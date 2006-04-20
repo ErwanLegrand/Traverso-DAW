@@ -1,0 +1,16 @@
+Unpack the tarball, and change directory to traverso.
+
+If you like to change parameters for the build process, open the file:
+travers/src/base.pri
+in your favorite editor, there's information on the possible options in that very file.
+
+Run the following commands:
+
+$ qmake traverso.pro
+$ make
+
+After compilation is finished, you can run traverso:
+
+$ ./traverso
+
+Have funn!

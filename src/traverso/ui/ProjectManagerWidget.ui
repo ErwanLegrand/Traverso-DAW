@@ -1,0 +1,424 @@
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>ProjectManagerWidget</class>
+ <widget class="QWidget" name="ProjectManagerWidget" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>792</width>
+    <height>595</height>
+   </rect>
+  </property>
+  <property name="maximumSize" >
+   <size>
+    <width>1600</width>
+    <height>900</height>
+   </size>
+  </property>
+  <property name="baseSize" >
+   <size>
+    <width>50</width>
+    <height>50</height>
+   </size>
+  </property>
+  <property name="windowTitle" >
+   <string>ProjectManagerWidget</string>
+  </property>
+  <property name="layoutDirection" >
+   <enum>Qt::LeftToRight</enum>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>8</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item row="1" column="0" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>502</width>
+       <height>71</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="1" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>266</width>
+       <height>474</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="0" >
+    <layout class="QVBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="label" >
+       <property name="text" >
+        <string>Project Management</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTreeWidget" name="projectListView" >
+       <property name="minimumSize" >
+        <size>
+         <width>500</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>500</width>
+         <height>16</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBox_2" >
+       <property name="title" >
+        <string>Selected Project</string>
+       </property>
+       <layout class="QVBoxLayout" >
+        <property name="margin" >
+         <number>8</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>0</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item row="1" column="3" >
+           <widget class="QPushButton" name="saveProjectButton" >
+            <property name="text" >
+             <string>Save</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QPushButton" name="deleteProjectbutton" >
+            <property name="text" >
+             <string>Delete</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="2" >
+           <widget class="QLineEdit" name="selectedProjectName" />
+          </item>
+          <item row="0" column="2" >
+           <widget class="QPushButton" name="saveAsProjectButton" >
+            <property name="text" >
+             <string>Save As</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3" >
+           <widget class="QPushButton" name="loadProjectButton" >
+            <property name="text" >
+             <string>Load</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>500</width>
+         <height>16</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBox" >
+       <property name="title" >
+        <string>New Project</string>
+       </property>
+       <layout class="QGridLayout" >
+        <property name="margin" >
+         <number>8</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item row="2" column="3" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>20</width>
+            <height>24</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="2" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>20</width>
+            <height>24</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="1" >
+         <widget class="QComboBox" name="templateComboBox" >
+          <property name="sizePolicy" >
+           <sizepolicy>
+            <hsizetype>5</hsizetype>
+            <vsizetype>0</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" >
+         <widget class="QLineEdit" name="newProjectEngineer" />
+        </item>
+        <item row="0" column="1" >
+         <widget class="QLineEdit" name="newProjectName" />
+        </item>
+        <item row="1" column="4" colspan="2" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>181</width>
+            <height>24</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="5" >
+         <widget class="QPushButton" name="createProjectButton" >
+          <property name="text" >
+           <string>Create</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3" colspan="2" >
+         <widget class="QLabel" name="label_2_2_2" >
+          <property name="text" >
+           <string>Number of Songs</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="5" >
+         <widget class="QLineEdit" name="numberOfSongs" >
+          <property name="sizePolicy" >
+           <sizepolicy>
+            <hsizetype>5</hsizetype>
+            <vsizetype>0</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text" >
+           <string>6</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" >
+         <widget class="QLabel" name="label_2_2" >
+          <property name="text" >
+           <string>Name</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" >
+         <widget class="QLabel" name="label_3_2" >
+          <property name="text" >
+           <string>Engineer</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" >
+         <widget class="QLabel" name="label_4_2" >
+          <property name="text" >
+           <string>Template</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <pixmapfunction></pixmapfunction>
+ <tabstops>
+  <tabstop>projectListView</tabstop>
+  <tabstop>selectedProjectName</tabstop>
+  <tabstop>saveAsProjectButton</tabstop>
+  <tabstop>loadProjectButton</tabstop>
+  <tabstop>deleteProjectbutton</tabstop>
+  <tabstop>saveProjectButton</tabstop>
+  <tabstop>newProjectName</tabstop>
+  <tabstop>newProjectEngineer</tabstop>
+  <tabstop>templateComboBox</tabstop>
+  <tabstop>numberOfSongs</tabstop>
+  <tabstop>createProjectButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>newProjectEngineer</sender>
+   <signal>returnPressed()</signal>
+   <receiver>createProjectButton</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>248</x>
+     <y>464</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>498</x>
+     <y>496</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>newProjectName</sender>
+   <signal>returnPressed()</signal>
+   <receiver>createProjectButton</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>248</x>
+     <y>434</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>498</x>
+     <y>496</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>selectedProjectName</sender>
+   <signal>returnPressed()</signal>
+   <receiver>saveAsProjectButton</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>315</x>
+     <y>309</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>406</x>
+     <y>310</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>projectListView</sender>
+   <signal>doubleClicked(QModelIndex)</signal>
+   <receiver>loadProjectButton</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>118</x>
+     <y>137</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>497</x>
+     <y>310</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>numberOfSongs</sender>
+   <signal>returnPressed()</signal>
+   <receiver>createProjectButton</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>450</x>
+     <y>427</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>449</x>
+     <y>477</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

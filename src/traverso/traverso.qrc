@@ -1,0 +1,44 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file alias="cursorDrag">../../resources/images/cursorDrag.xpm</file>
+		<file alias="cursorRZoom">../../resources/images/cursorRZoom.xpm</file>
+		<file alias="cursorFloatOverClip">../../resources/images/cursorFloatOverClip.xpm</file>
+		<file alias="cursorFloatOverTrack">../../resources/images/cursorFloatOverTrack.xpm</file>
+		<file alias="cursorFloat">../../resources/images/cursorFloat.xpm</file>
+		<file alias="cursorMagicZoom">../../resources/images/cursorRZoom.xpm</file>
+		<file alias="cursorHoldLrud">../../resources/images/cursorHoldLrud.xpm</file>
+		<file alias="cursorHoldLr">../../resources/images/cursorHoldLr.xpm</file>
+		<file alias="cursorHoldUd">../../resources/images/cursorHoldUd.xpm</file>
+		<file alias="cursorSelect">../../resources/images/cursorSelect.xpm</file>
+		<file alias="traverso">../../resources/images/traverso.xpm</file>
+		<file alias="keymap">../../resources/keymap.xml</file>
+		<file alias="colortheme">../../resources/skin/defaultcolors.xml</file> 
+		<file alias="helpfile">../../resources/help.text</file>
+		<file alias="recled_on">../../resources/images/rec-on.xpm</file>
+		<file alias="recled_off">../../resources/images/rec-off.xpm</file>
+		<file alias="muteled_on">../../resources/images/mute-on.xpm</file>
+		<file alias="muteled_off">../../resources/images/mute-off.xpm</file> 
+		<file alias="sololed_on">../../resources/images/solo-on.xpm</file>
+		<file alias="sololed_off">../../resources/images/solo-off.xpm</file>
+		<file alias="lockled_on">../../resources/images/lock-on.xpm</file>
+		<file alias="lockled_off">../../resources/images/lock-off.xpm</file>
+		<file alias="bus_in">../../resources/images/bus-in.xpm</file>
+		<file alias="bus_out">../../resources/images/bus-out.xpm</file>
+		<file alias="audiocard">../../resources/images/soundcard.png</file>
+		<file alias="keyboard">../../resources/images/keyboard.png</file>
+		<file alias="cpu">../../resources/images/cpu.png</file>
+		<file alias="audiocardsmall">../../resources/images/soundcardsmall.png</file>
+		<file alias="harddrivesmall">../../resources/images/harddrivesmall.png</file>
+		<file alias="driver">../../resources/images/driver.png</file>
+		<file alias="projectmanagement">../../resources/images/icons/32X32/projects.png</file>
+		<file alias="songmanagement">../../resources/images/icons/32X32/songs.png</file>
+		<file alias="audiosourcesmanagement">../../resources/images/icons/32X32/audiosources.png</file>
+		<file alias="globalproperties">../../resources/images/icons/32X32/advancedsettings.png</file>
+		<file alias="info">../../resources/images/icons/22x22/info.png</file>
+		<file alias="warning">../../resources/images/icons/22x22/warning.png</file>
+		<file alias="critical">../../resources/images/icons/22x22/critical.png</file>
+		<file alias="traverso_nl">../../traverso_nl.qm</file>
+		<file alias="traverso_de">../../traverso_de.qm</file>
+	</qresource>
+</RCC>
+ 
