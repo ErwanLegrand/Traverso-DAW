@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioClip.h,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
+    $Id: AudioClip.h,v 1.2 2006/04/20 17:11:49 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -54,7 +54,7 @@ public:
 
         //  a TODO ? OK, this is a bit large to place here, but it gives a 30% speedup since it's called from
         // Mixer::mix_track_portion. Perhaps this should be moved in there?
-        float AudioClip::get_fade_factor_for(nframes_t pos) // pos : position in the track
+        float get_fade_factor_for(nframes_t pos) // pos : position in the track
         {
                 float fi,fo;
                 if (fadeInBlocks==0)
