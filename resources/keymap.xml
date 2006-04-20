@@ -1,0 +1,87 @@
+<keymap>
+	<keyseq keyfacttype="FKEY" key1="ESC" mousehint="" slotname="cancel" name="Cancel" sortorder="" />
+	<keyseq keyfacttype="FKEY" key1="H" slotname="show_help" name="Show Help" sortorder="" />
+	<keyseq keyfacttype="FKEY" key1="F1" slotname="set_editing_mode" name="Editing Mode" sortorder="" />
+	<keyseq keyfacttype="FKEY" key1="F2" slotname="set_curve_mode" name="Curve Mode" sortorder="" />
+	<keyseq keyfacttype="FKEY" key1="F11" slotname="full_screen" name="Fullscreen" sortorder="" />
+	<keyseq keyfacttype="FKEY" key1="F5" slotname="undo" name="Undo" sortorder="" />
+	<keyseq keyfacttype="FKEY" key1="F6" slotname="redo" name="Redo" sortorder="" />
+	<keyseq keyfacttype="FKEY" key1="LARROW" slotname="scroll_left" name="Scroll left" sortorder="" />
+	<keyseq keyfacttype="FKEY" key1="RARROW" slotname="scroll_right" name="Scroll right" sortorder="" />
+	<keyseq keyfacttype="FKEY" key1="UARROW" slotname="scroll_up" name="Scroll up" sortorder="" />
+	<keyseq keyfacttype="FKEY" key1="DARROW" slotname="scroll_down" name="Scroll down" sortorder="" />
+	<keyseq keyfacttype="FKEY" key1="SHIFT" slotname="touch" name="Touch" sortorder="20" />
+	<keyseq keyfacttype="FKEY" key1="W" slotname="goto_begin" name="Startpos" sortorder="" />
+	<keyseq keyfacttype="FKEY" key1="HOME" slotname="goto_begin" name="Startpos" sortorder="" />
+	<keyseq keyfacttype="FKEY" key1="Z" slotname="hzoom_in" name="Zoom in" sortorder="" />
+	<keyseq keyfacttype="FKEY" key1="S" slotname="select" name="Select" sortorder="10" />
+	<keyseq keyfacttype="FKEY" key1="SPACE" slotname="go" name="Play" sortorder="" />
+	<keyseq keyfacttype="FKEY" key1="A" slotname="toggle_arm" name="Record (on/off)" sortorder="12" />
+	<keyseq keyfacttype="FKEY" key1="ENTER" slotname="" name="Render" sortorder="" />
+	<keyseq keyfacttype="FKEY" key1="O" slotname="solo" name="Solo" sortorder="10" />
+	<keyseq keyfacttype="FKEY" key1="U" slotname="mute" name="Mute" sortorder="10" />
+	<keyseq keyfacttype="FKEY" key1="X" slotname="split" name="Split" sortorder="29" />
+	<keyseq keyfacttype="FKEY" key1="F3" slotname="set_songview_widget" name="Songs Window" sortorder="" />
+	<keyseq keyfacttype="FKEY" key1="F4" slotname="set_manager_widget" name="Manager Window" sortorder="" />
+	<keyseq keyfacttype="FKEY" key1="I" slotname="import_audiosource" name="Import Audio" sortorder="25" />
+	<keyseq keyfacttype="FKEY" key1="Q" slotname="show_context_menu" name="This Menu" sortorder="100" />
+	
+	<keyseq keyfacttype="FKEY2" key1="A" key2="B" slotname="about_traverso" name="About" sortorder="" />
+	<keyseq keyfacttype="FKEY2" key1="CTRL" key2="S" slotname="save_project" name="Save Project" sortorder="" />
+	<keyseq keyfacttype="FKEY2" key1="S" key2="P" slotname="show_song_properties" name="Properties Window" sortorder="" />
+	<keyseq keyfacttype="FKEY2" key1="S" key2="N" slotname="toggle_snap" name="Snap (on/off)" sortorder="" />
+	<keyseq keyfacttype="FKEY2" key1="G" key2="P" slotname="show_gp" name="Global Properties Window" sortorder="" />
+	<keyseq keyfacttype="FKEY2" key1="LCONTROL" key2="SHIFT" slotname="touch_and_center" name="Touch (and center)" sortorder="21" />
+	<keyseq keyfacttype="FKEY2" key1="Z" key2="X" slotname="hzoom_out" name="Zoom out" sortorder="" />
+	<keyseq keyfacttype="FKEY2" key1="Z" key2="ALT" slotname="vzoom_out" name="Verticall Zoom out" sortorder="" />
+	<keyseq keyfacttype="FKEY2" key1="Z" key2="A" slotname="vzoom_in" name="Verticall Zoom in" sortorder="" />
+	<keyseq keyfacttype="FKEY2" key1="S" key2="D" slotname="add_to_selection" name="Select (add)" sortorder="30" />
+	<keyseq keyfacttype="FKEY2" key1="S" key2="A" slotname="deselect" name="Select (remove)" sortorder="31" />
+	<keyseq keyfacttype="FKEY2" key1="A" key2="D" slotname="invert_clip_selection" name="Invert Selection" sortorder="" />
+	<keyseq keyfacttype="FKEY2" key1="J" key2="L" slotname="capture_from_channel_both" name="Capture channels both" sortorder="40" />
+	<keyseq keyfacttype="FKEY2" key1="J" key2="K" slotname="capture_from_channel_left" name="Capture left channel" sortorder="41" />
+	<keyseq keyfacttype="FKEY2" key1="K" key2="L" slotname="capture_from_channel_right" name="Capture right channel" sortorder="42" />
+	<keyseq keyfacttype="FKEY2" key1="SPACE" key2="R" slotname="go_regions" name="Play regions" sortorder="" />
+	<keyseq keyfacttype="FKEY2" key1="B" key2="V" mousehint="UD" slotname="select_bus_in" name="Bus in" sortorder="30" />
+	<keyseq keyfacttype="FKEY2" key1="B" key2="N" mousehint="UD" slotname="select_bus_out" name="Bus out" sortorder="31" />
+	
+	<keyseq keyfacttype="HKEY" key1="Z" mousehint="LRUD" slotname="zoom" name="Zoom" sortorder="" />
+	<keyseq keyfacttype="HKEY" key1="TAB" mousehint="LR" slotname="shuttle" name="Shuttle" sortorder="" />
+	<keyseq keyfacttype="HKEY" key1="P" mousehint="LR" slotname="pan" name="Pan" sortorder="16" />
+	<keyseq keyfacttype="HKEY" key1="E" mousehint="LR" slotname="drag_edge" name="Drag Edge" sortorder="28" />
+	<keyseq keyfacttype="HKEY" key1="G" mousehint="UD" slotname="gain" name="Gain" sortorder="15" />
+	<keyseq keyfacttype="HKEY" key1="C" mousehint="LRUD" slotname="copy" name="Copy" sortorder="27" />
+	<keyseq keyfacttype="HKEY" key1="D" mousehint="LRUD" slotname="drag" name="Drag" sortorder="25" />
+	<keyseq keyfacttype="HKEY" key1="R" mousehint="LR" slotname="create_region" name="Create Region" sortorder="" />
+	<keyseq keyfacttype="HKEY" key1="X" mousehint="LR" slotname="in_crop" name="Crop (in)" sortorder="" />
+	
+	
+	<keyseq keyfacttype="HKEY2" key1="UARROW" key2="DARROW" mousehint="UD" slotname="vertical_scroll" name="Verticall Scroll" sortorder="" />
+	<keyseq keyfacttype="HKEY2" key1="E" key2="W" mousehint="LR" slotname="drag_edge_left" name="Drag edge (right)" sortorder="34" />
+	<keyseq keyfacttype="HKEY2" key1="E" key2="R" mousehint="LR" slotname="drag_edge_right" name="Drag edge (left)" sortorder="33" />
+	<keyseq keyfacttype="HKEY2" key1="W" key2="R" mousehint="LR" slotname="drag_edge_both" name="Drag edge (both)" sortorder="35" />
+	<keyseq keyfacttype="HKEY2" key1="F" key2="G" mousehint="LR" slotname="clip_fade_in" name="Fade (in)" sortorder="42" />
+	<keyseq keyfacttype="HKEY2" key1="G" key2="H" mousehint="LR" slotname="clip_fade_out" name="Fade (out)" sortorder="43" />
+	<keyseq keyfacttype="HKEY2" key1="F" key2="H" mousehint="LR" slotname="clip_fade_both" name="Fade (both)" sortorder="44" />
+	
+	
+	<keyseq keyfacttype="D_FKEY" key1="ESC" slotname="exit" name="Exit" sortorder="" />
+	<keyseq keyfacttype="D_FKEY" key1="T" slotname="create_track" name="New Track" sortorder="" />
+	<keyseq keyfacttype="D_FKEY" key1="ENTER" slotname="show_export_widget" name="Export Project" sortorder="20" />
+	<keyseq keyfacttype="D_FKEY" key1="RETURN" slotname="show_export_widget" name="Export Project" sortorder="20" />
+	<keyseq keyfacttype="D_FKEY" key1="G" slotname="reset_gain" name="Gain (reset)" sortorder="51" />
+
+	<keyseq keyfacttype="D_FKEY2" key1="DEL" key2="T" slotname="delete_track" name="Delete Track" sortorder="" />
+	<keyseq keyfacttype="D_FKEY2" key1="S" key2="D" slotname="select_all_clips" name="Select Clips (all)" sortorder="" />
+	<keyseq keyfacttype="D_FKEY2" key1="S" key2="A" slotname="deselect_all_clips" name="Deselect Clips (all)" sortorder="" />
+	<keyseq keyfacttype="D_FKEY2" key1="F" key2="G" slotname="reset_fade_in" name="Reset fade (in)" sortorder="52" />
+	<keyseq keyfacttype="D_FKEY2" key1="G" key2="H" slotname="reset_fade_out" name="Reset fade (out)" sortorder="53" />
+	<keyseq keyfacttype="D_FKEY2" key1="F" key2="H" slotname="reset_fade_both" name="Reset fade (both)" sortorder="54" />
+	<keyseq keyfacttype="D_FKEY2" key1="C" key2="X" slotname="process_delete" name="Delete" sortorder="" />
+	<keyseq keyfacttype="D_FKEY2" key1="SPACE" key2="R" slotname="go_loop_regions" name="Play Regions (loop)" sortorder="" />
+
+	<keyseq keyfacttype="S_FKEY_FKEY" key1="W" key2="E" slotname="work_next_edge" name="Work Cursor Next Edge" sortorder="" />
+	<keyseq keyfacttype="S_FKEY_FKEY" key1="W" key2="Q" slotname="work_previous_edge" name="Work Cursor Previous Edge" sortorder="" />
+
+
+</keymap>

@@ -1,0 +1,863 @@
+Traverso - The Free Professional Audio Tools for Linux V x.x.x
+
+
+
+Traverso Contextual  ACTIONS - QUICK REFERENCE GUIDE, FOR THE IMPATIENTS ;-)
+===========================================================
+
+    ********************************************************************
+             IF YOU HAVE NEVER USED Traverso, READ AT LEAST THIS !
+    
+    Traverso is not hard to use, but you need to open your mind. Traverso
+    uses keyboard plus mouse actions, that we call "jmb". For short,
+    every time you see in this guide something like <K> , it will mean
+    "press a key 'K' in the keyboard" (only press, not hold it
+    !),pretty much as if you have clicked the key). Same way, [K]
+    means hold it,<<K>> means double- press the key and <KK> means
+    press two keys.  Examples : <J> - press the J [J] - hold the J
+    <<J>> - double-press the J <HJ> - press H and J at the same time
+	       
+    Now, imagine that you are playing a very sophisticated video-game,
+    and enjoy the power of Traverso :-)
+    *********************************************************************
+
+
+
+    TRY THIS :
+    ==========
+
+    <PM> - Open the project manager , where you can import audio,
+    		  create songs, and so on.
+
+    <CTRL S> - ( IT IS NOT HOLD CTRL AND THEN PRESS S !! IT IS CTRL
+    		  AND S PRESSED FASTLY AT THE SAME TIME ) - Save
+    		  current project.
+
+    <SPACE> - Play/Stop. If you have armed any track ( by <A> in the
+    		  track panel), it will record too.
+
+    [Z] - ( Hold Z and move the mouse ) - Magic Zoom Tool (the best of
+    		  all known audio applications, including those from
+    		  Windoze and Mac(rap).
+
+    <L_SHIFT> - "touch" the track. By "touching" a track, you set it
+    		  as the active one, and also you set the working
+    		  position (from where play will start, for example).
+
+    [TAB] - The shuttle tool . Hold TAB and move the mouse left/right
+
+    <<ESC>> - Exits Traverso
+
+
+    *********************************************************************
+	READ THE FULL Traverso Contextual  MAP SECTION IN THIS GUIDE BELOW FOR MORE
+	ADVANCED ACTIONS
+    *********************************************************************
+    
+
+
+
+
+WELCOME TO Traverso! 
+==================
+
+Hello! By now you have already started Traverso, noticed the lack of
+menus, found the layout very cool, but couldn't do anything clicking
+on anywhere, so you decided to resort to the Help Reference the
+program gave you.  You also were about to give up using the program
+(and click on the little X button that your favorite window manager
+gives you to stop programs).
+
+Don't worry!
+This quick help guide (which in the future will probably turn into a
+Quick Reference Guide) is here to rescue you, explaining what Traverso
+is and how it works.  Before you try to play around the project, we
+suggest you to read the parts about the Traverso Contextual  Concept, and the Sections
+of the Interface. Everything afterwords can be used as reference, and
+are a small insight of what is to come.  (Hey! Its still under
+development)
+
+
+
+
+WHAT IS Traverso ?
+================
+
+Traverso is A Free Professional Audio Tools for GNU/Linux.  It aims to
+be the most pratical and one of the most powerful audio tools for
+GNU/Linux.  Traverso *does not want to imitate Protools (tm)*, and this
+is because Protools is not the "gold at the end of the rainbow" of
+digital audio.
+
+
+
+Jog Mouse Board (Traverso Contextual ) CONCEPT
+=============================
+
+Traverso user interface is built based on the Jog Mouse Board Concept.
+Although Protools is such a powerful suite, its interface is designed
+around traditional interface concept (mouse, icons, buttons, menus,
+and so on), which forces you do to toggle many flags on and off, move
+the mouse back and forth in the screen and generally, you end up with
+a sharp wrist pain. We think that using only a 1-button device when
+you have a 101-keys one right in front of you, is kind of a waste.
+
+Althought the tradicional kind of interface is interesting for
+Graphics, Word, Vector and other types of editing programs, experience
+shows that for audio, unfortunately, there are too many different
+types of editing for only type of action.  Bottom line is that the
+traditional interface, for audio editing, is quite clumsy, and ends up
+slowing everything down.  This is extremely undesirable in the
+professional environment, where the studio hour can be expensive.  It
+also makes the editing process burocratic and boring for the engeneer!
+
+Traverso Contextual  (Jog Mouse Board) is a concept and a engine that offer a new way
+to edit audio.  The user simply does not have to click lots of icons
+and menus anymore to perform an action.  He has to perform a Traverso Contextual 
+action that consists, in most cases, of a key-press while pointing or
+moving the mouse. The idea of Traverso Contextual  is to speed up the audio production
+and avoid wrist problems.
+
+Using the Traverso Contextual  Concept as the guiding principal of the project, Traverso
+is designed for practibility, flexibility, reliability and editing
+speed.  The three project guides are derived from the Traverso Contextual  Concept:
+
+
+
+
+THE INTERFACE
+=============
+
+The interface has to be simple and direct, because the more visual
+information you have in the screen, the longer your action will take, even
+if you just want to open a file.  So Traverso Interface is as clean as
+possible.
+
+The mouse as a clicking device is almost abolished.  Everything can be
+done with the Keyboard, speeding up the recording, editing, and mixing
+processes.  Traverso supposes that if you are a professional, you'll be
+using the same software most of your time, so no problem if you have
+to learn a more complex combination of keys (compared to a simple
+icon, or a pop-up menu), because they get automated in few days.
+Tests show that a regular person learns the main group of actions
+(combination of keys and mouse movements) in less than a week.
+
+
+
+
+EDITION
+=======
+
+Performing a CD project usually involves the same steps.  Traverso
+edition concepts are based in the professional experience.  For
+example, you'll almost always have to correct DC before applying
+filters.  Applying DC correction is a static, one-step,
+twice-forbidden, action.  It makes no sense to have a filter history
+of DC correction. But makes sense to have independent filter histories
+for EQ and Chorus, for example, just because it does not matter which
+comes first.
+
+Another important point in Traverso edition concepts is that you can put
+every filter you want in the audio, test it, and if you like it, you
+render it.  So all the possible filters resides "virtually" in the
+audio, until you render it.  This makes Traverso to be considered an
+audio tool of "real time" effects, since you can turn "auto render"
+on, in fast machines.
+
+
+
+
+PROJECT ASSISTMENT
+==================
+
+Traverso soon will also include Project Management. Generally multitrack
+audio tools only allow you to work with one song at a time. Traverso
+will allow you to manage the songs, their titles, how long they are,
+which project they belong to, at what phase in the production process
+they are in, and even burn a CD in the order you ask it to.
+
+This is possible because we take advante of the many great GNU\Linux
+applications that take care of specific actions such as those. Thus
+Traverso only has to manage files, and issue the correct commands,
+simplifying, as much as possible, the task of actually recording and
+mixing your own CD.
+
+
+
+
+
+SECTIONS OF THE INTERFACE
+=========================
+
+This is where we begin explaining what is what in the Traverso
+Interface.  If you look at the Traverso window you'll notice that there
+are 6 distinct areas.
+
+1. LCD DISPLAY - This area is at the very top.  Its is greenish-gray
+and (duh!) it looks like an LCD Display.  This area tells you which
+Traverso Contextual  Actions are being understood by the Traverso Contextual  Engine (or in plain
+english, which Action is being executed).
+
+2. INFO AREA - Next to the LCD DISPLAY, we have the INFO AREA. It
+tells you which Song is currently active and the Project you're
+currently working on.  It also gives you information about the used
+rate and bitdepth and last of all it tells you what the Horizontal
+Zoom (HZ) ratio is.
+
+3. BUS MONITOR AREA - This is the area next to the INFO AREA. It
+presents the LEVEL METERS of your sound card(s) buses who are
+available on the system.  Whenever something is being played, watch
+the meters. The BUS MONITOR can be detached and made into a separate
+window.
+
+4. SONG AREA.  This is kind of obvious. Here is where Songs are
+displayed.  If you want to switch between songs , type 1, 2, 3, or n,
+say, and then type 'S'.
+
+5. TRACK PANEL AREA (TPA) - This is the greenish area on the left side
+of the interface.  It displays many things. The Track number and name
+is at the top, followed by the GAIN (G) and PAN (P) METERS. On the top
+of each box are SOLO, MUTE and RECORD LEDS. They tell you at which
+state the track is on. On the bottom there is a IN:0 OUT:0. This tells
+you that the input card number is. This will be explained later.
+
+6. MULTI TRACK AREA (MTA) - This is the dark-gray area, where
+everything actually happens.  The line that follows the mouse is the
+FLOAT CURSOR.  Also, the WORK CURSOR is the red-dashed line that
+appears when you touch a clip (Using the LEFT_SHIFT key). Also notice
+that whenever you record, a CLIP appears. Each take has a logo which
+tells you if it is a stereo or mono take, followed by two numbers. The
+first one is the sample-rate followed by its resolution. Next is the
+source of the take. SRC is an imported audio file, while CAP is
+captured audio. Lastly comes the name of the CLIP which depends
+greatly on which source it came from. Needless to say, in the future
+you will be able to rename takes, as well as tracks. Don't forget that
+this will also change in the future.
+
+
+Traverso Contextual  ACTIONS MAP for V 0.20.1
+==============================================
+
+As you might know, Traverso is based on Traverso Contextual  engine, that lets you make
+everything by using the keyboard and the mouse at the same time,
+without a single click.  For convention, we created a "action
+representation standard" , that makes it easier to understand the
+Traverso operation.
+
+Where you find :
+
+<K>		- press the "K" key once and fast ( a simple keypress )
+<KK>		- double press two keys, fast and together
+[K]		- hold the "K" key
+[KK]		- hold two keys together
+<<K>>		- double press one key (fast, like a double click)
+<<KL>>		- double press two keys, fast and together
+>K>K   		- press one key and then other key fast and sequentially
+n..<K>		- type one or a collection of numbers and finally press the key once and fast
+
+Following actions can be placed behind the actions mentioned above, for example
+[K] and UD becomes: [K]UD which means hold the "K" key and move mouse UP/DOWN:
+
+UDLR		- move the mouse UP/DOWN/LEFT/RIGHT
+UD		- move the mouse UP/DOWN
+LR		- move the mouse LEFT/RIGHT
+
+Following actions tells as where the mouse has to be to perform a specific action. For
+example ^T and [K] becomes: ^T[K] which means point to a Track and hold the "K" key.
+This can be extended to ^T[K]UD which means: point to a Track, hold the "K" key and
+move the mouse UP/DOWN:
+
+^X		- point (just point!) to something (generalization for didatic purposes)
+^C              - Point to a clip
+^T 		- Point to a track (can be the track panel or track area)
+^TP 		- Point to a track panel
+^TA 		- point to a track area
+
+
+There are much more kinds of actions you can perform, but they are for
+advanced users.  You probably will need <K> , [K] and <<K>> most of
+time.
+
+Now lets play a little with Traverso !
+
+
+BASIC COMMANDS
+=================
+
+Help : <H>
+	Just Press H ( Oops.. you might already know it, otherwise you
+	wont be reading this ... :-)
+
+
+
+Open/Import Audio (Project Manager) : <PM>
+	Press P and M together . It means ProjectManager (duh). This action will
+	change in future releases.
+
+
+
+Play/Stop : <SPACE>
+	Just Press Space bar, as most of audio editors do.
+
+
+
+Touch : <LEFT_SHIFT>
+	This is a simple way to "click" on the tracks, so specify a
+	new point of operation (the WORK CURSOR will be set at your
+	last touched position). When you import audio, for example,
+	the new audio will be placed from the last "touched" point,
+	into the latest "touched" track. You may also touch a whole
+	Track: ^# + <LEFT_SHIFT>.
+
+
+
+nTouch : n..<LEFT_SHIFT>
+	This way you can activate tracks using the keyboard ONLY.
+	It's based on a engine called 'Number Collector'.  So press
+	the Track number (n..) you want to be touched and confirm this
+	with <LEFT_SHIFT>.  For example:
+
+	2<LEFT_SHIFT> will touch track 2.
+	12345<LEFT_SHIFT> will touch track 12345 ;-)
+
+
+
+Go to begin : <HOME> or <W>
+        This will take your WORK CURSOR right to the begining of your
+        touched track.
+
+
+
+================================================================================
+All other actions are grouped within their context to maintain readebility.
+So all actions which apply to a CLIP are grouped together, etc. etc.
+================================================================================
+
+
+
+========================================
+	GENERAL ACTIONS
+========================================
+
+
+About : <AB>
+	Some information will be displayed on the LCD about Traverso.
+
+Cancel : <ESC>
+        You will find no cancel button using Traverso, because you can
+	cancel every window by <ESC>. In some dialog windows, this is
+	not implemented yet. If that is the case, just use the close
+	button at the top of your window.
+
+
+
+Editing Modes : <F1> <F2>
+	This is the first implementation of Editing modes. Currently,
+	there are 2 modes available.
+
+          Normal Mode : <F1>
+	       This is the general sound editing and recording mode. It
+	       is in this mode where all of the actions above occur, and
+	       by far the most stable mode.
+
+
+	  Track Curves : <F2>
+	       This mode will allow the editing of Filters. Filters can
+	       be added and edited by changing their "Curves". Currently
+	       there are not many working filters implemented yet. But
+	       hey!, its only version 0.20.1!
+
+
+
+
+Global Properties Dialog : <GP>
+        This will take you to a dialog which lets you change a couple
+        of Traverso's behaviours. This is also still a work in process,
+        althought all of the options in the dialog are already
+        functional.
+
+
+
+LOCK/UNLOCK EVERYTHING  :  <LE>
+	When LOCKED, no keyboard actions will be handled. You have to
+	first UNLOCK before you can go on working with Traverso
+
+
+
+Quit Traverso : <<ESC>>
+        Double-press ESC to exit Traverso.
+
+
+
+Record : <SPACE>
+	This start a recording in the "ARMED" track(s) at the actual
+	position (last 'touched' position == Work Cursor).  To stop
+	recording press again <SPACE>.
+
+
+
+Render Song : <<ENTER>>
+        Double press ENTER . Rendering is the process of applying all
+        of the filters and editings into one sound document. In the
+        future you will be able to render all songs with just one
+        command. When you RENDER SONG, a dialog will open to ask you
+        the ouput file name.  If you specify a .praf, the whole
+        project will be rendered to a Praf file (Traverso's Native
+        Format).  If you specify a .wav file, the whole project will
+        be rendered to a Wav file.
+
+
+
+Save Song : <CTRL S>
+	Save the current active Song.
+
+
+
+Song Properties : <SP>
+	Shows a Dialog with the properties of the Song. It gives you
+	the ability to change all kind of settings.
+
+
+
+Use Song : n..<S>
+	Type in a number and press "S". Now the selected Song will
+	show up in the Song Area if it exist.
+
+
+
+TOGGLE SNAP ON/OFF : <SN>
+	Switches the "SNAP" feature on or off.
+	
+UNDO : <F5>
+
+REDO : <F6>
+
+
+
+========================================
+	NAVIGATION
+========================================
+
+
+SCROLL : <U>, <D>, <L>, <R>
+	Use the arrows to scroll the TracksArea Up/Down/Left/Right
+
+
+
+SHUTTLE : ^TA<TAB>LR
+        The shuttle is an action that simulates the Jog-Shuttle ring controller found
+        in many VCR's. The more you roll it to left, the faster the scroll is done to the
+        left. The more you roll it to the right, the faster you scroll it to the right.
+
+
+
+TOUCH AND CENTER : <L_SHIFT L_CTRL>
+	"TOUCH" the Track under the mouse pointer. This sets the Track active AND the
+	work cursor will be centered!
+
+
+
+VERTICAL SCROLL : [UARR DARR]UD
+	Trivial isn't it ;-)
+
+
+
+WORK ON NEXT EDGE : >W>E
+	Moves the working cursor to the nearest next edge.
+
+
+
+WORK ON PREVIOUS EDGE : >W>Q
+	Moves the working cursor to the nearest previous edge.
+
+
+
+
+========================================
+	TRACK ACTIONS
+========================================
+
+
+Add Track : <<T>>
+	Add a Track to the current active Song
+
+
+
+Delete Track : <T DELETE>
+	Delete active Track from current active Song
+
+
+Gain of Track: [G]UD
+        Don't Forget to Touch the track first! Watch the GAIN METER on
+        the TPA!
+
+
+
+Mute/Unmute a Track : ^TP<U>
+	This action will MUTE a track. Notice that the MUTE LED will
+	light up. The whole track will be MUTED, so before you go on
+	complaining that Traverso suddenly stopped playing your track,
+	be sure to check if the MUTE flag is not on.
+
+
+
+Pan of Track:  [P]LR
+	Don't Forget to Touch the track first! Watch the PAN METER on
+        the TPA!
+
+
+
+
+Set/Unset a Track recordable ("ARMED"): ^T<A>
+	This action will SET THE TRACK RECORDABLE. It records on the
+	bus(es) you see in the TPA. You can change the buses with
+	^T[BV] = select BUS IN or ^T[BN] = select BUS OUT
+
+
+
+Solo/Unsolo a Track : ^TP<O>
+	This will set SOLO. Notice that the SOLO LED will light
+	up. You HAVE to point to the TPA for it to work!
+
+
+
+Select BUS In  : ^T[BN]
+Select BUS Out : ^T[BV]
+	This allows you to select which BUS is used to play or
+	record. When using [BN] or [BV] a menu shows up with
+	the available (valid) buses on your system. Point the
+	mouse to the BUS you want to use, and release the keys.
+	Then that BUS will be used for the "TOUCHED" Track.
+
+
+
+========================================
+	CLIP ACTIONS
+========================================
+
+
+Copy Clip : ^C[C]LRUD
+	Same procedure as 'Move', but this action will make a copy of
+	the CLIP.
+
+
+
+Drag Clip : ^C[D]LRUD
+	Point the mouse to the CLIP you want to drag, Hold "D" , and
+	move the mouse. After finding a good new place for the clip,
+	release "D" to drop the clip at this position. Watch out! You
+	can delete CLIPS by dragging them outside the MULTITRACK AREA!
+
+
+
+Delete a Clip : <<XC>> 
+        This is cool . Double-press both X and C at the same time to
+        delete a selected CLIP .  This is a "hard" action, made like
+        this exactly to prevent acidental deletes.  To delete a track
+        in this fashing, it has to be SELECTED! You can also delete a
+        CLIP by dragging it outside the Multitrack Area.
+
+
+
+Fade In : ^C[FG]LR
+
+
+
+Fade Out : ^C[GH]LR
+
+
+
+Fade Both : ^C[FH]LR
+
+
+
+Gain (this is the Clip Gain, not Track Gain!!) : ^C[G]UD
+
+
+Reset Gain : ^C<<G>>
+
+
+
+Reset Fade In : ^C<<FG>>
+
+
+
+Reset Fade Out : ^C<<GH>>
+
+
+
+Reset Both Fades : ^C<<FH>>
+
+
+
+Modify/Move Clip edges : You have 4 ways to do that. All them uses [E] (Edge)
+	^C[E]LR : point to the CLIP, near the Edge you want to move , hold [E] and
+	move the mouse left/right
+	^C[ER]LR : point to the CLIP you want to move the right Edge , hold [ER] and
+	move the mouse left/right
+	^C[EW]LR : point to the CLIP you want to move the left Edge , hold [EW] and
+	move the mouse left/right
+	^C[WR]LR : point to the CLIP you want to move the both left and right edge ,
+	hold [WR] and move the mouse left/right
+
+
+
+Mute/Unmute a Clip : ^C<U>
+	This action will MUTE a clip. Notice that the muted clip will
+	change colors! MUTE will only mute that specific take.
+
+
+
+Select a Clip : ^C<S>
+	********** THIS IS NOT WORKING. Sorry, but while working on the
+	0.20.0 release we discovered some problems with this action. It is
+	being worked on, the Traverso Contextual  Engine will have Contextive Actions in
+	release 0.30.0 which will solve this problem.
+	Until then use ^C<SD> (add CLIP to selection) to select
+	a clip. Notive that you have to deselect it manually if you want to
+	select another clip. Our apologies for this shortcoming!*********
+
+        Point to the clip you want to select and press <S>. Notice
+        that you can select Clips that are not on the touched track!
+        Selecting is NOT the same thing as touching BTW.
+
+
+
+Select/De-Select multiple Clips : ^C<SD> ^C<AS>
+	Same as select: just point to a clip and hit one of the jmb-cuts to add or
+	remove a clip from the selection.
+
+
+
+Select ALL Clips : <<SD>>
+
+
+DeSelect ALL Clips : <<SA>>
+
+
+Select->Invert selection : <SX>
+
+
+
+Split Clip : ^C<X>
+	This ^! means that you have to point a specific element in the
+	interface. In this case, the clip you want to split. Point to
+	then split it with <X>
+
+
+
+========================================
+	PLAYBACK/RECORD (GO)
+========================================
+
+
+Go / Stop : <SPACE>
+
+
+
+CAPTURE FROM BOTH CHANNELS : <JL>
+
+
+
+CAPTURE ONLY FROM LEFT CHANNEL : <KJ>
+
+
+
+CAPTURE ONLY FROM RIGHT CHANNEL : <KL>
+
+
+
+
+========================================
+	ZOOM ACTIONS
+========================================
+
+
+Horizontal Zoom : [Z]LR
+	This is cool! You hold the Z and move the mouse left and
+	right.  The zooming will happen based on you mouse moves. Try
+	it!  You can also try <Z> for zoom in and <ZX> for zoom out.
+
+
+Vertical Zoom : [Z]UD
+	Hold the Z and move the mouse up and down.
+	The zooming will happen based on you mouse moves.
+	You can also try <ZA> and <Z ALT>.
+
+
+
+Horizontal Zoom In : <Z>
+	Zoom in horizontally
+
+
+
+Horizontal Zoom Out : <ZX>
+	Zoom out horizontally
+
+
+
+Vertical Zoom In : <ZA>
+	Zoom in vertically
+
+
+
+Vertical Zoom Out : <Z L_ALT>
+	Zoom out vertically
+
+
+
+
+========================================
+	BUSMONITOR ACTIONS
+========================================
+
+
+DOCK/UNDOCK BUSMONITOR : <B>
+
+
+
+SHOW ONLY IN BUSES : <BV>
+
+
+
+SHOW ONLY OUT BUSES : <BN>
+
+
+
+SHOW BOTH IN/OUT BUSES : <VN>
+
+
+
+========================================
+	CURVES AND FILTER CONTROLLERS
+========================================
+
+
+============================================================================
+FOLLOWING ACTION ARE WORKING, but you may experience some (small) problems
+with certain actions, as it is not much tested and a work in progress....
+============================================================================
+
+
+Add Node : <N>
+	This will add a node to the filter curve. By adding node you can
+	edit how the filter controller is applied to your track. Simply
+	point to the track, and press "N".
+
+
+
+Move Node : [ND]
+	You can edit your added nodes by pointing to it and moving it
+	around with the "ND" key. Currently there is no way to remove
+	nodes.
+
+
+
+Node Setup : <<N>>
+	Currently not working.
+
+
+
+Add Filter Controller : ^T[FG]
+	This action will add a Filter to your selected track. Select from
+	the list that is presented. Not all filter have been implemented
+	yet.
+
+
+
+Remove Filter Controller : <<FD>>
+	This action will remove the current active filter controller. The
+	active filter controller is the "RED" one ;-)
+
+
+
+Select Filter Controller : [F]LR
+	This will select the filter controller for editing when you have
+	more than one Filter Controller.
+
+
+Setup a Filter : <<F>>
+     These options are currently not enabled, although their key
+     sequence is working.
+
+
+
+
+========================================
+	REGIONS
+========================================
+
+
+Create a Region : [R]LR
+
+
+
+Delete Region : ^R<<R>> (Not working right now :-( )
+
+
+
+GO (REGIONS) : <SPACE R>
+
+
+
+GO (LOOP REGIONS) : <<SPACE R>>
+
+
+
+
+========================================
+	CROP
+========================================
+
+
+In Crop : ^C[X]LR
+
+
+
+
+================================================================================
+================================================================================
+
+
+
+ACTIONS STILL IN EXPERIMENTAL FASE
+================================
+
+The following actions are still in experimental fase.
+Which means that:
+1. They are very buggy.
+2. They could be disabled in future versions
+3. They could be reinplemented  at any moment.
+4. They could damage your sound-wave.
+5. They might not work!
+
+So try them out with ***** CAUTION! *****
+
+
+NO ITEMS...
+
+
+ACTIONS TYPES FOR ADVANCED USERS
+================================
+
+These actions are being implemented, so no important feature are based
+on those kind of actions yet
+
+Actions types
+>K>L		, press K and then L very fast (dont hold the K
+                  key, be a piano player !)
+>KL>N		, press K and L together and then M very fast
+                  (dont hold the fist two keys, be a piano player !)
+<[K]>		, press K and then HOLD it (a double press,
+                  but the second press remains hold)
+<[KL]>		, press K and L together  and then HOLD them (a double
+                     press, but the second press remains hold)
+
+well you got it.. you can also try
+
+<<KK>>
+>KL>MN>
+>K[L]
+>KL[M]
+>K[LM]
+>KL[MN]
