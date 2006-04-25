@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ViewItem.cpp,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: ViewItem.cpp,v 1.2 2006/04/25 17:18:31 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -32,7 +32,7 @@
 // #include "Debugger.h"
 
 ViewItem::ViewItem(ViewPort* vp, ViewItem* parent, ContextItem* relatedContextItem)
-                : ContextItem(relatedContextItem), m_parent(parent), m_vp(vp)
+                : ContextItem(relatedContextItem, vp), m_parent(parent), m_vp(vp)
 {
         if (m_parent)
                 zOrder = m_parent->get_z_order() + 1;

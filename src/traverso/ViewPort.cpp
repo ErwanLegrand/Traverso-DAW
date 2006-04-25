@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewPort.cpp,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+$Id: ViewPort.cpp,v 1.2 2006/04/25 17:19:10 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -58,19 +58,12 @@ ViewPort::ViewPort(QWidget* widget)
 	setAcceptDrops(true);
 
 	setMinimumSize(100, 50);
-	
-	connect(pm().get_project(), SIGNAL(destroyed(QObject* )), this, SLOT (destroy(QObject* ) ));
 }
 
 ViewPort::~ViewPort()
 {
 	PENTERDES;
-/*	foreach(ViewItem* item, predrawItemList)
-		delete item;*/
-		
-/*	foreach(ViewItem* item, viewItemList)
-		delete item;*/
-		
+	
 	cpointer().set_current_viewport((ViewPort*) 0);
 }
 
@@ -84,7 +77,7 @@ void ViewPort::mouseMoveEvent(QMouseEvent* e)
 
 void ViewPort::resizeEvent(QResizeEvent* )
 {
-	PENTER;
+	PENTER3;
 	if (pixmap.size() != size())
 		pixmap = QPixmap(size());
 	emit resized();
@@ -259,12 +252,4 @@ void ViewPort::register_viewitem( ViewItem * item )
 	viewItemList.append(item);
 }
 
-void ViewPort::destroy( QObject * )
-{
-//	FIXME ViewPort is NOT deleted at the correct time, however, if
-//			I use this method of deletion, the new ViewPorts don't show up anymore!
-// 	PWARN("deleting myself");
-// 	delete this;
-}
 //eof
-

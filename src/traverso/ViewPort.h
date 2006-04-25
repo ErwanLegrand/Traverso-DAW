@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ViewPort.h,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: ViewPort.h,v 1.2 2006/04/25 17:19:10 r_sijrier Exp $
 */
 
 #ifndef VIEWPORT_H
@@ -81,8 +81,6 @@ private:
 
         void clear_repaintviewitemlist();
 
-private slots:
-	void destroy(QObject * obj = 0);
 
 signals:
         void resized();
