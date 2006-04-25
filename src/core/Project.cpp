@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Project.cpp,v 1.1 2006/04/20 14:51:40 r_sijrier Exp $
+$Id: Project.cpp,v 1.2 2006/04/25 16:50:29 r_sijrier Exp $
 */
 
 #include <QFile>
@@ -67,12 +67,8 @@ Project::~Project()
 	cpointer().remove_contextitem(this);
 	
 	foreach(Song* song, songList) {
-		if ( song->disconnect_from_audiodevice() ) {
-			delete song;
-		}
+		 song->disconnect_from_audiodevice_and_delete();
 	}
-		
-	audiodevice().process_client_request();
 	
 	delete audioSourcesList;
 }
@@ -103,11 +99,12 @@ int Project::create(int pNumSongs)
 	}
 
 	for (int i=0; i< pNumSongs; i++) {
-
-		songList.insert(i+1, new Song(this, i+1));
+		Song* song = new Song(this, i+1);
+		songList.insert(i+1, song);
 	}
 
 	set_current_song( 1 );
+	
 	save();
 	info().information("New project created");
 	return 1;
@@ -163,8 +160,6 @@ int Project::load() // try to load the project by its title
 		songNode = songNode.nextSibling();
 	}
 	
-	audiodevice().process_client_request();
-
 	set_current_song(currentSongId);
 
 	QString message = tr("Project loaded ");
@@ -247,7 +242,8 @@ bool Project::has_changed()
 Song* Project::add_song()
 {
 	PENTER;
-		Song* song = new Song(this, songList.size()+1);
+	Song* song = new Song(this, songList.size()+1);
+	
 	songList.insert(song->get_id(), song);
 	set_current_song(song->get_id());
 	currentSongId = song->get_id();
@@ -293,9 +289,8 @@ int Project::remove_song(int key)
 		
 		emit songRemoved(song);
 		
-		if ( song->disconnect_from_audiodevice() ) {
-			delete song;
-		}
+		song->disconnect_from_audiodevice_and_delete();
+		
 	} else {
 		return -1;
 	}

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.1 2006/04/20 14:50:44 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.2 2006/04/25 16:50:29 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -30,7 +30,6 @@ $Id: AudioDevice.cpp,v 1.1 2006/04/20 14:50:44 r_sijrier Exp $
 #include "AudioChannel.h"
 #include "AudioBus.h"
 #include <sys/mman.h>
-#include <QMutexLocker>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -48,7 +47,11 @@ AudioDevice::AudioDevice()
 	driver = 0;
 	audioThread = 0;
 	processClientRequest = 0;
-	cpuTimeBuffer = new RingBuffer(2048);
+	cpuTimeBuffer = new RingBuffer(4096);
+	
+	clientRequestsRetryTimer.setSingleShot( true );
+	connect(&clientRequestsRetryTimer, SIGNAL(timeout()), this, SLOT (process_client_request()));
+	
 
 	m_driverType = tr("No Driver Loaded");
 #if defined (JACK_SUPPORT)
@@ -85,10 +88,11 @@ void AudioDevice::free_memory()
 	foreach(AudioBus* bus, playbackBuses)
 		delete bus;
 
+	captureChannels.clear();
+	playbackChannels.clear();
 	captureBuses.clear();
 	playbackBuses.clear();
 }
-
 
 void AudioDevice::show_descriptors( )
 {}
@@ -107,7 +111,6 @@ void AudioDevice::set_bit_depth( uint depth )
 {
 	m_bitdepth = depth;
 }
-
 
 int AudioDevice::run_cycle( nframes_t nframes, float delayed_usecs )
 {
@@ -167,10 +170,15 @@ uint AudioDevice::playback_buses_count( )
 
 void AudioDevice::set_parameters( int rate, nframes_t bufferSize, QString driverType )
 {
+	PENTER;
+	
 	m_rate = rate;
 	m_bufferSize = bufferSize;
 
 	if (driver) {
+		
+		emit stopped();
+		
 		if (audioThread) {
 			shutdown();
 		}
@@ -204,9 +212,12 @@ void AudioDevice::set_parameters( int rate, nframes_t bufferSize, QString driver
 			}
 			running = true;
 		}
+		
+		emit started();
+	} else {
+		set_parameters(rate, bufferSize, "Null Driver");
 	}
 }
-
 
 int AudioDevice::create_driver( QString driverType )
 {
@@ -290,6 +301,8 @@ AudioChannel * AudioDevice::get_capture_channel( QByteArray name )
 
 int AudioDevice::shutdown( )
 {
+	PENTER;
+	
 	if (audioThread) {
 		runAudioThread = false;
 		// Wait until the audioThread has finished execution. One second
@@ -335,7 +348,7 @@ void AudioDevice::setup_buses( )
 		bus->add_channel(captureChannels.value("capture_"+QByteArray::number(i++)));
 		captureBuses.insert(name, bus);
 	}
-	// 	PWARN("Capture buses count is: %d", captureBuses.size());
+// 	PWARN("Capture buses count is: %d", captureBuses.size());
 
 	number = 1;
 
@@ -346,7 +359,7 @@ void AudioDevice::setup_buses( )
 		bus->add_channel(playbackChannels.value("playback_"+QByteArray::number(i++)));
 		playbackBuses.insert(name, bus);
 	}
-	// 	PWARN("Playback buses count is: %d", playbackBuses.size());
+// 	PWARN("Playback buses count is: %d", playbackBuses.size());
 }
 
 uint AudioDevice::get_sample_rate( )
@@ -407,82 +420,88 @@ trav_time_t AudioDevice::get_cpu_time( )
 
 void AudioDevice::post_process( )
 {
-	if (processClientRequest) {
-		printf("Entering AudioDevice::post_process(). Thread id:  %ld\n", QThread::currentThreadId ());
-		PENTER;
-		processClientRequest = 0;
-		
-		for (int i=0; i<newClients.size(); ++i) {
-			Client* client = newClients.at( i );
-			printf("appending client %s\n", client->m_name.toAscii().data());
-			clients.append( client );
-		}
-		
-		newClients.clear();
-		
-		bool clientdeleted;
-		
-		do {
-			clientdeleted = false;
-			
-			for (int i=0; i<clients.size(); ++i) {
-				Client* client = clients.at( i );
-				
-				if (client->scheduled_for_deletion()) {
-					delete clients.takeAt( i );
-					clientdeleted = true;
-				}
-			
-			}
-		}
-		while (clientdeleted);
-		
-		emit clientRequestsProcesssed();
+	if (! processClientRequest) {
+		return;
 	}
+	
+	PENTER;
+	PMESG("AudioDevice::post_process(). Thread id:  %ld", QThread::currentThreadId ());
+	
+	if ( ! mutex.tryLock() ) {
+		printf("AudioDevice :: Couldn't lock mutex, retrying next cycle");
+		return;
+	}
+	
+	
+	for (int i=0; i<newClients.size(); ++i) {
+		Client* client = newClients.at( i );
+		PMESG("appending client %s", client->m_name.toAscii().data());
+		clients.append( client );
+	}
+	
+	newClients.clear();
+	
+	bool clientdeleted;
+	
+	do {
+		clientdeleted = false;
+		
+		for (int i=0; i<clients.size(); ++i) {
+			Client* client = clients.at( i );
+			
+			if (client->scheduled_for_deletion()) {
+				delete clients.takeAt( i );
+				clientdeleted = true;
+			}
+		
+		}
+	}
+	while (clientdeleted);
+	
+	mutex.unlock();
+	
+	processClientRequest = 0;
+	
+	emit clientRequestsProcesssed();
 }
 
 void AudioDevice::process_client_request( )
 {
 	PENTER;
+	static int retryCount;
+	
+	if (processClientRequest) {
+		
+		clientRequestsRetryTimer.start( 10 );
+		
+		PMESG("processClientRequest is still true, retrying in 10 ms !!");
+		retryCount++;
+		
+		if (retryCount > 100) {
+			qFatal("Cannot start AudioDevice::process_client_reques, processClientRequest remains true.\n"
+					"This  happens when the audiodevice didn't handle the client request. PLEASE report me as a bug");
+		}
+		
+		return;
+	}
+	
 	processClientRequest = 1;
+	retryCount = 0;
 }
 
 Client* AudioDevice::new_client( QString name )
 {
 	PENTER;
-	printf("New client %s\n", name.toAscii().data());
+	PMESG("New client %s", name.toAscii().data());
+	
+	mutex.lock();
 	
 	Client* client = new Client(name);
 	newClients.append( client );
-
-		for (int i=0; i<newClients.size(); ++i) {
-			Client* client = newClients.at( i );
-			printf("clients in list: %s\n", client->m_name.toAscii().data());
-		}
 	
+	mutex.unlock();
+
 	return client;
-}
-
-void AudioDevice::unregister_client( Client* client )
-{
-	if (!runAudioThread)
-		return;
-
-	runAudioThread = false;
-	audioThread->wait();
-	driver->stop();
-
-	Client* c;
-	for (int i=0; i < clients.size(); ++i) {
-		c = clients.at(i);
-		if (c == client) {
-			delete clients.takeAt(i);
-		}
-	}
-
-	runAudioThread = true;
-	driver->start();
-	audioThread->start();
 }
 
 //eof

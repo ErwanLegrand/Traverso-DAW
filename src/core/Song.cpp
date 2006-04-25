@@ -1,24 +1,3 @@
-/*
-Copyright (C) 2005-2006 Remon Sijrier 
-
-This file is part of Traverso
-
-Traverso is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
-
-$Id: Song.cpp,v 1.1 2006/04/20 14:51:40 r_sijrier Exp $
-*/
 
 #include <QTextStream>
 #include <QMessageBox>
@@ -36,7 +15,6 @@ $Id: Song.cpp,v 1.1 2006/04/20 14:51:40 r_sijrier Exp $
 #include "Project.h"
 #include "Track.h"
 #include "Mixer.h"
-#include "AudioEngine.h"
 #include "AudioSource.h"
 #include "AudioClip.h"
 #include "MtaRegion.h"
@@ -75,7 +53,7 @@ Song::Song(Project* project, int number)
 	for (int i=1; i <= tracksToCreate; i++)
 		create_track();
 
-	create_audiodevice_client();
+	connect_to_audiodevice();
 }
 
 Song::Song(Project* project, const QDomNode node)
@@ -86,62 +64,70 @@ Song::Song(Project* project, const QDomNode node)
 	emit m_project->newSongCreated( this );
 	set_state( node );
 	
-	create_audiodevice_client();
+	connect_to_audiodevice();
 }
 
 Song::~Song()
 {
 	PENTERDES;
+	
+	if (transport) {
+		qCritical("Song still running on deletion! (song_%d : %s) \n\n"
+		"PLEASE report this error, it's a very critical problem!!!\n\n", m_id, title.toAscii().data());
+	}
 
 	delete diskio;
-
-	foreach(Track* track, m_tracks)
-		delete track;
 
 	delete regionList;
 	delete masterOut;
 	delete m_hs;
 }
 
-void Song::create_audiodevice_client( )
+void Song::connect_to_audiodevice( )
 {
+	PENTER;
+	
         audiodeviceClient = audiodevice().new_client("song_" + QByteArray::number(get_id()));
         audiodeviceClient->set_process_callback( MakeDelegate(this, &Song::process) );
-
+	
+	audiodevice().process_client_request();
 }
 
-int Song::disconnect_from_audiodevice()
+void Song::disconnect_from_audiodevice_and_delete()
 {
-	printf("Song::disconnect_from_audiodevice()\n");
+	PENTER;
+	
 	if (transport) {
-		printf("Song : Scheduling for deletion\n\n");
-		scheduleForDeletion = true;
 		stopTransport = true;
-		return 0;
 	}
+	
+	PMESG("Song : Scheduling for deletion !!");
+	scheduleForDeletion = true;
 	
 	audiodeviceClient->delete_client();
 	
-	return 1;
+	audiodevice().process_client_request();
 }
 
 void Song::audiodevice_client_request_processed( )
 {
 	PENTER;
-	printf("Entering Song::audiodevice_client_request_processed(). Thread id:  %ld\n", QThread::currentThreadId ());
+	
+	PMESG("Song :: Thread id:  %ld", QThread::currentThreadId ());
 	if (scheduleForDeletion) {
-		printf("Song : deleting myself!!!!! \n\n");
+		PMESG("Song : deleting myself!!!!!");
 		delete this;
 	}
 }
 
 void Song::init()
 {
-	PENTER;
+	PENTER2;
 	diskio = new DiskIO();
 
 	connect(this, SIGNAL(seekStart(uint )), diskio, SLOT(seek( uint )), Qt::QueuedConnection);
 	connect(&audiodevice(), SIGNAL(clientRequestsProcesssed()), this, SLOT (audiodevice_client_request_processed() ), Qt::QueuedConnection);
+	connect(&audiodevice(), SIGNAL(started()), this, SLOT(audiodevice_started()));
 	connect(diskio, SIGNAL(seekFinished()), this, SLOT(seek_finished()), Qt::QueuedConnection);
 	connect (diskio, SIGNAL(outOfSync()), this, SLOT(handle_diskio_outofsync()));
 
@@ -526,13 +512,14 @@ void Song::seek_finished()
 	printf("Song :: leaving seek_finished\n\n");
 }
 
-void Song::toggle_snap()
+Command* Song::toggle_snap()
 {
 	isSnapOn=!isSnapOn;
+	
+	emit snapChanged();
+	
+	return (Command*) 0;
 }
-
-void Song::update_properties()
-{}
 
 void Song::update_last_block()
 {
@@ -548,7 +535,7 @@ void Song::update_last_block()
 	emit lastFramePositionChanged();
 }
 
-
+ 
 /******************************** SLOTS *****************************/
 
 Command* Song::add_audio_plugin_controller()
@@ -671,14 +658,14 @@ Command* Song::audio_plugin_setup()
 
 Command* Song::go()
 {
-	printf("Song-%d::go transport is %d\n", m_id, transport);
+// 	printf("Song-%d::go transport is %d\n", m_id, transport);
 	update_last_block();
 	if (transport) {
 		stopTransport = true;
 	} else {
 		emit transferStarted();
 		transport = true;
-		printf("transport is %d\n", transport);
+// 		printf("transport is %d\n", transport);
 		realtimepath = true;
 	}
 	return (Command*)0;
@@ -1019,6 +1006,11 @@ void Song::handle_diskio_outofsync( )
 	} else {
 		PWARN("diskio out of sync received, but no transport????");
 	}
+}
+
+void Song::audiodevice_started( )
+{
+	playBackBus = audiodevice().get_playback_bus("Playback 1");
 }
 
 // eof

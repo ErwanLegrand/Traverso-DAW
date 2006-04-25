@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Song.h,v 1.1 2006/04/20 14:51:40 r_sijrier Exp $
+    $Id: Song.h,v 1.2 2006/04/25 16:50:29 r_sijrier Exp $
 */
 
 #ifndef SONG_H
@@ -34,7 +34,6 @@ class Project;
 class Track;
 class AudioSource;
 class WriteSource;
-class AudioEngine;
 class Track;
 class AudioClip;
 class AudioPluginSelector;
@@ -137,15 +136,13 @@ public:
         int process_export(nframes_t nframes);
         int prepare_export(ExportSpecification* spec);
         int render(ExportSpecification* spec);
-        void toggle_snap();
         void update_last_block();
-        void update_properties();
         void solo_track(Track* track);
         void select_clip(AudioClip* clip);
         void create(int tracksToCreate);
         nframes_t xpos_to_block(int xpos);
         bool any_track_armed();
-        bool realime_path() const {return realtimepath;}
+        bool realtime_path() const {return realtimepath;}
         bool is_transporting() const
         {
                 return transport;
@@ -159,19 +156,18 @@ public:
                 return isSnapOn;
         }
 
-	int disconnect_from_audiodevice();
+	void disconnect_from_audiodevice_and_delete();
 
 private:
         QHash<int, Track* >	m_tracks;
         AudioPluginSelector* 	audioPluginSelector;
-        AudioEngine*			engine;
         MtaRegionList* 		regionList;
         Project*				m_project;
         WriteSource*			exportSource;
         AudioBus*			playBackBus;
         Client* 				audiodeviceClient;
-        AudioBus*		masterOut;
-        DiskIO*			diskio;
+        AudioBus*			masterOut;
+        DiskIO*				diskio;
 
         nframes_t			transport_frame;
         nframes_t			cursorPos;
@@ -201,7 +197,7 @@ private:
         bool			scheduleForDeletion;
 
         void init();
-        void create_audiodevice_client();
+        void connect_to_audiodevice();
         int set_state( const QDomNode & node );
 
         int finish_audio_export();
@@ -216,6 +212,7 @@ public slots :
         void seek_finished();
         void handle_diskio_outofsync();
         void audiodevice_client_request_processed();
+        void audiodevice_started();
 
         Command* go();
         Command* create_track();
@@ -248,6 +245,7 @@ public slots :
         Command* show_song_properties();
         Command* undo();
         Command* redo();
+        Command* toggle_snap();
 
 signals:
         void trackCreated(Track* );
@@ -259,6 +257,7 @@ signals:
         void firstBlockChanged();
         void lastFramePositionChanged();
         void seekStart(uint position);
+        void snapChanged();
 
 
 };

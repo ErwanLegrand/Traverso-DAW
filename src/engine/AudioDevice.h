@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.1 2006/04/20 14:50:44 r_sijrier Exp $
+$Id: AudioDevice.h,v 1.2 2006/04/25 16:50:29 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -29,6 +29,7 @@ $Id: AudioDevice.h,v 1.1 2006/04/20 14:50:44 r_sijrier Exp $
 #include <QHash>
 #include <QStringList>
 #include <QByteArray>
+#include <QTimer>
 
 #include "RingBuffer.h"
 #include "defines.h"
@@ -53,7 +54,6 @@ public:
 
 	void unregister_capture_channel(QByteArray name);
 	void unregister_playback_channel(QByteArray name);
-	void unregister_client(Client* client);
 
 	void set_parameters(int rate, nframes_t bufferSize, QString driverType);
 
@@ -120,11 +120,11 @@ public:
 
 	int create_driver(QString driverType);
 	
-	void process_client_request();
 
 	trav_time_t get_cpu_time();
 
-
+public slots:
+	void process_client_request();
 
 private:
 	AudioDevice();
@@ -149,6 +149,8 @@ private:
 	QHash<QByteArray, AudioBus* >		playbackBuses;
 	QHash<QByteArray, AudioBus* >		captureBuses;
 	QStringList						availableDrivers;
+	QMutex							mutex;
+	QTimer							clientRequestsRetryTimer;
 
 	bool 				running;
 	bool 				runAudioThread;
@@ -175,9 +177,8 @@ private:
 	void set_bit_depth(uint depth);
 
 signals:
-	void driverTypeChanged();
-	void bufferSizeChanged();
-	void sampleRateChanged();
+	void stopped();
+	void started();
 	void driverParamsChanged();
 	void xrun();
 	void clientRequestsProcesssed();
