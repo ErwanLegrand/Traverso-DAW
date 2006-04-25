@@ -17,21 +17,20 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ProjectManager.cpp,v 1.1 2006/04/20 14:51:40 r_sijrier Exp $
+$Id: ProjectManager.cpp,v 1.2 2006/04/25 16:48:32 r_sijrier Exp $
 */
 
 #include "ProjectManager.h"
 
-#include <sys/stat.h>
-
 #include <QSettings>
-#include <QDir>
 #include <QApplication>
+#include <QFileInfo>
 
 #include "Project.h"
 #include "Song.h"
 #include "AudioSourcesList.h"
 #include "Information.h"
+#include "FileHelpers.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -45,178 +44,13 @@ ProjectManager::ProjectManager()
 	currentProject = (Project*) 0;
 
 	cpointer().add_contextitem(this);
-};
+}
 
 ProjectManager& pm()
 {
 	static ProjectManager projMan;
 	return projMan;
 }
-
-
-void ProjectManager::update()
-{
-	PENTER;
-}
-
-
-// delete file/dir pName after prepending $HOME/traversoprojects/ to it
-//
-// if it is a directory, calls itself recursively  on any file/dir in the directory
-// before removing the directory
-int ProjectManager::remove_recursively(QString pName)
-{
-	QSettings settings;
-
-	QString name = settings.value("Project/directory").toString();
-	name += pName;
-
-	// check if we are removing the currentProject, and delete it before removing its files
-	if (project_is_current(pName)) {
-		PMESG("removing current project\n");
-		delete currentProject;
-		currentProject = NULL;
-	}
-
-	QFileInfo fileInfo(name);
-
-	if (!fileInfo.exists())
-		return -1;
-
-	if (!fileInfo.isWritable()) {
-		PERROR("failed to remove %s: you don't have write access to it\n", name.toAscii().data());
-		return -1;
-	}
-
-	if(fileInfo.isFile()) {
-		QFile file(name);
-		if (!file.remove()) {
-			PERROR("failed to remove file %s\n", name.toAscii().data());
-			return -1;
-		}
-		return 1;
-	} else if(fileInfo.isDir()) {
-		QDir dir(name);
-		PWARN("name is: %s", name.toAscii().data());
-		QFileInfoList list = dir.entryInfoList();
-		QFileInfo fi;
-		for (int i = 0; i < list.size(); ++i) {
-			fi = list.at(i);
-			if ((fi.fileName() != ".") && (fi.fileName() != "..")) {
-				QString nextFileName = pName + "/" + fi.fileName();
-				if (remove_recursively(nextFileName) < 0) {
-					PERROR("failed to remove directory %s\n", nextFileName.toAscii().data());
-					return -1;
-				}
-			}
-		}
-		if (!dir.rmdir(name)) {
-			PERROR("failed to remove directory %s\n", name.toAscii().data());
-			return -1;
-		}
-
-		return 1;
-	}
-
-	return 1;
-}
-
-
-int ProjectManager::copy_recursively(QString pNameFrom, QString pNameTo)
-{
-	QSettings settings;
-	QString nameFrom = settings.value("Project/directory").toString();
-	QString nameTo(nameFrom);
-
-	nameFrom += pNameFrom;
-	nameTo += pNameTo;
-
-	QFileInfo fileFromInfo(nameFrom);
-	QFileInfo fileToInfo(nameTo);
-
-	if (!fileFromInfo.exists()) {
-		PERROR("File or directory %s doesn't exist\n", pNameFrom.toAscii().data());
-		return -1;
-	}
-	if (fileToInfo.exists()) {
-		PERROR("File or directory %s already exists", pNameTo.toAscii().data());
-		return -1;
-	}
-
-	if(fileFromInfo.isFile()) {
-		QFile fileFrom(nameFrom);
-		if (!fileFrom.open(QIODevice::ReadOnly)) {
-			PERROR("failed to open file %s for reading\n", nameFrom.toAscii().data());
-			return -1;
-		}
-
-		QFile fileTo(nameTo);
-		if (!fileTo.open(QIODevice::WriteOnly)) {
-			fileFrom.close();
-			PERROR("failed to open file for writting%s\n", nameFrom.toAscii().data());
-			return -1;
-		}
-
-		// the real copy part should perhaps be implemented using QDataStream
-		// but .handle() will still be needed to get the optimal block-size
-		//
-		//! \todo does not keep file mode yet
-		int bufferSize = 4096;
-		int fileDescFrom = fileFrom.handle();
-		int fileDescTo = fileTo.handle();
-		struct stat fileStat;
-		if (fstat(fileDescFrom, &fileStat) == 0)
-			bufferSize = (int)fileStat.st_blksize;
-
-		void *buffer = malloc(sizeof(char) * bufferSize);
-		// QMemArray<char> buffer(bufferSize);
-
-		for (;;) {
-			int nRead = read(fileDescFrom, buffer, bufferSize);
-			if (nRead < 0) {
-				fileFrom.close();
-				fileTo.close();
-				PERROR("Error while reading file %s\n", nameFrom.toAscii().data());
-				return -1;
-			}
-			if (nRead == 0)
-				break;
-			if (write(fileDescTo, buffer, nRead) < 0) {
-				fileFrom.close();
-				fileTo.close();
-				PERROR("Error while writing file %s\n", nameTo.toAscii().data());
-				return -1;
-			}
-		}
-		free(buffer);
-
-		fileFrom.close();
-		fileTo.close();
-
-		return 0;
-	} else if(fileFromInfo.isDir()) {
-		QDir dirFrom(nameFrom);
-		QDir dirTo(nameTo);
-		if (!dirTo.mkdir(nameTo)) {
-			PERROR("failed to create directory %s\n", nameTo.toAscii().data());
-			return -1;
-		}
-
-		QFileInfoList list = dirFrom.entryInfoList();
-		QFileInfo fi;
-		QString fileName;
-		for (int i = 0; i < list.size(); ++i) {
-			fileName = fi.fileName();
-			if ((fileName != ".") && (fileName != "..")) {
-				copy_recursively(pNameFrom + "/" + fileName, pNameTo + "/" + fileName);
-			}
-		}
-		return 0;
-	}
-	return -1;
-}
-
-
 
 int ProjectManager::save_song(QString songName)
 {
@@ -242,7 +76,6 @@ int ProjectManager::save_song(QString songName)
 	return 0;
 }
 
-
 int ProjectManager::save_song_as(QString songName, QString title, QString artists)
 {
 	Song* s;
@@ -267,7 +100,6 @@ int ProjectManager::save_song_as(QString songName, QString title, QString artist
 	return 0;
 }
 
-
 void ProjectManager::set_current_project(Project* pProject)
 {
 	PENTER;
@@ -284,7 +116,6 @@ void ProjectManager::set_current_project(Project* pProject)
 	settings.setValue("Project/current", currentProject->get_title());
 
 }
-
 
 int ProjectManager::create_new_project(QString projectName, int numSongs)
 {
@@ -304,7 +135,6 @@ int ProjectManager::create_new_project(QString projectName, int numSongs)
 	set_current_project(newProject);
 	return 0;
 }
-
 
 int ProjectManager::delete_source(QString )
 {
@@ -332,7 +162,6 @@ int ProjectManager::delete_source(QString )
 	return r;
 }
 
-
 int ProjectManager::load_project(QString projectName)
 {
 	PENTER;
@@ -358,6 +187,17 @@ int ProjectManager::load_project(QString projectName)
 	return 0;
 }
 
+int ProjectManager::remove_project( QString name )
+{
+	// check if we are removing the currentProject, and delete it before removing its files
+	if (project_is_current(name)) {
+		PMESG("removing current project\n");
+		delete currentProject;
+		currentProject = NULL;
+	}
+	
+	return FileHelper::remove_recursively( name );
+}
 
 bool ProjectManager::project_is_current(QString title)
 {
@@ -365,11 +205,12 @@ bool ProjectManager::project_is_current(QString title)
 	QString path = settings.value("Project/directory").toString();
 	path += title;
 
-	if (currentProject && (currentProject->get_root_dir() == path))
+	if (currentProject && (currentProject->get_root_dir() == path)) {
 		return true;
+	}
+	
 	return false;
 }
-
 
 bool ProjectManager::projectExists(QString title)
 {
@@ -377,74 +218,57 @@ bool ProjectManager::projectExists(QString title)
 	QString project_dir = settings.value("Project/directory").toString();
 	QString project_path = project_dir + title;
 	QFileInfo fileInfo(project_path);
-	if (fileInfo.exists())
+	
+	if (fileInfo.exists()) {
 		return true;
+	}
+	
 	return false;
 }
 
-
 Command* ProjectManager::save_project()
 {
-	if (currentProject)
-		currentProject->save();
-	else
-		info().information( tr("Open or create a project first!"));
-	return (Command*) 0;
-}
-
-
-Command* ProjectManager::render_song()
-{
-	/*	if (currentProject)
-			currentProject->get_current_song()->render();
-		else 
-			info().information("Open or create a Project first!!");*/
-	return (Command*) 0;
-}
-
-
-Command* ProjectManager::toggle_snap()
-{
-	info().information("Toggle snap on/off");
 	if (currentProject) {
-		Song* so = currentProject->get_current_song();
-		if (so)
-			so->toggle_snap();
+		currentProject->save();
+	} else {
+		info().information( tr("Open or create a project first!"));
 	}
+	
 	return (Command*) 0;
 }
-
 
 Project * ProjectManager::get_project( )
 {
-	if (currentProject)
+	if (currentProject) {
 		return currentProject;
+	}
+	
 	return (Project*) 0;
 }
-
 
 void ProjectManager::start( )
 {
 	QSettings settings;
 	int loadProjectAtStartUp = settings.value("Project/loadLastUsed").toInt();
-	if (loadProjectAtStartUp == 0) {}
-	else {
+	
+	if (loadProjectAtStartUp != 0) {
 		QString sCurrentProject = settings.value("Project/current").toString();
+		
 		if ((sCurrentProject.isNull()) || (sCurrentProject.isEmpty()))
 			sCurrentProject="Untitled";
+		
 		if (projectExists(sCurrentProject)) {
-			if (load_project(sCurrentProject)<0) {
+			if (load_project(sCurrentProject) < 0) {
 				PWARN("Cannot load project %s. Continuing anyway...", sCurrentProject.toAscii().data());
 				info().warning(tr("Could not load project \"").append(sCurrentProject).append("\""));
 			}
 		} else {
-			if (create_new_project("Untitled", 1)<0) {
+			if (create_new_project("Untitled", 1) < 0) {
 				PWARN("Cannot load project Untitled. Continuing anyway...");
 			}
 		}
 	}
 }
-
 
 Command* ProjectManager::exit()
 {
@@ -452,14 +276,18 @@ Command* ProjectManager::exit()
 	if (currentProject) {
 		currentProject->save();
 		delete currentProject;
-		currentProject = 0;
 	}
-
 
 	ie().free_memory();
+	
+	// Give the audiodevice some time to handle the disconnections and 
+	// deletion of the Songs. Afterwards, we force the events to be processed
+	// which will do the actuall deletion of the Songs. After this point, it's fine to
+	// shutdown the audiodevice.
+	usleep(50000);
+	QCoreApplication::processEvents();
 
-	if (audiodevice().shutdown() < 0) {
-	}
+	audiodevice().shutdown();
 	
 	QApplication::exit();
 	
