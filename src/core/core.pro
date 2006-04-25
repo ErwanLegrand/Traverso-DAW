@@ -22,7 +22,6 @@ DESTDIR = ../../lib
 
 TEMPLATE = lib 
 HEADERS += precompile.h \
-	   AudioEngine.h \
 	   AudioClipList.h \
            AudioSource.h \
 	   ContextItem.h \
@@ -36,6 +35,7 @@ HEADERS += precompile.h \
            Debugger.h \
            DiskIO.h \
            Export.h \
+           FileHelpers.h \
            HistoryStack.h \
            Mixer.h \
            MtaRegion.h \
@@ -66,7 +66,6 @@ SOURCES += AudioClip.cpp \
            ReadSource.cpp \
            WriteSource.cpp \
 	   AudioClipList.cpp \
-	   AudioEngine.cpp \
            AudioPluginChain.cpp \
            AudioPluginController.cpp \
            AudioSource.cpp \
@@ -78,6 +77,7 @@ SOURCES += AudioClip.cpp \
            Debugger.cpp \
            DiskIO.cpp \
            Export.cpp \
+           FileHelpers.cpp \
            HistoryStack.cpp \
            IEAction.cpp \
            IEMessage.cpp \
