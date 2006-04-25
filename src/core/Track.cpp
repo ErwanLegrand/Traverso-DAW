@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Track.cpp,v 1.1 2006/04/20 14:51:40 r_sijrier Exp $
+    $Id: Track.cpp,v 1.2 2006/04/25 17:06:30 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -51,7 +51,7 @@
 
 
 Track::Track(Song* song, int pID, QString pName, int pBaseY, int pHeight )
-                : ContextItem(), m_song(song), ID(pID), name(pName),
+                : ContextItem((ContextItem*) 0, song), m_song(song), ID(pID), name(pName),
                 baseY(pBaseY)
 {
         PENTERCONS;
@@ -67,7 +67,7 @@ Track::Track(Song* song, int pID, QString pName, int pBaseY, int pHeight )
 }
 
 Track::Track( Song * song, const QDomNode node )
-                : ContextItem(), m_song(song)
+                : ContextItem( (ContextItem*) 0, song ), m_song(song)
 {
         PENTERCONS;
         isArmed=false;
@@ -372,7 +372,7 @@ void Track::toggle_active()
 
 void Track::init_recording()
 {
-        PENTER;
+        PENTER2;
         if (isArmed) {
                 QByteArray name = "Audio_" + QByteArray::number(ID) + "." + QByteArray::number(audioClipList.size() + 1);
                 AudioClip* clip = new AudioClip(this, m_song->transport_frame, name);
