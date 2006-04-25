@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: PanelLed.cpp,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: PanelLed.cpp,v 1.2 2006/04/25 17:22:13 r_sijrier Exp $
 */
 
 #include "PanelLed.h"
@@ -58,7 +58,7 @@ QRect PanelLed::draw( QPainter & p )
 
 void PanelLed::ison_changed( bool isOn )
 {
-        PENTER;
+        PENTER2;
         m_isOn = isOn;
         schedule_for_repaint();
 }

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ContextItem.h,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
+    $Id: ContextItem.h,v 1.2 2006/04/25 17:24:39 r_sijrier Exp $
 */
 #ifndef CONTEXTITEM_H
 #define CONTEXTITEM_H
@@ -29,7 +29,7 @@ class ContextItem : public QObject
 {
         Q_OBJECT
 public:
-        ContextItem(ContextItem* item=0);
+        ContextItem(ContextItem* item=0, QObject* parent=0);
         ~ContextItem();
 
         ContextItem* get_context() const

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.2 2006/04/25 17:22:13 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -180,7 +180,7 @@ void AudioClipView::draw_peaks( QPainter& p )
 		if (nframes <= 0) {
 			// It seems there are no peak buffers yet, but they are now generated
 			// just wait for the finished() signal.....
-			PWARN("Waiting for peak");
+// 			PWARN("Waiting for peak");
 			waitingForPeaks = true;
 			connect(peak, SIGNAL(progress( int )), this, SLOT(update_progress_info( int )));
 			connect(peak, SIGNAL(finished()), this, SLOT (peaks_creation_finished()));

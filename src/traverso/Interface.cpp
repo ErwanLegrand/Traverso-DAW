@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+$Id: Interface.cpp,v 1.2 2006/04/25 17:22:13 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -74,7 +74,6 @@ Interface::Interface()
 	cpointer().add_contextitem(this);
 };
 
-
 Interface::~Interface()
 {
 	PENTERDES;
@@ -84,17 +83,13 @@ Interface::~Interface()
 	settings.setValue("fullScreen", isFullScreen());
 	settings.setValue("pos", pos());
 	settings.endGroup();
-
-	delete helpWindow;
 }
-
-
 
 void Interface::create()
 {
 	setWindowTitle("Traverso");
 
-	helpWindow = new Help();
+	helpWindow = new Help(this);
 
 	mainVBoxLayout = new BorderLayout(this, 0, 0);
 
@@ -166,22 +161,16 @@ void Interface::set_project(Project* project)
 	connect(project, SIGNAL(currentSongChanged(Song* )), overView, SLOT(set_song(Song* )));
 	connect(project, SIGNAL(newSongCreated(Song* )), this, SLOT(create_songview(Song* )));
 
+	songViewList.clear();
+	
 	// OK, a new Project is created. Remove and delete all the ViewPorts related to this project
 	while ( ! currentProjectViewPortList.isEmpty()) {
 		ViewPort* view = currentProjectViewPortList.takeFirst();
-		if (view) {
-			centerAreaWidget->removeWidget(view);
-// 			delete view;
-		}
+		centerAreaWidget->removeWidget(view);
+		delete view;
 	}
 
-	songViewList.clear();
-
-
-	// FIXME Remove the related songviews from songViewList too!!
-
 }
-
 
 void Interface::set_songview(Song* song)
 {
@@ -193,9 +182,11 @@ void Interface::set_songview(Song* song)
 			PMESG("Setting new songView");
 			centerAreaWidget->setCurrentWidget(sv->get_viewport());
 			currentSongView = sv;
+			
 			// NB If I don't set this explicitely, Qt doesn't return the
 			// focus to this widget after for example a popup of a QMenu :-(
 			sv->get_viewport()->setFocus();
+			
 			break;
 		}
 	}
@@ -228,13 +219,10 @@ void Interface::create_songview(Song* song)
 	currentProjectViewPortList.append(vp);
 }
 
-
 void Interface::resizeEvent(QResizeEvent* )
 {
-	PENTER;
-	emit resized();
+	PENTER2;
 }
-
 
 void Interface::busmonitor_dock()
 {
@@ -246,7 +234,6 @@ void Interface::busmonitor_dock()
 		busMonitorWindow->hide();
 		isBusMonitorDocked = true;*/
 }
-
 
 void Interface::busmonitor_undock()
 {
@@ -263,15 +250,14 @@ bool Interface::is_busmonitor_docked()
 	return isBusMonitorDocked;
 }
 
-
 Command* Interface::about_traverso()
 {
 
 	PENTER;
-	QString authors="The Traverso Team : Remon Sijrier, and all the people from Free Software world, who made important technologies on which Traverso is based ( Gcc, QT, KDE, XFree, Linux, and so on...)                                              ";
+	info().information("The Traverso Team : R. Sijrier, and all the people from Free Software world,");
+	info().information("who made important technologies on which Traverso is based (Gcc, Qt, Xorg, Linux, and so on)");
 	return (Command*) 0;
 }
-
 
 Command* Interface::full_screen()
 {
@@ -281,7 +267,6 @@ Command* Interface::full_screen()
 		showFullScreen();
 	return (Command*) 0;
 }
-
 
 void Interface::keyPressEvent( QKeyEvent * e)
 {
@@ -310,7 +295,6 @@ Command * Interface::show_export_widget( )
 	exportWidget->show();
 	return (Command*) 0;
 }
-
 
 
 // eof

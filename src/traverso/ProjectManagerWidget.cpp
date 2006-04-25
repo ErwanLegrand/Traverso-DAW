@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ProjectManagerWidget.cpp,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: ProjectManagerWidget.cpp,v 1.2 2006/04/25 17:22:13 r_sijrier Exp $
 */
 
 #include "ProjectManagerWidget.h"
@@ -206,7 +206,7 @@ void ProjectManagerWidget::on_createProjectButton_clicked( )
                                                  tr("The Project \"%1\" already exists, do you want to remove it and replace it with a new one ?").arg(title),
                                                  tr("Yes"), tr("No"), QString::null, 1, -1)) {
                 case 0:
-                        pm().remove_recursively(title);
+                        pm().remove_project(title);
                         break;
                 default:
                         return;
@@ -248,7 +248,7 @@ void ProjectManagerWidget::on_deleteProjectbutton_clicked( )
                                          tr("Are you sure that you want to remove the project %1 ? It's not possible to undo it !").arg(title).toAscii().data(),
                                          "Yes", "No", QString::null, 1, -1)) {
         case 0:
-                pm().remove_recursively(title);
+                pm().remove_project(title);
                 update_projects_list();
                 break;
         default:

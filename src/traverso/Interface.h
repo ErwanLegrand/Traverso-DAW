@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Interface.h,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: Interface.h,v 1.2 2006/04/25 17:22:13 r_sijrier Exp $
 */
 
 #ifndef INTERFACE_H
@@ -72,9 +72,6 @@ public slots :
         Command* full_screen();
         Command* about_traverso();
         Command* show_export_widget();
-
-signals:
-        void resized();
 
 protected:
         void resizeEvent(QResizeEvent* e);

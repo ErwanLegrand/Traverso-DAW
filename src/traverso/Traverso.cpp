@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Traverso.cpp,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+$Id: Traverso.cpp,v 1.2 2006/04/25 17:22:13 r_sijrier Exp $
 */
 
 #include <signal.h>
@@ -55,16 +55,14 @@ Traverso::Traverso(int argc, char **argv )
 	QCoreApplication::setApplicationName("Traverso");
 
 
-
-	//PluginLoader::probe_plugins();
 	interface = new Interface();
 
 	init();
-	prepare_audio_device();
 
 	interface->create();
 
-	// 	QMetaObject::invokeMethod(this, "prepare_audio_device", Qt::QueuedConnection);
+	QMetaObject::invokeMethod(this, "prepare_audio_device", Qt::QueuedConnection);
+	QMetaObject::invokeMethod(&pm(), "start", Qt::QueuedConnection);
 	
 	connect(this, SIGNAL(lastWindowClosed()), &pm(), SLOT(exit()));
 }
@@ -160,15 +158,15 @@ int Traverso::init( )
 			"popl %%ebx\n"
 			"andl $33554432, %%edx\n"
 			"movl %%edx, %0\n"
-	: "=m" (use_sse)
-					:
-					: "%eax", "%ecx", "%edx", "memory");
+			: "=m" (use_sse)
+			:
+			: "%eax", "%ecx", "%edx", "memory");
 
-if (use_sse) {
+		if (use_sse) {
 			PMESG("Enabling SSE optimized routines");
 
 			// SSE SET
-			Mixer::compute_peak			= x86_sse_compute_peak;
+			Mixer::compute_peak		= x86_sse_compute_peak;
 			Mixer::apply_gain_to_buffer 	= x86_sse_apply_gain_to_buffer;
 			Mixer::mix_buffers_with_gain 	= x86_sse_mix_buffers_with_gain;
 			Mixer::mix_buffers_no_gain 	= x86_sse_mix_buffers_no_gain;
@@ -227,8 +225,6 @@ if (use_sse) {
 	ie().set_hold_sensitiveness(settings.value("CCE/holdTimeout").toInt());
 	ie().set_double_fact_interval(settings.value("CCE/doublefactTimeout").toInt());
 
-	QMetaObject::invokeMethod(&pm(), "start", Qt::QueuedConnection);
-
 	return 1;
 }
 
@@ -239,7 +235,6 @@ void Traverso::prepare_audio_device( )
 	int rate = settings.value("Hardware/samplerate").toInt();
 	int bufferSize = settings.value("Hardware/bufferSize").toInt();
 	QString driverType = settings.value("Hardware/drivertype").toString();
-	PWARN("Driver type from settings is %s", driverType.toAscii().data());
 
 	if (bufferSize == 0) {
 		qWarning("BufferSize read from Settings is 0 !!!");

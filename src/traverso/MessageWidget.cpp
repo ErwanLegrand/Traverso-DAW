@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MessageWidget.cpp,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: MessageWidget.cpp,v 1.2 2006/04/25 17:22:13 r_sijrier Exp $
 */
 
 #include "MessageWidget.h"
@@ -57,7 +57,7 @@ void MessageWidget::paintEvent(QPaintEvent* )
                 return;
         }
 
-        PWARN("Printing message");
+//         PWARN("Printing message");
         QPixmap pm;
 
         painter.fillRect(0, 0, width(), height(), QColor(80, 90, 70));
@@ -101,7 +101,7 @@ void MessageWidget::resizeEvent(QResizeEvent* )
 
 void MessageWidget::enqueue_message( InfoStruct info_struct)
 {
-        PWARN("Enqueueing message %s", info_struct.message.toAscii().data());
+//         PWARN("Enqueueing message %s", info_struct.message.toAscii().data());
         messageQueue.enqueue(info_struct);
 
         if (!messageTimer.isActive()) {
@@ -134,7 +134,7 @@ void MessageWidget::dequeue_messagequeue( )
                 }
 
                 infoStruct = messageQueue.dequeue();
-                PWARN("Dequeueing message %s", infoStruct.message.toAscii().data());
+//                 PWARN("Dequeueing message %s", infoStruct.message.toAscii().data());
         }
 
         update();

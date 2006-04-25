@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Help.cpp,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: Help.cpp,v 1.2 2006/04/25 17:22:13 r_sijrier Exp $
 */
 
 #include <QFile>
@@ -29,7 +29,8 @@
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-Help::Help()
+Help::Help(QWidget* parent)
+		: QWidget(parent)
 {
         PENTERCONS;
         created=false;

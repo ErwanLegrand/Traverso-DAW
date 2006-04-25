@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.2 2006/04/25 17:24:24 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
@@ -72,7 +72,6 @@ void DiskIOThread::become_realtime( bool becomerealtime )
 
 
 DiskIO::DiskIO()
-		: QObject()
 {
 	diskThread = new DiskIOThread();
 	seeking = false;
@@ -99,6 +98,7 @@ DiskIO::DiskIO()
 
 DiskIO::~DiskIO()
 {
+	PENTERDES;
 	stop();
 	delete cpuTimeBuffer;
 	delete diskThread;
@@ -218,7 +218,7 @@ int DiskIO::stop( )
 
 void DiskIO::register_read_source (ReadSource* source )
 {
-	PENTER;
+	PENTER2;
 	QMutexLocker locker(&mutex);
 	
 	readSources.append(source);
@@ -226,7 +226,7 @@ void DiskIO::register_read_source (ReadSource* source )
 
 void DiskIO::register_write_source( WriteSource * source )
 {
-	PENTER;
+	PENTER2;
 	QMutexLocker locker(&mutex);
 	
 	writeSources.append(source);

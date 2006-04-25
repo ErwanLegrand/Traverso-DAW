@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioDeviceThread.cpp,v 1.1 2006/04/20 14:50:44 r_sijrier Exp $
+    $Id: AudioDeviceThread.cpp,v 1.2 2006/04/25 17:23:34 r_sijrier Exp $
 */
 
 #include "AudioDeviceThread.h"
@@ -38,6 +38,7 @@
 class WatchDogThread : public QThread
 {
         AudioDeviceThread* guardedThread;
+
 public:
         WatchDogThread(AudioDeviceThread* thread)
         {
@@ -53,7 +54,7 @@ protected:
 
                 while(true) {
                         sleep(5);
-                        printf("Checking watchdogCheck...\n");
+//                         printf("Checking watchdogCheck...\n");
 
                         if (guardedThread->watchdogCheck == 0) {
                                 qCritical("WatchDog timed out!");
@@ -79,7 +80,7 @@ AudioDeviceThread::AudioDeviceThread(AudioDevice* device)
 void AudioDeviceThread::run()
 {
         run_on_cpu( 0 );
-//         become_realtime(true);
+        become_realtime(true);
         int err =0;
 
         WatchDogThread watchdog(this);

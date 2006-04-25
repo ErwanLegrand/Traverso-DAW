@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ContextItem.cpp,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
+    $Id: ContextItem.cpp,v 1.2 2006/04/25 17:24:48 r_sijrier Exp $
 */
 
 #include "ContextItem.h"
@@ -26,8 +26,8 @@
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-ContextItem::ContextItem( ContextItem * item )
-                : QObject(item)
+ContextItem::ContextItem( ContextItem * item, QObject* parent )
+                : QObject(parent)
 {
         m_contextItem = item;
         m_hs = 0;

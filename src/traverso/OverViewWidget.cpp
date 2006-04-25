@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: OverViewWidget.cpp,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: OverViewWidget.cpp,v 1.2 2006/04/25 17:22:13 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -52,7 +52,7 @@ OverViewWidget::~ OverViewWidget()
 
 void OverViewWidget::set_song(Song* song)
 {
-        PWARN("Entering OverViewWidget set_song");
+        PENTER2;
         m_song = song;
         connect(m_song, SIGNAL(firstBlockChanged() ), this, SLOT(update( )));
         connect(m_song, SIGNAL(hzoomChanged() ), this, SLOT(update( )));

@@ -1,23 +1,23 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
- 
-    This file is part of Traverso
- 
-    Traverso is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
- 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
- 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
- 
-    $Id: SongInfoWidget.cpp,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+Copyright (C) 2005-2006 Remon Sijrier 
+
+This file is part of Traverso
+
+Traverso is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
+
+$Id: SongInfoWidget.cpp,v 1.2 2006/04/25 17:22:13 r_sijrier Exp $
 */
 
 #include "SongInfoWidget.h"
@@ -31,17 +31,17 @@
 //#include "Debugger.h"
 
 SongInfoWidget::SongInfoWidget( QWidget * parent )
-                : QWidget(parent)
+		: QWidget(parent)
 {
-        setupUi(this);
+	setupUi(this);
 
-        QPalette palette;
-        palette.setColor(QPalette::Background, cm().get("INFO_WIDGET_BACKGROUND"));
-        setPalette(palette);
-        setAutoFillBackground(true);
+	QPalette palette;
+	palette.setColor(QPalette::Background, cm().get("INFO_WIDGET_BACKGROUND"));
+	setPalette(palette);
+	setAutoFillBackground(true);
 
-        connect(&pm(), SIGNAL(projectLoaded(Project* )), this, SLOT(set_project(Project* )));
-        connect(&smpteTimer, SIGNAL(timeout() ), this, SLOT(update_smpte() ) );
+	connect(&pm(), SIGNAL(projectLoaded(Project* )), this, SLOT(set_project(Project* )));
+	connect(&smpteTimer, SIGNAL(timeout() ), this, SLOT(update_smpte() ) );
 }
 
 SongInfoWidget::~ SongInfoWidget( )
@@ -49,65 +49,59 @@ SongInfoWidget::~ SongInfoWidget( )
 
 void SongInfoWidget::set_project(Project* project )
 {
-        m_project = project;
-        connect(m_project, SIGNAL(currentSongChanged(Song* )), this, SLOT(set_song(Song* )));
+	m_project = project;
+	connect(m_project, SIGNAL(currentSongChanged(Song* )), this, SLOT(set_song(Song* )));
 }
 
 void SongInfoWidget::set_song(Song* song)
 {
-        m_song = song;
-        connect(m_song, SIGNAL(hzoomChanged()), this, SLOT(update_zoom()));
-        connect(m_song, SIGNAL(transferStopped()), this, SLOT(stop_smpte_update_timer()));
-        connect(m_song, SIGNAL(transferStarted()), this, SLOT(start_smpte_update_timer()));
-        connect(m_song, SIGNAL(cursorPosChanged()), this, SLOT(update_smpte()));
-        QString name = song->get_title();
-        name.prepend(QString::number(song->get_id()) + " - " );
-        songNameLabel->setText(name);
+	m_song = song;
+	connect(m_song, SIGNAL(hzoomChanged()), this, SLOT(update_zoom()));
+	connect(m_song, SIGNAL(transferStopped()), this, SLOT(stop_smpte_update_timer()));
+	connect(m_song, SIGNAL(transferStarted()), this, SLOT(start_smpte_update_timer()));
+	connect(m_song, SIGNAL(cursorPosChanged()), this, SLOT(update_smpte()));
+	connect(m_song, SIGNAL(snapChanged()), this, SLOT (update_snap_status()));
+	
+	QString name = song->get_title();
+	name.prepend(QString::number(song->get_id()) + " - " );
+	songNameLabel->setText(name);
 
-        update_zoom();
-        update_smpte();
+	update_zoom();
+	update_smpte();
+	update_snap_status();
 }
-
 
 void SongInfoWidget::start_smpte_update_timer( )
 {
-        smpteTimer.start(150);
+	smpteTimer.start(150);
 }
-
 
 void SongInfoWidget::stop_smpte_update_timer( )
 {
-        smpteTimer.stop();
+	smpteTimer.stop();
 }
-
 
 void SongInfoWidget::update_smpte( )
 {
-        nframes_t bpos;
-        if (!m_song->is_transporting())
-                bpos = m_song->xpos_to_block(cpointer().clip_area_x());
-        else
-                bpos = m_song->get_transfer_frame();
+	nframes_t bpos;
+	if (!m_song->is_transporting())
+		bpos = m_song->xpos_to_block(cpointer().clip_area_x());
+	else
+		bpos = m_song->get_transfer_frame();
 
-        smpteLabel->setText( frame_to_smpte(bpos, m_song->get_rate()) );
+	smpteLabel->setText( frame_to_smpte(bpos, m_song->get_rate()) );
 }
-
-
-void SongInfoWidget::update_snapstatus( )
-{
-        if (m_project->get_current_song()->is_snap_on() )
-                snapStatusLabel->setText("SNAP ON");
-        else
-                snapStatusLabel->setText("SNAP OFF");
-}
-
 
 void SongInfoWidget::update_zoom( )
 {
-        QByteArray zoomLevel = "1:" + QByteArray::number(Peak::zoomStep[m_song->get_hzoom()]);
-        zoomLabel->setText(zoomLevel);
+	QByteArray zoomLevel = "1:" + QByteArray::number(Peak::zoomStep[m_song->get_hzoom()]);
+	zoomLabel->setText(zoomLevel);
+}
+
+void SongInfoWidget::update_snap_status( )
+{
+	QString snaptext = m_song->is_snap_on() ? "ON" : "OFF";
+	snapStatusLabel->setText(snaptext);
 }
 
 //eof
-
-

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioBus.cpp,v 1.1 2006/04/20 14:50:44 r_sijrier Exp $
+$Id: AudioBus.cpp,v 1.2 2006/04/25 17:23:46 r_sijrier Exp $
 */
 
 #include "AudioBus.h"
@@ -33,11 +33,15 @@ $Id: AudioBus.cpp,v 1.1 2006/04/20 14:50:44 r_sijrier Exp $
 AudioBus::AudioBus(QString name)
 		: QObject()
 {
+	PENTERCONS;
+	
 	init(name);
 }
 
 AudioBus::AudioBus( QString name, int channels )
 {
+	PENTERCONS;
+	
 	init(name);
 
 	for(int channelNumber=0; channelNumber<channels; ++channelNumber) {
@@ -72,7 +76,7 @@ void AudioBus::add_channel(AudioChannel* chan)
 void AudioBus::set_buffer_size( nframes_t size )
 {
 	foreach(AudioChannel* chan, channels)
-	chan->set_buffer_size(size);
+		chan->set_buffer_size(size);
 }
 
 

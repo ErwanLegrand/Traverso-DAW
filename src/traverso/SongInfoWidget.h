@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongInfoWidget.h,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: SongInfoWidget.h,v 1.2 2006/04/25 17:22:13 r_sijrier Exp $
 */
 
 #ifndef SONGINFOWIDGET_H
@@ -51,10 +51,10 @@ public slots:
         void set_song(Song* );
         void update_smpte();
         void update_zoom();
-        void update_snapstatus();
         void set_project(Project* );
         void start_smpte_update_timer();
         void stop_smpte_update_timer();
+        void update_snap_status();
 };
 
 #endif

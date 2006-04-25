@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: InputEngine.cpp,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
+    $Id: InputEngine.cpp,v 1.2 2006/04/25 17:24:14 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -136,7 +136,7 @@ void InputEngine::suspend()
 int InputEngine::broadcast_action_from_contextmenu(QString name)
 {
         PENTER2;
-        IEAction* action;
+        IEAction* action = 0;
 
         foreach(IEAction* ieaction, ieActions) {
                 if (ieaction->name == name) {
@@ -164,7 +164,7 @@ int InputEngine::broadcast_action(IEAction* action)
         QList<QObject* > list = cpointer().get_context_items();
 
         QString slotName = action->slotName;
-        PWARN("slotName is %s", slotName.toAscii().data());
+        PMESG("slotName is %s", slotName.toAscii().data());
 
         for (int i=0; i < list.size(); ++i) {
                 item = list.at(i);
@@ -173,10 +173,10 @@ int InputEngine::broadcast_action(IEAction* action)
                 if(QMetaObject::invokeMethod(item, slotName.toAscii().data(),
                                              Qt::DirectConnection,
                                              Q_RETURN_ARG(Command*, k))) {
-                        PWARN("HIT, invoking %s::%s", item->metaObject()->className(), slotName.toAscii().data());
+                        PMESG("HIT, invoking %s::%s", item->metaObject()->className(), slotName.toAscii().data());
                         break;
                 } else {
-                        PWARN("nope %s wasn't the right one, next ...", item->metaObject()->className());
+                        PMESG("nope %s wasn't the right one, next ...", item->metaObject()->className());
                 }
         }
 
@@ -753,7 +753,7 @@ void InputEngine::dispatch_hold()
 void InputEngine::finish_hold()
 {
         PENTER3;
-        PWARN("Finishing hold action %d",wholeMapIndex);
+        PMESG("Finishing hold action %d",wholeMapIndex);
 
         isHolding = false;
         set_jogging(false);

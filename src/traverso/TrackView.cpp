@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TrackView.cpp,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: TrackView.cpp,v 1.2 2006/04/25 17:22:13 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -90,10 +90,6 @@ TrackView::TrackView(ViewPort* vp, SongView* parent, Track* track)
 TrackView::~TrackView()
 {
         PENTERDES;
-        delete muteLed;
-        delete lockLed;
-        delete soloLed;
-        delete recLed;
         delete busInMenu;
         delete busOutMenu;
 }
@@ -193,7 +189,7 @@ void TrackView::draw_panel_head()
 
 void TrackView::draw_panel_leds(QPainter& p)
 {
-        PENTER;
+        PENTER3;
         recLed->draw(p);
         soloLed->draw(p);
         muteLed->draw(p);
@@ -394,7 +390,7 @@ void TrackView::schedule_for_repaint( )
 
 void TrackView::height_changed( )
 {
-        PENTER;
+        PENTER2;
         paintPanel = true;
         paintClipArea = true;
         //FIXME hmm, not a better way to do this? Added to clear the rootspace of SongView

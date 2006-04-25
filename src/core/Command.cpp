@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Command.cpp,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
+    $Id: Command.cpp,v 1.2 2006/04/25 17:24:57 r_sijrier Exp $
 */
 
 #include "Command.h"
@@ -76,7 +76,7 @@ int Command::push_to_history_stack( )
                 m_historyStack->push(this);
                 return 0;
         } else {
-                PWARN("No history stack??");
+                PMESG("No history stack??");
                 return -1;
         }
 }
