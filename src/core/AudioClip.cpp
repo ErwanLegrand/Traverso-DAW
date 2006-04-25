@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.2 2006/04/25 17:01:05 r_sijrier Exp $
 */
 
 #include "ContextItem.h"
@@ -344,7 +344,7 @@ int AudioClip::process(nframes_t nframes)
 		channels = bus->get_channel_count();
 
 	for (int channel=0; channel<channels; channel++) {
-		if (m_song->realime_path())
+		if (m_song->realtime_path())
 			read_frames = readSources.at(channel)->rb_read(mixdown, mix_pos, nframes);
 		else
 			read_frames = readSources.at(channel)->file_read(mixdown, mix_pos, nframes);
@@ -435,7 +435,7 @@ int AudioClip::init_recording( QByteArray name )
 
 void AudioClip::resize_buffer( )
 {
-	delete mixdown;
+	delete [] mixdown;
 	mixdown = new audio_sample_t[audiodevice().get_buffer_size()];
 }
 

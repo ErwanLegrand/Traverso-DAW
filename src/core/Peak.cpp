@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Peak.cpp,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
+$Id: Peak.cpp,v 1.2 2006/04/25 17:00:45 r_sijrier Exp $
 */
 
 #include "libtraversocore.h"
@@ -68,7 +68,7 @@ int Peak::load_peaks()
 {
 	PENTER;
 	if (!peakBuildThread) {
-		PWARN("Starting peak build thread");
+// 		PWARN("Starting peak build thread");
 		peakBuildThread = new PeakBuildThread(this);
 		peakBuildThread->start();
 	}
@@ -138,7 +138,7 @@ int Peak::prepare_buffer_for_zoomlevel(int zoomLevel, nframes_t startPos, nframe
 			count++;
 		} while(count < nframes);
 
-		delete buf;
+		delete [] buf;
 
 		preparedBufferPointer = preparedBuffer;
 
@@ -378,7 +378,7 @@ void Peak::free_buffer_memory( )
 	peaksAvailable = false;
 
 	foreach(PeakBuffer* buffer, bufferList)
-	delete buffer;
+		delete buffer;
 
 	delete preparedBuffer;
 }
@@ -418,14 +418,14 @@ PeakBuffer::~PeakBuffer()
 {
 	PENTERDES3;
 	if (upperHalfBuffer) {
-		delete upperHalfBuffer;
+		delete [] upperHalfBuffer;
 	}
 
 	if (lowerHalfBuffer)
-		delete lowerHalfBuffer;
+		delete [] lowerHalfBuffer;
 
 	if (microViewBuffer)
-		delete microViewBuffer;
+		delete [] microViewBuffer;
 }
 
 void PeakBuffer::set_size(nframes_t size)
@@ -437,9 +437,9 @@ void PeakBuffer::set_size(nframes_t size)
 
 	if (size > bufferSize) {
 		if (upperHalfBuffer)
-			delete upperHalfBuffer;
+			delete [] upperHalfBuffer;
 		if (lowerHalfBuffer)
-			delete lowerHalfBuffer;
+			delete [] lowerHalfBuffer;
 		upperHalfBuffer = new unsigned char[size];
 		lowerHalfBuffer = new unsigned char[size];
 		bufferSize = size;
@@ -450,7 +450,7 @@ void PeakBuffer::set_microview_buffer_size(nframes_t size)
 {
 	if (size > microBufferSize) {
 		if (microViewBuffer)
-			delete microViewBuffer;
+			delete [] microViewBuffer;
 		microViewBuffer = new short[size];
 		microBufferSize = size;
 	}
