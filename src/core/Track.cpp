@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Track.cpp,v 1.2 2006/04/25 17:06:30 r_sijrier Exp $
+    $Id: Track.cpp,v 1.3 2006/04/25 17:09:29 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -85,8 +85,6 @@ Track::~Track()
 {
         PENTERDES;
         delete audioPluginChain;
-        while (!audioClipList.isEmpty())
-                delete audioClipList.takeFirst();
 }
 
 void Track::init()

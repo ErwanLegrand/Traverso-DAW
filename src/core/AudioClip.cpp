@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.2 2006/04/25 17:01:05 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.3 2006/04/25 17:09:18 r_sijrier Exp $
 */
 
 #include "ContextItem.h"
@@ -41,7 +41,7 @@ $Id: AudioClip.cpp,v 1.2 2006/04/25 17:01:05 r_sijrier Exp $
 
 
 AudioClip::AudioClip(Track* track, nframes_t pTrackInsertBlock, QString name)
-		: ContextItem() , m_track(track), m_name(name), trackStartFrame(pTrackInsertBlock)
+		: ContextItem((ContextItem*) 0, track) , m_track(track), m_name(name), trackStartFrame(pTrackInsertBlock)
 {
 	PENTERCONS;
 	m_gain = 1.0;
