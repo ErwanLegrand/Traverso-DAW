@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.3 2006/04/25 17:09:18 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.4 2006/04/26 12:04:02 r_sijrier Exp $
 */
 
 #include "ContextItem.h"
@@ -94,7 +94,7 @@ int AudioClip::set_state(const QDomNode& node )
 	set_fade_in( e.attribute( "fadeIn", "" ).toInt() );
 	set_fade_out( e.attribute( "fadeOut", "").toInt() );
 	set_gain( e.attribute( "gain", "" ).toFloat() );
-	set_muted( e.attribute( "mute", "" ).toInt() );
+	isMuted =  e.attribute( "mute", "" ).toInt();
 	isSelected = e.attribute("selected", "0").toInt();
 	bitDepth = e.attribute("origbitdepth", "0").toInt();
 
@@ -156,10 +156,10 @@ void AudioClip::set_track_first_block(nframes_t newTrackFirstBlock)
 	emit trackStartFrameChanged();
 }
 
-void AudioClip::set_muted(bool b)
+void AudioClip::toggle_mute()
 {
 	PENTER;
-	isMuted=b;
+	isMuted=!isMuted;
 	set_sources_active_state();	
 	emit muteChanged(isMuted);
 }
@@ -448,7 +448,7 @@ Command* AudioClip::deselect()
 
 Command* AudioClip::mute()
 {
-	return new MuteClip(this);
+	return new PCommand(this, "toggle_mute");
 }
 
 Command* AudioClip::reset_gain()
