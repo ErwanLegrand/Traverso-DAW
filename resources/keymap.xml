@@ -47,9 +47,10 @@
 	
 	<keyseq keyfacttype="HKEY" key1="Z" mousehint="LRUD" slotname="zoom" name="Zoom" sortorder="" />
 	<keyseq keyfacttype="HKEY" key1="TAB" mousehint="LR" slotname="shuttle" name="Shuttle" sortorder="" />
-	<keyseq keyfacttype="HKEY" key1="P" mousehint="LR" slotname="pan" name="Pan" sortorder="16" />
 	<keyseq keyfacttype="HKEY" key1="E" mousehint="LR" slotname="drag_edge" name="Drag Edge" sortorder="28" />
 	<keyseq keyfacttype="HKEY" key1="G" mousehint="UD" slotname="gain" name="Gain" sortorder="15" />
+	<keyseq keyfacttype="HKEY" key1="P" mousehint="LR" slotname="pan" name="Pan" sortorder="16" />
+	<keyseq keyfacttype="HKEY" key1="O" mousehint="" slotname="silence_others" name="Silence others" sortorder="18" />
 	<keyseq keyfacttype="HKEY" key1="C" mousehint="LRUD" slotname="copy" name="Copy" sortorder="27" />
 	<keyseq keyfacttype="HKEY" key1="D" mousehint="LRUD" slotname="drag" name="Drag" sortorder="25" />
 	<keyseq keyfacttype="HKEY" key1="R" mousehint="LR" slotname="create_region" name="Create Region" sortorder="" />
