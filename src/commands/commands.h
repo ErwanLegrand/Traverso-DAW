@@ -1,5 +1,4 @@
 #include "SplitClip.h"
-#include "MuteClip.h"
 #include "MoveClip.h"
 #include "MoveEdge.h"
 #include "CopyClip.h"
@@ -10,3 +9,4 @@
 #include "Zoom.h"
 #include "Import.h"
 #include "Shuttle.h"
+#include "PCommand.h"

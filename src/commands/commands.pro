@@ -25,7 +25,7 @@ HEADERS += ClipGain.h \
            TrackGain.h \
            MoveClip.h \
            MoveEdge.h \
-           MuteClip.h \
+           PCommand.h \
            Shuttle.h \
            SplitClip.h \
            Zoom.h \
@@ -37,7 +37,7 @@ SOURCES += CopyClip.cpp \
            TrackGain.cpp \
            MoveClip.cpp \
            MoveEdge.cpp \
-           MuteClip.cpp \
+           PCommand.cpp \
            Shuttle.cpp \
            SplitClip.cpp \
 	   Zoom.cpp \
