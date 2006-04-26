@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioClip.h,v 1.2 2006/04/20 17:11:49 r_sijrier Exp $
+    $Id: AudioClip.h,v 1.3 2006/04/26 12:05:16 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -86,7 +86,6 @@ public:
         void add_audio_source(ReadSource* source, int channel);
         void set_blur(bool stat);
         void set_gain(float g);
-        void set_muted(bool b);
         void set_track_first_block(nframes_t newTrackFirstBlock);
         void set_last_source_block(nframes_t block);
         void set_first_source_block(nframes_t block);
@@ -243,6 +242,7 @@ public slots:
         void set_right_edge(nframes_t block);
         void resize_buffer();
         void track_mute_changed(bool mute);
+        void toggle_mute();
 
         Command* drag_edge();
         Command* mute();
