@@ -168,6 +168,12 @@ int Song::set_state( const QDomNode & node )
 	while(!trackNode.isNull()) {
 		Track* track = new Track(this, trackNode);
 		track->set_baseY(trackBaseY);
+		foreach(Track* existingTrack, m_tracks) {
+			if (existingTrack->is_solo()) {
+				track->set_muted_by_solo( true );
+				break;
+			}
+		}
 		m_tracks.insert(track->get_id(), track);
 		trackBaseY += track->get_height();
 		trackNode = trackNode.nextSibling();
@@ -825,13 +831,20 @@ Command* Song::show_song_properties()
 void Song::solo_track(Track* t)
 {
 	bool wasSolo = t->is_solo();
+	
 	foreach(Track* track, m_tracks) {
 		track->set_solo(false);
+		track->set_muted_by_solo(false);
 	}
-	if (wasSolo)
-		t->set_solo(false);
-	else
+	
+	if (!wasSolo) {
+		foreach(Track* track, m_tracks) {
+			track->set_muted_by_solo(true);
+		}
 		t->set_solo(true);
+	}
+	
+	
 }
 
 Command* Song::work_next_edge()
