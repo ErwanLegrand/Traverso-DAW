@@ -19,27 +19,31 @@ DESTDIR = ../../lib
 TEMPLATE = lib 
 
 HEADERS += ClipGain.h \
-           CopyClip.h \
-           Crop.h \
-           Import.h \
-           TrackGain.h \
-           MoveClip.h \
-           MoveEdge.h \
-           PCommand.h \
-           Shuttle.h \
-           SplitClip.h \
-           Zoom.h \
-	   TrackPan.h \
+	ClipSelection.h \
+	CopyClip.h \
+	Crop.h \
+	Import.h \
+	TrackGain.h \
+	MoveClip.h \
+	MoveEdge.h \
+	PCommand.h \
+	RemoveClip.h \
+	Shuttle.h \
+	SplitClip.h \
+	Zoom.h \
+	TrackPan.h \
 	   commands.h
 SOURCES += CopyClip.cpp \
+	ClipSelection.cpp \
 #           Crop.cpp \
-           Import.cpp \
-           TrackGain.cpp \
-           MoveClip.cpp \
-           MoveEdge.cpp \
-           PCommand.cpp \
-           Shuttle.cpp \
-           SplitClip.cpp \
-	   Zoom.cpp \
-	   ClipGain.cpp \
-	   TrackPan.cpp
+	Import.cpp \
+	TrackGain.cpp \
+	MoveClip.cpp \
+	MoveEdge.cpp \
+	PCommand.cpp \
+	RemoveClip.cpp \
+	Shuttle.cpp \
+	SplitClip.cpp \
+	Zoom.cpp \
+	ClipGain.cpp \
+	TrackPan.cpp

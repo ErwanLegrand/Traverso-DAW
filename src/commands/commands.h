@@ -10,3 +10,5 @@
 #include "Import.h"
 #include "Shuttle.h"
 #include "PCommand.h"
+#include "ClipSelection.h"
+#include "RemoveClip.h"
