@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ProjectManagerWidget.cpp,v 1.2 2006/04/25 17:22:13 r_sijrier Exp $
+    $Id: ProjectManagerWidget.cpp,v 1.3 2006/05/01 21:31:58 r_sijrier Exp $
 */
 
 #include "ProjectManagerWidget.h"
@@ -162,7 +162,7 @@ void ProjectManagerWidget::on_loadProjectButton_clicked( )
                 }
 
         // first test if project exists
-        if (!pm().projectExists(title)) {
+        if (!pm().project_exists(title)) {
                 info().warning(tr("Project does not exist! (%1)").arg(title));
                 return;
         }
@@ -200,7 +200,7 @@ void ProjectManagerWidget::on_createProjectButton_clicked( )
 
 
         // first test if project exists already
-        if (pm().projectExists(title)) {
+        if (pm().project_exists(title)) {
                 switch (QMessageBox::information(this,
                                                  tr("Traverso - Question"),
                                                  tr("The Project \"%1\" already exists, do you want to remove it and replace it with a new one ?").arg(title),
@@ -238,7 +238,7 @@ void ProjectManagerWidget::on_deleteProjectbutton_clicked( )
         }
 
         // first test if project exists
-        if (!pm().projectExists(title)) {
+        if (!pm().project_exists(title)) {
                 info().warning(tr("Project does not exist! (%1)").arg(title));
                 return;
         }

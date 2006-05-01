@@ -17,10 +17,11 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: PanelLed.h,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: PanelLed.h,v 1.2 2006/05/01 21:31:58 r_sijrier Exp $
 */
 
 #include "ViewItem.h"
+#include <QString>
 
 class TrackView;
 
@@ -42,8 +43,8 @@ private:
         TrackView* m_trackView;
         int m_xpos;
         bool m_isOn;
-        char* onType;
-        char* offType;
+        QString onType;
+        QString offType;
 
 
 public slots:

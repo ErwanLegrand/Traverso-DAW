@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ProjectInfoWidget.h,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: ProjectInfoWidget.h,v 1.2 2006/05/01 21:31:58 r_sijrier Exp $
 */
 
 #ifndef PROJECTINFOWIDGET_H
@@ -42,8 +42,7 @@ private:
 
 public slots:
         void set_project(Project* );
-        void update_song_count(Song* );
-
+        void update_song_count();
 };
 
 #endif

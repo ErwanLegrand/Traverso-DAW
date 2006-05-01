@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ProjectInfoWidget.cpp,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: ProjectInfoWidget.cpp,v 1.2 2006/05/01 21:31:58 r_sijrier Exp $
 */
 
 #include "ProjectInfoWidget.h"
@@ -41,7 +41,7 @@ ProjectInfoWidget::ProjectInfoWidget( QWidget * parent )
         setPalette(palette);
         setAutoFillBackground(true);
 
-        connect(&pm(), SIGNAL(currentProjectChanged(Project* )), this, SLOT(set_project(Project* )));
+        connect(&pm(), SIGNAL(projectLoaded(Project* )), this, SLOT(set_project(Project* )));
 }
 
 ProjectInfoWidget::~ ProjectInfoWidget( )
@@ -49,17 +49,19 @@ ProjectInfoWidget::~ ProjectInfoWidget( )
 
 void ProjectInfoWidget::set_project(Project* project)
 {
-        m_project = project;
-        projectNameLabel->setText(project->get_title());
-        bitdepthLabel->setText( QByteArray::number(project->get_bitdepth()) );
-        rateLabel->setText( QByteArray::number(project->get_rate()) );
-        songCountLabel->setText(QString::number(project->get_num_songs()) );
-
-        connect(m_project, SIGNAL(songAdded(Song* )), this, SLOT(update_song_count(Song* )));
-        connect(m_project, SIGNAL(songRemoved(Song* )), this, SLOT(update_song_count(Song* )));
+	if (project) {
+		m_project = project;
+		projectNameLabel->setText(project->get_title());
+		bitdepthLabel->setText( QByteArray::number(project->get_bitdepth()) );
+		rateLabel->setText( QByteArray::number(project->get_rate()) );
+		songCountLabel->setText(QString::number(project->get_num_songs()) );
+		
+		connect(m_project, SIGNAL(songAdded()), this, SLOT(update_song_count( )));
+		connect(m_project, SIGNAL(songRemoved( )), this, SLOT(update_song_count( )));
+	}
 }
 
-void ProjectInfoWidget::update_song_count(Song* song)
+void ProjectInfoWidget::update_song_count( )
 {
         songCountLabel->setText(QString::number(m_project->get_num_songs()) );
 }

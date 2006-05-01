@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongInfoWidget.cpp,v 1.2 2006/04/25 17:22:13 r_sijrier Exp $
+$Id: SongInfoWidget.cpp,v 1.3 2006/05/01 21:31:58 r_sijrier Exp $
 */
 
 #include "SongInfoWidget.h"
@@ -49,8 +49,10 @@ SongInfoWidget::~ SongInfoWidget( )
 
 void SongInfoWidget::set_project(Project* project )
 {
-	m_project = project;
-	connect(m_project, SIGNAL(currentSongChanged(Song* )), this, SLOT(set_song(Song* )));
+	if (project) {
+		m_project = project;
+		connect(m_project, SIGNAL(currentSongChanged(Song* )), this, SLOT(set_song(Song* )));
+	}
 }
 
 void SongInfoWidget::set_song(Song* song)

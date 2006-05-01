@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioSourcesManagerWidget.cpp,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: AudioSourcesManagerWidget.cpp,v 1.2 2006/05/01 21:31:58 r_sijrier Exp $
 */
 
 #include "AudioSourcesManagerWidget.h"
@@ -62,7 +62,7 @@ void AudioSourcesManagerWidget::update_audio_sources_list()
         if (!s) {
                 return;
         }
-        /*	AudioSourcesList* asl= s->get_audiosources_list();
+        /*	AudioSourceManager* asl= s->get_audiosources_list();
         	int tot = asl->get_total_sources();
         	treeAudioSourcesWidget->clear();
         	for (int i=0; i<tot; i++)
@@ -112,21 +112,21 @@ void AudioSourcesManagerWidget::on_removeUnusedSourcesButton_clicked( )
         /*	for (int i=0; i<numSongs; i++)
         		{
         		Song* s = pm().get_project()->get_song(i);
-        		AudioSourcesList* asl= s->get_audiosources_list();
+        		AudioSourceManager* asl= s->get_audiosources_list();
         		int tot = asl->get_total_sources();
         		for (int i=tot-1; i>=0; --i)
         			{
         			AudioSource* a = asl->get_source_for_index(i);
         			if (!a)		//No audio source for this index, strange....
         				{
-        				PWARN("No audioSource for this index in AudioSourcesList!");
+        				PWARN("No audioSource for this index in AudioSourceManager!");
         				continue;
         				}
         			QString aName = a->get_filename();
         			if (s->get_clips_count_for_audio(a) == 0)
         				{
         				if (asl->remove(a) < 0)
-        					PWARN("Could not remove audioSource from AudioSourcesList!");
+        					PWARN("Could not remove audioSource from AudioSourceManager!");
         				QFile file(aName);
         				if (!file.remove())
         					{
@@ -162,8 +162,8 @@ void AudioSourcesManagerWidget::on_removeSourcesButton_clicked( )
         if (item) {
                 QString s = item->text(0);
                 int r;
-                if ( (r = (pm().delete_source(s)) > 0))
-                        PMESG("File %s removed succesfully", s.toAscii().data());
+/*                if ( (r = (pm().delete_source(s)) > 0))
+                        PMESG("File %s removed succesfully", s.toAscii().data());*/
         }
 }
 
@@ -184,7 +184,7 @@ void AudioSourcesManagerWidget::on_removeAllSourcesButton_clicked( )
         }
 
         while((item = treeAudioSourcesWidget->takeTopLevelItem(0))) {
-                pm().delete_source(item->text(0));
+//                 pm().delete_source(item->text(0));
         }
 }
 

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.2 2006/04/25 17:22:13 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.3 2006/05/01 21:31:58 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -43,7 +43,7 @@ AudioClipView::AudioClipView(ViewPort * vp, TrackView* parent, AudioClip* clip )
 	m_muted = m_clip->is_muted();
 	waitingForPeaks = false;
 	m_progress = 0;
-	m_song = m_clip->get_parent_song();
+	m_song = m_clip->get_song();
 	recreate_clipname_pixmap();
 
 	connect(m_clip, SIGNAL(muteChanged(bool )), this, SLOT(mute_changed(bool )));
@@ -279,7 +279,7 @@ void AudioClipView::draw_crossings( QPainter& p )
 void AudioClipView::draw_clipinfo_area( QPainter& p )
 {
 	// clip info area bg
-	if (m_clip->get_parent_track()->is_active())
+	if (m_clip->get_track()->is_active())
 		p.fillRect( baseX , baseY, clipXWidth, 16, cm().get("CLIP_INFO_AREA_BG_ACTIVE"));
 	else
 		p.fillRect( baseX , baseY, clipXWidth, 16, cm().get("CLIP_INFO_AREA_BG"));
@@ -287,7 +287,7 @@ void AudioClipView::draw_clipinfo_area( QPainter& p )
 
 	// Draw Clip Info Area
 	if (clipXWidth>70) {
-		if (m_clip->get_parent_track()->is_active())
+		if (m_clip->get_track()->is_active())
 			p.drawPixmap(baseX, baseY, clipNamePixmapActive, 0, 0, clipXWidth, CLIP_INFO_AREA_HEIGHT);
 		else
 			p.drawPixmap(baseX, baseY, clipNamePixmapInActive, 0, 0, clipXWidth, CLIP_INFO_AREA_HEIGHT);

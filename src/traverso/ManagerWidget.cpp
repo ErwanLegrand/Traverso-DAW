@@ -17,13 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ManagerWidget.cpp,v 1.2 2006/04/25 17:22:13 r_sijrier Exp $
+$Id: ManagerWidget.cpp,v 1.3 2006/05/01 21:31:58 r_sijrier Exp $
 */
 
 #include "ManagerWidget.h"
 #include "ui_ManagerWidget.h"
 
-#include "libtraversocore.h"
+//#include "libtraversocore.h"
 
 #include "ProjectManagerWidget.h"
 #include "SongManagerWidget.h"

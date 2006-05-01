@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursor.cpp,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: Cursor.cpp,v 1.2 2006/05/01 21:31:58 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -88,7 +88,7 @@ QRect Cursor::postdraw(QPainter& p)
                 floatCursorNewPos = TrackView::CLIPAREABASEX;
 
         playCursorNewPos = m_song->get_playing_xpos() + TrackView::CLIPAREABASEX;
-        if (playCursorNewPos > (m_sv->cliparea_width() + TrackView::CLIPAREABASEX)) {
+        if ( ( playCursorNewPos > (m_sv->cliparea_width() + TrackView::CLIPAREABASEX) ) || (playCursorNewPos < TrackView::CLIPAREABASEX) ) {
                 playCursorNewPos = TrackView::CLIPAREABASEX;
                 if (currentMode == PLAYMODE)
                         m_song->set_first_block(m_song->get_transfer_frame());
