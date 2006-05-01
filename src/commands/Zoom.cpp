@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Zoom.cpp,v 1.1 2006/04/20 14:51:13 r_sijrier Exp $
+    $Id: Zoom.cpp,v 1.2 2006/05/01 21:17:39 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -55,7 +55,7 @@ int Zoom::begin_hold()
         jogZoomTotalX = m_sv->get_viewport()->width();
         jogZoomTotalY = m_sv->get_viewport()->height();
         verticalJogZoomLastY = cpointer().y();
-        baseJogZoomXFactor = m_sv->get_assocsong()->get_hzoom() - ((int) ( (float) (jogZoomTotalX - cpointer().clip_area_x()) / jogZoomTotalX * 50 ) + 1 );
+        baseJogZoomXFactor = m_sv->get_song()->get_hzoom() - ((int) ( (float) (jogZoomTotalX - cpointer().clip_area_x()) / jogZoomTotalX * 50 ) + 1 );
         return 1;
 }
 
@@ -80,11 +80,11 @@ int Zoom::jog()
                 lastJogZoomXFactor = jzxfactor;
                 int newHZoom = jzxfactor + baseJogZoomXFactor;
                 if ( newHZoom < 0 )
-                        m_sv->get_assocsong()->set_hzoom(0);
+                        m_sv->get_song()->set_hzoom(0);
                 else if ( newHZoom > Peak::ZOOM_LEVELS -1 )
-                        m_sv->get_assocsong()->set_hzoom(Peak::ZOOM_LEVELS - 1);
+                        m_sv->get_song()->set_hzoom(Peak::ZOOM_LEVELS - 1);
                 else
-                        m_sv->get_assocsong()->set_hzoom(newHZoom);
+                        m_sv->get_song()->set_hzoom(newHZoom);
                 m_sv->center();
         }
 
