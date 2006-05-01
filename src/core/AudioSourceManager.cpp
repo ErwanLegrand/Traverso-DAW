@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSourceManager.cpp,v 1.1 2006/05/01 21:20:13 r_sijrier Exp $
+$Id: AudioSourceManager.cpp,v 1.2 2006/05/01 22:10:38 r_sijrier Exp $
 */
 
 #include "AudioSourceManager.h"
@@ -104,27 +104,17 @@ int AudioSourceManager::get_total_sources()
 }
 
 
-ReadSource* AudioSourceManager::get_source(qint64 id)
-{
-	return sources.value(id);
-}
-
-
-ReadSource* AudioSourceManager::get_source(QString fileName, int channel)
-{
-	foreach(ReadSource* as, sources) {
-		if ((as->get_filename() == fileName) && (as->get_channel() == channel)) {
-			return as;
-		}
-	}
-	
-	return (ReadSource*) 0;
-}
-
-
 ReadSource * AudioSourceManager::new_readsource( QString dir, QString name, uint channel, int songId, int bitDepth, int rate )
 {
+	PENTER;
+	
 	ReadSource* newSource = new ReadSource(channel, dir, name);
+	
+	if (newSource->init() < 0) {
+		PWARN("ReadSource init() failed");
+		delete newSource;
+		return 0;
+	}
 	
 	if ( bitDepth ) {
 		newSource->set_original_bit_depth( bitDepth );
@@ -146,6 +136,34 @@ ReadSource * AudioSourceManager::new_readsource( QString dir, QString name, uint
 ReadSource * AudioSourceManager::get_readsource( qint64 id )
 {
 	ReadSource* source = sources.value(id);
+	
+	if ( ! source ) {
+		return 0;
+	}
+	
+	if (source->ref()) {
+		source = source->deep_copy();
+	}
+	
+	if ( source->init() < 0) {
+		info().warning( tr( "Failed to initialize ReadSource : %1").arg(source->get_filename()) );
+		delete source;
+		source = 0;
+	}
+	
+	return source;
+}
+
+ReadSource* AudioSourceManager::get_readsource(QString fileName, int channel)
+{
+	ReadSource* source = 0;
+	
+	foreach(ReadSource* as, sources) {
+		if ((as->get_filename() == fileName) && (as->get_channel() == channel)) {
+			source = as;
+			break;
+		}
+	}
 	
 	if ( ! source ) {
 		return 0;
