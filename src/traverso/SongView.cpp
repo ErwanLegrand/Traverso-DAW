@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongView.cpp,v 1.2 2006/04/25 17:22:13 r_sijrier Exp $
+    $Id: SongView.cpp,v 1.3 2006/05/01 21:35:06 r_sijrier Exp $
 */
 
 #include <QPainter>
@@ -78,8 +78,7 @@ void SongView::set_context()
         PENTER4;
         m_vp->schedule_for_repaint(m_cursor);
 
-        // FIXME Bareuh, not a better way to do this?
-        m_song->set_cursor_pos(cpointer().x());
+        m_song->update_cursor_pos();
 
         if (ie().is_jogging()) {
                 return;
