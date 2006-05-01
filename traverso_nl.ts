@@ -23,6 +23,17 @@
     </message>
 </context>
 <context>
+    <name>AudioDevice</name>
+    <message>
+        <source>No Driver Loaded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Device Configured</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AudioSourcesManagerWidget</name>
     <message>
         <source>Form</source>
@@ -73,7 +84,7 @@
     </message>
     <message>
         <source>Current</source>
-        <translation>Huidige</translation>
+        <translation type="unfinished">Huidige</translation>
     </message>
     <message>
         <source>All</source>
@@ -117,7 +128,7 @@
     </message>
     <message>
         <source>Unable to create export directory! Please check permissions for this directory: </source>
-        <translation>Kan export map niet aanmaken. Controleer of u toegang heeft voor deze map:</translation>
+        <translation type="obsolete">Kan export map niet aanmaken. Controleer of u toegang heeft voor deze map:</translation>
     </message>
     <message>
         <source>Choose/create an export directory</source>
@@ -151,11 +162,8 @@
         <source>Sample rate</source>
         <translation></translation>
     </message>
-</context>
-<context>
-    <name>GlobalPropertiesDialog</name>
     <message>
-        <source>How big will be the fragments of audio will be buff</source>
+        <source>Unable to create export directory! Please check permissions for this directory: %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -226,31 +234,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Sound</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ALSA</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use plughw device</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Defaults</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Slice width factor&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Default sample rate&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Default BitDepth&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -278,10 +262,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>24</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>32</source>
         <translation type="unfinished"></translation>
     </message>
@@ -291,10 +271,6 @@
     </message>
     <message>
         <source>Discard</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Global properties saved!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -314,7 +290,71 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Keyboard settings</source>
+        <source>Settings Saved!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Buffer latency</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>latency (ms)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sample rate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>88200</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Audio Driver</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Buffer size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>64</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>128</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>256</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>512</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>1024</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>2048</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>4096</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restart Driver</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -356,7 +396,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Global Properties</source>
+        <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -391,7 +431,7 @@
     </message>
     <message>
         <source>Bitdepth</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bit diepte</translation>
     </message>
     <message>
         <source>-</source>
@@ -570,6 +610,10 @@
         <source>Hold actions are not supported yet from Context Menu</source>
         <translation>&apos;Hold actions&apos; worden (nog) niet ondersteund vanuit &apos;Context Menus&apos;</translation>
     </message>
+    <message>
+        <source>TrackNumber %1 does not exist!</source>
+        <translation type="unfinished">Track nummer %1 bestaat niet!</translation>
+    </message>
 </context>
 <context>
     <name>Song</name>
@@ -691,15 +735,43 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Sans Serif; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;System&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>Card Name (na)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>-</source>
+        <source>image</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Disk space</source>
+        <source>buffer size (na)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>rate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>- GB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>drivertype (na)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>xruns (na)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>latency (na)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> - %</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>bitdepth</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -718,7 +790,41 @@
     </message>
     <message>
         <source>TrackNumber %1 does not exist!</source>
-        <translation>Track nummer %1 bestaat niet!</translation>
+        <translation type="obsolete">Track nummer %1 bestaat niet!</translation>
+    </message>
+</context>
+<context>
+    <name>Traverso</name>
+    <message>
+        <source>Choose an existing or create a new Project Directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Traverso - Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Using existing Project directory: %1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Traverso - Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to create Project directory! 
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please check permission for this directory: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Created new Project directory for you here: %1
+</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
