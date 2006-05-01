@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.4 2006/04/26 12:04:02 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.5 2006/05/01 21:21:37 r_sijrier Exp $
 */
 
 #include "ContextItem.h"
@@ -32,6 +32,8 @@ $Id: AudioClip.cpp,v 1.4 2006/04/26 12:04:02 r_sijrier Exp $
 #include "Mixer.h"
 #include "DiskIO.h"
 #include "Export.h"
+#include "AudioClipManager.h"
+#include "AudioSourceManager.h"
 
 #include <commands.h>
 
@@ -45,27 +47,24 @@ AudioClip::AudioClip(Track* track, nframes_t pTrackInsertBlock, QString name)
 {
 	PENTERCONS;
 	m_gain = 1.0;
-	m_length = fadeOutBlocks = fadeInBlocks = sourceStartFrame = m_channels = 0;
+	m_length = fadeOutBlocks = fadeInBlocks = sourceStartFrame = m_channels = sourceEndFrame = trackEndFrame = 0;
 	isMuted=false;
-	isSelected=false;
-	set_blur(false);
-	m_song = m_track->get_parent_song();
+	m_song = m_track->get_song();
 	bitDepth = m_song->get_bitdepth();
 	init();
 }
 
 AudioClip::AudioClip(Track* track, const QDomNode& node)
-		: ContextItem(), m_track(track)
+		: ContextItem((ContextItem*) 0, track), m_track(track)
 {
-	m_song = m_track->get_parent_song();
-	set_state( node );
+	m_song = m_track->get_song();
 	init();
+	set_state( node );
 }
 
 AudioClip::~AudioClip()
 {
 	PENTERDES;
-	delete [] mixdown;
 	
 	foreach(ReadSource* source, readSources)
 		delete source;
@@ -73,13 +72,11 @@ AudioClip::~AudioClip()
 
 void AudioClip::init()
 {
-	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(resize_buffer()), Qt::DirectConnection);
 	connect(m_track, SIGNAL(muteChanged(bool )), this, SLOT(track_mute_changed( bool )));
 	set_history_stack(m_track->get_history_stack());
-	mixdown = new audio_sample_t[audiodevice().get_buffer_size()];
-	sourceEndFrame = sourceStartFrame + m_length;
-	set_track_end_frame(trackStartFrame + m_length);
+	m_song->get_audioclip_manager()->add_clip( this );
 	isRecording = false;
+	isSelected = false;
 }
 
 int AudioClip::set_state(const QDomNode& node )
@@ -91,22 +88,31 @@ int AudioClip::set_state(const QDomNode& node )
 	m_length = e.attribute( "length", "0" ).toUInt();
 	isTake = e.attribute( "take", "").toInt();
 	uint channels = e.attribute( "channels", "0").toInt();
+	bitDepth = e.attribute("origbitdepth", "0").toInt();
 	set_fade_in( e.attribute( "fadeIn", "" ).toInt() );
 	set_fade_out( e.attribute( "fadeOut", "").toInt() );
 	set_gain( e.attribute( "gain", "" ).toFloat() );
 	isMuted =  e.attribute( "mute", "" ).toInt();
-	isSelected = e.attribute("selected", "0").toInt();
-	bitDepth = e.attribute("origbitdepth", "0").toInt();
+	
+	sourceEndFrame = sourceStartFrame + m_length;
+	set_track_end_frame(trackStartFrame + m_length);
+	
+	if ( e.attribute("selected", "0").toInt() ) {
+		m_song->get_audioclip_manager()->add_to_selection( this );
+	}
 
 	m_channels = 0;
 	
 	for (uint i=0; i<channels; i++) {
 		QString sourceName = "source-" + QByteArray::number(i);
 		qint64 id = e.attribute(sourceName, "").toLongLong();
-		ReadSource* rs = (ReadSource*) m_song->get_source(id);
+		
+		ReadSource* rs = pm().get_project()->get_audiosource_manager()->get_readsource( id );
+		
 		if ( ! rs ) {
 			PWARN("no audio source returned!");
 			m_channels = 0;
+			return -1;
 		} else {
 			add_audio_source(rs, i);
 		}
@@ -137,12 +143,6 @@ QDomNode AudioClip::get_state( QDomDocument doc )
 	}
 
 	return node;
-}
-
-// FIXME Bogus!
-AudioSource* AudioClip::get_audio_source()
-{
-	return audioSource;
 }
 
 void AudioClip::set_track_first_block(nframes_t newTrackFirstBlock)
@@ -247,12 +247,7 @@ void AudioClip::set_last_source_block(nframes_t block)
 void AudioClip::set_track_end_frame( nframes_t endFrame )
 {
 	trackEndFrame = endFrame;
-	m_song->update_last_block();
-}
-
-nframes_t AudioClip::get_length()
-{
-	return m_length;
+	emit trackEndFrameChanged();
 }
 
 void AudioClip::set_blur(bool )
@@ -267,23 +262,6 @@ void AudioClip::set_blur(bool )
 		ColorManager::set_blur(ColorManager::CLIP_PEAK_OVERLOADED_SAMPLE, stat );
 		ColorManager::set_blur(ColorManager::DARK_TEXT                  , stat );*/
 	emit stateChanged();
-}
-
-int AudioClip::get_baseY()
-{
-	return m_track->real_baseY() + 3;
-}
-
-int AudioClip::get_width()
-{
-	nframes_t blockWidth = sourceEndFrame - sourceStartFrame;
-	int xwidth = (int) ( blockWidth / Peak::zoomStep[m_song->get_hzoom()] );
-	return xwidth;
-}
-
-int AudioClip::get_height()
-{
-	return m_track->get_height() - 8;
 }
 
 void AudioClip::set_fade_in(nframes_t b)
@@ -307,10 +285,12 @@ void AudioClip::set_gain(float g)
 	emit stateChanged();
 }
 
-int AudioClip::set_selected()
+int AudioClip::set_selected(bool selected)
 {
-	isSelected = !isSelected;
-	emit stateChanged();
+	if (isSelected != selected) {
+		isSelected = selected;
+		emit stateChanged();
+	}
 	return 1;
 }
 
@@ -339,7 +319,9 @@ int AudioClip::process(nframes_t nframes)
 
 
 	AudioBus* bus = m_song->get_master_out();
+	audio_sample_t* mixdown = m_song->mixdown;
 	int channels = m_channels;
+	
 	if (channels > bus->get_channel_count())
 		channels = bus->get_channel_count();
 
@@ -399,7 +381,6 @@ int AudioClip::init_recording( QByteArray name )
 		return -1;
 	}
 
-	writeSources.clear();
 
 	for (int chan=0; chan<captureBus->get_channel_count(); chan++) {
 		ExportSpecification*  spec = new ExportSpecification;
@@ -411,7 +392,13 @@ int AudioClip::init_recording( QByteArray name )
 		spec->channels = 1;
 		spec->sample_rate = audiodevice().get_sample_rate();
 		spec->src_quality = SRC_SINC_MEDIUM_QUALITY;
-		spec->name = m_name + "-" + QByteArray::number(chan) + ".wav";
+		
+		QString songid = QString::number(m_song->get_id())  + "_";
+		if (m_song->get_id() < 10)
+			songid.prepend("0");
+		songid.prepend( "Song" );
+		
+		spec->name = songid + m_name + "-" + QByteArray::number(chan) + ".wav";
 
 		spec->dataF = captureBus->get_buffer( chan, audiodevice().get_buffer_size());
 
@@ -433,17 +420,19 @@ int AudioClip::init_recording( QByteArray name )
 	return 1;
 }
 
-void AudioClip::resize_buffer( )
+Command* AudioClip::remove_from_selection()
 {
-	delete [] mixdown;
-	mixdown = new audio_sample_t[audiodevice().get_buffer_size()];
+	return new ClipSelection(this, "remove_from_selection");
 }
 
-Command* AudioClip::deselect()
+Command * AudioClip::add_to_selection()
 {
-	isSelected=false;
-	emit stateChanged();
-	return (Command*) 0;
+	return new ClipSelection(this, "add_to_selection");
+}
+
+Command* AudioClip::select()
+{
+	return new ClipSelection(this, "select_clip");
 }
 
 Command* AudioClip::mute()
@@ -453,8 +442,7 @@ Command* AudioClip::mute()
 
 Command* AudioClip::reset_gain()
 {
-	set_gain(1.0);
-	return (Command*) 0;
+	return new ClipGain(this, 1.000);
 }
 
 Command* AudioClip::reset_fade_in()
@@ -476,12 +464,6 @@ Command* AudioClip::reset_fade_both()
 	return (Command*) 0;
 }
 
-Command* AudioClip::select()
-{
-	m_song->select_clip(this);
-	return (Command*) 0;
-}
-
 Command* AudioClip::drag()
 {
 	return new MoveClip(m_song, this);
@@ -492,13 +474,14 @@ Command* AudioClip::drag_edge()
 	int x = cpointer().clip_area_x();
 	int cxm = m_song->block_to_xpos( trackStartFrame + ( m_length / 2 ) );
 
+	MoveEdge* me;
 
 	if (x < cxm)
-		return  new  MoveEdge(this, "set_left_edge");
+		me =   new  MoveEdge(this, "set_left_edge");
 	else
-		return new MoveEdge(this, "set_right_edge");
+		me = new MoveEdge(this, "set_right_edge");
 
-	return (Command*) 0;
+	return me;
 }
 
 Command* AudioClip::gain()
@@ -514,12 +497,6 @@ Command* AudioClip::split()
 Command* AudioClip::copy()
 {
 	return new CopyClip(m_song, this);
-}
-
-Command * AudioClip::add_to_selection()
-{
-	set_selected();
-	return (Command*) 0;
 }
 
 AudioClip * AudioClip::prev_clip( )
@@ -541,7 +518,7 @@ AudioClip* AudioClip::create_copy( )
 	return clip;
 }
 
-Peak* AudioClip::get_peak_for_channel( int chan )
+Peak* AudioClip::get_peak_for_channel( int chan ) const
 {
 	ReadSource* source = readSources.at(chan);
 	
@@ -575,8 +552,11 @@ void AudioClip::finish_write_source( WriteSource * ws )
 		if (ws == writeSources.at(i)) {
 			ReadSource* rs = new ReadSource(ws);
 			
+			rs->set_created_by_song( m_song->get_id() );
+			rs->set_original_bit_depth( audiodevice().get_bit_depth() );
+			
 			add_audio_source(rs, i);
-			pm().get_project()->add_audio_source(rs, ws->get_channel());
+			pm().get_project()->get_audiosource_manager()->add(rs);
 			
 			delete ws;
 			ws = 0;
@@ -588,21 +568,166 @@ void AudioClip::finish_recording()
 {
 	PENTER;
 	
-	PWARN("AudioClip :: entering finish_recording()");
-	
 	foreach(WriteSource* ws, writeSources) {
-		PWARN("Setting writesource isRecording to false");
 		ws->set_recording(false);
 	}
 
 	disconnect(m_song, SIGNAL(transferStopped()), this, SLOT(finish_recording()));
+	
 	isRecording = false;
 }
 
-int AudioClip::get_channels( )
+int AudioClip::get_channels( ) const
 {
 	return m_channels;
 }
+
+Song * AudioClip::get_song( ) const
+{
+	return m_song;
+}
+
+Track * AudioClip::get_track( ) const
+{
+	return m_track;
+}
+
+void AudioClip::set_track( Track * t )
+{
+	m_track = t;
+}
+
+void AudioClip::set_name( QString name )
+{
+	m_name = name;
+}
+
+float AudioClip::get_gain( ) const
+{
+	return m_gain;
+}
+
+bool AudioClip::is_selected( ) const
+{
+	return isSelected;
+}
+
+bool AudioClip::is_take( ) const
+{
+	return isTake;
+}
+
+bool AudioClip::is_muted( ) const
+{
+	return isMuted;
+}
+
+QString AudioClip::get_name( ) const
+{
+	return m_name;
+}
+
+int AudioClip::get_bitdepth( ) const
+{
+	return bitDepth;
+}
+
+int AudioClip::get_rate( ) const
+{
+	return rate;
+}
+
+nframes_t AudioClip::get_source_length( ) const
+{
+	return sourceLength;
+}
+
+nframes_t AudioClip::get_length() const
+{
+	return m_length;
+}
+
+int AudioClip::get_baseY() const
+{
+	return m_track->real_baseY() + 3;
+}
+
+int AudioClip::get_width() const
+{
+	nframes_t blockWidth = sourceEndFrame - sourceStartFrame;
+	int xwidth = (int) ( blockWidth / Peak::zoomStep[m_song->get_hzoom()] );
+	return xwidth;
+}
+
+int AudioClip::get_height() const
+{
+	return m_track->get_height() - 8;
+}
+
+bool AudioClip::is_recording( ) const
+{
+	return isRecording;
+}
+
+nframes_t AudioClip::get_fade_out_blocks( ) const
+{
+	return fadeOutBlocks;
+}
+
+nframes_t AudioClip::get_fade_in_blocks( ) const
+{
+	return fadeInBlocks;
+}
+
+nframes_t AudioClip::get_source_last_block( ) const
+{
+	return sourceEndFrame;
+}
+
+nframes_t AudioClip::get_source_first_block( ) const
+{
+	return sourceStartFrame;
+}
+
+nframes_t AudioClip::get_track_last_block( ) const
+{
+	return trackEndFrame;
+}
+
+nframes_t AudioClip::get_track_first_block( ) const
+{
+	return trackStartFrame;
+}
+
+float AudioClip::get_fade_factor_for( nframes_t pos )
+{
+	float fi,fo;
+	if (fadeInBlocks==0)
+		fi = 1.0;
+	else
+	{
+		if (pos < trackStartFrame) // that happens in the edge, the current playing pos , when rounded to locate the clip, may lead to a position "considered" inside the clip, but it is not.
+			fi = 0.0;
+		else if (pos > trackStartFrame + fadeInBlocks)
+			fi = 1.0;
+		else
+			fi = (float)((double)(pos - trackStartFrame)/fadeInBlocks);
+	}
+	if (fadeOutBlocks==0)
+		fo = 1.0;
+	else
+	{
+		if (pos> trackEndFrame)
+			fo = 0.0;
+		else if ( pos < trackEndFrame - fadeOutBlocks)
+			fo = 1.0;
+		else
+			fo = (float)((double)(trackEndFrame-pos)/fadeOutBlocks);
+	}
+	// TODO calculate cross-fades-gains
+	return fi*fo;
+}
+
 // eof
 
 

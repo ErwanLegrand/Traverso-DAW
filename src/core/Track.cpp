@@ -17,30 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.4 2006/04/26 12:06:04 r_sijrier Exp $
+$Id: Track.cpp,v 1.5 2006/05/01 21:21:37 r_sijrier Exp $
 */
 
-#include <libtraverso.h>
-
-#include <QTextStream>
-#include <QString>
 #include "Track.h"
 #include "Song.h"
-#include "AudioSource.h"
 #include "AudioClip.h"
-#include "AudioSourcesList.h"
-#include "Mixer.h"
-#include "AudioPluginController.h"
 #include "AudioPluginChain.h"
-#include "ColorManager.h"
-#include "MtaRegion.h"
-#include "MtaRegionList.h"
-#include "Curve.h"
-#include "CurveNode.h"
-#include "Information.h"
-#include "ContextItem.h"
-#include "AudioChannel.h"
-#include "AudioBus.h"
 
 #include <commands.h>
 
@@ -49,18 +32,17 @@ $Id: Track.cpp,v 1.4 2006/04/26 12:06:04 r_sijrier Exp $
 #include "Debugger.h"
 
 
-
 Track::Track(Song* song, int pID, QString pName, int pBaseY, int pHeight )
-		: ContextItem((ContextItem*) 0, song), m_song(song), ID(pID), name(pName),
-		baseY(pBaseY)
+		: ContextItem((ContextItem*) 0, song), m_song(song), ID(pID), m_name(pName),
+		baseY(pBaseY), height(pHeight)
 {
 	PENTERCONS;
-	isActive = isMuted = isArmed = mutedBySolo = isSolo= false;
-	m_pan = 0;
+	m_pan = numtakes = 0;
+	m_gain = 0.5;
+	
 	busIn = "Not Set";
 	busOut = "MasterOut";
-	m_gain = 0.5;
-	height = pHeight;
+	
 	init();
 
 	emit m_song->trackCreated(this);
@@ -70,13 +52,14 @@ Track::Track( Song * song, const QDomNode node )
 		: ContextItem( (ContextItem*) 0, song ), m_song(song)
 {
 	PENTERCONS;
-	isArmed=false;
-	isActive = false;
-	// These are use by TrackView _before_ they are initialized by set_state !!
+	// These are used by TrackView _before_ they are initialized by set_state !!
 	baseY = height = 0;
+	
 	// ALWAYS call init() before new member objects are created!
 	init();
+	
 	emit m_song->trackCreated(this);
+	
 	set_state(node);
 }
 
@@ -89,8 +72,10 @@ Track::~Track()
 
 void Track::init()
 {
+	isSolo = mutedBySolo = isActive = isMuted = isArmed = false;
 	set_history_stack(m_song->get_history_stack());
 	audioPluginChain = new AudioPluginChain(this);
+	
 	connect(m_song, SIGNAL( transferStarted() ), this, SLOT (init_recording() ));
 }
 
@@ -98,12 +83,13 @@ QDomNode Track::get_state( QDomDocument doc )
 {
 	QDomElement node = doc.createElement("Track");
 	node.setAttribute("id", ID);
-	node.setAttribute("name", name);
+	node.setAttribute("name", m_name);
 	node.setAttribute("gain", m_gain);
 	node.setAttribute("pan", m_pan);
 	node.setAttribute("mute", isMuted);
 	node.setAttribute("solo", isSolo);
 	node.setAttribute("height", height);
+	node.setAttribute("numtakes", numtakes);
 	node.setAttribute("InBus", busIn.data());
 	node.setAttribute("OutBus", busOut.data());
 
@@ -119,7 +105,7 @@ QDomNode Track::get_state( QDomDocument doc )
 int Track::set_state( const QDomNode & node )
 {
 	QDomElement e = node.toElement();
-	name = e.attribute( "name", "" );
+	m_name = e.attribute( "name", "" );
 	set_muted(e.attribute( "mute", "" ).toInt());
 	if (e.attribute( "solo", "" ).toInt()) {
 		solo();
@@ -130,6 +116,7 @@ int Track::set_state( const QDomNode & node )
 	set_bus_out( e.attribute( "OutBus", "" ).toAscii() );
 	set_height( e.attribute( "height", "160" ).toInt() );
 	ID = e.attribute( "id", "").toInt();
+	numtakes = e.attribute( "numtakes", "").toInt();
 
 	QDomElement ClipsNode = node.firstChildElement("Clips");
 	if (!ClipsNode.isNull()) {
@@ -239,20 +226,20 @@ AudioClip* Track::get_clip_before(nframes_t blockPos)
 
 
 
-//FIXME needs to be reviewed
-int Track::delete_clip(AudioClip* clip, bool permanently)
-{
-	PENTER;
-	if (!clip) {
-		PERROR("Trying to delete invalid Clip");
-		return -1;
-	}
-	if(permanently && (m_song->get_clips_count_for_audio(clip->get_audio_source()) == 1))//FIXME this clip is the only one with this audioSource,
-		clip->get_audio_source()->get_peak()->free_buffer_memory();					//so we have to unbuild the peak RAMBuffers... or not? Waste of memory usage if we keep it there...
-
-
-	return 1;
-}
+//FIXME needs to be reviewed. NOT USED ANYMORE...
+// int Track::delete_clip(AudioClip* clip, bool permanently)
+// {
+// 	PENTER;
+// 	if (!clip) {
+// 		PERROR("Trying to delete invalid Clip");
+// 		return -1;
+// 	}
+// 	if(permanently && (m_song->get_clips_count_for_audio(clip->get_audio_source()) == 1))//FIXME this clip is the only one with this audioSource,
+// 		clip->get_audio_source()->get_peak()->free_buffer_memory();					//so we have to unbuild the peak RAMBuffers... or not? Waste of memory usage if we keep it there...
+// 
+// 
+// 	return 1;
+// }
 
 
 int Track::remove_clip(AudioClip* clip)
@@ -302,10 +289,6 @@ void Track::deactivate()
 
 void Track::set_blur(bool )
 {
-	/*	ColorManager::set_blur(ColorManager::TRACK_BG , stat);
-		ColorManager::set_blur(ColorManager::TRACK_BG_ACTIVE, stat);
-		for (int i=0; i < audioClipList.size(); ++i)
-			audioClipList.at(i)->set_blur(stat);*/
 }
 
 
@@ -378,7 +361,7 @@ void Track::init_recording()
 {
 	PENTER2;
 	if (isArmed) {
-		QByteArray name = "Audio_" + QByteArray::number(ID) + "." + QByteArray::number(audioClipList.size() + 1);
+		QByteArray name = "Audio_" + QByteArray::number(ID) + "." + QByteArray::number(++numtakes);
 		AudioClip* clip = new AudioClip(this, m_song->transport_frame, name);
 		if (clip->init_recording(busIn) < 0) {
 			PERROR("Could not create AudioClip to record to!");
@@ -489,9 +472,6 @@ int Track::process( nframes_t nframes )
 {
 	int processResult = 0;
 	
-/*	if (mutedBySolo)
-		return 0;*/
-	
 	if ( ! (isMuted || mutedBySolo) || isArmed) {
 		foreach(AudioClip* clip, audioClipList) {
 			processResult |= clip->process(nframes);
@@ -541,10 +521,9 @@ Command * Track::import_audiosource(  )
 	return new Import(this);
 }
 
-Command * Track::silence_others( )
+Command* Track::silence_others( )
 {
 	return new PCommand(this, "solo");
 }
-
 
 // eof

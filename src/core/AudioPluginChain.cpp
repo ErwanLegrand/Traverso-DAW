@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioPluginChain.cpp,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
+    $Id: AudioPluginChain.cpp,v 1.2 2006/05/01 21:21:37 r_sijrier Exp $
 */
 
 #include "AudioPluginChain.h"
@@ -213,7 +213,7 @@ int AudioPluginChain::set_current_audio_plugin_controller(int index)
                         if (pluginController[k])
                                 pluginController[k]->deactivate();
                 currentAudioPluginController = index;
-                /*		if (ie().get_current_mode() ==  assocTrack->get_parent_song()->CurveMode)
+                /*		if (ie().get_current_mode() ==  assocTrack->get_song()->CurveMode)
                 			pluginController[currentAudioPluginController]->activate();*/
                 return 1;
         }
@@ -293,7 +293,7 @@ void AudioPluginChain::followMouse(int x, int y)
         // NODE/CURVE MANIPULATION
         // 	if (
         // 		(currentAudioPluginController<0) ||
-        // 		(ie().get_current_mode() == assocTrack->get_parent_song()->CurveMode) ||
+        // 		(ie().get_current_mode() == assocTrack->get_song()->CurveMode) ||
         // 		((!draggingNode) && (!assocTrack->is_pointed(y)))
         // 	    )
         // 	    	{
@@ -301,7 +301,7 @@ void AudioPluginChain::followMouse(int x, int y)
         // 			}
 
 
-        // 	nframes_t lpos = assocTrack->get_parent_song()->xpos_to_block(x);
+        // 	nframes_t lpos = assocTrack->get_song()->xpos_to_block(x);
 
         // 	float cv = pluginController[currentAudioPluginController]->get_current_curve()->get_value_at(lpos);
 
@@ -319,7 +319,7 @@ void AudioPluginChain::followMouse(int x, int y)
                 CurveNode* cn = pluginController[currentAudioPluginController]->get_current_curve()->get_current_curve_node();
                 if (cn->prev) // This is to avoid changing the root node position
                 {
-                        nframes_t pos = assocTrack->get_parent_song()->xpos_to_block( x - originX ) + originPos;
+                        nframes_t pos = assocTrack->get_song()->xpos_to_block( x - originX ) + originPos;
                         if(cn->prev->pos > pos)
                                 pos=cn->prev->pos + 4;
                         if (cn->next)
@@ -356,7 +356,7 @@ void AudioPluginChain::add_node()
         if (currentAudioPluginController>=0) {
                 int x = cpointer().x();//assocTrack->get_mouse_x();
                 int y = cpointer().y();//assocTrack->get_mouse_y();
-                nframes_t pos  = assocTrack->get_parent_song()->xpos_to_block(x);
+                nframes_t pos  = assocTrack->get_song()->xpos_to_block(x);
                 int half = assocTrack->get_height()/2;
                 float value = -100.0 * ((float) ((y - assocTrack->get_baseY()) - half) / half );
                 pluginController[currentAudioPluginController]->get_current_curve()->add_node(pos, value);

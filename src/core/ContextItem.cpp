@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ContextItem.cpp,v 1.2 2006/04/25 17:24:48 r_sijrier Exp $
+    $Id: ContextItem.cpp,v 1.3 2006/05/01 21:21:37 r_sijrier Exp $
 */
 
 #include "ContextItem.h"
@@ -35,3 +35,18 @@ ContextItem::ContextItem( ContextItem * item, QObject* parent )
 
 ContextItem::~ ContextItem( )
 {}
+
+void ContextItem::set_history_stack( HistoryStack * hs )
+{
+	m_hs = hs;
+}
+
+HistoryStack * ContextItem::get_history_stack( ) const
+{
+	return m_hs;
+}
+
+void ContextItem::set_context_item( ContextItem * item )
+{
+	m_contextItem = item;
+}

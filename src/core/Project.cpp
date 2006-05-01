@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Project.cpp,v 1.2 2006/04/25 16:50:29 r_sijrier Exp $
+$Id: Project.cpp,v 1.3 2006/05/01 21:21:37 r_sijrier Exp $
 */
 
 #include <QFile>
@@ -33,7 +33,7 @@ $Id: Project.cpp,v 1.2 2006/04/25 16:50:29 r_sijrier Exp $
 #include "Song.h"
 #include "ProjectManager.h"
 #include "Information.h"
-#include "AudioSourcesList.h"
+#include "AudioSourceManager.h"
 #include "Export.h"
 
 // Always put me below _all_ includes, this is needed
@@ -55,7 +55,7 @@ Project::Project(QString pTitle)
 	m_rate = settings.value("Hardware/samplerate").toInt();
 	m_bitDepth = settings.value("Hardware/DEFAULT_BIT_DEPTH").toInt();
 
-	audioSourcesList = new AudioSourcesList();
+	asmanager = new AudioSourceManager();
 
 	cpointer().add_contextitem(this);
 }
@@ -70,7 +70,7 @@ Project::~Project()
 		 song->disconnect_from_audiodevice_and_delete();
 	}
 	
-	delete audioSourcesList;
+	delete asmanager;
 }
 
 
@@ -101,6 +101,7 @@ int Project::create(int pNumSongs)
 	for (int i=0; i< pNumSongs; i++) {
 		Song* song = new Song(this, i+1);
 		songList.insert(i+1, song);
+		emit songAdded();
 	}
 
 	set_current_song( 1 );
@@ -145,7 +146,7 @@ int Project::load() // try to load the project by its title
 	m_bitDepth = e.attribute( "bitdepth", "" ).toInt();
 	// Load all the AudioSources for this project
 	QDomNode sourcesNode = docElem.firstChildElement("AudioSources");
-	audioSourcesList->set_state( sourcesNode );
+	asmanager->set_state( sourcesNode );
 
 
 	QDomNode songsNode = docElem.firstChildElement("Songs");
@@ -157,14 +158,13 @@ int Project::load() // try to load the project by its title
 		Song* song = new Song(this, songNode);
 		int id = songNode.toElement().attribute( "id", "" ).toInt();
 		songList.insert(id, song);
+		emit songAdded();
 		songNode = songNode.nextSibling();
 	}
 	
 	set_current_song(currentSongId);
 
-	QString message = tr("Project loaded ");
-	message.append("(").append(title).append(")");
-	info().information(message);
+	info().information( tr("Project loaded (%1)").arg(title) );
 
 	return 1;
 }
@@ -191,7 +191,7 @@ int Project::save()
 		doc.appendChild(projectNode);
 
 		// Get the AudioSources Node, and append
-		projectNode.appendChild(audioSourcesList->get_state( doc ));
+		projectNode.appendChild(asmanager->get_state( doc ));
 
 		// Get all the Songs
 		QDomNode songsNode = doc.createElement("Songs");
@@ -204,13 +204,11 @@ int Project::save()
 		QTextStream stream(&data);
 		doc.save(stream, 4);
 		data.close();
-		QString message = tr("Project saved ");
-		message.append("(").append(title).append(")");
-		info().information(message);
+		
+		info().information( tr("Project saved (%1)").arg(title) );
+	
 	} else {
-		QString message = tr("Could not open project properties file for writing! ");
-		message.append("(").append(fileName.toAscii().data()).append(")");
-		info().critical(message);
+		info().critical( tr("Could not open project properties file for writing! (%1)").arg(fileName) );
 		return -1;
 	}
 
@@ -247,7 +245,7 @@ Song* Project::add_song()
 	songList.insert(song->get_id(), song);
 	set_current_song(song->get_id());
 	currentSongId = song->get_id();
-	emit songAdded(song);
+	emit songAdded();
 	return song;
 }
 
@@ -257,8 +255,7 @@ void Project::set_current_song(int id)
 	PENTER;
 	Song* song = songList.value(id);
 	if (!song) {
-		PERROR("Internal Error : Trying to set current song : invalid index %d",id );
-		info().information( tr("Song doesn't exist! ( Song ").append(QString::number(id)).append(" )") );
+		info().information( tr("Song doesn't exist! ( Song %1)").arg(id) );
 		return;
 	}
 
@@ -268,13 +265,13 @@ void Project::set_current_song(int id)
 }
 
 
-Song* Project::get_current_song()
+Song* Project::get_current_song() const
 {
 	return songList.value(currentSongId);
 }
 
 
-Song* Project::get_song(int id)
+Song* Project::get_song(int id) const
 {
 	return songList.value(id);
 }
@@ -287,7 +284,7 @@ int Project::remove_song(int key)
 		if (song->get_id() == key)
 			set_current_song(songList.size());
 		
-		emit songRemoved(song);
+		emit songRemoved();
 		
 		song->disconnect_from_audiodevice_and_delete();
 		
@@ -367,43 +364,22 @@ Command* Project::select()
 	return (Command*) 0;
 }
 
-AudioSource* Project::new_audio_source( int songId, QString name, uint channel )
-{
-	return audioSourcesList->new_audio_source(m_rate, m_bitDepth, songId, name, channel, sourcesDir);
-}
-
-AudioSource* Project::get_source( qint64 sourceId )
-{
-	return audioSourcesList->get_source( sourceId );
-}
-
-
-int Project::get_rate( )
+int Project::get_rate( ) const
 {
 	return m_rate;
 }
 
-int Project::get_bitdepth( )
+int Project::get_bitdepth( ) const
 {
 	return m_bitDepth;
 }
 
-int Project::add_audio_source( AudioSource * source, int channel )
-{
-	return audioSourcesList->add
-	(source, channel);
-}
-
-AudioSource * Project::get_source( QString fileName, int channel )
-{
-	return audioSourcesList->get_source(fileName, channel);
-}
-
-QStringList Project::get_songs( )
+QStringList Project::get_songs( ) const
 {
 	QStringList list;
-	foreach(Song* song, songList)
-	list.append(song->get_title());
+	foreach(Song* song, songList) {
+		list.append(song->get_title());
+	}
 	return list;
 }
 
@@ -415,9 +391,39 @@ void Project::set_song_export_progress(int progress)
 	emit overallExportProgressChanged(overallExportProgress);
 }
 
-QHash< int, Song * > Project::get_song_list( )
+QHash< int, Song * > Project::get_song_list( ) const
 {
 	return songList;
+}
+
+int Project::get_current_song_id( ) const
+{
+	return currentSongId;
+}
+
+int Project::get_num_songs( ) const
+{
+	return songList.size();
+}
+
+QString Project::get_title( ) const
+{
+	return title;
+}
+
+QString Project::get_engineer( ) const
+{
+	return engineer;
+}
+
+QString Project::get_root_dir( ) const
+{
+	return rootDir;
+}
+
+AudioSourceManager * Project::get_audiosource_manager( ) const
+{
+	return asmanager;
 }
 
 //eof

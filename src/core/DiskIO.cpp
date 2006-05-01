@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.2 2006/04/25 17:24:24 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.3 2006/05/01 21:21:37 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
@@ -128,6 +128,8 @@ void DiskIO::seek( nframes_t position )
 	do_work();
 
 	seeking = false;
+	
+	workTimer.start(20);
 
 	emit seekFinished();
 
@@ -186,9 +188,7 @@ void DiskIO::do_work( )
 	update_time_usage();
 	
 	/* END Process ReadSources */
-
-	workTimer.start(20);
-
+	
 	// 	printf("DiskIO :: Leaving do_work\n\n");
 }
 

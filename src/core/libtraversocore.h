@@ -2,7 +2,7 @@
 #include "AudioClip.h"
 #include "AudioPluginChain.h"
 #include "AudioPluginController.h"
-#include "AudioSourcesList.h"
+#include "AudioSourceManager.h"
 #include "ContextPointer.h"
 #include "ContextItem.h"
 #include "Curve.h"

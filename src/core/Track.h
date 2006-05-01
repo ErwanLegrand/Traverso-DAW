@@ -17,14 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.h,v 1.2 2006/04/26 12:06:16 r_sijrier Exp $
+$Id: Track.h,v 1.3 2006/05/01 21:21:37 r_sijrier Exp $
 */
 
 
 #ifndef TRACK_H
 #define TRACK_H
 
-#include <QPixmap>
 #include <QString>
 #include <QDomDocument>
 #include <QList>
@@ -35,12 +34,9 @@ $Id: Track.h,v 1.2 2006/04/26 12:06:16 r_sijrier Exp $
 
 #include "defines.h"
 
-class QString;
 class AudioClip;
 class Song;
-class AudioSource;
 class AudioPluginChain;
-class IEMessage;
 
 
 class Track : public ContextItem
@@ -62,6 +58,10 @@ public :
 
 	void add_clip(AudioClip* clip);
 
+	int remove_clip(AudioClip* clip);
+	int arm();
+	int disarm();
+	void toggle_active();
 
 	AudioClip* get_clip_under(nframes_t blockPos);
 	AudioClip* get_clip_after(nframes_t blockPos);
@@ -70,13 +70,9 @@ public :
 
 	QList<AudioClip* > split_clip(nframes_t splitPoint);
 	QList<AudioClip* > split_clip(AudioClip* c, nframes_t splitPoint);
-	int delete_clip(AudioClip* clip, bool permanently = 0);
+// 	int delete_clip(AudioClip* clip, bool permanently = 0);
 
-	int remove_clip(AudioClip* clip);
 
-	int arm();
-	int disarm();
-	void toggle_active();
 
 
 	// Get functions:
@@ -91,10 +87,6 @@ public :
 	QString get_bus_out() const
 	{
 		return busOut;
-	}
-	int get_baseX() const
-	{
-		return 0;
 	}
 	int get_baseY() const
 	{
@@ -113,13 +105,13 @@ public :
 	{
 		return m_pan;
 	}
-	Song* get_parent_song() const
+	Song* get_song() const
 	{
 		return m_song;
 	}
 	QString get_name() const
 	{
-		return name;
+		return m_name;
 	}
 	int get_total_clips();
 	QDomNode get_state(QDomDocument doc);
@@ -161,19 +153,16 @@ public :
 
 private :
 	Song* m_song;
-	AudioSource* recordingAudio;
 	AudioClipList audioClipList;
-	audio_sample_t* mixdown0;
-	audio_sample_t* mixdown1;
 
 	float m_gain;
 	float m_pan;
 	int ID;
+	int numtakes;
 	QByteArray busIn;
 	QByteArray busOut;
 
-	QString recordingAudioFilename;
-	QString name;
+	QString m_name;
 
 	int baseY;
 	int height;
@@ -212,7 +201,6 @@ public slots:
 	Command* silence_others();
 
 };
-
 
 #endif
 

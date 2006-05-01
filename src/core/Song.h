@@ -17,13 +17,11 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Song.h,v 1.2 2006/04/25 16:50:29 r_sijrier Exp $
+    $Id: Song.h,v 1.3 2006/05/01 21:21:37 r_sijrier Exp $
 */
 
 #ifndef SONG_H
 #define SONG_H
-
-#include <libtraverso.h>
 
 #include "ContextItem.h"
 #include <QHash>
@@ -39,6 +37,9 @@ class AudioClip;
 class AudioPluginSelector;
 class MtaRegionList;
 class DiskIO;
+class AudioClipManager;
+class Client;
+class AudioBus;
 
 struct ExportSpecification;
 
@@ -84,16 +85,14 @@ public:
         {
                 return activeTrackNumber;
         }
-        nframes_t get_transfer_frame();
+        nframes_t get_transfer_frame() const;
         nframes_t get_working_block() const
         {
                 return workingFrame;
         }
         nframes_t get_firstblock() const;
-        nframes_t get_last_block() const
-        {
-                return lastBlock;
-        }
+        nframes_t get_last_block() const;
+        
         Track*       get_track(int trackNumber);
         Track*       get_track_under_y (int y);
         QString get_title() const
@@ -105,15 +104,15 @@ public:
                 return artists;
         }
         QDomNode get_state(QDomDocument doc);
-        AudioSource* get_source(qint64 sourceId);
         QHash<int, Track* > get_tracks() const;
         DiskIO*	get_diskio();
+        AudioClipManager* get_audioclip_manager();
         AudioBus* get_master_out() const {return masterOut;}
 
         // Set functions
         void set_artists(QString pArtistis);
         void set_active_track(int trackNumber);
-        void set_cursor_pos(int cursorPosition);
+        void update_cursor_pos();
         void set_first_block(nframes_t pos);
         void set_master_gain(float pMasterGain);
         void set_title(QString sTitle);
@@ -125,7 +124,6 @@ public:
         }
 
 
-        AudioSource* new_audio_source(QString name, uint channel);
         int block_to_xpos(nframes_t block);
         int delete_audio_source(AudioSource* pAudio);
         int delete_track(int trackNumber);
@@ -136,9 +134,7 @@ public:
         int process_export(nframes_t nframes);
         int prepare_export(ExportSpecification* spec);
         int render(ExportSpecification* spec);
-        void update_last_block();
         void solo_track(Track* track);
-        void select_clip(AudioClip* clip);
         void create(int tracksToCreate);
         nframes_t xpos_to_block(int xpos);
         bool any_track_armed();
@@ -157,6 +153,8 @@ public:
         }
 
 	void disconnect_from_audiodevice_and_delete();
+	
+	audio_sample_t* 		mixdown;
 
 private:
         QHash<int, Track* >	m_tracks;
@@ -168,11 +166,10 @@ private:
         Client* 				audiodeviceClient;
         AudioBus*			masterOut;
         DiskIO*				diskio;
+        AudioClipManager*		acmanager;
 
         nframes_t			transport_frame;
-        nframes_t			cursorPos;
         nframes_t 			firstFrame;
-        nframes_t 			lastBlock;
         nframes_t 			origBlockL;
         nframes_t 			origBlockR;
         nframes_t 			workingFrame;
@@ -203,16 +200,19 @@ private:
         int finish_audio_export();
         void start_seek();
 
+	void add_track(Track* track, int id);
+	
         uint		 	newTransportFramePos;
         bool			seeking;
 
         friend class Track;
-
+	
 public slots :
         void seek_finished();
         void handle_diskio_outofsync();
         void audiodevice_client_request_processed();
         void audiodevice_started();
+	void resize_buffer();
 
         Command* go();
         Command* create_track();
@@ -223,26 +223,21 @@ public slots :
         Command* work_next_edge();
         Command* work_previous_edge();
         Command* in_crop();
-        Command* add_audio_plugin_controller();
-        Command* select_audio_plugin_controller();
-        Command* remove_current_audio_plugin_controller();
-        Command* remove_audio_plugin_controller();
-        Command* add_node();
-        Command* drag_and_drop_node();
-        Command* audio_plugin_setup();
-        Command* node_setup();
-        Command* invert_clip_selection();
-        Command* select_all_clips();
-        Command* deselect_all_clips();
+//         Command* add_audio_plugin_controller();
+//         Command* select_audio_plugin_controller();
+//         Command* remove_current_audio_plugin_controller();
+//         Command* remove_audio_plugin_controller();
+//         Command* add_node();
+//         Command* drag_and_drop_node();
+//         Command* audio_plugin_setup();
+//         Command* node_setup();
         Command* create_region_start();
         Command* create_region_end();
         Command* create_region();
         Command* delete_region_under_x();
-        Command* process_delete();
         Command* go_regions();
         Command* go_loop_regions();
         Command* jog_create_region();
-        Command* show_song_properties();
         Command* undo();
         Command* redo();
         Command* toggle_snap();
@@ -261,6 +256,11 @@ signals:
 
 
 };
+
+inline nframes_t Song::get_transfer_frame() const
+{
+	return transport_frame;
+}
 
 #endif
 

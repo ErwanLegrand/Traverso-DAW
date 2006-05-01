@@ -1,3 +1,24 @@
+/*
+    Copyright (C) 2005-2006 Remon Sijrier 
+ 
+    This file is part of Traverso
+ 
+    Traverso is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+ 
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+ 
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
+ 
+    $Id: Song.cpp,v 1.4 2006/05/01 21:21:37 r_sijrier Exp $
+*/
 
 #include <QTextStream>
 #include <QMessageBox>
@@ -25,6 +46,7 @@
 #include "Export.h"
 #include "DiskIO.h"
 #include "WriteSource.h"
+#include "AudioClipManager.h"
 
 #include "LocatorView.h"
 #include "ContextItem.h"
@@ -76,11 +98,103 @@ Song::~Song()
 		"PLEASE report this error, it's a very critical problem!!!\n\n", m_id, title.toAscii().data());
 	}
 
+	delete [] mixdown;
 	delete diskio;
 
 	delete regionList;
 	delete masterOut;
 	delete m_hs;
+}
+
+void Song::init()
+{
+	PENTER2;
+	diskio = new DiskIO();
+
+	connect(this, SIGNAL(seekStart(uint )), diskio, SLOT(seek( uint )), Qt::QueuedConnection);
+	connect(&audiodevice(), SIGNAL(clientRequestsProcesssed()), this, SLOT (audiodevice_client_request_processed() ), Qt::QueuedConnection);
+	connect(&audiodevice(), SIGNAL(started()), this, SLOT(audiodevice_started()));
+	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(resize_buffer()), Qt::DirectConnection);
+	connect(diskio, SIGNAL(seekFinished()), this, SLOT(seek_finished()), Qt::QueuedConnection);
+	connect (diskio, SIGNAL(outOfSync()), this, SLOT(handle_diskio_outofsync()));
+
+	mixdown = new audio_sample_t[audiodevice().get_buffer_size()];
+	masterOut = new AudioBus("Master Out", 2);
+	regionList = new MtaRegionList();
+	m_hs = new HistoryStack();
+	acmanager = new AudioClipManager(this);
+	connect(acmanager, SIGNAL(lastFramePositionChanged()), this, SIGNAL(lastFramePositionChanged()));
+	
+	set_context_item( acmanager );
+
+	playBackBus = audiodevice().get_playback_bus("Playback 1");
+	
+	transport = stopTransport = resumeTransport = false;
+	realtimepath = false;
+	scheduleForDeletion = false;
+	isSnapOn=true;
+	changed = rendering = false;
+	firstFrame=workingFrame=activeTrackNumber=0;
+}
+
+int Song::set_state( const QDomNode & node )
+{
+	PENTER;
+	QDomNode propertiesNode = node.firstChildElement("Properties");
+	m_id = node.toElement().attribute( "id", "" ).toInt();
+
+	QDomElement e = propertiesNode.toElement();
+
+	title = e.attribute( "title", "" );
+	artists = e.attribute( "artists", "" );
+	activeTrackNumber = e.attribute( "activeTrackNumber", "" ).toInt();
+	set_hzoom(e.attribute( "hzoom", "" ).toInt());
+	set_first_block(e.attribute( "firstFrame", "" ).toUInt());
+	set_work_at(e.attribute( "workingFrame", "0").toUInt());
+	int trackBaseY = LocatorView::LOCATOR_HEIGHT;
+
+	QDomNode tracksNode = node.firstChildElement("Tracks");
+	QDomNode trackNode = tracksNode.firstChild();
+	while(!trackNode.isNull()) {
+		Track* track = new Track(this, trackNode);
+		track->set_baseY(trackBaseY);
+		foreach(Track* existingTrack, m_tracks) {
+			if (existingTrack->is_solo()) {
+				track->set_muted_by_solo( true );
+				break;
+			}
+		}
+		add_track( track, track->get_id());
+		trackBaseY += track->get_height();
+		trackNode = trackNode.nextSibling();
+	}
+
+	return 1;
+}
+
+QDomNode Song::get_state(QDomDocument doc)
+{
+	QDomElement songNode = doc.createElement("Song");
+	songNode.setAttribute("id", m_id);
+	QDomElement properties = doc.createElement("Properties");
+	properties.setAttribute("title", title);
+	properties.setAttribute("artists", artists);
+	properties.setAttribute("activeTrackNumber", activeTrackNumber);
+	properties.setAttribute("firstFrame", firstFrame);
+	properties.setAttribute("workingFrame", workingFrame);
+	properties.setAttribute("hzoom", m_hzoom);
+	songNode.appendChild(properties);
+
+	doc.appendChild(songNode);
+
+	QDomNode tracksNode = doc.createElement("Tracks");
+
+	foreach(Track* track, m_tracks) {
+		tracksNode.appendChild(track->get_state(doc));
+	}
+
+	songNode.appendChild(tracksNode);
+	return songNode;
 }
 
 void Song::connect_to_audiodevice( )
@@ -120,91 +234,9 @@ void Song::audiodevice_client_request_processed( )
 	}
 }
 
-void Song::init()
+void Song::add_track( Track* track, int id)
 {
-	PENTER2;
-	diskio = new DiskIO();
-
-	connect(this, SIGNAL(seekStart(uint )), diskio, SLOT(seek( uint )), Qt::QueuedConnection);
-	connect(&audiodevice(), SIGNAL(clientRequestsProcesssed()), this, SLOT (audiodevice_client_request_processed() ), Qt::QueuedConnection);
-	connect(&audiodevice(), SIGNAL(started()), this, SLOT(audiodevice_started()));
-	connect(diskio, SIGNAL(seekFinished()), this, SLOT(seek_finished()), Qt::QueuedConnection);
-	connect (diskio, SIGNAL(outOfSync()), this, SLOT(handle_diskio_outofsync()));
-
-
-	masterOut = new AudioBus("Master Out", 2);
-	playBackBus = audiodevice().get_playback_bus("Playback 1");
-
-	transport = stopTransport = resumeTransport = false;
-	realtimepath = false;
-	scheduleForDeletion = false;
-
-	regionList = new MtaRegionList();
-	m_hs = new HistoryStack();
-
-	isSnapOn=true;
-	changed = rendering = false;
-	firstFrame=lastBlock=workingFrame=activeTrackNumber=0;
-}
-
-int Song::set_state( const QDomNode & node )
-{
-	PENTER;
-	QDomNode propertiesNode = node.firstChildElement("Properties");
-	m_id = node.toElement().attribute( "id", "" ).toInt();
-
-	QDomElement e = propertiesNode.toElement();
-
-	title = e.attribute( "title", "" );
-	artists = e.attribute( "artists", "" );
-	activeTrackNumber = e.attribute( "activeTrackNumber", "" ).toInt();
-	set_hzoom(e.attribute( "hzoom", "" ).toInt());
-	set_first_block(e.attribute( "firstFrame", "" ).toUInt());
-	set_work_at(e.attribute( "workingFrame", "0").toUInt());
-	int trackBaseY = LocatorView::LOCATOR_HEIGHT;
-
-	QDomNode tracksNode = node.firstChildElement("Tracks");
-	QDomNode trackNode = tracksNode.firstChild();
-	while(!trackNode.isNull()) {
-		Track* track = new Track(this, trackNode);
-		track->set_baseY(trackBaseY);
-		foreach(Track* existingTrack, m_tracks) {
-			if (existingTrack->is_solo()) {
-				track->set_muted_by_solo( true );
-				break;
-			}
-		}
-		m_tracks.insert(track->get_id(), track);
-		trackBaseY += track->get_height();
-		trackNode = trackNode.nextSibling();
-	}
-
-	return 1;
-}
-
-QDomNode Song::get_state(QDomDocument doc)
-{
-	QDomElement songNode = doc.createElement("Song");
-	songNode.setAttribute("id", m_id);
-	QDomElement properties = doc.createElement("Properties");
-	properties.setAttribute("title", title);
-	properties.setAttribute("artists", artists);
-	properties.setAttribute("activeTrackNumber", activeTrackNumber);
-	properties.setAttribute("firstFrame", firstFrame);
-	properties.setAttribute("workingFrame", workingFrame);
-	properties.setAttribute("hzoom", m_hzoom);
-	songNode.appendChild(properties);
-
-	doc.appendChild(songNode);
-
-	QDomNode tracksNode = doc.createElement("Tracks");
-
-	foreach(Track* track, m_tracks) {
-		tracksNode.appendChild(track->get_state(doc));
-	}
-
-	songNode.appendChild(tracksNode);
-	return songNode;
+	m_tracks.insert(id, track);
 }
 
 bool Song::any_track_armed()
@@ -217,18 +249,10 @@ bool Song::any_track_armed()
 	return false;
 }
 
-int Song::get_clips_count_for_audio(AudioSource* a)
+int Song::get_clips_count_for_audio(AudioSource* )
 {
 	int count=0;
-	foreach(Track* track, m_tracks) {
-		AudioClipList list = track->get_cliplist();
-		AudioClip* clip;
-		for (int j=0; j< list.size(); ++j) {
-			clip = list.at(j);
-			if (clip->get_audio_source() == a)
-				count++;
-		}
-	}
+	
 	return count;
 }
 
@@ -253,21 +277,11 @@ int Song::process_go(int )
 	return 1;
 }
 
-int Song::remove_all_clips_for_audio(AudioSource* a)
+int Song::remove_all_clips_for_audio(AudioSource* )
 {
 	PENTER;
 	int counter=0;
-	foreach(Track* track, m_tracks) {
-		AudioClipList list = track->get_cliplist();
-		AudioClip* clip;
-		for (int j=0; j< list.size(); ++j) {
-			clip = list.at(j);
-			if (clip->get_audio_source() == a) {
-				track->remove_clip(clip);
-				counter++;
-			}
-		}
-	}
+	
 	return counter;
 }
 
@@ -281,8 +295,6 @@ int Song::prepare_export(ExportSpecification* spec)
 
 	rendering = true;
 	transport_frame = 0;
-
-	update_last_block();
 
 	spec->start_frame = 0;
 	spec->end_frame = get_last_block();
@@ -414,11 +426,6 @@ nframes_t Song::xpos_to_block(int xpos)
 	return (firstFrame + xpos * Peak::zoomStep[m_hzoom]);
 }
 
-nframes_t Song::get_transfer_frame()
-{
-	return transport_frame;
-}
-
 Track* Song::get_track_under_y(int y)
 {
 	foreach(Track* track, m_tracks) {
@@ -452,6 +459,7 @@ void Song::set_active_track(int trackNumber)
 {
 	if (!m_tracks.value(trackNumber))
 		return;
+	
 	m_tracks.value(activeTrackNumber)->deactivate();
 	activeTrackNumber=trackNumber;
 	m_tracks.value(activeTrackNumber)->activate();
@@ -527,41 +535,7 @@ Command* Song::toggle_snap()
 	return (Command*) 0;
 }
 
-void Song::update_last_block()
-{
-	PENTER;
-	lastBlock=0; // find the last blockpos in MTA
-	AudioClip* clip;
-	foreach(Track* track, m_tracks) {
-		clip = track->get_cliplist().get_last();
-		if (clip && (clip->get_track_last_block() >= lastBlock))
-			lastBlock = clip->get_track_last_block();
-	}
-
-	emit lastFramePositionChanged();
-}
-
- 
 /******************************** SLOTS *****************************/
-
-Command* Song::add_audio_plugin_controller()
-{
-	if (ie().is_holding()) {
-		// 		ie().set_jogging(true);
-		audioPluginSelector->start();
-	} else {
-		audioPluginSelector->stop();
-		QString filterType = audioPluginSelector->get_selected_filter_type();
-		m_tracks.value(activeTrackNumber)->audioPluginChain->add_audio_plugin_controller(filterType);
-	}
-	return (Command*) 0;
-}
-
-Command* Song::add_node()
-{
-	m_tracks.value(activeTrackNumber)->audioPluginChain->add_node();
-	return (Command*) 0;
-}
 
 Command* Song::create_track()
 {
@@ -571,7 +545,7 @@ Command* Song::create_track()
 
 	int trackNumber = m_tracks.size() + 1;
 	Track* track = new Track(this, trackNumber, "Unnamed", trackBaseY, Track::INITIAL_HEIGHT);
-	m_tracks.insert(trackNumber, track);
+	add_track( track, trackNumber);
 	return (Command*) 0;
 }
 
@@ -586,7 +560,6 @@ Command* Song::create_region()
 		MtaRegion* m = new MtaRegion(origBlockL,origBlockR);
 		regionList->add_region(m);
 	}
-	update_last_block();
 	return (Command*) 0;
 }
 
@@ -601,16 +574,6 @@ Command* Song::create_region_end()
 {
 	// int xpos ...
 	//TODO
-	return (Command*) 0;
-}
-
-Command* Song::deselect_all_clips()
-{
-	foreach(Track* track, m_tracks) {
-		AudioClipList list = track->get_cliplist();
-		for (int j=0; j< list.size(); ++j)
-			list.at(j)->deselect();
-	}
 	return (Command*) 0;
 }
 
@@ -650,22 +613,10 @@ Command* Song::delete_track()
 	return (Command*) 0;
 }
 
-Command* Song::drag_and_drop_node()
-{
-	m_tracks.value(activeTrackNumber)->audioPluginChain->drag_node(ie().is_holding());
-	return (Command*) 0;
-}
-
-Command* Song::audio_plugin_setup()
-{
-	m_tracks.value(activeTrackNumber)->audioPluginChain->audio_plugin_setup();
-	return (Command*) 0;
-}
-
 Command* Song::go()
 {
 // 	printf("Song-%d::go transport is %d\n", m_id, transport);
-	update_last_block();
+	
 	if (transport) {
 		stopTransport = true;
 	} else {
@@ -715,91 +666,8 @@ Command* Song::in_crop()
 	return (Command*) 0;
 }
 
-Command* Song::invert_clip_selection()
-{
-	foreach(Track* track, m_tracks) {
-		AudioClipList list = track->get_cliplist();
-		AudioClip* clip;
-		for (int j=0; j< list.size(); ++j) {
-			clip = list.at(j);
-			if (clip->is_selected())
-				clip->deselect();
-			else
-				clip->set_selected();
-		}
-	}
-	return (Command*) 0;
-}
-
 Command* Song::jog_create_region()
 {
-	return (Command*) 0;
-}
-
-Command* Song::node_setup()
-{
-	m_tracks.value(activeTrackNumber)->audioPluginChain->node_setup();
-	return (Command*) 0;
-}
-
-Command* Song::process_delete()
-{
-	PENTER;
-	AudioClipList list;
-
-	foreach(Track* track, m_tracks) {
-		list = track->get_cliplist();
-		foreach(AudioClip* clip, list) {
-			if (clip->is_selected())
-				track->remove_clip(clip);
-		}
-	}
-	update_last_block();
-	return (Command*) 0;
-}
-
-Command* Song::remove_current_audio_plugin_controller()
-{
-	m_tracks.value(activeTrackNumber)->audioPluginChain->remove_controller();
-	return (Command*) 0;
-}
-
-Command* Song::remove_audio_plugin_controller()
-{
-	m_tracks.value(activeTrackNumber)->audioPluginChain->select_controller(ie().is_holding());
-	if (!ie().is_holding())  //FIXME Do you really want to have this behaviour?????? beginHold first selects the controller, second beginHold removes it!!!!!
-		m_tracks.value(activeTrackNumber)->audioPluginChain->remove_controller();
-	return (Command*) 0;
-}
-
-
-Command* Song::select_all_clips()
-{
-	foreach(Track* track, m_tracks) {
-		AudioClipList list = track->get_cliplist();
-		for (int j=0; j< list.size(); ++j)
-			list.at(j)->set_selected();
-	}
-	return (Command*) 0;
-}
-
-void Song::select_clip(AudioClip* clip)
-{
-	PENTER;
-	AudioClipList list;
-	foreach(Track* track, m_tracks) {
-		list = track->get_cliplist();
-		for (int j=0; j< list.size(); ++j)
-			list.at(j)->deselect();
-	}
-	clip->set_selected();
-}
-
-Command* Song::select_audio_plugin_controller()
-{
-	if (ie().is_holding())
-		// 		ie().set_jogging(true);
-		m_tracks.value(activeTrackNumber)->audioPluginChain->select_controller(ie().is_holding());
 	return (Command*) 0;
 }
 
@@ -807,9 +675,9 @@ Command* Song::set_editing_mode()
 {
 	info().information(tr("CURRENT MODE : EDITING"));
 	foreach(Track* track, m_tracks)
-	track->set_blur(false);
+		track->set_blur(false);
 	foreach(Track* track, m_tracks)
-	track->audioPluginChain->deactivate();
+		track->audioPluginChain->deactivate();
 	return (Command*) 0;
 }
 
@@ -817,14 +685,8 @@ Command* Song::set_curve_mode()
 {
 	info().information(tr("CURRENT MODE : TRACK CURVES"));
 	foreach(Track* track, m_tracks)
-	track->set_blur(true);
+		track->set_blur(true);
 	m_tracks.value(activeTrackNumber)->audioPluginChain->activate();
-	return (Command*) 0;
-}
-
-Command* Song::show_song_properties()
-{
-	/*	propertiesDialog->show();*/
 	return (Command*) 0;
 }
 
@@ -849,14 +711,17 @@ void Song::solo_track(Track* t)
 
 Command* Song::work_next_edge()
 {
-	nframes_t w = lastBlock;
+	nframes_t w = acmanager->get_last_frame();
+	
 	foreach(Track* track, m_tracks) {
 		AudioClip* c=track->get_clip_after(workingFrame);
 		if ((c) && (c->get_track_first_block()<w))
 			w=c->get_track_first_block();
 	}
-	if (w != lastBlock)
+	
+	if ( w != acmanager->get_last_frame() )
 		set_work_at(w);
+	
 	return (Command*) 0;
 }
 
@@ -965,15 +830,10 @@ int Song::process_export( nframes_t nframes )
 	return 1;
 }
 
-AudioSource* Song::new_audio_source(QString name, uint channel)
+void Song::resize_buffer( )
 {
-	name = "Song_" + QByteArray::number(m_id) + "_" + name;
-	return m_project->new_audio_source( m_id, name, channel );
-}
-
-AudioSource* Song::get_source( qint64 sourceId )
-{
-	return m_project->get_source( sourceId );
+	delete [] mixdown;
+	mixdown = new audio_sample_t[audiodevice().get_buffer_size()];
 }
 
 int Song::get_bitdepth( )
@@ -991,9 +851,8 @@ nframes_t Song::get_firstblock( ) const
 	return firstFrame;
 }
 
-void Song::set_cursor_pos( int cursorPosition )
+void Song::update_cursor_pos()
 {
-	cursorPos = xpos_to_block(cursorPosition);
 	if (!transport)
 		emit cursorPosChanged();
 }
@@ -1006,6 +865,11 @@ QHash< int, Track * > Song::get_tracks( ) const
 DiskIO * Song::get_diskio( )
 {
 	return diskio;
+}
+
+AudioClipManager * Song::get_audioclip_manager( )
+{
+	return acmanager;
 }
 
 void Song::handle_diskio_outofsync( )
@@ -1025,5 +889,70 @@ void Song::audiodevice_started( )
 {
 	playBackBus = audiodevice().get_playback_bus("Playback 1");
 }
+
+nframes_t Song::get_last_block( ) const
+{
+	return acmanager->get_last_frame();
+}
+
+
+// Command* Song::node_setup()
+// {
+// 	m_tracks.value(activeTrackNumber)->audioPluginChain->node_setup();
+// 	return (Command*) 0;
+// }
+// 
+// Command* Song::remove_current_audio_plugin_controller()
+// {
+// 	m_tracks.value(activeTrackNumber)->audioPluginChain->remove_controller();
+// 	return (Command*) 0;
+// }
+// 
+// Command* Song::remove_audio_plugin_controller()
+// {
+// 	m_tracks.value(activeTrackNumber)->audioPluginChain->select_controller(ie().is_holding());
+// 	if (!ie().is_holding())  //FIXME Do you really want to have this behaviour?????? beginHold first selects the controller, second beginHold removes it!!!!!
+// 		m_tracks.value(activeTrackNumber)->audioPluginChain->remove_controller();
+// 	return (Command*) 0;
+// }
+// 
+// Command* Song::add_audio_plugin_controller()
+// {
+// 	if (ie().is_holding()) {
+// 		// 		ie().set_jogging(true);
+// 		audioPluginSelector->start();
+// 	} else {
+// 		audioPluginSelector->stop();
+// 		QString filterType = audioPluginSelector->get_selected_filter_type();
+// 		m_tracks.value(activeTrackNumber)->audioPluginChain->add_audio_plugin_controller(filterType);
+// 	}
+// 	return (Command*) 0;
+// }
+// 
+// Command* Song::add_node()
+// {
+// 	m_tracks.value(activeTrackNumber)->audioPluginChain->add_node();
+// 	return (Command*) 0;
+// }
+// 
+// Command* Song::drag_and_drop_node()
+// {
+// 	m_tracks.value(activeTrackNumber)->audioPluginChain->drag_node(ie().is_holding());
+// 	return (Command*) 0;
+// }
+// 
+// Command* Song::audio_plugin_setup()
+// {
+// 	m_tracks.value(activeTrackNumber)->audioPluginChain->audio_plugin_setup();
+// 	return (Command*) 0;
+// }
+// 
+// Command* Song::select_audio_plugin_controller()
+// {
+// 	if (ie().is_holding())
+// 		// 		ie().set_jogging(true);
+// 		m_tracks.value(activeTrackNumber)->audioPluginChain->select_controller(ie().is_holding());
+// 	return (Command*) 0;
+// }
 
 // eof

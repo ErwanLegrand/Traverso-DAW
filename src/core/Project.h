@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Project.h,v 1.2 2006/04/25 16:50:29 r_sijrier Exp $
+$Id: Project.h,v 1.3 2006/05/01 21:21:37 r_sijrier Exp $
 */
 
 #ifndef PROJECT_H
@@ -32,7 +32,7 @@ $Id: Project.h,v 1.2 2006/04/25 16:50:29 r_sijrier Exp $
 
 
 class Song;
-class AudioSourcesList;
+class AudioSourceManager;
 struct ExportSpecification;
 
 class Project : public ContextItem
@@ -45,44 +45,31 @@ public :
 
 
 	// Get functions
-	int get_current_song_id() const
-	{
-		return currentSongId;
-	}
-	int get_num_songs() const
-	{
-		return songList.size();
-	}
-	int get_rate();
-	int get_bitdepth();
-	QString get_title() const
-	{
-		return title;
-	}
-	QString get_engineer() const
-	{
-		return engineer;
-	}
-	QString get_root_dir() const
-	{
-		return rootDir;
-	}
-	QStringList get_songs();
-	QHash<int, Song* > get_song_list();
+	int get_current_song_id() const;
+	int get_num_songs() const;
+	int get_rate() const;
+	int get_bitdepth() const;
+	
+	AudioSourceManager* get_audiosource_manager() const;
+	QString get_title() const;
+	QString get_engineer() const;
+	QString get_root_dir() const;
+	QStringList get_songs() const;
+	QHash<int, Song* > get_song_list() const;
+	Song* get_current_song() const ;
+	Song* get_song(int id) const;
 
-	Song* get_current_song();
-	Song* get_song(int id);
 
 	// Set functions
 	void set_title(QString pTitle);
 	void set_engineer(QString pEngineer);
 	void set_song_export_progress(int pogress);
 
+	
 	Song* add_song();
-	AudioSource* new_audio_source(int songId, QString name, uint channel);
-	AudioSource* get_source(qint64 sourceId);
-	AudioSource* get_source(QString fileName, int channel);
+	
 	bool has_changed();
+	
 	int create(int pNumSongs);
 	int save();
 	int load();
@@ -90,9 +77,6 @@ public :
 	int rename();
 	int export_project(ExportSpecification* spec);
 	int start_export(ExportSpecification* spec);
-	int add_audio_source(AudioSource* source, int channel);
-
-
 
 
 public slots:
@@ -100,7 +84,7 @@ public slots:
 
 private:
 	QHash<int, Song* >	songList;
-	AudioSourcesList* 	audioSourcesList;
+	AudioSourceManager* 	asmanager;
 
 	QString 		title;
 	QString 		rootDir;
@@ -123,8 +107,8 @@ private:
 signals:
 	void currentSongChanged(Song* );
 	void newSongCreated(Song* );
-	void songAdded(Song* );
-	void songRemoved(Song* );
+	void songAdded();
+	void songRemoved();
 	void songExportProgressChanged(int );
 	void overallExportProgressChanged(int );
 	void exportFinished();

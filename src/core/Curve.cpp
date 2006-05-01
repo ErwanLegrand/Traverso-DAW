@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Curve.cpp,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
+    $Id: Curve.cpp,v 1.2 2006/05/01 21:21:37 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -212,7 +212,7 @@ void Curve::show()
         //
         // 	//if ( n->pos < firstBlock ) continue; FOR LATER
         // 	//if ( n->pos > lastBlock ) break; FOR LATER
-        // 	Song* parentSong = parentTrack->get_parent_song();
+        // 	Song* parentSong = parentTrack->get_song();
         // 	if (active)
         // 		p.setPen(cm().get(CURVE_ACTIVE));
         // 	else

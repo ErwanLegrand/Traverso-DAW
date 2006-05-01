@@ -17,11 +17,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.cpp,v 1.2 2006/04/25 17:24:02 r_sijrier Exp $
+$Id: ReadSource.cpp,v 1.3 2006/05/01 21:21:37 r_sijrier Exp $
 */
 
 #include "ReadSource.h"
-#include "AudioSource.h"
 
 #include "Peak.h"
 #include "RingBuffer.h"
@@ -33,19 +32,17 @@ $Id: ReadSource.cpp,v 1.2 2006/04/25 17:24:02 r_sijrier Exp $
 
 // This constructor is called for existing (recorded/imported) audio sources
 ReadSource::ReadSource(const QDomNode node)
-		: AudioSource(node)
+		: AudioSource(node), refcount(0)
 {
-	init();
 }
 
 ReadSource::ReadSource(uint chan, QString dir, QString name)
-		: AudioSource(chan, dir, name)
+		: AudioSource(chan, dir, name), refcount(0)
 {
-	init();
 }
 
 ReadSource::ReadSource( AudioSource * source )
-		: AudioSource(source->get_channel(), source->get_dir(), source->get_name())
+		: AudioSource(source->get_channel(), source->get_dir(), source->get_name()), refcount(0)
 {
 	m_peak = source->get_peak();
 	m_peak->set_audiosource(this);
@@ -56,8 +53,8 @@ ReadSource::ReadSource( AudioSource * source )
 ReadSource::~ReadSource()
 {
 	PENTERDES;
-	if (tmpbuf)
-		delete [] tmpbuf;
+	if (readbuffer)
+		delete [] readbuffer;
 }
 
 
@@ -69,8 +66,8 @@ int ReadSource::init( )
 	rbReady = true;
 	needSync = false;
 	sourceStartOffset = 0;
-	tmpbuf = 0;
-	tmpbufsize = 0;
+	readbuffer = 0;
+	readbuffersize = 0;
 	sf = 0;
 
 	/* although libsndfile says we don't need to set this,
@@ -106,6 +103,9 @@ int ReadSource::init( )
 
 int ReadSource::file_read (audio_sample_t* dst, nframes_t start, nframes_t cnt) const
 {
+	// this equals checking if init() is called!
+	Q_ASSERT(sf);
+	
 	if (start >= m_length) {
 		return 0;
 	}
@@ -131,17 +131,17 @@ int ReadSource::file_read (audio_sample_t* dst, nframes_t start, nframes_t cnt) 
 	/*	{
 			Do we want to have a Lock here during read?? */
 
-	if (tmpbufsize < real_cnt) {
+	if (readbuffersize < real_cnt) {
 
-		if (tmpbuf) {
-			delete [] tmpbuf;
+		if (readbuffer) {
+			delete [] readbuffer;
 		}
-		tmpbufsize = real_cnt;
-		tmpbuf = new float[tmpbufsize];
+		readbuffersize = real_cnt;
+		readbuffer = new float[readbuffersize];
 	}
 
-	nread = sf_read_float (sf, tmpbuf, real_cnt);
-	ptr = tmpbuf + channelNumber;
+	nread = sf_read_float (sf, readbuffer, real_cnt);
+	ptr = readbuffer + channelNumber;
 	nread /= sfinfo.channels;
 
 	/* stride through the interleaved data */
@@ -163,7 +163,6 @@ int ReadSource::rb_read(audio_sample_t* dst, nframes_t start, nframes_t cnt)
 {
 
 	if ( ! rbReady ) {
-		// 		PWARN("RingBuffer is not ready!");
 		return 0;
 	}
 
@@ -171,8 +170,6 @@ int ReadSource::rb_read(audio_sample_t* dst, nframes_t start, nframes_t cnt)
 	if (start != rbRelativeFileReadPos) {
 		if ( (start > rbRelativeFileReadPos) && (rbRelativeFileReadPos + m_buffer->read_space()) > start) {
 			int advance = start - rbRelativeFileReadPos;
-// 			int readspace = m_buffer->read_space();
-// 			PWARN("advance is %d, readspace is %d", advance, readspace);
 			m_buffer->read_advance( advance );
 			rbRelativeFileReadPos += advance;
 		} else {
@@ -212,6 +209,19 @@ void ReadSource::rb_seek_to_file_position( nframes_t position )
 	}
 }
 
+int ReadSource::process_ringbuffer( audio_sample_t * framebuffer )
+{
+	nframes_t writeSpace = m_buffer->write_space();
+
+	if (writeSpace > 4096) {
+		nframes_t toWrite = rb_file_read(framebuffer, writeSpace);
+
+		m_buffer->write(framebuffer, toWrite);
+	}
+	
+	return 0;
+}
+
 void ReadSource::set_source_start_offset( nframes_t offset )
 {
 	sourceStartOffset = offset;
@@ -225,29 +235,11 @@ void ReadSource::start_resync( nframes_t position )
 //         PWARN("Resyncing ringbuffer start");
 }
 
-bool ReadSource::need_sync( )
-{
-	return needSync;
-}
-
 void ReadSource::sync( )
 {
 	rb_seek_to_file_position(syncPos);
 	needSync = false;
 //         PWARN("Resyncing ringbuffer finished");
-}
-
-int ReadSource::process_ringbuffer( audio_sample_t * framebuffer )
-{
-	nframes_t writeSpace = m_buffer->write_space();
-
-	if (writeSpace > 4096) {
-		nframes_t toWrite = rb_file_read(framebuffer, writeSpace);
-
-		m_buffer->write(framebuffer, toWrite);
-	}
-	
-	return 0;
 }
 
 void ReadSource::set_rb_ready( bool ready )
@@ -267,5 +259,19 @@ void ReadSource::set_inactive( )
 	active = false;
 }
 
+ReadSource * ReadSource::deep_copy( )
+{
+	PENTER;
+	
+	QDomDocument doc("ReadSource");
+	QDomNode rsnode = get_state(doc);
+	ReadSource* source = new ReadSource(rsnode);
+	return source;
+}
+
+int ReadSource::ref( )
+{
+	return refcount++;
+}
 //eof
 

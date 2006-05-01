@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ProjectManager.cpp,v 1.2 2006/04/25 16:48:32 r_sijrier Exp $
+$Id: ProjectManager.cpp,v 1.3 2006/05/01 21:21:37 r_sijrier Exp $
 */
 
 #include "ProjectManager.h"
@@ -28,7 +28,7 @@ $Id: ProjectManager.cpp,v 1.2 2006/04/25 16:48:32 r_sijrier Exp $
 
 #include "Project.h"
 #include "Song.h"
-#include "AudioSourcesList.h"
+#include "AudioSourceManager.h"
 #include "Information.h"
 #include "FileHelpers.h"
 
@@ -54,48 +54,9 @@ ProjectManager& pm()
 
 int ProjectManager::save_song(QString songName)
 {
-	Song* s = (Song*) 0;
-	if (songName == "") {
-		s = currentProject->get_current_song();
-		songName.setNum(s->get_id());
-		songName.prepend("Song ");
-	} else {
-		//assuming that song name is always: "Song nr title" so nr is always on position 5-7
-		QString t = songName.mid(5,2);
-		bool b;
-		int nr = t.toInt(&b, 10);
-		s = currentProject->get_song( (nr - 1) );
+	if (currentProject) {
+		currentProject->save();
 	}
-
-	// Hmmm, this no longer works :-(
-	// Use currentProject->save instead
-	/*	if(s && (s->save()))
-			return 1;*/
-	currentProject->save();
-
-	return 0;
-}
-
-int ProjectManager::save_song_as(QString songName, QString title, QString artists)
-{
-	Song* s;
-	QString t = songName.mid(5,2);
-	bool b;
-	//assuming that song name is always: "Song nr title" so nr is always on position 5-7
-	int nr = t.toInt(&b, 10);
-	s = currentProject->get_song( (nr - 1) );
-	s = currentProject->get_song( (nr - 1) );
-	if (title.length() != 0) {
-		s->set_title(title);
-	}
-	if (artists.length() != 0) {
-		s->set_artists(artists);
-	}
-	// Hmmm, this no longer works :-(
-	// Use currentProject->save instead
-	/*	if(s->save())
-			return 1;*/
-	currentProject->save();
 
 	return 0;
 }
@@ -103,6 +64,7 @@ int ProjectManager::save_song_as(QString songName, QString title, QString artist
 void ProjectManager::set_current_project(Project* pProject)
 {
 	PENTER;
+	
 	if (currentProject) {
 		currentProject->save();
 		delete currentProject;
@@ -110,22 +72,30 @@ void ProjectManager::set_current_project(Project* pProject)
 
 	currentProject = pProject;
 
-	emit currentProjectChanged(currentProject);
+	emit projectLoaded(currentProject);
 
 	QSettings settings;
-	settings.setValue("Project/current", currentProject->get_title());
-
+	
+	QString title = "";
+	
+	if (currentProject) {
+		title = currentProject->get_title();
+		settings.setValue("Project/current", title);
+	}
+	
 }
 
 int ProjectManager::create_new_project(QString projectName, int numSongs)
 {
 	PENTER;
 
-	if (projectExists(projectName)) {
+	if (project_exists(projectName)) {
 		PERROR("project %s already exists\n", projectName.toAscii().data());
 		return -1;
 	}
+	
 	Project *newProject = new Project(projectName);
+	
 	if (newProject->create(numSongs) < 0) {
 		delete newProject;
 		PERROR("couldn't create new project %s", projectName.toAscii().data());
@@ -133,53 +103,28 @@ int ProjectManager::create_new_project(QString projectName, int numSongs)
 	}
 
 	set_current_project(newProject);
+	
 	return 0;
-}
-
-int ProjectManager::delete_source(QString )
-{
-	int r = 0;
-	/*	QString s = sourceName;
-		s.prepend(currentProject->get_root_dir());
-		Song* cs = currentProject->get_current_song();
-		AudioSource* a = cs->get_audiosources_list()->get_audio_for_source(s);
-		cs->remove_all_clips_for_audio(a);
-		cs->get_audiosources_list()->remove(a);
-		delete a;
-		QFile file(s);
-		if (!file.remove())
-			{
-			PERROR("failed to remove file %s\n", s.toAscii().data());
-			r = -1;
-			}
-		QString peakFile = s + ".peak" ;
-		file.setFileName(peakFile);
-		if (!file.remove())
-			{
-			PERROR("failed to remove file %s\n", peakFile.toAscii().data());
-			r = -1;
-			}*/
-	return r;
 }
 
 int ProjectManager::load_project(QString projectName)
 {
 	PENTER;
-	if(!projectExists(projectName)) {
+	
+	if( ! project_exists(projectName) ) {
 		PERROR("project %s doesn't exist\n", projectName.toAscii().data());
 		return -1;
 	}
 
 	Project *newProject = new Project(projectName);
+	
 	if (!newProject)
 		return -1;
 
-	emit projectLoaded(newProject);
+	set_current_project(newProject);
 
-	if (newProject->load() > 0) {
-		set_current_project(newProject);
-	} else {
-		delete newProject;
+	if (currentProject->load() < 0) {
+		set_current_project( (Project*) 0 );
 		PERROR("couldn't load project %s", projectName.toAscii().data());
 		return -1;
 	}
@@ -192,8 +137,7 @@ int ProjectManager::remove_project( QString name )
 	// check if we are removing the currentProject, and delete it before removing its files
 	if (project_is_current(name)) {
 		PMESG("removing current project\n");
-		delete currentProject;
-		currentProject = NULL;
+		set_current_project( 0 );
 	}
 	
 	return FileHelper::remove_recursively( name );
@@ -212,7 +156,7 @@ bool ProjectManager::project_is_current(QString title)
 	return false;
 }
 
-bool ProjectManager::projectExists(QString title)
+bool ProjectManager::project_exists(QString title)
 {
 	QSettings settings;
 	QString project_dir = settings.value("Project/directory").toString();
@@ -239,11 +183,7 @@ Command* ProjectManager::save_project()
 
 Project * ProjectManager::get_project( )
 {
-	if (currentProject) {
-		return currentProject;
-	}
-	
-	return (Project*) 0;
+	return currentProject;
 }
 
 void ProjectManager::start( )
@@ -252,19 +192,19 @@ void ProjectManager::start( )
 	int loadProjectAtStartUp = settings.value("Project/loadLastUsed").toInt();
 	
 	if (loadProjectAtStartUp != 0) {
-		QString sCurrentProject = settings.value("Project/current").toString();
+		QString projectToLoad = settings.value("Project/current").toString();
 		
-		if ((sCurrentProject.isNull()) || (sCurrentProject.isEmpty()))
-			sCurrentProject="Untitled";
+		if ( projectToLoad.isNull() || projectToLoad.isEmpty() )
+			projectToLoad="Untitled";
 		
-		if (projectExists(sCurrentProject)) {
-			if (load_project(sCurrentProject) < 0) {
-				PWARN("Cannot load project %s. Continuing anyway...", sCurrentProject.toAscii().data());
-				info().warning(tr("Could not load project \"").append(sCurrentProject).append("\""));
+		if (project_exists(projectToLoad)) {
+			if ( load_project(projectToLoad) < 0 ) {
+				PWARN("Cannot load project %s. Continuing anyway...", projectToLoad.toAscii().data());
+				info().warning( tr("Could not load project %1").arg(projectToLoad) );
 			}
 		} else {
 			if (create_new_project("Untitled", 1) < 0) {
-				PWARN("Cannot load project Untitled. Continuing anyway...");
+				PWARN("Cannot create project Untitled. Continuing anyway...");
 			}
 		}
 	}
@@ -273,10 +213,7 @@ void ProjectManager::start( )
 Command* ProjectManager::exit()
 {
 
-	if (currentProject) {
-		currentProject->save();
-		delete currentProject;
-	}
+	set_current_project( (Project*) 0 );
 
 	ie().free_memory();
 	

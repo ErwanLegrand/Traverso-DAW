@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioPluginController.cpp,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
+    $Id: AudioPluginController.cpp,v 1.2 2006/05/01 21:21:37 r_sijrier Exp $
 */
 
 #include "AudioPluginController.h"
@@ -94,7 +94,7 @@ void AudioPluginController::draw()
 void AudioPluginController::update_current_node(int x)
 {
         PENTER4;
-        nframes_t blockPos = parentChain->assocTrack->get_parent_song()->xpos_to_block(x);
+        nframes_t blockPos = parentChain->assocTrack->get_song()->xpos_to_block(x);
         CurveNode* lastnode = curve[currentCurveIndex]->currentNode;
         if (blockPos > 0) {
                 CurveNode* cn = curve[currentCurveIndex]->get_nearest_node(blockPos);

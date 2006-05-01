@@ -23,13 +23,14 @@ DESTDIR = ../../lib
 TEMPLATE = lib 
 HEADERS += precompile.h \
 	   AudioClipList.h \
+	   AudioClipManager.h \
            AudioSource.h \
 	   ContextItem.h \
            AudioPluginChain.h \
            AudioPluginController.h \
            Track.h \
            AudioClip.h \
-           AudioSourcesList.h \
+           AudioSourceManager.h \
            Command.h \
            Curve.h \
            Debugger.h \
@@ -66,10 +67,11 @@ SOURCES += AudioClip.cpp \
            ReadSource.cpp \
            WriteSource.cpp \
 	   AudioClipList.cpp \
+	   AudioClipManager.cpp \
            AudioPluginChain.cpp \
            AudioPluginController.cpp \
            AudioSource.cpp \
-           AudioSourcesList.cpp \
+           AudioSourceManager.cpp \
            Command.cpp \
 	   ContextItem.cpp \
            ContextPointer.cpp \
