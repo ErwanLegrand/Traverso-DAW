@@ -17,19 +17,20 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ClipGain.h,v 1.1 2006/04/20 14:51:13 r_sijrier Exp $
+    $Id: ClipGain.h,v 1.2 2006/05/01 21:13:32 r_sijrier Exp $
 */
 
 #ifndef CLIPGAIN_H
 #define CLIPGAIN_H
 
-#include <libtraversocore.h>
+#include "Command.h"
 
+class AudioClip;
 
 class ClipGain : public Command
 {
 public :
-        ClipGain(AudioClip* clip);
+        ClipGain(AudioClip* clip, float gain = -1);
         ~ClipGain();
 
         int begin_hold();
