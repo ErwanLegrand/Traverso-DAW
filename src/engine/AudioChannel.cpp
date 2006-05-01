@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioChannel.cpp,v 1.2 2006/04/25 17:00:31 r_sijrier Exp $
+    $Id: AudioChannel.cpp,v 1.3 2006/05/01 21:22:34 r_sijrier Exp $
 */
 
 #include "AudioChannel.h"
@@ -89,6 +89,7 @@ void AudioChannel::set_buffer_size( nframes_t size )
 
         buf = new audio_sample_t[size];
         bufSize = size;
+        silence_buffer(size);
 }
 
 
