@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SplitClip.cpp,v 1.1 2006/04/20 14:51:13 r_sijrier Exp $
+    $Id: SplitClip.cpp,v 1.2 2006/05/01 21:17:12 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -33,7 +33,7 @@ SplitClip::SplitClip(Song* song, AudioClip* clip)
 {
         m_clip = clip;
         m_song = song;
-        m_track = clip->get_parent_track();
+        m_track = clip->get_track();
 }
 
 
@@ -60,8 +60,8 @@ int SplitClip::do_action()
         PENTER;
         m_track->remove_clip(m_clip);
 
-        leftClip->get_parent_track()->add_clip(leftClip);
-        rightClip->get_parent_track()->add_clip(rightClip);
+        leftClip->get_track()->add_clip(leftClip);
+        rightClip->get_track()->add_clip(rightClip);
 
         return 1;
 }
@@ -71,8 +71,8 @@ int SplitClip::undo_action()
         PENTER;
         m_track->add_clip(m_clip);
 
-        leftClip->get_parent_track()->remove_clip(leftClip);
-        rightClip->get_parent_track()->remove_clip(rightClip);
+        leftClip->get_track()->remove_clip(leftClip);
+        rightClip->get_track()->remove_clip(rightClip);
 
         return 1;
 }
