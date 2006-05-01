@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Import.cpp,v 1.2 2006/05/01 21:15:40 r_sijrier Exp $
+$Id: Import.cpp,v 1.3 2006/05/01 22:09:41 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -88,19 +88,23 @@ int Import::prepare_actions()
 	m_clip = new AudioClip(m_track, 0, name);
 
 	int channels = source->get_channel_count();
+	
+	delete source;
+	
+	
 	ReadSource* existingSource;
 
 	for (int channel=0; channel < channels; channel++) {
 		
-		if ( (existingSource = project->get_audiosource_manager()->get_source( m_fileName, channel)) != 0) {
-			PWARN("Using existing AudioSource object");
+		existingSource = project->get_audiosource_manager()->get_readsource( m_fileName, channel);
+		
+		if ( existingSource ) {
 			m_clip->add_audio_source(existingSource, channel);
 		} else {
-			PWARN("Creating new AudioSource object");
+			
 			ReadSource* newSource = project->get_audiosource_manager()->new_readsource(dir, name, channel, 0, 0);
 
-			if (newSource->init() < 0) {
-				// Hmmmm this will mess up certain things a little but is unlikey to happen....
+			if ( ! newSource) {
 				PERROR("Failed to initialize ReadSource %s for channel %d", m_fileName.toAscii().data(), channel);
 				return -1;
 			}
@@ -108,8 +112,6 @@ int Import::prepare_actions()
 			m_clip->add_audio_source(newSource, channel);
 		}
 	}
-
-	delete source;
 
 	return 1;
 }
