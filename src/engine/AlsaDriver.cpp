@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AlsaDriver.cpp,v 1.1 2006/04/20 14:50:44 r_sijrier Exp $
+$Id: AlsaDriver.cpp,v 1.2 2006/05/01 19:42:41 r_sijrier Exp $
 */
 
 
@@ -135,6 +135,11 @@ int AlsaDriver::setup()
 	playback_addr = 0;
 	capture_addr = 0;
 
+	playback_hw_params = 0;
+	capture_hw_params = 0;
+	playback_sw_params = 0;
+	capture_sw_params = 0;
+
 
 	silent = 0;
 	all_monitor_in = false;
@@ -245,10 +250,6 @@ int AlsaDriver::setup()
 		}
 	}
 
-	playback_hw_params = 0;
-	capture_hw_params = 0;
-	playback_sw_params = 0;
-	capture_sw_params = 0;
 
 	if (playback_handle) {
 		if ((err = snd_pcm_hw_params_malloc (&playback_hw_params)) < 0) {
