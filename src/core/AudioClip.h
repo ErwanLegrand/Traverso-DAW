@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.4 2006/05/01 21:21:37 r_sijrier Exp $
+$Id: AudioClip.h,v 1.5 2006/05/02 13:11:00 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -55,9 +55,9 @@ public:
 	
 	void set_blur(bool stat);
 	void set_gain(float g);
-	void set_track_first_block(nframes_t newTrackFirstBlock);
-	void set_last_source_block(nframes_t block);
-	void set_first_source_block(nframes_t block);
+	void set_track_start_frame(nframes_t newTrackFirstBlock);
+	void set_source_end_frame(nframes_t block);
+	void set_source_start_frame(nframes_t block);
 	void set_name(QString name);
 	void set_fade_in(nframes_t b);
 	void set_fade_out(nframes_t b);
@@ -78,12 +78,12 @@ public:
 	float get_fade_factor_for(nframes_t pos); // pos : position in the track
 	
 	nframes_t get_length() const;
-	nframes_t get_track_first_block() const;
-	nframes_t get_track_last_block() const;
-	nframes_t get_source_first_block() const;
-	nframes_t get_source_last_block() const;
-	nframes_t get_fade_in_blocks() const;
-	nframes_t get_fade_out_blocks() const;
+	nframes_t get_track_start_frame() const;
+	nframes_t get_track_end_frame() const;
+	nframes_t get_source_start_frame() const;
+	nframes_t get_source_end_frame() const;
+	nframes_t get_fade_in_frames() const;
+	nframes_t get_fade_out_frames() const;
 	nframes_t get_source_length() const;
 	
 	int get_baseY() const;
@@ -102,11 +102,11 @@ public:
 
 	static bool smaller(const AudioClip* left, const AudioClip* right )
 	{
-		return left->get_track_first_block() < right->get_track_first_block();
+		return left->get_track_start_frame() < right->get_track_start_frame();
 	}
 	static bool greater(const AudioClip* left, const AudioClip* right )
 	{
-		return left->get_track_first_block() > right->get_track_first_block();
+		return left->get_track_start_frame() > right->get_track_start_frame();
 	}
 
 	int process(nframes_t nframes);
