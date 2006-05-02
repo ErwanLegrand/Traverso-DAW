@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Song.cpp,v 1.4 2006/05/01 21:21:37 r_sijrier Exp $
+    $Id: Song.cpp,v 1.5 2006/05/02 13:10:02 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -715,8 +715,8 @@ Command* Song::work_next_edge()
 	
 	foreach(Track* track, m_tracks) {
 		AudioClip* c=track->get_clip_after(workingFrame);
-		if ((c) && (c->get_track_first_block()<w))
-			w=c->get_track_first_block();
+		if ((c) && (c->get_track_start_frame()<w))
+			w=c->get_track_start_frame();
 	}
 	
 	if ( w != acmanager->get_last_frame() )
@@ -730,8 +730,8 @@ Command* Song::work_previous_edge()
 	nframes_t w = 0;
 	foreach(Track* track, m_tracks) {
 		AudioClip* c = track->get_clip_before(workingFrame);
-		if ((c) && (c->get_track_first_block() >= w))
-			w=c->get_track_first_block();
+		if ((c) && (c->get_track_start_frame() >= w))
+			w=c->get_track_start_frame();
 	}
 	set_work_at(w);
 	return (Command*) 0;
@@ -788,6 +788,7 @@ int Song::process( nframes_t nframes )
 	masterOut->silence_buffers(nframes);
 
 	int processResult = 0;
+	
 	// Process all Tracks.
 	foreach(Track* track, m_tracks) {
 		processResult |= track->process(nframes);
@@ -795,6 +796,11 @@ int Song::process( nframes_t nframes )
 
 	// update the transport_frame
 	transport_frame += nframes;
+	
+	if (seeking) {
+		start_seek();
+	}
+	
 
 	if (!processResult) {
 		return 0;
@@ -805,10 +811,6 @@ int Song::process( nframes_t nframes )
 		Mixer::mix_buffers_no_gain(playBackBus->get_buffer(0, nframes), masterOut->get_buffer(0, nframes), nframes);
 		Mixer::mix_buffers_no_gain(playBackBus->get_buffer(1, nframes), masterOut->get_buffer(1, nframes), nframes);
 		playBackBus->monitor_peaks();
-	}
-
-	if (seeking) {
-		start_seek();
 	}
 
 	return 1;
