@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.h,v 1.2 2006/05/01 21:21:37 r_sijrier Exp $
+$Id: ReadSource.h,v 1.3 2006/05/02 13:14:14 r_sijrier Exp $
 */
 
 #ifndef READSOURCE_H
@@ -44,7 +44,6 @@ public :
 
 	int init();
 	int ref();
-	void set_source_start_offset(nframes_t offset);
 	void set_rb_ready(bool ready);
 	void set_active();
 	void set_inactive();
@@ -59,7 +58,6 @@ private:
 	mutable uint32_t 		m_read_data_count;
 	nframes_t			rbFileReadPos;
 	nframes_t			rbRelativeFileReadPos;
-	nframes_t			sourceStartOffset;
 	nframes_t			syncPos;
 	bool					needSync;
 	bool					rbReady;

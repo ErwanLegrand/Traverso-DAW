@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.cpp,v 1.3 2006/05/01 21:21:37 r_sijrier Exp $
+$Id: ReadSource.cpp,v 1.4 2006/05/02 13:14:14 r_sijrier Exp $
 */
 
 #include "ReadSource.h"
@@ -65,7 +65,6 @@ int ReadSource::init( )
 	rbRelativeFileReadPos = 0;
 	rbReady = true;
 	needSync = false;
-	sourceStartOffset = 0;
 	readbuffer = 0;
 	readbuffersize = 0;
 	sf = 0;
@@ -220,11 +219,6 @@ int ReadSource::process_ringbuffer( audio_sample_t * framebuffer )
 	}
 	
 	return 0;
-}
-
-void ReadSource::set_source_start_offset( nframes_t offset )
-{
-	sourceStartOffset = offset;
 }
 
 void ReadSource::start_resync( nframes_t position )
