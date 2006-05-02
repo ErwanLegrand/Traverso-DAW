@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.4 2006/05/02 13:13:27 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.5 2006/05/02 19:21:10 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -48,8 +48,7 @@ AudioClipView::AudioClipView(ViewPort * vp, TrackView* parent, AudioClip* clip )
 
 	connect(m_clip, SIGNAL(muteChanged(bool )), this, SLOT(mute_changed(bool )));
 	connect(m_clip, SIGNAL(stateChanged()), this, SLOT(schedule_for_repaint()));
-	connect(m_clip, SIGNAL(trackStartFrameChanged()), m_tv, SLOT (repaint_all_clips()));
-	connect(m_clip, SIGNAL(edgePositionChanged()), m_tv, SLOT (repaint_all_clips()));
+	connect(m_clip, SIGNAL(positionChanged()), m_tv, SLOT (repaint_all_clips()));
 
 
 	update_geometry();
