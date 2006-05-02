@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.5 2006/05/02 13:11:00 r_sijrier Exp $
+$Id: AudioClip.h,v 1.6 2006/05/02 19:19:09 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -147,9 +147,8 @@ private:
 signals:
 	void stateChanged();
 	void muteChanged(bool);
-	void trackStartFrameChanged();
+	void positionChanged();
 	void trackEndFrameChanged();
-	void edgePositionChanged();
 
 public slots:
 	void finish_recording();

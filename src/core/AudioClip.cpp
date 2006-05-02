@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.6 2006/05/02 13:10:48 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.7 2006/05/02 19:19:09 r_sijrier Exp $
 */
 
 #include "ContextItem.h"
@@ -160,7 +160,7 @@ void AudioClip::track_mute_changed( bool )
 
 void AudioClip::set_sources_active_state()
 {
-	if ( m_track->is_muted() || is_muted() ) {
+	if ( m_track->is_muted() || m_track->is_muted_by_solo() || is_muted() ) {
 		foreach(ReadSource* source, readSources)
 			source->set_inactive();
 	} else {
@@ -203,24 +203,43 @@ void AudioClip::set_left_edge(nframes_t newFrame)
 		return;
 	}
 
-	emit edgePositionChanged();
+	emit positionChanged();
 }
 
 void AudioClip::set_right_edge(nframes_t newFrame)
 {
-	sourceEndFrame = (newFrame - trackStartFrame);
-
-	if (sourceEndFrame > sourceLength)
-		sourceEndFrame = sourceLength;
-
-	if (sourceEndFrame < sourceStartFrame)
-		sourceEndFrame = sourceStartFrame;
-
-	m_length = sourceEndFrame - sourceStartFrame;
-
-	set_track_end_frame(trackStartFrame + m_length);
-
-	emit edgePositionChanged();
+	PENTER;
+	if (newFrame > trackEndFrame) {
+		
+		int availableFramesRight = sourceLength - sourceEndFrame;
+		
+		int movingToRight = newFrame - trackEndFrame;
+		
+		if (movingToRight > availableFramesRight) {
+			movingToRight = availableFramesRight;
+		}
+		
+		set_track_end_frame( trackEndFrame + movingToRight );
+		set_source_end_frame( sourceEndFrame + movingToRight );
+	
+	} else if (newFrame < trackEndFrame) {
+		
+		int availableFramesLeft = m_length;
+		
+		int movingToLeft = trackEndFrame - newFrame;
+		
+		if (movingToLeft > availableFramesLeft) {
+			movingToLeft = availableFramesLeft;
+		}
+		
+		set_track_end_frame( trackEndFrame - movingToLeft );
+		set_source_end_frame( sourceEndFrame - movingToLeft);
+	
+	} else {
+		return;
+	}
+	
+	emit positionChanged();
 }
 
 void AudioClip::set_source_start_frame(nframes_t frame)
@@ -229,13 +248,10 @@ void AudioClip::set_source_start_frame(nframes_t frame)
 	m_length = sourceEndFrame - sourceStartFrame;
 }
 
-void AudioClip::set_source_end_frame(nframes_t block)
+void AudioClip::set_source_end_frame(nframes_t frame)
 {
-	sourceEndFrame = block;
+	sourceEndFrame = frame;
 	m_length = sourceEndFrame - sourceStartFrame;
-	set_track_end_frame(trackStartFrame + m_length);
-
-	emit stateChanged();
 }
 
 void AudioClip::set_track_start_frame(nframes_t newTrackStartFrame)
@@ -244,7 +260,7 @@ void AudioClip::set_track_start_frame(nframes_t newTrackStartFrame)
 
 	set_track_end_frame(trackStartFrame + m_length);
 
-	emit trackStartFrameChanged();
+	emit positionChanged();
 }
 
 void AudioClip::set_track_end_frame( nframes_t endFrame )
