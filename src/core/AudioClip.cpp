@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.5 2006/05/01 21:21:37 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.6 2006/05/02 13:10:48 r_sijrier Exp $
 */
 
 #include "ContextItem.h"
@@ -145,17 +145,6 @@ QDomNode AudioClip::get_state( QDomDocument doc )
 	return node;
 }
 
-void AudioClip::set_track_first_block(nframes_t newTrackFirstBlock)
-{
-	trackStartFrame=newTrackFirstBlock;
-
-	foreach(ReadSource* source, readSources)
-	source->set_source_start_offset(trackStartFrame + sourceStartFrame);
-
-	set_track_end_frame(trackStartFrame + m_length);
-	emit trackStartFrameChanged();
-}
-
 void AudioClip::toggle_mute()
 {
 	PENTER;
@@ -183,32 +172,36 @@ void AudioClip::set_sources_active_state()
 
 void AudioClip::set_left_edge(nframes_t newFrame)
 {
-	nframes_t olen = sourceEndFrame - sourceStartFrame;
-	nframes_t otff = trackStartFrame;
-	nframes_t origTrackStartFrame = trackStartFrame;
-
-	trackStartFrame = newFrame;
-
-	if (trackStartFrame > trackEndFrame)
-		trackStartFrame = trackEndFrame;
-
-	m_length = olen + otff - newFrame;
-
-	int newSourceStartFrame = (int) (sourceEndFrame - m_length);
-
-	if (newSourceStartFrame < 0) {
-		newSourceStartFrame = 0;
-		trackStartFrame = origTrackStartFrame;
-		m_length = sourceLength;
+	
+	if (newFrame < trackStartFrame) {
+		
+		int availableFramesLeft = sourceStartFrame;
+		
+		int movingToLeft = trackStartFrame - newFrame;
+		
+		if (movingToLeft > availableFramesLeft) {
+			movingToLeft = availableFramesLeft;
+		}
+		
+		trackStartFrame -= movingToLeft;
+		set_source_start_frame( sourceStartFrame - movingToLeft );
+	
+	} else if (newFrame > trackStartFrame) {
+		
+		int availableFramesRight = m_length;
+		
+		int movingToRight = newFrame - trackStartFrame;
+		
+		if (movingToRight > availableFramesRight) {
+			movingToRight = availableFramesRight;
+		}
+		
+		trackStartFrame += movingToRight;
+		set_source_start_frame( sourceStartFrame + movingToRight );
+		
+	} else {
+		return;
 	}
-
-	sourceStartFrame = (nframes_t) newSourceStartFrame;
-
-	if (sourceStartFrame > sourceLength)
-		sourceStartFrame = sourceLength;
-
-	foreach(ReadSource* source, readSources)
-		source->set_source_start_offset(trackStartFrame + sourceStartFrame);
 
 	emit edgePositionChanged();
 }
@@ -230,18 +223,28 @@ void AudioClip::set_right_edge(nframes_t newFrame)
 	emit edgePositionChanged();
 }
 
-void AudioClip::set_first_source_block(nframes_t block)
+void AudioClip::set_source_start_frame(nframes_t frame)
 {
-	sourceStartFrame = block;
+	sourceStartFrame = frame;
 	m_length = sourceEndFrame - sourceStartFrame;
 }
 
-void AudioClip::set_last_source_block(nframes_t block)
+void AudioClip::set_source_end_frame(nframes_t block)
 {
 	sourceEndFrame = block;
 	m_length = sourceEndFrame - sourceStartFrame;
 	set_track_end_frame(trackStartFrame + m_length);
+
 	emit stateChanged();
+}
+
+void AudioClip::set_track_start_frame(nframes_t newTrackStartFrame)
+{
+	trackStartFrame = newTrackStartFrame;
+
+	set_track_end_frame(trackStartFrame + m_length);
+
+	emit trackStartFrameChanged();
 }
 
 void AudioClip::set_track_end_frame( nframes_t endFrame )
@@ -301,7 +304,6 @@ int AudioClip::process(nframes_t nframes)
 		return 0;
 	}
 
-	nframes_t read_frames =0;
 	nframes_t mix_pos;
 	float gainFactor = m_gain * m_track->get_gain();
 
@@ -309,10 +311,10 @@ int AudioClip::process(nframes_t nframes)
 		return 0;
 	}
 
-	if ( (trackStartFrame + sourceStartFrame) < m_song->get_transfer_frame()) {
-		mix_pos = m_song->get_transfer_frame() - trackStartFrame;
-		if (mix_pos > m_length)
-			return 0;
+	if ( (trackStartFrame < m_song->get_transfer_frame()) && (trackEndFrame > m_song->get_transfer_frame()) ) {
+
+		mix_pos = m_song->get_transfer_frame() - trackStartFrame + sourceStartFrame;
+
 	} else {
 		return 0;
 	}
@@ -321,6 +323,7 @@ int AudioClip::process(nframes_t nframes)
 	AudioBus* bus = m_song->get_master_out();
 	audio_sample_t* mixdown = m_song->mixdown;
 	int channels = m_channels;
+	nframes_t read_frames = 0;
 	
 	if (channels > bus->get_channel_count())
 		channels = bus->get_channel_count();
@@ -534,7 +537,7 @@ void AudioClip::add_audio_source( ReadSource* rs, int channel )
 	
 	readSources.insert(channel, rs);
 	sourceLength = rs->get_nframes();
-	set_last_source_block( rs->get_nframes() );
+	set_source_end_frame( rs->get_nframes() );
 	m_channels = readSources.size();
 	m_song->get_diskio()->register_read_source( rs );
 	rate = rs->get_rate();
@@ -669,32 +672,32 @@ bool AudioClip::is_recording( ) const
 	return isRecording;
 }
 
-nframes_t AudioClip::get_fade_out_blocks( ) const
+nframes_t AudioClip::get_fade_out_frames( ) const
 {
 	return fadeOutBlocks;
 }
 
-nframes_t AudioClip::get_fade_in_blocks( ) const
+nframes_t AudioClip::get_fade_in_frames( ) const
 {
 	return fadeInBlocks;
 }
 
-nframes_t AudioClip::get_source_last_block( ) const
+nframes_t AudioClip::get_source_end_frame( ) const
 {
 	return sourceEndFrame;
 }
 
-nframes_t AudioClip::get_source_first_block( ) const
+nframes_t AudioClip::get_source_start_frame( ) const
 {
 	return sourceStartFrame;
 }
 
-nframes_t AudioClip::get_track_last_block( ) const
+nframes_t AudioClip::get_track_end_frame( ) const
 {
 	return trackEndFrame;
 }
 
-nframes_t AudioClip::get_track_first_block( ) const
+nframes_t AudioClip::get_track_start_frame( ) const
 {
 	return trackStartFrame;
 }
