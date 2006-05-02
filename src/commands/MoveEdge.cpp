@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveEdge.cpp,v 1.2 2006/05/01 21:16:23 r_sijrier Exp $
+    $Id: MoveEdge.cpp,v 1.3 2006/05/02 13:12:24 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -50,9 +50,9 @@ int MoveEdge::begin_hold()
 {
         PENTER;
         if (m_edge == "set_left_edge")
-                m_originalPos = m_clip->get_track_first_block();
+                m_originalPos = m_clip->get_track_start_frame();
         if (m_edge == "set_right_edge")
-                m_originalPos = m_clip->get_track_last_block();
+                m_originalPos = m_clip->get_track_end_frame();
         return 1;
 }
 

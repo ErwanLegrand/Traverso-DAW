@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.5 2006/05/01 21:21:37 r_sijrier Exp $
+$Id: Track.cpp,v 1.6 2006/05/02 13:13:27 r_sijrier Exp $
 */
 
 #include "Track.h"
@@ -162,16 +162,16 @@ QList<AudioClip* > Track::split_clip(AudioClip* clip, nframes_t splitPoint)
 	PENTER2;
 	QList<AudioClip* > clipPair;
 
-	nframes_t leftLenght = splitPoint - (clip->get_track_first_block());
-	nframes_t rightSourceFirstBlock = clip->get_source_first_block() + leftLenght;
+	nframes_t leftLenght = splitPoint - (clip->get_track_start_frame());
+	nframes_t rightSourceFirstBlock = clip->get_source_start_frame() + leftLenght;
 
 	AudioClip* leftClip = clip->create_copy();
-	leftClip->set_last_source_block(rightSourceFirstBlock);
+	leftClip->set_source_end_frame(rightSourceFirstBlock);
 	clipPair.append(leftClip);
 
 	AudioClip* rightClip = clip->create_copy();
-	rightClip->set_first_source_block( rightSourceFirstBlock );
-	rightClip->set_track_first_block( splitPoint );
+	rightClip->set_source_start_frame( rightSourceFirstBlock );
+	rightClip->set_track_start_frame( splitPoint );
 	clipPair.append(rightClip);
 
 	return clipPair;
@@ -183,9 +183,9 @@ AudioClip* Track::get_clip_under(nframes_t blockPos)
 	AudioClip* clip = (AudioClip*) 0;
 	for (int i=0; i < audioClipList.size(); ++i) {
 		clip = audioClipList.at(i);
-		if ((clip->get_track_first_block() <= blockPos) && (clip->get_track_last_block() >= blockPos))
+		if ((clip->get_track_start_frame() <= blockPos) && (clip->get_track_end_frame() >= blockPos))
 			return clip;
-		if (clip->get_track_first_block() > blockPos)
+		if (clip->get_track_start_frame() > blockPos)
 			break;
 	}
 	return clip;
@@ -205,7 +205,7 @@ AudioClip* Track::get_clip_after(nframes_t blockPos)
 	AudioClip* clip;
 	for (int i=0; i < audioClipList.size(); ++i) {
 		clip = audioClipList.at(i);
-		if (clip->get_track_first_block() > blockPos)
+		if (clip->get_track_start_frame() > blockPos)
 			return clip;
 	}
 	return (AudioClip*) 0;
@@ -218,7 +218,7 @@ AudioClip* Track::get_clip_before(nframes_t blockPos)
 	AudioClip* clip;
 	for (int i=0; i < audioClipList.size(); ++i) {
 		clip = audioClipList.at(i);
-		if (clip->get_track_first_block() < blockPos)
+		if (clip->get_track_start_frame() < blockPos)
 			return clip;
 	}
 	return (AudioClip*) 0;

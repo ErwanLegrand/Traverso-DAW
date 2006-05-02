@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioClipManager.cpp,v 1.1 2006/05/01 21:20:13 r_sijrier Exp $
+    $Id: AudioClipManager.cpp,v 1.2 2006/05/02 13:13:27 r_sijrier Exp $
 */
  
 #include "AudioClipManager.h"
@@ -58,8 +58,8 @@ void AudioClipManager::update_last_frame( )
 	lastFrame = 0; // find the last blockpos in MTA
 	
 	foreach(AudioClip* clip, m_clips) {
-		if (clip->get_track_last_block() >= lastFrame)
-			lastFrame = clip->get_track_last_block();
+		if (clip->get_track_end_frame() >= lastFrame)
+			lastFrame = clip->get_track_end_frame();
 	}
 	
 	emit lastFramePositionChanged();

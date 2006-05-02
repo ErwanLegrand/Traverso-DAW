@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.3 2006/05/01 21:31:58 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.4 2006/05/02 13:13:27 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -371,7 +371,7 @@ void AudioClipView::schedule_for_repaint( )
 void AudioClipView::update_geometry( )
 {
 	PENTER2;
-	nframes_t trackFirstBlock =  m_clip->get_track_first_block();
+	nframes_t trackFirstBlock =  m_clip->get_track_start_frame();
 	int baseX = m_song->block_to_xpos(trackFirstBlock) + m_tv->cliparea_basex();
 	int clipWidth = m_clip->get_width();
 	int baseY  = m_clip->get_baseY();
@@ -451,8 +451,8 @@ void AudioClipView::process_fade_clip()
 		origX = cpointer().clip_area_x();
 		origY = cpointer().y();
 		origGain = m_clip->get_gain();
-		origBlockL = m_clip->get_fade_in_blocks();
-		origBlockR = m_clip->get_fade_out_blocks();
+		origBlockL = m_clip->get_fade_in_frames();
+		origBlockR = m_clip->get_fade_out_frames();
 	}
 }
 
@@ -476,12 +476,12 @@ AudioClip * AudioClipView::get_clip( )
 
 void AudioClipView::update_variables( )
 {
-	sourceLastFrame = m_clip->get_source_last_block();
-	sourceFirstFrame = m_clip->get_source_first_block();
-	trackFirstFrame =  m_clip->get_track_first_block();
-	trackLastFrame = m_clip->get_track_last_block();
-	fadeOutFrames = m_clip->get_fade_out_blocks();
-	fadeInFrames = m_clip->get_fade_in_blocks();
+	sourceLastFrame = m_clip->get_source_end_frame();
+	sourceFirstFrame = m_clip->get_source_start_frame();
+	trackFirstFrame =  m_clip->get_track_start_frame();
+	trackLastFrame = m_clip->get_track_end_frame();
+	fadeOutFrames = m_clip->get_fade_out_frames();
+	fadeInFrames = m_clip->get_fade_in_frames();
 	startFrame = sourceFirstFrame;
 	gain = m_clip->get_gain();
 	hzoom = m_song->get_hzoom();
@@ -495,14 +495,14 @@ void AudioClipView::update_variables( )
 	// Check Cross Fades
 	prevClip = m_clip->prev_clip();
 	nextClip = m_clip->next_clip();
-	prevTLF = prevClip ? prevClip->get_track_last_block() : 0;
-	nextTFF = nextClip ? nextClip->get_track_first_block() : 0;
+	prevTLF = prevClip ? prevClip->get_track_end_frame() : 0;
+	nextTFF = nextClip ? nextClip->get_track_start_frame() : 0;
 	crossAtLeft  = ((prevClip) && (prevTLF > trackFirstFrame));
 	crossAtRight = ((nextClip) && (nextTFF < trackLastFrame));
 	lCrossX = crossAtLeft  ? m_song->block_to_xpos(prevTLF) - m_song->block_to_xpos(trackFirstFrame) : 0;
 	rCrossX = crossAtRight ? m_song->block_to_xpos(trackLastFrame) - m_song->block_to_xpos(nextTFF)  : 0;
 
-	if (crossAtRight && nextClip && (nextClip->get_track_last_block() < trackLastFrame)) {
+	if (crossAtRight && nextClip && (nextClip->get_track_end_frame() < trackLastFrame)) {
 		lCrossX = rCrossX = 0;
 	}
 }
