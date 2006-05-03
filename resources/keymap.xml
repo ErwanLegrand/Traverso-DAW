@@ -25,6 +25,8 @@
 	<keyseq keyfacttype="FKEY" key1="F4" slotname="set_manager_widget" name="Manager Window" sortorder="" />
 	<keyseq keyfacttype="FKEY" key1="I" slotname="import_audiosource" name="Import Audio" sortorder="25" />
 	<keyseq keyfacttype="FKEY" key1="Q" slotname="show_context_menu" name="This Menu" sortorder="100" />
+	<keyseq keyfacttype="FKEY" key1="E" slotname="edit_properties" name="Edit Properties" sortorder="30" />
+	
 	
 	<keyseq keyfacttype="FKEY2" key1="A" key2="B" slotname="about_traverso" name="About" sortorder="" />
 	<keyseq keyfacttype="FKEY2" key1="CTRL" key2="S" slotname="save_project" name="Save Project" sortorder="" />
@@ -36,7 +38,7 @@
 	<keyseq keyfacttype="FKEY2" key1="Z" key2="ALT" slotname="vzoom_out" name="Verticall Zoom out" sortorder="" />
 	<keyseq keyfacttype="FKEY2" key1="Z" key2="A" slotname="vzoom_in" name="Verticall Zoom in" sortorder="" />
 	<keyseq keyfacttype="FKEY2" key1="S" key2="D" slotname="add_to_selection" name="Select (add)" sortorder="30" />
-	<keyseq keyfacttype="FKEY2" key1="S" key2="A" slotname="deselect" name="Select (remove)" sortorder="31" />
+	<keyseq keyfacttype="FKEY2" key1="S" key2="A" slotname="remove_from_selection" name="Select (remove)" sortorder="31" />
 	<keyseq keyfacttype="FKEY2" key1="A" key2="D" slotname="invert_clip_selection" name="Invert Selection" sortorder="" />
 	<keyseq keyfacttype="FKEY2" key1="J" key2="L" slotname="capture_from_channel_both" name="Capture channels both" sortorder="40" />
 	<keyseq keyfacttype="FKEY2" key1="J" key2="K" slotname="capture_from_channel_left" name="Capture left channel" sortorder="41" />
@@ -78,7 +80,7 @@
 	<keyseq keyfacttype="D_FKEY2" key1="F" key2="G" slotname="reset_fade_in" name="Reset fade (in)" sortorder="52" />
 	<keyseq keyfacttype="D_FKEY2" key1="G" key2="H" slotname="reset_fade_out" name="Reset fade (out)" sortorder="53" />
 	<keyseq keyfacttype="D_FKEY2" key1="F" key2="H" slotname="reset_fade_both" name="Reset fade (both)" sortorder="54" />
-	<keyseq keyfacttype="D_FKEY2" key1="C" key2="X" slotname="process_delete" name="Delete" sortorder="" />
+	<keyseq keyfacttype="D_FKEY2" key1="C" key2="X" slotname="delete_selected_clips" name="Delete" sortorder="" />
 	<keyseq keyfacttype="D_FKEY2" key1="SPACE" key2="R" slotname="go_loop_regions" name="Play Regions (loop)" sortorder="" />
 
 	<keyseq keyfacttype="S_FKEY_FKEY" key1="W" key2="E" slotname="work_next_edge" name="Work Cursor Next Edge" sortorder="" />
