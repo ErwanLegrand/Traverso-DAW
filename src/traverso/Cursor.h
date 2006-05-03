@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursor.h,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: Cursor.h,v 1.2 2006/05/03 11:59:39 r_sijrier Exp $
 */
 
 
@@ -90,7 +90,7 @@ private:
 public slots:
         void set_cursor_playmode();
         void set_cursor_normalmode();
-        void set_workcursor_newpos(int newPos);
+        void set_workcursor_newpos();
         void schedule_for_repaint();
         void play_cursor_repaint();
 };

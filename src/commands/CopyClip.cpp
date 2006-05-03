@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: CopyClip.cpp,v 1.1 2006/04/20 14:51:13 r_sijrier Exp $
+    $Id: CopyClip.cpp,v 1.2 2006/05/03 11:59:39 r_sijrier Exp $
 */
 
 #include "AudioClip.h"
@@ -54,7 +54,7 @@ int CopyClip::finish_hold()
 {
         int x = m_song->snapped_x(cpointer().clip_area_x());
         int y = cpointer().y();
-        newInsertBlock = m_song->xpos_to_block( x );
+        newInsertBlock = m_song->xpos_to_frame( x );
         targetTrack = m_song->get_track_under_y(y);
         return 1;
 }

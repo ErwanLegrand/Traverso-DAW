@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Curve.cpp,v 1.2 2006/05/01 21:21:37 r_sijrier Exp $
+    $Id: Curve.cpp,v 1.3 2006/05/03 11:59:39 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -219,7 +219,7 @@ void Curve::show()
         // 		p.setPen(cm().get(CURVE_NONACTIVE));
         // 	while (n)
         // 		{
-        // 		int x = parentSong->block_to_xpos(n->pos);
+        // 		int x = parentSong->frame_to_xpos(n->pos);
         // 		int y = yc + (int) (-1*n->value * half / 100 );
         // 		p.drawLine(lastx, lasty, x, y);
         // 		lastx=x;

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: OverViewWidget.cpp,v 1.3 2006/05/01 21:31:58 r_sijrier Exp $
+    $Id: OverViewWidget.cpp,v 1.4 2006/05/03 11:59:39 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -54,7 +54,7 @@ void OverViewWidget::set_song(Song* song)
 {
         PENTER2;
         m_song = song;
-        connect(m_song, SIGNAL(firstBlockChanged() ), this, SLOT(update( )));
+        connect(m_song, SIGNAL(firstVisibleFrameChanged() ), this, SLOT(update( )));
         connect(m_song, SIGNAL(hzoomChanged() ), this, SLOT(update( )));
 	connect(m_song, SIGNAL(lastFramePositionChanged() ), this, SLOT(update( )));
 }
@@ -68,10 +68,10 @@ void OverViewWidget::paintEvent( QPaintEvent*  )
 
         QPainter painter(this);
 
-        double scale = ( (double) width() ) /   m_song->get_last_block();
+        double scale = ( (double) width() ) /   m_song->get_last_frame();
 
-        nframes_t totalFrames = m_song->get_last_block();
-        nframes_t startFrame = m_song->get_firstblock();
+        nframes_t totalFrames = m_song->get_last_frame();
+        nframes_t startFrame = m_song->get_first_visible_frame();
         nframes_t visibleFrames = width() * Peak::zoomStep[m_song->get_hzoom()];
 
         if (totalFrames == 0)

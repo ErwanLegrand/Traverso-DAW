@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.7 2006/05/02 19:19:09 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.8 2006/05/03 11:59:39 r_sijrier Exp $
 */
 
 #include "ContextItem.h"
@@ -327,9 +327,9 @@ int AudioClip::process(nframes_t nframes)
 		return 0;
 	}
 
-	if ( (trackStartFrame < m_song->get_transfer_frame()) && (trackEndFrame > m_song->get_transfer_frame()) ) {
+	if ( (trackStartFrame < m_song->get_transport_frame()) && (trackEndFrame > m_song->get_transport_frame()) ) {
 
-		mix_pos = m_song->get_transfer_frame() - trackStartFrame + sourceStartFrame;
+		mix_pos = m_song->get_transport_frame() - trackStartFrame + sourceStartFrame;
 
 	} else {
 		return 0;
@@ -381,7 +381,7 @@ void AudioClip::process_capture( nframes_t nframes )
 {
 	for (int channel=0; channel < writeSources.size(); channel++) {
 		WriteSource* source = writeSources.at(channel);
-		nframes_t written = source->rb_write(captureBus->get_buffer(channel, nframes), m_song->get_transfer_frame(), nframes);
+		nframes_t written = source->rb_write(captureBus->get_buffer(channel, nframes), m_song->get_transport_frame(), nframes);
 		if (written != nframes) {
 			PWARN("couldn't write nframes to buffer, only %d", written);
 		}
@@ -491,7 +491,7 @@ Command* AudioClip::drag()
 Command* AudioClip::drag_edge()
 {
 	int x = cpointer().clip_area_x();
-	int cxm = m_song->block_to_xpos( trackStartFrame + ( m_length / 2 ) );
+	int cxm = m_song->frame_to_xpos( trackStartFrame + ( m_length / 2 ) );
 
 	MoveEdge* me;
 
@@ -673,8 +673,8 @@ int AudioClip::get_baseY() const
 
 int AudioClip::get_width() const
 {
-	nframes_t blockWidth = sourceEndFrame - sourceStartFrame;
-	int xwidth = (int) ( blockWidth / Peak::zoomStep[m_song->get_hzoom()] );
+	nframes_t nframes = sourceEndFrame - sourceStartFrame;
+	int xwidth = (int) ( nframes / Peak::zoomStep[m_song->get_hzoom()] );
 	return xwidth;
 }
 

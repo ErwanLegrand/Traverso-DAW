@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.4 2006/05/02 19:21:10 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.5 2006/05/03 11:59:39 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -65,7 +65,7 @@ TrackView::TrackView(ViewPort* vp, SongView* parent, Track* track)
 	connect(m_vp, SIGNAL(resized()), this, SLOT(resize()));
 
 	connect(m_sv->get_song(), SIGNAL(hzoomChanged( )), this, SLOT(repaint_cliparea( )));
-	connect (m_sv->get_song(), SIGNAL(firstBlockChanged()), this, SLOT(repaint_cliparea()));
+	connect (m_sv->get_song(), SIGNAL(firstVisibleFrameChanged()), this, SLOT(repaint_cliparea()));
 
 	connect(m_track, SIGNAL(audioClipAdded(AudioClip* )), this, SLOT(add_new_audioclipview(AudioClip* )));
 	connect(m_track, SIGNAL(audioClipRemoved(AudioClip* )), this, SLOT(remove_audioclipview(AudioClip* )));
@@ -322,8 +322,8 @@ void TrackView::clear_clip_area(QPainter& p)
 	/*	MtaRegion* m = m_track->get_song()->regionList->head();
 		while (m)
 			{
-			int xrs = m_track->get_song()->block_to_xpos(m->beginBlock) + CLIPAREABASEX;
-			int xre = m_track->get_song()->block_to_xpos(m->endBlock) + CLIPAREABASEX;
+			int xrs = m_track->get_song()->frame_to_xpos(m->beginBlock) + CLIPAREABASEX;
+			int xre = m_track->get_song()->frame_to_xpos(m->endBlock) + CLIPAREABASEX;
 			int xs,xe=0;
 			int w = clipAreaWidth;
 			if ((xrs>=0) && (xrs<w))
@@ -351,7 +351,7 @@ void TrackView::add_new_audioclipview( AudioClip * clip )
 	audioClipViewList.append(audioClipView);
 
 	connect(m_sv->get_song(), SIGNAL(hzoomChanged( )), audioClipView, SLOT(schedule_for_repaint()));
-	connect(m_sv->get_song(), SIGNAL(firstBlockChanged()), audioClipView, SLOT(schedule_for_repaint()));
+	connect(m_sv->get_song(), SIGNAL(firstVisibleFrameChanged()), audioClipView, SLOT(schedule_for_repaint()));
 	connect(m_track, SIGNAL(heightChanged()), audioClipView, SLOT(schedule_for_repaint()));
 	connect(m_vp, SIGNAL(resized()), audioClipView, SLOT(schedule_for_repaint()));
 }
@@ -518,7 +518,7 @@ Command* TrackView::select_bus_out()
 void TrackView::touch_track(int , int x)
 {
 	PENTER;
-	m_sv->get_song()->set_work_at(m_sv->xpos_to_block(x));
+	m_sv->get_song()->set_work_at(m_sv->xpos_to_frame(x));
 	m_sv->get_song()->set_active_track(m_track->get_id());
 }
 

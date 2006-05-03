@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Song.cpp,v 1.5 2006/05/02 13:10:02 r_sijrier Exp $
+    $Id: Song.cpp,v 1.6 2006/05/03 11:59:39 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -134,7 +134,7 @@ void Song::init()
 	scheduleForDeletion = false;
 	isSnapOn=true;
 	changed = rendering = false;
-	firstFrame=workingFrame=activeTrackNumber=0;
+	firstVisibleFrame=workingFrame=activeTrackNumber=0;
 }
 
 int Song::set_state( const QDomNode & node )
@@ -149,22 +149,27 @@ int Song::set_state( const QDomNode & node )
 	artists = e.attribute( "artists", "" );
 	activeTrackNumber = e.attribute( "activeTrackNumber", "" ).toInt();
 	set_hzoom(e.attribute( "hzoom", "" ).toInt());
-	set_first_block(e.attribute( "firstFrame", "" ).toUInt());
+	set_first_visible_frame(e.attribute( "firstVisibleFrame", "0" ).toUInt());
 	set_work_at(e.attribute( "workingFrame", "0").toUInt());
+	
 	int trackBaseY = LocatorView::LOCATOR_HEIGHT;
 
 	QDomNode tracksNode = node.firstChildElement("Tracks");
 	QDomNode trackNode = tracksNode.firstChild();
+	
 	while(!trackNode.isNull()) {
 		Track* track = new Track(this, trackNode);
 		track->set_baseY(trackBaseY);
+		
 		foreach(Track* existingTrack, m_tracks) {
 			if (existingTrack->is_solo()) {
 				track->set_muted_by_solo( true );
 				break;
 			}
 		}
+		
 		add_track( track, track->get_id());
+		
 		trackBaseY += track->get_height();
 		trackNode = trackNode.nextSibling();
 	}
@@ -180,7 +185,7 @@ QDomNode Song::get_state(QDomDocument doc)
 	properties.setAttribute("title", title);
 	properties.setAttribute("artists", artists);
 	properties.setAttribute("activeTrackNumber", activeTrackNumber);
-	properties.setAttribute("firstFrame", firstFrame);
+	properties.setAttribute("firstVisibleFrame", firstVisibleFrame);
 	properties.setAttribute("workingFrame", workingFrame);
 	properties.setAttribute("hzoom", m_hzoom);
 	songNode.appendChild(properties);
@@ -294,10 +299,10 @@ int Song::prepare_export(ExportSpecification* spec)
 	}
 
 	rendering = true;
-	transport_frame = 0;
+	transportFrame = 0;
 
 	spec->start_frame = 0;
-	spec->end_frame = get_last_block();
+	spec->end_frame = get_last_frame();
 	spec->total_frames = spec->end_frame - spec->start_frame;
 	spec->pos = 0;
 	spec->progress = 0;
@@ -408,7 +413,7 @@ int Song::snapped_x(int x)
 {
 	int nx = x;
 	if (isSnapOn) {
-		int wx = block_to_xpos(workingFrame);
+		int wx = frame_to_xpos(workingFrame);
 		// TODO check if it is close to upper or lower nearest clip's edges
 		if (nx<10) // check if it is close to track begin
 			nx=0;
@@ -421,9 +426,9 @@ int Song::snapped_x(int x)
 	return nx;
 }
 
-nframes_t Song::xpos_to_block(int xpos)
+nframes_t Song::xpos_to_frame(int xpos)
 {
-	return (firstFrame + xpos * Peak::zoomStep[m_hzoom]);
+	return (firstVisibleFrame + xpos * Peak::zoomStep[m_hzoom]);
 }
 
 Track* Song::get_track_under_y(int y)
@@ -465,18 +470,18 @@ void Song::set_active_track(int trackNumber)
 	m_tracks.value(activeTrackNumber)->activate();
 }
 
-int Song::block_to_xpos(nframes_t block)
+int Song::frame_to_xpos(nframes_t frame)
 {
-	float pos = (float) block;
-	float start = (float)firstFrame;
+	float pos = (float) frame;
+	float start = (float)firstVisibleFrame;
 	return (int) ((pos - start)  / Peak::zoomStep[m_hzoom]);
 }
 
-void Song::set_first_block(nframes_t pos)
+void Song::set_first_visible_frame(nframes_t pos)
 {
 	PENTER;
-	firstFrame = pos;
-	emit firstBlockChanged();
+	firstVisibleFrame = pos;
+	emit firstVisibleFrameChanged();
 }
 
 void Song::set_work_at(nframes_t pos)
@@ -491,6 +496,7 @@ void Song::set_work_at(nframes_t pos)
 		start_seek();
 
 	seeking = true;
+	emit workingPosChanged();
 }
 
 void Song::start_seek()
@@ -513,7 +519,7 @@ void Song::start_seek()
 void Song::seek_finished()
 {
 	printf("Song :: entering seek_finished\n");
-	transport_frame = newTransportFramePos;
+	transportFrame = newTransportFramePos;
 	seeking = false;
 
 	if (resumeTransport) {
@@ -522,7 +528,6 @@ void Song::seek_finished()
 		resumeTransport = false;
 	}
 
-	// 	emit workingPosChanged(block_to_xpos(transport_frame));
 	printf("Song :: leaving seek_finished\n\n");
 }
 
@@ -551,15 +556,6 @@ Command* Song::create_track()
 
 Command* Song::create_region()
 {
-	if (ie().is_holding()) {
-		origBlockL = xpos_to_block(cpointer().clip_area_x());
-		origBlockR = 0;
-		// 		ie().set_jogging(true);
-	} else {
-		origBlockR = xpos_to_block(cpointer().clip_area_x());
-		MtaRegion* m = new MtaRegion(origBlockL,origBlockR);
-		regionList->add_region(m);
-	}
 	return (Command*) 0;
 }
 
@@ -794,8 +790,8 @@ int Song::process( nframes_t nframes )
 		processResult |= track->process(nframes);
 	}
 
-	// update the transport_frame
-	transport_frame += nframes;
+	// update the transportFrame
+	transportFrame += nframes;
 	
 	if (seeking) {
 		start_seek();
@@ -826,8 +822,8 @@ int Song::process_export( nframes_t nframes )
 		track->process(nframes);
 	}
 
-	// update the transport_frame
-	transport_frame += nframes;
+	// update the transportFrame
+	transportFrame += nframes;
 
 	return 1;
 }
@@ -848,9 +844,9 @@ int Song::get_rate( )
 	return m_project->get_rate();
 }
 
-nframes_t Song::get_firstblock( ) const
+nframes_t Song::get_first_visible_frame( ) const
 {
-	return firstFrame;
+	return firstVisibleFrame;
 }
 
 void Song::update_cursor_pos()
@@ -881,7 +877,7 @@ void Song::handle_diskio_outofsync( )
 		// Stop transport, and resync diskio, we can handle this just fine
 		// with a seek request! set_work_at() starts the seek routine...
 		// 		transport = false;
-		set_work_at(transport_frame);
+		set_work_at(transportFrame);
 	} else {
 		PWARN("diskio out of sync received, but no transport????");
 	}
@@ -892,7 +888,7 @@ void Song::audiodevice_started( )
 	playBackBus = audiodevice().get_playback_bus("Playback 1");
 }
 
-nframes_t Song::get_last_block( ) const
+nframes_t Song::get_last_frame( ) const
 {
 	return acmanager->get_last_frame();
 }

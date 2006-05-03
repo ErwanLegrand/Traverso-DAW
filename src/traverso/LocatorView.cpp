@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: LocatorView.cpp,v 1.2 2006/05/01 21:31:58 r_sijrier Exp $
+    $Id: LocatorView.cpp,v 1.3 2006/05/03 11:59:39 r_sijrier Exp $
 */
 
 #include "LocatorView.h"
@@ -92,7 +92,7 @@ void LocatorView::draw_locator( QPainter & p )
         p.setFont( QFont( "Bitstream Vera Sans", 8) );
         /*	if (ie().is_jogging() == m_sv->get_song()->JogCreateRegion)
         		{
-        		int xs = m_sv->get_song()->block_to_xpos(m_sv->get_song()->origBlockL) + clipAreaBaseX;
+        		int xs = m_sv->get_song()->frame_to_xpos(m_sv->get_song()->origBlockL) + clipAreaBaseX;
         		int xe = m_vp->get_mouse_x();
         		if (xs<0) xs=0;
         		if ( xe > clipAreaWidth )
@@ -102,13 +102,13 @@ void LocatorView::draw_locator( QPainter & p )
         int k=0;
         int rate = pm().get_project()->get_rate();
         int zoomStep = Peak::zoomStep[m_sv->get_song()->get_hzoom()];
-        nframes_t lastb = m_sv->get_song()->get_firstblock() + clipAreaWidth * zoomStep;
-        nframes_t firstFrame = m_sv->get_song()->get_firstblock();
+        nframes_t lastb = m_sv->get_song()->get_first_visible_frame() + clipAreaWidth * zoomStep;
+        nframes_t firstFrame = m_sv->get_song()->get_first_visible_frame();
 
         for (nframes_t b = firstFrame; b < lastb; b += (zoomStep * 10) ) {
                 if (b < firstFrame)
                         continue;
-                int x = m_sv->get_song()->block_to_xpos(b) + clipAreaBaseX;
+                int x = m_sv->get_song()->frame_to_xpos(b) + clipAreaBaseX;
                 p.drawLine(x, 19, x, LOCATOR_HEIGHT);
                 if (++k>10) {
                         p.drawLine(x, 8, x, LOCATOR_HEIGHT);

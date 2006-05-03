@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.h,v 1.3 2006/05/01 21:21:37 r_sijrier Exp $
+$Id: Track.h,v 1.4 2006/05/03 11:59:39 r_sijrier Exp $
 */
 
 
@@ -63,10 +63,10 @@ public :
 	int disarm();
 	void toggle_active();
 
-	AudioClip* get_clip_under(nframes_t blockPos);
-	AudioClip* get_clip_after(nframes_t blockPos);
-	AudioClip* get_clip_before(nframes_t blockPos);
-	AudioClip* get_clip_between(nframes_t blockPosL, nframes_t blockPosR);
+	AudioClip* get_clip_under(nframes_t framePos);
+	AudioClip* get_clip_after(nframes_t framePos);
+	AudioClip* get_clip_before(nframes_t framePos);
+	AudioClip* get_clip_between(nframes_t framePosL, nframes_t framePosR);
 
 	QList<AudioClip* > split_clip(nframes_t splitPoint);
 	QList<AudioClip* > split_clip(AudioClip* c, nframes_t splitPoint);

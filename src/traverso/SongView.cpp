@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongView.cpp,v 1.3 2006/05/01 21:35:06 r_sijrier Exp $
+    $Id: SongView.cpp,v 1.4 2006/05/03 11:59:39 r_sijrier Exp $
 */
 
 #include <QPainter>
@@ -61,7 +61,7 @@ SongView::SongView(Song* song, ViewPort* vp)
 
         connect(m_song, SIGNAL(trackCreated(Track* )), this, SLOT(add_new_trackview(Track* )));
         connect(m_song, SIGNAL(hzoomChanged( )), m_locator, SLOT(hzoom_changed( )));
-        connect(m_song, SIGNAL(firstBlockChanged()), m_locator, SLOT(schedule_for_repaint()));
+        connect(m_song, SIGNAL(firstVisibleFrameChanged()), m_locator, SLOT(schedule_for_repaint()));
         connect(m_vp, SIGNAL(resized()), this, SLOT(resize()));
         connect(m_vp, SIGNAL(pointChanged( ) ), this, SLOT(set_context()));
 
@@ -218,8 +218,8 @@ Command* SongView::center()
         int w = view->cliparea_width();
         int half = w/2;
         nframes_t minimumBlockToCenter =  w * Peak::zoomStep[m_song->get_hzoom()] / 2;
-        if ( m_song->get_working_block() >= minimumBlockToCenter ) {
-                int x = m_song->block_to_xpos(m_song->get_working_block());
+        if ( m_song->get_working_frame() >= minimumBlockToCenter ) {
+                int x = m_song->frame_to_xpos(m_song->get_working_frame());
                 if (x<half) {
                         scrollAmount = half - x;
                         scroll_left();
@@ -236,7 +236,7 @@ Command* SongView::scroll_right()
 {
         PENTER3;
         if (scrollAmount != 0)
-                m_song->set_first_block(m_song->get_firstblock() + scrollAmount * Peak::zoomStep[m_song->get_hzoom()]);
+                m_song->set_first_visible_frame(m_song->get_first_visible_frame() + scrollAmount * Peak::zoomStep[m_song->get_hzoom()]);
         scrollAmount = 20;
         return (Command*) 0;
 }
@@ -245,11 +245,11 @@ Command* SongView::scroll_right()
 Command* SongView::scroll_left()
 {
         PENTER3;
-        int frame = m_song->get_firstblock() - scrollAmount * Peak::zoomStep[m_song->get_hzoom()];
+        int frame = m_song->get_first_visible_frame() - scrollAmount * Peak::zoomStep[m_song->get_hzoom()];
         if (frame < 0)
                 frame  = 0;
         if (scrollAmount != 0)
-                m_song->set_first_block(frame);
+                m_song->set_first_visible_frame(frame);
         scrollAmount = 20;
         return (Command*) 0;
 }
@@ -339,14 +339,14 @@ Command* SongView::jog_vertical_scroll()
 Command* SongView::goto_begin()
 {
         m_song->set_work_at(0);
-        m_song->set_first_block(0);
+        m_song->set_first_visible_frame(0);
         return (Command*) 0;
 }
 
 
 Command* SongView::goto_end()
 {
-        m_song->set_work_at(m_song->get_last_block());
+        m_song->set_work_at(m_song->get_last_frame());
         center();
         return (Command*) 0;
 }

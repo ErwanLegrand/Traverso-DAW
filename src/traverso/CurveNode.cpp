@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: CurveNode.cpp,v 1.2 2006/05/01 21:31:58 r_sijrier Exp $
+    $Id: CurveNode.cpp,v 1.3 2006/05/03 11:59:39 r_sijrier Exp $
 */
 
 #include "CurveNode.h"
@@ -104,7 +104,7 @@ void CurveNode::draw()
         		int baseY = parentTrack->get_baseY();
         		int half = parentTrack->get_height()/2;
         		int yc = baseY + half;
-        		int x = parentTrack->get_song()->block_to_xpos(pos);// + iface->get_songview()->cliparea_basex();
+        		int x = parentTrack->get_song()->frame_to_xpos(pos);// + iface->get_songview()->cliparea_basex();
         		int y = yc + (int) (-1*value*half/100);
          
          

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveEdge.cpp,v 1.3 2006/05/02 13:12:24 r_sijrier Exp $
+    $Id: MoveEdge.cpp,v 1.4 2006/05/03 11:59:39 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -77,7 +77,7 @@ int MoveEdge::undo_action()
 
 int MoveEdge::jog()
 {
-        m_newPos = m_song->xpos_to_block(cpointer().clip_area_x());
+        m_newPos = m_song->xpos_to_frame(cpointer().clip_area_x());
         return do_action();
 }
 

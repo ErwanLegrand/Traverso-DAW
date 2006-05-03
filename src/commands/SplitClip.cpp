@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SplitClip.cpp,v 1.2 2006/05/01 21:17:12 r_sijrier Exp $
+    $Id: SplitClip.cpp,v 1.3 2006/05/03 11:59:39 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -43,7 +43,7 @@ SplitClip::~SplitClip()
 
 int SplitClip::prepare_actions()
 {
-        splitPoint = m_song->xpos_to_block( cpointer().clip_area_x());
+        splitPoint = m_song->xpos_to_frame( cpointer().clip_area_x());
 
         leftClip = m_clip->create_copy();
         rightClip = m_clip->create_copy();

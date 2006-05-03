@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.h,v 1.4 2006/05/02 19:20:16 r_sijrier Exp $
+$Id: Song.h,v 1.5 2006/05/03 11:59:39 r_sijrier Exp $
 */
 
 #ifndef SONG_H
@@ -69,7 +69,7 @@ public:
 	int get_floorY();
 	int get_playing_xpos()
 	{
-		return block_to_xpos(transport_frame);
+		return frame_to_xpos(transportFrame);
 	}
 	int get_rate();
 	int get_bitdepth();
@@ -85,13 +85,13 @@ public:
 	{
 		return activeTrackNumber;
 	}
-	nframes_t get_transfer_frame() const;
-	nframes_t get_working_block() const
+	nframes_t get_transport_frame() const;
+	nframes_t get_working_frame() const
 	{
 		return workingFrame;
 	}
-	nframes_t get_firstblock() const;
-	nframes_t get_last_block() const;
+	nframes_t get_first_visible_frame() const;
+	nframes_t get_last_frame() const;
 	
 	Track*       get_track(int trackNumber);
 	Track*       get_track_under_y (int y);
@@ -113,7 +113,7 @@ public:
 	void set_artists(QString pArtistis);
 	void set_active_track(int trackNumber);
 	void update_cursor_pos();
-	void set_first_block(nframes_t pos);
+	void set_first_visible_frame(nframes_t pos);
 	void set_master_gain(float pMasterGain);
 	void set_title(QString sTitle);
 	void set_work_at(nframes_t pos);
@@ -124,7 +124,7 @@ public:
 	}
 
 
-	int block_to_xpos(nframes_t block);
+	int frame_to_xpos(nframes_t frame);
 	int delete_audio_source(AudioSource* pAudio);
 	int delete_track(int trackNumber);
 	int process_go(int step);
@@ -136,7 +136,7 @@ public:
 	int render(ExportSpecification* spec);
 	void solo_track(Track* track);
 	void create(int tracksToCreate);
-	nframes_t xpos_to_block(int xpos);
+	nframes_t xpos_to_frame(int xpos);
 	bool any_track_armed();
 	bool realtime_path() const {return realtimepath;}
 	bool is_transporting() const
@@ -154,30 +154,28 @@ public:
 
 	void disconnect_from_audiodevice_and_delete();
 	
-	audio_sample_t* 		mixdown;
+	audio_sample_t* 	mixdown;
 
 private:
 	QHash<int, Track* >	m_tracks;
 	AudioPluginSelector* 	audioPluginSelector;
 	MtaRegionList* 		regionList;
-	Project*				m_project;
-	WriteSource*			exportSource;
-	AudioBus*			playBackBus;
-	Client* 				audiodeviceClient;
-	AudioBus*			masterOut;
-	DiskIO*				diskio;
-	AudioClipManager*		acmanager;
+	Project*		m_project;
+	WriteSource*		exportSource;
+	AudioBus*		playBackBus;
+	Client* 		audiodeviceClient;
+	AudioBus*		masterOut;
+	DiskIO*			diskio;
+	AudioClipManager*	acmanager;
 
-	nframes_t			transport_frame;
-	nframes_t 			firstFrame;
-	nframes_t 			origBlockL;
-	nframes_t 			origBlockR;
-	nframes_t 			workingFrame;
+	nframes_t		transportFrame;
+	nframes_t 		firstVisibleFrame;
+	nframes_t 		workingFrame;
 
-	float 				masterGain;
-
-	QString 				artists;
-	QString 				title;
+	float 			masterGain;
+	
+	QString 		artists;
+	QString 		title;
 
 	int 			activeTrackNumber;
 	int 			m_id;
@@ -187,7 +185,7 @@ private:
 	bool 			rendering;
 	bool 			changed;
 	bool 			isSnapOn;
-	volatile size_t	transport;
+	volatile size_t		transport;
 	bool			resumeTransport;
 	bool 			stopTransport;
 	bool			realtimepath;
@@ -248,8 +246,8 @@ signals:
 	void hzoomChanged();
 	void transferStarted();
 	void transferStopped();
-	void workingPosChanged(int newPos);
-	void firstBlockChanged();
+	void workingPosChanged();
+	void firstVisibleFrameChanged();
 	void lastFramePositionChanged();
 	void seekStart(uint position);
 	void snapChanged();
@@ -257,9 +255,9 @@ signals:
 
 };
 
-inline nframes_t Song::get_transfer_frame() const
+inline nframes_t Song::get_transport_frame() const
 {
-	return transport_frame;
+	return transportFrame;
 }
 
 #endif

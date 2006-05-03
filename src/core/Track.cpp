@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.6 2006/05/02 13:13:27 r_sijrier Exp $
+$Id: Track.cpp,v 1.7 2006/05/03 11:59:39 r_sijrier Exp $
 */
 
 #include "Track.h"
@@ -178,14 +178,14 @@ QList<AudioClip* > Track::split_clip(AudioClip* clip, nframes_t splitPoint)
 }
 
 
-AudioClip* Track::get_clip_under(nframes_t blockPos)
+AudioClip* Track::get_clip_under(nframes_t framePos)
 {
 	AudioClip* clip = (AudioClip*) 0;
 	for (int i=0; i < audioClipList.size(); ++i) {
 		clip = audioClipList.at(i);
-		if ((clip->get_track_start_frame() <= blockPos) && (clip->get_track_end_frame() >= blockPos))
+		if ((clip->get_track_start_frame() <= framePos) && (clip->get_track_end_frame() >= framePos))
 			return clip;
-		if (clip->get_track_start_frame() > blockPos)
+		if (clip->get_track_start_frame() > framePos)
 			break;
 	}
 	return clip;
@@ -200,12 +200,12 @@ AudioClip* Track::get_clip_between(nframes_t , nframes_t )
 }
 
 
-AudioClip* Track::get_clip_after(nframes_t blockPos)
+AudioClip* Track::get_clip_after(nframes_t framePos)
 {
 	AudioClip* clip;
 	for (int i=0; i < audioClipList.size(); ++i) {
 		clip = audioClipList.at(i);
-		if (clip->get_track_start_frame() > blockPos)
+		if (clip->get_track_start_frame() > framePos)
 			return clip;
 	}
 	return (AudioClip*) 0;
@@ -213,12 +213,12 @@ AudioClip* Track::get_clip_after(nframes_t blockPos)
 
 
 
-AudioClip* Track::get_clip_before(nframes_t blockPos)
+AudioClip* Track::get_clip_before(nframes_t framePos)
 {
 	AudioClip* clip;
 	for (int i=0; i < audioClipList.size(); ++i) {
 		clip = audioClipList.at(i);
-		if (clip->get_track_start_frame() < blockPos)
+		if (clip->get_track_start_frame() < framePos)
 			return clip;
 	}
 	return (AudioClip*) 0;
@@ -362,7 +362,7 @@ void Track::init_recording()
 	PENTER2;
 	if (isArmed) {
 		QByteArray name = "Audio_" + QByteArray::number(ID) + "." + QByteArray::number(++numtakes);
-		AudioClip* clip = new AudioClip(this, m_song->transport_frame, name);
+		AudioClip* clip = new AudioClip(this, m_song->get_transport_frame(), name);
 		if (clip->init_recording(busIn) < 0) {
 			PERROR("Could not create AudioClip to record to!");
 			delete clip;

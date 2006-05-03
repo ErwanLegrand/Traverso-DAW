@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.5 2006/05/02 19:21:10 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.6 2006/05/03 11:59:39 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -79,13 +79,13 @@ QRect AudioClipView::draw(QPainter& p)
 
 
 	// Check if the clipwidth is larger then 0!
-	if ( (clipXWidth <=0) || (m_song->block_to_xpos(trackLastFrame) <= 0) ) {
+	if ( (clipXWidth <=0) || (m_song->frame_to_xpos(trackLastFrame) <= 0) ) {
 		return QRect();
 	}
 
-	if ( m_song->block_to_xpos(trackFirstFrame) < 0) {
-		startFrame += (-1 * m_song->block_to_xpos(trackFirstFrame)) * Peak::zoomStep[hzoom];
-		clipXWidth -= (-1 * m_song->block_to_xpos(trackFirstFrame));
+	if ( m_song->frame_to_xpos(trackFirstFrame) < 0) {
+		startFrame += (-1 * m_song->frame_to_xpos(trackFirstFrame)) * Peak::zoomStep[hzoom];
+		clipXWidth -= (-1 * m_song->frame_to_xpos(trackFirstFrame));
 		baseX = m_tv->cliparea_basex();
 	}
 
@@ -241,9 +241,9 @@ void AudioClipView::draw_fades( QPainter& p )
 	/*	if (ie().get_current_mode() == m_song->EditingMode)
 			{*/
 	if (fadeInFrames>0)
-		xrbfi = m_song->block_to_xpos(trackFirstFrame + fadeInFrames) + m_tv->cliparea_basex();
+		xrbfi = m_song->frame_to_xpos(trackFirstFrame + fadeInFrames) + m_tv->cliparea_basex();
 	if (fadeOutFrames>0)
-		xrbfo = m_song->block_to_xpos(trackFirstFrame + ( sourceLastFrame - sourceFirstFrame)  - fadeOutFrames) + m_tv->cliparea_basex();
+		xrbfo = m_song->frame_to_xpos(trackFirstFrame + ( sourceLastFrame - sourceFirstFrame)  - fadeOutFrames) + m_tv->cliparea_basex();
 	// 		}
 	if (xrbfi < 0 )
 		xrbfi = 0;
@@ -371,15 +371,15 @@ void AudioClipView::update_geometry( )
 {
 	PENTER2;
 	nframes_t trackFirstBlock =  m_clip->get_track_start_frame();
-	int baseX = m_song->block_to_xpos(trackFirstBlock) + m_tv->cliparea_basex();
+	int baseX = m_song->frame_to_xpos(trackFirstBlock) + m_tv->cliparea_basex();
 	int clipWidth = m_clip->get_width();
 	int baseY  = m_clip->get_baseY();
 	int height = m_clip->get_height();
 
-	if ( m_song->block_to_xpos(trackFirstBlock) < 0) {
-		// if the above is true, clipWidth += m_song->block_to_xpos(trackFirstBlock)
+	if ( m_song->frame_to_xpos(trackFirstBlock) < 0) {
+		// if the above is true, clipWidth += m_song->frame_to_xpos(trackFirstBlock)
 		// will actually substract which is what we wanted :-)
-		clipWidth += m_song->block_to_xpos(trackFirstBlock);
+		clipWidth += m_song->frame_to_xpos(trackFirstBlock);
 		if (clipWidth < 0)
 			clipWidth = 0;
 		baseX = m_tv->cliparea_basex();
@@ -485,7 +485,7 @@ void AudioClipView::update_variables( )
 	gain = m_clip->get_gain();
 	hzoom = m_song->get_hzoom();
 	baseY  = m_clip->get_baseY();
-	baseX = m_song->block_to_xpos(trackFirstFrame) + m_tv->cliparea_basex();
+	baseX = m_song->frame_to_xpos(trackFirstFrame) + m_tv->cliparea_basex();
 	height = m_clip->get_height();
 	clipXWidth = m_clip->get_width();
 	clipAreaWidth = m_tv->cliparea_width();
@@ -498,8 +498,8 @@ void AudioClipView::update_variables( )
 	nextTFF = nextClip ? nextClip->get_track_start_frame() : 0;
 	crossAtLeft  = ((prevClip) && (prevTLF > trackFirstFrame));
 	crossAtRight = ((nextClip) && (nextTFF < trackLastFrame));
-	lCrossX = crossAtLeft  ? m_song->block_to_xpos(prevTLF) - m_song->block_to_xpos(trackFirstFrame) : 0;
-	rCrossX = crossAtRight ? m_song->block_to_xpos(trackLastFrame) - m_song->block_to_xpos(nextTFF)  : 0;
+	lCrossX = crossAtLeft  ? m_song->frame_to_xpos(prevTLF) - m_song->frame_to_xpos(trackFirstFrame) : 0;
+	rCrossX = crossAtRight ? m_song->frame_to_xpos(trackLastFrame) - m_song->frame_to_xpos(nextTFF)  : 0;
 
 	if (crossAtRight && nextClip && (nextClip->get_track_end_frame() < trackLastFrame)) {
 		lCrossX = rCrossX = 0;

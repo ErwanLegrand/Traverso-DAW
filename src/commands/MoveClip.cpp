@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: MoveClip.cpp,v 1.3 2006/05/02 13:12:24 r_sijrier Exp $
+$Id: MoveClip.cpp,v 1.4 2006/05/03 11:59:39 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -106,7 +106,7 @@ int MoveClip::jog()
 	if (newTrackStartFrame < 0)
 		newTrackStartFrame = 0;
 	
-	newInsertBlock= m_song->xpos_to_block(m_song->snapped_x(m_song->block_to_xpos(newTrackStartFrame)));
+	newInsertBlock= m_song->xpos_to_frame(m_song->snapped_x(m_song->frame_to_xpos(newTrackStartFrame)));
 	
 	origXPos = newXPos;
 	

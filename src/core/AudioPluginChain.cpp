@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioPluginChain.cpp,v 1.2 2006/05/01 21:21:37 r_sijrier Exp $
+    $Id: AudioPluginChain.cpp,v 1.3 2006/05/03 11:59:39 r_sijrier Exp $
 */
 
 #include "AudioPluginChain.h"
@@ -301,7 +301,7 @@ void AudioPluginChain::followMouse(int x, int y)
         // 			}
 
 
-        // 	nframes_t lpos = assocTrack->get_song()->xpos_to_block(x);
+        // 	nframes_t lpos = assocTrack->get_song()->xpos_to_frame(x);
 
         // 	float cv = pluginController[currentAudioPluginController]->get_current_curve()->get_value_at(lpos);
 
@@ -319,7 +319,7 @@ void AudioPluginChain::followMouse(int x, int y)
                 CurveNode* cn = pluginController[currentAudioPluginController]->get_current_curve()->get_current_curve_node();
                 if (cn->prev) // This is to avoid changing the root node position
                 {
-                        nframes_t pos = assocTrack->get_song()->xpos_to_block( x - originX ) + originPos;
+                        nframes_t pos = assocTrack->get_song()->xpos_to_frame( x - originX ) + originPos;
                         if(cn->prev->pos > pos)
                                 pos=cn->prev->pos + 4;
                         if (cn->next)
@@ -356,7 +356,7 @@ void AudioPluginChain::add_node()
         if (currentAudioPluginController>=0) {
                 int x = cpointer().x();//assocTrack->get_mouse_x();
                 int y = cpointer().y();//assocTrack->get_mouse_y();
-                nframes_t pos  = assocTrack->get_song()->xpos_to_block(x);
+                nframes_t pos  = assocTrack->get_song()->xpos_to_frame(x);
                 int half = assocTrack->get_height()/2;
                 float value = -100.0 * ((float) ((y - assocTrack->get_baseY()) - half) / half );
                 pluginController[currentAudioPluginController]->get_current_curve()->add_node(pos, value);

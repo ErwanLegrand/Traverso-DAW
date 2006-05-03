@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongView.h,v 1.2 2006/05/01 21:31:58 r_sijrier Exp $
+    $Id: SongView.h,v 1.3 2006/05/03 11:59:39 r_sijrier Exp $
 */
 
 #ifndef SONGVIEW_H
@@ -81,13 +81,13 @@ public :
         }
         int cliparea_width() const;
 
-        nframes_t xpos_to_block(int xpos)
+        nframes_t xpos_to_frame(int xpos)
         {
-                return m_song->get_firstblock() + xpos * Peak::zoomStep[m_song->get_hzoom()];
+                return m_song->get_first_visible_frame() + xpos * Peak::zoomStep[m_song->get_hzoom()];
         }
-        int block_to_xpos(nframes_t block)
+        int frame_to_xpos(nframes_t frame)
         {
-                return ((block - m_song->get_firstblock())  / Peak::zoomStep[m_song->get_hzoom()]);
+                return ((frame - m_song->get_first_visible_frame())  / Peak::zoomStep[m_song->get_hzoom()]);
         }
         bool is_pointed() const
         {

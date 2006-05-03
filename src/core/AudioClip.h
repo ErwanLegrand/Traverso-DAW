@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.6 2006/05/02 19:19:09 r_sijrier Exp $
+$Id: AudioClip.h,v 1.7 2006/05/03 11:59:39 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -55,9 +55,9 @@ public:
 	
 	void set_blur(bool stat);
 	void set_gain(float g);
-	void set_track_start_frame(nframes_t newTrackFirstBlock);
-	void set_source_end_frame(nframes_t block);
-	void set_source_start_frame(nframes_t block);
+	void set_track_start_frame(nframes_t newTrackFirstFrame);
+	void set_source_end_frame(nframes_t frame);
+	void set_source_start_frame(nframes_t frame);
 	void set_name(QString name);
 	void set_fade_in(nframes_t b);
 	void set_fade_out(nframes_t b);
@@ -135,7 +135,6 @@ private:
 	bool 			isMuted;
 	bool 			isRecording;
 	float	 		m_gain;
-	int 			blockSize;
 	uint 			m_channels;
 	int 			rate;
 	int 			bitDepth;
@@ -154,8 +153,8 @@ public slots:
 	void finish_recording();
 	void finish_write_source(WriteSource* source);
 	void process_capture(nframes_t nframes);
-	void set_left_edge(nframes_t block);
-	void set_right_edge(nframes_t block);
+	void set_left_edge(nframes_t frame);
+	void set_right_edge(nframes_t frame);
 	void track_mute_changed(bool mute);
 	void toggle_mute();
 

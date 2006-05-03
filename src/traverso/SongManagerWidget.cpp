@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongManagerWidget.cpp,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: SongManagerWidget.cpp,v 1.2 2006/05/03 11:59:39 r_sijrier Exp $
 */
 
 #include "SongManagerWidget.h"
@@ -75,7 +75,7 @@ void SongManagerWidget::update_song_list( )
                 QString numberOfTracks;
                 numberOfTracks.setNum(s->get_numtracks());
 
-                QString songLength = frame_to_smpte(s->get_last_block(), s->get_rate());
+                QString songLength = frame_to_smpte(s->get_last_frame(), s->get_rate());
 
                 //QString songLength; songLength.setNum( spos );
                 QString songRate;
