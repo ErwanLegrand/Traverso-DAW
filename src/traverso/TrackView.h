@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TrackView.h,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: TrackView.h,v 1.2 2006/05/03 13:28:01 r_sijrier Exp $
 */
 
 #ifndef TRACKVIEW_H
@@ -38,10 +38,6 @@ class AudioClipView;
 class TrackView : public ViewItem
 {
         Q_OBJECT
-
-        int jogMode;
-        static const int JOG_NONE = 0;
-        static const int JOG_GAIN_AND_PAN = 1;
 
 public:
         static const int TRACKPANELWIDTH = 180;
@@ -75,9 +71,6 @@ private:
         QMenu* 			busInMenu;
         QMenu* 			busOutMenu;
 
-        QString sid;
-        QString sgain;
-        QString span;
         QPixmap panelPixmap;
         int panelWidth;
 
@@ -86,9 +79,6 @@ private:
 
         int clipAreaWidth;
 
-        int origX;
-        int origY;
-        float origPan;
 
         PanelLed* muteLed;
         PanelLed* soloLed;
@@ -106,7 +96,6 @@ private:
         void draw_panel_gain();
         void resize_panel_pixmap();
 
-        void jog_gain_pan(int mouseX, int mouseY);
         void touch_track(int trackNumber = -1, int xpos = -1);
 
         QList<AudioClipView* > audioClipViewList;
@@ -123,8 +112,6 @@ public slots:
         void set_bus_in(QAction* action);
         void set_bus_out(QAction* action);
 
-        Command* gain_and_pan();
-        Command* jog_track_pan();
         Command* touch();
         Command* touch_and_center();
         Command* capture_from_channel_both();
@@ -132,6 +119,7 @@ public slots:
         Command* capture_from_channel_right();
         Command* select_bus_in();
         Command* select_bus_out();
+        Command* edit_properties();
 };
 
 

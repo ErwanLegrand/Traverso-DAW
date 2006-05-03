@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.5 2006/05/03 11:59:39 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.6 2006/05/03 13:28:08 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -25,6 +25,7 @@ $Id: TrackView.cpp,v 1.5 2006/05/03 11:59:39 r_sijrier Exp $
 #include <QPixmap>
 #include <QPainter>
 #include <QMenu>
+#include <QInputDialog>
 
 #include "TrackView.h"
 #include "AudioClipView.h"
@@ -139,7 +140,8 @@ void TrackView::draw_panel_gain()
 	int sliderWidth=panelWidth-95;
 	int sliderx=10;
 	float gain = m_track->get_gain();
-	QString s;
+	QString s, sgain;
+	
 	p.setPen(cm().get("TRACK_PANEL_TEXT"));
 	p.setFont( QFont( "Bitstream Vera Sans", (int)(GAIN_H*0.9)) );
 
@@ -161,7 +163,7 @@ void TrackView::draw_panel_gain()
 
 	if (db < -60)
 		db = -60;
-	int sliderdbx =  (sliderWidth - (sliderWidth*0.3)) - (int) ( ( (-1 * db) / 60 ) * sliderWidth);
+	int sliderdbx =  (int) (sliderWidth - (sliderWidth*0.3)) - (int) ( ( (-1 * db) / 60 ) * sliderWidth);
 	if (sliderdbx < 0)
 		sliderdbx = 0;
 	if (db > 0)
@@ -208,7 +210,7 @@ void TrackView::draw_panel_pan()
 	int sliderx=10;
 	float v;
 	//	int y;
-	QString s;
+	QString s, span;
 	paint.setPen(cm().get("TRACK_PANEL_TEXT"));
 	paint.setFont( QFont( "Bitstream Vera Sans", (int)(PAN_H*0.9)) );
 
@@ -249,15 +251,6 @@ void TrackView::draw_panel_bus_in_out()
 	QString sir = "";
 	sir.append(m_track->get_bus_in());
 
-	// 	if (m_track->get_which_channels() == AudioDeviceMapper::MONO)
-	// 		sir.append(" [MO]");
-	// 	else if (m_track->get_which_channels() == AudioDeviceMapper::STEREO)
-	// 		sir.append(" [LR]");
-	// 	else if (m_track->get_which_channels() == AudioDeviceMapper::ONLY_LEFT_CHANNEL)
-	// 		sir.append(" [L]");
-	// 	else
-	// 		sir.append(" [R]");
-
 	QString sor = "";
 	sor.append(m_track->get_bus_out());
 
@@ -282,7 +275,7 @@ void TrackView::draw_panel_track_name()
 	panelWidth = TRACKPANELWIDTH;
 	QPainter paint(&panelPixmap);
 	paint.setRenderHint(QPainter::TextAntialiasing);
-	sid.setNum(m_track->get_id());
+	QString sid = QString::number(m_track->get_id());
 
 	paint.setFont( QFont( "Bitstream Vera Sans", 8) );
 	paint.setPen(cm().get("TRACK_PANEL_NAME"));
@@ -416,43 +409,20 @@ void TrackView::resize( )
 	schedule_for_repaint();
 }
 
-Command* TrackView::jog_track_pan()
-{
-	int x = cpointer().clip_area_x();
-	float w = (float) (m_vp->width() * 0.6);
-	float ofx = (float) origX - x;
-	float p = -2.0f *  (ofx) / w ;
-	float fp = p + origPan;
-	m_track->set_pan( fp );
-
-	return (Command*) 0;
-}
-
-
-Command* TrackView::gain_and_pan()
-{
-	jog_gain_pan(cpointer().clip_area_x(), cpointer().y());
-	return (Command*) 0;
-}
-
-
 Command* TrackView::capture_from_channel_both()
 {
-	// 	m_track->set_which_channels(AudioDeviceMapper::STEREO); //FIXME !!!!!!! AudioDeviceMapper::STEREO, AudioDeviceMapper::ONLY_LEFT_CHANNEL or AudioDeviceMapper::ONLY_RIGHT_CHANNEL
 	return (Command*) 0;
 }
 
 
 Command* TrackView::capture_from_channel_left()
 {
-	// 	m_track->set_which_channels(AudioDeviceMapper::ONLY_LEFT_CHANNEL);
 	return (Command*) 0;
 }
 
 
 Command* TrackView::capture_from_channel_right()
 {
-	// 	m_track->set_which_channels(AudioDeviceMapper::ONLY_RIGHT_CHANNEL);
 	return (Command*) 0;
 }
 
@@ -460,23 +430,6 @@ Command* TrackView::capture_from_channel_right()
 Command* TrackView::touch()
 {
 	int x = cpointer().clip_area_x();
-	// 	int trackNumber = ie().collected_number();
-	/*	if (trackNumber > 0) // there is a track number collected !!
-			{
-			if ((trackNumber<=numTracks) && (trackNumber>=0))
-				touch_track(trackNumber, x);
-			}
-		else
-			{
-			foreach(Track* track, m_song->get_tracks())
-				{
-				if (track->is_pointed(m->mousey()))
-					{
-					touch_track(i);
-					break;
-					}
-				}
-			}*/
 	touch_track(m_track->get_id(), x);
 	return (Command*) 0;
 }
@@ -523,21 +476,6 @@ void TrackView::touch_track(int , int x)
 }
 
 
-
-void TrackView::jog_gain_pan(int mousex, int mousey)
-{
-	PENTER;
-	if (jogMode == JOG_NONE) {
-		PMESG("Starting jog gain/pan for track %d",m_track->get_id() );
-		jogMode = JOG_GAIN_AND_PAN;
-		origX = mousex;
-		origY = mousey;
-	} else {
-		PMESG("Finishing jog gain/pan for track %d",m_track->get_id() );
-		jogMode = JOG_NONE;
-	}
-}
-
 void TrackView::panel_info_changed( )
 {
 	paintPanel = true;
@@ -563,6 +501,19 @@ void TrackView::set_bus_out( QAction* action )
 {
 	PENTER;
 	m_track->set_bus_out(action->text().toAscii());
+}
+
+Command * TrackView::edit_properties( )
+{
+	bool ok;
+	QString text = QInputDialog::getText(m_vp, tr("Set Track name"),
+					tr("Enter new Track name"), 
+					QLineEdit::Normal, m_track->get_name(), &ok, Qt::Tool);
+	if (ok && !text.isEmpty()) {
+		m_track->set_name(text);
+	}
+	
+	return (Command*) 0;
 }
 
 //eof
