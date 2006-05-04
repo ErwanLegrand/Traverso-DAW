@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.8 2006/05/03 11:59:39 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.9 2006/05/04 16:05:58 r_sijrier Exp $
 */
 
 #include "ContextItem.h"
@@ -554,11 +554,14 @@ void AudioClip::add_audio_source( ReadSource* rs, int channel )
 	readSources.insert(channel, rs);
 	sourceLength = rs->get_nframes();
 	set_source_end_frame( rs->get_nframes() );
+	set_track_end_frame( trackStartFrame + sourceLength );
 	m_channels = readSources.size();
 	m_song->get_diskio()->register_read_source( rs );
 	rate = rs->get_rate();
 	
 	set_sources_active_state();
+	
+	emit stateChanged();
 }
 
 void AudioClip::finish_write_source( WriteSource * ws )
