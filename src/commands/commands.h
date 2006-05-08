@@ -12,3 +12,4 @@
 #include "PCommand.h"
 #include "ClipSelection.h"
 #include "RemoveClip.h"
+#include "Fade.h"
