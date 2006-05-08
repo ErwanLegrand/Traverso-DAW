@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: VUMeterLevel.cpp,v 1.2 2006/04/25 17:22:13 r_sijrier Exp $
+    $Id: VUMeterLevel.cpp,v 1.3 2006/05/08 20:05:27 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -39,9 +39,10 @@ VUMeterLevel::VUMeterLevel(QWidget* parent, AudioChannel* chan)
 
         setAttribute(Qt::WA_OpaquePaintEvent);
         setAttribute(Qt::WA_PaintOnScreen);
+	setAutoFillBackground(false);
         setFixedSize(7, 120);
-        /*	setAutoFillBackground(false);*/
 
+	
 	connect(&audiodevice(), SIGNAL(stopped()), this, SLOT(stop()));
         timer.start(40, this);
 }

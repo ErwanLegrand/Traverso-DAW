@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.6 2006/05/03 11:59:39 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.7 2006/05/08 20:05:27 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -386,73 +386,6 @@ void AudioClipView::update_geometry( )
 	}
 
 	set_geometry(baseX, baseY, clipWidth, height);
-}
-
-
-Command* AudioClipView::clip_fade_in()
-{
-	if (ie().is_holding())
-		process_fade_clip();
-	return (Command*) 0;
-}
-
-
-Command* AudioClipView::clip_fade_out()
-{
-	if (ie().is_holding())
-		process_fade_clip();
-	return (Command*) 0;
-}
-
-
-Command* AudioClipView::clip_fade_both()
-{
-	if (ie().is_holding())
-		process_fade_clip();
-	return (Command*) 0;
-}
-
-Command* AudioClipView::jog_fade_clip()
-{
-	PENTER4;
-	int x = cpointer().clip_area_x();
-	int y = cpointer().y();
-	if (ie().is_jogging()) {
-		nframes_t b = (x - origX) * Peak::zoomStep[m_song->get_hzoom()];
-		int dbi = origBlockL + b;
-		dbi = dbi < 0? 0:dbi;
-		m_clip->set_fade_in(dbi);
-	} else if (ie().is_jogging()) {
-		nframes_t b = (origX - x) * Peak::zoomStep[m_song->get_hzoom()];
-		int dbo = origBlockR + b;
-		dbo = dbo < 0? 0:dbo;
-		m_clip->set_fade_out(dbo);
-	} else if (ie().is_jogging()) {
-		nframes_t b = (x - origX) * Peak::zoomStep[m_song->get_hzoom()];
-		int dbi =  + b;
-		dbi = dbi < 0? 0:dbi;
-		int dbo = origBlockR + b;
-		dbo = dbo < 0? 0:dbo;
-		m_clip->set_fade_in(dbi);
-		m_clip->set_fade_out(dbo);
-	} else if (ie().is_jogging()) {
-		int dy = (origY - y);
-		float g = origGain + ( (float) dy / 200 );
-		m_clip->set_gain(g);
-	}
-	return (Command*) 0;
-}
-
-void AudioClipView::process_fade_clip()
-{
-	PENTER;
-	if ( ie().is_holding() ) {
-		origX = cpointer().clip_area_x();
-		origY = cpointer().y();
-		origGain = m_clip->get_gain();
-		origBlockL = m_clip->get_fade_in_frames();
-		origBlockR = m_clip->get_fade_out_frames();
-	}
 }
 
 void AudioClipView::update_progress_info( int progress )

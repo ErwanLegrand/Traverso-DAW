@@ -20,7 +20,6 @@ HEADERS += AudioPluginSelector.h \
            BusMonitor.h \
            BusSelector.h \
            ColorManager.h \
-           CurveNode.h \
            Help.h \
            InfoBox.h \
            Main.h \
@@ -58,7 +57,6 @@ SOURCES += Traverso.cpp \
            BusMonitor.cpp \
            BusSelector.cpp \
            ColorManager.cpp \
-           CurveNode.cpp \
            Help.cpp \
            InfoBox.cpp \
            Main.cpp \

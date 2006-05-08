@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SystemInfoWidget.cpp,v 1.2 2006/05/01 21:31:58 r_sijrier Exp $
+$Id: SystemInfoWidget.cpp,v 1.3 2006/05/08 20:05:27 r_sijrier Exp $
 */
 
 #include "SystemInfoWidget.h"
@@ -26,6 +26,7 @@ $Id: SystemInfoWidget.cpp,v 1.2 2006/05/01 21:31:58 r_sijrier Exp $
 #include "libtraversocore.h"
 #include "ColorManager.h"
 #include "DiskIO.h"
+#include <AudioDevice.h>
 
 #include <QPixmap>
 #include <QByteArray>

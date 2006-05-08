@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: GlobalPropertiesWidget.cpp,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: GlobalPropertiesWidget.cpp,v 1.2 2006/05/08 20:05:27 r_sijrier Exp $
 */
 
 #include "GlobalPropertiesWidget.h"
@@ -27,6 +27,7 @@
 
 #include <QSettings>
 #include "Traverso.h"
+#include <AudioDevice.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!

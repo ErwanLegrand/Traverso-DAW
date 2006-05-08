@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioClipView.h,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: AudioClipView.h,v 1.2 2006/05/08 20:05:27 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIPVIEW_H
@@ -115,11 +115,6 @@ public slots:
         void schedule_for_repaint();
         void update_progress_info(int progress);
         void peaks_creation_finished();
-
-        Command* clip_fade_in();
-        Command* clip_fade_out();
-        Command* clip_fade_both();
-        Command* jog_fade_clip();
 };
 
 #endif

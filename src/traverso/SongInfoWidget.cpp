@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongInfoWidget.cpp,v 1.4 2006/05/03 11:59:39 r_sijrier Exp $
+$Id: SongInfoWidget.cpp,v 1.5 2006/05/08 20:05:27 r_sijrier Exp $
 */
 
 #include "SongInfoWidget.h"
@@ -62,15 +62,11 @@ void SongInfoWidget::set_song(Song* song)
 	connect(m_song, SIGNAL(transferStopped()), this, SLOT(stop_smpte_update_timer()));
 	connect(m_song, SIGNAL(transferStarted()), this, SLOT(start_smpte_update_timer()));
 	connect(m_song, SIGNAL(cursorPosChanged()), this, SLOT(update_smpte()));
-	connect(m_song, SIGNAL(snapChanged()), this, SLOT (update_snap_status()));
+	connect(m_song, SIGNAL(propertieChanged()), this, SLOT (update_properties()));
 	
-	QString name = song->get_title();
-	name.prepend(QString::number(song->get_id()) + " - " );
-	songNameLabel->setText(name);
-
 	update_zoom();
 	update_smpte();
-	update_snap_status();
+	update_properties();
 }
 
 void SongInfoWidget::start_smpte_update_timer( )
@@ -100,8 +96,12 @@ void SongInfoWidget::update_zoom( )
 	zoomLabel->setText(zoomLevel);
 }
 
-void SongInfoWidget::update_snap_status( )
+void SongInfoWidget::update_properties( )
 {
+	QString name = m_song->get_title();
+	name.prepend(QString::number(m_song->get_id()) + " - " );
+	songNameLabel->setText(name);
+
 	QString snaptext = m_song->is_snap_on() ? "ON" : "OFF";
 	snapStatusLabel->setText(snaptext);
 }
