@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.h,v 1.4 2006/05/03 11:59:39 r_sijrier Exp $
+$Id: Track.h,v 1.5 2006/05/08 20:03:10 r_sijrier Exp $
 */
 
 
@@ -125,6 +125,7 @@ public :
 	void set_bus_out(QByteArray bus);
 	void set_bus_in(QByteArray bus);
 	void set_muted_by_solo(bool muted);
+	void set_name(const QString& name);
 	void set_solo(bool solo);
 	void set_muted(bool muted);
 	void set_gain(float gain);

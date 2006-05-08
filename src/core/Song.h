@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.h,v 1.5 2006/05/03 11:59:39 r_sijrier Exp $
+$Id: Song.h,v 1.6 2006/05/08 20:03:10 r_sijrier Exp $
 */
 
 #ifndef SONG_H
@@ -155,6 +155,7 @@ public:
 	void disconnect_from_audiodevice_and_delete();
 	
 	audio_sample_t* 	mixdown;
+	audio_sample_t*		gainbuffer;
 
 private:
 	QHash<int, Track* >	m_tracks;
@@ -171,6 +172,8 @@ private:
 	nframes_t		transportFrame;
 	nframes_t 		firstVisibleFrame;
 	nframes_t 		workingFrame;
+	uint		 	newTransportFramePos;
+	volatile size_t		transport;
 
 	float 			masterGain;
 	
@@ -181,15 +184,14 @@ private:
 	int 			m_id;
 	int 			m_hzoom;
 
-
 	bool 			rendering;
 	bool 			changed;
 	bool 			isSnapOn;
-	volatile size_t		transport;
 	bool			resumeTransport;
 	bool 			stopTransport;
 	bool			realtimepath;
 	bool			scheduleForDeletion;
+	bool			seeking;
 
 	void init();
 	void connect_to_audiodevice();
@@ -200,11 +202,9 @@ private:
 
 	void add_track(Track* track, int id);
 	
-	uint		 	newTransportFramePos;
-	bool			seeking;
-
 	friend class Track;
 	
+
 public slots :
 	void seek_finished();
 	void handle_diskio_outofsync();
@@ -239,6 +239,7 @@ public slots :
 	Command* undo();
 	Command* redo();
 	Command* toggle_snap();
+	Command* playhead_to_workcursor();
 
 signals:
 	void trackCreated(Track* );
@@ -251,6 +252,7 @@ signals:
 	void lastFramePositionChanged();
 	void seekStart(uint position);
 	void snapChanged();
+	void propertieChanged();
 
 
 };

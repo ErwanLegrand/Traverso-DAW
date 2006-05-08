@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.7 2006/05/03 11:59:39 r_sijrier Exp $
+$Id: AudioClip.h,v 1.8 2006/05/08 20:03:10 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -26,9 +26,12 @@ $Id: AudioClip.h,v 1.7 2006/05/03 11:59:39 r_sijrier Exp $
 #include <QString>
 #include <QList>
 #include <QDomDocument>
+#include <QPolygonF>
 
 #include "ContextItem.h"
 #include "defines.h"
+
+#include "Curve.h"
 
 
 class Song;
@@ -39,6 +42,7 @@ class Track;
 class IEMessage;
 class Peak;
 class AudioBus;
+
 
 class AudioClip : public ContextItem
 {
@@ -51,7 +55,18 @@ public:
 	~AudioClip();
 
 
+	enum FadeShape {
+		Linear,
+		Fast,
+		Slow,
+		LogA,
+		LogB,
+
+	};
+	
 	void add_audio_source(ReadSource* source, int channel);
+	int init_recording(QByteArray bus);
+	int process(nframes_t nframes, audio_sample_t* channelBuffer, uint channel);
 	
 	void set_blur(bool stat);
 	void set_gain(float g);
@@ -62,6 +77,8 @@ public:
 	void set_fade_in(nframes_t b);
 	void set_fade_out(nframes_t b);
 	void set_track(Track* t);
+	void set_fade_in_shape (FadeShape shape, nframes_t len);
+	void set_fade_out_shape (FadeShape shape, nframes_t len);
 
 	int set_selected(bool selected);
 	int set_state( const QDomNode& node );
@@ -73,9 +90,11 @@ public:
 	Song* get_song() const;
 	Peak* get_peak_for_channel(int chan) const;
 	QDomNode get_state(QDomDocument doc);
+	Curve& get_fade_in() {return fadeIn;}
+	Curve& get_fade_out() {return fadeOut;}
+	Curve& get_gain_envelope() {return gainEnvelope;}
 	
 	float get_gain() const;
-	float get_fade_factor_for(nframes_t pos); // pos : position in the track
 	
 	nframes_t get_length() const;
 	nframes_t get_track_start_frame() const;
@@ -109,26 +128,27 @@ public:
 		return left->get_track_start_frame() > right->get_track_start_frame();
 	}
 
-	int process(nframes_t nframes);
-	int init_recording(QByteArray bus);
 
 private:
-	Track* 				m_track;
-	Song* 				m_song;
-	AudioSource* 			audioSource;
+	Track* 			m_track;
+	Song* 			m_song;
+	AudioSource* 		audioSource;
 	QList<ReadSource* > 	readSources;
 	QList<WriteSource* >	writeSources;
-	AudioBus*			captureBus;
+	AudioBus*		captureBus;
+	Curve			fadeIn;
+	Curve			fadeOut;
+	Curve			gainEnvelope;
+	FadeShape		fadeInShape;
+	FadeShape		fadeOutShape;
 
 	QString 		m_name;
-	nframes_t 	trackStartFrame;
-	nframes_t 	trackEndFrame;
-	nframes_t 	sourceEndFrame;
-	nframes_t 	sourceStartFrame;
-	nframes_t	sourceLength;
-	nframes_t 	fadeOutBlocks;
-	nframes_t 	fadeInBlocks;
-	nframes_t 	m_length;
+	nframes_t 		trackStartFrame;
+	nframes_t 		trackEndFrame;
+	nframes_t 		sourceEndFrame;
+	nframes_t 		sourceStartFrame;
+	nframes_t		sourceLength;
+	nframes_t 		m_length;
 
 	bool 			isSelected;
 	bool 			isTake;
@@ -171,6 +191,8 @@ public slots:
 	Command* copy();
 	Command* add_to_selection();
 	Command* gain();
+        Command* clip_fade_in();
+        Command* clip_fade_out();
 
 };
 

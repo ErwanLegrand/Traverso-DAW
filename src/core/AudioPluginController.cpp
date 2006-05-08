@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioPluginController.cpp,v 1.3 2006/05/03 11:59:39 r_sijrier Exp $
+    $Id: AudioPluginController.cpp,v 1.4 2006/05/08 20:03:10 r_sijrier Exp $
 */
 
 #include "AudioPluginController.h"
@@ -200,7 +200,7 @@ int AudioPluginController::get_curve_index(Curve* c)
 Curve* AudioPluginController::add_curve(QString type)
 {
         PENTER2;
-        int ind=-1;
+/*        int ind=-1;
         for (int i=0; i<MAX_CURVES; i++) {
                 // cannot add a same audio plugin twice
                 if (curve[i] && (curve[i]->get_type()==type)) {
@@ -217,7 +217,7 @@ Curve* AudioPluginController::add_curve(QString type)
                 curve[ind]=new Curve(this,type);
                 set_current_curve(ind);
                 return curve[ind];
-        }
+        }*/
         return (Curve*) 0;
 }
 

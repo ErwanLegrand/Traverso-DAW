@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.7 2006/05/03 11:59:39 r_sijrier Exp $
+$Id: Track.cpp,v 1.8 2006/05/08 20:03:10 r_sijrier Exp $
 */
 
 #include "Track.h"
@@ -67,14 +67,14 @@ Track::Track( Song * song, const QDomNode node )
 Track::~Track()
 {
 	PENTERDES;
-	delete audioPluginChain;
+// 	delete audioPluginChain;
 }
 
 void Track::init()
 {
 	isSolo = mutedBySolo = isActive = isMuted = isArmed = false;
 	set_history_stack(m_song->get_history_stack());
-	audioPluginChain = new AudioPluginChain(this);
+// 	audioPluginChain = new AudioPluginChain(this);
 	
 	connect(m_song, SIGNAL( transferStarted() ), this, SLOT (init_recording() ));
 }
@@ -279,9 +279,9 @@ void Track::activate()
 void Track::deactivate()
 {
 	if (isActive) {
-		for (int k=0; k<AudioPluginChain::MAX_CONTROLLERS; k++)
+/*		for (int k=0; k<AudioPluginChain::MAX_CONTROLLERS; k++)
 			if (audioPluginChain->pluginController[k])
-				audioPluginChain->pluginController[k]->deactivate();
+				audioPluginChain->pluginController[k]->deactivate();*/
 		isActive=false;
 	}
 }
@@ -473,9 +473,36 @@ int Track::process( nframes_t nframes )
 	int processResult = 0;
 	
 	if ( ! (isMuted || mutedBySolo) || isArmed) {
-		foreach(AudioClip* clip, audioClipList) {
-			processResult |= clip->process(nframes);
+		
+		AudioBus* bus = m_song->get_master_out();
+		
+		if (!bus) {
+			return 0;
 		}
+		
+		audio_sample_t* channelBuffer;
+		int result;
+		
+		for (int chan=0; chan<bus->get_channel_count(); ++chan) {
+			
+			channelBuffer = bus->get_channel( chan )->get_buffer( nframes );
+			
+			foreach(AudioClip* clip, audioClipList) {
+				result = clip->process(nframes, channelBuffer, chan);
+				
+				if (result == -1) { // No such channel !!
+					if (chan > 0) { 
+						// There are at least 2 channels in Track. AudioClip could be a mono source. Duplicate!
+						memcpy(channelBuffer, bus->get_channel( chan -1 )->get_buffer( nframes ),
+							  sizeof (audio_sample_t) * nframes);
+					}
+				}
+				else {
+					processResult |= result;
+				}
+			}
+		}
+		
 	} else {
 		return 0;
 	}
@@ -524,6 +551,12 @@ Command * Track::import_audiosource(  )
 Command* Track::silence_others( )
 {
 	return new PCommand(this, "solo");
+}
+
+void Track::set_name( const QString & name )
+{
+	m_name = name;
+	emit stateChanged();
 }
 
 // eof

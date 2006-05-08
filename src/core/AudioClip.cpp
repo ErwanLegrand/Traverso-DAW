@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.9 2006/05/04 16:05:58 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.10 2006/05/08 20:03:10 r_sijrier Exp $
 */
 
 #include "ContextItem.h"
@@ -34,6 +34,7 @@ $Id: AudioClip.cpp,v 1.9 2006/05/04 16:05:58 r_sijrier Exp $
 #include "Export.h"
 #include "AudioClipManager.h"
 #include "AudioSourceManager.h"
+#include "Curve.h"
 
 #include <commands.h>
 
@@ -47,7 +48,7 @@ AudioClip::AudioClip(Track* track, nframes_t pTrackInsertBlock, QString name)
 {
 	PENTERCONS;
 	m_gain = 1.0;
-	m_length = fadeOutBlocks = fadeInBlocks = sourceStartFrame = m_channels = sourceEndFrame = trackEndFrame = 0;
+	m_length = sourceStartFrame = m_channels = sourceEndFrame = trackEndFrame = 0;
 	isMuted=false;
 	m_song = m_track->get_song();
 	bitDepth = m_song->get_bitdepth();
@@ -129,8 +130,8 @@ QDomNode AudioClip::get_state( QDomDocument doc )
 	node.setAttribute("length", m_length);
 	node.setAttribute("gain", m_gain);
 	node.setAttribute("mute", isMuted);
-	node.setAttribute("fadeIn", fadeInBlocks);
-	node.setAttribute("fadeOut", fadeOutBlocks);
+	node.setAttribute("fadeIn", fadeIn.get_range());
+	node.setAttribute("fadeOut", fadeOut.get_range());
 	node.setAttribute("take", isTake);
 	node.setAttribute("channels", m_channels);
 	node.setAttribute("clipname", m_name );
@@ -285,13 +286,14 @@ void AudioClip::set_blur(bool )
 
 void AudioClip::set_fade_in(nframes_t b)
 {
-	fadeInBlocks=b;
+	PWARN("Setting fade in to %d frames", b);
+	set_fade_in_shape( LogB , b);
 	emit stateChanged();
 }
 
 void AudioClip::set_fade_out(nframes_t b)
 {
-	fadeOutBlocks=b;
+	set_fade_out_shape( LogB , b);
 	emit stateChanged();
 }
 
@@ -313,66 +315,80 @@ int AudioClip::set_selected(bool selected)
 	return 1;
 }
 
-int AudioClip::process(nframes_t nframes)
+int AudioClip::process(nframes_t nframes, audio_sample_t* channelBuffer, uint channel)
 {
 	if (isRecording) {
 		process_capture(nframes);
 		return 0;
 	}
+	
+	if (channel >= m_channels) {
+		return -1;	// Channel doesn't exist!!
+	}
 
 	nframes_t mix_pos;
 	float gainFactor = m_gain * m_track->get_gain();
 
-	if (isMuted || (gainFactor == 0.0) || (m_channels == 0)) {
+	if (isMuted || (gainFactor == 0.0f) ) {
 		return 0;
 	}
 
 	if ( (trackStartFrame < m_song->get_transport_frame()) && (trackEndFrame > m_song->get_transport_frame()) ) {
-
 		mix_pos = m_song->get_transport_frame() - trackStartFrame + sourceStartFrame;
-
 	} else {
 		return 0;
 	}
 
 
-	AudioBus* bus = m_song->get_master_out();
 	audio_sample_t* mixdown = m_song->mixdown;
-	int channels = m_channels;
+	audio_sample_t* gainbuffer = m_song->gainbuffer;
 	nframes_t read_frames = 0;
 	
-	if (channels > bus->get_channel_count())
-		channels = bus->get_channel_count();
 
-	for (int channel=0; channel<channels; channel++) {
-		if (m_song->realtime_path())
-			read_frames = readSources.at(channel)->rb_read(mixdown, mix_pos, nframes);
-		else
-			read_frames = readSources.at(channel)->file_read(mixdown, mix_pos, nframes);
+	if (m_song->realtime_path()) {
+		read_frames = readSources.at(channel)->rb_read(mixdown, mix_pos, nframes);
+	} else {
+		read_frames = readSources.at(channel)->file_read(mixdown, mix_pos, nframes);
+	}
 
-		if (read_frames == 0)
-			continue;
+	if (read_frames == 0)
+		return 0;
 
-		gainFactor = m_gain * m_track->get_gain();
-		float panFactor = 1;
+	gainFactor = m_gain * m_track->get_gain();
+	float panFactor = 1;
 
-		if ( (channel == 0) && (m_track->get_pan() > 0)) {
-			panFactor = 1 - m_track->get_pan();
-			gainFactor *= panFactor;
-		}
-		if ( (channel == 1) && (m_track->get_pan() < 0)) {
-			panFactor = 1 + m_track->get_pan();
-			gainFactor *= panFactor;
-		}
+	if ( (channel == 0) && (m_track->get_pan() > 0)) {
+		panFactor = 1 - m_track->get_pan();
+		gainFactor *= panFactor;
+	}
+	if ( (channel == 1) && (m_track->get_pan() < 0)) {
+		panFactor = 1 + m_track->get_pan();
+		gainFactor *= panFactor;
+	}
 
-		if (read_frames == nframes) {
-			// If gainFactor == 1.0 , then there's no need to apply it.
-			if (gainFactor == 1.0)
-				Mixer::mix_buffers_no_gain(bus->get_buffer(channel, nframes), mixdown, nframes);
-			else
-				Mixer::mix_buffers_with_gain(bus->get_buffer(channel, nframes), mixdown, nframes, gainFactor);
+	if (mix_pos < fadeIn.get_range()) {
+// 		printf("mix_pos is %d, len is %d\n", mix_pos, fadeIn.get_range());
+		nframes_t limit;
+
+		limit = std::min (read_frames, (uint)fadeIn.get_range());
+
+		fadeIn.get_vector (mix_pos, mix_pos+limit, gainbuffer, limit);
+		
+
+		for (nframes_t n = 0; n < limit; ++n) {
+			mixdown[n] *= gainbuffer[n];
 		}
 	}
+	
+	if (read_frames == nframes) {
+		// If gainFactor == 1.0 , then there's no need to apply it.
+		if (gainFactor == 1.0f)
+			Mixer::mix_buffers_no_gain(channelBuffer, mixdown, nframes);
+		else
+			Mixer::mix_buffers_with_gain(channelBuffer, mixdown, nframes, gainFactor);
+	}
+		
+
 
 	return 1;
 }
@@ -693,12 +709,12 @@ bool AudioClip::is_recording( ) const
 
 nframes_t AudioClip::get_fade_out_frames( ) const
 {
-	return fadeOutBlocks;
+	return (nframes_t) fadeOut.get_range();
 }
 
-nframes_t AudioClip::get_fade_in_frames( ) const
+nframes_t AudioClip::get_fade_in_frames() const
 {
-	return fadeInBlocks;
+	return (nframes_t) fadeIn.get_range();
 }
 
 nframes_t AudioClip::get_source_end_frame( ) const
@@ -721,33 +737,128 @@ nframes_t AudioClip::get_track_start_frame( ) const
 	return trackStartFrame;
 }
 
-float AudioClip::get_fade_factor_for( nframes_t pos )
+void AudioClip::set_fade_in_shape( FadeShape shape, nframes_t len )
 {
-	float fi,fo;
-	if (fadeInBlocks==0)
-		fi = 1.0;
-	else
-	{
-		if (pos < trackStartFrame) // that happens in the edge, the current playing pos , when rounded to locate the clip, may lead to a position "considered" inside the clip, but it is not.
-			fi = 0.0;
-		else if (pos > trackStartFrame + fadeInBlocks)
-			fi = 1.0;
-		else
-			fi = (float)((double)(pos - trackStartFrame)/fadeInBlocks);
+	
+	switch (shape) {
+		case Linear:
+			PWARN("Setting frame shape too %d", shape);
+			fadeIn.add_node(0.0, 0.0);
+			fadeIn.add_node(len, 1.0);
+			break;
+	
+		case Fast:
+			PWARN("Setting frame shape too %d", shape);
+			fadeIn.add_node(0, 0);
+			fadeIn.add_node(len * 0.389401, 0.0333333);
+			fadeIn.add_node(len * 0.629032, 0.0861111);
+			fadeIn.add_node(len * 0.829493, 0.233333);
+			fadeIn.add_node(len * 0.9447, 0.483333);
+			fadeIn.add_node(len * 0.976959, 0.697222);
+			fadeIn.add_node(len, 1);
+			break;
+	
+		case Slow:
+			PWARN("Setting frame shape too %d", shape);
+			fadeIn.add_node(0, 0);
+			fadeIn.add_node(len * 0.0207373, 0.197222);
+			fadeIn.add_node(len * 0.0645161, 0.525);
+			fadeIn.add_node(len * 0.152074, 0.802778);
+			fadeIn.add_node(len * 0.276498, 0.919444);
+			fadeIn.add_node(len * 0.481567, 0.980556);
+			fadeIn.add_node(len * 0.767281, 1);
+			fadeIn.add_node(len, 1);
+			break;
+	
+		case LogA:
+			PWARN("Setting frame shape too %d", shape);
+			fadeIn.add_node(0, 0);
+			fadeIn.add_node(len * 0.0737327, 0.308333);
+			fadeIn.add_node(len * 0.246544, 0.658333);
+			fadeIn.add_node(len * 0.470046, 0.886111);
+			fadeIn.add_node(len * 0.652074, 0.972222);
+			fadeIn.add_node(len * 0.771889, 0.988889);
+			fadeIn.add_node(len, 1);
+			break;
+	
+		case LogB:
+			PWARN("Setting frame shape too %d", shape);
+			fadeIn.add_node(0, 0);
+			fadeIn.add_node(len * 0.304147, 0.0694444);
+			fadeIn.add_node(len * 0.529954, 0.152778);
+			fadeIn.add_node(len * 0.725806, 0.333333);
+			fadeIn.add_node(len * 0.847926, 0.558333);
+			fadeIn.add_node(len * 0.919355, 0.730556);
+			fadeIn.add_node(len, 1);
+			break;
 	}
-	if (fadeOutBlocks==0)
-		fo = 1.0;
-	else
-	{
-		if (pos> trackEndFrame)
-			fo = 0.0;
-		else if ( pos < trackEndFrame - fadeOutBlocks)
-			fo = 1.0;
-		else
-			fo = (float)((double)(trackEndFrame-pos)/fadeOutBlocks);
+	
+	fadeInShape = shape;
+	fadeIn.set_range( 170000 );
+	
+}
+
+void AudioClip::set_fade_out_shape( FadeShape shape, nframes_t len )
+{
+	
+	switch (shape) {
+		case Linear:
+			fadeOut.add_node(len * 0, 1);
+			fadeOut.add_node(len * 1, 0);
+			break;
+		
+		case Fast:
+			fadeOut.add_node(len * 0, 1);
+			fadeOut.add_node(len * 0.023041, 0.697222);
+			fadeOut.add_node(len * 0.0553,   0.483333);
+			fadeOut.add_node(len * 0.170507, 0.233333);
+			fadeOut.add_node(len * 0.370968, 0.0861111);
+			fadeOut.add_node(len * 0.610599, 0.0333333);
+			fadeOut.add_node(len * 1, 0);
+			break;
+	
+		case Slow:
+			fadeOut.add_node(len * 0, 1);
+			fadeOut.add_node(len * 0.305556, 1);
+			fadeOut.add_node(len * 0.548611, 0.991736);
+			fadeOut.add_node(len * 0.759259, 0.931129);
+			fadeOut.add_node(len * 0.918981, 0.68595);
+			fadeOut.add_node(len * 0.976852, 0.22865);
+			fadeOut.add_node(len * 1, 0);
+			break;
+	
+		case LogA:
+			fadeOut.add_node(len * 0, 1);
+			fadeOut.add_node(len * 0.228111, 0.988889);
+			fadeOut.add_node(len * 0.347926, 0.972222);
+			fadeOut.add_node(len * 0.529954, 0.886111);
+			fadeOut.add_node(len * 0.753456, 0.658333);
+			fadeOut.add_node(len * 0.9262673, 0.308333);
+			fadeOut.add_node(len * 1, 0);
+			break;
+	
+		case LogB:
+			fadeOut.add_node(len * 0, 1);
+			fadeOut.add_node(len * 0.080645, 0.730556);
+			fadeOut.add_node(len * 0.277778, 0.289256);
+			fadeOut.add_node(len * 0.470046, 0.152778);
+			fadeOut.add_node(len * 0.695853, 0.0694444);
+			fadeOut.add_node(len * 1, 0);
+			break;
+	
 	}
-	// TODO calculate cross-fades-gains
-	return fi*fo;
+	
+	fadeOutShape = shape;
+}
+
+Command * AudioClip::clip_fade_in( )
+{
+	return new Fade(this, &fadeIn);
+}
+
+Command * AudioClip::clip_fade_out( )
+{
+	return new Fade(this, &fadeOut);
 }
 
 // eof

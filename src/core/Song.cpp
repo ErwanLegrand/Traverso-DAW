@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Song.cpp,v 1.6 2006/05/03 11:59:39 r_sijrier Exp $
+    $Id: Song.cpp,v 1.7 2006/05/08 20:03:10 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -99,6 +99,7 @@ Song::~Song()
 	}
 
 	delete [] mixdown;
+	delete [] gainbuffer;
 	delete diskio;
 
 	delete regionList;
@@ -119,6 +120,7 @@ void Song::init()
 	connect (diskio, SIGNAL(outOfSync()), this, SLOT(handle_diskio_outofsync()));
 
 	mixdown = new audio_sample_t[audiodevice().get_buffer_size()];
+	gainbuffer = new audio_sample_t[audiodevice().get_buffer_size()];
 	masterOut = new AudioBus("Master Out", 2);
 	regionList = new MtaRegionList();
 	m_hs = new HistoryStack();
@@ -458,6 +460,7 @@ void Song::set_master_gain(float pMasterGain)
 void Song::set_title(QString sTitle)
 {
 	title=sTitle;
+	emit propertieChanged();
 }
 
 void Song::set_active_track(int trackNumber)
@@ -535,7 +538,7 @@ Command* Song::toggle_snap()
 {
 	isSnapOn=!isSnapOn;
 	
-	emit snapChanged();
+	emit propertieChanged();
 	
 	return (Command*) 0;
 }
@@ -672,8 +675,8 @@ Command* Song::set_editing_mode()
 	info().information(tr("CURRENT MODE : EDITING"));
 	foreach(Track* track, m_tracks)
 		track->set_blur(false);
-	foreach(Track* track, m_tracks)
-		track->audioPluginChain->deactivate();
+/*	foreach(Track* track, m_tracks)
+		track->audioPluginChain->deactivate();*/
 	return (Command*) 0;
 }
 
@@ -682,7 +685,7 @@ Command* Song::set_curve_mode()
 	info().information(tr("CURRENT MODE : TRACK CURVES"));
 	foreach(Track* track, m_tracks)
 		track->set_blur(true);
-	m_tracks.value(activeTrackNumber)->audioPluginChain->activate();
+// 	m_tracks.value(activeTrackNumber)->audioPluginChain->activate();
 	return (Command*) 0;
 }
 
@@ -831,7 +834,9 @@ int Song::process_export( nframes_t nframes )
 void Song::resize_buffer( )
 {
 	delete [] mixdown;
+	delete [] gainbuffer;
 	mixdown = new audio_sample_t[audiodevice().get_buffer_size()];
+	gainbuffer = new audio_sample_t[audiodevice().get_buffer_size()];
 }
 
 int Song::get_bitdepth( )
@@ -891,6 +896,13 @@ void Song::audiodevice_started( )
 nframes_t Song::get_last_frame( ) const
 {
 	return acmanager->get_last_frame();
+}
+
+Command * Song::playhead_to_workcursor( )
+{
+	set_work_at( workingFrame );
+	
+	return (Command*) 0;
 }
 
 
