@@ -11,7 +11,7 @@
 	<keyseq keyfacttype="FKEY" key1="UARROW" slotname="scroll_up" name="Scroll up" sortorder="" />
 	<keyseq keyfacttype="FKEY" key1="DARROW" slotname="scroll_down" name="Scroll down" sortorder="" />
 	<keyseq keyfacttype="FKEY" key1="SHIFT" slotname="touch" name="Touch" sortorder="20" />
-	<keyseq keyfacttype="FKEY" key1="W" slotname="goto_begin" name="Startpos" sortorder="" />
+	<keyseq keyfacttype="FKEY" key1="W" slotname="playhead_to_workcursor" name="Playhead to Workcursor" sortorder="" />
 	<keyseq keyfacttype="FKEY" key1="HOME" slotname="goto_begin" name="Startpos" sortorder="" />
 	<keyseq keyfacttype="FKEY" key1="Z" slotname="hzoom_in" name="Zoom in" sortorder="" />
 	<keyseq keyfacttype="FKEY" key1="S" slotname="select" name="Select" sortorder="10" />
@@ -26,7 +26,6 @@
 	<keyseq keyfacttype="FKEY" key1="I" slotname="import_audiosource" name="Import Audio" sortorder="25" />
 	<keyseq keyfacttype="FKEY" key1="Q" slotname="show_context_menu" name="This Menu" sortorder="100" />
 	<keyseq keyfacttype="FKEY" key1="E" slotname="edit_properties" name="Edit Properties" sortorder="30" />
-	
 	
 	<keyseq keyfacttype="FKEY2" key1="A" key2="B" slotname="about_traverso" name="About" sortorder="" />
 	<keyseq keyfacttype="FKEY2" key1="CTRL" key2="S" slotname="save_project" name="Save Project" sortorder="" />
@@ -45,7 +44,10 @@
 	<keyseq keyfacttype="FKEY2" key1="K" key2="L" slotname="capture_from_channel_right" name="Capture right channel" sortorder="42" />
 	<keyseq keyfacttype="FKEY2" key1="SPACE" key2="R" slotname="go_regions" name="Play regions" sortorder="" />
 	<keyseq keyfacttype="FKEY2" key1="B" key2="V" mousehint="UD" slotname="select_bus_in" name="Bus in" sortorder="30" />
-	<keyseq keyfacttype="FKEY2" key1="B" key2="N" mousehint="UD" slotname="select_bus_out" name="Bus out" sortorder="31" />
+	<keyseq keyfacttype="FKEY2" key1="F" key2="G" mousehint="UD" slotname="select_fade_in_shape" name="Fade In Shape" sortorder="31" />
+	<keyseq keyfacttype="FKEY2" key1="G" key2="H" mousehint="UD" slotname="select_fade_out_shape" name="Fade Out Shape" sortorder="31" />
+	
+	
 	
 	<keyseq keyfacttype="HKEY" key1="Z" mousehint="LRUD" slotname="zoom" name="Zoom" sortorder="" />
 	<keyseq keyfacttype="HKEY" key1="TAB" mousehint="LR" slotname="shuttle" name="Shuttle" sortorder="" />
@@ -65,7 +67,6 @@
 	<keyseq keyfacttype="HKEY2" key1="W" key2="R" mousehint="LR" slotname="drag_edge_both" name="Drag edge (both)" sortorder="35" />
 	<keyseq keyfacttype="HKEY2" key1="F" key2="G" mousehint="LR" slotname="clip_fade_in" name="Fade (in)" sortorder="42" />
 	<keyseq keyfacttype="HKEY2" key1="G" key2="H" mousehint="LR" slotname="clip_fade_out" name="Fade (out)" sortorder="43" />
-	<keyseq keyfacttype="HKEY2" key1="F" key2="H" mousehint="LR" slotname="clip_fade_both" name="Fade (both)" sortorder="44" />
 	
 	
 	<keyseq keyfacttype="D_FKEY" key1="ESC" slotname="exit" name="Exit" sortorder="" />
