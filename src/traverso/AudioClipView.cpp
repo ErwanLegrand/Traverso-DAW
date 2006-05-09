@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.8 2006/05/09 18:50:17 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.9 2006/05/09 19:13:34 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -203,7 +203,7 @@ void AudioClipView::draw_peaks( QPainter& p )
 			short* buf = peak->get_prepared_peakbuffer()->get_microview_buffer();
 			p.setPen(cm().get("CLIP_PEAK_MICROVIEW"));
 
-			for (uint x = baseX; x < (nframes + baseX); x++) {
+			for (uint x = 0; x < nframes; x++) {
 				posY = (int) (centerY + (scaleFactor * buf[microBufferPos]));
 				p.drawLine(x, prev, x+1, posY);
 				prev = posY;
@@ -223,7 +223,7 @@ void AudioClipView::draw_peaks( QPainter& p )
 			centerY = height*(chan+1)+ 16 + baseY;
 			p.setPen(cm().get("CLIP_PEAK_MACROVIEW"));
 
-			for (uint x = baseX; x < (nframes + baseX); x++) {
+			for (uint x = 0; x < nframes; x++) {
 				posY = (int) (centerY - (scaleFactor * (f_max(upperHalf[bufferPos], lowerHalf[bufferPos]))));
 				p.drawLine(x, centerY, x, posY);
 				bufferPos++;
