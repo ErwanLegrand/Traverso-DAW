@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioClipView.h,v 1.2 2006/05/08 20:05:27 r_sijrier Exp $
+    $Id: AudioClipView.h,v 1.3 2006/05/09 18:50:17 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIPVIEW_H
@@ -52,6 +52,8 @@ private:
         AudioClip* 		m_clip;
         Song*		m_song;
         QMenu		contextMenu;
+        QMenu 		fadeInShapeSelector;
+        QMenu 		fadeOutShapeSelector;
 
         QString clipInfo;
         QString sRate;
@@ -75,6 +77,7 @@ private:
 
         bool waitingForPeaks;
 
+	void create_fade_selectors();
         void recreate_clipname_pixmap();
         void update_geometry();
 
@@ -115,6 +118,12 @@ public slots:
         void schedule_for_repaint();
         void update_progress_info(int progress);
         void peaks_creation_finished();
+        
+        void set_fade_in_shape(QAction* action);
+        void set_fade_out_shape(QAction* action);
+        
+        Command* select_fade_in_shape();
+        Command* select_fade_out_shape();
 };
 
 #endif
