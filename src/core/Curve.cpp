@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Curve.cpp,v 1.4 2006/05/08 20:03:10 r_sijrier Exp $
+    $Id: Curve.cpp,v 1.5 2006/05/09 18:47:17 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -36,6 +36,7 @@ using namespace std;
 
 
 Curve::Curve()
+		: ContextItem()
 {
         PENTERCONS;
         changed = true;
@@ -52,6 +53,7 @@ void Curve::add_node(double pos, double value)
 {
         PENTER2;
         nodes.append(new CurveNode(pos, value) );
+        emit stateChanged();
 }
 
 void Curve::solve ()
@@ -365,7 +367,7 @@ double Curve::multipoint_eval (double x)
 		}
 
 		double x2 = x * x;
-		CurveNode* cn = dynamic_cast<CurveNode*> (*range.second);
+		CurveNode* cn = *range.second;
 
 		return cn->coeff[0] + (cn->coeff[1] * x) + (cn->coeff[2] * x2) + (cn->coeff[3] * x2 * x);
 	} 
@@ -386,6 +388,8 @@ void Curve::set_range( double when )
 	
 	double factor = when / nodes.last()->when;
 	x_scale (factor);
+	
+	emit stateChanged();
 }
 
 void Curve::x_scale( double factor )
@@ -412,6 +416,12 @@ double Curve::get_range( ) const
 	}
 		
 	return 0;
+}
+
+void Curve::clear( )
+{
+	nodes.clear();
+	set_changed();
 }
 
 //eof
