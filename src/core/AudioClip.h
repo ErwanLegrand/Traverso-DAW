@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.8 2006/05/08 20:03:10 r_sijrier Exp $
+$Id: AudioClip.h,v 1.9 2006/05/09 18:47:47 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -56,12 +56,11 @@ public:
 
 
 	enum FadeShape {
-		Linear,
+		Fastest,
 		Fast,
+		Linear,
 		Slow,
-		LogA,
-		LogB,
-
+		Slowest
 	};
 	
 	void add_audio_source(ReadSource* source, int channel);
@@ -90,9 +89,9 @@ public:
 	Song* get_song() const;
 	Peak* get_peak_for_channel(int chan) const;
 	QDomNode get_state(QDomDocument doc);
-	Curve& get_fade_in() {return fadeIn;}
-	Curve& get_fade_out() {return fadeOut;}
-	Curve& get_gain_envelope() {return gainEnvelope;}
+	Curve* get_fade_in() {return fadeIn;}
+	Curve* get_fade_out() {return fadeOut;}
+	Curve* get_gain_envelope() {return gainEnvelope;}
 	
 	float get_gain() const;
 	
@@ -136,9 +135,9 @@ private:
 	QList<ReadSource* > 	readSources;
 	QList<WriteSource* >	writeSources;
 	AudioBus*		captureBus;
-	Curve			fadeIn;
-	Curve			fadeOut;
-	Curve			gainEnvelope;
+	Curve*			fadeIn;
+	Curve*			fadeOut;
+	Curve*			gainEnvelope;
 	FadeShape		fadeInShape;
 	FadeShape		fadeOutShape;
 

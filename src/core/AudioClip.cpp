@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.10 2006/05/08 20:03:10 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.11 2006/05/09 18:47:47 r_sijrier Exp $
 */
 
 #include "ContextItem.h"
@@ -78,6 +78,8 @@ void AudioClip::init()
 	m_song->get_audioclip_manager()->add_clip( this );
 	isRecording = false;
 	isSelected = false;
+	fadeIn = new Curve;
+	fadeOut = new Curve;
 }
 
 int AudioClip::set_state(const QDomNode& node )
@@ -90,8 +92,15 @@ int AudioClip::set_state(const QDomNode& node )
 	isTake = e.attribute( "take", "").toInt();
 	uint channels = e.attribute( "channels", "0").toInt();
 	bitDepth = e.attribute("origbitdepth", "0").toInt();
-	set_fade_in( e.attribute( "fadeIn", "" ).toInt() );
-	set_fade_out( e.attribute( "fadeOut", "").toInt() );
+	
+	uint fadeInRange = e.attribute( "fadeIn", "" ).toUInt();
+	FadeShape shape = (FadeShape) e.attribute( "fadeInShape", "" ).toInt();
+	set_fade_in_shape( shape, fadeInRange);
+	
+	uint fadeOutRange = e.attribute( "fadeOut", "").toUInt();
+	shape = (FadeShape) e.attribute( "fadeOutShape", "" ).toInt();
+	set_fade_out_shape( shape, fadeOutRange);
+	
 	set_gain( e.attribute( "gain", "" ).toFloat() );
 	isMuted =  e.attribute( "mute", "" ).toInt();
 	
@@ -130,8 +139,10 @@ QDomNode AudioClip::get_state( QDomDocument doc )
 	node.setAttribute("length", m_length);
 	node.setAttribute("gain", m_gain);
 	node.setAttribute("mute", isMuted);
-	node.setAttribute("fadeIn", fadeIn.get_range());
-	node.setAttribute("fadeOut", fadeOut.get_range());
+	node.setAttribute("fadeIn", (uint) fadeIn->get_range());
+	node.setAttribute("fadeOut", (uint) fadeOut->get_range());
+	node.setAttribute("fadeInShape", fadeInShape);
+	node.setAttribute("fadeOutShape", fadeOutShape);
 	node.setAttribute("take", isTake);
 	node.setAttribute("channels", m_channels);
 	node.setAttribute("clipname", m_name );
@@ -286,14 +297,13 @@ void AudioClip::set_blur(bool )
 
 void AudioClip::set_fade_in(nframes_t b)
 {
-	PWARN("Setting fade in to %d frames", b);
-	set_fade_in_shape( LogB , b);
+	fadeIn->set_range( b );
 	emit stateChanged();
 }
 
 void AudioClip::set_fade_out(nframes_t b)
 {
-	set_fade_out_shape( LogB , b);
+	fadeOut->set_range( b );
 	emit stateChanged();
 }
 
@@ -366,13 +376,13 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* channelBuffer, uint ch
 		gainFactor *= panFactor;
 	}
 
-	if (mix_pos < fadeIn.get_range()) {
-// 		printf("mix_pos is %d, len is %d\n", mix_pos, fadeIn.get_range());
+	if (mix_pos < fadeIn->get_range()) {
+// 		printf("mix_pos is %d, len is %d\n", mix_pos, fadeIn->get_range());
 		nframes_t limit;
 
-		limit = std::min (read_frames, (uint)fadeIn.get_range());
+		limit = std::min (read_frames, (uint)fadeIn->get_range());
 
-		fadeIn.get_vector (mix_pos, mix_pos+limit, gainbuffer, limit);
+		fadeIn->get_vector (mix_pos, mix_pos+limit, gainbuffer, limit);
 		
 
 		for (nframes_t n = 0; n < limit; ++n) {
@@ -482,20 +492,20 @@ Command* AudioClip::reset_gain()
 
 Command* AudioClip::reset_fade_in()
 {
-	set_fade_in(0);
+	set_fade_in(1);
 	return (Command*) 0;
 }
 
 Command* AudioClip::reset_fade_out()
 {
-	set_fade_out(0);
+	set_fade_out(1);
 	return (Command*) 0;
 }
 
 Command* AudioClip::reset_fade_both()
 {
-	set_fade_in(0);
-	set_fade_out(0);
+	set_fade_in(1);
+	set_fade_out(1);
 	return (Command*) 0;
 }
 
@@ -709,12 +719,12 @@ bool AudioClip::is_recording( ) const
 
 nframes_t AudioClip::get_fade_out_frames( ) const
 {
-	return (nframes_t) fadeOut.get_range();
+	return (nframes_t) fadeOut->get_range();
 }
 
 nframes_t AudioClip::get_fade_in_frames() const
 {
-	return (nframes_t) fadeIn.get_range();
+	return (nframes_t) fadeIn->get_range();
 }
 
 nframes_t AudioClip::get_source_end_frame( ) const
@@ -739,126 +749,122 @@ nframes_t AudioClip::get_track_start_frame( ) const
 
 void AudioClip::set_fade_in_shape( FadeShape shape, nframes_t len )
 {
+
+	fadeIn->clear();
+	fadeInShape = shape;
 	
 	switch (shape) {
 		case Linear:
-			PWARN("Setting frame shape too %d", shape);
-			fadeIn.add_node(0.0, 0.0);
-			fadeIn.add_node(len, 1.0);
+			fadeIn->add_node(0.0, 0.0);
+			fadeIn->add_node(len, 1.0);
+			break;
+	
+		case Slowest:
+			fadeIn->add_node(0, 0);
+			fadeIn->add_node(len * 0.389401, 0.0333333);
+			fadeIn->add_node(len * 0.629032, 0.0861111);
+			fadeIn->add_node(len * 0.829493, 0.233333);
+			fadeIn->add_node(len * 0.9447, 0.483333);
+			fadeIn->add_node(len * 0.976959, 0.697222);
+			fadeIn->add_node(len, 1);
+			break;
+	
+		case Fastest:
+			fadeIn->add_node(0, 0);
+			fadeIn->add_node(len * 0.0207373, 0.197222);
+			fadeIn->add_node(len * 0.0645161, 0.525);
+			fadeIn->add_node(len * 0.152074, 0.802778);
+			fadeIn->add_node(len * 0.276498, 0.919444);
+			fadeIn->add_node(len * 0.481567, 0.980556);
+			fadeIn->add_node(len * 0.767281, 1);
+			fadeIn->add_node(len, 1);
 			break;
 	
 		case Fast:
-			PWARN("Setting frame shape too %d", shape);
-			fadeIn.add_node(0, 0);
-			fadeIn.add_node(len * 0.389401, 0.0333333);
-			fadeIn.add_node(len * 0.629032, 0.0861111);
-			fadeIn.add_node(len * 0.829493, 0.233333);
-			fadeIn.add_node(len * 0.9447, 0.483333);
-			fadeIn.add_node(len * 0.976959, 0.697222);
-			fadeIn.add_node(len, 1);
+			fadeIn->add_node(0, 0);
+			fadeIn->add_node(len * 0.0737327, 0.308333);
+			fadeIn->add_node(len * 0.246544, 0.658333);
+			fadeIn->add_node(len * 0.470046, 0.886111);
+			fadeIn->add_node(len * 0.652074, 0.972222);
+			fadeIn->add_node(len * 0.771889, 0.988889);
+			fadeIn->add_node(len, 1);
 			break;
 	
 		case Slow:
-			PWARN("Setting frame shape too %d", shape);
-			fadeIn.add_node(0, 0);
-			fadeIn.add_node(len * 0.0207373, 0.197222);
-			fadeIn.add_node(len * 0.0645161, 0.525);
-			fadeIn.add_node(len * 0.152074, 0.802778);
-			fadeIn.add_node(len * 0.276498, 0.919444);
-			fadeIn.add_node(len * 0.481567, 0.980556);
-			fadeIn.add_node(len * 0.767281, 1);
-			fadeIn.add_node(len, 1);
-			break;
-	
-		case LogA:
-			PWARN("Setting frame shape too %d", shape);
-			fadeIn.add_node(0, 0);
-			fadeIn.add_node(len * 0.0737327, 0.308333);
-			fadeIn.add_node(len * 0.246544, 0.658333);
-			fadeIn.add_node(len * 0.470046, 0.886111);
-			fadeIn.add_node(len * 0.652074, 0.972222);
-			fadeIn.add_node(len * 0.771889, 0.988889);
-			fadeIn.add_node(len, 1);
-			break;
-	
-		case LogB:
-			PWARN("Setting frame shape too %d", shape);
-			fadeIn.add_node(0, 0);
-			fadeIn.add_node(len * 0.304147, 0.0694444);
-			fadeIn.add_node(len * 0.529954, 0.152778);
-			fadeIn.add_node(len * 0.725806, 0.333333);
-			fadeIn.add_node(len * 0.847926, 0.558333);
-			fadeIn.add_node(len * 0.919355, 0.730556);
-			fadeIn.add_node(len, 1);
+			fadeIn->add_node(0, 0);
+			fadeIn->add_node(len * 0.304147, 0.0694444);
+			fadeIn->add_node(len * 0.529954, 0.152778);
+			fadeIn->add_node(len * 0.725806, 0.333333);
+			fadeIn->add_node(len * 0.847926, 0.558333);
+			fadeIn->add_node(len * 0.919355, 0.730556);
+			fadeIn->add_node(len, 1);
 			break;
 	}
-	
-	fadeInShape = shape;
-	fadeIn.set_range( 170000 );
 	
 }
 
 void AudioClip::set_fade_out_shape( FadeShape shape, nframes_t len )
 {
+	fadeOut->clear();
+	fadeOutShape = shape;
 	
 	switch (shape) {
 		case Linear:
-			fadeOut.add_node(len * 0, 1);
-			fadeOut.add_node(len * 1, 0);
+			fadeOut->add_node(len * 0, 1);
+			fadeOut->add_node(len * 1, 0);
 			break;
 		
+		case Slowest:
+			fadeOut->add_node(len * 0, 1);
+			fadeOut->add_node(len * 0.023041, 0.697222);
+			fadeOut->add_node(len * 0.0553,   0.483333);
+			fadeOut->add_node(len * 0.170507, 0.233333);
+			fadeOut->add_node(len * 0.370968, 0.0861111);
+			fadeOut->add_node(len * 0.610599, 0.0333333);
+			fadeOut->add_node(len * 1, 0);
+			break;
+	
+		case Fastest:
+			fadeOut->add_node(len * 0, 1);
+			fadeOut->add_node(len * 0.305556, 1);
+			fadeOut->add_node(len * 0.548611, 0.991736);
+			fadeOut->add_node(len * 0.759259, 0.931129);
+			fadeOut->add_node(len * 0.918981, 0.68595);
+			fadeOut->add_node(len * 0.976852, 0.22865);
+			fadeOut->add_node(len * 1, 0);
+			break;
+	
 		case Fast:
-			fadeOut.add_node(len * 0, 1);
-			fadeOut.add_node(len * 0.023041, 0.697222);
-			fadeOut.add_node(len * 0.0553,   0.483333);
-			fadeOut.add_node(len * 0.170507, 0.233333);
-			fadeOut.add_node(len * 0.370968, 0.0861111);
-			fadeOut.add_node(len * 0.610599, 0.0333333);
-			fadeOut.add_node(len * 1, 0);
+			fadeOut->add_node(len * 0, 1);
+			fadeOut->add_node(len * 0.228111, 0.988889);
+			fadeOut->add_node(len * 0.347926, 0.972222);
+			fadeOut->add_node(len * 0.529954, 0.886111);
+			fadeOut->add_node(len * 0.753456, 0.658333);
+			fadeOut->add_node(len * 0.9262673, 0.308333);
+			fadeOut->add_node(len * 1, 0);
 			break;
 	
 		case Slow:
-			fadeOut.add_node(len * 0, 1);
-			fadeOut.add_node(len * 0.305556, 1);
-			fadeOut.add_node(len * 0.548611, 0.991736);
-			fadeOut.add_node(len * 0.759259, 0.931129);
-			fadeOut.add_node(len * 0.918981, 0.68595);
-			fadeOut.add_node(len * 0.976852, 0.22865);
-			fadeOut.add_node(len * 1, 0);
-			break;
-	
-		case LogA:
-			fadeOut.add_node(len * 0, 1);
-			fadeOut.add_node(len * 0.228111, 0.988889);
-			fadeOut.add_node(len * 0.347926, 0.972222);
-			fadeOut.add_node(len * 0.529954, 0.886111);
-			fadeOut.add_node(len * 0.753456, 0.658333);
-			fadeOut.add_node(len * 0.9262673, 0.308333);
-			fadeOut.add_node(len * 1, 0);
-			break;
-	
-		case LogB:
-			fadeOut.add_node(len * 0, 1);
-			fadeOut.add_node(len * 0.080645, 0.730556);
-			fadeOut.add_node(len * 0.277778, 0.289256);
-			fadeOut.add_node(len * 0.470046, 0.152778);
-			fadeOut.add_node(len * 0.695853, 0.0694444);
-			fadeOut.add_node(len * 1, 0);
+			fadeOut->add_node(len * 0, 1);
+			fadeOut->add_node(len * 0.080645, 0.730556);
+			fadeOut->add_node(len * 0.277778, 0.289256);
+			fadeOut->add_node(len * 0.470046, 0.152778);
+			fadeOut->add_node(len * 0.695853, 0.0694444);
+			fadeOut->add_node(len * 1, 0);
 			break;
 	
 	}
 	
-	fadeOutShape = shape;
 }
 
 Command * AudioClip::clip_fade_in( )
 {
-	return new Fade(this, &fadeIn);
+	return new Fade(this, fadeIn);
 }
 
 Command * AudioClip::clip_fade_out( )
 {
-	return new Fade(this, &fadeOut);
+	return new Fade(this, fadeOut);
 }
 
 // eof
