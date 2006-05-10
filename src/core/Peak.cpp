@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Peak.cpp,v 1.2 2006/04/25 17:00:45 r_sijrier Exp $
+$Id: Peak.cpp,v 1.3 2006/05/10 10:59:03 r_sijrier Exp $
 */
 
 #include "libtraversocore.h"
@@ -41,11 +41,12 @@ $Id: Peak.cpp,v 1.2 2006/04/25 17:00:45 r_sijrier Exp $
 * the waveform.
 */
 
-const uint SAMPLE_MULTIPLY_FACTOR 		= 255;
+const int Peak::MAX_DB_VALUE			= 120;
 const int SAVING_ZOOM_FACTOR 			= 6;
 const uint INITIAL_PROCESSBUFFER_SIZE 		= 3000000;
 
 const int Peak::MAX_ZOOM_USING_SOURCEFILE	= SAVING_ZOOM_FACTOR - 1;
+
 int Peak::zoomStep[ZOOM_LEVELS] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096,
 				8192, 16384, 32768, 65536, 131072};
 
@@ -129,10 +130,10 @@ int Peak::prepare_buffer_for_zoomlevel(int zoomLevel, nframes_t startPos, nframe
 			}
 
 			if (valueMax > (valueMin * -1)) {
-				value = (short)(valueMax * SAMPLE_MULTIPLY_FACTOR);
+				value = (short)(valueMax * MAX_DB_VALUE);
 				preparedBuffer->set_microview_buffer_value(value, count);
 			} else {
-				value = (short)(valueMin * SAMPLE_MULTIPLY_FACTOR);
+				value = (short)(valueMin * MAX_DB_VALUE);
 				preparedBuffer->set_microview_buffer_value(value, count);
 			}
 			count++;
@@ -162,8 +163,8 @@ void Peak::finish_process_buffer()
 	if (processedFrames != 0) {
 		unsigned char* upperHalfBuffer = processBuffer->get_upper_half_buffer();
 		unsigned char* lowerHalfBuffer = processBuffer->get_lower_half_buffer();
-		upperHalfBuffer[processBufferPos] = (unsigned char)(peakUpperValue * SAMPLE_MULTIPLY_FACTOR);
-		lowerHalfBuffer[processBufferPos] = (unsigned char)(peakLowerValue * SAMPLE_MULTIPLY_FACTOR);
+		upperHalfBuffer[processBufferPos] = (unsigned char)(peakUpperValue * MAX_DB_VALUE);
+		lowerHalfBuffer[processBufferPos] = (unsigned char)(peakLowerValue * MAX_DB_VALUE);
 	}
 
 	processBuffer->set_recording_size(processBufferPos + 1);
@@ -185,8 +186,9 @@ void Peak::process(audio_sample_t* buffer, nframes_t nframes)
 		if (sample < peakLowerValue)
 			peakLowerValue = sample;
 		if (processedFrames == 64) {
-			upperHalfBuffer[processBufferPos] = (unsigned char) (peakUpperValue * SAMPLE_MULTIPLY_FACTOR );
-			lowerHalfBuffer[processBufferPos] = (unsigned char) ((-1) * (peakLowerValue * SAMPLE_MULTIPLY_FACTOR ));
+			
+			upperHalfBuffer[processBufferPos] = (unsigned char) (peakUpperValue * MAX_DB_VALUE );
+			lowerHalfBuffer[processBufferPos] = (unsigned char) ((-1) * (peakLowerValue * MAX_DB_VALUE ));
 
 			peakUpperValue = 0.0;
 			peakLowerValue = 0.0;

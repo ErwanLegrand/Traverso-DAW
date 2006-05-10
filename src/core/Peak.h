@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Peak.h,v 1.1 2006/04/20 14:51:40 r_sijrier Exp $
+    $Id: Peak.h,v 1.2 2006/05/10 10:58:50 r_sijrier Exp $
 */
 
 #ifndef PEAK_H
@@ -97,6 +97,7 @@ class Peak : public QObject
 public:
         static const int ZOOM_LEVELS = 18;
         static const int MAX_ZOOM_USING_SOURCEFILE;
+        static const int MAX_DB_VALUE;
         static int zoomStep[ZOOM_LEVELS];
 
         Peak(AudioSource* source);
