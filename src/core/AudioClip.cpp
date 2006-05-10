@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.11 2006/05/09 18:47:47 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.12 2006/05/10 11:43:08 r_sijrier Exp $
 */
 
 #include "ContextItem.h"
@@ -53,6 +53,8 @@ AudioClip::AudioClip(Track* track, nframes_t pTrackInsertBlock, QString name)
 	m_song = m_track->get_song();
 	bitDepth = m_song->get_bitdepth();
 	init();
+	set_fade_in_shape( Linear, 1);
+	set_fade_out_shape( Linear, 1);
 }
 
 AudioClip::AudioClip(Track* track, const QDomNode& node)
