@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.9 2006/05/09 19:13:34 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.10 2006/05/10 10:58:37 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -33,6 +33,9 @@ $Id: AudioClipView.cpp,v 1.9 2006/05/09 19:13:34 r_sijrier Exp $
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
+
+static const int MINIMAL_CLIPINFO_HEIGHT = 30;
+static const int CLIPINFO_HEIGHT = 14;
 
 AudioClipView::AudioClipView(ViewPort * vp, TrackView* parent, AudioClip* clip )
 		: ViewItem(vp, parent, clip), m_tv(parent), m_clip(clip)
@@ -103,7 +106,6 @@ QRect AudioClipView::draw(QPainter& p)
 	QPainter painter(&pix);
 
 
-	draw_clipinfo_area(p);
 
 	int normalBackgroundWidth = clipXWidth - rCrossX - lCrossX;
 
@@ -142,16 +144,23 @@ QRect AudioClipView::draw(QPainter& p)
 		si.setNum(m_progress);
 		QString buildProcess = "Building Peaks: " + si + "%";
 		painter.drawText(r, Qt::AlignVCenter, buildProcess);
-		return QRect();
+	
+	} else {
+		
+		// 	draw_crossings(p);
+	
+		draw_peaks(painter);
+	
+		draw_fades(painter);
+	
 	}
 
-	// 	draw_crossings(p);
-
-	draw_peaks(painter);
-
-	draw_fades(painter);
-
-	p.drawPixmap(baseX, baseY + 16, pix);
+	if (m_clip->get_height() < (MINIMAL_CLIPINFO_HEIGHT + CLIPINFO_HEIGHT)) {
+		p.drawPixmap(baseX, baseY, pix);
+	} else {
+		draw_clipinfo_area(p);
+		p.drawPixmap(baseX, baseY + CLIPINFO_HEIGHT, pix);
+	}
 
 	PMESG("drawing clip");
 	
@@ -194,13 +203,13 @@ void AudioClipView::draw_peaks( QPainter& p )
 		upperHalf = peak->get_prepared_peakbuffer()->get_lower_half_buffer();
 		lowerHalf = peak->get_prepared_peakbuffer()->get_lower_half_buffer();
 
-		float scaleFactor = ( ((float)(height - 6)) / 512) * gain;
+		float scaleFactor = ( ((float)(height)) / (Peak::MAX_DB_VALUE * 2)) * gain;
 		centerY = height/2 + height*chan;
 
 		if (microView) {
-			int prev = 0;
 			int microBufferPos = 0;
 			short* buf = peak->get_prepared_peakbuffer()->get_microview_buffer();
+			int prev =  (int) (centerY + (scaleFactor * buf[0]));
 			p.setPen(cm().get("CLIP_PEAK_MICROVIEW"));
 
 			for (uint x = 0; x < nframes; x++) {
@@ -213,18 +222,18 @@ void AudioClipView::draw_peaks( QPainter& p )
 			p.setPen(cm().get("CLIP_PEAK_MACROVIEW"));
 
 			for (uint x = 0; x < nframes; x++) {
-				posY = (int) (centerY + (scaleFactor * upperHalf[bufferPos]));
-				negY = (int) (centerY - (scaleFactor * lowerHalf[bufferPos]));
+                                posY = (int) (centerY + (scaleFactor * upperHalf[bufferPos]));
+                                negY = (int) (centerY - (scaleFactor * lowerHalf[bufferPos]));
 				p.drawLine(x, negY, x, posY);
 				bufferPos++;
 			}
 		} else {
-			scaleFactor = ( ( (float) (height - 6) ) / 256) * gain;
-			centerY = height*(chan+1)+ 16 + baseY;
+			scaleFactor = ( ( (float) height ) / Peak::MAX_DB_VALUE) * gain;
+			centerY = height*(chan+1);
 			p.setPen(cm().get("CLIP_PEAK_MACROVIEW"));
 
 			for (uint x = 0; x < nframes; x++) {
-				posY = (int) (centerY - (scaleFactor * (f_max(upperHalf[bufferPos], lowerHalf[bufferPos]))));
+                                posY = (int) (centerY - (scaleFactor * (f_max(upperHalf[bufferPos], lowerHalf[bufferPos]))));
 				p.drawLine(x, centerY, x, posY);
 				bufferPos++;
 			}
@@ -236,7 +245,7 @@ void AudioClipView::draw_peaks( QPainter& p )
 void AudioClipView::draw_fades( QPainter& painter )
 {
 	Curve* fadeIn = m_clip->get_fade_in();
-	QPolygon polygon;
+	QPolygonF polygon;
 	
 	float value[2];
 	int step = 0;
@@ -249,7 +258,7 @@ void AudioClipView::draw_fades( QPainter& painter )
 		return;
 	}
 	
-	if (firstVisibleFrame > m_clip->get_track_start_frame()) {
+	if (firstVisibleFrame > startFrame) {
 		startPos = (firstVisibleFrame - startFrame) / Peak::zoomStep[hzoom];
 		startFrame = firstVisibleFrame;
 	}
@@ -267,7 +276,7 @@ void AudioClipView::draw_fades( QPainter& painter )
 	// using a 2 pixel resolution, is sufficient enough
 	for (int i=startPos; i < (fadeWidth+startPos); i+=2) {
 		fadeIn->get_vector(i*Peak::zoomStep[hzoom], i*Peak::zoomStep[hzoom] + 1, value, 2);
-	 	polygon << QPoint( step, height - (int) (value[1] * height) );
+	 	polygon << QPointF( step, height - (value[1] * height) );
 	 	step += 2;
 	}
 	
@@ -284,8 +293,8 @@ void AudioClipView::draw_fades( QPainter& painter )
 	path.lineTo(0, 0);
 	path.closeSubpath();
 	
-	painter.setPen(QPen(QColor(122, 163, 39, 80)));
-	painter.setBrush(QColor(122, 163, 39, 80));
+	painter.setPen(Qt::NoPen);
+	painter.setBrush(QColor(255, 0, 255, 45));
 	
 	painter.drawPath(path);	
 	painter.restore();
@@ -295,14 +304,14 @@ void AudioClipView::draw_fades( QPainter& painter )
 void AudioClipView::draw_crossings( QPainter& p )
 {
 	// bg under RIGHT crossfade region  ( only RIGHT !)
-	p.fillRect( baseX + clipXWidth - rCrossX , baseY+16, rCrossX, height, cm().get("CLIP_RIGHT_CROSSFADE"));
+	p.fillRect( clipXWidth - rCrossX , 0, rCrossX, height, cm().get("CLIP_RIGHT_CROSSFADE"));
 
 	if (crossAtLeft && crossAtRight)
 		return;
 	if (crossAtLeft)
-		p.drawArc(baseX - lCrossX, baseY + 16, lCrossX * 2 , height * 2 , 90*16, -90*16);
+		p.drawArc(lCrossX, 0, lCrossX * 2 , height * 2 , 90*16, -90*16);
 	if (crossAtRight)
-		p.drawArc(baseX + clipXWidth - rCrossX, baseY + 16, rCrossX * 2, height * 2, 90*16, 90*16);
+		p.drawArc(clipXWidth - rCrossX, 0, rCrossX * 2, height * 2, 90*16, 90*16);
 }
 
 
@@ -357,11 +366,12 @@ void AudioClipView::recreate_clipname_pixmap()
 
 
 	QPainter paint(&clipNamePixmapActive);
+	paint.setRenderHint(QPainter::TextAntialiasing );
 	paint.setPen(cm().get("DARK_TEXT"));
-	paint.setFont( QFont( "Bitstream Vera Sans", 9 ) );
+	paint.setFont( QFont( "Bitstream Vera Sans", 8 ) );
 	int deltaX = 0;
 	for (int i=0; i<channels; ++i) {
-		paint.drawEllipse( x + 6*i, 4, 10 , 7);
+		paint.drawEllipse( x + 4*i, 3, 7 , 7);
 		deltaX += 4*i;
 	}
 	x += 15 + deltaX;
@@ -371,12 +381,13 @@ void AudioClipView::recreate_clipname_pixmap()
 
 
 	QPainter painter(&clipNamePixmapInActive);
-	paint.setPen(cm().get("DARK_TEXT"));
-	painter.setFont( QFont( "Bitstream Vera Sans", 9 ) );
+	painter.setRenderHint(QPainter::TextAntialiasing );
+	painter.setPen(cm().get("DARK_TEXT"));
+	painter.setFont( QFont( "Bitstream Vera Sans", 8 ) );
 	x = 5;
 	deltaX = 0;
 	for (int i=0; i<channels; ++i) {
-		painter.drawEllipse( x + 4*i, 4, 8 , 8);
+		painter.drawEllipse( x + 4*i, 3, 7 , 7);
 		deltaX += 4*i;
 	}
 	x += 15 + deltaX;
@@ -443,14 +454,14 @@ void AudioClipView::update_variables( )
 	sourceFirstFrame = m_clip->get_source_start_frame();
 	trackFirstFrame =  m_clip->get_track_start_frame();
 	trackLastFrame = m_clip->get_track_end_frame();
-	fadeOutFrames = m_clip->get_fade_out_frames();
-	fadeInFrames = m_clip->get_fade_in_frames();
 	startFrame = sourceFirstFrame;
 	gain = m_clip->get_gain();
 	hzoom = m_song->get_hzoom();
 	baseY  = m_clip->get_baseY();
 	baseX = m_song->frame_to_xpos(trackFirstFrame) + m_tv->cliparea_basex();
-	height = m_clip->get_height() - 16;
+	height = m_clip->get_height() - CLIPINFO_HEIGHT;
+	if (height < MINIMAL_CLIPINFO_HEIGHT)
+		height = m_clip->get_height();
 	clipXWidth = m_clip->get_width();
 	clipAreaWidth = m_tv->cliparea_width();
 	channels = m_clip->get_channels();
