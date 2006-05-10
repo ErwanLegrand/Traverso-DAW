@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioClipView.h,v 1.3 2006/05/09 18:50:17 r_sijrier Exp $
+    $Id: AudioClipView.h,v 1.4 2006/05/10 11:03:19 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIPVIEW_H
@@ -92,8 +92,6 @@ private:
         nframes_t sourceFirstFrame;
         nframes_t trackFirstFrame;
         nframes_t trackLastFrame;
-        nframes_t fadeOutFrames;
-        nframes_t fadeInFrames;
         nframes_t startFrame;
         float gain;
         int hzoom;
