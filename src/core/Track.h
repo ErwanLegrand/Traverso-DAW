@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.h,v 1.5 2006/05/08 20:03:10 r_sijrier Exp $
+$Id: Track.h,v 1.6 2006/05/10 11:00:33 r_sijrier Exp $
 */
 
 
@@ -49,7 +49,7 @@ public :
 	~Track();
 
 	static const int INITIAL_HEIGHT = 100;
-	static const int MINIMUM_HEIGHT = 50;
+	static const int MINIMUM_HEIGHT = 25;
 
 	void activate();
 	void deactivate();
