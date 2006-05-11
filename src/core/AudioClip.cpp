@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.12 2006/05/10 11:43:08 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.13 2006/05/11 13:55:10 r_sijrier Exp $
 */
 
 #include "ContextItem.h"
@@ -96,10 +96,12 @@ int AudioClip::set_state(const QDomNode& node )
 	bitDepth = e.attribute("origbitdepth", "0").toInt();
 	
 	uint fadeInRange = e.attribute( "fadeIn", "" ).toUInt();
+	fadeInRange = (fadeInRange == 0) ? 1 : fadeInRange;
 	FadeShape shape = (FadeShape) e.attribute( "fadeInShape", "" ).toInt();
 	set_fade_in_shape( shape, fadeInRange);
 	
 	uint fadeOutRange = e.attribute( "fadeOut", "").toUInt();
+	fadeOutRange = (fadeOutRange == 0) ? 1 : fadeOutRange;
 	shape = (FadeShape) e.attribute( "fadeOutShape", "" ).toInt();
 	set_fade_out_shape( shape, fadeOutRange);
 	
