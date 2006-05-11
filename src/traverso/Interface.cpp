@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.5 2006/05/11 18:46:48 r_sijrier Exp $
+$Id: Interface.cpp,v 1.6 2006/05/11 18:52:50 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -130,10 +130,10 @@ void Interface::create()
 	buttonWidget->setMaximumHeight (18);
 	statusAreaWidgetLayout->addWidget(buttonWidget);
 	
-// 	QPushButton* helpbutton = new QPushButton("Help", buttonWidget);
-// 	helpbutton->setMaximumHeight (18);
-// 	helpbutton->setFocusPolicy(Qt::NoFocus);
-// 	connect(helpbutton, SIGNAL(clicked()), helpWindow, SLOT(show_help()));
+	QPushButton* helpbutton = new QPushButton("Help", buttonWidget);
+	helpbutton->setMaximumHeight (18);
+	helpbutton->setFocusPolicy(Qt::NoFocus);
+	connect(helpbutton, SIGNAL(clicked()), helpWindow, SLOT(show_help()));
 
 
 	overView = new OverViewWidget(statusAreaWidget);

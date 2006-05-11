@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Traverso.cpp,v 1.3 2006/05/11 18:46:48 r_sijrier Exp $
+$Id: Traverso.cpp,v 1.4 2006/05/11 18:52:50 r_sijrier Exp $
 */
 
 #include <signal.h>
@@ -56,7 +56,6 @@ Traverso::Traverso(int argc, char **argv )
 
 
 	interface = new Interface();
-	prepare_audio_device();
 
 	init();
 
