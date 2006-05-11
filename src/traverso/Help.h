@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Help.h,v 1.2 2006/04/25 17:22:13 r_sijrier Exp $
+    $Id: Help.h,v 1.3 2006/05/11 13:52:04 r_sijrier Exp $
 */
 
 #ifndef HELP_H
@@ -26,7 +26,7 @@
 #include <libtraversocore.h>
 
 #include <QWidget>
-#include <QTextEdit>
+#include <QTextBrowser>
 
 class Help : public QWidget
 {
@@ -36,7 +36,7 @@ public:
         ~Help();
 
 private:
-        QTextEdit *view;
+        QTextBrowser *view;
         bool created;
 
         void create();
