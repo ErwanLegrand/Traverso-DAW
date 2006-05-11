@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Peak.cpp,v 1.3 2006/05/10 10:59:03 r_sijrier Exp $
+$Id: Peak.cpp,v 1.4 2006/05/11 13:56:24 r_sijrier Exp $
 */
 
 #include "libtraversocore.h"
@@ -98,7 +98,7 @@ int Peak::prepare_buffer_for_zoomlevel(int zoomLevel, nframes_t startPos, nframe
 	else {
 		nframes_t readFrames, toRead;
 		toRead = nframes * zoomStep[zoomLevel];
-		audio_sample_t* buf = new audio_sample_t[toRead];
+		audio_sample_t buf[toRead];
 
 		if ( (readFrames = static_cast<ReadSource*>(m_source)->file_read(buf, startPos, toRead))
 				!= toRead) {
@@ -138,8 +138,6 @@ int Peak::prepare_buffer_for_zoomlevel(int zoomLevel, nframes_t startPos, nframe
 			}
 			count++;
 		} while(count < nframes);
-
-		delete [] buf;
 
 		preparedBufferPointer = preparedBuffer;
 
