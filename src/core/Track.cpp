@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.8 2006/05/08 20:03:10 r_sijrier Exp $
+$Id: Track.cpp,v 1.9 2006/05/11 17:57:32 r_sijrier Exp $
 */
 
 #include "Track.h"
@@ -95,6 +95,10 @@ QDomNode Track::get_state( QDomDocument doc )
 
 	QDomNode clips = doc.createElement("Clips");
 	foreach(AudioClip* clip, audioClipList) {
+		if (clip->get_length() == 0) {
+			PERROR("Clip lenght is 0! This shouldn't happen!!!!");
+			continue;
+		}
 		clips.appendChild(clip->get_state(doc));
 	}
 	node.appendChild(clips);
