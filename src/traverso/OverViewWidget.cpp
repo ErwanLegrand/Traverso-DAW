@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: OverViewWidget.cpp,v 1.4 2006/05/03 11:59:39 r_sijrier Exp $
+    $Id: OverViewWidget.cpp,v 1.5 2006/05/11 13:57:09 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -93,10 +93,10 @@ void OverViewWidget::paintEvent( QPaintEvent*  )
                 barWidth = width();
 
         // This creates a round capped location bar.
-        QPen pen(cm().get("CLIP_PEAK_MACROVIEW"), 15);
+        QPen pen(cm().get("CLIP_PEAK_MACROVIEW"), height());
         pen.setCapStyle(Qt::RoundCap);
         painter.setPen(pen);
-        painter.drawLine(startPosition, 7, startPosition + barWidth, 7);
+        painter.drawLine(startPosition, height() / 2, startPosition + barWidth, height() / 2);
 
         // A non round capped location bar....
         // 	painter.fillRect(startPosition, 0, barWidth, height(), cm().get("CLIP_PEAK_MACROVIEW"));
