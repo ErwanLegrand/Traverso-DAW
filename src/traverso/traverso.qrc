@@ -39,6 +39,12 @@
 		<file alias="critical">../../resources/images/icons/22x22/critical.png</file>
 		<file alias="traverso_nl">../../traverso_nl.qm</file>
 		<file alias="traverso_de">../../traverso_de.qm</file>
+		<file alias="index.html">../../resources/help/index.html</file>
+		<file alias="firststart.html">../../resources/help/firststart.html</file>
+		<file alias="theinterface.html">../../resources/help/theinterface.html</file>
+		<file alias="keycommands.html">../../resources/help/keycommands.html</file>
+		<file alias="examples.html">../../resources/help/examples.html</file>
+		<file alias="quickstartreference.html">../../resources/help/quickstartreference.html</file>
 	</qresource>
 </RCC>
  
