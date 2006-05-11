@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.13 2006/05/11 13:55:10 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.14 2006/05/11 17:54:50 r_sijrier Exp $
 */
 
 #include "ContextItem.h"
@@ -332,7 +332,7 @@ int AudioClip::set_selected(bool selected)
 int AudioClip::process(nframes_t nframes, audio_sample_t* channelBuffer, uint channel)
 {
 	if (isRecording) {
-		process_capture(nframes);
+		process_capture(nframes, channel);
 		return 0;
 	}
 	
@@ -407,16 +407,15 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* channelBuffer, uint ch
 	return 1;
 }
 
-void AudioClip::process_capture( nframes_t nframes )
+void AudioClip::process_capture( nframes_t nframes, uint channel )
 {
-	for (int channel=0; channel < writeSources.size(); channel++) {
-		WriteSource* source = writeSources.at(channel);
-		nframes_t written = source->rb_write(captureBus->get_buffer(channel, nframes), m_song->get_transport_frame(), nframes);
-		if (written != nframes) {
-			PWARN("couldn't write nframes to buffer, only %d", written);
-		}
+	WriteSource* source = writeSources.at(channel);
+	
+	nframes_t written = source->rb_write(captureBus->get_buffer(channel, nframes), m_song->get_transport_frame(), nframes);
+	
+	if (written != nframes) {
+		PWARN("couldn't write nframes to buffer, only %d", written);
 	}
-	captureBus->monitor_peaks();
 }
 
 int AudioClip::init_recording( QByteArray name )
