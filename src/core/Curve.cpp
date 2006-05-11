@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Curve.cpp,v 1.5 2006/05/09 18:47:17 r_sijrier Exp $
+    $Id: Curve.cpp,v 1.6 2006/05/11 17:50:28 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -411,6 +411,10 @@ void Curve::set_changed( )
 
 double Curve::get_range( ) const
 {
+	if (nodes.isEmpty()) {
+		return 0;
+	}
+	
 	if (nodes.last()) {
 		return nodes.last()->when;
 	}
