@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.5 2006/05/11 18:46:48 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.6 2006/05/17 22:00:56 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
@@ -75,7 +75,7 @@ DiskIO::DiskIO()
 {
 	diskThread = new DiskIOThread();
 	// Set the thread stack size. 0.5 MB should do IMHO
-// 	diskThread->setStackSize(500000);
+	diskThread->setStackSize(200000);
 	seeking = false;
 	stopWork = false;
 	cpuTimeBuffer = new RingBuffer(2048);
