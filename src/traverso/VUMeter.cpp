@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: VUMeter.cpp,v 1.3 2006/05/08 20:05:27 r_sijrier Exp $
+$Id: VUMeter.cpp,v 1.4 2006/05/17 22:10:03 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -26,6 +26,7 @@ $Id: VUMeter.cpp,v 1.3 2006/05/08 20:05:27 r_sijrier Exp $
 
 #include <QPainter>
 #include <QColor>
+#include <QHBoxLayout>
 
 #include "ColorManager.h"
 #include "Mixer.h"

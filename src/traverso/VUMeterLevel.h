@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: VUMeterLevel.h,v 1.2 2006/04/25 17:22:13 r_sijrier Exp $
+    $Id: VUMeterLevel.h,v 1.3 2006/05/17 22:10:27 r_sijrier Exp $
 */
 
 #ifndef VUMETERLEVEL_H
@@ -28,6 +28,7 @@
 #include <QPixmap>
 #include <QColor>
 #include <QBasicTimer>
+#include <QTimerEvent>
 
 class AudioChannel;
 
