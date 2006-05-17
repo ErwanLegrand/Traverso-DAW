@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioSource.cpp,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
+    $Id: AudioSource.cpp,v 1.2 2006/05/17 21:57:21 r_sijrier Exp $
 */
 
 #include <QDateTime>
@@ -38,7 +38,7 @@
 
 // This constructor is called during file import
 AudioSource::AudioSource(uint chanNumber, QString dir, QString name)
-                : channelNumber(chanNumber), m_dir(dir), m_name(name)
+                : sf(0), channelNumber(chanNumber), m_dir(dir), m_name(name)
 {
         PENTERCONS;
         m_filename = m_dir + "/" + m_name;
@@ -49,6 +49,7 @@ AudioSource::AudioSource(uint chanNumber, QString dir, QString name)
 
 // This constructor is called for existing (recorded/imported) audio sources
 AudioSource::AudioSource(const QDomNode node)
+	: sf(0)
 {
         set_state(node);
         private_init();
@@ -69,7 +70,7 @@ AudioSource::~AudioSource()
 
 void AudioSource::private_init( )
 {
-        m_buffer = new RingBuffer(65536);
+        m_buffer = new RingBuffer(131072);
         m_buffer->mlock_buffer();
         m_buffer->reset();
         m_peak = new Peak(this);
