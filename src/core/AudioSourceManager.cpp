@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSourceManager.cpp,v 1.2 2006/05/01 22:10:38 r_sijrier Exp $
+$Id: AudioSourceManager.cpp,v 1.3 2006/05/17 21:58:39 r_sijrier Exp $
 */
 
 #include "AudioSourceManager.h"
@@ -142,13 +142,30 @@ ReadSource * AudioSourceManager::get_readsource( qint64 id )
 	}
 	
 	if (source->ref()) {
+		PWARN("Creating deep copy!");
 		source = source->deep_copy();
+		
+		if ( source->init() < 0) {
+			info().warning( tr( "Failed to initialize ReadSource : %1").arg(source->get_filename()) );
+			delete source;
+			source = 0;
+		}
 	}
 	
-	if ( source->init() < 0) {
-		info().warning( tr( "Failed to initialize ReadSource : %1").arg(source->get_filename()) );
-		delete source;
-		source = 0;
+	
+	foreach(ReadSource* rs, sources) {
+		if (source->get_filename() == rs->get_filename()) {
+			if ( source->get_id() != rs->get_id() && source->sharedReadSource == 0 && rs->sharedReadSource == 0) {
+				if (source->get_channel() != 1) continue;
+				PWARN("Setting shared readsource for source %s, channel %d",
+						source->get_filename().toAscii().data(), source->get_channel());
+				PWARN("To source %s, channel %d",
+						rs->get_filename().toAscii().data(), rs->get_channel());
+				
+				source->sharedReadSource = rs;
+				break;
+			}
+		}
 	}
 	
 	return source;
