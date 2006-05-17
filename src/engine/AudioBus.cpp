@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioBus.cpp,v 1.2 2006/04/25 17:23:46 r_sijrier Exp $
+$Id: AudioBus.cpp,v 1.3 2006/05/17 22:07:05 r_sijrier Exp $
 */
 
 #include "AudioBus.h"
@@ -89,6 +89,13 @@ void AudioBus::resize_buffer( )
 AudioChannel * AudioBus::get_channel( int channelNumber )
 {
 	return channels.at(channelNumber);
+}
+
+void AudioBus::set_monitor_peaks( bool monitor )
+{
+	foreach(AudioChannel* chan, channels) {
+		chan->set_monitor_peaks(true);
+	}
 }
 
 //eof

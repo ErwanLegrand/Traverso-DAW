@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioChannel.cpp,v 1.3 2006/05/01 21:22:34 r_sijrier Exp $
+    $Id: AudioChannel.cpp,v 1.4 2006/05/17 22:07:05 r_sijrier Exp $
 */
 
 #include "AudioChannel.h"
@@ -39,6 +39,7 @@ AudioChannel::AudioChannel( QString busName, QString audioType, int flags, uint 
         m_flags = flags;
         m_number = channelNumber;
         hasData = false;
+        monitoring = false;
         buf = 0;
         bufSize = 0;
         mlocked = 0;
@@ -106,6 +107,11 @@ audio_sample_t AudioChannel::get_peak_value( )
         }
 
         return result;
+}
+
+void AudioChannel::set_monitor_peaks( bool monitor )
+{
+	monitoring = monitor;
 }
 //eof
 

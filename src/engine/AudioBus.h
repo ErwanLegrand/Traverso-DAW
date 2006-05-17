@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioBus.h,v 1.1 2006/04/20 14:50:44 r_sijrier Exp $
+$Id: AudioBus.h,v 1.2 2006/05/17 22:07:05 r_sijrier Exp $
 */
 
 
@@ -57,26 +57,29 @@ public:
 	}
 
 	void set_buffer_size(nframes_t size);
+	void set_monitor_peaks(bool monitor);
+	
 	void monitor_peaks()
 	{
-		foreach(AudioChannel* chan, channels)
-		chan->monitor_peaks();
+		foreach(AudioChannel* chan, channels) {
+			chan->monitor_peaks();
+		}
 	}
 
 	void silence_buffers(nframes_t nframes)
 	{
-		foreach(AudioChannel* chan, channels)
-		chan->silence_buffer(nframes);
+		foreach(AudioChannel* chan, channels) {
+			chan->silence_buffer(nframes);
+		}
 	}
 
 
 private:
 	QList<AudioChannel* >	channels;
-	QString				deviceName;
-	QString				m_name;
-
-	int 					channelCount;
-	bool					monitorPeaks;
+	QString			deviceName;
+	QString			m_name;
+	
+	int 			channelCount;
 
 	void init(QString name);
 
