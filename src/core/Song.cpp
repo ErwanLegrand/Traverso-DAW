@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Song.cpp,v 1.7 2006/05/08 20:03:10 r_sijrier Exp $
+    $Id: Song.cpp,v 1.8 2006/05/17 22:03:52 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -41,7 +41,7 @@
 #include "MtaRegion.h"
 #include "MtaRegionList.h"
 #include "Peak.h"
-#include "AudioPluginChain.h"
+//#include "AudioPluginChain.h"
 #include "AudioPluginSelector.h"
 #include "Export.h"
 #include "DiskIO.h"
@@ -809,7 +809,6 @@ int Song::process( nframes_t nframes )
 	if (playBackBus) {
 		Mixer::mix_buffers_no_gain(playBackBus->get_buffer(0, nframes), masterOut->get_buffer(0, nframes), nframes);
 		Mixer::mix_buffers_no_gain(playBackBus->get_buffer(1, nframes), masterOut->get_buffer(1, nframes), nframes);
-		playBackBus->monitor_peaks();
 	}
 
 	return 1;
