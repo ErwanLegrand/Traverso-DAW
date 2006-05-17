@@ -25,7 +25,7 @@ DEFINES += ALSA_SUPPORT
 # Uncomment the line which notes your CPU type
 #
 
-QMAKE_CXXFLAGS_RELEASE += -g -mtune=pentium3
+QMAKE_CXXFLAGS_RELEASE += -mtune=pentium3
 #QMAKE_CXXFLAGS_RELEASE += -mtune=pentium4
 #QMAKE_CXXFLAGS_RELEASE += -mtune=pentium-m
 
@@ -62,6 +62,11 @@ debug {
 
 unix {
 	release {
+		
+#		DEFINES += USE_DEBUGGER
+		
+		#QMAKE_CXXFLAGS_RELEASE += -finline-functions
+		
 		MACHINETYPE = $$system(arch)
 		
 		contains( MACHINETYPE, x86_64 )	{
@@ -78,6 +83,12 @@ unix {
 	
 	contains(GCCVERSION, [45].[01234].[012345] ) {
 		CONFIG += precompile_header
+
+#		Makes only sense if there are loops to vectorize, which isn't the case (yet)
+#		Maybe gcc 4.2 will do a better job on certain loops?
+#		specially those in memops. would be nice if they get some optimization too...
+#		and of course the ones in gdither etc.
+#		QMAKE_CXXFLAGS_RELEASE += -ftree-vectorizer-verbose=2 -ftree-vectorize
 	}
 	
 }
