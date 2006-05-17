@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioClipView.h,v 1.4 2006/05/10 11:03:19 r_sijrier Exp $
+    $Id: AudioClipView.h,v 1.5 2006/05/17 22:08:10 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIPVIEW_H
@@ -84,7 +84,8 @@ private:
         void process_fade_clip();
         void update_variables();
         void draw_clipinfo_area(QPainter& painter);
-        void draw_fades(QPainter& painter);
+        void draw_fade_in(QPainter& painter);
+        void draw_fade_out(QPainter& painter);
         void draw_peaks(QPainter& painter);
         void draw_crossings(QPainter& painter);
 
