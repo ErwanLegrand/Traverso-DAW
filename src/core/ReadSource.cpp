@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.cpp,v 1.4 2006/05/02 13:14:14 r_sijrier Exp $
+$Id: ReadSource.cpp,v 1.5 2006/05/17 22:02:52 r_sijrier Exp $
 */
 
 #include "ReadSource.h"
@@ -61,13 +61,17 @@ ReadSource::~ReadSource()
 int ReadSource::init( )
 {
 	PENTER2;
+	
+	Q_ASSERT(sf == 0);
+	
 	rbFileReadPos = 0;
 	rbRelativeFileReadPos = 0;
 	rbReady = true;
 	needSync = false;
 	readbuffer = 0;
 	readbuffersize = 0;
-	sf = 0;
+	seekPos = -1;
+	sharedReadSource = (ReadSource*) 0;
 
 	/* although libsndfile says we don't need to set this,
 	valgrind and source code shows us that we do.
@@ -102,11 +106,20 @@ int ReadSource::init( )
 
 int ReadSource::file_read (audio_sample_t* dst, nframes_t start, nframes_t cnt) const
 {
+// 	PWARN("file_read");
 	// this equals checking if init() is called!
 	Q_ASSERT(sf);
 	
 	if (start >= m_length) {
 		return 0;
+	}
+	
+	seekPos = start;
+	
+	if (sharedReadSource) {
+		if (sharedReadSource->get_seek_position() == start) {
+			return sharedReadSource->shared_file_read(dst, start, cnt, channelNumber);
+		}
 	}
 
 
@@ -116,6 +129,7 @@ int ReadSource::file_read (audio_sample_t* dst, nframes_t start, nframes_t cnt) 
 		PERROR("ReadAudioSource: could not seek to frame %d within %s (%s)", start, m_filename.toAscii().data(), errbuf);
 		return 0;
 	}
+	
 
 	if (sfinfo.channels == 1) {
 		nframes_t ret = sf_read_float (sf, dst, cnt);
@@ -123,7 +137,6 @@ int ReadSource::file_read (audio_sample_t* dst, nframes_t start, nframes_t cnt) 
 		return ret;
 	}
 
-	int32_t nread;
 	float *ptr;
 	uint32_t real_cnt = cnt * sfinfo.channels;
 
@@ -154,6 +167,23 @@ int ReadSource::file_read (audio_sample_t* dst, nframes_t start, nframes_t cnt) 
 
 	// 	m_read_data_count = cnt * sizeof(float);
 
+	return nread;
+}
+
+int ReadSource::shared_file_read( audio_sample_t * dst,  nframes_t start, nframes_t cnt, uint channelNumber ) const
+{
+// 	PWARN("Entering shared_file_read");
+	float *ptr;
+	ptr = readbuffer + channelNumber;
+	
+	if (!readbuffer)
+		return 0;
+
+	for (int32_t n = 0; n < nread; ++n) {
+		dst[n] = *ptr;
+		ptr += sfinfo.channels;
+	}
+	
 	return nread;
 }
 
@@ -210,13 +240,29 @@ void ReadSource::rb_seek_to_file_position( nframes_t position )
 
 int ReadSource::process_ringbuffer( audio_sample_t * framebuffer )
 {
+	if (rbFileReadPos >= m_length) {
+		return 0;
+	}
+	
 	nframes_t writeSpace = m_buffer->write_space();
 
-	if (writeSpace > 4096) {
-		nframes_t toWrite = rb_file_read(framebuffer, writeSpace);
-
-		m_buffer->write(framebuffer, toWrite);
+	int toRead = ((int)(writeSpace / 16384)) * 16384;
+	
+	if (toRead > 65536) {
+		toRead = 65536;
 	}
+	
+	if (toRead == 0) {
+		if ( (m_length - rbFileReadPos) <= 16384) {
+			toRead = m_length - rbFileReadPos;
+		} else {
+			return 0;
+		}
+	}
+	
+	nframes_t toWrite = rb_file_read(framebuffer, toRead);
+
+	m_buffer->write(framebuffer, toWrite);
 	
 	return 0;
 }
@@ -267,5 +313,6 @@ int ReadSource::ref( )
 {
 	return refcount++;
 }
+
 //eof
 

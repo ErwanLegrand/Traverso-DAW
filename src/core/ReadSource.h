@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.h,v 1.3 2006/05/02 13:14:14 r_sijrier Exp $
+$Id: ReadSource.h,v 1.4 2006/05/17 22:02:52 r_sijrier Exp $
 */
 
 #ifndef READSOURCE_H
@@ -41,27 +41,34 @@ public :
 	int process_ringbuffer(audio_sample_t* framebuffer);
 
 	int file_read(audio_sample_t* dst, nframes_t start, nframes_t cnt) const;
+	int shared_file_read(audio_sample_t* dst, nframes_t start, nframes_t cnt, uint channelNumber) const;
 
 	int init();
 	int ref();
 	void set_rb_ready(bool ready);
 	void set_active();
 	void set_inactive();
+	
+	int get_seek_position();
 
 	bool need_sync();
 	void sync();
 
+	ReadSource*		sharedReadSource;
 
 private:
-	mutable float*	 		readbuffer;
-	mutable nframes_t 		readbuffersize;
-	mutable uint32_t 		m_read_data_count;
-	nframes_t			rbFileReadPos;
-	nframes_t			rbRelativeFileReadPos;
-	nframes_t			syncPos;
-	bool					needSync;
-	bool					rbReady;
-	int					refcount;
+	mutable float*	 	readbuffer;
+	mutable nframes_t 	readbuffersize;
+	mutable int32_t 	nread;
+	mutable uint32_t 	m_read_data_count;
+	nframes_t		rbFileReadPos;
+	nframes_t		rbRelativeFileReadPos;
+	nframes_t		syncPos;
+	mutable int		seekPos;
+	bool			needSync;
+	bool			rbReady;
+	int			refcount;
+	
 
 	void start_resync(nframes_t position);
 
@@ -71,6 +78,11 @@ private:
 inline bool ReadSource::need_sync( )
 {
 	return needSync;
+}
+
+inline int ReadSource::get_seek_position()
+{
+	return seekPos;
 }
 
 #endif
