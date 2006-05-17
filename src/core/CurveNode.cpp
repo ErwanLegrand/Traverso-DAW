@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveNode.cpp,v 1.1 2006/05/10 11:02:03 r_sijrier Exp $
+$Id: CurveNode.cpp,v 1.2 2006/05/17 21:59:21 r_sijrier Exp $
 */
 
 #include "CurveNode.h"
@@ -29,7 +29,7 @@ $Id: CurveNode.cpp,v 1.1 2006/05/10 11:02:03 r_sijrier Exp $
 
 CurveNode::CurveNode(double pos, double  val)
 {
-	PENTERCONS;
+	PENTERCONS3;
 	coeff[0] = coeff[1] = coeff[2] = coeff[3] = 0.0;
 	
 	when = pos;
@@ -38,7 +38,7 @@ CurveNode::CurveNode(double pos, double  val)
 
 CurveNode::~CurveNode()
 {
-	PENTERDES;
+	PENTERDES3;
 }
 
 
