@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.14 2006/05/11 17:54:50 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.15 2006/05/17 21:55:56 r_sijrier Exp $
 */
 
 #include "ContextItem.h"
@@ -87,11 +87,16 @@ void AudioClip::init()
 int AudioClip::set_state(const QDomNode& node )
 {
 	QDomElement e = node.toElement();
+	
 	trackStartFrame = e.attribute( "trackstart", "" ).toUInt();
 	sourceStartFrame = e.attribute( "sourcestart", "" ).toUInt();
-	m_name = e.attribute( "clipname", "" ) ;
 	m_length = e.attribute( "length", "0" ).toUInt();
+	sourceEndFrame = sourceStartFrame + m_length;
+	
+	m_name = e.attribute( "clipname", "" ) ;
+	
 	isTake = e.attribute( "take", "").toInt();
+	
 	uint channels = e.attribute( "channels", "0").toInt();
 	bitDepth = e.attribute("origbitdepth", "0").toInt();
 	
@@ -108,8 +113,6 @@ int AudioClip::set_state(const QDomNode& node )
 	set_gain( e.attribute( "gain", "" ).toFloat() );
 	isMuted =  e.attribute( "mute", "" ).toInt();
 	
-	sourceEndFrame = sourceStartFrame + m_length;
-	set_track_end_frame(trackStartFrame + m_length);
 	
 	if ( e.attribute("selected", "0").toInt() ) {
 		m_song->get_audioclip_manager()->add_to_selection( this );
@@ -281,6 +284,7 @@ void AudioClip::set_track_start_frame(nframes_t newTrackStartFrame)
 
 void AudioClip::set_track_end_frame( nframes_t endFrame )
 {
+// 	PWARN("trackEndFrame is %d", endFrame);
 	trackEndFrame = endFrame;
 	emit trackEndFrameChanged();
 }
@@ -380,13 +384,36 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* channelBuffer, uint ch
 		gainFactor *= panFactor;
 	}
 
-	if (mix_pos < fadeIn->get_range()) {
+
+	// FADE IN
+	
+	if (m_song->get_transport_frame() < (trackStartFrame + fadeIn->get_range()) ) {
 // 		printf("mix_pos is %d, len is %d\n", mix_pos, fadeIn->get_range());
 		nframes_t limit;
 
 		limit = std::min (read_frames, (uint)fadeIn->get_range());
+		
+		int fadepos = m_song->get_transport_frame() - trackStartFrame;
+		
+		fadeIn->get_vector ( fadepos, fadepos + limit, gainbuffer, limit);
+		
 
-		fadeIn->get_vector (mix_pos, mix_pos+limit, gainbuffer, limit);
+		for (nframes_t n = 0; n < limit; ++n) {
+			mixdown[n] *= gainbuffer[n];
+		}
+	}
+	
+	// FADE OUT
+	
+	if (m_song->get_transport_frame() > (trackEndFrame - fadeOut->get_range()) ) {
+		
+		nframes_t limit;
+		
+		limit = std::min (read_frames, (uint)fadeOut->get_range());
+		
+		int fadepos = m_song->get_transport_frame() - (trackEndFrame - fadeOut->get_range());
+		
+		fadeOut->get_vector (fadepos, fadepos + limit, gainbuffer, limit);
 		
 
 		for (nframes_t n = 0; n < limit; ++n) {
@@ -583,7 +610,7 @@ void AudioClip::add_audio_source( ReadSource* rs, int channel )
 	readSources.insert(channel, rs);
 	sourceLength = rs->get_nframes();
 	set_source_end_frame( rs->get_nframes() );
-	set_track_end_frame( trackStartFrame + sourceLength );
+	set_track_end_frame( trackStartFrame + sourceLength - sourceStartFrame);
 	m_channels = readSources.size();
 	m_song->get_diskio()->register_read_source( rs );
 	rate = rs->get_rate();
