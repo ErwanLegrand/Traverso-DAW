@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioClipManager.cpp,v 1.4 2006/05/03 11:59:39 r_sijrier Exp $
+    $Id: AudioClipManager.cpp,v 1.5 2006/06/12 20:07:22 r_sijrier Exp $
 */
  
 #include "AudioClipManager.h"
@@ -69,6 +69,18 @@ void AudioClipManager::update_last_frame( )
 nframes_t AudioClipManager::get_last_frame( )
 {
 	return lastFrame;
+}
+
+nframes_t AudioClipManager::get_start_frame( )
+{
+	nframes_t startframe = UINT_MAX;
+	
+	foreach(AudioClip* clip, m_clips) {
+		if (clip->get_track_start_frame() < startframe)
+			startframe = clip->get_track_start_frame();
+	}
+	
+	return startframe;
 }
 
 void AudioClipManager::get_selected_clips_state( QList< AudioClip * > & list )
