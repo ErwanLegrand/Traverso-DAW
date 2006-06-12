@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Song.cpp,v 1.8 2006/05/17 22:03:52 r_sijrier Exp $
+    $Id: Song.cpp,v 1.9 2006/06/12 20:06:58 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -301,12 +301,28 @@ int Song::prepare_export(ExportSpecification* spec)
 	}
 
 	rendering = true;
-	transportFrame = 0;
 
-	spec->start_frame = 0;
-	spec->end_frame = get_last_frame();
+	spec->start_frame = acmanager->get_start_frame();
+	spec->end_frame = 0;
+	
+	foreach (Track* track, m_tracks) {
+		nframes_t endframe = track->get_render_end_frame();
+		
+		if (endframe > spec->end_frame) {
+			spec->end_frame = endframe;
+		}
+		
+		if (track->is_solo()) {
+			break;
+		}
+	}
+	
 	spec->total_frames = spec->end_frame - spec->start_frame;
-	spec->pos = 0;
+	
+// 	PWARN( "Song render started, render length is: %s",frame_to_smpte(spec->total_frames, m_project->get_rate()).toAscii().data() );
+	
+	spec->pos = spec->start_frame;
+	transportFrame = spec->start_frame;
 	spec->progress = 0;
 
 	spec->blocksize = audiodevice().get_buffer_size();
