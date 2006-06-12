@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.6 2006/05/17 22:00:56 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.7 2006/06/12 20:12:00 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
@@ -34,14 +34,16 @@ $Id: DiskIO.cpp,v 1.6 2006/05/17 22:00:56 r_sijrier Exp $
 
 /************** DISKIO THREAD ************/
 
-DiskIOThread::DiskIOThread( )
+DiskIOThread::DiskIOThread(DiskIO* diskio)
 {
 	realtime = false;
+	m_diskio = diskio;
 }
 
 void DiskIOThread::run()
 {
 	exec();
+	m_diskio->workTimer.stop();
 }
 
 void DiskIOThread::become_realtime( bool becomerealtime )
@@ -73,7 +75,7 @@ void DiskIOThread::become_realtime( bool becomerealtime )
 
 DiskIO::DiskIO()
 {
-	diskThread = new DiskIOThread();
+	diskThread = new DiskIOThread(this);
 	// Set the thread stack size. 0.5 MB should do IMHO
 	diskThread->setStackSize(200000);
 	seeking = false;
@@ -201,7 +203,7 @@ int DiskIO::stop( )
 
 	// Stop any processing in do_work()
 	stopWork = true;
-	workTimer.stop();
+// 	workTimer.stop();
 
 	// Exit the event loop
 	diskThread->exit(0);
