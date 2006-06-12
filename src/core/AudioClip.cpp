@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.15 2006/05/17 21:55:56 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.16 2006/06/12 22:53:32 r_sijrier Exp $
 */
 
 #include "ContextItem.h"
@@ -411,7 +411,7 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* channelBuffer, uint ch
 		
 		limit = std::min (read_frames, (uint)fadeOut->get_range());
 		
-		int fadepos = m_song->get_transport_frame() - (trackEndFrame - fadeOut->get_range());
+		int fadepos = m_song->get_transport_frame() - (trackEndFrame - (nframes_t)fadeOut->get_range());
 		
 		fadeOut->get_vector (fadepos, fadepos + limit, gainbuffer, limit);
 		
@@ -609,7 +609,15 @@ void AudioClip::add_audio_source( ReadSource* rs, int channel )
 	
 	readSources.insert(channel, rs);
 	sourceLength = rs->get_nframes();
-	set_source_end_frame( rs->get_nframes() );
+	
+	// If m_length isn't set yet, it means we are importing stuff instead of reloading from project file.
+	// it's a bit weak this way, hopefull I'll get up something better in the future.
+	// The positioning-length-offset and such stuff is still a bit weak :(
+	if (m_length == 0) {
+		sourceEndFrame = rs->get_nframes();
+		m_length = sourceEndFrame;
+	}
+	
 	set_track_end_frame( trackStartFrame + sourceLength - sourceStartFrame);
 	m_channels = readSources.size();
 	m_song->get_diskio()->register_read_source( rs );
