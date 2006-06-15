@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.16 2006/06/12 22:53:32 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.17 2006/06/15 13:00:43 r_sijrier Exp $
 */
 
 #include "ContextItem.h"
@@ -75,7 +75,8 @@ AudioClip::~AudioClip()
 
 void AudioClip::init()
 {
-	connect(m_track, SIGNAL(muteChanged(bool )), this, SLOT(track_mute_changed( bool )));
+	connect(m_track, SIGNAL(muteChanged(bool )), this, SLOT(track_audible_state_changed( bool )));
+	connect(m_track, SIGNAL(soloChanged(bool )), this, SLOT(track_audible_state_changed( bool )));
 	set_history_stack(m_track->get_history_stack());
 	m_song->get_audioclip_manager()->add_clip( this );
 	isRecording = false;
@@ -172,7 +173,7 @@ void AudioClip::toggle_mute()
 	emit muteChanged(isMuted);
 }
 
-void AudioClip::track_mute_changed( bool )
+void AudioClip::track_audible_state_changed( bool )
 {
 	set_sources_active_state();	
 }
