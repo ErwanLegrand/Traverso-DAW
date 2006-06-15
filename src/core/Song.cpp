@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Song.cpp,v 1.9 2006/06/12 20:06:58 r_sijrier Exp $
+    $Id: Song.cpp,v 1.10 2006/06/15 12:10:16 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -64,7 +64,29 @@ Song::Song(Project* project, int number)
 	masterGain = 0.0f;
 	artists = "No artists name yet";
 	QSettings settings;
-	m_hzoom = settings.value("hzoomLevel").toInt();
+	int level = settings.value("hzoomLevel").toInt();
+	switch (level) {
+		case 8: m_hzoom = 4;
+			break;
+		case 64: m_hzoom = 7;
+			break;
+		case 128: m_hzoom = 8;
+			break;
+		case 256: m_hzoom = 9;
+			break;
+		case 1024: m_hzoom = 10;
+			break;
+		case 2048: m_hzoom = 11;
+			break;
+		case 4096: m_hzoom = 12;
+			break;
+		case 8192: m_hzoom = 13;
+			break;
+		case 16384: m_hzoom = 14;
+			break;
+		default:   m_hzoom = 11;
+			break;
+	}
 	int tracksToCreate = settings.value("trackCreationCount").toInt();
 	regionList = (MtaRegionList*) 0;
 
@@ -308,18 +330,20 @@ int Song::prepare_export(ExportSpecification* spec)
 	foreach (Track* track, m_tracks) {
 		nframes_t endframe = track->get_render_end_frame();
 		
+		if (track->is_solo()) {
+			spec->end_frame = track->get_render_end_frame();
+			break;
+		}
+		
 		if (endframe > spec->end_frame) {
 			spec->end_frame = endframe;
 		}
 		
-		if (track->is_solo()) {
-			break;
-		}
 	}
 	
 	spec->total_frames = spec->end_frame - spec->start_frame;
 	
-// 	PWARN( "Song render started, render length is: %s",frame_to_smpte(spec->total_frames, m_project->get_rate()).toAscii().data() );
+// 	PWARN("Render length is: %s",frame_to_smpte(spec->total_frames, m_project->get_rate()).toAscii().data() );
 	
 	spec->pos = spec->start_frame;
 	transportFrame = spec->start_frame;
