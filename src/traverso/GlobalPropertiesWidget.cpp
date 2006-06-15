@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: GlobalPropertiesWidget.cpp,v 1.2 2006/05/08 20:05:27 r_sijrier Exp $
+    $Id: GlobalPropertiesWidget.cpp,v 1.3 2006/06/15 12:18:01 r_sijrier Exp $
 */
 
 #include "GlobalPropertiesWidget.h"
@@ -67,8 +67,6 @@ void GlobalPropertiesWidget::save_properties( )
         settings.setValue("Hardware/samplerate", defaultSampleRateComboBox->currentText());
         settings.setValue("Hardware/bufferSize", bufferSizeComboBox->currentText());
         settings.setValue("Hardware/drivertype", audioDriverBackendComboBox->currentText());
-        settings.setValue("USE_EXTERNAL_OGG_DECODER", 1); // IMPROVE ME
-        settings.setValue("USE_EXTERNAL_OGG_ENCODER", 1); // IMPROVE ME
         settings.setValue("Project/loadLastUsed",  (loadLastProjectRadioButton->isChecked() ? 1 : 0));
 }
 
