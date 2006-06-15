@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SplitClip.cpp,v 1.3 2006/05/03 11:59:39 r_sijrier Exp $
+    $Id: SplitClip.cpp,v 1.4 2006/06/15 11:16:13 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -48,8 +48,11 @@ int SplitClip::prepare_actions()
         leftClip = m_clip->create_copy();
         rightClip = m_clip->create_copy();
 
+        leftClip->set_track_start_frame( m_clip->get_track_start_frame() );
         leftClip->set_right_edge(splitPoint);
+        
         rightClip->set_left_edge(splitPoint);
+        rightClip->set_track_start_frame( splitPoint );
 
         return 1;
 }
