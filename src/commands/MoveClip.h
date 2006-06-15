@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveClip.h,v 1.1 2006/04/20 14:51:13 r_sijrier Exp $
+    $Id: MoveClip.h,v 1.2 2006/06/15 11:03:00 r_sijrier Exp $
 */
 
 #ifndef MOVECLIPACTION_H
@@ -46,8 +46,8 @@ public :
 private :
         Song* m_song;
         AudioClip* m_clip;
-        nframes_t originalTrackFirstBlock;
-        nframes_t newInsertBlock;
+        nframes_t originalTrackFirstFrame;
+        nframes_t newInsertFrame;
         Track* originTrack;
         Track* targetTrack;
         int	origXPos;
