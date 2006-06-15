@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Project.cpp,v 1.3 2006/05/01 21:21:37 r_sijrier Exp $
+$Id: Project.cpp,v 1.4 2006/06/15 12:11:38 r_sijrier Exp $
 */
 
 #include <QFile>
@@ -35,6 +35,7 @@ $Id: Project.cpp,v 1.3 2006/05/01 21:21:37 r_sijrier Exp $
 #include "Information.h"
 #include "AudioSourceManager.h"
 #include "Export.h"
+#include "AudioDevice.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -52,8 +53,8 @@ Project::Project(QString pTitle)
 
 	rootDir = settings.value("Project/directory").toString() + title;
 	sourcesDir = rootDir + "/audiosources";
-	m_rate = settings.value("Hardware/samplerate").toInt();
-	m_bitDepth = settings.value("Hardware/DEFAULT_BIT_DEPTH").toInt();
+	m_rate = audiodevice().get_sample_rate();
+	m_bitDepth = audiodevice().get_bit_depth();
 
 	asmanager = new AudioSourceManager();
 
