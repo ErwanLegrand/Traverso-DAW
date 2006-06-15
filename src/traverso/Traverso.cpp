@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Traverso.cpp,v 1.4 2006/05/11 18:52:50 r_sijrier Exp $
+$Id: Traverso.cpp,v 1.5 2006/06/15 12:08:14 r_sijrier Exp $
 */
 
 #include <signal.h>
@@ -82,7 +82,7 @@ void Traverso::reset_settings( )
 	settings.setValue("ProgramVersion", VERSION);
 	settings.setValue("ConfigFileVersion", CONFIG_FILE_VERSION);
 	settings.setValue("trackCreationCount", 6);
-	settings.setValue("hzoomLevel", 11);
+	settings.setValue("hzoomLevel", 2048);
 
 	settings.beginGroup("Project");
 	settings.setValue("current", "Untitled");
