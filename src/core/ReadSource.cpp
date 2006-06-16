@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.cpp,v 1.5 2006/05/17 22:02:52 r_sijrier Exp $
+$Id: ReadSource.cpp,v 1.6 2006/06/16 14:03:44 r_sijrier Exp $
 */
 
 #include "ReadSource.h"
@@ -117,7 +117,7 @@ int ReadSource::file_read (audio_sample_t* dst, nframes_t start, nframes_t cnt) 
 	seekPos = start;
 	
 	if (sharedReadSource) {
-		if (sharedReadSource->get_seek_position() == start) {
+		if (sharedReadSource->get_seek_position() == (int) start) {
 			return sharedReadSource->shared_file_read(dst, start, cnt, channelNumber);
 		}
 	}
@@ -170,7 +170,7 @@ int ReadSource::file_read (audio_sample_t* dst, nframes_t start, nframes_t cnt) 
 	return nread;
 }
 
-int ReadSource::shared_file_read( audio_sample_t * dst,  nframes_t start, nframes_t cnt, uint channelNumber ) const
+int ReadSource::shared_file_read( audio_sample_t * dst,  nframes_t /*start*/, nframes_t /*cnt*/, uint channelNumber ) const
 {
 // 	PWARN("Entering shared_file_read");
 	float *ptr;
