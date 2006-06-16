@@ -26,6 +26,7 @@
 	<keyseq keyfacttype="FKEY" key1="I" slotname="import_audiosource" name="Import Audio" sortorder="25" />
 	<keyseq keyfacttype="FKEY" key1="Q" slotname="show_context_menu" name="This Menu" sortorder="100" />
 	<keyseq keyfacttype="FKEY" key1="E" slotname="edit_properties" name="Edit Properties" sortorder="30" />
+	<keyseq keyfacttype="FKEY" key1="N" slotname="normalize" name="Normalize" sortorder="30" />
 	
 	<keyseq keyfacttype="FKEY2" key1="A" key2="B" slotname="about_traverso" name="About" sortorder="" />
 	<keyseq keyfacttype="FKEY2" key1="CTRL" key2="S" slotname="save_project" name="Save Project" sortorder="" />
@@ -74,6 +75,7 @@
 	<keyseq keyfacttype="D_FKEY" key1="ENTER" slotname="show_export_widget" name="Export Project" sortorder="20" />
 	<keyseq keyfacttype="D_FKEY" key1="RETURN" slotname="show_export_widget" name="Export Project" sortorder="20" />
 	<keyseq keyfacttype="D_FKEY" key1="G" slotname="reset_gain" name="Gain (reset)" sortorder="51" />
+	<keyseq keyfacttype="D_FKEY" key1="N" slotname="denormalize" name="De-normalize" sortorder="31" />
 
 	<keyseq keyfacttype="D_FKEY2" key1="DEL" key2="T" slotname="remove_track" name="Delete Track" sortorder="91" />
 	<keyseq keyfacttype="D_FKEY2" key1="S" key2="D" slotname="select_all_clips" name="Select Clips (all)" sortorder="40" />
