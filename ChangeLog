@@ -1,3 +1,13 @@
+16-06-2006 Remon Sijrier <remon@vt.shuis.tudelft.nl>
+	* Released 0.30.0-rc1
+	
+	* Fixed a memory corruption bug which caused the computer to halt when the Jack driver
+	  was running on Project export.
+	* Fixed bug where audioclip edges were set at the wrong position on AudioClip split.
+	* Fixed AudioClip drag, sometimes the AudioClip got duplicated in one of the Tracks.
+	* Fixed solo-mute bug, sometimes the AudioClip got silenced after Track solo-mute state change,
+	  where it should not.
+
 23-05-2006 Remon Sijrier <remon@vt.shuis.tudelft.nl>
 	* Released 0.29.0
 	
