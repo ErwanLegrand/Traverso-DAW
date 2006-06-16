@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: GlobalPropertiesWidget.cpp,v 1.3 2006/06/15 12:18:01 r_sijrier Exp $
+    $Id: GlobalPropertiesWidget.cpp,v 1.4 2006/06/16 13:56:38 r_sijrier Exp $
 */
 
 #include "GlobalPropertiesWidget.h"
@@ -40,6 +40,9 @@ GlobalPropertiesWidget::GlobalPropertiesWidget( QWidget * parent )
 
         audiocardLabel->setPixmap(QPixmap(":/audiocard"));
         keyboardLabel->setPixmap(QPixmap(":/keyboard"));
+        
+        holdTimeoutSpinBox->setMinimum(140);
+        doubleFactTimeoutSpinBox->setMinimum(140);
 
         QStringList drivers = audiodevice().get_avaible_drivers();
         foreach(QString name, drivers)
