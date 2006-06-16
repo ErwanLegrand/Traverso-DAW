@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.17 2006/06/15 13:00:43 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.18 2006/06/16 18:21:49 r_sijrier Exp $
 */
 
 #include "ContextItem.h"
@@ -316,12 +316,14 @@ void AudioClip::set_fade_out(nframes_t b)
 	emit stateChanged();
 }
 
-void AudioClip::set_gain(float g) 
+void AudioClip::set_gain(float gain) 
 {
 	PENTER3;
-	g = g < 0.0 ? 0.0 : g;
-	g = g > 1.0 ? 1.0 : g;
-	m_gain = g;
+	if (gain < 0.0)
+		gain = 0.0;
+	if (gain > 2.0)
+		gain = 2.0;
+	m_gain = gain;
 	emit stateChanged();
 }
 
