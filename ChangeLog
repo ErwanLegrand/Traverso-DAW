@@ -7,6 +7,8 @@
 	* Fixed AudioClip drag, sometimes the AudioClip got duplicated in one of the Tracks.
 	* Fixed solo-mute bug, sometimes the AudioClip got silenced after Track solo-mute state change,
 	  where it should not.
+	* Correctly calculate the Song render start and end frame.
+	* Added (de)normalization for AudioClips
 
 23-05-2006 Remon Sijrier <remon@vt.shuis.tudelft.nl>
 	* Released 0.29.0
