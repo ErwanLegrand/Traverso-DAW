@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.13 2006/06/16 18:30:11 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.14 2006/06/16 20:21:47 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -447,20 +447,33 @@ void AudioClipView::recreate_clipname_pixmap()
 	sourceType=(isTake?"CAP":"SRC");
 	
 	float db = coefficient_to_dB(gain);
+	float norm = coefficient_to_dB(m_clip->get_norm_factor());
 	QString gainIndB;
+	QString normIndB;
 	
 	if (db < -99)
 		gainIndB = "- INF";
 	else if ( db < 0)
 		gainIndB = "- " + QByteArray::number((-1 * db), 'f', 1) + " dB";
 	else
-		gainIndB = "+" + QByteArray::number(db, 'f', 1) + " dB";
+		gainIndB = "+ " + QByteArray::number(db, 'f', 1) + " dB";
 	
 	sclipGain = "Gain "+gainIndB;
+	
+	if (norm < -99)
+		normIndB = "- INF";
+	else if ( norm < 0)
+		normIndB = "- " + QByteArray::number((-1 * norm), 'f', 1) + " dB";
+	else
+		normIndB = "+ " + QByteArray::number(norm, 'f', 1) + " dB";
+	
+	QString sclipNormGain = "Normalization "+ normIndB;
+	
 	sMuted = "";
 	if (m_muted)
 		sMuted = "M";
-	clipInfo = sMuted + "  " + sRate +  "  " + sBitDepth + "   " + sourceType + "  " + sclipGain + "   " + clipName;
+	
+	clipInfo = sMuted + "  " + sRate +  "  " + sBitDepth + "   " + sourceType + "  " + sclipGain + "   " + sclipNormGain + "   " + clipName;
 	int clipInfoAreaWidth = 500;
 	int x=5;
 
@@ -560,7 +573,7 @@ void AudioClipView::update_variables( )
 	trackFirstFrame =  m_clip->get_track_start_frame();
 	trackLastFrame = m_clip->get_track_end_frame();
 	startFrame = sourceFirstFrame;
-	gain = m_clip->get_gain();
+	gain = m_clip->get_gain() * m_clip->get_norm_factor();
 	hzoom = m_song->get_hzoom();
 	baseY  = m_clip->get_baseY();
 	baseX = m_song->frame_to_xpos(trackFirstFrame) + m_tv->cliparea_basex();
