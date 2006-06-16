@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Song.cpp,v 1.11 2006/06/16 13:31:03 r_sijrier Exp $
+    $Id: Song.cpp,v 1.12 2006/06/16 13:37:46 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -810,9 +810,6 @@ int Song::process( nframes_t nframes )
 	if (!transport)
 		return 0;
 		
-	printf("Entering Song::process\n");
-	usleep(20000);
-
 	if (stopTransport) {
 		emit transferStopped();
 		transport = false;
