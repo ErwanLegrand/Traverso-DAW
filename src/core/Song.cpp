@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Song.cpp,v 1.12 2006/06/16 13:37:46 r_sijrier Exp $
+    $Id: Song.cpp,v 1.13 2006/06/16 14:01:43 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -528,7 +528,7 @@ void Song::set_first_visible_frame(nframes_t pos)
 
 void Song::set_work_at(nframes_t pos)
 {
-	printf("entering set_work_at\n");
+	PMESG2("entering set_work_at");
 	newTransportFramePos = pos;
 	workingFrame = pos;
 
@@ -543,9 +543,9 @@ void Song::set_work_at(nframes_t pos)
 
 void Song::start_seek()
 {
-	printf("Song :: entering start_seek\n");
-	printf("Song :: thread id is: %ld\n", QThread::currentThreadId ());
-	printf("Song::start_seek()\n");
+	PMESG2("Song :: entering start_seek");
+	PMESG2("Song :: thread id is: %ld", QThread::currentThreadId ());
+	PMESG2("Song::start_seek()");
 	if (transport) {
 		transport = false;
 		realtimepath = false;
@@ -555,12 +555,12 @@ void Song::start_seek()
 	diskio->prepare_for_seek();
 
 	emit seekStart(newTransportFramePos);
-	printf("Song :: leaving start_seek\n\n");
+	PMESG2("Song :: leaving start_seek");
 }
 
 void Song::seek_finished()
 {
-	printf("Song :: entering seek_finished\n");
+	PMESG2("Song :: entering seek_finished");
 	transportFrame = newTransportFramePos;
 	seeking = false;
 
@@ -570,7 +570,7 @@ void Song::seek_finished()
 		resumeTransport = false;
 	}
 
-	printf("Song :: leaving seek_finished\n\n");
+	PMESG2("Song :: leaving seek_finished");
 }
 
 Command* Song::toggle_snap()
