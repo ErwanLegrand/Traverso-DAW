@@ -75,7 +75,7 @@
 	<keyseq keyfacttype="D_FKEY" key1="RETURN" slotname="show_export_widget" name="Export Project" sortorder="20" />
 	<keyseq keyfacttype="D_FKEY" key1="G" slotname="reset_gain" name="Gain (reset)" sortorder="51" />
 
-	<keyseq keyfacttype="D_FKEY2" key1="DEL" key2="T" slotname="delete_track" name="Delete Track" sortorder="91" />
+	<keyseq keyfacttype="D_FKEY2" key1="DEL" key2="T" slotname="remove_track" name="Delete Track" sortorder="91" />
 	<keyseq keyfacttype="D_FKEY2" key1="S" key2="D" slotname="select_all_clips" name="Select Clips (all)" sortorder="40" />
 	<keyseq keyfacttype="D_FKEY2" key1="S" key2="A" slotname="deselect_all_clips" name="Deselect Clips (all)" sortorder="41" />
 	<keyseq keyfacttype="D_FKEY2" key1="F" key2="G" slotname="reset_fade_in" name="Reset fade (in)" sortorder="52" />
