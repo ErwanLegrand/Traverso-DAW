@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.h,v 1.6 2006/05/08 20:03:10 r_sijrier Exp $
+$Id: Song.h,v 1.7 2006/06/16 20:20:53 r_sijrier Exp $
 */
 
 #ifndef SONG_H
@@ -126,7 +126,6 @@ public:
 
 	int frame_to_xpos(nframes_t frame);
 	int delete_audio_source(AudioSource* pAudio);
-	int delete_track(int trackNumber);
 	int process_go(int step);
 	int remove_all_clips_for_audio(AudioSource* a);
 	int snapped_x(int x);
@@ -153,6 +152,9 @@ public:
 	}
 
 	void disconnect_from_audiodevice_and_delete();
+	
+	void add_track(Track* track, int id);
+	void remove_track(Track* track);
 	
 	audio_sample_t* 	mixdown;
 	audio_sample_t*		gainbuffer;
@@ -200,8 +202,6 @@ private:
 	int finish_audio_export();
 	void start_seek();
 
-	void add_track(Track* track, int id);
-	
 	friend class Track;
 	
 
@@ -214,7 +214,7 @@ public slots :
 
 	Command* go();
 	Command* create_track();
-	Command* delete_track();
+	Command* remove_track();
 
 	Command* set_editing_mode();
 	Command* set_curve_mode();

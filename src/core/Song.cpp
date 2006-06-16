@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Song.cpp,v 1.13 2006/06/16 14:01:43 r_sijrier Exp $
+    $Id: Song.cpp,v 1.14 2006/06/16 20:20:53 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -266,6 +266,13 @@ void Song::audiodevice_client_request_processed( )
 void Song::add_track( Track* track, int id)
 {
 	m_tracks.insert(id, track);
+}
+
+void Song::remove_track(Track* trackToBeDeleted)
+{
+	if (m_tracks.take(trackToBeDeleted->get_id() )) {
+		PWARN("Removing Track with id %d", trackToBeDeleted->get_id());
+	}
 }
 
 bool Song::any_track_armed()
@@ -621,34 +628,9 @@ Command* Song::delete_region_under_x()
 	return (Command*) 0;
 }
 
-Command* Song::delete_track()
+Command* Song::remove_track()
 {
-	Track* track = m_tracks.take(activeTrackNumber);
-
-	if (!track)
-		return (Command*) -1;
-
-
-	if (track->get_cliplist().count()) {
-		QString s1;
-		s1.setNum(track->get_total_clips());
-		QString mesg = "There are "+s1+" clips on this tracks\nAre you sure you want to delete it ?";
-		if ( QMessageBox::warning( 0, "Delete Track", mesg,"&YES", "&CANCEL", 0 , 0, 1 ) != 0)
-			return (Command*) -1;
-	}
-
-	delete track;
-
-	int numberTracks = m_tracks.size();
-	int newActiveTrackNumber = activeTrackNumber - 1;
-	if (numberTracks > 0 && (newActiveTrackNumber <= numberTracks))
-		activeTrackNumber = newActiveTrackNumber;
-	else if (numberTracks > 0)
-		activeTrackNumber = 1;
-	else
-		activeTrackNumber = -1;
-
-	return (Command*) 0;
+	return new RemoveTrack(this);
 }
 
 Command* Song::go()

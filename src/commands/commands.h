@@ -13,3 +13,4 @@
 #include "ClipSelection.h"
 #include "RemoveClip.h"
 #include "Fade.h"
+#include "RemoveTrack.h"
