@@ -1,3 +1,39 @@
+23-05-2006 Remon Sijrier <remon@vt.shuis.tudelft.nl>
+	* Released 0.29.0
+	
+	All changes below are from the fork until the release of 0.29.0
+	
+	* Fully seperated the GUI from the core code. Core code is a library, named libtraversocore
+	* Ported to Qt4, no Qt3 Support is needed.
+	* The application links statically to libtraversocore, and has all resource files compiled in,
+		so no install is needed (makes testing builds much more comfortable)
+	* Reimplemented the audio rendering, and driver backends. 
+		This means: 
+		- Support for Jack, and much better support for ALSA.
+		- Normalized bitdepth (32 bit float), making bitdepth transparent throughout the application.
+		- Using libsndfile for audio reading/writing, resulting in much more stable audio file
+			read/writes and more audio formats are supported transparently, including FLAC
+		- Audio file read/writes are decoupled from the audio thread with lockless ringbuffers
+			greatly improving (soft) realtime behaviour.
+	* Fade In/Out improved. Fade's are Curves now, with a number of presets.
+	* Removed hard coded "Keyboard Shortcuts" code, replaced with scripting functionallity provided
+		by Qt. Key shortcuts are stored in an xml file now, and can be reloaded at runtime!
+	* Project rendering improved due use of libsndfile. Export to a number of audio formats, including 
+		samplerate conversion is possible.
+	* Runtime switching to Jack/ALSA/Null driver supported, including setting a new samplerate and/or 
+		latency. It's inavitable that changing the driver or driver parameters will cause a short
+		sound drop in case the application is playing/recording.
+	* History implemented (a.k.a. Un/Redo).
+	* Contextual Menu's.
+	* Drag and Drop Audiofiles into any Track, or manually Import audiofiles.
+	* Audio Waveform drawing improved, 2 modes are possible, "Classic View" and "Rectified View".
+	* Improved "Help" Dialog, with a short introduction on how to use the application.
+	* Indication of total CPU _time_ spend in both the audio thread and hard disk I/O thread.
+	* Massive code cleaning, and adoption of one coding style.
+	* Better Object Oriented Design, better information encapsulation using Qt signal/slot feature.
+	* More "minor" things I don't remember ;-)
+		
+
 2005-09-13 Remon Sijrier <remon@vt.shuis.tudelft.nl>
 	The author of the Protux/libmustux project decided to cancel my participation in the mustux project. 
 	 
