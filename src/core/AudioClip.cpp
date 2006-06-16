@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.21 2006/06/16 20:26:12 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.22 2006/06/16 22:46:25 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -326,8 +326,8 @@ void AudioClip::set_gain(float gain)
 	PENTER3;
 	if (gain < 0.0)
 		gain = 0.0;
-	if (gain > 2.0)
-		gain = 2.0;
+	if (gain > 32.0)
+		gain = 32.0;
 	m_gain = gain;
 	emit gainChanged();
 }
@@ -380,7 +380,6 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* channelBuffer, uint ch
 	if (read_frames == 0)
 		return 0;
 
-	gainFactor = m_gain * m_track->get_gain();
 	float panFactor = 1;
 
 	if ( (channel == 0) && (m_track->get_pan() > 0)) {
@@ -998,7 +997,7 @@ void AudioClip::calculate_normalization_factor(float targetdB)
 
 	m_normfactor = target/maxamp;
 
-// 	PWARN("normalization factor is %f", factor);
+// 	printf("normalization factor is %f\n", m_normfactor);
 	
 }
 
