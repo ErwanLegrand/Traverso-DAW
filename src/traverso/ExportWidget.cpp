@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ExportWidget.cpp,v 1.2 2006/05/08 20:05:27 r_sijrier Exp $
+    $Id: ExportWidget.cpp,v 1.3 2006/06/16 14:09:26 r_sijrier Exp $
 */
 
 #include "ExportWidget.h"
@@ -125,15 +125,15 @@ void ExportWidget::on_exportStartButton_clicked( )
         }
 
         switch (audioTypeComboBox->currentIndex()) {
-        case		0:
+        case	0:
                 spec->format = SF_FORMAT_WAV;
                 spec->extension = ".wav";
                 break;
-        case		1:
+        case	1:
                 spec->format = SF_FORMAT_AIFF;
                 spec->extension = ".aiff";
                 break;
-        case		2:
+        case	2:
                 char  buffer [128] ;
                 sf_command (NULL, SFC_GET_LIB_VERSION, buffer, sizeof (buffer));
                 if (QByteArray(buffer) == "libsndfile-1.0.12") {

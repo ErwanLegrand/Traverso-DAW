@@ -108,6 +108,7 @@ INSTALLS += target
 
 DESTDIR = ../..
 TEMPLATE = app
+DESTDIR_TARGET = /usr/local/bin
 
 unix {
 	# if exists('sys/vfs.h')

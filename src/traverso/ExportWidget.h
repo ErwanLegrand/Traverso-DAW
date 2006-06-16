@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ExportWidget.h,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: ExportWidget.h,v 1.2 2006/06/16 14:09:26 r_sijrier Exp $
 */
 
 #ifndef EXPORTWIDGET_H
@@ -41,7 +41,7 @@ public:
         ~ExportWidget();
 
 private:
-        Project*				m_project;
+        Project*		m_project;
         ExportSpecification* 	spec;
 
         void show_progress_view();
