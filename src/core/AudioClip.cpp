@@ -17,8 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.19 2006/06/16 18:30:38 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.20 2006/06/16 20:18:59 r_sijrier Exp $
 */
+
+#include <cfloat>
+#include <QInputDialog>
 
 #include "ContextItem.h"
 #include "AudioClip.h"
@@ -47,7 +50,7 @@ AudioClip::AudioClip(Track* track, nframes_t pTrackInsertBlock, QString name)
 		: ContextItem((ContextItem*) 0, track) , m_track(track), m_name(name), trackStartFrame(pTrackInsertBlock)
 {
 	PENTERCONS;
-	m_gain = 1.0;
+	m_gain = m_normfactor = 1.0;
 	m_length = sourceStartFrame = m_channels = sourceEndFrame = trackEndFrame = 0;
 	isMuted=false;
 	m_song = m_track->get_song();
@@ -112,6 +115,7 @@ int AudioClip::set_state(const QDomNode& node )
 	set_fade_out_shape( shape, fadeOutRange);
 	
 	set_gain( e.attribute( "gain", "" ).toFloat() );
+	m_normfactor =  e.attribute( "normfactor", "" ).toFloat();
 	isMuted =  e.attribute( "mute", "" ).toInt();
 	
 	
@@ -146,6 +150,7 @@ QDomNode AudioClip::get_state( QDomDocument doc )
 	node.setAttribute("sourcestart", sourceStartFrame);
 	node.setAttribute("length", m_length);
 	node.setAttribute("gain", m_gain);
+	node.setAttribute("normfactor", m_normfactor);
 	node.setAttribute("mute", isMuted);
 	node.setAttribute("fadeIn", (uint) fadeIn->get_range());
 	node.setAttribute("fadeOut", (uint) fadeOut->get_range());
@@ -348,7 +353,7 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* channelBuffer, uint ch
 	}
 
 	nframes_t mix_pos;
-	float gainFactor = m_gain * m_track->get_gain();
+	float gainFactor = m_gain * m_track->get_gain() * m_normfactor;
 
 	if (isMuted || (gainFactor == 0.0f) ) {
 		return 0;
@@ -696,6 +701,11 @@ float AudioClip::get_gain( ) const
 	return m_gain;
 }
 
+float AudioClip::get_norm_factor( ) const
+{
+	return m_normfactor;
+}
+
 bool AudioClip::is_selected( ) const
 {
 	return isSelected;
@@ -906,6 +916,90 @@ Command * AudioClip::clip_fade_in( )
 Command * AudioClip::clip_fade_out( )
 {
 	return new Fade(this, fadeOut);
+}
+
+Command * AudioClip::normalize( )
+{
+        bool ok;
+        double d = QInputDialog::getDouble(0, tr("QInputDialog::getDouble()"),
+                                           tr("Amount:"), 0.0, -120, 0, 1, &ok);
+        if (ok)
+		calculate_normalization_factor(d);
+	
+	// Hmm, this is not entirely true, but "almost" ;-)
+	emit gainChanged();
+	
+	return (Command*) 0;
+}
+
+Command * AudioClip::denormalize( )
+{
+	m_normfactor = 1.0;
+	// Hmm, this is not entirely true, but "almost" ;-)
+	emit gainChanged();
+	
+	return (Command*) 0;
+}
+
+void AudioClip::calculate_normalization_factor(float targetdB)
+{
+	const nframes_t blocksize = 256 * 1048;
+	float buf[blocksize];
+	nframes_t fpos;
+	nframes_t fend;
+	nframes_t to_read;
+	double maxamp = 0;
+	
+	float target = dB_to_scale_factor (targetdB);
+
+	if (target == 1.0f) {
+		/* do not normalize to precisely 1.0 (0 dBFS), to avoid making it appear
+		   that we may have clipped.
+		*/
+		target -= FLT_EPSILON;
+	}
+
+	fpos = 0;
+	fend = sourceLength;
+
+	/* first pass: find max amplitude */
+
+	while (fpos < fend) {
+
+		uint32_t n;
+
+		to_read = std::min (fend - fpos, blocksize);
+
+		for (n = 0; n < m_channels; ++n) {
+
+			/* read it in */
+
+			if (readSources.at(n)->file_read (buf, fpos, to_read) != (int)to_read) {
+				return;
+			}
+			
+			maxamp = Mixer::compute_peak (buf, to_read, maxamp);
+		}
+
+		fpos += to_read;
+	};
+
+	if (maxamp == 0.0f) {
+		/* don't even try */
+		return;
+	}
+
+	if (maxamp == target) {
+		/* we can't do anything useful */
+		return;
+	}
+
+	/* compute scale factor */
+
+	m_normfactor = target/maxamp;
+
+// 	PWARN("normalization factor is %f", factor);
+	
 }
 
 // eof
