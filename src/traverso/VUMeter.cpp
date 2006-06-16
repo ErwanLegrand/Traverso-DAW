@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: VUMeter.cpp,v 1.4 2006/05/17 22:10:03 r_sijrier Exp $
+$Id: VUMeter.cpp,v 1.5 2006/06/16 18:45:50 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -110,7 +110,14 @@ void VUMeter::paintEvent( QPaintEvent *  )
 
 
 	int markX = TITLE_TO_BUS_DISTANCE + ( m_channels * VU_CHANNEL_WIDTH );
-	painter.drawText(markX + 5, maxh - vuBottonYoffset - levelRange + 8, " 0" ); // 0 is always drawn
+	
+// 	painter.drawText(markX + 5, maxh - vuBottonYoffset - levelRange + 8, " 0" ); // 0 is always drawn
+	
+	QFontMetrics fm(QFont("Bitstream Vera Sans", 7));
+	QRect markRect(markX + 3, maxh - vuBottonYoffset - levelRange, 
+	               fm.width("-96"), fm.ascent());
+	
+	painter.drawText(markRect, Qt::AlignRight, "0" ); // 0 is always drawn
 
 	QString spm;
 	int deltaY;
@@ -123,7 +130,11 @@ void VUMeter::paintEvent( QPaintEvent *  )
 
 		deltaY = (int) ( dB_to_scale_factor(presetMark[j] / 2)  * levelRange );
 		spm.sprintf("%2.0f", presetMark[j]);
-		painter.drawText(markX + 3, maxh - deltaY + 2 - vuBottonYoffset, spm);
+// 		painter.drawText(markX + 3, maxh - deltaY + 2 - vuBottonYoffset, spm);
+		
+		markRect.setY(maxh - deltaY + 2 - vuBottonYoffset - fm.ascent());
+		markRect.setHeight(fm.ascent());
+		painter.drawText(markRect, Qt::AlignRight, spm);
 	}
 
 }

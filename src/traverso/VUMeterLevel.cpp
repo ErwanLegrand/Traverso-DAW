@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: VUMeterLevel.cpp,v 1.3 2006/05/08 20:05:27 r_sijrier Exp $
+    $Id: VUMeterLevel.cpp,v 1.4 2006/06/16 18:45:44 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -88,7 +88,8 @@ void VUMeterLevel::paintEvent( QPaintEvent*  )
 
 
         painter.drawPixmap(0, 0, levelPixmap);
-        painter.drawPixmap(0, 0, clearPixmap, 0, 0, width(), levelRange - thisLevelDeltaY);
+	if ((levelRange - thisLevelDeltaY) > 0)
+	        painter.drawPixmap(0, 0, clearPixmap, 0, 0, width(), levelRange - thisLevelDeltaY);
 
         directpainter.drawPixmap(0, 0, pix);
 }
@@ -101,7 +102,7 @@ void VUMeterLevel::resize_level_pixmap( )
         levelPixmap = QPixmap(width(), levelRange);
         QPainter painter(&levelPixmap);
 
-        for (int i = 0; i < levelRange; i++) {
+        for (int i = 0; i <= levelRange; i++) {
                 int cR = (int) ( (i < hlr ) ? ((float)i/hlr) * 255 : 255);
                 int cG = (int) ( (i < hlr ) ? 255 : 255 * ((float)(levelRange-i)/hlr) );
                 cG = cG > 255 ? 255 : cG;
