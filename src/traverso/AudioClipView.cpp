@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.15 2006/06/16 20:33:27 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.16 2006/06/16 21:46:06 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -144,6 +144,7 @@ QRect AudioClipView::draw(QPainter& p)
 		painter.setFont( QFont( "Bitstream Vera Sans", 12 ) );
 		QString si;
 		si.setNum(m_progress);
+		if (m_progress == 100) m_progress = 0;
 		QString buildProcess = "Building Peaks: " + si + "%";
 		painter.drawText(r, Qt::AlignVCenter, buildProcess);
 	
@@ -553,8 +554,10 @@ void AudioClipView::update_geometry( )
 void AudioClipView::update_progress_info( int progress )
 {
 	PENTER;
-	m_progress = progress;
-	schedule_for_repaint();
+	if (progress > (m_progress + 4)) {
+		m_progress = progress;
+		schedule_for_repaint();
+	}
 }
 
 void AudioClipView::peaks_creation_finished( )
