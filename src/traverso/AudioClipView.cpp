@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.14 2006/06/16 20:21:47 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.15 2006/06/16 20:33:27 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -158,18 +158,20 @@ QRect AudioClipView::draw(QPainter& p)
 	
 	}
 
+        p.setPen(cm().get("DARK_TEXT")); // CHANGE TO CLIP_COUNTOUR
+	
 	if (m_clip->get_height() < (MINIMAL_CLIPINFO_HEIGHT + CLIPINFO_HEIGHT)) {
 		p.drawPixmap(baseX, baseY, pix);
+	        // Black Contour
+		p.drawRect(baseX, baseY , clipXWidth , height);
 	} else {
 		draw_clipinfo_area(p);
 		p.drawPixmap(baseX, baseY + CLIPINFO_HEIGHT, pix);
+        	// Black Contour
+		p.drawRect(baseX, baseY , clipXWidth , CLIPINFO_HEIGHT);
+		p.drawRect(baseX, baseY , clipXWidth , height + CLIPINFO_HEIGHT);
 	}
 
-        // Black Contour of clip Info area
-        p.setPen(cm().get("DARK_TEXT")); // CHANGE TO CLIP_COUNTOUR
-        p.drawRect(baseX, baseY , clipXWidth , CLIPINFO_HEIGHT);
-        p.drawRect(baseX, baseY , clipXWidth , height + CLIPINFO_HEIGHT);
-        p.setPen(Qt::blue);
 	PMESG("drawing clip");
 	
 	return QRect();
