@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Project.cpp,v 1.4 2006/06/15 12:11:38 r_sijrier Exp $
+$Id: Project.cpp,v 1.5 2006/06/16 13:31:36 r_sijrier Exp $
 */
 
 #include <QFile>
@@ -317,6 +317,8 @@ int Project::export_project(ExportSpecification* spec)
 int Project::start_export(ExportSpecification* spec)
 {
 	PMESG("Starting export, rate is %d bitdepth is %d", spec->sample_rate, spec->data_width );
+	
+	spec->blocksize = audiodevice().get_buffer_size();
 
 	spec->dataF = new audio_sample_t[spec->blocksize * spec->channels];
 
@@ -355,7 +357,7 @@ int Project::start_export(ExportSpecification* spec)
 	delete spec->dataF;
 
 	emit exportFinished();
-
+	
 	return 1;
 }
 
