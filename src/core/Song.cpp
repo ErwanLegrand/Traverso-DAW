@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Song.cpp,v 1.10 2006/06/15 12:10:16 r_sijrier Exp $
+    $Id: Song.cpp,v 1.11 2006/06/16 13:31:03 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -349,7 +349,6 @@ int Song::prepare_export(ExportSpecification* spec)
 	transportFrame = spec->start_frame;
 	spec->progress = 0;
 
-	spec->blocksize = audiodevice().get_buffer_size();
 	QString idString = QString::number(m_id);
 	if (m_id < 10)
 		idString.prepend("0");
@@ -810,6 +809,9 @@ int Song::process( nframes_t nframes )
 // 	printf("Song-%d::process transport is %d\n", m_id, transport);
 	if (!transport)
 		return 0;
+		
+	printf("Entering Song::process\n");
+	usleep(20000);
 
 	if (stopTransport) {
 		emit transferStopped();
