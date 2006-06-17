@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.11 2006/06/12 20:07:55 r_sijrier Exp $
+$Id: Track.cpp,v 1.12 2006/06/17 09:25:23 r_sijrier Exp $
 */
 
 #include "Track.h"
@@ -563,12 +563,14 @@ void Track::set_name( const QString & name )
 	emit stateChanged();
 }
 
-nframes_t Track::get_render_end_frame( )
+void Track::get_render_range(nframes_t& startframe, nframes_t& endframe )
 {
 	if (audioClipList.size() == 0)
-		return 0;
+		return;
 		
-	nframes_t endframe = 0;
+	endframe = 0;
+	startframe = INT_MAX;
+	
 	AudioClip* clip;
 	
 	for(int i=0; i < audioClipList.size(); ++i) {
@@ -578,10 +580,13 @@ nframes_t Track::get_render_end_frame( )
 			if (clip->get_track_end_frame() > endframe) {
 				endframe = clip->get_track_end_frame();
 			}
+			
+			if (clip->get_track_start_frame() < startframe) {
+				startframe = clip->get_track_start_frame();
+			}
 		}
 	}
 	
-	return endframe;
 }
 
 // eof
