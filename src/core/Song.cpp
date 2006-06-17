@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Song.cpp,v 1.14 2006/06/16 20:20:53 r_sijrier Exp $
+    $Id: Song.cpp,v 1.15 2006/06/17 09:25:09 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -331,19 +331,26 @@ int Song::prepare_export(ExportSpecification* spec)
 
 	rendering = true;
 
-	spec->start_frame = acmanager->get_start_frame();
+	spec->start_frame = INT_MAX;
 	spec->end_frame = 0;
 	
+	nframes_t endframe, startframe;
+	
 	foreach (Track* track, m_tracks) {
-		nframes_t endframe = track->get_render_end_frame();
+		track->get_render_range(startframe, endframe);
 		
 		if (track->is_solo()) {
-			spec->end_frame = track->get_render_end_frame();
+			spec->end_frame = endframe;
+			spec->start_frame = startframe;
 			break;
 		}
 		
 		if (endframe > spec->end_frame) {
 			spec->end_frame = endframe;
+		}
+		
+		if (startframe < spec->start_frame) {
+			spec->start_frame = startframe;
 		}
 		
 	}

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.h,v 1.7 2006/06/12 20:08:03 r_sijrier Exp $
+$Id: Track.h,v 1.8 2006/06/17 09:25:30 r_sijrier Exp $
 */
 
 
@@ -72,7 +72,7 @@ public :
 	QList<AudioClip* > split_clip(AudioClip* c, nframes_t splitPoint);
 // 	int delete_clip(AudioClip* clip, bool permanently = 0);
 
-	nframes_t get_render_end_frame();
+	void get_render_range(nframes_t& startframe, nframes_t& endframe);
 
 
 	// Get functions:
