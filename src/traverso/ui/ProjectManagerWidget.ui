@@ -32,37 +32,11 @@
   </property>
   <layout class="QGridLayout" >
    <property name="margin" >
-    <number>8</number>
+    <number>9</number>
    </property>
    <property name="spacing" >
     <number>6</number>
    </property>
-   <item row="1" column="0" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" >
-      <size>
-       <width>502</width>
-       <height>71</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="1" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" >
-      <size>
-       <width>266</width>
-       <height>474</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item row="0" column="0" >
     <layout class="QVBoxLayout" >
      <property name="margin" >
@@ -72,11 +46,41 @@
       <number>6</number>
      </property>
      <item>
-      <widget class="QLabel" name="label" >
-       <property name="text" >
-        <string>Project Management</string>
+      <layout class="QHBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
        </property>
-      </widget>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="label" >
+         <property name="text" >
+          <string>Project Management</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="projectDirSelectButton" >
+         <property name="text" >
+          <string>Select Project Dir</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
       <widget class="QTreeWidget" name="projectListView" >
@@ -124,13 +128,6 @@
           <property name="spacing" >
            <number>6</number>
           </property>
-          <item row="1" column="3" >
-           <widget class="QPushButton" name="saveProjectButton" >
-            <property name="text" >
-             <string>Save</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="1" >
            <spacer>
             <property name="orientation" >
@@ -144,13 +141,6 @@
             </property>
            </spacer>
           </item>
-          <item row="1" column="0" >
-           <widget class="QPushButton" name="deleteProjectbutton" >
-            <property name="text" >
-             <string>Delete</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="0" colspan="2" >
            <widget class="QLineEdit" name="selectedProjectName" />
           </item>
@@ -161,10 +151,24 @@
             </property>
            </widget>
           </item>
+          <item row="1" column="0" >
+           <widget class="QPushButton" name="deleteProjectbutton" >
+            <property name="text" >
+             <string>Delete</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="3" >
            <widget class="QPushButton" name="loadProjectButton" >
             <property name="text" >
              <string>Load</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3" >
+           <widget class="QPushButton" name="saveProjectButton" >
+            <property name="text" >
+             <string>Save</string>
             </property>
            </widget>
           </item>
@@ -322,6 +326,32 @@
      </item>
     </layout>
    </item>
+   <item row="0" column="1" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>266</width>
+       <height>474</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="0" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>502</width>
+       <height>70</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
   </layout>
  </widget>
  <pixmapfunction></pixmapfunction>
@@ -340,38 +370,6 @@
  </tabstops>
  <resources/>
  <connections>
-  <connection>
-   <sender>newProjectEngineer</sender>
-   <signal>returnPressed()</signal>
-   <receiver>createProjectButton</receiver>
-   <slot>animateClick()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>248</x>
-     <y>464</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>498</x>
-     <y>496</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>newProjectName</sender>
-   <signal>returnPressed()</signal>
-   <receiver>createProjectButton</receiver>
-   <slot>animateClick()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>248</x>
-     <y>434</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>498</x>
-     <y>496</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>selectedProjectName</sender>
    <signal>returnPressed()</signal>
@@ -401,6 +399,38 @@
     <hint type="destinationlabel" >
      <x>497</x>
      <y>310</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>newProjectEngineer</sender>
+   <signal>returnPressed()</signal>
+   <receiver>createProjectButton</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>248</x>
+     <y>464</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>498</x>
+     <y>496</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>newProjectName</sender>
+   <signal>returnPressed()</signal>
+   <receiver>createProjectButton</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>248</x>
+     <y>434</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>498</x>
+     <y>496</y>
     </hint>
    </hints>
   </connection>

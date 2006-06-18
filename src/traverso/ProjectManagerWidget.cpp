@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ProjectManagerWidget.cpp,v 1.3 2006/05/01 21:31:58 r_sijrier Exp $
+    $Id: ProjectManagerWidget.cpp,v 1.4 2006/06/18 20:43:24 r_sijrier Exp $
 */
 
 #include "ProjectManagerWidget.h"
@@ -30,6 +30,8 @@
 #include <QMessageBox>
 #include <QTextStream>
 #include <QDomDocument>
+#include <QFileDialog>
+#include <QHeaderView>
 
 
 // Always put me below _all_ includes, this is needed
@@ -45,6 +47,8 @@ ProjectManagerWidget::ProjectManagerWidget( QWidget * parent )
         QStringList stringList;
         stringList << "Project Name" << "Songs" << "Status" ;
         projectListView->setHeaderLabels(stringList);
+	
+	projectListView->header()->resizeSection(0, 200);
 
         connect(projectListView, SIGNAL(itemClicked ( QTreeWidgetItem* , int  )), this, SLOT(projectitem_clicked(QTreeWidgetItem*, int )));
 }
@@ -266,6 +270,32 @@ void ProjectManagerWidget::on_saveAsProjectButton_clicked( )
         }
         selectedProjectName->setText("");
         update_projects_list();
+}
+
+void ProjectManagerWidget::on_projectDirSelectButton_clicked( )
+{
+	QSettings settings;
+	
+	QString projects_path = QDir::homePath();
+	
+	QString newPath = QFileDialog::getExistingDirectory(0,
+			tr("Choose an existing or create a new Project Directory"), projects_path);
+	
+	QDir dir;
+	
+	if (dir.exists(newPath)) {
+// 		QMessageBox::information( interface, tr("Traverso - Information"), tr("Using existing Project directory: %1\n").arg(newPath), "OK", 0 );
+	} else if (!dir.mkpath(newPath)) {
+		QMessageBox::warning( this, tr("Traverso - Warning"), tr("Unable to create Project directory! \n") +
+				tr("Please check permission for this directory: %1").arg(newPath) );
+		return;
+	} else {
+		QMessageBox::information( this, tr("Traverso - Information"), tr("Created new Project directory for you here: %1\n").arg(newPath), "OK", 0 );
+	}
+	
+	settings.setValue("Project/directory", newPath);
+	
+	update_projects_list();
 }
 
 

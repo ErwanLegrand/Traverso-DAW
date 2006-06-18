@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ProjectManagerWidget.h,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: ProjectManagerWidget.h,v 1.2 2006/06/18 20:43:30 r_sijrier Exp $
 */
 
 #ifndef PROJECTMANAGERWIDGET_H
@@ -43,6 +43,7 @@ private slots:
         void on_createProjectButton_clicked();
         void on_deleteProjectbutton_clicked();
         void on_saveAsProjectButton_clicked();
+        void on_projectDirSelectButton_clicked();
         void projectitem_clicked( QTreeWidgetItem* , int  );
 };
 
