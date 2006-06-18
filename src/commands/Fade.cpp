@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Fade.cpp,v 1.1 2006/05/08 20:01:30 r_sijrier Exp $
+$Id: Fade.cpp,v 1.2 2006/06/18 19:40:02 r_sijrier Exp $
 */
 
 
@@ -32,10 +32,11 @@ $Id: Fade.cpp,v 1.1 2006/05/08 20:01:30 r_sijrier Exp $
 #include "Debugger.h"
 
 
-Fade::Fade(AudioClip* clip, Curve* curve)
+Fade::Fade(AudioClip* clip, Curve* curve, int direction)
 	: Command(clip)
 {
 	m_curve = curve;
+	m_direction = direction;
 }
 
 
@@ -77,7 +78,7 @@ int Fade::undo_action()
 
 int Fade::jog()
 {
-	int dx = (origX - cpointer().x());
+	int dx = (origX - (cpointer().x()) ) * m_direction;
 	newFade = origFade - ( dx * 1000 );
 	
 	if (newFade < 1) {
