@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.12 2006/06/17 09:25:23 r_sijrier Exp $
+$Id: Track.cpp,v 1.13 2006/06/18 17:41:32 r_sijrier Exp $
 */
 
 #include "Track.h"
@@ -443,6 +443,7 @@ void Track::set_muted_by_solo(bool muted)
 {
 	PENTER;
 	mutedBySolo = muted;
+	emit audibleStateChanged();
 }
 
 void Track::set_solo(bool solo)
@@ -451,12 +452,14 @@ void Track::set_solo(bool solo)
 	if (solo)
 		mutedBySolo = false;
 	emit soloChanged(isSolo);
+	emit audibleStateChanged();
 }
 
 void Track::set_muted( bool muted )
 {
 	isMuted = muted;
 	emit muteChanged(isMuted);
+	emit audibleStateChanged();
 }
 
 void Track::set_armed( bool armed )
@@ -485,25 +488,42 @@ int Track::process( nframes_t nframes )
 		}
 		
 		audio_sample_t* channelBuffer;
+		audio_sample_t* mixdown = m_song->mixdown;
 		int result;
+		float gainFactor, panFactor;
 		
-		for (int chan=0; chan<bus->get_channel_count(); ++chan) {
+		for (int i=0; i<audioClipList.size(); ++i) {
+		
+			AudioClip* clip = audioClipList.at(i);
 			
-			channelBuffer = bus->get_channel( chan )->get_buffer( nframes );
 			
-			foreach(AudioClip* clip, audioClipList) {
-				result = clip->process(nframes, channelBuffer, chan);
+			for (int chan=0; chan<bus->get_channel_count(); ++chan) {
+			
+				channelBuffer = bus->get_channel( chan )->get_buffer( nframes );
+			
+				result = clip->process(nframes, mixdown, chan);
 				
-				if (result == -1) { // No such channel !!
-					if (chan > 0) { 
-						// There are at least 2 channels in Track. AudioClip could be a mono source. Duplicate!
-						memcpy(channelBuffer, bus->get_channel( chan -1 )->get_buffer( nframes ),
-							  sizeof (audio_sample_t) * nframes);
-					}
+				if (result == 0) {
+					continue;
 				}
-				else {
+	
+				if (result != -1) { // No such channel !!
 					processResult |= result;
 				}
+				
+				gainFactor = m_gain * clip->get_gain() * clip->get_norm_factor();
+				
+				if ( (chan == 0) && (m_pan > 0)) {
+					panFactor = 1 - m_pan;
+					gainFactor *= panFactor;
+				}
+				
+				if ( (chan == 1) && (m_pan < 0)) {
+					panFactor = 1 + m_pan;
+					gainFactor *= panFactor;
+				}
+				
+				Mixer::mix_buffers_with_gain(channelBuffer, mixdown, nframes, gainFactor);
 			}
 		}
 		

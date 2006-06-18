@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.13 2006/06/16 20:18:51 r_sijrier Exp $
+$Id: AudioClip.h,v 1.14 2006/06/18 17:41:04 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -179,7 +179,7 @@ public slots:
 	void finish_write_source(WriteSource* source);
 	void set_left_edge(nframes_t frame);
 	void set_right_edge(nframes_t frame);
-	void track_audible_state_changed(bool status);
+	void track_audible_state_changed();
 	void toggle_mute();
 
 	Command* drag_edge();

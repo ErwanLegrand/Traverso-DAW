@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.h,v 1.8 2006/06/17 09:25:30 r_sijrier Exp $
+$Id: Track.h,v 1.9 2006/06/18 17:41:40 r_sijrier Exp $
 */
 
 
@@ -189,6 +189,7 @@ signals:
 	void gainChanged();
 	void panChanged();
 	void stateChanged();
+	void audibleStateChanged();
 
 public slots:
 	void init_recording();

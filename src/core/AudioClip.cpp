@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.22 2006/06/16 22:46:25 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.23 2006/06/18 17:40:56 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -78,8 +78,7 @@ AudioClip::~AudioClip()
 
 void AudioClip::init()
 {
-	connect(m_track, SIGNAL(muteChanged(bool )), this, SLOT(track_audible_state_changed( bool )));
-	connect(m_track, SIGNAL(soloChanged(bool )), this, SLOT(track_audible_state_changed( bool )));
+	connect(m_track, SIGNAL(audibleStateChanged()), this, SLOT(track_audible_state_changed()));
 	set_history_stack(m_track->get_history_stack());
 	m_song->get_audioclip_manager()->add_clip( this );
 	isRecording = false;
@@ -115,7 +114,7 @@ int AudioClip::set_state(const QDomNode& node )
 	set_fade_out_shape( shape, fadeOutRange);
 	
 	set_gain( e.attribute( "gain", "" ).toFloat() );
-	m_normfactor =  e.attribute( "normfactor", "" ).toFloat();
+	m_normfactor =  e.attribute( "normfactor", "1.0" ).toFloat();
 	isMuted =  e.attribute( "mute", "" ).toInt();
 	
 	
@@ -178,7 +177,7 @@ void AudioClip::toggle_mute()
 	emit muteChanged(isMuted);
 }
 
-void AudioClip::track_audible_state_changed( bool )
+void AudioClip::track_audible_state_changed()
 {
 	set_sources_active_state();	
 }
@@ -341,33 +340,33 @@ int AudioClip::set_selected(bool selected)
 	return 1;
 }
 
-int AudioClip::process(nframes_t nframes, audio_sample_t* channelBuffer, uint channel)
+int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 {
 	if (isRecording) {
 		process_capture(nframes, channel);
 		return 0;
 	}
 	
+	
 	if (channel >= m_channels) {
 		return -1;	// Channel doesn't exist!!
 	}
 
+
 	nframes_t mix_pos;
-	float gainFactor = m_gain * m_track->get_gain() * m_normfactor;
-
-	if (isMuted || (gainFactor == 0.0f) ) {
-		return 0;
-	}
-
+	
 	if ( (trackStartFrame < m_song->get_transport_frame()) && (trackEndFrame > m_song->get_transport_frame()) ) {
 		mix_pos = m_song->get_transport_frame() - trackStartFrame + sourceStartFrame;
 	} else {
 		return 0;
 	}
 
+	
+	if (isMuted || ( (m_gain * m_normfactor) == 0.0f) ) {
+		return 0;
+	}
 
-	audio_sample_t* mixdown = m_song->mixdown;
-	audio_sample_t* gainbuffer = m_song->gainbuffer;
+
 	nframes_t read_frames = 0;
 	
 
@@ -380,18 +379,9 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* channelBuffer, uint ch
 	if (read_frames == 0)
 		return 0;
 
-	float panFactor = 1;
-
-	if ( (channel == 0) && (m_track->get_pan() > 0)) {
-		panFactor = 1 - m_track->get_pan();
-		gainFactor *= panFactor;
-	}
-	if ( (channel == 1) && (m_track->get_pan() < 0)) {
-		panFactor = 1 + m_track->get_pan();
-		gainFactor *= panFactor;
-	}
-
-
+	
+	audio_sample_t* gainbuffer = m_song->gainbuffer;
+	
 	// FADE IN
 	
 	if (m_song->get_transport_frame() < (trackStartFrame + fadeIn->get_range()) ) {
@@ -428,15 +418,6 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* channelBuffer, uint ch
 		}
 	}
 	
-	if (read_frames == nframes) {
-		// If gainFactor == 1.0 , then there's no need to apply it.
-		if (gainFactor == 1.0f)
-			Mixer::mix_buffers_no_gain(channelBuffer, mixdown, nframes);
-		else
-			Mixer::mix_buffers_with_gain(channelBuffer, mixdown, nframes, gainFactor);
-	}
-		
-
 
 	return 1;
 }
@@ -688,6 +669,7 @@ Track * AudioClip::get_track( ) const
 void AudioClip::set_track( Track * t )
 {
 	m_track = t;
+	set_sources_active_state();
 }
 
 void AudioClip::set_name( QString name )
