@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.23 2006/06/18 17:40:56 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.24 2006/06/18 19:40:30 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -891,12 +891,14 @@ void AudioClip::set_fade_out_shape( FadeShape shape, nframes_t len )
 
 Command * AudioClip::clip_fade_in( )
 {
-	return new Fade(this, fadeIn);
+	int direction = 1;
+	return new Fade(this, fadeIn, direction);
 }
 
 Command * AudioClip::clip_fade_out( )
 {
-	return new Fade(this, fadeOut);
+	int direction = -1;
+	return new Fade(this, fadeOut, direction);
 }
 
 Command * AudioClip::normalize( )
