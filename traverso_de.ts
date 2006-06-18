@@ -29,6 +29,37 @@
         <source>AudioDevice doesn&apos;t have this Capture Bus: %1 (Track %2)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Normalization</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set Normalization level:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AudioClipView</name>
+    <message>
+        <source>Fastest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fast</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Slow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Slowest</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AudioDevice</name>
@@ -38,6 +69,17 @@
     </message>
     <message>
         <source>No Device Configured</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AudioSourceManager</name>
+    <message>
+        <source>Failed to initialize ReadSource : %s1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to initialize ReadSource : %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -516,11 +558,11 @@
     <name>Project</name>
     <message>
         <source>Project loaded </source>
-        <translation>Projekt geladen</translation>
+        <translation type="obsolete">Projekt geladen</translation>
     </message>
     <message>
         <source>Project saved </source>
-        <translation>Projekt gespeichert</translation>
+        <translation type="obsolete">Projekt gespeichert</translation>
     </message>
     <message>
         <source>Could not open Project properties file for writing! </source>
@@ -528,11 +570,27 @@
     </message>
     <message>
         <source>Song doesn&apos;t exist! ( Song </source>
-        <translation>Song existiert nicht! ( Song</translation>
+        <translation type="obsolete">Song existiert nicht! ( Song</translation>
     </message>
     <message>
         <source>Could not open project properties file for writing! </source>
-        <translation>Projektdatei konnte nicht schreibend geöffnet werden!</translation>
+        <translation type="obsolete">Projektdatei konnte nicht schreibend geöffnet werden!</translation>
+    </message>
+    <message>
+        <source>Project loaded (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Project saved (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not open project properties file for writing! (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Song doesn&apos;t exist! ( Song %1)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -578,7 +636,11 @@
     </message>
     <message>
         <source>Could not load project &quot;</source>
-        <translation>Fehler beim Laden von Projekt &quot;</translation>
+        <translation type="obsolete">Fehler beim Laden von Projekt &quot;</translation>
+    </message>
+    <message>
+        <source>Could not load project %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -777,11 +839,11 @@
     <name>SongManagerWidget</name>
     <message>
         <source> Succesfully saved!</source>
-        <translation>Speichern erfolgreich!</translation>
+        <translation type="obsolete">Speichern erfolgreich!</translation>
     </message>
     <message>
         <source>Failed to save: </source>
-        <translation>Fehler beim Speichern:</translation>
+        <translation type="obsolete">Fehler beim Speichern:</translation>
     </message>
     <message>
         <source>QFileDialog::getOpenFileName()</source>
@@ -927,6 +989,17 @@
     <message>
         <source>Invalid track</source>
         <translation type="obsolete">Ungültiger Track</translation>
+    </message>
+</context>
+<context>
+    <name>TrackView</name>
+    <message>
+        <source>Set Track name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter new Track name</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

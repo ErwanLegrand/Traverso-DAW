@@ -21,15 +21,57 @@
         <source>AudioDevice doesn&apos;t have this Capture Bus: %1 (Track %2)</source>
         <translation>AudioApparaat heeft deze Opname Bus niet: %1 (Track %2)</translation>
     </message>
+    <message>
+        <source>Normalization</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set Normalization level:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AudioClipView</name>
+    <message>
+        <source>Fastest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fast</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Slow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Slowest</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AudioDevice</name>
     <message>
         <source>No Driver Loaded</source>
-        <translation type="unfinished"></translation>
+        <translation>Geen Driver geladen</translation>
     </message>
     <message>
         <source>No Device Configured</source>
+        <translation>Geen Apparaat geconfigureerd</translation>
+    </message>
+</context>
+<context>
+    <name>AudioSourceManager</name>
+    <message>
+        <source>Failed to initialize ReadSource : %s1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to initialize ReadSource : %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -37,27 +79,27 @@
     <name>AudioSourcesManagerWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Form</translation>
     </message>
     <message>
         <source>AudioSources</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio Bronnen</translation>
     </message>
     <message>
         <source>Remove sources</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwijder bronnen</translation>
     </message>
     <message>
         <source>Remove source</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwijder bron</translation>
     </message>
     <message>
         <source>Remove all sources</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwijder alle bronnen</translation>
     </message>
     <message>
         <source>Remove unused sources</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwijder niet gebruikt bronnen</translation>
     </message>
 </context>
 <context>
@@ -84,7 +126,7 @@
     </message>
     <message>
         <source>Current</source>
-        <translation type="unfinished">Huidige</translation>
+        <translation>Huidige</translation>
     </message>
     <message>
         <source>All</source>
@@ -164,198 +206,198 @@
     </message>
     <message>
         <source>Unable to create export directory! Please check permissions for this directory: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan export directory niet aanmaken! Controleer s.v.p. de permissies voor directory: %1</translation>
     </message>
 </context>
 <context>
     <name>GlobalPropertiesWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Form</translation>
     </message>
     <message>
         <source>Load last used project at startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Laatst geopende Project laden tijdens start</translation>
     </message>
     <message>
         <source>1:8</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>1:20</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>1:64</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>1:128</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>1:256</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>1:512</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>1:1024</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>1:2048</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>1:4096</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>1:8192</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>1:16384</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Hardware</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Hold timeout (ms)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Hold timeout</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Double fact timeout (ms)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Double fact timeout</translation>
     </message>
     <message>
         <source>Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Defaults</translation>
     </message>
     <message>
         <source>22050</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>32000</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>44100</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>48000</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>96000</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>16</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>32</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Opslaan</translation>
     </message>
     <message>
         <source>Discard</source>
-        <translation type="unfinished"></translation>
+        <translation>Negeren</translation>
     </message>
     <message>
         <source>General settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Standaard opties</translation>
     </message>
     <message>
         <source>New song options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opties voor nieuwe Song</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Horizontal zoom level&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontale zoom niveau</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Number of tracks&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Aantal Tracks</translation>
     </message>
     <message>
         <source>Settings Saved!</source>
-        <translation type="unfinished"></translation>
+        <translation>Opties opgeslagen!</translation>
     </message>
     <message>
         <source>image</source>
-        <translation type="unfinished"></translation>
+        <translation>Afbeelding</translation>
     </message>
     <message>
         <source>Buffer latency</source>
-        <translation type="unfinished"></translation>
+        <translation>Buffer latencie</translation>
     </message>
     <message>
         <source>latency (ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>latencie (ms)</translation>
     </message>
     <message>
         <source>Sample rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Sample rate</translation>
     </message>
     <message>
         <source>88200</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Audio Driver</source>
-        <translation type="unfinished"></translation>
+        <translation>Geluids Driver</translation>
     </message>
     <message>
         <source>Buffer size</source>
-        <translation type="unfinished"></translation>
+        <translation>Buffer groote</translation>
     </message>
     <message>
         <source>64</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>128</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>256</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>512</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>1024</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>2048</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>4096</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Restart Driver</source>
-        <translation type="unfinished"></translation>
+        <translation>Driver herstarten</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Naam</translation>
     </message>
 </context>
 <context>
@@ -381,34 +423,34 @@
     <name>ManagerWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Form</translation>
     </message>
     <message>
         <source>Project Management</source>
-        <translation type="unfinished"></translation>
+        <translation>Project beheer</translation>
     </message>
     <message>
         <source>Song Management</source>
-        <translation type="unfinished"></translation>
+        <translation>Lied beheer</translation>
     </message>
     <message>
         <source>Audio Sources</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio bronnen</translation>
     </message>
     <message>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Opties</translation>
     </message>
 </context>
 <context>
     <name>Project</name>
     <message>
         <source>Project loaded </source>
-        <translation>Project geladen </translation>
+        <translation type="obsolete">Project geladen </translation>
     </message>
     <message>
         <source>Project saved </source>
-        <translation>Project opgeslagen </translation>
+        <translation type="obsolete">Project opgeslagen </translation>
     </message>
     <message>
         <source>Could not open Project properties file for writing! </source>
@@ -416,38 +458,54 @@
     </message>
     <message>
         <source>Song doesn&apos;t exist! ( Song </source>
-        <translation>Song bestaat niet! ( Song </translation>
+        <translation type="obsolete">Song bestaat niet! ( Song </translation>
     </message>
     <message>
         <source>Could not open project properties file for writing! </source>
-        <translation>Project status bestand kon niet geopend worden om ernaar te schrijven!</translation>
+        <translation type="obsolete">Project status bestand kon niet geopend worden om ernaar te schrijven!</translation>
+    </message>
+    <message>
+        <source>Project loaded (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Project saved (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not open project properties file for writing! (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Song doesn&apos;t exist! ( Song %1)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ProjectInfoWidget</name>
     <message>
         <source>Project Information Widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Project informatie venster</translation>
     </message>
     <message>
         <source>Bitdepth</source>
-        <translation type="unfinished">Bit diepte</translation>
+        <translation>Bit diepte</translation>
     </message>
     <message>
         <source>-</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Rate</translation>
     </message>
     <message>
         <source>Songs</source>
-        <translation type="unfinished"></translation>
+        <translation>Songs</translation>
     </message>
     <message>
         <source>Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Project</translation>
     </message>
 </context>
 <context>
@@ -462,10 +520,10 @@
     </message>
     <message>
         <source>Open or create a project first!</source>
-        <translation type="unfinished"></translation>
+        <translation>Vooraf een Project maken/openen svp!</translation>
     </message>
     <message>
-        <source>Could not load project &quot;</source>
+        <source>Could not load project %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -509,59 +567,59 @@
     </message>
     <message>
         <source>ProjectManagerWidget</source>
-        <translation type="unfinished"></translation>
+        <translation>Project beheer venster</translation>
     </message>
     <message>
         <source>Selected Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecteer Project</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Opslaan</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwijderen</translation>
     </message>
     <message>
         <source>Save As</source>
-        <translation type="unfinished"></translation>
+        <translation>Opslaan als</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation type="unfinished"></translation>
+        <translation>Laden</translation>
     </message>
     <message>
         <source>New Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieuw Project</translation>
     </message>
     <message>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>Maak</translation>
     </message>
     <message>
         <source>6</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Project Management</source>
-        <translation type="unfinished"></translation>
+        <translation>Project beheer</translation>
     </message>
     <message>
         <source>Number of Songs</source>
-        <translation type="unfinished"></translation>
+        <translation>Aantal Songs</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Naam</translation>
     </message>
     <message>
         <source>Engineer</source>
-        <translation type="unfinished"></translation>
+        <translation>Engineer</translation>
     </message>
     <message>
         <source>Template</source>
-        <translation type="unfinished"></translation>
+        <translation>Sjabloon</translation>
     </message>
     <message>
         <source>Are you sure that you want to remove the project %s ? It&apos;s not possible to undo it !</source>
@@ -569,23 +627,23 @@
     </message>
     <message>
         <source>Select a project and click the &apos;Load&apos; button again</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecteer een Project en klik opnieuw op de &quot;Laad&quot; knop</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ja</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation>Nee</translation>
     </message>
     <message>
         <source>You must supply a name for the project!</source>
-        <translation type="unfinished"></translation>
+        <translation>U dient een Project naam op te geven!</translation>
     </message>
     <message>
         <source>Should the current project be saved ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Huidige Project opslaan?</translation>
     </message>
     <message>
         <source>Are you sure that you want to remove the project %1 ? It&apos;s not possible to undo it !</source>
@@ -593,15 +651,15 @@
     </message>
     <message>
         <source>Project does not exist! (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Project bestaat niet! (%1)</translation>
     </message>
     <message>
         <source>The Project &quot;%1&quot; already exists, do you want to remove it and replace it with a new one ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Project &quot;%1&quot; bestaat reeds, vervangen door een nieuwe?</translation>
     </message>
     <message>
         <source>Couldn&apos;t create project (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kon Project &quot;%1&quot; niet aanmaken</translation>
     </message>
 </context>
 <context>
@@ -612,60 +670,60 @@
     </message>
     <message>
         <source>TrackNumber %1 does not exist!</source>
-        <translation type="unfinished">Track nummer %1 bestaat niet!</translation>
+        <translation>Track nummer %1 bestaat niet!</translation>
     </message>
 </context>
 <context>
     <name>Song</name>
     <message>
         <source>CURRENT MODE : EDITING</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>CURRENT MODE : TRACK CURVES</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>SongInfoWidget</name>
     <message>
         <source>SongInfoWidget</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>-</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>SMPTE</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Song</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Snap</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>SongManagerWidget</name>
     <message>
         <source> Succesfully saved!</source>
-        <translation>Succesvol opgeslagen!</translation>
+        <translation type="obsolete">Succesvol opgeslagen!</translation>
     </message>
     <message>
         <source>Failed to save: </source>
-        <translation>Kon niet worden opgeslagen:</translation>
+        <translation type="obsolete">Kon niet worden opgeslagen:</translation>
     </message>
     <message>
         <source>QFileDialog::getOpenFileName()</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>All Files (*);;AudioFiles (*.wav)</source>
@@ -673,106 +731,106 @@
     </message>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Form</translation>
     </message>
     <message>
         <source>Selected Song</source>
-        <translation type="unfinished"></translation>
+        <translation>Geselecteerde Song</translation>
     </message>
     <message>
         <source>Save / Save As / Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Opslaan / Opslaan als / verwijderen</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwijderen</translation>
     </message>
     <message>
         <source>Save (As)</source>
-        <translation type="unfinished"></translation>
+        <translation>Opslaan (als)</translation>
     </message>
     <message>
         <source>File Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Bestand importeren</translation>
     </message>
     <message>
         <source>Choose File</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecteer bestand</translation>
     </message>
     <message>
         <source>Import Now</source>
-        <translation type="unfinished"></translation>
+        <translation>Nu importeren</translation>
     </message>
     <message>
         <source>New Song</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieuwe Song</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Name&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Naam</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Artists&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Artiest</translation>
     </message>
     <message>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>Maak</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;Song Management&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Song beheer</translation>
     </message>
     <message>
         <source>All files (*);;Audio files (*.wav)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>SystemInfoWidget</name>
     <message>
         <source>SystemInfoWidget</source>
-        <translation type="unfinished"></translation>
+        <translation>Systeem informatie venster</translation>
     </message>
     <message>
         <source>Card Name (na)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaart Naam (na)</translation>
     </message>
     <message>
         <source>image</source>
-        <translation type="unfinished"></translation>
+        <translation>Afbeelding</translation>
     </message>
     <message>
         <source>buffer size (na)</source>
-        <translation type="unfinished"></translation>
+        <translation>Buffer groote</translation>
     </message>
     <message>
         <source>rate</source>
-        <translation type="unfinished"></translation>
+        <translation>rate</translation>
     </message>
     <message>
         <source>- GB</source>
-        <translation type="unfinished"></translation>
+        <translation>- GB</translation>
     </message>
     <message>
         <source>drivertype (na)</source>
-        <translation type="unfinished"></translation>
+        <translation>driver type (na)</translation>
     </message>
     <message>
         <source>xruns (na)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>latency (na)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source> - %</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>bitdepth</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -794,37 +852,48 @@
     </message>
 </context>
 <context>
-    <name>Traverso</name>
+    <name>TrackView</name>
     <message>
-        <source>Choose an existing or create a new Project Directory</source>
+        <source>Set Track name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Traverso - Information</source>
+        <source>Enter new Track name</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Traverso</name>
+    <message>
+        <source>Choose an existing or create a new Project Directory</source>
+        <translation>Selecteer een bestaande Project map, of maak een nieuwe</translation>
+    </message>
+    <message>
+        <source>Traverso - Information</source>
+        <translation>Traverso - Informatie</translation>
     </message>
     <message>
         <source>Using existing Project directory: %1
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Maak gebruik van bestaande Project map: %1</translation>
     </message>
     <message>
         <source>Traverso - Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Traverso - Waarschuwing</translation>
     </message>
     <message>
         <source>Unable to create Project directory! 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Kon Project map niet aanmaken!</translation>
     </message>
     <message>
         <source>Please check permission for this directory: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Controleer toegangsrechten voor deze map: %1</translation>
     </message>
     <message>
         <source>Created new Project directory for you here: %1
 </source>
-        <translation type="unfinished"></translation>
+        <translation>De volgende Project map werd aangemaakt: %1</translation>
     </message>
 </context>
 </TS>
