@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Song.cpp,v 1.17 2006/06/19 19:17:45 r_sijrier Exp $
+    $Id: Song.cpp,v 1.18 2006/06/19 19:52:27 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -742,11 +742,14 @@ Command* Song::work_next_edge()
 	
 	foreach(Track* track, m_tracks) {
 		AudioClip* c=track->get_clip_after(workingFrame);
-		if ((c) && (c->get_track_start_frame()<w))
-			w=c->get_track_start_frame();
+		
+		if ((c) && (c->get_track_start_frame() < w && c->get_track_start_frame() > workingFrame))
+			w = c->get_track_start_frame();
 	}
 	
 	set_work_at(w);
+	
+	emit setCursorAtEdge();
 	
 	return (Command*) 0;
 }
@@ -756,11 +759,13 @@ Command* Song::work_previous_edge()
 	nframes_t w = 0;
 	foreach(Track* track, m_tracks) {
 		AudioClip* c = track->get_clip_before(workingFrame);
-		if ((c) && (c->get_track_start_frame() >= w))
-			w=c->get_track_start_frame();
+		if ((c) && (c->get_track_end_frame() >= w && c->get_track_end_frame() < workingFrame) )
+			w=c->get_track_end_frame();
 	}
 	
 	set_work_at(w);
+	
+	emit setCursorAtEdge();
 	
 	return (Command*) 0;
 }

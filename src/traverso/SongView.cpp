@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.6 2006/06/19 19:17:06 r_sijrier Exp $
+$Id: SongView.cpp,v 1.7 2006/06/19 19:52:41 r_sijrier Exp $
 */
 
 #include <QPainter>
@@ -62,7 +62,7 @@ SongView::SongView(Song* song, ViewPort* vp)
 	connect(m_song, SIGNAL(trackCreated(Track* )), this, SLOT(add_new_trackview(Track* )));
 	connect(m_song, SIGNAL(hzoomChanged( )), m_locator, SLOT(hzoom_changed( )));
 	connect(m_song, SIGNAL(firstVisibleFrameChanged()), m_locator, SLOT(schedule_for_repaint()));
-	connect(m_song, SIGNAL(workingPosChanged()), this, SLOT(center()));
+	connect(m_song, SIGNAL(setCursorAtEdge()), this, SLOT(center()));
 	connect(m_vp, SIGNAL(resized()), this, SLOT(resize()));
 	connect(m_vp, SIGNAL(pointChanged( ) ), this, SLOT(set_context()));
 

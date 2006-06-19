@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.h,v 1.8 2006/06/19 19:17:37 r_sijrier Exp $
+$Id: Song.h,v 1.9 2006/06/19 19:52:35 r_sijrier Exp $
 */
 
 #ifndef SONG_H
@@ -253,6 +253,7 @@ signals:
 	void seekStart(uint position);
 	void snapChanged();
 	void propertieChanged();
+	void setCursorAtEdge();
 
 
 };
