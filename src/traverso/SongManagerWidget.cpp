@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongManagerWidget.cpp,v 1.3 2006/05/08 20:05:27 r_sijrier Exp $
+$Id: SongManagerWidget.cpp,v 1.4 2006/06/19 15:28:05 r_sijrier Exp $
 */
 
 #include "SongManagerWidget.h"
@@ -183,31 +183,6 @@ void SongManagerWidget::on_createSongButton_clicked( )
 		PMESG("song added");
 		update_song_list();
 	}
-}
-
-void SongManagerWidget::on_importFileButton_clicked( )
-{
-	/*	if (importFileButton->text() == "Import Now")
-			{
-			pm().get_project()->import_audio(importFileName->text());
-			importFileButton->setText("Cancel Import!");
-			}
-		else
-			{
-			pm().get_project()->cancel_import_audio();
-			importFileButton->setText("Import Now");
-			importProgressBar->reset();
-			}*/
-}
-
-void SongManagerWidget::on_chooseFileButton_clicked( )
-{
-	QString fileName = QFileDialog::getOpenFileName(this,
-			tr("QFileDialog::getOpenFileName()"),
-			importFileName->text(),
-			tr("All files (*);;Audio files (*.wav)"));
-	if (!fileName.isEmpty())
-		importFileName->setText(fileName);
 }
 
 

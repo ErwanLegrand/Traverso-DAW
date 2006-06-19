@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongManagerWidget.h,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: SongManagerWidget.h,v 1.2 2006/06/19 15:27:58 r_sijrier Exp $
 */
 
 #ifndef SONGMANAGERWIDGET_H
@@ -42,8 +42,6 @@ private slots:
         void on_saveSongButton_clicked();
         void on_deleteSongButton_clicked();
         void on_createSongButton_clicked();
-        void on_importFileButton_clicked();
-        void on_chooseFileButton_clicked();
 };
 
 #endif
