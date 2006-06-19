@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ProjectManager.cpp,v 1.4 2006/05/08 20:03:10 r_sijrier Exp $
+$Id: ProjectManager.cpp,v 1.5 2006/06/19 08:26:36 r_sijrier Exp $
 */
 
 #include "ProjectManager.h"
@@ -103,8 +103,6 @@ int ProjectManager::create_new_project(QString projectName, int numSongs)
 		return -1;
 	}
 
-	set_current_project(newProject);
-	
 	return 0;
 }
 
@@ -206,7 +204,10 @@ void ProjectManager::start( )
 		} else {
 			if (create_new_project("Untitled", 1) < 0) {
 				PWARN("Cannot create project Untitled. Continuing anyway...");
+			} else {
+				load_project("Untitled");
 			}
+			
 		}
 	}
 }
