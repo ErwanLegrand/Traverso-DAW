@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: LocatorView.cpp,v 1.3 2006/05/03 11:59:39 r_sijrier Exp $
+    $Id: LocatorView.cpp,v 1.4 2006/06/19 13:23:03 r_sijrier Exp $
 */
 
 #include "LocatorView.h"
@@ -41,6 +41,8 @@ LocatorView::LocatorView(SongView* parent, ViewPort* vp)
         PENTERCONS2;
         paintLocator = true;
         paintLocatorInfo = true;
+        
+        zOrder = 100;
 
         connect(m_vp, SIGNAL(resized()), this, SLOT(schedule_for_repaint()));
 }
@@ -109,10 +111,10 @@ void LocatorView::draw_locator( QPainter & p )
                 if (b < firstFrame)
                         continue;
                 int x = m_sv->get_song()->frame_to_xpos(b) + clipAreaBaseX;
-                p.drawLine(x, 19, x, LOCATOR_HEIGHT);
+                p.drawLine(x, 18, x, LOCATOR_HEIGHT - 1);
                 if (++k>10) {
-                        p.drawLine(x, 8, x, LOCATOR_HEIGHT);
-                        p.drawText(x + 7, 15, frame_to_smpte(b, rate) );
+                        p.drawLine(x, 7, x, LOCATOR_HEIGHT - 1);
+                        p.drawText(x + 6, 15, frame_to_smpte(b, rate) );
                         k=0;
                 }
         }
