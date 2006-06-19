@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.7 2006/06/19 19:52:41 r_sijrier Exp $
+$Id: SongView.cpp,v 1.8 2006/06/19 19:59:44 r_sijrier Exp $
 */
 
 #include <QPainter>
@@ -46,7 +46,7 @@ SongView::SongView(Song* song, ViewPort* vp)
 
 	m_cursor = new Cursor(this, m_vp, m_song);
 	m_locator = new LocatorView(this, m_vp);
-	verticalScrollAmount = 30;
+	verticalScrollAmount = 35;
 	currentCursorMapIndex = 0;
 
 	cursorMap[CURSOR_FLOAT] = QCursor( QPixmap(":/cursorFloat") );
@@ -263,7 +263,7 @@ Command* SongView::scroll_down()
 {
 	if ( trackViewList.size() > 0) {
 		TrackView* view = (TrackView*)trackViewList.last();
-		if ( (view->get_base_y() + view->get_track()->get_height() - verticalScrollAmount ) <= m_vp->height()) {
+		if ( (view->get_base_y() + view->get_track()->get_height() + LocatorView::LOCATOR_HEIGHT - verticalScrollAmount ) <= m_vp->height()) {
 			verticalScrollAmount = 0;
 		}
 	}
@@ -274,7 +274,7 @@ Command* SongView::scroll_down()
 	
 	m_locator->schedule_for_repaint();
 	
-	verticalScrollAmount=30;
+	verticalScrollAmount=35;
 	
 	return (Command*) 0;
 }
@@ -292,7 +292,7 @@ Command* SongView::scroll_up()
 	
 	m_locator->schedule_for_repaint();
 	
-	verticalScrollAmount=30;
+	verticalScrollAmount=35;
 	
 	return (Command*) 0;
 }
