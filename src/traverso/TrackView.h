@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TrackView.h,v 1.2 2006/05/03 13:28:01 r_sijrier Exp $
+    $Id: TrackView.h,v 1.3 2006/06/19 19:17:57 r_sijrier Exp $
 */
 
 #ifndef TRACKVIEW_H
@@ -114,9 +114,9 @@ public slots:
 
         Command* touch();
         Command* touch_and_center();
-        Command* capture_from_channel_both();
+/*        Command* capture_from_channel_both();
         Command* capture_from_channel_left();
-        Command* capture_from_channel_right();
+        Command* capture_from_channel_right();*/
         Command* select_bus_in();
         Command* select_bus_out();
         Command* edit_properties();

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.h,v 1.7 2006/06/16 20:20:53 r_sijrier Exp $
+$Id: Song.h,v 1.8 2006/06/19 19:17:37 r_sijrier Exp $
 */
 
 #ifndef SONG_H
@@ -220,7 +220,7 @@ public slots :
 	Command* set_curve_mode();
 	Command* work_next_edge();
 	Command* work_previous_edge();
-	Command* in_crop();
+// 	Command* in_crop();
 //         Command* add_audio_plugin_controller();
 //         Command* select_audio_plugin_controller();
 //         Command* remove_current_audio_plugin_controller();
@@ -229,13 +229,13 @@ public slots :
 //         Command* drag_and_drop_node();
 //         Command* audio_plugin_setup();
 //         Command* node_setup();
-	Command* create_region_start();
+/*	Command* create_region_start();
 	Command* create_region_end();
 	Command* create_region();
 	Command* delete_region_under_x();
 	Command* go_regions();
 	Command* go_loop_regions();
-	Command* jog_create_region();
+	Command* jog_create_region();*/
 	Command* undo();
 	Command* redo();
 	Command* toggle_snap();

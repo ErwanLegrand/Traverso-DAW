@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.6 2006/05/03 13:28:08 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.7 2006/06/19 19:17:52 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -409,22 +409,22 @@ void TrackView::resize( )
 	schedule_for_repaint();
 }
 
-Command* TrackView::capture_from_channel_both()
-{
-	return (Command*) 0;
-}
-
-
-Command* TrackView::capture_from_channel_left()
-{
-	return (Command*) 0;
-}
-
-
-Command* TrackView::capture_from_channel_right()
-{
-	return (Command*) 0;
-}
+// Command* TrackView::capture_from_channel_both()
+// {
+// 	return (Command*) 0;
+// }
+// 
+// 
+// Command* TrackView::capture_from_channel_left()
+// {
+// 	return (Command*) 0;
+// }
+// 
+// 
+// Command* TrackView::capture_from_channel_right()
+// {
+// 	return (Command*) 0;
+// }
 
 
 Command* TrackView::touch()

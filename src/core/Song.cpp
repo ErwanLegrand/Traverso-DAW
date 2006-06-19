@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Song.cpp,v 1.16 2006/06/19 10:57:05 r_sijrier Exp $
+    $Id: Song.cpp,v 1.17 2006/06/19 19:17:45 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -610,30 +610,30 @@ Command* Song::create_track()
 	return (Command*) 0;
 }
 
-Command* Song::create_region()
-{
-	return (Command*) 0;
-}
-
-Command* Song::create_region_start()
-{
-	// int xpos ...
-	//TODO
-	return (Command*) 0;
-}
-
-Command* Song::create_region_end()
-{
-	// int xpos ...
-	//TODO
-	return (Command*) 0;
-}
-
-Command* Song::delete_region_under_x()
-{
-	// int xpos...
-	return (Command*) 0;
-}
+// Command* Song::create_region()
+// {
+// 	return (Command*) 0;
+// }
+// 
+// Command* Song::create_region_start()
+// {
+// 	// int xpos ...
+// 	//TODO
+// 	return (Command*) 0;
+// }
+// 
+// Command* Song::create_region_end()
+// {
+// 	// int xpos ...
+// 	//TODO
+// 	return (Command*) 0;
+// }
+// 
+// Command* Song::delete_region_under_x()
+// {
+// 	// int xpos...
+// 	return (Command*) 0;
+// }
 
 Command* Song::remove_track()
 {
@@ -655,48 +655,48 @@ Command* Song::go()
 	return (Command*)0;
 }
 
-Command* Song::go_loop_regions()
-{
-	int r=0;
-	if (this->process_go(10)) {
-		//TODO
-		return (Command*) 0;
-	}
-	r = process_go(r);
-	return (Command*) 0;
-}
-
-Command* Song::go_regions()
-{
-	/*	int r=0;
-		if (process_go(10))
-			{
-			if (regionList)
-				{
-				MtaRegion* firstRegion = regionList->head();
-				r = mixer->go(firstRegion);
-				info().information(tr("GOING THRU REGIONS ..."));
-				PMESG("GOING (REGIONS) FROM %d ...", (int) firstRegion->beginBlock );
-				}
-			else
-				{
-				info().information(tr("No region to play !"));
-				}
-			}
-		r = process_go(r);*/
-	return (Command*) 0;
-}
-
-Command* Song::in_crop()
-{
-	// 	return new Crop(this);
-	return (Command*) 0;
-}
-
-Command* Song::jog_create_region()
-{
-	return (Command*) 0;
-}
+// Command* Song::go_loop_regions()
+// {
+// 	int r=0;
+// 	if (this->process_go(10)) {
+// 		//TODO
+// 		return (Command*) 0;
+// 	}
+// 	r = process_go(r);
+// 	return (Command*) 0;
+// }
+// 
+// Command* Song::go_regions()
+// {
+// 	/*	int r=0;
+// 		if (process_go(10))
+// 			{
+// 			if (regionList)
+// 				{
+// 				MtaRegion* firstRegion = regionList->head();
+// 				r = mixer->go(firstRegion);
+// 				info().information(tr("GOING THRU REGIONS ..."));
+// 				PMESG("GOING (REGIONS) FROM %d ...", (int) firstRegion->beginBlock );
+// 				}
+// 			else
+// 				{
+// 				info().information(tr("No region to play !"));
+// 				}
+// 			}
+// 		r = process_go(r);*/
+// 	return (Command*) 0;
+// }
+// 
+// Command* Song::in_crop()
+// {
+// 	// 	return new Crop(this);
+// 	return (Command*) 0;
+// }
+// 
+// Command* Song::jog_create_region()
+// {
+// 	return (Command*) 0;
+// }
 
 Command* Song::set_editing_mode()
 {
@@ -746,8 +746,7 @@ Command* Song::work_next_edge()
 			w=c->get_track_start_frame();
 	}
 	
-	if ( w != acmanager->get_last_frame() )
-		set_work_at(w);
+	set_work_at(w);
 	
 	return (Command*) 0;
 }
@@ -760,7 +759,9 @@ Command* Song::work_previous_edge()
 		if ((c) && (c->get_track_start_frame() >= w))
 			w=c->get_track_start_frame();
 	}
+	
 	set_work_at(w);
+	
 	return (Command*) 0;
 }
 
