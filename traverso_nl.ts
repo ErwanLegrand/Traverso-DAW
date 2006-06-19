@@ -23,34 +23,34 @@
     </message>
     <message>
         <source>Normalization</source>
-        <translation type="unfinished"></translation>
+        <translation>Normalizatie</translation>
     </message>
     <message>
         <source>Set Normalization level:</source>
-        <translation type="unfinished"></translation>
+        <translation>Geef normalizatie niveau:</translation>
     </message>
 </context>
 <context>
     <name>AudioClipView</name>
     <message>
         <source>Fastest</source>
-        <translation type="unfinished"></translation>
+        <translation>Snelste</translation>
     </message>
     <message>
         <source>Fast</source>
-        <translation type="unfinished"></translation>
+        <translation>Snel</translation>
     </message>
     <message>
         <source>Linear</source>
-        <translation type="unfinished"></translation>
+        <translation>Linear</translation>
     </message>
     <message>
         <source>Slow</source>
-        <translation type="unfinished"></translation>
+        <translation>Langzaam</translation>
     </message>
     <message>
         <source>Slowest</source>
-        <translation type="unfinished"></translation>
+        <translation>Langzaamst</translation>
     </message>
 </context>
 <context>
@@ -67,12 +67,8 @@
 <context>
     <name>AudioSourceManager</name>
     <message>
-        <source>Failed to initialize ReadSource : %s1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Failed to initialize ReadSource : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Kon Audio Bron %1 niet initializeren</translation>
     </message>
 </context>
 <context>
@@ -337,7 +333,7 @@
     </message>
     <message>
         <source>image</source>
-        <translation>Afbeelding</translation>
+        <translation type="obsolete">Afbeelding</translation>
     </message>
     <message>
         <source>Buffer latency</source>
@@ -398,6 +394,10 @@
     <message>
         <source>Name</source>
         <translation>Naam</translation>
+    </message>
+    <message>
+        <source>Draw AudioWaves Rectified</source>
+        <translation>Audio vorm gelijkgericht weergeven</translation>
     </message>
 </context>
 <context>
@@ -466,19 +466,19 @@
     </message>
     <message>
         <source>Project loaded (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Project &quot;%1&quot; geladen</translation>
     </message>
     <message>
         <source>Project saved (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Project &quot;%1&quot; opgeslagen</translation>
     </message>
     <message>
         <source>Could not open project properties file for writing! (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan Project gegevensbestand %1 niet openen om naar te schrijven</translation>
     </message>
     <message>
         <source>Song doesn&apos;t exist! ( Song %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Song %1 bestaat niet</translation>
     </message>
 </context>
 <context>
@@ -524,7 +524,7 @@
     </message>
     <message>
         <source>Could not load project %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan Project %1 niet laden</translation>
     </message>
 </context>
 <context>
@@ -661,6 +661,36 @@
         <source>Couldn&apos;t create project (%1)</source>
         <translation>Kon Project &quot;%1&quot; niet aanmaken</translation>
     </message>
+    <message>
+        <source>Choose an existing or create a new Project Directory</source>
+        <translation>Selecteer een bestaande Project map, of maak een nieuwe</translation>
+    </message>
+    <message>
+        <source>Traverso - Warning</source>
+        <translation>Traverso - Waarschuwing</translation>
+    </message>
+    <message>
+        <source>Unable to create Project directory! 
+</source>
+        <translation>Kon Project map niet aanmaken!</translation>
+    </message>
+    <message>
+        <source>Please check permission for this directory: %1</source>
+        <translation>Controleer toegangsrechten voor deze map: %1</translation>
+    </message>
+    <message>
+        <source>Traverso - Information</source>
+        <translation>Traverso - Informatie</translation>
+    </message>
+    <message>
+        <source>Created new Project directory for you here: %1
+</source>
+        <translation>De volgende Project map werd aangemaakt: %1</translation>
+    </message>
+    <message>
+        <source>Select Project Dir</source>
+        <translation>Selecteer Project map</translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -722,10 +752,6 @@
         <translation type="obsolete">Kon niet worden opgeslagen:</translation>
     </message>
     <message>
-        <source>QFileDialog::getOpenFileName()</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>All Files (*);;AudioFiles (*.wav)</source>
         <translation type="obsolete">Alle Bestanden (*);; AudioBestanden (*.wav)</translation>
     </message>
@@ -735,11 +761,11 @@
     </message>
     <message>
         <source>Selected Song</source>
-        <translation>Geselecteerde Song</translation>
+        <translation type="obsolete">Geselecteerde Song</translation>
     </message>
     <message>
         <source>Save / Save As / Delete</source>
-        <translation>Opslaan / Opslaan als / verwijderen</translation>
+        <translation type="obsolete">Opslaan / Opslaan als / verwijderen</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -751,15 +777,15 @@
     </message>
     <message>
         <source>File Import</source>
-        <translation>Bestand importeren</translation>
+        <translation type="obsolete">Bestand importeren</translation>
     </message>
     <message>
         <source>Choose File</source>
-        <translation>Selecteer bestand</translation>
+        <translation type="obsolete">Selecteer bestand</translation>
     </message>
     <message>
         <source>Import Now</source>
-        <translation>Nu importeren</translation>
+        <translation type="obsolete">Nu importeren</translation>
     </message>
     <message>
         <source>New Song</source>
@@ -782,8 +808,8 @@
         <translation>Song beheer</translation>
     </message>
     <message>
-        <source>All files (*);;Audio files (*.wav)</source>
-        <translation></translation>
+        <source>Selected Song: Save (as) / Delete</source>
+        <translation>Geselecteerde Song: Opslaan (als) / Verwijderen</translation>
     </message>
 </context>
 <context>
@@ -855,11 +881,11 @@
     <name>TrackView</name>
     <message>
         <source>Set Track name</source>
-        <translation type="unfinished"></translation>
+        <translation>Verander Track naam</translation>
     </message>
     <message>
         <source>Enter new Track name</source>
-        <translation type="unfinished"></translation>
+        <translation>Geef de nieuwe Track naam</translation>
     </message>
 </context>
 <context>

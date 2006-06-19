@@ -75,10 +75,6 @@
 <context>
     <name>AudioSourceManager</name>
     <message>
-        <source>Failed to initialize ReadSource : %s1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Failed to initialize ReadSource : %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -444,10 +440,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>image</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Buffer latency</source>
         <translation type="unfinished"></translation>
     </message>
@@ -506,6 +498,10 @@
     <message>
         <source>Name</source>
         <translation type="unfinished">Name</translation>
+    </message>
+    <message>
+        <source>Draw AudioWaves Rectified</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -785,6 +781,36 @@
         <source>Are you sure that you want to remove the project %1 ? It&apos;s not possible to undo it !</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Choose an existing or create a new Project Directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Traverso - Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to create Project directory! 
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please check permission for this directory: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Traverso - Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Created new Project directory for you here: %1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select Project Dir</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -846,10 +872,6 @@
         <translation type="obsolete">Fehler beim Speichern:</translation>
     </message>
     <message>
-        <source>QFileDialog::getOpenFileName()</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>All Files (*);;AudioFiles (*.wav)</source>
         <translation type="obsolete">Alle Dateien (*);;Audiodateien (*.wav)</translation>
     </message>
@@ -859,11 +881,11 @@
     </message>
     <message>
         <source>Selected Song</source>
-        <translation>Ausgewählter Song</translation>
+        <translation type="obsolete">Ausgewählter Song</translation>
     </message>
     <message>
         <source>Save / Save As / Delete</source>
-        <translation>Speichern / Speichern unter / Löschen</translation>
+        <translation type="obsolete">Speichern / Speichern unter / Löschen</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -875,15 +897,15 @@
     </message>
     <message>
         <source>File Import</source>
-        <translation>Dateiimport</translation>
+        <translation type="obsolete">Dateiimport</translation>
     </message>
     <message>
         <source>Choose File</source>
-        <translation>Datei auswählen</translation>
+        <translation type="obsolete">Datei auswählen</translation>
     </message>
     <message>
         <source>Import Now</source>
-        <translation>Importieren</translation>
+        <translation type="obsolete">Importieren</translation>
     </message>
     <message>
         <source>New Song</source>
@@ -907,7 +929,11 @@
     </message>
     <message>
         <source>All files (*);;Audio files (*.wav)</source>
-        <translation>Alle Dateien (*);;Audiodateien (*.wav)</translation>
+        <translation type="obsolete">Alle Dateien (*);;Audiodateien (*.wav)</translation>
+    </message>
+    <message>
+        <source>Selected Song: Save (as) / Delete</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
