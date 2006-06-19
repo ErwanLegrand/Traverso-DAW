@@ -33,7 +33,7 @@
 	<keyseq keyfacttype="FKEY2" key1="S" key2="P" slotname="show_song_properties" name="Properties Window" sortorder="" />
 	<keyseq keyfacttype="FKEY2" key1="S" key2="N" slotname="toggle_snap" name="Snap (on/off)" sortorder="28" />
 	<keyseq keyfacttype="FKEY2" key1="G" key2="P" slotname="show_gp" name="Global Properties Window" sortorder="" />
-	<keyseq keyfacttype="FKEY2" key1="LCONTROL" key2="SHIFT" slotname="touch_and_center" name="Touch (and center)" sortorder="21" />
+	<keyseq keyfacttype="FKEY2" key1="CTRL" key2="SHIFT" slotname="touch_and_center" name="Touch (and center)" sortorder="21" />
 	<keyseq keyfacttype="FKEY2" key1="Z" key2="X" slotname="hzoom_out" name="Zoom out" sortorder="51" />
 	<keyseq keyfacttype="FKEY2" key1="Z" key2="ALT" slotname="vzoom_out" name="Verticall Zoom out" sortorder="52" />
 	<keyseq keyfacttype="FKEY2" key1="Z" key2="A" slotname="vzoom_in" name="Verticall Zoom in" sortorder="53" />
