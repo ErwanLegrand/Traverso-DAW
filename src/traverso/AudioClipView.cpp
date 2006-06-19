@@ -17,13 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.16 2006/06/16 21:46:06 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.17 2006/06/19 14:20:39 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
 
 #include <QPainter>
 #include <QPainterPath>
+#include <QSettings>
 
 #include "AudioClipView.h"
 #include "ColorManager.h"
@@ -49,6 +50,9 @@ AudioClipView::AudioClipView(ViewPort * vp, TrackView* parent, AudioClip* clip )
 	m_progress = 0;
 	m_song = m_clip->get_song();
 	recreate_clipname_pixmap();
+	
+	QSettings settings;
+	classicView = settings.value("WaveFormRectified", "0").toInt() == 0 ? 1 : 0;
 	
 	connect(m_clip, SIGNAL(muteChanged(bool )), this, SLOT(mute_changed(bool )));
 	connect(m_clip, SIGNAL(stateChanged()), this, SLOT(schedule_for_repaint()));
@@ -193,7 +197,6 @@ void AudioClipView::draw_peaks( QPainter& p )
 	unsigned char* lowerHalf;
 	unsigned char* upperHalf;
 	bool microView = hzoom > Peak::MAX_ZOOM_USING_SOURCEFILE ? 0 : 1;
-	bool classicView = true;
 
 
 	for (int chan=0; chan < channels; chan++) {
