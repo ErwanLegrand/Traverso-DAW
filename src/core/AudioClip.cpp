@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.25 2006/06/19 10:37:26 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.26 2006/06/19 19:21:29 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -477,6 +477,8 @@ int AudioClip::init_recording( QByteArray name )
 
 	sourceStartFrame = 0;
 	isTake = 1;
+	m_channels = captureBus->get_channel_count();
+	rate = m_song->get_rate();
 	isRecording = true;
 	connect(m_song, SIGNAL(transferStopped()), this, SLOT(finish_recording()));
 
@@ -620,7 +622,7 @@ void AudioClip::finish_write_source( WriteSource * ws )
 {
 	PENTER;
  	
- 	printf("AudioClip::finish_write_source :  thread id is: %ld\n", QThread::currentThreadId ());
+//  	printf("AudioClip::finish_write_source :  thread id is: %ld\n", QThread::currentThreadId ());
 	
 	for (int i=0; i<writeSources.size(); ++i) {
 		if (ws == writeSources.at(i)) {
@@ -905,7 +907,7 @@ Command * AudioClip::normalize( )
 {
         bool ok;
         double d = QInputDialog::getDouble(0, tr("Normalization"),
-                                           tr("Set Normalization level:"), 0.0, -120, 0, 1, &ok);
+                                           tr("Set Normalization level:"), 0.0, -120, 0, 1, &ok, Qt::Tool);
         if (ok)
 		calculate_normalization_factor(d);
 	
