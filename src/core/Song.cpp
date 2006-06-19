@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Song.cpp,v 1.15 2006/06/17 09:25:09 r_sijrier Exp $
+    $Id: Song.cpp,v 1.16 2006/06/19 10:57:05 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -443,7 +443,7 @@ int Song::render(ExportSpecification* spec)
 
 	spec->pos += nframes;
 
-	progress = ( 100 * (spec->pos) ) / spec->total_frames;
+	progress = (int) (( 100.0 * (float)(spec->pos) ) / spec->total_frames);
 	if (progress > spec->progress) {
 		spec->progress = progress;
 		m_project->set_song_export_progress(progress);
