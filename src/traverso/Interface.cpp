@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.6 2006/05/11 18:52:50 r_sijrier Exp $
+$Id: Interface.cpp,v 1.7 2006/06/19 08:39:17 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -219,6 +219,10 @@ Command* Interface::set_songview_widget()
 {
 	if (currentSongView) {
 		centerAreaWidget->setCurrentWidget(currentSongView->get_viewport());
+		
+		// In some circumstances the focus of the keyboard is still on the 
+		// project manager widget :-( So we "steal" the focus explicitely!
+		currentSongView->get_viewport()->setFocus();
 	}
 	
 	return (Command*) 0;
