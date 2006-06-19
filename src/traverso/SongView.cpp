@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.5 2006/06/19 13:16:41 r_sijrier Exp $
+$Id: SongView.cpp,v 1.6 2006/06/19 19:17:06 r_sijrier Exp $
 */
 
 #include <QPainter>
@@ -62,6 +62,7 @@ SongView::SongView(Song* song, ViewPort* vp)
 	connect(m_song, SIGNAL(trackCreated(Track* )), this, SLOT(add_new_trackview(Track* )));
 	connect(m_song, SIGNAL(hzoomChanged( )), m_locator, SLOT(hzoom_changed( )));
 	connect(m_song, SIGNAL(firstVisibleFrameChanged()), m_locator, SLOT(schedule_for_repaint()));
+	connect(m_song, SIGNAL(workingPosChanged()), this, SLOT(center()));
 	connect(m_vp, SIGNAL(resized()), this, SLOT(resize()));
 	connect(m_vp, SIGNAL(pointChanged( ) ), this, SLOT(set_context()));
 
@@ -217,19 +218,21 @@ Command* SongView::center()
 {
 	PENTER2;
 	TrackView* view = (TrackView*)trackViewList.at(0);
+	if (! view)
+		return 0;
+		
 	int w = view->cliparea_width();
 	int half = w/2;
-	nframes_t minimumBlockToCenter =  w * Peak::zoomStep[m_song->get_hzoom()] / 2;
-	if ( m_song->get_working_frame() >= minimumBlockToCenter ) {
-		int x = m_song->frame_to_xpos(m_song->get_working_frame());
-		if (x<half) {
-			scrollAmount = half - x;
-			scroll_left();
-		} else {
-			scrollAmount = x-half;
-			scroll_right();
-		}
+		
+	int x = m_song->frame_to_xpos(m_song->get_working_frame());
+	if (x<half) {
+		scrollAmount = half - x;
+		scroll_left();
+	} else {
+		scrollAmount = x-half;
+		scroll_right();
 	}
+	
 	return (Command*) 0;
 }
 
