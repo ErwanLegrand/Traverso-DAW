@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSourceManager.cpp,v 1.3 2006/05/17 21:58:39 r_sijrier Exp $
+$Id: AudioSourceManager.cpp,v 1.4 2006/06/19 11:54:51 r_sijrier Exp $
 */
 
 #include "AudioSourceManager.h"
@@ -63,7 +63,7 @@ int AudioSourceManager::set_state( const QDomNode & node )
 		ReadSource* source = new ReadSource(sourcesNode);
 		
 		if ( source->init() < 0) {
-			info().warning( tr( "Failed to initialize ReadSource : %s1").arg(source->get_filename()) );
+			info().warning( tr( "Failed to initialize ReadSource : %1").arg(source->get_filename()) );
 			delete source;
 			continue;
 		}
