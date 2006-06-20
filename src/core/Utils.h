@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Utils.h,v 1.1 2006/04/20 14:51:40 r_sijrier Exp $
+    $Id: Utils.h,v 1.2 2006/06/20 19:27:09 r_sijrier Exp $
 */
 
 #ifndef UTILS_H
@@ -28,5 +28,5 @@
 class QString;
 
 QString frame_to_smpte(nframes_t nframes, int rate);
-
+QString coefficient_to_dbstring(float coeff);
 #endif

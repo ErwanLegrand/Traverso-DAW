@@ -17,10 +17,11 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Utils.cpp,v 1.1 2006/04/20 14:51:40 r_sijrier Exp $
+    $Id: Utils.cpp,v 1.2 2006/06/20 19:27:03 r_sijrier Exp $
 */
 
 #include "Utils.h"
+#include "Mixer.h"
 
 #include <QString>
 
@@ -38,6 +39,22 @@ QString frame_to_smpte(nframes_t nframes, int rate)
         spos.sprintf (" %02d:%02d,%02d", mins, secs, frames);
 
         return spos;
+}
+
+QString coefficient_to_dbstring( float coeff )
+{
+	float db = coefficient_to_dB(coeff);
+
+	QString gainIndB;
+	
+	if (db < -99)
+		gainIndB = "- INF";
+	else if ( db < 0)
+		gainIndB = "- " + QByteArray::number((-1 * db), 'f', 1) + " dB";
+	else
+		gainIndB = "+ " + QByteArray::number(db, 'f', 1) + " dB";
+		
+	return gainIndB;
 }
 
 //eof
