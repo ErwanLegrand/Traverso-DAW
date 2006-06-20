@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.8 2006/06/19 19:59:44 r_sijrier Exp $
+$Id: SongView.cpp,v 1.9 2006/06/20 11:14:53 r_sijrier Exp $
 */
 
 #include <QPainter>
@@ -263,9 +263,13 @@ Command* SongView::scroll_down()
 {
 	if ( trackViewList.size() > 0) {
 		TrackView* view = (TrackView*)trackViewList.last();
-		if ( (view->get_base_y() + view->get_track()->get_height() + LocatorView::LOCATOR_HEIGHT - verticalScrollAmount ) <= m_vp->height()) {
+		verticalScrollAmount = view->get_track()->get_height() * 0.5;
+		
+		if ( (view->get_base_y() + view->get_track()->get_height() + LocatorView::LOCATOR_HEIGHT  ) < m_vp->height()) {
 			verticalScrollAmount = 0;
 		}
+	} else {
+		return (Command*) 0;
 	}
 	
 	foreach(ViewItem* view, trackViewList) {
@@ -274,16 +278,21 @@ Command* SongView::scroll_down()
 	
 	m_locator->schedule_for_repaint();
 	
-	verticalScrollAmount=35;
-	
 	return (Command*) 0;
 }
 
 
 Command* SongView::scroll_up()
 {
-	if (trackViewList.size() > 0 && ( ((TrackView*)trackViewList.at(0))->get_base_y() + (verticalScrollAmount) >= LocatorView::LOCATOR_HEIGHT) ) {
-		verticalScrollAmount = -1 * (((TrackView*)trackViewList.at(0))->get_base_y() - LocatorView::LOCATOR_HEIGHT);
+	if (trackViewList.size() > 0) {
+		TrackView* view = (TrackView*)trackViewList.first();
+		verticalScrollAmount = view->get_track()->get_height() * 0.5;
+		
+		if ( (view->get_base_y() + verticalScrollAmount) > LocatorView::LOCATOR_HEIGHT ) {
+			verticalScrollAmount = -1 * (view->get_base_y() - LocatorView::LOCATOR_HEIGHT);
+		}
+	} else {
+		return (Command*) 0;
 	}
 	
 	foreach(ViewItem* view, trackViewList) {
@@ -291,8 +300,6 @@ Command* SongView::scroll_up()
 	}
 	
 	m_locator->schedule_for_repaint();
-	
-	verticalScrollAmount=35;
 	
 	return (Command*) 0;
 }
