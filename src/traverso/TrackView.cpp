@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.7 2006/06/19 19:17:52 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.8 2006/06/20 19:27:45 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -149,18 +149,14 @@ void TrackView::draw_panel_gain()
 	p.fillRect(0, GAIN_Y, panelWidth, GAIN_H, cm().get("TRACK_PANEL_BG"));
 	p.drawText(sliderx, GAIN_Y+GAIN_H+1, "GAIN");
 
-	float db = coefficient_to_dB(gain);
-	if (db < -99)
-		sgain = "- INF";
-	else if ( db < 0)
-		sgain = "- " + QByteArray::number((-1 * db), 'f', 1) + " dB";
-	else
-		sgain = "+" + QByteArray::number(db, 'f', 1) + " dB";
+	sgain = coefficient_to_dbstring(gain);
 
 	p.fillRect(sliderx+30,GAIN_Y,sliderWidth,GAIN_H, cm().get("SLIDER_BACKGROUND"));
 	p.drawRect(sliderx+30,GAIN_Y,sliderWidth,GAIN_H);
 
 
+	float db = coefficient_to_dB(gain);
+	
 	if (db < -60)
 		db = -60;
 	int sliderdbx =  (int) (sliderWidth - (sliderWidth*0.3)) - (int) ( ( (-1 * db) / 60 ) * sliderWidth);

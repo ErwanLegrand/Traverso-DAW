@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.17 2006/06/19 14:20:39 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.18 2006/06/20 19:27:58 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -445,35 +445,14 @@ void AudioClipView::recreate_clipname_pixmap()
 	int rate = m_clip->get_rate();
 	int bitDepth = m_clip->get_bitdepth();
 	bool isTake = m_clip->is_take();
-	float gain = m_clip->get_gain();
 	QString clipName = m_clip->get_name();
 
 	sRate.setNum(rate);
 	sBitDepth.setNum(bitDepth);
 	sourceType=(isTake?"CAP":"SRC");
 	
-	float db = coefficient_to_dB(gain);
-	float norm = coefficient_to_dB(m_clip->get_norm_factor());
-	QString gainIndB;
-	QString normIndB;
-	
-	if (db < -99)
-		gainIndB = "- INF";
-	else if ( db < 0)
-		gainIndB = "- " + QByteArray::number((-1 * db), 'f', 1) + " dB";
-	else
-		gainIndB = "+ " + QByteArray::number(db, 'f', 1) + " dB";
-	
-	sclipGain = "Gain "+gainIndB;
-	
-	if (norm < -99)
-		normIndB = "- INF";
-	else if ( norm < 0)
-		normIndB = "- " + QByteArray::number((-1 * norm), 'f', 1) + " dB";
-	else
-		normIndB = "+ " + QByteArray::number(norm, 'f', 1) + " dB";
-	
-	QString sclipNormGain = "Normalization "+ normIndB;
+	sclipGain = "Gain "+ coefficient_to_dbstring(m_clip->get_gain());
+	QString sclipNormGain = "Norm "+ coefficient_to_dbstring(m_clip->get_norm_factor());
 	
 	sMuted = "";
 	if (m_muted)
