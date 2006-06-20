@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.h,v 1.9 2006/06/19 19:52:35 r_sijrier Exp $
+$Id: Song.h,v 1.10 2006/06/20 19:18:23 r_sijrier Exp $
 */
 
 #ifndef SONG_H
@@ -114,7 +114,6 @@ public:
 	void set_active_track(int trackNumber);
 	void update_cursor_pos();
 	void set_first_visible_frame(nframes_t pos);
-	void set_master_gain(float pMasterGain);
 	void set_title(QString sTitle);
 	void set_work_at(nframes_t pos);
 	void set_hzoom(int hzoom);
@@ -177,7 +176,7 @@ private:
 	uint		 	newTransportFramePos;
 	volatile size_t		transport;
 
-	float 			masterGain;
+	float 			m_gain;
 	
 	QString 		artists;
 	QString 		title;
@@ -211,6 +210,9 @@ public slots :
 	void audiodevice_client_request_processed();
 	void audiodevice_started();
 	void resize_buffer();
+	void set_gain(float gain);
+	
+	float get_gain() const;
 
 	Command* go();
 	Command* create_track();
@@ -240,6 +242,7 @@ public slots :
 	Command* redo();
 	Command* toggle_snap();
 	Command* playhead_to_workcursor();
+	Command* master_gain();
 
 signals:
 	void trackCreated(Track* );
@@ -254,6 +257,7 @@ signals:
 	void snapChanged();
 	void propertieChanged();
 	void setCursorAtEdge();
+	void masterGainChanged();
 
 
 };

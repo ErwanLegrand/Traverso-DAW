@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Song.cpp,v 1.18 2006/06/19 19:52:27 r_sijrier Exp $
+    $Id: Song.cpp,v 1.19 2006/06/20 19:18:16 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -61,7 +61,7 @@ Song::Song(Project* project, int number)
 {
 	PENTERCONS;
 	title="Untitled";
-	masterGain = 0.0f;
+	m_gain = 1.0f;
 	artists = "No artists name yet";
 	QSettings settings;
 	int level = settings.value("hzoomLevel").toInt();
@@ -172,6 +172,7 @@ int Song::set_state( const QDomNode & node )
 	title = e.attribute( "title", "" );
 	artists = e.attribute( "artists", "" );
 	activeTrackNumber = e.attribute( "activeTrackNumber", "" ).toInt();
+	set_gain(e.attribute( "mastergain", "1.0").toFloat() );
 	set_hzoom(e.attribute( "hzoom", "" ).toInt());
 	set_first_visible_frame(e.attribute( "firstVisibleFrame", "0" ).toUInt());
 	set_work_at(e.attribute( "workingFrame", "0").toUInt());
@@ -212,6 +213,7 @@ QDomNode Song::get_state(QDomDocument doc)
 	properties.setAttribute("firstVisibleFrame", firstVisibleFrame);
 	properties.setAttribute("workingFrame", workingFrame);
 	properties.setAttribute("hzoom", m_hzoom);
+	properties.setAttribute("mastergain", m_gain);
 	songNode.appendChild(properties);
 
 	doc.appendChild(songNode);
@@ -505,9 +507,16 @@ void Song::set_artists(QString pArtists)
 	artists = pArtists;
 }
 
-void Song::set_master_gain(float pMasterGain)
+void Song::set_gain(float gain)
 {
-	masterGain = pMasterGain;
+	if (gain < 0.0)
+		gain = 0.0;
+	if (gain > 2.0)
+		gain = 2.0;
+	
+	m_gain = gain;
+	
+	emit masterGainChanged();
 }
 
 void Song::set_title(QString sTitle)
@@ -841,8 +850,8 @@ int Song::process( nframes_t nframes )
 
 	// Mix the result into the AudioDevice "physical" buffers
 	if (playBackBus) {
-		Mixer::mix_buffers_no_gain(playBackBus->get_buffer(0, nframes), masterOut->get_buffer(0, nframes), nframes);
-		Mixer::mix_buffers_no_gain(playBackBus->get_buffer(1, nframes), masterOut->get_buffer(1, nframes), nframes);
+		Mixer::mix_buffers_with_gain(playBackBus->get_buffer(0, nframes), masterOut->get_buffer(0, nframes), nframes, m_gain);
+		Mixer::mix_buffers_with_gain(playBackBus->get_buffer(1, nframes), masterOut->get_buffer(1, nframes), nframes, m_gain);
 	}
 
 	return 1;
@@ -885,6 +894,11 @@ int Song::get_rate( )
 nframes_t Song::get_first_visible_frame( ) const
 {
 	return firstVisibleFrame;
+}
+
+float Song::get_gain() const
+{
+	return m_gain;
 }
 
 void Song::update_cursor_pos()
@@ -936,6 +950,11 @@ Command * Song::playhead_to_workcursor( )
 	set_work_at( workingFrame );
 	
 	return (Command*) 0;
+}
+
+Command * Song::master_gain( )
+{
+	return new Gain(this);
 }
 
 
