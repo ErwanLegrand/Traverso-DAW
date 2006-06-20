@@ -68,6 +68,7 @@
 	<keyseq keyfacttype="HKEY2" key1="W" key2="R" mousehint="LR" slotname="drag_edge_both" name="Drag edge (both)" sortorder="35" />
 	<keyseq keyfacttype="HKEY2" key1="F" key2="G" mousehint="LR" slotname="clip_fade_in" name="Fade (in)" sortorder="42" />
 	<keyseq keyfacttype="HKEY2" key1="G" key2="H" mousehint="LR" slotname="clip_fade_out" name="Fade (out)" sortorder="43" />
+	<keyseq keyfacttype="HKEY2" key1="S" key2="G" slotname="master_gain" name="Master Gain" sortorder="37" />
 	
 	
 	<keyseq keyfacttype="D_FKEY" key1="ESC" slotname="exit" name="Exit" sortorder="" />
