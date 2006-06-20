@@ -860,6 +860,10 @@
         <source>Snap</source>
         <translation>Einrasten</translation>
     </message>
+    <message>
+        <source>Gain</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SongManagerWidget</name>
@@ -1001,10 +1005,6 @@
 </context>
 <context>
     <name>TrackGain</name>
-    <message>
-        <source>TrackNumber %1 does not exist!</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>TrackPan</name>

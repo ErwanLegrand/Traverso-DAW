@@ -466,11 +466,11 @@
     </message>
     <message>
         <source>Project loaded (%1)</source>
-        <translation>Project &quot;%1&quot; geladen</translation>
+        <translation type="unfinished">Project %1 geladen</translation>
     </message>
     <message>
         <source>Project saved (%1)</source>
-        <translation>Project &quot;%1&quot; opgeslagen</translation>
+        <translation>Project %1 opgeslagen</translation>
     </message>
     <message>
         <source>Could not open project properties file for writing! (%1)</source>
@@ -740,6 +740,10 @@
         <source>Snap</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Gain</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SongManagerWidget</name>
@@ -863,7 +867,7 @@
     <name>TrackGain</name>
     <message>
         <source>TrackNumber %1 does not exist!</source>
-        <translation>Track nummer %1 bestaat niet!</translation>
+        <translation type="obsolete">Track nummer %1 bestaat niet!</translation>
     </message>
 </context>
 <context>
