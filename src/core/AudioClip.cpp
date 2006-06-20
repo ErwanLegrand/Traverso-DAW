@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.26 2006/06/19 19:21:29 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.27 2006/06/20 19:19:12 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -507,7 +507,7 @@ Command* AudioClip::mute()
 
 Command* AudioClip::reset_gain()
 {
-	return new ClipGain(this, 1.000);
+	return new Gain(this, 1.0);
 }
 
 Command* AudioClip::reset_fade_in()
@@ -551,7 +551,7 @@ Command* AudioClip::drag_edge()
 
 Command* AudioClip::gain()
 {
-	return new ClipGain(this);
+	return new Gain(this);
 }
 
 Command* AudioClip::split()

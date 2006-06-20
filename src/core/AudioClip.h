@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.14 2006/06/18 17:41:04 r_sijrier Exp $
+$Id: AudioClip.h,v 1.15 2006/06/20 19:19:17 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -68,7 +68,6 @@ public:
 	int process(nframes_t nframes, audio_sample_t* channelBuffer, uint channel);
 	
 	void set_blur(bool stat);
-	void set_gain(float g);
 	void set_track_start_frame(nframes_t newTrackFirstFrame);
 	void set_source_end_frame(nframes_t frame);
 	void set_source_start_frame(nframes_t frame);
@@ -93,7 +92,6 @@ public:
 	Curve* get_fade_out() {return fadeOut;}
 	Curve* get_gain_envelope() {return gainEnvelope;}
 	
-	float get_gain() const;
 	float get_norm_factor() const;
 	
 	nframes_t get_length() const;
@@ -181,7 +179,10 @@ public slots:
 	void set_right_edge(nframes_t frame);
 	void track_audible_state_changed();
 	void toggle_mute();
+	void set_gain(float g);
 
+	float get_gain() const;
+	
 	Command* drag_edge();
 	Command* mute();
 	Command* reset_gain();

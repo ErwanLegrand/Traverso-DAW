@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.14 2006/06/19 19:22:55 r_sijrier Exp $
+$Id: Track.cpp,v 1.15 2006/06/20 19:19:05 r_sijrier Exp $
 */
 
 #include "Track.h"
@@ -439,6 +439,11 @@ int Track::get_total_clips()
 }
 
 
+float Track::get_gain( ) const
+{
+	return m_gain;
+}
+
 void Track::set_muted_by_solo(bool muted)
 {
 	PENTER;
@@ -501,8 +506,8 @@ int Track::process( nframes_t nframes )
 		
 		for (int chan=0; chan<bus->get_channel_count(); ++chan) {
 		
-			channelBuffer = bus->get_channel( chan )->get_buffer( nframes );
-		
+			channelBuffer = bus->get_buffer(chan, nframes);
+			
 			result = clip->process(nframes, mixdown, chan);
 			
 			if (result == 0) {
@@ -557,7 +562,7 @@ Command* Track::solo(  )
 
 Command* Track::gain()
 {
-	return new TrackGain(this, m_song);
+	return new Gain(this);
 }
 
 Command* Track::pan()
