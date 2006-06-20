@@ -2,8 +2,6 @@
 #include "MoveClip.h"
 #include "MoveEdge.h"
 #include "CopyClip.h"
-#include "ClipGain.h"
-#include "TrackGain.h"
 #include "TrackPan.h"
 #include "Crop.h"
 #include "Zoom.h"
@@ -14,3 +12,4 @@
 #include "RemoveClip.h"
 #include "Fade.h"
 #include "RemoveTrack.h"
+#include "Gain.h"
