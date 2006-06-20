@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongInfoWidget.cpp,v 1.5 2006/05/08 20:05:27 r_sijrier Exp $
+$Id: SongInfoWidget.cpp,v 1.6 2006/06/20 19:28:26 r_sijrier Exp $
 */
 
 #include "SongInfoWidget.h"
@@ -63,10 +63,12 @@ void SongInfoWidget::set_song(Song* song)
 	connect(m_song, SIGNAL(transferStarted()), this, SLOT(start_smpte_update_timer()));
 	connect(m_song, SIGNAL(cursorPosChanged()), this, SLOT(update_smpte()));
 	connect(m_song, SIGNAL(propertieChanged()), this, SLOT (update_properties()));
+	connect(m_song, SIGNAL(masterGainChanged()), this, SLOT(update_master_gain()));
 	
 	update_zoom();
 	update_smpte();
 	update_properties();
+	update_master_gain();
 }
 
 void SongInfoWidget::start_smpte_update_timer( )
@@ -104,6 +106,11 @@ void SongInfoWidget::update_properties( )
 
 	QString snaptext = m_song->is_snap_on() ? "ON" : "OFF";
 	snapStatusLabel->setText(snaptext);
+}
+
+void SongInfoWidget::update_master_gain( )
+{
+	masterGainLabel->setText(coefficient_to_dbstring(m_song->get_gain()));
 }
 
 //eof
