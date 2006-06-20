@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.8 2006/06/16 14:01:52 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.9 2006/06/20 19:33:14 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
@@ -94,10 +94,6 @@ DiskIO::DiskIO()
 	// due the fact both this instance and workTimer live in the same thread
 	// we can connect the timeout signal to a slot of this instance.
 	connect(&workTimer, SIGNAL(timeout()), this, SLOT(do_work()));
-	connect(&bufferFillStatusTimer, SIGNAL(timeout()), this, SLOT (update_buffer_fill_status()));
-
-	bufferFillStatusTimer.start(1000);
-
 }
 
 DiskIO::~DiskIO()
@@ -241,14 +237,6 @@ void DiskIO::prepare_for_seek( )
 	PENTER;
 	// Stop any processing in do_work()
 	stopWork = true;
-}
-
-void DiskIO::update_buffer_fill_status( )
-{
-	// 	printf("buffer status is: %d\n", bufferFillStatus);
-	int status = bufferFillStatus;
-	bufferFillStatus = 100;
-	emit bufferFillStatusChanged(status);
 }
 
 void DiskIO::update_time_usage( )

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.h,v 1.2 2006/06/12 20:12:28 r_sijrier Exp $
+$Id: DiskIO.h,v 1.3 2006/06/20 19:33:14 r_sijrier Exp $
 */
 
 #ifndef DISKIO_H
@@ -78,7 +78,6 @@ private:
 	QTimer			workTimer;
 	DiskIOThread*		diskThread;
 	QMutex			mutex;
-	QTimer			bufferFillStatusTimer;
 	int			bufferFillStatus;
 	RingBuffer*		cpuTimeBuffer;
 	trav_time_t		cycleStartTime;
@@ -92,7 +91,6 @@ private:
 public slots:
 	void seek(uint position);
 	void do_work();
-	void update_buffer_fill_status();
 
 signals:
 	void seekFinished();
