@@ -3,10 +3,10 @@
 # Subdir relative project main directory: ./src/commands
 # Target is a library:  traversocommands
 
-HEADERS += ClipGain.h \
-           ClipSelection.h \
+HEADERS += ClipSelection.h \
            CopyClip.h \
            Crop.h \
+           Gain.h \
            Import.h \
            MoveClip.h \
            MoveEdge.h \
@@ -16,13 +16,12 @@ HEADERS += ClipGain.h \
            Shuttle.h \
            SplitClip.h \
            Zoom.h \
-           TrackGain.h \
            TrackPan.h \
            commands.h \
            Fade.h 
 SOURCES += CopyClip.cpp \
-           ClipGain.cpp \
            ClipSelection.cpp \
+           Gain.cpp \
            Import.cpp \
            MoveClip.cpp \
            MoveEdge.cpp \
@@ -32,9 +31,9 @@ SOURCES += CopyClip.cpp \
            Shuttle.cpp \
            SplitClip.cpp \
            Zoom.cpp \
-           TrackGain.cpp \
            TrackPan.cpp \
            Fade.cpp 
+
 include(../libbase.pri)
 INCLUDEPATH += ../../src/traverso \
 ../../src/core \
