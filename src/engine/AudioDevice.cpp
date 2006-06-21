@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.2 2006/04/25 16:50:29 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.3 2006/06/21 19:52:35 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -428,7 +428,7 @@ void AudioDevice::post_process( )
 	PMESG("AudioDevice::post_process(). Thread id:  %ld", QThread::currentThreadId ());
 	
 	if ( ! mutex.tryLock() ) {
-		printf("AudioDevice :: Couldn't lock mutex, retrying next cycle");
+		printf("AudioDevice :: Couldn't lock mutex, retrying next cycle\n");
 		return;
 	}
 	
@@ -478,8 +478,10 @@ void AudioDevice::process_client_request( )
 		retryCount++;
 		
 		if (retryCount > 100) {
-			qFatal("Cannot start AudioDevice::process_client_reques, processClientRequest remains true.\n"
-					"This  happens when the audiodevice didn't handle the client request. PLEASE report me as a bug");
+			qFatal("Cannot start AudioDevice::process_client_request, processClientRequest remains true.\n"
+				"This is most likely caused by the audiodevice thread (or Jacks' one) gone wild or stalled\n"
+				"One issue could be that you are not running with real time privileges! Please check for this!\n"
+				"To improve future program behaviour, please report this so we can sort the problem out!\n");
 		}
 		
 		return;
@@ -494,9 +496,10 @@ Client* AudioDevice::new_client( QString name )
 	PENTER;
 	PMESG("New client %s", name.toAscii().data());
 	
+	Client* client = new Client(name);
+	
 	mutex.lock();
 	
-	Client* client = new Client(name);
 	newClients.append( client );
 	
 	mutex.unlock();
