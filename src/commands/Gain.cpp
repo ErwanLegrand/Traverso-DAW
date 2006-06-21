@@ -17,13 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Gain.cpp,v 1.1 2006/06/20 19:16:36 r_sijrier Exp $
+$Id: Gain.cpp,v 1.2 2006/06/21 11:51:48 r_sijrier Exp $
 */
 
 #include "Gain.h"
 
 #include "ContextItem.h"
 #include "ContextPointer.h"
+#include "Mixer.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -98,8 +99,20 @@ int Gain::undo_action()
 
 int Gain::jog()
 {
-	int ofy = origY - cpointer().y();
-	newGain  = (0.003f *  ofy)  + origGain;
+	float ofy = 0;
+	
+	float dbFactor = coefficient_to_dB(newGain);
+	
+	if (dbFactor > -1)
+		ofy = (origY - cpointer().y()) * 0.05;
+	if (dbFactor <= -1) {
+		ofy = (origY - cpointer().y()) * ((1 - dB_to_scale_factor(dbFactor)) / 3);
+	}
+		
+		
+	newGain = dB_to_scale_factor( dbFactor + ofy );
+	origY = cpointer().y();
+	
 	return QMetaObject::invokeMethod(gainObject, "set_gain", Q_ARG(float, newGain));
 }
 
