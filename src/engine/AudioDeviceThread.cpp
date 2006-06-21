@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDeviceThread.cpp,v 1.3 2006/05/08 20:05:27 r_sijrier Exp $
+$Id: AudioDeviceThread.cpp,v 1.4 2006/06/21 19:50:37 r_sijrier Exp $
 */
 
 #include "AudioDeviceThread.h"
@@ -121,7 +121,11 @@ int AudioDeviceThread::become_realtime( bool realtime )
 		struct sched_param param;
 		param.sched_priority = 70;
 		if (pthread_setschedparam (pthread_self(), SCHED_FIFO, &param) != 0) {
-			qWarning("Unable to set realtime!");
+			qWarning("Unable to set Audiodevice Thread to realtime priority!!!\n"
+				 "This most likely results in unreliable playback/capture and\n"
+				 "lots of buffer underruns (== sound drops).\n"
+				 "In the worst case the program can even abort!\n"
+				 "Please make sure you run this program with realtime privileges!!!\n");
 			return -1;
 		} else {
 			qDebug("Running realtime");
