@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Song.cpp,v 1.19 2006/06/20 19:18:16 r_sijrier Exp $
+    $Id: Song.cpp,v 1.20 2006/06/22 22:15:28 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -826,9 +826,11 @@ int Song::process( nframes_t nframes )
 		return 0;
 	}
 
-	// zero the masterOut buffers
+	// zero the masterOut buffers _and_ the mixdown buffer which is used 
+	// in the Tracks' to mixdown the audioclips!
 	masterOut->silence_buffers(nframes);
-
+	memset (mixdown, 0, sizeof (audio_sample_t) * nframes);
+	
 	int processResult = 0;
 	
 	// Process all Tracks.
@@ -866,6 +868,9 @@ int Song::process_export( nframes_t nframes )
 	foreach(Track* track, m_tracks) {
 		track->process(nframes);
 	}
+	
+	Mixer::apply_gain_to_buffer(masterOut->get_buffer(0, nframes), nframes, m_gain);
+	Mixer::apply_gain_to_buffer(masterOut->get_buffer(1, nframes), nframes, m_gain);
 
 	// update the transportFrame
 	transportFrame += nframes;
