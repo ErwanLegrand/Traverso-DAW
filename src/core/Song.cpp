@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Song.cpp,v 1.20 2006/06/22 22:15:28 r_sijrier Exp $
+    $Id: Song.cpp,v 1.21 2006/06/22 22:51:52 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -863,6 +863,7 @@ int Song::process_export( nframes_t nframes )
 {
 	// Get the masterout buffers, and fill with zero's
 	masterOut->silence_buffers(nframes);
+	memset (mixdown, 0, sizeof (audio_sample_t) * nframes);
 
 	// Process all Tracks.
 	foreach(Track* track, m_tracks) {
