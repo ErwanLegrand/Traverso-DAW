@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.27 2006/06/20 19:19:12 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.28 2006/06/23 11:04:12 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -74,6 +74,9 @@ AudioClip::~AudioClip()
 	
 	foreach(ReadSource* source, readSources)
 		delete source;
+		
+	delete fadeIn;
+	delete fadeOut;
 }
 
 void AudioClip::init()
