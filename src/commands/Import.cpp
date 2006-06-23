@@ -17,13 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Import.cpp,v 1.3 2006/05/01 22:09:41 r_sijrier Exp $
+$Id: Import.cpp,v 1.4 2006/06/23 10:18:11 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
 
 #include <QFileDialog>
 #include <ReadSource.h>
+#include "AudioClipList.h"
 
 #include "Import.h"
 
@@ -113,6 +114,10 @@ int Import::prepare_actions()
 		}
 	}
 
+	if (AudioClip* lastClip = m_track->get_cliplist().get_last()) {
+		m_clip->set_track_start_frame( lastClip->get_track_end_frame() + 1);
+	}
+	
 	return 1;
 }
 
