@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Curve.cpp,v 1.6 2006/05/11 17:50:28 r_sijrier Exp $
+    $Id: Curve.cpp,v 1.7 2006/06/23 11:22:39 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -47,6 +47,9 @@ Curve::Curve()
 
 Curve::~Curve()
 {
+	foreach(CurveNode* node, nodes) {
+		delete node;
+	}
 }
 
 void Curve::add_node(double pos, double value)
