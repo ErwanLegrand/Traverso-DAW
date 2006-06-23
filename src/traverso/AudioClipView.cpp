@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.18 2006/06/20 19:27:58 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.19 2006/06/23 12:32:59 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -138,7 +138,7 @@ QRect AudioClipView::draw(QPainter& p)
 	if (channels == 0) {
 		return QRect();
 	}
-
+	
 
 	if (waitingForPeaks) {
 		// Hmm, do we paint here something?
@@ -155,6 +155,12 @@ QRect AudioClipView::draw(QPainter& p)
 	} else {
 		
 		// 	draw_crossings(p);
+		
+		painter.setPen(QColor(178, 191, 182)); // CHANGE TO CLIP_COUNTOUR
+		
+		for (int i=1; i<channels; ++i) {
+			painter.drawLine(0, height/(i+1), clipXWidth, height/(i+1));
+		}
 	
 		draw_peaks(painter);
 	
@@ -217,7 +223,7 @@ void AudioClipView::draw_peaks( QPainter& p )
 		upperHalf = peak->get_prepared_peakbuffer()->get_lower_half_buffer();
 		lowerHalf = peak->get_prepared_peakbuffer()->get_lower_half_buffer();
 
-		float scaleFactor = ( ((float)(height)) / (Peak::MAX_DB_VALUE * 2)) * gain;
+		float scaleFactor = ( ((float)(height - channels * 3)) / (Peak::MAX_DB_VALUE * 2)) * gain;
 		centerY = height/2 + height*chan;
 
 		if (microView) {
@@ -459,7 +465,7 @@ void AudioClipView::recreate_clipname_pixmap()
 		sMuted = "M";
 	
 	clipInfo = sMuted + "  " + sRate +  "  " + sBitDepth + "   " + sourceType + "  " + sclipGain + "   " + sclipNormGain + "   " + clipName;
-	int clipInfoAreaWidth = 500;
+	int clipInfoAreaWidth = 700;
 	int x=5;
 
 	clipNamePixmapActive = QPixmap(clipInfoAreaWidth, CLIP_INFO_AREA_HEIGHT);
