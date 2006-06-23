@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.19 2006/06/23 12:32:59 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.20 2006/06/23 12:39:41 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -156,10 +156,10 @@ QRect AudioClipView::draw(QPainter& p)
 		
 		// 	draw_crossings(p);
 		
-		painter.setPen(QColor(178, 191, 182)); // CHANGE TO CLIP_COUNTOUR
-		
+		painter.setPen(QColor(178, 191, 182)); // Channel seperator color.
+		// Draw channel seperator horizontal lines.
 		for (int i=1; i<channels; ++i) {
-			painter.drawLine(0, height/(i+1), clipXWidth, height/(i+1));
+			painter.drawLine(0, (height/channels) * 1, clipXWidth, (height/channels) * i);
 		}
 	
 		draw_peaks(painter);
