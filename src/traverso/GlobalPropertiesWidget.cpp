@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: GlobalPropertiesWidget.cpp,v 1.5 2006/06/19 14:21:10 r_sijrier Exp $
+$Id: GlobalPropertiesWidget.cpp,v 1.6 2006/06/26 23:59:37 r_sijrier Exp $
 */
 
 #include "GlobalPropertiesWidget.h"
@@ -44,7 +44,7 @@ GlobalPropertiesWidget::GlobalPropertiesWidget( QWidget * parent )
 	holdTimeoutSpinBox->setMinimum(140);
 	doubleFactTimeoutSpinBox->setMinimum(140);
 
-	QStringList drivers = audiodevice().get_avaible_drivers();
+	QStringList drivers = audiodevice().get_available_drivers();
 	foreach(QString name, drivers)
 	audioDriverBackendComboBox->addItem(name);
 
