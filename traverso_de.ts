@@ -1004,9 +1004,6 @@
     </message>
 </context>
 <context>
-    <name>TrackGain</name>
-</context>
-<context>
     <name>TrackPan</name>
     <message>
         <source>Invalid Track</source>
