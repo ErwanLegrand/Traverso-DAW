@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioBus.cpp,v 1.3 2006/05/17 22:07:05 r_sijrier Exp $
+$Id: AudioBus.cpp,v 1.4 2006/06/26 23:58:13 r_sijrier Exp $
 */
 
 #include "AudioBus.h"
@@ -94,7 +94,7 @@ AudioChannel * AudioBus::get_channel( int channelNumber )
 void AudioBus::set_monitor_peaks( bool monitor )
 {
 	foreach(AudioChannel* chan, channels) {
-		chan->set_monitor_peaks(true);
+		chan->set_monitor_peaks(monitor);
 	}
 }
 

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Import.cpp,v 1.4 2006/06/23 10:18:11 r_sijrier Exp $
+$Id: Import.cpp,v 1.5 2006/06/26 23:57:08 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -124,7 +124,9 @@ int Import::prepare_actions()
 int Import::do_action()
 {
 	PENTER;
-	m_track->add_clip(m_clip);
+	
+	THREAD_SAVE_ADD(m_clip, m_track, "add_clip");
+	
 	return 1;
 }
 
@@ -132,7 +134,9 @@ int Import::do_action()
 int Import::undo_action()
 {
 	PENTER;
-	m_track->remove_clip(m_clip);
+	
+	THREAD_SAVE_REMOVE(m_clip, m_track, "remove_clip");
+	
 	return 1;
 }
 

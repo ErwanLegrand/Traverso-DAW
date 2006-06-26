@@ -17,14 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: RemoveTrack.cpp,v 1.1 2006/06/16 18:12:07 r_sijrier Exp $
+$Id: RemoveTrack.cpp,v 1.2 2006/06/26 23:57:08 r_sijrier Exp $
 */
 
 #include "RemoveTrack.h"
 
-#include "Track.h"
-#include "Song.h"
-#include "ContextPointer.h"
+#include <libtraversocore.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -55,14 +53,18 @@ int RemoveTrack::prepare_actions()
 int RemoveTrack::do_action()
 {
 	PENTER;
-	m_song->remove_track(m_track);
+	
+	THREAD_SAVE_REMOVE(m_track, m_song, "remove_track");
+
 	return 1;
 }
 
 int RemoveTrack::undo_action()
 {
 	PENTER;
-	m_song->add_track(m_track, m_track->get_id());
+	
+	THREAD_SAVE_ADD(m_track, m_song, "add_track");
+
 	return 1;
 }
 

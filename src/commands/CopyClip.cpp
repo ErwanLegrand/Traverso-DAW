@@ -17,14 +17,12 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: CopyClip.cpp,v 1.2 2006/05/03 11:59:39 r_sijrier Exp $
+    $Id: CopyClip.cpp,v 1.3 2006/06/26 23:57:08 r_sijrier Exp $
 */
 
-#include "AudioClip.h"
-#include "Song.h"
-#include "Track.h"
 #include "CopyClip.h"
-#include "ContextPointer.h"
+
+#include <libtraversocore.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -69,7 +67,7 @@ int CopyClip::prepare_actions()
 int CopyClip::do_action()
 {
         PENTER;
-        targetTrack->add_clip(newCreatedClip);
+	THREAD_SAVE_ADD(newCreatedClip, targetTrack, "add_clip");
         return 1;
 }
 
@@ -78,6 +76,7 @@ int CopyClip::undo_action()
 {
         PENTER;
         targetTrack->remove_clip(newCreatedClip);
+	THREAD_SAVE_REMOVE(newCreatedClip, targetTrack, "remove_clip");
         return 1;
 }
 

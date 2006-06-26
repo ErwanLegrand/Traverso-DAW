@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.3 2006/06/16 14:07:38 r_sijrier Exp $
+$Id: AudioDevice.h,v 1.4 2006/06/26 23:58:13 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -25,11 +25,9 @@ $Id: AudioDevice.h,v 1.3 2006/06/16 14:07:38 r_sijrier Exp $
 
 #include <QObject>
 #include <QList>
-#include <QMutex>
 #include <QHash>
 #include <QStringList>
 #include <QByteArray>
-#include <QTimer>
 
 #include "RingBuffer.h"
 #include "defines.h"
@@ -41,7 +39,6 @@ class Driver;
 class Client;
 class AudioChannel;
 class AudioBus;
-class RingBuffer;
 
 
 class AudioDevice : public QObject
@@ -49,7 +46,6 @@ class AudioDevice : public QObject
 	Q_OBJECT
 
 public:
-	Client* new_client(QString clientName);
 	AudioChannel* register_capture_channel(QByteArray busName, QString audioType, int flags, uint bufferSize, uint channel );
 	AudioChannel* register_playback_channel(QByteArray busName, QString audioType, int flags, uint bufferSize, uint channel );
 
@@ -77,7 +73,7 @@ public:
 	QString get_device_longname();
 	QString get_driver_type();
 
-	QStringList get_avaible_drivers();
+	QStringList get_available_drivers();
 
 	uint get_sample_rate();
 	uint get_bit_depth();
@@ -86,10 +82,12 @@ public:
 	{
 		return clients;
 	}
+	
 	Driver* get_driver() const
 	{
 		return driver;
 	}
+	
 	nframes_t get_buffer_size()
 	{
 		return m_bufferSize;
@@ -119,13 +117,9 @@ public:
 	uint capture_buses_count();
 	uint playback_buses_count();
 
-	int create_driver(QString driverType);
-	
 
 	trav_time_t get_cpu_time();
-        
-public slots:
-	void process_client_request();
+ 
 
 private:
 	AudioDevice();
@@ -141,35 +135,30 @@ private:
 	friend class Driver;
 
 
-	Driver* 							driver;
-	AudioDeviceThread* 				audioThread;
-	QList<Client *> 					clients;
-	QList<Client *>					newClients;
+	Driver* 				driver;
+	AudioDeviceThread* 			audioThread;
+	QList<Client *> 			clients;
 	QHash<QByteArray, AudioChannel* >	playbackChannels;
 	QHash<QByteArray, AudioChannel* >	captureChannels;
 	QHash<QByteArray, AudioBus* >		playbackBuses;
 	QHash<QByteArray, AudioBus* >		captureBuses;
-	QStringList						availableDrivers;
-	QMutex							mutex;
-	QTimer							clientRequestsRetryTimer;
+	QStringList				availableDrivers;
 
-	bool 				running;
-	bool 				runAudioThread;
+	bool 			running;
+	bool 			runAudioThread;
 	RingBuffer*		cpuTimeBuffer;
 	trav_time_t		cycleStartTime;
 	trav_time_t		lastCpuReadTime;
-	uint 				m_bufferSize;
-	uint 				m_rate;
-	uint				m_bitdepth;
+	uint 			m_bufferSize;
+	uint 			m_rate;
+	uint			m_bitdepth;
 	QString			m_driverType;
 	
-	volatile size_t		processClientRequest;
-
 	int run_one_cycle(nframes_t nframes, float delayed_usecs);
+	int create_driver(QString driverType);
+	
 	void setup_buses();
-
 	void post_process();
-
 	void free_memory();
 
 	// These are reserved for Driver Objects only!!
@@ -182,7 +171,11 @@ signals:
 	void started();
 	void driverParamsChanged();
 	void xrun();
-	void clientRequestsProcesssed();
+	void clientRemoved();
+	
+private slots:
+	void thread_save_add_client(QObject* obj);
+	void thread_save_remove_client(QObject* obj);
 };
 
 static inline unsigned int is_power_of_two (unsigned int n)

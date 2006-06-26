@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Client.cpp,v 1.2 2006/04/25 16:50:29 r_sijrier Exp $
+$Id: Client.cpp,v 1.3 2006/06/26 23:58:13 r_sijrier Exp $
 */
 
 
@@ -35,7 +35,6 @@ Client::Client( QString name )
 	PENTERCONS;
 	
 	m_name = name;
-	scheduleForDeletion = false;
 }
 
 Client::~ Client( )
@@ -46,16 +45,6 @@ Client::~ Client( )
 void Client::set_process_callback( ProcessCallback call)
 {
 	process = call;
-}
-
-void Client::delete_client( )
-{
-	scheduleForDeletion = true;
-}
-
-bool Client::scheduled_for_deletion( )
-{
-	return scheduleForDeletion;
 }
 
 //eof

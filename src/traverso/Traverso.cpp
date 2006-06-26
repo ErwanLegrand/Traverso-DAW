@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Traverso.cpp,v 1.5 2006/06/15 12:08:14 r_sijrier Exp $
+$Id: Traverso.cpp,v 1.6 2006/06/26 23:59:55 r_sijrier Exp $
 */
 
 #include <signal.h>
@@ -37,12 +37,13 @@ $Id: Traverso.cpp,v 1.5 2006/06/15 12:08:14 r_sijrier Exp $
 #include "ProjectManager.h"
 #include "Project.h"
 #include "AudioClip.h"
+#include "Tsar.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-static const char* CONFIG_FILE_VERSION = "1";
+static const char* CONFIG_FILE_VERSION = "2";
 
 Traverso::Traverso(int argc, char **argv )
 		: QApplication ( argc, argv )
@@ -83,6 +84,7 @@ void Traverso::reset_settings( )
 	settings.setValue("ConfigFileVersion", CONFIG_FILE_VERSION);
 	settings.setValue("trackCreationCount", 6);
 	settings.setValue("hzoomLevel", 2048);
+	settings.setValue("WaveFormRectified", 0);
 
 	settings.beginGroup("Project");
 	settings.setValue("current", "Untitled");
@@ -250,6 +252,13 @@ void Traverso::prepare_audio_device( )
 	}
 
 	audiodevice().set_parameters(rate, bufferSize, driverType);
+	
+	// tsar is a singleton, so initialization is done on first tsar() call
+	// However, if we do so by adding/removing an object in/out the audioprocessing path
+	// the addRemoveRetryTimer QTimer complains, don't know why.
+	// So it seems to be a good idea to initialize tsar at the same time the audiodevice is 
+	// up and running, though this shouldn't be needed!!!!!
+	tsar();
 }
 
 void Traverso::saveState( QSessionManager &  manager)

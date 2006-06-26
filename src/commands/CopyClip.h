@@ -17,13 +17,19 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: CopyClip.h,v 1.1 2006/04/20 14:51:13 r_sijrier Exp $
+    $Id: CopyClip.h,v 1.2 2006/06/26 23:57:08 r_sijrier Exp $
 */
 
 #ifndef COPYCLIPACTION_H
 #define COPYCLIPACTION_H
 
 #include "Command.h"
+
+#include "defines.h"
+
+class Song;
+class AudioClip;
+class Track;
 
 class CopyClip : public Command
 {

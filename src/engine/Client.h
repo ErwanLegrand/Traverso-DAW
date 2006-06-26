@@ -17,17 +17,20 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Client.h,v 1.1 2006/04/20 14:50:44 r_sijrier Exp $
+$Id: Client.h,v 1.2 2006/06/26 23:58:13 r_sijrier Exp $
 */
 
 #ifndef CLIENT_H
 #define CLIENT_H
 
 #include <QString>
+#include <QObject>
+
 #include "defines.h"
 
-class Client
+class Client : public QObject
 {
+	Q_OBJECT
 
 public:
 	Client(QString name);
@@ -35,14 +38,11 @@ public:
 
 	void set_process_callback(ProcessCallback call);
 
-	void delete_client();
-	bool scheduled_for_deletion();
 	
 	ProcessCallback process;
+	
 	QString		m_name;
 
-private:
-	bool			scheduleForDeletion;
 };
 
 #endif

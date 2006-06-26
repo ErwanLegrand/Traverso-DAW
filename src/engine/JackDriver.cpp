@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: JackDriver.cpp,v 1.1 2006/04/20 14:50:44 r_sijrier Exp $
+    $Id: JackDriver.cpp,v 1.2 2006/06/26 23:58:13 r_sijrier Exp $
 */
 
 #include "JackDriver.h"
@@ -69,10 +69,10 @@ int JackDriver::_write( nframes_t nframes )
 {
         int portNumber = 0;
         foreach(AudioChannel* chan, playbackChannels) {
-                /*		if (!bus->has_data()) {
-                			portNumber++;
-                			continue;
-                		}*/
+/*		if (!chan->has_data()) {
+			portNumber++;
+			continue;
+		}*/
                 memcpy ( jack_port_get_buffer (outputPorts[portNumber], nframes), chan->get_data(), sizeof (jack_default_audio_sample_t) * nframes);
                 chan->silence_buffer(nframes);
                 portNumber++;

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.3 2006/06/21 19:52:35 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.4 2006/06/26 23:58:13 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -29,6 +29,8 @@ $Id: AudioDevice.cpp,v 1.3 2006/06/21 19:52:35 r_sijrier Exp $
 #include "Client.h"
 #include "AudioChannel.h"
 #include "AudioBus.h"
+#include "Tsar.h"
+
 #include <sys/mman.h>
 
 // Always put me below _all_ includes, this is needed
@@ -46,21 +48,15 @@ AudioDevice::AudioDevice()
 	runAudioThread = false;
 	driver = 0;
 	audioThread = 0;
-	processClientRequest = 0;
 	cpuTimeBuffer = new RingBuffer(4096);
 	
-	clientRequestsRetryTimer.setSingleShot( true );
-	connect(&clientRequestsRetryTimer, SIGNAL(timeout()), this, SLOT (process_client_request()));
-	
-
 	m_driverType = tr("No Driver Loaded");
-#if defined (JACK_SUPPORT)
 
+#if defined (JACK_SUPPORT)
 	availableDrivers << "Jack";
 #endif
 
 #if defined (ALSA_SUPPORT)
-
 	availableDrivers << "ALSA";
 #endif
 
@@ -386,7 +382,7 @@ QString AudioDevice::get_device_longname( )
 	return tr("No Device Configured");
 }
 
-QStringList AudioDevice::get_avaible_drivers( )
+QStringList AudioDevice::get_available_drivers( )
 {
 	return availableDrivers;
 }
@@ -420,91 +416,36 @@ trav_time_t AudioDevice::get_cpu_time( )
 
 void AudioDevice::post_process( )
 {
-	if (! processClientRequest) {
-		return;
-	}
-	
-	PENTER;
-	PMESG("AudioDevice::post_process(). Thread id:  %ld", QThread::currentThreadId ());
-	
-	if ( ! mutex.tryLock() ) {
-		printf("AudioDevice :: Couldn't lock mutex, retrying next cycle\n");
-		return;
-	}
-	
-	
-	for (int i=0; i<newClients.size(); ++i) {
-		Client* client = newClients.at( i );
-		PMESG("appending client %s", client->m_name.toAscii().data());
-		clients.append( client );
-	}
-	
-	newClients.clear();
-	
-	bool clientdeleted;
-	
-	do {
-		clientdeleted = false;
-		
-		for (int i=0; i<clients.size(); ++i) {
-			Client* client = clients.at( i );
-			
-			if (client->scheduled_for_deletion()) {
-				delete clients.takeAt( i );
-				clientdeleted = true;
-			}
-		
-		}
-	}
-	while (clientdeleted);
-	
-	mutex.unlock();
-	
-	processClientRequest = 0;
-	
-	emit clientRequestsProcesssed();
+	tsar().add_remove_items_in_audio_processing_path();
 }
 
-void AudioDevice::process_client_request( )
+void AudioDevice::thread_save_add_client( QObject * obj )
 {
-	PENTER;
-	static int retryCount;
+	Client* client = qobject_cast<Client* >(obj);
 	
-	if (processClientRequest) {
-		
-		clientRequestsRetryTimer.start( 10 );
-		
-		PMESG("processClientRequest is still true, retrying in 10 ms !!");
-		retryCount++;
-		
-		if (retryCount > 100) {
-			qFatal("Cannot start AudioDevice::process_client_request, processClientRequest remains true.\n"
-				"This is most likely caused by the audiodevice thread (or Jacks' one) gone wild or stalled\n"
-				"One issue could be that you are not running with real time privileges! Please check for this!\n"
-				"To improve future program behaviour, please report this so we can sort the problem out!\n");
-		}
-		
-		return;
+	if (!client) {
+ 		qCritical("Unable to cast to Client, this is a Programming Error !!\n");
+ 		return;
 	}
 	
-	processClientRequest = 1;
-	retryCount = 0;
+	clients.append(client);
 }
 
-Client* AudioDevice::new_client( QString name )
+void AudioDevice::thread_save_remove_client( QObject * obj )
 {
-	PENTER;
-	PMESG("New client %s", name.toAscii().data());
+	Client* client = qobject_cast<Client* >(obj);
 	
-	Client* client = new Client(name);
+	if (!client) {
+ 		qCritical("Unable to cast to Client, this is a Programming Error !!\n");
+ 		return;
+	}
 	
-	mutex.lock();
+	int index = clients.indexOf(client);
 	
-	newClients.append( client );
-	
-	mutex.unlock();
-
-	return client;
+	if (index >= 0) {
+		clients.removeAt( index );
+		emit clientRemoved();
+	}
 }
 
 //eof

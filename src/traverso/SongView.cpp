@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.10 2006/06/20 19:35:05 r_sijrier Exp $
+$Id: SongView.cpp,v 1.11 2006/06/26 23:59:55 r_sijrier Exp $
 */
 
 #include <QPainter>
@@ -152,10 +152,12 @@ void SongView::paint_splitter( QPainter & painter )
 void SongView::clear_root_space( QPainter & p )
 {
 	int lasty;
-	if (m_song->get_numtracks() > 0)
-		lasty = m_song->get_track(m_song->get_numtracks()-1)->real_baseY() + m_song->get_track(m_song->get_numtracks()-1)->get_height();
-	else
+	if (m_song->get_numtracks() > 0) {
+		lasty = m_song->get_track(m_song->get_numtracks())->real_baseY() + m_song->get_track(m_song->get_numtracks())->get_height();
+	} else {
 		lasty =0;
+	}
+	
 	p.fillRect(0, lasty, TrackView::TRACKPANELWIDTH, m_vp->height(), QColor(0, 0, 0));
 	p.fillRect(TrackView::CLIPAREABASEX, lasty, m_vp->width(), m_vp->height() - lasty, QColor(0, 0, 0));
 }

@@ -17,14 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: RemoveClip.cpp,v 1.1 2006/05/01 21:18:17 r_sijrier Exp $
+$Id: RemoveClip.cpp,v 1.2 2006/06/26 23:57:08 r_sijrier Exp $
 */
 
 #include "RemoveClip.h"
 
-#include "AudioClip.h"
-#include "AudioClipManager.h"
-#include "Track.h"
+#include <libtraversocore.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -57,7 +55,7 @@ int RemoveClip::do_action()
 	PENTER;
 	
 	foreach(AudioClip* clip, m_clips) {
-		clip->get_track()->remove_clip(clip);
+		THREAD_SAVE_REMOVE(clip, clip->get_track(), "remove_clip");
 	}
 	
 	return 1;
@@ -68,7 +66,7 @@ int RemoveClip::undo_action()
 	PENTER;
 	
 	foreach(AudioClip* clip, m_clips) {
-		clip->get_track()->add_clip(clip);
+		THREAD_SAVE_ADD(clip, clip->get_track(), "add_clip");
 	}
 	
 	return 1;
