@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.20 2006/06/23 12:39:41 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.21 2006/06/26 23:59:10 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -156,7 +156,11 @@ QRect AudioClipView::draw(QPainter& p)
 		
 		// 	draw_crossings(p);
 		
-		painter.setPen(QColor(178, 191, 182)); // Channel seperator color.
+		if (m_clip->is_selected()) {
+			painter.setPen(QColor(124, 137, 210)); // Channel seperator color.
+		} else {
+			painter.setPen(QColor(178, 191, 182)); // Channel seperator color.
+		}
 		// Draw channel seperator horizontal lines.
 		for (int i=1; i<channels; ++i) {
 			painter.drawLine(0, (height/channels) * 1, clipXWidth, (height/channels) * i);
@@ -223,7 +227,7 @@ void AudioClipView::draw_peaks( QPainter& p )
 		upperHalf = peak->get_prepared_peakbuffer()->get_lower_half_buffer();
 		lowerHalf = peak->get_prepared_peakbuffer()->get_lower_half_buffer();
 
-		float scaleFactor = ( ((float)(height - channels * 3)) / (Peak::MAX_DB_VALUE * 2)) * gain;
+		float scaleFactor = ( ((float)(height - channels * 2)) / (Peak::MAX_DB_VALUE * 2)) * gain;
 		centerY = height/2 + height*chan;
 
 		if (microView) {
