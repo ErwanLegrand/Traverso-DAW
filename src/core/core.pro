@@ -55,6 +55,7 @@ SOURCES	= AudioClip.cpp \
 	Song.cpp \
 	Track.cpp \
 	TraversoAudioPlugin.cpp \
+	Tsar.cpp \
 	Utils.cpp \
 	WriteSource.cpp \
 	gdither.cpp
@@ -93,6 +94,7 @@ HEADERS	= precompile.h \
 	Song.h \
 	Track.h \
 	TraversoAudioPlugin.h \
+	Tsar.h \
 	Utils.h \
 	WriteSource.h \
 	libtraversocore.h \

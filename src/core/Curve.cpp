@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Curve.cpp,v 1.8 2006/06/23 11:26:10 r_sijrier Exp $
+    $Id: Curve.cpp,v 1.9 2006/06/26 23:57:48 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -434,6 +434,27 @@ void Curve::clear( )
 	nodes.clear();
 	
 	set_changed();
+}
+
+void Curve::thread_save_add_node( QObject * obj )
+{
+// 	printf("Entering Curve::add_node \n");
+	
+	CurveNode* node = qobject_cast<CurveNode* >(obj);
+	
+	if (!node) {
+		qCritical("Unable to cast to CurveNode, this is a Programming Error !\n");
+		return;
+	}
+        
+        nodes.append(node);
+        emit stateChanged();
+}
+
+void Curve::thread_save_clear( QObject * obj )
+{
+// 	printf("clearing nodes from rt thread\n");
+	clear();
 }
 
 //eof

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.28 2006/06/23 11:04:12 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.29 2006/06/26 23:57:48 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -38,6 +38,7 @@ $Id: AudioClip.cpp,v 1.28 2006/06/23 11:04:12 r_sijrier Exp $
 #include "AudioClipManager.h"
 #include "AudioSourceManager.h"
 #include "Curve.h"
+#include "Tsar.h"
 
 #include <commands.h>
 
@@ -787,54 +788,57 @@ nframes_t AudioClip::get_track_start_frame( ) const
 void AudioClip::set_fade_in_shape( FadeShape shape, nframes_t len )
 {
 
-	fadeIn->clear();
 	fadeInShape = shape;
+	
+	if (fadeIn->nodes.size() > 0) {
+		THREAD_SAVE_ADD(new QObject, fadeIn, "clear");
+	}
 	
 	switch (shape) {
 		case Linear:
-			fadeIn->add_node(0.0, 0.0);
-			fadeIn->add_node(len, 1.0);
+			THREAD_SAVE_ADD(new CurveNode(0.0, 0.0), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len, 1.0), fadeIn, "add_node");
 			break;
 	
 		case Slowest:
-			fadeIn->add_node(0, 0);
-			fadeIn->add_node(len * 0.389401, 0.0333333);
-			fadeIn->add_node(len * 0.629032, 0.0861111);
-			fadeIn->add_node(len * 0.829493, 0.233333);
-			fadeIn->add_node(len * 0.9447, 0.483333);
-			fadeIn->add_node(len * 0.976959, 0.697222);
-			fadeIn->add_node(len, 1);
+			THREAD_SAVE_ADD(new CurveNode(0             , 0       ), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.389401, 0.033333), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.629032, 0.086111), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.829493, 0.233333), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.944700, 0.483333), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.976959, 0.697222), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 1,        1       ), fadeIn, "add_node");
 			break;
 	
 		case Fastest:
-			fadeIn->add_node(0, 0);
-			fadeIn->add_node(len * 0.0207373, 0.197222);
-			fadeIn->add_node(len * 0.0645161, 0.525);
-			fadeIn->add_node(len * 0.152074, 0.802778);
-			fadeIn->add_node(len * 0.276498, 0.919444);
-			fadeIn->add_node(len * 0.481567, 0.980556);
-			fadeIn->add_node(len * 0.767281, 1);
-			fadeIn->add_node(len, 1);
+			THREAD_SAVE_ADD(new CurveNode(0             , 0       ), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.020737, 0.197222), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.064516, 0.525000), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.152074, 0.802778), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.276498, 0.919444), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.481567, 0.980556), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.767281, 1       ), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 1,        1       ), fadeIn, "add_node");
 			break;
 	
 		case Fast:
-			fadeIn->add_node(0, 0);
-			fadeIn->add_node(len * 0.0737327, 0.308333);
-			fadeIn->add_node(len * 0.246544, 0.658333);
-			fadeIn->add_node(len * 0.470046, 0.886111);
-			fadeIn->add_node(len * 0.652074, 0.972222);
-			fadeIn->add_node(len * 0.771889, 0.988889);
-			fadeIn->add_node(len, 1);
+			THREAD_SAVE_ADD(new CurveNode(0             , 0       ), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.073732, 0.308333), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.246544, 0.658333), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.470046, 0.886111), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.652074, 0.972222), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.771889, 0.988889), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 1,        1       ), fadeIn, "add_node");
 			break;
 	
 		case Slow:
-			fadeIn->add_node(0, 0);
-			fadeIn->add_node(len * 0.304147, 0.0694444);
-			fadeIn->add_node(len * 0.529954, 0.152778);
-			fadeIn->add_node(len * 0.725806, 0.333333);
-			fadeIn->add_node(len * 0.847926, 0.558333);
-			fadeIn->add_node(len * 0.919355, 0.730556);
-			fadeIn->add_node(len, 1);
+			THREAD_SAVE_ADD(new CurveNode(0             , 0       ), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.304147, 0.069444), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.529954, 0.152778), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.725806, 0.333333), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.847926, 0.558333), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.919355, 0.730556), fadeIn, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 1,        1       ), fadeIn, "add_node");
 			break;
 	}
 	
@@ -842,52 +846,54 @@ void AudioClip::set_fade_in_shape( FadeShape shape, nframes_t len )
 
 void AudioClip::set_fade_out_shape( FadeShape shape, nframes_t len )
 {
-	fadeOut->clear();
 	fadeOutShape = shape;
+	
+	if (fadeOut->nodes.size() > 0) {
+		THREAD_SAVE_ADD(new QObject, fadeOut, "clear");
+	}
 	
 	switch (shape) {
 		case Linear:
-			fadeOut->add_node(len * 0, 1);
-			fadeOut->add_node(len * 1, 0);
+			THREAD_SAVE_ADD(new CurveNode(len * 0, 1), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 1, 0), fadeOut, "add_node");
 			break;
-		
 		case Slowest:
-			fadeOut->add_node(len * 0, 1);
-			fadeOut->add_node(len * 0.023041, 0.697222);
-			fadeOut->add_node(len * 0.0553,   0.483333);
-			fadeOut->add_node(len * 0.170507, 0.233333);
-			fadeOut->add_node(len * 0.370968, 0.0861111);
-			fadeOut->add_node(len * 0.610599, 0.0333333);
-			fadeOut->add_node(len * 1, 0);
+			THREAD_SAVE_ADD(new CurveNode(len * 0,        1        ), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.023041, 0.6972220), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.0553,   0.4833330), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.170507, 0.2333330), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.370968, 0.0861111), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.610599, 0.0333333), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 1,        0        ), fadeOut, "add_node");
 			break;
 	
 		case Fastest:
-			fadeOut->add_node(len * 0, 1);
-			fadeOut->add_node(len * 0.305556, 1);
-			fadeOut->add_node(len * 0.548611, 0.991736);
-			fadeOut->add_node(len * 0.759259, 0.931129);
-			fadeOut->add_node(len * 0.918981, 0.68595);
-			fadeOut->add_node(len * 0.976852, 0.22865);
-			fadeOut->add_node(len * 1, 0);
+			THREAD_SAVE_ADD(new CurveNode(len * 0,        1       ), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.305556, 1       ), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.548611, 0.991736), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.759259, 0.931129), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.918981, 0.685950), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.976852, 0.228650), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 1,        0       ), fadeOut, "add_node");
 			break;
 	
 		case Fast:
-			fadeOut->add_node(len * 0, 1);
-			fadeOut->add_node(len * 0.228111, 0.988889);
-			fadeOut->add_node(len * 0.347926, 0.972222);
-			fadeOut->add_node(len * 0.529954, 0.886111);
-			fadeOut->add_node(len * 0.753456, 0.658333);
-			fadeOut->add_node(len * 0.9262673, 0.308333);
-			fadeOut->add_node(len * 1, 0);
+			THREAD_SAVE_ADD(new CurveNode(len * 0,        1       ), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.228111, 0.988889), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.347926, 0.972222), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.529954, 0.886111), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.753456, 0.658333), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.926267, 0.308333), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 1, 0), fadeOut, "add_node");
 			break;
 	
 		case Slow:
-			fadeOut->add_node(len * 0, 1);
-			fadeOut->add_node(len * 0.080645, 0.730556);
-			fadeOut->add_node(len * 0.277778, 0.289256);
-			fadeOut->add_node(len * 0.470046, 0.152778);
-			fadeOut->add_node(len * 0.695853, 0.0694444);
-			fadeOut->add_node(len * 1, 0);
+			THREAD_SAVE_ADD(new CurveNode(len * 0, 1), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.080645, 0.730556), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.277778, 0.289256), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.470046, 0.152778), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 0.695853, 0.069444), fadeOut, "add_node");
+			THREAD_SAVE_ADD(new CurveNode(len * 1,        0       ), fadeOut, "add_node");
 			break;
 	
 	}

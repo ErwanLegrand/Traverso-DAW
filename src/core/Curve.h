@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.h,v 1.3 2006/05/09 18:47:17 r_sijrier Exp $
+$Id: Curve.h,v 1.4 2006/06/26 23:57:48 r_sijrier Exp $
 */
 
 #ifndef CURVE_H
@@ -73,6 +73,9 @@ private :
 	
 	friend class CurveNode;
 
+private slots:
+	void thread_save_add_node(QObject* node);
+	void thread_save_clear(QObject* obj);
 
 signals :
 	void stateChanged();

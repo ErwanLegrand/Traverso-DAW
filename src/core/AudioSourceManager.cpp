@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSourceManager.cpp,v 1.5 2006/06/22 22:38:54 r_sijrier Exp $
+$Id: AudioSourceManager.cpp,v 1.6 2006/06/26 23:57:48 r_sijrier Exp $
 */
 
 #include "AudioSourceManager.h"
@@ -143,7 +143,7 @@ ReadSource * AudioSourceManager::get_readsource( qint64 id )
 	}
 	
 	if (source->ref()) {
-		PWARN("Creating deep copy!");
+		PMESG("Creating deep copy of ReadSource: %s", source->get_name().toAscii().data());
 		source = source->deep_copy();
 		
 		if ( source->init() < 0) {
@@ -153,8 +153,11 @@ ReadSource * AudioSourceManager::get_readsource( qint64 id )
 		}
 	}
 	
-	
-	foreach(ReadSource* rs, sources) {
+// This routine detecs if there is a ReadSource with the same audiofile
+// and set's it as the SharedReadSource for this source.
+// However, it's not tested toroughly, and only makes a big difference in reading 
+// compressed stereo audio files.....	
+/*	foreach(ReadSource* rs, sources) {
 		if (source->get_filename() == rs->get_filename()) {
 			if ( source->get_id() != rs->get_id() && source->sharedReadSource == 0 && rs->sharedReadSource == 0) {
 				if (source->get_channel() != 1) continue;
@@ -167,7 +170,7 @@ ReadSource * AudioSourceManager::get_readsource( qint64 id )
 				break;
 			}
 		}
-	}
+	}*/
 	
 	return source;
 }

@@ -1,23 +1,23 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
- 
-    This file is part of Traverso
- 
-    Traverso is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
- 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
- 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
- 
-    $Id: Song.cpp,v 1.21 2006/06/22 22:51:52 r_sijrier Exp $
+Copyright (C) 2005-2006 Remon Sijrier 
+
+This file is part of Traverso
+
+Traverso is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
+
+$Id: Song.cpp,v 1.22 2006/06/26 23:57:48 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -47,6 +47,7 @@
 #include "DiskIO.h"
 #include "WriteSource.h"
 #include "AudioClipManager.h"
+#include "Tsar.h"
 
 #include "LocatorView.h"
 #include "ContextItem.h"
@@ -62,6 +63,7 @@ Song::Song(Project* project, int number)
 	PENTERCONS;
 	title="Untitled";
 	m_gain = 1.0f;
+	trackCount = 0;
 	artists = "No artists name yet";
 	QSettings settings;
 	int level = settings.value("hzoomLevel").toInt();
@@ -94,8 +96,10 @@ Song::Song(Project* project, int number)
 	emit m_project->newSongCreated( this );
 
 	activeTrackNumber = 1;
-	for (int i=1; i <= tracksToCreate; i++)
+	printf("tracksToCreate is %d\n", tracksToCreate);
+	for (int i=1; i <= tracksToCreate; i++) {
 		create_track();
+	}
 
 	connect_to_audiodevice();
 }
@@ -115,11 +119,6 @@ Song::~Song()
 {
 	PENTERDES;
 	
-	if (transport) {
-		qCritical("Song still running on deletion! (song_%d : %s) \n\n"
-		"PLEASE report this error, it's a very critical problem!!!\n\n", m_id, title.toAscii().data());
-	}
-
 	delete [] mixdown;
 	delete [] gainbuffer;
 	delete diskio;
@@ -127,6 +126,7 @@ Song::~Song()
 	delete regionList;
 	delete masterOut;
 	delete m_hs;
+	delete audiodeviceClient;
 }
 
 void Song::init()
@@ -135,7 +135,7 @@ void Song::init()
 	diskio = new DiskIO();
 
 	connect(this, SIGNAL(seekStart(uint )), diskio, SLOT(seek( uint )), Qt::QueuedConnection);
-	connect(&audiodevice(), SIGNAL(clientRequestsProcesssed()), this, SLOT (audiodevice_client_request_processed() ), Qt::QueuedConnection);
+	connect(&audiodevice(), SIGNAL(clientRemoved()), this, SLOT (audiodevice_client_removed() ), Qt::QueuedConnection);
 	connect(&audiodevice(), SIGNAL(started()), this, SLOT(audiodevice_started()));
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(resize_buffer()), Qt::DirectConnection);
 	connect(diskio, SIGNAL(seekFinished()), this, SLOT(seek_finished()), Qt::QueuedConnection);
@@ -193,7 +193,8 @@ int Song::set_state( const QDomNode & node )
 			}
 		}
 		
-		add_track( track, track->get_id());
+		add_track(track);
+		trackCount++;
 		
 		trackBaseY += track->get_height();
 		trackNode = trackNode.nextSibling();
@@ -232,42 +233,39 @@ void Song::connect_to_audiodevice( )
 {
 	PENTER;
 	
-        audiodeviceClient = audiodevice().new_client("song_" + QByteArray::number(get_id()));
-        audiodeviceClient->set_process_callback( MakeDelegate(this, &Song::process) );
+	audiodeviceClient = new Client("song_" + QByteArray::number(get_id()));
 	
-	audiodevice().process_client_request();
+	audiodeviceClient->set_process_callback( MakeDelegate(this, &Song::process) );
+	
+	THREAD_SAVE_ADD(audiodeviceClient, &audiodevice(), "add_client");
 }
 
 void Song::disconnect_from_audiodevice_and_delete()
 {
 	PENTER;
 	
-	if (transport) {
-		stopTransport = true;
-	}
-	
 	PMESG("Song : Scheduling for deletion !!");
+	
 	scheduleForDeletion = true;
 	
-	audiodeviceClient->delete_client();
-	
-	audiodevice().process_client_request();
+	THREAD_SAVE_REMOVE(audiodeviceClient, &audiodevice(), "remove_client");
 }
 
-void Song::audiodevice_client_request_processed( )
+void Song::audiodevice_client_removed( )
 {
 	PENTER;
 	
 	PMESG("Song :: Thread id:  %ld", QThread::currentThreadId ());
+	
 	if (scheduleForDeletion) {
 		PMESG("Song : deleting myself!!!!!");
 		delete this;
 	}
 }
 
-void Song::add_track( Track* track, int id)
+void Song::add_track(Track* track)
 {
-	m_tracks.insert(id, track);
+	m_tracks.insert(track->get_id(), track);
 }
 
 void Song::remove_track(Track* trackToBeDeleted)
@@ -610,12 +608,17 @@ Command* Song::toggle_snap()
 Command* Song::create_track()
 {
 	int trackBaseY = LocatorView::LOCATOR_HEIGHT;
-	foreach(Track* track, m_tracks)
-	trackBaseY += track->get_height();
+	int height = Track::INITIAL_HEIGHT;
+	
+	foreach(Track* track, m_tracks) {
+		trackBaseY += track->get_height();
+		height = track->get_height();
+	}
 
-	int trackNumber = m_tracks.size() + 1;
-	Track* track = new Track(this, trackNumber, "Unnamed", trackBaseY, Track::INITIAL_HEIGHT);
-	add_track( track, trackNumber);
+	Track* track = new Track(this, ++trackCount, "Unnamed", trackBaseY, height);
+	
+	THREAD_SAVE_ADD(track, this, "add_track");
+	
 	return (Command*) 0;
 }
 
@@ -820,9 +823,6 @@ int Song::process( nframes_t nframes )
 		realtimepath = false;
 		stopTransport = false;
 		
-		if (scheduleForDeletion) {
-			audiodeviceClient->delete_client();
-		}
 		return 0;
 	}
 
@@ -961,6 +961,30 @@ Command * Song::playhead_to_workcursor( )
 Command * Song::master_gain( )
 {
 	return new Gain(this);
+}
+
+void Song::thread_save_add_track( QObject * obj )
+{
+	Track* track = qobject_cast<Track* >(obj);
+	
+	if (!track) {
+		qCritical("Unable to cast to Track, this is a Programming Error !!\n");
+		return;
+	}
+	
+	add_track(track);
+}
+
+void Song::thread_save_remove_track( QObject * obj )
+{
+	Track* track = qobject_cast<Track* >(obj);
+	
+	if (!track) {
+		qCritical("Unable to cast to Track, this is a Programming Error !!\n");
+		return;
+	}
+	
+	remove_track(track);
 }
 
 

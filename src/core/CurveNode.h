@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: CurveNode.h,v 1.1 2006/05/10 11:02:03 r_sijrier Exp $
+    $Id: CurveNode.h,v 1.2 2006/06/26 23:57:48 r_sijrier Exp $
 */
 
 #ifndef CURVENODE_H
@@ -25,9 +25,13 @@
 
 #include "defines.h"
 
+#include <QObject>
 
-class CurveNode
+
+class CurveNode : public QObject
 {
+
+	Q_OBJECT
 
 public:
         CurveNode(double pos, double value);

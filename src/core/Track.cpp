@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.15 2006/06/20 19:19:05 r_sijrier Exp $
+$Id: Track.cpp,v 1.16 2006/06/26 23:57:48 r_sijrier Exp $
 */
 
 #include "Track.h"
@@ -610,6 +610,30 @@ void Track::get_render_range(nframes_t& startframe, nframes_t& endframe )
 		}
 	}
 	
+}
+
+void Track::thread_save_add_clip( QObject* obj )
+{
+	AudioClip* clip = qobject_cast<AudioClip* >(obj);
+	
+	if (!clip) {
+ 		qCritical("Unable to cast to Track, this is a Programming Error !!\n");
+ 		return;
+	}
+	
+	add_clip(clip);
+}
+
+void Track::thread_save_remove_clip( QObject* obj )
+{
+	AudioClip* clip = qobject_cast<AudioClip* >(obj);
+	
+	if (!clip) {
+ 		qCritical("Unable to cast to Track, this is a Programming Error !!\n");
+ 		return;
+	}
+	
+	remove_clip(clip);
 }
 
 // eof
