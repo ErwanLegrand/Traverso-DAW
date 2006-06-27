@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: CopyClip.cpp,v 1.3 2006/06/26 23:57:08 r_sijrier Exp $
+    $Id: CopyClip.cpp,v 1.4 2006/06/27 00:13:26 r_sijrier Exp $
 */
 
 #include "CopyClip.h"
@@ -75,7 +75,6 @@ int CopyClip::do_action()
 int CopyClip::undo_action()
 {
         PENTER;
-        targetTrack->remove_clip(newCreatedClip);
 	THREAD_SAVE_REMOVE(newCreatedClip, targetTrack, "remove_clip");
         return 1;
 }
