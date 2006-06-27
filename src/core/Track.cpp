@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.16 2006/06/26 23:57:48 r_sijrier Exp $
+$Id: Track.cpp,v 1.17 2006/06/27 21:48:33 r_sijrier Exp $
 */
 
 #include "Track.h"
@@ -499,8 +499,11 @@ int Track::process( nframes_t nframes )
 	int result;
 	float gainFactor, panFactor;
 	
+	
 	for (int i=0; i<audioClipList.size(); ++i) {
 	
+		memset (mixdown, 0, sizeof (audio_sample_t) * nframes);
+		
 		AudioClip* clip = audioClipList.at(i);
 		
 		
