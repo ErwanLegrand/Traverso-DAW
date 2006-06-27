@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.22 2006/06/26 23:57:48 r_sijrier Exp $
+$Id: Song.cpp,v 1.23 2006/06/27 21:48:05 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -96,7 +96,6 @@ Song::Song(Project* project, int number)
 	emit m_project->newSongCreated( this );
 
 	activeTrackNumber = 1;
-	printf("tracksToCreate is %d\n", tracksToCreate);
 	for (int i=1; i <= tracksToCreate; i++) {
 		create_track();
 	}
@@ -829,7 +828,7 @@ int Song::process( nframes_t nframes )
 	// zero the masterOut buffers _and_ the mixdown buffer which is used 
 	// in the Tracks' to mixdown the audioclips!
 	masterOut->silence_buffers(nframes);
-	memset (mixdown, 0, sizeof (audio_sample_t) * nframes);
+/*	memset (mixdown, 0, sizeof (audio_sample_t) * nframes);*/
 	
 	int processResult = 0;
 	
