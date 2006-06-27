@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Tsar.cpp,v 1.1 2006/06/27 00:05:13 r_sijrier Exp $
+    $Id: Tsar.cpp,v 1.2 2006/06/27 00:40:29 r_sijrier Exp $
 */
 
 #include "Tsar.h"
@@ -59,8 +59,8 @@ void Tsar::process_object( QObject * objectToBeAdded, QObject* objectToAddTo, ch
 	objectsToBeAddedRemoved.append(tsarstruct);
 	mutex.unlock();
 	
-	processAddRemove = 1;
-// 	start_add_remove();
+//	processAddRemove = 1;
+	start_add_remove();
 }
 
 
@@ -84,7 +84,7 @@ void Tsar::add_remove_items_in_audio_processing_path( )
 	
 	int count = 0;
 	
-	trav_time_t starttime = get_microseconds();
+// 	trav_time_t starttime = get_microseconds();
 	
 	foreach(TsarDataStruct tsarData, objectsToBeAddedRemoved) {
 		
@@ -105,8 +105,8 @@ void Tsar::add_remove_items_in_audio_processing_path( )
 	objectsToBeAddedRemoved.clear();
 
 
-	int processtime = (int) (get_microseconds() - starttime);
-	printf("Number of objects processed: %d in %d useconds\n",count, processtime);
+// 	int processtime = (int) (get_microseconds() - starttime);
+// 	printf("Number of objects processed: %d in %d useconds\n",count, processtime);
 
 	mutex.unlock();
 	
