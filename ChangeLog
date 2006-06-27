@@ -1,3 +1,18 @@
+x-x-2006 Remon Sijrier <remon@vt.shuis.tudelft.nl>
+	* Released 0.30.0X
+	
+	* Added a "select project dir" in Project manager view.
+	* Correctly set AudioClip track start/end frame at startup.
+	* Fixed project render progress indication for long Songs (> 16 minutes)
+	* Don't load/set a newly created Project, so the SongView of the current loaded
+	  project will still be accessible!
+	* Fixed issues with solo-stereo AudioClips in one Track. 
+	* Make pan work for solo AudioClips as well.
+	* Made fadeout adjustment follow the mouse which is more natural.
+	* Added "Draw Rectified Wave" radiobutton in Settings View.
+	* Some more small fixes ;-)
+
+
 16-06-2006 Remon Sijrier <remon@vt.shuis.tudelft.nl>
 	* Released 0.30.0-rc1
 	
