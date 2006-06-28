@@ -17,17 +17,16 @@
 	along with this program; if not, write to the Free Software
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-	$Id: Main.cpp,v 1.2 2006/05/03 12:00:15 r_sijrier Exp $
+	$Id: Main.cpp,v 1.3 2006/06/28 12:06:00 r_sijrier Exp $
 */
 
 #include <signal.h>
 
-#include <libtraverso.h>
 #include <QLocale>
 #include <QTranslator>
-#include <QThread>
 #include "Traverso.h"
 #include "Main.h"
+#include "../config.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -77,14 +76,15 @@ int main( int argc, char **argv )
 					Debugger::create_log("traverso.log");
 			if ((strcmp(argv[i],"--help")==0) || (strcmp(argv[i],"-h")==0)) {
 				printf("\nUsage: traverso [OPTIONS]\n\n");
-				printf("Valid OPTIONS are :\n");
-				printf("\t\t--d1  \t\t Set debug level to 1 (BASIC)\n");
-				printf("\t\t--d2  \t\t Set debug level to 2 (FLOOD)\n");
-				printf("\t\t--d3  \t\t Set debug level to 3 (SUPER_FLOOD)\n");
-				printf("\t\t--d4  \t\t Set debug level to 4 (ALL)\n");
-				printf("\t\t--log \t\t Create a ~/traverso.log file instead of dumping debug messages to stdout\n");
-				printf("\t\t--scanbuses \t List all hardware in and out buses\n");
-				printf("\t\t--help or -h \t This help text\n");
+				printf("Valid OPTIONS are :\n\n");
+				printf("\t--help or -h \t This help text\n");
+				printf("\t -v   \t\t Print version number\n");
+				printf("\t--d1  \t\t Set debug level to 1 (BASIC)\n");
+				printf("\t--d2  \t\t Set debug level to 2 (FLOOD)\n");
+				printf("\t--d3  \t\t Set debug level to 3 (SUPER_FLOOD)\n");
+				printf("\t--d4  \t\t Set debug level to 4 (ALL)\n");
+				printf("\t--log \t\t Create a ~/traverso.log file instead of dumping debug messages to stdout\n");
+// 				printf("\t--scanbuses \t List all hardware in and out buses\n");
 				printf("\n");
 				return 0;
 			}
@@ -103,6 +103,10 @@ int main( int argc, char **argv )
 			}
 			if (strcmp(argv[i],"--memtrace")==0)
 					TRACE_ON();
+			if (strcmp(argv[i],"-v")==0) {
+				printf("Traverso %s\n", VERSION);
+				return 0;
+			}
 		}
 	}
 	PENTER;
