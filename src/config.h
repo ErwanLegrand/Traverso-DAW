@@ -1,24 +1,5 @@
-/* Define to 1 if you have the `asound' library (-lasound). */
-#define HAVE_LIBASOUND 1
-
-/* Define to 1 if you have the `m' library (-lm). */
-#define HAVE_LIBM 1
-
-/* Define to 1 if you have the 'ogg' library (-logg). */
-#define HAVE_LIBOGG 1
-
-/* Define to 1 if you have the `pthread' library (-lpthread). */
-#define HAVE_LIBPTHREAD 1
-
-/* Define to 1 if you have the 'vorbis' library (-lvorbis -lvorbisenc
-   -lvorbisfile). */
-#define HAVE_LIBVORBIS 1
-
 /* Name of package */
 #define PACKAGE "traverso"
-
-/* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT ""
 
 /* Define to the full name of this package. */
 #define PACKAGE_NAME "traverso"
