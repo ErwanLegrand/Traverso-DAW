@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FileHelpers.cpp,v 1.1 2006/04/25 16:37:30 r_sijrier Exp $
+$Id: FileHelpers.cpp,v 1.2 2006/06/29 22:43:47 r_sijrier Exp $
 */
 
 #include "FileHelpers.h"
@@ -59,9 +59,9 @@ int FileHelper::remove_recursively(QString pName)
 		return 1;
 	} else if(fileInfo.isDir()) {
 		QDir dir(name);
-		PWARN("name is: %s", name.toAscii().data());
 		QFileInfoList list = dir.entryInfoList();
 		QFileInfo fi;
+		
 		for (int i = 0; i < list.size(); ++i) {
 			fi = list.at(i);
 			if ((fi.fileName() != ".") && (fi.fileName() != "..")) {
@@ -72,6 +72,7 @@ int FileHelper::remove_recursively(QString pName)
 				}
 			}
 		}
+		
 		if (!dir.rmdir(name)) {
 			PERROR("failed to remove directory %s\n", name.toAscii().data());
 			return -1;
