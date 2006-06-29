@@ -67,6 +67,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="audioSourcesButton" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
        <property name="text" >
         <string>Audio Sources</string>
        </property>
