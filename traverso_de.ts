@@ -3,7 +3,7 @@
     <name>AudioClip</name>
     <message>
         <source>Unable to Record to Track</source>
-        <translation type="unfinished">Kann nicht auf Track aufnehmen</translation>
+        <translation>Kann nicht auf Track aufnehmen</translation>
     </message>
     <message>
         <source>AudioDevice doesn&apos;t have this Capture Bus: &quot;</source>
@@ -27,56 +27,56 @@
     </message>
     <message>
         <source>AudioDevice doesn&apos;t have this Capture Bus: %1 (Track %2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Dieser Aufnahmebus existiert nicht: %1 (Track %2)</translation>
     </message>
     <message>
         <source>Normalization</source>
-        <translation type="unfinished"></translation>
+        <translation>Normalisieren</translation>
     </message>
     <message>
         <source>Set Normalization level:</source>
-        <translation type="unfinished"></translation>
+        <translation>Normalisieren auf Level:</translation>
     </message>
 </context>
 <context>
     <name>AudioClipView</name>
     <message>
         <source>Fastest</source>
-        <translation type="unfinished"></translation>
+        <translation>Sehr schnell</translation>
     </message>
     <message>
         <source>Fast</source>
-        <translation type="unfinished"></translation>
+        <translation>Schnell</translation>
     </message>
     <message>
         <source>Linear</source>
-        <translation type="unfinished"></translation>
+        <translation>Linear</translation>
     </message>
     <message>
         <source>Slow</source>
-        <translation type="unfinished"></translation>
+        <translation>Langsam</translation>
     </message>
     <message>
         <source>Slowest</source>
-        <translation type="unfinished"></translation>
+        <translation>Sehr langsam</translation>
     </message>
 </context>
 <context>
     <name>AudioDevice</name>
     <message>
         <source>No Driver Loaded</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein Treiber geladen</translation>
     </message>
     <message>
         <source>No Device Configured</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein Gerät konfiguriert</translation>
     </message>
 </context>
 <context>
     <name>AudioSourceManager</name>
     <message>
         <source>Failed to initialize ReadSource : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Quelle nicht öffnen: %1</translation>
     </message>
 </context>
 <context>
@@ -254,7 +254,7 @@
     </message>
     <message>
         <source>Unable to create export directory! Please check permissions for this directory: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Export-Verzeichnis kann nicht erstellt werden! Bitte überprüfen Sie die Berechtigungen für Verzeichnis: %1</translation>
     </message>
 </context>
 <context>
@@ -281,47 +281,47 @@
     </message>
     <message>
         <source>1:8</source>
-        <translation type="unfinished"></translation>
+        <translation>1:8</translation>
     </message>
     <message>
         <source>1:20</source>
-        <translation type="unfinished"></translation>
+        <translation>1:20</translation>
     </message>
     <message>
         <source>1:64</source>
-        <translation type="unfinished"></translation>
+        <translation>1:64</translation>
     </message>
     <message>
         <source>1:128</source>
-        <translation type="unfinished"></translation>
+        <translation>1:128</translation>
     </message>
     <message>
         <source>1:256</source>
-        <translation type="unfinished"></translation>
+        <translation>1:256</translation>
     </message>
     <message>
         <source>1:512</source>
-        <translation type="unfinished"></translation>
+        <translation>1:512</translation>
     </message>
     <message>
         <source>1:1024</source>
-        <translation type="unfinished"></translation>
+        <translation>1:1024</translation>
     </message>
     <message>
         <source>1:2048</source>
-        <translation type="unfinished"></translation>
+        <translation>1:2048</translation>
     </message>
     <message>
         <source>1:4096</source>
-        <translation type="unfinished"></translation>
+        <translation>1:4096</translation>
     </message>
     <message>
         <source>1:8192</source>
-        <translation type="unfinished"></translation>
+        <translation>1:8192</translation>
     </message>
     <message>
         <source>1:16384</source>
-        <translation type="unfinished"></translation>
+        <translation>1:16384</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Horizontal Zoom level&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -377,31 +377,31 @@
     </message>
     <message>
         <source>22050</source>
-        <translation type="unfinished"></translation>
+        <translation>22050</translation>
     </message>
     <message>
         <source>32000</source>
-        <translation type="unfinished"></translation>
+        <translation>32000</translation>
     </message>
     <message>
         <source>44100</source>
-        <translation type="unfinished"></translation>
+        <translation>44100</translation>
     </message>
     <message>
         <source>48000</source>
-        <translation type="unfinished"></translation>
+        <translation>48000</translation>
     </message>
     <message>
         <source>96000</source>
-        <translation type="unfinished"></translation>
+        <translation>96000</translation>
     </message>
     <message>
         <source>16</source>
-        <translation type="unfinished"></translation>
+        <translation>16</translation>
     </message>
     <message>
         <source>32</source>
-        <translation type="unfinished"></translation>
+        <translation>32</translation>
     </message>
     <message>
         <source>Save</source>
@@ -437,71 +437,71 @@
     </message>
     <message>
         <source>Settings Saved!</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen gespeichert!</translation>
     </message>
     <message>
         <source>Buffer latency</source>
-        <translation type="unfinished"></translation>
+        <translation>Puffer-Latenz</translation>
     </message>
     <message>
         <source>latency (ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>Latenz (ms)</translation>
     </message>
     <message>
         <source>Sample rate</source>
-        <translation type="unfinished">Samplefrequenz</translation>
+        <translation>Samplefrequenz</translation>
     </message>
     <message>
         <source>88200</source>
-        <translation type="unfinished"></translation>
+        <translation>88200</translation>
     </message>
     <message>
         <source>Audio Driver</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio-Treiber</translation>
     </message>
     <message>
         <source>Buffer size</source>
-        <translation type="unfinished"></translation>
+        <translation>Puffergrösse</translation>
     </message>
     <message>
         <source>64</source>
-        <translation type="unfinished"></translation>
+        <translation>64</translation>
     </message>
     <message>
         <source>128</source>
-        <translation type="unfinished"></translation>
+        <translation>128</translation>
     </message>
     <message>
         <source>256</source>
-        <translation type="unfinished"></translation>
+        <translation>256</translation>
     </message>
     <message>
         <source>512</source>
-        <translation type="unfinished"></translation>
+        <translation>512</translation>
     </message>
     <message>
         <source>1024</source>
-        <translation type="unfinished"></translation>
+        <translation>1024</translation>
     </message>
     <message>
         <source>2048</source>
-        <translation type="unfinished"></translation>
+        <translation>2048</translation>
     </message>
     <message>
         <source>4096</source>
-        <translation type="unfinished"></translation>
+        <translation>4096</translation>
     </message>
     <message>
         <source>Restart Driver</source>
-        <translation type="unfinished"></translation>
+        <translation>Treiber neu starten</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <source>Draw AudioWaves Rectified</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeichne Wave-Formen halbiert</translation>
     </message>
 </context>
 <context>
@@ -527,7 +527,7 @@
     <name>ManagerWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished">Form</translation>
+        <translation>Form</translation>
     </message>
     <message>
         <source>Project Management</source>
@@ -547,7 +547,7 @@
     </message>
     <message>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -574,26 +574,26 @@
     </message>
     <message>
         <source>Project loaded (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Projekt geladen (%1)</translation>
     </message>
     <message>
         <source>Project saved (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Projekt gespeichert (%1)</translation>
     </message>
     <message>
         <source>Could not open project properties file for writing! (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Projekt-Eigenschaften konnte nicht geschrieben werden! (%1)</translation>
     </message>
     <message>
         <source>Song doesn&apos;t exist! ( Song %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Der Song existiert nicht! (Song %1)</translation>
     </message>
 </context>
 <context>
     <name>ProjectInfoWidget</name>
     <message>
         <source>Project Information Widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Projektinformationen</translation>
     </message>
     <message>
         <source>Bitdepth</source>
@@ -636,7 +636,7 @@
     </message>
     <message>
         <source>Could not load project %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Laden von Projekt %1</translation>
     </message>
 </context>
 <context>
@@ -679,7 +679,7 @@
     </message>
     <message>
         <source>ProjectManagerWidget</source>
-        <translation type="unfinished"></translation>
+        <translation>Projektmanager</translation>
     </message>
     <message>
         <source>Selected Project</source>
@@ -711,7 +711,7 @@
     </message>
     <message>
         <source>6</source>
-        <translation type="unfinished"></translation>
+        <translation>6</translation>
     </message>
     <message>
         <source>Project Management</source>
@@ -767,49 +767,49 @@
     </message>
     <message>
         <source>Project does not exist! (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Das Projekt existiert nicht! (%1)</translation>
     </message>
     <message>
         <source>The Project &quot;%1&quot; already exists, do you want to remove it and replace it with a new one ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Ein Projekt namens &quot;%1&quot; existiert bereits. Wollen Sie es löschen und durch ein neues ersetzen?</translation>
     </message>
     <message>
         <source>Couldn&apos;t create project (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Erstellen von Projekt %1</translation>
     </message>
     <message>
         <source>Are you sure that you want to remove the project %1 ? It&apos;s not possible to undo it !</source>
-        <translation type="unfinished"></translation>
+        <translation>Wollen sie das Projekt &quot;%1&quot; wirklich entfernen? Diese Aktion kann nicht rückgängig gemacht werden!</translation>
     </message>
     <message>
         <source>Choose an existing or create a new Project Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Wählen sie ein existierendes Projektverzeichnis, oder erstellen Sie ein neues</translation>
     </message>
     <message>
         <source>Traverso - Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Traverso - Warnung</translation>
     </message>
     <message>
         <source>Unable to create Project directory! 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Projektverzeichnis konnte nicht erstellt werden!</translation>
     </message>
     <message>
         <source>Please check permission for this directory: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitte überprüfen Sie die Berechtigungen für Verzeichnis %1</translation>
     </message>
     <message>
         <source>Traverso - Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Traverso - Information</translation>
     </message>
     <message>
         <source>Created new Project directory for you here: %1
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Ein neues Projektverzeichnis wurde erstellt: %1</translation>
     </message>
     <message>
         <source>Select Project Dir</source>
-        <translation type="unfinished"></translation>
+        <translation>Projektverzeichnis wählen</translation>
     </message>
 </context>
 <context>
@@ -820,7 +820,7 @@
     </message>
     <message>
         <source>TrackNumber %1 does not exist!</source>
-        <translation type="unfinished"></translation>
+        <translation>Track Nr. %1 existiert nicht!</translation>
     </message>
 </context>
 <context>
@@ -838,7 +838,7 @@
     <name>SongInfoWidget</name>
     <message>
         <source>SongInfoWidget</source>
-        <translation type="unfinished"></translation>
+        <translation>Songinformationen</translation>
     </message>
     <message>
         <source>-</source>
@@ -862,7 +862,7 @@
     </message>
     <message>
         <source>Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Volumen</translation>
     </message>
 </context>
 <context>
@@ -881,7 +881,7 @@
     </message>
     <message>
         <source>Form</source>
-        <translation type="unfinished">Form</translation>
+        <translation>Form</translation>
     </message>
     <message>
         <source>Selected Song</source>
@@ -937,14 +937,14 @@
     </message>
     <message>
         <source>Selected Song: Save (as) / Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausgewählter Song: Speichern (unter) / Löschen</translation>
     </message>
 </context>
 <context>
     <name>SystemInfoWidget</name>
     <message>
         <source>SystemInfoWidget</source>
-        <translation type="unfinished"></translation>
+        <translation>Systeminformationen</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Sans Serif; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;System&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -964,43 +964,43 @@
     </message>
     <message>
         <source>Card Name (na)</source>
-        <translation type="unfinished"></translation>
+        <translation>Soundkarte</translation>
     </message>
     <message>
         <source>image</source>
-        <translation type="unfinished"></translation>
+        <translation>Bild</translation>
     </message>
     <message>
         <source>buffer size (na)</source>
-        <translation type="unfinished"></translation>
+        <translation>Puffergrösse</translation>
     </message>
     <message>
         <source>rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Rate</translation>
     </message>
     <message>
         <source>- GB</source>
-        <translation type="unfinished"></translation>
+        <translation>- GB</translation>
     </message>
     <message>
         <source>drivertype (na)</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio-Treiber</translation>
     </message>
     <message>
         <source>xruns (na)</source>
-        <translation type="unfinished"></translation>
+        <translation>xruns</translation>
     </message>
     <message>
         <source>latency (na)</source>
-        <translation type="unfinished"></translation>
+        <translation>Latenz</translation>
     </message>
     <message>
         <source> - %</source>
-        <translation type="unfinished"></translation>
+        <translation>(sp)- %</translation>
     </message>
     <message>
         <source>bitdepth</source>
-        <translation type="unfinished"></translation>
+        <translation>Bit-Auflösung</translation>
     </message>
 </context>
 <context>
@@ -1018,45 +1018,45 @@
     <name>TrackView</name>
     <message>
         <source>Set Track name</source>
-        <translation type="unfinished"></translation>
+        <translation>Track-Name</translation>
     </message>
     <message>
         <source>Enter new Track name</source>
-        <translation type="unfinished"></translation>
+        <translation>Geben Sie einen neuen Track-Namen ein</translation>
     </message>
 </context>
 <context>
     <name>Traverso</name>
     <message>
         <source>Choose an existing or create a new Project Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Wählen sie ein existierendes Projektverzeichnis, oder erstellen Sie ein neues</translation>
     </message>
     <message>
         <source>Traverso - Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Traverso - Information</translation>
     </message>
     <message>
         <source>Using existing Project directory: %1
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Verwende ein existierendes Projektverzeichnis: %1(new line)</translation>
     </message>
     <message>
         <source>Traverso - Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Traverso - Warnung</translation>
     </message>
     <message>
         <source>Unable to create Project directory! 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>(sp)Projektverzeichnis kann nicht erstellt werden!</translation>
     </message>
     <message>
         <source>Please check permission for this directory: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitte überprüfen Sie die Berechtigungen für Verzeichnis %1</translation>
     </message>
     <message>
         <source>Created new Project directory for you here: %1
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Ein neues Projektverzeichnis wurde erstellt: %1</translation>
     </message>
 </context>
 </TS>
