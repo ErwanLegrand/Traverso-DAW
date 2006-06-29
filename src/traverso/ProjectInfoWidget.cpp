@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ProjectInfoWidget.cpp,v 1.2 2006/05/01 21:31:58 r_sijrier Exp $
+    $Id: ProjectInfoWidget.cpp,v 1.3 2006/06/29 22:16:21 r_sijrier Exp $
 */
 
 #include "ProjectInfoWidget.h"
@@ -58,6 +58,11 @@ void ProjectInfoWidget::set_project(Project* project)
 		
 		connect(m_project, SIGNAL(songAdded()), this, SLOT(update_song_count( )));
 		connect(m_project, SIGNAL(songRemoved( )), this, SLOT(update_song_count( )));
+	} else {
+		projectNameLabel->setText("-");
+		bitdepthLabel->setText("-");
+		rateLabel->setText("-");
+		songCountLabel->setText("-");
 	}
 }
 

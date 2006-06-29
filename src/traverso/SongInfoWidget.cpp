@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongInfoWidget.cpp,v 1.6 2006/06/20 19:28:26 r_sijrier Exp $
+$Id: SongInfoWidget.cpp,v 1.7 2006/06/29 22:16:11 r_sijrier Exp $
 */
 
 #include "SongInfoWidget.h"
@@ -52,6 +52,12 @@ void SongInfoWidget::set_project(Project* project )
 	if (project) {
 		m_project = project;
 		connect(m_project, SIGNAL(currentSongChanged(Song* )), this, SLOT(set_song(Song* )));
+	} else {
+		smpteLabel->setText("-");
+		zoomLabel->setText("-");
+		snapStatusLabel->setText("-");
+		masterGainLabel->setText("-");
+		songNameLabel->setText("-");
 	}
 }
 
