@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SplitClip.cpp,v 1.5 2006/06/26 23:57:08 r_sijrier Exp $
+$Id: SplitClip.cpp,v 1.6 2006/06/29 22:38:08 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -52,7 +52,7 @@ int SplitClip::prepare_actions()
 	leftClip->set_right_edge(splitPoint);
 	
 	rightClip->set_left_edge(splitPoint);
-	rightClip->set_track_start_frame( splitPoint );
+	rightClip->set_track_start_frame( splitPoint);
 
 	return 1;
 }
@@ -61,10 +61,10 @@ int SplitClip::prepare_actions()
 int SplitClip::do_action()
 {
 	PENTER;
-	THREAD_SAVE_REMOVE(m_clip, m_track, "remove_clip");
+	THREAD_SAVE_REMOVE(m_clip, m_track, remove_clip);
 
-	THREAD_SAVE_ADD(leftClip, leftClip->get_track(), "add_clip");
-	THREAD_SAVE_ADD(rightClip, rightClip->get_track(), "add_clip");
+	THREAD_SAVE_ADD(leftClip, leftClip->get_track(), add_clip);
+	THREAD_SAVE_ADD(rightClip, rightClip->get_track(), add_clip);
 	
 	return 1;
 }
@@ -72,10 +72,10 @@ int SplitClip::do_action()
 int SplitClip::undo_action()
 {
 	PENTER;
-	THREAD_SAVE_ADD(m_clip, m_track, "add_clip");
+	THREAD_SAVE_ADD(m_clip, m_track, add_clip);
 	
-	THREAD_SAVE_REMOVE(leftClip, leftClip->get_track(), "remove_clip");
-	THREAD_SAVE_REMOVE(rightClip, rightClip->get_track(), "remove_clip");
+	THREAD_SAVE_REMOVE(leftClip, leftClip->get_track(), remove_clip);
+	THREAD_SAVE_REMOVE(rightClip, rightClip->get_track(), remove_clip);
 	
 	return 1;
 }
