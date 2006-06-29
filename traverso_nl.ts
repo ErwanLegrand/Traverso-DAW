@@ -466,7 +466,7 @@
     </message>
     <message>
         <source>Project loaded (%1)</source>
-        <translation type="unfinished">Project %1 geladen</translation>
+        <translation>Project %1 geladen</translation>
     </message>
     <message>
         <source>Project saved (%1)</source>
@@ -742,7 +742,7 @@
     </message>
     <message>
         <source>Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Gain</translation>
     </message>
 </context>
 <context>
