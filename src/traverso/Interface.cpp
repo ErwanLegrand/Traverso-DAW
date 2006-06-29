@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.8 2006/06/23 11:21:02 r_sijrier Exp $
+$Id: Interface.cpp,v 1.9 2006/06/29 22:15:41 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -173,14 +173,15 @@ void Interface::set_project(Project* project)
 		connect(project, SIGNAL(currentSongChanged(Song* )), overView, SLOT(set_song(Song* )));
 		connect(project, SIGNAL(newSongCreated(Song* )), this, SLOT(create_songview(Song* )));
 		
-		songViewList.clear();
-		
-		// OK, a new Project is created. Remove and delete all the ViewPorts related to this project
-		while ( ! currentProjectViewPortList.isEmpty()) {
-			ViewPort* view = currentProjectViewPortList.takeFirst();
-			centerAreaWidget->removeWidget(view);
-			delete view;
-		}
+	}
+	
+	songViewList.clear();
+	
+	// OK, a new Project is created. Remove and delete all the ViewPorts related to this project
+	while ( ! currentProjectViewPortList.isEmpty()) {
+		ViewPort* view = currentProjectViewPortList.takeFirst();
+		centerAreaWidget->removeWidget(view);
+		delete view;
 	}
 	
 	currentSongView = 0;
