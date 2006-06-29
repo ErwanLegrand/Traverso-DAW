@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.h,v 1.11 2006/06/26 23:57:48 r_sijrier Exp $
+$Id: Song.h,v 1.12 2006/06/29 22:43:24 r_sijrier Exp $
 */
 
 #ifndef SONG_H
@@ -152,9 +152,6 @@ public:
 
 	void disconnect_from_audiodevice_and_delete();
 	
-	void add_track(Track* track);
-	void remove_track(Track* track);
-	
 	audio_sample_t* 	mixdown;
 	audio_sample_t*		gainbuffer;
 
@@ -202,6 +199,11 @@ private:
 	int finish_audio_export();
 	void start_seek();
 
+	Track* create_track();
+	
+	void add_track(Track* track);
+	void remove_track(Track* track);
+	
 	friend class Track;
 	
 
@@ -216,7 +218,7 @@ public slots :
 	float get_gain() const;
 
 	Command* go();
-	Command* create_track();
+	Command* add_new_track();
 	Command* remove_track();
 
 	Command* set_editing_mode();
@@ -259,6 +261,8 @@ signals:
 	void propertieChanged();
 	void setCursorAtEdge();
 	void masterGainChanged();
+	void add_track_Signal();
+	void remove_track_Signal();
 
 private slots:
 	void thread_save_add_track(QObject* obj);

@@ -1,23 +1,23 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
- 
-    This file is part of Traverso
- 
-    Traverso is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
- 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
- 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
- 
-    $Id: Curve.cpp,v 1.9 2006/06/26 23:57:48 r_sijrier Exp $
+Copyright (C) 2005-2006 Remon Sijrier 
+
+This file is part of Traverso
+
+Traverso is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
+
+$Id: Curve.cpp,v 1.10 2006/06/29 22:43:24 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -38,9 +38,9 @@ using namespace std;
 Curve::Curve()
 		: ContextItem()
 {
-        PENTERCONS;
-        changed = true;
-        defaultValue = 1.0f;
+	PENTERCONS;
+	changed = true;
+	defaultValue = 1.0f;
 	lookup_cache.left = -1;
 	lookup_cache.range.first = nodes.end();
 }
@@ -54,9 +54,9 @@ Curve::~Curve()
 
 void Curve::add_node(double pos, double value)
 {
-        PENTER2;
-        nodes.append(new CurveNode(pos, value) );
-        emit stateChanged();
+	PENTER2;
+	nodes.append(new CurveNode(pos, value) );
+	emit stateChanged();
 }
 
 void Curve::solve ()
@@ -70,8 +70,8 @@ void Curve::solve ()
 	if ((npoints = nodes.size()) > 2) {
 		
 		/* Compute coefficients needed to efficiently compute a constrained spline
-		   curve. See "Constrained Cubic Spline Interpolation" by CJC Kruger
-		   (www.korf.co.uk/spline.pdf) for more details.
+		curve. See "Constrained Cubic Spline Interpolation" by CJC Kruger
+		(www.korf.co.uk/spline.pdf) for more details.
 		*/
 
 		double x[npoints];
@@ -103,8 +103,8 @@ void Curve::solve ()
 
 			if (cn == 0) {
 /*				qCritical  << _("programming error: ")
-				       << X_("non-CurvePoint event found in event list for a Curve")
-				       << endmsg;*/
+				<< X_("non-CurvePoint event found in event list for a Curve")
+				<< endmsg;*/
 				/*NOTREACHED*/
 			}
 			
@@ -228,7 +228,7 @@ void Curve::get_vector (double x0, double x1, float *vec, int32_t veclen)
 	if (x0 < min_x) {
 
 		/* fill some beginning section of the array with the 
-		   initial (used to be default) value 
+		initial (used to be default) value 
 		*/
 
 		double frac = (min_x - x0) / (x1 - x0);
@@ -271,43 +271,43 @@ void Curve::get_vector (double x0, double x1, float *vec, int32_t veclen)
 		return;
 	}
 
- 	if (npoints == 1 ) {
- 	
- 		for (i = 0; i < veclen; ++i) {
- 			vec[i] = nodes.front()->value;
- 		}
- 		return;
- 	}
- 
- 
- 	if (npoints == 2) {
- 
- 		/* linear interpolation between 2 points */
- 
- 		/* XXX I'm not sure that this is the right thing to
- 		   do here. but its not a common case for the envisaged
- 		   uses.
- 		*/
- 	
- 		if (veclen > 1) {
- 			dx = (hx - lx) / (veclen - 1) ;
- 		} else {
- 			dx = 0; // not used
- 		}
- 	
- 		double slope = (nodes.back()->value - nodes.front()->value)/  
+	if (npoints == 1 ) {
+	
+		for (i = 0; i < veclen; ++i) {
+			vec[i] = nodes.front()->value;
+		}
+		return;
+	}
+
+
+	if (npoints == 2) {
+
+		/* linear interpolation between 2 points */
+
+		/* XXX I'm not sure that this is the right thing to
+		do here. but its not a common case for the envisaged
+		uses.
+		*/
+	
+		if (veclen > 1) {
+			dx = (hx - lx) / (veclen - 1) ;
+		} else {
+			dx = 0; // not used
+		}
+	
+		double slope = (nodes.back()->value - nodes.front()->value)/  
 			(nodes.back()->when - nodes.front()->when);
- 		double yfrac = dx*slope;
- 
- 		vec[0] = nodes.front()->value + slope * (lx - nodes.front()->when);
- 
- 		for (i = 1; i < veclen; ++i) {
- 			vec[i] = vec[i-1] + yfrac;
- 		}
- 
- 		return;
- 	}
- 
+		double yfrac = dx*slope;
+
+		vec[0] = nodes.front()->value + slope * (lx - nodes.front()->when);
+
+		for (i = 1; i < veclen; ++i) {
+			vec[i] = vec[i-1] + yfrac;
+		}
+
+		return;
+	}
+
 	if (changed) {
 		solve ();
 	}
@@ -329,9 +329,9 @@ double Curve::multipoint_eval (double x)
 	std::pair<QList<CurveNode* >::iterator, QList<CurveNode* >::iterator> range;
 
 	if ((lookup_cache.left < 0) ||
-	    ((lookup_cache.left > x) || 
-	     (lookup_cache.range.first == nodes.end()) || 
-	     ((*lookup_cache.range.second)->when < x))) {
+	((lookup_cache.left > x) || 
+	(lookup_cache.range.first == nodes.end()) || 
+	((*lookup_cache.range.second)->when < x))) {
 		
 		Comparator cmp;
 		CurveNode cn (x, 0.0);
@@ -342,14 +342,14 @@ double Curve::multipoint_eval (double x)
 	range = lookup_cache.range;
 
 	/* EITHER 
-	   
-	   a) x is an existing control point, so first == existing point, second == next point
+	
+	a) x is an existing control point, so first == existing point, second == next point
 
-	   OR
+	OR
 
-	   b) x is between control points, so range is empty (first == second, points to where
-	       to insert x)
-	   
+	b) x is between control points, so range is empty (first == second, points to where
+	to insert x)
+	
 	*/
 
 	if (range.first == range.second) {
@@ -384,8 +384,11 @@ double Curve::multipoint_eval (double x)
 void Curve::set_range( double when )
 {
 	if (nodes.isEmpty() || nodes.last()->when == when) {
+// 		printf("NOT Setting range!\n");
 		return;
 	}
+	
+	printf("Setting range!, %lf\n", when);
 	
 	Q_ASSERT(when >= 0);
 	
@@ -415,6 +418,7 @@ void Curve::set_changed( )
 double Curve::get_range( ) const
 {
 	if (nodes.isEmpty()) {
+// 		printf("Curve::get_range(), nodes is empty\n");
 		return 0;
 	}
 	
@@ -438,22 +442,18 @@ void Curve::clear( )
 
 void Curve::thread_save_add_node( QObject * obj )
 {
-// 	printf("Entering Curve::add_node \n");
-	
 	CurveNode* node = qobject_cast<CurveNode* >(obj);
 	
 	if (!node) {
 		qCritical("Unable to cast to CurveNode, this is a Programming Error !\n");
 		return;
 	}
-        
-        nodes.append(node);
-        emit stateChanged();
+	
+	nodes.append(node);
 }
 
-void Curve::thread_save_clear( QObject * obj )
+void Curve::thread_save_clear( QObject *  )
 {
-// 	printf("clearing nodes from rt thread\n");
 	clear();
 }
 

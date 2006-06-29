@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Tsar.cpp,v 1.2 2006/06/27 00:40:29 r_sijrier Exp $
+    $Id: Tsar.cpp,v 1.3 2006/06/29 22:43:24 r_sijrier Exp $
 */
 
 #include "Tsar.h"
@@ -44,6 +44,7 @@ Tsar::Tsar()
 	addRemoveRetryTimer.setSingleShot( true );
 
 	connect(&addRemoveRetryTimer, SIGNAL(timeout()), this, SLOT(start_add_remove()));
+	connect(&finishProcessedObjectsTimer, SIGNAL(timeout()), this, SLOT(finish_processed_objects()));
 }
 
 void Tsar::process_object( QObject * objectToBeAdded, QObject* objectToAddTo, char * slot )
@@ -56,11 +57,12 @@ void Tsar::process_object( QObject * objectToBeAdded, QObject* objectToAddTo, ch
 	tsarstruct.slot = slot;
 	
 	mutex.lock();
-	objectsToBeAddedRemoved.append(tsarstruct);
+	objectsToBeProcessed.append(tsarstruct);
 	mutex.unlock();
 	
 //	processAddRemove = 1;
 	start_add_remove();
+	finishProcessedObjectsTimer.start( 20 );
 }
 
 
@@ -75,7 +77,7 @@ void Tsar::add_remove_items_in_audio_processing_path( )
 		return;
 	}
 	
-	PMESG("processAddRemove is true, entering add_remove_items_in_audio_processing_path()");
+// 	PMESG("processAddRemove is true, entering add_remove_items_in_audio_processing_path()");
 	
 	if ( ! mutex.tryLock() ) {
 		printf("Tsar::add_remove_items_in_audio_processing_path() : Couldn't lock mutex, retrying next cycle\n");
@@ -84,33 +86,38 @@ void Tsar::add_remove_items_in_audio_processing_path( )
 	
 	int count = 0;
 	
-// 	trav_time_t starttime = get_microseconds();
+	trav_time_t starttime = get_microseconds();
 	
-	foreach(TsarDataStruct tsarData, objectsToBeAddedRemoved) {
-		
+	foreach(TsarDataStruct tsarData, objectsToBeProcessed) {
+	
 		char* slot = QByteArray("thread_save_").append(tsarData.slot).data();
 		
 		if ( ! QMetaObject::invokeMethod(tsarData.objectToAddTo, slot, Qt::DirectConnection, Q_ARG(QObject*, tsarData.objectToBeAdded)) ) {
+			
 			qDebug("Tsar::add_remove_items_in_audio_processing_path() QMetaObject::invokeMethod failed");
 			qDebug("ToBeAddedRemovedObject: %s from %s::%s\n", tsarData.objectToBeAdded->metaObject()->className(), tsarData.objectToAddTo->metaObject()->className(), slot);
+		
 		} else {
+			
 			PMESG("Tsar::add_remove_items_in_audio_processing_path() QMetaObject::invokeMethod: Succes!");
+			
+			processedObjects.append( tsarData );
 		}	
 		
-		PMESG("ToBeAddedRemovedObject: %s from %s::%s\n", tsarData.objectToBeAdded->metaObject()->className(), tsarData.objectToAddTo->metaObject()->className(), slot);
+		PMESG("ToBeAddedRemovedObject: %s from %s::%s", tsarData.objectToBeAdded->metaObject()->className(), tsarData.objectToAddTo->metaObject()->className(), slot);
+		
 		
 		count++;
 	}
 	
-	objectsToBeAddedRemoved.clear();
-
-
-// 	int processtime = (int) (get_microseconds() - starttime);
-// 	printf("Number of objects processed: %d in %d useconds\n",count, processtime);
+	objectsToBeProcessed.clear();
+	
+	int processtime = (int) (get_microseconds() - starttime);
+ 	printf("\nNumber of objects processed: %d in %d useconds\n",count, processtime);
 
 	mutex.unlock();
 	
-	PMESG("done add_remove_items_in_audio_processing_path(), set processAddRemove to 0\n");
+// 	PMESG("done add_remove_items_in_audio_processing_path(), set processAddRemove to 0\n");
 	
 	processAddRemove = 0;
 }
@@ -141,6 +148,32 @@ void Tsar::start_add_remove( )
 	
 	processAddRemove = 1;
 	retryCount = 0;
+	
+}
+
+void Tsar::finish_processed_objects( )
+{
+	printf("Entering finish_processed_objects()\n");
+	
+	emit addRemoveFinished();
+	
+	mutex.lock();
+	
+	if (processedObjects.isEmpty() && objectsToBeProcessed.isEmpty()) {
+		finishProcessedObjectsTimer.stop();
+		mutex.unlock();
+		printf("Stopped the finishProcessedObjectsTimer\n");
+		return;
+	}
+	
+	foreach(TsarDataStruct tsarData, processedObjects) {
+		
+		disconnect(this, SIGNAL(addRemoveFinished()), tsarData.objectToBeAdded, 0);
+	}
+	
+	processedObjects.clear();
+	
+	mutex.unlock();
 }
 
 

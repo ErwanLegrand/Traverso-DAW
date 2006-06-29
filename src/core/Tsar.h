@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Tsar.h,v 1.1 2006/06/27 00:05:13 r_sijrier Exp $
+$Id: Tsar.h,v 1.2 2006/06/29 22:43:24 r_sijrier Exp $
 */
 
 #ifndef TSAR_H
@@ -26,8 +26,12 @@ $Id: Tsar.h,v 1.1 2006/06/27 00:05:13 r_sijrier Exp $
 #include <QObject>
 #include <QTimer>
 #include <QMutex>
+#include <QStack>
 
-#define THREAD_SAVE_ADD(ObjectToAdd, ObjectAddedTo, functionName)  tsar().process_object(ObjectToAdd, ObjectAddedTo, functionName)
+#define THREAD_SAVE_ADD(ObjectToAdd, ObjectAddedTo, functionName)  { \
+		connect(&tsar(), SIGNAL(addRemoveFinished()), ObjectAddedTo, SIGNAL(functionName##_Signal())); \
+		tsar().process_object(ObjectToAdd, ObjectAddedTo, #functionName); \
+	}
 #define THREAD_SAVE_REMOVE  THREAD_SAVE_ADD
 
 class ContextItem;
@@ -46,7 +50,7 @@ public:
 
 	void add_remove_items_in_audio_processing_path();
 	
-	void process_object(QObject* objectToBeAdded, QObject* objectsToBeAddedRemoved, char* slot);
+	void process_object(QObject* objectToBeAdded, QObject* objectsToBeProcessed, char* slot);
 
 private:
 	Tsar();
@@ -56,14 +60,22 @@ private:
 	friend Tsar& tsar();
 
 	QTimer			addRemoveRetryTimer;
+	QTimer			finishProcessedObjectsTimer;
 	QMutex			mutex;
-	QList<TsarDataStruct >	objectsToBeAddedRemoved;
+	
+	QList<TsarDataStruct >	objectsToBeProcessed;
+	QList<TsarDataStruct >	processedObjects;
 	
 	volatile size_t		processAddRemove;
 	
 
+signals:
+	void addRemoveFinished();
+	void objectsProcessed();
+
 private slots:
 	void start_add_remove( );
+	void finish_processed_objects();
 	
 };
 

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.23 2006/06/27 21:48:05 r_sijrier Exp $
+$Id: Song.cpp,v 1.24 2006/06/29 22:43:24 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -97,7 +97,8 @@ Song::Song(Project* project, int number)
 
 	activeTrackNumber = 1;
 	for (int i=1; i <= tracksToCreate; i++) {
-		create_track();
+		Track* track = create_track();
+		add_track( track );
 	}
 
 	connect_to_audiodevice();
@@ -134,7 +135,7 @@ void Song::init()
 	diskio = new DiskIO();
 
 	connect(this, SIGNAL(seekStart(uint )), diskio, SLOT(seek( uint )), Qt::QueuedConnection);
-	connect(&audiodevice(), SIGNAL(clientRemoved()), this, SLOT (audiodevice_client_removed() ), Qt::QueuedConnection);
+	connect(&audiodevice(), SIGNAL(remove_client_Signal()), this, SLOT (audiodevice_client_removed() ), Qt::QueuedConnection);
 	connect(&audiodevice(), SIGNAL(started()), this, SLOT(audiodevice_started()));
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(resize_buffer()), Qt::DirectConnection);
 	connect(diskio, SIGNAL(seekFinished()), this, SLOT(seek_finished()), Qt::QueuedConnection);
@@ -185,14 +186,8 @@ int Song::set_state( const QDomNode & node )
 		Track* track = new Track(this, trackNode);
 		track->set_baseY(trackBaseY);
 		
-		foreach(Track* existingTrack, m_tracks) {
-			if (existingTrack->is_solo()) {
-				track->set_muted_by_solo( true );
-				break;
-			}
-		}
-		
 		add_track(track);
+		
 		trackCount++;
 		
 		trackBaseY += track->get_height();
@@ -236,7 +231,7 @@ void Song::connect_to_audiodevice( )
 	
 	audiodeviceClient->set_process_callback( MakeDelegate(this, &Song::process) );
 	
-	THREAD_SAVE_ADD(audiodeviceClient, &audiodevice(), "add_client");
+	THREAD_SAVE_ADD(audiodeviceClient, &audiodevice(), add_client);
 }
 
 void Song::disconnect_from_audiodevice_and_delete()
@@ -247,7 +242,7 @@ void Song::disconnect_from_audiodevice_and_delete()
 	
 	scheduleForDeletion = true;
 	
-	THREAD_SAVE_REMOVE(audiodeviceClient, &audiodevice(), "remove_client");
+	THREAD_SAVE_REMOVE(audiodeviceClient, &audiodevice(), remove_client);
 }
 
 void Song::audiodevice_client_removed( )
@@ -264,6 +259,13 @@ void Song::audiodevice_client_removed( )
 
 void Song::add_track(Track* track)
 {
+	foreach(Track* existingTrack, m_tracks) {
+		if (existingTrack->is_solo()) {
+			track->set_muted_by_solo( true );
+			break;
+		}
+	}
+	
 	m_tracks.insert(track->get_id(), track);
 }
 
@@ -604,7 +606,7 @@ Command* Song::toggle_snap()
 
 /******************************** SLOTS *****************************/
 
-Command* Song::create_track()
+Track* Song::create_track()
 {
 	int trackBaseY = LocatorView::LOCATOR_HEIGHT;
 	int height = Track::INITIAL_HEIGHT;
@@ -616,7 +618,14 @@ Command* Song::create_track()
 
 	Track* track = new Track(this, ++trackCount, "Unnamed", trackBaseY, height);
 	
-	THREAD_SAVE_ADD(track, this, "add_track");
+	return track;
+}
+
+Command* Song::add_new_track()
+{
+	Track* track = create_track();
+	
+	THREAD_SAVE_ADD(track, this, add_track);
 	
 	return (Command*) 0;
 }
@@ -828,7 +837,6 @@ int Song::process( nframes_t nframes )
 	// zero the masterOut buffers _and_ the mixdown buffer which is used 
 	// in the Tracks' to mixdown the audioclips!
 	masterOut->silence_buffers(nframes);
-/*	memset (mixdown, 0, sizeof (audio_sample_t) * nframes);*/
 	
 	int processResult = 0;
 	

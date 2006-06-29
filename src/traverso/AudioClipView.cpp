@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.21 2006/06/26 23:59:10 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.22 2006/06/29 22:44:28 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -60,6 +60,9 @@ AudioClipView::AudioClipView(ViewPort * vp, TrackView* parent, AudioClip* clip )
 	connect(m_clip, SIGNAL(positionChanged()), m_tv, SLOT (repaint_all_clips()));
 	connect(m_clip->get_fade_in(), SIGNAL(stateChanged()), this, SLOT(schedule_for_repaint()));
 	connect(m_clip->get_fade_out(), SIGNAL(stateChanged()), this, SLOT(schedule_for_repaint()));
+	
+	connect(m_clip->get_fade_in(), SIGNAL(add_node_Signal()), this, SLOT(schedule_for_repaint()));
+	connect(m_clip->get_fade_out(), SIGNAL(add_node_Signal()), this, SLOT(schedule_for_repaint()));
 	
 	create_fade_selectors();
 	

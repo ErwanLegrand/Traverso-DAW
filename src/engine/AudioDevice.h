@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.4 2006/06/26 23:58:13 r_sijrier Exp $
+$Id: AudioDevice.h,v 1.5 2006/06/29 22:44:01 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -171,7 +171,8 @@ signals:
 	void started();
 	void driverParamsChanged();
 	void xrun();
-	void clientRemoved();
+	void add_client_Signal();
+	void remove_client_Signal();
 	
 private slots:
 	void thread_save_add_client(QObject* obj);
