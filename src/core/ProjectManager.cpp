@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ProjectManager.cpp,v 1.6 2006/06/26 23:57:48 r_sijrier Exp $
+$Id: ProjectManager.cpp,v 1.7 2006/06/30 12:04:36 r_sijrier Exp $
 */
 
 #include "ProjectManager.h"
@@ -219,11 +219,12 @@ Command* ProjectManager::exit()
 
 	ie().free_memory();
 	
+	// FIXME This really sucks!
 	// Give the audiodevice some time to handle the disconnections and 
 	// deletion of the Songs. Afterwards, we force the events to be processed
 	// which will do the actuall deletion of the Songs. After this point, it's fine to
 	// shutdown the audiodevice and exit the application.
-	usleep(100000);
+	usleep(200000);
 	QCoreApplication::processEvents();
 
 	audiodevice().shutdown();

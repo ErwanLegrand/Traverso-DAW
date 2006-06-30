@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.30 2006/06/29 22:43:24 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.31 2006/06/30 12:04:36 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -793,8 +793,6 @@ void AudioClip::set_fade_in_shape( FadeShape shape, nframes_t len )
 	if (fadeIn->nodes.size() > 0) {
 		THREAD_SAVE_ADD(fadeIn, fadeIn, clear );
 	}
-	
-// 	connect(&tsar(), SIGNAL(addRemoveFinished()), fadeIn, SIGNAL(stateChanged()));
 	
 	switch (shape) {
 		case Linear:
