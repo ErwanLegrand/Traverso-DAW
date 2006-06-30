@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Tsar.cpp,v 1.3 2006/06/29 22:43:24 r_sijrier Exp $
+    $Id: Tsar.cpp,v 1.4 2006/06/30 12:05:24 r_sijrier Exp $
 */
 
 #include "Tsar.h"
@@ -86,7 +86,7 @@ void Tsar::add_remove_items_in_audio_processing_path( )
 	
 	int count = 0;
 	
-	trav_time_t starttime = get_microseconds();
+// 	trav_time_t starttime = get_microseconds();
 	
 	foreach(TsarDataStruct tsarData, objectsToBeProcessed) {
 	
@@ -112,8 +112,8 @@ void Tsar::add_remove_items_in_audio_processing_path( )
 	
 	objectsToBeProcessed.clear();
 	
-	int processtime = (int) (get_microseconds() - starttime);
- 	printf("\nNumber of objects processed: %d in %d useconds\n",count, processtime);
+// 	int processtime = (int) (get_microseconds() - starttime);
+//  	printf("\nNumber of objects processed: %d in %d useconds\n",count, processtime);
 
 	mutex.unlock();
 	
@@ -153,7 +153,7 @@ void Tsar::start_add_remove( )
 
 void Tsar::finish_processed_objects( )
 {
-	printf("Entering finish_processed_objects()\n");
+// 	printf("Entering finish_processed_objects()\n");
 	
 	emit addRemoveFinished();
 	
@@ -162,7 +162,7 @@ void Tsar::finish_processed_objects( )
 	if (processedObjects.isEmpty() && objectsToBeProcessed.isEmpty()) {
 		finishProcessedObjectsTimer.stop();
 		mutex.unlock();
-		printf("Stopped the finishProcessedObjectsTimer\n");
+// 		printf("Stopped the finishProcessedObjectsTimer\n");
 		return;
 	}
 	
