@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.cpp,v 1.10 2006/06/29 22:43:24 r_sijrier Exp $
+$Id: Curve.cpp,v 1.11 2006/06/30 12:19:18 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -387,8 +387,6 @@ void Curve::set_range( double when )
 // 		printf("NOT Setting range!\n");
 		return;
 	}
-	
-	printf("Setting range!, %lf\n", when);
 	
 	Q_ASSERT(when >= 0);
 	
