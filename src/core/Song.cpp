@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.24 2006/06/29 22:43:24 r_sijrier Exp $
+$Id: Song.cpp,v 1.25 2006/06/30 12:04:57 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -63,7 +63,6 @@ Song::Song(Project* project, int number)
 	PENTERCONS;
 	title="Untitled";
 	m_gain = 1.0f;
-	trackCount = 0;
 	artists = "No artists name yet";
 	QSettings settings;
 	int level = settings.value("hzoomLevel").toInt();
@@ -159,6 +158,7 @@ void Song::init()
 	isSnapOn=true;
 	changed = rendering = false;
 	firstVisibleFrame=workingFrame=activeTrackNumber=0;
+	trackCount = 0;
 }
 
 int Song::set_state( const QDomNode & node )
@@ -269,10 +269,11 @@ void Song::add_track(Track* track)
 	m_tracks.insert(track->get_id(), track);
 }
 
-void Song::remove_track(Track* trackToBeDeleted)
+void Song::remove_track(Track* trackToBeRemoved)
 {
-	if (m_tracks.take(trackToBeDeleted->get_id() )) {
-		PWARN("Removing Track with id %d", trackToBeDeleted->get_id());
+	if (m_tracks.take(trackToBeRemoved->get_id() )) {
+		PWARN("Removing Track with id %d", trackToBeRemoved->get_id());
+		emit trackRemoved(trackToBeRemoved);
 	}
 }
 
