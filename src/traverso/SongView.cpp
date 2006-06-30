@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.11 2006/06/26 23:59:55 r_sijrier Exp $
+$Id: SongView.cpp,v 1.12 2006/06/30 12:06:18 r_sijrier Exp $
 */
 
 #include <QPainter>
@@ -60,6 +60,7 @@ SongView::SongView(Song* song, ViewPort* vp)
 	cursorMap[CURSOR_MAGIC_ZOOM] = QCursor( QPixmap(":/cursorMagicZoom") );
 
 	connect(m_song, SIGNAL(trackCreated(Track* )), this, SLOT(add_new_trackview(Track* )));
+	connect(m_song, SIGNAL(trackRemoved(Track* )), this, SLOT(remove_trackview(Track* )));
 	connect(m_song, SIGNAL(hzoomChanged( )), m_locator, SLOT(hzoom_changed( )));
 	connect(m_song, SIGNAL(firstVisibleFrameChanged()), m_locator, SLOT(schedule_for_repaint()));
 	connect(m_song, SIGNAL(setCursorAtEdge()), this, SLOT(center()));
@@ -132,6 +133,23 @@ void SongView::add_new_trackview( Track* track )
 	PENTER2;
 	TrackView* trackView = new TrackView(m_vp, this, track);
 	trackViewList.append(trackView);
+}
+
+
+void SongView::remove_trackview( Track * track )
+{
+	for (int i=0; i<trackViewList.size(); ++i) {
+		
+		TrackView* view = (TrackView*)trackViewList.at(i);
+		if (view->get_track() == track) {
+		
+			trackViewList.removeAt(i);
+			m_vp->unregister_viewitem(view);
+			delete view;
+			schedule_for_repaint();
+			break;
+		}
+	}
 }
 
 
