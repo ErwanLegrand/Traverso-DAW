@@ -114,3 +114,7 @@ unix {
 	# if exists('sys/vfs.h')
 	DEFINES += HAVE_SYS_VFS_H
 }
+
+macx {
+	LIBS -= -lasound
+}
