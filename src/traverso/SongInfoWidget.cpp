@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongInfoWidget.cpp,v 1.7 2006/06/29 22:16:11 r_sijrier Exp $
+$Id: SongInfoWidget.cpp,v 1.8 2006/07/03 17:46:56 r_sijrier Exp $
 */
 
 #include "SongInfoWidget.h"
@@ -58,6 +58,8 @@ void SongInfoWidget::set_project(Project* project )
 		snapStatusLabel->setText("-");
 		masterGainLabel->setText("-");
 		songNameLabel->setText("-");
+		// Just in case the timer is still running, there is _no_ Song anymore!
+		stop_smpte_update_timer();
 	}
 }
 
