@@ -1,5 +1,5 @@
 x-x-2006 Remon Sijrier <remon@vt.shuis.tudelft.nl>
-	* Released 0.30.0X
+	* Released 0.30.0
 	
 	* Added a "select project dir" in Project manager view.
 	* Correctly set AudioClip track start/end frame at startup.
@@ -10,7 +10,8 @@ x-x-2006 Remon Sijrier <remon@vt.shuis.tudelft.nl>
 	* Make pan work for solo AudioClips as well.
 	* Made fadeout adjustment follow the mouse which is more natural.
 	* Added "Draw Rectified Wave" radiobutton in Settings View.
-	* Some more small fixes ;-)
+	* A number of crashing fixes.
+	* Some more (important) stuff I don't remember ;-)
 
 
 16-06-2006 Remon Sijrier <remon@vt.shuis.tudelft.nl>
