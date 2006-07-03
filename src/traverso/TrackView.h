@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TrackView.h,v 1.3 2006/06/19 19:17:57 r_sijrier Exp $
+    $Id: TrackView.h,v 1.4 2006/07/03 13:53:42 r_sijrier Exp $
 */
 
 #ifndef TRACKVIEW_H
@@ -63,6 +63,13 @@ public:
         }
         int cliparea_basex() const;
         int cliparea_width() const;
+        
+        // TrackViews can be deleted, however it "manages"
+        // a number of views which are _also_ managed by 
+        // ViewPort. A complete mess so to speak!
+        // This simply is a hack to avoid memleaks and crashes on 
+        // TrackView deletion, and needs to be called explicitely!
+        void delete_my_viewitems();
 
 private:
         Track* m_track;

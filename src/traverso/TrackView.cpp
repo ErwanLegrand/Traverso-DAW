@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.8 2006/06/20 19:27:45 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.9 2006/07/03 13:53:34 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -510,6 +510,23 @@ Command * TrackView::edit_properties( )
 	}
 	
 	return (Command*) 0;
+}
+
+void TrackView::delete_my_viewitems( )
+{
+	m_vp->unregister_viewitem(soloLed);
+	m_vp->unregister_viewitem(muteLed);
+	m_vp->unregister_viewitem(lockLed);
+	m_vp->unregister_viewitem(recLed);
+	delete soloLed;
+	delete muteLed;
+	delete lockLed;
+	delete recLed;
+	
+	foreach(AudioClipView* view, audioClipViewList) {
+		m_vp->unregister_viewitem(view);
+		delete view;
+	}
 }
 
 //eof
