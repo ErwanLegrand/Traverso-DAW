@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: CopyClip.cpp,v 1.5 2006/06/29 22:38:08 r_sijrier Exp $
+    $Id: CopyClip.cpp,v 1.6 2006/07/03 17:51:56 r_sijrier Exp $
 */
 
 #include "CopyClip.h"
@@ -61,13 +61,14 @@ int CopyClip::finish_hold()
 int CopyClip::prepare_actions()
 {
         newCreatedClip = m_clip->create_copy();
+        newCreatedClip->set_track_start_frame(newInsertBlock);
         return 1;
 }
 
 int CopyClip::do_action()
 {
         PENTER;
-	THREAD_SAVE_ADD(newCreatedClip, targetTrack, add_clip);
+	targetTrack->add_clip(newCreatedClip);
         return 1;
 }
 
@@ -75,7 +76,7 @@ int CopyClip::do_action()
 int CopyClip::undo_action()
 {
         PENTER;
-	THREAD_SAVE_REMOVE(newCreatedClip, targetTrack, remove_clip);
+        targetTrack->remove_clip(newCreatedClip);
         return 1;
 }
 

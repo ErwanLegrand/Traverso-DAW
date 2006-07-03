@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Tsar.h,v 1.2 2006/06/29 22:43:24 r_sijrier Exp $
+$Id: Tsar.h,v 1.3 2006/07/03 17:51:56 r_sijrier Exp $
 */
 
 #ifndef TSAR_H
@@ -27,19 +27,58 @@ $Id: Tsar.h,v 1.2 2006/06/29 22:43:24 r_sijrier Exp $
 #include <QTimer>
 #include <QMutex>
 #include <QStack>
+#include <QByteArray>
 
-#define THREAD_SAVE_ADD(ObjectToAdd, ObjectAddedTo, functionName)  { \
-		connect(&tsar(), SIGNAL(addRemoveFinished()), ObjectAddedTo, SIGNAL(functionName##_Signal())); \
-		tsar().process_object(ObjectToAdd, ObjectAddedTo, #functionName); \
+#define THREAD_SAVE_ADD(ObjectAddedTo, ObjectToBeAdded, slotSignature)  { \
+		THREAD_SAVE_ADD_EMIT_SIGNAL(ObjectAddedTo, ObjectToBeAdded, slotSignature, "")\
 	}
 #define THREAD_SAVE_REMOVE  THREAD_SAVE_ADD
 
+#define THREAD_SAVE_ADD_EMIT_SIGNAL(ObjectAddedTo, ObjectToBeAdded, slotSignature, signalSignature)  { \
+	TsarDataStruct tsardata;\
+	tsardata.objectToAddTo = ObjectAddedTo;\
+	tsardata.objectToBeAdded = ObjectToBeAdded;\
+	\
+	int index = ObjectAddedTo->metaObject()->indexOfMethod(#slotSignature);\
+	if (index < 0) {\
+	        QByteArray norm = QMetaObject::normalizedSignature(#slotSignature);\
+        	index = ObjectAddedTo->metaObject()->indexOfMethod(norm.constData());\
+        }\
+        \
+	tsardata.slotindex = index;\
+	\
+	if ( ! QString(#signalSignature).isEmpty()) {\
+		/* the signal index seems to have an offset of 4, so we have to substract 4 from */\
+		/* the value returned by ObjectAddedTo->metaObject()->indexOfMethod*/ \
+		index = ObjectAddedTo->metaObject()->indexOfMethod(#signalSignature) - 4;\
+		if (index < 0) {\
+			QByteArray norm = QMetaObject::normalizedSignature(#signalSignature);\
+			index = ObjectAddedTo->metaObject()->indexOfMethod(norm.constData()) - 4;\
+		}\
+		tsardata.signalindex = index; \
+		tsardata.sender = ObjectAddedTo;\
+	} else {\
+		tsardata.sender = 0;\
+	}\
+	\
+	tsar().process_object(tsardata);\
+	}\
+
+#define THREAD_SAVE_REMOVE_EMIT_SIGNAL  THREAD_SAVE_ADD_EMIT_SIGNAL
+
+
 class ContextItem;
+class RingBuffer;
 
 struct TsarDataStruct {
+// used for slot invokation stuff
 	QObject*	objectToBeAdded;
 	QObject*	objectToAddTo;
-	char*		slot;
+	int		slotindex;
+
+// Used for the signal emiting stuff
+	QObject* sender;
+	int signalindex;
 };
 
 class Tsar : public QObject
@@ -50,7 +89,7 @@ public:
 
 	void add_remove_items_in_audio_processing_path();
 	
-	void process_object(QObject* objectToBeAdded, QObject* objectsToBeProcessed, char* slot);
+	void process_object(TsarDataStruct& data);
 
 private:
 	Tsar();
@@ -66,12 +105,11 @@ private:
 	QList<TsarDataStruct >	objectsToBeProcessed;
 	QList<TsarDataStruct >	processedObjects;
 	
+	RingBuffer*		rbToBeProcessed;
+	RingBuffer*		rbProcessed;
+	
 	volatile size_t		processAddRemove;
 	
-
-signals:
-	void addRemoveFinished();
-	void objectsProcessed();
 
 private slots:
 	void start_add_remove( );

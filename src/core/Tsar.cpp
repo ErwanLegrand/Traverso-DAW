@@ -17,13 +17,15 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Tsar.cpp,v 1.4 2006/06/30 12:05:24 r_sijrier Exp $
+    $Id: Tsar.cpp,v 1.5 2006/07/03 17:51:56 r_sijrier Exp $
 */
 
 #include "Tsar.h"
 
 #include "ContextItem.h"
 #include "AudioDevice.h"
+#include "RingBuffer.h"
+
 #include <QByteArray>
 #include <QThread>
 
@@ -41,35 +43,30 @@ Tsar::Tsar()
 {
 	processAddRemove = 0; 
 	
+/*	printf("Tsardata struct is %d bytes, Ringbuffer size is %d bytes\n",sizeof(TsarDataStruct), 1000 * sizeof(TsarDataStruct));
+	rbToBeProcessed = new RingBuffer(1000 * sizeof(TsarDataStruct));
+	
+	printf("write space is %d\n",rbToBeProcessed->write_space());*/
+	
 	addRemoveRetryTimer.setSingleShot( true );
 
 	connect(&addRemoveRetryTimer, SIGNAL(timeout()), this, SLOT(start_add_remove()));
 	connect(&finishProcessedObjectsTimer, SIGNAL(timeout()), this, SLOT(finish_processed_objects()));
 }
 
-void Tsar::process_object( QObject * objectToBeAdded, QObject* objectToAddTo, char * slot )
+void Tsar::process_object( TsarDataStruct& data )
 {
-	PENTER;
-	
-	TsarDataStruct tsarstruct;
-	tsarstruct.objectToBeAdded = objectToBeAdded;
-	tsarstruct.objectToAddTo = objectToAddTo;
-	tsarstruct.slot = slot;
-	
 	mutex.lock();
-	objectsToBeProcessed.append(tsarstruct);
+	objectsToBeProcessed.append(data);
 	mutex.unlock();
 	
-//	processAddRemove = 1;
 	start_add_remove();
 	finishProcessedObjectsTimer.start( 20 );
 }
 
-
 //
 //  Function called in RealTime AudioThread processing path
 //
-
 void Tsar::add_remove_items_in_audio_processing_path( )
 {
 
@@ -80,7 +77,7 @@ void Tsar::add_remove_items_in_audio_processing_path( )
 // 	PMESG("processAddRemove is true, entering add_remove_items_in_audio_processing_path()");
 	
 	if ( ! mutex.tryLock() ) {
-		printf("Tsar::add_remove_items_in_audio_processing_path() : Couldn't lock mutex, retrying next cycle\n");
+// 		printf("Tsar::add_remove_items_in_audio_processing_path() : Couldn't lock mutex, retrying next cycle\n");
 		return;
 	}
 	
@@ -90,30 +87,32 @@ void Tsar::add_remove_items_in_audio_processing_path( )
 	
 	foreach(TsarDataStruct tsarData, objectsToBeProcessed) {
 	
-		char* slot = QByteArray("thread_save_").append(tsarData.slot).data();
-		
-		if ( ! QMetaObject::invokeMethod(tsarData.objectToAddTo, slot, Qt::DirectConnection, Q_ARG(QObject*, tsarData.objectToBeAdded)) ) {
+		void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&tsarData.objectToBeAdded)) };
+		// This equals QMetaObject::invokeMethod(), without type checking. But we know that the types
+		// are the correct ones, and will casted just fine!
+		if (! (tsarData.objectToAddTo->qt_metacall(QMetaObject::InvokeMetaMethod, tsarData.slotindex, _a) < 0) ) {
 			
 			qDebug("Tsar::add_remove_items_in_audio_processing_path() QMetaObject::invokeMethod failed");
-			qDebug("ToBeAddedRemovedObject: %s from %s::%s\n", tsarData.objectToBeAdded->metaObject()->className(), tsarData.objectToAddTo->metaObject()->className(), slot);
+// 			qDebug("ToBeAddedRemovedObject: %s from %s::%s\n", tsarData.objectToBeAdded->metaObject()->className(), tsarData.objectToAddTo->metaObject()->className(), tsarData.slot);
 		
 		} else {
 			
-			PMESG("Tsar::add_remove_items_in_audio_processing_path() QMetaObject::invokeMethod: Succes!");
-			
+// 			printf("Tsar::add_remove_items_in_audio_processing_path() QMetaObject::invokeMethod: Succes!\n");
+// 			printf("ToBeAddedRemovedObject: %s from %s::%s\n", tsarData.objectToBeAdded->metaObject()->className(), tsarData.objectToAddTo->metaObject()->className(), tsarData.slot);
+// 			
 			processedObjects.append( tsarData );
 		}	
 		
-		PMESG("ToBeAddedRemovedObject: %s from %s::%s", tsarData.objectToBeAdded->metaObject()->className(), tsarData.objectToAddTo->metaObject()->className(), slot);
+// 		PMESG("ToBeAddedRemovedObject: %s from %s::%s", tsarData.objectToBeAdded->metaObject()->className(), tsarData.objectToAddTo->metaObject()->className(), tsarData.slot);
 		
-		
+
 		count++;
 	}
 	
 	objectsToBeProcessed.clear();
 	
 // 	int processtime = (int) (get_microseconds() - starttime);
-//  	printf("\nNumber of objects processed: %d in %d useconds\n",count, processtime);
+// 	printf("\nNumber of objects processed: %d in %d useconds\n",count, processtime);
 
 	mutex.unlock();
 	
@@ -155,8 +154,6 @@ void Tsar::finish_processed_objects( )
 {
 // 	printf("Entering finish_processed_objects()\n");
 	
-	emit addRemoveFinished();
-	
 	mutex.lock();
 	
 	if (processedObjects.isEmpty() && objectsToBeProcessed.isEmpty()) {
@@ -167,15 +164,17 @@ void Tsar::finish_processed_objects( )
 	}
 	
 	foreach(TsarDataStruct tsarData, processedObjects) {
-		
-		disconnect(this, SIGNAL(addRemoveFinished()), tsarData.objectToBeAdded, 0);
+		if (tsarData.sender) {
+			// This equals emit someSignal() :-)
+			void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&tsarData.objectToBeAdded)) };
+			QMetaObject::activate(tsarData.sender, tsarData.sender->metaObject(), tsarData.signalindex, _a);
+		}
 	}
 	
 	processedObjects.clear();
 	
 	mutex.unlock();
 }
-
 
 //eof
  

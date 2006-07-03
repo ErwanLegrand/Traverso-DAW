@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.h,v 1.11 2006/06/26 23:57:48 r_sijrier Exp $
+$Id: Track.h,v 1.12 2006/07/03 17:51:56 r_sijrier Exp $
 */
 
 
@@ -128,6 +128,7 @@ public :
 	void set_baseY(int b);
 	void set_height(int h);
 	int set_state( const QDomNode& node );
+	void set_id(int id);
 	// End set functions
 
 
@@ -201,8 +202,8 @@ public slots:
 	Command* silence_others();
 
 private slots:
-	void thread_save_add_clip(QObject * obj);
-	void thread_save_remove_clip(QObject * obj);
+	void private_add_clip(AudioClip* clip);
+	void private_remove_clip(AudioClip* clip);
 
 };
 

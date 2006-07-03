@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: MoveClip.cpp,v 1.5 2006/06/15 11:02:53 r_sijrier Exp $
+$Id: MoveClip.cpp,v 1.6 2006/07/03 17:51:56 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -112,21 +112,25 @@ int MoveClip::jog()
 		newTrackStartFrame = 0;
 	
 	newInsertFrame= m_song->xpos_to_frame(m_song->snapped_x(m_song->frame_to_xpos(newTrackStartFrame)));
+	m_clip->set_track_start_frame(newInsertFrame);
 	
 	origXPos = newXPos;
 	
-	Track* newTargetTrack = m_song->get_track_under_y( cpointer().y() );
+	// This potentially leaves a Clip into a Track where it should have been 
+	// removed. This happens when a song is playing, and thread save add/remove
+	// is used. Disabled until a solid implementation has been made
+	// (i.e. moving an audioclip visually without adding/removing it during move to/from Tracks!!!
+/*	Track* newTargetTrack = m_song->get_track_under_y( cpointer().y() );
 	Track* currentTrack = m_clip->get_track();
-	
-	if (newTargetTrack) {
-		if (newTargetTrack != currentTrack) {
-			currentTrack->remove_clip( m_clip );
-			newTargetTrack->add_clip( m_clip );
-		}
-		
+
+	if (newTargetTrack == currentTrack) {
 		m_clip->set_track_start_frame(newInsertFrame);
 		
-	}
+	} else {
+		currentTrack->remove_clip( m_clip );
+		newTargetTrack->add_clip( m_clip );
+		m_clip->set_track_start_frame(newInsertFrame);
+	}*/
 	
 	return 1;
 }

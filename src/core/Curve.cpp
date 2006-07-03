@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.cpp,v 1.11 2006/06/30 12:19:18 r_sijrier Exp $
+$Id: Curve.cpp,v 1.12 2006/07/03 17:51:56 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -27,6 +27,7 @@ $Id: Curve.cpp,v 1.11 2006/06/30 12:19:18 r_sijrier Exp $
 #include "Song.h"
 #include "Track.h"
 #include "CurveNode.h"
+#include "Tsar.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -55,8 +56,10 @@ Curve::~Curve()
 void Curve::add_node(double pos, double value)
 {
 	PENTER2;
-	nodes.append(new CurveNode(pos, value) );
-	emit stateChanged();
+	
+	CurveNode* node = new CurveNode(pos, value); 
+	
+	THREAD_SAVE_ADD_EMIT_SIGNAL(this, node, private_add_node(CurveNode*), stateChanged());
 }
 
 void Curve::solve ()
@@ -438,20 +441,16 @@ void Curve::clear( )
 	set_changed();
 }
 
-void Curve::thread_save_add_node( QObject * obj )
+void Curve::private_add_node( CurveNode* node )
 {
-	CurveNode* node = qobject_cast<CurveNode* >(obj);
-	
-	if (!node) {
-		qCritical("Unable to cast to CurveNode, this is a Programming Error !\n");
-		return;
-	}
+// 	printf("private_add_node:: Adding node\n");
 	
 	nodes.append(node);
 }
 
-void Curve::thread_save_clear( QObject *  )
+void Curve::private_clear()
 {
+// 	printf("private_clear:: Clearing Curve\n");
 	clear();
 }
 

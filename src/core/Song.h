@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.h,v 1.13 2006/06/30 12:04:57 r_sijrier Exp $
+$Id: Song.h,v 1.14 2006/07/03 17:51:56 r_sijrier Exp $
 */
 
 #ifndef SONG_H
@@ -132,9 +132,14 @@ public:
 	int process_export(nframes_t nframes);
 	int prepare_export(ExportSpecification* spec);
 	int render(ExportSpecification* spec);
+	
 	void solo_track(Track* track);
 	void create(int tracksToCreate);
+	void add_track(Track* track);
+	void remove_track(Track* track);
+	
 	nframes_t xpos_to_frame(int xpos);
+	
 	bool any_track_armed();
 	bool realtime_path() const {return realtimepath;}
 	bool is_transporting() const
@@ -201,16 +206,13 @@ private:
 
 	Track* create_track();
 	
-	void add_track(Track* track);
-	void remove_track(Track* track);
-	
 	friend class Track;
 	
 
 public slots :
 	void seek_finished();
 	void handle_diskio_outofsync();
-	void audiodevice_client_removed();
+	void audiodevice_client_removed(Client* );
 	void audiodevice_started();
 	void resize_buffer();
 	void set_gain(float gain);
@@ -248,8 +250,8 @@ public slots :
 	Command* master_gain();
 
 signals:
-	void trackCreated(Track* );
 	void trackRemoved(Track* );
+	void trackAdded(Track* );
 	void cursorPosChanged();
 	void hzoomChanged();
 	void transferStarted();
@@ -262,12 +264,10 @@ signals:
 	void propertieChanged();
 	void setCursorAtEdge();
 	void masterGainChanged();
-	void add_track_Signal();
-	void remove_track_Signal();
 
 private slots:
-	void thread_save_add_track(QObject* obj);
-	void thread_save_remove_track(QObject* obj);
+	void private_add_track(Track* track);
+	void private_remove_track(Track* track);
 
 };
 

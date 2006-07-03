@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.17 2006/06/27 21:48:33 r_sijrier Exp $
+$Id: Track.cpp,v 1.18 2006/07/03 17:51:56 r_sijrier Exp $
 */
 
 #include "Track.h"
@@ -44,8 +44,6 @@ Track::Track(Song* song, int pID, QString pName, int pBaseY, int pHeight )
 	busOut = "MasterOut";
 	
 	init();
-
-	emit m_song->trackCreated(this);
 }
 
 Track::Track( Song * song, const QDomNode node )
@@ -57,10 +55,6 @@ Track::Track( Song * song, const QDomNode node )
 	
 	// ALWAYS call init() before new member objects are created!
 	init();
-	
-	emit m_song->trackCreated(this);
-	
-	set_state(node);
 }
 
 
@@ -249,20 +243,29 @@ AudioClip* Track::get_clip_before(nframes_t framePos)
 int Track::remove_clip(AudioClip* clip)
 {
 	PENTER;
-	if (audioClipList.remove_clip(clip)) {
+	if ( ! m_song->is_transporting() ) {
+		private_remove_clip(clip);
 		emit audioClipRemoved(clip);
+// 		printf("Song not running, removing Clip now\n");
 		return 1;
+	} else {
+		THREAD_SAVE_REMOVE_EMIT_SIGNAL(this, clip, private_remove_clip(AudioClip*), audioClipRemoved(AudioClip*));
 	}
-	return -1;
+	
+	return 1;
 }
 
 
 void Track::add_clip(AudioClip* clip)
 {
 	PENTER;
-	clip->set_track(this);
-	audioClipList.add_clip(clip);
-	emit audioClipAdded(clip);
+	if ( ! m_song->is_transporting() ) {
+		private_add_clip(clip);
+		emit audioClipAdded(clip);
+// 		printf("Song not running, adding Clip now\n");
+	} else {
+		THREAD_SAVE_ADD_EMIT_SIGNAL(this, clip, private_add_clip(AudioClip*), audioClipAdded(AudioClip*));
+	}
 }
 
 
@@ -615,28 +618,20 @@ void Track::get_render_range(nframes_t& startframe, nframes_t& endframe )
 	
 }
 
-void Track::thread_save_add_clip( QObject* obj )
+void Track::private_add_clip(AudioClip* clip)
 {
-	AudioClip* clip = qobject_cast<AudioClip* >(obj);
-	
-	if (!clip) {
- 		qCritical("Unable to cast to Track, this is a Programming Error !!\n");
- 		return;
-	}
-	
-	add_clip(clip);
+	clip->set_track(this);
+	audioClipList.add_clip(clip);
 }
 
-void Track::thread_save_remove_clip( QObject* obj )
+void Track::private_remove_clip(AudioClip* clip)
 {
-	AudioClip* clip = qobject_cast<AudioClip* >(obj);
-	
-	if (!clip) {
- 		qCritical("Unable to cast to Track, this is a Programming Error !!\n");
- 		return;
-	}
-	
-	remove_clip(clip);
+	audioClipList.remove_clip(clip);
+}
+
+void Track::set_id( int id )
+{
+	ID = id;
 }
 
 // eof

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.5 2006/06/29 22:44:01 r_sijrier Exp $
+$Id: AudioDevice.h,v 1.6 2006/07/03 17:51:56 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -54,6 +54,9 @@ public:
 
 	void set_parameters(int rate, nframes_t bufferSize, QString driverType);
 
+	void add_client(Client* client);
+	void remove_client(Client* client);
+	
 	AudioChannel* get_playback_channel(QByteArray name);
 	AudioChannel* get_capture_channel(QByteArray name);
 
@@ -172,11 +175,11 @@ signals:
 	void driverParamsChanged();
 	void xrun();
 	void add_client_Signal();
-	void remove_client_Signal();
+	void clientRemoved(Client* );
 	
 private slots:
-	void thread_save_add_client(QObject* obj);
-	void thread_save_remove_client(QObject* obj);
+	void private_add_client(Client* client);
+	void private_remove_client(Client* client);
 };
 
 static inline unsigned int is_power_of_two (unsigned int n)

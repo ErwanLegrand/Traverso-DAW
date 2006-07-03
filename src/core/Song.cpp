@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.25 2006/06/30 12:04:57 r_sijrier Exp $
+$Id: Song.cpp,v 1.26 2006/07/03 17:51:56 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -134,7 +134,7 @@ void Song::init()
 	diskio = new DiskIO();
 
 	connect(this, SIGNAL(seekStart(uint )), diskio, SLOT(seek( uint )), Qt::QueuedConnection);
-	connect(&audiodevice(), SIGNAL(remove_client_Signal()), this, SLOT (audiodevice_client_removed() ), Qt::QueuedConnection);
+	connect(&audiodevice(), SIGNAL(clientRemoved(Client* )), this, SLOT (audiodevice_client_removed(Client* ) ));
 	connect(&audiodevice(), SIGNAL(started()), this, SLOT(audiodevice_started()));
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(resize_buffer()), Qt::DirectConnection);
 	connect(diskio, SIGNAL(seekFinished()), this, SLOT(seek_finished()), Qt::QueuedConnection);
@@ -185,10 +185,17 @@ int Song::set_state( const QDomNode & node )
 	while(!trackNode.isNull()) {
 		Track* track = new Track(this, trackNode);
 		track->set_baseY(trackBaseY);
+		track->set_id(++trackCount);
 		
+		// Adding a track at this point will add it and signal _immediately_
+		// this is desired behaviour, this way the GUI can catch the signal
+		// and make a TrackView!
 		add_track(track);
 		
-		trackCount++;
+		// Now that a TrackView has been created, we can set the state
+		// of the Track, this will create AudioClips (if there are any of course)
+		// So the TrackView can make AudioClipViews ;-)
+		track->set_state(trackNode);
 		
 		trackBaseY += track->get_height();
 		trackNode = trackNode.nextSibling();
@@ -231,7 +238,7 @@ void Song::connect_to_audiodevice( )
 	
 	audiodeviceClient->set_process_callback( MakeDelegate(this, &Song::process) );
 	
-	THREAD_SAVE_ADD(audiodeviceClient, &audiodevice(), add_client);
+	audiodevice().add_client(audiodeviceClient);
 }
 
 void Song::disconnect_from_audiodevice_and_delete()
@@ -240,20 +247,26 @@ void Song::disconnect_from_audiodevice_and_delete()
 	
 	PMESG("Song : Scheduling for deletion !!");
 	
+	if (transport) {
+		transport = false;
+	}
+	
 	scheduleForDeletion = true;
 	
-	THREAD_SAVE_REMOVE(audiodeviceClient, &audiodevice(), remove_client);
+	audiodevice().remove_client(audiodeviceClient);
 }
 
-void Song::audiodevice_client_removed( )
+void Song::audiodevice_client_removed(Client* client )
 {
 	PENTER;
 	
-	PMESG("Song :: Thread id:  %ld", QThread::currentThreadId ());
-	
-	if (scheduleForDeletion) {
-		PMESG("Song : deleting myself!!!!!");
-		delete this;
+	if (audiodeviceClient == client) {
+// 		printf("Succesfully discovered if this Song is to be deleted! Client is %s\n\n", client->m_name.toAscii().data());
+		
+		if (scheduleForDeletion) {
+			PMESG("Song : deleting myself!!!!!");
+			delete this;
+		}
 	}
 }
 
@@ -266,15 +279,25 @@ void Song::add_track(Track* track)
 		}
 	}
 	
-	m_tracks.insert(track->get_id(), track);
+	if ( ! is_transporting() ) {
+		private_add_track(track);
+		emit trackAdded(track);
+// 		printf("Song is not transporting, save to add Track directly\n");
+	} else {
+		THREAD_SAVE_ADD_EMIT_SIGNAL(this, track, private_add_track(Track*), trackAdded(Track*));
+	}
+	
 }
 
-void Song::remove_track(Track* trackToBeRemoved)
+void Song::remove_track(Track* track)
 {
-	if (m_tracks.take(trackToBeRemoved->get_id() )) {
-		PWARN("Removing Track with id %d", trackToBeRemoved->get_id());
-		emit trackRemoved(trackToBeRemoved);
+	if ( ! is_transporting() ) {
+		private_remove_track(track);
+		emit trackRemoved(track);
+	} else {
+		THREAD_SAVE_REMOVE_EMIT_SIGNAL(this, track, private_remove_track(Track*), trackRemoved(Track*));
 	}
+
 }
 
 bool Song::any_track_armed()
@@ -625,8 +648,8 @@ Track* Song::create_track()
 Command* Song::add_new_track()
 {
 	Track* track = create_track();
-	
-	THREAD_SAVE_ADD(track, this, add_track);
+
+	add_track(track);
 	
 	return (Command*) 0;
 }
@@ -658,6 +681,8 @@ Command* Song::add_new_track()
 
 Command* Song::remove_track()
 {
+	PENTER;
+
 	return new RemoveTrack(this);
 }
 
@@ -971,28 +996,16 @@ Command * Song::master_gain( )
 	return new Gain(this);
 }
 
-void Song::thread_save_add_track( QObject * obj )
+void Song::private_add_track(Track* track)
 {
-	Track* track = qobject_cast<Track* >(obj);
-	
-	if (!track) {
-		qCritical("Unable to cast to Track, this is a Programming Error !!\n");
-		return;
-	}
-	
-	add_track(track);
+	m_tracks.insert(track->get_id(), track);
 }
 
-void Song::thread_save_remove_track( QObject * obj )
+void Song::private_remove_track(Track* track)
 {
-	Track* track = qobject_cast<Track* >(obj);
-	
-	if (!track) {
-		qCritical("Unable to cast to Track, this is a Programming Error !!\n");
-		return;
+	if (m_tracks.take(track->get_id() )) {
+// 		printf("Removing Track with id %d\n", track->get_id());
 	}
-	
-	remove_track(track);
 }
 
 

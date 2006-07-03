@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.5 2006/06/29 22:44:01 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.6 2006/07/03 17:51:56 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -30,6 +30,7 @@ $Id: AudioDevice.cpp,v 1.5 2006/06/29 22:44:01 r_sijrier Exp $
 #include "AudioChannel.h"
 #include "AudioBus.h"
 #include "Tsar.h"
+
 
 #include <sys/mman.h>
 
@@ -419,32 +420,31 @@ void AudioDevice::post_process( )
 	tsar().add_remove_items_in_audio_processing_path();
 }
 
-void AudioDevice::thread_save_add_client( QObject * obj )
+void AudioDevice::private_add_client(Client* client)
 {
-	Client* client = qobject_cast<Client* >(obj);
-	
-	if (!client) {
- 		qCritical("Unable to cast to Client, this is a Programming Error !!\n");
- 		return;
-	}
-	
+// 	printf("Adding client %s\n", client->m_name.toAscii().data());
 	clients.append(client);
 }
 
-void AudioDevice::thread_save_remove_client( QObject * obj )
+void AudioDevice::private_remove_client(Client* client)
 {
-	Client* client = qobject_cast<Client* >(obj);
-	
-	if (!client) {
- 		qCritical("Unable to cast to Client, this is a Programming Error !!\n");
- 		return;
-	}
-	
 	int index = clients.indexOf(client);
 	
 	if (index >= 0) {
 		clients.removeAt( index );
 	}
+	
+// 	printf("Removing client %s\n", client->m_name.toAscii().data());
+}
+
+void AudioDevice::add_client( Client * client )
+{
+	THREAD_SAVE_ADD(this, client, private_add_client(Client*));
+}
+
+void AudioDevice::remove_client( Client * client )
+{
+	THREAD_SAVE_REMOVE_EMIT_SIGNAL(this, client, private_remove_client(Client*), clientRemoved(Client*));
 }
 
 //eof
