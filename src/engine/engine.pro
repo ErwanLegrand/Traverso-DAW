@@ -7,7 +7,7 @@ include(../libbase.pri)
 
 #PRECOMPILED_HEADER = libtraverso.h 
 
-INCLUDEPATH += ../../src/core 
+INCLUDEPATH += ../../src/core
 
 TARGET = traverso 
 DESTDIR = ../../lib 
