@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.12 2006/06/30 12:06:18 r_sijrier Exp $
+$Id: SongView.cpp,v 1.13 2006/07/03 13:52:58 r_sijrier Exp $
 */
 
 #include <QPainter>
@@ -59,7 +59,7 @@ SongView::SongView(Song* song, ViewPort* vp)
 	cursorMap[CURSOR_SELECT] = QCursor( QPixmap(":/cursorSelect") );
 	cursorMap[CURSOR_MAGIC_ZOOM] = QCursor( QPixmap(":/cursorMagicZoom") );
 
-	connect(m_song, SIGNAL(trackCreated(Track* )), this, SLOT(add_new_trackview(Track* )));
+	connect(m_song, SIGNAL(trackAdded(Track* )), this, SLOT(add_new_trackview(Track* )));
 	connect(m_song, SIGNAL(trackRemoved(Track* )), this, SLOT(remove_trackview(Track* )));
 	connect(m_song, SIGNAL(hzoomChanged( )), m_locator, SLOT(hzoom_changed( )));
 	connect(m_song, SIGNAL(firstVisibleFrameChanged()), m_locator, SLOT(schedule_for_repaint()));
@@ -132,6 +132,7 @@ void SongView::add_new_trackview( Track* track )
 {
 	PENTER2;
 	TrackView* trackView = new TrackView(m_vp, this, track);
+	trackView->schedule_for_repaint();
 	trackViewList.append(trackView);
 }
 
@@ -145,6 +146,7 @@ void SongView::remove_trackview( Track * track )
 		
 			trackViewList.removeAt(i);
 			m_vp->unregister_viewitem(view);
+			view->delete_my_viewitems();
 			delete view;
 			schedule_for_repaint();
 			break;
@@ -171,7 +173,12 @@ void SongView::clear_root_space( QPainter & p )
 {
 	int lasty;
 	if (m_song->get_numtracks() > 0) {
-		lasty = m_song->get_track(m_song->get_numtracks())->real_baseY() + m_song->get_track(m_song->get_numtracks())->get_height();
+		Track* track = m_song->get_track(m_song->get_numtracks());
+		if (! track ) {
+			PERROR("Song says it has %d tracks, but cannot get the %dth Track!", m_song->get_numtracks(), m_song->get_numtracks());
+			return;
+		}
+		lasty = track->real_baseY() + track->get_height();
 	} else {
 		lasty =0;
 	}
