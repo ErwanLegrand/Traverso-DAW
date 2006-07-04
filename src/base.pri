@@ -9,8 +9,8 @@ CONFIG -= release debug
 # Choose debug or release build
 #
 
-#CONFIG += debug
-CONFIG += release
+CONFIG += debug
+#CONFIG += release
 
 #
 # Add support for Jack / ALSA audio driver. If you have a 
@@ -25,7 +25,7 @@ DEFINES += ALSA_SUPPORT
 # Uncomment the line which notes your CPU type
 #
 
-QMAKE_CXXFLAGS_RELEASE += -mtune=pentium3
+#QMAKE_CXXFLAGS_RELEASE += -mtune=pentium3
 #QMAKE_CXXFLAGS_RELEASE += -mtune=pentium4
 #QMAKE_CXXFLAGS_RELEASE += -mtune=pentium-m
 
@@ -65,7 +65,8 @@ unix {
 		
 #		DEFINES += USE_DEBUGGER
 		
-		#QMAKE_CXXFLAGS_RELEASE += -finline-functions
+#		QMAKE_CXXFLAGS_RELEASE += -g
+#		QMAKE_CXXFLAGS_RELEASE += -finline-functions
 		
 		MACHINETYPE = $$system(arch)
 		
@@ -95,4 +96,5 @@ unix {
 
 macx {
 	DEFINES -= ALSA_SUPPORT
+	DEFINES += MAC_OS_BUILD
 }
