@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.18 2006/07/03 17:51:56 r_sijrier Exp $
+$Id: Track.cpp,v 1.19 2006/07/04 09:52:22 r_sijrier Exp $
 */
 
 #include "Track.h"
@@ -40,7 +40,7 @@ Track::Track(Song* song, int pID, QString pName, int pBaseY, int pHeight )
 	m_pan = numtakes = 0;
 	m_gain = 0.5;
 	
-	busIn = "Not Set";
+	busIn = "Capture 1";
 	busOut = "MasterOut";
 	
 	init();
