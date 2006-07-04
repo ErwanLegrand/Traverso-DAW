@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: JackDriver.cpp,v 1.2 2006/06/26 23:58:13 r_sijrier Exp $
+    $Id: JackDriver.cpp,v 1.3 2006/07/04 20:38:48 r_sijrier Exp $
 */
 
 #include "JackDriver.h"
@@ -26,7 +26,10 @@
 #include "AudioChannel.h"
 
 #include <jack/jack.h>
+
+#if defined (ALSA_SUPPORT)
 #include "AlsaDriver.h"
+#endif
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -228,12 +231,18 @@ int JackDriver::process_callback (nframes_t nframes)
 // Since Jack uses ALSA, we ask it from ALSA directly :-)
 QString JackDriver::get_device_name( )
 {
+#if defined (ALSA_SUPPORT)
         return AlsaDriver::alsa_device_name(false);
+#endif
+	return "AudioDevice";
 }
 
 QString JackDriver::get_device_longname( )
 {
+#if defined (ALSA_SUPPORT)
         return AlsaDriver::alsa_device_name(true);
+#endif
+	return "AudioDevice";
 }
 
 int JackDriver::_xrun_callback( void * arg )
