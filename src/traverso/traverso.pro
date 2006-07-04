@@ -103,7 +103,7 @@ INCLUDEPATH += 	../../src/core \
 QMAKE_LIBDIR = ./lib ../../lib
 TARGET = traverso
 
-target.path = /usr/bin
+target.path = /usr/local/bin
 INSTALLS += target
 
 DESTDIR = ../..
