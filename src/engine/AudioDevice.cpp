@@ -17,13 +17,16 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.6 2006/07/03 17:51:56 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.7 2006/07/04 20:35:48 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
 #include "AudioDeviceThread.h"
 
+#if defined (ALSA_SUPPORT)
 #include "AlsaDriver.h"
+#endif
+
 #include "JackDriver.h"
 #include "Driver.h"
 #include "Client.h"

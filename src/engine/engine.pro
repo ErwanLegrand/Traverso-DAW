@@ -47,4 +47,6 @@ unix {
 
 macx {
 	SOURCES -= AlsaDriver.cpp
+	HEADERS -= AlsaDriver.h
+	LIBS -= -lasound
 }
