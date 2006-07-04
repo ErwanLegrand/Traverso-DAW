@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDeviceThread.cpp,v 1.4 2006/06/21 19:50:37 r_sijrier Exp $
+$Id: AudioDeviceThread.cpp,v 1.5 2006/07/04 20:59:26 r_sijrier Exp $
 */
 
 #include "AudioDeviceThread.h"
@@ -137,6 +137,9 @@ int AudioDeviceThread::become_realtime( bool realtime )
 
 void AudioDeviceThread::run_on_cpu( int cpu )
 {
+#if defined (MAC_OS_BUILD)
+	return;
+#else
 	cpu_set_t mask;
 	CPU_ZERO(&mask);
 	CPU_SET(cpu, &mask);
@@ -145,5 +148,6 @@ void AudioDeviceThread::run_on_cpu( int cpu )
 	} else {
 		PMESG("Running AudioDeviceThread on CPU %d", cpu);
 	}
+#endif
 }
 
