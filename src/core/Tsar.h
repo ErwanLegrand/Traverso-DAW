@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Tsar.h,v 1.3 2006/07/03 17:51:56 r_sijrier Exp $
+$Id: Tsar.h,v 1.4 2006/07/05 11:11:15 r_sijrier Exp $
 */
 
 #ifndef TSAR_H
@@ -98,21 +98,15 @@ private:
 	// allow this function to create one instance
 	friend Tsar& tsar();
 
-	QTimer			addRemoveRetryTimer;
 	QTimer			finishProcessedObjectsTimer;
-	QMutex			mutex;
-	
-	QList<TsarDataStruct >	objectsToBeProcessed;
-	QList<TsarDataStruct >	processedObjects;
 	
 	RingBuffer*		rbToBeProcessed;
 	RingBuffer*		rbProcessed;
 	
-	volatile size_t		processAddRemove;
-	
+	int 			count;
+
 
 private slots:
-	void start_add_remove( );
 	void finish_processed_objects();
 	
 };

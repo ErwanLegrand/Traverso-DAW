@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.cpp,v 1.4 2006/06/19 11:59:04 r_sijrier Exp $
+$Id: WriteSource.cpp,v 1.5 2006/07/05 11:11:15 r_sijrier Exp $
 */
 
 #include "WriteSource.h"
@@ -376,7 +376,7 @@ int WriteSource::finish_export( )
 
 int WriteSource::rb_write( const audio_sample_t * src, nframes_t start, nframes_t cnt )
 {
-	return m_buffer->write( src, cnt);
+	return m_buffer->write( (char*)src, cnt * sizeof(audio_sample_t));
 }
 
 void WriteSource::set_process_peaks( bool process )
@@ -387,7 +387,7 @@ void WriteSource::set_process_peaks( bool process )
 
 int WriteSource::rb_file_write( nframes_t cnt )
 {
-	int read = m_buffer->read(spec->dataF, cnt);
+	int read = m_buffer->read((char*)spec->dataF, cnt * sizeof(audio_sample_t)) / sizeof(audio_sample_t);
 	
 	if (read > 0) {
 		process(read);
@@ -409,7 +409,7 @@ bool WriteSource::is_recording( )
 int WriteSource::process_ringbuffer( audio_sample_t* framebuffer)
 {
 	spec->dataF = framebuffer;
-	int readSpace = m_buffer->read_space();
+	int readSpace = m_buffer->read_space() / sizeof(audio_sample_t);
 	
 	if (  ! recording ) {
 		PWARN("Writing remaining  (%d) samples to ringbuffer", readSpace);

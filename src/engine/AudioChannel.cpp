@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioChannel.cpp,v 1.4 2006/05/17 22:07:05 r_sijrier Exp $
+    $Id: AudioChannel.cpp,v 1.5 2006/07/05 11:11:15 r_sijrier Exp $
 */
 
 #include "AudioChannel.h"
@@ -98,10 +98,10 @@ audio_sample_t AudioChannel::get_peak_value( )
 {
         float peak = 0;
         audio_sample_t result = 0;
-        int read = peaks->read_space();
+        int read = peaks->read_space() /  sizeof(audio_sample_t);
 
         while (read != 0) {
-                read = peaks->read(&peak, 1);
+                read = peaks->read((char*)&peak, 1 * sizeof(audio_sample_t));
                 if (peak > result)
                         result = peak;
         }

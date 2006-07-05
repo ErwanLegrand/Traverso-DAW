@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSource.cpp,v 1.3 2006/06/20 19:33:45 r_sijrier Exp $
+$Id: AudioSource.cpp,v 1.4 2006/07/05 11:11:15 r_sijrier Exp $
 */
 
 #include <QDateTime>
@@ -72,7 +72,7 @@ AudioSource::~AudioSource()
 
 void AudioSource::private_init( )
 {
-	m_buffer = new RingBuffer(131072);
+	m_buffer = new RingBuffer(131072 * sizeof(audio_sample_t));
 	m_buffer->mlock_buffer();
 	m_buffer->reset();
 	m_peak = new Peak(this);

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.7 2006/07/04 20:35:48 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.8 2006/07/05 11:11:15 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -404,10 +404,10 @@ trav_time_t AudioDevice::get_cpu_time( )
 	trav_time_t currentTime = get_microseconds();
 	float totaltime = 0;
 	float value = 0;
-	int read = cpuTimeBuffer->read_space();
+	int read = cpuTimeBuffer->read_space() / sizeof(audio_sample_t);
 
 	while (read != 0) {
-		read = cpuTimeBuffer->read(&value, 1);
+		read = cpuTimeBuffer->read((char*)&value, 1 * sizeof(audio_sample_t));
 		totaltime += value;
 	}
 

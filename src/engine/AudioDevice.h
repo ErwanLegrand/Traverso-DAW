@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.6 2006/07/03 17:51:56 r_sijrier Exp $
+$Id: AudioDevice.h,v 1.7 2006/07/05 11:11:15 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -111,7 +111,7 @@ public:
 	void transport_cycle_end(trav_time_t time)
 	{
 		audio_sample_t runcycleTime = time - cycleStartTime;
-		cpuTimeBuffer->write(&runcycleTime, 1);
+		cpuTimeBuffer->write((char*)&runcycleTime, 1 * sizeof(audio_sample_t));
 	}
 
 	int shutdown();

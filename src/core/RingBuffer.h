@@ -21,7 +21,7 @@
     along with this program; if not, write to the Free Software 
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: RingBuffer.h,v 1.1 2006/04/20 14:51:40 r_sijrier Exp $
+    $Id: RingBuffer.h,v 1.2 2006/07/05 11:11:15 r_sijrier Exp $
 */
 
 #ifndef _RINGBUFFER_H
@@ -43,7 +43,7 @@
 
 typedef struct
 {
-        audio_sample_t  *buf;
+        char  *buf;
         size_t len;
 }
 ringbuffer_data_t ;
@@ -106,7 +106,7 @@ public:
         *
         * @return the number of bytes read, which may range from 0 to cnt.
         */
-        size_t read(audio_sample_t *dest, size_t cnt);
+        size_t read(char *dest, size_t cnt);
 
         /**
         * Read data from the ringbuffer. Opposed to read()
@@ -122,7 +122,7 @@ public:
         *
         * @return the number of bytes read, which may range from 0 to cnt.
         */
-        size_t peek(audio_sample_t *dest, size_t cnt);
+        size_t peek(char *dest, size_t cnt);
 
         /**
         * Advance the read pointer.
@@ -165,7 +165,7 @@ public:
         *
         * @return the number of bytes write, which may range from 0 to cnt
         */
-        size_t write(const audio_sample_t *src, size_t cnt);
+        size_t write(const char *src, size_t cnt);
 
         /**
         * Advance the write pointer.
@@ -187,12 +187,12 @@ public:
         size_t write_space();
 
 private:
-        audio_sample_t	*buf;
-        volatile size_t 		write_ptr;
-        volatile size_t 		read_ptr;
+        char			*buf;
+        volatile size_t 	write_ptr;
+        volatile size_t 	read_ptr;
         size_t	  		size;
         size_t	  		size_mask;
-        int		  		mlocked;
+        int			mlocked;
 
 };
 

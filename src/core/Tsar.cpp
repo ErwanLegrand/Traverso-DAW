@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Tsar.cpp,v 1.5 2006/07/03 17:51:56 r_sijrier Exp $
+    $Id: Tsar.cpp,v 1.6 2006/07/05 11:11:15 r_sijrier Exp $
 */
 
 #include "Tsar.h"
@@ -41,27 +41,27 @@ Tsar& tsar()
 
 Tsar::Tsar()
 {
-	processAddRemove = 0; 
+	count = 0;
 	
-/*	printf("Tsardata struct is %d bytes, Ringbuffer size is %d bytes\n",sizeof(TsarDataStruct), 1000 * sizeof(TsarDataStruct));
 	rbToBeProcessed = new RingBuffer(1000 * sizeof(TsarDataStruct));
+	rbProcessed = new RingBuffer(1000 * sizeof(TsarDataStruct));
 	
-	printf("write space is %d\n",rbToBeProcessed->write_space());*/
 	
-	addRemoveRetryTimer.setSingleShot( true );
-
-	connect(&addRemoveRetryTimer, SIGNAL(timeout()), this, SLOT(start_add_remove()));
 	connect(&finishProcessedObjectsTimer, SIGNAL(timeout()), this, SLOT(finish_processed_objects()));
 }
 
 void Tsar::process_object( TsarDataStruct& data )
 {
-	mutex.lock();
-	objectsToBeProcessed.append(data);
-	mutex.unlock();
+	// write data to the to be processed objects ringbuffer
+	rbToBeProcessed->write( (char*)(&data), sizeof(TsarDataStruct));
 	
-	start_add_remove();
-	finishProcessedObjectsTimer.start( 20 );
+	count++;
+// 	printf("process_object:: Count is %d\n", count);
+	
+	// In case the timer wasn't fired, fire it now.
+	if ( ! finishProcessedObjectsTimer.isActive()) {
+		finishProcessedObjectsTimer.start( 10 );
+	}
 }
 
 //
@@ -69,23 +69,24 @@ void Tsar::process_object( TsarDataStruct& data )
 //
 void Tsar::add_remove_items_in_audio_processing_path( )
 {
+	// We track how many objects we have inserted in process_objects
+	// and how many we have processed in finish_processed_objects
+	// if count == 0, there is nothing left, so we can return immediately!
+	if ( ! count ) {
+		return;
+	}
+	
+	int objcount = 0;
+	
+	trav_time_t starttime = get_microseconds();
+	
+	while( (rbToBeProcessed->read_space() / sizeof(TsarDataStruct)) >= 1 ) {
+		
+		TsarDataStruct tsarData;
+		rbToBeProcessed->read( (char*)(&tsarData), sizeof(TsarDataStruct));
 
-	if ( ! processAddRemove ) {
-		return;
-	}
-	
-// 	PMESG("processAddRemove is true, entering add_remove_items_in_audio_processing_path()");
-	
-	if ( ! mutex.tryLock() ) {
-// 		printf("Tsar::add_remove_items_in_audio_processing_path() : Couldn't lock mutex, retrying next cycle\n");
-		return;
-	}
-	
-	int count = 0;
-	
-// 	trav_time_t starttime = get_microseconds();
-	
-	foreach(TsarDataStruct tsarData, objectsToBeProcessed) {
+// 		printf("fromRB slotindex is %d, objecttobeadded is %s, objectoadd is %s\n", fromRB.slotindex, fromRB.objectToBeAdded->metaObject()->className(), fromRB.objectToAddTo->metaObject()->className());
+// 		printf("tsarData slotindex is %d, objecttobeadded is %s, objectoadd is %s\n\n", tsarData.slotindex, tsarData.objectToBeAdded->metaObject()->className(), tsarData.objectToAddTo->metaObject()->className());
 	
 		void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&tsarData.objectToBeAdded)) };
 		// This equals QMetaObject::invokeMethod(), without type checking. But we know that the types
@@ -93,87 +94,60 @@ void Tsar::add_remove_items_in_audio_processing_path( )
 		if (! (tsarData.objectToAddTo->qt_metacall(QMetaObject::InvokeMetaMethod, tsarData.slotindex, _a) < 0) ) {
 			
 			qDebug("Tsar::add_remove_items_in_audio_processing_path() QMetaObject::invokeMethod failed");
-// 			qDebug("ToBeAddedRemovedObject: %s from %s::%s\n", tsarData.objectToBeAdded->metaObject()->className(), tsarData.objectToAddTo->metaObject()->className(), tsarData.slot);
 		
 		} else {
-			
-// 			printf("Tsar::add_remove_items_in_audio_processing_path() QMetaObject::invokeMethod: Succes!\n");
-// 			printf("ToBeAddedRemovedObject: %s from %s::%s\n", tsarData.objectToBeAdded->metaObject()->className(), tsarData.objectToAddTo->metaObject()->className(), tsarData.slot);
-// 			
-			processedObjects.append( tsarData );
-		}	
+			rbProcessed->write( (char*)(&tsarData), sizeof(TsarDataStruct));
+		}
 		
 // 		PMESG("ToBeAddedRemovedObject: %s from %s::%s", tsarData.objectToBeAdded->metaObject()->className(), tsarData.objectToAddTo->metaObject()->className(), tsarData.slot);
 		
 
-		count++;
+		objcount++;
 	}
 	
-	objectsToBeProcessed.clear();
 	
-// 	int processtime = (int) (get_microseconds() - starttime);
-// 	printf("\nNumber of objects processed: %d in %d useconds\n",count, processtime);
+	int processtime = (int) (get_microseconds() - starttime);
+	if (objcount)
+		printf("\nNumber of objects processed: %d in %d useconds\n",objcount, processtime);
 
-	mutex.unlock();
-	
-// 	PMESG("done add_remove_items_in_audio_processing_path(), set processAddRemove to 0\n");
-	
-	processAddRemove = 0;
-}
-
-void Tsar::start_add_remove( )
-{
-	PENTER;
-	static int retryCount;
-	
-	if (processAddRemove) {
-		
-		if (!addRemoveRetryTimer.isActive()) {
-			addRemoveRetryTimer.start( 10 );
-			PMESG("processAddRemove is still true, retrying in 10 ms !!");
-			retryCount++;
-		}
-		
-		
-		if (retryCount > 100) {
-			qFatal("Cannot start ThreadSaveAddRemove::start_add_remove(), processAddRemove remains true.\n"
-				"This is most likely caused by the audiodevice thread (or Jacks' one) gone wild or stalled\n"
-				"One issue could be that you are not running with real time privileges! Please check for this!\n"
-				"To improve future program behaviour, please report this so we can sort out the problem!\n");
-		}
-		
-		return;
-	}
-	
-	processAddRemove = 1;
-	retryCount = 0;
-	
 }
 
 void Tsar::finish_processed_objects( )
 {
-// 	printf("Entering finish_processed_objects()\n");
 	
-	mutex.lock();
-	
-	if (processedObjects.isEmpty() && objectsToBeProcessed.isEmpty()) {
-		finishProcessedObjectsTimer.stop();
-		mutex.unlock();
-// 		printf("Stopped the finishProcessedObjectsTimer\n");
-		return;
-	}
-	
-	foreach(TsarDataStruct tsarData, processedObjects) {
+	while( (rbProcessed->read_space() / sizeof(TsarDataStruct)) >= 1 ) {
+		TsarDataStruct tsarData;
+		// Read one TsarDataStruct from the processed objects ringbuffer
+		rbProcessed->read( (char*)(&tsarData), sizeof(TsarDataStruct));
+		
+		// In case the sender object != 0, emit the signal!
 		if (tsarData.sender) {
 			// This equals emit someSignal() :-)
 			void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&tsarData.objectToBeAdded)) };
 			QMetaObject::activate(tsarData.sender, tsarData.sender->metaObject(), tsarData.signalindex, _a);
 		}
+		
+		--count;
+// 		printf("finish_processed_objects:: Count is %d\n", count);
 	}
 	
-	processedObjects.clear();
+	static int retryCount;
 	
-	mutex.unlock();
+	retryCount++;
+	
+	if (retryCount > 100) {
+		qFatal("Unable to process thread save adding/removing of object into audio processing execution path!\n"
+			"This is most likely caused by the audiodevice thread (or Jacks' one) gone wild or stalled\n"
+			"One issue could be that you are not running with real time privileges! Please check for this!\n"
+			"To improve future program behaviour, please report this so we can sort out the problem!\n");
+	}
+	
+	if (count == 0) {
+		printf("count is 0, stopping timer\n\n");
+		finishProcessedObjectsTimer.stop();
+		retryCount = 0;
+	}
+	
 }
 
 //eof

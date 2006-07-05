@@ -53,7 +53,7 @@ RingBuffer::RingBuffer(size_t sz)
         size_mask -= 1;
         write_ptr = 0;
         read_ptr = 0;
-        buf = new audio_sample_t[size];
+        buf = new char[size]; 
         mlocked = 0;
 }
 
@@ -132,7 +132,7 @@ size_t RingBuffer::write_space ()
 /* The copying data reader.  Copy at most `cnt' bytes to
    `dest'.  Returns the actual number of bytes copied. */
 
-size_t RingBuffer::read (audio_sample_t *dest, size_t cnt)
+size_t RingBuffer::read (char *dest, size_t cnt)
 {
         size_t free_cnt;
         size_t cnt2;
@@ -155,12 +155,12 @@ size_t RingBuffer::read (audio_sample_t *dest, size_t cnt)
                 n2 = 0;
         }
 
-        memcpy (dest, &(buf[read_ptr]), n1 * sizeof(audio_sample_t));
+        memcpy (dest, &(buf[read_ptr]), n1 * sizeof(char));
         read_ptr += n1;
         read_ptr &= size_mask;
 
         if (n2) {
-                memcpy (dest + n1, &(buf[read_ptr]), n2 * sizeof(audio_sample_t));
+                memcpy (dest + n1, &(buf[read_ptr]), n2 * sizeof(char));
                 read_ptr += n2;
                 read_ptr &= size_mask;
         }
@@ -171,7 +171,7 @@ size_t RingBuffer::read (audio_sample_t *dest, size_t cnt)
 /* The copying data reader w/o read pointer advance.  Copy at most
    `cnt' bytes from `dest'.  Returns the actual number of bytes copied. */
 
-size_t RingBuffer::peek (audio_sample_t *dest, size_t cnt)
+size_t RingBuffer::peek (char *dest, size_t cnt)
 {
         size_t free_cnt;
         size_t cnt2;
@@ -214,7 +214,7 @@ size_t RingBuffer::peek (audio_sample_t *dest, size_t cnt)
 /* The copying data writer.  Copy at most `cnt' bytes to `rb' from
    `src'.  Returns the actual number of bytes copied. */
 
-size_t RingBuffer::write (const audio_sample_t *src, size_t cnt)
+size_t RingBuffer::write (const char *src, size_t cnt)
 {
         size_t free_cnt;
         size_t cnt2;
@@ -237,12 +237,12 @@ size_t RingBuffer::write (const audio_sample_t *src, size_t cnt)
                 n2 = 0;
         }
 
-        memcpy (&(buf[write_ptr]), src, n1 * sizeof(audio_sample_t));
+        memcpy (&(buf[write_ptr]), src, n1 * sizeof(char));
         write_ptr += n1;
         write_ptr &= size_mask;
 
         if (n2) {
-                memcpy (&(buf[write_ptr]), src + n1, n2 * sizeof(audio_sample_t));
+                memcpy (&(buf[write_ptr]), src + n1, n2 * sizeof(char));
                 write_ptr += n2;
                 write_ptr &= size_mask;
         }

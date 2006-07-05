@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioChannel.h,v 1.2 2006/05/17 22:07:05 r_sijrier Exp $
+$Id: AudioChannel.h,v 1.3 2006/07/05 11:11:15 r_sijrier Exp $
 */
 
 #ifndef AUDIOCHANNEL_H
@@ -75,7 +75,7 @@ public:
 		float peakValue = 0;
 
 		peakValue = Mixer::compute_peak( buf, bufSize, peakValue );
-		peaks->write( &peakValue, 1);
+		peaks->write( (char*)&peakValue, 1 * sizeof(audio_sample_t));
 	}
 
 	audio_sample_t get_peak_value();

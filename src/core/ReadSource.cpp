@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.cpp,v 1.6 2006/06/16 14:03:44 r_sijrier Exp $
+$Id: ReadSource.cpp,v 1.7 2006/07/05 11:11:15 r_sijrier Exp $
 */
 
 #include "ReadSource.h"
@@ -197,9 +197,9 @@ int ReadSource::rb_read(audio_sample_t* dst, nframes_t start, nframes_t cnt)
 
 
 	if (start != rbRelativeFileReadPos) {
-		if ( (start > rbRelativeFileReadPos) && (rbRelativeFileReadPos + m_buffer->read_space()) > start) {
+		if ( (start > rbRelativeFileReadPos) && (rbRelativeFileReadPos + (m_buffer->read_space() /  sizeof(audio_sample_t)) ) > start) {
 			int advance = start - rbRelativeFileReadPos;
-			m_buffer->read_advance( advance );
+			m_buffer->read_advance( advance * sizeof(audio_sample_t) );
 			rbRelativeFileReadPos += advance;
 		} else {
 			start_resync(start);
@@ -207,7 +207,7 @@ int ReadSource::rb_read(audio_sample_t* dst, nframes_t start, nframes_t cnt)
 		}
 	}
 
-	nframes_t readFrames = m_buffer->read(dst, cnt);
+	nframes_t readFrames = m_buffer->read((char*)dst, cnt * sizeof(audio_sample_t)) / sizeof(audio_sample_t);
 
 	if (readFrames != cnt) {
 		// Hmm, not sure what to do in this case....
@@ -244,7 +244,7 @@ int ReadSource::process_ringbuffer( audio_sample_t * framebuffer )
 		return 0;
 	}
 	
-	nframes_t writeSpace = m_buffer->write_space();
+	nframes_t writeSpace = m_buffer->write_space() / sizeof(audio_sample_t);
 
 	int toRead = ((int)(writeSpace / 16384)) * 16384;
 	
@@ -262,7 +262,7 @@ int ReadSource::process_ringbuffer( audio_sample_t * framebuffer )
 	
 	nframes_t toWrite = rb_file_read(framebuffer, toRead);
 
-	m_buffer->write(framebuffer, toWrite);
+	m_buffer->write((char*)framebuffer, toWrite * sizeof(audio_sample_t));
 	
 	return 0;
 }

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.9 2006/06/20 19:33:14 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.10 2006/07/05 11:11:15 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
@@ -242,7 +242,7 @@ void DiskIO::prepare_for_seek( )
 void DiskIO::update_time_usage( )
 {
 	audio_sample_t runcycleTime = get_microseconds() - cycleStartTime;
-	cpuTimeBuffer->write(&runcycleTime, 1);
+	cpuTimeBuffer->write((char*)&runcycleTime, 1 * sizeof(audio_sample_t));
 
 }
 
@@ -251,10 +251,10 @@ trav_time_t DiskIO::get_cpu_time( )
 	trav_time_t currentTime = get_microseconds();
 	float totaltime = 0;
 	float value = 0;
-	int read = cpuTimeBuffer->read_space();
+	int read = cpuTimeBuffer->read_space() / sizeof(audio_sample_t);
 
 	while (read != 0) {
-		read = cpuTimeBuffer->read(&value, 1);
+		read = cpuTimeBuffer->read((char*)&value, 1 * sizeof(audio_sample_t));
 		totaltime += value;
 	}
 
