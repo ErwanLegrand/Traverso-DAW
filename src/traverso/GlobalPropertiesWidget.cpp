@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: GlobalPropertiesWidget.cpp,v 1.6 2006/06/26 23:59:37 r_sijrier Exp $
+$Id: GlobalPropertiesWidget.cpp,v 1.7 2006/07/05 09:13:29 r_sijrier Exp $
 */
 
 #include "GlobalPropertiesWidget.h"
@@ -67,11 +67,12 @@ void GlobalPropertiesWidget::save_properties( )
 	settings.setValue("trackCreationCount", numberOfTrackSpinBox->text());
 	QString zoomLevel = defaultHZoomLevelComboBox->currentText().mid(2);
 	settings.setValue("hzoomLevel", zoomLevel);
-	settings.setValue("WaveFormRectified", (waveFormRectifiedRadioButton->isChecked() ? 1 : 0));
+	settings.setValue("WaveFormRectified", (waveFormRectifiedCheckBox->isChecked() ? 1 : 0));
+	settings.setValue("WaveFormMerged", (waveFormMergedCheckBox->isChecked() ? 1 : 0));
 	settings.setValue("Hardware/samplerate", defaultSampleRateComboBox->currentText());
 	settings.setValue("Hardware/bufferSize", bufferSizeComboBox->currentText());
 	settings.setValue("Hardware/drivertype", audioDriverBackendComboBox->currentText());
-	settings.setValue("Project/loadLastUsed",  (loadLastProjectRadioButton->isChecked() ? 1 : 0));
+	settings.setValue("Project/loadLastUsed",  (loadLastProjectCheckBox->isChecked() ? 1 : 0));
 }
 
 
@@ -83,6 +84,7 @@ void GlobalPropertiesWidget::load_properties( )
 	int defaultNumTracks = settings.value("trackCreationCount").toInt();
 	int hzoomLevel = settings.value("hzoomLevel").toInt();
 	int waveform = settings.value("WaveFormRectified").toInt();
+	int waveformmerged = settings.value("WaveFormMerged").toInt();
 	int loadLastUsedProject = settings.value("Project/loadLastUsed").toInt();
 	int defaultSampleRate = settings.value("Hardware/samplerate").toInt();
 	int bufferSize = settings.value("Hardware/bufferSize").toInt();
@@ -155,13 +157,14 @@ void GlobalPropertiesWidget::load_properties( )
 	if (hzoomIndex >= 0)
 		defaultHZoomLevelComboBox->setCurrentIndex(hzoomIndex);
 
-	loadLastProjectRadioButton->setChecked(loadLastUsedProject);
+	loadLastProjectCheckBox->setChecked(loadLastUsedProject);
 	numberOfTrackSpinBox->setValue(defaultNumTracks);
 	defaultSampleRateComboBox->setCurrentIndex(defaultSampleRateIndex);
 	bufferSizeComboBox->setCurrentIndex(bufferSizeIndex);
 	doubleFactTimeoutSpinBox->setValue(doubleFactTimeout);
 	holdTimeoutSpinBox->setValue(holdTimeout);
-	waveFormRectifiedRadioButton->setChecked(waveform);
+	waveFormRectifiedCheckBox->setChecked(waveform);
+	waveFormMergedCheckBox->setChecked(waveformmerged);
 }
 
 void GlobalPropertiesWidget::on_saveButton_clicked( )
