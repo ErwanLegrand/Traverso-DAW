@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.22 2006/06/29 22:44:28 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.23 2006/07/06 17:34:52 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -53,6 +53,7 @@ AudioClipView::AudioClipView(ViewPort * vp, TrackView* parent, AudioClip* clip )
 	
 	QSettings settings;
 	classicView = settings.value("WaveFormRectified", "0").toInt() == 0 ? 1 : 0;
+	mergedView = settings.value("WaveFormMerged", "0").toInt() == 0 ? 0 : 1;
 	
 	connect(m_clip, SIGNAL(muteChanged(bool )), this, SLOT(mute_changed(bool )));
 	connect(m_clip, SIGNAL(stateChanged()), this, SLOT(schedule_for_repaint()));
@@ -165,8 +166,10 @@ QRect AudioClipView::draw(QPainter& p)
 			painter.setPen(QColor(178, 191, 182)); // Channel seperator color.
 		}
 		// Draw channel seperator horizontal lines.
-		for (int i=1; i<channels; ++i) {
-			painter.drawLine(0, (height/channels) * 1, clipXWidth, (height/channels) * i);
+		if (!mergedView) {
+			for (int i=1; i<channels; ++i) {
+				painter.drawLine(0, (height/channels) * 1, clipXWidth, (height/channels) * i);
+			}
 		}
 	
 		draw_peaks(painter);
@@ -246,6 +249,10 @@ void AudioClipView::draw_peaks( QPainter& p )
 				microBufferPos++;
 			}
 		} else if (classicView) {
+			if (mergedView) {
+				scaleFactor = ( ( (float) this->height ) / Peak::MAX_DB_VALUE) * gain / 2.0;
+				centerY = this->height/2;
+			}
 			p.setPen(cm().get("CLIP_PEAK_MACROVIEW"));
 
 			for (uint x = 0; x < nframes; x++) {
@@ -255,8 +262,13 @@ void AudioClipView::draw_peaks( QPainter& p )
 				bufferPos++;
 			}
 		} else {
-			scaleFactor = ( ( (float) height ) / Peak::MAX_DB_VALUE) * gain;
-			centerY = height*(chan+1);
+			if (mergedView) {
+				scaleFactor = ( ( (float) this->height ) / Peak::MAX_DB_VALUE) * gain;
+				centerY = this->height;
+			} else {
+				scaleFactor = ( ( (float) height ) / Peak::MAX_DB_VALUE) * gain;
+				centerY = height*(chan+1);
+			}
 			p.setPen(cm().get("CLIP_PEAK_MACROVIEW"));
 
 			for (uint x = 0; x < nframes; x++) {
