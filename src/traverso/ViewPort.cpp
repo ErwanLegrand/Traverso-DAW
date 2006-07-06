@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewPort.cpp,v 1.2 2006/04/25 17:19:10 r_sijrier Exp $
+$Id: ViewPort.cpp,v 1.3 2006/07/06 17:18:48 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -184,7 +184,7 @@ void ViewPort::unregister_viewitem( ViewItem * item )
 
 	// Also remove it from repaintViewItemList if it's in there.
 	index = repaintViewItemList.indexOf(item);
-	if (index > 0)
+	if (index != -1)
 		repaintViewItemList.takeAt(index);
 }
 
