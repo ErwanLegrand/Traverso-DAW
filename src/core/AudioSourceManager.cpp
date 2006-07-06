@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSourceManager.cpp,v 1.6 2006/06/26 23:57:48 r_sijrier Exp $
+$Id: AudioSourceManager.cpp,v 1.7 2006/07/06 17:36:27 r_sijrier Exp $
 */
 
 #include "AudioSourceManager.h"
@@ -39,6 +39,12 @@ AudioSourceManager::AudioSourceManager()
 AudioSourceManager::~AudioSourceManager()
 {
 	PENTERDES;
+	foreach(ReadSource* source, sources) {
+		if (! source->ref()) {
+			delete source;
+		}
+	}
+
 }
 
 
