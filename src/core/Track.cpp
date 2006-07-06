@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.19 2006/07/04 09:52:22 r_sijrier Exp $
+$Id: Track.cpp,v 1.20 2006/07/06 17:38:03 r_sijrier Exp $
 */
 
 #include "Track.h"
@@ -249,7 +249,7 @@ int Track::remove_clip(AudioClip* clip)
 // 		printf("Song not running, removing Clip now\n");
 		return 1;
 	} else {
-		THREAD_SAVE_REMOVE_EMIT_SIGNAL(this, clip, private_remove_clip(AudioClip*), audioClipRemoved(AudioClip*));
+		THREAD_SAVE_CALL_EMIT_SIGNAL(this, clip, private_remove_clip(AudioClip*), audioClipRemoved(AudioClip*));
 	}
 	
 	return 1;
@@ -264,7 +264,7 @@ void Track::add_clip(AudioClip* clip)
 		emit audioClipAdded(clip);
 // 		printf("Song not running, adding Clip now\n");
 	} else {
-		THREAD_SAVE_ADD_EMIT_SIGNAL(this, clip, private_add_clip(AudioClip*), audioClipAdded(AudioClip*));
+		THREAD_SAVE_CALL_EMIT_SIGNAL(this, clip, private_add_clip(AudioClip*), audioClipAdded(AudioClip*));
 	}
 }
 
@@ -482,6 +482,9 @@ int Track::real_baseY( ) const
 	return baseY;// + m_song->mtaBaseY;
 }
 
+//
+//  Function called in RealTime AudioThread processing path
+//
 
 int Track::process( nframes_t nframes )
 {

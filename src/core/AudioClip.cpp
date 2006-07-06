@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.32 2006/07/03 17:51:56 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.33 2006/07/06 17:38:03 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -344,6 +344,9 @@ int AudioClip::set_selected(bool selected)
 	return 1;
 }
 
+//
+//  Function called in RealTime AudioThread processing path
+//
 int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 {
 	if (isRecording) {
@@ -426,6 +429,9 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 	return 1;
 }
 
+//
+//  Function called in RealTime AudioThread processing path
+//
 void AudioClip::process_capture( nframes_t nframes, uint channel )
 {
 	WriteSource* source = writeSources.at(channel);
@@ -630,7 +636,13 @@ void AudioClip::finish_write_source( WriteSource * ws )
 	
 	for (int i=0; i<writeSources.size(); ++i) {
 		if (ws == writeSources.at(i)) {
+		
+			//FIXME. The audiosourcesmanager is actually in charge of creating
+			// new ReadSources!!!!!!
+			// So we should move this code into asm, and get the source from there again :-)
+			// As a temp. fix, we call rs->ref() here to not crash :-(
 			ReadSource* rs = new ReadSource(ws);
+			rs->ref();
 			
 			rs->set_created_by_song( m_song->get_id() );
 			rs->set_original_bit_depth( audiodevice().get_bit_depth() );
@@ -791,7 +803,7 @@ void AudioClip::set_fade_in_shape( FadeShape shape, nframes_t len )
 	fadeInShape = shape;
 	
 	if (fadeIn->nodes.size() > 0) {
-		THREAD_SAVE_ADD(fadeIn, fadeIn, private_clear() );
+		THREAD_SAVE_CALL(fadeIn, private_clear(), fadeIn);
 	}
 	
 	switch (shape) {
@@ -849,7 +861,7 @@ void AudioClip::set_fade_out_shape( FadeShape shape, nframes_t len )
 	fadeOutShape = shape;
 	
 	if (fadeOut->nodes.size() > 0) {
-		THREAD_SAVE_ADD(fadeOut, fadeOut, private_clear());
+		THREAD_SAVE_CALL(fadeOut, private_clear(), fadeOut);
 	}
 	
 	switch (shape) {

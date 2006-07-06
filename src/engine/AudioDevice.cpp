@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.8 2006/07/05 11:11:15 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.9 2006/07/06 17:38:18 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -442,12 +442,12 @@ void AudioDevice::private_remove_client(Client* client)
 
 void AudioDevice::add_client( Client * client )
 {
-	THREAD_SAVE_ADD(this, client, private_add_client(Client*));
+	THREAD_SAVE_CALL(this, private_add_client(Client*), client);
 }
 
 void AudioDevice::remove_client( Client * client )
 {
-	THREAD_SAVE_REMOVE_EMIT_SIGNAL(this, client, private_remove_client(Client*), clientRemoved(Client*));
+	THREAD_SAVE_CALL_EMIT_SIGNAL(this, client, private_remove_client(Client*), clientRemoved(Client*));
 }
 
 //eof

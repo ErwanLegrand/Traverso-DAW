@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.26 2006/07/03 17:51:56 r_sijrier Exp $
+$Id: Song.cpp,v 1.27 2006/07/06 17:38:03 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -284,7 +284,7 @@ void Song::add_track(Track* track)
 		emit trackAdded(track);
 // 		printf("Song is not transporting, save to add Track directly\n");
 	} else {
-		THREAD_SAVE_ADD_EMIT_SIGNAL(this, track, private_add_track(Track*), trackAdded(Track*));
+		THREAD_SAVE_CALL_EMIT_SIGNAL(this, track, private_add_track(Track*), trackAdded(Track*));
 	}
 	
 }
@@ -295,7 +295,7 @@ void Song::remove_track(Track* track)
 		private_remove_track(track);
 		emit trackRemoved(track);
 	} else {
-		THREAD_SAVE_REMOVE_EMIT_SIGNAL(this, track, private_remove_track(Track*), trackRemoved(Track*));
+		THREAD_SAVE_CALL_EMIT_SIGNAL(this, track, private_remove_track(Track*), trackRemoved(Track*));
 	}
 
 }
@@ -587,6 +587,9 @@ void Song::set_work_at(nframes_t pos)
 	emit workingPosChanged();
 }
 
+//
+//  Function _could_ be called in RealTime AudioThread processing path
+//
 void Song::start_seek()
 {
 	PMESG2("Song :: entering start_seek");
@@ -600,7 +603,8 @@ void Song::start_seek()
 
 	diskio->prepare_for_seek();
 
-	emit seekStart(newTransportFramePos);
+	THREAD_SAVE_EMIT_SIGNAL(this, seekStart(uint), newTransportFramePos);
+	
 	PMESG2("Song :: leaving start_seek");
 }
 
@@ -844,6 +848,9 @@ void Song::set_hzoom( int hzoom )
 	emit hzoomChanged();
 }
 
+//
+//  Function called in RealTime AudioThread processing path
+//
 int Song::process( nframes_t nframes )
 {
 	// If no need for playback/record, return.
@@ -852,7 +859,7 @@ int Song::process( nframes_t nframes )
 		return 0;
 		
 	if (stopTransport) {
-		emit transferStopped();
+		THREAD_SAVE_EMIT_SIGNAL(this, transferStopped(), 0);
 		transport = false;
 		realtimepath = false;
 		stopTransport = false;
@@ -860,8 +867,7 @@ int Song::process( nframes_t nframes )
 		return 0;
 	}
 
-	// zero the masterOut buffers _and_ the mixdown buffer which is used 
-	// in the Tracks' to mixdown the audioclips!
+	// zero the masterOut buffers
 	masterOut->silence_buffers(nframes);
 	
 	int processResult = 0;

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Tsar.h,v 1.4 2006/07/05 11:11:15 r_sijrier Exp $
+$Id: Tsar.h,v 1.5 2006/07/06 17:38:03 r_sijrier Exp $
 */
 
 #ifndef TSAR_H
@@ -25,19 +25,20 @@ $Id: Tsar.h,v 1.4 2006/07/05 11:11:15 r_sijrier Exp $
 
 #include <QObject>
 #include <QTimer>
-#include <QMutex>
-#include <QStack>
 #include <QByteArray>
 
-#define THREAD_SAVE_ADD(ObjectAddedTo, ObjectToBeAdded, slotSignature)  { \
-		THREAD_SAVE_ADD_EMIT_SIGNAL(ObjectAddedTo, ObjectToBeAdded, slotSignature, "")\
+#define THREAD_SAVE_CALL(ObjectAddedTo, slotSignature, slotArgument)  { \
+		THREAD_SAVE_CALL_EMIT_SIGNAL(ObjectAddedTo, slotArgument, slotSignature, "")\
 	}
-#define THREAD_SAVE_REMOVE  THREAD_SAVE_ADD
 
-#define THREAD_SAVE_ADD_EMIT_SIGNAL(ObjectAddedTo, ObjectToBeAdded, slotSignature, signalSignature)  { \
+#define THREAD_SAVE_EMIT_SIGNAL(sender, signalSignature, functionArgument) {\
+	THREAD_SAVE_CALL_EMIT_SIGNAL(sender, functionArgument, "", signalSignature)\
+}\
+
+#define THREAD_SAVE_CALL_EMIT_SIGNAL(ObjectAddedTo, functionArgument, slotSignature, signalSignature)  { \
 	TsarDataStruct tsardata;\
 	tsardata.objectToAddTo = ObjectAddedTo;\
-	tsardata.objectToBeAdded = ObjectToBeAdded;\
+	tsardata.funcArgument = (void*)functionArgument;\
 	\
 	int index = ObjectAddedTo->metaObject()->indexOfMethod(#slotSignature);\
 	if (index < 0) {\
@@ -64,15 +65,13 @@ $Id: Tsar.h,v 1.4 2006/07/05 11:11:15 r_sijrier Exp $
 	tsar().process_object(tsardata);\
 	}\
 
-#define THREAD_SAVE_REMOVE_EMIT_SIGNAL  THREAD_SAVE_ADD_EMIT_SIGNAL
-
 
 class ContextItem;
 class RingBuffer;
 
 struct TsarDataStruct {
 // used for slot invokation stuff
-	QObject*	objectToBeAdded;
+	void*		funcArgument;
 	QObject*	objectToAddTo;
 	int		slotindex;
 
@@ -93,6 +92,7 @@ public:
 
 private:
 	Tsar();
+	~Tsar();
 	Tsar(const Tsar&);
 
 	// allow this function to create one instance

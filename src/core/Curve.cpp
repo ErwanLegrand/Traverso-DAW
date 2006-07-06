@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.cpp,v 1.12 2006/07/03 17:51:56 r_sijrier Exp $
+$Id: Curve.cpp,v 1.13 2006/07/06 17:38:03 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -59,7 +59,7 @@ void Curve::add_node(double pos, double value)
 	
 	CurveNode* node = new CurveNode(pos, value); 
 	
-	THREAD_SAVE_ADD_EMIT_SIGNAL(this, node, private_add_node(CurveNode*), stateChanged());
+	THREAD_SAVE_CALL_EMIT_SIGNAL(this, node, private_add_node(CurveNode*), stateChanged());
 }
 
 void Curve::solve ()

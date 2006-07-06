@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Tsar.cpp,v 1.6 2006/07/05 11:11:15 r_sijrier Exp $
+    $Id: Tsar.cpp,v 1.7 2006/07/06 17:38:03 r_sijrier Exp $
 */
 
 #include "Tsar.h"
@@ -26,7 +26,6 @@
 #include "AudioDevice.h"
 #include "RingBuffer.h"
 
-#include <QByteArray>
 #include <QThread>
 
 // Always put me below _all_ includes, this is needed
@@ -46,8 +45,15 @@ Tsar::Tsar()
 	rbToBeProcessed = new RingBuffer(1000 * sizeof(TsarDataStruct));
 	rbProcessed = new RingBuffer(1000 * sizeof(TsarDataStruct));
 	
-	
 	connect(&finishProcessedObjectsTimer, SIGNAL(timeout()), this, SLOT(finish_processed_objects()));
+	
+	finishProcessedObjectsTimer.start( 20 );
+}
+
+Tsar::~ Tsar( )
+{
+	delete rbToBeProcessed;
+	delete rbProcessed;
 }
 
 void Tsar::process_object( TsarDataStruct& data )
@@ -56,12 +62,6 @@ void Tsar::process_object( TsarDataStruct& data )
 	rbToBeProcessed->write( (char*)(&data), sizeof(TsarDataStruct));
 	
 	count++;
-// 	printf("process_object:: Count is %d\n", count);
-	
-	// In case the timer wasn't fired, fire it now.
-	if ( ! finishProcessedObjectsTimer.isActive()) {
-		finishProcessedObjectsTimer.start( 10 );
-	}
 }
 
 //
@@ -76,39 +76,38 @@ void Tsar::add_remove_items_in_audio_processing_path( )
 		return;
 	}
 	
-	int objcount = 0;
-	
-	trav_time_t starttime = get_microseconds();
+/*	int objcount = 0;
+	trav_time_t starttime = get_microseconds();*/
 	
 	while( (rbToBeProcessed->read_space() / sizeof(TsarDataStruct)) >= 1 ) {
 		
 		TsarDataStruct tsarData;
 		rbToBeProcessed->read( (char*)(&tsarData), sizeof(TsarDataStruct));
 
-// 		printf("fromRB slotindex is %d, objecttobeadded is %s, objectoadd is %s\n", fromRB.slotindex, fromRB.objectToBeAdded->metaObject()->className(), fromRB.objectToAddTo->metaObject()->className());
-// 		printf("tsarData slotindex is %d, objecttobeadded is %s, objectoadd is %s\n\n", tsarData.slotindex, tsarData.objectToBeAdded->metaObject()->className(), tsarData.objectToAddTo->metaObject()->className());
-	
-		void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&tsarData.objectToBeAdded)) };
-		// This equals QMetaObject::invokeMethod(), without type checking. But we know that the types
-		// are the correct ones, and will casted just fine!
-		if (! (tsarData.objectToAddTo->qt_metacall(QMetaObject::InvokeMetaMethod, tsarData.slotindex, _a) < 0) ) {
 			
-			qDebug("Tsar::add_remove_items_in_audio_processing_path() QMetaObject::invokeMethod failed");
-		
-		} else {
-			rbProcessed->write( (char*)(&tsarData), sizeof(TsarDataStruct));
+		// If there is an object to be added, do the magic to call the slot :-)
+		if (tsarData.funcArgument) {
+			
+			void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&tsarData.funcArgument)) };
+			
+			// This equals QMetaObject::invokeMethod(), without type checking. But we know that the types
+			// are the correct ones, and will casted just fine!
+			if (! (tsarData.objectToAddTo->qt_metacall(QMetaObject::InvokeMetaMethod, tsarData.slotindex, _a) < 0) ) {
+				
+				qDebug("Tsar::add_remove_items_in_audio_processing_path() QMetaObject::invokeMethod failed");
+			
+			}
 		}
 		
-// 		PMESG("ToBeAddedRemovedObject: %s from %s::%s", tsarData.objectToBeAdded->metaObject()->className(), tsarData.objectToAddTo->metaObject()->className(), tsarData.slot);
+		rbProcessed->write( (char*)(&tsarData), sizeof(TsarDataStruct));
 		
-
-		objcount++;
+// 		objcount++;
 	}
 	
 	
-	int processtime = (int) (get_microseconds() - starttime);
-	if (objcount)
-		printf("\nNumber of objects processed: %d in %d useconds\n",objcount, processtime);
+// 	int processtime = (int) (get_microseconds() - starttime);
+// 	if (objcount)
+// 		printf("\nNumber of objects processed: %d in %d useconds\n",objcount, processtime);
 
 }
 
@@ -123,7 +122,7 @@ void Tsar::finish_processed_objects( )
 		// In case the sender object != 0, emit the signal!
 		if (tsarData.sender) {
 			// This equals emit someSignal() :-)
-			void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&tsarData.objectToBeAdded)) };
+			void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&tsarData.funcArgument)) };
 			QMetaObject::activate(tsarData.sender, tsarData.sender->metaObject(), tsarData.signalindex, _a);
 		}
 		
@@ -143,12 +142,11 @@ void Tsar::finish_processed_objects( )
 	}
 	
 	if (count == 0) {
-		printf("count is 0, stopping timer\n\n");
-		finishProcessedObjectsTimer.stop();
 		retryCount = 0;
 	}
 	
 }
+
 
 //eof
  
