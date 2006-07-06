@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioClipView.h,v 1.7 2006/06/19 14:20:46 r_sijrier Exp $
+    $Id: AudioClipView.h,v 1.8 2006/07/06 17:34:34 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIPVIEW_H
@@ -76,6 +76,7 @@ private:
         float origGain;
 
         bool waitingForPeaks;
+	bool mergedView;
         bool classicView;
 
 	void create_fade_selectors();
