@@ -17,13 +17,17 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.cpp,v 1.7 2006/07/05 11:11:15 r_sijrier Exp $
+$Id: ReadSource.cpp,v 1.8 2006/07/07 14:44:18 r_sijrier Exp $
 */
 
 #include "ReadSource.h"
 
 #include "Peak.h"
 #include "RingBuffer.h"
+#include "ProjectManager.h"
+#include "Project.h"
+
+#include <QFile>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -34,6 +38,15 @@ $Id: ReadSource.cpp,v 1.7 2006/07/05 11:11:15 r_sijrier Exp $
 ReadSource::ReadSource(const QDomNode node)
 		: AudioSource(node), refcount(0)
 {
+	Project* project = pm().get_project();
+	
+	// Check if the audiofile exists in our project audiosources dir
+	// and give it priority over the dir as given by the project.traverso file
+	// This makes it possible to move project directories without Traverso being
+	// unable to find it's audiosources!
+	if (QFile::exists(project->get_root_dir() + "/audiosources/" + m_name)) {
+		set_dir(project->get_root_dir() + "/audiosources/");
+	}
 }
 
 ReadSource::ReadSource(uint chan, QString dir, QString name)
