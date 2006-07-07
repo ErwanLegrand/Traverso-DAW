@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.33 2006/07/06 17:38:03 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.34 2006/07/07 14:48:32 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -143,6 +143,16 @@ int AudioClip::set_state(const QDomNode& node )
 	sourceEndFrame = sourceStartFrame + m_length;
 	set_track_start_frame( e.attribute( "trackstart", "" ).toUInt());
 	
+/*	QDomElement CurvesNode = node.firstChildElement("Curves");
+	if (!CurvesNode.isNull()) {
+		QDomNode CurveNode = CurvesNode.firstChild();
+		while (!CurveNode.isNull()) {
+			QDomElement e = CurveNode.toElement();
+			Curve* curve = new Curve(e);
+			CurveNode = CurveNode.nextSibling();
+		}
+	}*/
+	
 	return 1;
 }
 
@@ -169,6 +179,12 @@ QDomNode AudioClip::get_state( QDomDocument doc )
 		QString sourceName = "source-" + QByteArray::number(i);
 		node.setAttribute(sourceName, readSources.at(i)->get_id());
 	}
+
+// 	QDomNode curves = doc.createElement("Curves");
+// 	
+// 	curves.appendChild(fadeIn->get_state(doc));
+// 	
+// 	node.appendChild(curves);
 
 	return node;
 }
@@ -802,7 +818,7 @@ void AudioClip::set_fade_in_shape( FadeShape shape, nframes_t len )
 
 	fadeInShape = shape;
 	
-	if (fadeIn->nodes.size() > 0) {
+	if (fadeIn->get_nodes()->size() > 0) {
 		THREAD_SAVE_CALL(fadeIn, private_clear(), fadeIn);
 	}
 	
@@ -860,7 +876,7 @@ void AudioClip::set_fade_out_shape( FadeShape shape, nframes_t len )
 {
 	fadeOutShape = shape;
 	
-	if (fadeOut->nodes.size() > 0) {
+	if (fadeOut->get_nodes()->size() > 0) {
 		THREAD_SAVE_CALL(fadeOut, private_clear(), fadeOut);
 	}
 	
