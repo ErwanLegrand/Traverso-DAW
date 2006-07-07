@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.cpp,v 1.13 2006/07/06 17:38:03 r_sijrier Exp $
+$Id: Curve.cpp,v 1.14 2006/07/07 14:49:22 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -46,11 +46,58 @@ Curve::Curve()
 	lookup_cache.range.first = nodes.end();
 }
 
+Curve::Curve( const QDomNode node )
+{
+	changed = true;
+	defaultValue = 1.0f;
+	lookup_cache.left = -1;
+	lookup_cache.range.first = nodes.end();
+	set_state(node);
+}
+
 Curve::~Curve()
 {
 	foreach(CurveNode* node, nodes) {
 		delete node;
 	}
+}
+
+QDomNode Curve::get_state( QDomDocument doc )
+{
+	QDomElement node = doc.createElement("Curve");
+	
+	QStringList nodesList;
+	
+	for (int i=0; i< nodes.size(); ++i) {
+		CurveNode* cn = nodes.at(i);
+		
+		nodesList << QString::number(cn->when).append(",").append(QString::number(cn->value));
+	}
+	
+	node.setAttribute("nodes",  nodesList.join(";"));
+	node.setAttribute("range", get_range());
+	
+	return node;
+}
+
+int Curve::set_state( const QDomNode & node )
+{
+	QDomElement e = node.toElement();
+	
+	QStringList nodesList = e.attribute( "nodes", "" ).split(";");
+	
+	for (int i=0; i<nodesList.size(); ++i) {
+		QStringList whenValueList = nodesList.at(i).split(",");
+		double when = whenValueList.at(0).toDouble();
+		double value = whenValueList.at(1).toDouble();
+		add_node(when, value);
+	}
+	
+	double range = e.attribute("range", "1").toDouble();
+	range = (range == 0.0) ? 1 : range;
+	set_range(range);
+	
+	return 1;
 }
 
 void Curve::add_node(double pos, double value)
@@ -453,5 +500,6 @@ void Curve::private_clear()
 // 	printf("private_clear:: Clearing Curve\n");
 	clear();
 }
+
 
 //eof

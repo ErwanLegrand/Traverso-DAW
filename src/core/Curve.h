@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.h,v 1.6 2006/07/03 17:51:56 r_sijrier Exp $
+$Id: Curve.h,v 1.7 2006/07/07 14:49:22 r_sijrier Exp $
 */
 
 #ifndef CURVE_H
@@ -26,6 +26,7 @@ $Id: Curve.h,v 1.6 2006/07/03 17:51:56 r_sijrier Exp $
 #include "ContextItem.h"
 #include <QString>
 #include <QList>
+#include <QDomDocument>
 
 #include "CurveNode.h"
 
@@ -36,19 +37,24 @@ class Curve : public ContextItem
 	
 public:
 	Curve();
+	Curve(const QDomNode node);
 	~Curve();
 
 	void add_node(double pos, double value);
 	void clear();
-	void x_scale(double factor);
-	void solve ();
+	
+	// Get functions
+	double get_range() const;
+	
 	void get_vector (double x0, double x1, float *arg, int32_t veclen);
 	
+	QDomNode get_state(QDomDocument doc);
+	QList<CurveNode* >* get_nodes() {return &nodes;}
+	
+	// Set functions
+	int set_state( const QDomNode& node );
 	void set_range(double pos);
 	
-	double get_range() const;
-
-	QList<CurveNode* >	nodes;
 
 private :
 	
@@ -63,13 +69,18 @@ private :
 		}
 	};
 	
+	QList<CurveNode* >	nodes;
+	
 	LookupCache lookup_cache;
 	
 	bool changed;
 	double defaultValue;
 	
 	double multipoint_eval (double x);
+	
 	void set_changed();
+	void x_scale(double factor);
+	void solve ();
 	
 	friend class CurveNode;
 
