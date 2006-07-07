@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.34 2006/07/07 14:48:32 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.35 2006/07/07 15:01:41 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -981,8 +981,8 @@ void AudioClip::calculate_normalization_factor(float targetdB)
 		target -= FLT_EPSILON;
 	}
 
-	fpos = 0;
-	fend = sourceLength;
+	fpos = sourceStartFrame;
+	fend = sourceEndFrame;
 
 	/* first pass: find max amplitude */
 
