@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.cpp,v 1.14 2006/07/07 14:49:22 r_sijrier Exp $
+$Id: Curve.cpp,v 1.15 2006/07/27 18:06:53 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -28,6 +28,7 @@ $Id: Curve.cpp,v 1.14 2006/07/07 14:49:22 r_sijrier Exp $
 #include "Track.h"
 #include "CurveNode.h"
 #include "Tsar.h"
+#include <QStringList>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
