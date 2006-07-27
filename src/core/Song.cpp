@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.27 2006/07/06 17:38:03 r_sijrier Exp $
+$Id: Song.cpp,v 1.28 2006/07/27 08:45:31 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -41,8 +41,6 @@ $Id: Song.cpp,v 1.27 2006/07/06 17:38:03 r_sijrier Exp $
 #include "MtaRegion.h"
 #include "MtaRegionList.h"
 #include "Peak.h"
-//#include "AudioPluginChain.h"
-#include "AudioPluginSelector.h"
 #include "Export.h"
 #include "DiskIO.h"
 #include "WriteSource.h"

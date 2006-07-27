@@ -17,13 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.20 2006/07/06 17:38:03 r_sijrier Exp $
+$Id: Track.cpp,v 1.21 2006/07/27 08:45:31 r_sijrier Exp $
 */
 
 #include "Track.h"
 #include "Song.h"
 #include "AudioClip.h"
-//#include "AudioPluginChain.h"
 
 #include <commands.h>
 
@@ -61,14 +60,12 @@ Track::Track( Song * song, const QDomNode node )
 Track::~Track()
 {
 	PENTERDES;
-// 	delete audioPluginChain;
 }
 
 void Track::init()
 {
 	isSolo = mutedBySolo = isActive = isMuted = isArmed = false;
 	set_history_stack(m_song->get_history_stack());
-// 	audioPluginChain = new AudioPluginChain(this);
 	
 	connect(m_song, SIGNAL( transferStarted() ), this, SLOT (init_recording() ));
 }
@@ -273,12 +270,6 @@ void Track::activate()
 {
 	if (!isActive) {
 		isActive=true;
-		/*		if (m_song->editingMode==Song::EDIT_TRACK_CURVES)
-					{
-					int cfc  = audioPluginChain->currentAudioPluginController;
-					if ((cfc>=0) && (audioPluginChain->pluginController[cfc]))
-						audioPluginChain->pluginController[cfc]->start_blinking();
-					}*/
 	}
 }
 
@@ -286,9 +277,6 @@ void Track::activate()
 void Track::deactivate()
 {
 	if (isActive) {
-/*		for (int k=0; k<AudioPluginChain::MAX_CONTROLLERS; k++)
-			if (audioPluginChain->pluginController[k])
-				audioPluginChain->pluginController[k]->deactivate();*/
 		isActive=false;
 	}
 }
