@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AlsaDriver.cpp,v 1.3 2006/06/16 14:07:38 r_sijrier Exp $
+$Id: AlsaDriver.cpp,v 1.4 2006/07/27 18:25:17 r_sijrier Exp $
 */
 
 
@@ -1195,6 +1195,7 @@ again:
 		if (need_playback) {
 			for (i = 0; i < playback_nfds; i++) {
 				if (pfd[i].revents & POLLERR) {
+					PWARN("playback pollerror, xrun_detected is true");
 					xrun_detected = true;
 				}
 
@@ -1227,6 +1228,7 @@ again:
 		if (need_capture) {
 			for (i = ci; i < nfds; i++) {
 				if (pfd[i].revents & POLLERR) {
+					PWARN("capture pollerror, xrun_detected is true");
 					xrun_detected = true;
 				}
 
@@ -1266,6 +1268,7 @@ again:
 	if (capture_handle) {
 		if ((capture_avail = snd_pcm_avail_update (capture_handle)) < 0) {
 			if (capture_avail == -EPIPE) {
+				PWARN("capture pipeerror, xrun_detected is true");
 				xrun_detected = true;
 			} else {
 				PERROR ("ALSA Driver: unknown avail_update return value (%ld)", capture_avail);
@@ -1279,6 +1282,7 @@ again:
 	if (playback_handle) {
 		if ((playback_avail = snd_pcm_avail_update (playback_handle)) < 0) {
 			if (playback_avail == -EPIPE) {
+				PWARN("playback pipeerror, xrun_detected is true");
 				xrun_detected = true;
 			} else {
 				PERROR ("ALSA Driver: unknown avail_update return value (%ld)", playback_avail);
