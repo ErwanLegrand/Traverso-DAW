@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.9 2006/07/06 17:38:18 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.10 2006/07/27 18:54:28 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -193,7 +193,6 @@ void AudioDevice::set_parameters( int rate, nframes_t bufferSize, QString driver
 
 		emit driverParamsChanged();
 
-		driver->start();
 
 		if ((driverType == "ALSA") || (driverType == "Null Driver")) {
 			printf("Starting AudioDeviceThread..... ");
@@ -212,6 +211,8 @@ void AudioDevice::set_parameters( int rate, nframes_t bufferSize, QString driver
 			}
 			running = true;
 		}
+		
+		driver->start();
 		
 		emit started();
 	} else {
