@@ -25,8 +25,6 @@ TEMPLATE = lib
 SOURCES	= AudioClip.cpp \
 	AudioClipList.cpp \
 	AudioClipManager.cpp \
-#	AudioPluginChain.cpp \
-#	AudioPluginController.cpp \
 	AudioSource.cpp \
 	AudioSourceManager.cpp \
 	Command.cpp \
@@ -47,14 +45,12 @@ SOURCES	= AudioClip.cpp \
 	MtaRegion.cpp \
 	MtaRegionList.cpp \
 	Peak.cpp \
-	PluginLoader.cpp \
 	Project.cpp \
 	ProjectManager.cpp \
 	ReadSource.cpp \
 	RingBuffer.cpp \
 	Song.cpp \
 	Track.cpp \
-	TraversoAudioPlugin.cpp \
 	Tsar.cpp \
 	Utils.cpp \
 	WriteSource.cpp \
@@ -64,8 +60,6 @@ HEADERS	= precompile.h \
 	AudioClip.h \
 	AudioClipList.h \
 	AudioClipManager.h \
-#	AudioPluginChain.h \
-#	AudioPluginController.h \
 	AudioSource.h \
 	AudioSourceManager.h \
 	Command.h \
@@ -86,14 +80,12 @@ HEADERS	= precompile.h \
 	MtaRegion.h \
 	MtaRegionList.h \
 	Peak.h \
-	PluginLoader.h \
 	Project.h \
 	ProjectManager.h \
 	ReadSource.h \
 	RingBuffer.h \
 	Song.h \
 	Track.h \
-	TraversoAudioPlugin.h \
 	Tsar.h \
 	Utils.h \
 	WriteSource.h \
