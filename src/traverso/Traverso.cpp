@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Traverso.cpp,v 1.6 2006/06/26 23:59:55 r_sijrier Exp $
+$Id: Traverso.cpp,v 1.7 2006/07/27 00:12:59 r_sijrier Exp $
 */
 
 #include <signal.h>
@@ -31,13 +31,12 @@ $Id: Traverso.cpp,v 1.6 2006/06/26 23:59:55 r_sijrier Exp $
 
 #include "ColorManager.h"
 #include "Traverso.h"
-#include "Interface.h"
-#include "PluginLoader.h"
 #include "Mixer.h"
 #include "ProjectManager.h"
-#include "Project.h"
-#include "AudioClip.h"
 #include "Tsar.h"
+#include "Interface.h"
+#include <AudioDevice.h>
+#include <InputEngine.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -165,7 +164,7 @@ int Traverso::init( )
 			: "%eax", "%ecx", "%edx", "memory");
 
 		if (use_sse) {
-			PMESG("Enabling SSE optimized routines");
+			printf("Enabling SSE optimized routines\n");
 
 			// SSE SET
 			Mixer::compute_peak		= x86_sse_compute_peak;
@@ -185,7 +184,7 @@ int Traverso::init( )
 		Mixer::mix_buffers_with_gain 	= default_mix_buffers_with_gain;
 		Mixer::mix_buffers_no_gain 	= default_mix_buffers_no_gain;
 
-		PMESG("No Hardware specific optimizations in use");
+		printf("No Hardware specific optimizations in use\n");
 	}
 
 	// Initialize random number generator
