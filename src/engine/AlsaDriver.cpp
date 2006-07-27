@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AlsaDriver.cpp,v 1.4 2006/07/27 18:25:17 r_sijrier Exp $
+$Id: AlsaDriver.cpp,v 1.5 2006/07/27 18:45:24 r_sijrier Exp $
 */
 
 
@@ -187,6 +187,8 @@ int AlsaDriver::setup()
 				printf ("ALSA Driver: You do not have permission to open the audio device \"%s\" for playback\n", playback_pcm_name);
 				return -1;
 				break;
+			default:
+				PERROR ("snd_pcm_open(playback_handle, ..) failed with unknown error type");
 			}
 
 			playback_handle = 0;
@@ -210,6 +212,8 @@ int AlsaDriver::setup()
 				PWARN ("ALSA Driver: You do not have permission to open the audio device \"%s\" for capture", capture_pcm_name);
 				return -1;
 				break;
+			default:
+				PERROR ("snd_pcm_open(capture_handle, ...) failed with unknown error type");
 			}
 
 			capture_handle = 0;
