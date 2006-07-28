@@ -98,5 +98,7 @@ macx {
 	DEFINES -= ALSA_SUPPORT
 	DEFINES += MAC_OS_BUILD
 	
+	LIBS += -ljack
+		
 	QMAKE_LFLAGS_SONAME  = -Wl,-install_name,@executable_path/../Frameworks/
 }
