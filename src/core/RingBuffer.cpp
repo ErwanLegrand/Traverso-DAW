@@ -28,6 +28,11 @@
 #include <stdlib.h>
 #include <string.h>
 #ifdef USE_MLOCK
+
+#ifdef MAC_OS_BUILD
+#include <sys/types.h>
+#endif /* MAC_OS_BUILD */
+
 #include <sys/mman.h>
 #endif /* USE_MLOCK */
 
@@ -72,7 +77,7 @@ RingBuffer::~RingBuffer()
 
 int RingBuffer::mlock_buffer()
 {
-#ifdef USE_MLOCK
+#if defined (USE_MLOCK)
         if (mlock (buf, size)) {
                 return -1;
         }
