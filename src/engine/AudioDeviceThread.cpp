@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDeviceThread.cpp,v 1.5 2006/07/04 20:59:26 r_sijrier Exp $
+$Id: AudioDeviceThread.cpp,v 1.6 2006/07/28 12:46:28 r_sijrier Exp $
 */
 
 #include "AudioDeviceThread.h"
@@ -73,7 +73,11 @@ AudioDeviceThread::AudioDeviceThread(AudioDevice* device)
 	transfer = false;
 	realTime = true;
 	setTerminationEnabled(true);
-	setStackSize(1000000);
+	
+#ifndef MAC_OS_BUILD
+	setStackSize(100000);
+#endif
+	
 	watchdogCheck = 1;
 }
 
