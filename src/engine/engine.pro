@@ -49,4 +49,5 @@ macx {
 	SOURCES -= AlsaDriver.cpp
 	HEADERS -= AlsaDriver.h
 	LIBS -= -lasound
+	QMAKE_LIBDIR += /usr/local/qt/lib
 }
