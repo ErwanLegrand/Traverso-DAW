@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Traverso.cpp,v 1.7 2006/07/27 00:12:59 r_sijrier Exp $
+$Id: Traverso.cpp,v 1.8 2006/07/28 13:12:38 r_sijrier Exp $
 */
 
 #include <signal.h>
@@ -100,7 +100,12 @@ void Traverso::reset_settings( )
 	settings.beginGroup("Hardware");
 	settings.setValue("samplerate", 44100);
 	settings.setValue("bufferSize", 1024);
+// Use Jack by default on mac os x, since thats the only supported driver there!
+#ifdef MAC_OS_BUILD
+	settings.setValue("drivertype", "Jack");
+#else
 	settings.setValue("drivertype", "ALSA");
+#endif
 	settings.endGroup();
 }
 
