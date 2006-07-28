@@ -1,3 +1,11 @@
+xx-xx-xxxx Remon Sijrier <remon@vt.shuis.tudelft.nl>
+	* Released 0.30.1
+	
+	* Fixed 2 possible crash bugs.
+	* Added "merged waveform drawing for stereo tracks"
+	* Snapping improved considerably!
+	* Traverso build on Mac OS X now!
+
 05-07-2006 Remon Sijrier <remon@vt.shuis.tudelft.nl>
 	* Released 0.30.0
 	
