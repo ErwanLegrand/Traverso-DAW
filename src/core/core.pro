@@ -95,4 +95,8 @@ HEADERS	= precompile.h \
 	gdither_types_internal.h \
 	noise.h \
 	FastDelegate.h
+	
+macx {
+	QMAKE_LIBDIR += /usr/local/qt/lib
+}
 
