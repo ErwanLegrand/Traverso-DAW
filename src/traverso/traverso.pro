@@ -117,4 +117,6 @@ unix {
 
 macx {
 	LIBS -= -lasound
+	QMAKE_LIBDIR += /usr/local/qt/lib
+	DEFINES -= HAVE_SYS_VFS_H
 }
