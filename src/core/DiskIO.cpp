@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.10 2006/07/05 11:11:15 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.11 2006/07/28 12:52:48 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
@@ -76,8 +76,10 @@ void DiskIOThread::become_realtime( bool becomerealtime )
 DiskIO::DiskIO()
 {
 	diskThread = new DiskIOThread(this);
-	// Set the thread stack size. 0.5 MB should do IMHO
+	// Set the thread stack size. 0.2 MB should do IMHO
+#ifndef MAC_OS_BUILD
 	diskThread->setStackSize(200000);
+#endif
 	seeking = false;
 	stopWork = false;
 	cpuTimeBuffer = new RingBuffer(2048);
