@@ -9,6 +9,7 @@ TEMPLATE = subdirs
 SUBDIRS += src/engine \
 	   src/commands \
            src/core \
+           src/plugins \
            src/traverso
 
 DISTFILES += 	ChangeLog \
