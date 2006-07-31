@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.13 2006/07/03 13:52:58 r_sijrier Exp $
+$Id: SongView.cpp,v 1.14 2006/07/31 13:27:27 r_sijrier Exp $
 */
 
 #include <QPainter>
@@ -51,6 +51,7 @@ SongView::SongView(Song* song, ViewPort* vp)
 
 	cursorMap[CURSOR_FLOAT] = QCursor( QPixmap(":/cursorFloat") );
 	cursorMap[CURSOR_FLOAT_OVER_CLIP] = QCursor( QPixmap(":/cursorFloatOverClip") );
+	cursorMap[CURSOR_FLOAT_OVER_PLUGIN] = QCursor( QPixmap(":/cursorFloatOverPlugin") );
 	cursorMap[CURSOR_FLOAT_OVER_TRACK] = QCursor( QPixmap(":/cursorFloatOverTrack") );
 	cursorMap[CURSOR_HOLD_UD] = QCursor( QPixmap(":/cursorHoldUd") );
 	cursorMap[CURSOR_HOLD_LR] = QCursor( QPixmap(":/cursorHoldLr") );
@@ -58,6 +59,7 @@ SongView::SongView(Song* song, ViewPort* vp)
 	cursorMap[CURSOR_DRAG] = QCursor( QPixmap(":/cursorDrag") );
 	cursorMap[CURSOR_SELECT] = QCursor( QPixmap(":/cursorSelect") );
 	cursorMap[CURSOR_MAGIC_ZOOM] = QCursor( QPixmap(":/cursorMagicZoom") );
+	
 
 	connect(m_song, SIGNAL(trackAdded(Track* )), this, SLOT(add_new_trackview(Track* )));
 	connect(m_song, SIGNAL(trackRemoved(Track* )), this, SLOT(remove_trackview(Track* )));
@@ -68,6 +70,7 @@ SongView::SongView(Song* song, ViewPort* vp)
 	connect(m_vp, SIGNAL(pointChanged( ) ), this, SLOT(set_context()));
 
 	init_context_menu( this );
+	
 }
 
 SongView::~SongView()
@@ -97,6 +100,12 @@ void SongView::set_context()
 	int type = view->type();
 
 	switch (type) {
+	case	PLUGINVIEW:
+		if (currentCursorMapIndex != CURSOR_FLOAT_OVER_PLUGIN) {
+			m_vp->setCursor(cursorMap[CURSOR_FLOAT_OVER_PLUGIN]);
+			currentCursorMapIndex = CURSOR_FLOAT_OVER_PLUGIN;
+		}
+		break;
 	case	 AUDIOCLIPVIEW:
 		if (currentCursorMapIndex != CURSOR_FLOAT_OVER_CLIP) {
 			m_vp->setCursor(cursorMap[CURSOR_FLOAT_OVER_CLIP]);
@@ -413,6 +422,7 @@ Command* SongView::goto_end()
 
 void SongView::resize()
 {
+	m_song->set_viewport_size(cliparea_width());
 	schedule_for_repaint();
 }
 

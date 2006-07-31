@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ViewItem.h,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: ViewItem.h,v 1.2 2006/07/31 13:27:27 r_sijrier Exp $
 */
 
 #ifndef VIEWITEM_H
@@ -40,6 +40,7 @@ public:
         static const int AUDIOCLIPVIEW	= 1;
         static const int TRACKVIEW 	= 2;
         static const int SONGVIEW 	= 3;
+        static const int PLUGINVIEW 	= 4;
 
         ViewItem(ViewPort* vp, ViewItem* parent, ContextItem* relatedContextItem=0);
         ViewItem()
@@ -91,13 +92,13 @@ public:
 
 protected:
         ViewItem* 		m_parent;
-        ViewItem*			m_child;
-        ViewPort* 			m_vp;
+        ViewItem*		m_child;
+        ViewPort* 		m_vp;
         QRect 			geometry;
         QList<IEAction* >	IEActionList;
         QMenu*			contextMenu;
-        int 				zOrder;
-        int				m_type;
+        int 			zOrder;
+        int			m_type;
 
         void set_geometry(int x, int y, int width, int height);
         void init_context_menu(ViewItem* item);

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.9 2006/07/03 13:53:34 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.10 2006/07/31 13:27:27 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -34,6 +34,9 @@ $Id: TrackView.cpp,v 1.9 2006/07/03 13:53:34 r_sijrier Exp $
 #include "SongView.h"
 #include "PanelLed.h"
 #include "BusSelector.h"
+#include "PluginChainView.h"
+
+#include <PluginSelectorDialog.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -57,7 +60,9 @@ TrackView::TrackView(ViewPort* vp, SongView* parent, Track* track)
 
 	busInMenu = new QMenu();
 	busOutMenu = new QMenu();
-
+	
+	pluginChainView = new PluginChainView(m_vp, this);
+	
 	muteLed = new PanelLed(m_vp, this, MUTE_LED_X, ":/muteled_on", ":/muteled_off");
 	soloLed = new PanelLed(m_vp, this, SOLO_LED_X, ":/sololed_on", ":/sololed_off");
 	recLed = new PanelLed(m_vp, this, REC_LED_X, ":recled_on", ":/recled_off");
@@ -125,7 +130,7 @@ QRect TrackView::draw(QPainter& p)
 		clear_clip_area(p);
 		paintClipArea = false;
 	}
-
+	
 	return QRect();
 }
 
@@ -372,8 +377,11 @@ void TrackView::repaint_cliparea()
 void TrackView::schedule_for_repaint( )
 {
 	set_geometry(0, m_track->get_baseY(), m_vp->width(), m_track->get_height());
-	if (visible())
+	if (visible()) {
 		m_vp->schedule_for_repaint(this);
+		if (pluginChainView)
+			pluginChainView->schedule_for_repaint();
+	}
 }
 
 void TrackView::height_changed( )
@@ -527,6 +535,19 @@ void TrackView::delete_my_viewitems( )
 		m_vp->unregister_viewitem(view);
 		delete view;
 	}
+}
+
+Command * TrackView::add_new_plugin( )
+{
+	if (PluginSelectorDialog::instance()->exec() == QDialog::Accepted) {
+		Plugin* plugin = PluginSelectorDialog::instance()->get_selected_plugin();
+		if (plugin) {
+			m_track->add_plugin(plugin);
+		}
+	}
+	
+	return 0;
+	
 }
 
 //eof

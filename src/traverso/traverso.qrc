@@ -3,6 +3,7 @@
 		<file alias="cursorDrag">../../resources/images/cursorDrag.xpm</file>
 		<file alias="cursorRZoom">../../resources/images/cursorRZoom.xpm</file>
 		<file alias="cursorFloatOverClip">../../resources/images/cursorFloatOverClip.xpm</file>
+		<file alias="cursorFloatOverPlugin">../../resources/images/cursorFloatOverPlugin.xpm</file>
 		<file alias="cursorFloatOverTrack">../../resources/images/cursorFloatOverTrack.xpm</file>
 		<file alias="cursorFloat">../../resources/images/cursorFloat.xpm</file>
 		<file alias="cursorMagicZoom">../../resources/images/cursorRZoom.xpm</file>

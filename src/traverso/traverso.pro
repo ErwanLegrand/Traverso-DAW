@@ -11,8 +11,10 @@ PRECOMPILED_HEADER = precompile.h
 LIBS += 	-ltraversocore \
 		-ltraversocommands \
 		-ltraverso \
+		-ltraversoplugins \
 		-lsndfile \
-		-lsamplerate
+		-lsamplerate \
+		-lslv2 \
 
 HEADERS += AudioPluginSelector.h \
 #	   CursorWidget.h \
@@ -27,6 +29,9 @@ HEADERS += AudioPluginSelector.h \
            ManagerWidget.h \
            MessageWidget.h \
            OverViewWidget.h \
+           PluginView.h \
+           PluginChainView.h \
+           PluginSelectorDialog.h \
            ProjectManagerWidget.h \
            ProjectInfoWidget.h \
            SongManagerWidget.h \
@@ -66,6 +71,9 @@ SOURCES += Traverso.cpp \
            MessageWidget.cpp \
            ManagerWidget.cpp \
            OverViewWidget.cpp \
+           PluginSelectorDialog.cpp \
+           PluginChainView.cpp \
+           PluginView.cpp \
            SongManagerWidget.cpp \
            SongInfoWidget.cpp \
            SystemInfoWidget.cpp \
@@ -83,15 +91,16 @@ SOURCES += Traverso.cpp \
            PanelLed.cpp \
            LocatorView.cpp
 
-FORMS += 	ui/ProjectManagerWidget.ui \
-			ui/ProjectInfoWidget.ui \
-			ui/SongInfoWidget.ui \
-			ui/ExportWidget.ui \
-			ui/SongManagerWidget.ui \
-			ui/SystemInfoWidget.ui \
-			ui/ManagerWidget.ui \
-			ui/GlobalPropertiesWidget.ui \
-			ui/AudioSourcesManagerWidget.ui 
+FORMS += ui/ProjectManagerWidget.ui \
+	ui/ProjectInfoWidget.ui \
+	ui/SongInfoWidget.ui \
+	ui/ExportWidget.ui \
+	ui/SongManagerWidget.ui \
+	ui/SystemInfoWidget.ui \
+	ui/ManagerWidget.ui \
+	ui/GlobalPropertiesWidget.ui \
+	ui/AudioSourcesManagerWidget.ui \
+	ui/PluginSelectorDialog.ui
 
 
 contains(DEFINES, ALSA_SUPPORT):LIBS += -lasound
@@ -99,7 +108,10 @@ contains(DEFINES, JACK_SUPPORT):LIBS += -ljack
 
 INCLUDEPATH += 	../../src/core \
 		../../src/commands \
-		../../src/engine
+		../../src/engine \
+		../../src/plugins \
+		../../src/plugins/LV2
+		
 QMAKE_LIBDIR = ./lib ../../lib
 TARGET = traverso
 
@@ -117,6 +129,4 @@ unix {
 
 macx {
 	LIBS -= -lasound
-	QMAKE_LIBDIR += /usr/local/qt/lib
-	DEFINES -= HAVE_SYS_VFS_H
 }
