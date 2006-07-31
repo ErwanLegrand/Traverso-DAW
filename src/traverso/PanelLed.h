@@ -17,8 +17,12 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: PanelLed.h,v 1.2 2006/05/01 21:31:58 r_sijrier Exp $
+    $Id: PanelLed.h,v 1.3 2006/07/31 13:25:32 r_sijrier Exp $
 */
+
+#ifndef PANEL_LED_VIEW_H
+#define PANEL_LED_VIEW_H
+
 
 #include "ViewItem.h"
 #include <QString>
@@ -51,5 +55,8 @@ public slots:
         void ison_changed(bool isOn);
         void schedule_for_repaint();
 };
+
+
+#endif
 
 //eof
