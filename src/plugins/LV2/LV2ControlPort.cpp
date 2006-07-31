@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: LV2ControlPort.cpp,v 1.1 2006/07/31 13:24:46 r_sijrier Exp $
+$Id: LV2ControlPort.cpp,v 1.2 2006/07/31 13:59:20 r_sijrier Exp $
 
 slv2 url: http://codeson.net/svn/libslv2/
 */
@@ -78,7 +78,7 @@ float LV2ControlPort::get_max_control_value()
 
 QString LV2ControlPort::get_description()
 {
-	SLV2Property prop = slv2_port_get_property(m_plugin->get_slv2_plugin(), m_index, (const uchar*) "lv2:symbol");
+	SLV2Property prop = slv2_port_get_property(m_plugin->get_slv2_plugin(), m_index, "lv2:symbol");
 
         if (prop && prop->num_values == 1) {
 		return QString((char*)prop->values[0]);

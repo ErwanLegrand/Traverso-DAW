@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: LV2Plugin.cpp,v 1.1 2006/07/31 13:24:46 r_sijrier Exp $
+$Id: LV2Plugin.cpp,v 1.2 2006/07/31 13:59:20 r_sijrier Exp $
 
 slv2 url: http://codeson.net/svn/libslv2/
 */
@@ -163,10 +163,10 @@ int LV2Plugin::init()
 	}
 
 	/* Create ports */
-	unsigned long numPorts  = slv2_plugin_get_num_ports(m_plugin);
+	int numPorts  = slv2_plugin_get_num_ports(m_plugin);
 	printf("numports is %d\n", (int) numPorts);
 
-	for (unsigned long i=0; i < numPorts; ++i) {
+	for (int i=0; i < numPorts; ++i) {
 		LV2ControlPort* port = create_port(i);
 		if (port) {
 			m_controlPorts.append(port);
@@ -196,7 +196,7 @@ int LV2Plugin::create_instance()
 {
 	printf("URI:\t%s\n", C_(m_pluginUri));
 
-	m_plugin = slv2_list_get_plugin_by_uri(PluginManager::instance()->get_slv2_plugin_list(), UC_(m_pluginUri));
+	m_plugin = slv2_list_get_plugin_by_uri(PluginManager::instance()->get_slv2_plugin_list(), C_(m_pluginUri));
 
 	
 	if (! m_plugin) {
@@ -205,7 +205,7 @@ int LV2Plugin::create_instance()
 	}
 
 	/* Get the plugin's name */
-	unsigned char* name = slv2_plugin_get_name(m_plugin);
+	char* name = slv2_plugin_get_name(m_plugin);
 
 	printf("Name:\t%s\n", name);
 
@@ -231,7 +231,7 @@ void LV2Plugin::process(AudioBus* bus, unsigned long nframes)
 	}
 			
 	/* Connect the AudioBus Channel buffers to the plugin instance */
-// 	for (unsigned long index = 0; index < (unsigned long)bus->get_channel_count(); ++index) {
+// 	for (int index = 0; index < (int)bus->get_channel_count(); ++index) {
 	
 		slv2_instance_connect_port(m_instance, 1, bus->get_buffer(0, (nframes_t)nframes));
 		slv2_instance_connect_port(m_instance, 2, bus->get_buffer(0, (nframes_t)nframes));
@@ -247,7 +247,7 @@ void LV2Plugin::process(AudioBus* bus, unsigned long nframes)
 }
 
 
-LV2ControlPort* LV2Plugin::create_port(unsigned long  portIndex)
+LV2ControlPort* LV2Plugin::create_port(int  portIndex)
 {
 	LV2ControlPort* port = (LV2ControlPort*) 0;
 
