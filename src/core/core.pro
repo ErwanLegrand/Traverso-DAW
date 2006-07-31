@@ -15,6 +15,8 @@ INCLUDEPATH += ../../src/traverso \
                ../../src/core \
                ../../src/commands \
                ../../src/engine \
+               ../../src/plugins/LV2 \
+               ../../src/plugins \
                . 
 QMAKE_LIBDIR = ../../lib 
 TARGET = traversocore 
@@ -54,7 +56,8 @@ SOURCES	= AudioClip.cpp \
 	Tsar.cpp \
 	Utils.cpp \
 	WriteSource.cpp \
-	gdither.cpp
+	gdither.cpp \
+	SnapList.cpp
 
 HEADERS	= precompile.h \
 	AudioClip.h \
@@ -94,7 +97,8 @@ HEADERS	= precompile.h \
 	gdither_types.h \
 	gdither_types_internal.h \
 	noise.h \
-	FastDelegate.h
+	FastDelegate.h \
+	SnapList.h
 	
 macx {
 	QMAKE_LIBDIR += /usr/local/qt/lib
