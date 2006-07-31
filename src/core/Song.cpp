@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.28 2006/07/27 08:45:31 r_sijrier Exp $
+$Id: Song.cpp,v 1.29 2006/07/31 13:40:08 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -46,9 +46,15 @@ $Id: Song.cpp,v 1.28 2006/07/27 08:45:31 r_sijrier Exp $
 #include "WriteSource.h"
 #include "AudioClipManager.h"
 #include "Tsar.h"
+#include "SnapList.h"
 
 #include "LocatorView.h"
 #include "ContextItem.h"
+
+#include <PluginManager.h>
+#include <Plugin.h>
+#include <LV2Plugin.h>
+#include <PluginChain.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -124,6 +130,7 @@ Song::~Song()
 	delete masterOut;
 	delete m_hs;
 	delete audiodeviceClient;
+ 	delete pluginChain;
 }
 
 void Song::init()
@@ -151,12 +158,15 @@ void Song::init()
 	playBackBus = audiodevice().get_playback_bus("Playback 1");
 	
 	transport = stopTransport = resumeTransport = false;
+	snaplist = new SnapList(this);
 	realtimepath = false;
 	scheduleForDeletion = false;
 	isSnapOn=true;
 	changed = rendering = false;
 	firstVisibleFrame=workingFrame=activeTrackNumber=0;
 	trackCount = 0;
+	
+	pluginChain = new PluginChain;
 }
 
 int Song::set_state( const QDomNode & node )
@@ -199,6 +209,9 @@ int Song::set_state( const QDomNode & node )
 		trackNode = trackNode.nextSibling();
 	}
 
+	QDomNode pluginChainNode = node.firstChildElement("PluginChain");
+	pluginChain->set_state(pluginChainNode);
+	
 	return 1;
 }
 
@@ -225,6 +238,12 @@ QDomNode Song::get_state(QDomDocument doc)
 	}
 
 	songNode.appendChild(tracksNode);
+	
+	QDomNode pluginChainNode = doc.createElement("PluginChain");
+	pluginChainNode.appendChild(pluginChain->get_state(doc));
+	songNode.appendChild(pluginChainNode);
+	
+	
 	return songNode;
 }
 
@@ -491,17 +510,22 @@ int Song::snapped_x(int x)
 {
 	int nx = x;
 	if (isSnapOn) {
-		int wx = frame_to_xpos(workingFrame);
-		// TODO check if it is close to upper or lower nearest clip's edges
-		if (nx<10) // check if it is close to track begin
-			nx=0;
-		if (abs(nx-wx)<10) // first try to snap to working block
-		{
-			PMESG("snapping !");
-			nx=wx;
-		}
+		nx = snaplist->get_snap_value(x);
 	}
 	return nx;
+}
+
+// recalculate the snap positions. SnapList must know
+// which clip is being moved, in order to exclude
+// it from the snap list. It's much more convenient that way
+void Song::update_snaplist(AudioClip *u_clip)
+{
+	snaplist->update_snaplist(u_clip);
+}
+
+SnapList* Song::get_snap_list()
+{
+	return snaplist;
 }
 
 nframes_t Song::xpos_to_frame(int xpos)
@@ -573,8 +597,15 @@ void Song::set_first_visible_frame(nframes_t pos)
 void Song::set_work_at(nframes_t pos)
 {
 	PMESG2("entering set_work_at");
-	newTransportFramePos = pos;
-	workingFrame = pos;
+
+/** use this part if the work cursor should _not_ snap **/
+// 	newTransportFramePos = pos;
+// 	workingFrame = pos;
+/** use this if it should snap **/
+	snaplist->update_snaplist();
+	newTransportFramePos = xpos_to_frame(snapped_x(frame_to_xpos(pos)));
+	workingFrame = xpos_to_frame(snapped_x(frame_to_xpos(pos)));
+/** **/
 
 	// If there is no transport, start_seek() will _not_ be
 	// called from within process(). So we do it now!
@@ -768,20 +799,50 @@ Command* Song::set_curve_mode()
 void Song::solo_track(Track* t)
 {
 	bool wasSolo = t->is_solo();
-	
+
+	t->set_muted_by_solo(!wasSolo);
+	t->set_solo(!wasSolo);
+
+	bool hasSolo = false;
 	foreach(Track* track, m_tracks) {
-		track->set_solo(false);
+		track->set_muted_by_solo(!track->is_solo());
+		if (track->is_solo()) hasSolo = true;
+	}
+
+	if (!hasSolo) {
+		foreach(Track* track, m_tracks) {
+			track->set_muted_by_solo(false);
+		}
+	}
+}
+
+Command* Song::toggle_solo()
+{
+	bool hasSolo = false;
+	foreach(Track* track, m_tracks) {
+		if (track->is_solo()) hasSolo = true;
+	}
+
+	foreach(Track* track, m_tracks) {
+		track->set_solo(!hasSolo);
 		track->set_muted_by_solo(false);
 	}
-	
-	if (!wasSolo) {
-		foreach(Track* track, m_tracks) {
-			track->set_muted_by_solo(true);
-		}
-		t->set_solo(true);
+
+	return (Command*) 0;
+}
+
+Command *Song::toggle_mute()
+{
+	bool hasMute = false;
+	foreach(Track* track, m_tracks) {
+		if (track->is_muted()) hasMute = true;
 	}
-	
-	
+
+	foreach(Track* track, m_tracks) {
+		track->set_muted(!hasMute);
+	}
+
+	return (Command*) 0;
 }
 
 Command* Song::work_next_edge()
@@ -892,6 +953,8 @@ int Song::process( nframes_t nframes )
 		Mixer::mix_buffers_with_gain(playBackBus->get_buffer(0, nframes), masterOut->get_buffer(0, nframes), nframes, m_gain);
 		Mixer::mix_buffers_with_gain(playBackBus->get_buffer(1, nframes), masterOut->get_buffer(1, nframes), nframes, m_gain);
 	}
+	
+// 	plugin->process(playBackBus, nframes);
 
 	return 1;
 }

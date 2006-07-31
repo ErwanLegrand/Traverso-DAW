@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.14 2006/07/31 13:27:27 r_sijrier Exp $
+$Id: SongView.cpp,v 1.15 2006/07/31 13:42:03 r_sijrier Exp $
 */
 
 #include <QPainter>
@@ -422,7 +422,6 @@ Command* SongView::goto_end()
 
 void SongView::resize()
 {
-	m_song->set_viewport_size(cliparea_width());
 	schedule_for_repaint();
 }
 

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.h,v 1.14 2006/07/03 17:51:56 r_sijrier Exp $
+$Id: Song.h,v 1.15 2006/07/31 13:40:08 r_sijrier Exp $
 */
 
 #ifndef SONG_H
@@ -25,7 +25,6 @@ $Id: Song.h,v 1.14 2006/07/03 17:51:56 r_sijrier Exp $
 
 #include "ContextItem.h"
 #include <QHash>
-#include <QDomDocument>
 #include "defines.h"
 
 class Project;
@@ -40,6 +39,8 @@ class DiskIO;
 class AudioClipManager;
 class Client;
 class AudioBus;
+class PluginChain;
+class SnapList;
 
 struct ExportSpecification;
 
@@ -108,6 +109,7 @@ public:
 	DiskIO*	get_diskio();
 	AudioClipManager* get_audioclip_manager();
 	AudioBus* get_master_out() const {return masterOut;}
+	SnapList* get_snap_list();
 
 	// Set functions
 	void set_artists(QString pArtistis);
@@ -121,7 +123,6 @@ public:
 	{
 		m_id = num;
 	}
-
 
 	int frame_to_xpos(nframes_t frame);
 	int delete_audio_source(AudioSource* pAudio);
@@ -156,7 +157,8 @@ public:
 	}
 
 	void disconnect_from_audiodevice_and_delete();
-	
+	void update_snaplist( AudioClip* );
+
 	audio_sample_t* 	mixdown;
 	audio_sample_t*		gainbuffer;
 
@@ -171,6 +173,7 @@ private:
 	AudioBus*		masterOut;
 	DiskIO*			diskio;
 	AudioClipManager*	acmanager;
+	PluginChain*		pluginChain;
 
 	nframes_t		transportFrame;
 	nframes_t 		firstVisibleFrame;
@@ -195,6 +198,7 @@ private:
 	bool 			stopTransport;
 	bool			realtimepath;
 	bool			scheduleForDeletion;
+	SnapList*		snaplist;
 	bool			seeking;
 
 	void init();
@@ -205,7 +209,7 @@ private:
 	void start_seek();
 
 	Track* create_track();
-	
+
 	friend class Track;
 	
 
@@ -248,6 +252,8 @@ public slots :
 	Command* toggle_snap();
 	Command* playhead_to_workcursor();
 	Command* master_gain();
+	Command* toggle_solo();
+	Command* toggle_mute();
 
 signals:
 	void trackRemoved(Track* );
