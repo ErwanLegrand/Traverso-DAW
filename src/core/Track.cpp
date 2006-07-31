@@ -17,12 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.21 2006/07/27 08:45:31 r_sijrier Exp $
+$Id: Track.cpp,v 1.22 2006/07/31 13:30:48 r_sijrier Exp $
 */
 
 #include "Track.h"
 #include "Song.h"
 #include "AudioClip.h"
+#include "PluginChain.h"
+#include "Plugin.h"
 
 #include <commands.h>
 
@@ -45,7 +47,7 @@ Track::Track(Song* song, int pID, QString pName, int pBaseY, int pHeight )
 	init();
 }
 
-Track::Track( Song * song, const QDomNode node )
+Track::Track( Song * song, const QDomNode )
 		: ContextItem( (ContextItem*) 0, song ), m_song(song)
 {
 	PENTERCONS;
@@ -60,12 +62,14 @@ Track::Track( Song * song, const QDomNode node )
 Track::~Track()
 {
 	PENTERDES;
+ 	delete pluginChain;
 }
 
 void Track::init()
 {
 	isSolo = mutedBySolo = isActive = isMuted = isArmed = false;
 	set_history_stack(m_song->get_history_stack());
+	pluginChain = new PluginChain;
 	
 	connect(m_song, SIGNAL( transferStarted() ), this, SLOT (init_recording() ));
 }
@@ -93,6 +97,11 @@ QDomNode Track::get_state( QDomDocument doc )
 		clips.appendChild(clip->get_state(doc));
 	}
 	node.appendChild(clips);
+	
+	QDomNode pluginChainNode = doc.createElement("PluginChain");
+	pluginChainNode.appendChild(pluginChain->get_state(doc));
+	node.appendChild(pluginChainNode);
+	
 	return node;
 }
 
@@ -117,13 +126,15 @@ int Track::set_state( const QDomNode & node )
 	if (!ClipsNode.isNull()) {
 		QDomNode ClipNode = ClipsNode.firstChild();
 		while (!ClipNode.isNull()) {
-			QDomElement e = ClipNode.toElement();
 			AudioClip* clip = new AudioClip(this, ClipNode);
 			add_clip( clip );
 			ClipNode = ClipNode.nextSibling();
 		}
 	}
 
+	QDomNode pluginChainNode = node.firstChildElement("PluginChain");
+	pluginChain->set_state(pluginChainNode);
+	
 	return 1;
 }
 
@@ -530,6 +541,12 @@ int Track::process( nframes_t nframes )
 			Mixer::mix_buffers_with_gain(channelBuffer, mixdown, nframes, gainFactor);
 		}
 	}
+	
+	QList<Plugin* >	pluginList = pluginChain->get_plugin_list();
+	
+	foreach(Plugin* plugin, pluginList) {
+		plugin->process(bus, nframes);
+	}
 		
 	return processResult;
 }
@@ -624,5 +641,17 @@ void Track::set_id( int id )
 {
 	ID = id;
 }
+
+void Track::add_plugin( Plugin * plugin )
+{
+	pluginChain->insert_plugin(plugin);
+}
+
+void Track::remove_plugin( Plugin * plugin )
+{
+	pluginChain->remove_plugin(plugin);
+}
+
+
 
 // eof

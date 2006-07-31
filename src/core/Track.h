@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.h,v 1.13 2006/07/27 08:45:31 r_sijrier Exp $
+$Id: Track.h,v 1.14 2006/07/31 13:30:48 r_sijrier Exp $
 */
 
 
@@ -36,6 +36,8 @@ $Id: Track.h,v 1.13 2006/07/27 08:45:31 r_sijrier Exp $
 
 class AudioClip;
 class Song;
+class PluginChain;
+class Plugin;
 
 
 class Track : public ContextItem
@@ -56,8 +58,10 @@ public :
 	void set_blur(bool stat);
 
 	void add_clip(AudioClip* clip);
+	void add_plugin(Plugin* plugin);
 
 	int remove_clip(AudioClip* clip);
+	void remove_plugin(Plugin* plugin);
 	int arm();
 	int disarm();
 	void toggle_active();
@@ -114,6 +118,12 @@ public :
 	{
 		return audioClipList;
 	}
+	
+	PluginChain* get_plugin_chain() const
+	{
+		return pluginChain;
+	}
+	
 	// End get functions
 
 	// Set functions:
@@ -145,10 +155,10 @@ public :
 
 	int process(nframes_t nframes);
 
-
 private :
-	Song* m_song;
-	AudioClipList audioClipList;
+	Song*		m_song;
+	AudioClipList 	audioClipList;
+	PluginChain*	pluginChain;
 
 	float m_gain;
 	float m_pan;
