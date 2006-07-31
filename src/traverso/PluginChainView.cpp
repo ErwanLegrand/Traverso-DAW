@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: PluginChainView.cpp,v 1.1 2006/07/31 13:27:59 r_sijrier Exp $
+    $Id: PluginChainView.cpp,v 1.2 2006/07/31 14:58:50 r_sijrier Exp $
 */
 
 #include "PluginChainView.h"
@@ -58,8 +58,7 @@ QRect PluginChainView::draw( QPainter & p )
 void PluginChainView::schedule_for_repaint( )
 {
 	foreach(PluginView* view, m_pluginViews) {
-// 		view->schedule_for_repaint();
-		m_vp->schedule_for_repaint( view );
+ 		view->schedule_for_repaint();
 	}
 }
 

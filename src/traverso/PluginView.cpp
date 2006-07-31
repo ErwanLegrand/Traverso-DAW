@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: PluginView.cpp,v 1.1 2006/07/31 13:27:59 r_sijrier Exp $
+    $Id: PluginView.cpp,v 1.2 2006/07/31 14:58:50 r_sijrier Exp $
 */
 
 #include "PluginView.h"
@@ -46,7 +46,7 @@ PluginView::PluginView( ViewPort * vp, TrackView* parent, Plugin* plugin, int in
 	init_context_menu( this );
 	m_type = PLUGINVIEW;
 	
-	connect(m_plugin, SIGNAL(bypassChanged()), this, SLOT(schedule_for_repaint()));
+	connect(m_plugin, SIGNAL(bypassChanged()), m_trackView, SLOT(repaint_all_clips()));
 	
 	schedule_for_repaint();
 }
@@ -81,8 +81,7 @@ void PluginView::schedule_for_repaint( )
 	int xstart = 200 + m_index * 120;
 	
 	set_geometry(xstart, m_track->get_baseY() + m_track->get_height() - 30, 100, 25);
-//         m_vp->schedule_for_repaint(this);
-        m_trackView->repaint_all_clips();
+        m_vp->schedule_for_repaint(this);
 }
 
 Command * PluginView::edit_properties( )
