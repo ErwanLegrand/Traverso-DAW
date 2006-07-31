@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveClip.h,v 1.2 2006/06/15 11:03:00 r_sijrier Exp $
+    $Id: MoveClip.h,v 1.3 2006/07/31 15:34:28 r_sijrier Exp $
 */
 
 #ifndef MOVECLIPACTION_H
@@ -50,6 +50,7 @@ private :
         nframes_t newInsertFrame;
         Track* originTrack;
         Track* targetTrack;
+        Track* currentTrack;
         int	origXPos;
 
 };

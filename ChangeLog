@@ -5,6 +5,8 @@ xx-xx-xxxx Remon Sijrier <remon@vt.shuis.tudelft.nl>
 	* Added "merged waveform drawing for stereo tracks"
 	* Snapping improved considerably!
 	* Traverso build on Mac OS X now!
+	* Fix clip normalization, scans only the Clips source range
+	* Move the AudioClip during move visually again to the targetTrack!
 
 05-07-2006 Remon Sijrier <remon@vt.shuis.tudelft.nl>
 	* Released 0.30.0
