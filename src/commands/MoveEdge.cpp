@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveEdge.cpp,v 1.5 2006/06/29 11:51:51 r_sijrier Exp $
+    $Id: MoveEdge.cpp,v 1.6 2006/07/31 13:42:24 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -55,10 +55,13 @@ int MoveEdge::prepare_actions()
 int MoveEdge::begin_hold()
 {
         PENTER;
-        if (m_edge == "set_left_edge")
+        if (m_edge == "set_left_edge") {
                 m_newPos = m_originalPos = m_clip->get_track_start_frame();
-        if (m_edge == "set_right_edge")
+	}
+        if (m_edge == "set_right_edge") {
                 m_newPos = m_originalPos = m_clip->get_track_end_frame();
+	}
+	m_song->update_snaplist(m_clip);
         return 1;
 }
 
@@ -83,7 +86,7 @@ int MoveEdge::undo_action()
 
 int MoveEdge::jog()
 {
-        m_newPos = m_song->xpos_to_frame(cpointer().clip_area_x());
+        m_newPos = m_song->xpos_to_frame(m_song->snapped_x(cpointer().clip_area_x()));
         return do_action();
 }
 

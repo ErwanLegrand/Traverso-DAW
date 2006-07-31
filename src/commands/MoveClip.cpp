@@ -17,13 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: MoveClip.cpp,v 1.6 2006/07/03 17:51:56 r_sijrier Exp $
+$Id: MoveClip.cpp,v 1.7 2006/07/31 13:42:24 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
 
 #include "TrackView.h"
 #include "MoveClip.h"
+#include "SnapList.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -47,6 +48,7 @@ int MoveClip::begin_hold()
 	originTrack = targetTrack = m_clip->get_track();
 	originalTrackFirstFrame = newInsertFrame = m_clip->get_track_start_frame();
 	origXPos = cpointer().x();
+	m_song->update_snaplist(m_clip);
 	return 1;
 }
 
@@ -99,23 +101,67 @@ int MoveClip::undo_action()
 int MoveClip::jog()
 {
 	int newXPos = cpointer().x();
-	
+
 	if ( newXPos < TrackView::CLIPAREABASEX ) {
 		newXPos = TrackView::CLIPAREABASEX;
 	}
-	
-	nframes_t diff = (newXPos - origXPos) * Peak::zoomStep[m_song->get_hzoom()];
+
+	SnapList *slist = m_song->get_snap_list();
+
+	// must be signed int because it can be negative
+	int diff_f = (newXPos - origXPos) * Peak::zoomStep[m_song->get_hzoom()];
 	nframes_t origTrackStartFrame = m_clip->get_track_start_frame();
-	int newTrackStartFrame = origTrackStartFrame + diff;
-	
-	if (newTrackStartFrame < 0)
+	nframes_t origTrackEndFrame = m_clip->get_track_end_frame();
+	nframes_t newTrackStartFrame = origTrackStartFrame + diff_f;
+	nframes_t newTrackEndFrame = origTrackEndFrame + diff_f;
+
+	// attention: newTrackStartFrame is unsigned, can't check for negative values
+	if (-diff_f >= (int)newTrackStartFrame)
 		newTrackStartFrame = 0;
-	
-	newInsertFrame= m_song->xpos_to_frame(m_song->snapped_x(m_song->frame_to_xpos(newTrackStartFrame)));
+
+	// "nframe_t" domain, but must be signed ints because they can become negative
+	int snapStartDiff = 0;
+	int snapEndDiff = 0;
+	int snapDiff = 0;
+
+	if (m_song->is_snap_on()) {
+
+		// check if there is anything to snap
+		bool start_snapped = false;
+		bool end_snapped = false;
+		if (slist->is_snap_value(m_song->frame_to_xpos(newTrackStartFrame))) start_snapped = true;
+		if (slist->is_snap_value(m_song->frame_to_xpos(newTrackEndFrame))) end_snapped = true;
+
+		if (start_snapped) {
+			snapStartDiff = slist->get_snap_diff(m_song->frame_to_xpos(newTrackStartFrame)) 
+				* Peak::zoomStep[m_song->get_hzoom()];
+			snapDiff = snapStartDiff; // in case both ends snapped, change this value later, else leave it
+		}
+
+		if (end_snapped) {
+			snapEndDiff = slist->get_snap_diff(m_song->frame_to_xpos(newTrackEndFrame)) 
+				* Peak::zoomStep[m_song->get_hzoom()];
+			snapDiff = snapEndDiff; // in case both ends snapped, change this value later, else leave it
+		}
+
+		// If both snapped, check which one is closer. Do not apply this check if one of the
+		// ends hasn't snapped, because it's diff value will be 0 by default and will always
+		// be smaller than the actually snapped value.
+		if (start_snapped && end_snapped) {
+			if (abs(snapEndDiff) > abs(snapStartDiff))
+				snapDiff = snapStartDiff;
+			else
+				snapDiff = snapEndDiff;
+		}
+	}
+
+	newInsertFrame = newTrackStartFrame - snapDiff;
 	m_clip->set_track_start_frame(newInsertFrame);
-	
-	origXPos = newXPos;
-	
+
+	// store the new position only if the clip was moved, but not if it stuck to a snap position
+	if (origTrackStartFrame != newInsertFrame)
+		origXPos = newXPos;
+
 	// This potentially leaves a Clip into a Track where it should have been 
 	// removed. This happens when a song is playing, and thread save add/remove
 	// is used. Disabled until a solid implementation has been made
