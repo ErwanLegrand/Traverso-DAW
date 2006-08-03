@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeContextDialogView.h,v 1.1 2006/08/03 14:33:02 r_sijrier Exp $
+$Id: FadeContextDialogView.h,v 1.2 2006/08/03 15:14:04 r_sijrier Exp $
 */
 
 #ifndef FADE_CONTEXT_DIALOG_VIEW_H
@@ -41,21 +41,19 @@ public:
 
         QRect draw(QPainter& p);
 
-//private:
-	void solve();
-	
-	void create_background();
-	
 	float roundFloat(float f);
+	bool get_raster() const {return m_raster;}
+
+
+private:
+	void solve();
+	void create_background();
+        void schedule_for_repaint();
 	
 	QPointF getCurvePoint(float f);
 	
-	
-	bool 	raster;
-	
-	int 	mode;
-	
-	float	bendValue, strenghtValue;
+	int 	m_mode;
+	bool 	m_raster;
 	
 	QList<QPointF> 	points;
 	QPolygonF 	polygon;
@@ -63,15 +61,13 @@ public:
 	QPixmap		background;
 	
 	ViewPort*	m_vp;
-	
-private:
 	FadeCurve*	m_fade;
 
-public slots:
-        void schedule_for_repaint();
+private slots:
         void resize();
         void state_changed();
 	
+public slots:
 	Command* set_mode();
 	Command* reset();
 	Command* bend();

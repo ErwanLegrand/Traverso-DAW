@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeContextDialogView.cpp,v 1.1 2006/08/03 14:33:02 r_sijrier Exp $
+$Id: FadeContextDialogView.cpp,v 1.2 2006/08/03 15:14:04 r_sijrier Exp $
 */
 
 #include "FadeContextDialogView.h"
@@ -42,8 +42,8 @@ FadeContextDialogView::FadeContextDialogView(ViewPort* viewPort, FadeCurve* fade
 		: ViewItem(viewPort, 0, fadeCurve), m_vp(viewPort), m_fade(fadeCurve)
 {
 	// initialize default values
-	raster = false;
-	mode = 0;
+	m_raster = false;
+	m_mode = 0;
 
 	points.append(QPointF(0.0, 0.0));
 	points.append(QPointF(0.25, 0.25));
@@ -72,7 +72,7 @@ QRect FadeContextDialogView::draw( QPainter& p )
 
 	p.setRenderHint(QPainter::Antialiasing);
 	
-	// control points
+	// Calculate and draw control points
 	float h = float(m_vp->height() - 2*VMARGIN - 1);
 	QPoint p1(int(points[1].x() * m_vp->width()), m_vp->height()-1-VMARGIN - int(points[1].y() * h));
 	QPoint p2(int(m_vp->width()-1 - (1.0 - points[2].x()) * (m_vp->width()-1)), VMARGIN + int(float(1.0 - points[2].y()) * h));
@@ -104,7 +104,7 @@ QRect FadeContextDialogView::draw( QPainter& p )
 	// since the above routine potentially does not include it.
 	polygon << QPointF(m_vp->width(), VMARGIN);
 	
-	// the curve
+	// Draw the curve
 	QPainterPath path;
 	path.moveTo(VMARGIN, m_vp->height());
 	path.addPolygon(polygon);
@@ -123,17 +123,17 @@ QRect FadeContextDialogView::draw( QPainter& p )
 void FadeContextDialogView::solve( )
 {
 	// calculate points
-	if (mode == 0) {
+	if (m_mode == 0) {
 		points[1] = QPointF(m_fade->get_strenght_factor() * (1.0 - m_fade->get_bend_factor()), m_fade->get_strenght_factor() * m_fade->get_bend_factor());
 		points[2] = QPointF(1.0 - (m_fade->get_strenght_factor() * m_fade->get_bend_factor()), 1.0 - (m_fade->get_strenght_factor() * (1.0 - m_fade->get_bend_factor())));
 	}
-	if (mode == 1) {
+	if (m_mode == 1) {
 		points[1] = QPointF(m_fade->get_strenght_factor() * (1.0 - m_fade->get_bend_factor()), m_fade->get_strenght_factor() * m_fade->get_bend_factor());
 		points[2] = QPointF(1.0 - (m_fade->get_strenght_factor() * (1.0 - m_fade->get_bend_factor())), 1.0 - (m_fade->get_strenght_factor() * m_fade->get_bend_factor()));
 	}
 
 
-	// calculate curve
+	// calculate curve nodes
 	float f = 0.0;
  	for (int i = 1; i < (m_fade->get_nodes()->size() -1); i++) {
 		
@@ -195,13 +195,13 @@ void FadeContextDialogView::create_background( )
 	if (m_fade->get_bend_factor() == 0.5) {
 		m = "Mode: linear";
 	} else {
-		if (mode == 0)
+		if (m_mode == 0)
 			m = "Mode: bended";
-		if (mode == 1)
+		if (m_mode == 1)
 			m = "Mode: s-shape";
 	}
 
-	if (raster) {
+	if (m_raster) {
 		r = "Raster: on";
 	} else {
 		r = "Raster: off";
@@ -255,10 +255,10 @@ Command* FadeContextDialogView::set_mode( )
 {
 	PENTER;
 
-	if (mode < 1) {
-		mode++;
+	if (m_mode < 1) {
+		m_mode++;
 	} else {
-		mode = 0;
+		m_mode = 0;
 	}
 
 	solve();
@@ -301,7 +301,7 @@ Command * FadeContextDialogView::strength( )
 
 Command * FadeContextDialogView::toggle_raster( )
 {
-	raster = ! raster;
+	m_raster = ! m_raster;
 	create_background();
 	schedule_for_repaint();
 	
@@ -309,6 +309,8 @@ Command * FadeContextDialogView::toggle_raster( )
 }
 
 
+
+/****** Command classes used by FadeContextDialogView *******/
 
 /********** FadeBend **********/
 /******************************/
@@ -325,7 +327,7 @@ int FadeBend::begin_hold()
 int FadeBend::jog()
 {
 
-	if (m_view->raster) {
+	if (m_view->get_raster()) {
 		m_curve->set_bend_factor(m_view->roundFloat(m_curve->get_bend_factor()));
 	} else {
 		m_curve->set_bend_factor(oldValue + float(origY - cpointer().y()) / CURSOR_SPEED);
@@ -351,7 +353,7 @@ int FadeStrength::jog()
 	if (m_curve->get_bend_factor() >= 0.5) {
 		m_curve->set_strength_factor(oldValue + float(origY - cpointer().y()) / CURSOR_SPEED);
 	} else {
-		if (m_view->raster) {
+		if (m_view->get_raster()) {
 			m_curve->set_strength_factor(m_view->roundFloat(m_curve->get_strenght_factor()));
 		} else {
 			m_curve->set_strength_factor(oldValue - float(origY - cpointer().y()) / CURSOR_SPEED);
