@@ -1,4 +1,4 @@
 include(base.pri)
  
-CONFIG += static
-#CONFIG += dll
+#CONFIG += static
+CONFIG += dll
