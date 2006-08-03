@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginPort.h,v 1.1 2006/07/31 13:24:46 r_sijrier Exp $
+$Id: PluginPort.h,v 1.2 2006/08/03 14:37:10 r_sijrier Exp $
 */
 
 
@@ -37,15 +37,13 @@ public:
 	PluginPort(){};
 	~PluginPort(){};
 
-	virtual QDomNode get_state(QDomDocument doc) = 0;
+	virtual QDomNode get_state(QDomDocument doc);
 	virtual int set_state( const QDomNode & node ) = 0;
 	
 	int get_index() const {return m_index;}
 
 protected:
 	int	m_index;
-
-
 }; 
 
 #endif
