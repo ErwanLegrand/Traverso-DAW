@@ -23,6 +23,7 @@ HEADERS += Plugin.h \
 
 SOURCES += Plugin.cpp \
 	PluginChain.cpp \
+	PluginPort.cpp \
 	AudioInputPort.cpp \
 	AudioOutputPort.cpp \
 	PluginManager.cpp \
