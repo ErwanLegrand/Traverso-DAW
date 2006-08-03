@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.1 2006/08/03 14:33:02 r_sijrier Exp $
+$Id: FadeCurve.cpp,v 1.2 2006/08/03 15:14:26 r_sijrier Exp $
 */
  
 #include "FadeCurve.h"
@@ -44,6 +44,7 @@ QDomNode FadeCurve::get_state( QDomDocument doc )
 	QDomElement node = doc.createElement(m_type);
 	node.setAttribute("bendfactor", m_bendFactor);
 	node.setAttribute("strengthfactor", m_strenghtFactor);
+	node.setAttribute("bypassed", m_bypass);
 	
 	QDomNode curvenode = Curve::get_state(doc);
 	
@@ -57,6 +58,7 @@ int FadeCurve::set_state( const QDomNode & node )
 	QDomElement e = node.toElement();
 	m_bendFactor = e.attribute( "bendfactor", "0.5" ).toDouble();
 	m_strenghtFactor = e.attribute( "strengthfactor", "0.5" ).toDouble();
+	m_bypass = e.attribute( "bypassed", "0" ).toInt();
 	
 	QDomElement curveElement = node.firstChildElement("Curve");
 	Curve::set_state(curveElement);

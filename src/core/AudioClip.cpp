@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.36 2006/08/03 14:33:46 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.37 2006/08/03 15:14:26 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -390,7 +390,7 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 	
 	// FADE IN
 	
-	if (m_song->get_transport_frame() < (trackStartFrame + fadeIn->get_range()) ) {
+	if ( (! fadeIn->is_bypassed() ) && (m_song->get_transport_frame() < (trackStartFrame + fadeIn->get_range())) ) {
 // 		printf("mix_pos is %d, len is %d\n", mix_pos, fadeIn->get_range());
 		nframes_t limit;
 
@@ -408,7 +408,7 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 	
 	// FADE OUT
 	
-	if (m_song->get_transport_frame() > (trackEndFrame - fadeOut->get_range()) ) {
+	if ( ( ! fadeOut->is_bypassed()) && (m_song->get_transport_frame() > (trackEndFrame - fadeOut->get_range())) ) {
 		
 		nframes_t limit;
 		
