@@ -9,7 +9,7 @@ include(../libbase.pri)
 
 INCLUDEPATH += ../../src/core
 
-TARGET = traverso 
+TARGET = traversoaudiobackend
 DESTDIR = ../../lib 
 
 TEMPLATE = lib 
