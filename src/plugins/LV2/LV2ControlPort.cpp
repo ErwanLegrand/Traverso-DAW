@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: LV2ControlPort.cpp,v 1.2 2006/07/31 13:59:20 r_sijrier Exp $
+$Id: LV2ControlPort.cpp,v 1.3 2006/08/03 14:38:09 r_sijrier Exp $
 
 slv2 url: http://codeson.net/svn/libslv2/
 */
@@ -47,8 +47,8 @@ LV2ControlPort::LV2ControlPort( LV2Plugin * plugin, const QDomNode node )
 
 QDomNode LV2ControlPort::get_state( QDomDocument doc )
 {
-	QDomElement node = doc.createElement("ControlPort");
-	node.setAttribute("index", (int) m_index);
+	
+	QDomElement node = PluginPort::get_state(doc).toElement();
 	node.setAttribute("value", m_controlValue);
 	
 	return node;
@@ -58,7 +58,7 @@ QDomNode LV2ControlPort::get_state( QDomDocument doc )
 int LV2ControlPort::set_state( const QDomNode & node )
 {
 	QDomElement e = node.toElement();
-	m_index = (unsigned long) e.attribute( "index", "").toInt();
+	m_index = e.attribute( "index", "").toInt();
 	m_controlValue = e.attribute( "value", "").toFloat();
 	
 	return 1;
