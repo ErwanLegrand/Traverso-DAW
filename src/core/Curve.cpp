@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.cpp,v 1.15 2006/07/27 18:06:53 r_sijrier Exp $
+$Id: Curve.cpp,v 1.16 2006/08/03 14:33:46 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -41,18 +41,13 @@ Curve::Curve()
 		: ContextItem()
 {
 	PENTERCONS;
-	changed = true;
-	defaultValue = 1.0f;
-	lookup_cache.left = -1;
-	lookup_cache.range.first = nodes.end();
+	
+	init();
 }
 
 Curve::Curve( const QDomNode node )
 {
-	changed = true;
-	defaultValue = 1.0f;
-	lookup_cache.left = -1;
-	lookup_cache.range.first = nodes.end();
+	init();
 	set_state(node);
 }
 
@@ -63,6 +58,15 @@ Curve::~Curve()
 	}
 }
 
+void Curve::init( )
+{
+	changed = true;
+	defaultValue = 1.0f;
+	lookup_cache.left = -1;
+	lookup_cache.range.first = nodes.end();
+}
+
+
 QDomNode Curve::get_state( QDomDocument doc )
 {
 	QDomElement node = doc.createElement("Curve");
@@ -72,7 +76,7 @@ QDomNode Curve::get_state( QDomDocument doc )
 	for (int i=0; i< nodes.size(); ++i) {
 		CurveNode* cn = nodes.at(i);
 		
-		nodesList << QString::number(cn->when).append(",").append(QString::number(cn->value));
+		nodesList << QString::number(cn->get_when()).append(",").append(QString::number(cn->get_value()));
 	}
 	
 	node.setAttribute("nodes",  nodesList.join(";"));
@@ -105,7 +109,9 @@ void Curve::add_node(double pos, double value)
 {
 	PENTER2;
 	
-	CurveNode* node = new CurveNode(pos, value); 
+	CurveNode* node = new CurveNode(this, pos, value); 
+	
+	connect(node, SIGNAL(positionChanged()), this, SLOT(set_changed()));
 	
 	THREAD_SAVE_CALL_EMIT_SIGNAL(this, node, private_add_node(CurveNode*), stateChanged());
 }
@@ -131,8 +137,8 @@ void Curve::solve ()
 		QList<CurveNode* >::iterator xx;
 
 		for (i = 0, xx = nodes.begin(); xx != nodes.end(); ++xx, ++i) {
-			x[i] = (double) (*xx)->when;
-			y[i] = (double) (*xx)->value;
+			x[i] = (double) (*xx)->get_when();
+			y[i] = (double) (*xx)->get_value();
 		}
 
 		double lp0, lp1, fpone;
@@ -262,13 +268,13 @@ void Curve::get_vector (double x0, double x1, float *vec, int32_t veclen)
 
 	/* nodes is now known not to be empty */
 
-	max_x = nodes.back()->when;
-	min_x = nodes.front()->when;
+	max_x = nodes.back()->get_when();
+	min_x = nodes.front()->get_when();
 
 	lx = max (min_x, x0);
 
 	if (x1 < 0) {
-		x1 = nodes.back()->when;
+		x1 = nodes.back()->get_when();
 	}
 
 	hx = min (max_x, x1);
@@ -288,7 +294,7 @@ void Curve::get_vector (double x0, double x1, float *vec, int32_t veclen)
 		subveclen = min (subveclen, veclen);
 
 		for (i = 0; i < subveclen; ++i) {
-			vec[i] = nodes.front()->value;
+			vec[i] = nodes.front()->get_value();
 		}
 
 		veclen -= subveclen;
@@ -307,7 +313,7 @@ void Curve::get_vector (double x0, double x1, float *vec, int32_t veclen)
 		
 		subveclen = min (subveclen, veclen);
 
-		val = nodes.back()->value;
+		val = nodes.back()->get_value();
 
 		i = veclen - subveclen;
 
@@ -325,7 +331,7 @@ void Curve::get_vector (double x0, double x1, float *vec, int32_t veclen)
 	if (npoints == 1 ) {
 	
 		for (i = 0; i < veclen; ++i) {
-			vec[i] = nodes.front()->value;
+			vec[i] = nodes.front()->get_value();
 		}
 		return;
 	}
@@ -346,11 +352,11 @@ void Curve::get_vector (double x0, double x1, float *vec, int32_t veclen)
 			dx = 0; // not used
 		}
 	
-		double slope = (nodes.back()->value - nodes.front()->value)/  
-			(nodes.back()->when - nodes.front()->when);
+		double slope = (nodes.back()->get_value() - nodes.front()->get_value())/  
+			(nodes.back()->get_when() - nodes.front()->get_when());
 		double yfrac = dx*slope;
 
-		vec[0] = nodes.front()->value + slope * (lx - nodes.front()->when);
+		vec[0] = nodes.front()->get_value() + slope * (lx - nodes.front()->get_when());
 
 		for (i = 1; i < veclen; ++i) {
 			vec[i] = vec[i-1] + yfrac;
@@ -382,10 +388,10 @@ double Curve::multipoint_eval (double x)
 	if ((lookup_cache.left < 0) ||
 	((lookup_cache.left > x) || 
 	(lookup_cache.range.first == nodes.end()) || 
-	((*lookup_cache.range.second)->when < x))) {
+	((*lookup_cache.range.second)->get_when() < x))) {
 		
 		Comparator cmp;
-		CurveNode cn (x, 0.0);
+		CurveNode cn (this, x, 0.0);
 
 		lookup_cache.range = equal_range (nodes.begin(), nodes.end(), &cn, cmp);
 	}
@@ -412,12 +418,12 @@ double Curve::multipoint_eval (double x)
 		if (range.first == nodes.begin()) {
 			/* we're before the first point */
 			// return defaultValue;
-			nodes.front()->value;
+			nodes.front()->get_value();
 		}
 		
 		if (range.second == nodes.end()) {
 			/* we're after the last point */
-			return nodes.back()->value;
+			return nodes.back()->get_value();
 		}
 
 		double x2 = x * x;
@@ -429,19 +435,19 @@ double Curve::multipoint_eval (double x)
 	/* x is a control point in the data */
 	/* invalidate the cached range because its not usable */
 	lookup_cache.left = -1;
-	return (*range.first)->value;
+	return (*range.first)->get_value();
 }
 
 void Curve::set_range( double when )
 {
-	if (nodes.isEmpty() || nodes.last()->when == when) {
+	if (nodes.isEmpty() || nodes.last()->get_when() == when) {
 // 		printf("NOT Setting range!\n");
 		return;
 	}
 	
 	Q_ASSERT(when >= 0);
 	
-	double factor = when / nodes.last()->when;
+	double factor = when / nodes.last()->get_when();
 	x_scale (factor);
 	
 	emit stateChanged();
@@ -450,10 +456,10 @@ void Curve::set_range( double when )
 void Curve::x_scale( double factor )
 {
 	foreach(CurveNode* node, nodes) {
-		node->when = node->when * factor;
+		node->set_when(node->get_when() * factor);
 	}
 	
-// 	printf("Range is now %d\n", (int) nodes.last()->when);
+// 	printf("Range is now %d\n", (int) nodes.last()->get_when());
 
 	set_changed();
 }
@@ -472,7 +478,7 @@ double Curve::get_range( ) const
 	}
 	
 	if (nodes.last()) {
-		return nodes.last()->when;
+		return nodes.last()->get_when();
 	}
 		
 	return 0;

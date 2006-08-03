@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.35 2006/07/07 15:01:41 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.36 2006/08/03 14:33:46 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -38,6 +38,7 @@ $Id: AudioClip.cpp,v 1.35 2006/07/07 15:01:41 r_sijrier Exp $
 #include "AudioClipManager.h"
 #include "AudioSourceManager.h"
 #include "Curve.h"
+#include "FadeCurve.h"
 #include "Tsar.h"
 
 #include <commands.h>
@@ -57,8 +58,6 @@ AudioClip::AudioClip(Track* track, nframes_t pTrackInsertBlock, QString name)
 	m_song = m_track->get_song();
 	bitDepth = m_song->get_bitdepth();
 	init();
-	set_fade_in_shape( Linear, 1);
-	set_fade_out_shape( Linear, 1);
 }
 
 AudioClip::AudioClip(Track* track, const QDomNode& node)
@@ -73,8 +72,9 @@ AudioClip::~AudioClip()
 {
 	PENTERDES;
 	
-	foreach(ReadSource* source, readSources)
+	foreach(ReadSource* source, readSources) {
 		delete source;
+	}
 		
 	delete fadeIn;
 	delete fadeOut;
@@ -87,8 +87,8 @@ void AudioClip::init()
 	m_song->get_audioclip_manager()->add_clip( this );
 	isRecording = false;
 	isSelected = false;
-	fadeIn = new Curve;
-	fadeOut = new Curve;
+	fadeIn = new FadeCurve("FadeIn");
+	fadeOut = new FadeCurve("FadeOut");
 }
 
 int AudioClip::set_state(const QDomNode& node )
@@ -101,16 +101,6 @@ int AudioClip::set_state(const QDomNode& node )
 	
 	uint channels = e.attribute( "channels", "0").toInt();
 	bitDepth = e.attribute("origbitdepth", "0").toInt();
-	
-	uint fadeInRange = e.attribute( "fadeIn", "" ).toUInt();
-	fadeInRange = (fadeInRange == 0) ? 1 : fadeInRange;
-	FadeShape shape = (FadeShape) e.attribute( "fadeInShape", "" ).toInt();
-	set_fade_in_shape( shape, fadeInRange);
-	
-	uint fadeOutRange = e.attribute( "fadeOut", "").toUInt();
-	fadeOutRange = (fadeOutRange == 0) ? 1 : fadeOutRange;
-	shape = (FadeShape) e.attribute( "fadeOutShape", "" ).toInt();
-	set_fade_out_shape( shape, fadeOutRange);
 	
 	set_gain( e.attribute( "gain", "" ).toFloat() );
 	m_normfactor =  e.attribute( "normfactor", "1.0" ).toFloat();
@@ -143,15 +133,20 @@ int AudioClip::set_state(const QDomNode& node )
 	sourceEndFrame = sourceStartFrame + m_length;
 	set_track_start_frame( e.attribute( "trackstart", "" ).toUInt());
 	
-/*	QDomElement CurvesNode = node.firstChildElement("Curves");
-	if (!CurvesNode.isNull()) {
-		QDomNode CurveNode = CurvesNode.firstChild();
-		while (!CurveNode.isNull()) {
-			QDomElement e = CurveNode.toElement();
-			Curve* curve = new Curve(e);
-			CurveNode = CurveNode.nextSibling();
+	QDomElement curvesNode = node.firstChildElement("Curves");
+	if (!curvesNode.isNull()) {
+		QDomElement fadeInNode = curvesNode.firstChildElement("FadeIn");
+		if (!fadeInNode.isNull()) {
+			fadeIn = new FadeCurve("FadeIn");
+			fadeIn->set_state( fadeInNode );
 		}
-	}*/
+		
+		QDomElement fadeOutNode = curvesNode.firstChildElement("FadeOut");
+		if (!fadeOutNode.isNull()) {
+			fadeOut = new FadeCurve("FadeOut");
+			fadeOut->set_state( fadeOutNode );
+		}
+	}
 	
 	return 1;
 }
@@ -165,10 +160,6 @@ QDomNode AudioClip::get_state( QDomDocument doc )
 	node.setAttribute("gain", m_gain);
 	node.setAttribute("normfactor", m_normfactor);
 	node.setAttribute("mute", isMuted);
-	node.setAttribute("fadeIn", (uint) fadeIn->get_range());
-	node.setAttribute("fadeOut", (uint) fadeOut->get_range());
-	node.setAttribute("fadeInShape", fadeInShape);
-	node.setAttribute("fadeOutShape", fadeOutShape);
 	node.setAttribute("take", isTake);
 	node.setAttribute("channels", m_channels);
 	node.setAttribute("clipname", m_name );
@@ -180,11 +171,12 @@ QDomNode AudioClip::get_state( QDomDocument doc )
 		node.setAttribute(sourceName, readSources.at(i)->get_id());
 	}
 
-// 	QDomNode curves = doc.createElement("Curves");
-// 	
-// 	curves.appendChild(fadeIn->get_state(doc));
-// 	
-// 	node.appendChild(curves);
+	QDomNode curves = doc.createElement("Curves");
+	
+	curves.appendChild(fadeIn->get_state(doc));
+	curves.appendChild(fadeOut->get_state(doc));
+	
+	node.appendChild(curves);
 
 	return node;
 }
@@ -316,15 +308,6 @@ void AudioClip::set_track_end_frame( nframes_t endFrame )
 
 void AudioClip::set_blur(bool )
 {
-	/*	ColorManager::set_blur(ColorManager::CLIP_BG_DEFAULT            , stat );
-		ColorManager::set_blur(ColorManager::CLIP_BG_SELECTED           , stat );
-		ColorManager::set_blur(ColorManager::CLIP_BG_MUTED              , stat );
-		ColorManager::set_blur(ColorManager::CLIP_INFO_AREA_BG          , stat );
-		ColorManager::set_blur(ColorManager::CLIP_INFO_AREA_BG_ACTIVE   , stat );
-		ColorManager::set_blur(ColorManager::CLIP_PEAK_MICROVIEW        , stat );
-		ColorManager::set_blur(ColorManager::CLIP_PEAK_MACROVIEW        , stat );
-		ColorManager::set_blur(ColorManager::CLIP_PEAK_OVERLOADED_SAMPLE, stat );
-		ColorManager::set_blur(ColorManager::DARK_TEXT                  , stat );*/
 	emit stateChanged();
 }
 
@@ -783,16 +766,6 @@ bool AudioClip::is_recording( ) const
 	return isRecording;
 }
 
-nframes_t AudioClip::get_fade_out_frames( ) const
-{
-	return (nframes_t) fadeOut->get_range();
-}
-
-nframes_t AudioClip::get_fade_in_frames() const
-{
-	return (nframes_t) fadeIn->get_range();
-}
-
 nframes_t AudioClip::get_source_end_frame( ) const
 {
 	return sourceEndFrame;
@@ -813,120 +786,6 @@ nframes_t AudioClip::get_track_start_frame( ) const
 	return trackStartFrame;
 }
 
-void AudioClip::set_fade_in_shape( FadeShape shape, nframes_t len )
-{
-
-	fadeInShape = shape;
-	
-	if (fadeIn->get_nodes()->size() > 0) {
-		THREAD_SAVE_CALL(fadeIn, private_clear(), fadeIn);
-	}
-	
-	switch (shape) {
-		case Linear:
-			fadeIn->add_node(0.0, 0.0);
-			fadeIn->add_node(len, 1.0);
-			break;
-	
-		case Slowest:
-			fadeIn->add_node(0, 0);
-			fadeIn->add_node(len * 0.389401, 0.0333333);
-			fadeIn->add_node(len * 0.629032, 0.0861111);
-			fadeIn->add_node(len * 0.829493, 0.233333);
-			fadeIn->add_node(len * 0.9447, 0.483333);
-			fadeIn->add_node(len * 0.976959, 0.697222);
-			fadeIn->add_node(len, 1);
-			break;
-	
-		case Fastest:
-			fadeIn->add_node(0, 0);
-			fadeIn->add_node(len * 0.0207373, 0.197222);
-			fadeIn->add_node(len * 0.0645161, 0.525);
-			fadeIn->add_node(len * 0.152074, 0.802778);
-			fadeIn->add_node(len * 0.276498, 0.919444);
-			fadeIn->add_node(len * 0.481567, 0.980556);
-			fadeIn->add_node(len * 0.767281, 1);
-			fadeIn->add_node(len, 1);
-			break;
-	
-		case Fast:
-			fadeIn->add_node(0, 0);
-			fadeIn->add_node(len * 0.0737327, 0.308333);
-			fadeIn->add_node(len * 0.246544, 0.658333);
-			fadeIn->add_node(len * 0.470046, 0.886111);
-			fadeIn->add_node(len * 0.652074, 0.972222);
-			fadeIn->add_node(len * 0.771889, 0.988889);
-			fadeIn->add_node(len, 1);
-			break;
-	
-		case Slow:
-			fadeIn->add_node(0, 0);
-			fadeIn->add_node(len * 0.304147, 0.0694444);
-			fadeIn->add_node(len * 0.529954, 0.152778);
-			fadeIn->add_node(len * 0.725806, 0.333333);
-			fadeIn->add_node(len * 0.847926, 0.558333);
-			fadeIn->add_node(len * 0.919355, 0.730556);
-			fadeIn->add_node(len, 1);
-			break;
-	}
-	
-}
-
-void AudioClip::set_fade_out_shape( FadeShape shape, nframes_t len )
-{
-	fadeOutShape = shape;
-	
-	if (fadeOut->get_nodes()->size() > 0) {
-		THREAD_SAVE_CALL(fadeOut, private_clear(), fadeOut);
-	}
-	
-	switch (shape) {
-		case Linear:
-			fadeOut->add_node(len * 0, 1);
-			fadeOut->add_node(len * 1, 0);
-			break;
-		
-		case Slowest:
-			fadeOut->add_node(len * 0, 1);
-			fadeOut->add_node(len * 0.023041, 0.697222);
-			fadeOut->add_node(len * 0.0553,   0.483333);
-			fadeOut->add_node(len * 0.170507, 0.233333);
-			fadeOut->add_node(len * 0.370968, 0.0861111);
-			fadeOut->add_node(len * 0.610599, 0.0333333);
-			fadeOut->add_node(len * 1, 0);
-			break;
-	
-		case Fastest:
-			fadeOut->add_node(len * 0, 1);
-			fadeOut->add_node(len * 0.305556, 1);
-			fadeOut->add_node(len * 0.548611, 0.991736);
-			fadeOut->add_node(len * 0.759259, 0.931129);
-			fadeOut->add_node(len * 0.918981, 0.68595);
-			fadeOut->add_node(len * 0.976852, 0.22865);
-			fadeOut->add_node(len * 1, 0);
-			break;
-	
-		case Fast:
-			fadeOut->add_node(len * 0, 1);
-			fadeOut->add_node(len * 0.228111, 0.988889);
-			fadeOut->add_node(len * 0.347926, 0.972222);
-			fadeOut->add_node(len * 0.529954, 0.886111);
-			fadeOut->add_node(len * 0.753456, 0.658333);
-			fadeOut->add_node(len * 0.9262673, 0.308333);
-			fadeOut->add_node(len * 1, 0);
-			break;
-	
-		case Slow:
-			fadeOut->add_node(len * 0, 1);
-			fadeOut->add_node(len * 0.080645, 0.730556);
-			fadeOut->add_node(len * 0.277778, 0.289256);
-			fadeOut->add_node(len * 0.470046, 0.152778);
-			fadeOut->add_node(len * 0.695853, 0.0694444);
-			fadeOut->add_node(len * 1, 0);
-			break;
-	
-	}
-}
 
 Command * AudioClip::clip_fade_in( )
 {

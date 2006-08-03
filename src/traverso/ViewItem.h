@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ViewItem.h,v 1.2 2006/07/31 13:27:27 r_sijrier Exp $
+    $Id: ViewItem.h,v 1.3 2006/08/03 14:33:46 r_sijrier Exp $
 */
 
 #ifndef VIEWITEM_H
@@ -41,10 +41,10 @@ public:
         static const int TRACKVIEW 	= 2;
         static const int SONGVIEW 	= 3;
         static const int PLUGINVIEW 	= 4;
+        static const int FADEVIEW 	= 5;
 
         ViewItem(ViewPort* vp, ViewItem* parent, ContextItem* relatedContextItem=0);
-        ViewItem()
-        {}
+        ViewItem(){}
         ~ViewItem();
 
         virtual QRect draw(QPainter& painter) = 0;

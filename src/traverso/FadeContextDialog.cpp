@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2006 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -17,42 +17,37 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveNode.cpp,v 1.3 2006/08/03 14:33:46 r_sijrier Exp $
+$Id: FadeContextDialog.cpp,v 1.1 2006/08/03 14:33:02 r_sijrier Exp $
 */
 
-#include "CurveNode.h"
-#include "Curve.h"
+#include "FadeContextDialog.h"
+#include "FadeContextDialogView.h"
+#include "ViewPort.h"
 
-// Always put me below _all_ includes, this is needed
-// in case we run with memory leak detection enabled!
-#include "Debugger.h"
+#include <QtCore>
 
+static const QString BG_COLOR		= "#a4aa94";
+static const QString VERSION		= "0.0.3";
 
-CurveNode::CurveNode(Curve* curve, double pos, double  val)
-	: m_curve(curve)
+FadeContextDialog::FadeContextDialog(FadeCurve* fadeCurve)
+	: ContextDialog()
 {
-	PENTERCONS3;
-	coeff[0] = coeff[1] = coeff[2] = coeff[3] = 0.0;
+	m_fadeCDV = new FadeContextDialogView(m_vp, fadeCurve);
 	
-	m_when = pos;
-	m_value = val;
+	qDebug() << "JmbFade version" << VERSION;
+	setWindowTitle("JmbFade " + VERSION);
+
+	// set the background color
+	setAutoFillBackground(false);
+	setAttribute(Qt::WA_PaintOnScreen);
+
+	resize(400, 200);
 }
 
-CurveNode::~CurveNode()
+FadeContextDialog::~FadeContextDialog()
 {
-	PENTERDES3;
-}
-
-void CurveNode::set_relative_when( double when )
-{
-	m_when = when * m_curve->get_range();
-	emit positionChanged();
-}
-
-void CurveNode::set_value( double value )
-{
-	m_value = value;
-	emit positionChanged();
 }
 
 //eof
+
+

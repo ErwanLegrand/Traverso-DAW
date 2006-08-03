@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.23 2006/07/06 17:34:52 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.24 2006/08/03 14:33:46 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -30,6 +30,8 @@ $Id: AudioClipView.cpp,v 1.23 2006/07/06 17:34:52 r_sijrier Exp $
 #include "ColorManager.h"
 #include "TrackView.h"
 #include "SongView.h"
+#include "FadeView.h"
+#include <FadeCurve.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -66,6 +68,9 @@ AudioClipView::AudioClipView(ViewPort * vp, TrackView* parent, AudioClip* clip )
 	connect(m_clip->get_fade_out(), SIGNAL(add_node_Signal()), this, SLOT(schedule_for_repaint()));
 	
 	create_fade_selectors();
+	
+	fadeInView = new FadeView(m_vp, this, m_clip->get_fade_in());
+	fadeOutView = new FadeView(m_vp, this, m_clip->get_fade_out());
 	
 	connect(&fadeInShapeSelector, SIGNAL(triggered ( QAction* )), this, SLOT(set_fade_in_shape( QAction* )));
 	connect(&fadeOutShapeSelector, SIGNAL(triggered ( QAction* )), this, SLOT(set_fade_out_shape( QAction* )));
@@ -174,8 +179,8 @@ QRect AudioClipView::draw(QPainter& p)
 	
 		draw_peaks(painter);
 	
-		draw_fade_in(painter);
-		draw_fade_out(painter);
+		fadeInView->draw(painter);
+		fadeOutView->draw(painter);
 	
 	}
 
@@ -278,152 +283,6 @@ void AudioClipView::draw_peaks( QPainter& p )
 			}
 		}
 	}
-}
-
-
-void AudioClipView::draw_fade_in( QPainter& painter )
-{
-	Curve* fadeIn = m_clip->get_fade_in();
-	
-	if (fadeIn->get_range() == 0) {
-		return;
-	}
-	
-	QPolygonF polygon;
-	float value[2];
-	int step = 0;
-	int startPos = 0;
-	nframes_t startFrame = m_clip->get_track_start_frame();
-	nframes_t endFrame = (nframes_t) fadeIn->get_range() + startFrame;
-	nframes_t firstVisibleFrame = m_song->get_first_visible_frame();
-	
-	if (endFrame < firstVisibleFrame) {
-		return;
-	}
-	
-	if (firstVisibleFrame > startFrame) {
-		startPos = (firstVisibleFrame - startFrame) / Peak::zoomStep[hzoom];
-		startFrame = firstVisibleFrame;
-	}
-	
-	int fadeWidth = (endFrame - startFrame) / Peak::zoomStep[hzoom];
-	
-	if (fadeWidth > clipXWidth) {
-		fadeWidth = clipXWidth;
-	}
-	
-	
-// 	PWARN("fadeWidth is %d", fadeWidth);
-	
-	// Populate the polygon with enough points to draw a smooth curve.
-	// using a 2 pixel resolution, is sufficient enough
-	for (int i=startPos; i < (fadeWidth+startPos); i+=2) {
-		fadeIn->get_vector(i*Peak::zoomStep[hzoom], i*Peak::zoomStep[hzoom] + 1, value, 2);
-	 	polygon << QPointF( step, height - (value[1] * height) );
-	 	step += 2;
-	}
-	
-	// Always add the uppermost point in the polygon path 
-	// since the above routine potentially does not include it.
-	polygon << QPoint(fadeWidth, 0);
-	
-	painter.save();
-	painter.setRenderHint(QPainter::Antialiasing);
-	
-	QPainterPath path;
-	path.moveTo(0, height);
-	path.addPolygon(polygon);
-	path.lineTo(0, 0);
-	path.closeSubpath();
-	
-	painter.setPen(Qt::NoPen);
-	painter.setBrush(QColor(255, 0, 255, 50));
-	
-	painter.drawPath(path);	
-	painter.restore();
-}
-
-void AudioClipView::draw_fade_out(QPainter& painter) 
-{
-	Curve* fadeOut = m_clip->get_fade_out();
-	
-	if (fadeOut->get_range() == 0) {
-		return;
-	}
-	
-	QPolygonF polygon;
-	float value[2];
-	int step = 0;
-	int startPos = 0;
-	nframes_t endFrame = m_clip->get_track_end_frame();
-	nframes_t startFrame = endFrame - (nframes_t) fadeOut->get_range();
-	nframes_t firstVisibleFrame = m_song->get_first_visible_frame();
-	
-	
-	if (endFrame < firstVisibleFrame) {
-		return;
-	}
-	
-	int startX = (startFrame - m_clip->get_track_start_frame()) / Peak::zoomStep[hzoom];
-	if (startFrame < m_clip->get_track_start_frame()) {
-		startX = 0;
-		startPos = (m_clip->get_track_start_frame() - startFrame) / Peak::zoomStep[hzoom];
-	}
-	
-	if (m_clip->get_track_start_frame() < firstVisibleFrame) {
-		startX -= (firstVisibleFrame - m_clip->get_track_start_frame()) / Peak::zoomStep[hzoom];
-	}
-	
-	
-	if (firstVisibleFrame > startFrame) {
-		startPos = (firstVisibleFrame - startFrame) / Peak::zoomStep[hzoom];
-		startFrame = firstVisibleFrame;
-	}
-	
-	if (startX < 0) {
-		startX = 0;
-	}
-	
-	
-	int fadeWidth = clipXWidth - startX;
-	
-	
-/*	PWARN("fadeWidth is %d", fadeWidth);
-	PWARN("StartX is %d", startX);
-	PWARN("startPos is %d", startPos);
-	PWARN("clipXWidth is %d", clipXWidth);*/
-	
-	if (fadeWidth < 0) {
-// 		PWARN("FadeWidth < 0");
-		return;
-	}
-	
-	// Populate the polygon with enough points to draw a smooth curve.
-	// using a 2 pixel resolution, is sufficient enough
-	for (int i=startPos; i < (fadeWidth+startPos); i+=2) {
-		fadeOut->get_vector(i*Peak::zoomStep[hzoom], i*Peak::zoomStep[hzoom] + 1, value, 2);
-	 	polygon << QPointF( step+startX, height - (value[1] * height) );
-	 	step += 2;
-	}
-	
-	// Always add the lowest point in the polygon path 
-	// since the above routine potentially does not include it.
-	polygon << QPoint(startX + fadeWidth, height);
-	
-	painter.save();
-	painter.setRenderHint(QPainter::Antialiasing);
-	
-	QPainterPath path;
-	path.addPolygon(polygon);
-	path.lineTo(startX + fadeWidth, 0);
-	path.lineTo(startX, 0);
-	path.closeSubpath();
-	
-	painter.setPen(Qt::NoPen);
-	painter.setBrush(QColor(255, 0, 255, 50));
-	
-	painter.drawPath(path);	
-	painter.restore();
 }
 
 
@@ -627,12 +486,12 @@ Command * AudioClipView::select_fade_out_shape( )
 
 void AudioClipView::set_fade_in_shape( QAction * action )
 {
-	m_clip->set_fade_in_shape( (AudioClip::FadeShape) action->data().toInt(), (uint) m_clip->get_fade_in()->get_range());
+	m_clip->get_fade_in()->set_shape( (FadeCurve::FadeShape) action->data().toInt() );
 }
 
 void AudioClipView::set_fade_out_shape( QAction * action )
 {
-	m_clip->set_fade_out_shape( (AudioClip::FadeShape) action->data().toInt(), (uint) m_clip->get_fade_out()->get_range());
+	m_clip->get_fade_out()->set_shape( (FadeCurve::FadeShape) action->data().toInt() );
 }
 
 void AudioClipView::create_fade_selectors( )

@@ -27,8 +27,10 @@
 	<keyseq keyfacttype="FKEY" key1="Q" slotname="show_context_menu" name="This Menu" sortorder="100" />
 	<keyseq keyfacttype="FKEY" key1="E" slotname="edit_properties" name="Edit Properties" sortorder="30" />
 	<keyseq keyfacttype="FKEY" key1="N" slotname="normalize" name="Normalize" sortorder="30" />
-	<keyseq keyfacttype="FKEY" key1="R" slotname="remove_item" name="Remove" sortorder="40" />
 	<keyseq keyfacttype="FKEY" key1="B" slotname="toggle_bypass" name="Bypass" sortorder="30" />
+	<keyseq keyfacttype="FKEY" key1="M" slotname="set_mode" name="Set Mode" sortorder="30" />
+	<keyseq keyfacttype="FKEY" key1="L" slotname="reset" name="Reset" sortorder="40" />
+	<keyseq keyfacttype="FKEY" key1="R" slotname="toggle_raster" name="Toggle Raster" sortorder="50" />
 	
 	
 	<keyseq keyfacttype="FKEY2" key1="A" key2="B" slotname="about_traverso" name="About" sortorder="" />
@@ -52,7 +54,6 @@
 	<keyseq keyfacttype="FKEY2" key1="G" key2="H" mousehint="UD" slotname="select_fade_out_shape" name="Fade Out Shape" sortorder="31" />
 	
 	
-	
 	<keyseq keyfacttype="HKEY" key1="Z" mousehint="LRUD" slotname="zoom" name="Zoom" sortorder="35" />
 	<keyseq keyfacttype="HKEY" key1="TAB" mousehint="LR" slotname="shuttle" name="Shuttle" sortorder="36" />
 	<keyseq keyfacttype="HKEY" key1="E" mousehint="LR" slotname="drag_edge" name="Drag Edge" sortorder="28" />
@@ -63,6 +64,8 @@
 	<keyseq keyfacttype="HKEY" key1="D" mousehint="LRUD" slotname="drag" name="Drag" sortorder="25" />
 	<keyseq keyfacttype="HKEY" key1="R" mousehint="LR" slotname="create_region" name="Create Region" sortorder="70" />
 	<keyseq keyfacttype="HKEY" key1="X" mousehint="LR" slotname="in_crop" name="Crop (in)" sortorder="71" />
+	<keyseq keyfacttype="HKEY" key1="B" mousehint="LR" slotname="bend" name="Bend" sortorder="25" />
+	<keyseq keyfacttype="HKEY" key1="S" mousehint="LR" slotname="strength" name="Strenght" sortorder="25" />
 	
 	
 	<keyseq keyfacttype="HKEY2" key1="UARROW" key2="DARROW" mousehint="UD" slotname="vertical_scroll" name="Verticall Scroll" sortorder="120" />
@@ -83,6 +86,7 @@
 	<keyseq keyfacttype="D_FKEY" key1="G" slotname="reset_gain" name="Gain (reset)" sortorder="51" />
 	<keyseq keyfacttype="D_FKEY" key1="N" slotname="denormalize" name="De-normalize" sortorder="31" />
 	<keyseq keyfacttype="D_FKEY" key1="P" slotname="add_new_plugin" name="Add Plugin" sortorder="20" />
+	<keyseq keyfacttype="D_FKEY" key1="R" slotname="remove_item" name="Remove" sortorder="40" />
 
 	<keyseq keyfacttype="D_FKEY2" key1="DEL" key2="T" slotname="remove_track" name="Delete Track" sortorder="91" />
 	<keyseq keyfacttype="D_FKEY2" key1="S" key2="D" slotname="select_all_clips" name="Select Clips (all)" sortorder="40" />

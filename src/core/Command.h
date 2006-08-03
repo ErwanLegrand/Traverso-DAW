@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Command.h,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
+    $Id: Command.h,v 1.2 2006/08/03 14:33:46 r_sijrier Exp $
 */
 
 #ifndef COMMAND_H
@@ -38,9 +38,9 @@ public :
 
         virtual int begin_hold();
         virtual int finish_hold();
-        virtual int prepare_actions() = 0;
-        virtual int do_action() = 0;
-        virtual int undo_action() = 0;
+        virtual int prepare_actions();
+        virtual int do_action();
+        virtual int undo_action();
         virtual int jog();
 
         void set_valid(bool valid);

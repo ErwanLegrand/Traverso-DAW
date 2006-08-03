@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.h,v 1.7 2006/07/07 14:49:22 r_sijrier Exp $
+$Id: Curve.h,v 1.8 2006/08/03 14:33:46 r_sijrier Exp $
 */
 
 #ifndef CURVE_H
@@ -40,6 +40,9 @@ public:
 	Curve(const QDomNode node);
 	~Curve();
 
+	virtual QDomNode get_state(QDomDocument doc);
+	virtual int set_state( const QDomNode& node );
+	
 	void add_node(double pos, double value);
 	void clear();
 	
@@ -48,11 +51,9 @@ public:
 	
 	void get_vector (double x0, double x1, float *arg, int32_t veclen);
 	
-	QDomNode get_state(QDomDocument doc);
 	QList<CurveNode* >* get_nodes() {return &nodes;}
 	
 	// Set functions
-	int set_state( const QDomNode& node );
 	void set_range(double pos);
 	
 
@@ -65,7 +66,7 @@ private :
 	
 	struct Comparator {
 		bool operator() (const CurveNode* a, const CurveNode* b) { 
-			return a->when < b->when;
+			return a->get_when() < b->get_when();
 		}
 	};
 	
@@ -78,15 +79,20 @@ private :
 	
 	double multipoint_eval (double x);
 	
-	void set_changed();
 	void x_scale(double factor);
 	void solve ();
+	
+	void init();
 	
 	friend class CurveNode;
 
 public slots:
 	void private_add_node(CurveNode* node);
 	void private_clear();
+
+private slots:
+	void set_changed();
+
 
 signals :
 	void stateChanged();

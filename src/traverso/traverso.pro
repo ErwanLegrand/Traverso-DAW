@@ -10,7 +10,7 @@ PRECOMPILED_HEADER = precompile.h
 
 LIBS += 	-ltraversocore \
 		-ltraversocommands \
-		-ltraverso \
+		-ltraversoaudiobackend \
 		-ltraversoplugins \
 		-lsndfile \
 		-lsamplerate \
@@ -22,6 +22,10 @@ HEADERS += AudioPluginSelector.h \
            BusMonitor.h \
            BusSelector.h \
            ColorManager.h \
+           ContextDialog.h \
+           FadeContextDialog.h \
+           FadeContextDialogView.h \
+           FadeView.h \
            Help.h \
            InfoBox.h \
            Main.h \
@@ -62,6 +66,10 @@ SOURCES += Traverso.cpp \
            BusMonitor.cpp \
            BusSelector.cpp \
            ColorManager.cpp \
+           ContextDialog.cpp \
+           FadeContextDialog.cpp \
+           FadeContextDialogView.cpp \
+           FadeView.cpp \
            Help.cpp \
            InfoBox.cpp \
            Main.cpp \

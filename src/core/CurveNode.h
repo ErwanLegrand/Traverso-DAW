@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: CurveNode.h,v 1.2 2006/06/26 23:57:48 r_sijrier Exp $
+    $Id: CurveNode.h,v 1.3 2006/08/03 14:33:46 r_sijrier Exp $
 */
 
 #ifndef CURVENODE_H
@@ -27,6 +27,7 @@
 
 #include <QObject>
 
+class Curve;
 
 class CurveNode : public QObject
 {
@@ -34,13 +35,27 @@ class CurveNode : public QObject
 	Q_OBJECT
 
 public:
-        CurveNode(double pos, double value);
+        CurveNode(Curve* curve, double pos, double value);
         ~CurveNode();
+        
+        void set_relative_when(double when);
+        void set_value(double value);
+      
+        void set_when(double when) {m_when = when;}
+        
+        double get_when() const {return m_when;}
+        double get_value() const {return m_value;}
 
 	double coeff[4];
 	
-	double when;
-	double value;
+private:
+	Curve*	m_curve;
+	double 	m_when;
+	double 	m_value;
+	
+	
+signals:
+	void positionChanged();
 };
 
 

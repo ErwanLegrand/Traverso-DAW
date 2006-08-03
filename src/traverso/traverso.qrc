@@ -4,6 +4,7 @@
 		<file alias="cursorRZoom">../../resources/images/cursorRZoom.xpm</file>
 		<file alias="cursorFloatOverClip">../../resources/images/cursorFloatOverClip.xpm</file>
 		<file alias="cursorFloatOverPlugin">../../resources/images/cursorFloatOverPlugin.xpm</file>
+		<file alias="cursorFloatOverFade">../../resources/images/cursorFloatOverFade.xpm</file>
 		<file alias="cursorFloatOverTrack">../../resources/images/cursorFloatOverTrack.xpm</file>
 		<file alias="cursorFloat">../../resources/images/cursorFloat.xpm</file>
 		<file alias="cursorMagicZoom">../../resources/images/cursorRZoom.xpm</file>
@@ -13,6 +14,7 @@
 		<file alias="cursorSelect">../../resources/images/cursorSelect.xpm</file>
 		<file alias="traverso">../../resources/images/traverso.xpm</file>
 		<file alias="keymap">../../resources/keymap.xml</file>
+		<file alias="fadeshapes">../../resources/fadeshapes.xml</file>
 		<file alias="colortheme">../../resources/skin/defaultcolors.xml</file> 
 		<file alias="helpfile">../../resources/help.text</file>
 		<file alias="recled_on">../../resources/images/rec-on.xpm</file>

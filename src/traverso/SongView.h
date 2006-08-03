@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongView.h,v 1.5 2006/07/31 13:27:27 r_sijrier Exp $
+    $Id: SongView.h,v 1.6 2006/08/03 14:33:46 r_sijrier Exp $
 */
 
 #ifndef SONGVIEW_H
@@ -55,6 +55,7 @@ class SongView : public ViewItem
         static const int CURSOR_SELECT = 8;
         static const int CURSOR_MAGIC_ZOOM = 9;
         static const int CURSOR_FLOAT_OVER_PLUGIN = 10;
+        static const int CURSOR_FLOAT_OVER_FADE = 11;
 
 
 public :

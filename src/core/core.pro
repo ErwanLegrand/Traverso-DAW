@@ -8,7 +8,7 @@ include(../libbase.pri)
 PRECOMPILED_HEADER = precompile.h 
 
 LIBS += -ltraversocommands \
-        -ltraverso 
+        -ltraversoaudiobackend
         
 INCLUDEPATH += ../../src/traverso \
                ../../src/traverso/build \
@@ -37,6 +37,7 @@ SOURCES	= AudioClip.cpp \
 	Debugger.cpp \
 	DiskIO.cpp \
 	Export.cpp \
+	FadeCurve.cpp \
 	FileHelpers.cpp \
 	HistoryStack.cpp \
 	IEAction.cpp \
@@ -73,6 +74,7 @@ HEADERS	= precompile.h \
 	Debugger.h \
 	DiskIO.h \
 	Export.h \
+	FadeCurve.h \
 	FileHelpers.h \
 	HistoryStack.h \
 	IEAction.h \

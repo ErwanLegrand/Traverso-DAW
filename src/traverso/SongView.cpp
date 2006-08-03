@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.15 2006/07/31 13:42:03 r_sijrier Exp $
+$Id: SongView.cpp,v 1.16 2006/08/03 14:33:46 r_sijrier Exp $
 */
 
 #include <QPainter>
@@ -52,6 +52,7 @@ SongView::SongView(Song* song, ViewPort* vp)
 	cursorMap[CURSOR_FLOAT] = QCursor( QPixmap(":/cursorFloat") );
 	cursorMap[CURSOR_FLOAT_OVER_CLIP] = QCursor( QPixmap(":/cursorFloatOverClip") );
 	cursorMap[CURSOR_FLOAT_OVER_PLUGIN] = QCursor( QPixmap(":/cursorFloatOverPlugin") );
+	cursorMap[CURSOR_FLOAT_OVER_FADE] = QCursor( QPixmap(":/cursorFloatOverFade") );
 	cursorMap[CURSOR_FLOAT_OVER_TRACK] = QCursor( QPixmap(":/cursorFloatOverTrack") );
 	cursorMap[CURSOR_HOLD_UD] = QCursor( QPixmap(":/cursorHoldUd") );
 	cursorMap[CURSOR_HOLD_LR] = QCursor( QPixmap(":/cursorHoldLr") );
@@ -104,6 +105,12 @@ void SongView::set_context()
 		if (currentCursorMapIndex != CURSOR_FLOAT_OVER_PLUGIN) {
 			m_vp->setCursor(cursorMap[CURSOR_FLOAT_OVER_PLUGIN]);
 			currentCursorMapIndex = CURSOR_FLOAT_OVER_PLUGIN;
+		}
+		break;
+	case	FADEVIEW:
+		if (currentCursorMapIndex != CURSOR_FLOAT_OVER_FADE) {
+			m_vp->setCursor(cursorMap[CURSOR_FLOAT_OVER_FADE]);
+			currentCursorMapIndex = CURSOR_FLOAT_OVER_FADE;
 		}
 		break;
 	case	 AUDIOCLIPVIEW:
