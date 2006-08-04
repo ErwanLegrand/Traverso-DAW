@@ -1,18 +1,17 @@
 <!DOCTYPE FadeShapes>
 <Shapes>
-	<FadeInShapes>
-		<Fastest nodes="0,0;0.0207373,0.197222;0.0645161,0.525;0.152074,0.802778;0.276498,0.919444;0.481567,0.980556;0.767281,1;1,1" />
-		<Fast nodes="0,0;0.0737327,0.308333;0.246544,0.658333;0.470046,0.886111;0.652074,0.972222;0.771889,0.988889;1,1" />
-		<Linear nodes="0,0;1,1" />
-		<SlowOrig nodes="0,0;0.304147,0.0694444;0.529954,0.152778;0.725806,0.333333;0.847926,0.558333;0.919355,0.730556;1,1" />
-		<Slow nodes="0,0; 0.1,0.02; 0.2,0.4; 0.304147,0.0694444; 0.4,0.11; 0.529954,0.152778; 0.8,0.23; 0.725806,0.333333; 0.847926,0.558333; 0.919355,0.730556; 1,1" />
-		<Slowest nodes="0,0;0.389401,0.0333333;0.629032,0.0861111;0.829493,0.233333;0.9447,0.483333;0.976959,0.697222;1,1" />
-	</FadeInShapes>
-	<FadeOutShapes>
-		<Fastest nodes="0,1;0.305556,1;0.548611,0.991736;0.759259,0.931129;0.918981,0.68595;0.976852,0.22865;1,0" />
-		<Fast nodes="0,1;0.228111,0.988889;0.347926,0.972222;0.529954,0.886111;0.753456,0.658333;0.926267,0.308333;1,0" />
-		<Linear nodes="0,1;1,0" />
-		<Slow nodes="0,1;0.080645,0.730556;0.277778,0.289256;0.470046,0.152778;0.695853,0.0694444;1,0" />
-		<Slowest nodes="0,1;0.023041,0.697222;0.0553,0.483333;0.170507,0.233333;0.370968,0.0861111;0.610599,0.0333333;1,0" />
-	</FadeOutShapes>
+	<FadeIn>
+		<Fastest  mode="0" bendfactor="1" strengthfactor="1" controlpoints="0,0;0,1;0,1;1,1" />
+		<Fast mode="0" bendfactor="0.853333" strengthfactor="0.84" controlpoints="0,0;0.1232,0.7168;0.2832,0.8768;1,1" />
+		<Linear mode="0" bendfactor="0" strengthfactor="0" controlpoints="0,0;0,0;1,1;1,1" />
+		<Slow  mode="0" bendfactor="0.0199997" strengthfactor="0.72" controlpoints="0,0;0.7056,0.0143998;0.9856,0.2944;1,1" />
+		<Slowest mode="0" bendfactor="0" strengthfactor="1" controlpoints="0,0;1,0;1,0;1,1" />
+	</FadeIn>
+	<FadeOut>
+		<Fastest mode="0" bendfactor="0" strengthfactor="1" controlpoints="0,0;1,0;1,0;1,1" />
+		<Fast  mode="0" bendfactor="0.0199997" strengthfactor="0.72" controlpoints="0,0;0.7056,0.0143998;0.9856,0.2944;1,1" />
+		<Linear mode="0" bendfactor="0" strengthfactor="0" controlpoints="0,0;0,0;1,1;1,1" />
+		<Slow mode="0" bendfactor="0.853333" strengthfactor="0.84" controlpoints="0,0;0.1232,0.7168;0.2832,0.8768;1,1" />
+		<Slowest  mode="0" bendfactor="1" strengthfactor="1" controlpoints="0,0;0,1;0,1;1,1" />
+	</FadeOut>
 </Shapes>
