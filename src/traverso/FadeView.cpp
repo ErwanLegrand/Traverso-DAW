@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeView.cpp,v 1.1 2006/08/03 14:33:02 r_sijrier Exp $
+$Id: FadeView.cpp,v 1.2 2006/08/04 11:22:41 r_sijrier Exp $
 */
 
 #include "FadeView.h"
@@ -53,11 +53,13 @@ FadeView::~ FadeView( )
 
 QRect FadeView::draw( QPainter & painter )
 {
-	if (m_fadeCurve->get_fade_type() == QString("FadeIn"))
+	if (m_fadeCurve->get_fade_type() == FadeCurve::FadeIn) {
 		draw_fade_in(painter);
+	}
 	
-	if (m_fadeCurve->get_fade_type() == QString("FadeOut"))
+	if (m_fadeCurve->get_fade_type() == FadeCurve::FadeOut) {
 		draw_fade_out(painter);
+	}
 	
 	return QRect();
 }
@@ -121,7 +123,11 @@ void FadeView::draw_fade_in(QPainter& painter)
 	m_path.closeSubpath();
 	
 	painter.setPen(Qt::NoPen);
-	painter.setBrush(QColor(255, 0, 255, 50));
+	if (m_fadeCurve->is_bypassed()) {
+		painter.setBrush(QColor(255, 0, 255, 40));
+	} else {
+		painter.setBrush(QColor(255, 0, 255, 85));
+	}
 	
 	painter.drawPath(m_path);	
 	painter.restore();
@@ -206,7 +212,11 @@ void FadeView::draw_fade_out(QPainter& painter)
 	m_path.closeSubpath();
 	
 	painter.setPen(Qt::NoPen);
-	painter.setBrush(QColor(255, 0, 255, 50));
+	if (m_fadeCurve->is_bypassed()) {
+		painter.setBrush(QColor(255, 0, 255, 40));
+	} else {
+		painter.setBrush(QColor(255, 0, 255, 85));
+	}
 	
 	painter.drawPath(m_path);	
 	painter.restore();

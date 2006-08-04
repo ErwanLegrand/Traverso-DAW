@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.24 2006/08/03 14:33:46 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.25 2006/08/04 11:22:41 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -486,26 +486,22 @@ Command * AudioClipView::select_fade_out_shape( )
 
 void AudioClipView::set_fade_in_shape( QAction * action )
 {
-	m_clip->get_fade_in()->set_shape( (FadeCurve::FadeShape) action->data().toInt() );
+	m_clip->get_fade_in()->set_shape(action->data().toString());
 }
 
 void AudioClipView::set_fade_out_shape( QAction * action )
 {
-	m_clip->get_fade_out()->set_shape( (FadeCurve::FadeShape) action->data().toInt() );
+	m_clip->get_fade_out()->set_shape(action->data().toString());
 }
 
 void AudioClipView::create_fade_selectors( )
 {
-	QStringList names;
-	names << tr("Fastest") << tr("Fast") << tr("Linear")  << tr("Slow") << tr("Slowest");
-	int shape = 0;
-	
-	foreach(QString name, names) {
+	foreach(QString name, FadeCurve::defaultShapes) {
 		QAction* action = fadeOutShapeSelector.addAction(name);
-		action->setData(shape);
+		action->setData(name);
 		
 		action = fadeInShapeSelector.addAction(name);
-		action->setData(shape++);
+		action->setData(name);
 	}
 }
 

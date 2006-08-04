@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier 
+Copyright (C) 2006 Remon Sijrier, Nicola Doebelin
 
 This file is part of Traverso
 
@@ -17,22 +17,37 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.2 2006/08/03 15:14:26 r_sijrier Exp $
+$Id: FadeCurve.cpp,v 1.3 2006/08/04 11:22:19 r_sijrier Exp $
 */
  
 #include "FadeCurve.h"
 
 #include <QFile>
+#include <cmath>
+
+QStringList FadeCurve::defaultShapes = QStringList() << "Fastest" << "Fast" << "Linear"  << "Slow" << "Slowest";
 
 FadeCurve::FadeCurve(QString type )
-	: Curve(), m_type(type)
+	: Curve(), m_sType(type)
 {
+	if (type == "FadeIn") {
+		m_type = FadeIn;
+	}
+	if (type == "FadeOut") {
+		m_type = FadeOut;
+	}
+		
+	m_controlPoints.append(QPointF(0.0, 0.0));
+	m_controlPoints.append(QPointF(0.25, 0.25));
+	m_controlPoints.append(QPointF(0.75, 0.75));
+	m_controlPoints.append(QPointF(1.0, 1.0));
+	
 	m_bendFactor = 0.5;
 	m_strenghtFactor = 0.5;
-	m_curvemode = Logarithmic;
+	m_mode = 0;
 	m_bypass = false;
 	
-	set_shape( Fastest );
+	connect(this, SIGNAL(stateChanged()), this, SLOT(solve_node_positions()));
 }
 
 FadeCurve::~ FadeCurve( )
@@ -41,14 +56,22 @@ FadeCurve::~ FadeCurve( )
 
 QDomNode FadeCurve::get_state( QDomDocument doc )
 {
-	QDomElement node = doc.createElement(m_type);
+	QDomElement node = doc.createElement(m_sType);
 	node.setAttribute("bendfactor", m_bendFactor);
 	node.setAttribute("strengthfactor", m_strenghtFactor);
 	node.setAttribute("bypassed", m_bypass);
+	node.setAttribute("range", get_range());
+	node.setAttribute("mode", m_mode);
 	
-	QDomNode curvenode = Curve::get_state(doc);
+	QStringList controlPointsList;
 	
-	node.appendChild(curvenode);
+	for (int i=0; i< m_controlPoints.size(); ++i) {
+		QPointF point = m_controlPoints.at(i);
+		
+		controlPointsList << QString::number(point.x()).append(",").append(QString::number(point.y()));
+	}
+	
+	node.setAttribute("controlpoints",  controlPointsList.join(";"));
 	
 	return node;
 }
@@ -59,47 +82,134 @@ int FadeCurve::set_state( const QDomNode & node )
 	m_bendFactor = e.attribute( "bendfactor", "0.5" ).toDouble();
 	m_strenghtFactor = e.attribute( "strengthfactor", "0.5" ).toDouble();
 	m_bypass = e.attribute( "bypassed", "0" ).toInt();
+	m_mode = e.attribute( "mode", "0" ).toInt();
 	
-	QDomElement curveElement = node.firstChildElement("Curve");
-	Curve::set_state(curveElement);
+	QStringList controlPointsList = e.attribute( "controlpoints", "0.0,0.0;0.25,0.25;0.75,0.75;1.0,1.0" ).split(";");
 	
+	for (int i=0; i<controlPointsList.size(); ++i) {
+		QStringList xyList = controlPointsList.at(i).split(",");
+		float x = xyList.at(0).toFloat();
+		float y = xyList.at(1).toFloat();
+		m_controlPoints[i] = QPointF(x,y);
+	}
+	
+	
+	// Populate the curve with 15 CurveNodes
+	float f = 0.0;
+	int nodecount = 14;
+ 	for (int i = 0; i <= nodecount; ++i) {
+		QPointF p = get_curve_point(f);
+		
+		CurveNode* node = new CurveNode(this, p.x(), p.y());
+		nodes.append(node);
+		connect(node, SIGNAL(positionChanged()), this, SLOT(set_changed()));
+		
+		printf("adding node with x=%f, y=%f\n", p.x(), p.y());
+		
+		f += 1.0 / nodecount;
+	}
+
+	double range = e.attribute("range", "1").toDouble();
+	range = (range == 0.0) ? 1 : range;
+	set_range(range);
+	
+	printf("\n\n");
 	return 1;
 }
 
-void FadeCurve::set_shape( FadeShape shape )
+void FadeCurve::set_shape(QString shapeName)
 {
-	QDomDocument doc("FadeInShapes");
-	QFile file(":/fadeshapes");
+	QDomDocument doc("FadeShapes");
 	
-	if (!file.open(QIODevice::ReadOnly)) {
-		printf("Could not open fadeshapes file!!\n");
-		return;
-	}
-	if (!doc.setContent(&file)) {
+	if (defaultShapes.contains(shapeName)) {
+		QFile file(":/fadeshapes");
+		
+		if (!file.open(QIODevice::ReadOnly)) {
+			printf("Could not open fadeshapes file!!\n");
+			return;
+		}
+		if (!doc.setContent(&file)) {
+			file.close();
+			printf("Could not set QDomDocument content!\n");
+			return;
+		}
 		file.close();
-		printf("Could not set QDomDocument content!\n");
-		return;
+	} else {
+		// Load from custom saved fades
 	}
-	file.close();
+	
 
 	QDomElement root = doc.documentElement();
-	QDomNode node = root.firstChild();
+	QDomNode node = root.firstChildElement(m_sType);
 	
-	QDomElement fadeElement = node.firstChildElement("Slow");
+	QDomElement fadeElement = node.firstChildElement(shapeName);
+	
 	if (fadeElement.isNull()) {
-		printf("Fastest does not exist\n");
+		printf("%s does not exist?????\n", shapeName.toAscii().data());
 		return;
 	}
 	
-	Curve::set_state(fadeElement);
+	m_bendFactor = fadeElement.attribute( "bendfactor", "0.5" ).toDouble();
+	m_strenghtFactor = fadeElement.attribute( "strengthfactor", "0.5" ).toDouble();
 	
-	m_shape = shape;
+	QStringList controlPointsList = fadeElement.attribute( "controlpoints", "" ).split(";");
+	
+	for (int i=0; i<controlPointsList.size(); ++i) {
+		QStringList xyList = controlPointsList.at(i).split(",");
+		float x = xyList.at(0).toFloat();
+		float y = xyList.at(1).toFloat();
+		m_controlPoints[i] = QPointF(x,y);
+	}
+	
+	emit stateChanged();
 }
 
-void FadeCurve::set_shape( QString customShape )
+void FadeCurve::solve_node_positions( )
 {
-	// load custom shape
+	// calculate control points values
+	if (m_mode == 0) {
+		m_controlPoints[1] = QPointF(m_strenghtFactor * (1.0 - m_bendFactor), m_strenghtFactor * m_bendFactor);
+		m_controlPoints[2] = QPointF(1.0 - (m_strenghtFactor * m_bendFactor), 1.0 - (m_strenghtFactor * (1.0 - m_bendFactor)));
+	}
+	if (m_mode == 1) {
+		m_controlPoints[1] = QPointF(m_strenghtFactor * (1.0 - m_bendFactor), m_strenghtFactor * m_bendFactor);
+		m_controlPoints[2] = QPointF(1.0 - (m_strenghtFactor * (1.0 - m_bendFactor)), 1.0 - (m_strenghtFactor * m_bendFactor));
+	}
+
+
+	// calculate curve nodes values
+	float f = 0.0;
+ 	for (int i = 1; i < (nodes.size() -1); i++) {
+		f += 1.0/ (nodes.size() - 1);
+		
+		CurveNode* node = nodes.at(i);
+		QPointF p = get_curve_point(f);
+		
+		node->set_relative_when(p.x());
+		node->set_value(p.y());
+		
+	}
 }
+
+QPointF FadeCurve::get_curve_point( float f)
+{
+	float x = m_controlPoints.at(0).x() * pow((1.0 - f), 3.0)
+		+ 3 * m_controlPoints.at(1).x() * f * pow((1.0 - f), 2.0)
+		+ 3 * m_controlPoints.at(2).x() * pow(f, 2.0) * (1.0 - f)
+		+ m_controlPoints.at(3).x() * pow(f, 3.0);
+
+	float y = m_controlPoints.at(0).y() * pow((1.0 - f), 3.0)
+		+ 3 * m_controlPoints.at(1).y() * f * pow((1.0 - f), 2.0)
+		+ 3 * m_controlPoints.at(2).y() * pow(f, 2.0) * (1.0 - f)
+		+ m_controlPoints.at(3).y() * pow(f, 3.0);
+
+	if (m_type == FadeOut) {
+		y = 1.0 - y;
+	}
+	
+	return QPointF(x, y);
+}
+
 
 void FadeCurve::set_bend_factor( float factor )
 {
@@ -109,6 +219,7 @@ void FadeCurve::set_bend_factor( float factor )
 		factor = 0.0;
 		
 	m_bendFactor = factor;
+	
 	emit stateChanged();
 }
 
@@ -120,12 +231,41 @@ void FadeCurve::set_strength_factor( float factor )
 		factor = 0.0;
 	
 	m_strenghtFactor = factor;
+	
 	emit stateChanged();
+}
+
+QList< QPointF > FadeCurve::get_control_points( )
+{
+	return m_controlPoints;
+}
+
+Command* FadeCurve::set_mode( )
+{
+	if (m_mode < 1) {
+		m_mode++;
+	} else {
+		m_mode = 0;
+	}
+
+	emit stateChanged();
+	return 0;
+}
+
+Command * FadeCurve::reset( )
+{
+	m_bendFactor = 0.5;
+	m_strenghtFactor = 0.5;
+
+	emit stateChanged();
+	return 0;
 }
 
 Command * FadeCurve::toggle_bypass( )
 {
 	m_bypass = !m_bypass;
+	
+	emit stateChanged();
 	return 0;
 }
 
