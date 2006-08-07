@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.4 2006/08/07 19:15:23 r_sijrier Exp $
+$Id: FadeCurve.cpp,v 1.5 2006/08/07 21:32:27 r_sijrier Exp $
 */
  
 #include "FadeCurve.h"
@@ -153,8 +153,8 @@ void FadeCurve::set_shape(QString shapeName)
 		return;
 	}
 	
-	m_bendFactor = fadeElement.attribute( "bendfactor", "0.5" ).toDouble();
-	m_strenghtFactor = fadeElement.attribute( "strengthfactor", "0.5" ).toDouble();
+	set_bend_factor(fadeElement.attribute( "bendfactor", "0.5" ).toDouble());
+	set_strength_factor(fadeElement.attribute( "strengthfactor", "0.5" ).toDouble());
 	
 	QStringList controlPointsList = fadeElement.attribute( "controlpoints", "" ).split(";");
 	
