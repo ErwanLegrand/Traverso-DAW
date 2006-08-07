@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.37 2006/08/03 15:14:26 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.38 2006/08/07 19:16:23 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -358,12 +358,36 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 		return -1;	// Channel doesn't exist!!
 	}
 
+	bool showdebug = false;
+	
+	if ( ((m_song->get_transport_frame() < (548864 + 3000))) && (channel == 0)) {
+// 		showdebug = true;
+	}
+	
+	if (showdebug) {
+		printf("%s\n", m_name.toAscii().data());
+		printf("trackStartFrame is %d\n", trackStartFrame);
+		printf("trackEndFrame is %d\n", trackEndFrame);
+		printf("song->transport is %d\n", m_song->get_transport_frame());
+		printf("diff trackEndFrame, song->transport is %d\n", (int)trackEndFrame - m_song->get_transport_frame());
+		printf("diff trackStartFrame, song->transport is %d\n", (int)trackStartFrame - m_song->get_transport_frame());
+	}
 
 	nframes_t mix_pos;
 	
-	if ( (trackStartFrame < m_song->get_transport_frame()) && (trackEndFrame > m_song->get_transport_frame()) ) {
+	if (showdebug) printf("clip trackEndFrame - song->transport_frame is %d\n", trackEndFrame - m_song->get_transport_frame());
+	
+	if ( (trackStartFrame <= (m_song->get_transport_frame())) && (trackEndFrame > (m_song->get_transport_frame())) ) {
 		mix_pos = m_song->get_transport_frame() - trackStartFrame + sourceStartFrame;
+		if (showdebug) {
+			printf("mix_pos is %d\n", mix_pos);
+		}
 	} else {
+		if (showdebug) {
+			printf("Not processing this Clip\n\n");
+			printf("END %s\n\n", m_name.toAscii().data());
+		}
+
 		return 0;
 	}
 
@@ -382,6 +406,11 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 		read_frames = readSources.at(channel)->file_read(mixdown, mix_pos, nframes);
 	}
 
+	if (showdebug) {
+		printf("read frames is %d\n", read_frames);
+		printf("END %s\n\n", m_name.toAscii().data());
+	}
+	
 	if (read_frames == 0)
 		return 0;
 
@@ -395,6 +424,10 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 		nframes_t limit;
 
 		limit = std::min (read_frames, (uint)fadeIn->get_range());
+		
+		if (fadeIn->get_range() < 16) {
+			limit = 0;
+		}
 		
 		int fadepos = m_song->get_transport_frame() - trackStartFrame;
 		
@@ -413,6 +446,10 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 		nframes_t limit;
 		
 		limit = std::min (read_frames, (uint)fadeOut->get_range());
+		
+		if (fadeOut->get_range() < 16) {
+			limit = 0;
+		}
 		
 		int fadepos = m_song->get_transport_frame() - (trackEndFrame - (nframes_t)fadeOut->get_range());
 		
@@ -623,6 +660,8 @@ void AudioClip::add_audio_source( ReadSource* rs, int channel )
 	rate = rs->get_rate();
 	
 	set_sources_active_state();
+	
+	rs->set_audio_clip(this);
 	
 	emit stateChanged();
 }

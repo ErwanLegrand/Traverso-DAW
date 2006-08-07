@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.11 2006/07/28 12:52:48 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.12 2006/08/07 19:16:23 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
@@ -110,7 +110,7 @@ void DiskIO::seek( nframes_t position )
 {
 	PMESG2("DiskIO :: Entering seek");
 	PMESG2("DiskIO :: thread id is: %ld", QThread::currentThreadId ());
-
+	
 	stopWork = false;
 	seeking = true;
 

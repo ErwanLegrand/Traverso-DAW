@@ -17,13 +17,15 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.h,v 1.4 2006/05/17 22:02:52 r_sijrier Exp $
+$Id: ReadSource.h,v 1.5 2006/08/07 19:16:23 r_sijrier Exp $
 */
 
 #ifndef READSOURCE_H
 #define READSOURCE_H
 
 #include "AudioSource.h"
+
+class AudioClip;
 
 class ReadSource : public AudioSource
 {
@@ -55,6 +57,8 @@ public :
 	void sync();
 
 	ReadSource*		sharedReadSource;
+	
+	void set_audio_clip(AudioClip* clip);
 
 private:
 	mutable float*	 	readbuffer;
@@ -68,6 +72,8 @@ private:
 	bool			needSync;
 	bool			rbReady;
 	int			refcount;
+	
+	AudioClip*		m_clip;
 	
 
 	void start_resync(nframes_t position);

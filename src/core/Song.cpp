@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.29 2006/07/31 13:40:08 r_sijrier Exp $
+$Id: Song.cpp,v 1.30 2006/08/07 19:16:23 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -183,7 +183,6 @@ int Song::set_state( const QDomNode & node )
 	set_gain(e.attribute( "mastergain", "1.0").toFloat() );
 	set_hzoom(e.attribute( "hzoom", "" ).toInt());
 	set_first_visible_frame(e.attribute( "firstVisibleFrame", "0" ).toUInt());
-	set_work_at(e.attribute( "workingFrame", "0").toUInt());
 	
 	int trackBaseY = LocatorView::LOCATOR_HEIGHT;
 
@@ -212,6 +211,9 @@ int Song::set_state( const QDomNode & node )
 	QDomNode pluginChainNode = node.firstChildElement("PluginChain");
 	pluginChain->set_state(pluginChainNode);
 	
+	// Set work at will trigger a seek, which in turn get's all 
+	// audio buffers into proper pre-filled state!
+	set_work_at(e.attribute( "workingFrame", "0").toUInt());
 	return 1;
 }
 
@@ -603,14 +605,19 @@ void Song::set_work_at(nframes_t pos)
 // 	workingFrame = pos;
 /** use this if it should snap **/
 	snaplist->update_snaplist();
-	newTransportFramePos = xpos_to_frame(snapped_x(frame_to_xpos(pos)));
+	long position = xpos_to_frame(snapped_x(frame_to_xpos(pos)));
 	workingFrame = xpos_to_frame(snapped_x(frame_to_xpos(pos)));
 /** **/
 
+	Q_ASSERT(position >= 0);
+	
+	newTransportFramePos = (uint) position;
+	
 	// If there is no transport, start_seek() will _not_ be
 	// called from within process(). So we do it now!
-	if (!transport)
+	if (!transport) {
 		start_seek();
+	}
 
 	seeking = true;
 	emit workingPosChanged();
@@ -631,7 +638,7 @@ void Song::start_seek()
 	}
 
 	diskio->prepare_for_seek();
-
+	
 	THREAD_SAVE_EMIT_SIGNAL(this, seekStart(uint), newTransportFramePos);
 	
 	PMESG2("Song :: leaving start_seek");

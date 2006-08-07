@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.cpp,v 1.8 2006/07/07 14:44:18 r_sijrier Exp $
+$Id: ReadSource.cpp,v 1.9 2006/08/07 19:16:23 r_sijrier Exp $
 */
 
 #include "ReadSource.h"
@@ -26,6 +26,7 @@ $Id: ReadSource.cpp,v 1.8 2006/07/07 14:44:18 r_sijrier Exp $
 #include "RingBuffer.h"
 #include "ProjectManager.h"
 #include "Project.h"
+#include "AudioClip.h"
 
 #include <QFile>
 
@@ -85,6 +86,7 @@ int ReadSource::init( )
 	readbuffersize = 0;
 	seekPos = -1;
 	sharedReadSource = (ReadSource*) 0;
+	m_clip = 0;
 
 	/* although libsndfile says we don't need to set this,
 	valgrind and source code shows us that we do.
@@ -205,6 +207,7 @@ int ReadSource::rb_read(audio_sample_t* dst, nframes_t start, nframes_t cnt)
 {
 
 	if ( ! rbReady ) {
+// 		printf("ringbuffer not ready\n");
 		return 0;
 	}
 
@@ -215,6 +218,7 @@ int ReadSource::rb_read(audio_sample_t* dst, nframes_t start, nframes_t cnt)
 			m_buffer->read_advance( advance * sizeof(audio_sample_t) );
 			rbRelativeFileReadPos += advance;
 		} else {
+// 			printf("starting resync!\n");
 			start_resync(start);
 			return 0;
 		}
@@ -243,12 +247,26 @@ int ReadSource::rb_file_read( audio_sample_t * dst, nframes_t cnt )
 
 void ReadSource::rb_seek_to_file_position( nframes_t position )
 {
-	int fileposition = position;
-	if (fileposition > 0) {
-		m_buffer->reset();
-		rbFileReadPos = fileposition;
-		rbRelativeFileReadPos = fileposition;
+	Q_ASSERT(m_clip);
+	
+	long fileposition = position;
+	
+	// check if the clip's start position is within the range
+	// if not, fill the buffer from the earliest point this clip
+	// will come into play.
+	if (fileposition < (int)m_clip->get_source_start_frame()) {
+// 		printf("not seeking to %d, but too %d\n\n", fileposition,m_clip->get_source_start_frame()); 
+		// Song's start from 0, this makes a period start from
+		// 0 - 1023 for example, the nframes is 1024!
+		// Setting a songs new position is on 1024, and NOT 
+		// 1023.. Hmm, something isn't correct here, but at least substract 1
+		// to make this thing work!
+		fileposition = m_clip->get_source_start_frame() - 1;
 	}
+	
+	m_buffer->reset();
+	rbFileReadPos = fileposition;
+	rbRelativeFileReadPos = fileposition;
 }
 
 int ReadSource::process_ringbuffer( audio_sample_t * framebuffer )
@@ -325,6 +343,12 @@ ReadSource * ReadSource::deep_copy( )
 int ReadSource::ref( )
 {
 	return refcount++;
+}
+
+void ReadSource::set_audio_clip( AudioClip * clip )
+{
+	Q_ASSERT(!m_clip);
+	m_clip = clip;
 }
 
 //eof

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.h,v 1.15 2006/07/31 13:40:08 r_sijrier Exp $
+$Id: Song.h,v 1.16 2006/08/07 19:16:23 r_sijrier Exp $
 */
 
 #ifndef SONG_H
@@ -175,7 +175,7 @@ private:
 	AudioClipManager*	acmanager;
 	PluginChain*		pluginChain;
 
-	nframes_t		transportFrame;
+	volatile nframes_t	transportFrame;
 	nframes_t 		firstVisibleFrame;
 	nframes_t 		workingFrame;
 	uint		 	newTransportFramePos;
