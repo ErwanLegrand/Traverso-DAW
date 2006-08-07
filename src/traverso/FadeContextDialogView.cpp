@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeContextDialogView.cpp,v 1.4 2006/08/07 19:15:23 r_sijrier Exp $
+$Id: FadeContextDialogView.cpp,v 1.5 2006/08/07 21:33:05 r_sijrier Exp $
 */
 
 #include "FadeContextDialogView.h"
@@ -196,12 +196,13 @@ int FadeBend::begin_hold()
 
 int FadeBend::jog()
 {
+	int direction = (m_fade->get_fade_type() == FadeCurve::FadeIn) ? 1 : -1;
 
 	if (m_fade->get_raster()) {
-		float value = m_view->roundFloat(oldValue + (origY - cpointer().y()) / CURSOR_SPEED);
+		float value = m_view->roundFloat(oldValue + ((origY - cpointer().y()) / CURSOR_SPEED) * direction);
 		m_fade->set_bend_factor(value);
 	} else {
-		m_fade->set_bend_factor(oldValue + float(origY - cpointer().y()) / CURSOR_SPEED);
+		m_fade->set_bend_factor(oldValue + (float(origY - cpointer().y()) / CURSOR_SPEED) * direction);
 	}
 
 	return 1;
