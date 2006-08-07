@@ -17,15 +17,17 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeContextDialogView.cpp,v 1.3 2006/08/04 11:22:41 r_sijrier Exp $
+$Id: FadeContextDialogView.cpp,v 1.4 2006/08/07 19:15:23 r_sijrier Exp $
 */
 
 #include "FadeContextDialogView.h"
 
 #include "ViewPort.h"
+#include "ColorManager.h"
+#include "FadeCurve.h"
+#include "CurveNode.h"
+
 #include <QPainterPath>
-#include <FadeCurve.h>
-#include <CurveNode.h>
 
 #include <Debugger.h>
 
@@ -33,23 +35,18 @@ static const int GRID_LINES		= 4;
 static const float CURSOR_SPEED		= 150.0;
 static const float RASTER_SIZE		= 0.05;
 static const int DOT_SIZE		= 6;
-static const int VMARGIN		= 25;
-static const QString LINE_COLOR		= "#000000";
-static const QString DOT_COLOR		= "#7b806f";
-static const QString INACTIVE_COLOR	= "#7b806f";
+static const QString DOT_COLOR		= "#78817B";
+static const QString INACTIVE_COLOR	= "#A6B2A9";
 
 
 FadeContextDialogView::FadeContextDialogView(ViewPort* viewPort, FadeCurve* fadeCurve)
 		: ViewItem(viewPort, 0, fadeCurve), m_vp(viewPort), m_fade(fadeCurve)
 {
-	// initialize default values
-	m_raster = false;
-	
 	m_vp->register_viewitem(this);
 	init_context_menu( this );
 	
 	connect(m_vp, SIGNAL(resized()), this, SLOT(resize()));
-	connect(m_fade, SIGNAL(stateChanged()), this, SLOT(state_changed()));
+	connect(m_fade, SIGNAL(stateChanged()), this, SLOT(schedule_for_repaint()));
 }
 
 
@@ -66,10 +63,10 @@ QRect FadeContextDialogView::draw( QPainter& p )
 	p.setRenderHint(QPainter::Antialiasing);
 	
 	// Calculate and draw control points
-	float h = float(m_vp->height() - 2*VMARGIN - 1);
+	float h = m_vp->height() - 1;
 	QList<QPointF> points = m_fade->get_control_points();
-	QPoint p1(int(points.at(1).x() * m_vp->width()), m_vp->height()-1-VMARGIN - int(points.at(1).y() * h));
-	QPoint p2(int(m_vp->width()-1 - (1.0 - points.at(2).x()) * (m_vp->width()-1)), VMARGIN + int(float(1.0 - points.at(2).y()) * h));
+	QPoint p1(int(points.at(1).x() * m_vp->width()), m_vp->height()-1 - int(points.at(1).y() * h));
+	QPoint p2(int(m_vp->width()-1 - (1.0 - points.at(2).x()) * (m_vp->width()-1)), int(float(1.0 - points.at(2).y()) * h));
 
 	p.setPen(QColor(DOT_COLOR));
 	p.setBrush(QColor(DOT_COLOR));
@@ -77,11 +74,11 @@ QRect FadeContextDialogView::draw( QPainter& p )
 	if (m_fade->get_fade_type() == FadeCurve::FadeOut) {
 		p1.setX(m_vp->width() - p1.x() - 1);
 		p2.setX(m_vp->width() - p2.x() - 1);
-		p.drawLine(m_vp->width()-1, m_vp->height()-1-VMARGIN, p1.x(), p1.y());
-		p.drawLine(0, VMARGIN, p2.x(), p2.y());
+		p.drawLine(m_vp->width()-1, m_vp->height()-1, p1.x(), p1.y());
+		p.drawLine(0, 0, p2.x(), p2.y());
 	} else {
-		p.drawLine(0, m_vp->height()-1-VMARGIN, p1.x(), p1.y());
-		p.drawLine(m_vp->width()-1, VMARGIN, p2.x(), p2.y());
+		p.drawLine(0, m_vp->height()-1, p1.x(), p1.y());
+		p.drawLine(m_vp->width()-1, 0, p2.x(), p2.y());
 	}
 	
 	p.drawEllipse(p1.x() - DOT_SIZE/2, p1.y() - DOT_SIZE/2, DOT_SIZE, DOT_SIZE);
@@ -91,7 +88,7 @@ QRect FadeContextDialogView::draw( QPainter& p )
 	QPolygonF polygon;
 	float value[2];
 	int step = 0;
-	int height = m_vp->height()-2*VMARGIN;
+	int height = m_vp->height();
 	
 	int zoom = (int) m_fade->get_range() / m_vp->width();
 	
@@ -99,23 +96,23 @@ QRect FadeContextDialogView::draw( QPainter& p )
 	// using a 2 pixel resolution, is sufficient enough
 	for (int i=0; i < m_vp->width(); i+=2) {
 		m_fade->get_vector(i * zoom, i * zoom + 1, value, 2);
-	 	polygon << QPointF( step, height - (value[1] * height) + VMARGIN );
+	 	polygon << QPointF( step, height - (value[1] * height) );
 	 	step += 2;
 	}
 
 	// Always add the uppermost point in the polygon path 
 	// since the above routine potentially does not include it.
-	polygon << QPointF(m_vp->width(), VMARGIN);
+	polygon << QPointF(m_vp->width(), 0);
 	
 	// Draw the curve
 	QPainterPath path;
-	path.moveTo(VMARGIN, m_vp->height());
+	path.moveTo(0, m_vp->height());
 	path.addPolygon(polygon);
-	path.lineTo(0, VMARGIN);
+	path.lineTo(0, 0);
 	path.closeSubpath();
 	
 	p.setPen(Qt::NoPen);
-	p.setBrush(QColor(255, 0, 255, 60));
+	p.setBrush(QColor(255, 0, 255, 80));
 	
 	p.drawPath(path);	
 
@@ -131,7 +128,6 @@ float FadeContextDialogView::roundFloat( float f)
 
 void FadeContextDialogView::schedule_for_repaint( )
 {
-	create_background();
 	m_vp->schedule_for_repaint(this);
 }
 
@@ -143,55 +139,22 @@ void FadeContextDialogView::create_background( )
 	}
 
 	QPainter p(&background);
-
-	p.setRenderHint(QPainter::Antialiasing);
-
-	QString m = "", r = "";
-	if (m_fade->get_bend_factor() == 0.5) {
-		m = "Mode: linear";
-	} else {
-		if (m_fade->get_mode() == 0)
-			m = "Mode: bended";
-		if (m_fade->get_mode() == 1)
-			m = "Mode: s-shape";
-	}
-
-	if (m_raster) {
-		r = "Raster: on";
-	} else {
-		r = "Raster: off";
-	}
-
-	QFontMetrics ftm(p.font());
-	int dist = ftm.descent() + 3;
+	
+// 	p.setRenderHint(QPainter::Antialiasing);
 
 	// Background color
-	p.fillRect(0, 0, m_vp->width(), m_vp->height(), QColor("#a4aa94"));
+	p.fillRect(0, 0, m_vp->width(), m_vp->height(), cm().get("CLIP_BG_DEFAULT"));
 
 	// grid lines
 	p.setPen(QColor(INACTIVE_COLOR));
 	for (int i = 0; i <= GRID_LINES; i++) {
 		float d = (float)i / (float)GRID_LINES;
-		int x = int(((float) m_vp->width() * d) + 0.5);
-		int y = int(((float)(m_vp->height() - 2*VMARGIN) * d) + 0.5) + VMARGIN;
-		p.drawLine(x, VMARGIN, x, m_vp->height()-VMARGIN);
+		int x = (int)(m_vp->width() * d);
+		int y = (int)(m_vp->height() * d);
+		p.drawLine(x, 0, x, m_vp->height());
 		p.drawLine(0, y, m_vp->width(), y);
 	}
 
-	// text labels
-	p.setPen(QColor(LINE_COLOR));
-	p.drawText(          5, m_vp->height() - dist, QString("Bending: %1").arg(2.0 * (m_fade->get_bend_factor() - 0.5), 0, 'f', 2));
-	p.drawText(1*m_vp->width()/4, m_vp->height() - dist, QString("Strength: %1").arg(2.0 * m_fade->get_strenght_factor(), 0, 'f', 2));
-	p.drawText(2*m_vp->width()/4, m_vp->height() - dist, m);
-	p.drawText(3*m_vp->width()/4, m_vp->height() - dist, r);
-
-	p.setPen(QColor(INACTIVE_COLOR));
-	dist = ftm.ascent() + 3;
-	p.drawText(          5, dist, "Raster: <r>");
-	p.drawText(1*m_vp->width()/5, dist, "Bending: [b]");
-	p.drawText(2*m_vp->width()/5, dist, "Strength: [s]");
-	p.drawText(3*m_vp->width()/5, dist, "Mode: <m>");
-	p.drawText(4*m_vp->width()/5, dist, "Reset: <l>");
 }
 
 
@@ -201,12 +164,7 @@ void FadeContextDialogView::create_background( )
 void FadeContextDialogView::resize( )
 {
 	set_geometry(0, 0, m_vp->width(), m_vp->height());
-	schedule_for_repaint();
-}
-
-
-void FadeContextDialogView::state_changed( )
-{
+	create_background();
 	schedule_for_repaint();
 }
 
@@ -221,15 +179,6 @@ Command * FadeContextDialogView::strength( )
 	return new FadeStrength(this, m_fade);
 }
 
-Command * FadeContextDialogView::toggle_raster( )
-{
-	m_raster = ! m_raster;
-	schedule_for_repaint();
-	
-	return 0;
-}
-
-
 
 /****** Command classes used by FadeContextDialogView *******/
 
@@ -240,7 +189,7 @@ int FadeBend::begin_hold()
 {
 	PENTER;
 	origY = cpointer().y();
-	oldValue =  m_curve->get_bend_factor();
+	oldValue =  m_fade->get_bend_factor();
 	return 1;
 }
 
@@ -248,10 +197,11 @@ int FadeBend::begin_hold()
 int FadeBend::jog()
 {
 
-	if (m_view->get_raster()) {
-		m_curve->set_bend_factor(m_view->roundFloat(m_curve->get_bend_factor()));
+	if (m_fade->get_raster()) {
+		float value = m_view->roundFloat(oldValue + (origY - cpointer().y()) / CURSOR_SPEED);
+		m_fade->set_bend_factor(value);
 	} else {
-		m_curve->set_bend_factor(oldValue + float(origY - cpointer().y()) / CURSOR_SPEED);
+		m_fade->set_bend_factor(oldValue + float(origY - cpointer().y()) / CURSOR_SPEED);
 	}
 
 	return 1;
@@ -264,20 +214,21 @@ int FadeStrength::begin_hold()
 {
 	PENTER;
 	origY = cpointer().y();
-	oldValue =  m_curve->get_strenght_factor();
+	oldValue =  m_fade->get_strenght_factor();
 	return 1;
 }
 
 
 int FadeStrength::jog()
 {
-	if (m_curve->get_bend_factor() >= 0.5) {
-		m_curve->set_strength_factor(oldValue + float(origY - cpointer().y()) / CURSOR_SPEED);
+	if (m_fade->get_bend_factor() >= 0.5) {
+		m_fade->set_strength_factor(oldValue + float(origY - cpointer().y()) / CURSOR_SPEED);
 	} else {
-		if (m_view->get_raster()) {
-			m_curve->set_strength_factor(m_view->roundFloat(m_curve->get_strenght_factor()));
+		if (m_fade->get_raster()) {
+			float value = m_view->roundFloat(oldValue + (origY - cpointer().y()) / CURSOR_SPEED);
+			m_fade->set_strength_factor(value);
 		} else {
-			m_curve->set_strength_factor(oldValue - float(origY - cpointer().y()) / CURSOR_SPEED);
+			m_fade->set_strength_factor(oldValue - float(origY - cpointer().y()) / CURSOR_SPEED);
 		}
 	}
 	

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.h,v 1.3 2006/08/04 11:22:19 r_sijrier Exp $
+$Id: FadeCurve.h,v 1.4 2006/08/07 19:15:23 r_sijrier Exp $
 */
 
 #ifndef FADE_CURVE_H
@@ -51,6 +51,7 @@ public:
 	float get_bend_factor() {return m_bendFactor;}
 	float get_strenght_factor() {return m_strenghtFactor;}
 	int get_mode() const {return m_mode;}
+	int get_raster() const {return m_raster;}
 	
 	void set_shape(QString shapeName);
 	void set_bend_factor(float factor);
@@ -66,6 +67,7 @@ private:
 	float 		m_strenghtFactor;
 	bool		m_bypass;
 	int 		m_mode;
+	int		m_raster;
 	FadeType	m_type;
 	QString		m_sType;
 	QList<QPointF> 	m_controlPoints;
@@ -78,6 +80,13 @@ public slots:
 	Command* toggle_bypass();
 	Command* set_mode();
 	Command* reset();
+	Command* toggle_raster();
+	
+signals:
+	void modeChanged();
+	void bendValueChanged();
+	void strengthValueChanged();
+	void rasterChanged();
 };
 
 #endif

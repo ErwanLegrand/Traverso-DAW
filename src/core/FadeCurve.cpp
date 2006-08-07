@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.3 2006/08/04 11:22:19 r_sijrier Exp $
+$Id: FadeCurve.cpp,v 1.4 2006/08/07 19:15:23 r_sijrier Exp $
 */
  
 #include "FadeCurve.h"
@@ -44,10 +44,13 @@ FadeCurve::FadeCurve(QString type )
 	
 	m_bendFactor = 0.5;
 	m_strenghtFactor = 0.5;
-	m_mode = 0;
+	m_mode = m_raster = 0;
 	m_bypass = false;
 	
 	connect(this, SIGNAL(stateChanged()), this, SLOT(solve_node_positions()));
+	connect(this, SIGNAL(bendValueChanged()), this, SIGNAL(stateChanged()));
+	connect(this, SIGNAL(strengthValueChanged()), this, SIGNAL(stateChanged()));
+	connect(this, SIGNAL(modeChanged()), this, SIGNAL(stateChanged()));
 }
 
 FadeCurve::~ FadeCurve( )
@@ -62,6 +65,7 @@ QDomNode FadeCurve::get_state( QDomDocument doc )
 	node.setAttribute("bypassed", m_bypass);
 	node.setAttribute("range", get_range());
 	node.setAttribute("mode", m_mode);
+	node.setAttribute("raster", m_raster);
 	
 	QStringList controlPointsList;
 	
@@ -83,6 +87,7 @@ int FadeCurve::set_state( const QDomNode & node )
 	m_strenghtFactor = e.attribute( "strengthfactor", "0.5" ).toDouble();
 	m_bypass = e.attribute( "bypassed", "0" ).toInt();
 	m_mode = e.attribute( "mode", "0" ).toInt();
+	m_raster = e.attribute( "raster", "0" ).toInt();
 	
 	QStringList controlPointsList = e.attribute( "controlpoints", "0.0,0.0;0.25,0.25;0.75,0.75;1.0,1.0" ).split(";");
 	
@@ -94,9 +99,9 @@ int FadeCurve::set_state( const QDomNode & node )
 	}
 	
 	
-	// Populate the curve with 15 CurveNodes
+	// Populate the curve with 12 CurveNodes
 	float f = 0.0;
-	int nodecount = 14;
+	int nodecount = 11;
  	for (int i = 0; i <= nodecount; ++i) {
 		QPointF p = get_curve_point(f);
 		
@@ -104,7 +109,7 @@ int FadeCurve::set_state( const QDomNode & node )
 		nodes.append(node);
 		connect(node, SIGNAL(positionChanged()), this, SLOT(set_changed()));
 		
-		printf("adding node with x=%f, y=%f\n", p.x(), p.y());
+// 		printf("adding node with x=%f, y=%f\n", p.x(), p.y());
 		
 		f += 1.0 / nodecount;
 	}
@@ -113,7 +118,6 @@ int FadeCurve::set_state( const QDomNode & node )
 	range = (range == 0.0) ? 1 : range;
 	set_range(range);
 	
-	printf("\n\n");
 	return 1;
 }
 
@@ -220,7 +224,7 @@ void FadeCurve::set_bend_factor( float factor )
 		
 	m_bendFactor = factor;
 	
-	emit stateChanged();
+	emit bendValueChanged();
 }
 
 void FadeCurve::set_strength_factor( float factor )
@@ -232,7 +236,7 @@ void FadeCurve::set_strength_factor( float factor )
 	
 	m_strenghtFactor = factor;
 	
-	emit stateChanged();
+	emit strengthValueChanged();
 }
 
 QList< QPointF > FadeCurve::get_control_points( )
@@ -248,16 +252,15 @@ Command* FadeCurve::set_mode( )
 		m_mode = 0;
 	}
 
-	emit stateChanged();
+	emit modeChanged();
 	return 0;
 }
 
 Command * FadeCurve::reset( )
 {
-	m_bendFactor = 0.5;
-	m_strenghtFactor = 0.5;
-
-	emit stateChanged();
+	set_bend_factor(0.5);
+	set_strength_factor(0.5);
+	
 	return 0;
 }
 
@@ -268,5 +271,14 @@ Command * FadeCurve::toggle_bypass( )
 	emit stateChanged();
 	return 0;
 }
+
+Command * FadeCurve::toggle_raster( )
+{
+	m_raster = ! m_raster;
+	
+	emit rasterChanged();
+	return 0;
+}
+
 
 //eof

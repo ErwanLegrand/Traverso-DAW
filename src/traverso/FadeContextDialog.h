@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeContextDialog.h,v 1.1 2006/08/03 14:33:02 r_sijrier Exp $
+$Id: FadeContextDialog.h,v 1.2 2006/08/07 19:15:23 r_sijrier Exp $
 */
 
 #ifndef FADE_CONTEXT_DIALOG_H
@@ -25,18 +25,33 @@ $Id: FadeContextDialog.h,v 1.1 2006/08/03 14:33:02 r_sijrier Exp $
 
 #include "ContextDialog.h" 
 
+#include <QLabel>
+
 class FadeContextDialogView;
 class FadeCurve;
 
 class FadeContextDialog : public ContextDialog
 {
-
+	Q_OBJECT
+	
 public:
 	FadeContextDialog(FadeCurve* fadeCurve);
 	~FadeContextDialog();
 	
 private:
 	FadeContextDialogView*	m_fadeCDV;
+	FadeCurve*		m_fade;
+	
+	QLabel*		m_bendLabel;
+	QLabel*		m_strengthLabel;
+	QLabel*		m_modeLabel;
+	QLabel*		m_rasterLabel;
+	
+public slots:
+	void update_bend_value();
+	void update_strength_value();
+	void update_raster_value();
+	void update_mode_value();
 };
 
 #endif

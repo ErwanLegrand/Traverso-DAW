@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeContextDialogView.h,v 1.3 2006/08/04 11:22:41 r_sijrier Exp $
+$Id: FadeContextDialogView.h,v 1.4 2006/08/07 19:15:23 r_sijrier Exp $
 */
 
 #ifndef FADE_CONTEXT_DIALOG_VIEW_H
@@ -42,14 +42,9 @@ public:
         QRect draw(QPainter& p);
 
 	float roundFloat(float f);
-	bool get_raster() const {return m_raster;}
-
 
 private:
 	void create_background();
-        void schedule_for_repaint();
-	
-	bool 	m_raster;
 	
 	QPixmap		background;
 	ViewPort*	m_vp;
@@ -57,12 +52,11 @@ private:
 
 private slots:
         void resize();
-        void state_changed();
+        void schedule_for_repaint();
 	
 public slots:
 	Command* bend();
 	Command* strength();
-	Command* toggle_raster();
 
 };
 
@@ -70,7 +64,7 @@ public slots:
 class FadeStrength : public Command
 {
 public :
-        FadeStrength(FadeContextDialogView* view, FadeCurve* curve) : Command(), m_view(view), m_curve(curve) {};
+        FadeStrength(FadeContextDialogView* view, FadeCurve* fade) : Command(), m_view(view), m_fade(fade) {};
         ~FadeStrength(){};
 
         int begin_hold();
@@ -80,7 +74,7 @@ private :
 	float	oldValue;
 	int	origY;
 	FadeContextDialogView* m_view;
-	FadeCurve*	m_curve;
+	FadeCurve*	m_fade;
 
 };
 
@@ -88,7 +82,7 @@ private :
 class FadeBend : public Command
 {
 public :
-        FadeBend(FadeContextDialogView* view, FadeCurve* curve) : Command(), m_view(view), m_curve(curve) {};
+        FadeBend(FadeContextDialogView* view, FadeCurve* fade) : Command(), m_view(view), m_fade(fade) {};
         ~FadeBend(){};
 
         int begin_hold();
@@ -98,7 +92,7 @@ private :
 	float	oldValue;
 	int	origY;
 	FadeContextDialogView* m_view;
-	FadeCurve*	m_curve;
+	FadeCurve*	m_fade;
 
 };
 

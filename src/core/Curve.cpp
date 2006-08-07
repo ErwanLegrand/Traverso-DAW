@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.cpp,v 1.17 2006/08/04 11:22:19 r_sijrier Exp $
+$Id: Curve.cpp,v 1.18 2006/08/07 19:15:23 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -441,7 +441,7 @@ double Curve::multipoint_eval (double x)
 void Curve::set_range( double when )
 {
 	if (nodes.isEmpty() || nodes.last()->get_when() == when) {
-		printf("NOT Setting range!\n");
+		PMESG("NOT Setting range!\n");
 		return;
 	}
 	
