@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeContextDialog.cpp,v 1.2 2006/08/07 19:15:23 r_sijrier Exp $
+$Id: FadeContextDialog.cpp,v 1.3 2006/08/07 19:34:29 r_sijrier Exp $
 */
 
 #include "FadeContextDialog.h"
@@ -31,15 +31,12 @@ $Id: FadeContextDialog.cpp,v 1.2 2006/08/07 19:15:23 r_sijrier Exp $
 #include <QLabel>
 
 
-static const QString VERSION		= "0.0.3";
-
 FadeContextDialog::FadeContextDialog(FadeCurve* fadeCurve)
 	: ContextDialog(), m_fade(fadeCurve)
 {
 	m_fadeCDV = new FadeContextDialogView(m_vp, fadeCurve);
 	
-/*	qDebug() << "JmbFade version" << VERSION;*/
-	setWindowTitle("JmbFade " + VERSION);
+	setWindowTitle(tr("Fade Editor"));
 
 	// set the background color
 	setAutoFillBackground(false);
@@ -71,10 +68,14 @@ FadeContextDialog::FadeContextDialog(FadeCurve* fadeCurve)
 	QWidget* valuesWidget = new QWidget(this);
 	QHBoxLayout* valuesLayout = new QHBoxLayout(valuesWidget);
 	
-	m_bendLabel =  new QLabel("Bending: 0.5");
-	m_strengthLabel = new QLabel("Strength: 0.5");
-	m_modeLabel = new QLabel("Mode: Bended");
-	m_rasterLabel = new QLabel("Raster: Off");
+	m_bendLabel =  new QLabel();
+	m_strengthLabel = new QLabel();
+	m_modeLabel = new QLabel();
+	m_rasterLabel = new QLabel();
+	update_bend_value();
+	update_mode_value();
+	update_raster_value();
+	update_strength_value();
 	
 	valuesLayout->addWidget(m_bendLabel);
 	valuesLayout->addWidget(m_strengthLabel);
