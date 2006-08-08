@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ProjectManager.cpp,v 1.7 2006/06/30 12:04:36 r_sijrier Exp $
+$Id: ProjectManager.cpp,v 1.8 2006/08/08 19:37:03 r_sijrier Exp $
 */
 
 #include "ProjectManager.h"
@@ -214,7 +214,6 @@ void ProjectManager::start( )
 
 Command* ProjectManager::exit()
 {
-
 	set_current_project( (Project*) 0 );
 
 	ie().free_memory();
@@ -226,7 +225,7 @@ Command* ProjectManager::exit()
 	// shutdown the audiodevice and exit the application.
 	usleep(200000);
 	QCoreApplication::processEvents();
-
+	
 	audiodevice().shutdown();
 	
 	QApplication::exit();

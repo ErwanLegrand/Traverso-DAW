@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.16 2006/08/03 14:33:46 r_sijrier Exp $
+$Id: AudioClip.h,v 1.17 2006/08/08 19:37:03 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -74,8 +74,8 @@ public:
 	Song* get_song() const;
 	Peak* get_peak_for_channel(int chan) const;
 	QDomNode get_state(QDomDocument doc);
-	FadeCurve* get_fade_in() {return fadeIn;}
-	FadeCurve* get_fade_out() {return fadeOut;}
+	FadeCurve* get_fade_in();
+	FadeCurve* get_fade_out();
 	Curve* get_gain_envelope() {return gainEnvelope;}
 	
 	float get_norm_factor() const;
@@ -117,6 +117,7 @@ private:
 	AudioSource* 		audioSource;
 	QList<ReadSource* > 	readSources;
 	QList<WriteSource* >	writeSources;
+	QList<FadeCurve* >	m_fades;
 	AudioBus*		captureBus;
 	FadeCurve*		fadeIn;
 	FadeCurve*		fadeOut;
@@ -153,6 +154,8 @@ signals:
 	void positionChanged();
 	void trackEndFrameChanged();
 	void gainChanged();
+	void fadeAdded(FadeCurve*);
+	void fadeRemoved(FadeCurve*);
 
 public slots:
 	void finish_recording();
@@ -182,6 +185,10 @@ public slots:
         Command* clip_fade_out();
         Command* normalize();
         Command* denormalize();
+
+private slots:
+	void private_add_fade(FadeCurve* fade);
+	void private_remove_fade(FadeCurve* fade);
 
 };
 

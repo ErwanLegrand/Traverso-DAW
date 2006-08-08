@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.25 2006/08/04 11:22:41 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.26 2006/08/08 19:37:03 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -47,7 +47,6 @@ AudioClipView::AudioClipView(ViewPort * vp, TrackView* parent, AudioClip* clip )
 	clipNamePixmapActive = QPixmap();
 	clipNamePixmapInActive = QPixmap();
 
-	m_muted = m_clip->is_muted();
 	waitingForPeaks = false;
 	m_progress = 0;
 	m_song = m_clip->get_song();
@@ -61,16 +60,11 @@ AudioClipView::AudioClipView(ViewPort * vp, TrackView* parent, AudioClip* clip )
 	connect(m_clip, SIGNAL(stateChanged()), this, SLOT(schedule_for_repaint()));
 	connect(m_clip, SIGNAL(gainChanged()), this, SLOT (gain_changed()));
 	connect(m_clip, SIGNAL(positionChanged()), m_tv, SLOT (repaint_all_clips()));
-	connect(m_clip->get_fade_in(), SIGNAL(stateChanged()), this, SLOT(schedule_for_repaint()));
-	connect(m_clip->get_fade_out(), SIGNAL(stateChanged()), this, SLOT(schedule_for_repaint()));
-	
-	connect(m_clip->get_fade_in(), SIGNAL(add_node_Signal()), this, SLOT(schedule_for_repaint()));
-	connect(m_clip->get_fade_out(), SIGNAL(add_node_Signal()), this, SLOT(schedule_for_repaint()));
-	
+	connect(m_clip, SIGNAL(fadeAdded(FadeCurve*)), this, SLOT(add_new_fadeview( FadeCurve* )));
+	connect(m_clip, SIGNAL(fadeRemoved(FadeCurve*)), this, SLOT(remove_fadeview( FadeCurve* )));
+
 	create_fade_selectors();
 	
-	fadeInView = new FadeView(m_vp, this, m_clip->get_fade_in());
-	fadeOutView = new FadeView(m_vp, this, m_clip->get_fade_out());
 	
 	connect(&fadeInShapeSelector, SIGNAL(triggered ( QAction* )), this, SLOT(set_fade_in_shape( QAction* )));
 	connect(&fadeOutShapeSelector, SIGNAL(triggered ( QAction* )), this, SLOT(set_fade_out_shape( QAction* )));
@@ -179,9 +173,9 @@ QRect AudioClipView::draw(QPainter& p)
 	
 		draw_peaks(painter);
 	
-		fadeInView->draw(painter);
-		fadeOutView->draw(painter);
-	
+		foreach(FadeView* view, m_fadeViews) {
+			view->draw(painter);
+		}
 	}
 
         p.setPen(cm().get("DARK_TEXT")); // CHANGE TO CLIP_COUNTOUR
@@ -454,6 +448,7 @@ void AudioClipView::update_variables( )
 	clipXWidth = m_clip->get_width();
 	clipAreaWidth = m_tv->cliparea_width();
 	channels = m_clip->get_channels();
+	m_muted = m_clip->is_muted();
 
 	// Check Cross Fades
 	prevClip = m_clip->prev_clip();
@@ -509,6 +504,26 @@ void AudioClipView::gain_changed( )
 {
 	recreate_clipname_pixmap();
 	schedule_for_repaint();
+}
+
+void AudioClipView::add_new_fadeview( FadeCurve * fade )
+{
+	FadeView* view = new FadeView(m_vp, this, fade);
+	connect(fade, SIGNAL(stateChanged()), this, SLOT(schedule_for_repaint()));
+	
+	m_fadeViews.append(view);
+}
+
+void AudioClipView::remove_fadeview( FadeCurve * fade )
+{
+	for (int i = 0; i < m_fadeViews.size(); ++i) {
+		FadeView* view = m_fadeViews.at(i);
+		if (view->get_fade() == fade) {
+			m_fadeViews.takeAt(i);
+			delete view;
+			break;
+		}
+	}
 }
 
 //eof

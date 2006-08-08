@@ -17,18 +17,20 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.5 2006/08/07 21:32:27 r_sijrier Exp $
+$Id: FadeCurve.cpp,v 1.6 2006/08/08 19:37:03 r_sijrier Exp $
 */
  
 #include "FadeCurve.h"
 
 #include <QFile>
 #include <cmath>
+#include "Song.h"
+#include "AudioClip.h"
 
 QStringList FadeCurve::defaultShapes = QStringList() << "Fastest" << "Fast" << "Linear"  << "Slow" << "Slowest";
 
-FadeCurve::FadeCurve(QString type )
-	: Curve(), m_sType(type)
+FadeCurve::FadeCurve(AudioClip* clip, QString type )
+	: Curve(), m_clip(clip), m_sType(type)
 {
 	if (type == "FadeIn") {
 		m_type = FadeIn;
@@ -36,6 +38,8 @@ FadeCurve::FadeCurve(QString type )
 	if (type == "FadeOut") {
 		m_type = FadeOut;
 	}
+	
+	m_song = m_clip->get_song();
 		
 	m_controlPoints.append(QPointF(0.0, 0.0));
 	m_controlPoints.append(QPointF(0.25, 0.25));
@@ -47,6 +51,8 @@ FadeCurve::FadeCurve(QString type )
 	m_mode = m_raster = 0;
 	m_bypass = false;
 	
+	init();
+	
 	connect(this, SIGNAL(stateChanged()), this, SLOT(solve_node_positions()));
 	connect(this, SIGNAL(bendValueChanged()), this, SIGNAL(stateChanged()));
 	connect(this, SIGNAL(strengthValueChanged()), this, SIGNAL(stateChanged()));
@@ -55,6 +61,26 @@ FadeCurve::FadeCurve(QString type )
 
 FadeCurve::~ FadeCurve( )
 {
+}
+
+void FadeCurve::init()
+{
+	// Populate the curve with 12 CurveNodes
+	float f = 0.0;
+	int nodecount = 11;
+ 	for (int i = 0; i <= nodecount; ++i) {
+		QPointF p = get_curve_point(f);
+		
+		CurveNode* node = new CurveNode(this, p.x(), p.y());
+		nodes.append(node);
+		connect(node, SIGNAL(positionChanged()), this, SLOT(set_changed()));
+		
+// 		printf("adding node with x=%f, y=%f\n", p.x(), p.y());
+		
+		f += 1.0 / nodecount;
+	}
+	
+	set_range(1.0);
 }
 
 QDomNode FadeCurve::get_state( QDomDocument doc )
@@ -99,27 +125,51 @@ int FadeCurve::set_state( const QDomNode & node )
 	}
 	
 	
-	// Populate the curve with 12 CurveNodes
-	float f = 0.0;
-	int nodecount = 11;
- 	for (int i = 0; i <= nodecount; ++i) {
-		QPointF p = get_curve_point(f);
-		
-		CurveNode* node = new CurveNode(this, p.x(), p.y());
-		nodes.append(node);
-		connect(node, SIGNAL(positionChanged()), this, SLOT(set_changed()));
-		
-// 		printf("adding node with x=%f, y=%f\n", p.x(), p.y());
-		
-		f += 1.0 / nodecount;
-	}
-
 	double range = e.attribute("range", "1").toDouble();
 	range = (range == 0.0) ? 1 : range;
 	set_range(range);
 	
 	return 1;
 }
+
+
+void FadeCurve::process( audio_sample_t * mixdown, nframes_t nframes )
+{
+
+	if (is_bypassed() || (get_range() < 16)) {
+		return;
+	}
+	
+	
+	int fadepos = 0;
+	
+	if (m_type == FadeIn) {
+		if( !( m_song->get_transport_frame() < (m_clip->get_track_start_frame() + get_range()) ) ) {
+			return;
+		}
+		
+		fadepos = m_song->get_transport_frame() - m_clip->get_track_start_frame();	
+	} else {
+		if( !(m_song->get_transport_frame() > (m_clip->get_track_end_frame() - get_range())) ) {
+			return;
+		}
+		
+		fadepos = m_song->get_transport_frame() - (m_clip->get_track_end_frame() - (nframes_t)get_range());
+	}
+	
+// 	printf("mix_pos is %d, len is %d\n", mix_pos, fadeIn->get_range());
+
+	nframes_t limit = std::min (nframes, (uint) get_range());
+	
+	
+	get_vector (fadepos, fadepos + limit, m_song->gainbuffer, limit);
+	
+
+	for (nframes_t n = 0; n < limit; ++n) {
+		mixdown[n] *= m_song->gainbuffer[n];
+	}
+}
+
 
 void FadeCurve::set_shape(QString shapeName)
 {

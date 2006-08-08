@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.h,v 1.4 2006/08/07 19:15:23 r_sijrier Exp $
+$Id: FadeCurve.h,v 1.5 2006/08/08 19:37:03 r_sijrier Exp $
 */
 
 #ifndef FADE_CURVE_H
@@ -30,6 +30,9 @@ $Id: FadeCurve.h,v 1.4 2006/08/07 19:15:23 r_sijrier Exp $
 #include <QList>
 #include <QPointF>
 
+class Song;
+class AudioClip;
+
 class FadeCurve : public Curve
 {
 	Q_OBJECT
@@ -37,7 +40,7 @@ class FadeCurve : public Curve
 public:
 	static QStringList defaultShapes;
 	
-	FadeCurve(QString type);
+	FadeCurve(AudioClip* clip, QString type);
 	~FadeCurve();
 	
 	enum FadeType {
@@ -47,6 +50,8 @@ public:
 	
 	QDomNode get_state(QDomDocument doc);
 	int set_state( const QDomNode & node );
+	
+	void process(audio_sample_t* mixdown, nframes_t nframes);
 	
 	float get_bend_factor() {return m_bendFactor;}
 	float get_strenght_factor() {return m_strenghtFactor;}
@@ -63,6 +68,8 @@ public:
 	bool is_bypassed() const {return m_bypass;}
 
 private:
+	AudioClip*	m_clip;
+	Song*		m_song;
 	float 		m_bendFactor;
 	float 		m_strenghtFactor;
 	bool		m_bypass;
@@ -73,6 +80,7 @@ private:
 	QList<QPointF> 	m_controlPoints;
 	
 	QPointF get_curve_point(float f);
+	void init();
 	
 public slots:
 	void solve_node_positions();

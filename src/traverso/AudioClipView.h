@@ -17,18 +17,20 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.h,v 1.9 2006/08/03 14:33:46 r_sijrier Exp $
+$Id: AudioClipView.h,v 1.10 2006/08/08 19:37:03 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIPVIEW_H
 #define AUDIOCLIPVIEW_H
 
 #include "ViewItem.h"
+#include <QList>
 
 class AudioClip;
 class TrackView;
 class Song;
 class FadeView;
+class FadeCurve;
 
 class AudioClipView : public ViewItem
 {
@@ -51,8 +53,7 @@ public:
 
 private:
 	TrackView* 	m_tv;
-	FadeView*	fadeInView;
-	FadeView*	fadeOutView;
+	QList<FadeView*> m_fadeViews;
 	AudioClip* 	m_clip;
 	Song*		m_song;
 	QMenu		contextMenu;
@@ -113,6 +114,8 @@ private:
 	friend class FadeView;
 
 public slots:
+	void add_new_fadeview(FadeCurve* fade);
+	void remove_fadeview(FadeCurve* fade);
 	void mute_changed(bool mute);
 	void schedule_for_repaint();
 	void update_progress_info(int progress);

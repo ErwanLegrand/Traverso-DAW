@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.22 2006/07/31 13:30:48 r_sijrier Exp $
+$Id: Track.cpp,v 1.23 2006/08/08 19:37:03 r_sijrier Exp $
 */
 
 #include "Track.h"
@@ -124,11 +124,15 @@ int Track::set_state( const QDomNode & node )
 
 	QDomElement ClipsNode = node.firstChildElement("Clips");
 	if (!ClipsNode.isNull()) {
-		QDomNode ClipNode = ClipsNode.firstChild();
-		while (!ClipNode.isNull()) {
-			AudioClip* clip = new AudioClip(this, ClipNode);
+		QDomNode clipNode = ClipsNode.firstChild();
+		while (!clipNode.isNull()) {
+			AudioClip* clip = new AudioClip(this, clipNode);
+			// First add the clip, this will emit the clipAdded Signal!
 			add_clip( clip );
-			ClipNode = ClipNode.nextSibling();
+			// Now set the clips state, which will eventually generate
+			// other signals, so the GUI can act on it!
+			clip->set_state(clipNode);
+			clipNode = clipNode.nextSibling();
 		}
 	}
 

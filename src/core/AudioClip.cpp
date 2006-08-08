@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.38 2006/08/07 19:16:23 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.39 2006/08/08 19:37:03 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -60,12 +60,11 @@ AudioClip::AudioClip(Track* track, nframes_t pTrackInsertBlock, QString name)
 	init();
 }
 
-AudioClip::AudioClip(Track* track, const QDomNode& node)
+AudioClip::AudioClip(Track* track, const QDomNode&)
 		: ContextItem((ContextItem*) 0, track), m_track(track)
 {
 	m_song = m_track->get_song();
 	init();
-	set_state( node );
 }
 
 AudioClip::~AudioClip()
@@ -75,9 +74,10 @@ AudioClip::~AudioClip()
 	foreach(ReadSource* source, readSources) {
 		delete source;
 	}
-		
-	delete fadeIn;
-	delete fadeOut;
+	
+	foreach(FadeCurve* fade, m_fades) {
+		delete fade;
+	}
 }
 
 void AudioClip::init()
@@ -87,21 +87,19 @@ void AudioClip::init()
 	m_song->get_audioclip_manager()->add_clip( this );
 	isRecording = false;
 	isSelected = false;
-	fadeIn = new FadeCurve("FadeIn");
-	fadeOut = new FadeCurve("FadeOut");
+	fadeIn = 0;
+	fadeOut = 0;
+	m_channels = 0;
 }
 
-int AudioClip::set_state(const QDomNode& node )
+int AudioClip::set_state(const QDomNode& node)
 {
 	QDomElement e = node.toElement();
 	
 	m_name = e.attribute( "clipname", "" ) ;
-	
 	isTake = e.attribute( "take", "").toInt();
-	
 	uint channels = e.attribute( "channels", "0").toInt();
 	bitDepth = e.attribute("origbitdepth", "0").toInt();
-	
 	set_gain( e.attribute( "gain", "" ).toFloat() );
 	m_normfactor =  e.attribute( "normfactor", "1.0" ).toFloat();
 	isMuted =  e.attribute( "mute", "" ).toInt();
@@ -137,14 +135,18 @@ int AudioClip::set_state(const QDomNode& node )
 	if (!curvesNode.isNull()) {
 		QDomElement fadeInNode = curvesNode.firstChildElement("FadeIn");
 		if (!fadeInNode.isNull()) {
-			fadeIn = new FadeCurve("FadeIn");
+			fadeIn = new FadeCurve(this, "FadeIn");
 			fadeIn->set_state( fadeInNode );
+			emit fadeAdded(fadeIn);
+			private_add_fade(fadeIn);
 		}
 		
 		QDomElement fadeOutNode = curvesNode.firstChildElement("FadeOut");
 		if (!fadeOutNode.isNull()) {
-			fadeOut = new FadeCurve("FadeOut");
+			fadeOut = new FadeCurve(this, "FadeOut");
 			fadeOut->set_state( fadeOutNode );
+			emit fadeAdded(fadeOut);
+			private_add_fade(fadeOut);
 		}
 	}
 	
@@ -173,8 +175,10 @@ QDomNode AudioClip::get_state( QDomDocument doc )
 
 	QDomNode curves = doc.createElement("Curves");
 	
-	curves.appendChild(fadeIn->get_state(doc));
-	curves.appendChild(fadeOut->get_state(doc));
+	if (fadeIn)
+		curves.appendChild(fadeIn->get_state(doc));
+	if (fadeOut)
+		curves.appendChild(fadeOut->get_state(doc));
 	
 	node.appendChild(curves);
 
@@ -313,13 +317,14 @@ void AudioClip::set_blur(bool )
 
 void AudioClip::set_fade_in(nframes_t b)
 {
-	fadeIn->set_range( b );
+	get_fade_in()->set_range( b );
 	emit stateChanged();
 }
 
 void AudioClip::set_fade_out(nframes_t b)
 {
-	fadeOut->set_range( b );
+	Q_ASSERT(fadeOut);
+	get_fade_out()->set_range( b );
 	emit stateChanged();
 }
 
@@ -411,57 +416,16 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 		printf("END %s\n\n", m_name.toAscii().data());
 	}
 	
-	if (read_frames == 0)
+	
+	if (read_frames == 0) {
 		return 0;
+	}
 
-	
-	audio_sample_t* gainbuffer = m_song->gainbuffer;
-	
-	// FADE IN
-	
-	if ( (! fadeIn->is_bypassed() ) && (m_song->get_transport_frame() < (trackStartFrame + fadeIn->get_range())) ) {
-// 		printf("mix_pos is %d, len is %d\n", mix_pos, fadeIn->get_range());
-		nframes_t limit;
 
-		limit = std::min (read_frames, (uint)fadeIn->get_range());
-		
-		if (fadeIn->get_range() < 16) {
-			limit = 0;
-		}
-		
-		int fadepos = m_song->get_transport_frame() - trackStartFrame;
-		
-		fadeIn->get_vector ( fadepos, fadepos + limit, gainbuffer, limit);
-		
-
-		for (nframes_t n = 0; n < limit; ++n) {
-			mixdown[n] *= gainbuffer[n];
-		}
+	foreach(FadeCurve* fade, m_fades) {
+		fade->process(mixdown, read_frames);
 	}
 	
-	// FADE OUT
-	
-	if ( ( ! fadeOut->is_bypassed()) && (m_song->get_transport_frame() > (trackEndFrame - fadeOut->get_range())) ) {
-		
-		nframes_t limit;
-		
-		limit = std::min (read_frames, (uint)fadeOut->get_range());
-		
-		if (fadeOut->get_range() < 16) {
-			limit = 0;
-		}
-		
-		int fadepos = m_song->get_transport_frame() - (trackEndFrame - (nframes_t)fadeOut->get_range());
-		
-		fadeOut->get_vector (fadepos, fadepos + limit, gainbuffer, limit);
-		
-
-		for (nframes_t n = 0; n < limit; ++n) {
-			mixdown[n] *= gainbuffer[n];
-		}
-	}
-	
-
 	return 1;
 }
 
@@ -829,13 +793,13 @@ nframes_t AudioClip::get_track_start_frame( ) const
 Command * AudioClip::clip_fade_in( )
 {
 	int direction = 1;
-	return new Fade(this, fadeIn, direction);
+	return new Fade(this, get_fade_in(), direction);
 }
 
 Command * AudioClip::clip_fade_out( )
 {
 	int direction = -1;
-	return new Fade(this, fadeOut, direction);
+	return new Fade(this, get_fade_out(), direction);
 }
 
 Command * AudioClip::normalize( )
@@ -920,6 +884,38 @@ void AudioClip::calculate_normalization_factor(float targetdB)
 
 // 	printf("normalization factor is %f\n", m_normfactor);
 	
+}
+
+FadeCurve * AudioClip::get_fade_in( )
+{
+	if (!fadeIn) {
+		fadeIn = new FadeCurve(this, "FadeIn");
+		fadeIn->set_shape("Linear");
+		THREAD_SAVE_CALL_EMIT_SIGNAL(this, fadeIn, private_add_fade(FadeCurve*), fadeAdded(FadeCurve*));
+	}
+	
+	return fadeIn;
+}
+
+FadeCurve * AudioClip::get_fade_out( )
+{
+	if (!fadeOut) {
+		fadeOut = new FadeCurve(this, "FadeOut");
+		fadeOut->set_shape("Linear");
+		THREAD_SAVE_CALL_EMIT_SIGNAL(this, fadeOut, private_add_fade(FadeCurve*), fadeAdded(FadeCurve*));
+	}
+	
+	return fadeOut;
+}
+
+void AudioClip::private_add_fade( FadeCurve* fade )
+{
+	m_fades.append(fade);
+}
+
+void AudioClip::private_remove_fade( FadeCurve * fade )
+{
+	m_fades.append(fade);
 }
 
 // eof
