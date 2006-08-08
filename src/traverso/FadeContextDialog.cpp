@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeContextDialog.cpp,v 1.3 2006/08/07 19:34:29 r_sijrier Exp $
+$Id: FadeContextDialog.cpp,v 1.4 2006/08/08 20:59:49 r_sijrier Exp $
 */
 
 #include "FadeContextDialog.h"
@@ -131,6 +131,8 @@ void FadeContextDialog::update_mode_value( )
 			m_modeLabel->setText("Mode: bended");
 		if (m_fade->get_mode() == 1)
 			m_modeLabel->setText("Mode: s-shape");
+		if (m_fade->get_mode() == 2)
+			m_modeLabel->setText("Mode: long");
 	}
 }
 
