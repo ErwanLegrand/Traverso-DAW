@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeContextDialogView.cpp,v 1.5 2006/08/07 21:33:05 r_sijrier Exp $
+$Id: FadeContextDialogView.cpp,v 1.6 2006/08/08 19:34:57 r_sijrier Exp $
 */
 
 #include "FadeContextDialogView.h"
@@ -63,22 +63,25 @@ QRect FadeContextDialogView::draw( QPainter& p )
 	p.setRenderHint(QPainter::Antialiasing);
 	
 	// Calculate and draw control points
-	float h = m_vp->height() - 1;
+	int h = m_vp->height() - 1;
+	int w = m_vp->width() - 1;
 	QList<QPointF> points = m_fade->get_control_points();
-	QPoint p1(int(points.at(1).x() * m_vp->width()), m_vp->height()-1 - int(points.at(1).y() * h));
-	QPoint p2(int(m_vp->width()-1 - (1.0 - points.at(2).x()) * (m_vp->width()-1)), int(float(1.0 - points.at(2).y()) * h));
+	QPoint p1(int(points.at(1).x() * w + 0.5), h - int(points.at(1).y() * h + 0.5));
+	QPoint p2(w - int((1.0 - points.at(2).x()) * w + 0.5), int((1.0 - points.at(2).y()) * h + 0.5));
 
 	p.setPen(QColor(DOT_COLOR));
 	p.setBrush(QColor(DOT_COLOR));
 	
 	if (m_fade->get_fade_type() == FadeCurve::FadeOut) {
-		p1.setX(m_vp->width() - p1.x() - 1);
-		p2.setX(m_vp->width() - p2.x() - 1);
-		p.drawLine(m_vp->width()-1, m_vp->height()-1, p1.x(), p1.y());
+		p1.setX(w - int((1 - points.at(2).x()) * w + 0.5));
+		p1.setY(h - int((1 - points.at(2).y()) * h + 0.5));
+		p2.setX(int((points.at(1).x()) * w + 0.5));
+		p2.setY(int((points.at(1).y()) * h + 0.5));
+		p.drawLine(w, h, p1.x(), p1.y());
 		p.drawLine(0, 0, p2.x(), p2.y());
 	} else {
-		p.drawLine(0, m_vp->height()-1, p1.x(), p1.y());
-		p.drawLine(m_vp->width()-1, 0, p2.x(), p2.y());
+		p.drawLine(0, h, p1.x(), p1.y());
+		p.drawLine(w, 0, p2.x(), p2.y());
 	}
 	
 	p.drawEllipse(p1.x() - DOT_SIZE/2, p1.y() - DOT_SIZE/2, DOT_SIZE, DOT_SIZE);
