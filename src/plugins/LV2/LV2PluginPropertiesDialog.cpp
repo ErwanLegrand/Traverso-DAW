@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: LV2PluginPropertiesDialog.cpp,v 1.1 2006/07/31 13:24:46 r_sijrier Exp $
+$Id: LV2PluginPropertiesDialog.cpp,v 1.2 2006/08/09 21:12:45 r_sijrier Exp $
 */
 
 
@@ -60,12 +60,12 @@ void LV2PluginPropertiesDialog::setup_gui()
 		QWidget* widget = new QWidget(sliderWidget);
 		QHBoxLayout *layout = new QHBoxLayout;
 
-		PluginSlider* slider = new PluginSlider(Qt::Horizontal);
+		PluginSlider* slider = new PluginSlider();
 		slider->setFixedWidth(200);
 		slider->set_minimum(port->get_min_control_value());
 		slider->set_maximum(port->get_max_control_value());
 		slider->set_value(port->get_control_value());
-		connect(slider, SIGNAL(sliderValueChanged(double )), port, SLOT(set_control_value(double )));
+		connect(slider, SIGNAL(sliderValueChanged(float )), port, SLOT(set_control_value(float )));
 
 		QLabel* minvalue = new QLabel();
 		minvalue->setNum(port->get_min_control_value());
@@ -77,12 +77,12 @@ void LV2PluginPropertiesDialog::setup_gui()
 
 		QLabel* currentvalue = new QLabel();
 		currentvalue->setNum(port->get_control_value());
-		currentvalue->setFixedWidth(30);
+		currentvalue->setFixedWidth(35);
 
-		connect(slider, SIGNAL(sliderValueChanged(double )), currentvalue, SLOT(setNum (double )));
+		connect(slider, SIGNAL(sliderValueChangedDouble(double )), currentvalue, SLOT(setNum (double )));
 
 		QLabel* controlname = new QLabel(port->get_description());
-		controlname->setFixedWidth(90);
+		controlname->setFixedWidth(80);
 
 		layout->addWidget(minvalue);
 		layout->addWidget(slider, 4);

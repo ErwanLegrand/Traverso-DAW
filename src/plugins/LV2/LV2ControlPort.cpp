@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: LV2ControlPort.cpp,v 1.3 2006/08/03 14:38:09 r_sijrier Exp $
+$Id: LV2ControlPort.cpp,v 1.4 2006/08/09 21:12:45 r_sijrier Exp $
 
 slv2 url: http://codeson.net/svn/libslv2/
 */
@@ -90,7 +90,7 @@ QString LV2ControlPort::get_description()
 
 /******* SLOTS ********/
 
-void LV2ControlPort::set_control_value(double value)
+void LV2ControlPort::set_control_value(float value)
 {
 	m_controlValue = value;
 }
