@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.26 2006/08/08 19:37:03 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.27 2006/08/23 13:01:25 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -85,7 +85,7 @@ AudioClipView::~ AudioClipView()
 
 QRect AudioClipView::draw(QPainter& p)
 {
-	PENTER;
+	PENTER2;
 
 	if (m_clip->is_recording()) {
 		// For now, just exit. For later, draw the recording audio :-)
@@ -206,19 +206,29 @@ void AudioClipView::draw_peaks( QPainter& p )
 
 	const int height = this->height / channels;
 	Peak* peak;
-	nframes_t nframes, bufferPos;
-	nframes = clipXWidth;
+	nframes_t pixelcount = clipXWidth;
 	int posY, negY, centerY;
-	unsigned char* lowerHalf;
-	unsigned char* upperHalf;
 	bool microView = hzoom > Peak::MAX_ZOOM_USING_SOURCEFILE ? 0 : 1;
+	if (!microView) {
+		pixelcount *= 2;
+	}
 
 
 	for (int chan=0; chan < channels; chan++) {
 		peak = m_clip->get_peak_for_channel(chan);
-		nframes = peak->prepare_buffer_for_zoomlevel(hzoom, startFrame, nframes);
-
-		if (nframes <= 0) {
+		
+		int buffersize;
+		if (microView) {
+			buffersize = sizeof(short) * pixelcount;
+		} else {
+			buffersize = sizeof(unsigned char) * pixelcount;
+		}
+	
+		unsigned char peakBuffer[buffersize];
+		
+		pixelcount = peak->calculate_peaks(peakBuffer, hzoom, startFrame, pixelcount);
+		
+		if (pixelcount <= 0) {
 			// It seems there are no peak buffers yet, but they are now generated
 			// just wait for the finished() signal.....
 // 			PWARN("Waiting for peak");
@@ -228,37 +238,34 @@ void AudioClipView::draw_peaks( QPainter& p )
 			return;
 		}
 
-		bufferPos = (nframes_t) (startFrame / Peak::zoomStep[hzoom]);
-		upperHalf = peak->get_prepared_peakbuffer()->get_lower_half_buffer();
-		lowerHalf = peak->get_prepared_peakbuffer()->get_lower_half_buffer();
-
 		float scaleFactor = ( ((float)(height - channels * 2)) / (Peak::MAX_DB_VALUE * 2)) * gain;
 		centerY = height/2 + height*chan;
 
 		if (microView) {
-			int microBufferPos = 0;
-			short* buf = peak->get_prepared_peakbuffer()->get_microview_buffer();
-			int prev =  (int) (centerY + (scaleFactor * buf[0]));
+		
+			short* mbuffer = (short*) peakBuffer;
+			 
+			int prev =  (int) (centerY + (scaleFactor * mbuffer[0]));
 			p.setPen(cm().get("CLIP_PEAK_MICROVIEW"));
 
-			for (uint x = 0; x < nframes; x++) {
-				posY = (int) (centerY + (scaleFactor * buf[microBufferPos]));
+			for (uint x = 0; x < pixelcount; x++) {
+				posY = (int) (centerY + (scaleFactor * mbuffer[x]));
 				p.drawLine(x, prev, x+1, posY);
 				prev = posY;
-				microBufferPos++;
 			}
 		} else if (classicView) {
+			int bufferPos = 0;
 			if (mergedView) {
 				scaleFactor = ( ( (float) this->height ) / Peak::MAX_DB_VALUE) * gain / 2.0;
 				centerY = this->height/2;
 			}
 			p.setPen(cm().get("CLIP_PEAK_MACROVIEW"));
 
-			for (uint x = 0; x < nframes; x++) {
-                                posY = (int) (centerY + (scaleFactor * upperHalf[bufferPos]));
-                                negY = (int) (centerY - (scaleFactor * lowerHalf[bufferPos]));
+			for (uint x = 0; x < pixelcount; x++) {
+                                posY = (int) (centerY + (scaleFactor * peakBuffer[bufferPos]));
+                                negY = (int) (centerY - (scaleFactor * peakBuffer[bufferPos + 1]));
 				p.drawLine(x, negY, x, posY);
-				bufferPos++;
+				bufferPos += 2;
 			}
 		} else {
 			if (mergedView) {
@@ -270,10 +277,11 @@ void AudioClipView::draw_peaks( QPainter& p )
 			}
 			p.setPen(cm().get("CLIP_PEAK_MACROVIEW"));
 
-			for (uint x = 0; x < nframes; x++) {
-                                posY = (int) (centerY - (scaleFactor * (f_max(upperHalf[bufferPos], lowerHalf[bufferPos]))));
+			int bufferPos = 0;
+			for (uint x = 0; x < pixelcount; x++) {
+                                posY = (int) (centerY - (scaleFactor * (f_max(peakBuffer[bufferPos], peakBuffer[bufferPos + 1]))));
 				p.drawLine(x, centerY, x, posY);
-				bufferPos++;
+				bufferPos += 2;
 			}
 		}
 	}
@@ -413,7 +421,7 @@ void AudioClipView::update_geometry( )
 
 void AudioClipView::update_progress_info( int progress )
 {
-	PENTER;
+	PENTER4;
 	if (progress > (m_progress + 4)) {
 		m_progress = progress;
 		schedule_for_repaint();
