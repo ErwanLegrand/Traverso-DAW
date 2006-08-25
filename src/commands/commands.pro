@@ -38,8 +38,6 @@ include(../libbase.pri)
 INCLUDEPATH += ../../src/traverso \
 ../../src/core \
 ../../src/engine
-QMAKE_CXXFLAGS_RELEASE += -fPIC
-QMAKE_CXXFLAGS_DEBUG += -fPIC
 TARGET = traversocommands
 DESTDIR = ../../lib
 TEMPLATE = lib
