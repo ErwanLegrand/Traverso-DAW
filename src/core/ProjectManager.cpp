@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2006 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ProjectManager.cpp,v 1.8 2006/08/08 19:37:03 r_sijrier Exp $
+$Id: ProjectManager.cpp,v 1.9 2006/08/25 11:25:54 r_sijrier Exp $
 */
 
 #include "ProjectManager.h"
@@ -65,7 +65,7 @@ int ProjectManager::save_song(QString songName)
 void ProjectManager::set_current_project(Project* pProject)
 {
 	PENTER;
-	
+
 	if (currentProject) {
 		currentProject->save();
 		delete currentProject;
@@ -76,14 +76,14 @@ void ProjectManager::set_current_project(Project* pProject)
 	emit projectLoaded(currentProject);
 
 	QSettings settings;
-	
+
 	QString title = "";
-	
+
 	if (currentProject) {
 		title = currentProject->get_title();
 		settings.setValue("Project/current", title);
 	}
-	
+
 }
 
 int ProjectManager::create_new_project(QString projectName, int numSongs)
@@ -94,9 +94,9 @@ int ProjectManager::create_new_project(QString projectName, int numSongs)
 		PERROR("project %s already exists\n", projectName.toAscii().data());
 		return -1;
 	}
-	
+
 	Project *newProject = new Project(projectName);
-	
+
 	if (newProject->create(numSongs) < 0) {
 		delete newProject;
 		PERROR("couldn't create new project %s", projectName.toAscii().data());
@@ -109,14 +109,14 @@ int ProjectManager::create_new_project(QString projectName, int numSongs)
 int ProjectManager::load_project(QString projectName)
 {
 	PENTER;
-	
+
 	if( ! project_exists(projectName) ) {
 		PERROR("project %s doesn't exist\n", projectName.toAscii().data());
 		return -1;
 	}
 
 	Project *newProject = new Project(projectName);
-	
+
 	if (!newProject)
 		return -1;
 
@@ -138,7 +138,7 @@ int ProjectManager::remove_project( QString name )
 		PMESG("removing current project\n");
 		set_current_project( 0 );
 	}
-	
+
 	return FileHelper::remove_recursively( name );
 }
 
@@ -151,7 +151,7 @@ bool ProjectManager::project_is_current(QString title)
 	if (currentProject && (currentProject->get_root_dir() == path)) {
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -161,11 +161,11 @@ bool ProjectManager::project_exists(QString title)
 	QString project_dir = settings.value("Project/directory").toString();
 	QString project_path = project_dir + title;
 	QFileInfo fileInfo(project_path);
-	
+
 	if (fileInfo.exists()) {
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -176,7 +176,7 @@ Command* ProjectManager::save_project()
 	} else {
 		info().information( tr("Open or create a project first!"));
 	}
-	
+
 	return (Command*) 0;
 }
 
@@ -189,13 +189,13 @@ void ProjectManager::start( )
 {
 	QSettings settings;
 	int loadProjectAtStartUp = settings.value("Project/loadLastUsed").toInt();
-	
+
 	if (loadProjectAtStartUp != 0) {
 		QString projectToLoad = settings.value("Project/current").toString();
-		
+
 		if ( projectToLoad.isNull() || projectToLoad.isEmpty() )
 			projectToLoad="Untitled";
-		
+
 		if (project_exists(projectToLoad)) {
 			if ( load_project(projectToLoad) < 0 ) {
 				PWARN("Cannot load project %s. Continuing anyway...", projectToLoad.toAscii().data());
@@ -207,7 +207,7 @@ void ProjectManager::start( )
 			} else {
 				load_project("Untitled");
 			}
-			
+
 		}
 	}
 }
@@ -217,19 +217,19 @@ Command* ProjectManager::exit()
 	set_current_project( (Project*) 0 );
 
 	ie().free_memory();
-	
+
 	// FIXME This really sucks!
-	// Give the audiodevice some time to handle the disconnections and 
+	// Give the audiodevice some time to handle the disconnections and
 	// deletion of the Songs. Afterwards, we force the events to be processed
 	// which will do the actuall deletion of the Songs. After this point, it's fine to
 	// shutdown the audiodevice and exit the application.
 	usleep(200000);
 	QCoreApplication::processEvents();
-	
+
 	audiodevice().shutdown();
-	
+
 	QApplication::exit();
-	
+
 	return (Command*) 0;
 }
 

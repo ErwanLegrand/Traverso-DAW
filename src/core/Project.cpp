@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2006 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Project.cpp,v 1.5 2006/06/16 13:31:36 r_sijrier Exp $
+$Id: Project.cpp,v 1.6 2006/08/25 11:23:23 r_sijrier Exp $
 */
 
 #include <QFile>
@@ -66,11 +66,11 @@ Project::~Project()
 {
 	PENTERDES;
 	cpointer().remove_contextitem(this);
-	
+
 	foreach(Song* song, songList) {
 		 song->disconnect_from_audiodevice_and_delete();
 	}
-	
+
 	delete asmanager;
 }
 
@@ -106,7 +106,7 @@ int Project::create(int pNumSongs)
 	}
 
 	set_current_song( 1 );
-	
+
 	save();
 	info().information("New project created");
 	return 1;
@@ -162,7 +162,7 @@ int Project::load() // try to load the project by its title
 		emit songAdded();
 		songNode = songNode.nextSibling();
 	}
-	
+
 	set_current_song(currentSongId);
 
 	info().information( tr("Project loaded (%1)").arg(title) );
@@ -205,9 +205,9 @@ int Project::save()
 		QTextStream stream(&data);
 		doc.save(stream, 4);
 		data.close();
-		
+
 		info().information( tr("Project saved (%1)").arg(title) );
-	
+
 	} else {
 		info().critical( tr("Could not open project properties file for writing! (%1)").arg(fileName) );
 		return -1;
@@ -242,7 +242,7 @@ Song* Project::add_song()
 {
 	PENTER;
 	Song* song = new Song(this, songList.size()+1);
-	
+
 	songList.insert(song->get_id(), song);
 	set_current_song(song->get_id());
 	currentSongId = song->get_id();
@@ -284,11 +284,11 @@ int Project::remove_song(int key)
 	if (song) {
 		if (song->get_id() == key)
 			set_current_song(songList.size());
-		
+
 		emit songRemoved();
-		
+
 		song->disconnect_from_audiodevice_and_delete();
-		
+
 	} else {
 		return -1;
 	}
@@ -317,7 +317,7 @@ int Project::export_project(ExportSpecification* spec)
 int Project::start_export(ExportSpecification* spec)
 {
 	PMESG("Starting export, rate is %d bitdepth is %d", spec->sample_rate, spec->data_width );
-	
+
 	spec->blocksize = audiodevice().get_buffer_size();
 
 	spec->dataF = new audio_sample_t[spec->blocksize * spec->channels];
@@ -357,7 +357,7 @@ int Project::start_export(ExportSpecification* spec)
 	delete spec->dataF;
 
 	emit exportFinished();
-	
+
 	return 1;
 }
 
