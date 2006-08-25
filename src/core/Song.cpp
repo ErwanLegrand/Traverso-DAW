@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2006 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.30 2006/08/07 19:16:23 r_sijrier Exp $
+$Id: Song.cpp,v 1.31 2006/08/25 11:22:51 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -53,7 +53,7 @@ $Id: Song.cpp,v 1.30 2006/08/07 19:16:23 r_sijrier Exp $
 
 #include <PluginManager.h>
 #include <Plugin.h>
-#include <LV2Plugin.h>
+//#include <LV2Plugin.h>
 #include <PluginChain.h>
 
 // Always put me below _all_ includes, this is needed
@@ -114,14 +114,14 @@ Song::Song(Project* project, const QDomNode node)
 	init();
 	emit m_project->newSongCreated( this );
 	set_state( node );
-	
+
 	connect_to_audiodevice();
 }
 
 Song::~Song()
 {
 	PENTERDES;
-	
+
 	delete [] mixdown;
 	delete [] gainbuffer;
 	delete diskio;
@@ -131,6 +131,7 @@ Song::~Song()
 	delete m_hs;
 	delete audiodeviceClient;
  	delete pluginChain;
+ 	delete snaplist;
 }
 
 void Song::init()
@@ -152,11 +153,11 @@ void Song::init()
 	m_hs = new HistoryStack();
 	acmanager = new AudioClipManager(this);
 	connect(acmanager, SIGNAL(lastFramePositionChanged()), this, SIGNAL(lastFramePositionChanged()));
-	
+
 	set_context_item( acmanager );
 
 	playBackBus = audiodevice().get_playback_bus("Playback 1");
-	
+
 	transport = stopTransport = resumeTransport = false;
 	snaplist = new SnapList(this);
 	realtimepath = false;
@@ -165,7 +166,7 @@ void Song::init()
 	changed = rendering = false;
 	firstVisibleFrame=workingFrame=activeTrackNumber=0;
 	trackCount = 0;
-	
+
 	pluginChain = new PluginChain;
 }
 
@@ -183,35 +184,35 @@ int Song::set_state( const QDomNode & node )
 	set_gain(e.attribute( "mastergain", "1.0").toFloat() );
 	set_hzoom(e.attribute( "hzoom", "" ).toInt());
 	set_first_visible_frame(e.attribute( "firstVisibleFrame", "0" ).toUInt());
-	
+
 	int trackBaseY = LocatorView::LOCATOR_HEIGHT;
 
 	QDomNode tracksNode = node.firstChildElement("Tracks");
 	QDomNode trackNode = tracksNode.firstChild();
-	
+
 	while(!trackNode.isNull()) {
 		Track* track = new Track(this, trackNode);
 		track->set_baseY(trackBaseY);
 		track->set_id(++trackCount);
-		
+
 		// Adding a track at this point will add it and signal _immediately_
 		// this is desired behaviour, this way the GUI can catch the signal
 		// and make a TrackView!
 		add_track(track);
-		
+
 		// Now that a TrackView has been created, we can set the state
 		// of the Track, this will create AudioClips (if there are any of course)
 		// So the TrackView can make AudioClipViews ;-)
 		track->set_state(trackNode);
-		
+
 		trackBaseY += track->get_height();
 		trackNode = trackNode.nextSibling();
 	}
 
 	QDomNode pluginChainNode = node.firstChildElement("PluginChain");
 	pluginChain->set_state(pluginChainNode);
-	
-	// Set work at will trigger a seek, which in turn get's all 
+
+	// Set work at will trigger a seek, which in turn get's all
 	// audio buffers into proper pre-filled state!
 	set_work_at(e.attribute( "workingFrame", "0").toUInt());
 	return 1;
@@ -240,48 +241,48 @@ QDomNode Song::get_state(QDomDocument doc)
 	}
 
 	songNode.appendChild(tracksNode);
-	
+
 	QDomNode pluginChainNode = doc.createElement("PluginChain");
 	pluginChainNode.appendChild(pluginChain->get_state(doc));
 	songNode.appendChild(pluginChainNode);
-	
-	
+
+
 	return songNode;
 }
 
 void Song::connect_to_audiodevice( )
 {
 	PENTER;
-	
+
 	audiodeviceClient = new Client("song_" + QByteArray::number(get_id()));
-	
+
 	audiodeviceClient->set_process_callback( MakeDelegate(this, &Song::process) );
-	
+
 	audiodevice().add_client(audiodeviceClient);
 }
 
 void Song::disconnect_from_audiodevice_and_delete()
 {
 	PENTER;
-	
+
 	PMESG("Song : Scheduling for deletion !!");
-	
+
 	if (transport) {
 		transport = false;
 	}
-	
+
 	scheduleForDeletion = true;
-	
+
 	audiodevice().remove_client(audiodeviceClient);
 }
 
 void Song::audiodevice_client_removed(Client* client )
 {
 	PENTER;
-	
+
 	if (audiodeviceClient == client) {
 // 		printf("Succesfully discovered if this Song is to be deleted! Client is %s\n\n", client->m_name.toAscii().data());
-		
+
 		if (scheduleForDeletion) {
 			PMESG("Song : deleting myself!!!!!");
 			delete this;
@@ -297,7 +298,7 @@ void Song::add_track(Track* track)
 			break;
 		}
 	}
-	
+
 	if ( ! is_transporting() ) {
 		private_add_track(track);
 		emit trackAdded(track);
@@ -305,7 +306,7 @@ void Song::add_track(Track* track)
 	} else {
 		THREAD_SAVE_CALL_EMIT_SIGNAL(this, track, private_add_track(Track*), trackAdded(Track*));
 	}
-	
+
 }
 
 void Song::remove_track(Track* track)
@@ -332,7 +333,7 @@ bool Song::any_track_armed()
 int Song::get_clips_count_for_audio(AudioSource* )
 {
 	int count=0;
-	
+
 	return count;
 }
 
@@ -361,7 +362,7 @@ int Song::remove_all_clips_for_audio(AudioSource* )
 {
 	PENTER;
 	int counter=0;
-	
+
 	return counter;
 }
 
@@ -377,32 +378,32 @@ int Song::prepare_export(ExportSpecification* spec)
 
 	spec->start_frame = INT_MAX;
 	spec->end_frame = 0;
-	
+
 	nframes_t endframe, startframe;
-	
+
 	foreach (Track* track, m_tracks) {
 		track->get_render_range(startframe, endframe);
-		
+
 		if (track->is_solo()) {
 			spec->end_frame = endframe;
 			spec->start_frame = startframe;
 			break;
 		}
-		
+
 		if (endframe > spec->end_frame) {
 			spec->end_frame = endframe;
 		}
-		
+
 		if (startframe < spec->start_frame) {
 			spec->start_frame = startframe;
 		}
-		
+
 	}
-	
+
 	spec->total_frames = spec->end_frame - spec->start_frame;
-	
+
 // 	PWARN("Render length is: %s",frame_to_smpte(spec->total_frames, m_project->get_rate()).toAscii().data() );
-	
+
 	spec->pos = spec->start_frame;
 	transportFrame = spec->start_frame;
 	spec->progress = 0;
@@ -560,9 +561,9 @@ void Song::set_gain(float gain)
 		gain = 0.0;
 	if (gain > 2.0)
 		gain = 2.0;
-	
+
 	m_gain = gain;
-	
+
 	emit masterGainChanged();
 }
 
@@ -576,7 +577,7 @@ void Song::set_active_track(int trackNumber)
 {
 	if (!m_tracks.value(trackNumber))
 		return;
-	
+
 	m_tracks.value(activeTrackNumber)->deactivate();
 	activeTrackNumber=trackNumber;
 	m_tracks.value(activeTrackNumber)->activate();
@@ -610,9 +611,9 @@ void Song::set_work_at(nframes_t pos)
 /** **/
 
 	Q_ASSERT(position >= 0);
-	
+
 	newTransportFramePos = (uint) position;
-	
+
 	// If there is no transport, start_seek() will _not_ be
 	// called from within process(). So we do it now!
 	if (!transport) {
@@ -638,9 +639,9 @@ void Song::start_seek()
 	}
 
 	diskio->prepare_for_seek();
-	
+
 	THREAD_SAVE_EMIT_SIGNAL(this, seekStart(uint), newTransportFramePos);
-	
+
 	PMESG2("Song :: leaving start_seek");
 }
 
@@ -662,9 +663,9 @@ void Song::seek_finished()
 Command* Song::toggle_snap()
 {
 	isSnapOn=!isSnapOn;
-	
+
 	emit propertieChanged();
-	
+
 	return (Command*) 0;
 }
 
@@ -674,14 +675,14 @@ Track* Song::create_track()
 {
 	int trackBaseY = LocatorView::LOCATOR_HEIGHT;
 	int height = Track::INITIAL_HEIGHT;
-	
+
 	foreach(Track* track, m_tracks) {
 		trackBaseY += track->get_height();
 		height = track->get_height();
 	}
 
 	Track* track = new Track(this, ++trackCount, "Unnamed", trackBaseY, height);
-	
+
 	return track;
 }
 
@@ -690,7 +691,7 @@ Command* Song::add_new_track()
 	Track* track = create_track();
 
 	add_track(track);
-	
+
 	return (Command*) 0;
 }
 
@@ -698,21 +699,21 @@ Command* Song::add_new_track()
 // {
 // 	return (Command*) 0;
 // }
-// 
+//
 // Command* Song::create_region_start()
 // {
 // 	// int xpos ...
 // 	//TODO
 // 	return (Command*) 0;
 // }
-// 
+//
 // Command* Song::create_region_end()
 // {
 // 	// int xpos ...
 // 	//TODO
 // 	return (Command*) 0;
 // }
-// 
+//
 // Command* Song::delete_region_under_x()
 // {
 // 	// int xpos...
@@ -729,7 +730,7 @@ Command* Song::remove_track()
 Command* Song::go()
 {
 // 	printf("Song-%d::go transport is %d\n", m_id, transport);
-	
+
 	if (transport) {
 		stopTransport = true;
 	} else {
@@ -751,7 +752,7 @@ Command* Song::go()
 // 	r = process_go(r);
 // 	return (Command*) 0;
 // }
-// 
+//
 // Command* Song::go_regions()
 // {
 // 	/*	int r=0;
@@ -772,13 +773,13 @@ Command* Song::go()
 // 		r = process_go(r);*/
 // 	return (Command*) 0;
 // }
-// 
+//
 // Command* Song::in_crop()
 // {
 // 	// 	return new Crop(this);
 // 	return (Command*) 0;
 // }
-// 
+//
 // Command* Song::jog_create_region()
 // {
 // 	return (Command*) 0;
@@ -855,18 +856,18 @@ Command *Song::toggle_mute()
 Command* Song::work_next_edge()
 {
 	nframes_t w = acmanager->get_last_frame();
-	
+
 	foreach(Track* track, m_tracks) {
 		AudioClip* c=track->get_clip_after(workingFrame);
-		
+
 		if ((c) && (c->get_track_start_frame() < w && c->get_track_start_frame() > workingFrame))
 			w = c->get_track_start_frame();
 	}
-	
+
 	set_work_at(w);
-	
+
 	emit setCursorAtEdge();
-	
+
 	return (Command*) 0;
 }
 
@@ -878,11 +879,11 @@ Command* Song::work_previous_edge()
 		if ((c) && (c->get_track_end_frame() >= w && c->get_track_end_frame() < workingFrame) )
 			w=c->get_track_end_frame();
 	}
-	
+
 	set_work_at(w);
-	
+
 	emit setCursorAtEdge();
-	
+
 	return (Command*) 0;
 }
 
@@ -923,21 +924,21 @@ int Song::process( nframes_t nframes )
 // 	printf("Song-%d::process transport is %d\n", m_id, transport);
 	if (!transport)
 		return 0;
-		
+
 	if (stopTransport) {
 		THREAD_SAVE_EMIT_SIGNAL(this, transferStopped(), 0);
 		transport = false;
 		realtimepath = false;
 		stopTransport = false;
-		
+
 		return 0;
 	}
 
 	// zero the masterOut buffers
 	masterOut->silence_buffers(nframes);
-	
+
 	int processResult = 0;
-	
+
 	// Process all Tracks.
 	foreach(Track* track, m_tracks) {
 		processResult |= track->process(nframes);
@@ -945,11 +946,11 @@ int Song::process( nframes_t nframes )
 
 	// update the transportFrame
 	transportFrame += nframes;
-	
+
 	if (seeking) {
 		start_seek();
 	}
-	
+
 
 	if (!processResult) {
 		return 0;
@@ -960,7 +961,7 @@ int Song::process( nframes_t nframes )
 		Mixer::mix_buffers_with_gain(playBackBus->get_buffer(0, nframes), masterOut->get_buffer(0, nframes), nframes, m_gain);
 		Mixer::mix_buffers_with_gain(playBackBus->get_buffer(1, nframes), masterOut->get_buffer(1, nframes), nframes, m_gain);
 	}
-	
+
 // 	plugin->process(playBackBus, nframes);
 
 	return 1;
@@ -976,7 +977,7 @@ int Song::process_export( nframes_t nframes )
 	foreach(Track* track, m_tracks) {
 		track->process(nframes);
 	}
-	
+
 	Mixer::apply_gain_to_buffer(masterOut->get_buffer(0, nframes), nframes, m_gain);
 	Mixer::apply_gain_to_buffer(masterOut->get_buffer(1, nframes), nframes, m_gain);
 
@@ -1061,7 +1062,7 @@ nframes_t Song::get_last_frame( ) const
 Command * Song::playhead_to_workcursor( )
 {
 	set_work_at( workingFrame );
-	
+
 	return (Command*) 0;
 }
 
@@ -1088,13 +1089,13 @@ void Song::private_remove_track(Track* track)
 // 	m_tracks.value(activeTrackNumber)->audioPluginChain->node_setup();
 // 	return (Command*) 0;
 // }
-// 
+//
 // Command* Song::remove_current_audio_plugin_controller()
 // {
 // 	m_tracks.value(activeTrackNumber)->audioPluginChain->remove_controller();
 // 	return (Command*) 0;
 // }
-// 
+//
 // Command* Song::remove_audio_plugin_controller()
 // {
 // 	m_tracks.value(activeTrackNumber)->audioPluginChain->select_controller(ie().is_holding());
@@ -1102,7 +1103,7 @@ void Song::private_remove_track(Track* track)
 // 		m_tracks.value(activeTrackNumber)->audioPluginChain->remove_controller();
 // 	return (Command*) 0;
 // }
-// 
+//
 // Command* Song::add_audio_plugin_controller()
 // {
 // 	if (ie().is_holding()) {
@@ -1115,25 +1116,25 @@ void Song::private_remove_track(Track* track)
 // 	}
 // 	return (Command*) 0;
 // }
-// 
+//
 // Command* Song::add_node()
 // {
 // 	m_tracks.value(activeTrackNumber)->audioPluginChain->add_node();
 // 	return (Command*) 0;
 // }
-// 
+//
 // Command* Song::drag_and_drop_node()
 // {
 // 	m_tracks.value(activeTrackNumber)->audioPluginChain->drag_node(ie().is_holding());
 // 	return (Command*) 0;
 // }
-// 
+//
 // Command* Song::audio_plugin_setup()
 // {
 // 	m_tracks.value(activeTrackNumber)->audioPluginChain->audio_plugin_setup();
 // 	return (Command*) 0;
 // }
-// 
+//
 // Command* Song::select_audio_plugin_controller()
 // {
 // 	if (ie().is_holding())
