@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2006 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.3 2006/06/29 11:52:34 r_sijrier Exp $
+$Id: InputEngine.cpp,v 1.4 2006/08/25 11:25:24 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -145,7 +145,7 @@ int InputEngine::broadcast_action_from_contextmenu(QString name)
 		}
 	}
 
-	if ( (action->type == HKEY) || (action->type == HKEY2) ) {
+	if ( (action->type == HOLDKEY) || (action->type == HKEY2) ) {
 		info().information(QObject::tr("Hold actions are not supported yet from Context Menu"));
 		return -1;
 	}
@@ -225,10 +225,11 @@ void InputEngine::jog()
 
 void InputEngine::set_jogging(bool jog)
 {
-	if (jog)
+/*	if (jog)
 		cpointer().grab_mouse();
 	else
 		cpointer().release_mouse();
+*/
 	isJogging = jog;
 }
 
@@ -527,7 +528,7 @@ int InputEngine::identify_first_fact()
 		} else
 		{
 			PMESG3("Detected [K]");
-			fact1Type = HKEY;
+			fact1Type = HOLDKEY;
 		}
 	}
 	else // <KK> or [KK]
@@ -674,7 +675,7 @@ int InputEngine::identify_first_and_second_facts_together()
 			)
 		) {
 			// 'i' is a candidate the whole action
-			PMESG3("Found a match : action %s", action->slotName.toAscii().data());
+			PMESG3("Found a match : action %s", action->slotName.data());
 			return ieActions.indexOf(action);
 		}
 	}
@@ -759,9 +760,9 @@ void InputEngine::finish_hold()
 	set_jogging(false);
 
 	if (holdingCommand && holdingCommand->handleByIE) {
-		
+
 		holdingCommand->finish_hold();
-		
+
 		if (holdingCommand->prepare_actions()) {
 			holdingCommand->set_valid(true);
 			holdingCommand->do_action();
@@ -867,7 +868,7 @@ int InputEngine::init_map(QString mapFilename)
 				else if (keyFactType == "FKEY2")
 					parsedActionType = FKEY2;
 				else if (keyFactType == "HKEY")
-					parsedActionType = HKEY;
+					parsedActionType = HOLDKEY;
 				else if (keyFactType == "HKEY2")
 					parsedActionType = HKEY2;
 				else if (keyFactType == "D_FKEY")
@@ -941,7 +942,7 @@ int InputEngine::init_map(QString mapFilename)
 					alone=false;
 			}
 			if (alone) {
-				PMESG3("Setting <K> fact (slot=%s) as protected (Instantaneous response)", action->slotName.toAscii().data());
+				PMESG3("Setting <K> fact (slot=%s) as protected (Instantaneous response)", action->slotName.data());
 				action->set_instantaneous(true);
 				optimizedActions++;
 			} else
@@ -958,7 +959,7 @@ int InputEngine::init_map(QString mapFilename)
 				if (
 					((t1A==c1A) && (t2A==c2A)) &&
 					(
-						(tt==HKEY)         ||
+						(tt==HOLDKEY)         ||
 						(tt==D_FKEY2)      ||
 						(tt==S_FKEY2_FKEY) ||
 						(tt==S_FKEY2_FKEY2)||
@@ -969,7 +970,7 @@ int InputEngine::init_map(QString mapFilename)
 					alone=false;
 			}
 			if (alone) {
-				PMESG3("Setting <KK> fact (slot=%s) for instantaneous response", action->slotName.toAscii().data());
+				PMESG3("Setting <KK> fact (slot=%s) for instantaneous response", action->slotName.data());
 				action->set_instantaneous(true);
 				optimizedActions++;
 			} else
@@ -1126,4 +1127,3 @@ void EventCatcher::quit_second_chance()
 }
 
 //eof
-

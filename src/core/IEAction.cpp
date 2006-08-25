@@ -1,23 +1,23 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
- 
+    Copyright (C) 2005-2006 Remon Sijrier
+
     This file is part of Traverso
- 
+
     Traverso is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
- 
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
- 
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
- 
-    $Id: IEAction.cpp,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
+
+    $Id: IEAction.cpp,v 1.2 2006/08/25 11:25:24 r_sijrier Exp $
 */
 
 #include "IEAction.h"
@@ -26,13 +26,6 @@
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
-
-IEAction::IEAction()
-                : QObject()
-{}
-
-IEAction::~IEAction()
-{}
 
 void IEAction::set
         (int pType,
@@ -53,30 +46,30 @@ void IEAction::set
         useX = newUseX;
         useY = newUseY;
         isInstantaneous = false;
-        slotName = slot;
-        name = actionName;
+        slotName = slot.toAscii().data();
+        name = actionName.toAscii().data();
         sortOrder = order;
         switch(type) {
         case	FKEY:
-                keySequence = "< " + key1 + " >";
+                keySequence = QString("< " + key1 + " >").toAscii().data();
                 break;
         case	FKEY2:
-                keySequence = "< " + key1 + " " + key2 + " >";
+                keySequence = QString("< " + key1 + " " + key2 + " >").toAscii().data();
                 break;
-        case	HKEY:
-                keySequence = "[ " + key1 + " ]";
+        case	HOLDKEY:
+                keySequence = QString("[ " + key1 + " ]").toAscii().data();
                 break;
         case	HKEY2:
-                keySequence = "[ " + key1 +  " " + key2 + " ]";
+                keySequence = QString("[ " + key1 +  " " + key2 + " ]").toAscii().data();
                 break;
         case	D_FKEY:
-                keySequence = "<< " + key1 + " >>";
+                keySequence = QString("<< " + key1 + " >>").toAscii().data();
                 break;
         case	D_FKEY2:
-                keySequence = "<< " + key1 + " " + key2 + " >>";
+                keySequence = QString("<< " + key1 + " " + key2 + " >>").toAscii().data();
                 break;
         case	S_FKEY_FKEY:
-                keySequence = "> " + key1 + " > " + key2;
+                keySequence = QString("> " + key1 + " > " + key2).toAscii().data();
                 break;
         default	:
                 keySequence = "Unknown Key Sequence";
@@ -91,5 +84,4 @@ void IEAction::set_instantaneous(bool status)
 
 
 // EOF
-
 

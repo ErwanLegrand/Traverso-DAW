@@ -17,21 +17,22 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: IEAction.h,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
+    $Id: IEAction.h,v 1.2 2006/08/25 11:25:24 r_sijrier Exp $
 */
 
 #ifndef IEACTION_H
 #define IEACTION_H
 
 #include <QString>
+#include <QByteArray>
 #include <QObject>
 
-class IEAction : public QObject
+class IEAction
 {
 public:
         //! constructs a IEAction
-        IEAction();
-        ~IEAction();
+        IEAction(){};
+        ~IEAction(){};
 
         //! set the action caracteristics
         //! @param pId
@@ -67,9 +68,9 @@ public:
         bool useX;
         bool useY;
         bool isInstantaneous;
-        QString slotName;
-        QString keySequence;
-        QString name;
+        QByteArray slotName;
+        QByteArray keySequence;
+        QByteArray name;
         int sortOrder;
 };
 
