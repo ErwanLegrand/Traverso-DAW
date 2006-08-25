@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSourceManager.cpp,v 1.7 2006/07/06 17:36:27 r_sijrier Exp $
+$Id: AudioSourceManager.cpp,v 1.8 2006/08/25 11:24:53 r_sijrier Exp $
 */
 
 #include "AudioSourceManager.h"
@@ -83,16 +83,16 @@ int AudioSourceManager::set_state( const QDomNode & node )
 }
 
 
-int AudioSourceManager::add(ReadSource* source)
-{
-	PENTER;
-	
-	sources.insert(source->get_id(), source);
-	
-	emit sourceAdded();
-	
-	return 1;
-}
+// int AudioSourceManager::add(ReadSource* source)
+// {
+// 	PENTER;
+// 	
+// 	sources.insert(source->get_id(), source);
+// 	
+// 	emit sourceAdded();
+// 	
+// 	return 1;
+// }
 
 
 int AudioSourceManager::remove(AudioSource* )
@@ -135,7 +135,11 @@ ReadSource * AudioSourceManager::new_readsource( QString dir, QString name, uint
 		newSource->set_created_by_song( -1 );
 	}
 	
-	add( newSource );
+	sources.insert(newSource->get_id(), newSource);
+	
+	newSource->ref();
+	
+	emit sourceAdded();
 		
 	return newSource;
 }

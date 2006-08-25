@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioSource.h,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
+    $Id: AudioSource.h,v 1.2 2006/08/25 11:24:53 r_sijrier Exp $
 */
 
 #ifndef AUDIOSOURCE_H
@@ -52,8 +52,8 @@ public :
         void set_created_by_song(int id);
         void set_sample_rate(int rate);
         int set_state( const QDomNode& node );
-        void set_peak(Peak* peak);
-
+        void prepare_buffer();
+        
         Peak* get_peak() const;
         QDomNode get_state(QDomDocument doc);
         QString get_filename() const;
@@ -66,9 +66,6 @@ public :
         int get_channel();
         int get_clips_count();
         bool is_active() const {return active;}
-
-        int rebuild_peaks();
-
 
 
 protected:
@@ -89,10 +86,7 @@ protected:
         qint64		m_id;
         bool			active;
 
-
-
 private:
-        void private_init();
         void create_id();
 };
 

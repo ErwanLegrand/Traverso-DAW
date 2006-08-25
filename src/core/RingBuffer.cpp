@@ -58,8 +58,12 @@ RingBuffer::RingBuffer(size_t sz)
         size_mask -= 1;
         write_ptr = 0;
         read_ptr = 0;
-        buf = new char[size]; 
+        buf = new char[size];
+         
         mlocked = 0;
+        if (mlock_buffer() < 0) {
+        	PERROR("Failed to memory lock buffer!");
+        }
 }
 
 

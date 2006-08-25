@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSourceManager.h,v 1.2 2006/05/01 22:10:58 r_sijrier Exp $
+$Id: AudioSourceManager.h,v 1.3 2006/08/25 11:24:53 r_sijrier Exp $
 */
 
 #ifndef AUDIOSOURCEMANAGER_H
@@ -42,7 +42,6 @@ public:
 
 	ReadSource* new_readsource(QString dir, QString name, uint channel, int songId, int bitDepth, int rate=0 );
 	
-	int add (ReadSource*  source);
 	int remove (AudioSource* source);
 	int set_state( const QDomNode& node );
 

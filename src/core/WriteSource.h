@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier 
+Copyright (C) 2006 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.h,v 1.1 2006/04/20 14:51:40 r_sijrier Exp $
+$Id: WriteSource.h,v 1.2 2006/08/25 11:24:53 r_sijrier Exp $
 */
 
 #ifndef WRITESOURCE_H
@@ -25,7 +25,9 @@ $Id: WriteSource.h,v 1.1 2006/04/20 14:51:40 r_sijrier Exp $
 
 #include "AudioSource.h"
 
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 #include <samplerate.h>
+#endif
 #include "gdither.h"
 
 struct ExportSpecification;
@@ -50,9 +52,9 @@ public :
 
 	void set_process_peaks(bool process);
 	void set_recording(bool rec);
-	
+
 	bool is_recording();
-	
+
 	ExportSpecification*		spec;
 
 private:
@@ -62,21 +64,22 @@ private:
 	uint				channels;
 	uint32_t       		sample_bytes;
 	nframes_t      		leftover_frames;
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 	SRC_DATA        	src_data;
 	SRC_STATE*     	src_state;
+#endif
 	nframes_t      		max_leftover_frames;
 	float*			leftoverF;
 	float*			dataF2;
 	void*               		output_data;
 	bool				processPeaks;
 	bool				recording;
-	
+
 signals:
 	void exportFinished(WriteSource* );
 };
 
 #endif
-
 
 
 

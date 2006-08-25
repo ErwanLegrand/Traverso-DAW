@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.cpp,v 1.9 2006/08/07 19:16:23 r_sijrier Exp $
+$Id: ReadSource.cpp,v 1.10 2006/08/25 11:24:53 r_sijrier Exp $
 */
 
 #include "ReadSource.h"
@@ -58,9 +58,6 @@ ReadSource::ReadSource(uint chan, QString dir, QString name)
 ReadSource::ReadSource( AudioSource * source )
 		: AudioSource(source->get_channel(), source->get_dir(), source->get_name()), refcount(0)
 {
-	m_peak = source->get_peak();
-	m_peak->set_audiosource(this);
-	source->set_peak(0);
 	init();
 }
 
@@ -115,6 +112,9 @@ int ReadSource::init( )
 	}
 
 	m_length = sfinfo.frames;
+	
+	m_peak = new Peak(this);
+	
 	return 1;
 }
 

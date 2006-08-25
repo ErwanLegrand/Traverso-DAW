@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier 
+Copyright (C) 2006 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.cpp,v 1.6 2006/07/06 17:38:03 r_sijrier Exp $
+$Id: WriteSource.cpp,v 1.7 2006/08/25 11:24:53 r_sijrier Exp $
 */
 
 #include "WriteSource.h"
@@ -68,7 +68,7 @@ int WriteSource::process (nframes_t nframes)
 	char errbuf[256];
 	nframes_t to_write = 0;
 	int cnt = 0;
-	
+
 	// nframes MUST be greater then 0, this is a precondition !
 	Q_ASSERT(nframes);
 
@@ -78,6 +78,8 @@ int WriteSource::process (nframes_t nframes)
 		/* now do sample rate conversion */
 
 		if (sample_rate != spec->sample_rate) {
+
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 
 			int err;
 
@@ -106,7 +108,6 @@ int WriteSource::process (nframes_t nframes)
 
 					src_data.input_frames = leftover_frames;
 				}
-
 			} else {
 
 				src_data.data_in = spec->dataF;
@@ -135,6 +136,7 @@ int WriteSource::process (nframes_t nframes)
 
 			float_buffer = dataF2;
 
+#endif
 		} else {
 
 			/* no SRC, keep it simple */
@@ -233,7 +235,6 @@ int WriteSource::process (nframes_t nframes)
 int WriteSource::prepare_export (ExportSpecification* spec)
 {
 	PENTER;
-
 	char errbuf[256];
 	GDitherSize dither_size;
 
@@ -243,7 +244,10 @@ int WriteSource::prepare_export (ExportSpecification* spec)
 	dataF2 = leftoverF = 0;
 	dither = 0;
 	output_data = 0;
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 	src_state = 0;
+#endif
+	
 
 	switch (spec->data_width) {
 	case 8:
@@ -285,6 +289,7 @@ int WriteSource::prepare_export (ExportSpecification* spec)
 
 
 	if (spec->sample_rate != sample_rate) {
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 		qDebug("Doing samplerate conversion");
 		int err;
 
@@ -300,7 +305,7 @@ int WriteSource::prepare_export (ExportSpecification* spec)
 		max_leftover_frames = 4 * spec->blocksize;
 		leftoverF = new audio_sample_t[max_leftover_frames * channels];
 		leftover_frames = 0;
-
+#endif
 	} else {
 		out_samples_max = spec->blocksize * channels;
 	}
@@ -332,6 +337,9 @@ int WriteSource::prepare_export (ExportSpecification* spec)
 		output_data = (void*) malloc (sample_bytes * out_samples_max);
 	}
 
+	
+	m_peak = new Peak(this);
+	
 	return 0;
 }
 
@@ -359,13 +367,15 @@ int WriteSource::finish_export( )
 		output_data = 0;
 	}
 
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 	if (src_state) {
 		src_delete (src_state);
 		src_state = 0;
 	}
+#endif
 
 	if (processPeaks)
-		m_peak->finish_process_buffer();
+		m_peak->finish_processing();
 
 /*	printf("WriteSource :: thread id is: %ld\n", QThread::currentThreadId ());
 	PWARN("WriteSource :: emiting exportFinished");*/
@@ -376,20 +386,20 @@ int WriteSource::finish_export( )
 
 int WriteSource::rb_write( const audio_sample_t * src, nframes_t start, nframes_t cnt )
 {
-	int written = m_buffer->write( (char*)src, cnt * sizeof(audio_sample_t)) / sizeof(audio_sample_t); 
+	int written = m_buffer->write( (char*)src, cnt * sizeof(audio_sample_t)) / sizeof(audio_sample_t);
 	return written;
 }
 
 void WriteSource::set_process_peaks( bool process )
 {
 	processPeaks = process;
-	m_peak->prepare_process_buffer();
+	m_peak->prepare_processing();
 }
 
 int WriteSource::rb_file_write( nframes_t cnt )
 {
 	int read = m_buffer->read((char*)spec->dataF, cnt * sizeof(audio_sample_t)) / sizeof(audio_sample_t);
-	
+
 	if (read > 0) {
 		process(read);
 	}
@@ -411,7 +421,7 @@ int WriteSource::process_ringbuffer( audio_sample_t* framebuffer)
 {
 	spec->dataF = framebuffer;
 	int readSpace = m_buffer->read_space() / sizeof(audio_sample_t);
-	
+
 	if (  ! recording ) {
 		PWARN("Writing remaining  (%d) samples to ringbuffer", readSpace);
 		rb_file_write(readSpace);
@@ -419,11 +429,11 @@ int WriteSource::process_ringbuffer( audio_sample_t* framebuffer)
 		finish_export();
 		return 1;
 	}
-	
+
 	if (readSpace > 4096) {
 		rb_file_write(readSpace);
 	}
-	
+
 	return 0;
 }
 

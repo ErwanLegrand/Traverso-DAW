@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSource.cpp,v 1.4 2006/07/05 11:11:15 r_sijrier Exp $
+$Id: AudioSource.cpp,v 1.5 2006/08/25 11:24:53 r_sijrier Exp $
 */
 
 #include <QDateTime>
@@ -38,21 +38,19 @@ $Id: AudioSource.cpp,v 1.4 2006/07/05 11:11:15 r_sijrier Exp $
 
 // This constructor is called during file import
 AudioSource::AudioSource(uint chanNumber, QString dir, QString name)
-		: sf(0), channelNumber(chanNumber), m_dir(dir), m_name(name)
+		: m_buffer(0), sf(0), channelNumber(chanNumber), m_dir(dir), m_name(name)
 {
 	PENTERCONS;
 	m_filename = m_dir + "/" + m_name;
 	create_id();
-	private_init();
 }
 
 
 // This constructor is called for existing (recorded/imported) audio sources
 AudioSource::AudioSource(const QDomNode node)
-	: sf(0)
+	: m_buffer(0), sf(0)
 {
 	set_state(node);
-	private_init();
 }
 
 
@@ -70,13 +68,9 @@ AudioSource::~AudioSource()
 }
 
 
-void AudioSource::private_init( )
+void AudioSource::prepare_buffer( )
 {
 	m_buffer = new RingBuffer(131072 * sizeof(audio_sample_t));
-	m_buffer->mlock_buffer();
-	m_buffer->reset();
-	m_peak = new Peak(this);
-	active = true;
 }
 
 
@@ -103,16 +97,6 @@ int AudioSource::set_state( const QDomNode & node )
 	m_originalBitDepth = e.attribute( "bitdepth", "" ).toInt();
 	createdBySong = e.attribute( "createdBySong", "" ).toInt();
 	channelNumber = e.attribute( "channelNumber", "" ).toInt();
-	return 1;
-}
-
-
-int AudioSource::rebuild_peaks()
-{
-	PENTER;
-	if (m_peak)
-		delete m_peak;
-	m_peak = new Peak(this);
 	return 1;
 }
 
@@ -167,11 +151,6 @@ void AudioSource::create_id( )
 nframes_t AudioSource::get_nframes( ) const
 {
 	return sfinfo.frames;
-}
-
-void AudioSource::set_peak( Peak * peak )
-{
-	m_peak = peak;
 }
 
 void AudioSource::set_original_bit_depth( uint bitDepth )

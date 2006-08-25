@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier 
+Copyright (C) 2006 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.12 2006/08/07 19:16:23 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.13 2006/08/25 11:24:53 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
@@ -38,6 +38,10 @@ DiskIOThread::DiskIOThread(DiskIO* diskio)
 {
 	realtime = false;
 	m_diskio = diskio;
+
+#ifndef MAC_OS_BUILD
+	setStackSize(20000);
+#endif
 }
 
 void DiskIOThread::run()
@@ -48,6 +52,7 @@ void DiskIOThread::run()
 
 void DiskIOThread::become_realtime( bool becomerealtime )
 {
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 	if (becomerealtime) {
 		struct sched_param param;
 		param.sched_priority = 50;
@@ -67,6 +72,7 @@ void DiskIOThread::become_realtime( bool becomerealtime )
 			PWARN("Running with SCED_OTHER value 0");
 		}
 	}
+#endif
 }
 
 
@@ -77,9 +83,6 @@ DiskIO::DiskIO()
 {
 	diskThread = new DiskIOThread(this);
 	// Set the thread stack size. 0.2 MB should do IMHO
-#ifndef MAC_OS_BUILD
-	diskThread->setStackSize(200000);
-#endif
 	seeking = false;
 	stopWork = false;
 	cpuTimeBuffer = new RingBuffer(2048);
@@ -110,14 +113,14 @@ void DiskIO::seek( nframes_t position )
 {
 	PMESG2("DiskIO :: Entering seek");
 	PMESG2("DiskIO :: thread id is: %ld", QThread::currentThreadId ());
-	
+
 	stopWork = false;
 	seeking = true;
 
 	// First, reset all buffers, and set new readPos.
-	
+
 	mutex.lock();
-	
+
 	foreach(ReadSource* source, readSources) {
 		if (source->need_sync())
 			continue;
@@ -125,14 +128,14 @@ void DiskIO::seek( nframes_t position )
 	}
 
 	mutex.unlock();
-	
+
 	// Now, fill the buffers like normal
 	do_work();
 
 	seeking = false;
-	
+
 	workTimer.start(20);
-	
+
 	emit seekFinished();
 
 	PMESG2("DiskIO :: Leaving seek");
@@ -141,39 +144,39 @@ void DiskIO::seek( nframes_t position )
 void DiskIO::do_work( )
 {
 	QMutexLocker locker(&mutex);
-	
+
 	// 	printf("DiskIO :: Entering do_work\n");
 	//  	printf("DiskIO :: thread id is: %ld\n", QThread::currentThreadId ());
 
 	/* Process WriteSources */
-	
+
 	cycleStartTime = get_microseconds();
-	
+
 	for (int i=0; i<writeSources.size(); i++) {
-		
+
 		if (writeSources.at(i)->process_ringbuffer(framebuffer) == 1) {
 			writeSources.removeAt( i );
 		}
-		
+
 	}
-	
+
 	update_time_usage();
 
 	/* END Process WriteSources */
-	
+
 
 	/* Process ReadSources */
-	
+
 	cycleStartTime = get_microseconds();
 
 	foreach(ReadSource* source, readSources) {
-		
+
 		if (stopWork) {
 			workTimer.stop();
 			update_time_usage();
 			return;
 		}
-		
+
 		if ( ! source->is_active() )
 			continue;
 
@@ -183,14 +186,14 @@ void DiskIO::do_work( )
 			source->set_rb_ready(true);
 			continue;
 		}
-		
+
 		source->process_ringbuffer(framebuffer);
 	}
-	
+
 	update_time_usage();
-	
+
 	/* END Process ReadSources */
-	
+
 	// 	printf("DiskIO :: Leaving do_work\n\n");
 }
 
@@ -221,16 +224,22 @@ int DiskIO::stop( )
 void DiskIO::register_read_source (ReadSource* source )
 {
 	PENTER2;
-	QMutexLocker locker(&mutex);
 	
+	source->prepare_buffer();
+	
+	QMutexLocker locker(&mutex);
+
 	readSources.append(source);
 }
 
 void DiskIO::register_write_source( WriteSource * source )
 {
 	PENTER2;
-	QMutexLocker locker(&mutex);
 	
+	source->prepare_buffer();
+	
+	QMutexLocker locker(&mutex);
+
 	writeSources.append(source);
 }
 
