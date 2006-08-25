@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ViewItem.cpp,v 1.2 2006/04/25 17:18:31 r_sijrier Exp $
+    $Id: ViewItem.cpp,v 1.3 2006/08/25 11:17:58 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -103,7 +103,7 @@ void ViewItem::init_context_menu( ViewItem * item )
 
         QAction* action;
         foreach(IEAction* ieaction, IEActionList) {
-                QString text = ieaction->keySequence + "  " + ieaction->name;
+                QString text = QString(ieaction->keySequence + "  " + ieaction->name);
                 action = new QAction(this);
                 action->setText(text);
                 action->setData(ieaction->name);

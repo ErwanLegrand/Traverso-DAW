@@ -138,3 +138,10 @@ unix {
 macx {
 	LIBS -= -lasound
 }
+
+win32 {
+	LIBS -= -lslv2 -lsamplerate
+
+	INCLUDEPATH -= ../../src/plugins/LV2
+
+}

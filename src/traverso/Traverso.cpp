@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2006 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Traverso.cpp,v 1.8 2006/07/28 13:12:38 r_sijrier Exp $
+$Id: Traverso.cpp,v 1.9 2006/08/25 11:18:08 r_sijrier Exp $
 */
 
 #include <signal.h>
@@ -55,22 +55,24 @@ Traverso::Traverso(int argc, char **argv )
 	QCoreApplication::setApplicationName("Traverso");
 
 
-	interface = new Interface();
+	iface = new Interface();
 
 	init();
 
-	interface->create();
-
-	QMetaObject::invokeMethod(this, "prepare_audio_device", Qt::QueuedConnection);
+	iface->create();
+	prepare_audio_device();
+// 	pm().start();
+	iface->show();
+// 	QMetaObject::invokeMethod(this, "prepare_audio_device", Qt::QueuedConnection);
 	QMetaObject::invokeMethod(&pm(), "start", Qt::QueuedConnection);
-	
+
 	connect(this, SIGNAL(lastWindowClosed()), &pm(), SLOT(exit()));
 }
 
 Traverso::~Traverso()
 {
 	PENTERDES;
-	delete interface;
+	delete iface;
 }
 
 
@@ -121,7 +123,7 @@ void Traverso::shutdown( int signal )
 		break;
 	case SIGSEGV:
 		printf("\nCatched the SIGSEGV signal!\n");
-		switch (QMessageBox::critical( interface, "Crash",
+		switch (QMessageBox::critical( iface, "Crash",
 					"The program made an invalid operation and crashed :-(\n"
 					"should I try to save your work?",
 					"Yes",
@@ -214,13 +216,13 @@ int Traverso::init( )
 				tr("Choose an existing or create a new Project Directory"),
 				projects_path);
 		if (dir.exists(newPath)) {
-			QMessageBox::information( interface, tr("Traverso - Information"), tr("Using existing Project directory: %1\n").arg(newPath), "OK", 0 );
+			QMessageBox::information( iface, tr("Traverso - Information"), tr("Using existing Project directory: %1\n").arg(newPath), "OK", 0 );
 		} else if (!dir.mkpath(newPath)) {
-			QMessageBox::warning( interface, tr("Traverso - Warning"), tr("Unable to create Project directory! \n") +
+			QMessageBox::warning( iface, tr("Traverso - Warning"), tr("Unable to create Project directory! \n") +
 					tr("Please check permission for this directory: %1").arg(newPath) );
 			return -1;
 		} else {
-			QMessageBox::information( interface, tr("Traverso - Information"), tr("Created new Project directory for you here: %1\n").arg(newPath), "OK", 0 );
+			QMessageBox::information( iface, tr("Traverso - Information"), tr("Created new Project directory for you here: %1\n").arg(newPath), "OK", 0 );
 		}
 		settings.setValue("Project/directory", newPath);
 	}
@@ -256,11 +258,11 @@ void Traverso::prepare_audio_device( )
 	}
 
 	audiodevice().set_parameters(rate, bufferSize, driverType);
-	
+
 	// tsar is a singleton, so initialization is done on first tsar() call
 	// However, if we do so by adding/removing an object in/out the audioprocessing path
 	// the addRemoveRetryTimer QTimer complains, don't know why.
-	// So it seems to be a good idea to initialize tsar at the same time the audiodevice is 
+	// So it seems to be a good idea to initialize tsar at the same time the audiodevice is
 	// up and running, though this shouldn't be needed!!!!!
 	tsar();
 }
@@ -280,4 +282,3 @@ void Traverso::commitData( QSessionManager &  )
 
 
 // eof
-

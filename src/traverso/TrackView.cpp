@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2006 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.10 2006/07/31 13:27:27 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.11 2006/08/25 11:17:58 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -36,7 +36,9 @@ $Id: TrackView.cpp,v 1.10 2006/07/31 13:27:27 r_sijrier Exp $
 #include "BusSelector.h"
 #include "PluginChainView.h"
 
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 #include <PluginSelectorDialog.h>
+#endif
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -60,9 +62,9 @@ TrackView::TrackView(ViewPort* vp, SongView* parent, Track* track)
 
 	busInMenu = new QMenu();
 	busOutMenu = new QMenu();
-	
+
 	pluginChainView = new PluginChainView(m_vp, this);
-	
+
 	muteLed = new PanelLed(m_vp, this, MUTE_LED_X, ":/muteled_on", ":/muteled_off");
 	soloLed = new PanelLed(m_vp, this, SOLO_LED_X, ":/sololed_on", ":/sololed_off");
 	recLed = new PanelLed(m_vp, this, REC_LED_X, ":recled_on", ":/recled_off");
@@ -130,7 +132,7 @@ QRect TrackView::draw(QPainter& p)
 		clear_clip_area(p);
 		paintClipArea = false;
 	}
-	
+
 	return QRect();
 }
 
@@ -146,7 +148,7 @@ void TrackView::draw_panel_gain()
 	int sliderx=10;
 	float gain = m_track->get_gain();
 	QString s, sgain;
-	
+
 	p.setPen(cm().get("TRACK_PANEL_TEXT"));
 	p.setFont( QFont( "Bitstream Vera Sans", (int)(GAIN_H*0.9)) );
 
@@ -161,7 +163,7 @@ void TrackView::draw_panel_gain()
 
 
 	float db = coefficient_to_dB(gain);
-	
+
 	if (db < -60)
 		db = -60;
 	int sliderdbx =  (int) (sliderWidth - (sliderWidth*0.3)) - (int) ( ( (-1 * db) / 60 ) * sliderWidth);
@@ -326,7 +328,7 @@ void TrackView::clear_clip_area(QPainter& p)
 				xs=w;
 			else
 				xs=0;
-	
+
 			if ((xre>=0) && (xre<w))
 				xe=xre;
 			else if (xre>=0)
@@ -417,14 +419,14 @@ void TrackView::resize( )
 // {
 // 	return (Command*) 0;
 // }
-// 
-// 
+//
+//
 // Command* TrackView::capture_from_channel_left()
 // {
 // 	return (Command*) 0;
 // }
-// 
-// 
+//
+//
 // Command* TrackView::capture_from_channel_right()
 // {
 // 	return (Command*) 0;
@@ -511,12 +513,12 @@ Command * TrackView::edit_properties( )
 {
 	bool ok;
 	QString text = QInputDialog::getText(m_vp, tr("Set Track name"),
-					tr("Enter new Track name"), 
+					tr("Enter new Track name"),
 					QLineEdit::Normal, m_track->get_name(), &ok, Qt::Tool);
 	if (ok && !text.isEmpty()) {
 		m_track->set_name(text);
 	}
-	
+
 	return (Command*) 0;
 }
 
@@ -530,7 +532,7 @@ void TrackView::delete_my_viewitems( )
 	delete muteLed;
 	delete lockLed;
 	delete recLed;
-	
+
 	foreach(AudioClipView* view, audioClipViewList) {
 		m_vp->unregister_viewitem(view);
 		delete view;
@@ -539,15 +541,16 @@ void TrackView::delete_my_viewitems( )
 
 Command * TrackView::add_new_plugin( )
 {
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 	if (PluginSelectorDialog::instance()->exec() == QDialog::Accepted) {
 		Plugin* plugin = PluginSelectorDialog::instance()->get_selected_plugin();
 		if (plugin) {
 			m_track->add_plugin(plugin);
 		}
 	}
-	
+
+#endif
 	return 0;
-	
 }
 
 //eof
