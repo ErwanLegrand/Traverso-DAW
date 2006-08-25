@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier 
+Copyright (C) 2006 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginSelectorDialog.cpp,v 1.1 2006/07/31 13:27:59 r_sijrier Exp $
+$Id: PluginSelectorDialog.cpp,v 1.2 2006/08/25 11:17:18 r_sijrier Exp $
 */
 
 #include "PluginSelectorDialog.h"
@@ -26,7 +26,9 @@ $Id: PluginSelectorDialog.cpp,v 1.1 2006/07/31 13:27:59 r_sijrier Exp $
 #include <QStandardItemModel>
 #include <QHeaderView>
 
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 #include <LV2Plugin.h>
+#endif
 #include <Plugin.h>
 #include <PluginManager.h>
 #include <Information.h>
@@ -46,27 +48,28 @@ PluginSelectorDialog::PluginSelectorDialog( QWidget * p )
 	QModelIndex parent;
 
 	model->insertColumns(0, 2, parent);
-	
+
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 	SLV2List pluginList = PluginManager::instance()->get_slv2_plugin_list();
-	
+
 	for (uint i=0; i < slv2_list_get_length(pluginList); ++i) {
 		const SLV2Plugin* const p = slv2_list_get_plugin_by_index(pluginList, i);
-		
+
 		model->insertRows(i, 1, parent);
 		QModelIndex index = model->index(i, 0, parent);
 		model->setData(index, QString( (char*) slv2_plugin_get_name(p)) );
 		index = model->index(i, 1, parent);
 		model->setData(index, QString( (char*) slv2_plugin_get_uri(p)) );
 	}
-	
-	
+#endif
+
 	pluginTreeView->setModel(model);
-	
+
 	QStringList stringList;
 	stringList << "Name" << "Uri";
-	
+
 	pluginTreeView->header()->resizeSection(0, 200);
-	
+
 	connect(pluginTreeView, SIGNAL(doubleClicked(QModelIndex& index )), this, SLOT(model_double_clicked( const QModelIndex& index )));
 }
 
@@ -79,16 +82,17 @@ void PluginSelectorDialog::on_cancelButton_clicked( )
 
 void PluginSelectorDialog::on_okButton_clicked( )
 {
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 	LV2Plugin* plugin = 0;
-	
-	
+
+
 	QModelIndex index = pluginTreeView->currentIndex();
 	if (index.column() == 0)
 		index = index.model()->index(index.row(), 1);
-		
+
 	if (index.isValid()) {
 		QByteArray uri(index.data().toString().toAscii().data());
-		
+
 		plugin = new LV2Plugin(uri.data());
 		if (plugin->init() > 0) {
 			m_plugin = plugin;
@@ -101,8 +105,9 @@ void PluginSelectorDialog::on_okButton_clicked( )
 	} else {
 		printf("no index selected\n");
 	}
-	
+
 	m_plugin = plugin;
+#endif
 }
 
 
@@ -115,7 +120,7 @@ PluginSelectorDialog* PluginSelectorDialog::instance()
 	if (m_instance == 0) {
 		m_instance = new PluginSelectorDialog();
 	}
-	
+
 	return m_instance;
 }
 
@@ -123,7 +128,7 @@ Plugin* PluginSelectorDialog::get_selected_plugin( )
 {
 	Plugin* plugin = m_plugin;
 	m_plugin = 0;
-	
+
 	return plugin;
 }
 

@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2006 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Driver.cpp,v 1.2 2006/04/25 17:23:06 r_sijrier Exp $
+$Id: Driver.cpp,v 1.3 2006/08/25 11:13:17 r_sijrier Exp $
 */
 
 #include "Driver.h"
@@ -52,7 +52,7 @@ int Driver::_run_cycle( )
 	// / 2, 2 bytes (16 bit)
 	device->transport_cycle_end (get_microseconds());
 
-	usleep(23000);
+	device->mili_sleep(23);
 
 	device->transport_cycle_start (get_microseconds());
 
@@ -89,16 +89,16 @@ int Driver::attach( )
 	int port_flags;
 	char buf[32];
 	AudioChannel* chan;
-	
+
 	device->set_buffer_size (frames_per_cycle);
 	device->set_sample_rate (frame_rate);
-	
+
 	port_flags = PortIsOutput|PortIsPhysical|PortIsTerminal;
-	
+
 	// Create 2 fake capture channels
 	for (uint chn=0; chn<2; chn++) {
 		snprintf (buf, sizeof(buf) - 1, "capture_%d", chn+1);
-		
+
 		chan = device->register_capture_channel(buf, JACK_DEFAULT_AUDIO_TYPE, port_flags, frames_per_cycle, chn);
 		chan->set_latency( frames_per_cycle + capture_frame_latency );
 		captureChannels.append(chan);
@@ -107,7 +107,7 @@ int Driver::attach( )
 	// Create 2 fake playback channels
 	for (uint chn=0; chn<2; chn++) {
 		snprintf (buf, sizeof(buf) - 1, "playback_%d", chn+1);
-		
+
 		chan = device->register_playback_channel(buf, JACK_DEFAULT_AUDIO_TYPE, port_flags, frames_per_cycle, chn);
 		chan->set_latency( frames_per_cycle + capture_frame_latency );
 		playbackChannels.append(chan);
@@ -143,4 +143,3 @@ QString Driver::get_device_longname( )
 
 
 //eof
-

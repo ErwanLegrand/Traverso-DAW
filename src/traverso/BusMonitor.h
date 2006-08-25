@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2006 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: BusMonitor.h,v 1.2 2006/04/25 17:22:13 r_sijrier Exp $
+$Id: BusMonitor.h,v 1.3 2006/08/25 11:16:18 r_sijrier Exp $
 */
 
 #ifndef BUSMONITOR_H
@@ -35,7 +35,7 @@ class BusMonitor :  public QWidget
 	Q_OBJECT
 
 public:
-	BusMonitor(QWidget* parent, Interface* interface);
+	BusMonitor(QWidget* parent, Interface* iface);
 	~BusMonitor();
 
 protected:

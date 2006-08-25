@@ -7,7 +7,7 @@ include(../libbase.pri)
 
 #PRECOMPILED_HEADER = libtraverso.h 
 
-INCLUDEPATH += ../../src/core
+INCLUDEPATH += ../../src/core ./ ./build
 
 TARGET = traversoaudiobackend
 DESTDIR = ../../lib 
@@ -19,35 +19,39 @@ HEADERS += AudioDevice.h \
 	   AudioBus.h \
 	   AudioDeviceThread.h \
 	   Client.h \
-	   AlsaDriver.h \
 	   JackDriver.h \
 	   AudioChannel.h \
 	   Driver.h \
 	   memops.h \
-           libtraverso.h \
-           AudioPlugin.h \
-           bitset.h \
-           defines.h
+         libtraverso.h \
+#         AudioPlugin.h \
+         bitset.h \
+         defines.h
 
 SOURCES += AudioDevice.cpp \
 	   AudioBus.cpp \
 	   AudioDeviceThread.cpp \
 	   Client.cpp \
-	   AlsaDriver.cpp \
 	   JackDriver.cpp \
 	   Driver.cpp \
 	   AudioChannel.cpp \
 	   memops.cpp \
-           AudioPlugin.cpp
+ #          AudioPlugin.cpp
 
 unix {
+	SOURCES += AlsaDriver.cpp
+	HEADERS += AlsaDriver.h
 	contains(DEFINES, SSE_OPTIMIZATIONS):SOURCES += sse_functions.s
 }
 
 
 macx {
-	SOURCES -= AlsaDriver.cpp
-	HEADERS -= AlsaDriver.h
 	LIBS -= -lasound
-	QMAKE_LIBDIR += /usr/local/qt/lib
+	QMAKE_LIBDIR += /usr/local/qt/lib 
+}
+
+win32 {
+	LIBS -= -lasound
+	SOURCES -= JackDriver.cpp
+	HEADERS -= JackDriver.h
 }

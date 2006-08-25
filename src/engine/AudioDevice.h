@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2006 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.7 2006/07/05 11:11:15 r_sijrier Exp $
+$Id: AudioDevice.h,v 1.8 2006/08/25 11:13:17 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -31,8 +31,6 @@ $Id: AudioDevice.h,v 1.7 2006/07/05 11:11:15 r_sijrier Exp $
 
 #include "RingBuffer.h"
 #include "defines.h"
-
-#include <sys/time.h>
 
 class AudioDeviceThread;
 class Driver;
@@ -56,7 +54,7 @@ public:
 
 	void add_client(Client* client);
 	void remove_client(Client* client);
-	
+
 	AudioChannel* get_playback_channel(QByteArray name);
 	AudioChannel* get_capture_channel(QByteArray name);
 
@@ -85,12 +83,14 @@ public:
 	{
 		return clients;
 	}
-	
+
 	Driver* get_driver() const
 	{
 		return driver;
 	}
-	
+
+	void mili_sleep(int msec);
+
 	nframes_t get_buffer_size()
 	{
 		return m_bufferSize;
@@ -122,7 +122,7 @@ public:
 
 
 	trav_time_t get_cpu_time();
- 
+
 
 private:
 	AudioDevice();
@@ -156,10 +156,10 @@ private:
 	uint 			m_rate;
 	uint			m_bitdepth;
 	QString			m_driverType;
-	
+
 	int run_one_cycle(nframes_t nframes, float delayed_usecs);
 	int create_driver(QString driverType);
-	
+
 	void setup_buses();
 	void post_process();
 	void free_memory();
@@ -176,7 +176,7 @@ signals:
 	void xrun();
 	void add_client_Signal();
 	void clientRemoved(Client* );
-	
+
 private slots:
 	void private_add_client(Client* client);
 	void private_remove_client(Client* client);
@@ -186,15 +186,6 @@ static inline unsigned int is_power_of_two (unsigned int n)
 {
 	return !(n & (n - 1));
 }
-
-static inline trav_time_t get_microseconds()
-{
-	struct timeval now;
-	gettimeofday(&now, 0);
-	trav_time_t time = (now.tv_sec * 1000000.0 + now.tv_usec);
-	return time;
-}
-
 
 // use this function to get the audiodevice object
 AudioDevice& audiodevice();

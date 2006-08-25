@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2005-2006 Remon Sijrier 
+	Copyright (C) 2005-2006 Remon Sijrier
 
 	This file is part of Traverso
 
@@ -17,7 +17,7 @@
 	along with this program; if not, write to the Free Software
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-	$Id: Main.cpp,v 1.3 2006/06/28 12:06:00 r_sijrier Exp $
+	$Id: Main.cpp,v 1.4 2006/08/25 11:17:04 r_sijrier Exp $
 */
 
 #include <signal.h>
@@ -38,6 +38,7 @@ Traverso* traverso;
 int signalcount = 0;
 
 
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 void catch_signal(int sig_num)
 {
 	if (!signalcount) {
@@ -50,16 +51,17 @@ void catch_signal(int sig_num)
 		exit(-1);
 	}
 }
-
+#endif
 
 int main( int argc, char **argv )
 {
 	TRACE_OFF();
 	MEM_ON();
 
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 	signal(SIGINT, catch_signal);
 	signal(SIGSEGV, catch_signal);
-
+#endif
 
 	Debugger::set_debug_level(Debugger::OFF);
 	if (argc > 1) {
@@ -127,5 +129,4 @@ int main( int argc, char **argv )
 	printf("Thank you for using Traverso !\n");
 	return 0;
 }
-
 

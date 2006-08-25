@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2006 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: BusMonitor.cpp,v 1.3 2006/06/16 14:11:31 r_sijrier Exp $
+$Id: BusMonitor.cpp,v 1.4 2006/08/25 11:16:18 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -31,17 +31,17 @@ $Id: BusMonitor.cpp,v 1.3 2006/06/16 14:11:31 r_sijrier Exp $
 #include "Debugger.h"
 
 
-BusMonitor::BusMonitor(QWidget* parent, Interface* interface)
+BusMonitor::BusMonitor(QWidget* parent, Interface* iface)
 		: QWidget( parent)
 {
 	PENTERCONS;
-	m_interface = interface;
+	m_interface = iface;
 	layout = new QHBoxLayout(this);
 	layout->setMargin(0);
 
 	vumeterLayoutWidget = new QWidget(this);
 	vumeterLayout = new QHBoxLayout(vumeterLayoutWidget);
-	
+
 	vumeterLayout->setMargin(0);
 
 	vumeterLayoutWidget->setLayout(vumeterLayout);
@@ -68,26 +68,26 @@ void BusMonitor::resizeEvent( QResizeEvent * )
 void BusMonitor::create_vu_meters( )
 {
 	PENTER;
-	
+
 	vumeterLayout->setEnabled(false);
-	
+
 	while( ! inMeters.isEmpty() ) {
 		VUMeter* meter = inMeters.takeFirst();
 		vumeterLayout->removeWidget( meter );
 		delete meter;
 	}
-		
+
 	while ( ! outMeters.isEmpty() ) {
 		VUMeter* meter = outMeters.takeFirst();
 		vumeterLayout->removeWidget( meter );
 		delete meter;
 	}
-	
-	
+
+
 	QStringList list = audiodevice().get_capture_buses_names();
 	foreach(QString name, list)
 	{
-		AudioBus* bus = audiodevice().get_capture_bus(name.toAscii());	
+		AudioBus* bus = audiodevice().get_capture_bus(name.toAscii());
 // 		bus->set_monitor_peaks(true);
 		VUMeter* meter = new VUMeter( vumeterLayoutWidget, bus );
 		vumeterLayout->addWidget(meter);
@@ -101,11 +101,11 @@ void BusMonitor::create_vu_meters( )
 		vumeterLayout->addWidget(meter);
 		outMeters.append(meter);
 	}
-	
+
 /*	AudioBus* bus = audiodevice().get_capture_bus("Capture 1");
 	if (bus)
 		bus->set_monitor_peaks(true);*/
-	
+
 	vumeterLayout->setEnabled(true);
 }
 

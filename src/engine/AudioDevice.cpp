@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2006 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.11 2006/07/27 19:07:15 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.12 2006/08/25 11:13:17 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -27,7 +27,9 @@ $Id: AudioDevice.cpp,v 1.11 2006/07/27 19:07:15 r_sijrier Exp $
 #include "AlsaDriver.h"
 #endif
 
+#if defined (JACK_SUPPORT)
 #include "JackDriver.h"
+#endif
 #include "Driver.h"
 #include "Client.h"
 #include "AudioChannel.h"
@@ -35,7 +37,7 @@ $Id: AudioDevice.cpp,v 1.11 2006/07/27 19:07:15 r_sijrier Exp $
 #include "Tsar.h"
 
 
-#include <sys/mman.h>
+//#include <sys/mman.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -53,7 +55,7 @@ AudioDevice::AudioDevice()
 	driver = 0;
 	audioThread = 0;
 	cpuTimeBuffer = new RingBuffer(4096);
-	
+
 	m_driverType = tr("No Driver Loaded");
 
 #if defined (JACK_SUPPORT)
@@ -69,6 +71,8 @@ AudioDevice::AudioDevice()
 
 AudioDevice::~AudioDevice()
 {
+	PENTERDES;
+
 	if (driver)
 		delete driver;
 
@@ -130,7 +134,7 @@ int AudioDevice::run_cycle( nframes_t nframes, float delayed_usecs )
 	}
 
 	post_process();
-	
+
 	return 1;
 }
 
@@ -171,14 +175,14 @@ uint AudioDevice::playback_buses_count( )
 void AudioDevice::set_parameters( int rate, nframes_t bufferSize, QString driverType )
 {
 	PENTER;
-	
+
 	m_rate = rate;
 	m_bufferSize = bufferSize;
 
 	if (driver) {
-		
+
 		emit stopped();
-		
+
 		if (audioThread) {
 			shutdown();
 		}
@@ -212,7 +216,7 @@ void AudioDevice::set_parameters( int rate, nframes_t bufferSize, QString driver
 			}
 			running = true;
 		}
-		
+
 		emit started();
 	} else {
 		set_parameters(rate, bufferSize, "Null Driver");
@@ -302,7 +306,7 @@ AudioChannel * AudioDevice::get_capture_channel( QByteArray name )
 int AudioDevice::shutdown( )
 {
 	PENTER;
-	
+
 	if (audioThread) {
 		runAudioThread = false;
 		// Wait until the audioThread has finished execution. One second
@@ -398,8 +402,10 @@ QString AudioDevice::get_driver_type( )
 
 trav_time_t AudioDevice::get_cpu_time( )
 {
+#if defined (JACK_SUPPORT)
 	if (driver && m_driverType == "Jack")
 		return ((JackDriver*)driver)->get_cpu_load();
+#endif
 
 	trav_time_t currentTime = get_microseconds();
 	float totaltime = 0;
@@ -432,11 +438,11 @@ void AudioDevice::private_add_client(Client* client)
 void AudioDevice::private_remove_client(Client* client)
 {
 	int index = clients.indexOf(client);
-	
+
 	if (index >= 0) {
 		clients.removeAt( index );
 	}
-	
+
 // 	printf("Removing client %s\n", client->m_name.toAscii().data());
 }
 
@@ -448,6 +454,11 @@ void AudioDevice::add_client( Client * client )
 void AudioDevice::remove_client( Client * client )
 {
 	THREAD_SAVE_CALL_EMIT_SIGNAL(this, client, private_remove_client(Client*), clientRemoved(Client*));
+}
+
+void AudioDevice::mili_sleep(int msec)
+{
+	audioThread->mili_sleep(msec);
 }
 
 //eof

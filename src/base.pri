@@ -19,6 +19,7 @@ CONFIG += debug
 
 DEFINES += JACK_SUPPORT
 DEFINES += ALSA_SUPPORT
+DEFINES += LV2_SUPPORT
 #DEFINES += USE_MEM_CHECKER
 
 #
@@ -61,6 +62,9 @@ debug {
 
 
 unix {
+
+	DEFINES += LINUX_BUILD
+
 	release {
 		
 #		DEFINES += USE_DEBUGGER
@@ -101,4 +105,11 @@ macx {
 	LIBS += -ljack
 		
 	QMAKE_LFLAGS_SONAME  = -Wl,-install_name,@executable_path/../Frameworks/
+}
+
+win32 { 
+	DEFINES -= ALSA_SUPPORT
+	DEFINES -= JACK_SUPPORT
+	DEFINES -= USE_MLOCK
+	DEFINES -= LV2_SUPPORT
 }

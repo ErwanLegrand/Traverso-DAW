@@ -1,9 +1,10 @@
-include(../appbase.pri) 
+include(../libbase.pri) 
 
 
 INCLUDEPATH += ../../src/core \
 		../../src/engine \
 		../../src/plugins/LV2 \
+		./
 
 DESTDIR = ../../lib 
 
@@ -31,3 +32,14 @@ SOURCES += Plugin.cpp \
 	LV2/LV2Plugin.cpp \
 	LV2/LV2ControlPort.cpp \
 	LV2/LV2PluginPropertiesDialog.cpp
+
+win32 {
+	HEADERS -= 	LV2/LV2Plugin.h \
+			LV2/LV2ControlPort.h \
+			LV2/LV2PluginPropertiesDialog.h
+	SOURCES -= 	LV2/LV2Plugin.cpp \
+			LV2/LV2ControlPort.cpp \
+			LV2/LV2PluginPropertiesDialog.cpp
+	INCLUDEPATH -= ../../src/plugins/LV2
+
+}

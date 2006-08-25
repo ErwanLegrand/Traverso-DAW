@@ -17,14 +17,16 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginManager.h,v 1.1 2006/07/31 13:24:46 r_sijrier Exp $
+$Id: PluginManager.h,v 1.2 2006/08/25 11:15:27 r_sijrier Exp $
 */
 
 
 #ifndef PLUGIN_MANAGER_H
 #define PLUGIN_MANAGER_H
 
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 #include <slv2/slv2.h>
+#endif
 
 #include <QDomDocument>
 
@@ -35,23 +37,25 @@ class PluginManager
 
 public:
 	~PluginManager();
-	
+
 	static PluginManager* instance();
-	
+
 	Plugin* get_plugin(const QDomNode node);
-	
+
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 	SLV2List get_slv2_plugin_list();
-	
+#endif
+
 private:
 	PluginManager();
-	
-	static PluginManager* m_instance;	
+
+	static PluginManager* m_instance;
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 	SLV2List	slv2PluginList;
-	
+#endif
 	void init();
 };
 
 #endif
 
 //eof
-

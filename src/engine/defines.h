@@ -3,7 +3,7 @@
 
 #include <inttypes.h>
 #include "FastDelegate.h"
- 
+
 using namespace fastdelegate;
 
 /**
@@ -18,7 +18,7 @@ typedef uint32_t     nframes_t;
 typedef double trav_time_t;
 
 typedef unsigned long          channel_t;
- 
+
 typedef float audio_sample_t;
 
 
@@ -57,7 +57,7 @@ enum PortFlags {
       * if PortIsPhysical is set, then the port corresponds
       * to some kind of physical I/O connector.
       */
-     PortIsPhysical = 0x4, 
+     PortIsPhysical = 0x4,
 
      /**
       * if PortCanMonitor is set, then a call to
@@ -68,7 +68,7 @@ enum PortFlags {
       * that data that would be available from an output port (with
       * PortIsPhysical set) is sent to a physical output connector
       * as well, so that it can be heard/seen/whatever.
-      * 
+      *
       * Clients that do not control physical interfaces
       * should never create ports with this bit set.
       */
@@ -89,7 +89,49 @@ enum PortFlags {
       * their ports.
       */
      PortIsTerminal = 0x10
-};	  
+};
+
+
+#if defined(_MSC_VER) || defined(__MINGW32__)
+#  include <time.h>
+#ifndef _TIMEVAL_DEFINED /* also in winsock[2].h */
+#define _TIMEVAL_DEFINED
+struct timeval {
+    long tv_sec;
+    long tv_usec;
+};
+#endif /* _TIMEVAL_DEFINED */
+#else
+#  include <sys/time.h>
+#endif
+
+
+#if defined(_MSC_VER) || defined(__MINGW32__)
+
+#include <windows.h>
+
+static inline int gettimeofday(struct timeval* tp, void* tzp) {
+    DWORD t;
+//  t = timeGetTime();
+    t = 0;
+    tp->tv_sec = t / 1000;
+    tp->tv_usec = t % 1000;
+    /* 0 indicates that the call succeeded. */
+    return 0;
+}
+
+typedef uint8_t            u_int8_t;
+
+#endif
+
+static inline trav_time_t get_microseconds()
+{
+	struct timeval now;
+	gettimeofday(&now, 0);
+	trav_time_t time = (now.tv_sec * 1000000.0 + now.tv_usec);
+	return time;
+}
+
 
 #endif
 

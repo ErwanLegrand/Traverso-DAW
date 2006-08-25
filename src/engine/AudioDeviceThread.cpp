@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2006 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDeviceThread.cpp,v 1.6 2006/07/28 12:46:28 r_sijrier Exp $
+$Id: AudioDeviceThread.cpp,v 1.7 2006/08/25 11:13:17 r_sijrier Exp $
 */
 
 #include "AudioDeviceThread.h"
@@ -25,8 +25,11 @@ $Id: AudioDeviceThread.cpp,v 1.6 2006/07/28 12:46:28 r_sijrier Exp $
 #include "AudioDevice.h"
 #include "Driver.h"
 
+#if defined (LINUX_BUILD)
 #include <sys/resource.h>
 #include <sched.h>
+#endif
+
 #include <sys/time.h>
 #include <unistd.h>
 #include <signal.h>
@@ -48,9 +51,12 @@ public:
 protected:
 	void run()
 	{
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 		struct sched_param param;
 		param.sched_priority = 90;
 		if (pthread_setschedparam (pthread_self(), SCHED_FIFO, &param) != 0) {}
+#endif
+
 
 		while(true) {
 			sleep(5);
@@ -58,8 +64,10 @@ protected:
 
 			if (guardedThread->watchdogCheck == 0) {
 				qCritical("WatchDog timed out!");
-				guardedThread->terminate();
+//				guardedThread->terminate();
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 				kill (-getpgrp(), SIGABRT);
+#endif
 			}
 
 			guardedThread->watchdogCheck = 0;
@@ -73,11 +81,11 @@ AudioDeviceThread::AudioDeviceThread(AudioDevice* device)
 	transfer = false;
 	realTime = true;
 	setTerminationEnabled(true);
-	
+
 #ifndef MAC_OS_BUILD
 	setStackSize(100000);
 #endif
-	
+
 	watchdogCheck = 1;
 }
 
@@ -120,6 +128,8 @@ void AudioDeviceThread::start_transfering( )
 
 int AudioDeviceThread::become_realtime( bool realtime )
 {
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
+
 	/* RTC stuff */
 	if (realtime) {
 		struct sched_param param;
@@ -136,14 +146,15 @@ int AudioDeviceThread::become_realtime( bool realtime )
 			return 1;
 		}
 	}
+
+#endif
+
 	return -1;
 }
 
 void AudioDeviceThread::run_on_cpu( int cpu )
 {
-#if defined (MAC_OS_BUILD)
-	return;
-#else
+#if defined (LINUX_BUILD)
 	cpu_set_t mask;
 	CPU_ZERO(&mask);
 	CPU_SET(cpu, &mask);
@@ -154,4 +165,3 @@ void AudioDeviceThread::run_on_cpu( int cpu )
 	}
 #endif
 }
-
