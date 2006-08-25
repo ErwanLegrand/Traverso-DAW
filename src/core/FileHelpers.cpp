@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2006 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FileHelpers.cpp,v 1.2 2006/06/29 22:43:47 r_sijrier Exp $
+$Id: FileHelpers.cpp,v 1.3 2006/08/25 11:25:08 r_sijrier Exp $
 */
 
 #include "FileHelpers.h"
@@ -61,7 +61,7 @@ int FileHelper::remove_recursively(QString pName)
 		QDir dir(name);
 		QFileInfoList list = dir.entryInfoList();
 		QFileInfo fi;
-		
+
 		for (int i = 0; i < list.size(); ++i) {
 			fi = list.at(i);
 			if ((fi.fileName() != ".") && (fi.fileName() != "..")) {
@@ -72,7 +72,7 @@ int FileHelper::remove_recursively(QString pName)
 				}
 			}
 		}
-		
+
 		if (!dir.rmdir(name)) {
 			PERROR("failed to remove directory %s\n", name.toAscii().data());
 			return -1;
@@ -87,6 +87,7 @@ int FileHelper::remove_recursively(QString pName)
 
 int FileHelper::copy_recursively(QString pNameFrom, QString pNameTo)
 {
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 	QSettings settings;
 	QString nameFrom = settings.value("Project/directory").toString();
 	QString nameTo(nameFrom);
@@ -127,7 +128,7 @@ int FileHelper::copy_recursively(QString pNameFrom, QString pNameTo)
 		int bufferSize = 4096;
 		int fileDescFrom = fileFrom.handle();
 		int fileDescTo = fileTo.handle();
-		
+
 		struct stat fileStat;
 		if (fstat(fileDescFrom, &fileStat) == 0)
 			bufferSize = (int)fileStat.st_blksize;
@@ -177,7 +178,9 @@ int FileHelper::copy_recursively(QString pNameFrom, QString pNameTo)
 		}
 		return 0;
 	}
+
+#endif
+
 	return -1;
 }
-
 

@@ -15,7 +15,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  *
- *  $Id: gdither.cpp,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
+ *  $Id: gdither.cpp,v 1.2 2006/08/25 11:25:08 r_sijrier Exp $
  */
 
 #include <gdither_types_internal.h>
@@ -36,7 +36,7 @@
 #include <math.h>
 #endif
 
-#undef  __USE_SVID 
+#undef  __USE_SVID
 #define __USE_SVID 1
 #ifdef __cplusplus
 #include <cstdlib>
@@ -45,6 +45,7 @@
 #endif
 
 #include <sys/types.h>
+#include "defines.h"
 
 /* Lipshitz's minimally audible FIR, only really works for 46kHz-ish signals */
 static const float shaped_bs[] = { 2.033f, -2.165f, 1.959f, -1.590f, 0.6149f };
@@ -164,13 +165,13 @@ void gdither_free(GDither s)
     }
 }
 
-inline static void gdither_innner_loop(const GDitherType dt, 
-    const uint32_t stride, const float bias, const float scale, 
+inline static void gdither_innner_loop(const GDitherType dt,
+    const uint32_t stride, const float bias, const float scale,
 
-    const uint32_t post_scale, const int bit_depth, 
-    const uint32_t channel, const uint32_t length, float *ts, 
+    const uint32_t post_scale, const int bit_depth,
+    const uint32_t channel, const uint32_t length, float *ts,
 
-    GDitherShapedState *ss, float *x, void *y, const int clamp_u, 
+    GDitherShapedState *ss, float *x, void *y, const int clamp_u,
 
     const int clamp_l)
 {
@@ -217,7 +218,7 @@ inline static void gdither_innner_loop(const GDitherType dt,
 	    ss->buffer[ss->phase] = (float)lrintf(tmp) - ideal;
 	    break;
 	}
-	
+
 	clamped = lrintf(tmp);
 	if (clamped > clamp_u) {
 		clamped = clamp_u;
@@ -240,13 +241,13 @@ inline static void gdither_innner_loop(const GDitherType dt,
 }
 
 /* floating pint version of the inner loop function */
-inline static void gdither_innner_loop_fp(const GDitherType dt, 
-    const uint32_t stride, const float bias, const float scale, 
+inline static void gdither_innner_loop_fp(const GDitherType dt,
+    const uint32_t stride, const float bias, const float scale,
 
-    const float post_scale, const int bit_depth, 
-    const uint32_t channel, const uint32_t length, float *ts, 
+    const float post_scale, const int bit_depth,
+    const uint32_t channel, const uint32_t length, float *ts,
 
-    GDitherShapedState *ss, float *x, void *y, const int clamp_u, 
+    GDitherShapedState *ss, float *x, void *y, const int clamp_u,
 
     const int clamp_l)
 {
@@ -292,7 +293,7 @@ inline static void gdither_innner_loop_fp(const GDitherType dt,
 	    ss->buffer[ss->phase] = (float)lrintf(tmp) - ideal;
 	    break;
 	}
-	
+
 	clamped = rintf(tmp);
 	if (clamped > clamp_u) {
 		clamped = clamp_u;
