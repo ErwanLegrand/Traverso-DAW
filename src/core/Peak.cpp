@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Peak.cpp,v 1.6 2006/08/23 13:01:18 r_sijrier Exp $
+$Id: Peak.cpp,v 1.7 2006/08/25 11:22:03 r_sijrier Exp $
 */
 
 #include "libtraversocore.h"
@@ -42,7 +42,7 @@ const int Peak::MAX_ZOOM_USING_SOURCEFILE	= SAVING_ZOOM_FACTOR - 1;
 
 #define NORMALIZE_CHUNK_SIZE	10000
 #define PEAKFILE_MAJOR_VERSION	0
-#define PEAKFILE_MINOR_VERSION	1
+#define PEAKFILE_MINOR_VERSION	5
 
 int Peak::zoomStep[ZOOM_LEVELS] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096,
 				8192, 16384, 32768, 65536, 131072};
@@ -50,20 +50,38 @@ int Peak::zoomStep[ZOOM_LEVELS] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 
 Peak::Peak(AudioSource* source)
 		: m_source(source)
 {
-	peaksAvailable = permanentFailure = false;
+	if (m_source->get_channel_count() > 1) {
+		QString channelNumber = "-" + QByteArray::number(m_source->get_channel());
+		m_fileName = pm().get_project()->get_root_dir() + "/peakfiles/" + m_source->get_name() + ".peak" + channelNumber;
+	} else {
+		m_fileName = pm().get_project()->get_root_dir() + "/peakfiles/" + m_source->get_name() + ".peak";
+	}
+	
+	peaksAvailable = permanentFailure = interuptPeakBuild = false;
 	peakBuildThread = 0;
-	m_file = 0;
+	m_file = m_normFile = 0;
 }
 
 Peak::~Peak()
 {
 	PENTERDES;
+	
 	if (peakBuildThread) {
+		if (peakBuildThread->isRunning()) {
+			interuptPeakBuild = true;
+			peakBuildThread->wait();
+		}
+		
 		delete peakBuildThread;
 	}
 
 	if (m_file) {
 		fclose(m_file);
+	}
+	
+	if (m_normFile) {
+		fclose(m_normFile);
+		remove(m_normFileName.toAscii().data());
 	}
 }
 
@@ -72,13 +90,6 @@ int Peak::read_header()
 {
 	PENTER;
 	
-	if (m_source->get_channel_count() > 1) {
-		QString channelNumber = "-" + QByteArray::number(m_source->get_channel());
-		m_fileName = pm().get_project()->get_root_dir() + "/peakfiles/" + m_source->get_name() + ".peak" + channelNumber;
-	} else {
-		m_fileName = pm().get_project()->get_root_dir() + "/peakfiles/" + m_source->get_name() + ".peak";
-	}
-
 	m_file = fopen(m_fileName.toAscii().data(),"r");
 	
 	if (! m_file) {
@@ -141,7 +152,7 @@ int Peak::write_header()
 }
 
 
-int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, nframes_t pixelcount )
+int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int pixelcount )
 {
 	PENTER;
 	if (permanentFailure) {
@@ -161,7 +172,7 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, nfram
 	// Macro view mdde
 	if (zoomLevel > MAX_ZOOM_USING_SOURCEFILE) {
 		
-		nframes_t offset = (startPos / zoomStep[zoomLevel]) * 2;
+		int offset = (startPos / zoomStep[zoomLevel]) * 2;
 		
 		// Check if this zoom level has as many data as requested.
 		if ( (pixelcount + offset) > m_data.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR]) {
@@ -195,7 +206,7 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, nfram
 			pixelcount = readFrames;
 		}
 
-		nframes_t count = 0;
+		int count = 0;
 		nframes_t pos = 0;
 		audio_sample_t valueMax, valueMin, sample;
 		short* writeBuffer = (short*)buffer;
@@ -237,11 +248,23 @@ int Peak::prepare_processing()
 {
 	PENTER;
 	
+	m_normFileName = m_fileName;
+	m_normFileName.append(".norm");
+	
 	// Create read/write enabled file
 	m_file = fopen(m_fileName.toAscii().data(),"w+");
 	
 	if (! m_file) {
 		PWARN("Couldn't open peak file for writing! (%s)", m_fileName.toAscii().data());
+		permanentFailure  = true;
+		return -1;
+	}
+	
+	// Create the temporary normalization data file
+	m_normFile = fopen(m_normFileName.toAscii().data(), "w+");
+	
+	if (! m_normFile) {
+		PWARN("Couldn't open normalization data file for writing! (%s)", m_normFileName.toAscii().data());
 		permanentFailure  = true;
 		return -1;
 	}
@@ -257,7 +280,10 @@ int Peak::prepare_processing()
 	// Now seek to the start position, so we can write the peakdata to it in the process function
 	fseek(m_file, m_data.peakDataOffset, SEEK_SET);
 	
-	peakUpperValue = peakLowerValue = processBufferSize = processedFrames = m_progress = 0;
+	normValue = peakUpperValue = peakLowerValue = 0;
+	processBufferSize = processedFrames = m_progress = normProcessedFrames = normDataCount = 0;
+	
+	return 1;
 }
 
 
@@ -270,7 +296,7 @@ int Peak::finish_processing()
 		fwrite(&peakLowerValue, 1, 1, m_file);
 		processBufferSize += 2;
 	}
-
+	
 	int totalBufferSize = 0;
 	int dividingFactor = 2;
 	
@@ -283,9 +309,6 @@ int Peak::finish_processing()
 		totalBufferSize += size;
 		dividingFactor *= 2;
 	}
-	
-/*	printf("processBufferSize is %d \n", processBufferSize);
-	printf("total buffer size is %d \n\n", totalBufferSize);*/
 	
 	
 	fseek(m_file, m_data.peakDataOffset, SEEK_SET);
@@ -311,10 +334,6 @@ int Peak::finish_processing()
 		prevLevelBufferPos = m_data.peakDataLevelOffsets[i - SAVING_ZOOM_FACTOR - 1] - m_data.peakDataOffset;
 		nextLevelBufferPos = m_data.peakDataLevelOffsets[i - SAVING_ZOOM_FACTOR] - m_data.peakDataOffset;
 		
-/*		printf("peakDataLevelOffsets[%d] is %d \n", i, m_data.peakDataLevelOffsets[i - SAVING_ZOOM_FACTOR]);
-		printf("nextLevelBufferPos is %d\n", nextLevelBufferPos); 
-		printf("prevLevelSize is %d\n", prevLevelSize);
-		printf("prevLevelBufferPos is %d\n", prevLevelBufferPos);*/
 		
 		int count = 0;
 		
@@ -337,11 +356,31 @@ int Peak::finish_processing()
 		return -1;
 	}
 	
+	fseek(m_normFile, 0, SEEK_SET);
+	
+	read = fread(saveBuffer, sizeof(audio_sample_t), normDataCount, m_normFile);
+	
+	if (read != normDataCount) {
+		PERROR("Could not read in all (%d) norm. data, only %d", normDataCount, read);
+	}
+	
+	m_data.normValuesDataOffset = m_data.peakDataOffset + totalBufferSize;
+	
+	fclose(m_normFile);
+	m_normFile = 0;
+	
+	if( remove(m_normFileName.toAscii().data()) != 0 ) {
+		PERROR("Failed to remove temp. norm. data file! (%s)", m_normFileName.toAscii().data()); 
+	}
+	
+	written = fwrite(saveBuffer, sizeof(audio_sample_t), read, m_file);
 	
 	write_header();
 	
 	fclose(m_file);
 	m_file = 0;
+	
+	delete [] saveBuffer;
 	
 	emit finished();
 	
@@ -364,6 +403,8 @@ void Peak::process(audio_sample_t* buffer, nframes_t nframes)
 			peakLowerValue = sample;
 		}
 		
+		normValue = f_max(normValue, fabsf(sample));
+		
 		if (processedFrames == 64) {
 		
 			unsigned char peakbuffer[2];
@@ -371,7 +412,7 @@ void Peak::process(audio_sample_t* buffer, nframes_t nframes)
 			peakbuffer[0] = (unsigned char) (peakUpperValue * MAX_DB_VALUE );
 			peakbuffer[1] = (unsigned char) ((-1) * (peakLowerValue * MAX_DB_VALUE ));
 			
-			int written = fwrite(peakbuffer, 1, 2, m_file);
+			int written = fwrite(peakbuffer, sizeof(unsigned char), 2, m_file);
 			
 			if (written != 2) {
 				PWARN("couldnt write data, only (%d)", written);
@@ -384,7 +425,20 @@ void Peak::process(audio_sample_t* buffer, nframes_t nframes)
 			processBufferSize+=2;
 		}
 		
+		if (normProcessedFrames == NORMALIZE_CHUNK_SIZE) {
+			int written = fwrite(&normValue, sizeof(audio_sample_t), 1, m_normFile);
+			
+			if (written != 1) {
+				PWARN("couldnt write data, only (%d)", written);
+			}
+
+			normValue = 0.0;
+			normProcessedFrames = 0;
+			normDataCount++;
+		}
+		
 		processedFrames++;
+		normProcessedFrames++;
 	}
 }
 
@@ -420,15 +474,22 @@ int Peak::create_from_scratch()
 	}
 
 	do {
+		if (interuptPeakBuild) {
+			delete [] buf;
+			return -1;
+		}
+		
 		readFrames = static_cast<ReadSource*>(m_source)->file_read(buf, totalReadFrames, bufferSize);
 		process(buf, readFrames);
 		totalReadFrames += readFrames;
 		counter++;
 		p = (int) (counter*100) / cycles;
+		
 		if ( p > m_progress) {
 			m_progress = p;
 			emit progress(m_progress);
 		}
+		
 	} while(totalReadFrames != m_source->get_nframes());
 
 
@@ -442,16 +503,57 @@ int Peak::create_from_scratch()
 }
 
 
-void Peak::set_audiosource( AudioSource * source )
+audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 {
-	m_source = source;
+	Q_ASSERT(m_file);
+	
+	audio_sample_t maxamp = 0;
+	int startpos = startframe / NORMALIZE_CHUNK_SIZE;
+	
+	// Read in the part not fully occupied by a cached normalize value
+	// and run compute_peak on it.
+	if (startframe != 0) {
+		startpos += 1;
+		int toRead = (int) ((startpos * NORMALIZE_CHUNK_SIZE) - startframe);
+		
+		audio_sample_t buf[toRead];
+		int read = static_cast<ReadSource*>(m_source)->file_read(buf, startframe, toRead);
+		
+		maxamp = Mixer::compute_peak(buf, read, maxamp);
+	}
+	
+	int count = (endframe / NORMALIZE_CHUNK_SIZE) - startpos;
+	
+	
+	// Read in the part not fully occupied by a cached normalize value
+	// and run compute_peak on it.
+	float f = (float) endframe / NORMALIZE_CHUNK_SIZE;
+	int endpos = (int) f;
+	int toRead = (int) ((f - (endframe / NORMALIZE_CHUNK_SIZE)) * NORMALIZE_CHUNK_SIZE);
+	audio_sample_t buf[toRead];
+	int read = static_cast<ReadSource*>(m_source)->file_read(buf, endframe - toRead, toRead);
+	maxamp = Mixer::compute_peak(buf, read, maxamp);
+	
+	
+	// Now that we have covered both boundary situations,
+	// read in the cached normvalues, and calculate the highest value!
+	count = endpos - startpos;
+	audio_sample_t buffer[count];
+	
+	fseek(m_file, m_data.normValuesDataOffset + (startpos * sizeof(audio_sample_t)), SEEK_SET);
+	
+	read = fread(buffer, sizeof(audio_sample_t), count, m_file);
+	
+	if (read != count) {
+		printf("could only read %d, %d requested\n", read, count);
+	}
+	
+	maxamp = Mixer::compute_peak(buffer, read, maxamp);
+	
+	return maxamp;
 }
 
 
-int Peak::calculate_normalization_factor(float &normfactor, float targetdB, nframes_t startframe, nframes_t endframe)
-{
-	return -1;
-}
 
 
 /******** PEAK BUILD THREAD CLASS **********/
