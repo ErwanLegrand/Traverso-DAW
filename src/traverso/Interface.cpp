@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.9 2006/06/29 22:15:41 r_sijrier Exp $
+$Id: Interface.cpp,v 1.10 2006/08/25 11:16:52 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -160,7 +160,7 @@ void Interface::create()
 	move(settings.value("pos", QPoint(200, 200)).toPoint());
 	settings.endGroup();
 
-	show();
+// 	show();
 }
 
 
