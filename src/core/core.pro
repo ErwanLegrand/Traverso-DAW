@@ -41,7 +41,6 @@ SOURCES	= AudioClip.cpp \
 	FileHelpers.cpp \
 	HistoryStack.cpp \
 	IEAction.cpp \
-	IEMessage.cpp \
 	Information.cpp \
 	InputEngine.cpp \
 	Mixer.cpp \
@@ -78,7 +77,6 @@ HEADERS	= precompile.h \
 	FileHelpers.h \
 	HistoryStack.h \
 	IEAction.h \
-	IEMessage.h \
 	Information.h \
 	InputEngine.h \
 	Mixer.h \
