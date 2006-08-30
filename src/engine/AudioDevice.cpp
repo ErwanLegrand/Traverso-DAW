@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.12 2006/08/25 11:13:17 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.13 2006/08/30 21:08:36 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -129,7 +129,7 @@ int AudioDevice::run_cycle( nframes_t nframes, float delayed_usecs )
 	for (left = nframes; left >= m_bufferSize; left -= m_bufferSize) {
 		if (run_one_cycle (m_bufferSize, delayed_usecs) < 0) {
 			qCritical ("cycle execution failure, exiting");
-			return EIO;
+			return -1;
 		}
 	}
 
