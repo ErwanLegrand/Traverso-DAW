@@ -21,7 +21,7 @@
     along with this program; if not, write to the Free Software 
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: RingBuffer.h,v 1.2 2006/07/05 11:11:15 r_sijrier Exp $
+    $Id: RingBuffer.h,v 1.3 2006/08/31 12:38:35 r_sijrier Exp $
 */
 
 #ifndef _RINGBUFFER_H
@@ -31,15 +31,6 @@
 #include <sys/types.h>
 #include "defines.h"
 
-/** @file ringbuffer.h
-*
-* The key attribute of a ringbuffer is that it can be safely accessed
-* by two threads simultaneously -- one reading from the buffer and
-* the other writing to it -- without using any synchronization or
-* mutual exclusion primitives.  For this to work correctly, there can
-* only be a single reader and a single writer thread.  Their
-* identities cannot be interchanged.
-*/
 
 typedef struct
 {
@@ -49,6 +40,14 @@ typedef struct
 ringbuffer_data_t ;
 
 
+/** 
+* The key attribute of a ringbuffer is that it can be safely accessed
+* by two threads simultaneously -- one reading from the buffer and
+* the other writing to it -- without using any synchronization or
+* mutual exclusion primitives.  For this to work correctly, there can
+* only be a single reader and a single writer thread.  Their
+* identities cannot be interchanged.
+*/
 class RingBuffer
 {
 
