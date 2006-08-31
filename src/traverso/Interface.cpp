@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.10 2006/08/25 11:16:52 r_sijrier Exp $
+$Id: Interface.cpp,v 1.11 2006/08/31 12:39:09 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -56,7 +56,7 @@ static const int MINIMUM_FLOATING_BUS_MONITOR_HEIGHT = 120;
 
 
 Interface::Interface()
-		: QWidget( 0 )
+	: QMainWindow( 0 )
 {
 	PENTERCONS;
 
@@ -89,13 +89,16 @@ Interface::~Interface()
 
 void Interface::create()
 {
+	QWidget* centralWidget = new QWidget;
+	setCentralWidget(centralWidget);
+	
 	setWindowTitle("Traverso");
 
 	helpWindow = new Help(this);
 
-	mainVBoxLayout = new BorderLayout(this, 0, 0);
+	mainVBoxLayout = new BorderLayout(centralWidget, 0, 0);
 
-	topPanelWidget = new QWidget(this);
+	topPanelWidget = new QWidget(centralWidget);
 	topPanelWidgetLayout = new QHBoxLayout(topPanelWidget);
 	topPanelWidget->setLayout(topPanelWidgetLayout);
 	topPanelWidget->setMinimumHeight(TOPPANEL_FIXED_HEIGHT);
@@ -114,7 +117,7 @@ void Interface::create()
 
 
 	// 2nd Area (MIDDLE) the current project
-	QWidget* widget = new QWidget(this);
+	QWidget* widget = new QWidget(centralWidget);
 	centerWidgetLayout = new QHBoxLayout(widget);
 	widget->setLayout(centerWidgetLayout);
 	centerAreaWidget = new QStackedWidget(widget);
@@ -122,7 +125,7 @@ void Interface::create()
 
 
 	// 3rd Area (BOTTOM) : Status stuff
-	statusAreaWidget = new QWidget(this);
+	statusAreaWidget = new QWidget(centralWidget);
 	statusAreaWidgetLayout = new QHBoxLayout;
 	statusAreaWidget->setLayout(statusAreaWidgetLayout);
 
@@ -148,7 +151,8 @@ void Interface::create()
 	mainVBoxLayout->addWidget(topPanelWidget, BorderLayout::North);
 	mainVBoxLayout->addWidget(widget, BorderLayout::Center);
 	mainVBoxLayout->addWidget(statusAreaWidget, BorderLayout::South);
-	setLayout(mainVBoxLayout);
+	
+	centralWidget->setLayout(mainVBoxLayout);
 
 	managerWidgetCreated = false;
 
@@ -159,6 +163,9 @@ void Interface::create()
 	resize(settings.value("size", QSize(400, 400)).toSize());
 	move(settings.value("pos", QPoint(200, 200)).toPoint());
 	settings.endGroup();
+	
+	create_menu_actions();
+	create_menus();
 
 // 	show();
 }
@@ -274,10 +281,16 @@ bool Interface::is_busmonitor_docked()
 
 Command* Interface::about_traverso()
 {
-
 	PENTER;
-	info().information("The Traverso Team : R. Sijrier, and all the people from Free Software world,");
-	info().information("who made important technologies on which Traverso is based (Gcc, Qt, Xorg, Linux, and so on)");
+	QString text(tr("Traverso %1, making use of Qt %2\n\n" 
+			"Traverso, a Multitrack audio recording and editing program.\n\n "
+			"Traverso uses a very powerfull interface concept, which makes recording\n"
+			"and editing audio much quicker and a pleasure to do!\n"
+			"See for more info the Help file\n\n"
+			"Traverso is brought to you by the author, R. Sijrier, and all the people from Free Software world\n"
+			"who made important technologies on which Traverso is based (Gcc, Qt, Xorg, Linux, and so on)").arg(VERSION).arg(QT_VERSION_STR));
+	QMessageBox::about ( this, tr("About Traverso"), text);
+	
 	return (Command*) 0;
 }
 
@@ -316,6 +329,59 @@ Command * Interface::show_export_widget( )
 		exportWidget = new ExportWidget(this);
 	exportWidget->show();
 	return (Command*) 0;
+}
+
+void Interface::create_menus( )
+{
+	fileMenu = menuBar()->addMenu(tr("&File"));
+	fileMenu->addAction(saveAction);
+	fileMenu->addAction(exitAction);
+	
+	menuBar()->addSeparator();
+	
+	viewMenu = menuBar()->addMenu(tr("&View"));
+	viewMenu->addAction(projManViewAction);
+	viewMenu->addAction(editViewAction);
+	viewMenu->addAction(curveViewAction);
+	viewMenu->addAction(settingsViewAction);
+	
+	menuBar()->addSeparator();
+	
+	helpMenu = menuBar()->addMenu(tr("&Help"));
+	helpMenu->addAction(handBookAction);
+	helpMenu->addAction(aboutTraversoAction);
+
+}
+
+void Interface::create_menu_actions( )
+{
+	saveAction = new QAction(tr("&Save"), this);
+	saveAction->setIcon(QIcon("/usr/share/icons/crystalsvg/22x22/actions/filesave.png"));
+	connect(saveAction, SIGNAL(triggered()), &pm(), SLOT(save_project()));
+	
+	exitAction = new QAction(tr("&Quit"), this);
+	exitAction->setIcon(QIcon("/usr/share/icons/crystalsvg/22x22/actions/exit.png"));
+	connect(exitAction, SIGNAL(triggered()), &pm(), SLOT(exit()));
+	
+	editViewAction = new QAction(tr("&Edit View"), this);
+	connect(editViewAction, SIGNAL(triggered()), this, SLOT(set_songview_widget()));
+	
+	curveViewAction = new QAction(tr("&Curve View"), this);
+	connect(curveViewAction, SIGNAL(triggered()), this, SLOT(set_songview_widget()));
+	
+	projManViewAction = new QAction(tr("&Project Management"), this);
+	connect(projManViewAction, SIGNAL(triggered()), this, SLOT(set_manager_widget()));
+	
+	settingsViewAction = new QAction(tr("&Settings"), this);
+	connect(settingsViewAction, SIGNAL(triggered()), this, SLOT(set_manager_widget()));
+	
+	
+	handBookAction = new QAction(tr("&HandBook"), this);
+	handBookAction->setIcon(QIcon("/usr/share/icons/crystalsvg/22x22/actions/help.png"));
+	connect(handBookAction, SIGNAL(triggered()), helpWindow, SLOT(show_help()));
+	
+	aboutTraversoAction = new QAction(tr("&About Traverso"), this);
+	connect(aboutTraversoAction,  SIGNAL(triggered()), this, SLOT(about_traverso()));
 }
 
 
