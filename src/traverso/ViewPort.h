@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ViewPort.h,v 1.2 2006/04/25 17:19:10 r_sijrier Exp $
+    $Id: ViewPort.h,v 1.3 2006/08/31 17:56:38 r_sijrier Exp $
 */
 
 #ifndef VIEWPORT_H
@@ -55,6 +55,8 @@ public :
 
         void register_viewitem(ViewItem* item);
         void unregister_viewitem(ViewItem* item);
+        
+        void reset_context();
 
         QPixmap 	pixmap;
 
@@ -85,6 +87,7 @@ private:
 signals:
         void resized();
         void pointChanged();
+        void resetContext();
 
 };
 

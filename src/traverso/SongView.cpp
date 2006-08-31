@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.16 2006/08/03 14:33:46 r_sijrier Exp $
+$Id: SongView.cpp,v 1.17 2006/08/31 17:56:38 r_sijrier Exp $
 */
 
 #include <QPainter>
@@ -59,7 +59,7 @@ SongView::SongView(Song* song, ViewPort* vp)
 	cursorMap[CURSOR_HOLD_LRUD] = QCursor( QPixmap(":/cursorHoldLrud") );
 	cursorMap[CURSOR_DRAG] = QCursor( QPixmap(":/cursorDrag") );
 	cursorMap[CURSOR_SELECT] = QCursor( QPixmap(":/cursorSelect") );
-	cursorMap[CURSOR_MAGIC_ZOOM] = QCursor( QPixmap(":/cursorMagicZoom") );
+	cursorMap[CURSOR_MAGIC_ZOOM] = QCursor( QPixmap(":/cursorZoom") );
 	
 
 	connect(m_song, SIGNAL(trackAdded(Track* )), this, SLOT(add_new_trackview(Track* )));
@@ -69,6 +69,7 @@ SongView::SongView(Song* song, ViewPort* vp)
 	connect(m_song, SIGNAL(setCursorAtEdge()), this, SLOT(center()));
 	connect(m_vp, SIGNAL(resized()), this, SLOT(resize()));
 	connect(m_vp, SIGNAL(pointChanged( ) ), this, SLOT(set_context()));
+	connect(m_vp, SIGNAL(resetContext( ) ), this, SLOT(reset_context()));
 
 	init_context_menu( this );
 	
@@ -77,6 +78,12 @@ SongView::SongView(Song* song, ViewPort* vp)
 SongView::~SongView()
 {
 	PENTERDES;
+}
+
+void SongView::reset_context( )
+{
+	currentCursorMapIndex = -1;
+	set_context();
 }
 
 void SongView::set_context()
@@ -436,5 +443,6 @@ int SongView::cliparea_width( ) const
 {
 	return ( m_vp->width() - TrackView::CLIPAREABASEX );
 }
+
 
 //eof

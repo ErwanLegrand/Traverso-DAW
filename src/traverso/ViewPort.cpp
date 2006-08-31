@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewPort.cpp,v 1.3 2006/07/06 17:18:48 r_sijrier Exp $
+$Id: ViewPort.cpp,v 1.4 2006/08/31 17:56:38 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -250,6 +250,11 @@ void ViewPort::dragMoveEvent( QDragMoveEvent * event )
 void ViewPort::register_viewitem( ViewItem * item )
 {
 	viewItemList.append(item);
+}
+
+void ViewPort::reset_context( )
+{
+	emit resetContext();
 }
 
 //eof

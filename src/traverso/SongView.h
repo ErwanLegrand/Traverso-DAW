@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongView.h,v 1.6 2006/08/03 14:33:46 r_sijrier Exp $
+    $Id: SongView.h,v 1.7 2006/08/31 17:56:38 r_sijrier Exp $
 */
 
 #ifndef SONGVIEW_H
@@ -130,6 +130,7 @@ public slots:
         void add_new_trackview(Track* track);
         void remove_trackview(Track* track);
         void set_context();
+        void reset_context();
         void schedule_for_repaint();
         void update_shuttle();
         void resize();
