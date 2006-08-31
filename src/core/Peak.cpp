@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Peak.cpp,v 1.7 2006/08/25 11:22:03 r_sijrier Exp $
+$Id: Peak.cpp,v 1.8 2006/08/31 12:37:50 r_sijrier Exp $
 */
 
 #include "libtraversocore.h"
@@ -27,6 +27,8 @@ $Id: Peak.cpp,v 1.7 2006/08/25 11:22:03 r_sijrier Exp $
 #include "ReadSource.h"
 #include "defines.h"
 #include "Mixer.h"
+#include <QFSFileEngine>
+#include <QDateTime>
 
 #include "Debugger.h"
 
@@ -89,6 +91,20 @@ Peak::~Peak()
 int Peak::read_header()
 {
 	PENTER;
+	
+	QFSFileEngine file(m_source->get_filename());
+	QFSFileEngine peakFile(m_fileName);
+	
+	QDateTime fileModTime = file.fileTime(QAbstractFileEngine::ModificationTime);
+	QDateTime peakModTime = peakFile.fileTime(QAbstractFileEngine::ModificationTime);
+	
+	if (fileModTime > peakModTime) {
+		PERROR("Source and Peak file modification time do not match");
+		printf("SourceFile modification time is %s\n", fileModTime.toString().toAscii().data());
+		printf("PeakFile modification time is %s\n", peakModTime.toString().toAscii().data());
+		return -1;
+	}
+	
 	
 	m_file = fopen(m_fileName.toAscii().data(),"r");
 	
@@ -169,7 +185,7 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 		}
 	}
 	
-	// Macro view mdde
+	// Macro view mode
 	if (zoomLevel > MAX_ZOOM_USING_SOURCEFILE) {
 		
 		int offset = (startPos / zoomStep[zoomLevel]) * 2;
@@ -457,7 +473,7 @@ int Peak::create_from_scratch()
 	int cycles = m_source->get_nframes() / bufferSize;
 	int counter = 0;
 	int p = 0;
-	audio_sample_t* buf = new audio_sample_t[bufferSize];
+	audio_sample_t buf[bufferSize];
 
 	if (m_source->get_nframes() == 0) {
 		qWarning("Peak::create_from_scratch() : m_source (%s) has length 0", m_source->get_name().toAscii().data());
@@ -475,7 +491,6 @@ int Peak::create_from_scratch()
 
 	do {
 		if (interuptPeakBuild) {
-			delete [] buf;
 			return -1;
 		}
 		
@@ -492,8 +507,6 @@ int Peak::create_from_scratch()
 		
 	} while(totalReadFrames != m_source->get_nframes());
 
-
-	delete []  buf;
 
 	if (finish_processing() < 0) {
 		return -1;
@@ -563,7 +576,7 @@ PeakBuildThread::PeakBuildThread(Peak* peak)
 {
 	m_peak = peak;
 #ifndef MAC_OS_BUILD
-	setStackSize(20000);
+// 	setStackSize(20000);
 #endif
 }
 
