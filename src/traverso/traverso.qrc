@@ -1,17 +1,17 @@
 <!DOCTYPE RCC><RCC version="1.0">
 	<qresource>
 		<file alias="cursorDrag">../../resources/images/cursorDrag.xpm</file>
-		<file alias="cursorRZoom">../../resources/images/cursorRZoom.xpm</file>
 		<file alias="cursorFloatOverClip">../../resources/images/cursorFloatOverClip.xpm</file>
 		<file alias="cursorFloatOverPlugin">../../resources/images/cursorFloatOverPlugin.xpm</file>
 		<file alias="cursorFloatOverFade">../../resources/images/cursorFloatOverFade.xpm</file>
 		<file alias="cursorFloatOverTrack">../../resources/images/cursorFloatOverTrack.xpm</file>
 		<file alias="cursorFloat">../../resources/images/cursorFloat.xpm</file>
-		<file alias="cursorMagicZoom">../../resources/images/cursorRZoom.xpm</file>
+		<file alias="cursorZoom">../../resources/images/cursorZoom.xpm</file>
 		<file alias="cursorHoldLrud">../../resources/images/cursorHoldLrud.xpm</file>
 		<file alias="cursorHoldLr">../../resources/images/cursorHoldLr.xpm</file>
 		<file alias="cursorHoldUd">../../resources/images/cursorHoldUd.xpm</file>
 		<file alias="cursorSelect">../../resources/images/cursorSelect.xpm</file>
+		<file alias="cursorGain">../../resources/images/cursorGain.xpm</file>
 		<file alias="traverso">../../resources/images/traverso.xpm</file>
 		<file alias="keymap">../../resources/keymap.xml</file>
 		<file alias="fadeshapes">../../resources/fadeshapes.xml</file>
