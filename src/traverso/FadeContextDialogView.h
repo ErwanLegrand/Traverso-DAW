@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeContextDialogView.h,v 1.4 2006/08/07 19:15:23 r_sijrier Exp $
+$Id: FadeContextDialogView.h,v 1.5 2006/08/31 17:56:01 r_sijrier Exp $
 */
 
 #ifndef FADE_CONTEXT_DIALOG_VIEW_H
@@ -26,9 +26,9 @@ $Id: FadeContextDialogView.h,v 1.4 2006/08/07 19:15:23 r_sijrier Exp $
 #include "ViewItem.h"
 
 #include <QPixmap>
+#include "Command.h"
 
 class ViewPort;
-class Command;
 class FadeCurve;
 
 class FadeContextDialogView : public ViewItem
@@ -64,7 +64,7 @@ public slots:
 class FadeStrength : public Command
 {
 public :
-        FadeStrength(FadeContextDialogView* view, FadeCurve* fade) : Command(), m_view(view), m_fade(fade) {};
+        FadeStrength(FadeContextDialogView* view, FadeCurve* fade) : Command("FadeStrength"), m_view(view), m_fade(fade) {};
         ~FadeStrength(){};
 
         int begin_hold();
@@ -82,7 +82,7 @@ private :
 class FadeBend : public Command
 {
 public :
-        FadeBend(FadeContextDialogView* view, FadeCurve* fade) : Command(), m_view(view), m_fade(fade) {};
+        FadeBend(FadeContextDialogView* view, FadeCurve* fade) : Command("FadeBend"), m_view(view), m_fade(fade) {};
         ~FadeBend(){};
 
         int begin_hold();

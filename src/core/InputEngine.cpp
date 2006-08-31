@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.4 2006/08/25 11:25:24 r_sijrier Exp $
+$Id: InputEngine.cpp,v 1.5 2006/08/31 17:55:38 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -25,6 +25,8 @@ $Id: InputEngine.cpp,v 1.4 2006/08/25 11:25:24 r_sijrier Exp $
 #include "ContextItem.h"
 #include "ContextPointer.h"
 #include "Information.h"
+#include "IEAction.h"
+#include "Command.h"
 
 #include <QTime>
 #include <QFile>
@@ -94,8 +96,6 @@ InputEngine& ie()
 InputEngine::InputEngine()
 {
 	PENTERCONS;
-	targetHoldObject = (QObject*) 0;
-	targetHoldSlot =  "";
 	holdingCommand = 0;
 
 	isJogging = false;
@@ -189,23 +189,16 @@ int InputEngine::broadcast_action(IEAction* action)
 	if (k && isHolding) {
 		if (k->begin_hold()) {
 			k->set_valid(true);
+			k->set_cursor_shape(action->useX, action->useY);
 			holdingCommand = k;
 			set_jogging(true);
 		} else {
 			// OOPSSS, something went wrong when making the Command
 			// set following stuff to zero to make finish_hold do nothing
 			delete k;
-			targetHoldSlot = "";
-			targetHoldObject = (QObject*)0;
 			set_jogging( false );
 			wholeMapIndex = -1;
 		}
-	}
-	// In case a ContextItem manages an Action al by itself. This means, no Command object
-	// was returned, and hence, this action is not un/redoable....
-	if ( (!k) && item && isHolding) {
-		targetHoldObject = item;
-		targetHoldSlot = slotName;
 	}
 
 
@@ -217,19 +210,20 @@ void InputEngine::jog()
 {
 	PENTER3;
 	if (isJogging) {
-		if (holdingCommand && holdingCommand->handleByIE )
+		if (holdingCommand) {
 			holdingCommand->jog();
+		}
 	}
 }
 
 
 void InputEngine::set_jogging(bool jog)
 {
-/*	if (jog)
+	if (jog)
 		cpointer().grab_mouse();
 	else
 		cpointer().release_mouse();
-*/
+
 	isJogging = jog;
 }
 
@@ -759,9 +753,10 @@ void InputEngine::finish_hold()
 	isHolding = false;
 	set_jogging(false);
 
-	if (holdingCommand && holdingCommand->handleByIE) {
+	if (holdingCommand) {
 
 		holdingCommand->finish_hold();
+		holdingCommand->set_cursor_shape();
 
 		if (holdingCommand->prepare_actions()) {
 			holdingCommand->set_valid(true);
@@ -770,7 +765,7 @@ void InputEngine::finish_hold()
 			holdingCommand->set_valid( false );
 		}
 
-		if ( ! holdingCommand->valid() ) {
+		if ( ! holdingCommand->is_valid() ) {
 			delete holdingCommand;
 		} else {
 			if (holdingCommand->push_to_history_stack() < 0) {
@@ -779,19 +774,8 @@ void InputEngine::finish_hold()
 		}
 
 		holdingCommand = (Command*) 0;
-	} else {
-		if (targetHoldObject) {
-			PWARN("Hold action not handled by InputEngine, this is not recommended!");
-			Command* k = 0;
-			if(!QMetaObject::invokeMethod(targetHoldObject, targetHoldSlot.toAscii().data(),
-						Qt::DirectConnection,
-						Q_RETURN_ARG(Command*, k))) {
-				PWARN("Couldn't finish hold Command");
-			}
-			targetHoldObject = (QObject*)0;
-		}
 	}
-
+	
 	conclusion();
 }
 
@@ -847,7 +831,7 @@ int InputEngine::init_map(QString mapFilename)
 	int keyCode1, keyCode2, keyCode3, keyCode4 = 0;
 	int parsedActionType=-1;
 
-	bool useX = false, useY = false;
+	bool useX , useY;
 
 
 	while( !n.isNull() ) {
@@ -881,6 +865,8 @@ int InputEngine::init_map(QString mapFilename)
 					PWARN("keyFactType not supported!");
 				}
 
+				useX = useY = false;
+				
 				if (mouseHint == "LR")
 					useX = true;
 				if (mouseHint == "UD")

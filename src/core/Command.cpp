@@ -17,26 +17,28 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Command.cpp,v 1.3 2006/08/03 14:33:46 r_sijrier Exp $
+    $Id: Command.cpp,v 1.4 2006/08/31 17:55:38 r_sijrier Exp $
 */
 
 #include "Command.h"
-#include "IEMessage.h"
 #include "HistoryStack.h"
+#include "ContextPointer.h"
+#include <ViewPort.h>
+#include "ContextItem.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-Command::Command( )
+Command::Command( QString des )
+	: m_description(des)
 {
         m_historyStack = 0;
-        handleByIE=true;
 }
 
-Command::Command(ContextItem* item)
+Command::Command(ContextItem* item, QString des)
+	: m_description(des)
 {
-        handleByIE=true;
         m_context = item;
         m_historyStack = item->get_history_stack();
 }
@@ -59,14 +61,9 @@ int Command::jog()
         return -1;
 }
 
-bool Command::valid()
-{
-        return isValid;
-}
-
 void Command::set_valid(bool valid)
 {
-        isValid = valid;
+        m_isValid = valid;
 }
 
 int Command::push_to_history_stack( )
@@ -94,6 +91,37 @@ int Command::do_action( )
 int Command::undo_action( )
 {
 	return -1;
+}
+
+void Command::set_description(const QString& des )
+{
+	m_description = des;
+}
+
+bool Command::merg_with(const Command* )
+{
+	return false;
+}
+
+int Command::command_type( )
+{
+	return -1;
+}
+
+void Command::set_cursor_shape( int useX, int useY )
+{
+	ViewPort* view = cpointer().get_viewport();
+	
+	if (useX && useY) {
+		view->setCursor(QCursor( QPixmap(":/cursorHoldLrud") ));
+	} else if (useX) {
+		view->setCursor(QCursor( QPixmap(":/cursorHoldLr") ));
+	} else if (useY) {
+		view->setCursor(QCursor( QPixmap(":/cursorHoldUd") ));
+	} else{
+		view->reset_context();
+	}
+	
 }
 
 //eof

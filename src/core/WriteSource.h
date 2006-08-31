@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.h,v 1.2 2006/08/25 11:24:53 r_sijrier Exp $
+$Id: WriteSource.h,v 1.3 2006/08/31 17:55:38 r_sijrier Exp $
 */
 
 #ifndef WRITESOURCE_H
@@ -32,6 +32,7 @@ $Id: WriteSource.h,v 1.2 2006/08/25 11:24:53 r_sijrier Exp $
 
 struct ExportSpecification;
 
+/// WriteSource is an AudioSource only used for writing (recording, rendering) purposes
 class WriteSource : public AudioSource
 {
 	Q_OBJECT

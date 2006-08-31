@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: InputEngine.h,v 1.2 2006/08/25 11:25:24 r_sijrier Exp $
+    $Id: InputEngine.h,v 1.3 2006/08/31 17:55:38 r_sijrier Exp $
 */
 
 #ifndef INPUTENGINE_H
@@ -30,10 +30,10 @@
 #include <QObject>
 #include <QTimer>
 
-#include "IEAction.h"
-#include "Command.h"
 
 class ContextItem;
+class Command;
+class IEAction;
 
 static const int FKEY = 0;                 // <K>    - press one key fast
 static const int FKEY2 = 1;                // <KK>   - press two keys fast, together
@@ -69,7 +69,10 @@ public slots:
         void clear_output();
 };
 
-
+/** The InputEngine is the hearth of the Contextual Interface, and does all keyboard processing
+ *
+ * More info
+ */ 
 class InputEngine
 {
 public:
@@ -146,8 +149,7 @@ public:
 
 private:
         InputEngine();
-        InputEngine(const InputEngine&)
-{}
+        InputEngine(const InputEngine&) {}
         ~InputEngine();
 
         static const int 	STACK_SIZE = 4;
@@ -159,8 +161,6 @@ private:
         EventCatcher 		catcher;
         Command* 		holdingCommand;
         QString			sCollectedNumber;
-        QString 			targetHoldSlot;
-        QObject* 			targetHoldObject;
         QWheelEvent*		scrollEvent;
 
         bool 			active;

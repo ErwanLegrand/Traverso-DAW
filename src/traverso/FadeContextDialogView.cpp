@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeContextDialogView.cpp,v 1.6 2006/08/08 19:34:57 r_sijrier Exp $
+$Id: FadeContextDialogView.cpp,v 1.7 2006/08/31 17:56:01 r_sijrier Exp $
 */
 
 #include "FadeContextDialogView.h"
@@ -26,6 +26,7 @@ $Id: FadeContextDialogView.cpp,v 1.6 2006/08/08 19:34:57 r_sijrier Exp $
 #include "ColorManager.h"
 #include "FadeCurve.h"
 #include "CurveNode.h"
+#include "Command.h"
 
 #include <QPainterPath>
 

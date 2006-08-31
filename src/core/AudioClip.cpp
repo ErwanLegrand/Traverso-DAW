@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.40 2006/08/25 11:22:03 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.41 2006/08/31 17:55:38 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -40,6 +40,10 @@ $Id: AudioClip.cpp,v 1.40 2006/08/25 11:22:03 r_sijrier Exp $
 #include "Curve.h"
 #include "FadeCurve.h"
 #include "Tsar.h"
+#include "ProjectManager.h"
+#include "Peak.h"
+#include "ContextPointer.h"
+#include "Project.h"
 
 #include <commands.h>
 

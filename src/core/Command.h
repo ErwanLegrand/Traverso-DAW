@@ -17,23 +17,25 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Command.h,v 1.2 2006/08/03 14:33:46 r_sijrier Exp $
+    $Id: Command.h,v 1.3 2006/08/31 17:55:38 r_sijrier Exp $
 */
 
 #ifndef COMMAND_H
 #define COMMAND_H
 
 #include <QObject>
-#include "ContextItem.h"
+#include <QString>
+#include <QCursor>
+#include <QPixmap>
 
 class HistoryStack;
-class IEMessage;
+class ContextItem;
 
 class Command : public QObject
 {
 public :
-        Command(ContextItem* item);
-        Command();
+        Command(ContextItem* item, QString des = "No description set!");
+        Command(QString des = "No description set!");
         virtual ~Command();
 
         virtual int begin_hold();
@@ -42,20 +44,25 @@ public :
         virtual int do_action();
         virtual int undo_action();
         virtual int jog();
+        virtual bool merg_with(const Command* cmd);
+        virtual int command_type();
+        virtual void set_cursor_shape(int useX = 0, int useY = 0);
 
         void set_valid(bool valid);
+        void set_description(const QString& des);
         int push_to_history_stack();
+        QString get_description() const {return m_description;}
 
-        bool valid();
-
-        bool handleByIE;
+        bool is_valid() const {return m_isValid;}
 
         Command* prev;
         Command* next;
 
 
 protected:
-        bool isValid;
+        bool 		m_isValid;
+        bool		m_isMergable;
+        QString		m_description;
 
 private:
         bool expired;

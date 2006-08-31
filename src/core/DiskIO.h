@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.h,v 1.3 2006/06/20 19:33:14 r_sijrier Exp $
+$Id: DiskIO.h,v 1.4 2006/08/31 17:55:38 r_sijrier Exp $
 */
 
 #ifndef DISKIO_H
@@ -53,7 +53,12 @@ private:
 
 };
 
-
+/** DiskIO handles all the read's and write's of AudioSources in it's private thread.
+ *  Each Song class has it's own DiskIO instance. 
+ * The DiskIO manages all the AudioSources
+ * related to a Song, and makes sure the RingBuffers from the AudioSources are processed
+ * in time.
+ */
 class DiskIO : public QObject
 {
 	Q_OBJECT
@@ -62,11 +67,31 @@ public:
 	DiskIO();
 	~DiskIO();
 
+	/**
+	 *        Interupts any pending AudioSource's buffer processing, and returns from do_work().
+	 *	Use this before calling seek() to shorten the seek process.
+	 */
 	void prepare_for_seek();
 
+	/**
+	 *        Registers the ReadSource. The source's RingBuffer will be initalized at this point.
+	 *
+	 *	This function is thread save. 
+	 * @param source The ReadSource to register
+	 */
 	void register_read_source(ReadSource* source);
+	/**
+	 *        Registers the WriteSource. The source's RingBuffer will be initalized at this point.
+	 *
+	 *	This function is thread save. 
+	 * @param source The WriteSource to register
+	 */
 	void register_write_source(WriteSource* source);
 
+	/**
+	 *
+	 * @return Returns the CPU time consumed by the DiskIO work thread 
+	 */
 	trav_time_t get_cpu_time();
 
 private:
@@ -89,7 +114,14 @@ private:
 	friend class DiskIOThread;
 
 public slots:
+	/**
+	 *        Seek's all the ReadSource's readbuffers to the new position.
+	 *	Call prepare_seek() first, to interupt do_work() if it was running.
+	 * @param position 
+	 */
 	void seek(uint position);
+	
+private slots:
 	void do_work();
 
 signals:
