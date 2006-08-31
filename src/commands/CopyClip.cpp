@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: CopyClip.cpp,v 1.6 2006/07/03 17:51:56 r_sijrier Exp $
+    $Id: CopyClip.cpp,v 1.7 2006/08/31 17:54:51 r_sijrier Exp $
 */
 
 #include "CopyClip.h"
@@ -30,7 +30,7 @@
 
 
 CopyClip::CopyClip(Song* song, AudioClip* clip)
-                : Command(clip)
+                : Command(clip, tr("Copy Clip"))
 {
         m_song = song;
         m_clip = clip;

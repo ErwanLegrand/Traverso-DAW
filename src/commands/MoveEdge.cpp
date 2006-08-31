@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveEdge.cpp,v 1.6 2006/07/31 13:42:24 r_sijrier Exp $
+    $Id: MoveEdge.cpp,v 1.7 2006/08/31 17:54:51 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -29,7 +29,7 @@
 #include "Debugger.h"
 
 MoveEdge::MoveEdge(AudioClip* clip, QByteArray whichEdge)
-                : Command(clip)
+                : Command(clip, tr("Move Clip Edge"))
 {
         m_clip = clip;
         m_song = clip->get_song();

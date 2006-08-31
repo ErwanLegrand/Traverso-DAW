@@ -17,13 +17,13 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Zoom.h,v 1.1 2006/04/20 14:51:13 r_sijrier Exp $
+    $Id: Zoom.h,v 1.2 2006/08/31 17:54:51 r_sijrier Exp $
 */
 
 #ifndef ZOOM_H
 #define ZOOM_H
 
-#include <libtraversocore.h>
+#include "Command.h"
 
 class SongView;
 
@@ -40,6 +40,8 @@ public :
 	int undo_action();
 
         int jog();
+
+        void set_cursor_shape(int useX = 0, int useY = 0);
 
 private :
         int origZoomLevel;

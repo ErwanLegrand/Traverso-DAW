@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Fade.cpp,v 1.2 2006/06/18 19:40:02 r_sijrier Exp $
+$Id: Fade.cpp,v 1.3 2006/08/31 17:54:51 r_sijrier Exp $
 */
 
 
@@ -33,7 +33,7 @@ $Id: Fade.cpp,v 1.2 2006/06/18 19:40:02 r_sijrier Exp $
 
 
 Fade::Fade(AudioClip* clip, Curve* curve, int direction)
-	: Command(clip)
+	: Command(clip, tr("Fade"))
 {
 	m_curve = curve;
 	m_direction = direction;

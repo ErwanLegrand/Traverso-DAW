@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Import.cpp,v 1.7 2006/07/03 17:51:56 r_sijrier Exp $
+$Id: Import.cpp,v 1.8 2006/08/31 17:54:51 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -34,14 +34,14 @@ $Id: Import.cpp,v 1.7 2006/07/03 17:51:56 r_sijrier Exp $
 
 
 Import::Import(Track* track)
-		: Command(track)
+		: Command(track, tr("Import Audio File"))
 {
 	m_track = track;
 }
 
 
 Import::Import(Track* track, QString fileName)
-		: Command(track)
+		: Command(track, tr("Import Audio File"))
 {
 	m_track = track;
 	m_fileName = fileName;

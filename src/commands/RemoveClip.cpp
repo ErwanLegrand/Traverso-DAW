@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: RemoveClip.cpp,v 1.4 2006/07/03 17:51:56 r_sijrier Exp $
+$Id: RemoveClip.cpp,v 1.5 2006/08/31 17:54:51 r_sijrier Exp $
 */
 
 #include "RemoveClip.h"
@@ -30,14 +30,14 @@ $Id: RemoveClip.cpp,v 1.4 2006/07/03 17:51:56 r_sijrier Exp $
 
 
 RemoveClip::RemoveClip(AudioClip* clip)
-		: Command(clip)
+		: Command(clip, tr("Remove Clip"))
 {
 	m_clips.append(clip);
 }
 
 
 RemoveClip::RemoveClip( QList< AudioClip * > clips, AudioClipManager* manager)
-		: Command(manager)
+		: Command(manager, tr("Remove Clip"))
 {
 	m_clips = clips;
 }

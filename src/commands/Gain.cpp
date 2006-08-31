@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Gain.cpp,v 1.2 2006/06/21 11:51:48 r_sijrier Exp $
+$Id: Gain.cpp,v 1.3 2006/08/31 17:54:51 r_sijrier Exp $
 */
 
 #include "Gain.h"
@@ -25,6 +25,8 @@ $Id: Gain.cpp,v 1.2 2006/06/21 11:51:48 r_sijrier Exp $
 #include "ContextItem.h"
 #include "ContextPointer.h"
 #include "Mixer.h"
+#include <ViewPort.h>
+
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -32,7 +34,7 @@ $Id: Gain.cpp,v 1.2 2006/06/21 11:51:48 r_sijrier Exp $
 
 
 Gain::Gain(ContextItem* context, float gain)
-	: Command(context)
+	: Command(context, tr("Gain"))
 {
 	gainObject = context;
 	
@@ -94,6 +96,18 @@ int Gain::undo_action()
 	}
 	
 	return 1;
+}
+
+
+void Gain::set_cursor_shape( int useX, int useY )
+{
+	ViewPort* view = cpointer().get_viewport();
+	
+	if (useY) {
+		view->setCursor(QCursor( QPixmap(":/cursorGain") ));
+	} else {
+        	view->reset_context();
+        }
 }
 
 

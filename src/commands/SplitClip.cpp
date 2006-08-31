@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SplitClip.cpp,v 1.7 2006/07/03 17:51:56 r_sijrier Exp $
+$Id: SplitClip.cpp,v 1.8 2006/08/31 17:54:51 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -29,7 +29,7 @@ $Id: SplitClip.cpp,v 1.7 2006/07/03 17:51:56 r_sijrier Exp $
 #include "Debugger.h"
 
 SplitClip::SplitClip(Song* song, AudioClip* clip)
-		: Command(clip)
+		: Command(clip, tr("Split Clip"))
 {
 	m_clip = clip;
 	m_song = song;

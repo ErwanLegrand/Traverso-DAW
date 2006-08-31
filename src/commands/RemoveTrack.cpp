@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: RemoveTrack.cpp,v 1.4 2006/07/03 17:51:56 r_sijrier Exp $
+$Id: RemoveTrack.cpp,v 1.5 2006/08/31 17:54:51 r_sijrier Exp $
 */
 
 #include "RemoveTrack.h"
@@ -30,7 +30,7 @@ $Id: RemoveTrack.cpp,v 1.4 2006/07/03 17:51:56 r_sijrier Exp $
 
 
 RemoveTrack::RemoveTrack(Song* song)
-		: Command(song)
+		: Command(song, tr("Remove Track"))
 {
 	m_song = song;
 }

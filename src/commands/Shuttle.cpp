@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Shuttle.cpp,v 1.1 2006/04/20 14:51:13 r_sijrier Exp $
+    $Id: Shuttle.cpp,v 1.2 2006/08/31 17:54:51 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -32,7 +32,7 @@
 #include "Debugger.h"
 
 Shuttle::Shuttle(SongView* sv, ViewPort* vp)
-                : Command()
+	: Command("Shuttle")
 {
         m_sv = sv;
         m_vp = vp;

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Zoom.cpp,v 1.2 2006/05/01 21:17:39 r_sijrier Exp $
+    $Id: Zoom.cpp,v 1.3 2006/08/31 17:54:51 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -32,7 +32,7 @@
 #include "Debugger.h"
 
 Zoom::Zoom(SongView* sv)
-                : Command()
+	: Command("Zoom")
 {
         m_sv = sv;
 }
@@ -50,8 +50,6 @@ int Zoom::prepare_actions()
 
 int Zoom::begin_hold()
 {
-        m_sv->get_viewport()->setCursor(m_sv->cursorMap[9]);
-        m_sv->currentCursorMapIndex = 9;
         jogZoomTotalX = m_sv->get_viewport()->width();
         jogZoomTotalY = m_sv->get_viewport()->height();
         verticalJogZoomLastY = cpointer().y();
@@ -62,10 +60,19 @@ int Zoom::begin_hold()
 
 int Zoom::finish_hold()
 {
-        m_sv->set_context();
         return 1;
 }
 
+
+void Zoom::set_cursor_shape( int useX, int useY )
+{
+	if (useX && useY) {
+		m_sv->get_viewport()->setCursor(m_sv->cursorMap[9]);
+		m_sv->currentCursorMapIndex = 9;
+	} else {
+        	m_sv->set_context();
+        }
+}
 
 int Zoom::jog()
 {
@@ -108,5 +115,6 @@ int Zoom::undo_action( )
 {
 	return -1;
 }
+
 
 // eof

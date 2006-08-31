@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ClipSelection.cpp,v 1.1 2006/05/01 21:18:17 r_sijrier Exp $
+$Id: ClipSelection.cpp,v 1.2 2006/08/31 17:54:51 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -29,7 +29,7 @@ $Id: ClipSelection.cpp,v 1.1 2006/05/01 21:18:17 r_sijrier Exp $
 
 
 ClipSelection::ClipSelection(AudioClip* clip, const char* slot)
-		: Command(clip)
+		: Command(clip, tr("Clip Selection"))
 {
 	m_clips.append( clip );
 	m_slot = slot;
@@ -37,7 +37,7 @@ ClipSelection::ClipSelection(AudioClip* clip, const char* slot)
 }
 
 ClipSelection::ClipSelection( QList< AudioClip * > clips, AudioClipManager * manager, const char * slot )
-		: Command(manager)
+		: Command(manager, tr("Clip Selection"))
 {
 	m_clips = clips;
 	m_slot = slot;

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Gain.h,v 1.1 2006/06/20 19:16:42 r_sijrier Exp $
+    $Id: Gain.h,v 1.2 2006/08/31 17:54:51 r_sijrier Exp $
 */
 
 #ifndef GAIN_H
@@ -40,6 +40,8 @@ public :
         int undo_action();
 
         int jog();
+        
+        void set_cursor_shape(int useX = 0, int useY = 0);
 
 private :
 	ContextItem*	gainObject;

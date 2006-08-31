@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: MoveClip.cpp,v 1.8 2006/07/31 15:34:28 r_sijrier Exp $
+$Id: MoveClip.cpp,v 1.9 2006/08/31 17:54:51 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -31,7 +31,7 @@ $Id: MoveClip.cpp,v 1.8 2006/07/31 15:34:28 r_sijrier Exp $
 #include "Debugger.h"
 
 MoveClip::MoveClip(Song* song, AudioClip* clip)
-		: Command(clip)
+		: Command(clip, tr("Move Clip"))
 {
 	m_song = song;
 	m_clip = clip;
