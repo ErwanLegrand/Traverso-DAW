@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Command.h,v 1.3 2006/08/31 17:55:38 r_sijrier Exp $
+    $Id: Command.h,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #ifndef COMMAND_H
@@ -34,8 +34,8 @@ class ContextItem;
 class Command : public QObject
 {
 public :
-        Command(ContextItem* item, QString des = "No description set!");
-        Command(QString des = "No description set!");
+        Command(ContextItem* item, const QString& des = "No description set!");
+        Command(const QString& des = "No description set!");
         virtual ~Command();
 
         virtual int begin_hold();
@@ -61,6 +61,7 @@ public :
 
 protected:
         bool 		m_isValid;
+        bool		m_historable;
         bool		m_isMergable;
         QString		m_description;
 

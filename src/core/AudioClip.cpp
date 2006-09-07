@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.41 2006/08/31 17:55:38 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.42 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -53,7 +53,7 @@ $Id: AudioClip.cpp,v 1.41 2006/08/31 17:55:38 r_sijrier Exp $
 
 
 AudioClip::AudioClip(Track* track, nframes_t pTrackInsertBlock, QString name)
-		: ContextItem((ContextItem*) 0, track) , m_track(track), m_name(name), trackStartFrame(pTrackInsertBlock)
+		: ContextItem(track) , m_track(track), m_name(name), trackStartFrame(pTrackInsertBlock)
 {
 	PENTERCONS;
 	m_gain = m_normfactor = 1.0;
@@ -65,7 +65,7 @@ AudioClip::AudioClip(Track* track, nframes_t pTrackInsertBlock, QString name)
 }
 
 AudioClip::AudioClip(Track* track, const QDomNode&)
-		: ContextItem((ContextItem*) 0, track), m_track(track)
+		: ContextItem(track), m_track(track)
 {
 	m_song = m_track->get_song();
 	init();
@@ -77,10 +77,6 @@ AudioClip::~AudioClip()
 
 	foreach(ReadSource* source, readSources) {
 		delete source;
-	}
-
-	foreach(FadeCurve* fade, m_fades) {
-		delete fade;
 	}
 }
 
@@ -501,22 +497,22 @@ int AudioClip::init_recording( QByteArray name )
 
 Command* AudioClip::remove_from_selection()
 {
-	return new ClipSelection(this, "remove_from_selection");
+	return new ClipSelection(this, "remove_from_selection", tr("Selection: Remove Clip"));
 }
 
 Command * AudioClip::add_to_selection()
 {
-	return new ClipSelection(this, "add_to_selection");
+	return new ClipSelection(this, "add_to_selection", tr ("Selection: Add Clip"));
 }
 
 Command* AudioClip::select()
 {
-	return new ClipSelection(this, "select_clip");
+	return new ClipSelection(this, "select_clip", tr("Select Clip"));
 }
 
 Command* AudioClip::mute()
 {
-	return new PCommand(this, "toggle_mute");
+	return new PCommand(this, "toggle_mute", tr("Toggle Mute"));
 }
 
 Command* AudioClip::reset_gain()
@@ -703,7 +699,7 @@ void AudioClip::set_track( Track * t )
 	set_sources_active_state();
 }
 
-void AudioClip::set_name( QString name )
+void AudioClip::set_name( const QString& name )
 {
 	m_name = name;
 }

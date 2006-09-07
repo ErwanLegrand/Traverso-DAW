@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.cpp,v 1.10 2006/08/25 11:24:53 r_sijrier Exp $
+$Id: ReadSource.cpp,v 1.11 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #include "ReadSource.h"
@@ -50,7 +50,7 @@ ReadSource::ReadSource(const QDomNode node)
 	}
 }
 
-ReadSource::ReadSource(uint chan, QString dir, QString name)
+ReadSource::ReadSource(uint chan, const QString& dir, const QString& name)
 		: AudioSource(chan, dir, name), refcount(0)
 {
 }

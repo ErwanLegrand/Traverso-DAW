@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.8 2006/08/25 11:13:17 r_sijrier Exp $
+$Id: AudioDevice.h,v 1.9 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -38,87 +38,74 @@ class Client;
 class AudioChannel;
 class AudioBus;
 
-
 class AudioDevice : public QObject
 {
 	Q_OBJECT
 
 public:
-	AudioChannel* register_capture_channel(QByteArray busName, QString audioType, int flags, uint bufferSize, uint channel );
-	AudioChannel* register_playback_channel(QByteArray busName, QString audioType, int flags, uint bufferSize, uint channel );
-
-	void unregister_capture_channel(QByteArray name);
-	void unregister_playback_channel(QByteArray name);
-
-	void set_parameters(int rate, nframes_t bufferSize, QString driverType);
+	void set_parameters(int rate, nframes_t bufferSize, const QString& driverType);
 
 	void add_client(Client* client);
 	void remove_client(Client* client);
 
-	AudioChannel* get_playback_channel(QByteArray name);
-	AudioChannel* get_capture_channel(QByteArray name);
-
-	AudioBus* get_playback_bus(QByteArray name)
+	/**
+	 * Get the Playback AudioBus instance with name \a name.
+	 
+	 * You can use this for example in your callback function to get a Playback Bus,
+	 * and mix audiodata into the Buses' buffers. 
+	 * \sa get_playback_buses_names(), AudioBus::get_buffer()
+	 *
+	 * @param name The name of the Playback Bus 
+	 * @return An AudioBus if one exists with name \a name, 0 on failure
+	 */
+	AudioBus* get_playback_bus(QByteArray name) const
 	{
 		return playbackBuses.value(name);
 	}
-	AudioBus* get_capture_bus(QByteArray name)
+	
+	/**
+	 * Get the Capture AudioBus instance with name \a name.
+	 
+	 * You can use this for example in your callback function to get a Capture Bus,
+	 * and read the audiodata from the Buses' buffers. 
+	 * \sa AudioBus::get_buffer(),  get_capture_buses_names()
+	 *
+	 * @param name The name of the Capture Bus
+	 * @return An AudioBus if one exists with name \a name, 0 on failure
+	 */
+	AudioBus* get_capture_bus(QByteArray name) const
 	{
 		return captureBuses.value(name);
 	}
 
-	QStringList get_capture_buses_names();
-	QStringList get_playback_buses_names();
+	QStringList get_capture_buses_names() const;
+	QStringList get_playback_buses_names() const;
 
-	QString get_device_name();
-	QString get_device_longname();
-	QString get_driver_type();
+	QString get_device_name() const;
+	QString get_device_longname() const;
+	QString get_driver_type() const;
 
-	QStringList get_available_drivers();
+	QStringList get_available_drivers() const;
 
-	uint get_sample_rate();
-	uint get_bit_depth();
+	uint get_sample_rate() const;
+	uint get_bit_depth() const;
 
-	QList<Client *> get_clients() const
-	{
-		return clients;
-	}
-
-	Driver* get_driver() const
-	{
-		return driver;
-	}
-
-	void mili_sleep(int msec);
-
-	nframes_t get_buffer_size()
+	/**
+	 * 
+	 * @return The period buffer size, as used by the Audio Driver.
+	 */
+	nframes_t get_buffer_size() const
 	{
 		return m_bufferSize;
 	}
 
-	bool run_audio_thread() const
-	{
-		return runAudioThread;
-	}
 
 	void show_descriptors();
 
-	void transport_cycle_start(trav_time_t time)
-	{
-		cycleStartTime = time;
-	}
-
-	void transport_cycle_end(trav_time_t time)
-	{
-		audio_sample_t runcycleTime = time - cycleStartTime;
-		cpuTimeBuffer->write((char*)&runcycleTime, 1 * sizeof(audio_sample_t));
-	}
-
 	int shutdown();
-	int run_cycle(nframes_t nframes, float delayed_usecs);
-	void delay(float delay);
-	uint capture_buses_count();
-	uint playback_buses_count();
+	
+	uint capture_buses_count() const;
+	uint playback_buses_count() const;
 
 
 	trav_time_t get_cpu_time();
@@ -136,6 +123,7 @@ private:
 	friend class AlsaDriver;
 	friend class JackDriver;
 	friend class Driver;
+	friend class AudioDeviceThread;
 
 
 	Driver* 				driver;
@@ -165,17 +153,71 @@ private:
 	void free_memory();
 
 	// These are reserved for Driver Objects only!!
+	AudioChannel* register_capture_channel(const QByteArray& busName, const QString& audioType, int flags, uint bufferSize, uint channel );
+	AudioChannel* register_playback_channel(const QByteArray& busName, const QString& audioType, int flags, uint bufferSize, uint channel );
+	
+	int run_cycle(nframes_t nframes, float delayed_usecs);
+	
 	void set_buffer_size(uint size);
 	void set_sample_rate(uint rate);
 	void set_bit_depth(uint depth);
+	void delay(float delay);
+
+	void transport_cycle_start(trav_time_t time)
+	{
+		cycleStartTime = time;
+	}
+
+	void transport_cycle_end(trav_time_t time)
+	{
+		audio_sample_t runcycleTime = time - cycleStartTime;
+		cpuTimeBuffer->write((char*)&runcycleTime, 1 * sizeof(audio_sample_t));
+	}
+
+	Driver* get_driver() const
+	{
+		return driver;
+	}
+
+	void mili_sleep(int msec);
+	
+	bool run_audio_thread() const
+	{
+		return runAudioThread;
+	}
 
 signals:
+	/**
+	 *      The stopped() signal is emited just before the AudioDeviceThread will be stopped.
+	 *	Connect this signal to all Objects that have a pointer to an AudioBus (For example a VU meter),
+	 *	since all he Buses will be deleted, and new ones created when the AudioDevice re-inits
+	 *	the AudioDriver.
+	 */
 	void stopped();
+	
+	/**
+	 *      The started() signal is emited ones the AudioThread and AudioDriver have been succesfully
+	 *	setup.
+	 */
 	void started();
+	
+	/**
+	 *      The driverParamsChanged() signal is emited just before the started() signal, you should 
+	 *	connect all objects to this signal who need a pointer to one of the AudioBuses supplied by 
+	 *	the AudioDevice!
+	 */
 	void driverParamsChanged();
+	
+	/**
+	 *        Connect this signal to any Object who need to be informed about buffer under/overruns
+	 */
 	void xrun();
-	void add_client_Signal();
-	void clientRemoved(Client* );
+	
+	/**
+	 *        This signal will be emited after succesfull Client removal from within the GUI Thread!
+	 * @param  The Client \a client which as been removed from the AudioDevice
+	 */
+	void clientRemoved(Client*);
 
 private slots:
 	void private_add_client(Client* client);

@@ -27,6 +27,7 @@ HEADERS += AudioPluginSelector.h \
            FadeContextDialogView.h \
            FadeView.h \
            Help.h \
+           HistoryWidget.h \
            InfoBox.h \
            Main.h \
            ExportWidget.h \
@@ -71,6 +72,7 @@ SOURCES += Traverso.cpp \
            FadeContextDialogView.cpp \
            FadeView.cpp \
            Help.cpp \
+           HistoryWidget.cpp \
            InfoBox.cpp \
            Main.cpp \
            ExportWidget.cpp \

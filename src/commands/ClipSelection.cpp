@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ClipSelection.cpp,v 1.2 2006/08/31 17:54:51 r_sijrier Exp $
+$Id: ClipSelection.cpp,v 1.3 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -28,16 +28,16 @@ $Id: ClipSelection.cpp,v 1.2 2006/08/31 17:54:51 r_sijrier Exp $
 #include "Debugger.h"
 
 
-ClipSelection::ClipSelection(AudioClip* clip, const char* slot)
-		: Command(clip, tr("Clip Selection"))
+ClipSelection::ClipSelection(AudioClip* clip, const char* slot, const QString& des)
+		: Command(clip, des)
 {
 	m_clips.append( clip );
 	m_slot = slot;
 	m_acmanager = clip->get_song()->get_audioclip_manager();
 }
 
-ClipSelection::ClipSelection( QList< AudioClip * > clips, AudioClipManager * manager, const char * slot )
-		: Command(manager, tr("Clip Selection"))
+ClipSelection::ClipSelection( QList< AudioClip * > clips, AudioClipManager * manager, const char * slot, const QString& des )
+		: Command(manager, des)
 {
 	m_clips = clips;
 	m_slot = slot;

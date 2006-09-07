@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.11 2006/08/25 11:17:58 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.12 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -35,6 +35,7 @@ $Id: TrackView.cpp,v 1.11 2006/08/25 11:17:58 r_sijrier Exp $
 #include "PanelLed.h"
 #include "BusSelector.h"
 #include "PluginChainView.h"
+#include <Plugin.h>
 
 #if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 #include <PluginSelectorDialog.h>
@@ -545,7 +546,7 @@ Command * TrackView::add_new_plugin( )
 	if (PluginSelectorDialog::instance()->exec() == QDialog::Accepted) {
 		Plugin* plugin = PluginSelectorDialog::instance()->get_selected_plugin();
 		if (plugin) {
-			m_track->add_plugin(plugin);
+			return m_track->add_plugin(plugin);
 		}
 	}
 

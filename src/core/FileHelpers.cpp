@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FileHelpers.cpp,v 1.3 2006/08/25 11:25:08 r_sijrier Exp $
+$Id: FileHelpers.cpp,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #include "FileHelpers.h"
@@ -33,7 +33,7 @@ $Id: FileHelpers.cpp,v 1.3 2006/08/25 11:25:08 r_sijrier Exp $
 //
 // if it is a directory, calls itself recursively  on any file/dir in the directory
 // before removing the directory
-int FileHelper::remove_recursively(QString pName)
+int FileHelper::remove_recursively(const QString& pName)
 {
 	QSettings settings;
 
@@ -85,7 +85,7 @@ int FileHelper::remove_recursively(QString pName)
 }
 
 
-int FileHelper::copy_recursively(QString pNameFrom, QString pNameTo)
+int FileHelper::copy_recursively(const QString& pNameFrom, const QString& pNameTo)
 {
 #if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 	QSettings settings;

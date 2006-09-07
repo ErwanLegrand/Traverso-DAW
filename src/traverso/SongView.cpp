@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.17 2006/08/31 17:56:38 r_sijrier Exp $
+$Id: SongView.cpp,v 1.18 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #include <QPainter>
@@ -72,7 +72,6 @@ SongView::SongView(Song* song, ViewPort* vp)
 	connect(m_vp, SIGNAL(resetContext( ) ), this, SLOT(reset_context()));
 
 	init_context_menu( this );
-	
 }
 
 SongView::~SongView()

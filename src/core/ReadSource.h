@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.h,v 1.6 2006/08/31 17:55:38 r_sijrier Exp $
+$Id: ReadSource.h,v 1.7 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #ifndef READSOURCE_H
@@ -31,7 +31,7 @@ class ReadSource : public AudioSource
 {
 public :
 	ReadSource(const QDomNode node);
-	ReadSource(uint channel, QString dir, QString name);
+	ReadSource(uint channel, const QString& dir, const QString& name);
 	ReadSource(AudioSource* source);
 	~ReadSource();
 	

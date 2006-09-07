@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginView.cpp,v 1.3 2006/08/25 11:17:18 r_sijrier Exp $
+    $Id: PluginView.cpp,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #include "PluginView.h"
@@ -95,9 +95,7 @@ Command * PluginView::edit_properties( )
 
 Command* PluginView::remove_item()
 {
-	m_track->remove_plugin(m_plugin);
-
-	return (Command*) 0;
+	return m_track->remove_plugin(m_plugin);
 }
 
 Plugin * PluginView::get_plugin( )

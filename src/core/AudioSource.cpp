@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSource.cpp,v 1.5 2006/08/25 11:24:53 r_sijrier Exp $
+$Id: AudioSource.cpp,v 1.6 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #include <QDateTime>
@@ -37,7 +37,7 @@ $Id: AudioSource.cpp,v 1.5 2006/08/25 11:24:53 r_sijrier Exp $
 
 
 // This constructor is called during file import
-AudioSource::AudioSource(uint chanNumber, QString dir, QString name)
+AudioSource::AudioSource(uint chanNumber, const QString& dir, const QString& name)
 		: m_buffer(0), sf(0), channelNumber(chanNumber), m_dir(dir), m_name(name)
 {
 	PENTERCONS;
@@ -108,14 +108,14 @@ int AudioSource::get_clips_count()
 }
 
 
-void AudioSource::set_name(QString name)
+void AudioSource::set_name(const QString& name)
 {
 	m_name = name;
 	m_filename = m_dir + "/" + m_name;
 }
 
 
-void AudioSource::set_dir(QString dir)
+void AudioSource::set_dir(const QString& dir)
 {
 	m_dir = dir;
 	m_filename = m_dir + "/" + m_name;

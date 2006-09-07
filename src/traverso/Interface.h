@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.h,v 1.3 2006/08/31 12:39:09 r_sijrier Exp $
+$Id: Interface.h,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #ifndef INTERFACE_H
@@ -43,7 +43,7 @@ class ExportWidget;
 class QStackedWidget;
 class BorderLayout;
 class QHBoxLayout;
-
+class HistoryWidget;
 
 class Interface : public QMainWindow
 {
@@ -88,7 +88,8 @@ private:
 	ManagerWidget* 			managerWidget;
 	ExportWidget*			exportWidget;
 	OverViewWidget* 		overView;
-
+	HistoryWidget*			historyWidget;
+	 
 	bool 				managerWidgetCreated;
 	bool 				isBusMonitorDocked;
 

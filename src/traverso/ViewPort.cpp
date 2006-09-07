@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewPort.cpp,v 1.4 2006/08/31 17:56:38 r_sijrier Exp $
+$Id: ViewPort.cpp,v 1.5 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -86,6 +86,7 @@ void ViewPort::resizeEvent(QResizeEvent* )
 void ViewPort::enterEvent(QEvent* )
 {
 	cpointer().set_current_viewport(this);
+	setFocus();
 }
 
 

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioSource.h,v 1.3 2006/08/31 17:55:38 r_sijrier Exp $
+    $Id: AudioSource.h,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #ifndef AUDIOSOURCE_H
@@ -39,15 +39,15 @@ class RingBuffer;
 class AudioSource : public QObject
 {
 public :
-        AudioSource(uint channelNumber, QString dir, QString name);
+        AudioSource(uint channelNumber, const QString& dir, const QString& name);
         AudioSource(const QDomNode node);
         AudioSource() {}
         ~AudioSource();
 
 	virtual int process_ringbuffer(audio_sample_t* framebuffer) = 0;
 	
-        void set_name(QString name);
-        void set_dir(QString name);
+        void set_name(const QString& name);
+        void set_dir(const QString& name);
         void set_original_bit_depth(uint bitDepth);
         void set_created_by_song(int id);
         void set_sample_rate(int rate);

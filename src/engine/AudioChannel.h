@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioChannel.h,v 1.3 2006/07/05 11:11:15 r_sijrier Exp $
+$Id: AudioChannel.h,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #ifndef AUDIOCHANNEL_H
@@ -34,19 +34,12 @@ class AudioChannel
 {
 
 public:
-	AudioChannel(QString busName, QString audioType, int flags, uint channelNumber );
+	AudioChannel(const QString& busName, const QString& audioType, int flags, uint channelNumber );
 	~AudioChannel();
 
 	audio_sample_t* get_buffer(nframes_t )
 	{
 		hasData = true;
-		return buf;
-	}
-
-	audio_sample_t* get_data()
-	{
-		hasData = false;
-		monitor_peaks();
 		return buf;
 	}
 
@@ -60,10 +53,6 @@ public:
 	void set_buffer_size(nframes_t size);
 	void set_monitor_peaks(bool monitor);
 	
-	int has_data()
-	{
-		return hasData || monitoring;
-	}
 	
 	uint get_number() const
 	{
@@ -97,6 +86,23 @@ private:
 	bool			monitoring;
 	QString 		m_name;
 	QString 		m_audioType;
+
+	friend class JackDriver;
+	friend class AlsaDriver;
+	friend class Driver;
+	
+	int has_data()
+	{
+		return hasData || monitoring;
+	}
+	
+	audio_sample_t* get_data()
+	{
+		hasData = false;
+		monitor_peaks();
+		return buf;
+	}
+
 };
 
 #endif

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Tsar.h,v 1.5 2006/07/06 17:38:03 r_sijrier Exp $
+$Id: Tsar.h,v 1.6 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #ifndef TSAR_H
@@ -27,57 +27,35 @@ $Id: Tsar.h,v 1.5 2006/07/06 17:38:03 r_sijrier Exp $
 #include <QTimer>
 #include <QByteArray>
 
-#define THREAD_SAVE_CALL(ObjectAddedTo, slotSignature, slotArgument)  { \
-		THREAD_SAVE_CALL_EMIT_SIGNAL(ObjectAddedTo, slotArgument, slotSignature, "")\
+#define THREAD_SAVE_CALL(caller, argument, slotSignature)  { \
+		TsarEvent event = tsar().create_event(caller, argument, #slotSignature, ""); \
+		tsar().add_event(event);\
 	}
 
-#define THREAD_SAVE_EMIT_SIGNAL(sender, signalSignature, functionArgument) {\
-	THREAD_SAVE_CALL_EMIT_SIGNAL(sender, functionArgument, "", signalSignature)\
+#define THREAD_SAVE_EMIT_SIGNAL(caller, argument, signalSignature) {\
+		TsarEvent event = tsar().create_event(caller, argument, "", #signalSignature); \
+		tsar().add_event(event);\
 }\
 
-#define THREAD_SAVE_CALL_EMIT_SIGNAL(ObjectAddedTo, functionArgument, slotSignature, signalSignature)  { \
-	TsarDataStruct tsardata;\
-	tsardata.objectToAddTo = ObjectAddedTo;\
-	tsardata.funcArgument = (void*)functionArgument;\
-	\
-	int index = ObjectAddedTo->metaObject()->indexOfMethod(#slotSignature);\
-	if (index < 0) {\
-	        QByteArray norm = QMetaObject::normalizedSignature(#slotSignature);\
-        	index = ObjectAddedTo->metaObject()->indexOfMethod(norm.constData());\
-        }\
-        \
-	tsardata.slotindex = index;\
-	\
-	if ( ! QString(#signalSignature).isEmpty()) {\
-		/* the signal index seems to have an offset of 4, so we have to substract 4 from */\
-		/* the value returned by ObjectAddedTo->metaObject()->indexOfMethod*/ \
-		index = ObjectAddedTo->metaObject()->indexOfMethod(#signalSignature) - 4;\
-		if (index < 0) {\
-			QByteArray norm = QMetaObject::normalizedSignature(#signalSignature);\
-			index = ObjectAddedTo->metaObject()->indexOfMethod(norm.constData()) - 4;\
-		}\
-		tsardata.signalindex = index; \
-		tsardata.sender = ObjectAddedTo;\
-	} else {\
-		tsardata.sender = 0;\
-	}\
-	\
-	tsar().process_object(tsardata);\
+#define THREAD_SAVE_CALL_EMIT_SIGNAL(caller, argument, slotSignature, signalSignature)  { \
+	TsarEvent event = tsar().create_event(caller, argument, #slotSignature, #signalSignature); \
+	tsar().add_event(event);\
 	}\
 
 
 class ContextItem;
 class RingBuffer;
 
-struct TsarDataStruct {
+struct TsarEvent {
 // used for slot invokation stuff
-	void*		funcArgument;
-	QObject*	objectToAddTo;
+	QObject* 	caller;
+	void*		argument;
 	int		slotindex;
 
 // Used for the signal emiting stuff
-	QObject* sender;
 	int signalindex;
+	
+	bool valid;
 };
 
 class Tsar : public QObject
@@ -86,9 +64,13 @@ class Tsar : public QObject
 
 public:
 
-	void add_remove_items_in_audio_processing_path();
+	void process_events();
+	TsarEvent create_event(QObject* caller, void* argument, char* slotSignature, char* signalSignature);
 	
-	void process_object(TsarDataStruct& data);
+	void add_event(TsarEvent& event);
+	void process_event_slot(TsarEvent& event);
+	void process_event_signal(TsarEvent& event);
+	void process_event_slot_signal(TsarEvent& event);
 
 private:
 	Tsar();
@@ -107,7 +89,7 @@ private:
 
 
 private slots:
-	void finish_processed_objects();
+	void finish_processed_events();
 	
 };
 

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.5 2006/08/31 17:55:38 r_sijrier Exp $
+$Id: InputEngine.cpp,v 1.6 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -43,7 +43,7 @@ $Id: InputEngine.cpp,v 1.5 2006/08/31 17:55:38 r_sijrier Exp $
 #define MAX_TIME_DIFFERENCE_FOR_DOUBLE_KEY_CONSIDERATION 50
 
 
-static void set_hexcode(int & variable, QString text)
+static void set_hexcode(int & variable, const QString& text)
 {
 	variable = 0;
 	QString s;
@@ -133,7 +133,7 @@ void InputEngine::suspend()
 	active=false;
 }
 
-int InputEngine::broadcast_action_from_contextmenu(QString name)
+int InputEngine::broadcast_action_from_contextmenu(const QString& name)
 {
 	PENTER2;
 	IEAction* action = 0;
@@ -203,6 +203,18 @@ int InputEngine::broadcast_action(IEAction* action)
 
 
 	return 1;
+}
+
+void InputEngine::process_command( Command * cmd )
+{
+	Q_ASSERT(cmd);
+	
+	if (cmd->prepare_actions() && cmd->do_action()) {
+		cmd->set_valid(true);
+		if (cmd->push_to_history_stack() < 0) {
+			delete cmd;
+		}
+	}
 }
 
 
@@ -765,12 +777,8 @@ void InputEngine::finish_hold()
 			holdingCommand->set_valid( false );
 		}
 
-		if ( ! holdingCommand->is_valid() ) {
+		if (holdingCommand->push_to_history_stack() < 0) {
 			delete holdingCommand;
-		} else {
-			if (holdingCommand->push_to_history_stack() < 0) {
-				delete holdingCommand;
-			}
 		}
 
 		holdingCommand = (Command*) 0;
@@ -798,7 +806,7 @@ void InputEngine::hold_output()
 }
 
 
-int InputEngine::init_map(QString mapFilename)
+int InputEngine::init_map(const QString& mapFilename)
 {
 	PENTER2;
 	PMESG2("INITIALIZING KEYMAP ... ");

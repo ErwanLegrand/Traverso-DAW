@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.11 2006/08/31 12:39:09 r_sijrier Exp $
+$Id: Interface.cpp,v 1.12 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -40,6 +40,7 @@ $Id: Interface.cpp,v 1.11 2006/08/31 12:39:09 r_sijrier Exp $
 #include "ViewPort.h"
 #include "OverViewWidget.h"
 #include "Help.h"
+#include "HistoryWidget.h"
 
 #include "ManagerWidget.h"
 #include "ExportWidget.h"
@@ -164,6 +165,11 @@ void Interface::create()
 	move(settings.value("pos", QPoint(200, 200)).toPoint());
 	settings.endGroup();
 	
+	QDockWidget* dw = new QDockWidget("History", this);
+	historyWidget = new HistoryWidget(dw);
+	dw->setWidget(historyWidget);
+	addDockWidget(Qt::RightDockWidgetArea, dw);
+	
 	create_menu_actions();
 	create_menus();
 
@@ -202,13 +208,9 @@ void Interface::set_songview(Song* song)
 		sv = songViewList.at(i);
 		if(sv->get_song() == song) {
 			PMESG("Setting new songView");
+			UndoGroup::instance()->set_active_stack(song->get_history_stack());
 			centerAreaWidget->setCurrentWidget(sv->get_viewport());
 			currentSongView = sv;
-			
-			// NB If I don't set this explicitely, Qt doesn't return the
-			// focus to this widget after for example a popup of a QMenu :-(
-			sv->get_viewport()->setFocus();
-			
 			break;
 		}
 	}
@@ -337,20 +339,21 @@ void Interface::create_menus( )
 	fileMenu->addAction(saveAction);
 	fileMenu->addAction(exitAction);
 	
-	menuBar()->addSeparator();
-	
-	viewMenu = menuBar()->addMenu(tr("&View"));
+	viewMenu = menuBar()->addMenu(tr("&Views"));
 	viewMenu->addAction(projManViewAction);
 	viewMenu->addAction(editViewAction);
 	viewMenu->addAction(curveViewAction);
 	viewMenu->addAction(settingsViewAction);
 	
-	menuBar()->addSeparator();
-	
 	helpMenu = menuBar()->addMenu(tr("&Help"));
 	helpMenu->addAction(handBookAction);
 	helpMenu->addAction(aboutTraversoAction);
 
+	QAction* action = menuBar()->addAction(tr("Manager View"));
+	connect(action, SIGNAL(triggered()), this, SLOT(set_manager_widget()));
+
+	action = menuBar()->addAction(tr("Song View"));
+	connect(action, SIGNAL(triggered()), this, SLOT(set_songview_widget()));
 }
 
 void Interface::create_menu_actions( )
@@ -382,6 +385,7 @@ void Interface::create_menu_actions( )
 	
 	aboutTraversoAction = new QAction(tr("&About Traverso"), this);
 	connect(aboutTraversoAction,  SIGNAL(triggered()), this, SLOT(about_traverso()));
+	
 }
 
 

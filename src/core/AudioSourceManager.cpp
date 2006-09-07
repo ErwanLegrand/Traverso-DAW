@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSourceManager.cpp,v 1.8 2006/08/25 11:24:53 r_sijrier Exp $
+$Id: AudioSourceManager.cpp,v 1.9 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #include "AudioSourceManager.h"
@@ -111,7 +111,7 @@ int AudioSourceManager::get_total_sources()
 }
 
 
-ReadSource * AudioSourceManager::new_readsource( QString dir, QString name, uint channel, int songId, int bitDepth, int rate )
+ReadSource * AudioSourceManager::new_readsource( const QString& dir, const QString& name, uint channel, int songId, int bitDepth, int rate )
 {
 	PENTER;
 	
@@ -185,7 +185,7 @@ ReadSource * AudioSourceManager::get_readsource( qint64 id )
 	return source;
 }
 
-ReadSource* AudioSourceManager::get_readsource(QString fileName, int channel)
+ReadSource* AudioSourceManager::get_readsource(const QString& fileName, int channel)
 {
 	ReadSource* source = 0;
 	

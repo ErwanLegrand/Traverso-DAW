@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.h,v 1.16 2006/08/07 19:16:23 r_sijrier Exp $
+$Id: Song.h,v 1.17 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #ifndef SONG_H
@@ -112,11 +112,11 @@ public:
 	SnapList* get_snap_list();
 
 	// Set functions
-	void set_artists(QString pArtistis);
+	void set_artists(const QString& pArtistis);
 	void set_active_track(int trackNumber);
 	void update_cursor_pos();
 	void set_first_visible_frame(nframes_t pos);
-	void set_title(QString sTitle);
+	void set_title(const QString& sTitle);
 	void set_work_at(nframes_t pos);
 	void set_hzoom(int hzoom);
 	void set_number(int num)
@@ -136,8 +136,8 @@ public:
 	
 	void solo_track(Track* track);
 	void create(int tracksToCreate);
-	void add_track(Track* track);
-	void remove_track(Track* track);
+	Command* add_track(Track* track, bool historable=true);
+	Command* remove_track(Track* track, bool historable=true);
 	
 	nframes_t xpos_to_frame(int xpos);
 	
@@ -231,22 +231,6 @@ public slots :
 	Command* set_curve_mode();
 	Command* work_next_edge();
 	Command* work_previous_edge();
-// 	Command* in_crop();
-//         Command* add_audio_plugin_controller();
-//         Command* select_audio_plugin_controller();
-//         Command* remove_current_audio_plugin_controller();
-//         Command* remove_audio_plugin_controller();
-//         Command* add_node();
-//         Command* drag_and_drop_node();
-//         Command* audio_plugin_setup();
-//         Command* node_setup();
-/*	Command* create_region_start();
-	Command* create_region_end();
-	Command* create_region();
-	Command* delete_region_under_x();
-	Command* go_regions();
-	Command* go_loop_regions();
-	Command* jog_create_region();*/
 	Command* undo();
 	Command* redo();
 	Command* toggle_snap();

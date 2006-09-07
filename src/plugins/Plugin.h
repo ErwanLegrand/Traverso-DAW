@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Plugin.h,v 1.1 2006/07/31 13:24:46 r_sijrier Exp $
+$Id: Plugin.h,v 1.2 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 
@@ -30,6 +30,7 @@ $Id: Plugin.h,v 1.1 2006/07/31 13:24:46 r_sijrier Exp $
 #include "defines.h"
 
 class AudioBus;
+class PluginChain;
 
 class Plugin : public ContextItem
 {

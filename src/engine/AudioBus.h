@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioBus.h,v 1.2 2006/05/17 22:07:05 r_sijrier Exp $
+$Id: AudioBus.h,v 1.3 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 
@@ -35,8 +35,8 @@ class AudioBus : public QObject
 	Q_OBJECT
 
 public:
-	AudioBus(QString name);
-	AudioBus(QString name, int channelCount);
+	AudioBus(const QString& name);
+	AudioBus(const QString& name, int channelCount);
 	~AudioBus();
 
 	void add_channel(AudioChannel* chan);
@@ -49,8 +49,15 @@ public:
 	{
 		return m_name;
 	}
+	
 	AudioChannel* get_channel(int channelNumber);
 
+	/**
+	 *        Get a pointer to the buffer associated with AudioChannel \a channel 
+	 * @param channel The channel number to get the buffer from
+	 * @param nframes The buffer size to get
+	 * @return 
+	 */
 	audio_sample_t* get_buffer(int channel, nframes_t nframes)
 	{
 		return channels.at(channel)->get_buffer(nframes);
@@ -66,6 +73,10 @@ public:
 		}
 	}
 
+	/**
+	 *        Zero all AudioChannels buffers for
+	 * @param nframes size of the buffer
+	 */
 	void silence_buffers(nframes_t nframes)
 	{
 		foreach(AudioChannel* chan, channels) {
@@ -81,7 +92,7 @@ private:
 	
 	int 			channelCount;
 
-	void init(QString name);
+	void init(const QString& name);
 
 public slots:
 	void resize_buffer();

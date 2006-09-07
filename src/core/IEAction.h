@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: IEAction.h,v 1.2 2006/08/25 11:25:24 r_sijrier Exp $
+    $Id: IEAction.h,v 1.3 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #ifndef IEACTION_H
@@ -43,10 +43,20 @@ public:
         //! @param pFact2_k2
         //! @param useX
         //! @param useY
-        void set
-                (int pType, int pFact1_k1, int pFact1_k2, int pFact2_k1, int pFact2_k2,
-                                bool useX, bool useY, QString slot,
-                                QString key1, QString key2, QString key3, QString key4, QString actionName, int order);
+        void set(int pType,
+        	 int pFact1_k1, 
+        	 int pFact1_k2, 
+        	 int pFact2_k1, 
+        	 int pFact2_k2,
+        	 bool useX, 
+        	 bool useY, 
+        	 const QString& slot,
+        	 const QString& key1, 
+        	 const QString& key2, 
+        	 const QString& key3, 
+        	 const QString& key4,
+        	 const QString& actionName,
+        	 int order);
 
         //! if an action is set to be instantaneous, when it is recognized by jmb , jmb will not wait for a second fact.
         void set_instantaneous(bool status);

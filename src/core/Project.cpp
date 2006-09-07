@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Project.cpp,v 1.6 2006/08/25 11:23:23 r_sijrier Exp $
+$Id: Project.cpp,v 1.7 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #include <QFile>
@@ -42,8 +42,8 @@ $Id: Project.cpp,v 1.6 2006/08/25 11:23:23 r_sijrier Exp $
 #include "Debugger.h"
 
 
-Project::Project(QString pTitle)
-		: ContextItem(), title(pTitle)
+Project::Project(const QString& pTitle)
+	: ContextItem(), title(pTitle)
 {
 	PENTERCONS;
 	currentSongId = 1;
@@ -216,13 +216,13 @@ int Project::save()
 	return 1;
 }
 
-void Project::set_title(QString pTitle)
+void Project::set_title(const QString& pTitle)
 {
 	title = pTitle;
 }
 
 
-void Project::set_engineer(QString pEngineer)
+void Project::set_engineer(const QString& pEngineer)
 {
 	engineer=pEngineer;
 }

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: PCommand.h,v 1.1 2006/04/26 11:48:03 r_sijrier Exp $
+    $Id: PCommand.h,v 1.2 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #ifndef PCOMMAND_H
@@ -30,7 +30,7 @@ class ContextItem;
 class PCommand : public Command
 {
 public :
-        PCommand(ContextItem* item, char* slot);
+        PCommand(ContextItem* item, char* slot, const QString& des);
         ~PCommand();
 
         int prepare_actions();

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.13 2006/08/30 21:08:36 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.14 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -43,8 +43,91 @@ $Id: AudioDevice.cpp,v 1.13 2006/08/30 21:08:36 r_sijrier Exp $
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
+/*! 	\class AudioDevice
+	\brief An Interface to the 'real' audio device, and the hearth of the libtraversoaudiobackend
+ 
+	AudioDevice is accessed by the audiodevice() function. You need to first initialize the 'device' by 
+	calling AudioDevice::set_parameters(int rate, nframes_t bufferSize, QString driverType);
+	This will initialize the real audiodevice in case of the Alsa driver, or connect to the jack deamon. 
+	In the latter case, the rate and bufferSize don't do anything, since they are provided by the jack itself
+	
+	This class and/or related classes depend on RingBuffer, Tsar and FastDelegate which are found in libtraversocore.
+	The signal/slot feature as supplied by Qt is also used, which makes the Qt dependency a bit deeper, though
+	it shouldn't be to hard to get rid of it if you like to use the libtraversoaudiobackend in an application not 
+	using Qt, or if you don't want a dependency to Qt.
+	
+	Using the audiobackend in an application is as simple as:
+	
+	\code
+	#include <AudioDevice.h>
+	
+	main()
+	{
+		myApp = new MyApp();
+		myApp->execute();
+		return;
+	}
+		
+	MyApp::MyApp() 
+		: QApplication
+	{	
+		setup_audiobackend();
+		connect_to_audiodevice();
+	}
+		
+	
+	void MyApp::setup_audiobackend()
+	{
+		int rate = 44100;
+		int bufSize = 1024;
+		QString driver = "ALSA";
+		audiodevice().set_parameters(rate, bufSize, driver);
+	}
+	\endcode
+	
+	
+	The AudioDevice instance now has set up it's own audio thread, or uses the one created by jack.
+	This thread will continuously run, and process the callback functions of the registered Client's
+	
+	Connecting your application to the audiodevice is done by creating an instance of Client, and 
+	setting the right callback function. The Client is added to the audiodevice in a thread save way, 
+	without using any locking mechanisms.
+	
+	\code
+	void MyApp::connect_to_audiodevice()
+	{
+		m_client = new Client("MyApplication");
+		m_client->set_process_callback( MakeDelegate(this, &MyApp::process) );
+		audiodevice().add_client(m_client);
+	}
+	\endcode
+	
+	Finally, we want to do some processing in the process callback, e.g.
+	
+	\code
+	int MyApp::process(nframes_t nframes)
+	{
+		AudioBus* captureBus = audiodevice().get_capture_bus("Capture 1");
+		AudioBus* playbackBus = audiodevice().get_playback_bus("Playback 1");
+		
+		// Just copy the captured audio to the playback buses.
+		for (int i=0; i<captureBuses->get_channel_count(); ++i) {
+			memcpy(captureBus->get_channel(i)->get_buffer(nframes), playbackBus->get_channel(i)->get_buffer(nframes), nframes); 
+		}
+		
+		return 1;
+	}
+	\endcode
+	
+	*/
+
+/**
+ * A global function, used to get the AudioDevice instance. Due the nature of singletons, the 
+   AudioDevice intance will be created automatically!
+ * @return The AudioDevice instance, it will be automatically created on first call
+ */
 AudioDevice& audiodevice()
-{
+{ 
 	static AudioDevice device;
 	return device;
 }
@@ -98,8 +181,14 @@ void AudioDevice::free_memory()
 	playbackBuses.clear();
 }
 
+/**
+ * 
+ * Not yet implemented 
+ */
 void AudioDevice::show_descriptors( )
-{}
+{
+	// Needs to be implemented
+}
 
 void AudioDevice::set_buffer_size( nframes_t size )
 {
@@ -162,17 +251,36 @@ void AudioDevice::delay( float  )
 {
 }
 
-uint AudioDevice::capture_buses_count( )
+/**
+ * 
+ * @return The amount of Capture Buses, 0 if no Capture Buses are available 
+ */
+uint AudioDevice::capture_buses_count( ) const
 {
 	return captureChannels.size();
 }
 
-uint AudioDevice::playback_buses_count( )
+/**
+ * 
+ * @return The amount of PlayBack Buses, 0 if no PlayBack Buses are available 
+ */
+uint AudioDevice::playback_buses_count( ) const
 {
 	return playbackChannels.size();
 }
 
-void AudioDevice::set_parameters( int rate, nframes_t bufferSize, QString driverType )
+/**
+ * This function is used to initialize the AudioDevice's audioThread with the supplied
+ * rate, bufferSize and driver type. In case the AudioDevice allready was configured,
+ * it will stop the AudioDeviceThread and emits the stopped() signal,
+ * re-inits the AlsaDriver with the new paramaters, when succesfull emits the driverParamsChanged() signal,
+ * restarts the AudioDeviceThread and emits the started() signal
+ * 
+ * @param rate The new sample rate, only used for the AlsaDriver
+ * @param bufferSize The period buffer size, only used for the AlsaDriver
+ * @param driverType The Driver Type, can be ALSA, Jack or the Null Driver
+ */
+void AudioDevice::set_parameters( int rate, nframes_t bufferSize, const QString& driverType )
 {
 	PENTER;
 
@@ -265,44 +373,31 @@ int AudioDevice::create_driver( QString driverType )
 }
 
 
-AudioChannel* AudioDevice::register_capture_channel(QByteArray busName, QString audioType, int flags, uint , uint channel )
+AudioChannel* AudioDevice::register_capture_channel(const QByteArray& chanName, const QString& audioType, int flags, uint , uint channel )
 {
-	AudioChannel* bus = new AudioChannel(busName, audioType, flags, channel);
-	captureChannels.insert(busName, bus);
-	return bus;
+	AudioChannel* chan = new AudioChannel(chanName, audioType, flags, channel);
+	captureChannels.insert(chanName, chan);
+	return chan;
 }
 
-AudioChannel* AudioDevice::register_playback_channel(QByteArray busName, QString audioType, int flags, uint , uint channel )
+AudioChannel* AudioDevice::register_playback_channel(const QByteArray& chanName, const QString& audioType, int flags, uint , uint channel )
 {
-	AudioChannel* bus = new AudioChannel(busName, audioType, flags, channel);
-	playbackChannels.insert(busName, bus);
-	return bus;
+	AudioChannel* chan = new AudioChannel(chanName, audioType, flags, channel);
+	playbackChannels.insert(chanName, chan);
+	return chan;
 }
 
-void AudioDevice::unregister_capture_channel( QByteArray name )
-{
-	AudioChannel* bus = captureChannels.take(name);
-	if (bus)
-		delete bus;
-}
 
-void AudioDevice::unregister_playback_channel( QByteArray name )
-{
-	AudioChannel* bus = playbackChannels.take(name);
-	if (bus)
-		delete bus;
-}
-
-AudioChannel * AudioDevice::get_playback_channel( QByteArray name )
-{
-	return playbackChannels.value(name);
-}
-
-AudioChannel * AudioDevice::get_capture_channel( QByteArray name )
-{
-	return captureChannels.value(name);
-}
-
+/**
+ * Stops the AudioDevice's AudioThread, free's any related memory.
+ 
+ * Use this to properly shut down the AudioDevice on application exit,
+ * or to explicitely release the real 'audiodevice'.
+ 
+ * Use set_parameters() to reinitialize the audiodevice if you want to use it again.
+ * 
+ * @return 1 on succes, 0 on failure 
+ */
 int AudioDevice::shutdown( )
 {
 	PENTER;
@@ -322,7 +417,14 @@ int AudioDevice::shutdown( )
 	return 1;
 }
 
-QStringList AudioDevice::get_capture_buses_names( )
+/**
+ * Get the names of all the Capture Buses availble, use the names to get a Bus instance 
+ * via get_capture_bus()
+ *
+ * @return A QStringList with all the Capture Buses names which are available, 
+ *		an empty list if no Buses are available.
+ */
+QStringList AudioDevice::get_capture_buses_names( ) const
 {
 	QStringList names;
 	foreach(AudioBus* bus, captureBuses) {
@@ -331,7 +433,14 @@ QStringList AudioDevice::get_capture_buses_names( )
 	return names;
 }
 
-QStringList AudioDevice::get_playback_buses_names( )
+/**
+ * Get the names of all the Playback Buses availble, use the names to get a Bus instance 
+ * via get_playback_bus()
+ *
+ * @return A QStringList with all the PlayBack Buses names which are available, 
+ *		an empty list if no Buses are available.
+ */
+QStringList AudioDevice::get_playback_buses_names( ) const
 {
 	QStringList names;
 	foreach(AudioBus* bus, playbackBuses) {
@@ -366,40 +475,69 @@ void AudioDevice::setup_buses( )
 // 	PWARN("Playback buses count is: %d", playbackBuses.size());
 }
 
-uint AudioDevice::get_sample_rate( )
+/**
+ * 
+ * @return The real audiodevices sample rate
+ */
+uint AudioDevice::get_sample_rate( ) const
 {
 	return m_rate;
 }
 
-uint AudioDevice::get_bit_depth( )
+/**
+ * 
+ * @return The real bit depth, which is 32 bit float.... FIXME Need to get the real bitdepth as
+ *		reported by the 'real audiodevice' 
+ */
+uint AudioDevice::get_bit_depth( ) const
 {
 	return m_bitdepth;
 }
 
-QString AudioDevice::get_device_name( )
+/**
+ * 
+ * @return The short description of the 'real audio device' 
+ */
+QString AudioDevice::get_device_name( ) const
 {
 	if (driver)
 		return driver->get_device_name();
 	return tr("No Device Configured");
 }
 
-QString AudioDevice::get_device_longname( )
+/**
+ * 
+ * @return The long description of the 'real audio device' 
+ */
+QString AudioDevice::get_device_longname( ) const
 {
 	if (driver)
 		return driver->get_device_longname();
 	return tr("No Device Configured");
 }
 
-QStringList AudioDevice::get_available_drivers( )
+/**
+ * 
+ * @return A list of supported Drivers 
+ */
+QStringList AudioDevice::get_available_drivers( ) const
 {
 	return availableDrivers;
 }
 
-QString AudioDevice::get_driver_type( )
+/**
+ * 
+ * @return The currently used Driver type 
+ */
+QString AudioDevice::get_driver_type( ) const
 {
 	return m_driverType;
 }
 
+/**
+ * 
+ * @return The cpu load, call this at least 1 time each 3 seconds to keep data consistent 
+ */
 trav_time_t AudioDevice::get_cpu_time( )
 {
 #if defined (JACK_SUPPORT)
@@ -426,7 +564,7 @@ trav_time_t AudioDevice::get_cpu_time( )
 
 void AudioDevice::post_process( )
 {
-	tsar().add_remove_items_in_audio_processing_path();
+	tsar().process_events();
 }
 
 void AudioDevice::private_add_client(Client* client)
@@ -446,11 +584,22 @@ void AudioDevice::private_remove_client(Client* client)
 // 	printf("Removing client %s\n", client->m_name.toAscii().data());
 }
 
+/**
+ * Adds the client into the audio processing chain in a Thread Save way
+
+ * WARNING: This function assumes the Clients callback function is set to an existing objects function!
+ */
 void AudioDevice::add_client( Client * client )
 {
-	THREAD_SAVE_CALL(this, private_add_client(Client*), client);
+	THREAD_SAVE_CALL(this, client, private_add_client(Client*));
 }
 
+/**
+ * Removes the client into the audio processing chain in a Thread save way 
+ *
+ * The clientRemoved(Client* client); signal will be emited after succesfull removal
+ * from within the GUI Thread!
+ */
 void AudioDevice::remove_client( Client * client )
 {
 	THREAD_SAVE_CALL_EMIT_SIGNAL(this, client, private_remove_client(Client*), clientRemoved(Client*));

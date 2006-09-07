@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginChain.h,v 1.1 2006/07/31 13:24:46 r_sijrier Exp $
+$Id: PluginChain.h,v 1.2 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 
@@ -28,25 +28,27 @@ $Id: PluginChain.h,v 1.1 2006/07/31 13:24:46 r_sijrier Exp $
 #include <QList>
 
 class Plugin;
+class Song;
 
 class PluginChain : public ContextItem
 {
 	Q_OBJECT
 	
 public:
-	PluginChain(){};
-	~PluginChain(){};
+	PluginChain(ContextItem* parent, Song* song);
+	~PluginChain();
 	
 	QDomNode get_state(QDomDocument doc);
 	int set_state(const QDomNode & node );
 	
-	void insert_plugin(Plugin* plugin, int index = -1);
-	int remove_plugin(Plugin* plugin);
+	Command* add_plugin(Plugin* plugin, bool historable=true);
+	Command* remove_plugin(Plugin* plugin);
 	
 	QList<Plugin* >	get_plugin_list() const {return m_pluginList;}
 	
 private:
 	QList<Plugin* >	m_pluginList;
+	Song*		m_song;
 	
 signals:
 	void pluginAdded(Plugin* plugin);

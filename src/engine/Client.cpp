@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Client.cpp,v 1.3 2006/06/26 23:58:13 r_sijrier Exp $
+$Id: Client.cpp,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 
@@ -30,7 +30,19 @@ $Id: Client.cpp,v 1.3 2006/06/26 23:58:13 r_sijrier Exp $
 #include "Debugger.h"
 
 
-Client::Client( QString name )
+/**
+ * \class Client
+ * \brief The Client class is used to include an Object's process callback function 
+ *	into the audio processing chain of the AudioDevice's Audio Thread.
+ 
+ * Use the set_process_callback( ProcessCallback call) to set the Objects callback function.
+ * It's now save to add the Client to the AudioDevice, which will be done in a Thread save way,
+ * without using any mutual exclusion mechanisms.
+ * \sa AudioDevice::add_client(Client* client)
+ * 
+ * @param name The name of the Client, this should be a unique name
+ */
+Client::Client(const QString& name )
 {
 	PENTERCONS;
 	
@@ -42,6 +54,16 @@ Client::~ Client( )
 	PENTERDES;
 }
 
+/**
+ * Set this Client's process callback delegate to \a call.
+ *
+ * The ProcessCallback is of type FastDelegate. 
+ *
+ * Use the convenience function MakeDelegate(this, &MyApp::process); to create a 
+ * ProcessCallback delegate. See the AudioDevice for a code example
+ *
+ * @param call The FastDelegate \a call to use as the callback function 
+ */
 void Client::set_process_callback( ProcessCallback call)
 {
 	process = call;

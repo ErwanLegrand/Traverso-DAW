@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: InputEngine.h,v 1.3 2006/08/31 17:55:38 r_sijrier Exp $
+    $Id: InputEngine.h,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #ifndef INPUTENGINE_H
@@ -89,6 +89,9 @@ public:
 
         //! process a Qt Wheel Event
         void catch_scroll(QWheelEvent * e );
+        
+        //! Process a single command, which was made outside the InputEngine routines
+        void process_command(Command* cmd);
 
         QWheelEvent*	get_scroll_event();
 
@@ -98,7 +101,7 @@ public:
 
         QList<IEAction* > get_contextitem_actionlist(ContextItem* item);
 
-        int broadcast_action_from_contextmenu(QString name);
+        int broadcast_action_from_contextmenu(const QString& name);
 
         void jog();
 
@@ -114,7 +117,7 @@ public:
 
         //! Initialize the JMB map using mapFilename as the map
         //! @param mapFilename the jmb map file. More on jmb map files in here : libtraverso.h
-        int init_map(QString mapFilename);
+        int init_map(const QString& mapFilename);
 
 
         //! internal method. Not meant to be called by clients

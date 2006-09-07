@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ClipSelection.h,v 1.1 2006/05/01 21:18:17 r_sijrier Exp $
+$Id: ClipSelection.h,v 1.2 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #ifndef CLIPSELECTION_H
@@ -32,8 +32,8 @@ class AudioClipManager;
 class ClipSelection : public Command
 {
 public :
-	ClipSelection(AudioClip* clip, const char* slot);
-	ClipSelection(QList<AudioClip*> clips, AudioClipManager* manager, const char* slot);
+	ClipSelection(AudioClip* clip, const char* slot, const QString& des);
+	ClipSelection(QList<AudioClip*> clips, AudioClipManager* manager, const char* slot, const QString& des);
 	~ClipSelection();
 
 	int prepare_actions();

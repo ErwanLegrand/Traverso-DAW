@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ProjectManager.cpp,v 1.9 2006/08/25 11:25:54 r_sijrier Exp $
+$Id: ProjectManager.cpp,v 1.10 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #include "ProjectManager.h"
@@ -53,7 +53,7 @@ ProjectManager& pm()
 	return projMan;
 }
 
-int ProjectManager::save_song(QString songName)
+int ProjectManager::save_song(const QString& songName)
 {
 	if (currentProject) {
 		currentProject->save();
@@ -86,7 +86,7 @@ void ProjectManager::set_current_project(Project* pProject)
 
 }
 
-int ProjectManager::create_new_project(QString projectName, int numSongs)
+int ProjectManager::create_new_project(const QString& projectName, int numSongs)
 {
 	PENTER;
 
@@ -106,7 +106,7 @@ int ProjectManager::create_new_project(QString projectName, int numSongs)
 	return 0;
 }
 
-int ProjectManager::load_project(QString projectName)
+int ProjectManager::load_project(const QString& projectName)
 {
 	PENTER;
 
@@ -131,7 +131,7 @@ int ProjectManager::load_project(QString projectName)
 	return 0;
 }
 
-int ProjectManager::remove_project( QString name )
+int ProjectManager::remove_project( const QString& name )
 {
 	// check if we are removing the currentProject, and delete it before removing its files
 	if (project_is_current(name)) {
@@ -142,7 +142,7 @@ int ProjectManager::remove_project( QString name )
 	return FileHelper::remove_recursively( name );
 }
 
-bool ProjectManager::project_is_current(QString title)
+bool ProjectManager::project_is_current(const QString& title)
 {
 	QSettings settings;
 	QString path = settings.value("Project/directory").toString();
@@ -155,7 +155,7 @@ bool ProjectManager::project_is_current(QString title)
 	return false;
 }
 
-bool ProjectManager::project_exists(QString title)
+bool ProjectManager::project_exists(const QString& title)
 {
 	QSettings settings;
 	QString project_dir = settings.value("Project/directory").toString();

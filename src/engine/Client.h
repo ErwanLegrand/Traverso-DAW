@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Client.h,v 1.2 2006/06/26 23:58:13 r_sijrier Exp $
+$Id: Client.h,v 1.3 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #ifndef CLIENT_H
@@ -33,7 +33,7 @@ class Client : public QObject
 	Q_OBJECT
 
 public:
-	Client(QString name);
+	Client(const QString& name);
 	~Client();
 
 	void set_process_callback(ProcessCallback call);

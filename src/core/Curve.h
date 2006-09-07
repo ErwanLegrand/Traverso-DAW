@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.h,v 1.10 2006/08/08 19:37:03 r_sijrier Exp $
+$Id: Curve.h,v 1.11 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #ifndef CURVE_H
@@ -36,8 +36,8 @@ class Curve : public ContextItem
 	Q_OBJECT
 	
 public:
-	Curve();
-	Curve(const QDomNode node);
+	Curve(ContextItem* parent);
+	Curve(ContextItem* parent, const QDomNode node);
 	~Curve();
 
 	virtual QDomNode get_state(QDomDocument doc);

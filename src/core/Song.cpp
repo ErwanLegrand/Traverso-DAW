@@ -17,15 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.31 2006/08/25 11:22:51 r_sijrier Exp $
+$Id: Song.cpp,v 1.32 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #include <QTextStream>
-#include <QMessageBox>
 #include <QString>
-#include <QFileDialog>
 #include <QSettings>
-#include <QDir>
 
 #include <libtraverso.h>
 #include <commands.h>
@@ -47,6 +44,7 @@ $Id: Song.cpp,v 1.31 2006/08/25 11:22:51 r_sijrier Exp $
 #include "AudioClipManager.h"
 #include "Tsar.h"
 #include "SnapList.h"
+#include "HistoryStack.h"
 
 #include "LocatorView.h"
 #include "ContextItem.h"
@@ -101,7 +99,7 @@ Song::Song(Project* project, int number)
 	activeTrackNumber = 1;
 	for (int i=1; i <= tracksToCreate; i++) {
 		Track* track = create_track();
-		add_track( track );
+		ie().process_command( add_track( track, false) );
 	}
 
 	connect_to_audiodevice();
@@ -130,7 +128,6 @@ Song::~Song()
 	delete masterOut;
 	delete m_hs;
 	delete audiodeviceClient;
- 	delete pluginChain;
  	delete snaplist;
 }
 
@@ -139,8 +136,8 @@ void Song::init()
 	PENTER2;
 	diskio = new DiskIO();
 
-	connect(this, SIGNAL(seekStart(uint )), diskio, SLOT(seek( uint )), Qt::QueuedConnection);
-	connect(&audiodevice(), SIGNAL(clientRemoved(Client* )), this, SLOT (audiodevice_client_removed(Client* ) ));
+	connect(this, SIGNAL(seekStart(uint)), diskio, SLOT(seek(uint)), Qt::QueuedConnection);
+	connect(&audiodevice(), SIGNAL(clientRemoved(Client*)), this, SLOT (audiodevice_client_removed(Client*)));
 	connect(&audiodevice(), SIGNAL(started()), this, SLOT(audiodevice_started()));
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(resize_buffer()), Qt::DirectConnection);
 	connect(diskio, SIGNAL(seekFinished()), this, SLOT(seek_finished()), Qt::QueuedConnection);
@@ -150,7 +147,7 @@ void Song::init()
 	gainbuffer = new audio_sample_t[audiodevice().get_buffer_size()];
 	masterOut = new AudioBus("Master Out", 2);
 	regionList = new MtaRegionList();
-	m_hs = new HistoryStack();
+	m_hs = new HistoryStack(UndoGroup::instance());
 	acmanager = new AudioClipManager(this);
 	connect(acmanager, SIGNAL(lastFramePositionChanged()), this, SIGNAL(lastFramePositionChanged()));
 
@@ -167,7 +164,7 @@ void Song::init()
 	firstVisibleFrame=workingFrame=activeTrackNumber=0;
 	trackCount = 0;
 
-	pluginChain = new PluginChain;
+	pluginChain = new PluginChain(this, this);
 }
 
 int Song::set_state( const QDomNode & node )
@@ -198,7 +195,7 @@ int Song::set_state( const QDomNode & node )
 		// Adding a track at this point will add it and signal _immediately_
 		// this is desired behaviour, this way the GUI can catch the signal
 		// and make a TrackView!
-		add_track(track);
+		ie().process_command( add_track(track, false) );
 
 		// Now that a TrackView has been created, we can set the state
 		// of the Track, this will create AudioClips (if there are any of course)
@@ -290,7 +287,7 @@ void Song::audiodevice_client_removed(Client* client )
 	}
 }
 
-void Song::add_track(Track* track)
+Command* Song::add_track(Track* track, bool historable)
 {
 	foreach(Track* existingTrack, m_tracks) {
 		if (existingTrack->is_solo()) {
@@ -299,25 +296,29 @@ void Song::add_track(Track* track)
 		}
 	}
 
-	if ( ! is_transporting() ) {
-		private_add_track(track);
-		emit trackAdded(track);
-// 		printf("Song is not transporting, save to add Track directly\n");
-	} else {
-		THREAD_SAVE_CALL_EMIT_SIGNAL(this, track, private_add_track(Track*), trackAdded(Track*));
-	}
-
+	return new AddRemoveItemCommand(this, track, historable, this,
+					"private_add_track(Track*)", "trackAdded(Track*)",
+					"private_remove_track(Track*)", "trackRemoved(Track*)");
 }
 
-void Song::remove_track(Track* track)
+Command* Song::remove_track()
 {
-	if ( ! is_transporting() ) {
-		private_remove_track(track);
-		emit trackRemoved(track);
-	} else {
-		THREAD_SAVE_CALL_EMIT_SIGNAL(this, track, private_remove_track(Track*), trackRemoved(Track*));
-	}
+	PENTER;
 
+	Track* track = get_track_under_y(cpointer().y());
+	
+	if ( ! track) {
+		return 0;
+	}
+	
+	return remove_track(track);
+}
+
+Command* Song::remove_track(Track* track, bool historable)
+{
+	return new AddRemoveItemCommand(this, track, historable, this,
+					"private_remove_track(Track*)", "trackRemoved(Track*)",
+					"private_add_track(Track*)", "trackAdded(Track*)");
 }
 
 bool Song::any_track_armed()
@@ -550,7 +551,7 @@ Track* Song::get_track(int trackNumber)
 	return m_tracks.value(trackNumber);
 }
 
-void Song::set_artists(QString pArtists)
+void Song::set_artists(const QString& pArtists)
 {
 	artists = pArtists;
 }
@@ -567,7 +568,7 @@ void Song::set_gain(float gain)
 	emit masterGainChanged();
 }
 
-void Song::set_title(QString sTitle)
+void Song::set_title(const QString& sTitle)
 {
 	title=sTitle;
 	emit propertieChanged();
@@ -640,7 +641,7 @@ void Song::start_seek()
 
 	diskio->prepare_for_seek();
 
-	THREAD_SAVE_EMIT_SIGNAL(this, seekStart(uint), newTransportFramePos);
+	THREAD_SAVE_EMIT_SIGNAL(this, (void*)newTransportFramePos, seekStart(uint));
 
 	PMESG2("Song :: leaving start_seek");
 }
@@ -690,100 +691,39 @@ Command* Song::add_new_track()
 {
 	Track* track = create_track();
 
-	add_track(track);
-
-	return (Command*) 0;
+	return add_track(track);
 }
 
-// Command* Song::create_region()
-// {
-// 	return (Command*) 0;
-// }
-//
-// Command* Song::create_region_start()
-// {
-// 	// int xpos ...
-// 	//TODO
-// 	return (Command*) 0;
-// }
-//
-// Command* Song::create_region_end()
-// {
-// 	// int xpos ...
-// 	//TODO
-// 	return (Command*) 0;
-// }
-//
-// Command* Song::delete_region_under_x()
-// {
-// 	// int xpos...
-// 	return (Command*) 0;
-// }
-
-Command* Song::remove_track()
-{
-	PENTER;
-
-	return new RemoveTrack(this);
-}
 
 Command* Song::go()
 {
 // 	printf("Song-%d::go transport is %d\n", m_id, transport);
-
+	
 	if (transport) {
 		stopTransport = true;
 	} else {
 		emit transferStarted();
+		
+		if (any_track_armed()) {
+			CommandGroup* group = new CommandGroup(this, tr("Recording to Clip(s)"));
+			
+			foreach(Track* track, m_tracks) {
+				if (track->armed()) {
+					group->add_command(track->init_recording());
+				}
+			}
+			
+			ie().process_command(group);
+		}
+		
 		transport = true;
 // 		printf("transport is %d\n", transport);
 		realtimepath = true;
 	}
-	return (Command*)0;
+	
+	return 0;
 }
 
-// Command* Song::go_loop_regions()
-// {
-// 	int r=0;
-// 	if (this->process_go(10)) {
-// 		//TODO
-// 		return (Command*) 0;
-// 	}
-// 	r = process_go(r);
-// 	return (Command*) 0;
-// }
-//
-// Command* Song::go_regions()
-// {
-// 	/*	int r=0;
-// 		if (process_go(10))
-// 			{
-// 			if (regionList)
-// 				{
-// 				MtaRegion* firstRegion = regionList->head();
-// 				r = mixer->go(firstRegion);
-// 				info().information(tr("GOING THRU REGIONS ..."));
-// 				PMESG("GOING (REGIONS) FROM %d ...", (int) firstRegion->beginBlock );
-// 				}
-// 			else
-// 				{
-// 				info().information(tr("No region to play !"));
-// 				}
-// 			}
-// 		r = process_go(r);*/
-// 	return (Command*) 0;
-// }
-//
-// Command* Song::in_crop()
-// {
-// 	// 	return new Crop(this);
-// 	return (Command*) 0;
-// }
-//
-// Command* Song::jog_create_region()
-// {
-// 	return (Command*) 0;
-// }
 
 Command* Song::set_editing_mode()
 {
@@ -889,19 +829,13 @@ Command* Song::work_previous_edge()
 
 Command* Song::undo()
 {
-	Command* a = m_hs->undo();
-	if (a) {
-		a->undo_action();
-	}
+	m_hs->undo();
 	return (Command*) 0;
 }
 
 Command* Song::redo()
 {
-	Command* a = m_hs->redo();
-	if (a) {
-		a->do_action();
-	}
+	m_hs->redo();
 	return (Command*) 0;
 }
 
@@ -926,7 +860,7 @@ int Song::process( nframes_t nframes )
 		return 0;
 
 	if (stopTransport) {
-		THREAD_SAVE_EMIT_SIGNAL(this, transferStopped(), 0);
+		THREAD_SAVE_EMIT_SIGNAL(this, 0, transferStopped());
 		transport = false;
 		realtimepath = false;
 		stopTransport = false;
@@ -1083,64 +1017,5 @@ void Song::private_remove_track(Track* track)
 	}
 }
 
-
-// Command* Song::node_setup()
-// {
-// 	m_tracks.value(activeTrackNumber)->audioPluginChain->node_setup();
-// 	return (Command*) 0;
-// }
-//
-// Command* Song::remove_current_audio_plugin_controller()
-// {
-// 	m_tracks.value(activeTrackNumber)->audioPluginChain->remove_controller();
-// 	return (Command*) 0;
-// }
-//
-// Command* Song::remove_audio_plugin_controller()
-// {
-// 	m_tracks.value(activeTrackNumber)->audioPluginChain->select_controller(ie().is_holding());
-// 	if (!ie().is_holding())  //FIXME Do you really want to have this behaviour?????? beginHold first selects the controller, second beginHold removes it!!!!!
-// 		m_tracks.value(activeTrackNumber)->audioPluginChain->remove_controller();
-// 	return (Command*) 0;
-// }
-//
-// Command* Song::add_audio_plugin_controller()
-// {
-// 	if (ie().is_holding()) {
-// 		// 		ie().set_jogging(true);
-// 		audioPluginSelector->start();
-// 	} else {
-// 		audioPluginSelector->stop();
-// 		QString filterType = audioPluginSelector->get_selected_filter_type();
-// 		m_tracks.value(activeTrackNumber)->audioPluginChain->add_audio_plugin_controller(filterType);
-// 	}
-// 	return (Command*) 0;
-// }
-//
-// Command* Song::add_node()
-// {
-// 	m_tracks.value(activeTrackNumber)->audioPluginChain->add_node();
-// 	return (Command*) 0;
-// }
-//
-// Command* Song::drag_and_drop_node()
-// {
-// 	m_tracks.value(activeTrackNumber)->audioPluginChain->drag_node(ie().is_holding());
-// 	return (Command*) 0;
-// }
-//
-// Command* Song::audio_plugin_setup()
-// {
-// 	m_tracks.value(activeTrackNumber)->audioPluginChain->audio_plugin_setup();
-// 	return (Command*) 0;
-// }
-//
-// Command* Song::select_audio_plugin_controller()
-// {
-// 	if (ie().is_holding())
-// 		// 		ie().set_jogging(true);
-// 		m_tracks.value(activeTrackNumber)->audioPluginChain->select_controller(ie().is_holding());
-// 	return (Command*) 0;
-// }
 
 // eof

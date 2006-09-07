@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Project.h,v 1.3 2006/05/01 21:21:37 r_sijrier Exp $
+$Id: Project.h,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #ifndef PROJECT_H
@@ -40,7 +40,7 @@ class Project : public ContextItem
 	Q_OBJECT
 
 public :
-	Project(QString pProjectToLoadTitle);
+	Project(const QString& pProjectToLoadTitle);
 	~Project();
 
 
@@ -61,8 +61,8 @@ public :
 
 
 	// Set functions
-	void set_title(QString pTitle);
-	void set_engineer(QString pEngineer);
+	void set_title(const QString& pTitle);
+	void set_engineer(const QString& pEngineer);
 	void set_song_export_progress(int pogress);
 
 	

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.7 2006/08/08 20:59:49 r_sijrier Exp $
+$Id: FadeCurve.cpp,v 1.8 2006/09/07 09:36:52 r_sijrier Exp $
 */
  
 #include "FadeCurve.h"
@@ -27,10 +27,15 @@ $Id: FadeCurve.cpp,v 1.7 2006/08/08 20:59:49 r_sijrier Exp $
 #include "Song.h"
 #include "AudioClip.h"
 
+// Always put me below _all_ includes, this is needed
+// in case we run with memory leak detection enabled!
+#include "Debugger.h"
+
+
 QStringList FadeCurve::defaultShapes = QStringList() << "Fastest" << "Fast" << "Linear"  << "Slow" << "Slowest";
 
 FadeCurve::FadeCurve(AudioClip* clip, QString type )
-	: Curve(), m_clip(clip), m_sType(type)
+	: Curve(clip), m_clip(clip), m_sType(type)
 {
 	if (type == "FadeIn") {
 		m_type = FadeIn;
@@ -61,6 +66,7 @@ FadeCurve::FadeCurve(AudioClip* clip, QString type )
 
 FadeCurve::~ FadeCurve( )
 {
+	PENTERDES;
 }
 
 void FadeCurve::init()

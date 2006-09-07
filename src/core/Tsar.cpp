@@ -1,23 +1,23 @@
 /*
-    Copyright (C) 2006 Remon Sijrier 
- 
-    This file is part of Traverso
- 
-    Traverso is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
- 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
- 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
- 
-    $Id: Tsar.cpp,v 1.7 2006/07/06 17:38:03 r_sijrier Exp $
+Copyright (C) 2006 Remon Sijrier 
+
+This file is part of Traverso
+
+Traverso is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
+
+$Id: Tsar.cpp,v 1.8 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #include "Tsar.h"
@@ -34,18 +34,18 @@
 
 Tsar& tsar()
 {
-        static Tsar ThreadSaveAddRemove;
-        return ThreadSaveAddRemove;
+	static Tsar ThreadSaveAddRemove;
+	return ThreadSaveAddRemove;
 }
 
 Tsar::Tsar()
 {
 	count = 0;
 	
-	rbToBeProcessed = new RingBuffer(1000 * sizeof(TsarDataStruct));
-	rbProcessed = new RingBuffer(1000 * sizeof(TsarDataStruct));
+	rbToBeProcessed = new RingBuffer(1000 * sizeof(TsarEvent));
+	rbProcessed = new RingBuffer(1000 * sizeof(TsarEvent));
 	
-	connect(&finishProcessedObjectsTimer, SIGNAL(timeout()), this, SLOT(finish_processed_objects()));
+	connect(&finishProcessedObjectsTimer, SIGNAL(timeout()), this, SLOT(finish_processed_events()));
 	
 	finishProcessedObjectsTimer.start( 20 );
 }
@@ -56,10 +56,10 @@ Tsar::~ Tsar( )
 	delete rbProcessed;
 }
 
-void Tsar::process_object( TsarDataStruct& data )
+void Tsar::add_event( TsarEvent& data )
 {
-	// write data to the to be processed objects ringbuffer
-	rbToBeProcessed->write( (char*)(&data), sizeof(TsarDataStruct));
+	// write the event the the lockless ringbuffer 'queue'
+	rbToBeProcessed->write( (char*)(&data), sizeof(TsarEvent));
 	
 	count++;
 }
@@ -67,10 +67,10 @@ void Tsar::process_object( TsarDataStruct& data )
 //
 //  Function called in RealTime AudioThread processing path
 //
-void Tsar::add_remove_items_in_audio_processing_path( )
+void Tsar::process_events( )
 {
-	// We track how many objects we have inserted in process_objects
-	// and how many we have processed in finish_processed_objects
+	// We track how many events we have added in add_event
+	// and how many we have processed in finish_processed_events
 	// if count == 0, there is nothing left, so we can return immediately!
 	if ( ! count ) {
 		return;
@@ -79,52 +79,35 @@ void Tsar::add_remove_items_in_audio_processing_path( )
 /*	int objcount = 0;
 	trav_time_t starttime = get_microseconds();*/
 	
-	while( (rbToBeProcessed->read_space() / sizeof(TsarDataStruct)) >= 1 ) {
+	while( (rbToBeProcessed->read_space() / sizeof(TsarEvent)) >= 1 ) {
 		
-		TsarDataStruct tsarData;
-		rbToBeProcessed->read( (char*)(&tsarData), sizeof(TsarDataStruct));
+		TsarEvent event;
+		rbToBeProcessed->read( (char*)(&event), sizeof(TsarEvent));
 
-			
-		// If there is an object to be added, do the magic to call the slot :-)
-		if (tsarData.funcArgument) {
-			
-			void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&tsarData.funcArgument)) };
-			
-			// This equals QMetaObject::invokeMethod(), without type checking. But we know that the types
-			// are the correct ones, and will casted just fine!
-			if (! (tsarData.objectToAddTo->qt_metacall(QMetaObject::InvokeMetaMethod, tsarData.slotindex, _a) < 0) ) {
-				
-				qDebug("Tsar::add_remove_items_in_audio_processing_path() QMetaObject::invokeMethod failed");
-			
-			}
-		}
+// 		printf("called %s, slotindex %d, signalindex %d\n", event.caller->metaObject()->className(), event.slotindex, event.signalindex);
+		process_event_slot(event);
 		
-		rbProcessed->write( (char*)(&tsarData), sizeof(TsarDataStruct));
+		rbProcessed->write( (char*)(&event), sizeof(TsarEvent));
 		
 // 		objcount++;
 	}
 	
 	
-// 	int processtime = (int) (get_microseconds() - starttime);
-// 	if (objcount)
-// 		printf("\nNumber of objects processed: %d in %d useconds\n",objcount, processtime);
-
+/*	int processtime = (int) (get_microseconds() - starttime);
+	if (objcount)
+		printf("\nNumber of objects processed: %d in %d useconds\n",objcount, processtime);
+*/
 }
 
-void Tsar::finish_processed_objects( )
+void Tsar::finish_processed_events( )
 {
 	
-	while( (rbProcessed->read_space() / sizeof(TsarDataStruct)) >= 1 ) {
-		TsarDataStruct tsarData;
-		// Read one TsarDataStruct from the processed objects ringbuffer
-		rbProcessed->read( (char*)(&tsarData), sizeof(TsarDataStruct));
+	while( (rbProcessed->read_space() / sizeof(TsarEvent)) >= 1 ) {
+		TsarEvent event;
+		// Read one TsarEvent from the processed events ringbuffer 'queue'
+		rbProcessed->read( (char*)(&event), sizeof(TsarEvent));
 		
-		// In case the sender object != 0, emit the signal!
-		if (tsarData.sender) {
-			// This equals emit someSignal() :-)
-			void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&tsarData.funcArgument)) };
-			QMetaObject::activate(tsarData.sender, tsarData.sender->metaObject(), tsarData.signalindex, _a);
-		}
+		process_event_signal(event);
 		
 		--count;
 // 		printf("finish_processed_objects:: Count is %d\n", count);
@@ -147,6 +130,76 @@ void Tsar::finish_processed_objects( )
 	
 }
 
+TsarEvent Tsar::create_event( QObject* caller, void* argument, char* slotSignature, char* signalSignature )
+{
+	PENTER;
+	TsarEvent event;
+	event.caller = caller;
+	event.argument = argument;
+	int index;
+	
+	if (qstrlen(slotSignature) > 0) {
+		index = caller->metaObject()->indexOfMethod(slotSignature);
+		if (index < 0) {
+			PWARN("Slot signature contains whitespaces, please remove to avoid unneeded processing (%s::%s)", caller->metaObject()->className(), slotSignature);
+			QByteArray norm = QMetaObject::normalizedSignature(slotSignature);
+			index = caller->metaObject()->indexOfMethod(norm.constData());
+		}
+		event.slotindex = index;
+	} else {
+		event.slotindex = -1;
+	}
+	
+	if (qstrlen(signalSignature) > 0) {
+		/* the signal index seems to have an offset of 4, so we have to substract 4 from */
+		/* the value returned by caller->metaObject()->indexOfMethod*/ 
+		index = caller->metaObject()->indexOfMethod(signalSignature) - 4;
+		if (index < 0) {
+			PWARN("Signal signature contains whitespaces, please remove to avoid unneeded processing (%s::%s)", caller->metaObject()->className(), signalSignature);
+			QByteArray norm = QMetaObject::normalizedSignature(signalSignature);
+			index = caller->metaObject()->indexOfMethod(norm.constData()) - 4;
+		}
+		event.signalindex = index; 
+	} else {
+		event.signalindex = -1; 
+	}
+	
+	event.valid = true;
+	
+	return event;
+}
+
+void Tsar::process_event_slot( TsarEvent& event )
+{
+	// If there is an object to be added, do the magic to call the slot :-)
+	if (event.slotindex > -1) {
+		
+		void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&event.argument)) };
+		
+		// This equals QMetaObject::invokeMethod(), without type checking. But we know that the types
+		// are the correct ones, and will be casted just fine!
+		if ( ! (event.caller->qt_metacall(QMetaObject::InvokeMetaMethod, event.slotindex, _a) < 0) ) {
+			qDebug("Tsar::add_remove_items_in_audio_processing_path() QMetaObject::invokeMethod failed");
+		}
+	}
+}
+
+void Tsar::process_event_signal( TsarEvent & event )
+{
+	// In case the signalindex > -1, emit the signal!
+	if (event.signalindex > -1) {
+		// This equals emit someSignal() :-)
+		void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&event.argument)) };
+		QMetaObject::activate(event.caller, event.caller->metaObject(), event.signalindex, _a);
+	}
+}
+
+void Tsar::process_event_slot_signal( TsarEvent & event )
+{
+	process_event_slot(event);
+	process_event_signal(event);
+}
+
 
 //eof
- 
+

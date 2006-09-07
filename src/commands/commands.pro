@@ -3,7 +3,9 @@
 # Subdir relative project main directory: ./src/commands
 # Target is a library:  traversocommands
 
-HEADERS += ClipSelection.h \
+HEADERS += AddRemoveItemCommand.h \
+	   ClipSelection.h \
+	   CommandGroup.h \
            CopyClip.h \
            Crop.h \
            Gain.h \
@@ -11,23 +13,21 @@ HEADERS += ClipSelection.h \
            MoveClip.h \
            MoveEdge.h \
            PCommand.h \
-           RemoveClip.h \
-           RemoveTrack.h \
            Shuttle.h \
            SplitClip.h \
            Zoom.h \
            TrackPan.h \
            commands.h \
            Fade.h 
-SOURCES += CopyClip.cpp \
+SOURCES += AddRemoveItemCommand.cpp \
+	   CommandGroup.cpp \
+	   CopyClip.cpp \
            ClipSelection.cpp \
            Gain.cpp \
            Import.cpp \
            MoveClip.cpp \
            MoveEdge.cpp \
            PCommand.cpp \
-           RemoveClip.cpp \
-           RemoveTrack.cpp \
            Shuttle.cpp \
            SplitClip.cpp \
            Zoom.cpp \

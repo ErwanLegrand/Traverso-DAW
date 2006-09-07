@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.cpp,v 1.18 2006/08/07 19:15:23 r_sijrier Exp $
+$Id: Curve.cpp,v 1.19 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -37,15 +37,16 @@ $Id: Curve.cpp,v 1.18 2006/08/07 19:15:23 r_sijrier Exp $
 using namespace std;
 
 
-Curve::Curve()
-		: ContextItem()
+Curve::Curve(ContextItem* parent)
+	: ContextItem(parent)
 {
 	PENTERCONS;
 	
 	init();
 }
 
-Curve::Curve( const QDomNode node )
+Curve::Curve(ContextItem* parent, const QDomNode node )
+	: ContextItem(parent)
 {
 	init();
 	set_state(node);

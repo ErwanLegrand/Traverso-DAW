@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginChain.cpp,v 1.1 2006/07/31 13:24:46 r_sijrier Exp $
+$Id: PluginChain.cpp,v 1.2 2006/09/07 09:36:52 r_sijrier Exp $
 */
  
 #include "PluginChain.h"
@@ -25,6 +25,25 @@ $Id: PluginChain.cpp,v 1.1 2006/07/31 13:24:46 r_sijrier Exp $
 #include "Plugin.h"
 #include "PluginManager.h"
 #include <Tsar.h>
+#include <InputEngine.h>
+#include <Song.h>
+#include <AddRemoveItemCommand.h>
+
+// Always put me below _all_ includes, this is needed
+// in case we run with memory leak detection enabled!
+#include "Debugger.h"
+
+PluginChain::PluginChain(ContextItem* parent, Song* song)
+	: ContextItem(parent), m_song(song)
+{
+	m_hs = parent->get_history_stack();
+}
+
+PluginChain::~ PluginChain( )
+{
+	PENTERDES;
+}
+
 
 QDomNode PluginChain::get_state(QDomDocument doc)
 {
@@ -44,28 +63,37 @@ int PluginChain::set_state( const QDomNode & node )
 	
 	while(!pluginNode.isNull()) {
 		Plugin* plugin = PluginManager::instance()->get_plugin(pluginNode);
-		insert_plugin(plugin);
+		ie().process_command(add_plugin(plugin, false));
 		pluginNode = pluginNode.nextSibling();
 	}
 	
 	return 1;
 }
 
-void PluginChain::insert_plugin( Plugin * plugin, int index )
+
+Command* PluginChain::add_plugin(Plugin * plugin, bool historable)
 {
-	THREAD_SAVE_CALL_EMIT_SIGNAL(this, plugin, private_add_plugin(Plugin*), pluginAdded(Plugin*));
+	plugin->set_history_stack(get_history_stack());
+	
+	return new AddRemoveItemCommand( this, plugin, historable, m_song,
+						"private_add_plugin(Plugin*)", "pluginAdded(Plugin*)",
+						"private_remove_plugin(Plugin*)", "pluginRemoved(Plugin*)");
 }
 
-int PluginChain::remove_plugin(Plugin* plugin)
+
+Command* PluginChain::remove_plugin(Plugin* plugin)
 {
-	THREAD_SAVE_CALL_EMIT_SIGNAL(this, plugin, private_remove_plugin(Plugin*), pluginRemoved(Plugin*));
-	return 1;
+	return new AddRemoveItemCommand( this, plugin, true, m_song,
+					 "private_remove_plugin(Plugin*)", "pluginRemoved(Plugin*)",
+					 "private_add_plugin(Plugin*)", "pluginAdded(Plugin*)");
 }
+
 
 void PluginChain::private_add_plugin( Plugin * plugin )
 {
 	m_pluginList.append(plugin);
 }
+
 
 void PluginChain::private_remove_plugin( Plugin * plugin )
 {

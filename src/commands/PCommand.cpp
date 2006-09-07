@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PCommand.cpp,v 1.3 2006/08/31 17:54:51 r_sijrier Exp $
+$Id: PCommand.cpp,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #include "PCommand.h"
@@ -28,8 +28,8 @@ $Id: PCommand.cpp,v 1.3 2006/08/31 17:54:51 r_sijrier Exp $
 #include "Debugger.h"
 
 
-PCommand::PCommand(ContextItem* item, char* slot)
-		: Command(item, "")
+PCommand::PCommand(ContextItem* item, char* slot, const QString& des)
+		: Command(item, des)
 {
 	m_contextitem = item;
 	m_slot = slot;

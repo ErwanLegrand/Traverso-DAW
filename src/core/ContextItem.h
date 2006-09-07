@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ContextItem.h,v 1.5 2006/07/31 13:31:54 r_sijrier Exp $
+$Id: ContextItem.h,v 1.6 2006/09/07 09:36:52 r_sijrier Exp $
 */
 #ifndef CONTEXTITEM_H
 #define CONTEXTITEM_H
@@ -31,7 +31,8 @@ class ContextItem : public QObject
 {
 	Q_OBJECT
 public:
-	ContextItem(ContextItem* item=0, QObject* parent=0);
+	ContextItem(QObject* parent);
+	ContextItem();
 	~ContextItem();
 
 	ContextItem* get_context() const
@@ -45,7 +46,6 @@ public:
 	
 	void set_context_item(ContextItem* item);
 	
-	friend class Tsar;
 
 protected:
 	HistoryStack* m_hs;
@@ -53,6 +53,7 @@ protected:
 private:
 	ContextItem* m_contextItem;
 
+	friend class Tsar;
 };
 
 #endif

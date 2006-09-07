@@ -3,6 +3,7 @@ include(../libbase.pri)
 
 INCLUDEPATH += ../../src/core \
 		../../src/engine \
+		../../src/commands \
 		../../src/plugins/LV2 \
 		./
 

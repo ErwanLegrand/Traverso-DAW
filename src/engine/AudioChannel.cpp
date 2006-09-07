@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: AudioChannel.cpp,v 1.6 2006/08/25 11:13:17 r_sijrier Exp $
+    $Id: AudioChannel.cpp,v 1.7 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #include "AudioChannel.h"
@@ -32,7 +32,16 @@
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-AudioChannel::AudioChannel( QString busName, QString audioType, int flags, uint channelNumber )
+/**
+ * \class AudioChannel
+ * \brief AudioChannel wraps one 'real' audiochannel into an easy to use class
+ *
+ * An AudioChannel has a audio_sample_t* buffer, a name and some functions for setting the buffer size, 
+ * and monitoring the highest peak value, which is handy to use by for example a VU meter. 
+ */
+
+
+AudioChannel::AudioChannel( const QString& busName, const QString& audioType, int flags, uint channelNumber )
 {
         m_name = busName;
         m_audioType = audioType;
@@ -97,6 +106,11 @@ void AudioChannel::set_buffer_size( nframes_t size )
 }
 
 
+/**
+ * 
+ * @return The highest peak value since the previous call to this function,
+ *		 call this at least 10 times each second to keep data consistent 
+ */
 audio_sample_t AudioChannel::get_peak_value( )
 {
         float peak = 0;

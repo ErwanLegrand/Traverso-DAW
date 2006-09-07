@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.24 2006/08/31 17:55:38 r_sijrier Exp $
+$Id: Track.cpp,v 1.25 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #include "Track.h"
@@ -26,6 +26,7 @@ $Id: Track.cpp,v 1.24 2006/08/31 17:55:38 r_sijrier Exp $
 #include "Tsar.h"
 #include "PluginChain.h"
 #include "Plugin.h"
+#include "InputEngine.h"
 
 #include <commands.h>
 
@@ -34,9 +35,13 @@ $Id: Track.cpp,v 1.24 2006/08/31 17:55:38 r_sijrier Exp $
 #include "Debugger.h"
 
 
-Track::Track(Song* song, int pID, QString pName, int pBaseY, int pHeight )
-		: ContextItem((ContextItem*) 0, song), m_song(song), ID(pID), m_name(pName),
-		baseY(pBaseY), height(pHeight)
+Track::Track(Song* song, int pID, const QString& pName, int pBaseY, int pHeight )
+	: ContextItem(song), 
+	  m_song(song), 
+	  ID(pID), 
+	  m_name(pName),
+	  baseY(pBaseY), 
+	  height(pHeight)
 {
 	PENTERCONS;
 	m_pan = numtakes = 0;
@@ -49,7 +54,8 @@ Track::Track(Song* song, int pID, QString pName, int pBaseY, int pHeight )
 }
 
 Track::Track( Song * song, const QDomNode )
-		: ContextItem( (ContextItem*) 0, song ), m_song(song)
+	: ContextItem(song), 
+	  m_song(song)
 {
 	PENTERCONS;
 	// These are used by TrackView _before_ they are initialized by set_state !!
@@ -63,16 +69,13 @@ Track::Track( Song * song, const QDomNode )
 Track::~Track()
 {
 	PENTERDES;
- 	delete pluginChain;
 }
 
 void Track::init()
 {
 	isSolo = mutedBySolo = isActive = isMuted = isArmed = false;
 	set_history_stack(m_song->get_history_stack());
-	pluginChain = new PluginChain;
-	
-	connect(m_song, SIGNAL( transferStarted() ), this, SLOT (init_recording() ));
+	pluginChain = new PluginChain(this, m_song);
 }
 
 QDomNode Track::get_state( QDomDocument doc )
@@ -129,7 +132,7 @@ int Track::set_state( const QDomNode & node )
 		while (!clipNode.isNull()) {
 			AudioClip* clip = new AudioClip(this, clipNode);
 			// First add the clip, this will emit the clipAdded Signal!
-			add_clip( clip );
+			ie().process_command( add_clip( clip, false ) );
 			// Now set the clips state, which will eventually generate
 			// other signals, so the GUI can act on it!
 			clip->set_state(clipNode);
@@ -253,32 +256,21 @@ AudioClip* Track::get_clip_before(nframes_t framePos)
 // }
 
 
-int Track::remove_clip(AudioClip* clip)
+Command* Track::remove_clip(AudioClip* clip, bool historable)
 {
 	PENTER;
-	if ( ! m_song->is_transporting() ) {
-		private_remove_clip(clip);
-		emit audioClipRemoved(clip);
-// 		printf("Song not running, removing Clip now\n");
-		return 1;
-	} else {
-		THREAD_SAVE_CALL_EMIT_SIGNAL(this, clip, private_remove_clip(AudioClip*), audioClipRemoved(AudioClip*));
-	}
-	
-	return 1;
+	return new AddRemoveItemCommand(this, clip, historable, m_song,
+					"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)",
+					"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)");
 }
 
 
-void Track::add_clip(AudioClip* clip)
+Command* Track::add_clip(AudioClip* clip, bool historable)
 {
 	PENTER;
-	if ( ! m_song->is_transporting() ) {
-		private_add_clip(clip);
-		emit audioClipAdded(clip);
-// 		printf("Song not running, adding Clip now\n");
-	} else {
-		THREAD_SAVE_CALL_EMIT_SIGNAL(this, clip, private_add_clip(AudioClip*), audioClipAdded(AudioClip*));
-	}
+	return new AddRemoveItemCommand(this, clip, historable, m_song,
+					"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)",
+					"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)");
 }
 
 
@@ -368,7 +360,7 @@ void Track::toggle_active()
 }
 
 
-void Track::init_recording()
+Command* Track::init_recording()
 {
 	PENTER2;
 	if (isArmed) {
@@ -378,9 +370,11 @@ void Track::init_recording()
 			PERROR("Could not create AudioClip to record to!");
 			delete clip;
 		} else {
-			add_clip( clip );
+			return add_clip( clip );
 		}
 	}
+	
+	return 0;
 }
 
 
@@ -596,7 +590,7 @@ Command * Track::import_audiosource(  )
 
 Command* Track::silence_others( )
 {
-	return new PCommand(this, "solo");
+	return new PCommand(this, "solo", tr("Silence Others"));
 }
 
 void Track::set_name( const QString & name )
@@ -647,14 +641,14 @@ void Track::set_id( int id )
 	ID = id;
 }
 
-void Track::add_plugin( Plugin * plugin )
+Command* Track::add_plugin( Plugin * plugin )
 {
-	pluginChain->insert_plugin(plugin);
+	return pluginChain->add_plugin(plugin);
 }
 
-void Track::remove_plugin( Plugin * plugin )
+Command* Track::remove_plugin( Plugin * plugin )
 {
-	pluginChain->remove_plugin(plugin);
+	return pluginChain->remove_plugin(plugin);
 }
 
 

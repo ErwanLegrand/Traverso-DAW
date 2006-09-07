@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioClipManager.cpp,v 1.6 2006/07/31 13:32:41 r_sijrier Exp $
+    $Id: AudioClipManager.cpp,v 1.7 2006/09/07 09:36:52 r_sijrier Exp $
 */
  
 #include "AudioClipManager.h"
@@ -30,7 +30,7 @@
 #include "Debugger.h"
 
 AudioClipManager::AudioClipManager( Song* song )
-		: ContextItem( (ContextItem*) 0, song )
+		: ContextItem(song)
 {
 	PENTERCONS;
 	m_song = song;
@@ -165,28 +165,31 @@ Command* AudioClipManager::select_all_clips()
 {
 	PENTER;
 	
-	return new ClipSelection(m_clips, this, "add_to_selection");
+	return new ClipSelection(m_clips, this, "add_to_selection", tr("Selection: Add Clip"));
 }
 
 Command* AudioClipManager::deselect_all_clips()
 {
 	PENTER;
 	
-	return new ClipSelection(m_clips, this, "remove_from_selection");
+	return new ClipSelection(m_clips, this, "remove_from_selection", tr("Selection: Remove Clip"));
 }
 
 Command* AudioClipManager::invert_clip_selection()
 {
 	PENTER;
 	
-	return new ClipSelection(m_clips, this, "toggle_selected");
+	return new ClipSelection(m_clips, this, "toggle_selected", tr("Selection: Invert"));
 }
 
 Command* AudioClipManager::delete_selected_clips()
 {
 	PENTER;
-	
-	return new RemoveClip(clipselection, this);
+	CommandGroup* group = new CommandGroup(this, tr("Remove Clip(s)"));
+	foreach(AudioClip* clip, clipselection) {
+		group->add_command(clip->get_track()->remove_clip(clip));
+	}
+	return group;
 }
 
 //eof
