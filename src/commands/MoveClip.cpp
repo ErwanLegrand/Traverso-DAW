@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: MoveClip.cpp,v 1.9 2006/08/31 17:54:51 r_sijrier Exp $
+$Id: MoveClip.cpp,v 1.10 2006/09/11 14:37:51 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -59,7 +59,7 @@ int MoveClip::finish_hold()
 	targetTrack = m_song->get_track_under_y(y);
 	// m_clip could be moved to another track due jogging
 	// so we remove it from there!
-	m_clip->get_track()->remove_clip( m_clip );
+	ie().process_command( m_clip->get_track()->remove_clip( m_clip, false ) );
 	return 1;
 }
 
@@ -75,12 +75,12 @@ int MoveClip::do_action()
 	PENTER;
 	if (!targetTrack) {
 		PMESG("Deleting clip %p",m_clip);
-		originTrack->remove_clip(m_clip);
+		ie().process_command(originTrack->remove_clip(m_clip, false));
 		targetTrack = (Track*) 0;
 	} else {
-		originTrack->remove_clip(m_clip);
+		ie().process_command(originTrack->remove_clip(m_clip, false));
 		m_clip->set_track_start_frame(newInsertFrame);
-		targetTrack->add_clip(m_clip);
+		ie().process_command(targetTrack->add_clip(m_clip, false));
 	}
 	return 1;
 }
@@ -90,9 +90,9 @@ int MoveClip::undo_action()
 {
 	PENTER;
 	if (targetTrack)
-		targetTrack->remove_clip(m_clip);
+		ie().process_command(targetTrack->remove_clip(m_clip, false));
 	m_clip->set_track_start_frame(originalTrackFirstFrame);
-	originTrack->add_clip(m_clip);
+	ie().process_command(originTrack->add_clip(m_clip, false));
 	m_clip->set_track(originTrack);
 	return 1;
 }
@@ -168,10 +168,10 @@ int MoveClip::jog()
 		
 	} else {
 		if (currentTrack) {
-			currentTrack->remove_clip( m_clip );
+			ie().process_command(currentTrack->remove_clip( m_clip, false));
 		}
 		if (newTargetTrack) {
-			newTargetTrack->add_clip( m_clip );
+			ie().process_command(newTargetTrack->add_clip( m_clip, false ));
 		}
 		m_clip->set_track_start_frame(newInsertFrame);
 		currentTrack = newTargetTrack;
