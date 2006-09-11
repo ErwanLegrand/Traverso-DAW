@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: BusMonitor.cpp,v 1.4 2006/08/25 11:16:18 r_sijrier Exp $
+$Id: BusMonitor.cpp,v 1.5 2006/09/11 21:16:02 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -88,7 +88,6 @@ void BusMonitor::create_vu_meters( )
 	foreach(QString name, list)
 	{
 		AudioBus* bus = audiodevice().get_capture_bus(name.toAscii());
-// 		bus->set_monitor_peaks(true);
 		VUMeter* meter = new VUMeter( vumeterLayoutWidget, bus );
 		vumeterLayout->addWidget(meter);
 		inMeters.append(meter);
@@ -101,10 +100,6 @@ void BusMonitor::create_vu_meters( )
 		vumeterLayout->addWidget(meter);
 		outMeters.append(meter);
 	}
-
-/*	AudioBus* bus = audiodevice().get_capture_bus("Capture 1");
-	if (bus)
-		bus->set_monitor_peaks(true);*/
 
 	vumeterLayout->setEnabled(true);
 }
