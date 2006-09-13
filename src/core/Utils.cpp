@@ -17,13 +17,15 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Utils.cpp,v 1.2 2006/06/20 19:27:03 r_sijrier Exp $
+    $Id: Utils.cpp,v 1.3 2006/09/13 12:51:07 r_sijrier Exp $
 */
 
 #include "Utils.h"
 #include "Mixer.h"
 
 #include <QString>
+#include <QDateTime>
+
 
 QString frame_to_smpte(nframes_t nframes, int rate)
 {
@@ -55,6 +57,18 @@ QString coefficient_to_dbstring( float coeff )
 		gainIndB = "+ " + QByteArray::number(db, 'f', 1) + " dB";
 		
 	return gainIndB;
+}
+
+qint64 create_id( )
+{
+	int r = rand();
+	QDateTime time = QDateTime::currentDateTime();
+	uint timeValue = time.toTime_t();
+	qint64 id = timeValue;
+	id *= 1000000000;
+	id += r;
+	
+	return id;
 }
 
 //eof

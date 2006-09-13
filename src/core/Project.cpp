@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Project.cpp,v 1.7 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: Project.cpp,v 1.8 2006/09/13 12:51:07 r_sijrier Exp $
 */
 
 #include <QFile>
@@ -36,6 +36,9 @@ $Id: Project.cpp,v 1.7 2006/09/07 09:36:52 r_sijrier Exp $
 #include "AudioSourceManager.h"
 #include "Export.h"
 #include "AudioDevice.h"
+
+
+#define PROJECT_FILE_VERSION 	1
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -139,6 +142,12 @@ int Project::load() // try to load the project by its title
 	QDomElement docElem = doc.documentElement();
 	QDomNode propertiesNode = docElem.firstChildElement("Properties");
 	QDomElement e = propertiesNode.toElement();
+	
+	if (e.attribute("projectfileversion", "").toInt() != PROJECT_FILE_VERSION) {
+		PERROR("Project File Version does not match, cannot load project :-(");
+		info().warning("Project File Version does not match, cannot load project :-(");
+		return -1;
+	}
 
 	title = e.attribute( "title", "" );
 	engineer = e.attribute( "engineer", "" );
@@ -146,8 +155,9 @@ int Project::load() // try to load the project by its title
 	m_rate = e.attribute( "rate", "" ).toInt();
 	m_bitDepth = e.attribute( "bitdepth", "" ).toInt();
 	// Load all the AudioSources for this project
-	QDomNode sourcesNode = docElem.firstChildElement("AudioSources");
-	asmanager->set_state( sourcesNode );
+	
+	QDomNode asmNode = docElem.firstChildElement("AudioSourcesManager");
+	asmanager->set_state(asmNode);
 
 
 	QDomNode songsNode = docElem.firstChildElement("Songs");
@@ -187,6 +197,7 @@ int Project::save()
 		properties.setAttribute("currentSongId", currentSongId);
 		properties.setAttribute("rate", m_rate);
 		properties.setAttribute("bitdepth", m_bitDepth);
+		properties.setAttribute("projectfileversion", PROJECT_FILE_VERSION);
 		projectNode.appendChild(properties);
 
 		doc.appendChild(projectNode);

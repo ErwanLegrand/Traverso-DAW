@@ -47,6 +47,7 @@ SOURCES	= AudioClip.cpp \
 	MtaRegion.cpp \
 	MtaRegionList.cpp \
 	Peak.cpp \
+	PrivateReadSource.cpp \
 	Project.cpp \
 	ProjectManager.cpp \
 	ReadSource.cpp \
@@ -83,6 +84,7 @@ HEADERS	= precompile.h \
 	MtaRegion.h \
 	MtaRegionList.h \
 	Peak.h \
+	PrivateReadSource.h \
 	Project.h \
 	ProjectManager.h \
 	ReadSource.h \

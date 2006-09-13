@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.19 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: AudioClip.h,v 1.20 2006/09/13 12:51:07 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -46,11 +46,12 @@ class AudioClip : public ContextItem
 
 public:
 
-	AudioClip(Track* track, nframes_t aTrackInsertBlock, QString name);
-	AudioClip(Track* track, const QDomNode& node);
+	AudioClip(const QString& name);
+	AudioClip(const QDomNode& node);
 	~AudioClip();
 
-	void add_audio_source(ReadSource* source, int channel);
+	void set_audio_source(ReadSource* source);
+	void set_clip_readsource(ReadSource* source);
 	int init_recording(QByteArray bus);
 	int process(nframes_t nframes, audio_sample_t* channelBuffer, uint channel);
 	
@@ -61,7 +62,8 @@ public:
 	void set_name(const QString& name);
 	void set_fade_in(nframes_t b);
 	void set_fade_out(nframes_t b);
-	void set_track(Track* t);
+	void set_track(Track* track);
+	void set_song(Song* song);
 
 	int set_selected(bool selected);
 	int set_state( const QDomNode& node );
@@ -92,6 +94,8 @@ public:
 	int get_channels() const;
 	int get_rate() const;
 	int get_bitdepth() const;
+	qint64 get_id() const;
+	qint64 get_readsource_id();
 	
 	QString get_name() const;
 	
@@ -109,12 +113,13 @@ public:
 		return left->get_track_start_frame() > right->get_track_start_frame();
 	}
 
+	QDomNode		m_domNode;
 
 private:
 	Track* 			m_track;
 	Song* 			m_song;
 	AudioSource* 		audioSource;
-	QList<ReadSource* > 	readSources;
+	ReadSource*		m_readSource;
 	QList<WriteSource* >	writeSources;
 	QList<FadeCurve* >	m_fades;
 	AudioBus*		captureBus;
@@ -137,8 +142,9 @@ private:
 	float	 		m_gain;
 	float			m_normfactor;
 	uint 			m_channels;
-	int 			rate;
-	int 			bitDepth;
+	
+	qint64		m_id;
+	qint64		m_readSourceId;
 
 	void init();
 	void set_track_end_frame(nframes_t endFrame);

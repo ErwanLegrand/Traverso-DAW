@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSourceManager.h,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: AudioSourceManager.h,v 1.5 2006/09/13 12:51:07 r_sijrier Exp $
 */
 
 #ifndef AUDIOSOURCEMANAGER_H
@@ -31,6 +31,7 @@ $Id: AudioSourceManager.h,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
 
 class AudioSource;
 class ReadSource;
+class AudioClip;
 
 class AudioSourceManager : public QObject
 {
@@ -40,14 +41,16 @@ public:
 	AudioSourceManager();
 	~AudioSourceManager();
 
-	ReadSource* new_readsource(const QString& dir, const QString& name, uint channel, int songId, int bitDepth, int rate=0 );
+	ReadSource* new_readsource(const QString& dir, const QString& name, int songId, int bitDepth, int rate=0 );
+	AudioClip* new_audio_clip(const QString& name);
 	
 	int remove (AudioSource* source);
 	int set_state( const QDomNode& node );
 
-	ReadSource* get_readsource(const QString& fileName, int channel);
+	ReadSource* get_readsource(const QString& fileName);
 	
 	ReadSource* get_readsource(qint64 id);
+	AudioClip* get_clip(qint64 id);
 	
 	QDomNode get_state(QDomDocument doc);
 	
@@ -55,7 +58,8 @@ public:
 
 
 private:
-	QHash<qint64, ReadSource* >	sources;
+	QHash<qint64, ReadSource* >	m_sources;
+	QHash<qint64, AudioClip* >	m_clips;
 	
 	
 signals:

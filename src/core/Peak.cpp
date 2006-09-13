@@ -17,17 +17,16 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Peak.cpp,v 1.8 2006/08/31 12:37:50 r_sijrier Exp $
+$Id: Peak.cpp,v 1.9 2006/09/13 12:51:07 r_sijrier Exp $
 */
 
 #include "libtraversocore.h"
 
 #include "Peak.h"
-#include "AudioSource.h"
 #include "ReadSource.h"
 #include "defines.h"
 #include "Mixer.h"
-#include <QFSFileEngine>
+#include <QFileInfo>
 #include <QDateTime>
 
 #include "Debugger.h"
@@ -49,12 +48,18 @@ const int Peak::MAX_ZOOM_USING_SOURCEFILE	= SAVING_ZOOM_FACTOR - 1;
 int Peak::zoomStep[ZOOM_LEVELS] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096,
 				8192, 16384, 32768, 65536, 131072};
 
-Peak::Peak(AudioSource* source)
-		: m_source(source)
+Peak::Peak()
+	: m_source(0)
 {
+	PENTERCONS;
+}
+
+Peak::Peak(ReadSource* source, int channel)
+	: m_source(source), m_channel(channel)
+{
+	PENTERCONS;
 	if (m_source->get_channel_count() > 1) {
-		QString channelNumber = "-" + QByteArray::number(m_source->get_channel());
-		m_fileName = pm().get_project()->get_root_dir() + "/peakfiles/" + m_source->get_name() + ".peak" + channelNumber;
+		m_fileName = pm().get_project()->get_root_dir() + "/peakfiles/" + m_source->get_name() + ".peak-ch" + QByteArray::number(m_channel);
 	} else {
 		m_fileName = pm().get_project()->get_root_dir() + "/peakfiles/" + m_source->get_name() + ".peak";
 	}
@@ -92,11 +97,13 @@ int Peak::read_header()
 {
 	PENTER;
 	
-	QFSFileEngine file(m_source->get_filename());
-	QFSFileEngine peakFile(m_fileName);
+	Q_ASSERT(m_source);
 	
-	QDateTime fileModTime = file.fileTime(QAbstractFileEngine::ModificationTime);
-	QDateTime peakModTime = peakFile.fileTime(QAbstractFileEngine::ModificationTime);
+	QFileInfo file(m_source->get_filename());
+	QFileInfo peakFile(m_fileName);
+	
+	QDateTime fileModTime = file.lastModified();
+	QDateTime peakModTime = peakFile.lastModified();
 	
 	if (fileModTime > peakModTime) {
 		PERROR("Source and Peak file modification time do not match");
@@ -214,7 +221,7 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 		toRead = pixelcount * zoomStep[zoomLevel];
 		audio_sample_t buf[toRead];
 
-		if ( (readFrames = static_cast<ReadSource*>(m_source)->file_read(buf, startPos, toRead)) != toRead) {
+		if ( (readFrames = m_source->file_read(m_channel, buf, startPos, toRead)) != toRead) {
 			PWARN("Unable to read nframes %d (only %d available)", pixelcount, readFrames);
 			if (readFrames == 0) {
 				return -1;
@@ -494,7 +501,7 @@ int Peak::create_from_scratch()
 			return -1;
 		}
 		
-		readFrames = static_cast<ReadSource*>(m_source)->file_read(buf, totalReadFrames, bufferSize);
+		readFrames = m_source->file_read(m_channel, buf, totalReadFrames, bufferSize);
 		process(buf, readFrames);
 		totalReadFrames += readFrames;
 		counter++;
@@ -530,7 +537,7 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 		int toRead = (int) ((startpos * NORMALIZE_CHUNK_SIZE) - startframe);
 		
 		audio_sample_t buf[toRead];
-		int read = static_cast<ReadSource*>(m_source)->file_read(buf, startframe, toRead);
+		int read = m_source->file_read(m_channel, buf, startframe, toRead);
 		
 		maxamp = Mixer::compute_peak(buf, read, maxamp);
 	}
@@ -544,7 +551,7 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 	int endpos = (int) f;
 	int toRead = (int) ((f - (endframe / NORMALIZE_CHUNK_SIZE)) * NORMALIZE_CHUNK_SIZE);
 	audio_sample_t buf[toRead];
-	int read = static_cast<ReadSource*>(m_source)->file_read(buf, endframe - toRead, toRead);
+	int read = m_source->file_read(m_channel, buf, endframe - toRead, toRead);
 	maxamp = Mixer::compute_peak(buf, read, maxamp);
 	
 	
@@ -586,3 +593,4 @@ void PeakBuildThread::run()
 		PWARN("Failed to create peak buffers");
 	}
 }
+

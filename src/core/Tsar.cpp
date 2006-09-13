@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Tsar.cpp,v 1.8 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: Tsar.cpp,v 1.9 2006/09/13 12:51:07 r_sijrier Exp $
 */
 
 #include "Tsar.h"
@@ -27,6 +27,7 @@ $Id: Tsar.cpp,v 1.8 2006/09/07 09:36:52 r_sijrier Exp $
 #include "RingBuffer.h"
 
 #include <QThread>
+#include <QMetaMethod>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -76,27 +77,27 @@ void Tsar::process_events( )
 		return;
 	}
 	
-/*	int objcount = 0;
-	trav_time_t starttime = get_microseconds();*/
+//#define profile	
 	
 	while( (rbToBeProcessed->read_space() / sizeof(TsarEvent)) >= 1 ) {
+		
+#if defined (profile)
+		trav_time_t starttime = get_microseconds();
+#endif
 		
 		TsarEvent event;
 		rbToBeProcessed->read( (char*)(&event), sizeof(TsarEvent));
 
-// 		printf("called %s, slotindex %d, signalindex %d\n", event.caller->metaObject()->className(), event.slotindex, event.signalindex);
 		process_event_slot(event);
 		
 		rbProcessed->write( (char*)(&event), sizeof(TsarEvent));
 		
-// 		objcount++;
+#if defined (profile)
+		int processtime = (int) (get_microseconds() - starttime);
+		printf("called %s::%s, (signal: %s) \n", event.caller->metaObject()->className(), event.caller->metaObject()->method(event.slotindex).signature(), event.caller->metaObject()->method(event.signalindex + 4).signature());
+		printf("Process time: %d useconds\n\n", processtime);
+#endif
 	}
-	
-	
-/*	int processtime = (int) (get_microseconds() - starttime);
-	if (objcount)
-		printf("\nNumber of objects processed: %d in %d useconds\n",objcount, processtime);
-*/
 }
 
 void Tsar::finish_processed_events( )
@@ -173,13 +174,13 @@ void Tsar::process_event_slot( TsarEvent& event )
 {
 	// If there is an object to be added, do the magic to call the slot :-)
 	if (event.slotindex > -1) {
-		
+
 		void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&event.argument)) };
 		
 		// This equals QMetaObject::invokeMethod(), without type checking. But we know that the types
 		// are the correct ones, and will be casted just fine!
 		if ( ! (event.caller->qt_metacall(QMetaObject::InvokeMetaMethod, event.slotindex, _a) < 0) ) {
-			qDebug("Tsar::add_remove_items_in_audio_processing_path() QMetaObject::invokeMethod failed");
+			qDebug("Tsar::process_event_slot failed (%s::%s)", event.caller->metaObject()->className(), event.caller->metaObject()->method(event.slotindex).signature());
 		}
 	}
 }

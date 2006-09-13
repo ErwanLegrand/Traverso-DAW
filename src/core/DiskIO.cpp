@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.13 2006/08/25 11:24:53 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.14 2006/09/13 12:51:07 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
@@ -235,8 +235,6 @@ void DiskIO::register_read_source (ReadSource* source )
 void DiskIO::register_write_source( WriteSource * source )
 {
 	PENTER2;
-	
-	source->prepare_buffer();
 	
 	QMutexLocker locker(&mutex);
 

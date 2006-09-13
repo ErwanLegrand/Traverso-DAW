@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ProjectManager.cpp,v 1.10 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: ProjectManager.cpp,v 1.11 2006/09/13 12:51:07 r_sijrier Exp $
 */
 
 #include "ProjectManager.h"
@@ -115,7 +115,7 @@ int ProjectManager::load_project(const QString& projectName)
 		return -1;
 	}
 
-	Project *newProject = new Project(projectName);
+	Project* newProject = new Project(projectName);
 
 	if (!newProject)
 		return -1;
@@ -123,6 +123,8 @@ int ProjectManager::load_project(const QString& projectName)
 	set_current_project(newProject);
 
 	if (currentProject->load() < 0) {
+		delete currentProject;
+		currentProject = 0;
 		set_current_project( (Project*) 0 );
 		PERROR("couldn't load project %s", projectName.toAscii().data());
 		return -1;

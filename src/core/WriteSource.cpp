@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.cpp,v 1.7 2006/08/25 11:24:53 r_sijrier Exp $
+$Id: WriteSource.cpp,v 1.8 2006/09/13 12:51:07 r_sijrier Exp $
 */
 
 #include "WriteSource.h"
@@ -28,6 +28,7 @@ $Id: WriteSource.cpp,v 1.7 2006/08/25 11:24:53 r_sijrier Exp $
 #include <AudioDevice.h>
 #include "Peak.h"
 #include "RingBuffer.h"
+#include "Utils.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -35,14 +36,14 @@ $Id: WriteSource.cpp,v 1.7 2006/08/25 11:24:53 r_sijrier Exp $
 
 
 WriteSource::WriteSource( ExportSpecification * specification )
-		: AudioSource( specification->channels, specification->exportdir, specification->name),
+		: AudioSource(specification->exportdir, specification->name),
 		spec(specification)
 {
 	prepare_export(spec);
 }
 
 WriteSource::WriteSource( ExportSpecification * specification, int channelNumber )
-		: AudioSource(channelNumber, specification->exportdir, specification->name),
+		: AudioSource(specification->exportdir, specification->name),
 		spec(specification)
 {
 	prepare_export(spec);
@@ -281,9 +282,9 @@ int WriteSource::prepare_export (ExportSpecification* spec)
 
 	/* XXX make sure we have enough disk space for the output */
 
-	if ((sf = sf_open (m_filename.toAscii().data(), SFM_WRITE, &sfinfo)) == 0) {
+	if ((sf = sf_open (QS_C(m_fileName), SFM_WRITE, &sfinfo)) == 0) {
 		sf_error_str (0, errbuf, sizeof (errbuf) - 1);
-		PWARN("Export: cannot open output file \"%s\" (%s)", m_filename.toAscii().data(), errbuf);
+		PWARN("Export: cannot open output file \"%s\" (%s)", QS_C(m_fileName), errbuf);
 		return -1;
 	}
 
@@ -338,7 +339,7 @@ int WriteSource::prepare_export (ExportSpecification* spec)
 	}
 
 	
-	m_peak = new Peak(this);
+	m_peak = new Peak();
 	
 	return 0;
 }

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.25 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: Track.cpp,v 1.26 2006/09/13 12:51:07 r_sijrier Exp $
 */
 
 #include "Track.h"
@@ -27,6 +27,9 @@ $Id: Track.cpp,v 1.25 2006/09/07 09:36:52 r_sijrier Exp $
 #include "PluginChain.h"
 #include "Plugin.h"
 #include "InputEngine.h"
+#include "ProjectManager.h"
+#include "AudioSourceManager.h"
+#include "Project.h"
 
 #include <commands.h>
 
@@ -93,13 +96,18 @@ QDomNode Track::get_state( QDomDocument doc )
 	node.setAttribute("OutBus", busOut.data());
 
 	QDomNode clips = doc.createElement("Clips");
+	
 	foreach(AudioClip* clip, audioClipList) {
 		if (clip->get_length() == 0) {
 			PERROR("Clip lenght is 0! This shouldn't happen!!!!");
 			continue;
 		}
-		clips.appendChild(clip->get_state(doc));
+		
+		QDomElement clipNode = doc.createElement("Clip");
+		clipNode.setAttribute("id", clip->get_id() );
+		clips.appendChild(clipNode);
 	}
+	
 	node.appendChild(clips);
 	
 	QDomNode pluginChainNode = doc.createElement("PluginChain");
@@ -130,12 +138,24 @@ int Track::set_state( const QDomNode & node )
 	if (!ClipsNode.isNull()) {
 		QDomNode clipNode = ClipsNode.firstChild();
 		while (!clipNode.isNull()) {
-			AudioClip* clip = new AudioClip(this, clipNode);
+			QDomElement clipElement = clipNode.toElement();
+			qint64 id = clipElement.attribute("id", "").toLongLong();
+			
+			AudioClip* clip = pm().get_project()->get_audiosource_manager()->get_clip(id);
+			if (!clip) {
+				PERROR("Clip with id %d not found!", id);
+				break;
+			}
+			
+			clip->set_song(m_song);
+
 			// First add the clip, this will emit the clipAdded Signal!
 			ie().process_command( add_clip( clip, false ) );
+			
 			// Now set the clips state, which will eventually generate
 			// other signals, so the GUI can act on it!
-			clip->set_state(clipNode);
+			clip->set_state(clip->m_domNode);
+			
 			clipNode = clipNode.nextSibling();
 		}
 	}
@@ -239,23 +259,6 @@ AudioClip* Track::get_clip_before(nframes_t framePos)
 }
 
 
-
-//FIXME needs to be reviewed. NOT USED ANYMORE...
-// int Track::delete_clip(AudioClip* clip, bool permanently)
-// {
-// 	PENTER;
-// 	if (!clip) {
-// 		PERROR("Trying to delete invalid Clip");
-// 		return -1;
-// 	}
-// 	if(permanently && (m_song->get_clips_count_for_audio(clip->get_audio_source()) == 1))//FIXME this clip is the only one with this audioSource,
-// 		clip->get_audio_source()->get_peak()->free_buffer_memory();					//so we have to unbuild the peak RAMBuffers... or not? Waste of memory usage if we keep it there...
-// 
-// 
-// 	return 1;
-// }
-
-
 Command* Track::remove_clip(AudioClip* clip, bool historable)
 {
 	PENTER;
@@ -268,6 +271,7 @@ Command* Track::remove_clip(AudioClip* clip, bool historable)
 Command* Track::add_clip(AudioClip* clip, bool historable)
 {
 	PENTER;
+	clip->set_track(this);
 	return new AddRemoveItemCommand(this, clip, historable, m_song,
 					"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)",
 					"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)");
@@ -299,6 +303,10 @@ int Track::arm()
 {
 	PENTER;
 	set_armed(true);
+	AudioBus* bus = audiodevice().get_capture_bus(busIn);
+	if (bus) {
+		bus->set_monitor_peaks(true);
+	}
 	return 1;
 }
 
@@ -307,6 +315,10 @@ int Track::disarm()
 {
 	PENTER;
 	set_armed(false);
+	AudioBus* bus = audiodevice().get_capture_bus(busIn);
+	if (bus) {
+		bus->set_monitor_peaks(false);
+	}
 	return 1;
 }
 
@@ -365,7 +377,11 @@ Command* Track::init_recording()
 	PENTER2;
 	if (isArmed) {
 		QByteArray name = "Audio_" + QByteArray::number(ID) + "." + QByteArray::number(++numtakes);
-		AudioClip* clip = new AudioClip(this, m_song->get_transport_frame(), name);
+		AudioClip* clip = pm().get_project()->get_audiosource_manager()->new_audio_clip(name);
+		clip->set_track(this);
+		clip->set_song(m_song);
+		clip->set_track_start_frame(m_song->get_transport_frame());
+		
 		if (clip->init_recording(busIn) < 0) {
 			PERROR("Could not create AudioClip to record to!");
 			delete clip;
@@ -627,7 +643,6 @@ void Track::get_render_range(nframes_t& startframe, nframes_t& endframe )
 
 void Track::private_add_clip(AudioClip* clip)
 {
-	clip->set_track(this);
 	audioClipList.add_clip(clip);
 }
 

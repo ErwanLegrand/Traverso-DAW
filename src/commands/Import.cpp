@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Import.cpp,v 1.9 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: Import.cpp,v 1.10 2006/09/13 12:51:07 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -27,6 +27,7 @@ $Id: Import.cpp,v 1.9 2006/09/07 09:36:52 r_sijrier Exp $
 #include "AudioClipList.h"
 
 #include "Import.h"
+#include "Utils.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -68,7 +69,7 @@ int Import::prepare_actions()
 	int splitpoint = m_fileName.lastIndexOf("/") + 1;
 	int length = m_fileName.length();
 
-	QString dir = m_fileName.left(splitpoint - 1);
+	QString dir = m_fileName.left(splitpoint - 1) + "/";
 	QString name = m_fileName.right(length - splitpoint);
 
 	Project* project = pm().get_project();
@@ -77,42 +78,21 @@ int Import::prepare_actions()
 		return 0;
 	}
 
-	ReadSource* source = new ReadSource(0, dir, name);
-
-	if (source->init() < 0) {
-		PWARN("AudioSource init failed");
-		delete source;
-		return 0;
-	}
-
-
-	m_clip = new AudioClip(m_track, 0, name);
-
-	int channels = source->get_channel_count();
+	ReadSource* source = project->get_audiosource_manager()->get_readsource(m_fileName);
 	
-	delete source;
-	
-	
-	ReadSource* existingSource;
-
-	for (int channel=0; channel < channels; channel++) {
-		
-		existingSource = project->get_audiosource_manager()->get_readsource( m_fileName, channel);
-		
-		if ( existingSource ) {
-			m_clip->add_audio_source(existingSource, channel);
-		} else {
-			
-			ReadSource* newSource = project->get_audiosource_manager()->new_readsource(dir, name, channel, 0, 0);
-
-			if ( ! newSource) {
-				PERROR("Failed to initialize ReadSource %s for channel %d", m_fileName.toAscii().data(), channel);
-				return -1;
-			}
-
-			m_clip->add_audio_source(newSource, channel);
+	if (! source ) {
+		PMESG("AudioSource not found in acm, requesting new one");
+		source = project->get_audiosource_manager()->new_readsource(dir, name, -1, 0, 0);
+		if (! source) {
+			PERROR("Can't import audiofile %s", QS_C(m_fileName));
 		}
 	}
+
+	m_clip = project->get_audiosource_manager()->new_audio_clip(name);
+	m_clip->set_song(m_track->get_song());
+	m_clip->set_track(m_track);
+	m_clip->set_track_start_frame(0);
+	m_clip->set_audio_source(source);
 
 	if (AudioClip* lastClip = m_track->get_cliplist().get_last()) {
 		m_clip->set_track_start_frame( lastClip->get_track_end_frame() + 1);
@@ -125,7 +105,7 @@ int Import::do_action()
 {
 	PENTER;
 	
-	m_track->add_clip(m_clip);
+	ie().process_command(m_track->add_clip(m_clip, false));
 	
 	return 1;
 }
@@ -135,7 +115,7 @@ int Import::undo_action()
 {
 	PENTER;
 		
-	m_track->remove_clip(m_clip);
+	ie().process_command(m_track->remove_clip(m_clip, false));
 	
 	return 1;
 }
