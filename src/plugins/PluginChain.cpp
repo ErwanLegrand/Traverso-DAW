@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginChain.cpp,v 1.2 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: PluginChain.cpp,v 1.3 2006/09/13 12:45:09 r_sijrier Exp $
 */
  
 #include "PluginChain.h"
@@ -100,7 +100,7 @@ void PluginChain::private_remove_plugin( Plugin * plugin )
 	int index = m_pluginList.indexOf(plugin);
 	
 	if (index >=0 ) {
-		m_pluginList.takeAt(index);
+		m_pluginList.removeAt(index);
 	} else {
 // 		QCritical("Plugin not found in list, this is invalid plugin remove!!!!!");
 	}
