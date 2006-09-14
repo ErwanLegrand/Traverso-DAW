@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.20 2006/09/13 12:51:07 r_sijrier Exp $
+$Id: AudioClip.h,v 1.21 2006/09/14 10:49:39 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -51,7 +51,6 @@ public:
 	~AudioClip();
 
 	void set_audio_source(ReadSource* source);
-	void set_clip_readsource(ReadSource* source);
 	int init_recording(QByteArray bus);
 	int process(nframes_t nframes, audio_sample_t* channelBuffer, uint channel);
 	
@@ -67,6 +66,8 @@ public:
 
 	int set_selected(bool selected);
 	int set_state( const QDomNode& node );
+	int get_ref_count() const;
+	int ref();
 
 	AudioClip* prev_clip();
 	AudioClip* next_clip();
@@ -141,10 +142,10 @@ private:
 	bool 			isRecording;
 	float	 		m_gain;
 	float			m_normfactor;
-	uint 			m_channels;
 	
 	qint64		m_id;
 	qint64		m_readSourceId;
+	int		m_refcount;
 
 	void init();
 	void set_track_end_frame(nframes_t endFrame);

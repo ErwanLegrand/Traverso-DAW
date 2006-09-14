@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PrivateReadSource.cpp,v 1.1 2006/09/13 12:51:28 r_sijrier Exp $
+$Id: PrivateReadSource.cpp,v 1.2 2006/09/14 10:49:39 r_sijrier Exp $
 */
 
 #include "PrivateReadSource.h"
@@ -39,9 +39,10 @@ $Id: PrivateReadSource.cpp,v 1.1 2006/09/13 12:51:28 r_sijrier Exp $
 
 
 PrivateReadSource::PrivateReadSource(ReadSource* source, uint chan, int channelNumber, const QString& fileName)
-	: m_source(source), 
-	  m_peak(0), 
-	  sf(0), 
+	: m_source(source),
+	  m_buffer(0),
+	  m_peak(0),
+	  sf(0),
 	  m_channelCount(chan), 
 	  m_channelNumber(channelNumber), 
 	  m_fileName(fileName)
@@ -52,8 +53,15 @@ PrivateReadSource::PrivateReadSource(ReadSource* source, uint chan, int channelN
 PrivateReadSource::~PrivateReadSource()
 {
 	PENTERDES;
-	if (readbuffer)
-		delete [] readbuffer;
+	if (m_readbuffer) {
+		delete [] m_readbuffer;
+	}
+	if (m_buffer) {
+		delete m_buffer;
+	}
+	if (m_peak) {
+		delete m_peak;
+	}
 }
 
 
@@ -67,7 +75,7 @@ int PrivateReadSource::init( )
 	rbRelativeFileReadPos = 0;
 	rbReady = true;
 	needSync = false;
-	readbuffer = 0;
+	m_readbuffer = 0;
 	readbuffersize = 0;
 	seekPos = -1;
 	m_clip = 0;
@@ -142,15 +150,15 @@ int PrivateReadSource::file_read (audio_sample_t* dst, nframes_t start, nframes_
 
 	if (readbuffersize < real_cnt) {
 
-		if (readbuffer) {
-			delete [] readbuffer;
+		if (m_readbuffer) {
+			delete [] m_readbuffer;
 		}
 		readbuffersize = real_cnt;
-		readbuffer = new float[readbuffersize];
+		m_readbuffer = new float[readbuffersize];
 	}
 
-	nread = sf_read_float (sf, readbuffer, real_cnt);
-	ptr = readbuffer + m_channelNumber;
+	nread = sf_read_float (sf, m_readbuffer, real_cnt);
+	ptr = m_readbuffer + m_channelNumber;
 	nread /= sfinfo.channels;
 
 	/* stride through the interleaved data */

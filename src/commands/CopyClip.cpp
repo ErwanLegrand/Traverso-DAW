@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: CopyClip.cpp,v 1.7 2006/08/31 17:54:51 r_sijrier Exp $
+    $Id: CopyClip.cpp,v 1.8 2006/09/14 10:49:39 r_sijrier Exp $
 */
 
 #include "CopyClip.h"
@@ -60,15 +60,17 @@ int CopyClip::finish_hold()
 
 int CopyClip::prepare_actions()
 {
-        newCreatedClip = m_clip->create_copy();
+	newCreatedClip = pm().get_project()->get_audiosource_manager()->get_clip(m_clip->get_id());
         newCreatedClip->set_track_start_frame(newInsertBlock);
+        newCreatedClip->set_song(m_song);
+        newCreatedClip->set_track(targetTrack);
         return 1;
 }
 
 int CopyClip::do_action()
 {
         PENTER;
-	targetTrack->add_clip(newCreatedClip);
+	ie().process_command(targetTrack->add_clip(newCreatedClip, false));
         return 1;
 }
 
@@ -76,7 +78,7 @@ int CopyClip::do_action()
 int CopyClip::undo_action()
 {
         PENTER;
-        targetTrack->remove_clip(newCreatedClip);
+        ie().process_command(targetTrack->remove_clip(newCreatedClip, false));
         return 1;
 }
 

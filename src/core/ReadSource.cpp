@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.cpp,v 1.12 2006/09/13 12:51:07 r_sijrier Exp $
+$Id: ReadSource.cpp,v 1.13 2006/09/14 10:49:39 r_sijrier Exp $
 */
 
 #include "ReadSource.h"
@@ -67,9 +67,21 @@ ReadSource::ReadSource(const QString& dir, const QString& name)
 }
 
 
+ReadSource::ReadSource(const QString& dir, const QString& name, int channelCount, int fileCount)
+	: AudioSource(dir, name), 
+	  refcount(0)
+{
+	  m_channelCount = channelCount;
+	  m_fileCount = fileCount;
+}
+
+
 ReadSource::~ReadSource()
 {
 	PENTERDES;
+	foreach(PrivateReadSource* source, m_sources) {
+		delete source;
+	}
 }
 
 
@@ -84,7 +96,7 @@ int ReadSource::init( )
 		return -1;
 	}
 	
-	for (int i=0; i<m_channelCount; ++i) {
+	for (uint i=0; i<m_channelCount; ++i) {
 		QString fileName = m_dir + m_name;
 		if (m_fileCount > 1) {
 			fileName.append("-ch" + QByteArray::number(i) + ".wav");
@@ -183,6 +195,7 @@ ReadSource * ReadSource::deep_copy( )
 
 int ReadSource::ref( )
 {
+	PENTER;
 	return refcount++;
 }
 

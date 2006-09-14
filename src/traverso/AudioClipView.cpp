@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.27 2006/08/23 13:01:25 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.28 2006/09/14 10:49:39 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -107,6 +107,7 @@ QRect AudioClipView::draw(QPainter& p)
 		
 	// Check if the clipwidth is larger then 0!
 	if ( (clipXWidth <=0) || (m_song->frame_to_xpos(trackLastFrame) <= 0) || (height == 0)) {
+		PWARN("Clipwidt is only %d", clipXWidth);
 		return QRect();
 	}
 	
@@ -139,6 +140,7 @@ QRect AudioClipView::draw(QPainter& p)
 
 	// Only continue if our AudioClip has more then 1 channel
 	if (channels == 0) {
+		PWARN("This AudioClipView has 0 channels!!!!!");
 		return QRect();
 	}
 	
@@ -200,6 +202,7 @@ QRect AudioClipView::draw(QPainter& p)
 
 void AudioClipView::draw_peaks( QPainter& p )
 {
+	PENTER;
 	int normalBackgroundWidth = clipXWidth - rCrossX - lCrossX;
 	if (normalBackgroundWidth < 0)
 		return;
@@ -227,7 +230,7 @@ void AudioClipView::draw_peaks( QPainter& p )
 		unsigned char peakBuffer[buffersize];
 		
 		pixelcount = peak->calculate_peaks(peakBuffer, hzoom, startFrame, pixelcount);
-		
+
 		if (pixelcount <= 0) {
 			// It seems there are no peak buffers yet, but they are now generated
 			// just wait for the finished() signal.....
@@ -441,6 +444,7 @@ AudioClip * AudioClipView::get_clip( )
 
 void AudioClipView::update_variables( )
 {
+	PENTER;
 	sourceLastFrame = m_clip->get_source_end_frame();
 	sourceFirstFrame = m_clip->get_source_start_frame();
 	trackFirstFrame =  m_clip->get_track_start_frame();

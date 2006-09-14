@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSource.h,v 1.5 2006/09/13 12:51:07 r_sijrier Exp $
+$Id: AudioSource.h,v 1.6 2006/09/14 10:49:39 r_sijrier Exp $
 */
 
 #ifndef AUDIOSOURCE_H
@@ -59,12 +59,14 @@ public :
 	QString get_name() const;
 	qint64 get_id() const;
 	int get_rate() const;
-	int get_channel_count() const;
+	uint get_channel_count() const;
 	int get_bit_depth() const;
+	
+	void set_channel_count(uint count);
 
 protected:
-	int		m_channelCount;
-	int		m_fileCount;
+	uint		m_channelCount;
+	uint		m_fileCount;
 	int		m_origSongId;
 	QString 	m_dir;
 	qint64		m_id;
@@ -73,8 +75,12 @@ protected:
 	QString		m_fileName;
 	nframes_t	m_length;
 	uint 		m_rate;
-	uint		m_creationTime;
 };
+
+inline uint AudioSource::get_channel_count( ) const
+{
+	return m_channelCount;
+}
 
 #endif
 

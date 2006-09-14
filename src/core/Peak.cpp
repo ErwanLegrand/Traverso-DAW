@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Peak.cpp,v 1.9 2006/09/13 12:51:07 r_sijrier Exp $
+$Id: Peak.cpp,v 1.10 2006/09/14 10:49:39 r_sijrier Exp $
 */
 
 #include "libtraversocore.h"
@@ -48,20 +48,21 @@ const int Peak::MAX_ZOOM_USING_SOURCEFILE	= SAVING_ZOOM_FACTOR - 1;
 int Peak::zoomStep[ZOOM_LEVELS] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096,
 				8192, 16384, 32768, 65536, 131072};
 
-Peak::Peak()
-	: m_source(0)
+Peak::Peak(AudioSource* source, int channel)
+	: m_channel(channel)
 {
 	PENTERCONS;
-}
-
-Peak::Peak(ReadSource* source, int channel)
-	: m_source(source), m_channel(channel)
-{
-	PENTERCONS;
-	if (m_source->get_channel_count() > 1) {
-		m_fileName = pm().get_project()->get_root_dir() + "/peakfiles/" + m_source->get_name() + ".peak-ch" + QByteArray::number(m_channel);
+	
+	ReadSource* rs = qobject_cast<ReadSource*>(source);
+	if (rs) {
+		m_source = rs;
+	}
+	 
+	if (source->get_channel_count() > 1) {
+		PMESG("Peak channel count is %d", source->get_channel_count());
+		m_fileName = pm().get_project()->get_root_dir() + "/peakfiles/" + source->get_name() + "-ch" + QByteArray::number(m_channel) + ".peak";
 	} else {
-		m_fileName = pm().get_project()->get_root_dir() + "/peakfiles/" + m_source->get_name() + ".peak";
+		m_fileName = pm().get_project()->get_root_dir() + "/peakfiles/" + source->get_name() + ".peak";
 	}
 	
 	peaksAvailable = permanentFailure = interuptPeakBuild = false;
@@ -99,6 +100,13 @@ int Peak::read_header()
 	
 	Q_ASSERT(m_source);
 	
+	m_file = fopen(m_fileName.toAscii().data(),"r");
+	
+	if (! m_file) {
+		PERROR("Couldn't open peak file for reading! (%s)", m_fileName.toAscii().data());
+		return -1;
+	}
+	
 	QFileInfo file(m_source->get_filename());
 	QFileInfo peakFile(m_fileName);
 	
@@ -112,13 +120,6 @@ int Peak::read_header()
 		return -1;
 	}
 	
-	
-	m_file = fopen(m_fileName.toAscii().data(),"r");
-	
-	if (! m_file) {
-		PERROR("Couldn't open peak file for reading! (%s)", m_fileName.toAscii().data());
-		return -1;
-	}
 	
 	fseek(m_file, 0, SEEK_SET);
 

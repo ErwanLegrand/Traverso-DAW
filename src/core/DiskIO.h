@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.h,v 1.4 2006/08/31 17:55:38 r_sijrier Exp $
+$Id: DiskIO.h,v 1.5 2006/09/14 10:49:39 r_sijrier Exp $
 */
 
 #ifndef DISKIO_H
@@ -87,6 +87,8 @@ public:
 	 * @param source The WriteSource to register
 	 */
 	void register_write_source(WriteSource* source);
+	
+	void unregister_read_source(ReadSource* source);
 
 	/**
 	 *

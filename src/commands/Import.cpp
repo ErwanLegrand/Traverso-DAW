@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Import.cpp,v 1.10 2006/09/13 12:51:07 r_sijrier Exp $
+$Id: Import.cpp,v 1.11 2006/09/14 10:49:39 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -82,17 +82,17 @@ int Import::prepare_actions()
 	
 	if (! source ) {
 		PMESG("AudioSource not found in acm, requesting new one");
-		source = project->get_audiosource_manager()->new_readsource(dir, name, -1, 0, 0);
+		source = project->get_audiosource_manager()->new_readsource(dir, name);
 		if (! source) {
 			PERROR("Can't import audiofile %s", QS_C(m_fileName));
 		}
 	}
 
 	m_clip = project->get_audiosource_manager()->new_audio_clip(name);
+	m_clip->set_audio_source(source);
 	m_clip->set_song(m_track->get_song());
 	m_clip->set_track(m_track);
 	m_clip->set_track_start_frame(0);
-	m_clip->set_audio_source(source);
 
 	if (AudioClip* lastClip = m_track->get_cliplist().get_last()) {
 		m_clip->set_track_start_frame( lastClip->get_track_end_frame() + 1);

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.h,v 1.4 2006/09/13 12:51:07 r_sijrier Exp $
+$Id: WriteSource.h,v 1.5 2006/09/14 10:49:39 r_sijrier Exp $
 */
 
 #ifndef WRITESOURCE_H
@@ -39,10 +39,10 @@ class WriteSource : public AudioSource
 
 public :
 	WriteSource(ExportSpecification* spec);
-	WriteSource(ExportSpecification* spec, int channelNumber);
+	WriteSource(ExportSpecification* spec, int channelNumber, int superChannelCount);
 	~WriteSource();
 
-	int rb_write(const audio_sample_t* src, nframes_t start, nframes_t cnt);
+	int rb_write(const audio_sample_t* src, nframes_t cnt);
 	int rb_file_write(nframes_t cnt);
 	int process_ringbuffer(audio_sample_t* framebuffer);
 
@@ -67,7 +67,7 @@ private:
 	GDither             	dither;
 	nframes_t      		out_samples_max;
 	nframes_t      		sample_rate;
-	uint				channels;
+	uint			channels;
 	uint32_t       		sample_bytes;
 	nframes_t      		leftover_frames;
 #if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
@@ -77,9 +77,10 @@ private:
 	nframes_t      		max_leftover_frames;
 	float*			leftoverF;
 	float*			dataF2;
-	void*               		output_data;
-	bool				processPeaks;
-	bool				recording;
+	void*               	output_data;
+	bool			processPeaks;
+	bool			recording;
+	int			m_channelNumber;
 
 signals:
 	void exportFinished(WriteSource* );

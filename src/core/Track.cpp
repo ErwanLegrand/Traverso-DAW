@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.26 2006/09/13 12:51:07 r_sijrier Exp $
+$Id: Track.cpp,v 1.27 2006/09/14 10:49:39 r_sijrier Exp $
 */
 
 #include "Track.h"
@@ -378,8 +378,8 @@ Command* Track::init_recording()
 	if (isArmed) {
 		QByteArray name = "Audio_" + QByteArray::number(ID) + "." + QByteArray::number(++numtakes);
 		AudioClip* clip = pm().get_project()->get_audiosource_manager()->new_audio_clip(name);
-		clip->set_track(this);
 		clip->set_song(m_song);
+		clip->set_track(this);
 		clip->set_track_start_frame(m_song->get_transport_frame());
 		
 		if (clip->init_recording(busIn) < 0) {

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.cpp,v 1.8 2006/09/13 12:51:07 r_sijrier Exp $
+$Id: WriteSource.cpp,v 1.9 2006/09/14 10:49:39 r_sijrier Exp $
 */
 
 #include "WriteSource.h"
@@ -42,16 +42,21 @@ WriteSource::WriteSource( ExportSpecification * specification )
 	prepare_export(spec);
 }
 
-WriteSource::WriteSource( ExportSpecification * specification, int channelNumber )
+WriteSource::WriteSource( ExportSpecification * specification, int channelNumber, int superChannelCount )
 		: AudioSource(specification->exportdir, specification->name),
-		spec(specification)
+		spec(specification),
+		m_channelNumber(channelNumber)
 {
+	m_channelCount = superChannelCount;
 	prepare_export(spec);
 }
 
 WriteSource::~WriteSource()
 {
 	PENTERDES;
+	if (m_peak)
+		delete m_peak;
+		
 	//FIXME spec can be owned by someone else!!!! (ExportWidget for example)
 /*	if (spec) {
 		delete spec;
@@ -282,7 +287,10 @@ int WriteSource::prepare_export (ExportSpecification* spec)
 
 	/* XXX make sure we have enough disk space for the output */
 
-	if ((sf = sf_open (QS_C(m_fileName), SFM_WRITE, &sfinfo)) == 0) {
+	QString name = m_fileName;
+	name.append("-ch" + QByteArray::number(m_channelNumber) + ".wav");
+	
+	if ((sf = sf_open (QS_C(name), SFM_WRITE, &sfinfo)) == 0) {
 		sf_error_str (0, errbuf, sizeof (errbuf) - 1);
 		PWARN("Export: cannot open output file \"%s\" (%s)", QS_C(m_fileName), errbuf);
 		return -1;
@@ -339,7 +347,8 @@ int WriteSource::prepare_export (ExportSpecification* spec)
 	}
 
 	
-	m_peak = new Peak();
+	m_peak = new Peak(this, m_channelNumber);
+	m_buffer = new RingBuffer(131072 * sizeof(audio_sample_t));
 	
 	return 0;
 }
@@ -385,7 +394,7 @@ int WriteSource::finish_export( )
 	return 1;
 }
 
-int WriteSource::rb_write( const audio_sample_t * src, nframes_t start, nframes_t cnt )
+int WriteSource::rb_write( const audio_sample_t * src, nframes_t cnt )
 {
 	int written = m_buffer->write( (char*)src, cnt * sizeof(audio_sample_t)) / sizeof(audio_sample_t);
 	return written;
@@ -394,7 +403,12 @@ int WriteSource::rb_write( const audio_sample_t * src, nframes_t start, nframes_
 void WriteSource::set_process_peaks( bool process )
 {
 	processPeaks = process;
-	m_peak->prepare_processing();
+	if (m_peak->prepare_processing() < 0) {
+		PERROR("Cannot process peaks realtime");
+		delete m_peak;
+		m_peak = 0;
+		processPeaks = false;
+	}
 }
 
 int WriteSource::rb_file_write( nframes_t cnt )

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.14 2006/09/13 12:51:07 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.15 2006/09/14 10:49:39 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
@@ -276,6 +276,13 @@ trav_time_t DiskIO::get_cpu_time( )
 	}
 
 	return result;
+}
+
+void DiskIO::unregister_read_source( ReadSource * source )
+{
+	QMutexLocker locker(&mutex);
+	
+	readSources.removeAll(source);
 }
 
 //eof

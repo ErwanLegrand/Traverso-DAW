@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSourceManager.cpp,v 1.10 2006/09/13 12:51:07 r_sijrier Exp $
+$Id: AudioSourceManager.cpp,v 1.11 2006/09/14 10:49:39 r_sijrier Exp $
 */
 
 #include "AudioSourceManager.h"
@@ -46,6 +46,10 @@ AudioSourceManager::~AudioSourceManager()
 			delete source;
 		}
 	}
+	
+	foreach(AudioClip* clip, m_clips) {
+			delete clip;
+	}
 
 }
 
@@ -67,7 +71,12 @@ QDomNode AudioSourceManager::get_state( QDomDocument doc )
 	QDomElement audioClipsElement = doc.createElement("AudioClips");
 	
 	foreach(AudioClip* clip, m_clips) {
-		audioClipsElement.appendChild(clip->get_state(doc));
+// 		PWARN("Getting state of clip %s", QS_C(clip->get_name()));
+		if (clip->get_ref_count()) {
+			audioClipsElement.appendChild(clip->get_state(doc));
+		} else {
+			audioClipsElement.appendChild(clip->m_domNode);
+		}
 	}
 	
 	asmNode.appendChild(audioClipsElement);
@@ -116,37 +125,36 @@ int AudioSourceManager::get_total_sources()
 }
 
 
-ReadSource * AudioSourceManager::new_readsource( const QString& dir, const QString& name, int songId, int bitDepth, int rate )
+ReadSource* AudioSourceManager::new_readsource(const QString& dir, const QString& name)
+{
+	ReadSource* source = new ReadSource(dir, name);
+	m_sources.insert(source->get_id(), source);
+	source->set_created_by_song( -1 );
+	return get_readsource(source->get_id());
+}
+
+
+ReadSource* AudioSourceManager::new_readsource( const QString& dir, const QString& name,  int channelCount, int fileCount, int songId, int bitDepth, int rate )
 {
 	PENTER;
 	
-	ReadSource* newSource = new ReadSource(dir, name);
-	
-	if (newSource->init() < 0) {
-		PWARN("ReadSource init() failed");
-		delete newSource;
-		return 0;
-	}
+	ReadSource* source = new ReadSource(dir, name, channelCount, fileCount);
+	m_sources.insert(source->get_id(), source);
 	
 	if ( bitDepth ) {
-		newSource->set_original_bit_depth( bitDepth );
+		source->set_original_bit_depth( bitDepth );
 	} else {
-		newSource->set_original_bit_depth( 16 );
+		source->set_original_bit_depth( 16 );
 	}
 	
 	if ( songId ) {
-		newSource->set_created_by_song( songId );
+		source->set_created_by_song( songId );
 	} else {
-		newSource->set_created_by_song( -1 );
+		source->set_created_by_song( -1 );
 	}
 	
-	m_sources.insert(newSource->get_id(), newSource);
-	
-	newSource->ref();
-	
-	emit sourceAdded();
-		
-	return newSource;
+
+	return get_readsource(source->get_id());
 }
 
 ReadSource * AudioSourceManager::get_readsource( qint64 id )
@@ -161,8 +169,9 @@ ReadSource * AudioSourceManager::get_readsource( qint64 id )
 	// If the source allready was ref counted, create a deep copy
 	// and do the initialization
 	if (source->ref()) {
-		PMESG("Creating deep copy of ReadSource: %s", source->get_name().toAscii().data());
+		PWARN("Creating deep copy of ReadSource: %s", QS_C(source->get_name()));
 		source = source->deep_copy();
+		source->ref();
 	}
 		
 	if ( source->init() < 0) {
@@ -194,7 +203,16 @@ AudioClip* AudioSourceManager::get_clip( qint64 id )
 		return 0;
 	}
 	
-	clip->set_clip_readsource(get_readsource(clip->get_readsource_id()));
+	if (clip->ref()) {
+		PWARN("Creating deep copy of Clip %s", QS_C(clip->get_name()));
+		clip = clip->create_copy();
+	}
+	
+	ReadSource* source = get_readsource(clip->get_readsource_id());
+	
+	if (source) {
+		clip->set_audio_source(source);
+	}
 	
 	return clip;
 }
@@ -204,8 +222,9 @@ AudioClip* AudioSourceManager::new_audio_clip(const QString& name)
 	PENTER;
 	AudioClip* clip = new AudioClip(name);
 	m_clips.insert(clip->get_id(), clip);
-	return clip;
+	return get_clip(clip->get_id());
 }
+
 
 //eof
 

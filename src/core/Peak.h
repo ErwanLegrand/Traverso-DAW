@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Peak.h,v 1.5 2006/09/13 12:51:07 r_sijrier Exp $
+$Id: Peak.h,v 1.6 2006/09/14 10:49:39 r_sijrier Exp $
 */
 
 #ifndef PEAK_H
@@ -30,6 +30,7 @@ $Id: Peak.h,v 1.5 2006/09/13 12:51:07 r_sijrier Exp $
 #include "defines.h"
 
 class ReadSource;
+class AudioSource;
 class Peak;
 
 
@@ -61,8 +62,7 @@ public:
 	static const int MAX_DB_VALUE;
 	static int zoomStep[ZOOM_LEVELS];
 
-	Peak(ReadSource* source, int channel);
-	Peak();
+	Peak(AudioSource* source, int channel = -1);
 	~Peak();
 
 	void process(audio_sample_t* buffer, nframes_t frames);

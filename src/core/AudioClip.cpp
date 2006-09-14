@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.43 2006/09/13 12:51:07 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.44 2006/09/14 10:49:39 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -59,9 +59,10 @@ AudioClip::AudioClip(const QString& name)
 {
 	PENTERCONS;
 	m_gain = m_normfactor = 1.0;
-	m_length = sourceStartFrame = m_channels = sourceEndFrame = trackEndFrame = 0;
+	m_length = sourceStartFrame = sourceEndFrame = trackEndFrame = 0;
 	isMuted=false;
 	m_id = create_id();
+	m_readSourceId = 0;
 	init();
 }
 
@@ -74,6 +75,7 @@ AudioClip::AudioClip(const QDomNode& node)
 	QDomElement e = node.toElement();
 	m_id = e.attribute("id", "").toLongLong();
 	m_readSourceId = e.attribute("source", "").toLongLong();
+	m_name = e.attribute( "clipname", "" ) ;
 	m_domNode = node;
 	init();
 }
@@ -81,8 +83,10 @@ AudioClip::AudioClip(const QDomNode& node)
 AudioClip::~AudioClip()
 {
 	PENTERDES;
-	
-	delete m_readSource;
+	if (m_readSource) {
+		m_song->get_diskio()->unregister_read_source(m_readSource);
+		delete m_readSource;
+	}
 }
 
 void AudioClip::init()
@@ -94,7 +98,8 @@ void AudioClip::init()
 	isSelected = false;
 	fadeIn = 0;
 	fadeOut = 0;
-	m_channels = 0;
+	m_refcount = 0;
+	
 }
 
 int AudioClip::set_state(const QDomNode& node)
@@ -103,23 +108,12 @@ int AudioClip::set_state(const QDomNode& node)
 	
 	QDomElement e = node.toElement();
 
-	m_name = e.attribute( "clipname", "" ) ;
-	PWARN("clipname is %s", QS_C(m_name));
 	isTake = e.attribute( "take", "").toInt();
-	m_channels = e.attribute( "channels", "0").toInt();
 	set_gain( e.attribute( "gain", "" ).toFloat() );
 	m_normfactor =  e.attribute( "normfactor", "1.0" ).toFloat();
 	isMuted =  e.attribute( "mute", "" ).toInt();
 
 	isSelected = e.attribute("selected", "0").toInt(); 
-
-	if ( ! m_readSource ) {
-		PWARN("no audio source set!");
-		m_channels = 0;
-		return -1;
-	} else {
-		set_audio_source(m_readSource);
-	}
 
 	sourceStartFrame = e.attribute( "sourcestart", "" ).toUInt();
 	m_length = e.attribute( "length", "0" ).toUInt();
@@ -150,6 +144,8 @@ int AudioClip::set_state(const QDomNode& node)
 
 QDomNode AudioClip::get_state( QDomDocument doc )
 {
+	Q_ASSERT(m_readSource);
+	
 	QDomElement node = doc.createElement("Clip");
 	node.setAttribute("trackstart", trackStartFrame);
 	node.setAttribute("sourcestart", sourceStartFrame);
@@ -158,7 +154,6 @@ QDomNode AudioClip::get_state( QDomDocument doc )
 	node.setAttribute("normfactor", m_normfactor);
 	node.setAttribute("mute", isMuted);
 	node.setAttribute("take", isTake);
-	node.setAttribute("channels", m_channels);
 	node.setAttribute("clipname", m_name );
 	node.setAttribute("selected", isSelected );
 	node.setAttribute("id", m_id );
@@ -192,7 +187,9 @@ void AudioClip::track_audible_state_changed()
 
 void AudioClip::set_sources_active_state()
 {
-	Q_ASSERT(m_track);
+	if (! m_track) {
+		return;
+	}
 	
 	if (! m_readSource) {
 		return;
@@ -357,7 +354,7 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 	}
 
 
-	if (channel >= m_channels) {
+	if (channel >= m_readSource->get_channel_count()) {
 		return -1;	// Channel doesn't exist!!
 	}
 
@@ -434,7 +431,7 @@ void AudioClip::process_capture( nframes_t nframes, uint channel )
 {
 	WriteSource* source = writeSources.at(channel);
 
-	nframes_t written = source->rb_write(captureBus->get_buffer(channel, nframes), m_song->get_transport_frame(), nframes);
+	nframes_t written = source->rb_write(captureBus->get_buffer(channel, nframes), nframes);
 
 	if (written != nframes) {
 		PWARN("couldn't write nframes to buffer, only %d", written);
@@ -459,7 +456,7 @@ int AudioClip::init_recording( QByteArray name )
 	for (int chan=0; chan<captureBus->get_channel_count(); chan++) {
 		ExportSpecification*  spec = new ExportSpecification;
 
-		spec->exportdir = pm().get_project()->get_root_dir() + "/audiosources";
+		spec->exportdir = pm().get_project()->get_root_dir() + "/audiosources/";
 		spec->format = SF_FORMAT_WAV;
 		spec->data_width = 1;	// 1 means float
 		spec->format |= SF_FORMAT_FLOAT;
@@ -472,11 +469,11 @@ int AudioClip::init_recording( QByteArray name )
 			songid.prepend("0");
 		songid.prepend( "Song" );
 
-		spec->name = songid + m_name + "-" + QByteArray::number(chan) + ".wav";
+		spec->name = songid + m_name;
 
 		spec->dataF = captureBus->get_buffer( chan, audiodevice().get_buffer_size());
 
-		WriteSource* ws = new WriteSource(spec, 0);
+		WriteSource* ws = new WriteSource(spec, chan, captureBus->get_channel_count());
 		ws->set_process_peaks( true );
 		ws->set_recording( true );
 
@@ -488,7 +485,6 @@ int AudioClip::init_recording( QByteArray name )
 
 	sourceStartFrame = 0;
 	isTake = 1;
-	m_channels = captureBus->get_channel_count();
 	isRecording = true;
 	connect(m_song, SIGNAL(transferStopped()), this, SLOT(finish_recording()));
 
@@ -592,11 +588,19 @@ AudioClip * AudioClip::next_clip( )
 
 AudioClip* AudioClip::create_copy( )
 {
+	PENTER;
 	Q_ASSERT(m_track);
 	QDomDocument doc("AudioClip");
 	QDomNode clipState = get_state(doc);
 	AudioClip* clip = new AudioClip(clipState);
 	clip->set_name( clip->get_name().prepend(tr("Copy of - ")) );
+	clip->set_state(clipState);
+	if (m_song) {
+		clip->set_song(m_song);
+	}
+/*	if (m_track) {
+		clip->set_track(m_track);
+	}*/
 	return clip;
 }
 
@@ -610,7 +614,6 @@ Peak* AudioClip::get_peak_for_channel( int chan ) const
 void AudioClip::set_audio_source(ReadSource* rs)
 {
 	PENTER;
-	Q_ASSERT(m_song);
 	
 	m_readSource = rs;
 	sourceLength = rs->get_nframes();
@@ -624,8 +627,6 @@ void AudioClip::set_audio_source(ReadSource* rs)
 	}
 
 	set_track_end_frame( trackStartFrame + sourceLength - sourceStartFrame);
-	m_song->get_diskio()->register_read_source( rs );
-	m_channels = rs->get_channel_count();
 
 	set_sources_active_state();
 
@@ -640,30 +641,35 @@ void AudioClip::finish_write_source( WriteSource * ws )
 
 //  	printf("AudioClip::finish_write_source :  thread id is: %ld\n", QThread::currentThreadId ());
 
+	QString dir;
+	QString name;
+	
 	for (int i=0; i<writeSources.size(); ++i) {
 		if (ws == writeSources.at(i)) {
-
-			//FIXME. The audiosourcesmanager is actually in charge of creating
-			// new ReadSources!!!!!!
-			// So we should move this code into asm, and get the source from there again :-)
-			// As a temp. fix, we call rs->ref() here to not crash :-(
-/*			AudioSourceManager* asmanager =pm().get_project()->get_audiosource_manager();
-			QString dir = ws->get_dir();
-			QString name = ws->get_name();
-			int channel = ws->get_channel();
-			
+			writeSources.removeAt(i);
+			dir = ws->get_dir();
+			name = ws->get_name();
 			delete ws;
-			
-			ReadSource* rs = asmanager->new_readsource(dir,
-								   name, 
-								   channel, 
-								   m_song->get_id(), 
-								   audiodevice().get_bit_depth(), 
-								   audiodevice().get_sample_rate() );
-
+		}
+	}
+	
+	if (writeSources.isEmpty()) {
+		int channelCount, fileCount;
+		channelCount = fileCount = captureBus->get_channel_count(); 
+		
+		AudioSourceManager* asmanager = pm().get_project()->get_audiosource_manager();
+		ReadSource* rs = asmanager->new_readsource(dir,
+							name,
+							channelCount,
+							fileCount,
+							m_song->get_id(), 
+							audiodevice().get_bit_depth(), 
+							audiodevice().get_sample_rate() );
+		if (rs) {
 			set_audio_source(rs);
-
-			ws = 0;*/
+			m_song->get_diskio()->register_read_source( m_readSource );
+		} else {
+			PERROR("No ReadSource returned from asm after recording");
 		}
 	}
 }
@@ -683,7 +689,15 @@ void AudioClip::finish_recording()
 
 int AudioClip::get_channels( ) const
 {
-	return m_channels;
+	if (m_readSource) {
+		return m_readSource->get_channel_count();
+	} else {
+		if (writeSources.size() > 0) {
+			writeSources.at(0)->get_channel_count();
+		}
+	}
+	
+	return 0;
 }
 
 Song* AudioClip::get_song( ) const
@@ -701,6 +715,9 @@ Track* AudioClip::get_track( ) const
 void AudioClip::set_song( Song * song )
 {
 	m_song = song;
+	if (m_readSource) {
+		m_song->get_diskio()->register_read_source( m_readSource );
+	}
 	set_history_stack(m_song->get_history_stack());
 	m_song->get_audioclip_manager()->add_clip( this );
 	
@@ -759,14 +776,21 @@ QString AudioClip::get_name( ) const
 
 int AudioClip::get_bitdepth( ) const
 {
-	Q_ASSERT(m_readSource);
-	return m_readSource->get_bit_depth();
+	if (m_readSource) {
+		return m_readSource->get_bit_depth();
+	}
+	
+	return audiodevice().get_bit_depth();
+
 }
 
 int AudioClip::get_rate( ) const
 {
-	Q_ASSERT(m_readSource);
-	return m_readSource->get_rate();
+	if (m_readSource) {
+		return m_readSource->get_rate();
+	}
+	
+	return audiodevice().get_sample_rate();
 }
 
 nframes_t AudioClip::get_source_length( ) const
@@ -872,7 +896,7 @@ void AudioClip::calculate_normalization_factor(float targetdB)
 		target -= FLT_EPSILON;
 	}
 
-	for (uint i=0; i<m_channels; ++i) {
+	for (uint i=0; i<m_readSource->get_channel_count(); ++i) {
 		maxamp = f_max(m_readSource->get_peak(i)->get_max_amplitude(sourceStartFrame, sourceEndFrame), maxamp);
 	}
 
@@ -932,9 +956,14 @@ qint64 AudioClip::get_readsource_id( )
 	return m_readSourceId;
 }
 
-void AudioClip::set_clip_readsource( ReadSource * source )
+int AudioClip::ref( )
 {
-	m_readSource = source;
+	return m_refcount++;
+}
+
+int AudioClip::get_ref_count( ) const
+{
+	return m_refcount;
 }
 
 // eof

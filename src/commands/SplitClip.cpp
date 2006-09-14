@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SplitClip.cpp,v 1.8 2006/08/31 17:54:51 r_sijrier Exp $
+$Id: SplitClip.cpp,v 1.9 2006/09/14 10:49:39 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -45,8 +45,10 @@ int SplitClip::prepare_actions()
 {
 	splitPoint = m_song->xpos_to_frame( cpointer().clip_area_x());
 
-	leftClip = m_clip->create_copy();
-	rightClip = m_clip->create_copy();
+	AudioSourceManager* manager = pm().get_project()->get_audiosource_manager();
+	
+	leftClip = manager->get_clip(m_clip->get_id());
+	rightClip = manager->get_clip(m_clip->get_id());
 
 	leftClip->set_track_start_frame( m_clip->get_track_start_frame() );
 	leftClip->set_right_edge(splitPoint);
@@ -61,10 +63,10 @@ int SplitClip::prepare_actions()
 int SplitClip::do_action()
 {
 	PENTER;
-	m_track->remove_clip(m_clip);
+	ie().process_command(m_track->remove_clip(m_clip, false));
 
-	leftClip->get_track()->add_clip(leftClip);
-	rightClip->get_track()->add_clip(rightClip);
+	ie().process_command(m_track->add_clip(leftClip, false));
+	ie().process_command(m_track->add_clip(rightClip, false));
 	
 	return 1;
 }
@@ -72,10 +74,10 @@ int SplitClip::do_action()
 int SplitClip::undo_action()
 {
 	PENTER;
-	m_track->add_clip(m_clip);
+	ie().process_command(m_track->add_clip(m_clip, false));
 	
-	leftClip->get_track()->remove_clip(leftClip);
-	rightClip->get_track()->remove_clip(rightClip);
+	ie().process_command(m_track->remove_clip(leftClip, false));
+	ie().process_command(m_track->remove_clip(rightClip, false));
 	
 	
 	return 1;
