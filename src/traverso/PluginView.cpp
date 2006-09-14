@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginView.cpp,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
+    $Id: PluginView.cpp,v 1.5 2006/09/14 10:47:04 r_sijrier Exp $
 */
 
 #include "PluginView.h"
@@ -55,6 +55,9 @@ PluginView::PluginView( ViewPort * vp, TrackView* parent, Plugin* plugin, int in
 PluginView::~PluginView( )
 {
         PENTERDES2;
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
+	delete propertiesDialog;
+#endif
 }
 
 QRect PluginView::draw( QPainter & p )
