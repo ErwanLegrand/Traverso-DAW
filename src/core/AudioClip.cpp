@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.44 2006/09/14 10:49:39 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.45 2006/09/14 11:07:34 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -72,10 +72,14 @@ AudioClip::AudioClip(const QDomNode& node)
 {
 	PENTERCONS;
 	QDomNode clipNode = node.firstChild();
+	
+	// It makes sense to set these values at this time allready
+	// they are for example used by the AudioSourcesManager!
 	QDomElement e = node.toElement();
 	m_id = e.attribute("id", "").toLongLong();
 	m_readSourceId = e.attribute("source", "").toLongLong();
 	m_name = e.attribute( "clipname", "" ) ;
+	isMuted =  e.attribute( "mute", "" ).toInt();
 	m_domNode = node;
 	init();
 }
@@ -111,7 +115,6 @@ int AudioClip::set_state(const QDomNode& node)
 	isTake = e.attribute( "take", "").toInt();
 	set_gain( e.attribute( "gain", "" ).toFloat() );
 	m_normfactor =  e.attribute( "normfactor", "1.0" ).toFloat();
-	isMuted =  e.attribute( "mute", "" ).toInt();
 
 	isSelected = e.attribute("selected", "0").toInt(); 
 
