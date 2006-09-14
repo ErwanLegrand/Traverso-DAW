@@ -16,15 +16,15 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioInputPort.cpp,v 1.2 2006/08/09 21:12:45 r_sijrier Exp $
+$Id: AudioInputPort.cpp,v 1.3 2006/09/14 10:45:44 r_sijrier Exp $
 */
 
 
 #include "AudioInputPort.h" 
 
 
-AudioInputPort::AudioInputPort(int index)
-	: PluginPort(index)
+AudioInputPort::AudioInputPort(QObject* parent, int index)
+	: PluginPort(parent, index)
 {
 }
 

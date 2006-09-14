@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginChain.cpp,v 1.3 2006/09/13 12:45:09 r_sijrier Exp $
+$Id: PluginChain.cpp,v 1.4 2006/09/14 10:45:44 r_sijrier Exp $
 */
  
 #include "PluginChain.h"
@@ -42,6 +42,9 @@ PluginChain::PluginChain(ContextItem* parent, Song* song)
 PluginChain::~ PluginChain( )
 {
 	PENTERDES;
+	foreach(Plugin* plugin, m_pluginList) {
+		delete plugin;
+	}
 }
 
 
