@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: LV2Plugin.cpp,v 1.2 2006/07/31 13:59:20 r_sijrier Exp $
+$Id: LV2Plugin.cpp,v 1.3 2006/09/18 18:40:18 r_sijrier Exp $
 
 slv2 url: http://codeson.net/svn/libslv2/
 */
@@ -56,11 +56,6 @@ LV2Plugin::~LV2Plugin()
 	if (m_instance) {
 		slv2_instance_deactivate(m_instance);
 		slv2_instance_free(m_instance);
-	}
-
-	/* Delete all control ports */
-	foreach(LV2ControlPort* port, m_controlPorts) {
-		delete port;
 	}
 }
 
@@ -127,7 +122,7 @@ int LV2Plugin::set_state(const QDomNode & node )
 		QDomNode portNode = audioInputPortsNode.firstChild();
 		
 		while (!portNode.isNull()) {
-			AudioInputPort* port = new AudioInputPort();
+			AudioInputPort* port = new AudioInputPort(this);
 			port->set_state(portNode);
 			m_audioInputPorts.append(port);
 			
@@ -141,7 +136,7 @@ int LV2Plugin::set_state(const QDomNode & node )
 		QDomNode portNode = audioOutputPortsNode.firstChild();
 		
 		while (!portNode.isNull()) {
-			AudioOutputPort* port = new AudioOutputPort();
+			AudioOutputPort* port = new AudioOutputPort(this);
 			port->set_state(portNode);
 			m_audioOutputPorts.append(port);
 			
@@ -278,10 +273,10 @@ LV2ControlPort* LV2Plugin::create_port(int  portIndex)
 			printf("Set %s to ", symbol);
 			break;
 		case SLV2_AUDIO_RATE_INPUT:
-			m_audioInputPorts.append(new AudioInputPort(portIndex));
+			m_audioInputPorts.append(new AudioInputPort(this, portIndex));
 			break;
 		case SLV2_AUDIO_RATE_OUTPUT:
-			m_audioOutputPorts.append(new AudioOutputPort(portIndex));
+			m_audioOutputPorts.append(new AudioOutputPort(this, portIndex));
 			break;
 		default:
 			PERROR("ERROR: Unknown port type!");
