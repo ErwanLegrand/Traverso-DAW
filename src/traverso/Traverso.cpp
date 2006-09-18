@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Traverso.cpp,v 1.10 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: Traverso.cpp,v 1.11 2006/09/18 18:34:00 r_sijrier Exp $
 */
 
 #include <signal.h>
@@ -42,7 +42,7 @@ $Id: Traverso.cpp,v 1.10 2006/09/07 09:36:52 r_sijrier Exp $
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-static const char* CONFIG_FILE_VERSION = "2";
+static const char* CONFIG_FILE_VERSION = "3";
 
 Traverso::Traverso(int argc, char **argv )
 		: QApplication ( argc, argv )
@@ -61,9 +61,8 @@ Traverso::Traverso(int argc, char **argv )
 
 	iface->create();
 	prepare_audio_device();
-// 	pm().start();
 	iface->show();
-// 	QMetaObject::invokeMethod(this, "prepare_audio_device", Qt::QueuedConnection);
+	
 	QMetaObject::invokeMethod(&pm(), "start", Qt::QueuedConnection);
 
 	connect(this, SIGNAL(lastWindowClosed()), &pm(), SLOT(exit()));
@@ -102,6 +101,7 @@ void Traverso::reset_settings( )
 	settings.beginGroup("Hardware");
 	settings.setValue("samplerate", 44100);
 	settings.setValue("bufferSize", 1024);
+	settings.setValue("PreBufferSize", 65536);
 // Use Jack by default on mac os x, since thats the only supported driver there!
 #ifdef MAC_OS_BUILD
 	settings.setValue("drivertype", "Jack");
@@ -202,8 +202,9 @@ int Traverso::init( )
 	// Detect if the confile file versions match, if not, there has been most likely a changeAlsaDriver
 	// overwrite with the newest version...
 
-	if (settings.value("ConfigFileVersion").toString() != CONFIG_FILE_VERSION)
+	if (settings.value("ConfigFileVersion").toString() != CONFIG_FILE_VERSION) {
 		reset_settings();
+	}
 
 	QString projects_path = settings.value("Project/directory").toString();
 
