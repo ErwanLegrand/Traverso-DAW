@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.45 2006/09/14 11:07:34 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.46 2006/09/18 18:31:10 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -319,7 +319,6 @@ void AudioClip::set_fade_in(nframes_t b)
 
 void AudioClip::set_fade_out(nframes_t b)
 {
-	Q_ASSERT(fadeOut);
 	get_fade_out()->set_range( b );
 	emit stateChanged();
 }
@@ -592,18 +591,14 @@ AudioClip * AudioClip::next_clip( )
 AudioClip* AudioClip::create_copy( )
 {
 	PENTER;
+	Q_ASSERT(m_song);
 	Q_ASSERT(m_track);
 	QDomDocument doc("AudioClip");
 	QDomNode clipState = get_state(doc);
 	AudioClip* clip = new AudioClip(clipState);
+	clip->set_song(m_song);
 	clip->set_name( clip->get_name().prepend(tr("Copy of - ")) );
 	clip->set_state(clipState);
-	if (m_song) {
-		clip->set_song(m_song);
-	}
-/*	if (m_track) {
-		clip->set_track(m_track);
-	}*/
 	return clip;
 }
 
