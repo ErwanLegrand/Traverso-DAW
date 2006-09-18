@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: VUMeterLevel.cpp,v 1.5 2006/08/25 11:17:58 r_sijrier Exp $
+    $Id: VUMeterLevel.cpp,v 1.6 2006/09/18 18:34:55 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -37,6 +37,9 @@ VUMeterLevel::VUMeterLevel(QWidget* parent, AudioChannel* chan)
         levelClearColor  = QColor("black");
         prevPeakValue = peak = tailDeltaY = 0;
 
+	QPalette palette;
+	palette.setColor(QPalette::Background, levelClearColor);
+	setPalette(palette);
         setAttribute(Qt::WA_OpaquePaintEvent);
         setAttribute(Qt::WA_PaintOnScreen);
 	setAutoFillBackground(false);
