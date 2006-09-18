@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.cpp,v 1.13 2006/09/14 10:49:39 r_sijrier Exp $
+$Id: ReadSource.cpp,v 1.14 2006/09/18 18:30:14 r_sijrier Exp $
 */
 
 #include "ReadSource.h"
@@ -28,6 +28,7 @@ $Id: ReadSource.cpp,v 1.13 2006/09/14 10:49:39 r_sijrier Exp $
 #include "Project.h"
 #include "AudioClip.h"
 
+#include <QSettings>
 #include <QFile>
 
 // Always put me below _all_ includes, this is needed
@@ -96,6 +97,9 @@ int ReadSource::init( )
 		return -1;
 	}
 	
+	QSettings settings;
+	m_preBufferSize = settings.value("HardWare/PreBufferSize").toInt();
+	
 	for (uint i=0; i<m_channelCount; ++i) {
 		QString fileName = m_dir + m_name;
 		if (m_fileCount > 1) {
@@ -143,11 +147,13 @@ void ReadSource::rb_seek_to_file_position( nframes_t position )
 
 int ReadSource::process_ringbuffer( audio_sample_t * framebuffer )
 {
+	int count = 0;
+	m_bufferProcessPrio = NormalPrio;
 	foreach(PrivateReadSource* source, m_sources) {
-		source->process_ringbuffer(framebuffer);
+		count = std::max(source->process_ringbuffer(framebuffer), count);
 	}
 	
-	return 0;
+	return count;
 	
 }
 
@@ -156,14 +162,6 @@ void ReadSource::sync( )
 {
 	foreach(PrivateReadSource* source, m_sources) {
 		source->sync();
-	}
-}
-
-
-void ReadSource::set_rb_ready( bool ready )
-{
-	foreach(PrivateReadSource* source, m_sources) {
-		source->set_rb_ready(ready);
 	}
 }
 
@@ -233,6 +231,11 @@ void ReadSource::prepare_buffer( )
 nframes_t ReadSource::get_nframes( ) const
 {
 	return m_length;
+}
+
+void ReadSource::set_buffer_process_prio( BufferProcessPrio prio )
+{
+	m_bufferProcessPrio = std::max(prio, m_bufferProcessPrio);
 }
 
 

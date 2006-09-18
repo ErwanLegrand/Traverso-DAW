@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PrivateReadSource.cpp,v 1.2 2006/09/14 10:49:39 r_sijrier Exp $
+$Id: PrivateReadSource.cpp,v 1.3 2006/09/18 18:30:14 r_sijrier Exp $
 */
 
 #include "PrivateReadSource.h"
@@ -29,6 +29,7 @@ $Id: PrivateReadSource.cpp,v 1.2 2006/09/14 10:49:39 r_sijrier Exp $
 #include "AudioClip.h"
 #include "ReadSource.h"
 #include "Utils.h"
+#include "AudioSource.h"
 
 #include <QFile>
 
@@ -53,9 +54,6 @@ PrivateReadSource::PrivateReadSource(ReadSource* source, uint chan, int channelN
 PrivateReadSource::~PrivateReadSource()
 {
 	PENTERDES;
-	if (m_readbuffer) {
-		delete [] m_readbuffer;
-	}
 	if (m_buffer) {
 		delete m_buffer;
 	}
@@ -73,11 +71,8 @@ int PrivateReadSource::init( )
 	
 	rbFileReadPos = 0;
 	rbRelativeFileReadPos = 0;
-	rbReady = true;
-	needSync = false;
-	m_readbuffer = 0;
-	readbuffersize = 0;
-	seekPos = -1;
+	rbReady = false;
+	needSync = true;
 	m_clip = 0;
 
 	/* although libsndfile says we don't need to set this,
@@ -125,9 +120,6 @@ int PrivateReadSource::file_read (audio_sample_t* dst, nframes_t start, nframes_
 		return 0;
 	}
 	
-	seekPos = start;
-	
-
 	if (sf_seek (sf, (off_t) start, SEEK_SET) < 0) {
 		char errbuf[256];
 		sf_error_str (0, errbuf, sizeof (errbuf) - 1);
@@ -137,28 +129,17 @@ int PrivateReadSource::file_read (audio_sample_t* dst, nframes_t start, nframes_
 	
 
 	if (sfinfo.channels == 1) {
-		nframes_t ret = sf_read_float (sf, dst, cnt);
-		m_read_data_count = cnt * sizeof(float);
-		return ret;
+		return sf_read_float (sf, dst, cnt);
 	}
 
 	float *ptr;
-	uint32_t real_cnt = cnt * sfinfo.channels;
+	int real_cnt = cnt * sfinfo.channels;
 
-	/*	{
-			Do we want to have a Lock here during read?? */
 
-	if (readbuffersize < real_cnt) {
+	audio_sample_t readbuffer[real_cnt];
 
-		if (m_readbuffer) {
-			delete [] m_readbuffer;
-		}
-		readbuffersize = real_cnt;
-		m_readbuffer = new float[readbuffersize];
-	}
-
-	nread = sf_read_float (sf, m_readbuffer, real_cnt);
-	ptr = m_readbuffer + m_channelNumber;
+	int nread = sf_read_float (sf, readbuffer, real_cnt);
+	ptr = readbuffer + m_channelNumber;
 	nread /= sfinfo.channels;
 
 	/* stride through the interleaved data */
@@ -168,9 +149,6 @@ int PrivateReadSource::file_read (audio_sample_t* dst, nframes_t start, nframes_
 		ptr += sfinfo.channels;
 	}
 
-	// 	}
-
-	// 	m_read_data_count = cnt * sizeof(float);
 
 	return nread;
 }
@@ -244,31 +222,60 @@ void PrivateReadSource::rb_seek_to_file_position( nframes_t position )
 
 int PrivateReadSource::process_ringbuffer( audio_sample_t * framebuffer )
 {
+	// Do nothing if we passed the lenght of the AudioFile.
 	if (rbFileReadPos >= m_source->m_length) {
 		return 0;
 	}
 	
-	nframes_t writeSpace = m_buffer->write_space() / sizeof(audio_sample_t);
-
-	int toRead = ((int)(writeSpace / 16384)) * 16384;
+	// Calculate the number of samples we can write into the buffer
+	int writeSpace = m_buffer->write_space() / sizeof(audio_sample_t);
 	
-	if (toRead > 65536) {
-		toRead = 65536;
+	// calculate the 'chunk' size 
+	int chunkSize = m_source->m_preBufferSize / 4;
+	
+	// Calculate the Priority depending of the available writespace
+	// A buffer only gets refilled if there is at least chuncksize 
+	// of writespace.
+	if (writeSpace < (1 * chunkSize)) {
+		m_source->set_buffer_process_prio(AudioSource::NormalPrio);
+	} else if ( writeSpace < (2 * chunkSize)) {
+		m_source->set_buffer_process_prio(AudioSource::MediumPrio);
+	} else {
+		m_source->set_buffer_process_prio(AudioSource::HighPrio);
+	} 
+	
+	// The amount of samples to read
+	int toRead = ((int)(writeSpace / chunkSize)) * chunkSize;
+	
+	// If toRead is larger then half the buffer size, only
+	// read in half the buffer. The buffer can be almost empty
+	// so it's really important to fill as quickly as possible
+	// Filling only partially is _much_ quicker!
+	if (toRead > (chunkSize * 2) && !needSync) {
+		toRead = (chunkSize * 2);
 	}
 	
+	// If we are nearing the end of the source file it could be possible
+	// we only need to read the last samples which is smaller in size then 
+	// chunksize. If so, set toRead to m_source->m_length - rbFileReasPos
 	if (toRead == 0) {
-		if ( (m_source->m_length - rbFileReadPos) <= 16384) {
+		if ( (int) (m_source->m_length - rbFileReadPos) <= chunkSize) {
 			toRead = m_source->m_length - rbFileReadPos;
 		} else {
 			return 0;
 		}
 	}
 	
+	// Read in the samples from source
 	nframes_t toWrite = rb_file_read(framebuffer, toRead);
 
+	// and write it to the ringbuffer
 	m_buffer->write((char*)framebuffer, toWrite * sizeof(audio_sample_t));
 	
-	return 0;
+	
+	// Return the amount of writable space. It will be used to calculate
+	// the 'fill state' of the buffer.
+	return writeSpace;
 }
 
 void PrivateReadSource::start_resync( nframes_t position )
@@ -282,13 +289,11 @@ void PrivateReadSource::start_resync( nframes_t position )
 void PrivateReadSource::sync( )
 {
 	rb_seek_to_file_position(syncPos);
+	audio_sample_t framebuffer[m_source->m_preBufferSize];
+	process_ringbuffer(framebuffer);
 	needSync = false;
+	rbReady = true;
 //         PWARN("Resyncing ringbuffer finished");
-}
-
-void PrivateReadSource::set_rb_ready( bool ready )
-{
-	rbReady = ready;
 }
 
 
@@ -312,7 +317,7 @@ void PrivateReadSource::prepare_buffer( )
 {
 	PENTER;
 	
-	m_buffer = new RingBuffer(131072 * sizeof(audio_sample_t));
+	m_buffer = new RingBuffer(m_source->m_preBufferSize * sizeof(audio_sample_t));
 }
 
 //eof

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.h,v 1.5 2006/09/14 10:49:39 r_sijrier Exp $
+$Id: DiskIO.h,v 1.6 2006/09/18 18:30:14 r_sijrier Exp $
 */
 
 #ifndef DISKIO_H
@@ -95,9 +95,9 @@ public:
 	 * @return Returns the CPU time consumed by the DiskIO work thread 
 	 */
 	trav_time_t get_cpu_time();
+	int get_buffer_fill_status();
 
 private:
-	audio_sample_t 		framebuffer[131072];
 	bool			stopWork;
 	bool			seeking;
 	QList<ReadSource*>	readSources;
@@ -106,6 +106,7 @@ private:
 	DiskIOThread*		diskThread;
 	QMutex			mutex;
 	int			bufferFillStatus;
+	int			m_preBufferSize;
 	RingBuffer*		cpuTimeBuffer;
 	trav_time_t		cycleStartTime;
 	trav_time_t		lastCpuReadTime;

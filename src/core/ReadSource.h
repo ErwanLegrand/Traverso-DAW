@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.h,v 1.9 2006/09/14 10:49:39 r_sijrier Exp $
+$Id: ReadSource.h,v 1.10 2006/09/18 18:30:14 r_sijrier Exp $
 */
 
 #ifndef READSOURCE_H
@@ -40,13 +40,13 @@ public :
 
 	int rb_read(int channel, audio_sample_t* dst, nframes_t start, nframes_t cnt);
 	void rb_seek_to_file_position(nframes_t position);
+	void set_buffer_process_prio(BufferProcessPrio prio);
 	int process_ringbuffer(audio_sample_t* framebuffer);
 
 	int file_read(int channel, audio_sample_t* dst, nframes_t start, nframes_t cnt) const;
 
 	int init();
 	int ref();
-	void set_rb_ready(bool ready);
 	void set_active();
 	void set_inactive();
 	void prepare_buffer();

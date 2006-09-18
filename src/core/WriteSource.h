@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.h,v 1.5 2006/09/14 10:49:39 r_sijrier Exp $
+$Id: WriteSource.h,v 1.6 2006/09/18 18:30:14 r_sijrier Exp $
 */
 
 #ifndef WRITESOURCE_H
@@ -64,23 +64,23 @@ private:
 	SNDFILE*	sf;
 	SF_INFO 	sfinfo;
 	
-	GDither             	dither;
-	nframes_t      		out_samples_max;
-	nframes_t      		sample_rate;
-	uint			channels;
-	uint32_t       		sample_bytes;
-	nframes_t      		leftover_frames;
+	GDither         dither;
+	nframes_t       out_samples_max;
+	nframes_t       sample_rate;
+	uint		channels;
+	uint32_t        sample_bytes;
+	nframes_t       leftover_frames;
 #if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
-	SRC_DATA        	src_data;
-	SRC_STATE*     	src_state;
+	SRC_DATA        src_data;
+	SRC_STATE*      src_state;
 #endif
-	nframes_t      		max_leftover_frames;
-	float*			leftoverF;
-	float*			dataF2;
-	void*               	output_data;
-	bool			processPeaks;
-	bool			recording;
-	int			m_channelNumber;
+	nframes_t       max_leftover_frames;
+	float*		leftoverF;
+	float*		dataF2;
+	void*           output_data;
+	bool		processPeaks;
+	bool		recording;
+	int		m_channelNumber;
 
 signals:
 	void exportFinished(WriteSource* );

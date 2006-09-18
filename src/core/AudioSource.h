@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSource.h,v 1.6 2006/09/14 10:49:39 r_sijrier Exp $
+$Id: AudioSource.h,v 1.7 2006/09/18 18:30:14 r_sijrier Exp $
 */
 
 #ifndef AUDIOSOURCE_H
@@ -43,8 +43,20 @@ public :
 	AudioSource(const QDomNode node);
 	AudioSource() {}
 	~AudioSource();
+	
+	enum BufferProcessPrio {
+		NormalPrio, 
+		MediumPrio,
+		HighPrio
+	};
 
 	virtual int process_ringbuffer(audio_sample_t* framebuffer) = 0;
+	virtual void set_buffer_process_prio(BufferProcessPrio prio);
+	
+        static bool greater(const AudioSource* left, const AudioSource* right )
+        {
+                return left->get_buffer_process_prio() > right->get_buffer_process_prio();
+        }
 	
 	void set_name(const QString& name);
 	void set_dir(const QString& name);
@@ -52,6 +64,8 @@ public :
 	void set_created_by_song(int id);
 	void set_sample_rate(int rate);
 	int set_state( const QDomNode& node );
+	int get_buffer_process_prio() const;
+	
 	
 	QDomNode get_state(QDomDocument doc);
 	QString get_filename() const;
@@ -75,6 +89,8 @@ protected:
 	QString		m_fileName;
 	nframes_t	m_length;
 	uint 		m_rate;
+	BufferProcessPrio m_bufferProcessPrio;
+	int		m_preBufferSize;
 };
 
 inline uint AudioSource::get_channel_count( ) const

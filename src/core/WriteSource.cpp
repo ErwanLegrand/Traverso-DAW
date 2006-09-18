@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.cpp,v 1.9 2006/09/14 10:49:39 r_sijrier Exp $
+$Id: WriteSource.cpp,v 1.10 2006/09/18 18:30:14 r_sijrier Exp $
 */
 
 #include "WriteSource.h"
@@ -29,6 +29,8 @@ $Id: WriteSource.cpp,v 1.9 2006/09/14 10:49:39 r_sijrier Exp $
 #include "Peak.h"
 #include "RingBuffer.h"
 #include "Utils.h"
+
+#include <QSettings>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -348,7 +350,10 @@ int WriteSource::prepare_export (ExportSpecification* spec)
 
 	
 	m_peak = new Peak(this, m_channelNumber);
-	m_buffer = new RingBuffer(131072 * sizeof(audio_sample_t));
+	
+	QSettings settings;
+	m_preBufferSize = settings.value("HardWare/PreBufferSize").toInt();
+	m_buffer = new RingBuffer(m_preBufferSize * sizeof(audio_sample_t));
 	
 	return 0;
 }
@@ -445,11 +450,37 @@ int WriteSource::process_ringbuffer( audio_sample_t* framebuffer)
 		return 1;
 	}
 
-	if (readSpace > 4096) {
-		rb_file_write(readSpace);
+	// calculate the 'chunk' size 
+	int chunkSize = m_preBufferSize / 4;
+	
+	// Calculate the Priority depending of the available writespace
+	// A buffer only gets refilled if there is at least chuncksize 
+	// of writespace.
+	if (readSpace < (1 * chunkSize)) {
+		set_buffer_process_prio(AudioSource::NormalPrio);
+	} else if ( readSpace < (2 * chunkSize)) {
+		set_buffer_process_prio(AudioSource::MediumPrio);
+	} else {
+		set_buffer_process_prio(AudioSource::HighPrio);
+	} 
+	
+	// The amount of samples to write
+	int toWrite = ((int)(readSpace / chunkSize)) * chunkSize;
+	
+	
+	if (toWrite == 0) {
+		return 0;
 	}
-
-	return 0;
+	
+	// Only write to hard disk if there is at least chunkSize of data
+	// to write. This makes writing much more efficient
+	if (toWrite >= (chunkSize*2)) {
+		toWrite = chunkSize * 2;
+	}
+	
+	rb_file_write(toWrite);
+	
+	return readSpace;
 }
 
 //eof

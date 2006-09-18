@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PrivateReadSource.h,v 1.2 2006/09/14 10:49:39 r_sijrier Exp $
+$Id: PrivateReadSource.h,v 1.3 2006/09/18 18:30:14 r_sijrier Exp $
 */
 
 #ifndef PRIVATE_READSOURCE_H
@@ -40,7 +40,6 @@ public :
 
 	int init();
 	int ref();
-	void set_rb_ready(bool ready);
 	
 	bool need_sync();
 	void sync();
@@ -62,20 +61,15 @@ private:
 	uint 		m_channelCount;
 	int		m_channelNumber;
 	
-	mutable float*	 	m_readbuffer;
-	mutable nframes_t 	readbuffersize;
-	mutable int32_t 	nread;
-	mutable uint32_t 	m_read_data_count;
-	nframes_t		rbFileReadPos;
-	nframes_t		rbRelativeFileReadPos;
-	nframes_t		syncPos;
-	mutable int		seekPos;
-	bool			rbReady;
-	bool			needSync;
-	int			refcount;
+	nframes_t	rbFileReadPos;
+	nframes_t	rbRelativeFileReadPos;
+	nframes_t	syncPos;
+	volatile bool	rbReady;
+	bool		needSync;
+	int		refcount;
 	
-	AudioClip*		m_clip;
-	QString			m_fileName;
+	AudioClip*	m_clip;
+	QString		m_fileName;
 	
 
 	void start_resync(nframes_t position);
