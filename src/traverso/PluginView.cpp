@@ -1,23 +1,23 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier
+Copyright (C) 2005-2006 Remon Sijrier
 
-    This file is part of Traverso
+This file is part of Traverso
 
-    Traverso is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+Traverso is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginView.cpp,v 1.5 2006/09/14 10:47:04 r_sijrier Exp $
+$Id: PluginView.cpp,v 1.6 2006/09/18 18:35:53 r_sijrier Exp $
 */
 
 #include "PluginView.h"
@@ -34,16 +34,14 @@
 
 
 PluginView::PluginView( ViewPort * vp, TrackView* parent, Plugin* plugin, int index)
-                : ViewItem(vp, parent, plugin), m_trackView(parent),
-                  m_plugin(plugin), m_index(index)
+	: ViewItem(vp, parent, plugin), m_trackView(parent),
+	  m_plugin(plugin),
+	  m_index(index),
+	  propertiesDialog(0)
 {
 	zOrder = 10;
 	m_track = m_trackView->get_track();
 	m_name = plugin->get_name();
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
-	propertiesDialog = new LV2PluginPropertiesDialog((LV2Plugin*) plugin);
-	propertiesDialog->setWindowTitle(m_name);
-#endif
 	init_context_menu( this );
 	m_type = PLUGINVIEW;
 
@@ -54,9 +52,11 @@ PluginView::PluginView( ViewPort * vp, TrackView* parent, Plugin* plugin, int in
 
 PluginView::~PluginView( )
 {
-        PENTERDES2;
+	PENTERDES2;
 #if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
-	delete propertiesDialog;
+	if (propertiesDialog) {
+		delete propertiesDialog;
+	}
 #endif
 }
 
@@ -76,7 +76,7 @@ QRect PluginView::draw( QPainter & p )
 	p.setPen(QColor(Qt::white));
 	p.drawText(rect, Qt::AlignCenter, m_name);
 
-        return rect;
+	return rect;
 }
 
 
@@ -85,12 +85,16 @@ void PluginView::schedule_for_repaint( )
 	int xstart = 200 + m_index * 120;
 
 	set_geometry(xstart, m_track->get_baseY() + m_track->get_height() - 30, 100, 25);
-        m_vp->schedule_for_repaint(this);
+	m_vp->schedule_for_repaint(this);
 }
 
 Command * PluginView::edit_properties( )
 {
 #if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
+	if (! propertiesDialog) {
+		propertiesDialog = new LV2PluginPropertiesDialog((LV2Plugin*) m_plugin);
+		propertiesDialog->setWindowTitle(m_name);
+	} 
 	propertiesDialog->show();
 #endif
 	return (Command*) 0;
