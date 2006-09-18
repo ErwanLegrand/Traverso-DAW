@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: AudioDeviceThread.h,v 1.2 2006/08/25 11:13:17 r_sijrier Exp $
+    $Id: AudioDeviceThread.h,v 1.3 2006/09/18 18:41:41 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICETHREAD_H
@@ -29,7 +29,6 @@ class AudioDevice;
 
 class AudioDeviceThread : public QThread
 {
-        Q_OBJECT
 
 public:
         AudioDeviceThread(AudioDevice* device);
@@ -37,24 +36,18 @@ public:
 
         void run_on_cpu(int cpu);
 
-		void mili_sleep(int msec) {msleep(msec);}
+	void mili_sleep(int msec) {msleep(msec);}
 
         volatile size_t watchdogCheck;
 
 protected:
         void run();
 
-public slots:
-        int transfer_start();
-        int transfer_stop();
-
 private:
         AudioDevice* m_device;
 
         bool transfer;
         bool realTime;
-
-        void start_transfering();
 };
 
 #endif
