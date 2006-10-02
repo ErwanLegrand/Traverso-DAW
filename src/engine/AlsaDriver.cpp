@@ -20,13 +20,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AlsaDriver.cpp,v 1.5 2006/07/27 18:45:24 r_sijrier Exp $
+$Id: AlsaDriver.cpp,v 1.6 2006/10/02 19:09:57 r_sijrier Exp $
 */
 
 
 #include "AlsaDriver.h"
 #include "AudioDevice.h"
 #include "AudioChannel.h"
+#include <Utils.h>
 
 #include <pthread.h>
 
@@ -1041,7 +1042,7 @@ int AlsaDriver::xrun_recovery (float *delayed_usecs)
 		timersub(&now, &tstamp, &diff);
 		*delayed_usecs = diff.tv_sec * 1000000.0 + diff.tv_usec;
 		printf ("\n**** alsa_pcm: xrun of at least %.3f msecs\n\n", *delayed_usecs / 1000.0);
-		emit device->xrun();
+		device->xrun();
 	}
 
 	if (restart()) {
@@ -1272,7 +1273,6 @@ again:
 	if (capture_handle) {
 		if ((capture_avail = snd_pcm_avail_update (capture_handle)) < 0) {
 			if (capture_avail == -EPIPE) {
-				PWARN("capture pipeerror, xrun_detected is true");
 				xrun_detected = true;
 			} else {
 				PERROR ("ALSA Driver: unknown avail_update return value (%ld)", capture_avail);
@@ -1286,7 +1286,6 @@ again:
 	if (playback_handle) {
 		if ((playback_avail = snd_pcm_avail_update (playback_handle)) < 0) {
 			if (playback_avail == -EPIPE) {
-				PWARN("playback pipeerror, xrun_detected is true");
 				xrun_detected = true;
 			} else {
 				PERROR ("ALSA Driver: unknown avail_update return value (%ld)", playback_avail);
