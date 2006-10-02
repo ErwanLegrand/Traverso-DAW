@@ -22,11 +22,11 @@ HEADERS += AudioDevice.h \
 	   JackDriver.h \
 	   AudioChannel.h \
 	   Driver.h \
+	   Tsar.h \
 	   memops.h \
-         libtraverso.h \
-#         AudioPlugin.h \
-         bitset.h \
-         defines.h
+           libtraverso.h \
+           bitset.h \
+           defines.h
 
 SOURCES += AudioDevice.cpp \
 	   AudioBus.cpp \
@@ -35,8 +35,8 @@ SOURCES += AudioDevice.cpp \
 	   JackDriver.cpp \
 	   Driver.cpp \
 	   AudioChannel.cpp \
-	   memops.cpp \
- #          AudioPlugin.cpp
+	   Tsar.cpp \
+	   memops.cpp
 
 unix {
 	SOURCES += AlsaDriver.cpp
