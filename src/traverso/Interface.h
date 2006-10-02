@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.h,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: Interface.h,v 1.5 2006/10/02 19:18:01 r_sijrier Exp $
 */
 
 #ifndef INTERFACE_H
@@ -26,6 +26,7 @@ $Id: Interface.h,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
 #include <QResizeEvent>
 #include <QMainWindow>
 #include <QWidget>
+#include <QDockWidget>
 #include "libtraversocore.h"
 
 class Help;
@@ -81,29 +82,31 @@ protected:
 	void wheelEvent ( QWheelEvent* e );
 
 private:
-	QStackedWidget* 		centerAreaWidget;
-	QList<SongView* > 		songViewList;
-	QList<ViewPort* > 		currentProjectViewPortList;
-	SongView* 			currentSongView;
-	ManagerWidget* 			managerWidget;
-	ExportWidget*			exportWidget;
-	OverViewWidget* 		overView;
-	HistoryWidget*			historyWidget;
+	QStackedWidget* 	centerAreaWidget;
+	QList<SongView* > 	songViewList;
+	QList<ViewPort* > 	currentProjectViewPortList;
+	SongView* 		currentSongView;
+	ManagerWidget* 		managerWidget;
+	ExportWidget*		exportWidget;
+	OverViewWidget* 	overView;
+	HistoryWidget*		historyWidget;
+	QDockWidget* 		hvdw;
+	QDockWidget*		tpdw;
 	 
-	bool 				managerWidgetCreated;
-	bool 				isBusMonitorDocked;
+	bool 			managerWidgetCreated;
+	bool 			isBusMonitorDocked;
 
-	InfoBox*			infoBox;
-	BusMonitor* 			busMonitor;
-	QWidget* 			busMonitorWindow;
-	Help* 				helpWindow;
+	InfoBox*		infoBox;
+	BusMonitor* 		busMonitor;
+	QWidget* 		busMonitorWindow;
+	Help* 			helpWindow;
 
-	BorderLayout* 			mainVBoxLayout;
-	QHBoxLayout* 			topPanelWidgetLayout;
-	QHBoxLayout* 			statusAreaWidgetLayout;
-	QHBoxLayout* 			centerWidgetLayout;
-	QWidget* 			topPanelWidget;
-	QWidget* 			statusAreaWidget;
+	BorderLayout* 		mainVBoxLayout;
+	QHBoxLayout* 		topPanelWidgetLayout;
+	QHBoxLayout* 		statusAreaWidgetLayout;
+	QHBoxLayout* 		centerWidgetLayout;
+	QWidget* 		topPanelWidget;
+	QWidget* 		statusAreaWidget;
 	
 	QMenu*			fileMenu;
 	QMenu*			helpMenu;

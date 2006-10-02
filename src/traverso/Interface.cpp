@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.12 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: Interface.cpp,v 1.13 2006/10/02 19:18:01 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -90,7 +90,7 @@ Interface::~Interface()
 
 void Interface::create()
 {
-	QWidget* centralWidget = new QWidget;
+	QWidget* centralWidget = new QWidget(this);
 	setCentralWidget(centralWidget);
 	
 	setWindowTitle("Traverso");
@@ -99,11 +99,15 @@ void Interface::create()
 
 	mainVBoxLayout = new BorderLayout(centralWidget, 0, 0);
 
-	topPanelWidget = new QWidget(centralWidget);
+	tpdw = new QDockWidget("TopPanel", this);
+// 	tpdw->setFeatures(QDockWidget::NoDockWidgetFeatures);
+	topPanelWidget = new QWidget(tpdw);
 	topPanelWidgetLayout = new QHBoxLayout(topPanelWidget);
 	topPanelWidget->setLayout(topPanelWidgetLayout);
 	topPanelWidget->setMinimumHeight(TOPPANEL_FIXED_HEIGHT);
 	topPanelWidget->setMaximumHeight(TOPPANEL_FIXED_HEIGHT);
+	tpdw->setWidget(topPanelWidget);
+	addDockWidget(Qt::TopDockWidgetArea, tpdw);
 
 	infoBox = new InfoBox(topPanelWidget);
 	topPanelWidgetLayout->insertWidget( 0, infoBox, 4);
@@ -149,7 +153,7 @@ void Interface::create()
 	centerWidgetLayout->setMargin(3);
 	statusAreaWidgetLayout->setMargin(3);
 
-	mainVBoxLayout->addWidget(topPanelWidget, BorderLayout::North);
+// 	mainVBoxLayout->addWidget(topPanelWidget, BorderLayout::North);
 	mainVBoxLayout->addWidget(widget, BorderLayout::Center);
 	mainVBoxLayout->addWidget(statusAreaWidget, BorderLayout::South);
 	
@@ -165,10 +169,10 @@ void Interface::create()
 	move(settings.value("pos", QPoint(200, 200)).toPoint());
 	settings.endGroup();
 	
-	QDockWidget* dw = new QDockWidget("History", this);
-	historyWidget = new HistoryWidget(dw);
-	dw->setWidget(historyWidget);
-	addDockWidget(Qt::RightDockWidgetArea, dw);
+	hvdw = new QDockWidget(tr("History"), this);
+	historyWidget = new HistoryWidget(hvdw);
+	hvdw->setWidget(historyWidget);
+	addDockWidget(Qt::RightDockWidgetArea, hvdw);
 	
 	create_menu_actions();
 	create_menus();
@@ -336,14 +340,15 @@ Command * Interface::show_export_widget( )
 void Interface::create_menus( )
 {
 	fileMenu = menuBar()->addMenu(tr("&File"));
-	fileMenu->addAction(saveAction);
+	saveAction = fileMenu->addAction(tr("&Save"));
+	saveAction->setIcon(QIcon("/usr/share/icons/crystalsvg/22x22/actions/filesave.png"));
+	connect(saveAction, SIGNAL(triggered()), &pm(), SLOT(save_project()));
+	
 	fileMenu->addAction(exitAction);
 	
 	viewMenu = menuBar()->addMenu(tr("&Views"));
-	viewMenu->addAction(projManViewAction);
-	viewMenu->addAction(editViewAction);
-	viewMenu->addAction(curveViewAction);
-	viewMenu->addAction(settingsViewAction);
+	viewMenu->addAction(hvdw->toggleViewAction());
+	viewMenu->addAction(tpdw->toggleViewAction());
 	
 	helpMenu = menuBar()->addMenu(tr("&Help"));
 	helpMenu->addAction(handBookAction);
@@ -358,9 +363,6 @@ void Interface::create_menus( )
 
 void Interface::create_menu_actions( )
 {
-	saveAction = new QAction(tr("&Save"), this);
-	saveAction->setIcon(QIcon("/usr/share/icons/crystalsvg/22x22/actions/filesave.png"));
-	connect(saveAction, SIGNAL(triggered()), &pm(), SLOT(save_project()));
 	
 	exitAction = new QAction(tr("&Quit"), this);
 	exitAction->setIcon(QIcon("/usr/share/icons/crystalsvg/22x22/actions/exit.png"));
