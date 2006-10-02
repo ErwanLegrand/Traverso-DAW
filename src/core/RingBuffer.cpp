@@ -83,6 +83,7 @@ int RingBuffer::mlock_buffer()
 {
 #if defined (USE_MLOCK)
         if (mlock (buf, size)) {
+        	printf("Unable to lock memory\n");
                 return -1;
         }
         mlocked = 1;
