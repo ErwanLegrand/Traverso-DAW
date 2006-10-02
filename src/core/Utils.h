@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Utils.h,v 1.3 2006/09/13 12:51:07 r_sijrier Exp $
+    $Id: Utils.h,v 1.4 2006/10/02 19:08:42 r_sijrier Exp $
 */
 
 #ifndef UTILS_H
@@ -33,5 +33,11 @@ QString frame_to_smpte(nframes_t nframes, int rate);
 QString coefficient_to_dbstring(float coeff);
 
 qint64 create_id();
+
+static inline unsigned int is_power_of_two (unsigned int n)
+{
+	return !(n & (n - 1));
+}
+
 
 #endif
