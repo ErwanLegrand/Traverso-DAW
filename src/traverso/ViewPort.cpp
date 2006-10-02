@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewPort.cpp,v 1.6 2006/09/19 09:12:07 r_sijrier Exp $
+$Id: ViewPort.cpp,v 1.7 2006/10/02 19:15:22 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -93,13 +93,24 @@ void ViewPort::enterEvent(QEvent* )
 void ViewPort::leaveEvent(QEvent *)
 {}
 
+static bool smallerZOrder(const ViewItem* left, const ViewItem* right )
+{
+	return left->get_z_order() < right->get_z_order();
+}
+
+static bool higherZOrder(const ViewItem* left, const ViewItem* right )
+{
+	return left->get_z_order() > right->get_z_order();
+}
+
+
 void ViewPort::paintEvent( QPaintEvent *  )
 {
 	QPainter p(&pixmap);
 	QPainter pixmapPainter(this);
 
 	// Sort all the ViewItems in zOrder!
-	qSort(repaintViewItemList.begin(), repaintViewItemList.end(), ViewItem::smaller);
+	qSort(repaintViewItemList.begin(), repaintViewItemList.end(), smallerZOrder);
 
 
 	if (predrawItemList.size() > 0) {
@@ -175,7 +186,7 @@ void ViewPort::get_pointed_view_items( QList< ViewItem * > & list )
 		if (item->is_pointed())
 			list.append(item);
 	}
-	qSort(list.begin(), list.end(), ViewItem::greater);
+	qSort(list.begin(), list.end(), higherZOrder);
 }
 
 void ViewPort::unregister_viewitem( ViewItem * item )
