@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.cpp,v 1.10 2006/09/18 18:30:14 r_sijrier Exp $
+$Id: WriteSource.cpp,v 1.11 2006/10/02 19:04:38 r_sijrier Exp $
 */
 
 #include "WriteSource.h"
@@ -27,10 +27,8 @@ $Id: WriteSource.cpp,v 1.10 2006/09/18 18:30:14 r_sijrier Exp $
 
 #include <AudioDevice.h>
 #include "Peak.h"
-#include "RingBuffer.h"
 #include "Utils.h"
-
-#include <QSettings>
+#include "DiskIO.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -249,6 +247,7 @@ int WriteSource::prepare_export (ExportSpecification* spec)
 	sample_rate = audiodevice().get_sample_rate();
 	channels = spec->channels;
 	processPeaks = false;
+	diskio = 0;
 	dataF2 = leftoverF = 0;
 	dither = 0;
 	output_data = 0;
@@ -351,9 +350,7 @@ int WriteSource::prepare_export (ExportSpecification* spec)
 	
 	m_peak = new Peak(this, m_channelNumber);
 	
-	QSettings settings;
-	m_preBufferSize = settings.value("HardWare/PreBufferSize").toInt();
-	m_buffer = new RingBuffer(m_preBufferSize * sizeof(audio_sample_t));
+	m_buffer = new RingBufferNPT<audio_sample_t>(diskio->get_buffer_size());
 	
 	return 0;
 }
@@ -389,8 +386,14 @@ int WriteSource::finish_export( )
 	}
 #endif
 
-	if (processPeaks)
+	if (processPeaks) {
 		m_peak->finish_processing();
+	}
+		
+	if (diskio) {
+		diskio->unregister_write_source(this);
+	}
+
 
 /*	printf("WriteSource :: thread id is: %ld\n", QThread::currentThreadId ());
 	PWARN("WriteSource :: emiting exportFinished");*/
@@ -399,9 +402,9 @@ int WriteSource::finish_export( )
 	return 1;
 }
 
-int WriteSource::rb_write( const audio_sample_t * src, nframes_t cnt )
+int WriteSource::rb_write(audio_sample_t* src, nframes_t cnt )
 {
-	int written = m_buffer->write( (char*)src, cnt * sizeof(audio_sample_t)) / sizeof(audio_sample_t);
+	int written = m_buffer->write(src, cnt);
 	return written;
 }
 
@@ -418,7 +421,7 @@ void WriteSource::set_process_peaks( bool process )
 
 int WriteSource::rb_file_write( nframes_t cnt )
 {
-	int read = m_buffer->read((char*)spec->dataF, cnt * sizeof(audio_sample_t)) / sizeof(audio_sample_t);
+	int read = m_buffer->read(spec->dataF, cnt);
 
 	if (read > 0) {
 		process(read);
@@ -429,48 +432,35 @@ int WriteSource::rb_file_write( nframes_t cnt )
 
 void WriteSource::set_recording( bool rec )
 {
-	recording = rec;
+	m_isRecording = rec;
 }
 
-bool WriteSource::is_recording( )
-{
-	return recording;
-}
-
-int WriteSource::process_ringbuffer( audio_sample_t* framebuffer)
+void WriteSource::process_ringbuffer( audio_sample_t* framebuffer)
 {
 	spec->dataF = framebuffer;
-	int readSpace = m_buffer->read_space() / sizeof(audio_sample_t);
+	int readSpace = m_buffer->read_space();
 
-	if (  ! recording ) {
+	if (! m_isRecording ) {
 		PWARN("Writing remaining  (%d) samples to ringbuffer", readSpace);
 		rb_file_write(readSpace);
 		PWARN("WriteSource :: calling source->finish_export()");
 		finish_export();
-		return 1;
+		diskio->unregister_write_source(this);
+		return;
 	}
 
 	// calculate the 'chunk' size 
-	int chunkSize = m_preBufferSize / 4;
+	int chunkSize = diskio->get_buffer_size() / 4;
 	
-	// Calculate the Priority depending of the available writespace
-	// A buffer only gets refilled if there is at least chuncksize 
-	// of writespace.
-	if (readSpace < (1 * chunkSize)) {
-		set_buffer_process_prio(AudioSource::NormalPrio);
-	} else if ( readSpace < (2 * chunkSize)) {
-		set_buffer_process_prio(AudioSource::MediumPrio);
-	} else {
-		set_buffer_process_prio(AudioSource::HighPrio);
-	} 
 	
 	// The amount of samples to write
-	int toWrite = ((int)(readSpace / chunkSize)) * chunkSize;
+	int chunkCount = (int)(readSpace / diskio->get_chunk_size());
 	
-	
-	if (toWrite == 0) {
-		return 0;
+	if (chunkCount == 0) {
+		return;
 	}
+	
+	int toWrite = chunkCount * diskio->get_chunk_size();
 	
 	// Only write to hard disk if there is at least chunkSize of data
 	// to write. This makes writing much more efficient
@@ -479,8 +469,6 @@ int WriteSource::process_ringbuffer( audio_sample_t* framebuffer)
 	}
 	
 	rb_file_write(toWrite);
-	
-	return readSpace;
 }
 
 //eof

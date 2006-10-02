@@ -17,15 +17,20 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PrivateReadSource.h,v 1.3 2006/09/18 18:30:14 r_sijrier Exp $
+$Id: PrivateReadSource.h,v 1.4 2006/10/02 19:04:38 r_sijrier Exp $
 */
 
 #ifndef PRIVATE_READSOURCE_H
 #define PRIVATE_READSOURCE_H
 
-#include "AudioSource.h"
+#include "RingBufferNPT.h"
+#include "defines.h"
+
+#include "sndfile.h"
+
 
 class AudioClip;
+class Peak;
 class ReadSource;
 
 class PrivateReadSource
@@ -41,8 +46,8 @@ public :
 	int init();
 	int ref();
 	
-	bool need_sync();
-	void sync();
+	size_t need_sync();
+	void sync(audio_sample_t* framebuffer);
 
 	void set_audio_clip(AudioClip* clip);
 	Peak* get_peak();
@@ -50,22 +55,23 @@ public :
 	void prepare_buffer();
 
 private:
-	PrivateReadSource(ReadSource* source, uint channel, int channelNumber, const QString& fileName);
+	PrivateReadSource(ReadSource* source, int sourceChannelCount, int channelNumber, const QString& fileName);
 	~PrivateReadSource();
 	
 	ReadSource*	m_source;
-	RingBuffer*	m_buffer;
+	RingBufferNPT<float>*	m_buffer;
 	Peak* 		m_peak;
 	SNDFILE*	sf;
 	SF_INFO 	sfinfo;
-	uint 		m_channelCount;
+	int 		m_sourceChannelCount;
 	int		m_channelNumber;
 	
 	nframes_t	rbFileReadPos;
 	nframes_t	rbRelativeFileReadPos;
-	nframes_t	syncPos;
-	volatile bool	rbReady;
-	bool		needSync;
+	volatile size_t	syncPos;
+	volatile size_t	rbReady;
+	volatile size_t	needSync;
+	bool		syncInProgress;
 	int		refcount;
 	
 	AudioClip*	m_clip;
@@ -77,5 +83,10 @@ private:
 	friend class ReadSource;
 	
 };
+
+inline size_t PrivateReadSource::need_sync( )
+{
+	return needSync;
+}
 
 #endif

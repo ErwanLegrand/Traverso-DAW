@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.h,v 1.17 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: Song.h,v 1.18 2006/10/02 19:04:38 r_sijrier Exp $
 */
 
 #ifndef SONG_H
@@ -161,6 +161,8 @@ public:
 
 	audio_sample_t* 	mixdown;
 	audio_sample_t*		gainbuffer;
+	
+	unsigned long	threadId;
 
 private:
 	QHash<int, Track* >	m_tracks;
@@ -175,12 +177,20 @@ private:
 	AudioClipManager*	acmanager;
 	PluginChain*		pluginChain;
 
-	volatile nframes_t	transportFrame;
-	nframes_t 		firstVisibleFrame;
-	nframes_t 		workingFrame;
-	uint		 	newTransportFramePos;
+	// The following data could be read/written by multiple threads
+	// (gui, audio and diskio thread). Therefore they should have 
+	// atomic behaviour, still not sure if volatile size_t declaration
+	// would suffice, or should we use g_atomic_int_set/get() to make
+	// it 100% portable and working on all platforms...?
+	volatile size_t		transportFrame;
+	volatile size_t		workingFrame;
+	volatile size_t		newTransportFramePos;
 	volatile size_t		transport;
+	volatile size_t		seeking;
 
+	
+	nframes_t 		firstVisibleFrame;
+	
 	float 			m_gain;
 	
 	QString 		artists;
@@ -199,7 +209,6 @@ private:
 	bool			realtimepath;
 	bool			scheduleForDeletion;
 	SnapList*		snaplist;
-	bool			seeking;
 
 	void init();
 	void connect_to_audiodevice();
@@ -215,7 +224,6 @@ private:
 
 public slots :
 	void seek_finished();
-	void handle_diskio_outofsync();
 	void audiodevice_client_removed(Client* );
 	void audiodevice_started();
 	void resize_buffer();
@@ -258,6 +266,8 @@ signals:
 private slots:
 	void private_add_track(Track* track);
 	void private_remove_track(Track* track);
+	void handle_diskio_writebuffer_overrun();
+	void handle_diskio_readbuffer_underrun();
 
 };
 

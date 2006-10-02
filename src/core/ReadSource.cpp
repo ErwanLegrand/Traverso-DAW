@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.cpp,v 1.14 2006/09/18 18:30:14 r_sijrier Exp $
+$Id: ReadSource.cpp,v 1.15 2006/10/02 19:04:38 r_sijrier Exp $
 */
 
 #include "ReadSource.h"
@@ -27,8 +27,8 @@ $Id: ReadSource.cpp,v 1.14 2006/09/18 18:30:14 r_sijrier Exp $
 #include "ProjectManager.h"
 #include "Project.h"
 #include "AudioClip.h"
+#include "DiskIO.h"
 
-#include <QSettings>
 #include <QFile>
 
 // Always put me below _all_ includes, this is needed
@@ -97,30 +97,44 @@ int ReadSource::init( )
 		return -1;
 	}
 	
-	QSettings settings;
-	m_preBufferSize = settings.value("HardWare/PreBufferSize").toInt();
 	
-	for (uint i=0; i<m_channelCount; ++i) {
-		QString fileName = m_dir + m_name;
-		if (m_fileCount > 1) {
-			fileName.append("-ch" + QByteArray::number(i) + ".wav");
-		}
-		
-		int channel = m_fileCount > 1 ? 0 : 1;
-		
-		PrivateReadSource* source = new PrivateReadSource(this, channel, i, fileName);
-		
-		if (source->init() > 0) {
-			m_sources.append(source);
-		} else {
-			PERROR("Failed to initialize a PrivateReadSource (%s)", QS_C(fileName));
+	QString fileName = m_dir + m_name;
+	
+	if (m_channelCount == 1 && m_fileCount == 1) {
+		if (add_private_source(1, 0, fileName) < 0) {
 			return -1;
 		}
+	} else if (m_channelCount == 2 && m_fileCount == 2) {
+		if ((add_private_source(1, 0, fileName + "-ch" + QByteArray::number(0) + ".wav") < 0) || 
+		    (add_private_source(1, 1, fileName + "-ch" + QByteArray::number(1) + ".wav") < 0)) {
+			return -1;
+		}
+	} else if (m_channelCount == 2 && m_fileCount == 1) {
+		if ((add_private_source(2, 0, fileName) < 0) || 
+		    (add_private_source(2, 1, fileName) < 0)) {
+			return -1;
+		}
+	} else {
+		PERROR("Unsupported combination of channelcount/filecount (%d/%d)", m_channelCount, m_fileCount);
+		return -1;
 	}
 	
 	return 1;
 }
 
+int ReadSource::add_private_source(int sourceChannelCount, int channelNumber, const QString& fileName)
+{
+	PrivateReadSource* source = new PrivateReadSource(this, sourceChannelCount, channelNumber, fileName);
+	
+	if (source->init() > 0) {
+		m_sources.append(source);
+	} else {
+		PERROR("Failed to initialize a PrivateReadSource (%s)", QS_C(fileName));
+		return -1;
+	}
+	
+	return 1;
+}
 
 int ReadSource::file_read (int channel, audio_sample_t* dst, nframes_t start, nframes_t cnt) const
 {
@@ -145,23 +159,11 @@ void ReadSource::rb_seek_to_file_position( nframes_t position )
 }
 
 
-int ReadSource::process_ringbuffer( audio_sample_t * framebuffer )
+void ReadSource::sync(audio_sample_t* framebuffer)
 {
-	int count = 0;
-	m_bufferProcessPrio = NormalPrio;
+// 	printf("entering sync\n");
 	foreach(PrivateReadSource* source, m_sources) {
-		count = std::max(source->process_ringbuffer(framebuffer), count);
-	}
-	
-	return count;
-	
-}
-
-
-void ReadSource::sync( )
-{
-	foreach(PrivateReadSource* source, m_sources) {
-		source->sync();
+		source->sync(framebuffer);
 	}
 }
 
@@ -205,15 +207,6 @@ void ReadSource::set_audio_clip( AudioClip * clip )
 	}
 }
 
-bool ReadSource::need_sync( )
-{
-	foreach(PrivateReadSource* source, m_sources) {
-		if (source->need_sync())
-			return true;
-	}
-	
-	return false;
-}
 
 Peak * ReadSource::get_peak( int channel )
 {
@@ -231,11 +224,6 @@ void ReadSource::prepare_buffer( )
 nframes_t ReadSource::get_nframes( ) const
 {
 	return m_length;
-}
-
-void ReadSource::set_buffer_process_prio( BufferProcessPrio prio )
-{
-	m_bufferProcessPrio = std::max(prio, m_bufferProcessPrio);
 }
 
 

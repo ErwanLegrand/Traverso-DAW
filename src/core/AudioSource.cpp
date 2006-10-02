@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSource.cpp,v 1.9 2006/09/18 18:30:14 r_sijrier Exp $
+$Id: AudioSource.cpp,v 1.10 2006/10/02 19:04:38 r_sijrier Exp $
 */
 
 
@@ -25,7 +25,6 @@ $Id: AudioSource.cpp,v 1.9 2006/09/18 18:30:14 r_sijrier Exp $
 #include "Song.h"
 #include "Peak.h"
 #include "Export.h"
-#include "RingBuffer.h"
 #include "Utils.h"
 
 // Always put me below _all_ includes, this is needed
@@ -38,8 +37,7 @@ $Id: AudioSource.cpp,v 1.9 2006/09/18 18:30:14 r_sijrier Exp $
 // This constructor is called during file import
 AudioSource::AudioSource(const QString& dir, const QString& name)
 	: m_dir(dir),
-	  m_name(name),
-	  m_bufferProcessPrio(NormalPrio)
+	  m_name(name)
 {
 	PENTERCONS;
 	m_fileName = m_dir + m_name;
@@ -51,8 +49,7 @@ AudioSource::AudioSource(const QString& dir, const QString& name)
 AudioSource::AudioSource(const QDomNode node)
 	: m_dir(""),
 	  m_name(""), 
-	  m_fileName(""),
-	  m_bufferProcessPrio(NormalPrio)
+	  m_fileName("")
 {
 	set_state(node);
 }
@@ -161,14 +158,15 @@ void AudioSource::set_channel_count( uint count )
 	m_channelCount = count;
 }
 
-void AudioSource::set_buffer_process_prio( BufferProcessPrio prio )
+void AudioSource::set_diskio( DiskIO * io )
 {
-	m_bufferProcessPrio = prio;
+	diskio = io;
 }
 
-int AudioSource::get_buffer_process_prio( ) const
+void AudioSource::sync( audio_sample_t*)
 {
-	return m_bufferProcessPrio;
+	//Reimplemented in ReadSource..
 }
- 
+
+
 // eof

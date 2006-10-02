@@ -17,111 +17,74 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.h,v 1.6 2006/09/18 18:30:14 r_sijrier Exp $
+$Id: DiskIO.h,v 1.7 2006/10/02 19:04:38 r_sijrier Exp $
 */
 
 #ifndef DISKIO_H
 #define DISKIO_H
 
-#include <QThread>
-#include <QWaitCondition>
 #include <QMutex>
 #include <QList>
-#include <QTimer>
 
 #include "defines.h"
 
 class ReadSource;
 class WriteSource;
-class DiskIO;
+class AudioSource;
 class RingBuffer;
+class DiskIOThread;
+class Song;
 
 
-class DiskIOThread : public QThread
-{
-public:
-	DiskIOThread(DiskIO* diskio);
-
-	void become_realtime(bool realtime);
-	bool realtime;
-
-protected:
-	void run();
-
-private:
-	DiskIO*		m_diskio;
-
-};
-
-/** DiskIO handles all the read's and write's of AudioSources in it's private thread.
- *  Each Song class has it's own DiskIO instance. 
- * The DiskIO manages all the AudioSources
- * related to a Song, and makes sure the RingBuffers from the AudioSources are processed
- * in time.
- */
 class DiskIO : public QObject
 {
 	Q_OBJECT
 
 public:
-	DiskIO();
+	DiskIO(Song* song);
 	~DiskIO();
 
-	/**
-	 *        Interupts any pending AudioSource's buffer processing, and returns from do_work().
-	 *	Use this before calling seek() to shorten the seek process.
-	 */
 	void prepare_for_seek();
 
-	/**
-	 *        Registers the ReadSource. The source's RingBuffer will be initalized at this point.
-	 *
-	 *	This function is thread save. 
-	 * @param source The ReadSource to register
-	 */
 	void register_read_source(ReadSource* source);
-	/**
-	 *        Registers the WriteSource. The source's RingBuffer will be initalized at this point.
-	 *
-	 *	This function is thread save. 
-	 * @param source The WriteSource to register
-	 */
 	void register_write_source(WriteSource* source);
 	
 	void unregister_read_source(ReadSource* source);
+	void unregister_write_source(WriteSource* source);
 
-	/**
-	 *
-	 * @return Returns the CPU time consumed by the DiskIO work thread 
-	 */
 	trav_time_t get_cpu_time();
-	int get_buffer_fill_status();
+	int get_write_buffers_fill_status();
+	int get_read_buffers_fill_status();
+	int get_buffer_size() const;
+	int get_chunk_size() const;
 
 private:
-	bool			stopWork;
-	bool			seeking;
-	QList<ReadSource*>	readSources;
-	QList<WriteSource*>	writeSources;
-	QTimer			workTimer;
-	DiskIOThread*		diskThread;
+	Song* 			m_song;
+	volatile size_t		m_stopWork;
+	QList<ReadSource*>	m_readSources;
+	QList<AudioSource*>	m_processableSources;
+	QList<WriteSource*>	m_writeSources;
+	DiskIOThread*		m_diskThread;
 	QMutex			mutex;
-	int			bufferFillStatus;
-	int			m_preBufferSize;
+	volatile size_t		m_readBufferFillStatus;
+	volatile size_t		m_writeBufferFillStatus;
+	int			m_bufferSize;
+	uint			m_minBufStatus;
 	RingBuffer*		cpuTimeBuffer;
 	trav_time_t		cycleStartTime;
 	trav_time_t		lastCpuReadTime;
+	bool			m_seeking;
+	int			m_hardDiskOverLoadCounter;
 
+	
 	void update_time_usage();
+	
 	int stop();
+	int there_are_processable_sources();
 
 	friend class DiskIOThread;
 
 public slots:
-	/**
-	 *        Seek's all the ReadSource's readbuffers to the new position.
-	 *	Call prepare_seek() first, to interupt do_work() if it was running.
-	 * @param position 
-	 */
 	void seek(uint position);
 	
 private slots:
@@ -129,10 +92,20 @@ private slots:
 
 signals:
 	void seekFinished();
-	void bufferFillStatusChanged(int status);
-	void outOfSync();
+	void readSourceBufferUnderRun();
+	void writeSourceBufferOverRun();
 
 };
+
+inline int DiskIO::get_buffer_size() const
+{
+	return m_bufferSize;
+}
+
+inline int DiskIO::get_chunk_size() const
+{
+	return m_bufferSize / 8;
+}
 
 #endif
 

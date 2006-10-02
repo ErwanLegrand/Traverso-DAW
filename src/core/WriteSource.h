@@ -17,20 +17,25 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.h,v 1.6 2006/09/18 18:30:14 r_sijrier Exp $
+$Id: WriteSource.h,v 1.7 2006/10/02 19:04:38 r_sijrier Exp $
 */
 
 #ifndef WRITESOURCE_H
 #define WRITESOURCE_H
 
 #include "AudioSource.h"
+#include "RingBufferNPT.h"
+#include <sndfile.h>
+#include "gdither.h"
+
 
 #if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 #include <samplerate.h>
 #endif
-#include "gdither.h"
 
 struct ExportSpecification;
+class Peak;
+class DiskIO;
 
 /// WriteSource is an AudioSource only used for writing (recording, rendering) purposes
 class WriteSource : public AudioSource
@@ -42,9 +47,10 @@ public :
 	WriteSource(ExportSpecification* spec, int channelNumber, int superChannelCount);
 	~WriteSource();
 
-	int rb_write(const audio_sample_t* src, nframes_t cnt);
+	int rb_write(audio_sample_t* src, nframes_t cnt);
 	int rb_file_write(nframes_t cnt);
-	int process_ringbuffer(audio_sample_t* framebuffer);
+	void process_ringbuffer(audio_sample_t* framebuffer);
+	int get_processable_buffer_space() const;
 
 	int process(nframes_t nframes);
 
@@ -54,13 +60,14 @@ public :
 	void set_process_peaks(bool process);
 	void set_recording(bool rec);
 
-	bool is_recording();
+	bool is_recording() const;
 
 	ExportSpecification*		spec;
 
 private:
-	RingBuffer*	m_buffer;
+	RingBufferNPT<audio_sample_t>*	m_buffer;
 	Peak* 		m_peak;
+	DiskIO*		diskio;
 	SNDFILE*	sf;
 	SF_INFO 	sfinfo;
 	
@@ -79,12 +86,23 @@ private:
 	float*		dataF2;
 	void*           output_data;
 	bool		processPeaks;
-	bool		recording;
+	bool		m_isRecording;
 	int		m_channelNumber;
 
 signals:
 	void exportFinished(WriteSource* );
 };
+
+
+inline int WriteSource::get_processable_buffer_space( ) const
+{
+	return m_buffer->read_space();
+}
+
+inline bool WriteSource::is_recording( ) const
+{
+	return m_isRecording;
+}
 
 #endif
 

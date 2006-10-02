@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.32 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: Song.cpp,v 1.33 2006/10/02 19:04:38 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -134,14 +134,16 @@ Song::~Song()
 void Song::init()
 {
 	PENTER2;
-	diskio = new DiskIO();
+	diskio = new DiskIO(this);
+	
+	threadId = QThread::currentThreadId ();
 
 	connect(this, SIGNAL(seekStart(uint)), diskio, SLOT(seek(uint)), Qt::QueuedConnection);
 	connect(&audiodevice(), SIGNAL(clientRemoved(Client*)), this, SLOT (audiodevice_client_removed(Client*)));
 	connect(&audiodevice(), SIGNAL(started()), this, SLOT(audiodevice_started()));
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(resize_buffer()), Qt::DirectConnection);
 	connect(diskio, SIGNAL(seekFinished()), this, SLOT(seek_finished()), Qt::QueuedConnection);
-	connect (diskio, SIGNAL(outOfSync()), this, SLOT(handle_diskio_outofsync()));
+	connect (diskio, SIGNAL(readSourceBufferUnderRun()), this, SLOT(handle_diskio_readbuffer_underrun()));
 
 	mixdown = new audio_sample_t[audiodevice().get_buffer_size()];
 	gainbuffer = new audio_sample_t[audiodevice().get_buffer_size()];
@@ -163,6 +165,7 @@ void Song::init()
 	changed = rendering = false;
 	firstVisibleFrame=workingFrame=activeTrackNumber=0;
 	trackCount = 0;
+	seeking = 0;
 
 	pluginChain = new PluginChain(this, this);
 }
@@ -181,7 +184,8 @@ int Song::set_state( const QDomNode & node )
 	set_gain(e.attribute( "mastergain", "1.0").toFloat() );
 	set_hzoom(e.attribute( "hzoom", "" ).toInt());
 	set_first_visible_frame(e.attribute( "firstVisibleFrame", "0" ).toUInt());
-
+	set_work_at(e.attribute( "workingFrame", "0").toUInt());
+	
 	int trackBaseY = LocatorView::LOCATOR_HEIGHT;
 
 	QDomNode tracksNode = node.firstChildElement("Tracks");
@@ -209,9 +213,6 @@ int Song::set_state( const QDomNode & node )
 	QDomNode pluginChainNode = node.firstChildElement("PluginChain");
 	pluginChain->set_state(pluginChainNode);
 
-	// Set work at will trigger a seek, which in turn get's all
-	// audio buffers into proper pre-filled state!
-	set_work_at(e.attribute( "workingFrame", "0").toUInt());
 	return 1;
 }
 
@@ -600,7 +601,7 @@ void Song::set_first_visible_frame(nframes_t pos)
 
 void Song::set_work_at(nframes_t pos)
 {
-	PMESG2("entering set_work_at");
+	PENTER;
 
 /** use this part if the work cursor should _not_ snap **/
 // 	newTransportFramePos = pos;
@@ -621,7 +622,7 @@ void Song::set_work_at(nframes_t pos)
 		start_seek();
 	}
 
-	seeking = true;
+	seeking = 1;
 	emit workingPosChanged();
 }
 
@@ -641,7 +642,11 @@ void Song::start_seek()
 
 	diskio->prepare_for_seek();
 
-	THREAD_SAVE_EMIT_SIGNAL(this, (void*)newTransportFramePos, seekStart(uint));
+	if (!transport) {
+		emit seekStart(newTransportFramePos);
+	} else {
+		RT_THREAD_EMIT(this, (void*)newTransportFramePos, seekStart(uint));
+	}
 
 	PMESG2("Song :: leaving start_seek");
 }
@@ -650,7 +655,7 @@ void Song::seek_finished()
 {
 	PMESG2("Song :: entering seek_finished");
 	transportFrame = newTransportFramePos;
-	seeking = false;
+	seeking = 0;
 
 	if (resumeTransport) {
 		transport = true;
@@ -860,7 +865,7 @@ int Song::process( nframes_t nframes )
 		return 0;
 
 	if (stopTransport) {
-		THREAD_SAVE_EMIT_SIGNAL(this, 0, transferStopped());
+		RT_THREAD_EMIT(this, 0, transferStopped());
 		transport = false;
 		realtimepath = false;
 		stopTransport = false;
@@ -970,16 +975,21 @@ AudioClipManager * Song::get_audioclip_manager( )
 	return acmanager;
 }
 
-void Song::handle_diskio_outofsync( )
+void Song::handle_diskio_readbuffer_underrun( )
 {
 	if (transport) {
-		PWARN("Out of sync signal received!");
-		// Stop transport, and resync diskio, we can handle this just fine
-		// with a seek request! set_work_at() starts the seek routine...
-		// 		transport = false;
-		set_work_at(transportFrame);
-	} else {
-		PWARN("diskio out of sync received, but no transport????");
+		printf("Song:: DiskIO ReadBuffer UnderRun signal received!\n");
+		info().critical(tr("Hard Disk overload detected!"));
+		info().critical(tr("Failed to fill ReadBuffer in time"));
+	}
+}
+
+void Song::handle_diskio_writebuffer_overrun( )
+{
+	if (transport) {
+		printf("Song:: DiskIO WriteBuffer OverRun signal received!\n");
+		info().critical(tr("Hard Disk overload detected!"));
+		info().critical(tr("Failed to empty WriteBuffer in time"));
 	}
 }
 

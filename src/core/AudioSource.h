@@ -17,23 +17,19 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSource.h,v 1.7 2006/09/18 18:30:14 r_sijrier Exp $
+$Id: AudioSource.h,v 1.8 2006/10/02 19:04:38 r_sijrier Exp $
 */
 
 #ifndef AUDIOSOURCE_H
 #define AUDIOSOURCE_H
 
-#include <sndfile.h>
 #include "defines.h"
 
 #include <QObject>
-#include <QList>
 #include <QDomDocument>
 
 class QString;
-class Peak;
-class Song;
-class RingBuffer;
+class DiskIO;
 
 /// The base class for AudioSources like ReadSource and WriteSource
 class AudioSource : public QObject
@@ -44,27 +40,17 @@ public :
 	AudioSource() {}
 	~AudioSource();
 	
-	enum BufferProcessPrio {
-		NormalPrio, 
-		MediumPrio,
-		HighPrio
-	};
+	virtual void process_ringbuffer(audio_sample_t* framebuffer) = 0;
+	virtual	bool need_sync() const;
+	virtual int get_processable_buffer_space() const;
+	virtual void sync(audio_sample_t* framebuffer);
 
-	virtual int process_ringbuffer(audio_sample_t* framebuffer) = 0;
-	virtual void set_buffer_process_prio(BufferProcessPrio prio);
-	
-        static bool greater(const AudioSource* left, const AudioSource* right )
-        {
-                return left->get_buffer_process_prio() > right->get_buffer_process_prio();
-        }
-	
 	void set_name(const QString& name);
 	void set_dir(const QString& name);
 	void set_original_bit_depth(uint bitDepth);
 	void set_created_by_song(int id);
 	void set_sample_rate(int rate);
 	int set_state( const QDomNode& node );
-	int get_buffer_process_prio() const;
 	
 	
 	QDomNode get_state(QDomDocument doc);
@@ -77,7 +63,8 @@ public :
 	int get_bit_depth() const;
 	
 	void set_channel_count(uint count);
-
+	void set_diskio(DiskIO* io );
+	
 protected:
 	uint		m_channelCount;
 	uint		m_fileCount;
@@ -89,16 +76,15 @@ protected:
 	QString		m_fileName;
 	nframes_t	m_length;
 	uint 		m_rate;
-	BufferProcessPrio m_bufferProcessPrio;
-	int		m_preBufferSize;
+	DiskIO*		diskio;
 };
 
-inline uint AudioSource::get_channel_count( ) const
-{
-	return m_channelCount;
-}
+
+inline uint AudioSource::get_channel_count( ) const {return m_channelCount;}
+
+inline bool AudioSource::need_sync( ) const {return false;}
+
+inline int AudioSource::get_processable_buffer_space() const {return 0;}
+
 
 #endif
-
-
-
