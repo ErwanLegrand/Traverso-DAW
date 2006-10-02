@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Traverso.cpp,v 1.11 2006/09/18 18:34:00 r_sijrier Exp $
+$Id: Traverso.cpp,v 1.12 2006/10/02 19:13:19 r_sijrier Exp $
 */
 
 #include <signal.h>
@@ -101,7 +101,7 @@ void Traverso::reset_settings( )
 	settings.beginGroup("Hardware");
 	settings.setValue("samplerate", 44100);
 	settings.setValue("bufferSize", 1024);
-	settings.setValue("PreBufferSize", 65536);
+	settings.setValue("PreBufferSize", 32768);
 // Use Jack by default on mac os x, since thats the only supported driver there!
 #ifdef MAC_OS_BUILD
 	settings.setValue("drivertype", "Jack");
@@ -247,7 +247,7 @@ void Traverso::prepare_audio_device( )
 
 	if (bufferSize == 0) {
 		qWarning("BufferSize read from Settings is 0 !!!");
-		bufferSize = 2048;
+		bufferSize = 1024;
 	}
 	if (rate == 0) {
 		qWarning("Samplerate read from Settings is 0 !!!");
@@ -260,12 +260,6 @@ void Traverso::prepare_audio_device( )
 
 	audiodevice().set_parameters(rate, bufferSize, driverType);
 
-	// tsar is a singleton, so initialization is done on first tsar() call
-	// However, if we do so by adding/removing an object in/out the audioprocessing path
-	// the addRemoveRetryTimer QTimer complains, don't know why.
-	// So it seems to be a good idea to initialize tsar at the same time the audiodevice is
-	// up and running, though this shouldn't be needed!!!!!
-	tsar();
 }
 
 void Traverso::saveState( QSessionManager &  manager)
