@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.14 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.15 2006/10/02 19:10:58 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -35,6 +35,7 @@ $Id: AudioDevice.cpp,v 1.14 2006/09/07 09:36:52 r_sijrier Exp $
 #include "AudioChannel.h"
 #include "AudioBus.h"
 #include "Tsar.h"
+#include "Information.h"
 
 
 //#include <sys/mman.h>
@@ -134,10 +135,10 @@ AudioDevice& audiodevice()
 
 AudioDevice::AudioDevice()
 {
-	runAudioThread = false;
+	m_runAudioThread = false;
 	driver = 0;
 	audioThread = 0;
-	cpuTimeBuffer = new RingBuffer(4096);
+	m_cpuTime = new RingBufferNPT<trav_time_t>(4096);
 
 	m_driverType = tr("No Driver Loaded");
 
@@ -150,6 +151,14 @@ AudioDevice::AudioDevice()
 #endif
 
 	availableDrivers << "Null Driver";
+	
+	// tsar is a singleton, so initialization is done on first tsar() call
+	// Tsar makes use of a QTimer to cleanup the processed events.
+	// The QTimer _has_ to be started from the GUI thread, so we 'initialize'
+	// tsar here _before_ the AudioDevice is setup, since tsar is being called
+	// from here by for example the jack driver which could initialize tsar 
+	// from within the _jack client thread_ which makes the whole thing _fail_
+	tsar();
 }
 
 AudioDevice::~AudioDevice()
@@ -162,7 +171,7 @@ AudioDevice::~AudioDevice()
 	if (audioThread)
 		delete audioThread;
 
-	delete cpuTimeBuffer;
+	delete m_cpuTime;
 
 	free_memory();
 }
@@ -291,44 +300,62 @@ void AudioDevice::set_parameters( int rate, nframes_t bufferSize, const QString&
 
 		emit stopped();
 
-		if (audioThread) {
-			shutdown();
-		}
+		shutdown();
+		
 		delete driver;
 		driver = 0;
 	}
 
 
-	if (create_driver(driverType) > 0) {
-		driver->attach();
-		setup_buses();
+	if (create_driver(driverType) < 0) {
+		set_parameters(rate, bufferSize, "Null Driver");
+		return;
+	}
+	
+	driver->attach();
+	
+	setup_buses();
 
-		emit driverParamsChanged();
+	emit driverParamsChanged();
 
-		driver->start();
-
-		if ((driverType == "ALSA") || (driverType == "Null Driver")) {
-			printf("Starting AudioDeviceThread..... ");
-			runAudioThread = true;
-			if (!audioThread)
-				audioThread = new AudioDeviceThread(this);
-
-			// cycleStartTime/EndTime are set before/after the first cycle.
-			// to avoid a "100%" cpu usage value during audioThread startup, set the
-			// cycleStartTime here!
-			cycleStartTime = get_microseconds();
-
-			audioThread->start();
-			if (audioThread->isRunning()) {
-				printf("Running!\n");
-			}
-			running = true;
+	m_runAudioThread = 1;
+	
+	if ((driverType == "ALSA") || (driverType == "Null Driver")) {
+		
+		printf("Starting AudioDeviceThread..... ");
+		
+		
+		if (!audioThread) {
+			audioThread = new AudioDeviceThread(this);
 		}
 
-		emit started();
-	} else {
-		set_parameters(rate, bufferSize, "Null Driver");
+		// m_cycleStartTime/EndTime are set before/after the first cycle.
+		// to avoid a "100%" cpu usage value during audioThread startup, set the
+		// m_cycleStartTime here!
+		m_cycleStartTime = get_microseconds();
+
+		// When the audiothread fails for some reason we catch it in audiothread_finished()
+		// by connecting the finished signal of the audio thread!
+		connect(audioThread, SIGNAL(finished()), this, SLOT(audiothread_finished()));
+		
+		// Start the audio thread, the driver->start() will be called from there!!
+		audioThread->start();
+		
+		// It appears this check is a little silly because it always returns true
+		// this close after calling the QThread::start() function :-(
+		if (audioThread->isRunning()) {
+			printf("Running!\n");
+		}
 	}
+	 
+	// This will activate the jack client
+	if (driverType == "Jack") {
+		driver->start();
+		connect(&jackShutDownChecker, SIGNAL(timeout()), this, SLOT(check_jack_shutdown()));
+		jackShutDownChecker.start(500);
+	}
+
+	emit started();
 }
 
 int AudioDevice::create_driver( QString driverType )
@@ -401,20 +428,23 @@ AudioChannel* AudioDevice::register_playback_channel(const QByteArray& chanName,
 int AudioDevice::shutdown( )
 {
 	PENTER;
+	int r = 1;
 
+	m_runAudioThread = 0;
+	
 	if (audioThread) {
-		runAudioThread = false;
+		disconnect(audioThread, SIGNAL(finished()), this, SLOT(audiothread_finished()));
+		
 		// Wait until the audioThread has finished execution. One second
 		// should do, if it's still running then, the thread must have gone wild or something....
-		int r = audioThread->wait(1000);
-
-		free_memory();
-
-		return r;
+		if (audioThread->isRunning()) {
+			r = audioThread->wait(1000);
+		}
 	}
 
+	free_memory();
 
-	return 1;
+	return r;
 }
 
 /**
@@ -536,7 +566,7 @@ QString AudioDevice::get_driver_type( ) const
 
 /**
  * 
- * @return The cpu load, call this at least 1 time each 3 seconds to keep data consistent 
+ * @return The cpu load, call this at least 1 time per second to keep data consistent 
  */
 trav_time_t AudioDevice::get_cpu_time( )
 {
@@ -547,17 +577,17 @@ trav_time_t AudioDevice::get_cpu_time( )
 
 	trav_time_t currentTime = get_microseconds();
 	float totaltime = 0;
-	float value = 0;
-	int read = cpuTimeBuffer->read_space() / sizeof(audio_sample_t);
+	trav_time_t value = 0;
+	int read = m_cpuTime->read_space();
 
 	while (read != 0) {
-		read = cpuTimeBuffer->read((char*)&value, 1 * sizeof(audio_sample_t));
+		read = m_cpuTime->read(&value, 1);
 		totaltime += value;
 	}
 
-	audio_sample_t result = ( (totaltime  / (currentTime - lastCpuReadTime) ) * 100 );
+	audio_sample_t result = ( (totaltime  / (currentTime - m_lastCpuReadTime) ) * 100 );
 
-	lastCpuReadTime = currentTime;
+	m_lastCpuReadTime = currentTime;
 
 	return result;
 }
@@ -609,5 +639,35 @@ void AudioDevice::mili_sleep(int msec)
 {
 	audioThread->mili_sleep(msec);
 }
+
+
+void AudioDevice::audiothread_finished() 
+{
+	if (m_runAudioThread) {
+		// AudioThread stopped, but we didn't do it ourselves
+		// so something certainly did go wrong when starting the beast
+		// Start the Null Driver to avoid problems with Tsar
+		PERROR("Alsa/Jack AudioThread stopped, but we didn't ask for it! Something apparently did go wrong :-(");
+		set_parameters(44100, 1024, "Null Driver");
+	}
+}
+
+void AudioDevice::xrun( )
+{
+	RT_THREAD_EMIT(this, NULL, bufferUnderRun());
+}
+
+void AudioDevice::check_jack_shutdown()
+{
+	JackDriver* jackdriver = qobject_cast<JackDriver*>(driver);
+	if (jackdriver) {
+		if ( ! jackdriver->is_jack_running()) {
+			printf("jack shutdown detected\n");
+			info().critical(tr("The Jack server has been shutdown!"));
+			set_parameters(44100, 1024, "Null Driver");
+		}
+	}
+}
+
 
 //eof

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDeviceThread.cpp,v 1.8 2006/09/18 18:41:41 r_sijrier Exp $
+$Id: AudioDeviceThread.cpp,v 1.9 2006/10/02 19:10:58 r_sijrier Exp $
 */
 
 #include "AudioDeviceThread.h"
@@ -96,8 +96,16 @@ void AudioDeviceThread::run()
 	become_realtime(true);
 	int err =0;
 
+	
 	WatchDogThread watchdog(this);
 	watchdog.start();
+
+	
+	if (m_device->driver->start() < 0) {
+		watchdog.terminate();
+		watchdog.wait();
+		return;
+	}
 
 	while (m_device->run_audio_thread()) {
 		if ((err = m_device->get_driver()->run_cycle()) < 0) {
@@ -106,6 +114,7 @@ void AudioDeviceThread::run()
 		}
 		watchdogCheck = 1;
 	}
+	
 	watchdog.terminate();
 	watchdog.wait();
 }

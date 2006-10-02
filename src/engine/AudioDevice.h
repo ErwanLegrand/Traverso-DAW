@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.9 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: AudioDevice.h,v 1.10 2006/10/02 19:10:58 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -28,8 +28,9 @@ $Id: AudioDevice.h,v 1.9 2006/09/07 09:36:52 r_sijrier Exp $
 #include <QHash>
 #include <QStringList>
 #include <QByteArray>
+#include <QTimer>
 
-#include "RingBuffer.h"
+#include "RingBufferNPT.h"
 #include "defines.h"
 
 class AudioDeviceThread;
@@ -134,12 +135,12 @@ private:
 	QHash<QByteArray, AudioBus* >		playbackBuses;
 	QHash<QByteArray, AudioBus* >		captureBuses;
 	QStringList				availableDrivers;
+	QTimer					jackShutDownChecker;
 
-	bool 			running;
-	bool 			runAudioThread;
-	RingBuffer*		cpuTimeBuffer;
-	trav_time_t		cycleStartTime;
-	trav_time_t		lastCpuReadTime;
+	RingBufferNPT<trav_time_t>*	m_cpuTime;
+	volatile size_t		m_runAudioThread;
+	trav_time_t		m_cycleStartTime;
+	trav_time_t		m_lastCpuReadTime;
 	uint 			m_bufferSize;
 	uint 			m_rate;
 	uint			m_bitdepth;
@@ -165,13 +166,13 @@ private:
 
 	void transport_cycle_start(trav_time_t time)
 	{
-		cycleStartTime = time;
+		m_cycleStartTime = time;
 	}
 
 	void transport_cycle_end(trav_time_t time)
 	{
-		audio_sample_t runcycleTime = time - cycleStartTime;
-		cpuTimeBuffer->write((char*)&runcycleTime, 1 * sizeof(audio_sample_t));
+		trav_time_t runcycleTime = time - m_cycleStartTime;
+		m_cpuTime->write(&runcycleTime, 1);
 	}
 
 	Driver* get_driver() const
@@ -180,11 +181,9 @@ private:
 	}
 
 	void mili_sleep(int msec);
+	void xrun();
 	
-	bool run_audio_thread() const
-	{
-		return runAudioThread;
-	}
+	size_t run_audio_thread() const;
 
 signals:
 	/**
@@ -211,7 +210,7 @@ signals:
 	/**
 	 *        Connect this signal to any Object who need to be informed about buffer under/overruns
 	 */
-	void xrun();
+	void bufferUnderRun();
 	
 	/**
 	 *        This signal will be emited after succesfull Client removal from within the GUI Thread!
@@ -222,15 +221,17 @@ signals:
 private slots:
 	void private_add_client(Client* client);
 	void private_remove_client(Client* client);
+	void audiothread_finished();
+	void check_jack_shutdown();
 };
 
-static inline unsigned int is_power_of_two (unsigned int n)
-{
-	return !(n & (n - 1));
-}
 
 // use this function to get the audiodevice object
 AudioDevice& audiodevice();
+
+
+inline size_t AudioDevice::run_audio_thread( ) const {return m_runAudioThread;}
+
 
 #endif
 

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Driver.h,v 1.1 2006/04/20 14:50:44 r_sijrier Exp $
+    $Id: Driver.h,v 1.2 2006/10/02 19:10:58 r_sijrier Exp $
 */
 
 #ifndef DRIVER_H
@@ -31,11 +31,12 @@
 
 #include <QList>
 #include <QString>
+#include <QObject>
 
 class AudioDevice;
 class AudioChannel;
 
-class Driver
+class Driver : public QObject
 {
 public:
         Driver(AudioDevice* dev, int rate, nframes_t bufferSize);

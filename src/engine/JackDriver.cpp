@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: JackDriver.cpp,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
+    $Id: JackDriver.cpp,v 1.5 2006/10/02 19:10:58 r_sijrier Exp $
 */
 
 #include "JackDriver.h"
@@ -41,12 +41,15 @@ JackDriver::JackDriver( AudioDevice * dev , int rate, nframes_t bufferSize)
         read = MakeDelegate(this, &JackDriver::_read);
         write = MakeDelegate(this, &JackDriver::_write);
         run_cycle = RunCycleCallback(this, &JackDriver::_run_cycle);
+	m_running = false;
 }
 
 JackDriver::~JackDriver( )
 {
-        if (client)
+	PENTER;
+	if (!m_running) {
                 jack_client_close (client);
+	}
 }
 
 int JackDriver::_run_cycle( )
@@ -199,6 +202,7 @@ int JackDriver::setup( )
         jack_set_process_callback (client, _process_callback, this);
         jack_set_xrun_callback (client, _xrun_callback, this);
         jack_set_buffer_size_callback (client, _bufsize_callback, this);
+	jack_on_shutdown(client, _on_jack_shutdown_callback, this);
 
 
         printf("Connected to the Jack server succesfully!\n");
@@ -212,6 +216,7 @@ int JackDriver::attach( )
 
 int JackDriver::start( )
 {
+	m_running = 1;
         jack_activate (client);
         return 1;
 }
@@ -248,13 +253,20 @@ QString JackDriver::get_device_longname( )
 int JackDriver::_xrun_callback( void * arg )
 {
         JackDriver* driver  = static_cast<JackDriver *> (arg);
-        emit driver->device->xrun();
+	if (driver->m_running) {
+        	driver->device->xrun();
+	}
         return 0;
 }
 
 int JackDriver::_process_callback (nframes_t nframes, void *arg)
 {
-        return static_cast<JackDriver *> (arg)->process_callback (nframes);
+	JackDriver* driver  = static_cast<JackDriver *> (arg);
+	if (!driver->m_running) {
+		return 0;
+	}
+	
+	return driver->process_callback (nframes);
 }
 
 int JackDriver::_bufsize_callback( nframes_t nframes, void * arg )
@@ -269,6 +281,12 @@ int JackDriver::_bufsize_callback( nframes_t nframes, void * arg )
 float JackDriver::get_cpu_load( )
 {
         return jack_cpu_load(client);
+}
+
+void JackDriver::_on_jack_shutdown_callback( void * arg )
+{
+	JackDriver* driver  = static_cast<JackDriver *> (arg);
+	driver->m_running = 0;
 }
 
 

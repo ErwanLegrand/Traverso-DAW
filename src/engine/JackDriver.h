@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: JackDriver.h,v 1.1 2006/04/20 14:50:44 r_sijrier Exp $
+    $Id: JackDriver.h,v 1.2 2006/10/02 19:10:58 r_sijrier Exp $
 */
 
 #ifndef JACKDRIVER_H
@@ -26,9 +26,11 @@
 #include "Driver.h"
 #include "defines.h"
 #include <jack/jack.h>
+#include <QObject>
 
 class JackDriver : public Driver
 {
+	Q_OBJECT
 public:
         JackDriver(AudioDevice* dev, int rate, nframes_t bufferSize);
         ~JackDriver();
@@ -47,8 +49,11 @@ public:
         QString get_device_longname();
 
         float get_cpu_load();
+	
+	size_t is_jack_running() const {return m_running;}
 
 private:
+	volatile size_t	m_running;
         jack_client_t*	client;
         jack_port_t**	inputPorts;
         jack_port_t**	outputPorts;
@@ -56,6 +61,10 @@ private:
         static int _xrun_callback(void *arg);
         static int  _process_callback (nframes_t nframes, void *arg);
         static int _bufsize_callback(jack_nframes_t nframes, void *arg);
+	static void _on_jack_shutdown_callback(void* arg);
+	
+signals:
+	void jackShutDown();	
 
 };
 
