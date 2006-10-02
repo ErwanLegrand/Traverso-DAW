@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SystemInfoWidget.cpp,v 1.3 2006/05/08 20:05:27 r_sijrier Exp $
+$Id: SystemInfoWidget.cpp,v 1.4 2006/10/02 19:16:00 r_sijrier Exp $
 */
 
 #include "SystemInfoWidget.h"
@@ -62,7 +62,7 @@ SystemInfoWidget::SystemInfoWidget( QWidget * parent )
 	connect(&cpuUsageTimer, SIGNAL(timeout()), this, SLOT(update_cpu_usage()));
 
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(update_driver_info()));
-	connect(&audiodevice(), SIGNAL(xrun()), this, SLOT(update_xrun_info()), Qt::QueuedConnection);
+	connect(&audiodevice(), SIGNAL(bufferUnderRun()), this, SLOT(update_xrun_info()), Qt::QueuedConnection);
 
 	sytemResourcesTimer.start(2000);
 	cpuUsageTimer.start(1000);
@@ -119,15 +119,19 @@ void SystemInfoWidget::update_xrun_info( )
 
 void SystemInfoWidget::update_cpu_usage( )
 {
-	float time = audiodevice().get_cpu_time();
+// 	float time = audiodevice().get_cpu_time();
+	float time = 0;
 	Project* project = pm().get_project();
+	int status = 0;
 	
 	if (project)
 		foreach(Song* song, project->get_song_list() ) {
-			time += song->get_diskio()->get_cpu_time();
+			status += song->get_diskio()->get_read_buffers_fill_status();
+// 			time += song->get_diskio()->get_cpu_time();
 		}
 
-	cpuLabel->setText(QByteArray::number(time, 'f', 2).append(" %"));
+// 	cpuLabel->setText(QByteArray::number(time, 'f', 2).append(" %"));
+	cpuLabel->setText(QByteArray::number(status).append(" %"));
 }
 
 
