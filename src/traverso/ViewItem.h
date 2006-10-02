@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ViewItem.h,v 1.3 2006/08/03 14:33:46 r_sijrier Exp $
+    $Id: ViewItem.h,v 1.4 2006/10/02 19:14:31 r_sijrier Exp $
 */
 
 #ifndef VIEWITEM_H
@@ -79,15 +79,6 @@ public:
         ViewPort* get_viewport() const
         {
                 return m_vp;
-        }
-
-        static bool smaller(const ViewItem* left, const ViewItem* right )
-        {
-                return left->get_z_order() < right->get_z_order();
-        }
-        static bool greater(const ViewItem* left, const ViewItem* right )
-        {
-                return left->get_z_order() > right->get_z_order();
         }
 
 protected:
