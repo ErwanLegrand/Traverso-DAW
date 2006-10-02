@@ -54,7 +54,6 @@ SOURCES	= AudioClip.cpp \
 	RingBuffer.cpp \
 	Song.cpp \
 	Track.cpp \
-	Tsar.cpp \
 	Utils.cpp \
 	WriteSource.cpp \
 	gdither.cpp \
@@ -89,9 +88,9 @@ HEADERS	= precompile.h \
 	ProjectManager.h \
 	ReadSource.h \
 	RingBuffer.h \
+	RingBufferNPT.h \
 	Song.h \
 	Track.h \
-	Tsar.h \
 	Utils.h \
 	WriteSource.h \
 	libtraversocore.h \
