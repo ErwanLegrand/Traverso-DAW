@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.15 2006/10/02 19:10:58 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.16 2006/10/04 19:23:21 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -244,9 +244,12 @@ int AudioDevice::run_one_cycle( nframes_t nframes, float  )
 		return -1;
 	}
 
-	foreach(Client* client, clients) {
-		if (client->process(nframes) < 0) {}
+	for (int i=0; i<clients.size(); ++i) {
+		if (clients.at(i)->process(nframes) < 0) {
+			// ?
+		}
 	}
+	
 	if (driver->write(nframes) < 0) {
 		qDebug("driver write failed!");
 		return -1;

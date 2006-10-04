@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AlsaDriver.cpp,v 1.6 2006/10/02 19:09:57 r_sijrier Exp $
+$Id: AlsaDriver.cpp,v 1.7 2006/10/04 19:21:55 r_sijrier Exp $
 */
 
 
@@ -984,8 +984,9 @@ int AlsaDriver::stop()
 	be entering offline mode.
 	*/
 
-	foreach(AudioChannel* bus, captureChannels) {
-		buf = bus->get_buffer(frames_per_cycle);
+	for (int i=0; i<captureChannels.size(); ++i) {
+		AudioChannel* chan = captureChannels.at(i);
+		buf = chan->get_buffer(frames_per_cycle);
 		memset (buf, 0, sizeof (audio_sample_t) * frames_per_cycle);
 	}
 
@@ -1420,7 +1421,8 @@ int AlsaDriver::_read(nframes_t nframes)
 			return -1;
 		}
 
-		foreach(AudioChannel* channel, captureChannels) {
+		for (int i=0; i<captureChannels.size(); ++i) {
+			AudioChannel* channel = captureChannels.at(i);
 			
 			if (!channel->has_data()) {
 				//no-copy optimization
@@ -1473,7 +1475,8 @@ int AlsaDriver::_write(nframes_t nframes)
 			return -1;
 		}
 
-		foreach(AudioChannel* channel, playbackChannels) {
+		for (int i=0; i<playbackChannels.size(); ++i) {
+			AudioChannel* channel = playbackChannels.at(i);
 			if (!channel->has_data()) {
 				continue;
 			}
