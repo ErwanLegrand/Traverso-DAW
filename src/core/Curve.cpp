@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.cpp,v 1.19 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: Curve.cpp,v 1.20 2006/10/04 19:26:35 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -456,7 +456,8 @@ void Curve::set_range( double when )
 
 void Curve::x_scale( double factor )
 {
-	foreach(CurveNode* node, nodes) {
+	for (int i=0; i<nodes.size(); ++i) {
+		CurveNode* node = nodes.at(i); 
 		node->set_when(node->get_when() * factor);
 	}
 	
