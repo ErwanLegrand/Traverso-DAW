@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.17 2006/10/02 19:04:38 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.18 2006/10/04 19:24:25 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
@@ -140,19 +140,16 @@ DiskIO::DiskIO(Song* song)
 	: m_song(song)
 {
 	m_diskThread = new DiskIOThread(this);
-	cpuTimeBuffer = new RingBuffer(2048);
+	cpuTimeBuffer = new RingBuffer(128);
 	lastCpuReadTime = get_microseconds();
 	m_readBufferFillStatus = m_stopWork = m_seeking = 0; 
 	m_hardDiskOverLoadCounter = 0;
 	
-	// calculation: worse case latency = 20 ms updateinterval + 12 ms seek time = 32 ms
-	// frame count.= (samplerate * latency) / 1000  
-	// latency framecount + audiodevice buffer size == highest possible latency in frames, or minimal 
-	// frame count required to assure correct operation 
-	m_minBufStatus = (audiodevice().get_sample_rate() * (UPDATE_INTERVAL + 12)) / 1000 + 1024;
+	m_minBufStatus = (audiodevice().get_sample_rate() * 12) / 1000 + 1024;
 	
 	QSettings settings;
 	m_bufferSize = settings.value("HardWare/PreBufferSize").toInt();
+	framebuffer = new audio_sample_t[m_bufferSize];
 
 	// Move this instance to the workthread
 	moveToThread(m_diskThread);
@@ -208,23 +205,19 @@ void DiskIO::do_work( )
 	
 	int whilecount = 0; 
 	m_hardDiskOverLoadCounter = 0;
-	audio_sample_t framebuffer[m_bufferSize];
 	cycleStartTime = get_microseconds();
 	
 	while (there_are_processable_sources()) {
 		
-		foreach(AudioSource* source, m_processableSources) {
+		for (int i=0; i<m_processableSources.size(); ++i) {
+			AudioSource* source = m_processableSources.at(i);
 	
 			if (m_stopWork) {
 				update_time_usage();
 				return;
 			}
 	
-			if (source->need_sync()) {
-				source->sync(framebuffer);
-			} else {
-				source->process_ringbuffer(framebuffer);
-			}
+			source->process_ringbuffer(framebuffer);
 		}
 		
 		if (whilecount++ > 1000) {
@@ -245,7 +238,9 @@ int DiskIO::there_are_processable_sources( )
 	QList< ReadSource * > syncSources;
 		
 	for (int i=6; i >= 0; --i) {
-		foreach(WriteSource* source, m_writeSources) {
+		
+		for (int j=0; j<m_writeSources.size(); ++j) {
+			WriteSource* source = m_writeSources.at(j); 
 			size_t space = source->get_processable_buffer_space();
 			int prio = space  / get_chunk_size();
 			
@@ -267,17 +262,13 @@ int DiskIO::there_are_processable_sources( )
 			}
 		}
 		
-		if (m_processableSources.size() > 0) {
-			return 1;
-		}
-	}
-				
-	for (int i=6; i >= 0; --i) {
-		foreach(ReadSource* source, m_readSources) {
+		for (int j=0; j<m_readSources.size(); ++j) {
+			ReadSource* source = m_readSources.at(j);
 			size_t space = source->get_processable_buffer_space();
 			int prio = space  / get_chunk_size();
+			bool needSync = source->need_sync();
 			
-			if (prio > i && source->is_active() && ! source->need_sync()) {
+			if (prio > i && source->is_active() && !needSync ) {
 				
 				if ( (! m_seeking) && ((m_bufferSize - space) < m_minBufStatus) ) {
 					if (! m_hardDiskOverLoadCounter++) {
@@ -291,7 +282,7 @@ int DiskIO::there_are_processable_sources( )
 				
 				m_processableSources.append(source);
 			
-			} else if (source->need_sync()) {
+			} else if (needSync) {
 				if (syncSources.size() == 0) {
 					syncSources.append(source);
 				}
@@ -302,11 +293,13 @@ int DiskIO::there_are_processable_sources( )
 			return 1;
 		}
 	}
+				
 	
 	if (syncSources.size() > 0) {
-		m_processableSources.append(syncSources.at(0));
+		syncSources.at(0)->sync(framebuffer);
 		return 1;
 	}
+	
 	
 	return 0;
 }

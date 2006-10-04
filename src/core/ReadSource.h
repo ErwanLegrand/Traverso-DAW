@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.h,v 1.11 2006/10/02 19:04:38 r_sijrier Exp $
+$Id: ReadSource.h,v 1.12 2006/10/04 19:26:12 r_sijrier Exp $
 */
 
 #ifndef READSOURCE_H
@@ -75,8 +75,8 @@ private:
 
 inline bool ReadSource::need_sync() const
 {
-	foreach(PrivateReadSource* source, m_sources) {
-		if (source->need_sync()) {
+	for (int i=0; i<m_sources.size(); ++i) {
+		if (m_sources.at(i)->need_sync()) {
 			return true;
 		}
 	}
@@ -93,8 +93,8 @@ inline int ReadSource::get_processable_buffer_space( ) const
 
 inline void ReadSource::process_ringbuffer( audio_sample_t * framebuffer )
 {
-	foreach(PrivateReadSource* source, m_sources) {
-		source->process_ringbuffer(framebuffer);
+	for (int i=0; i<m_sources.size(); ++i) {
+		m_sources.at(i)->process_ringbuffer(framebuffer);
 	}
 }
 
