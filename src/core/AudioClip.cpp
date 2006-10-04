@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.46 2006/09/18 18:31:10 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.47 2006/10/04 19:25:45 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -419,8 +419,8 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 	}
 
 
-	foreach(FadeCurve* fade, m_fades) {
-		fade->process(mixdown, read_frames);
+	for (int i=0; i<m_fades.size(); ++i) {
+		m_fades.at(i)->process(mixdown, read_frames);
 	}
 
 	return 1;
