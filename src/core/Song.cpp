@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.33 2006/10/02 19:04:38 r_sijrier Exp $
+$Id: Song.cpp,v 1.34 2006/10/06 16:20:59 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -122,8 +122,8 @@ Song::~Song()
 
 	delete [] mixdown;
 	delete [] gainbuffer;
-	delete diskio;
 
+	delete diskio;
 	delete regionList;
 	delete masterOut;
 	delete m_hs;
@@ -134,16 +134,19 @@ Song::~Song()
 void Song::init()
 {
 	PENTER2;
-	diskio = new DiskIO(this);
-	
 	threadId = QThread::currentThreadId ();
 
+	diskio = new DiskIO(this);
+	
 	connect(this, SIGNAL(seekStart(uint)), diskio, SLOT(seek(uint)), Qt::QueuedConnection);
 	connect(&audiodevice(), SIGNAL(clientRemoved(Client*)), this, SLOT (audiodevice_client_removed(Client*)));
 	connect(&audiodevice(), SIGNAL(started()), this, SLOT(audiodevice_started()));
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(resize_buffer()), Qt::DirectConnection);
 	connect(diskio, SIGNAL(seekFinished()), this, SLOT(seek_finished()), Qt::QueuedConnection);
 	connect (diskio, SIGNAL(readSourceBufferUnderRun()), this, SLOT(handle_diskio_readbuffer_underrun()));
+	connect (diskio, SIGNAL(writeSourceBufferOverRun()), this, SLOT(handle_diskio_writebuffer_overrun()));
+	connect(this, SIGNAL(transferStarted()), diskio, SLOT(start_io()));
+	connect(this, SIGNAL(transferStopped()), diskio, SLOT(stop_io()));
 
 	mixdown = new audio_sample_t[audiodevice().get_buffer_size()];
 	gainbuffer = new audio_sample_t[audiodevice().get_buffer_size()];
@@ -212,7 +215,7 @@ int Song::set_state( const QDomNode & node )
 
 	QDomNode pluginChainNode = node.firstChildElement("PluginChain");
 	pluginChain->set_state(pluginChainNode);
-
+	
 	return 1;
 }
 
