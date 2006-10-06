@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.27 2006/09/14 10:49:39 r_sijrier Exp $
+$Id: Track.cpp,v 1.28 2006/10/06 16:21:52 r_sijrier Exp $
 */
 
 #include "Track.h"
@@ -143,7 +143,7 @@ int Track::set_state( const QDomNode & node )
 			
 			AudioClip* clip = pm().get_project()->get_audiosource_manager()->get_clip(id);
 			if (!clip) {
-				PERROR("Clip with id %d not found!", id);
+				PERROR("Clip with id %ld not found!", (long)id);
 				break;
 			}
 			
@@ -559,8 +559,9 @@ int Track::process( nframes_t nframes )
 	
 	QList<Plugin* >	pluginList = pluginChain->get_plugin_list();
 	
-	foreach(Plugin* plugin, pluginList) {
-		plugin->process(bus, nframes);
+	
+	for (int i=0; i<pluginList.size(); ++i) {
+		pluginList.at(i)->process(bus, nframes);
 	}
 		
 	return processResult;
