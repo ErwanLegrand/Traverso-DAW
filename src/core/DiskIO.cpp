@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.19 2006/10/06 16:20:16 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.20 2006/10/06 22:26:09 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
@@ -25,6 +25,8 @@ $Id: DiskIO.cpp,v 1.19 2006/10/06 16:20:16 r_sijrier Exp $
 #include <QThread>
 
 #if defined (LINUX_BUILD)
+
+# define IOPRIO_SUPPORT		1
 
 #include <unistd.h>
 #include <sys/syscall.h>
@@ -42,7 +44,7 @@ $Id: DiskIO.cpp,v 1.19 2006/10/06 16:20:16 r_sijrier Exp $
 # define __NR_ioprio_set	1274
 # define __NR_ioprio_get	1275
 #else
-# error "Unsupported archiecture!"
+# define IOPRIO_SUPPORT		0
 #endif
 
 enum {
@@ -99,7 +101,8 @@ public:
 protected:
 	void run()
 	{
-#if defined (LINUX_BUILD)
+#if defined (LINUX_BUILD) 
+	if (IOPRIO_SUPPORT) {
 // When using the cfq scheduler we are able to set the priority of the io for what it's worth though :-) 
 		int ioprio = 0, ioprio_class = IOPRIO_CLASS_RT;
 		int value = syscall(__NR_ioprio_set, IOPRIO_WHO_PROCESS, getpid(), ioprio | ioprio_class << IOPRIO_CLASS_SHIFT);
@@ -116,6 +119,7 @@ protected:
 			PMESG("Using prioritized disk I/O (Only effective with the cfq scheduler)");
 			PMESG("%s: prio %d", to_prio[ioprio_class], ioprio);
 		}
+	}
 #endif
 		exec();
 	}
