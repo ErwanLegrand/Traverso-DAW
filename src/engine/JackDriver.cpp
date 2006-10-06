@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: JackDriver.cpp,v 1.5 2006/10/02 19:10:58 r_sijrier Exp $
+    $Id: JackDriver.cpp,v 1.6 2006/10/06 11:44:59 r_sijrier Exp $
 */
 
 #include "JackDriver.h"
@@ -60,7 +60,8 @@ int JackDriver::_run_cycle( )
 int JackDriver::_read( nframes_t nframes )
 {
         int portNumber = 0;
-        foreach(AudioChannel* chan, captureChannels) {
+	for (int i=0; i<captureChannels.size(); ++i) {
+		AudioChannel* chan = captureChannels.at(i);
                 if (!chan->has_data()) {
                         portNumber++;
                         continue;
@@ -74,7 +75,9 @@ int JackDriver::_read( nframes_t nframes )
 int JackDriver::_write( nframes_t nframes )
 {
         int portNumber = 0;
-        foreach(AudioChannel* chan, playbackChannels) {
+	for (int i=0; i<playbackChannels.size(); ++i) {
+		AudioChannel* chan = playbackChannels.at(i);
+		
 /*		if (!chan->has_data()) {
 			portNumber++;
 			continue;
@@ -223,7 +226,8 @@ int JackDriver::start( )
 
 int JackDriver::stop( )
 {
-        return 1;
+	m_running = 0;
+	return 1;
 }
 
 int JackDriver::process_callback (nframes_t nframes)
