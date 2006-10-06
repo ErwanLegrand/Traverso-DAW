@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.16 2006/10/04 19:23:21 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.17 2006/10/06 11:44:01 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -443,6 +443,11 @@ int AudioDevice::shutdown( )
 		if (audioThread->isRunning()) {
 			r = audioThread->wait(1000);
 		}
+	}
+	
+	JackDriver* jackdriver = qobject_cast<JackDriver*>(driver);
+	if (jackdriver) {
+		jackdriver->stop();
 	}
 
 	free_memory();
