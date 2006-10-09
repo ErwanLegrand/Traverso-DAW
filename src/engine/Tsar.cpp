@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Tsar.cpp,v 1.1 2006/10/02 19:11:43 r_sijrier Exp $
+$Id: Tsar.cpp,v 1.2 2006/10/09 11:56:07 r_sijrier Exp $
 */
 
 #include "Tsar.h"
@@ -103,7 +103,8 @@ void Tsar::process_events( )
 {
 //#define profile
 
-	foreach(RingBufferNPT<TsarEvent>* newEvents, m_events) {
+	for (int i=0; i<m_events.size(); ++i) {
+		RingBufferNPT<TsarEvent>* newEvents = m_events.at(i);
 		
 		int processedCount = 0;
 		int newEventCount = newEvents->read_space();
