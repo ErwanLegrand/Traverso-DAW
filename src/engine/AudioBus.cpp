@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioBus.cpp,v 1.6 2006/09/11 21:15:52 r_sijrier Exp $
+$Id: AudioBus.cpp,v 1.7 2006/10/16 23:58:31 r_sijrier Exp $
 */
 
 #include "AudioBus.h"
@@ -109,8 +109,9 @@ void AudioBus::add_channel(AudioChannel* chan)
  */
 void AudioBus::set_buffer_size( nframes_t size )
 {
-	foreach(AudioChannel* chan, channels)
-		chan->set_buffer_size(size);
+	for (int i=0; i<channels.size(); ++i) {
+		channels.at(i)->set_buffer_size(size);
+	}
 }
 
 
@@ -144,8 +145,8 @@ void AudioBus::set_monitor_peaks( bool monitor )
 		m_monitors--;
 	}
 	
-	foreach(AudioChannel* chan, channels) {
-		chan->set_monitor_peaks(m_monitors);
+	for (int i=0; i<channels.size(); ++i) {
+		channels.at(i)->set_monitor_peaks(m_monitors);
 	}
 }
 

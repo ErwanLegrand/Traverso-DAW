@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioBus.h,v 1.4 2006/09/11 21:15:45 r_sijrier Exp $
+$Id: AudioBus.h,v 1.5 2006/10/16 23:58:31 r_sijrier Exp $
 */
 
 
@@ -68,8 +68,8 @@ public:
 	
 	void monitor_peaks()
 	{
-		foreach(AudioChannel* chan, channels) {
-			chan->monitor_peaks();
+		for (int i=0; i<channels.size(); ++i) {
+			channels.at(i)->monitor_peaks();
 		}
 	}
 
@@ -79,8 +79,8 @@ public:
 	 */
 	void silence_buffers(nframes_t nframes)
 	{
-		foreach(AudioChannel* chan, channels) {
-			chan->silence_buffer(nframes);
+		for (int i=0; i<channels.size(); ++i) {
+			channels.at(i)->silence_buffer(nframes);
 		}
 	}
 
