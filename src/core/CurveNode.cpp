@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveNode.cpp,v 1.3 2006/08/03 14:33:46 r_sijrier Exp $
+$Id: CurveNode.cpp,v 1.4 2006/10/17 00:07:43 r_sijrier Exp $
 */
 
 #include "CurveNode.h"
@@ -27,21 +27,6 @@ $Id: CurveNode.cpp,v 1.3 2006/08/03 14:33:46 r_sijrier Exp $
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-
-CurveNode::CurveNode(Curve* curve, double pos, double  val)
-	: m_curve(curve)
-{
-	PENTERCONS3;
-	coeff[0] = coeff[1] = coeff[2] = coeff[3] = 0.0;
-	
-	m_when = pos;
-	m_value = val;
-}
-
-CurveNode::~CurveNode()
-{
-	PENTERDES3;
-}
 
 void CurveNode::set_relative_when( double when )
 {
