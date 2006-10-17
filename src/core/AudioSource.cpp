@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSource.cpp,v 1.10 2006/10/02 19:04:38 r_sijrier Exp $
+$Id: AudioSource.cpp,v 1.11 2006/10/17 00:04:48 r_sijrier Exp $
 */
 
 
@@ -140,11 +140,6 @@ QString AudioSource::get_dir( ) const
 QString AudioSource::get_name( ) const
 {
 	return m_name;
-}
-
-qint64 AudioSource::get_id( ) const
-{
-	return m_id;
 }
 
 int AudioSource::get_bit_depth( ) const

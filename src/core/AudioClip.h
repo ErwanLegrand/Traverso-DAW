@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.21 2006/09/14 10:49:39 r_sijrier Exp $
+$Id: AudioClip.h,v 1.22 2006/10/17 00:04:17 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -96,7 +96,7 @@ public:
 	int get_rate() const;
 	int get_bitdepth() const;
 	qint64 get_id() const;
-	qint64 get_readsource_id();
+	qint64 get_readsource_id() const;
 	
 	QString get_name() const;
 	
@@ -197,6 +197,9 @@ private slots:
 	void private_remove_fade(FadeCurve* fade);
 
 };
+
+
+inline qint64 AudioClip::get_readsource_id( ) const {return m_readSourceId;}
 
 
 #endif

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.47 2006/10/04 19:25:45 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.48 2006/10/17 00:04:17 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -949,10 +949,6 @@ qint64 AudioClip::get_id( ) const
 	return m_id;
 }
 
-qint64 AudioClip::get_readsource_id( )
-{
-	return m_readSourceId;
-}
 
 int AudioClip::ref( )
 {

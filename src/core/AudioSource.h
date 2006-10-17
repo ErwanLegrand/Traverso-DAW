@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSource.h,v 1.8 2006/10/02 19:04:38 r_sijrier Exp $
+$Id: AudioSource.h,v 1.9 2006/10/17 00:04:48 r_sijrier Exp $
 */
 
 #ifndef AUDIOSOURCE_H
@@ -86,5 +86,6 @@ inline bool AudioSource::need_sync( ) const {return false;}
 
 inline int AudioSource::get_processable_buffer_space() const {return 0;}
 
+inline qint64 AudioSource::get_id( ) const {return m_id;}
 
 #endif
