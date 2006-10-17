@@ -17,13 +17,14 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Utils.h,v 1.4 2006/10/02 19:08:42 r_sijrier Exp $
+    $Id: Utils.h,v 1.5 2006/10/17 00:13:42 r_sijrier Exp $
 */
 
 #ifndef UTILS_H
 #define UTILS_H
 
 #include "defines.h"
+#include <QPixmap>
 
 #define QS_C(x) x.toAscii().data()
 
@@ -39,5 +40,6 @@ static inline unsigned int is_power_of_two (unsigned int n)
 	return !(n & (n - 1));
 }
 
+QPixmap find_pixmap(const QString& pixname);
 
 #endif

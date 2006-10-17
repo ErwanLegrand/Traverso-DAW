@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Utils.cpp,v 1.3 2006/09/13 12:51:07 r_sijrier Exp $
+    $Id: Utils.cpp,v 1.4 2006/10/17 00:13:42 r_sijrier Exp $
 */
 
 #include "Utils.h"
@@ -25,6 +25,7 @@
 
 #include <QString>
 #include <QDateTime>
+#include <QPixmapCache>
 
 
 QString frame_to_smpte(nframes_t nframes, int rate)
@@ -69,6 +70,18 @@ qint64 create_id( )
 	id += r;
 	
 	return id;
+}
+
+QPixmap find_pixmap( const QString & pixname )
+{
+	QPixmap pixmap;
+
+	if ( ! QPixmapCache::find(pixname, pixmap)) {
+		pixmap = QPixmap(pixname);
+		QPixmapCache::insert(pixname, pixmap);
+	}
+	
+	return pixmap;
 }
 
 //eof
