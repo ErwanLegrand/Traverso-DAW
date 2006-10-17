@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.6 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: InputEngine.cpp,v 1.7 2006/10/17 00:10:25 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -1085,9 +1085,9 @@ QList< IEAction* > InputEngine::get_contextitem_actionlist( ContextItem * ci )
 EventCatcher::EventCatcher()
 {
 	holdTimer.setSingleShot(true);
-	connect( &holdTimer, SIGNAL(timeout()), this, SLOT(assume_hold()) );
-	connect( &secondChanceTimer, SIGNAL(timeout()), this, SLOT(quit_second_chance()) );
-	connect( &clearOutputTimer, SIGNAL(timeout()), this, SLOT(clear_output()) );
+	connect( &holdTimer, SIGNAL(timeout()), this, SLOT(assume_hold()));
+	connect( &secondChanceTimer, SIGNAL(timeout()), this, SLOT(quit_second_chance()));
+	connect( &clearOutputTimer, SIGNAL(timeout()), this, SLOT(clear_output()));
 }
 
 
