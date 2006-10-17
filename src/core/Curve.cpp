@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.cpp,v 1.20 2006/10/04 19:26:35 r_sijrier Exp $
+$Id: Curve.cpp,v 1.21 2006/10/17 00:07:01 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -387,9 +387,9 @@ double Curve::multipoint_eval (double x)
 	std::pair<QList<CurveNode* >::iterator, QList<CurveNode* >::iterator> range;
 
 	if ((lookup_cache.left < 0) ||
-	((lookup_cache.left > x) || 
-	(lookup_cache.range.first == nodes.end()) || 
-	((*lookup_cache.range.second)->get_when() < x))) {
+		((lookup_cache.left > x) || 
+		(lookup_cache.range.first == nodes.end()) || 
+		((*lookup_cache.range.second)->get_when() < x))) {
 		
 		Comparator cmp;
 		CurveNode cn (this, x, 0.0);
@@ -472,19 +472,6 @@ void Curve::set_changed( )
 	changed = true;
 }
 
-double Curve::get_range( ) const
-{
-	if (nodes.isEmpty()) {
-// 		printf("Curve::get_range(), nodes is empty\n");
-		return 0;
-	}
-	
-	if (nodes.last()) {
-		return nodes.last()->get_when();
-	}
-		
-	return 0;
-}
 
 void Curve::clear( )
 {

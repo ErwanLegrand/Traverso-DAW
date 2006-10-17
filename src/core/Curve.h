@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.h,v 1.11 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: Curve.h,v 1.12 2006/10/17 00:07:01 r_sijrier Exp $
 */
 
 #ifndef CURVE_H
@@ -100,5 +100,14 @@ signals :
 	void clear_Signal();
 };
 
+
+inline double Curve::get_range( ) const
+{
+	if ( ! nodes.isEmpty()) {
+		return nodes.last()->get_when();
+	}
+		
+	return 0;
+}
 
 #endif
