@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginChain.h,v 1.2 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: PluginChain.h,v 1.3 2006/10/17 00:01:25 r_sijrier Exp $
 */
 
 
@@ -44,7 +44,7 @@ public:
 	Command* add_plugin(Plugin* plugin, bool historable=true);
 	Command* remove_plugin(Plugin* plugin);
 	
-	QList<Plugin* >	get_plugin_list() const {return m_pluginList;}
+	QList<Plugin* >* get_plugin_list() {return &m_pluginList;}
 	
 private:
 	QList<Plugin* >	m_pluginList;
