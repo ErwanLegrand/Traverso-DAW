@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: LV2PluginPropertiesDialog.cpp,v 1.2 2006/08/09 21:12:45 r_sijrier Exp $
+$Id: LV2PluginPropertiesDialog.cpp,v 1.3 2006/10/17 00:02:33 r_sijrier Exp $
 */
 
 
@@ -65,7 +65,7 @@ void LV2PluginPropertiesDialog::setup_gui()
 		slider->set_minimum(port->get_min_control_value());
 		slider->set_maximum(port->get_max_control_value());
 		slider->set_value(port->get_control_value());
-		connect(slider, SIGNAL(sliderValueChanged(float )), port, SLOT(set_control_value(float )));
+		connect(slider, SIGNAL(sliderValueChanged(float)), port, SLOT(set_control_value(float)));
 
 		QLabel* minvalue = new QLabel();
 		minvalue->setNum(port->get_min_control_value());
@@ -79,7 +79,7 @@ void LV2PluginPropertiesDialog::setup_gui()
 		currentvalue->setNum(port->get_control_value());
 		currentvalue->setFixedWidth(35);
 
-		connect(slider, SIGNAL(sliderValueChangedDouble(double )), currentvalue, SLOT(setNum (double )));
+		connect(slider, SIGNAL(sliderValueChangedDouble(double)), currentvalue, SLOT(setNum (double)));
 
 		QLabel* controlname = new QLabel(port->get_description());
 		controlname->setFixedWidth(80);
