@@ -17,16 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.20 2006/10/06 22:26:09 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.21 2006/10/18 18:37:39 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
 #include "Song.h"
 #include <QThread>
 
-#if defined (LINUX_BUILD)
-
-# define IOPRIO_SUPPORT		1
+#if defined (USE_IO_PRIO)
 
 #include <unistd.h>
 #include <sys/syscall.h>
@@ -34,15 +32,19 @@ $Id: DiskIO.cpp,v 1.20 2006/10/06 22:26:09 r_sijrier Exp $
 #if defined(__i386__)
 # define __NR_ioprio_set	289
 # define __NR_ioprio_get	290
+# define IOPRIO_SUPPORT		1
 #elif defined(__ppc__)
 # define __NR_ioprio_set	273
 # define __NR_ioprio_get	274
+# define IOPRIO_SUPPORT		1
 #elif defined(__x86_64__)
 # define __NR_ioprio_set	251
 # define __NR_ioprio_get	252
+# define IOPRIO_SUPPORT		1
 #elif defined(__ia64__)
 # define __NR_ioprio_set	1274
 # define __NR_ioprio_get	1275
+# define IOPRIO_SUPPORT		1
 #else
 # define IOPRIO_SUPPORT		0
 #endif
@@ -64,7 +66,7 @@ const char *to_prio[] = { "none", "realtime", "best-effort", "idle", };
 #define IOPRIO_CLASS_SHIFT	13
 #define IOPRIO_PRIO_MASK	0xff
 
-#endif // endif LINUX_BUILD
+#endif // endif USE_IO_PRIO
 
 #include "AudioSource.h"
 #include "ReadSource.h"
@@ -101,7 +103,7 @@ public:
 protected:
 	void run()
 	{
-#if defined (LINUX_BUILD) 
+#if defined (USE_IO_PRIO) 
 	if (IOPRIO_SUPPORT) {
 // When using the cfq scheduler we are able to set the priority of the io for what it's worth though :-) 
 		int ioprio = 0, ioprio_class = IOPRIO_CLASS_RT;
@@ -244,7 +246,7 @@ int DiskIO::there_are_processable_sources( )
 		
 		for (int j=0; j<m_writeSources.size(); ++j) {
 			WriteSource* source = m_writeSources.at(j); 
-			size_t space = source->get_processable_buffer_space();
+			int space = source->get_processable_buffer_space();
 			int prio = space  / get_chunk_size();
 			
 			// If the source stopped recording, it will write it's remaining samples in the next 
@@ -267,7 +269,7 @@ int DiskIO::there_are_processable_sources( )
 		
 		for (int j=0; j<m_readSources.size(); ++j) {
 			ReadSource* source = m_readSources.at(j);
-			size_t space = source->get_processable_buffer_space();
+			int space = source->get_processable_buffer_space();
 			int prio = space  / get_chunk_size();
 			bool needSync = source->need_sync();
 			
