@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursor.h,v 1.3 2006/10/18 12:08:56 r_sijrier Exp $
+    $Id: Cursor.h,v 1.4 2006/10/18 21:17:28 r_sijrier Exp $
 */
 
 
@@ -128,11 +128,14 @@ public:
         QRect draw(QPainter& painter);
 	
 	QRect get_geometry();
+	
+	void set_text(const QString& text);
 
 private:
 	QPixmap		pixmap;
 	QPoint		m_pos;
 	ViewPort*	m_vp;
+	QString		m_text;
 
 };
 

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewPort.cpp,v 1.8 2006/10/18 12:08:56 r_sijrier Exp $
+$Id: ViewPort.cpp,v 1.9 2006/10/18 21:17:28 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -303,6 +303,16 @@ void ViewPort::set_hold_cursor( const QString & cursorName )
 	m_holdCursor = new HoldCursor(this, QPoint(cpointer().x(), cpointer().y()), cursorName);
 	
 	update();
+}
+
+void ViewPort::set_hold_cursor_text( const QString & text )
+{
+	if (!m_holdCursor) {
+		PERROR("Cannot set text for hold cursor, since it DOESN'T EXIST!!!");
+		return;
+	}
+	
+	m_holdCursor->set_text(text);
 }
 
 //eof

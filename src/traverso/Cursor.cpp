@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Cursor.cpp,v 1.4 2006/10/18 12:08:56 r_sijrier Exp $
+$Id: Cursor.cpp,v 1.5 2006/10/18 21:17:28 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -248,12 +248,28 @@ QRect HoldCursor::draw( QPainter & painter )
 // 	backup = m_vp->pixmap->copy(m_pos.x(), m_pos.y(), 32, 32);
 	
 	painter.drawPixmap(m_pos.x(), m_pos.y(), pixmap);
+	
+	if (!m_text.isEmpty()) {
+		QFontMetrics fm(QFont("Bitstream Vera Sans", 11));
+		int width = fm.width(m_text) + 4;
+		int height = fm.height();
+		QRect textArea = QRect(m_pos.x() + pixmap.width(), m_pos.y() + pixmap.height() / 4, width, height);
+		painter.setFont(QFont("Bitstream Vera Sans", 11));
+		painter.fillRect(textArea, QBrush(Qt::white));
+		painter.drawText(textArea, m_text);
+	}
+	
 	return QRect();
 }
 
 QRect HoldCursor::get_geometry( )
 {
 	return QRect(m_pos.x(), m_pos.y(), pixmap.width(), pixmap.height());
+}
+
+void HoldCursor::set_text( const QString & text )
+{
+	m_text = text;
 }
 
 
