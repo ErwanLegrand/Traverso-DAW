@@ -1,4 +1,7 @@
 <ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
  <class>QuickDriverConfigWidget</class>
  <widget class="QWidget" name="QuickDriverConfigWidget" >
   <property name="geometry" >
@@ -6,78 +9,276 @@
     <x>0</x>
     <y>0</y>
     <width>285</width>
-    <height>130</height>
+    <height>131</height>
    </rect>
   </property>
   <property name="palette" >
    <palette>
     <active>
-     <colorrole role="Base" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
-        <red>255</red>
-        <green>255</green>
-        <blue>255</blue>
-       </color>
-      </brush>
-     </colorrole>
-     <colorrole role="Window" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
-        <red>255</red>
-        <green>255</green>
-        <blue>222</blue>
-       </color>
-      </brush>
-     </colorrole>
+     <color>
+      <red>0</red>
+      <green>0</green>
+      <blue>0</blue>
+     </color>
+     <color>
+      <red>221</red>
+      <green>223</green>
+      <blue>228</blue>
+     </color>
+     <color>
+      <red>255</red>
+      <green>255</green>
+      <blue>255</blue>
+     </color>
+     <color>
+      <red>255</red>
+      <green>255</green>
+      <blue>255</blue>
+     </color>
+     <color>
+      <red>85</red>
+      <green>85</green>
+      <blue>85</blue>
+     </color>
+     <color>
+      <red>199</red>
+      <green>199</green>
+      <blue>199</blue>
+     </color>
+     <color>
+      <red>0</red>
+      <green>0</green>
+      <blue>0</blue>
+     </color>
+     <color>
+      <red>255</red>
+      <green>255</green>
+      <blue>255</blue>
+     </color>
+     <color>
+      <red>0</red>
+      <green>0</green>
+      <blue>0</blue>
+     </color>
+     <color>
+      <red>255</red>
+      <green>255</green>
+      <blue>255</blue>
+     </color>
+     <color>
+      <red>239</red>
+      <green>239</green>
+      <blue>239</blue>
+     </color>
+     <color>
+      <red>0</red>
+      <green>0</green>
+      <blue>0</blue>
+     </color>
+     <color>
+      <red>103</red>
+      <green>141</green>
+      <blue>178</blue>
+     </color>
+     <color>
+      <red>255</red>
+      <green>255</green>
+      <blue>255</blue>
+     </color>
+     <color>
+      <red>0</red>
+      <green>0</green>
+      <blue>238</blue>
+     </color>
+     <color>
+      <red>82</red>
+      <green>24</green>
+      <blue>139</blue>
+     </color>
+     <color>
+      <red>232</red>
+      <green>232</green>
+      <blue>232</blue>
+     </color>
     </active>
     <inactive>
-     <colorrole role="Base" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
-        <red>255</red>
-        <green>255</green>
-        <blue>255</blue>
-       </color>
-      </brush>
-     </colorrole>
-     <colorrole role="Window" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
-        <red>255</red>
-        <green>255</green>
-        <blue>222</blue>
-       </color>
-      </brush>
-     </colorrole>
+     <color>
+      <red>0</red>
+      <green>0</green>
+      <blue>0</blue>
+     </color>
+     <color>
+      <red>221</red>
+      <green>223</green>
+      <blue>228</blue>
+     </color>
+     <color>
+      <red>255</red>
+      <green>255</green>
+      <blue>255</blue>
+     </color>
+     <color>
+      <red>255</red>
+      <green>255</green>
+      <blue>255</blue>
+     </color>
+     <color>
+      <red>85</red>
+      <green>85</green>
+      <blue>85</blue>
+     </color>
+     <color>
+      <red>199</red>
+      <green>199</green>
+      <blue>199</blue>
+     </color>
+     <color>
+      <red>0</red>
+      <green>0</green>
+      <blue>0</blue>
+     </color>
+     <color>
+      <red>255</red>
+      <green>255</green>
+      <blue>255</blue>
+     </color>
+     <color>
+      <red>0</red>
+      <green>0</green>
+      <blue>0</blue>
+     </color>
+     <color>
+      <red>255</red>
+      <green>255</green>
+      <blue>255</blue>
+     </color>
+     <color>
+      <red>239</red>
+      <green>239</green>
+      <blue>239</blue>
+     </color>
+     <color>
+      <red>0</red>
+      <green>0</green>
+      <blue>0</blue>
+     </color>
+     <color>
+      <red>103</red>
+      <green>141</green>
+      <blue>178</blue>
+     </color>
+     <color>
+      <red>255</red>
+      <green>255</green>
+      <blue>255</blue>
+     </color>
+     <color>
+      <red>0</red>
+      <green>0</green>
+      <blue>238</blue>
+     </color>
+     <color>
+      <red>82</red>
+      <green>24</green>
+      <blue>139</blue>
+     </color>
+     <color>
+      <red>232</red>
+      <green>232</green>
+      <blue>232</blue>
+     </color>
     </inactive>
     <disabled>
-     <colorrole role="Base" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
-        <red>255</red>
-        <green>255</green>
-        <blue>222</blue>
-       </color>
-      </brush>
-     </colorrole>
-     <colorrole role="Window" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
-        <red>255</red>
-        <green>255</green>
-        <blue>222</blue>
-       </color>
-      </brush>
-     </colorrole>
+     <color>
+      <red>128</red>
+      <green>128</green>
+      <blue>128</blue>
+     </color>
+     <color>
+      <red>221</red>
+      <green>223</green>
+      <blue>228</blue>
+     </color>
+     <color>
+      <red>255</red>
+      <green>255</green>
+      <blue>255</blue>
+     </color>
+     <color>
+      <red>255</red>
+      <green>255</green>
+      <blue>255</blue>
+     </color>
+     <color>
+      <red>85</red>
+      <green>85</green>
+      <blue>85</blue>
+     </color>
+     <color>
+      <red>199</red>
+      <green>199</green>
+      <blue>199</blue>
+     </color>
+     <color>
+      <red>199</red>
+      <green>199</green>
+      <blue>199</blue>
+     </color>
+     <color>
+      <red>255</red>
+      <green>255</green>
+      <blue>255</blue>
+     </color>
+     <color>
+      <red>128</red>
+      <green>128</green>
+      <blue>128</blue>
+     </color>
+     <color>
+      <red>239</red>
+      <green>239</green>
+      <blue>239</blue>
+     </color>
+     <color>
+      <red>239</red>
+      <green>239</green>
+      <blue>239</blue>
+     </color>
+     <color>
+      <red>0</red>
+      <green>0</green>
+      <blue>0</blue>
+     </color>
+     <color>
+      <red>86</red>
+      <green>117</green>
+      <blue>148</blue>
+     </color>
+     <color>
+      <red>255</red>
+      <green>255</green>
+      <blue>255</blue>
+     </color>
+     <color>
+      <red>0</red>
+      <green>0</green>
+      <blue>238</blue>
+     </color>
+     <color>
+      <red>82</red>
+      <green>24</green>
+      <blue>139</blue>
+     </color>
+     <color>
+      <red>232</red>
+      <green>232</green>
+      <blue>232</blue>
+     </color>
     </disabled>
    </palette>
   </property>
   <property name="windowTitle" >
    <string>Form</string>
-  </property>
-  <property name="styleSheet" >
-   <string/>
   </property>
   <layout class="QGridLayout" >
    <property name="margin" >
@@ -86,106 +287,67 @@
    <property name="spacing" >
     <number>6</number>
    </property>
-   <item row="2" column="1" >
+   <item row="3" column="0" colspan="3" >
+    <widget class="Line" name="line_3" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2" >
+    <widget class="QPushButton" name="applyButton" >
+     <property name="maximumSize" >
+      <size>
+       <width>16777215</width>
+       <height>22</height>
+      </size>
+     </property>
+     <property name="text" >
+      <string>Apply</string>
+     </property>
+     <property name="autoDefault" >
+      <bool>false</bool>
+     </property>
+     <property name="default" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" >
     <spacer>
      <property name="orientation" >
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType" >
-      <enum>QSizePolicy::Fixed</enum>
+      <enum>Qt::Horizontal</enum>
      </property>
      <property name="sizeHint" >
       <size>
-       <width>20</width>
-       <height>10</height>
+       <width>40</width>
+       <height>20</height>
       </size>
      </property>
     </spacer>
    </item>
-   <item row="0" column="0" >
-    <widget class="QLabel" name="label" >
-     <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>5</hsizetype>
-       <vsizetype>0</vsizetype>
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="frameShape" >
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow" >
-      <enum>QFrame::Raised</enum>
-     </property>
-     <property name="text" >
-      <string>Driver</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1" >
-    <widget class="QLabel" name="label_5" >
-     <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>5</hsizetype>
-       <vsizetype>0</vsizetype>
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize" >
+   <item row="4" column="0" >
+    <widget class="QPushButton" name="saveButton" >
+     <property name="maximumSize" >
       <size>
-       <width>75</width>
-       <height>0</height>
+       <width>16777215</width>
+       <height>22</height>
       </size>
      </property>
-     <property name="frameShape" >
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow" >
-      <enum>QFrame::Raised</enum>
-     </property>
      <property name="text" >
-      <string>Rate (Hz)</string>
+      <string>Save</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="2" >
-    <widget class="QLabel" name="label_12" >
+   <item row="1" column="2" >
+    <widget class="QComboBox" name="latencyComboBox" >
      <property name="sizePolicy" >
       <sizepolicy>
        <hsizetype>5</hsizetype>
        <vsizetype>0</vsizetype>
-       <horstretch>0</horstretch>
+       <horstretch>1</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
-     </property>
-     <property name="frameShape" >
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow" >
-      <enum>QFrame::Raised</enum>
-     </property>
-     <property name="text" >
-      <string>Latency (ms)</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0" >
-    <widget class="QComboBox" name="driverComboBox" >
-     <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>5</hsizetype>
-       <vsizetype>0</vsizetype>
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize" >
-      <size>
-       <width>90</width>
-       <height>0</height>
-      </size>
      </property>
     </widget>
    </item>
@@ -237,75 +399,112 @@
      </item>
     </widget>
    </item>
-   <item row="1" column="2" >
-    <widget class="QComboBox" name="latencyComboBox" >
+   <item row="1" column="0" >
+    <widget class="QComboBox" name="driverComboBox" >
      <property name="sizePolicy" >
       <sizepolicy>
        <hsizetype>5</hsizetype>
        <vsizetype>0</vsizetype>
-       <horstretch>1</horstretch>
+       <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-    </widget>
-   </item>
-   <item row="4" column="0" >
-    <widget class="QPushButton" name="saveButton" >
-     <property name="maximumSize" >
+     <property name="minimumSize" >
       <size>
-       <width>16777215</width>
-       <height>22</height>
+       <width>90</width>
+       <height>0</height>
       </size>
      </property>
-     <property name="styleSheet" >
-      <string/>
+    </widget>
+   </item>
+   <item row="0" column="2" >
+    <widget class="QLabel" name="label_12" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>5</hsizetype>
+       <vsizetype>0</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="frameShape" >
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Raised</enum>
      </property>
      <property name="text" >
-      <string>Save</string>
+      <string>Latency (ms)</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="1" >
+   <item row="0" column="1" >
+    <widget class="QLabel" name="label_5" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>5</hsizetype>
+       <vsizetype>0</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize" >
+      <size>
+       <width>75</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="frameShape" >
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Raised</enum>
+     </property>
+     <property name="text" >
+      <string>Rate (Hz)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" >
+    <widget class="QLabel" name="label" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>5</hsizetype>
+       <vsizetype>0</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="frameShape" >
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Raised</enum>
+     </property>
+     <property name="text" >
+      <string>Driver</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" >
     <spacer>
      <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Fixed</enum>
      </property>
      <property name="sizeHint" >
       <size>
-       <width>40</width>
-       <height>20</height>
+       <width>75</width>
+       <height>12</height>
       </size>
      </property>
     </spacer>
    </item>
-   <item row="4" column="2" >
-    <widget class="QPushButton" name="applyButton" >
-     <property name="maximumSize" >
-      <size>
-       <width>16777215</width>
-       <height>22</height>
-      </size>
-     </property>
-     <property name="text" >
-      <string>Apply</string>
-     </property>
-     <property name="autoDefault" >
-      <bool>false</bool>
-     </property>
-     <property name="default" >
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0" colspan="3" >
-    <widget class="Line" name="line_3" >
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
+ <pixmapfunction></pixmapfunction>
  <tabstops>
   <tabstop>driverComboBox</tabstop>
   <tabstop>rateComboBox</tabstop>
