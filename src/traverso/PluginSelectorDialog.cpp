@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginSelectorDialog.cpp,v 1.2 2006/08/25 11:17:18 r_sijrier Exp $
+$Id: PluginSelectorDialog.cpp,v 1.3 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #include "PluginSelectorDialog.h"
@@ -70,7 +70,7 @@ PluginSelectorDialog::PluginSelectorDialog( QWidget * p )
 
 	pluginTreeView->header()->resizeSection(0, 200);
 
-	connect(pluginTreeView, SIGNAL(doubleClicked(QModelIndex& index )), this, SLOT(model_double_clicked( const QModelIndex& index )));
+	connect(pluginTreeView, SIGNAL(doubleClicked(QModelIndex&)), this, SLOT(model_double_clicked(QModelIndex&)));
 }
 
 PluginSelectorDialog::~PluginSelectorDialog( )

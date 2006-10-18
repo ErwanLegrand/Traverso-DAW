@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursor.h,v 1.2 2006/05/03 11:59:39 r_sijrier Exp $
+    $Id: Cursor.h,v 1.3 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 
@@ -34,6 +34,24 @@ class QPainter;
 class QRect;
 class Song;
 class QPixmap;
+
+
+class FCursor : public QWidget
+{
+	Q_OBJECT
+	
+public:
+
+        FCursor(ViewPort* parent);
+
+protected:
+        void paintEvent( QPaintEvent* e);
+	
+private:
+	ViewPort*	m_vp;
+        QPixmap		pixmap;
+};
+
 
 class Cursor : public ViewItem
 {
@@ -86,6 +104,8 @@ private:
         int currentMode;
 
         double time;
+	
+	FCursor*	fCursor;
 
 public slots:
         void set_cursor_playmode();
@@ -94,6 +114,28 @@ public slots:
         void schedule_for_repaint();
         void play_cursor_repaint();
 };
+
+
+class QPoint;
+
+class HoldCursor
+{
+
+public:
+        HoldCursor(ViewPort* vp, QPoint pos, const QString& name);
+        ~HoldCursor() {};
+
+        QRect draw(QPainter& painter);
+	
+	QRect get_geometry();
+
+private:
+	QPixmap		pixmap;
+	QPoint		m_pos;
+	ViewPort*	m_vp;
+
+};
+
 
 #endif
 

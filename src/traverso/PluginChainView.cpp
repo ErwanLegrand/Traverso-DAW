@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginChainView.cpp,v 1.3 2006/08/25 11:17:18 r_sijrier Exp $
+    $Id: PluginChainView.cpp,v 1.4 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #include "PluginChainView.h"
@@ -27,6 +27,10 @@
 #include "TrackView.h"
 #include "PluginView.h"
 #include "ColorManager.h"
+#include "ViewPort.h"
+
+#include <Track.h>
+
 #if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 #include <LV2Plugin.h>
 #endif
@@ -51,7 +55,7 @@ PluginChainView::~PluginChainView( )
         PENTERDES2;
 }
 
-QRect PluginChainView::draw( QPainter & p )
+QRect PluginChainView::draw( QPainter& )
 {
        return QRect();
 }

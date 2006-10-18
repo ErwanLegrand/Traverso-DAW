@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: PanelLed.cpp,v 1.2 2006/04/25 17:22:13 r_sijrier Exp $
+    $Id: PanelLed.cpp,v 1.3 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #include "PanelLed.h"
@@ -25,6 +25,8 @@
 #include <QPainter>
 
 #include "TrackView.h"
+#include "ViewPort.h"
+#include <Utils.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -48,10 +50,12 @@ PanelLed::~PanelLed( )
 
 QRect PanelLed::draw( QPainter & p )
 {
-        if (m_isOn)
-                p.drawPixmap(m_xpos, LED_Y + m_trackView->get_base_y(), QPixmap(onType));
-        else
-                p.drawPixmap(m_xpos, LED_Y + m_trackView->get_base_y(), QPixmap(offType));
+
+	if (m_isOn) {
+		p.drawPixmap(m_xpos, LED_Y + m_trackView->get_base_y(), find_pixmap(onType));
+	} else {
+		p.drawPixmap(m_xpos, LED_Y + m_trackView->get_base_y(), find_pixmap(offType));
+	}
 
         return QRect();
 }

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.12 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.13 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -34,6 +34,7 @@ $Id: TrackView.cpp,v 1.12 2006/09/07 09:36:52 r_sijrier Exp $
 #include "SongView.h"
 #include "PanelLed.h"
 #include "BusSelector.h"
+#include <Utils.h>
 #include "PluginChainView.h"
 #include <Plugin.h>
 
@@ -61,9 +62,6 @@ TrackView::TrackView(ViewPort* vp, SongView* parent, Track* track)
 	paintPanel = true;
 	paintClipArea = true;
 
-	busInMenu = new QMenu();
-	busOutMenu = new QMenu();
-
 	pluginChainView = new PluginChainView(m_vp, this);
 
 	muteLed = new PanelLed(m_vp, this, MUTE_LED_X, ":/muteled_on", ":/muteled_off");
@@ -73,34 +71,22 @@ TrackView::TrackView(ViewPort* vp, SongView* parent, Track* track)
 
 	connect(m_vp, SIGNAL(resized()), this, SLOT(resize()));
 
-	connect(m_sv->get_song(), SIGNAL(hzoomChanged( )), this, SLOT(repaint_cliparea( )));
+	connect(m_sv->get_song(), SIGNAL(hzoomChanged()), this, SLOT(repaint_cliparea()));
 	connect (m_sv->get_song(), SIGNAL(firstVisibleFrameChanged()), this, SLOT(repaint_cliparea()));
 
-	connect(m_track, SIGNAL(audioClipAdded(AudioClip* )), this, SLOT(add_new_audioclipview(AudioClip* )));
-	connect(m_track, SIGNAL(audioClipRemoved(AudioClip* )), this, SLOT(remove_audioclipview(AudioClip* )));
-	connect(m_track, SIGNAL(heightChanged( )), this, SLOT(height_changed()));
-	connect(m_track, SIGNAL(armedChanged(bool )), recLed, SLOT(ison_changed(bool )));
-	connect(m_track, SIGNAL(soloChanged(bool )), soloLed, SLOT(ison_changed(bool )));
-	connect(m_track, SIGNAL(muteChanged(bool )), muteLed, SLOT(ison_changed(bool )));
+	connect(m_track, SIGNAL(audioClipAdded(AudioClip*)), this, SLOT(add_new_audioclipview(AudioClip*)));
+	connect(m_track, SIGNAL(audioClipRemoved(AudioClip*)), this, SLOT(remove_audioclipview(AudioClip*)));
+	connect(m_track, SIGNAL(heightChanged()), this, SLOT(height_changed()));
+	connect(m_track, SIGNAL(armedChanged(bool)), recLed, SLOT(ison_changed(bool)));
+	connect(m_track, SIGNAL(soloChanged(bool)), soloLed, SLOT(ison_changed(bool)));
+	connect(m_track, SIGNAL(muteChanged(bool)), muteLed, SLOT(ison_changed(bool)));
 	connect(m_track, SIGNAL(gainChanged()), this, SLOT(panel_info_changed()));
 	connect(m_track, SIGNAL(panChanged()), this, SLOT(panel_info_changed()));
 	connect(m_track, SIGNAL(stateChanged()), this, SLOT(panel_info_changed()));
 
-	connect(busInMenu, SIGNAL(triggered ( QAction* )), this, SLOT(set_bus_in( QAction* )));
-	connect(busOutMenu, SIGNAL(triggered ( QAction* )), this, SLOT(set_bus_out( QAction* )));
 
 
-	init_context_menu( this );
 	m_type = TRACKVIEW;
-
-}
-
-
-TrackView::~TrackView()
-{
-	PENTERDES;
-	delete busInMenu;
-	delete busOutMenu;
 }
 
 
@@ -258,14 +244,19 @@ void TrackView::draw_panel_bus_in_out()
 	QString sor = "";
 	sor.append(m_track->get_bus_out());
 
-	paint.drawPixmap(10, y, QPixmap(":/bus_in"));
+	QPixmap pixmap = find_pixmap(":/bus_in");
+	
+	paint.drawPixmap(10, y, pixmap);
 	//	paint.fillRect(10,y,10,10,QColor(255,0,0));
 	//	paint.setPen(Qt::black);
 	//	paint.drawRect(10,y,10,10);
 	paint.drawText(30,y+8, sir);
 
 	paint.fillRect(95, y, 75, 10, cm().get("TRACK_PANEL_BG"));
-	paint.drawPixmap(85, y, QPixmap(":/bus_out"));
+	
+	pixmap = find_pixmap(":/bus_out");
+	
+	paint.drawPixmap(85, y, pixmap);
 	//	paint.fillRect(10,y+16,10,10,QColor(0,255,0));
 	//	paint.setPen(Qt::black);
 	//	paint.drawRect(10,y+16,10,10);
@@ -347,7 +338,7 @@ void TrackView::add_new_audioclipview( AudioClip * clip )
 	AudioClipView* audioClipView = new AudioClipView(m_vp, this, clip);
 	audioClipViewList.append(audioClipView);
 
-	connect(m_sv->get_song(), SIGNAL(hzoomChanged( )), audioClipView, SLOT(schedule_for_repaint()));
+	connect(m_sv->get_song(), SIGNAL(hzoomChanged()), audioClipView, SLOT(schedule_for_repaint()));
 	connect(m_sv->get_song(), SIGNAL(firstVisibleFrameChanged()), audioClipView, SLOT(schedule_for_repaint()));
 	connect(m_track, SIGNAL(heightChanged()), audioClipView, SLOT(schedule_for_repaint()));
 	connect(m_vp, SIGNAL(resized()), audioClipView, SLOT(schedule_for_repaint()));
@@ -450,31 +441,6 @@ Command* TrackView::touch_and_center()
 }
 
 
-Command* TrackView::select_bus_in()
-{
-	PENTER;
-	busInMenu->clear();
-	QStringList names = audiodevice().get_capture_buses_names();
-	foreach(QString name, names) {
-		busInMenu->addAction(name);
-	}
-	busInMenu->exec(QCursor::pos());
-	return (Command*) 0;
-}
-
-
-Command* TrackView::select_bus_out()
-{
-	busOutMenu->clear();
-	QStringList names = audiodevice().get_playback_buses_names();
-	foreach(QString name, names) {
-		busOutMenu->addAction(name);
-	}
-	busOutMenu->exec(QCursor::pos());
-	return (Command*) 0;
-}
-
-
 void TrackView::touch_track(int , int x)
 {
 	PENTER;
@@ -498,24 +464,13 @@ void TrackView::repaint_all_clips( )
 	}
 }
 
-void TrackView::set_bus_in( QAction* action )
-{
-	PENTER;
-	m_track->set_bus_in(action->text().toAscii());
-}
-
-void TrackView::set_bus_out( QAction* action )
-{
-	PENTER;
-	m_track->set_bus_out(action->text().toAscii());
-}
 
 Command * TrackView::edit_properties( )
 {
 	bool ok;
 	QString text = QInputDialog::getText(m_vp, tr("Set Track name"),
 					tr("Enter new Track name"),
-					QLineEdit::Normal, m_track->get_name(), &ok, Qt::Tool);
+					QLineEdit::Normal, m_track->get_name(), &ok);
 	if (ok && !text.isEmpty()) {
 		m_track->set_name(text);
 	}
@@ -552,6 +507,12 @@ Command * TrackView::add_new_plugin( )
 
 #endif
 	return 0;
+}
+
+void TrackView::force_redraw( )
+{
+	repaint_all_clips();
+	paintPanel = true;
 }
 
 //eof

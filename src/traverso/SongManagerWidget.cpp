@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongManagerWidget.cpp,v 1.4 2006/06/19 15:28:05 r_sijrier Exp $
+$Id: SongManagerWidget.cpp,v 1.5 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #include "SongManagerWidget.h"
@@ -48,8 +48,7 @@ SongManagerWidget::SongManagerWidget( QWidget * parent )
 	treeSongWidget->setHeaderLabels(stringList);
 	update_song_list();
 
-	connect(treeSongWidget, SIGNAL(itemClicked ( QTreeWidgetItem* , int  )), this, SLOT(songitem_clicked(QTreeWidgetItem*, int )));
-
+	connect(treeSongWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(songitem_clicked(QTreeWidgetItem*,int)));
 }
 
 SongManagerWidget::~SongManagerWidget()

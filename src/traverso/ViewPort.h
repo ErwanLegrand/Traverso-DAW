@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ViewPort.h,v 1.3 2006/08/31 17:56:38 r_sijrier Exp $
+    $Id: ViewPort.h,v 1.4 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #ifndef VIEWPORT_H
@@ -34,6 +34,7 @@ class ViewItem;
 class ContextItem;
 class Import;
 class Track;
+class HoldCursor;
 
 class ViewPort : public QWidget
 {
@@ -56,9 +57,10 @@ public :
         void register_viewitem(ViewItem* item);
         void unregister_viewitem(ViewItem* item);
         
+	void set_hold_cursor(const QString& cursorName);
         void reset_context();
 
-        QPixmap 	pixmap;
+        QPixmap* 	pixmap;
 
 protected:
         void leaveEvent ( QEvent * );
@@ -77,9 +79,12 @@ private:
         QList<ViewItem* > predrawItemList;
         QList<ViewItem* > postdrawItemList;
 
+	HoldCursor* 	m_holdCursor;
         Import* 	import;
         Track*		importTrack;
         QString		importFileName;
+	
+	bool		scheduledForRepaint;
 
         void clear_repaintviewitemlist();
 
@@ -87,7 +92,7 @@ private:
 signals:
         void resized();
         void pointChanged();
-        void resetContext();
+        void contextChanged();
 
 };
 

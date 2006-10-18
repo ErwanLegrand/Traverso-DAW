@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: VUMeter.cpp,v 1.6 2006/08/25 11:17:58 r_sijrier Exp $
+$Id: VUMeter.cpp,v 1.7 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -73,6 +73,10 @@ VUMeter::VUMeter(QWidget* parent, AudioBus* bus)
 	presetMark[5]=-36.0f;
 	presetMark[6]=-96.0f;
 
+	QPalette palette;
+	palette.setColor(QPalette::Background, cm().get("BUS_BACKGROUND"));
+	setPalette(palette);
+	
 	setAutoFillBackground(false);
 	setAttribute(Qt::WA_OpaquePaintEvent);
 }

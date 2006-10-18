@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.h,v 1.5 2006/10/02 19:18:01 r_sijrier Exp $
+$Id: Interface.h,v 1.6 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #ifndef INTERFACE_H
@@ -27,7 +27,11 @@ $Id: Interface.h,v 1.5 2006/10/02 19:18:01 r_sijrier Exp $
 #include <QMainWindow>
 #include <QWidget>
 #include <QDockWidget>
-#include "libtraversocore.h"
+#include <QMenu>
+#include <QAction>
+#include <QPushButton>
+#include <QToolBar>
+#include <QHash>
 
 class Help;
 class Song;
@@ -37,6 +41,8 @@ class InfoBox;
 class ViewPort;
 class SongView;
 class OverViewWidget;
+class ContextItem;
+class Command;
 
 class QLabel;
 class ManagerWidget;
@@ -45,35 +51,19 @@ class QStackedWidget;
 class BorderLayout;
 class QHBoxLayout;
 class HistoryWidget;
+class QTreeView;
+class QuickDriverConfigWidget;
+class ResourcesInfoWidget;
+class DriverInfoWidget;
+class HDDSpaceInfoWidget;
 
 class Interface : public QMainWindow
 {
 	Q_OBJECT
 
 public :
-	static const int MINIMUM_INTERFACE_WIDTH = 750;
-	static const int MINIMUM_INTERFACE_HEIGHT = 500;
-
 	Interface();
 	~Interface();
-
-	void busmonitor_dock();
-	void busmonitor_undock();
-	void create();
-
-	bool is_busmonitor_docked();
-
-
-public slots :
-	void set_project(Project* project);
-	void set_songview(Song* song);
-	void create_songview(Song* song);
-
-	Command* set_manager_widget();
-	Command* set_songview_widget();
-	Command* full_screen();
-	Command* about_traverso();
-	Command* show_export_widget();
 
 protected:
 	void resizeEvent(QResizeEvent* e);
@@ -85,6 +75,7 @@ private:
 	QStackedWidget* 	centerAreaWidget;
 	QList<SongView* > 	songViewList;
 	QList<ViewPort* > 	currentProjectViewPortList;
+	QHash<QString, QMenu*>	m_contextMenus;
 	SongView* 		currentSongView;
 	ManagerWidget* 		managerWidget;
 	ExportWidget*		exportWidget;
@@ -92,13 +83,14 @@ private:
 	HistoryWidget*		historyWidget;
 	QDockWidget* 		hvdw;
 	QDockWidget*		tpdw;
+	QDockWidget*		asdw;
+	QTreeView* 		audiosourcesview;
+	QuickDriverConfigWidget* driverConfigWidget;
 	 
 	bool 			managerWidgetCreated;
-	bool 			isBusMonitorDocked;
 
 	InfoBox*		infoBox;
 	BusMonitor* 		busMonitor;
-	QWidget* 		busMonitorWindow;
 	Help* 			helpWindow;
 
 	BorderLayout* 		mainVBoxLayout;
@@ -122,12 +114,55 @@ private:
 	QAction*		projManViewAction;
 	QAction*		settingsViewAction;
 	
+	QToolBar* 		mainToolBar;
+	
+	ResourcesInfoWidget*	resourcesInfo;
+	DriverInfoWidget*	driverInfo;
+	HDDSpaceInfoWidget*	hddInfo;
+	
+	void create();
 	void create_menus();
-	void create_menu_actions();
+	
+	QMenu* create_context_menu(ContextItem* item);
+	QMenu* create_fade_selector_menu(const QString& fadeTypeName);
 
+public slots :
+	void set_project(Project* project);
+	void set_songview(Song* song);
+	void create_songview(Song* song);
+	void process_context_menu_action(QAction* action);
+	void set_bus_in(QAction* action);
+	void set_bus_out(QAction* action);
+	void set_fade_in_shape(QAction* action);
+	void set_fade_out_shape(QAction* action);
+	void show_driver_config_widget();
+
+	Command* set_manager_widget();
+	Command* set_songview_widget();
+	Command* full_screen();
+	Command* about_traverso();
+	Command* show_export_widget();
+	Command* show_context_menu();
+	Command* select_bus_in();
+	Command* select_bus_out();
+	Command* select_fade_in_shape();
+	Command* select_fade_out_shape();
+};
+
+
+#include <QLCDNumber>
+
+class DigitalClock : public QLCDNumber
+{
+	Q_OBJECT
+
+	public:
+		DigitalClock(QWidget *parent = 0);
+
+	private slots:
+		void showTime();
 };
 
 #endif
-
 
 // eof

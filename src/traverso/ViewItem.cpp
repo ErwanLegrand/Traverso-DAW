@@ -17,15 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewItem.cpp,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: ViewItem.cpp,v 1.5 2006/10/18 12:08:56 r_sijrier Exp $
 */
-
-#include <libtraversocore.h>
 
 #include <QPainter>
 
 #include "ViewItem.h"
 #include "SongView.h"
+#include "ViewPort.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -39,9 +38,6 @@ ViewItem::ViewItem(ViewPort* vp, ViewItem* parent, ContextItem* relatedContextIt
 	else
 		zOrder = 0;
 
-	m_child = 0;
-	contextMenu = 0;
-	
 	set_context_item(relatedContextItem);
 	
 	m_vp->schedule_for_repaint(this);
@@ -51,17 +47,8 @@ ViewItem::ViewItem(ViewPort* vp, ViewItem* parent, ContextItem* relatedContextIt
 
 ViewItem::~ ViewItem()
 {
-	// 	PENTERDES2;
-	if (contextMenu)
-		delete contextMenu;
 }
 
-bool ViewItem::visible( )
-{
-	return ( (geometry.top() <= m_vp->height()) &&
-		(geometry.left() <= m_vp->width()) &&
-		(geometry.right() >= 0) );
-}
 
 QRect ViewItem::predraw( QPainter &  )
 {
@@ -81,36 +68,9 @@ void ViewItem::set_geometry( int x, int y, int width, int height )
 	geometry.setRight(x + width);
 }
 
-Command * ViewItem::show_context_menu( )
+void ViewItem::force_redraw( )
 {
-	if (m_child)
-		contextMenu->exec(QCursor::pos());
-	return 0;
-}
-
-void ViewItem::process_menu_action( QAction* qaction )
-{
-	QString name = (qaction->data()).toString();
-	ie().broadcast_action_from_contextmenu(name);
-}
-
-void ViewItem::init_context_menu( ViewItem * item )
-{
-	contextMenu = new QMenu();
-
-	m_child = item;
-	connect(contextMenu, SIGNAL(triggered ( QAction* )), this, SLOT(process_menu_action( QAction* )));
-	IEActionList = ie().get_contextitem_actionlist( item );
-	qSort(IEActionList.begin(), IEActionList.end(), IEAction::smaller);
-
-	QAction* action;
-	foreach(IEAction* ieaction, IEActionList) {
-		QString text = QString(ieaction->keySequence + "  " + ieaction->name);
-		action = new QAction(this);
-		action->setText(text);
-		action->setData(ieaction->name);
-		contextMenu->addAction(action);
-	}
+	m_vp->schedule_for_repaint(this);
 }
 
 

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ProjectManagerWidget.cpp,v 1.5 2006/06/19 08:59:52 r_sijrier Exp $
+    $Id: ProjectManagerWidget.cpp,v 1.6 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #include "ProjectManagerWidget.h"
@@ -50,7 +50,7 @@ ProjectManagerWidget::ProjectManagerWidget( QWidget * parent )
 	
 	projectListView->header()->resizeSection(0, 200);
 
-        connect(projectListView, SIGNAL(itemClicked ( QTreeWidgetItem* , int  )), this, SLOT(projectitem_clicked(QTreeWidgetItem*, int )));
+        connect(projectListView, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(projectitem_clicked(QTreeWidgetItem*,int)));
 }
 
 ProjectManagerWidget::~ ProjectManagerWidget( )

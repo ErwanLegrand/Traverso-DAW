@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongInfoWidget.cpp,v 1.8 2006/07/03 17:46:56 r_sijrier Exp $
+$Id: SongInfoWidget.cpp,v 1.9 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #include "SongInfoWidget.h"
@@ -40,8 +40,8 @@ SongInfoWidget::SongInfoWidget( QWidget * parent )
 	setPalette(palette);
 	setAutoFillBackground(true);
 
-	connect(&pm(), SIGNAL(projectLoaded(Project* )), this, SLOT(set_project(Project* )));
-	connect(&smpteTimer, SIGNAL(timeout() ), this, SLOT(update_smpte() ) );
+	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
+	connect(&smpteTimer, SIGNAL(timeout()), this, SLOT(update_smpte()));
 }
 
 SongInfoWidget::~ SongInfoWidget( )
@@ -51,7 +51,7 @@ void SongInfoWidget::set_project(Project* project )
 {
 	if (project) {
 		m_project = project;
-		connect(m_project, SIGNAL(currentSongChanged(Song* )), this, SLOT(set_song(Song* )));
+		connect(m_project, SIGNAL(currentSongChanged(Song*)), this, SLOT(set_song(Song*)));
 	} else {
 		smpteLabel->setText("-");
 		zoomLabel->setText("-");

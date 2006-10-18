@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.h,v 1.5 2006/07/31 13:27:27 r_sijrier Exp $
+$Id: TrackView.h,v 1.6 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #ifndef TRACKVIEW_H
@@ -32,7 +32,6 @@ class Track;
 class AudioClip;
 class SongView;
 class PanelLed;
-class BusSelector;
 class AudioClipView;
 class PluginChainView;
 class Plugin;
@@ -48,8 +47,10 @@ public:
 
 
 	TrackView(ViewPort* vp, SongView* sv, Track* track);
-	~TrackView();
+	~TrackView() {};
 
+	void force_redraw();
+	
 	QRect draw(QPainter& painter);
 	int get_base_y() const
 	{
@@ -76,9 +77,6 @@ public:
 private:
 	Track* 			m_track;
 	SongView* 		m_sv;
-	BusSelector* 		busSelector;
-	QMenu* 			busInMenu;
-	QMenu* 			busOutMenu;
 	PluginChainView* 	pluginChainView;
 
 	QPixmap panelPixmap;
@@ -119,8 +117,6 @@ public slots:
 	void schedule_for_repaint();
 	void resize();
 	void repaint_all_clips();
-	void set_bus_in(QAction* action);
-	void set_bus_out(QAction* action);
 
 	Command* add_new_plugin();	
 	Command* touch();
@@ -128,8 +124,6 @@ public slots:
 /*        Command* capture_from_channel_both();
 	Command* capture_from_channel_left();
 	Command* capture_from_channel_right();*/
-	Command* select_bus_in();
-	Command* select_bus_out();
 	Command* edit_properties();
 };
 

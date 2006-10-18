@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ExportWidget.cpp,v 1.3 2006/06/16 14:09:26 r_sijrier Exp $
+    $Id: ExportWidget.cpp,v 1.4 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #include "ExportWidget.h"
@@ -57,10 +57,10 @@ ExportWidget::ExportWidget( QWidget * parent )
                 songListView->setModel(model);
                 songListView->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-                connect(m_project, SIGNAL(songExportProgressChanged(int )), this, SLOT(update_song_progress(int )));
-                connect(m_project, SIGNAL(overallExportProgressChanged(int )), this, SLOT(update_overall_progress(int )));
+                connect(m_project, SIGNAL(songExportProgressChanged(int)), this, SLOT(update_song_progress(int)));
+                connect(m_project, SIGNAL(overallExportProgressChanged(int)), this, SLOT(update_overall_progress(int)));
                 connect(m_project, SIGNAL(exportFinished()), this, SLOT(render_finished()));
-                connect(m_project, SIGNAL(exportStartedForSong(Song* )), this, SLOT (set_exporting_song(Song* )));
+                connect(m_project, SIGNAL(exportStartedForSong(Song*)), this, SLOT (set_exporting_song(Song*)));
         }
 
         bitdepthComboBox->insertItem(0, "16");

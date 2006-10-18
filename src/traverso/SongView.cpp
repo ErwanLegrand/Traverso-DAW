@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.18 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: SongView.cpp,v 1.19 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #include <QPainter>
@@ -27,6 +27,7 @@ $Id: SongView.cpp,v 1.18 2006/09/07 09:36:52 r_sijrier Exp $
 
 #include "Song.h"
 #include "Track.h"
+#include "Utils.h"
 #include "ViewItem.h"
 #include "Peak.h"
 #include "Cursor.h"
@@ -48,30 +49,24 @@ SongView::SongView(Song* song, ViewPort* vp)
 	m_locator = new LocatorView(this, m_vp);
 	verticalScrollAmount = 35;
 	currentCursorMapIndex = 0;
+	set_geometry(0,0,m_vp->width(), m_vp->height());
 
-	cursorMap[CURSOR_FLOAT] = QCursor( QPixmap(":/cursorFloat") );
-	cursorMap[CURSOR_FLOAT_OVER_CLIP] = QCursor( QPixmap(":/cursorFloatOverClip") );
-	cursorMap[CURSOR_FLOAT_OVER_PLUGIN] = QCursor( QPixmap(":/cursorFloatOverPlugin") );
-	cursorMap[CURSOR_FLOAT_OVER_FADE] = QCursor( QPixmap(":/cursorFloatOverFade") );
-	cursorMap[CURSOR_FLOAT_OVER_TRACK] = QCursor( QPixmap(":/cursorFloatOverTrack") );
-	cursorMap[CURSOR_HOLD_UD] = QCursor( QPixmap(":/cursorHoldUd") );
-	cursorMap[CURSOR_HOLD_LR] = QCursor( QPixmap(":/cursorHoldLr") );
-	cursorMap[CURSOR_HOLD_LRUD] = QCursor( QPixmap(":/cursorHoldLrud") );
-	cursorMap[CURSOR_DRAG] = QCursor( QPixmap(":/cursorDrag") );
-	cursorMap[CURSOR_SELECT] = QCursor( QPixmap(":/cursorSelect") );
-	cursorMap[CURSOR_MAGIC_ZOOM] = QCursor( QPixmap(":/cursorZoom") );
+	cursorMap[CURSOR_FLOAT] = QCursor(find_pixmap(":/cursorFloat"));
+	cursorMap[CURSOR_FLOAT_OVER_CLIP] = QCursor(find_pixmap(":/cursorFloatOverClip"));
+	cursorMap[CURSOR_FLOAT_OVER_PLUGIN] = QCursor(find_pixmap(":/cursorFloatOverPlugin"));
+	cursorMap[CURSOR_FLOAT_OVER_FADE] = QCursor(find_pixmap(":/cursorFloatOverFade"));
+	cursorMap[CURSOR_FLOAT_OVER_TRACK] = QCursor(find_pixmap(":/cursorFloatOverTrack"));
 	
 
-	connect(m_song, SIGNAL(trackAdded(Track* )), this, SLOT(add_new_trackview(Track* )));
-	connect(m_song, SIGNAL(trackRemoved(Track* )), this, SLOT(remove_trackview(Track* )));
-	connect(m_song, SIGNAL(hzoomChanged( )), m_locator, SLOT(hzoom_changed( )));
+	connect(m_song, SIGNAL(trackAdded(Track*)), this, SLOT(add_new_trackview(Track*)));
+	connect(m_song, SIGNAL(trackRemoved(Track*)), this, SLOT(remove_trackview(Track*)));
+	connect(m_song, SIGNAL(hzoomChanged()), m_locator, SLOT(hzoom_changed()));
 	connect(m_song, SIGNAL(firstVisibleFrameChanged()), m_locator, SLOT(schedule_for_repaint()));
 	connect(m_song, SIGNAL(setCursorAtEdge()), this, SLOT(center()));
 	connect(m_vp, SIGNAL(resized()), this, SLOT(resize()));
-	connect(m_vp, SIGNAL(pointChanged( ) ), this, SLOT(set_context()));
-	connect(m_vp, SIGNAL(resetContext( ) ), this, SLOT(reset_context()));
+	connect(m_vp, SIGNAL(pointChanged()), this, SLOT(set_context()));
+	connect(m_vp, SIGNAL(contextChanged()), this, SLOT(reset_context()));
 
-	init_context_menu( this );
 }
 
 SongView::~SongView()
@@ -435,6 +430,7 @@ Command* SongView::goto_end()
 
 void SongView::resize()
 {
+	set_geometry(0,0,m_vp->width(), m_vp->height());
 	schedule_for_repaint();
 }
 

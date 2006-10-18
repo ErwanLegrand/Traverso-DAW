@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.13 2006/10/02 19:18:01 r_sijrier Exp $
+$Id: Interface.cpp,v 1.14 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -30,17 +30,24 @@ $Id: Interface.cpp,v 1.13 2006/10/02 19:18:01 r_sijrier Exp $
 #include <QHBoxLayout>
 #include <QResizeEvent>
 #include <QtGui>
+#include <QTreeView>
 
 #include "Interface.h"
 #include "BusMonitor.h"
 #include "ProjectManager.h"
 #include "InfoBox.h"
 #include "BorderLayout.h"
+#include "AudioClipView.h"
 #include "SongView.h"
+#include "TrackView.h"
 #include "ViewPort.h"
 #include "OverViewWidget.h"
 #include "Help.h"
 #include "HistoryWidget.h"
+#include "AudioSourcesTreeWidget.h"
+#include <FadeCurve.h>
+#include "QuickDriverConfigWidget.h"
+#include "SystemInfoWidget.h"
 
 #include "ManagerWidget.h"
 #include "ExportWidget.h"
@@ -61,8 +68,9 @@ Interface::Interface()
 {
 	PENTERCONS;
 
-	setMinimumSize(MINIMUM_INTERFACE_WIDTH, MINIMUM_INTERFACE_HEIGHT);
-	setWindowIcon(QPixmap (":/traverso") );
+	setMinimumSize(150, 100);
+	
+	setWindowIcon(QPixmap (":/windowicon") );
 
 	//         setMaximumWidth(1024);
 	//         setMaximumHeight(768);
@@ -70,10 +78,12 @@ Interface::Interface()
 	exportWidget = 0;
 
 	// Connections to core:
-	connect(&pm(), SIGNAL(projectLoaded(Project* )), this, SLOT(set_project(Project* )));
+	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 
 	cpointer().add_contextitem(this);
-};
+	
+	create();
+}
 
 Interface::~Interface()
 {
@@ -83,6 +93,7 @@ Interface::~Interface()
 	settings.setValue("size", size());
 	settings.setValue("fullScreen", isFullScreen());
 	settings.setValue("pos", pos());
+	settings.setValue("windowstate", saveState());
 	settings.endGroup();
 	
 	delete helpWindow;
@@ -90,6 +101,8 @@ Interface::~Interface()
 
 void Interface::create()
 {
+	driverConfigWidget = 0;
+	
 	QWidget* centralWidget = new QWidget(this);
 	setCentralWidget(centralWidget);
 	
@@ -99,26 +112,24 @@ void Interface::create()
 
 	mainVBoxLayout = new BorderLayout(centralWidget, 0, 0);
 
-	tpdw = new QDockWidget("TopPanel", this);
+	tpdw = new QDockWidget("Master VU", this);
+	tpdw->setObjectName("Master VU");
 // 	tpdw->setFeatures(QDockWidget::NoDockWidgetFeatures);
-	topPanelWidget = new QWidget(tpdw);
-	topPanelWidgetLayout = new QHBoxLayout(topPanelWidget);
-	topPanelWidget->setLayout(topPanelWidgetLayout);
-	topPanelWidget->setMinimumHeight(TOPPANEL_FIXED_HEIGHT);
-	topPanelWidget->setMaximumHeight(TOPPANEL_FIXED_HEIGHT);
-	tpdw->setWidget(topPanelWidget);
+// 	topPanelWidget = new QWidget(tpdw);
+// 	topPanelWidgetLayout = new QHBoxLayout(topPanelWidget);
+// 	topPanelWidget->setLayout(topPanelWidgetLayout);
+// 	topPanelWidget->setMinimumHeight(TOPPANEL_FIXED_HEIGHT);
+// 	topPanelWidget->setMaximumHeight(TOPPANEL_FIXED_HEIGHT);
+// 	tpdw->setWidget(topPanelWidget);
+// 
+// 	infoBox = new InfoBox(topPanelWidget);
+// 	topPanelWidgetLayout->insertWidget( 0, infoBox, 4);
+
+	busMonitor = new BusMonitor(tpdw, this);
+// 	topPanelWidgetLayout->insertWidget( 1, busMonitor);
+// 	busMonitor->show();
+	tpdw->setWidget(busMonitor);
 	addDockWidget(Qt::TopDockWidgetArea, tpdw);
-
-	infoBox = new InfoBox(topPanelWidget);
-	topPanelWidgetLayout->insertWidget( 0, infoBox, 4);
-
-	busMonitor = new BusMonitor(topPanelWidget, this);
-	topPanelWidgetLayout->insertWidget( 1, busMonitor);
-	busMonitor->show();
-
-	isBusMonitorDocked = true;
-	// 	busMonitorWindow = new QWidget( (QWidget*) 0);
-	// 	busMonitorWindow->hide();
 
 
 	// 2nd Area (MIDDLE) the current project
@@ -134,23 +145,12 @@ void Interface::create()
 	statusAreaWidgetLayout = new QHBoxLayout;
 	statusAreaWidget->setLayout(statusAreaWidgetLayout);
 
-	QWidget* buttonWidget = new QWidget(statusAreaWidget);
-	buttonWidget->setMinimumWidth(180);
-	buttonWidget->setMinimumHeight(18);
-	buttonWidget->setMaximumHeight (18);
-	statusAreaWidgetLayout->addWidget(buttonWidget);
 	
-	QPushButton* helpbutton = new QPushButton("Help", buttonWidget);
-	helpbutton->setMaximumHeight (18);
-	helpbutton->setFocusPolicy(Qt::NoFocus);
-	connect(helpbutton, SIGNAL(clicked()), helpWindow, SLOT(show_help()));
-
-
 	overView = new OverViewWidget(statusAreaWidget);
 	statusAreaWidgetLayout->addWidget(overView, 4);
 
-	topPanelWidgetLayout->setMargin(3);
-	centerWidgetLayout->setMargin(3);
+// 	topPanelWidgetLayout->setMargin(0);
+	centerWidgetLayout->setMargin(0);
 	statusAreaWidgetLayout->setMargin(3);
 
 // 	mainVBoxLayout->addWidget(topPanelWidget, BorderLayout::North);
@@ -161,23 +161,36 @@ void Interface::create()
 
 	managerWidgetCreated = false;
 
+	
+	hvdw = new QDockWidget(tr("History"), this);
+	hvdw->setObjectName("HistoryDockWidget");
+	historyWidget = new HistoryWidget(hvdw);
+	historyWidget->setFocusPolicy(Qt::NoFocus);
+	hvdw->setWidget(historyWidget);
+	addDockWidget(Qt::RightDockWidgetArea, hvdw);
+	
+	asdw = new QDockWidget(tr("AudioSources"), this);
+	asdw->setObjectName("AudioSourcesDockWidget");
+	audiosourcesview = new QTreeView(asdw);
+	audiosourcesview->setFocusPolicy(Qt::NoFocus);
+// 	audiosourcesview->setAnimated(true);
+	TreeModel* model = new TreeModel("hoi, test");
+	audiosourcesview->setModel(model);
+	asdw->setWidget(audiosourcesview);
+	addDockWidget(Qt::RightDockWidgetArea, asdw);
+	
+
+	create_menus();
+
+	
 	/** Read in the Interface settings and apply them
-	*/
+	 */
 	QSettings settings;
 	settings.beginGroup("Interface");
 	resize(settings.value("size", QSize(400, 400)).toSize());
 	move(settings.value("pos", QPoint(200, 200)).toPoint());
+	restoreState(settings.value("windowstate", "").toByteArray());
 	settings.endGroup();
-	
-	hvdw = new QDockWidget(tr("History"), this);
-	historyWidget = new HistoryWidget(hvdw);
-	hvdw->setWidget(historyWidget);
-	addDockWidget(Qt::RightDockWidgetArea, hvdw);
-	
-	create_menu_actions();
-	create_menus();
-
-// 	show();
 }
 
 
@@ -186,9 +199,9 @@ void Interface::set_project(Project* project)
 	PENTER;
 	
 	if ( project ) {
-		connect(project, SIGNAL(currentSongChanged(Song* )), this, SLOT(set_songview(Song* )));
-		connect(project, SIGNAL(currentSongChanged(Song* )), overView, SLOT(set_song(Song* )));
-		connect(project, SIGNAL(newSongCreated(Song* )), this, SLOT(create_songview(Song* )));
+		connect(project, SIGNAL(currentSongChanged(Song*)), this, SLOT(set_songview(Song*)));
+		connect(project, SIGNAL(currentSongChanged(Song*)), overView, SLOT(set_song(Song*)));
+		connect(project, SIGNAL(newSongCreated(Song*)), this, SLOT(create_songview(Song*)));
 		
 	}
 	
@@ -259,31 +272,6 @@ void Interface::resizeEvent(QResizeEvent* )
 	PENTER2;
 }
 
-void Interface::busmonitor_dock()
-{
-	PENTER2;
-	/*	busMonitor->setParent(wid);
-		//Reset busMonitor maximum height to fit busMonitor in widLayout
-		busMonitor->setMinimumHeight(MINIMUM_BUS_MONITOR_HEIGHT);
-		widLayout->insertWidget( 2, busMonitor);
-		busMonitorWindow->hide();
-		isBusMonitorDocked = true;*/
-}
-
-void Interface::busmonitor_undock()
-{
-	PENTER2;
-	/*	busMonitor->setParent(busMonitorWindow->parentWidget());
-		//Make the floating busMonitor a bit heigher by default
-		busMonitor->setMinimumHeight(MINIMUM_FLOATING_BUS_MONITOR_HEIGHT);
-		widLayout->removeWidget(busMonitor);
-		isBusMonitorDocked = false;*/
-}
-
-bool Interface::is_busmonitor_docked()
-{
-	return isBusMonitorDocked;
-}
 
 Command* Interface::about_traverso()
 {
@@ -339,30 +327,9 @@ Command * Interface::show_export_widget( )
 
 void Interface::create_menus( )
 {
-	fileMenu = menuBar()->addMenu(tr("&File"));
-	saveAction = fileMenu->addAction(tr("&Save"));
+	saveAction =  new QAction(tr("&Save"), this);
 	saveAction->setIcon(QIcon("/usr/share/icons/crystalsvg/22x22/actions/filesave.png"));
 	connect(saveAction, SIGNAL(triggered()), &pm(), SLOT(save_project()));
-	
-	fileMenu->addAction(exitAction);
-	
-	viewMenu = menuBar()->addMenu(tr("&Views"));
-	viewMenu->addAction(hvdw->toggleViewAction());
-	viewMenu->addAction(tpdw->toggleViewAction());
-	
-	helpMenu = menuBar()->addMenu(tr("&Help"));
-	helpMenu->addAction(handBookAction);
-	helpMenu->addAction(aboutTraversoAction);
-
-	QAction* action = menuBar()->addAction(tr("Manager View"));
-	connect(action, SIGNAL(triggered()), this, SLOT(set_manager_widget()));
-
-	action = menuBar()->addAction(tr("Song View"));
-	connect(action, SIGNAL(triggered()), this, SLOT(set_songview_widget()));
-}
-
-void Interface::create_menu_actions( )
-{
 	
 	exitAction = new QAction(tr("&Quit"), this);
 	exitAction->setIcon(QIcon("/usr/share/icons/crystalsvg/22x22/actions/exit.png"));
@@ -388,6 +355,369 @@ void Interface::create_menu_actions( )
 	aboutTraversoAction = new QAction(tr("&About Traverso"), this);
 	connect(aboutTraversoAction,  SIGNAL(triggered()), this, SLOT(about_traverso()));
 	
+	
+/*	fileMenu = menuBar()->addMenu(tr("&File"));
+	viewMenu = menuBar()->addMenu(tr("&Views"));
+	helpMenu = menuBar()->addMenu(tr("&Help"));
+	
+	
+	
+	fileMenu->addAction(exitAction);
+	
+	QAction* driverConfigAction = menuBar()->addAction(tr("Driver"));
+// 	driverConfigAction->setIcon(QPixmap(":/driver"));
+	driverConfigAction->setText(audiodevice().get_device_name());
+	connect(driverConfigAction, SIGNAL(triggered()), this, SLOT(show_driver_config_widget()));
+	*/
+	
+	
+	fileMenu = new QMenu("File");
+	fileMenu->addAction(saveAction);
+	fileMenu->addAction(exitAction);
+	
+	viewMenu = new QMenu("Views");
+	QAction* mvAction = viewMenu->addAction(tr("Manager View"));
+	connect(mvAction, SIGNAL(triggered()), this, SLOT(set_manager_widget()));
+
+	QAction* svAction = viewMenu->addAction(tr("Song View"));
+	connect(svAction, SIGNAL(triggered()), this, SLOT(set_songview_widget()));
+	viewMenu->addSeparator();
+	viewMenu->addAction(hvdw->toggleViewAction());
+	viewMenu->addAction(tpdw->toggleViewAction());
+	viewMenu->addAction(asdw->toggleViewAction());
+	
+	helpMenu = new QMenu("Help");
+	helpMenu->addAction(handBookAction);
+	helpMenu->addAction(aboutTraversoAction);
+	
+	
+	mainToolBar = addToolBar(tr("MainToolBar"));
+	mainToolBar->setMovable(false);
+	mainToolBar->setObjectName("MainToolBar");
+	mainToolBar->setFocusPolicy(Qt::NoFocus);
+
+	
+	QPushButton* tbutton = new QPushButton(mainToolBar);
+	QFontMetrics fm = tbutton->fontMetrics();
+	QString text = tr("File");
+// 	utton->setPopupMode(QToolButton::InstantPopup);
+	tbutton->setText(text);
+	tbutton->setMaximumWidth(fm.width(text) + 32);
+	tbutton->setFlat(true);
+	tbutton->setMenu(fileMenu);
+	mainToolBar->addWidget(tbutton);
+// 	tbutton->setFocusPolicy(Qt::NoFocus);
+	
+	tbutton = new QPushButton(mainToolBar);
+// 	tbutton->setPopupMode(QToolButton::InstantPopup);
+	text = tr("Views");
+	tbutton->setText(text);
+	tbutton->setMaximumWidth(fm.width(text) + 32);
+	tbutton->setFlat(true);
+	tbutton->setMenu(viewMenu);
+	mainToolBar->addWidget(tbutton);
+// 	tbutton->setFocusPolicy(Qt::NoFocus);
+	
+	
+	QToolButton* button = new QToolButton(mainToolBar);
+	button->setIcon(find_pixmap(":/projectmanagement-22"));
+	button->setMinimumWidth(44);
+	button->setToolTip("Show Manager View");
+	mainToolBar->addWidget(button);
+	button->setFocusPolicy(Qt::NoFocus);
+	connect(button, SIGNAL(clicked()), this, SLOT(set_manager_widget()));
+	
+
+	button = new QToolButton(mainToolBar);
+	button->setIcon(find_pixmap(":/songview-22"));
+	button->setMinimumWidth(44);
+	button->setToolTip("Show Song View");
+	mainToolBar->addWidget(button);
+	button->setFocusPolicy(Qt::NoFocus);
+	connect(button, SIGNAL(clicked()), this, SLOT(set_songview_widget()));
+	
+	
+	mainToolBar->addSeparator();
+	
+	driverInfo = new DriverInfoWidget(mainToolBar);
+	driverInfo->setFlat(true);
+	driverInfo->setFocusPolicy(Qt::NoFocus);
+	
+	mainToolBar->addWidget(driverInfo);
+	connect(driverInfo, SIGNAL(clicked()), this, SLOT(show_driver_config_widget()));
+	
+	
+	mainToolBar->addSeparator();
+	
+	resourcesInfo = new ResourcesInfoWidget(mainToolBar);
+	resourcesInfo->setFlat(true);
+	mainToolBar->addWidget(resourcesInfo);
+	
+	
+	mainToolBar->addSeparator();
+	
+	hddInfo = new HDDSpaceInfoWidget(mainToolBar);
+	hddInfo->setFlat(true);
+	mainToolBar->addWidget(hddInfo);
+	
+	mainToolBar->addSeparator();
+	
+	tbutton = new QPushButton(mainToolBar);
+// 	tbutton->setPopupMode(QToolButton::InstantPopup);
+	text = tr("Help");
+	tbutton->setText(text);
+	tbutton->setMaximumWidth(fm.width(text) + 32);
+	tbutton->setFlat(true);
+	tbutton->setMenu(helpMenu);
+	mainToolBar->addWidget(tbutton);
+	tbutton->setFocusPolicy(Qt::NoFocus);
+	
+/*	DigitalClock* clock = new DigitalClock();
+	mainToolBar->addWidget(clock);*/
+	
+}
+
+void Interface::process_context_menu_action( QAction * action )
+{
+	QString name = (action->data()).toString();
+	ie().broadcast_action_from_contextmenu(name);
+}
+
+Command * Interface::show_context_menu( )
+{
+	QList<QObject* > items = cpointer().get_context_items();
+	if (items.isEmpty()) {
+		printf("cpointer() returned empty list\n");
+		return 0;
+	}
+	
+	ViewItem* viewitem = qobject_cast<ViewItem*>(items.at(0));
+	
+	if (! viewitem) {
+		printf("cpointer() first returned item is NOT a ViewItem\n");
+		return 0;
+	}
+	
+	QString className = viewitem->metaObject()->className();
+	
+	QMenu* menu = m_contextMenus.value(className);
+	
+	if ( ! menu ) {
+		printf("No menu for %s, creating new one\n", QS_C(className));
+		menu = create_context_menu(viewitem);
+		m_contextMenus.insert(className, menu);
+	}
+	
+	menu->exec(QCursor::pos());
+	
+	return 0;
+}
+
+QMenu* Interface::create_context_menu( ContextItem * item )
+{
+	printf("entering create_context_menu\n");
+	QMenu* menu = new QMenu();
+	
+	
+	connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(process_context_menu_action(QAction*)));
+	
+	QList<IEAction* > actionLst = ie().get_contextitem_actionlist( item );
+	
+	qSort(actionLst.begin(), actionLst.end(), IEAction::smaller);
+
+	foreach(IEAction* ieaction, actionLst) {
+		QString text = QString(ieaction->keySequence + "  " + ieaction->name);
+		QAction* action = new QAction(this);
+		action->setText(text);
+		action->setData(ieaction->name);
+		menu->addAction(action);
+	}
+	
+	return menu;
+}
+
+
+Command* Interface::select_bus_in()
+{
+	PENTER;
+	QMenu* menu = m_contextMenus.value("busInMenu");
+	
+	if (!menu) {
+		menu = new QMenu();
+		m_contextMenus.insert("busInMenu", menu);
+		connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(set_bus_in(QAction*)));
+	}
+		
+	
+	menu->clear();
+	
+	QStringList names = audiodevice().get_capture_buses_names();
+	
+	foreach(QString name, names) {
+		menu->addAction(name);
+	}
+	
+	menu->exec(QCursor::pos());
+	
+	return (Command*) 0;
+}
+
+
+Command* Interface::select_bus_out()
+{
+	QMenu* menu = m_contextMenus.value("busOutMenu");
+	
+	if (!menu) {
+		menu = new QMenu();
+		m_contextMenus.insert("busOutMenu", menu);
+		connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(set_bus_out(QAction*)));
+	}
+		
+	
+	menu->clear();
+	
+	QStringList names = audiodevice().get_playback_buses_names();
+	
+	foreach(QString name, names) {
+		menu->addAction(name);
+	}
+	
+	menu->exec(QCursor::pos());
+	
+	return (Command*) 0;
+}
+
+void Interface::set_bus_in( QAction* action )
+{
+	PENTER;
+	QList<QObject* > items = cpointer().get_context_items();
+	foreach(QObject* obj, items) {
+		TrackView* tv = qobject_cast<TrackView*>(obj);
+		if (tv) {
+			tv->get_track()->set_bus_in(action->text().toAscii());
+			break;
+		}
+	}
+}
+
+void Interface::set_bus_out( QAction* action )
+{
+	PENTER;
+	QList<QObject* > items = cpointer().get_context_items();
+	foreach(QObject* obj, items) {
+		TrackView* tv = qobject_cast<TrackView*>(obj);
+		if (tv) {
+			tv->get_track()->set_bus_out(action->text().toAscii());
+			break;
+		}
+	}
+}
+
+Command * Interface::select_fade_in_shape( )
+{
+	QMenu* menu = m_contextMenus.value("fadeInSelector");
+	
+	if (!menu) {
+		menu = create_fade_selector_menu("fadeInSelector");
+		connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(set_fade_in_shape(QAction*)));
+	}
+		
+	
+	menu->exec(QCursor::pos());
+	
+	return (Command*) 0;
+}
+
+Command * Interface::select_fade_out_shape( )
+{
+	QMenu* menu = m_contextMenus.value("fadeOutSelector");
+	
+	if (!menu) {
+		menu = create_fade_selector_menu("fadeOutSelector");
+		connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(set_fade_out_shape(QAction*)));
+	}
+		
+	
+	menu->exec(QCursor::pos());
+	
+	return (Command*) 0;
+}
+
+
+void Interface::set_fade_in_shape( QAction * action )
+{
+	QList<QObject* > items = cpointer().get_context_items();
+	foreach(QObject* obj, items) {
+		AudioClipView* acv = qobject_cast<AudioClipView*>(obj);
+		if (acv) {
+			acv->get_clip()->get_fade_in()->set_shape(action->data().toString());
+			break;
+		}
+	}
+}
+
+void Interface::set_fade_out_shape( QAction * action )
+{
+	QList<QObject* > items = cpointer().get_context_items();
+	foreach(QObject* obj, items) {
+		AudioClipView* acv = qobject_cast<AudioClipView*>(obj);
+		if (acv) {
+			acv->get_clip()->get_fade_out()->set_shape(action->data().toString());
+			break;
+		}
+	}
+}
+
+
+QMenu* Interface::create_fade_selector_menu(const QString& fadeTypeName)
+{
+	QMenu* menu = new QMenu();
+	
+	foreach(QString name, FadeCurve::defaultShapes) {
+		QAction* action = menu->addAction(name);
+		action->setData(name);
+	}
+	
+	m_contextMenus.insert(fadeTypeName, menu);
+	
+	return menu;
+}
+
+void Interface::show_driver_config_widget( )
+{
+	if (! driverConfigWidget) {
+		driverConfigWidget = new QuickDriverConfigWidget(this);
+	}
+	
+	// Hmmm, very weak positioning code imho. Can't find how to do it any better right now :(
+	driverConfigWidget->move(driverInfo->x() + x() + 2, geometry().y() + mainToolBar->height() - 2);
+	driverConfigWidget->show();
+}
+
+
+DigitalClock::DigitalClock(QWidget *parent)
+	: QLCDNumber(parent)
+{
+	setSegmentStyle(Outline);
+	setFrameStyle(QFrame::StyledPanel);
+
+	QTimer *timer = new QTimer(this);
+	connect(timer, SIGNAL(timeout()), this, SLOT(showTime()));
+	timer->start(1000);
+	
+	showTime();
+
+	setWindowTitle(tr("Digital Clock"));
+	resize(150, 60);
+}
+
+void DigitalClock::showTime()
+{
+	QTime time = QTime::currentTime();
+	QString text = time.toString("hh:mm");
+	if ((time.second() % 2) == 0)
+		text[2] = ' ';
+	display(text);
 }
 
 

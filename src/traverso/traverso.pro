@@ -17,6 +17,7 @@ LIBS += 	-ltraversocore \
 		-lslv2 \
 
 HEADERS += AudioPluginSelector.h \
+	   AudioSourcesTreeWidget.h \
 #	   CursorWidget.h \
            BorderLayout.h \
            BusMonitor.h \
@@ -28,7 +29,6 @@ HEADERS += AudioPluginSelector.h \
            FadeView.h \
            Help.h \
            HistoryWidget.h \
-           InfoBox.h \
            Main.h \
            ExportWidget.h \
            ManagerWidget.h \
@@ -56,11 +56,13 @@ HEADERS += AudioPluginSelector.h \
            Cursor.h \
            PanelLed.h \
            LocatorView.h  \
+           QuickDriverConfigWidget.h \
            precompile.h
 
 
 
 SOURCES += Traverso.cpp \
+	   AudioSourcesTreeWidget.cpp \
 #	   CursorWidget.cpp \
            AudioPluginSelector.cpp \
            BorderLayout.cpp \
@@ -73,7 +75,6 @@ SOURCES += Traverso.cpp \
            FadeView.cpp \
            Help.cpp \
            HistoryWidget.cpp \
-           InfoBox.cpp \
            Main.cpp \
            ExportWidget.cpp \
            ProjectManagerWidget.cpp \
@@ -99,18 +100,20 @@ SOURCES += Traverso.cpp \
 	   VUMeterLevel.cpp \
            Cursor.cpp \
            PanelLed.cpp \
-           LocatorView.cpp
+           LocatorView.cpp \
+           QuickDriverConfigWidget.cpp
 
 FORMS += ui/ProjectManagerWidget.ui \
 	ui/ProjectInfoWidget.ui \
 	ui/SongInfoWidget.ui \
 	ui/ExportWidget.ui \
 	ui/SongManagerWidget.ui \
-	ui/SystemInfoWidget.ui \
 	ui/ManagerWidget.ui \
 	ui/GlobalPropertiesWidget.ui \
 	ui/AudioSourcesManagerWidget.ui \
-	ui/PluginSelectorDialog.ui
+	ui/AudioSourcesManagerWidget.ui \
+	ui/PluginSelectorDialog.ui \
+	ui/QuickDriverConfigWidget.ui
 
 
 contains(DEFINES, ALSA_SUPPORT):LIBS += -lasound

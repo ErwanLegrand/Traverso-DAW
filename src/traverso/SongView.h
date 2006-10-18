@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongView.h,v 1.7 2006/08/31 17:56:38 r_sijrier Exp $
+    $Id: SongView.h,v 1.8 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #ifndef SONGVIEW_H
@@ -42,20 +42,14 @@ class SongView : public ViewItem
         static const int VERTICAL_SCROLL_SENSIBILITY = 80; // 1-100  : will be user configurable
         static const int MOUSE_SENSIBILITY = 6;
 
-        static const int MAX_CURSORS = 20;
+        static const int MAX_CURSORS = 6;
 
         static const int CURSOR_FLOAT = 0;
         static const int CURSOR_FLOAT_OVER_CLIP = 1;
         static const int CURSOR_FLOAT_OVER_TRACK = 2;
         static const int CURSOR_FLOAT_OVER_SPLITTER = 3;
-        static const int CURSOR_HOLD_UD = 4;
-        static const int CURSOR_HOLD_LR = 5;
-        static const int CURSOR_HOLD_LRUD = 6;
-        static const int CURSOR_DRAG = 7;
-        static const int CURSOR_SELECT = 8;
-        static const int CURSOR_MAGIC_ZOOM = 9;
-        static const int CURSOR_FLOAT_OVER_PLUGIN = 10;
-        static const int CURSOR_FLOAT_OVER_FADE = 11;
+        static const int CURSOR_FLOAT_OVER_PLUGIN = 4;
+        static const int CURSOR_FLOAT_OVER_FADE = 5;
 
 
 public :
@@ -77,11 +71,8 @@ public :
         {
                 return m_song;
         }
-        Cursor* get_cursor() const
-        {
-                return m_cursor;
-        }
-        int cliparea_width() const;
+        
+	int cliparea_width() const;
 
         nframes_t xpos_to_frame(int xpos)
         {

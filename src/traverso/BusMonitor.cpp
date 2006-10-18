@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: BusMonitor.cpp,v 1.5 2006/09/11 21:16:02 r_sijrier Exp $
+$Id: BusMonitor.cpp,v 1.6 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -50,6 +50,8 @@ BusMonitor::BusMonitor(QWidget* parent, Interface* iface)
 	setLayout(layout);
 
 	setAutoFillBackground(false);
+	
+	create_vu_meters();
 
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(create_vu_meters()));
 }

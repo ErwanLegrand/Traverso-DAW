@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: Traverso.h,v 1.3 2006/08/25 11:17:58 r_sijrier Exp $
+    $Id: Traverso.h,v 1.4 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #ifndef Traverso_H
@@ -39,9 +39,6 @@ public :
 
 
         void shutdown(int signal);
-        int init();
-
-        static void reset_settings();
 
 protected:
         void saveState ( QSessionManager& manager );
@@ -49,8 +46,8 @@ protected:
 
 private :
         Interface* iface;
-
-private slots:
+	
+	void init_sse();
         void prepare_audio_device();
 };
 

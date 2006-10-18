@@ -17,13 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.h,v 1.10 2006/08/08 19:37:03 r_sijrier Exp $
+$Id: AudioClipView.h,v 1.11 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIPVIEW_H
 #define AUDIOCLIPVIEW_H
 
 #include "ViewItem.h"
+#include <defines.h>
 #include <QList>
 
 class AudioClip;
@@ -56,9 +57,6 @@ private:
 	QList<FadeView*> m_fadeViews;
 	AudioClip* 	m_clip;
 	Song*		m_song;
-	QMenu		contextMenu;
-	QMenu 		fadeInShapeSelector;
-	QMenu 		fadeOutShapeSelector;
 
 	QString clipInfo;
 	QString sRate;
@@ -78,7 +76,6 @@ private:
 	bool mergedView;
 	bool classicView;
 
-	void create_fade_selectors();
 	void recreate_clipname_pixmap();
 	void update_geometry();
 
@@ -121,12 +118,6 @@ public slots:
 	void update_progress_info(int progress);
 	void peaks_creation_finished();
 	void gain_changed();
-	
-	void set_fade_in_shape(QAction* action);
-	void set_fade_out_shape(QAction* action);
-	
-	Command* select_fade_in_shape();
-	Command* select_fade_out_shape();
 };
 
 #endif

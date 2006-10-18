@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: LocatorView.cpp,v 1.4 2006/06/19 13:23:03 r_sijrier Exp $
+    $Id: LocatorView.cpp,v 1.5 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #include "LocatorView.h"
@@ -26,6 +26,7 @@
 
 #include "SongView.h"
 #include "TrackView.h"
+#include "ViewPort.h"
 #include "Peak.h"
 #include "Utils.h"
 #include "ColorManager.h"

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginView.cpp,v 1.6 2006/09/18 18:35:53 r_sijrier Exp $
+$Id: PluginView.cpp,v 1.7 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #include "PluginView.h"
@@ -25,6 +25,8 @@ $Id: PluginView.cpp,v 1.6 2006/09/18 18:35:53 r_sijrier Exp $
 #include <QPainter>
 
 #include "TrackView.h"
+#include "ViewPort.h"
+
 #include "ColorManager.h"
 #include <Plugin.h>
 
@@ -42,7 +44,6 @@ PluginView::PluginView( ViewPort * vp, TrackView* parent, Plugin* plugin, int in
 	zOrder = 10;
 	m_track = m_trackView->get_track();
 	m_name = plugin->get_name();
-	init_context_menu( this );
 	m_type = PLUGINVIEW;
 
 	connect(m_plugin, SIGNAL(bypassChanged()), m_trackView, SLOT(repaint_all_clips()));

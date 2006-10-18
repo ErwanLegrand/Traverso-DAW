@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ProjectInfoWidget.cpp,v 1.3 2006/06/29 22:16:21 r_sijrier Exp $
+    $Id: ProjectInfoWidget.cpp,v 1.4 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #include "ProjectInfoWidget.h"
@@ -41,7 +41,7 @@ ProjectInfoWidget::ProjectInfoWidget( QWidget * parent )
         setPalette(palette);
         setAutoFillBackground(true);
 
-        connect(&pm(), SIGNAL(projectLoaded(Project* )), this, SLOT(set_project(Project* )));
+        connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 }
 
 ProjectInfoWidget::~ ProjectInfoWidget( )
@@ -56,8 +56,8 @@ void ProjectInfoWidget::set_project(Project* project)
 		rateLabel->setText( QByteArray::number(project->get_rate()) );
 		songCountLabel->setText(QString::number(project->get_num_songs()) );
 		
-		connect(m_project, SIGNAL(songAdded()), this, SLOT(update_song_count( )));
-		connect(m_project, SIGNAL(songRemoved( )), this, SLOT(update_song_count( )));
+		connect(m_project, SIGNAL(songAdded()), this, SLOT(update_song_count()));
+		connect(m_project, SIGNAL(songRemoved()), this, SLOT(update_song_count()));
 	} else {
 		projectNameLabel->setText("-");
 		bitdepthLabel->setText("-");

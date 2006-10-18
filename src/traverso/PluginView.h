@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginView.h,v 1.2 2006/08/25 11:17:18 r_sijrier Exp $
+    $Id: PluginView.h,v 1.3 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #ifndef PLUGIN_VIEW_H
@@ -34,6 +34,7 @@
 
 class TrackView;
 class Plugin;
+class Track;
 
 class PluginView : public ViewItem
 {

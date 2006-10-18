@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: OverViewWidget.cpp,v 1.5 2006/05/11 13:57:09 r_sijrier Exp $
+    $Id: OverViewWidget.cpp,v 1.6 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -54,9 +54,9 @@ void OverViewWidget::set_song(Song* song)
 {
         PENTER2;
         m_song = song;
-        connect(m_song, SIGNAL(firstVisibleFrameChanged() ), this, SLOT(update( )));
-        connect(m_song, SIGNAL(hzoomChanged() ), this, SLOT(update( )));
-	connect(m_song, SIGNAL(lastFramePositionChanged() ), this, SLOT(update( )));
+        connect(m_song, SIGNAL(firstVisibleFrameChanged()), this, SLOT(update()));
+        connect(m_song, SIGNAL(hzoomChanged()), this, SLOT(update()));
+	connect(m_song, SIGNAL(lastFramePositionChanged()), this, SLOT(update()));
 }
 
 void OverViewWidget::paintEvent( QPaintEvent*  )

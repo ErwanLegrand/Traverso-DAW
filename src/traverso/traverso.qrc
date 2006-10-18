@@ -13,6 +13,7 @@
 		<file alias="cursorSelect">../../resources/images/cursorSelect.xpm</file>
 		<file alias="cursorGain">../../resources/images/cursorGain.xpm</file>
 		<file alias="traverso">../../resources/images/traverso.xpm</file>
+		<file alias="windowicon">../../resources/images/windowicon.xpm</file>
 		<file alias="keymap">../../resources/keymap.xml</file>
 		<file alias="fadeshapes">../../resources/fadeshapes.xml</file>
 		<file alias="colortheme">../../resources/skin/defaultcolors.xml</file> 
@@ -33,6 +34,7 @@
 		<file alias="audiocardsmall">../../resources/images/soundcardsmall.png</file>
 		<file alias="harddrivesmall">../../resources/images/harddrivesmall.png</file>
 		<file alias="driver">../../resources/images/driver.png</file>
+		<file alias="memorysmall">../../resources/images/memory.png</file>
 		<file alias="projectmanagement">../../resources/images/icons/32X32/projects.png</file>
 		<file alias="songmanagement">../../resources/images/icons/32X32/songs.png</file>
 		<file alias="audiosourcesmanagement">../../resources/images/icons/32X32/audiosources.png</file>
@@ -40,6 +42,9 @@
 		<file alias="info">../../resources/images/icons/22x22/info.png</file>
 		<file alias="warning">../../resources/images/icons/22x22/warning.png</file>
 		<file alias="critical">../../resources/images/icons/22x22/critical.png</file>
+		<file alias="songview-22">../../resources/images/icons/22x22/songview.png</file>
+		<file alias="projectmanagement-22">../../resources/images/icons/22x22/projects.png</file>
+		<file alias="projectmanagement-16">../../resources/images/icons/16x16/projects.png</file>
 		<file alias="traverso_nl">../../traverso_nl.qm</file>
 		<file alias="traverso_de">../../traverso_de.qm</file>
 		<file alias="index.html">../../resources/help/index.html</file>
@@ -50,4 +55,3 @@
 		<file alias="quickstartreference.html">../../resources/help/quickstartreference.html</file>
 	</qresource>
 </RCC>
- 

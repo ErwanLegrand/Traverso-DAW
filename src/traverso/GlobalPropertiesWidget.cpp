@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: GlobalPropertiesWidget.cpp,v 1.7 2006/07/05 09:13:29 r_sijrier Exp $
+$Id: GlobalPropertiesWidget.cpp,v 1.8 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #include "GlobalPropertiesWidget.h"
@@ -26,6 +26,7 @@ $Id: GlobalPropertiesWidget.cpp,v 1.7 2006/07/05 09:13:29 r_sijrier Exp $
 #include "libtraversocore.h"
 
 #include <QSettings>
+#include <Config.h>
 #include "Traverso.h"
 #include <AudioDevice.h>
 
@@ -48,9 +49,9 @@ GlobalPropertiesWidget::GlobalPropertiesWidget( QWidget * parent )
 	foreach(QString name, drivers)
 	audioDriverBackendComboBox->addItem(name);
 
-	connect(bufferSizeComboBox, SIGNAL(currentIndexChanged(int )), this, SLOT (update_latency_label( int ) ));
-	connect(defaultSampleRateComboBox, SIGNAL(currentIndexChanged(int )), this, SLOT (update_latency_label( int ) ));
-	connect(&audiodevice(), SIGNAL(driverParamsChanged( )), this, SLOT(update_driver_info()));
+	connect(bufferSizeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT (update_latency_label(int)));
+	connect(defaultSampleRateComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT (update_latency_label(int)));
+	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(update_driver_info()));
 
 	update_driver_info();
 	load_properties();
@@ -182,7 +183,7 @@ void GlobalPropertiesWidget::on_discardButton_clicked( )
 
 void GlobalPropertiesWidget::on_defaultsButton_clicked( )
 {
-	Traverso::reset_settings();
+	config().reset_settings();
 	load_properties();
 }
 

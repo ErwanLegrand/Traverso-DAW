@@ -17,36 +17,62 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SystemInfoWidget.h,v 1.1 2006/04/20 14:54:03 r_sijrier Exp $
+    $Id: SystemInfoWidget.h,v 1.2 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
-#ifndef SYSTEMINFOWIDGET_H
-#define SYSTEMINFOWIDGET_H
+#ifndef RESOURCES_INFO_WIDGET_H
+#define RESOURCES_INFO_WIDGET_H
 
-#include "ui_SystemInfoWidget.h"
-#include <QWidget>
+#include <QPushButton>
 #include <QTimer>
 
-class SystemInfoWidget : public QWidget, protected Ui::SystemInfoWidget
+class ResourcesInfoWidget : public QPushButton
 {
         Q_OBJECT
 
 public:
-        SystemInfoWidget(QWidget* parent = 0);
-        ~SystemInfoWidget();
+        ResourcesInfoWidget(QWidget* parent = 0);
+        ~ResourcesInfoWidget() {};
 
 private:
-        QTimer		sytemResourcesTimer;
-        QTimer		cpuUsageTimer;
-        int			xrunCount;
+        QTimer		updateTimer;
 
-public slots:
-        void update_system_resources();
-        void update_driver_info();
-        void update_xrun_info();
-        void update_cpu_usage();
+private slots:
+        void update_resources_status();
 };
 
+
+
+class DriverInfoWidget : public QPushButton
+{
+        Q_OBJECT
+
+public:
+        DriverInfoWidget(QWidget* parent = 0);
+        ~DriverInfoWidget() {};
+
+private:
+        QTimer		updateTimer;
+        int		xrunCount;
+	void draw_information();
+
+private slots:
+        void update_driver_info();
+        void update_xrun_info();
+};
+
+
+class HDDSpaceInfoWidget : public QPushButton
+{
+	Q_OBJECT
+public:
+	HDDSpaceInfoWidget(QWidget* parent  = 0);
+	~HDDSpaceInfoWidget(){};
+private:
+	QTimer	updateTimer;
+private slots:
+	void update_harddisk_space_info();
+};
 #endif
 
 //eof

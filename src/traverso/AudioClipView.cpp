@@ -17,20 +17,22 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.28 2006/09/14 10:49:39 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.29 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
 
 #include <QPainter>
 #include <QPainterPath>
-#include <QSettings>
 
 #include "AudioClipView.h"
-#include "ColorManager.h"
 #include "TrackView.h"
 #include "SongView.h"
 #include "FadeView.h"
+#include "ViewPort.h"
+
+#include "ColorManager.h"
+#include <Config.h>
 #include <FadeCurve.h>
 
 // Always put me below _all_ includes, this is needed
@@ -52,25 +54,17 @@ AudioClipView::AudioClipView(ViewPort * vp, TrackView* parent, AudioClip* clip )
 	m_song = m_clip->get_song();
 	recreate_clipname_pixmap();
 	
-	QSettings settings;
-	classicView = settings.value("WaveFormRectified", "0").toInt() == 0 ? 1 : 0;
-	mergedView = settings.value("WaveFormMerged", "0").toInt() == 0 ? 0 : 1;
+	classicView = config().get_int_property("WaveFormRectified") == 0 ? 1 : 0;
+	mergedView = config().get_int_property("WaveFormMerged") == 0 ? 0 : 1;
 	
-	connect(m_clip, SIGNAL(muteChanged(bool )), this, SLOT(mute_changed(bool )));
+	connect(m_clip, SIGNAL(muteChanged(bool)), this, SLOT(mute_changed(bool)));
 	connect(m_clip, SIGNAL(stateChanged()), this, SLOT(schedule_for_repaint()));
 	connect(m_clip, SIGNAL(gainChanged()), this, SLOT (gain_changed()));
 	connect(m_clip, SIGNAL(positionChanged()), m_tv, SLOT (repaint_all_clips()));
-	connect(m_clip, SIGNAL(fadeAdded(FadeCurve*)), this, SLOT(add_new_fadeview( FadeCurve* )));
-	connect(m_clip, SIGNAL(fadeRemoved(FadeCurve*)), this, SLOT(remove_fadeview( FadeCurve* )));
-
-	create_fade_selectors();
-	
-	
-	connect(&fadeInShapeSelector, SIGNAL(triggered ( QAction* )), this, SLOT(set_fade_in_shape( QAction* )));
-	connect(&fadeOutShapeSelector, SIGNAL(triggered ( QAction* )), this, SLOT(set_fade_out_shape( QAction* )));
+	connect(m_clip, SIGNAL(fadeAdded(FadeCurve*)), this, SLOT(add_new_fadeview( FadeCurve*)));
+	connect(m_clip, SIGNAL(fadeRemoved(FadeCurve*)), this, SLOT(remove_fadeview( FadeCurve*)));
 
 	update_geometry();
-	init_context_menu( this );
 	m_type = AUDIOCLIPVIEW;
 }
 
@@ -236,7 +230,7 @@ void AudioClipView::draw_peaks( QPainter& p )
 			// just wait for the finished() signal.....
 // 			PWARN("Waiting for peak");
 			waitingForPeaks = true;
-			connect(peak, SIGNAL(progress( int )), this, SLOT(update_progress_info( int )));
+			connect(peak, SIGNAL(progress(int)), this, SLOT(update_progress_info(int)));
 			connect(peak, SIGNAL(finished()), this, SLOT (peaks_creation_finished()));
 			return;
 		}
@@ -477,40 +471,6 @@ void AudioClipView::update_variables( )
 	}
 }
 
-Command * AudioClipView::select_fade_in_shape( )
-{
-	fadeInShapeSelector.exec(QCursor::pos());
-	
-	return (Command*) 0;
-}
-
-Command * AudioClipView::select_fade_out_shape( )
-{
-	fadeOutShapeSelector.exec(QCursor::pos());
-	
-	return (Command*) 0;
-}
-
-void AudioClipView::set_fade_in_shape( QAction * action )
-{
-	m_clip->get_fade_in()->set_shape(action->data().toString());
-}
-
-void AudioClipView::set_fade_out_shape( QAction * action )
-{
-	m_clip->get_fade_out()->set_shape(action->data().toString());
-}
-
-void AudioClipView::create_fade_selectors( )
-{
-	foreach(QString name, FadeCurve::defaultShapes) {
-		QAction* action = fadeOutShapeSelector.addAction(name);
-		action->setData(name);
-		
-		action = fadeInShapeSelector.addAction(name);
-		action->setData(name);
-	}
-}
 
 void AudioClipView::gain_changed( )
 {

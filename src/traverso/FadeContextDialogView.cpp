@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeContextDialogView.cpp,v 1.7 2006/08/31 17:56:01 r_sijrier Exp $
+$Id: FadeContextDialogView.cpp,v 1.8 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #include "FadeContextDialogView.h"
@@ -44,7 +44,6 @@ FadeContextDialogView::FadeContextDialogView(ViewPort* viewPort, FadeCurve* fade
 		: ViewItem(viewPort, 0, fadeCurve), m_vp(viewPort), m_fade(fadeCurve)
 {
 	m_vp->register_viewitem(this);
-	init_context_menu( this );
 	
 	connect(m_vp, SIGNAL(resized()), this, SLOT(resize()));
 	connect(m_fade, SIGNAL(stateChanged()), this, SLOT(schedule_for_repaint()));

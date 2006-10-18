@@ -17,11 +17,12 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MessageWidget.cpp,v 1.2 2006/04/25 17:22:13 r_sijrier Exp $
+    $Id: MessageWidget.cpp,v 1.3 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #include "MessageWidget.h"
 #include <QPainter>
+#include <Utils.h>
 #include "libtraversocore.h"
 #include "ColorManager.h"
 
@@ -40,8 +41,8 @@ MessageWidget::MessageWidget( QWidget * parent )
         	setPalette(palette);
         	setAutoFillBackground(true);*/
 
-        connect(&info(), SIGNAL(message(InfoStruct )), this, SLOT(enqueue_message(InfoStruct )));
-        connect(&messageTimer, SIGNAL(timeout() ), this, SLOT(dequeue_messagequeue() ));
+        connect(&info(), SIGNAL(message(InfoStruct)), this, SLOT(enqueue_message(InfoStruct)));
+        connect(&messageTimer, SIGNAL(timeout()), this, SLOT(dequeue_messagequeue()));
 }
 
 MessageWidget::~ MessageWidget( )
@@ -64,16 +65,16 @@ void MessageWidget::paintEvent(QPaintEvent* )
 
         switch(infoStruct.type) {
         case INFO		:
-                pm =QPixmap(":/info");
+		pm = find_pixmap(":/info");
                 break;
         case WARNING	:
-                pm =QPixmap(":/warning");
+		pm = find_pixmap(":/warning");
                 break;
         case CRITICAL	:
-                pm =QPixmap(":/critical");
+		pm = find_pixmap(":/critical");
                 break;
         default		:
-                pm =QPixmap(":/info");
+		pm = find_pixmap(":/info");
         }
 
         //         pm = QApplication::style()->standardPixmap(QStyle::SP_MessageBoxInformation);

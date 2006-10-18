@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Cursor.cpp,v 1.3 2006/05/03 11:59:39 r_sijrier Exp $
+$Id: Cursor.cpp,v 1.4 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -30,6 +30,8 @@ $Id: Cursor.cpp,v 1.3 2006/05/03 11:59:39 r_sijrier Exp $
 #include "ViewPort.h"
 #include "SongView.h"
 #include "TrackView.h"
+#include <Utils.h>
+
 
 
 // Always put me below _all_ includes, this is needed
@@ -43,18 +45,21 @@ Cursor::Cursor(SongView* sv, ViewPort* vp, Song* song)
 	m_vp->register_predraw_item(this);
 
 	currentMode = NORMALMODE;
+	
+// 	fCursor = new FCursor(m_vp);
+// 	fCursor->show();
 
 	floatCursorOldPos = playCursorOldPos = workCursorOldPos = 0;
 	floatCursorBackgroundBackup = QPixmap(0,0);
 	workCursorBackgroundBackup = QPixmap(0,0);
 	playCursorBackgroundBackup = QPixmap(0,0);
 
-	connect(m_song, SIGNAL(transferStarted( )), this, SLOT(set_cursor_playmode( )) );
-	connect(m_song, SIGNAL(transferStopped( )), this, SLOT(set_cursor_normalmode( )) );
-	connect(m_song, SIGNAL(workingPosChanged( )), this, SLOT(set_workcursor_newpos( ) ));
-	connect(m_song, SIGNAL(firstVisibleFrameChanged( )), this, SLOT(set_workcursor_newpos() ));
+	connect(m_song, SIGNAL(transferStarted()), this, SLOT(set_cursor_playmode()));
+	connect(m_song, SIGNAL(transferStopped()), this, SLOT(set_cursor_normalmode()));
+	connect(m_song, SIGNAL(workingPosChanged()), this, SLOT(set_workcursor_newpos()));
+	connect(m_song, SIGNAL(firstVisibleFrameChanged()), this, SLOT(set_workcursor_newpos()));
 
-	connect(&playTimer, SIGNAL(timeout( )), this, SLOT(play_cursor_repaint()));
+	connect(&playTimer, SIGNAL(timeout()), this, SLOT(play_cursor_repaint()));
 
 
 }
@@ -83,6 +88,10 @@ QRect Cursor::predraw(QPainter& p)
 
 QRect Cursor::postdraw(QPainter& p)
 {
+/*	if (m_vp->height() != fCursor->height()) {
+		fCursor->resize(2, m_vp->height());
+	}*/
+// 	fCursor->move(playCursorNewPos, 0);
 
 
 	floatCursorNewPos = cpointer().x();
@@ -104,9 +113,9 @@ QRect Cursor::postdraw(QPainter& p)
 	}
 
 
-	floatCursorBackgroundBackup = m_vp->pixmap.copy(floatCursorNewPos, 0, FLOATCURSORWIDTH, m_vp->height());
-	playCursorBackgroundBackup = m_vp->pixmap.copy(playCursorNewPos, 0, PLAYCURSORWIDTH, m_vp->height());
-	workCursorBackgroundBackup = m_vp->pixmap.copy(workCursorPos, 0, WORKCURSORWIDTH, m_vp->height());
+	floatCursorBackgroundBackup = m_vp->pixmap->copy(floatCursorNewPos, 0, FLOATCURSORWIDTH, m_vp->height());
+	playCursorBackgroundBackup = m_vp->pixmap->copy(playCursorNewPos, 0, PLAYCURSORWIDTH, m_vp->height());
+	workCursorBackgroundBackup = m_vp->pixmap->copy(workCursorPos, 0, WORKCURSORWIDTH, m_vp->height());
 
 
 	if (currentMode == PLAYMODE) {
@@ -149,7 +158,7 @@ QRect Cursor::postdraw(QPainter& p)
 		}
 	}
 
-	// Paint the work cursor
+// 	Paint the work cursor
 	if ( (workCursorPos >= TrackView::CLIPAREABASEX) && (workCursorPos <=  m_sv->cliparea_width() + TrackView::CLIPAREABASEX) ) {
 		p.drawPixmap( workCursorPos, 0, workCursor);
 	}
@@ -191,12 +200,62 @@ void Cursor::schedule_for_repaint( )
 void Cursor::play_cursor_repaint( )
 {
 	if ( (m_song->get_playing_xpos() + TrackView::CLIPAREABASEX) != playCursorOldPos ) {
+/*		playCursorNewPos = m_song->get_playing_xpos() + TrackView::CLIPAREABASEX;
+		fCursor->move(playCursorNewPos, 0);*/
 		/*double newTime =  get_microseconds();
 		double diff = newTime - time;
 		printf("Diff is %.3f\n", diff / 1000.0); */
 		schedule_for_repaint();
 	}
 }
+
+FCursor::FCursor( ViewPort * parent )
+	: QWidget(parent)
+{
+	QPalette palette;
+	palette.setColor(QPalette::Background, QColor(Qt::black));
+	setPalette(palette);
+        setAttribute(Qt::WA_OpaquePaintEvent);
+        setAttribute(Qt::WA_PaintOnScreen);
+	setAutoFillBackground(false);
+        
+	QPainter painter(&pixmap);
+        pixmap.fill(QColor(Qt::black));
+	setAttribute(Qt::WA_PaintOnScreen);
+}
+
+void FCursor::paintEvent( QPaintEvent * e )
+{
+// 	printf("entering FCursor paintEvent\n");
+        QPainter directpainter(this);
+        directpainter.drawPixmap(0, 0, pixmap);
+}
+
+
+
+
+HoldCursor::HoldCursor(ViewPort* vp, QPoint pos, const QString& name)
+{
+	m_vp = vp;
+	pixmap = find_pixmap(name);
+	m_pos.setX(pos.x() - pixmap.width()/2);
+	m_pos.setY(pos.y());
+}
+
+
+QRect HoldCursor::draw( QPainter & painter )
+{
+// 	backup = m_vp->pixmap->copy(m_pos.x(), m_pos.y(), 32, 32);
+	
+	painter.drawPixmap(m_pos.x(), m_pos.y(), pixmap);
+	return QRect();
+}
+
+QRect HoldCursor::get_geometry( )
+{
+	return QRect(m_pos.x(), m_pos.y(), pixmap.width(), pixmap.height());
+}
+
 
 
 //eof

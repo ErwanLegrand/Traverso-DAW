@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewPort.cpp,v 1.7 2006/10/02 19:15:22 r_sijrier Exp $
+$Id: ViewPort.cpp,v 1.8 2006/10/18 12:08:56 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -36,6 +36,7 @@ $Id: ViewPort.cpp,v 1.7 2006/10/02 19:15:22 r_sijrier Exp $
 #include "ViewPort.h"
 #include "SongView.h"
 #include "ViewItem.h"
+#include "Cursor.h"
 #include "ContextPointer.h"
 
 #include "Import.h"
@@ -48,9 +49,11 @@ ViewPort::ViewPort(QWidget* widget)
 		: QWidget(widget)
 {
 	PENTERCONS;
-	pixmap = QPixmap();
+	pixmap = new QPixmap();
 	import = 0;
 	importTrack = 0;
+	m_holdCursor = 0;
+	scheduledForRepaint = false;
 
 	setMouseTracking(true);
 	setAttribute(Qt::WA_PaintOnScreen);
@@ -58,6 +61,7 @@ ViewPort::ViewPort(QWidget* widget)
 	setAcceptDrops(true);
 
 	setMinimumSize(100, 50);
+	setFocusPolicy(Qt::StrongFocus);
 }
 
 ViewPort::~ViewPort()
@@ -78,20 +82,21 @@ void ViewPort::mouseMoveEvent(QMouseEvent* e)
 void ViewPort::resizeEvent(QResizeEvent* )
 {
 	PENTER3;
-	if (pixmap.size() != size())
-		pixmap = QPixmap(size());
 	emit resized();
 }
 
 void ViewPort::enterEvent(QEvent* )
 {
 	cpointer().set_current_viewport(this);
-	setFocus();
+	setFocus(Qt::MouseFocusReason);
+	grabKeyboard();
 }
 
 
 void ViewPort::leaveEvent(QEvent *)
-{}
+{
+	releaseKeyboard();
+}
 
 static bool smallerZOrder(const ViewItem* left, const ViewItem* right )
 {
@@ -106,8 +111,18 @@ static bool higherZOrder(const ViewItem* left, const ViewItem* right )
 
 void ViewPort::paintEvent( QPaintEvent *  )
 {
-	QPainter p(&pixmap);
+	if (pixmap->size() != size()) {
+		delete pixmap;
+		pixmap = new QPixmap(size());
+	}
+	
+	scheduledForRepaint = false;
+	
+	QPainter p(pixmap);
 	QPainter pixmapPainter(this);
+	
+// 	printf("pixmap size: x=%d, y=%d\n", pixmap->width(), pixmap->height());
+// 	printf("vp size: x=%d, y=%d\n\n", width(), height());
 
 	// Sort all the ViewItems in zOrder!
 	qSort(repaintViewItemList.begin(), repaintViewItemList.end(), smallerZOrder);
@@ -129,6 +144,10 @@ void ViewPort::paintEvent( QPaintEvent *  )
 	}
 
 
+	if (m_holdCursor) {
+		m_holdCursor->draw(p);
+	}
+	
 	if (postdrawItemList.size() > 0) {
 		for (int i=0; i < postdrawItemList.size(); ++i) {
 			ViewItem* view = postdrawItemList.at(i);
@@ -137,7 +156,7 @@ void ViewPort::paintEvent( QPaintEvent *  )
 	}
 
 
-	pixmapPainter.drawPixmap(0, 0, pixmap);
+	pixmapPainter.drawPixmap(0, 0, *pixmap);
 }
 
 
@@ -149,23 +168,15 @@ void ViewPort::clear_repaintviewitemlist( )
 
 void ViewPort::schedule_for_repaint( ViewItem * view )
 {
-	if (!repaintViewItemList.contains(view))
+	if (!repaintViewItemList.contains(view)) {
 		repaintViewItemList.append(view);
-	else {
-		// 		PWARN("ViewItem %s allready in ViewPort updatelist!", view->metaObject()->className());
 	}
 
-	/*	PWARN("View classname is: %s", view->metaObject()->className());
-		if (view->get_context())
-			{
-			ContextItem* con = view->get_context();
-			QMetaObject::invokeMethod(con,"test", Qt::DirectConnection);
-			PWARN("Context classname is: %s", con->metaObject()->className());
-			if(con->get_context())
-				PWARN("Related Context classname is: %s", con->get_context()->metaObject()->className());
-			}*/
 
-	update();
+	if (! scheduledForRepaint) {
+		scheduledForRepaint = true;
+		update();
+	}
 }
 
 void ViewPort::register_predraw_item( ViewItem * item )
@@ -266,7 +277,32 @@ void ViewPort::register_viewitem( ViewItem * item )
 
 void ViewPort::reset_context( )
 {
-	emit resetContext();
+	if (m_holdCursor) {
+		QRect holdCursorGeo = m_holdCursor->get_geometry();
+		for (int i=0; i<viewItemList.size(); ++i) {
+			ViewItem* view = viewItemList.at(i);
+			if (holdCursorGeo.intersects(view->get_geometry())) {
+				view->force_redraw();
+			}
+		}
+		delete m_holdCursor;
+		m_holdCursor = 0;
+	}
+	
+	emit contextChanged();
+}
+
+void ViewPort::set_hold_cursor( const QString & cursorName )
+{
+	if (m_holdCursor) {
+		PERROR("Setting hold cursor, but it allready exist!!");
+		return;
+	}
+	
+	setCursor(Qt::BlankCursor);
+	m_holdCursor = new HoldCursor(this, QPoint(cpointer().x(), cpointer().y()), cursorName);
+	
+	update();
 }
 
 //eof
