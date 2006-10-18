@@ -17,23 +17,24 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.21 2006/10/18 18:37:39 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.22 2006/10/18 19:12:39 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
 #include "Song.h"
 #include <QThread>
 
-#if defined (USE_IO_PRIO)
+#if defined (LINUX_BUILD)
 
 #include <unistd.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
+		
 #if defined(__i386__)
 # define __NR_ioprio_set	289
 # define __NR_ioprio_get	290
 # define IOPRIO_SUPPORT		1
-#elif defined(__ppc__)
+#elif defined(__ppc__) || defined(__powerpc__) || (defined(__PPC__)
 # define __NR_ioprio_set	273
 # define __NR_ioprio_get	274
 # define IOPRIO_SUPPORT		1
@@ -66,7 +67,7 @@ const char *to_prio[] = { "none", "realtime", "best-effort", "idle", };
 #define IOPRIO_CLASS_SHIFT	13
 #define IOPRIO_PRIO_MASK	0xff
 
-#endif // endif USE_IO_PRIO
+#endif // endif LINUX_BUILD
 
 #include "AudioSource.h"
 #include "ReadSource.h"
@@ -103,7 +104,7 @@ public:
 protected:
 	void run()
 	{
-#if defined (USE_IO_PRIO) 
+#if defined (LINUX_BUILD) 
 	if (IOPRIO_SUPPORT) {
 // When using the cfq scheduler we are able to set the priority of the io for what it's worth though :-) 
 		int ioprio = 0, ioprio_class = IOPRIO_CLASS_RT;
