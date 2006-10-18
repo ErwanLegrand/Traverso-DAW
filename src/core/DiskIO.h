@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.h,v 1.9 2006/10/06 16:20:16 r_sijrier Exp $
+$Id: DiskIO.h,v 1.10 2006/10/18 19:12:29 r_sijrier Exp $
 */
 
 #ifndef DISKIO_H
@@ -26,7 +26,7 @@ $Id: DiskIO.h,v 1.9 2006/10/06 16:20:16 r_sijrier Exp $
 #include <QMutex>
 #include <QList>
 #include <QTimer>
-
+#include <glib.h>
 
 #include "defines.h"
 
@@ -69,10 +69,10 @@ private:
 	DiskIOThread*		m_diskThread;
 	QTimer			m_workTimer;
 	QMutex			mutex;
-	volatile size_t		m_readBufferFillStatus;
-	volatile size_t		m_writeBufferFillStatus;
+	gint			m_readBufferFillStatus;
+	gint			m_writeBufferFillStatus;
 	int			m_bufferSize;
-	uint			m_minBufStatus;
+	int			m_minBufStatus;
 	RingBuffer*		cpuTimeBuffer;
 	trav_time_t		cycleStartTime;
 	trav_time_t		lastCpuReadTime;
