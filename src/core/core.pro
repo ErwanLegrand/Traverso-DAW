@@ -30,6 +30,7 @@ SOURCES	= AudioClip.cpp \
 	AudioSource.cpp \
 	AudioSourceManager.cpp \
 	Command.cpp \
+	Config.cpp \
 	ContextItem.cpp \
 	ContextPointer.cpp \
 	Curve.cpp \
@@ -66,6 +67,7 @@ HEADERS	= precompile.h \
 	AudioSource.h \
 	AudioSourceManager.h \
 	Command.h \
+	Config.h \
 	ContextItem.h \
 	ContextPointer.h \
 	CurveNode.h \
