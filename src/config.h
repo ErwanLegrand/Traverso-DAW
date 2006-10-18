@@ -17,4 +17,4 @@
 #define RESOURCES_DIR "/usr/local/share/traverso/"
 
 /* Version number of package */
-#define VERSION "0.30.0"
+#define VERSION "0.35.0"
