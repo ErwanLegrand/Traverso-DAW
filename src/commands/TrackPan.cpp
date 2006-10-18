@@ -17,13 +17,14 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TrackPan.cpp,v 1.2 2006/08/31 17:54:51 r_sijrier Exp $
+    $Id: TrackPan.cpp,v 1.3 2006/10/18 12:01:17 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
 
 #include "TrackPan.h"
-
+#include <ViewPort.h>
+		
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
@@ -46,8 +47,10 @@ int TrackPan::prepare_actions()
 }
 
 
-int TrackPan::begin_hold()
+int TrackPan::begin_hold(int useX, int useY)
 {
+	set_cursor_shape(useX, useY);
+	
         int trackNumber;
 
         // Override m_track in case there was a number collection!
@@ -71,7 +74,8 @@ int TrackPan::begin_hold()
 
 int TrackPan::finish_hold()
 {
-        return 1;
+ 	cpointer().get_viewport()->reset_context();
+	return 1;
 }
 
 

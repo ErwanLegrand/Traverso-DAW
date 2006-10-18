@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: MoveClip.cpp,v 1.10 2006/09/11 14:37:51 r_sijrier Exp $
+$Id: MoveClip.cpp,v 1.11 2006/10/18 12:01:17 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -43,8 +43,10 @@ MoveClip::~MoveClip()
 {}
 
 
-int MoveClip::begin_hold()
+int MoveClip::begin_hold(int useX, int useY)
 {
+	set_cursor_shape(useX, useY);
+	
 	originTrack = targetTrack = currentTrack = m_clip->get_track();
 	originalTrackFirstFrame = newInsertFrame = m_clip->get_track_start_frame();
 	origXPos = cpointer().x();
@@ -60,6 +62,9 @@ int MoveClip::finish_hold()
 	// m_clip could be moved to another track due jogging
 	// so we remove it from there!
 	ie().process_command( m_clip->get_track()->remove_clip( m_clip, false ) );
+	
+	cpointer().get_viewport()->reset_context();
+	
 	return 1;
 }
 

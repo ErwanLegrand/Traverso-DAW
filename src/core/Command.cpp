@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Command.cpp,v 1.6 2006/10/17 00:06:14 r_sijrier Exp $
+$Id: Command.cpp,v 1.7 2006/10/18 12:01:44 r_sijrier Exp $
 */
 
 #include "Command.h"
@@ -49,7 +49,7 @@ Command::Command(ContextItem* item, const QString& des)
 Command::~Command()
 {}
 
-int Command::begin_hold()
+int Command::begin_hold(int useX, int useY)
 {
 	return -1;
 }

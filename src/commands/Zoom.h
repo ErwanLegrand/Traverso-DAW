@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Zoom.h,v 1.2 2006/08/31 17:54:51 r_sijrier Exp $
+    $Id: Zoom.h,v 1.3 2006/10/18 12:01:17 r_sijrier Exp $
 */
 
 #ifndef ZOOM_H
@@ -26,14 +26,15 @@
 #include "Command.h"
 
 class SongView;
+class QPoint;
 
 class Zoom : public Command
 {
 public :
         Zoom(SongView* sv);
-        ~Zoom();
+        ~Zoom() {};
 
-        int begin_hold();
+        int begin_hold(int useX = 0, int useY = 0);
         int finish_hold();
         int prepare_actions();
 	int do_action();
@@ -50,7 +51,8 @@ private :
         int lastJogZoomXFactor;
         int baseJogZoomXFactor;
         int verticalJogZoomLastY;
-
+	QPoint		mousePos;
+	
         SongView* m_sv;
 };
 

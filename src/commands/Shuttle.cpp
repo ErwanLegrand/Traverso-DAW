@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Shuttle.cpp,v 1.2 2006/08/31 17:54:51 r_sijrier Exp $
+    $Id: Shuttle.cpp,v 1.3 2006/10/18 12:01:17 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -51,17 +51,19 @@ int Shuttle::prepare_actions()
         return 1;
 }
 
-int Shuttle::begin_hold()
+int Shuttle::begin_hold(int useX, int useY)
 {
         // Call jog() to get our initial values (song->shuttleFactor)
         jog();
         m_timer.start(40);
+	set_cursor_shape(useX, useY);
         return 1;
 }
 
 
 int Shuttle::finish_hold()
 {
+	cpointer().get_viewport()->reset_context();
         m_timer.stop();
         return 1;
 }

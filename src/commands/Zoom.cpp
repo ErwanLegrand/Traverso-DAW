@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Zoom.cpp,v 1.3 2006/08/31 17:54:51 r_sijrier Exp $
+    $Id: Zoom.cpp,v 1.4 2006/10/18 12:01:17 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -26,6 +26,8 @@
 
 #include "SongView.h"
 #include "TrackView.h"
+#include <QPoint>
+#include <ViewPort.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -38,40 +40,40 @@ Zoom::Zoom(SongView* sv)
 }
 
 
-Zoom::~Zoom()
-{}
-
-
 int Zoom::prepare_actions()
 {
         return 0;
 }
 
 
-int Zoom::begin_hold()
+int Zoom::begin_hold(int useX, int useY)
 {
         jogZoomTotalX = m_sv->get_viewport()->width();
         jogZoomTotalY = m_sv->get_viewport()->height();
         verticalJogZoomLastY = cpointer().y();
         baseJogZoomXFactor = m_sv->get_song()->get_hzoom() - ((int) ( (float) (jogZoomTotalX - cpointer().clip_area_x()) / jogZoomTotalX * 50 ) + 1 );
-        return 1;
+	
+	set_cursor_shape(useX, useY);
+        
+	return 1;
 }
 
 
 int Zoom::finish_hold()
 {
-        return 1;
+	cpointer().get_viewport()->reset_context();
+	QCursor::setPos(mousePos);
+	return 1;
 }
 
 
 void Zoom::set_cursor_shape( int useX, int useY )
 {
-	if (useX && useY) {
-		m_sv->get_viewport()->setCursor(m_sv->cursorMap[9]);
-		m_sv->currentCursorMapIndex = 9;
-	} else {
-        	m_sv->set_context();
-        }
+	Q_UNUSED(useX);
+	Q_UNUSED(useY);
+	
+	mousePos = QCursor::pos();	
+	cpointer().get_viewport()->set_hold_cursor(":/cursorZoom");
 }
 
 int Zoom::jog()

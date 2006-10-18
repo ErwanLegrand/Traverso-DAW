@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Fade.cpp,v 1.3 2006/08/31 17:54:51 r_sijrier Exp $
+$Id: Fade.cpp,v 1.4 2006/10/18 12:01:17 r_sijrier Exp $
 */
 
 
@@ -26,7 +26,8 @@ $Id: Fade.cpp,v 1.3 2006/08/31 17:54:51 r_sijrier Exp $
 #include "Curve.h"
 #include "AudioClip.h"
 #include "ContextPointer.h"
-
+#include <ViewPort.h>
+		
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
@@ -48,8 +49,10 @@ int Fade::prepare_actions()
 	return 1;
 }
 
-int Fade::begin_hold()
+int Fade::begin_hold(int useX, int useY)
 {
+	set_cursor_shape(useX, useY);
+
 	origX = cpointer().x();
 	newFade = origFade = m_curve->get_range();
 	return 1;
@@ -58,6 +61,7 @@ int Fade::begin_hold()
 
 int Fade::finish_hold()
 {
+	cpointer().get_viewport()->reset_context();
 	return 1;
 }
 

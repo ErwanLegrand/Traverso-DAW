@@ -17,15 +17,17 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Gain.h,v 1.2 2006/08/31 17:54:51 r_sijrier Exp $
+    $Id: Gain.h,v 1.3 2006/10/18 12:01:17 r_sijrier Exp $
 */
 
 #ifndef GAIN_H
 #define GAIN_H
 
 #include "Command.h"
+#include <QPoint>
 
 class ContextItem;
+
 
 class Gain : public Command
 {
@@ -33,7 +35,7 @@ public :
         Gain(ContextItem* context, float gain = -1.0);
         ~Gain();
 
-        int begin_hold();
+        int begin_hold(int useX = 0, int useY = 0);
         int finish_hold();
         int prepare_actions();
         int do_action();
@@ -48,6 +50,7 @@ private :
         float 		origGain;
         float 		newGain;
         int 		origY;
+	QPoint		mousePos;
 };
 
 #endif

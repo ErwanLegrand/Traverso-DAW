@@ -17,12 +17,13 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveEdge.cpp,v 1.7 2006/08/31 17:54:51 r_sijrier Exp $
+    $Id: MoveEdge.cpp,v 1.8 2006/10/18 12:01:17 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
 
 #include "MoveEdge.h"
+#include <ViewPort.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -52,9 +53,12 @@ int MoveEdge::prepare_actions()
         return 1;
 }
 
-int MoveEdge::begin_hold()
+int MoveEdge::begin_hold(int useX, int useY)
 {
-        PENTER;
+	PENTER;
+	
+	set_cursor_shape(useX, useY);
+	
         if (m_edge == "set_left_edge") {
                 m_newPos = m_originalPos = m_clip->get_track_start_frame();
 	}
@@ -68,6 +72,7 @@ int MoveEdge::begin_hold()
 
 int MoveEdge::finish_hold()
 {
+	cpointer().get_viewport()->reset_context();
         return 1;
 }
 

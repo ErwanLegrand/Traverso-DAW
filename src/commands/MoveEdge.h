@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveEdge.h,v 1.2 2006/06/29 22:38:08 r_sijrier Exp $
+    $Id: MoveEdge.h,v 1.3 2006/10/18 12:01:17 r_sijrier Exp $
 */
 
 #ifndef MOVEEDGE_H
@@ -36,7 +36,7 @@ public :
         MoveEdge(AudioClip* clip, QByteArray whichEdge);
         ~MoveEdge();
 
-        int begin_hold();
+        int begin_hold(int useX = 0, int useY = 0);
         int finish_hold();
         int prepare_actions();
         int do_action();

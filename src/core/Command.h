@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Command.h,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
+    $Id: Command.h,v 1.5 2006/10/18 12:01:44 r_sijrier Exp $
 */
 
 #ifndef COMMAND_H
@@ -38,7 +38,7 @@ public :
         Command(const QString& des = "No description set!");
         virtual ~Command();
 
-        virtual int begin_hold();
+        virtual int begin_hold(int useX = 0, int useY = 0);
         virtual int finish_hold();
         virtual int prepare_actions();
         virtual int do_action();

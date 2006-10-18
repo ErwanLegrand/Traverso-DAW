@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Gain.cpp,v 1.3 2006/08/31 17:54:51 r_sijrier Exp $
+$Id: Gain.cpp,v 1.4 2006/10/18 12:01:17 r_sijrier Exp $
 */
 
 #include "Gain.h"
@@ -55,7 +55,7 @@ int Gain::prepare_actions()
 	return 1;
 }
 
-int Gain::begin_hold()
+int Gain::begin_hold(int useX, int useY)
 {
 	if ( ! QMetaObject::invokeMethod(gainObject, "get_gain",
 					Qt::DirectConnection,
@@ -64,15 +64,17 @@ int Gain::begin_hold()
 		return 0;
 	}	
 	
+	set_cursor_shape(useX, useY);
 	
 	newGain = origGain;
 	origY = cpointer().y();
-	
 	return 1;
 }
 
 int Gain::finish_hold()
 {
+	cpointer().get_viewport()->reset_context();
+	QCursor::setPos(mousePos);
 	return 1;
 }
 
@@ -99,15 +101,13 @@ int Gain::undo_action()
 }
 
 
-void Gain::set_cursor_shape( int useX, int useY )
+void Gain::set_cursor_shape(int useX, int useY)
 {
-	ViewPort* view = cpointer().get_viewport();
+	Q_UNUSED(useX);
+	Q_UNUSED(useY);
 	
-	if (useY) {
-		view->setCursor(QCursor( QPixmap(":/cursorGain") ));
-	} else {
-        	view->reset_context();
-        }
+	mousePos = QCursor::pos();	
+	cpointer().get_viewport()->set_hold_cursor(":/cursorGain");
 }
 
 

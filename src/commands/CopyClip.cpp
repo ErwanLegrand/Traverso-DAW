@@ -17,12 +17,13 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: CopyClip.cpp,v 1.8 2006/09/14 10:49:39 r_sijrier Exp $
+    $Id: CopyClip.cpp,v 1.9 2006/10/18 12:01:17 r_sijrier Exp $
 */
 
 #include "CopyClip.h"
 
 #include <libtraversocore.h>
+#include <ViewPort.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -42,8 +43,9 @@ CopyClip::~CopyClip()
 {}
 
 
-int CopyClip::begin_hold()
+int CopyClip::begin_hold(int useX, int useY)
 {
+	set_cursor_shape(useX, useY);
         return 1;
 }
 
@@ -54,6 +56,8 @@ int CopyClip::finish_hold()
         int y = cpointer().y();
         newInsertBlock = m_song->xpos_to_frame( x );
         targetTrack = m_song->get_track_under_y(y);
+	
+	cpointer().get_viewport()->reset_context();
         return 1;
 }
 
