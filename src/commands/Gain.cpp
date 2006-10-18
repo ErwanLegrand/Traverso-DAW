@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Gain.cpp,v 1.4 2006/10/18 12:01:17 r_sijrier Exp $
+$Id: Gain.cpp,v 1.5 2006/10/18 21:17:58 r_sijrier Exp $
 */
 
 #include "Gain.h"
@@ -126,6 +126,8 @@ int Gain::jog()
 		
 	newGain = dB_to_scale_factor( dbFactor + ofy );
 	origY = cpointer().y();
+	
+	cpointer().get_viewport()->set_hold_cursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
 	
 	return QMetaObject::invokeMethod(gainObject, "set_gain", Q_ARG(float, newGain));
 }
