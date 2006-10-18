@@ -21,6 +21,7 @@ DEFINES += JACK_SUPPORT
 DEFINES += ALSA_SUPPORT
 DEFINES += LV2_SUPPORT
 #DEFINES += USE_MEM_CHECKER
+DEFINES += USE_IO_PRIO
 
 #
 # Uncomment the line which notes your CPU type
@@ -83,6 +84,7 @@ unix {
 			DEFINES += SSE_OPTIMIZATIONS
 			QMAKE_CXXFLAGS_RELEASE += -msse -mfpmath=sse
 		}
+		
 	}
 	
 	GCCVERSION = $$system(gcc -dumpversion)
