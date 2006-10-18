@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.22 2006/10/18 19:12:39 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.23 2006/10/18 19:29:15 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
@@ -34,7 +34,7 @@ $Id: DiskIO.cpp,v 1.22 2006/10/18 19:12:39 r_sijrier Exp $
 # define __NR_ioprio_set	289
 # define __NR_ioprio_get	290
 # define IOPRIO_SUPPORT		1
-#elif defined(__ppc__) || defined(__powerpc__) || (defined(__PPC__)
+#elif defined(__ppc__) || defined(__powerpc__) || defined(__PPC__)
 # define __NR_ioprio_set	273
 # define __NR_ioprio_get	274
 # define IOPRIO_SUPPORT		1
