@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSourceManager.h,v 1.6 2006/09/14 10:49:39 r_sijrier Exp $
+$Id: AudioSourceManager.h,v 1.7 2006/10/18 12:03:16 r_sijrier Exp $
 */
 
 #ifndef AUDIOSOURCEMANAGER_H
@@ -25,6 +25,7 @@ $Id: AudioSourceManager.h,v 1.6 2006/09/14 10:49:39 r_sijrier Exp $
 
 #include <QString>
 #include <QHash>
+#include <QList>
 #include <QDomDocument>
 #include <QObject>
 
@@ -56,6 +57,9 @@ public:
 	QDomNode get_state(QDomDocument doc);
 	
 	int get_total_sources();
+	
+	QList<ReadSource*> get_all_audio_sources() const;
+	QList<AudioClip*> get_clips_for_source(ReadSource* source) const;
 
 
 private:

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSourceManager.cpp,v 1.11 2006/09/14 10:49:39 r_sijrier Exp $
+$Id: AudioSourceManager.cpp,v 1.12 2006/10/18 12:03:16 r_sijrier Exp $
 */
 
 #include "AudioSourceManager.h"
@@ -104,6 +104,8 @@ int AudioSourceManager::set_state( const QDomNode & node )
 		clipsNode = clipsNode.nextSibling();
 	}
 	
+	
+	emit sourceAdded();
 	
 	return 1;
 }
@@ -224,6 +226,25 @@ AudioClip* AudioSourceManager::new_audio_clip(const QString& name)
 	m_clips.insert(clip->get_id(), clip);
 	return get_clip(clip->get_id());
 }
+
+QList<ReadSource*> AudioSourceManager::get_all_audio_sources( ) const
+{
+	return m_sources.values();
+}
+
+QList< AudioClip * > AudioSourceManager::get_clips_for_source( ReadSource * source ) const
+{
+	QList<AudioClip*> clips;
+	
+	foreach(AudioClip* clip, m_clips) {
+		if (clip->get_readsource_id() == source->get_id()) {
+			clips.append(clip);
+		}
+	}
+	
+	return clips;
+}
+
 
 
 //eof
