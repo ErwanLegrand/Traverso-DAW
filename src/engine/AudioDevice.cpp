@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.17 2006/10/06 11:44:01 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.18 2006/10/19 10:47:26 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -440,16 +440,15 @@ int AudioDevice::shutdown( )
 		
 		// Wait until the audioThread has finished execution. One second
 		// should do, if it's still running then, the thread must have gone wild or something....
+		printf("Starting to shutdown AudioThread..\n");
 		if (audioThread->isRunning()) {
 			r = audioThread->wait(1000);
 		}
 	}
 	
-	JackDriver* jackdriver = qobject_cast<JackDriver*>(driver);
-	if (jackdriver) {
-		jackdriver->stop();
-	}
-
+	printf("AudioDeviceThread finished, stopping driver\n");
+	driver->stop();
+	
 	free_memory();
 
 	return r;
