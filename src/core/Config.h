@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Config.h,v 1.1 2006/10/18 12:02:40 r_sijrier Exp $
+$Id: Config.h,v 1.2 2006/10/19 10:45:20 r_sijrier Exp $
 */
 
 #ifndef CONFIG_H
@@ -35,6 +35,7 @@ public:
 	
 	int get_hardware_int_property(const QString& property, int defaultValue=0) const;
 	int get_ie_int_property(const QString& property, int defaultValue=0) const;
+	int get_project_int_property(const QString& property, int defaultValue=0) const;
 	
 	QString get_project_string_property(const QString& property, const QString& defaultValue="") const;
 	QString get_hardware_string_property(const QString& property, const QString& defaultValue="") const;

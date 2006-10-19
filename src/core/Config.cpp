@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Config.cpp,v 1.1 2006/10/18 12:02:40 r_sijrier Exp $
+$Id: Config.cpp,v 1.2 2006/10/19 10:45:20 r_sijrier Exp $
 */
 
 #include "Config.h"
@@ -183,6 +183,11 @@ int Config::get_int_property(const QString& property, int defaultValue) const
 int Config::get_hardware_int_property( const QString& property, int defaultValue ) const
 {
 	return m_intConfigs.value(QString("Hardware/").append(property), defaultValue);
+}
+
+int Config::get_project_int_property( const QString & property, int defaultValue ) const
+{
+	return m_intConfigs.value(QString("Project/").append(property), defaultValue);
 }
 
 QString Config::get_project_string_property( const QString & property, const QString & defaultValue ) const
