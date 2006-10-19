@@ -17,11 +17,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Project.cpp,v 1.8 2006/09/13 12:51:07 r_sijrier Exp $
+$Id: Project.cpp,v 1.9 2006/10/19 10:45:57 r_sijrier Exp $
 */
 
 #include <QFile>
-#include <QSettings>
 #include <QDir>
 #include <QTextStream>
 
@@ -36,6 +35,7 @@ $Id: Project.cpp,v 1.8 2006/09/13 12:51:07 r_sijrier Exp $
 #include "AudioSourceManager.h"
 #include "Export.h"
 #include "AudioDevice.h"
+#include "Config.h"
 
 
 #define PROJECT_FILE_VERSION 	1
@@ -52,9 +52,7 @@ Project::Project(const QString& pTitle)
 	currentSongId = 1;
 	engineer = "";
 
-	QSettings settings;
-
-	rootDir = settings.value("Project/directory").toString() + title;
+	rootDir = config().get_project_string_property("directory") + title;
 	sourcesDir = rootDir + "/audiosources";
 	m_rate = audiodevice().get_sample_rate();
 	m_bitDepth = audiodevice().get_bit_depth();
@@ -81,7 +79,6 @@ Project::~Project()
 int Project::create(int pNumSongs)
 {
 	PENTER;
-	QSettings settings;
 	PMESG("Creating new project %s  NumSongs=%d", title.toAscii().data(), pNumSongs);
 
 	QDir dir;

@@ -17,12 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.34 2006/10/06 16:20:59 r_sijrier Exp $
+$Id: Song.cpp,v 1.35 2006/10/19 10:46:27 r_sijrier Exp $
 */
 
 #include <QTextStream>
 #include <QString>
-#include <QSettings>
 
 #include <libtraverso.h>
 #include <commands.h>
@@ -45,6 +44,7 @@ $Id: Song.cpp,v 1.34 2006/10/06 16:20:59 r_sijrier Exp $
 #include "Tsar.h"
 #include "SnapList.h"
 #include "HistoryStack.h"
+#include "Config.h"
 
 #include "LocatorView.h"
 #include "ContextItem.h"
@@ -66,8 +66,7 @@ Song::Song(Project* project, int number)
 	title="Untitled";
 	m_gain = 1.0f;
 	artists = "No artists name yet";
-	QSettings settings;
-	int level = settings.value("hzoomLevel").toInt();
+	int level = config().get_int_property("hzoomLevel");
 	switch (level) {
 		case 8: m_hzoom = 4;
 			break;
@@ -90,7 +89,7 @@ Song::Song(Project* project, int number)
 		default:   m_hzoom = 11;
 			break;
 	}
-	int tracksToCreate = settings.value("trackCreationCount").toInt();
+	int tracksToCreate = config().get_int_property("trackCreationCount");
 	regionList = (MtaRegionList*) 0;
 
 	init();

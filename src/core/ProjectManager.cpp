@@ -17,12 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ProjectManager.cpp,v 1.11 2006/09/13 12:51:07 r_sijrier Exp $
+$Id: ProjectManager.cpp,v 1.12 2006/10/19 10:45:57 r_sijrier Exp $
 */
 
 #include "ProjectManager.h"
 
-#include <QSettings>
 #include <QApplication>
 #include <QFileInfo>
 
@@ -30,6 +29,7 @@ $Id: ProjectManager.cpp,v 1.11 2006/09/13 12:51:07 r_sijrier Exp $
 #include "Song.h"
 #include "AudioSourceManager.h"
 #include "Information.h"
+#include "Config.h"
 #include "FileHelpers.h"
 #include <AudioDevice.h>
 
@@ -75,13 +75,11 @@ void ProjectManager::set_current_project(Project* pProject)
 
 	emit projectLoaded(currentProject);
 
-	QSettings settings;
-
 	QString title = "";
 
 	if (currentProject) {
 		title = currentProject->get_title();
-		settings.setValue("Project/current", title);
+		config().set_project_property("current", title);
 	}
 
 }
@@ -146,8 +144,7 @@ int ProjectManager::remove_project( const QString& name )
 
 bool ProjectManager::project_is_current(const QString& title)
 {
-	QSettings settings;
-	QString path = settings.value("Project/directory").toString();
+	QString path = config().get_project_string_property("directory");
 	path += title;
 
 	if (currentProject && (currentProject->get_root_dir() == path)) {
@@ -159,8 +156,7 @@ bool ProjectManager::project_is_current(const QString& title)
 
 bool ProjectManager::project_exists(const QString& title)
 {
-	QSettings settings;
-	QString project_dir = settings.value("Project/directory").toString();
+	QString project_dir = config().get_project_string_property("directory");
 	QString project_path = project_dir + title;
 	QFileInfo fileInfo(project_path);
 
@@ -189,11 +185,10 @@ Project * ProjectManager::get_project( )
 
 void ProjectManager::start( )
 {
-	QSettings settings;
-	int loadProjectAtStartUp = settings.value("Project/loadLastUsed").toInt();
+	int loadProjectAtStartUp = config().get_project_int_property("loadLastUsed");
 
 	if (loadProjectAtStartUp != 0) {
-		QString projectToLoad = settings.value("Project/current").toString();
+		QString projectToLoad = config().get_project_string_property("current");
 
 		if ( projectToLoad.isNull() || projectToLoad.isEmpty() )
 			projectToLoad="Untitled";

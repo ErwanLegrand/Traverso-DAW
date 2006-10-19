@@ -17,14 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FileHelpers.cpp,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: FileHelpers.cpp,v 1.5 2006/10/19 10:45:46 r_sijrier Exp $
 */
 
 #include "FileHelpers.h"
 
 #include <sys/stat.h>
-
-#include <QSettings>
+#include "Config.h"
 #include <QDir>
 
 #include "Debugger.h"
@@ -35,9 +34,7 @@ $Id: FileHelpers.cpp,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
 // before removing the directory
 int FileHelper::remove_recursively(const QString& pName)
 {
-	QSettings settings;
-
-	QString name = settings.value("Project/directory").toString();
+	QString name = config().get_project_string_property("directory");
 	name += pName;
 
 	QFileInfo fileInfo(name);
@@ -88,8 +85,7 @@ int FileHelper::remove_recursively(const QString& pName)
 int FileHelper::copy_recursively(const QString& pNameFrom, const QString& pNameTo)
 {
 #if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
-	QSettings settings;
-	QString nameFrom = settings.value("Project/directory").toString();
+	QString nameFrom = config().get_project_string_property("directory");
 	QString nameTo(nameFrom);
 
 	nameFrom += pNameFrom;

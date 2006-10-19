@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.23 2006/10/18 19:29:15 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.24 2006/10/19 10:45:39 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
@@ -74,7 +74,7 @@ const char *to_prio[] = { "none", "realtime", "best-effort", "idle", };
 #include "WriteSource.h"
 #include "AudioDevice.h"
 #include "RingBuffer.h"
-#include <QSettings>
+#include "Config.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -150,8 +150,7 @@ DiskIO::DiskIO(Song* song)
 	
 	m_minBufStatus = (audiodevice().get_sample_rate() * 12) / 1000 + 1024;
 	
-	QSettings settings;
-	m_bufferSize = settings.value("HardWare/PreBufferSize").toInt();
+	m_bufferSize = config().get_hardware_int_property("PreBufferSize");
 	framebuffer = new audio_sample_t[m_bufferSize];
 
 	// Move this instance to the workthread
