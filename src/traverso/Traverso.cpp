@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Traverso.cpp,v 1.13 2006/10/18 12:08:56 r_sijrier Exp $
+$Id: Traverso.cpp,v 1.14 2006/10/23 19:14:24 r_sijrier Exp $
 */
 
 #include <signal.h>
@@ -72,6 +72,8 @@ Traverso::~Traverso()
 
 void Traverso::shutdown( int signal )
 {
+	PENTER;
+	
 	audiodevice().shutdown();
 	
 	bool save = false;
