@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: Traverso.h,v 1.4 2006/10/18 12:08:56 r_sijrier Exp $
+    $Id: Traverso.h,v 1.5 2006/10/25 14:51:12 r_sijrier Exp $
 */
 
 #ifndef Traverso_H
@@ -34,7 +34,7 @@ class Traverso : public QApplication
 
 public :
 
-        Traverso(int argc, char **argv );
+        Traverso(int &argc, char **argv );
         ~Traverso();
 
 
