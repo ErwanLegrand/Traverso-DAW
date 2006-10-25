@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Config.cpp,v 1.2 2006/10/19 10:45:20 r_sijrier Exp $
+$Id: Config.cpp,v 1.3 2006/10/25 14:52:38 r_sijrier Exp $
 */
 
 #include "Config.h"
@@ -160,8 +160,8 @@ void Config::check_and_load_configuration( )
 					tr("Created new Project directory for you here: %1\n").arg(newPath), 
 					"OK", 
 					0 );
-			set_project_property("directory", newPath);
 		}
+		set_project_property("directory", newPath);
 	}
 }
 
@@ -208,6 +208,7 @@ QString Config::get_hardware_string_property( const QString & property, const QS
 
 void Config::set_project_property( const QString & property, const QString& newValue )
 {
+	printf("setting property (%s) to %s\n", property.toAscii().data(), newValue.toAscii().data());
 	QSettings settings;
 	settings.setValue(QString("Project/").append(property), newValue);
 }
