@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: VUMeterLevel.cpp,v 1.7 2006/11/06 19:22:27 n_doebelin Exp $
+    $Id: VUMeterLevel.cpp,v 1.8 2006/11/06 19:28:53 n_doebelin Exp $
 */
 
 #include <libtraverso.h>
@@ -116,7 +116,7 @@ void VUMeterLevel::paintEvent( QPaintEvent*  )
 		//	We want the new peak hold value to be held for 1 sec., so we restart the timer
 		//	as soon as a new phvalue was detected.
 		if (PEAK_HOLD_MODE == 1) {
-			phTimer->start(PEAK_HOLD_TIME);
+			phTimer.start(PEAK_HOLD_TIME);
 		}
 	}
 
