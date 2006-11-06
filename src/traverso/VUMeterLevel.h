@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: VUMeterLevel.h,v 1.3 2006/05/17 22:10:27 r_sijrier Exp $
+    $Id: VUMeterLevel.h,v 1.4 2006/11/06 19:22:27 n_doebelin Exp $
 */
 
 #ifndef VUMETERLEVEL_H
@@ -27,8 +27,10 @@
 #include <QTimer>
 #include <QPixmap>
 #include <QColor>
-#include <QBasicTimer>
+#include <QTimer>
 #include <QTimerEvent>
+#include <QVector>
+#include <QLinearGradient>
 
 class AudioChannel;
 
@@ -42,28 +44,46 @@ public:
 
 protected:
         void paintEvent( QPaintEvent* e);
-        void timerEvent(QTimerEvent *event);
+        void resizeEvent( QResizeEvent * );
 
 
 private:
-        bool 			activeTail;
+        bool 		activeTail;
+	bool		peakHoldFalling;
         AudioChannel*	m_channel;
         QColor		levelClearColor;
         QPixmap		levelPixmap;
         QPixmap		clearPixmap;
-        QBasicTimer 	timer;
+        QTimer 		timer,
+			phTimer;
+	QLinearGradient	gradient2D,
+			gradient3DLeft,
+			gradient3DRight;
 
         float 			presetMark[7];
         float			tailDeltaY;
         float			prevPeakValue;
-        float			 peak;
+        float			peak;
+	float			rms;
+	float			maxFalloff;
+	float			peakHoldValue;
+	float			peakHistory[50];
+	short unsigned int	rmsIndex;
+	short unsigned int	overCount;
 
         void resize_level_pixmap();
-        void update_peak();
+	void create_gradients();
+	int get_meter_position(float);
 
 private slots:
 	void stop();
 	void start();
+        void update_peak();
+	void reset_peak_hold_value();
+
+signals:
+	void activate_over_led(bool);
+
 };
 
 #endif

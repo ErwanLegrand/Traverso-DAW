@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
+    Copyright (C) 2006 Nicola Doebelin
  
     This file is part of Traverso
  
@@ -17,59 +17,34 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: VUMeter.h,v 1.2 2006/11/06 19:22:27 n_doebelin Exp $
+    $Id: VUMeterRuler.h,v 1.1 2006/11/06 19:22:27 n_doebelin Exp $
 */
 
-#ifndef VUMETER_H
-#define VUMETER_H
+#ifndef VUMETERRULER_H
+#define VUMETERRULER_H
 
 #include <QWidget>
-#include <QString>
-#include <QGridLayout>
-#include <QLabel>
 #include <QVector>
 
-#include "VUMeterRuler.h"
-
-class AudioBus;
-
-class VUMeter : public QWidget
+class VUMeterRuler : public QWidget
 {
-
+	Q_OBJECT
+	
 public:
-        VUMeter(QWidget* parent, AudioBus* bus);
-        ~VUMeter();
 
-	static QVector<float>* vumeter_lut();
+        VUMeterRuler(QWidget* parent);
+	void setYOffset(int);
 
 protected:
-        void resizeEvent( QResizeEvent* e);
         void paintEvent( QPaintEvent* e);
 
+
 private:
-        bool			isActive;
-        int 			m_id;
-        int			m_channels;
-	int			minSpace;
-        QString			m_name;
-	QLabel*			channelNameLabel;
-	QGridLayout*		glayout;
-	QBrush			bgBrush;
-	QLinearGradient		bgGradient;
-	VUMeterRuler*		ruler;
-	bool			drawTickmarks;
-	static QVector<float>	lut;
+	std::vector<int>	presetMark;
+	std::vector<int>	lineMark;
+	int			yOffset;
 
-	static void calculate_lut_data();
 };
-
-inline QVector<float>* VUMeter::vumeter_lut()
-{
-	if (lut.isEmpty()) {
-		calculate_lut_data();
-	}
-	return &lut;
-}
 
 #endif
 

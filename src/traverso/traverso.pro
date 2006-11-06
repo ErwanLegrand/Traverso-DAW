@@ -52,6 +52,8 @@ HEADERS += AudioPluginSelector.h \
            ViewPort.h \
            SongView.h \
 	   VUMeter.h \
+	   VUMeterRuler.h \
+	   VUMeterOverLed.h \
 	   VUMeterLevel.h \
            Cursor.h \
            PanelLed.h \
@@ -97,6 +99,8 @@ SOURCES += Traverso.cpp \
            ViewPort.cpp \
            SongView.cpp \
 	   VUMeter.cpp \
+	   VUMeterRuler.cpp \
+	   VUMeterOverLed.cpp \
 	   VUMeterLevel.cpp \
            Cursor.cpp \
            PanelLed.cpp \
