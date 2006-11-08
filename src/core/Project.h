@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Project.h,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: Project.h,v 1.5 2006/11/08 14:49:37 r_sijrier Exp $
 */
 
 #ifndef PROJECT_H
@@ -106,7 +106,6 @@ private:
 
 signals:
 	void currentSongChanged(Song* );
-	void newSongCreated(Song* );
 	void songAdded();
 	void songRemoved();
 	void songExportProgressChanged(int );

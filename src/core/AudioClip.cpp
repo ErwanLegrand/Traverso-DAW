@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.48 2006/10/17 00:04:17 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.49 2006/11/08 14:49:37 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -129,7 +129,6 @@ int AudioClip::set_state(const QDomNode& node)
 		if (!fadeInNode.isNull()) {
 			fadeIn = new FadeCurve(this, "FadeIn");
 			fadeIn->set_state( fadeInNode );
-			emit fadeAdded(fadeIn);
 			private_add_fade(fadeIn);
 		}
 
@@ -137,7 +136,6 @@ int AudioClip::set_state(const QDomNode& node)
 		if (!fadeOutNode.isNull()) {
 			fadeOut = new FadeCurve(this, "FadeOut");
 			fadeOut->set_state( fadeOutNode );
-			emit fadeAdded(fadeOut);
 			private_add_fade(fadeOut);
 		}
 	}
@@ -180,7 +178,7 @@ void AudioClip::toggle_mute()
 	PENTER;
 	isMuted=!isMuted;
 	set_sources_active_state();
-	emit muteChanged(isMuted);
+	emit muteChanged();
 }
 
 void AudioClip::track_audible_state_changed()
@@ -313,14 +311,18 @@ void AudioClip::set_blur(bool )
 
 void AudioClip::set_fade_in(nframes_t b)
 {
-	get_fade_in()->set_range( b );
-	emit stateChanged();
+	if (!fadeIn) {
+		create_fade_in();
+	}
+	fadeIn->set_range( b );
 }
 
 void AudioClip::set_fade_out(nframes_t b)
 {
-	get_fade_out()->set_range( b );
-	emit stateChanged();
+	if (!fadeOut) {
+		create_fade_out();
+	}
+	fadeOut->set_range( b );
 }
 
 void AudioClip::set_gain(float gain)
@@ -515,7 +517,7 @@ Command* AudioClip::mute()
 
 Command* AudioClip::reset_gain()
 {
-	return new Gain(this, 1.0);
+	return new Gain(this, tr("Clip Gain"), 1.0);
 }
 
 Command* AudioClip::reset_fade_in()
@@ -546,7 +548,7 @@ Command* AudioClip::drag()
 Command* AudioClip::drag_edge()
 {
 	Q_ASSERT(m_song);
-	int x = cpointer().clip_area_x();
+	int x = cpointer().x();
 	int cxm = m_song->frame_to_xpos( trackStartFrame + ( m_length / 2 ) );
 
 	MoveEdge* me;
@@ -561,7 +563,7 @@ Command* AudioClip::drag_edge()
 
 Command* AudioClip::gain()
 {
-	return new Gain(this);
+	return new Gain(this, tr("Clip Gain"));
 }
 
 Command* AudioClip::split()
@@ -849,13 +851,19 @@ nframes_t AudioClip::get_track_start_frame( ) const
 Command * AudioClip::clip_fade_in( )
 {
 	int direction = 1;
-	return new Fade(this, get_fade_in(), direction);
+	if (!fadeIn) {
+		create_fade_in();
+	}
+	return new Fade(this, fadeIn, direction);
 }
 
 Command * AudioClip::clip_fade_out( )
 {
 	int direction = -1;
-	return new Fade(this, get_fade_out(), direction);
+	if (!fadeOut) {
+		create_fade_out();
+	}
+	return new Fade(this, fadeOut, direction);
 }
 
 Command * AudioClip::normalize( )
@@ -914,23 +922,11 @@ void AudioClip::calculate_normalization_factor(float targetdB)
 
 FadeCurve * AudioClip::get_fade_in( )
 {
-	if (!fadeIn) {
-		fadeIn = new FadeCurve(this, "FadeIn");
-		fadeIn->set_shape("Linear");
-		THREAD_SAVE_CALL_EMIT_SIGNAL(this, fadeIn, private_add_fade(FadeCurve*), fadeAdded(FadeCurve*));
-	}
-
 	return fadeIn;
 }
 
 FadeCurve * AudioClip::get_fade_out( )
 {
-	if (!fadeOut) {
-		fadeOut = new FadeCurve(this, "FadeOut");
-		fadeOut->set_shape("Linear");
-		THREAD_SAVE_CALL_EMIT_SIGNAL(this, fadeOut, private_add_fade(FadeCurve*), fadeAdded(FadeCurve*));
-	}
-
 	return fadeOut;
 }
 
@@ -958,6 +954,20 @@ int AudioClip::ref( )
 int AudioClip::get_ref_count( ) const
 {
 	return m_refcount;
+}
+
+void AudioClip::create_fade_in( )
+{
+	fadeIn = new FadeCurve(this, "FadeIn");
+	fadeIn->set_shape("Linear");
+	THREAD_SAVE_CALL_EMIT_SIGNAL(this, fadeIn, private_add_fade(FadeCurve*), fadeAdded(FadeCurve*));
+}
+
+void AudioClip::create_fade_out( )
+{
+	fadeOut = new FadeCurve(this, "FadeOut");
+	fadeOut->set_shape("Linear");
+	THREAD_SAVE_CALL_EMIT_SIGNAL(this, fadeOut, private_add_fade(FadeCurve*), fadeAdded(FadeCurve*));
 }
 
 // eof

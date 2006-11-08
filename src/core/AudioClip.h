@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.22 2006/10/17 00:04:17 r_sijrier Exp $
+$Id: AudioClip.h,v 1.23 2006/11/08 14:49:37 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -152,11 +152,14 @@ private:
 	void set_sources_active_state();
 	void process_capture(nframes_t nframes, uint channel);
 	
+	void create_fade_in();
+	void create_fade_out();
+	
 	void calculate_normalization_factor(float targetdB = 0.0);
 
 signals:
 	void stateChanged();
-	void muteChanged(bool);
+	void muteChanged();
 	void positionChanged();
 	void trackEndFrameChanged();
 	void gainChanged();

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.29 2006/10/17 00:12:10 r_sijrier Exp $
+$Id: Track.cpp,v 1.30 2006/11/08 14:49:37 r_sijrier Exp $
 */
 
 #include "Track.h"
@@ -49,6 +49,7 @@ Track::Track(Song* song, int pID, const QString& pName, int pBaseY, int pHeight 
 	PENTERCONS;
 	m_pan = numtakes = 0;
 	m_gain = 0.5;
+	m_sortIndex = -1;
 	
 	busIn = "Capture 1";
 	busOut = "MasterOut";
@@ -56,14 +57,11 @@ Track::Track(Song* song, int pID, const QString& pName, int pBaseY, int pHeight 
 	init();
 }
 
-Track::Track( Song * song, const QDomNode )
+Track::Track( Song * song, const QDomNode node)
 	: ContextItem(song), 
 	  m_song(song)
 {
 	PENTERCONS;
-	// These are used by TrackView _before_ they are initialized by set_state !!
-	baseY = height = 0;
-	
 	// ALWAYS call init() before new member objects are created!
 	init();
 }
@@ -90,7 +88,9 @@ QDomNode Track::get_state( QDomDocument doc )
 	node.setAttribute("pan", m_pan);
 	node.setAttribute("mute", isMuted);
 	node.setAttribute("solo", isSolo);
+	node.setAttribute("mutedbysolo", mutedBySolo);
 	node.setAttribute("height", height);
+	node.setAttribute("sortindex", m_sortIndex);
 	node.setAttribute("numtakes", numtakes);
 	node.setAttribute("InBus", busIn.data());
 	node.setAttribute("OutBus", busOut.data());
@@ -121,16 +121,19 @@ QDomNode Track::get_state( QDomDocument doc )
 int Track::set_state( const QDomNode & node )
 {
 	QDomElement e = node.toElement();
+	
+	set_height( e.attribute( "height", "160" ).toInt() );
+	m_sortIndex = e.attribute( "sortindex", "-1" ).toInt();
 	m_name = e.attribute( "name", "" );
 	set_muted(e.attribute( "mute", "" ).toInt());
 	if (e.attribute( "solo", "" ).toInt()) {
 		solo();
 	}
+	set_muted_by_solo(e.attribute( "mutedbysolo", "0").toInt());
 	m_gain =  e.attribute( "gain", "" ).toFloat();
 	set_pan( e.attribute( "pan", "" ).toFloat() );
 	set_bus_in( e.attribute( "InBus", "" ).toAscii() );
 	set_bus_out( e.attribute( "OutBus", "" ).toAscii() );
-	set_height( e.attribute( "height", "160" ).toInt() );
 	ID = e.attribute( "id", "").toInt();
 	numtakes = e.attribute( "numtakes", "").toInt();
 
@@ -148,13 +151,9 @@ int Track::set_state( const QDomNode & node )
 			}
 			
 			clip->set_song(m_song);
-
-			// First add the clip, this will emit the clipAdded Signal!
-			ie().process_command( add_clip( clip, false ) );
-			
-			// Now set the clips state, which will eventually generate
-			// other signals, so the GUI can act on it!
+			clip->set_track(this);
 			clip->set_state(clip->m_domNode);
+			private_add_clip(clip);
 			
 			clipNode = clipNode.nextSibling();
 		}
@@ -264,7 +263,7 @@ Command* Track::remove_clip(AudioClip* clip, bool historable)
 	PENTER;
 	return new AddRemoveItemCommand(this, clip, historable, m_song,
 					"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)",
-					"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)");
+					"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)", tr("Remove Clip"));
 }
 
 
@@ -274,7 +273,7 @@ Command* Track::add_clip(AudioClip* clip, bool historable)
 	clip->set_track(this);
 	return new AddRemoveItemCommand(this, clip, historable, m_song,
 					"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)",
-					"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)");
+					"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)", tr("Add Clip"));
 }
 
 
@@ -328,15 +327,17 @@ void Track::set_bus_in(QByteArray bus)
 	if (isArmed)
 		disarm();
 	busIn=bus;
-	if (wasArmed)
+	if (wasArmed) {
 		arm();
-	emit stateChanged();
+	}
+	
+	emit inBusChanged();
 }
 
 void Track::set_bus_out(QByteArray bus)
 {
 	busOut=bus;
-	emit stateChanged();
+	emit outBusChanged();
 }
 
 bool Track::is_solo()
@@ -592,7 +593,7 @@ Command* Track::solo(  )
 
 Command* Track::gain()
 {
-	return new Gain(this);
+	return new Gain(this, tr("Track %1 Gain").arg(ID));
 }
 
 Command* Track::pan()
@@ -667,6 +668,21 @@ Command* Track::remove_plugin( Plugin * plugin )
 	return pluginChain->remove_plugin(plugin);
 }
 
+void Track::set_sort_index( int index )
+{
+	m_sortIndex = index;
+}
+
+int Track::get_sort_index( ) const
+{
+	return m_sortIndex;
+}
+
+
+Command * Track::remove_item( )
+{
+	return m_song->remove_track(this);
+}
 
 
 // eof

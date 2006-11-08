@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.h,v 1.18 2006/10/02 19:04:38 r_sijrier Exp $
+$Id: Song.h,v 1.19 2006/11/08 14:49:37 r_sijrier Exp $
 */
 
 #ifndef SONG_H
@@ -67,7 +67,6 @@ public:
 		return m_hzoom;
 	}
 	int get_clips_count_for_audio(AudioSource* a);
-	int get_floorY();
 	int get_playing_xpos()
 	{
 		return frame_to_xpos(transportFrame);
@@ -95,7 +94,6 @@ public:
 	nframes_t get_last_frame() const;
 	
 	Track*       get_track(int trackNumber);
-	Track*       get_track_under_y (int y);
 	QString get_title() const
 	{
 		return title;
@@ -219,9 +217,6 @@ private:
 
 	Track* create_track();
 
-	friend class Track;
-	
-
 public slots :
 	void seek_finished();
 	void audiodevice_client_removed(Client* );
@@ -233,7 +228,6 @@ public slots :
 
 	Command* go();
 	Command* add_new_track();
-	Command* remove_track();
 
 	Command* set_editing_mode();
 	Command* set_curve_mode();

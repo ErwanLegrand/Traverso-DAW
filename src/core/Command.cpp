@@ -17,11 +17,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Command.cpp,v 1.7 2006/10/18 12:01:44 r_sijrier Exp $
+$Id: Command.cpp,v 1.8 2006/11/08 14:49:37 r_sijrier Exp $
 */
 
 #include "Command.h"
-#include "HistoryStack.h"
 #include "ContextPointer.h"
 #include <ViewPort.h>
 #include <Utils.h>
@@ -32,18 +31,17 @@ $Id: Command.cpp,v 1.7 2006/10/18 12:01:44 r_sijrier Exp $
 #include "Debugger.h"
 
 Command::Command( const QString& des )
-	: m_description(des)
+	: QUndoCommand(des)
 {
 	m_historyStack = 0;
-	m_historable = true;
+	m_isHistorable = true;
 }
 
 Command::Command(ContextItem* item, const QString& des)
-	: m_description(des)
+	: QUndoCommand(des)
 {
-	m_context = item;
 	m_historyStack = item->get_history_stack();
-	m_historable = true;
+	m_isHistorable = true;
 }
 
 Command::~Command()
@@ -51,6 +49,7 @@ Command::~Command()
 
 int Command::begin_hold(int useX, int useY)
 {
+	PERROR("Hold actions should re-implement this function!!");
 	return -1;
 }
 
@@ -66,6 +65,7 @@ int Command::jog()
 
 void Command::set_valid(bool valid)
 {
+	PENTER;
 	m_isValid = valid;
 }
 
@@ -73,7 +73,7 @@ int Command::push_to_history_stack( )
 {
 	PENTER;
 	
-	if (! m_historable) {
+	if (! m_isHistorable) {
 		PMESG("Not a Historable command, deleting the command");
 		return -1;
 	}
@@ -108,20 +108,6 @@ int Command::undo_action( )
 	return -1;
 }
 
-void Command::set_description(const QString& des )
-{
-	m_description = des;
-}
-
-bool Command::merg_with(const Command* )
-{
-	return false;
-}
-
-int Command::command_type( )
-{
-	return -1;
-}
 
 void Command::set_cursor_shape( int useX, int useY )
 {

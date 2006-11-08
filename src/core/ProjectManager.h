@@ -17,13 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ProjectManager.h,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: ProjectManager.h,v 1.5 2006/11/08 14:49:37 r_sijrier Exp $
 */
 
 #ifndef ProjectManager_H
 #define ProjectManager_H
 
 #include "ContextItem.h"
+#include <QUndoGroup>
 
 
 class Project;
@@ -44,6 +45,7 @@ public:
 	int remove_project(const QString& title);
 
 	Project* get_project();
+	QUndoGroup* get_undogroup() const;
 
 
 public slots:
@@ -60,6 +62,7 @@ private:
 	Project* currentProject;
 
 	bool clientRequestInProgress;
+	static QUndoGroup	undogroup;
 	
 	void set_current_project(Project* pProject);
 	bool project_is_current(const QString& title);

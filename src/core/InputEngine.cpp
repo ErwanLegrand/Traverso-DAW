@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.8 2006/10/18 12:01:44 r_sijrier Exp $
+$Id: InputEngine.cpp,v 1.9 2006/11/08 14:49:37 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -181,17 +181,18 @@ int InputEngine::broadcast_action(IEAction* action)
 	}
 
 	if (k && (!isHolding)) {
-		if (k->prepare_actions() && k->do_action()) {
+		if (k->prepare_actions()) {
 			k->set_valid(true);
 			k->push_to_history_stack();
 		}
 	}
 	if (k && isHolding) {
-		if (k->begin_hold(action->useX, action->useY)) {
+		if (k->begin_hold(action->useX, action->useY) != -1) {
 			k->set_valid(true);
 			holdingCommand = k;
 			set_jogging(true);
 		} else {
+			PERROR("hold action begin_hold() failed!");
 			// OOPSSS, something went wrong when making the Command
 			// set following stuff to zero to make finish_hold do nothing
 			delete k;
@@ -208,7 +209,7 @@ void InputEngine::process_command( Command * cmd )
 {
 	Q_ASSERT(cmd);
 	
-	if (cmd->prepare_actions() && cmd->do_action()) {
+	if (cmd->prepare_actions()) {
 		cmd->set_valid(true);
 		if (cmd->push_to_history_stack() < 0) {
 			delete cmd;
@@ -770,7 +771,6 @@ void InputEngine::finish_hold()
 
 		if (holdingCommand->prepare_actions()) {
 			holdingCommand->set_valid(true);
-			holdingCommand->do_action();
 		} else {
 			holdingCommand->set_valid( false );
 		}

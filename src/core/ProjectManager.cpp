@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ProjectManager.cpp,v 1.12 2006/10/19 10:45:57 r_sijrier Exp $
+$Id: ProjectManager.cpp,v 1.13 2006/11/08 14:49:37 r_sijrier Exp $
 */
 
 #include "ProjectManager.h"
@@ -37,6 +37,7 @@ $Id: ProjectManager.cpp,v 1.12 2006/10/19 10:45:57 r_sijrier Exp $
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
+QUndoGroup ProjectManager::undogroup;
 
 ProjectManager::ProjectManager()
 		: ContextItem()
@@ -208,6 +209,13 @@ void ProjectManager::start( )
 		}
 	}
 }
+
+
+QUndoGroup* ProjectManager::get_undogroup() const
+{
+	return &undogroup;
+}
+
 
 Command* ProjectManager::exit()
 {

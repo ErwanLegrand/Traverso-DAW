@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.8 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: FadeCurve.cpp,v 1.9 2006/11/08 14:49:37 r_sijrier Exp $
 */
  
 #include "FadeCurve.h"
@@ -26,6 +26,7 @@ $Id: FadeCurve.cpp,v 1.8 2006/09/07 09:36:52 r_sijrier Exp $
 #include <cmath>
 #include "Song.h"
 #include "AudioClip.h"
+#include <Fade.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -322,7 +323,7 @@ Command* FadeCurve::set_mode( )
 	return 0;
 }
 
-Command * FadeCurve::reset( )
+Command* FadeCurve::reset( )
 {
 	set_bend_factor(0.5);
 	set_strength_factor(0.5);
@@ -330,7 +331,7 @@ Command * FadeCurve::reset( )
 	return 0;
 }
 
-Command * FadeCurve::toggle_bypass( )
+Command* FadeCurve::toggle_bypass( )
 {
 	m_bypass = !m_bypass;
 	
@@ -338,13 +339,24 @@ Command * FadeCurve::toggle_bypass( )
 	return 0;
 }
 
-Command * FadeCurve::toggle_raster( )
+Command* FadeCurve::toggle_raster( )
 {
 	m_raster = ! m_raster;
 	
 	emit rasterChanged();
 	return 0;
 }
+
+Command* FadeCurve::bend( )
+{
+	return new FadeBend(this);
+}
+
+Command* FadeCurve::strength( )
+{
+	return new FadeStrength(this);
+}
+
 
 
 //eof

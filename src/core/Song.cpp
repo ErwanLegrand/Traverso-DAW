@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.35 2006/10/19 10:46:27 r_sijrier Exp $
+$Id: Song.cpp,v 1.36 2006/11/08 14:49:37 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -43,10 +43,8 @@ $Id: Song.cpp,v 1.35 2006/10/19 10:46:27 r_sijrier Exp $
 #include "AudioClipManager.h"
 #include "Tsar.h"
 #include "SnapList.h"
-#include "HistoryStack.h"
 #include "Config.h"
 
-#include "LocatorView.h"
 #include "ContextItem.h"
 
 #include <PluginManager.h>
@@ -93,12 +91,11 @@ Song::Song(Project* project, int number)
 	regionList = (MtaRegionList*) 0;
 
 	init();
-	emit m_project->newSongCreated( this );
 
 	activeTrackNumber = 1;
 	for (int i=1; i <= tracksToCreate; i++) {
 		Track* track = create_track();
-		ie().process_command( add_track( track, false) );
+		private_add_track(track);
 	}
 
 	connect_to_audiodevice();
@@ -109,7 +106,6 @@ Song::Song(Project* project, const QDomNode node)
 {
 	PENTERCONS;
 	init();
-	emit m_project->newSongCreated( this );
 	set_state( node );
 
 	connect_to_audiodevice();
@@ -151,7 +147,7 @@ void Song::init()
 	gainbuffer = new audio_sample_t[audiodevice().get_buffer_size()];
 	masterOut = new AudioBus("Master Out", 2);
 	regionList = new MtaRegionList();
-	m_hs = new HistoryStack(UndoGroup::instance());
+	m_hs = new QUndoStack(pm().get_undogroup());
 	acmanager = new AudioClipManager(this);
 	connect(acmanager, SIGNAL(lastFramePositionChanged()), this, SIGNAL(lastFramePositionChanged()));
 
@@ -188,27 +184,15 @@ int Song::set_state( const QDomNode & node )
 	set_first_visible_frame(e.attribute( "firstVisibleFrame", "0" ).toUInt());
 	set_work_at(e.attribute( "workingFrame", "0").toUInt());
 	
-	int trackBaseY = LocatorView::LOCATOR_HEIGHT;
-
 	QDomNode tracksNode = node.firstChildElement("Tracks");
 	QDomNode trackNode = tracksNode.firstChild();
 
 	while(!trackNode.isNull()) {
 		Track* track = new Track(this, trackNode);
-		track->set_baseY(trackBaseY);
 		track->set_id(++trackCount);
-
-		// Adding a track at this point will add it and signal _immediately_
-		// this is desired behaviour, this way the GUI can catch the signal
-		// and make a TrackView!
-		ie().process_command( add_track(track, false) );
-
-		// Now that a TrackView has been created, we can set the state
-		// of the Track, this will create AudioClips (if there are any of course)
-		// So the TrackView can make AudioClipViews ;-)
+		private_add_track(track);
 		track->set_state(trackNode);
 
-		trackBaseY += track->get_height();
 		trackNode = trackNode.nextSibling();
 	}
 
@@ -253,11 +237,8 @@ QDomNode Song::get_state(QDomDocument doc)
 void Song::connect_to_audiodevice( )
 {
 	PENTER;
-
 	audiodeviceClient = new Client("song_" + QByteArray::number(get_id()));
-
 	audiodeviceClient->set_process_callback( MakeDelegate(this, &Song::process) );
-
 	audiodevice().add_client(audiodeviceClient);
 }
 
@@ -301,27 +282,15 @@ Command* Song::add_track(Track* track, bool historable)
 
 	return new AddRemoveItemCommand(this, track, historable, this,
 					"private_add_track(Track*)", "trackAdded(Track*)",
-					"private_remove_track(Track*)", "trackRemoved(Track*)");
+					"private_remove_track(Track*)", "trackRemoved(Track*)", tr("Add Track"));
 }
 
-Command* Song::remove_track()
-{
-	PENTER;
-
-	Track* track = get_track_under_y(cpointer().y());
-	
-	if ( ! track) {
-		return 0;
-	}
-	
-	return remove_track(track);
-}
 
 Command* Song::remove_track(Track* track, bool historable)
 {
 	return new AddRemoveItemCommand(this, track, historable, this,
 					"private_remove_track(Track*)", "trackRemoved(Track*)",
-					"private_add_track(Track*)", "trackAdded(Track*)");
+					"private_add_track(Track*)", "trackAdded(Track*)", tr("Remove Track"));
 }
 
 bool Song::any_track_armed()
@@ -339,22 +308,6 @@ int Song::get_clips_count_for_audio(AudioSource* )
 	int count=0;
 
 	return count;
-}
-
-int Song::get_floorY()
-{
-	if (m_tracks.size() > 0) {
-		int ct = m_tracks.size()-1;
-		foreach(Track* track, m_tracks) {
-			if (track->get_id() == ct) {
-				int by = track->get_baseY();
-				int h = track->get_height();
-				int fy = by+h;
-				return fy;
-			}
-		}
-	}
-	return 0;
 }
 
 int Song::process_go(int )
@@ -540,15 +493,6 @@ nframes_t Song::xpos_to_frame(int xpos)
 	return (firstVisibleFrame + xpos * Peak::zoomStep[m_hzoom]);
 }
 
-Track* Song::get_track_under_y(int y)
-{
-	foreach(Track* track, m_tracks) {
-		if ( (y >= track->real_baseY() ) && ( y <= track->real_baseY() + track->get_height()) )
-			return track;
-	}
-	return (Track*) 0;
-}
-
 Track* Song::get_track(int trackNumber)
 {
 	return m_tracks.value(trackNumber);
@@ -681,7 +625,7 @@ Command* Song::toggle_snap()
 
 Track* Song::create_track()
 {
-	int trackBaseY = LocatorView::LOCATOR_HEIGHT;
+	int trackBaseY = 0;
 	int height = Track::INITIAL_HEIGHT;
 
 	foreach(Track* track, m_tracks) {
@@ -1014,7 +958,7 @@ Command * Song::playhead_to_workcursor( )
 
 Command * Song::master_gain( )
 {
-	return new Gain(this);
+	return new Gain(this, tr("Master Gain"));
 }
 
 void Song::private_add_track(Track* track)

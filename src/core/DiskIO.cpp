@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.24 2006/10/19 10:45:39 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.25 2006/11/08 14:49:37 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
@@ -427,9 +427,9 @@ trav_time_t DiskIO::get_cpu_time( )
 
 	lastCpuReadTime = currentTime;
 
-	if (result > 95) {
-		qWarning("DiskIO :: consuming more then 95 Percent CPU !!");
-	}
+// 	if (result > 95) {
+// 		qWarning("DiskIO :: consuming more then 95 Percent CPU !!");
+// 	}
 
 	return result;
 }

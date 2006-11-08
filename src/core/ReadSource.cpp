@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.cpp,v 1.15 2006/10/02 19:04:38 r_sijrier Exp $
+$Id: ReadSource.cpp,v 1.16 2006/11/08 14:49:37 r_sijrier Exp $
 */
 
 #include "ReadSource.h"
@@ -35,6 +35,11 @@ $Id: ReadSource.cpp,v 1.15 2006/10/02 19:04:38 r_sijrier Exp $
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
+
+/**
+ *	\class ReadSource
+	\brief A class for (buffered) reading of audio files.
+ */
 
 // This constructor is called for existing (recorded/imported) audio sources
 ReadSource::ReadSource(const QDomNode node)

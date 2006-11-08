@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Mixer.h,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
+    $Id: Mixer.h,v 1.2 2006/11/08 14:49:37 r_sijrier Exp $
 */
 
 #ifndef MIXER_H
@@ -44,7 +44,7 @@ static inline float dB_to_scale_factor (float dB)
         // dB = 0    will return 1.0
         // db = -6.0 will return 0.5
         // db = -inf will return 0.0
-        return dB > -120.0f ? pow (10.0f, dB * 0.05f) : 0.0f;
+        return dB > -120.0f ? ::pow(10.0f, dB * 0.05f) : 0.0f;
 }
 
 

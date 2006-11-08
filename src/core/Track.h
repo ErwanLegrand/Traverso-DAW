@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.h,v 1.16 2006/09/13 12:51:07 r_sijrier Exp $
+$Id: Track.h,v 1.17 2006/11/08 14:49:37 r_sijrier Exp $
 */
 
 
@@ -126,6 +126,8 @@ public :
 		return pluginChain;
 	}
 	
+	int get_sort_index() const;
+	
 	// End get functions
 
 	// Set functions:
@@ -137,6 +139,7 @@ public :
 	void set_muted(bool muted);
 	void set_pan(float pan);
 	void set_baseY(int b);
+	void set_sort_index(int index);
 	void set_height(int h);
 	int set_state( const QDomNode& node );
 	void set_id(int id);
@@ -172,6 +175,7 @@ private :
 	QString m_name;
 
 	int baseY;
+	int m_sortIndex;
 	int height;
 
 	bool isActive;
@@ -196,6 +200,8 @@ signals:
 	void panChanged();
 	void stateChanged();
 	void audibleStateChanged();
+	void inBusChanged();
+	void outBusChanged();
 
 public slots:
 	void set_gain(float gain);
@@ -209,6 +215,7 @@ public slots:
 	Command* pan();
 	Command* import_audiosource();
 	Command* silence_others();
+	Command* remove_item();
 
 private slots:
 	void private_add_clip(AudioClip* clip);

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ContextPointer.h,v 1.3 2006/08/31 17:55:38 r_sijrier Exp $
+    $Id: ContextPointer.h,v 1.4 2006/11/08 14:49:37 r_sijrier Exp $
 */
 
 #ifndef CONTEXTPOINTER_H
@@ -33,18 +33,9 @@ class ViewPort;
 class ContextPointer : public QObject
 {
 public:
-        int x() const
-        {
-                return m_x;
-        }
-        int y() const
-        {
-                return m_y;
-        }
-
-        int clip_area_x() const;
-
-        void set_point(int x, int y)
+        inline int x() const {return m_x;}
+        inline int y() const {return m_y;}
+        inline void set_point(int x, int y)
         {
                 m_x = x;
                 m_y = y;

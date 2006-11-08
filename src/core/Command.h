@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Command.h,v 1.5 2006/10/18 12:01:44 r_sijrier Exp $
+    $Id: Command.h,v 1.6 2006/11/08 14:49:37 r_sijrier Exp $
 */
 
 #ifndef COMMAND_H
@@ -27,11 +27,13 @@
 #include <QString>
 #include <QCursor>
 #include <QPixmap>
+#include <QUndoCommand>
+#include <QUndoStack>
 
 class HistoryStack;
 class ContextItem;
 
-class Command : public QObject
+class Command : public QUndoCommand
 {
 public :
         Command(ContextItem* item, const QString& des = "No description set!");
@@ -44,33 +46,21 @@ public :
         virtual int do_action();
         virtual int undo_action();
         virtual int jog();
-        virtual bool merg_with(const Command* cmd);
-        virtual int command_type();
         virtual void set_cursor_shape(int useX = 0, int useY = 0);
+	
+	void undo() {undo_action();}
+	void redo() {do_action();}
 
         void set_valid(bool valid);
-        void set_description(const QString& des);
         int push_to_history_stack();
-        QString get_description() const {return m_description;}
-
-        bool is_valid() const {return m_isValid;}
-
-        Command* prev;
-        Command* next;
-
 
 protected:
         bool 		m_isValid;
-        bool		m_historable;
-        bool		m_isMergable;
+        bool		m_isHistorable;
         QString		m_description;
 
 private:
-        bool expired;
-        HistoryStack* m_historyStack;
-        ContextItem* m_context;
-
-
+        QUndoStack* m_historyStack;
 };
 
 

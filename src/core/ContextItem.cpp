@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ContextItem.cpp,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
+    $Id: ContextItem.cpp,v 1.5 2006/11/08 14:49:37 r_sijrier Exp $
 */
 
 #include "ContextItem.h"
@@ -39,12 +39,12 @@ ContextItem::ContextItem()
 ContextItem::~ ContextItem( )
 {}
 
-void ContextItem::set_history_stack( HistoryStack * hs )
+void ContextItem::set_history_stack( QUndoStack * hs )
 {
 	m_hs = hs;
 }
 
-HistoryStack * ContextItem::get_history_stack( ) const
+QUndoStack* ContextItem::get_history_stack( ) const
 {
 	return m_hs;
 }

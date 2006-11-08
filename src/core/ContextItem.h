@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ContextItem.h,v 1.6 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: ContextItem.h,v 1.7 2006/11/08 14:49:37 r_sijrier Exp $
 */
 #ifndef CONTEXTITEM_H
 #define CONTEXTITEM_H
@@ -25,7 +25,9 @@ $Id: ContextItem.h,v 1.6 2006/09/07 09:36:52 r_sijrier Exp $
 #include <QObject>
 #include <QDomDocument>
 
-#include "HistoryStack.h"
+#include <QUndoStack>
+#include <QUndoGroup>
+#include "Command.h"
 
 class ContextItem : public QObject
 {
@@ -40,15 +42,15 @@ public:
 		return m_contextItem;
 	}
 	
-	HistoryStack* get_history_stack() const;
+	QUndoStack* get_history_stack() const;
 
-	void set_history_stack(HistoryStack* hs);
+	void set_history_stack(QUndoStack* hs);
 	
 	void set_context_item(ContextItem* item);
 	
 
 protected:
-	HistoryStack* m_hs;
+	QUndoStack* m_hs;
 
 private:
 	ContextItem* m_contextItem;

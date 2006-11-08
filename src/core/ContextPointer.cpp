@@ -17,13 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ContextPointer.cpp,v 1.4 2006/08/31 17:55:38 r_sijrier Exp $
+$Id: ContextPointer.cpp,v 1.5 2006/11/08 14:49:37 r_sijrier Exp $
 */
 
 #include "ContextPointer.h"
 
 #include "ViewItem.h"
 #include "TrackView.h"
+#include "ViewPort.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -87,29 +88,20 @@ void ContextPointer::remove_contextitem(QObject* item)
 void ContextPointer::grab_mouse( )
 {
 	if (currentViewPort)
-		currentViewPort->grabMouse ();
+		currentViewPort->viewport()->grabMouse();
 
 }
 
 void ContextPointer::release_mouse( )
 {
 	if (currentViewPort)
-		currentViewPort->releaseMouse ();
+		currentViewPort->viewport()->releaseMouse();
 }
-
-int ContextPointer::clip_area_x( ) const
-{
-	int nx = m_x - TrackView::CLIPAREABASEX;
-	if (nx <  0)
-		nx = 0;
-	return nx;
-}
-
 
 int ContextPointer::get_viewport_width( )
 {
 	if (currentViewPort) {
-		return (currentViewPort->width() - TrackView::CLIPAREABASEX);
+		return (currentViewPort->width());
 	}
 	
 	return 0;
