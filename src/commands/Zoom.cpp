@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Zoom.cpp,v 1.4 2006/10/18 12:01:17 r_sijrier Exp $
+    $Id: Zoom.cpp,v 1.5 2006/11/08 14:52:11 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -28,6 +28,7 @@
 #include "TrackView.h"
 #include <QPoint>
 #include <ViewPort.h>
+#include <ClipsViewPort.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -48,10 +49,10 @@ int Zoom::prepare_actions()
 
 int Zoom::begin_hold(int useX, int useY)
 {
-        jogZoomTotalX = m_sv->get_viewport()->width();
-        jogZoomTotalY = m_sv->get_viewport()->height();
+        jogZoomTotalX = m_sv->get_clips_viewport()->viewport()->width();
+        jogZoomTotalY = m_sv->get_clips_viewport()->viewport()->height();
         verticalJogZoomLastY = cpointer().y();
-        baseJogZoomXFactor = m_sv->get_song()->get_hzoom() - ((int) ( (float) (jogZoomTotalX - cpointer().clip_area_x()) / jogZoomTotalX * 50 ) + 1 );
+        baseJogZoomXFactor = m_sv->get_song()->get_hzoom() - ((int) ( (float) (jogZoomTotalX - cpointer().x()) / jogZoomTotalX * 50 ) + 1 );
 	
 	set_cursor_shape(useX, useY);
         
@@ -79,7 +80,7 @@ void Zoom::set_cursor_shape( int useX, int useY )
 int Zoom::jog()
 {
         PENTER;
-        int x = cpointer().clip_area_x();
+        int x = cpointer().x();
         int y = cpointer().y();
         int jzxfactor = (int) ( (float) (jogZoomTotalX - x) / jogZoomTotalX * 50 ) + 1;
         if (jzxfactor==0)

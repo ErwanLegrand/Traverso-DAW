@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Fade.h,v 1.3 2006/10/18 12:01:17 r_sijrier Exp $
+$Id: Fade.h,v 1.4 2006/11/08 14:52:11 r_sijrier Exp $
 */
 
 #ifndef FADE_H
@@ -27,6 +27,7 @@ $Id: Fade.h,v 1.3 2006/10/18 12:01:17 r_sijrier Exp $
 
 class Curve;
 class AudioClip;
+class FadeCurve;
 
 class Fade : public Command
 {
@@ -50,6 +51,40 @@ private :
 
 	Curve*	m_curve;
 };
+
+
+class FadeStrength : public Command
+{
+public :
+        FadeStrength(FadeCurve* fade) : Command("FadeStrength"), m_fade(fade) {};
+        ~FadeStrength(){};
+
+        int begin_hold(int useX = 0, int useY = 0);
+        int jog();
+
+private :
+	float	oldValue;
+	int	origY;
+	FadeCurve*	m_fade;
+};
+
+
+class FadeBend : public Command
+{
+public :
+        FadeBend(FadeCurve* fade) : Command("FadeBend"), m_fade(fade) {};
+        ~FadeBend(){};
+
+        int begin_hold(int useX = 0, int useY = 0);
+        int jog();
+
+private :
+	float	oldValue;
+	int	origY;
+	FadeCurve*	m_fade;
+
+};
+
 
 #endif
 

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TrackPan.cpp,v 1.3 2006/10/18 12:01:17 r_sijrier Exp $
+    $Id: TrackPan.cpp,v 1.4 2006/11/08 14:52:11 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -30,7 +30,7 @@
 #include "Debugger.h"
 
 TrackPan::TrackPan(Track* track, Song* song)
-                : Command(track, tr("Track Pan"))
+	: Command(track, QObject::tr("Track Pan"))
 {
         m_track = track;
         m_song = song;

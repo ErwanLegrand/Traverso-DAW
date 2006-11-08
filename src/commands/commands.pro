@@ -13,7 +13,7 @@ HEADERS += AddRemoveItemCommand.h \
            MoveClip.h \
            MoveEdge.h \
            PCommand.h \
-           Shuttle.h \
+#          Shuttle.h \
            SplitClip.h \
            Zoom.h \
            TrackPan.h \
@@ -28,16 +28,17 @@ SOURCES += AddRemoveItemCommand.cpp \
            MoveClip.cpp \
            MoveEdge.cpp \
            PCommand.cpp \
-           Shuttle.cpp \
+#           Shuttle.cpp \
            SplitClip.cpp \
            Zoom.cpp \
            TrackPan.cpp \
            Fade.cpp 
 
 include(../libbase.pri)
-INCLUDEPATH += ../../src/traverso \
-../../src/core \
-../../src/engine
+INCLUDEPATH += 	../../src/traverso \
+		../../src/traverso/songcanvas \
+		../../src/core \
+		../../src/engine
 TARGET = traversocommands
 DESTDIR = ../../lib
 TEMPLATE = lib

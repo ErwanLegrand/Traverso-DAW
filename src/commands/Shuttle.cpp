@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Shuttle.cpp,v 1.3 2006/10/18 12:01:17 r_sijrier Exp $
+    $Id: Shuttle.cpp,v 1.4 2006/11/08 14:52:11 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -72,7 +72,7 @@ int Shuttle::finish_hold()
 int Shuttle::jog()
 {
         int shuttlespeed = 10;
-        float f = (float) cpointer().clip_area_x() / (m_vp->width() - TrackView::CLIPAREABASEX);
+        float f = (float) cpointer().x() / (m_vp->width() - TrackView::CLIPAREABASEX);
 
         if ( f > 0.85 || f < 0.15)
                 shuttlespeed = 15;

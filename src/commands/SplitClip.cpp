@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SplitClip.cpp,v 1.9 2006/09/14 10:49:39 r_sijrier Exp $
+$Id: SplitClip.cpp,v 1.10 2006/11/08 14:52:11 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -29,7 +29,7 @@ $Id: SplitClip.cpp,v 1.9 2006/09/14 10:49:39 r_sijrier Exp $
 #include "Debugger.h"
 
 SplitClip::SplitClip(Song* song, AudioClip* clip)
-		: Command(clip, tr("Split Clip"))
+	: Command(clip, QObject::tr("Split Clip"))
 {
 	m_clip = clip;
 	m_song = song;
@@ -43,7 +43,7 @@ SplitClip::~SplitClip()
 
 int SplitClip::prepare_actions()
 {
-	splitPoint = m_song->xpos_to_frame( cpointer().clip_area_x());
+	splitPoint = m_song->xpos_to_frame( cpointer().x());
 
 	AudioSourceManager* manager = pm().get_project()->get_audiosource_manager();
 	

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Fade.cpp,v 1.4 2006/10/18 12:01:17 r_sijrier Exp $
+$Id: Fade.cpp,v 1.5 2006/11/08 14:52:11 r_sijrier Exp $
 */
 
 
@@ -27,14 +27,18 @@ $Id: Fade.cpp,v 1.4 2006/10/18 12:01:17 r_sijrier Exp $
 #include "AudioClip.h"
 #include "ContextPointer.h"
 #include <ViewPort.h>
+#include <FadeCurve.h>
 		
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
+static const float CURSOR_SPEED		= 150.0;
+static const float RASTER_SIZE		= 0.05;
+
 
 Fade::Fade(AudioClip* clip, Curve* curve, int direction)
-	: Command(clip, tr("Fade"))
+	: Command(clip, QObject::tr("Fade"))
 {
 	m_curve = curve;
 	m_direction = direction;
@@ -93,6 +97,68 @@ int Fade::jog()
 	
 	return 1;
 }
+
+
+static float round_float( float f)
+{
+	return float(int(0.5 + f / RASTER_SIZE)) * RASTER_SIZE;
+}
+
+/********** FadeBend **********/
+/******************************/
+
+int FadeBend::begin_hold(int useX, int useY)
+{
+	PENTER;
+	origY = cpointer().y();
+	oldValue =  m_fade->get_bend_factor();
+	return 1;
+}
+
+
+int FadeBend::jog()
+{
+	int direction = (m_fade->get_fade_type() == FadeCurve::FadeIn) ? 1 : -1;
+
+	if (m_fade->get_raster()) {
+		float value = round_float(oldValue + ((origY - cpointer().y()) / CURSOR_SPEED) * direction);
+		m_fade->set_bend_factor(value);
+	} else {
+		m_fade->set_bend_factor(oldValue + (float(origY - cpointer().y()) / CURSOR_SPEED) * direction);
+	}
+
+	return 1;
+}
+
+/********** FadeStrength **********/
+/******************************/
+
+int FadeStrength::begin_hold(int useX, int useY)
+{
+	PENTER;
+	origY = cpointer().y();
+	oldValue =  m_fade->get_strenght_factor();
+	return 1;
+}
+
+
+int FadeStrength::jog()
+{
+	if (m_fade->get_bend_factor() >= 0.5) {
+		m_fade->set_strength_factor(oldValue + float(origY - cpointer().y()) / CURSOR_SPEED);
+	} else {
+		if (m_fade->get_raster()) {
+			float value = round_float(oldValue + (origY - cpointer().y()) / CURSOR_SPEED);
+			m_fade->set_strength_factor(value);
+		} else {
+			m_fade->set_strength_factor(oldValue - float(origY - cpointer().y()) / CURSOR_SPEED);
+		}
+	}
+	
+
+	return 1;
+}
+
 
 // eof
 

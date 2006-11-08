@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: MoveClip.cpp,v 1.11 2006/10/18 12:01:17 r_sijrier Exp $
+$Id: MoveClip.cpp,v 1.12 2006/11/08 14:52:11 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -25,13 +25,14 @@ $Id: MoveClip.cpp,v 1.11 2006/10/18 12:01:17 r_sijrier Exp $
 #include "TrackView.h"
 #include "MoveClip.h"
 #include "SnapList.h"
+#include "ViewPort.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
 MoveClip::MoveClip(Song* song, AudioClip* clip)
-		: Command(clip, tr("Move Clip"))
+	: Command(clip, QObject::tr("Move Clip"))
 {
 	m_song = song;
 	m_clip = clip;
@@ -58,7 +59,7 @@ int MoveClip::begin_hold(int useX, int useY)
 int MoveClip::finish_hold()
 {
 	int y = cpointer().y();
-	targetTrack = m_song->get_track_under_y(y);
+// 	targetTrack = m_song->get_track_under_y(y);
 	// m_clip could be moved to another track due jogging
 	// so we remove it from there!
 	ie().process_command( m_clip->get_track()->remove_clip( m_clip, false ) );
@@ -106,10 +107,6 @@ int MoveClip::undo_action()
 int MoveClip::jog()
 {
 	int newXPos = cpointer().x();
-
-	if ( newXPos < TrackView::CLIPAREABASEX ) {
-		newXPos = TrackView::CLIPAREABASEX;
-	}
 
 	SnapList *slist = m_song->get_snap_list();
 
@@ -166,7 +163,7 @@ int MoveClip::jog()
 	if (origTrackStartFrame != newInsertFrame)
 		origXPos = newXPos;
 
-	Track* newTargetTrack = m_song->get_track_under_y( cpointer().y() );
+	Track* newTargetTrack;// = m_song->get_track_under_y( cpointer().y() );
 
 	if (newTargetTrack == currentTrack) {
 		m_clip->set_track_start_frame(newInsertFrame);

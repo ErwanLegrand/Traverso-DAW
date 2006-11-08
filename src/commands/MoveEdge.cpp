@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveEdge.cpp,v 1.8 2006/10/18 12:01:17 r_sijrier Exp $
+    $Id: MoveEdge.cpp,v 1.9 2006/11/08 14:52:11 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -30,7 +30,7 @@
 #include "Debugger.h"
 
 MoveEdge::MoveEdge(AudioClip* clip, QByteArray whichEdge)
-                : Command(clip, tr("Move Clip Edge"))
+	: Command(clip, QObject::tr("Move Clip Edge"))
 {
         m_clip = clip;
         m_song = clip->get_song();
@@ -91,7 +91,7 @@ int MoveEdge::undo_action()
 
 int MoveEdge::jog()
 {
-        m_newPos = m_song->xpos_to_frame(m_song->snapped_x(cpointer().clip_area_x()));
+        m_newPos = m_song->xpos_to_frame(m_song->snapped_x(cpointer().x()));
         return do_action();
 }
 

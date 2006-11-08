@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Import.cpp,v 1.11 2006/09/14 10:49:39 r_sijrier Exp $
+$Id: Import.cpp,v 1.12 2006/11/08 14:52:11 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -35,14 +35,14 @@ $Id: Import.cpp,v 1.11 2006/09/14 10:49:39 r_sijrier Exp $
 
 
 Import::Import(Track* track)
-		: Command(track, tr("Import Audio File"))
+		: Command(track, QObject::tr("Import Audio File"))
 {
 	m_track = track;
 }
 
 
 Import::Import(Track* track, const QString& fileName)
-		: Command(track, tr("Import Audio File"))
+		: Command(track, QObject::tr("Import Audio File"))
 {
 	m_track = track;
 	m_fileName = fileName;
@@ -56,9 +56,9 @@ int Import::prepare_actions()
 	PENTER;
 	if (m_fileName.isEmpty()) {
 		m_fileName = QFileDialog::getOpenFileName(0,
-				tr("Import audio source"),
+				QObject::tr("Import audio source"),
 				getenv("HOME"),
-				tr("All files (*);;Audio files (*.wav *.flac)"));
+				QObject::tr("All files (*);;Audio files (*.wav *.flac)"));
 	}
 
 	if (m_fileName.isEmpty()) {

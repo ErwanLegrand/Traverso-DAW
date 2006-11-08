@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Gain.cpp,v 1.5 2006/10/18 21:17:58 r_sijrier Exp $
+$Id: Gain.cpp,v 1.6 2006/11/08 14:52:11 r_sijrier Exp $
 */
 
 #include "Gain.h"
@@ -33,8 +33,8 @@ $Id: Gain.cpp,v 1.5 2006/10/18 21:17:58 r_sijrier Exp $
 #include "Debugger.h"
 
 
-Gain::Gain(ContextItem* context, float gain)
-	: Command(context, tr("Gain"))
+Gain::Gain(ContextItem* context, const QString& des, float gain)
+	: Command(context, des)
 {
 	gainObject = context;
 	
@@ -113,6 +113,7 @@ void Gain::set_cursor_shape(int useX, int useY)
 
 int Gain::jog()
 {
+	PENTER;
 	float ofy = 0;
 	
 	float dbFactor = coefficient_to_dB(newGain);

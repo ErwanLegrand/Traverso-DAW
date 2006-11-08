@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AddRemoveItemCommand.h,v 1.1 2006/09/07 09:30:56 r_sijrier Exp $
+    $Id: AddRemoveItemCommand.h,v 1.2 2006/11/08 14:52:11 r_sijrier Exp $
 */
 
 #ifndef ADD_ITEM_COMMAND_H
@@ -32,7 +32,7 @@ class Song;
 class AddRemoveItemCommand : public Command
 {
 public :
-        AddRemoveItemCommand(ContextItem* parent, ContextItem* child);
+        AddRemoveItemCommand(ContextItem* parent, ContextItem* child, const QString& des);
         AddRemoveItemCommand(ContextItem* parent,
         			 ContextItem* child,
         			 bool historable,
@@ -40,7 +40,8 @@ public :
         			 char* doActionSlot,
         			 char* doSignal,
         			 char* undoActionSlot,
-        			 char* undoSignal);
+        			 char* undoSignal,
+				 const QString& des);
         ~AddRemoveItemCommand();
 
         int prepare_actions();

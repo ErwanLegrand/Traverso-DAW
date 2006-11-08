@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AddRemoveItemCommand.cpp,v 1.2 2006/10/02 19:02:41 r_sijrier Exp $
+$Id: AddRemoveItemCommand.cpp,v 1.3 2006/11/08 14:52:11 r_sijrier Exp $
 */
 
 #include "AddRemoveItemCommand.h"
@@ -29,8 +29,8 @@ $Id: AddRemoveItemCommand.cpp,v 1.2 2006/10/02 19:02:41 r_sijrier Exp $
 #include "Debugger.h"
 
 
-AddRemoveItemCommand::AddRemoveItemCommand(ContextItem* parent, ContextItem* child)
-	: Command(child, "Add Item"),
+AddRemoveItemCommand::AddRemoveItemCommand(ContextItem* parent, ContextItem* child, const QString& des)
+	: Command(child, des),
 	m_parentItem(parent),
 	m_childItem(child),
 	m_song(0),
@@ -54,8 +54,9 @@ AddRemoveItemCommand::AddRemoveItemCommand(
 	char * doActionSlot,
 	char * doSignal,
 	char * undoActionSlot,
-	char * undoSignal )
-  	: Command(child, "Add Item"),
+	char * undoSignal,
+	const QString& des)
+  	: Command(child, des),
 	  m_parentItem(parent),
 	  m_childItem(child),
 	  m_song(song),
@@ -64,7 +65,7 @@ AddRemoveItemCommand::AddRemoveItemCommand(
 	  m_doSignal(doSignal),
 	  m_undoSignal(undoSignal)
 {
-	m_historable = historable;
+	m_isHistorable = historable;
 }
 
 AddRemoveItemCommand::~AddRemoveItemCommand()
