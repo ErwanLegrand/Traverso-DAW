@@ -1,15 +1,18 @@
 /* XPM */
-static char * bus_in_xpm[] = {
-"18 9 3 1",
-" 	c None",
-".	c #000000",
-"+	c #FF0000",
-"     ........     ",
-"     .++++++.     ",
-"     .+.++++.     ",
-"      ++..++.     ",
-"...........+.     ",
-"      ++..++.     ",
-"     .+.++++.     ",
-"     .++++++.     ",
-"     ........     "};
+static char *bus-in[] = {
+/* columns rows colors chars-per-pixel */
+"13 9 3 1",
+"  c black",
+". c red",
+"X c gray100",
+/* pixels */
+"XXXXX        ",
+"XXXXX ...... ",
+"XXXXX . .... ",
+"XXXXXX..  .. ",
+"           . ",
+"XXXXXX..  .. ",
+"XXXXX . .... ",
+"XXXXX ...... ",
+"XXXXX        "
+};
