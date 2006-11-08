@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginChain.cpp,v 1.4 2006/09/14 10:45:44 r_sijrier Exp $
+$Id: PluginChain.cpp,v 1.5 2006/11/08 14:47:35 r_sijrier Exp $
 */
  
 #include "PluginChain.h"
@@ -80,7 +80,8 @@ Command* PluginChain::add_plugin(Plugin * plugin, bool historable)
 	
 	return new AddRemoveItemCommand( this, plugin, historable, m_song,
 						"private_add_plugin(Plugin*)", "pluginAdded(Plugin*)",
-						"private_remove_plugin(Plugin*)", "pluginRemoved(Plugin*)");
+						"private_remove_plugin(Plugin*)", "pluginRemoved(Plugin*)",
+				       tr("Add Plugin (%1)").arg(plugin->get_name()));
 }
 
 
@@ -88,7 +89,8 @@ Command* PluginChain::remove_plugin(Plugin* plugin)
 {
 	return new AddRemoveItemCommand( this, plugin, true, m_song,
 					 "private_remove_plugin(Plugin*)", "pluginRemoved(Plugin*)",
-					 "private_add_plugin(Plugin*)", "pluginAdded(Plugin*)");
+					 "private_add_plugin(Plugin*)", "pluginAdded(Plugin*)",
+				       tr("Remove Plugin (%1)").arg(plugin->get_name()));
 }
 
 
