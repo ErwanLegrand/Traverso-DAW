@@ -11,6 +11,7 @@ LIBS += -ltraversocommands \
         -ltraversoaudiobackend
         
 INCLUDEPATH += ../../src/traverso \
+		../../src/traverso/songcanvas \
                ../../src/traverso/build \
                ../../src/core \
                ../../src/commands \
@@ -40,7 +41,6 @@ SOURCES	= AudioClip.cpp \
 	Export.cpp \
 	FadeCurve.cpp \
 	FileHelpers.cpp \
-	HistoryStack.cpp \
 	IEAction.cpp \
 	Information.cpp \
 	InputEngine.cpp \
@@ -77,7 +77,6 @@ HEADERS	= precompile.h \
 	Export.h \
 	FadeCurve.h \
 	FileHelpers.h \
-	HistoryStack.h \
 	IEAction.h \
 	Information.h \
 	InputEngine.h \
