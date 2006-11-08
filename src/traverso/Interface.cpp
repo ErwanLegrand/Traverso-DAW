@@ -17,33 +17,26 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.14 2006/10/18 12:08:56 r_sijrier Exp $
+$Id: Interface.cpp,v 1.15 2006/11/08 14:45:21 r_sijrier Exp $
 */
 
 #include "../config.h"
 
 #include <libtraversocore.h>
+#include <AudioDevice.h>
 
-#include <QPixmap>
-#include <QLabel>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QResizeEvent>
 #include <QtGui>
-#include <QTreeView>
 
 #include "Interface.h"
 #include "BusMonitor.h"
 #include "ProjectManager.h"
 #include "InfoBox.h"
-#include "BorderLayout.h"
 #include "AudioClipView.h"
-#include "SongView.h"
+//#include "SongView.h"
 #include "TrackView.h"
 #include "ViewPort.h"
 #include "OverViewWidget.h"
 #include "Help.h"
-#include "HistoryWidget.h"
 #include "AudioSourcesTreeWidget.h"
 #include <FadeCurve.h>
 #include "QuickDriverConfigWidget.h"
@@ -51,6 +44,9 @@ $Id: Interface.cpp,v 1.14 2006/10/18 12:08:56 r_sijrier Exp $
 
 #include "ManagerWidget.h"
 #include "ExportWidget.h"
+		
+		
+#include "songcanvas/SongWidget.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -67,22 +63,67 @@ Interface::Interface()
 	: QMainWindow( 0 )
 {
 	PENTERCONS;
-
+	setWindowTitle("Traverso");
 	setMinimumSize(150, 100);
-	
 	setWindowIcon(QPixmap (":/windowicon") );
-
 	//         setMaximumWidth(1024);
 	//         setMaximumHeight(768);
 
+	// CenterAreaWidget
+	centerAreaWidget = new QStackedWidget(this);
+	setCentralWidget(centerAreaWidget);
+	
+	// BusMonitor
+	busMonitorDW = new QDockWidget("Master VU", this);
+	busMonitorDW->setObjectName("Master VU");
+
+	busMonitor = new BusMonitor(busMonitorDW, this);
+	busMonitorDW->setWidget(busMonitor);
+	addDockWidget(Qt::TopDockWidgetArea, busMonitorDW);
+	
+	// HistoryView 
+	historyDW = new QDockWidget(tr("History"), this);
+	historyDW->setObjectName("HistoryDockWidget");
+	historyWidget = new QUndoView(pm().get_undogroup(), historyDW);
+	historyWidget->setFocusPolicy(Qt::NoFocus);
+	historyDW->setWidget(historyWidget);
+	addDockWidget(Qt::RightDockWidgetArea, historyDW);
+	
+	// AudioSources View
+	AudioSourcesDW = new QDockWidget(tr("AudioSources"), this);
+	AudioSourcesDW->setObjectName("AudioSourcesDockWidget");
+	audiosourcesview = new QTreeView(AudioSourcesDW);
+	audiosourcesview->setFocusPolicy(Qt::NoFocus);
+// 	audiosourcesview->setAnimated(true);
+	TreeModel* model = new TreeModel("hoi, test");
+	audiosourcesview->setModel(model);
+	AudioSourcesDW->setWidget(audiosourcesview);
+	addDockWidget(Qt::RightDockWidgetArea, AudioSourcesDW);
+	
+	// Help widget
+	helpWindow = new Help(this);
+	
+	// Some default values.
+	driverConfigWidget = 0;
+	currentSongWidget = 0;
 	exportWidget = 0;
+	managerWidget = 0;
+	
+	create_menus();
+	
+	/** Read in the Interface settings and apply them
+	 */
+	QSettings settings;
+	settings.beginGroup("Interface");
+	resize(settings.value("size", QSize(400, 400)).toSize());
+	move(settings.value("pos", QPoint(200, 200)).toPoint());
+	restoreState(settings.value("windowstate", "").toByteArray());
+	settings.endGroup();
 
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 
 	cpointer().add_contextitem(this);
-	
-	create();
 }
 
 Interface::~Interface()
@@ -99,113 +140,14 @@ Interface::~Interface()
 	delete helpWindow;
 }
 
-void Interface::create()
-{
-	driverConfigWidget = 0;
-	
-	QWidget* centralWidget = new QWidget(this);
-	setCentralWidget(centralWidget);
-	
-	setWindowTitle("Traverso");
-
-	helpWindow = new Help(this);
-
-	mainVBoxLayout = new BorderLayout(centralWidget, 0, 0);
-
-	tpdw = new QDockWidget("Master VU", this);
-	tpdw->setObjectName("Master VU");
-// 	tpdw->setFeatures(QDockWidget::NoDockWidgetFeatures);
-// 	topPanelWidget = new QWidget(tpdw);
-// 	topPanelWidgetLayout = new QHBoxLayout(topPanelWidget);
-// 	topPanelWidget->setLayout(topPanelWidgetLayout);
-// 	topPanelWidget->setMinimumHeight(TOPPANEL_FIXED_HEIGHT);
-// 	topPanelWidget->setMaximumHeight(TOPPANEL_FIXED_HEIGHT);
-// 	tpdw->setWidget(topPanelWidget);
-// 
-// 	infoBox = new InfoBox(topPanelWidget);
-// 	topPanelWidgetLayout->insertWidget( 0, infoBox, 4);
-
-	busMonitor = new BusMonitor(tpdw, this);
-// 	topPanelWidgetLayout->insertWidget( 1, busMonitor);
-// 	busMonitor->show();
-	tpdw->setWidget(busMonitor);
-	addDockWidget(Qt::TopDockWidgetArea, tpdw);
-
-
-	// 2nd Area (MIDDLE) the current project
-	QWidget* widget = new QWidget(centralWidget);
-	centerWidgetLayout = new QHBoxLayout(widget);
-	widget->setLayout(centerWidgetLayout);
-	centerAreaWidget = new QStackedWidget(widget);
-	centerWidgetLayout->addWidget(centerAreaWidget);
-
-
-	// 3rd Area (BOTTOM) : Status stuff
-	statusAreaWidget = new QWidget(centralWidget);
-	statusAreaWidgetLayout = new QHBoxLayout;
-	statusAreaWidget->setLayout(statusAreaWidgetLayout);
-
-	
-	overView = new OverViewWidget(statusAreaWidget);
-	statusAreaWidgetLayout->addWidget(overView, 4);
-
-// 	topPanelWidgetLayout->setMargin(0);
-	centerWidgetLayout->setMargin(0);
-	statusAreaWidgetLayout->setMargin(3);
-
-// 	mainVBoxLayout->addWidget(topPanelWidget, BorderLayout::North);
-	mainVBoxLayout->addWidget(widget, BorderLayout::Center);
-	mainVBoxLayout->addWidget(statusAreaWidget, BorderLayout::South);
-	
-	centralWidget->setLayout(mainVBoxLayout);
-
-	managerWidgetCreated = false;
-
-	
-	hvdw = new QDockWidget(tr("History"), this);
-	hvdw->setObjectName("HistoryDockWidget");
-	historyWidget = new HistoryWidget(hvdw);
-	historyWidget->setFocusPolicy(Qt::NoFocus);
-	hvdw->setWidget(historyWidget);
-	addDockWidget(Qt::RightDockWidgetArea, hvdw);
-	
-	asdw = new QDockWidget(tr("AudioSources"), this);
-	asdw->setObjectName("AudioSourcesDockWidget");
-	audiosourcesview = new QTreeView(asdw);
-	audiosourcesview->setFocusPolicy(Qt::NoFocus);
-// 	audiosourcesview->setAnimated(true);
-	TreeModel* model = new TreeModel("hoi, test");
-	audiosourcesview->setModel(model);
-	asdw->setWidget(audiosourcesview);
-	addDockWidget(Qt::RightDockWidgetArea, asdw);
-	
-
-	create_menus();
-
-	
-	/** Read in the Interface settings and apply them
-	 */
-	QSettings settings;
-	settings.beginGroup("Interface");
-	resize(settings.value("size", QSize(400, 400)).toSize());
-	move(settings.value("pos", QPoint(200, 200)).toPoint());
-	restoreState(settings.value("windowstate", "").toByteArray());
-	settings.endGroup();
-}
-
 
 void Interface::set_project(Project* project)
 {
 	PENTER;
 	
 	if ( project ) {
-		connect(project, SIGNAL(currentSongChanged(Song*)), this, SLOT(set_songview(Song*)));
-		connect(project, SIGNAL(currentSongChanged(Song*)), overView, SLOT(set_song(Song*)));
-		connect(project, SIGNAL(newSongCreated(Song*)), this, SLOT(create_songview(Song*)));
-		
+		connect(project, SIGNAL(currentSongChanged(Song*)), this, SLOT(show_song(Song*)));
 	}
-	
-	songViewList.clear();
 	
 	// OK, a new Project is created. Remove and delete all the ViewPorts related to this project
 	while ( ! currentProjectViewPortList.isEmpty()) {
@@ -213,63 +155,42 @@ void Interface::set_project(Project* project)
 		centerAreaWidget->removeWidget(view);
 		delete view;
 	}
-	
-	currentSongView = 0;
 }
 
-void Interface::set_songview(Song* song)
+void Interface::show_song(Song* song)
 {
 	PENTER;
-	SongView* sv;
-	for (int i=0; i<songViewList.size(); ++i) {
-		sv = songViewList.at(i);
-		if(sv->get_song() == song) {
-			PMESG("Setting new songView");
-			UndoGroup::instance()->set_active_stack(song->get_history_stack());
-			centerAreaWidget->setCurrentWidget(sv->get_viewport());
-			currentSongView = sv;
-			break;
-		}
+	SongWidget* songWidget = m_songWidgets.value(song);
+	
+	if (!songWidget) {
+		songWidget = new SongWidget(song, centerAreaWidget);
+		centerAreaWidget->addWidget(songWidget);
+		m_songWidgets.insert(song, songWidget);
 	}
+	currentSongWidget = songWidget;
+	centerAreaWidget->setCurrentIndex(centerAreaWidget->indexOf(songWidget));
+	pm().get_undogroup()->setActiveStack(song->get_history_stack());
 }
 
 Command* Interface::set_manager_widget()
 {
-	if (!managerWidgetCreated) {
+	if (!managerWidget) {
 		managerWidget = new ManagerWidget(centerAreaWidget);
-		managerWidgetCreated = true;
 		centerAreaWidget->addWidget(managerWidget);
 	}
-	centerAreaWidget->setCurrentWidget(managerWidget);
-	return (Command*) 0;
-}
-
-Command* Interface::set_songview_widget()
-{
-	if (currentSongView) {
-		centerAreaWidget->setCurrentWidget(currentSongView->get_viewport());
-		
-		// In some circumstances the focus of the keyboard is still on the 
-		// project manager widget :-( So we "steal" the focus explicitely!
-		currentSongView->get_viewport()->setFocus();
-	}
+	
+	centerAreaWidget->setCurrentIndex(centerAreaWidget->indexOf(managerWidget));
 	
 	return (Command*) 0;
 }
 
-void Interface::create_songview(Song* song)
+Command* Interface::show_song_widget()
 {
-	PENTER;
-	ViewPort* vp = new ViewPort(centerAreaWidget);
-	centerAreaWidget->addWidget(vp);
-	SongView* sv = new SongView(song, vp);
-	songViewList.append(sv);
-	currentProjectViewPortList.append(vp);
-}
-
-void Interface::resizeEvent(QResizeEvent* )
-{
-	PENTER2;
+	if (currentSongWidget) {
+		centerAreaWidget->setCurrentIndex(centerAreaWidget->indexOf(currentSongWidget));
+	}
+	
+	return (Command*) 0;
 }
 
 
@@ -336,10 +257,10 @@ void Interface::create_menus( )
 	connect(exitAction, SIGNAL(triggered()), &pm(), SLOT(exit()));
 	
 	editViewAction = new QAction(tr("&Edit View"), this);
-	connect(editViewAction, SIGNAL(triggered()), this, SLOT(set_songview_widget()));
+	connect(editViewAction, SIGNAL(triggered()), this, SLOT(show_song_widget()));
 	
 	curveViewAction = new QAction(tr("&Curve View"), this);
-	connect(curveViewAction, SIGNAL(triggered()), this, SLOT(set_songview_widget()));
+	connect(curveViewAction, SIGNAL(triggered()), this, SLOT(show_song_widget()));
 	
 	projManViewAction = new QAction(tr("&Project Management"), this);
 	connect(projManViewAction, SIGNAL(triggered()), this, SLOT(set_manager_widget()));
@@ -356,21 +277,6 @@ void Interface::create_menus( )
 	connect(aboutTraversoAction,  SIGNAL(triggered()), this, SLOT(about_traverso()));
 	
 	
-/*	fileMenu = menuBar()->addMenu(tr("&File"));
-	viewMenu = menuBar()->addMenu(tr("&Views"));
-	helpMenu = menuBar()->addMenu(tr("&Help"));
-	
-	
-	
-	fileMenu->addAction(exitAction);
-	
-	QAction* driverConfigAction = menuBar()->addAction(tr("Driver"));
-// 	driverConfigAction->setIcon(QPixmap(":/driver"));
-	driverConfigAction->setText(audiodevice().get_device_name());
-	connect(driverConfigAction, SIGNAL(triggered()), this, SLOT(show_driver_config_widget()));
-	*/
-	
-	
 	fileMenu = new QMenu("File");
 	fileMenu->addAction(saveAction);
 	fileMenu->addAction(exitAction);
@@ -380,11 +286,11 @@ void Interface::create_menus( )
 	connect(mvAction, SIGNAL(triggered()), this, SLOT(set_manager_widget()));
 
 	QAction* svAction = viewMenu->addAction(tr("Song View"));
-	connect(svAction, SIGNAL(triggered()), this, SLOT(set_songview_widget()));
+	connect(svAction, SIGNAL(triggered()), this, SLOT(show_song_widget()));
 	viewMenu->addSeparator();
-	viewMenu->addAction(hvdw->toggleViewAction());
-	viewMenu->addAction(tpdw->toggleViewAction());
-	viewMenu->addAction(asdw->toggleViewAction());
+	viewMenu->addAction(historyDW->toggleViewAction());
+	viewMenu->addAction(busMonitorDW->toggleViewAction());
+	viewMenu->addAction(AudioSourcesDW->toggleViewAction());
 	
 	helpMenu = new QMenu("Help");
 	helpMenu->addAction(handBookAction);
@@ -434,7 +340,7 @@ void Interface::create_menus( )
 	button->setToolTip("Show Song View");
 	mainToolBar->addWidget(button);
 	button->setFocusPolicy(Qt::NoFocus);
-	connect(button, SIGNAL(clicked()), this, SLOT(set_songview_widget()));
+	connect(button, SIGNAL(clicked()), this, SLOT(show_song_widget()));
 	
 	
 	mainToolBar->addSeparator();
@@ -693,7 +599,6 @@ void Interface::show_driver_config_widget( )
 	driverConfigWidget->move(driverInfo->x() + x() + 2, geometry().y() + mainToolBar->height() - 2);
 	driverConfigWidget->show();
 }
-
 
 DigitalClock::DigitalClock(QWidget *parent)
 	: QLCDNumber(parent)

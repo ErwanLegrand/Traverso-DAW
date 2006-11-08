@@ -1,0 +1,132 @@
+/*
+Copyright (C) 2005-2006 Remon Sijrier
+
+This file is part of Traverso
+
+Traverso is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
+
+$Id: TrackView.cpp,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
+*/
+
+#include "TrackView.h"
+#include "AudioClipView.h"
+#include <ColorManager.h>
+#include <Song.h>
+#include "TrackPanelViewPort.h"
+#include "SongView.h"
+#include "TrackPanelView.h"
+		
+#include <Debugger.h>
+
+TrackView::TrackView(SongView* sv, Track * track)
+	: ViewItem(0, track)
+{
+	PENTERCONS;
+	
+	m_sv = sv;
+	sv->scene()->addItem(this);
+
+	m_track = track;
+	m_clipViewYOfsset = 3;
+	setFlags(ItemIsSelectable | ItemIsMovable);
+// 	setAcceptsHoverEvents(true);
+
+	m_panel = new TrackPanelView(m_sv->get_trackpanel_view_port(), this, m_track);
+
+	connect(m_track, SIGNAL(audioClipAdded(AudioClip*)), this, SLOT(add_new_audioclipview(AudioClip*)));
+	
+	m_boundingRectangle = QRectF(0, 0, 2000000000, m_track->get_height());
+	
+	foreach(AudioClip* clip, m_track->get_cliplist()) {
+		add_new_audioclipview(clip);
+	}
+}
+
+TrackView:: ~ TrackView( )
+{
+	delete m_panel;
+}
+
+void TrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+{
+	Q_UNUSED(widget);
+	int xstart = (int)option->exposedRect.x();
+	int pixelcount = (int)option->exposedRect.width();
+	
+	QColor color = cm().get("TRACK_BG");
+// 	color.setAlpha(100);
+	
+	if (option->state & QStyle::State_MouseOver) {
+		color = color.light(110);
+	}
+	
+	QColor color11 = QColor(186, 202, 231);
+	QColor color22 = QColor(235, 243, 255);
+	QColor color33 = QColor(240, 246, 255);
+	
+	QColor color1 = color11.light(110);
+	QColor color2 = color22.light(103);
+	QColor color3 = color33.light(104);
+
+	QLinearGradient grad1(QPointF(0, 0), QPointF(0, m_track->get_height()));
+	grad1.setColorAt(0.0, color1);
+	grad1.setColorAt(0.01, color2);
+	grad1.setColorAt(0.5, color3);
+	grad1.setColorAt(0.96, color2);
+	grad1.setColorAt(1.0, color1);
+	
+// 	painter->fillRect(xstart, 0, pixelcount, m_track->get_height(), grad1);
+
+	painter->fillRect(xstart, 0, pixelcount, 101, color1);
+	painter->fillRect(xstart, 3, pixelcount, 94, color2);
+}
+
+void TrackView::add_new_audioclipview( AudioClip * clip )
+{
+	PENTER;
+	AudioClipView* clipView = new AudioClipView(m_sv, this, clip);
+	m_clipViews.append(clipView);
+	
+	clipView->setPos(0, m_clipViewYOfsset);
+}
+
+Track* TrackView::get_track( ) const
+{
+	return m_track;
+}
+
+int TrackView::get_clipview_y_offset( )
+{
+	return m_clipViewYOfsset;
+}
+
+void TrackView::move_to( int x, int y )
+{
+	setPos(0, y);
+	m_panel->setPos(-202, y);
+}
+
+void TrackView::add_clip_view(AudioClipView* view)
+{
+	view->setParent(this);
+	m_clipViews.append(view);
+}
+
+int TrackView::get_clipview_height( )
+{
+	return m_track->get_height() - 8;
+}
+
+//eof
