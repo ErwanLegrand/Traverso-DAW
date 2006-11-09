@@ -28,7 +28,7 @@ HEADERS += \
 	songcanvas/SongView.h \
 	songcanvas/TimeLineview.h \
 	songcanvas/TrackPanelView.h \
-	songcanvas/PlayCursor.h \
+	songcanvas/Cursors.h \
 	songcanvas/FadeView.h \
         songcanvas/FadeContextDialogView.h \
 	songcanvas/PluginView.h \
@@ -78,7 +78,7 @@ SOURCES += \
 	songcanvas/SongView.cpp \
 	songcanvas/TimeLineView.cpp \
 	songcanvas/TrackPanelView.cpp \
-	songcanvas/PlayCursor.cpp \
+	songcanvas/Cursors.cpp \
 	songcanvas/FadeView.cpp \
         songcanvas/FadeContextDialogView.cpp \
 	songcanvas/PluginView.cpp \

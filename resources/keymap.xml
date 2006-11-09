@@ -66,6 +66,7 @@
 	<keyseq keyfacttype="HKEY" key1="X" mousehint="LR" slotname="in_crop" name="Crop (in)" sortorder="71" />
 	<keyseq keyfacttype="HKEY" key1="B" mousehint="LR" slotname="bend" name="Bend" sortorder="25" />
 	<keyseq keyfacttype="HKEY" key1="S" mousehint="LR" slotname="strength" name="Strenght" sortorder="25" />
+	<keyseq keyfacttype="HKEY" key1="SPACE" mousehint="LR" slotname="play_cursor_move" name="Move PlayCursor" sortorder="34" />
 	
 	
 	<keyseq keyfacttype="HKEY2" key1="UARROW" key2="DARROW" mousehint="UD" slotname="vertical_scroll" name="Verticall Scroll" sortorder="120" />
