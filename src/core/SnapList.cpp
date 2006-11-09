@@ -17,10 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SnapList.cpp,v 1.2 2006/07/31 14:48:38 r_sijrier Exp $
+$Id: SnapList.cpp,v 1.3 2006/11/09 15:45:42 r_sijrier Exp $
 */
 
 #include "SnapList.h"
+#include "Peak.h"
 #include "Song.h"
 #include "AudioClip.h"
 #include "AudioClipManager.h"
@@ -33,51 +34,26 @@ $Id: SnapList.cpp,v 1.2 2006/07/31 14:48:38 r_sijrier Exp $
 static const int SNAP_WIDTH = 10;
 
 SnapList::SnapList(Song* song) 
-	: m_song(song)
+	: QObject(song)
+	, m_song(song)
 {
+	m_isDirty = true;
+	m_rangeStart = 0;
+	m_rangeEnd = 900;
+	connect(m_song, SIGNAL(workingPosChanged()), this, SLOT(mark_dirty()));
 }
 
-SnapList::~SnapList()
+void SnapList::mark_dirty()
 {
+	m_isDirty = true;
 }
 
-void SnapList::update_snaplist(AudioClip *clip)
-{
-	xposList.clear();
-
-	// collects all clip boundaries and adds them to the snap list
-	QList<AudioClip* >* acList = m_song->get_audioclip_manager()->get_clip_list();
-
-	for( int i = 0; i < acList->size(); i++ ) {
-
-		AudioClip* acClip = acList->at(i);
-
-		// don't store the moved clip's position
-		if ( acClip == clip ) {
-			 continue;
-		}
-
-		int xstart = m_song->frame_to_xpos(acClip->get_track_start_frame());
-		int xend = m_song->frame_to_xpos(acClip->get_track_end_frame());
-
-		if (xstart > xend) {
-			PERROR("clip xstart > xend, this must be a programming error!");
-			continue;  // something wrong, ignore this clip
-		}
-		if (xstart > 0) {
-	 		xposList.append(xstart);
-		}
-		if ((xend > 0) && (xend < cpointer().get_viewport_width())) {
-			xposList.append(xend);
-		}
-	}
-
-	process_snaplist();
-}
 
 void SnapList::update_snaplist()
 {
 	xposList.clear();
+	
+	int scalefactor = Peak::zoomStep[m_song->get_hzoom()];
 
 	// collects all clip boundaries and adds them to the snap list
 	QList<AudioClip* >* acList = m_song->get_audioclip_manager()->get_clip_list();
@@ -86,43 +62,42 @@ void SnapList::update_snaplist()
 
 		AudioClip* clip = acList->at(i);
 
-		int xstart = m_song->frame_to_xpos(clip->get_track_start_frame());
-		int xend = m_song->frame_to_xpos(clip->get_track_end_frame());
+		int startx = clip->get_track_start_frame() / scalefactor;
+		int endx = clip->get_track_end_frame() / scalefactor;
 
-		if (xstart > xend) {
+		if (startx > endx) {
 			PERROR("clip xstart > xend, this must be a programming error!");
 			continue;  // something wrong, ignore this clip
 		}
-		if (xstart > 0) {
-	 		xposList.append(xstart);
+		if (startx >= m_rangeStart) {
+	 		xposList.append(startx);
 		}
-		if ((xend > 0) && (xend < cpointer().get_viewport_width())) {
-			xposList.append(xend);
+		if (endx <= m_rangeEnd) {
+			xposList.append(endx);
 		}
 	}
 
-	process_snaplist();
-}
+	// Be able to snap to trackstart
+	if (m_rangeStart == 0) {
+		xposList.append(0);
+	}
 
-void SnapList::process_snaplist()
-{
+	printf("workingframe xpos is %d\n", m_song->get_working_frame() / scalefactor);
+	xposList.append(m_song->get_working_frame() / scalefactor);
+	
+	// if there are more items to be added to the list (e.g. markers, cursor),
+	
 	xposLut.clear();
 	xposBool.clear();
 
-	// if there are more items to be added to the list (e.g. markers, cursor),
-	// add them here. Don't forget to convert to widget coordinates by the
-	// function m_song->frame_to_xpos() first
-	if (m_song->get_first_visible_frame() == (nframes_t)0) {
-		xposList.append(m_song->frame_to_xpos(0));
-	}
-
-	xposList.append(m_song->frame_to_xpos(m_song->get_working_frame()));
-
+	
 	// sort the list
 	qSort(xposList);
+	
+// 	int range = m_rangeEnd - m_rangeStart;
 
 	// create a linear lookup table
-	for (int i = 0; i <= cpointer().get_viewport_width(); i++) {
+	for (int i = m_rangeStart; i <= m_rangeEnd; ++i) {
 		xposLut.push_back(i);
 		xposBool.push_back(false);
 	}
@@ -161,12 +136,19 @@ void SnapList::process_snaplist()
 
 		lastVal = xposList.at(i);
 	}
+	
+	m_isDirty = false;
 }
+
 
 // public function that checks if there is a snap position
 // within +-SNAP_WIDTH of the supplied value i
 int SnapList::get_snap_value(int i)
 {
+	if (m_isDirty) {
+		update_snaplist();
+	}
+	
 	// catch dangerous values:
 	if (i < 0) { 
 		return i;
@@ -186,6 +168,10 @@ int SnapList::get_snap_value(int i)
 // returns true if i is inside a snap area, else returns false
 bool SnapList::is_snap_value(int i)
 {
+	if (m_isDirty) {
+		update_snaplist();
+	}
+	
 	// need to catch values outside the LUT. Return false in that case
 	if (i < 0) {
 		return false;
@@ -202,6 +188,10 @@ bool SnapList::is_snap_value(int i)
 // The return value is negative if the supplied value is < snapped value
 int SnapList::get_snap_diff(int i)
 {
+	if (m_isDirty) {
+		update_snaplist();
+	}
+	
 	// need to catch values outside the LUT. Return 0 in that case
 	if (i < 0) {
 		return 0;

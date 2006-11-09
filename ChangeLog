@@ -1,6 +1,10 @@
 xx-xx-xxxx Remon Sijrier <remon@vt.shuis.tudelft.nl>
 	* Released 0.xx.x
 	
+	* Ported the SongView and related classes to QGraphicsView
+	* VUMeter restyling and made iec conformant by N. Doebelin.
+	* Major GUI refresh!
+	* Added HistoryView Widget, depends on QUndo framework
 	* Created Plugin 'framework'.
 	* LV2 plugin support has been added, using the Plugin 'framework'
 	* Created AddRemoveItemCommand. This command wil be used by ALL

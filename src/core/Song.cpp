@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.36 2006/11/08 14:49:37 r_sijrier Exp $
+$Id: Song.cpp,v 1.37 2006/11/09 15:45:42 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -149,7 +149,6 @@ void Song::init()
 	regionList = new MtaRegionList();
 	m_hs = new QUndoStack(pm().get_undogroup());
 	acmanager = new AudioClipManager(this);
-	connect(acmanager, SIGNAL(lastFramePositionChanged()), this, SIGNAL(lastFramePositionChanged()));
 
 	set_context_item( acmanager );
 
@@ -475,14 +474,6 @@ int Song::snapped_x(int x)
 	return nx;
 }
 
-// recalculate the snap positions. SnapList must know
-// which clip is being moved, in order to exclude
-// it from the snap list. It's much more convenient that way
-void Song::update_snaplist(AudioClip *u_clip)
-{
-	snaplist->update_snaplist(u_clip);
-}
-
 SnapList* Song::get_snap_list()
 {
 	return snaplist;
@@ -553,7 +544,6 @@ void Song::set_work_at(nframes_t pos)
 // 	newTransportFramePos = pos;
 // 	workingFrame = pos;
 /** use this if it should snap **/
-	snaplist->update_snaplist();
 	long position = xpos_to_frame(snapped_x(frame_to_xpos(pos)));
 	workingFrame = xpos_to_frame(snapped_x(frame_to_xpos(pos)));
 /** **/
@@ -571,6 +561,21 @@ void Song::set_work_at(nframes_t pos)
 	seeking = 1;
 	emit workingPosChanged();
 }
+
+
+void Song::set_transport_pos(nframes_t position)
+{
+	newTransportFramePos = (uint) position;
+	// If there is no transport, start_seek() will _not_ be
+	// called from within process(). So we do it now!
+	if (!transport) {
+		start_seek();
+	}
+
+	seeking = 1;
+}
+
+
 
 //
 //  Function _could_ be called in RealTime AudioThread processing path

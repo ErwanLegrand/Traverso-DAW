@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.2 2006/11/09 15:45:42 r_sijrier Exp $
 */
 
 #include "TrackView.h"
@@ -28,6 +28,8 @@ $Id: TrackView.cpp,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
 #include "SongView.h"
 #include "TrackPanelView.h"
 		
+#include <PluginSelectorDialog.h>
+
 #include <Debugger.h>
 
 TrackView::TrackView(SongView* sv, Track * track)
@@ -46,6 +48,7 @@ TrackView::TrackView(SongView* sv, Track * track)
 	m_panel = new TrackPanelView(m_sv->get_trackpanel_view_port(), this, m_track);
 
 	connect(m_track, SIGNAL(audioClipAdded(AudioClip*)), this, SLOT(add_new_audioclipview(AudioClip*)));
+	connect(m_track, SIGNAL(audioClipRemoved(AudioClip*)), this, SLOT(remove_audioclipview(AudioClip*)));
 	
 	m_boundingRectangle = QRectF(0, 0, 2000000000, m_track->get_height());
 	
@@ -98,9 +101,28 @@ void TrackView::add_new_audioclipview( AudioClip * clip )
 	PENTER;
 	AudioClipView* clipView = new AudioClipView(m_sv, this, clip);
 	m_clipViews.append(clipView);
-	
-	clipView->setPos(0, m_clipViewYOfsset);
 }
+
+void TrackView::remove_audioclipview( AudioClip * clip )
+{
+	PENTER;
+	foreach(AudioClipView* view, m_clipViews) {
+		if (view->get_clip() == clip) {
+			printf("Removing clipview from track %d\n", m_track->get_id());
+			scene()->removeItem(view);
+			m_clipViews.removeAll(view);
+			delete view;
+			return;
+		}
+	}
+}
+
+
+// void TrackView::add_clip_view(AudioClipView* view)
+// {
+// 	view->setParent(this);
+// 	m_clipViews.append(view);
+// }
 
 Track* TrackView::get_track( ) const
 {
@@ -118,15 +140,37 @@ void TrackView::move_to( int x, int y )
 	m_panel->setPos(-202, y);
 }
 
-void TrackView::add_clip_view(AudioClipView* view)
-{
-	view->setParent(this);
-	m_clipViews.append(view);
-}
-
 int TrackView::get_clipview_height( )
 {
 	return m_track->get_height() - 8;
 }
+
+Command* TrackView::edit_properties( )
+{
+	bool ok;
+	QString text = QInputDialog::getText(m_sv->get_trackpanel_view_port()->viewport(), tr("Set Track name"),
+					tr("Enter new Track name"),
+					QLineEdit::Normal, m_track->get_name(), &ok);
+	if (ok && !text.isEmpty()) {
+		m_track->set_name(text);
+	}
+
+	return (Command*) 0;
+}
+
+Command* TrackView::add_new_plugin( )
+{
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
+	if (PluginSelectorDialog::instance()->exec() == QDialog::Accepted) {
+		Plugin* plugin = PluginSelectorDialog::instance()->get_selected_plugin();
+		if (plugin) {
+			return m_track->add_plugin(plugin);
+		}
+	}
+
+#endif
+	return 0;
+}
+
 
 //eof

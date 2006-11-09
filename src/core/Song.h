@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.h,v 1.19 2006/11/08 14:49:37 r_sijrier Exp $
+$Id: Song.h,v 1.20 2006/11/09 15:45:42 r_sijrier Exp $
 */
 
 #ifndef SONG_H
@@ -116,6 +116,7 @@ public:
 	void set_first_visible_frame(nframes_t pos);
 	void set_title(const QString& sTitle);
 	void set_work_at(nframes_t pos);
+	void set_transport_pos(nframes_t pos);
 	void set_hzoom(int hzoom);
 	void set_number(int num)
 	{
@@ -155,7 +156,6 @@ public:
 	}
 
 	void disconnect_from_audiodevice_and_delete();
-	void update_snaplist( AudioClip* );
 
 	audio_sample_t* 	mixdown;
 	audio_sample_t*		gainbuffer;
@@ -216,6 +216,8 @@ private:
 	void start_seek();
 
 	Track* create_track();
+	
+	friend class AudioClipManager;
 
 public slots :
 	void seek_finished();

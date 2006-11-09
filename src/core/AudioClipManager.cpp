@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioClipManager.cpp,v 1.7 2006/09/07 09:36:52 r_sijrier Exp $
+    $Id: AudioClipManager.cpp,v 1.8 2006/11/09 15:45:42 r_sijrier Exp $
 */
  
 #include "AudioClipManager.h"
@@ -26,11 +26,12 @@
 #include "AudioClip.h"
 #include "Track.h"
 #include "commands.h"
-
+#include "SnapList.h"
+#include "Utils.h"
 #include "Debugger.h"
 
 AudioClipManager::AudioClipManager( Song* song )
-		: ContextItem(song)
+	: ContextItem(song)
 {
 	PENTERCONS;
 	m_song = song;
@@ -45,12 +46,28 @@ AudioClipManager::~ AudioClipManager( )
 
 void AudioClipManager::add_clip( AudioClip * clip )
 {
+	PENTER;
+	if (m_clips.contains(clip)) {
+		PERROR("Trying to add clip %s, but it's allready in my list!!", QS_C(clip->get_name()));
+	}
 	m_clips.append( clip );
 	
 	connect(clip, SIGNAL(trackEndFrameChanged()), this, SLOT(update_last_frame()));
+	connect(clip, SIGNAL(positionChanged()), m_song->get_snap_list(), SLOT(mark_dirty()));
 	
 	update_last_frame();
 }
+
+void AudioClipManager::remove_clip( AudioClip * clip )
+{
+	PENTER;
+	disconnect(clip, SIGNAL(positionChanged()), m_song->get_snap_list(), SLOT(mark_dirty()));
+	if (m_clips.removeAll(clip) == 0) {
+		PERROR("Clip %s was not in my list, couldn't remove it!!", QS_C(clip->get_name()));
+	}
+	update_last_frame();
+}
+
 
 void AudioClipManager::update_last_frame( )
 {
@@ -63,7 +80,7 @@ void AudioClipManager::update_last_frame( )
 			lastFrame = clip->get_track_end_frame();
 	}
 	
-	emit lastFramePositionChanged();
+	emit m_song->lastFramePositionChanged();
 }
 
 nframes_t AudioClipManager::get_last_frame( )
@@ -191,5 +208,6 @@ Command* AudioClipManager::delete_selected_clips()
 	}
 	return group;
 }
+
 
 //eof

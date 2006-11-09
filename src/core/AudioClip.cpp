@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.49 2006/11/08 14:49:37 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.50 2006/11/09 15:45:42 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -32,6 +32,8 @@ $Id: AudioClip.cpp,v 1.49 2006/11/08 14:49:37 r_sijrier Exp $
 #include "Song.h"
 #include "Track.h"
 #include "AudioChannel.h"
+#include <AudioBus.h>
+#include <AudioDevice.h>
 #include "Mixer.h"
 #include "DiskIO.h"
 #include "Export.h"
@@ -539,11 +541,6 @@ Command* AudioClip::reset_fade_both()
 	return (Command*) 0;
 }
 
-Command* AudioClip::drag()
-{
-	Q_ASSERT(m_song);
-	return new MoveClip(m_song, this);
-}
 
 Command* AudioClip::drag_edge()
 {
@@ -719,7 +716,6 @@ void AudioClip::set_song( Song * song )
 		m_song->get_diskio()->register_read_source( m_readSource );
 	}
 	set_history_stack(m_song->get_history_stack());
-	m_song->get_audioclip_manager()->add_clip( this );
 	
 	if (isSelected) {
 		m_song->get_audioclip_manager()->add_to_selection( this );

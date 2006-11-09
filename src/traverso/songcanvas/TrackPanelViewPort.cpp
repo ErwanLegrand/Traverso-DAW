@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TrackPanelViewPort.cpp,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
+    $Id: TrackPanelViewPort.cpp,v 1.2 2006/11/09 15:45:42 r_sijrier Exp $
 */
 
 #include "TrackPanelViewPort.h"
@@ -34,8 +34,6 @@ TrackPanelViewPort::TrackPanelViewPort(QGraphicsScene* scene, SongWidget* sw)
 {
 	setBackgroundBrush(QBrush(QColor("#F9FBFF")));
 	
-	setSceneRect(-2, 0, -200, 1000);
-
 	setMinimumWidth(200);
 	setMaximumWidth(200);
 	

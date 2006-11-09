@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.h,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
+$Id: AudioClipView.h,v 1.2 2006/11/09 15:45:42 r_sijrier Exp $
 */
 
 #ifndef AUDIO_CLIP_VIEW_H
@@ -56,6 +56,9 @@ public:
 	
 	void calculate_bounding_rect();
 	int type() const;
+	
+	TrackView* get_trackview() const {return m_tv;}
+	void set_trackview(TrackView* view) {m_tv = view;}
 
 protected:
 	void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
@@ -94,6 +97,8 @@ public slots:
 	void gain_changed();
 	void repaint();
 	void update_start_pos();
+	
+	Command* drag();
 };
 
 

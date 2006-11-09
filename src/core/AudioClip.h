@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.23 2006/11/08 14:49:37 r_sijrier Exp $
+$Id: AudioClip.h,v 1.24 2006/11/09 15:45:42 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -185,7 +185,6 @@ public slots:
 	Command* reset_fade_both();
 	Command* select();
 	Command* remove_from_selection();
-	Command* drag();
 	Command* split();
 	Command* copy();
 	Command* add_to_selection();

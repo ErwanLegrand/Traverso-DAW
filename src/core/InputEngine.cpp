@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.9 2006/11/08 14:49:37 r_sijrier Exp $
+$Id: InputEngine.cpp,v 1.10 2006/11/09 15:45:42 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -205,13 +205,16 @@ int InputEngine::broadcast_action(IEAction* action)
 	return 1;
 }
 
-void InputEngine::process_command( Command * cmd )
+void InputEngine::process_command(Command* cmd )
 {
 	Q_ASSERT(cmd);
 	
 	if (cmd->prepare_actions()) {
 		cmd->set_valid(true);
 		if (cmd->push_to_history_stack() < 0) {
+			// QUndoStack calls redo() for us, now it's not
+			// called, so we do it here!
+			cmd->redo();
 			delete cmd;
 		}
 	}

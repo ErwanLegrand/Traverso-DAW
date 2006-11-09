@@ -17,24 +17,77 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
+$Id: SongView.cpp,v 1.2 2006/11/09 15:45:42 r_sijrier Exp $
 */
 
 
 #include "SongView.h"
 #include "TrackView.h"
-#include "PlayCursor.h"
+#include "Cursors.h"
 #include "ClipsViewPort.h"
 #include "TimeLineViewPort.h"
 #include "TrackPanelViewPort.h"
 		
 #include <Song.h>
 #include <Peak.h>
+#include <SnapList.h>
 #include <ContextPointer.h>
 #include <Zoom.h>
 		
 #include <Debugger.h>
 
+class PlayCursorMove : public Command
+{
+public :
+        PlayCursorMove(PlayCursor* cursor, Song* song, SongView* sv);
+        ~PlayCursorMove(){PENTERDES;};
+
+	int finish_hold();
+        int begin_hold(int useX = 0, int useY = 0);
+        int jog();
+
+private :
+	PlayCursor*	m_cursor;
+	Song*		m_song;
+	SongView*	m_sv;
+	bool 		wasActive;
+};
+
+PlayCursorMove::PlayCursorMove(PlayCursor* cursor, Song* song, SongView* sv)
+	: Command("Play Cursor Move")
+	, m_cursor(cursor)
+	, m_song(song)
+	, m_sv(sv)
+{
+}
+
+int PlayCursorMove::finish_hold()
+{
+	m_cursor->set_active(wasActive);
+	QPointF point = m_sv->get_clips_viewport()->mapToScene(cpointer().x(), cpointer().y());
+	m_song->set_transport_pos(point.x() * m_sv->scalefactor);
+	return -1;
+}
+
+int PlayCursorMove::begin_hold(int useX, int useY)
+{
+	wasActive = m_cursor->is_active();
+	m_cursor->set_active(false);
+	return 1;
+}
+
+int PlayCursorMove::jog()
+{
+	int x = cpointer().x();
+	if (x < 0)
+		x = 0;
+	QPointF point = m_sv->get_clips_viewport()->mapToScene(x, cpointer().y());
+	m_cursor->setPos(point.x(), 0);
+	return 1;
+}
+
+
+		
 SongView::SongView(ClipsViewPort* viewPort, TrackPanelViewPort* tpvp, TimeLineViewPort* tlvp, Song* song)
 	: ViewItem(0, song)
 {
@@ -45,13 +98,13 @@ SongView::SongView(ClipsViewPort* viewPort, TrackPanelViewPort* tpvp, TimeLineVi
 	
 	m_clipsViewPort->scene()->addItem(this);
 	
-	scale_factor_changed();
-	
-	connect(m_song, SIGNAL(trackAdded(Track*)), this, SLOT(add_new_trackview(Track*)));
-	connect(m_song, SIGNAL(trackRemoved(Track*)), this, SLOT(remove_trackview(Track*)));
-	
 	m_playCursor = new PlayCursor(m_song);
+	m_workCursor = new WorkCursor(this, m_song);
+	
 	m_clipsViewPort->scene()->addItem(m_playCursor);
+	m_clipsViewPort->scene()->addItem(m_workCursor);
+	
+	scale_factor_changed();
 	
 	foreach(Track* track, m_song->get_tracks()) {
 		add_new_trackview(track);
@@ -60,6 +113,15 @@ SongView::SongView(ClipsViewPort* viewPort, TrackPanelViewPort* tpvp, TimeLineVi
 	calculate_scene_rect();
 	
 	connect(m_song, SIGNAL(hzoomChanged()), this, SLOT(scale_factor_changed()));
+	connect(m_song, SIGNAL(trackAdded(Track*)), this, SLOT(add_new_trackview(Track*)));
+	connect(m_song, SIGNAL(trackRemoved(Track*)), this, SLOT(remove_trackview(Track*)));
+	connect(m_song, SIGNAL(lastFramePositionChanged()), this, SLOT(calculate_scene_rect()));
+	connect(m_clipsViewPort->horizontalScrollBar(), 
+		SIGNAL(valueChanged(int)),
+		this, 
+		SLOT(set_snap_range(int)));
+
+
 }
 
 SongView::~SongView()
@@ -77,6 +139,8 @@ void SongView::scale_factor_changed( )
 		item->prepare_geometry_change();
 		item->calculate_bounding_rect();
 	}
+	
+	calculate_scene_rect();
 }
 
 TrackView* SongView::get_trackview_under( QPointF point )
@@ -132,7 +196,14 @@ void SongView::calculate_scene_rect()
 	
 	m_clipsViewPort->setSceneRect(0, 0, width, totalheight);
 	m_tlvp->setSceneRect(0, -2, width, -23);
-	m_clipsViewPort->centerOn(m_song->get_first_visible_frame() / scalefactor, 0);
+	m_tpvp->setSceneRect(-2, 0, -200, totalheight);
+	
+	m_playCursor->set_bounding_rect(QRectF(0, 0, 2, totalheight));
+	m_playCursor->update_position();
+	m_workCursor->set_bounding_rect(QRectF(0, 0, 2, totalheight));
+	m_workCursor->update_position();
+
+	m_clipsViewPort->centerOn(m_song->get_working_frame() / scalefactor, 0);
 }
 
 
@@ -230,6 +301,26 @@ void SongView::update_zoom( int xFactor, int vZoomDirection )
 TrackPanelViewPort* SongView::get_trackpanel_view_port( ) const
 {
 	return m_tpvp;
+}
+
+Command * SongView::touch( )
+{
+	QPointF point = m_clipsViewPort->mapToScene(cpointer().x(), cpointer().y());
+	printf("point.x() is %f\n", point.x());
+	m_song->set_work_at((uint) (point.x() * scalefactor));
+	m_clipsViewPort->centerOn(m_song->get_working_frame() / scalefactor, 0);
+
+	return 0;
+}
+
+Command * SongView::play_cursor_move( )
+{
+	return new PlayCursorMove(m_playCursor, m_song, this);
+}
+
+void SongView::set_snap_range(int start)
+{
+	m_song->get_snap_list()->set_range(start, start + m_clipsViewPort->viewport()->width());
 }
 
 

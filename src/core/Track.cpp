@@ -17,13 +17,15 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.30 2006/11/08 14:49:37 r_sijrier Exp $
+$Id: Track.cpp,v 1.31 2006/11/09 15:45:42 r_sijrier Exp $
 */
 
 #include "Track.h"
 #include "Song.h"
 #include "AudioClip.h"
 #include "Tsar.h"
+#include <AudioBus.h>
+#include <AudioDevice.h>
 #include "PluginChain.h"
 #include "Plugin.h"
 #include "InputEngine.h"
@@ -153,6 +155,7 @@ int Track::set_state( const QDomNode & node )
 			clip->set_song(m_song);
 			clip->set_track(this);
 			clip->set_state(clip->m_domNode);
+			m_song->get_audioclip_manager()->add_clip(clip);
 			private_add_clip(clip);
 			
 			clipNode = clipNode.nextSibling();
@@ -261,6 +264,7 @@ AudioClip* Track::get_clip_before(nframes_t framePos)
 Command* Track::remove_clip(AudioClip* clip, bool historable)
 {
 	PENTER;
+	m_song->get_audioclip_manager()->remove_clip(clip);
 	return new AddRemoveItemCommand(this, clip, historable, m_song,
 					"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)",
 					"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)", tr("Remove Clip"));
@@ -271,6 +275,7 @@ Command* Track::add_clip(AudioClip* clip, bool historable)
 {
 	PENTER;
 	clip->set_track(this);
+	m_song->get_audioclip_manager()->add_clip(clip);
 	return new AddRemoveItemCommand(this, clip, historable, m_song,
 					"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)",
 					"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)", tr("Add Clip"));

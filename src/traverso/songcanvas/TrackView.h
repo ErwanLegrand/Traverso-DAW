@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.h,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
+$Id: TrackView.h,v 1.2 2006/11/09 15:45:42 r_sijrier Exp $
 */
 
 #ifndef TRACK_VIEW_H
@@ -48,7 +48,7 @@ public:
 	int get_clipview_height();
 	void move_to(int x, int y);
 	
-	void add_clip_view(AudioClipView* view);
+// 	void add_clip_view(AudioClipView* view);
 	int type() const;
 	
 private:
@@ -57,8 +57,13 @@ private:
 	TrackPanelView*		m_panel;
 	int			m_clipViewYOfsset;
 
+public slots:
+	Command* edit_properties();
+	Command* add_new_plugin();	
+
 private slots:
 	void add_new_audioclipview(AudioClip* clip);
+	void remove_audioclipview(AudioClip* clip);
 };
 
 

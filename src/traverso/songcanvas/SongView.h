@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongView.h,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
+    $Id: SongView.h,v 1.2 2006/11/09 15:45:42 r_sijrier Exp $
 */
 
 #ifndef SONG_VIEW_H
@@ -34,6 +34,7 @@ class Track;
 class SongWidget;
 class TrackView;
 class PlayCursor;
+class WorkCursor;
 
 class SongView : public ViewItem
 {
@@ -63,11 +64,13 @@ private:
 	TimeLineViewPort*	m_tlvp;
 	QList<TrackView*>	m_trackViews;
 	PlayCursor*		m_playCursor;
+	WorkCursor*		m_workCursor;
 
 
 public slots:
         void update_shuttle();
 
+	Command* touch();
         Command* hzoom_out();
         Command* hzoom_in();
         Command* vzoom_out();
@@ -79,9 +82,11 @@ public slots:
         Command* shuttle();
         Command* goto_begin();
         Command* goto_end();
+	Command* play_cursor_move();
 	
 private slots:
 	void scale_factor_changed();
+	void set_snap_range(int);
 	void add_new_trackview(Track*);
 	void remove_trackview(Track*);
 	void calculate_scene_rect();

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SnapList.h,v 1.2 2006/07/31 14:48:38 r_sijrier Exp $
+$Id: SnapList.h,v 1.3 2006/11/09 15:45:42 r_sijrier Exp $
 */
 
 #ifndef SNAPLIST_H
@@ -30,18 +30,19 @@ $Id: SnapList.h,v 1.2 2006/07/31 14:48:38 r_sijrier Exp $
 class Song;
 class AudioClip;
 
-class SnapList
+class SnapList : public QObject
 {
+	Q_OBJECT
 
 public:
 	SnapList(Song* song);
-	~SnapList();
+	~SnapList() {};
 
 	int get_snap_value(int);
 	bool is_snap_value(int);
-	void update_snaplist(AudioClip *);
-	void update_snaplist();
 	int get_snap_diff(int);
+	
+	void set_range(int start, int end);
 
 private:
 	Song* m_song;
@@ -49,10 +50,22 @@ private:
 	QList<int> xposLut;
 	QList<bool> xposBool;
 	QList<AudioClip* > m_clips;
+	bool	m_isDirty;
+	int	m_rangeStart;
+	int	m_rangeEnd;
 
-	void process_snaplist();
+	void update_snaplist();
+
+public slots:
+	void mark_dirty();
 };
 
+inline void SnapList::set_range(int start, int end)
+{
+	printf("setting xstart %d, xend %d\n", start, end);
+	m_rangeStart = start;
+	m_rangeEnd = end;
+}
 
 #endif
 

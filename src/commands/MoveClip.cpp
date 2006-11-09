@@ -17,24 +17,29 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: MoveClip.cpp,v 1.12 2006/11/08 14:52:11 r_sijrier Exp $
+$Id: MoveClip.cpp,v 1.13 2006/11/09 15:45:42 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
 
-#include "TrackView.h"
 #include "MoveClip.h"
 #include "SnapList.h"
-#include "ViewPort.h"
+#include <SongView.h>
+#include <TrackView.h>
+#include <AudioClipView.h>
+#include <ViewPort.h>
+#include <ClipsViewPort.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-MoveClip::MoveClip(Song* song, AudioClip* clip)
+MoveClip::MoveClip(SongView* sv, AudioClipView* cv, AudioClip* clip)
 	: Command(clip, QObject::tr("Move Clip"))
 {
-	m_song = song;
+	m_sv = sv;
+	m_cv = cv;
+	m_song = clip->get_song();
 	m_clip = clip;
 	targetTrack = 0;
 }
@@ -46,25 +51,21 @@ MoveClip::~MoveClip()
 
 int MoveClip::begin_hold(int useX, int useY)
 {
-	set_cursor_shape(useX, useY);
+// 	set_cursor_shape(useX, useY);
 	
 	originTrack = targetTrack = currentTrack = m_clip->get_track();
 	originalTrackFirstFrame = newInsertFrame = m_clip->get_track_start_frame();
+	origPos = cpointer().pos();
 	origXPos = cpointer().x();
-	m_song->update_snaplist(m_clip);
 	return 1;
 }
 
 
 int MoveClip::finish_hold()
 {
-	int y = cpointer().y();
-// 	targetTrack = m_song->get_track_under_y(y);
-	// m_clip could be moved to another track due jogging
-	// so we remove it from there!
-	ie().process_command( m_clip->get_track()->remove_clip( m_clip, false ) );
+	newInsertFrame = m_cv->scenePos().x() * m_sv->scalefactor;
 	
-	cpointer().get_viewport()->reset_context();
+// 	cpointer().get_viewport()->reset_context();
 	
 	return 1;
 }
@@ -106,12 +107,31 @@ int MoveClip::undo_action()
 
 int MoveClip::jog()
 {
+	QPointF diffPoint(cpointer().pos() - origPos);
+	QPointF newPos(m_cv->pos() + diffPoint);
+	
+	origPos = cpointer().pos();
+	
+// 	printf("newPos x, y is %f, %f\n", newPos.x(), newPos.y());
+	
+	TrackView* trackView = m_sv->get_trackview_under(m_sv->get_clips_viewport()->mapToScene(cpointer().x(), cpointer().y()));
+	if (!trackView) {
+// 		printf("no trackview returned\n");
+	} else if (trackView != m_cv->get_trackview()) {
+// 		printf("Setting new TrackView!\n");
+		m_cv->set_trackview(trackView);
+		m_cv->setParentItem(trackView);
+		targetTrack = trackView->get_track();
+// 		printf("track id is %d\n", targetTrack->get_id());
+	}
+		
+	
 	int newXPos = cpointer().x();
 
-	SnapList *slist = m_song->get_snap_list();
+	SnapList* slist = m_song->get_snap_list();
 
 	// must be signed int because it can be negative
-	int diff_f = (newXPos - origXPos) * Peak::zoomStep[m_song->get_hzoom()];
+	int diff_f = (cpointer().x() - origXPos) * Peak::zoomStep[m_song->get_hzoom()];
 	nframes_t origTrackStartFrame = m_clip->get_track_start_frame();
 	nframes_t origTrackEndFrame = m_clip->get_track_end_frame();
 	nframes_t newTrackStartFrame = origTrackStartFrame + diff_f;
@@ -161,23 +181,11 @@ int MoveClip::jog()
 
 	// store the new position only if the clip was moved, but not if it stuck to a snap position
 	if (origTrackStartFrame != newInsertFrame)
-		origXPos = newXPos;
+		origPos.setX(newXPos);
 
-	Track* newTargetTrack;// = m_song->get_track_under_y( cpointer().y() );
-
-	if (newTargetTrack == currentTrack) {
-		m_clip->set_track_start_frame(newInsertFrame);
-		
-	} else {
-		if (currentTrack) {
-			ie().process_command(currentTrack->remove_clip( m_clip, false));
-		}
-		if (newTargetTrack) {
-			ie().process_command(newTargetTrack->add_clip( m_clip, false ));
-		}
-		m_clip->set_track_start_frame(newInsertFrame);
-		currentTrack = newTargetTrack;
-	}
+	newPos.setX(newInsertFrame / m_sv->scalefactor);	
+	newPos.setY(m_cv->pos().y());
+	m_cv->setPos(newPos);
 	
 	return 1;
 }

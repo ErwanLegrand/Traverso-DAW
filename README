@@ -17,8 +17,6 @@ A summary of known weak areas:
 - Track adding/removing works however, un/redoing this sometimes messes up the TrackView
   possibly crashing Traverso. It's advised to not un/redo a Track add/remove.
   This will be fixed in a later release.
-- Moving a project dir causes Traverso to no longer find the audiosources in
-  that dir, will be fixt next release.
 - FLAC is supported from libsdnfile > 1.0.12, however strange problems occur 
   when playing a flac file, which seems to be a problem related with the flac
   support in libsndfile, and not having anything to do with Traverso.

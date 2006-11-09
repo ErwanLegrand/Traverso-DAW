@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ContextPointer.h,v 1.4 2006/11/08 14:49:37 r_sijrier Exp $
+    $Id: ContextPointer.h,v 1.5 2006/11/09 15:45:42 r_sijrier Exp $
 */
 
 #ifndef CONTEXTPOINTER_H
@@ -35,6 +35,7 @@ class ContextPointer : public QObject
 public:
         inline int x() const {return m_x;}
         inline int y() const {return m_y;}
+	inline QPoint pos() {return QPoint(m_x, m_y);}
         inline void set_point(int x, int y)
         {
                 m_x = x;

@@ -17,23 +17,24 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveClip.h,v 1.4 2006/10/18 12:01:17 r_sijrier Exp $
+    $Id: MoveClip.h,v 1.5 2006/11/09 15:45:42 r_sijrier Exp $
 */
 
 #ifndef MOVECLIPACTION_H
 #define MOVECLIPACTION_H
 
-#include <libtraverso.h>
 #include "Command.h"
 
 class AudioClip;
 class Song;
 class Track;
+class SongView;
+class AudioClipView;
 
 class MoveClip : public Command
 {
 public :
-        MoveClip(Song* song, AudioClip* clip);
+        MoveClip(SongView* sv, AudioClipView* clipView, AudioClip* clip);
         ~MoveClip();
 
         int begin_hold(int useX = 0, int useY = 0);
@@ -46,13 +47,15 @@ public :
 private :
         Song* m_song;
         AudioClip* m_clip;
+	SongView* 	m_sv;
+	AudioClipView*	m_cv;
         nframes_t originalTrackFirstFrame;
         nframes_t newInsertFrame;
         Track* originTrack;
         Track* targetTrack;
         Track* currentTrack;
-        int	origXPos;
-
+	QPoint	origPos;
+	int origXPos;
 };
 
 #endif

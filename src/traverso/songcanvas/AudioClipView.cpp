@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.2 2006/11/09 15:45:42 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -28,14 +28,13 @@ $Id: AudioClipView.cpp,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
 #include "AudioClipView.h"
 #include "SongView.h"
 #include "TrackView.h"
-//#include "SongView.h"
 #include "FadeView.h"
-//#include "ViewPort.h"
 
 #include "ColorManager.h"
 #include <Config.h>
 #include <FadeCurve.h>
-#include "ClipsViewPort.h"
+
+#include <MoveClip.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -426,9 +425,11 @@ void AudioClipView::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 
 void AudioClipView::mouseMoveEvent( QGraphicsSceneMouseEvent * event )
 {
+	PENTER;
+	
 	QPointF newPos(mapToParent(event->pos()) - event->buttonDownPos(Qt::LeftButton));
 	
-	printf("newPos x, y is %f, %f\n", newPos.x(), newPos.y());
+	printf("newPos x, y is %f, %f\n", event->pos().x(), event->pos().y());
 	
 	TrackView* trackView = m_sv->get_trackview_under(event->scenePos());
 	if (!trackView) {
@@ -467,5 +468,12 @@ void AudioClipView::update_start_pos()
 {
 	setPos(m_clip->get_track_start_frame() / m_sv->scalefactor, m_tv->get_clipview_y_offset());
 }
+
+
+Command* AudioClipView::drag()
+{
+	return new MoveClip(m_sv, this, m_clip);
+}
+
 
 //eof
