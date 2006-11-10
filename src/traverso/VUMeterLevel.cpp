@@ -1,3 +1,4 @@
+
 /*
     Copyright (C) 2005-2006 Remon Sijrier
 
@@ -17,7 +18,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: VUMeterLevel.cpp,v 1.8 2006/11/06 19:28:53 n_doebelin Exp $
+    $Id: VUMeterLevel.cpp,v 1.9 2006/11/10 22:54:30 n_doebelin Exp $
 */
 
 #include <libtraverso.h>
@@ -35,6 +36,16 @@
 
 #include "ColorManager.h"
 #include "Debugger.h"
+
+/**
+ * \class VUMeterLevel
+ * \brief An audio level indicator widget
+ *
+ * A VUMeterLevel is usually constructed within a VUMeter object. The audio level is
+ * read from an AudioChannel object, which must be given in the constructor. The
+ * VUMeterLevel is optimized for efficient space usage and switches from 3D look
+ * to 2D look for narrow sizes.
+ */
 
 static const int MINIMUM_WIDTH = 4;		// minimum width of the widget
 static const int THREE_D_LIMIT = 8;		// threshold for 3D-look

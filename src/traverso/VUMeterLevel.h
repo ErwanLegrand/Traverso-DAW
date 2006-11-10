@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: VUMeterLevel.h,v 1.4 2006/11/06 19:22:27 n_doebelin Exp $
+    $Id: VUMeterLevel.h,v 1.5 2006/11/10 22:54:30 n_doebelin Exp $
 */
 
 #ifndef VUMETERLEVEL_H
@@ -82,6 +82,12 @@ private slots:
 	void reset_peak_hold_value();
 
 signals:
+
+/**
+ * 
+ * @return 'true' is emitted if a signal >0.0 dB is detected. Connect this signal
+ *		to VUMeterOverLed::set_active(bool). To reset 'false' is emitted.
+ */
 	void activate_over_led(bool);
 
 };

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: VUMeterRuler.cpp,v 1.1 2006/11/06 19:22:27 n_doebelin Exp $
+    $Id: VUMeterRuler.cpp,v 1.2 2006/11/10 22:54:30 n_doebelin Exp $
 */
 
 #include <libtraverso.h>
@@ -32,6 +32,14 @@
 #include <QDebug>
 
 #include "Debugger.h"
+
+/**
+ * \class VUMeterRuler
+ * \brief A scale which places tick marks and labels from +6.0 to -60.0 dB
+ *
+ * The scale is compliant with IEC standard 60268-18 and uses VUMeter::vumeter_lut()
+ * to map dB values to widget positions.
+ */
 
 static const int FONT_SIZE		= 7;
 static const int TICK_LINE_LENGTH	= 3;

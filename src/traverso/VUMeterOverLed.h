@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: VUMeterOverLed.h,v 1.1 2006/11/06 19:22:27 n_doebelin Exp $
+    $Id: VUMeterOverLed.h,v 1.2 2006/11/10 22:54:30 n_doebelin Exp $
 */
 
 #ifndef VUMETEROVERLED_H
@@ -35,6 +35,10 @@ public:
         VUMeterOverLed(QWidget* parent);
 
 public slots:
+/**
+ *
+ * @return Connect this slot with the signal VUMeterLevel::activate_over_led(bool).
+ */
 	void set_active(bool b);
 
 protected:

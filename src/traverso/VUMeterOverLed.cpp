@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: VUMeterOverLed.cpp,v 1.1 2006/11/06 19:22:27 n_doebelin Exp $
+    $Id: VUMeterOverLed.cpp,v 1.2 2006/11/10 22:54:30 n_doebelin Exp $
 */
 
 #include <libtraverso.h>
@@ -28,6 +28,15 @@
 
 #include "ColorManager.h"
 #include "Debugger.h"
+
+/**
+ * \class VUMeterOverLed
+ * \brief An LED-styled widget indicating audio levels > 0.0 dB
+ *
+ * A VUMeterOverLed is usually constructed within a VUMeter object in conjunction with a
+ * VUMeterLevel object. It can be switched on to indicate the occurrence of audio levels
+ * > 0.0 dB.
+ */
 
 static const int MINIMUM_WIDTH		= 4;
 static const int MINIMUM_HEIGHT		= 8;

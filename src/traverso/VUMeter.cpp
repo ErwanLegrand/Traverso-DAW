@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: VUMeter.cpp,v 1.8 2006/11/06 19:22:27 n_doebelin Exp $
+    $Id: VUMeter.cpp,v 1.9 2006/11/10 22:54:30 n_doebelin Exp $
 */
 
 #include <libtraverso.h>
@@ -38,6 +38,29 @@
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
+
+/**
+ * \class VUMeter
+ * \brief A widget holding level indicators, 'over' LEDs, and a scale
+ *
+ * The VUMeter class is a widget that holds one or more level indicators (VUMeterLevel),
+ * one or more 'over' LEDs (VUMeterOverLed), and one scale (VUMeterRuler). Usually one
+ * VUMeter per track is created, which contains one level indicator and 'over' LED per
+ * audio channel (2 for stereo) and one scale. The name of the track is shown below
+ * the level indicators.
+ *
+ * The scale is hidden automatically if the width of the widget becomes too narrow.
+ *
+ * All VUMeter related classes are designed to be arranged in a QGridLayout as in the
+ * following example showing a stereo track with two channels (O = VUMeterOverLed,
+ * L = VUMeterLevel, R = VUMeterRuler):
+ *
+ *  O OR
+ *  L LR
+ *  L LR
+ *  L LR
+ *  L LR
+ */
 
 static const int MAXIMUM_WIDTH	= 150;
 static const int FONT_SIZE 	= 7;
@@ -158,8 +181,6 @@ void VUMeter::resizeEvent( QResizeEvent *  )
 	}
 }
 
-/** creates a lookup table to map dB values to meter deflection, according
-    to IEC 60268-18. Range from +6 to -70 dB in steps of 0.2 **/
 void VUMeter::calculate_lut_data()
 {
 	printf("calculating lut data\n");

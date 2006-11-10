@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: VUMeterRuler.h,v 1.1 2006/11/06 19:22:27 n_doebelin Exp $
+    $Id: VUMeterRuler.h,v 1.2 2006/11/10 22:54:30 n_doebelin Exp $
 */
 
 #ifndef VUMETERRULER_H
@@ -33,6 +33,12 @@ class VUMeterRuler : public QWidget
 public:
 
         VUMeterRuler(QWidget* parent);
+
+/**
+ * @return Sets the offset from the top to the first tick mark (+6.0 dB) in pixels.
+ *		Set this value to the height of the 'over' LED (VUMeterOverLed) in order
+ *		to position the first tick mark at the top of the VUMeterLevel.
+ */
 	void setYOffset(int);
 
 protected:
