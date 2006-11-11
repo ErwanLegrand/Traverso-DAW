@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Tsar.cpp,v 1.2 2006/10/09 11:56:07 r_sijrier Exp $
+$Id: Tsar.cpp,v 1.3 2006/11/11 22:17:45 r_sijrier Exp $
 */
 
 #include "Tsar.h"
@@ -147,7 +147,7 @@ void Tsar::finish_processed_events( )
 // 		printf("finish_processed_objects:: Count is %d\n", m_eventCounter);
 	}
 	
-	static int retryCount;
+/*	static int retryCount;
 	
 	retryCount++;
 	
@@ -160,7 +160,7 @@ void Tsar::finish_processed_events( )
 	
 	if (m_eventCounter <= 0) {
 		retryCount = 0;
-	}
+	}*/
 }
 
 /**
