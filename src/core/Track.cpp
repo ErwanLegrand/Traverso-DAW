@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.31 2006/11/09 15:45:42 r_sijrier Exp $
+$Id: Track.cpp,v 1.32 2006/11/12 20:26:15 r_sijrier Exp $
 */
 
 #include "Track.h"
@@ -601,12 +601,17 @@ Command* Track::gain()
 	return new Gain(this, tr("Track %1 Gain").arg(ID));
 }
 
+Command* Track::reset_gain()
+{
+	return new Gain(this, tr("Track %1 Gain").arg(ID), 0.5);
+}
+
 Command* Track::pan()
 {
 	return new TrackPan(this, m_song);
 }
 
-Command * Track::import_audiosource(  )
+Command* Track::import_audiosource()
 {
 	return new Import(this);
 }
