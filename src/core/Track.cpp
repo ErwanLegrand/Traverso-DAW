@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.32 2006/11/12 20:26:15 r_sijrier Exp $
+$Id: Track.cpp,v 1.33 2006/11/12 20:33:22 r_sijrier Exp $
 */
 
 #include "Track.h"
@@ -603,7 +603,11 @@ Command* Track::gain()
 
 Command* Track::reset_gain()
 {
-	return new Gain(this, tr("Track %1 Gain").arg(ID), 0.5);
+	float newGain = 0.5;
+	if (m_gain == 0.5) {
+		newGain = 1.0;
+	}
+	return new Gain(this, tr("Track %1 Gain").arg(ID), newGain);
 }
 
 Command* Track::pan()
