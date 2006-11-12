@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.2 2006/11/09 15:45:42 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.3 2006/11/12 15:19:29 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -35,6 +35,7 @@ $Id: AudioClipView.cpp,v 1.2 2006/11/09 15:45:42 r_sijrier Exp $
 #include <FadeCurve.h>
 
 #include <MoveClip.h>
+#include <MoveEdge.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -219,7 +220,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			PWARN("peakdatacount != availpeaks (%d, %d)", peakdatacount, availpeaks);
 		}
 
-		if (pixelcount <= 0) {
+		if (availpeaks <= 0) {
 			// It seems there are no peak buffers yet, but they are now generated
 			// just wait for the finished() signal.....
 // 			PWARN("Waiting for peak");
@@ -475,5 +476,19 @@ Command* AudioClipView::drag()
 	return new MoveClip(m_sv, this, m_clip);
 }
 
+Command* AudioClipView::drag_edge()
+{
+	Q_ASSERT(m_song);
+	int x = (int) mapToItem(this, cpointer().pos()).x();
+
+	MoveEdge* me;
+
+	if (x < (m_boundingRectangle.width() / 2))
+		me =   new  MoveEdge(this, m_sv, "set_left_edge");
+	else
+		me = new MoveEdge(this, m_sv, "set_right_edge");
+
+	return me;
+}
 
 //eof
