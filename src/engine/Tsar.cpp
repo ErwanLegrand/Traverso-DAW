@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Tsar.cpp,v 1.3 2006/11/11 22:17:45 r_sijrier Exp $
+$Id: Tsar.cpp,v 1.4 2006/11/13 19:35:11 r_sijrier Exp $
 */
 
 #include "Tsar.h"
@@ -74,7 +74,7 @@ Tsar::~ Tsar( )
  * 	called from the GUI thread.
  *
  *	Note: This function should be called ONLY from the GUI thread! 
- * @param data 
+ * @param event  The event to add to the event queue
  */
 void Tsar::add_event(TsarEvent& event )
 {
@@ -147,11 +147,11 @@ void Tsar::finish_processed_events( )
 // 		printf("finish_processed_objects:: Count is %d\n", m_eventCounter);
 	}
 	
-/*	static int retryCount;
+	static int retryCount;
 	
 	retryCount++;
 	
-	if (retryCount > 100) {
+	if (retryCount > 150) {
 		qFatal("Unable to process thread save adding/removing of object into audio processing execution path!\n"
 			"This is most likely caused by the audiodevice thread (or Jacks' one) gone wild or stalled\n"
 			"One issue could be that you are not running with real time privileges! Please check for this!\n"
@@ -160,7 +160,7 @@ void Tsar::finish_processed_events( )
 	
 	if (m_eventCounter <= 0) {
 		retryCount = 0;
-	}*/
+	}
 }
 
 /**
@@ -175,7 +175,7 @@ void Tsar::finish_processed_events( )
  * @param argument 	The slot and/or signal argument which can be of any type.
  * @param slotSignature The 'signature' of the calling objects slot (equals the name of the slot function)
  * @param signalSignature The 'signature' of the calling objects signal (equals the name of the signal function) 
- * @return 
+ * @return The newly created event.
  */
 TsarEvent Tsar::create_event( QObject* caller, void* argument, char* slotSignature, char* signalSignature )
 {
