@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: VUMeter.cpp,v 1.9 2006/11/10 22:54:30 n_doebelin Exp $
+    $Id: VUMeter.cpp,v 1.10 2006/11/13 20:17:27 n_doebelin Exp $
 */
 
 #include <libtraverso.h>
@@ -51,15 +51,8 @@
  *
  * The scale is hidden automatically if the width of the widget becomes too narrow.
  *
- * All VUMeter related classes are designed to be arranged in a QGridLayout as in the
- * following example showing a stereo track with two channels (O = VUMeterOverLed,
- * L = VUMeterLevel, R = VUMeterRuler):
- *
- *  O OR
- *  L LR
- *  L LR
- *  L LR
- *  L LR
+ * All VUMeter related classes are designed to be arranged in a QGridLayout so as to 
+ * resize correctly.
  */
 
 static const int MAXIMUM_WIDTH	= 150;

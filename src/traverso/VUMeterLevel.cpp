@@ -18,7 +18,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: VUMeterLevel.cpp,v 1.9 2006/11/10 22:54:30 n_doebelin Exp $
+    $Id: VUMeterLevel.cpp,v 1.10 2006/11/13 20:17:27 n_doebelin Exp $
 */
 
 #include <libtraverso.h>
@@ -40,6 +40,9 @@
 /**
  * \class VUMeterLevel
  * \brief An audio level indicator widget
+ *
+ * This is a digital audio level meter which is compliant with the IEC standard
+ * 60268-18. It ranges from +6.0 dB to -70.0 dB.
  *
  * A VUMeterLevel is usually constructed within a VUMeter object. The audio level is
  * read from an AudioChannel object, which must be given in the constructor. The

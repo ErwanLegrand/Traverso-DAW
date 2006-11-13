@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: VUMeterOverLed.h,v 1.2 2006/11/10 22:54:30 n_doebelin Exp $
+    $Id: VUMeterOverLed.h,v 1.3 2006/11/13 20:17:27 n_doebelin Exp $
 */
 
 #ifndef VUMETEROVERLED_H
@@ -36,8 +36,10 @@ public:
 
 public slots:
 /**
+ * Switches the LED indicator on and off. Connect this slot with the signal
+ * VUMeterLevel::activate_over_led(bool).
  *
- * @return Connect this slot with the signal VUMeterLevel::activate_over_led(bool).
+ * @param b new state of the LED indicator. 
  */
 	void set_active(bool b);
 
