@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SnapList.h,v 1.3 2006/11/09 15:45:42 r_sijrier Exp $
+$Id: SnapList.h,v 1.4 2006/11/14 14:53:46 r_sijrier Exp $
 */
 
 #ifndef SNAPLIST_H
@@ -38,21 +38,21 @@ public:
 	SnapList(Song* song);
 	~SnapList() {};
 
-	int get_snap_value(int);
-	bool is_snap_value(int);
-	int get_snap_diff(int);
+	int get_snap_value(nframes_t);
+	bool is_snap_value(nframes_t);
+	int get_snap_diff(nframes_t);
 	
-	void set_range(int start, int end);
+	void set_range(nframes_t start, nframes_t end, int scalefactor);
 
 private:
-	Song* m_song;
-	QList<int> xposList;
-	QList<int> xposLut;
-	QList<bool> xposBool;
-	QList<AudioClip* > m_clips;
-	bool	m_isDirty;
-	int	m_rangeStart;
-	int	m_rangeEnd;
+	Song* 		m_song;
+	QList<int> 	xposList;
+	QList<int> 	xposLut;
+	QList<bool> 	xposBool;
+	bool		m_isDirty;
+	nframes_t	m_rangeStart;
+	nframes_t	m_rangeEnd;
+	int		m_scalefactor;
 
 	void update_snaplist();
 
@@ -60,11 +60,12 @@ public slots:
 	void mark_dirty();
 };
 
-inline void SnapList::set_range(int start, int end)
+inline void SnapList::set_range(nframes_t start, nframes_t end, int scalefactor)
 {
-	printf("setting xstart %d, xend %d\n", start, end);
+// 	printf("setting xstart %d, xend %d scalefactor %d\n", start, end, scalefactor);
 	m_rangeStart = start;
 	m_rangeEnd = end;
+	m_scalefactor = scalefactor;
 }
 
 #endif

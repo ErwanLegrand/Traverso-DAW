@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SnapList.cpp,v 1.3 2006/11/09 15:45:42 r_sijrier Exp $
+$Id: SnapList.cpp,v 1.4 2006/11/14 14:53:46 r_sijrier Exp $
 */
 
 #include "SnapList.h"
@@ -40,6 +40,7 @@ SnapList::SnapList(Song* song)
 	m_isDirty = true;
 	m_rangeStart = 0;
 	m_rangeEnd = 900;
+	m_scalefactor = 1;
 	connect(m_song, SIGNAL(workingPosChanged()), this, SLOT(mark_dirty()));
 }
 
@@ -52,52 +53,53 @@ void SnapList::mark_dirty()
 void SnapList::update_snaplist()
 {
 	xposList.clear();
+	xposLut.clear();
+	xposBool.clear();
 	
-	int scalefactor = Peak::zoomStep[m_song->get_hzoom()];
-
 	// collects all clip boundaries and adds them to the snap list
 	QList<AudioClip* >* acList = m_song->get_audioclip_manager()->get_clip_list();
+	
+	printf("acList size is %d\n", acList->size());
 
 	for( int i = 0; i < acList->size(); i++ ) {
 
 		AudioClip* clip = acList->at(i);
+		if ( ! clip->is_snappable()) {
+			continue;
+		}
 
-		int startx = clip->get_track_start_frame() / scalefactor;
-		int endx = clip->get_track_end_frame() / scalefactor;
+		nframes_t startframe = clip->get_track_start_frame();
+		nframes_t endframe = clip->get_track_end_frame();
 
-		if (startx > endx) {
+		if (startframe > endframe) {
 			PERROR("clip xstart > xend, this must be a programming error!");
 			continue;  // something wrong, ignore this clip
 		}
-		if (startx >= m_rangeStart) {
-	 		xposList.append(startx);
+		if (startframe >= m_rangeStart) {
+	 		xposList.append(startframe);
 		}
-		if (endx <= m_rangeEnd) {
-			xposList.append(endx);
+		if (endframe <= m_rangeEnd) {
+			xposList.append(endframe);
 		}
 	}
 
 	// Be able to snap to trackstart
-	if (m_rangeStart == 0) {
-		xposList.append(0);
+	xposList.append(0);
+
+	nframes_t workingframe = m_song->get_working_frame();
+	printf("workingframe xpos is %d\n",  workingframe / m_scalefactor);
+	if (workingframe >= m_rangeStart && workingframe <= m_rangeEnd) {
+		xposList.append(m_song->get_working_frame());
 	}
+	
 
-	printf("workingframe xpos is %d\n", m_song->get_working_frame() / scalefactor);
-	xposList.append(m_song->get_working_frame() / scalefactor);
-	
-	// if there are more items to be added to the list (e.g. markers, cursor),
-	
-	xposLut.clear();
-	xposBool.clear();
-
-	
 	// sort the list
 	qSort(xposList);
 	
-// 	int range = m_rangeEnd - m_rangeStart;
+	int range = (m_rangeEnd - m_rangeStart) / m_scalefactor;
 
 	// create a linear lookup table
-	for (int i = m_rangeStart; i <= m_rangeEnd; ++i) {
+	for (int i = 0; i <= range; ++i) {
 		xposLut.push_back(i);
 		xposBool.push_back(false);
 	}
@@ -111,16 +113,16 @@ void SnapList::update_snaplist()
 
 		// check if neighbouring snap regions overlap.
 		// if yes, reduce SNAP_WIDTH to keep the border in the middle
-		int ls = -SNAP_WIDTH;
+		int ls = - (SNAP_WIDTH * m_scalefactor);
 
 		if (i > 0) {
-			if (xposList.at(i-1) - xposList.at(i) > 2*ls) {
+			if ( (xposList.at(i-1) - xposList.at(i)) > (2 * ls) ) {
 				ls = (xposList.at(i-1) - xposList.at(i)) / 2;
 			}
 		}
 
-		for (int j = ls; j <= SNAP_WIDTH; j++) {
-			int pos = xposList.at(i) + j; // index in the LUT
+		for (int j = ls; j <= (SNAP_WIDTH * m_scalefactor); j+=m_scalefactor) {
+			int pos = (xposList.at(i) + j) / m_scalefactor; // index in the LUT
 
 			if (pos < 0) {
 				continue;
@@ -143,34 +145,49 @@ void SnapList::update_snaplist()
 
 // public function that checks if there is a snap position
 // within +-SNAP_WIDTH of the supplied value i
-int SnapList::get_snap_value(int i)
+int SnapList::get_snap_value(nframes_t pos)
 {
 	if (m_isDirty) {
 		update_snaplist();
 	}
 	
+	int i = (pos - m_rangeStart) / m_scalefactor;
+	printf("get_snap_value:: i is %d\n", i);
+	
 	// catch dangerous values:
 	if (i < 0) { 
-		return i;
+		printf("get_snap_value:: i < 0\n");
+		return pos;
 	}
 
 	if (xposLut.isEmpty()) {
-		return i;
+		printf("get_snap_value:: empty lut\n");
+		return pos;
 	}
 
 	if (i >= xposLut.size()) {
-		return i;
+		printf("get_snap_value:: i > xposLut.size()\n");
+		return pos;
 	}
-
-	return xposLut.at(i);
+	
+	if (is_snap_value(pos)) {
+		printf("get_snap_value returns: %d (was %d)\n", xposLut.at(i), pos);
+		return xposLut.at(i);
+	}
+	
+	
+	printf("get_snap_value returns: %d (was %d)\n", pos, pos);
+	return pos;
 }
-
 // returns true if i is inside a snap area, else returns false
-bool SnapList::is_snap_value(int i)
+bool SnapList::is_snap_value(nframes_t pos)
 {
 	if (m_isDirty) {
 		update_snaplist();
 	}
+	
+	int i = (pos - m_rangeStart) / m_scalefactor;
+	printf("is_snap_value:: i is %d\n", i);
 	
 	// need to catch values outside the LUT. Return false in that case
 	if (i < 0) {
@@ -181,16 +198,20 @@ bool SnapList::is_snap_value(int i)
 		return false;
 	}
 
+	printf("is_snap_value returns: %d\n", xposBool.at(i));
 	return xposBool.at(i);
 }
 
 // returns the difference between the unsnapped and snapped location.
 // The return value is negative if the supplied value is < snapped value
-int SnapList::get_snap_diff(int i)
+int SnapList::get_snap_diff(nframes_t pos)
 {
 	if (m_isDirty) {
 		update_snaplist();
 	}
+	
+	int i = (pos - m_rangeStart) / m_scalefactor;
+	printf("get_snap_diff:: i is %d\n", i);
 	
 	// need to catch values outside the LUT. Return 0 in that case
 	if (i < 0) {
@@ -201,7 +222,8 @@ int SnapList::get_snap_diff(int i)
 		return 0;
 	}
 
-	return i - xposLut.at(i);
+	printf("get_snap_diff returns: %d\n", xposLut.at(i));
+	return pos - xposLut.at(i);
 }
 
 
