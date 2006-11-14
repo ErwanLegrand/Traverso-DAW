@@ -13,6 +13,7 @@
 	<keyseq keyfacttype="FKEY" key1="SHIFT" slotname="touch" name="Touch" sortorder="20" />
 	<keyseq keyfacttype="FKEY" key1="W" slotname="playhead_to_workcursor" name="Playhead to Workcursor" sortorder="4" />
 	<keyseq keyfacttype="FKEY" key1="HOME" slotname="goto_begin" name="Startpos" sortorder="5" />
+	<keyseq keyfacttype="FKEY" key1="END" slotname="goto_end" name="Startpos" sortorder="6" />
 	<keyseq keyfacttype="FKEY" key1="Z" slotname="hzoom_in" name="Zoom in" sortorder="50" />
 	<keyseq keyfacttype="FKEY" key1="S" slotname="select" name="Select" sortorder="10" />
 	<keyseq keyfacttype="FKEY" key1="SPACE" slotname="go" name="Play" sortorder="2" />
