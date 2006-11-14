@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongInfoWidget.cpp,v 1.10 2006/11/08 14:46:35 r_sijrier Exp $
+$Id: SongInfoWidget.cpp,v 1.11 2006/11/14 14:33:42 r_sijrier Exp $
 */
 
 #include "SongInfoWidget.h"
@@ -91,13 +91,13 @@ void SongInfoWidget::stop_smpte_update_timer( )
 
 void SongInfoWidget::update_smpte( )
 {
-	nframes_t bpos;
+/*	nframes_t bpos;
 	if (!m_song->is_transporting())
 		bpos = m_song->xpos_to_frame(cpointer().x());
 	else
 		bpos = m_song->get_transport_frame();
 
-	smpteLabel->setText( frame_to_smpte(bpos, m_song->get_rate()) );
+	smpteLabel->setText( frame_to_smpte(bpos, m_song->get_rate()) );*/
 }
 
 void SongInfoWidget::update_zoom( )

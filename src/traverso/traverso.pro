@@ -49,10 +49,10 @@ HEADERS += \
 	OverViewWidget.h \
 	PluginSelectorDialog.h \
 	ProjectManagerWidget.h \
-	ProjectInfoWidget.h \
+#	ProjectInfoWidget.h \
 	SongManagerWidget.h \
 	SystemInfoWidget.h \
-	SongInfoWidget.h \
+#	SongInfoWidget.h \
 	AudioSourcesManagerWidget.h \
 	GlobalPropertiesWidget.h \
 	Traverso.h \
@@ -96,13 +96,13 @@ SOURCES += \
 	Main.cpp \
 	ExportWidget.cpp \
 	ProjectManagerWidget.cpp \
-	ProjectInfoWidget.cpp \
+#	ProjectInfoWidget.cpp \
 	MessageWidget.cpp \
 	ManagerWidget.cpp \
 	OverViewWidget.cpp \
 	PluginSelectorDialog.cpp \
 	SongManagerWidget.cpp \
-	SongInfoWidget.cpp \
+#	SongInfoWidget.cpp \
 	SystemInfoWidget.cpp \
 	AudioSourcesManagerWidget.cpp \
 	GlobalPropertiesWidget.cpp \
@@ -114,8 +114,8 @@ SOURCES += \
 	QuickDriverConfigWidget.cpp
 
 FORMS += ui/ProjectManagerWidget.ui \
-	ui/ProjectInfoWidget.ui \
-	ui/SongInfoWidget.ui \
+#	ui/ProjectInfoWidget.ui \
+#	ui/SongInfoWidget.ui \
 	ui/ExportWidget.ui \
 	ui/SongManagerWidget.ui \
 	ui/ManagerWidget.ui \
@@ -135,6 +135,7 @@ INCLUDEPATH += 	../../src/core \
 		../../src/plugins/LV2 \
 		../../src/traverso/songcanvas \
 		
+QT += opengl
 QMAKE_LIBDIR = ./lib ../../lib
 TARGET = traverso
 

@@ -17,22 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.h,v 1.7 2006/11/08 14:45:21 r_sijrier Exp $
+$Id: Interface.h,v 1.8 2006/11/14 14:33:42 r_sijrier Exp $
 */
 
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
-#include <QResizeEvent>
-#include <QMainWindow>
-#include <QWidget>
-#include <QDockWidget>
-#include <QMenu>
-#include <QAction>
-#include <QPushButton>
-#include <QToolBar>
-#include <QHash>
-#include <QUndoView>
+#include <QtGui>
 
 class Help;
 class Song;
@@ -105,6 +96,7 @@ private:
 	QAction*		settingsViewAction;
 	
 	QToolBar* 		mainToolBar;
+	QToolButton*		openGlButton;
 	
 	ResourcesInfoWidget*	resourcesInfo;
 	DriverInfoWidget*	driverInfo;
@@ -124,6 +116,7 @@ public slots :
 	void set_fade_in_shape(QAction* action);
 	void set_fade_out_shape(QAction* action);
 	void show_driver_config_widget();
+	void toggle_OpenGL();
 
 	Command* set_manager_widget();
 	Command* show_song_widget();

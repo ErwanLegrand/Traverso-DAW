@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: QuickDriverConfigWidget.cpp,v 1.1 2006/10/18 12:09:47 r_sijrier Exp $
+$Id: QuickDriverConfigWidget.cpp,v 1.2 2006/11/14 14:33:42 r_sijrier Exp $
 */
 
 #include "QuickDriverConfigWidget.h"
@@ -59,8 +59,10 @@ void QuickDriverConfigWidget::on_applyButton_clicked( )
 	QString driver = driverComboBox->currentText();
 	int rate = rateComboBox->currentText().toInt();
 	int bufSize = periodBufferSizesList.at(latencyComboBox->currentIndex());
+	bool capture = config().get_hardware_int_property("capture");
+	bool playback = config().get_hardware_int_property("playback");
 	
-	audiodevice().set_parameters(rate, bufSize, driver);
+	audiodevice().set_parameters(rate, bufSize, driver, capture, playback);
 }
 
 void QuickDriverConfigWidget::on_saveButton_clicked( )

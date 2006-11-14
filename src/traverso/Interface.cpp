@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.15 2006/11/08 14:45:21 r_sijrier Exp $
+$Id: Interface.cpp,v 1.16 2006/11/14 14:33:42 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -25,7 +25,7 @@ $Id: Interface.cpp,v 1.15 2006/11/08 14:45:21 r_sijrier Exp $
 #include <libtraversocore.h>
 #include <AudioDevice.h>
 
-#include <QtGui>
+#include <QtOpenGL>
 
 #include "Interface.h"
 #include "BusMonitor.h"
@@ -198,7 +198,7 @@ Command* Interface::about_traverso()
 {
 	PENTER;
 	QString text(tr("Traverso %1, making use of Qt %2\n\n" 
-			"Traverso, a Multitrack audio recording and editing program.\n\n "
+			"Traverso, a Multitrack audio recording and editing program.\n\n"
 			"Traverso uses a very powerfull interface concept, which makes recording\n"
 			"and editing audio much quicker and a pleasure to do!\n"
 			"See for more info the Help file\n\n"
@@ -378,7 +378,14 @@ void Interface::create_menus( )
 	mainToolBar->addWidget(tbutton);
 	tbutton->setFocusPolicy(Qt::NoFocus);
 	
-/*	DigitalClock* clock = new DigitalClock();
+	openGlButton = new QToolButton;
+	openGlButton->setText(tr("OpenGL"));
+	openGlButton->setCheckable(true);
+	openGlButton->setEnabled(QGLFormat::hasOpenGL());
+	mainToolBar->addWidget(openGlButton);
+	connect(openGlButton, SIGNAL(toggled(bool)), this, SLOT(toggle_OpenGL()));
+
+    /*	DigitalClock* clock = new DigitalClock();
 	mainToolBar->addWidget(clock);*/
 	
 }
@@ -599,6 +606,17 @@ void Interface::show_driver_config_widget( )
 	driverConfigWidget->move(driverInfo->x() + x() + 2, geometry().y() + mainToolBar->height() - 2);
 	driverConfigWidget->show();
 }
+
+void Interface::toggle_OpenGL( )
+{
+	bool useOpenGl = openGlButton->isChecked();
+	printf("useOpenGl is %d\n", useOpenGl);
+	foreach(SongWidget* widget, m_songWidgets) {
+		widget->set_use_opengl(useOpenGl);
+	}
+	
+}
+
 
 DigitalClock::DigitalClock(QWidget *parent)
 	: QLCDNumber(parent)

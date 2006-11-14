@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: GlobalPropertiesWidget.cpp,v 1.8 2006/10/18 12:08:56 r_sijrier Exp $
+$Id: GlobalPropertiesWidget.cpp,v 1.9 2006/11/14 14:33:42 r_sijrier Exp $
 */
 
 #include "GlobalPropertiesWidget.h"
@@ -194,8 +194,10 @@ void GlobalPropertiesWidget::on_deviceApplyButton_clicked( )
 	uint rate = defaultSampleRateComboBox->currentText().toUInt();
 	uint bufferSize = bufferSizeComboBox->currentText().toUInt();
 	QString driverType  = audioDriverBackendComboBox->currentText();
+	bool capture = config().get_hardware_int_property("capture");
+	bool playback = config().get_hardware_int_property("playback");
 
-	audiodevice().set_parameters(rate, bufferSize, driverType);
+	audiodevice().set_parameters(rate, bufferSize, driverType, capture, playback);
 }
 
 void GlobalPropertiesWidget::update_latency_label( int index)
