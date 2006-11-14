@@ -17,13 +17,16 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Tsar.cpp,v 1.4 2006/11/13 19:35:11 r_sijrier Exp $
+$Id: Tsar.cpp,v 1.5 2006/11/14 14:30:58 r_sijrier Exp $
 */
 
 #include "Tsar.h"
 
 #include "AudioDevice.h"
 #include <QMetaMethod>
+#include <QMessageBox>
+#include <QCoreApplication>
+		
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -151,11 +154,29 @@ void Tsar::finish_processed_events( )
 	
 	retryCount++;
 	
-	if (retryCount > 150) {
-		qFatal("Unable to process thread save adding/removing of object into audio processing execution path!\n"
-			"This is most likely caused by the audiodevice thread (or Jacks' one) gone wild or stalled\n"
-			"One issue could be that you are not running with real time privileges! Please check for this!\n"
-			"To improve future program behaviour, please report this so we can sort out the problem!\n");
+	if (retryCount > 100) {
+		if (audiodevice().get_driver_type() != "Null Driver") {
+			QMessageBox::critical( 0, 
+				tr("Traverso - Malfunction!"), 
+				tr("The Audiodriver Thread seems to be stalled/stopped, but Traverso didn't ask for it!\n"
+				"This effectively makes Traverso unusable, since it relies heavily on the AudioDriver Thread\n"
+				"To ensure proper operation, Traverso will fallback to the 'Null Driver'.\n"
+				"Potential issues why this can show up are: \n\n"
+				"* You're not running with real time privileges! Please make sure this is setup properly.\n\n"
+				"* The audio chipset isn't supported (completely), you probably have to turn off some of it's features.\n"
+				"\nFor more information, see the Help file, section: \n\n AudioDriver: 'Thread stalled error'\n\n"),
+				"OK", 
+				0 );
+			audiodevice().set_parameters(44100, 1024, "Null Driver", true, true);
+			retryCount = 0;
+		} else {
+			QMessageBox::critical( 0, 
+				tr("Traverso - Fatal!"), 
+				tr("The Null AudioDriver stalled too, exiting application!"),
+				"OK", 
+				0 );
+			QCoreApplication::exit(-1);
+		}
 	}
 	
 	if (m_eventCounter <= 0) {
