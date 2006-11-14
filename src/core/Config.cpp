@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Config.cpp,v 1.3 2006/10/25 14:52:38 r_sijrier Exp $
+$Id: Config.cpp,v 1.4 2006/11/14 14:34:47 r_sijrier Exp $
 */
 
 #include "Config.h"
@@ -34,7 +34,7 @@ $Id: Config.cpp,v 1.3 2006/10/25 14:52:38 r_sijrier Exp $
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-static const char* CONFIG_FILE_VERSION = "3";
+static const char* CONFIG_FILE_VERSION = "4";
 
 
 Config& config()
@@ -61,6 +61,8 @@ void Config::load_configuration()
 	m_intConfigs.insert("Hardware/samplerate", settings.value("Hardware/samplerate", "44100").toInt());
 	m_intConfigs.insert("Hardware/bufferSize", settings.value("Hardware/bufferSize", "1024").toInt());
 	m_intConfigs.insert("Hardware/PreBufferSize", settings.value("Hardware/PreBufferSize", "32768").toInt());
+	m_intConfigs.insert("Hardware/capture", settings.value("Hardware/capture", "1").toInt());
+	m_intConfigs.insert("Hardware/playback", settings.value("Hardware/playback", "1").toInt());
 	
 	m_stringConfigs.insert("ProgramVersion", settings.value("ProgramVersion", "0").toString());
 	m_stringConfigs.insert("ProgramVersion", settings.value("ProgramVersion", "0").toString());
@@ -71,7 +73,7 @@ void Config::load_configuration()
 
 	// Use Jack by default on mac os x, since thats the only supported driver there!
 #ifdef MAC_OS_BUILD
-	m_stringConfigs.insert("Hardware/", settings.value("Hardware/drivertype", "Jack").toString());
+	m_stringConfigs.insert("Hardware/drivertype", settings.value("Hardware/drivertype", "Jack").toString());
 #else
 	m_stringConfigs.insert("Hardware/drivertype", settings.value("Hardware/drivertype", "ALSA").toString());
 #endif
@@ -111,6 +113,8 @@ void Config::reset_settings( )
 #else
 	settings.setValue("drivertype", "ALSA");
 #endif
+	settings.setValue("capture", 1);
+	settings.setValue("playback", 1);
 	settings.endGroup();
 	
 	load_configuration();
