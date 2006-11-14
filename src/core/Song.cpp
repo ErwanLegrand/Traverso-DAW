@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.37 2006/11/09 15:45:42 r_sijrier Exp $
+$Id: Song.cpp,v 1.38 2006/11/14 14:48:46 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -465,23 +465,10 @@ out:
 	return ret;
 }
 
-int Song::snapped_x(int x)
-{
-	int nx = x;
-	if (isSnapOn) {
-		nx = snaplist->get_snap_value(x);
-	}
-	return nx;
-}
 
 SnapList* Song::get_snap_list()
 {
 	return snaplist;
-}
-
-nframes_t Song::xpos_to_frame(int xpos)
-{
-	return (firstVisibleFrame + xpos * Peak::zoomStep[m_hzoom]);
 }
 
 Track* Song::get_track(int trackNumber)
@@ -522,13 +509,6 @@ void Song::set_active_track(int trackNumber)
 	m_tracks.value(activeTrackNumber)->activate();
 }
 
-int Song::frame_to_xpos(nframes_t frame)
-{
-	float pos = (float) frame;
-	float start = (float)firstVisibleFrame;
-	return (int) ((pos - start)  / Peak::zoomStep[m_hzoom]);
-}
-
 void Song::set_first_visible_frame(nframes_t pos)
 {
 	PENTER;
@@ -544,10 +524,11 @@ void Song::set_work_at(nframes_t pos)
 // 	newTransportFramePos = pos;
 // 	workingFrame = pos;
 /** use this if it should snap **/
-	long position = xpos_to_frame(snapped_x(frame_to_xpos(pos)));
-	workingFrame = xpos_to_frame(snapped_x(frame_to_xpos(pos)));
+	long position = snaplist->get_snap_value(pos);
+	workingFrame = position;
 /** **/
 
+	printf("position is %d\n", position);
 	Q_ASSERT(position >= 0);
 
 	newTransportFramePos = (uint) position;
@@ -559,7 +540,6 @@ void Song::set_work_at(nframes_t pos)
 	}
 
 	seeking = 1;
-	emit workingPosChanged();
 }
 
 
@@ -614,6 +594,7 @@ void Song::seek_finished()
 		resumeTransport = false;
 	}
 
+	emit workingPosChanged();
 	PMESG2("Song :: leaving seek_finished");
 }
 

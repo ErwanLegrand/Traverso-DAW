@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.h,v 1.20 2006/11/09 15:45:42 r_sijrier Exp $
+$Id: Song.h,v 1.21 2006/11/14 14:48:46 r_sijrier Exp $
 */
 
 #ifndef SONG_H
@@ -67,10 +67,6 @@ public:
 		return m_hzoom;
 	}
 	int get_clips_count_for_audio(AudioSource* a);
-	int get_playing_xpos()
-	{
-		return frame_to_xpos(transportFrame);
-	}
 	int get_rate();
 	int get_bitdepth();
 	int get_numtracks() const
@@ -123,11 +119,9 @@ public:
 		m_id = num;
 	}
 
-	int frame_to_xpos(nframes_t frame);
 	int delete_audio_source(AudioSource* pAudio);
 	int process_go(int step);
 	int remove_all_clips_for_audio(AudioSource* a);
-	int snapped_x(int x);
 	int process(nframes_t nframes);
 	int process_export(nframes_t nframes);
 	int prepare_export(ExportSpecification* spec);
@@ -137,8 +131,6 @@ public:
 	void create(int tracksToCreate);
 	Command* add_track(Track* track, bool historable=true);
 	Command* remove_track(Track* track, bool historable=true);
-	
-	nframes_t xpos_to_frame(int xpos);
 	
 	bool any_track_armed();
 	bool realtime_path() const {return realtimepath;}
