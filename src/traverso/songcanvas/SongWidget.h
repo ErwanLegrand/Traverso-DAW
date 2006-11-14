@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongWidget.h,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
+    $Id: SongWidget.h,v 1.2 2006/11/14 14:59:07 r_sijrier Exp $
 */
 
 #ifndef SONG_WIDGET_H
@@ -41,6 +41,8 @@ public:
 	~SongWidget() {};
 	
 	SongView* m_songView;
+	
+	void set_use_opengl(bool useOpenGL);
 	
 private:
 	QGridLayout*		m_mainLayout;

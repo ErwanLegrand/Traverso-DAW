@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TimeLineView.cpp,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
+$Id: TimeLineView.cpp,v 1.2 2006/11/14 14:59:07 r_sijrier Exp $
 */
 
 #include "TimeLineView.h"
@@ -26,6 +26,7 @@ $Id: TimeLineView.cpp,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
 #include "Project.h"
 #include "ColorManager.h"
 #include "SongView.h"
+#include <cmath>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -36,6 +37,7 @@ TimeLineView::TimeLineView(SongView* view)
 {
 	PENTERCONS2;
 	m_sv = view;
+	m_boundingRectangle = QRectF(0, 0, pow(2, 31), 21);
 }
 
 TimeLineView::~ TimeLineView()
@@ -88,11 +90,6 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 	}
 }
 
-
-QRectF TimeLineView::boundingRect( ) const
-{
-	return QRectF(0, 0, 20000, 30);
-}
 
 
 //eof

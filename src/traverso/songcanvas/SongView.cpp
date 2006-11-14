@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.2 2006/11/09 15:45:42 r_sijrier Exp $
+$Id: SongView.cpp,v 1.3 2006/11/14 14:59:07 r_sijrier Exp $
 */
 
 
@@ -65,7 +65,7 @@ int PlayCursorMove::finish_hold()
 {
 	m_cursor->set_active(wasActive);
 	QPointF point = m_sv->get_clips_viewport()->mapToScene(cpointer().x(), cpointer().y());
-	m_song->set_transport_pos(point.x() * m_sv->scalefactor);
+	m_song->set_transport_pos( (nframes_t) (point.x() * m_sv->scalefactor));
 	return -1;
 }
 
@@ -98,7 +98,7 @@ SongView::SongView(ClipsViewPort* viewPort, TrackPanelViewPort* tpvp, TimeLineVi
 	
 	m_clipsViewPort->scene()->addItem(this);
 	
-	m_playCursor = new PlayCursor(m_song);
+	m_playCursor = new PlayCursor(this, m_song);
 	m_workCursor = new WorkCursor(this, m_song);
 	
 	m_clipsViewPort->scene()->addItem(m_playCursor);
@@ -134,7 +134,7 @@ void SongView::scale_factor_changed( )
 	
 	QList<QGraphicsItem*> list = scene()->items(m_clipsViewPort->sceneRect());
 	
-	for (int i=0; i<list.size(); ++i) {
+	for (int i=list.size() - 1; i>=0; --i) {
 		ViewItem* item = (ViewItem*)list.at(i);
 		item->prepare_geometry_change();
 		item->calculate_bounding_rect();
@@ -191,7 +191,7 @@ void SongView::calculate_scene_rect()
 	foreach(Track* track, m_song->get_tracks()) {
 		totalheight += track->get_height() + 6;
 	}
-	totalheight += 200;
+	totalheight += 150;
 	int width = m_song->get_last_frame() / scalefactor + 500;
 	
 	m_clipsViewPort->setSceneRect(0, 0, width, totalheight);
@@ -203,7 +203,7 @@ void SongView::calculate_scene_rect()
 	m_workCursor->set_bounding_rect(QRectF(0, 0, 2, totalheight));
 	m_workCursor->update_position();
 
-	m_clipsViewPort->centerOn(m_song->get_working_frame() / scalefactor, 0);
+// 	m_clipsViewPort->centerOn(m_song->get_working_frame() / scalefactor, 0);
 }
 
 
@@ -216,7 +216,7 @@ Command* SongView::hzoom_out()
 {
 	PENTER;
 	m_song->set_hzoom(m_song->get_hzoom() + 1);
-	center();
+// 	center();
 	return (Command*) 0;
 }
 
@@ -225,7 +225,7 @@ Command* SongView::hzoom_in()
 {
 	PENTER;
 	m_song->set_hzoom(m_song->get_hzoom() - 1);
-	center();
+// 	center();
 	return (Command*) 0;
 }
 
@@ -246,7 +246,7 @@ Command* SongView::vzoom_in()
 Command* SongView::center()
 {
 	PENTER2;
-	
+	m_clipsViewPort->centerOn(m_song->get_working_frame() / scalefactor, 0);
 	return (Command*) 0;
 }
 
@@ -277,9 +277,8 @@ void SongView::update_shuttle()
 
 Command* SongView::goto_begin()
 {
-	printf("SongView::goto_begin\n");
 	m_song->set_work_at(0);
-	m_song->set_first_visible_frame(0);
+	center();
 	return (Command*) 0;
 }
 
@@ -305,10 +304,8 @@ TrackPanelViewPort* SongView::get_trackpanel_view_port( ) const
 
 Command * SongView::touch( )
 {
-	QPointF point = m_clipsViewPort->mapToScene(cpointer().x(), cpointer().y());
-	printf("point.x() is %f\n", point.x());
+	QPointF point = m_clipsViewPort->mapToScene(cpointer().pos());
 	m_song->set_work_at((uint) (point.x() * scalefactor));
-	m_clipsViewPort->centerOn(m_song->get_working_frame() / scalefactor, 0);
 
 	return 0;
 }
@@ -320,7 +317,9 @@ Command * SongView::play_cursor_move( )
 
 void SongView::set_snap_range(int start)
 {
-	m_song->get_snap_list()->set_range(start, start + m_clipsViewPort->viewport()->width());
+	m_song->get_snap_list()->set_range(start * scalefactor, 
+					(start + m_clipsViewPort->viewport()->width()) * scalefactor,
+					scalefactor);
 }
 
 

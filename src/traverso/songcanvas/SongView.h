@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongView.h,v 1.2 2006/11/09 15:45:42 r_sijrier Exp $
+    $Id: SongView.h,v 1.3 2006/11/14 14:59:07 r_sijrier Exp $
 */
 
 #ifndef SONG_VIEW_H
@@ -69,6 +69,7 @@ private:
 
 public slots:
         void update_shuttle();
+	void set_snap_range(int);
 
 	Command* touch();
         Command* hzoom_out();
@@ -86,7 +87,6 @@ public slots:
 	
 private slots:
 	void scale_factor_changed();
-	void set_snap_range(int);
 	void add_new_trackview(Track*);
 	void remove_trackview(Track*);
 	void calculate_scene_rect();

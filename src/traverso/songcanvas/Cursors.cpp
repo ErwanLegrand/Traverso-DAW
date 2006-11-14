@@ -17,11 +17,12 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursors.cpp,v 1.1 2006/11/09 15:46:48 r_sijrier Exp $
+    $Id: Cursors.cpp,v 1.2 2006/11/14 14:59:07 r_sijrier Exp $
 */
 
 #include "Cursors.h"
 #include "SongView.h"
+#include "ClipsViewPort.h"
 #include <QPen>
 #include <Song.h>
 		
@@ -29,10 +30,12 @@
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-PlayCursor::PlayCursor(Song* song)
+PlayCursor::PlayCursor(SongView* sv, Song* song)
 	: ViewItem(0, song)
 	, m_song(song)
 {
+	m_sv = sv;
+	
 	connect(m_song, SIGNAL(transferStarted()), this, SLOT(play_start()));
 	connect(m_song, SIGNAL(transferStopped()), this, SLOT(play_stop()));
 	
@@ -50,13 +53,13 @@ void PlayCursor::paint( QPainter * painter, const QStyleOptionGraphicsItem * opt
 {
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
-	QColor color = QColor(180, 189, 240, 170);
+	QColor color = QColor(180, 189, 240, 140);
 	painter->fillRect(0, 0, 2, (int)m_boundingRectangle.height(), color);
 }
 
 void PlayCursor::play_start()
 {
-	m_playTimer.start(40);
+	m_playTimer.start(20);
 }
 
 void PlayCursor::play_stop()
@@ -66,7 +69,11 @@ void PlayCursor::play_stop()
 
 void PlayCursor::update_position()
 {
-	setPos(m_song->get_playing_xpos(), 0);
+	QPointF newPos(m_song->get_transport_frame() / m_sv->scalefactor, 0);
+	if (newPos != pos()) {
+		setPos(newPos);
+// 		m_sv->get_clips_viewport()->centerOn(pos());
+	}
 }
 
 void PlayCursor::set_bounding_rect( QRectF rect )

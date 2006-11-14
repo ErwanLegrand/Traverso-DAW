@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
+$Id: TrackPanelView.cpp,v 1.2 2006/11/14 14:59:07 r_sijrier Exp $
 */
 
 #include "TrackPanelView.h"
@@ -71,6 +71,16 @@ TrackPanelView::TrackPanelView(TrackPanelViewPort* view, TrackView* trackView, T
 	soloLed->setPos(48, 18);
 	recLed->setPos(86, 18);
 	
+	if (m_track->armed()) {
+		recLed->ison_changed(true);
+	}
+	if (m_track->is_solo()) {
+		soloLed->ison_changed(true);
+	}
+	if (m_track->is_muted()) {
+		muteLed->ison_changed(true);
+	}
+	
 	inBus = new TrackPanelBus(this, m_track, ":/bus_in");
 	outBus = new TrackPanelBus(this, m_track, ":/bus_out");
 	
@@ -118,15 +128,18 @@ void TrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
 	grad1.setColorAt(0.5, color3);
 	grad1.setColorAt(0.93, color2);
 	grad1.setColorAt(1.0, color1);
-	painter->fillRect(0, 0, m_viewPort->width(), m_track->get_height(), grad1);
 	
-	panelPixmap.fill(QColor(0,0,0,0));
-	painter->fillRect(0, 0, m_viewPort->width(), m_track->get_height(), grad1);
+// 	painter->fillRect(0, 0, m_viewPort->width(), m_track->get_height(), grad1);
+// 	painter->fillRect(0, 0, m_viewPort->width(), m_track->get_height(), grad1);
 
+	painter->fillRect(0, 0, m_viewPort->width(), 3, color1);
+	painter->fillRect(0, 3, m_viewPort->width(), 95, color2);
+	painter->fillRect(0, 96, m_viewPort->width(), 5, color1);
 // 	draw_panel_head();
 
 	//Update Panel
-	painter->drawPixmap(0, 0, panelPixmap, 0, 0, 200, m_track->get_height());
+/*	panelPixmap.fill(QColor(0,0,0,0));
+	painter->drawPixmap(0, 0, panelPixmap, 0, 0, 200, m_track->get_height());*/
 	painter->setPen(color1);
 	painter->drawLine(m_viewPort->width() - 3, 0,  m_viewPort->width() - 3, m_track->get_height() - 1);
 	painter->setPen(color1);

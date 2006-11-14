@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.2 2006/11/09 15:45:42 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.3 2006/11/14 14:59:07 r_sijrier Exp $
 */
 
 #include "TrackView.h"
@@ -27,6 +27,7 @@ $Id: TrackView.cpp,v 1.2 2006/11/09 15:45:42 r_sijrier Exp $
 #include "TrackPanelViewPort.h"
 #include "SongView.h"
 #include "TrackPanelView.h"
+#include <cmath>
 		
 #include <PluginSelectorDialog.h>
 
@@ -50,7 +51,7 @@ TrackView::TrackView(SongView* sv, Track * track)
 	connect(m_track, SIGNAL(audioClipAdded(AudioClip*)), this, SLOT(add_new_audioclipview(AudioClip*)));
 	connect(m_track, SIGNAL(audioClipRemoved(AudioClip*)), this, SLOT(remove_audioclipview(AudioClip*)));
 	
-	m_boundingRectangle = QRectF(0, 0, 2000000000, m_track->get_height());
+	m_boundingRectangle = QRectF(0, 0, pow(2, 31), m_track->get_height());
 	
 	foreach(AudioClip* clip, m_track->get_cliplist()) {
 		add_new_audioclipview(clip);
@@ -92,8 +93,9 @@ void TrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 	
 // 	painter->fillRect(xstart, 0, pixelcount, m_track->get_height(), grad1);
 
-	painter->fillRect(xstart, 0, pixelcount, 101, color1);
-	painter->fillRect(xstart, 3, pixelcount, 94, color2);
+	painter->fillRect(xstart, 0, pixelcount, 3, color1);
+	painter->fillRect(xstart, 3, pixelcount, 95, color2);
+	painter->fillRect(xstart, 96, pixelcount, 5, color1);
 }
 
 void TrackView::add_new_audioclipview( AudioClip * clip )

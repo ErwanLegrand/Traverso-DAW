@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TimeLineView.h,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
+    $Id: TimeLineView.h,v 1.2 2006/11/14 14:59:07 r_sijrier Exp $
 */
 
 #ifndef TIME_LINE_VIEW_H
@@ -36,8 +36,6 @@ public:
         ~TimeLineView();
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-	QRectF boundingRect() const;
-
 
 public slots:
         void hzoom_changed( );

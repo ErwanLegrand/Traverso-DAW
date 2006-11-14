@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursors.h,v 1.1 2006/11/09 15:46:48 r_sijrier Exp $
+    $Id: Cursors.h,v 1.2 2006/11/14 14:59:07 r_sijrier Exp $
 */
 
 #ifndef CURSORS_H
@@ -33,7 +33,7 @@ class PlayCursor : public ViewItem
         Q_OBJECT
 
 public:
-        PlayCursor(Song* song);
+        PlayCursor(SongView* sv, Song* song);
         ~PlayCursor();
 
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);

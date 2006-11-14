@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.3 2006/11/12 15:19:29 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.4 2006/11/14 14:59:07 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -36,6 +36,7 @@ $Id: AudioClipView.cpp,v 1.3 2006/11/12 15:19:29 r_sijrier Exp $
 
 #include <MoveClip.h>
 #include <MoveEdge.h>
+#include <SplitClip.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -416,6 +417,7 @@ void AudioClipView::calculate_bounding_rect()
 {
 	m_boundingRectangle = QRectF(0, 0, m_clip->get_length() / m_sv->scalefactor, m_height + CLIPINFO_HEIGHT);
 	update_start_pos();
+	update();
 }
 
 
@@ -490,5 +492,13 @@ Command* AudioClipView::drag_edge()
 
 	return me;
 }
+
+Command* AudioClipView::split()
+{
+	Q_ASSERT(m_song);
+	return new SplitClip(m_sv, m_clip);
+}
+
+
 
 //eof

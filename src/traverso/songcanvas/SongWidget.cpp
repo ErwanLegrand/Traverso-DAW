@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongWidget.cpp,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
+    $Id: SongWidget.cpp,v 1.2 2006/11/14 14:59:07 r_sijrier Exp $
 */
 
 		
@@ -28,6 +28,7 @@
 #include "SongView.h"
 
 #include <Song.h>
+#include <QtOpenGL>
 
 #include <Debugger.h>
 
@@ -35,7 +36,6 @@
 SongWidget::SongWidget(Song* song, QWidget* parent)
 	: QFrame(parent)
 {
-	m_songView = 0;
 	scene = new QGraphicsScene(this);
 
 	m_trackPanel = new TrackPanelViewPort(scene, this);
@@ -52,6 +52,9 @@ SongWidget::SongWidget(Song* song, QWidget* parent)
 	m_mainLayout->setSpacing(0);
 	
 	setLayout(m_mainLayout);
+	
+	m_songView = new SongView(m_clipsViewPort, m_trackPanel, m_timeLine, song);
+	m_timeLine->set_songview(m_songView);
 	
 	connect(m_clipsViewPort->horizontalScrollBar(), 
 		SIGNAL(valueChanged(int)),
@@ -74,10 +77,13 @@ SongWidget::SongWidget(Song* song, QWidget* parent)
 		SLOT(setValue(int)));
 	
 	
-	m_songView = new SongView(m_clipsViewPort, m_trackPanel, m_timeLine, song);
-	m_timeLine->set_songview(m_songView);
-	
 	setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+}
+
+void SongWidget::set_use_opengl( bool useOpenGL )
+{
+	m_clipsViewPort->setViewport(useOpenGL ? new QGLWidget(QGLFormat(QGL::SampleBuffers)) : new QWidget);
+	m_trackPanel->setViewport(useOpenGL ? new QGLWidget(QGLFormat(QGL::SampleBuffers)) : new QWidget);
 }
 
 

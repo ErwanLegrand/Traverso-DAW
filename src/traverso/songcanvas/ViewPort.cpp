@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewPort.cpp,v 1.2 2006/11/09 15:45:42 r_sijrier Exp $
+$Id: ViewPort.cpp,v 1.3 2006/11/14 14:59:07 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -70,6 +70,7 @@ ViewPort::~ViewPort()
 void ViewPort::mouseMoveEvent(QMouseEvent* e)
 {
 	PENTER3;
+// 	printf("\nViewPort::mouseMoveEvent\n");
 // 	if (!ie().is_holding())
 		QGraphicsView::mouseMoveEvent(e);
 	cpointer().set_point(e->x(), e->y());
