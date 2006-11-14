@@ -17,13 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ContextPointer.cpp,v 1.5 2006/11/08 14:49:37 r_sijrier Exp $
+$Id: ContextPointer.cpp,v 1.6 2006/11/14 14:50:31 r_sijrier Exp $
 */
 
 #include "ContextPointer.h"
 
 #include "ViewItem.h"
-#include "TrackView.h"
 #include "ViewPort.h"
 
 // Always put me below _all_ includes, this is needed
@@ -63,7 +62,6 @@ QList< QObject * > ContextPointer::get_context_items( )
 			contextItems.append(nextItem);
 			item = nextItem;
 		}
-		// 		PWARN("Item zOrder is: %d", item->get_z_order());
 	}
 
 	for (int i=0; i < contextItemsList.size(); ++i) {
@@ -96,15 +94,6 @@ void ContextPointer::release_mouse( )
 {
 	if (currentViewPort)
 		currentViewPort->viewport()->releaseMouse();
-}
-
-int ContextPointer::get_viewport_width( )
-{
-	if (currentViewPort) {
-		return (currentViewPort->width());
-	}
-	
-	return 0;
 }
 
 ViewPort * ContextPointer::get_viewport( )
