@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: MoveClip.cpp,v 1.13 2006/11/09 15:45:42 r_sijrier Exp $
+$Id: MoveClip.cpp,v 1.14 2006/11/14 14:52:40 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -57,13 +57,15 @@ int MoveClip::begin_hold(int useX, int useY)
 	originalTrackFirstFrame = newInsertFrame = m_clip->get_track_start_frame();
 	origPos = cpointer().pos();
 	origXPos = cpointer().x();
+	m_clip->set_snappable(false);
 	return 1;
 }
 
 
 int MoveClip::finish_hold()
 {
-	newInsertFrame = m_cv->scenePos().x() * m_sv->scalefactor;
+	newInsertFrame = (nframes_t) (m_cv->scenePos().x() * m_sv->scalefactor);
+	m_clip->set_snappable(true);
 	
 // 	cpointer().get_viewport()->reset_context();
 	
@@ -107,6 +109,7 @@ int MoveClip::undo_action()
 
 int MoveClip::jog()
 {
+// 	printf("jog\n");
 	QPointF diffPoint(cpointer().pos() - origPos);
 	QPointF newPos(m_cv->pos() + diffPoint);
 	
@@ -131,15 +134,17 @@ int MoveClip::jog()
 	SnapList* slist = m_song->get_snap_list();
 
 	// must be signed int because it can be negative
-	int diff_f = (cpointer().x() - origXPos) * Peak::zoomStep[m_song->get_hzoom()];
+	int diff_f = (cpointer().x() - origXPos) * m_sv->scalefactor;
 	nframes_t origTrackStartFrame = m_clip->get_track_start_frame();
 	nframes_t origTrackEndFrame = m_clip->get_track_end_frame();
-	nframes_t newTrackStartFrame = origTrackStartFrame + diff_f;
+	long newTrackStartFrame = origTrackStartFrame + diff_f;
 	nframes_t newTrackEndFrame = origTrackEndFrame + diff_f;
+// 	printf("newTrackEndFrame is %d\n", newTrackStartFrame);
 
 	// attention: newTrackStartFrame is unsigned, can't check for negative values
-	if (-diff_f >= (int)newTrackStartFrame)
+	if (newTrackStartFrame < 0) {
 		newTrackStartFrame = 0;
+	}
 
 	// "nframe_t" domain, but must be signed ints because they can become negative
 	int snapStartDiff = 0;
@@ -151,18 +156,20 @@ int MoveClip::jog()
 		// check if there is anything to snap
 		bool start_snapped = false;
 		bool end_snapped = false;
-		if (slist->is_snap_value(m_song->frame_to_xpos(newTrackStartFrame))) start_snapped = true;
-		if (slist->is_snap_value(m_song->frame_to_xpos(newTrackEndFrame))) end_snapped = true;
+		if (slist->is_snap_value(newTrackStartFrame)) {
+			start_snapped = true;
+		}
+		if (slist->is_snap_value(newTrackEndFrame)) {
+			end_snapped = true;
+		}
 
 		if (start_snapped) {
-			snapStartDiff = slist->get_snap_diff(m_song->frame_to_xpos(newTrackStartFrame)) 
-				* Peak::zoomStep[m_song->get_hzoom()];
+			snapStartDiff = slist->get_snap_diff(newTrackStartFrame) / m_sv->scalefactor;
 			snapDiff = snapStartDiff; // in case both ends snapped, change this value later, else leave it
 		}
 
 		if (end_snapped) {
-			snapEndDiff = slist->get_snap_diff(m_song->frame_to_xpos(newTrackEndFrame)) 
-				* Peak::zoomStep[m_song->get_hzoom()];
+			snapEndDiff = slist->get_snap_diff(newTrackEndFrame) / m_sv->scalefactor; 
 			snapDiff = snapEndDiff; // in case both ends snapped, change this value later, else leave it
 		}
 
@@ -177,11 +184,12 @@ int MoveClip::jog()
 		}
 	}
 
-	newInsertFrame = newTrackStartFrame - snapDiff;
+	newInsertFrame = newTrackStartFrame - (snapDiff * m_sv->scalefactor);
 
 	// store the new position only if the clip was moved, but not if it stuck to a snap position
-	if (origTrackStartFrame != newInsertFrame)
+	if (origTrackStartFrame != newInsertFrame) {
 		origPos.setX(newXPos);
+	}
 
 	newPos.setX(newInsertFrame / m_sv->scalefactor);	
 	newPos.setY(m_cv->pos().y());

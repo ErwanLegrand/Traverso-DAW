@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SplitClip.h,v 1.1 2006/04/20 14:51:13 r_sijrier Exp $
+    $Id: SplitClip.h,v 1.2 2006/11/14 14:52:40 r_sijrier Exp $
 */
 
 #ifndef SPLITCLIPACTION_H
@@ -27,13 +27,13 @@
 #include "defines.h"
 
 class AudioClip;
-class Song;
 class Track;
+class SongView;
 
 class SplitClip : public Command
 {
 public :
-        SplitClip(Song* song, AudioClip* clip);
+        SplitClip(SongView* sv, AudioClip* clip);
         ~SplitClip();
 
         int prepare_actions();
@@ -41,7 +41,7 @@ public :
         int undo_action();
 
 private :
-        Song* m_song;
+	SongView* m_sv;
         Track* m_track;
         AudioClip* m_clip;
         AudioClip* leftClip;

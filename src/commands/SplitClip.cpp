@@ -17,22 +17,23 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SplitClip.cpp,v 1.10 2006/11/08 14:52:11 r_sijrier Exp $
+$Id: SplitClip.cpp,v 1.11 2006/11/14 14:52:40 r_sijrier Exp $
 */
 
-#include <libtraversocore.h>
-
 #include "SplitClip.h"
+		
+#include <libtraversocore.h>
+#include <SongView.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-SplitClip::SplitClip(Song* song, AudioClip* clip)
+SplitClip::SplitClip(SongView* sv, AudioClip* clip)
 	: Command(clip, QObject::tr("Split Clip"))
 {
 	m_clip = clip;
-	m_song = song;
+	m_sv = sv;
 	m_track = clip->get_track();
 }
 
@@ -43,7 +44,7 @@ SplitClip::~SplitClip()
 
 int SplitClip::prepare_actions()
 {
-	splitPoint = m_song->xpos_to_frame( cpointer().x());
+	splitPoint = cpointer().sceneX() * m_sv->scalefactor;
 
 	AudioSourceManager* manager = pm().get_project()->get_audiosource_manager();
 	

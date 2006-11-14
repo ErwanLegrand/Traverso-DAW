@@ -17,23 +17,26 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveEdge.cpp,v 1.10 2006/11/09 15:45:42 r_sijrier Exp $
+    $Id: MoveEdge.cpp,v 1.11 2006/11/14 14:52:40 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
 
 #include "MoveEdge.h"
 #include <ViewPort.h>
+#include <SongView.h>
+#include <AudioClipView.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-MoveEdge::MoveEdge(AudioClip* clip, QByteArray whichEdge)
-	: Command(clip, QObject::tr("Move Clip Edge"))
+MoveEdge::MoveEdge(AudioClipView* cv, SongView* sv, QByteArray whichEdge)
+	: Command(cv->get_clip(), QObject::tr("Move Clip Edge"))
 {
-        m_clip = clip;
-        m_song = clip->get_song();
+        m_cv = cv;
+        m_sv = sv;
+	m_clip = cv->get_clip();
         m_edge = whichEdge;
 }
 
@@ -90,7 +93,7 @@ int MoveEdge::undo_action()
 
 int MoveEdge::jog()
 {
-        m_newPos = m_song->xpos_to_frame(m_song->snapped_x(cpointer().x()));
+//         m_newPos = m_song->xpos_to_frame(m_song->snapped_x(cpointer().x()));
         return do_action();
 }
 

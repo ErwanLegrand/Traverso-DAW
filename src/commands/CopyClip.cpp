@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: CopyClip.cpp,v 1.10 2006/11/08 14:52:11 r_sijrier Exp $
+    $Id: CopyClip.cpp,v 1.11 2006/11/14 14:52:40 r_sijrier Exp $
 */
 
 #include "CopyClip.h"
@@ -52,9 +52,9 @@ int CopyClip::begin_hold(int useX, int useY)
 
 int CopyClip::finish_hold()
 {
-        int x = m_song->snapped_x(cpointer().x());
+//         int x = m_song->snapped_x(cpointer().x());
         int y = cpointer().y();
-        newInsertBlock = m_song->xpos_to_frame( x );
+//         newInsertBlock = m_song->xpos_to_frame( x );
 //         targetTrack = m_song->get_track_under_y(y);
 	
 	cpointer().get_viewport()->reset_context();
