@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.24 2006/11/09 15:45:42 r_sijrier Exp $
+$Id: AudioClip.h,v 1.25 2006/11/14 14:50:21 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -63,6 +63,7 @@ public:
 	void set_fade_out(nframes_t b);
 	void set_track(Track* track);
 	void set_song(Song* song);
+	void set_snappable(bool snap);
 
 	int set_selected(bool selected);
 	int set_state( const QDomNode& node );
@@ -104,6 +105,7 @@ public:
 	bool is_take() const;
 	bool is_selected() const;
 	bool is_recording() const;
+	bool is_snappable() const {return m_isSnappable;}
 
 	static bool smaller(const AudioClip* left, const AudioClip* right )
 	{
@@ -140,6 +142,7 @@ private:
 	bool 			isTake;
 	bool 			isMuted;
 	bool 			isRecording;
+	bool			m_isSnappable;
 	float	 		m_gain;
 	float			m_normfactor;
 	
@@ -177,7 +180,6 @@ public slots:
 
 	float get_gain() const;
 	
-	Command* drag_edge();
 	Command* mute();
 	Command* reset_gain();
 	Command* reset_fade_in();
@@ -185,7 +187,6 @@ public slots:
 	Command* reset_fade_both();
 	Command* select();
 	Command* remove_from_selection();
-	Command* split();
 	Command* copy();
 	Command* add_to_selection();
 	Command* gain();

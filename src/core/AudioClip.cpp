@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.50 2006/11/09 15:45:42 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.51 2006/11/14 14:50:21 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -30,6 +30,7 @@ $Id: AudioClip.cpp,v 1.50 2006/11/09 15:45:42 r_sijrier Exp $
 #include "WriteSource.h"
 #include "ColorManager.h"
 #include "Song.h"
+#include "SnapList.h"
 #include "Track.h"
 #include "AudioChannel.h"
 #include <AudioBus.h>
@@ -105,7 +106,7 @@ void AudioClip::init()
 	fadeIn = 0;
 	fadeOut = 0;
 	m_refcount = 0;
-	
+	m_isSnappable = true;
 }
 
 int AudioClip::set_state(const QDomNode& node)
@@ -541,32 +542,9 @@ Command* AudioClip::reset_fade_both()
 	return (Command*) 0;
 }
 
-
-Command* AudioClip::drag_edge()
-{
-	Q_ASSERT(m_song);
-	int x = cpointer().x();
-	int cxm = m_song->frame_to_xpos( trackStartFrame + ( m_length / 2 ) );
-
-	MoveEdge* me;
-
-	if (x < cxm)
-		me =   new  MoveEdge(this, "set_left_edge");
-	else
-		me = new MoveEdge(this, "set_right_edge");
-
-	return me;
-}
-
 Command* AudioClip::gain()
 {
 	return new Gain(this, tr("Clip Gain"));
-}
-
-Command* AudioClip::split()
-{
-	Q_ASSERT(m_song);
-	return new SplitClip(m_song, this);
 }
 
 Command* AudioClip::copy()
@@ -866,7 +844,7 @@ Command * AudioClip::normalize( )
 {
         bool ok;
         double d = QInputDialog::getDouble(0, tr("Normalization"),
-                                           tr("Set Normalization level:"), 0.0, -120, 0, 1, &ok, Qt::Tool);
+                                           tr("Set Normalization level:"), 0.0, -120, 0, 1, &ok);
         if (ok)
 		calculate_normalization_factor(d);
 
@@ -965,6 +943,13 @@ void AudioClip::create_fade_out( )
 	fadeOut->set_shape("Linear");
 	THREAD_SAVE_CALL_EMIT_SIGNAL(this, fadeOut, private_add_fade(FadeCurve*), fadeAdded(FadeCurve*));
 }
+
+void AudioClip::set_snappable( bool snap )
+{
+	m_isSnappable = snap;
+	m_song->get_snap_list()->mark_dirty();
+}
+
 
 // eof
 
