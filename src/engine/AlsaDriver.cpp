@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AlsaDriver.cpp,v 1.8 2006/11/14 14:32:12 r_sijrier Exp $
+$Id: AlsaDriver.cpp,v 1.9 2006/11/14 16:35:32 r_sijrier Exp $
 */
 
 
@@ -104,8 +104,6 @@ int AlsaDriver::setup(bool capture, bool playback)
 	unsigned long user_nperiods = 2;
 	char *playback_pcm_name = "hw:0";
 	char *capture_pcm_name = "hw:0";
-	int soft_mode = false;
-	int monitor = false;
 	int shorts_first = false;
 
 	/* duplex is the default */
@@ -120,6 +118,8 @@ int AlsaDriver::setup(bool capture, bool playback)
 	capture_handle = (snd_pcm_t*) 0;
 	ctl_handle = 0;
 	capture_and_playback_not_synced = false;
+	capture_interleaved = false;
+	playback_interleaved = false;
 	max_nchannels = 0;
 	user_nchannels = 0;
 	playback_nchannels = 0;
@@ -141,8 +141,6 @@ int AlsaDriver::setup(bool capture, bool playback)
 
 
 	silent = 0;
-	all_monitor_in = false;
-	with_monitor_ports = monitor;
 
 	input_monitor_mask = 0;   /* XXX is it? */
 
@@ -152,7 +150,7 @@ int AlsaDriver::setup(bool capture, bool playback)
 	capture_nfds = 0;
 
 	dither = None;
-	soft_mode = soft_mode;
+	soft_mode = false;
 
 	pthread_mutex_init (&clock_sync_lock, 0);
 
@@ -278,6 +276,8 @@ int AlsaDriver::setup(bool capture, bool playback)
 		}
 	}
 
+	
+	
 	if (set_parameters (frames_per_cycle, user_nperiods, frame_rate)) {
 		return -1;
 	}
@@ -1453,6 +1453,10 @@ int AlsaDriver::_write(nframes_t nframes)
 
 	process_count++;
 
+	if (! playback_handle) {
+		return 0;
+	}
+	
 	if (nframes > frames_per_cycle) {
 		return -1;
 	}

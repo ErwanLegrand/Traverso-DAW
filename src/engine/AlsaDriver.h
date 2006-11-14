@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AlsaDriver.h,v 1.2 2006/11/14 14:32:12 r_sijrier Exp $
+$Id: AlsaDriver.h,v 1.3 2006/11/14 16:35:38 r_sijrier Exp $
 */
 
 #ifndef ALSADRIVER_H
@@ -208,39 +208,17 @@ private:
 
 	unsigned long input_monitor_mask;
 
-char   soft_mode :
-	1;
-char   hw_monitoring :
-	1;
-char   hw_metering :
-	1;
-char   all_monitor_in :
-	1;
-char   capture_and_playback_not_synced :
-	1;
-char   playback_interleaved :
-	1;
-char   capture_interleaved :
-	1;
-char   with_monitor_ports :
-	1;
+	bool soft_mode;
+	bool capture_and_playback_not_synced;
+	bool playback_interleaved;
+	bool capture_interleaved;
 
 	ReadCopyFunction read_via_copy;
 	WriteCopyFunction write_via_copy;
 	CopyCopyFunction channel_copy;
 
-
-	//     SampleClockMode clock_mode;
-	// 		JSList *clock_sync_listeners;
 	pthread_mutex_t clock_sync_lock;
 	unsigned long next_clock_sync_listener_id;
-char has_clock_sync_reporting :
-	1;
-char has_hw_monitoring :
-	1;
-char has_hw_metering :
-	1;
-
 	int poll_late;
 	int xrun_count;
 	int process_count;
