@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.10 2006/10/02 19:10:58 r_sijrier Exp $
+$Id: AudioDevice.h,v 1.11 2006/11/14 14:32:12 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -44,7 +44,7 @@ class AudioDevice : public QObject
 	Q_OBJECT
 
 public:
-	void set_parameters(int rate, nframes_t bufferSize, const QString& driverType);
+	void set_parameters(int rate, nframes_t bufferSize, const QString& driverType, bool capture=true, bool playback=true);
 
 	void add_client(Client* client);
 	void remove_client(Client* client);
@@ -147,7 +147,7 @@ private:
 	QString			m_driverType;
 
 	int run_one_cycle(nframes_t nframes, float delayed_usecs);
-	int create_driver(QString driverType);
+	int create_driver(QString driverType, bool capture, bool playback);
 
 	void setup_buses();
 	void post_process();

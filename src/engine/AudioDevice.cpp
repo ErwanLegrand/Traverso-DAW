@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.18 2006/10/19 10:47:26 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.19 2006/11/14 14:32:12 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -165,11 +165,17 @@ AudioDevice::~AudioDevice()
 {
 	PENTERDES;
 
-	if (driver)
-		delete driver;
-
-	if (audioThread)
+	if (audioThread) {
+		if (audioThread->isRunning()) {
+			audioThread->terminate();
+		}
 		delete audioThread;
+	}
+	
+	if (driver) {
+		delete driver;
+	}
+
 
 	delete m_cpuTime;
 
@@ -292,7 +298,11 @@ uint AudioDevice::playback_buses_count( ) const
  * @param bufferSize The period buffer size, only used for the AlsaDriver
  * @param driverType The Driver Type, can be ALSA, Jack or the Null Driver
  */
-void AudioDevice::set_parameters( int rate, nframes_t bufferSize, const QString& driverType )
+void AudioDevice::set_parameters( int rate, 
+				nframes_t bufferSize, 
+				const QString& driverType,
+				bool capture,
+				bool playback)
 {
 	PENTER;
 
@@ -310,7 +320,7 @@ void AudioDevice::set_parameters( int rate, nframes_t bufferSize, const QString&
 	}
 
 
-	if (create_driver(driverType) < 0) {
+	if (create_driver(driverType, capture, playback) < 0) {
 		set_parameters(rate, bufferSize, "Null Driver");
 		return;
 	}
@@ -361,13 +371,13 @@ void AudioDevice::set_parameters( int rate, nframes_t bufferSize, const QString&
 	emit started();
 }
 
-int AudioDevice::create_driver( QString driverType )
+int AudioDevice::create_driver(QString driverType, bool capture, bool playback)
 {
 
 #if defined (JACK_SUPPORT)
 	if (driverType == "Jack") {
 		driver = new JackDriver(this, m_rate, m_bufferSize);
-		if (driver->setup() < 0) {
+		if (driver->setup(capture, playback) < 0) {
 			printf("Jack Driver creation failed\n");
 			delete driver;
 			driver = 0;
@@ -381,7 +391,7 @@ int AudioDevice::create_driver( QString driverType )
 #if defined (ALSA_SUPPORT)
 	if (driverType == "ALSA") {
 		driver =  new AlsaDriver(this, m_rate, m_bufferSize);
-		if (driver->setup() < 0) {
+		if (driver->setup(capture,playback) < 0) {
 			printf("ALSA driver creation failed\n");
 			delete driver;
 			driver = 0;

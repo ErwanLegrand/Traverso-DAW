@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: JackDriver.h,v 1.2 2006/10/02 19:10:58 r_sijrier Exp $
+    $Id: JackDriver.h,v 1.3 2006/11/14 14:32:12 r_sijrier Exp $
 */
 
 #ifndef JACKDRIVER_H
@@ -40,7 +40,7 @@ public:
         int _write(nframes_t nframes);
         int _run_cycle();
         int _null_cycle(nframes_t nframes);
-        int setup();
+        int setup(bool capture=true, bool playback=true);
         int attach();
         int start();
         int stop();

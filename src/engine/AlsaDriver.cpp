@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AlsaDriver.cpp,v 1.7 2006/10/04 19:21:55 r_sijrier Exp $
+$Id: AlsaDriver.cpp,v 1.8 2006/11/14 14:32:12 r_sijrier Exp $
 */
 
 
@@ -99,13 +99,11 @@ AlsaDriver::~AlsaDriver()
 }
 
 
-int AlsaDriver::setup()
+int AlsaDriver::setup(bool capture, bool playback)
 {
 	unsigned long user_nperiods = 2;
 	char *playback_pcm_name = "hw:0";
 	char *capture_pcm_name = "hw:0";
-	int capture = false;
-	int playback = false;
 	int soft_mode = false;
 	int monitor = false;
 	int shorts_first = false;

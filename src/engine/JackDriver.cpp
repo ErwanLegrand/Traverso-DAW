@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: JackDriver.cpp,v 1.6 2006/10/06 11:44:59 r_sijrier Exp $
+    $Id: JackDriver.cpp,v 1.7 2006/11/14 14:32:12 r_sijrier Exp $
 */
 
 #include "JackDriver.h"
@@ -94,7 +94,7 @@ int JackDriver::_null_cycle( nframes_t )
         return 1;
 }
 
-int JackDriver::setup( )
+int JackDriver::setup(bool capture, bool playback)
 {
         const char **inputports;
         const char **outputports;
