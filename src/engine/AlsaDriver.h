@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AlsaDriver.h,v 1.3 2006/11/14 16:35:38 r_sijrier Exp $
+$Id: AlsaDriver.h,v 1.4 2006/11/14 19:06:45 r_sijrier Exp $
 */
 
 #ifndef ALSADRIVER_H
@@ -206,8 +206,6 @@ private:
 	snd_pcm_hw_params_t          *capture_hw_params;
 	snd_pcm_sw_params_t          *capture_sw_params;
 
-	unsigned long input_monitor_mask;
-
 	bool soft_mode;
 	bool capture_and_playback_not_synced;
 	bool playback_interleaved;
@@ -217,10 +215,6 @@ private:
 	WriteCopyFunction write_via_copy;
 	CopyCopyFunction channel_copy;
 
-	pthread_mutex_t clock_sync_lock;
-	unsigned long next_clock_sync_listener_id;
-	int poll_late;
-	int xrun_count;
 	int process_count;
 
 };

@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AlsaDriver.cpp,v 1.9 2006/11/14 16:35:32 r_sijrier Exp $
+$Id: AlsaDriver.cpp,v 1.10 2006/11/14 19:06:39 r_sijrier Exp $
 */
 
 
@@ -142,9 +142,6 @@ int AlsaDriver::setup(bool capture, bool playback)
 
 	silent = 0;
 
-	input_monitor_mask = 0;   /* XXX is it? */
-
-
 	pfd = 0;
 	playback_nfds = 0;
 	capture_nfds = 0;
@@ -152,10 +149,6 @@ int AlsaDriver::setup(bool capture, bool playback)
 	dither = None;
 	soft_mode = false;
 
-	pthread_mutex_init (&clock_sync_lock, 0);
-
-	poll_late = 0;
-	xrun_count = 0;
 	process_count = 0;
 
 	alsa_name_playback = strdup (playback_pcm_name);
@@ -1035,7 +1028,6 @@ int AlsaDriver::xrun_recovery (float *delayed_usecs)
 
 	if (snd_pcm_status_get_state(status) == SND_PCM_STATE_XRUN && process_count > XRUN_REPORT_DELAY) {
 		struct timeval now, diff, tstamp;
-		xrun_count++;
 		gettimeofday(&now, 0);
 		snd_pcm_status_get_trigger_tstamp(status, &tstamp);
 		timersub(&now, &tstamp, &diff);
@@ -1134,7 +1126,6 @@ again:
 			* a wakeup delay:
 			*/
 			poll_next = 0;
-			poll_late++;
 		}
 
 		device->transport_cycle_end(poll_enter);
@@ -1464,10 +1455,6 @@ int AlsaDriver::_write(nframes_t nframes)
 	nwritten = 0;
 	contiguous = 0;
 	orig_nframes = nframes;
-
-	/* check current input monitor request status */
-
-	input_monitor_mask = 0;
 
 	while (nframes) {
 
