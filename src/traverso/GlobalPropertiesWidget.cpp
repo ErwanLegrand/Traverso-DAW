@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: GlobalPropertiesWidget.cpp,v 1.9 2006/11/14 14:33:42 r_sijrier Exp $
+$Id: GlobalPropertiesWidget.cpp,v 1.10 2006/11/15 00:06:28 r_sijrier Exp $
 */
 
 #include "GlobalPropertiesWidget.h"
@@ -72,8 +72,17 @@ void GlobalPropertiesWidget::save_properties( )
 	settings.setValue("WaveFormMerged", (waveFormMergedCheckBox->isChecked() ? 1 : 0));
 	settings.setValue("Hardware/samplerate", defaultSampleRateComboBox->currentText());
 	settings.setValue("Hardware/bufferSize", bufferSizeComboBox->currentText());
-	settings.setValue("Hardware/drivertype", audioDriverBackendComboBox->currentText());
 	settings.setValue("Project/loadLastUsed",  (loadLastProjectCheckBox->isChecked() ? 1 : 0));
+	config().set_hardware_property("drivertype", audioDriverBackendComboBox->currentText());
+	bool playback=true, capture=true;
+	if(duplexComboBox->currentIndex() == 1)
+		capture = false;
+	if(duplexComboBox->currentIndex() == 2)
+		playback = false;
+	
+	config().set_hardware_property("playback", playback);
+	config().set_hardware_property("capture", capture);
+	config().save();
 }
 
 
@@ -90,6 +99,9 @@ void GlobalPropertiesWidget::load_properties( )
 	int defaultSampleRate = settings.value("Hardware/samplerate").toInt();
 	int bufferSize = settings.value("Hardware/bufferSize").toInt();
 	QString driverType = settings.value("Hardware/drivertype").toString();
+	bool capture = config().get_hardware_int_property("capture");
+	bool playback = config().get_hardware_int_property("playback");
+
 
 
 	int defaultSampleRateIndex = 0;
@@ -166,6 +178,14 @@ void GlobalPropertiesWidget::load_properties( )
 	holdTimeoutSpinBox->setValue(holdTimeout);
 	waveFormRectifiedCheckBox->setChecked(waveform);
 	waveFormMergedCheckBox->setChecked(waveformmerged);
+	
+	if (capture && playback) {
+		duplexComboBox->setCurrentIndex(0);
+	} else if (playback) {
+		duplexComboBox->setCurrentIndex(1);
+	} else {
+		duplexComboBox->setCurrentIndex(2);
+	}
 }
 
 void GlobalPropertiesWidget::on_saveButton_clicked( )
@@ -189,13 +209,18 @@ void GlobalPropertiesWidget::on_defaultsButton_clicked( )
 
 void GlobalPropertiesWidget::on_deviceApplyButton_clicked( )
 {
-	audiodevice().shutdown();
-
 	uint rate = defaultSampleRateComboBox->currentText().toUInt();
 	uint bufferSize = bufferSizeComboBox->currentText().toUInt();
 	QString driverType  = audioDriverBackendComboBox->currentText();
-	bool capture = config().get_hardware_int_property("capture");
-	bool playback = config().get_hardware_int_property("playback");
+	bool capture = false, playback = false;
+	
+	if (duplexComboBox->currentIndex() == 0) {
+		capture = playback = true;
+	} else if (duplexComboBox->currentIndex() == 1) {
+		playback = true;
+	} else {
+		capture = true;
+	}
 
 	audiodevice().set_parameters(rate, bufferSize, driverType, capture, playback);
 }
