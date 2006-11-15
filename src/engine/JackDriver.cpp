@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: JackDriver.cpp,v 1.7 2006/11/14 14:32:12 r_sijrier Exp $
+    $Id: JackDriver.cpp,v 1.8 2006/11/15 00:04:40 r_sijrier Exp $
 */
 
 #include "JackDriver.h"
@@ -25,6 +25,7 @@
 #include "AudioDevice.h"
 #include "AudioChannel.h"
 
+#include <glib.h>
 #include <jack/jack.h>
 
 #if defined (ALSA_SUPPORT)
@@ -47,7 +48,7 @@ JackDriver::JackDriver( AudioDevice * dev , int rate, nframes_t bufferSize)
 JackDriver::~JackDriver( )
 {
 	PENTER;
-	if (!m_running) {
+	if (m_running == 0) {
                 jack_client_close (client);
 	}
 }
@@ -290,7 +291,7 @@ float JackDriver::get_cpu_load( )
 void JackDriver::_on_jack_shutdown_callback( void * arg )
 {
 	JackDriver* driver  = static_cast<JackDriver *> (arg);
-	driver->m_running = 0;
+	g_atomic_int_set(&driver->m_running, -1);
 }
 
 

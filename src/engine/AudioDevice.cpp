@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.19 2006/11/14 14:32:12 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.20 2006/11/15 00:04:40 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -309,16 +309,7 @@ void AudioDevice::set_parameters( int rate,
 	m_rate = rate;
 	m_bufferSize = bufferSize;
 
-	if (driver) {
-
-		emit stopped();
-
-		shutdown();
-		
-		delete driver;
-		driver = 0;
-	}
-
+	shutdown();
 
 	if (create_driver(driverType, capture, playback) < 0) {
 		set_parameters(rate, bufferSize, "Null Driver");
@@ -443,6 +434,8 @@ int AudioDevice::shutdown( )
 	PENTER;
 	int r = 1;
 
+	emit stopped();
+
 	m_runAudioThread = 0;
 	
 	if (audioThread) {
@@ -450,14 +443,19 @@ int AudioDevice::shutdown( )
 		
 		// Wait until the audioThread has finished execution. One second
 		// should do, if it's still running then, the thread must have gone wild or something....
-		printf("Starting to shutdown AudioThread..\n");
 		if (audioThread->isRunning()) {
+			printf("Starting to shutdown AudioThread..\n");
 			r = audioThread->wait(1000);
+			printf("AudioDeviceThread finished, stopping driver\n");
 		}
 	}
 	
-	printf("AudioDeviceThread finished, stopping driver\n");
-	driver->stop();
+	
+	if (driver) {
+		driver->stop();
+		delete driver;
+		driver = 0;
+	}
 	
 	free_memory();
 
@@ -679,8 +677,11 @@ void AudioDevice::check_jack_shutdown()
 	JackDriver* jackdriver = qobject_cast<JackDriver*>(driver);
 	if (jackdriver) {
 		if ( ! jackdriver->is_jack_running()) {
+			jackShutDownChecker.stop();
 			printf("jack shutdown detected\n");
 			info().critical(tr("The Jack server has been shutdown!"));
+			delete driver;
+			driver = 0;
 			set_parameters(44100, 1024, "Null Driver");
 		}
 	}

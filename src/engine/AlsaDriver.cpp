@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AlsaDriver.cpp,v 1.10 2006/11/14 19:06:39 r_sijrier Exp $
+$Id: AlsaDriver.cpp,v 1.11 2006/11/15 00:04:40 r_sijrier Exp $
 */
 
 
@@ -28,8 +28,6 @@ $Id: AlsaDriver.cpp,v 1.10 2006/11/14 19:06:39 r_sijrier Exp $
 #include "AudioDevice.h"
 #include "AudioChannel.h"
 #include <Utils.h>
-
-#include <pthread.h>
 
 #include <math.h>
 #include <stdio.h>

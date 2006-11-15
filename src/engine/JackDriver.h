@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: JackDriver.h,v 1.3 2006/11/14 14:32:12 r_sijrier Exp $
+    $Id: JackDriver.h,v 1.4 2006/11/15 00:04:40 r_sijrier Exp $
 */
 
 #ifndef JACKDRIVER_H
@@ -50,7 +50,7 @@ public:
 
         float get_cpu_load();
 	
-	size_t is_jack_running() const {return m_running;}
+	size_t is_jack_running() const {return m_running == 1;}
 
 private:
 	volatile size_t	m_running;
