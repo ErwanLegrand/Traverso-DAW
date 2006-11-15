@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.4 2006/11/14 14:59:07 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.5 2006/11/15 13:15:25 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -241,9 +241,9 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			 
 			int prev =  (int) (centerY + (scaleFactor * mbuffer[0]));
 			p->setPen(cm().get("CLIP_PEAK_MICROVIEW"));
-
+			int bufferPos = 0;
 			for (int x = xstart; x < (pixelcount+xstart); x++) {
-				posY = (int) (centerY + (scaleFactor * mbuffer[x]));
+				posY = (int) (centerY + (scaleFactor * mbuffer[bufferPos++]));
 				p->drawLine(x, prev, x+1, posY);
 				prev = posY;
 			}
