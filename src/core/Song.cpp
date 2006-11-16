@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.38 2006/11/14 14:48:46 r_sijrier Exp $
+$Id: Song.cpp,v 1.39 2006/11/16 15:01:07 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -244,28 +244,20 @@ void Song::connect_to_audiodevice( )
 void Song::disconnect_from_audiodevice_and_delete()
 {
 	PENTER;
-
-	PMESG("Song : Scheduling for deletion !!");
-
 	if (transport) {
 		transport = false;
 	}
-
 	scheduleForDeletion = true;
-
+	pm().scheduled_for_deletion(this);
 	audiodevice().remove_client(audiodeviceClient);
 }
 
 void Song::audiodevice_client_removed(Client* client )
 {
 	PENTER;
-
 	if (audiodeviceClient == client) {
-// 		printf("Succesfully discovered if this Song is to be deleted! Client is %s\n\n", client->m_name.toAscii().data());
-
 		if (scheduleForDeletion) {
-			PMESG("Song : deleting myself!!!!!");
-			delete this;
+			pm().delete_song(this);
 		}
 	}
 }

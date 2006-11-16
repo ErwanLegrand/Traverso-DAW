@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ProjectManager.h,v 1.5 2006/11/08 14:49:37 r_sijrier Exp $
+$Id: ProjectManager.h,v 1.6 2006/11/16 15:01:07 r_sijrier Exp $
 */
 
 #ifndef ProjectManager_H
@@ -25,9 +25,10 @@ $Id: ProjectManager.h,v 1.5 2006/11/08 14:49:37 r_sijrier Exp $
 
 #include "ContextItem.h"
 #include <QUndoGroup>
-
+#include <QList>
 
 class Project;
+class Song;
 class Command;
 
 class ProjectManager : public ContextItem
@@ -43,6 +44,9 @@ public:
 	int save_song_as(const QString& songName, const QString& title, const QString& artists);
 	
 	int remove_project(const QString& title);
+	
+	void scheduled_for_deletion(Song* song);
+	void delete_song(Song* song);
 
 	Project* get_project();
 	QUndoGroup* get_undogroup() const;
@@ -60,6 +64,8 @@ private:
 	ProjectManager(const ProjectManager&);
 
 	Project* currentProject;
+	QList<Song*>	m_deletionSongList;
+	bool		m_exitInProgress;
 
 	bool clientRequestInProgress;
 	static QUndoGroup	undogroup;
