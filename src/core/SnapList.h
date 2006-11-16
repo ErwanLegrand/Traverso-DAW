@@ -17,12 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SnapList.h,v 1.4 2006/11/14 14:53:46 r_sijrier Exp $
+$Id: SnapList.h,v 1.5 2006/11/16 12:24:01 r_sijrier Exp $
 */
 
 #ifndef SNAPLIST_H
 #define SNAPLIST_H
 
+#include <QObject>
 #include <QList>
 
 #include "defines.h"
