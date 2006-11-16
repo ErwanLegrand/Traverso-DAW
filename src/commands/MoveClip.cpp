@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: MoveClip.cpp,v 1.14 2006/11/14 14:52:40 r_sijrier Exp $
+$Id: MoveClip.cpp,v 1.15 2006/11/16 12:25:12 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -102,7 +102,6 @@ int MoveClip::undo_action()
 		ie().process_command(targetTrack->remove_clip(m_clip, false));
 	m_clip->set_track_start_frame(originalTrackFirstFrame);
 	ie().process_command(originTrack->add_clip(m_clip, false));
-	m_clip->set_track(originTrack);
 	return 1;
 }
 
