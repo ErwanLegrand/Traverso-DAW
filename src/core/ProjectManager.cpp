@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ProjectManager.cpp,v 1.13 2006/11/08 14:49:37 r_sijrier Exp $
+$Id: ProjectManager.cpp,v 1.14 2006/11/16 12:26:37 r_sijrier Exp $
 */
 
 #include "ProjectManager.h"
@@ -81,6 +81,7 @@ void ProjectManager::set_current_project(Project* pProject)
 	if (currentProject) {
 		title = currentProject->get_title();
 		config().set_project_property("current", title);
+		config().save();
 	}
 
 }
