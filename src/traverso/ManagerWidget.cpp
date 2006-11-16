@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ManagerWidget.cpp,v 1.3 2006/05/01 21:31:58 r_sijrier Exp $
+$Id: ManagerWidget.cpp,v 1.4 2006/11/16 15:03:07 r_sijrier Exp $
 */
 
 #include "ManagerWidget.h"
@@ -44,13 +44,16 @@ ManagerWidget::ManagerWidget( QWidget * parent )
 	asmw = 0;
 	gpw = 0;
 
-	pmw = new ProjectManagerWidget(stackedManagerWidget);
-	stackedManagerWidget->addWidget(pmw);
+	m_scrollArea = new QScrollArea();
+	pmw = new ProjectManagerWidget();
 
 	projectButton->setIcon(QIcon(":/projectmanagement"));
 	songButton->setIcon(QIcon(":/songmanagement"));
 	audioSourcesButton->setIcon(QIcon(":/audiosourcesmanagement"));
 	globalPropertiesButton->setIcon(QIcon(":/globalproperties"));
+	
+	layout()->addWidget(m_scrollArea);
+	on_projectButton_clicked();
 }
 
 ManagerWidget::~ ManagerWidget( )
@@ -60,39 +63,41 @@ ManagerWidget::~ ManagerWidget( )
 void ManagerWidget::on_projectButton_clicked( )
 {
 	pmw->update_projects_list();
-	stackedManagerWidget->setCurrentWidget(pmw);
+	m_scrollArea->takeWidget();
+	m_scrollArea->setWidget(pmw);
 }
 
 void ManagerWidget::on_songButton_clicked( )
 {
 	if (!smw) {
-		smw = new SongManagerWidget(stackedManagerWidget);
-		stackedManagerWidget->addWidget(smw);
+		smw = new SongManagerWidget(m_stackedWidget);
 	}
 	
 	smw->update_song_list();
-	stackedManagerWidget->setCurrentWidget(smw);
+	m_scrollArea->takeWidget();
+	m_scrollArea->setWidget(smw);
 }
 
 void ManagerWidget::on_audioSourcesButton_clicked()
 {
 	if (!asmw) {
-		asmw = new AudioSourcesManagerWidget(stackedManagerWidget);
-		stackedManagerWidget->addWidget(asmw);
+		asmw = new AudioSourcesManagerWidget(m_stackedWidget);
+		m_stackedWidget->addWidget(asmw);
 	}
 	
 	asmw->update_audio_sources_list();
-	stackedManagerWidget->setCurrentWidget(asmw);
+	m_scrollArea->takeWidget();
+	m_scrollArea->setWidget(asmw);
 }
 
 void ManagerWidget::on_globalPropertiesButton_clicked( )
 {
 	if (!gpw) {
-		gpw = new GlobalPropertiesWidget(stackedManagerWidget);
-		stackedManagerWidget->addWidget(gpw);
+		gpw = new GlobalPropertiesWidget();
 	}
 	
-	stackedManagerWidget->setCurrentWidget(gpw);
+	m_scrollArea->takeWidget();
+	m_scrollArea->setWidget(gpw);
 }
 
 
