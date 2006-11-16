@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.20 2006/11/15 00:04:40 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.21 2006/11/16 15:02:07 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -165,18 +165,12 @@ AudioDevice::~AudioDevice()
 {
 	PENTERDES;
 
+	shutdown();
+	
 	if (audioThread) {
-		if (audioThread->isRunning()) {
-			audioThread->terminate();
-		}
 		delete audioThread;
 	}
 	
-	if (driver) {
-		delete driver;
-	}
-
-
 	delete m_cpuTime;
 
 	free_memory();
