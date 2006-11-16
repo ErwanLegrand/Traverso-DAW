@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Traverso.cpp,v 1.16 2006/11/14 14:33:42 r_sijrier Exp $
+$Id: Traverso.cpp,v 1.17 2006/11/16 15:03:25 r_sijrier Exp $
 */
 
 #include <signal.h>
@@ -60,6 +60,7 @@ Traverso::Traverso(int &argc, char **argv )
 // 	pm().start();
 	QMetaObject::invokeMethod(&pm(), "start", Qt::QueuedConnection);
 
+	setQuitOnLastWindowClosed(false);
 	connect(this, SIGNAL(lastWindowClosed()), &pm(), SLOT(exit()));
 }
 
