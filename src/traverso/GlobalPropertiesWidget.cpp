@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: GlobalPropertiesWidget.cpp,v 1.10 2006/11/15 00:06:28 r_sijrier Exp $
+$Id: GlobalPropertiesWidget.cpp,v 1.11 2006/11/16 12:27:22 r_sijrier Exp $
 */
 
 #include "GlobalPropertiesWidget.h"
@@ -62,6 +62,22 @@ GlobalPropertiesWidget::~ GlobalPropertiesWidget( )
 
 void GlobalPropertiesWidget::save_properties( )
 {
+	config().set_hardware_property("samplerate", defaultSampleRateComboBox->currentText());
+	config().set_hardware_property("bufferSize", bufferSizeComboBox->currentText());
+	config().set_project_property("loadLastUsed", (loadLastProjectCheckBox->isChecked() ? 1 : 0));
+	config().set_hardware_property("drivertype", audioDriverBackendComboBox->currentText());
+	
+	bool playback=true, capture=true;
+	if(duplexComboBox->currentIndex() == 1) {
+		capture = false;
+	}
+	if(duplexComboBox->currentIndex() == 2) {
+		playback = false;
+	}
+	config().set_hardware_property("playback", playback);
+	config().set_hardware_property("capture", capture);
+	config().save();
+	
 	QSettings settings;
 	settings.setValue("CCE/holdTimeout", holdTimeoutSpinBox->text());
 	settings.setValue("CCE/doublefactTimeout", doubleFactTimeoutSpinBox->text());
@@ -70,19 +86,6 @@ void GlobalPropertiesWidget::save_properties( )
 	settings.setValue("hzoomLevel", zoomLevel);
 	settings.setValue("WaveFormRectified", (waveFormRectifiedCheckBox->isChecked() ? 1 : 0));
 	settings.setValue("WaveFormMerged", (waveFormMergedCheckBox->isChecked() ? 1 : 0));
-	settings.setValue("Hardware/samplerate", defaultSampleRateComboBox->currentText());
-	settings.setValue("Hardware/bufferSize", bufferSizeComboBox->currentText());
-	settings.setValue("Project/loadLastUsed",  (loadLastProjectCheckBox->isChecked() ? 1 : 0));
-	config().set_hardware_property("drivertype", audioDriverBackendComboBox->currentText());
-	bool playback=true, capture=true;
-	if(duplexComboBox->currentIndex() == 1)
-		capture = false;
-	if(duplexComboBox->currentIndex() == 2)
-		playback = false;
-	
-	config().set_hardware_property("playback", playback);
-	config().set_hardware_property("capture", capture);
-	config().save();
 }
 
 
