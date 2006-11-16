@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeView.cpp,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
+$Id: FadeView.cpp,v 1.2 2006/11/16 12:23:14 r_sijrier Exp $
 */
 
 #include "FadeView.h"
@@ -65,10 +65,12 @@ void FadeView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 	int pixelcount = (int) option->exposedRect.width();
 	
 	// Populate the polygon with enough points to draw a smooth curve.
+	// We add 1 to position and xstart to compensate for an off by 1 pixel offset.
+	// Don't know exactly why this offset is there....
 	int position = xstart;
 	do {
 		m_fadeCurve->get_vector(position*scaleFactor, position*scaleFactor + 1, value, 2);
-	 	polygon << QPointF(position, m_clipView->get_height() - (value[1] * m_clipView->get_height()) );
+	 	polygon << QPointF(position + 1, m_clipView->get_height() - (value[1] * m_clipView->get_height()) );
 // 		printf("x, y: %d, %f \n", position, m_clipView->get_height() - (value[1] * m_clipView->get_height()));
 	 	position ++;
 	} while (position <= (xstart + pixelcount));
@@ -80,8 +82,8 @@ void FadeView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 	QPainterPath path;
 	
 	path.addPolygon(polygon);
-	path.lineTo(xstart + pixelcount, 0);
-	path.lineTo(xstart, 0);
+	path.lineTo(xstart + 1 + pixelcount, 0);
+	path.lineTo(xstart + 1, 0);
 	path.closeSubpath();
 	
 	painter->setPen(Qt::NoPen);
