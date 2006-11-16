@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Config.cpp,v 1.4 2006/11/14 14:34:47 r_sijrier Exp $
+$Id: Config.cpp,v 1.5 2006/11/16 12:25:55 r_sijrier Exp $
 */
 
 #include "Config.h"
@@ -210,11 +210,14 @@ QString Config::get_hardware_string_property( const QString & property, const QS
 }
 
 
+void Config::set_project_property( const QString & property, int newValue )
+{
+	m_intConfigs.insert(QString("Project/").append(property), newValue);
+}
+
 void Config::set_project_property( const QString & property, const QString& newValue )
 {
-	printf("setting property (%s) to %s\n", property.toAscii().data(), newValue.toAscii().data());
-	QSettings settings;
-	settings.setValue(QString("Project/").append(property), newValue);
+	m_stringConfigs.insert(QString("Project/").append(property), newValue);
 }
 
 void Config::set_hardware_property( const QString & property, int newValue )
@@ -247,7 +250,5 @@ void Config::save( )
 	}
 
 }
-
-
 
 //eof
