@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: JackDriver.cpp,v 1.8 2006/11/15 00:04:40 r_sijrier Exp $
+    $Id: JackDriver.cpp,v 1.9 2006/11/19 21:49:23 r_sijrier Exp $
 */
 
 #include "JackDriver.h"
@@ -291,7 +291,7 @@ float JackDriver::get_cpu_load( )
 void JackDriver::_on_jack_shutdown_callback( void * arg )
 {
 	JackDriver* driver  = static_cast<JackDriver *> (arg);
-	g_atomic_int_set(&driver->m_running, -1);
+	driver->m_running = -1;
 }
 
 
