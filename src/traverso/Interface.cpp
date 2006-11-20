@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.16 2006/11/14 14:33:42 r_sijrier Exp $
+$Id: Interface.cpp,v 1.17 2006/11/20 16:37:57 n_doebelin Exp $
 */
 
 #include "../config.h"
@@ -44,6 +44,7 @@ $Id: Interface.cpp,v 1.16 2006/11/14 14:33:42 r_sijrier Exp $
 
 #include "ManagerWidget.h"
 #include "ExportWidget.h"
+#include "MultiMeterWidget.h"
 		
 		
 #include "songcanvas/SongWidget.h"
@@ -100,6 +101,14 @@ Interface::Interface()
 	AudioSourcesDW->setWidget(audiosourcesview);
 	addDockWidget(Qt::RightDockWidgetArea, AudioSourcesDW);
 	
+	// MultiMeter Widget
+	multiMeterDW = new QDockWidget(tr("MultiMeter"), this);
+	multiMeterDW->setObjectName("MultiMeterDockWidget");
+	multiMeter = new MultiMeterWidget(multiMeterDW);
+	multiMeter->setFocusPolicy(Qt::NoFocus);
+	multiMeterDW->setWidget(multiMeter);
+	addDockWidget(Qt::RightDockWidgetArea, multiMeterDW);
+
 	// Help widget
 	helpWindow = new Help(this);
 	

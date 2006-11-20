@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.h,v 1.21 2006/11/14 14:48:46 r_sijrier Exp $
+$Id: Song.h,v 1.22 2006/11/20 16:37:57 n_doebelin Exp $
 */
 
 #ifndef SONG_H
@@ -41,6 +41,7 @@ class Client;
 class AudioBus;
 class PluginChain;
 class SnapList;
+class MultiMeter;
 
 struct ExportSpecification;
 
@@ -104,6 +105,7 @@ public:
 	AudioClipManager* get_audioclip_manager();
 	AudioBus* get_master_out() const {return masterOut;}
 	SnapList* get_snap_list();
+	MultiMeter* get_multimeter();
 
 	// Set functions
 	void set_artists(const QString& pArtistis);
@@ -166,6 +168,7 @@ private:
 	DiskIO*			diskio;
 	AudioClipManager*	acmanager;
 	PluginChain*		pluginChain;
+	MultiMeter*		m_multimeter;
 
 	// The following data could be read/written by multiple threads
 	// (gui, audio and diskio thread). Therefore they should have 

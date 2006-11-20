@@ -58,7 +58,8 @@ SOURCES	= AudioClip.cpp \
 	Utils.cpp \
 	WriteSource.cpp \
 	gdither.cpp \
-	SnapList.cpp
+	SnapList.cpp \
+	MultiMeter.cpp
 
 HEADERS	= precompile.h \
 	AudioClip.h \
@@ -100,7 +101,8 @@ HEADERS	= precompile.h \
 	gdither_types_internal.h \
 	noise.h \
 	FastDelegate.h \
-	SnapList.h
+	SnapList.h \
+	MultiMeter.h
 	
 macx {
 	QMAKE_LIBDIR += /usr/local/qt/lib

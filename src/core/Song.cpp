@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.39 2006/11/16 15:01:07 r_sijrier Exp $
+$Id: Song.cpp,v 1.40 2006/11/20 16:37:57 n_doebelin Exp $
 */
 
 #include <QTextStream>
@@ -44,6 +44,7 @@ $Id: Song.cpp,v 1.39 2006/11/16 15:01:07 r_sijrier Exp $
 #include "Tsar.h"
 #include "SnapList.h"
 #include "Config.h"
+#include "MultiMeter.h"
 
 #include "ContextItem.h"
 
@@ -123,7 +124,8 @@ Song::~Song()
 	delete masterOut;
 	delete m_hs;
 	delete audiodeviceClient;
- 	delete snaplist;
+	delete snaplist;
+	delete m_multimeter;
 }
 
 void Song::init()
@@ -149,6 +151,7 @@ void Song::init()
 	regionList = new MtaRegionList();
 	m_hs = new QUndoStack(pm().get_undogroup());
 	acmanager = new AudioClipManager(this);
+	m_multimeter = new MultiMeter();
 
 	set_context_item( acmanager );
 
@@ -826,6 +829,7 @@ int Song::process( nframes_t nframes )
 	}
 
 // 	plugin->process(playBackBus, nframes);
+	m_multimeter->process(masterOut);
 
 	return 1;
 }
@@ -897,6 +901,11 @@ DiskIO * Song::get_diskio( )
 AudioClipManager * Song::get_audioclip_manager( )
 {
 	return acmanager;
+}
+
+MultiMeter * Song::get_multimeter()
+{
+	return m_multimeter;
 }
 
 void Song::handle_diskio_readbuffer_underrun( )
