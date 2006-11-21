@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: MultiMeterWidget.cpp,v 1.2 2006/11/20 16:43:18 n_doebelin Exp $
+    $Id: MultiMeterWidget.cpp,v 1.3 2006/11/21 19:38:25 n_doebelin Exp $
 */
 
 #include <libtraverso.h>
@@ -66,8 +66,8 @@ void MultiMeterWidget::paintEvent( QPaintEvent *  )
 
 	painter.fillRect(0, 0, width(), height(), Qt::black);
 
-	int lend = int(0.5*width() - (-coeff + 1)*0.25*width());
-	int rend = int(0.5*width() + (-coeff + 1)*0.25*width());
+	int lend = int(0.5*width() - (-coeff + 1.0) * 0.25 * width() * (1.0 - fabs(direction)));
+	int rend = int(0.5*width() + (-coeff + 1.0) * 0.25 * width() * (1.0 - fabs(direction)));
 	int wdt = abs(lend - rend);
 	int centerOffset = int(width() * 0.25 * direction);
 
