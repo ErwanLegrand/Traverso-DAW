@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: MultiMeterWidget.cpp,v 1.4 2006/11/24 12:05:36 r_sijrier Exp $
+    $Id: MultiMeterWidget.cpp,v 1.5 2006/11/24 12:24:23 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -50,15 +50,10 @@ MultiMeterWidget::MultiMeterWidget(QWidget* parent)
 	setMinimumWidth(40);
 	setMinimumHeight(10);
 	
-	// We paint all our pixels with non transparent colors
-	// so inform the backingstore not to try to let the background
-	// of parent widgets 'shine through', which has a rather high
-	// cost on a widget updated as much as we do!!!
+	// We paint all our pixels ourselves, so no need to let Qt
+	// erase and fill it for us prior to the paintEvent.
 	// @ Nicola : This is where the high load comes from!
         setAttribute(Qt::WA_OpaquePaintEvent);
-	// Don't let Qt erase the background, we do that allready, this
-	// saves only a little cpu cycles, but still worht it ;-)
-	setAutoFillBackground(false);
 	
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
