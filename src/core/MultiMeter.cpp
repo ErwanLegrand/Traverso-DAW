@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Nicola Doebelin
+    Copyright (C) 2006 Nicola Doebelin
 
     This file is part of Traverso
 
@@ -17,187 +17,190 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: MultiMeter.cpp,v 1.1 2006/11/20 16:21:38 n_doebelin Exp $
+    $Id: MultiMeter.cpp,v 1.2 2006/11/24 12:06:53 r_sijrier Exp $
 */
 
 #include "MultiMeter.h"
-#include "AudioBus.h"
+#include <AudioBus.h>
+#include <AudioDevice.h>
 
-#include <QDebug>
 #include <math.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
+		
+#define SMOOTH_FACTOR	1
 
 MultiMeter::MultiMeter()
 {
-	for (unsigned int i = 0; i < BUFFER_SIZE; ++i) {
-		ringBufferR[i] = 0.0;
-		ringBufferL[i] = 0.0;
-	}
-
-	avg_l = 0.0;
-	avg_r = 0.0;
-	index = 0;
-	prev_avg_l = 0.0;
-	prev_avg_r = 0.0;
-	prev_r = 1.0;
-
-	level_l = 0.0;
-	level_r = 0.0;
-	prev_level_l = 0.0;
-	prev_level_r = 0.0;
-	prev_index = 0;
-	hasNewData = false;
+	// constructs a ringbuffer that can hold 150 MultiMeterData structs
+	m_databuffer = new RingBufferNPT<MultiMeterData>(150);
+	
+	// Initialize member variables, that need to be initialized
+	m_avgLeft = m_avgRight = 0;
+	calculate_fract();
+	// With memset, we're able to very efficiently set all bytes of an array
+	// or struct to zero
+	memset(&m_history, 0, sizeof(MultiMeterData));
+	
+	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(calculate_fract()));
 }
 
 MultiMeter::~MultiMeter()
 {
+	delete m_databuffer;
 }
 
 
-void MultiMeter::process(AudioBus *a_bus)
+void MultiMeter::process(AudioBus* bus, nframes_t nframes)
 {
-	if (a_bus) {
-		m_audiobus = a_bus;
-	} else {
-		return;
-	}
-
 	// check if audiobus is stereo (2 channels)
 	// if not, do nothing
-	if (m_audiobus->get_channel_count() != 2) return;
+	if (bus->get_channel_count() != 2)
+		return;
 
-	uint buf_size = m_audiobus->get_channel(0)->get_buffer_size();
+	// The nframes is the amount of samples there are in the buffers
+	// we have to process. No need to get the buffersize, we _have_ to
+	// use the nframes variable !
+	audio_sample_t* bufferLeft = bus->get_buffer(0, nframes);
+	audio_sample_t* bufferRight = bus->get_buffer(1, nframes);
 
-	buf_l = m_audiobus->get_buffer(0, buf_size);
-	buf_r = m_audiobus->get_buffer(1, buf_size);
-
-	for (uint i = 0; i < buf_size; ++i) {
-		ringBufferL[index] = buf_l[i];
-		ringBufferR[index] = buf_r[i];
-
-		++index;
-		if (index >= BUFFER_SIZE) {
-			index = 0;
-		}
-	}
-
-	hasNewData = true;
-}
-
-/**
- * Compute the correlation coefficient of the stereo master output data
- * of the active song. The number of samples considered in the calculation
- * is fixed.
- *
- * @returns linear correlation coefficient (1.0: complete positive correlation,
- *  0.0: uncorrelated, -1.0: complete negative correlation).
- **/
-float MultiMeter::get_correlation_coefficient()
-{
-//  All prev_* variables are used to avoid iterating over the entire ring
-//  buffer each time. The idea is to store the previous values, and only iterate
-//  over the new data in the ring buffer. The results are merged afterwards.
-//  This technique reduced CPU usage from 47% to 14% on my system!
-	if (!hasNewData) {
-		return 1.0;
-	}
-
-	float r = 1.0;
-	float a1 = 0.0;
-	float a2 = 0.0;
-	float aa = 0.0;
-	float a1sq = 0.0;
-	float a2sq = 0.0;
-
-	unsigned int num_samples = index - prev_index;
-	if (index < prev_index) {
-		num_samples = index + (BUFFER_SIZE - prev_index);
-	}
-
-	float fract = (float)num_samples / (float)BUFFER_SIZE;
-
-	float vl;
-	float vr;
-
+	
+	// Variables we need to calculate the correlation and avarages/levels
+	float a1, a2, a1a2 = 0, a1sq = 0, a2sq = 0, r, avgLeft = 0, avgRight = 0, levelLeft = 0, levelRight = 0;
+	
 	// calulate averages
-	unsigned int j = prev_index;
-	for (unsigned int i = 0; i < num_samples; ++i) {
-		if (j >= BUFFER_SIZE) {
-			j = 0;
-		}
-		vl = ringBufferL[j];
-		vr = ringBufferR[j];
+	for (uint i = 0; i < nframes; ++i) {
+		avgLeft += bufferLeft[i];
+		avgRight += bufferRight[i];
 
-		avg_l += vl;
-		avg_r += vr;
-
-		level_l += fabs(vl);
-		level_r += fabs(vr);
-
-		++j;
+		levelLeft += fabs(bufferLeft[i]);
+		levelRight += fabs(bufferRight[i]);
 	}
 
-	avg_l /= (float)num_samples;
-	avg_r /= (float)num_samples;
+	avgLeft /= nframes;
+	avgRight /= nframes;
 
-	level_l /= (float)num_samples;
-	level_r /= (float)num_samples;
+	levelLeft /= nframes;
+	levelRight /= nframes;
 
-	avg_l = avg_l * fract + prev_avg_l * (1.0 - fract);
-	avg_r = avg_r * fract + prev_avg_r * (1.0 - fract);
-
-	level_l = level_l * fract + prev_level_l * (1.0 - fract);
-	level_r = level_r * fract + prev_level_r * (1.0 - fract);
-
-	// check for dividions by 0
-	if ((!avg_l) || (!avg_r)) {
-		return 1.0;
-	}
-
+	// Assign the newly calculated avarages to my 'own' m_avgLeft/Right
+	// member variables, we use those to calculate the coefficient.
+	m_avgLeft = avgLeft * m_fract + m_avgLeft * (1.0 - m_fract);
+	m_avgRight = avgRight * m_fract + m_avgRight * (1.0 - m_fract);
+	
 	// calculate coefficient
-	j = prev_index;
-	for (unsigned int i = 0; i < num_samples; ++i) {
-		if (j >= BUFFER_SIZE) {
-			j = 0;
-		}
-		a1 = ringBufferL[j] - avg_l;
-		a2 = ringBufferR[j] - avg_r;
+	for (uint i = 0; i < nframes; ++i) {
+		a1 = bufferLeft[i] - m_avgLeft;
+		a2 = bufferRight[i] - m_avgRight;
 
-		aa += a1 * a2;
+		a1a2 += a1 * a2;
 		a1sq += a1 * a1;
 		a2sq += a2 * a2;
 	}
 
-	r = aa / (sqrtf(a1sq) * sqrtf(a2sq));
+	// We have all data to calculate the correlation coefficient
+	// for the processed buffer
+	r = a1a2 / (sqrtf(a1sq) * sqrtf(a2sq));
 
-	r = r * fract + prev_r * (1.0 - fract);
+	// And we store this in a MultiMeterData struct
+	// and write this struct into the data ringbuffer,
+	// to be processed later in get_data()
+	// levelLeft and levelRight are also needed to calculate the
+	// correct direction in get_data(), so we store that too!
+	MultiMeterData data;
+	data.r = r;
+	data.levelLeft = levelLeft;
+	data.levelRight = levelRight;
 
-	// store the current values
-	prev_index = index;
-	prev_avg_l = avg_l;
-	prev_avg_r = avg_r;
-	prev_r = r;
-	prev_level_l = level_l;
-	prev_level_r = level_r;
-
-	hasNewData = false;
-
-	return r;
+	// The ringbuffer::write function acts like it's appending the data
+	// to the end of the buffer.
+	// The amount of MultiMeterData structs we want to write is 1, and 
+	// we have to provide a pointer to the data we want to write, which
+	// is done by dereferencing (the & in front of) data.
+	//
+	// This would also have worked (since it's essentially the same):
+	// MultiMeterData* datatowrite = &data;
+	// m_databuffer->write(datatowrite, 1);
+	// 
+	// If we want to write more then 1 MultiMeterData struct, we have to 
+	// place them into an array, but well, there's only one now :-)
+	m_databuffer->write(&data, 1);
 }
 
-float MultiMeter::get_direction()
+/**
+ * Compute the correlation coefficient of the stereo master output data
+ * of the active song, and the direction. When there is new data, the new
+ * data will be assigned to the \a r and \a direction variables, else no 
+ * data will be assigned to those variables
+ * 
+ * r: linear correlation coefficient (1.0: complete positive correlation,
+ * 0.0: uncorrelated, -1.0: complete negative correlation).
+ *
+ * @returns 0 if no new data was available, > 0 when new data was available
+ *	The new data will be assigned to \a r and \a direction
+ **/
+int MultiMeter::get_data(float& r, float& direction)
 {
-	if ((prev_level_l == 0.0) && (prev_level_r == 0.0)) {
-		return 0.0;
+	// RingBuffer::read_space() tells us how many data
+	// of type T (MultiMeterData in this case) has been written 
+	// to the buffer since last time we checked.
+	int readcount = m_databuffer->read_space();
+	
+	// If there is no new data in the ringbuffer, leave it alone and return zero
+	if (readcount == 0) {
+		return 0;
+	}
+	
+	// We need to know the 'history' of these variables to get a smooth
+	// and consistent (independend of buffersizes) stereometer behaviour.
+	// So we get it from our history struct.
+	r = m_history.r;
+	float levelLeft = m_history.levelLeft;
+	float levelRight = m_history.levelRight;
+	
+	// Create an empty MultiMeterData struct data,
+	MultiMeterData data;
+	
+	for (int i=0; i<readcount; ++i) {
+		// which we fill by reading from the databuffer.
+		m_databuffer->read(&data, 1);
+		
+		// Calculate the new correlation variable, and merge the old one.
+		// Assign it to r itself, this spares a temp. variable for r ;-)
+		r = data.r * m_fract + r * (1.0 - m_fract);
+	
+		// Same for levelLeft/Right
+		levelLeft = data.levelLeft * m_fract + levelLeft * (1.0 - m_fract);
+		levelRight = data.levelRight * m_fract + levelRight * (1.0 - m_fract);
+	}
+	
+	// Now that we truely have taken into account all the levelLeft/Right data
+	// for all buffers that have been processed since last call to get_data()
+	// we now can calculate the direction variable.
+	if ( ! ((levelLeft + levelRight) == 0.0) ) {
+		float vl = levelLeft / (levelLeft + levelRight);
+		float vr = levelRight / (levelLeft + levelRight);
+	
+		direction = vr - vl;
+	} else {
+		direction = 0;
 	}
 
-	float vl = prev_level_l / (prev_level_l + prev_level_r);
-	float vr = prev_level_r / (prev_level_l + prev_level_r);
+	// Store the calculated variables in the history struct, to be used on
+	// next call of this function
+	m_history.r = r;
+	m_history.levelLeft = levelLeft;
+	m_history.levelRight = levelRight;
 
-	return vr - vl;
+	return readcount;
 }
+
+void MultiMeter::calculate_fract( )
+{
+	m_fract = ((float) audiodevice().get_buffer_size()) / (audiodevice().get_sample_rate() * SMOOTH_FACTOR);
+}
+
 
 // EOF
