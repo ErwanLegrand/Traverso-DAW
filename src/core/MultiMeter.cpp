@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: MultiMeter.cpp,v 1.2 2006/11/24 12:06:53 r_sijrier Exp $
+    $Id: MultiMeter.cpp,v 1.3 2006/11/24 18:44:30 n_doebelin Exp $
 */
 
 #include "MultiMeter.h"
@@ -38,7 +38,6 @@ MultiMeter::MultiMeter()
 	m_databuffer = new RingBufferNPT<MultiMeterData>(150);
 	
 	// Initialize member variables, that need to be initialized
-	m_avgLeft = m_avgRight = 0;
 	calculate_fract();
 	// With memset, we're able to very efficiently set all bytes of an array
 	// or struct to zero
@@ -68,41 +67,32 @@ void MultiMeter::process(AudioBus* bus, nframes_t nframes)
 
 	
 	// Variables we need to calculate the correlation and avarages/levels
-	float a1, a2, a1a2 = 0, a1sq = 0, a2sq = 0, r, avgLeft = 0, avgRight = 0, levelLeft = 0, levelRight = 0;
-	
-	// calulate averages
-	for (uint i = 0; i < nframes; ++i) {
-		avgLeft += bufferLeft[i];
-		avgRight += bufferRight[i];
-
-		levelLeft += fabs(bufferLeft[i]);
-		levelRight += fabs(bufferRight[i]);
-	}
-
-	avgLeft /= nframes;
-	avgRight /= nframes;
-
-	levelLeft /= nframes;
-	levelRight /= nframes;
-
-	// Assign the newly calculated avarages to my 'own' m_avgLeft/Right
-	// member variables, we use those to calculate the coefficient.
-	m_avgLeft = avgLeft * m_fract + m_avgLeft * (1.0 - m_fract);
-	m_avgRight = avgRight * m_fract + m_avgRight * (1.0 - m_fract);
+	float a1, a2, a1a2 = 0, a1sq = 0, a2sq = 0, r, levelLeft = 0, levelRight = 0;
 	
 	// calculate coefficient
 	for (uint i = 0; i < nframes; ++i) {
-		a1 = bufferLeft[i] - m_avgLeft;
-		a2 = bufferRight[i] - m_avgRight;
+		a1 = bufferLeft[i];
+		a2 = bufferRight[i];
 
 		a1a2 += a1 * a2;
 		a1sq += a1 * a1;
 		a2sq += a2 * a2;
+
+		levelLeft += a1sq;
+		levelRight += a2sq;
 	}
 
 	// We have all data to calculate the correlation coefficient
-	// for the processed buffer
-	r = a1a2 / (sqrtf(a1sq) * sqrtf(a2sq));
+	// for the processed buffer (but check for division by 0 first)
+	if ((a1sq == 0.0) || (a2sq == 0.0)) {
+		r = 1.0;
+	} else {
+		r = a1a2 / (sqrtf(a1sq) * sqrtf(a2sq));
+	}
+
+	// calculate RMS of the levels
+	levelLeft = sqrtf(levelLeft / nframes);
+	levelRight = sqrtf(levelRight / nframes);
 
 	// And we store this in a MultiMeterData struct
 	// and write this struct into the data ringbuffer,

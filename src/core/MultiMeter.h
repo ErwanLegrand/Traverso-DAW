@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MultiMeter.h,v 1.2 2006/11/24 12:06:47 r_sijrier Exp $
+    $Id: MultiMeter.h,v 1.3 2006/11/24 18:44:30 n_doebelin Exp $
 */
 
 #ifndef MULTIMETER_H
@@ -49,8 +49,6 @@ public:
 private:
 	RingBufferNPT<MultiMeterData>*	m_databuffer;
 	MultiMeterData			m_history;
-	float				m_avgLeft;
-	float				m_avgRight;
 	float				m_fract;
 	
 private slots:
