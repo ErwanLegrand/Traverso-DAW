@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.40 2006/11/20 16:37:57 n_doebelin Exp $
+$Id: Song.cpp,v 1.41 2006/11/24 12:06:03 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -829,7 +829,7 @@ int Song::process( nframes_t nframes )
 	}
 
 // 	plugin->process(playBackBus, nframes);
-	m_multimeter->process(masterOut);
+	m_multimeter->process(masterOut, nframes);
 
 	return 1;
 }
