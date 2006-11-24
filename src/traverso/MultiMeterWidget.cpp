@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: MultiMeterWidget.cpp,v 1.3 2006/11/21 19:38:25 n_doebelin Exp $
+    $Id: MultiMeterWidget.cpp,v 1.4 2006/11/24 12:05:36 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -49,6 +49,17 @@ MultiMeterWidget::MultiMeterWidget(QWidget* parent)
 {
 	setMinimumWidth(40);
 	setMinimumHeight(10);
+	
+	// We paint all our pixels with non transparent colors
+	// so inform the backingstore not to try to let the background
+	// of parent widgets 'shine through', which has a rather high
+	// cost on a widget updated as much as we do!!!
+	// @ Nicola : This is where the high load comes from!
+        setAttribute(Qt::WA_OpaquePaintEvent);
+	// Don't let Qt erase the background, we do that allready, this
+	// saves only a little cpu cycles, but still worht it ;-)
+	setAutoFillBackground(false);
+	
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 
@@ -59,15 +70,17 @@ MultiMeterWidget::MultiMeterWidget(QWidget* parent)
 void MultiMeterWidget::paintEvent( QPaintEvent *  )
 {
 	PENTER3;
-
-	QPixmap pix(width(), height());
-	QPainter painter(&pix);
-	QPainter directpainter(this);
+	// Since all painting is allready double buffered by Qt, we don't need
+	// to create a buffer to paint in ourselves, using a painter like below
+	// has the same results (at a lower cost of course, buffering again here
+	// means triple buffering which makes no sense.
+	QPainter painter(this);
 
 	painter.fillRect(0, 0, width(), height(), Qt::black);
 
 	int lend = int(0.5*width() - (-coeff + 1.0) * 0.25 * width() * (1.0 - fabs(direction)));
 	int rend = int(0.5*width() + (-coeff + 1.0) * 0.25 * width() * (1.0 - fabs(direction)));
+	
 	int wdt = abs(lend - rend);
 	int centerOffset = int(width() * 0.25 * direction);
 
@@ -81,8 +94,6 @@ void MultiMeterWidget::paintEvent( QPaintEvent *  )
 
 	painter.setPen(QColor(0, 255, 0));
 	painter.drawLine(width()/2 + centerOffset, 0, width()/2 + centerOffset, height());
-
-	directpainter.drawPixmap(0, 0, pix);
 }
 
 void MultiMeterWidget::resizeEvent( QResizeEvent *  )
@@ -93,10 +104,16 @@ void MultiMeterWidget::resizeEvent( QResizeEvent *  )
 
 void MultiMeterWidget::update_data()
 {
-	if (!m_multimeter) return;
+	if (!m_multimeter) {
+		return;
+	}
 
-	coeff = m_multimeter->get_correlation_coefficient();
-	direction = m_multimeter->get_direction();
+	// MultiMeter::get_data() will assign it's data to coef and direction
+	// if no data was available, return, so we _only_ update the widget when
+	// it needs to be!
+	if (m_multimeter->get_data(coeff, direction) == 0) {
+		return;
+	}
 
 	update();
 }
