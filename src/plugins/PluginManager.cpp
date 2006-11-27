@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginManager.cpp,v 1.3 2006/11/27 20:54:44 r_sijrier Exp $
+$Id: PluginManager.cpp,v 1.4 2006/11/27 21:12:14 r_sijrier Exp $
 
 slv2 url: http://codeson.net/svn/libslv2/
 */
@@ -95,12 +95,13 @@ Plugin* PluginManager::get_plugin(const  QDomNode node )
 		plugin = new SpectralMeter();
 	}
 	
-	
-	if (plugin->set_state(node) > 0) {
-		return plugin;
-	} else {
-		delete plugin;
-		plugin = 0;
+	if (plugin) {
+		if (plugin->set_state(node) > 0) {
+			return plugin;
+		} else {
+			delete plugin;
+			plugin = 0;
+		}
 	}
 
 	return plugin;
