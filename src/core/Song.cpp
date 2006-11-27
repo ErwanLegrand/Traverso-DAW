@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.41 2006/11/24 12:06:03 r_sijrier Exp $
+$Id: Song.cpp,v 1.42 2006/11/27 20:52:41 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -44,7 +44,7 @@ $Id: Song.cpp,v 1.41 2006/11/24 12:06:03 r_sijrier Exp $
 #include "Tsar.h"
 #include "SnapList.h"
 #include "Config.h"
-#include "MultiMeter.h"
+#include <CorrelationMeter.h>
 
 #include "ContextItem.h"
 
@@ -125,7 +125,6 @@ Song::~Song()
 	delete m_hs;
 	delete audiodeviceClient;
 	delete snaplist;
-	delete m_multimeter;
 }
 
 void Song::init()
@@ -150,9 +149,9 @@ void Song::init()
 	masterOut = new AudioBus("Master Out", 2);
 	regionList = new MtaRegionList();
 	m_hs = new QUndoStack(pm().get_undogroup());
+	set_history_stack(m_hs);
 	acmanager = new AudioClipManager(this);
-	m_multimeter = new MultiMeter();
-
+	
 	set_context_item( acmanager );
 
 	playBackBus = audiodevice().get_playback_bus("Playback 1");
@@ -166,7 +165,7 @@ void Song::init()
 	firstVisibleFrame=workingFrame=activeTrackNumber=0;
 	trackCount = 0;
 	seeking = 0;
-
+	
 	pluginChain = new PluginChain(this, this);
 }
 
@@ -828,9 +827,11 @@ int Song::process( nframes_t nframes )
 		Mixer::mix_buffers_with_gain(playBackBus->get_buffer(1, nframes), masterOut->get_buffer(1, nframes), nframes, m_gain);
 	}
 
-// 	plugin->process(playBackBus, nframes);
-	m_multimeter->process(masterOut, nframes);
-
+	// Process all the plugins for this Song (Currently no one)
+	foreach(Plugin* plugin, pluginChain->get_plugin_list()) {
+		plugin->process(playBackBus, nframes);
+	}
+	
 	return 1;
 }
 
@@ -903,9 +904,9 @@ AudioClipManager * Song::get_audioclip_manager( )
 	return acmanager;
 }
 
-MultiMeter * Song::get_multimeter()
+PluginChain* Song::get_plugin_chain()
 {
-	return m_multimeter;
+	return pluginChain;
 }
 
 void Song::handle_diskio_readbuffer_underrun( )
