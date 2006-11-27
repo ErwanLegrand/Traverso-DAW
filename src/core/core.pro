@@ -10,14 +10,15 @@ PRECOMPILED_HEADER = precompile.h
 LIBS += -ltraversocommands \
         -ltraversoaudiobackend
         
-INCLUDEPATH += ../../src/traverso \
-		../../src/traverso/songcanvas \
-               ../../src/traverso/build \
-               ../../src/core \
-               ../../src/commands \
-               ../../src/engine \
-               ../../src/plugins/LV2 \
-               ../../src/plugins \
+INCLUDEPATH += \
+	../../src/traverso/songcanvas \
+	../../src/traverso \
+	../../src/core \
+	../../src/commands \
+	../../src/engine \
+	../../src/plugins/LV2 \
+	../../src/plugins/native \
+	../../src/plugins \
                . 
 QMAKE_LIBDIR = ../../lib 
 TARGET = traversocore 
