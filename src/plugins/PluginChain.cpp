@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginChain.cpp,v 1.5 2006/11/08 14:47:35 r_sijrier Exp $
+$Id: PluginChain.cpp,v 1.6 2006/11/27 20:54:44 r_sijrier Exp $
 */
  
 #include "PluginChain.h"
@@ -66,7 +66,13 @@ int PluginChain::set_state( const QDomNode & node )
 	
 	while(!pluginNode.isNull()) {
 		Plugin* plugin = PluginManager::instance()->get_plugin(pluginNode);
-		ie().process_command(add_plugin(plugin, false));
+		if (!plugin) {
+			PERROR("PluginManager couldn't create Plugin ????");
+			pluginNode = pluginNode.nextSibling();
+			continue;
+		}
+		plugin->set_history_stack(get_history_stack());
+		private_add_plugin(plugin);
 		pluginNode = pluginNode.nextSibling();
 	}
 	

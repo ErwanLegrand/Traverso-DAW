@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginManager.cpp,v 1.2 2006/08/25 11:15:27 r_sijrier Exp $
+$Id: PluginManager.cpp,v 1.3 2006/11/27 20:54:44 r_sijrier Exp $
 
 slv2 url: http://codeson.net/svn/libslv2/
 */
@@ -24,6 +24,8 @@ slv2 url: http://codeson.net/svn/libslv2/
 
 #include "PluginManager.h"
 #include "Plugin.h"
+#include "CorrelationMeter.h"
+#include "SpectralMeter.h"
 
 #if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 #include <LV2Plugin.h>
@@ -77,15 +79,30 @@ Plugin* PluginManager::get_plugin(const  QDomNode node )
 #if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 	if (type == "LV2Plugin") {
 		plugin = new LV2Plugin();
-
-		if (plugin->set_state(node) > 0) {
-			return plugin;
-		} else {
-			delete plugin;
-			plugin = 0;
-		}
 	}
 #endif
+	
+// Well, this looks a little ehm, ugly hehe
+// I'll investigate sometime in the future to make 
+// a Plugin a _real_ plugin, by using the Qt Plugin
+// framework. (loading it as a shared library object...)
+
+	if (type == "CorrelationMeterPlugin") {
+		plugin = new CorrelationMeter();
+	}
+
+	if (type == "SpectralMeterPlugin") {
+		plugin = new SpectralMeter();
+	}
+	
+	
+	if (plugin->set_state(node) > 0) {
+		return plugin;
+	} else {
+		delete plugin;
+		plugin = 0;
+	}
+
 	return plugin;
 }
 

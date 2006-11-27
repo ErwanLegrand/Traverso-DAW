@@ -5,6 +5,7 @@ INCLUDEPATH += ../../src/core \
 		../../src/engine \
 		../../src/commands \
 		../../src/plugins/LV2 \
+		../../src/plugins/native \
 		./
 
 DESTDIR = ../../lib 
@@ -21,7 +22,9 @@ HEADERS += Plugin.h \
 	PluginManager.h \
 	LV2/LV2Plugin.h \
 	LV2/LV2ControlPort.h \
-	LV2/LV2PluginPropertiesDialog.h
+	LV2/LV2PluginPropertiesDialog.h \
+	native/CorrelationMeter.h \
+	native/SpectralMeter.h \
 
 SOURCES += Plugin.cpp \
 	PluginChain.cpp \
@@ -32,7 +35,9 @@ SOURCES += Plugin.cpp \
 	PluginSlider.cpp \
 	LV2/LV2Plugin.cpp \
 	LV2/LV2ControlPort.cpp \
-	LV2/LV2PluginPropertiesDialog.cpp
+	LV2/LV2PluginPropertiesDialog.cpp \
+	native/CorrelationMeter.cpp \
+	native/SpectralMeter.cpp \
 
 win32 {
 	HEADERS -= 	LV2/LV2Plugin.h \
