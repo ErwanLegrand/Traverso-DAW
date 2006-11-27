@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MultiMeterWidget.h,v 1.1 2006/11/20 16:21:38 n_doebelin Exp $
+    $Id: MultiMeterWidget.h,v 1.2 2006/11/27 20:56:05 r_sijrier Exp $
 */
 
 #ifndef MULTIMETERWIDGET_H
@@ -25,7 +25,7 @@
 
 #include <QWidget>
 
-class MultiMeter;
+class CorrelationMeter;
 class Song;
 class Project;
 class QLinearGradient;
@@ -45,7 +45,7 @@ private:
 	QTimer		timer;
 	float		coeff;
 	float		direction;
-	MultiMeter*	m_multimeter;
+	CorrelationMeter*	m_meter;
 	QLinearGradient	gradPhase;
 	QPixmap		pixPhase;
 

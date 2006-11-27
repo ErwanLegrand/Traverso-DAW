@@ -17,13 +17,14 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: MultiMeterWidget.cpp,v 1.5 2006/11/24 12:24:23 r_sijrier Exp $
+    $Id: MultiMeterWidget.cpp,v 1.6 2006/11/27 20:56:05 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
 
 #include "MultiMeterWidget.h"
-#include "MultiMeter.h"
+#include <PluginChain.h>
+#include <CorrelationMeter.h>
 #include "ProjectManager.h"
 #include "Project.h"
 
@@ -50,6 +51,8 @@ MultiMeterWidget::MultiMeterWidget(QWidget* parent)
 	setMinimumWidth(40);
 	setMinimumHeight(10);
 	
+	update_gradient();
+	
 	// We paint all our pixels ourselves, so no need to let Qt
 	// erase and fill it for us prior to the paintEvent.
 	// @ Nicola : This is where the high load comes from!
@@ -59,7 +62,6 @@ MultiMeterWidget::MultiMeterWidget(QWidget* parent)
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 
 	connect(&timer, SIGNAL(timeout()), this, SLOT(update_data()));
-	timer.start(40);
 }
 
 void MultiMeterWidget::paintEvent( QPaintEvent *  )
@@ -99,14 +101,14 @@ void MultiMeterWidget::resizeEvent( QResizeEvent *  )
 
 void MultiMeterWidget::update_data()
 {
-	if (!m_multimeter) {
+	if (!m_meter) {
 		return;
 	}
 
 	// MultiMeter::get_data() will assign it's data to coef and direction
 	// if no data was available, return, so we _only_ update the widget when
 	// it needs to be!
-	if (m_multimeter->get_data(coeff, direction) == 0) {
+	if (m_meter->get_data(coeff, direction) == 0) {
 		return;
 	}
 
@@ -117,12 +119,28 @@ void MultiMeterWidget::set_project(Project *project)
 {
 	if (project) {
 		connect(project, SIGNAL(currentSongChanged(Song *)), this, SLOT(set_song(Song*)));
+	} else {
+		timer.stop();
 	}
 }
 
 void MultiMeterWidget::set_song(Song *song)
 {
-	m_multimeter = song->get_multimeter();
+	PluginChain* chain = song->get_plugin_chain();
+	
+	foreach(Plugin* plugin, chain->get_plugin_list()) {
+		m_meter = qobject_cast<CorrelationMeter*>(plugin);
+		
+		if (m_meter) {
+			timer.start(40);
+			return;
+		}
+	}
+	
+	m_meter = new CorrelationMeter();
+	m_meter->init();
+	ie().process_command( chain->add_plugin(m_meter, false) );
+	timer.start(40);
 }
 
 void MultiMeterWidget::update_gradient()
