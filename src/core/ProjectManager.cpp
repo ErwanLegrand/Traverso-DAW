@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ProjectManager.cpp,v 1.15 2006/11/16 15:01:07 r_sijrier Exp $
+$Id: ProjectManager.cpp,v 1.16 2006/11/27 20:53:57 r_sijrier Exp $
 */
 
 #include "ProjectManager.h"
@@ -225,8 +225,9 @@ Command* ProjectManager::exit()
 	m_exitInProgress = true;
 	
 	if (currentProject) {
-		currentProject->save();
-		delete currentProject;
+		set_current_project(0);
+	} else {
+		QApplication::exit();
 	}
 
 
