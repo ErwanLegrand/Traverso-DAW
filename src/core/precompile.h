@@ -20,4 +20,5 @@
 #include <qtimer.h>
 #include <qwidget.h>
 
+#include <glib.h>
 #include <stdlib.h>
