@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.51 2006/11/14 14:50:21 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.52 2006/11/28 14:07:29 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -107,6 +107,7 @@ void AudioClip::init()
 	fadeOut = 0;
 	m_refcount = 0;
 	m_isSnappable = true;
+	gainEnvelope = new Curve(this);
 }
 
 int AudioClip::set_state(const QDomNode& node)
