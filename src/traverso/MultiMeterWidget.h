@@ -17,13 +17,14 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MultiMeterWidget.h,v 1.2 2006/11/27 20:56:05 r_sijrier Exp $
+    $Id: MultiMeterWidget.h,v 1.3 2006/11/28 12:48:40 r_sijrier Exp $
 */
 
 #ifndef MULTIMETERWIDGET_H
 #define MULTIMETERWIDGET_H
 
 #include <QWidget>
+#include <QTimer>
 
 class CorrelationMeter;
 class Song;
