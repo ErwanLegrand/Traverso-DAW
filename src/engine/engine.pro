@@ -41,7 +41,7 @@ SOURCES += AudioDevice.cpp \
 unix {
 	SOURCES += AlsaDriver.cpp
 	HEADERS += AlsaDriver.h
-	contains(DEFINES, SSE_OPTIMIZATIONS):SOURCES += sse_functions.s
+	contains(DEFINES, SSE_OPTIMIZATIONS):SOURCES += sse_functions.S
 }
 
 
