@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginChainView.cpp,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
+    $Id: PluginChainView.cpp,v 1.2 2006/11/28 14:06:12 r_sijrier Exp $
 */
 
 #include "PluginChainView.h"
@@ -25,6 +25,8 @@
 #include "TrackView.h"
 #include "PluginView.h"
 #include "ColorManager.h"
+#include <PluginChain.h>
+#include <Plugin.h>
 
 #include <Track.h>
 
@@ -38,12 +40,21 @@
 #include "Debugger.h"
 
 
-PluginChainView::PluginChainView(TrackView* parent)
-	: ViewItem(0, parent)
+PluginChainView::PluginChainView(TrackView* parent, PluginChain* chain)
+	: ViewItem(parent, parent)
 	, m_trackView(parent)
 {
-	connect(m_trackView->get_track()->get_plugin_chain(), SIGNAL(pluginAdded(Plugin*)), this, SLOT(add_new_pluginview(Plugin*)));
-	connect(m_trackView->get_track()->get_plugin_chain(), SIGNAL(pluginRemoved(Plugin*)), this, SLOT(remove_pluginview(Plugin*)));
+	PENTERCONS;
+	m_trackView->scene()->addItem(this);
+	m_boundingRectangle = m_trackView->boundingRect();
+	
+	foreach(Plugin* plugin, chain->get_plugin_list()) {
+		add_new_pluginview(plugin);
+	}
+	
+	connect(chain, SIGNAL(pluginAdded(Plugin*)), this, SLOT(add_new_pluginview(Plugin*)));
+	connect(chain, SIGNAL(pluginRemoved(Plugin*)), this, SLOT(remove_pluginview(Plugin*)));
+	
 }
 
 PluginChainView::~PluginChainView( )
@@ -55,6 +66,8 @@ void PluginChainView::add_new_pluginview( Plugin * plugin )
 {
 	PluginView* view = new PluginView(m_trackView, plugin, m_pluginViews.size());
 	m_pluginViews.append(view);
+	scene()->addItem(view);
+	view->setPos(0, m_boundingRectangle.height() - view->boundingRect().height());
 }
 
 void PluginChainView::remove_pluginview( Plugin * plugin )

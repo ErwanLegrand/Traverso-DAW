@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2006 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -17,60 +17,40 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.h,v 1.3 2006/11/28 14:06:12 r_sijrier Exp $
+$Id: CurveNodeView.h,v 1.1 2006/11/28 14:06:12 r_sijrier Exp $
 */
 
-#ifndef TRACK_VIEW_H
-#define TRACK_VIEW_H
+#ifndef CURVE_NODE_VIEW_H
+#define CURVE_NODE_VIEW_H
 
 #include "ViewItem.h"
-#include "Track.h"
 
-class Track;
-class AudioClipView;
-class TrackPanelView;
-class PluginChainView;
+class CurveNode;
 
-class TrackView : public ViewItem
+class CurveNodeView : public ViewItem
 {
 	Q_OBJECT
 
 public:
-	TrackView(SongView* sv, Track* track);
-	~TrackView();
+	CurveNodeView(SongView* sv, ViewItem* parentViewItem, CurveNode* node);
+	~CurveNodeView();
 	
-	enum {Type = UserType + 2};
+	enum {Type = UserType + 9};
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-	
-	Track* get_track() const;
-	
-	int get_clipview_y_offset();
-	int get_clipview_height();
-	void move_to(int x, int y);
-	
-// 	void add_clip_view(AudioClipView* view);
 	int type() const;
 	
 private:
-	Track*			m_track;
-	QList<AudioClipView* >	m_clipViews;
-	TrackPanelView*		m_panel;
-	PluginChainView*	m_pluginChainView;
-	int			m_clipViewYOfsset;
+	CurveNode*	m_node;
 
 public slots:
-	Command* edit_properties();
-	Command* add_new_plugin();	
-
-private slots:
-	void add_new_audioclipview(AudioClip* clip);
-	void remove_audioclipview(AudioClip* clip);
 };
 
 
-inline int TrackView::type() const {return Type;}
+inline int CurveNodeView::type() const {return Type;}
 
 #endif
 
 //eof
+ 
+ 

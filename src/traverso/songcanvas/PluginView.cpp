@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginView.cpp,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
+$Id: PluginView.cpp,v 1.2 2006/11/28 14:06:12 r_sijrier Exp $
 */
 
 #include "PluginView.h"
@@ -41,8 +41,11 @@ PluginView::PluginView(TrackView* parent, Plugin* plugin, int index)
 	,  m_index(index)
 	,  propertiesDialog(0)
 {
+	PENTERCONS;
 	m_track = m_trackView->get_track();
 	m_name = plugin->get_name();
+	m_boundingRectangle = QRectF(0, 0, 100, 25);
+	
 }
 
 PluginView::~PluginView( )
@@ -66,7 +69,7 @@ void PluginView::paint(QPainter* painter, const QStyleOptionGraphicsItem *option
 
 	QBrush brush(color);
 	int xstart = 200 + m_index * 120;
-	QRect rect(xstart, m_track->get_baseY() + m_track->get_height() - 30, 100, 25);
+	QRect rect(0, 0, 100, 25);
 	painter->fillRect(rect, brush);
 	painter->setPen(QColor(Qt::white));
 	painter->drawText(rect, Qt::AlignCenter, m_name);

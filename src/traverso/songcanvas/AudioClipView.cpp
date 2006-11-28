@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.5 2006/11/15 13:15:25 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.6 2006/11/28 14:06:12 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -29,6 +29,7 @@ $Id: AudioClipView.cpp,v 1.5 2006/11/15 13:15:25 r_sijrier Exp $
 #include "SongView.h"
 #include "TrackView.h"
 #include "FadeView.h"
+#include "CurveView.h"
 
 #include "ColorManager.h"
 #include <Config.h>
@@ -73,6 +74,9 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 		add_new_fadeview(curve);
 	}
 	
+	CurveView* curveView = new CurveView(m_sv, this, m_clip->get_gain_envelope());
+	scene()->addItem(curveView);
+	
 	connect(m_clip, SIGNAL(muteChanged()), this, SLOT(repaint()));
 	connect(m_clip, SIGNAL(stateChanged()), this, SLOT(repaint()));
 	connect(m_clip, SIGNAL(gainChanged()), this, SLOT (gain_changed()));
@@ -93,6 +97,12 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 {
 	PENTER2;
 	Q_UNUSED(widget);
+	
+	
+	QPixmap* pix = dynamic_cast<QPixmap*>(painter->paintEngine()->paintDevice());
+	if (pix) {
+		printf("painting on a pixmap\n");
+	}
 	
 	if (m_clip->is_recording()) {
 		// For now, just exit. For later, draw the recording audio :-)
@@ -264,10 +274,10 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		} else {
 			if (mergedView) {
 				scaleFactor = ( ( (float) m_height ) / Peak::MAX_DB_VALUE) * gain;
-				centerY = m_height;
+				centerY = m_height + CLIPINFO_HEIGHT;
 			} else {
 				scaleFactor = ( ( (float) height ) / Peak::MAX_DB_VALUE) * gain;
-				centerY = height*(chan+1);
+				centerY = height*(chan+1) + CLIPINFO_HEIGHT;
 			}
 			p->setPen(cm().get("CLIP_PEAK_MACROVIEW"));
 

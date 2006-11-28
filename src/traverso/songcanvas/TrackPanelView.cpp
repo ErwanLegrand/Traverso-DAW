@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.2 2006/11/14 14:59:07 r_sijrier Exp $
+$Id: TrackPanelView.cpp,v 1.3 2006/11/28 14:06:12 r_sijrier Exp $
 */
 
 #include "TrackPanelView.h"
@@ -221,7 +221,7 @@ void TrackPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem *
 	painter->setFont( QFont( "Bitstream Vera Sans", (int)(GAIN_H*0.9)) );
 	painter->drawText(0, GAIN_H + 1, "GAIN");
 	painter->drawRect(30, 0, sliderWidth, GAIN_H);
-	painter->fillRect(31, 1, sliderdbx, GAIN_H-1, QColor(cr,0,cb));
+	painter->fillRect(30, 0, sliderdbx, GAIN_H, QColor(cr,0,cb));
 	painter->drawText(sliderWidth + 35, GAIN_H, sgain);
 }
 
@@ -263,9 +263,9 @@ void TrackPanelPan::paint( QPainter * painter, const QStyleOptionGraphicsItem * 
 	int z = abs((int)(v*(sliderWidth/2)));
 	int c = abs((int)(255*v));
 	if (v>=0)
-		painter->fillRect(pm+1,1,z,PAN_H-1,  QColor(c,0,0));
+		painter->fillRect(pm, 0, z, PAN_H, QColor(c,0,0));
 	else
-		painter->fillRect(pm-z+1,1,z,PAN_H-1,QColor(c,0,0));
+		painter->fillRect(pm-z, 0, z, PAN_H, QColor(c,0,0));
 	painter->drawText(30 + sliderWidth + 10, PAN_H + 1, s);
 }
 

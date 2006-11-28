@@ -17,11 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.3 2006/11/14 14:59:07 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.4 2006/11/28 14:06:12 r_sijrier Exp $
 */
 
 #include "TrackView.h"
 #include "AudioClipView.h"
+#include "PluginChainView.h"
 #include <ColorManager.h>
 #include <Song.h>
 #include "TrackPanelViewPort.h"
@@ -44,14 +45,15 @@ TrackView::TrackView(SongView* sv, Track * track)
 	m_track = track;
 	m_clipViewYOfsset = 3;
 	setFlags(ItemIsSelectable | ItemIsMovable);
+	m_boundingRectangle = QRectF(0, 0, pow(2, 31), m_track->get_height());
 // 	setAcceptsHoverEvents(true);
 
 	m_panel = new TrackPanelView(m_sv->get_trackpanel_view_port(), this, m_track);
+	m_pluginChainView = new PluginChainView(this, m_track->get_plugin_chain());
 
 	connect(m_track, SIGNAL(audioClipAdded(AudioClip*)), this, SLOT(add_new_audioclipview(AudioClip*)));
 	connect(m_track, SIGNAL(audioClipRemoved(AudioClip*)), this, SLOT(remove_audioclipview(AudioClip*)));
 	
-	m_boundingRectangle = QRectF(0, 0, pow(2, 31), m_track->get_height());
 	
 	foreach(AudioClip* clip, m_track->get_cliplist()) {
 		add_new_audioclipview(clip);
