@@ -15,7 +15,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: sse_functions.s,v 1.1 2006/04/20 14:50:44 r_sijrier Exp $
+    $Id: sse_functions.S,v 1.1 2006/11/28 13:59:34 r_sijrier Exp $
 */
 
 
@@ -524,6 +524,6 @@ x86_sse_compute_peak:
 .size	x86_sse_compute_peak, .-x86_sse_compute_peak
 #; end proc
 
-
-
-
+#ifdef __ELF__
+.section .note.GNU-stack,"",%progbits
+#endif
