@@ -16,8 +16,6 @@ INCLUDEPATH += \
 	../../src/core \
 	../../src/commands \
 	../../src/engine \
-	../../src/plugins/LV2 \
-	../../src/plugins/native \
 	../../src/plugins \
                . 
 QMAKE_LIBDIR = ../../lib 
