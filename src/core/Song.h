@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.h,v 1.23 2006/11/27 20:52:41 r_sijrier Exp $
+$Id: Song.h,v 1.24 2006/11/28 14:00:37 r_sijrier Exp $
 */
 
 #ifndef SONG_H
@@ -67,7 +67,6 @@ public:
 	{
 		return m_hzoom;
 	}
-	int get_clips_count_for_audio(AudioSource* a);
 	int get_rate();
 	int get_bitdepth();
 	int get_numtracks() const
@@ -121,9 +120,6 @@ public:
 		m_id = num;
 	}
 
-	int delete_audio_source(AudioSource* pAudio);
-	int process_go(int step);
-	int remove_all_clips_for_audio(AudioSource* a);
 	int process(nframes_t nframes);
 	int process_export(nframes_t nframes);
 	int prepare_export(ExportSpecification* spec);

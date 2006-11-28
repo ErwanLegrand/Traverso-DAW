@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.42 2006/11/27 20:52:41 r_sijrier Exp $
+$Id: Song.cpp,v 1.43 2006/11/28 14:00:37 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -44,13 +44,10 @@ $Id: Song.cpp,v 1.42 2006/11/27 20:52:41 r_sijrier Exp $
 #include "Tsar.h"
 #include "SnapList.h"
 #include "Config.h"
-#include <CorrelationMeter.h>
 
 #include "ContextItem.h"
 
-#include <PluginManager.h>
 #include <Plugin.h>
-//#include <LV2Plugin.h>
 #include <PluginChain.h>
 
 // Always put me below _all_ includes, this is needed
@@ -296,25 +293,6 @@ bool Song::any_track_armed()
 	return false;
 }
 
-int Song::get_clips_count_for_audio(AudioSource* )
-{
-	int count=0;
-
-	return count;
-}
-
-int Song::process_go(int )
-{
-	return 1;
-}
-
-int Song::remove_all_clips_for_audio(AudioSource* )
-{
-	PENTER;
-	int counter=0;
-
-	return counter;
-}
 
 int Song::prepare_export(ExportSpecification* spec)
 {
