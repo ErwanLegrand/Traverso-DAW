@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.25 2006/11/08 14:49:37 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.26 2006/12/01 00:35:11 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
@@ -362,6 +362,7 @@ void DiskIO::register_write_source( WriteSource * source )
 	PENTER2;
 	
 	source->set_diskio(this);
+	source->prepare_buffer();
 	
 	QMutexLocker locker(&mutex);
 
@@ -473,7 +474,7 @@ void DiskIO::start_io( )
 void DiskIO::stop_io( )
 {
 	Q_ASSERT_X(m_song->threadId != QThread::currentThreadId (), "DiskIO::stop_io", "Error, running in gui thread!!!!!");
-	m_workTimer.stop();
+// 	m_workTimer.stop();
 }
 
 //eof

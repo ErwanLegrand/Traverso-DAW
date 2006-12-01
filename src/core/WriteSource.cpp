@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.cpp,v 1.11 2006/10/02 19:04:38 r_sijrier Exp $
+$Id: WriteSource.cpp,v 1.12 2006/12/01 00:35:11 r_sijrier Exp $
 */
 
 #include "WriteSource.h"
@@ -36,8 +36,8 @@ $Id: WriteSource.cpp,v 1.11 2006/10/02 19:04:38 r_sijrier Exp $
 
 
 WriteSource::WriteSource( ExportSpecification * specification )
-		: AudioSource(specification->exportdir, specification->name),
-		spec(specification)
+	: AudioSource(specification->exportdir, specification->name)
+	, spec(specification)
 {
 	prepare_export(spec);
 }
@@ -191,8 +191,9 @@ int WriteSource::process (nframes_t nframes)
 			break;
 
 		default:
-			if (processPeaks)
+			if (processPeaks) {
 				m_peak->process( float_buffer, to_write );
+			}
 
 			for (x = 0; x < to_write * channels; ++x) {
 				if (float_buffer[x] > 1.0f) {
@@ -347,13 +348,9 @@ int WriteSource::prepare_export (ExportSpecification* spec)
 		output_data = (void*) malloc (sample_bytes * out_samples_max);
 	}
 
-	
-	m_peak = new Peak(this, m_channelNumber);
-	
-	m_buffer = new RingBufferNPT<audio_sample_t>(diskio->get_buffer_size());
-	
 	return 0;
 }
+
 
 int WriteSource::finish_export( )
 {
@@ -411,6 +408,12 @@ int WriteSource::rb_write(audio_sample_t* src, nframes_t cnt )
 void WriteSource::set_process_peaks( bool process )
 {
 	processPeaks = process;
+	if (!processPeaks) {
+		return;
+	}
+	
+	m_peak = new Peak(this, m_channelNumber);
+	
 	if (m_peak->prepare_processing() < 0) {
 		PERROR("Cannot process peaks realtime");
 		delete m_peak;
@@ -430,7 +433,7 @@ int WriteSource::rb_file_write( nframes_t cnt )
 	return read;
 }
 
-void WriteSource::set_recording( bool rec )
+void WriteSource::set_recording( int rec )
 {
 	m_isRecording = rec;
 }
@@ -445,22 +448,21 @@ void WriteSource::process_ringbuffer( audio_sample_t* framebuffer)
 		rb_file_write(readSpace);
 		PWARN("WriteSource :: calling source->finish_export()");
 		finish_export();
-		diskio->unregister_write_source(this);
 		return;
 	}
 
 	// calculate the 'chunk' size 
-	int chunkSize = diskio->get_buffer_size() / 4;
+	int chunkSize = diskio->get_chunk_size();
 	
 	
 	// The amount of samples to write
-	int chunkCount = (int)(readSpace / diskio->get_chunk_size());
+	int chunkCount = (int)(readSpace / chunkSize);
 	
 	if (chunkCount == 0) {
 		return;
 	}
 	
-	int toWrite = chunkCount * diskio->get_chunk_size();
+	int toWrite = chunkCount * chunkSize;
 	
 	// Only write to hard disk if there is at least chunkSize of data
 	// to write. This makes writing much more efficient
@@ -469,6 +471,11 @@ void WriteSource::process_ringbuffer( audio_sample_t* framebuffer)
 	}
 	
 	rb_file_write(toWrite);
+}
+
+void WriteSource::prepare_buffer( )
+{
+	m_buffer = new RingBufferNPT<audio_sample_t>(diskio->get_buffer_size());
 }
 
 //eof

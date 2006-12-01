@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.h,v 1.7 2006/10/02 19:04:38 r_sijrier Exp $
+$Id: WriteSource.h,v 1.8 2006/12/01 00:35:11 r_sijrier Exp $
 */
 
 #ifndef WRITESOURCE_H
@@ -58,16 +58,16 @@ public :
 	int finish_export();
 
 	void set_process_peaks(bool process);
-	void set_recording(bool rec);
+	void set_recording(int rec);
+	void prepare_buffer();
 
-	bool is_recording() const;
+	size_t is_recording() const;
 
 	ExportSpecification*		spec;
 
 private:
 	RingBufferNPT<audio_sample_t>*	m_buffer;
 	Peak* 		m_peak;
-	DiskIO*		diskio;
 	SNDFILE*	sf;
 	SF_INFO 	sfinfo;
 	
@@ -86,7 +86,7 @@ private:
 	float*		dataF2;
 	void*           output_data;
 	bool		processPeaks;
-	bool		m_isRecording;
+	size_t		m_isRecording;
 	int		m_channelNumber;
 
 signals:
@@ -99,7 +99,7 @@ inline int WriteSource::get_processable_buffer_space( ) const
 	return m_buffer->read_space();
 }
 
-inline bool WriteSource::is_recording( ) const
+inline size_t WriteSource::is_recording( ) const
 {
 	return m_isRecording;
 }
