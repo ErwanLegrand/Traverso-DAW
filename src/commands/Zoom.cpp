@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Zoom.cpp,v 1.5 2006/11/08 14:52:11 r_sijrier Exp $
+    $Id: Zoom.cpp,v 1.6 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -49,8 +49,7 @@ int Zoom::prepare_actions()
 
 int Zoom::begin_hold(int useX, int useY)
 {
-        jogZoomTotalX = m_sv->get_clips_viewport()->viewport()->width();
-        jogZoomTotalY = m_sv->get_clips_viewport()->viewport()->height();
+        jogZoomTotalX = cpointer().get_viewport()->viewport()->width();
         verticalJogZoomLastY = cpointer().y();
         baseJogZoomXFactor = m_sv->get_song()->get_hzoom() - ((int) ( (float) (jogZoomTotalX - cpointer().x()) / jogZoomTotalX * 50 ) + 1 );
 	

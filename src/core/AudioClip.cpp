@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.52 2006/11/28 14:07:29 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.53 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -28,7 +28,6 @@ $Id: AudioClip.cpp,v 1.52 2006/11/28 14:07:29 r_sijrier Exp $
 #include "AudioSource.h"
 #include "ReadSource.h"
 #include "WriteSource.h"
-#include "ColorManager.h"
 #include "Song.h"
 #include "SnapList.h"
 #include "Track.h"
@@ -142,6 +141,11 @@ int AudioClip::set_state(const QDomNode& node)
 			fadeOut->set_state( fadeOutNode );
 			private_add_fade(fadeOut);
 		}
+		
+		QDomElement gainEnvelopeNode = curvesNode.firstChildElement("Curve");
+		if (!gainEnvelopeNode.isNull()) {
+			gainEnvelope->set_state( gainEnvelopeNode );
+		}
 	}
 
 	return 1;
@@ -167,10 +171,13 @@ QDomNode AudioClip::get_state( QDomDocument doc )
 
 	QDomNode curves = doc.createElement("Curves");
 
-	if (fadeIn)
+	if (fadeIn) {
 		curves.appendChild(fadeIn->get_state(doc));
-	if (fadeOut)
+	}
+	if (fadeOut) {
 		curves.appendChild(fadeOut->get_state(doc));
+	}
+	curves.appendChild(gainEnvelope->get_state(doc));
 
 	node.appendChild(curves);
 
@@ -428,6 +435,14 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 	for (int i=0; i<m_fades.size(); ++i) {
 		m_fades.at(i)->process(mixdown, read_frames);
 	}
+	
+	nframes_t gainEnvelopeMixPos = m_song->get_transport_frame() - trackStartFrame;
+	gainEnvelope->get_vector(gainEnvelopeMixPos, gainEnvelopeMixPos + read_frames, m_song->gainbuffer, read_frames);
+	
+	for (nframes_t n = 0; n < read_frames; ++n) {
+		mixdown[n] *= m_song->gainbuffer[n];
+	}
+
 
 	return 1;
 }
@@ -695,6 +710,8 @@ void AudioClip::set_song( Song * song )
 		m_song->get_diskio()->register_read_source( m_readSource );
 	}
 	set_history_stack(m_song->get_history_stack());
+	gainEnvelope->set_history_stack(get_history_stack());
+
 	
 	if (isSelected) {
 		m_song->get_audioclip_manager()->add_to_selection( this );
@@ -776,25 +793,6 @@ nframes_t AudioClip::get_source_length( ) const
 nframes_t AudioClip::get_length() const
 {
 	return m_length;
-}
-
-int AudioClip::get_baseY() const
-{
-	Q_ASSERT(m_track);
-	return m_track->real_baseY() + 3;
-}
-
-int AudioClip::get_width() const
-{
-	nframes_t nframes = sourceEndFrame - sourceStartFrame;
-	int xwidth = (int) ( nframes / Peak::zoomStep[m_song->get_hzoom()] );
-	return xwidth;
-}
-
-int AudioClip::get_height() const
-{
-	Q_ASSERT(m_track);
-	return m_track->get_height() - 8;
 }
 
 bool AudioClip::is_recording( ) const

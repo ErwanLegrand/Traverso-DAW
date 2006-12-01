@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.cpp,v 1.21 2006/10/17 00:07:01 r_sijrier Exp $
+$Id: Curve.cpp,v 1.22 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -27,8 +27,10 @@ $Id: Curve.cpp,v 1.21 2006/10/17 00:07:01 r_sijrier Exp $
 #include "Song.h"
 #include "Track.h"
 #include "CurveNode.h"
-#include "Tsar.h"
+#include "InputEngine.h"
 #include <QStringList>
+#include <AddRemoveItemCommand.h>
+
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -41,7 +43,6 @@ Curve::Curve(ContextItem* parent)
 	: ContextItem(parent)
 {
 	PENTERCONS;
-	
 	init();
 }
 
@@ -70,6 +71,7 @@ void Curve::init( )
 
 QDomNode Curve::get_state( QDomDocument doc )
 {
+	PENTER;
 	QDomElement node = doc.createElement("Curve");
 	
 	QStringList nodesList;
@@ -77,7 +79,11 @@ QDomNode Curve::get_state( QDomDocument doc )
 	for (int i=0; i< nodes.size(); ++i) {
 		CurveNode* cn = nodes.at(i);
 		
-		nodesList << QString::number(cn->get_when()).append(",").append(QString::number(cn->get_value()));
+		nodesList << QString::number(cn->get_when(), 'g', 24).append(",").append(QString::number(cn->get_value()));
+	}
+	
+	if (nodes.size() == 0) {
+		nodesList << "1,0";
 	}
 	
 	node.setAttribute("nodes",  nodesList.join(";"));
@@ -88,6 +94,7 @@ QDomNode Curve::get_state( QDomDocument doc )
 
 int Curve::set_state( const QDomNode & node )
 {
+	PENTER;
 	QDomElement e = node.toElement();
 	
 	QStringList nodesList = e.attribute( "nodes", "" ).split(";");
@@ -96,7 +103,7 @@ int Curve::set_state( const QDomNode & node )
 		QStringList whenValueList = nodesList.at(i).split(",");
 		double when = whenValueList.at(0).toDouble();
 		double value = whenValueList.at(1).toDouble();
-		add_node(when, value);
+		ie().process_command( add_node(when, value, false) );
 	}
 	
 	double range = e.attribute("range", "1").toDouble();
@@ -104,17 +111,6 @@ int Curve::set_state( const QDomNode & node )
 	set_range(range);
 	
 	return 1;
-}
-
-void Curve::add_node(double pos, double value)
-{
-	PENTER2;
-	
-	CurveNode* node = new CurveNode(this, pos, value); 
-	
-	connect(node, SIGNAL(positionChanged()), this, SLOT(set_changed()));
-	
-	THREAD_SAVE_CALL_EMIT_SIGNAL(this, node, private_add_node(CurveNode*), stateChanged());
 }
 
 void Curve::solve ()
@@ -484,18 +480,48 @@ void Curve::clear( )
 	set_changed();
 }
 
-void Curve::private_add_node( CurveNode* node )
+static bool smallerNode(const CurveNode* left, const CurveNode* right )
+{
+        return left->get_when() < right->get_when();
+}
+
+
+Command* Curve::add_node(double pos, double value, bool historable)
+{
+	PENTER2;
+	
+	CurveNode* node = new CurveNode(this, pos, value); 
+	
+	connect(node, SIGNAL(positionChanged()), this, SLOT(set_changed()));
+	
+	return new AddRemoveItemCommand(this, node, historable, 0,
+			"private_add_node(CurveNode*)", "nodeAdded(CurveNode*)",
+			"private_remove_node(CurveNode*)", "nodeRemoved(CurveNode*)", tr("Add CurveNode"));
+}
+
+
+Command* Curve::remove_node(CurveNode* node, bool historable)
+{
+	return new AddRemoveItemCommand(this, node, historable, 0,
+			"private_remove_node(CurveNode*)", "nodeRemoved(CurveNode*)", 
+			"private_add_node(CurveNode*)", "nodeAdded(CurveNode*)", tr("Remove CurveNode"));
+}
+
+void Curve::private_add_node(CurveNode* node )
 {
 // 	printf("private_add_node:: Adding node\n");
 	
 	nodes.append(node);
+	qSort(nodes.begin(), nodes.end(), smallerNode);
+	set_changed();
 }
 
-void Curve::private_clear()
+void Curve::private_remove_node(CurveNode* node )
 {
-// 	printf("private_clear:: Clearing Curve\n");
-	clear();
+	nodes.removeAll(node);
+	set_changed();
 }
+
 
 
 //eof

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SplitClip.cpp,v 1.11 2006/11/14 14:52:40 r_sijrier Exp $
+$Id: SplitClip.cpp,v 1.12 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 #include "SplitClip.h"
@@ -44,7 +44,7 @@ SplitClip::~SplitClip()
 
 int SplitClip::prepare_actions()
 {
-	splitPoint = cpointer().sceneX() * m_sv->scalefactor;
+	splitPoint = cpointer().scene_x() * m_sv->scalefactor;
 
 	AudioSourceManager* manager = pm().get_project()->get_audiosource_manager();
 	

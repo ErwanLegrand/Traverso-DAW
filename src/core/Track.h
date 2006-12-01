@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.h,v 1.18 2006/11/12 20:26:21 r_sijrier Exp $
+$Id: Track.h,v 1.19 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 
@@ -55,7 +55,6 @@ public :
 	void activate();
 	void deactivate();
 	bool is_pointed(int y);
-	void set_blur(bool stat);
 
 	Command* add_clip(AudioClip* clip, bool historable=true);
 	Command* add_plugin(Plugin* plugin);

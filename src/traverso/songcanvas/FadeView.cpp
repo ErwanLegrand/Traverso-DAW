@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeView.cpp,v 1.2 2006/11/16 12:23:14 r_sijrier Exp $
+$Id: FadeView.cpp,v 1.3 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 #include "FadeView.h"
@@ -41,6 +41,7 @@ FadeView::FadeView(SongView* sv, AudioClipView* parent, FadeCurve * fadeCurve )
 	, m_clipView(parent)
 	, m_fadeCurve(fadeCurve)
 {
+	PENTERCONS;
 	m_dialog = 0;
 	m_sv = sv;
 	
@@ -53,6 +54,7 @@ FadeView::FadeView(SongView* sv, AudioClipView* parent, FadeCurve * fadeCurve )
 
 FadeView::~ FadeView( )
 {
+	PENTERDES;
 }
 
 

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Zoom.h,v 1.3 2006/10/18 12:01:17 r_sijrier Exp $
+    $Id: Zoom.h,v 1.4 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 #ifndef ZOOM_H
@@ -47,7 +47,6 @@ public :
 private :
         int origZoomLevel;
         int jogZoomTotalX;
-        int jogZoomTotalY;
         int lastJogZoomXFactor;
         int baseJogZoomXFactor;
         int verticalJogZoomLastY;

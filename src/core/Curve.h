@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.h,v 1.12 2006/10/17 00:07:01 r_sijrier Exp $
+$Id: Curve.h,v 1.13 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 #ifndef CURVE_H
@@ -43,7 +43,8 @@ public:
 	virtual QDomNode get_state(QDomDocument doc);
 	virtual int set_state( const QDomNode& node );
 	
-	void add_node(double pos, double value);
+	Command* add_node(double pos, double value, bool historable=true);
+	Command* remove_node(CurveNode* node, bool historable=true);
 	void clear();
 	
 	// Get functions
@@ -51,7 +52,7 @@ public:
 	
 	void get_vector (double x0, double x1, float *arg, int32_t veclen);
 	
-	QList<CurveNode* >* get_nodes() {return &nodes;}
+	QList<CurveNode* > get_nodes() {return nodes;}
 	
 	// Set functions
 	void set_range(double pos);
@@ -87,17 +88,16 @@ private :
 	
 	friend class CurveNode;
 
-public slots:
-	void private_add_node(CurveNode* node);
-	void private_clear();
-
 private slots:
+	void private_add_node(CurveNode* node);
+	void private_remove_node(CurveNode* node);
 	void set_changed();
 
 
 signals :
 	void stateChanged();
-	void clear_Signal();
+	void nodeAdded(CurveNode*);
+	void nodeRemoved(CurveNode*);
 };
 
 

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.25 2006/11/14 14:50:21 r_sijrier Exp $
+$Id: AudioClip.h,v 1.26 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -90,9 +90,6 @@ public:
 	nframes_t get_source_end_frame() const;
 	nframes_t get_source_length() const;
 	
-	int get_baseY() const;
-	int get_width() const;
-	int get_height() const;
 	int get_channels() const;
 	int get_rate() const;
 	int get_bitdepth() const;

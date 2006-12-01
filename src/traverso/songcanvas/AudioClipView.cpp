@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.6 2006/11/28 14:06:12 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.7 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -52,7 +52,7 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	PENTERCONS;
 	
 	m_sv = sv;
-	m_sv->scene()->addItem(this);
+	m_tv->scene()->addItem(this);
 	
 	clipNamePixmapActive = QPixmap();
 	clipNamePixmapInActive = QPixmap();
@@ -75,7 +75,6 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	}
 	
 	CurveView* curveView = new CurveView(m_sv, this, m_clip->get_gain_envelope());
-	scene()->addItem(curveView);
 	
 	connect(m_clip, SIGNAL(muteChanged()), this, SLOT(repaint()));
 	connect(m_clip, SIGNAL(stateChanged()), this, SLOT(repaint()));
@@ -83,6 +82,8 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	connect(m_clip, SIGNAL(fadeAdded(FadeCurve*)), this, SLOT(add_new_fadeview( FadeCurve*)));
 	connect(m_clip, SIGNAL(fadeRemoved(FadeCurve*)), this, SLOT(remove_fadeview( FadeCurve*)));
 	connect(m_clip, SIGNAL(positionChanged()), this, SLOT(update_start_pos()));
+	
+	connect(m_sv, SIGNAL(viewModeChanged()), this, SLOT(repaint()));
 	
 	setFlags(ItemIsSelectable | ItemIsMovable);
 	setAcceptsHoverEvents(true);
@@ -101,7 +102,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	
 	QPixmap* pix = dynamic_cast<QPixmap*>(painter->paintEngine()->paintDevice());
 	if (pix) {
-		printf("painting on a pixmap\n");
+// 		printf("painting on a pixmap\n");
 	}
 	
 	if (m_clip->is_recording()) {
@@ -198,13 +199,13 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 		painter->drawLine(2, CLIPINFO_HEIGHT, 2, m_height + CLIPINFO_HEIGHT);
 	}
 
-	PMESG("drawing clip");
+	PMESG2("drawing clip");
 }
 
 
 void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 {
-	PENTER;
+	PENTER2;
 
 	int channels = m_clip->get_channels();
 	const int height = m_height / channels;
@@ -250,7 +251,11 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			short* mbuffer = (short*) peakBuffer;
 			 
 			int prev =  (int) (centerY + (scaleFactor * mbuffer[0]));
-			p->setPen(cm().get("CLIP_PEAK_MICROVIEW"));
+			if (m_sv->viewmode == EditMode) {
+				p->setPen(cm().get("CLIP_PEAK_MICROVIEW"));
+			} else  {
+				p->setPen(cm().get("CLIP_PEAK_MICROVIEW").light(230));
+			}
 			int bufferPos = 0;
 			for (int x = xstart; x < (pixelcount+xstart); x++) {
 				posY = (int) (centerY + (scaleFactor * mbuffer[bufferPos++]));
@@ -263,7 +268,11 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				scaleFactor = ( ( (float) m_height ) / Peak::MAX_DB_VALUE) * gain / 2.0;
 				centerY = m_height/2;
 			}
-			p->setPen(cm().get("CLIP_PEAK_MACROVIEW"));
+			if (m_sv->viewmode == EditMode) {
+				p->setPen(cm().get("CLIP_PEAK_MACROVIEW"));
+			} else  {
+				p->setPen(cm().get("CLIP_PEAK_MACROVIEW").light(230));
+			}
 
 			for (int x = xstart; x < (pixelcount+xstart); x++) {
                                 posY = (int) (centerY + (scaleFactor * peakBuffer[bufferPos]));
@@ -279,7 +288,11 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				scaleFactor = ( ( (float) height ) / Peak::MAX_DB_VALUE) * gain;
 				centerY = height*(chan+1) + CLIPINFO_HEIGHT;
 			}
-			p->setPen(cm().get("CLIP_PEAK_MACROVIEW"));
+			if (m_sv->viewmode == EditMode) {
+				p->setPen(cm().get("CLIP_PEAK_MACROVIEW"));
+			} else  {
+				p->setPen(cm().get("CLIP_PEAK_MACROVIEW").light(230));
+			}
 
 			int bufferPos = 0;
 			for (int x = xstart; x < (pixelcount+xstart); x++) {

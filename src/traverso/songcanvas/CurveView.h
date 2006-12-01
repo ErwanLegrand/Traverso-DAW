@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.h,v 1.1 2006/11/28 14:06:12 r_sijrier Exp $
+$Id: CurveView.h,v 1.2 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 #ifndef CURVE_VIEW_H
@@ -26,6 +26,8 @@ $Id: CurveView.h,v 1.1 2006/11/28 14:06:12 r_sijrier Exp $
 #include "ViewItem.h"
 
 class Curve;
+class CurveNode;
+class CurveNodeView;
 
 class CurveView : public ViewItem
 {
@@ -39,11 +41,34 @@ public:
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	int type() const;
+	void calculate_bounding_rect();
 	
+protected:
+	void hoverEnterEvent ( QGraphicsSceneHoverEvent * event );
+	void hoverLeaveEvent ( QGraphicsSceneHoverEvent * event );
+	void hoverMoveEvent ( QGraphicsSceneHoverEvent * event );
+
 private:
-	Curve*	m_curve;
+	Curve*		m_curve;
+	QTimer		m_blinkTimer;
+	CurveNodeView*	m_blinkingNode;
+	QColor		m_blinkColor;
+	int		m_blinkColorDirection;
+	QList<CurveNodeView*>	m_nodeViews;
 
 public slots:
+	
+	Command* add_node();
+	Command* remove_item();
+	Command* drag();
+	
+private slots:
+	void add_curvenode_view(CurveNode* node);
+	void remove_curvenode_view(CurveNode* node);
+	void curve_changed();
+	void set_view_mode();
+	
+	void update_blink_color();
 };
 
 

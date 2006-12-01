@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.10 2006/11/09 15:45:42 r_sijrier Exp $
+$Id: InputEngine.cpp,v 1.11 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -183,7 +183,13 @@ int InputEngine::broadcast_action(IEAction* action)
 	if (k && (!isHolding)) {
 		if (k->prepare_actions()) {
 			k->set_valid(true);
-			k->push_to_history_stack();
+			if (k->push_to_history_stack() < 0) {
+				// The command doesn't have a history stack, or wasn't
+				// historable for some reason.... At least call do_action
+				// since that still isn't done (should be done by QUndoStack...)
+				k->do_action();
+				delete k;
+			}
 		}
 	}
 	if (k && isHolding) {
@@ -766,7 +772,6 @@ void InputEngine::finish_hold()
 	PMESG("Finishing hold action %d",wholeMapIndex);
 
 	isHolding = false;
-	set_jogging(false);
 
 	if (holdingCommand) {
 
@@ -779,12 +784,14 @@ void InputEngine::finish_hold()
 		}
 
 		if (holdingCommand->push_to_history_stack() < 0) {
+			holdingCommand->do_action();
 			delete holdingCommand;
 		}
 
 		holdingCommand = (Command*) 0;
 	}
 	
+	set_jogging(false);
 	conclusion();
 }
 

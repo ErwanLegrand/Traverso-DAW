@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AddRemoveItemCommand.cpp,v 1.3 2006/11/08 14:52:11 r_sijrier Exp $
+$Id: AddRemoveItemCommand.cpp,v 1.4 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 #include "AddRemoveItemCommand.h"
@@ -30,7 +30,7 @@ $Id: AddRemoveItemCommand.cpp,v 1.3 2006/11/08 14:52:11 r_sijrier Exp $
 
 
 AddRemoveItemCommand::AddRemoveItemCommand(ContextItem* parent, ContextItem* child, const QString& des)
-	: Command(child, des),
+	: Command(parent, des),
 	m_parentItem(parent),
 	m_childItem(child),
 	m_song(0),
@@ -56,7 +56,7 @@ AddRemoveItemCommand::AddRemoveItemCommand(
 	char * undoActionSlot,
 	char * undoSignal,
 	const QString& des)
-  	: Command(child, des),
+  	: Command(parent, des),
 	  m_parentItem(parent),
 	  m_childItem(child),
 	  m_song(song),

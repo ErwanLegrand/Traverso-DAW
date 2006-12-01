@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.3 2006/11/14 14:59:07 r_sijrier Exp $
+$Id: SongView.cpp,v 1.4 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 
@@ -64,8 +64,7 @@ PlayCursorMove::PlayCursorMove(PlayCursor* cursor, Song* song, SongView* sv)
 int PlayCursorMove::finish_hold()
 {
 	m_cursor->set_active(wasActive);
-	QPointF point = m_sv->get_clips_viewport()->mapToScene(cpointer().x(), cpointer().y());
-	m_song->set_transport_pos( (nframes_t) (point.x() * m_sv->scalefactor));
+	m_song->set_transport_pos( (nframes_t) (cpointer().scene_x() * m_sv->scalefactor));
 	return -1;
 }
 
@@ -78,11 +77,11 @@ int PlayCursorMove::begin_hold(int useX, int useY)
 
 int PlayCursorMove::jog()
 {
-	int x = cpointer().x();
-	if (x < 0)
+	int x = cpointer().scene_x();
+	if (x < 0) {
 		x = 0;
-	QPointF point = m_sv->get_clips_viewport()->mapToScene(x, cpointer().y());
-	m_cursor->setPos(point.x(), 0);
+	}
+	m_cursor->setPos(x, 0);
 	return 1;
 }
 
@@ -95,6 +94,8 @@ SongView::SongView(ClipsViewPort* viewPort, TrackPanelViewPort* tpvp, TimeLineVi
 	m_clipsViewPort = viewPort;
 	m_tpvp = tpvp;
 	m_tlvp = tlvp;
+	
+	set_editing_mode();
 	
 	m_clipsViewPort->scene()->addItem(this);
 	
@@ -320,6 +321,20 @@ void SongView::set_snap_range(int start)
 	m_song->get_snap_list()->set_range(start * scalefactor, 
 					(start + m_clipsViewPort->viewport()->width()) * scalefactor,
 					scalefactor);
+}
+
+Command * SongView::set_editing_mode( )
+{
+	viewmode = EditMode;
+	emit viewModeChanged();
+	return 0;
+}
+
+Command * SongView::set_curve_mode( )
+{
+	viewmode = CurveMode;
+	emit viewModeChanged();
+	return 0;
 }
 
 

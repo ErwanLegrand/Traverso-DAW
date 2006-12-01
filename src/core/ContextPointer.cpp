@@ -17,13 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ContextPointer.cpp,v 1.6 2006/11/14 14:50:31 r_sijrier Exp $
+$Id: ContextPointer.cpp,v 1.7 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 #include "ContextPointer.h"
-
-#include "ViewItem.h"
-#include "ViewPort.h"
+#include "ContextItem.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -45,10 +43,10 @@ ContextPointer::ContextPointer()
 QList< QObject * > ContextPointer::get_context_items( )
 {
 	PENTER;
-	QList<ViewItem* > pointedViewItems;
+	QList<ContextItem* > pointedViewItems;
 	
 	if (currentViewPort) {
-		currentViewPort->get_pointed_view_items(pointedViewItems);
+		currentViewPort->get_pointed_context_items(pointedViewItems);
 	}
 
 	QList<QObject* > contextItems;
@@ -56,7 +54,7 @@ QList< QObject * > ContextPointer::get_context_items( )
 	ContextItem*  nextItem;
 	
 	for (int i=0; i < pointedViewItems.size(); ++i) {
-		item = (ContextItem*)pointedViewItems.at(i);
+		item = pointedViewItems.at(i);
 		contextItems.append(item);
 		while ((nextItem = item->get_context())) {
 			contextItems.append(nextItem);

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveNode.h,v 1.4 2006/10/17 00:07:43 r_sijrier Exp $
+$Id: CurveNode.h,v 1.5 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 #ifndef CURVENODE_H
@@ -25,11 +25,11 @@ $Id: CurveNode.h,v 1.4 2006/10/17 00:07:43 r_sijrier Exp $
 
 #include "defines.h"
 
-#include <QObject>
+#include "ContextItem.h"
 
 class Curve;
 
-class CurveNode : public QObject
+class CurveNode : public ContextItem
 {
 
 	Q_OBJECT

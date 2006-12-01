@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.h,v 1.24 2006/11/28 14:00:37 r_sijrier Exp $
+$Id: Song.h,v 1.25 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 #ifndef SONG_H
@@ -222,8 +222,6 @@ public slots :
 	Command* go();
 	Command* add_new_track();
 
-	Command* set_editing_mode();
-	Command* set_curve_mode();
 	Command* work_next_edge();
 	Command* work_previous_edge();
 	Command* undo();

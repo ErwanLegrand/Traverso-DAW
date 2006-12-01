@@ -17,10 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveNodeView.cpp,v 1.1 2006/11/28 14:06:12 r_sijrier Exp $
+$Id: CurveNodeView.cpp,v 1.2 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 #include "CurveNodeView.h"
+#include "SongView.h"
 
 #include <CurveNode.h>
 
@@ -30,16 +31,50 @@ CurveNodeView::CurveNodeView( SongView * sv, ViewItem * parentViewItem, CurveNod
 	: ViewItem(parentViewItem, 0)
 	, m_node(node)
 {
+	PENTERCONS;
 	m_sv = sv;
-	m_boundingRectangle = parentViewItem->boundingRect();
+	m_boundingRectangle = QRectF(0, 0, 6, 6);
+	m_color = QColor(255, 0, 255, 140);
+	// This actually calculates the position..
+	calculate_bounding_rect();
+	
+	connect(m_node, SIGNAL(positionChanged()), this, SLOT(update_pos()));
 }
 
 CurveNodeView::~ CurveNodeView( )
 {
+	PENTERDES;
 }
 
 void CurveNodeView::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
 {
+	QPen pen;
+	pen.setColor(m_color);
+	pen.setWidth(1);
+	
+	painter->setRenderHint(QPainter::Antialiasing);
+	painter->setPen(pen);
+	QPainterPath path;
+	path.addEllipse(m_boundingRectangle);
+	painter->fillPath(path, QBrush(m_color));
 } 
+
+
+void CurveNodeView::calculate_bounding_rect()
+{
+	update_pos();
+}
+
+
+void CurveNodeView::set_color(QColor color)
+{
+	m_color = color;
+}
+
+void CurveNodeView::update_pos( )
+{
+	setPos( (m_node->get_when() / m_sv->scalefactor) - (m_boundingRectangle.width() / 2),
+	 	parentItem()->boundingRect().height() - (m_node->get_value() * parentItem()->boundingRect().height() + m_boundingRectangle.height() / 2 ));
+}
 
 //eof

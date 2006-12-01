@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewItem.h,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
+$Id: ViewItem.h,v 1.2 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 #ifndef VIEW_ITEM_H
@@ -42,11 +42,16 @@ public:
 	~ViewItem() {};
 	
 	enum {Type = UserType + 1};
+	enum ViewMode {
+		EditMode,
+		CurveMode,
+		PluginMode
+	};
 	
 	QRectF boundingRect() const;
 	virtual void calculate_bounding_rect() {};
 	void prepare_geometry_change() {prepareGeometryChange();}
-	int type() const;
+	virtual int type() const;
 
 protected:
 

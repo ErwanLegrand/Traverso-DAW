@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: MoveClip.cpp,v 1.15 2006/11/16 12:25:12 r_sijrier Exp $
+$Id: MoveClip.cpp,v 1.16 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -116,7 +116,7 @@ int MoveClip::jog()
 	
 // 	printf("newPos x, y is %f, %f\n", newPos.x(), newPos.y());
 	
-	TrackView* trackView = m_sv->get_trackview_under(m_sv->get_clips_viewport()->mapToScene(cpointer().x(), cpointer().y()));
+	TrackView* trackView = m_sv->get_trackview_under(cpointer().scene_pos());
 	if (!trackView) {
 // 		printf("no trackview returned\n");
 	} else if (trackView != m_cv->get_trackview()) {

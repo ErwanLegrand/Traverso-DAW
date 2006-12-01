@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ContextPointer.h,v 1.6 2006/11/14 14:50:31 r_sijrier Exp $
+    $Id: ContextPointer.h,v 1.7 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 #ifndef CONTEXTPOINTER_H
@@ -26,7 +26,7 @@
 #include <QObject>
 
 #include "InputEngine.h"
-#include <ViewPort.h>
+#include "ViewPort.h"
 
 class ContextItem;
 
@@ -36,11 +36,23 @@ public:
         inline int x() const {return m_x;}
         inline int y() const {return m_y;}
 	inline QPoint pos() {return QPoint(m_x, m_y);}
-	inline int sceneX() const {
+	
+	inline int scene_x() const {
 		Q_ASSERT(currentViewPort);
-		return (int) currentViewPort->mapToScene(QPoint(m_x, m_y)).x();
+		return (int) currentViewPort->mapToScene(m_x, m_y).x();
 	}
-        inline void set_point(int x, int y)
+
+	inline int scene_y() const {
+		Q_ASSERT(currentViewPort);
+		return (int) currentViewPort->mapToScene(m_x, m_y).y();
+	}
+	
+	inline QPointF scene_pos() const {
+		Q_ASSERT(currentViewPort);
+		return currentViewPort->mapToScene(m_x, m_y);
+	}
+	
+	inline void set_point(int x, int y)
         {
                 m_x = x;
                 m_y = y;

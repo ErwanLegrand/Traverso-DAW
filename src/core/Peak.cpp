@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Peak.cpp,v 1.10 2006/09/14 10:49:39 r_sijrier Exp $
+$Id: Peak.cpp,v 1.11 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 #include "libtraversocore.h"
@@ -178,7 +178,7 @@ int Peak::write_header()
 
 int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int pixelcount )
 {
-	PENTER;
+	PENTER3;
 	if (permanentFailure) {
 		return -1;
 	}

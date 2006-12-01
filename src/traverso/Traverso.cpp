@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Traverso.cpp,v 1.17 2006/11/16 15:03:25 r_sijrier Exp $
+$Id: Traverso.cpp,v 1.18 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 #include <signal.h>
@@ -28,6 +28,7 @@ $Id: Traverso.cpp,v 1.17 2006/11/16 15:03:25 r_sijrier Exp $
 #include "Traverso.h"
 #include "Mixer.h"
 #include "ProjectManager.h"
+#include <Project.h>
 #include "Interface.h"
 #include <Config.h>
 #include <AudioDevice.h>
@@ -53,12 +54,8 @@ Traverso::Traverso(int &argc, char **argv )
 	
 	prepare_audio_device();
 	
-	
-	iface = new Interface();
-	iface->show();
-	
+	QMetaObject::invokeMethod(this, "create_interface", Qt::QueuedConnection);
 // 	pm().start();
-	QMetaObject::invokeMethod(&pm(), "start", Qt::QueuedConnection);
 
 	setQuitOnLastWindowClosed(false);
 	connect(this, SIGNAL(lastWindowClosed()), &pm(), SLOT(exit()));
@@ -71,13 +68,16 @@ Traverso::~Traverso()
 }
 
 
+void Traverso::create_interface( )
+{
+	iface = new Interface();
+	iface->show();
+	QMetaObject::invokeMethod(&pm(), "start", Qt::QueuedConnection);
+}
+
 void Traverso::shutdown( int signal )
 {
 	PENTER;
-	
-	audiodevice().shutdown();
-	
-	bool save = false;
 	
 	// Just in case the mouse was grabbed...
 	cpointer().release_mouse();
@@ -85,7 +85,8 @@ void Traverso::shutdown( int signal )
 	switch(signal) {
 		case SIGINT:
 			printf("\nCatched the SIGINT signal!\nSaving your work....\n\nShutting down Traverso!\n\n");
-			save = true;
+			pm().exit();
+			return;
 			break;
 		case SIGSEGV:
 			printf("\nCatched the SIGSEGV signal!\n");
@@ -96,23 +97,12 @@ void Traverso::shutdown( int signal )
 						"No",
 						0, 1)) {
 				case 0 :
-					save = true;
 					break;
 				case 1 :
 					break;
 			}
 	}
 
-	/*	if (save) {
-		Project* project = pm().get_project();
-		if (project) {
-			if (project->save() > 0)
-				printf("Succesfully saved your work!\n");
-			else
-				printf("Couldn't save your work\n");
-		}
-	}*/
-	
 	printf("Stopped\n");
 
 	exit(0);
@@ -199,5 +189,6 @@ void Traverso::commitData( QSessionManager &  )
 {
 	pm().save_project();
 }
+
 
 // eof

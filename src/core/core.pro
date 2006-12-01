@@ -11,8 +11,6 @@ LIBS += -ltraversocommands \
         -ltraversoaudiobackend
         
 INCLUDEPATH += \
-	../../src/traverso/songcanvas \
-	../../src/traverso \
 	../../src/core \
 	../../src/commands \
 	../../src/engine \
@@ -55,6 +53,7 @@ SOURCES	= AudioClip.cpp \
 	Song.cpp \
 	Track.cpp \
 	Utils.cpp \
+	ViewPort.cpp \
 	WriteSource.cpp \
 	gdither.cpp \
 	SnapList.cpp \
@@ -93,6 +92,7 @@ HEADERS	= precompile.h \
 	Song.h \
 	Track.h \
 	Utils.h \
+	ViewPort.h \
 	WriteSource.h \
 	libtraversocore.h \
 	gdither.h \

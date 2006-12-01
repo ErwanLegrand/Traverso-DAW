@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongView.h,v 1.3 2006/11/14 14:59:07 r_sijrier Exp $
+    $Id: SongView.h,v 1.4 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 #ifndef SONG_VIEW_H
@@ -49,13 +49,13 @@ public :
 	QRectF boundingRect() const {return QRectF();}
 	
 	Song* get_song() const {return m_song;}
-	ClipsViewPort* get_clips_viewport() const {return m_clipsViewPort;}
 	TrackPanelViewPort* get_trackpanel_view_port() const;
 	
 	void update_zoom(int xFactor, int vZoomDirection);
 	TrackView* get_trackview_under(QPointF point);
 
-	int	scalefactor;
+	int		scalefactor;
+	ViewMode	viewmode;
 
 private:
         Song* 			m_song;
@@ -84,12 +84,17 @@ public slots:
         Command* goto_begin();
         Command* goto_end();
 	Command* play_cursor_move();
+	Command* set_editing_mode();
+	Command* set_curve_mode();
 	
 private slots:
 	void scale_factor_changed();
 	void add_new_trackview(Track*);
 	void remove_trackview(Track*);
 	void calculate_scene_rect();
+	
+signals:
+	void viewModeChanged();
 };
 
 

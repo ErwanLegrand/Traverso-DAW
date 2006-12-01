@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.43 2006/11/28 14:00:37 r_sijrier Exp $
+$Id: Song.cpp,v 1.44 2006/12/01 13:58:45 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -633,25 +633,6 @@ Command* Song::go()
 	return 0;
 }
 
-
-Command* Song::set_editing_mode()
-{
-	info().information(tr("CURRENT MODE : EDITING"));
-	foreach(Track* track, m_tracks)
-		track->set_blur(false);
-/*	foreach(Track* track, m_tracks)
-		track->audioPluginChain->deactivate();*/
-	return (Command*) 0;
-}
-
-Command* Song::set_curve_mode()
-{
-	info().information(tr("CURRENT MODE : TRACK CURVES"));
-	foreach(Track* track, m_tracks)
-		track->set_blur(true);
-// 	m_tracks.value(activeTrackNumber)->audioPluginChain->activate();
-	return (Command*) 0;
-}
 
 void Song::solo_track(Track* t)
 {
