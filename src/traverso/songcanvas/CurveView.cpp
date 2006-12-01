@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.cpp,v 1.2 2006/12/01 13:58:45 r_sijrier Exp $
+$Id: CurveView.cpp,v 1.3 2006/12/01 14:15:40 r_sijrier Exp $
 */
 
 #include "CurveView.h"
@@ -34,7 +34,7 @@ $Id: CurveView.cpp,v 1.2 2006/12/01 13:58:45 r_sijrier Exp $
 class DragNode : public Command
 {
 public:
-	DragNode(CurveNodeView* view, CurveView* curveview, SongView* sv, const QString& des);
+	DragNode(CurveNode* node, CurveView* curveview, int scalefactor, const QString& des);
 	
         int do_action();
         int undo_action();
@@ -43,9 +43,9 @@ public:
         int jog();
 
 private :
-	CurveNodeView*	m_nodeView;
 	CurveView*	m_curveView;
-	SongView*	m_sv;
+	CurveNode*	m_node;
+	int		m_scalefactor;
 	QPointF		m_origPos;
 	QPointF 	m_newPos;
 };
@@ -53,13 +53,12 @@ private :
 
 
 	
-DragNode::DragNode(CurveNodeView* view, CurveView* curveview, SongView* sv, const QString& des)
+DragNode::DragNode(CurveNode* node, CurveView* curveview, int scalefactor, const QString& des)
 	: Command(curveview->get_context(), des)
 {
-	m_nodeView = view;
+	m_node = node;
 	m_curveView = curveview;
-	m_sv = sv;
-	
+	m_scalefactor = scalefactor;
 }
 
 int DragNode::finish_hold()
@@ -71,23 +70,23 @@ int DragNode::begin_hold(int useX, int useY)
 {
 	Q_UNUSED(useX);
 	Q_UNUSED(useY);
-	m_origPos.setX(m_nodeView->get_node()->get_when());
-	m_origPos.setY(m_nodeView->get_node()->get_value());
+	m_origPos.setX(m_node->get_when());
+	m_origPos.setY(m_node->get_value());
 	return 1;
 }
 
 
 int DragNode::do_action()
 {
-	m_nodeView->get_node()->set_when(m_newPos.x());
-	m_nodeView->get_node()->set_value(m_newPos.y());
+	m_node->set_when(m_newPos.x());
+	m_node->set_value(m_newPos.y());
 	return 1;
 }
 
 int DragNode::undo_action()
 {
-	m_nodeView->get_node()->set_when(m_origPos.x());
-	m_nodeView->get_node()->set_value(m_origPos.y());
+	m_node->set_when(m_origPos.x());
+	m_node->set_value(m_origPos.y());
 	
 	return 1;
 }
@@ -95,7 +94,7 @@ int DragNode::undo_action()
 int DragNode::jog()
 {
 	QPointF point = m_curveView->mapFromScene(cpointer().scene_pos());
-	double x = point.x() * m_sv->scalefactor;
+	double x = point.x() * m_scalefactor;
 	double y = (m_curveView->boundingRect().height() - point.y()) / m_curveView->boundingRect().height();
 	m_newPos.setX(x);
 	m_newPos.setY(y);
@@ -312,7 +311,7 @@ Command* CurveView::drag()
 {
 	PENTER;
 	if (m_blinkingNode) {
-		return new DragNode(m_blinkingNode, this, m_sv, tr("Drag Node"));
+		return new DragNode(m_blinkingNode->get_node(), this, m_sv->scalefactor, tr("Drag Node"));
 	}
 	return 0;
 }
