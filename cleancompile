@@ -1,0 +1,8 @@
+make clean
+rm src/commands/Makefile
+rm src/core/Makefile
+rm src/engine/Makefile
+rm src/plugins/Makefile
+rm src/traverso/Makefile
+qmake -nocache
+make
