@@ -17,13 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.h,v 1.10 2006/12/04 19:24:54 r_sijrier Exp $
+$Id: Interface.h,v 1.11 2006/12/04 19:33:26 r_sijrier Exp $
 */
 
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
 #include <QMainWindow>
+#include <QHash>
 
 class Help;
 class Song;
