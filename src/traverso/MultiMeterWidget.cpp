@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: MultiMeterWidget.cpp,v 1.6 2006/11/27 20:56:05 r_sijrier Exp $
+    $Id: MultiMeterWidget.cpp,v 1.7 2006/12/04 19:24:54 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -27,6 +27,8 @@
 #include <CorrelationMeter.h>
 #include "ProjectManager.h"
 #include "Project.h"
+#include <Song.h>
+#include <InputEngine.h>
 
 #include <QPainter>
 #include <QColor>
@@ -129,7 +131,7 @@ void MultiMeterWidget::set_song(Song *song)
 	PluginChain* chain = song->get_plugin_chain();
 	
 	foreach(Plugin* plugin, chain->get_plugin_list()) {
-		m_meter = qobject_cast<CorrelationMeter*>(plugin);
+		m_meter = dynamic_cast<CorrelationMeter*>(plugin);
 		
 		if (m_meter) {
 			timer.start(40);

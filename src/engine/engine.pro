@@ -5,7 +5,7 @@
 
 include(../libbase.pri)
 
-#PRECOMPILED_HEADER = libtraverso.h 
+PRECOMPILED_HEADER = precompile.h 
 
 INCLUDEPATH += ../../src/core ./ ./build
 
@@ -14,19 +14,23 @@ DESTDIR = ../../lib
 
 TEMPLATE = lib 
 LIBS += -lasound
+LIBS += $$system(pkg-config --libs glib-2.0)
+QMAKE_CXXFLAGS += $$system(pkg-config --cflags glib-2.0)
 
-HEADERS += AudioDevice.h \
-	   AudioBus.h \
-	   AudioDeviceThread.h \
-	   Client.h \
-	   JackDriver.h \
-	   AudioChannel.h \
-	   Driver.h \
-	   Tsar.h \
-	   memops.h \
-           libtraverso.h \
-           bitset.h \
-           defines.h
+HEADERS += \
+	precompile.h \
+	AudioDevice.h \
+	AudioBus.h \
+	AudioDeviceThread.h \
+	Client.h \
+	JackDriver.h \
+	AudioChannel.h \
+	Driver.h \
+	Tsar.h \
+	memops.h \
+	libtraverso.h \
+	bitset.h \
+	defines.h
 
 SOURCES += AudioDevice.cpp \
 	   AudioBus.cpp \

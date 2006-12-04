@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ProjectManager.cpp,v 1.16 2006/11/27 20:53:57 r_sijrier Exp $
+$Id: ProjectManager.cpp,v 1.17 2006/12/04 19:24:54 r_sijrier Exp $
 */
 
 #include "ProjectManager.h"
@@ -27,6 +27,7 @@ $Id: ProjectManager.cpp,v 1.16 2006/11/27 20:53:57 r_sijrier Exp $
 
 #include "Project.h"
 #include "Song.h"
+#include "ContextPointer.h"
 #include "AudioSourceManager.h"
 #include "Information.h"
 #include "Config.h"

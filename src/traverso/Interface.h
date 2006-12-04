@@ -17,13 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.h,v 1.9 2006/11/20 16:37:57 n_doebelin Exp $
+$Id: Interface.h,v 1.10 2006/12/04 19:24:54 r_sijrier Exp $
 */
 
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
-#include <QtGui>
+#include <QMainWindow>
 
 class Help;
 class Song;
@@ -41,6 +41,10 @@ class ExportWidget;
 class QStackedWidget;
 class QHBoxLayout;
 class QVBoxLayout;
+class QUndoView;
+class QDockWidget;
+class QToolBar;
+class QToolButton;
 class QTreeView;
 class QuickDriverConfigWidget;
 class ResourcesInfoWidget;

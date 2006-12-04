@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginView.h,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
+    $Id: PluginView.h,v 1.2 2006/12/04 19:24:54 r_sijrier Exp $
 */
 
 #ifndef PLUGIN_VIEW_H
@@ -27,9 +27,8 @@
 #include "ViewItem.h"
 #include <QString>
 
-#include <PluginChain.h>
 #if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
-#include "LV2PluginPropertiesDialog.h"
+class LV2PluginPropertiesDialog;
 #endif
 
 class TrackView;

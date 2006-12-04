@@ -17,9 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.4 2006/12/01 13:58:45 r_sijrier Exp $
+$Id: SongView.cpp,v 1.5 2006/12/04 19:24:54 r_sijrier Exp $
 */
 
+
+#include <QScrollBar>
 
 #include "SongView.h"
 #include "TrackView.h"
@@ -29,6 +31,7 @@ $Id: SongView.cpp,v 1.4 2006/12/01 13:58:45 r_sijrier Exp $
 #include "TrackPanelViewPort.h"
 		
 #include <Song.h>
+#include <Track.h>
 #include <Peak.h>
 #include <SnapList.h>
 #include <ContextPointer.h>

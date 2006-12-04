@@ -8,6 +8,7 @@
 #include <qtextcodec.h>
 
 #include <qapplication.h>
+#include <QMainWindow>
 #include <qbitmap.h>
 #include <qcursor.h>
 #include <qdesktopwidget.h>
@@ -19,10 +20,15 @@
 #include <qstyle.h>
 #include <qtimer.h>
 #include <qwidget.h>
-
+#include <QHash>
+#include <QWheelEvent>
+#include <QUndoGroup>
 #include <qgraphicsscene.h>
 #include <qgraphicsview.h>
 #include <qgraphicsitem.h>
+#include <QGraphicsSceneMouseEvent>
+#include <QStyleOptionGraphicsItem>
+
 #include <glib.h>
 
 #include <stdlib.h>

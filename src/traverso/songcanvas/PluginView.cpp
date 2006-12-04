@@ -17,17 +17,22 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginView.cpp,v 1.2 2006/11/28 14:06:12 r_sijrier Exp $
+$Id: PluginView.cpp,v 1.3 2006/12/04 19:24:54 r_sijrier Exp $
 */
 
 #include "PluginView.h"
 
 #include <QPainter>
 
+#include <Track.h>
 #include "TrackView.h"
 
 #include "ColorManager.h"
 #include <Plugin.h>
+
+#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
+#include <LV2PluginPropertiesDialog.h>
+#endif
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!

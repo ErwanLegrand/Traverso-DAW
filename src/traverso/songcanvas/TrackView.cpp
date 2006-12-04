@@ -17,19 +17,26 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.4 2006/11/28 14:06:12 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.5 2006/12/04 19:24:54 r_sijrier Exp $
 */
+
+#include <QLineEdit>
+#include <QInputDialog>
+#include <QGraphicsScene>
 
 #include "TrackView.h"
 #include "AudioClipView.h"
 #include "PluginChainView.h"
-#include <ColorManager.h>
-#include <Song.h>
+#include "ColorManager.h"
 #include "TrackPanelViewPort.h"
 #include "SongView.h"
 #include "TrackPanelView.h"
+
+#include <Song.h>
+#include <Track.h>
+
 #include <cmath>
-		
+
 #include <PluginSelectorDialog.h>
 
 #include <Debugger.h>

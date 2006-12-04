@@ -17,14 +17,16 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursors.h,v 1.2 2006/11/14 14:59:07 r_sijrier Exp $
+    $Id: Cursors.h,v 1.3 2006/12/04 19:24:54 r_sijrier Exp $
 */
 
 #ifndef CURSORS_H
 #define CURSORS_H
 
 #include "ViewItem.h"
-		
+
+#include <QTimer>
+
 class Song;
 class SongView;
 		

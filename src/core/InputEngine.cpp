@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.11 2006/12/01 13:58:45 r_sijrier Exp $
+$Id: InputEngine.cpp,v 1.12 2006/12/04 19:24:54 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -1068,19 +1068,25 @@ QList< IEAction* > InputEngine::get_contextitem_actionlist( ContextItem * ci )
 	do {
 		// 		PWARN("My name is %s ", item->metaObject()->className());
 		const QMetaObject* mo = item->metaObject();
-		for (int i=0; i < mo->methodCount(); i++) {
-			if (mo->method(i).methodType() == QMetaMethod::Slot) {
-				string = mo->method(i).signature();
-				string = string.left(string.indexOf("("));
-				// 				PWARN("signature is %s", string.toAscii().data());
-				for (int i=0; i<ieActions.size(); i++) {
-					if (string == ieActions.at(i)->slotName) {
-						list.append(ieActions.at(i));
+		do {
+			for (int i=0; i < mo->methodCount(); i++) {
+				if (mo->method(i).methodType() == QMetaMethod::Slot) {
+					string = mo->method(i).signature();
+					string = string.left(string.indexOf("("));
+					// PWARN("signature is %s", string.toAscii().data());
+					for (int i=0; i<ieActions.size(); i++) {
+						if (string == ieActions.at(i)->slotName) {
+							list.append(ieActions.at(i));
+						}
 					}
 				}
 			}
-		}
-	} while ( (item = item->get_context()) );
+		if (mo->superClass())
+			printf("%s has superclass %s\n", mo->className(), mo->superClass()->className());
+		} 
+		while(mo = mo->superClass());
+	} 
+	while ( (item = item->get_context()) );
 
 	return list;
 }

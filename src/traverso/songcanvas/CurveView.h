@@ -17,13 +17,15 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.h,v 1.2 2006/12/01 13:58:45 r_sijrier Exp $
+$Id: CurveView.h,v 1.3 2006/12/04 19:24:54 r_sijrier Exp $
 */
 
 #ifndef CURVE_VIEW_H
 #define CURVE_VIEW_H
 
 #include "ViewItem.h"
+
+#include <QTimer>
 
 class Curve;
 class CurveNode;

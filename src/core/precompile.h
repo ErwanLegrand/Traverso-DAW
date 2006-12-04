@@ -19,6 +19,12 @@
 #include <qstyle.h>
 #include <qtimer.h>
 #include <qwidget.h>
+#include <QDomDocument>
+#include <QDomNode>
+#include <QHash>
+#include <QWheelEvent>
+#include <QUndoGroup>
+#include <qgraphicsview.h>
 
 #include <glib.h>
 #include <stdlib.h>

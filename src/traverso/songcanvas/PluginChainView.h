@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginChainView.h,v 1.2 2006/11/28 14:06:12 r_sijrier Exp $
+    $Id: PluginChainView.h,v 1.3 2006/12/04 19:24:54 r_sijrier Exp $
 */
 
 #ifndef PLUGIN_CHAIN_VIEW_H
@@ -26,8 +26,6 @@
 
 #include "ViewItem.h"
 #include <QString>
-
-#include <PluginChain.h>
 
 class TrackView;
 class Plugin;

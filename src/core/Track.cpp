@@ -17,13 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.35 2006/12/01 13:58:45 r_sijrier Exp $
+$Id: Track.cpp,v 1.36 2006/12/04 19:24:54 r_sijrier Exp $
 */
 
 #include "Track.h"
 #include "Song.h"
 #include "AudioClip.h"
-#include "Tsar.h"
+#include "AudioClipManager.h"
 #include <AudioBus.h>
 #include <AudioDevice.h>
 #include "PluginChain.h"

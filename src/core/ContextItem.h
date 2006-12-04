@@ -17,17 +17,16 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ContextItem.h,v 1.7 2006/11/08 14:49:37 r_sijrier Exp $
+$Id: ContextItem.h,v 1.8 2006/12/04 19:24:54 r_sijrier Exp $
 */
 #ifndef CONTEXTITEM_H
 #define CONTEXTITEM_H
 
 #include <QObject>
-#include <QDomDocument>
 
-#include <QUndoStack>
-#include <QUndoGroup>
-#include "Command.h"
+class Command;
+class QUndoStack;
+class QUndoGroup;
 
 class ContextItem : public QObject
 {

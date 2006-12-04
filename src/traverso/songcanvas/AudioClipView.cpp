@@ -17,13 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.7 2006/12/01 13:58:45 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.8 2006/12/04 19:24:54 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
 
 #include <QPainter>
 #include <QPainterPath>
+#include <QGraphicsScene>
 
 #include "AudioClipView.h"
 #include "SongView.h"
@@ -100,10 +101,10 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	Q_UNUSED(widget);
 	
 	
-	QPixmap* pix = dynamic_cast<QPixmap*>(painter->paintEngine()->paintDevice());
+/*	QPixmap* pix = dynamic_cast<QPixmap*>(painter->paintEngine()->paintDevice());
 	if (pix) {
-// 		printf("painting on a pixmap\n");
-	}
+		printf("painting on a pixmap\n");
+	}*/
 	
 	if (m_clip->is_recording()) {
 		// For now, just exit. For later, draw the recording audio :-)

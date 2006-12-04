@@ -17,13 +17,15 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TimeLineViewPort.cpp,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
+    $Id: TimeLineViewPort.cpp,v 1.2 2006/12/04 19:24:54 r_sijrier Exp $
 */
 
 #include "TimeLineViewPort.h"
 #include "ClipsViewPort.h"
 #include "SongWidget.h"
 #include "TimeLineView.h"
+#include <QScrollBar>
+#include <QWheelEvent>
 		
 #include <Debugger.h>
 

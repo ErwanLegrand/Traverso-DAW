@@ -17,13 +17,13 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ViewPort.h,v 1.1 2006/12/01 13:59:36 r_sijrier Exp $
+    $Id: ViewPort.h,v 1.2 2006/12/04 19:24:54 r_sijrier Exp $
 */
 
 #ifndef VIEWPORT_H
 #define VIEWPORT_H
 
-#include <QtGui>
+#include <QGraphicsView>
 
 class ViewItem;
 class ContextItem;

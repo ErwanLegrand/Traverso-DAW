@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.cpp,v 1.16 2006/11/08 14:49:37 r_sijrier Exp $
+$Id: ReadSource.cpp,v 1.17 2006/12/04 19:24:54 r_sijrier Exp $
 */
 
 #include "ReadSource.h"
@@ -28,7 +28,7 @@ $Id: ReadSource.cpp,v 1.16 2006/11/08 14:49:37 r_sijrier Exp $
 #include "Project.h"
 #include "AudioClip.h"
 #include "DiskIO.h"
-
+#include "Utils.h"
 #include <QFile>
 
 // Always put me below _all_ includes, this is needed

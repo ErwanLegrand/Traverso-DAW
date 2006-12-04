@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.26 2006/12/01 13:58:45 r_sijrier Exp $
+$Id: AudioClip.h,v 1.27 2006/12/04 19:24:54 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -25,6 +25,7 @@ $Id: AudioClip.h,v 1.26 2006/12/01 13:58:45 r_sijrier Exp $
 
 #include <QString>
 #include <QList>
+#include <QDomNode>
 
 #include "ContextItem.h"
 #include "defines.h"

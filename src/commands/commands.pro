@@ -3,36 +3,41 @@
 # Subdir relative project main directory: ./src/commands
 # Target is a library:  traversocommands
 
-HEADERS += AddRemoveItemCommand.h \
-	   ClipSelection.h \
-	   CommandGroup.h \
-           CopyClip.h \
-           Crop.h \
-           Gain.h \
-           Import.h \
-           MoveClip.h \
-           MoveEdge.h \
-           PCommand.h \
-#          Shuttle.h \
-           SplitClip.h \
-           Zoom.h \
-           TrackPan.h \
-           commands.h \
-           Fade.h 
-SOURCES += AddRemoveItemCommand.cpp \
-	   CommandGroup.cpp \
-	   CopyClip.cpp \
-           ClipSelection.cpp \
-           Gain.cpp \
-           Import.cpp \
-           MoveClip.cpp \
-           MoveEdge.cpp \
-           PCommand.cpp \
-#           Shuttle.cpp \
-           SplitClip.cpp \
-           Zoom.cpp \
-           TrackPan.cpp \
-           Fade.cpp 
+PRECOMPILED_HEADER = precompile.h 
+
+HEADERS += \
+	precompile.h \ 
+	AddRemoveItemCommand.h \
+	ClipSelection.h \
+	CommandGroup.h \
+	CopyClip.h \
+	Crop.h \
+	Gain.h \
+	Import.h \
+	MoveClip.h \
+	MoveEdge.h \
+	PCommand.h \
+#       Shuttle.h \
+	SplitClip.h \
+	Zoom.h \
+	TrackPan.h \
+	commands.h \
+	Fade.h 
+SOURCES += \
+	AddRemoveItemCommand.cpp \
+	CommandGroup.cpp \
+	CopyClip.cpp \
+	ClipSelection.cpp \
+	Gain.cpp \
+	Import.cpp \
+	MoveClip.cpp \
+	MoveEdge.cpp \
+	PCommand.cpp \
+#       Shuttle.cpp \
+	SplitClip.cpp \
+	Zoom.cpp \
+	TrackPan.cpp \
+	Fade.cpp 
 
 include(../libbase.pri)
 INCLUDEPATH += 	../../src/traverso \

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.44 2006/12/01 13:58:45 r_sijrier Exp $
+$Id: Song.cpp,v 1.45 2006/12/04 19:24:54 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -28,6 +28,8 @@ $Id: Song.cpp,v 1.44 2006/12/01 13:58:45 r_sijrier Exp $
 
 #include <Client.h>
 #include "ProjectManager.h"
+#include "ContextPointer.h"
+#include "Information.h"
 #include "Song.h"
 #include "Project.h"
 #include "Track.h"
