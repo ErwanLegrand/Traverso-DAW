@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.17 2006/11/20 16:37:57 n_doebelin Exp $
+$Id: Interface.cpp,v 1.18 2006/12/09 08:44:54 n_doebelin Exp $
 */
 
 #include "../config.h"
@@ -44,7 +44,8 @@ $Id: Interface.cpp,v 1.17 2006/11/20 16:37:57 n_doebelin Exp $
 
 #include "ManagerWidget.h"
 #include "ExportWidget.h"
-#include "MultiMeterWidget.h"
+#include "CorrelationMeterWidget.h"
+#include "SpectralMeterWidget.h"
 		
 		
 #include "songcanvas/SongWidget.h"
@@ -101,13 +102,20 @@ Interface::Interface()
 	AudioSourcesDW->setWidget(audiosourcesview);
 	addDockWidget(Qt::RightDockWidgetArea, AudioSourcesDW);
 	
-	// MultiMeter Widget
-	multiMeterDW = new QDockWidget(tr("MultiMeter"), this);
-	multiMeterDW->setObjectName("MultiMeterDockWidget");
-	multiMeter = new MultiMeterWidget(multiMeterDW);
-	multiMeter->setFocusPolicy(Qt::NoFocus);
-	multiMeterDW->setWidget(multiMeter);
-	addDockWidget(Qt::RightDockWidgetArea, multiMeterDW);
+	// Meter Widgets
+	correlationMeterDW = new QDockWidget(tr("Correlation Meter"), this);
+	correlationMeterDW->setObjectName("CorrelationMeterDockWidget");
+	correlationMeter = new CorrelationMeterWidget(correlationMeterDW);
+	correlationMeter->setFocusPolicy(Qt::NoFocus);
+	correlationMeterDW->setWidget(correlationMeter);
+	addDockWidget(Qt::RightDockWidgetArea, correlationMeterDW);
+
+	spectralMeterDW = new QDockWidget(tr("FFT Spectrum"), this);
+	spectralMeterDW->setObjectName("SpectralMeterDockWidget");
+	spectralMeter = new SpectralMeterWidget(spectralMeterDW);
+	spectralMeter->setFocusPolicy(Qt::NoFocus);
+	spectralMeterDW->setWidget(spectralMeter);
+	addDockWidget(Qt::RightDockWidgetArea, spectralMeterDW);
 
 	// Help widget
 	helpWindow = new Help(this);

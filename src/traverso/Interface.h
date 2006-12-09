@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.h,v 1.11 2006/12/04 19:33:26 r_sijrier Exp $
+$Id: Interface.h,v 1.12 2006/12/09 08:44:54 n_doebelin Exp $
 */
 
 #ifndef INTERFACE_H
@@ -52,7 +52,8 @@ class ResourcesInfoWidget;
 class DriverInfoWidget;
 class HDDSpaceInfoWidget;
 class SongWidget;
-class MultiMeterWidget;
+class CorrelationMeterWidget;
+class SpectralMeterWidget;
 
 class Interface : public QMainWindow
 {
@@ -83,8 +84,10 @@ private:
 	QDockWidget*		AudioSourcesDW;
 	QTreeView* 		audiosourcesview;
 	QuickDriverConfigWidget* driverConfigWidget;
-	QDockWidget*		multiMeterDW;
-	MultiMeterWidget*	multiMeter;
+	QDockWidget*		correlationMeterDW;
+	CorrelationMeterWidget*	correlationMeter;
+	QDockWidget*		spectralMeterDW;
+	SpectralMeterWidget*	spectralMeter;
 
 	BusMonitor* 		busMonitor;
 	Help* 			helpWindow;

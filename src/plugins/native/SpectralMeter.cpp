@@ -16,30 +16,52 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SpectralMeter.cpp,v 1.1 2006/11/27 21:53:42 r_sijrier Exp $
+$Id: SpectralMeter.cpp,v 1.2 2006/12/09 08:44:54 n_doebelin Exp $
 
 */
 
 
 #include "SpectralMeter.h"
 #include <AudioBus.h>
+#include <QVector>
+#include <math.h>
+#include <QDebug>
 
 #include <Debugger.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
-		
 
+#define FRLEN 2048
+#define PI 3.141592653589
 
 SpectralMeter::SpectralMeter()
 	: Plugin()
 {
+	fftsigl  = NDArray(FRLEN);		// array of input values (windowed samples)
+	fftsigr  = NDArray(FRLEN);		// array of input values (windowed samples)
+	fftspecl = NFFTWArray(FRLEN/2 + 1);	// array of output values (complex numbers)
+	fftspecr = NFFTWArray(FRLEN/2 + 1);	// array of output values (complex numbers)
+	pfegl = fftw_plan_dft_r2c_1d(FRLEN, fftsigl, fftspecl, FFTW_ESTIMATE);
+	pfegr = fftw_plan_dft_r2c_1d(FRLEN, fftsigr, fftspecr, FFTW_ESTIMATE);
+
+	// calculates the Hanning window (?)
+	win = NDArray(FRLEN);
+	for (int i = 0; i < FRLEN; ++i) {
+		win[i] = pow(sin(PI * i / FRLEN), 2);
+	}
+
+	// constructs a ringbuffer that can hold 16384 samples
+	m_databufferL = new RingBufferNPT<float>(16384);
+	m_databufferR = new RingBufferNPT<float>(16384);
 }
 
 
 SpectralMeter::~SpectralMeter()
 {
+	delete m_databufferL;
+	delete m_databufferR;
 }
 
 
@@ -72,12 +94,64 @@ void SpectralMeter::process(AudioBus* bus, unsigned long nframes)
 	if ( is_bypassed() ) {
 		return;
 	}
+
+	// The nframes is the amount of samples there are in the buffers
+	// we have to process. No need to get the buffersize, we _have_ to
+	// use the nframes variable !
+	m_databufferL->write(bus->get_buffer(0, nframes), nframes);
+	m_databufferR->write(bus->get_buffer(1, nframes), nframes);
 }
 
 
 QString SpectralMeter::get_name( )
 {
 	return QString(tr("SpectralMeter Meter"));
+}
+
+// writes the fft output into two qvector<float> (left and right channel).
+int SpectralMeter::get_data(QVector<float> &specl, QVector<float> &specr)
+{
+	int readcount = m_databufferL->read_space();
+	
+	// If there is not enough new data for an FFT window in the ringbuffer,
+	// leave it alone and return zero
+	if (readcount < FRLEN) {
+		return 0;
+	}
+
+	specl.clear();
+	specr.clear();
+
+	// Create an empty SpectralMeterData struct data,
+	float left = 0.0;
+	float right = 0.0;
+
+	// read samples (in chunks of buffer_size) from the ringbuffer until the FFT window is filled
+	m_databufferL->read(&left, 1);
+	m_databufferR->read(&right, 1);
+
+	for (uint i = 0; i < FRLEN; ++i) {
+		m_databufferL->read(&left, 1);
+		m_databufferR->read(&right, 1);
+		fftsigl[i] = (double)left * win[i];
+		fftsigr[i] = (double)right * win[i];
+	}
+
+	// do the FFT calculations for the left and right channel
+	fftw_execute(pfegl);
+	fftw_execute(pfegr);
+
+	float tmp;
+
+	// send the fft spectrum to the caller
+	for (uint i = 1; i < FRLEN/2 + 1; ++i) {
+		tmp = pow((float)fftspecl[i][0],2.0f) + pow((float)fftspecl[i][1],2.0f);
+		specl.push_back(tmp);
+		tmp = pow((float)fftspecr[i][0],2.0f) + pow((float)fftspecr[i][1],2.0f);
+		specr.push_back(tmp);
+	}
+
+	return 1;
 }
 
 //eof

@@ -52,7 +52,7 @@ MOC_DIR = build
 UI_DIR = build 
 OBJECTS_DIR = build 
 
-LIBS += $$system(pkg-config --libs glib-2.0)
+LIBS += $$system(pkg-config --libs glib-2.0) -lfftw3
 QMAKE_CXXFLAGS += $$system(pkg-config --cflags glib-2.0)
 
 

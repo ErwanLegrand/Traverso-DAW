@@ -64,7 +64,8 @@ HEADERS += \
 	VUMeterRuler.h \
 	VUMeterLevel.h \
 	VUMeterOverLed.h \
-	MultiMeterWidget.h \
+	CorrelationMeterWidget.h \
+	SpectralMeterWidget.h \
 	QuickDriverConfigWidget.h \
 	precompile.h 
 
@@ -116,7 +117,8 @@ SOURCES += \
 	VUMeterRuler.cpp \
 	VUMeterLevel.cpp \
 	VUMeterOverLed.cpp \
-	MultiMeterWidget.cpp \
+	CorrelationMeterWidget.cpp \
+	SpectralMeterWidget.cpp \
 	QuickDriverConfigWidget.cpp
 
 FORMS += ui/ProjectManagerWidget.ui \
