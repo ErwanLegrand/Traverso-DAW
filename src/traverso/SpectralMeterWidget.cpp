@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.1 2006/12/09 08:44:54 n_doebelin Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.2 2006/12/09 22:26:49 n_doebelin Exp $
 */
 
 #include <libtraverso.h>
@@ -33,11 +33,8 @@
 
 #include <QPainter>
 #include <QColor>
-#include <QGradient>
-#include <QPixmap>
 #include <QFontMetrics>
 #include <QTimer>
-#include <QLinearGradient>
 #include <QColor>
 #include <QPointF>
 #include <QDebug>
@@ -45,6 +42,7 @@
 #include <QVector>
 #include <QString>
 #include <math.h>
+#include <QRect>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -54,6 +52,8 @@
 #define DB_FLOOR -140.0
 
 static const float DEFAULT_VAL = -999.0f;
+static const int UPDATE_INTERVAL = 40;
+static const int FONT_SIZE = 7;
 
 SpectralMeterWidget::SpectralMeterWidget(QWidget* parent)
 	: QWidget(parent)
@@ -61,23 +61,28 @@ SpectralMeterWidget::SpectralMeterWidget(QWidget* parent)
 {
 	setMinimumWidth(40);
 	setMinimumHeight(10);
+
+	num_bands = 16;
+	upper_freq = 22050;
+	lower_freq = 20;
+	upper_db = 0.0f;
+	lower_db = -90.0f;
+	sample_rate = audiodevice().get_sample_rate();
+
+	QFontMetrics fm(QFont("Bitstream Vera Sans", FONT_SIZE));
+	margin_l = 5;
+	margin_r = fm.width("-XX") + 5;
+	margin_t = fm.ascent()/2 + 5;
+	margin_b = fm.ascent() + fm.descent() + 10;
 	
 	// We paint all our pixels ourselves, so no need to let Qt
 	// erase and fill it for us prior to the paintEvent.
 	// @ Nicola : This is where the high load comes from!
         setAttribute(Qt::WA_OpaquePaintEvent);
-	
+
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
-
 	connect(&timer, SIGNAL(timeout()), this, SLOT(update_data()));
-
-	num_bands = 32;
-	upper_freq = 20000;
-	lower_freq = 20;
-	upper_db = 0;
-	lower_db = -90;
-	sample_rate = audiodevice().get_sample_rate();
 }
 
 void SpectralMeterWidget::paintEvent( QPaintEvent *  )
@@ -85,32 +90,81 @@ void SpectralMeterWidget::paintEvent( QPaintEvent *  )
 	PENTER3;
 
 	QPainter painter(this);
-	painter.fillRect(0, 0, width(), height(), Qt::black);
+	painter.fillRect(0, 0, width(), height(), Qt::white);
+	painter.fillRect(m_rect, QColor(241, 247, 255));
 
-	if (!m_spectrum.size()) {
-		return;
+	painter.setFont(QFont("Bitstream Vera Sans", FONT_SIZE));
+	QFontMetrics fm(QFont("Bitstream Vera Sans", FONT_SIZE));
+
+	QPen pen;
+	pen.setColor(QColor(205,223,255));
+	pen.setWidth(1);
+
+	QString spm;
+	// draw horizontal lines + labels
+	for (float i = 0.0; i >= lower_db; i -= 10.0f) {
+		float f = db2ypos(i);
+
+		painter.setPen(pen);
+		painter.drawLine(QPointF(m_rect.x(), f), QPointF(m_rect.right(), f));
+
+		painter.setPen(Qt::black);
+		spm.sprintf("%2.0f", i);
+		painter.drawText(m_rect.right() + 1, (int)f + fm.ascent()/2, spm);
 	}
 
-	int w = int((float)width() / (float)num_bands) - 2;
-	int d = int((float)width() / (2.0f * num_bands));
+	// draw frequency labels
+	painter.setPen(Qt::black);
+	for (int i = 0; i < m_freq_labels.size(); ++i) {
+		float f = freq2xpos(m_freq_labels.at(i));
+		if (!f) continue;
 
-	QPen pen(Qt::green);
-	pen.setWidth(w);
-	painter.setPen(pen);
+		spm.sprintf("%2.0f", m_freq_labels.at(i));
+		float s = (float)fm.width(spm)/2.0f;
+		painter.drawLine(QPointF(f, m_rect.bottom()), QPointF(f, m_rect.bottom() + 3));
+		painter.drawText(QPointF(f-s, height() - fm.descent() - 5), spm);
+	}
 
-	QPointF pt;
+	if (m_spectrum.size()) {
+		pen.setColor(QColor(80, 80, 120));
+		pen.setWidth(bar_width);
+		painter.setClipRegion(m_rect);
+		painter.setPen(pen);
 
-	for (uint i = 0; i < num_bands; ++i) {
-		pt.setX(d + i * width() / num_bands);
-		pt.setY(m_spectrum.at(i) * height()/(float)lower_db);
+		QPointF pt;
 
-		painter.drawLine(QPointF(pt.x(), height()), pt);
+		// draw the freq bands
+		for (uint i = 0; i < num_bands; ++i) {
+			if (m_spectrum.at(i) < lower_db) {
+				continue;
+			}
+			pt.setX(bar_offset + i * m_rect.width() / num_bands);
+			pt.setY(db2ypos(m_spectrum.at(i)));
+
+			painter.drawLine(QPointF(pt.x(), m_rect.bottom()), pt);
+		}
 	}
 }
 
 void SpectralMeterWidget::resizeEvent( QResizeEvent *  )
 {
 	PENTER3;
+
+	// Make the axis labels disappear when the widget becomes too small
+	int x = 0, y = 0, w = width(), h = height();
+	if (width() >= 200) {
+		x = margin_l;
+		w -= (margin_l + margin_r);
+	}
+
+	if (height() >= 120) {
+		y = margin_t;
+		h -= (margin_t + margin_b);
+	}
+
+	update_barwidth();
+
+	m_rect.setRect(x, y, w, h);
 }
 
 void SpectralMeterWidget::update_data()
@@ -124,6 +178,10 @@ void SpectralMeterWidget::update_data()
  	if (m_meter->get_data(specl, specr) == 0) {
  		return;
  	}
+
+	if (!fft_size) {
+		update_layout();
+	}
 
 	reduce_bands();
 	update();
@@ -149,7 +207,7 @@ void SpectralMeterWidget::set_song(Song *song)
 		
 		if (m_meter) {
 			printf("using existing meter\n");
-			timer.start(40);
+			timer.start(UPDATE_INTERVAL);
 			return;
 		}
 	}
@@ -157,18 +215,14 @@ void SpectralMeterWidget::set_song(Song *song)
 	m_meter = new SpectralMeter();
 	m_meter->init();
 	ie().process_command( chain->add_plugin(m_meter, false) );
-	timer.start(40);
+	timer.start(UPDATE_INTERVAL);
 }
 
 void SpectralMeterWidget::reduce_bands()
 {
-	uint s = specl.size();			// number of frequencies
-	float f = 4.0f * log10(2.0f / (2.0f * s));	// a constant factor for conversion to dB
-
-	// create a vector for the frequency bands, containing very small default values
-	if (m_spectrum.size() != num_bands) {
-		update_band_lut();
-		m_spectrum.fill(DEFAULT_VAL, num_bands);
+	// check if we have to update some variables
+	if ((uint)m_spectrum.size() != num_bands) {
+		update_layout();
 	}
 
 	// used for smooth falloff
@@ -177,8 +231,8 @@ void SpectralMeterWidget::reduce_bands()
 	// Convert fft results to dB. Heavily simplyfied version of the following function:
 	// db = (20 * log10(2 * sqrt(r_a^2 + i_a^2) / N) + 20 * log10(2 * sqrt(r_b^2 + i_b^2) / N)) / 2
 	// with (r_a^2 + i_a^2) and (r_b^2 + i_b^2) given in specl and specr vectors
-	for (uint i = 0, j = 0; i <= s; ++i) {
-		float freq = i * (float)sample_rate / (2.0f * s);
+	for (uint i = 0, j = 0; i < fft_size; ++i) {
+		float freq = i * (float)sample_rate / (2.0f * fft_size);
 
 		if (freq < (float)lower_freq) {
 			// We are still below the lowest displayed frequency
@@ -197,24 +251,63 @@ void SpectralMeterWidget::reduce_bands()
 			}
 		}
 
-
-		float val = 5.0 * (log10(specl.at(i) * specr.at(i)) + f);
+		float val = 5.0 * (log10(specl.at(i) * specr.at(i)) + xfactor);
 		m_spectrum[j] = qMax(val, hist);
 	}
 }
 
-void SpectralMeterWidget::update_band_lut()
+// call this function if the size, number of bands, ranges etc. changed.
+// it re-calculates some variables
+void SpectralMeterWidget::update_layout()
 {
-	float ufl = log10(upper_freq);
-	float lfl = log10(lower_freq);
-	float step = (ufl - lfl)/(num_bands + 1);
+	// recalculate a couple of variables
+	fft_size = qMin(specl.size(), specr.size());		// number of frequencies
+	xfactor = 4.0f * log10(2.0f / (2.0f * fft_size));	// a constant factor for conversion to dB
+	upper_freq_log = log10(upper_freq);
+	lower_freq_log = log10(lower_freq);
+	freq_step = (upper_freq_log - lower_freq_log)/(num_bands + 1);
 
+	// recreate the vector containing the levels and frequency bands
+	m_spectrum.fill(DEFAULT_VAL, num_bands);
+
+	// recreate the vector containing border frequencies of the freq bands
 	m_bands.clear();
-
-	for (uint i = 1; i <= num_bands; ++i) {
-		m_bands.push_back(pow(10.0, lfl + i*step));
+	for (uint i = 0; i < num_bands; ++i) {
+		m_bands.push_back(pow(10.0, lower_freq_log + (i+1)*freq_step));
 	}
 	m_bands.push_back(upper_freq);
+
+	m_freq_labels.clear();
+	for (int i = 0; i < 4; ++i) {
+		m_freq_labels.push_back(10.0f * pow(10.0,i));
+		m_freq_labels.push_back(20.0f * pow(10.0,i));
+		m_freq_labels.push_back(50.0f * pow(10.0,i));
+	}
+
+	update_barwidth();
+}
+
+float SpectralMeterWidget::db2ypos(float f)
+{
+	return (f * m_rect.height()/(lower_db - upper_db)) + m_rect.top();
+}
+
+float SpectralMeterWidget::freq2xpos(float f)
+{
+	if ((f < lower_freq) || (f > upper_freq)) {
+		return 0.0;
+	}
+
+	float d = log10(f) - lower_freq_log;
+	return (float)margin_l + d * m_rect.width() / (upper_freq_log - lower_freq_log);
+}
+
+void SpectralMeterWidget::update_barwidth()
+{
+	bar_width = int((float)m_rect.width() / (float)num_bands) - 2;
+	bar_width = bar_width < 1 ? 1 : bar_width;
+	bar_offset = int((float)m_rect.width() / (2.0f * num_bands));
+	bar_offset += m_rect.x();
 }
 
 //eof

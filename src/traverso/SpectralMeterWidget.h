@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SpectralMeterWidget.h,v 1.1 2006/12/09 08:44:54 n_doebelin Exp $
+    $Id: SpectralMeterWidget.h,v 1.2 2006/12/09 22:26:49 n_doebelin Exp $
 */
 
 #ifndef SPECTRALMETERWIDGET_H
@@ -30,7 +30,7 @@
 
 class Song;
 class Project;
-class QLinearGradient;
+class QRect;
 
 class SpectralMeterWidget : public QWidget
 {
@@ -50,16 +50,33 @@ private:
 	QVector<float>	m_spectrum;
 	QVector<float>	m_history;
 	QVector<float>	m_bands;
+	QVector<float>	m_freq_labels;
 	SpectralMeter*	m_meter;
+	QRect		m_rect;
 	uint		num_bands;
 	uint		sample_rate;
-	uint		upper_freq;
-	uint		lower_freq;
-	int		upper_db;
-	int		lower_db;
+	float		upper_freq;
+	float		lower_freq;
+	float		upper_db;
+	float		lower_db;
+	int		margin_l;
+	int		margin_r;
+	int		margin_t;
+	int		margin_b;
+
+	uint		fft_size;
+	float		xfactor;
+	float		upper_freq_log;
+	float		lower_freq_log;
+	float		freq_step;
+	int		bar_width;
+	int		bar_offset;
 
 	void		reduce_bands();
-	void		update_band_lut();
+	void		update_layout();
+	float		db2ypos(float);
+	float		freq2xpos(float);
+	void		update_barwidth();
 
 private slots:
 	void		set_project( Project* );
