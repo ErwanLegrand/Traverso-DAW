@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SpectralMeterWidget.h,v 1.2 2006/12/09 22:26:49 n_doebelin Exp $
+    $Id: SpectralMeterWidget.h,v 1.4 2006/12/12 23:13:35 n_doebelin Exp $
 */
 
 #ifndef SPECTRALMETERWIDGET_H
@@ -31,6 +31,7 @@
 class Song;
 class Project;
 class QRect;
+class QPixmap;
 
 class SpectralMeterWidget : public QWidget
 {
@@ -53,6 +54,7 @@ private:
 	QVector<float>	m_freq_labels;
 	SpectralMeter*	m_meter;
 	QRect		m_rect;
+	QPixmap		bgPixmap;
 	uint		num_bands;
 	uint		sample_rate;
 	float		upper_freq;

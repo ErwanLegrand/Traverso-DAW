@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.2 2006/12/09 22:26:49 n_doebelin Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.3 2006/12/12 19:20:09 n_doebelin Exp $
 */
 
 #include <libtraverso.h>
@@ -63,10 +63,12 @@ SpectralMeterWidget::SpectralMeterWidget(QWidget* parent)
 	setMinimumHeight(10);
 
 	num_bands = 16;
-	upper_freq = 22050;
-	lower_freq = 20;
+	upper_freq = 22050.0f;
+	lower_freq = 20.0f;
 	upper_db = 0.0f;
 	lower_db = -90.0f;
+	upper_freq_log = log10(upper_freq);
+	lower_freq_log = log10(lower_freq);
 	sample_rate = audiodevice().get_sample_rate();
 
 	QFontMetrics fm(QFont("Bitstream Vera Sans", FONT_SIZE));
@@ -80,6 +82,18 @@ SpectralMeterWidget::SpectralMeterWidget(QWidget* parent)
 	// @ Nicola : This is where the high load comes from!
         setAttribute(Qt::WA_OpaquePaintEvent);
 
+	for (int i = 0; i < 4; ++i) {
+		m_freq_labels.push_back(10.0f * pow(10.0,i));
+		m_freq_labels.push_back(20.0f * pow(10.0,i));
+		m_freq_labels.push_back(30.0f * pow(10.0,i));
+		m_freq_labels.push_back(40.0f * pow(10.0,i));
+		m_freq_labels.push_back(50.0f * pow(10.0,i));
+		m_freq_labels.push_back(60.0f * pow(10.0,i));
+		m_freq_labels.push_back(70.0f * pow(10.0,i));
+		m_freq_labels.push_back(80.0f * pow(10.0,i));
+		m_freq_labels.push_back(90.0f * pow(10.0,i));
+	}
+
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 	connect(&timer, SIGNAL(timeout()), this, SLOT(update_data()));
@@ -90,42 +104,11 @@ void SpectralMeterWidget::paintEvent( QPaintEvent *  )
 	PENTER3;
 
 	QPainter painter(this);
-	painter.fillRect(0, 0, width(), height(), Qt::white);
-	painter.fillRect(m_rect, QColor(241, 247, 255));
+	painter.drawPixmap(0, 0, bgPixmap);
 
-	painter.setFont(QFont("Bitstream Vera Sans", FONT_SIZE));
-	QFontMetrics fm(QFont("Bitstream Vera Sans", FONT_SIZE));
-
-	QPen pen;
-	pen.setColor(QColor(205,223,255));
-	pen.setWidth(1);
-
-	QString spm;
-	// draw horizontal lines + labels
-	for (float i = 0.0; i >= lower_db; i -= 10.0f) {
-		float f = db2ypos(i);
-
-		painter.setPen(pen);
-		painter.drawLine(QPointF(m_rect.x(), f), QPointF(m_rect.right(), f));
-
-		painter.setPen(Qt::black);
-		spm.sprintf("%2.0f", i);
-		painter.drawText(m_rect.right() + 1, (int)f + fm.ascent()/2, spm);
-	}
-
-	// draw frequency labels
-	painter.setPen(Qt::black);
-	for (int i = 0; i < m_freq_labels.size(); ++i) {
-		float f = freq2xpos(m_freq_labels.at(i));
-		if (!f) continue;
-
-		spm.sprintf("%2.0f", m_freq_labels.at(i));
-		float s = (float)fm.width(spm)/2.0f;
-		painter.drawLine(QPointF(f, m_rect.bottom()), QPointF(f, m_rect.bottom() + 3));
-		painter.drawText(QPointF(f-s, height() - fm.descent() - 5), spm);
-	}
-
+	// draw the bars
 	if (m_spectrum.size()) {
+		QPen pen;
 		pen.setColor(QColor(80, 80, 120));
 		pen.setWidth(bar_width);
 		painter.setClipRegion(m_rect);
@@ -165,6 +148,57 @@ void SpectralMeterWidget::resizeEvent( QResizeEvent *  )
 	update_barwidth();
 
 	m_rect.setRect(x, y, w, h);
+
+	// draw the background image
+	bgPixmap = QPixmap(width(), height());
+	bgPixmap.fill(Qt::white);
+
+	QPainter painter(&bgPixmap);
+	painter.fillRect(m_rect, QColor(241, 247, 255));
+	painter.setFont(QFont("Bitstream Vera Sans", FONT_SIZE));
+	QFontMetrics fm(QFont("Bitstream Vera Sans", FONT_SIZE));
+
+	QString spm;
+
+	// draw horizontal lines + labels
+	for (float i = 0.0; i >= lower_db; i -= 10.0f) {
+		float f = db2ypos(i);
+
+		painter.setPen(QColor(205,223,255));
+		painter.drawLine(QPointF(m_rect.x(), f), QPointF(m_rect.right(), f));
+
+		painter.setPen(QColor(  0,  0,  0));
+		spm.sprintf("%2.0f", i);
+		painter.drawText(m_rect.right() + 1, (int)f + fm.ascent()/2, spm);
+	}
+
+	// draw frequency labels
+	float last_pos = 1.0;
+	for (int i = 0; i < m_freq_labels.size(); ++i) {
+		// check if we have space to draw the labels by checking if the
+		// m_rect is borderless
+		if (!m_rect.top()) break;
+
+		float f = freq2xpos(m_freq_labels.at(i));
+
+		// check if the freq is in the visible range
+		if (!f) continue;
+
+		spm.sprintf("%2.0f", m_freq_labels.at(i));
+		float s = (float)fm.width(spm)/2.0f;
+
+
+		// draw text only if there is enough space for it
+		if (((f - s) > last_pos) && ((f + s) < float(width()-1))) {
+			painter.setPen(Qt::black);
+			painter.drawText(QPointF(f - s, height() - fm.descent() - 3), spm);
+			last_pos = f + s + 1.0;
+		} else {
+			painter.setPen(QColor(150, 150, 150));
+		}
+
+		painter.drawLine(QPointF(f, m_rect.bottom()), QPointF(f, m_rect.bottom() + 3));
+	}
 }
 
 void SpectralMeterWidget::update_data()
@@ -276,13 +310,6 @@ void SpectralMeterWidget::update_layout()
 		m_bands.push_back(pow(10.0, lower_freq_log + (i+1)*freq_step));
 	}
 	m_bands.push_back(upper_freq);
-
-	m_freq_labels.clear();
-	for (int i = 0; i < 4; ++i) {
-		m_freq_labels.push_back(10.0f * pow(10.0,i));
-		m_freq_labels.push_back(20.0f * pow(10.0,i));
-		m_freq_labels.push_back(50.0f * pow(10.0,i));
-	}
 
 	update_barwidth();
 }
