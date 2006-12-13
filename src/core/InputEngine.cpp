@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.12 2006/12/04 19:24:54 r_sijrier Exp $
+$Id: InputEngine.cpp,v 1.13 2006/12/13 19:13:25 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -1060,11 +1060,12 @@ bool InputEngine::is_holding( )
 	return isHolding;
 }
 
-QList< IEAction* > InputEngine::get_contextitem_actionlist( ContextItem * ci )
+QList< IEAction* > InputEngine::get_contextitem_actionlist(QObject* item)
 {
 	QList<IEAction* > list;
-	ContextItem* item = ci;
+	ContextItem* contextitem;
 	QString string;
+	
 	do {
 		// 		PWARN("My name is %s ", item->metaObject()->className());
 		const QMetaObject* mo = item->metaObject();
@@ -1081,12 +1082,15 @@ QList< IEAction* > InputEngine::get_contextitem_actionlist( ContextItem * ci )
 					}
 				}
 			}
-		if (mo->superClass())
-			printf("%s has superclass %s\n", mo->className(), mo->superClass()->className());
+			if (mo->superClass()) {
+				printf("%s has superclass %s\n", mo->className(), mo->superClass()->className());
+			}
 		} 
-		while(mo = mo->superClass());
+		while( (mo = mo->superClass()) );
+
+		contextitem = qobject_cast<ContextItem*>(item);
 	} 
-	while ( (item = item->get_context()) );
+	while ( contextitem && (item = contextitem->get_context()) );
 
 	return list;
 }

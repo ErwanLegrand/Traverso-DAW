@@ -17,23 +17,24 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SpectralMeterWidget.h,v 1.4 2006/12/12 23:13:35 n_doebelin Exp $
+    $Id: SpectralMeterWidget.h,v 1.5 2006/12/13 19:13:25 r_sijrier Exp $
 */
 
 #ifndef SPECTRALMETERWIDGET_H
 #define SPECTRALMETERWIDGET_H
 
-#include <QWidget>
+#include <ViewPort.h>
 #include <QTimer>
 #include <QVector>
-#include "SpectralMeter.h"
 
 class Song;
 class Project;
 class QRect;
 class QPixmap;
+class SpectralMeter;
+class Command;
 
-class SpectralMeterWidget : public QWidget
+class SpectralMeterWidget : public ViewPort
 {
 	Q_OBJECT
 
@@ -84,6 +85,9 @@ private slots:
 	void		set_project( Project* );
 	void		set_song( Song* );
 	void		update_data();
+
+public slots:
+	Command*	edit_properties();
 
 };
 

@@ -17,19 +17,18 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.4 2006/12/12 23:13:35 n_doebelin Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.5 2006/12/13 19:13:25 r_sijrier Exp $
 */
-
-#include <libtraverso.h>
 
 #include "SpectralMeterWidget.h"
 #include <PluginChain.h>
-#include <CorrelationMeter.h>
-#include "ProjectManager.h"
-#include "Project.h"
+#include <SpectralMeter.h>
+#include <Command.h>
+#include <ProjectManager.h>
+#include <Project.h>
 #include <AudioDevice.h>
-#include "InputEngine.h"
-#include "Song.h"
+#include <InputEngine.h>
+#include <Song.h>
 
 #include <QPainter>
 #include <QColor>
@@ -56,7 +55,7 @@ static const int UPDATE_INTERVAL = 40;
 static const int FONT_SIZE = 7;
 
 SpectralMeterWidget::SpectralMeterWidget(QWidget* parent)
-	: QWidget(parent)
+	: ViewPort(parent)
 	, m_meter(0)
 {
 	setMinimumWidth(40);
@@ -103,7 +102,7 @@ void SpectralMeterWidget::paintEvent( QPaintEvent *  )
 {
 	PENTER3;
 
-	QPainter painter(this);
+	QPainter painter(viewport());
 	painter.drawPixmap(0, 0, bgPixmap);
 
 	// draw the bars
@@ -222,7 +221,7 @@ void SpectralMeterWidget::update_data()
 	}
 
 	reduce_bands();
-	update();
+	viewport()->update();
 }
 
 void SpectralMeterWidget::set_project(Project *project)
@@ -341,6 +340,12 @@ void SpectralMeterWidget::update_barwidth()
 	bar_width = bar_width < 1 ? 1 : bar_width;
 	bar_offset = int((float)m_rect.width() / (2.0f * num_bands));
 	bar_offset += m_rect.x();
+}
+
+Command* SpectralMeterWidget::edit_properties()
+{
+	// Some usefull code here
+	return 0;
 }
 
 //eof

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.h,v 1.12 2006/12/09 08:44:54 n_doebelin Exp $
+$Id: Interface.h,v 1.13 2006/12/13 19:13:25 r_sijrier Exp $
 */
 
 #ifndef INTERFACE_H
@@ -115,7 +115,7 @@ private:
 	
 	void create_menus();
 	
-	QMenu* create_context_menu(ContextItem* item);
+	QMenu* create_context_menu(QObject* item);
 	QMenu* create_fade_selector_menu(const QString& fadeTypeName);
 
 public slots :

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ViewPort.h,v 1.2 2006/12/04 19:24:54 r_sijrier Exp $
+    $Id: ViewPort.h,v 1.3 2006/12/13 19:13:25 r_sijrier Exp $
 */
 
 #ifndef VIEWPORT_H
@@ -51,11 +51,11 @@ public :
 
 
 protected:
-        void leaveEvent ( QEvent * );
-        void enterEvent ( QEvent * );
-        void resizeEvent(QResizeEvent* e);
+        virtual void leaveEvent ( QEvent * );
+        virtual void enterEvent ( QEvent * );
+        virtual void resizeEvent(QResizeEvent* e);
         virtual void paintEvent( QPaintEvent* e);
-        void mouseMoveEvent(QMouseEvent* e);
+        virtual void mouseMoveEvent(QMouseEvent* e);
 
 private:
 

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: InputEngine.h,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
+    $Id: InputEngine.h,v 1.5 2006/12/13 19:13:25 r_sijrier Exp $
 */
 
 #ifndef INPUTENGINE_H
@@ -99,7 +99,7 @@ public:
 
         bool is_holding();
 
-        QList<IEAction* > get_contextitem_actionlist(ContextItem* item);
+        QList<IEAction* > get_contextitem_actionlist(QObject* item);
 
         int broadcast_action_from_contextmenu(const QString& name);
 

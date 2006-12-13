@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.18 2006/12/09 08:44:54 n_doebelin Exp $
+$Id: Interface.cpp,v 1.19 2006/12/13 19:13:25 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -421,20 +421,20 @@ Command * Interface::show_context_menu( )
 		return 0;
 	}
 	
-	ViewItem* viewitem = qobject_cast<ViewItem*>(items.at(0));
+	QObject* item = qobject_cast<QObject*>(items.at(0));
 	
-	if (! viewitem) {
-		printf("cpointer() first returned item is NOT a ViewItem\n");
+	if (! item) {
+		printf("cpointer() first returned item is NOT a QObject!!\n");
 		return 0;
 	}
 	
-	QString className = viewitem->metaObject()->className();
+	QString className = item->metaObject()->className();
 	
 	QMenu* menu = m_contextMenus.value(className);
 	
 	if ( ! menu ) {
 		printf("No menu for %s, creating new one\n", QS_C(className));
-		menu = create_context_menu(viewitem);
+		menu = create_context_menu(item);
 		m_contextMenus.insert(className, menu);
 	}
 	
@@ -443,7 +443,7 @@ Command * Interface::show_context_menu( )
 	return 0;
 }
 
-QMenu* Interface::create_context_menu( ContextItem * item )
+QMenu* Interface::create_context_menu(QObject* item )
 {
 	printf("entering create_context_menu\n");
 	QMenu* menu = new QMenu();
