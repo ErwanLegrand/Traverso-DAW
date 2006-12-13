@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.5 2006/12/13 19:13:25 r_sijrier Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.6 2006/12/13 21:15:38 n_doebelin Exp $
 */
 
 #include "SpectralMeterWidget.h"
@@ -40,8 +40,8 @@
 #include <QPen>
 #include <QVector>
 #include <QString>
-#include <math.h>
 #include <QRect>
+#include <math.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -110,20 +110,20 @@ void SpectralMeterWidget::paintEvent( QPaintEvent *  )
 		QPen pen;
 		pen.setColor(QColor(80, 80, 120));
 		pen.setWidth(bar_width);
+		pen.setCapStyle(Qt::FlatCap);
 		painter.setClipRegion(m_rect);
 		painter.setPen(pen);
 
 		QPointF pt;
 
 		// draw the freq bands
-		for (uint i = 0; i < num_bands; ++i) {
+		for (uint i = 0; i < m_spectrum.size(); ++i) {
 			if (m_spectrum.at(i) < lower_db) {
 				continue;
 			}
 			pt.setX(bar_offset + i * m_rect.width() / num_bands);
 			pt.setY(db2ypos(m_spectrum.at(i)));
-
-			painter.drawLine(QPointF(pt.x(), m_rect.bottom()), pt);
+			painter.drawLine(QPointF(pt.x(), height()), pt);
 		}
 	}
 }
@@ -301,7 +301,7 @@ void SpectralMeterWidget::update_layout()
 {
 	// recalculate a couple of variables
 	fft_size = qMin(specl.size(), specr.size());		// number of frequencies
-	xfactor = 4.0f * log10(2.0f / (2.0f * fft_size));	// a constant factor for conversion to dB
+	xfactor = 4.0f * log10(2.0f / float(fft_size));	// a constant factor for conversion to dB
 	upper_freq_log = log10(upper_freq);
 	lower_freq_log = log10(lower_freq);
 	freq_step = (upper_freq_log - lower_freq_log)/(num_bands);
