@@ -5,8 +5,6 @@
 
 include(../libbase.pri)
 
-PRECOMPILED_HEADER = precompile.h 
-
 INCLUDEPATH += ../../src/core ./ ./build
 
 TARGET = traversoaudiobackend
@@ -14,8 +12,6 @@ DESTDIR = ../../lib
 
 TEMPLATE = lib 
 LIBS += -lasound
-LIBS += $$system(pkg-config --libs glib-2.0)
-QMAKE_CXXFLAGS += $$system(pkg-config --cflags glib-2.0)
 
 HEADERS += \
 	precompile.h \
@@ -41,6 +37,11 @@ SOURCES += AudioDevice.cpp \
 	   AudioChannel.cpp \
 	   Tsar.cpp \
 	   memops.cpp
+
+debug {
+	PRECOMPILED_HEADER = precompile.h 
+}
+
 
 unix {
 	SOURCES += AlsaDriver.cpp
