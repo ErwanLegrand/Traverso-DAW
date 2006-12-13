@@ -16,7 +16,8 @@ LIBS +=  \
 	-lsndfile \
 	-lsamplerate \
 	-lslv2 \
-
+	-lfftw3 \
+	$$system(pkg-config --libs glib-2.0) \
 
 HEADERS += \
 	songcanvas/AudioClipView.h \ 
