@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SpectralMeter.cpp,v 1.2 2006/12/09 08:44:54 n_doebelin Exp $
+$Id: SpectralMeter.cpp,v 1.3 2006/12/14 21:21:19 n_doebelin Exp $
 
 */
 
@@ -33,24 +33,15 @@ $Id: SpectralMeter.cpp,v 1.2 2006/12/09 08:44:54 n_doebelin Exp $
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-#define FRLEN 2048
 #define PI 3.141592653589
 
 SpectralMeter::SpectralMeter()
 	: Plugin()
 {
-	fftsigl  = NDArray(FRLEN);		// array of input values (windowed samples)
-	fftsigr  = NDArray(FRLEN);		// array of input values (windowed samples)
-	fftspecl = NFFTWArray(FRLEN/2 + 1);	// array of output values (complex numbers)
-	fftspecr = NFFTWArray(FRLEN/2 + 1);	// array of output values (complex numbers)
-	pfegl = fftw_plan_dft_r2c_1d(FRLEN, fftsigl, fftspecl, FFTW_ESTIMATE);
-	pfegr = fftw_plan_dft_r2c_1d(FRLEN, fftsigr, fftspecr, FFTW_ESTIMATE);
+	m_frlen = 2048;
+	m_windowingFunction = 1;
 
-	// calculates the Hanning window (?)
-	win = NDArray(FRLEN);
-	for (int i = 0; i < FRLEN; ++i) {
-		win[i] = pow(sin(PI * i / FRLEN), 2);
-	}
+	(int) init();
 
 	// constructs a ringbuffer that can hold 16384 samples
 	m_databufferL = new RingBufferNPT<float>(16384);
@@ -85,9 +76,68 @@ int SpectralMeter::set_state(const QDomNode & node )
 
 int SpectralMeter::init()
 {
+	fftsigl  = NDArray(m_frlen);		// array of input values (windowed samples)
+	fftsigr  = NDArray(m_frlen);		// array of input values (windowed samples)
+	fftspecl = NFFTWArray(m_frlen/2 + 1);	// array of output values (complex numbers)
+	fftspecr = NFFTWArray(m_frlen/2 + 1);	// array of output values (complex numbers)
+	pfegl = fftw_plan_dft_r2c_1d(m_frlen, fftsigl, fftspecl, FFTW_ESTIMATE);
+	pfegr = fftw_plan_dft_r2c_1d(m_frlen, fftsigr, fftspecr, FFTW_ESTIMATE);
+
+	win = NDArray(m_frlen);
+	switch (m_windowingFunction)
+	{
+		case 0: // rectangle
+			for (int i = 0; i < m_frlen; ++i) {
+				win[i] = 1.0;
+			}
+			break;
+
+		case 1: // hanning
+			for (int i = 0; i < m_frlen; ++i) {
+				win[i] = 0.5 - 0.5 * cos(2.0 * i * PI / m_frlen);
+			}
+			break;
+
+		case 2: // hamming
+			for (int i = 0; i < m_frlen; ++i) {
+				win[i] = 0.54 - 0.46 * cos(2.0 * i * PI / m_frlen);
+			}
+			break;
+
+		case 3: // blackman
+			for (int i = 0; i < m_frlen; ++i) {
+				win[i] = 0.42 - 0.5 * cos(2.0 * PI * i / m_frlen) +
+					 0.08 * cos(4.0 * PI * i / m_frlen);
+			}
+			break;
+	}
+	// calculates the Hanning window (?)
+/*	for (int i = 0; i < m_frlen; ++i) {
+		win[i] = pow(sin(PI * i / m_frlen), 2);
+	}
+*/
 	return 1;
 }
 
+int SpectralMeter::get_fr_size()
+{
+	return m_frlen;
+}
+
+void SpectralMeter::set_fr_size(int i)
+{
+	m_frlen = i;
+}
+
+void SpectralMeter::set_windowing_function(int i)
+{
+	m_windowingFunction = i;
+}
+
+int SpectralMeter::get_windowing_function()
+{
+	return m_windowingFunction;
+}
 
 void SpectralMeter::process(AudioBus* bus, unsigned long nframes)
 {
@@ -115,7 +165,7 @@ int SpectralMeter::get_data(QVector<float> &specl, QVector<float> &specr)
 	
 	// If there is not enough new data for an FFT window in the ringbuffer,
 	// leave it alone and return zero
-	if (readcount < FRLEN) {
+	if (readcount < m_frlen) {
 		return 0;
 	}
 
@@ -130,7 +180,7 @@ int SpectralMeter::get_data(QVector<float> &specl, QVector<float> &specr)
 	m_databufferL->read(&left, 1);
 	m_databufferR->read(&right, 1);
 
-	for (uint i = 0; i < FRLEN; ++i) {
+	for (uint i = 0; i < m_frlen; ++i) {
 		m_databufferL->read(&left, 1);
 		m_databufferR->read(&right, 1);
 		fftsigl[i] = (double)left * win[i];
@@ -144,7 +194,7 @@ int SpectralMeter::get_data(QVector<float> &specl, QVector<float> &specr)
 	float tmp;
 
 	// send the fft spectrum to the caller
-	for (uint i = 1; i < FRLEN/2 + 1; ++i) {
+	for (uint i = 1; i < m_frlen/2 + 1; ++i) {
 		tmp = pow((float)fftspecl[i][0],2.0f) + pow((float)fftspecl[i][1],2.0f);
 		specl.push_back(tmp);
 		tmp = pow((float)fftspecr[i][0],2.0f) + pow((float)fftspecr[i][1],2.0f);

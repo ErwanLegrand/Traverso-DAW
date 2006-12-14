@@ -67,6 +67,7 @@ HEADERS += \
 	VUMeterOverLed.h \
 	CorrelationMeterWidget.h \
 	SpectralMeterWidget.h \
+	SpectralMeterConfigWidget.h \
 	QuickDriverConfigWidget.h \
 	precompile.h 
 
@@ -120,6 +121,7 @@ SOURCES += \
 	VUMeterOverLed.cpp \
 	CorrelationMeterWidget.cpp \
 	SpectralMeterWidget.cpp \
+	SpectralMeterConfigWidget.cpp \
 	QuickDriverConfigWidget.cpp
 
 FORMS += ui/ProjectManagerWidget.ui \
@@ -131,6 +133,7 @@ FORMS += ui/ProjectManagerWidget.ui \
 	ui/GlobalPropertiesWidget.ui \
 	ui/AudioSourcesManagerWidget.ui \
 	ui/PluginSelectorDialog.ui \
+	ui/SpectralMeterConfigWidget.ui \
 	ui/QuickDriverConfigWidget.ui
 
 

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SpectralMeter.h,v 1.2 2006/12/09 08:44:54 n_doebelin Exp $
+$Id: SpectralMeter.h,v 1.3 2006/12/14 21:21:19 n_doebelin Exp $
 */
 
 
@@ -49,10 +49,18 @@ public:
 	int set_state(const QDomNode & node );
 	void process(AudioBus* bus, unsigned long nframes);
 	QString get_name();
+	int get_fr_size();
+	void set_fr_size(int);
+	int get_windowing_function();
+	void set_windowing_function(int);
 
 	int get_data(QVector<float>& specl, QVector<float>& specr);
+	
 
 private:
+	int	m_frlen;
+	int	m_windowingFunction;
+
 	// FFTW globals
 	fftw_plan pfegl, pfegr;
 	fftw_complex *fftspecl,*fftspecr;

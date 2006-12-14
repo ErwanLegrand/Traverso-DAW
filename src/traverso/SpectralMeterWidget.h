@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SpectralMeterWidget.h,v 1.5 2006/12/13 19:13:25 r_sijrier Exp $
+    $Id: SpectralMeterWidget.h,v 1.6 2006/12/14 21:21:19 n_doebelin Exp $
 */
 
 #ifndef SPECTRALMETERWIDGET_H
@@ -33,6 +33,7 @@ class QRect;
 class QPixmap;
 class SpectralMeter;
 class Command;
+class SpectralMeterConfigWidget;
 
 class SpectralMeterWidget : public ViewPort
 {
@@ -40,6 +41,7 @@ class SpectralMeterWidget : public ViewPort
 
 public:
         SpectralMeterWidget(QWidget* parent);
+	~SpectralMeterWidget();
 
 protected:
         void resizeEvent( QResizeEvent* e);
@@ -55,6 +57,7 @@ private:
 	QVector<float>	m_freq_labels;
 	SpectralMeter*	m_meter;
 	QRect		m_rect;
+	SpectralMeterConfigWidget *m_config;
 	QPixmap		bgPixmap;
 	uint		num_bands;
 	uint		sample_rate;
@@ -80,6 +83,7 @@ private:
 	float		db2ypos(float);
 	float		freq2xpos(float);
 	void		update_barwidth();
+	void		update_background();
 
 private slots:
 	void		set_project( Project* );
@@ -88,6 +92,7 @@ private slots:
 
 public slots:
 	Command*	edit_properties();
+	void		update_properties();
 
 };
 

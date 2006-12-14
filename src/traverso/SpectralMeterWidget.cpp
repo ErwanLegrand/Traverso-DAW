@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.6 2006/12/13 21:15:38 n_doebelin Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.7 2006/12/14 21:21:19 n_doebelin Exp $
 */
 
 #include "SpectralMeterWidget.h"
@@ -29,6 +29,7 @@
 #include <AudioDevice.h>
 #include <InputEngine.h>
 #include <Song.h>
+#include "SpectralMeterConfigWidget.h"
 
 #include <QPainter>
 #include <QColor>
@@ -93,9 +94,17 @@ SpectralMeterWidget::SpectralMeterWidget(QWidget* parent)
 		m_freq_labels.push_back(90.0f * pow(10.0,i));
 	}
 
+	m_config = new SpectralMeterConfigWidget(this);
+	connect(m_config, SIGNAL(closed()), this, SLOT(update_properties()));
+
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 	connect(&timer, SIGNAL(timeout()), this, SLOT(update_data()));
+}
+
+SpectralMeterWidget::~SpectralMeterWidget()
+{
+// 	delete m_config;
 }
 
 void SpectralMeterWidget::paintEvent( QPaintEvent *  )
@@ -144,10 +153,13 @@ void SpectralMeterWidget::resizeEvent( QResizeEvent *  )
 		h -= (margin_t + margin_b);
 	}
 
-	update_barwidth();
-
 	m_rect.setRect(x, y, w, h);
+	update_barwidth();
+	update_background();
+}
 
+void SpectralMeterWidget::update_background()
+{
 	// draw the background image
 	bgPixmap = QPixmap(width(), height());
 	bgPixmap.fill(Qt::white);
@@ -160,7 +172,7 @@ void SpectralMeterWidget::resizeEvent( QResizeEvent *  )
 	QString spm;
 
 	// draw horizontal lines + labels
-	for (float i = 0.0; i >= lower_db; i -= 10.0f) {
+	for (float i = upper_db; i >= lower_db; i -= 10.0f) {
 		float f = db2ypos(i);
 
 		painter.setPen(QColor(205,223,255));
@@ -216,10 +228,6 @@ void SpectralMeterWidget::update_data()
  		return;
  	}
 
-	if (!fft_size) {
-		update_layout();
-	}
-
 	reduce_bands();
 	viewport()->update();
 }
@@ -258,7 +266,7 @@ void SpectralMeterWidget::set_song(Song *song)
 void SpectralMeterWidget::reduce_bands()
 {
 	// check if we have to update some variables
-	if ((uint)m_spectrum.size() != num_bands) {
+	if (((uint)m_spectrum.size() != num_bands) || (fft_size != qMin(specl.size(), specr.size()))) {
 		update_layout();
 	}
 
@@ -280,11 +288,11 @@ void SpectralMeterWidget::reduce_bands()
 		if (freq >= m_bands.at(j)) {
 			// we entered the freq range of the next band
 			++j;
-			if (j >= num_bands) {
+			if (j >= m_spectrum.size()) {
 				// We are above the highest displayed frequency
 				return;
 			} else {
-				// calc smooth falloff
+				// move to the next band and fill it with the smooth falloff value as default
 				hist = DB_FLOOR + (m_spectrum.at(j) - DB_FLOOR) * SMOOTH_FACTOR;
 				m_spectrum[j] = hist;
 			}
@@ -320,7 +328,7 @@ void SpectralMeterWidget::update_layout()
 
 float SpectralMeterWidget::db2ypos(float f)
 {
-	return (f * m_rect.height()/(lower_db - upper_db)) + m_rect.top();
+	return ((f - upper_db) * m_rect.height()/(lower_db - upper_db)) + m_rect.top();
 }
 
 float SpectralMeterWidget::freq2xpos(float f)
@@ -344,8 +352,41 @@ void SpectralMeterWidget::update_barwidth()
 
 Command* SpectralMeterWidget::edit_properties()
 {
-	// Some usefull code here
+	if (!m_meter) {
+		return 0;
+	}
+
+	m_config->show();
+	m_config->set_upper_freq((int)upper_freq);
+	m_config->set_lower_freq((int)lower_freq);
+	m_config->set_num_bands(num_bands);
+	m_config->set_upper_db((int)upper_db);
+	m_config->set_lower_db((int)lower_db);
+
+	m_config->set_fr_len(m_meter->get_fr_size());
+	m_config->set_windowing_function(m_meter->get_windowing_function());
+
 	return 0;
 }
+
+void SpectralMeterWidget::update_properties()
+{
+	m_config->hide();
+	upper_freq = (float)m_config->get_upper_freq();
+	lower_freq = (float)m_config->get_lower_freq();
+	num_bands = m_config->get_num_bands();
+	upper_db = (float)m_config->get_upper_db();
+	lower_db = (float)m_config->get_lower_db();
+
+	if (m_meter) {
+		m_meter->set_fr_size(m_config->get_fr_len());
+		m_meter->set_windowing_function(m_config->get_windowing_function());
+		m_meter->init();
+	}
+
+	update_layout();
+	update_background();
+}
+
 
 //eof
