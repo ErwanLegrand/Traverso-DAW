@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.7 2006/12/14 21:21:19 n_doebelin Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.8 2006/12/17 21:13:20 n_doebelin Exp $
 */
 
 #include "SpectralMeterWidget.h"
@@ -277,7 +277,7 @@ void SpectralMeterWidget::reduce_bands()
 	// db = (20 * log10(2 * sqrt(r_a^2 + i_a^2) / N) + 20 * log10(2 * sqrt(r_b^2 + i_b^2) / N)) / 2
 	// with (r_a^2 + i_a^2) and (r_b^2 + i_b^2) given in specl and specr vectors
 	m_spectrum[0] = DB_FLOOR + (m_spectrum.at(0) - DB_FLOOR) * SMOOTH_FACTOR;
-	for (uint i = 0, j = 0; i <= fft_size; ++i) {
+	for (uint i = 0, j = 0; i < fft_size; ++i) {
 		float freq = i * (float)sample_rate / (2.0f * fft_size);
 
 		if (freq < (float)lower_freq) {
