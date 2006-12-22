@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: CorrelationMeterWidget.cpp,v 1.1 2006/12/09 08:44:54 n_doebelin Exp $
+    $Id: CorrelationMeterWidget.cpp,v 1.2 2006/12/22 10:15:34 n_doebelin Exp $
 */
 
 #include <libtraverso.h>
@@ -39,6 +39,8 @@
 #include <QLinearGradient>
 #include <QColor>
 #include <QPointF>
+#include <QFont>
+#include <QFontMetrics>
 #include <QDebug>
 
 // Always put me below _all_ includes, this is needed
@@ -46,6 +48,7 @@
 #include "Debugger.h"
 
 static const float SMOOTH_SHIFT = 0.05;
+static const int FONT_SIZE = 7;
 
 CorrelationMeterWidget::CorrelationMeterWidget(QWidget* parent)
 	: QWidget(parent)
@@ -75,7 +78,7 @@ void CorrelationMeterWidget::paintEvent( QPaintEvent *  )
 	// means triple buffering which makes no sense.
 	QPainter painter(this);
 
-	painter.fillRect(0, 0, width(), height(), Qt::black);
+	painter.fillRect(0, 0, width(), height(), QColor(246, 250, 255));
 
 	int lend = int(0.5*width() - (-coeff + 1.0) * 0.25 * width() * (1.0 - fabs(direction)));
 	int rend = int(0.5*width() + (-coeff + 1.0) * 0.25 * width() * (1.0 - fabs(direction)));
@@ -86,13 +89,34 @@ void CorrelationMeterWidget::paintEvent( QPaintEvent *  )
 	painter.drawPixmap(lend + centerOffset, 0, wdt, height(),
 		pixPhase, lend, 0, wdt, height());
 
-	painter.setPen(QColor(128, 128, 128));
-	painter.drawLine(int(0.25*width()), 0, int(0.25*width()), height());
-	painter.drawLine(int(0.50*width()), 0, int(0.50*width()), height());
-	painter.drawLine(int(0.75*width()), 0, int(0.75*width()), height());
+	painter.setPen(QColor(205, 222, 255));
 
-	painter.setPen(QColor(0, 255, 0));
+	int lpos = int(0.25*width());
+	int cpos = int(0.50*width());
+	int rpos = int(0.75*width());
+
+	painter.drawLine(lpos, 0, lpos, height());
+	painter.drawLine(cpos, 0, cpos, height());
+	painter.drawLine(rpos, 0, rpos, height());
+
+	// center line
+	QPen pen(QColor(180, 190, 189));
+	pen.setWidth(3);
+	painter.setPen(pen);
 	painter.drawLine(width()/2 + centerOffset, 0, width()/2 + centerOffset, height());
+
+	painter.setFont(QFont("Bitstream Vera Sans", FONT_SIZE));
+	QFontMetrics fm(QFont("Bitstream Vera Sans", FONT_SIZE));
+	
+	if (height() < 2*fm.height()) {
+		return;
+	}
+
+	painter.setPen(QColor(0, 0, 0));
+	painter.fillRect(0, 0, width(), fm.height() + 1, QColor(246, 246, 255));
+	painter.drawText(lpos - fm.width("L")/2, fm.ascent() + 1, "L");
+	painter.drawText(cpos - fm.width("C")/2, fm.ascent() + 1, "C");
+	painter.drawText(rpos - fm.width("R")/2, fm.ascent() + 1, "R");
 }
 
 void CorrelationMeterWidget::resizeEvent( QResizeEvent *  )
@@ -148,11 +172,11 @@ void CorrelationMeterWidget::set_song(Song *song)
 void CorrelationMeterWidget::update_gradient()
 {
 	gradPhase.setStart(0,0);
-	gradPhase.setColorAt(0.0,  QColor(100,   0, 0));
-	gradPhase.setColorAt(0.25, QColor(100, 100, 0));
-	gradPhase.setColorAt(0.5,  QColor(  0, 200, 0));
-	gradPhase.setColorAt(0.75, QColor(100, 100, 0));
-	gradPhase.setColorAt(1.0,  QColor(100,   0, 0));
+	gradPhase.setColorAt(0.0,  QColor(205, 202, 246));
+// 	gradPhase.setColorAt(0.25, QColor(144, 141, 185));
+	gradPhase.setColorAt(0.5,  QColor( 82,  80, 123));
+// 	gradPhase.setColorAt(0.75, QColor(144, 141, 185));
+	gradPhase.setColorAt(1.0,  QColor(205, 202, 246));
 
 	gradPhase.setFinalStop(QPointF((float)width(), 0.0));
 

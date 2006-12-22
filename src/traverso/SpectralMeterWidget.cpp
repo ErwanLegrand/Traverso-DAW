@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.8 2006/12/17 21:13:20 n_doebelin Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.9 2006/12/22 10:15:34 n_doebelin Exp $
 */
 
 #include "SpectralMeterWidget.h"
@@ -162,10 +162,10 @@ void SpectralMeterWidget::update_background()
 {
 	// draw the background image
 	bgPixmap = QPixmap(width(), height());
-	bgPixmap.fill(Qt::white);
+	bgPixmap.fill(QColor(246, 246, 255));
 
 	QPainter painter(&bgPixmap);
-	painter.fillRect(m_rect, QColor(241, 247, 255));
+	painter.fillRect(m_rect, QColor(241, 250, 255));
 	painter.setFont(QFont("Bitstream Vera Sans", FONT_SIZE));
 	QFontMetrics fm(QFont("Bitstream Vera Sans", FONT_SIZE));
 
