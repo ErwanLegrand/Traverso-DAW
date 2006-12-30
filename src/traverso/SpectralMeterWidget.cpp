@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.9 2006/12/22 10:15:34 n_doebelin Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.10 2006/12/30 14:01:01 n_doebelin Exp $
 */
 
 #include "SpectralMeterWidget.h"
@@ -42,7 +42,11 @@
 #include <QVector>
 #include <QString>
 #include <QRect>
+#include <QFileDialog>
+#include <QFile>
+#include <QTextStream>
 #include <math.h>
+#include <limits.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -54,6 +58,7 @@
 static const float DEFAULT_VAL = -999.0f;
 static const int UPDATE_INTERVAL = 40;
 static const int FONT_SIZE = 7;
+static const uint MAX_SAMPLES = UINT_MAX;
 
 SpectralMeterWidget::SpectralMeterWidget(QWidget* parent)
 	: ViewPort(parent)
@@ -70,6 +75,8 @@ SpectralMeterWidget::SpectralMeterWidget(QWidget* parent)
 	upper_freq_log = log10(upper_freq);
 	lower_freq_log = log10(lower_freq);
 	sample_rate = audiodevice().get_sample_rate();
+	show_average = false;
+	sample_weight = 1;
 
 	QFontMetrics fm(QFont("Bitstream Vera Sans", FONT_SIZE));
 	margin_l = 5;
@@ -95,7 +102,7 @@ SpectralMeterWidget::SpectralMeterWidget(QWidget* parent)
 	}
 
 	m_config = new SpectralMeterConfigWidget(this);
-	connect(m_config, SIGNAL(closed()), this, SLOT(update_properties()));
+	connect(m_config, SIGNAL(closed()), this, SLOT(apply_properties()));
 
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
@@ -126,13 +133,25 @@ void SpectralMeterWidget::paintEvent( QPaintEvent *  )
 		QPointF pt;
 
 		// draw the freq bands
-		for (uint i = 0; i < m_spectrum.size(); ++i) {
+		for (uint i = 0; i < (uint)m_spectrum.size(); ++i) {
 			if (m_spectrum.at(i) < lower_db) {
 				continue;
 			}
 			pt.setX(bar_offset + i * m_rect.width() / num_bands);
 			pt.setY(db2ypos(m_spectrum.at(i)));
 			painter.drawLine(QPointF(pt.x(), height()), pt);
+		}
+
+		// draw the average line if requested
+		if (show_average) {
+			painter.setPen(Qt::red);
+			QPointF po(bar_offset, db2ypos(m_avg_db.at(0)));
+			for (uint i = 0; i < (uint)m_avg_db.size(); ++i) {
+				pt.setX(m_map_idx2xpos.at(i));
+				pt.setY(db2ypos(m_avg_db.at(i)));
+				painter.drawLine(po, pt);
+				po = pt;
+			}
 		}
 	}
 }
@@ -154,7 +173,14 @@ void SpectralMeterWidget::resizeEvent( QResizeEvent *  )
 	}
 
 	m_rect.setRect(x, y, w, h);
+
+	// update the vectors mapping indices and frequencies to widget coordinates
+	update_freq_map();
+
+	// re-calculate the bar width
 	update_barwidth();
+
+	// re-draw the background pixmap
 	update_background();
 }
 
@@ -183,7 +209,7 @@ void SpectralMeterWidget::update_background()
 		painter.drawText(m_rect.right() + 1, (int)f + fm.ascent()/2, spm);
 	}
 
-	// draw frequency labels
+	// draw frequency labels and tickmarks
 	float last_pos = 1.0;
 	for (int i = 0; i < m_freq_labels.size(); ++i) {
 		// check if we have space to draw the labels by checking if the
@@ -228,7 +254,10 @@ void SpectralMeterWidget::update_data()
  		return;
  	}
 
+	// process the data
 	reduce_bands();
+
+	// paint the widget
 	viewport()->update();
 }
 
@@ -236,6 +265,7 @@ void SpectralMeterWidget::set_project(Project *project)
 {
 	if (project) {
 		connect(project, SIGNAL(currentSongChanged(Song *)), this, SLOT(set_song(Song*)));
+		m_project = project;
 	} else {
 		timer.stop();
 	}
@@ -245,6 +275,9 @@ void SpectralMeterWidget::set_song(Song *song)
 {
 	PluginChain* chain = song->get_plugin_chain();
 	
+	connect(song, SIGNAL(transferStarted()), this, SLOT(transfer_started()));
+	connect(song, SIGNAL(transferStopped()), this, SLOT(transfer_stopped()));
+
 	foreach(Plugin* plugin, chain->get_plugin_list()) {
 		// Nicola: qobject_cast didn't have the behaviour I thought
 		// it would have, so I switched it to dynamic_cast!
@@ -260,37 +293,56 @@ void SpectralMeterWidget::set_song(Song *song)
 	m_meter = new SpectralMeter();
 	m_meter->init();
 	ie().process_command( chain->add_plugin(m_meter, false) );
+
 	timer.start(UPDATE_INTERVAL);
 }
 
+// most of the calculations is done here:
+//	1. the gain values must be converted to db
+//	2. since we don't want to show every frequency bin, we reduce the number of freqs
+//		and split them into bands evenly distributed on a log10 x-scale.
+//		This is pretty complicated and is the reason for most of the weired code below
+//	3. calculate the average db levels
 void SpectralMeterWidget::reduce_bands()
 {
 	// check if we have to update some variables
-	if (((uint)m_spectrum.size() != num_bands) || (fft_size != qMin(specl.size(), specr.size()))) {
-		update_layout();
+	if ((m_spectrum.size() != (int)num_bands) 
+		|| (fft_size != qMin(specl.size(), specr.size())) 
+		|| (m_map_idx2freq.size() != fft_size)) {
+			update_layout();
 	}
+
+	// calculate the sample weight for the average curve
+	double sweight = 1.0 / (double)sample_weight;
+	double oweight = 1.0 - sweight;
 
 	// used for smooth falloff
 	float hist = DB_FLOOR + (m_spectrum.at(0) - DB_FLOOR) * SMOOTH_FACTOR;
 
-	// Convert fft results to dB. Heavily simplyfied version of the following function:
+	bool skip = false;
+
+	// Convert fft results to dB. Heavily re-arranged version of the following function:
 	// db = (20 * log10(2 * sqrt(r_a^2 + i_a^2) / N) + 20 * log10(2 * sqrt(r_b^2 + i_b^2) / N)) / 2
 	// with (r_a^2 + i_a^2) and (r_b^2 + i_b^2) given in specl and specr vectors
 	m_spectrum[0] = DB_FLOOR + (m_spectrum.at(0) - DB_FLOOR) * SMOOTH_FACTOR;
+
+	// loop through the fft vectors
 	for (uint i = 0, j = 0; i < fft_size; ++i) {
-		float freq = i * (float)sample_rate / (2.0f * fft_size);
+		float freq = m_map_idx2freq.at(i);
 
 		if (freq < (float)lower_freq) {
 			// We are still below the lowest displayed frequency
-			continue;
+			skip = true;
+		} else {
+			skip = false;
 		}
 
 		if (freq >= m_bands.at(j)) {
 			// we entered the freq range of the next band
 			++j;
-			if (j >= m_spectrum.size()) {
+			if (j >= (uint)m_spectrum.size()) {
 				// We are above the highest displayed frequency
-				return;
+				skip = true;
 			} else {
 				// move to the next band and fill it with the smooth falloff value as default
 				hist = DB_FLOOR + (m_spectrum.at(j) - DB_FLOOR) * SMOOTH_FACTOR;
@@ -298,8 +350,26 @@ void SpectralMeterWidget::reduce_bands()
 			}
 		}
 
+		// calculate the db value of the current bin
 		float val = 5.0 * (log10(specl.at(i) * specr.at(i)) + xfactor);
-		m_spectrum[j] = qMax(val, m_spectrum.at(j));
+
+		// fill the average sample curve
+		if (show_average) {
+			if (i < (uint)m_avg_db.size()) {
+				double dv = val * sweight + m_avg_db.at(i) * oweight;
+				m_avg_db[i] = dv;
+			}
+		}
+
+		// write back the actual db value to the current freq band
+		if (!skip) {
+			m_spectrum[j] = qMax(val, m_spectrum.at(j));
+		}
+	}
+
+	// progress the sample weighting for the average curve
+	if ((show_average) && (sample_weight < (MAX_SAMPLES - 1))) {
+		++sample_weight;
 	}
 }
 
@@ -307,15 +377,19 @@ void SpectralMeterWidget::reduce_bands()
 // it re-calculates some variables
 void SpectralMeterWidget::update_layout()
 {
+	timer.stop();
+
 	// recalculate a couple of variables
 	fft_size = qMin(specl.size(), specr.size());		// number of frequencies
 	xfactor = 4.0f * log10(2.0f / float(fft_size));	// a constant factor for conversion to dB
 	upper_freq_log = log10(upper_freq);
 	lower_freq_log = log10(lower_freq);
 	freq_step = (upper_freq_log - lower_freq_log)/(num_bands);
+	sample_weight = 1;
 
 	// recreate the vector containing the levels and frequency bands
 	m_spectrum.fill(DEFAULT_VAL, num_bands);
+	m_avg_db.fill(DEFAULT_VAL, fft_size);
 
 	// recreate the vector containing border frequencies of the freq bands
 	m_bands.clear();
@@ -323,14 +397,20 @@ void SpectralMeterWidget::update_layout()
 		m_bands.push_back(pow(10.0, lower_freq_log + (i+1)*freq_step));
 	}
 
+	// update related stuff
 	update_barwidth();
+	update_freq_map();
+
+	timer.start(UPDATE_INTERVAL);
 }
 
+// converts db-values into widget y-coordinates
 float SpectralMeterWidget::db2ypos(float f)
 {
 	return ((f - upper_db) * m_rect.height()/(lower_db - upper_db)) + m_rect.top();
 }
 
+// converts frequencies into widget x-coordinates
 float SpectralMeterWidget::freq2xpos(float f)
 {
 	if ((f < lower_freq) || (f > upper_freq)) {
@@ -341,6 +421,7 @@ float SpectralMeterWidget::freq2xpos(float f)
 	return (float)margin_l + d * m_rect.width() / (upper_freq_log - lower_freq_log);
 }
 
+// re-calculates the bar width of the frequency bands
 void SpectralMeterWidget::update_barwidth()
 {
 	int i = num_bands < 128 ? 2 : 0;
@@ -350,6 +431,20 @@ void SpectralMeterWidget::update_barwidth()
 	bar_offset += m_rect.x();
 }
 
+// updates a vector mapping fft indices (0, ..., fft_size) to widget x-positions
+// and one mapping fft indices to frequency
+void SpectralMeterWidget::update_freq_map()
+{
+	m_map_idx2xpos.clear();
+	m_map_idx2freq.clear();
+	for (uint i = 0; i < fft_size; ++i) {
+		float freq = float(i+1) * (float)sample_rate / (2.0f * fft_size);
+		m_map_idx2freq.push_back(freq);
+		m_map_idx2xpos.push_back(freq2xpos(freq));
+	}
+}
+
+// opens the properties dialog
 Command* SpectralMeterWidget::edit_properties()
 {
 	if (!m_meter) {
@@ -362,6 +457,7 @@ Command* SpectralMeterWidget::edit_properties()
 	m_config->set_num_bands(num_bands);
 	m_config->set_upper_db((int)upper_db);
 	m_config->set_lower_db((int)lower_db);
+	m_config->set_show_average(show_average);
 
 	m_config->set_fr_len(m_meter->get_fr_size());
 	m_config->set_windowing_function(m_meter->get_windowing_function());
@@ -369,7 +465,8 @@ Command* SpectralMeterWidget::edit_properties()
 	return 0;
 }
 
-void SpectralMeterWidget::update_properties()
+// is called upon closing the properties dialog
+void SpectralMeterWidget::apply_properties()
 {
 	m_config->hide();
 	upper_freq = (float)m_config->get_upper_freq();
@@ -377,6 +474,7 @@ void SpectralMeterWidget::update_properties()
 	num_bands = m_config->get_num_bands();
 	upper_db = (float)m_config->get_upper_db();
 	lower_db = (float)m_config->get_lower_db();
+	show_average = m_config->get_show_average();
 
 	if (m_meter) {
 		m_meter->set_fr_size(m_config->get_fr_len());
@@ -388,5 +486,71 @@ void SpectralMeterWidget::update_properties()
 	update_background();
 }
 
+void SpectralMeterWidget::transfer_started()
+{
+	// restarts the average curve
+	sample_weight = 1;
+}
+
+void SpectralMeterWidget::transfer_stopped()
+{
+
+}
+
+Command* SpectralMeterWidget::set_mode()
+{
+	show_average = !show_average;
+	update_layout();
+	return 0;
+}
+
+Command* SpectralMeterWidget::reset()
+{
+	sample_weight = 1;
+	return 0;
+}
+
+Command* SpectralMeterWidget::show_export_widget()
+{
+	// check if all requirements are met
+	if ((!show_average) || (!m_avg_db.size()) || (!m_project)) {
+		printf("No average data available.");
+		return 0;
+	}
+
+	// check if there actually is data to export
+	int s = qMin(m_map_idx2freq.size(), m_avg_db.size());
+	if (!s) {
+		printf("No average data available.");
+		return 0;
+	}
+
+	QString fn = QFileDialog::getSaveFileName (0, tr("Export average dB curve"), m_project->get_root_dir());
+
+	// if aborted exit here
+	if (fn.isEmpty()) {
+		return 0;
+	}
+
+	QFile file(fn);
+
+	// check if the selected file can be opened for writing
+	if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+		printf("Could not open file for writing.");
+		return 0;
+	}
+
+	QTextStream out(&file);
+	QString separator = " ";
+	QString str;
+
+	// export the data
+	// bin 0 contains no useful data (freq is 0 Hz anyway)
+	for (int i = 0; i < s; ++i) {
+		out << str.sprintf("%.6f %.6f\n", m_map_idx2freq.at(i), m_avg_db.at(i));
+	}
+
+	return 0;
+}
 
 //eof

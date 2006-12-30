@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SpectralMeterConfigWidget.cpp,v 1.1 2006/12/14 21:21:19 n_doebelin Exp $
+$Id: SpectralMeterConfigWidget.cpp,v 1.2 2006/12/30 14:01:01 n_doebelin Exp $
 */
 
 #include "SpectralMeterConfigWidget.h"
@@ -26,6 +26,8 @@ $Id: SpectralMeterConfigWidget.cpp,v 1.1 2006/12/14 21:21:19 n_doebelin Exp $
 #include <QSpinBox>
 #include <QComboBox>
 #include <QString>
+#include <QGroupBox>
+#include <QCheckBox>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -35,7 +37,9 @@ SpectralMeterConfigWidget::SpectralMeterConfigWidget( QWidget * parent )
 	: QWidget(parent, Qt::Popup)
 {
 	setupUi(this);
+	groupBoxAdvanced->hide();
 	connect(buttonClose, SIGNAL(clicked()), this, SLOT(on_closeButton_clicked()));
+	connect(buttonAdvanced, SIGNAL(toggled(bool)), this, SLOT(advancedButton_toggled(bool)));
 }
 
 SpectralMeterConfigWidget::~ SpectralMeterConfigWidget( )
@@ -43,7 +47,16 @@ SpectralMeterConfigWidget::~ SpectralMeterConfigWidget( )
 
 void SpectralMeterConfigWidget::on_closeButton_clicked()
 {
-	emit closed();	
+	emit closed();
+}
+
+void SpectralMeterConfigWidget::advancedButton_toggled(bool b)
+{
+	if (b) {
+		groupBoxAdvanced->show();
+	} else {
+		groupBoxAdvanced->hide();
+	}
 }
 
 void SpectralMeterConfigWidget::set_upper_freq(int i)
@@ -69,6 +82,16 @@ void SpectralMeterConfigWidget::set_lower_db(int i)
 void SpectralMeterConfigWidget::set_num_bands(int i)
 {
 	spinBoxNumBands->setValue(i);
+}
+
+void SpectralMeterConfigWidget::set_show_average(bool b)
+{
+	checkBoxAverage->setChecked(b);
+}
+
+bool SpectralMeterConfigWidget::get_show_average()
+{
+	return checkBoxAverage->isChecked();
 }
 
 void SpectralMeterConfigWidget::set_fr_len(int i)

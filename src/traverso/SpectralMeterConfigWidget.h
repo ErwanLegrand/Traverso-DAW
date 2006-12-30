@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SpectralMeterConfigWidget.h,v 1.1 2006/12/14 21:21:19 n_doebelin Exp $
+    $Id: SpectralMeterConfigWidget.h,v 1.2 2006/12/30 14:01:01 n_doebelin Exp $
 */
 
 #ifndef SPECTRALMETER_CONFIG_WIDGET_H
@@ -41,6 +41,7 @@ public:
 	void set_num_bands(int);
 	void set_fr_len(int);
 	void set_windowing_function(int);
+	void set_show_average(bool);
 
 	int get_upper_freq();
 	int get_lower_freq();
@@ -49,11 +50,13 @@ public:
 	int get_num_bands();
 	int get_fr_len();
 	int get_windowing_function();
+	bool get_show_average();
 
 private:
 	
 private slots:
 	void on_closeButton_clicked();
+	void advancedButton_toggled(bool);
 
 signals:
 	void closed();

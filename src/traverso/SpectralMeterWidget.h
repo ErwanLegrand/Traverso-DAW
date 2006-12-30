@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SpectralMeterWidget.h,v 1.6 2006/12/14 21:21:19 n_doebelin Exp $
+    $Id: SpectralMeterWidget.h,v 1.7 2006/12/30 14:01:01 n_doebelin Exp $
 */
 
 #ifndef SPECTRALMETERWIDGET_H
@@ -48,6 +48,7 @@ protected:
         void paintEvent( QPaintEvent* e);
 
 private:
+	Project		*m_project;
 	QTimer		timer;
 	QVector<float>	specl;
 	QVector<float>	specr;
@@ -55,6 +56,9 @@ private:
 	QVector<float>	m_history;
 	QVector<float>	m_bands;
 	QVector<float>	m_freq_labels;
+	QVector<float>	m_avg_db;
+	QVector<float>	m_map_idx2xpos;
+	QVector<float>	m_map_idx2freq;
 	SpectralMeter*	m_meter;
 	QRect		m_rect;
 	SpectralMeterConfigWidget *m_config;
@@ -69,6 +73,7 @@ private:
 	int		margin_r;
 	int		margin_t;
 	int		margin_b;
+	uint		sample_weight;
 
 	uint		fft_size;
 	float		xfactor;
@@ -77,9 +82,11 @@ private:
 	float		freq_step;
 	int		bar_width;
 	int		bar_offset;
+	bool		show_average;
 
 	void		reduce_bands();
 	void		update_layout();
+	void		update_freq_map();
 	float		db2ypos(float);
 	float		freq2xpos(float);
 	void		update_barwidth();
@@ -89,10 +96,15 @@ private slots:
 	void		set_project( Project* );
 	void		set_song( Song* );
 	void		update_data();
+	void		transfer_started();
+	void		transfer_stopped();
 
 public slots:
 	Command*	edit_properties();
-	void		update_properties();
+	Command*	set_mode();
+	Command*	reset();
+	Command*	show_export_widget();
+	void		apply_properties();
 
 };
 
