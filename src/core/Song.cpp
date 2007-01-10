@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.45 2006/12/04 19:24:54 r_sijrier Exp $
+$Id: Song.cpp,v 1.46 2007/01/10 11:32:11 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -211,7 +211,7 @@ QDomNode Song::get_state(QDomDocument doc)
 	properties.setAttribute("artists", artists);
 	properties.setAttribute("activeTrackNumber", activeTrackNumber);
 	properties.setAttribute("firstVisibleFrame", firstVisibleFrame);
-	properties.setAttribute("workingFrame", workingFrame);
+	properties.setAttribute("workingFrame", (uint)workingFrame);
 	properties.setAttribute("hzoom", m_hzoom);
 	properties.setAttribute("mastergain", m_gain);
 	songNode.appendChild(properties);
