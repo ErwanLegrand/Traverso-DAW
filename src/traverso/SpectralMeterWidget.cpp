@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.10 2006/12/30 14:01:01 n_doebelin Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.11 2007/01/10 15:19:41 r_sijrier Exp $
 */
 
 #include "SpectralMeterWidget.h"
@@ -67,6 +67,7 @@ SpectralMeterWidget::SpectralMeterWidget(QWidget* parent)
 	setMinimumWidth(40);
 	setMinimumHeight(10);
 
+	fft_size = 0;
 	num_bands = 16;
 	upper_freq = 22050.0f;
 	lower_freq = 20.0f;
