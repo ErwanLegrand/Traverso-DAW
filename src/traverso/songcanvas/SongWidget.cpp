@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongWidget.cpp,v 1.2 2006/11/14 14:59:07 r_sijrier Exp $
+    $Id: SongWidget.cpp,v 1.3 2007/01/10 15:42:13 r_sijrier Exp $
 */
 
 		
@@ -37,6 +37,7 @@ SongWidget::SongWidget(Song* song, QWidget* parent)
 	: QFrame(parent)
 {
 	scene = new QGraphicsScene(this);
+	scene->setItemIndexMethod(QGraphicsScene::NoIndex);
 
 	m_trackPanel = new TrackPanelViewPort(scene, this);
 	m_clipsViewPort = new ClipsViewPort(scene, this);
