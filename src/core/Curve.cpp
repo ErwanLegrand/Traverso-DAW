@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.cpp,v 1.23 2007/01/11 12:37:31 r_sijrier Exp $
+$Id: Curve.cpp,v 1.24 2007/01/11 16:00:47 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -78,12 +78,11 @@ QDomNode Curve::get_state( QDomDocument doc )
 	
 	for (int i=0; i< nodes.size(); ++i) {
 		CurveNode* cn = nodes.at(i);
-		
 		nodesList << QString::number(cn->get_when(), 'g', 24).append(",").append(QString::number(cn->get_value()));
 	}
 	
 	if (nodes.size() == 0) {
-		nodesList << "0,1";
+		nodesList << "1,1";
 	}
 	
 	node.setAttribute("nodes",  nodesList.join(";"));
@@ -108,6 +107,7 @@ int Curve::set_state( const QDomNode & node )
 	
 	double range = e.attribute("range", "1").toDouble();
 	range = (range == 0.0) ? 1 : range;
+	
 	set_range(range);
 	
 	return 1;
