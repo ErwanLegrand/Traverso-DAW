@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.h,v 1.8 2006/12/01 00:35:11 r_sijrier Exp $
+$Id: WriteSource.h,v 1.9 2007/01/11 14:57:37 r_sijrier Exp $
 */
 
 #ifndef WRITESOURCE_H
@@ -49,7 +49,7 @@ public :
 
 	int rb_write(audio_sample_t* src, nframes_t cnt);
 	int rb_file_write(nframes_t cnt);
-	void process_ringbuffer(audio_sample_t* framebuffer);
+	void process_ringbuffer(audio_sample_t* framebuffer, bool seek);
 	int get_processable_buffer_space() const;
 
 	int process(nframes_t nframes);
@@ -64,12 +64,14 @@ public :
 	size_t is_recording() const;
 
 	ExportSpecification*		spec;
+	void set_diskio(DiskIO* io );
 
 private:
 	RingBufferNPT<audio_sample_t>*	m_buffer;
 	Peak* 		m_peak;
 	SNDFILE*	sf;
 	SF_INFO 	sfinfo;
+	DiskIO*		diskio;
 	
 	GDither         dither;
 	nframes_t       out_samples_max;

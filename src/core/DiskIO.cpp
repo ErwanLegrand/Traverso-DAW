@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.26 2006/12/01 00:35:11 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.27 2007/01/11 14:57:36 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
@@ -71,6 +71,7 @@ const char *to_prio[] = { "none", "realtime", "best-effort", "idle", };
 
 #include "AudioSource.h"
 #include "ReadSource.h"
+#include "PrivateReadSource.h"
 #include "WriteSource.h"
 #include "AudioDevice.h"
 #include "RingBuffer.h"
@@ -145,12 +146,14 @@ DiskIO::DiskIO(Song* song)
 	m_diskThread = new DiskIOThread(this);
 	cpuTimeBuffer = new RingBuffer(128);
 	lastCpuReadTime = get_microseconds();
-	m_readBufferFillStatus = m_stopWork = m_seeking = 0; 
+	m_stopWork = m_seeking = 0;
+	m_readBufferFillStatus = 0;
 	m_hardDiskOverLoadCounter = 0;
 	
 	m_minBufStatus = (audiodevice().get_sample_rate() * 12) / 1000 + 1024;
 	
-	m_bufferSize = config().get_hardware_int_property("PreBufferSize");
+	m_bufferSize = (int) (config().get_float_property("Hardware", "PreBufferSize", 1.0) * audiodevice().get_sample_rate());
+	printf("diskio:: buffer size is %d\n", m_bufferSize);
 	framebuffer = new audio_sample_t[m_bufferSize];
 
 	// Move this instance to the workthread
@@ -186,7 +189,7 @@ void DiskIO::seek( nframes_t position )
 	m_stopWork = 0;
 	m_seeking = true;
 
-	foreach(ReadSource* source, m_readSources) {
+	foreach(PrivateReadSource* source, m_privateReadSources) {
 		source->rb_seek_to_file_position(position);
 	}
 	
@@ -222,7 +225,7 @@ void DiskIO::do_work( )
 				return;
 			}
 	
-			source->process_ringbuffer(framebuffer);
+			source->process_ringbuffer(framebuffer, m_seeking);
 		}
 		
 		if (whilecount++ > 1000) {
@@ -240,7 +243,7 @@ void DiskIO::do_work( )
 int DiskIO::there_are_processable_sources( )
 {
 	m_processableSources.clear();
-	QList< ReadSource * > syncSources;
+	QList< PrivateReadSource * > syncSources;
 		
 	for (int i=6; i >= 0; --i) {
 		
@@ -267,27 +270,28 @@ int DiskIO::there_are_processable_sources( )
 			}
 		}
 		
-		for (int j=0; j<m_readSources.size(); ++j) {
-			ReadSource* source = m_readSources.at(j);
-			int space = source->get_processable_buffer_space();
-			int prio = space  / get_chunk_size();
-			bool needSync = source->need_sync();
+		for (int j=0; j<m_privateReadSources.size(); ++j) {
+
+			PrivateReadSource* source = m_privateReadSources.at(j);
+			BufferStatus status = source->get_buffer_status();
 			
-			if (prio > i && source->is_active() && !needSync ) {
+			if (status.priority > i && source->is_active() && !status.needSync ) {
 				
-				if ( (! m_seeking) && ((m_bufferSize - space) < m_minBufStatus) ) {
+				if ( (! m_seeking) && status.bufferUnderRun ) {
 					if (! m_hardDiskOverLoadCounter++) {
+						printf("DiskIO:: BuferUnderRun detected\n");
 						emit readSourceBufferUnderRun();
 					}
 				}
 				
-				if (space > g_atomic_int_get(&m_readBufferFillStatus)) {
-					g_atomic_int_set(&m_readBufferFillStatus, space);
+				if (status.fillStatus > g_atomic_int_get(&m_readBufferFillStatus)) {
+					g_atomic_int_set(&m_readBufferFillStatus, status.fillStatus);
 				}
 				
 				m_processableSources.append(source);
 			
-			} else if (needSync) {
+			} else if (status.needSync) {
+// 				printf("status == bufferUnderRun\n");
 				if (syncSources.size() == 0) {
 					syncSources.append(source);
 				}
@@ -343,12 +347,15 @@ void DiskIO::register_read_source (ReadSource* source )
 {
 	PENTER2;
 	
-	source->set_diskio(this);
-	source->prepare_buffer();
-	
 	QMutexLocker locker(&mutex);
 
 	m_readSources.append(source);
+
+	foreach(PrivateReadSource* prs, source->get_private_sources()) {
+		prs->prepare_buffer();
+		m_privateReadSources.append(prs);
+	}
+		
 }
 
 /**
@@ -380,6 +387,10 @@ void DiskIO::unregister_read_source( ReadSource * source )
 	QMutexLocker locker(&mutex);
 	
 	m_readSources.removeAll(source);
+
+	foreach(PrivateReadSource* prs, source->get_private_sources()) {
+		m_privateReadSources.removeAll(prs);
+	}
 }
 
 
@@ -458,8 +469,7 @@ int DiskIO::get_write_buffers_fill_status( )
  */
 int DiskIO::get_read_buffers_fill_status( )
 {
-	int space = g_atomic_int_get(&m_readBufferFillStatus);
-	int status = (int) (((float)(m_bufferSize - space) / m_bufferSize) * 100);
+	int status = 100 - g_atomic_int_get(&m_readBufferFillStatus);
 	g_atomic_int_set(&m_readBufferFillStatus, 0);
 	
 	return status;

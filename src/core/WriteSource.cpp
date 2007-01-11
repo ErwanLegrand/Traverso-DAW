@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.cpp,v 1.12 2006/12/01 00:35:11 r_sijrier Exp $
+$Id: WriteSource.cpp,v 1.13 2007/01/11 14:57:37 r_sijrier Exp $
 */
 
 #include "WriteSource.h"
@@ -39,6 +39,7 @@ WriteSource::WriteSource( ExportSpecification * specification )
 	: AudioSource(specification->exportdir, specification->name)
 	, spec(specification)
 {
+	diskio = 0;
 	prepare_export(spec);
 }
 
@@ -47,6 +48,7 @@ WriteSource::WriteSource( ExportSpecification * specification, int channelNumber
 		spec(specification),
 		m_channelNumber(channelNumber)
 {
+	diskio = 0;
 	m_channelCount = superChannelCount;
 	prepare_export(spec);
 }
@@ -438,8 +440,10 @@ void WriteSource::set_recording( int rec )
 	m_isRecording = rec;
 }
 
-void WriteSource::process_ringbuffer( audio_sample_t* framebuffer)
+void WriteSource::process_ringbuffer( audio_sample_t* framebuffer, bool seek)
 {
+	Q_UNUSED(seek);
+
 	spec->dataF = framebuffer;
 	int readSpace = m_buffer->read_space();
 
@@ -476,6 +480,11 @@ void WriteSource::process_ringbuffer( audio_sample_t* framebuffer)
 void WriteSource::prepare_buffer( )
 {
 	m_buffer = new RingBufferNPT<audio_sample_t>(diskio->get_buffer_size());
+}
+
+void WriteSource::set_diskio( DiskIO * io )
+{
+	diskio = io;
 }
 
 //eof

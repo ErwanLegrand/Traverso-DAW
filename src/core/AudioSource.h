@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSource.h,v 1.10 2006/12/01 00:20:03 r_sijrier Exp $
+$Id: AudioSource.h,v 1.11 2007/01/11 14:57:36 r_sijrier Exp $
 */
 
 #ifndef AUDIOSOURCE_H
@@ -29,7 +29,6 @@ $Id: AudioSource.h,v 1.10 2006/12/01 00:20:03 r_sijrier Exp $
 #include <QDomDocument>
 
 class QString;
-class DiskIO;
 
 /// The base class for AudioSources like ReadSource and WriteSource
 class AudioSource : public QObject
@@ -37,12 +36,10 @@ class AudioSource : public QObject
 public :
 	AudioSource(const QString& dir, const QString& name);
 	AudioSource(const QDomNode node);
+	AudioSource(){};
 	~AudioSource();
 	
-	virtual void process_ringbuffer(audio_sample_t* framebuffer) = 0;
-	virtual	bool need_sync() const;
-	virtual int get_processable_buffer_space() const;
-	virtual void sync(audio_sample_t* framebuffer);
+	virtual void process_ringbuffer(audio_sample_t* framebuffer, bool seeking=false);
 
 	void set_name(const QString& name);
 	void set_dir(const QString& name);
@@ -62,7 +59,6 @@ public :
 	int get_bit_depth() const;
 	
 	void set_channel_count(uint count);
-	void set_diskio(DiskIO* io );
 	
 protected:
 	uint		m_channelCount;
@@ -75,15 +71,12 @@ protected:
 	QString		m_fileName;
 	nframes_t	m_length;
 	uint 		m_rate;
-	DiskIO*		diskio;
 };
 
 
 inline uint AudioSource::get_channel_count( ) const {return m_channelCount;}
 
-inline bool AudioSource::need_sync( ) const {return false;}
-
-inline int AudioSource::get_processable_buffer_space() const {return 0;}
+inline void AudioSource::process_ringbuffer(audio_sample_t*, bool) {}
 
 inline qint64 AudioSource::get_id( ) const {return m_id;}
 

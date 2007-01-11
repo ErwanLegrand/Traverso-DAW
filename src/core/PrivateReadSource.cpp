@@ -17,24 +17,22 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PrivateReadSource.cpp,v 1.5 2006/12/04 19:24:54 r_sijrier Exp $
+$Id: PrivateReadSource.cpp,v 1.6 2007/01/11 14:57:37 r_sijrier Exp $
 */
+
 
 #include "PrivateReadSource.h"
 
 #include "Peak.h"
-#include "RingBuffer.h"
 #include "ProjectManager.h"
 #include "Project.h"
 #include "AudioClip.h"
 #include "ReadSource.h"
 #include "Utils.h"
-#include "AudioSource.h"
-#include "RingBufferNPT.h"
-#include "DiskIO.h"
-#include "Song.h"
-
-#include <QFile>
+#include <Config.h>
+#include <AudioDevice.h>
+#include <DiskIO.h>
+#include <Song.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -43,10 +41,11 @@ $Id: PrivateReadSource.cpp,v 1.5 2006/12/04 19:24:54 r_sijrier Exp $
 
 
 PrivateReadSource::PrivateReadSource(ReadSource* source, int sourceChannelCount, int channelNumber, const QString& fileName)
-	: m_source(source),
+	: AudioSource(),
+	  m_source(source),
 	  m_buffer(0),
 	  m_peak(0),
-	  sf(0),
+	  m_sf(0),
 	  m_sourceChannelCount(sourceChannelCount), 
 	  m_channelNumber(channelNumber), 
 	  m_fileName(fileName)
@@ -63,8 +62,8 @@ PrivateReadSource::~PrivateReadSource()
 	if (m_peak) {
 		delete m_peak;
 	}
-	if (sf) {
-		if (sf_close (sf)) {
+	if (m_sf) {
+		if (sf_close (m_sf)) {
 			qWarning("sf_close returned an error!");
 		}
 	}
@@ -75,43 +74,50 @@ int PrivateReadSource::init( )
 {
 	PENTER;
 	
-	Q_ASSERT(sf == 0);
+	Q_ASSERT(m_sf == 0);
 	
-	rbFileReadPos = 0;
-	rbRelativeFileReadPos = 0;
-	rbReady = 0;
-	needSync = 0;
-	syncInProgress = 0;
+	m_rbFileReadPos = 0;
+	m_rbRelativeFileReadPos = 0;
+	m_rbReady = 0;
+	m_needSync = 0;
+	m_syncInProgress = 0;
 	m_clip = 0;
+	m_bufferUnderRunDetected = m_wasActivated = 0;
+	m_isCompressedFile = false;
 
 	/* although libsndfile says we don't need to set this,
 	valgrind and source code shows us that we do.
 	Really? Look it up !
 	*/
-	memset (&sfinfo, 0, sizeof(sfinfo));
+	memset (&m_sfinfo, 0, sizeof(m_sfinfo));
 
 
-	if ((sf = sf_open (QS_C(m_fileName), SFM_READ, &sfinfo)) == 0) {
+	if ((m_sf = sf_open (QS_C(m_fileName), SFM_READ, &m_sfinfo)) == 0) {
 		PERROR("Couldn't open soundfile (%s)", QS_C(m_fileName));
 		return -1;
 	}
 
-	if (m_sourceChannelCount > sfinfo.channels) {
-		PERROR("ReadAudioSource: file only contains %d channels; %d is invalid as a channel number", sfinfo.channels, m_sourceChannelCount);
-		sf_close (sf);
-		sf = 0;
+	if (m_sourceChannelCount > m_sfinfo.channels) {
+		PERROR("ReadAudioSource: file only contains %d channels; %d is invalid as a channel number", m_sfinfo.channels, m_sourceChannelCount);
+		sf_close (m_sf);
+		m_sf = 0;
 		return -1;
 	}
 
-	if (sfinfo.channels == 0) {
-		PERROR("ReadAudioSource: not a valid channel count: %d", sfinfo.channels);
-		sf_close (sf);
-		sf = 0;
+	if (m_sfinfo.channels == 0) {
+		PERROR("ReadAudioSource: not a valid channel count: %d", m_sfinfo.channels);
+		sf_close (m_sf);
+		m_sf = 0;
 		return -1;
 	}
 
-	m_source->m_length = sfinfo.frames;
-	m_source->m_rate = sfinfo.samplerate;
+	m_source->m_length = m_sfinfo.frames;
+	m_length = m_sfinfo.frames;
+	m_source->m_rate = m_sfinfo.samplerate;
+
+	if ( (m_sfinfo.format & SF_FORMAT_TYPEMASK) == SF_FORMAT_FLAC ) {
+		m_isCompressedFile = true;
+	}
 	
 	m_peak = new Peak(m_source, m_channelNumber);
 	
@@ -123,13 +129,13 @@ int PrivateReadSource::file_read (audio_sample_t* dst, nframes_t start, nframes_
 {
 // 	PWARN("file_read");
 	// this equals checking if init() is called!
-	Q_ASSERT(sf);
+	Q_ASSERT(m_sf);
 	
 	if (start >= m_source->m_length) {
 		return 0;
 	}
 	
-	if (sf_seek (sf, (off_t) start, SEEK_SET) < 0) {
+	if (sf_seek (m_sf, (off_t) start, SEEK_SET) < 0) {
 		char errbuf[256];
 		sf_error_str (0, errbuf, sizeof (errbuf) - 1);
 		PERROR("ReadAudioSource: could not seek to frame %d within %s (%s)", start, QS_C(m_fileName), errbuf);
@@ -137,25 +143,25 @@ int PrivateReadSource::file_read (audio_sample_t* dst, nframes_t start, nframes_
 	}
 	
 
-	if (sfinfo.channels == 1) {
-		return sf_read_float (sf, dst, cnt);
+	if (m_sfinfo.channels == 1) {
+		return sf_read_float (m_sf, dst, cnt);
 	}
 
 	float *ptr;
-	int real_cnt = cnt * sfinfo.channels;
+	int real_cnt = cnt * m_sfinfo.channels;
 
 
 	audio_sample_t readbuffer[real_cnt];
 
-	int nread = sf_read_float (sf, readbuffer, real_cnt);
+	int nread = sf_read_float (m_sf, readbuffer, real_cnt);
 	ptr = readbuffer + m_channelNumber;
-	nread /= sfinfo.channels;
+	nread /= m_sfinfo.channels;
 
 	/* stride through the interleaved data */
 
 	for (int32_t n = 0; n < nread; ++n) {
 		dst[n] = *ptr;
-		ptr += sfinfo.channels;
+		ptr += m_sfinfo.channels;
 	}
 
 
@@ -163,44 +169,50 @@ int PrivateReadSource::file_read (audio_sample_t* dst, nframes_t start, nframes_
 }
 
 
-int PrivateReadSource::rb_read(audio_sample_t* dst, nframes_t start, nframes_t cnt)
+int PrivateReadSource::rb_read(audio_sample_t* dst, nframes_t start, nframes_t count)
 {
 
-	if ( ! rbReady ) {
+	if ( ! m_rbReady ) {
 // 		printf("ringbuffer not ready\n");
 		return 0;
 	}
 
 
-	if (start != rbRelativeFileReadPos) {
+	if (start != m_rbRelativeFileReadPos) {
 		int available = m_buffer->read_space();
-		if ( (start > rbRelativeFileReadPos) && ((rbRelativeFileReadPos + (available / 0.7)) > start) ) {
-			int advance = start - rbRelativeFileReadPos;
+		if ( (start > m_rbRelativeFileReadPos) && ( (m_rbRelativeFileReadPos + available) > (start + count) ) ) {
+			int advance = start - m_rbRelativeFileReadPos;
+			if (available < advance)
+				printf("available < advance !!!!!!!\n");
 			m_buffer->increment_read_ptr(advance);
-			rbRelativeFileReadPos += advance;
+			m_rbRelativeFileReadPos += advance;
 		} else {
-// 			printf("starting resync!\n");
-			start_resync(start);
+/*			if (m_wasActivated) {
+				m_wasActivated = 0;*/
+				start_resync(start);
+/*			} else {
+				recover_from_buffer_underrun(start);
+			}*/
 			return 0;
 		}
 	}
 
-	nframes_t readFrames = m_buffer->read(dst, cnt);
+	nframes_t readcount = m_buffer->read(dst, count);
 
-	if (readFrames != cnt) {
+	if (readcount != count) {
 		// Hmm, not sure what to do in this case....
 	}
 
-	rbRelativeFileReadPos += readFrames;
+	m_rbRelativeFileReadPos += readcount;
 
-	return readFrames;
+	return readcount;
 }
 
 
 int PrivateReadSource::rb_file_read( audio_sample_t * dst, nframes_t cnt )
 {
-	int readFrames = file_read( dst, rbFileReadPos, cnt);
-	rbFileReadPos += readFrames;
+	int readFrames = file_read( dst, m_rbFileReadPos, cnt);
+	m_rbFileReadPos += readFrames;
 
 	return readFrames;
 }
@@ -210,10 +222,14 @@ void PrivateReadSource::rb_seek_to_file_position( nframes_t position )
 {
 	Q_ASSERT(m_clip);
 	
-	if (rbFileReadPos == position) {
+	if (m_rbFileReadPos == position) {
 		PMESG("ringbuffer allready at position %d", position);
 		return;
 	}
+
+/*	if (m_needSync) {
+		finish_resync();
+	}*/
 	
 	long fileposition = position;
 	
@@ -231,49 +247,48 @@ void PrivateReadSource::rb_seek_to_file_position( nframes_t position )
 	}
 	
 	m_buffer->reset();
-	rbFileReadPos = fileposition;
-	rbRelativeFileReadPos = fileposition;
+	m_rbFileReadPos = fileposition;
+	m_rbRelativeFileReadPos = fileposition;
 }
 
-int PrivateReadSource::process_ringbuffer( audio_sample_t * framebuffer )
+void PrivateReadSource::process_ringbuffer( audio_sample_t * framebuffer, bool seeking)
 {
 	// Do nothing if we passed the lenght of the AudioFile.
-	if (rbFileReadPos >= m_source->m_length) {
-		printf("returning, rbFileReadPos > m_length! (%d >  %d)\n", rbFileReadPos, m_source->m_length);
-		return 0;
+	if (m_rbFileReadPos >= m_length) {
+		printf("returning, m_rbFileReadPos > m_length! (%d >  %d)\n", m_rbFileReadPos, m_source->m_length);
+		if (m_syncInProgress) {
+			finish_resync();
+		}
+		return;
 	}
 	
 	// Calculate the number of samples we can write into the buffer
 	int writeSpace = m_buffer->write_space();
-	
-	// calculate the 'chunk' size 
-	int chunkSize = m_source->diskio->get_chunk_size();
-	
+
 	// The amount of chunks which can be 'read'
-	int chunkCount = (int)(writeSpace / chunkSize);
+	int chunkCount = (int)(writeSpace / m_chunkSize);
 	
+	int toRead = m_chunkSize;
 	
-	int toRead;
-	
-	// Calculate how many chuncks should be read in.
-	// In case the buffer nears emptyness read in a bit more
-	// else just read in chunkSize.
-	if (chunkCount >= 1) {
-		if (syncInProgress) {
-			toRead = chunkSize * 2;
-		} else if (chunkCount < 7){
-			toRead = chunkSize;
-		} else {
-			toRead = chunkSize * 8;
+	if (seeking) {
+		toRead = writeSpace;
+		// For whatever reason, but FLAC crashes when refilling the 
+		// buffer completely in one round! :-(
+		if (m_isCompressedFile) {
+			toRead = writeSpace / 2;
 		}
-	} else {
+		printf("doing a full seek buffer fill\n");
+	} else 	if (m_syncInProgress) {
+		toRead = m_chunkSize * 2;
+	} else if (chunkCount == 0) {
 		// If we are nearing the end of the source file it could be possible
 		// we only need to read the last samples which is smaller in size then 
 		// chunksize. If so, set toRead to m_source->m_length - rbFileReasPos
-		if ( (int) (m_source->m_length - rbFileReadPos) <= chunkSize) {
-			toRead = m_source->m_length - rbFileReadPos;
+		if ( (int) (m_source->m_length - m_rbFileReadPos) <= m_chunkSize) {
+			toRead = m_source->m_length - m_rbFileReadPos;
 		} else {
-			return 0;
+		printf("chunkCount == 0, but not at end of file, this shouldn't happen!!\n");
+			return;
 		}
 	}
 	
@@ -283,35 +298,48 @@ int PrivateReadSource::process_ringbuffer( audio_sample_t * framebuffer )
 	// and write it to the ringbuffer
 	m_buffer->write(framebuffer, toWrite);
 	
-	return writeSpace;
+}
+
+void PrivateReadSource::recover_from_buffer_underrun(nframes_t position)
+{
+	printf("buffer underrun detected!\n");
+	m_bufferUnderRunDetected = 1;
+	start_resync(position);
 }
 
 void PrivateReadSource::start_resync( nframes_t position )
 {
-	syncPos = position;
-	rbReady = false;
-	needSync = true;
-//         PWARN("Resyncing ringbuffer start");
+	printf("starting resync!\n");
+	m_syncPos = position;
+	m_rbReady = 0;
+	m_needSync = 1;
+}
+
+void PrivateReadSource::finish_resync()
+{
+	printf("sync finished\n");
+	m_needSync = 0;
+	m_bufferUnderRunDetected = 0;
+	m_rbReady = 1;
+	m_syncInProgress = false;
 }
 
 void PrivateReadSource::sync(audio_sample_t* framebuffer)
 {
 	PENTER;
-	if (!needSync) {
+	if (!m_needSync) {
 		return;
 	}
 	
-	if (!syncInProgress) {
-		rb_seek_to_file_position(syncPos);
-		syncInProgress = true;
+	if (!m_syncInProgress) {
+		rb_seek_to_file_position(m_syncPos);
+		m_syncInProgress = true;
 	}
 	
-	int writeSpace = process_ringbuffer(framebuffer);
+	process_ringbuffer(framebuffer);
 	
-	if (writeSpace == 0) {
-		needSync = false;
-		rbReady = true;
-		syncInProgress = false;
+	if (m_buffer->write_space() == 0) {
+		finish_resync();
 	}
 	
 //         PWARN("Resyncing ringbuffer finished");
@@ -332,11 +360,67 @@ Peak* PrivateReadSource::get_peak( )
 void PrivateReadSource::prepare_buffer( )
 {
 	PENTER;
-	
-	m_buffer = new RingBufferNPT<float>(m_source->diskio->get_buffer_size());
+
+	float size = config().get_float_property("Hardware", "PreBufferSize", 1.0);
+
+	if (m_isCompressedFile) {
+		size *= 2;
+		if (size > 3.0) {
+			size = 3.0;
+		}
+	}
+
+	m_bufferSize = (int) (size * audiodevice().get_sample_rate());
+
+	if ( ! m_isCompressedFile) {
+		m_chunkSize = m_bufferSize / 8;
+	} else {
+		m_chunkSize = m_bufferSize / 4;
+	}
+
+	m_buffer = new RingBufferNPT<float>(m_bufferSize);
+
 	start_resync(m_clip->get_song()->get_working_frame());
 }
 
-//eof
+BufferStatus PrivateReadSource::get_buffer_status()
+{
+	BufferStatus status;
+	int freespace = m_buffer->write_space();
 
- 
+	if (m_rbFileReadPos >= m_length) {
+		status.fillStatus =  100;
+		freespace = 0;
+	} else {
+		status.fillStatus = (int) (((float)freespace / m_bufferSize) * 100);
+	}
+	
+	status.bufferUnderRun = m_bufferUnderRunDetected;
+	status.needSync = m_needSync;
+
+	if ( ! m_isCompressedFile) {
+		status.priority = (int) (freespace / m_chunkSize);
+	} else {
+		status.priority = (int) (freespace / m_chunkSize);
+	}
+	
+	return status;
+}
+
+void PrivateReadSource::set_active(bool active)
+{
+	if (m_active == active)
+		return;
+
+	if (active) {
+		m_active = 1;
+// 		m_wasActivated = 1;
+// 		printf("setting private readsource %s to active\n", QS_C(m_fileName));
+	} else {
+// 		printf("setting private readsource %s to IN-active\n", QS_C(m_fileName));
+		m_active = 0;
+	}
+}
+
+
+//eof

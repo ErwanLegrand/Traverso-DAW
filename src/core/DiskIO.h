@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.h,v 1.10 2006/10/18 19:12:29 r_sijrier Exp $
+$Id: DiskIO.h,v 1.11 2007/01/11 14:57:37 r_sijrier Exp $
 */
 
 #ifndef DISKIO_H
@@ -31,12 +31,19 @@ $Id: DiskIO.h,v 1.10 2006/10/18 19:12:29 r_sijrier Exp $
 #include "defines.h"
 
 class ReadSource;
+class PrivateReadSource;
 class WriteSource;
 class AudioSource;
 class RingBuffer;
 class DiskIOThread;
 class Song;
 
+struct BufferStatus {
+	int	fillStatus;
+	int	priority;
+	bool	bufferUnderRun;
+	bool	needSync;
+};
 
 class DiskIO : public QObject
 {
@@ -64,6 +71,7 @@ private:
 	Song* 			m_song;
 	volatile size_t		m_stopWork;
 	QList<ReadSource*>	m_readSources;
+	QList<PrivateReadSource*> m_privateReadSources;
 	QList<AudioSource*>	m_processableSources;
 	QList<WriteSource*>	m_writeSources;
 	DiskIOThread*		m_diskThread;

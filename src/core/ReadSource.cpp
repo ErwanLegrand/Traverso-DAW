@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.cpp,v 1.17 2006/12/04 19:24:54 r_sijrier Exp $
+$Id: ReadSource.cpp,v 1.18 2007/01/11 14:57:37 r_sijrier Exp $
 */
 
 #include "ReadSource.h"
@@ -156,34 +156,12 @@ int ReadSource::rb_read(int channel, audio_sample_t* dst, nframes_t start, nfram
 }
 
 
-void ReadSource::rb_seek_to_file_position( nframes_t position )
-{
-	foreach(PrivateReadSource* source, m_sources) {
-		source->rb_seek_to_file_position(position);
-	}
-}
-
-
-void ReadSource::sync(audio_sample_t* framebuffer)
-{
-// 	printf("entering sync\n");
-	foreach(PrivateReadSource* source, m_sources) {
-		source->sync(framebuffer);
-	}
-}
-
-
-void ReadSource::set_active( )
+void ReadSource::set_active(bool active)
 {
 	PENTER2;
-	m_active = true;
-}
-
-
-void ReadSource::set_inactive( )
-{
-	PENTER2;
-	m_active = false;
+	foreach(PrivateReadSource* source, m_sources) {
+		source->set_active(active);
+	}
 }
 
 
@@ -217,13 +195,6 @@ Peak * ReadSource::get_peak( int channel )
 {
 	Q_ASSERT(channel < m_sources.size());
 	return m_sources.at(channel)->get_peak();
-}
-
-void ReadSource::prepare_buffer( )
-{
-	foreach(PrivateReadSource* source, m_sources) {
-		source->prepare_buffer();
-	}	
 }
 
 nframes_t ReadSource::get_nframes( ) const

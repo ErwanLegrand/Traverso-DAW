@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSource.cpp,v 1.12 2006/12/01 00:20:03 r_sijrier Exp $
+$Id: AudioSource.cpp,v 1.13 2007/01/11 14:57:36 r_sijrier Exp $
 */
 
 
@@ -42,7 +42,6 @@ AudioSource::AudioSource(const QString& dir, const QString& name)
 	PENTERCONS;
 	m_fileName = m_dir + m_name;
 	m_id = create_id();
-	diskio = 0;
 }
 
 
@@ -53,7 +52,6 @@ AudioSource::AudioSource(const QDomNode node)
 	  m_fileName("")
 {
 	set_state(node);
-	diskio = 0;
 }
 
 
@@ -153,16 +151,6 @@ void AudioSource::set_channel_count( uint count )
 {
 	PENTER;
 	m_channelCount = count;
-}
-
-void AudioSource::set_diskio( DiskIO * io )
-{
-	diskio = io;
-}
-
-void AudioSource::sync( audio_sample_t*)
-{
-	//Reimplemented in ReadSource..
 }
 
 

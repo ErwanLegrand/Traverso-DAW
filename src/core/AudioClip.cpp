@@ -17,16 +17,16 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.54 2006/12/04 19:24:54 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.55 2007/01/11 14:57:36 r_sijrier Exp $
 */
 
 #include <cfloat>
 #include <QInputDialog>
 
 #include "ContextItem.h"
+#include "ReadSource.h"
 #include "AudioClip.h"
 #include "AudioSource.h"
-#include "ReadSource.h"
 #include "WriteSource.h"
 #include "Song.h"
 #include "SnapList.h"
@@ -209,9 +209,9 @@ void AudioClip::set_sources_active_state()
 	}
 	
 	if ( m_track->is_muted() || m_track->is_muted_by_solo() || is_muted() ) {
-			m_readSource->set_inactive();
+			m_readSource->set_active(false);
 	} else {
-			m_readSource->set_active();
+			m_readSource->set_active(true);
 	}
 
 }
@@ -369,6 +369,7 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 		return 0;
 	}
 
+	Q_ASSERT(m_readSource);
 
 	if (channel >= m_readSource->get_channel_count()) {
 		return -1;	// Channel doesn't exist!!
