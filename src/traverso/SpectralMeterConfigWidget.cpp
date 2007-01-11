@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SpectralMeterConfigWidget.cpp,v 1.2 2006/12/30 14:01:01 n_doebelin Exp $
+$Id: SpectralMeterConfigWidget.cpp,v 1.3 2007/01/11 20:10:53 r_sijrier Exp $
 */
 
 #include "SpectralMeterConfigWidget.h"
@@ -34,7 +34,7 @@ $Id: SpectralMeterConfigWidget.cpp,v 1.2 2006/12/30 14:01:01 n_doebelin Exp $
 #include "Debugger.h"
 
 SpectralMeterConfigWidget::SpectralMeterConfigWidget( QWidget * parent )
-	: QWidget(parent, Qt::Popup)
+	: QWidget(parent, Qt::Dialog)
 {
 	setupUi(this);
 	groupBoxAdvanced->hide();
