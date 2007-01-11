@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.19 2006/12/13 19:13:25 r_sijrier Exp $
+$Id: Interface.cpp,v 1.20 2007/01/11 12:02:31 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -164,6 +164,10 @@ void Interface::set_project(Project* project)
 	
 	if ( project ) {
 		connect(project, SIGNAL(currentSongChanged(Song*)), this, SLOT(show_song(Song*)));
+		setWindowTitle(project->get_title() + " - Traverso");
+
+	} else {
+		setWindowTitle("Traverso");
 	}
 	
 	// OK, a new Project is created. Remove and delete all the ViewPorts related to this project
@@ -456,7 +460,7 @@ QMenu* Interface::create_context_menu(QObject* item )
 	qSort(actionLst.begin(), actionLst.end(), IEAction::smaller);
 
 	foreach(IEAction* ieaction, actionLst) {
-		QString text = QString(ieaction->keySequence + "  " + ieaction->name);
+		QString text = QString(ieaction->name + "  " + ieaction->keySequence);
 		QAction* action = new QAction(this);
 		action->setText(text);
 		action->setData(ieaction->name);
