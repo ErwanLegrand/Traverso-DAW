@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.5 2006/12/04 19:24:54 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.6 2007/01/11 20:11:26 r_sijrier Exp $
 */
 
 #include <QLineEdit>
@@ -52,10 +52,11 @@ TrackView::TrackView(SongView* sv, Track * track)
 	m_track = track;
 	m_clipViewYOfsset = 3;
 	setFlags(ItemIsSelectable | ItemIsMovable);
-	m_boundingRectangle = QRectF(0, 0, pow(2, 31), m_track->get_height());
 // 	setAcceptsHoverEvents(true);
 
 	m_panel = new TrackPanelView(m_sv->get_trackpanel_view_port(), this, m_track);
+	calculate_bounding_rect();
+	
 	m_pluginChainView = new PluginChainView(this, m_track->get_plugin_chain());
 
 	connect(m_track, SIGNAL(audioClipAdded(AudioClip*)), this, SLOT(add_new_audioclipview(AudioClip*)));
@@ -103,8 +104,8 @@ void TrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 // 	painter->fillRect(xstart, 0, pixelcount, m_track->get_height(), grad1);
 
 	painter->fillRect(xstart, 0, pixelcount, 3, color1);
-	painter->fillRect(xstart, 3, pixelcount, 95, color2);
-	painter->fillRect(xstart, 96, pixelcount, 5, color1);
+	painter->fillRect(xstart, 3, pixelcount, m_track->get_height()-5, color2);
+	painter->fillRect(xstart, m_track->get_height() - 5, pixelcount, 5, color1);
 }
 
 void TrackView::add_new_audioclipview( AudioClip * clip )
@@ -181,6 +182,24 @@ Command* TrackView::add_new_plugin( )
 
 #endif
 	return 0;
+}
+
+int TrackView::get_height( )
+{
+	return m_height;
+}
+
+void TrackView::set_height( int height )
+{
+	m_height = height;
+}
+
+
+void TrackView::calculate_bounding_rect()
+{
+	m_boundingRectangle = QRectF(0, 0, pow(2, 30), m_track->get_height());
+	m_panel->calculate_bounding_rect();
+	update();
 }
 
 

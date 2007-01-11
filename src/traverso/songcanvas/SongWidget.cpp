@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongWidget.cpp,v 1.3 2007/01/10 15:42:13 r_sijrier Exp $
+    $Id: SongWidget.cpp,v 1.4 2007/01/11 20:11:26 r_sijrier Exp $
 */
 
 		
@@ -42,6 +42,8 @@ SongWidget::SongWidget(Song* song, QWidget* parent)
 	m_trackPanel = new TrackPanelViewPort(scene, this);
 	m_clipsViewPort = new ClipsViewPort(scene, this);
 	m_timeLine = new TimeLineViewPort(scene, this, m_clipsViewPort);
+	
+	m_clipsViewPort->setScene(scene);
 	
 	m_mainLayout = new QGridLayout(this);
 	m_mainLayout->addWidget(new QWidget(this), 0, 0);

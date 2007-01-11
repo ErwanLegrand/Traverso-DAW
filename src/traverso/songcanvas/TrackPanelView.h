@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.h,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
+$Id: TrackPanelView.h,v 1.2 2007/01/11 20:11:26 r_sijrier Exp $
 */
 
 #ifndef TRACK_PANEL_VIEW_H
@@ -112,6 +112,7 @@ public:
 	enum {Type = UserType + 7};
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+	void calculate_bounding_rect();
 	int type() const;
 	
 private:

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.8 2006/12/04 19:24:54 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.9 2007/01/11 20:11:26 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -100,7 +100,6 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	PENTER2;
 	Q_UNUSED(widget);
 	
-	
 /*	QPixmap* pix = dynamic_cast<QPixmap*>(painter->paintEngine()->paintDevice());
 	if (pix) {
 		printf("painting on a pixmap\n");
@@ -116,6 +115,17 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	
 	int xstart = (int) option->exposedRect.x();
 	int pixelcount = (int) option->exposedRect.width();
+	if (pixelcount == 0) {
+		PWARN("AudioClipView::paint : Exposed rectangle has 0 width ????");
+		return;
+	}
+	
+	
+	QRectF clipRect = m_boundingRectangle;
+	clipRect.setWidth(clipRect.width() + 1);
+	clipRect.setHeight(clipRect.height() + 1);
+	painter->setClipRect(clipRect);
+	
 	QColor color;
 	
 	// paint background color
@@ -143,6 +153,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	
 
 	if (waitingForPeaks) {
+		PMESG("Waiting for peaks!");
 		// Hmm, do we paint here something?
 		// Progress info, I think so....
 /*		painter.setPen(Qt::black);
@@ -439,7 +450,8 @@ void AudioClipView::remove_fadeview( FadeCurve * fade )
 
 void AudioClipView::calculate_bounding_rect()
 {
-	m_boundingRectangle = QRectF(0, 0, m_clip->get_length() / m_sv->scalefactor, m_height + CLIPINFO_HEIGHT);
+	set_height(m_tv->get_clipview_height());
+	m_boundingRectangle = QRectF(0, 0, (m_clip->get_length() / m_sv->scalefactor), m_height + CLIPINFO_HEIGHT);
 	update_start_pos();
 	update();
 }
@@ -483,7 +495,7 @@ void AudioClipView::set_height( int height )
 {
 	prepareGeometryChange();
 	m_height = height - CLIPINFO_HEIGHT;
-	calculate_bounding_rect();
+// 	calculate_bounding_rect();
 }
 
 int AudioClipView::get_fade_y_offset() const

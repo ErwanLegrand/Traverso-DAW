@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.4 2006/12/04 19:24:54 r_sijrier Exp $
+$Id: TrackPanelView.cpp,v 1.5 2007/01/11 20:11:26 r_sijrier Exp $
 */
 
 #include <QGraphicsScene>
@@ -134,8 +134,8 @@ void TrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
 // 	painter->fillRect(0, 0, m_viewPort->width(), m_track->get_height(), grad1);
 
 	painter->fillRect(0, 0, m_viewPort->width(), 3, color1);
-	painter->fillRect(0, 3, m_viewPort->width(), 95, color2);
-	painter->fillRect(0, 96, m_viewPort->width(), 5, color1);
+	painter->fillRect(0, 3, m_viewPort->width(), m_track->get_height() - 5, color2);
+	painter->fillRect(0, m_track->get_height() - 5, m_viewPort->width(), 5, color1);
 // 	draw_panel_head();
 
 	//Update Panel
@@ -184,6 +184,13 @@ void TrackPanelView::draw_panel_track_name(QPainter* painter)
 	painter->setFont( QFont( "Bitstream Vera Sans", 8) );
 	painter->drawText(4,12, sid);
 	painter->drawText(15,12, m_track->get_name());
+}
+
+
+void TrackPanelView::calculate_bounding_rect()
+{
+	m_boundingRectangle = QRectF(0, 0, 200, m_track->get_height());
+	update();
 }
 
 

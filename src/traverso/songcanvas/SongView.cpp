@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.5 2006/12/04 19:24:54 r_sijrier Exp $
+$Id: SongView.cpp,v 1.6 2007/01/11 20:11:26 r_sijrier Exp $
 */
 
 
@@ -237,6 +237,24 @@ Command* SongView::hzoom_in()
 Command* SongView::vzoom_out()
 {
 	PENTER;
+	int verticalposition = 6;
+	for (int i=0; i<m_trackViews.size(); ++i) {
+		TrackView* view = m_trackViews.at(i);
+		Track* track = view->get_track();
+		int height = track->get_height();
+		height *= 1.2;
+		if (height > 400) {
+			break;
+		}
+		track->set_height(height);
+		view->prepare_geometry_change();
+		view->calculate_bounding_rect();
+		view->move_to(0, verticalposition);
+		verticalposition += height + 6;
+	}
+	
+	scale_factor_changed();
+	
 	return (Command*) 0;
 }
 
@@ -244,6 +262,24 @@ Command* SongView::vzoom_out()
 Command* SongView::vzoom_in()
 {
 	PENTER;
+	int verticalposition = 6;
+	for (int i=0; i<m_trackViews.size(); ++i) {
+		TrackView* view = m_trackViews.at(i);
+		Track* track = view->get_track();
+		int height = track->get_height();
+		height *= 0.8;
+		if (height < 25) {
+			break;
+		}
+		track->set_height(height);
+		view->prepare_geometry_change();
+		view->calculate_bounding_rect();
+		view->move_to(0, verticalposition);
+		verticalposition += height + 6;
+	}
+	
+	scale_factor_changed();
+	
 	return (Command*) 0;
 }
 
