@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Config.cpp,v 1.5 2006/11/16 12:25:55 r_sijrier Exp $
+$Id: Config.cpp,v 1.6 2007/01/11 12:03:25 r_sijrier Exp $
 */
 
 #include "Config.h"
@@ -34,7 +34,7 @@ $Id: Config.cpp,v 1.5 2006/11/16 12:25:55 r_sijrier Exp $
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-static const char* CONFIG_FILE_VERSION = "4";
+static const char* CONFIG_FILE_VERSION = "5";
 
 
 Config& config()
@@ -60,7 +60,7 @@ void Config::load_configuration()
 	
 	m_intConfigs.insert("Hardware/samplerate", settings.value("Hardware/samplerate", "44100").toInt());
 	m_intConfigs.insert("Hardware/bufferSize", settings.value("Hardware/bufferSize", "1024").toInt());
-	m_intConfigs.insert("Hardware/PreBufferSize", settings.value("Hardware/PreBufferSize", "32768").toInt());
+	m_floatConfigs.insert("Hardware/PreBufferSize", settings.value("Hardware/PreBufferSize", "0.0").toDouble());
 	m_intConfigs.insert("Hardware/capture", settings.value("Hardware/capture", "1").toInt());
 	m_intConfigs.insert("Hardware/playback", settings.value("Hardware/playback", "1").toInt());
 	
@@ -77,6 +77,7 @@ void Config::load_configuration()
 #else
 	m_stringConfigs.insert("Hardware/drivertype", settings.value("Hardware/drivertype", "ALSA").toString());
 #endif
+	m_stringConfigs.insert("Hardware/carddevice", settings.value("Hardware/carddevice", "hw:0").toString());
 }
 
 
@@ -106,7 +107,7 @@ void Config::reset_settings( )
 	settings.beginGroup("Hardware");
 	settings.setValue("samplerate", 44100);
 	settings.setValue("bufferSize", 1024);
-	settings.setValue("PreBufferSize", 32768);
+	settings.setValue("PreBufferSize", 1.0);
 // Use Jack by default on mac os x, since thats the only supported driver there!
 #ifdef MAC_OS_BUILD
 	settings.setValue("drivertype", "Jack");
@@ -179,6 +180,12 @@ void Config::init_input_engine( )
 }
 
 
+float Config::get_float_property(const QString& type, const QString& property, float defaultValue) const
+{
+	return m_floatConfigs.value(type + ("/") + property, defaultValue);
+}
+
+
 int Config::get_int_property(const QString& property, int defaultValue) const
 {
 	return m_intConfigs.value(property, defaultValue);
@@ -225,9 +232,14 @@ void Config::set_hardware_property( const QString & property, int newValue )
 	m_intConfigs.insert(QString("Hardware/").append(property), newValue);
 }
 
-void Config::set_hardware_property( const QString & property, const QString & newValue )
+void Config::set_hardware_property( const QString & property, const QString& newValue )
 {
 	m_stringConfigs.insert(QString("Hardware/").append(property), newValue);
+}
+
+void Config::set_property( const QString& type, const QString& property, float newValue )
+{
+	m_floatConfigs.insert(type + "/" + property, newValue);
 }
 
 void Config::save( )
