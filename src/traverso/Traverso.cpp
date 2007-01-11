@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Traverso.cpp,v 1.18 2006/12/01 13:58:45 r_sijrier Exp $
+$Id: Traverso.cpp,v 1.19 2007/01/11 11:50:57 r_sijrier Exp $
 */
 
 #include <signal.h>
@@ -158,6 +158,7 @@ void Traverso::prepare_audio_device( )
 	int rate = config().get_hardware_int_property("samplerate");
 	int bufferSize = config().get_hardware_int_property("bufferSize");
 	QString driverType = config().get_hardware_string_property("drivertype");
+	QString cardDevice = config().get_hardware_string_property("carddevice");
 	bool capture = config().get_hardware_int_property("capture");
 	bool playback = config().get_hardware_int_property("playback");
 
@@ -174,7 +175,7 @@ void Traverso::prepare_audio_device( )
 		driverType = "ALSA";
 	}
 
-	audiodevice().set_parameters(rate, bufferSize, driverType, capture, playback);
+	audiodevice().set_parameters(rate, bufferSize, driverType, capture, playback, cardDevice);
 }
 
 void Traverso::saveState( QSessionManager &  manager)

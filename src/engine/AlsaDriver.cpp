@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AlsaDriver.cpp,v 1.11 2006/11/15 00:04:40 r_sijrier Exp $
+$Id: AlsaDriver.cpp,v 1.12 2007/01/11 11:50:21 r_sijrier Exp $
 */
 
 
@@ -97,11 +97,11 @@ AlsaDriver::~AlsaDriver()
 }
 
 
-int AlsaDriver::setup(bool capture, bool playback)
+int AlsaDriver::setup(bool capture, bool playback, const QString& pcmName)
 {
 	unsigned long user_nperiods = 2;
-	char *playback_pcm_name = "hw:0";
-	char *capture_pcm_name = "hw:0";
+	char *playback_pcm_name = pcmName.toAscii().data();
+	char *capture_pcm_name = pcmName.toAscii().data();
 	int shorts_first = false;
 
 	/* duplex is the default */

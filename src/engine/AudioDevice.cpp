@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.21 2006/11/16 15:02:07 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.22 2007/01/11 11:50:21 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -296,7 +296,8 @@ void AudioDevice::set_parameters( int rate,
 				nframes_t bufferSize, 
 				const QString& driverType,
 				bool capture,
-				bool playback)
+				bool playback,
+				const QString& cardDevice)
 {
 	PENTER;
 
@@ -305,7 +306,7 @@ void AudioDevice::set_parameters( int rate,
 
 	shutdown();
 
-	if (create_driver(driverType, capture, playback) < 0) {
+	if (create_driver(driverType, capture, playback, cardDevice) < 0) {
 		set_parameters(rate, bufferSize, "Null Driver");
 		return;
 	}
@@ -356,7 +357,7 @@ void AudioDevice::set_parameters( int rate,
 	emit started();
 }
 
-int AudioDevice::create_driver(QString driverType, bool capture, bool playback)
+int AudioDevice::create_driver(QString driverType, bool capture, bool playback, const QString& cardDevice)
 {
 
 #if defined (JACK_SUPPORT)
@@ -376,7 +377,7 @@ int AudioDevice::create_driver(QString driverType, bool capture, bool playback)
 #if defined (ALSA_SUPPORT)
 	if (driverType == "ALSA") {
 		driver =  new AlsaDriver(this, m_rate, m_bufferSize);
-		if (driver->setup(capture,playback) < 0) {
+		if (driver->setup(capture,playback, cardDevice) < 0) {
 			printf("ALSA driver creation failed\n");
 			delete driver;
 			driver = 0;

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Driver.cpp,v 1.4 2006/11/14 14:32:12 r_sijrier Exp $
+$Id: Driver.cpp,v 1.5 2007/01/11 11:50:21 r_sijrier Exp $
 */
 
 #include "Driver.h"
@@ -79,10 +79,11 @@ int Driver::_null_cycle( nframes_t  )
 	return 1;
 }
 
-int Driver::setup(bool capture, bool playback)
+int Driver::setup(bool capture, bool playback, const QString& cardDevice)
 {
 	Q_UNUSED(capture);
 	Q_UNUSED(playback);
+	Q_UNUSED(cardDevice);
 	return 1;
 }
 

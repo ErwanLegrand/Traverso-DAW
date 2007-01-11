@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: GlobalPropertiesWidget.cpp,v 1.12 2006/11/28 14:08:54 r_sijrier Exp $
+$Id: GlobalPropertiesWidget.cpp,v 1.13 2007/01/11 11:53:30 r_sijrier Exp $
 */
 
 #include "GlobalPropertiesWidget.h"
@@ -216,6 +216,7 @@ void GlobalPropertiesWidget::on_deviceApplyButton_clicked( )
 	uint bufferSize = bufferSizeComboBox->currentText().toUInt();
 	QString driverType  = audioDriverBackendComboBox->currentText();
 	bool capture = false, playback = false;
+	QString cardDevice = config().get_hardware_string_property("carddevice");
 	
 	if (duplexComboBox->currentIndex() == 0) {
 		capture = playback = true;
@@ -225,7 +226,7 @@ void GlobalPropertiesWidget::on_deviceApplyButton_clicked( )
 		capture = true;
 	}
 
-	audiodevice().set_parameters(rate, bufferSize, driverType, capture, playback);
+	audiodevice().set_parameters(rate, bufferSize, driverType, capture, playback, cardDevice);
 }
 
 void GlobalPropertiesWidget::update_latency_label( int index)
