@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.cpp,v 1.22 2006/12/01 13:58:45 r_sijrier Exp $
+$Id: Curve.cpp,v 1.23 2007/01/11 12:37:31 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -83,7 +83,7 @@ QDomNode Curve::get_state( QDomDocument doc )
 	}
 	
 	if (nodes.size() == 0) {
-		nodesList << "1,0";
+		nodesList << "0,1";
 	}
 	
 	node.setAttribute("nodes",  nodesList.join(";"));
