@@ -17,12 +17,13 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TrackPanelViewPort.cpp,v 1.3 2006/12/01 13:58:45 r_sijrier Exp $
+    $Id: TrackPanelViewPort.cpp,v 1.4 2007/01/14 17:50:15 r_sijrier Exp $
 */
 
 #include "TrackPanelViewPort.h"
 		
 #include "SongWidget.h"
+#include "SongView.h"
 #include "TrackPanelView.h"
 #include <ContextPointer.h>
 
@@ -36,6 +37,8 @@ TrackPanelViewPort::TrackPanelViewPort(QGraphicsScene* scene, SongWidget* sw)
 	
 	setMinimumWidth(200);
 	setMaximumWidth(200);
+
+	m_sw = sw;
 	
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
@@ -56,6 +59,7 @@ void TrackPanelViewPort::get_pointed_context_items(QList<ContextItem* > &list)
 			list.append(view);
 		}
 	}
+	list.append(m_sw->m_songView);
 	printf("list size is %d\n", list.size());
 }
 
