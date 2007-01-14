@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.20 2007/01/11 12:02:31 r_sijrier Exp $
+$Id: Interface.cpp,v 1.21 2007/01/14 18:14:19 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -190,6 +190,7 @@ void Interface::show_song(Song* song)
 	}
 	currentSongWidget = songWidget;
 	centerAreaWidget->setCurrentIndex(centerAreaWidget->indexOf(songWidget));
+	songWidget->setFocus();
 	pm().get_undogroup()->setActiveStack(song->get_history_stack());
 }
 
