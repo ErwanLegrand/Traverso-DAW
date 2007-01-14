@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: JackDriver.cpp,v 1.9 2006/11/19 21:49:23 r_sijrier Exp $
+    $Id: JackDriver.cpp,v 1.10 2007/01/14 20:36:36 r_sijrier Exp $
 */
 
 #include "JackDriver.h"
@@ -95,8 +95,9 @@ int JackDriver::_null_cycle( nframes_t )
         return 1;
 }
 
-int JackDriver::setup(bool capture, bool playback)
+int JackDriver::setup(bool capture, bool playback, const QString& )
 {
+	PENTER;
         const char **inputports;
         const char **outputports;
         const char *client_name = "Traverso";
@@ -215,11 +216,13 @@ int JackDriver::setup(bool capture, bool playback)
 
 int JackDriver::attach( )
 {
+	PENTER;
         return 1;
 }
 
 int JackDriver::start( )
 {
+	PENTER;
 	m_running = 1;
         jack_activate (client);
         return 1;
@@ -227,6 +230,7 @@ int JackDriver::start( )
 
 int JackDriver::stop( )
 {
+	PENTER;
 	m_running = 0;
 	return 1;
 }
