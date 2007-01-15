@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: CorrelationMeterWidget.cpp,v 1.2 2006/12/22 10:15:34 n_doebelin Exp $
+    $Id: CorrelationMeterWidget.cpp,v 1.3 2007/01/15 20:17:02 n_doebelin Exp $
 */
 
 #include <libtraverso.h>
@@ -86,8 +86,7 @@ void CorrelationMeterWidget::paintEvent( QPaintEvent *  )
 	int wdt = abs(lend - rend);
 	int centerOffset = int(width() * 0.25 * direction);
 
-	painter.drawPixmap(lend + centerOffset, 0, wdt, height(),
-		pixPhase, lend, 0, wdt, height());
+	painter.drawPixmap(lend + centerOffset, 0, wdt, height(), pixPhase);
 
 	painter.setPen(QColor(205, 222, 255));
 
@@ -173,9 +172,7 @@ void CorrelationMeterWidget::update_gradient()
 {
 	gradPhase.setStart(0,0);
 	gradPhase.setColorAt(0.0,  QColor(205, 202, 246));
-// 	gradPhase.setColorAt(0.25, QColor(144, 141, 185));
 	gradPhase.setColorAt(0.5,  QColor( 82,  80, 123));
-// 	gradPhase.setColorAt(0.75, QColor(144, 141, 185));
 	gradPhase.setColorAt(1.0,  QColor(205, 202, 246));
 
 	gradPhase.setFinalStop(QPointF((float)width(), 0.0));
