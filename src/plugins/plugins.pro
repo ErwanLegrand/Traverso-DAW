@@ -27,9 +27,9 @@ HEADERS += Plugin.h \
 	native/SpectralMeter.h \
 
 SOURCES += Plugin.cpp \
+	AudioInputPort.cpp \
 	PluginChain.cpp \
 	PluginPort.cpp \
-	AudioInputPort.cpp \
 	AudioOutputPort.cpp \
 	PluginManager.cpp \
 	PluginSlider.cpp \

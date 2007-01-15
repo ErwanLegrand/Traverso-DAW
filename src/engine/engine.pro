@@ -5,7 +5,10 @@
 
 include(../libbase.pri)
 
-INCLUDEPATH += ../../src/core ./ ./build
+INCLUDEPATH += \
+	../../src/core \
+	./ \
+	./build
 
 TARGET = traversoaudiobackend
 DESTDIR = ../../lib 
@@ -13,9 +16,7 @@ DESTDIR = ../../lib
 TEMPLATE = lib 
 LIBS += -lasound
 
-HEADERS += \
-	precompile.h \
-	AudioDevice.h \
+HEADERS =  AudioDevice.h \
 	AudioBus.h \
 	AudioDeviceThread.h \
 	Client.h \
@@ -26,17 +27,18 @@ HEADERS += \
 	memops.h \
 	libtraverso.h \
 	bitset.h \
-	defines.h
+	defines.h \
+	precompile.h
 
-SOURCES += AudioDevice.cpp \
-	   AudioBus.cpp \
-	   AudioDeviceThread.cpp \
-	   Client.cpp \
-	   JackDriver.cpp \
-	   Driver.cpp \
-	   AudioChannel.cpp \
-	   Tsar.cpp \
-	   memops.cpp
+SOURCES = AudioDevice.cpp \
+	AudioBus.cpp \
+	AudioDeviceThread.cpp \
+	Client.cpp \
+	JackDriver.cpp \
+	Driver.cpp \
+	AudioChannel.cpp \
+	Tsar.cpp \
+	memops.cpp
 
 debug {
 	PRECOMPILED_HEADER = precompile.h 
