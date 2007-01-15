@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Nicola Doebelin
+    Copyright (C) 2006 Nicola Doebelin
  
     This file is part of Traverso
  
@@ -17,15 +17,18 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SpectralMeterWidget.h,v 1.7 2006/12/30 14:01:01 n_doebelin Exp $
+    $Id: SpectralMeterWidget.h,v 1.8 2007/01/15 23:53:28 r_sijrier Exp $
 */
 
 #ifndef SPECTRALMETERWIDGET_H
 #define SPECTRALMETERWIDGET_H
 
 #include <ViewPort.h>
+#include <ViewItem.h>
 #include <QTimer>
 #include <QVector>
+#include "ui_SpectralMeterConfigWidget.h"
+#include <QDialog>
 
 class Song;
 class Project;
@@ -33,21 +36,60 @@ class QRect;
 class QPixmap;
 class SpectralMeter;
 class Command;
-class SpectralMeterConfigWidget;
+class SpectralMeterItem;
 
-class SpectralMeterWidget : public ViewPort
+
+class SpectralMeterConfigWidget : public QDialog, private Ui::SpectralMeterConfigWidget
 {
 	Q_OBJECT
 
 public:
+	SpectralMeterConfigWidget(QWidget* parent = 0);
+
+private:
+	void save_configuration();
+	void load_configuration();
+	
+private slots:
+	void on_buttonClose_clicked();
+	void on_buttonApply_clicked();
+	void advancedButton_toggled(bool);
+
+signals:
+	void configChanged();
+
+};
+
+class SpectralMeterWidget : public ViewPort
+{
+public:
         SpectralMeterWidget(QWidget* parent);
 	~SpectralMeterWidget();
 
+	void get_pointed_context_items(QList<ContextItem* > &list);
+
 protected:
         void resizeEvent( QResizeEvent* e);
-        void paintEvent( QPaintEvent* e);
 
 private:
+	SpectralMeterItem* m_item;
+};
+
+
+class SpectralMeterItem : public ViewItem
+{
+	Q_OBJECT
+
+public:
+        SpectralMeterItem(SpectralMeterWidget* widget);
+	~SpectralMeterItem();
+	
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+	
+	void resize();
+
+private:
+	SpectralMeterWidget* m_widget;
 	Project		*m_project;
 	QTimer		timer;
 	QVector<float>	specl;
@@ -104,7 +146,7 @@ public slots:
 	Command*	set_mode();
 	Command*	reset();
 	Command*	show_export_widget();
-	void		apply_properties();
+	void		load_configuration();
 
 };
 

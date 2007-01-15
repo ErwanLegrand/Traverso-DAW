@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Nicola Doebelin
+    Copyright (C) 2006 Nicola Doebelin
 
     This file is part of Traverso
 
@@ -17,10 +17,11 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.11 2007/01/10 15:19:41 r_sijrier Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.12 2007/01/15 23:53:28 r_sijrier Exp $
 */
 
 #include "SpectralMeterWidget.h"
+#include <Config.h>
 #include <PluginChain.h>
 #include <SpectralMeter.h>
 #include <Command.h>
@@ -29,22 +30,10 @@
 #include <AudioDevice.h>
 #include <InputEngine.h>
 #include <Song.h>
-#include "SpectralMeterConfigWidget.h"
+#include <ContextPointer.h>
 
-#include <QPainter>
-#include <QColor>
-#include <QFontMetrics>
-#include <QTimer>
-#include <QColor>
-#include <QPointF>
-#include <QDebug>
-#include <QPen>
-#include <QVector>
-#include <QString>
-#include <QRect>
-#include <QFileDialog>
-#include <QFile>
-#include <QTextStream>
+#include <QtGui>
+
 #include <math.h>
 #include <limits.h>
 
@@ -60,19 +49,60 @@ static const int UPDATE_INTERVAL = 40;
 static const int FONT_SIZE = 7;
 static const uint MAX_SAMPLES = UINT_MAX;
 
+
 SpectralMeterWidget::SpectralMeterWidget(QWidget* parent)
 	: ViewPort(parent)
-	, m_meter(0)
 {
 	setMinimumWidth(40);
 	setMinimumHeight(10);
+	
+	// We paint all our pixels ourselves, so no need to let Qt
+	// erase and fill it for us prior to the paintEvent.
+	// @ Nicola : This is where the high load comes from!
+//         setAttribute(Qt::WA_OpaquePaintEvent);
+	
+	m_item = new SpectralMeterItem(this);
+	
+	QGraphicsScene* scene = new QGraphicsScene(this);
+	setScene(scene);
+	scene->addItem(m_item);
+	m_item->setPos(0,0);
+	
+	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+}
 
-	fft_size = 0;
-	num_bands = 16;
-	upper_freq = 22050.0f;
-	lower_freq = 20.0f;
-	upper_db = 0.0f;
-	lower_db = -90.0f;
+SpectralMeterWidget::~SpectralMeterWidget()
+{
+}
+
+void SpectralMeterWidget::resizeEvent( QResizeEvent *  )
+{
+	m_item->resize();
+}
+
+void SpectralMeterWidget::get_pointed_context_items(QList<ContextItem* > &list)
+{
+	printf("SpectralMeterWidget::get_pointed_view_items\n");
+	QList<QGraphicsItem *> itemlist = items(cpointer().x(), cpointer().y());
+	foreach(QGraphicsItem* item, itemlist) {
+		list.append((ViewItem*)item);
+	}
+	
+	printf("itemlist size is %d\n", itemlist.size());
+}
+
+
+
+SpectralMeterItem::SpectralMeterItem(SpectralMeterWidget* widget)
+	: ViewItem(0, 0)
+	, m_widget(widget)
+	, m_meter(0)
+{
+
+	m_config = new SpectralMeterConfigWidget(m_widget);
+	load_configuration();
+	
 	upper_freq_log = log10(upper_freq);
 	lower_freq_log = log10(lower_freq);
 	sample_rate = audiodevice().get_sample_rate();
@@ -85,10 +115,6 @@ SpectralMeterWidget::SpectralMeterWidget(QWidget* parent)
 	margin_t = fm.ascent()/2 + 5;
 	margin_b = fm.ascent() + fm.descent() + 10;
 	
-	// We paint all our pixels ourselves, so no need to let Qt
-	// erase and fill it for us prior to the paintEvent.
-	// @ Nicola : This is where the high load comes from!
-        setAttribute(Qt::WA_OpaquePaintEvent);
 
 	for (int i = 0; i < 4; ++i) {
 		m_freq_labels.push_back(10.0f * pow(10.0,i));
@@ -102,25 +128,24 @@ SpectralMeterWidget::SpectralMeterWidget(QWidget* parent)
 		m_freq_labels.push_back(90.0f * pow(10.0,i));
 	}
 
-	m_config = new SpectralMeterConfigWidget(this);
-	connect(m_config, SIGNAL(closed()), this, SLOT(apply_properties()));
+	connect(m_config, SIGNAL(configChanged()), this, SLOT(load_configuration()));
 
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 	connect(&timer, SIGNAL(timeout()), this, SLOT(update_data()));
 }
 
-SpectralMeterWidget::~SpectralMeterWidget()
+SpectralMeterItem::~SpectralMeterItem()
 {
 // 	delete m_config;
 }
 
-void SpectralMeterWidget::paintEvent( QPaintEvent *  )
+void SpectralMeterItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-	PENTER3;
-
-	QPainter painter(viewport());
-	painter.drawPixmap(0, 0, bgPixmap);
+	Q_UNUSED(option);
+	Q_UNUSED(widget);
+	
+	painter->drawPixmap(0, 0, bgPixmap);
 
 	// draw the bars
 	if (m_spectrum.size()) {
@@ -128,8 +153,8 @@ void SpectralMeterWidget::paintEvent( QPaintEvent *  )
 		pen.setColor(QColor(80, 80, 120));
 		pen.setWidth(bar_width);
 		pen.setCapStyle(Qt::FlatCap);
-		painter.setClipRegion(m_rect);
-		painter.setPen(pen);
+		painter->setClipRegion(m_rect);
+		painter->setPen(pen);
 
 		QPointF pt;
 
@@ -140,39 +165,45 @@ void SpectralMeterWidget::paintEvent( QPaintEvent *  )
 			}
 			pt.setX(bar_offset + i * m_rect.width() / num_bands);
 			pt.setY(db2ypos(m_spectrum.at(i)));
-			painter.drawLine(QPointF(pt.x(), height()), pt);
+			painter->drawLine(QPointF(pt.x(), m_widget->height()), pt);
 		}
 
 		// draw the average line if requested
 		if (show_average) {
-			painter.setPen(Qt::red);
+			painter->setPen(Qt::red);
 			QPointF po(bar_offset, db2ypos(m_avg_db.at(0)));
 			for (uint i = 0; i < (uint)m_avg_db.size(); ++i) {
 				pt.setX(m_map_idx2xpos.at(i));
 				pt.setY(db2ypos(m_avg_db.at(i)));
-				painter.drawLine(po, pt);
+				painter->drawLine(po, pt);
 				po = pt;
 			}
 		}
 	}
 }
 
-void SpectralMeterWidget::resizeEvent( QResizeEvent *  )
+void SpectralMeterItem::resize()
 {
-	PENTER3;
+	PENTER;
+	
+	prepareGeometryChange();
+	
 
 	// Make the axis labels disappear when the widget becomes too small
-	int x = 0, y = 0, w = width(), h = height();
-	if (width() >= 200) {
+	int x = 0, y = 0, w = m_widget->width(), h = m_widget->height();
+	m_boundingRectangle = QRectF(0, 0, w, h);
+	
+	if (m_widget->width() >= 200) {
 		x = margin_l;
 		w -= (margin_l + margin_r);
 	}
 
-	if (height() >= 120) {
+	if (m_widget->height() >= 120) {
 		y = margin_t;
 		h -= (margin_t + margin_b);
 	}
 
+	
 	m_rect.setRect(x, y, w, h);
 
 	// update the vectors mapping indices and frequencies to widget coordinates
@@ -185,10 +216,10 @@ void SpectralMeterWidget::resizeEvent( QResizeEvent *  )
 	update_background();
 }
 
-void SpectralMeterWidget::update_background()
+void SpectralMeterItem::update_background()
 {
 	// draw the background image
-	bgPixmap = QPixmap(width(), height());
+	bgPixmap = QPixmap((int)m_boundingRectangle.width(), (int)m_boundingRectangle.height());
 	bgPixmap.fill(QColor(246, 246, 255));
 
 	QPainter painter(&bgPixmap);
@@ -231,9 +262,9 @@ void SpectralMeterWidget::update_background()
 
 
 		// draw text only if there is enough space for it
-		if (((f - s) > last_pos) && ((f + s) < float(width()-1))) {
+		if (((f - s) > last_pos) && ((f + s) < float(m_boundingRectangle.width()-1))) {
 			painter.setPen(Qt::black);
-			painter.drawText(QPointF(f - s, height() - fm.descent() - 3), spm);
+			painter.drawText(QPointF(f - s, m_boundingRectangle.height() - fm.descent() - 3), spm);
 			last_pos = f + s + 1.0;
 		} else {
 			painter.setPen(QColor(150, 150, 150));
@@ -243,7 +274,7 @@ void SpectralMeterWidget::update_background()
 	}
 }
 
-void SpectralMeterWidget::update_data()
+void SpectralMeterItem::update_data()
 {
 	if (!m_meter) {
 		return;
@@ -259,10 +290,10 @@ void SpectralMeterWidget::update_data()
 	reduce_bands();
 
 	// paint the widget
-	viewport()->update();
+	update();
 }
 
-void SpectralMeterWidget::set_project(Project *project)
+void SpectralMeterItem::set_project(Project *project)
 {
 	if (project) {
 		connect(project, SIGNAL(currentSongChanged(Song *)), this, SLOT(set_song(Song*)));
@@ -272,7 +303,7 @@ void SpectralMeterWidget::set_project(Project *project)
 	}
 }
 
-void SpectralMeterWidget::set_song(Song *song)
+void SpectralMeterItem::set_song(Song *song)
 {
 	PluginChain* chain = song->get_plugin_chain();
 	
@@ -285,7 +316,6 @@ void SpectralMeterWidget::set_song(Song *song)
 		m_meter = dynamic_cast<SpectralMeter*>(plugin);
 		
 		if (m_meter) {
-			printf("using existing meter\n");
 			timer.start(UPDATE_INTERVAL);
 			return;
 		}
@@ -304,12 +334,12 @@ void SpectralMeterWidget::set_song(Song *song)
 //		and split them into bands evenly distributed on a log10 x-scale.
 //		This is pretty complicated and is the reason for most of the weired code below
 //	3. calculate the average db levels
-void SpectralMeterWidget::reduce_bands()
+void SpectralMeterItem::reduce_bands()
 {
 	// check if we have to update some variables
 	if ((m_spectrum.size() != (int)num_bands) 
-		|| (fft_size != qMin(specl.size(), specr.size())) 
-		|| (m_map_idx2freq.size() != fft_size)) {
+		|| (fft_size != (uint)qMin(specl.size(), specr.size())) 
+		|| ((uint)m_map_idx2freq.size() != fft_size)) {
 			update_layout();
 	}
 
@@ -376,7 +406,7 @@ void SpectralMeterWidget::reduce_bands()
 
 // call this function if the size, number of bands, ranges etc. changed.
 // it re-calculates some variables
-void SpectralMeterWidget::update_layout()
+void SpectralMeterItem::update_layout()
 {
 	timer.stop();
 
@@ -406,13 +436,13 @@ void SpectralMeterWidget::update_layout()
 }
 
 // converts db-values into widget y-coordinates
-float SpectralMeterWidget::db2ypos(float f)
+float SpectralMeterItem::db2ypos(float f)
 {
 	return ((f - upper_db) * m_rect.height()/(lower_db - upper_db)) + m_rect.top();
 }
 
 // converts frequencies into widget x-coordinates
-float SpectralMeterWidget::freq2xpos(float f)
+float SpectralMeterItem::freq2xpos(float f)
 {
 	if ((f < lower_freq) || (f > upper_freq)) {
 		return 0.0;
@@ -423,7 +453,7 @@ float SpectralMeterWidget::freq2xpos(float f)
 }
 
 // re-calculates the bar width of the frequency bands
-void SpectralMeterWidget::update_barwidth()
+void SpectralMeterItem::update_barwidth()
 {
 	int i = num_bands < 128 ? 2 : 0;
 	bar_width = int(0.5 + (float)m_rect.width() / (float)num_bands) - i;
@@ -434,7 +464,7 @@ void SpectralMeterWidget::update_barwidth()
 
 // updates a vector mapping fft indices (0, ..., fft_size) to widget x-positions
 // and one mapping fft indices to frequency
-void SpectralMeterWidget::update_freq_map()
+void SpectralMeterItem::update_freq_map()
 {
 	m_map_idx2xpos.clear();
 	m_map_idx2freq.clear();
@@ -446,40 +476,30 @@ void SpectralMeterWidget::update_freq_map()
 }
 
 // opens the properties dialog
-Command* SpectralMeterWidget::edit_properties()
+Command* SpectralMeterItem::edit_properties()
 {
 	if (!m_meter) {
 		return 0;
 	}
 
 	m_config->show();
-	m_config->set_upper_freq((int)upper_freq);
-	m_config->set_lower_freq((int)lower_freq);
-	m_config->set_num_bands(num_bands);
-	m_config->set_upper_db((int)upper_db);
-	m_config->set_lower_db((int)lower_db);
-	m_config->set_show_average(show_average);
-
-	m_config->set_fr_len(m_meter->get_fr_size());
-	m_config->set_windowing_function(m_meter->get_windowing_function());
-
+	
 	return 0;
 }
 
 // is called upon closing the properties dialog
-void SpectralMeterWidget::apply_properties()
+void SpectralMeterItem::load_configuration()
 {
-	m_config->hide();
-	upper_freq = (float)m_config->get_upper_freq();
-	lower_freq = (float)m_config->get_lower_freq();
-	num_bands = m_config->get_num_bands();
-	upper_db = (float)m_config->get_upper_db();
-	lower_db = (float)m_config->get_lower_db();
-	show_average = m_config->get_show_average();
-
+	upper_freq = config().get_property("SpectralMeter", "UpperFrequenty", 22050).toInt();
+	lower_freq = config().get_property("SpectralMeter", "LowerFrequenty", 20).toInt();
+	num_bands = config().get_property("SpectralMeter", "NumberOfBands", 16).toInt();
+	upper_db = config().get_property("SpectralMeter", "UpperdB", 0).toInt();
+	lower_db = config().get_property("SpectralMeter", "LowerdB", -90).toInt();
+	show_average = config().get_property("SpectralMeter", "ShowAvarage", 0).toInt();
+	
 	if (m_meter) {
-		m_meter->set_fr_size(m_config->get_fr_len());
-		m_meter->set_windowing_function(m_config->get_windowing_function());
+		m_meter->set_fr_size(config().get_property("SpectralMeter", "FFTSize", 2048).toInt());
+		m_meter->set_windowing_function(config().get_property("SpectralMeter", "WindowingFunction", 1).toInt());
 		m_meter->init();
 	}
 
@@ -487,31 +507,31 @@ void SpectralMeterWidget::apply_properties()
 	update_background();
 }
 
-void SpectralMeterWidget::transfer_started()
+void SpectralMeterItem::transfer_started()
 {
 	// restarts the average curve
 	sample_weight = 1;
 }
 
-void SpectralMeterWidget::transfer_stopped()
+void SpectralMeterItem::transfer_stopped()
 {
 
 }
 
-Command* SpectralMeterWidget::set_mode()
+Command* SpectralMeterItem::set_mode()
 {
 	show_average = !show_average;
 	update_layout();
 	return 0;
 }
 
-Command* SpectralMeterWidget::reset()
+Command* SpectralMeterItem::reset()
 {
 	sample_weight = 1;
 	return 0;
 }
 
-Command* SpectralMeterWidget::show_export_widget()
+Command* SpectralMeterItem::show_export_widget()
 {
 	// check if all requirements are met
 	if ((!show_average) || (!m_avg_db.size()) || (!m_project)) {
@@ -553,5 +573,89 @@ Command* SpectralMeterWidget::show_export_widget()
 
 	return 0;
 }
+
+
+/*******************************************/
+/*        SpectralMeterConfWidget          */
+/*******************************************/
+
+SpectralMeterConfigWidget::SpectralMeterConfigWidget( QWidget * parent )
+	: QDialog(parent)
+{
+	setupUi(this);
+	groupBoxAdvanced->hide();
+	
+	load_configuration();
+	
+	connect(buttonAdvanced, SIGNAL(toggled(bool)), this, SLOT(advancedButton_toggled(bool)));
+}
+
+void SpectralMeterConfigWidget::on_buttonApply_clicked()
+{
+	save_configuration();
+	emit configChanged();
+}
+
+void SpectralMeterConfigWidget::on_buttonClose_clicked( )
+{
+	hide();
+}
+
+void SpectralMeterConfigWidget::advancedButton_toggled(bool b)
+{
+	if (b) {
+		groupBoxAdvanced->show();
+	} else {
+		groupBoxAdvanced->hide();
+	}
+}
+
+void SpectralMeterConfigWidget::save_configuration( )
+{
+	config().set_property(	"SpectralMeter",
+				"UpperFrequenty",
+				qMax(spinBoxLowerFreq->value(), spinBoxUpperFreq->value()) );
+	config().set_property(	"SpectralMeter",
+				"LowerFrequenty",
+				qMin(spinBoxLowerFreq->value(), spinBoxUpperFreq->value()) );
+	config().set_property(	"SpectralMeter",
+				"UpperdB",
+				qMax(spinBoxUpperDb->value(), spinBoxLowerDb->value()) );
+	config().set_property(	"SpectralMeter",
+				"LowerdB",
+				qMin(spinBoxUpperDb->value(), spinBoxLowerDb->value()) );
+	config().set_property("SpectralMeter", "NumberOfBands", spinBoxNumBands->value() );
+	config().set_property("SpectralMeter", "ShowAvarage", checkBoxAverage->isChecked() );
+	
+	config().set_property("SpectralMeter", "FFTSize", comboBoxFftSize->currentText().toInt() );
+	config().set_property("SpectralMeter", "WindowingFunction", comboBoxWindowing->currentIndex() );
+	config().save();
+}
+
+void SpectralMeterConfigWidget::load_configuration( )
+{
+	int value;
+	value = config().get_property("SpectralMeter", "UpperFrequenty", 22050).toInt();
+	spinBoxUpperFreq->setValue(value);
+	value = config().get_property("SpectralMeter", "LowerFrequenty", 20).toInt();
+	spinBoxLowerFreq->setValue(value);
+	value = config().get_property("SpectralMeter", "UpperdB", 0).toInt();
+	spinBoxUpperDb->setValue(value);
+	value = config().get_property("SpectralMeter", "LowerdB", -90).toInt();
+	spinBoxLowerDb->setValue(value);
+	value = config().get_property("SpectralMeter", "NumberOfBands", 16).toInt();
+	spinBoxNumBands->setValue(value);
+	value = config().get_property("SpectralMeter", "ShowAvarage", 0).toInt();
+	checkBoxAverage->setChecked(value);
+	value = config().get_property("SpectralMeter", "FFTSize", 2048).toInt();
+	QString str;
+	str = QString("%1").arg(value);
+	int idx = comboBoxFftSize->findText(str);
+	idx = idx == -1 ? 3 : idx;
+	comboBoxFftSize->setCurrentIndex(idx);
+	value = config().get_property("SpectralMeter", "WindowingFunction", 1).toInt();
+	comboBoxWindowing->setCurrentIndex(value);
+}
+
 
 //eof
