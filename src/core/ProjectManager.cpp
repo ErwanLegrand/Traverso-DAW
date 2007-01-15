@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ProjectManager.cpp,v 1.17 2006/12/04 19:24:54 r_sijrier Exp $
+$Id: ProjectManager.cpp,v 1.18 2007/01/15 23:51:47 r_sijrier Exp $
 */
 
 #include "ProjectManager.h"
@@ -82,7 +82,7 @@ void ProjectManager::set_current_project(Project* pProject)
 
 	if (currentProject) {
 		title = currentProject->get_title();
-		config().set_project_property("current", title);
+		config().set_property("Project", "current", title);
 		config().save();
 	}
 
@@ -148,7 +148,7 @@ int ProjectManager::remove_project( const QString& name )
 
 bool ProjectManager::project_is_current(const QString& title)
 {
-	QString path = config().get_project_string_property("directory");
+	QString path = config().get_property("Project", "directory", "/directory/unknown").toString();
 	path += title;
 
 	if (currentProject && (currentProject->get_root_dir() == path)) {
@@ -160,7 +160,7 @@ bool ProjectManager::project_is_current(const QString& title)
 
 bool ProjectManager::project_exists(const QString& title)
 {
-	QString project_dir = config().get_project_string_property("directory");
+	QString project_dir = config().get_property("Project", "directory", "/directory/unknown").toString();
 	QString project_path = project_dir + title;
 	QFileInfo fileInfo(project_path);
 
@@ -189,10 +189,10 @@ Project * ProjectManager::get_project( )
 
 void ProjectManager::start( )
 {
-	int loadProjectAtStartUp = config().get_project_int_property("loadLastUsed");
+	int loadProjectAtStartUp = config().get_property("Project", "loadLastUsed", 1).toInt();
 
 	if (loadProjectAtStartUp != 0) {
-		QString projectToLoad = config().get_project_string_property("current");
+		QString projectToLoad = config().get_property("Project", "current", "").toString();
 
 		if ( projectToLoad.isNull() || projectToLoad.isEmpty() )
 			projectToLoad="Untitled";

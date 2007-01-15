@@ -5,4 +5,4 @@ rm src/engine/Makefile
 rm src/plugins/Makefile
 rm src/traverso/Makefile
 qmake -nocache
-time make
+time make -j2

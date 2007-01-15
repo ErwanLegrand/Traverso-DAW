@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.27 2007/01/11 14:57:36 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.28 2007/01/15 23:51:47 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
@@ -152,7 +152,7 @@ DiskIO::DiskIO(Song* song)
 	
 	m_minBufStatus = (audiodevice().get_sample_rate() * 12) / 1000 + 1024;
 	
-	m_bufferSize = (int) (config().get_float_property("Hardware", "PreBufferSize", 1.0) * audiodevice().get_sample_rate());
+	m_bufferSize = (int) (config().get_property("Hardware", "PreBufferSize", 1.0).toDouble() * audiodevice().get_sample_rate());
 	printf("diskio:: buffer size is %d\n", m_bufferSize);
 	framebuffer = new audio_sample_t[m_bufferSize];
 

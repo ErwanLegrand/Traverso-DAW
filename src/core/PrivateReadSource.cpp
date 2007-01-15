@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PrivateReadSource.cpp,v 1.6 2007/01/11 14:57:37 r_sijrier Exp $
+$Id: PrivateReadSource.cpp,v 1.7 2007/01/15 23:51:47 r_sijrier Exp $
 */
 
 
@@ -361,7 +361,7 @@ void PrivateReadSource::prepare_buffer( )
 {
 	PENTER;
 
-	float size = config().get_float_property("Hardware", "PreBufferSize", 1.0);
+	float size = config().get_property("Hardware", "PreBufferSize", 1.0).toDouble();
 
 	if (m_isCompressedFile) {
 		size *= 2;

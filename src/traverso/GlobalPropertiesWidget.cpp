@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: GlobalPropertiesWidget.cpp,v 1.13 2007/01/11 11:53:30 r_sijrier Exp $
+$Id: GlobalPropertiesWidget.cpp,v 1.14 2007/01/15 23:51:47 r_sijrier Exp $
 */
 
 #include "GlobalPropertiesWidget.h"
@@ -25,7 +25,6 @@ $Id: GlobalPropertiesWidget.cpp,v 1.13 2007/01/11 11:53:30 r_sijrier Exp $
 
 #include "libtraversocore.h"
 
-#include <QSettings>
 #include <Config.h>
 #include "Traverso.h"
 #include <AudioDevice.h>
@@ -62,50 +61,44 @@ GlobalPropertiesWidget::~ GlobalPropertiesWidget( )
 
 void GlobalPropertiesWidget::save_properties( )
 {
-	config().set_hardware_property("samplerate", defaultSampleRateComboBox->currentText());
-	config().set_hardware_property("bufferSize", bufferSizeComboBox->currentText());
-	config().set_project_property("loadLastUsed", (loadLastProjectCheckBox->isChecked() ? 1 : 0));
-	config().set_hardware_property("drivertype", audioDriverBackendComboBox->currentText());
-	
-	bool playback=true, capture=true;
+	config().set_property("Hardware", "samplerate", defaultSampleRateComboBox->currentText());
+	config().set_property("Hardware", "bufferSize", bufferSizeComboBox->currentText());
+	config().set_property("Project", "loadLastUsed", (loadLastProjectCheckBox->isChecked() ? 1 : 0));
+	config().set_property("Hardware", "drivertype", audioDriverBackendComboBox->currentText());
+	config().set_property("AudioClip", "WaveFormRectified", (waveFormRectifiedCheckBox->isChecked() ? 1 : 0));
+	config().set_property("AudioClip", "WaveFormMerged", (waveFormMergedCheckBox->isChecked() ? 1 : 0));
+	config().set_property("CCE", "holdTimeout", holdTimeoutSpinBox->text());
+	config().set_property("CCE", "doublefactTimeout", doubleFactTimeoutSpinBox->text());
+	config().set_property("Song", "trackCreationCount", numberOfTrackSpinBox->text());
+	QString zoomLevel = defaultHZoomLevelComboBox->currentText().mid(2);
+	config().set_property("Song", "hzoomLevel", zoomLevel);
+	int playback=1, capture=1;
 	if(duplexComboBox->currentIndex() == 1) {
-		capture = false;
+		capture = 0;
 	}
 	if(duplexComboBox->currentIndex() == 2) {
-		playback = false;
+		playback = 0;
 	}
-	config().set_hardware_property("playback", playback);
-	config().set_hardware_property("capture", capture);
+	config().set_property("Hardware", "playback", playback);
+	config().set_property("Hardware", "capture", capture);
 	config().save();
-	
-	QSettings settings;
-	settings.setValue("CCE/holdTimeout", holdTimeoutSpinBox->text());
-	settings.setValue("CCE/doublefactTimeout", doubleFactTimeoutSpinBox->text());
-	settings.setValue("trackCreationCount", numberOfTrackSpinBox->text());
-	QString zoomLevel = defaultHZoomLevelComboBox->currentText().mid(2);
-	settings.setValue("hzoomLevel", zoomLevel);
-	settings.setValue("WaveFormRectified", (waveFormRectifiedCheckBox->isChecked() ? 1 : 0));
-	settings.setValue("WaveFormMerged", (waveFormMergedCheckBox->isChecked() ? 1 : 0));
 }
 
 
 void GlobalPropertiesWidget::load_properties( )
 {
-	QSettings settings;
-	int doubleFactTimeout = settings.value("CCE/doublefactTimeout").toInt();
-	int holdTimeout = settings.value("CCE/holdTimeout").toInt();
-	int defaultNumTracks = settings.value("trackCreationCount").toInt();
-	int hzoomLevel = settings.value("hzoomLevel").toInt();
-	int waveform = settings.value("WaveFormRectified").toInt();
-	int waveformmerged = settings.value("WaveFormMerged").toInt();
-	int loadLastUsedProject = settings.value("Project/loadLastUsed").toInt();
-	int defaultSampleRate = settings.value("Hardware/samplerate").toInt();
-	int bufferSize = settings.value("Hardware/bufferSize").toInt();
-	QString driverType = settings.value("Hardware/drivertype").toString();
-	bool capture = config().get_hardware_int_property("capture");
-	bool playback = config().get_hardware_int_property("playback");
-
-
+	int doubleFactTimeout = config().get_property("CCE", "doublefactTimeout", 200).toInt();
+	int holdTimeout = config().get_property("CCE", "holdTimeout", 200).toInt();
+	int defaultNumTracks = config().get_property("Song", "trackCreationCount", 6).toInt();
+	int hzoomLevel = config().get_property("Song", "hzoomLevel", 8).toInt();
+	int waveform = config().get_property("AudioClip", "WaveFormRectified", 0).toInt();
+	int waveformmerged = config().get_property("AudioClip", "WaveFormMerged", 0).toInt();
+	int loadLastUsedProject = config().get_property("Project", "loadLastUsed", 1).toInt();
+	int defaultSampleRate = config().get_property("Hardware", "samplerate", 44100).toInt();
+	int bufferSize = config().get_property("Hardware", "bufferSize", 1024).toInt();
+	QString driverType = config().get_property("Hardware", "drivertype", "ALSA").toString();
+	bool capture = config().get_property("Hardware", "capture", 1).toInt();
+	bool playback = config().get_property("Hardware", "playback", 1).toInt();
 
 	int defaultSampleRateIndex = 0;
 	int bufferSizeIndex = 0;
@@ -216,7 +209,7 @@ void GlobalPropertiesWidget::on_deviceApplyButton_clicked( )
 	uint bufferSize = bufferSizeComboBox->currentText().toUInt();
 	QString driverType  = audioDriverBackendComboBox->currentText();
 	bool capture = false, playback = false;
-	QString cardDevice = config().get_hardware_string_property("carddevice");
+	QString cardDevice = config().get_property("Hardware", "carddevice", "hw:0").toString();
 	
 	if (duplexComboBox->currentIndex() == 0) {
 		capture = playback = true;

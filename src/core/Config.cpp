@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Config.cpp,v 1.6 2007/01/11 12:03:25 r_sijrier Exp $
+$Id: Config.cpp,v 1.7 2007/01/15 23:51:47 r_sijrier Exp $
 */
 
 #include "Config.h"
@@ -34,7 +34,7 @@ $Id: Config.cpp,v 1.6 2007/01/11 12:03:25 r_sijrier Exp $
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-static const char* CONFIG_FILE_VERSION = "5";
+static const char* CONFIG_FILE_VERSION = "6";
 
 
 Config& config()
@@ -46,38 +46,11 @@ Config& config()
 void Config::load_configuration()
 {
 	QSettings settings;
+	QStringList keys = settings.allKeys();
 	
-	m_intConfigs.insert("WaveFormRectified", settings.value("WaveFormRectified", "0").toInt());
-	m_intConfigs.insert("WaveFormMerged", settings.value("WaveFormMerged", "0").toInt());
-	m_intConfigs.insert("trackCreationCount", settings.value("trackCreationCount", "0").toInt());
-	m_intConfigs.insert("hzoomLevel", settings.value("hzoomLevel", "0").toInt());
-	
-	m_intConfigs.insert("Project/loadLastUsed", settings.value("Project/loadLastUsed", "0").toInt());
-	
-	m_intConfigs.insert("CCE/clearTime", settings.value("CCE/clearTime", "2000").toInt());
-	m_intConfigs.insert("CCE/holdTimeout", settings.value("CCE/holdTimeout", "200").toInt());
-	m_intConfigs.insert("CCE/doublefactTimeout", settings.value("CCE/doublefactTimeout", "200").toInt());
-	
-	m_intConfigs.insert("Hardware/samplerate", settings.value("Hardware/samplerate", "44100").toInt());
-	m_intConfigs.insert("Hardware/bufferSize", settings.value("Hardware/bufferSize", "1024").toInt());
-	m_floatConfigs.insert("Hardware/PreBufferSize", settings.value("Hardware/PreBufferSize", "0.0").toDouble());
-	m_intConfigs.insert("Hardware/capture", settings.value("Hardware/capture", "1").toInt());
-	m_intConfigs.insert("Hardware/playback", settings.value("Hardware/playback", "1").toInt());
-	
-	m_stringConfigs.insert("ProgramVersion", settings.value("ProgramVersion", "0").toString());
-	m_stringConfigs.insert("ProgramVersion", settings.value("ProgramVersion", "0").toString());
-	m_stringConfigs.insert("ConfigFileVersion", settings.value("ConfigFileVersion", "0").toString());
-
-	m_stringConfigs.insert("Project/current", settings.value("Project/current", "0").toString());
-	m_stringConfigs.insert("Project/directory", settings.value("Project/directory", "0").toString());
-
-	// Use Jack by default on mac os x, since thats the only supported driver there!
-#ifdef MAC_OS_BUILD
-	m_stringConfigs.insert("Hardware/drivertype", settings.value("Hardware/drivertype", "Jack").toString());
-#else
-	m_stringConfigs.insert("Hardware/drivertype", settings.value("Hardware/drivertype", "ALSA").toString());
-#endif
-	m_stringConfigs.insert("Hardware/carddevice", settings.value("Hardware/carddevice", "hw:0").toString());
+	foreach(QString key, keys) {
+		m_configs.insert(key, settings.value(key));
+	}
 }
 
 
@@ -88,44 +61,15 @@ void Config::reset_settings( )
 
 	settings.setValue("ProgramVersion", VERSION);
 	settings.setValue("ConfigFileVersion", CONFIG_FILE_VERSION);
-	settings.setValue("trackCreationCount", 6);
-	settings.setValue("hzoomLevel", 2048);
-	settings.setValue("WaveFormRectified", 0);
-
-	settings.beginGroup("Project");
-	settings.setValue("current", "Untitled");
-	settings.setValue("loadLastUsed", 1);
-	settings.setValue("directory", "");
-	settings.endGroup();
-
-	settings.beginGroup("CCE");
-	settings.setValue("clearTime", 2000);
-	settings.setValue("holdTimeout", 200);
-	settings.setValue("doublefactTimeout", 200);
-	settings.endGroup();
-
-	settings.beginGroup("Hardware");
-	settings.setValue("samplerate", 44100);
-	settings.setValue("bufferSize", 1024);
-	settings.setValue("PreBufferSize", 1.0);
-// Use Jack by default on mac os x, since thats the only supported driver there!
-#ifdef MAC_OS_BUILD
-	settings.setValue("drivertype", "Jack");
-#else
-	settings.setValue("drivertype", "ALSA");
-#endif
-	settings.setValue("capture", 1);
-	settings.setValue("playback", 1);
-	settings.endGroup();
+	
+	m_configs.clear();
 	
 	load_configuration();
 }
 
 void Config::check_and_load_configuration( )
 {
-#if QT_VERSION >= 0x040100
 	QSettings::setPath ( QSettings::NativeFormat, QSettings::UserScope, QDir::homePath () + "/.traverso" );
-#endif
 	
 	load_configuration();
 	
@@ -133,11 +77,11 @@ void Config::check_and_load_configuration( )
 
 	// Detect if the config file versions match, if not, there has been most likely 
 	// a change, overwrite with the newest version...
-	if (m_stringConfigs.value("ConfigFileVersion") != CONFIG_FILE_VERSION) {
+	if (m_configs.value("ConfigFileVersion").toString() != CONFIG_FILE_VERSION) {
 		reset_settings();
 	}
 
-	QString projects_path = m_stringConfigs.value("Project/directory");
+	QString projects_path = m_configs.value("Project/directory").toString();
 
 	QDir dir;
 	if ( (projects_path.isEmpty()) || (!dir.exists(projects_path)) ) {
@@ -166,7 +110,7 @@ void Config::check_and_load_configuration( )
 					"OK", 
 					0 );
 		}
-		set_project_property("directory", newPath);
+		set_property("Project", "directory", newPath);
 	}
 }
 
@@ -174,93 +118,44 @@ void Config::check_and_load_configuration( )
 void Config::init_input_engine( )
 {
 	ie().init_map(":/keymap");
-	ie().set_clear_time(config().get_ie_int_property("clearTime"));
-	ie().set_hold_sensitiveness(config().get_ie_int_property("holdTimeout"));
-	ie().set_double_fact_interval(config().get_ie_int_property("doublefactTimeout"));
+	ie().set_clear_time(config().get_property("CCE", "clearTime", 2000).toInt());
+	ie().set_hold_sensitiveness(config().get_property("CCE", "holdTimeout", 200).toInt());
+	ie().set_double_fact_interval(config().get_property("CCE", "doublefactTimeout", 200).toInt());
 }
 
 
-float Config::get_float_property(const QString& type, const QString& property, float defaultValue) const
-{
-	return m_floatConfigs.value(type + ("/") + property, defaultValue);
-}
-
-
-int Config::get_int_property(const QString& property, int defaultValue) const
-{
-	return m_intConfigs.value(property, defaultValue);
-}
-
-int Config::get_hardware_int_property( const QString& property, int defaultValue ) const
-{
-	return m_intConfigs.value(QString("Hardware/").append(property), defaultValue);
-}
-
-int Config::get_project_int_property( const QString & property, int defaultValue ) const
-{
-	return m_intConfigs.value(QString("Project/").append(property), defaultValue);
-}
-
-QString Config::get_project_string_property( const QString & property, const QString & defaultValue ) const
-{
-	return m_stringConfigs.value(QString("Project/").append(property), defaultValue);
-}
-
-int Config::get_ie_int_property( const QString & property, int defaultValue ) const
-{
-	return m_intConfigs.value(QString("CCE/").append(property), defaultValue);
-}
-
-QString Config::get_hardware_string_property( const QString & property, const QString & defaultValue ) const
-{
-	return m_stringConfigs.value(QString("Hardware/").append(property), defaultValue);
-}
-
-
-void Config::set_project_property( const QString & property, int newValue )
-{
-	m_intConfigs.insert(QString("Project/").append(property), newValue);
-}
-
-void Config::set_project_property( const QString & property, const QString& newValue )
-{
-	m_stringConfigs.insert(QString("Project/").append(property), newValue);
-}
-
-void Config::set_hardware_property( const QString & property, int newValue )
-{
-	m_intConfigs.insert(QString("Hardware/").append(property), newValue);
-}
-
-void Config::set_hardware_property( const QString & property, const QString& newValue )
-{
-	m_stringConfigs.insert(QString("Hardware/").append(property), newValue);
-}
-
-void Config::set_property( const QString& type, const QString& property, float newValue )
-{
-	m_floatConfigs.insert(type + "/" + property, newValue);
-}
 
 void Config::save( )
 {
 	QSettings settings;
 	
-	QHash<QString, int>::const_iterator i = m_intConfigs.constBegin();
+	QHash<QString, QVariant>::const_iterator i = m_configs.constBegin();
 	
-	while (i != m_intConfigs.constEnd()) {
+	while (i != m_configs.constEnd()) {
 		settings.setValue(i.key(), i.value());
 		++i;
 	}
- 	
+}
 
-	QHash<QString, QString>::const_iterator j = m_stringConfigs.constBegin();
+QVariant Config::get_property( const QString & type, const QString & property, QVariant defaultValue )
+{
+	QVariant var = defaultValue;
 	
-	while (j != m_stringConfigs.constEnd()) {
-		settings.setValue(j.key(), j.value());
-		++j;
+	if (m_configs.contains(type + ("/") + property)) {
+		var = m_configs.value(type + ("/") + property);
+	} else {
+		m_configs.insert(type + "/" + property, defaultValue);
+		QSettings settings;
+		settings.setValue(type + "/" + property, defaultValue);
 	}
+	
+	return var;
+}
 
+void Config::set_property( const QString & type, const QString & property, QVariant newValue )
+{
+	printf("type, property, value: %s, %s, %d\n", type.toAscii().data(), property.toAscii().data(), newValue.toInt());
+	m_configs.insert(type + "/" + property, newValue);
 }
 
 //eof

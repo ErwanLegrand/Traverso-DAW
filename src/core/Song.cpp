@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.46 2007/01/10 11:32:11 r_sijrier Exp $
+$Id: Song.cpp,v 1.47 2007/01/15 23:51:47 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -64,7 +64,8 @@ Song::Song(Project* project, int number)
 	title="Untitled";
 	m_gain = 1.0f;
 	artists = "No artists name yet";
-	int level = config().get_int_property("hzoomLevel");
+	int level = config().get_property("Song", "hzoomLevel", 2048).toInt();
+	printf("level is %d\n", level);
 	switch (level) {
 		case 8: m_hzoom = 4;
 			break;
@@ -87,7 +88,7 @@ Song::Song(Project* project, int number)
 		default:   m_hzoom = 11;
 			break;
 	}
-	int tracksToCreate = config().get_int_property("trackCreationCount");
+	int tracksToCreate = config().get_property("Song", "trackCreationCount", 6).toInt();
 	regionList = (MtaRegionList*) 0;
 
 	init();

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: QuickDriverConfigWidget.cpp,v 1.3 2007/01/11 11:53:30 r_sijrier Exp $
+$Id: QuickDriverConfigWidget.cpp,v 1.4 2007/01/15 23:51:47 r_sijrier Exp $
 */
 
 #include "QuickDriverConfigWidget.h"
@@ -59,18 +59,18 @@ void QuickDriverConfigWidget::on_applyButton_clicked( )
 	QString driver = driverComboBox->currentText();
 	int rate = rateComboBox->currentText().toInt();
 	int bufSize = periodBufferSizesList.at(latencyComboBox->currentIndex());
-	bool capture = config().get_hardware_int_property("capture");
-	bool playback = config().get_hardware_int_property("playback");
-	QString cardDevice = config().get_hardware_string_property("carddevice");
+	bool capture = config().get_property("Hardware", "capture", 1).toInt();
+	bool playback = config().get_property("Hardware", "playback", 1).toInt();
+	QString cardDevice = config().get_property("Hardware", "carddevice", "hw:0").toString();
 	
 	audiodevice().set_parameters(rate, bufSize, driver, capture, playback, cardDevice);
 }
 
 void QuickDriverConfigWidget::on_saveButton_clicked( )
 {
-	config().set_hardware_property("samplerate", rateComboBox->currentText().toInt());
-	config().set_hardware_property("bufferSize", periodBufferSizesList.at(latencyComboBox->currentIndex()));
-	config().set_hardware_property("drivertype", driverComboBox->currentText());
+	config().set_property("Hardware", "samplerate", rateComboBox->currentText().toInt());
+	config().set_property("Hardware", "bufferSize", periodBufferSizesList.at(latencyComboBox->currentIndex()));
+	config().set_property("Hardware", "drivertype", driverComboBox->currentText());
 	config().save();
 }
 

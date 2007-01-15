@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Traverso.cpp,v 1.19 2007/01/11 11:50:57 r_sijrier Exp $
+$Id: Traverso.cpp,v 1.20 2007/01/15 23:51:47 r_sijrier Exp $
 */
 
 #include <signal.h>
@@ -155,12 +155,12 @@ void Traverso::init_sse( )
 
 void Traverso::prepare_audio_device( )
 {
-	int rate = config().get_hardware_int_property("samplerate");
-	int bufferSize = config().get_hardware_int_property("bufferSize");
-	QString driverType = config().get_hardware_string_property("drivertype");
-	QString cardDevice = config().get_hardware_string_property("carddevice");
-	bool capture = config().get_hardware_int_property("capture");
-	bool playback = config().get_hardware_int_property("playback");
+	int rate = config().get_property("Hardware", "samplerate", 44100).toInt();
+	int bufferSize = config().get_property("Hardware", "bufferSize", 1024).toInt();
+	QString driverType = config().get_property("Hardware", "drivertype", "ALSA").toString();
+	QString cardDevice = config().get_property("Hardware", "carddevice", "hw:0").toString();
+	bool capture = config().get_property("Hardware", "capture", 1).toInt();
+	bool playback = config().get_property("Hardware", "playback", 1).toInt();
 
 	if (bufferSize == 0) {
 		qWarning("BufferSize read from Settings is 0 !!!");

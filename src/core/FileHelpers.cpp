@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FileHelpers.cpp,v 1.5 2006/10/19 10:45:46 r_sijrier Exp $
+$Id: FileHelpers.cpp,v 1.6 2007/01/15 23:51:47 r_sijrier Exp $
 */
 
 #include "FileHelpers.h"
@@ -34,7 +34,7 @@ $Id: FileHelpers.cpp,v 1.5 2006/10/19 10:45:46 r_sijrier Exp $
 // before removing the directory
 int FileHelper::remove_recursively(const QString& pName)
 {
-	QString name = config().get_project_string_property("directory");
+	QString name = config().get_property("Project", "directory", "/directory/unknown").toString();
 	name += pName;
 
 	QFileInfo fileInfo(name);
@@ -85,7 +85,7 @@ int FileHelper::remove_recursively(const QString& pName)
 int FileHelper::copy_recursively(const QString& pNameFrom, const QString& pNameTo)
 {
 #if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
-	QString nameFrom = config().get_project_string_property("directory");
+	QString nameFrom = config().get_property("Project", "directory", "/directory/unknown").toString();
 	QString nameTo(nameFrom);
 
 	nameFrom += pNameFrom;

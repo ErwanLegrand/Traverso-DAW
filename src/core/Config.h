@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Config.h,v 1.5 2007/01/11 12:03:25 r_sijrier Exp $
+$Id: Config.h,v 1.6 2007/01/15 23:51:47 r_sijrier Exp $
 */
 
 #ifndef CONFIG_H
@@ -25,29 +25,14 @@ $Id: Config.h,v 1.5 2007/01/11 12:03:25 r_sijrier Exp $
 
 #include <QObject>
 #include <QHash>
+#include <QVariant>
 
 class Config : public QObject
 {
 	Q_OBJECT
 public:
-	int get_int_property(const QString& property, int defaultValue=0) const;
-	
-	int get_hardware_int_property(const QString& property, int defaultValue=0) const;
-	int get_ie_int_property(const QString& property, int defaultValue=0) const;
-	int get_project_int_property(const QString& property, int defaultValue=0) const;
-
-	float get_float_property(const QString& type, const QString& property, float defaultValue=0.0) const;
-	
-	QString get_project_string_property(const QString& property, const QString& defaultValue="") const;
-	QString get_hardware_string_property(const QString& property, const QString& defaultValue="") const;
-	
-	void set_property(const QString& type, const QString& property, float newValue);
-
-	void set_project_property(const QString& property, int newValue);
-	void set_project_property(const QString& property, const QString& newValue);
-	
-	void set_hardware_property(const QString& property, int newValue);
-	void set_hardware_property(const QString& property, const QString& newValue);
+	QVariant get_property(const QString& type, const QString& property, QVariant defaultValue);
+	void set_property(const QString& type, const QString& property, QVariant newValue);
 	
 	void check_and_load_configuration();
 	void reset_settings( );
@@ -67,9 +52,7 @@ private:
 	
 	void load_configuration();
 	
-	QHash<QString, int>	m_intConfigs;
-	QHash<QString, float>	m_floatConfigs;
-	QHash<QString, QString>	m_stringConfigs;
+	QHash<QString, QVariant>	m_configs;
 
 };
 

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.9 2007/01/11 20:11:26 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.10 2007/01/15 23:54:07 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -65,8 +65,8 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	recreate_clipname_pixmap();
 	calculate_bounding_rect();
 	
-	classicView = config().get_int_property("WaveFormRectified") == 0 ? 1 : 0;
-	mergedView = config().get_int_property("WaveFormMerged") == 0 ? 0 : 1;
+	classicView = config().get_property("AudioClip", "WaveFormRectified", 0).toInt() == 0 ? 1 : 0;
+	mergedView = config().get_property("AudioClip", "WaveFormMerged", 0).toInt() == 0 ? 0 : 1;
 	
 	if (FadeCurve* curve = m_clip->get_fade_in()) {
 		add_new_fadeview(curve);

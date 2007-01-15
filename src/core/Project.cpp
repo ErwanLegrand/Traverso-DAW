@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Project.cpp,v 1.10 2006/12/04 19:24:54 r_sijrier Exp $
+$Id: Project.cpp,v 1.11 2007/01/15 23:51:47 r_sijrier Exp $
 */
 
 #include <QFile>
@@ -52,7 +52,7 @@ Project::Project(const QString& pTitle)
 	currentSongId = 1;
 	engineer = "";
 
-	rootDir = config().get_project_string_property("directory") + title;
+	rootDir = config().get_property("Project", "directory", "/directory/unknown").toString() + title;
 	sourcesDir = rootDir + "/audiosources";
 	m_rate = audiodevice().get_sample_rate();
 	m_bitDepth = audiodevice().get_bit_depth();
