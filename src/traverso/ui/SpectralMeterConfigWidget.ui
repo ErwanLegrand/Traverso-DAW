@@ -74,7 +74,7 @@
    </palette>
   </property>
   <property name="windowTitle" >
-   <string>Form</string>
+   <string>SpectralMeter Configuration</string>
   </property>
   <layout class="QVBoxLayout" >
    <property name="margin" >
@@ -328,6 +328,13 @@
         </size>
        </property>
       </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonApply" >
+       <property name="text" >
+        <string>Apply</string>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="buttonClose" >
