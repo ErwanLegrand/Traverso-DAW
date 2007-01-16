@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Gain.h,v 1.4 2006/11/08 14:52:11 r_sijrier Exp $
+    $Id: Gain.h,v 1.5 2007/01/16 20:21:08 r_sijrier Exp $
 */
 
 #ifndef GAIN_H
@@ -35,7 +35,7 @@ public :
         Gain(ContextItem* context, const QString& des, float gain = -1.0);
         ~Gain();
 
-        int begin_hold(int useX = 0, int useY = 0);
+        int begin_hold();
         int finish_hold();
         int prepare_actions();
         int do_action();
@@ -43,7 +43,7 @@ public :
 
         int jog();
         
-        void set_cursor_shape(int useX = 0, int useY = 0);
+        void set_cursor_shape(int useX, int useY);
 
 private :
 	ContextItem*	gainObject;

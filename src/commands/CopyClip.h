@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: CopyClip.h,v 1.3 2006/10/18 12:01:17 r_sijrier Exp $
+    $Id: CopyClip.h,v 1.4 2007/01/16 20:21:08 r_sijrier Exp $
 */
 
 #ifndef COPYCLIPACTION_H
@@ -38,7 +38,7 @@ public :
         ~CopyClip();
 
         int prepare_actions();
-        int begin_hold(int useX = 0, int useY = 0);
+        int begin_hold();
         int finish_hold();
         int do_action();
         int undo_action();

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TrackPan.cpp,v 1.4 2006/11/08 14:52:11 r_sijrier Exp $
+    $Id: TrackPan.cpp,v 1.5 2007/01/16 20:21:08 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -47,10 +47,8 @@ int TrackPan::prepare_actions()
 }
 
 
-int TrackPan::begin_hold(int useX, int useY)
+int TrackPan::begin_hold()
 {
-	set_cursor_shape(useX, useY);
-	
         int trackNumber;
 
         // Override m_track in case there was a number collection!
@@ -74,7 +72,6 @@ int TrackPan::begin_hold(int useX, int useY)
 
 int TrackPan::finish_hold()
 {
- 	cpointer().get_viewport()->reset_context();
 	return 1;
 }
 

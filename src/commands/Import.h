@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Import.h,v 1.2 2006/09/07 09:36:52 r_sijrier Exp $
+    $Id: Import.h,v 1.3 2007/01/16 20:21:08 r_sijrier Exp $
 */
 
 #ifndef IMPORT_H
@@ -26,6 +26,7 @@
 #include "Command.h"
 
 class QString;
+class AudioClip;
 
 class Import : public Command
 {

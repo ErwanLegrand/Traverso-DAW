@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: CopyClip.cpp,v 1.11 2006/11/14 14:52:40 r_sijrier Exp $
+    $Id: CopyClip.cpp,v 1.12 2007/01/16 20:21:08 r_sijrier Exp $
 */
 
 #include "CopyClip.h"
@@ -43,9 +43,8 @@ CopyClip::~CopyClip()
 {}
 
 
-int CopyClip::begin_hold(int useX, int useY)
+int CopyClip::begin_hold()
 {
-	set_cursor_shape(useX, useY);
         return 1;
 }
 
@@ -57,7 +56,6 @@ int CopyClip::finish_hold()
 //         newInsertBlock = m_song->xpos_to_frame( x );
 //         targetTrack = m_song->get_track_under_y(y);
 	
-	cpointer().get_viewport()->reset_context();
         return 1;
 }
 

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.cpp,v 1.24 2007/01/11 16:00:47 r_sijrier Exp $
+$Id: Curve.cpp,v 1.25 2007/01/16 20:21:08 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -71,7 +71,7 @@ void Curve::init( )
 
 QDomNode Curve::get_state( QDomDocument doc )
 {
-	PENTER;
+	PENTER3;
 	QDomElement node = doc.createElement("Curve");
 	
 	QStringList nodesList;

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Command.h,v 1.6 2006/11/08 14:49:37 r_sijrier Exp $
+    $Id: Command.h,v 1.7 2007/01/16 20:21:08 r_sijrier Exp $
 */
 
 #ifndef COMMAND_H
@@ -40,13 +40,13 @@ public :
         Command(const QString& des = "No description set!");
         virtual ~Command();
 
-        virtual int begin_hold(int useX = 0, int useY = 0);
+        virtual int begin_hold();
         virtual int finish_hold();
         virtual int prepare_actions();
         virtual int do_action();
         virtual int undo_action();
         virtual int jog();
-        virtual void set_cursor_shape(int useX = 0, int useY = 0);
+        virtual void set_cursor_shape(int useX, int useY);
 	
 	void undo() {undo_action();}
 	void redo() {do_action();}

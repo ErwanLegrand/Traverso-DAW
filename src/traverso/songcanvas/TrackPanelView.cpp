@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.5 2007/01/11 20:11:26 r_sijrier Exp $
+$Id: TrackPanelView.cpp,v 1.6 2007/01/16 20:21:08 r_sijrier Exp $
 */
 
 #include <QGraphicsScene>
@@ -107,6 +107,11 @@ TrackPanelView::TrackPanelView(TrackPanelViewPort* view, TrackView* trackView, T
 // 	setFlags(ItemIsSelectable | ItemIsMovable);
 // 	setAcceptsHoverEvents(true);
 
+}
+
+TrackPanelView::~TrackPanelView( )
+{
+	PENTERDES;
 }
 
 
@@ -353,6 +358,7 @@ void TrackPanelBus::bus_changed()
 	
 	update();
 }
+
 
 
 //eof

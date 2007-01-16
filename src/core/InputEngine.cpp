@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.15 2007/01/16 16:05:59 r_sijrier Exp $
+$Id: InputEngine.cpp,v 1.16 2007/01/16 20:21:08 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -197,8 +197,9 @@ int InputEngine::broadcast_action(IEAction* action)
 		}
 	}
 	if (k && isHolding) {
-		if (k->begin_hold(action->useX, action->useY) != -1) {
+		if (k->begin_hold() != -1) {
 			k->set_valid(true);
+			k->set_cursor_shape(action->useX, action->useY);
 			holdingCommand = k;
 			set_jogging(true);
 		} else {
@@ -244,10 +245,10 @@ void InputEngine::jog()
 
 void InputEngine::set_jogging(bool jog)
 {
-	if (jog)
-		cpointer().grab_mouse();
-	else
-		cpointer().release_mouse();
+// 	if (jog)
+// 		cpointer().grab_mouse();
+// 	else
+// 		cpointer().release_mouse();
 
 	isJogging = jog;
 }
@@ -785,6 +786,8 @@ void InputEngine::finish_hold()
 	if (holdingCommand) {
 
 		holdingCommand->finish_hold();
+		cpointer().reset_cursor();
+
 
 		if (holdingCommand->prepare_actions()) {
 			holdingCommand->set_valid(true);

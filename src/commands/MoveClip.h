@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveClip.h,v 1.5 2006/11/09 15:45:42 r_sijrier Exp $
+    $Id: MoveClip.h,v 1.6 2007/01/16 20:21:08 r_sijrier Exp $
 */
 
 #ifndef MOVECLIPACTION_H
@@ -37,7 +37,7 @@ public :
         MoveClip(SongView* sv, AudioClipView* clipView, AudioClip* clip);
         ~MoveClip();
 
-        int begin_hold(int useX = 0, int useY = 0);
+        int begin_hold();
         int finish_hold();
         int prepare_actions();
         int do_action();

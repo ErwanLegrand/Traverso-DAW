@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Zoom.h,v 1.4 2006/12/01 13:58:45 r_sijrier Exp $
+    $Id: Zoom.h,v 1.5 2007/01/16 20:21:08 r_sijrier Exp $
 */
 
 #ifndef ZOOM_H
@@ -34,7 +34,7 @@ public :
         Zoom(SongView* sv);
         ~Zoom() {};
 
-        int begin_hold(int useX = 0, int useY = 0);
+        int begin_hold();
         int finish_hold();
         int prepare_actions();
 	int do_action();
@@ -42,7 +42,7 @@ public :
 
         int jog();
 
-        void set_cursor_shape(int useX = 0, int useY = 0);
+        void set_cursor_shape(int useX, int useY);
 
 private :
         int origZoomLevel;

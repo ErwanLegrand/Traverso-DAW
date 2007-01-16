@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.6 2007/01/11 20:11:26 r_sijrier Exp $
+$Id: SongView.cpp,v 1.7 2007/01/16 20:21:08 r_sijrier Exp $
 */
 
 
@@ -46,7 +46,7 @@ public :
         ~PlayCursorMove(){PENTERDES;};
 
 	int finish_hold();
-        int begin_hold(int useX = 0, int useY = 0);
+        int begin_hold();
         int jog();
 
 private :
@@ -71,7 +71,7 @@ int PlayCursorMove::finish_hold()
 	return -1;
 }
 
-int PlayCursorMove::begin_hold(int useX, int useY)
+int PlayCursorMove::begin_hold()
 {
 	wasActive = m_cursor->is_active();
 	m_cursor->set_active(false);
@@ -242,7 +242,7 @@ Command* SongView::vzoom_out()
 		TrackView* view = m_trackViews.at(i);
 		Track* track = view->get_track();
 		int height = track->get_height();
-		height *= 1.2;
+		height = (int) (height * 1.2);
 		if (height > 400) {
 			break;
 		}
@@ -267,7 +267,7 @@ Command* SongView::vzoom_in()
 		TrackView* view = m_trackViews.at(i);
 		Track* track = view->get_track();
 		int height = track->get_height();
-		height *= 0.8;
+		height = (int) (height * 0.8);
 		if (height < 25) {
 			break;
 		}
@@ -308,6 +308,7 @@ Command* SongView::scroll_left()
 Command* SongView::shuttle()
 {
 // 	return new Shuttle(this, m_vp);
+	return 0;
 }
 
 void SongView::update_shuttle()
@@ -330,12 +331,6 @@ Command* SongView::goto_end()
 	return (Command*) 0;
 }
 
-
- 
-void SongView::update_zoom( int xFactor, int vZoomDirection )
-{
-	m_song->set_hzoom(xFactor);
-}
 
 TrackPanelViewPort* SongView::get_trackpanel_view_port( ) const
 {

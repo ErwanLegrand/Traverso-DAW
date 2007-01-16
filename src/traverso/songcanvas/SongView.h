@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongView.h,v 1.4 2006/12/01 13:58:45 r_sijrier Exp $
+    $Id: SongView.h,v 1.5 2007/01/16 20:21:08 r_sijrier Exp $
 */
 
 #ifndef SONG_VIEW_H
@@ -51,7 +51,6 @@ public :
 	Song* get_song() const {return m_song;}
 	TrackPanelViewPort* get_trackpanel_view_port() const;
 	
-	void update_zoom(int xFactor, int vZoomDirection);
 	TrackView* get_trackview_under(QPointF point);
 
 	int		scalefactor;

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Zoom.cpp,v 1.7 2007/01/11 20:09:25 r_sijrier Exp $
+    $Id: Zoom.cpp,v 1.8 2007/01/16 20:21:08 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -47,21 +47,18 @@ int Zoom::prepare_actions()
 }
 
 
-int Zoom::begin_hold(int useX, int useY)
+int Zoom::begin_hold()
 {
         jogZoomTotalX = cpointer().get_viewport()->viewport()->width();
         verticalJogZoomLastY = cpointer().y();
         baseJogZoomXFactor = m_sv->get_song()->get_hzoom() - ((int) ( (float) (jogZoomTotalX - cpointer().x()) / jogZoomTotalX * 50 ) + 1 );
 	
-	set_cursor_shape(useX, useY);
-        
 	return 1;
 }
 
 
 int Zoom::finish_hold()
 {
-	cpointer().get_viewport()->reset_context();
 	QCursor::setPos(mousePos);
 	return 1;
 }
@@ -72,8 +69,9 @@ void Zoom::set_cursor_shape( int useX, int useY )
 	Q_UNUSED(useX);
 	Q_UNUSED(useY);
 	
+	ViewPort* view = cpointer().get_viewport();
+	view->viewport()->setCursor(QCursor(find_pixmap(":/cursorZoom")));
 	mousePos = QCursor::pos();	
-	cpointer().get_viewport()->set_hold_cursor(":/cursorZoom");
 }
 
 int Zoom::jog()

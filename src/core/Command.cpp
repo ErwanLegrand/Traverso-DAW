@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Command.cpp,v 1.9 2007/01/16 14:06:05 r_sijrier Exp $
+$Id: Command.cpp,v 1.10 2007/01/16 20:21:08 r_sijrier Exp $
 */
 
 #include "Command.h"
@@ -47,7 +47,7 @@ Command::Command(ContextItem* item, const QString& des)
 Command::~Command()
 {}
 
-int Command::begin_hold(int useX, int useY)
+int Command::begin_hold()
 {
 	PERROR("Hold actions should re-implement this function!!");
 	return -1;
@@ -120,7 +120,7 @@ void Command::set_cursor_shape( int useX, int useY )
 	} else if (useY) {
 		view->viewport()->setCursor(QCursor(find_pixmap(":/cursorHoldUd")));
 	} else{
-		view->reset_context();
+		view->reset_cursor();
 	}
 	
 }

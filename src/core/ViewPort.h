@@ -17,13 +17,14 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ViewPort.h,v 1.4 2007/01/16 13:51:35 r_sijrier Exp $
+    $Id: ViewPort.h,v 1.5 2007/01/16 20:21:08 r_sijrier Exp $
 */
 
 #ifndef VIEWPORT_H
 #define VIEWPORT_H
 
 #include <QGraphicsView>
+#include <QGraphicsItem>
 
 class ViewItem;
 class ContextItem;
@@ -47,7 +48,7 @@ public :
 
 	void set_hold_cursor(const QString& cursorName);
 	void set_hold_cursor_text(const QString& text);
-        void reset_context();
+        void reset_cursor();
 
 
 protected:
@@ -59,11 +60,34 @@ protected:
 
 private:
 
+	HoldCursor*	m_holdcursor;
 
 signals:
         void contextChanged();
 
 };
+
+class HoldCursor : public QGraphicsItem
+{
+
+public:
+	HoldCursor();
+	~HoldCursor();
+
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+
+	void set_text(const QString& text);
+	void set_type(const QString& type);
+
+	QRectF boundingRect() const;
+
+private:
+	QPoint          m_pos;
+	QPixmap		m_pixmap;
+	QString         m_text;
+
+};
+
 
 #endif
 

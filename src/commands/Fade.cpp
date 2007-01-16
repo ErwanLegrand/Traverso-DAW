@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Fade.cpp,v 1.5 2006/11/08 14:52:11 r_sijrier Exp $
+$Id: Fade.cpp,v 1.6 2007/01/16 20:21:08 r_sijrier Exp $
 */
 
 
@@ -53,10 +53,8 @@ int Fade::prepare_actions()
 	return 1;
 }
 
-int Fade::begin_hold(int useX, int useY)
+int Fade::begin_hold()
 {
-	set_cursor_shape(useX, useY);
-
 	origX = cpointer().x();
 	newFade = origFade = m_curve->get_range();
 	return 1;
@@ -65,7 +63,6 @@ int Fade::begin_hold(int useX, int useY)
 
 int Fade::finish_hold()
 {
-	cpointer().get_viewport()->reset_context();
 	return 1;
 }
 
@@ -107,7 +104,7 @@ static float round_float( float f)
 /********** FadeBend **********/
 /******************************/
 
-int FadeBend::begin_hold(int useX, int useY)
+int FadeBend::begin_hold()
 {
 	PENTER;
 	origY = cpointer().y();
@@ -133,7 +130,7 @@ int FadeBend::jog()
 /********** FadeStrength **********/
 /******************************/
 
-int FadeStrength::begin_hold(int useX, int useY)
+int FadeStrength::begin_hold()
 {
 	PENTER;
 	origY = cpointer().y();

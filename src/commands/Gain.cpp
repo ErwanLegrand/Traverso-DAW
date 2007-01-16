@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Gain.cpp,v 1.6 2006/11/08 14:52:11 r_sijrier Exp $
+$Id: Gain.cpp,v 1.7 2007/01/16 20:21:08 r_sijrier Exp $
 */
 
 #include "Gain.h"
@@ -55,7 +55,7 @@ int Gain::prepare_actions()
 	return 1;
 }
 
-int Gain::begin_hold(int useX, int useY)
+int Gain::begin_hold()
 {
 	if ( ! QMetaObject::invokeMethod(gainObject, "get_gain",
 					Qt::DirectConnection,
@@ -64,8 +64,6 @@ int Gain::begin_hold(int useX, int useY)
 		return 0;
 	}	
 	
-	set_cursor_shape(useX, useY);
-	
 	newGain = origGain;
 	origY = cpointer().y();
 	return 1;
@@ -73,7 +71,6 @@ int Gain::begin_hold(int useX, int useY)
 
 int Gain::finish_hold()
 {
-	cpointer().get_viewport()->reset_context();
 	QCursor::setPos(mousePos);
 	return 1;
 }

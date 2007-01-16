@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Fade.h,v 1.4 2006/11/08 14:52:11 r_sijrier Exp $
+$Id: Fade.h,v 1.5 2007/01/16 20:21:08 r_sijrier Exp $
 */
 
 #ifndef FADE_H
@@ -35,7 +35,7 @@ public :
         Fade(AudioClip* clip, Curve* curve, int direction);
         ~Fade();
 
-        int begin_hold(int useX = 0, int useY = 0);
+        int begin_hold();
         int finish_hold();
         int prepare_actions();
         int do_action();
@@ -59,7 +59,7 @@ public :
         FadeStrength(FadeCurve* fade) : Command("FadeStrength"), m_fade(fade) {};
         ~FadeStrength(){};
 
-        int begin_hold(int useX = 0, int useY = 0);
+        int begin_hold();
         int jog();
 
 private :
@@ -75,7 +75,7 @@ public :
         FadeBend(FadeCurve* fade) : Command("FadeBend"), m_fade(fade) {};
         ~FadeBend(){};
 
-        int begin_hold(int useX = 0, int useY = 0);
+        int begin_hold();
         int jog();
 
 private :
