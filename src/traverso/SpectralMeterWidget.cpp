@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.15 2007/01/16 13:47:32 r_sijrier Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.16 2007/01/16 21:48:47 r_sijrier Exp $
 */
 
 #include "SpectralMeterWidget.h"
@@ -54,6 +54,7 @@ static const uint MAX_SAMPLES = UINT_MAX;
 SpectralMeterWidget::SpectralMeterWidget(QWidget* parent)
 	: ViewPort(parent)
 {
+	PENTERCONS;
 	setMinimumWidth(40);
 	setMinimumHeight(10);
 	
@@ -102,6 +103,7 @@ SpectralMeterItem::SpectralMeterItem(SpectralMeterWidget* widget)
 {
 
 	m_config = new SpectralMeterConfigWidget(m_widget);
+	m_boundingRectangle = QRectF(0, 0, 0, 0);
 	load_configuration();
 	
 	upper_freq_log = log10(upper_freq);
