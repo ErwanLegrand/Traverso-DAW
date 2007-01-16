@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.28 2007/01/15 23:51:47 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.29 2007/01/16 16:05:59 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
@@ -170,6 +170,7 @@ DiskIO::~DiskIO()
 	PENTERDES;
 	stop();
 	delete cpuTimeBuffer;
+	delete framebuffer;
 }
 
 /**

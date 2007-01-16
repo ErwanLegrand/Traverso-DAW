@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.14 2007/01/16 13:46:54 r_sijrier Exp $
+$Id: InputEngine.cpp,v 1.15 2007/01/16 16:05:59 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -111,7 +111,11 @@ InputEngine::InputEngine()
 }
 
 InputEngine::~ InputEngine( )
-{}
+{
+	foreach(IEAction* action, ieActions) {
+		delete action;
+	}
+}
 
 void InputEngine::free_memory( )
 {

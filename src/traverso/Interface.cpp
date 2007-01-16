@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.21 2007/01/14 18:14:19 r_sijrier Exp $
+$Id: Interface.cpp,v 1.22 2007/01/16 16:06:16 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -299,11 +299,11 @@ void Interface::create_menus( )
 	connect(aboutTraversoAction,  SIGNAL(triggered()), this, SLOT(about_traverso()));
 	
 	
-	fileMenu = new QMenu("File");
+	fileMenu = new QMenu("File", this);
 	fileMenu->addAction(saveAction);
 	fileMenu->addAction(exitAction);
 	
-	viewMenu = new QMenu("Views");
+	viewMenu = new QMenu("Views", this);
 	QAction* mvAction = viewMenu->addAction(tr("Manager View"));
 	connect(mvAction, SIGNAL(triggered()), this, SLOT(set_manager_widget()));
 
@@ -314,7 +314,7 @@ void Interface::create_menus( )
 	viewMenu->addAction(busMonitorDW->toggleViewAction());
 	viewMenu->addAction(AudioSourcesDW->toggleViewAction());
 	
-	helpMenu = new QMenu("Help");
+	helpMenu = new QMenu("Help", this);
 	helpMenu->addAction(handBookAction);
 	helpMenu->addAction(aboutTraversoAction);
 	
