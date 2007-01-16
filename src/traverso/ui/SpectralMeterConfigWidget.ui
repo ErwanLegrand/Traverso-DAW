@@ -334,6 +334,9 @@
        <property name="text" >
         <string>Apply</string>
        </property>
+       <property name="autoDefault" >
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>
@@ -347,6 +350,19 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>spinBoxUpperFreq</tabstop>
+  <tabstop>spinBoxLowerFreq</tabstop>
+  <tabstop>spinBoxUpperDb</tabstop>
+  <tabstop>spinBoxLowerDb</tabstop>
+  <tabstop>spinBoxNumBands</tabstop>
+  <tabstop>checkBoxAverage</tabstop>
+  <tabstop>comboBoxFftSize</tabstop>
+  <tabstop>comboBoxWindowing</tabstop>
+  <tabstop>buttonApply</tabstop>
+  <tabstop>buttonClose</tabstop>
+  <tabstop>buttonAdvanced</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
