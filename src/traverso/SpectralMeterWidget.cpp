@@ -17,11 +17,12 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.13 2007/01/16 00:26:59 r_sijrier Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.14 2007/01/16 00:37:02 r_sijrier Exp $
 */
 
 #include "SpectralMeterWidget.h"
 #include <Config.h>
+#include <Information.h>
 #include <PluginChain.h>
 #include <SpectralMeter.h>
 #include <Command.h>
@@ -531,8 +532,12 @@ Command* SpectralMeterItem::reset()
 	return 0;
 }
 
-Command * SpectralMeterItem::screen_capture( )
+Command* SpectralMeterItem::screen_capture( )
 {
+        QImage image(m_widget->size(), QImage::Format_RGB32);
+        QPainter painter(&image);
+        m_widget->render(&painter);
+	
 	QString fn = QFileDialog::getSaveFileName (0, tr("Screen Capture file name"), getenv("HOME"));
 	
 	// if aborted exit here
@@ -540,18 +545,9 @@ Command * SpectralMeterItem::screen_capture( )
 		return 0;
 	}
 	
-	QFile file(fn);
-
-	// check if the selected file can be opened for writing
-	if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-		printf("Could not open file for writing.");
-		return 0;
-	}
- 
-        QImage image(m_widget->size(), QImage::Format_RGB32);
-        QPainter painter(&image);
-        m_widget->render(&painter);
-        image.save(fn, "PNG");
+        if ( ! image.save(fn, "PNG")) {
+        	info().warning("Unable to write captured image to hard disk");
+        }
  
         return 0;
 }

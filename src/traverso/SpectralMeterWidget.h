@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SpectralMeterWidget.h,v 1.8 2007/01/15 23:53:28 r_sijrier Exp $
+    $Id: SpectralMeterWidget.h,v 1.9 2007/01/16 00:37:02 r_sijrier Exp $
 */
 
 #ifndef SPECTRALMETERWIDGET_H
@@ -146,6 +146,7 @@ public slots:
 	Command*	set_mode();
 	Command*	reset();
 	Command*	show_export_widget();
+	Command*	screen_capture();
 	void		load_configuration();
 
 };
