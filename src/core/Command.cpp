@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Command.cpp,v 1.8 2006/11/08 14:49:37 r_sijrier Exp $
+$Id: Command.cpp,v 1.9 2007/01/16 14:06:05 r_sijrier Exp $
 */
 
 #include "Command.h"
@@ -114,11 +114,11 @@ void Command::set_cursor_shape( int useX, int useY )
 	ViewPort* view = cpointer().get_viewport();
 	
 	if (useX && useY) {
-		view->setCursor(QCursor(find_pixmap(":/cursorHoldLrud")));
+		view->viewport()->setCursor(QCursor(find_pixmap(":/cursorHoldLrud")));
 	} else if (useX) {
-		view->setCursor(QCursor(find_pixmap(":/cursorHoldLr")));
+		view->viewport()->setCursor(QCursor(find_pixmap(":/cursorHoldLr")));
 	} else if (useY) {
-		view->setCursor(QCursor(find_pixmap(":/cursorHoldUd")));
+		view->viewport()->setCursor(QCursor(find_pixmap(":/cursorHoldUd")));
 	} else{
 		view->reset_context();
 	}
