@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ContextPointer.h,v 1.7 2006/12/01 13:58:45 r_sijrier Exp $
+    $Id: ContextPointer.h,v 1.8 2007/01/16 13:46:54 r_sijrier Exp $
 */
 
 #ifndef CONTEXTPOINTER_H
@@ -58,7 +58,16 @@ public:
                 m_y = y;
                 ie().jog();
         }
-
+	
+	inline int on_first_input_event_x() const {return m_onFirstInputEventX; };
+	inline int on_first_input_event_y() const {return m_onFirstInputEventY; };
+        
+	inline void inputengine_first_input_event( )
+	{
+		m_onFirstInputEventX = m_x;
+		m_onFirstInputEventY = m_y;
+	}
+	
         void grab_mouse();
         void release_mouse();
  
@@ -84,6 +93,9 @@ private:
 
         int m_x;
         int m_y;
+        
+	int m_onFirstInputEventX;
+	int m_onFirstInputEventY;
 
         ViewPort* currentViewPort;
         QList<QObject* > contextItemsList;

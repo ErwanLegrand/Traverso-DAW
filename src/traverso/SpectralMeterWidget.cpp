@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.14 2007/01/16 00:37:02 r_sijrier Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.15 2007/01/16 13:47:32 r_sijrier Exp $
 */
 
 #include "SpectralMeterWidget.h"
@@ -85,7 +85,7 @@ void SpectralMeterWidget::resizeEvent( QResizeEvent *  )
 void SpectralMeterWidget::get_pointed_context_items(QList<ContextItem* > &list)
 {
 	printf("SpectralMeterWidget::get_pointed_view_items\n");
-	QList<QGraphicsItem *> itemlist = items(cpointer().x(), cpointer().y());
+	QList<QGraphicsItem *> itemlist = items(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
 	foreach(QGraphicsItem* item, itemlist) {
 		list.append((ViewItem*)item);
 	}

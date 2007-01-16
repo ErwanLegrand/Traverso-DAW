@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.13 2006/12/13 19:13:25 r_sijrier Exp $
+$Id: InputEngine.cpp,v 1.14 2007/01/16 13:46:54 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -287,6 +287,11 @@ void InputEngine::catch_press(QKeyEvent * e )
 {
 	PENTER3;
 	int k = e->key();
+	
+	if (isFirstFact) {
+		cpointer().inputengine_first_input_event();
+	}
+		
 	if (!isPressEventLocked) {
 		if (pressEventCounter < 2) {
 			pressEventCounter++;

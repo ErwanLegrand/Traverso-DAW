@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ClipsViewPort.cpp,v 1.4 2006/12/04 19:24:54 r_sijrier Exp $
+$Id: ClipsViewPort.cpp,v 1.5 2007/01/16 13:47:32 r_sijrier Exp $
 */
 
 #include "ClipsViewPort.h"
@@ -40,7 +40,7 @@ ClipsViewPort::ClipsViewPort(QGraphicsScene* scene, SongWidget* sw)
 void ClipsViewPort::get_pointed_context_items(QList<ContextItem* > &list)
 {
 	printf("ClipsViewPort::get_pointed_view_items\n");
-	QList<QGraphicsItem *> itemlist = items(cpointer().x(), cpointer().y());
+	QList<QGraphicsItem *> itemlist = items(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
 	foreach(QGraphicsItem* item, itemlist) {
 		list.append((ViewItem*)item);
 	}
