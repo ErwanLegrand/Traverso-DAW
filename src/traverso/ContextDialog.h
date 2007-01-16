@@ -17,27 +17,28 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ContextDialog.h,v 1.1 2006/08/03 14:33:02 r_sijrier Exp $
+$Id: ContextDialog.h,v 1.2 2007/01/16 15:24:17 r_sijrier Exp $
 */
 
 #ifndef CONTEXT_DIALOG_H
 #define CONTEXT_DIALOG_H
 
-#include <QDialog>
+#include <ViewPort.h>
 
-class ViewPort;
 
-class ContextDialog : public QDialog
+class ContextItem;
+
+class ContextDialog : public ViewPort
 {
 public:
 	ContextDialog();
 	~ContextDialog();
+	
+	void get_pointed_context_items(QList<ContextItem* > &list) {};
 
 protected:
         void keyPressEvent ( QKeyEvent* e);
         void keyReleaseEvent ( QKeyEvent* e);
-	
-	ViewPort*	m_vp;
 };
 
 #endif

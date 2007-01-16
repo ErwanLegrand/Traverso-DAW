@@ -17,24 +17,22 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ContextDialog.cpp,v 1.2 2006/08/07 19:15:23 r_sijrier Exp $
+$Id: ContextDialog.cpp,v 1.3 2007/01/16 15:24:17 r_sijrier Exp $
 */
  
 #include "ContextDialog.h"
 
 #include <QHBoxLayout>
 
-#include "ViewPort.h"
 #include <InputEngine.h>
+#include <ViewPort.h>
 
 #include <Debugger.h>
 
 ContextDialog::ContextDialog()
-	: QDialog(0, Qt::SubWindow)
+	: ViewPort(0)
 {
 	PENTERCONS;
-	
-	m_vp = new ViewPort(this);
 }
 
 ContextDialog::~ContextDialog()

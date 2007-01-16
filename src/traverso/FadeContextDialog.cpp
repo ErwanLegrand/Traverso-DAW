@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeContextDialog.cpp,v 1.4 2006/08/08 20:59:49 r_sijrier Exp $
+$Id: FadeContextDialog.cpp,v 1.5 2007/01/16 15:24:17 r_sijrier Exp $
 */
 
 #include "FadeContextDialog.h"
@@ -34,7 +34,7 @@ $Id: FadeContextDialog.cpp,v 1.4 2006/08/08 20:59:49 r_sijrier Exp $
 FadeContextDialog::FadeContextDialog(FadeCurve* fadeCurve)
 	: ContextDialog(), m_fade(fadeCurve)
 {
-	m_fadeCDV = new FadeContextDialogView(m_vp, fadeCurve);
+// 	m_fadeCDV = new FadeContextDialogView(m_vp, fadeCurve);
 	
 	setWindowTitle(tr("Fade Editor"));
 
@@ -86,7 +86,7 @@ FadeContextDialog::FadeContextDialog(FadeCurve* fadeCurve)
 	valuesWidget->setLayout(valuesLayout);
 	
 	mainlayout->addWidget(definitionWidget);
-	mainlayout->addWidget(m_vp, 10);
+// 	mainlayout->addWidget(m_vp, 10);
 	mainlayout->addWidget(valuesWidget);
 	mainlayout->setMargin(0);
 	mainlayout->setSpacing(2);
