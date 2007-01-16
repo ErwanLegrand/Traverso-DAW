@@ -364,5 +364,54 @@
   <tabstop>buttonAdvanced</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>checkBoxAverage</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>buttonApply</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>29</x>
+     <y>202</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>264</x>
+     <y>342</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboBoxFftSize</sender>
+   <signal>currentIndexChanged(QString)</signal>
+   <receiver>buttonApply</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>281</x>
+     <y>272</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>295</x>
+     <y>346</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboBoxWindowing</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>buttonApply</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>269</x>
+     <y>303</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>280</x>
+     <y>335</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
