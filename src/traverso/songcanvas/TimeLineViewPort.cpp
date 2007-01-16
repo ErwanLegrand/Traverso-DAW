@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TimeLineViewPort.cpp,v 1.2 2006/12/04 19:24:54 r_sijrier Exp $
+    $Id: TimeLineViewPort.cpp,v 1.3 2007/01/16 13:51:23 r_sijrier Exp $
 */
 
 #include "TimeLineViewPort.h"
@@ -26,6 +26,7 @@
 #include "TimeLineView.h"
 #include <QScrollBar>
 #include <QWheelEvent>
+#include <ContextPointer.h>
 		
 #include <Debugger.h>
 
@@ -54,6 +55,15 @@ void TimeLineViewPort::set_songview( SongView * view )
 	m_timeLineView = new TimeLineView(view);
 	scene()->addItem(m_timeLineView);
 	m_timeLineView->setPos(0, -23);
+}
+
+void TimeLineViewPort::get_pointed_context_items(QList<ContextItem* > &list)
+{
+	printf("TimeLineViewPort::get_pointed_view_items\n");
+	QList<QGraphicsItem *> itemlist = items(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
+	foreach(QGraphicsItem* item, itemlist) {
+		list.append((ViewItem*)item);
+	}
 }
 
 //eof

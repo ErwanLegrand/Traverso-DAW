@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ViewPort.h,v 1.3 2006/12/13 19:13:25 r_sijrier Exp $
+    $Id: ViewPort.h,v 1.4 2007/01/16 13:51:35 r_sijrier Exp $
 */
 
 #ifndef VIEWPORT_H
@@ -41,7 +41,7 @@ public :
         ~ViewPort();
 
         // Get functions
-        virtual void get_pointed_context_items(QList<ContextItem* > &list);
+        virtual void get_pointed_context_items(QList<ContextItem* > &list) = 0;
 
         // Set functions
 

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TimeLineViewPort.h,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
+    $Id: TimeLineViewPort.h,v 1.2 2007/01/16 13:51:23 r_sijrier Exp $
 */
 
 #ifndef TIME_LINE_VIEW_PORT_H
@@ -37,6 +37,8 @@ public:
 	~TimeLineViewPort() {};
 	
 	void set_songview(SongView* view);
+	
+	void get_pointed_context_items(QList<ContextItem* > &list);
 
 protected:
 	void wheelEvent ( QWheelEvent * e );

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewPort.cpp,v 1.1 2006/12/01 13:59:36 r_sijrier Exp $
+$Id: ViewPort.cpp,v 1.2 2007/01/16 13:51:35 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -105,20 +105,6 @@ void ViewPort::paintEvent( QPaintEvent* e )
 	QGraphicsView::paintEvent(e);
 }
 
-
-void ViewPort::get_pointed_context_items( QList<ContextItem* >& list )
-{
-	PENTER3;
-	printf("ViewPort::get_pointed_context_items\n");
-	QList<QGraphicsItem *> itemlist = items(cpointer().pos());
-	printf("itemlist size is %d\n", itemlist.size());
-	foreach(QGraphicsItem* item, itemlist) {
-		ContextItem* item = (ContextItem*)item;
-		if (item) {
-			list.append(item);
-		}
-	}
-}
 
 void ViewPort::reset_context( )
 {
