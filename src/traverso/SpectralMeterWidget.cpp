@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.12 2007/01/15 23:53:28 r_sijrier Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.13 2007/01/16 00:26:59 r_sijrier Exp $
 */
 
 #include "SpectralMeterWidget.h"
@@ -531,6 +531,31 @@ Command* SpectralMeterItem::reset()
 	return 0;
 }
 
+Command * SpectralMeterItem::screen_capture( )
+{
+	QString fn = QFileDialog::getSaveFileName (0, tr("Screen Capture file name"), getenv("HOME"));
+	
+	// if aborted exit here
+	if (fn.isEmpty()) {
+		return 0;
+	}
+	
+	QFile file(fn);
+
+	// check if the selected file can be opened for writing
+	if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+		printf("Could not open file for writing.");
+		return 0;
+	}
+ 
+        QImage image(m_widget->size(), QImage::Format_RGB32);
+        QPainter painter(&image);
+        m_widget->render(&painter);
+        image.save(fn, "PNG");
+ 
+        return 0;
+}
+
 Command* SpectralMeterItem::show_export_widget()
 {
 	// check if all requirements are met
@@ -656,6 +681,5 @@ void SpectralMeterConfigWidget::load_configuration( )
 	value = config().get_property("SpectralMeter", "WindowingFunction", 1).toInt();
 	comboBoxWindowing->setCurrentIndex(value);
 }
-
 
 //eof

@@ -54,7 +54,7 @@
 	<keyseq keyfacttype="FKEY2" key1="B" key2="V" mousehint="UD" slotname="select_bus_in" name="Bus in" sortorder="30" />
 	<keyseq keyfacttype="FKEY2" key1="F" key2="G" mousehint="UD" slotname="select_fade_in_shape" name="Fade In Shape" sortorder="31" />
 	<keyseq keyfacttype="FKEY2" key1="G" key2="H" mousehint="UD" slotname="select_fade_out_shape" name="Fade Out Shape" sortorder="31" />
-	
+	<keyseq keyfacttype="FKEY2" key1="S" key2="C" slotname="screen_capture" name="Screen Capture" sortorder="31" />
 	
 	<keyseq keyfacttype="HKEY" key1="Z" mousehint="LRUD" slotname="zoom" name="Zoom" sortorder="35" />
 	<keyseq keyfacttype="HKEY" key1="TAB" mousehint="LR" slotname="shuttle" name="Shuttle" sortorder="36" />
