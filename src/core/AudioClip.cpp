@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.55 2007/01/11 14:57:36 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.56 2007/01/16 15:19:24 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -156,6 +156,8 @@ QDomNode AudioClip::get_state( QDomDocument doc )
 {
 	Q_ASSERT(m_readSource);
 	
+	printf("AudioClip::get_state\n");
+	
 	QDomElement node = doc.createElement("Clip");
 	node.setAttribute("trackstart", trackStartFrame);
 	node.setAttribute("sourcestart", sourceStartFrame);
@@ -216,10 +218,13 @@ void AudioClip::set_sources_active_state()
 
 }
 
-void AudioClip::set_left_edge(nframes_t newFrame)
+void AudioClip::set_left_edge(long newFrame)
 {
-
-	if (newFrame < trackStartFrame) {
+	if (newFrame < 0) {
+		newFrame = 0;
+	}
+	
+	if (newFrame < (long)trackStartFrame) {
 
 		int availableFramesLeft = sourceStartFrame;
 
@@ -232,7 +237,7 @@ void AudioClip::set_left_edge(nframes_t newFrame)
 		trackStartFrame -= movingToLeft;
 		set_source_start_frame( sourceStartFrame - movingToLeft );
 
-	} else if (newFrame > trackStartFrame) {
+	} else if (newFrame > (long)trackStartFrame) {
 
 		int availableFramesRight = m_length;
 
@@ -252,10 +257,13 @@ void AudioClip::set_left_edge(nframes_t newFrame)
 	emit positionChanged();
 }
 
-void AudioClip::set_right_edge(nframes_t newFrame)
+void AudioClip::set_right_edge(long newFrame)
 {
-	PENTER;
-	if (newFrame > trackEndFrame) {
+	if (newFrame < 0) {
+		newFrame = 0;
+	}
+	
+	if (newFrame > (long)trackEndFrame) {
 
 		int availableFramesRight = sourceLength - sourceEndFrame;
 
@@ -268,7 +276,7 @@ void AudioClip::set_right_edge(nframes_t newFrame)
 		set_track_end_frame( trackEndFrame + movingToRight );
 		set_source_end_frame( sourceEndFrame + movingToRight );
 
-	} else if (newFrame < trackEndFrame) {
+	} else if (newFrame < (long)trackEndFrame) {
 
 		int availableFramesLeft = m_length;
 
@@ -302,6 +310,7 @@ void AudioClip::set_source_end_frame(nframes_t frame)
 
 void AudioClip::set_track_start_frame(nframes_t newTrackStartFrame)
 {
+	printf("set_track_start_frame\n");
 	trackStartFrame = newTrackStartFrame;
 
 	set_track_end_frame(trackStartFrame + m_length);

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.10 2007/01/15 23:54:07 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.11 2007/01/16 15:19:24 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -82,7 +82,7 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	connect(m_clip, SIGNAL(gainChanged()), this, SLOT (gain_changed()));
 	connect(m_clip, SIGNAL(fadeAdded(FadeCurve*)), this, SLOT(add_new_fadeview( FadeCurve*)));
 	connect(m_clip, SIGNAL(fadeRemoved(FadeCurve*)), this, SLOT(remove_fadeview( FadeCurve*)));
-	connect(m_clip, SIGNAL(positionChanged()), this, SLOT(update_start_pos()));
+	connect(m_clip, SIGNAL(positionChanged()), this, SLOT(position_changed()));
 	
 	connect(m_sv, SIGNAL(viewModeChanged()), this, SLOT(repaint()));
 	
@@ -517,7 +517,7 @@ Command* AudioClipView::drag()
 Command* AudioClipView::drag_edge()
 {
 	Q_ASSERT(m_song);
-	int x = (int) mapToItem(this, cpointer().pos()).x();
+	int x = (int) ( cpointer().scene_pos() - scenePos()).x();
 
 	MoveEdge* me;
 
@@ -533,6 +533,12 @@ Command* AudioClipView::split()
 {
 	Q_ASSERT(m_song);
 	return new SplitClip(m_sv, m_clip);
+}
+
+void AudioClipView::position_changed( )
+{
+	prepareGeometryChange();
+	calculate_bounding_rect();
 }
 
 
