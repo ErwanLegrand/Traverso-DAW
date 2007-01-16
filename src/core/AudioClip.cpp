@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.56 2007/01/16 15:19:24 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.57 2007/01/16 15:22:51 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -155,8 +155,6 @@ int AudioClip::set_state(const QDomNode& node)
 QDomNode AudioClip::get_state( QDomDocument doc )
 {
 	Q_ASSERT(m_readSource);
-	
-	printf("AudioClip::get_state\n");
 	
 	QDomElement node = doc.createElement("Clip");
 	node.setAttribute("trackstart", trackStartFrame);
@@ -310,7 +308,6 @@ void AudioClip::set_source_end_frame(nframes_t frame)
 
 void AudioClip::set_track_start_frame(nframes_t newTrackStartFrame)
 {
-	printf("set_track_start_frame\n");
 	trackStartFrame = newTrackStartFrame;
 
 	set_track_end_frame(trackStartFrame + m_length);
