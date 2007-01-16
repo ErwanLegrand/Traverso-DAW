@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveEdge.cpp,v 1.11 2006/11/14 14:52:40 r_sijrier Exp $
+    $Id: MoveEdge.cpp,v 1.12 2007/01/16 15:18:37 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -81,19 +81,19 @@ int MoveEdge::finish_hold()
 
 int MoveEdge::do_action()
 {
-        return QMetaObject::invokeMethod(m_clip, m_edge.data(), Q_ARG(nframes_t, m_newPos));
+        return QMetaObject::invokeMethod(m_clip, m_edge.data(), Q_ARG(long, m_newPos));
 }
 
 
 int MoveEdge::undo_action()
 {
-        return QMetaObject::invokeMethod(m_clip, m_edge.data(), Q_ARG(nframes_t, m_originalPos));
+        return QMetaObject::invokeMethod(m_clip, m_edge.data(), Q_ARG(long, m_originalPos));
 }
 
 
 int MoveEdge::jog()
 {
-//         m_newPos = m_song->xpos_to_frame(m_song->snapped_x(cpointer().x()));
+	m_newPos = cpointer().scene_x() * m_sv->scalefactor;
         return do_action();
 }
 
