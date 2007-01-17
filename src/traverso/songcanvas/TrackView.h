@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.h,v 1.5 2007/01/11 20:11:26 r_sijrier Exp $
+$Id: TrackView.h,v 1.6 2007/01/17 13:14:20 r_sijrier Exp $
 */
 
 #ifndef TRACK_VIEW_H
@@ -34,6 +34,8 @@ class PluginChainView;
 class TrackView : public ViewItem
 {
 	Q_OBJECT
+	Q_CLASSINFO("edit_properties", tr("Edit properties"))
+	Q_CLASSINFO("add_new_plugin", tr("Add new Plugin")) 
 
 public:
 	TrackView(SongView* sv, Track* track);
