@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.16 2007/01/16 20:21:08 r_sijrier Exp $
+$Id: InputEngine.cpp,v 1.17 2007/01/17 13:15:29 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -245,10 +245,10 @@ void InputEngine::jog()
 
 void InputEngine::set_jogging(bool jog)
 {
-// 	if (jog)
-// 		cpointer().grab_mouse();
-// 	else
-// 		cpointer().release_mouse();
+	if (jog)
+		cpointer().grab_mouse();
+	else
+		cpointer().release_mouse();
 
 	isJogging = jog;
 }
@@ -1088,8 +1088,21 @@ QList< IEAction* > InputEngine::get_contextitem_actionlist(QObject* item)
 					string = string.left(string.indexOf("("));
 					// PWARN("signature is %s", string.toAscii().data());
 					for (int i=0; i<ieActions.size(); i++) {
-						if (string == ieActions.at(i)->slotName) {
-							list.append(ieActions.at(i));
+						IEAction* ieaction = ieActions.at(i);
+						if (string == ieaction->slotName) {
+							list.append(ieaction);
+							// The Q_CLASSINFO macro is used to set a (tranlated) description 
+							// for a 'context' slot, so we query for this (translated) string
+							int classInfoIndex = mo->indexOfClassInfo(string.toAscii().data());
+							if (classInfoIndex >= 0) {
+								QMetaClassInfo classInfo = mo->classInfo(classInfoIndex);
+								// Set the translated string!
+								ieaction->name = QCoreApplication::translate(mo->className(), classInfo.value()).toAscii();
+							} else {
+								PWARN("No description set for: %s::%s", mo->className(), string.toAscii().data());
+								PWARN("Add a 	Q_CLASSINFO(\"%s\", tr(\"Description here\")) to class %s\n", string.toAscii().data(), mo->className());
+
+							}
 						}
 					}
 				}
