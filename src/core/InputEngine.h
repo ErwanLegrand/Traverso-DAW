@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: InputEngine.h,v 1.6 2007/01/18 11:33:38 r_sijrier Exp $
+    $Id: InputEngine.h,v 1.7 2007/01/18 21:17:57 r_sijrier Exp $
 */
 
 #ifndef INPUTENGINE_H
@@ -163,7 +163,6 @@ private:
         EventCatcher 		catcher;
         Command* 		holdingCommand;
         QString			sCollectedNumber;
-        QWheelEvent*		m_wheelEvent;
 
         bool 			active;
         bool 			isHolding;
@@ -215,8 +214,11 @@ private:
 
         void set_jogging(bool jog);
         
-        void process_press_event(int eventcode);
+        void process_press_event(int eventcode, QInputEvent* event, bool isAutoRepeat=false);
         void process_release_event(int eventcode);
+        int find_index_for_single_fact(int type, int key1, int key2);
+        
+        int holdEventCode;
 
         friend class EventCatcher;
 

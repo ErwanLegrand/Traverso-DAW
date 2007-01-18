@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Gain.h,v 1.5 2007/01/16 20:21:08 r_sijrier Exp $
+    $Id: Gain.h,v 1.6 2007/01/18 21:17:57 r_sijrier Exp $
 */
 
 #ifndef GAIN_H
@@ -31,6 +31,8 @@ class ContextItem;
 
 class Gain : public Command
 {
+	Q_OBJECT
+	
 public :
         Gain(ContextItem* context, const QString& des, float gain = -1.0);
         ~Gain();
@@ -41,6 +43,7 @@ public :
         int do_action();
         int undo_action();
 
+        
         int jog();
         
         void set_cursor_shape(int useX, int useY);
@@ -51,6 +54,10 @@ private :
         float 		newGain;
         int 		origY;
 	QPoint		mousePos;
+	
+public slots:
+        void increase_gain(bool autorepeat);
+        void decrease_gain(bool autorepeat);
 };
 
 #endif

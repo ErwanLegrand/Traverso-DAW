@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Gain.cpp,v 1.7 2007/01/16 20:21:08 r_sijrier Exp $
+$Id: Gain.cpp,v 1.8 2007/01/18 21:17:57 r_sijrier Exp $
 */
 
 #include "Gain.h"
@@ -108,6 +108,25 @@ void Gain::set_cursor_shape(int useX, int useY)
 }
 
 
+void Gain::increase_gain( bool autorepeat )
+{
+	float dbFactor = coefficient_to_dB(newGain);
+	dbFactor += 0.2;
+	newGain = dB_to_scale_factor(dbFactor);
+	cpointer().get_viewport()->set_hold_cursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
+	QMetaObject::invokeMethod(gainObject, "set_gain", Q_ARG(float, newGain));
+}
+
+void Gain::decrease_gain(bool autorepeat)
+{
+	float dbFactor = coefficient_to_dB(newGain);
+	dbFactor -= 0.2;
+	newGain = dB_to_scale_factor(dbFactor);
+	cpointer().get_viewport()->set_hold_cursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
+	QMetaObject::invokeMethod(gainObject, "set_gain", Q_ARG(float, newGain));
+}
+
+
 int Gain::jog()
 {
 	PENTER;
@@ -129,6 +148,7 @@ int Gain::jog()
 	
 	return QMetaObject::invokeMethod(gainObject, "set_gain", Q_ARG(float, newGain));
 }
+
 
 // eof
 

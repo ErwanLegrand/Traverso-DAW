@@ -17,23 +17,20 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Command.h,v 1.7 2007/01/16 20:21:08 r_sijrier Exp $
+    $Id: Command.h,v 1.8 2007/01/18 21:17:57 r_sijrier Exp $
 */
 
 #ifndef COMMAND_H
 #define COMMAND_H
 
 #include <QObject>
-#include <QString>
-#include <QCursor>
-#include <QPixmap>
 #include <QUndoCommand>
 #include <QUndoStack>
 
 class HistoryStack;
 class ContextItem;
 
-class Command : public QUndoCommand
+class Command : public QObject, public QUndoCommand
 {
 public :
         Command(ContextItem* item, const QString& des = "No description set!");
@@ -47,12 +44,13 @@ public :
         virtual int undo_action();
         virtual int jog();
         virtual void set_cursor_shape(int useX, int useY);
-	
+        
 	void undo() {undo_action();}
 	void redo() {do_action();}
 
         void set_valid(bool valid);
         int push_to_history_stack();
+        
 
 protected:
         bool 		m_isValid;

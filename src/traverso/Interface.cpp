@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.23 2007/01/18 11:34:12 r_sijrier Exp $
+$Id: Interface.cpp,v 1.24 2007/01/18 21:17:57 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -252,11 +252,11 @@ void Interface::keyReleaseEvent( QKeyEvent * e)
 	e->ignore();
 }
 
-void Interface::wheelEvent( QWheelEvent * e )
-{
-/*	ie().catch_scroll(e);
-	e->ignore();*/
-}
+// void Interface::wheelEvent( QWheelEvent * e )
+// {
+// 	ie().catch_scroll(e);
+// 	e->ignore();
+// }
 
 Command * Interface::show_export_widget( )
 {

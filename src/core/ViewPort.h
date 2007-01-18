@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ViewPort.h,v 1.6 2007/01/18 11:33:38 r_sijrier Exp $
+    $Id: ViewPort.h,v 1.7 2007/01/18 21:17:57 r_sijrier Exp $
 */
 
 #ifndef VIEWPORT_H
@@ -61,6 +61,8 @@ protected:
         virtual void mouseReleaseEvent ( QMouseEvent * e );
         virtual void mouseDoubleClickEvent ( QMouseEvent * e );
 	virtual void wheelEvent ( QWheelEvent* e );
+	virtual void keyPressEvent ( QKeyEvent* e);
+	virtual void keyReleaseEvent ( QKeyEvent* e);
 
 private:
 
