@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SpectralMeterWidget.h,v 1.11 2007/01/18 11:34:29 r_sijrier Exp $
+    $Id: SpectralMeterWidget.h,v 1.12 2007/01/18 16:43:42 n_doebelin Exp $
 */
 
 #ifndef SPECTRALMETERWIDGET_H
@@ -81,7 +81,7 @@ class SpectralMeterItem : public ViewItem
 	Q_OBJECT
 	
 	Q_CLASSINFO("edit_properties", tr("SpectralMeter Configuration"))
-	Q_CLASSINFO("set_mode", tr("Show avarage dB (On/Off)"))
+	Q_CLASSINFO("set_mode", tr("Export avarage dB"))
 	Q_CLASSINFO("reset", tr("Reset meter"))
 	Q_CLASSINFO("show_export_widget", tr("Export avarage dB"))
 	Q_CLASSINFO("screen_capture", tr("Capture Screen"))
@@ -129,7 +129,6 @@ private:
 	float		upper_freq_log;
 	float		lower_freq_log;
 	float		freq_step;
-	int		bar_width;
 	int		bar_offset;
 	bool		show_average;
 
@@ -138,8 +137,8 @@ private:
 	void		update_freq_map();
 	float		db2ypos(float);
 	float		freq2xpos(float);
-	void		update_barwidth();
 	void		update_background();
+	float		freq2db(float, float);
 
 private slots:
 	void		set_project( Project* );

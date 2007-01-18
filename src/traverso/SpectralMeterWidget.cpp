@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.16 2007/01/16 21:48:47 r_sijrier Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.17 2007/01/18 16:43:42 n_doebelin Exp $
 */
 
 #include "SpectralMeterWidget.h"
@@ -34,6 +34,7 @@
 #include <ContextPointer.h>
 
 #include <QtGui>
+// #include <QRectF>
 
 #include <math.h>
 #include <limits.h>
@@ -152,23 +153,26 @@ void SpectralMeterItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 
 	// draw the bars
 	if (m_spectrum.size()) {
-		QPen pen;
-		pen.setColor(QColor(80, 80, 120));
-		pen.setWidth(bar_width);
-		pen.setCapStyle(Qt::FlatCap);
+		QRectF rect;
+		QBrush brush(QColor(80, 80, 120), Qt::SolidPattern);
 		painter->setClipRegion(m_rect);
-		painter->setPen(pen);
+		painter->setBrush(brush);
+		painter->setPen(Qt::NoPen);
+
+		int spc = 0;
+		if (num_bands < 64) spc = 1;
 
 		QPointF pt;
 
 		// draw the freq bands
 		for (uint i = 0; i < (uint)m_spectrum.size(); ++i) {
-			if (m_spectrum.at(i) < lower_db) {
+			if (m_bands.at(i+1) < lower_db) {
 				continue;
 			}
-			pt.setX(bar_offset + i * m_rect.width() / num_bands);
-			pt.setY(db2ypos(m_spectrum.at(i)));
-			painter->drawLine(QPointF(pt.x(), m_widget->height()), pt);
+
+			rect.setTopLeft(QPointF(freq2xpos(m_bands.at(i)) + spc, db2ypos(m_spectrum.at(i))));
+			rect.setBottomRight(QPointF(freq2xpos(m_bands.at(i+1)) - spc, db2ypos(DB_FLOOR)));
+			painter->drawRect(rect);
 		}
 
 		// draw the average line if requested
@@ -211,9 +215,6 @@ void SpectralMeterItem::resize()
 
 	// update the vectors mapping indices and frequencies to widget coordinates
 	update_freq_map();
-
-	// re-calculate the bar width
-	update_barwidth();
 
 	// re-draw the background pixmap
 	update_background();
@@ -331,12 +332,6 @@ void SpectralMeterItem::set_song(Song *song)
 	timer.start(UPDATE_INTERVAL);
 }
 
-// most of the calculations is done here:
-//	1. the gain values must be converted to db
-//	2. since we don't want to show every frequency bin, we reduce the number of freqs
-//		and split them into bands evenly distributed on a log10 x-scale.
-//		This is pretty complicated and is the reason for most of the weired code below
-//	3. calculate the average db levels
 void SpectralMeterItem::reduce_bands()
 {
 	// check if we have to update some variables
@@ -350,54 +345,19 @@ void SpectralMeterItem::reduce_bands()
 	double sweight = 1.0 / (double)sample_weight;
 	double oweight = 1.0 - sweight;
 
-	// used for smooth falloff
-	float hist = DB_FLOOR + (m_spectrum.at(0) - DB_FLOOR) * SMOOTH_FACTOR;
+	// loop through the freq bands and determine the db-values
+	for (int i = 0; i < m_spectrum.size(); ++i) {
+		float val = freq2db(m_bands.at(i), m_bands.at(i+1));
+		float hist = DB_FLOOR + (m_spectrum.at(i) - DB_FLOOR) * SMOOTH_FACTOR;
+		m_spectrum[i] = qMax(val, hist);
+	}
 
-	bool skip = false;
-
-	// Convert fft results to dB. Heavily re-arranged version of the following function:
-	// db = (20 * log10(2 * sqrt(r_a^2 + i_a^2) / N) + 20 * log10(2 * sqrt(r_b^2 + i_b^2) / N)) / 2
-	// with (r_a^2 + i_a^2) and (r_b^2 + i_b^2) given in specl and specr vectors
-	m_spectrum[0] = DB_FLOOR + (m_spectrum.at(0) - DB_FLOOR) * SMOOTH_FACTOR;
-
-	// loop through the fft vectors
-	for (uint i = 0, j = 0; i < fft_size; ++i) {
-		float freq = m_map_idx2freq.at(i);
-
-		if (freq < (float)lower_freq) {
-			// We are still below the lowest displayed frequency
-			skip = true;
-		} else {
-			skip = false;
-		}
-
-		if (freq >= m_bands.at(j)) {
-			// we entered the freq range of the next band
-			++j;
-			if (j >= (uint)m_spectrum.size()) {
-				// We are above the highest displayed frequency
-				skip = true;
-			} else {
-				// move to the next band and fill it with the smooth falloff value as default
-				hist = DB_FLOOR + (m_spectrum.at(j) - DB_FLOOR) * SMOOTH_FACTOR;
-				m_spectrum[j] = hist;
-			}
-		}
-
-		// calculate the db value of the current bin
-		float val = 5.0 * (log10(specl.at(i) * specr.at(i)) + xfactor);
-
-		// fill the average sample curve
-		if (show_average) {
-			if (i < (uint)m_avg_db.size()) {
-				double dv = val * sweight + m_avg_db.at(i) * oweight;
-				m_avg_db[i] = dv;
-			}
-		}
-
-		// write back the actual db value to the current freq band
-		if (!skip) {
-			m_spectrum[j] = qMax(val, m_spectrum.at(j));
+	// fill the average sample curve
+	if (show_average) {
+		for (int i = 0; i < m_avg_db.size(); ++i) {
+			float val = 5.0 * (log10(specl.at(i) * specr.at(i)) + xfactor);
+			float v = val * sweight + m_avg_db.at(i) * oweight;
+			m_avg_db[i] = v;
 		}
 	}
 
@@ -414,7 +374,7 @@ void SpectralMeterItem::update_layout()
 	timer.stop();
 
 	// recalculate a couple of variables
-	fft_size = qMin(specl.size(), specr.size());		// number of frequencies
+	fft_size = qMin(specl.size(), specr.size());		// number of frequencies (size of the FFT)
 	xfactor = 4.0f * log10(2.0f / float(fft_size));	// a constant factor for conversion to dB
 	upper_freq_log = log10(upper_freq);
 	lower_freq_log = log10(lower_freq);
@@ -427,12 +387,11 @@ void SpectralMeterItem::update_layout()
 
 	// recreate the vector containing border frequencies of the freq bands
 	m_bands.clear();
-	for (uint i = 0; i < num_bands; ++i) {
-		m_bands.push_back(pow(10.0, lower_freq_log + (i+1)*freq_step));
+	for (uint i = 0; i <= num_bands; ++i) {
+		m_bands.push_back(pow(10.0, lower_freq_log + i*freq_step));
 	}
 
 	// update related stuff
-	update_barwidth();
 	update_freq_map();
 
 	timer.start(UPDATE_INTERVAL);
@@ -455,14 +414,60 @@ float SpectralMeterItem::freq2xpos(float f)
 	return (float)margin_l + d * m_rect.width() / (upper_freq_log - lower_freq_log);
 }
 
-// re-calculates the bar width of the frequency bands
-void SpectralMeterItem::update_barwidth()
+// determines the highest db value for frequency rang fl-fu. Does all the interpolation etc.
+float SpectralMeterItem::freq2db(float fl, float fu)
 {
-	int i = num_bands < 128 ? 2 : 0;
-	bar_width = int(0.5 + (float)m_rect.width() / (float)num_bands) - i;
-	bar_width = bar_width < 1 ? 1 : bar_width;
-	bar_offset = int((float)m_rect.width() / (2.0f * num_bands));
-	bar_offset += m_rect.x();
+	float lfreq = qMin(fl, fu);
+	float ufreq = qMax(fl, fu);
+	float fidxl = lfreq * (2.0f * fft_size) / (float)sample_rate;
+	float fidxu = ufreq * (2.0f * fft_size) / (float)sample_rate;
+
+	int idxl = int(floor(fidxl - 1.0f));
+	int idxu = int(ceil(fidxu - 1.0f));
+
+	if (idxl < 0) {
+		idxl = 0;
+	}
+
+	if ((uint)idxu >= fft_size) {
+		idxu = fft_size - 1;
+	}
+
+	// distinguishing some cases to save cpu cycles.
+
+	// if we're outside the range covered by the FFT, return DB_FLOOR
+	if (idxu <= 0) {
+		return DB_FLOOR;
+	}
+	if (idxl >= fft_size) {
+		return DB_FLOOR;
+	}
+
+	// they are the same (which shouldn't happen)
+	if (idxu - idxl == 0) {
+		return DB_FLOOR;
+	}
+
+	// if we have exactly one bin in the freq range, return it's db-value and exit
+	if (idxu - idxl == 2) {
+		return 5.0f * (log10(specl.at(idxl + 1) * specr.at(idxl + 1)) + xfactor);
+	}
+
+	// if no bin is in between, we have to interpolate in order to get an accurate value
+	if (idxu - idxl == 1) {
+		float v = fidxu - fidxl;
+		float dbvl = specl.at(idxl) * specr.at(idxl);
+		float dbvu = specl.at(idxu) * specr.at(idxu);
+		return 5.0 * (log10(dbvl + v * (dbvu - dbvl)) + xfactor);
+	}
+
+	// if several bins are in between, search the highest db value
+	float val = 0.0;
+	for (int i = idxl; i <=idxu; ++i) {
+		val = qMax(val, specl.at(i) * specr.at(i));
+	}
+
+	return 5.0 * (log10(val) + xfactor);
 }
 
 // updates a vector mapping fft indices (0, ..., fft_size) to widget x-positions
