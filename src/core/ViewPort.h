@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ViewPort.h,v 1.5 2007/01/16 20:21:08 r_sijrier Exp $
+    $Id: ViewPort.h,v 1.6 2007/01/18 11:33:38 r_sijrier Exp $
 */
 
 #ifndef VIEWPORT_H
@@ -35,7 +35,7 @@ class HoldCursor;
 class ViewPort : public QGraphicsView
 {
         Q_OBJECT
-
+			
 public :
         ViewPort(QWidget* parent);
         ViewPort(QGraphicsScene* scene, QWidget* parent);
@@ -57,6 +57,10 @@ protected:
         virtual void resizeEvent(QResizeEvent* e);
         virtual void paintEvent( QPaintEvent* e);
         virtual void mouseMoveEvent(QMouseEvent* e);
+        virtual void mousePressEvent ( QMouseEvent * e );
+        virtual void mouseReleaseEvent ( QMouseEvent * e );
+        virtual void mouseDoubleClickEvent ( QMouseEvent * e );
+	virtual void wheelEvent ( QWheelEvent* e );
 
 private:
 

@@ -17,14 +17,14 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: InputEngine.h,v 1.5 2006/12/13 19:13:25 r_sijrier Exp $
+    $Id: InputEngine.h,v 1.6 2007/01/18 11:33:38 r_sijrier Exp $
 */
 
 #ifndef INPUTENGINE_H
 #define INPUTENGINE_H
 
 
-#include <QEvent>
+#include <QKeyEvent>
 #include <QWheelEvent>
 #include <QString>
 #include <QObject>
@@ -77,23 +77,22 @@ class InputEngine
 {
 public:
 
-        //! Free the memory on program exit.
-        void free_memory();
-
         //! process a QT press event */
-        void catch_press(QKeyEvent *);
+        void catch_key_press(QKeyEvent *);
 
 
         //! process a QT release event */
-        void catch_release(QKeyEvent *);
+        void catch_key_release(QKeyEvent *);
 
+        void catch_mousebutton_press( QMouseEvent * e );
+        void catch_mousebutton_release( QMouseEvent * e );
+        void catch_mousebutton_doubleclick( QMouseEvent * e );
+        
         //! process a Qt Wheel Event
         void catch_scroll(QWheelEvent * e );
         
         //! Process a single command, which was made outside the InputEngine routines
         void process_command(Command* cmd);
-
-        QWheelEvent*	get_scroll_event();
 
         int collected_number();
 
@@ -164,7 +163,7 @@ private:
         EventCatcher 		catcher;
         Command* 		holdingCommand;
         QString			sCollectedNumber;
-        QWheelEvent*		scrollEvent;
+        QWheelEvent*		m_wheelEvent;
 
         bool 			active;
         bool 			isHolding;
@@ -215,6 +214,9 @@ private:
         int broadcast_action(IEAction* action);
 
         void set_jogging(bool jog);
+        
+        void process_press_event(int eventcode);
+        void process_release_event(int eventcode);
 
         friend class EventCatcher;
 

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ContextDialog.cpp,v 1.3 2007/01/16 15:24:17 r_sijrier Exp $
+$Id: ContextDialog.cpp,v 1.4 2007/01/18 11:34:12 r_sijrier Exp $
 */
  
 #include "ContextDialog.h"
@@ -46,15 +46,13 @@ void ContextDialog::keyPressEvent( QKeyEvent * e)
 		close();
 	}
 	
-	if (!e->isAutoRepeat())
-		ie().catch_press(e);
+	ie().catch_key_press(e);
 	e->ignore();
 }
 
 void ContextDialog::keyReleaseEvent( QKeyEvent * e)
 {
-	if (!e->isAutoRepeat())
-		ie().catch_release(e);
+	ie().catch_key_release(e);
 	e->ignore();
 }
 

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewPort.cpp,v 1.3 2007/01/16 20:21:08 r_sijrier Exp $
+$Id: ViewPort.cpp,v 1.4 2007/01/18 11:33:38 r_sijrier Exp $
 */
 
 #include <QMouseEvent>
@@ -99,6 +99,29 @@ void ViewPort::leaveEvent(QEvent* e)
 }
 
 
+void ViewPort::mousePressEvent( QMouseEvent * e )
+{
+	ie().catch_mousebutton_press(e);
+}
+
+void ViewPort::mouseReleaseEvent( QMouseEvent * e )
+{
+	ie().catch_mousebutton_release(e);
+}
+
+void ViewPort::mouseDoubleClickEvent( QMouseEvent * e )
+{
+	ie().catch_mousebutton_doubleclick(e);
+}
+
+void ViewPort::wheelEvent( QWheelEvent * e )
+{
+	ie().catch_scroll(e);
+	if ( ! e->isAccepted() ) {
+		QGraphicsView::wheelEvent(e);
+	}
+}
+
 void ViewPort::paintEvent( QPaintEvent* e )
 {
 // 	PWARN("ViewPort::paintEvent()");
@@ -177,6 +200,5 @@ QRectF HoldCursor::boundingRect( ) const
 {
 	return QRectF(0, 0, 120, 40);
 }
-
 
 //eof

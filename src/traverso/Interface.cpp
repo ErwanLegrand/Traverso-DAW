@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.22 2007/01/16 16:06:16 r_sijrier Exp $
+$Id: Interface.cpp,v 1.23 2007/01/18 11:34:12 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -242,22 +242,20 @@ Command* Interface::full_screen()
 
 void Interface::keyPressEvent( QKeyEvent * e)
 {
-	if (!e->isAutoRepeat())
-		ie().catch_press(e);
+	ie().catch_key_press(e);
 	e->ignore();
 }
 
 void Interface::keyReleaseEvent( QKeyEvent * e)
 {
-	if (!e->isAutoRepeat())
-		ie().catch_release(e);
+	ie().catch_key_release(e);
 	e->ignore();
 }
 
 void Interface::wheelEvent( QWheelEvent * e )
 {
-	ie().catch_scroll(e);
-	e->ignore();
+/*	ie().catch_scroll(e);
+	e->ignore();*/
 }
 
 Command * Interface::show_export_widget( )
