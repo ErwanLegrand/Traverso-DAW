@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SpectralMeterWidget.h,v 1.10 2007/01/17 13:14:04 r_sijrier Exp $
+    $Id: SpectralMeterWidget.h,v 1.11 2007/01/18 11:34:29 r_sijrier Exp $
 */
 
 #ifndef SPECTRALMETERWIDGET_H
@@ -81,7 +81,7 @@ class SpectralMeterItem : public ViewItem
 	Q_OBJECT
 	
 	Q_CLASSINFO("edit_properties", tr("SpectralMeter Configuration"))
-	Q_CLASSINFO("set_mode", tr("Export avarage dB"))
+	Q_CLASSINFO("set_mode", tr("Show avarage dB (On/Off)"))
 	Q_CLASSINFO("reset", tr("Reset meter"))
 	Q_CLASSINFO("show_export_widget", tr("Export avarage dB"))
 	Q_CLASSINFO("screen_capture", tr("Capture Screen"))
