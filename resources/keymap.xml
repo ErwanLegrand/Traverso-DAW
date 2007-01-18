@@ -8,8 +8,8 @@
 	<keyseq keyfacttype="FKEY" key1="F6" slotname="redo" name="Redo" sortorder="20" />
 	<keyseq keyfacttype="FKEY" key1="LARROW" slotname="scroll_left" name="Scroll left" sortorder="121" />
 	<keyseq keyfacttype="FKEY" key1="RARROW" slotname="scroll_right" name="Scroll right" sortorder="122" />
-	<keyseq keyfacttype="FKEY" key1="UARROW" slotname="scroll_up" name="Scroll up" sortorder="123" />
-	<keyseq keyfacttype="FKEY" key1="DARROW" slotname="scroll_down" name="Scroll down" sortorder="124" />
+	<keyseq keyfacttype="FKEY" key1="UARROW" slotname="increase_gain" name="Scroll up" sortorder="123" />
+	<keyseq keyfacttype="FKEY" key1="DARROW" slotname="decrease_gain" name="Scroll down" sortorder="124" />
 	<keyseq keyfacttype="FKEY" key1="SHIFT" slotname="touch" name="Touch" sortorder="20" />
 	<keyseq keyfacttype="FKEY" key1="W" slotname="playhead_to_workcursor" name="Playhead to Workcursor" sortorder="4" />
 	<keyseq keyfacttype="FKEY" key1="HOME" slotname="goto_begin" name="Set work at Start" sortorder="5" />
@@ -26,7 +26,6 @@
 	<keyseq keyfacttype="FKEY" key1="F4" slotname="set_manager_widget" name="Manager Window" sortorder="" />
 	<keyseq keyfacttype="FKEY" key1="I" slotname="import_audiosource" name="Import Audio" sortorder="25" />
 	<keyseq keyfacttype="FKEY" key1="Q" slotname="show_context_menu" name="This Menu" sortorder="100" />
-	<keyseq keyfacttype="FKEY" key1="MouseButtonRight" slotname="show_context_menu" name="This Menu" sortorder="100" />
 	<keyseq keyfacttype="FKEY" key1="E" slotname="edit_properties" name="Edit Properties" sortorder="30" />
 	<keyseq keyfacttype="FKEY" key1="N" slotname="normalize" name="Normalize" sortorder="30" />
 	<keyseq keyfacttype="FKEY" key1="B" slotname="toggle_bypass" name="Bypass" sortorder="30" />
@@ -34,6 +33,10 @@
 	<keyseq keyfacttype="FKEY" key1="L" slotname="reset" name="Reset" sortorder="40" />
 	<keyseq keyfacttype="FKEY" key1="R" slotname="toggle_raster" name="Toggle Raster" sortorder="50" />
 	<keyseq keyfacttype="FKEY" key1="C" slotname="add_node" name="Add Node" sortorder="50" />
+	<keyseq keyfacttype="FKEY" key1="MouseButtonLeft" slotname="increase_gain" name="Left Click" sortorder="50" />
+	<keyseq keyfacttype="FKEY" key1="MouseButtonRight" slotname="show_context_menu" name="This Menu" sortorder="100" />
+	<keyseq keyfacttype="FKEY" key1="MouseScrollVerticalUp" slotname="increase_gain" name="This Menu" sortorder="100" />
+	<keyseq keyfacttype="FKEY" key1="MouseScrollVerticalDown" slotname="decrease_gain" name="This Menu" sortorder="100" />
 	
 	
 	<keyseq keyfacttype="FKEY2" key1="A" key2="B" slotname="about_traverso" name="About" sortorder="" />
