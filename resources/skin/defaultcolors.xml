@@ -52,4 +52,9 @@
     <color alpha="230" red="0" blue="200" name="TRACK_PANEL_NAME" green="0" />
     <color alpha="170" red="255" blue="255" name="TRACK_SEPERATOR" green="255" />
     <color alpha="255" red="160" blue="150" name="INFO_WIDGET_BACKGROUND" green="170" />
+    <color alpha="255" red="246" blue="255" name="METER_MARGIN" green="246" />
+    <color alpha="255" red="241" blue="255" name="METER_BACKGROUND" green="250" />
+    <color alpha="255" red="205" blue="255" name="METER_GRID" green="223" />
+    <color alpha="255" red="82" blue="123" name="METER_FOREGROUND" green="80" />
+    <color alpha="255" red="255" blue="0" name="METER_AVERAGE_CURVE" green="0" />
 </ColorManager> 

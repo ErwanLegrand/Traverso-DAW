@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: CorrelationMeterWidget.h,v 1.2 2007/01/18 19:07:23 n_doebelin Exp $
+    $Id: CorrelationMeterWidget.h,v 1.3 2007/01/18 21:39:37 n_doebelin Exp $
 */
 
 #ifndef CORRELATIONMETERWIDGET_H
@@ -30,6 +30,7 @@ class CorrelationMeter;
 class Song;
 class Project;
 class QLinearGradient;
+class QColor;
 
 class CorrelationMeterWidget : public QWidget
 {
@@ -48,6 +49,9 @@ private:
 	float		direction;
 	CorrelationMeter*	m_meter;
 	QLinearGradient	gradPhase;
+	QColor		bgColor, fgColor,
+			hgColor, dtColor,
+			gcColor;
 
 
 private slots:

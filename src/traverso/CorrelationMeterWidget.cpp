@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: CorrelationMeterWidget.cpp,v 1.4 2007/01/18 19:07:23 n_doebelin Exp $
+    $Id: CorrelationMeterWidget.cpp,v 1.5 2007/01/18 21:39:37 n_doebelin Exp $
 */
 
 #include <libtraverso.h>
@@ -29,6 +29,7 @@
 #include "Project.h"
 #include "InputEngine.h"
 #include "Song.h"
+#include "ColorManager.h"
 
 #include <QPainter>
 #include <QColor>
@@ -61,9 +62,15 @@ CorrelationMeterWidget::CorrelationMeterWidget(QWidget* parent)
 	// @ Nicola : This is where the high load comes from!
         setAttribute(Qt::WA_OpaquePaintEvent);
 	
-	gradPhase.setColorAt(0.0,  QColor(205, 202, 246));
-	gradPhase.setColorAt(0.5,  QColor( 82,  80, 123));
-	gradPhase.setColorAt(1.0,  QColor(205, 202, 246));
+	fgColor = cm().get("METER_MARGIN");
+	bgColor = cm().get("METER_BACKGROUND");
+	hgColor = cm().get("METER_GRID");
+	dtColor = cm().get("DARK_TEXT");
+	gcColor = cm().get("METER_FOREGROUND");
+
+	gradPhase.setColorAt(0.0,  bgColor);
+	gradPhase.setColorAt(0.5,  gcColor);
+	gradPhase.setColorAt(1.0,  bgColor);
 
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
@@ -80,7 +87,7 @@ void CorrelationMeterWidget::paintEvent( QPaintEvent *  )
 	// means triple buffering which makes no sense.
 	QPainter painter(this);
 
-	painter.fillRect(0, 0, width(), height(), QColor(246, 250, 255));
+	painter.fillRect(0, 0, width(), height(), bgColor);
 
 	int lend = int(0.5*width() - (-coeff + 1.0) * 0.25 * width() * (1.0 - fabs(direction)));
 	int rend = int(0.5*width() + (-coeff + 1.0) * 0.25 * width() * (1.0 - fabs(direction)));
@@ -92,7 +99,7 @@ void CorrelationMeterWidget::paintEvent( QPaintEvent *  )
 	gradPhase.setFinalStop(QPointF(float(rend + centerOffset), 0.0));
 	painter.fillRect(lend + centerOffset, 0, wdt, height(), gradPhase);
 
-	painter.setPen(QColor(205, 222, 255));
+	painter.setPen(hgColor);
 
 	int lpos = int(0.25*width());
 	int cpos = int(0.50*width());
@@ -103,7 +110,7 @@ void CorrelationMeterWidget::paintEvent( QPaintEvent *  )
 	painter.drawLine(rpos, 0, rpos, height());
 
 	// center line
-	QPen pen(QColor(180, 190, 189));
+	QPen pen(hgColor);
 	pen.setWidth(3);
 	painter.setPen(pen);
 	painter.drawLine(width()/2 + centerOffset, 0, width()/2 + centerOffset, height());
@@ -115,8 +122,8 @@ void CorrelationMeterWidget::paintEvent( QPaintEvent *  )
 		return;
 	}
 
-	painter.setPen(QColor(0, 0, 0));
-	painter.fillRect(0, 0, width(), fm.height() + 1, QColor(246, 246, 255));
+	painter.setPen(dtColor);
+	painter.fillRect(0, 0, width(), fm.height() + 1, fgColor);
 	painter.drawText(lpos - fm.width("L")/2, fm.ascent() + 1, "L");
 	painter.drawText(cpos - fm.width("C")/2, fm.ascent() + 1, "C");
 	painter.drawText(rpos - fm.width("R")/2, fm.ascent() + 1, "R");
