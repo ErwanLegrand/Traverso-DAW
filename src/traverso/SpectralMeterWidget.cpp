@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.18 2007/01/18 17:15:46 n_doebelin Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.19 2007/01/18 17:27:24 n_doebelin Exp $
 */
 
 #include "SpectralMeterWidget.h"
@@ -162,8 +162,6 @@ void SpectralMeterItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 		int spc = 0;
 		if (num_bands < 64) spc = 1;
 
-		QPointF pt;
-
 		// draw the freq bands
 		for (uint i = 0; i < (uint)m_spectrum.size(); ++i) {
 			if (m_bands.at(i+1) < lower_db) {
@@ -178,10 +176,11 @@ void SpectralMeterItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 		// draw the average line if requested
 		if (show_average) {
 			painter->setPen(Qt::red);
-			QPointF po(bar_offset, db2ypos(m_avg_db.at(0)));
+			QPoint pt;
+			QPoint po((int)m_map_idx2xpos.at(0), (int)db2ypos(m_avg_db.at(0)));
 			for (uint i = 0; i < (uint)m_avg_db.size(); ++i) {
-				pt.setX(m_map_idx2xpos.at(i));
-				pt.setY(db2ypos(m_avg_db.at(i)));
+				pt.setX((int)m_map_idx2xpos.at(i));
+				pt.setY((int)db2ypos(m_avg_db.at(i)));
 				painter->drawLine(po, pt);
 				po = pt;
 			}
