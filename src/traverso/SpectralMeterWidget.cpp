@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.17 2007/01/18 16:43:42 n_doebelin Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.18 2007/01/18 17:15:46 n_doebelin Exp $
 */
 
 #include "SpectralMeterWidget.h"
@@ -153,7 +153,7 @@ void SpectralMeterItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 
 	// draw the bars
 	if (m_spectrum.size()) {
-		QRectF rect;
+		QRect rect;
 		QBrush brush(QColor(80, 80, 120), Qt::SolidPattern);
 		painter->setClipRegion(m_rect);
 		painter->setBrush(brush);
@@ -170,8 +170,8 @@ void SpectralMeterItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 				continue;
 			}
 
-			rect.setTopLeft(QPointF(freq2xpos(m_bands.at(i)) + spc, db2ypos(m_spectrum.at(i))));
-			rect.setBottomRight(QPointF(freq2xpos(m_bands.at(i+1)) - spc, db2ypos(DB_FLOOR)));
+			rect.setTopLeft(QPoint((int)freq2xpos(m_bands.at(i)) + spc, (int)db2ypos(m_spectrum.at(i))));
+			rect.setBottomRight(QPoint((int)freq2xpos(m_bands.at(i+1)) - spc, (int)db2ypos(DB_FLOOR)));
 			painter->drawRect(rect);
 		}
 
