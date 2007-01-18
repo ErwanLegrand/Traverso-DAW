@@ -26,6 +26,7 @@
 	<keyseq keyfacttype="FKEY" key1="F4" slotname="set_manager_widget" name="Manager Window" sortorder="" />
 	<keyseq keyfacttype="FKEY" key1="I" slotname="import_audiosource" name="Import Audio" sortorder="25" />
 	<keyseq keyfacttype="FKEY" key1="Q" slotname="show_context_menu" name="This Menu" sortorder="100" />
+	<keyseq keyfacttype="FKEY" key1="MouseButtonRight" slotname="show_context_menu" name="This Menu" sortorder="100" />
 	<keyseq keyfacttype="FKEY" key1="E" slotname="edit_properties" name="Edit Properties" sortorder="30" />
 	<keyseq keyfacttype="FKEY" key1="N" slotname="normalize" name="Normalize" sortorder="30" />
 	<keyseq keyfacttype="FKEY" key1="B" slotname="toggle_bypass" name="Bypass" sortorder="30" />
