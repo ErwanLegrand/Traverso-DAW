@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: CorrelationMeterWidget.cpp,v 1.3 2007/01/15 20:17:02 n_doebelin Exp $
+    $Id: CorrelationMeterWidget.cpp,v 1.4 2007/01/18 19:07:23 n_doebelin Exp $
 */
 
 #include <libtraverso.h>
@@ -55,14 +55,16 @@ CorrelationMeterWidget::CorrelationMeterWidget(QWidget* parent)
 {
 	setMinimumWidth(40);
 	setMinimumHeight(10);
-	
-	update_gradient();
-	
+		
 	// We paint all our pixels ourselves, so no need to let Qt
 	// erase and fill it for us prior to the paintEvent.
 	// @ Nicola : This is where the high load comes from!
         setAttribute(Qt::WA_OpaquePaintEvent);
 	
+	gradPhase.setColorAt(0.0,  QColor(205, 202, 246));
+	gradPhase.setColorAt(0.5,  QColor( 82,  80, 123));
+	gradPhase.setColorAt(1.0,  QColor(205, 202, 246));
+
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 
@@ -86,7 +88,9 @@ void CorrelationMeterWidget::paintEvent( QPaintEvent *  )
 	int wdt = abs(lend - rend);
 	int centerOffset = int(width() * 0.25 * direction);
 
-	painter.drawPixmap(lend + centerOffset, 0, wdt, height(), pixPhase);
+	gradPhase.setStart(QPointF(float(lend + centerOffset), 0.0));
+	gradPhase.setFinalStop(QPointF(float(rend + centerOffset), 0.0));
+	painter.fillRect(lend + centerOffset, 0, wdt, height(), gradPhase);
 
 	painter.setPen(QColor(205, 222, 255));
 
@@ -121,7 +125,6 @@ void CorrelationMeterWidget::paintEvent( QPaintEvent *  )
 void CorrelationMeterWidget::resizeEvent( QResizeEvent *  )
 {
 	PENTER3;
-	update_gradient();
 }
 
 void CorrelationMeterWidget::update_data()
@@ -168,20 +171,5 @@ void CorrelationMeterWidget::set_song(Song *song)
 	timer.start(40);
 }
 
-void CorrelationMeterWidget::update_gradient()
-{
-	gradPhase.setStart(0,0);
-	gradPhase.setColorAt(0.0,  QColor(205, 202, 246));
-	gradPhase.setColorAt(0.5,  QColor( 82,  80, 123));
-	gradPhase.setColorAt(1.0,  QColor(205, 202, 246));
-
-	gradPhase.setFinalStop(QPointF((float)width(), 0.0));
-
-	pixPhase = QPixmap(width(), height());
-
-	QPainter pPhase(&pixPhase);
-
-	pPhase.fillRect(0, 0, width(), height(), gradPhase);
-}
 
 //eof

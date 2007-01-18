@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: CorrelationMeterWidget.h,v 1.1 2006/12/09 08:44:54 n_doebelin Exp $
+    $Id: CorrelationMeterWidget.h,v 1.2 2007/01/18 19:07:23 n_doebelin Exp $
 */
 
 #ifndef CORRELATIONMETERWIDGET_H
@@ -48,9 +48,7 @@ private:
 	float		direction;
 	CorrelationMeter*	m_meter;
 	QLinearGradient	gradPhase;
-	QPixmap		pixPhase;
 
-	void		update_gradient();
 
 private slots:
 	void		set_project( Project* );
