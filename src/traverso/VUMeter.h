@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: VUMeter.h,v 1.4 2006/11/13 20:17:27 n_doebelin Exp $
+    $Id: VUMeter.h,v 1.5 2007/01/19 12:13:14 r_sijrier Exp $
 */
 
 #ifndef VUMETER_H
@@ -28,10 +28,42 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QVector>
+#include <QTimer>
 
 #include "VUMeterRuler.h"
 
 class AudioBus;
+class AudioChannel;
+
+class VUMeterRuler : public QWidget
+{
+	Q_OBJECT
+	
+public:
+
+        VUMeterRuler(QWidget* parent);
+
+/**
+ * Sets the offset from the top to the first tick mark (+6.0 dB) in pixels.
+ * Set this value to the height of the 'over' LED (VUMeterOverLed) in order
+ * to position the first tick mark at the top of the VUMeterLevel.
+ *
+ * @param i offset from top in pixels
+ */
+	void setYOffset(int);
+
+protected:
+        void paintEvent( QPaintEvent* e);
+
+
+private:
+	std::vector<int>	presetMark;
+	std::vector<int>	lineMark;
+	int			yOffset;
+
+};
+
+
 
 class VUMeter : public QWidget
 {
@@ -82,6 +114,93 @@ inline QVector<float>* VUMeter::vumeter_lut()
 	}
 	return &lut;
 }
+
+
+
+class VUMeterOverLed : public QWidget
+{
+	Q_OBJECT
+	
+public:
+
+        VUMeterOverLed(QWidget* parent);
+
+public slots:
+/**
+ * Switches the LED indicator on and off. Connect this slot with the signal
+ * VUMeterLevel::activate_over_led(bool).
+ *
+ * @param b new state of the LED indicator. 
+ */
+	void set_active(bool b);
+
+protected:
+        void paintEvent( QPaintEvent* e);
+
+
+private:
+        bool isActive;
+};
+
+
+class VUMeterLevel : public QWidget
+{
+	Q_OBJECT
+	
+public:
+
+        VUMeterLevel(QWidget* parent, AudioChannel* chan);
+
+protected:
+        void paintEvent( QPaintEvent* e);
+        void resizeEvent( QResizeEvent * );
+
+
+private:
+        bool 		activeTail;
+	bool		peakHoldFalling;
+        AudioChannel*	m_channel;
+        QColor		levelClearColor;
+        QPixmap		levelPixmap;
+        QPixmap		clearPixmap;
+        QTimer 		timer,
+			phTimer;
+	QLinearGradient	gradient2D,
+			gradient3DLeft,
+			gradient3DRight;
+
+        float 			presetMark[7];
+        float			tailDeltaY;
+        float			prevPeakValue;
+        float			peak;
+	float			rms;
+	float			maxFalloff;
+	float			peakHoldValue;
+	float			peakHistory[50];
+	short unsigned int	rmsIndex;
+	short unsigned int	overCount;
+
+        void resize_level_pixmap();
+	void create_gradients();
+	int get_meter_position(float);
+
+private slots:
+	void stop();
+	void start();
+        void update_peak();
+	void reset_peak_hold_value();
+
+signals:
+
+/**
+ * Connect this signal to VUMeterOverLed::set_active(bool).
+ * 'true' is emitted if a signal >0.0 dB is detected. 'false' is emitted
+ * if the connected LED should reset.
+ */
+	void activate_over_led(bool);
+
+};
+
 
 #endif
 
