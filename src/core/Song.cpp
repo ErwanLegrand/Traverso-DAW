@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.48 2007/01/16 20:21:08 r_sijrier Exp $
+$Id: Song.cpp,v 1.49 2007/01/19 12:16:45 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -787,12 +787,13 @@ int Song::process( nframes_t nframes )
 	if (playBackBus) {
 		Mixer::mix_buffers_with_gain(playBackBus->get_buffer(0, nframes), masterOut->get_buffer(0, nframes), nframes, m_gain);
 		Mixer::mix_buffers_with_gain(playBackBus->get_buffer(1, nframes), masterOut->get_buffer(1, nframes), nframes, m_gain);
+		
+		// Process all the plugins for this Song
+		foreach(Plugin* plugin, pluginChain->get_plugin_list()) {
+			plugin->process(playBackBus, nframes);
+		}
 	}
 
-	// Process all the plugins for this Song (Currently no one)
-	foreach(Plugin* plugin, pluginChain->get_plugin_list()) {
-		plugin->process(playBackBus, nframes);
-	}
 	
 	return 1;
 }
