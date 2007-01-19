@@ -20,6 +20,7 @@ CONFIG += debug
 DEFINES += JACK_SUPPORT
 DEFINES += ALSA_SUPPORT
 DEFINES += LV2_SUPPORT
+DEFINES += PRECOMPILED_HEADER
 #DEFINES += USE_MEM_CHECKER
 
 #
@@ -58,6 +59,8 @@ QMAKE_CXXFLAGS += $$system(pkg-config --cflags glib-2.0)
 debug {
 	DEFINES += USE_DEBUGGER
 #	DEFINES += USE_MEM_CHECKER
+	QMAKE_CXXFLAGS -= -g
+	QMAKE_CXXFLAGS += -ggdb
 }
 
 
@@ -87,9 +90,9 @@ unix {
 	
 	GCCVERSION = $$system(gcc -dumpversion)
 	
+	contains(DEFINES, PRECOMPILED_HEADER):CONFIG += precompile_header
+	
 	contains(GCCVERSION, [45].[01234].[012345] ) {
-		CONFIG += precompile_header
-
 #		Makes only sense if there are loops to vectorize, which isn't the case (yet)
 #		Maybe gcc 4.2 will do a better job on certain loops?
 #		specially those in memops. would be nice if they get some optimization too...
