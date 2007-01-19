@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: CorrelationMeterWidget.cpp,v 1.5 2007/01/18 21:39:37 n_doebelin Exp $
+    $Id: CorrelationMeterWidget.cpp,v 1.6 2007/01/19 13:13:25 n_doebelin Exp $
 */
 
 #include <libtraverso.h>
@@ -25,23 +25,16 @@
 #include "CorrelationMeterWidget.h"
 #include <PluginChain.h>
 #include <CorrelationMeter.h>
-#include "ProjectManager.h"
-#include "Project.h"
-#include "InputEngine.h"
-#include "Song.h"
-#include "ColorManager.h"
+#include <Command.h>
+#include <ProjectManager.h>
+#include <Project.h>
+#include <InputEngine.h>
+#include <Song.h>
+#include <ColorManager.h>
+#include <ContextPointer.h>
+#include <Config.h>
 
-#include <QPainter>
-#include <QColor>
-#include <QGradient>
-#include <QPixmap>
-#include <QFontMetrics>
-#include <QTimer>
-#include <QLinearGradient>
-#include <QColor>
-#include <QPointF>
-#include <QFont>
-#include <QFontMetrics>
+#include <QtGui>
 #include <QDebug>
 
 // Always put me below _all_ includes, this is needed
@@ -52,16 +45,52 @@ static const float SMOOTH_SHIFT = 0.05;
 static const int FONT_SIZE = 7;
 
 CorrelationMeterWidget::CorrelationMeterWidget(QWidget* parent)
-	: QWidget(parent)
+	: ViewPort(parent)
 {
+	PENTERCONS;
 	setMinimumWidth(40);
 	setMinimumHeight(10);
-		
-	// We paint all our pixels ourselves, so no need to let Qt
-	// erase and fill it for us prior to the paintEvent.
-	// @ Nicola : This is where the high load comes from!
-        setAttribute(Qt::WA_OpaquePaintEvent);
 	
+	m_item = new CorrelationMeterItem(this);
+	
+	QGraphicsScene* scene = new QGraphicsScene(this);
+	setScene(scene);
+	scene->addItem(m_item);
+	m_item->setPos(0,0);
+
+	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+}
+
+CorrelationMeterWidget::~CorrelationMeterWidget()
+{
+}
+
+void CorrelationMeterWidget::resizeEvent( QResizeEvent *  )
+{
+	m_item->resize();
+}
+
+void CorrelationMeterWidget::get_pointed_context_items(QList<ContextItem* > &list)
+{
+	printf("CorrelationMeterWidget::get_pointed_view_items\n");
+	QList<QGraphicsItem *> itemlist = items(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
+	foreach(QGraphicsItem* item, itemlist) {
+		list.append((ViewItem*)item);
+	}
+	
+	printf("itemlist size is %d\n", itemlist.size());
+}
+
+
+
+
+
+CorrelationMeterItem::CorrelationMeterItem(CorrelationMeterWidget* widget)
+	: ViewItem(0, 0)
+	, m_widget(widget)
+	, m_meter(0)
+{
 	fgColor = cm().get("METER_MARGIN");
 	bgColor = cm().get("METER_BACKGROUND");
 	hgColor = cm().get("METER_GRID");
@@ -72,69 +101,94 @@ CorrelationMeterWidget::CorrelationMeterWidget(QWidget* parent)
 	gradPhase.setColorAt(0.5,  gcColor);
 	gradPhase.setColorAt(1.0,  bgColor);
 
+	load_configuration();
+
+	// Nicola: Not sure if we need to initialize here, perhaps a 
+	// call to resize would suffice ?
+	m_boundingRectangle = QRectF();
+
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 
 	connect(&timer, SIGNAL(timeout()), this, SLOT(update_data()));
 }
 
-void CorrelationMeterWidget::paintEvent( QPaintEvent *  )
+CorrelationMeterItem::~CorrelationMeterItem()
 {
+	save_configuration();
+}
+
+void CorrelationMeterItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+	Q_UNUSED(option);
+	Q_UNUSED(widget);
+
 	PENTER3;
-	// Since all painting is allready double buffered by Qt, we don't need
-	// to create a buffer to paint in ourselves, using a painter like below
-	// has the same results (at a lower cost of course, buffering again here
-	// means triple buffering which makes no sense.
-	QPainter painter(this);
 
-	painter.fillRect(0, 0, width(), height(), bgColor);
+	float r = 90.0f / range;
 
-	int lend = int(0.5*width() - (-coeff + 1.0) * 0.25 * width() * (1.0 - fabs(direction)));
-	int rend = int(0.5*width() + (-coeff + 1.0) * 0.25 * width() * (1.0 - fabs(direction)));
+	painter->fillRect(0, 0, m_widget->width(), m_widget->height(), bgColor);
+
+	int lend = int(0.5*m_widget->width() - (-coeff + 1.0) * r * m_widget->width() * (1.0 - fabs(direction)));
+	int rend = int(0.5*m_widget->width() + (-coeff + 1.0) * r * m_widget->width() * (1.0 - fabs(direction)));
 	
 	int wdt = abs(lend - rend);
-	int centerOffset = int(width() * 0.25 * direction);
+	int centerOffset = int(m_widget->width() * r * direction);
 
 	gradPhase.setStart(QPointF(float(lend + centerOffset), 0.0));
 	gradPhase.setFinalStop(QPointF(float(rend + centerOffset), 0.0));
-	painter.fillRect(lend + centerOffset, 0, wdt, height(), gradPhase);
+	painter->fillRect(lend + centerOffset, 0, wdt, m_widget->height(), gradPhase);
 
-	painter.setPen(hgColor);
+	painter->setPen(hgColor);
 
-	int lpos = int(0.25*width());
-	int cpos = int(0.50*width());
-	int rpos = int(0.75*width());
+	int lpos = int((0.50 - r) * m_widget->width());
+	int cpos = int(0.50 * m_widget->width());
+	int rpos = int((0.50 + r) * m_widget->width());
 
-	painter.drawLine(lpos, 0, lpos, height());
-	painter.drawLine(cpos, 0, cpos, height());
-	painter.drawLine(rpos, 0, rpos, height());
+	painter->drawLine(cpos, 0, cpos, m_widget->height());
+
+	if (range > 180) {
+		painter->drawLine(lpos, 0, lpos, m_widget->height());
+		painter->drawLine(rpos, 0, rpos, m_widget->height());
+	}
 
 	// center line
 	QPen pen(hgColor);
 	pen.setWidth(3);
-	painter.setPen(pen);
-	painter.drawLine(width()/2 + centerOffset, 0, width()/2 + centerOffset, height());
+	painter->setPen(pen);
+	painter->drawLine(m_widget->width()/2 + centerOffset, 0, m_widget->width()/2 + centerOffset, m_widget->height());
 
-	painter.setFont(QFont("Bitstream Vera Sans", FONT_SIZE));
+	painter->setFont(QFont("Bitstream Vera Sans", FONT_SIZE));
 	QFontMetrics fm(QFont("Bitstream Vera Sans", FONT_SIZE));
 	
-	if (height() < 2*fm.height()) {
+	if (m_widget->height() < 2*fm.height()) {
 		return;
 	}
 
-	painter.setPen(dtColor);
-	painter.fillRect(0, 0, width(), fm.height() + 1, fgColor);
-	painter.drawText(lpos - fm.width("L")/2, fm.ascent() + 1, "L");
-	painter.drawText(cpos - fm.width("C")/2, fm.ascent() + 1, "C");
-	painter.drawText(rpos - fm.width("R")/2, fm.ascent() + 1, "R");
+	painter->setPen(dtColor);
+	painter->fillRect(0, 0, m_widget->width(), fm.height() + 1, fgColor);
+	painter->drawText(cpos - fm.width("C")/2, fm.ascent() + 1, "C");
+
+	if (range == 180) {
+		painter->drawText(1, fm.ascent() + 1, "L");
+		painter->drawText(m_widget->width() - fm.width("R") - 1, fm.ascent() + 1, "R");	
+	} else {
+		painter->drawText(lpos - fm.width("L")/2, fm.ascent() + 1, "L");
+		painter->drawText(rpos - fm.width("R")/2, fm.ascent() + 1, "R");
+	}
 }
 
-void CorrelationMeterWidget::resizeEvent( QResizeEvent *  )
+void CorrelationMeterItem::resize()
 {
-	PENTER3;
+	PENTER;
+	
+	prepareGeometryChange();
+	// Nicola: Make this as large as the CorrelationMeterWidget
+	// by setting the boundingrect.
+	m_boundingRectangle = QRectF(0, 0, m_widget->width(), m_widget->height());
 }
 
-void CorrelationMeterWidget::update_data()
+void CorrelationMeterItem::update_data()
 {
 	if (!m_meter) {
 		return;
@@ -150,7 +204,7 @@ void CorrelationMeterWidget::update_data()
 	update();
 }
 
-void CorrelationMeterWidget::set_project(Project *project)
+void CorrelationMeterItem::set_project(Project *project)
 {
 	if (project) {
 		connect(project, SIGNAL(currentSongChanged(Song *)), this, SLOT(set_song(Song*)));
@@ -159,7 +213,7 @@ void CorrelationMeterWidget::set_project(Project *project)
 	}
 }
 
-void CorrelationMeterWidget::set_song(Song *song)
+void CorrelationMeterItem::set_song(Song *song)
 {
 	PluginChain* chain = song->get_plugin_chain();
 	
@@ -178,5 +232,25 @@ void CorrelationMeterWidget::set_song(Song *song)
 	timer.start(40);
 }
 
+Command* CorrelationMeterItem::set_mode()
+{
+	switch (range) {
+		case 180 : range = 240; break;
+		case 240 : range = 360; break;
+		case 360 : range = 180; break;
+	}
+	return 0;
+}
+
+void CorrelationMeterItem::save_configuration()
+{
+	config().set_property("CorrelationMeter", "Range", range);
+	config().save();
+}
+
+void CorrelationMeterItem::load_configuration()
+{
+	range = config().get_property("CorrelationMeter", "Range", 360).toInt();
+}
 
 //eof

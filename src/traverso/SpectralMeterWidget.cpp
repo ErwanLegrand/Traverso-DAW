@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.20 2007/01/18 21:39:37 n_doebelin Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.21 2007/01/19 13:13:25 n_doebelin Exp $
 */
 
 #include "SpectralMeterWidget.h"
@@ -32,7 +32,7 @@
 #include <InputEngine.h>
 #include <Song.h>
 #include <ContextPointer.h>
-#include "ColorManager.h"
+#include <ColorManager.h>
 
 #include <QtGui>
 // #include <QRectF>
@@ -44,7 +44,7 @@
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-#define SMOOTH_FACTOR 0.97
+#define SMOOTH_FACTOR 0.98
 #define DB_FLOOR -140.0
 
 static const float DEFAULT_VAL = -999.0f;

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: CorrelationMeterWidget.h,v 1.3 2007/01/18 21:39:37 n_doebelin Exp $
+    $Id: CorrelationMeterWidget.h,v 1.4 2007/01/19 13:13:25 n_doebelin Exp $
 */
 
 #ifndef CORRELATIONMETERWIDGET_H
@@ -26,24 +26,50 @@
 #include <QWidget>
 #include <QTimer>
 
+#include <ViewPort.h>
+#include <ViewItem.h>
+
 class CorrelationMeter;
+class CorrelationMeterItem;
 class Song;
 class Project;
+class Command;
 class QLinearGradient;
 class QColor;
 
-class CorrelationMeterWidget : public QWidget
+
+class CorrelationMeterWidget : public ViewPort
 {
-	Q_OBJECT
 
 public:
-        CorrelationMeterWidget(QWidget* parent);
+	CorrelationMeterWidget(QWidget* parent);
+	~CorrelationMeterWidget();
+
+	void get_pointed_context_items(QList<ContextItem* > &list);
 
 protected:
         void resizeEvent( QResizeEvent* e);
-        void paintEvent( QPaintEvent* e);
 
 private:
+	CorrelationMeterItem* m_item;
+
+};
+
+class CorrelationMeterItem : public ViewItem
+{
+	Q_OBJECT
+
+	Q_CLASSINFO("set_mode", tr("Toggle display range"))
+
+public:
+        CorrelationMeterItem(CorrelationMeterWidget* widget);
+	~CorrelationMeterItem();
+
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+	void resize();
+
+private:
+	CorrelationMeterWidget* m_widget;
 	QTimer		timer;
 	float		coeff;
 	float		direction;
@@ -52,12 +78,17 @@ private:
 	QColor		bgColor, fgColor,
 			hgColor, dtColor,
 			gcColor;
-
+	int		range;
+	void save_configuration();
+	void load_configuration();
 
 private slots:
 	void		set_project( Project* );
 	void		set_song( Song* );
 	void		update_data();
+
+public slots:
+	Command*	set_mode();
 
 };
 
