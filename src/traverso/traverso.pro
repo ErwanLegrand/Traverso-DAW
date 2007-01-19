@@ -62,9 +62,6 @@ HEADERS += \
 	Traverso.h \
 	Interface.h \
 	VUMeter.h \
-	VUMeterRuler.h \
-	VUMeterLevel.h \
-	VUMeterOverLed.h \
 	CorrelationMeterWidget.h \
 	SpectralMeterWidget.h \
 	QuickDriverConfigWidget.h \
@@ -115,9 +112,6 @@ SOURCES += \
 	GlobalPropertiesWidget.cpp \
 	Interface.cpp \
 	VUMeter.cpp \
-	VUMeterRuler.cpp \
-	VUMeterLevel.cpp \
-	VUMeterOverLed.cpp \
 	CorrelationMeterWidget.cpp \
 	SpectralMeterWidget.cpp \
 	QuickDriverConfigWidget.cpp

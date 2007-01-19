@@ -17,10 +17,8 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: VUMeter.cpp,v 1.11 2007/01/19 12:13:14 r_sijrier Exp $
+    $Id: VUMeter.cpp,v 1.12 2007/01/19 12:34:04 r_sijrier Exp $
 */
-
-#include <libtraverso.h>
 
 #include "VUMeter.h"
 
@@ -32,8 +30,9 @@
 
 #include "ColorManager.h"
 #include "Mixer.h"
-#include "VUMeterLevel.h"
-#include "VUMeterOverLed.h"
+#include <AudioDevice.h>
+#include <AudioChannel.h>
+#include <AudioBus.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
