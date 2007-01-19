@@ -5,7 +5,6 @@
 #include "ContextItem.h"
 #include "ContextPointer.h"
 #include "Curve.h"
-#include "IEAction.h"
 #include "Information.h"
 #include "InputEngine.h"
 #include "Mixer.h"

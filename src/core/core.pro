@@ -38,7 +38,6 @@ SOURCES	= AudioClip.cpp \
 	Export.cpp \
 	FadeCurve.cpp \
 	FileHelpers.cpp \
-	IEAction.cpp \
 	Information.cpp \
 	InputEngine.cpp \
 	Mixer.cpp \
@@ -76,7 +75,6 @@ HEADERS	= precompile.h \
 	Export.h \
 	FadeCurve.h \
 	FileHelpers.h \
-	IEAction.h \
 	Information.h \
 	InputEngine.h \
 	Mixer.h \
