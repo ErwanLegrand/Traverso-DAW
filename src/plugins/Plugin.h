@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Plugin.h,v 1.3 2006/12/04 19:24:54 r_sijrier Exp $
+$Id: Plugin.h,v 1.4 2007/01/19 12:15:10 r_sijrier Exp $
 */
 
 
@@ -59,6 +59,52 @@ signals:
 public slots:
 	Command* toggle_bypass();
 };
+
+
+class PluginPort : public QObject
+{
+
+public:
+	PluginPort(QObject* parent, int index) : QObject(parent), m_index(index) {};
+	PluginPort(QObject* parent) : QObject(parent) {};
+	~PluginPort(){};
+
+	virtual QDomNode get_state(QDomDocument doc);
+	virtual int set_state( const QDomNode & node ) = 0;
+	
+	int get_index() const {return m_index;}
+
+protected:
+	int	m_index;
+}; 
+
+
+class AudioInputPort : public PluginPort
+{
+
+public:
+	AudioInputPort(QObject* parent, int index);
+	AudioInputPort(QObject* parent) : PluginPort(parent) {};
+	~AudioInputPort(){};
+
+	QDomNode get_state(QDomDocument doc);
+	int set_state( const QDomNode & node );
+
+}; 
+
+
+class AudioOutputPort : public PluginPort
+{
+
+public:
+	AudioOutputPort(QObject* parent, int index);
+	AudioOutputPort(QObject* parent) : PluginPort(parent) {};
+	~AudioOutputPort(){};
+
+	QDomNode get_state(QDomDocument doc);
+	int set_state( const QDomNode & node );
+
+}; 
 
 
 #endif

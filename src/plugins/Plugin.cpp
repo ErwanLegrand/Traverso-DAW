@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Plugin.cpp,v 1.2 2006/07/31 13:59:08 r_sijrier Exp $
+$Id: Plugin.cpp,v 1.3 2007/01/19 12:15:10 r_sijrier Exp $
 */
 
 #include "Plugin.h"
@@ -35,6 +35,69 @@ Command* Plugin::toggle_bypass( )
 	emit bypassChanged();
 	
 	return (Command*) 0;
+}
+
+
+
+QDomNode PluginPort::get_state( QDomDocument doc )
+{
+	QDomElement node = doc.createElement("ControlPort");
+	node.setAttribute("index", (int) m_index);
+	
+	return node;
+} 
+
+int PluginPort::set_state( const QDomNode & node )
+{
+	return 1;
+}
+
+
+AudioInputPort::AudioInputPort(QObject* parent, int index)
+	: PluginPort(parent, index)
+{
+}
+
+QDomNode AudioInputPort::get_state( QDomDocument doc )
+{
+	QDomElement node = doc.createElement("AudioInputPort");
+	node.setAttribute("index", m_index);
+	
+	return node;
+}
+
+
+int AudioInputPort::set_state( const QDomNode & node )
+{
+	QDomElement e = node.toElement();
+	
+	m_index = e.attribute( "index", "-1").toInt();
+	
+	return 1;
+}
+
+AudioOutputPort::AudioOutputPort(QObject* parent, int index)
+	: PluginPort(parent, index)
+{
+}
+
+
+QDomNode AudioOutputPort::get_state( QDomDocument doc )
+{
+	QDomElement node = doc.createElement("AudioOutputPort");
+	node.setAttribute("index", (int) m_index);
+	
+	return node;
+}
+
+
+int AudioOutputPort::set_state( const QDomNode & node )
+{
+	QDomElement e = node.toElement();
+	
+	m_index = e.attribute( "index", "-1").toInt();
+	
+	return 1;
 }
 
 //eof
