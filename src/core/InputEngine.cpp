@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.19 2007/01/18 21:17:57 r_sijrier Exp $
+$Id: InputEngine.cpp,v 1.20 2007/01/19 12:17:05 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -34,7 +34,7 @@ $Id: InputEngine.cpp,v 1.19 2007/01/18 21:17:57 r_sijrier Exp $
 #include <QTextStream>
 #include <QDomDocument>
 #include <QMetaMethod>
-#include <QTranslator>
+#include <QCoreApplication>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!

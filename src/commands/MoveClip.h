@@ -17,13 +17,15 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveClip.h,v 1.6 2007/01/16 20:21:08 r_sijrier Exp $
+    $Id: MoveClip.h,v 1.7 2007/01/19 12:17:56 r_sijrier Exp $
 */
 
 #ifndef MOVECLIPACTION_H
 #define MOVECLIPACTION_H
 
 #include "Command.h"
+
+#include <QPoint>
 
 class AudioClip;
 class Song;
