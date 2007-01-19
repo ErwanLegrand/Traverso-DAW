@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.21 2007/01/19 12:38:50 r_sijrier Exp $
+$Id: InputEngine.cpp,v 1.22 2007/01/19 12:43:43 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -1253,6 +1253,67 @@ void EventCatcher::quit_second_chance()
 		PMESG3("No second fact (waited %d ms) ... Forcing a null second fact",ie().doubleFactWaitTime);
 		ie().push_fact(0,0); // no second press performed, so I am adding a pair of Zeros as second press and keep going...
 	}
+}
+
+
+void IEAction::set
+	(	int pType,
+		int pFact1_k1,
+		int pFact1_k2,
+		int pFact2_k1,
+		int pFact2_k2,
+		bool newUseX,
+		bool newUseY,
+		const QString& slot,
+		const QString& key1, 
+		const QString& key2, 
+		const QString& key3, 
+		const QString& key4, 
+		const QString& actionName, 
+		int order)
+{
+	type = pType;
+	fact1_key1 = pFact1_k1;
+	fact1_key2 = pFact1_k2;
+	fact2_key1 = pFact2_k1;
+	fact2_key2 = pFact2_k2;
+	useX = newUseX;
+	useY = newUseY;
+	isInstantaneous = false;
+	slotName = slot.toAscii().data();
+	name = actionName.toAscii().data();
+	sortOrder = order;
+	switch(type) {
+	case	FKEY:
+		keySequence = QString("< " + key1 + " >").toAscii().data();
+		break;
+	case	FKEY2:
+		keySequence = QString("< " + key1 + " " + key2 + " >").toAscii().data();
+		break;
+	case	HOLDKEY:
+		keySequence = QString("[ " + key1 + " ]").toAscii().data();
+		break;
+	case	HKEY2:
+		keySequence = QString("[ " + key1 +  " " + key2 + " ]").toAscii().data();
+		break;
+	case	D_FKEY:
+		keySequence = QString("<< " + key1 + " >>").toAscii().data();
+		break;
+	case	D_FKEY2:
+		keySequence = QString("<< " + key1 + " " + key2 + " >>").toAscii().data();
+		break;
+	case	S_FKEY_FKEY:
+		keySequence = QString("> " + key1 + " > " + key2).toAscii().data();
+		break;
+	default	:
+		keySequence = "Unknown Key Sequence";
+	}
+}
+
+
+void IEAction::set_instantaneous(bool status)
+{
+	isInstantaneous = status;
 }
 
 
