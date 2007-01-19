@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: LV2Plugin.h,v 1.2 2006/07/31 13:59:20 r_sijrier Exp $
+$Id: LV2Plugin.h,v 1.3 2007/01/19 12:15:27 r_sijrier Exp $
 */
 
 
@@ -70,6 +70,34 @@ private:
 
 	int create_instance();
 };
+
+
+class LV2ControlPort : public PluginPort
+{
+	Q_OBJECT
+
+public:
+	LV2ControlPort(LV2Plugin* plugin, int index);
+	LV2ControlPort(LV2Plugin* plugin, const QDomNode node);
+	~LV2ControlPort(){};
+
+	float get_control_value() {return m_controlValue; }
+	float get_min_control_value();
+	float get_max_control_value();
+	QDomNode get_state(QDomDocument doc);
+
+	QString get_description();
+
+private:
+	LV2Plugin*		m_plugin;
+	float			m_controlValue;
+
+	int set_state( const QDomNode & node );
+
+public slots:
+	void set_control_value(float value);
+
+}; 
 
 
 #endif
