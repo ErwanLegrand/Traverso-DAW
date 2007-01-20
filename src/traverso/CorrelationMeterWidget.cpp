@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: CorrelationMeterWidget.cpp,v 1.6 2007/01/19 13:13:25 n_doebelin Exp $
+    $Id: CorrelationMeterWidget.cpp,v 1.7 2007/01/20 08:09:37 n_doebelin Exp $
 */
 
 #include <libtraverso.h>
@@ -95,11 +95,10 @@ CorrelationMeterItem::CorrelationMeterItem(CorrelationMeterWidget* widget)
 	bgColor = cm().get("METER_BACKGROUND");
 	hgColor = cm().get("METER_GRID");
 	dtColor = cm().get("DARK_TEXT");
-	gcColor = cm().get("METER_FOREGROUND");
 
-	gradPhase.setColorAt(0.0,  bgColor);
-	gradPhase.setColorAt(0.5,  gcColor);
-	gradPhase.setColorAt(1.0,  bgColor);
+	gradPhase.setColorAt(0.0,  cm().get("METER_FOREGROUND_LIGHT"));
+	gradPhase.setColorAt(0.5,  cm().get("METER_FOREGROUND"));
+	gradPhase.setColorAt(1.0,  cm().get("METER_FOREGROUND_LIGHT"));
 
 	load_configuration();
 
@@ -239,6 +238,7 @@ Command* CorrelationMeterItem::set_mode()
 		case 240 : range = 360; break;
 		case 360 : range = 180; break;
 	}
+	update();
 	return 0;
 }
 
