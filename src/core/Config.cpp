@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Config.cpp,v 1.7 2007/01/15 23:51:47 r_sijrier Exp $
+$Id: Config.cpp,v 1.8 2007/01/20 18:46:25 r_sijrier Exp $
 */
 
 #include "Config.h"
@@ -41,6 +41,11 @@ Config& config()
 {
 	static Config conf;
 	return conf;
+}
+
+Config::~ Config( )
+{
+	save();
 }
 
 void Config::load_configuration()
@@ -157,5 +162,6 @@ void Config::set_property( const QString & type, const QString & property, QVari
 	printf("type, property, value: %s, %s, %d\n", type.toAscii().data(), property.toAscii().data(), newValue.toInt());
 	m_configs.insert(type + "/" + property, newValue);
 }
+
 
 //eof
