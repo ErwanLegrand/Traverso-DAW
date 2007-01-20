@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.25 2007/01/20 18:47:03 r_sijrier Exp $
+$Id: Interface.cpp,v 1.26 2007/01/20 19:22:02 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -302,11 +302,19 @@ void Interface::create_menus( )
 
 	QAction* svAction = viewMenu->addAction(tr("Song View"));
 	connect(svAction, SIGNAL(triggered()), this, SLOT(show_song_widget()));
+	
 	viewMenu->addSeparator();
+	
 	viewMenu->addAction(historyDW->toggleViewAction());
 	viewMenu->addAction(busMonitorDW->toggleViewAction());
 	viewMenu->addAction(AudioSourcesDW->toggleViewAction());
 	
+	viewMenu->addSeparator();
+	
+	viewMenu->addAction(correlationMeterDW->toggleViewAction());
+	viewMenu->addAction(spectralMeterDW->toggleViewAction());
+	
+
 	helpMenu = new QMenu("Help", this);
 	helpMenu->addAction(handBookAction);
 	helpMenu->addAction(aboutTraversoAction);
