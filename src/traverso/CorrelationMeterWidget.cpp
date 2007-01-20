@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: CorrelationMeterWidget.cpp,v 1.7 2007/01/20 08:09:37 n_doebelin Exp $
+    $Id: CorrelationMeterWidget.cpp,v 1.8 2007/01/20 18:28:06 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -114,7 +114,6 @@ CorrelationMeterItem::CorrelationMeterItem(CorrelationMeterWidget* widget)
 
 CorrelationMeterItem::~CorrelationMeterItem()
 {
-	save_configuration();
 }
 
 void CorrelationMeterItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -245,7 +244,6 @@ Command* CorrelationMeterItem::set_mode()
 void CorrelationMeterItem::save_configuration()
 {
 	config().set_property("CorrelationMeter", "Range", range);
-	config().save();
 }
 
 void CorrelationMeterItem::load_configuration()

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: QuickDriverConfigWidget.cpp,v 1.4 2007/01/15 23:51:47 r_sijrier Exp $
+$Id: QuickDriverConfigWidget.cpp,v 1.5 2007/01/20 18:27:08 r_sijrier Exp $
 */
 
 #include "QuickDriverConfigWidget.h"
@@ -71,7 +71,6 @@ void QuickDriverConfigWidget::on_saveButton_clicked( )
 	config().set_property("Hardware", "samplerate", rateComboBox->currentText().toInt());
 	config().set_property("Hardware", "bufferSize", periodBufferSizesList.at(latencyComboBox->currentIndex()));
 	config().set_property("Hardware", "drivertype", driverComboBox->currentText());
-	config().save();
 }
 
 void QuickDriverConfigWidget::driver_combobox_index_changed( QString )
