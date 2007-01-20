@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.21 2007/01/19 13:13:25 n_doebelin Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.22 2007/01/20 17:30:15 r_sijrier Exp $
 */
 
 #include "SpectralMeterWidget.h"
@@ -652,7 +652,6 @@ void SpectralMeterConfigWidget::save_configuration( )
 	
 	config().set_property("SpectralMeter", "FFTSize", comboBoxFftSize->currentText().toInt() );
 	config().set_property("SpectralMeter", "WindowingFunction", comboBoxWindowing->currentIndex() );
-	config().save();
 }
 
 void SpectralMeterConfigWidget::load_configuration( )

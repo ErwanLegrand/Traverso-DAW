@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: GlobalPropertiesWidget.cpp,v 1.14 2007/01/15 23:51:47 r_sijrier Exp $
+$Id: GlobalPropertiesWidget.cpp,v 1.15 2007/01/20 17:29:53 r_sijrier Exp $
 */
 
 #include "GlobalPropertiesWidget.h"
@@ -81,7 +81,6 @@ void GlobalPropertiesWidget::save_properties( )
 	}
 	config().set_property("Hardware", "playback", playback);
 	config().set_property("Hardware", "capture", capture);
-	config().save();
 }
 
 
