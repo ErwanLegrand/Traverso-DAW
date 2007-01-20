@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: CorrelationMeterWidget.cpp,v 1.8 2007/01/20 18:28:06 r_sijrier Exp $
+    $Id: CorrelationMeterWidget.cpp,v 1.9 2007/01/20 18:36:31 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -238,6 +238,7 @@ Command* CorrelationMeterItem::set_mode()
 		case 360 : range = 180; break;
 	}
 	update();
+	save_configuration();
 	return 0;
 }
 
