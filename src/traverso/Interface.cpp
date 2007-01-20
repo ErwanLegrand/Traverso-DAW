@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.24 2007/01/18 21:17:57 r_sijrier Exp $
+$Id: Interface.cpp,v 1.25 2007/01/20 18:47:03 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -32,6 +32,7 @@ $Id: Interface.cpp,v 1.24 2007/01/18 21:17:57 r_sijrier Exp $
 #include "ProjectManager.h"
 #include "InfoBox.h"
 #include "AudioClipView.h"
+#include <Config.h>
 //#include "SongView.h"
 #include "TrackView.h"
 #include "ViewPort.h"
@@ -130,12 +131,9 @@ Interface::Interface()
 	
 	/** Read in the Interface settings and apply them
 	 */
-	QSettings settings;
-	settings.beginGroup("Interface");
-	resize(settings.value("size", QSize(400, 400)).toSize());
-	move(settings.value("pos", QPoint(200, 200)).toPoint());
-	restoreState(settings.value("windowstate", "").toByteArray());
-	settings.endGroup();
+	resize(config().get_property("Interface", "size", QSize(400, 400)).toSize());
+	move(config().get_property("Interface", "pos", QPoint(200, 200)).toPoint());
+	restoreState(config().get_property("Interface", "windowstate", "").toByteArray());
 
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
@@ -146,13 +144,10 @@ Interface::Interface()
 Interface::~Interface()
 {
 	PENTERDES;
-	QSettings settings;
-	settings.beginGroup("Interface");
-	settings.setValue("size", size());
-	settings.setValue("fullScreen", isFullScreen());
-	settings.setValue("pos", pos());
-	settings.setValue("windowstate", saveState());
-	settings.endGroup();
+	config().set_property("Interface", "size", size());
+	config().set_property("Interface", "fullScreen", isFullScreen());
+	config().set_property("Interface", "pos", pos());
+	config().set_property("Interface", "windowstate", saveState());
 	
 	delete helpWindow;
 }
