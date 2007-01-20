@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.cpp,v 1.4 2006/12/04 19:24:54 r_sijrier Exp $
+$Id: CurveView.cpp,v 1.5 2007/01/20 20:17:18 r_sijrier Exp $
 */
 
 #include "CurveView.h"
@@ -40,7 +40,7 @@ public:
         int do_action();
         int undo_action();
 	int finish_hold();
-        int begin_hold(int useX = 0, int useY = 0);
+        int begin_hold();
         int jog();
 
 private :
@@ -67,10 +67,8 @@ int DragNode::finish_hold()
 	return 1;
 }
 
-int DragNode::begin_hold(int useX, int useY)
+int DragNode::begin_hold()
 {
-	Q_UNUSED(useX);
-	Q_UNUSED(useY);
 	m_origPos.setX(m_node->get_when());
 	m_origPos.setY(m_node->get_value());
 	return 1;
