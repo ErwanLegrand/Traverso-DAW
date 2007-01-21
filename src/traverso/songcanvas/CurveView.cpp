@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.cpp,v 1.6 2007/01/21 14:19:37 r_sijrier Exp $
+$Id: CurveView.cpp,v 1.7 2007/01/21 15:30:34 r_sijrier Exp $
 */
 
 #include "CurveView.h"
@@ -351,8 +351,8 @@ Command* CurveView::remove_item()
 Command* CurveView::drag()
 {
 	PENTER;
-	QPoint pos(cpointer().on_first_input_event_scene_x(), cpointer().on_first_input_event_scene_y());
-	update_softselected_node(pos);
+/*	QPoint pos(cpointer().on_first_input_event_scene_x(), cpointer().on_first_input_event_scene_y());
+	update_softselected_node(pos);*/
 	
 	if (m_blinkingNode) {
 		return new DragNode(m_blinkingNode->get_curve_node(), this, m_sv->scalefactor, tr("Drag Node"));
