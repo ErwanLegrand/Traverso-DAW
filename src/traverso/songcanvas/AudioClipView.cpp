@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.12 2007/01/16 20:21:08 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.13 2007/01/21 14:20:15 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -35,6 +35,7 @@ $Id: AudioClipView.cpp,v 1.12 2007/01/16 20:21:08 r_sijrier Exp $
 #include "ColorManager.h"
 #include <Config.h>
 #include <FadeCurve.h>
+#include <Curve.h>
 
 #include <MoveClip.h>
 #include <MoveEdge.h>
@@ -257,7 +258,23 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		float gain = m_clip->get_gain() * m_clip->get_norm_factor();
 		float scaleFactor = ( ((float)(height - channels * 2)) / (Peak::MAX_DB_VALUE * 2)) * gain;
 		centerY = height/2 + height*chan + CLIPINFO_HEIGHT;
-
+		
+		if (!microView) {
+			Curve* curve = m_clip->get_gain_envelope();
+			float value[2];
+			int count = 0, peakbufferpos = 0;
+			do {
+				curve->get_vector((xstart+count)*m_sv->scalefactor, (xstart+count)*m_sv->scalefactor + 1, value, 2);
+				count ++;
+			
+				peakBuffer[peakbufferpos] = peakBuffer[peakbufferpos] * value[1] * scaleFactor;
+				peakbufferpos++;
+				peakBuffer[peakbufferpos] = peakBuffer[peakbufferpos] * value[1] * scaleFactor;
+				peakbufferpos++;
+			
+			} while (count < pixelcount);
+		}
+		
 		if (microView) {
 		
 			short* mbuffer = (short*) peakBuffer;
@@ -286,9 +303,10 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				p->setPen(cm().get("CLIP_PEAK_MACROVIEW").light(230));
 			}
 
+
 			for (int x = xstart; x < (pixelcount+xstart); x++) {
-                                posY = (int) (centerY + (scaleFactor * peakBuffer[bufferPos]));
-                                negY = (int) (centerY - (scaleFactor * peakBuffer[bufferPos + 1]));
+                                posY = (int) (centerY + peakBuffer[bufferPos]);
+                                negY = (int) (centerY - peakBuffer[bufferPos + 1]);
 				p->drawLine(x, negY, x, posY);
 				bufferPos += 2;
 			}
