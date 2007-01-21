@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SpectralMeterWidget.h,v 1.13 2007/01/19 13:13:25 n_doebelin Exp $
+    $Id: SpectralMeterWidget.h,v 1.14 2007/01/21 14:37:31 n_doebelin Exp $
 */
 
 #ifndef SPECTRALMETERWIDGET_H
@@ -139,6 +139,7 @@ private:
 	float		freq2xpos(float);
 	void		update_background();
 	float		freq2db(float, float);
+	QString		get_xmgr_string();
 
 private slots:
 	void		set_project( Project* );

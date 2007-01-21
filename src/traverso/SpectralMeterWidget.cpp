@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.22 2007/01/20 17:30:15 r_sijrier Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.23 2007/01/21 14:37:31 n_doebelin Exp $
 */
 
 #include "SpectralMeterWidget.h"
@@ -35,7 +35,6 @@
 #include <ColorManager.h>
 
 #include <QtGui>
-// #include <QRectF>
 
 #include <math.h>
 #include <limits.h>
@@ -557,7 +556,7 @@ Command* SpectralMeterItem::screen_capture( )
 Command* SpectralMeterItem::show_export_widget()
 {
 	// check if all requirements are met
-	if ((!show_average) || (!m_avg_db.size()) || (!m_project)) {
+	if ((!show_average) || (!m_project)) {
 		printf("No average data available.");
 		return 0;
 	}
@@ -566,6 +565,23 @@ Command* SpectralMeterItem::show_export_widget()
 	int s = qMin(m_map_idx2freq.size(), m_avg_db.size());
 	if (!s) {
 		printf("No average data available.");
+		return 0;
+	}
+
+	QStringList oFormats;
+
+	QString formatA = "plain text";
+	QString formatB = "XMGrace";
+
+	oFormats.append(formatA);
+	oFormats.append(formatB);
+
+	bool ok;
+	QString format = QInputDialog::getItem( 0, tr("Select output format"), tr("Output format:"), 
+						oFormats, 0, false, &ok );
+
+	if (!ok) {
+		printf("Aborted.");
 		return 0;
 	}
 
@@ -588,13 +604,428 @@ Command* SpectralMeterItem::show_export_widget()
 	QString separator = " ";
 	QString str;
 
-	// export the data
-	// bin 0 contains no useful data (freq is 0 Hz anyway)
-	for (int i = 0; i < s; ++i) {
-		out << str.sprintf("%.6f %.6f\n", m_map_idx2freq.at(i), m_avg_db.at(i));
+	if (format == formatA) {
+		// export the data in text format
+		for (int i = 0; i < s; ++i) {
+			out << str.sprintf("%.6f %.6f\n", m_map_idx2freq.at(i), m_avg_db.at(i));
+		}
+
+		return 0;
+	}
+
+	if (format == formatB) {
+		// export the data in XMGrace format
+		out << get_xmgr_string();
+		return 0;
 	}
 
 	return 0;
+}
+
+QString SpectralMeterItem::get_xmgr_string()
+{
+	QString s = "# Grace project file\n";
+	s += "#\n";
+	s += "@version 50120\n";
+	s += "@page size 842, 594\n";
+	s += "@page scroll 5\%\n";
+	s += "@page inout 5\%\n";
+	s += "@link page off\n";
+	s += "@map font 39 to \"Courier\", \"Courier\"\n";
+	s += "@map font 40 to \"Courier-Bold\", \"Courier-Bold\"\n";
+	s += "@map font 11 to \"Courier-BoldOblique\", \"Courier-BoldOblique\"\n";
+	s += "@map font 9 to \"Courier-Oblique\", \"Courier-Oblique\"\n";
+	s += "@map font 4 to \"Helvetica\", \"Helvetica\"\n";
+	s += "@map font 6 to \"Helvetica-Bold\", \"Helvetica-Bold\"\n";
+	s += "@map font 7 to \"Helvetica-BoldOblique\", \"Helvetica-BoldOblique\"\n";
+	s += "@map font 15 to \"Helvetica-Narrow\", \"Helvetica-Narrow\"\n";
+	s += "@map font 16 to \"Helvetica-Narrow-Bold\", \"Helvetica-Narrow-Bold\"\n";
+	s += "@map font 17 to \"Helvetica-Narrow-BoldOblique\", \"Helvetica-Narrow-BoldOblique\"\n";
+	s += "@map font 18 to \"Helvetica-Narrow-Oblique\", \"Helvetica-Narrow-Oblique\"\n";
+	s += "@map font 5 to \"Helvetica-Oblique\", \"Helvetica-Oblique\"\n";
+	s += "@map font 20 to \"NewCenturySchlbk-Bold\", \"NewCenturySchlbk-Bold\"\n";
+	s += "@map font 21 to \"NewCenturySchlbk-BoldItalic\", \"NewCenturySchlbk-BoldItalic\"\n";
+	s += "@map font 22 to \"NewCenturySchlbk-Italic\", \"NewCenturySchlbk-Italic\"\n";
+	s += "@map font 23 to \"NewCenturySchlbk-Roman\", \"NewCenturySchlbk-Roman\"\n";
+	s += "@map font 24 to \"Palatino-Bold\", \"Palatino-Bold\"\n";
+	s += "@map font 25 to \"Palatino-BoldItalic\", \"Palatino-BoldItalic\"\n";
+	s += "@map font 26 to \"Palatino-Italic\", \"Palatino-Italic\"\n";
+	s += "@map font 27 to \"Palatino-Roman\", \"Palatino-Roman\"\n";
+	s += "@map font 12 to \"Symbol\", \"Symbol\"\n";
+	s += "@map font 2 to \"Times-Bold\", \"Times-Bold\"\n";
+	s += "@map font 3 to \"Times-BoldItalic\", \"Times-BoldItalic\"\n";
+	s += "@map font 1 to \"Times-Italic\", \"Times-Italic\"\n";
+	s += "@map font 0 to \"Times-Roman\", \"Times-Roman\"\n";
+	s += "@map font 33 to \"ZapfChancery-MediumItalic\", \"ZapfChancery-MediumItalic\"\n";
+	s += "@map font 13 to \"ZapfDingbats\", \"ZapfDingbats\"\n";
+	s += "@map font 35 to \"CharterBT-Bold\", \"CharterBT-Bold\"\n";
+	s += "@map font 36 to \"CharterBT-BoldItalic\", \"CharterBT-BoldItalic\"\n";
+	s += "@map font 37 to \"CharterBT-Italic\", \"CharterBT-Italic\"\n";
+	s += "@map font 38 to \"CharterBT-Roman\", \"CharterBT-Roman\"\n";
+	s += "@map font 41 to \"Courier-BoldItalic\", \"Courier-BoldItalic\"\n";
+	s += "@map font 42 to \"Courier-Italic\", \"Courier-Italic\"\n";
+	s += "@map font 43 to \"Hershey-Gothic-English\", \"Hershey-Gothic-English\"\n";
+	s += "@map font 44 to \"Hershey-Gothic-German\", \"Hershey-Gothic-German\"\n";
+	s += "@map font 45 to \"Hershey-Gothic-Italian\", \"Hershey-Gothic-Italian\"\n";
+	s += "@map font 46 to \"Hershey-Plain-Duplex\", \"Hershey-Plain-Duplex\"\n";
+	s += "@map font 47 to \"Hershey-Plain-Duplex-Italic\", \"Hershey-Plain-Duplex-Italic\"\n";
+	s += "@map font 48 to \"Hershey-Plain-Triplex\", \"Hershey-Plain-Triplex\"\n";
+	s += "@map font 49 to \"Hershey-Plain-Triplex-Italic\", \"Hershey-Plain-Triplex-Italic\"\n";
+	s += "@map font 50 to \"Hershey-Script-Complex\", \"Hershey-Script-Complex\"\n";
+	s += "@map font 51 to \"Hershey-Script-Simplex\", \"Hershey-Script-Simplex\"\n";
+	s += "@map font 52 to \"LuxiMono\", \"LuxiMono\"\n";
+	s += "@map font 53 to \"LuxiMono-Bold\", \"LuxiMono-Bold\"\n";
+	s += "@map font 54 to \"LuxiMono-BoldOblique\", \"LuxiMono-BoldOblique\"\n";
+	s += "@map font 55 to \"LuxiMono-Oblique\", \"LuxiMono-Oblique\"\n";
+	s += "@map font 56 to \"LuxiSans\", \"LuxiSans\"\n";
+	s += "@map font 57 to \"LuxiSans-Bold\", \"LuxiSans-Bold\"\n";
+	s += "@map font 58 to \"LuxiSans-BoldOblique\", \"LuxiSans-BoldOblique\"\n";
+	s += "@map font 59 to \"LuxiSans-Oblique\", \"LuxiSans-Oblique\"\n";
+	s += "@map font 60 to \"LuxiSerif\", \"LuxiSerif\"\n";
+	s += "@map font 61 to \"LuxiSerif-Bold\", \"LuxiSerif-Bold\"\n";
+	s += "@map font 62 to \"LuxiSerif-BoldOblique\", \"LuxiSerif-BoldOblique\"\n";
+	s += "@map font 63 to \"LuxiSerif-Oblique\", \"LuxiSerif-Oblique\"\n";
+	s += "@map font 64 to \"Utopia-Bold\", \"Utopia-Bold\"\n";
+	s += "@map font 65 to \"Utopia-BoldItalic\", \"Utopia-BoldItalic\"\n";
+	s += "@map font 66 to \"Utopia-Italic\", \"Utopia-Italic\"\n";
+	s += "@map font 67 to \"Utopia-Regular\", \"Utopia-Regular\"\n";
+	s += "@map color 0 to (255, 255, 255), \"white\"\n";
+	s += "@map color 1 to (0, 0, 0), \"black\"\n";
+	s += "@map color 2 to (255, 0, 0), \"red\"\n";
+	s += "@map color 3 to (0, 255, 0), \"green\"\n";
+	s += "@map color 4 to (0, 0, 255), \"blue\"\n";
+	s += "@map color 5 to (255, 255, 0), \"yellow\"\n";
+	s += "@map color 6 to (188, 143, 143), \"brown\"\n";
+	s += "@map color 7 to (220, 220, 220), \"grey\"\n";
+	s += "@map color 8 to (148, 0, 211), \"violet\"\n";
+	s += "@map color 9 to (0, 255, 255), \"cyan\"\n";
+	s += "@map color 10 to (255, 0, 255), \"magenta\"\n";
+	s += "@map color 11 to (255, 165, 0), \"orange\"\n";
+	s += "@map color 12 to (114, 33, 188), \"indigo\"\n";
+	s += "@map color 13 to (103, 7, 72), \"maroon\"\n";
+	s += "@map color 14 to (64, 224, 208), \"turquoise\"\n";
+	s += "@map color 15 to (0, 139, 0), \"green4\"\n";
+	s += "@reference date 0\n";
+	s += "@date wrap off\n";
+	s += "@date wrap year 1950\n";
+	s += "@default linewidth 1.0\n";
+	s += "@default linestyle 1\n";
+	s += "@default color 1\n";
+	s += "@default pattern 1\n";
+	s += "@default font 0\n";
+	s += "@default char size 1.000000\n";
+	s += "@default symbol size 1.000000\n";
+	s += "@default sformat \"\%.8g\"\n";
+	s += "@background color 0\n";
+	s += "@page background fill on\n";
+	s += "@timestamp off\n";
+	s += "@timestamp 0.03, 0.03\n";
+	s += "@timestamp color 1\n";
+	s += "@timestamp rot 0\n";
+	s += "@timestamp font 0\n";
+	s += "@timestamp char size 1.000000\n";
+	s += "@timestamp def \"Sun Jan 21 12:56:47 2007\"\n";
+	s += "@r0 off\n";
+	s += "@link r0 to g0\n";
+	s += "@r0 type above\n";
+	s += "@r0 linestyle 1\n";
+	s += "@r0 linewidth 1.0\n";
+	s += "@r0 color 1\n";
+	s += "@r0 line 0, 0, 0, 0\n";
+	s += "@r1 off\n";
+	s += "@link r1 to g0\n";
+	s += "@r1 type above\n";
+	s += "@r1 linestyle 1\n";
+	s += "@r1 linewidth 1.0\n";
+	s += "@r1 color 1\n";
+	s += "@r1 line 0, 0, 0, 0\n";
+	s += "@r2 off\n";
+	s += "@link r2 to g0\n";
+	s += "@r2 type above\n";
+	s += "@r2 linestyle 1\n";
+	s += "@r2 linewidth 1.0\n";
+	s += "@r2 color 1\n";
+	s += "@r2 line 0, 0, 0, 0\n";
+	s += "@r3 off\n";
+	s += "@link r3 to g0\n";
+	s += "@r3 type above\n";
+	s += "@r3 linestyle 1\n";
+	s += "@r3 linewidth 1.0\n";
+	s += "@r3 color 1\n";
+	s += "@r3 line 0, 0, 0, 0\n";
+	s += "@r4 off\n";
+	s += "@link r4 to g0\n";
+	s += "@r4 type above\n";
+	s += "@r4 linestyle 1\n";
+	s += "@r4 linewidth 1.0\n";
+	s += "@r4 color 1\n";
+	s += "@r4 line 0, 0, 0, 0\n";
+	s += "@g0 on\n";
+	s += "@g0 hidden false\n";
+	s += "@g0 type XY\n";
+	s += "@g0 stacked false\n";
+	s += "@g0 bar hgap 0.000000\n";
+	s += "@g0 fixedpoint off\n";
+	s += "@g0 fixedpoint type 0\n";
+	s += "@g0 fixedpoint xy 0.000000, 0.000000\n";
+	s += "@g0 fixedpoint format general general\n";
+	s += "@g0 fixedpoint prec 6, 6\n";
+	s += "@with g0\n";
+	s += "@    world 20, -90, 20000, 0\n";
+	s += "@    stack world 0, 0, 0, 0\n";
+	s += "@    znorm 1\n";
+	s += "@    view 0.130000, 0.120000, 1.300000, 0.920000\n";
+	s += "@    title \"\"\n";
+	s += "@    title font 0\n";
+	s += "@    title size 1.500000\n";
+	s += "@    title color 1\n";
+	s += "@    subtitle \"\"\n";
+	s += "@    subtitle font 0\n";
+	s += "@    subtitle size 1.000000\n";
+	s += "@    subtitle color 1\n";
+	s += "@    xaxes scale Logarithmic\n";
+	s += "@    yaxes scale Normal\n";
+	s += "@    xaxes invert off\n";
+	s += "@    yaxes invert off\n";
+	s += "@    xaxis  on\n";
+	s += "@    xaxis  type zero false\n";
+	s += "@    xaxis  offset 0.000000 , 0.000000\n";
+	s += "@    xaxis  bar on\n";
+	s += "@    xaxis  bar color 1\n";
+	s += "@    xaxis  bar linestyle 1\n";
+	s += "@    xaxis  bar linewidth 1.0\n";
+	s += "@    xaxis  label \"Frequency (Hz)\"\n";
+	s += "@    xaxis  label layout para\n";
+	s += "@    xaxis  label place auto\n";
+	s += "@    xaxis  label char size 1.000000\n";
+	s += "@    xaxis  label font 0\n";
+	s += "@    xaxis  label color 1\n";
+	s += "@    xaxis  label place normal\n";
+	s += "@    xaxis  tick on\n";
+	s += "@    xaxis  tick major 10\n";
+	s += "@    xaxis  tick minor ticks 9\n";
+	s += "@    xaxis  tick default 6\n";
+	s += "@    xaxis  tick place rounded true\n";
+	s += "@    xaxis  tick in\n";
+	s += "@    xaxis  tick major size 0.500000\n";
+	s += "@    xaxis  tick major color 1\n";
+	s += "@    xaxis  tick major linewidth 1.0\n";
+	s += "@    xaxis  tick major linestyle 1\n";
+	s += "@    xaxis  tick major grid on\n";
+	s += "@    xaxis  tick minor color 1\n";
+	s += "@    xaxis  tick minor linewidth 1.0\n";
+	s += "@    xaxis  tick minor linestyle 2\n";
+	s += "@    xaxis  tick minor grid on\n";
+	s += "@    xaxis  tick minor size 0.250000\n";
+	s += "@    xaxis  ticklabel on\n";
+	s += "@    xaxis  ticklabel format general\n";
+	s += "@    xaxis  ticklabel prec 5\n";
+	s += "@    xaxis  ticklabel formula \"\"\n";
+	s += "@    xaxis  ticklabel append \"\"\n";
+	s += "@    xaxis  ticklabel prepend \"\"\n";
+	s += "@    xaxis  ticklabel angle 0\n";
+	s += "@    xaxis  ticklabel skip 0\n";
+	s += "@    xaxis  ticklabel stagger 0\n";
+	s += "@    xaxis  ticklabel place normal\n";
+	s += "@    xaxis  ticklabel offset auto\n";
+	s += "@    xaxis  ticklabel offset 0.000000 , 0.010000\n";
+	s += "@    xaxis  ticklabel start type auto\n";
+	s += "@    xaxis  ticklabel start 0.000000\n";
+	s += "@    xaxis  ticklabel stop type auto\n";
+	s += "@    xaxis  ticklabel stop 0.000000\n";
+	s += "@    xaxis  ticklabel char size 0.750000\n";
+	s += "@    xaxis  ticklabel font 0\n";
+	s += "@    xaxis  ticklabel color 1\n";
+	s += "@    xaxis  tick place both\n";
+	s += "@    xaxis  tick spec type both\n";
+	s += "@    xaxis  tick spec 37\n";
+	s += "@    xaxis  tick major 0, 10\n";
+	s += "@    xaxis  ticklabel 0, \"10\"\n";
+	s += "@    xaxis  tick major 1, 20\n";
+	s += "@    xaxis  ticklabel 1, \"20\"\n";
+	s += "@    xaxis  tick minor 2, 30\n";
+	s += "@    xaxis  tick minor 3, 40\n";
+	s += "@    xaxis  tick major 4, 50\n";
+	s += "@    xaxis  ticklabel 4, \"50\"\n";
+	s += "@    xaxis  tick minor 5, 60\n";
+	s += "@    xaxis  tick minor 6, 70\n";
+	s += "@    xaxis  tick minor 7, 80\n";
+	s += "@    xaxis  tick minor 8, 90\n";
+	s += "@    xaxis  tick major 9, 100\n";
+	s += "@    xaxis  ticklabel 9, \"100\"\n";
+	s += "@    xaxis  tick major 10, 200\n";
+	s += "@    xaxis  ticklabel 10, \"200\"\n";
+	s += "@    xaxis  tick minor 11, 300\n";
+	s += "@    xaxis  tick minor 12, 400\n";
+	s += "@    xaxis  tick major 13, 500\n";
+	s += "@    xaxis  ticklabel 13, \"500\"\n";
+	s += "@    xaxis  tick minor 14, 600\n";
+	s += "@    xaxis  tick minor 15, 700\n";
+	s += "@    xaxis  tick minor 16, 800\n";
+	s += "@    xaxis  tick minor 17, 900\n";
+	s += "@    xaxis  tick major 18, 1000\n";
+	s += "@    xaxis  ticklabel 18, \"1000\"\n";
+	s += "@    xaxis  tick major 19, 2000\n";
+	s += "@    xaxis  ticklabel 19, \"2000\"\n";
+	s += "@    xaxis  tick minor 20, 3000\n";
+	s += "@    xaxis  tick minor 21, 4000\n";
+	s += "@    xaxis  tick major 22, 5000\n";
+	s += "@    xaxis  ticklabel 22, \"5000\"\n";
+	s += "@    xaxis  tick minor 23, 6000\n";
+	s += "@    xaxis  tick minor 24, 7000\n";
+	s += "@    xaxis  tick minor 25, 8000\n";
+	s += "@    xaxis  tick minor 26, 9000\n";
+	s += "@    xaxis  tick major 27, 10000\n";
+	s += "@    xaxis  ticklabel 27, \"10000\"\n";
+	s += "@    xaxis  tick major 28, 20000\n";
+	s += "@    xaxis  ticklabel 28, \"20000\"\n";
+	s += "@    xaxis  tick minor 29, 30000\n";
+	s += "@    xaxis  tick minor 30, 40000\n";
+	s += "@    xaxis  tick minor 31, 50000\n";
+	s += "@    xaxis  tick minor 32, 60000\n";
+	s += "@    xaxis  tick minor 33, 70000\n";
+	s += "@    xaxis  tick minor 34, 80000\n";
+	s += "@    xaxis  tick minor 35, 90000\n";
+	s += "@    xaxis  tick minor 36, 100000\n";
+	s += "@    xaxis  ticklabel 36, \"1e+05\"\n";
+	s += "@    yaxis  on\n";
+	s += "@    yaxis  type zero false\n";
+	s += "@    yaxis  offset 0.000000 , 0.000000\n";
+	s += "@    yaxis  bar on\n";
+	s += "@    yaxis  bar color 1\n";
+	s += "@    yaxis  bar linestyle 1\n";
+	s += "@    yaxis  bar linewidth 1.0\n";
+	s += "@    yaxis  label \"Level (dB)\"\n";
+	s += "@    yaxis  label layout para\n";
+	s += "@    yaxis  label place auto\n";
+	s += "@    yaxis  label char size 1.000000\n";
+	s += "@    yaxis  label font 0\n";
+	s += "@    yaxis  label color 1\n";
+	s += "@    yaxis  label place normal\n";
+	s += "@    yaxis  tick on\n";
+	s += "@    yaxis  tick major 10\n";
+	s += "@    yaxis  tick minor ticks 1\n";
+	s += "@    yaxis  tick default 6\n";
+	s += "@    yaxis  tick place rounded true\n";
+	s += "@    yaxis  tick in\n";
+	s += "@    yaxis  tick major size 0.500000\n";
+	s += "@    yaxis  tick major color 1\n";
+	s += "@    yaxis  tick major linewidth 1.0\n";
+	s += "@    yaxis  tick major linestyle 1\n";
+	s += "@    yaxis  tick major grid on\n";
+	s += "@    yaxis  tick minor color 1\n";
+	s += "@    yaxis  tick minor linewidth 1.0\n";
+	s += "@    yaxis  tick minor linestyle 2\n";
+	s += "@    yaxis  tick minor grid on\n";
+	s += "@    yaxis  tick minor size 0.250000\n";
+	s += "@    yaxis  ticklabel on\n";
+	s += "@    yaxis  ticklabel format general\n";
+	s += "@    yaxis  ticklabel prec 5\n";
+	s += "@    yaxis  ticklabel formula \"\"\n";
+	s += "@    yaxis  ticklabel append \"\"\n";
+	s += "@    yaxis  ticklabel prepend \"\"\n";
+	s += "@    yaxis  ticklabel angle 0\n";
+	s += "@    yaxis  ticklabel skip 0\n";
+	s += "@    yaxis  ticklabel stagger 0\n";
+	s += "@    yaxis  ticklabel place normal\n";
+	s += "@    yaxis  ticklabel offset auto\n";
+	s += "@    yaxis  ticklabel offset 0.000000 , 0.010000\n";
+	s += "@    yaxis  ticklabel start type auto\n";
+	s += "@    yaxis  ticklabel start 0.000000\n";
+	s += "@    yaxis  ticklabel stop type auto\n";
+	s += "@    yaxis  ticklabel stop 0.000000\n";
+	s += "@    yaxis  ticklabel char size 0.750000\n";
+	s += "@    yaxis  ticklabel font 0\n";
+	s += "@    yaxis  ticklabel color 1\n";
+	s += "@    yaxis  tick place both\n";
+	s += "@    yaxis  tick spec type none\n";
+	s += "@    altxaxis  off\n";
+	s += "@    altyaxis  off\n";
+	s += "@    legend on\n";
+	s += "@    legend loctype view\n";
+	s += "@    legend 0.84941423, 0.8\n";
+	s += "@    legend box color 1\n";
+	s += "@    legend box pattern 1\n";
+	s += "@    legend box linewidth 1.0\n";
+	s += "@    legend box linestyle 1\n";
+	s += "@    legend box fill color 0\n";
+	s += "@    legend box fill pattern 1\n";
+	s += "@    legend font 0\n";
+	s += "@    legend char size 1.000000\n";
+	s += "@    legend color 1\n";
+	s += "@    legend length 4\n";
+	s += "@    legend vgap 1\n";
+	s += "@    legend hgap 1\n";
+	s += "@    legend invert false\n";
+	s += "@    frame type 0\n";
+	s += "@    frame linestyle 1\n";
+	s += "@    frame linewidth 1.0\n";
+	s += "@    frame color 1\n";
+	s += "@    frame pattern 1\n";
+	s += "@    frame background color 0\n";
+	s += "@    frame background pattern 0\n";
+	s += "@    s0 hidden false\n";
+	s += "@    s0 type xy\n";
+	s += "@    s0 symbol 9\n";
+	s += "@    s0 symbol size 0.500000\n";
+	s += "@    s0 symbol color 2\n";
+	s += "@    s0 symbol pattern 1\n";
+	s += "@    s0 symbol fill color 2\n";
+	s += "@    s0 symbol fill pattern 0\n";
+	s += "@    s0 symbol linewidth 1.0\n";
+	s += "@    s0 symbol linestyle 1\n";
+	s += "@    s0 symbol char 65\n";
+	s += "@    s0 symbol char font 0\n";
+	s += "@    s0 symbol skip 0\n";
+	s += "@    s0 line type 1\n";
+	s += "@    s0 line linestyle 1\n";
+	s += "@    s0 line linewidth 2.0\n";
+	s += "@    s0 line color 1\n";
+	s += "@    s0 line pattern 1\n";
+	s += "@    s0 baseline type 0\n";
+	s += "@    s0 baseline off\n";
+	s += "@    s0 dropline off\n";
+	s += "@    s0 fill type 0\n";
+	s += "@    s0 fill rule 0\n";
+	s += "@    s0 fill color 1\n";
+	s += "@    s0 fill pattern 1\n";
+	s += "@    s0 avalue off\n";
+	s += "@    s0 avalue type 2\n";
+	s += "@    s0 avalue char size 1.000000\n";
+	s += "@    s0 avalue font 0\n";
+	s += "@    s0 avalue color 1\n";
+	s += "@    s0 avalue rot 0\n";
+	s += "@    s0 avalue format general\n";
+	s += "@    s0 avalue prec 3\n";
+	s += "@    s0 avalue prepend \"\"\n";
+	s += "@    s0 avalue append \"\"\n";
+	s += "@    s0 avalue offset 0.000000 , 0.000000\n";
+	s += "@    s0 errorbar off\n";
+	s += "@    s0 errorbar place both\n";
+	s += "@    s0 errorbar color 2\n";
+	s += "@    s0 errorbar pattern 1\n";
+	s += "@    s0 errorbar size 1.000000\n";
+	s += "@    s0 errorbar linewidth 1.0\n";
+	s += "@    s0 errorbar linestyle 1\n";
+	s += "@    s0 errorbar riser linewidth 1.0\n";
+	s += "@    s0 errorbar riser linestyle 1\n";
+	s += "@    s0 errorbar riser clip off\n";
+	s += "@    s0 errorbar riser clip length 0.100000\n";
+	s += "@    s0 comment \"Exported from Traverso\"\n";
+	s += "@    s0 legend  \"\"\n";
+	s += "@target G0.S0\n";
+	s += "@type xy\n";
+
+	int n = qMin(m_map_idx2freq.size(), m_avg_db.size());
+	QString str;
+
+	for (int i = 0; i < n; ++i) {
+		s += str.sprintf("%.6f %.6f\n", m_map_idx2freq.at(i), m_avg_db.at(i));
+	}
+
+	s += "&\n";
+
+	return s;
 }
 
 
