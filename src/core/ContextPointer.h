@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ContextPointer.h,v 1.9 2007/01/16 20:21:08 r_sijrier Exp $
+    $Id: ContextPointer.h,v 1.10 2007/01/21 14:20:02 r_sijrier Exp $
 */
 
 #ifndef CONTEXTPOINTER_H
@@ -59,9 +59,16 @@ public:
                 ie().jog();
         }
 	
-	inline int on_first_input_event_x() const {return m_onFirstInputEventX; };
-	inline int on_first_input_event_y() const {return m_onFirstInputEventY; };
+	inline int on_first_input_event_x() const {return m_onFirstInputEventX; }
+	inline int on_first_input_event_y() const {return m_onFirstInputEventY; }
         
+	inline int on_first_input_event_scene_x() const {
+		return (int) currentViewPort->mapToScene(m_onFirstInputEventX, m_onFirstInputEventY).x(); 
+	}
+	inline int on_first_input_event_scene_y() const {
+		return (int) currentViewPort->mapToScene(m_onFirstInputEventX, m_onFirstInputEventY).y(); 
+	}
+	
 	inline void inputengine_first_input_event( )
 	{
 		m_onFirstInputEventX = m_x;
