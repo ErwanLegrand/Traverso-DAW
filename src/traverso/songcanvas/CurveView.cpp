@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.cpp,v 1.7 2007/01/21 15:30:34 r_sijrier Exp $
+$Id: CurveView.cpp,v 1.8 2007/01/21 15:49:17 r_sijrier Exp $
 */
 
 #include "CurveView.h"
@@ -34,6 +34,7 @@ $Id: CurveView.cpp,v 1.7 2007/01/21 15:30:34 r_sijrier Exp $
 		
 class DragNode : public Command
 {
+	Q_OBJECT
 public:
 	DragNode(CurveNode* node, CurveView* curveview, int scalefactor, const QString& des);
 	
@@ -50,9 +51,14 @@ private :
 	QPointF		m_origPos;
 	QPointF 	m_newPos;
 	QPoint		m_mousepos;
+
+public slots:
+        void increase_gain(bool autorepeat);
+        void decrease_gain(bool autorepeat);
 };
 
 
+#include "CurveView.moc"
 
 	
 DragNode::DragNode(CurveNode* node, CurveView* curveview, int scalefactor, const QString& des)
@@ -94,6 +100,17 @@ int DragNode::undo_action()
 	return 1;
 }
 
+void DragNode::increase_gain(bool )
+{
+	m_newPos.setY(m_newPos.y() + ( 1 / m_curveView->boundingRect().height()) );
+	do_action();
+}
+
+void DragNode::decrease_gain(bool )
+{
+	m_newPos.setY(m_newPos.y() - ( 1 / m_curveView->boundingRect().height()) );
+	do_action();
+}
 
 int DragNode::jog()
 {
