@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveNodeView.h,v 1.2 2006/12/01 13:58:45 r_sijrier Exp $
+$Id: CurveNodeView.h,v 1.3 2007/01/21 14:19:37 r_sijrier Exp $
 */
 
 #ifndef CURVE_NODE_VIEW_H
@@ -40,9 +40,11 @@ public:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	int type() const;
 	void calculate_bounding_rect();
+	void increase_size();
+	void decrease_size();
 	
 	void set_color(QColor color);
-	CurveNode* get_node() const {return m_node;}
+	CurveNode* get_curve_node() const {return m_node;}
 	
 private:
 	CurveNode*	m_node;
