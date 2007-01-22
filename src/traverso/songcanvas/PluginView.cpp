@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginView.cpp,v 1.5 2007/01/22 20:12:58 r_sijrier Exp $
+$Id: PluginView.cpp,v 1.6 2007/01/22 20:27:06 r_sijrier Exp $
 */
 
 #include "PluginView.h"
@@ -81,6 +81,8 @@ void PluginView::paint(QPainter* painter, const QStyleOptionGraphicsItem *option
 	painter->fillRect(rect, brush);
 	painter->setPen(QColor(Qt::white));
 	painter->drawText(rect, Qt::AlignCenter, m_name);
+	
+	connect(m_plugin, SIGNAL(bypassChanged()), this, SLOT(repaint()));
 }
 
 
@@ -109,5 +111,10 @@ Plugin * PluginView::get_plugin( )
 void PluginView::set_index(int index)
 {
 	m_index = index;
+}
+
+void PluginView::repaint( )
+{
+	update();
 }
 //eof
