@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.24 2007/01/22 15:13:32 r_sijrier Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.25 2007/01/22 19:27:05 r_sijrier Exp $
 */
 
 #include "SpectralMeterWidget.h"
@@ -99,7 +99,7 @@ SpectralMeterItem::SpectralMeterItem(SpectralMeterWidget* widget)
 {
 
 	m_config = new SpectralMeterConfigWidget(m_widget);
-	m_boundingRectangle = QRectF(0, 0, 0, 0);
+	m_boundingRectangle = QRectF(0, 0, m_widget->width(), m_widget->height());
 	load_configuration();
 	
 	upper_freq_log = log10(upper_freq);
