@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.cpp,v 1.11 2007/01/22 20:22:31 r_sijrier Exp $
+$Id: CurveView.cpp,v 1.12 2007/01/22 20:24:52 r_sijrier Exp $
 */
 
 #include "CurveView.h"
@@ -225,6 +225,7 @@ void CurveView::add_curvenode_view(CurveNode* node)
 	CurveNodeView* view = new CurveNodeView(m_sv, this, node);
 	m_sv->scene()->addItem(view);
 	m_nodeViews.append(view);
+	update_softselected_node(cpointer().pos());
 	update();
 	connect(node, SIGNAL(positionChanged()), this, SLOT(curve_changed()));
 }
