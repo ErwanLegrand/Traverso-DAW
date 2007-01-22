@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SplitClip.cpp,v 1.12 2006/12/01 13:58:45 r_sijrier Exp $
+$Id: SplitClip.cpp,v 1.13 2007/01/22 15:09:01 r_sijrier Exp $
 */
 
 #include "SplitClip.h"
@@ -75,10 +75,11 @@ int SplitClip::do_action()
 int SplitClip::undo_action()
 {
 	PENTER;
-	ie().process_command(m_track->add_clip(m_clip, false));
-	
 	ie().process_command(m_track->remove_clip(leftClip, false));
 	ie().process_command(m_track->remove_clip(rightClip, false));
+	
+	ie().process_command(m_track->add_clip(m_clip, false));
+	
 	
 	
 	return 1;
