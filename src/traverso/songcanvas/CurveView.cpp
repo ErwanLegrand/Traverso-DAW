@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.cpp,v 1.10 2007/01/22 20:12:58 r_sijrier Exp $
+$Id: CurveView.cpp,v 1.11 2007/01/22 20:22:31 r_sijrier Exp $
 */
 
 #include "CurveView.h"
@@ -234,6 +234,9 @@ void CurveView::remove_curvenode_view(CurveNode* node)
 	foreach(CurveNodeView* view, m_nodeViews) {
 		if (view->get_curve_node() == node) {
 			m_nodeViews.removeAll(view);
+			if (view == m_blinkingNode) {
+				update_softselected_node(cpointer().pos());
+			}
 			delete view;
 			update();
 			return;
