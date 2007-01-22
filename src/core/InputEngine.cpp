@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.23 2007/01/22 15:12:08 r_sijrier Exp $
+$Id: InputEngine.cpp,v 1.24 2007/01/22 15:50:17 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -173,11 +173,13 @@ int InputEngine::broadcast_action_from_contextmenu(const QString& keySequence)
 		}
 	}
 
+	if (! action) {
+		PERROR("ContextMenu keySequency doesn't apply to any InputEngine knows off!! (%s)", QS_C(keySequence));
+		return -1;
+	}
+	
 	if ( action && (action->type == HOLDKEY) || (action->type == HKEY2) ) {
 		info().information(QObject::tr("Hold actions are not supported yet from Context Menu"));
-		return -1;
-	} else {
-		PERROR("ContextMenu keySequency doesn't apply to any InputEngine knows off!! (%s)", QS_C(keySequence));
 		return -1;
 	}
 
