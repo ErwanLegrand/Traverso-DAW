@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.7 2007/01/16 20:21:08 r_sijrier Exp $
+$Id: SongView.cpp,v 1.8 2007/01/22 15:12:08 r_sijrier Exp $
 */
 
 
@@ -368,6 +368,20 @@ Command * SongView::set_curve_mode( )
 {
 	viewmode = CurveMode;
 	emit viewModeChanged();
+	return 0;
+}
+
+Command* SongView::scroll_up( )
+{
+	QScrollBar* scrollbar = m_clipsViewPort->verticalScrollBar();
+	scrollbar->setValue(scrollbar->value() - 50);
+	return 0;
+}
+
+Command* SongView::scroll_down( )
+{
+	QScrollBar* scrollbar = m_clipsViewPort->verticalScrollBar();
+	scrollbar->setValue(scrollbar->value() + 50);
 	return 0;
 }
 

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginView.h,v 1.2 2006/12/04 19:24:54 r_sijrier Exp $
+    $Id: PluginView.h,v 1.3 2007/01/22 15:12:08 r_sijrier Exp $
 */
 
 #ifndef PLUGIN_VIEW_H
@@ -65,7 +65,7 @@ private:
 
 public slots:
 	Command* edit_properties();
-        Command* remove_item();
+        Command* remove_plugin();
 };
 
 inline int PluginView::type() const {return Type;}

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.h,v 1.5 2007/01/22 15:12:08 r_sijrier Exp $
+$Id: CurveView.h,v 1.6 2007/01/22 15:18:27 r_sijrier Exp $
 */
 
 #ifndef CURVE_VIEW_H
@@ -35,6 +35,9 @@ class QPoint;
 class CurveView : public ViewItem
 {
 	Q_OBJECT
+	Q_CLASSINFO("add_node", tr("New node"))
+	Q_CLASSINFO("remove_node", tr("Remove node"))
+	Q_CLASSINFO("drag_node", tr("Move node"))
 
 public:
 	CurveView(SongView* sv, ViewItem* parentViewItem, Curve* curve);

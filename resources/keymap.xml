@@ -1,111 +1,462 @@
 <keymap>
-	<keyseq keyfacttype="FKEY" key1="ESC" mousehint="" slotname="cancel" name="Cancel" sortorder="" />
-	<keyseq keyfacttype="FKEY" key1="H" slotname="show_help" name="Show Help" sortorder="" />
-	<keyseq keyfacttype="FKEY" key1="F1" slotname="set_editing_mode" name="Editing Mode" sortorder="42" />
-	<keyseq keyfacttype="FKEY" key1="F2" slotname="set_curve_mode" name="Curve Mode" sortorder="43" />
-	<keyseq keyfacttype="FKEY" key1="F11" slotname="full_screen" name="Fullscreen" sortorder="" />
-	<keyseq keyfacttype="FKEY" key1="F5" slotname="undo" name="Undo" sortorder="21" />
-	<keyseq keyfacttype="FKEY" key1="F6" slotname="redo" name="Redo" sortorder="20" />
-	<keyseq keyfacttype="FKEY" key1="LARROW" slotname="scroll_left" name="Scroll left" sortorder="121" />
-	<keyseq keyfacttype="FKEY" key1="RARROW" slotname="scroll_right" name="Scroll right" sortorder="122" />
-	<keyseq keyfacttype="FKEY" key1="UARROW" slotname="increase_gain" name="Scroll up" sortorder="123" />
-	<keyseq keyfacttype="FKEY" key1="DARROW" slotname="decrease_gain" name="Scroll down" sortorder="124" />
-	<keyseq keyfacttype="FKEY" key1="SHIFT" slotname="touch" name="Touch" sortorder="20" />
-	<keyseq keyfacttype="FKEY" key1="W" slotname="playhead_to_workcursor" name="Playhead to Workcursor" sortorder="4" />
-	<keyseq keyfacttype="FKEY" key1="HOME" slotname="goto_begin" name="Set work at Start" sortorder="5" />
-	<keyseq keyfacttype="FKEY" key1="END" slotname="goto_end" name="Set work at End" sortorder="6" />
-	<keyseq keyfacttype="FKEY" key1="Z" slotname="hzoom_in" name="Zoom in" sortorder="50" />
-	<keyseq keyfacttype="FKEY" key1="S" slotname="select" name="Select" sortorder="10" />
-	<keyseq keyfacttype="FKEY" key1="SPACE" slotname="go" name="Play" sortorder="2" />
-	<keyseq keyfacttype="FKEY" key1="A" slotname="toggle_arm" name="Record (on/off)" sortorder="12" />
-	<keyseq keyfacttype="FKEY" key1="ENTER" slotname="" name="Render" sortorder="" />
-	<keyseq keyfacttype="FKEY" key1="O" slotname="solo" name="Solo" sortorder="10" />
-	<keyseq keyfacttype="FKEY" key1="U" slotname="mute" name="Mute" sortorder="10" />
-	<keyseq keyfacttype="FKEY" key1="X" slotname="split" name="Split" sortorder="29" />
-	<keyseq keyfacttype="FKEY" key1="F3" slotname="set_songview_widget" name="Songs Window" sortorder="" />
-	<keyseq keyfacttype="FKEY" key1="F4" slotname="set_manager_widget" name="Manager Window" sortorder="" />
-	<keyseq keyfacttype="FKEY" key1="I" slotname="import_audiosource" name="Import Audio" sortorder="25" />
-	<keyseq keyfacttype="FKEY" key1="Q" slotname="show_context_menu" name="This Menu" sortorder="100" />
-	<keyseq keyfacttype="FKEY" key1="E" slotname="edit_properties" name="Edit Properties" sortorder="30" />
-	<keyseq keyfacttype="FKEY" key1="N" slotname="normalize" name="Normalize" sortorder="30" />
-	<keyseq keyfacttype="FKEY" key1="B" slotname="toggle_bypass" name="Bypass" sortorder="30" />
-	<keyseq keyfacttype="FKEY" key1="M" slotname="set_mode" name="Set Mode" sortorder="30" />
-	<keyseq keyfacttype="FKEY" key1="L" slotname="reset" name="Reset" sortorder="40" />
-	<keyseq keyfacttype="FKEY" key1="R" slotname="toggle_raster" name="Toggle Raster" sortorder="50" />
-	<keyseq keyfacttype="FKEY" key1="C" slotname="add_node" name="Add Node" sortorder="50" />
-	<keyseq keyfacttype="FKEY" key1="MouseButtonLeft" slotname="increase_gain" name="Left Click" sortorder="50" />
-	<keyseq keyfacttype="FKEY" key1="MouseButtonRight" slotname="show_context_menu" name="This Menu" sortorder="100" />
-	<keyseq keyfacttype="FKEY" key1="MouseScrollVerticalUp" slotname="increase_gain" name="This Menu" sortorder="100" />
-	<keyseq keyfacttype="FKEY" key1="MouseScrollVerticalDown" slotname="decrease_gain" name="This Menu" sortorder="100" />
+	
+	<keyfact type="FKEY" key1="H">
+		<Objects>
+			<Object objectname="Help" slotsignature="show_help" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="F1" sortorder="42" >
+		<Objects>
+			<Object objectname="SongView" slotsignature="set_editing_mode" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="F2" sortorder="43" >
+		<Objects>
+			<Object objectname="SongView" slotsignature="set_curve_mode" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="F11" sortorder="" >
+		<Objects>
+			<Object objectname="Interface" slotsignature="full_screen" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="F5" sortorder="21" >
+		<Objects>
+			<Object objectname="Song" slotsignature="undo" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="F6" sortorder="20" >
+		<Objects>
+			<Object objectname="Song" slotsignature="redo" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="LARROW" sortorder="121" >
+		<Objects>
+			<Object objectname="SongView" slotsignature="scroll_left" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="RARROW" sortorder="122" >
+		<Objects>
+			<Object objectname="SongView" slotsignature="scroll_right" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="UARROW"  sortorder="123" >
+		<Objects>
+			<Object objectname="Gain" slotsignature="increase_gain" modes="All" instantanious="1" />
+			<Object objectname="DragNode" slotsignature="move_up" modes="CurveMode" instantanious="1" />
+			<Object objectname="SongView" slotsignature="scroll_up" modes="All" instantanious="1" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="DARROW" sortorder="124" >
+		<Objects>
+			<Object objectname="Gain" slotsignature="decrease_gain" modes="All" instantanious="1" />
+			<Object objectname="DragNode" slotsignature="move_down" modes="CurveMode" instantanious="1" />
+			<Object objectname="SongView" slotsignature="scroll_down" modes="All" instantanious="1" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="SHIFT" sortorder="20" >
+		<Objects>
+			<Object objectname="SongView" slotsignature="touch" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="W" sortorder="4" >
+		<Objects>
+			<Object objectname="Song" slotsignature="playhead_to_workcursor" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="HOME" sortorder="5" >
+		<Objects>
+			<Object objectname="SongView" slotsignature="goto_begin" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="END" sortorder="6" >
+		<Objects>
+			<Object objectname="SongView" slotsignature="goto_end" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="Z" sortorder="50" >
+		<Objects>
+			<Object objectname="SongView" slotsignature="hzoom_in" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="S" sortorder="10" >
+		<Objects>
+			<Object objectname="Project" slotsignature="select" modes="All" instantanious="0" />
+			<Object objectname="AudioClip" slotsignature="select" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="SPACE" sortorder="2" >
+		<Objects>
+			<Object objectname="Song" slotsignature="go" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="A" sortorder="12" >
+		<Objects>
+			<Object objectname="Track" slotsignature="toggle_arm" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="O" sortorder="10" >
+		<Objects>
+			<Object objectname="Track" slotsignature="solo" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="U" sortorder="10" >
+		<Objects>
+			<Object objectname="Track" slotsignature="mute" modes="All" instantanious="0" />
+			<Object objectname="AudioClip" slotsignature="mute" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="X" sortorder="29" >
+		<Objects>
+			<Object objectname="AudioClipView" slotsignature="split" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="F3" sortorder="" >
+		<Objects>
+			<Object objectname="Interface" slotsignature="show_song_widget" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="F4" sortorder="" >
+		<Objects>
+			<Object objectname="Interface" slotsignature="set_manager_widget" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="I" sortorder="25" >
+		<Objects>
+			<Object objectname="Track" slotsignature="import_audiosource" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="Q" sortorder="100" >
+		<Objects>
+			<Object objectname="Interface" slotsignature="show_context_menu" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="E" sortorder="30" >
+		<Objects>
+			<Object objectname="TrackView" slotsignature="edit_properties" modes="All" instantanious="0" />
+			<Object objectname="PluginView" slotsignature="edit_properties" modes="All" instantanious="0" />
+			<Object objectname="FadeView" slotsignature="edit_properties" modes="All" instantanious="0" />
+			<Object objectname="SpectralMeterItem" slotsignature="edit_properties" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="N" sortorder="30" >
+		<Objects>
+			<Object objectname="AudioClip" slotsignature="normalize" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="B" sortorder="30" >
+		<Objects>
+			<Object objectname="FadeCurve" slotsignature="toggle_bypass" modes="All" instantanious="0" />
+			<Object objectname="Plugin" slotsignature="toggle_bypass" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="M" sortorder="30" >
+		<Objects>
+			<Object objectname="CorrelationMeterItem" slotsignature="set_mode" modes="All" instantanious="0" />
+			<Object objectname="SpectralMeterItem" slotsignature="set_mode" modes="All" instantanious="0" />
+			<Object objectname="FadeCurve" slotsignature="set_mode" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="L" sortorder="40" >
+		<Objects>
+			<Object objectname="SpectralMeterItem" slotsignature="reset" modes="All" instantanious="0" />
+			<Object objectname="FadeCurve" slotsignature="reset" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="R" sortorder="50" >
+		<Objects>
+			<Object objectname="FadeCurve" slotsignature="toggle_raster" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="C" sortorder="50" >
+		<Objects>
+			<Object objectname="CurveView" slotsignature="add_node" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="MouseButtonLeft" sortorder="50" >
+		<Objects/>
+	</keyfact>
+	<keyfact type="FKEY" key1="MouseButtonRight" sortorder="100" >
+		<Objects>
+			<Object objectname="Interface" slotsignature="show_context_menu" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="MouseScrollVerticalUp" sortorder="100" >
+		<Objects>
+			<Object objectname="DragNode" slotsignature="move_up" modes="CurveMode" instantanious="1" />
+			<Object objectname="SongView" slotsignature="scroll_up" modes="All" instantanious="1" />
+			<Object objectname="Gain" slotsignature="increase_gain" modes="All" instantanious="1" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY" key1="MouseScrollVerticalDown" sortorder="100" >
+		<Objects>
+			<Object objectname="DragNode" slotsignature="move_down" modes="CurveMode" instantanious="1" />
+			<Object objectname="SongView" slotsignature="scroll_down" modes="All" instantanious="1" />
+			<Object objectname="Gain" slotsignature="decrease_gain" modes="All" instantanious="1" />
+		</Objects>
+	</keyfact>
 	
 	
-	<keyseq keyfacttype="FKEY2" key1="A" key2="B" slotname="about_traverso" name="About" sortorder="" />
-	<keyseq keyfacttype="FKEY2" key1="CTRL" key2="S" slotname="save_project" name="Save Project" sortorder="" />
-	<keyseq keyfacttype="FKEY2" key1="S" key2="P" slotname="show_song_properties" name="Properties Window" sortorder="" />
-	<keyseq keyfacttype="FKEY2" key1="S" key2="N" slotname="toggle_snap" name="Snap (on/off)" sortorder="28" />
-	<keyseq keyfacttype="FKEY2" key1="G" key2="P" slotname="show_gp" name="Global Properties Window" sortorder="" />
-	<keyseq keyfacttype="FKEY2" key1="CTRL" key2="SHIFT" slotname="touch_and_center" name="Touch (and center)" sortorder="21" />
-	<keyseq keyfacttype="FKEY2" key1="Z" key2="X" slotname="hzoom_out" name="Zoom out" sortorder="51" />
-	<keyseq keyfacttype="FKEY2" key1="Z" key2="ALT" slotname="vzoom_out" name="Verticall Zoom out" sortorder="52" />
-	<keyseq keyfacttype="FKEY2" key1="Z" key2="A" slotname="vzoom_in" name="Verticall Zoom in" sortorder="53" />
-	<keyseq keyfacttype="FKEY2" key1="S" key2="D" slotname="add_to_selection" name="Select (add)" sortorder="30" />
-	<keyseq keyfacttype="FKEY2" key1="S" key2="A" slotname="remove_from_selection" name="Select (remove)" sortorder="31" />
-	<keyseq keyfacttype="FKEY2" key1="A" key2="D" slotname="invert_clip_selection" name="Invert Selection" sortorder="32" />
-	<keyseq keyfacttype="FKEY2" key1="J" key2="L" slotname="capture_from_channel_both" name="Capture channels both" sortorder="40" />
-	<keyseq keyfacttype="FKEY2" key1="J" key2="K" slotname="capture_from_channel_left" name="Capture left channel" sortorder="41" />
-	<keyseq keyfacttype="FKEY2" key1="K" key2="L" slotname="capture_from_channel_right" name="Capture right channel" sortorder="42" />
-	<keyseq keyfacttype="FKEY2" key1="SPACE" key2="R" slotname="go_regions" name="Play regions" sortorder="138" />
-	<keyseq keyfacttype="FKEY2" key1="B" key2="V" mousehint="UD" slotname="select_bus_in" name="Bus in" sortorder="30" />
-	<keyseq keyfacttype="FKEY2" key1="F" key2="G" mousehint="UD" slotname="select_fade_in_shape" name="Fade In Shape" sortorder="31" />
-	<keyseq keyfacttype="FKEY2" key1="G" key2="H" mousehint="UD" slotname="select_fade_out_shape" name="Fade Out Shape" sortorder="31" />
-	<keyseq keyfacttype="FKEY2" key1="S" key2="C" slotname="screen_capture" name="Screen Capture" sortorder="31" />
+	<keyfact type="FKEY2" key1="A" key2="B" sortorder="" >
+		<Objects>
+			<Object objectname="Interface" slotsignature="about_traverso" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY2" key1="CTRL" key2="S" sortorder="" >
+		<Objects>
+			<Object objectname="ProjectManager" slotsignature="save_project" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY2" key1="S" key2="N" sortorder="28" >
+		<Objects>
+			<Object objectname="Song" slotsignature="toggle_snap" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY2" key1="Z" key2="X" sortorder="51" >
+		<Objects>
+			<Object objectname="SongView" slotsignature="hzoom_out" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY2" key1="Z" key2="ALT" sortorder="52" >
+		<Objects>
+			<Object objectname="SongView" slotsignature="vzoom_out" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY2" key1="Z" key2="A" sortorder="53" >
+		<Objects>
+			<Object objectname="SongView" slotsignature="vzoom_in" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY2" key1="S" key2="D" sortorder="30" >
+		<Objects>
+			<Object objectname="AudioClip" slotsignature="add_to_selection" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY2" key1="S" key2="A" sortorder="31" >
+		<Objects>
+			<Object objectname="AudioClip" slotsignature="remove_from_selection" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY2" key1="A" key2="D" sortorder="32" >
+		<Objects>
+			<Object objectname="AudioClipManager" slotsignature="invert_clip_selection" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY2" key1="J" key2="L" sortorder="40" >
+		<Objects>
+			<Object objectname="Track" slotsignature="capture_from_channel_both" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY2" key1="J" key2="K" sortorder="41" >
+		<Objects>
+			<Object objectname="Track" slotsignature="capture_from_channel_left" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY2" key1="K" key2="L" sortorder="42" >
+		<Objects>
+			<Object objectname="Track" slotsignature="capture_from_channel_right" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY2" key1="B" key2="V" mousehint="UD" sortorder="30" >
+		<Objects>
+			<Object objectname="Interface" slotsignature="select_bus_in" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY2" key1="F" key2="G" sortorder="31" >
+		<Objects>
+			<Object objectname="Interface" slotsignature="select_fade_in_shape" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY2" key1="G" key2="H" sortorder="31" >
+		<Objects>
+			<Object objectname="Interface" slotsignature="select_fade_out_shape" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="FKEY2" key1="S" key2="C" sortorder="31" >
+		<Objects>
+			<Object objectname="SpectralMeterWidget" slotsignature="screen_capture" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
 	
-	<keyseq keyfacttype="HKEY" key1="Z" mousehint="LRUD" slotname="zoom" name="Zoom" sortorder="35" />
-	<keyseq keyfacttype="HKEY" key1="TAB" mousehint="LR" slotname="shuttle" name="Shuttle" sortorder="36" />
-	<keyseq keyfacttype="HKEY" key1="E" mousehint="LR" slotname="drag_edge" name="Drag Edge" sortorder="28" />
-	<keyseq keyfacttype="HKEY" key1="G" mousehint="UD" slotname="gain" name="Gain" sortorder="15" />
-	<keyseq keyfacttype="HKEY" key1="P" mousehint="LR" slotname="pan" name="Pan" sortorder="16" />
-	<keyseq keyfacttype="HKEY" key1="O" mousehint="" slotname="silence_others" name="Silence others" sortorder="18" />
-	<keyseq keyfacttype="HKEY" key1="C" mousehint="LRUD" slotname="copy" name="Copy" sortorder="27" />
-	<keyseq keyfacttype="HKEY" key1="D" mousehint="LRUD" slotname="drag" name="Drag" sortorder="25" />
-	<keyseq keyfacttype="HKEY" key1="R" mousehint="LR" slotname="create_region" name="Create Region" sortorder="70" />
-	<keyseq keyfacttype="HKEY" key1="X" mousehint="LR" slotname="in_crop" name="Crop (in)" sortorder="71" />
-	<keyseq keyfacttype="HKEY" key1="B" mousehint="LR" slotname="bend" name="Bend" sortorder="25" />
-	<keyseq keyfacttype="HKEY" key1="S" mousehint="LR" slotname="strength" name="Strenght" sortorder="25" />
-	<keyseq keyfacttype="HKEY" key1="SPACE" mousehint="LR" slotname="play_cursor_move" name="Move PlayCursor" sortorder="34" />
+	
+	<keyfact type="HKEY" key1="Z" mousehint="LRUD" sortorder="35" >
+		<Objects>
+			<Object objectname="SongView" slotsignature="zoom" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="HKEY" key1="TAB" mousehint="LR" sortorder="36" >
+		<Objects>
+			<Object objectname="SongView" slotsignature="shuttle" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="HKEY" key1="E" mousehint="LR" sortorder="28" >
+		<Objects>
+			<Object objectname="AudioClipView" slotsignature="drag_edge" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="HKEY" key1="G" mousehint="UD" sortorder="15" >
+		<Objects>
+			<Object objectname="AudioClip" slotsignature="gain" modes="All" instantanious="0" />
+			<Object objectname="Track" slotsignature="gain" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="HKEY" key1="P" mousehint="LR" sortorder="16" >
+		<Objects>
+			<Object objectname="Track" slotsignature="pan" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="HKEY" key1="O" sortorder="18" >
+		<Objects>
+			<Object objectname="Track" slotsignature="silence_others" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="HKEY" key1="C" mousehint="LRUD" sortorder="27" >
+		<Objects>
+			<Object objectname="AudioClip" slotsignature="copy" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="HKEY" key1="D" mousehint="LRUD" slotname="drag" name="Drag" sortorder="25" >
+		<Objects>
+			<Object objectname="AudioClipView" slotsignature="drag" modes="EditMode" instantanious="0" />
+			<Object objectname="CurveView" slotsignature="drag_node" modes="EditMode" instantanious="1" />
+		</Objects>
+	</keyfact>
+	<keyfact type="HKEY" key1="B" mousehint="LR" sortorder="25" >
+		<Objects>
+			<Object objectname="FadeCurve" slotsignature="bend" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="HKEY" key1="S" mousehint="LR" slotname="strength" name="Strenght" sortorder="25" >
+		<Objects>
+			<Object objectname="FadeCurve" slotsignature="strength" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="HKEY" key1="SPACE" mousehint="LR" sortorder="34" >
+		<Objects>
+			<Object objectname="SongView" slotsignature="play_cursor_move" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
 	
 	
-	<keyseq keyfacttype="HKEY2" key1="UARROW" key2="DARROW" mousehint="UD" slotname="vertical_scroll" name="Verticall Scroll" sortorder="120" />
-	<keyseq keyfacttype="HKEY2" key1="E" key2="W" mousehint="LR" slotname="drag_edge_left" name="Drag edge (right)" sortorder="34" />
-	<keyseq keyfacttype="HKEY2" key1="E" key2="R" mousehint="LR" slotname="drag_edge_right" name="Drag edge (left)" sortorder="33" />
-	<keyseq keyfacttype="HKEY2" key1="W" key2="R" mousehint="LR" slotname="drag_edge_both" name="Drag edge (both)" sortorder="35" />
-	<keyseq keyfacttype="HKEY2" key1="F" key2="G" mousehint="LR" slotname="clip_fade_in" name="Fade (in)" sortorder="42" />
-	<keyseq keyfacttype="HKEY2" key1="G" key2="H" mousehint="LR" slotname="clip_fade_out" name="Fade (out)" sortorder="43" />
-	<keyseq keyfacttype="HKEY2" key1="S" key2="G" slotname="master_gain" name="Master Gain" sortorder="37" />
+	<keyfact type="HKEY2" key1="F" key2="G" mousehint="LR" sortorder="42" >
+		<Objects>
+			<Object objectname="AudioClip" slotsignature="clip_fade_in" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="HKEY2" key1="G" key2="H" mousehint="LR" sortorder="43" >
+		<Objects>
+			<Object objectname="AudioClip" slotsignature="clip_fade_out" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="HKEY2" key1="S" key2="G" mousehint="UD" sortorder="37" >
+		<Objects>
+			<Object objectname="Song" slotsignature="master_gain" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
 	
 	
-	<keyseq keyfacttype="D_FKEY" key1="ESC" slotname="exit" name="Exit" sortorder="" />
-	<keyseq keyfacttype="D_FKEY" key1="T" slotname="add_new_track" name="New Track" sortorder="90" />
-	<keyseq keyfacttype="D_FKEY" key1="ENTER" slotname="show_export_widget" name="Export Project" sortorder="20" />
-	<keyseq keyfacttype="D_FKEY" key1="U" slotname="toggle_mute" name="Toggle Mute" sortorder="10" />
-	<keyseq keyfacttype="D_FKEY" key1="O" slotname="toggle_solo" name="Toggle Solo" sortorder="10" />
-	<keyseq keyfacttype="D_FKEY" key1="RETURN" slotname="show_export_widget" name="Export Project" sortorder="20" />
-	<keyseq keyfacttype="D_FKEY" key1="G" slotname="reset_gain" name="Gain (reset)" sortorder="51" />
-	<keyseq keyfacttype="D_FKEY" key1="N" slotname="denormalize" name="De-normalize" sortorder="31" />
-	<keyseq keyfacttype="D_FKEY" key1="P" slotname="add_new_plugin" name="Add Plugin" sortorder="20" />
-	<keyseq keyfacttype="D_FKEY" key1="R" slotname="remove_item" name="Remove" sortorder="40" />
+	<keyfact type="D_FKEY" key1="ESC" sortorder="" >
+		<Objects>
+			<Object objectname="ProjectManager" slotsignature="exit" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="D_FKEY" key1="T" sortorder="90" >
+		<Objects>
+			<Object objectname="Song" slotsignature="add_new_track" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="D_FKEY" key1="ENTER" sortorder="20" >
+		<Objects>
+			<Object objectname="SpectralMeterItem" slotsignature="export_avarage_curve" modes="All" instantanious="0" />
+			<Object objectname="Interface" slotsignature="show_export_widget" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="D_FKEY" key1="U" sortorder="10" >
+		<Objects>
+			<Object objectname="Song" slotsignature="toggle_mute" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="D_FKEY" key1="O" sortorder="10" >
+		<Objects>
+			<Object objectname="Song" slotsignature="toggle_solo" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="D_FKEY" key1="RETURN" sortorder="20" >
+		<Objects>
+			<Object objectname="SpectralMeterItem" slotsignature="export_avarage_curve" modes="All" instantanious="0" />
+			<Object objectname="Interface" slotsignature="show_export_widget" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="D_FKEY" key1="G" sortorder="51" >
+		<Objects>
+			<Object objectname="AudioClip" slotsignature="reset_gain" modes="All" instantanious="0" />
+			<Object objectname="Track" slotsignature="reset_gain" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="D_FKEY" key1="N" sortorder="31" >
+		<Objects>
+			<Object objectname="AudioClip" slotsignature="denormalize" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="D_FKEY" key1="P" sortorder="20" >
+		<Objects>
+			<Object objectname="TrackView" slotsignature="add_new_plugin" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="D_FKEY" key1="R" sortorder="40" >
+		<Objects>
+			<Object objectname="Track" slotsignature="remove_myself" modes="All" instantanious="0" />
+			<Object objectname="CurveView" slotsignature="remove_node" modes="All" instantanious="0" />
+			<Object objectname="PluginView" slotsignature="remove_plugin" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
 
-	<keyseq keyfacttype="D_FKEY2" key1="DEL" key2="T" slotname="remove_track" name="Delete Track" sortorder="91" />
-	<keyseq keyfacttype="D_FKEY2" key1="S" key2="D" slotname="select_all_clips" name="Select Clips (all)" sortorder="40" />
-	<keyseq keyfacttype="D_FKEY2" key1="S" key2="A" slotname="deselect_all_clips" name="Deselect Clips (all)" sortorder="41" />
-	<keyseq keyfacttype="D_FKEY2" key1="F" key2="G" slotname="reset_fade_in" name="Reset fade (in)" sortorder="52" />
-	<keyseq keyfacttype="D_FKEY2" key1="G" key2="H" slotname="reset_fade_out" name="Reset fade (out)" sortorder="53" />
-	<keyseq keyfacttype="D_FKEY2" key1="F" key2="H" slotname="reset_fade_both" name="Reset fade (both)" sortorder="54" />
-	<keyseq keyfacttype="D_FKEY2" key1="C" key2="X" slotname="delete_selected_clips" name="Delete Selected Clips" sortorder="50" />
-	<keyseq keyfacttype="D_FKEY2" key1="SPACE" key2="R" slotname="go_loop_regions" name="Play Regions (loop)" sortorder="135" />
+	<keyfact type="D_FKEY2" key1="DEL" key2="T" sortorder="91" >
+		<Objects>
+			<Object objectname="Song" slotsignature="remove_track" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="D_FKEY2" key1="S" key2="D" sortorder="40" >
+		<Objects>
+			<Object objectname="AudioClipManager" slotsignature="select_all_clips" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="D_FKEY2" key1="S" key2="A" sortorder="41" >
+		<Objects>
+			<Object objectname="AudioClipManager" slotsignature="deselect_all_clips" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="D_FKEY2" key1="F" key2="G" sortorder="52" >
+		<Objects>
+			<Object objectname="AudioClip" slotsignature="reset_fade_in" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="D_FKEY2" key1="G" key2="H" sortorder="53" >
+		<Objects>
+			<Object objectname="AudioClip" slotsignature="reset_fade_out" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="D_FKEY2" key1="F" key2="H" sortorder="54" >
+		<Objects>
+			<Object objectname="AudioClip" slotsignature="reset_fade_both" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="D_FKEY2" key1="C" key2="X" sortorder="50" >
+		<Objects>
+			<Object objectname="AudioClip" slotsignature="delete_selected_clips" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
 
-	<keyseq keyfacttype="S_FKEY_FKEY" key1="W" key2="E" slotname="work_next_edge" name="Work Cursor Next Edge" sortorder="100" />
-	<keyseq keyfacttype="S_FKEY_FKEY" key1="W" key2="Q" slotname="work_previous_edge" name="Work Cursor Previous Edge" sortorder="101" />
+	<keyfact type="S_FKEY_FKEY" key1="W" key2="E" sortorder="100" >
+		<Objects>
+			<Object objectname="Song" slotsignature="work_next_edge" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="S_FKEY_FKEY" key1="W" key2="Q" sortorder="101" >
+		<Objects>
+			<Object objectname="Song" slotsignature="work_previous_edge" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
 
 
 </keymap>

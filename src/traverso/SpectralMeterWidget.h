@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SpectralMeterWidget.h,v 1.14 2007/01/21 14:37:31 n_doebelin Exp $
+    $Id: SpectralMeterWidget.h,v 1.15 2007/01/22 15:13:32 r_sijrier Exp $
 */
 
 #ifndef SPECTRALMETERWIDGET_H
@@ -83,7 +83,7 @@ class SpectralMeterItem : public ViewItem
 	Q_CLASSINFO("edit_properties", tr("Settings..."))
 	Q_CLASSINFO("set_mode", tr("Toggle avarage curve"))
 	Q_CLASSINFO("reset", tr("Reset average curve"))
-	Q_CLASSINFO("show_export_widget", tr("Export avarage curve"))
+	Q_CLASSINFO("export_avarage_curve", tr("Export avarage curve"))
 	Q_CLASSINFO("screen_capture", tr("Capture Screen"))
 	
 
@@ -153,7 +153,7 @@ public slots:
 	Command*	edit_properties();
 	Command*	set_mode();
 	Command*	reset();
-	Command*	show_export_widget();
+	Command*	export_avarage_curve();
 	Command*	screen_capture();
 	void		load_configuration();
 

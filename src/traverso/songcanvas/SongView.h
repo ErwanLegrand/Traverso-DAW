@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongView.h,v 1.5 2007/01/16 20:21:08 r_sijrier Exp $
+    $Id: SongView.h,v 1.6 2007/01/22 15:12:08 r_sijrier Exp $
 */
 
 #ifndef SONG_VIEW_H
@@ -39,6 +39,23 @@ class WorkCursor;
 class SongView : public ViewItem
 {
         Q_OBJECT
+	Q_CLASSINFO("touch", tr("Touch"))
+	Q_CLASSINFO("hzoom_out", tr("Zoom: Horizontal Out"))
+	Q_CLASSINFO("hzoom_in", tr("Zoom: Horizontal In"))
+	Q_CLASSINFO("vzoom_out", tr("Zoom: Vertical Out"))
+	Q_CLASSINFO("vzoom_in", tr("Zoom: Vertical In"))
+	Q_CLASSINFO("zoom", tr("Zoom"))
+	Q_CLASSINFO("center", tr("Center View"))
+	Q_CLASSINFO("scroll_right", tr("Scroll: right"))
+	Q_CLASSINFO("scroll_left", tr("Scroll: left"))
+	Q_CLASSINFO("scroll_up", tr("Scroll: up"))
+	Q_CLASSINFO("scroll_down", tr("Scroll: down"))
+	Q_CLASSINFO("shuttle", tr("Shuttle"))
+	Q_CLASSINFO("goto_begin", tr("Workcursor: To start"))
+	Q_CLASSINFO("goto_end", tr("Workcurosr: To end"))
+	Q_CLASSINFO("play_cursor_move", tr("Playcursor: Move"))
+	Q_CLASSINFO("set_editing_mode", tr("Mode: Edit"))
+	Q_CLASSINFO("set_curve_mode", tr("Mode: Curve"))
 
 public :
 
@@ -79,6 +96,8 @@ public slots:
         Command* center();
         Command* scroll_right();
         Command* scroll_left();
+        Command* scroll_up();
+        Command* scroll_down();
         Command* shuttle();
         Command* goto_begin();
         Command* goto_end();

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginView.cpp,v 1.3 2006/12/04 19:24:54 r_sijrier Exp $
+$Id: PluginView.cpp,v 1.4 2007/01/22 15:12:08 r_sijrier Exp $
 */
 
 #include "PluginView.h"
@@ -93,7 +93,7 @@ Command * PluginView::edit_properties( )
 	return (Command*) 0;
 }
 
-Command* PluginView::remove_item()
+Command* PluginView::remove_plugin()
 {
 	return m_track->remove_plugin(m_plugin);
 }

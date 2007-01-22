@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.23 2007/01/21 14:37:31 n_doebelin Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.24 2007/01/22 15:13:32 r_sijrier Exp $
 */
 
 #include "SpectralMeterWidget.h"
@@ -553,7 +553,7 @@ Command* SpectralMeterItem::screen_capture( )
         return 0;
 }
 
-Command* SpectralMeterItem::show_export_widget()
+Command* SpectralMeterItem::export_avarage_curve()
 {
 	// check if all requirements are met
 	if ((!show_average) || (!m_project)) {
