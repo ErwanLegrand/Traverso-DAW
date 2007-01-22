@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginView.cpp,v 1.4 2007/01/22 15:12:08 r_sijrier Exp $
+$Id: PluginView.cpp,v 1.5 2007/01/22 20:12:58 r_sijrier Exp $
 */
 
 #include "PluginView.h"
@@ -47,6 +47,9 @@ PluginView::PluginView(TrackView* parent, Plugin* plugin, int index)
 	,  propertiesDialog(0)
 {
 	PENTERCONS;
+	
+	setZValue(parent->zValue() + 2);
+	
 	m_track = m_trackView->get_track();
 	m_name = plugin->get_name();
 	m_boundingRectangle = QRectF(0, 0, 100, 25);

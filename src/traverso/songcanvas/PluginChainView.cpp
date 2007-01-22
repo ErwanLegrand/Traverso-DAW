@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginChainView.cpp,v 1.3 2006/12/04 19:24:54 r_sijrier Exp $
+    $Id: PluginChainView.cpp,v 1.4 2007/01/22 20:12:58 r_sijrier Exp $
 */
 
 #include "PluginChainView.h"
@@ -47,6 +47,9 @@ PluginChainView::PluginChainView(TrackView* parent, PluginChain* chain)
 	, m_trackView(parent)
 {
 	PENTERCONS;
+	
+	setZValue(parent->zValue() + 1);
+	
 	m_trackView->scene()->addItem(this);
 	m_boundingRectangle = m_trackView->boundingRect();
 	

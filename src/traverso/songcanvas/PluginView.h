@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginView.h,v 1.3 2007/01/22 15:12:08 r_sijrier Exp $
+    $Id: PluginView.h,v 1.4 2007/01/22 20:12:58 r_sijrier Exp $
 */
 
 #ifndef PLUGIN_VIEW_H
@@ -38,6 +38,8 @@ class Track;
 class PluginView : public ViewItem
 {
         Q_OBJECT
+	Q_CLASSINFO("edit_properties", tr("Settings..."))
+	Q_CLASSINFO("remove_plugin", tr("Remove"))
 
 public:
         PluginView(TrackView* view, Plugin* plugin, int index);

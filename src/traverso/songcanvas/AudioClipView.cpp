@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.14 2007/01/22 15:12:08 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.15 2007/01/22 20:12:58 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -52,6 +52,8 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	: ViewItem(parent, clip), m_tv(parent), m_clip(clip)
 {
 	PENTERCONS;
+	
+	setZValue(parent->zValue() + 1);
 	
 	m_sv = sv;
 	m_tv->scene()->addItem(this);
@@ -89,8 +91,6 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	
 	setFlags(ItemIsSelectable | ItemIsMovable);
 	setAcceptsHoverEvents(true);
-	
-	setZValue(10);
 }
 
 AudioClipView::~ AudioClipView()

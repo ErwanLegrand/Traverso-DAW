@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.8 2007/01/22 15:12:08 r_sijrier Exp $
+$Id: SongView.cpp,v 1.9 2007/01/22 20:12:58 r_sijrier Exp $
 */
 
 
@@ -93,6 +93,8 @@ int PlayCursorMove::jog()
 SongView::SongView(ClipsViewPort* viewPort, TrackPanelViewPort* tpvp, TimeLineViewPort* tlvp, Song* song)
 	: ViewItem(0, song)
 {
+	setZValue(1);
+	
 	m_song = song;
 	m_clipsViewPort = viewPort;
 	m_tpvp = tpvp;
@@ -291,20 +293,6 @@ Command* SongView::center()
 }
 
 
-Command* SongView::scroll_right()
-{
-	PENTER3;
-	return (Command*) 0;
-}
-
-
-Command* SongView::scroll_left()
-{
-	PENTER3;
-	return (Command*) 0;
-}
-
-
 Command* SongView::shuttle()
 {
 // 	return new Shuttle(this, m_vp);
@@ -385,5 +373,21 @@ Command* SongView::scroll_down( )
 	return 0;
 }
 
+Command* SongView::scroll_right()
+{
+	PENTER3;
+	QScrollBar* scrollbar = m_clipsViewPort->horizontalScrollBar();
+	scrollbar->setValue(scrollbar->value() + 50);
+	return (Command*) 0;
+}
+
+
+Command* SongView::scroll_left()
+{
+	PENTER3;
+	QScrollBar* scrollbar = m_clipsViewPort->horizontalScrollBar();
+	scrollbar->setValue(scrollbar->value() - 50); 
+	return (Command*) 0;
+}
 
 //eof

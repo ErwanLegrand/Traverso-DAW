@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.cpp,v 1.9 2007/01/22 15:12:08 r_sijrier Exp $
+$Id: CurveView.cpp,v 1.10 2007/01/22 20:12:58 r_sijrier Exp $
 */
 
 #include "CurveView.h"
@@ -143,6 +143,8 @@ CurveView::CurveView(SongView* sv, ViewItem* parentViewItem, Curve* curve)
 	: ViewItem(parentViewItem, curve)
 	, m_curve(curve)
 {
+	setZValue(parentViewItem->zValue() + 1);
+	
 	m_sv = sv;
 	m_sv->scene()->addItem(this);
 	m_boundingRectangle = parentViewItem->boundingRect();
@@ -160,6 +162,7 @@ CurveView::CurveView(SongView* sv, ViewItem* parentViewItem, Curve* curve)
 	setAcceptsHoverEvents(true);
 	
 	set_view_mode();
+	
 }
 
 CurveView::~ CurveView( )
