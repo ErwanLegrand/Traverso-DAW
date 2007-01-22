@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.cpp,v 1.8 2007/01/21 15:49:17 r_sijrier Exp $
+$Id: CurveView.cpp,v 1.9 2007/01/22 15:12:08 r_sijrier Exp $
 */
 
 #include "CurveView.h"
@@ -53,8 +53,8 @@ private :
 	QPoint		m_mousepos;
 
 public slots:
-        void increase_gain(bool autorepeat);
-        void decrease_gain(bool autorepeat);
+        void move_up(bool autorepeat);
+        void move_down(bool autorepeat);
 };
 
 
@@ -100,13 +100,13 @@ int DragNode::undo_action()
 	return 1;
 }
 
-void DragNode::increase_gain(bool )
+void DragNode::move_up(bool )
 {
 	m_newPos.setY(m_newPos.y() + ( 1 / m_curveView->boundingRect().height()) );
 	do_action();
 }
 
-void DragNode::decrease_gain(bool )
+void DragNode::move_down(bool )
 {
 	m_newPos.setY(m_newPos.y() - ( 1 / m_curveView->boundingRect().height()) );
 	do_action();
@@ -354,7 +354,7 @@ Command* CurveView::add_node()
 }
 
 
-Command* CurveView::remove_item()
+Command* CurveView::remove_node()
 {
 	PENTER;
 	if (m_blinkingNode) {
@@ -365,7 +365,7 @@ Command* CurveView::remove_item()
 	return 0;
 }
 
-Command* CurveView::drag()
+Command* CurveView::drag_node()
 {
 	PENTER;
 /*	QPoint pos(cpointer().on_first_input_event_scene_x(), cpointer().on_first_input_event_scene_y());

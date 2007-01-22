@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.h,v 1.19 2006/12/01 13:58:45 r_sijrier Exp $
+$Id: Track.h,v 1.20 2007/01/22 15:12:08 r_sijrier Exp $
 */
 
 
@@ -43,6 +43,15 @@ class Plugin;
 class Track : public ContextItem
 {
 	Q_OBJECT
+	Q_CLASSINFO("mute", tr("Mute"))
+	Q_CLASSINFO("toggle_arm", tr("Record: On/Off"))
+	Q_CLASSINFO("solo", tr("Solo"))
+	Q_CLASSINFO("gain", tr("Gain"))
+	Q_CLASSINFO("pan", tr("Panorama"))
+	Q_CLASSINFO("reset_gain", tr("Gain: Reset"))
+	Q_CLASSINFO("import_audiosource", tr("Import audio"))
+	Q_CLASSINFO("silence_others", tr("Silence other tracks"))
+	Q_CLASSINFO("remove_myself", tr("Remove"))
 
 public :
 	Track(Song* pParentSong, int pID, const QString& pName, int pBaseY, int pHeight);
@@ -215,7 +224,7 @@ public slots:
 	Command* reset_gain();
 	Command* import_audiosource();
 	Command* silence_others();
-	Command* remove_item();
+	Command* remove_myself();
 
 private slots:
 	void private_add_clip(AudioClip* clip);

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.22 2007/01/19 12:43:43 r_sijrier Exp $
+$Id: InputEngine.cpp,v 1.23 2007/01/22 15:12:08 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -125,7 +125,9 @@ InputEngine::InputEngine()
 {
 	PENTERCONS;
 	holdingCommand = 0;
-	holdEventCode = -1;
+	// holdEvenCode MUST be a value != ANY key code!
+	// when set to 'not matching any key!!!!!!
+	holdEventCode = -100;
 	isJogging = false;
 	reset();
 
@@ -159,20 +161,23 @@ void InputEngine::suspend()
 	active=false;
 }
 
-int InputEngine::broadcast_action_from_contextmenu(const QString& name)
+int InputEngine::broadcast_action_from_contextmenu(const QString& keySequence)
 {
 	PENTER2;
 	IEAction* action = 0;
 
 	foreach(IEAction* ieaction, ieActions) {
-		if (ieaction->name == name) {
+		if (ieaction->keySequence == keySequence) {
 			action = ieaction;
 			break;
 		}
 	}
 
-	if ( (action->type == HOLDKEY) || (action->type == HKEY2) ) {
+	if ( action && (action->type == HOLDKEY) || (action->type == HKEY2) ) {
 		info().information(QObject::tr("Hold actions are not supported yet from Context Menu"));
+		return -1;
+	} else {
+		PERROR("ContextMenu keySequency doesn't apply to any InputEngine knows off!! (%s)", QS_C(keySequence));
 		return -1;
 	}
 
@@ -180,7 +185,7 @@ int InputEngine::broadcast_action_from_contextmenu(const QString& name)
 }
 
 
-int InputEngine::broadcast_action(IEAction* action)
+int InputEngine::broadcast_action(IEAction* action, bool autorepeat)
 {
 	PENTER2;
 
@@ -189,20 +194,48 @@ int InputEngine::broadcast_action(IEAction* action)
 
 	QList<QObject* > list = cpointer().get_context_items();
 
-	QString slotName = action->slotName;
-	PMESG("slotName is %s", QS_C(slotName));
-
+	char* slotsignature;
+	
+	if (holdingCommand) {
+		list.prepend(holdingCommand);
+	}
+	
 	for (int i=0; i < list.size(); ++i) {
 		item = list.at(i);
+		
 		if (!item) {
+			PERROR("no item in cpointer()'s context item list ??");
 			continue;
 		}
 		
-		if(QMetaObject::invokeMethod(item, QS_C(slotName),
+		IEAction::Data* data;
+		data = action->objects.value(QString(item->metaObject()->className()));
+		
+		if ( ! data ) {
+			PMESG("No data found for object %s", item->metaObject()->className());
+		} else {
+			PMESG("Data found for %s!", item->metaObject()->className());
+			PMESG("setting slotsignature to %s", data->slotsignature);
+			slotsignature = data->slotsignature;
+		}
+		
+		if (item == holdingCommand) {
+			if (QMetaObject::invokeMethod(item,
+					slotsignature,
+					Qt::DirectConnection,
+					Q_ARG(bool, autorepeat) 
+					)) {
+				PMESG("HIT, invoking %s::%s", holdingCommand->metaObject()->className(), slotsignature);
+				break;
+			}
+		} else if ( ! holdingCommand) {
+			if (QMetaObject::invokeMethod(item,
+					slotsignature,
 					Qt::DirectConnection,
 					Q_RETURN_ARG(Command*, k))) {
-			PMESG("HIT, invoking %s::%s", item->metaObject()->className(), QS_C(slotName));
-			break;
+				PMESG("HIT, invoking %s::%s", item->metaObject()->className(), slotsignature);
+				break;
+			}
 		} else {
 			PMESG("nope %s wasn't the right one, next ...", item->metaObject()->className());
 		}
@@ -381,14 +414,8 @@ void InputEngine::process_press_event(int eventcode, QInputEvent* event, bool is
 		int index = find_index_for_single_fact(FKEY, eventcode, 0);
 		if (index >= 0) {
 			IEAction* action = ieActions.at(index);
-			if (QMetaObject::invokeMethod(holdingCommand, 
-					action->slotName.data(),
-					Qt::DirectConnection,
-					Q_ARG(bool, isAutoRepeat) 
-					)) {
-				PMESG("HIT, invoking %s::%s", holdingCommand->metaObject()->className(), action->slotName.data());	
-				event->setAccepted(true);
-			}
+			
+			broadcast_action(action, isAutoRepeat);
 		}
 		return;
 	}
@@ -404,8 +431,6 @@ void InputEngine::process_press_event(int eventcode, QInputEvent* event, bool is
 			isPressEventLocked = true;
 		}
 	}
-	
-	event->ignore();
 }
 
 void InputEngine::process_release_event(int eventcode)
@@ -416,7 +441,7 @@ void InputEngine::process_release_event(int eventcode)
 			return;
 		} else {
 			printf("release event for hold action detected!\n");
-			holdEventCode = -1;
+			holdEventCode = -100;
 		}
 	}
 	
@@ -582,6 +607,7 @@ void InputEngine::push_fact(int k1,int k2)
 		}
 		PMESG3("First fact matches map in position %d",mapIndex);
 		// there is a single-fact action which matches this !! now must check if is not an immediate action
+		
 		if (!ieActions.at(mapIndex)->isInstantaneous) {
 			PMESG3("Although this could be an SINGLE PRESS Action, it is not protected, so...");
 			// action is not an immediate action, so...
@@ -792,7 +818,7 @@ int InputEngine::identify_first_and_second_facts_together()
 			)
 		) {
 			// 'i' is a candidate the whole action
-			PMESG3("Found a match : action %s", action->slotName.data());
+			PMESG3("Found a match : action %s", action->keySequence.data());
 			return ieActions.indexOf(action);
 		}
 	}
@@ -923,8 +949,6 @@ int InputEngine::init_map(const QString& mapFilename)
 	PENTER2;
 	PMESG2("INITIALIZING KEYMAP ... ");
 
-	IEAction* action;
-
 	QDomDocument doc("keymap");
 	QFile file(mapFilename);
 	if (!file.open(QIODevice::ReadOnly))
@@ -936,88 +960,116 @@ int InputEngine::init_map(const QString& mapFilename)
 	file.close();
 
 	QDomElement root = doc.documentElement();
-	QDomNode n = root.firstChild();
+	QDomNode node = root.firstChild();
 
 	QString keyFactType;
-	QString key1;
-	QString key2;
-	QString key3;
-	QString key4;
-	QString mouseHint;
-	QString slot;
-	QString name;
-	int sortOrder = 0;
-
-	int keyCode1, keyCode2, keyCode3, keyCode4 = 0;
-	int parsedActionType=-1;
-
-	bool useX , useY;
-
-
-	while( !n.isNull() ) {
-		QDomElement e = n.toElement();
-		if( !e.isNull() ) {
-			if( e.tagName() == "keyseq" ) {
-				keyFactType = e.attribute( "keyfacttype", "" );
-				key1 = e.attribute( "key1", "" );
-				key2 = e.attribute( "key2", "" );
-				name = e.attribute( "name", "Name not set");
-				sortOrder = e.attribute( "sortorder", "1").toInt();
-
-				mouseHint = e.attribute( "mousehint", "" );
-				slot = e.attribute( "slotname", "" );
-
-				if (keyFactType == "FKEY")
-					parsedActionType = FKEY;
-				else if (keyFactType == "FKEY2")
-					parsedActionType = FKEY2;
-				else if (keyFactType == "HKEY")
-					parsedActionType = HOLDKEY;
-				else if (keyFactType == "HKEY2")
-					parsedActionType = HKEY2;
-				else if (keyFactType == "D_FKEY")
-					parsedActionType = D_FKEY;
-				else if (keyFactType == "D_FKEY2")
-					parsedActionType = D_FKEY2;
-				else if (keyFactType == "S_FKEY_FKEY")
-					parsedActionType = S_FKEY_FKEY;
-				else {
-					PWARN("keyFactType not supported!");
-				}
-
-				useX = useY = false;
-				
-				if (mouseHint == "LR")
-					useX = true;
-				if (mouseHint == "UD")
-					useY = true;
-				if (mouseHint == "LRUD")
-					useX = useY = true;
-
-				set_hexcode(keyCode1, key1);
-				set_hexcode(keyCode2, key2);
-				set_hexcode(keyCode3, key3);
-				set_hexcode(keyCode4, key4);
-
-				// Fix the keyCode positions
-				if  (( parsedActionType == D_FKEY  ) || ( parsedActionType == FHKEY  )) {
-					keyCode3=keyCode1;
-				} else if (( parsedActionType == D_FKEY2 ) || ( parsedActionType == FHKEY  )) {
-					keyCode3=keyCode1;
-					keyCode4=keyCode2;
-				} else if (( parsedActionType == S_FKEY_FKEY ) || ( parsedActionType == S_FKEY_HKEY )) {
-					keyCode3=keyCode2;
-					keyCode2=0;
-				}
-
-			}
-			PMESG2("ADDED action: type=%d keys=%d,%d,%d,%d useX=%d useY=%d, slot=%s", parsedActionType, keyCode1,keyCode2,keyCode3,keyCode4,useX,useY, QS_C(slot));
-			action = new IEAction();
-			action->set
-			(parsedActionType, keyCode1, keyCode2, keyCode3, keyCode4, useX, useY, slot, key1, key2, key3, key4, name, sortOrder);
-			ieActions.append(action);
+	QString key1, key2, key3, key4, mouseHint, slot;
+	
+	while( !node.isNull() ) {
+		QDomElement e = node.toElement();
+		
+		if( e.isNull() ) {
+			continue;
 		}
-		n = n.nextSibling();
+			
+		if( ! (e.tagName() == "keyfact" ) ) {
+			PERROR("Detected wrong tagname, misspelled: keyfact !!");
+			continue;
+		}
+		
+		IEAction* action = new IEAction();
+		
+		keyFactType = e.attribute( "type", "" );
+		key1 = e.attribute( "key1", "");
+		key2 = e.attribute( "key2", "" );
+		action->sortOrder = e.attribute( "sortorder", "1").toInt();
+
+		mouseHint = e.attribute( "mousehint", "" );
+		slot = e.attribute( "slotname", "" );
+
+		if (keyFactType == "FKEY")
+			action->type = FKEY;
+		else if (keyFactType == "FKEY2")
+			action->type = FKEY2;
+		else if (keyFactType == "HKEY")
+			action->type = HOLDKEY;
+		else if (keyFactType == "HKEY2")
+			action->type = HKEY2;
+		else if (keyFactType == "D_FKEY")
+			action->type = D_FKEY;
+		else if (keyFactType == "D_FKEY2")
+			action->type = D_FKEY2;
+		else if (keyFactType == "S_FKEY_FKEY")
+			action->type = S_FKEY_FKEY;
+		else {
+			PWARN("keyFactType not supported!");
+		}
+
+		action->useX = action->useY = false;
+		
+		if (mouseHint == "LR")
+			action->useX = true;
+		if (mouseHint == "UD")
+			action->useY = true;
+		if (mouseHint == "LRUD")
+			action->useX = action->useY = true;
+
+		set_hexcode(action->fact1_key1, key1);
+		set_hexcode(action->fact1_key2, key2);
+		set_hexcode(action->fact2_key1, key3);
+		set_hexcode(action->fact2_key2, key4);
+		
+		
+		// Fix the keyCode positions
+		if  (( action->type == D_FKEY  ) || ( action->type == FHKEY  )) {
+			action->fact2_key1=action->fact1_key1;
+		} else if (( action->type == D_FKEY2 ) || ( action->type == FHKEY  )) {
+			action->fact2_key1=action->fact1_key1;
+			action->fact2_key2=action->fact1_key2;
+		} else if (( action->type == S_FKEY_FKEY ) || ( action->type == S_FKEY_HKEY )) {
+			action->fact2_key1=action->fact1_key2;
+			action->fact1_key2=0;
+		}
+
+		
+		QDomElement objectsNode = e.firstChildElement("Objects");
+		QDomNode objectNode = objectsNode.firstChild();
+	
+		while(!objectNode.isNull()) {
+			IEAction::Data* data = new IEAction::Data;
+			
+			QDomElement e = objectNode.toElement();
+			
+			QString objectname = e.attribute("objectname", "");
+			
+			data->slotsignature = qstrdup(e.attribute("slotsignature", "").toAscii().data());
+			data->modes = e.attribute("modes", "").split(";");
+			data->description = e.attribute("description", "");
+			data->instantanious = e.attribute("instantanious", "0").toInt();
+			
+			if (QString(objectname) == "") {
+				PERROR("no objectname given in keyaction %s", QS_C(keyFactType));
+			}
+			if (QString(data->slotsignature) == "") {
+				PERROR("no slotsignature given in keyaction %s, object %s", QS_C(keyFactType), QS_C(objectname));
+			}
+			if (QString(data->modes.join(";")) == "") {
+				PERROR("no modes given in keyaction %s, object %s", QS_C(keyFactType), QS_C(objectname));
+			}
+	
+			action->objects.insert(objectname, data);
+		
+			objectNode = objectNode.nextSibling();
+		}
+		
+		action->isInstantaneous = false;
+		action->render_key_sequence(key1, key2);
+	
+		ieActions.append(action);
+		
+		PMESG2("ADDED action: type=%d keys=%d,%d,%d,%d useX=%d useY=%d, slot=%s", action->type, action->fact1_key1,action->fact1_key2,action->fact2_key1,action->fact2_key2,action->useX,action->useY, QS_C(slot));
+		
+		node = node.nextSibling();
 	}
 
 
@@ -1048,11 +1100,11 @@ int InputEngine::init_map(const QString& mapFilename)
 					alone=false;
 			}
 			if (alone) {
-				PMESG3("Setting <K> fact (slot=%s) as protected (Instantaneous response)", action->slotName.data());
-				action->set_instantaneous(true);
+				PMESG3("Setting <K> fact (slot=%s) as protected (Instantaneous response)", action->keySequence.data());
+				action->isInstantaneous = true;
 				optimizedActions++;
 			} else
-				action->set_instantaneous(false);
+				action->isInstantaneous = false;
 
 		} else if ((action->type == FKEY2)) {
 			bool alone = true;
@@ -1076,11 +1128,11 @@ int InputEngine::init_map(const QString& mapFilename)
 					alone=false;
 			}
 			if (alone) {
-				PMESG3("Setting <KK> fact (slot=%s) for instantaneous response", action->slotName.data());
-				action->set_instantaneous(true);
+				PMESG3("Setting <KK> fact (slot=%s) for instantaneous response", action->keySequence.data());
+				action->isInstantaneous = true;
 				optimizedActions++;
 			} else
-				action->set_instantaneous(false);
+				action->isInstantaneous = false;
 		}
 	}
 	PMESG2("Keymap initialized! %d actions registered ( %d instantanious) .", ieActions.size(), optimizedActions);
@@ -1164,39 +1216,57 @@ bool InputEngine::is_holding( )
 	return isHolding;
 }
 
-QList< IEAction* > InputEngine::get_contextitem_actionlist(QObject* item)
+QList< MenuData > InputEngine::get_contextitem_actionlist(QObject* item)
 {
-	QList<IEAction* > list;
+	QList<MenuData > list;
 	ContextItem* contextitem;
-	QString string;
+	QString slotsignature;
+	
 	
 	do {
-		// 		PWARN("My name is %s ", item->metaObject()->className());
 		const QMetaObject* mo = item->metaObject();
+		const char* classname = mo->className();
+		
 		do {
 			for (int i=0; i < mo->methodCount(); i++) {
-				if (mo->method(i).methodType() == QMetaMethod::Slot) {
-					string = mo->method(i).signature();
-					string = string.left(string.indexOf("("));
-					// PWARN("signature is %s", QS_C(string));
-					for (int i=0; i<ieActions.size(); i++) {
-						IEAction* ieaction = ieActions.at(i);
-						if (string == ieaction->slotName) {
-							list.append(ieaction);
-							// The Q_CLASSINFO macro is used to set a (tranlated) description 
-							// for a 'context' slot, so we query for this (translated) string
-							int classInfoIndex = mo->indexOfClassInfo(QS_C(string));
-							if (classInfoIndex >= 0) {
-								QMetaClassInfo classInfo = mo->classInfo(classInfoIndex);
-								// Set the translated string!
-								ieaction->name = QCoreApplication::translate(mo->className(), classInfo.value()).toAscii();
-							} else {
-								PWARN("No description set for: %s::%s", mo->className(), QS_C(string));
-								PWARN("Add a 	Q_CLASSINFO(\"%s\", tr(\"Description here\")) to class %s\n", QS_C(string), mo->className());
-
-							}
-						}
+				
+				if ( ! (mo->method(i).methodType() == QMetaMethod::Slot) ) {
+					continue;
+				}
+				
+				slotsignature = mo->method(i).signature();
+				slotsignature = slotsignature.left(slotsignature.indexOf("("));
+				
+				for (int i=0; i<ieActions.size(); i++) {
+					
+					IEAction* ieaction = ieActions.at(i);
+					
+					IEAction::Data* iedata;
+					iedata = ieaction->objects.value(classname);
+					
+					if ( ! iedata ) {
+						continue;
 					}
+					
+					if ( ! ( iedata->slotsignature == slotsignature) ) {
+						continue;
+					}
+					
+					MenuData menudata;
+					int classInfoIndex = mo->indexOfClassInfo(QS_C(slotsignature));
+					
+					if (classInfoIndex >= 0) {
+						QMetaClassInfo classInfo = mo->classInfo(classInfoIndex);
+						// Set the translated string!
+						menudata.description = QCoreApplication::translate(classname, classInfo.value());
+					} else {
+						menudata.description = QString("Add a Q_CLASSINFO() for %1::%2 please").arg(classname).arg(slotsignature);
+					}
+					
+					menudata.keysequence = ieaction->keySequence;
+					menudata.sortorder = ieaction->sortOrder;
+					
+					list.append(menudata);
 				}
 			}
 			if (mo->superClass()) {
@@ -1256,33 +1326,8 @@ void EventCatcher::quit_second_chance()
 }
 
 
-void IEAction::set
-	(	int pType,
-		int pFact1_k1,
-		int pFact1_k2,
-		int pFact2_k1,
-		int pFact2_k2,
-		bool newUseX,
-		bool newUseY,
-		const QString& slot,
-		const QString& key1, 
-		const QString& key2, 
-		const QString& key3, 
-		const QString& key4, 
-		const QString& actionName, 
-		int order)
+void IEAction::render_key_sequence(const QString& key1, const QString& key2)
 {
-	type = pType;
-	fact1_key1 = pFact1_k1;
-	fact1_key2 = pFact1_k2;
-	fact2_key1 = pFact2_k1;
-	fact2_key2 = pFact2_k2;
-	useX = newUseX;
-	useY = newUseY;
-	isInstantaneous = false;
-	slotName = slot.toAscii().data();
-	name = actionName.toAscii().data();
-	sortOrder = order;
 	switch(type) {
 	case	FKEY:
 		keySequence = QString("< " + key1 + " >").toAscii().data();
@@ -1308,12 +1353,6 @@ void IEAction::set
 	default	:
 		keySequence = "Unknown Key Sequence";
 	}
-}
-
-
-void IEAction::set_instantaneous(bool status)
-{
-	isInstantaneous = status;
 }
 
 

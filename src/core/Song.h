@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.h,v 1.26 2006/12/04 19:24:54 r_sijrier Exp $
+$Id: Song.h,v 1.27 2007/01/22 15:12:08 r_sijrier Exp $
 */
 
 #ifndef SONG_H
@@ -49,6 +49,17 @@ struct ExportSpecification;
 class Song : public ContextItem
 {
 	Q_OBJECT
+	Q_CLASSINFO("go", tr("Start (Play/Record)"))
+	Q_CLASSINFO("add_new_track", tr("New Track"))
+	Q_CLASSINFO("work_next_edge", tr("Workcursor: To next ege"))
+	Q_CLASSINFO("work_previous_edge", tr("Workcursor: To previous edge"))
+	Q_CLASSINFO("undo", tr("Undo"))
+	Q_CLASSINFO("redo", tr("Redo"))
+	Q_CLASSINFO("toggle_snap", tr("Snap: On/Off"))
+	Q_CLASSINFO("playhead_to_workcursor", tr("Playcursor: To workcursor"))
+	Q_CLASSINFO("master_gain", tr("Gain"))
+	Q_CLASSINFO("toggle_solo", tr("Solo: On/Off"))
+	Q_CLASSINFO("toggle_mute", tr("Mute: On/Off"))
 
 public:
 

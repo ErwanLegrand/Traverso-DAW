@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.28 2007/01/16 15:19:24 r_sijrier Exp $
+$Id: AudioClip.h,v 1.29 2007/01/22 15:12:08 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -44,6 +44,20 @@ class Curve;
 class AudioClip : public ContextItem
 {
 	Q_OBJECT
+	Q_CLASSINFO("mute", tr("Mute"))
+	Q_CLASSINFO("reset_gain", tr("Gain: Reset"))
+	Q_CLASSINFO("reset_fade_in", tr("Fade In: Reset"))
+	Q_CLASSINFO("reset_fade_out", tr("Fade Out: Reset"))
+	Q_CLASSINFO("reset_fade_both", tr("Fade: Reset both"))
+	Q_CLASSINFO("select", tr("Select"))
+	Q_CLASSINFO("remove_from_selection", tr("Selection: Remove"))
+	Q_CLASSINFO("copy", tr("Copy"))
+	Q_CLASSINFO("add_to_selection", tr("Selection: Add"))
+	Q_CLASSINFO("gain", tr("Gain"))
+	Q_CLASSINFO("clip_fade_in", tr("Fade In"))
+	Q_CLASSINFO("clip_fade_out", tr("Fade Out"))
+	Q_CLASSINFO("normalize", tr("Normalize"))
+	Q_CLASSINFO("denormalize", tr("Normalize: reset"))
 
 public:
 

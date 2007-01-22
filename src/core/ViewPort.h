@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ViewPort.h,v 1.7 2007/01/18 21:17:57 r_sijrier Exp $
+    $Id: ViewPort.h,v 1.8 2007/01/22 15:12:08 r_sijrier Exp $
 */
 
 #ifndef VIEWPORT_H
@@ -25,6 +25,7 @@
 
 #include <QGraphicsView>
 #include <QGraphicsItem>
+#include "ContextItem.h"
 
 class ViewItem;
 class ContextItem;
@@ -73,9 +74,9 @@ signals:
 
 };
 
-class HoldCursor : public QGraphicsItem
+class HoldCursor : public ContextItem, public QGraphicsItem
 {
-
+	Q_OBJECT
 public:
 	HoldCursor();
 	~HoldCursor();

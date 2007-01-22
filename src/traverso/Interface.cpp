@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.26 2007/01/20 19:22:02 r_sijrier Exp $
+$Id: Interface.cpp,v 1.27 2007/01/22 15:12:08 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -457,15 +457,15 @@ QMenu* Interface::create_context_menu(QObject* item )
 	
 	connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(process_context_menu_action(QAction*)));
 	
-	QList<IEAction* > actionLst = ie().get_contextitem_actionlist( item );
+	QList<MenuData > list = ie().get_contextitem_actionlist( item );
 	
-	qSort(actionLst.begin(), actionLst.end(), IEAction::smaller);
+	qSort(list.begin(), list.end(), MenuData::smaller);
 
-	foreach(IEAction* ieaction, actionLst) {
-		QString text = QString(ieaction->name + "  " + ieaction->keySequence);
+	foreach(MenuData data, list) {
+		QString text = QString(data.description + "  " + data.keysequence);
 		QAction* action = new QAction(this);
 		action->setText(text);
-		action->setData(ieaction->name);
+		action->setData(data.keysequence);
 		menu->addAction(action);
 	}
 	

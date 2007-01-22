@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.h,v 1.4 2007/01/16 15:19:24 r_sijrier Exp $
+$Id: AudioClipView.h,v 1.5 2007/01/22 15:12:08 r_sijrier Exp $
 */
 
 #ifndef AUDIO_CLIP_VIEW_H
@@ -37,6 +37,9 @@ class FadeView;
 class AudioClipView : public ViewItem
 {
 	Q_OBJECT
+	Q_CLASSINFO("drag", tr("Move Clip"))
+	Q_CLASSINFO("drag_edge", tr("Move Edge"))
+	Q_CLASSINFO("split", tr("Split"))
 
 public:
 	static const int CLIP_INFO_AREA_HEIGHT = 16;

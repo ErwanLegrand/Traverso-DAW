@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: InputEngine.h,v 1.8 2007/01/19 12:39:32 r_sijrier Exp $
+    $Id: InputEngine.h,v 1.9 2007/01/22 15:12:08 r_sijrier Exp $
 */
 
 #ifndef INPUTENGINE_H
@@ -29,6 +29,8 @@
 #include <QString>
 #include <QObject>
 #include <QTimer>
+#include <QHash>
+#include <QStringList>
 
 
 class ContextItem;
@@ -72,41 +74,16 @@ public slots:
 
 struct IEAction
 {
-        //! set the action caracteristics
-        //! @param pId
-        //! @param pType
-        //! @param pFact1_k1
-        //! @param pFact1_k2
-        //! @param pFact2_k1
-        //! @param pFact2_k2
-        //! @param useX
-        //! @param useY
-        void set(int pType,
-        	 int pFact1_k1, 
-        	 int pFact1_k2, 
-        	 int pFact2_k1, 
-        	 int pFact2_k2,
-        	 bool useX, 
-        	 bool useY, 
-        	 const QString& slot,
-        	 const QString& key1, 
-        	 const QString& key2, 
-        	 const QString& key3, 
-        	 const QString& key4,
-        	 const QString& actionName,
-        	 int order);
+        void render_key_sequence(const QString& key1, const QString& key2);
 
-        //! if an action is set to be instantaneous, when it is recognized by jmb , jmb will not wait for a second fact.
-        void set_instantaneous(bool status);
+        struct Data {
+        	QStringList modes;
+        	char* slotsignature;
+        	QString description;
+        	int instantanious;
+        };
 
-        static bool smaller(const IEAction* left, const IEAction* right )
-        {
-                return left->sortOrder < right->sortOrder;
-        }
-        static bool greater(const IEAction* left, const IEAction* right )
-        {
-                return left->sortOrder > right->sortOrder;
-        }
+        QHash<QString, Data*> objects;
 
         int type;
         int fact1_key1;
@@ -116,12 +93,24 @@ struct IEAction
         bool useX;
         bool useY;
         bool isInstantaneous;
-        QByteArray slotName;
         QByteArray keySequence;
-        QByteArray name;
         int sortOrder;
 };
 
+
+struct MenuData {
+        static bool smaller(const MenuData left, const MenuData right )
+        {
+                return left.sortorder < right.sortorder;
+        }
+        static bool greater(const MenuData* left, const MenuData* right )
+        {
+                return left->sortorder > right->sortorder;
+        }
+        QByteArray 	keysequence;
+        QString		description;
+        int		sortorder;
+};
 
 /** The InputEngine is the hearth of the Contextual Interface, and does all keyboard processing
  *
@@ -152,7 +141,7 @@ public:
 
         bool is_holding();
 
-        QList<IEAction* > get_contextitem_actionlist(QObject* item);
+        QList<MenuData > get_contextitem_actionlist(QObject* item);
 
         int broadcast_action_from_contextmenu(const QString& name);
 
@@ -264,7 +253,7 @@ private:
         void 			check_number_collection();
 
         //! call the slot that handler a given action
-        int broadcast_action(IEAction* action);
+        int broadcast_action(IEAction* action, bool autorepeat=false);
 
         void set_jogging(bool jog);
         
