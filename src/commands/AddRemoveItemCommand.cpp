@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AddRemoveItemCommand.cpp,v 1.4 2006/12/01 13:58:45 r_sijrier Exp $
+$Id: AddRemoveItemCommand.cpp,v 1.5 2007/01/24 21:15:47 r_sijrier Exp $
 */
 
 #include "AddRemoveItemCommand.h"
@@ -94,11 +94,15 @@ int AddRemoveItemCommand::do_action()
 		return -1;
 	}
 	
-	if (m_song && m_song->is_transporting()) {
-		PMESG("Using Thread Save add/remove");
-		tsar().add_event(m_doActionEvent);
+	if (m_song) {
+		if (m_song->is_transporting()) {
+			PMESG("Using Thread Save add/remove");
+			tsar().add_event(m_doActionEvent);
+		} else {
+			tsar().process_event_slot_signal(m_doActionEvent);
+		}
 	} else {
-		tsar().process_event_slot_signal(m_doActionEvent);
+		tsar().add_event(m_doActionEvent);
 	}
 	
 	return 1;
@@ -113,12 +117,16 @@ int AddRemoveItemCommand::undo_action()
 		return -1;
 	}
 	
-	if (m_song && m_song->is_transporting()) {
-		PMESG("Using Thread Save add/remove");
-		tsar().add_event(m_undoActionEvent);
+	if (m_song) {
+		if (m_song->is_transporting()) {
+			PMESG("Using Thread Save add/remove");
+			tsar().add_event(m_undoActionEvent);
+		} else {
+			tsar().process_event_slot_signal(m_undoActionEvent);
+		}
 	} else {
 		PMESG("Using direct add/remove/signaling");
-		tsar().process_event_slot_signal(m_undoActionEvent);
+			tsar().add_event(m_undoActionEvent);
 	}
 	
 	return 1;
