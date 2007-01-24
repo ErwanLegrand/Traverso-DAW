@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeView.cpp,v 1.4 2006/12/04 19:24:54 r_sijrier Exp $
+$Id: FadeView.cpp,v 1.5 2007/01/24 21:21:07 r_sijrier Exp $
 */
 
 #include "FadeView.h"
@@ -51,6 +51,7 @@ FadeView::FadeView(SongView* sv, AudioClipView* parent, FadeCurve * fadeCurve )
 	setAcceptsHoverEvents(true);
 	
 	connect(m_fadeCurve, SIGNAL(stateChanged()), this, SLOT(state_changed()));
+	connect(m_fadeCurve, SIGNAL(rangeChanged()), this, SLOT(state_changed()));
 }
 
 
