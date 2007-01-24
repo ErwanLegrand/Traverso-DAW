@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.24 2007/01/22 15:50:17 r_sijrier Exp $
+$Id: InputEngine.cpp,v 1.25 2007/01/24 00:37:03 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -414,9 +414,12 @@ void InputEngine::process_press_event(int eventcode, QInputEvent* event, bool is
 	
 	if (isHolding) {
 		int index = find_index_for_single_fact(FKEY, eventcode, 0);
-		if (index >= 0) {
+		// PRE-CONDITION:
+		// The eventcode must be bind to a single key fact AND
+		// the eventcode must be != the current active holding 
+		// command's eventcode!
+		if (index >= 0 && holdEventCode != eventcode) {
 			IEAction* action = ieActions.at(index);
-			
 			broadcast_action(action, isAutoRepeat);
 		}
 		return;
@@ -710,7 +713,7 @@ int InputEngine::find_index_for_single_fact( int type, int key1, int key2 )
 			( action->fact2_key2 == 0 )
 		) {
 			// 'i' is a candidate for first press
-			PMESG3("Found a match in map position %d", ieActions.indexOf(action));
+			PMESG3("Found a match in map position %d, keyfact %s", ieActions.indexOf(action), action->keySequence.data());
 			return ieActions.indexOf(action);
 		}
 	}
@@ -908,15 +911,19 @@ void InputEngine::finish_hold()
 		holdingCommand->finish_hold();
 		cpointer().reset_cursor();
 
-
-		if (holdingCommand->prepare_actions()) {
+		int holdprepare = holdingCommand->prepare_actions();
+		if (holdprepare > 0) {
+			PMESG("holdingCommand->prepare_actions() returned succes!");
 			holdingCommand->set_valid(true);
 		} else {
+			PMESG("holdingCommand->prepare_actions() returned <= 0, so either it failed, or nothing happened!");
 			holdingCommand->set_valid( false );
 		}
 
 		if (holdingCommand->push_to_history_stack() < 0) {
-			holdingCommand->do_action();
+			if (holdprepare == 1) {
+				holdingCommand->do_action();
+			}
 			delete holdingCommand;
 		}
 
