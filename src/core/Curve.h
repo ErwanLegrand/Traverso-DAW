@@ -1,6 +1,14 @@
 /*
 Copyright (C) 2005-2006 Remon Sijrier 
 
+Original version from Ardour curve.cc, modified
+in order to fit Traverso's lockless design
+
+Copyright (C) 2001-2003 Paul Davis 
+
+Contains ideas derived from "Constrained Cubic Spline Interpolation" 
+by CJC Kruger (www.korf.co.uk/spline.pdf).
+
 This file is part of Traverso
 
 Traverso is free software; you can redistribute it and/or modify
@@ -17,7 +25,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.h,v 1.13 2006/12/01 13:58:45 r_sijrier Exp $
+$Id: Curve.h,v 1.14 2007/01/24 21:18:30 r_sijrier Exp $
 */
 
 #ifndef CURVE_H
@@ -30,36 +38,34 @@ $Id: Curve.h,v 1.13 2006/12/01 13:58:45 r_sijrier Exp $
 
 #include "CurveNode.h"
 
+class Song;
 
 class Curve : public ContextItem
 {
 	Q_OBJECT
 	
 public:
-	Curve(ContextItem* parent);
-	Curve(ContextItem* parent, const QDomNode node);
+	Curve(ContextItem* parent, Song* song);
+	Curve(ContextItem* parent, Song* song, const QDomNode node);
 	~Curve();
 
 	virtual QDomNode get_state(QDomDocument doc);
 	virtual int set_state( const QDomNode& node );
 	
-	Command* add_node(double pos, double value, bool historable=true);
+	Command* add_node(CurveNode* node, bool historable=true);
 	Command* remove_node(CurveNode* node, bool historable=true);
-	void clear();
 	
 	// Get functions
 	double get_range() const;
 	
 	void get_vector (double x0, double x1, float *arg, int32_t veclen);
+	void rt_get_vector (double x0, double x1, float *arg, int32_t veclen);
 	
-	QList<CurveNode* > get_nodes() {return nodes;}
+	QList<CurveNode* >* get_nodes() {return &m_data.nodes;}
 	
 	// Set functions
 	void set_range(double pos);
 	
-protected:
-	QList<CurveNode* >	nodes;
-
 private :
 	
 	struct LookupCache {
@@ -74,28 +80,46 @@ private :
 	};
 	
 	
-	LookupCache lookup_cache;
+	struct CurveData {
+		QList<CurveNode* >	nodes;
+		LookupCache lookup_cache;
+		bool isGui;
+		bool changed;
+	};
 	
-	bool changed;
+	CurveData m_data;
+	CurveData m_rtdata;
+	Song* m_song;
+	
 	double defaultValue;
 	
-	double multipoint_eval (double x);
+	double multipoint_eval (CurveData* data, double x);
 	
 	void x_scale(double factor);
-	void solve ();
+	void solve (CurveData* data);
 	
 	void init();
 	
+	void _get_vector (CurveData*, double x0, double x1, float *arg, int32_t veclen);
+	
 	friend class CurveNode;
 
+protected slots:
+	void set_changed();
+
 private slots:
+	void rt_private_add_node(CurveNode* node);
+	void rt_private_remove_node(CurveNode* node);
+	void rt_set_changed();
+	
 	void private_add_node(CurveNode* node);
 	void private_remove_node(CurveNode* node);
-	void set_changed();
+	
 
 
 signals :
 	void stateChanged();
+	void rangeChanged();
 	void nodeAdded(CurveNode*);
 	void nodeRemoved(CurveNode*);
 };
@@ -103,8 +127,8 @@ signals :
 
 inline double Curve::get_range( ) const
 {
-	if ( ! nodes.isEmpty()) {
-		return nodes.last()->get_when();
+	if ( ! m_data.nodes.isEmpty()) {
+		return m_data.nodes.last()->get_when();
 	}
 		
 	return 0;

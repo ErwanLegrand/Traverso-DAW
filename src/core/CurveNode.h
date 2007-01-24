@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveNode.h,v 1.5 2006/12/01 13:58:45 r_sijrier Exp $
+$Id: CurveNode.h,v 1.6 2007/01/24 21:18:30 r_sijrier Exp $
 */
 
 #ifndef CURVENODE_H
@@ -26,7 +26,7 @@ $Id: CurveNode.h,v 1.5 2006/12/01 13:58:45 r_sijrier Exp $
 #include "defines.h"
 
 #include "ContextItem.h"
-
+#include "Debugger.h"
 class Curve;
 
 class CurveNode : public ContextItem
@@ -38,7 +38,8 @@ public:
 	CurveNode(Curve* curve, double pos, double  val)
 		: m_curve(curve)
 	{
-		coeff[0] = coeff[1] = coeff[2] = coeff[3] = 0.0;
+		rtCoeff[0] = rtCoeff[1] = rtCoeff[2] = rtCoeff[3] = 0.0;
+		guiCoeff[0] = guiCoeff[1] = guiCoeff[2] = guiCoeff[3] = 0.0;
 	
 		m_when = pos;
 		m_value = val;
@@ -46,15 +47,21 @@ public:
 
 	~CurveNode(){};
 	
-	void set_relative_when(double when);
-	void set_value(double value);
-
 	void set_when(double when) {m_when = when;}
+	
+	void set_when_and_value(double when, double value) {
+		m_when = when;
+		m_value = value;
+		emit positionChanged();
+	}
+	
+	void set_relative_when_and_value(double relwhen, double value);
 	
 	double get_when() const {return m_when;}
 	double get_value() const {return m_value;}
 
-	double coeff[4];
+	double rtCoeff[4];
+	double guiCoeff[4];
 	
 private:
 	Curve*	m_curve;

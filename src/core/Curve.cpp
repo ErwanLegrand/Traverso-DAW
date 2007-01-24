@@ -1,6 +1,14 @@
 /*
 Copyright (C) 2005-2006 Remon Sijrier 
 
+Original version from Ardour curve.cc, modified
+in order to fit Traverso's lockless design
+
+Copyright (C) 2001-2003 Paul Davis 
+
+Contains ideas derived from "Constrained Cubic Spline Interpolation" 
+by CJC Kruger (www.korf.co.uk/spline.pdf).
+
 This file is part of Traverso
 
 Traverso is free software; you can redistribute it and/or modify
@@ -17,7 +25,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.cpp,v 1.25 2007/01/16 20:21:08 r_sijrier Exp $
+$Id: Curve.cpp,v 1.26 2007/01/24 21:18:30 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -29,8 +37,11 @@ $Id: Curve.cpp,v 1.25 2007/01/16 20:21:08 r_sijrier Exp $
 #include "CurveNode.h"
 #include "InputEngine.h"
 #include <QStringList>
+#include <QThread>
 #include <AddRemoveItemCommand.h>
+#include <CommandGroup.h>
 
+unsigned long threadid;
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -39,56 +50,68 @@ $Id: Curve.cpp,v 1.25 2007/01/16 20:21:08 r_sijrier Exp $
 using namespace std;
 
 
-Curve::Curve(ContextItem* parent)
+Curve::Curve(ContextItem* parent, Song* song)
 	: ContextItem(parent)
+	, m_song(song)
 {
 	PENTERCONS;
+	Q_ASSERT(m_song);
 	init();
 }
 
-Curve::Curve(ContextItem* parent, const QDomNode node )
+Curve::Curve(ContextItem* parent, Song* song, const QDomNode node )
 	: ContextItem(parent)
+	, m_song(song)
 {
+	Q_ASSERT(m_song);
 	init();
 	set_state(node);
 }
 
 Curve::~Curve()
 {
-	foreach(CurveNode* node, nodes) {
+	foreach(CurveNode* node, m_data.nodes) {
 		delete node;
 	}
 }
 
 void Curve::init( )
 {
-	changed = true;
+	threadid = QThread::currentThreadId ();
+	m_rtdata.changed = true;
+	m_rtdata.lookup_cache.left = -1;
+	m_rtdata.lookup_cache.range.first = m_rtdata.nodes.end();
+	m_rtdata.isGui = false;
+
+	m_data.changed = true;
+	m_data.lookup_cache.left = -1;
+	m_data.lookup_cache.range.first = m_data.nodes.end();
+	m_data.isGui = true;
+
 	defaultValue = 1.0f;
-	lookup_cache.left = -1;
-	lookup_cache.range.first = nodes.end();
 }
 
 
 QDomNode Curve::get_state( QDomDocument doc )
 {
 	PENTER3;
-	QDomElement node = doc.createElement("Curve");
+	QDomElement domNode = doc.createElement("Curve");
 	
 	QStringList nodesList;
 	
-	for (int i=0; i< nodes.size(); ++i) {
-		CurveNode* cn = nodes.at(i);
+	for (int i=0; i< m_data.nodes.size(); ++i) {
+		CurveNode* cn = m_data.nodes.at(i);
 		nodesList << QString::number(cn->get_when(), 'g', 24).append(",").append(QString::number(cn->get_value()));
 	}
 	
-	if (nodes.size() == 0) {
+	if (m_data.nodes.size() == 0) {
 		nodesList << "1,1";
 	}
 	
-	node.setAttribute("nodes",  nodesList.join(";"));
-	node.setAttribute("range", get_range());
+	domNode.setAttribute("nodes",  nodesList.join(";"));
+	domNode.setAttribute("range", get_range());
 	
-	return node;
+	return domNode;
 }
 
 int Curve::set_state( const QDomNode & node )
@@ -102,7 +125,8 @@ int Curve::set_state( const QDomNode & node )
 		QStringList whenValueList = nodesList.at(i).split(",");
 		double when = whenValueList.at(0).toDouble();
 		double value = whenValueList.at(1).toDouble();
-		ie().process_command( add_node(when, value, false) );
+		CurveNode* node = new CurveNode(this, when, value); 
+		ie().process_command( add_node(node, false) );
 	}
 	
 	double range = e.attribute("range", "1").toDouble();
@@ -113,15 +137,19 @@ int Curve::set_state( const QDomNode & node )
 	return 1;
 }
 
-void Curve::solve ()
+void Curve::solve (CurveData* data)
 {
+	printf("Curve::solve\n");
 	uint32_t npoints;
 
-	if (!changed) {
+	if (!data->changed) {
+		printf("Curve::solve, no data change\n");
 		return;
 	}
 	
-	if ((npoints = nodes.size()) > 2) {
+	QList<CurveNode* >* nodes = &data->nodes;
+	
+	if ((npoints = nodes->size()) > 2) {
 		
 		/* Compute coefficients needed to efficiently compute a constrained spline
 		curve. See "Constrained Cubic Spline Interpolation" by CJC Kruger
@@ -133,7 +161,7 @@ void Curve::solve ()
 		uint32_t i;
 		QList<CurveNode* >::iterator xx;
 
-		for (i = 0, xx = nodes.begin(); xx != nodes.end(); ++xx, ++i) {
+		for (i = 0, xx = nodes->begin(); xx != nodes->end(); ++xx, ++i) {
 			x[i] = (double) (*xx)->get_when();
 			y[i] = (double) (*xx)->get_value();
 		}
@@ -151,7 +179,7 @@ void Curve::solve ()
 
 		double fplast = 0;
 
-		for (i = 0, xx = nodes.begin(); xx != nodes.end(); ++xx, ++i) {
+		for (i = 0, xx = nodes->begin(); xx != nodes->end(); ++xx, ++i) {
 			
 			CurveNode* cn = dynamic_cast<CurveNode*>(*xx);
 
@@ -234,29 +262,49 @@ void Curve::solve ()
 			b = (ydelta - (c * (xi2 - xim12)) - (d * (xi3 - xim13))) / xdelta;
 
 			/* store */
+			
+			double* coeff;
+			if (data->isGui) {
+				coeff = cn->guiCoeff;
+			} else {
+				coeff = cn->rtCoeff;
+			}
 
-			cn->coeff[0] = y[i-1] - (b * x[i-1]) - (c * xim12) - (d * xim13);
-			cn->coeff[1] = b;
-			cn->coeff[2] = c;
-			cn->coeff[3] = d;
+			coeff[0] = y[i-1] - (b * x[i-1]) - (c * xim12) - (d * xim13);
+			coeff[1] = b;
+			coeff[2] = c;
+			coeff[3] = d;
 
 			fplast = fpi;
 		}
 		
 	}
 
-	changed = false;
+	data->changed = false;
 }
 
 
-void Curve::get_vector (double x0, double x1, float *vec, int32_t veclen)
+void Curve::get_vector (double x0, double x1, float *vec, int32_t veclen) {
+#if defined(RT_THREAD_CHECK)
+	Q_ASSERT_X(threadid == QThread::currentThreadId (), "Curve::get_vector", "Error, not accessed from GUI thread!!!!!");
+#endif
+	_get_vector(&m_data, x0, x1, vec, veclen);
+}
+
+void Curve::rt_get_vector (double x0, double x1, float *vec, int32_t veclen) {
+	_get_vector(&m_rtdata, x0, x1, vec, veclen);
+}
+
+void Curve::_get_vector (CurveData* data, double x0, double x1, float *vec, int32_t veclen)
 {
 	double rx, dx, lx, hx, max_x, min_x;
 	int32_t i;
 	int32_t original_veclen;
 	int32_t npoints;
+	
+	QList<CurveNode* >* nodes = &data->nodes;
 
-	if ((npoints = nodes.size()) == 0) {
+	if ((npoints = nodes->size()) == 0) {
 		for (i = 0; i < veclen; ++i) {
 			vec[i] = defaultValue;
 		}
@@ -265,13 +313,13 @@ void Curve::get_vector (double x0, double x1, float *vec, int32_t veclen)
 
 	/* nodes is now known not to be empty */
 
-	max_x = nodes.back()->get_when();
-	min_x = nodes.front()->get_when();
+	max_x = nodes->back()->get_when();
+	min_x = nodes->front()->get_when();
 
 	lx = max (min_x, x0);
 
 	if (x1 < 0) {
-		x1 = nodes.back()->get_when();
+		x1 = nodes->back()->get_when();
 	}
 
 	hx = min (max_x, x1);
@@ -291,7 +339,7 @@ void Curve::get_vector (double x0, double x1, float *vec, int32_t veclen)
 		subveclen = min (subveclen, veclen);
 
 		for (i = 0; i < subveclen; ++i) {
-			vec[i] = nodes.front()->get_value();
+			vec[i] = nodes->front()->get_value();
 		}
 
 		veclen -= subveclen;
@@ -310,7 +358,7 @@ void Curve::get_vector (double x0, double x1, float *vec, int32_t veclen)
 		
 		subveclen = min (subveclen, veclen);
 
-		val = nodes.back()->get_value();
+		val = nodes->back()->get_value();
 
 		i = veclen - subveclen;
 
@@ -328,7 +376,7 @@ void Curve::get_vector (double x0, double x1, float *vec, int32_t veclen)
 	if (npoints == 1 ) {
 	
 		for (i = 0; i < veclen; ++i) {
-			vec[i] = nodes.front()->get_value();
+			vec[i] = nodes->front()->get_value();
 		}
 		return;
 	}
@@ -349,11 +397,11 @@ void Curve::get_vector (double x0, double x1, float *vec, int32_t veclen)
 			dx = 0; // not used
 		}
 	
-		double slope = (nodes.back()->get_value() - nodes.front()->get_value())/  
-			(nodes.back()->get_when() - nodes.front()->get_when());
+		double slope = (nodes->back()->get_value() - nodes->front()->get_value())/  
+			(nodes->back()->get_when() - nodes->front()->get_when());
 		double yfrac = dx*slope;
 
-		vec[0] = nodes.front()->get_value() + slope * (lx - nodes.front()->get_when());
+		vec[0] = nodes->front()->get_value() + slope * (lx - nodes->front()->get_when());
 
 		for (i = 1; i < veclen; ++i) {
 			vec[i] = vec[i-1] + yfrac;
@@ -362,8 +410,8 @@ void Curve::get_vector (double x0, double x1, float *vec, int32_t veclen)
 		return;
 	}
 
-	if (changed) {
-		solve ();
+	if (data->changed) {
+		solve (data);
 	}
 
 	rx = lx;
@@ -373,27 +421,30 @@ void Curve::get_vector (double x0, double x1, float *vec, int32_t veclen)
 		dx = (hx - lx) / veclen;
 
 		for (i = 0; i < veclen; ++i, rx += dx) {
-			vec[i] = multipoint_eval (rx);
+			vec[i] = multipoint_eval (data, rx);
 		}
 	}
 }
 
-double Curve::multipoint_eval (double x)
+double Curve::multipoint_eval (CurveData* data, double x)
 {	
 	std::pair<QList<CurveNode* >::iterator, QList<CurveNode* >::iterator> range;
 
-	if ((lookup_cache.left < 0) ||
-		((lookup_cache.left > x) || 
-		(lookup_cache.range.first == nodes.end()) || 
-		((*lookup_cache.range.second)->get_when() < x))) {
+	LookupCache* lookup_cache = &data->lookup_cache;
+	QList<CurveNode* >* nodes = &data->nodes;
+	
+	if ((lookup_cache->left < 0) ||
+		((lookup_cache->left > x) || 
+		(lookup_cache->range.first == nodes->end()) || 
+		((*lookup_cache->range.second)->get_when() < x))) {
 		
 		Comparator cmp;
 		CurveNode cn (this, x, 0.0);
 
-		lookup_cache.range = equal_range (nodes.begin(), nodes.end(), &cn, cmp);
+		lookup_cache->range = equal_range (nodes->begin(), nodes->end(), &cn, cmp);
 	}
 
-	range = lookup_cache.range;
+	range = lookup_cache->range;
 
 	/* EITHER 
 	
@@ -410,75 +461,87 @@ double Curve::multipoint_eval (double x)
 
 		/* x does not exist within the list as a control point */
 		
-		lookup_cache.left = x;
+		lookup_cache->left = x;
 
-		if (range.first == nodes.begin()) {
+		if (range.first == nodes->begin()) {
 			/* we're before the first point */
 			// return defaultValue;
-			nodes.front()->get_value();
+			nodes->front()->get_value();
 		}
 		
-		if (range.second == nodes.end()) {
+		if (range.second == nodes->end()) {
 			/* we're after the last point */
-			return nodes.back()->get_value();
+			return nodes->back()->get_value();
 		}
 
 		double x2 = x * x;
 		CurveNode* cn = *range.second;
+		
+		
+		double* coeff;
+		if (data->isGui) {
+			coeff = cn->guiCoeff;
+		} else {
+			coeff = cn->rtCoeff;
+		}
 
-		return cn->coeff[0] + (cn->coeff[1] * x) + (cn->coeff[2] * x2) + (cn->coeff[3] * x2 * x);
+		return coeff[0] + (coeff[1] * x) + (coeff[2] * x2) + (coeff[3] * x2 * x);
 	} 
 
 	/* x is a control point in the data */
 	/* invalidate the cached range because its not usable */
-	lookup_cache.left = -1;
+	lookup_cache->left = -1;
 	return (*range.first)->get_value();
 }
 
 void Curve::set_range( double when )
 {
-	if (nodes.isEmpty() || nodes.last()->get_when() == when) {
-		PMESG("NOT Setting range!\n");
+	if (m_data.nodes.isEmpty()) {
+		PMESG("no nodes!!");
+		return;
+	}
+	if (m_data.nodes.last()->get_when() == when) {
+		PMESG("new range == current range!");
 		return;
 	}
 	
 	Q_ASSERT(when >= 0);
 	
-	double factor = when / nodes.last()->get_when();
+	double factor = when / m_data.nodes.last()->get_when();
+	
 	x_scale (factor);
 	
-	emit stateChanged();
+	set_changed();
+	
+	emit rangeChanged();
 }
 
-void Curve::x_scale( double factor )
+// This function is called from within the GUI thread,
+// the rt-audio thread accesses the same node data,
+// so the multipoint_eval() could potentially create
+// slightly wrong values when scaling the curve during playback.
+void Curve::x_scale(double factor )
 {
-	for (int i=0; i<nodes.size(); ++i) {
-		CurveNode* node = nodes.at(i); 
+	for (int i=0; i<m_data.nodes.size(); ++i) {
+		CurveNode* node = m_data.nodes.at(i); 
 		node->set_when(node->get_when() * factor);
 	}
-	
-// 	printf("Range is now %d\n", (int) nodes.last()->get_when());
-
-	set_changed();
 }
 
 void Curve::set_changed( )
 {
-	lookup_cache.left = -1;
-	changed = true;
+	m_data.lookup_cache.left = -1;
+	m_data.changed = true;
+	
+	THREAD_SAVE_CALL(this, 0, rt_set_changed());
 }
 
-
-void Curve::clear( )
+void Curve::rt_set_changed( )
 {
-	foreach(CurveNode* node, nodes) {
-		delete node;
-	}
-	
-	nodes.clear();
-	
-	set_changed();
+	m_rtdata.lookup_cache.left = -1;
+	m_rtdata.changed = true;
 }
+
 
 static bool smallerNode(const CurveNode* left, const CurveNode* right )
 {
@@ -486,42 +549,133 @@ static bool smallerNode(const CurveNode* left, const CurveNode* right )
 }
 
 
-Command* Curve::add_node(double pos, double value, bool historable)
+/**
+ * Add a new Node to this Curve.
+ * 
+ * It'll update the CurveData for both the gui and rt-audio thread.
+ * The returned Command object can be placed on the history stack,
+ * to make un-redo possible (the default (??) when called from the InputEngine)
+ *
+ * Note: This function should only be called from the GUI thread!
+ * 
+ * @param node CurveNode to add to this Curve
+ * @param historable Should the returned Command object be placed on the
+ 		history stack?
+ * @return A Command object, if the call was generated from the InputEngine,
+ 	it can be leaved alone, if it was a direct call, use ie().process_command()
+ 	to do the actuall work!!
+ */
+Command* Curve::add_node(CurveNode* node, bool historable)
 {
 	PENTER2;
+	// Since we have to update 2 CurveData sets, create a AddAddRemoveItemCommand
+	// for each set, and place them in a CommandGroup!
+	CommandGroup* group = new CommandGroup(this, tr("Add CurveNode"), historable);
 	
-	CurveNode* node = new CurveNode(this, pos, value); 
+	AddRemoveItemCommand* cmd;
+	
+	cmd = new AddRemoveItemCommand(this, node, historable, m_song,
+			"rt_private_add_node(CurveNode*)", "",
+			"rt_private_remove_node(CurveNode*)", "nodeRemoved(CurveNode*)", 
+			"");
+	
+	group->add_command(cmd);
+	
+	cmd = new AddRemoveItemCommand(this, node, historable, m_song,
+			"private_add_node(CurveNode*)", "nodeAdded(CurveNode*)",
+			"private_remove_node(CurveNode*)", "nodeRemoved(CurveNode*)", 
+			"");
+	
+	
+	group->add_command(cmd);
 	
 	connect(node, SIGNAL(positionChanged()), this, SLOT(set_changed()));
 	
-	return new AddRemoveItemCommand(this, node, historable, 0,
-			"private_add_node(CurveNode*)", "nodeAdded(CurveNode*)",
-			"private_remove_node(CurveNode*)", "nodeRemoved(CurveNode*)", tr("Add CurveNode"));
+	return group;
 }
 
 
+/**
+ * Remove a  Node from this Curve.
+ * 
+ * It'll update the CurveData for both the gui and rt-audio thread.
+ * The returned Command object can be placed on the history stack,
+ * to make un-redo possible (the default (??) when called from the InputEngine)
+ *
+ * Note: This function should only be called from the GUI thread!
+ * 
+ * @param node CurveNode to be removed from this Curve
+ * @param historable Should the returned Command object be placed on the
+ 		history stack?
+ * @return A Command object, if the call was generated from the InputEngine,
+ 	it can be leaved alone, if it was a direct call, use ie().process_command()
+ 	to do the actuall work!!
+ */
 Command* Curve::remove_node(CurveNode* node, bool historable)
 {
-	return new AddRemoveItemCommand(this, node, historable, 0,
-			"private_remove_node(CurveNode*)", "nodeRemoved(CurveNode*)", 
-			"private_add_node(CurveNode*)", "nodeAdded(CurveNode*)", tr("Remove CurveNode"));
-}
-
-void Curve::private_add_node(CurveNode* node )
-{
-// 	printf("private_add_node:: Adding node\n");
+	PENTER2;
+	// Since we have to update 2 CurveData sets, create a AddAddRemoveItemCommand
+	// for each set, and place them in a CommandGroup!
+	CommandGroup* group = new CommandGroup(this, tr("Remove CurveNode"), historable);
 	
-	nodes.append(node);
-	qSort(nodes.begin(), nodes.end(), smallerNode);
-	set_changed();
+	AddRemoveItemCommand* cmd;
+	cmd = new AddRemoveItemCommand(this, node, historable, m_song,
+			"rt_private_remove_node(CurveNode*)", "", 
+			"rt_private_add_node(CurveNode*)", "nodeAdded(CurveNode*)", 
+			"");
+			
+	group->add_command(cmd);
+	
+	cmd = new AddRemoveItemCommand(this, node, historable, m_song,
+			"private_remove_node(CurveNode*)", "nodeRemoved(CurveNode*)", 
+			"private_add_node(CurveNode*)", "nodeAdded(CurveNode*)", 
+			"");
+	
+	group->add_command(cmd);
+			
+	return group;
 }
 
-void Curve::private_remove_node(CurveNode* node )
+// Will be called from within the audio thread
+// (dispatched from the tsar event dispatcher, by means
+// of the AddRemoveAddRemoveItemCommand->do/undo_action()
+void Curve::rt_private_add_node(CurveNode* node )
 {
-	nodes.removeAll(node);
+	m_rtdata.nodes.append(node);
+	qSort(m_rtdata.nodes.begin(), m_rtdata.nodes.end(), smallerNode);
+	
+	rt_set_changed();
+}
+
+// Will be called from within the audio thread
+// (dispatched from the tsar event dispatcher, by means
+// of the AddRemoveAddRemoveItemCommand->do/undo_action()
+void Curve::rt_private_remove_node(CurveNode* node )
+{
+	m_rtdata.nodes.removeAll(node);
+	
+	rt_set_changed();
+}
+
+// Will be called from within the audio thread
+// (dispatched from the tsar event dispatcher, by means
+// of the AddRemoveAddRemoveItemCommand->do/undo_action()
+void Curve::private_add_node( CurveNode * node )
+{
+	m_data.nodes.append(node);
+	qSort(m_data.nodes.begin(), m_data.nodes.end(), smallerNode);
+	
 	set_changed();
 }
 
+// Will be called from within the audio thread
+// (dispatched from the tsar event dispatcher, by means
+// of the AddRemoveAddRemoveItemCommand->do/undo_action()
+void Curve::private_remove_node( CurveNode * node )
+{
+	m_data.nodes.removeAll(node);
+	set_changed();
+}
 
 
 //eof

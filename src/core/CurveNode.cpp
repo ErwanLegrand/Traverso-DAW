@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveNode.cpp,v 1.4 2006/10/17 00:07:43 r_sijrier Exp $
+$Id: CurveNode.cpp,v 1.5 2007/01/24 21:18:30 r_sijrier Exp $
 */
 
 #include "CurveNode.h"
@@ -27,17 +27,11 @@ $Id: CurveNode.cpp,v 1.4 2006/10/17 00:07:43 r_sijrier Exp $
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-
-void CurveNode::set_relative_when( double when )
+void CurveNode::set_relative_when_and_value( double relwhen, double value )
 {
-	m_when = when * m_curve->get_range();
-	emit positionChanged();
-}
-
-void CurveNode::set_value( double value )
-{
+	printf("CurveNod:: range %f\n", m_curve->get_range());
+	m_when = relwhen * m_curve->get_range();
 	m_value = value;
-	emit positionChanged();
 }
 
 //eof

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.9 2006/11/08 14:49:37 r_sijrier Exp $
+$Id: FadeCurve.cpp,v 1.10 2007/01/24 21:18:30 r_sijrier Exp $
 */
  
 #include "FadeCurve.h"
@@ -27,6 +27,7 @@ $Id: FadeCurve.cpp,v 1.9 2006/11/08 14:49:37 r_sijrier Exp $
 #include "Song.h"
 #include "AudioClip.h"
 #include <Fade.h>
+#include "InputEngine.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -35,8 +36,10 @@ $Id: FadeCurve.cpp,v 1.9 2006/11/08 14:49:37 r_sijrier Exp $
 
 QStringList FadeCurve::defaultShapes = QStringList() << "Fastest" << "Fast" << "Linear"  << "Slow" << "Slowest";
 
-FadeCurve::FadeCurve(AudioClip* clip, QString type )
-	: Curve(clip), m_clip(clip), m_sType(type)
+FadeCurve::FadeCurve(AudioClip* clip, Song* song, QString type )
+	: Curve(clip, song)
+	, m_clip(clip)
+	, m_sType(type)
 {
 	if (type == "FadeIn") {
 		m_type = FadeIn;
@@ -79,7 +82,7 @@ void FadeCurve::init()
 		QPointF p = get_curve_point(f);
 		
 		CurveNode* node = new CurveNode(this, p.x(), p.y());
-		nodes.append(node);
+		ie().process_command( add_node(node, false) );
 		connect(node, SIGNAL(positionChanged()), this, SLOT(set_changed()));
 		
 // 		printf("adding node with x=%f, y=%f\n", p.x(), p.y());
@@ -124,6 +127,7 @@ int FadeCurve::set_state( const QDomNode & node )
 	
 	QStringList controlPointsList = e.attribute( "controlpoints", "0.0,0.0;0.25,0.25;0.75,0.75;1.0,1.0" ).split(";");
 	
+	
 	for (int i=0; i<controlPointsList.size(); ++i) {
 		QStringList xyList = controlPointsList.at(i).split(",");
 		float x = xyList.at(0).toFloat();
@@ -132,10 +136,13 @@ int FadeCurve::set_state( const QDomNode & node )
 	}
 	
 	
+	
 	double range = e.attribute("range", "1").toDouble();
 	range = (range == 0.0) ? 1 : range;
+	
 	set_range(range);
 	
+	solve_node_positions();	
 	return 1;
 }
 
@@ -169,7 +176,7 @@ void FadeCurve::process( audio_sample_t * mixdown, nframes_t nframes )
 	nframes_t limit = std::min (nframes, (uint) get_range());
 	
 	
-	get_vector (fadepos, fadepos + limit, m_song->gainbuffer, limit);
+	rt_get_vector (fadepos, fadepos + limit, m_song->gainbuffer, limit);
 	
 
 	for (nframes_t n = 0; n < limit; ++n) {
@@ -227,6 +234,7 @@ void FadeCurve::set_shape(QString shapeName)
 
 void FadeCurve::solve_node_positions( )
 {
+// 	printf("FadeCurve::solve_node_positions()\n");
 	// calculate control points values
 	if (m_mode == 0) {
 		m_controlPoints[1] = QPointF(m_strenghtFactor * (1.0 - m_bendFactor), m_strenghtFactor * m_bendFactor);
@@ -250,16 +258,18 @@ void FadeCurve::solve_node_positions( )
 
 	// calculate curve nodes values
 	float f = 0.0;
- 	for (int i = 1; i < (nodes.size() -1); i++) {
-		f += 1.0/ (nodes.size() - 1);
+	QList<CurveNode* >* nodes = get_nodes();
+ 	for (int i = 1; i < (nodes->size() -1); i++) {
+		f += 1.0/ (nodes->size() - 1);
 		
-		CurveNode* node = nodes.at(i);
+		CurveNode* node = nodes->at(i);
 		QPointF p = get_curve_point(f);
-		
-		node->set_relative_when(p.x());
-		node->set_value(p.y());
+		printf("p.x, p.y: %f, %f\n", p.x(), p.y());
+		node->set_relative_when_and_value(p.x(), p.y());
 		
 	}
+	
+	set_changed();
 }
 
 QPointF FadeCurve::get_curve_point( float f)

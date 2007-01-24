@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.57 2007/01/16 15:22:51 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.58 2007/01/24 21:18:30 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -107,7 +107,7 @@ void AudioClip::init()
 	fadeOut = 0;
 	m_refcount = 0;
 	m_isSnappable = true;
-	gainEnvelope = new Curve(this);
+	gainEnvelope = 0;
 }
 
 int AudioClip::set_state(const QDomNode& node)
@@ -131,14 +131,14 @@ int AudioClip::set_state(const QDomNode& node)
 	if (!curvesNode.isNull()) {
 		QDomElement fadeInNode = curvesNode.firstChildElement("FadeIn");
 		if (!fadeInNode.isNull()) {
-			fadeIn = new FadeCurve(this, "FadeIn");
+			fadeIn = new FadeCurve(this, m_song, "FadeIn");
 			fadeIn->set_state( fadeInNode );
 			private_add_fade(fadeIn);
 		}
 
 		QDomElement fadeOutNode = curvesNode.firstChildElement("FadeOut");
 		if (!fadeOutNode.isNull()) {
-			fadeOut = new FadeCurve(this, "FadeOut");
+			fadeOut = new FadeCurve(this, m_song, "FadeOut");
 			fadeOut->set_state( fadeOutNode );
 			private_add_fade(fadeOut);
 		}
@@ -445,7 +445,7 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 	}
 	
 	nframes_t gainEnvelopeMixPos = m_song->get_transport_frame() - trackStartFrame;
-	gainEnvelope->get_vector(gainEnvelopeMixPos, gainEnvelopeMixPos + read_frames, m_song->gainbuffer, read_frames);
+	gainEnvelope->rt_get_vector(gainEnvelopeMixPos, gainEnvelopeMixPos + read_frames, m_song->gainbuffer, read_frames);
 	
 	for (nframes_t n = 0; n < read_frames; ++n) {
 		mixdown[n] *= m_song->gainbuffer[n];
@@ -717,9 +717,15 @@ void AudioClip::set_song( Song * song )
 	if (m_readSource) {
 		m_song->get_diskio()->register_read_source( m_readSource );
 	}
+	
 	set_history_stack(m_song->get_history_stack());
+	
+	if (!gainEnvelope) {
+		gainEnvelope = new Curve(this, m_song);
+	}
+	
 	gainEnvelope->set_history_stack(get_history_stack());
-
+	
 	
 	if (isSelected) {
 		m_song->get_audioclip_manager()->add_to_selection( this );
@@ -939,14 +945,14 @@ int AudioClip::get_ref_count( ) const
 
 void AudioClip::create_fade_in( )
 {
-	fadeIn = new FadeCurve(this, "FadeIn");
+	fadeIn = new FadeCurve(this, m_song, "FadeIn");
 	fadeIn->set_shape("Linear");
 	THREAD_SAVE_CALL_EMIT_SIGNAL(this, fadeIn, private_add_fade(FadeCurve*), fadeAdded(FadeCurve*));
 }
 
 void AudioClip::create_fade_out( )
 {
-	fadeOut = new FadeCurve(this, "FadeOut");
+	fadeOut = new FadeCurve(this, m_song, "FadeOut");
 	fadeOut->set_shape("Linear");
 	THREAD_SAVE_CALL_EMIT_SIGNAL(this, fadeOut, private_add_fade(FadeCurve*), fadeAdded(FadeCurve*));
 }
