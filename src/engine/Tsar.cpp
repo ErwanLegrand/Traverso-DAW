@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Tsar.cpp,v 1.5 2006/11/14 14:30:58 r_sijrier Exp $
+$Id: Tsar.cpp,v 1.6 2007/01/24 21:24:22 r_sijrier Exp $
 */
 
 #include "Tsar.h"
@@ -212,6 +212,9 @@ TsarEvent Tsar::create_event( QObject* caller, void* argument, char* slotSignatu
 			PWARN("Slot signature contains whitespaces, please remove to avoid unneeded processing (%s::%s)", caller->metaObject()->className(), slotSignature);
 			QByteArray norm = QMetaObject::normalizedSignature(slotSignature);
 			index = caller->metaObject()->indexOfMethod(norm.constData());
+			if (index < 0) {
+				PERROR("Couldn't find a valid index for %s", slotSignature);
+			}
 		}
 		event.slotindex = index;
 	} else {
