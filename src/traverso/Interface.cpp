@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.27 2007/01/22 15:12:08 r_sijrier Exp $
+$Id: Interface.cpp,v 1.28 2007/01/24 21:22:01 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -461,6 +461,14 @@ QMenu* Interface::create_context_menu(QObject* item )
 	
 	qSort(list.begin(), list.end(), MenuData::smaller);
 
+	QString name = QString(item->metaObject()->className()).remove("View").remove("Item").remove("Panel");
+	QAction* menuAction = menu->addAction(name);
+	QFont font("Bitstream Vera Sans", 8);
+	font.setBold(true);
+	menuAction->setFont(font);
+	menuAction->setEnabled(false);
+	menu->addSeparator();
+	menu->setFont(QFont("Bitstream Vera Sans", 8));
 	foreach(MenuData data, list) {
 		QString text = QString(data.description + "  " + data.keysequence);
 		QAction* action = new QAction(this);
