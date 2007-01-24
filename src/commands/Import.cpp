@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Import.cpp,v 1.12 2006/11/08 14:52:11 r_sijrier Exp $
+$Id: Import.cpp,v 1.13 2007/01/24 00:33:59 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -63,7 +63,7 @@ int Import::prepare_actions()
 
 	if (m_fileName.isEmpty()) {
 		PWARN("FileName is empty!");
-		return 0;
+		return -1;
 	}
 
 	int splitpoint = m_fileName.lastIndexOf("/") + 1;
@@ -75,7 +75,7 @@ int Import::prepare_actions()
 	Project* project = pm().get_project();
 	if (!project) {
 		PWARN("No project loaded, can't import an AudioSource without a Project");
-		return 0;
+		return -1;
 	}
 
 	ReadSource* source = project->get_audiosource_manager()->get_readsource(m_fileName);
