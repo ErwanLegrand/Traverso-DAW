@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Gain.h,v 1.6 2007/01/18 21:17:57 r_sijrier Exp $
+    $Id: Gain.h,v 1.7 2007/01/24 00:35:07 r_sijrier Exp $
 */
 
 #ifndef GAIN_H
@@ -54,6 +54,8 @@ private :
         float 		newGain;
         int 		origY;
 	QPoint		mousePos;
+	
+	int get_gain_from_object(float& gain);
 	
 public slots:
         void increase_gain(bool autorepeat);

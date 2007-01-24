@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Gain.cpp,v 1.8 2007/01/18 21:17:57 r_sijrier Exp $
+$Id: Gain.cpp,v 1.9 2007/01/24 00:35:07 r_sijrier Exp $
 */
 
 #include "Gain.h"
@@ -40,9 +40,7 @@ Gain::Gain(ContextItem* context, const QString& des, float gain)
 	
 	if (gain >= 0) {
 		newGain = gain;
-		QMetaObject::invokeMethod(gainObject, "get_gain",
-					Qt::DirectConnection,
-					Q_RETURN_ARG(float, origGain));
+		get_gain_from_object(origGain);
 	}
 }
 
@@ -52,18 +50,18 @@ Gain::~Gain()
 
 int Gain::prepare_actions()
 {
+	if (origGain == newGain) {
+		// Nothing happened!
+		return 0;
+	}
 	return 1;
 }
 
 int Gain::begin_hold()
 {
-	if ( ! QMetaObject::invokeMethod(gainObject, "get_gain",
-					Qt::DirectConnection,
-					Q_RETURN_ARG(float, origGain)) ) {
-		PWARN("Gain::begin_hold QMetaObject::invokeMethod failed");
-		return 0;
-	}	
-	
+	if ( ! get_gain_from_object(origGain)) {
+		return -1;
+	}
 	newGain = origGain;
 	origY = cpointer().y();
 	return 1;
@@ -113,8 +111,14 @@ void Gain::increase_gain( bool autorepeat )
 	float dbFactor = coefficient_to_dB(newGain);
 	dbFactor += 0.2;
 	newGain = dB_to_scale_factor(dbFactor);
-	cpointer().get_viewport()->set_hold_cursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
 	QMetaObject::invokeMethod(gainObject, "set_gain", Q_ARG(float, newGain));
+	
+	// now we get the new gain value from gainObject, since we don't know if 
+	// gainobject accepted the change or not!
+	get_gain_from_object(newGain);
+	
+	// Update the vieport's hold cursor with the _actuall_ gain value!
+	cpointer().get_viewport()->set_hold_cursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
 }
 
 void Gain::decrease_gain(bool autorepeat)
@@ -122,8 +126,16 @@ void Gain::decrease_gain(bool autorepeat)
 	float dbFactor = coefficient_to_dB(newGain);
 	dbFactor -= 0.2;
 	newGain = dB_to_scale_factor(dbFactor);
-	cpointer().get_viewport()->set_hold_cursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
+	
 	QMetaObject::invokeMethod(gainObject, "set_gain", Q_ARG(float, newGain));
+	
+	// now we get the new gain value from gainObject, since we don't know if 
+	// gainobject accepted the change or not!
+	get_gain_from_object(newGain);
+
+
+	// Update the vieport's hold cursor with the _actuall_ gain value!
+	cpointer().get_viewport()->set_hold_cursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
 }
 
 
@@ -142,11 +154,36 @@ int Gain::jog()
 		
 		
 	newGain = dB_to_scale_factor( dbFactor + ofy );
-	origY = cpointer().y();
 	
+	// Set the gain for gainObject
+	QMetaObject::invokeMethod(gainObject, "set_gain", Q_ARG(float, newGain));
+	
+	// now we get the new gain value from gainObject, since we don't know if 
+	// gainobject accepted the change or not!
+	int result = get_gain_from_object(newGain);
+	
+	// Update the vieport's hold cursor!
 	cpointer().get_viewport()->set_hold_cursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
 	
-	return QMetaObject::invokeMethod(gainObject, "set_gain", Q_ARG(float, newGain));
+	// Set the mouse cursor back to the original position, so it doesn't leave the 
+	// object we're working on!
+	// This avoids highlighting of other objects !!
+	// Note that due this, we don't have to set the origY variable in this funcion!!
+	QCursor::setPos(mousePos);
+	
+	return result;
+}
+
+int Gain::get_gain_from_object(float& gain)
+{
+	if ( ! QMetaObject::invokeMethod(gainObject, "get_gain",
+					Qt::DirectConnection,
+					Q_RETURN_ARG(float, gain)) ) {
+		PWARN("Gain::get_gain_from_object QMetaObject::invokeMethod failed");
+		return 0;
+	}	
+	
+	return 1;
 }
 
 
