@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: CommandGroup.h,v 1.2 2006/09/07 09:36:52 r_sijrier Exp $
+    $Id: CommandGroup.h,v 1.3 2007/01/24 21:16:11 r_sijrier Exp $
 */
 
 #ifndef COMMAND_GROUP_H
@@ -30,7 +30,11 @@
 class CommandGroup : public Command
 {
 public :
-        CommandGroup(ContextItem* parent, const QString& des): Command(parent, des) {};
+        CommandGroup(ContextItem* parent, const QString& des, bool historable=true)
+        	: Command(parent, des) 
+        {
+        	m_isHistorable = historable;
+        };
         ~CommandGroup() {};
 
         int prepare_actions();
@@ -38,9 +42,8 @@ public :
         int undo_action();
 
         void add_command(Command* cmd) {
-        	if (cmd) {
-		 	m_commands.append(cmd);
-		}
+        	Q_ASSERT(cmd);
+		m_commands.append(cmd);
 	}
 ;
 
