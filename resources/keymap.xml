@@ -174,7 +174,9 @@
 		</Objects>
 	</keyfact>
 	<keyfact type="FKEY" key1="MouseButtonLeft" sortorder="50" >
-		<Objects/>
+		<Objects>
+			<Object objectname="CurveView" slotsignature="add_node" modes="All" instantanious="0" />
+		</Objects>
 	</keyfact>
 	<keyfact type="FKEY" key1="MouseButtonRight" sortorder="100" >
 		<Objects>
