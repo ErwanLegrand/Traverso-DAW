@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.25 2007/01/22 19:27:05 r_sijrier Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.26 2007/01/24 21:19:37 r_sijrier Exp $
 */
 
 #include "SpectralMeterWidget.h"
@@ -308,7 +308,9 @@ void SpectralMeterItem::set_song(Song *song)
 	connect(song, SIGNAL(transferStarted()), this, SLOT(transfer_started()));
 	connect(song, SIGNAL(transferStopped()), this, SLOT(transfer_stopped()));
 
-	foreach(Plugin* plugin, chain->get_plugin_list()) {
+	QList<Plugin* >* pluginList = chain->get_plugin_list();
+	for (int i=0; i<pluginList->size(); ++i) {
+		Plugin* plugin = pluginList->at(i);
 		// Nicola: qobject_cast didn't have the behaviour I thought
 		// it would have, so I switched it to dynamic_cast!
 		m_meter = dynamic_cast<SpectralMeter*>(plugin);

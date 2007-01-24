@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: CorrelationMeterWidget.cpp,v 1.9 2007/01/20 18:36:31 r_sijrier Exp $
+    $Id: CorrelationMeterWidget.cpp,v 1.10 2007/01/24 21:19:37 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -215,7 +215,9 @@ void CorrelationMeterItem::set_song(Song *song)
 {
 	PluginChain* chain = song->get_plugin_chain();
 	
-	foreach(Plugin* plugin, chain->get_plugin_list()) {
+	QList<Plugin* >* pluginList = chain->get_plugin_list();
+	for (int i=0; i<pluginList->size(); ++i) {
+		Plugin* plugin = pluginList->at(i);
 		m_meter = dynamic_cast<CorrelationMeter*>(plugin);
 		
 		if (m_meter) {

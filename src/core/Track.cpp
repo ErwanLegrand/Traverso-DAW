@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.37 2007/01/22 15:12:08 r_sijrier Exp $
+$Id: Track.cpp,v 1.38 2007/01/24 21:19:37 r_sijrier Exp $
 */
 
 #include "Track.h"
@@ -558,11 +558,11 @@ int Track::process( nframes_t nframes )
 		}
 	}
 	
-	QList<Plugin* > pluginList = pluginChain->get_plugin_list();
+	QList<Plugin* >* pluginList = pluginChain->get_plugin_list();
 	
 	
-	for (int i=0; i<pluginList.size(); ++i) {
-		pluginList.at(i)->process(bus, nframes);
+	for (int i=0; i<pluginList->size(); ++i) {
+		pluginList->at(i)->process(bus, nframes);
 	}
 		
 	return processResult;
