@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.cpp,v 1.12 2007/01/22 20:24:52 r_sijrier Exp $
+$Id: CurveView.cpp,v 1.13 2007/01/24 21:20:32 r_sijrier Exp $
 */
 
 #include "CurveView.h"
@@ -87,16 +87,13 @@ int DragNode::begin_hold()
 
 int DragNode::do_action()
 {
-	m_node->set_when(m_newPos.x());
-	m_node->set_value(m_newPos.y());
+	m_node->set_when_and_value(m_newPos.x(), m_newPos.y());
 	return 1;
 }
 
 int DragNode::undo_action()
 {
-	m_node->set_when(m_origPos.x());
-	m_node->set_value(m_origPos.y());
-	
+	m_node->set_when_and_value(m_origPos.x(), m_origPos.y());
 	return 1;
 }
 
@@ -151,8 +148,9 @@ CurveView::CurveView(SongView* sv, ViewItem* parentViewItem, Curve* curve)
 	m_blinkColorDirection = 1;
 	m_blinkingNode = 0;
 	
-	foreach(CurveNode* node, m_curve->get_nodes()) {
-		add_curvenode_view(node);
+	QList<CurveNode* >* nodes = m_curve->get_nodes();
+	for (int i=0; i < nodes->size(); i++) {
+		add_curvenode_view(nodes->at(i));
 	}
 	
 	connect(&m_blinkTimer, SIGNAL(timeout()), this, SLOT(update_blink_color()));
@@ -176,7 +174,7 @@ static bool smallerNode(const QPointF& left, const QPointF& right) {
 void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
 {
 	Q_UNUSED(widget);
-	
+	PENTER;
 	painter->setRenderHint(QPainter::Antialiasing);
 	painter->setPen(QColor(255, 0, 255));
 	
@@ -357,7 +355,8 @@ Command* CurveView::add_node()
 	PENTER;
 	QPointF point = mapFromScene(cpointer().scene_pos());
 	
-	return m_curve->add_node(point.x() * m_sv->scalefactor, (m_boundingRectangle.height() - point.y()) / m_boundingRectangle.height() );
+	CurveNode* node = new CurveNode(m_curve, point.x() * m_sv->scalefactor, (m_boundingRectangle.height() - point.y()) / m_boundingRectangle.height());
+	return m_curve->add_node(node);
 }
 
 
@@ -386,6 +385,7 @@ Command* CurveView::drag_node()
 
 void CurveView::curve_changed( )
 {
+	printf("CurveView::curve_changed()\n");
 	update();
 }
 
