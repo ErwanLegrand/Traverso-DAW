@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.10 2007/01/24 21:18:30 r_sijrier Exp $
+$Id: FadeCurve.cpp,v 1.11 2007/01/25 12:15:12 r_sijrier Exp $
 */
  
 #include "FadeCurve.h"
@@ -264,7 +264,6 @@ void FadeCurve::solve_node_positions( )
 		
 		CurveNode* node = nodes->at(i);
 		QPointF p = get_curve_point(f);
-		printf("p.x, p.y: %f, %f\n", p.x(), p.y());
 		node->set_relative_when_and_value(p.x(), p.y());
 		
 	}
