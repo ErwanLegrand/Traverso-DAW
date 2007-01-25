@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginChainView.h,v 1.3 2006/12/04 19:24:54 r_sijrier Exp $
+    $Id: PluginChainView.h,v 1.4 2007/01/25 19:21:20 r_sijrier Exp $
 */
 
 #ifndef PLUGIN_CHAIN_VIEW_H
@@ -40,7 +40,7 @@ public:
         PluginChainView(TrackView* view, PluginChain* chain);
         ~PluginChainView();
 
-        void paint(QPainter* painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {};
+        void paint(QPainter* painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 private:
         TrackView* 		m_trackView;
