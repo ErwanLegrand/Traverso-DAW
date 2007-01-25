@@ -25,7 +25,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.h,v 1.14 2007/01/24 21:18:30 r_sijrier Exp $
+$Id: Curve.h,v 1.15 2007/01/25 12:15:58 r_sijrier Exp $
 */
 
 #ifndef CURVE_H
@@ -62,6 +62,7 @@ public:
 	void rt_get_vector (double x0, double x1, float *arg, int32_t veclen);
 	
 	QList<CurveNode* >* get_nodes() {return &m_data.nodes;}
+	Song* get_song() const {return m_song;}
 	
 	// Set functions
 	void set_range(double pos);
@@ -110,7 +111,8 @@ protected slots:
 private slots:
 	void rt_private_add_node(CurveNode* node);
 	void rt_private_remove_node(CurveNode* node);
-	void rt_set_changed();
+	void rtdata_set_changed();
+	void data_set_changed();
 	
 	void private_add_node(CurveNode* node);
 	void private_remove_node(CurveNode* node);

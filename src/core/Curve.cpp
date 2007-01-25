@@ -25,7 +25,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.cpp,v 1.26 2007/01/24 21:18:30 r_sijrier Exp $
+$Id: Curve.cpp,v 1.27 2007/01/25 12:15:58 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -139,7 +139,6 @@ int Curve::set_state( const QDomNode & node )
 
 void Curve::solve (CurveData* data)
 {
-	printf("Curve::solve\n");
 	uint32_t npoints;
 
 	if (!data->changed) {
@@ -530,16 +529,20 @@ void Curve::x_scale(double factor )
 
 void Curve::set_changed( )
 {
-	m_data.lookup_cache.left = -1;
-	m_data.changed = true;
-	
-	THREAD_SAVE_CALL(this, 0, rt_set_changed());
+	data_set_changed();
+	THREAD_SAVE_CALL(this, 0, rtdata_set_changed());
 }
 
-void Curve::rt_set_changed( )
+void Curve::rtdata_set_changed( )
 {
 	m_rtdata.lookup_cache.left = -1;
 	m_rtdata.changed = true;
+}
+
+void Curve::data_set_changed( )
+{
+	m_data.lookup_cache.left = -1;
+	m_data.changed = true;
 }
 
 
@@ -574,18 +577,26 @@ Command* Curve::add_node(CurveNode* node, bool historable)
 	
 	AddRemoveItemCommand* cmd;
 	
+	// This commmand will add the New CurveNode to the m_rtdata 
+	// in a thread save way
 	cmd = new AddRemoveItemCommand(this, node, historable, m_song,
 			"rt_private_add_node(CurveNode*)", "",
-			"rt_private_remove_node(CurveNode*)", "nodeRemoved(CurveNode*)", 
-			"");
+			"rt_private_remove_node(CurveNode*)", "", "");
 	
 	group->add_command(cmd);
 	
+	// This commmand will add the New CurveNode to the m_data 
+	// bypassing the tsar logic, see comment below
 	cmd = new AddRemoveItemCommand(this, node, historable, m_song,
 			"private_add_node(CurveNode*)", "nodeAdded(CurveNode*)",
 			"private_remove_node(CurveNode*)", "nodeRemoved(CurveNode*)", 
 			"");
 	
+	
+	// Since the 'gui' data won't be accessed by the rt-audio thread,
+	// we can make this command bypass tsar, and thus the latency 
+	// involved with using tsar.
+	cmd->set_instantanious();
 	
 	group->add_command(cmd);
 	
@@ -619,17 +630,27 @@ Command* Curve::remove_node(CurveNode* node, bool historable)
 	CommandGroup* group = new CommandGroup(this, tr("Remove CurveNode"), historable);
 	
 	AddRemoveItemCommand* cmd;
+	
+	// This commmand will remove the New CurveNode to the m_rtdata 
+	// in a thread save way
 	cmd = new AddRemoveItemCommand(this, node, historable, m_song,
 			"rt_private_remove_node(CurveNode*)", "", 
-			"rt_private_add_node(CurveNode*)", "nodeAdded(CurveNode*)", 
+			"rt_private_add_node(CurveNode*)", "", 
 			"");
 			
 	group->add_command(cmd);
 	
+	// This commmand will remove the New CurveNode from the m_data struct
+	// bypassing the tsar logic, see comment below
 	cmd = new AddRemoveItemCommand(this, node, historable, m_song,
 			"private_remove_node(CurveNode*)", "nodeRemoved(CurveNode*)", 
 			"private_add_node(CurveNode*)", "nodeAdded(CurveNode*)", 
 			"");
+			
+	// Since the 'gui' data won't be accessed by the rt-audio thread,
+	// we can make this command bypass tsar, and thus the latency 
+	// involved with using tsar.
+	cmd->set_instantanious();
 	
 	group->add_command(cmd);
 			
@@ -644,7 +665,7 @@ void Curve::rt_private_add_node(CurveNode* node )
 	m_rtdata.nodes.append(node);
 	qSort(m_rtdata.nodes.begin(), m_rtdata.nodes.end(), smallerNode);
 	
-	rt_set_changed();
+	rtdata_set_changed();
 }
 
 // Will be called from within the audio thread
@@ -654,27 +675,21 @@ void Curve::rt_private_remove_node(CurveNode* node )
 {
 	m_rtdata.nodes.removeAll(node);
 	
-	rt_set_changed();
+	rtdata_set_changed();
 }
 
-// Will be called from within the audio thread
-// (dispatched from the tsar event dispatcher, by means
-// of the AddRemoveAddRemoveItemCommand->do/undo_action()
 void Curve::private_add_node( CurveNode * node )
 {
 	m_data.nodes.append(node);
 	qSort(m_data.nodes.begin(), m_data.nodes.end(), smallerNode);
 	
-	set_changed();
+	data_set_changed();
 }
 
-// Will be called from within the audio thread
-// (dispatched from the tsar event dispatcher, by means
-// of the AddRemoveAddRemoveItemCommand->do/undo_action()
 void Curve::private_remove_node( CurveNode * node )
 {
 	m_data.nodes.removeAll(node);
-	set_changed();
+	data_set_changed();
 }
 
 
