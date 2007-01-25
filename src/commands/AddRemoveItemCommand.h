@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AddRemoveItemCommand.h,v 1.2 2006/11/08 14:52:11 r_sijrier Exp $
+    $Id: AddRemoveItemCommand.h,v 1.3 2007/01/25 12:14:45 r_sijrier Exp $
 */
 
 #ifndef ADD_ITEM_COMMAND_H
@@ -47,6 +47,8 @@ public :
         int prepare_actions();
         int do_action();
         int undo_action();
+        
+        void set_instantanious();
 
 
 private :
@@ -60,6 +62,7 @@ private :
         char*		m_undoActionSlot;
         char*		m_doSignal;
         char*		m_undoSignal;
+        bool		m_instantanious;
 };
 
 #endif

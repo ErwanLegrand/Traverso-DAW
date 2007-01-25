@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AddRemoveItemCommand.cpp,v 1.5 2007/01/24 21:15:47 r_sijrier Exp $
+$Id: AddRemoveItemCommand.cpp,v 1.6 2007/01/25 12:14:45 r_sijrier Exp $
 */
 
 #include "AddRemoveItemCommand.h"
@@ -37,7 +37,8 @@ AddRemoveItemCommand::AddRemoveItemCommand(ContextItem* parent, ContextItem* chi
 	m_doActionSlot(""),
 	m_undoActionSlot(""),
 	m_doSignal(""),
-	m_undoSignal("")
+	m_undoSignal(""),
+	m_instantanious(0)
 {
 	m_parentItem = parent;
 	m_childItem = child;
@@ -63,7 +64,8 @@ AddRemoveItemCommand::AddRemoveItemCommand(
 	  m_doActionSlot(doActionSlot),
 	  m_undoActionSlot(undoActionSlot),
 	  m_doSignal(doSignal),
-	  m_undoSignal(undoSignal)
+	  m_undoSignal(undoSignal),
+	  m_instantanious(0)
 {
 	m_isHistorable = historable;
 }
@@ -94,6 +96,11 @@ int AddRemoveItemCommand::do_action()
 		return -1;
 	}
 	
+	if (m_instantanious) {
+		tsar().process_event_slot_signal(m_doActionEvent);
+		return 1;
+	}
+	
 	if (m_song) {
 		if (m_song->is_transporting()) {
 			PMESG("Using Thread Save add/remove");
@@ -117,6 +124,11 @@ int AddRemoveItemCommand::undo_action()
 		return -1;
 	}
 	
+	if (m_instantanious) {
+		tsar().process_event_slot_signal(m_undoActionEvent);
+		return 1;
+	}
+	
 	if (m_song) {
 		if (m_song->is_transporting()) {
 			PMESG("Using Thread Save add/remove");
@@ -130,6 +142,16 @@ int AddRemoveItemCommand::undo_action()
 	}
 	
 	return 1;
+}
+
+/**
+ * 	Set's the command instantanious, the do/undo actions will call
+ *	de slot and emit the signal (if they exist) instantaniously,
+ *	and thus bypassing the RT thread save nature of Tsar.
+ */
+void AddRemoveItemCommand::set_instantanious( )
+{
+	m_instantanious = 1;
 }
 
 
