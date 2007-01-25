@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginChainView.cpp,v 1.4 2007/01/22 20:12:58 r_sijrier Exp $
+    $Id: PluginChainView.cpp,v 1.5 2007/01/25 19:20:26 r_sijrier Exp $
 */
 
 #include "PluginChainView.h"
@@ -51,9 +51,11 @@ PluginChainView::PluginChainView(TrackView* parent, PluginChain* chain)
 	setZValue(parent->zValue() + 1);
 	
 	m_trackView->scene()->addItem(this);
-	m_boundingRectangle = m_trackView->boundingRect();
+	m_boundingRectangle = QRectF(0, 0, 0, 44);
 	
-	foreach(Plugin* plugin, chain->get_plugin_list()) {
+	QList<Plugin* >* pluginList = chain->get_plugin_list();
+	for (int i=0; i<pluginList->size(); ++i) {
+		Plugin* plugin = pluginList->at(i);
 		add_new_pluginview(plugin);
 	}
 	
@@ -72,7 +74,7 @@ void PluginChainView::add_new_pluginview( Plugin * plugin )
 	PluginView* view = new PluginView(m_trackView, plugin, m_pluginViews.size());
 	m_pluginViews.append(view);
 	scene()->addItem(view);
-	view->setPos(0, m_boundingRectangle.height() - view->boundingRect().height());
+	view->setPos( ( m_pluginViews.size() -1 )* 120, m_boundingRectangle.height() - view->boundingRect().height());
 }
 
 void PluginChainView::remove_pluginview( Plugin * plugin )
@@ -88,6 +90,15 @@ void PluginChainView::remove_pluginview( Plugin * plugin )
 	for (int i=0; i<m_pluginViews.size(); ++i) {
 		m_pluginViews.at(i)->set_index(i);
 	}
+	
+	m_trackView->update();
+}
+
+void PluginChainView::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
+{
+	Q_UNUSED(painter);
+	Q_UNUSED(option);
+	Q_UNUSED(widget);
 }
 
 //eof
