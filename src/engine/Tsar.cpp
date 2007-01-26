@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Tsar.cpp,v 1.6 2007/01/24 21:24:22 r_sijrier Exp $
+$Id: Tsar.cpp,v 1.7 2007/01/26 13:23:08 r_sijrier Exp $
 */
 
 #include "Tsar.h"
@@ -129,7 +129,9 @@ void Tsar::process_events( )
 	
 #if defined (profile)
 			int processtime = (int) (get_microseconds() - starttime);
-			printf("called %s::%s, (signal: %s) \n", event.caller->metaObject()->className(), event.caller->metaObject()->method(event.slotindex).signature(), event.caller->metaObject()->method(event.signalindex + 4).signature());
+			printf("called %s::%s, (signal: %s) \n", event.caller->metaObject()->className(), 
+			(event.slotindex >= 0) ? event.caller->metaObject()->method(event.slotindex).signature() : "", 
+			(event.signalindex >= 0) ? event.caller->metaObject()->method(event.signalindex + 4).signature() : "");
 			printf("Process time: %d useconds\n\n", processtime);
 #endif
 		}
