@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursors.cpp,v 1.3 2007/01/16 20:21:08 r_sijrier Exp $
+    $Id: Cursors.cpp,v 1.4 2007/01/26 13:24:41 r_sijrier Exp $
 */
 
 #include "Cursors.h"
@@ -25,16 +25,20 @@
 #include "ClipsViewPort.h"
 #include <QPen>
 #include <Song.h>
+#include <QScrollBar>
 		
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-PlayCursor::PlayCursor(SongView* sv, Song* song)
+PlayCursor::PlayCursor(SongView* sv, Song* song, ClipsViewPort* vp)
 	: ViewItem(0, song)
 	, m_song(song)
+	, m_vp(vp)
 {
 	m_sv = sv;
+	m_mode = FLIP_PAGE;
+	m_follow = true;
 	
 	connect(m_song, SIGNAL(transferStarted()), this, SLOT(play_start()));
 	connect(m_song, SIGNAL(transferStopped()), this, SLOT(play_stop()));
@@ -70,9 +74,40 @@ void PlayCursor::play_stop()
 void PlayCursor::update_position()
 {
 	QPointF newPos(m_song->get_transport_frame() / m_sv->scalefactor, 0);
+	
 	if (newPos != pos()) {
 		setPos(newPos);
-// 		m_sv->get_clips_viewport()->centerOn(pos());
+	} else {
+		return;
+	}
+	
+	QScrollBar* horizontalScrollbar = m_vp->horizontalScrollBar();
+	int vpWidth = m_vp->viewport()->width();
+	
+	if (m_follow) {
+		switch (m_mode) {
+		case FLIP_PAGE: 
+			{
+				QPoint vppoint = m_vp->mapFromScene(pos());
+				if (vppoint.x() < 0) {
+					horizontalScrollbar->setValue((int) (pos().x() - (0.5 * vpWidth)) );
+				} else if (vppoint.x() > ( vpWidth * 0.9) ) {
+					horizontalScrollbar->setValue((int) (horizontalScrollbar->value() + (0.8 * vpWidth)) );
+				}
+			}
+			break;
+		
+		case CENTERED:
+			m_vp->centerOn(pos());
+			break;
+		
+		case SCROLLED_FLIP_PAGE: 
+			// anyone ?
+			break;
+		
+		// never reached
+		default: break;
+		}
 	}
 }
 
@@ -95,7 +130,20 @@ void PlayCursor::set_active(bool active)
 	}
 }
 
+void PlayCursor::set_mode( PlayCursorMode mode )
+{
+	m_mode = mode;
+}
 
+void PlayCursor::toggle_folow( )
+{
+	m_follow = ! m_follow;
+}
+
+
+/**************************************************************/
+/*                    WorkCursor                              */
+/**************************************************************/
 
 
 WorkCursor::WorkCursor(SongView* sv, Song* song)

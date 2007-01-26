@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursors.h,v 1.4 2007/01/16 20:21:08 r_sijrier Exp $
+    $Id: Cursors.h,v 1.5 2007/01/26 13:24:41 r_sijrier Exp $
 */
 
 #ifndef CURSORS_H
@@ -28,13 +28,14 @@
 
 class Song;
 class SongView;
+class ClipsViewPort;
 		
 class PlayCursor : public ViewItem
 {
         Q_OBJECT
 
 public:
-        PlayCursor(SongView* sv, Song* song);
+        PlayCursor(SongView* sv, Song* song, ClipsViewPort* vp);
         ~PlayCursor();
 
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -42,10 +43,22 @@ public:
 	
 	bool is_active();
 	void set_active(bool active);
+	
+	enum PlayCursorMode {
+		FLIP_PAGE,
+		CENTERED,
+		SCROLLED_FLIP_PAGE
+	};
+	
+	void set_mode(PlayCursorMode mode);
+	void toggle_folow();
 
 private:
 	Song*		m_song;
         QTimer		m_playTimer;
+        ClipsViewPort*	m_vp;
+        bool 		m_follow;
+        PlayCursorMode	m_mode;
 
 private slots:
         void play_start();
