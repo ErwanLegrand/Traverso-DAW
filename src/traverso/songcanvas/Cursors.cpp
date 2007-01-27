@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursors.cpp,v 1.4 2007/01/26 13:24:41 r_sijrier Exp $
+    $Id: Cursors.cpp,v 1.5 2007/01/27 23:24:20 r_sijrier Exp $
 */
 
 #include "Cursors.h"
@@ -37,13 +37,17 @@ PlayCursor::PlayCursor(SongView* sv, Song* song, ClipsViewPort* vp)
 	, m_vp(vp)
 {
 	m_sv = sv;
-	m_mode = FLIP_PAGE;
+	m_mode = ANIMATED_FLIP_PAGE;
 	m_follow = true;
+	m_timeLine.setDuration(1800);
 	
 	connect(m_song, SIGNAL(transferStarted()), this, SLOT(play_start()));
 	connect(m_song, SIGNAL(transferStopped()), this, SLOT(play_stop()));
 	
 	connect(&m_playTimer, SIGNAL(timeout()), this, SLOT(update_position()));
+	
+	connect(&m_timeLine, SIGNAL(frameChanged(int)), this, SLOT(set_animation_value(int)));
+	connect(&m_timeLine, SIGNAL(finished()), this, SLOT(animation_finished()));
 	
 	setZValue(100);
 }
@@ -57,7 +61,7 @@ void PlayCursor::paint( QPainter * painter, const QStyleOptionGraphicsItem * opt
 {
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
-	QColor color = QColor(180, 189, 240, 140);
+	QColor color = QColor(180, 189, 240, 220);
 	painter->fillRect(0, 0, 2, (int)m_boundingRectangle.height(), color);
 }
 
@@ -69,6 +73,7 @@ void PlayCursor::play_start()
 void PlayCursor::play_stop()
 {
 	m_playTimer.stop();
+	m_timeLine.stop();
 }
 
 void PlayCursor::update_position()
@@ -84,32 +89,63 @@ void PlayCursor::update_position()
 	QScrollBar* horizontalScrollbar = m_vp->horizontalScrollBar();
 	int vpWidth = m_vp->viewport()->width();
 	
-	if (m_follow) {
-		switch (m_mode) {
-		case FLIP_PAGE: 
-			{
+	if ( ! m_follow) {
+		return;
+	}
+	
+	if (m_mode == CENTERED) {
+		horizontalScrollbar->setValue((int)scenePos().x() - (int)(0.5 * vpWidth));
+		return;
+	}
+	 
+	QPoint vppoint = m_vp->mapFromScene(pos());
+	
+	if (vppoint.x() < 0) {
+		horizontalScrollbar->setValue((int) (pos().x() - (0.1 * vpWidth)) );
+	} else if (vppoint.x() > ( vpWidth * 0.8) ) {
+		if (m_mode == ANIMATED_FLIP_PAGE) {
+			if (m_timeLine.state() != QTimeLine::Running) {
 				QPoint vppoint = m_vp->mapFromScene(pos());
+				
 				if (vppoint.x() < 0) {
-					horizontalScrollbar->setValue((int) (pos().x() - (0.5 * vpWidth)) );
-				} else if (vppoint.x() > ( vpWidth * 0.9) ) {
-					horizontalScrollbar->setValue((int) (horizontalScrollbar->value() + (0.8 * vpWidth)) );
+					horizontalScrollbar->setValue((int) (pos().x() - (int)(0.1 * vpWidth)) );
+				} else if (vppoint.x() > ( vpWidth * 0.8) ) {
+					m_timeLine.setFrameRange(0, (int)(vpWidth * 0.7));
+					m_animateStartPoint = horizontalScrollbar->value();
+					m_timeLine.setCurveShape(QTimeLine::SineCurve);
+					play_stop();
+					m_timeLine.start();
 				}
 			}
-			break;
-		
-		case CENTERED:
-			m_vp->centerOn(pos());
-			break;
-		
-		case SCROLLED_FLIP_PAGE: 
-			// anyone ?
-			break;
-		
-		// never reached
-		default: break;
+		} else {
+			horizontalScrollbar->setValue((int) ((int)scenePos().x() + (0.1 * vpWidth)) );
 		}
 	}
 }
+
+
+void PlayCursor::set_animation_value(int value)
+{
+	QPointF newPos(m_song->get_transport_frame() / m_sv->scalefactor, 0);
+	qreal xdiff = newPos.x() - pos().x();
+
+	m_animateStartPoint += (int)(value/21 + xdiff);
+	
+	if (newPos != pos()) {
+		setPos(newPos);
+	}
+	
+	m_vp->horizontalScrollBar()->setValue(m_animateStartPoint);
+}
+
+
+void PlayCursor::animation_finished()
+{
+	if (m_song->is_transporting()) {
+		play_start();
+	}
+}
+
 
 void PlayCursor::set_bounding_rect( QRectF rect )
 {
@@ -186,3 +222,5 @@ void WorkCursor::set_bounding_rect( QRectF rect )
 
 
 //eof
+
+

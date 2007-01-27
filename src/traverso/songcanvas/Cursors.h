@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursors.h,v 1.5 2007/01/26 13:24:41 r_sijrier Exp $
+    $Id: Cursors.h,v 1.6 2007/01/27 23:24:26 r_sijrier Exp $
 */
 
 #ifndef CURSORS_H
@@ -25,6 +25,7 @@
 
 #include "ViewItem.h"
 #include <QTimer>
+#include <QTimeLine>
 
 class Song;
 class SongView;
@@ -47,7 +48,7 @@ public:
 	enum PlayCursorMode {
 		FLIP_PAGE,
 		CENTERED,
-		SCROLLED_FLIP_PAGE
+		ANIMATED_FLIP_PAGE
 	};
 	
 	void set_mode(PlayCursorMode mode);
@@ -56,13 +57,18 @@ public:
 private:
 	Song*		m_song;
         QTimer		m_playTimer;
+        QTimeLine	m_timeLine;
         ClipsViewPort*	m_vp;
         bool 		m_follow;
         PlayCursorMode	m_mode;
+        int 		m_animateStartPoint;
 
 private slots:
         void play_start();
         void play_stop();
+        void set_animation_value(int);
+        void animation_finished();
+        
 public slots:
         void update_position();
 };
