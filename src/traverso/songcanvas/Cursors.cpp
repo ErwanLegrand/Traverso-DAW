@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursors.cpp,v 1.5 2007/01/27 23:24:20 r_sijrier Exp $
+    $Id: Cursors.cpp,v 1.6 2007/01/28 16:43:58 r_sijrier Exp $
 */
 
 #include "Cursors.h"
@@ -39,15 +39,17 @@ PlayCursor::PlayCursor(SongView* sv, Song* song, ClipsViewPort* vp)
 	m_sv = sv;
 	m_mode = ANIMATED_FLIP_PAGE;
 	m_follow = true;
-	m_timeLine.setDuration(1800);
+	
+	m_animation.setDuration(1800);
+	m_animation.setCurveShape(QTimeLine::SineCurve);
 	
 	connect(m_song, SIGNAL(transferStarted()), this, SLOT(play_start()));
 	connect(m_song, SIGNAL(transferStopped()), this, SLOT(play_stop()));
 	
 	connect(&m_playTimer, SIGNAL(timeout()), this, SLOT(update_position()));
 	
-	connect(&m_timeLine, SIGNAL(frameChanged(int)), this, SLOT(set_animation_value(int)));
-	connect(&m_timeLine, SIGNAL(finished()), this, SLOT(animation_finished()));
+	connect(&m_animation, SIGNAL(frameChanged(int)), this, SLOT(set_animation_value(int)));
+	connect(&m_animation, SIGNAL(finished()), this, SLOT(animation_finished()));
 	
 	setZValue(100);
 }
@@ -73,7 +75,7 @@ void PlayCursor::play_start()
 void PlayCursor::play_stop()
 {
 	m_playTimer.stop();
-	m_timeLine.stop();
+	m_animation.stop();
 }
 
 void PlayCursor::update_position()
@@ -100,25 +102,27 @@ void PlayCursor::update_position()
 	 
 	QPoint vppoint = m_vp->mapFromScene(pos());
 	
-	if (vppoint.x() < 0) {
-		horizontalScrollbar->setValue((int) (pos().x() - (0.1 * vpWidth)) );
-	} else if (vppoint.x() > ( vpWidth * 0.8) ) {
+	if (vppoint.x() < 0 || (vppoint.x() > vpWidth)) {
+		
+		// If the playhead is _not_ in the viewports range, center it in the middle!
+		horizontalScrollbar->setValue((int) ((int)scenePos().x() - (0.5 * vpWidth)) );
+	
+	} else if (vppoint.x() > ( vpWidth * 0.82) ) {
+		
+		// If the playhead is in the viewports range, and is nearing the end
+		// either start the animated flip page, or flip the page and place the 
+		// playhead cursor ~ 1/10 from the left viewport border
 		if (m_mode == ANIMATED_FLIP_PAGE) {
-			if (m_timeLine.state() != QTimeLine::Running) {
-				QPoint vppoint = m_vp->mapFromScene(pos());
-				
-				if (vppoint.x() < 0) {
-					horizontalScrollbar->setValue((int) (pos().x() - (int)(0.1 * vpWidth)) );
-				} else if (vppoint.x() > ( vpWidth * 0.8) ) {
-					m_timeLine.setFrameRange(0, (int)(vpWidth * 0.7));
-					m_animateStartPoint = horizontalScrollbar->value();
-					m_timeLine.setCurveShape(QTimeLine::SineCurve);
-					play_stop();
-					m_timeLine.start();
-				}
+			if (m_animation.state() != QTimeLine::Running) {
+				m_animation.setFrameRange(0, (int)(vpWidth * 0.75));
+				m_animationScrollPosition = horizontalScrollbar->value();
+				//during the animation, we stop the play update timer
+				// to avoid unnecessary update/paint events
+				play_stop();
+				m_animation.start();
 			}
 		} else {
-			horizontalScrollbar->setValue((int) ((int)scenePos().x() + (0.1 * vpWidth)) );
+			horizontalScrollbar->setValue((int) ((int)scenePos().x() - (0.1 * vpWidth)) );
 		}
 	}
 }
@@ -127,15 +131,21 @@ void PlayCursor::update_position()
 void PlayCursor::set_animation_value(int value)
 {
 	QPointF newPos(m_song->get_transport_frame() / m_sv->scalefactor, 0);
-	qreal xdiff = newPos.x() - pos().x();
+	// calculate the motion distance of the playhead.
+	qreal deltaX = newPos.x() - pos().x();
 
-	m_animateStartPoint += (int)(value/21 + xdiff);
+	// 21 seems to be the division factor with a QTimeLine running for
+	// 1800 ms, and 3/4 of the viewport width. Don't ask me why :-) 
+	// Due the playhead moves as well during the animation, we have to 
+	// compensate for this, by adding it's delta x to the animation 
+	// 'scroll' position
+	m_animationScrollPosition += (int)(value/21 + deltaX);
 	
 	if (newPos != pos()) {
 		setPos(newPos);
 	}
 	
-	m_vp->horizontalScrollBar()->setValue(m_animateStartPoint);
+	m_vp->horizontalScrollBar()->setValue(m_animationScrollPosition);
 }
 
 

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursors.h,v 1.6 2007/01/27 23:24:26 r_sijrier Exp $
+    $Id: Cursors.h,v 1.7 2007/01/28 16:43:51 r_sijrier Exp $
 */
 
 #ifndef CURSORS_H
@@ -57,11 +57,11 @@ public:
 private:
 	Song*		m_song;
         QTimer		m_playTimer;
-        QTimeLine	m_timeLine;
+        QTimeLine	m_animation;
         ClipsViewPort*	m_vp;
         bool 		m_follow;
         PlayCursorMode	m_mode;
-        int 		m_animateStartPoint;
+        int 		m_animationScrollPosition;
 
 private slots:
         void play_start();
