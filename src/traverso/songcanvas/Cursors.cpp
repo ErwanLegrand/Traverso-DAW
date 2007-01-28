@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursors.cpp,v 1.6 2007/01/28 16:43:58 r_sijrier Exp $
+    $Id: Cursors.cpp,v 1.7 2007/01/28 20:22:21 r_sijrier Exp $
 */
 
 #include "Cursors.h"
@@ -40,7 +40,7 @@ PlayCursor::PlayCursor(SongView* sv, Song* song, ClipsViewPort* vp)
 	m_mode = ANIMATED_FLIP_PAGE;
 	m_follow = true;
 	
-	m_animation.setDuration(1800);
+	m_animation.setDuration(1300);
 	m_animation.setCurveShape(QTimeLine::SineCurve);
 	
 	connect(m_song, SIGNAL(transferStarted()), this, SLOT(play_start()));
@@ -130,6 +130,7 @@ void PlayCursor::update_position()
 
 void PlayCursor::set_animation_value(int value)
 {
+	printf("time %d, value %d\n", m_animation.currentTime(), value);
 	QPointF newPos(m_song->get_transport_frame() / m_sv->scalefactor, 0);
 	// calculate the motion distance of the playhead.
 	qreal deltaX = newPos.x() - pos().x();
@@ -139,7 +140,7 @@ void PlayCursor::set_animation_value(int value)
 	// Due the playhead moves as well during the animation, we have to 
 	// compensate for this, by adding it's delta x to the animation 
 	// 'scroll' position
-	m_animationScrollPosition += (int)(value/21 + deltaX);
+	m_animationScrollPosition += (int)(value/15 + deltaX);
 	
 	if (newPos != pos()) {
 		setPos(newPos);
