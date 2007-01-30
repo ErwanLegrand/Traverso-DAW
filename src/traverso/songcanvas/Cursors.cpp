@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursors.cpp,v 1.8 2007/01/28 20:34:54 r_sijrier Exp $
+    $Id: Cursors.cpp,v 1.9 2007/01/30 23:54:39 r_sijrier Exp $
 */
 
 #include "Cursors.h"
@@ -70,12 +70,21 @@ void PlayCursor::paint( QPainter * painter, const QStyleOptionGraphicsItem * opt
 void PlayCursor::play_start()
 {
 	m_playTimer.start(20);
+	
+	if (m_animation.state() == QTimeLine::Running) {
+		m_animation.stop();
+		m_animation.setCurrentTime(0);
+	}
 }
 
 void PlayCursor::play_stop()
 {
 	m_playTimer.stop();
-	m_animation.stop();
+	
+	if (m_animation.state() == QTimeLine::Running) {
+		m_animation.stop();
+		m_animation.setCurrentTime(0);
+	}
 }
 
 void PlayCursor::update_position()
@@ -134,8 +143,8 @@ void PlayCursor::set_animation_value(int value)
 	// calculate the motion distance of the playhead.
 	qreal deltaX = newPos.x() - pos().x();
 
-	// 21 seems to be the division factor with a QTimeLine running for
-	// 1800 ms, and 3/4 of the viewport width. Don't ask me why :-) 
+	// 16 seems to be the division factor with a QTimeLine running for
+	// 1300 ms, and 3/4 of the viewport width. Don't ask me why :-) 
 	// Due the playhead moves as well during the animation, we have to 
 	// compensate for this, by adding it's delta x to the animation 
 	// 'scroll' position

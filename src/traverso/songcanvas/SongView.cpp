@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.10 2007/01/26 13:24:41 r_sijrier Exp $
+$Id: SongView.cpp,v 1.11 2007/01/30 23:54:15 r_sijrier Exp $
 */
 
 
@@ -53,7 +53,6 @@ private :
 	PlayCursor*	m_cursor;
 	Song*		m_song;
 	SongView*	m_sv;
-	bool 		wasActive;
 };
 
 PlayCursorMove::PlayCursorMove(PlayCursor* cursor, Song* song, SongView* sv)
@@ -66,14 +65,13 @@ PlayCursorMove::PlayCursorMove(PlayCursor* cursor, Song* song, SongView* sv)
 
 int PlayCursorMove::finish_hold()
 {
-	m_cursor->set_active(wasActive);
+	m_cursor->set_active(m_song->is_transporting());
 	m_song->set_transport_pos( (nframes_t) (cpointer().scene_x() * m_sv->scalefactor));
 	return -1;
 }
 
 int PlayCursorMove::begin_hold()
 {
-	wasActive = m_cursor->is_active();
 	m_cursor->set_active(false);
 	return 1;
 }
@@ -208,6 +206,8 @@ void SongView::calculate_scene_rect()
 	m_playCursor->update_position();
 	m_workCursor->set_bounding_rect(QRectF(0, 0, 2, totalheight));
 	m_workCursor->update_position();
+	
+	center();
 
 // 	m_clipsViewPort->centerOn(m_song->get_working_frame() / scalefactor, 0);
 }
@@ -288,7 +288,8 @@ Command* SongView::vzoom_in()
 Command* SongView::center()
 {
 	PENTER2;
-	m_clipsViewPort->centerOn(m_song->get_working_frame() / scalefactor, 0);
+	QScrollBar* scrollbar = m_clipsViewPort->horizontalScrollBar();
+	scrollbar->setValue(m_song->get_working_frame() / scalefactor - m_clipsViewPort->width() / 2);
 	return (Command*) 0;
 }
 
