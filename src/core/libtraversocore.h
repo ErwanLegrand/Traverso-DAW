@@ -8,8 +8,6 @@
 #include "Information.h"
 #include "InputEngine.h"
 #include "Mixer.h"
-#include "MtaRegion.h"
-#include "MtaRegionList.h"
 #include "Peak.h"
 #include "Project.h"
 #include "ProjectManager.h"

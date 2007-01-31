@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.50 2007/01/24 21:19:37 r_sijrier Exp $
+$Id: Song.cpp,v 1.51 2007/01/31 13:53:47 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -36,8 +36,6 @@ $Id: Song.cpp,v 1.50 2007/01/24 21:19:37 r_sijrier Exp $
 #include "Mixer.h"
 #include "AudioSource.h"
 #include "AudioClip.h"
-#include "MtaRegion.h"
-#include "MtaRegionList.h"
 #include "Peak.h"
 #include "Export.h"
 #include "DiskIO.h"
@@ -89,7 +87,6 @@ Song::Song(Project* project, int number)
 			break;
 	}
 	int tracksToCreate = config().get_property("Song", "trackCreationCount", 6).toInt();
-	regionList = (MtaRegionList*) 0;
 
 	init();
 
@@ -120,7 +117,6 @@ Song::~Song()
 	delete [] gainbuffer;
 
 	delete diskio;
-	delete regionList;
 	delete masterOut;
 	delete m_hs;
 	delete audiodeviceClient;
@@ -147,7 +143,6 @@ void Song::init()
 	mixdown = new audio_sample_t[audiodevice().get_buffer_size()];
 	gainbuffer = new audio_sample_t[audiodevice().get_buffer_size()];
 	masterOut = new AudioBus("Master Out", 2);
-	regionList = new MtaRegionList();
 	m_hs = new QUndoStack(pm().get_undogroup());
 	set_history_stack(m_hs);
 	acmanager = new AudioClipManager(this);
