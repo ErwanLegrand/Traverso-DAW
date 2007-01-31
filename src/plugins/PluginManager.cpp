@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginManager.cpp,v 1.4 2006/11/27 21:12:14 r_sijrier Exp $
+$Id: PluginManager.cpp,v 1.5 2007/01/31 11:59:11 r_sijrier Exp $
 
 slv2 url: http://codeson.net/svn/libslv2/
 */
@@ -27,7 +27,7 @@ slv2 url: http://codeson.net/svn/libslv2/
 #include "CorrelationMeter.h"
 #include "SpectralMeter.h"
 
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
+#if defined (LV2_SUPPORT)
 #include <LV2Plugin.h>
 #endif
 
@@ -42,7 +42,7 @@ PluginManager::PluginManager()
 
 PluginManager::~PluginManager()
 {
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
+#if defined (LV2_SUPPORT)
 	slv2_list_free(slv2PluginList);
 #endif
 }
@@ -60,8 +60,9 @@ PluginManager* PluginManager::instance()
 
 void PluginManager::init()
 {
+	printf("PluginManager::init()\n");
 
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
+#if defined (LV2_SUPPORT)
 // LV2 part:
 	slv2PluginList  = slv2_list_new();
 	slv2_list_load_all(slv2PluginList);
@@ -76,7 +77,7 @@ Plugin* PluginManager::get_plugin(const  QDomNode node )
 
 	Plugin* plugin = 0;
 
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
+#if defined (LV2_SUPPORT)
 	if (type == "LV2Plugin") {
 		plugin = new LV2Plugin();
 	}
@@ -107,7 +108,7 @@ Plugin* PluginManager::get_plugin(const  QDomNode node )
 	return plugin;
 }
 
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
+#if defined (LV2_SUPPORT)
 
 SLV2List PluginManager::get_slv2_plugin_list()
 {

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginView.cpp,v 1.6 2007/01/22 20:27:06 r_sijrier Exp $
+$Id: PluginView.cpp,v 1.7 2007/01/31 12:00:55 r_sijrier Exp $
 */
 
 #include "PluginView.h"
@@ -30,7 +30,7 @@ $Id: PluginView.cpp,v 1.6 2007/01/22 20:27:06 r_sijrier Exp $
 #include "ColorManager.h"
 #include <Plugin.h>
 
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
+#if defined (LV2_SUPPORT)
 #include <LV2PluginPropertiesDialog.h>
 #endif
 
@@ -54,12 +54,13 @@ PluginView::PluginView(TrackView* parent, Plugin* plugin, int index)
 	m_name = plugin->get_name();
 	m_boundingRectangle = QRectF(0, 0, 100, 25);
 	
+	setAcceptsHoverEvents(true);
 }
 
 PluginView::~PluginView( )
 {
 	PENTERDES2;
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
+#if defined (LV2_SUPPORT)
 	if (propertiesDialog) {
 		delete propertiesDialog;
 	}
@@ -68,6 +69,9 @@ PluginView::~PluginView( )
 
 void PluginView::paint(QPainter* painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+	Q_UNUSED(option);
+	Q_UNUSED(widget);
+	
 	QColor color;
 	if (m_plugin->is_bypassed()) {
 		color.setRgb(230, 0, 230, 80);
@@ -75,9 +79,18 @@ void PluginView::paint(QPainter* painter, const QStyleOptionGraphicsItem *option
 		color.setRgb(230, 0, 230, 170);
 	}
 
+	int height, width;
+	if (option->state & QStyle::State_MouseOver) {
+		height = 21;
+		width = 101;
+		color = color.light(120);
+	} else {
+		height = 20;
+		width = 100;
+	}
+	
 	QBrush brush(color);
-	int xstart = 200 + m_index * 120;
-	QRect rect(0, 0, 100, 25);
+	QRect rect(0, 0, width, height); 
 	painter->fillRect(rect, brush);
 	painter->setPen(QColor(Qt::white));
 	painter->drawText(rect, Qt::AlignCenter, m_name);
@@ -88,7 +101,7 @@ void PluginView::paint(QPainter* painter, const QStyleOptionGraphicsItem *option
 
 Command * PluginView::edit_properties( )
 {
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
+#if defined (LV2_SUPPORT)
 	if (! propertiesDialog) {
 		propertiesDialog = new LV2PluginPropertiesDialog((LV2Plugin*) m_plugin);
 		propertiesDialog->setWindowTitle(m_name);
