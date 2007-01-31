@@ -60,8 +60,6 @@ QMAKE_CXXFLAGS += $$system(pkg-config --cflags glib-2.0)
 debug {
 	DEFINES += USE_DEBUGGER
 #	DEFINES += USE_MEM_CHECKER
-	QMAKE_CXXFLAGS -= -g
-	QMAKE_CXXFLAGS += -ggdb
 }
 
 
