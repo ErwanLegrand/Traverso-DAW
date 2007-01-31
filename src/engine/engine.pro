@@ -1,64 +1,60 @@
-# Dit bestand is gegenereerd door KDevelop's QMake-Manager.
-# ------------------------------------------- 
-# De submap relatief aan de projectmap: ./src/engine
-# Het Target is een bibliotheek:  traverso
-
 include(../libbase.pri)
 
-INCLUDEPATH += \
-	../../src/core \
-	./ \
-	./build
+INCLUDEPATH += ../core
 
 TARGET = traversoaudiobackend
 DESTDIR = ../../lib 
-
 TEMPLATE = lib 
 LIBS += -lasound
 
-HEADERS =  AudioDevice.h \
-	AudioBus.h \
-	AudioDeviceThread.h \
-	Client.h \
-	JackDriver.h \
-	AudioChannel.h \
-	Driver.h \
-	Tsar.h \
-	memops.h \
-	libtraverso.h \
-	bitset.h \
-	defines.h \
-	precompile.h
 
-SOURCES = AudioDevice.cpp \
-	AudioBus.cpp \
-	AudioDeviceThread.cpp \
-	Client.cpp \
-	JackDriver.cpp \
-	Driver.cpp \
-	AudioChannel.cpp \
-	Tsar.cpp \
-	memops.cpp
+SOURCES += AlsaDriver.cpp \
+AudioBus.cpp \
+AudioChannel.cpp \
+AudioDevice.cpp \
+AudioDeviceThread.cpp \
+AudioPlugin.cpp \
+Client.cpp \
+Driver.cpp \
+JackDriver.cpp \
+memops.cpp \
+Tsar.cpp
+HEADERS += AlsaDriver.h \
+AudioBus.h \
+AudioChannel.h \
+AudioDevice.h \
+AudioDeviceThread.h \
+AudioPlugin.h \
+bitset.h \
+Client.h \
+defines.h \
+Driver.h \
+JackDriver.h \
+libtraverso.h \
+memops.h \
+precompile.h \
+Tsar.h
 
-debug {
-	PRECOMPILED_HEADER = precompile.h 
+
+release{
+PRECOMPILED_HEADER -= precompile.h 
 }
 
-
-unix {
-	SOURCES += AlsaDriver.cpp
-	HEADERS += AlsaDriver.h
-	contains(DEFINES, SSE_OPTIMIZATIONS):SOURCES += sse_functions.S
+unix{
+contains(DEFINES, SSE_OPTIMIZATIONS): SOURCES += sse_functions.S
 }
 
-
-macx {
-	LIBS -= -lasound
-	QMAKE_LIBDIR += /usr/local/qt/lib 
+macx{
+SOURCES -= AlsaDriver.cpp
+HEADERS -= AlsaDriver.h
+LIBS -= -lasound
+QMAKE_LIBDIR += /usr/local/qt/lib 
 }
 
-win32 {
-	LIBS -= -lasound
-	SOURCES -= JackDriver.cpp
-	HEADERS -= JackDriver.h
+win32{
+LIBS -= -lasound
+SOURCES -= JackDriver.cpp
+HEADERS -= JackDriver.h
+SOURCES -= AlsaDriver.cpp
+HEADERS -= AlsaDriver.h
 }
