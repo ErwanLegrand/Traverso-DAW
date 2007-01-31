@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginChainView.cpp,v 1.5 2007/01/25 19:20:26 r_sijrier Exp $
+    $Id: PluginChainView.cpp,v 1.6 2007/01/31 12:31:41 r_sijrier Exp $
 */
 
 #include "PluginChainView.h"
@@ -32,7 +32,7 @@
 
 #include <Track.h>
 
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
+#if defined (LV2_SUPPORT)
 #include <LV2Plugin.h>
 #endif
 #include <PluginChain.h>

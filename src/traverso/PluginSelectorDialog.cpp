@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginSelectorDialog.cpp,v 1.4 2007/01/31 12:11:21 r_sijrier Exp $
+$Id: PluginSelectorDialog.cpp,v 1.5 2007/01/31 12:32:59 r_sijrier Exp $
 */
 
 #include "PluginSelectorDialog.h"
@@ -26,7 +26,7 @@ $Id: PluginSelectorDialog.cpp,v 1.4 2007/01/31 12:11:21 r_sijrier Exp $
 #include <QStandardItemModel>
 #include <QHeaderView>
 
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
+#if defined (LV2_SUPPORT)
 #include <LV2Plugin.h>
 #endif
 #include <Plugin.h>
@@ -82,7 +82,7 @@ void PluginSelectorDialog::on_cancelButton_clicked( )
 
 void PluginSelectorDialog::on_okButton_clicked( )
 {
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
+#if defined (LV2_SUPPORT)
 	LV2Plugin* plugin = 0;
 
 

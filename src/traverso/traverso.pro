@@ -20,16 +20,16 @@ LIBS +=  \
 	$$system(pkg-config --libs glib-2.0) \
 
 HEADERS += \
-	songcanvas/AudioClipView.h \ 
-	songcanvas/SongWidget.h \ 
-	songcanvas/ClipsViewPort.h \ 
+	songcanvas/AudioClipView.h \
+	songcanvas/SongWidget.h \
+	songcanvas/ClipsViewPort.h \
 	songcanvas/CurveView.h \
 	songcanvas/CurveNodeView.h \
 	songcanvas/TimeLineViewPort.h \
 	songcanvas/TrackPanelViewPort.h \
 	songcanvas/TrackView.h \
 	songcanvas/ViewItem.h \
-	songcanvas/SongView.h \ 
+	songcanvas/SongView.h \
 	songcanvas/TimeLineview.h \
 	songcanvas/TrackPanelView.h \
 	songcanvas/Cursors.h \
@@ -39,7 +39,6 @@ HEADERS += \
 	songcanvas/PluginChainView.h \
 	AudioPluginSelector.h \
 	AudioSourcesTreeWidget.h \
-#	CursorWidget.h \
 	BusMonitor.h \
 	BusSelector.h \
 	ColorManager.h \
@@ -53,10 +52,8 @@ HEADERS += \
 	OverViewWidget.h \
 	PluginSelectorDialog.h \
 	ProjectManagerWidget.h \
-#	ProjectInfoWidget.h \
 	SongManagerWidget.h \
 	SystemInfoWidget.h \
-#	SongInfoWidget.h \
 	AudioSourcesManagerWidget.h \
 	GlobalPropertiesWidget.h \
 	Traverso.h \
@@ -89,7 +86,6 @@ SOURCES += \
 	songcanvas/PluginChainView.cpp \
 	Traverso.cpp \
 	AudioSourcesTreeWidget.cpp \
-#	CursorWidget.cpp \
 	AudioPluginSelector.cpp \
 	BusMonitor.cpp \
 	BusSelector.cpp \
@@ -100,13 +96,11 @@ SOURCES += \
 	Main.cpp \
 	ExportWidget.cpp \
 	ProjectManagerWidget.cpp \
-#	ProjectInfoWidget.cpp \
 	MessageWidget.cpp \
 	ManagerWidget.cpp \
 	OverViewWidget.cpp \
 	PluginSelectorDialog.cpp \
 	SongManagerWidget.cpp \
-#	SongInfoWidget.cpp \
 	SystemInfoWidget.cpp \
 	AudioSourcesManagerWidget.cpp \
 	GlobalPropertiesWidget.cpp \
@@ -117,8 +111,6 @@ SOURCES += \
 	QuickDriverConfigWidget.cpp
 
 FORMS += ui/ProjectManagerWidget.ui \
-#	ui/ProjectInfoWidget.ui \
-#	ui/SongInfoWidget.ui \
 	ui/ExportWidget.ui \
 	ui/SongManagerWidget.ui \
 	ui/ManagerWidget.ui \
@@ -129,17 +121,23 @@ FORMS += ui/ProjectManagerWidget.ui \
 	ui/QuickDriverConfigWidget.ui
 
 
-contains(DEFINES, ALSA_SUPPORT):LIBS += -lasound
-contains(DEFINES, JACK_SUPPORT):LIBS += -ljack
+INCLUDEPATH += 	../core \
+		../commands \
+		../engine \
+		../plugins \
+		../plugins/LV2 \
+		../plugins/native \
+		songcanvas \
 
-INCLUDEPATH += 	../../src/core \
-		../../src/commands \
-		../../src/engine \
-		../../src/plugins \
-		../../src/plugins/LV2 \
-		../../src/plugins/native \
-		../../src/traverso/songcanvas \
-		../../src/traverso \
+
+contains(DEFINES, ALSA_SUPPORT): LIBS += -lasound
+contains(DEFINES, JACK_SUPPORT): LIBS += -ljack
+
+!contains(DEFINES, LV2_SUPPORT) {
+LIBS -= -lslv2
+INCLUDEPATH -= ../plugins/LV2
+}
+
 		
 QT += opengl
 QMAKE_LIBDIR = ./lib ../../lib
@@ -152,18 +150,16 @@ DESTDIR = ../..
 TEMPLATE = app
 DESTDIR_TARGET = /usr/local/bin
 
-unix {
-	# if exists('sys/vfs.h')
-	DEFINES += HAVE_SYS_VFS_H
+unix{
+    # if exists('sys/vfs.h')
+    DEFINES += HAVE_SYS_VFS_H
 }
 
-macx {
-	LIBS -= -lasound
+macx{
+    LIBS -= -lasound
 }
 
-win32 {
-	LIBS -= -lslv2 -lsamplerate
-
-	INCLUDEPATH -= ../../src/plugins/LV2
-
+win32{
+    LIBS -= -lslv2 -lsamplerate
+    INCLUDEPATH -= ../../src/plugins/LV2
 }
