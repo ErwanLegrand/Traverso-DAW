@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginSelectorDialog.cpp,v 1.3 2006/10/18 12:08:56 r_sijrier Exp $
+$Id: PluginSelectorDialog.cpp,v 1.4 2007/01/31 12:11:21 r_sijrier Exp $
 */
 
 #include "PluginSelectorDialog.h"
@@ -49,7 +49,7 @@ PluginSelectorDialog::PluginSelectorDialog( QWidget * p )
 
 	model->insertColumns(0, 2, parent);
 
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
+#if defined (LV2_SUPPORT)
 	SLV2List pluginList = PluginManager::instance()->get_slv2_plugin_list();
 
 	for (uint i=0; i < slv2_list_get_length(pluginList); ++i) {

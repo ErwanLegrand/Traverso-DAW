@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginView.cpp,v 1.7 2007/01/31 12:00:55 r_sijrier Exp $
+$Id: PluginView.cpp,v 1.8 2007/01/31 12:11:34 r_sijrier Exp $
 */
 
 #include "PluginView.h"
@@ -44,10 +44,13 @@ PluginView::PluginView(TrackView* parent, Plugin* plugin, int index)
 	, m_trackView(parent)
 	,  m_plugin(plugin)
 	,  m_index(index)
-	,  propertiesDialog(0)
 {
 	PENTERCONS;
 	
+#if defined (LV2_SUPPORT)
+	propertiesDialog = 0;
+#endif
+
 	setZValue(parent->zValue() + 2);
 	
 	m_track = m_trackView->get_track();
