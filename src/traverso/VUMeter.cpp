@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: VUMeter.cpp,v 1.12 2007/01/19 12:34:04 r_sijrier Exp $
+    $Id: VUMeter.cpp,v 1.13 2007/02/01 15:44:23 r_sijrier Exp $
 */
 
 #include "VUMeter.h"
@@ -28,7 +28,7 @@
 #include <QSpacerItem>
 #include <QFontMetrics>
 
-#include "ColorManager.h"
+#include "Themer.h"
 #include "Mixer.h"
 #include <AudioDevice.h>
 #include <AudioChannel.h>
@@ -175,7 +175,6 @@ void VUMeter::resizeEvent( QResizeEvent *  )
 
 void VUMeter::calculate_lut_data()
 {
-	printf("calculating lut data\n");
 	for (int i = 60; i >= -700; i -= 2) {
 		if (i >= -200) {
 			lut.push_back(100.0 + (float)i * 2.5 / 10.0);

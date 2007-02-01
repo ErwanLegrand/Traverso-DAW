@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginManager.cpp,v 1.5 2007/01/31 11:59:11 r_sijrier Exp $
+$Id: PluginManager.cpp,v 1.6 2007/02/01 15:45:29 r_sijrier Exp $
 
 slv2 url: http://codeson.net/svn/libslv2/
 */
@@ -60,8 +60,6 @@ PluginManager* PluginManager::instance()
 
 void PluginManager::init()
 {
-	printf("PluginManager::init()\n");
-
 #if defined (LV2_SUPPORT)
 // LV2 part:
 	slv2PluginList  = slv2_list_new();
