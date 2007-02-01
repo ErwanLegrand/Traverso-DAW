@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Traverso.cpp,v 1.20 2007/01/15 23:51:47 r_sijrier Exp $
+$Id: Traverso.cpp,v 1.21 2007/02/01 18:09:46 r_sijrier Exp $
 */
 
 #include <signal.h>
@@ -30,6 +30,7 @@ $Id: Traverso.cpp,v 1.20 2007/01/15 23:51:47 r_sijrier Exp $
 #include "ProjectManager.h"
 #include <Project.h>
 #include "Interface.h"
+#include "Themer.h"
 #include <Config.h>
 #include <AudioDevice.h>
 #include <ContextPointer.h>
@@ -46,7 +47,7 @@ Traverso::Traverso(int &argc, char **argv )
 	QCoreApplication::setApplicationName("Traverso");
 	
 	config().check_and_load_configuration();
-
+	
 	// Initialize random number generator
 	srand ( time(NULL) );
 	
@@ -55,10 +56,11 @@ Traverso::Traverso(int &argc, char **argv )
 	prepare_audio_device();
 	
 	QMetaObject::invokeMethod(this, "create_interface", Qt::QueuedConnection);
-// 	pm().start();
 
 	setQuitOnLastWindowClosed(false);
 	connect(this, SIGNAL(lastWindowClosed()), &pm(), SLOT(exit()));
+	
+	printf("leaving Traverso const\n");
 }
 
 Traverso::~Traverso()
@@ -70,9 +72,10 @@ Traverso::~Traverso()
 
 void Traverso::create_interface( )
 {
+	themer().load();
 	iface = new Interface();
 	iface->show();
-	QMetaObject::invokeMethod(&pm(), "start", Qt::QueuedConnection);
+	pm().start();
 }
 
 void Traverso::shutdown( int signal )
