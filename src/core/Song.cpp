@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.51 2007/01/31 13:53:47 r_sijrier Exp $
+$Id: Song.cpp,v 1.52 2007/02/01 15:48:55 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -498,7 +498,7 @@ void Song::set_work_at(nframes_t pos)
 	workingFrame = position;
 /** **/
 
-	printf("position is %ld\n", position);
+// 	printf("position is %ld\n", position);
 	Q_ASSERT(position >= 0);
 
 	newTransportFramePos = (uint) position;
