@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AddRemoveItemCommand.cpp,v 1.6 2007/01/25 12:14:45 r_sijrier Exp $
+$Id: AddRemoveItemCommand.cpp,v 1.7 2007/02/02 11:22:20 r_sijrier Exp $
 */
 
 #include "AddRemoveItemCommand.h"
@@ -27,6 +27,22 @@ $Id: AddRemoveItemCommand.cpp,v 1.6 2007/01/25 12:14:45 r_sijrier Exp $
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
+
+/** 	\class AddRemoveItemCommand 
+ *	\brief Historably add/remove objects into the audio processing path without using locks
+ *	
+ *	AddRemoveItemCommand is a flexible class that let's you insert/remove Object that inherit from
+ *	QObject into the audio processing execution path. 
+ *
+ *	Usage: Create one public and one private function (slot) for both the add and remove function
+ *	The public function returns the AddRemoveItemCommand, it's constructor holds the private function
+ *	signatures for the do and undo action. If the class has signals for the to be added/removed object, 
+ *	then you can/should add those signatures to the constructor as well. Finally, the constructor 
+ *	has a boolean flag that indicate if the Command should be historable (pushed to the history stack)
+ *	or not. The signals (if you added the signatures) will be emited from within the gui thread, the 
+ *	private functions that will do the actuall adding/removal of the object will be called from within
+ *	the audio thread. DO NOT USE LOCKS OR ANY OTHER BLOCKING FUNCTION CALLS in the private functions!!
+ */
 
 
 AddRemoveItemCommand::AddRemoveItemCommand(ContextItem* parent, ContextItem* child, const QString& des)
@@ -47,6 +63,25 @@ AddRemoveItemCommand::AddRemoveItemCommand(ContextItem* parent, ContextItem* chi
 }
 
 
+/**
+ * 			Constructor with all the paramaters needed for proper operation.
+ *
+ * @param parent 	The object (which need to inherit ContextItem) where the object
+ 			will be added or removed.
+ * @param child 	The object (which need to inherit ContextItem) that will be added/removed
+ * @param historable 	Makes the command historable if set to true, else it will be deleted
+ 			after the do_action call. Only works when the command was requested 
+ 			from the InputEngine. If not, you are responsible yourself to call the 
+ 			do_action, and pushing it to the correct history stack.
+ * @param song 		If a related Song object is available you can use it, else supply a 0
+ * @param doActionSlot 	(private) slot signature which will be called on do_action()
+ * @param doSignal 	If supplied, the signal with this signature will be emited in the GUI thread
+ 			AFTER the actuall  adding/removing action in do_action() has happened!
+ * @param undoActionSlot (private) slot signature which will be called in undo_action();
+ * @param undoSignal 	If supplied, the signal with this signature will be emited in the GUI thread
+ 			AFTER the actuall adding/removing in undo_action has happened!
+ * @param des 		Short description that will show up in the history view.
+ */
 AddRemoveItemCommand::AddRemoveItemCommand(
 	ContextItem * parent,
 	ContextItem * child,
@@ -138,15 +173,15 @@ int AddRemoveItemCommand::undo_action()
 		}
 	} else {
 		PMESG("Using direct add/remove/signaling");
-			tsar().add_event(m_undoActionEvent);
+		tsar().add_event(m_undoActionEvent);
 	}
 	
 	return 1;
 }
 
 /**
- * 	Set's the command instantanious, the do/undo actions will call
- *	de slot and emit the signal (if they exist) instantaniously,
+ * 	Set's the command to instantanious, the do/undo actions will call
+ *	the slot and emit the signal (if they exist) instantaniously,
  *	and thus bypassing the RT thread save nature of Tsar.
  */
 void AddRemoveItemCommand::set_instantanious( )
