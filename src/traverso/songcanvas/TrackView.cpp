@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.11 2007/02/02 09:47:21 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.12 2007/02/02 13:15:38 r_sijrier Exp $
 */
 
 #include <QLineEdit>
@@ -51,6 +51,8 @@ TrackView::TrackView(SongView* sv, Track * track)
 	
 	m_sv = sv;
 	sv->scene()->addItem(this);
+	
+	reload_theme_data();
 
 	m_track = track;
 	m_clipViewYOfsset = 3;
@@ -78,26 +80,24 @@ TrackView:: ~ TrackView( )
 void TrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
 	Q_UNUSED(widget);
+	
 	int xstart = (int)option->exposedRect.x();
 	int pixelcount = (int)option->exposedRect.width();
 	
-	QColor color1 = themer().get_color("Track:cliptopoffset");
-	QColor color2 = themer().get_color("Track:background");
-	QColor color3 = themer().get_color("Track:clipbottomoffset");
+	if (m_cliptopoffset > 0) {
+		QColor color = themer().get_color("Track:cliptopoffset");
+		painter->fillRect(xstart, 0, pixelcount, m_cliptopoffset, color);
+	}
 	
-	int cliptopoffset = themer().get_property("Track:cliptopoffset").toInt();
-	int clipbottomoffset = themer().get_property("Track:clipbottomoffset").toInt();
+	if (m_paintBackground) {
+		QColor color = themer().get_color("Track:background");
+		painter->fillRect(xstart, m_cliptopoffset, pixelcount, m_track->get_height() - m_clipbottomoffset, color);
+	}
 	
-/*	QLinearGradient grad1(QPointF(0, 0), QPointF(0, m_track->get_height()));
-	grad1.setColorAt(0.0, color1);
-	grad1.setColorAt(0.01, color2);
-	grad1.setColorAt(0.5, color3);
-	grad1.setColorAt(0.96, color2);
-	grad1.setColorAt(1.0, color1);*/
-	
-	painter->fillRect(xstart, 0, pixelcount, cliptopoffset, color1);
-	painter->fillRect(xstart, cliptopoffset, pixelcount, m_track->get_height() - clipbottomoffset, color2);
-	painter->fillRect(xstart, m_track->get_height() - clipbottomoffset, pixelcount, clipbottomoffset, color3);
+	if (m_clipbottomoffset > 0) {
+		QColor color = themer().get_color("Track:clipbottomoffset");
+		painter->fillRect(xstart, m_track->get_height() - m_clipbottomoffset, pixelcount, m_clipbottomoffset, color);
+	}
 }
 
 void TrackView::add_new_audioclipview( AudioClip * clip )
@@ -146,7 +146,7 @@ void TrackView::move_to( int x, int y )
 
 int TrackView::get_clipview_height( )
 {
-	return m_track->get_height() - 8;
+	return m_track->get_height() - (m_cliptopoffset + m_clipbottomoffset);
 }
 
 Command* TrackView::edit_properties( )
@@ -195,6 +195,10 @@ void TrackView::calculate_bounding_rect()
 
 void TrackView::reload_theme_data()
 {
+	m_paintBackground = themer().get_property("Track:paintbackground").toInt();
+	m_cliptopoffset = themer().get_property("Track:cliptopoffset").toInt();
+	m_clipbottomoffset = themer().get_property("Track:clipbottomoffset").toInt();
+
 	update();
 }
 
