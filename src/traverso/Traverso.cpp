@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Traverso.cpp,v 1.22 2007/02/01 18:10:17 r_sijrier Exp $
+$Id: Traverso.cpp,v 1.23 2007/02/02 13:01:27 r_sijrier Exp $
 */
 
 #include <signal.h>
@@ -40,6 +40,15 @@ $Id: Traverso.cpp,v 1.22 2007/02/01 18:10:17 r_sijrier Exp $
 #include "Debugger.h"
 
 
+/**
+ * 	\mainpage Traverso developers documentation
+ *
+ *	See classes for API documentation
+ */
+
+
+
+
 Traverso::Traverso(int &argc, char **argv )
 	: QApplication ( argc, argv )
 {
@@ -55,7 +64,7 @@ Traverso::Traverso(int &argc, char **argv )
 	
 	prepare_audio_device();
 	
-	QMetaObject::invokeMethod(this, "create_interface", Qt::QueuedConnection);
+	create_interface();
 
 	setQuitOnLastWindowClosed(false);
 	connect(this, SIGNAL(lastWindowClosed()), &pm(), SLOT(exit()));
@@ -73,7 +82,7 @@ void Traverso::create_interface( )
 	themer().load();
 	iface = new Interface();
 	iface->show();
-	pm().start();
+	QMetaObject::invokeMethod(&pm(), "start", Qt::QueuedConnection);
 }
 
 void Traverso::shutdown( int signal )

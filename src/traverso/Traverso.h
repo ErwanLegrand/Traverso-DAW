@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: Traverso.h,v 1.6 2006/12/01 13:58:45 r_sijrier Exp $
+    $Id: Traverso.h,v 1.7 2007/02/02 13:01:35 r_sijrier Exp $
 */
 
 #ifndef Traverso_H
@@ -30,7 +30,6 @@ class Interface;
 
 class Traverso : public QApplication
 {
-        Q_OBJECT
 
 public :
 
@@ -49,8 +48,6 @@ private :
 	
 	void init_sse();
         void prepare_audio_device();
-	
-private slots:
 	void create_interface();
 };
 
