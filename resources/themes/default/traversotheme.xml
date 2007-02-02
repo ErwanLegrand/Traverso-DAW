@@ -1,0 +1,79 @@
+<!DOCTYPE TraversoTheming>
+<Themer>
+	<general fontscalefactor="1.0" someotherting="whatever" />
+	<colors>
+		<color name="AudioClip:wavemacro" red="80" green="80" blue="120" alpha="255" />
+		
+		
+		<color name="Track:cliptopoffset" red="205" green="223" blue="255" alpha="255" />
+		<color name="Track:clipbottomoffset" red="205" green="223" blue="255" alpha="255" />
+		<color name="Track:background" red="243" green="248" blue="255" alpha="255" />
+		
+		
+		<color alpha="220" red="180" blue="240" name="PLAY_HEAD_ACTIVE" green="189" />
+		<color alpha="150" red="180" blue="240" name="PLAY_HEAD_INACTIVE" green="189" />
+		<color alpha="255" red="180" blue="255" name="LIGHT_CYAN" green="255" />
+		<color alpha="255" red="100" blue="20" name="CLIP_PEAK_MICROVIEW" green="0" />
+		<color alpha="255" red="255" blue="255" name="MAGENTA" green="0" />
+		<color alpha="255" red="0" blue="0" name="DARK_TEXT" green="0" />
+		<color alpha="255" red="190" blue="90" name="TRACK_PANEL_BG_ACTIVE" green="140" />
+		<color alpha="255" red="110" blue="130" name="FILTERCONTROLLER_NONACTIVE" green="100" />
+		<color alpha="255" red="255" blue="0" name="CLIP_PEAK_OVERLOADED_SAMPLE" green="0" />
+		<color alpha="200" red="199" blue="218" name="CLIP_INFO_AREA_BG" green="190" />
+		<color alpha="255" red="190" blue="90" name="TRACK_BG_ACTIVE" green="90" />
+		<color alpha="200" red="101" blue="171" name="CLIP_BG_SELECTED" green="111" />
+		<color alpha="255" red="255" blue="180" name="LIGHT_RED" green="180" />
+		<color alpha="255" red="80" blue="120" name="CLIP_PEAK_MACROVIEW" green="80" />
+		<color alpha="255" red="60" blue="60" name="BUS_LEVEL_CLEAR_COLOR" green="70" />
+		<color alpha="255" red="240" blue="218" name="CLIP_INFO_AREA_BG_ACTIVE" green="190" />
+		<color alpha="255" red="120" blue="130" name="CLIP_RIGHT_CROSSFADE" green="150" />
+		<color alpha="200" red="240" blue="218" name="CLIPNAME_ACTIVE" green="190" />
+		<color alpha="200" red="199" blue="218" name="CLIPNAME_INACTIVE" green="190" />
+		<color alpha="255" red="255" blue="50" name="CURVE_ACTIVE" green="50" />
+		<color alpha="255" red="200" blue="200" name="LIGHT_TEXT" green="200" />
+		<color alpha="200" red="205" blue="210" name="CLIP_BG_ACTIVE" green="220" />
+		<color alpha="120" red="236" blue="255" name="CLIP_BG_DEFAULT" green="240" />
+		<color alpha="255" red="100" blue="100" name="MEDIUM_TEXT" green="100" />
+		<color alpha="255" red="255" blue="180" name="LIGHT_YELLOW" green="255" />
+		<color alpha="255" red="140" blue="120" name="BUS_BACKGROUND" green="160" />
+		<color alpha="255" red="0" blue="255" name="BLUE" green="0" />
+		<color alpha="200" red="40" blue="40" name="CLIP_BG_MUTED" green="40" />
+		<color alpha="255" red="255" blue="0" name="YELLOW" green="255" />
+		<color alpha="255" red="180" blue="255" name="LIGHT_BLUE" green="180" />
+		<color alpha="255" red="50" blue="61" name="CARD_INFO_BACKGROUND" green="55" />
+		<color alpha="255" red="255" blue="0" name="ORANGE" green="200" />
+		<color alpha="255" red="240" blue="120" name="BUS_BACKGROUND_ACTIVE" green="160" />
+		<color alpha="255" red="255" blue="255" name="WHITE" green="255" />
+		<color alpha="255" red="180" blue="180" name="LIGHT_GREEN" green="255" />
+		<color alpha="255" red="255" blue="100" name="LIGHT_ORANGE" green="200" />
+		<color alpha="255" red="255" blue="255" name="LIGHT_MAGENTA" green="180" />
+		<color alpha="255" red="180" blue="180" name="GRAY" green="180" />
+		<color alpha="255" red="0" blue="255" name="CYAN" green="255" />
+		<color alpha="255" red="90" blue="90" name="BUS_LEVEL_CLEAR_COLOR_GREYD_OUT" green="90" />
+		<color alpha="255" red="0" blue="0" name="GREEN" green="255" />
+		<color alpha="255" red="190" blue="210" name="TRACK_PANEL_BG" green="205" />
+		<color alpha="255" red="120" blue="120" name="BUS_BACKGROUND_GREYD_OUT" green="120" />
+		<color alpha="255" red="180" blue="189" name="LOCATOR_BACKGROUND" green="189" />
+		<color alpha="255" red="0" blue="0" name="LOCATOR_TEXT" green="0" />
+		<color alpha="255" red="0" blue="25" name="TRACK_PANEL_TEXT" green="0" />
+		<color alpha="255" red="200" blue="240" name="SLIDER_BACKGROUND" green="200" />
+		<color alpha="255" red="240" blue="150" name="TRACK_PANEL_HEAD_ACTIVE" green="140" />
+		<color alpha="255" red="170" blue="190" name="TRACK_PANEL_HEAD_INACTIVE" green="180" />
+		<color alpha="150" red="0" blue="0" name="TRACK_PANEL_SEPERATOR" green="0" />
+		<color alpha="230" red="0" blue="200" name="TRACK_PANEL_NAME" green="0" />
+		<color alpha="255" red="160" blue="150" name="INFO_WIDGET_BACKGROUND" green="170" />
+		<color alpha="255" red="246" blue="255" name="METER_MARGIN" green="246" />
+		<color alpha="255" red="241" blue="255" name="METER_BACKGROUND" green="250" />
+		<color alpha="255" red="205" blue="255" name="METER_GRID" green="223" />
+		<color alpha="255" red="82" blue="123" name="METER_FOREGROUND" green="80" />
+		<color alpha="255" red="241" blue="255" name="METER_FOREGROUND_LIGHT" green="250" />
+		<color alpha="255" red="255" blue="0" name="METER_AVERAGE_CURVE" green="0" />
+	</colors>
+	<properties>
+		<property name="Track:cliptopoffset" value="3" />
+		<property name="Track:clipbottomoffset" value="5" />
+	</properties>
+	<fonts>
+		<font name="AudioClip:title" size="8" family="Bitstream Vera Sans" />
+	</fonts>
+</Themer> 
