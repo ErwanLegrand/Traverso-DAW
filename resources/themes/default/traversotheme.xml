@@ -1,6 +1,14 @@
 <!DOCTYPE TraversoTheming>
 <Themer>
-	<general fontscalefactor="1.0" someotherting="whatever" />
+	<general fontscalefactor="1.0" someotherthing="whatever" />
+	<properties>
+		<property name="Track:cliptopoffset" value="3" />
+		<property name="Track:clipbottomoffset" value="5" />
+		<property name="Track:paintbackground" value="1" />
+	</properties>
+	<fonts>
+		<font name="AudioClip:title" size="8" family="Bitstream Vera Sans" />
+	</fonts>
 	<colors>
 		<color name="AudioClip:wavemacro" red="80" green="80" blue="120" alpha="255" />
 		
@@ -69,11 +77,4 @@
 		<color alpha="255" red="241" blue="255" name="METER_FOREGROUND_LIGHT" green="250" />
 		<color alpha="255" red="255" blue="0" name="METER_AVERAGE_CURVE" green="0" />
 	</colors>
-	<properties>
-		<property name="Track:cliptopoffset" value="3" />
-		<property name="Track:clipbottomoffset" value="5" />
-	</properties>
-	<fonts>
-		<font name="AudioClip:title" size="8" family="Bitstream Vera Sans" />
-	</fonts>
 </Themer> 
