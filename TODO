@@ -22,11 +22,23 @@ TOBEDONE FOR 0.40.0
 * When Track::init_recording fails, traverso crashes afterwards!
 * Duplicates of AudioClips don't work yet! (they share the same settings, so when modifying the seconds audioclip
 	the changes get lost on saving!!)
+* Get rid of using < LEFTSHIFT > to set the workcursor position, at least, create
+  a new command for moving the work cursor in a similar way the playhead can be 
+  positioned. Key fact I've in mind: [ W ].
+  [ W ] + modifier keys (like Q and E) to set work cursor to next/previous snap position
+* There must be lot's of other nice features like the one mentioned above, which are trivial to implement!
+* User Manual, with at least a step by step introduction on how to get started, creating a project,
+  assigning Buses to tracks, arming a track, recording, un/redo, moving audioclips, split, copy, and so on.
 
 
-Existing items, some of them are suggestions from Nicola:
+Other items, some of them are suggestions from Nicola:
 
 Maybies for 0.40.0:
+
+* Move the Settings widget from the Manager widget to the menu bar, and use a QDialog to display it.
+  Divide the thing into logical catagories, there is an example of one in the demos or examples dir 
+  of the qt source code!!
+* Add menu entry "New Project" in the "File" menu, people expect it to be there ????
 
 * If (imported) audiosource can't be find, don't 'remove' the audiosource and related clips, but mark as 'audiosource has gone!' 
 * Add Traverso to the menu system!
