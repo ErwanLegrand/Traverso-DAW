@@ -17,14 +17,14 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MessageWidget.cpp,v 1.3 2006/10/18 12:08:56 r_sijrier Exp $
+    $Id: MessageWidget.cpp,v 1.4 2007/02/02 09:48:27 r_sijrier Exp $
 */
 
 #include "MessageWidget.h"
 #include <QPainter>
 #include <Utils.h>
 #include "libtraversocore.h"
-#include "ColorManager.h"
+#include "Themer.h"
 
 
 // Always put me below _all_ includes, this is needed
@@ -54,7 +54,7 @@ void MessageWidget::paintEvent(QPaintEvent* )
         QPainter painter(this);
 
         if (infoStruct.message.isEmpty() ) {
-                painter.fillRect(0, 0, width(), height(), cm().get("INFO_WIDGET_BACKGROUND") );
+                painter.fillRect(0, 0, width(), height(), themer().get_color("INFO_WIDGET_BACKGROUND") );
                 return;
         }
 

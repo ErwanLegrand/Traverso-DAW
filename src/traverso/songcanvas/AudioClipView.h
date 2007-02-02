@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.h,v 1.5 2007/01/22 15:12:08 r_sijrier Exp $
+$Id: AudioClipView.h,v 1.6 2007/02/02 09:47:20 r_sijrier Exp $
 */
 
 #ifndef AUDIO_CLIP_VIEW_H
@@ -47,8 +47,6 @@ public:
 	AudioClipView(SongView* view, TrackView* parent, AudioClip* clip);
 	~AudioClipView();
 
-	enum {Type = UserType + 3};
-	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	
 	void set_height(int height);
@@ -58,10 +56,11 @@ public:
 	int get_fade_y_offset() const;
 	
 	void calculate_bounding_rect();
-	int type() const;
 	
 	TrackView* get_trackview() const {return m_tv;}
 	void set_trackview(TrackView* view) {m_tv = view;}
+	
+	void reload_theme_data() {update();}
 
 protected:
 	void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
@@ -109,7 +108,6 @@ public slots:
 
 
 inline int AudioClipView::get_height() const {return m_height;}
-inline int AudioClipView::type() const {return Type;}
 
 
 #endif

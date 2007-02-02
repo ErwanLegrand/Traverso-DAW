@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongView.h,v 1.6 2007/01/22 15:12:08 r_sijrier Exp $
+    $Id: SongView.h,v 1.7 2007/02/02 09:47:21 r_sijrier Exp $
 */
 
 #ifndef SONG_VIEW_H
@@ -33,7 +33,7 @@ class TimeLineViewPort;
 class Track;
 class SongWidget;
 class TrackView;
-class PlayCursor;
+class PlayHead;
 class WorkCursor;
 
 class SongView : public ViewItem
@@ -79,7 +79,7 @@ private:
 	TrackPanelViewPort*	m_tpvp;
 	TimeLineViewPort*	m_tlvp;
 	QList<TrackView*>	m_trackViews;
-	PlayCursor*		m_playCursor;
+	PlayHead*		m_playCursor;
 	WorkCursor*		m_workCursor;
 
 

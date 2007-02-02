@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursors.cpp,v 1.9 2007/01/30 23:54:39 r_sijrier Exp $
+    $Id: Cursors.cpp,v 1.10 2007/02/02 09:47:20 r_sijrier Exp $
 */
 
 #include "Cursors.h"
@@ -25,20 +25,22 @@
 #include "ClipsViewPort.h"
 #include <QPen>
 #include <Song.h>
+#include <Config.h>
+#include <Themer.h>
 #include <QScrollBar>
 		
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-PlayCursor::PlayCursor(SongView* sv, Song* song, ClipsViewPort* vp)
+PlayHead::PlayHead(SongView* sv, Song* song, ClipsViewPort* vp)
 	: ViewItem(0, song)
 	, m_song(song)
 	, m_vp(vp)
 {
 	m_sv = sv;
-	m_mode = ANIMATED_FLIP_PAGE;
-	m_follow = true;
+	m_mode = (PlayHeadMode) config().get_property("PlayHead", "Scrollmode", ANIMATED_FLIP_PAGE).toInt();
+	m_follow = config().get_property("PlayHead", "Folow", true).toInt();
 	
 	m_animation.setDuration(1300);
 	m_animation.setCurveShape(QTimeLine::SineCurve);
@@ -54,20 +56,27 @@ PlayCursor::PlayCursor(SongView* sv, Song* song, ClipsViewPort* vp)
 	setZValue(100);
 }
 
-PlayCursor::~PlayCursor( )
+PlayHead::~PlayHead( )
 {
         PENTERDES2;
 }
 
-void PlayCursor::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
+void PlayHead::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
 {
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
-	QColor color = QColor(180, 189, 240, 220);
+	QColor color;
+	
+	if (m_song->is_transporting()) {
+	 	color = themer().get_color("PLAY_HEAD_ACTIVE");
+	} else {
+	 	color = themer().get_color("PLAY_HEAD_INACTIVE");
+	}
+	
 	painter->fillRect(0, 0, 2, (int)m_boundingRectangle.height(), color);
 }
 
-void PlayCursor::play_start()
+void PlayHead::play_start()
 {
 	m_playTimer.start(20);
 	
@@ -77,7 +86,7 @@ void PlayCursor::play_start()
 	}
 }
 
-void PlayCursor::play_stop()
+void PlayHead::play_stop()
 {
 	m_playTimer.stop();
 	
@@ -85,9 +94,11 @@ void PlayCursor::play_stop()
 		m_animation.stop();
 		m_animation.setCurrentTime(0);
 	}
+	
+	update();
 }
 
-void PlayCursor::update_position()
+void PlayHead::update_position()
 {
 	QPointF newPos(m_song->get_transport_frame() / m_sv->scalefactor, 0);
 	
@@ -137,7 +148,7 @@ void PlayCursor::update_position()
 }
 
 
-void PlayCursor::set_animation_value(int value)
+void PlayHead::set_animation_value(int value)
 {
 	QPointF newPos(m_song->get_transport_frame() / m_sv->scalefactor, 0);
 	// calculate the motion distance of the playhead.
@@ -158,7 +169,7 @@ void PlayCursor::set_animation_value(int value)
 }
 
 
-void PlayCursor::animation_finished()
+void PlayHead::animation_finished()
 {
 	if (m_song->is_transporting()) {
 		play_start();
@@ -166,17 +177,17 @@ void PlayCursor::animation_finished()
 }
 
 
-void PlayCursor::set_bounding_rect( QRectF rect )
+void PlayHead::set_bounding_rect( QRectF rect )
 {
 	m_boundingRectangle = rect;
 }
 
-bool PlayCursor::is_active()
+bool PlayHead::is_active()
 {
 	return m_playTimer.isActive();
 }
 
-void PlayCursor::set_active(bool active)
+void PlayHead::set_active(bool active)
 {
 	if (active) {
 		play_start();
@@ -185,12 +196,12 @@ void PlayCursor::set_active(bool active)
 	}
 }
 
-void PlayCursor::set_mode( PlayCursorMode mode )
+void PlayHead::set_mode( PlayHeadMode mode )
 {
 	m_mode = mode;
 }
 
-void PlayCursor::toggle_folow( )
+void PlayHead::toggle_folow( )
 {
 	m_follow = ! m_follow;
 }

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewItem.cpp,v 1.2 2006/12/01 13:58:45 r_sijrier Exp $
+$Id: ViewItem.cpp,v 1.3 2007/02/02 09:47:21 r_sijrier Exp $
 */
 
 
@@ -29,4 +29,3 @@ $Id: ViewItem.cpp,v 1.2 2006/12/01 13:58:45 r_sijrier Exp $
 
 
 //eof
-		

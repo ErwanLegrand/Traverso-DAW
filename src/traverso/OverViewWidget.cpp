@@ -17,13 +17,13 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: OverViewWidget.cpp,v 1.6 2006/10/18 12:08:56 r_sijrier Exp $
+    $Id: OverViewWidget.cpp,v 1.7 2007/02/02 09:48:27 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
 
 #include "OverViewWidget.h"
-#include "ColorManager.h"
+#include "Themer.h"
 
 #include <QColor>
 #include <QPainter>
@@ -93,13 +93,13 @@ void OverViewWidget::paintEvent( QPaintEvent*  )
                 barWidth = width();
 
         // This creates a round capped location bar.
-        QPen pen(cm().get("CLIP_PEAK_MACROVIEW"), height());
+        QPen pen(themer().get_color("CLIP_PEAK_MACROVIEW"), height());
         pen.setCapStyle(Qt::RoundCap);
         painter.setPen(pen);
         painter.drawLine(startPosition, height() / 2, startPosition + barWidth, height() / 2);
 
         // A non round capped location bar....
-        // 	painter.fillRect(startPosition, 0, barWidth, height(), cm().get("CLIP_PEAK_MACROVIEW"));
+        // 	painter.fillRect(startPosition, 0, barWidth, height(), themer().get_color("CLIP_PEAK_MACROVIEW"));
 
 }
 

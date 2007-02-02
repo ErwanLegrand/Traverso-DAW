@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.10 2007/01/22 20:12:58 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.11 2007/02/02 09:47:21 r_sijrier Exp $
 */
 
 #include <QLineEdit>
@@ -27,7 +27,7 @@ $Id: TrackView.cpp,v 1.10 2007/01/22 20:12:58 r_sijrier Exp $
 #include "TrackView.h"
 #include "AudioClipView.h"
 #include "PluginChainView.h"
-#include "ColorManager.h"
+#include "Themer.h"
 #include "TrackPanelViewPort.h"
 #include "SongView.h"
 #include "TrackPanelView.h"
@@ -81,33 +81,23 @@ void TrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 	int xstart = (int)option->exposedRect.x();
 	int pixelcount = (int)option->exposedRect.width();
 	
-	QColor color = cm().get("TRACK_BG");
-// 	color.setAlpha(100);
+	QColor color1 = themer().get_color("Track:cliptopoffset");
+	QColor color2 = themer().get_color("Track:background");
+	QColor color3 = themer().get_color("Track:clipbottomoffset");
 	
-	if (option->state & QStyle::State_MouseOver) {
-		color = color.light(110);
-	}
+	int cliptopoffset = themer().get_property("Track:cliptopoffset").toInt();
+	int clipbottomoffset = themer().get_property("Track:clipbottomoffset").toInt();
 	
-	QColor color11 = QColor(186, 202, 231);
-	QColor color22 = QColor(235, 243, 255);
-	QColor color33 = QColor(240, 246, 255);
-	
-	QColor color1 = color11.light(110);
-	QColor color2 = color22.light(103);
-	QColor color3 = color33.light(104);
-
-	QLinearGradient grad1(QPointF(0, 0), QPointF(0, m_track->get_height()));
+/*	QLinearGradient grad1(QPointF(0, 0), QPointF(0, m_track->get_height()));
 	grad1.setColorAt(0.0, color1);
 	grad1.setColorAt(0.01, color2);
 	grad1.setColorAt(0.5, color3);
 	grad1.setColorAt(0.96, color2);
-	grad1.setColorAt(1.0, color1);
+	grad1.setColorAt(1.0, color1);*/
 	
-// 	painter->fillRect(xstart, 0, pixelcount, m_track->get_height(), grad1);
-
-	painter->fillRect(xstart, 0, pixelcount, 3, color1);
-	painter->fillRect(xstart, 3, pixelcount, m_track->get_height()-5, color2);
-	painter->fillRect(xstart, m_track->get_height() - 5, pixelcount, 5, color1);
+	painter->fillRect(xstart, 0, pixelcount, cliptopoffset, color1);
+	painter->fillRect(xstart, cliptopoffset, pixelcount, m_track->get_height() - clipbottomoffset, color2);
+	painter->fillRect(xstart, m_track->get_height() - clipbottomoffset, pixelcount, clipbottomoffset, color3);
 }
 
 void TrackView::add_new_audioclipview( AudioClip * clip )
@@ -196,7 +186,6 @@ void TrackView::set_height( int height )
 	m_height = height;
 }
 
-
 void TrackView::calculate_bounding_rect()
 {
 	m_boundingRectangle = QRectF(0, 0, pow(2, 30), m_track->get_height());
@@ -204,5 +193,10 @@ void TrackView::calculate_bounding_rect()
 	update();
 }
 
+void TrackView::reload_theme_data()
+{
+	update();
+}
 
 //eof
+

@@ -17,13 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeContextDialogView.cpp,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
+$Id: FadeContextDialogView.cpp,v 1.2 2007/02/02 09:47:21 r_sijrier Exp $
 */
 
 #include "FadeContextDialogView.h"
 
 #include "ViewPort.h"
-#include "ColorManager.h"
+#include "Themer.h"
 #include "FadeCurve.h"
 #include "CurveNode.h"
 #include "Command.h"
@@ -133,7 +133,7 @@ void FadeContextDialogView::create_background( )
 // 	painter->setRenderHint(QPainter::Antialiasing);
 
 	// Background color
-	painter.fillRect(0, 0, m_vp->width(), m_vp->height(), cm().get("CLIP_BG_DEFAULT"));
+	painter.fillRect(0, 0, m_vp->width(), m_vp->height(), themer().get_color("CLIP_BG_DEFAULT"));
 
 	// grid lines
 	painter.setPen(QColor(INACTIVE_COLOR));

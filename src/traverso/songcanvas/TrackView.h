@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.h,v 1.6 2007/01/17 13:14:20 r_sijrier Exp $
+$Id: TrackView.h,v 1.7 2007/02/02 09:47:21 r_sijrier Exp $
 */
 
 #ifndef TRACK_VIEW_H
@@ -54,8 +54,8 @@ public:
 	void set_height(int height);
 	
 	void calculate_bounding_rect();
+	void reload_theme_data();
 // 	void add_clip_view(AudioClipView* view);
-	int type() const;
 	
 private:
 	Track*			m_track;
@@ -74,8 +74,6 @@ private slots:
 	void remove_audioclipview(AudioClip* clip);
 };
 
-
-inline int TrackView::type() const {return Type;}
 
 #endif
 

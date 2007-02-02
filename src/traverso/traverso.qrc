@@ -16,7 +16,7 @@
 		<file alias="windowicon">../../resources/images/windowicon.xpm</file>
 		<file alias="keymap">../../resources/keymap.xml</file>
 		<file alias="fadeshapes">../../resources/fadeshapes.xml</file>
-		<file alias="colortheme">../../resources/skin/defaultcolors.xml</file> 
+		<file alias="defaulttheme">../../resources/themes/default/traversotheme.xml</file> 
 		<file alias="helpfile">../../resources/help.text</file>
 		<file alias="recled_on">../../resources/images/rec-on.xpm</file>
 		<file alias="recled_off">../../resources/images/rec-off.xpm</file>

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.11 2007/01/30 23:54:15 r_sijrier Exp $
+$Id: SongView.cpp,v 1.12 2007/02/02 09:47:21 r_sijrier Exp $
 */
 
 
@@ -39,23 +39,23 @@ $Id: SongView.cpp,v 1.11 2007/01/30 23:54:15 r_sijrier Exp $
 		
 #include <Debugger.h>
 
-class PlayCursorMove : public Command
+class PlayHeadMove : public Command
 {
 public :
-        PlayCursorMove(PlayCursor* cursor, Song* song, SongView* sv);
-        ~PlayCursorMove(){PENTERDES;};
+        PlayHeadMove(PlayHead* cursor, Song* song, SongView* sv);
+        ~PlayHeadMove(){PENTERDES;};
 
 	int finish_hold();
         int begin_hold();
         int jog();
 
 private :
-	PlayCursor*	m_cursor;
+	PlayHead*	m_cursor;
 	Song*		m_song;
 	SongView*	m_sv;
 };
 
-PlayCursorMove::PlayCursorMove(PlayCursor* cursor, Song* song, SongView* sv)
+PlayHeadMove::PlayHeadMove(PlayHead* cursor, Song* song, SongView* sv)
 	: Command("Play Cursor Move")
 	, m_cursor(cursor)
 	, m_song(song)
@@ -63,20 +63,20 @@ PlayCursorMove::PlayCursorMove(PlayCursor* cursor, Song* song, SongView* sv)
 {
 }
 
-int PlayCursorMove::finish_hold()
+int PlayHeadMove::finish_hold()
 {
 	m_cursor->set_active(m_song->is_transporting());
 	m_song->set_transport_pos( (nframes_t) (cpointer().scene_x() * m_sv->scalefactor));
 	return -1;
 }
 
-int PlayCursorMove::begin_hold()
+int PlayHeadMove::begin_hold()
 {
 	m_cursor->set_active(false);
 	return 1;
 }
 
-int PlayCursorMove::jog()
+int PlayHeadMove::jog()
 {
 	int x = cpointer().scene_x();
 	if (x < 0) {
@@ -102,7 +102,7 @@ SongView::SongView(ClipsViewPort* viewPort, TrackPanelViewPort* tpvp, TimeLineVi
 	
 	m_clipsViewPort->scene()->addItem(this);
 	
-	m_playCursor = new PlayCursor(this, m_song, m_clipsViewPort);
+	m_playCursor = new PlayHead(this, m_song, m_clipsViewPort);
 	m_workCursor = new WorkCursor(this, m_song);
 	
 	m_clipsViewPort->scene()->addItem(m_playCursor);
@@ -124,7 +124,6 @@ SongView::SongView(ClipsViewPort* viewPort, TrackPanelViewPort* tpvp, TimeLineVi
 		SIGNAL(valueChanged(int)),
 		this, 
 		SLOT(set_snap_range(int)));
-
 
 }
 
@@ -153,7 +152,7 @@ TrackView* SongView::get_trackview_under( QPointF point )
 	QList<QGraphicsItem*> views = m_clipsViewPort->items(m_clipsViewPort->mapFromScene(point));
 	
 	for (int i=0; i<views.size(); ++i) {
-		view = qgraphicsitem_cast<TrackView*>(views.at(i));
+		view = qobject_cast<TrackView*>((ViewItem*)views.at(i));
 		if (view) {
 			return view;
 		}
@@ -336,7 +335,7 @@ Command * SongView::touch( )
 
 Command * SongView::play_cursor_move( )
 {
-	return new PlayCursorMove(m_playCursor, m_song, this);
+	return new PlayHeadMove(m_playCursor, m_song, this);
 }
 
 void SongView::set_snap_range(int start)
@@ -391,4 +390,7 @@ Command* SongView::scroll_left()
 	return (Command*) 0;
 }
 
+
 //eof
+
+

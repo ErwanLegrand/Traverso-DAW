@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: CorrelationMeterWidget.cpp,v 1.10 2007/01/24 21:19:37 r_sijrier Exp $
+    $Id: CorrelationMeterWidget.cpp,v 1.11 2007/02/02 09:48:09 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -30,7 +30,7 @@
 #include <Project.h>
 #include <InputEngine.h>
 #include <Song.h>
-#include <ColorManager.h>
+#include <Themer.h>
 #include <ContextPointer.h>
 #include <Config.h>
 
@@ -91,14 +91,14 @@ CorrelationMeterItem::CorrelationMeterItem(CorrelationMeterWidget* widget)
 	, m_widget(widget)
 	, m_meter(0)
 {
-	fgColor = cm().get("METER_MARGIN");
-	bgColor = cm().get("METER_BACKGROUND");
-	hgColor = cm().get("METER_GRID");
-	dtColor = cm().get("DARK_TEXT");
+	fgColor = themer().get_color("METER_MARGIN");
+	bgColor = themer().get_color("METER_BACKGROUND");
+	hgColor = themer().get_color("METER_GRID");
+	dtColor = themer().get_color("DARK_TEXT");
 
-	gradPhase.setColorAt(0.0,  cm().get("METER_FOREGROUND_LIGHT"));
-	gradPhase.setColorAt(0.5,  cm().get("METER_FOREGROUND"));
-	gradPhase.setColorAt(1.0,  cm().get("METER_FOREGROUND_LIGHT"));
+	gradPhase.setColorAt(0.0,  themer().get_color("METER_FOREGROUND_LIGHT"));
+	gradPhase.setColorAt(0.5,  themer().get_color("METER_FOREGROUND"));
+	gradPhase.setColorAt(1.0,  themer().get_color("METER_FOREGROUND_LIGHT"));
 
 	load_configuration();
 

@@ -17,13 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SystemInfoWidget.cpp,v 1.5 2006/10/18 12:08:56 r_sijrier Exp $
+$Id: SystemInfoWidget.cpp,v 1.6 2007/02/02 09:48:27 r_sijrier Exp $
 */
 
 #include "SystemInfoWidget.h"
 
 #include "libtraversocore.h"
-#include "ColorManager.h"
+#include "Themer.h"
 #include "DiskIO.h"
 #include <AudioDevice.h>
 #include <Utils.h>

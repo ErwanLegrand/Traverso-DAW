@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginChainView.cpp,v 1.6 2007/01/31 12:31:41 r_sijrier Exp $
+    $Id: PluginChainView.cpp,v 1.7 2007/02/02 09:47:21 r_sijrier Exp $
 */
 
 #include "PluginChainView.h"
@@ -26,7 +26,7 @@
 
 #include "TrackView.h"
 #include "PluginView.h"
-#include "ColorManager.h"
+#include "Themer.h"
 #include <PluginChain.h>
 #include <Plugin.h>
 

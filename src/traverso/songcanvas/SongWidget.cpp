@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongWidget.cpp,v 1.4 2007/01/11 20:11:26 r_sijrier Exp $
+    $Id: SongWidget.cpp,v 1.5 2007/02/02 09:47:21 r_sijrier Exp $
 */
 
 		
@@ -26,6 +26,8 @@
 #include "ClipsViewPort.h"
 #include "TimeLineViewPort.h"
 #include "SongView.h"
+#include "ViewItem.h"
+#include "Themer.h"
 
 #include <Song.h>
 #include <QtOpenGL>
@@ -36,14 +38,14 @@
 SongWidget::SongWidget(Song* song, QWidget* parent)
 	: QFrame(parent)
 {
-	scene = new QGraphicsScene(this);
-	scene->setItemIndexMethod(QGraphicsScene::NoIndex);
+	m_scene = new QGraphicsScene(this);
+	m_scene->setItemIndexMethod(QGraphicsScene::NoIndex);
 
-	m_trackPanel = new TrackPanelViewPort(scene, this);
-	m_clipsViewPort = new ClipsViewPort(scene, this);
-	m_timeLine = new TimeLineViewPort(scene, this, m_clipsViewPort);
+	m_trackPanel = new TrackPanelViewPort(m_scene, this);
+	m_clipsViewPort = new ClipsViewPort(m_scene, this);
+	m_timeLine = new TimeLineViewPort(m_scene, this, m_clipsViewPort);
 	
-	m_clipsViewPort->setScene(scene);
+	m_clipsViewPort->setScene(m_scene);
 	
 	m_mainLayout = new QGridLayout(this);
 	m_mainLayout->addWidget(new QWidget(this), 0, 0);
@@ -79,6 +81,7 @@ SongWidget::SongWidget(Song* song, QWidget* parent)
 		m_clipsViewPort->verticalScrollBar(), 
 		SLOT(setValue(int)));
 	
+	connect(&themer(), SIGNAL(themeLoaded()), this, SLOT(reload_theme_data()), Qt::QueuedConnection);
 	
 	setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 }
@@ -87,6 +90,20 @@ void SongWidget::set_use_opengl( bool useOpenGL )
 {
 	m_clipsViewPort->setViewport(useOpenGL ? new QGLWidget(QGLFormat(QGL::SampleBuffers)) : new QWidget);
 	m_trackPanel->setViewport(useOpenGL ? new QGLWidget(QGLFormat(QGL::SampleBuffers)) : new QWidget);
+}
+
+
+void SongWidget::reload_theme_data()
+{
+	QList<QGraphicsItem*> list = m_scene->items();
+	
+	for (int i = 0; i < list.size(); ++i) {
+		ViewItem* item = qgraphicsitem_cast<ViewItem*>(list.at(i));
+		if (item) {
+			item->reload_theme_data();
+		}
+	}
+	
 }
 
 

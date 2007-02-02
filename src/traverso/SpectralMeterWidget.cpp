@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.26 2007/01/24 21:19:37 r_sijrier Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.27 2007/02/02 09:48:27 r_sijrier Exp $
 */
 
 #include "SpectralMeterWidget.h"
@@ -32,7 +32,7 @@
 #include <InputEngine.h>
 #include <Song.h>
 #include <ContextPointer.h>
-#include <ColorManager.h>
+#include <Themer.h>
 
 #include <QtGui>
 
@@ -149,7 +149,7 @@ void SpectralMeterItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 	// draw the bars
 	if (m_spectrum.size()) {
 		QRect rect;
-		QBrush brush(cm().get("METER_FOREGROUND"), Qt::SolidPattern);
+		QBrush brush(themer().get_color("METER_FOREGROUND"), Qt::SolidPattern);
 		painter->setClipRegion(m_rect);
 		painter->setBrush(brush);
 		painter->setPen(Qt::NoPen);
@@ -170,7 +170,7 @@ void SpectralMeterItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 
 		// draw the average line if requested
 		if (show_average) {
-			painter->setPen(cm().get("METER_AVERAGE_CURVE"));
+			painter->setPen(themer().get_color("METER_AVERAGE_CURVE"));
 			QPoint pt;
 			QPoint po((int)m_map_idx2xpos.at(0), (int)db2ypos(m_avg_db.at(0)));
 			for (uint i = 0; i < (uint)m_avg_db.size(); ++i) {
@@ -218,10 +218,10 @@ void SpectralMeterItem::update_background()
 {
 	// draw the background image
 	bgPixmap = QPixmap((int)m_boundingRectangle.width(), (int)m_boundingRectangle.height());
-	bgPixmap.fill(cm().get("METER_MARGIN"));
+	bgPixmap.fill(themer().get_color("METER_MARGIN"));
 
 	QPainter painter(&bgPixmap);
-	painter.fillRect(m_rect, cm().get("METER_BACKGROUND"));
+	painter.fillRect(m_rect, themer().get_color("METER_BACKGROUND"));
 	painter.setFont(QFont("Bitstream Vera Sans", FONT_SIZE));
 	QFontMetrics fm(QFont("Bitstream Vera Sans", FONT_SIZE));
 
@@ -231,10 +231,10 @@ void SpectralMeterItem::update_background()
 	for (float i = upper_db; i >= lower_db; i -= 10.0f) {
 		float f = db2ypos(i);
 
-		painter.setPen(cm().get("METER_GRID"));
+		painter.setPen(themer().get_color("METER_GRID"));
 		painter.drawLine(QPointF(m_rect.x(), f), QPointF(m_rect.right(), f));
 
-		painter.setPen(cm().get("DARK_TEST"));
+		painter.setPen(themer().get_color("DARK_TEST"));
 		spm.sprintf("%2.0f", i);
 		painter.drawText(m_rect.right() + 1, (int)f + fm.ascent()/2, spm);
 	}
@@ -261,11 +261,11 @@ void SpectralMeterItem::update_background()
 
 		// draw text only if there is enough space for it
 		if (((f - s) > last_pos) && ((f + s) < float(m_boundingRectangle.width()-1))) {
-			painter.setPen(cm().get("DARK_TEXT"));
+			painter.setPen(themer().get_color("DARK_TEXT"));
 			painter.drawText(QPointF(f - s, m_boundingRectangle.height() - fm.descent() - 3), spm);
 			last_pos = f + s + 1.0;
 		} else {
-			painter.setPen(cm().get("LIGHT_TEXT"));
+			painter.setPen(themer().get_color("LIGHT_TEXT"));
 		}
 
 		painter.drawLine(QPointF(f, m_rect.bottom()), QPointF(f, m_rect.bottom() + 3));
