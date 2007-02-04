@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Themer.cpp,v 1.1 2007/02/02 00:02:24 r_sijrier Exp $
+$Id: Themer.cpp,v 1.2 2007/02/04 12:46:59 r_sijrier Exp $
 */
 
 #include "Themer.h"
@@ -91,7 +91,7 @@ void Themer::load( )
  	
  	if ( ! file.exists() ) {
 		printf("Falling back to default theme\n");
-		file.setFileName(":/colortheme");
+		file.setFileName(":/defaulttheme");
 	} else {
 	 	m_watcher.addPath(m_themefile);
 		printf("Using themefile: %s\n", QS_C(m_themefile));
