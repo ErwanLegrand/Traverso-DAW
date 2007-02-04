@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.cpp,v 1.13 2007/01/11 14:57:37 r_sijrier Exp $
+$Id: WriteSource.cpp,v 1.14 2007/02/04 15:31:40 r_sijrier Exp $
 */
 
 #include "WriteSource.h"
@@ -250,6 +250,7 @@ int WriteSource::prepare_export (ExportSpecification* spec)
 	sample_rate = audiodevice().get_sample_rate();
 	channels = spec->channels;
 	processPeaks = false;
+	m_peak = 0;
 	diskio = 0;
 	dataF2 = leftoverF = 0;
 	dither = 0;
