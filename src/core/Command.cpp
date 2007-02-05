@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Command.cpp,v 1.10 2007/01/16 20:21:08 r_sijrier Exp $
+$Id: Command.cpp,v 1.11 2007/02/05 17:08:47 r_sijrier Exp $
 */
 
 #include "Command.h"
@@ -65,26 +65,26 @@ int Command::jog()
 
 void Command::set_valid(bool valid)
 {
-	PENTER;
+	PENTER3;
 	m_isValid = valid;
 }
 
 int Command::push_to_history_stack( )
 {
-	PENTER;
+	PENTER3;
 	
 	if (! m_isHistorable) {
-		PMESG("Not a Historable command, deleting the command");
+		PMESG3("Not a Historable command, deleting the command");
 		return -1;
 	}
 	
 	if (! m_isValid) {
-		PMESG("This command is invalid, deleting the command");
+		PMESG3("This command is invalid, deleting the command");
 		return -1;
 	}
 	
 	if (! m_historyStack) {
-		PMESG("This command has no HistoryStack, deleting the command");
+		PMESG3("This command has no HistoryStack, deleting the command");
 		return -1;
 	}
 		

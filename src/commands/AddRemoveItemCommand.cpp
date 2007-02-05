@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AddRemoveItemCommand.cpp,v 1.7 2007/02/02 11:22:20 r_sijrier Exp $
+$Id: AddRemoveItemCommand.cpp,v 1.8 2007/02/05 17:08:36 r_sijrier Exp $
 */
 
 #include "AddRemoveItemCommand.h"
@@ -125,7 +125,7 @@ int AddRemoveItemCommand::prepare_actions()
 
 int AddRemoveItemCommand::do_action()
 {
-	PENTER;
+	PENTER3;
 	if ( ! m_doActionEvent.valid ) {
 		PWARN("No do action defined for this Command");
 		return -1;
@@ -152,7 +152,7 @@ int AddRemoveItemCommand::do_action()
 
 int AddRemoveItemCommand::undo_action()
 {
-	PENTER;
+	PENTER3;
 	
 	if ( ! m_undoActionEvent.valid ) {
 		PWARN("No undo action defined for this Command");
