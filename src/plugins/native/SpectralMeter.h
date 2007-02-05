@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SpectralMeter.h,v 1.3 2006/12/14 21:21:19 n_doebelin Exp $
+$Id: SpectralMeter.h,v 1.4 2007/02/05 17:10:09 r_sijrier Exp $
 */
 
 
@@ -40,6 +40,8 @@ struct SpectralMeterData
 
 class SpectralMeter : public Plugin
 {
+	Q_OBJECT
+
 public:
 	SpectralMeter();
 	~SpectralMeter();
