@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongWidget.cpp,v 1.5 2007/02/02 09:47:21 r_sijrier Exp $
+    $Id: SongWidget.cpp,v 1.6 2007/02/05 17:12:02 r_sijrier Exp $
 */
 
 		
@@ -38,7 +38,7 @@
 SongWidget::SongWidget(Song* song, QWidget* parent)
 	: QFrame(parent)
 {
-	m_scene = new QGraphicsScene(this);
+	m_scene = new QGraphicsScene();
 	m_scene->setItemIndexMethod(QGraphicsScene::NoIndex);
 
 	m_trackPanel = new TrackPanelViewPort(m_scene, this);
@@ -81,10 +81,20 @@ SongWidget::SongWidget(Song* song, QWidget* parent)
 		m_clipsViewPort->verticalScrollBar(), 
 		SLOT(setValue(int)));
 	
-	connect(&themer(), SIGNAL(themeLoaded()), this, SLOT(reload_theme_data()), Qt::QueuedConnection);
+	connect(themer(), SIGNAL(themeLoaded()), this, SLOT(reload_theme_data()), Qt::QueuedConnection);
 	
 	setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 }
+
+
+SongWidget::~ SongWidget()
+{
+	delete m_trackPanel;
+	delete m_clipsViewPort;
+	delete m_timeLine;
+	delete m_scene;
+}
+
 
 void SongWidget::set_use_opengl( bool useOpenGL )
 {
@@ -108,3 +118,4 @@ void SongWidget::reload_theme_data()
 
 
 //eof
+

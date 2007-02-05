@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Themer.cpp,v 1.3 2007/02/04 13:20:49 r_sijrier Exp $
+$Id: Themer.cpp,v 1.4 2007/02/05 17:12:02 r_sijrier Exp $
 */
 
 #include "Themer.h"
@@ -33,18 +33,27 @@ $Id: Themer.cpp,v 1.3 2007/02/04 13:20:49 r_sijrier Exp $
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
+Themer* Themer::m_instance = 0;
 
-Themer& themer()
+Themer* themer()
 {
-	static Themer themer;
-	return themer;
+	return Themer::instance();
 }
 
+Themer* Themer::instance()
+{
+	if (m_instance == 0) {
+		m_instance = new Themer();
+	}
+
+	return m_instance;
+}
 
 Themer::Themer()
 {
- 	m_themefile = config().get_property("Theme", "themepath", ":/defaulttheme").toString() + "/traversotheme.xml";
-	connect(&m_watcher, SIGNAL(fileChanged(const QString&)), this, SLOT(reload_on_themefile_change(const QString&)));
+	m_watcher = new QFileSystemWatcher(this);
+ 	m_themefile = config().get_property("Theme", "themepath", "").toString() + "/traversotheme.xml";
+	connect(m_watcher, SIGNAL(fileChanged(const QString&)), this, SLOT(reload_on_themefile_change(const QString&)));
 }
 
 
@@ -93,7 +102,7 @@ void Themer::load( )
 		printf("File %s doesn't exit, falling back to default theme\n", QS_C(m_themefile));
 		file.setFileName(":/defaulttheme");
 	} else {
-	 	m_watcher.addPath(m_themefile);
+	 	m_watcher->addPath(m_themefile);
 		printf("Using themefile: %s\n", QS_C(m_themefile));
 	}
 

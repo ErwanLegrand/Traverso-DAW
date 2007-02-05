@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.16 2007/02/02 09:47:20 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.17 2007/02/05 17:12:02 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -100,7 +100,7 @@ AudioClipView::~ AudioClipView()
 
 void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-	PENTER2;
+	PENTER;
 	Q_UNUSED(widget);
 	
 /*	QPixmap* pix = dynamic_cast<QPixmap*>(painter->paintEngine()->paintDevice());
@@ -133,11 +133,11 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	
 	// paint background color
 	if (m_clip->is_muted()) {
-		color = themer().get_color("CLIP_BG_MUTED");
+		color = themer()->get_color("CLIP_BG_MUTED");
 	} else if (m_clip->is_selected()) {
-		color = themer().get_color("CLIP_BG_SELECTED");
+		color = themer()->get_color("CLIP_BG_SELECTED");
 	} else {
-		color = themer().get_color("CLIP_BG_DEFAULT");
+		color = themer()->get_color("CLIP_BG_DEFAULT");
 	}
 	
 	if (option->state & QStyle::State_MouseOver) {
@@ -186,7 +186,11 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 		// Draw channel seperator horizontal lines.
 		if (!mergedView) {
 			for (int i=1; i<channels; ++i) {
-				painter->drawLine(xstart, (m_height/channels) * i + CLIPINFO_HEIGHT, xstart + pixelcount, (m_height/channels) * i + CLIPINFO_HEIGHT);
+				if (m_height < (MINIMAL_CLIPINFO_HEIGHT + CLIPINFO_HEIGHT)) {
+					painter->drawLine(xstart, (m_height/channels) * i, xstart + pixelcount, (m_height/channels) * i);
+				} else {
+					painter->drawLine(xstart, (m_height/channels) * i + CLIPINFO_HEIGHT, xstart + pixelcount, (m_height/channels) * i + CLIPINFO_HEIGHT);
+				}
 			}
 		}
 	
@@ -194,7 +198,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 		draw_peaks(painter, xstart, pixelcount);
 	}
 
-        painter->setPen(themer().get_color("DARK_TEXT")); // CHANGE TO CLIP_COUNTOUR
+        painter->setPen(themer()->get_color("DARK_TEXT")); // CHANGE TO CLIP_COUNTOUR
 	
 	if (m_height < (MINIMAL_CLIPINFO_HEIGHT + CLIPINFO_HEIGHT)) {
 	        // Black Contour
@@ -202,15 +206,15 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	} else {
 		draw_clipinfo_area(painter, xstart, pixelcount);
         	// Black Contour
-		painter->setPen(themer().get_color("CLIP_BG_DEFAULT").dark(255));
+		painter->setPen(themer()->get_color("CLIP_BG_DEFAULT").dark(255));
 		painter->drawRect(xstart, 0, pixelcount, CLIPINFO_HEIGHT);
 		painter->drawRect(xstart, 0, pixelcount, m_height + CLIPINFO_HEIGHT);
 	}
 	
 	if (xstart == 0) {
-		painter->setPen(themer().get_color("CLIP_BG_DEFAULT").dark(110));
+		painter->setPen(themer()->get_color("CLIP_BG_DEFAULT").dark(110));
 		painter->drawLine(1, CLIPINFO_HEIGHT, 1, m_height + CLIPINFO_HEIGHT);
-		painter->setPen(themer().get_color("CLIP_BG_DEFAULT").light(105));
+		painter->setPen(themer()->get_color("CLIP_BG_DEFAULT").light(105));
 		painter->drawLine(2, CLIPINFO_HEIGHT, 2, m_height + CLIPINFO_HEIGHT);
 	}
 
@@ -259,7 +263,12 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 
 		float gain = m_clip->get_gain() * m_clip->get_norm_factor();
 		float scaleFactor = ( ((float)(height - channels * 2)) / (Peak::MAX_DB_VALUE * 2)) * gain;
-		centerY = height/2 + height*chan + CLIPINFO_HEIGHT;
+		
+		if (m_height < (MINIMAL_CLIPINFO_HEIGHT + CLIPINFO_HEIGHT)) {
+			centerY = height/2 + height*chan;
+		} else {
+			centerY = height/2 + height*chan + CLIPINFO_HEIGHT;
+		}
 		
 		if (!microView) {
 			Curve* curve = m_clip->get_gain_envelope();
@@ -283,9 +292,9 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			 
 			int prev =  (int) (centerY + (scaleFactor * mbuffer[0]));
 			if (m_sv->viewmode == EditMode) {
-				p->setPen(themer().get_color("CLIP_PEAK_MICROVIEW"));
+				p->setPen(themer()->get_color("CLIP_PEAK_MICROVIEW"));
 			} else  {
-				p->setPen(themer().get_color("CLIP_PEAK_MICROVIEW").light(230));
+				p->setPen(themer()->get_color("CLIP_PEAK_MICROVIEW").light(230));
 			}
 			int bufferPos = 0;
 			for (int x = xstart; x < (pixelcount+xstart); x++) {
@@ -300,10 +309,10 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				centerY = m_height/2;
 			}
 			if (m_sv->viewmode == EditMode) {
-				p->setPen(themer().get_color("AudioClip:wavemacro"));
-// 				p->setPen(themer().get_color("CLIP_PEAK_MICROVIEW"));
+				p->setPen(themer()->get_color("AudioClip:wavemacro"));
+// 				p->setPen(themer()->get_color("CLIP_PEAK_MICROVIEW"));
 			} else  {
-				p->setPen(themer().get_color("CLIP_PEAK_MACROVIEW").light(230));
+				p->setPen(themer()->get_color("AudioClip:Curvemode:wavemacro"));
 			}
 
 
@@ -322,9 +331,9 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				centerY = height*(chan+1) + CLIPINFO_HEIGHT;
 			}
 			if (m_sv->viewmode == EditMode) {
-				p->setPen(themer().get_color("CLIP_PEAK_MACROVIEW"));
+				p->setPen(themer()->get_color("CLIP_PEAK_MACROVIEW"));
 			} else  {
-				p->setPen(themer().get_color("CLIP_PEAK_MACROVIEW").light(230));
+				p->setPen(themer()->get_color("CLIP_PEAK_MACROVIEW").light(230));
 			}
 
 			int bufferPos = 0;
@@ -347,9 +356,9 @@ void AudioClipView::draw_clipinfo_area(QPainter* p, int xstart, int pixelcount)
 {
 	// clip info area bg
 	if (m_clip->get_track()->is_active())
-		p->fillRect(xstart, 0, pixelcount, 16, themer().get_color("CLIPNAME_ACTIVE"));
+		p->fillRect(xstart, 0, pixelcount, 16, themer()->get_color("CLIPNAME_ACTIVE"));
 	else
-		p->fillRect(xstart, 0, pixelcount, 16, themer().get_color("CLIPNAME_INACTIVE"));
+		p->fillRect(xstart, 0, pixelcount, 16, themer()->get_color("CLIPNAME_INACTIVE"));
 
 
 	// Draw Clip Info Area
@@ -389,14 +398,14 @@ void AudioClipView::recreate_clipname_pixmap()
 	clipNamePixmapActive = QPixmap(clipInfoAreaWidth, CLIP_INFO_AREA_HEIGHT);
 	clipNamePixmapInActive = QPixmap(clipInfoAreaWidth, CLIP_INFO_AREA_HEIGHT);
 	
-	clipNamePixmapActive.fill(themer().get_color("CLIPNAME_ACTIVE"));
-	clipNamePixmapInActive.fill(themer().get_color("CLIPNAME_INACTIVE"));
+	clipNamePixmapActive.fill(themer()->get_color("CLIPNAME_ACTIVE"));
+	clipNamePixmapInActive.fill(themer()->get_color("CLIPNAME_INACTIVE"));
 
 
 	QPainter paint(&clipNamePixmapActive);
 	paint.setRenderHint(QPainter::TextAntialiasing );
-	paint.setPen(themer().get_color("DARK_TEXT"));
-	paint.setFont(themer().get_font("AudioClip:title"));
+	paint.setPen(themer()->get_color("DARK_TEXT"));
+	paint.setFont(themer()->get_font("AudioClip:title"));
 
 	QRect r = QRect(5, 0, clipInfoAreaWidth, CLIP_INFO_AREA_HEIGHT);
 	paint.drawText( r, Qt::AlignVCenter, clipInfo);
@@ -404,8 +413,8 @@ void AudioClipView::recreate_clipname_pixmap()
 
 	QPainter painter(&clipNamePixmapInActive);
 	painter.setRenderHint(QPainter::TextAntialiasing );
-	painter.setPen(themer().get_color("DARK_TEXT"));
-	painter.setFont(themer().get_font("AudioClip:title"));
+	painter.setPen(themer()->get_color("DARK_TEXT"));
+	painter.setFont(themer()->get_font("AudioClip:title"));
 	painter.drawText( r, Qt::AlignVCenter, clipInfo);
 }
 
@@ -502,7 +511,11 @@ void AudioClipView::repaint( )
 void AudioClipView::set_height( int height )
 {
 	prepareGeometryChange();
-	m_height = height - CLIPINFO_HEIGHT;
+	if (m_height < (MINIMAL_CLIPINFO_HEIGHT + CLIPINFO_HEIGHT)) {
+		m_height = height;
+	} else {
+		m_height = height - CLIPINFO_HEIGHT;
+	}
 // 	calculate_bounding_rect();
 }
 

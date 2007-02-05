@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongWidget.h,v 1.4 2007/02/02 09:47:21 r_sijrier Exp $
+    $Id: SongWidget.h,v 1.5 2007/02/05 17:12:02 r_sijrier Exp $
 */
 
 #ifndef SONG_WIDGET_H
@@ -42,7 +42,7 @@ class SongWidget : public QFrame
 	Q_OBJECT
 public:
 	SongWidget(Song* song, QWidget* parent=0);
-	~SongWidget() {};
+	~SongWidget();
 	
 	SongView* m_songView;
 	

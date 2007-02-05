@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TimeLineView.cpp,v 1.4 2007/02/02 09:47:21 r_sijrier Exp $
+$Id: TimeLineView.cpp,v 1.5 2007/02/05 17:12:02 r_sijrier Exp $
 */
 
 #include "TimeLineView.h"
@@ -71,9 +71,9 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 
 	int height = 21;
 	
-	painter->fillRect(xstart, 0,  pixelcount, height, themer().get_color("LOCATOR_BACKGROUND") );
+	painter->fillRect(xstart, 0,  pixelcount, height, themer()->get_color("LOCATOR_BACKGROUND") );
 	
-	painter->setPen(themer().get_color("LOCATOR_TEXT"));
+	painter->setPen(themer()->get_color("LOCATOR_TEXT"));
 	painter->setFont( QFont( "Bitstream Vera Sans", 9) );
 	
 	int rate = pm().get_project()->get_rate();

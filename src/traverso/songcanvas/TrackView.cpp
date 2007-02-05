@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.12 2007/02/02 13:15:38 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.13 2007/02/05 17:12:02 r_sijrier Exp $
 */
 
 #include <QLineEdit>
@@ -85,17 +85,17 @@ void TrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 	int pixelcount = (int)option->exposedRect.width();
 	
 	if (m_cliptopoffset > 0) {
-		QColor color = themer().get_color("Track:cliptopoffset");
+		QColor color = themer()->get_color("Track:cliptopoffset");
 		painter->fillRect(xstart, 0, pixelcount, m_cliptopoffset, color);
 	}
 	
 	if (m_paintBackground) {
-		QColor color = themer().get_color("Track:background");
+		QColor color = themer()->get_color("Track:background");
 		painter->fillRect(xstart, m_cliptopoffset, pixelcount, m_track->get_height() - m_clipbottomoffset, color);
 	}
 	
 	if (m_clipbottomoffset > 0) {
-		QColor color = themer().get_color("Track:clipbottomoffset");
+		QColor color = themer()->get_color("Track:clipbottomoffset");
 		painter->fillRect(xstart, m_track->get_height() - m_clipbottomoffset, pixelcount, m_clipbottomoffset, color);
 	}
 }
@@ -195,9 +195,9 @@ void TrackView::calculate_bounding_rect()
 
 void TrackView::reload_theme_data()
 {
-	m_paintBackground = themer().get_property("Track:paintbackground").toInt();
-	m_cliptopoffset = themer().get_property("Track:cliptopoffset").toInt();
-	m_clipbottomoffset = themer().get_property("Track:clipbottomoffset").toInt();
+	m_paintBackground = themer()->get_property("Track:paintbackground").toInt();
+	m_cliptopoffset = themer()->get_property("Track:cliptopoffset").toInt();
+	m_clipbottomoffset = themer()->get_property("Track:clipbottomoffset").toInt();
 
 	update();
 }

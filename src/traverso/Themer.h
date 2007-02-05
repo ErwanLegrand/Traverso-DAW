@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Themer.h,v 1.1 2007/02/02 00:02:24 r_sijrier Exp $
+    $Id: Themer.h,v 1.2 2007/02/05 17:12:02 r_sijrier Exp $
 */
 
 #ifndef COLORMANAGER_H
@@ -42,18 +42,19 @@ public:
         QFont get_font(const QString& fontname) const;
         QVariant get_property(const QString& propertyname, const QVariant& defaultValue=0) const;
 
+	static Themer* instance();
+	
 private:
         Themer();
-        Themer(const Themer&) : QObject() {}
 
         QHash<QString , QColor>		m_colors;
 	QHash<QString, QFont>		m_fonts;
 	QHash<QString, QVariant> 	m_properties;
-        QFileSystemWatcher		m_watcher;
+        QFileSystemWatcher*		m_watcher;
         QString				m_themefile;
 
-        // allow this function to create one instance
-        friend Themer& themer();
+	static Themer* m_instance;
+        
        
 private slots:
 	void reload_on_themefile_change(const QString&);
@@ -63,7 +64,7 @@ signals:
 };
 
 // use this function to get the Colormanager object
-Themer& themer();
+Themer* themer();
 
 #endif
 

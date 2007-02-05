@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursors.cpp,v 1.10 2007/02/02 09:47:20 r_sijrier Exp $
+    $Id: Cursors.cpp,v 1.11 2007/02/05 17:12:02 r_sijrier Exp $
 */
 
 #include "Cursors.h"
@@ -40,7 +40,7 @@ PlayHead::PlayHead(SongView* sv, Song* song, ClipsViewPort* vp)
 {
 	m_sv = sv;
 	m_mode = (PlayHeadMode) config().get_property("PlayHead", "Scrollmode", ANIMATED_FLIP_PAGE).toInt();
-	m_follow = config().get_property("PlayHead", "Folow", true).toInt();
+	m_follow = config().get_property("PlayHead", "Folow", 1).toInt();
 	
 	m_animation.setDuration(1300);
 	m_animation.setCurveShape(QTimeLine::SineCurve);
@@ -68,9 +68,9 @@ void PlayHead::paint( QPainter * painter, const QStyleOptionGraphicsItem * optio
 	QColor color;
 	
 	if (m_song->is_transporting()) {
-	 	color = themer().get_color("PLAY_HEAD_ACTIVE");
+	 	color = themer()->get_color("PLAY_HEAD_ACTIVE");
 	} else {
-	 	color = themer().get_color("PLAY_HEAD_INACTIVE");
+	 	color = themer()->get_color("PLAY_HEAD_INACTIVE");
 	}
 	
 	painter->fillRect(0, 0, 2, (int)m_boundingRectangle.height(), color);
@@ -232,12 +232,7 @@ void WorkCursor::paint( QPainter * painter, const QStyleOptionGraphicsItem * opt
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 	
-	QPen pen;
-	pen.setWidth((int)m_boundingRectangle.width());
-	pen.setBrush(QColor(255, 0, 0, 100));
-	pen.setStyle(Qt::DashLine);
-	painter->setPen(pen);
-	painter->drawLine(0, 0, 0, (int)m_boundingRectangle.height());
+	painter->fillRect(0, 0, 2, (int)m_boundingRectangle.height(), QColor(255, 0, 0, 100));
 }
 
 void WorkCursor::update_position()

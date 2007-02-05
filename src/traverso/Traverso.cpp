@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Traverso.cpp,v 1.23 2007/02/02 13:01:27 r_sijrier Exp $
+$Id: Traverso.cpp,v 1.24 2007/02/05 17:12:02 r_sijrier Exp $
 */
 
 #include <signal.h>
@@ -79,7 +79,7 @@ Traverso::~Traverso()
 
 void Traverso::create_interface( )
 {
-	themer().load();
+	themer()->load();
 	iface = new Interface();
 	iface->show();
 	QMetaObject::invokeMethod(&pm(), "start", Qt::QueuedConnection);
