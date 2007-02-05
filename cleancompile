@@ -1,4 +1,5 @@
 make clean
+rm -r lib/*
 rm src/commands/Makefile
 rm src/core/Makefile
 rm src/engine/Makefile
