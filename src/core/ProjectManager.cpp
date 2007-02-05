@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ProjectManager.cpp,v 1.19 2007/01/20 17:29:35 r_sijrier Exp $
+$Id: ProjectManager.cpp,v 1.20 2007/02/05 17:09:42 r_sijrier Exp $
 */
 
 #include "ProjectManager.h"
@@ -65,18 +65,19 @@ int ProjectManager::save_song(const QString& songName)
 	return 0;
 }
 
-void ProjectManager::set_current_project(Project* pProject)
+void ProjectManager::set_current_project(Project* project)
 {
 	PENTER;
 
+	emit projectLoaded(project);
+	
 	if (currentProject) {
 		currentProject->save();
 		delete currentProject;
 	}
 
-	currentProject = pProject;
+	currentProject = project;
 
-	emit projectLoaded(currentProject);
 
 	QString title = "";
 
@@ -244,6 +245,7 @@ void ProjectManager::delete_song( Song * song )
 {
 	PENTER;
 	m_deletionSongList.removeAll(song);
+	emit aboutToDelete(song);
 	delete song;
 	
 	if (m_deletionSongList.isEmpty() && m_exitInProgress) {

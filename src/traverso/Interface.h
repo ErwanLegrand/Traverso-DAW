@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.h,v 1.14 2007/01/18 21:17:57 r_sijrier Exp $
+$Id: Interface.h,v 1.15 2007/02/05 17:10:36 r_sijrier Exp $
 */
 
 #ifndef INTERFACE_H
@@ -139,6 +139,9 @@ public slots :
 	Command* select_bus_out();
 	Command* select_fade_in_shape();
 	Command* select_fade_out_shape();
+	
+private slots:
+	void delete_songwidget(Song*);
 };
 
 

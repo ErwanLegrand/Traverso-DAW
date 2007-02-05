@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.28 2007/01/24 21:22:01 r_sijrier Exp $
+$Id: Interface.cpp,v 1.29 2007/02/05 17:10:36 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -137,6 +137,7 @@ Interface::Interface()
 
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
+	connect(&pm(), SIGNAL(aboutToDelete(Song*)), this, SLOT(delete_songwidget(Song*)));
 
 	cpointer().add_contextitem(this);
 }
@@ -164,14 +165,18 @@ void Interface::set_project(Project* project)
 	} else {
 		setWindowTitle("Traverso");
 	}
-	
-	// OK, a new Project is created. Remove and delete all the ViewPorts related to this project
-	while ( ! currentProjectViewPortList.isEmpty()) {
-		ViewPort* view = currentProjectViewPortList.takeFirst();
-		centerAreaWidget->removeWidget(view);
-		delete view;
+}
+
+void Interface::delete_songwidget(Song* song)
+{
+	SongWidget* sw = m_songWidgets.value(song);
+	if (sw) {
+		m_songWidgets.remove(song);
+		centerAreaWidget->removeWidget(sw);
+		delete sw;
 	}
 }
+
 
 void Interface::show_song(Song* song)
 {
@@ -676,3 +681,4 @@ void DigitalClock::showTime()
 
 
 // eof
+
