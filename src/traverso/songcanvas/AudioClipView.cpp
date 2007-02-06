@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.19 2007/02/06 21:20:39 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.20 2007/02/06 21:22:15 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -311,9 +311,10 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				if (m_usePolygonPeakDrawing) {
 					polygontop.append(QPoint(x, posY));
 					polygonbottom.append(QPoint(x, negY));
+				} else {
+					linelist.append(QLine(x, negY, x, posY));
 				}
-
-				linelist.append(QLine(x, negY, x, posY));
+				
 				bufferPos += 2;
 			}
 			
