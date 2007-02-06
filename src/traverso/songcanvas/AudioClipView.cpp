@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.18 2007/02/06 20:52:07 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.19 2007/02/06 21:20:39 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -321,10 +321,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				QPainterPath path;
 				path.addPolygon(polygontop);
 				path.lineTo(polygonbottom.last());
-				for (int i=0; i<polygonbottom.size(); ++i) {
-					polygonbottombackwards.append(polygonbottom.at(i));
-				}
-				path.addPolygon(polygonbottombackwards);
+				path.addPolygon(polygonbottom);
 				p->setBrush(themer()->get_color("AudioClip:wavemacroview"));
 				p->drawPath(path);	
 			} else {
