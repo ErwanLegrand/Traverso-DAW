@@ -17,13 +17,15 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ClipsViewPort.h,v 1.3 2006/12/01 13:58:45 r_sijrier Exp $
+    $Id: ClipsViewPort.h,v 1.4 2007/02/06 20:52:07 r_sijrier Exp $
 */
 
 #ifndef CLIPS_VIEW_PORT_H
 #define CLIPS_VIEW_PORT_H
 
 #include <QGraphicsScene>
+#include <QGraphicsItem>
+#include <QStyleOptionGraphicsItem>
 
 #include "ViewPort.h"
 

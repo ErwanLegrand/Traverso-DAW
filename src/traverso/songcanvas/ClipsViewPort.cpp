@@ -17,16 +17,19 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ClipsViewPort.cpp,v 1.5 2007/01/16 13:47:32 r_sijrier Exp $
+$Id: ClipsViewPort.cpp,v 1.6 2007/02/06 20:52:07 r_sijrier Exp $
 */
 
 #include "ClipsViewPort.h"
 
 #include "SongWidget.h"
 #include "SongView.h"
+#include "Cursors.h"
 
 #include <ContextPointer.h>
 #include <QScrollBar>
+#include <QSet>
+#include <QPaintEngine>
 		
 #include <Debugger.h>
 		
@@ -34,6 +37,7 @@ ClipsViewPort::ClipsViewPort(QGraphicsScene* scene, SongWidget* sw)
 	: ViewPort(scene, sw)
 {
 	setBackgroundBrush(QBrush(QColor("#FBFCFF")));
+	setAttribute(Qt::WA_NoSystemBackground);
 	m_sw = sw;
 }
 
@@ -54,6 +58,5 @@ void ClipsViewPort::resizeEvent( QResizeEvent * e )
 	ViewPort::resizeEvent(e);
 	m_sw->m_songView->set_snap_range(horizontalScrollBar()->value());
 }
-
 
 //eof

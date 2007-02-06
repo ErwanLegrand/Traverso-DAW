@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.12 2007/02/02 09:47:21 r_sijrier Exp $
+$Id: SongView.cpp,v 1.13 2007/02/06 20:52:07 r_sijrier Exp $
 */
 
 
@@ -190,6 +190,7 @@ void SongView::remove_trackview(Track* track)
 
 void SongView::calculate_scene_rect()
 {
+	m_clipsViewPort->setUpdatesEnabled(false);
 	int totalheight = 0;
 	foreach(Track* track, m_song->get_tracks()) {
 		totalheight += track->get_height() + 6;
@@ -207,6 +208,7 @@ void SongView::calculate_scene_rect()
 	m_workCursor->update_position();
 	
 	center();
+	m_clipsViewPort->setUpdatesEnabled(true);
 
 // 	m_clipsViewPort->centerOn(m_song->get_working_frame() / scalefactor, 0);
 }

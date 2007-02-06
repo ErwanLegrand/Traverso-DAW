@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongWidget.h,v 1.5 2007/02/05 17:12:02 r_sijrier Exp $
+    $Id: SongWidget.h,v 1.6 2007/02/06 20:52:07 r_sijrier Exp $
 */
 
 #ifndef SONG_WIDGET_H
@@ -56,7 +56,7 @@ private:
 	QGraphicsScene* 	m_scene;
 
 private slots:
-	void reload_theme_data();
+	void load_theme_data();
 };
 
 

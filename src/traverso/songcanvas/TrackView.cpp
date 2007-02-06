@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.13 2007/02/05 17:12:02 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.14 2007/02/06 20:52:07 r_sijrier Exp $
 */
 
 #include <QLineEdit>
@@ -52,7 +52,7 @@ TrackView::TrackView(SongView* sv, Track * track)
 	m_sv = sv;
 	sv->scene()->addItem(this);
 	
-	reload_theme_data();
+	load_theme_data();
 
 	m_track = track;
 	m_clipViewYOfsset = 3;
@@ -193,7 +193,7 @@ void TrackView::calculate_bounding_rect()
 	update();
 }
 
-void TrackView::reload_theme_data()
+void TrackView::load_theme_data()
 {
 	m_paintBackground = themer()->get_property("Track:paintbackground").toInt();
 	m_cliptopoffset = themer()->get_property("Track:cliptopoffset").toInt();

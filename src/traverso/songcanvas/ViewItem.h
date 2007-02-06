@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewItem.h,v 1.4 2007/02/02 09:47:21 r_sijrier Exp $
+$Id: ViewItem.h,v 1.5 2007/02/06 20:52:07 r_sijrier Exp $
 */
 
 #ifndef VIEW_ITEM_H
@@ -59,7 +59,7 @@ public:
 	 *      Reimplement and call update() in the reimplementation
 	 *	to make the theme change visible.
 	 */
-	virtual void reload_theme_data() {};
+	virtual void load_theme_data() {};
 
 protected:
 

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.h,v 1.6 2007/02/02 09:47:20 r_sijrier Exp $
+$Id: AudioClipView.h,v 1.7 2007/02/06 20:52:07 r_sijrier Exp $
 */
 
 #ifndef AUDIO_CLIP_VIEW_H
@@ -42,8 +42,6 @@ class AudioClipView : public ViewItem
 	Q_CLASSINFO("split", tr("Split"))
 
 public:
-	static const int CLIP_INFO_AREA_HEIGHT = 16;
-
 	AudioClipView(SongView* view, TrackView* parent, AudioClip* clip);
 	~AudioClipView();
 
@@ -60,11 +58,7 @@ public:
 	TrackView* get_trackview() const {return m_tv;}
 	void set_trackview(TrackView* view) {m_tv = view;}
 	
-	void reload_theme_data() {update();}
-
-protected:
-	void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
-	void mousePressEvent ( QGraphicsSceneMouseEvent * event );
+	void load_theme_data();
 
 private:
 	TrackView* 	m_tv;
@@ -81,12 +75,19 @@ private:
 	bool mergedView;
 	bool classicView;
 	int m_height;
+	int m_infoAreaHeight;
+	int m_mimimumheightforinfoarea;
+	int m_usePolygonPeakDrawing;
+	
+	// theme data
+	int m_drawbackground;
+	QColor m_backgroundColor;
+	QColor m_backgroundColorMouseHover;
 
 	void recreate_clipname_pixmap();
 
 	void draw_clipinfo_area(QPainter* painter, int xstart, int pixelcount);
 	void draw_peaks(QPainter* painter, int xstart, int pixelcount);
-	void draw_crossings(QPainter& painter);
 
 	
 	friend class FadeView;
