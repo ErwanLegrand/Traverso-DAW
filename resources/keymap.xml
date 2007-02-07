@@ -286,7 +286,7 @@
 			<Object objectname="SongView" slotsignature="zoom" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
-	<keyfact type="HKEY" key1="TAB" mousehint="LR" sortorder="36" >
+	<keyfact type="HKEY" key1="S" mousehint="LRUD" sortorder="36" >
 		<Objects>
 			<Object objectname="SongView" slotsignature="shuttle" modes="All" instantanious="0" />
 		</Objects>
@@ -317,6 +317,11 @@
 			<Object objectname="AudioClip" slotsignature="copy" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
+	<keyfact type="HKEY" key1="MouseButtonLeft" mousehint="LRUD" sortorder="50" >
+		<Objects>
+			<Object objectname="AudioClipView" slotsignature="drag" modes="EditMode" instantanious="0" />
+		</Objects>
+	</keyfact> 
 	<keyfact type="HKEY" key1="D" mousehint="LRUD" slotname="drag" name="Drag" sortorder="25" >
 		<Objects>
 			<Object objectname="AudioClipView" slotsignature="drag" modes="EditMode" instantanious="0" />
