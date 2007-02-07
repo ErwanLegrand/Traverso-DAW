@@ -3,13 +3,22 @@
 	<general fontscalefactor="1.0" someotherthing="whatever" />
 	<properties>
 		<property name="AudioClip:drawbackground" value="1" />
-		<property name="AudioClip:infoareaheight" value="16" />
-		<property name="AudioClip:mimimumheightforinfoarea" value="45" />
-		<property name="AudioClip:polygonpeakdrawing" value="0" />
+		<property name="AudioClip:infoareaheight" value="13" />
+		<property name="AudioClip:mimimumheightforinfoarea" value="40" />
+		<property name="AudioClip:polygonpeakdrawing" value="1" />
+		<property name="AudioClip:wavemicroview:antialiased" value="0" />
 		
-		<property name="Track:cliptopoffset" value="3" />
-		<property name="Track:clipbottomoffset" value="5" />
-		<property name="Track:paintbackground" value="1" />
+		<property name="Song:track:seperatingheight" value="1" />
+		<property name="Song:track:minimumheight" value="22" />
+		<property name="Song:track:maximumheight" value="300" />
+		<property name="Song:track:topindent" value="2" />
+		
+		
+		<property name="Track:cliptopoffset" value="1" />
+		<property name="Track:clipbottomoffset" value="1" />
+		<property name="Track:paintbackground" value="0" />
+		
+		
 	</properties>
 	<fonts>
 		<font name="AudioClip:title" size="8" family="Bitstream Vera Sans" />
@@ -19,24 +28,28 @@
 		
 		<color name="AudioClip:wavemacroview" red="80" green="80" blue="120" alpha="255" />
 		<color name="AudioClip:wavemacroview:curvemode" red="210" green="210" blue="255" alpha="255" />
+		<color name="AudioClip:wavemicroview"  red="150" green="150" blue="205"  alpha="255" />
+		<color name="AudioClip:wavemicroview:curvemode"  red="210" green="210" blue="255"  alpha="255" />
 		<color name="AudioClip:background:muted"  red="40" green="40" blue="40"  alpha="200" />
 		<color name="AudioClip:background:muted:mousehover"  red="40" green="40" blue="40"  alpha="200" />
 		<color name="AudioClip:background:selected"  red="101" green="111" blue="171"  alpha="200" />
 		<color name="AudioClip:background:selected:mousehover"  red="101" green="111" blue="171"  alpha="200" />
-		<color name="AudioClip:background"  red="236" green="240" blue="255"  alpha="200" />
-		<color name="AudioClip:background:mousehover"  red="234" green="238" blue="249"  alpha="200" />
+		<color name="AudioClip:background"  red="236" green="240" blue="255"  alpha="120" />
+		<color name="AudioClip:background:mousehover"  red="234" green="238" blue="249"  alpha="120" />
 		<color name="AudioClip:channelseperator"  red="178" green="191" blue="182"  alpha="255" />
 		<color name="AudioClip:channelseperator:selected"  red="24" green="137" blue="210"  alpha="255" />
-		<color name="AudioClip:contour"  red="255" green="255" blue="255"  alpha="255" />
-		<color name="AudioClip:wavemicroview"  red="255" green="0" blue="20"  alpha="255" />
-		<color name="AudioClip:wavemicroview:curvemode"  red="255" green="0" blue="20"  alpha="255" />
+		<color name="AudioClip:contour"  red="50" green="50" blue="50"  alpha="100" />
 		<color name="AudioClip:clipinfobackground"  red="240" green="190" blue="218"  alpha="200" />
 		<color name="AudioClip:clipinfobackground:inactive"  red="199" green="190" blue="218"  alpha="200" />
 		
 		
-		<color name="Track:cliptopoffset" red="205" green="223" blue="255" alpha="255" />
-		<color name="Track:clipbottomoffset" red="205" green="223" blue="255" alpha="255" />
+		<color name="Song:background" red="249" green="251" blue="255" alpha="255" />
+		
+		
+		<color name="Track:cliptopoffset" red="185" green="196" blue="226" alpha="255" />
+		<color name="Track:clipbottomoffset" red="185" green="196" blue="226" alpha="255" />
 		<color name="Track:background" red="243" green="248" blue="255" alpha="255" />
+		
 		
 		
 		<color alpha="220" red="180" blue="240" name="PLAY_HEAD_ACTIVE" green="189" />
