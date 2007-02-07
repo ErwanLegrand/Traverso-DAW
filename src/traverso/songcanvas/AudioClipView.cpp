@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.20 2007/02/06 21:22:15 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.21 2007/02/07 23:24:05 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -77,7 +77,7 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 		add_new_fadeview(curve);
 	}
 	
-	CurveView* curveView = new CurveView(m_sv, this, m_clip->get_gain_envelope());
+	curveView = new CurveView(m_sv, this, m_clip->get_gain_envelope());
 	
 	connect(m_clip, SIGNAL(muteChanged()), this, SLOT(repaint()));
 	connect(m_clip, SIGNAL(stateChanged()), this, SLOT(repaint()));
@@ -118,7 +118,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	
 	
 	QRectF clipRect = m_boundingRectangle;
-	clipRect.setWidth(clipRect.width());
+	clipRect.setWidth(clipRect.width() + 1);
 	clipRect.setHeight(clipRect.height());
 	painter->setClipRect(clipRect);
 	
@@ -183,12 +183,14 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	}
 	
 	// If the beginning of the clip is painted, add some effect to make it
-	// more visible that it _is_ the start of the clip
+	// more visible that it _is_ the start of the clip ?????????
 	if (xstart == 0) {
-		painter->setPen(themer()->get_color("AudioClip:background").dark(110));
-		painter->drawLine(1, m_infoAreaHeight, 1, m_height - m_infoAreaHeight);
-		painter->setPen(themer()->get_color("AudioClip:background").light(105));
-		painter->drawLine(2, m_infoAreaHeight, 2, m_height - m_infoAreaHeight);
+/*		painter->setPen(themer()->get_color("AudioClip:contour").light(115));
+		painter->drawLine(1, m_infoAreaHeight, 1, m_height);*/
+	}
+	
+	if (!m_sv->viewmode == CurveMode) {
+// 		curveView->paint(painter, option, widget);
 	}
 
 	PMESG2("drawing clip");
@@ -274,18 +276,22 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		
 			short* mbuffer = (short*) peakBuffer;
 			 
-			int prev =  (int) (centerY + (scaleFactor * mbuffer[0]));
 			if (m_sv->viewmode == EditMode) {
 				p->setPen(themer()->get_color("AudioClip:wavemicroview"));
 			} else  {
 				p->setPen(themer()->get_color("AudioClip:wavemicroview:curvemode"));
 			}
+			
 			int bufferPos = 0;
+			QPolygon polygon;
 			for (int x = xstart; x < (pixelcount+xstart); x++) {
-				posY = (int) (centerY + (scaleFactor * mbuffer[bufferPos++]));
-				p->drawLine(x, prev, x+1, posY);
-				prev = posY;
+				float posY =  (centerY + (scaleFactor * mbuffer[bufferPos++]));
+				polygon.append(QPoint(x, posY));
 			}
+			if (themer()->get_property("AudioClip:wavemicroview:antialiased", 0).toInt()) {
+				p->setRenderHints(QPainter::Antialiasing);
+			}
+			p->drawPolyline(polygon);
 		
 		// Classical view, both positive and negative peaks
 		} else if (classicView) {
@@ -296,8 +302,10 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			}
 			if (m_sv->viewmode == EditMode) {
 				p->setPen(themer()->get_color("AudioClip:wavemacroview"));
+				p->setBrush(themer()->get_color("AudioClip:wavemacroview"));
 			} else  {
-				p->setPen(themer()->get_color("AudioClip:wavemacro:curvemode"));
+				p->setPen(themer()->get_color("AudioClip:wavemacroview:curvemode"));
+				p->setBrush(themer()->get_color("AudioClip:wavemacroview:curvemode"));
 			}
 
 
@@ -305,8 +313,8 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			QPolygon polygontop, polygonbottom, polygonbottombackwards;
 			
 			for (int x = xstart; x < (pixelcount+xstart); x++) {
-                                posY = (int) (centerY + peakBuffer[bufferPos]);
-                                negY = (int) (centerY - peakBuffer[bufferPos + 1]);
+                                posY = (int) (centerY + peakBuffer[bufferPos++]);
+                                negY = (int) (centerY - peakBuffer[bufferPos++]);
 				
 				if (m_usePolygonPeakDrawing) {
 					polygontop.append(QPoint(x, posY));
@@ -314,8 +322,6 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				} else {
 					linelist.append(QLine(x, negY, x, posY));
 				}
-				
-				bufferPos += 2;
 			}
 			
 			if (m_usePolygonPeakDrawing) {
@@ -323,7 +329,6 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				path.addPolygon(polygontop);
 				path.lineTo(polygonbottom.last());
 				path.addPolygon(polygonbottom);
-				p->setBrush(themer()->get_color("AudioClip:wavemacroview"));
 				p->drawPath(path);	
 			} else {
 				p->drawLines(linelist);
@@ -551,10 +556,10 @@ void AudioClipView::position_changed( )
 
 void AudioClipView::load_theme_data()
 {
-	m_drawbackground = themer()->get_property("AudioClip:drawbackground").toInt();
-	m_infoAreaHeight = themer()->get_property("AudioClip:infoareaheight").toInt();
-	m_usePolygonPeakDrawing = themer()->get_property("AudioClip:polygonpeakdrawing").toInt();
-	m_mimimumheightforinfoarea = themer()->get_property("AudioClip:mimimumheightforinfoarea").toInt();
+	m_drawbackground = themer()->get_property("AudioClip:drawbackground", 1).toInt();
+	m_infoAreaHeight = themer()->get_property("AudioClip:infoareaheight", 16).toInt();
+	m_usePolygonPeakDrawing = themer()->get_property("AudioClip:polygonpeakdrawing", 0).toInt();
+	m_mimimumheightforinfoarea = themer()->get_property("AudioClip:mimimumheightforinfoarea", 45).toInt();
 	recreate_clipname_pixmap();
 }
 

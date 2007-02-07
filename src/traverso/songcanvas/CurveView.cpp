@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.cpp,v 1.14 2007/02/05 17:12:02 r_sijrier Exp $
+$Id: CurveView.cpp,v 1.15 2007/02/07 23:24:05 r_sijrier Exp $
 */
 
 #include "CurveView.h"
@@ -176,7 +176,12 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	Q_UNUSED(widget);
 	PENTER;
 	painter->setRenderHint(QPainter::Antialiasing);
-	painter->setPen(QColor(255, 0, 255));
+	
+	if (m_sv->viewmode == CurveMode) {
+		painter->setPen(QColor(255, 0, 255));
+	} else {
+		painter->setPen(QColor(255, 0, 255, 150));
+	}
 	
 	QPolygonF polygon;
 	float value[2];
@@ -191,7 +196,7 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	do {
 		m_curve->get_vector(position*scaleFactor, position*scaleFactor + 1, value, 2);
 		polygon <<  QPointF(position, height - (value[1] * height) );
-	 	position += 3;
+	 	position ++;
 	} while (position <= (xstart + pixelcount));
 
 	

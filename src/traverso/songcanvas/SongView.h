@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongView.h,v 1.8 2007/02/06 20:52:07 r_sijrier Exp $
+    $Id: SongView.h,v 1.9 2007/02/07 23:24:05 r_sijrier Exp $
 */
 
 #ifndef SONG_VIEW_H
@@ -67,24 +67,40 @@ public :
 	
 	Song* get_song() const {return m_song;}
 	TrackPanelViewPort* get_trackpanel_view_port() const;
+	ClipsViewPort* get_clips_viewport() const;
 	
 	TrackView* get_trackview_under(QPointF point);
+	
+	void load_theme_data();
+	void start_shuttle(bool start, bool drag=false);
+	void update_shuttle_factor();
 
 	int		scalefactor;
 	ViewMode	viewmode;
-	PlayHead*		m_playCursor;
 
 private:
         Song* 			m_song;
+	PlayHead*		m_playCursor;
 	ClipsViewPort* 		m_clipsViewPort;
 	TrackPanelViewPort*	m_tpvp;
 	TimeLineViewPort*	m_tlvp;
 	QList<TrackView*>	m_trackViews;
 	WorkCursor*		m_workCursor;
+	int			m_shuttleXfactor;
+	int			m_shuttleYfactor;
+	bool			m_dragShuttle;
+	QTimer			m_shuttletimer;
+	
+	// Themeing data
+	int	m_trackSeperatingHeight;
+	int	m_trackMinimumHeight;
+	int	m_trackMaximumHeight;
+	int	m_trackTopIndent;
+	
+	void layout_tracks();
 
 
 public slots:
-        void update_shuttle();
 	void set_snap_range(int);
 
 	Command* touch();
@@ -110,6 +126,7 @@ private slots:
 	void add_new_trackview(Track*);
 	void remove_trackview(Track*);
 	void calculate_scene_rect();
+	void update_shuttle();
 	
 signals:
 	void viewModeChanged();

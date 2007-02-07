@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.14 2007/02/06 20:52:07 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.15 2007/02/07 23:24:05 r_sijrier Exp $
 */
 
 #include <QLineEdit>
@@ -55,7 +55,6 @@ TrackView::TrackView(SongView* sv, Track * track)
 	load_theme_data();
 
 	m_track = track;
-	m_clipViewYOfsset = 3;
 	setFlags(ItemIsSelectable | ItemIsMovable);
 // 	setAcceptsHoverEvents(true);
 
@@ -135,7 +134,7 @@ Track* TrackView::get_track( ) const
 
 int TrackView::get_clipview_y_offset( )
 {
-	return m_clipViewYOfsset;
+	return m_cliptopoffset;
 }
 
 void TrackView::move_to( int x, int y )

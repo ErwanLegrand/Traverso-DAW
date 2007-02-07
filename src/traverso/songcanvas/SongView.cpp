@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.13 2007/02/06 20:52:07 r_sijrier Exp $
+$Id: SongView.cpp,v 1.14 2007/02/07 23:24:05 r_sijrier Exp $
 */
 
 
@@ -29,6 +29,7 @@ $Id: SongView.cpp,v 1.13 2007/02/06 20:52:07 r_sijrier Exp $
 #include "ClipsViewPort.h"
 #include "TimeLineViewPort.h"
 #include "TrackPanelViewPort.h"
+#include "Themer.h"
 		
 #include <Song.h>
 #include <Track.h>
@@ -38,6 +39,32 @@ $Id: SongView.cpp,v 1.13 2007/02/06 20:52:07 r_sijrier Exp $
 #include <Zoom.h>
 		
 #include <Debugger.h>
+
+class Shuttle : public Command
+{
+public :
+	Shuttle(SongView* sv) : Command("Shuttle"), m_sv(sv) {}
+
+	int begin_hold() {
+		m_sv->update_shuttle_factor();
+		m_sv->start_shuttle(true);
+		return 1;
+	}
+
+	int finish_hold() {
+		m_sv->start_shuttle(false);
+		return 1;
+	}
+	
+	int jog() {
+		m_sv->update_shuttle_factor();
+		return 1;
+	}
+
+private :
+	SongView*	m_sv;
+};
+
 
 class PlayHeadMove : public Command
 {
@@ -99,6 +126,7 @@ SongView::SongView(ClipsViewPort* viewPort, TrackPanelViewPort* tpvp, TimeLineVi
 	m_tlvp = tlvp;
 	
 	set_editing_mode();
+	load_theme_data();
 	
 	m_clipsViewPort->scene()->addItem(this);
 	
@@ -124,6 +152,7 @@ SongView::SongView(ClipsViewPort* viewPort, TrackPanelViewPort* tpvp, TimeLineVi
 		SIGNAL(valueChanged(int)),
 		this, 
 		SLOT(set_snap_range(int)));
+	connect(&m_shuttletimer, SIGNAL(timeout() ), this, SLOT (update_shuttle()) );
 
 }
 
@@ -152,7 +181,7 @@ TrackView* SongView::get_trackview_under( QPointF point )
 	QList<QGraphicsItem*> views = m_clipsViewPort->items(m_clipsViewPort->mapFromScene(point));
 	
 	for (int i=0; i<views.size(); ++i) {
-		view = qobject_cast<TrackView*>((ViewItem*)views.at(i));
+		view = dynamic_cast<TrackView*>(views.at(i));
 		if (view) {
 			return view;
 		}
@@ -193,10 +222,10 @@ void SongView::calculate_scene_rect()
 	m_clipsViewPort->setUpdatesEnabled(false);
 	int totalheight = 0;
 	foreach(Track* track, m_song->get_tracks()) {
-		totalheight += track->get_height() + 6;
+		totalheight += track->get_height() + m_trackSeperatingHeight;
 	}
 	totalheight += 150;
-	int width = m_song->get_last_frame() / scalefactor + 500;
+	int width = m_song->get_last_frame() / scalefactor + m_clipsViewPort->height() / 2;
 	
 	m_clipsViewPort->setSceneRect(0, 0, width, totalheight);
 	m_tlvp->setSceneRect(0, -2, width, -23);
@@ -207,10 +236,9 @@ void SongView::calculate_scene_rect()
 	m_workCursor->set_bounding_rect(QRectF(0, 0, 2, totalheight));
 	m_workCursor->update_position();
 	
-	center();
+// 	center();
 	m_clipsViewPort->setUpdatesEnabled(true);
 
-// 	m_clipsViewPort->centerOn(m_song->get_working_frame() / scalefactor, 0);
 }
 
 
@@ -223,7 +251,6 @@ Command* SongView::hzoom_out()
 {
 	PENTER;
 	m_song->set_hzoom(m_song->get_hzoom() + 1);
-// 	center();
 	return (Command*) 0;
 }
 
@@ -232,7 +259,6 @@ Command* SongView::hzoom_in()
 {
 	PENTER;
 	m_song->set_hzoom(m_song->get_hzoom() - 1);
-// 	center();
 	return (Command*) 0;
 }
 
@@ -240,22 +266,18 @@ Command* SongView::hzoom_in()
 Command* SongView::vzoom_out()
 {
 	PENTER;
-	int verticalposition = 6;
 	for (int i=0; i<m_trackViews.size(); ++i) {
 		TrackView* view = m_trackViews.at(i);
 		Track* track = view->get_track();
 		int height = track->get_height();
 		height = (int) (height * 1.2);
-		if (height > 400) {
-			break;
+		if (height > m_trackMaximumHeight) {
+			height = m_trackMaximumHeight;
 		}
 		track->set_height(height);
-		view->prepare_geometry_change();
-		view->calculate_bounding_rect();
-		view->move_to(0, verticalposition);
-		verticalposition += height + 6;
 	}
 	
+	layout_tracks();
 	scale_factor_changed();
 	
 	return (Command*) 0;
@@ -265,26 +287,36 @@ Command* SongView::vzoom_out()
 Command* SongView::vzoom_in()
 {
 	PENTER;
-	int verticalposition = 6;
 	for (int i=0; i<m_trackViews.size(); ++i) {
 		TrackView* view = m_trackViews.at(i);
 		Track* track = view->get_track();
 		int height = track->get_height();
 		height = (int) (height * 0.8);
-		if (height < 25) {
-			break;
+		if (height < m_trackMinimumHeight) {
+			height = m_trackMinimumHeight;
 		}
 		track->set_height(height);
-		view->prepare_geometry_change();
-		view->calculate_bounding_rect();
-		view->move_to(0, verticalposition);
-		verticalposition += height + 6;
 	}
 	
+	layout_tracks();
 	scale_factor_changed();
 	
 	return (Command*) 0;
 }
+
+
+void SongView::layout_tracks()
+{
+	int verticalposition = m_trackTopIndent;
+	for (int i=0; i<m_trackViews.size(); ++i) {
+		TrackView* view = m_trackViews.at(i);
+		view->prepare_geometry_change();
+		view->calculate_bounding_rect();
+		view->move_to(0, verticalposition);
+		verticalposition += (view->get_track()->get_height() + m_trackSeperatingHeight);
+	}
+}
+
 
 Command* SongView::center()
 {
@@ -297,12 +329,84 @@ Command* SongView::center()
 
 Command* SongView::shuttle()
 {
-// 	return new Shuttle(this, m_vp);
-	return 0;
+ 	return new Shuttle(this);
 }
+
+
+void SongView::start_shuttle(bool start, bool drag)
+{
+	if (start) {
+		m_shuttletimer.start(40);
+		m_dragShuttle = drag;
+		m_shuttleYfactor = m_shuttleXfactor = 0;
+	} else {
+		m_shuttletimer.stop();
+	}
+}
+
+void SongView::update_shuttle_factor()
+{
+	int shuttlespeed;
+	
+// TODO Interpolate normalized value from a (Fade)Curve, anyone ?
+
+	if(m_dragShuttle) {
+		float normalizedX = (float) cpointer().x() / m_clipsViewPort->width();
+		shuttlespeed = 0;
+		if ( normalizedX > 0.90 || normalizedX < 0.10)
+			shuttlespeed = 2;
+	
+		if ( normalizedX > 0.95 || normalizedX < 0.05)
+			shuttlespeed = 4;
+	
+		if ( normalizedX > 0.98 || normalizedX < 0.02)
+			shuttlespeed = 10;
+	
+		m_shuttleXfactor = (int) ( (( normalizedX * 30 ) - 15) * shuttlespeed / 2 );
+		
+	
+	} else {
+		shuttlespeed = 0;
+		float f = (float) cpointer().x() / m_clipsViewPort->width();
+		
+		if ( f > 0.6 || f < 0.4)
+			shuttlespeed = 7;
+	
+		if ( f > 0.85 || f < 0.15)
+			shuttlespeed = 15;
+	
+		if ( f > 0.95 || f < 0.05)
+			shuttlespeed = 20;
+	
+		if ( f > 0.98 || f < 0.02)
+			shuttlespeed = 30;
+	
+		m_shuttleXfactor = (int) ( (( f * 30 ) - 15) * shuttlespeed / 2 );
+	}
+	
+	shuttlespeed = 0;
+	float normalizedY = (float) cpointer().y() / m_clipsViewPort->height();
+		
+	if ( normalizedY > 0.80 || normalizedY < 0.20)
+		shuttlespeed = 1;
+	
+	if ( normalizedY > 0.90 || normalizedY < 0.10)
+		shuttlespeed = 2;
+	
+	if ( normalizedY > 0.98 || normalizedY < 0.02)
+		shuttlespeed = 5;
+		
+	m_shuttleYfactor = (int) ( (( normalizedY * 30 ) - 15) * shuttlespeed / 2 );
+}
+
 
 void SongView::update_shuttle()
 {
+	QScrollBar* hscrollbar = m_clipsViewPort->horizontalScrollBar();
+	hscrollbar->setValue(hscrollbar->value() + m_shuttleXfactor);
+	
+	QScrollBar* vscrollbar = m_clipsViewPort->verticalScrollBar();
+	vscrollbar->setValue(vscrollbar->value() + m_shuttleYfactor);
 }
 
 
@@ -326,6 +430,12 @@ TrackPanelViewPort* SongView::get_trackpanel_view_port( ) const
 {
 	return m_tpvp;
 }
+
+ClipsViewPort * SongView::get_clips_viewport() const
+{
+	return m_clipsViewPort;
+}
+
 
 Command * SongView::touch( )
 {
@@ -390,6 +500,19 @@ Command* SongView::scroll_left()
 	QScrollBar* scrollbar = m_clipsViewPort->horizontalScrollBar();
 	scrollbar->setValue(scrollbar->value() - 50); 
 	return (Command*) 0;
+}
+
+void SongView::load_theme_data()
+{
+	m_trackSeperatingHeight = themer()->get_property("Song:track:seperatingheight", 0).toInt();
+	m_trackMinimumHeight = themer()->get_property("Song:track:minimumheight", 22).toInt();
+	m_trackMaximumHeight = themer()->get_property("Song:track:maximumheight", 22).toInt();
+	m_trackTopIndent = themer()->get_property("Song:track:topindent", 6).toInt();
+	
+	QColor background = themer()->get_color("Song:background");
+	m_clipsViewPort->setBackgroundBrush(QBrush(background));
+
+	layout_tracks();
 }
 
 

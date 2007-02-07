@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ClipsViewPort.cpp,v 1.6 2007/02/06 20:52:07 r_sijrier Exp $
+$Id: ClipsViewPort.cpp,v 1.7 2007/02/07 23:24:05 r_sijrier Exp $
 */
 
 #include "ClipsViewPort.h"
@@ -36,7 +36,6 @@ $Id: ClipsViewPort.cpp,v 1.6 2007/02/06 20:52:07 r_sijrier Exp $
 ClipsViewPort::ClipsViewPort(QGraphicsScene* scene, SongWidget* sw)
 	: ViewPort(scene, sw)
 {
-	setBackgroundBrush(QBrush(QColor("#FBFCFF")));
 	setAttribute(Qt::WA_NoSystemBackground);
 	m_sw = sw;
 }

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.h,v 1.9 2007/02/06 20:52:07 r_sijrier Exp $
+$Id: TrackView.h,v 1.10 2007/02/07 23:24:05 r_sijrier Exp $
 */
 
 #ifndef TRACK_VIEW_H
@@ -62,7 +62,6 @@ private:
 	QList<AudioClipView* >	m_clipViews;
 	TrackPanelView*		m_panel;
 	PluginChainView*	m_pluginChainView;
-	int			m_clipViewYOfsset;
 	int			m_height;
 	int			m_paintBackground;
 	int			m_cliptopoffset;
