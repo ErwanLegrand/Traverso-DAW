@@ -26,7 +26,6 @@ precompile.h \
 SplitClip.h \
 TrackPan.h \
 Zoom.h
-
 TARGET = traversocommands
 DESTDIR = ../../lib
 TEMPLATE = lib

@@ -6,7 +6,6 @@
 #include "Crop.h"
 #include "Zoom.h"
 #include "Import.h"
-#include "Shuttle.h"
 #include "PCommand.h"
 #include "ClipSelection.h"
 #include "Fade.h"
