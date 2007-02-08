@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.23 2007/02/08 23:01:15 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.24 2007/02/08 23:47:06 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -504,7 +504,6 @@ void AudioClipView::calculate_bounding_rect()
 	set_height(m_tv->get_clipview_height());
 	m_boundingRectangle = QRectF(0, 0, (m_clip->get_length() / m_sv->scalefactor), m_height);
 	update_start_pos();
-	update();
 }
 
 
@@ -515,9 +514,7 @@ void AudioClipView::repaint( )
 
 void AudioClipView::set_height( int height )
 {
-	prepareGeometryChange();
 	m_height = height;
-// 	calculate_bounding_rect();
 }
 
 int AudioClipView::get_fade_y_offset() const
