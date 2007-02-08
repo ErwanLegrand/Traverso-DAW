@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.17 2007/02/08 22:57:11 r_sijrier Exp $
+$Id: SongView.cpp,v 1.18 2007/02/08 23:46:03 r_sijrier Exp $
 */
 
 
@@ -172,7 +172,6 @@ void SongView::scale_factor_changed( )
 	for (int i=list.size() - 1; i>=0; --i) {
 		ViewItem* item = dynamic_cast<ViewItem*>(list.at(i));
 		if (item) {
-			item->prepare_geometry_change();
 			item->calculate_bounding_rect();
 		}
 	}
