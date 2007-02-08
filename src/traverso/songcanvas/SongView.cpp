@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.16 2007/02/08 20:51:38 r_sijrier Exp $
+$Id: SongView.cpp,v 1.17 2007/02/08 22:57:11 r_sijrier Exp $
 */
 
 
@@ -167,12 +167,14 @@ void SongView::scale_factor_changed( )
 {
 	scalefactor = Peak::zoomStep[m_song->get_hzoom()];
 	
-	QList<QGraphicsItem*> list = scene()->items(m_clipsViewPort->sceneRect());
+	QList<QGraphicsItem*> list = m_clipsViewPort->items();
 	
 	for (int i=list.size() - 1; i>=0; --i) {
-		ViewItem* item = (ViewItem*)list.at(i);
-		item->prepare_geometry_change();
-		item->calculate_bounding_rect();
+		ViewItem* item = dynamic_cast<ViewItem*>(list.at(i));
+		if (item) {
+			item->prepare_geometry_change();
+			item->calculate_bounding_rect();
+		}
 	}
 	
 	calculate_scene_rect();
