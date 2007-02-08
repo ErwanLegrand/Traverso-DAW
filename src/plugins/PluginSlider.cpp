@@ -17,10 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginSlider.cpp,v 1.2 2006/08/09 21:12:45 r_sijrier Exp $
+$Id: PluginSlider.cpp,v 1.3 2007/02/08 20:51:38 r_sijrier Exp $
 */
 
 #include "PluginSlider.h"
+
 
 PluginSlider::PluginSlider()
 	: QWidget()

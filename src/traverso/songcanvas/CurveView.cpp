@@ -17,13 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.cpp,v 1.15 2007/02/07 23:24:05 r_sijrier Exp $
+$Id: CurveView.cpp,v 1.16 2007/02/08 20:51:38 r_sijrier Exp $
 */
 
 #include "CurveView.h"
 #include "SongView.h"
 #include "CurveNodeView.h"
 #include "ClipsViewPort.h"
+#include <Themer.h>
 		
 #include <Curve.h>
 #include <CurveNode.h>
@@ -178,9 +179,9 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	painter->setRenderHint(QPainter::Antialiasing);
 	
 	if (m_sv->viewmode == CurveMode) {
-		painter->setPen(QColor(255, 0, 255));
+		painter->setPen(themer()->get_color("Curve:active"));
 	} else {
-		painter->setPen(QColor(255, 0, 255, 150));
+		painter->setPen(themer()->get_color("Curve:inactive"));
 	}
 	
 	QPolygonF polygon;
@@ -258,7 +259,7 @@ void CurveView::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
 	PENTER;
 	Q_UNUSED(event);
 	
-	m_blinkColor = QColor(255, 0, 255, 220);
+	m_blinkColor = themer()->get_color("CurveNode:blink");
 	m_blinkTimer.start(40);
 }
 
@@ -274,7 +275,7 @@ void CurveView::hoverLeaveEvent ( QGraphicsSceneHoverEvent * event )
 	
 	m_blinkTimer.stop();
 	if (m_blinkingNode) {
-		m_blinkingNode->set_color(QColor(255, 0, 255, 140));
+		m_blinkingNode->set_color(themer()->get_color("CurveNode:default"));
 		m_blinkingNode->decrease_size();
 		m_blinkingNode = 0;
 	}
@@ -315,7 +316,7 @@ void CurveView::update_softselected_node( QPoint pos )
 	}
 	
 	if (prevNode && (prevNode != m_blinkingNode) ) {
-		prevNode->set_color(QColor(255, 0, 255, 140));
+		prevNode->set_color(themer()->get_color("CurveNode:default"));
 		prevNode->update();
 		prevNode->decrease_size();
 		m_blinkingNode->increase_size();

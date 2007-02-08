@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveNodeView.h,v 1.3 2007/01/21 14:19:37 r_sijrier Exp $
+$Id: CurveNodeView.h,v 1.4 2007/02/08 20:51:38 r_sijrier Exp $
 */
 
 #ifndef CURVE_NODE_VIEW_H
@@ -44,6 +44,7 @@ public:
 	void decrease_size();
 	
 	void set_color(QColor color);
+	void load_theme_data();
 	CurveNode* get_curve_node() const {return m_node;}
 	
 private:

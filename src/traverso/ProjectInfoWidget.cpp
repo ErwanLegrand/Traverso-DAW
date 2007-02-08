@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ProjectInfoWidget.cpp,v 1.4 2006/10/18 12:08:56 r_sijrier Exp $
+    $Id: ProjectInfoWidget.cpp,v 1.5 2007/02/08 20:51:38 r_sijrier Exp $
 */
 
 #include "ProjectInfoWidget.h"
@@ -37,7 +37,7 @@ ProjectInfoWidget::ProjectInfoWidget( QWidget * parent )
         setupUi(this);
 
         QPalette palette;
-        palette.setColor(QPalette::Background, cm().get("INFO_WIDGET_BACKGROUND"));
+	palette.setColor(QPalette::Background, cm().get("InfoWidget:background"));
         setPalette(palette);
         setAutoFillBackground(true);
 

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeView.cpp,v 1.5 2007/01/24 21:21:07 r_sijrier Exp $
+$Id: FadeView.cpp,v 1.6 2007/02/08 20:51:38 r_sijrier Exp $
 */
 
 #include "FadeView.h"
@@ -28,6 +28,7 @@ $Id: FadeView.cpp,v 1.5 2007/01/24 21:21:07 r_sijrier Exp $
 #include "AudioClipView.h"
 #include "FadeContextDialog.h"
 #include "SongView.h"
+#include <Themer.h>
 
 #include "Song.h"
 #include <InputEngine.h>
@@ -93,10 +94,10 @@ void FadeView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 	
 	painter->setPen(Qt::NoPen);
 	
-	QColor color = m_fadeCurve->is_bypassed() ? QColor(255, 0, 255, 40) : QColor(255, 0, 255, 85);
+	QColor color = m_fadeCurve->is_bypassed() ? themer()->get_color("Fade:bypassed") : themer()->get_color("Fade:default");
 	
 	if (option->state & QStyle::State_MouseOver) {
-		m_fadeCurve->is_bypassed() ? color.setAlpha(50) : color.setAlpha(95);
+		color.setAlpha(color.alpha() + 10);
 	}
 	
 	painter->setBrush(color);

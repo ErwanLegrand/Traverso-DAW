@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursors.cpp,v 1.11 2007/02/05 17:12:02 r_sijrier Exp $
+    $Id: Cursors.cpp,v 1.12 2007/02/08 20:51:38 r_sijrier Exp $
 */
 
 #include "Cursors.h"
@@ -68,9 +68,9 @@ void PlayHead::paint( QPainter * painter, const QStyleOptionGraphicsItem * optio
 	QColor color;
 	
 	if (m_song->is_transporting()) {
-	 	color = themer()->get_color("PLAY_HEAD_ACTIVE");
+	 	color = themer()->get_color("Playhead:active");
 	} else {
-	 	color = themer()->get_color("PLAY_HEAD_INACTIVE");
+		color = themer()->get_color("Playhead:inactive");
 	}
 	
 	painter->fillRect(0, 0, 2, (int)m_boundingRectangle.height(), color);
@@ -232,7 +232,7 @@ void WorkCursor::paint( QPainter * painter, const QStyleOptionGraphicsItem * opt
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 	
-	painter->fillRect(0, 0, 2, (int)m_boundingRectangle.height(), QColor(255, 0, 0, 100));
+	painter->fillRect(0, 0, 2, (int)m_boundingRectangle.height(), themer()->get_color("Workcursor:default"));
 }
 
 void WorkCursor::update_position()

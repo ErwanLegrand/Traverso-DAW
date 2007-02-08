@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveNodeView.cpp,v 1.4 2007/01/21 14:19:37 r_sijrier Exp $
+$Id: CurveNodeView.cpp,v 1.5 2007/02/08 20:51:38 r_sijrier Exp $
 */
 
 #include "CurveNodeView.h"
@@ -26,6 +26,7 @@ $Id: CurveNodeView.cpp,v 1.4 2007/01/21 14:19:37 r_sijrier Exp $
 #include <QPainter>
 #include <QPen>
 #include <CurveNode.h>
+#include <Themer.h>
 
 #include <Debugger.h>
 
@@ -36,7 +37,7 @@ CurveNodeView::CurveNodeView( SongView * sv, ViewItem * parentViewItem, CurveNod
 	PENTERCONS;
 	m_sv = sv;
 	m_boundingRectangle = QRectF(0, 0, 6, 6);
-	m_color = QColor(255, 0, 255, 140);
+	load_theme_data();
 	// This actually calculates the position..
 	calculate_bounding_rect();
 	
@@ -91,6 +92,12 @@ void CurveNodeView::decrease_size( )
 	m_boundingRectangle.setWidth(m_boundingRectangle.width() - 1);
 	m_boundingRectangle.setHeight(m_boundingRectangle.height() - 1);
 	update_pos();
+}
+
+void CurveNodeView::load_theme_data()
+{
+	m_color = themer()->get_color("CurveNode:default");
+	update();
 }
 
 //eof

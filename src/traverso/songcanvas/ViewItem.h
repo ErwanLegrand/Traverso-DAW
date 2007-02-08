@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewItem.h,v 1.5 2007/02/06 20:52:07 r_sijrier Exp $
+$Id: ViewItem.h,v 1.6 2007/02/08 20:51:38 r_sijrier Exp $
 */
 
 #ifndef VIEW_ITEM_H
@@ -29,6 +29,11 @@ $Id: ViewItem.h,v 1.5 2007/02/06 20:52:07 r_sijrier Exp $
 #include <QStyleOptionGraphicsItem>
 
 class SongView;
+		
+// Canvas width should be 2^31, but it doesn't work ok
+// 2^30 works ok, so let's use that, still gives a lot 
+// of headroom for real large recordings
+#define MAX_CANVAS_WIDTH 1073741824
 		
 class ViewItem : public ContextItem, public QGraphicsItem
 {

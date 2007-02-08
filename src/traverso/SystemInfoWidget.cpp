@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SystemInfoWidget.cpp,v 1.6 2007/02/02 09:48:27 r_sijrier Exp $
+$Id: SystemInfoWidget.cpp,v 1.7 2007/02/08 20:51:38 r_sijrier Exp $
 */
 
 #include "SystemInfoWidget.h"
@@ -65,7 +65,7 @@ void ResourcesInfoWidget::update_resources_status( )
 	foreach(Song* song, project->get_song_list() ) {
 		bufReadStatus = std::min(song->get_diskio()->get_read_buffers_fill_status(), bufReadStatus);
 		bufWriteStatus = std::min(song->get_diskio()->get_write_buffers_fill_status(), bufWriteStatus);
-		time += song->get_diskio()->get_cpu_time();
+// 		time += song->get_diskio()->get_cpu_time();
 	}
 
 	QByteArray cputime = QByteArray::number(time, 'f', 2).append(" %");

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongInfoWidget.cpp,v 1.11 2006/11/14 14:33:42 r_sijrier Exp $
+$Id: SongInfoWidget.cpp,v 1.12 2007/02/08 20:51:38 r_sijrier Exp $
 */
 
 #include "SongInfoWidget.h"
@@ -36,7 +36,7 @@ SongInfoWidget::SongInfoWidget( QWidget * parent )
 	setupUi(this);
 
 	QPalette palette;
-	palette.setColor(QPalette::Background, cm().get("INFO_WIDGET_BACKGROUND"));
+	palette.setColor(QPalette::Background, cm().get("InfoWidget:background"));
 	setPalette(palette);
 	setAutoFillBackground(true);
 

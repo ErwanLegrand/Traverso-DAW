@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.15 2007/02/08 13:30:42 r_sijrier Exp $
+$Id: SongView.cpp,v 1.16 2007/02/08 20:51:38 r_sijrier Exp $
 */
 
 
@@ -356,50 +356,75 @@ void SongView::update_shuttle_factor()
 	if(m_dragShuttle) {
 		float normalizedX = (float) cpointer().x() / m_clipsViewPort->width();
 		shuttlespeed = 0;
-		if ( normalizedX > 0.90 || normalizedX < 0.10)
-			shuttlespeed = 2;
+		if ( normalizedX > 0.87 || normalizedX < 0.13)
+			shuttlespeed = 3;
 	
-		if ( normalizedX > 0.95 || normalizedX < 0.05)
-			shuttlespeed = 4;
+		else if ( normalizedX > 0.90 || normalizedX < 0.10)
+			shuttlespeed = 8;
 	
-		if ( normalizedX > 0.98 || normalizedX < 0.02)
-			shuttlespeed = 10;
+		else if ( normalizedX > 0.95 || normalizedX < 0.05)
+			shuttlespeed = 20;
+		
+		else if ( normalizedX > 0.98 || normalizedX < 0.02)
+			shuttlespeed = 30;
 	
 		m_shuttleXfactor = (int) ( (( normalizedX * 30 ) - 15) * shuttlespeed / 2 );
 		
 	
+		shuttlespeed = 0;
+		float normalizedY = (float) cpointer().y() / m_clipsViewPort->height();
+		
+		if ( normalizedY > 0.80 || normalizedY < 0.20)
+			shuttlespeed = 3;
+	
+		else if ( normalizedY > 0.90 || normalizedY < 0.10)
+			shuttlespeed = 8;
+	
+		else if ( normalizedY > 0.95 || normalizedY < 0.05)
+			shuttlespeed = 20;
+		
+		else if ( normalizedY > 0.98 || normalizedY < 0.02)
+			shuttlespeed = 30;
+		
+		m_shuttleYfactor = (int) ( (( normalizedY * 30 ) - 15) * shuttlespeed / 2 );
+	
 	} else {
 		shuttlespeed = 0;
-		float f = (float) cpointer().x() / m_clipsViewPort->width();
+		float normalizedX = (float) cpointer().x() / m_clipsViewPort->width();
 		
-		if ( f > 0.6 || f < 0.4)
+		if ( normalizedX > 0.6 || normalizedX < 0.4)
 			shuttlespeed = 7;
 	
-		if ( f > 0.85 || f < 0.15)
+		else if ( normalizedX > 0.85 || normalizedX < 0.15)
 			shuttlespeed = 15;
 	
-		if ( f > 0.95 || f < 0.05)
+		else if ( normalizedX > 0.95 || normalizedX < 0.05)
 			shuttlespeed = 20;
 	
-		if ( f > 0.98 || f < 0.02)
+		else if ( normalizedX > 0.98 || normalizedX < 0.02)
 			shuttlespeed = 30;
 	
-		m_shuttleXfactor = (int) ( (( f * 30 ) - 15) * shuttlespeed / 2 );
+		m_shuttleXfactor = (int) ( (( normalizedX * 30 ) - 15) * shuttlespeed / 2 );
+		
+		
+		shuttlespeed = 0;
+		float normalizedY = (float) cpointer().y() / m_clipsViewPort->height();
+		
+		if ( normalizedY > 0.6 || normalizedY < 0.4)
+			shuttlespeed = 5;
+		
+		else if ( normalizedY > 0.80 || normalizedY < 0.20)
+			shuttlespeed = 15;
+	
+		else if ( normalizedY > 0.90 || normalizedY < 0.10)
+			shuttlespeed = 20;
+	
+		else if ( normalizedY > 0.98 || normalizedY < 0.02)
+			shuttlespeed = 30;
+		
+		m_shuttleYfactor = (int) ( (( normalizedY * 30 ) - 15) * shuttlespeed / 2 );
 	}
 	
-	shuttlespeed = 0;
-	float normalizedY = (float) cpointer().y() / m_clipsViewPort->height();
-		
-	if ( normalizedY > 0.80 || normalizedY < 0.20)
-		shuttlespeed = 1;
-	
-	if ( normalizedY > 0.90 || normalizedY < 0.10)
-		shuttlespeed = 2;
-	
-	if ( normalizedY > 0.98 || normalizedY < 0.02)
-		shuttlespeed = 5;
-		
-	m_shuttleYfactor = (int) ( (( normalizedY * 30 ) - 15) * shuttlespeed / 2 );
 }
 
 
@@ -512,8 +537,8 @@ void SongView::load_theme_data()
 	m_trackMaximumHeight = themer()->get_property("Song:track:maximumheight", 22).toInt();
 	m_trackTopIndent = themer()->get_property("Song:track:topindent", 6).toInt();
 	
-	QColor background = themer()->get_color("Song:background");
-	m_clipsViewPort->setBackgroundBrush(QBrush(background));
+	m_clipsViewPort->setBackgroundBrush(themer()->get_color("Song:background"));
+	m_tpvp->setBackgroundBrush(themer()->get_color("Song:background"));
 
 	layout_tracks();
 }

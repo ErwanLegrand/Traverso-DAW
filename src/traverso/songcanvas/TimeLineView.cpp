@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TimeLineView.cpp,v 1.5 2007/02/05 17:12:02 r_sijrier Exp $
+$Id: TimeLineView.cpp,v 1.6 2007/02/08 20:51:38 r_sijrier Exp $
 */
 
 #include "TimeLineView.h"
@@ -28,7 +28,6 @@ $Id: TimeLineView.cpp,v 1.5 2007/02/05 17:12:02 r_sijrier Exp $
 #include "Project.h"
 #include "Themer.h"
 #include "SongView.h"
-#include <cmath>
 #include <Utils.h>
 #include <defines.h>
 
@@ -41,7 +40,9 @@ TimeLineView::TimeLineView(SongView* view)
 {
 	PENTERCONS2;
 	m_sv = view;
-	m_boundingRectangle = QRectF(0, 0, pow(2, 31), 21);
+	m_boundingRectangle = QRectF(0, 0, MAX_CANVAS_WIDTH, 21);
+	
+	view->scene()->addItem(this);
 }
 
 TimeLineView::~ TimeLineView()
@@ -71,9 +72,9 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 
 	int height = 21;
 	
-	painter->fillRect(xstart, 0,  pixelcount, height, themer()->get_color("LOCATOR_BACKGROUND") );
+	painter->fillRect(xstart, 0,  pixelcount, height, themer()->get_color("Timeline:background") );
 	
-	painter->setPen(themer()->get_color("LOCATOR_TEXT"));
+	painter->setPen(themer()->get_color("Timeline:text"));
 	painter->setFont( QFont( "Bitstream Vera Sans", 9) );
 	
 	int rate = pm().get_project()->get_rate();
@@ -93,7 +94,6 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 		x++;
 	}
 }
-
 
 
 //eof

@@ -16,9 +16,9 @@
 		<property name="Song:track:topindent" value="5" />
 		
 		
-		<property name="Track:topborderwidth" value="1" />
+		<property name="Track:topborderwidth" value="0" />
 		<property name="Track:bottomborderwidth" value="1" />
-		<property name="Track:cliptopmargin" value="3" />
+		<property name="Track:cliptopmargin" value="1" />
 		<property name="Track:clipbottommargin" value="1" />
 		<property name="Track:paintbackground" value="0" />
 		
@@ -28,7 +28,9 @@
 		<font name="AudioClip:title" size="8" family="Bitstream Vera Sans" />
 	</fonts>
 	<colors>
+		<color name="Text:light" red="200" green="200" blue="200"  alpha="255" />
 		<color name="Text:dark" red="0" green="0" blue="0" alpha="255" />
+		
 		
 		<color name="AudioClip:wavemacroview:outline" red="80" green="80" blue="120" alpha="255" />
 		<color name="AudioClip:wavemacroview:outline:curvemode" red="210" green="210" blue="255" alpha="255" />
@@ -47,9 +49,38 @@
 		<color name="AudioClip:contour"  red="50" green="50" blue="50"  alpha="150" />
 		<color name="AudioClip:clipinfobackground"  red="240" green="190" blue="218"  alpha="200" />
 		<color name="AudioClip:clipinfobackground:inactive"  red="199" green="190" blue="218"  alpha="200" />
+		<color name="AudioClip:sampleoverload" red="255" green="0" blue="0" alpha="255" />
+		
+		
+		<color name="Curve:active" red="255" green="0" blue="255" alpha="255" />
+		<color name="Curve:inactive" red="255" green="0" blue="255" alpha="150" />
+		
+		<color name="CurveNode:default" red="255" green="0" blue="255" alpha="140" />
+		<color name="CurveNode:blink" red="255" green="0" blue="255" alpha="220" />
+		
+		<color name="Fade:default" red="255" green="0" blue="255" alpha="85" />
+		<color name="Fade:bypassed" red="255" green="0" blue="255" alpha="40" />
+		
+		<color name="Meter:margin" red="246" green="246" blue="255" alpha="255" />
+		<color name="Meter:background" red="241" green="250" blue="255" alpha="255" />
+		<color name="Meter:grid" red="205" green="223" blue="255" alpha="255" />
+		<color name="Meter:foreground" red="82" green="80" blue="123" alpha="255"/>
+		<color name="Meter:foreground:light" red="241" green="250" blue="255" alpha="255"/>
+		<color name="Meter:curve:average" red="255" green="0" blue="0" alpha="255" />
+		
+		
+		<color name="InfoWidget:background" red="160" green="170" blue="150" alpha="255" />
+		
+		
+		<color name="Playhead:active" red="180" green="189" blue="240" alpha="220" />
+		<color name="Playhead:inactive" red="180" green="189" blue="240" alpha="220" />
 		
 		
 		<color name="Song:background" red="249" green="251" blue="255" alpha="255" />
+		
+		
+		<color name="Timeline:background" red="180" green="189" blue="189" alpha="255" />
+		<color name="Timeline:text" red="0" green="0" blue="0" alpha="255" />
 		
 		
 		<color name="Track:cliptopoffset" red="120" green="120" blue="160" alpha="255" />
@@ -57,56 +88,12 @@
 		<color name="Track:background" red="243" green="248" blue="255" alpha="255" />
 		
 		
+		<color name="TrackPanel:text" red="0" green="0" blue="25" alpha="255" />
+		<color name="TrackPanel:slider:background" red="200" green="200" blue="240" alpha="255" />
+		<color name="TrackPanel:head:active" red="240" green="140" blue="150" alpha="255" />
+		<color name="TrackPanel:head:inactive" red="255" green="180" blue="190" alpha="255" />
 		
-		<color alpha="220" red="180" blue="240" name="PLAY_HEAD_ACTIVE" green="189" />
-		<color alpha="150" red="180" blue="240" name="PLAY_HEAD_INACTIVE" green="189" />
-		<color alpha="255" red="180" blue="255" name="LIGHT_CYAN" green="255" />
-		<color alpha="255" red="255" blue="255" name="MAGENTA" green="0" />
-		<color alpha="255" red="190" blue="90" name="TRACK_PANEL_BG_ACTIVE" green="140" />
-		<color alpha="255" red="110" blue="130" name="FILTERCONTROLLER_NONACTIVE" green="100" />
-		<color alpha="255" red="255" blue="0" name="CLIP_PEAK_OVERLOADED_SAMPLE" green="0" />
-		<color alpha="200" red="199" blue="218" name="CLIP_INFO_AREA_BG" green="190" />
-		<color alpha="255" red="190" blue="90" name="TRACK_BG_ACTIVE" green="90" />
-		<color alpha="255" red="255" blue="180" name="LIGHT_RED" green="180" />
-		<color alpha="255" red="80" blue="120" name="CLIP_PEAK_MACROVIEW" green="80" />
-		<color alpha="255" red="60" blue="60" name="BUS_LEVEL_CLEAR_COLOR" green="70" />
-		<color alpha="255" red="240" blue="218" name="CLIP_INFO_AREA_BG_ACTIVE" green="190" />
-		<color alpha="255" red="120" blue="130" name="CLIP_RIGHT_CROSSFADE" green="150" />
-		<color alpha="255" red="255" blue="50" name="CURVE_ACTIVE" green="50" />
-		<color alpha="255" red="200" blue="200" name="LIGHT_TEXT" green="200" />
-		<color alpha="255" red="100" blue="100" name="MEDIUM_TEXT" green="100" />
-		<color alpha="255" red="255" blue="180" name="LIGHT_YELLOW" green="255" />
-		<color alpha="255" red="140" blue="120" name="BUS_BACKGROUND" green="160" />
-		<color alpha="255" red="0" blue="255" name="BLUE" green="0" />
-		<color alpha="255" red="255" blue="0" name="YELLOW" green="255" />
-		<color alpha="255" red="180" blue="255" name="LIGHT_BLUE" green="180" />
-		<color alpha="255" red="50" blue="61" name="CARD_INFO_BACKGROUND" green="55" />
-		<color alpha="255" red="255" blue="0" name="ORANGE" green="200" />
-		<color alpha="255" red="240" blue="120" name="BUS_BACKGROUND_ACTIVE" green="160" />
-		<color alpha="255" red="255" blue="255" name="WHITE" green="255" />
-		<color alpha="255" red="180" blue="180" name="LIGHT_GREEN" green="255" />
-		<color alpha="255" red="255" blue="100" name="LIGHT_ORANGE" green="200" />
-		<color alpha="255" red="255" blue="255" name="LIGHT_MAGENTA" green="180" />
-		<color alpha="255" red="180" blue="180" name="GRAY" green="180" />
-		<color alpha="255" red="0" blue="255" name="CYAN" green="255" />
-		<color alpha="255" red="90" blue="90" name="BUS_LEVEL_CLEAR_COLOR_GREYD_OUT" green="90" />
-		<color alpha="255" red="0" blue="0" name="GREEN" green="255" />
-		<color alpha="255" red="190" blue="210" name="TRACK_PANEL_BG" green="205" />
-		<color alpha="255" red="120" blue="120" name="BUS_BACKGROUND_GREYD_OUT" green="120" />
-		<color alpha="255" red="180" blue="189" name="LOCATOR_BACKGROUND" green="189" />
-		<color alpha="255" red="0" blue="0" name="LOCATOR_TEXT" green="0" />
-		<color alpha="255" red="0" blue="25" name="TRACK_PANEL_TEXT" green="0" />
-		<color alpha="255" red="200" blue="240" name="SLIDER_BACKGROUND" green="200" />
-		<color alpha="255" red="240" blue="150" name="TRACK_PANEL_HEAD_ACTIVE" green="140" />
-		<color alpha="255" red="170" blue="190" name="TRACK_PANEL_HEAD_INACTIVE" green="180" />
-		<color alpha="150" red="0" blue="0" name="TRACK_PANEL_SEPERATOR" green="0" />
-		<color alpha="230" red="0" blue="200" name="TRACK_PANEL_NAME" green="0" />
-		<color alpha="255" red="160" blue="150" name="INFO_WIDGET_BACKGROUND" green="170" />
-		<color alpha="255" red="246" blue="255" name="METER_MARGIN" green="246" />
-		<color alpha="255" red="241" blue="255" name="METER_BACKGROUND" green="250" />
-		<color alpha="255" red="205" blue="255" name="METER_GRID" green="223" />
-		<color alpha="255" red="82" blue="123" name="METER_FOREGROUND" green="80" />
-		<color alpha="255" red="241" blue="255" name="METER_FOREGROUND_LIGHT" green="250" />
-		<color alpha="255" red="255" blue="0" name="METER_AVERAGE_CURVE" green="0" />
+		
+		<color name="Workcursor:default" red="255" green="0" blue="0" alpha="255" />
 	</colors>
 </Themer> 

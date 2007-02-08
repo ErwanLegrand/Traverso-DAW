@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.16 2007/02/08 13:30:42 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.17 2007/02/08 20:51:38 r_sijrier Exp $
 */
 
 #include <QLineEdit>
@@ -34,8 +34,6 @@ $Id: TrackView.cpp,v 1.16 2007/02/08 13:30:42 r_sijrier Exp $
 
 #include <Song.h>
 #include <Track.h>
-
-#include <cmath>
 
 #include <PluginSelectorDialog.h>
 
@@ -187,7 +185,7 @@ void TrackView::set_height( int height )
 
 void TrackView::calculate_bounding_rect()
 {
-	m_boundingRectangle = QRectF(0, 0, pow(2, 30), m_track->get_height());
+	m_boundingRectangle = QRectF(0, 0, MAX_CANVAS_WIDTH, m_track->get_height());
 	m_panel->calculate_bounding_rect();
 	update();
 }

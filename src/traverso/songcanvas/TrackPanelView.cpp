@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.9 2007/02/08 13:30:42 r_sijrier Exp $
+$Id: TrackPanelView.cpp,v 1.10 2007/02/08 20:51:38 r_sijrier Exp $
 */
 
 #include <QGraphicsScene>
@@ -139,7 +139,7 @@ void TrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
 	}
 
 	painter->setPen(themer()->get_color("Track:cliptopoffset"));
-	painter->drawLine(m_viewPort->width() - 3, 0,  m_viewPort->width() - 3, m_track->get_height() - 1);
+	painter->drawLine(m_viewPort->width() - 1, 0,  m_viewPort->width() - 1, m_track->get_height() - 1);
 	painter->drawLine(m_viewPort->width() - 2, 0,  m_viewPort->width() - 2, m_track->get_height() - 1);
 	
 	draw_panel_track_name(painter);
@@ -163,9 +163,9 @@ void TrackPanelView::draw_panel_head()
 	int panelWidth = m_viewPort->width();
 	QPainter p(&panelPixmap);
 	if (m_track->is_active())
-		p.fillRect(0,0,panelWidth,15, themer()->get_color("TRACK_PANEL_HEAD_ACTIVE"));
+		p.fillRect(0,0,panelWidth,15, themer()->get_color("TrackPanel:head:active"));
 	else
-		p.fillRect(0,0,panelWidth,15, themer()->get_color("TRACK_PANEL_HEAD_INACTIVE"));
+		p.fillRect(0,0,panelWidth,15, themer()->get_color("TrackPanel:head:inactive"));
 	p.setPen(themer()->get_color("TRACK_PANEL_SEPERATOR"));
 	p.drawLine(0, 0, panelWidth, 0);
 }
@@ -240,7 +240,7 @@ void TrackPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem *
 	int cr = (gain >= 1 ? 30 + (int)(100 * gain) : (int)(50 * gain));
 	int cb = ( gain < 1 ? 100 + (int)(50 * gain) : abs((int)(10 * gain)) );
 	
-	painter->setPen(themer()->get_color("TRACK_PANEL_TEXT"));
+	painter->setPen(themer()->get_color("TrackPanel:text"));
 	painter->setFont( QFont( "Bitstream Vera Sans", (int)(GAIN_H*0.9)) );
 	painter->drawText(0, GAIN_H + 1, "GAIN");
 	painter->drawRect(30, 0, sliderWidth, GAIN_H);
@@ -272,7 +272,7 @@ void TrackPanelPan::paint( QPainter * painter, const QStyleOptionGraphicsItem * 
 	float v;
 	//	int y;
 	QString s, span;
-	painter->setPen(themer()->get_color("TRACK_PANEL_TEXT"));
+	painter->setPen(themer()->get_color("TrackPanel:text"));
 	painter->setFont( QFont( "Bitstream Vera Sans", (int)(PAN_H*0.9)) );
 
 	painter->drawText(0, PAN_H + 1, "PAN");
@@ -280,7 +280,7 @@ void TrackPanelPan::paint( QPainter * painter, const QStyleOptionGraphicsItem * 
 	v = m_track->get_pan();
 	span = QByteArray::number(v,'f',1);
 	s = ( v > 0 ? QString("+") + span :  span );
-	painter->fillRect(30, 0, sliderWidth, PAN_H, themer()->get_color("SLIDER_BACKGROUND"));
+	painter->fillRect(30, 0, sliderWidth, PAN_H, themer()->get_color("TrackPanel:slider:background"));
 	painter->drawRect(30, 0, sliderWidth, PAN_H);
 	int pm= 30 + sliderWidth/2;
 	int z = abs((int)(v*(sliderWidth/2)));
@@ -346,7 +346,7 @@ void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 	
 	QPixmap pix = find_pixmap(m_type);
 	
-	painter->setPen(themer()->get_color("TRACK_PANEL_TEXT"));
+	painter->setPen(themer()->get_color("TrackPanel:text"));
 	painter->setFont( QFont( "Bitstream Vera Sans", 8) );
 	painter->drawPixmap(0, 0, pix);
 	painter->drawText(pix.width() + 5, 8, m_busName);

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MessageWidget.cpp,v 1.5 2007/02/05 17:12:02 r_sijrier Exp $
+    $Id: MessageWidget.cpp,v 1.6 2007/02/08 20:51:38 r_sijrier Exp $
 */
 
 #include "MessageWidget.h"
@@ -54,7 +54,7 @@ void MessageWidget::paintEvent(QPaintEvent* )
         QPainter painter(this);
 
         if (infoStruct.message.isEmpty() ) {
-                painter.fillRect(0, 0, width(), height(), themer()->get_color("INFO_WIDGET_BACKGROUND") );
+                painter.fillRect(0, 0, width(), height(), themer()->get_color("InfoWidget:background") );
                 return;
         }
 
