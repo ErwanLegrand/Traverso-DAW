@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.14 2007/02/07 23:24:05 r_sijrier Exp $
+$Id: SongView.cpp,v 1.15 2007/02/08 13:30:42 r_sijrier Exp $
 */
 
 
@@ -126,7 +126,6 @@ SongView::SongView(ClipsViewPort* viewPort, TrackPanelViewPort* tpvp, TimeLineVi
 	m_tlvp = tlvp;
 	
 	set_editing_mode();
-	load_theme_data();
 	
 	m_clipsViewPort->scene()->addItem(this);
 	
@@ -143,6 +142,10 @@ SongView::SongView(ClipsViewPort* viewPort, TrackPanelViewPort* tpvp, TimeLineVi
 	}
 	
 	calculate_scene_rect();
+	load_theme_data();
+	
+	// FIXME Center too position on song close!!
+	center();
 	
 	connect(m_song, SIGNAL(hzoomChanged()), this, SLOT(scale_factor_changed()));
 	connect(m_song, SIGNAL(trackAdded(Track*)), this, SLOT(add_new_trackview(Track*)));

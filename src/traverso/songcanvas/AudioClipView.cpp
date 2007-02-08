@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.21 2007/02/07 23:24:05 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.22 2007/02/08 13:30:42 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -63,8 +63,7 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	waitingForPeaks = false;
 	m_progress = 0;
 	m_song = m_clip->get_song();
-	set_height(m_tv->get_clipview_height());
-	recreate_clipname_pixmap();
+	
 	calculate_bounding_rect();
 	
 	classicView = config().get_property("AudioClip", "WaveFormRectified", 0).toInt() == 0 ? 1 : 0;
@@ -206,6 +205,12 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	int height;
 	Peak* peak;
 	int posY, negY, centerY;
+	// FIXME ?
+	// when painting with a path, I _have_ to use path.lineTo()
+	// which looks ugly when only parts of the clip is repainted
+	// when using a different color for the brush then the outline.
+	// Painting one more pixel makes it getting clipped away.....
+	pixelcount += 1;
 	bool microView = m_song->get_hzoom() > Peak::MAX_ZOOM_USING_SOURCEFILE ? 0 : 1;
 	int peakdatacount = microView ? pixelcount : pixelcount * 2;
 
@@ -301,11 +306,13 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				centerY = m_height/2;
 			}
 			if (m_sv->viewmode == EditMode) {
-				p->setPen(themer()->get_color("AudioClip:wavemacroview"));
-				p->setBrush(themer()->get_color("AudioClip:wavemacroview"));
+				p->setPen(themer()->get_color("AudioClip:wavemacroview:outline"));
+				if (m_fillwave)
+					p->setBrush(themer()->get_color("AudioClip:wavemacroview:brush"));
 			} else  {
-				p->setPen(themer()->get_color("AudioClip:wavemacroview:curvemode"));
-				p->setBrush(themer()->get_color("AudioClip:wavemacroview:curvemode"));
+				p->setPen(themer()->get_color("AudioClip:wavemacroview:outline:curvemode"));
+				if (m_fillwave)
+					p->setBrush(themer()->get_color("AudioClip:wavemacroview:brush:curvemode"));
 			}
 
 
@@ -560,6 +567,7 @@ void AudioClipView::load_theme_data()
 	m_infoAreaHeight = themer()->get_property("AudioClip:infoareaheight", 16).toInt();
 	m_usePolygonPeakDrawing = themer()->get_property("AudioClip:polygonpeakdrawing", 0).toInt();
 	m_mimimumheightforinfoarea = themer()->get_property("AudioClip:mimimumheightforinfoarea", 45).toInt();
+	m_fillwave = themer()->get_property("AudioClip:fillwave", 1).toInt();
 	recreate_clipname_pixmap();
 }
 

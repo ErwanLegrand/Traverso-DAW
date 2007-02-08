@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.15 2007/02/07 23:24:05 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.16 2007/02/08 13:30:42 r_sijrier Exp $
 */
 
 #include <QLineEdit>
@@ -83,19 +83,19 @@ void TrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 	int xstart = (int)option->exposedRect.x();
 	int pixelcount = (int)option->exposedRect.width();
 	
-	if (m_cliptopoffset > 0) {
+	if (m_topborderwidth > 0) {
 		QColor color = themer()->get_color("Track:cliptopoffset");
-		painter->fillRect(xstart, 0, pixelcount, m_cliptopoffset, color);
+		painter->fillRect(xstart, 0, pixelcount, m_topborderwidth, color);
 	}
 	
 	if (m_paintBackground) {
 		QColor color = themer()->get_color("Track:background");
-		painter->fillRect(xstart, m_cliptopoffset, pixelcount, m_track->get_height() - m_clipbottomoffset, color);
+		painter->fillRect(xstart, m_topborderwidth, pixelcount, m_track->get_height() - m_bottomborderwidth, color);
 	}
 	
-	if (m_clipbottomoffset > 0) {
+	if (m_bottomborderwidth > 0) {
 		QColor color = themer()->get_color("Track:clipbottomoffset");
-		painter->fillRect(xstart, m_track->get_height() - m_clipbottomoffset, pixelcount, m_clipbottomoffset, color);
+		painter->fillRect(xstart, m_track->get_height() - m_bottomborderwidth, pixelcount, m_bottomborderwidth, color);
 	}
 }
 
@@ -134,7 +134,7 @@ Track* TrackView::get_track( ) const
 
 int TrackView::get_clipview_y_offset( )
 {
-	return m_cliptopoffset;
+	return m_topborderwidth + m_cliptopmargin;
 }
 
 void TrackView::move_to( int x, int y )
@@ -145,7 +145,7 @@ void TrackView::move_to( int x, int y )
 
 int TrackView::get_clipview_height( )
 {
-	return m_track->get_height() - (m_cliptopoffset + m_clipbottomoffset);
+	return m_track->get_height() - (m_topborderwidth + m_bottomborderwidth + m_clipbottommargin + m_cliptopmargin);
 }
 
 Command* TrackView::edit_properties( )
@@ -195,8 +195,11 @@ void TrackView::calculate_bounding_rect()
 void TrackView::load_theme_data()
 {
 	m_paintBackground = themer()->get_property("Track:paintbackground").toInt();
-	m_cliptopoffset = themer()->get_property("Track:cliptopoffset").toInt();
-	m_clipbottomoffset = themer()->get_property("Track:clipbottomoffset").toInt();
+	m_topborderwidth = themer()->get_property("Track:topborderwidth").toInt();
+	m_bottomborderwidth = themer()->get_property("Track:bottomborderwidth").toInt();
+	
+	m_cliptopmargin = themer()->get_property("Track:cliptopmargin").toInt();
+	m_clipbottommargin = themer()->get_property("Track:clipbottommargin").toInt();
 
 	update();
 }

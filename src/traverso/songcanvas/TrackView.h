@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.h,v 1.10 2007/02/07 23:24:05 r_sijrier Exp $
+$Id: TrackView.h,v 1.11 2007/02/08 13:30:42 r_sijrier Exp $
 */
 
 #ifndef TRACK_VIEW_H
@@ -64,8 +64,12 @@ private:
 	PluginChainView*	m_pluginChainView;
 	int			m_height;
 	int			m_paintBackground;
-	int			m_cliptopoffset;
-	int			m_clipbottomoffset;
+	int			m_cliptopmargin;
+	int			m_clipbottommargin;
+	int			m_topborderwidth;
+	int			m_bottomborderwidth;
+	
+	friend class TrackPanelView;
 
 public slots:
 	Command* edit_properties();

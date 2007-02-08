@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.h,v 1.3 2007/01/16 20:21:08 r_sijrier Exp $
+$Id: TrackPanelView.h,v 1.4 2007/02/08 13:30:42 r_sijrier Exp $
 */
 
 #ifndef TRACK_PANEL_VIEW_H
@@ -117,7 +117,7 @@ public:
 	
 private:
 	Track*			m_track;
-	TrackView*		m_trackView;
+	TrackView*		m_tv;
 	TrackPanelViewPort*	m_viewPort;
 	TrackPanelGain*		m_gainView;
 	TrackPanelPan*		m_panView;

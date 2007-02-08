@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.8 2007/02/05 17:12:02 r_sijrier Exp $
+$Id: TrackPanelView.cpp,v 1.9 2007/02/08 13:30:42 r_sijrier Exp $
 */
 
 #include <QGraphicsScene>
@@ -45,7 +45,7 @@ TrackPanelView::TrackPanelView(TrackPanelViewPort* view, TrackView* trackView, T
 	panelPixmap = QPixmap(200, 90);
 		
 	m_viewPort = view;
-	m_trackView = trackView;
+	m_tv = trackView;
 	m_track = track;
 	
 	m_viewPort->scene()->addItem(this);
@@ -120,38 +120,27 @@ void TrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
 	Q_UNUSED(widget);
 	Q_UNUSED(option);
 	
-	QColor color11 = QColor(186, 202, 231);
-	QColor color22 = QColor(235, 243, 255);
-	QColor color33 = QColor(240, 246, 255);
+	int xstart = (int)option->exposedRect.x();
+	int pixelcount = (int)option->exposedRect.width();
 	
-	QColor color1 = color11.light(110);
-	QColor color2 = color22.light(102);
-	QColor color3 = color33.light(102);
-
-	QLinearGradient grad1(QPointF(0, 0), QPointF(0, m_track->get_height()));
-	grad1.setColorAt(0.0, color1);
-	grad1.setColorAt(0.02, color2);
-	grad1.setColorAt(0.5, color3);
-	grad1.setColorAt(0.93, color2);
-	grad1.setColorAt(1.0, color1);
+	if (m_tv->m_topborderwidth > 0) {
+		QColor color = themer()->get_color("Track:cliptopoffset");
+		painter->fillRect(xstart, 0, pixelcount, m_tv->m_topborderwidth, color);
+	}
 	
-// 	painter->fillRect(0, 0, m_viewPort->width(), m_track->get_height(), grad1);
-// 	painter->fillRect(0, 0, m_viewPort->width(), m_track->get_height(), grad1);
+	if (m_tv->m_paintBackground) {
+		QColor color = themer()->get_color("Track:background");
+		painter->fillRect(xstart, m_tv->m_topborderwidth, pixelcount, m_track->get_height() - m_tv->m_bottomborderwidth, color);
+	}
+	
+	if (m_tv->m_bottomborderwidth > 0) {
+		QColor color = themer()->get_color("Track:clipbottomoffset");
+		painter->fillRect(xstart, m_track->get_height() - m_tv->m_bottomborderwidth, pixelcount, m_tv->m_bottomborderwidth, color);
+	}
 
-	painter->fillRect(0, 0, m_viewPort->width(), 3, color1);
-	painter->fillRect(0, 3, m_viewPort->width(), m_track->get_height() - 5, color2);
-	painter->fillRect(0, m_track->get_height() - 5, m_viewPort->width(), 5, color1);
-// 	draw_panel_head();
-
-	//Update Panel
-/*	panelPixmap.fill(QColor(0,0,0,0));
-	painter->drawPixmap(0, 0, panelPixmap, 0, 0, 200, m_track->get_height());*/
-	painter->setPen(color1);
+	painter->setPen(themer()->get_color("Track:cliptopoffset"));
 	painter->drawLine(m_viewPort->width() - 3, 0,  m_viewPort->width() - 3, m_track->get_height() - 1);
-	painter->setPen(color1);
 	painter->drawLine(m_viewPort->width() - 2, 0,  m_viewPort->width() - 2, m_track->get_height() - 1);
-	painter->setPen(color1.dark(130));
-	painter->drawLine(m_viewPort->width() - 1, 0,  m_viewPort->width() - 1, m_track->get_height() - 1);
 	
 	draw_panel_track_name(painter);
 }
@@ -188,13 +177,34 @@ void TrackPanelView::draw_panel_track_name(QPainter* painter)
 	QString sid = QString::number(m_track->get_id());
 	painter->setFont( QFont( "Bitstream Vera Sans", 8) );
 	painter->drawText(4,12, sid);
-	painter->drawText(15,12, m_track->get_name());
+	painter->drawText(17, 12, m_track->get_name());
 }
 
 
 void TrackPanelView::calculate_bounding_rect()
 {
 	m_boundingRectangle = QRectF(0, 0, 200, m_track->get_height());
+	int height =  m_track->get_height();
+	
+	if ((inBus->pos().y() + inBus->boundingRect().height()) > height) {
+		inBus->hide();
+		outBus->hide();
+	} else {
+		inBus->show();
+		outBus->show();
+	}
+	
+	if ( (m_panView->pos().y() + m_panView->boundingRect().height()) > height) {
+		m_panView->hide();
+	} else {
+		m_panView->show();
+	}
+	
+	if ( (m_gainView->pos().y() + m_panView->boundingRect().height()) > height) {
+		m_gainView->hide();
+	} else {
+		m_gainView->show();
+	}
 	update();
 }
 
