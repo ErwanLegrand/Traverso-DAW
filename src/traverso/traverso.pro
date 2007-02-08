@@ -37,7 +37,6 @@ HEADERS += \
 	songcanvas/FadeContextDialogView.h \
 	songcanvas/PluginView.h \
 	songcanvas/PluginChainView.h \
-	AudioPluginSelector.h \
 	AudioSourcesTreeWidget.h \
 	BusMonitor.h \
 	BusSelector.h \
@@ -62,10 +61,7 @@ HEADERS += \
 	CorrelationMeterWidget.h \
 	SpectralMeterWidget.h \
 	QuickDriverConfigWidget.h \
-	precompile.h 
-
-
-
+	precompile.h
 SOURCES += \
 	songcanvas/AudioClipView.cpp \
 	songcanvas/SongWidget.cpp \
@@ -86,7 +82,6 @@ SOURCES += \
 	songcanvas/PluginChainView.cpp \
 	Traverso.cpp \
 	AudioSourcesTreeWidget.cpp \
-	AudioPluginSelector.cpp \
 	BusMonitor.cpp \
 	BusSelector.cpp \
 	Themer.cpp \
@@ -109,7 +104,6 @@ SOURCES += \
 	CorrelationMeterWidget.cpp \
 	SpectralMeterWidget.cpp \
 	QuickDriverConfigWidget.cpp
-
 FORMS += ui/ProjectManagerWidget.ui \
 	ui/ExportWidget.ui \
 	ui/SongManagerWidget.ui \
@@ -133,12 +127,12 @@ INCLUDEPATH += 	../core \
 contains(DEFINES, ALSA_SUPPORT): LIBS += -lasound
 contains(DEFINES, JACK_SUPPORT): LIBS += -ljack
 
-!contains(DEFINES, LV2_SUPPORT) {
-LIBS -= -lslv2
-INCLUDEPATH -= ../plugins/LV2
+!contains(DEFINES, LV2_SUPPORT){
+    LIBS -= -lslv2
+    INCLUDEPATH -= ../plugins/LV2
 }
 
-		
+
 QT += opengl
 QMAKE_LIBDIR = ./lib ../../lib
 TARGET = traverso
