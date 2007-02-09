@@ -18,8 +18,8 @@
 		
 		<property name="Track:topborderwidth" value="0" />
 		<property name="Track:bottomborderwidth" value="1" />
-		<property name="Track:cliptopmargin" value="1" />
-		<property name="Track:clipbottommargin" value="1" />
+		<property name="Track:cliptopmargin" value="2" />
+		<property name="Track:clipbottommargin" value="0" />
 		<property name="Track:paintbackground" value="0" />
 		
 		
@@ -42,8 +42,8 @@
 		<color name="AudioClip:background:muted:mousehover"  red="40" green="40" blue="40"  alpha="200" />
 		<color name="AudioClip:background:selected"  red="101" green="111" blue="171"  alpha="200" />
 		<color name="AudioClip:background:selected:mousehover"  red="101" green="111" blue="171"  alpha="200" />
-		<color name="AudioClip:background"  red="236" green="240" blue="255"  alpha="120" />
-		<color name="AudioClip:background:mousehover"  red="234" green="238" blue="249"  alpha="120" />
+		<color name="AudioClip:background"  red="246" green="246" blue="255"  alpha="120" />
+		<color name="AudioClip:background:mousehover"  red="241" green="241" blue="255"  alpha="120" />
 		<color name="AudioClip:channelseperator"  red="178" green="191" blue="182"  alpha="255" />
 		<color name="AudioClip:channelseperator:selected"  red="24" green="137" blue="210"  alpha="255" />
 		<color name="AudioClip:contour"  red="50" green="50" blue="50"  alpha="150" />
@@ -76,7 +76,7 @@
 		<color name="Playhead:inactive" red="180" green="189" blue="240" alpha="220" />
 		
 		
-		<color name="Song:background" red="249" green="251" blue="255" alpha="255" />
+		<color name="Song:background" red="250" green="251" blue="255" alpha="255" />
 		
 		
 		<color name="Timeline:background" red="180" green="189" blue="189" alpha="255" />
