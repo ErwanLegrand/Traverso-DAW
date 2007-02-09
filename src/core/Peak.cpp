@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Peak.cpp,v 1.11 2006/12/01 13:58:45 r_sijrier Exp $
+$Id: Peak.cpp,v 1.12 2007/02/09 14:49:33 r_sijrier Exp $
 */
 
 #include "libtraversocore.h"
@@ -193,6 +193,12 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 		}
 	}
 	
+#define profile
+
+#if defined (profile)
+	trav_time_t starttime = get_microseconds();
+#endif
+	
 	// Macro view mode
 	if (zoomLevel > MAX_ZOOM_USING_SOURCEFILE) {
 		
@@ -214,6 +220,10 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 			PERROR("Could not read in all peak data, pixelcount is %d, read count is %d", pixelcount, read);
 		}
 		
+#if defined (profile)
+		int processtime = (int) (get_microseconds() - starttime);
+		printf("Process time: %d useconds\n\n", processtime);
+#endif
 		return read;
 	}
 	// Micro view mode
@@ -260,6 +270,10 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 		} while(count < pixelcount);
 
 
+#if defined (profile)
+		int processtime = (int) (get_microseconds() - starttime);
+		printf("Process time: %d useconds\n\n", processtime);
+#endif
 		return count;
 	}
 
