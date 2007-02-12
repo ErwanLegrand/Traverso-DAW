@@ -8,17 +8,19 @@
 		<property name="AudioClip:polygonpeakdrawing" value="1" />
 		<property name="AudioClip:wavemicroview:antialiased" value="0" />
 		<property name="AudioClip:fillwave" value="1" />
+		<property name="AudioClip:paintrectified" value="0" />
+		<property name="AudioClip:paintmerged" value="0" />
 		
 		
-		<property name="Song:track:seperatingheight" value="3" />
-		<property name="Song:track:minimumheight" value="22" />
+		<property name="Song:track:seperatingheight" value="0" />
+		<property name="Song:track:minimumheight" value="16" />
 		<property name="Song:track:maximumheight" value="300" />
 		<property name="Song:track:topindent" value="5" />
 		
 		
 		<property name="Track:topborderwidth" value="0" />
 		<property name="Track:bottomborderwidth" value="1" />
-		<property name="Track:cliptopmargin" value="2" />
+		<property name="Track:cliptopmargin" value="0" />
 		<property name="Track:clipbottommargin" value="0" />
 		<property name="Track:paintbackground" value="0" />
 		
