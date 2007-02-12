@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.24 2007/02/08 23:47:06 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.25 2007/02/12 19:58:59 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -60,14 +60,13 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	
 	load_theme_data();
 
-	waitingForPeaks = false;
-	m_progress = 0;
+	m_waitingForPeaks = false;
+	m_progress = m_peakloadingcount = 0;
 	m_song = m_clip->get_song();
 	
 	calculate_bounding_rect();
 	
-	classicView = config().get_property("AudioClip", "WaveFormRectified", 0).toInt() == 0 ? 1 : 0;
-	mergedView = config().get_property("AudioClip", "WaveFormMerged", 0).toInt() == 0 ? 0 : 1;
+// 	m_mergedView = config().get_property("AudioClip", "WaveFormMerged", 0).toInt() == 0 ? 0 : 1;
 	
 	if (FadeCurve* curve = m_clip->get_fade_in()) {
 		add_new_fadeview(curve);
@@ -106,7 +105,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 		return;
 	}
 
-// 	printf("exposed rect is: x=%f, y=%f, w=%f, h=%f\n", option->exposedRect.x(), option->exposedRect.y(), option->exposedRect.width(), option->exposedRect.height());
+// 	printf("AudioClipView:: PAINT :: exposed rect is: x=%f, y=%f, w=%f, h=%f\n", option->exposedRect.x(), option->exposedRect.y(), option->exposedRect.width(), option->exposedRect.height());
 	
 	int xstart = (int) option->exposedRect.x();
 	int pixelcount = (int) option->exposedRect.width();
@@ -152,18 +151,18 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	}
 	
 	
-	if (waitingForPeaks) {
+	if (m_waitingForPeaks) {
 		PMESG("Waiting for peaks!");
 		// Hmm, do we paint here something?
 		// Progress info, I think so....
-/*		painter.setPen(Qt::black);
-		QRect r(clipXWidth/10, 0, 180, height);
-		painter.setFont( QFont( "Bitstream Vera Sans", 12 ) );
+		painter->setPen(Qt::black);
+		QRect r(10, 0, 150, m_height);
+		painter->setFont( QFont( "Bitstream Vera Sans", 11 ) );
 		QString si;
-		si.setNum(m_progress);
+		si.setNum((int)m_progress);
 		if (m_progress == 100) m_progress = 0;
 		QString buildProcess = "Building Peaks: " + si + "%";
-		painter.drawText(r, Qt::AlignVCenter, buildProcess);*/
+		painter->drawText(r, Qt::AlignVCenter, buildProcess);
 	
 	} else {
 		draw_peaks(painter, xstart, pixelcount);
@@ -192,7 +191,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 // 		curveView->paint(painter, option, widget);
 	}
 
-	PMESG2("drawing clip");
+// 	printf("drawing clip\n");
 	
 }
 
@@ -200,189 +199,206 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 {
 	PENTER2;
-
-	int channels = m_clip->get_channels();
-	int height;
-	Peak* peak;
-	int posY, negY, centerY;
+	
 	// FIXME ?
 	// when painting with a path, I _have_ to use path.lineTo()
 	// which looks ugly when only parts of the clip is repainted
 	// when using a different color for the brush then the outline.
 	// Painting one more pixel makes it getting clipped away.....
 	pixelcount += 1;
+	int channels = m_clip->get_channels();
+	
 	bool microView = m_song->get_hzoom() > Peak::MAX_ZOOM_USING_SOURCEFILE ? 0 : 1;
 	int peakdatacount = microView ? pixelcount : pixelcount * 2;
 
-
-	p->save();
-	
-	// calculate the height of the area available for peak drawing 
-	// and if the infoarea is displayed, translate the painter
-	// drawing by dy = m_infoAreaheight
-	if (m_height > m_mimimumheightforinfoarea) {
-		p->setMatrix(matrix().translate(0, m_infoAreaHeight), true);
-		height = (m_height - m_infoAreaHeight) / channels;
-	} else {
-		height = m_height / channels;
-	}
+	int buffersize = microView ? sizeof(short) * peakdatacount : sizeof(unsigned char) * peakdatacount;
+	unsigned char buffers[channels][buffersize];
+	float pixeldata[channels][buffersize];
 	
 	
+	// Load peak data for all channels, if no peakdata is returned
+	// for a certain Peak object, schedule it for loading.
 	for (int chan=0; chan < channels; chan++) {
-		peak = m_clip->get_peak_for_channel(chan);
-		
-		int buffersize;
-		if (microView) {
-			buffersize = sizeof(short) * peakdatacount;
-		} else {
-			buffersize = sizeof(unsigned char) * peakdatacount;
-		}
-	
-		unsigned char peakBuffer[buffersize];
-		
-		int availpeaks = peak->calculate_peaks(peakBuffer, m_song->get_hzoom(), xstart * m_sv->scalefactor + m_clip->get_source_start_frame(), peakdatacount);
+		Peak* peak = m_clip->get_peak_for_channel(chan);
+		int availpeaks = peak->calculate_peaks(buffers[chan], m_song->get_hzoom(), xstart * m_sv->scalefactor + m_clip->get_source_start_frame(), peakdatacount);
 		
 		if (peakdatacount != availpeaks) {
 			PWARN("peakdatacount != availpeaks (%d, %d)", peakdatacount, availpeaks);
 		}
 
 		if (availpeaks <= 0) {
-			// It seems there are no peak buffers yet, but they are now generated
-			// just wait for the finished() signal.....
-// 			PWARN("Waiting for peak");
-			waitingForPeaks = true;
-			connect(peak, SIGNAL(progress(int)), this, SLOT(update_progress_info(int)));
-			connect(peak, SIGNAL(finished()), this, SLOT (peaks_creation_finished()));
-			return;
+			m_peakloadinglist.append(peak);
+			m_waitingForPeaks = true;
+			m_peakloadingcount++;
 		}
-
-		float gain = m_clip->get_gain() * m_clip->get_norm_factor();
-		float scaleFactor = ( ((float)( (height - (0.1 * height)) - channels * 2)) / (Peak::MAX_DB_VALUE * 2)) * gain;
-		
-		centerY = height/2 + height*chan;
-		
-		if (!microView) {
-			Curve* curve = m_clip->get_gain_envelope();
-			float value[2];
-			int count = 0, peakbufferpos = 0;
-			do {
-				curve->get_vector((xstart+count)*m_sv->scalefactor, (xstart+count)*m_sv->scalefactor + 1, value, 2);
-				count ++;
-			
-				peakBuffer[peakbufferpos] = peakBuffer[peakbufferpos] * value[1] * scaleFactor;
-				peakbufferpos++;
-				peakBuffer[peakbufferpos] = peakBuffer[peakbufferpos] * value[1] * scaleFactor;
-				peakbufferpos++;
-			
-			} while (count < pixelcount);
+	}
+	
+	
+	if (m_waitingForPeaks) {
+		start_peak_data_loading();
+		return;
+	}
+	
+	
+	// Load the Peak data into the pixeldata float buffers
+	// ClassicView uses both positive and negative values,
+	// rectified view: pick the highest value of both
+	// Merged view: calculate highest value for all channels, 
+	// and store it in the first channels pixeldata.
+	// TODO mix curve pixel data with the pixeldata buffers!
+	if (!microView) {
+		for (int chan=0; chan < channels; chan++) {
+			if (m_classicView) {
+				for (int i = 0; i < (pixelcount*2); ++i) {
+					pixeldata[chan][i] = buffers[chan][i];
+					i++;
+					pixeldata[chan][i] = buffers[chan][i];
+				}
+			} else {
+				for (int i = 0; i < (pixelcount*2); i+=2) {
+					pixeldata[chan][i] = - f_max(buffers[chan][i], - buffers[chan][i+1]);
+					
+				}
+			}
 		}
 		
+		if (m_mergedView) {
+			for (int chan=1; chan < channels; chan++) {
+				for (int i = 0; i < (pixelcount*2); ++i) {
+					pixeldata[0][i] = f_max(pixeldata[chan - 1][i], pixeldata[chan][i]);
+				}
+			}
+		}
+		
+	}
+	
+	
+	for (int chan=0; chan < channels; chan++) {
+		
+		p->save();
+	
+		// calculate the height of the area available for peak drawing 
+		// and if the infoarea is displayed, translate the painter
+		// drawing by dy = m_infoAreaheight
+		int height;
+		
+		if (m_height > m_mimimumheightforinfoarea) {
+			p->setMatrix(matrix().translate(0, m_infoAreaHeight), true);
+			height = (m_height - m_infoAreaHeight) / channels;
+		} else {
+			height = m_height / channels;
+		}
+	
+		
+		float scaleFactor = ( (float) height * 0.90 / (Peak::MAX_DB_VALUE * 2)) * m_clip->get_gain() * m_clip->get_norm_factor();
+		float ytrans;
+		
+		// Draw channel seperator horizontal lines, if needed.
+		if (channels >= 2 && ! m_mergedView && m_classicView && chan >=1 ) {
+			p->save();
+			
+			if (m_clip->is_selected()) {
+				p->setPen(themer()->get_color("AudioClip:channelseperator:selected"));
+			} else {
+				p->setPen(themer()->get_color("AudioClip:channelseperator"));
+			}
+		
+			ytrans = height * chan;
+			p->setMatrix(matrix().translate(1, ytrans), true);
+			p->drawLine(xstart, 0, xstart + pixelcount, 0);
+			p->restore();
+		}
+		
+		// Microview, paint waveform as polyline
 		if (microView) {
 		
-			short* mbuffer = (short*) peakBuffer;
-			 
-			if (m_sv->viewmode == EditMode) {
-				p->setPen(themer()->get_color("AudioClip:wavemicroview"));
-			} else  {
-				p->setPen(themer()->get_color("AudioClip:wavemicroview:curvemode"));
+			p->setPen(themer()->get_color("AudioClip:wavemicroview"));
+			
+			QPolygon polygon;
+			short* mbuffer = (short*) buffers[chan];
+			int bufferPos = 0;
+			
+			for (int x = xstart; x < (pixelcount+xstart); x++) {
+				polygon.append( QPoint(x, mbuffer[bufferPos++]) );
 			}
 			
-			int bufferPos = 0;
-			QPolygon polygon;
-			for (int x = xstart; x < (pixelcount+xstart); x++) {
-				float posY =  (centerY + (scaleFactor * mbuffer[bufferPos++]));
-				polygon.append(QPoint(x, posY));
-			}
 			if (themer()->get_property("AudioClip:wavemicroview:antialiased", 0).toInt()) {
 				p->setRenderHints(QPainter::Antialiasing);
 			}
+			
+			ytrans = (height / 2) + (chan * height);
+			
+			p->setMatrix(matrix().translate(1, ytrans).scale(1, scaleFactor), true);
 			p->drawPolyline(polygon);
 		
-		// Classical view, both positive and negative peaks
-		} else if (classicView) {
-			int bufferPos = 0;
-			if (mergedView) {
-				scaleFactor = ( ( (float) (height - (0.1 * height)) ) / Peak::MAX_DB_VALUE) * gain / 2.0;
-				centerY = m_height/2;
-			}
+		// Macroview, paint waveform with painterpath
+		} else {
+			
 			if (m_sv->viewmode == EditMode) {
 				p->setPen(themer()->get_color("AudioClip:wavemacroview:outline"));
-				if (m_fillwave)
+				if (m_fillwave) {
 					p->setBrush(themer()->get_color("AudioClip:wavemacroview:brush"));
+				}
 			} else  {
 				p->setPen(themer()->get_color("AudioClip:wavemacroview:outline:curvemode"));
-				if (m_fillwave)
+				if (m_fillwave) {
 					p->setBrush(themer()->get_color("AudioClip:wavemacroview:brush:curvemode"));
-			}
-
-
-			QVector<QLine> linelist;
-			QPolygonF polygontop, polygonbottom;
-			polygontop.reserve(pixelcount);
-			polygonbottom.reserve(pixelcount);
-			
-			for (int x = xstart; x < (pixelcount+xstart); x++) {
-                                posY = (int) (centerY + peakBuffer[bufferPos++]);
-                                negY = (int) (centerY - peakBuffer[bufferPos++]);
-				
-				if (m_usePolygonPeakDrawing) {
-					polygontop.append(QPointF(x, posY));
-					polygonbottom.append(QPointF(x, negY));
-				} else {
-					linelist.append(QLine(x, negY, x, posY));
 				}
 			}
 			
-			if (m_usePolygonPeakDrawing) {
-				QPainterPath path;
+			QPainterPath path;
+			// in rectified view, we add an additional point, hence + 1
+			QPolygonF polygontop(pixelcount + 1);
+			int bufferpos = 0;
+						
+			if (m_classicView) {
+				QPolygonF polygonbottom(pixelcount);
+				
+				for (int x = xstart; x < (pixelcount+xstart); x++) {
+					polygontop.append( QPointF(x, pixeldata[chan][bufferpos++]) );
+					polygonbottom.append( QPointF(x, - pixeldata[chan][bufferpos++]) );
+				}
+				
 				path.addPolygon(polygontop);
 				path.lineTo(polygonbottom.last());
 				path.addPolygon(polygonbottom);
-				p->drawPath(path);	
+				
+				ytrans = (height / 2) + (chan * height);
+			
 			} else {
-				p->drawLines(linelist);
+				for (int x = xstart; x < (pixelcount+xstart); x++) {
+					polygontop.append( QPointF(x, pixeldata[chan][bufferpos]) );
+					bufferpos += 2;
+				}
+				
+				polygontop.append(QPointF(xstart + pixelcount, 0));
+				path.addPolygon(polygontop);
+				path.lineTo(xstart, 0);
+				
+				ytrans = height + (chan * height);
+				scaleFactor = 2 * ( (float) height * 0.95 / (Peak::MAX_DB_VALUE * 2)) * m_clip->get_gain() * m_clip->get_norm_factor();
 			}
 			
+			if (m_mergedView) {
+				if (m_classicView) {
+					ytrans = (height / 2) * channels;
+					scaleFactor *= channels;
+				} else {
+					ytrans = height * channels;
+					scaleFactor *= channels;
+				}
+			}
+			
+			p->setMatrix(matrix().translate(1, ytrans).scale(1, scaleFactor), true);
+			p->drawPath(path);	
+		}
 		
-		// Rectified view, pick higest abs. value of pos/neg value.
-		} else {
-			if (mergedView) {
-				scaleFactor = ( ( (float) height ) / Peak::MAX_DB_VALUE) * gain;
-				centerY = height;
-			} else {
-				scaleFactor = ( ( (float) (height - (0.1 * height)) ) / Peak::MAX_DB_VALUE) * gain;
-				centerY = height*(chan+1);
-			}
-			if (m_sv->viewmode == EditMode) {
-				p->setPen(themer()->get_color("AudioClip:wavemacroview"));
-			} else  {
-				p->setPen(themer()->get_color("AudioClip:wavemacroview:curvemode"));
-			}
-
-			int bufferPos = 0;
-			for (int x = xstart; x < (pixelcount+xstart); x++) {
-                                posY = (int) (centerY - (scaleFactor * (f_max(peakBuffer[bufferPos], peakBuffer[bufferPos + 1]))));
-				p->drawLine(x, centerY, x, posY);
-				bufferPos += 2;
-			}
+		p->restore();
+		
+		if (m_mergedView) {
+			break;
 		}
 	}
-	
-	
-		
-	// Draw channel seperator horizontal lines.
-	if (!mergedView && channels == 2) {
-		QColor color;
-		if (m_clip->is_selected()) {
-			color = themer()->get_color("AudioClip:channelseperator:selected");
-		} else {
-			color = themer()->get_color("AudioClip:channelseperator");
-		}
-		p->setPen(color);
-		p->drawLine(xstart, height, xstart + pixelcount, height);
-	}
-	
-	p->restore();
 }
 
 
@@ -428,7 +444,6 @@ void AudioClipView::recreate_clipname_pixmap()
 	
 	QString clipInfo = clipName  + "    " + sclipGain + "   " + sclipNormGain + "    " + sRate +  " Hz";
 	int clipInfoAreaWidth = 700;
-	int x=5;
 
 	clipNamePixmapActive = QPixmap(clipInfoAreaWidth, m_infoAreaHeight);
 	clipNamePixmapInActive = QPixmap(clipInfoAreaWidth, m_infoAreaHeight);
@@ -456,16 +471,23 @@ void AudioClipView::recreate_clipname_pixmap()
 void AudioClipView::update_progress_info( int progress )
 {
 	PENTER4;
-	if (progress > (m_progress + 4)) {
-		m_progress = progress;
-		update();
+	float prev = m_progress;
+	m_progress +=  ((float)progress / m_peakloadingcount);
+	
+	if ((int)m_progress > (int)prev) {
+		update(10, 0, 150, m_height);
 	}
 }
 
-void AudioClipView::peaks_creation_finished( )
+void AudioClipView::peaks_creation_finished(Peak* peak)
 {
-	waitingForPeaks = false;
-	update();
+	m_peakloadinglist.removeAll(peak);
+	if (m_peakloadinglist.size() > 0) {
+		start_peak_data_loading();
+	} else {
+		m_waitingForPeaks = false;
+		update();
+	}
 }
 
 AudioClip * AudioClipView::get_clip( )
@@ -501,6 +523,7 @@ void AudioClipView::remove_fadeview( FadeCurve * fade )
 
 void AudioClipView::calculate_bounding_rect()
 {
+// 	printf("AudioClipView::calculate_bounding_rect()\n");
 	set_height(m_tv->get_clipview_height());
 	m_boundingRectangle = QRectF(0, 0, (m_clip->get_length() / m_sv->scalefactor), m_height);
 	update_start_pos();
@@ -524,6 +547,7 @@ int AudioClipView::get_fade_y_offset() const
 
 void AudioClipView::update_start_pos()
 {
+// 	printf("AudioClipView::update_start_pos()\n");
 	setPos(m_clip->get_track_start_frame() / m_sv->scalefactor, m_tv->get_clipview_y_offset());
 }
 
@@ -566,9 +590,21 @@ void AudioClipView::load_theme_data()
 	m_infoAreaHeight = themer()->get_property("AudioClip:infoareaheight", 16).toInt();
 	m_usePolygonPeakDrawing = themer()->get_property("AudioClip:polygonpeakdrawing", 0).toInt();
 	m_mimimumheightforinfoarea = themer()->get_property("AudioClip:mimimumheightforinfoarea", 45).toInt();
+	m_classicView = ! themer()->get_property("AudioClip:paintrectified", 0).toInt();
+	m_mergedView = themer()->get_property("AudioClip:paintmerged", 0).toInt();
 	m_fillwave = themer()->get_property("AudioClip:fillwave", 1).toInt();
 	recreate_clipname_pixmap();
 }
 
+
+void AudioClipView::start_peak_data_loading()
+{
+	Peak* peak = m_peakloadinglist.first();
+	
+	connect(peak, SIGNAL(progress(int)), this, SLOT(update_progress_info(int)));
+	connect(peak, SIGNAL(finished(Peak*)), this, SLOT (peaks_creation_finished(Peak*)));
+	
+	peak->start_peak_loading();
+}
 
 //eof

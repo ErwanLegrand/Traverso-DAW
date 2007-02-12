@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.h,v 1.9 2007/02/08 13:30:42 r_sijrier Exp $
+$Id: AudioClipView.h,v 1.10 2007/02/12 19:58:59 r_sijrier Exp $
 */
 
 #ifndef AUDIO_CLIP_VIEW_H
@@ -34,6 +34,7 @@ class CurveView;
 class SongView;
 class TrackView;
 class FadeView;
+class Peak;
 
 class AudioClipView : public ViewItem
 {
@@ -67,15 +68,17 @@ private:
 	AudioClip* 	m_clip;
 	Song*		m_song;
 	CurveView* 	curveView;
+	QList<Peak*> 	m_peakloadinglist;
 
 	QPixmap clipNamePixmapActive;
 	QPixmap clipNamePixmapInActive;
 
-	int m_progress;
+	float m_progress;
+	int m_peakloadingcount;
 
-	bool waitingForPeaks;
-	bool mergedView;
-	bool classicView;
+	bool m_waitingForPeaks;
+	bool m_mergedView;
+	bool m_classicView;
 	int m_height;
 	int m_infoAreaHeight;
 	int m_mimimumheightforinfoarea;
@@ -91,6 +94,7 @@ private:
 
 	void draw_clipinfo_area(QPainter* painter, int xstart, int pixelcount);
 	void draw_peaks(QPainter* painter, int xstart, int pixelcount);
+	void start_peak_data_loading();
 
 	
 	friend class FadeView;
@@ -98,8 +102,6 @@ private:
 public slots:
 	void add_new_fadeview(FadeCurve* fade);
 	void remove_fadeview(FadeCurve* fade);
-	void update_progress_info(int progress);
-	void peaks_creation_finished();
 	void gain_changed();
 	void repaint();
 	void update_start_pos();
@@ -108,6 +110,10 @@ public slots:
 	Command* drag();
 	Command* drag_edge();
 	Command* split();
+	
+private slots:
+	void update_progress_info(int progress);
+	void peaks_creation_finished(Peak* peak);
 };
 
 
