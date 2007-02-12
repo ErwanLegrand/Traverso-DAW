@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Peak.cpp,v 1.12 2007/02/09 14:49:33 r_sijrier Exp $
+$Id: Peak.cpp,v 1.13 2007/02/12 19:57:54 r_sijrier Exp $
 */
 
 #include "libtraversocore.h"
@@ -176,6 +176,16 @@ int Peak::write_header()
 }
 
 
+void Peak::start_peak_loading()
+{
+	Q_ASSERT(!peakBuildThread);
+	
+	if (!peakBuildThread) {
+		peakBuildThread = new PeakBuildThread(this);
+		peakBuildThread->start();
+	}
+}
+
 int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int pixelcount )
 {
 	PENTER3;
@@ -185,15 +195,11 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 	
 	if(!peaksAvailable) {
 		if (read_header() < 0) {
-			if (!peakBuildThread) {
-				peakBuildThread = new PeakBuildThread(this);
-				peakBuildThread->start();
-			}
 			return 0;
 		}
 	}
 	
-#define profile
+// #define profile
 
 #if defined (profile)
 	trav_time_t starttime = get_microseconds();
@@ -420,7 +426,7 @@ int Peak::finish_processing()
 	
 	delete [] saveBuffer;
 	
-	emit finished();
+	emit finished(this);
 	
 	return 1;
 	
@@ -523,8 +529,8 @@ int Peak::create_from_scratch()
 		p = (int) (counter*100) / cycles;
 		
 		if ( p > m_progress) {
+			emit progress(p - m_progress);
 			m_progress = p;
-			emit progress(m_progress);
 		}
 		
 	} while(totalReadFrames != m_source->get_nframes());
@@ -608,4 +614,3 @@ void PeakBuildThread::run()
 		PWARN("Failed to create peak buffers");
 	}
 }
-

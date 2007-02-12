@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Peak.h,v 1.6 2006/09/14 10:49:39 r_sijrier Exp $
+$Id: Peak.h,v 1.7 2007/02/12 19:57:54 r_sijrier Exp $
 */
 
 #ifndef PEAK_H
@@ -71,6 +71,8 @@ public:
 	int calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int count);
 
 	void free_buffer_memory();
+	
+	void start_peak_loading();
 
 	audio_sample_t get_max_amplitude(nframes_t startframe, nframes_t endframe);
 
@@ -105,7 +107,7 @@ private:
 	friend class PeakBuildThread;
 
 signals:
-	void finished();
+	void finished(Peak*);
 	void progress(int m_progress);
 };
 
