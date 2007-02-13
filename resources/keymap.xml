@@ -286,11 +286,6 @@
 			<Object objectname="SongView" slotsignature="zoom" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
-	<keyfact type="HKEY" key1="S" mousehint="LRUD" sortorder="36" >
-		<Objects>
-			<Object objectname="SongView" slotsignature="shuttle" modes="All" instantanious="0" />
-		</Objects>
-	</keyfact>
 	<keyfact type="HKEY" key1="E" mousehint="LR" sortorder="28" >
 		<Objects>
 			<Object objectname="AudioClipView" slotsignature="drag_edge" modes="All" instantanious="0" />
@@ -333,9 +328,10 @@
 			<Object objectname="FadeCurve" slotsignature="bend" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
-	<keyfact type="HKEY" key1="S" mousehint="LR" slotname="strength" name="Strenght" sortorder="25" >
+	<keyfact type="HKEY" key1="S" mousehint="LR" sortorder="26" >
 		<Objects>
 			<Object objectname="FadeCurve" slotsignature="strength" modes="All" instantanious="0" />
+			<Object objectname="SongView" slotsignature="shuttle" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
 	<keyfact type="HKEY" key1="SPACE" mousehint="LR" sortorder="34" >
