@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.31 2007/02/13 11:04:46 r_sijrier Exp $
+$Id: Interface.cpp,v 1.32 2007/02/13 11:16:34 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -458,10 +458,10 @@ Command * Interface::show_context_menu( )
 		if (i==0) {
 			toplevelmenu = menu;
 		} else {
-			if (className.contains("View") && ! className.contains("ViewPort")) {
+			if (!className.contains("ViewPort")) {
 				toplevelmenu->addSeparator();
 				QAction* action = toplevelmenu->insertMenu(action, menu);
-				action->setText(className.remove("View").remove("Item").remove("Panel"));
+				action->setText(className.remove("View"));
 			}
 		}
 	}
@@ -485,7 +485,7 @@ QMenu* Interface::create_context_menu(QObject* item )
 	
 	qSort(list.begin(), list.end(), MenuData::smaller);
 
-	QString name = QString(item->metaObject()->className()).remove("View").remove("Item").remove("Panel");
+	QString name = QString(item->metaObject()->className()).remove("View").remove("Panel");
 	QAction* menuAction = menu->addAction(name);
 	QFont font("Bitstream Vera Sans", 8);
 	font.setBold(true);
