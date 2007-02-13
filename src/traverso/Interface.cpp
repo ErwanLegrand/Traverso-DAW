@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.30 2007/02/13 10:41:34 r_sijrier Exp $
+$Id: Interface.cpp,v 1.31 2007/02/13 11:04:46 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -443,6 +443,10 @@ Command * Interface::show_context_menu( )
 		}
 		
 		QString className = item->metaObject()->className();
+		if (! className.contains("View") ) {
+			continue;
+		}
+		
 		QMenu* menu = m_contextMenus.value(className);
 		
 		if ( ! menu ) {
