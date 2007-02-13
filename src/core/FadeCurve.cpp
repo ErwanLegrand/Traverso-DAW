@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.11 2007/01/25 12:15:12 r_sijrier Exp $
+$Id: FadeCurve.cpp,v 1.12 2007/02/13 21:34:27 r_sijrier Exp $
 */
  
 #include "FadeCurve.h"
@@ -56,7 +56,7 @@ FadeCurve::FadeCurve(AudioClip* clip, Song* song, QString type )
 	m_controlPoints.append(QPointF(1.0, 1.0));
 	
 	m_bendFactor = 0.5;
-	m_strenghtFactor = 0.5;
+	m_strenghtFactor = 1;
 	m_mode = m_raster = 0;
 	m_bypass = false;
 	
@@ -305,6 +305,7 @@ void FadeCurve::set_bend_factor( float factor )
 
 void FadeCurve::set_strength_factor( float factor )
 {
+	printf("set_strength_factor\n");
 	if (factor > 1.0)
 		factor = 1.0;
 	if (factor < 0.0)
