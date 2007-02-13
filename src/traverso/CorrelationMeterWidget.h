@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: CorrelationMeterWidget.h,v 1.5 2007/01/20 08:09:37 n_doebelin Exp $
+    $Id: CorrelationMeterWidget.h,v 1.6 2007/02/13 11:10:05 r_sijrier Exp $
 */
 
 #ifndef CORRELATIONMETERWIDGET_H
@@ -30,7 +30,7 @@
 #include <ViewItem.h>
 
 class CorrelationMeter;
-class CorrelationMeterItem;
+class CorrelationMeterView;
 class Song;
 class Project;
 class Command;
@@ -51,19 +51,19 @@ protected:
         void resizeEvent( QResizeEvent* e);
 
 private:
-	CorrelationMeterItem* m_item;
+	CorrelationMeterView* m_item;
 
 };
 
-class CorrelationMeterItem : public ViewItem
+class CorrelationMeterView : public ViewItem
 {
 	Q_OBJECT
 
 	Q_CLASSINFO("set_mode", tr("Toggle display range"))
 
 public:
-        CorrelationMeterItem(CorrelationMeterWidget* widget);
-	~CorrelationMeterItem();
+        CorrelationMeterView(CorrelationMeterWidget* widget);
+	~CorrelationMeterView();
 
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void resize();

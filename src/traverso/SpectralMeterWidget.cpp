@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.29 2007/02/08 20:51:38 r_sijrier Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.30 2007/02/13 11:10:05 r_sijrier Exp $
 */
 
 #include "SpectralMeterWidget.h"
@@ -59,7 +59,7 @@ SpectralMeterWidget::SpectralMeterWidget(QWidget* parent)
 	setMinimumWidth(40);
 	setMinimumHeight(10);
 	
-	m_item = new SpectralMeterItem(this);
+	m_item = new SpectralMeterView(this);
 	
 	QGraphicsScene* scene = new QGraphicsScene(this);
 	setScene(scene);
@@ -92,7 +92,7 @@ void SpectralMeterWidget::get_pointed_context_items(QList<ContextItem* > &list)
 
 
 
-SpectralMeterItem::SpectralMeterItem(SpectralMeterWidget* widget)
+SpectralMeterView::SpectralMeterView(SpectralMeterWidget* widget)
 	: ViewItem(0, 0)
 	, m_widget(widget)
 	, m_meter(0)
@@ -134,12 +134,12 @@ SpectralMeterItem::SpectralMeterItem(SpectralMeterWidget* widget)
 	connect(&timer, SIGNAL(timeout()), this, SLOT(update_data()));
 }
 
-SpectralMeterItem::~SpectralMeterItem()
+SpectralMeterView::~SpectralMeterView()
 {
 // 	delete m_config;
 }
 
-void SpectralMeterItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void SpectralMeterView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
@@ -183,7 +183,7 @@ void SpectralMeterItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 	}
 }
 
-void SpectralMeterItem::resize()
+void SpectralMeterView::resize()
 {
 	PENTER;
 	
@@ -214,7 +214,7 @@ void SpectralMeterItem::resize()
 	update_background();
 }
 
-void SpectralMeterItem::update_background()
+void SpectralMeterView::update_background()
 {
 	// draw the background image
 	bgPixmap = QPixmap((int)m_boundingRectangle.width(), (int)m_boundingRectangle.height());
@@ -272,7 +272,7 @@ void SpectralMeterItem::update_background()
 	}
 }
 
-void SpectralMeterItem::update_data()
+void SpectralMeterView::update_data()
 {
 	if (!m_meter) {
 		return;
@@ -291,7 +291,7 @@ void SpectralMeterItem::update_data()
 	update();
 }
 
-void SpectralMeterItem::set_project(Project *project)
+void SpectralMeterView::set_project(Project *project)
 {
 	if (project) {
 		connect(project, SIGNAL(currentSongChanged(Song *)), this, SLOT(set_song(Song*)));
@@ -301,7 +301,7 @@ void SpectralMeterItem::set_project(Project *project)
 	}
 }
 
-void SpectralMeterItem::set_song(Song *song)
+void SpectralMeterView::set_song(Song *song)
 {
 	PluginChain* chain = song->get_plugin_chain();
 	
@@ -326,7 +326,7 @@ void SpectralMeterItem::set_song(Song *song)
 	timer.start(UPDATE_INTERVAL);
 }
 
-void SpectralMeterItem::reduce_bands()
+void SpectralMeterView::reduce_bands()
 {
 	// check if we have to update some variables
 	if ((m_spectrum.size() != (int)num_bands) 
@@ -363,7 +363,7 @@ void SpectralMeterItem::reduce_bands()
 
 // call this function if the size, number of bands, ranges etc. changed.
 // it re-calculates some variables
-void SpectralMeterItem::update_layout()
+void SpectralMeterView::update_layout()
 {
 	timer.stop();
 
@@ -392,13 +392,13 @@ void SpectralMeterItem::update_layout()
 }
 
 // converts db-values into widget y-coordinates
-float SpectralMeterItem::db2ypos(float f)
+float SpectralMeterView::db2ypos(float f)
 {
 	return ((f - upper_db) * m_rect.height()/(lower_db - upper_db)) + m_rect.top();
 }
 
 // converts frequencies into widget x-coordinates
-float SpectralMeterItem::freq2xpos(float f)
+float SpectralMeterView::freq2xpos(float f)
 {
 	if ((f < lower_freq) || (f > upper_freq)) {
 		return 0.0;
@@ -409,7 +409,7 @@ float SpectralMeterItem::freq2xpos(float f)
 }
 
 // determines the highest db value for frequency rang fl-fu. Does all the interpolation etc.
-float SpectralMeterItem::freq2db(float fl, float fu)
+float SpectralMeterView::freq2db(float fl, float fu)
 {
 	float lfreq = qMin(fl, fu);
 	float ufreq = qMax(fl, fu);
@@ -466,7 +466,7 @@ float SpectralMeterItem::freq2db(float fl, float fu)
 
 // updates a vector mapping fft indices (0, ..., fft_size) to widget x-positions
 // and one mapping fft indices to frequency
-void SpectralMeterItem::update_freq_map()
+void SpectralMeterView::update_freq_map()
 {
 	m_map_idx2xpos.clear();
 	m_map_idx2freq.clear();
@@ -478,7 +478,7 @@ void SpectralMeterItem::update_freq_map()
 }
 
 // opens the properties dialog
-Command* SpectralMeterItem::edit_properties()
+Command* SpectralMeterView::edit_properties()
 {
 	if (!m_meter) {
 		return 0;
@@ -490,7 +490,7 @@ Command* SpectralMeterItem::edit_properties()
 }
 
 // is called upon closing the properties dialog
-void SpectralMeterItem::load_configuration()
+void SpectralMeterView::load_configuration()
 {
 	upper_freq = config().get_property("SpectralMeter", "UpperFrequenty", 22050).toInt();
 	lower_freq = config().get_property("SpectralMeter", "LowerFrequenty", 20).toInt();
@@ -509,31 +509,31 @@ void SpectralMeterItem::load_configuration()
 	update_background();
 }
 
-void SpectralMeterItem::transfer_started()
+void SpectralMeterView::transfer_started()
 {
 	// restarts the average curve
 	sample_weight = 1;
 }
 
-void SpectralMeterItem::transfer_stopped()
+void SpectralMeterView::transfer_stopped()
 {
 
 }
 
-Command* SpectralMeterItem::set_mode()
+Command* SpectralMeterView::set_mode()
 {
 	show_average = !show_average;
 	update_layout();
 	return 0;
 }
 
-Command* SpectralMeterItem::reset()
+Command* SpectralMeterView::reset()
 {
 	sample_weight = 1;
 	return 0;
 }
 
-Command* SpectralMeterItem::screen_capture( )
+Command* SpectralMeterView::screen_capture( )
 {
         QImage image(m_widget->size(), QImage::Format_RGB32);
         QPainter painter(&image);
@@ -553,7 +553,7 @@ Command* SpectralMeterItem::screen_capture( )
         return 0;
 }
 
-Command* SpectralMeterItem::export_avarage_curve()
+Command* SpectralMeterView::export_avarage_curve()
 {
 	// check if all requirements are met
 	if ((!show_average) || (!m_project)) {
@@ -622,7 +622,7 @@ Command* SpectralMeterItem::export_avarage_curve()
 	return 0;
 }
 
-QString SpectralMeterItem::get_xmgr_string()
+QString SpectralMeterView::get_xmgr_string()
 {
 	QString s = "# Grace project file\n";
 	s += "#\n";

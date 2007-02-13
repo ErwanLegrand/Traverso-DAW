@@ -136,7 +136,7 @@
 			<Object objectname="TrackView" slotsignature="edit_properties" modes="All" instantanious="0" />
 			<Object objectname="PluginView" slotsignature="edit_properties" modes="All" instantanious="0" />
 			<Object objectname="FadeView" slotsignature="edit_properties" modes="All" instantanious="0" />
-			<Object objectname="SpectralMeterItem" slotsignature="edit_properties" modes="All" instantanious="0" />
+			<Object objectname="SpectralMeterView" slotsignature="edit_properties" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
 	<keyfact type="FKEY" key1="N" sortorder="30" >
@@ -152,14 +152,14 @@
 	</keyfact>
 	<keyfact type="FKEY" key1="M" sortorder="30" >
 		<Objects>
-			<Object objectname="CorrelationMeterItem" slotsignature="set_mode" modes="All" instantanious="0" />
-			<Object objectname="SpectralMeterItem" slotsignature="set_mode" modes="All" instantanious="0" />
+			<Object objectname="CorrelationMeterView" slotsignature="set_mode" modes="All" instantanious="0" />
+			<Object objectname="SpectralMeterView" slotsignature="set_mode" modes="All" instantanious="0" />
 			<Object objectname="FadeCurve" slotsignature="set_mode" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
 	<keyfact type="FKEY" key1="L" sortorder="40" >
 		<Objects>
-			<Object objectname="SpectralMeterItem" slotsignature="reset" modes="All" instantanious="0" />
+			<Object objectname="SpectralMeterView" slotsignature="reset" modes="All" instantanious="0" />
 			<Object objectname="FadeCurve" slotsignature="reset" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
@@ -374,7 +374,7 @@
 	</keyfact>
 	<keyfact type="D_FKEY" key1="ENTER" sortorder="20" >
 		<Objects>
-			<Object objectname="SpectralMeterItem" slotsignature="export_avarage_curve" modes="All" instantanious="0" />
+			<Object objectname="SpectralMeterView" slotsignature="export_avarage_curve" modes="All" instantanious="0" />
 			<Object objectname="Interface" slotsignature="show_export_widget" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
@@ -390,7 +390,7 @@
 	</keyfact>
 	<keyfact type="D_FKEY" key1="RETURN" sortorder="20" >
 		<Objects>
-			<Object objectname="SpectralMeterItem" slotsignature="export_avarage_curve" modes="All" instantanious="0" />
+			<Object objectname="SpectralMeterView" slotsignature="export_avarage_curve" modes="All" instantanious="0" />
 			<Object objectname="Interface" slotsignature="show_export_widget" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>

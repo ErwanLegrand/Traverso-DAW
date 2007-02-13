@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: CorrelationMeterWidget.cpp,v 1.13 2007/02/08 20:51:38 r_sijrier Exp $
+    $Id: CorrelationMeterWidget.cpp,v 1.14 2007/02/13 11:10:05 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -51,7 +51,7 @@ CorrelationMeterWidget::CorrelationMeterWidget(QWidget* parent)
 	setMinimumWidth(40);
 	setMinimumHeight(10);
 	
-	m_item = new CorrelationMeterItem(this);
+	m_item = new CorrelationMeterView(this);
 	
 	QGraphicsScene* scene = new QGraphicsScene(this);
 	setScene(scene);
@@ -86,7 +86,7 @@ void CorrelationMeterWidget::get_pointed_context_items(QList<ContextItem* > &lis
 
 
 
-CorrelationMeterItem::CorrelationMeterItem(CorrelationMeterWidget* widget)
+CorrelationMeterView::CorrelationMeterView(CorrelationMeterWidget* widget)
 	: ViewItem(0, 0)
 	, m_widget(widget)
 	, m_meter(0)
@@ -112,11 +112,11 @@ CorrelationMeterItem::CorrelationMeterItem(CorrelationMeterWidget* widget)
 	connect(&timer, SIGNAL(timeout()), this, SLOT(update_data()));
 }
 
-CorrelationMeterItem::~CorrelationMeterItem()
+CorrelationMeterView::~CorrelationMeterView()
 {
 }
 
-void CorrelationMeterItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void CorrelationMeterView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
@@ -176,7 +176,7 @@ void CorrelationMeterItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
 	}
 }
 
-void CorrelationMeterItem::resize()
+void CorrelationMeterView::resize()
 {
 	PENTER;
 	
@@ -186,7 +186,7 @@ void CorrelationMeterItem::resize()
 	m_boundingRectangle = QRectF(0, 0, m_widget->width(), m_widget->height());
 }
 
-void CorrelationMeterItem::update_data()
+void CorrelationMeterView::update_data()
 {
 	if (!m_meter) {
 		return;
@@ -202,7 +202,7 @@ void CorrelationMeterItem::update_data()
 	update();
 }
 
-void CorrelationMeterItem::set_project(Project *project)
+void CorrelationMeterView::set_project(Project *project)
 {
 	if (project) {
 		connect(project, SIGNAL(currentSongChanged(Song *)), this, SLOT(set_song(Song*)));
@@ -211,7 +211,7 @@ void CorrelationMeterItem::set_project(Project *project)
 	}
 }
 
-void CorrelationMeterItem::set_song(Song *song)
+void CorrelationMeterView::set_song(Song *song)
 {
 	PluginChain* chain = song->get_plugin_chain();
 	
@@ -232,7 +232,7 @@ void CorrelationMeterItem::set_song(Song *song)
 	timer.start(40);
 }
 
-Command* CorrelationMeterItem::set_mode()
+Command* CorrelationMeterView::set_mode()
 {
 	switch (range) {
 		case 180 : range = 240; break;
@@ -244,12 +244,12 @@ Command* CorrelationMeterItem::set_mode()
 	return 0;
 }
 
-void CorrelationMeterItem::save_configuration()
+void CorrelationMeterView::save_configuration()
 {
 	config().set_property("CorrelationMeter", "Range", range);
 }
 
-void CorrelationMeterItem::load_configuration()
+void CorrelationMeterView::load_configuration()
 {
 	range = config().get_property("CorrelationMeter", "Range", 360).toInt();
 }

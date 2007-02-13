@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SpectralMeterWidget.h,v 1.15 2007/01/22 15:13:32 r_sijrier Exp $
+    $Id: SpectralMeterWidget.h,v 1.16 2007/02/13 11:10:05 r_sijrier Exp $
 */
 
 #ifndef SPECTRALMETERWIDGET_H
@@ -36,7 +36,7 @@ class QRect;
 class QPixmap;
 class SpectralMeter;
 class Command;
-class SpectralMeterItem;
+class SpectralMeterView;
 
 
 class SpectralMeterConfigWidget : public QDialog, private Ui::SpectralMeterConfigWidget
@@ -72,11 +72,11 @@ protected:
         void resizeEvent( QResizeEvent* e);
 
 private:
-	SpectralMeterItem* m_item;
+	SpectralMeterView* m_item;
 };
 
 
-class SpectralMeterItem : public ViewItem
+class SpectralMeterView : public ViewItem
 {
 	Q_OBJECT
 	
@@ -88,8 +88,8 @@ class SpectralMeterItem : public ViewItem
 	
 
 public:
-        SpectralMeterItem(SpectralMeterWidget* widget);
-	~SpectralMeterItem();
+        SpectralMeterView(SpectralMeterWidget* widget);
+	~SpectralMeterView();
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	
