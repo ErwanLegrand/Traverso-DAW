@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.26 2007/01/28 20:15:46 r_sijrier Exp $
+$Id: InputEngine.cpp,v 1.27 2007/02/13 10:51:47 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -1236,53 +1236,47 @@ QList< MenuData > InputEngine::get_contextitem_actionlist(QObject* item)
 		const QMetaObject* mo = item->metaObject();
 		const char* classname = mo->className();
 		
-		do {
-			for (int i=0; i < mo->methodCount(); i++) {
+		for (int i=0; i < mo->methodCount(); i++) {
+			
+			if ( ! (mo->method(i).methodType() == QMetaMethod::Slot) ) {
+				continue;
+			}
+			
+			slotsignature = mo->method(i).signature();
+			slotsignature = slotsignature.left(slotsignature.indexOf("("));
+			
+			for (int i=0; i<ieActions.size(); i++) {
 				
-				if ( ! (mo->method(i).methodType() == QMetaMethod::Slot) ) {
+				IEAction* ieaction = ieActions.at(i);
+				
+				IEAction::Data* iedata;
+				iedata = ieaction->objects.value(classname);
+				
+				if ( ! iedata ) {
 					continue;
 				}
 				
-				slotsignature = mo->method(i).signature();
-				slotsignature = slotsignature.left(slotsignature.indexOf("("));
-				
-				for (int i=0; i<ieActions.size(); i++) {
-					
-					IEAction* ieaction = ieActions.at(i);
-					
-					IEAction::Data* iedata;
-					iedata = ieaction->objects.value(classname);
-					
-					if ( ! iedata ) {
-						continue;
-					}
-					
-					if ( ! ( iedata->slotsignature == slotsignature) ) {
-						continue;
-					}
-					
-					MenuData menudata;
-					int classInfoIndex = mo->indexOfClassInfo(QS_C(slotsignature));
-					
-					if (classInfoIndex >= 0) {
-						QMetaClassInfo classInfo = mo->classInfo(classInfoIndex);
-						// Set the translated string!
-						menudata.description = QCoreApplication::translate(classname, classInfo.value());
-					} else {
-						menudata.description = QString("Add a Q_CLASSINFO() for %1::%2 please").arg(classname).arg(slotsignature);
-					}
-					
-					menudata.keysequence = ieaction->keySequence;
-					menudata.sortorder = ieaction->sortOrder;
-					
-					list.append(menudata);
+				if ( ! ( iedata->slotsignature == slotsignature) ) {
+					continue;
 				}
+				
+				MenuData menudata;
+				int classInfoIndex = mo->indexOfClassInfo(QS_C(slotsignature));
+				
+				if (classInfoIndex >= 0) {
+					QMetaClassInfo classInfo = mo->classInfo(classInfoIndex);
+					// Set the translated string!
+					menudata.description = QCoreApplication::translate(classname, classInfo.value());
+				} else {
+					menudata.description = QString("Add a Q_CLASSINFO() for %1::%2 please").arg(classname).arg(slotsignature);
+				}
+				
+				menudata.keysequence = ieaction->keySequence;
+				menudata.sortorder = ieaction->sortOrder;
+				
+				list.append(menudata);
 			}
-			if (mo->superClass()) {
-				printf("%s has superclass %s\n", mo->className(), mo->superClass()->className());
-			}
-		} 
-		while( (mo = mo->superClass()) );
+		}
 
 		contextitem = qobject_cast<ContextItem*>(item);
 	} 
