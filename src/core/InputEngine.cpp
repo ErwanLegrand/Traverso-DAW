@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.27 2007/02/13 10:51:47 r_sijrier Exp $
+$Id: InputEngine.cpp,v 1.28 2007/02/13 21:16:40 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -1074,9 +1074,28 @@ int InputEngine::init_map(const QString& mapFilename)
 		action->isInstantaneous = false;
 		action->render_key_sequence(key1, key2);
 	
-		ieActions.append(action);
+		bool exists = false;
+		for (int i=0; i<ieActions.size(); ++i) {
+		 	IEAction* existingaction = ieActions.at(i);
+			if ( 	(action->fact1_key1 == existingaction->fact1_key1) &&
+				(action->fact1_key2 == existingaction->fact1_key2) &&
+				(action->fact2_key1 == existingaction->fact2_key1) &&
+				(action->fact2_key2 == existingaction->fact2_key2) &&
+				(action->type == existingaction->type) ) {
+				exists = true;
+				QString errorstring = QString("InputEngine:: keyfact with: type=%1, key1='%2', key2='%3' allready exists!\n"
+						"You should only define keyfact types one time!!\n").arg(keyFactType).arg(key1).arg(key2); 
+				printf(QS_C(errorstring));
+				info().warning(errorstring);
+				break;
+			}
+				
+		}
+		if (!exists) {
+			ieActions.append(action);
+			PMESG2("ADDED action: type=%d keys=%d,%d,%d,%d useX=%d useY=%d, slot=%s", action->type, action->fact1_key1,action->fact1_key2,action->fact2_key1,action->fact2_key2,action->useX,action->useY, QS_C(slot));
+		}
 		
-		PMESG2("ADDED action: type=%d keys=%d,%d,%d,%d useX=%d useY=%d, slot=%s", action->type, action->fact1_key1,action->fact1_key2,action->fact2_key1,action->fact2_key2,action->useX,action->useY, QS_C(slot));
 		
 		node = node.nextSibling();
 	}
