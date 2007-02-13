@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.29 2007/02/05 17:10:36 r_sijrier Exp $
+$Id: Interface.cpp,v 1.30 2007/02/13 10:41:34 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -432,24 +432,39 @@ Command * Interface::show_context_menu( )
 		return 0;
 	}
 	
-	QObject* item = qobject_cast<QObject*>(items.at(0));
-	
-	if (! item) {
-		printf("cpointer() first returned item is NOT a QObject!!\n");
-		return 0;
+	QMenu* toplevelmenu;
+			
+	for (int i=0; i<items.size(); ++i) {
+		QObject* item = qobject_cast<QObject*>(items.at(i));
+		
+		if (! item) {
+			printf("cpointer() first returned item is NOT a QObject!!\n");
+			return 0;
+		}
+		
+		QString className = item->metaObject()->className();
+		QMenu* menu = m_contextMenus.value(className);
+		
+		if ( ! menu ) {
+			printf("No menu for %s, creating new one\n", QS_C(className));
+			menu = create_context_menu(item);
+			m_contextMenus.insert(className, menu);
+		}
+		
+		if (i==0) {
+			toplevelmenu = menu;
+		} else {
+			if (className.contains("View") && ! className.contains("ViewPort")) {
+				toplevelmenu->addSeparator();
+				QAction* action = toplevelmenu->insertMenu(action, menu);
+				action->setText(className.remove("View").remove("Item").remove("Panel"));
+			}
+		}
 	}
 	
-	QString className = item->metaObject()->className();
 	
-	QMenu* menu = m_contextMenus.value(className);
 	
-	if ( ! menu ) {
-		printf("No menu for %s, creating new one\n", QS_C(className));
-		menu = create_context_menu(item);
-		m_contextMenus.insert(className, menu);
-	}
-	
-	menu->exec(QCursor::pos());
+	toplevelmenu->exec(QCursor::pos());
 	
 	return 0;
 }
