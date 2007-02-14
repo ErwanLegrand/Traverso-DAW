@@ -197,6 +197,13 @@
 			<Object objectname="Gain" slotsignature="decrease_gain" modes="All" instantanious="1" />
 		</Objects>
 	</keyfact>
+	<keyfact type="FKEY" key1="F" sortorder="50" >
+		<Objects>
+			<Object objectname="AudioClipView" slotsignature="select_fade_shape" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	
+	
 	
 	
 	<keyfact type="FKEY2" key1="A" key2="B" sortorder="" >
@@ -325,18 +332,23 @@
 	</keyfact>
 	<keyfact type="HKEY" key1="B" mousehint="LR" sortorder="25" >
 		<Objects>
-			<Object objectname="FadeCurve" slotsignature="bend" modes="All" instantanious="0" />
+			<Object objectname="FadeView" slotsignature="bend" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
 	<keyfact type="HKEY" key1="S" mousehint="LR" sortorder="26" >
 		<Objects>
-			<Object objectname="FadeCurve" slotsignature="strength" modes="All" instantanious="0" />
+			<Object objectname="FadeView" slotsignature="strength" modes="All" instantanious="0" />
 			<Object objectname="SongView" slotsignature="shuttle" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
 	<keyfact type="HKEY" key1="SPACE" mousehint="LR" sortorder="34" >
 		<Objects>
 			<Object objectname="SongView" slotsignature="play_cursor_move" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
+	<keyfact type="HKEY" key1="F" mousehint="LR" sortorder="42" >
+		<Objects>
+			<Object objectname="AudioClipView" slotsignature="fade_range" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
 	
