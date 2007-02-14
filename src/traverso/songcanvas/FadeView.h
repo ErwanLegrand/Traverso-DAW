@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeView.h,v 1.1 2006/11/08 14:45:22 r_sijrier Exp $
+$Id: FadeView.h,v 1.2 2007/02/14 11:32:14 r_sijrier Exp $
 */
 
 #ifndef FADE_VIEW_H
@@ -32,6 +32,10 @@ class AudioClipView;
 class FadeView : public ViewItem
 {
 	Q_OBJECT
+	
+	Q_CLASSINFO("bend", tr("Bend"))
+	Q_CLASSINFO("strength", tr("Strength"))
+	
 public:
 	FadeView(SongView* sv, AudioClipView* parent, FadeCurve* fadeCuve);
 	~FadeView();
@@ -40,21 +44,22 @@ public:
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void calculate_bounding_rect();
+	void set_holding(bool hold);
 	
 	FadeCurve* get_fade() const {return m_fadeCurve;}
 	
 	int type() const;
 
 private:
-	AudioClipView*		m_clipView;
 	FadeCurve*		m_fadeCurve;
-	FadeContextDialog* 	m_dialog;
-	QPainterPath 		m_path;
+	bool			m_holdactive;
 	
 public slots:
 	void state_changed();
 	
-	Command* edit_properties();
+	Command* bend();
+	Command* strength();
+// 	Command* edit_properties();
 };
 
 inline int FadeView::type() const {return Type;}

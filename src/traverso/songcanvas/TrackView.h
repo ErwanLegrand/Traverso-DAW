@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.h,v 1.11 2007/02/08 13:30:42 r_sijrier Exp $
+$Id: TrackView.h,v 1.12 2007/02/14 11:32:14 r_sijrier Exp $
 */
 
 #ifndef TRACK_VIEW_H
@@ -47,8 +47,7 @@ public:
 	
 	Track* get_track() const;
 	
-	int get_clipview_y_offset();
-	int get_clipview_height();
+	int get_childview_y_offset() const;
 	void move_to(int x, int y);
 	int get_height();
 	void set_height(int height);

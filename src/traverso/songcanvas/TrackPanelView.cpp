@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.10 2007/02/08 20:51:38 r_sijrier Exp $
+$Id: TrackPanelView.cpp,v 1.11 2007/02/14 11:32:14 r_sijrier Exp $
 */
 
 #include <QGraphicsScene>
@@ -42,8 +42,6 @@ TrackPanelView::TrackPanelView(TrackPanelViewPort* view, TrackView* trackView, T
 {
 	PENTERCONS;
 	
-	panelPixmap = QPixmap(200, 90);
-		
 	m_viewPort = view;
 	m_tv = trackView;
 	m_track = track;
@@ -155,19 +153,6 @@ void TrackPanelView::update_gain()
 void TrackPanelView::update_pan()
 {
 	m_panView->update();
-}
-
-
-void TrackPanelView::draw_panel_head()
-{
-	int panelWidth = m_viewPort->width();
-	QPainter p(&panelPixmap);
-	if (m_track->is_active())
-		p.fillRect(0,0,panelWidth,15, themer()->get_color("TrackPanel:head:active"));
-	else
-		p.fillRect(0,0,panelWidth,15, themer()->get_color("TrackPanel:head:inactive"));
-	p.setPen(themer()->get_color("TRACK_PANEL_SEPERATOR"));
-	p.drawLine(0, 0, panelWidth, 0);
 }
 
 

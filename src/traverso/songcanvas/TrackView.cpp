@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.17 2007/02/08 20:51:38 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.18 2007/02/14 11:32:14 r_sijrier Exp $
 */
 
 #include <QLineEdit>
@@ -78,6 +78,8 @@ void TrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 {
 	Q_UNUSED(widget);
 	
+// 	printf("TrackView:: PAINT :: exposed rect is: x=%f, y=%f, w=%f, h=%f\n", option->exposedRect.x(), option->exposedRect.y(), option->exposedRect.width(), option->exposedRect.height());
+	
 	int xstart = (int)option->exposedRect.x();
 	int pixelcount = (int)option->exposedRect.width();
 	
@@ -130,7 +132,7 @@ Track* TrackView::get_track( ) const
 	return m_track;
 }
 
-int TrackView::get_clipview_y_offset( )
+int TrackView::get_childview_y_offset() const
 {
 	return m_topborderwidth + m_cliptopmargin;
 }
@@ -141,7 +143,7 @@ void TrackView::move_to( int x, int y )
 	m_panel->setPos(-202, y);
 }
 
-int TrackView::get_clipview_height( )
+int TrackView::get_height( )
 {
 	return m_track->get_height() - (m_topborderwidth + m_bottomborderwidth + m_clipbottommargin + m_cliptopmargin);
 }
@@ -161,7 +163,6 @@ Command* TrackView::edit_properties( )
 
 Command* TrackView::add_new_plugin( )
 {
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 	if (PluginSelectorDialog::instance()->exec() == QDialog::Accepted) {
 		Plugin* plugin = PluginSelectorDialog::instance()->get_selected_plugin();
 		if (plugin) {
@@ -169,13 +170,7 @@ Command* TrackView::add_new_plugin( )
 		}
 	}
 
-#endif
 	return 0;
-}
-
-int TrackView::get_height( )
-{
-	return m_height;
 }
 
 void TrackView::set_height( int height )

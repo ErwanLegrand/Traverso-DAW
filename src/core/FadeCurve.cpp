@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.12 2007/02/13 21:34:27 r_sijrier Exp $
+$Id: FadeCurve.cpp,v 1.13 2007/02/14 11:30:49 r_sijrier Exp $
 */
  
 #include "FadeCurve.h"
@@ -26,7 +26,6 @@ $Id: FadeCurve.cpp,v 1.12 2007/02/13 21:34:27 r_sijrier Exp $
 #include <cmath>
 #include "Song.h"
 #include "AudioClip.h"
-#include <Fade.h>
 #include "InputEngine.h"
 
 // Always put me below _all_ includes, this is needed
@@ -305,7 +304,6 @@ void FadeCurve::set_bend_factor( float factor )
 
 void FadeCurve::set_strength_factor( float factor )
 {
-	printf("set_strength_factor\n");
 	if (factor > 1.0)
 		factor = 1.0;
 	if (factor < 0.0)
@@ -356,17 +354,5 @@ Command* FadeCurve::toggle_raster( )
 	emit rasterChanged();
 	return 0;
 }
-
-Command* FadeCurve::bend( )
-{
-	return new FadeBend(this);
-}
-
-Command* FadeCurve::strength( )
-{
-	return new FadeStrength(this);
-}
-
-
 
 //eof

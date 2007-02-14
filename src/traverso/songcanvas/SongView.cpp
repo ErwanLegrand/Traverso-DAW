@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.18 2007/02/08 23:46:03 r_sijrier Exp $
+$Id: SongView.cpp,v 1.19 2007/02/14 11:32:30 r_sijrier Exp $
 */
 
 
@@ -319,6 +319,7 @@ void SongView::layout_tracks()
 		view->move_to(0, verticalposition);
 		verticalposition += (view->get_track()->get_height() + m_trackSeperatingHeight);
 	}
+	scale_factor_changed();
 }
 
 

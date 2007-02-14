@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.58 2007/01/24 21:18:30 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.59 2007/02/14 11:30:49 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -841,7 +841,7 @@ Command * AudioClip::clip_fade_in( )
 	if (!fadeIn) {
 		create_fade_in();
 	}
-	return new Fade(this, fadeIn, direction);
+	return new FadeRange(this, fadeIn, direction);
 }
 
 Command * AudioClip::clip_fade_out( )
@@ -850,7 +850,7 @@ Command * AudioClip::clip_fade_out( )
 	if (!fadeOut) {
 		create_fade_out();
 	}
-	return new Fade(this, fadeOut, direction);
+	return new FadeRange(this, fadeOut, direction);
 }
 
 Command * AudioClip::normalize( )

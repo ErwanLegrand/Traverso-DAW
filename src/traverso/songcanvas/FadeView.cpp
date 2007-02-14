@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeView.cpp,v 1.6 2007/02/08 20:51:38 r_sijrier Exp $
+$Id: FadeView.cpp,v 1.7 2007/02/14 11:32:14 r_sijrier Exp $
 */
 
 #include "FadeView.h"
@@ -29,9 +29,9 @@ $Id: FadeView.cpp,v 1.6 2007/02/08 20:51:38 r_sijrier Exp $
 #include "FadeContextDialog.h"
 #include "SongView.h"
 #include <Themer.h>
+#include <Fade.h>
 
 #include "Song.h"
-#include <InputEngine.h>
 
 #include <Debugger.h>
 
@@ -41,12 +41,11 @@ static const QString DOT_COLOR		= "#78817B";
 
 FadeView::FadeView(SongView* sv, AudioClipView* parent, FadeCurve * fadeCurve )
 	: ViewItem(parent, fadeCurve)
-	, m_clipView(parent)
 	, m_fadeCurve(fadeCurve)
 {
 	PENTERCONS;
-	m_dialog = 0;
 	m_sv = sv;
+	m_holdactive = false;
 	
 	calculate_bounding_rect();	
 	setAcceptsHoverEvents(true);
@@ -64,11 +63,14 @@ FadeView::~ FadeView( )
 
 void FadeView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+	Q_UNUSED(widget);
+	
 	QPolygonF polygon;
 	float value[2];
 	int scaleFactor = m_sv->scalefactor;
-	int xstart = (int) option->exposedRect.x();
+	int xstart = (int)option->exposedRect.x();
 	int pixelcount = (int) option->exposedRect.width();
+	int height = (int)m_boundingRectangle.height();
 	
 	// Populate the polygon with enough points to draw a smooth curve.
 	// We add 1 to position and xstart to compensate for an off by 1 pixel offset.
@@ -76,13 +78,14 @@ void FadeView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 	int position = xstart;
 	do {
 		m_fadeCurve->get_vector(position*scaleFactor, position*scaleFactor + 1, value, 2);
-	 	polygon << QPointF(position + 1, m_clipView->get_height() - (value[1] * m_clipView->get_height()) );
-// 		printf("x, y: %d, %f \n", position, m_clipView->get_height() - (value[1] * m_clipView->get_height()));
+		polygon << QPointF(position + 1, height - (value[1] * height));
+// 		printf("x, y: %d, %f \n", position, height - (value[1] * height));
 	 	position ++;
 	} while (position <= (xstart + pixelcount));
 	
 	
 	painter->save();
+	painter->setClipRect(m_boundingRectangle.intersected(parentItem()->boundingRect()));
 	painter->setRenderHint(QPainter::Antialiasing);
 	
 	QPainterPath path;
@@ -104,7 +107,7 @@ void FadeView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 	painter->drawPath(path);	
 
 
-	if ( (option->state & QStyle::State_MouseOver) && ie().is_holding()) {
+	if (m_holdactive) {
 		// Calculate and draw control points
 		int h = (int) m_boundingRectangle.height() - 1;
 		int w = (int) m_boundingRectangle.width() - 1;
@@ -134,7 +137,7 @@ void FadeView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 	painter->restore();
 }
 
-
+/*
 Command* FadeView::edit_properties()
 {
 	if (!m_dialog) {
@@ -145,16 +148,18 @@ Command* FadeView::edit_properties()
 	
 	return 0;
 }
-
+*/
 
 void FadeView::calculate_bounding_rect()
 {
-	m_boundingRectangle = QRectF(0, 0, m_fadeCurve->get_range() / m_sv->scalefactor, m_clipView->m_height);
+	ViewItem* parent = (ViewItem*)(parentItem());
+	
+	m_boundingRectangle = QRectF(0, 0, m_fadeCurve->get_range() / m_sv->scalefactor, parent->boundingRect().height() - parent->get_childview_y_offset());
 	
 	if (m_fadeCurve->get_fade_type() == FadeCurve::FadeOut) {
-		setPos(m_clipView->boundingRect().width() - m_boundingRectangle.width(), m_clipView->get_fade_y_offset());
+		setPos(parent->boundingRect().width() - m_boundingRectangle.width(), parent->get_childview_y_offset());
 	} else {
-		setPos(0, m_clipView->get_fade_y_offset());
+		setPos(0, parent->get_childview_y_offset());
 	}
 }
 
@@ -165,5 +170,23 @@ void FadeView::state_changed( )
 	prepareGeometryChange();
 	calculate_bounding_rect();
 }
+
+
+Command* FadeView::bend()
+{
+	return new FadeBend(this);
+}
+
+Command* FadeView::strength()
+{
+	return new FadeStrength(this);
+}
+
+void FadeView::set_holding(bool hold)
+{
+	m_holdactive = hold;
+	update(m_boundingRectangle);
+}
+
 
 //eof

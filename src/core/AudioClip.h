@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.30 2007/01/24 21:18:30 r_sijrier Exp $
+$Id: AudioClip.h,v 1.31 2007/02/14 11:30:49 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -65,6 +65,9 @@ public:
 	AudioClip(const QDomNode& node);
 	~AudioClip();
 
+	void create_fade_in();
+	void create_fade_out();
+	
 	void set_audio_source(ReadSource* source);
 	int init_recording(QByteArray bus);
 	int process(nframes_t nframes, audio_sample_t* channelBuffer, uint channel);
@@ -167,8 +170,6 @@ private:
 	void set_sources_active_state();
 	void process_capture(nframes_t nframes, uint channel);
 	
-	void create_fade_in();
-	void create_fade_out();
 	
 	void calculate_normalization_factor(float targetdB = 0.0);
 

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.25 2007/02/12 19:58:59 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.26 2007/02/14 11:32:14 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -40,6 +40,7 @@ $Id: AudioClipView.cpp,v 1.25 2007/02/12 19:58:59 r_sijrier Exp $
 #include <MoveClip.h>
 #include <MoveEdge.h>
 #include <SplitClip.h>
+#include <Fade.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -63,10 +64,6 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	m_waitingForPeaks = false;
 	m_progress = m_peakloadingcount = 0;
 	m_song = m_clip->get_song();
-	
-	calculate_bounding_rect();
-	
-// 	m_mergedView = config().get_property("AudioClip", "WaveFormMerged", 0).toInt() == 0 ? 0 : 1;
 	
 	if (FadeCurve* curve = m_clip->get_fade_in()) {
 		add_new_fadeview(curve);
@@ -524,7 +521,7 @@ void AudioClipView::remove_fadeview( FadeCurve * fade )
 void AudioClipView::calculate_bounding_rect()
 {
 // 	printf("AudioClipView::calculate_bounding_rect()\n");
-	set_height(m_tv->get_clipview_height());
+	set_height(m_tv->get_height());
 	m_boundingRectangle = QRectF(0, 0, (m_clip->get_length() / m_sv->scalefactor), m_height);
 	update_start_pos();
 }
@@ -540,15 +537,15 @@ void AudioClipView::set_height( int height )
 	m_height = height;
 }
 
-int AudioClipView::get_fade_y_offset() const
+int AudioClipView::get_childview_y_offset() const
 {
-	return m_infoAreaHeight;
+	return (m_height > m_mimimumheightforinfoarea) ? m_infoAreaHeight : 0;
 }
 
 void AudioClipView::update_start_pos()
 {
 // 	printf("AudioClipView::update_start_pos()\n");
-	setPos(m_clip->get_track_start_frame() / m_sv->scalefactor, m_tv->get_clipview_y_offset());
+	setPos(m_clip->get_track_start_frame() / m_sv->scalefactor, m_tv->get_childview_y_offset());
 }
 
 
@@ -578,6 +575,22 @@ Command* AudioClipView::split()
 	return new SplitClip(m_sv, m_clip);
 }
 
+
+Command * AudioClipView::fade_range()
+{
+	Q_ASSERT(m_song);
+	int x = (int) ( cpointer().scene_pos() - scenePos()).x();
+
+	if (x < (m_boundingRectangle.width() / 2)) {
+		return m_clip->clip_fade_in();
+	} else {
+		return m_clip->clip_fade_out();
+	}
+
+	return 0;
+}
+
+
 void AudioClipView::position_changed( )
 {
 	prepareGeometryChange();
@@ -594,6 +607,7 @@ void AudioClipView::load_theme_data()
 	m_mergedView = themer()->get_property("AudioClip:paintmerged", 0).toInt();
 	m_fillwave = themer()->get_property("AudioClip:fillwave", 1).toInt();
 	recreate_clipname_pixmap();
+	calculate_bounding_rect();
 }
 
 
@@ -608,3 +622,5 @@ void AudioClipView::start_peak_data_loading()
 }
 
 //eof
+
+
