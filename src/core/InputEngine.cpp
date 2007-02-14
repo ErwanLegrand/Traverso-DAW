@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.28 2007/02/13 21:16:40 r_sijrier Exp $
+$Id: InputEngine.cpp,v 1.29 2007/02/14 12:22:05 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -244,7 +244,7 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat)
 	}
 
 	if (k && (!isHolding)) {
-		if (k->prepare_actions()) {
+		if (k->prepare_actions() != -1) {
 			k->set_valid(true);
 			if (k->push_to_history_stack() < 0) {
 				// The command doesn't have a history stack, or wasn't
