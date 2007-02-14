@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Fade.h,v 1.5 2007/01/16 20:21:08 r_sijrier Exp $
+$Id: Fade.h,v 1.6 2007/02/14 11:30:20 r_sijrier Exp $
 */
 
 #ifndef FADE_H
@@ -28,12 +28,14 @@ $Id: Fade.h,v 1.5 2007/01/16 20:21:08 r_sijrier Exp $
 class Curve;
 class AudioClip;
 class FadeCurve;
+class FadeView;
+class SongView;
 
-class Fade : public Command
+class FadeRange : public Command
 {
 public :
-        Fade(AudioClip* clip, Curve* curve, int direction);
-        ~Fade();
+        FadeRange(AudioClip* clip, Curve* curve, int direction);
+        ~FadeRange();
 
         int begin_hold();
         int finish_hold();
@@ -56,33 +58,42 @@ private :
 class FadeStrength : public Command
 {
 public :
-        FadeStrength(FadeCurve* fade) : Command("FadeStrength"), m_fade(fade) {};
+	FadeStrength(FadeView* fadeview);
         ~FadeStrength(){};
 
         int begin_hold();
-        int jog();
+	int finish_hold();
+	int jog();
 
+	void set_cursor_shape(int useX, int useY);
+	
 private :
 	float	oldValue;
 	int	origY;
 	FadeCurve*	m_fade;
+	FadeView*	m_fv;
+	QPoint		mousePos;
 };
 
 
 class FadeBend : public Command
 {
 public :
-        FadeBend(FadeCurve* fade) : Command("FadeBend"), m_fade(fade) {};
+	FadeBend(FadeView* fadeview);
         ~FadeBend(){};
 
         int begin_hold();
-        int jog();
+	int finish_hold();
+	int jog();
+	
+	void set_cursor_shape(int useX, int useY);
 
 private :
 	float	oldValue;
 	int	origY;
 	FadeCurve*	m_fade;
-
+	FadeView*	m_fv;
+	QPoint		mousePos;
 };
 
 

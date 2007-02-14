@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Fade.cpp,v 1.6 2007/01/16 20:21:08 r_sijrier Exp $
+$Id: Fade.cpp,v 1.7 2007/02/14 11:30:20 r_sijrier Exp $
 */
 
 
@@ -28,6 +28,9 @@ $Id: Fade.cpp,v 1.6 2007/01/16 20:21:08 r_sijrier Exp $
 #include "ContextPointer.h"
 #include <ViewPort.h>
 #include <FadeCurve.h>
+#include <FadeView.h>
+#include <Peak.h>
+#include <Song.h>
 		
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -37,23 +40,24 @@ static const float CURSOR_SPEED		= 150.0;
 static const float RASTER_SIZE		= 0.05;
 
 
-Fade::Fade(AudioClip* clip, Curve* curve, int direction)
-	: Command(clip, QObject::tr("Fade"))
+FadeRange::FadeRange(AudioClip* clip, Curve* curve, int direction)
+	: Command(clip, "")
 {
 	m_curve = curve;
 	m_direction = direction;
+	setText( (direction == 1) ? QObject::tr("Fade In: range") : QObject::tr("Fade Out: range"));
 }
 
 
-Fade::~Fade()
+FadeRange::~FadeRange()
 {}
 
-int Fade::prepare_actions()
+int FadeRange::prepare_actions()
 {
 	return 1;
 }
 
-int Fade::begin_hold()
+int FadeRange::begin_hold()
 {
 	origX = cpointer().x();
 	newFade = origFade = m_curve->get_range();
@@ -61,30 +65,30 @@ int Fade::begin_hold()
 }
 
 
-int Fade::finish_hold()
+int FadeRange::finish_hold()
 {
 	return 1;
 }
 
 
-int Fade::do_action()
+int FadeRange::do_action()
 {
 	m_curve->set_range( newFade );
 	return 1;
 }
 
 
-int Fade::undo_action()
+int FadeRange::undo_action()
 {
 	m_curve->set_range( origFade );
 	return 1;
 }
 
 
-int Fade::jog()
+int FadeRange::jog()
 {
 	int dx = (origX - (cpointer().x()) ) * m_direction;
-	newFade = origFade - ( dx * 1000 );
+	newFade = origFade - ( dx * Peak::zoomStep[m_curve->get_song()->get_hzoom() ]);
 	
 	if (newFade < 1) {
 		newFade = 1;
@@ -104,58 +108,115 @@ static float round_float( float f)
 /********** FadeBend **********/
 /******************************/
 
+FadeBend::FadeBend(FadeView * fadeview)
+	: Command("FadeBend")
+	, m_fade(fadeview->get_fade())
+	, m_fv(fadeview) 
+{
+}
+
 int FadeBend::begin_hold()
 {
 	PENTER;
 	origY = cpointer().y();
 	oldValue =  m_fade->get_bend_factor();
+	m_fv->set_holding(true);
 	return 1;
 }
 
+int FadeBend::finish_hold()
+{
+	QCursor::setPos(mousePos);
+	m_fv->set_holding(false);
+}
+
+void FadeBend::set_cursor_shape(int useX, int useY)
+{
+	Q_UNUSED(useX);
+	Q_UNUSED(useY);
+	
+	mousePos = QCursor::pos();
+	cpointer().get_viewport()->set_hold_cursor(":/cursorHoldUd");
+}
 
 int FadeBend::jog()
 {
 	int direction = (m_fade->get_fade_type() == FadeCurve::FadeIn) ? 1 : -1;
+	
+	float dx = (float(origY - cpointer().y()) / CURSOR_SPEED);
 
 	if (m_fade->get_raster()) {
-		float value = round_float(oldValue + ((origY - cpointer().y()) / CURSOR_SPEED) * direction);
+		float value = round_float(oldValue + dx * direction);
 		m_fade->set_bend_factor(value);
 	} else {
-		m_fade->set_bend_factor(oldValue + (float(origY - cpointer().y()) / CURSOR_SPEED) * direction);
+		m_fade->set_bend_factor(oldValue + dx * direction);
 	}
 
+	oldValue = m_fade->get_bend_factor();
+	
+	QCursor::setPos(mousePos);
+	
 	return 1;
 }
 
 /********** FadeStrength **********/
 /******************************/
 
+FadeStrength::FadeStrength(FadeView* fadeview)
+	: Command("FadeStrength")
+	, m_fade(fadeview->get_fade())
+	, m_fv(fadeview)
+{
+}
+
 int FadeStrength::begin_hold()
 {
 	PENTER;
 	origY = cpointer().y();
 	oldValue =  m_fade->get_strenght_factor();
+	m_fv->set_holding(true);
 	return 1;
 }
 
+
+int FadeStrength::finish_hold()
+{
+	QCursor::setPos(mousePos);
+	m_fv->set_holding(false);
+}
+
+
+void FadeStrength::set_cursor_shape(int useX, int useY)
+{
+	Q_UNUSED(useX);
+	Q_UNUSED(useY);
+	
+	mousePos = QCursor::pos();	
+	cpointer().get_viewport()->set_hold_cursor(":/cursorHoldUd");
+}
 
 int FadeStrength::jog()
 {
+	float dy = float(origY - cpointer().y()) / CURSOR_SPEED;
+	
 	if (m_fade->get_bend_factor() >= 0.5) {
-		m_fade->set_strength_factor(oldValue + float(origY - cpointer().y()) / CURSOR_SPEED);
+		m_fade->set_strength_factor(oldValue + dy );
 	} else {
 		if (m_fade->get_raster()) {
-			float value = round_float(oldValue + (origY - cpointer().y()) / CURSOR_SPEED);
+			float value = round_float(oldValue + dy);
 			m_fade->set_strength_factor(value);
 		} else {
-			m_fade->set_strength_factor(oldValue - float(origY - cpointer().y()) / CURSOR_SPEED);
+			m_fade->set_strength_factor(oldValue - dy);
 		}
 	}
 	
+	oldValue = m_fade->get_strenght_factor();
+	
+	QCursor::setPos(mousePos);
 
 	return 1;
 }
 
 
-// eof
 
+// eof
