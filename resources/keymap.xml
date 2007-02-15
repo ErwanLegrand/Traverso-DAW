@@ -137,6 +137,7 @@
 			<Object objectname="PluginView" slotsignature="edit_properties" modes="All" instantanious="0" />
 			<Object objectname="FadeView" slotsignature="edit_properties" modes="All" instantanious="0" />
 			<Object objectname="SpectralMeterView" slotsignature="edit_properties" modes="All" instantanious="0" />
+			<Object objectname="AudioClip" slotsignature="external_processing" modes="All" commandpluginname="AudioClipExternalProcessing" instantanious="0" />
 		</Objects>
 	</keyfact>
 	<keyfact type="FKEY" key1="N" sortorder="30" >
