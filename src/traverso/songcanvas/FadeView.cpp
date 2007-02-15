@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeView.cpp,v 1.7 2007/02/14 11:32:14 r_sijrier Exp $
+$Id: FadeView.cpp,v 1.8 2007/02/15 13:53:15 r_sijrier Exp $
 */
 
 #include "FadeView.h"
@@ -152,9 +152,12 @@ Command* FadeView::edit_properties()
 
 void FadeView::calculate_bounding_rect()
 {
-	ViewItem* parent = (ViewItem*)(parentItem());
+	ViewItem* parent = parentview();
 	
-	m_boundingRectangle = QRectF(0, 0, m_fadeCurve->get_range() / m_sv->scalefactor, parent->boundingRect().height() - parent->get_childview_y_offset());
+	m_boundingRectangle = QRectF( 0,
+				0, 
+	 			m_fadeCurve->get_range() / m_sv->scalefactor, 
+				parent->get_height());
 	
 	if (m_fadeCurve->get_fade_type() == FadeCurve::FadeOut) {
 		setPos(parent->boundingRect().width() - m_boundingRectangle.width(), parent->get_childview_y_offset());

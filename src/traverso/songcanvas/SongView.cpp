@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.19 2007/02/14 11:32:30 r_sijrier Exp $
+$Id: SongView.cpp,v 1.20 2007/02/15 13:53:15 r_sijrier Exp $
 */
 
 
@@ -135,13 +135,12 @@ SongView::SongView(ClipsViewPort* viewPort, TrackPanelViewPort* tpvp, TimeLineVi
 	m_clipsViewPort->scene()->addItem(m_playCursor);
 	m_clipsViewPort->scene()->addItem(m_workCursor);
 	
-	scale_factor_changed();
+	scalefactor = Peak::zoomStep[m_song->get_hzoom()];
 	
 	foreach(Track* track, m_song->get_tracks()) {
 		add_new_trackview(track);
 	}
 	
-	calculate_scene_rect();
 	load_theme_data();
 	
 	// FIXME Center too position on song close!!
@@ -166,17 +165,7 @@ SongView::~SongView()
 void SongView::scale_factor_changed( )
 {
 	scalefactor = Peak::zoomStep[m_song->get_hzoom()];
-	
-	QList<QGraphicsItem*> list = m_clipsViewPort->items();
-	
-	for (int i=list.size() - 1; i>=0; --i) {
-		ViewItem* item = dynamic_cast<ViewItem*>(list.at(i));
-		if (item) {
-			item->calculate_bounding_rect();
-		}
-	}
-	
-	calculate_scene_rect();
+	layout_tracks();
 }
 
 TrackView* SongView::get_trackview_under( QPointF point )
@@ -282,7 +271,6 @@ Command* SongView::vzoom_out()
 	}
 	
 	layout_tracks();
-	scale_factor_changed();
 	
 	return (Command*) 0;
 }
@@ -303,7 +291,6 @@ Command* SongView::vzoom_in()
 	}
 	
 	layout_tracks();
-	scale_factor_changed();
 	
 	return (Command*) 0;
 }
@@ -311,15 +298,19 @@ Command* SongView::vzoom_in()
 
 void SongView::layout_tracks()
 {
+	m_clipsViewPort->setUpdatesEnabled(false);
+
 	int verticalposition = m_trackTopIndent;
 	for (int i=0; i<m_trackViews.size(); ++i) {
 		TrackView* view = m_trackViews.at(i);
-		view->prepare_geometry_change();
 		view->calculate_bounding_rect();
 		view->move_to(0, verticalposition);
 		verticalposition += (view->get_track()->get_height() + m_trackSeperatingHeight);
 	}
-	scale_factor_changed();
+	
+	calculate_scene_rect();
+	
+	m_clipsViewPort->setUpdatesEnabled(true);
 }
 
 

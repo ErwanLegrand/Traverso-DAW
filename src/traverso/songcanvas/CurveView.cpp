@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.cpp,v 1.16 2007/02/08 20:51:38 r_sijrier Exp $
+$Id: CurveView.cpp,v 1.17 2007/02/15 13:53:15 r_sijrier Exp $
 */
 
 #include "CurveView.h"
@@ -176,13 +176,21 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 {
 	Q_UNUSED(widget);
 	PENTER;
+	
+	painter->save();
+	
 	painter->setRenderHint(QPainter::Antialiasing);
 	
+	QPen pen;
+	pen.setWidth(1.0);
+	
 	if (m_sv->viewmode == CurveMode) {
-		painter->setPen(themer()->get_color("Curve:active"));
+		pen.setColor(themer()->get_color("Curve:active"));
 	} else {
-		painter->setPen(themer()->get_color("Curve:inactive"));
+		pen.setColor(themer()->get_color("Curve:inactive"));
 	}
+	
+	painter->setPen(pen);
 	
 	QPolygonF polygon;
 	float value[2];
@@ -220,7 +228,9 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	
 	path.addPolygon(polygon);
 	
-	painter->drawPath(path);	
+	painter->drawPath(path);
+	
+	painter->restore();
 }
 
 
@@ -251,7 +261,10 @@ void CurveView::remove_curvenode_view(CurveNode* node)
 
 void CurveView::calculate_bounding_rect()
 {
-	m_boundingRectangle = parentItem()->boundingRect();
+	int y  = parentview()->get_childview_y_offset();
+	m_boundingRectangle = QRectF(0, 0, parentItem()->boundingRect().width(), parentview()->get_height());
+	setPos(0, y);
+	ViewItem::calculate_bounding_rect();
 }
 
 void CurveView::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )

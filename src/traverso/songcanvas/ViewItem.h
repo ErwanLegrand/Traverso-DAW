@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewItem.h,v 1.7 2007/02/14 11:32:14 r_sijrier Exp $
+$Id: ViewItem.h,v 1.8 2007/02/15 13:53:15 r_sijrier Exp $
 */
 
 #ifndef VIEW_ITEM_H
@@ -41,9 +41,12 @@ class ViewItem : public ContextItem, public QGraphicsItem
 			
 public:
 
-	ViewItem(ViewItem* parent=0, ContextItem* parentContext=0) : ContextItem(parent), QGraphicsItem(parent)
+	ViewItem(ViewItem* parentViewItem=0, ContextItem* parentContext=0)
+	: ContextItem(parentViewItem)
+	, QGraphicsItem(parentViewItem)
 	{
 		set_context_item(parentContext);
+		m_parentViewItem = parentViewItem;
 	}
 	
 	~ViewItem() {};
@@ -56,11 +59,19 @@ public:
 	};
 	
 	QRectF boundingRect() const;
-	virtual void calculate_bounding_rect() {};
+	virtual void calculate_bounding_rect() {
+		for (int i=0; i< QGraphicsItem::children().size(); ++i) {
+		((ViewItem*)QGraphicsItem::children().at(i))->calculate_bounding_rect();
+		}
+	}
 	void prepare_geometry_change() {prepareGeometryChange();}
 	virtual int get_childview_y_offset() const {return 0;}
 	virtual int type() const;
 	virtual int get_height() const {return (int)m_boundingRectangle.height();}
+	ViewItem* parentview() const {
+		Q_ASSERT(m_parentViewItem);
+		return m_parentViewItem; 
+	}
 	
 	/**
 	 *      Reimplement and call update() in the reimplementation
@@ -71,6 +82,7 @@ public:
 protected:
 
 	SongView* 	m_sv;
+	ViewItem*	m_parentViewItem;
 	QRectF		m_boundingRectangle;
 	
 };

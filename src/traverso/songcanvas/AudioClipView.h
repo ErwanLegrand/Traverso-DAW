@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.h,v 1.11 2007/02/14 11:32:14 r_sijrier Exp $
+$Id: AudioClipView.h,v 1.12 2007/02/15 13:53:15 r_sijrier Exp $
 */
 
 #ifndef AUDIO_CLIP_VIEW_H
@@ -43,6 +43,7 @@ class AudioClipView : public ViewItem
 	Q_CLASSINFO("drag_edge", tr("Move Edge"))
 	Q_CLASSINFO("split", tr("Split"))
 	Q_CLASSINFO("fade_range", tr("Fade In/Out"))
+	Q_CLASSINFO("external_processing", tr("External Processing"))
 
 public:
 	AudioClipView(SongView* view, TrackView* parent, AudioClip* clip);
@@ -112,6 +113,7 @@ public slots:
 	Command* drag_edge();
 	Command* split();
 	Command* fade_range();
+	Command* external_processing();
 	
 private slots:
 	void update_progress_info(int progress);
@@ -119,7 +121,11 @@ private slots:
 };
 
 
-inline int AudioClipView::get_height() const {return m_height;}
+inline int AudioClipView::get_height() const {
+	int height;
+	(m_height > m_mimimumheightforinfoarea) ? height = m_height - m_infoAreaHeight : height = m_height;
+	return height;
+}
 
 
 #endif

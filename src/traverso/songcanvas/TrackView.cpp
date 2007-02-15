@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.18 2007/02/14 11:32:14 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.19 2007/02/15 13:53:15 r_sijrier Exp $
 */
 
 #include <QLineEdit>
@@ -120,13 +120,6 @@ void TrackView::remove_audioclipview( AudioClip * clip )
 	}
 }
 
-
-// void TrackView::add_clip_view(AudioClipView* view)
-// {
-// 	view->setParent(this);
-// 	m_clipViews.append(view);
-// }
-
 Track* TrackView::get_track( ) const
 {
 	return m_track;
@@ -182,7 +175,7 @@ void TrackView::calculate_bounding_rect()
 {
 	m_boundingRectangle = QRectF(0, 0, MAX_CANVAS_WIDTH, m_track->get_height());
 	m_panel->calculate_bounding_rect();
-	update();
+	ViewItem::calculate_bounding_rect();
 }
 
 void TrackView::load_theme_data()
@@ -193,8 +186,6 @@ void TrackView::load_theme_data()
 	
 	m_cliptopmargin = themer()->get_property("Track:cliptopmargin").toInt();
 	m_clipbottommargin = themer()->get_property("Track:clipbottommargin").toInt();
-
-	update();
 }
 
 //eof
