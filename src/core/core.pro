@@ -97,7 +97,8 @@ HEADERS = precompile.h \
 	gdither_types_internal.h \
 	noise.h \
 	FastDelegate.h \
-	SnapList.h
+	SnapList.h \
+	CommandPlugin.h
 macx{
     QMAKE_LIBDIR += /usr/local/qt/lib
 }
