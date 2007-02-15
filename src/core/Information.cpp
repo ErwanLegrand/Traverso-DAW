@@ -17,10 +17,14 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Information.cpp,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
+    $Id: Information.cpp,v 1.2 2007/02/15 23:10:44 r_sijrier Exp $
 */
 
 #include "Information.h"
+#include "Utils.h"
+
+#include "Debugger.h"
+
 
 Information& info()
 {
@@ -33,7 +37,8 @@ void Information::information( const QString & mes )
         InfoStruct s;
         s.message = mes;
         s.type = INFO;
-        emit message(s);
+	PMESG("Information::information %s", QS_C(mes));
+	emit message(s);
 }
 
 void Information::warning( const QString & mes )
@@ -41,6 +46,7 @@ void Information::warning( const QString & mes )
         InfoStruct s;
         s.message = mes;
         s.type = WARNING;
+	PWARN("Information::warning %s", QS_C(mes));
         emit message(s);
 }
 
@@ -50,7 +56,8 @@ void Information::critical( const QString & mes )
         InfoStruct s;
         s.message = mes;
         s.type = CRITICAL;
-        emit message(s);
+	PERROR("Information::critical %s", QS_C(mes));
+	emit message(s);
 }
 
 //eof
