@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.29 2007/02/14 12:22:05 r_sijrier Exp $
+$Id: InputEngine.cpp,v 1.30 2007/02/15 21:07:35 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -26,6 +26,7 @@ $Id: InputEngine.cpp,v 1.29 2007/02/14 12:22:05 r_sijrier Exp $
 #include "ContextPointer.h"
 #include "Information.h"
 #include "Command.h"
+#include <CommandInterface.h>
 #include "Utils.h"
 
 #include <QTime>
@@ -34,6 +35,8 @@ $Id: InputEngine.cpp,v 1.29 2007/02/14 12:22:05 r_sijrier Exp $
 #include <QDomDocument>
 #include <QMetaMethod>
 #include <QCoreApplication>
+#include <QPluginLoader>
+#include <QDir>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -138,6 +141,18 @@ InputEngine::InputEngine()
 	sCollectedNumber = "-1";
 	locked=false; // THIS SHOULD CALL everythingLocked
 	activate();
+	
+	QDir pluginsDir("lib/commandplugins");
+	foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
+		QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
+		CommandPlugin* plug = qobject_cast<CommandPlugin*>(loader.instance());
+		if (plug) {
+			m_commandplugins.insert(plug->metaObject()->className(), plug);
+			printf("InputEngine:: Succesfully loaded plugin: %s\n", plug->metaObject()->className());
+		} else {
+			printf("InputEngine:: Plugin load failed with %s\n", QS_C(loader.errorString()));
+		}
+	}
 }
 
 InputEngine::~ InputEngine( )
@@ -212,6 +227,7 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat)
 		
 		IEAction::Data* data;
 		data = action->objects.value(QString(item->metaObject()->className()));
+		QString commandpluginname = "";
 		
 		if ( ! data ) {
 			PMESG("No data found for object %s", item->metaObject()->className());
@@ -219,6 +235,7 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat)
 			PMESG("Data found for %s!", item->metaObject()->className());
 			PMESG("setting slotsignature to %s", data->slotsignature);
 			slotsignature = data->slotsignature;
+			commandpluginname = data->commandpluginname;
 		}
 		
 		if (item == holdingCommand) {
@@ -231,6 +248,18 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat)
 				break;
 			}
 		} else if ( ! holdingCommand) {
+			
+			if ( ! commandpluginname.isEmpty() ) {
+				CommandPlugin* plug = m_commandplugins.value(commandpluginname);
+				if (!plug) {
+					PMESG("plugin not found for: %s", QS_C(commandpluginname));
+				} else {
+					PMESG("InputEngine:: Using plugin %s for command %s", QS_C(commandpluginname), data->slotsignature);
+					k = plug->create(item);
+					break;
+				}
+			} 
+			
 			if (QMetaObject::invokeMethod(item,
 					slotsignature,
 					Qt::DirectConnection,
@@ -1055,6 +1084,7 @@ int InputEngine::init_map(const QString& mapFilename)
 			data->modes = e.attribute("modes", "").split(";");
 			data->description = e.attribute("description", "");
 			data->instantanious = e.attribute("instantanious", "0").toInt();
+			data->commandpluginname = e.attribute( "commandpluginname", "");
 			
 			if (QString(objectname) == "") {
 				PERROR("no objectname given in keyaction %s", QS_C(keyFactType));

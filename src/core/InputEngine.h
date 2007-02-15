@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: InputEngine.h,v 1.9 2007/01/22 15:12:08 r_sijrier Exp $
+    $Id: InputEngine.h,v 1.10 2007/02/15 21:07:35 r_sijrier Exp $
 */
 
 #ifndef INPUTENGINE_H
@@ -35,6 +35,7 @@
 
 class ContextItem;
 class Command;
+class CommandPlugin;
 
 static const int FKEY = 0;                 // <K>    - press one key fast
 static const int FKEY2 = 1;                // <KK>   - press two keys fast, together
@@ -81,7 +82,8 @@ struct IEAction
         	char* slotsignature;
         	QString description;
         	int instantanious;
-        };
+		QString commandpluginname;
+	};
 
         QHash<QString, Data*> objects;
 
@@ -203,6 +205,7 @@ private:
         static const int 	RELEASE_EVENT = 2;
 
         QList<IEAction* >	ieActions;
+	QHash<QString, CommandPlugin*> m_commandplugins;
         EventCatcher 		catcher;
         Command* 		holdingCommand;
         QString			sCollectedNumber;
