@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Command.cpp,v 1.11 2007/02/05 17:08:47 r_sijrier Exp $
+$Id: Command.cpp,v 1.12 2007/02/15 21:07:26 r_sijrier Exp $
 */
 
 #include "Command.h"
@@ -40,6 +40,7 @@ Command::Command( const QString& des )
 Command::Command(ContextItem* item, const QString& des)
 	: QUndoCommand(des)
 {
+	Q_ASSERT(item);
 	m_historyStack = item->get_history_stack();
 	m_isHistorable = true;
 }
