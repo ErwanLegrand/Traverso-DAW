@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PrivateReadSource.cpp,v 1.7 2007/01/15 23:51:47 r_sijrier Exp $
+$Id: PrivateReadSource.cpp,v 1.8 2007/02/15 21:15:11 r_sijrier Exp $
 */
 
 
@@ -309,7 +309,7 @@ void PrivateReadSource::recover_from_buffer_underrun(nframes_t position)
 
 void PrivateReadSource::start_resync( nframes_t position )
 {
-	printf("starting resync!\n");
+// 	printf("starting resync!\n");
 	m_syncPos = position;
 	m_rbReady = 0;
 	m_needSync = 1;
@@ -317,7 +317,7 @@ void PrivateReadSource::start_resync( nframes_t position )
 
 void PrivateReadSource::finish_resync()
 {
-	printf("sync finished\n");
+// 	printf("sync finished\n");
 	m_needSync = 0;
 	m_bufferUnderRunDetected = 0;
 	m_rbReady = 1;
