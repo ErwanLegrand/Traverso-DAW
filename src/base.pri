@@ -19,9 +19,8 @@ CONFIG += debug
 
 DEFINES += JACK_SUPPORT
 DEFINES += ALSA_SUPPORT
-#DEFINES += LV2_SUPPORT
+DEFINES += LV2_SUPPORT
 DEFINES += PRECOMPILED_HEADER
-DEFINES += RT_THREAD_CHECK
 #DEFINES += USE_MEM_CHECKER
 
 #
@@ -54,10 +53,11 @@ MOC_DIR = build
 UI_DIR = build 
 OBJECTS_DIR = build 
 
-QMAKE_CXXFLAGS += $$system(pkg-config --cflags glib-2.0)
+QMAKE_CXXFLAGS += $$system(pkg-config --cflags glib-2.0) -fstack-protector-all 
 
 
 debug {
+#	DEFINES += RT_THREAD_CHECK
 	DEFINES += USE_DEBUGGER
 #	DEFINES += USE_MEM_CHECKER
 }
