@@ -8,6 +8,7 @@ TEMPLATE = subdirs
 
 SUBDIRS += src/engine \
 	   src/commands \
+	   src/commands/plugins/AudioClipExternalProcessing \
            src/core \
            src/plugins \
            src/traverso
