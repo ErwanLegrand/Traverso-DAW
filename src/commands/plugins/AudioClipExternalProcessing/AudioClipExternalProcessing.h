@@ -21,8 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QObject>
 #include <QString>
-#include <CommandInterface.h>
-#include <Command.h>
+#include <CommandPlugin.h>
 
 class AudioClipExternalProcessing : public CommandPlugin, public CommandInterface
 {
