@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Project.h,v 1.6 2006/12/04 19:24:54 r_sijrier Exp $
+$Id: Project.h,v 1.7 2007/02/15 21:07:57 r_sijrier Exp $
 */
 
 #ifndef PROJECT_H
@@ -53,6 +53,7 @@ public :
 	QString get_title() const;
 	QString get_engineer() const;
 	QString get_root_dir() const;
+	QString get_audiosources_dir() const;
 	QStringList get_songs() const;
 	QHash<int, Song* > get_song_list() const;
 	Song* get_current_song() const ;

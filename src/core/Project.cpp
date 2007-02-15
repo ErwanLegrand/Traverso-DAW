@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Project.cpp,v 1.11 2007/01/15 23:51:47 r_sijrier Exp $
+$Id: Project.cpp,v 1.12 2007/02/15 21:07:57 r_sijrier Exp $
 */
 
 #include <QFile>
@@ -432,9 +432,15 @@ QString Project::get_root_dir( ) const
 	return rootDir;
 }
 
+QString Project::get_audiosources_dir() const
+{
+	return rootDir + "/audiosources/";
+}
+
 AudioSourceManager * Project::get_audiosource_manager( ) const
 {
 	return asmanager;
 }
 
 //eof
+
