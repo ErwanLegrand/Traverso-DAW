@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSourceManager.cpp,v 1.12 2006/10/18 12:03:16 r_sijrier Exp $
+$Id: AudioSourceManager.cpp,v 1.13 2007/02/15 23:10:16 r_sijrier Exp $
 */
 
 #include "AudioSourceManager.h"
@@ -177,7 +177,8 @@ ReadSource * AudioSourceManager::get_readsource( qint64 id )
 	}
 		
 	if ( source->init() < 0) {
-		info().warning( tr( "Failed to initialize ReadSource : %1").arg(source->get_filename()) );
+		info().warning( tr( "Failed to initialize ReadSource, removing from database: %1").arg(source->get_filename()) );
+		m_sources.remove(id);
 		delete source;
 		source = 0;
 	}
