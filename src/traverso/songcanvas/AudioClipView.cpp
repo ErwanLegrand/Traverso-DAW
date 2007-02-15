@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.27 2007/02/15 13:53:15 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.28 2007/02/15 21:16:07 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -41,7 +41,7 @@ $Id: AudioClipView.cpp,v 1.27 2007/02/15 13:53:15 r_sijrier Exp $
 #include <MoveEdge.h>
 #include <SplitClip.h>
 #include <Fade.h>
-#include <ExternalClipProcessor.h>
+
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -577,12 +577,6 @@ Command* AudioClipView::split()
 {
 	Q_ASSERT(m_song);
 	return new SplitClip(m_sv, m_clip);
-}
-
-
-Command* AudioClipView::external_processing( )
-{
-	return new ExternalClipProcessor(m_clip);
 }
 
 
