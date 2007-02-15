@@ -123,10 +123,16 @@ int Processor::prepare_actions()
 		return -1;
 	} else {
 		result = m_processor->readAllStandardOutput();
-		m_resultingclip = manager->new_audio_clip(outfilename.remove(".wav").remove(pm().get_project()->get_root_dir()).remove("/audiosources/"));
+		
 		QString dir = pm().get_project()->get_root_dir() + "/audiosources/";
 	
-		ReadSource* source = pm().get_project()->get_audiosource_manager()->new_readsource(dir, name);
+		ReadSource* source = manager->new_readsource(dir, name);
+		if (!source) {
+			printf("AudioSourcesManager didn't return a ReadSource, most likely sox didn't understand your command\n");
+			return -1;
+		}
+		
+		m_resultingclip = manager->new_audio_clip(outfilename.remove(".wav").remove(pm().get_project()->get_root_dir()).remove("/audiosources/"));
 		m_resultingclip->set_song(m_clip->get_song());
 		m_resultingclip->set_track(m_clip->get_track());
 		m_resultingclip->set_audio_source(source);
