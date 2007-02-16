@@ -118,13 +118,17 @@ int Processor::prepare_actions()
 	QString result;
 	
 	if (! m_processor->waitForFinished() ) {
+		if (!result.isEmpty())
 		result = m_processor->errorString();
-		printf("output: \n %s", QS_C(result));
+		if (!result.isEmpty())
+			printf("output: \n %s", QS_C(result));
 		return -1;
 	} else {
 		result = m_processor->readAllStandardOutput();
+		if (!result.isEmpty())
+			printf("output: \n %s", QS_C(result));
 		
-		QString dir = pm().get_project()->get_root_dir() + "/audiosources/";
+		QString dir = pm().get_project()->get_audiosources_dir();
 	
 		ReadSource* source = manager->new_readsource(dir, name);
 		if (!source) {
@@ -132,14 +136,14 @@ int Processor::prepare_actions()
 			return -1;
 		}
 		
-		m_resultingclip = manager->new_audio_clip(outfilename.remove(".wav").remove(pm().get_project()->get_root_dir()).remove("/audiosources/"));
+		m_resultingclip = manager->new_audio_clip(outfilename.remove(".wav").remove(pm().get_project()->get_audiosources_dir()));
+		// Clips live at project level, we have to set its Song, Track and ReadSource explicitely!!
 		m_resultingclip->set_song(m_clip->get_song());
 		m_resultingclip->set_track(m_clip->get_track());
 		m_resultingclip->set_audio_source(source);
 		m_resultingclip->set_track_start_frame(m_clip->get_track_start_frame());
 	}
 	
-	printf("output: \n %s", QS_C(result));
 	
 	return 1;
 }
