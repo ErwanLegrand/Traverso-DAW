@@ -136,7 +136,7 @@ int Processor::prepare_actions()
 			return -1;
 		}
 		
-		m_resultingclip = manager->new_audio_clip(outfilename.remove(".wav").remove(pm().get_project()->get_audiosources_dir()));
+		m_resultingclip = manager->new_audio_clip(name.remove(".wav"));
 		// Clips live at project level, we have to set its Song, Track and ReadSource explicitely!!
 		m_resultingclip->set_song(m_clip->get_song());
 		m_resultingclip->set_track(m_clip->get_track());
