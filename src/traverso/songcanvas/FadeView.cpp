@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeView.cpp,v 1.9 2007/02/23 13:54:33 r_sijrier Exp $
+$Id: FadeView.cpp,v 1.10 2007/02/23 14:57:18 r_sijrier Exp $
 */
 
 #include "FadeView.h"
@@ -100,7 +100,7 @@ void FadeView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 	
 	
 	painter->save();
-	painter->setClipRect(m_boundingRect);
+	painter->setClipRect(m_boundingRect.intersect(m_parentViewItem->boundingRect()));
 	painter->setRenderHint(QPainter::Antialiasing);
 	
 	QPainterPath path;
@@ -157,10 +157,10 @@ void FadeView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 int FadeView::get_vector(int xstart, int pixelcount, float * arg)
 {
 	if (m_fadeCurve->get_fade_type() == FadeCurve::FadeOut) {
-		int mappedx = (int) mapFromParent(xstart, 0).x();
+		int mappedx = - (int) mapFromParent(0, 0).x();
 		// CurveView adjusts xstart with -1 and pixelcount with +2
 		// compensate for this!
-		if (mappedx + xstart >= 3) {
+		if (false) {
 			m_guicurve->get_vector(mappedx, mappedx + pixelcount, arg, pixelcount);
 			return 1;
 		} else {
