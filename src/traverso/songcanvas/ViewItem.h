@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewItem.h,v 1.8 2007/02/15 13:53:15 r_sijrier Exp $
+$Id: ViewItem.h,v 1.9 2007/02/23 13:55:07 r_sijrier Exp $
 */
 
 #ifndef VIEW_ITEM_H
@@ -67,11 +67,7 @@ public:
 	void prepare_geometry_change() {prepareGeometryChange();}
 	virtual int get_childview_y_offset() const {return 0;}
 	virtual int type() const;
-	virtual int get_height() const {return (int)m_boundingRectangle.height();}
-	ViewItem* parentview() const {
-		Q_ASSERT(m_parentViewItem);
-		return m_parentViewItem; 
-	}
+	virtual int get_height() const {return (int)m_boundingRect.height();}
 	
 	/**
 	 *      Reimplement and call update() in the reimplementation
@@ -83,11 +79,11 @@ protected:
 
 	SongView* 	m_sv;
 	ViewItem*	m_parentViewItem;
-	QRectF		m_boundingRectangle;
+	QRectF		m_boundingRect;
 	
 };
 
-inline QRectF ViewItem::boundingRect() const {return m_boundingRectangle;}
+inline QRectF ViewItem::boundingRect() const {return m_boundingRect;}
 inline int ViewItem::type() const {return Type;}
 
 #endif
