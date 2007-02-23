@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.20 2007/02/15 13:53:15 r_sijrier Exp $
+$Id: SongView.cpp,v 1.21 2007/02/23 13:57:53 r_sijrier Exp $
 */
 
 
@@ -221,8 +221,8 @@ void SongView::calculate_scene_rect()
 	int width = m_song->get_last_frame() / scalefactor + m_clipsViewPort->height() / 2;
 	
 	m_clipsViewPort->setSceneRect(0, 0, width, totalheight);
-	m_tlvp->setSceneRect(0, -2, width, -23);
-	m_tpvp->setSceneRect(-2, 0, -200, totalheight);
+	m_tlvp->setSceneRect(0, -30, width, 0);
+	m_tpvp->setSceneRect(-200, 0, 0, totalheight);
 	
 	m_playCursor->set_bounding_rect(QRectF(0, 0, 2, totalheight));
 	m_playCursor->update_position();
@@ -298,7 +298,7 @@ Command* SongView::vzoom_in()
 
 void SongView::layout_tracks()
 {
-	m_clipsViewPort->setUpdatesEnabled(false);
+// 	m_clipsViewPort->viewport()->setUpdatesEnabled(false);
 
 	int verticalposition = m_trackTopIndent;
 	for (int i=0; i<m_trackViews.size(); ++i) {
@@ -310,7 +310,7 @@ void SongView::layout_tracks()
 	
 	calculate_scene_rect();
 	
-	m_clipsViewPort->setUpdatesEnabled(true);
+// 	m_clipsViewPort->viewport()->setUpdatesEnabled(true);
 }
 
 
