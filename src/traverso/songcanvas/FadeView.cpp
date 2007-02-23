@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeView.cpp,v 1.8 2007/02/15 13:53:15 r_sijrier Exp $
+$Id: FadeView.cpp,v 1.9 2007/02/23 13:54:33 r_sijrier Exp $
 */
 
 #include "FadeView.h"
@@ -30,6 +30,8 @@ $Id: FadeView.cpp,v 1.8 2007/02/15 13:53:15 r_sijrier Exp $
 #include "SongView.h"
 #include <Themer.h>
 #include <Fade.h>
+#include <InputEngine.h>
+#include <AddRemoveItemCommand.h>
 
 #include "Song.h"
 
@@ -46,8 +48,18 @@ FadeView::FadeView(SongView* sv, AudioClipView* parent, FadeCurve * fadeCurve )
 	PENTERCONS;
 	m_sv = sv;
 	m_holdactive = false;
+	m_guicurve = new Curve(0, m_sv->get_song());
 	
-	calculate_bounding_rect();	
+	foreach(CurveNode* node, *m_fadeCurve->get_nodes()) {
+		CurveNode* guinode = new CurveNode(m_guicurve, 
+				node->get_when() / m_sv->scalefactor,
+				node->get_value());
+		AddRemoveItemCommand* cmd = (AddRemoveItemCommand*) m_guicurve->add_node(guinode, false);
+		cmd->set_instantanious(true);
+		ie().process_command(cmd);
+	}
+	
+	load_theme_data();
 	setAcceptsHoverEvents(true);
 	
 	connect(m_fadeCurve, SIGNAL(stateChanged()), this, SLOT(state_changed()));
@@ -58,6 +70,7 @@ FadeView::FadeView(SongView* sv, AudioClipView* parent, FadeCurve * fadeCurve )
 FadeView::~ FadeView( )
 {
 	PENTERDES;
+	delete m_guicurve;
 }
 
 
@@ -65,27 +78,29 @@ void FadeView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 {
 	Q_UNUSED(widget);
 	
-	QPolygonF polygon;
-	float value[2];
-	int scaleFactor = m_sv->scalefactor;
-	int xstart = (int)option->exposedRect.x();
-	int pixelcount = (int) option->exposedRect.width();
-	int height = (int)m_boundingRectangle.height();
 	
-	// Populate the polygon with enough points to draw a smooth curve.
-	// We add 1 to position and xstart to compensate for an off by 1 pixel offset.
-	// Don't know exactly why this offset is there....
-	int position = xstart;
-	do {
-		m_fadeCurve->get_vector(position*scaleFactor, position*scaleFactor + 1, value, 2);
-		polygon << QPointF(position + 1, height - (value[1] * height));
-// 		printf("x, y: %d, %f \n", position, height - (value[1] * height));
-	 	position ++;
-	} while (position <= (xstart + pixelcount));
+	int pixelcount = (int) option->exposedRect.width();
+	
+	if (pixelcount == 0) {
+		return;
+	}
+	
+	pixelcount += 1;
+	
+	QPolygonF polygon;
+	int xstart = (int)option->exposedRect.x();
+	int height = (int)m_boundingRect.height();
+	float vector[pixelcount];
+	
+	m_guicurve->get_vector(xstart, xstart + pixelcount, vector, pixelcount);
+	
+	for (int i=0; i<pixelcount; i++) {
+		polygon <<  QPointF(xstart + i, height - (vector[i] * height) );
+	}
 	
 	
 	painter->save();
-	painter->setClipRect(m_boundingRectangle.intersected(parentItem()->boundingRect()));
+	painter->setClipRect(m_boundingRect);
 	painter->setRenderHint(QPainter::Antialiasing);
 	
 	QPainterPath path;
@@ -97,7 +112,9 @@ void FadeView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 	
 	painter->setPen(Qt::NoPen);
 	
-	QColor color = m_fadeCurve->is_bypassed() ? themer()->get_color("Fade:bypassed") : themer()->get_color("Fade:default");
+	QColor color = m_fadeCurve->is_bypassed() ? 
+			themer()->get_color("Fade:bypassed") :
+			themer()->get_color("Fade:default");
 	
 	if (option->state & QStyle::State_MouseOver) {
 		color.setAlpha(color.alpha() + 10);
@@ -109,8 +126,8 @@ void FadeView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
 	if (m_holdactive) {
 		// Calculate and draw control points
-		int h = (int) m_boundingRectangle.height() - 1;
-		int w = (int) m_boundingRectangle.width() - 1;
+		int h = (int) m_boundingRect.height() - 1;
+		int w = (int) m_boundingRect.width() - 1;
 		QList<QPointF> points = m_fadeCurve->get_control_points();
 		QPoint p1(int(points.at(1).x() * w + 0.5), h - int(points.at(1).y() * h + 0.5));
 		QPoint p2(w - int((1.0 - points.at(2).x()) * w + 0.5), int((1.0 - points.at(2).y()) * h + 0.5));
@@ -137,6 +154,28 @@ void FadeView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 	painter->restore();
 }
 
+int FadeView::get_vector(int xstart, int pixelcount, float * arg)
+{
+	if (m_fadeCurve->get_fade_type() == FadeCurve::FadeOut) {
+		int mappedx = (int) mapFromParent(xstart, 0).x();
+		// CurveView adjusts xstart with -1 and pixelcount with +2
+		// compensate for this!
+		if (mappedx + xstart >= 3) {
+			m_guicurve->get_vector(mappedx, mappedx + pixelcount, arg, pixelcount);
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+	
+	if (xstart < m_boundingRect.width()) {
+		m_guicurve->get_vector(xstart, xstart + pixelcount, arg, pixelcount);
+		return 1;
+	}
+	
+	return 0;
+}
+
 /*
 Command* FadeView::edit_properties()
 {
@@ -152,17 +191,23 @@ Command* FadeView::edit_properties()
 
 void FadeView::calculate_bounding_rect()
 {
-	ViewItem* parent = parentview();
+	QList<CurveNode*>* guinodes = m_guicurve->get_nodes();
+	QList<CurveNode*>* nodes = m_fadeCurve->get_nodes();
+	for (int i=0; i<guinodes->size(); ++i) {
+		CurveNode* node = nodes->at(i);
+		CurveNode* guinode = guinodes->at(i);
+		guinode->set_when_and_value(node->get_when() / m_sv->scalefactor, node->get_value());
+	}
 	
-	m_boundingRectangle = QRectF( 0,
-				0, 
-	 			m_fadeCurve->get_range() / m_sv->scalefactor, 
-				parent->get_height());
+	m_boundingRect = QRectF( 0, 0,
+	 			m_guicurve->get_range(), 
+				m_parentViewItem->get_height() );
 	
 	if (m_fadeCurve->get_fade_type() == FadeCurve::FadeOut) {
-		setPos(parent->boundingRect().width() - m_boundingRectangle.width(), parent->get_childview_y_offset());
+		setPos(m_parentViewItem->boundingRect().width() - m_boundingRect.width(), 
+		       m_parentViewItem->get_childview_y_offset());
 	} else {
-		setPos(0, parent->get_childview_y_offset());
+		setPos(0, m_parentViewItem->get_childview_y_offset());
 	}
 }
 
@@ -172,6 +217,7 @@ void FadeView::state_changed( )
 	PENTER;
 	prepareGeometryChange();
 	calculate_bounding_rect();
+	update();
 }
 
 
@@ -188,8 +234,14 @@ Command* FadeView::strength()
 void FadeView::set_holding(bool hold)
 {
 	m_holdactive = hold;
-	update(m_boundingRectangle);
+	update(m_boundingRect);
 }
 
 
+void FadeView::load_theme_data()
+{
+	calculate_bounding_rect();
+}
+
 //eof
+

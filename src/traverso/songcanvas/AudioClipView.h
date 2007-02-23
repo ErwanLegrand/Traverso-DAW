@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.h,v 1.13 2007/02/15 21:16:07 r_sijrier Exp $
+$Id: AudioClipView.h,v 1.14 2007/02/23 13:54:33 r_sijrier Exp $
 */
 
 #ifndef AUDIO_CLIP_VIEW_H
@@ -62,6 +62,9 @@ public:
 	void set_trackview(TrackView* view) {m_tv = view;}
 	
 	void load_theme_data();
+	
+protected:
+	void hoverEnterEvent ( QGraphicsSceneHoverEvent * event );
 
 private:
 	TrackView* 	m_tv;

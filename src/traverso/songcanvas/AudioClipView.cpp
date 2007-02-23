@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.28 2007/02/15 21:16:07 r_sijrier Exp $
+$Id: AudioClipView.cpp,v 1.29 2007/02/23 13:54:33 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -84,7 +84,7 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	
 	connect(m_sv, SIGNAL(viewModeChanged()), this, SLOT(repaint()));
 	
-	setFlags(ItemIsSelectable | ItemIsMovable);
+// 	setFlags(ItemIsSelectable | ItemIsMovable);
 	setAcceptsHoverEvents(true);
 }
 
@@ -103,7 +103,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 		return;
 	}
 
-// 	printf("AudioClipView:: PAINT :: exposed rect is: x=%f, y=%f, w=%f, h=%f\n", option->exposedRect.x(), option->exposedRect.y(), option->exposedRect.width(), option->exposedRect.height());
+	printf("AudioClipView:: %s PAINT :: exposed rect is: x=%f, y=%f, w=%f, h=%f\n", QS_C(m_clip->get_name()), option->exposedRect.x(), option->exposedRect.y(), option->exposedRect.width(), option->exposedRect.height());
 	
 	int xstart = (int) option->exposedRect.x();
 	int pixelcount = (int) option->exposedRect.width();
@@ -112,8 +112,9 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 		return;
 	}
 	
+	painter->save();
 	
-	QRectF clipRect = m_boundingRectangle;
+	QRectF clipRect = m_boundingRect;
 	clipRect.setWidth(clipRect.width() + 1);
 	clipRect.setHeight(clipRect.height());
 	painter->setClipRect(clipRect);
@@ -188,6 +189,8 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	if (!m_sv->viewmode == CurveMode) {
 // 		curveView->paint(painter, option, widget);
 	}
+	
+	painter->restore();
 
 // 	printf("drawing clip\n");
 	
@@ -204,14 +207,20 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	// when using a different color for the brush then the outline.
 	// Painting one more pixel makes it getting clipped away.....
 	pixelcount += 1;
-	int channels = m_clip->get_channels();
+	// Seems like we need one pixel more to the left as well, to 
+	// make the outline painting painted correctly...
+	xstart = xstart - 1;
+	if (xstart < 0)
+		xstart = 0;
 	
+	int channels = m_clip->get_channels();
 	bool microView = m_song->get_hzoom() > Peak::MAX_ZOOM_USING_SOURCEFILE ? 0 : 1;
 	int peakdatacount = microView ? pixelcount : pixelcount * 2;
 
 	int buffersize = microView ? sizeof(short) * peakdatacount : sizeof(unsigned char) * peakdatacount;
 	unsigned char buffers[channels][buffersize];
 	float pixeldata[channels][buffersize];
+	float curvemixdown[buffersize];
 	
 	
 	// Load peak data for all channels, if no peakdata is returned
@@ -237,13 +246,32 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		return;
 	}
 	
+	int mixcurvedata = 0;
+	mixcurvedata |= curveView->get_vector(xstart, pixelcount, curvemixdown);
+	
+	float fademixdown[pixelcount];
+	for (int i = 0; i < m_fadeViews.size(); ++i) {
+		FadeView* view = m_fadeViews.at(i);
+		int fademix;
+		if (mixcurvedata) {
+			fademix = view->get_vector(xstart, pixelcount, fademixdown);
+		} else {
+			fademix = view->get_vector(xstart, pixelcount, curvemixdown);
+		}
+			
+		if (mixcurvedata && fademix) {
+			for (int j=0; j<pixelcount; ++j) {
+				curvemixdown[j] *= fademixdown[j];
+			}
+		}
+		mixcurvedata |= fademix;
+	}
 	
 	// Load the Peak data into the pixeldata float buffers
 	// ClassicView uses both positive and negative values,
 	// rectified view: pick the highest value of both
 	// Merged view: calculate highest value for all channels, 
 	// and store it in the first channels pixeldata.
-	// TODO mix curve pixel data with the pixeldata buffers!
 	if (!microView) {
 		for (int chan=0; chan < channels; chan++) {
 			if (m_classicView) {
@@ -255,7 +283,24 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			} else {
 				for (int i = 0; i < (pixelcount*2); i+=2) {
 					pixeldata[chan][i] = - f_max(buffers[chan][i], - buffers[chan][i+1]);
-					
+				}
+			}
+		}
+		
+		if (mixcurvedata) {
+			int curvemixdownpos;
+			for (int chan=0; chan < channels; chan++) {
+				curvemixdownpos = 0;
+				if (m_classicView) {
+					for (int i = 0; i < (pixelcount*2); ++i) {
+						pixeldata[chan][i] *= curvemixdown[curvemixdownpos];
+						i++;
+						pixeldata[chan][i] *= curvemixdown[curvemixdownpos++];
+					}
+				} else {
+					for (int i = 0; i < (pixelcount*2); i+=2) {
+						pixeldata[chan][i] *= curvemixdown[curvemixdownpos++];
+					}
 				}
 			}
 		}
@@ -274,7 +319,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	for (int chan=0; chan < channels; chan++) {
 		
 		p->save();
-	
+		
 		// calculate the height of the area available for peak drawing 
 		// and if the infoarea is displayed, translate the painter
 		// drawing by dy = m_infoAreaheight
@@ -521,9 +566,10 @@ void AudioClipView::remove_fadeview( FadeCurve * fade )
 
 void AudioClipView::calculate_bounding_rect()
 {
+	prepareGeometryChange();
 // 	printf("AudioClipView::calculate_bounding_rect()\n");
 	set_height(m_tv->get_height());
-	m_boundingRectangle = QRectF(0, 0, (m_clip->get_length() / m_sv->scalefactor), m_height);
+	m_boundingRect = QRectF(0, 0, (m_clip->get_length() / m_sv->scalefactor), m_height);
 	update_start_pos();
 	ViewItem::calculate_bounding_rect();
 }
@@ -564,7 +610,7 @@ Command* AudioClipView::drag_edge()
 
 	MoveEdge* me;
 
-	if (x < (m_boundingRectangle.width() / 2))
+	if (x < (m_boundingRect.width() / 2))
 		me =   new  MoveEdge(this, m_sv, "set_left_edge");
 	else
 		me = new MoveEdge(this, m_sv, "set_right_edge");
@@ -585,7 +631,7 @@ Command * AudioClipView::fade_range()
 	Q_ASSERT(m_song);
 	int x = (int) ( cpointer().scene_pos() - scenePos()).x();
 
-	if (x < (m_boundingRectangle.width() / 2)) {
+	if (x < (m_boundingRect.width() / 2)) {
 		return m_clip->clip_fade_in();
 	} else {
 		return m_clip->clip_fade_out();
@@ -597,7 +643,6 @@ Command * AudioClipView::fade_range()
 
 void AudioClipView::position_changed( )
 {
-	prepareGeometryChange();
 	calculate_bounding_rect();
 }
 
@@ -626,5 +671,10 @@ void AudioClipView::start_peak_data_loading()
 }
 
 //eof
+
+void AudioClipView::hoverEnterEvent(QGraphicsSceneHoverEvent * event)
+{
+	update(m_boundingRect);
+}
 
 

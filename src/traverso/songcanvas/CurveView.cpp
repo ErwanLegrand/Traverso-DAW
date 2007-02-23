@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.cpp,v 1.17 2007/02/15 13:53:15 r_sijrier Exp $
+$Id: CurveView.cpp,v 1.18 2007/02/23 13:54:33 r_sijrier Exp $
 */
 
 #include "CurveView.h"
@@ -29,7 +29,7 @@ $Id: CurveView.cpp,v 1.17 2007/02/15 13:53:15 r_sijrier Exp $
 #include <Curve.h>
 #include <CurveNode.h>
 #include <ContextPointer.h>
-#include <Command.h>
+#include <AddRemoveItemCommand.h>
 
 #include <Debugger.h>
 		
@@ -120,17 +120,21 @@ int DragNode::jog()
 	
 	m_mousepos = mousepos;
 	
-	m_newPos.setX(m_newPos.x() + dx*m_scalefactor);
+	m_newPos.setX(m_newPos.x() + dx * m_scalefactor);
 	m_newPos.setY(m_newPos.y() - ( dy / m_curveView->boundingRect().height()) );
 	
-	if (m_newPos.y() < 0) {
-		m_newPos.setY(0);
+	if ( ((int)m_newPos.x()/ m_scalefactor) > m_curveView->boundingRect().width()) {
+		m_newPos.setX(m_curveView->boundingRect().width() * m_scalefactor);
 	}
-	if (m_newPos.x() < 0) {
-		m_newPos.setX(0);
+	
+	if (m_newPos.y() < 0.0) {
+		m_newPos.setY(0.0);
 	}
-	if (m_newPos.y() > 1) {
-		m_newPos.setY(1);
+	if (m_newPos.x() < 0.0) {
+		m_newPos.setX(0.0);
+	}
+	if (m_newPos.y() > 1.0) {
+		m_newPos.setY(1.0);
 	}
 	
 	return do_action();
@@ -145,9 +149,12 @@ CurveView::CurveView(SongView* sv, ViewItem* parentViewItem, Curve* curve)
 	
 	m_sv = sv;
 	m_sv->scene()->addItem(this);
-	m_boundingRectangle = parentViewItem->boundingRect();
+	
+	load_theme_data();
+	
 	m_blinkColorDirection = 1;
 	m_blinkingNode = 0;
+	m_guicurve = new Curve(0, m_sv->get_song());
 	
 	QList<CurveNode* >* nodes = m_curve->get_nodes();
 	for (int i=0; i < nodes->size(); i++) {
@@ -157,7 +164,9 @@ CurveView::CurveView(SongView* sv, ViewItem* parentViewItem, Curve* curve)
 	connect(&m_blinkTimer, SIGNAL(timeout()), this, SLOT(update_blink_color()));
 	connect(m_curve, SIGNAL(nodeAdded(CurveNode*)), this, SLOT(add_curvenode_view(CurveNode*)));
 	connect(m_curve, SIGNAL(nodeRemoved(CurveNode*)), this, SLOT(remove_curvenode_view(CurveNode*)));
+	connect(m_curve, SIGNAL(nodePositionChanged()), this, SLOT(node_moved()));
 	connect(m_sv, SIGNAL(viewModeChanged()), this, SLOT(set_view_mode()));
+	
 	setAcceptsHoverEvents(true);
 	
 	set_view_mode();
@@ -179,10 +188,10 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	
 	painter->save();
 	
+	painter->setClipRect(m_boundingRect);
 	painter->setRenderHint(QPainter::Antialiasing);
 	
 	QPen pen;
-	pen.setWidth(1.0);
 	
 	if (m_sv->viewmode == CurveMode) {
 		pen.setColor(themer()->get_color("Curve:active"));
@@ -193,21 +202,33 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	painter->setPen(pen);
 	
 	QPolygonF polygon;
-	float value[2];
-	int scaleFactor = m_sv->scalefactor;
 	int xstart = (int) option->exposedRect.x();
 	int pixelcount = (int) option->exposedRect.width();
-	float height = m_boundingRectangle.height();
 	
-	// Populate the polygon with enough points to draw a smooth curve.
-	// (actually a point for each pixel)
-	int position = xstart;
-	do {
-		m_curve->get_vector(position*scaleFactor, position*scaleFactor + 1, value, 2);
-		polygon <<  QPointF(position, height - (value[1] * height) );
-	 	position ++;
-	} while (position <= (xstart + pixelcount));
-
+	// Path's need an additional pixel righ/left to be painted correctly.
+	// FadeView get_curve adjusts for this, if changing these 
+	// values, also change the adjustment in FadeView::get_curve() !!!
+	pixelcount += 2;
+	xstart -= 1;
+	if (xstart < 0) {
+		xstart = 0;
+	}
+	float height = m_boundingRect.height();
+	float vector[pixelcount];
+	
+// 	printf("range: %d\n", (int)m_nodeViews.last()->pos().x());
+	
+	m_guicurve->get_vector(xstart,
+				xstart + pixelcount,
+    				vector,
+    				pixelcount);
+	
+	for (int i=0; i<pixelcount; i+=3) {
+		polygon <<  QPointF(xstart + i, height - (vector[i] * height) );
+	}
+	// We could miss the last one since we skip 3 pixels at a time.
+	// so, always add the last one!
+	polygon <<  QPointF(xstart + pixelcount-1, height - (vector[pixelcount-1] * height) );
 	
 	// Depending on the zoom level, curve nodes can end up to be aligned 
 	// vertically at the exact same x position. The curve line won't be painted
@@ -216,16 +237,19 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	foreach(CurveNodeView* view, m_nodeViews) {
 		qreal x = view->x();
 		if ( (x > xstart) && x < (xstart + pixelcount)) {
-			polygon <<  QPointF(view->get_curve_node()->get_when() / scaleFactor,
-					    height - view->get_curve_node()->get_value() * height);
+			polygon <<  QPointF( x + view->boundingRect().width() / 2,
+				(height - (view->get_curve_node()->get_value() * height)) );
 		}
 	}
 	
 	// Which means we have to sort the polygon *sigh* (rather cpu costly, but what can I do?)
 	qSort(polygon.begin(), polygon.end(), smallerNode);
 	
-	QPainterPath path;
+/*	for (int i=0; i<polygon.size(); ++i) {
+		printf("polygin %d, x=%d, y=%d\n", i, (int)polygon.at(i).x(), (int)polygon.at(i).y());
+	}*/
 	
+	QPainterPath path;
 	path.addPolygon(polygon);
 	
 	painter->drawPath(path);
@@ -233,26 +257,39 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	painter->restore();
 }
 
+int CurveView::get_vector(int xstart, int pixelcount, float* arg)
+{
+	m_guicurve->get_vector(xstart, xstart + pixelcount, arg, pixelcount);
+	return 1;
+}
 
 void CurveView::add_curvenode_view(CurveNode* node)
 {
-	CurveNodeView* view = new CurveNodeView(m_sv, this, node);
-	m_sv->scene()->addItem(view);
-	m_nodeViews.append(view);
+	CurveNodeView* nodeview = new CurveNodeView(m_sv, this, node, m_guicurve);
+	m_sv->scene()->addItem(nodeview);
+	m_nodeViews.append(nodeview);
+	
+	AddRemoveItemCommand* cmd = (AddRemoveItemCommand*) m_guicurve->add_node(nodeview, false);
+	cmd->set_instantanious(true);
+	ie().process_command(cmd);
+	
 	update_softselected_node(cpointer().pos());
 	update();
-	connect(node, SIGNAL(positionChanged()), this, SLOT(curve_changed()));
 }
 
 void CurveView::remove_curvenode_view(CurveNode* node)
 {
-	foreach(CurveNodeView* view, m_nodeViews) {
-		if (view->get_curve_node() == node) {
-			m_nodeViews.removeAll(view);
-			if (view == m_blinkingNode) {
+	foreach(CurveNodeView* nodeview, m_nodeViews) {
+		if (nodeview->get_curve_node() == node) {
+			m_nodeViews.removeAll(nodeview);
+			if (nodeview == m_blinkingNode) {
 				update_softselected_node(cpointer().pos());
 			}
-			delete view;
+			AddRemoveItemCommand* cmd = (AddRemoveItemCommand*) m_guicurve->remove_node(nodeview, false);
+			cmd->set_instantanious(true);
+			ie().process_command(cmd);
+			
+			delete nodeview;
 			update();
 			return;
 		}
@@ -261,8 +298,8 @@ void CurveView::remove_curvenode_view(CurveNode* node)
 
 void CurveView::calculate_bounding_rect()
 {
-	int y  = parentview()->get_childview_y_offset();
-	m_boundingRectangle = QRectF(0, 0, parentItem()->boundingRect().width(), parentview()->get_height());
+	int y  = m_parentViewItem->get_childview_y_offset();
+	m_boundingRect = QRectF(0, 0, m_parentViewItem->boundingRect().width(), m_parentViewItem->get_height());
 	setPos(0, y);
 	ViewItem::calculate_bounding_rect();
 }
@@ -273,7 +310,7 @@ void CurveView::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
 	Q_UNUSED(event);
 	
 	m_blinkColor = themer()->get_color("CurveNode:blink");
-	m_blinkTimer.start(40);
+// 	m_blinkTimer.start(40);
 }
 
 void CurveView::hoverLeaveEvent ( QGraphicsSceneHoverEvent * event )
@@ -374,7 +411,7 @@ Command* CurveView::add_node()
 	PENTER;
 	QPointF point = mapFromScene(cpointer().scene_pos());
 	
-	CurveNode* node = new CurveNode(m_curve, point.x() * m_sv->scalefactor, (m_boundingRectangle.height() - point.y()) / m_boundingRectangle.height());
+	CurveNode* node = new CurveNode(m_curve, point.x() * m_sv->scalefactor, (m_boundingRect.height() - point.y()) / m_boundingRect.height());
 	return m_curve->add_node(node);
 }
 
@@ -402,10 +439,47 @@ Command* CurveView::drag_node()
 	return 0;
 }
 
-void CurveView::curve_changed( )
+void CurveView::node_moved( )
 {
-	printf("CurveView::curve_changed()\n");
-	update();
+	printf("CurveView::node_moved()\n");
+	CurveNodeView* prev = 0;
+	CurveNodeView* next = 0;
+	
+	int index = m_nodeViews.indexOf(m_blinkingNode);
+	int xleft = (int) m_blinkingNode->x(), xright = (int) m_blinkingNode->x();
+	int leftindex = index;
+	int count = 0;
+	
+	if (m_blinkingNode == m_nodeViews.first()) {
+		xleft = 0;
+	} else {
+		while ( leftindex > 0 && count < 2) {
+			leftindex--;
+			count++;
+		}
+		prev = m_nodeViews.at(leftindex);
+	}	
+	
+	
+	count = 0;
+	int rightindex = index;
+	
+	if (m_blinkingNode == m_nodeViews.last()) {
+		xright = (int) m_boundingRect.width();
+	} else {
+		while (rightindex < (m_nodeViews.size() - 1) && count < 2) {
+			rightindex++;
+			count++;
+		}
+		next = m_nodeViews.at(rightindex);
+	}
+	
+	
+	if (prev) xleft = (int) prev->x();
+	if (next) xright = (int) next->x();
+	
+	
+	update(xleft, 0, xright - xleft, m_boundingRect.height());
 }
 
 void CurveView::set_view_mode()
@@ -417,5 +491,10 @@ void CurveView::set_view_mode()
 	}
 }
 
+void CurveView::load_theme_data()
+{
+	calculate_bounding_rect();
+}
 
 //eof
+

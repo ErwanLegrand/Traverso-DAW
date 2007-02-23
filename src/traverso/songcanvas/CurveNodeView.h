@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveNodeView.h,v 1.4 2007/02/08 20:51:38 r_sijrier Exp $
+$Id: CurveNodeView.h,v 1.5 2007/02/23 13:54:33 r_sijrier Exp $
 */
 
 #ifndef CURVE_NODE_VIEW_H
@@ -25,14 +25,14 @@ $Id: CurveNodeView.h,v 1.4 2007/02/08 20:51:38 r_sijrier Exp $
 
 #include "ViewItem.h"
 
-class CurveNode;
+#include <CurveNode.h>
 
-class CurveNodeView : public ViewItem
+class CurveNodeView : public ViewItem, public CurveNode
 {
 	Q_OBJECT
 
 public:
-	CurveNodeView(SongView* sv, ViewItem* parentViewItem, CurveNode* node);
+	CurveNodeView(SongView* sv, ViewItem* parentViewItem, CurveNode* node, Curve* guicurve);
 	~CurveNodeView();
 	
 	enum {Type = UserType + 9};

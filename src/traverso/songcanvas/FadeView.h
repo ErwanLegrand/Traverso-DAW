@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeView.h,v 1.2 2007/02/14 11:32:14 r_sijrier Exp $
+$Id: FadeView.h,v 1.3 2007/02/23 13:54:33 r_sijrier Exp $
 */
 
 #ifndef FADE_VIEW_H
@@ -25,6 +25,7 @@ $Id: FadeView.h,v 1.2 2007/02/14 11:32:14 r_sijrier Exp $
 
 #include "ViewItem.h"
 
+class Curve;
 class FadeCurve;
 class FadeContextDialog;
 class AudioClipView;
@@ -43,16 +44,19 @@ public:
 	enum {Type = UserType + 4};
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+	int get_vector(int xstart, int pixelcount, float * arg);
 	void calculate_bounding_rect();
 	void set_holding(bool hold);
 	
 	FadeCurve* get_fade() const {return m_fadeCurve;}
 	
 	int type() const;
+	void load_theme_data();
 
 private:
-	FadeCurve*		m_fadeCurve;
-	bool			m_holdactive;
+	FadeCurve*	m_fadeCurve;
+	Curve*		m_guicurve;
+	bool		m_holdactive;
 	
 public slots:
 	void state_changed();
