@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.19 2007/02/15 13:53:15 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.20 2007/02/23 13:55:37 r_sijrier Exp $
 */
 
 #include <QLineEdit>
@@ -133,7 +133,7 @@ int TrackView::get_childview_y_offset() const
 void TrackView::move_to( int x, int y )
 {
 	setPos(0, y);
-	m_panel->setPos(-202, y);
+	m_panel->setPos(-200, y);
 }
 
 int TrackView::get_height( )
@@ -173,7 +173,7 @@ void TrackView::set_height( int height )
 
 void TrackView::calculate_bounding_rect()
 {
-	m_boundingRectangle = QRectF(0, 0, MAX_CANVAS_WIDTH, m_track->get_height());
+	m_boundingRect = QRectF(0, 0, MAX_CANVAS_WIDTH, m_track->get_height());
 	m_panel->calculate_bounding_rect();
 	ViewItem::calculate_bounding_rect();
 }
