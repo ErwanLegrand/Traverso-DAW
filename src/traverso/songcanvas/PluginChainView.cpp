@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginChainView.cpp,v 1.7 2007/02/02 09:47:21 r_sijrier Exp $
+    $Id: PluginChainView.cpp,v 1.8 2007/02/23 13:52:38 r_sijrier Exp $
 */
 
 #include "PluginChainView.h"
@@ -51,7 +51,7 @@ PluginChainView::PluginChainView(TrackView* parent, PluginChain* chain)
 	setZValue(parent->zValue() + 1);
 	
 	m_trackView->scene()->addItem(this);
-	m_boundingRectangle = QRectF(0, 0, 0, 44);
+	m_boundingRect = QRectF(0, 0, 0, 44);
 	
 	QList<Plugin* >* pluginList = chain->get_plugin_list();
 	for (int i=0; i<pluginList->size(); ++i) {
@@ -74,7 +74,7 @@ void PluginChainView::add_new_pluginview( Plugin * plugin )
 	PluginView* view = new PluginView(m_trackView, plugin, m_pluginViews.size());
 	m_pluginViews.append(view);
 	scene()->addItem(view);
-	view->setPos( ( m_pluginViews.size() -1 )* 120, m_boundingRectangle.height() - view->boundingRect().height());
+	view->setPos( ( m_pluginViews.size() -1 )* 120, m_boundingRect.height() - view->boundingRect().height());
 }
 
 void PluginChainView::remove_pluginview( Plugin * plugin )

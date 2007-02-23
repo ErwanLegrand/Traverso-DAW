@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.11 2007/02/14 11:32:14 r_sijrier Exp $
+$Id: TrackPanelView.cpp,v 1.12 2007/02/23 13:55:59 r_sijrier Exp $
 */
 
 #include <QGraphicsScene>
@@ -101,7 +101,7 @@ TrackPanelView::TrackPanelView(TrackPanelViewPort* view, TrackView* trackView, T
 	connect(m_track, SIGNAL(outBusChanged()), outBus, SLOT(bus_changed()));
 	
 	
-	m_boundingRectangle = QRectF(0, 0, 200, m_track->get_height());
+	m_boundingRect = QRectF(0, 0, 200, m_track->get_height());
 // 	setFlags(ItemIsSelectable | ItemIsMovable);
 // 	setAcceptsHoverEvents(true);
 
@@ -168,7 +168,7 @@ void TrackPanelView::draw_panel_track_name(QPainter* painter)
 
 void TrackPanelView::calculate_bounding_rect()
 {
-	m_boundingRectangle = QRectF(0, 0, 200, m_track->get_height());
+	m_boundingRect = QRectF(0, 0, 200, m_track->get_height());
 	int height =  m_track->get_height();
 	
 	if ((inBus->pos().y() + inBus->boundingRect().height()) > height) {
@@ -292,7 +292,7 @@ TrackPanelLed::TrackPanelLed(TrackPanelView* parent, char * on, char * off )
 {
 	Q_ASSERT_X(find_pixmap(onType), "TrackPanelLed constructor", "pixmap for ontype could not be found!");
 	Q_ASSERT_X(find_pixmap(offType), "TrackPanelLed constructor", "pixmap for offtype could not be found!");
-	m_boundingRectangle = find_pixmap(onType).rect();
+	m_boundingRect = find_pixmap(onType).rect();
 }
 
 void TrackPanelLed::paint(QPainter* painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
@@ -340,10 +340,10 @@ void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 void TrackPanelBus::bus_changed()
 {
 	QPixmap pix = find_pixmap(m_type);
-	m_boundingRectangle = pix.rect();
+	m_boundingRect = pix.rect();
 	QFontMetrics fm(QFont( "Bitstream Vera Sans", 8));
 	prepareGeometryChange();
-	m_boundingRectangle.setWidth(pix.rect().width() + fm.width(m_busName) + 10);
+	m_boundingRect.setWidth(pix.rect().width() + fm.width(m_busName) + 10);
 	
 	if (m_type == ":/bus_in") {
 		m_busName =  m_track->get_bus_in();

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TimeLineView.cpp,v 1.6 2007/02/08 20:51:38 r_sijrier Exp $
+$Id: TimeLineView.cpp,v 1.7 2007/02/23 13:52:25 r_sijrier Exp $
 */
 
 #include "TimeLineView.h"
@@ -40,7 +40,7 @@ TimeLineView::TimeLineView(SongView* view)
 {
 	PENTERCONS2;
 	m_sv = view;
-	m_boundingRectangle = QRectF(0, 0, MAX_CANVAS_WIDTH, 21);
+	m_boundingRect = QRectF(0, 0, MAX_CANVAS_WIDTH, 21);
 	
 	view->scene()->addItem(this);
 }
@@ -69,6 +69,7 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 		xstart = 0;
 	}
 	
+// 	printf("TimeLineView:: PAINT :: exposed rect is: x=%f, y=%f, w=%f, h=%f\n", option->exposedRect.x(), option->exposedRect.y(), option->exposedRect.width(), option->exposedRect.height());
 
 	int height = 21;
 	

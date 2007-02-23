@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursors.cpp,v 1.12 2007/02/08 20:51:38 r_sijrier Exp $
+    $Id: Cursors.cpp,v 1.13 2007/02/23 13:59:18 r_sijrier Exp $
 */
 
 #include "Cursors.h"
@@ -73,7 +73,7 @@ void PlayHead::paint( QPainter * painter, const QStyleOptionGraphicsItem * optio
 		color = themer()->get_color("Playhead:inactive");
 	}
 	
-	painter->fillRect(0, 0, 2, (int)m_boundingRectangle.height(), color);
+	painter->fillRect(0, 0, (int)m_boundingRect.width(), (int)m_boundingRect.height(), color);
 }
 
 void PlayHead::play_start()
@@ -100,9 +100,9 @@ void PlayHead::play_stop()
 
 void PlayHead::update_position()
 {
-	QPointF newPos(m_song->get_transport_frame() / m_sv->scalefactor, 0);
+	QPointF newPos(m_song->get_transport_frame() / m_sv->scalefactor, 1);
 	
-	if (newPos != pos()) {
+	if (newPos != pos() && (m_animation.state() != QTimeLine::Running)) {
 		setPos(newPos);
 	} else {
 		return;
@@ -179,7 +179,7 @@ void PlayHead::animation_finished()
 
 void PlayHead::set_bounding_rect( QRectF rect )
 {
-	m_boundingRectangle = rect;
+	m_boundingRect = rect;
 }
 
 bool PlayHead::is_active()
@@ -232,17 +232,17 @@ void WorkCursor::paint( QPainter * painter, const QStyleOptionGraphicsItem * opt
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 	
-	painter->fillRect(0, 0, 2, (int)m_boundingRectangle.height(), themer()->get_color("Workcursor:default"));
+	painter->fillRect(0, 0, 2, (int)m_boundingRect.height(), themer()->get_color("Workcursor:default"));
 }
 
 void WorkCursor::update_position()
 {
-	setPos(m_song->get_working_frame() / m_sv->scalefactor, 0);
+	setPos(m_song->get_working_frame() / m_sv->scalefactor, 1);
 }
 
 void WorkCursor::set_bounding_rect( QRectF rect )
 {
-	m_boundingRectangle = rect;
+	m_boundingRect = rect;
 }
 
 

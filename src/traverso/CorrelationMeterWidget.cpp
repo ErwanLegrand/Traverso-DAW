@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: CorrelationMeterWidget.cpp,v 1.14 2007/02/13 11:10:05 r_sijrier Exp $
+    $Id: CorrelationMeterWidget.cpp,v 1.15 2007/02/23 13:50:46 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -104,7 +104,7 @@ CorrelationMeterView::CorrelationMeterView(CorrelationMeterWidget* widget)
 
 	// Nicola: Not sure if we need to initialize here, perhaps a 
 	// call to resize would suffice ?
-	m_boundingRectangle = QRectF();
+	m_boundingRect = QRectF();
 
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
@@ -183,7 +183,7 @@ void CorrelationMeterView::resize()
 	prepareGeometryChange();
 	// Nicola: Make this as large as the CorrelationMeterWidget
 	// by setting the boundingrect.
-	m_boundingRectangle = QRectF(0, 0, m_widget->width(), m_widget->height());
+	m_boundingRect = QRectF(0, 0, m_widget->width(), m_widget->height());
 }
 
 void CorrelationMeterView::update_data()

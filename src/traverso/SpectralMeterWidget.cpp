@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.30 2007/02/13 11:10:05 r_sijrier Exp $
+    $Id: SpectralMeterWidget.cpp,v 1.31 2007/02/23 13:50:46 r_sijrier Exp $
 */
 
 #include "SpectralMeterWidget.h"
@@ -99,7 +99,7 @@ SpectralMeterView::SpectralMeterView(SpectralMeterWidget* widget)
 {
 
 	m_config = new SpectralMeterConfigWidget(m_widget);
-	m_boundingRectangle = QRectF(0, 0, m_widget->width(), m_widget->height());
+	m_boundingRect = QRectF(0, 0, m_widget->width(), m_widget->height());
 	load_configuration();
 	
 	upper_freq_log = log10(upper_freq);
@@ -192,7 +192,7 @@ void SpectralMeterView::resize()
 
 	// Make the axis labels disappear when the widget becomes too small
 	int x = 0, y = 0, w = m_widget->width(), h = m_widget->height();
-	m_boundingRectangle = QRectF(0, 0, w, h);
+	m_boundingRect = QRectF(0, 0, w, h);
 	
 	if (m_widget->width() >= 200) {
 		x = margin_l;
@@ -217,7 +217,7 @@ void SpectralMeterView::resize()
 void SpectralMeterView::update_background()
 {
 	// draw the background image
-	bgPixmap = QPixmap((int)m_boundingRectangle.width(), (int)m_boundingRectangle.height());
+	bgPixmap = QPixmap((int)m_boundingRect.width(), (int)m_boundingRect.height());
 	bgPixmap.fill(themer()->get_color("Meter:margin"));
 
 	QPainter painter(&bgPixmap);
@@ -260,9 +260,9 @@ void SpectralMeterView::update_background()
 
 
 		// draw text only if there is enough space for it
-		if (((f - s) > last_pos) && ((f + s) < float(m_boundingRectangle.width()-1))) {
+		if (((f - s) > last_pos) && ((f + s) < float(m_boundingRect.width()-1))) {
 			painter.setPen(themer()->get_color("Text:dark"));
-			painter.drawText(QPointF(f - s, m_boundingRectangle.height() - fm.descent() - 3), spm);
+			painter.drawText(QPointF(f - s, m_boundingRect.height() - fm.descent() - 3), spm);
 			last_pos = f + s + 1.0;
 		} else {
 			painter.setPen(themer()->get_color("Text:light"));
