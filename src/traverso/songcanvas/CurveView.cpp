@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.cpp,v 1.18 2007/02/23 13:54:33 r_sijrier Exp $
+$Id: CurveView.cpp,v 1.19 2007/02/23 15:35:36 r_sijrier Exp $
 */
 
 #include "CurveView.h"
@@ -177,7 +177,7 @@ CurveView::~ CurveView( )
 {
 }
 
-static bool smallerNode(const QPointF& left, const QPointF& right) {
+static bool smallerpoint(const QPointF& left, const QPointF& right) {
 	return left.x() < right.x();
 }
 
@@ -243,7 +243,7 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	}
 	
 	// Which means we have to sort the polygon *sigh* (rather cpu costly, but what can I do?)
-	qSort(polygon.begin(), polygon.end(), smallerNode);
+	qSort(polygon.begin(), polygon.end(), smallerpoint);
 	
 /*	for (int i=0; i<polygon.size(); ++i) {
 		printf("polygin %d, x=%d, y=%d\n", i, (int)polygon.at(i).x(), (int)polygon.at(i).y());
@@ -272,6 +272,8 @@ void CurveView::add_curvenode_view(CurveNode* node)
 	AddRemoveItemCommand* cmd = (AddRemoveItemCommand*) m_guicurve->add_node(nodeview, false);
 	cmd->set_instantanious(true);
 	ie().process_command(cmd);
+	
+	qSort(m_nodeViews.begin(), m_nodeViews.end(), Curve::smallerNode);
 	
 	update_softselected_node(cpointer().pos());
 	update();
