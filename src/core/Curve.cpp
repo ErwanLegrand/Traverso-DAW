@@ -25,7 +25,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.cpp,v 1.28 2007/02/23 13:49:53 r_sijrier Exp $
+$Id: Curve.cpp,v 1.29 2007/02/23 15:36:02 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -490,12 +490,6 @@ void Curve::set_changed( )
 {
 	m_lookup_cache.left = -1;
 	m_changed = true;
-}
-
-
-static bool smallerNode(const CurveNode* left, const CurveNode* right )
-{
-        return left->get_when() < right->get_when();
 }
 
 
