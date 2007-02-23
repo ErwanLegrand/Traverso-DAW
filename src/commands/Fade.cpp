@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Fade.cpp,v 1.7 2007/02/14 11:30:20 r_sijrier Exp $
+$Id: Fade.cpp,v 1.8 2007/02/23 14:00:24 r_sijrier Exp $
 */
 
 
@@ -40,7 +40,7 @@ static const float CURSOR_SPEED		= 150.0;
 static const float RASTER_SIZE		= 0.05;
 
 
-FadeRange::FadeRange(AudioClip* clip, Curve* curve, int direction)
+FadeRange::FadeRange(AudioClip* clip, FadeCurve* curve, int direction)
 	: Command(clip, "")
 {
 	m_curve = curve;

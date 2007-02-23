@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Fade.h,v 1.6 2007/02/14 11:30:20 r_sijrier Exp $
+$Id: Fade.h,v 1.7 2007/02/23 14:00:24 r_sijrier Exp $
 */
 
 #ifndef FADE_H
@@ -34,7 +34,7 @@ class SongView;
 class FadeRange : public Command
 {
 public :
-        FadeRange(AudioClip* clip, Curve* curve, int direction);
+        FadeRange(AudioClip* clip, FadeCurve* curve, int direction);
         ~FadeRange();
 
         int begin_hold();
@@ -51,7 +51,7 @@ private :
         double origFade;
         double newFade;
 
-	Curve*	m_curve;
+	FadeCurve*	m_curve;
 };
 
 
