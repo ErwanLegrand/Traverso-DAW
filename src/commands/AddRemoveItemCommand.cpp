@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AddRemoveItemCommand.cpp,v 1.8 2007/02/05 17:08:36 r_sijrier Exp $
+$Id: AddRemoveItemCommand.cpp,v 1.9 2007/02/23 14:00:53 r_sijrier Exp $
 */
 
 #include "AddRemoveItemCommand.h"
@@ -84,7 +84,7 @@ AddRemoveItemCommand::AddRemoveItemCommand(ContextItem* parent, ContextItem* chi
  */
 AddRemoveItemCommand::AddRemoveItemCommand(
 	ContextItem * parent,
-	ContextItem * child,
+ 	void* child,
 	bool historable,
 	Song* song,
 	char * doActionSlot,
@@ -184,9 +184,9 @@ int AddRemoveItemCommand::undo_action()
  *	the slot and emit the signal (if they exist) instantaniously,
  *	and thus bypassing the RT thread save nature of Tsar.
  */
-void AddRemoveItemCommand::set_instantanious( )
+void AddRemoveItemCommand::set_instantanious(bool instant)
 {
-	m_instantanious = 1;
+	m_instantanious = instant;
 }
 
 
