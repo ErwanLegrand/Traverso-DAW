@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TimeLineViewPort.cpp,v 1.3 2007/01/16 13:51:23 r_sijrier Exp $
+    $Id: TimeLineViewPort.cpp,v 1.4 2007/02/23 13:51:26 r_sijrier Exp $
 */
 
 #include "TimeLineViewPort.h"
@@ -54,7 +54,7 @@ void TimeLineViewPort::set_songview( SongView * view )
 {
 	m_timeLineView = new TimeLineView(view);
 	scene()->addItem(m_timeLineView);
-	m_timeLineView->setPos(0, -23);
+	m_timeLineView->setPos(0, -30);
 }
 
 void TimeLineViewPort::get_pointed_context_items(QList<ContextItem* > &list)
