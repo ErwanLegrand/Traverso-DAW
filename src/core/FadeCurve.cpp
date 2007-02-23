@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.13 2007/02/14 11:30:49 r_sijrier Exp $
+$Id: FadeCurve.cpp,v 1.14 2007/02/23 13:49:53 r_sijrier Exp $
 */
  
 #include "FadeCurve.h"
@@ -82,7 +82,7 @@ void FadeCurve::init()
 		
 		CurveNode* node = new CurveNode(this, p.x(), p.y());
 		ie().process_command( add_node(node, false) );
-		connect(node, SIGNAL(positionChanged()), this, SLOT(set_changed()));
+		printf("x, y: %f, %f\n", p.x(), p.y());
 		
 // 		printf("adding node with x=%f, y=%f\n", p.x(), p.y());
 		
@@ -135,13 +135,21 @@ int FadeCurve::set_state( const QDomNode & node )
 	}
 	
 	
+	QString rangestring = e.attribute("range", "1");
+	double range;
+	if (rangestring == "nan" || rangestring == "inf") {
+		printf("FadeCurve::set_state: stored range was not a number!\n");
+		range = 1;
+	} else {
+		range = rangestring.toDouble();
+	}
 	
-	double range = e.attribute("range", "1").toDouble();
-	range = (range == 0.0) ? 1 : range;
+	range = (range < 1.0) ? 1 : range;
 	
 	set_range(range);
 	
 	solve_node_positions();	
+	
 	return 1;
 }
 
@@ -175,7 +183,7 @@ void FadeCurve::process( audio_sample_t * mixdown, nframes_t nframes )
 	nframes_t limit = std::min (nframes, (uint) get_range());
 	
 	
-	rt_get_vector (fadepos, fadepos + limit, m_song->gainbuffer, limit);
+	get_vector(fadepos, fadepos + limit, m_song->gainbuffer, limit);
 	
 
 	for (nframes_t n = 0; n < limit; ++n) {
@@ -289,6 +297,12 @@ QPointF FadeCurve::get_curve_point( float f)
 	return QPointF(x, y);
 }
 
+void FadeCurve::set_range(double when)
+{
+	printf("FadeCurve::set_range(%f)\n", when);
+	Curve::set_range(when);
+	emit rangeChanged();
+}
 
 void FadeCurve::set_bend_factor( float factor )
 {
@@ -356,3 +370,4 @@ Command* FadeCurve::toggle_raster( )
 }
 
 //eof
+

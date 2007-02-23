@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveNode.h,v 1.6 2007/01/24 21:18:30 r_sijrier Exp $
+$Id: CurveNode.h,v 1.7 2007/02/23 13:49:53 r_sijrier Exp $
 */
 
 #ifndef CURVENODE_H
@@ -25,52 +25,44 @@ $Id: CurveNode.h,v 1.6 2007/01/24 21:18:30 r_sijrier Exp $
 
 #include "defines.h"
 
-#include "ContextItem.h"
-#include "Debugger.h"
 class Curve;
 
-class CurveNode : public ContextItem
+class CurveNode
 {
 
-	Q_OBJECT
-
 public:
-	CurveNode(Curve* curve, double pos, double  val)
+	CurveNode(){};
+	CurveNode(Curve* curve, double when, double  val)
 		: m_curve(curve)
 	{
-		rtCoeff[0] = rtCoeff[1] = rtCoeff[2] = rtCoeff[3] = 0.0;
-		guiCoeff[0] = guiCoeff[1] = guiCoeff[2] = guiCoeff[3] = 0.0;
+		coeff[0] = coeff[1] = coeff[2] = coeff[3] = 0.0;
 	
-		m_when = pos;
-		m_value = val;
+		this->when = when;
+		this->value = val;
 	}
 
 	~CurveNode(){};
 	
-	void set_when(double when) {m_when = when;}
-	
-	void set_when_and_value(double when, double value) {
-		m_when = when;
-		m_value = value;
-		emit positionChanged();
+	void set_when(double when) {
+		this->when = when;
 	}
+	
+	void set_when_and_value(double when, double value);
 	
 	void set_relative_when_and_value(double relwhen, double value);
 	
-	double get_when() const {return m_when;}
-	double get_value() const {return m_value;}
+	double get_when() const {return when;}
+	double get_value() const {return value;}
 
-	double rtCoeff[4];
-	double guiCoeff[4];
+	
+	Curve*	m_curve;
 	
 private:
-	Curve*	m_curve;
-	double 	m_when;
-	double 	m_value;
+	double  coeff[4];
+	double 	when;
+	double 	value;
 	
-	
-signals:
-	void positionChanged();
+	friend class Curve;
 };
 
 

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.59 2007/02/14 11:30:49 r_sijrier Exp $
+$Id: AudioClip.cpp,v 1.60 2007/02/23 13:49:53 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -445,7 +445,7 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 	}
 	
 	nframes_t gainEnvelopeMixPos = m_song->get_transport_frame() - trackStartFrame;
-	gainEnvelope->rt_get_vector(gainEnvelopeMixPos, gainEnvelopeMixPos + read_frames, m_song->gainbuffer, read_frames);
+	gainEnvelope->get_vector(gainEnvelopeMixPos, gainEnvelopeMixPos + read_frames, m_song->gainbuffer, read_frames);
 	
 	for (nframes_t n = 0; n < read_frames; ++n) {
 		mixdown[n] *= m_song->gainbuffer[n];

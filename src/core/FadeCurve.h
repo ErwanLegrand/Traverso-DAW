@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.h,v 1.8 2007/02/14 11:30:49 r_sijrier Exp $
+$Id: FadeCurve.h,v 1.9 2007/02/23 13:49:53 r_sijrier Exp $
 */
 
 #ifndef FADE_CURVE_H
@@ -71,6 +71,7 @@ public:
 	QList<QPointF> get_control_points();
 	
 	bool is_bypassed() const {return m_bypass;}
+	void set_range(double pos);
 
 private:
 	AudioClip*	m_clip;
@@ -100,6 +101,7 @@ signals:
 	void bendValueChanged();
 	void strengthValueChanged();
 	void rasterChanged();
+	void rangeChanged();
 };
 
 #endif

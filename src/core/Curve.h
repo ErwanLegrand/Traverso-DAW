@@ -25,7 +25,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.h,v 1.15 2007/01/25 12:15:58 r_sijrier Exp $
+$Id: Curve.h,v 1.16 2007/02/23 13:49:53 r_sijrier Exp $
 */
 
 #ifndef CURVE_H
@@ -59,49 +59,43 @@ public:
 	double get_range() const;
 	
 	void get_vector (double x0, double x1, float *arg, int32_t veclen);
-	void rt_get_vector (double x0, double x1, float *arg, int32_t veclen);
 	
-	QList<CurveNode* >* get_nodes() {return &m_data.nodes;}
+	QList<CurveNode* >* get_nodes() {return &m_nodes;}
 	Song* get_song() const {return m_song;}
 	
 	// Set functions
-	void set_range(double pos);
+	virtual void set_range(double when);
 	
+
+protected:
+	struct LookupCache {
+		double left;  /* leftmost x coordinate used when finding "range" */
+		std::pair<QList<CurveNode* >::iterator, QList<CurveNode* >::iterator> range;
+	};
+	
+	QList<CurveNode* > m_nodes;
+	LookupCache m_lookup_cache;
+	bool m_changed;
+
 private :
 	
-	struct LookupCache {
-	    double left;  /* leftmost x coordinate used when finding "range" */
-	    std::pair<QList<CurveNode* >::iterator, QList<CurveNode* >::iterator> range;
-	};
 	
 	struct Comparator {
 		bool operator() (const CurveNode* a, const CurveNode* b) { 
-			return a->get_when() < b->get_when();
+			return a->when < b->when;
 		}
 	};
 	
-	
-	struct CurveData {
-		QList<CurveNode* >	nodes;
-		LookupCache lookup_cache;
-		bool isGui;
-		bool changed;
-	};
-	
-	CurveData m_data;
-	CurveData m_rtdata;
 	Song* m_song;
 	
-	double defaultValue;
+	double m_defaultValue;
 	
-	double multipoint_eval (CurveData* data, double x);
+	double multipoint_eval (double x);
 	
 	void x_scale(double factor);
-	void solve (CurveData* data);
+	void solve ();
 	
 	void init();
-	
-	void _get_vector (CurveData*, double x0, double x1, float *arg, int32_t veclen);
 	
 	friend class CurveNode;
 
@@ -109,11 +103,6 @@ protected slots:
 	void set_changed();
 
 private slots:
-	void rt_private_add_node(CurveNode* node);
-	void rt_private_remove_node(CurveNode* node);
-	void rtdata_set_changed();
-	void data_set_changed();
-	
 	void private_add_node(CurveNode* node);
 	void private_remove_node(CurveNode* node);
 	
@@ -121,16 +110,16 @@ private slots:
 
 signals :
 	void stateChanged();
-	void rangeChanged();
 	void nodeAdded(CurveNode*);
 	void nodeRemoved(CurveNode*);
+	void nodePositionChanged();
 };
 
 
 inline double Curve::get_range( ) const
 {
-	if ( ! m_data.nodes.isEmpty()) {
-		return m_data.nodes.last()->get_when();
+	if ( ! m_nodes.isEmpty()) {
+		return m_nodes.last()->when;
 	}
 		
 	return 0;
