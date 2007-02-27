@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ManagerWidget.h,v 1.2 2006/11/16 15:03:07 r_sijrier Exp $
+    $Id: ManagerWidget.h,v 1.3 2007/02/27 19:49:22 r_sijrier Exp $
 */
 
 #ifndef MANAGERWIDGET_H
@@ -31,7 +31,6 @@
 class ProjectManagerWidget;
 class SongManagerWidget;
 class AudioSourcesManagerWidget;
-class GlobalPropertiesWidget;
 
 
 class ManagerWidget : public QWidget, private Ui::ManagerWidget
@@ -46,7 +45,6 @@ private:
         ProjectManagerWidget* pmw;
         SongManagerWidget* smw;
         AudioSourcesManagerWidget* asmw;
-        GlobalPropertiesWidget* gpw;
 	QScrollArea*	m_scrollArea;
 	QStackedWidget*	m_stackedWidget;
 
@@ -54,7 +52,6 @@ private slots:
         void on_projectButton_clicked();
         void on_songButton_clicked();
         void on_audioSourcesButton_clicked();
-        void on_globalPropertiesButton_clicked();
 
 
 };

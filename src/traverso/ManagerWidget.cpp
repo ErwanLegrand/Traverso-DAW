@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ManagerWidget.cpp,v 1.4 2006/11/16 15:03:07 r_sijrier Exp $
+$Id: ManagerWidget.cpp,v 1.5 2007/02/27 19:49:22 r_sijrier Exp $
 */
 
 #include "ManagerWidget.h"
@@ -28,7 +28,6 @@ $Id: ManagerWidget.cpp,v 1.4 2006/11/16 15:03:07 r_sijrier Exp $
 #include "ProjectManagerWidget.h"
 #include "SongManagerWidget.h"
 #include "AudioSourcesManagerWidget.h"
-#include "GlobalPropertiesWidget.h"
 
 
 // Always put me below _all_ includes, this is needed
@@ -42,7 +41,6 @@ ManagerWidget::ManagerWidget( QWidget * parent )
 	
 	smw = 0;
 	asmw = 0;
-	gpw = 0;
 
 	m_scrollArea = new QScrollArea();
 	pmw = new ProjectManagerWidget();
@@ -89,17 +87,6 @@ void ManagerWidget::on_audioSourcesButton_clicked()
 	m_scrollArea->takeWidget();
 	m_scrollArea->setWidget(asmw);
 }
-
-void ManagerWidget::on_globalPropertiesButton_clicked( )
-{
-	if (!gpw) {
-		gpw = new GlobalPropertiesWidget();
-	}
-	
-	m_scrollArea->takeWidget();
-	m_scrollArea->setWidget(gpw);
-}
-
 
 
 //eof
