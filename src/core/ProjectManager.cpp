@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ProjectManager.cpp,v 1.20 2007/02/05 17:09:42 r_sijrier Exp $
+$Id: ProjectManager.cpp,v 1.21 2007/02/27 19:47:36 r_sijrier Exp $
 */
 
 #include "ProjectManager.h"
@@ -189,9 +189,9 @@ Project * ProjectManager::get_project( )
 
 void ProjectManager::start( )
 {
-	int loadProjectAtStartUp = config().get_property("Project", "loadLastUsed", 1).toInt();
+	bool loadProjectAtStartUp = config().get_property("Project", "loadLastUsed", 1).toBool();
 
-	if (loadProjectAtStartUp != 0) {
+	if (loadProjectAtStartUp) {
 		QString projectToLoad = config().get_property("Project", "current", "").toString();
 
 		if ( projectToLoad.isNull() || projectToLoad.isEmpty() )
