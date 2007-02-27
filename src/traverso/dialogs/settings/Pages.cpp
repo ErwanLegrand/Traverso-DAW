@@ -174,6 +174,7 @@ void AudioDriverPage::load_config( )
 	
 
 #if defined (ALSA_SUPPORT)
+	m_alsadevices->devicesCombo->clear();
 	int periodsIndex = config().get_property("Hardware", "NumberOfPeriods", 1).toInt();
 	m_alsadevices->periodsCombo->setCurrentIndex(periodsIndex - 2);
 	
@@ -422,7 +423,9 @@ void AppearancePage::load_config()
 				   QString(getenv("HOME")).append(".traverso/themes")).toString();
 	
 	
-	foreach(QString key, QStyleFactory::keys()) {
+	QStringList keys = QStyleFactory::keys();
+	keys.sort();
+	foreach(QString key, keys) {
 		m_themepage->styleCombo->addItem(key);
 	}
 	
@@ -467,6 +470,7 @@ ThemeConfigPage::ThemeConfigPage(QWidget * parent)
 	: QWidget(parent)
 {
 	setupUi(this);
+	themeSelecterCombo->setInsertPolicy(QComboBox::InsertAlphabetically);
 }
 
 void ThemeConfigPage::create_connections()
@@ -530,14 +534,14 @@ void ThemeConfigPage::update_theme_combobox(const QString& path)
 	themeSelecterCombo->clear();
 	
 	foreach(QString key, themer()->get_builtin_themes()) {
-		themeSelecterCombo->addItem(key, "builtintheme");
+		themeSelecterCombo->insertItem(0, key, "builtintheme");
 	}
 	
 	QDir themedir(path);
 	foreach (QString dirName, themedir.entryList(QDir::Dirs | QDir::NoDotAndDotDot)) {
 		QString filename = path + "/" + dirName + "/" + "traversotheme.xml";
 		if (QFile::exists(filename) ) {
-			themeSelecterCombo->addItem(dirName);
+			themeSelecterCombo->insertItem(0, dirName);
 		}
 	}
 	
