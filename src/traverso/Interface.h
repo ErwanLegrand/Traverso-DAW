@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.h,v 1.15 2007/02/05 17:10:36 r_sijrier Exp $
+$Id: Interface.h,v 1.16 2007/02/27 19:49:07 r_sijrier Exp $
 */
 
 #ifndef INTERFACE_H
@@ -54,6 +54,8 @@ class HDDSpaceInfoWidget;
 class SongWidget;
 class CorrelationMeterWidget;
 class SpectralMeterWidget;
+class SettingsDialog;
+
 
 class Interface : public QMainWindow
 {
@@ -66,6 +68,7 @@ public :
 protected:
 	void keyPressEvent ( QKeyEvent* e);
 	void keyReleaseEvent ( QKeyEvent* e);
+	void closeEvent ( QCloseEvent * event );
 // 	void wheelEvent ( QWheelEvent* e );
 	
 
@@ -88,6 +91,7 @@ private:
 	CorrelationMeterWidget*	correlationMeter;
 	QDockWidget*		spectralMeterDW;
 	SpectralMeterWidget*	spectralMeter;
+	SettingsDialog*		m_settingsdialog;
 
 	BusMonitor* 		busMonitor;
 	Help* 			helpWindow;
@@ -121,6 +125,7 @@ private:
 public slots :
 	void set_project(Project* project);
 	void show_song(Song* song);
+	void show_settings_dialog();
 	void process_context_menu_action(QAction* action);
 	void set_bus_in(QAction* action);
 	void set_bus_out(QAction* action);

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.32 2007/02/13 11:16:34 r_sijrier Exp $
+$Id: Interface.cpp,v 1.33 2007/02/27 19:49:07 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -50,6 +50,8 @@ $Id: Interface.cpp,v 1.32 2007/02/13 11:16:34 r_sijrier Exp $
 		
 		
 #include "songcanvas/SongWidget.h"
+
+#include "dialogs/settings/SettingsDialog.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -126,6 +128,7 @@ Interface::Interface()
 	currentSongWidget = 0;
 	exportWidget = 0;
 	managerWidget = 0;
+	m_settingsdialog = 0;
 	
 	create_menus();
 	
@@ -269,11 +272,13 @@ Command * Interface::show_export_widget( )
 void Interface::create_menus( )
 {
 	saveAction =  new QAction(tr("&Save"), this);
-	saveAction->setIcon(QIcon("/usr/share/icons/crystalsvg/22x22/actions/filesave.png"));
+	QIcon icon = QApplication::style()->standardIcon(QStyle::SP_DialogSaveButton);
+	saveAction->setIcon(icon);
 	connect(saveAction, SIGNAL(triggered()), &pm(), SLOT(save_project()));
 	
 	exitAction = new QAction(tr("&Quit"), this);
-	exitAction->setIcon(QIcon("/usr/share/icons/crystalsvg/22x22/actions/exit.png"));
+	icon = QApplication::style()->standardIcon(QStyle::SP_DialogCloseButton);
+	exitAction->setIcon(icon);
 	connect(exitAction, SIGNAL(triggered()), &pm(), SLOT(exit()));
 	
 	editViewAction = new QAction(tr("&Edit View"), this);
@@ -290,7 +295,8 @@ void Interface::create_menus( )
 	
 	
 	handBookAction = new QAction(tr("&HandBook"), this);
-	handBookAction->setIcon(QIcon("/usr/share/icons/crystalsvg/22x22/actions/help.png"));
+	icon = QApplication::style()->standardIcon(QStyle::SP_DialogHelpButton);
+	handBookAction->setIcon(icon);
 	connect(handBookAction, SIGNAL(triggered()), helpWindow, SLOT(show_help()));
 	
 	aboutTraversoAction = new QAction(tr("&About Traverso"), this);
@@ -353,6 +359,10 @@ void Interface::create_menus( )
 // 	tbutton->setFocusPolicy(Qt::NoFocus);
 	
 	
+	QAction* settings = mainToolBar->addAction(tr("Settings"));
+	connect(settings, SIGNAL(triggered( bool )), this, SLOT(show_settings_dialog()));
+	
+	
 	QToolButton* button = new QToolButton(mainToolBar);
 	button->setIcon(find_pixmap(":/projectmanagement-22"));
 	button->setMinimumWidth(44);
@@ -413,6 +423,7 @@ void Interface::create_menus( )
 	mainToolBar->addWidget(openGlButton);
 	connect(openGlButton, SIGNAL(toggled(bool)), this, SLOT(toggle_OpenGL()));
 
+	
     /*	DigitalClock* clock = new DigitalClock();
 	mainToolBar->addWidget(clock);*/
 	
@@ -699,5 +710,22 @@ void DigitalClock::showTime()
 }
 
 
-// eof
+void Interface::show_settings_dialog()
+{
+	if (!m_settingsdialog) {
+		m_settingsdialog = new SettingsDialog(this);
+	}
+	
+	m_settingsdialog->show();
+}
 
+
+void Interface::closeEvent(QCloseEvent * event)
+{
+	if (m_settingsdialog && m_settingsdialog->isVisible())
+		m_settingsdialog->close();
+	
+	event->accept();
+}
+
+// eof
