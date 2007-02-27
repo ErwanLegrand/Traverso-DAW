@@ -54,14 +54,15 @@ HEADERS += \
 	SongManagerWidget.h \
 	SystemInfoWidget.h \
 	AudioSourcesManagerWidget.h \
-	GlobalPropertiesWidget.h \
 	Traverso.h \
 	Interface.h \
 	VUMeter.h \
 	CorrelationMeterWidget.h \
 	SpectralMeterWidget.h \
 	QuickDriverConfigWidget.h \
-	precompile.h
+	precompile.h \
+	dialogs/settings/Pages.h \
+	dialogs/settings/SettingsDialog.h
 SOURCES += \
 	songcanvas/AudioClipView.cpp \
 	songcanvas/SongWidget.cpp \
@@ -98,21 +99,27 @@ SOURCES += \
 	SongManagerWidget.cpp \
 	SystemInfoWidget.cpp \
 	AudioSourcesManagerWidget.cpp \
-	GlobalPropertiesWidget.cpp \
 	Interface.cpp \
 	VUMeter.cpp \
 	CorrelationMeterWidget.cpp \
 	SpectralMeterWidget.cpp \
-	QuickDriverConfigWidget.cpp
+	QuickDriverConfigWidget.cpp \
+	dialogs/settings/Pages.cpp \
+	dialogs/settings/SettingsDialog.cpp
 FORMS += ui/ProjectManagerWidget.ui \
 	ui/ExportWidget.ui \
 	ui/SongManagerWidget.ui \
 	ui/ManagerWidget.ui \
-	ui/GlobalPropertiesWidget.ui \
 	ui/AudioSourcesManagerWidget.ui \
 	ui/PluginSelectorDialog.ui \
 	ui/SpectralMeterConfigWidget.ui \
-	ui/QuickDriverConfigWidget.ui
+	ui/QuickDriverConfigWidget.ui \
+	ui/DriverConfigPage.ui \
+	ui/AlsaDevicesPage.ui \
+	ui/KeyboardConfigPage.ui \
+	ui/BehaviorConfigPage.ui \
+	ui/MemoryConfigPage.ui \
+	ui/ThemeConfigPage.ui \
 
 
 INCLUDEPATH += 	../core \
@@ -125,6 +132,7 @@ INCLUDEPATH += 	../core \
 
 
 contains(DEFINES, ALSA_SUPPORT): LIBS += -lasound
+!contains(DEFINES, ALSA_SUPPORT): FORMS -= ui/AlsaDevicesPage.ui
 contains(DEFINES, JACK_SUPPORT): LIBS += -ljack
 
 !contains(DEFINES, LV2_SUPPORT){
