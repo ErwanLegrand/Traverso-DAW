@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AlsaDriver.h,v 1.5 2007/01/11 11:50:21 r_sijrier Exp $
+$Id: AlsaDriver.h,v 1.6 2007/02/27 19:48:34 r_sijrier Exp $
 */
 
 #ifndef ALSADRIVER_H
@@ -48,7 +48,6 @@ public:
 	AlsaDriver(AudioDevice* dev, int rate, nframes_t bufferSize);
 	~AlsaDriver();
 
-	char* get_descriptor();
 	int start();
 	int stop();
 	int _read(nframes_t nframes);
@@ -63,7 +62,7 @@ public:
 
 	QString get_device_name();
 	QString get_device_longname();
-	static QString alsa_device_name(bool longname = false);
+	static QString alsa_device_name(bool longname = false, int devicenumber=0);
 
 private:
 	void setup_io_function_pointers();

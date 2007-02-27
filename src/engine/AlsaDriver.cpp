@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AlsaDriver.cpp,v 1.12 2007/01/11 11:50:21 r_sijrier Exp $
+$Id: AlsaDriver.cpp,v 1.13 2007/02/27 19:48:34 r_sijrier Exp $
 */
 
 
@@ -28,6 +28,7 @@ $Id: AlsaDriver.cpp,v 1.12 2007/01/11 11:50:21 r_sijrier Exp $
 #include "AudioDevice.h"
 #include "AudioChannel.h"
 #include <Utils.h>
+#include <Config.h>
 
 #include <math.h>
 #include <stdio.h>
@@ -99,7 +100,7 @@ AlsaDriver::~AlsaDriver()
 
 int AlsaDriver::setup(bool capture, bool playback, const QString& pcmName)
 {
-	unsigned long user_nperiods = 2;
+	unsigned long user_nperiods = config().get_property("Hardware", "NumberOfPeriods", 2).toInt();
 	char *playback_pcm_name = pcmName.toAscii().data();
 	char *capture_pcm_name = pcmName.toAscii().data();
 	int shorts_first = false;
@@ -1552,53 +1553,12 @@ int AlsaDriver::attach()
 	}
 
 
-	// 	return jack_activate (client);
 	return 1;
 }
 
 int AlsaDriver::detach ()
 {
 	return 0;
-}
-
-
-
-static int
-dither_opt (char c, DitherAlgorithm* dither)
-{
-	switch (c) {
-	case '-':
-	case 'n':
-		*dither = None;
-		break;
-
-	case 'r':
-		*dither = Rectangular;
-		break;
-
-	case 's':
-		*dither = Shaped;
-		break;
-
-	case 't':
-		*dither = Triangular;
-		break;
-
-	default:
-		fprintf (stderr, "ALSA driver: illegal dithering mode %c\n", c);
-		return -1;
-	}
-	return 0;
-}
-
-
-/* DRIVER "PLUGIN" INTERFACE */
-
-const char driver_client_name[] = "alsa_pcm";
-
-const char* get_descriptor ()
-{
-	return "";
 }
 
 QString AlsaDriver::get_device_name( )
@@ -1611,40 +1571,35 @@ QString AlsaDriver::get_device_longname( )
 	return alsa_device_name(true);
 }
 
-QString AlsaDriver::alsa_device_name(bool longname)
+QString AlsaDriver::alsa_device_name(bool longname, int devicenumber)
 {
 	snd_ctl_card_info_t *info;
 	snd_ctl_t *handle;
 	char name[32];
-	sprintf(name, "hw:%d", 0);
+	sprintf(name, "hw:%d", devicenumber);
 	int err = 0;
 
 	snd_ctl_card_info_alloca(&info);
 
-	if ((err = snd_ctl_open(&handle, name, 0)) < 0) {
-		PERROR("Control open (%i): %s", 0, snd_strerror(err));
+	if ((err = snd_ctl_open(&handle, name, devicenumber)) < 0) {
+		PMESG("Control open (%i): %s", devicenumber, snd_strerror(err));
+		return "";
 	}
 
 	if ((err = snd_ctl_card_info(handle, info)) < 0) {
-		PERROR("Control hardware info (%i): %s", 0, snd_strerror(err));
+		PMESG("Control hardware info (%i): %s", 0, snd_strerror(err));
 	}
 
 	snd_ctl_close(handle);
 
-	if (err < 0)
+	if (err < 0) {
 		return "Device name unknown";
+	}
 
-	/*	int dev = -1;
-		if (snd_ctl_pcm_next_device(handle, &dev)<0)
-			PERROR("No buses available on soundcard :-(");
-		if (dev < 0)
-			return "";
-		
-		snd_pcm_info_set_device(pcminfo, dev);
-		snd_pcm_info_set_subdevice(pcminfo, 0);*/
 
-	if (longname)
+	if (longname) {
 		return snd_ctl_card_info_get_name(info);
+	}
 
 	return snd_ctl_card_info_get_id(info);
 }
