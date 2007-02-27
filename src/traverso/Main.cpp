@@ -17,7 +17,7 @@
 	along with this program; if not, write to the Free Software
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-	$Id: Main.cpp,v 1.5 2006/12/04 19:24:54 r_sijrier Exp $
+	$Id: Main.cpp,v 1.6 2007/02/27 19:48:56 r_sijrier Exp $
 */
 
 #include <signal.h>
@@ -115,9 +115,8 @@ int main( int argc, char **argv )
 
 
 
-// 	QApplication::setStyle("cleanlooks");
 	traverso = new Traverso(argc, argv);
-
+	
 	QTranslator traversoTranslator;
 	QString language = QLocale::system().name();
 	traversoTranslator.load(":/traverso_" + language );
