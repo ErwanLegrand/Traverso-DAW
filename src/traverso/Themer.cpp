@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Themer.cpp,v 1.4 2007/02/05 17:12:02 r_sijrier Exp $
+$Id: Themer.cpp,v 1.5 2007/02/27 19:50:03 r_sijrier Exp $
 */
 
 #include "Themer.h"
@@ -52,7 +52,31 @@ Themer* Themer::instance()
 Themer::Themer()
 {
 	m_watcher = new QFileSystemWatcher(this);
- 	m_themefile = config().get_property("Theme", "themepath", "").toString() + "/traversotheme.xml";
+	QString themepath = config().get_property("Themer", "themepath", "").toString();
+	if (themepath.isEmpty()) {
+		themepath = ":/themes";
+	}
+	m_currentTheme = config().get_property("Themer", "currenttheme", "TraversoLight").toString();
+	
+	if (get_builtin_themes().contains(m_currentTheme)) {
+		themepath = ":/themes";
+	}
+
+	m_themefile =  themepath + "/" + m_currentTheme + "/traversotheme.xml";
+	m_coloradjust = -1;
+	
+	m_systempallete = QApplication::palette();
+	
+	QString style = config().get_property("Themer", "style", "").toString();
+	QString currentStyle = QString(QApplication::style()->metaObject()->className()).remove("Q").remove("Style");
+	if (style != currentStyle) {
+		QApplication::setStyle(style);
+	}
+	bool usestylepallete = config().get_property("Themer", "usestylepallet", "").toBool();
+	if (usestylepallete) {
+		QApplication::setPalette(QApplication::style()->standardPalette());
+	}
+	
 	connect(m_watcher, SIGNAL(fileChanged(const QString&)), this, SLOT(reload_on_themefile_change(const QString&)));
 }
 
@@ -99,8 +123,8 @@ void Themer::load( )
  	QFile file(m_themefile);
  	
  	if ( ! file.exists() ) {
-		printf("File %s doesn't exit, falling back to default theme\n", QS_C(m_themefile));
-		file.setFileName(":/defaulttheme");
+		printf("File %s doesn't exit, falling back to default (TraversoLight) theme\n", QS_C(m_themefile));
+		file.setFileName(":/themes/TraversoLight/traversotheme.xml");
 	} else {
 	 	m_watcher->addPath(m_themefile);
 		printf("Using themefile: %s\n", QS_C(m_themefile));
@@ -122,6 +146,13 @@ void Themer::load( )
 
 	QDomNode colorsNode = docElem.firstChildElement("colors");
 	QDomNode colorNode = colorsNode.firstChild();
+	
+	int coloradjust = config().get_property("Themer", "coloradjust", 100).toInt();
+	
+	// If the m_coloradjust value is set, use that one instead!
+	if (m_coloradjust != -1) {
+		coloradjust = m_coloradjust;
+	}
 
 	while(!colorNode.isNull()) {
 		
@@ -135,6 +166,14 @@ void Themer::load( )
 			);
 		QString name = e.attribute("name", "");
 		
+		if (coloradjust != 100) {
+			int adjust = coloradjust - 100;
+			if (adjust < 0) {
+				color = color.dark(-1 * adjust + 100);
+			} else {
+				color = color.light(adjust + 100);
+			}
+		}
 		m_colors.insert(name, color);
 		colorNode = colorNode.nextSibling();
 	}
@@ -203,10 +242,37 @@ void Themer::reload_on_themefile_change(const QString&)
 }
 
 
-void Themer::set_theme_path(const QString& path)
+void Themer::set_path_and_theme(const QString& path, const QString& theme)
 {
-	m_themefile = path + "/traversotheme.xml";
-	config().set_property("Theme", "themepath", path);
-	reload_on_themefile_change(path);
+	if (m_currentTheme == theme) {
+		return;
+	}
+	m_currentTheme = theme;
+	m_themefile = path + "/" + theme + "/traversotheme.xml";
+	reload_on_themefile_change("");
+}
+
+void Themer::set_color_adjust_value(int value)
+{
+	m_coloradjust = value;
+	reload_on_themefile_change("");
+}
+
+QStringList Themer::get_builtin_themes()
+{
+	QStringList list;
+	list << "TraversoLight";
+	return list;
+}
+
+void Themer::use_builtin_theme(const QString & theme)
+{
+	if (m_currentTheme == theme) {
+		return;
+	}
+	
+	m_currentTheme = theme;
+	m_themefile = QString(":/themes/") + theme + "/traversotheme.xml";;
+	reload_on_themefile_change("");
 }
 

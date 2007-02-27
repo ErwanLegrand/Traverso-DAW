@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Themer.h,v 1.2 2007/02/05 17:12:02 r_sijrier Exp $
+    $Id: Themer.h,v 1.3 2007/02/27 19:50:03 r_sijrier Exp $
 */
 
 #ifndef COLORMANAGER_H
@@ -36,22 +36,29 @@ public:
         void save();
         void load();
         
-        void set_theme_path(const QString& path);
+        void set_path_and_theme(const QString& path, const QString& theme);
+	void use_builtin_theme(const QString& theme);
+	void set_color_adjust_value(int value);
         
 	QColor get_color(const QString& name) const;
         QFont get_font(const QString& fontname) const;
         QVariant get_property(const QString& propertyname, const QVariant& defaultValue=0) const;
+	QPalette system_palette() const {return m_systempallete;}
+	QStringList get_builtin_themes();
 
 	static Themer* instance();
 	
 private:
         Themer();
 
-        QHash<QString , QColor>		m_colors;
-	QHash<QString, QFont>		m_fonts;
-	QHash<QString, QVariant> 	m_properties;
-        QFileSystemWatcher*		m_watcher;
-        QString				m_themefile;
+        QHash<QString , QColor>	 m_colors;
+	QHash<QString, QVariant> m_properties;
+	QHash<QString, QFont>	m_fonts;
+	QFileSystemWatcher*	m_watcher;
+        QString			m_themefile;
+	int			m_coloradjust;
+	QPalette 		m_systempallete;
+	QString			m_currentTheme;
 
 	static Themer* m_instance;
         
@@ -61,6 +68,7 @@ private slots:
 	
 signals:
 	void themeLoaded();
+	void styleChanged();
 };
 
 // use this function to get the Colormanager object
