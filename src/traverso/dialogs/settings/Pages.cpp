@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Config.h>
 #include <Utils.h>
 #include <Themer.h>
-
+#include <InputEngine.h>
 
 
 /****************************************/
@@ -572,6 +572,9 @@ void KeyboardPage::save_config()
 {
 	config().set_property("CCE", "doublefactTimeout", m_configpage->doubleFactTimeoutSpinBox->value());
 	config().set_property("CCE", "holdTimeout", m_configpage->holdTimeoutSpinBox->value());
+	
+	ie().set_double_fact_interval(m_configpage->doubleFactTimeoutSpinBox->value());
+	ie().set_hold_sensitiveness(m_configpage->holdTimeoutSpinBox->value());
 }
 
 void KeyboardPage::reset_default_config()
