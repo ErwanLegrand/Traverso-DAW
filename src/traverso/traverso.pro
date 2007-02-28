@@ -104,9 +104,7 @@ SOURCES += \
 	dialogs/settings/SettingsDialog.cpp \
 	dialogs/project/SongManagerDialog.cpp \
 	dialogs/project/ProjectManagerDialog.cpp
-FORMS += ui/ProjectManagerWidget.ui \
-	ui/ExportWidget.ui \
-	ui/ManagerWidget.ui \
+FORMS += ui/ExportWidget.ui \
 	ui/AudioSourcesManagerWidget.ui \
 	ui/PluginSelectorDialog.ui \
 	ui/SpectralMeterConfigWidget.ui \
