@@ -46,12 +46,9 @@ HEADERS += \
 	Help.h \
 	Main.h \
 	ExportWidget.h \
-	ManagerWidget.h \
 	MessageWidget.h \
 	OverViewWidget.h \
 	PluginSelectorDialog.h \
-	ProjectManagerWidget.h \
-	SongManagerWidget.h \
 	SystemInfoWidget.h \
 	AudioSourcesManagerWidget.h \
 	Traverso.h \
@@ -62,7 +59,9 @@ HEADERS += \
 	QuickDriverConfigWidget.h \
 	precompile.h \
 	dialogs/settings/Pages.h \
-	dialogs/settings/SettingsDialog.h
+	dialogs/settings/SettingsDialog.h \
+	dialogs/project/SongManagerDialog.h \
+	dialogs/project/ProjectManagerDialog.h
 SOURCES += \
 	songcanvas/AudioClipView.cpp \
 	songcanvas/SongWidget.cpp \
@@ -91,12 +90,9 @@ SOURCES += \
 	Help.cpp \
 	Main.cpp \
 	ExportWidget.cpp \
-	ProjectManagerWidget.cpp \
 	MessageWidget.cpp \
-	ManagerWidget.cpp \
 	OverViewWidget.cpp \
 	PluginSelectorDialog.cpp \
-	SongManagerWidget.cpp \
 	SystemInfoWidget.cpp \
 	AudioSourcesManagerWidget.cpp \
 	Interface.cpp \
@@ -105,10 +101,11 @@ SOURCES += \
 	SpectralMeterWidget.cpp \
 	QuickDriverConfigWidget.cpp \
 	dialogs/settings/Pages.cpp \
-	dialogs/settings/SettingsDialog.cpp
+	dialogs/settings/SettingsDialog.cpp \
+	dialogs/project/SongManagerDialog.cpp \
+	dialogs/project/ProjectManagerDialog.cpp
 FORMS += ui/ProjectManagerWidget.ui \
 	ui/ExportWidget.ui \
-	ui/SongManagerWidget.ui \
 	ui/ManagerWidget.ui \
 	ui/AudioSourcesManagerWidget.ui \
 	ui/PluginSelectorDialog.ui \
@@ -120,6 +117,8 @@ FORMS += ui/ProjectManagerWidget.ui \
 	ui/BehaviorConfigPage.ui \
 	ui/MemoryConfigPage.ui \
 	ui/ThemeConfigPage.ui \
+	ui/SongManagerDialog.ui \
+	ui/ProjectManagerDialog.ui
 
 
 INCLUDEPATH += 	../core \
