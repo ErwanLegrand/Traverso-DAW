@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.35 2007/02/28 21:23:09 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -267,6 +266,36 @@ Command * Interface::show_export_widget( )
 
 void Interface::create_menus( )
 {
+	mainToolBar = addToolBar(tr("MainToolBar"));
+// 	mainToolBar->setMovable(false);
+	mainToolBar->setObjectName("MainToolBar");
+	mainToolBar->setFocusPolicy(Qt::NoFocus);
+
+	
+	driverInfo = new DriverInfoWidget(mainToolBar);
+	driverInfo->setFlat(true);
+	driverInfo->setFocusPolicy(Qt::NoFocus);
+	
+	mainToolBar->addWidget(driverInfo);
+	connect(driverInfo, SIGNAL(clicked()), this, SLOT(show_driver_config_widget()));
+	
+	
+	mainToolBar->addSeparator();
+	
+	resourcesInfo = new ResourcesInfoWidget(mainToolBar);
+	resourcesInfo->setFlat(true);
+	resourcesInfo->setFocusPolicy(Qt::NoFocus);
+	mainToolBar->addWidget(resourcesInfo);
+	
+	
+	mainToolBar->addSeparator();
+	
+	hddInfo = new HDDSpaceInfoWidget(mainToolBar);
+	hddInfo->setFlat(true);
+	hddInfo->setFocusPolicy(Qt::NoFocus);
+	mainToolBar->addWidget(hddInfo);
+	
+	
 	QMenu* menu = menuBar()->addMenu(tr("&File"));
 	
 	QAction* action = menu->addAction(tr("&Quit"));
@@ -307,7 +336,11 @@ void Interface::create_menus( )
 	menu->addAction(correlationMeterDW->toggleViewAction());
 	menu->addAction(spectralMeterDW->toggleViewAction());
 	
-
+	menu->addSeparator();
+	
+	menu->addAction(mainToolBar->toggleViewAction());
+		
+		
 	action = menuBar()->addAction(tr("&Settings"));
 	connect(action, SIGNAL(triggered( bool )), this, SLOT(show_settings_dialog()));
 	
@@ -328,34 +361,7 @@ void Interface::create_menus( )
 	
 	
 	
-	mainToolBar = addToolBar(tr("MainToolBar"));
-// 	mainToolBar->setMovable(false);
-	mainToolBar->setObjectName("MainToolBar");
-	mainToolBar->setFocusPolicy(Qt::NoFocus);
-
-	
-	driverInfo = new DriverInfoWidget(mainToolBar);
-	driverInfo->setFlat(true);
-	driverInfo->setFocusPolicy(Qt::NoFocus);
-	
-	mainToolBar->addWidget(driverInfo);
-	connect(driverInfo, SIGNAL(clicked()), this, SLOT(show_driver_config_widget()));
-	
-	
-	mainToolBar->addSeparator();
-	
-	resourcesInfo = new ResourcesInfoWidget(mainToolBar);
-	resourcesInfo->setFlat(true);
-	resourcesInfo->setFocusPolicy(Qt::NoFocus);
-	mainToolBar->addWidget(resourcesInfo);
-	
-	
-	mainToolBar->addSeparator();
-	
-	hddInfo = new HDDSpaceInfoWidget(mainToolBar);
-	hddInfo->setFlat(true);
-	hddInfo->setFocusPolicy(Qt::NoFocus);
-	mainToolBar->addWidget(hddInfo);
+		
 	
     /*	DigitalClock* clock = new DigitalClock();
 	mainToolBar->addWidget(clock);*/
