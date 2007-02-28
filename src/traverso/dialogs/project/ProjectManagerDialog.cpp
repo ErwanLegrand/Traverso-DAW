@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ProjectManagerDialog.cpp,v 1.1 2007/02/28 17:26:16 r_sijrier Exp $
+    $Id: ProjectManagerDialog.cpp,v 1.2 2007/02/28 21:23:09 r_sijrier Exp $
 */
 
 #include "ProjectManagerDialog.h"
@@ -42,13 +42,13 @@ ProjectManagerDialog::ProjectManagerDialog( QWidget * parent )
 	: QDialog(parent)
 {
 	setupUi(this);
-	projectListView->setColumnCount(3);
+	projectListView->setColumnCount(2);
 	update_projects_list();
 	QStringList stringList;
-	stringList << "Project Name" << "Songs" << "Status" ;
+	stringList << "Project Name" << "Songs";
 	projectListView->setHeaderLabels(stringList);
 	
-	projectListView->header()->resizeSection(0, 200);
+	projectListView->header()->resizeSection(0, 150);
 
 	connect(projectListView, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(projectitem_clicked(QTreeWidgetItem*,int)));
 }
@@ -110,20 +110,15 @@ void ProjectManagerDialog::update_projects_list()
 			title = e.attribute( "title", "" );
 			engineer = e.attribute( "engineer", "" );
 
-			/*********** TO HERE THIS CODE IS DUPLICATE FROM THAT IN PROJECT.CC :-( Don't know if this is avoidable at all *********/
+			/*********** TO HERE THIS CODE IS DUPLICATE FROM THAT IN PROJECT.CC :-( 
+			Don't know if this is avoidable at all *********/
 
-			QString status;
-			if (pm().get_project() && (pm().get_project()->get_title() == title))
-				status = pm().get_project()->has_changed()?"Unsaved":"Saved";
-			else
-				status="Saved";
 
 			QTreeWidgetItem* item = new QTreeWidgetItem(projectListView);
 			item->setTextAlignment(0, Qt::AlignLeft);
 			item->setTextAlignment(1, Qt::AlignHCenter);
 			item->setText(0,title);
 			item->setText(1,sNumSongs);
-			item->setText(2,status);
 		}
 	}
         /*	if (pm().get_project())

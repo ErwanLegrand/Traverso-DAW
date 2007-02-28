@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ExportWidget.h,v 1.2 2006/06/16 14:09:26 r_sijrier Exp $
+    $Id: ExportWidget.h,v 1.3 2007/02/28 21:23:09 r_sijrier Exp $
 */
 
 #ifndef EXPORTWIDGET_H
@@ -59,6 +59,7 @@ private slots:
         void on_selectionSongButton_clicked();
         void on_allSongsButton_clicked();
         void on_currentSongButton_clicked();
+	void on_cancelButton_clicked();
 
 };
 

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongManagerDialog.cpp,v 1.1 2007/02/28 17:26:16 r_sijrier Exp $
+$Id: SongManagerDialog.cpp,v 1.2 2007/02/28 21:23:09 r_sijrier Exp $
 */
 
 #include "SongManagerDialog.h"
@@ -37,13 +37,12 @@ SongManagerDialog::SongManagerDialog( QWidget * parent )
 {
 	setupUi(this);
 
-	treeSongWidget->setColumnCount(6);
+	treeSongWidget->setColumnCount(5);
 	treeSongWidget->header()->resizeSection(0, 200);
 	treeSongWidget->header()->resizeSection(1, 60);
 	treeSongWidget->header()->resizeSection(2, 120);
-	treeSongWidget->header()->resizeSection(4, 80);
 	QStringList stringList;
-	stringList << "Song Name" << "Tracks" << "Length h:m:s,fr" << "Rate/BitDepth" << "Status" << "Size" ;
+	stringList << "Song Name" << "Tracks" << "Length h:m:s,fr" << "Status" << "Size" ;
 	treeSongWidget->setHeaderLabels(stringList);
 	
 	m_project = pm().get_project();
@@ -99,12 +98,6 @@ void SongManagerDialog::update_song_list( )
 
 		QString songLength = frame_to_smpte(s->get_last_frame(), s->get_rate());
 
-		//QString songLength; songLength.setNum( spos );
-		QString songRate;
-		songRate.setNum(s->get_rate());
-		QString songBitDepth;
-		songBitDepth.setNum(s->get_bitdepth());
-		QString songRateBitdepth = songRate + " / " + songBitDepth;
 		QString songStatus = s->is_changed()?"UnSaved":"Saved";
 		QString songSpaceAllocated = "Unknown";
 		/* for later:
@@ -121,9 +114,8 @@ void SongManagerDialog::update_song_list( )
 		item->setText(0, songName);
 		item->setText(1, numberOfTracks);
 		item->setText(2, songLength);
-		item->setText(3, songRateBitdepth);
-		item->setText(4, songStatus);
-		item->setText(5, songSpaceAllocated);
+		item->setText(3, songStatus);
+		item->setText(4, songSpaceAllocated);
 	}
 }
 

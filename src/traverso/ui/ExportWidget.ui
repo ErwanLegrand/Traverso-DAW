@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>ExportWidget</class>
  <widget class="QWidget" name="ExportWidget" >
   <property name="geometry" >
@@ -42,7 +39,7 @@
   </property>
   <layout class="QVBoxLayout" >
    <property name="margin" >
-    <number>8</number>
+    <number>9</number>
    </property>
    <property name="spacing" >
     <number>6</number>
@@ -236,7 +233,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QWidget" name="widget" />
+    <widget class="QWidget" native="1" name="widget" />
    </item>
    <item>
     <spacer>
@@ -245,18 +242,48 @@
      </property>
      <property name="sizeHint" >
       <size>
-       <width>464</width>
+       <width>466</width>
        <height>16</height>
       </size>
      </property>
     </spacer>
    </item>
    <item>
-    <widget class="QPushButton" name="exportStartButton" >
-     <property name="text" >
-      <string>Start</string>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
      </property>
-    </widget>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="exportStartButton" >
+       <property name="text" >
+        <string>Start</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="cancelButton" >
+       <property name="text" >
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QGroupBox" name="ExportStateGroupBox" >
@@ -324,12 +351,18 @@
         <property name="value" >
          <number>0</number>
         </property>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
        </widget>
       </item>
       <item row="3" column="0" colspan="3" >
        <widget class="QProgressBar" name="overalProgressBar" >
         <property name="value" >
          <number>0</number>
+        </property>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
@@ -338,7 +371,6 @@
    </item>
   </layout>
  </widget>
- <pixmapfunction></pixmapfunction>
  <resources/>
  <connections/>
 </ui>

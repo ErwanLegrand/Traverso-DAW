@@ -17,30 +17,26 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Help.cpp,v 1.3 2006/05/11 13:51:53 r_sijrier Exp $
+$Id: Help.cpp,v 1.4 2007/02/28 21:23:09 r_sijrier Exp $
 */
 
 #include <QFile>
 #include <QTextStream>
 #include <QVBoxLayout>
 #include "Help.h"
+#include <Command.h>
+
+
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
 Help::Help(QWidget* parent)
-		: QWidget()
+	: QDialog(parent)
 {
 	PENTERCONS;
 	created=false;
-
-	cpointer().add_contextitem(this);
-}
-
-Help::~Help()
-{
-	PENTERDES;
 }
 
 

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.34 2007/02/28 17:25:07 r_sijrier Exp $
+$Id: Interface.cpp,v 1.35 2007/02/28 21:23:09 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -267,12 +267,9 @@ Command * Interface::show_export_widget( )
 
 void Interface::create_menus( )
 {
-	QMenu* menu;
-	QAction* action;
+	QMenu* menu = menuBar()->addMenu(tr("&File"));
 	
-	menu = menuBar()->addMenu(tr("&File"));
-	
-	action = menu->addAction(tr("&Quit"));
+	QAction* action = menu->addAction(tr("&Quit"));
 	action->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
 	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(exit()));
 	

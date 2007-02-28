@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ExportWidget.cpp,v 1.4 2006/10/18 12:08:56 r_sijrier Exp $
+    $Id: ExportWidget.cpp,v 1.5 2007/02/28 21:23:09 r_sijrier Exp $
 */
 
 #include "ExportWidget.h"
@@ -40,7 +40,7 @@
 
 
 ExportWidget::ExportWidget( QWidget * parent )
-                : QDialog(parent)
+	: QDialog(parent)
 {
         setupUi(this);
 
@@ -204,6 +204,12 @@ void ExportWidget::on_exportStartButton_clicked( )
 }
 
 
+void ExportWidget::on_cancelButton_clicked()
+{
+	hide();
+}
+
+
 void ExportWidget::on_exportStopButton_clicked( )
 {
         show_settings_view();
@@ -293,3 +299,4 @@ void ExportWidget::show_settings_view( )
 
 
 //eof
+

@@ -17,23 +17,22 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Help.h,v 1.3 2006/05/11 13:52:04 r_sijrier Exp $
+    $Id: Help.h,v 1.4 2007/02/28 21:23:09 r_sijrier Exp $
 */
 
 #ifndef HELP_H
 #define HELP_H
 
-#include <libtraversocore.h>
-
-#include <QWidget>
+#include <QDialog>
 #include <QTextBrowser>
 
-class Help : public QWidget
+class Command;
+
+class Help : public QDialog
 {
         Q_OBJECT
 public:
         Help(QWidget* parent = 0);
-        ~Help();
 
 private:
         QTextBrowser *view;
