@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.cpp,v 1.33 2007/02/27 19:49:07 r_sijrier Exp $
+$Id: Interface.cpp,v 1.34 2007/02/28 17:25:07 r_sijrier Exp $
 */
 
 #include "../config.h"
@@ -43,7 +43,6 @@ $Id: Interface.cpp,v 1.33 2007/02/27 19:49:07 r_sijrier Exp $
 #include "QuickDriverConfigWidget.h"
 #include "SystemInfoWidget.h"
 
-#include "ManagerWidget.h"
 #include "ExportWidget.h"
 #include "CorrelationMeterWidget.h"
 #include "SpectralMeterWidget.h"
@@ -52,6 +51,9 @@ $Id: Interface.cpp,v 1.33 2007/02/27 19:49:07 r_sijrier Exp $
 #include "songcanvas/SongWidget.h"
 
 #include "dialogs/settings/SettingsDialog.h"
+#include "dialogs/project/ProjectManagerDialog.h"
+#include "dialogs/project/SongManagerDialog.h"
+
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -127,8 +129,9 @@ Interface::Interface()
 	driverConfigWidget = 0;
 	currentSongWidget = 0;
 	exportWidget = 0;
-	managerWidget = 0;
 	m_settingsdialog = 0;
+	m_projectManagerDialog = 0;
+	m_songManagerDialog = 0;
 	
 	create_menus();
 	
@@ -164,8 +167,13 @@ void Interface::set_project(Project* project)
 	if ( project ) {
 		connect(project, SIGNAL(currentSongChanged(Song*)), this, SLOT(show_song(Song*)));
 		setWindowTitle(project->get_title() + " - Traverso");
-
+		m_projectSaveAction->setEnabled(true);
+		m_projectSongManagerAction->setEnabled(true);
+		m_projectExportAction->setEnabled(true);
 	} else {
+		m_projectSaveAction->setEnabled(false);
+		m_projectSongManagerAction->setEnabled(false);
+		m_projectExportAction->setEnabled(false);
 		setWindowTitle("Traverso");
 	}
 }
@@ -195,18 +203,6 @@ void Interface::show_song(Song* song)
 	centerAreaWidget->setCurrentIndex(centerAreaWidget->indexOf(songWidget));
 	songWidget->setFocus();
 	pm().get_undogroup()->setActiveStack(song->get_history_stack());
-}
-
-Command* Interface::set_manager_widget()
-{
-	if (!managerWidget) {
-		managerWidget = new ManagerWidget(centerAreaWidget);
-		centerAreaWidget->addWidget(managerWidget);
-	}
-	
-	centerAreaWidget->setCurrentIndex(centerAreaWidget->indexOf(managerWidget));
-	
-	return (Command*) 0;
 }
 
 Command* Interface::show_song_widget()
@@ -271,117 +267,75 @@ Command * Interface::show_export_widget( )
 
 void Interface::create_menus( )
 {
-	saveAction =  new QAction(tr("&Save"), this);
-	QIcon icon = QApplication::style()->standardIcon(QStyle::SP_DialogSaveButton);
-	saveAction->setIcon(icon);
-	connect(saveAction, SIGNAL(triggered()), &pm(), SLOT(save_project()));
+	QMenu* menu;
+	QAction* action;
 	
-	exitAction = new QAction(tr("&Quit"), this);
-	icon = QApplication::style()->standardIcon(QStyle::SP_DialogCloseButton);
-	exitAction->setIcon(icon);
-	connect(exitAction, SIGNAL(triggered()), &pm(), SLOT(exit()));
+	menu = menuBar()->addMenu(tr("&File"));
 	
-	editViewAction = new QAction(tr("&Edit View"), this);
-	connect(editViewAction, SIGNAL(triggered()), this, SLOT(show_song_widget()));
-	
-	curveViewAction = new QAction(tr("&Curve View"), this);
-	connect(curveViewAction, SIGNAL(triggered()), this, SLOT(show_song_widget()));
-	
-	projManViewAction = new QAction(tr("&Project Management"), this);
-	connect(projManViewAction, SIGNAL(triggered()), this, SLOT(set_manager_widget()));
-	
-	settingsViewAction = new QAction(tr("&Settings"), this);
-	connect(settingsViewAction, SIGNAL(triggered()), this, SLOT(set_manager_widget()));
+	action = menu->addAction(tr("&Quit"));
+	action->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
+	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(exit()));
 	
 	
-	handBookAction = new QAction(tr("&HandBook"), this);
-	icon = QApplication::style()->standardIcon(QStyle::SP_DialogHelpButton);
-	handBookAction->setIcon(icon);
-	connect(handBookAction, SIGNAL(triggered()), helpWindow, SLOT(show_help()));
+	menu = menuBar()->addMenu(tr("&Project"));
 	
-	aboutTraversoAction = new QAction(tr("&About Traverso"), this);
-	connect(aboutTraversoAction,  SIGNAL(triggered()), this, SLOT(about_traverso()));
+	action = menu->addAction(tr("Open / Create"));
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_project_manager_dialog()));
+	
+	menu->addSeparator();
+	
+	action = menu->addAction(tr("&Save"));
+	m_projectSaveAction = action;
+	action->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
+	connect(action, SIGNAL(triggered(bool)), &pm(), SLOT(save_project()));
+	
+	action = menu->addAction(tr("Manage Songs"));
+	m_projectSongManagerAction = action;
+	
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_song_manager_dialog()));
+	
+	action = menu->addAction(tr("Export"));
+	m_projectExportAction = action;
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_export_widget()));
 	
 	
-	fileMenu = new QMenu("File", this);
-	fileMenu->addAction(saveAction);
-	fileMenu->addAction(exitAction);
+	menu = menuBar()->addMenu(tr("&Views"));
 	
-	viewMenu = new QMenu("Views", this);
-	QAction* mvAction = viewMenu->addAction(tr("Manager View"));
-	connect(mvAction, SIGNAL(triggered()), this, SLOT(set_manager_widget()));
-
-	QAction* svAction = viewMenu->addAction(tr("Song View"));
-	connect(svAction, SIGNAL(triggered()), this, SLOT(show_song_widget()));
+	menu->addAction(historyDW->toggleViewAction());
+	menu->addAction(busMonitorDW->toggleViewAction());
+	menu->addAction(AudioSourcesDW->toggleViewAction());
 	
-	viewMenu->addSeparator();
+	menu->addSeparator();
 	
-	viewMenu->addAction(historyDW->toggleViewAction());
-	viewMenu->addAction(busMonitorDW->toggleViewAction());
-	viewMenu->addAction(AudioSourcesDW->toggleViewAction());
-	
-	viewMenu->addSeparator();
-	
-	viewMenu->addAction(correlationMeterDW->toggleViewAction());
-	viewMenu->addAction(spectralMeterDW->toggleViewAction());
+	menu->addAction(correlationMeterDW->toggleViewAction());
+	menu->addAction(spectralMeterDW->toggleViewAction());
 	
 
-	helpMenu = new QMenu("Help", this);
-	helpMenu->addAction(handBookAction);
-	helpMenu->addAction(aboutTraversoAction);
+	action = menuBar()->addAction(tr("&Settings"));
+	connect(action, SIGNAL(triggered( bool )), this, SLOT(show_settings_dialog()));
+	
+	
+	menu = menuBar()->addMenu("&Help");
+	action = menu->addAction(tr("&HandBook"));
+	action->setIcon(style()->standardIcon(QStyle::SP_DialogHelpButton));
+	connect(action, SIGNAL(triggered(bool)), helpWindow, SLOT(show_help()));
+	
+	action = menu->addAction(tr("&About Traverso"));
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(about_traverso()));
+	
+	
+	action = menuBar()->addAction(tr("OpenGL"));
+	action->setEnabled(QGLFormat::hasOpenGL());
+	action->setCheckable(true);
+	connect(action, SIGNAL(toggled( bool )), this, SLOT(toggle_OpenGL(bool)));
+	
 	
 	
 	mainToolBar = addToolBar(tr("MainToolBar"));
-	mainToolBar->setMovable(false);
+// 	mainToolBar->setMovable(false);
 	mainToolBar->setObjectName("MainToolBar");
 	mainToolBar->setFocusPolicy(Qt::NoFocus);
 
-	
-	QPushButton* tbutton = new QPushButton(mainToolBar);
-	QFontMetrics fm = tbutton->fontMetrics();
-	QString text = tr("File");
-// 	utton->setPopupMode(QToolButton::InstantPopup);
-	tbutton->setText(text);
-	tbutton->setMaximumWidth(fm.width(text) + 32);
-	tbutton->setFlat(true);
-	tbutton->setMenu(fileMenu);
-	mainToolBar->addWidget(tbutton);
-// 	tbutton->setFocusPolicy(Qt::NoFocus);
-	
-	tbutton = new QPushButton(mainToolBar);
-// 	tbutton->setPopupMode(QToolButton::InstantPopup);
-	text = tr("Views");
-	tbutton->setText(text);
-	tbutton->setMaximumWidth(fm.width(text) + 32);
-	tbutton->setFlat(true);
-	tbutton->setMenu(viewMenu);
-	mainToolBar->addWidget(tbutton);
-// 	tbutton->setFocusPolicy(Qt::NoFocus);
-	
-	
-	QAction* settings = mainToolBar->addAction(tr("Settings"));
-	connect(settings, SIGNAL(triggered( bool )), this, SLOT(show_settings_dialog()));
-	
-	
-	QToolButton* button = new QToolButton(mainToolBar);
-	button->setIcon(find_pixmap(":/projectmanagement-22"));
-	button->setMinimumWidth(44);
-	button->setToolTip("Show Manager View");
-	mainToolBar->addWidget(button);
-	button->setFocusPolicy(Qt::NoFocus);
-	connect(button, SIGNAL(clicked()), this, SLOT(set_manager_widget()));
-	
-
-	button = new QToolButton(mainToolBar);
-	button->setIcon(find_pixmap(":/songview-22"));
-	button->setMinimumWidth(44);
-	button->setToolTip("Show Song View");
-	mainToolBar->addWidget(button);
-	button->setFocusPolicy(Qt::NoFocus);
-	connect(button, SIGNAL(clicked()), this, SLOT(show_song_widget()));
-	
-	
-	mainToolBar->addSeparator();
 	
 	driverInfo = new DriverInfoWidget(mainToolBar);
 	driverInfo->setFlat(true);
@@ -395,6 +349,7 @@ void Interface::create_menus( )
 	
 	resourcesInfo = new ResourcesInfoWidget(mainToolBar);
 	resourcesInfo->setFlat(true);
+	resourcesInfo->setFocusPolicy(Qt::NoFocus);
 	mainToolBar->addWidget(resourcesInfo);
 	
 	
@@ -402,27 +357,8 @@ void Interface::create_menus( )
 	
 	hddInfo = new HDDSpaceInfoWidget(mainToolBar);
 	hddInfo->setFlat(true);
+	hddInfo->setFocusPolicy(Qt::NoFocus);
 	mainToolBar->addWidget(hddInfo);
-	
-	mainToolBar->addSeparator();
-	
-	tbutton = new QPushButton(mainToolBar);
-// 	tbutton->setPopupMode(QToolButton::InstantPopup);
-	text = tr("Help");
-	tbutton->setText(text);
-	tbutton->setMaximumWidth(fm.width(text) + 32);
-	tbutton->setFlat(true);
-	tbutton->setMenu(helpMenu);
-	mainToolBar->addWidget(tbutton);
-	tbutton->setFocusPolicy(Qt::NoFocus);
-	
-	openGlButton = new QToolButton;
-	openGlButton->setText(tr("OpenGL"));
-	openGlButton->setCheckable(true);
-	openGlButton->setEnabled(QGLFormat::hasOpenGL());
-	mainToolBar->addWidget(openGlButton);
-	connect(openGlButton, SIGNAL(toggled(bool)), this, SLOT(toggle_OpenGL()));
-
 	
     /*	DigitalClock* clock = new DigitalClock();
 	mainToolBar->addWidget(clock);*/
@@ -673,16 +609,13 @@ void Interface::show_driver_config_widget( )
 	driverConfigWidget->show();
 }
 
-void Interface::toggle_OpenGL( )
+void Interface::toggle_OpenGL(bool toggled)
 {
-	bool useOpenGl = openGlButton->isChecked();
-	printf("useOpenGl is %d\n", useOpenGl);
 	foreach(SongWidget* widget, m_songWidgets) {
-		widget->set_use_opengl(useOpenGl);
+		widget->set_use_opengl(toggled);
 	}
 	
 }
-
 
 DigitalClock::DigitalClock(QWidget *parent)
 	: QLCDNumber(parent)
@@ -728,4 +661,21 @@ void Interface::closeEvent(QCloseEvent * event)
 	event->accept();
 }
 
+void Interface::show_project_manager_dialog()
+{
+	if (! m_projectManagerDialog) {
+		m_projectManagerDialog = new ProjectManagerDialog(this);
+	}
+	m_projectManagerDialog->show();
+}
+
+void Interface::show_song_manager_dialog()
+{
+	if (! m_songManagerDialog ) {
+		m_songManagerDialog = new SongManagerDialog(this);
+	}
+	m_songManagerDialog->show();
+}
+
 // eof
+

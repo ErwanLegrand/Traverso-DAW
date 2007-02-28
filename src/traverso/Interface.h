@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.h,v 1.16 2007/02/27 19:49:07 r_sijrier Exp $
+$Id: Interface.h,v 1.17 2007/02/28 17:25:07 r_sijrier Exp $
 */
 
 #ifndef INTERFACE_H
@@ -37,7 +37,6 @@ class ContextItem;
 class Command;
 
 class QLabel;
-class ManagerWidget;
 class ExportWidget;
 class QStackedWidget;
 class QHBoxLayout;
@@ -55,7 +54,8 @@ class SongWidget;
 class CorrelationMeterWidget;
 class SpectralMeterWidget;
 class SettingsDialog;
-
+class ProjectManagerDialog;
+class SongManagerDialog;
 
 class Interface : public QMainWindow
 {
@@ -78,7 +78,6 @@ private:
 	SongWidget*		currentSongWidget;
 	QList<ViewPort* > 	currentProjectViewPortList;
 	QHash<QString, QMenu*>	m_contextMenus;
-	ManagerWidget* 		managerWidget;
 	ExportWidget*		exportWidget;
 	OverViewWidget* 	overView;
 	QUndoView*		historyWidget;
@@ -92,26 +91,17 @@ private:
 	QDockWidget*		spectralMeterDW;
 	SpectralMeterWidget*	spectralMeter;
 	SettingsDialog*		m_settingsdialog;
+	ProjectManagerDialog*	m_projectManagerDialog;
+	SongManagerDialog*	m_songManagerDialog;
 
 	BusMonitor* 		busMonitor;
 	Help* 			helpWindow;
 
-	QMenu*			fileMenu;
-	QMenu*			helpMenu;
-	QMenu*			viewMenu;
-	
-	QAction*		exitAction;
-	QAction*		saveAction;
-	QAction*		aboutTraversoAction;
-	QAction*		handBookAction;
-	
-	QAction*		editViewAction;
-	QAction*		curveViewAction;
-	QAction*		projManViewAction;
-	QAction*		settingsViewAction;
-	
 	QToolBar* 		mainToolBar;
 	QToolButton*		openGlButton;
+	QAction*		m_projectSaveAction;
+	QAction*		m_projectSongManagerAction;
+	QAction*		m_projectExportAction;
 	
 	ResourcesInfoWidget*	resourcesInfo;
 	DriverInfoWidget*	driverInfo;
@@ -132,9 +122,10 @@ public slots :
 	void set_fade_in_shape(QAction* action);
 	void set_fade_out_shape(QAction* action);
 	void show_driver_config_widget();
-	void toggle_OpenGL();
+	void toggle_OpenGL(bool);
+	void show_project_manager_dialog();
+	void show_song_manager_dialog();
 
-	Command* set_manager_widget();
 	Command* show_song_widget();
 	Command* full_screen();
 	Command* about_traverso();
