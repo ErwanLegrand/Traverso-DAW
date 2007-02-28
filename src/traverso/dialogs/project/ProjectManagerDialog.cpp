@@ -17,7 +17,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ProjectManagerDialog.cpp,v 1.2 2007/02/28 21:23:09 r_sijrier Exp $
 */
 
 #include "ProjectManagerDialog.h"
@@ -48,7 +47,8 @@ ProjectManagerDialog::ProjectManagerDialog( QWidget * parent )
 	stringList << "Project Name" << "Songs";
 	projectListView->setHeaderLabels(stringList);
 	
-	projectListView->header()->resizeSection(0, 150);
+	projectListView->header()->resizeSection(0, 160);
+	projectListView->header()->resizeSection(1, 30);
 
 	connect(projectListView, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(projectitem_clicked(QTreeWidgetItem*,int)));
 }
@@ -148,26 +148,28 @@ void ProjectManagerDialog::on_loadProjectButton_clicked( )
 	if (pm().get_project() && pm().get_project()->has_changed())
 		switch (QMessageBox::information(this,
 			"Traverso - Question",
-   "Should the current project be saved ?",
-   tr("Yes"), tr("No"), QString::null, 0, -1)) {
-	   case -1:
-		   return;
-		   break;
-	   case 0:
-		   pm().get_project()->save();
-		   break;
-	   default:
-		   break;
-   }
-
-        // first test if project exists
-   if (!pm().project_exists(title)) {
-	   info().warning(tr("Project does not exist! (%1)").arg(title));
-	   return;
-   }
-   if (pm().load_project(title)<0) {
-	   PERROR("Could not load project %s", title.toAscii().data());
-   }
+   			"Should the current project be saved ?",
+			tr("Yes"), tr("No"), QString::null, 0, -1)) 
+		{
+		case -1:
+			return;
+			break;
+		case 0:
+			pm().get_project()->save();
+			break;
+		default:
+			break;
+	}
+	
+	// first test if project exists
+	if (!pm().project_exists(title)) {
+		info().warning(tr("Project does not exist! (%1)").arg(title));
+		return;
+	}
+	
+	if (pm().load_project(title)<0) {
+		PERROR("Could not load project %s", title.toAscii().data());
+	}
 }
 
 void ProjectManagerDialog::on_createProjectButton_clicked( )
@@ -182,48 +184,45 @@ void ProjectManagerDialog::on_createProjectButton_clicked( )
 	}
 
         // ask if the current project should first be saved (only when status is "UnSaved")
-	if (pm().get_project() && pm().get_project()->has_changed())
+	if (pm().get_project() && pm().get_project()->has_changed()) {
 		switch (QMessageBox::information(this,
 			tr("Traverso - Question"),
-			   tr("Should the current project be saved ?"),
-			      tr("Yes"), tr("No"), QString::null, 0, -1)) {
-				      case -1:
-					      return;
-					      break;
-				      case 0:
-					      pm().get_project()->save();
-					      break;
-				      default:
-					      break;
-			      }
-
+			tr("Should the current project be saved ?"),
+			tr("Yes"), tr("No"), QString::null, 0, -1)) 
+		{
+		case -1:
+			return;
+			break;
+		case 0:
+			pm().get_project()->save();
+			break;
+		default:
+			break;
+	      }
+	}
 
         // first test if project exists already
-			      if (pm().project_exists(title)) {
-				      switch (QMessageBox::information(this,
-					      tr("Traverso - Question"),
-							      tr("The Project \"%1\" already exists, do you want to remove it and replace it with a new one ?").arg(title),
-									      tr("Yes"), tr("No"), QString::null, 1, -1)) {
-										case 0:
-										pm().remove_project(title);
-										break;
-										default:
-										return;
-										break;
-									      }
-			      }
-			      QString sNumSongs = numberOfSongs->text();
-			      bool ok;
-			      int numSongs = sNumSongs.toInt(&ok, 10);
-        //When input is not a decimal number, set it to a sane default value
-			      if (!ok)
-				      numSongs = 2;
-
-			      if( pm().create_new_project(title, numSongs) < 0)
-				      info().warning(tr("Couldn't create project (%1)").arg(title) );
-			      else {
-				      update_projects_list();
-			      }
+      if (pm().project_exists(title)) {
+	      switch (QMessageBox::information(this,
+		      tr("Traverso - Question"),
+		      tr("The Project \"%1\" already exists, do you want to remove it and replace it with a new one ?").arg(title),
+		      tr("Yes"), tr("No"), QString::null, 1, -1)) 
+		      {
+			case 0:
+			pm().remove_project(title);
+			break;
+			default:
+			return;
+			break;
+		}
+	}
+	int numSongs = songCountSpinBox->value();
+	
+	if( pm().create_new_project(title, numSongs) < 0) {
+		info().warning(tr("Couldn't create project (%1)").arg(title) );
+	} else {
+		update_projects_list();
+	}
 }
 
 void ProjectManagerDialog::on_deleteProjectbutton_clicked( )
