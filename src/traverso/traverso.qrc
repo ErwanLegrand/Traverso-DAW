@@ -47,6 +47,8 @@
 		<file alias="songview-22">../../resources/images/icons/22x22/songview.png</file>
 		<file alias="projectmanagement-22">../../resources/images/icons/22x22/projects.png</file>
 		<file alias="projectmanagement-16">../../resources/images/icons/16x16/projects.png</file>
+		<file alias="exit-16">../../resources/images/icons/16x16/exit.png</file>
+		<file alias="songmanager-16">../../resources/images/icons/16x16/contents.png</file>
 		<file alias="traverso_nl">../../traverso_nl.qm</file>
 		<file alias="traverso_de">../../traverso_de.qm</file>
 		<file alias="index.html">../../resources/help/index.html</file>
