@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02100-1301  USA.
 
 */
 
@@ -83,35 +83,35 @@ void SettingsDialog::createIcons()
 	behaviorButton->setTextAlignment(Qt::AlignHCenter);
 	behaviorButton->setText(tr("Behavior"));
 	behaviorButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-	behaviorButton->setSizeHint(QSize(110, 50));
+	behaviorButton->setSizeHint(QSize(100, 50));
 
 	QListWidgetItem* appearanceButton = new QListWidgetItem(contentsWidget);
 	appearanceButton->setIcon(QIcon(":/appearance"));
 	appearanceButton->setText(tr("Appearance"));
 	appearanceButton->setTextAlignment(Qt::AlignHCenter);
 	appearanceButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-	appearanceButton->setSizeHint(QSize(110, 50));
+	appearanceButton->setSizeHint(QSize(100, 50));
 	
 	QListWidgetItem* driverButton = new QListWidgetItem(contentsWidget);
 	driverButton->setIcon(QIcon(":/audiocard"));
 	driverButton->setText(tr("Audio Driver"));
 	driverButton->setTextAlignment(Qt::AlignHCenter);
 	driverButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-	driverButton->setSizeHint(QSize(110, 50));
+	driverButton->setSizeHint(QSize(100, 50));
 	
 	QListWidgetItem* diskioButton = new QListWidgetItem(contentsWidget);
 	diskioButton->setIcon(QIcon(":/diskdrive"));
 	diskioButton->setText(tr("Disk I/O"));
 	diskioButton->setTextAlignment(Qt::AlignHCenter);
 	diskioButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-	diskioButton->setSizeHint(QSize(110, 50));
+	diskioButton->setSizeHint(QSize(100, 50));
 	
 	QListWidgetItem* keyboardButton = new QListWidgetItem(contentsWidget);
 	keyboardButton->setIcon(QIcon(":/keyboard"));
 	keyboardButton->setText(tr("Keyboard"));
 	keyboardButton->setTextAlignment(Qt::AlignHCenter);
 	keyboardButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-	keyboardButton->setSizeHint(QSize(110, 50));
+	keyboardButton->setSizeHint(QSize(100, 50));
 	
 	
 	connect(contentsWidget,
