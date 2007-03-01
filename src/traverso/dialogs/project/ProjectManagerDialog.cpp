@@ -256,15 +256,6 @@ void ProjectManagerDialog::on_deleteProjectbutton_clicked( )
 		      return;
 }
 
-void ProjectManagerDialog::on_saveAsProjectButton_clicked( )
-{
-	if (pm().get_project()) {
-		pm().get_project()->set_title(selectedProjectName->text());
-		pm().get_project()->save();
-	}
-	selectedProjectName->setText("");
-	update_projects_list();
-}
 
 void ProjectManagerDialog::on_projectDirSelectButton_clicked( )
 {
