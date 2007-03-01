@@ -17,7 +17,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: CorrelationMeterWidget.cpp,v 1.15 2007/02/23 13:50:46 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -71,6 +70,19 @@ void CorrelationMeterWidget::resizeEvent( QResizeEvent *  )
 	m_item->resize();
 }
 
+void CorrelationMeterWidget::hideEvent(QHideEvent * event)
+{
+	QWidget::hideEvent(event);
+	m_item->hide_event();
+}
+
+
+void CorrelationMeterWidget::showEvent(QShowEvent * event)
+{
+	QWidget::showEvent(event);
+	m_item->show_event();
+}
+
 void CorrelationMeterWidget::get_pointed_context_items(QList<ContextItem* > &list)
 {
 	printf("CorrelationMeterWidget::get_pointed_view_items\n");
@@ -90,6 +102,7 @@ CorrelationMeterView::CorrelationMeterView(CorrelationMeterWidget* widget)
 	: ViewItem(0, 0)
 	, m_widget(widget)
 	, m_meter(0)
+	, m_song(0)
 {
 	fgColor = themer()->get_color("Meter:margin");
 	bgColor = themer()->get_color("Meter:background");
@@ -213,7 +226,26 @@ void CorrelationMeterView::set_project(Project *project)
 
 void CorrelationMeterView::set_song(Song *song)
 {
-	PluginChain* chain = song->get_plugin_chain();
+	if (m_widget->parentWidget()->isHidden()) {
+		m_song = song;
+		return;
+	}
+	
+
+	if (m_song) {
+		if (m_meter) {
+			ie().process_command(m_song->get_plugin_chain()->remove_plugin(m_meter, false));
+			timer.stop();
+		}
+	}
+	
+	m_song = song;
+	
+	if ( ! m_song ) {
+		return;
+	}
+	
+	PluginChain* chain = m_song->get_plugin_chain();
 	
 	QList<Plugin* >* pluginList = chain->get_plugin_list();
 	for (int i=0; i<pluginList->size(); ++i) {
@@ -231,6 +263,24 @@ void CorrelationMeterView::set_song(Song *song)
 	ie().process_command( chain->add_plugin(m_meter, false) );
 	timer.start(40);
 }
+
+void CorrelationMeterView::hide_event()
+{
+	printf("CorrelationMeterView::hide_event()\n");
+	if (m_song) {
+		if (m_meter) {
+			ie().process_command(m_song->get_plugin_chain()->remove_plugin(m_meter, false));
+			timer.stop();
+		}
+	}
+}
+
+void CorrelationMeterView::show_event()
+{
+	set_song(m_song);
+}
+
+
 
 Command* CorrelationMeterView::set_mode()
 {

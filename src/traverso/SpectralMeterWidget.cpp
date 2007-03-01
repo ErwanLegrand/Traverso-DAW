@@ -17,7 +17,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: SpectralMeterWidget.cpp,v 1.31 2007/02/23 13:50:46 r_sijrier Exp $
 */
 
 #include "SpectralMeterWidget.h"
@@ -79,15 +78,26 @@ void SpectralMeterWidget::resizeEvent( QResizeEvent *  )
 	m_item->resize();
 }
 
+void SpectralMeterWidget::hideEvent(QHideEvent * event)
+{
+	QWidget::hideEvent(event);
+	m_item->hide_event();
+}
+
+
+void SpectralMeterWidget::showEvent(QShowEvent * event)
+{
+	QWidget::showEvent(event);
+	m_item->show_event();
+}
+
+
 void SpectralMeterWidget::get_pointed_context_items(QList<ContextItem* > &list)
 {
-	printf("SpectralMeterWidget::get_pointed_view_items\n");
 	QList<QGraphicsItem *> itemlist = items(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
 	foreach(QGraphicsItem* item, itemlist) {
 		list.append((ViewItem*)item);
 	}
-	
-	printf("itemlist size is %d\n", itemlist.size());
 }
 
 
@@ -96,6 +106,7 @@ SpectralMeterView::SpectralMeterView(SpectralMeterWidget* widget)
 	: ViewItem(0, 0)
 	, m_widget(widget)
 	, m_meter(0)
+	, m_song(0)
 {
 
 	m_config = new SpectralMeterConfigWidget(m_widget);
@@ -303,10 +314,29 @@ void SpectralMeterView::set_project(Project *project)
 
 void SpectralMeterView::set_song(Song *song)
 {
-	PluginChain* chain = song->get_plugin_chain();
+	if (m_widget->parentWidget()->isHidden()) {
+		m_song = song;
+		return;
+	}
 	
-	connect(song, SIGNAL(transferStarted()), this, SLOT(transfer_started()));
-	connect(song, SIGNAL(transferStopped()), this, SLOT(transfer_stopped()));
+	
+	if (m_song) {
+		if (m_meter) {
+			ie().process_command(m_song->get_plugin_chain()->remove_plugin(m_meter, false));
+			timer.stop();
+		}
+	}
+	
+	m_song = song;
+	
+	if ( ! m_song ) {
+		return;
+	}
+	
+	PluginChain* chain = m_song->get_plugin_chain();
+	
+	connect(m_song, SIGNAL(transferStarted()), this, SLOT(transfer_started()));
+	connect(m_song, SIGNAL(transferStopped()), this, SLOT(transfer_stopped()));
 
 	QList<Plugin* >* pluginList = chain->get_plugin_list();
 	for (int i=0; i<pluginList->size(); ++i) {
@@ -325,6 +355,23 @@ void SpectralMeterView::set_song(Song *song)
 
 	timer.start(UPDATE_INTERVAL);
 }
+
+
+void SpectralMeterView::hide_event()
+{
+	if (m_song) {
+		if (m_meter) {
+			ie().process_command(m_song->get_plugin_chain()->remove_plugin(m_meter, false));
+			timer.stop();
+		}
+	}
+}
+
+void SpectralMeterView::show_event()
+{
+	set_song(m_song);
+}
+
 
 void SpectralMeterView::reduce_bands()
 {
@@ -1111,3 +1158,6 @@ void SpectralMeterConfigWidget::load_configuration( )
 }
 
 //eof
+
+
+

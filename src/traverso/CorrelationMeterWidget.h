@@ -17,7 +17,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: CorrelationMeterWidget.h,v 1.6 2007/02/13 11:10:05 r_sijrier Exp $
 */
 
 #ifndef CORRELATIONMETERWIDGET_H
@@ -49,6 +48,8 @@ public:
 
 protected:
         void resizeEvent( QResizeEvent* e);
+	void hideEvent ( QHideEvent * event );
+	void showEvent ( QShowEvent * event );
 
 private:
 	CorrelationMeterView* m_item;
@@ -67,6 +68,8 @@ public:
 
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void resize();
+	void hide_event();
+	void show_event();
 
 private:
 	CorrelationMeterWidget* m_widget;
@@ -74,6 +77,7 @@ private:
 	float		coeff;
 	float		direction;
 	CorrelationMeter*	m_meter;
+	Song*		m_song;
 	QLinearGradient	gradPhase;
 	QColor		bgColor, fgColor,
 			hgColor, dtColor;

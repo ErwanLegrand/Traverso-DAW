@@ -17,7 +17,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SpectralMeterWidget.h,v 1.16 2007/02/13 11:10:05 r_sijrier Exp $
 */
 
 #ifndef SPECTRALMETERWIDGET_H
@@ -70,7 +69,8 @@ public:
 
 protected:
         void resizeEvent( QResizeEvent* e);
-
+	void hideEvent ( QHideEvent * event );
+	void showEvent ( QShowEvent * event );
 private:
 	SpectralMeterView* m_item;
 };
@@ -94,10 +94,14 @@ public:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	
 	void resize();
+	void hide_event();
+	void show_event();
 
 private:
 	SpectralMeterWidget* m_widget;
-	Project		*m_project;
+	SpectralMeter*	m_meter;
+	Project*	m_project;
+	Song*		m_song;
 	QTimer		timer;
 	QVector<float>	specl;
 	QVector<float>	specr;
@@ -108,7 +112,6 @@ private:
 	QVector<float>	m_avg_db;
 	QVector<float>	m_map_idx2xpos;
 	QVector<float>	m_map_idx2freq;
-	SpectralMeter*	m_meter;
 	QRect		m_rect;
 	SpectralMeterConfigWidget *m_config;
 	QPixmap		bgPixmap;
@@ -140,23 +143,24 @@ private:
 	void		update_background();
 	float		freq2db(float, float);
 	QString		get_xmgr_string();
+	
 
 private slots:
 	void		set_project( Project* );
-	void		set_song( Song* );
 	void		update_data();
 	void		transfer_started();
 	void		transfer_stopped();
 
 
 public slots:
+	void		load_configuration();
+	void		set_song( Song* );
+	
 	Command*	edit_properties();
 	Command*	set_mode();
 	Command*	reset();
 	Command*	export_avarage_curve();
 	Command*	screen_capture();
-	void		load_configuration();
-
 };
 
 #endif
