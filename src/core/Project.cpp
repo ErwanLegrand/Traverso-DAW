@@ -279,12 +279,12 @@ void Project::set_current_song(int id)
 	Song* song = songList.value(id);
 	if (!song) {
 		info().information( tr("Song doesn't exist! ( Song %1)").arg(id) );
+		emit currentSongChanged(0);
 		return;
 	}
 
 	currentSongId=id;
 	emit currentSongChanged(song);
-
 }
 
 
