@@ -316,7 +316,7 @@ void Interface::create_menus( )
 	action->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
 	connect(action, SIGNAL(triggered(bool)), &pm(), SLOT(save_project()));
 	
-	action = menu->addAction(tr("Manage Songs"));
+	action = menu->addAction(tr("Manage Project"));
 	action->setIcon(QIcon(find_pixmap(":/songmanager-16")));
 	m_projectSongManagerAction = action;
 	
