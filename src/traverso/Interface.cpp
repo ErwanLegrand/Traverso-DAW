@@ -667,12 +667,13 @@ void Interface::closeEvent(QCloseEvent * event)
 	event->accept();
 }
 
-void Interface::show_project_manager_dialog()
+Command* Interface::show_project_manager_dialog()
 {
 	if (! m_projectManagerDialog) {
 		m_projectManagerDialog = new ProjectManagerDialog(this);
 	}
 	m_projectManagerDialog->show();
+	return 0;
 }
 
 void Interface::show_song_manager_dialog()

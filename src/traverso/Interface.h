@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Interface.h,v 1.17 2007/02/28 17:25:07 r_sijrier Exp $
+
 */
 
 #ifndef INTERFACE_H
@@ -123,7 +123,6 @@ public slots :
 	void set_fade_out_shape(QAction* action);
 	void show_driver_config_widget();
 	void toggle_OpenGL(bool);
-	void show_project_manager_dialog();
 	void show_song_manager_dialog();
 
 	Command* show_song_widget();
@@ -135,6 +134,7 @@ public slots :
 	Command* select_bus_out();
 	Command* select_fade_in_shape();
 	Command* select_fade_out_shape();
+	Command* show_project_manager_dialog();
 	
 private slots:
 	void delete_songwidget(Song*);
