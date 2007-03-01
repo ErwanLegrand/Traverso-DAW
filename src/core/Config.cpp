@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Config.cpp,v 1.9 2007/02/01 15:49:47 r_sijrier Exp $
+$Id: Config.cpp,v 1.10 2007/03/01 16:06:44 r_sijrier Exp $
 */
 
 #include "Config.h"
@@ -150,8 +150,6 @@ QVariant Config::get_property( const QString & type, const QString & property, Q
 		var = m_configs.value(type + ("/") + property);
 	} else {
 		m_configs.insert(type + "/" + property, defaultValue);
-		QSettings settings;
-		settings.setValue(type + "/" + property, defaultValue);
 	}
 	
 	return var;
