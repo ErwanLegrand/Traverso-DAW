@@ -55,15 +55,6 @@ ProjectManager& pm()
 	return projMan;
 }
 
-int ProjectManager::save_song(const QString& songName)
-{
-	if (currentProject) {
-		currentProject->save();
-	}
-
-	return 0;
-}
-
 void ProjectManager::set_current_project(Project* project)
 {
 	PENTER;

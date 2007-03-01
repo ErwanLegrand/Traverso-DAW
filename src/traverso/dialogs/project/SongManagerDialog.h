@@ -44,7 +44,7 @@ private:
 private slots:
 	void set_project(Project* project);
 	void songitem_clicked( QTreeWidgetItem* item, int);
-        void on_saveSongButton_clicked();
+	void on_renameSongButton_clicked();
         void on_deleteSongButton_clicked();
         void on_createSongButton_clicked();
 };

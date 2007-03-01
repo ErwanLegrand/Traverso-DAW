@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.cpp,v 1.52 2007/02/01 15:48:55 r_sijrier Exp $
 */
 
 #include <QTextStream>
@@ -44,7 +43,7 @@ $Id: Song.cpp,v 1.52 2007/02/01 15:48:55 r_sijrier Exp $
 #include "Tsar.h"
 #include "SnapList.h"
 #include "Config.h"
-
+#include "Utils.h"
 #include "ContextItem.h"
 
 #include <Plugin.h>
@@ -55,14 +54,16 @@ $Id: Song.cpp,v 1.52 2007/02/01 15:48:55 r_sijrier Exp $
 #include "Debugger.h"
 
 
-Song::Song(Project* project, int number)
-		: ContextItem(), m_project(project), m_id(number)
+Song::Song(Project* project)
+	: ContextItem()
+	, m_project(project)
 {
 	PENTERCONS;
 	title="Untitled";
+	m_id = create_id();
 	m_gain = 1.0f;
 	artists = "No artists name yet";
-	int level = config().get_property("Song", "hzoomLevel", 2048).toInt();
+	int level = config().get_property("Song", "hzoomLevel", 14).toInt();
 	printf("level is %d\n", level);
 	switch (level) {
 		case 8: m_hzoom = 4;
@@ -168,7 +169,7 @@ int Song::set_state( const QDomNode & node )
 {
 	PENTER;
 	QDomNode propertiesNode = node.firstChildElement("Properties");
-	m_id = node.toElement().attribute( "id", "" ).toInt();
+	m_id = node.toElement().attribute( "id", "" ).toLongLong();
 
 	QDomElement e = propertiesNode.toElement();
 
@@ -335,8 +336,9 @@ int Song::prepare_export(ExportSpecification* spec)
 	spec->progress = 0;
 
 	QString idString = QString::number(m_id);
-	if (m_id < 10)
+	if (m_id < 10) {
 		idString.prepend("0");
+	}
 	spec->name =  idString +" - " + title + spec->extension;
 
 	if (spec->start_frame >= spec->end_frame) {
@@ -441,10 +443,6 @@ SnapList* Song::get_snap_list()
 	return snaplist;
 }
 
-Track* Song::get_track(int trackNumber)
-{
-	return m_tracks.value(trackNumber);
-}
 
 void Song::set_artists(const QString& pArtists)
 {

@@ -36,12 +36,12 @@ SongManagerDialog::SongManagerDialog( QWidget * parent )
 {
 	setupUi(this);
 
-	treeSongWidget->setColumnCount(5);
+	treeSongWidget->setColumnCount(4);
 	treeSongWidget->header()->resizeSection(0, 200);
 	treeSongWidget->header()->resizeSection(1, 60);
 	treeSongWidget->header()->resizeSection(2, 120);
 	QStringList stringList;
-	stringList << "Song Name" << "Tracks" << "Length h:m:s,fr" << "Status" << "Size" ;
+	stringList << "Song Name" << "Tracks" << "Length h:m:s,fr" << "Size" ;
 	treeSongWidget->setHeaderLabels(stringList);
 	
 	m_project = pm().get_project();
@@ -81,35 +81,22 @@ void SongManagerDialog::update_song_list( )
 	treeSongWidget->clear();
 	foreach(Song* song, m_project->get_song_list()) {
 
-		QString songNr;
-		songNr.setNum(song->get_id());
-		if( (song->get_id() + 1 ) < 10)
-			songNr.prepend("0");
-		QString songName = "Song " + songNr + " - ";
-		songName.append(song->get_title());
-		QString numberOfTracks;
-		numberOfTracks.setNum(song->get_numtracks());
-
+		QString songNr = QString::number(m_project->get_song_index(song->get_id()));
+		QString songName = "Song " + songNr + " - " + song->get_title();
+		QString numberOfTracks = QString::number(song->get_numtracks());
 		QString songLength = frame_to_smpte(song->get_last_frame(), song->get_rate());
-
 		QString songStatus = song->is_changed()?"UnSaved":"Saved";
 		QString songSpaceAllocated = "Unknown";
-		/* for later:
-		QString sLength; sLength.setNum((double)a->file->totalBlocks,'f',0);
-		QString sSize; sSize.setNum((double)a->file->fileSize,'f',0);
-		*/
 
 		QTreeWidgetItem* item = new QTreeWidgetItem(treeSongWidget);
 		item->setTextAlignment(1, Qt::AlignHCenter);
 		item->setTextAlignment(2, Qt::AlignHCenter);
 		item->setTextAlignment(3, Qt::AlignHCenter);
-		item->setTextAlignment(4, Qt::AlignHCenter);
-		item->setTextAlignment(5, Qt::AlignHCenter);
 		item->setText(0, songName);
 		item->setText(1, numberOfTracks);
 		item->setText(2, songLength);
-		item->setText(3, songStatus);
-		item->setText(4, songSpaceAllocated);
+		item->setText(3, songSpaceAllocated);
+		
 		item->setData(0, Qt::UserRole, song->get_id());
 	}
 }
@@ -120,74 +107,77 @@ void SongManagerDialog::songitem_clicked( QTreeWidgetItem* item, int)
 		return;
 	}
 
-	Song* s;
-	QString title;
-	QString artists;
-	title = item->text(0);
-	int length = title.length();
-	length -= 10;
+	Song* song;
 
-	//find the selected Song
-	QString t = title.mid(5,2);
-	bool b;
-	int nr = t.toInt(&b, 10);
-	s = m_project->get_song( (nr) );
+	qint64 id = item->data(0, Qt::UserRole).toLongLong();
+	song = m_project->get_song(id);
 
-	if (s) {
-		artists = s->get_artists();
-		title = title.right(length);
-		selectedSongName->setText(title);
-	}
+	Q_ASSERT(song);
+		
+	selectedSongName->setText(song->get_title());
+	
+	m_project->set_current_song(song->get_id());
 }
 
-void SongManagerDialog::on_saveSongButton_clicked( )
+void SongManagerDialog::on_renameSongButton_clicked( )
 {
 	if( ! m_project) {
 		return;
 	}
 	
 	QTreeWidgetItem* item = treeSongWidget->currentItem();
-	QString name = "";
 	
-	if (item) {
-		name = item->text(0);
-		//find the selected Song
-		QString t = name.mid(5,2);
-		bool b;
-		int nr = t.toInt(&b, 10);
-		Song* s = m_project->get_song(nr);
-		
-		if (s) {
-			s->set_title( selectedSongName->text() );
-		}
-		
+	
+	
+	if ( ! item) {
+		return;
 	}
+	
+	qint64 id = item->data(0, Qt::UserRole).toLongLong();
+	Song* song = m_project->get_song(id);
+	
+	Q_ASSERT(song);
+	
+	QString newtitle = selectedSongName->text();
+	
+	if (newtitle.isEmpty()) {
+		info().information(tr("No new Song name was supplied!"));
+		return;
+	}
+	
+	song->set_title(newtitle);
 
 	update_song_list();
 }
 
 void SongManagerDialog::on_deleteSongButton_clicked( )
 {
+	printf("on_deleteSongButton_clicked()\n");
 	QTreeWidgetItem* item = treeSongWidget->currentItem();
-	int nr;
-	QString title;
-	title = item->text(0);
-	int length = title.length();
-	length -= 10;
-	QString t = title.mid(5,2);
-	bool b;
-	nr = t.toInt(&b, 10);
-	m_project->remove_song( nr );
+	
+	if ( ! item ) {
+		return;
+	}
+	
+	qint64 id = item->data(0, Qt::UserRole).toLongLong();
+	
+	m_project->remove_song(id);
+	
 	update_song_list();
 }
 
 void SongManagerDialog::on_createSongButton_clicked( )
 {
-	if (m_project) {
-		m_project->add_song();
-		PMESG("song added");
-		update_song_list();
+	if ( ! m_project) {
+		return;
 	}
+	
+	Song* song = m_project->add_song();
+	
+	song->set_title(newSongNameLineEdit->text());
+	song->set_artists(artistsLineEdit->text());
+	
+	update_song_list();
 }
 
 

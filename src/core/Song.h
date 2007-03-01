@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Song.h,v 1.28 2007/01/31 13:53:48 r_sijrier Exp $
 */
 
 #ifndef SONG_H
@@ -68,7 +67,7 @@ public:
 	};
 
 
-	Song(Project* project, int m_id);
+	Song(Project* project);
 	Song(Project* project, const QDomNode node);
 	~Song();
 
@@ -79,37 +78,19 @@ public:
 	}
 	int get_rate();
 	int get_bitdepth();
-	int get_numtracks() const
-	{
-		return m_tracks.size();
-	}
-	int get_id() const
-	{
-		return m_id;
-	}
-	int get_active_track_number() const
-	{
-		return activeTrackNumber;
-	}
+	int get_numtracks() const {return m_tracks.size();}
+	qint64 get_id() const {return m_id;}
+	
 	nframes_t get_transport_frame() const;
-	nframes_t get_working_frame() const
-	{
-		return workingFrame;
-	}
+	nframes_t get_working_frame() const {return workingFrame;}
 	nframes_t get_first_visible_frame() const;
 	nframes_t get_last_frame() const;
 	
-	Track*       get_track(int trackNumber);
-	QString get_title() const
-	{
-		return title;
-	}
-	QString get_artists() const
-	{
-		return artists;
-	}
+	QString get_title() const {return title;}
+	QString get_artists() const {return artists;}
 	QDomNode get_state(QDomDocument doc);
 	QHash<int, Track* > get_tracks() const;
+	
 	DiskIO*	get_diskio();
 	AudioClipManager* get_audioclip_manager();
 	AudioBus* get_master_out() const {return masterOut;}
@@ -125,10 +106,6 @@ public:
 	void set_work_at(nframes_t pos);
 	void set_transport_pos(nframes_t pos);
 	void set_hzoom(int hzoom);
-	void set_number(int num)
-	{
-		m_id = num;
-	}
 
 	int process(nframes_t nframes);
 	int process_export(nframes_t nframes);
@@ -194,7 +171,7 @@ private:
 	QString 		title;
 
 	int 			activeTrackNumber;
-	int 			m_id;
+	qint64 			m_id;
 	int 			m_hzoom;
 	int			trackCount;
 

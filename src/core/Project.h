@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define PROJECT_H
 
 #include <QString>
-#include <QHash>
 #include <QList>
 
 #include "ContextItem.h"
@@ -38,7 +37,6 @@ class Project : public ContextItem
 	Q_OBJECT
 
 public :
-	Project(const QString& pProjectToLoadTitle);
 	~Project();
 
 
@@ -55,10 +53,11 @@ public :
 	QString get_root_dir() const;
 	QString get_audiosources_dir() const;
 	QStringList get_songs() const;
-	QHash<int, Song* > get_song_list() const;
+	QList<Song* > get_song_list() const;
 	Song* get_current_song() const ;
-	Song* get_song(int id) const;
+	Song* get_song(qint64 id) const;
 	qint64 get_id() const;
+	int get_song_index(qint64 id) const;
 
 
 	// Set functions
@@ -66,6 +65,7 @@ public :
 	void set_engineer(const QString& pEngineer);
 	void set_description(const QString& des);
 	void set_song_export_progress(int pogress);
+	void set_current_song(qint64 id);
 
 	
 	Song* add_song();
@@ -75,7 +75,7 @@ public :
 	int create(int pNumSongs);
 	int save();
 	int load();
-	int remove_song(int id);
+	int remove_song(qint64 id);
 	int export_project(ExportSpecification* spec);
 	int start_export(ExportSpecification* spec);
 
@@ -84,8 +84,10 @@ public slots:
 	Command* select();
 
 private:
-	QHash<int, Song* >	songList;
-	AudioSourceManager* 	asmanager;
+	Project(const QString& title);
+	
+	QList<Song* >	m_songs;
+	AudioSourceManager* 	m_asmanager;
 
 	qint64		m_id;
 	QString 	title;
@@ -101,11 +103,9 @@ private:
 	int 		renderedSongs;
 	QList<Song* > 	songsToRender;
 
-	int currentSongId;
+	qint64 		m_currentSongId;
 	
-	void set_current_song(int id);
-
-	friend class Song;
+	friend class ProjectManager;
 
 signals:
 	void currentSongChanged(Song* );

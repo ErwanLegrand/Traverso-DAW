@@ -40,9 +40,6 @@ public:
 
 	bool project_exists(const QString& title);
 
-	int save_song(const QString& songName);
-	int save_song_as(const QString& songName, const QString& title, const QString& artists);
-	
 	int remove_project(const QString& title);
 	
 	void scheduled_for_deletion(Song* song);

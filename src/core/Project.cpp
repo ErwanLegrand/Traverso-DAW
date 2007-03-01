@@ -49,7 +49,7 @@ Project::Project(const QString& pTitle)
 	: ContextItem(), title(pTitle)
 {
 	PENTERCONS;
-	currentSongId = 1;
+	m_currentSongId = 1;
 	engineer = "";
 
 	rootDir = config().get_property("Project", "directory", "/directory/unknown").toString() + title;
@@ -57,7 +57,7 @@ Project::Project(const QString& pTitle)
 	m_rate = audiodevice().get_sample_rate();
 	m_bitDepth = audiodevice().get_bit_depth();
 
-	asmanager = new AudioSourceManager();
+	m_asmanager = new AudioSourceManager();
 
 	cpointer().add_contextitem(this);
 }
@@ -68,11 +68,11 @@ Project::~Project()
 	PENTERDES;
 	cpointer().remove_contextitem(this);
 
-	foreach(Song* song, songList) {
+	foreach(Song* song, m_songs) {
 		 song->disconnect_from_audiodevice_and_delete();
 	}
 
-	delete asmanager;
+	delete m_asmanager;
 }
 
 
@@ -100,12 +100,12 @@ int Project::create(int pNumSongs)
 	}
 
 	for (int i=0; i< pNumSongs; i++) {
-		Song* song = new Song(this, i+1);
-		songList.insert(i+1, song);
+		Song* song = new Song(this);
+		m_songs.append(song);
 		emit songAdded();
 	}
 
-	set_current_song( 1 );
+	set_current_song(m_songs.first()->get_id());
 	
 	m_id = create_id();
 
@@ -151,18 +151,16 @@ int Project::load() // try to load the project by its title
 	title = e.attribute( "title", "" );
 	engineer = e.attribute( "engineer", "" );
 	m_description = e.attribute( "description", "No description set");
-	currentSongId = e.attribute( "currentSongId", "" ).toInt();
+	m_currentSongId = e.attribute("currentSongId", "0" ).toLongLong();
 	m_rate = e.attribute( "rate", "" ).toInt();
 	m_bitDepth = e.attribute( "bitdepth", "" ).toInt();
 	m_id = e.attribute("id", "0").toLongLong();
-	if (m_id == 0) m_id = create_id();
-	
 	
 	
 	// Load all the AudioSources for this project
 	
 	QDomNode asmNode = docElem.firstChildElement("AudioSourcesManager");
-	asmanager->set_state(asmNode);
+	m_asmanager->set_state(asmNode);
 
 
 	QDomNode songsNode = docElem.firstChildElement("Songs");
@@ -172,13 +170,12 @@ int Project::load() // try to load the project by its title
 	while(!songNode.isNull())
 	{
 		Song* song = new Song(this, songNode);
-		int id = songNode.toElement().attribute( "id", "" ).toInt();
-		songList.insert(id, song);
+		m_songs.append(song);
 		emit songAdded();
 		songNode = songNode.nextSibling();
 	}
 
-	set_current_song(currentSongId);
+	set_current_song(m_currentSongId);
 
 	info().information( tr("Project loaded (%1)").arg(title) );
 
@@ -200,7 +197,7 @@ int Project::save()
 		properties.setAttribute("title", title);
 		properties.setAttribute("engineer", engineer);
 		properties.setAttribute("description", m_description);
-		properties.setAttribute("currentSongId", currentSongId);
+		properties.setAttribute("currentSongId", m_currentSongId);
 		properties.setAttribute("rate", m_rate);
 		properties.setAttribute("bitdepth", m_bitDepth);
 		properties.setAttribute("projectfileversion", PROJECT_FILE_VERSION);
@@ -210,12 +207,12 @@ int Project::save()
 		doc.appendChild(projectNode);
 
 		// Get the AudioSources Node, and append
-		projectNode.appendChild(asmanager->get_state( doc ));
+		projectNode.appendChild(m_asmanager->get_state( doc ));
 
 		// Get all the Songs
 		QDomNode songsNode = doc.createElement("Songs");
 
-		foreach(Song* song, songList)
+		foreach(Song* song, m_songs)
 		songsNode.appendChild(song->get_state(doc));
 
 		projectNode.appendChild(songsNode);
@@ -252,7 +249,7 @@ void Project::set_description(const QString& des)
 
 bool Project::has_changed()
 {
-	foreach(Song* song, songList) {
+	foreach(Song* song, m_songs) {
 		if(song->is_changed())
 			return true;
 	}
@@ -263,57 +260,102 @@ bool Project::has_changed()
 Song* Project::add_song()
 {
 	PENTER;
-	Song* song = new Song(this, songList.size()+1);
+	Song* song = new Song(this);
 
-	songList.insert(song->get_id(), song);
+	m_songs.append(song);
 	set_current_song(song->get_id());
-	currentSongId = song->get_id();
+	
 	emit songAdded();
+	
 	return song;
 }
 
 
-void Project::set_current_song(int id)
+void Project::set_current_song(qint64 id)
 {
 	PENTER;
-	Song* song = songList.value(id);
-	if (!song) {
+	
+	Song* newcurrent = 0;
+	
+	foreach(Song* song, m_songs) {
+		if (song->get_id() == id) {
+			newcurrent = song;
+			break;
+		}
+	}
+	
+	if (!newcurrent) {
 		info().information( tr("Song doesn't exist! ( Song %1)").arg(id) );
 		emit currentSongChanged(0);
 		return;
 	}
 
-	currentSongId=id;
-	emit currentSongChanged(song);
+	m_currentSongId=id;
+	
+	emit currentSongChanged(newcurrent);
 }
 
 
 Song* Project::get_current_song() const
 {
-	return songList.value(currentSongId);
+	Song* current = 0;
+	
+	foreach(Song* song, m_songs) {
+		if (song->get_id() == m_currentSongId) {
+			current = song;
+			break;
+		}
+	}
+	
+	return current;
 }
 
 
-Song* Project::get_song(int id) const
+Song* Project::get_song(qint64 id) const
 {
-	return songList.value(id);
+	Song* current = 0;
+	
+	foreach(Song* song, m_songs) {
+		if (song->get_id() == id) {
+			current = song;
+			break;
+		}
+	}
+	
+	return current;
 }
 
 
-int Project::remove_song(int key)
+int Project::remove_song(qint64 id)
 {
-	Song* song = songList.take(key);
-	if (song) {
-		if (song->get_id() == key)
-			set_current_song(songList.size());
+	Song* toberemoved = 0;
+	
+	foreach(Song* song, m_songs) {
+		if (song->get_id() == id) {
+			toberemoved = song;
+			break;
+		}
+	}
+	
+	if (toberemoved) {
+		m_songs.removeAll(toberemoved);
+		
+		qint64 newcurrent = 0;
+		
+		if (m_songs.size() > 0) {
+			newcurrent = m_songs.last()->get_id();
+		}
+		
+		set_current_song(newcurrent);
 
 		emit songRemoved();
 
-		song->disconnect_from_audiodevice_and_delete();
+		toberemoved->disconnect_from_audiodevice_and_delete();
 
 	} else {
 		return -1;
 	}
+	
 	return 1;
 }
 
@@ -342,12 +384,13 @@ int Project::start_export(ExportSpecification* spec)
 	songsToRender.clear();
 
 	if (spec->allSongs) {
-		foreach(Song* song, songList)
+		foreach(Song* song, m_songs)
 		songsToRender.append(song);
 	} else {
 		Song* song = get_current_song();
-		if (!song)
+		if (!song) {
 			return -1;
+		}
 		songsToRender.append(song);
 	}
 
@@ -379,7 +422,10 @@ int Project::start_export(ExportSpecification* spec)
 
 Command* Project::select()
 {
-	set_current_song(ie().collected_number());
+	int index = ie().collected_number();
+	if (index < m_songs.size()) {
+		set_current_song(m_songs.at(index)->get_id());
+	}
 	return (Command*) 0;
 }
 
@@ -396,7 +442,7 @@ int Project::get_bitdepth( ) const
 QStringList Project::get_songs( ) const
 {
 	QStringList list;
-	foreach(Song* song, songList) {
+	foreach(Song* song, m_songs) {
 		list.append(song->get_title());
 	}
 	return list;
@@ -410,9 +456,9 @@ void Project::set_song_export_progress(int progress)
 	emit overallExportProgressChanged(overallExportProgress);
 }
 
-QHash< int, Song * > Project::get_song_list( ) const
+QList<Song* > Project::get_song_list( ) const
 {
-	return songList;
+	return m_songs;
 }
 
 
@@ -421,14 +467,26 @@ qint64 Project::get_id() const
 	return m_id;
 }
 
+int Project::get_song_index(qint64 id) const
+{
+	for (int i=0; i<m_songs.size(); ++i) {
+		if (m_songs.at(i)->get_id() == id) {
+			return i + 1;
+		}
+	}
+	
+	return 0;
+}
+
+
 int Project::get_current_song_id( ) const
 {
-	return currentSongId;
+	return m_currentSongId;
 }
 
 int Project::get_num_songs( ) const
 {
-	return songList.size();
+	return m_songs.size();
 }
 
 QString Project::get_title( ) const
@@ -458,7 +516,7 @@ QString Project::get_audiosources_dir() const
 
 AudioSourceManager * Project::get_audiosource_manager( ) const
 {
-	return asmanager;
+	return m_asmanager;
 }
 
 //eof
