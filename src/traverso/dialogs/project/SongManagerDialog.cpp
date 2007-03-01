@@ -152,7 +152,6 @@ void SongManagerDialog::on_renameSongButton_clicked( )
 
 void SongManagerDialog::on_deleteSongButton_clicked( )
 {
-	printf("on_deleteSongButton_clicked()\n");
 	QTreeWidgetItem* item = treeSongWidget->currentItem();
 	
 	if ( ! item ) {
