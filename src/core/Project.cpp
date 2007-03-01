@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Project.cpp,v 1.12 2007/02/15 21:07:57 r_sijrier Exp $
 */
 
 #include <QFile>
@@ -37,6 +36,7 @@ $Id: Project.cpp,v 1.12 2007/02/15 21:07:57 r_sijrier Exp $
 #include "AudioDevice.h"
 #include "Config.h"
 #include "ContextPointer.h"
+#include "Utils.h"
 
 #define PROJECT_FILE_VERSION 	1
 
@@ -106,6 +106,8 @@ int Project::create(int pNumSongs)
 	}
 
 	set_current_song( 1 );
+	
+	m_id = create_id();
 
 	save();
 	info().information("New project created");
@@ -148,9 +150,15 @@ int Project::load() // try to load the project by its title
 
 	title = e.attribute( "title", "" );
 	engineer = e.attribute( "engineer", "" );
+	m_description = e.attribute( "description", "No description set");
 	currentSongId = e.attribute( "currentSongId", "" ).toInt();
 	m_rate = e.attribute( "rate", "" ).toInt();
 	m_bitDepth = e.attribute( "bitdepth", "" ).toInt();
+	m_id = e.attribute("id", "0").toLongLong();
+	if (m_id == 0) m_id = create_id();
+	
+	
+	
 	// Load all the AudioSources for this project
 	
 	QDomNode asmNode = docElem.firstChildElement("AudioSourcesManager");
@@ -191,10 +199,12 @@ int Project::save()
 
 		properties.setAttribute("title", title);
 		properties.setAttribute("engineer", engineer);
+		properties.setAttribute("description", m_description);
 		properties.setAttribute("currentSongId", currentSongId);
 		properties.setAttribute("rate", m_rate);
 		properties.setAttribute("bitdepth", m_bitDepth);
 		properties.setAttribute("projectfileversion", PROJECT_FILE_VERSION);
+		properties.setAttribute("id", m_id);
 		projectNode.appendChild(properties);
 
 		doc.appendChild(projectNode);
@@ -235,6 +245,10 @@ void Project::set_engineer(const QString& pEngineer)
 	engineer=pEngineer;
 }
 
+void Project::set_description(const QString& des)
+{
+	m_description = des;
+}
 
 bool Project::has_changed()
 {
@@ -301,12 +315,6 @@ int Project::remove_song(int key)
 		return -1;
 	}
 	return 1;
-}
-
-
-int Project::rename()
-{
-	return 0;
 }
 
 
@@ -407,6 +415,12 @@ QHash< int, Song * > Project::get_song_list( ) const
 	return songList;
 }
 
+
+qint64 Project::get_id() const
+{
+	return m_id;
+}
+
 int Project::get_current_song_id( ) const
 {
 	return currentSongId;
@@ -425,6 +439,11 @@ QString Project::get_title( ) const
 QString Project::get_engineer( ) const
 {
 	return engineer;
+}
+
+QString Project::get_description() const
+{
+	return m_description;
 }
 
 QString Project::get_root_dir( ) const

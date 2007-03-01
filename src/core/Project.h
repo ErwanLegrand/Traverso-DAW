@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Project.h,v 1.7 2007/02/15 21:07:57 r_sijrier Exp $
 */
 
 #ifndef PROJECT_H
@@ -52,17 +51,20 @@ public :
 	AudioSourceManager* get_audiosource_manager() const;
 	QString get_title() const;
 	QString get_engineer() const;
+	QString get_description() const;
 	QString get_root_dir() const;
 	QString get_audiosources_dir() const;
 	QStringList get_songs() const;
 	QHash<int, Song* > get_song_list() const;
 	Song* get_current_song() const ;
 	Song* get_song(int id) const;
+	qint64 get_id() const;
 
 
 	// Set functions
 	void set_title(const QString& pTitle);
 	void set_engineer(const QString& pEngineer);
+	void set_description(const QString& des);
 	void set_song_export_progress(int pogress);
 
 	
@@ -74,7 +76,6 @@ public :
 	int save();
 	int load();
 	int remove_song(int id);
-	int rename();
 	int export_project(ExportSpecification* spec);
 	int start_export(ExportSpecification* spec);
 
@@ -86,17 +87,19 @@ private:
 	QHash<int, Song* >	songList;
 	AudioSourceManager* 	asmanager;
 
-	QString 		title;
-	QString 		rootDir;
-	QString 		sourcesDir;
-	QString 		engineer;
+	qint64		m_id;
+	QString 	title;
+	QString 	rootDir;
+	QString 	sourcesDir;
+	QString 	engineer;
+	QString		m_description;
 
-	int			m_rate;
-	int			m_bitDepth;
+	int		m_rate;
+	int		m_bitDepth;
 
-	int			overallExportProgress;
-	int 			renderedSongs;
-	QList<Song* > songsToRender;
+	int		overallExportProgress;
+	int 		renderedSongs;
+	QList<Song* > 	songsToRender;
 
 	int currentSongId;
 	

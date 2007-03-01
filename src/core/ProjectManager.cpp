@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ProjectManager.cpp,v 1.21 2007/02/27 19:47:36 r_sijrier Exp $
 */
 
 #include "ProjectManager.h"
@@ -88,13 +87,13 @@ void ProjectManager::set_current_project(Project* project)
 
 }
 
-int ProjectManager::create_new_project(const QString& projectName, int numSongs)
+Project* ProjectManager::create_new_project(int numSongs, const QString& projectName)
 {
 	PENTER;
 
 	if (project_exists(projectName)) {
 		PERROR("project %s already exists\n", projectName.toAscii().data());
-		return -1;
+		return 0;
 	}
 
 	Project *newProject = new Project(projectName);
@@ -102,10 +101,10 @@ int ProjectManager::create_new_project(const QString& projectName, int numSongs)
 	if (newProject->create(numSongs) < 0) {
 		delete newProject;
 		PERROR("couldn't create new project %s", projectName.toAscii().data());
-		return -1;
+		return 0;
 	}
-
-	return 0;
+	
+	return newProject;
 }
 
 int ProjectManager::load_project(const QString& projectName)
@@ -203,10 +202,14 @@ void ProjectManager::start( )
 				info().warning( tr("Could not load project %1").arg(projectToLoad) );
 			}
 		} else {
-			if (create_new_project("Untitled", 1) < 0) {
-				PWARN("Cannot create project Untitled. Continuing anyway...");
-			} else {
+			Project* project;
+			if ( (project = create_new_project(1, "Untitled")) ) {
+				project->set_description(tr("Default Project created by Traverso"));
+				project->save();
+				delete project;
 				load_project("Untitled");
+			} else {
+				PWARN("Cannot create project Untitled. Continuing anyway...");
 			}
 
 		}

@@ -46,7 +46,7 @@ SongManagerDialog::SongManagerDialog( QWidget * parent )
 	
 	m_project = pm().get_project();
 	if (m_project) {
-		setWindowTitle("Manage Songs - Project '" + m_project->get_title() + "'");
+		setWindowTitle("Manage Project - " + m_project->get_title());
 	}
 	
 	update_song_list();
@@ -63,9 +63,9 @@ void SongManagerDialog::set_project(Project* project)
 	m_project = project;
 	if (m_project) {
 		connect(m_project, SIGNAL(songAdded()), this, SLOT(update_song_list()));
-		setWindowTitle("Manage Songs - Project '" + m_project->get_title() + "'");
+		setWindowTitle("Manage Project - " + m_project->get_title());
 	} else {
-		setWindowTitle("Manage Songs - No Project loaded!");
+		setWindowTitle("Manage Project - No Project loaded!");
 		treeSongWidget->clear();
 	}
 }

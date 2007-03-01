@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ProjectManager.h,v 1.7 2007/02/05 17:09:42 r_sijrier Exp $
 */
 
 #ifndef ProjectManager_H
@@ -35,7 +34,8 @@ class ProjectManager : public ContextItem
 {
 	Q_OBJECT
 public:
-	int create_new_project(const QString& projectName, int numSong);
+	Project* create_new_project(int numSong, const QString& projectName);
+	
 	int load_project(const QString& projectName);
 
 	bool project_exists(const QString& title);

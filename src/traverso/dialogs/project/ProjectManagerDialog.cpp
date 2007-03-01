@@ -22,8 +22,6 @@
 #include "ProjectManagerDialog.h"
 #include "ui_ProjectManagerDialog.h"
 
-#include "libtraversocore.h"
-#include <QSettings>
 #include <QDir>
 #include <QStringList>
 #include <QMessageBox>
@@ -31,6 +29,12 @@
 #include <QDomDocument>
 #include <QFileDialog>
 #include <QHeaderView>
+
+#include <Config.h>
+#include <Information.h>
+#include <ProjectManager.h>
+#include <Project.h>
+#include <Utils.h>
 
 
 // Always put me below _all_ includes, this is needed
@@ -59,109 +63,111 @@ ProjectManagerDialog::~ ProjectManagerDialog( )
 void ProjectManagerDialog::update_projects_list()
 {
 	projectListView->clear();
-	QSettings settings;
-	QString projsDir = settings.value("Project/directory").toString();
+	
+	QString path = config().get_property("Project", "directory", getenv("HOME")).toString();
 
-	QDir pDir( projsDir );
+	QDir dir(path);
 
-	QFileInfoList list = pDir.entryInfoList();
-	QFileInfo fi;
-	QString fileName;
-	for( int i = 0; i < list.size(); ++i ) {
-		fi = list.at(i);
-		fileName = fi.fileName();
-		if ( (fileName != ".") && (fileName != "..") ) {
-			/************ FROM HERE ****************/
-			QDomDocument doc("Project");
-			QString fileToOpen = projsDir + fileName + "/project.traverso";
-			QFile file(fileToOpen);
+	QStringList list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+	
+	foreach(QString dirname, list) {
+	
+		/************ FROM HERE ****************/
+		QDomDocument doc("Project");
+		QString fileToOpen = path + "/" + dirname + "/project.traverso";
+		
+		QFile file(fileToOpen);
 
-			if (!file.open(QIODevice::ReadOnly)) {
-				PWARN("Cannot open project properties file (%s)", fileToOpen.toAscii().data());
-				return;
-			}
-
-			QString errorMsg;
-			if (!doc.setContent(&file, &errorMsg)) {
-				file.close();
-				PWARN("Cannot set content of XML file (%s)", errorMsg.toAscii().data());
-				return;
-			}
-
-			file.close();
-
-			QDomElement docElem = doc.documentElement();
-			QDomNode propertiesNode = docElem.firstChildElement("Properties");
-			QDomElement e = propertiesNode.toElement();
-
-			QDomNode songsNode = docElem.firstChildElement("Songs");
-			QDomNode songNode = songsNode.firstChild();
-			int songCounter = 0;
-                        // count to get Songs number....
-			while(!songNode.isNull()) {
-				songCounter++;
-				songNode = songNode.nextSibling();
-			}
-
-			QString sNumSongs = QString::number(songCounter);
-			QString engineer;
-			QString title;
-
-			title = e.attribute( "title", "" );
-			engineer = e.attribute( "engineer", "" );
-
-			/*********** TO HERE THIS CODE IS DUPLICATE FROM THAT IN PROJECT.CC :-( 
-			Don't know if this is avoidable at all *********/
-
-
-			QTreeWidgetItem* item = new QTreeWidgetItem(projectListView);
-			item->setTextAlignment(0, Qt::AlignLeft);
-			item->setTextAlignment(1, Qt::AlignHCenter);
-			item->setText(0,title);
-			item->setText(1,sNumSongs);
+		if (!file.open(QIODevice::ReadOnly)) {
+			PWARN("ProjectManagerDialog:: Cannot open project properties file (%s)", fileToOpen.toAscii().data());
+			continue;
 		}
+
+		QString errorMsg;
+		if (!doc.setContent(&file, &errorMsg)) {
+			file.close();
+			PWARN("ProjectManagerDialog:: Cannot set content of XML file (%s)", errorMsg.toAscii().data());
+			continue;
+		}
+
+		file.close();
+
+		QDomElement docElem = doc.documentElement();
+		QDomNode propertiesNode = docElem.firstChildElement("Properties");
+		QDomElement e = propertiesNode.toElement();
+		QString title = e.attribute( "title", "" );
+		QString description = e.attribute("description", "No description set");
+		qint64 id = e.attribute( "id", "" ).toLongLong();
+		
+
+		QDomNode songsNode = docElem.firstChildElement("Songs");
+		QDomNode songNode = songsNode.firstChild();
+		int songCounter = 0;
+		
+		// count to get Songs number....
+		while(!songNode.isNull()) {
+			songCounter++;
+			songNode = songNode.nextSibling();
+		}
+
+		QString sNumSongs = QString::number(songCounter);
+
+		/*********** TO HERE THIS CODE IS DUPLICATE FROM THAT IN PROJECT.CC :-( 
+		Don't know if this is avoidable at all *********/
+
+
+		QTreeWidgetItem* item = new QTreeWidgetItem(projectListView);
+		item->setTextAlignment(0, Qt::AlignLeft);
+		item->setTextAlignment(1, Qt::AlignHCenter);
+		item->setText(0, title);
+		item->setText(1, sNumSongs);
+		QString html = "<html><head></head><body>Project: " + title + "<br /><br />";
+		html += tr("Description:") + "<br />";
+		html += description + "<br /><br />";
+		html += tr("Created on:") + " " + extract_date_time(id).toString() + "<br />";
+		html += "</body></html>";
+		item->setToolTip(0, html);
 	}
-        /*	if (pm().get_project())
-	selectedProjectName->setText( pm().get_project()->get_title() );*/
 }
 
 void ProjectManagerDialog::projectitem_clicked( QTreeWidgetItem* item, int)
 {
-	if (item)
+	if (item) {
 		selectedProjectName->setText(item->text(0));
+	}
 }
 
 void ProjectManagerDialog::on_loadProjectButton_clicked( )
 {
         // do we have the name of the project to load ?
 	QString title;
-	if (projectListView->currentItem())
+	if (projectListView->currentItem()) {
 		title = projectListView->currentItem()->text(0);
+	}
 
 	if (title.isEmpty()) {
 		info().warning(tr("No Project selected!") );
 		info().information(tr("Select a project and click the 'Load' button again") );
 		return;
 	}
-
-        // ask if the current project should first be saved
-	if (pm().get_project() && pm().get_project()->has_changed())
-		switch (QMessageBox::information(this,
-			"Traverso - Question",
-   			"Should the current project be saved ?",
-			tr("Yes"), tr("No"), QString::null, 0, -1)) 
-		{
-		case -1:
-			return;
-			break;
-		case 0:
-			pm().get_project()->save();
-			break;
-		default:
-			break;
-	}
 	
+	Project* project = pm().get_project();
+
+	
+	if (project && (project->get_title() == title)) {
+		QMessageBox::StandardButton button = QMessageBox::question(this,
+			"Traverso - Question",
+   			"Are you sure you want to reopen the current project ?",
+      			QMessageBox::Ok | QMessageBox::Cancel,
+	 		QMessageBox::Cancel );
+		if (button == QMessageBox::Cancel) {
+			return;
+		}
+	}
+		
 	// first test if project exists
+	// Note: this shouldn't be needed really, the projects in the view
+	// should exist, but just in case someone removed it, you never know!
 	if (!pm().project_exists(title)) {
 		info().warning(tr("Project does not exist! (%1)").arg(title));
 		return;
@@ -176,38 +182,21 @@ void ProjectManagerDialog::on_createProjectButton_clicked( )
 {
 
         // do we have the name of the project to create ?
-	QString title;
-	title = newProjectName->text();
+	QString title = newProjectName->text();
+	
 	if (title.length() == 0) {
 		info().information(tr("You must supply a name for the project!") );
 		return;
 	}
 
-        // ask if the current project should first be saved (only when status is "UnSaved")
-	if (pm().get_project() && pm().get_project()->has_changed()) {
+
+	// first test if project exists already
+	if (pm().project_exists(title)) {
 		switch (QMessageBox::information(this,
 			tr("Traverso - Question"),
-			tr("Should the current project be saved ?"),
-			tr("Yes"), tr("No"), QString::null, 0, -1)) 
+			tr("The Project \"%1\" already exists, do you want to remove it and replace it with a new one ?").arg(title),
+			tr("Yes"), tr("No"), QString::null, 1, -1)) 
 		{
-		case -1:
-			return;
-			break;
-		case 0:
-			pm().get_project()->save();
-			break;
-		default:
-			break;
-	      }
-	}
-
-        // first test if project exists already
-      if (pm().project_exists(title)) {
-	      switch (QMessageBox::information(this,
-		      tr("Traverso - Question"),
-		      tr("The Project \"%1\" already exists, do you want to remove it and replace it with a new one ?").arg(title),
-		      tr("Yes"), tr("No"), QString::null, 1, -1)) 
-		      {
 			case 0:
 			pm().remove_project(title);
 			break;
@@ -216,12 +205,18 @@ void ProjectManagerDialog::on_createProjectButton_clicked( )
 			break;
 		}
 	}
+	
 	int numSongs = songCountSpinBox->value();
 	
-	if( pm().create_new_project(title, numSongs) < 0) {
-		info().warning(tr("Couldn't create project (%1)").arg(title) );
-	} else {
+	Project* project;
+	if( (project = pm().create_new_project(numSongs, title)) ) {
+		project->set_description(descriptionTextEdit->toPlainText());
+		project->set_engineer(newProjectEngineer->text());
+		project->save();
+		delete project;
 		update_projects_list();
+	} else {
+		info().warning(tr("Couldn't create project (%1)").arg(title) );
 	}
 }
 
@@ -259,12 +254,10 @@ void ProjectManagerDialog::on_deleteProjectbutton_clicked( )
 
 void ProjectManagerDialog::on_projectDirSelectButton_clicked( )
 {
-	QSettings settings;
+	QString path = config().get_property("Project", "DefaultDirectory", getenv("HOME")).toString();
 	
-	QString projects_path = QDir::homePath();
-	
-	QString newPath = QFileDialog::getExistingDirectory(0,
-			tr("Choose an existing or create a new Project Directory"), projects_path);
+	QString newPath = QFileDialog::getExistingDirectory(this,
+			tr("Choose an existing or create a new Project Directory"), path);
 			
 	if (newPath.isEmpty() || newPath.isNull()) {
 		return;
@@ -282,7 +275,7 @@ void ProjectManagerDialog::on_projectDirSelectButton_clicked( )
 		QMessageBox::information( this, tr("Traverso - Information"), tr("Created new Project directory for you here: %1\n").arg(newPath), "OK", 0 );
 	}
 	
-	settings.setValue("Project/directory", newPath);
+	config().set_property("Project", "directory", newPath);
 	
 	update_projects_list();
 }

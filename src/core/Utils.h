@@ -17,7 +17,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Utils.h,v 1.5 2006/10/17 00:13:42 r_sijrier Exp $
 */
 
 #ifndef UTILS_H
@@ -25,6 +24,7 @@
 
 #include "defines.h"
 #include <QPixmap>
+#include <QDateTime>
 
 #define QS_C(x) x.toAscii().data()
 
@@ -32,6 +32,7 @@ class QString;
 
 QString frame_to_smpte(nframes_t nframes, int rate);
 QString coefficient_to_dbstring(float coeff);
+QDateTime extract_date_time(qint64 id);
 
 qint64 create_id();
 
