@@ -17,7 +17,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongManagerDialog.h,v 1.1 2007/02/28 17:26:16 r_sijrier Exp $
 */
 
 #ifndef SONG_MANAGER_DIALOG_H

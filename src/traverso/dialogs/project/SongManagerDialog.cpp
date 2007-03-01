@@ -78,26 +78,21 @@ void SongManagerDialog::update_song_list( )
 		return;
 	}
 
-	int numSongs = m_project->get_num_songs();
-
 	treeSongWidget->clear();
-	for (int i=1; i <= numSongs; i++) {
-		Song* s = m_project->get_song(i);
-		if (!s)
-			continue;
+	foreach(Song* song, m_project->get_song_list()) {
 
 		QString songNr;
-		songNr.setNum(i);
-		if( (i + 1 ) < 10)
+		songNr.setNum(song->get_id());
+		if( (song->get_id() + 1 ) < 10)
 			songNr.prepend("0");
 		QString songName = "Song " + songNr + " - ";
-		songName.append(s->get_title());
+		songName.append(song->get_title());
 		QString numberOfTracks;
-		numberOfTracks.setNum(s->get_numtracks());
+		numberOfTracks.setNum(song->get_numtracks());
 
-		QString songLength = frame_to_smpte(s->get_last_frame(), s->get_rate());
+		QString songLength = frame_to_smpte(song->get_last_frame(), song->get_rate());
 
-		QString songStatus = s->is_changed()?"UnSaved":"Saved";
+		QString songStatus = song->is_changed()?"UnSaved":"Saved";
 		QString songSpaceAllocated = "Unknown";
 		/* for later:
 		QString sLength; sLength.setNum((double)a->file->totalBlocks,'f',0);
@@ -115,13 +110,15 @@ void SongManagerDialog::update_song_list( )
 		item->setText(2, songLength);
 		item->setText(3, songStatus);
 		item->setText(4, songSpaceAllocated);
+		item->setData(0, Qt::UserRole, song->get_id());
 	}
 }
 
 void SongManagerDialog::songitem_clicked( QTreeWidgetItem* item, int)
 {
-	if (!item)
+	if (!item) {
 		return;
+	}
 
 	Song* s;
 	QString title;
