@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TrackPan.cpp,v 1.5 2007/01/16 20:21:08 r_sijrier Exp $
+    $Id: TrackPan.cpp,v 1.6 2007/03/01 21:15:20 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -49,20 +49,6 @@ int TrackPan::prepare_actions()
 
 int TrackPan::begin_hold()
 {
-        int trackNumber;
-
-        // Override m_track in case there was a number collection!
-        if ( (trackNumber = ie().collected_number()) > 0) {
-                Track* track = m_song->get_track(trackNumber);
-                if (track) {
-                        m_track = track;
-                        PMESG("Starting jog pan for m_track %d", trackNumber);
-                } else {
-                        info().information(QObject::tr("TrackNumber %1 does not exist!").arg(trackNumber));
-                        return 0;
-                }
-        }
-
         origX = cpointer().x();
         origPan = m_track->get_pan();
 
