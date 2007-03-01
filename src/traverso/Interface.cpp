@@ -191,6 +191,10 @@ void Interface::delete_songwidget(Song* song)
 void Interface::show_song(Song* song)
 {
 	PENTER;
+	if (!song) {
+		return;
+	}
+	
 	SongWidget* songWidget = m_songWidgets.value(song);
 	
 	if (!songWidget) {
