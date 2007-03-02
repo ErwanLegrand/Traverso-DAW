@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.21 2007/02/23 13:57:53 r_sijrier Exp $
+$Id: SongView.cpp,v 1.22 2007/03/02 13:36:15 r_sijrier Exp $
 */
 
 
@@ -25,6 +25,7 @@ $Id: SongView.cpp,v 1.21 2007/02/23 13:57:53 r_sijrier Exp $
 
 #include "SongView.h"
 #include "TrackView.h"
+#include "TrackPanelView.h"
 #include "Cursors.h"
 #include "ClipsViewPort.h"
 #include "TimeLineViewPort.h"
@@ -195,16 +196,22 @@ void SongView::add_new_trackview(Track* track)
 		track->set_sort_index(sortIndex);
 	}
 	
-	view->move_to(0, sortIndex * (track->get_height() + 6) + 6);
 	m_trackViews.append(view);
+	
+	layout_tracks();
 }
 
 void SongView::remove_trackview(Track* track)
 {
 	foreach(TrackView* view, m_trackViews) {
 		if (view->get_track() == track) {
+			TrackPanelView* tpv = view->get_trackpanel_view();
+			scene()->removeItem(tpv);
 			scene()->removeItem(view);
+			m_trackViews.removeAll(view);
 			delete view;
+			delete tpv;
+			layout_tracks();
 			return;
 		}
 	}

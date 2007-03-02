@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.h,v 1.20 2007/01/22 15:12:08 r_sijrier Exp $
+$Id: Track.h,v 1.21 2007/03/02 13:36:15 r_sijrier Exp $
 */
 
 
@@ -54,7 +54,7 @@ class Track : public ContextItem
 	Q_CLASSINFO("remove_myself", tr("Remove"))
 
 public :
-	Track(Song* pParentSong, int pID, const QString& pName, int pBaseY, int pHeight);
+	Track(Song* song, const QString& name, int height);
 	Track(Song* song, const QDomNode node);
 	~Track();
 
@@ -63,7 +63,6 @@ public :
 
 	void activate();
 	void deactivate();
-	bool is_pointed(int y);
 
 	Command* add_clip(AudioClip* clip, bool historable=true);
 	Command* add_plugin(Plugin* plugin);
@@ -77,66 +76,23 @@ public :
 	int disarm();
 	void toggle_active();
 
-	AudioClip* get_clip_under(nframes_t framePos);
+	// Get functions:
 	AudioClip* get_clip_after(nframes_t framePos);
 	AudioClip* get_clip_before(nframes_t framePos);
-	AudioClip* get_clip_between(nframes_t framePosL, nframes_t framePosR);
-
-	QList<AudioClip* > split_clip(nframes_t splitPoint);
-	QList<AudioClip* > split_clip(AudioClip* c, nframes_t splitPoint);
-
 	void get_render_range(nframes_t& startframe, nframes_t& endframe);
-
-
-	// Get functions:
-	int get_id() const
-	{
-		return ID;
-	}
-	QString get_bus_in() const
-	{
-		return busIn;
-	}
-	QString get_bus_out() const
-	{
-		return busOut;
-	}
-	int get_baseY() const
-	{
-		return baseY;
-	}
-	int get_height() const
-	{
-		return height;
-	}
-	int real_baseY() const;
-	float get_pan() const
-	{
-		return m_pan;
-	}
-	Song* get_song() const
-	{
-		return m_song;
-	}
-	QString get_name() const
-	{
-		return m_name;
-	}
+	qint64 get_id() const{return m_id;}
+	QString get_bus_in() const {return busIn;}
+	QString get_bus_out() const{return busOut;}
+	int get_height() const {return m_height;}
+	float get_pan() const {return m_pan;}
+	Song* get_song() const {return m_song;}
+	QString get_name() const {return m_name;}
 	int get_total_clips();
 	QDomNode get_state(QDomDocument doc);
-	AudioClipList get_cliplist() const
-	{
-		return audioClipList;
-	}
-	
-	PluginChain* get_plugin_chain() const
-	{
-		return pluginChain;
-	}
-	
+	AudioClipList get_cliplist() const {return audioClipList;}
+	PluginChain* get_plugin_chain() const {return pluginChain;}
 	int get_sort_index() const;
 	
-	// End get functions
 
 	// Set functions:
 	void set_bus_out(QByteArray bus);
@@ -146,12 +102,9 @@ public :
 	void set_solo(bool solo);
 	void set_muted(bool muted);
 	void set_pan(float pan);
-	void set_baseY(int b);
 	void set_sort_index(int index);
 	void set_height(int h);
 	int set_state( const QDomNode& node );
-	void set_id(int id);
-	// End set functions
 
 
 	//Bool functions:
@@ -163,9 +116,6 @@ public :
 	// End bool functions
 
 
-	void vzoom_in(int newBaseY);
-	void vzoom_out(int newBaseY);
-
 	int process(nframes_t nframes);
 
 private :
@@ -173,18 +123,17 @@ private :
 	AudioClipList 	audioClipList;
 	PluginChain*	pluginChain;
 
-	float m_gain;
-	float m_pan;
-	int ID;
+	float 	m_gain;
+	float 	m_pan;
+	qint64	m_id;
 	int numtakes;
 	QByteArray busIn;
 	QByteArray busOut;
 
 	QString m_name;
 
-	int baseY;
 	int m_sortIndex;
-	int height;
+	int m_height;
 
 	bool isActive;
 	bool isSolo;

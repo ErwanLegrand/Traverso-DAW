@@ -72,14 +72,12 @@ public:
 	~Song();
 
 	// Get functions
-	int get_hzoom() const
-	{
-		return m_hzoom;
-	}
+	int get_hzoom() const {	return m_hzoom;}
 	int get_rate();
 	int get_bitdepth();
 	int get_numtracks() const {return m_tracks.size();}
 	qint64 get_id() const {return m_id;}
+	int get_track_index(qint64 id) const;
 	
 	nframes_t get_transport_frame() const;
 	nframes_t get_working_frame() const {return workingFrame;}
@@ -89,7 +87,7 @@ public:
 	QString get_title() const {return title;}
 	QString get_artists() const {return artists;}
 	QDomNode get_state(QDomDocument doc);
-	QHash<int, Track* > get_tracks() const;
+	QList<Track* > get_tracks() const;
 	
 	DiskIO*	get_diskio();
 	AudioClipManager* get_audioclip_manager();
@@ -99,7 +97,6 @@ public:
 
 	// Set functions
 	void set_artists(const QString& pArtistis);
-	void set_active_track(int trackNumber);
 	void update_cursor_pos();
 	void set_first_visible_frame(nframes_t pos);
 	void set_title(const QString& sTitle);
@@ -140,7 +137,7 @@ public:
 	unsigned long	threadId;
 
 private:
-	QHash<int, Track* >	m_tracks;
+	QList<Track* >		m_tracks;
 	Project*		m_project;
 	WriteSource*		exportSource;
 	AudioBus*		playBackBus;

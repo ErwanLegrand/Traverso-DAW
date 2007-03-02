@@ -186,7 +186,6 @@ int Song::set_state( const QDomNode & node )
 
 	while(!trackNode.isNull()) {
 		Track* track = new Track(this, trackNode);
-		track->set_id(++trackCount);
 		private_add_track(track);
 		track->set_state(trackNode);
 
@@ -467,16 +466,6 @@ void Song::set_title(const QString& sTitle)
 	emit propertieChanged();
 }
 
-void Song::set_active_track(int trackNumber)
-{
-	if (!m_tracks.value(trackNumber))
-		return;
-
-	m_tracks.value(activeTrackNumber)->deactivate();
-	activeTrackNumber=trackNumber;
-	m_tracks.value(activeTrackNumber)->activate();
-}
-
 void Song::set_first_visible_frame(nframes_t pos)
 {
 	PENTER;
@@ -579,15 +568,9 @@ Command* Song::toggle_snap()
 
 Track* Song::create_track()
 {
-	int trackBaseY = 0;
 	int height = Track::INITIAL_HEIGHT;
 
-	foreach(Track* track, m_tracks) {
-		trackBaseY += track->get_height();
-		height = track->get_height();
-	}
-
-	Track* track = new Track(this, ++trackCount, "Unnamed", trackBaseY, height);
+	Track* track = new Track(this, "Unnamed", height);
 
 	return track;
 }
@@ -760,8 +743,8 @@ int Song::process( nframes_t nframes )
 	int processResult = 0;
 
 	// Process all Tracks.
-	foreach(Track* track, m_tracks) {
-		processResult |= track->process(nframes);
+	for (int i=0; i<m_tracks.size(); ++i) {
+		processResult |= m_tracks.at(i)->process(nframes);
 	}
 
 	// update the transportFrame
@@ -799,8 +782,8 @@ int Song::process_export( nframes_t nframes )
 	memset (mixdown, 0, sizeof (audio_sample_t) * nframes);
 
 	// Process all Tracks.
-	foreach(Track* track, m_tracks) {
-		track->process(nframes);
+	for (int i=0; i<m_tracks.size(); ++i) {
+		m_tracks.at(i)->process(nframes);
 	}
 
 	Mixer::apply_gain_to_buffer(masterOut->get_buffer(0, nframes), nframes, m_gain);
@@ -846,7 +829,7 @@ void Song::update_cursor_pos()
 		emit cursorPosChanged();
 }
 
-QHash< int, Track * > Song::get_tracks( ) const
+QList<Track* > Song::get_tracks( ) const
 {
 	return m_tracks;
 }
@@ -864,6 +847,16 @@ AudioClipManager * Song::get_audioclip_manager( )
 PluginChain* Song::get_plugin_chain()
 {
 	return pluginChain;
+}
+
+int Song::get_track_index(qint64 id) const
+{
+	for (int i=0; i<m_tracks.size(); ++i) {
+		if (m_tracks.at(i)->get_id() == id) {
+			return i + 1;
+		}
+	}
+	return 0;
 }
 
 void Song::handle_diskio_readbuffer_underrun( )
@@ -908,15 +901,14 @@ Command * Song::master_gain( )
 
 void Song::private_add_track(Track* track)
 {
-	m_tracks.insert(track->get_id(), track);
+	m_tracks.append(track);
 }
 
 void Song::private_remove_track(Track* track)
 {
-	if (m_tracks.take(track->get_id() )) {
-// 		printf("Removing Track with id %d\n", track->get_id());
-	}
+	m_tracks.removeAll(track);
 }
 
 
 // eof
+

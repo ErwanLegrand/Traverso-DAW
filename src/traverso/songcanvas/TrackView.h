@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.h,v 1.13 2007/02/15 13:53:15 r_sijrier Exp $
+$Id: TrackView.h,v 1.14 2007/03/02 13:36:15 r_sijrier Exp $
 */
 
 #ifndef TRACK_VIEW_H
@@ -46,6 +46,7 @@ public:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	
 	Track* get_track() const;
+	TrackPanelView* get_trackpanel_view() const;
 	
 	int get_childview_y_offset() const;
 	void move_to(int x, int y);

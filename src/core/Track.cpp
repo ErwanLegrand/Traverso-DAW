@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Track.cpp,v 1.38 2007/01/24 21:19:37 r_sijrier Exp $
+$Id: Track.cpp,v 1.39 2007/03/02 13:36:15 r_sijrier Exp $
 */
 
 #include "Track.h"
@@ -32,6 +32,7 @@ $Id: Track.cpp,v 1.38 2007/01/24 21:19:37 r_sijrier Exp $
 #include "ProjectManager.h"
 #include "AudioSourceManager.h"
 #include "Project.h"
+#include "Utils.h"
 
 #include <commands.h>
 
@@ -40,18 +41,17 @@ $Id: Track.cpp,v 1.38 2007/01/24 21:19:37 r_sijrier Exp $
 #include "Debugger.h"
 
 
-Track::Track(Song* song, int pID, const QString& pName, int pBaseY, int pHeight )
+Track::Track(Song* song, const QString& name, int height )
 	: ContextItem(song), 
 	  m_song(song), 
-	  ID(pID), 
-	  m_name(pName),
-	  baseY(pBaseY), 
-	  height(pHeight)
+	  m_name(name),
+	  m_height(height)
 {
 	PENTERCONS;
 	m_pan = numtakes = 0;
 	m_gain = 0.5;
 	m_sortIndex = -1;
+	m_id = create_id();
 	
 	busIn = "Capture 1";
 	busOut = "MasterOut";
@@ -64,7 +64,6 @@ Track::Track( Song * song, const QDomNode node)
 	  m_song(song)
 {
 	PENTERCONS;
-	// ALWAYS call init() before new member objects are created!
 	init();
 }
 
@@ -84,14 +83,14 @@ void Track::init()
 QDomNode Track::get_state( QDomDocument doc )
 {
 	QDomElement node = doc.createElement("Track");
-	node.setAttribute("id", ID);
+	node.setAttribute("id", m_id);
 	node.setAttribute("name", m_name);
 	node.setAttribute("gain", m_gain);
 	node.setAttribute("pan", m_pan);
 	node.setAttribute("mute", isMuted);
 	node.setAttribute("solo", isSolo);
 	node.setAttribute("mutedbysolo", mutedBySolo);
-	node.setAttribute("height", height);
+	node.setAttribute("height", m_height);
 	node.setAttribute("sortindex", m_sortIndex);
 	node.setAttribute("numtakes", numtakes);
 	node.setAttribute("InBus", busIn.data());
@@ -124,7 +123,7 @@ int Track::set_state( const QDomNode & node )
 {
 	QDomElement e = node.toElement();
 	
-	set_height( e.attribute( "height", "160" ).toInt() );
+	set_height(e.attribute( "height", "160" ).toInt() );
 	m_sortIndex = e.attribute( "sortindex", "-1" ).toInt();
 	m_name = e.attribute( "name", "" );
 	set_muted(e.attribute( "mute", "" ).toInt());
@@ -136,7 +135,7 @@ int Track::set_state( const QDomNode & node )
 	set_pan( e.attribute( "pan", "" ).toFloat() );
 	set_bus_in( e.attribute( "InBus", "" ).toAscii() );
 	set_bus_out( e.attribute( "OutBus", "" ).toAscii() );
-	ID = e.attribute( "id", "").toInt();
+	m_id = e.attribute( "id", "").toLongLong();
 	numtakes = e.attribute( "numtakes", "").toInt();
 
 	QDomElement ClipsNode = node.firstChildElement("Clips");
@@ -169,73 +168,6 @@ int Track::set_state( const QDomNode & node )
 }
 
 
-bool Track::is_pointed(int y)
-{
-	return ( (y >= real_baseY()) && (y <= real_baseY() + height) );
-}
-
-
-QList<AudioClip* > Track::split_clip(nframes_t splitPoint)
-{
-	PENTER2;
-
-	QList<AudioClip* > clipPair;
-
-	PMESG("Trying to find clip under %ld", (long)splitPoint);
-	AudioClip* c = get_clip_under(splitPoint);
-
-	if (c)
-		clipPair = split_clip(c, splitPoint);
-	else
-		PMESG("I'm uppon no clip :-(");
-
-	return clipPair;
-}
-
-
-QList<AudioClip* > Track::split_clip(AudioClip* clip, nframes_t splitPoint)
-{
-	PENTER2;
-	QList<AudioClip* > clipPair;
-
-	nframes_t leftLenght = splitPoint - (clip->get_track_start_frame());
-	nframes_t rightSourceFirstBlock = clip->get_source_start_frame() + leftLenght;
-
-	AudioClip* leftClip = clip->create_copy();
-	leftClip->set_source_end_frame(rightSourceFirstBlock);
-	clipPair.append(leftClip);
-
-	AudioClip* rightClip = clip->create_copy();
-	rightClip->set_source_start_frame( rightSourceFirstBlock );
-	rightClip->set_track_start_frame( splitPoint );
-	clipPair.append(rightClip);
-
-	return clipPair;
-}
-
-
-AudioClip* Track::get_clip_under(nframes_t framePos)
-{
-	AudioClip* clip = (AudioClip*) 0;
-	for (int i=0; i < audioClipList.size(); ++i) {
-		clip = audioClipList.at(i);
-		if ((clip->get_track_start_frame() <= framePos) && (clip->get_track_end_frame() >= framePos))
-			return clip;
-		if (clip->get_track_start_frame() > framePos)
-			break;
-	}
-	return clip;
-}
-
-
-AudioClip* Track::get_clip_between(nframes_t , nframes_t )
-{
-	PENTER4;
-	AudioClip* theClip = (AudioClip*) 0;
-	return theClip;
-}
-
-
 AudioClip* Track::get_clip_after(nframes_t framePos)
 {
 	AudioClip* clip;
@@ -246,7 +178,6 @@ AudioClip* Track::get_clip_after(nframes_t framePos)
 	}
 	return (AudioClip*) 0;
 }
-
 
 
 AudioClip* Track::get_clip_before(nframes_t framePos)
@@ -266,8 +197,8 @@ Command* Track::remove_clip(AudioClip* clip, bool historable)
 	PENTER;
 	m_song->get_audioclip_manager()->remove_clip(clip);
 	return new AddRemoveItemCommand(this, clip, historable, m_song,
-					"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)",
-					"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)", tr("Remove Clip"));
+			"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)",
+			"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)", tr("Remove Clip"));
 }
 
 
@@ -277,8 +208,8 @@ Command* Track::add_clip(AudioClip* clip, bool historable)
 	clip->set_track(this);
 	m_song->get_audioclip_manager()->add_clip(clip);
 	return new AddRemoveItemCommand(this, clip, historable, m_song,
-					"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)",
-					"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)", tr("Add Clip"));
+			"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)",
+			"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)", tr("Add Clip"));
 }
 
 
@@ -377,7 +308,9 @@ Command* Track::init_recording()
 {
 	PENTER2;
 	if (isArmed) {
-		QByteArray name = "Audio_" + QByteArray::number(ID) + "." + QByteArray::number(++numtakes);
+		QByteArray name = "Audio-" + QByteArray::number(m_song->get_track_index(m_id)) + 
+				"-take-" + QByteArray::number(++numtakes);
+		
 		AudioClip* clip = pm().get_project()->get_audiosource_manager()->new_audio_clip(name);
 		clip->set_song(m_song);
 		clip->set_track(this);
@@ -419,34 +352,9 @@ void Track::set_pan(float pan)
 }
 
 
-void Track::vzoom_in(int newBaseY)
-{
-	baseY = newBaseY;
-	if (1.1*height<500.0)
-		set_height((int) (1.10*height));
-}
-
-
-void Track::vzoom_out(int newBaseY)
-{
-	baseY = newBaseY;
-	if ( 0.9 * height > MINIMUM_HEIGHT )
-		set_height((int) (0.90 * height));
-}
-
-
-void Track::set_baseY(int b)
-{
-	baseY = b;
-
-	// I know, this is not true, but who cares. It causes everything to be repainted!
-	emit heightChanged();
-}
-
-
 void Track::set_height(int h)
 {
-	height = h;
+	m_height = h;
 	emit heightChanged();
 }
 
@@ -491,16 +399,10 @@ void Track::set_armed( bool armed )
 	emit armedChanged(isArmed);
 }
 
-int Track::real_baseY( ) const
-{
-	//FIXME!!!!
-	return baseY;// + m_song->mtaBaseY;
-}
 
 //
 //  Function called in RealTime AudioThread processing path
 //
-
 int Track::process( nframes_t nframes )
 {
 	int processResult = 0;
@@ -593,7 +495,7 @@ Command* Track::solo(  )
 
 Command* Track::gain()
 {
-	return new Gain(this, tr("Track %1 Gain").arg(ID));
+	return new Gain(this, tr("Track %1 Gain").arg(m_song->get_track_index(m_id)));
 }
 
 Command* Track::reset_gain()
@@ -602,7 +504,8 @@ Command* Track::reset_gain()
 	if (m_gain == 0.5) {
 		newGain = 1.0;
 	}
-	return new Gain(this, tr("Track %1 Gain").arg(ID), newGain);
+	
+	return new Gain(this, tr("Track %1 Gain").arg(m_song->get_track_index(m_id)), newGain);
 }
 
 Command* Track::pan()
@@ -660,11 +563,6 @@ void Track::private_add_clip(AudioClip* clip)
 void Track::private_remove_clip(AudioClip* clip)
 {
 	audioClipList.remove_clip(clip);
-}
-
-void Track::set_id( int id )
-{
-	ID = id;
 }
 
 Command* Track::add_plugin( Plugin * plugin )

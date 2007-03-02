@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackView.cpp,v 1.20 2007/02/23 13:55:37 r_sijrier Exp $
+$Id: TrackView.cpp,v 1.21 2007/03/02 13:36:15 r_sijrier Exp $
 */
 
 #include <QLineEdit>
@@ -123,6 +123,11 @@ void TrackView::remove_audioclipview( AudioClip * clip )
 Track* TrackView::get_track( ) const
 {
 	return m_track;
+}
+
+TrackPanelView * TrackView::get_trackpanel_view() const
+{
+	return m_panel;
 }
 
 int TrackView::get_childview_y_offset() const
