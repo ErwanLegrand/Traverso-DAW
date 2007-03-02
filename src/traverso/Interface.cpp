@@ -302,18 +302,18 @@ void Interface::create_menus( )
 	
 	QMenu* menu = menuBar()->addMenu(tr("&File"));
 	
-	QAction* action = menu->addAction(tr("&Quit"));
+	menu->addSeparator();
+	
+	QAction* action = menu->addAction(tr("Open / Create"));
+	action->setIcon(style()->standardIcon(QStyle::SP_FileDialogContentsView));
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_project_manager_dialog()));
+	
+	action = menu->addAction(tr("&Quit"));
 	action->setIcon(QIcon(find_pixmap(":/exit-16")));
 	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(exit()));
 	
 	
 	menu = menuBar()->addMenu(tr("&Project"));
-	
-	action = menu->addAction(tr("Open / Create"));
-	action->setIcon(style()->standardIcon(QStyle::SP_FileDialogContentsView));
-	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_project_manager_dialog()));
-	
-	menu->addSeparator();
 	
 	action = menu->addAction(tr("&Save"));
 	m_projectSaveAction = action;
