@@ -156,6 +156,8 @@
 			<Object objectname="CorrelationMeterView" slotsignature="set_mode" modes="All" instantanious="0" />
 			<Object objectname="SpectralMeterView" slotsignature="set_mode" modes="All" instantanious="0" />
 			<Object objectname="FadeCurve" slotsignature="set_mode" modes="All" instantanious="0" />
+			<Object objectname="TimeLineView" slotsignature="add_marker" modes="All" instantanious="0" />
+			<Object objectname="SongView" slotsignature="add_marker" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
 	<keyfact type="FKEY" key1="L" sortorder="40" >
@@ -289,25 +291,25 @@
 	</keyfact>
 	
 	
-	<keyfact type="HKEY" key1="Z" mousehint="LRUD" sortorder="35" >
+	<keyfact type="HKEY" key1="Z" sortorder="35" >
 		<Objects>
-			<Object objectname="SongView" slotsignature="zoom" modes="All" instantanious="0" />
+			<Object objectname="SongView" mousehint="LRUD" slotsignature="zoom" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
-	<keyfact type="HKEY" key1="E" mousehint="LR" sortorder="28" >
+	<keyfact type="HKEY" key1="E" sortorder="28" >
 		<Objects>
-			<Object objectname="AudioClipView" slotsignature="drag_edge" modes="All" instantanious="0" />
+			<Object objectname="AudioClipView" mousehint="LR" slotsignature="drag_edge" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
-	<keyfact type="HKEY" key1="G" mousehint="UD" sortorder="15" >
+	<keyfact type="HKEY" key1="G" sortorder="15" >
 		<Objects>
-			<Object objectname="AudioClip" slotsignature="gain" modes="All" instantanious="0" />
-			<Object objectname="Track" slotsignature="gain" modes="All" instantanious="0" />
+			<Object objectname="AudioClip" mousehint="UD" slotsignature="gain" modes="All" instantanious="0" />
+			<Object objectname="Track" mousehint="UD" slotsignature="gain" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
-	<keyfact type="HKEY" key1="P" mousehint="LR" sortorder="16" >
+	<keyfact type="HKEY" key1="P" sortorder="16" >
 		<Objects>
-			<Object objectname="Track" slotsignature="pan" modes="All" instantanious="0" />
+			<Object objectname="Track" mousehint="LR" slotsignature="pan" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
 	<keyfact type="HKEY" key1="O" sortorder="18" >
@@ -315,58 +317,59 @@
 			<Object objectname="Track" slotsignature="silence_others" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
-	<keyfact type="HKEY" key1="C" mousehint="LRUD" sortorder="27" >
+	<keyfact type="HKEY" key1="C" sortorder="27" >
 		<Objects>
-			<Object objectname="AudioClip" slotsignature="copy" modes="All" instantanious="0" />
+			<Object objectname="AudioClip" mousehint="LRUD" slotsignature="copy" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
-	<keyfact type="HKEY" key1="MouseButtonLeft" mousehint="LRUD" sortorder="50" >
+	<keyfact type="HKEY" key1="MouseButtonLeft" sortorder="50" >
 		<Objects>
-			<Object objectname="AudioClipView" slotsignature="drag" modes="EditMode" instantanious="0" />
+			<Object objectname="AudioClipView" mousehint="LRUD" slotsignature="drag" modes="EditMode" instantanious="0" />
 		</Objects>
 	</keyfact> 
-	<keyfact type="HKEY" key1="D" mousehint="LRUD" slotname="drag" name="Drag" sortorder="25" >
+	<keyfact type="HKEY" key1="D" slotname="drag" name="Drag" sortorder="25" >
 		<Objects>
-			<Object objectname="AudioClipView" slotsignature="drag" modes="EditMode" instantanious="0" />
-			<Object objectname="CurveView" slotsignature="drag_node" modes="EditMode" instantanious="1" />
+			<Object objectname="AudioClipView" mousehint="LRUD" slotsignature="drag" modes="EditMode" instantanious="0" />
+			<Object objectname="CurveView" mousehint="LRUD" slotsignature="drag_node" modes="EditMode" instantanious="1" />
+			<Object objectname="TimeLineView" mousehint="LR" slotsignature="drag_marker" modes="EditMode" instantanious="1" />
 		</Objects>
 	</keyfact>
-	<keyfact type="HKEY" key1="B" mousehint="LR" sortorder="25" >
+	<keyfact type="HKEY" key1="B" sortorder="25" >
 		<Objects>
-			<Object objectname="FadeView" slotsignature="bend" modes="All" instantanious="0" />
+			<Object objectname="FadeView" mousehint="UD" slotsignature="bend" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
-	<keyfact type="HKEY" key1="S" mousehint="LR" sortorder="26" >
+	<keyfact type="HKEY" key1="S" sortorder="26" >
 		<Objects>
-			<Object objectname="FadeView" slotsignature="strength" modes="All" instantanious="0" />
-			<Object objectname="SongView" slotsignature="shuttle" modes="All" instantanious="0" />
+			<Object objectname="FadeView" mousehint="LR" slotsignature="strength" modes="All" instantanious="0" />
+			<Object objectname="SongView" mousehint="LRUD" slotsignature="shuttle" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
-	<keyfact type="HKEY" key1="SPACE" mousehint="LR" sortorder="34" >
+	<keyfact type="HKEY" key1="SPACE" sortorder="34" >
 		<Objects>
-			<Object objectname="SongView" slotsignature="play_cursor_move" modes="All" instantanious="0" />
+			<Object objectname="SongView" mousehint="LR" slotsignature="play_cursor_move" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
-	<keyfact type="HKEY" key1="F" mousehint="LR" sortorder="42" >
+	<keyfact type="HKEY" key1="F" sortorder="42" >
 		<Objects>
-			<Object objectname="AudioClipView" slotsignature="fade_range" modes="All" instantanious="0" />
+			<Object objectname="AudioClipView" mousehint="LR" slotsignature="fade_range" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
 	
 	
-	<keyfact type="HKEY2" key1="F" key2="G" mousehint="LR" sortorder="42" >
+	<keyfact type="HKEY2" key1="F" key2="G" sortorder="42" >
 		<Objects>
-			<Object objectname="AudioClip" slotsignature="clip_fade_in" modes="All" instantanious="0" />
+			<Object objectname="AudioClip" mousehint="LR" slotsignature="clip_fade_in" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
-	<keyfact type="HKEY2" key1="G" key2="H" mousehint="LR" sortorder="43" >
+	<keyfact type="HKEY2" key1="G" key2="H" sortorder="43" >
 		<Objects>
-			<Object objectname="AudioClip" slotsignature="clip_fade_out" modes="All" instantanious="0" />
+			<Object objectname="AudioClip" mousehint="LR" slotsignature="clip_fade_out" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
-	<keyfact type="HKEY2" key1="S" key2="G" mousehint="UD" sortorder="37" >
+	<keyfact type="HKEY2" key1="S" key2="G" sortorder="37" >
 		<Objects>
-			<Object objectname="Song" slotsignature="master_gain" modes="All" instantanious="0" />
+			<Object objectname="Song" mousehint="UD" slotsignature="master_gain" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
 	
