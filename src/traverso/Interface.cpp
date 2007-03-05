@@ -302,11 +302,11 @@ void Interface::create_menus( )
 	
 	QMenu* menu = menuBar()->addMenu(tr("&File"));
 	
-	menu->addSeparator();
-	
 	QAction* action = menu->addAction(tr("Open / Create"));
 	action->setIcon(style()->standardIcon(QStyle::SP_FileDialogContentsView));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_project_manager_dialog()));
+	
+	menu->addSeparator();
 	
 	action = menu->addAction(tr("&Quit"));
 	action->setIcon(QIcon(find_pixmap(":/exit-16")));
