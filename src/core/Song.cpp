@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier
+Copyright (C) 2005-2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -45,6 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Config.h"
 #include "Utils.h"
 #include "ContextItem.h"
+#include "TimeLine.h"
 
 #include <Plugin.h>
 #include <PluginChain.h>
@@ -59,39 +60,15 @@ Song::Song(Project* project)
 	, m_project(project)
 {
 	PENTERCONS;
-	title="Untitled";
+	title = tr("Untitled");
 	m_id = create_id();
 	m_gain = 1.0f;
-	artists = "No artists name yet";
-	int level = config().get_property("Song", "hzoomLevel", 14).toInt();
-	printf("level is %d\n", level);
-	switch (level) {
-		case 8: m_hzoom = 4;
-			break;
-		case 64: m_hzoom = 7;
-			break;
-		case 128: m_hzoom = 8;
-			break;
-		case 256: m_hzoom = 9;
-			break;
-		case 1024: m_hzoom = 10;
-			break;
-		case 2048: m_hzoom = 11;
-			break;
-		case 4096: m_hzoom = 12;
-			break;
-		case 8192: m_hzoom = 13;
-			break;
-		case 16384: m_hzoom = 14;
-			break;
-		default:   m_hzoom = 11;
-			break;
-	}
-	int tracksToCreate = config().get_property("Song", "trackCreationCount", 6).toInt();
+	artists = tr("No artists name set");
+	m_hzoom = config().get_property("Song", "hzoomLevel", 14).toInt();
+	int tracksToCreate = config().get_property("Song", "trackCreationCount", 4).toInt();
 
 	init();
 
-	activeTrackNumber = 1;
 	for (int i=1; i <= tracksToCreate; i++) {
 		Track* track = create_track();
 		private_add_track(track);
@@ -117,10 +94,10 @@ Song::~Song()
 	delete [] mixdown;
 	delete [] gainbuffer;
 
-	delete diskio;
-	delete masterOut;
+	delete m_diskio;
+	delete m_masterOut;
 	delete m_hs;
-	delete audiodeviceClient;
+	delete m_audiodeviceClient;
 	delete snaplist;
 }
 
@@ -129,28 +106,28 @@ void Song::init()
 	PENTER2;
 	threadId = QThread::currentThreadId ();
 
-	diskio = new DiskIO(this);
+	m_diskio = new DiskIO(this);
 	
-	connect(this, SIGNAL(seekStart(uint)), diskio, SLOT(seek(uint)), Qt::QueuedConnection);
+	connect(this, SIGNAL(seekStart(uint)), m_diskio, SLOT(seek(uint)), Qt::QueuedConnection);
 	connect(&audiodevice(), SIGNAL(clientRemoved(Client*)), this, SLOT (audiodevice_client_removed(Client*)));
 	connect(&audiodevice(), SIGNAL(started()), this, SLOT(audiodevice_started()));
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(resize_buffer()), Qt::DirectConnection);
-	connect(diskio, SIGNAL(seekFinished()), this, SLOT(seek_finished()), Qt::QueuedConnection);
-	connect (diskio, SIGNAL(readSourceBufferUnderRun()), this, SLOT(handle_diskio_readbuffer_underrun()));
-	connect (diskio, SIGNAL(writeSourceBufferOverRun()), this, SLOT(handle_diskio_writebuffer_overrun()));
-	connect(this, SIGNAL(transferStarted()), diskio, SLOT(start_io()));
-	connect(this, SIGNAL(transferStopped()), diskio, SLOT(stop_io()));
+	connect(m_diskio, SIGNAL(seekFinished()), this, SLOT(seek_finished()), Qt::QueuedConnection);
+	connect (m_diskio, SIGNAL(readSourceBufferUnderRun()), this, SLOT(handle_m_diskio_readbuffer_underrun()));
+	connect (m_diskio, SIGNAL(writeSourceBufferOverRun()), this, SLOT(handle_m_diskio_writebuffer_overrun()));
+	connect(this, SIGNAL(transferStarted()), m_diskio, SLOT(start_io()));
+	connect(this, SIGNAL(transferStopped()), m_diskio, SLOT(stop_io()));
 
 	mixdown = new audio_sample_t[audiodevice().get_buffer_size()];
 	gainbuffer = new audio_sample_t[audiodevice().get_buffer_size()];
-	masterOut = new AudioBus("Master Out", 2);
+	m_masterOut = new AudioBus("Master Out", 2);
 	m_hs = new QUndoStack(pm().get_undogroup());
 	set_history_stack(m_hs);
-	acmanager = new AudioClipManager(this);
+	m_acmanager = new AudioClipManager(this);
 	
-	set_context_item( acmanager );
+	set_context_item( m_acmanager );
 
-	playBackBus = audiodevice().get_playback_bus("Playback 1");
+	m_playBackBus = audiodevice().get_playback_bus("Playback 1");
 
 	transport = stopTransport = resumeTransport = false;
 	snaplist = new SnapList(this);
@@ -158,11 +135,11 @@ void Song::init()
 	scheduleForDeletion = false;
 	isSnapOn=true;
 	changed = rendering = false;
-	firstVisibleFrame=workingFrame=activeTrackNumber=0;
-	trackCount = 0;
+	firstVisibleFrame=workingFrame=0;
 	seeking = 0;
 	
-	pluginChain = new PluginChain(this, this);
+	m_pluginChain = new PluginChain(this, this);
+	m_timeline = new TimeLine(this);
 }
 
 int Song::set_state( const QDomNode & node )
@@ -175,11 +152,13 @@ int Song::set_state( const QDomNode & node )
 
 	title = e.attribute( "title", "" );
 	artists = e.attribute( "artists", "" );
-	activeTrackNumber = e.attribute( "activeTrackNumber", "" ).toInt();
 	set_gain(e.attribute( "mastergain", "1.0").toFloat() );
 	set_hzoom(e.attribute( "hzoom", "" ).toInt());
 	set_first_visible_frame(e.attribute( "firstVisibleFrame", "0" ).toUInt());
 	set_work_at(e.attribute( "workingFrame", "0").toUInt());
+	
+	QDomNode timelineNode = node.firstChildElement("TimeLine");
+	m_timeline->set_state(timelineNode);
 	
 	QDomNode tracksNode = node.firstChildElement("Tracks");
 	QDomNode trackNode = tracksNode.firstChild();
@@ -193,7 +172,7 @@ int Song::set_state( const QDomNode & node )
 	}
 
 	QDomNode pluginChainNode = node.firstChildElement("PluginChain");
-	pluginChain->set_state(pluginChainNode);
+	m_pluginChain->set_state(pluginChainNode);
 	
 	return 1;
 }
@@ -205,7 +184,6 @@ QDomNode Song::get_state(QDomDocument doc)
 	QDomElement properties = doc.createElement("Properties");
 	properties.setAttribute("title", title);
 	properties.setAttribute("artists", artists);
-	properties.setAttribute("activeTrackNumber", activeTrackNumber);
 	properties.setAttribute("firstVisibleFrame", firstVisibleFrame);
 	properties.setAttribute("workingFrame", (uint)workingFrame);
 	properties.setAttribute("hzoom", m_hzoom);
@@ -214,6 +192,8 @@ QDomNode Song::get_state(QDomDocument doc)
 
 	doc.appendChild(songNode);
 
+	songNode.appendChild(m_timeline->get_state(doc));
+	
 	QDomNode tracksNode = doc.createElement("Tracks");
 
 	foreach(Track* track, m_tracks) {
@@ -222,9 +202,9 @@ QDomNode Song::get_state(QDomDocument doc)
 
 	songNode.appendChild(tracksNode);
 
-	QDomNode pluginChainNode = doc.createElement("PluginChain");
-	pluginChainNode.appendChild(pluginChain->get_state(doc));
-	songNode.appendChild(pluginChainNode);
+	QDomNode m_pluginChainNode = doc.createElement("PluginChain");
+	m_pluginChainNode.appendChild(m_pluginChain->get_state(doc));
+	songNode.appendChild(m_pluginChainNode);
 
 
 	return songNode;
@@ -233,9 +213,9 @@ QDomNode Song::get_state(QDomDocument doc)
 void Song::connect_to_audiodevice( )
 {
 	PENTER;
-	audiodeviceClient = new Client("song_" + QByteArray::number(get_id()));
-	audiodeviceClient->set_process_callback( MakeDelegate(this, &Song::process) );
-	audiodevice().add_client(audiodeviceClient);
+	m_audiodeviceClient = new Client("song_" + QByteArray::number(get_id()));
+	m_audiodeviceClient->set_process_callback( MakeDelegate(this, &Song::process) );
+	audiodevice().add_client(m_audiodeviceClient);
 }
 
 void Song::disconnect_from_audiodevice_and_delete()
@@ -246,13 +226,13 @@ void Song::disconnect_from_audiodevice_and_delete()
 	}
 	scheduleForDeletion = true;
 	pm().scheduled_for_deletion(this);
-	audiodevice().remove_client(audiodeviceClient);
+	audiodevice().remove_client(m_audiodeviceClient);
 }
 
 void Song::audiodevice_client_removed(Client* client )
 {
 	PENTER;
-	if (audiodeviceClient == client) {
+	if (m_audiodeviceClient == client) {
 		if (scheduleForDeletion) {
 			pm().delete_song(this);
 		}
@@ -269,16 +249,18 @@ Command* Song::add_track(Track* track, bool historable)
 	}
 
 	return new AddRemoveItemCommand(this, track, historable, this,
-					"private_add_track(Track*)", "trackAdded(Track*)",
-					"private_remove_track(Track*)", "trackRemoved(Track*)", tr("Add Track"));
+		"private_add_track(Track*)", "trackAdded(Track*)",
+		"private_remove_track(Track*)", "trackRemoved(Track*)",
+   		tr("Add Track"));
 }
 
 
 Command* Song::remove_track(Track* track, bool historable)
 {
 	return new AddRemoveItemCommand(this, track, historable, this,
-					"private_remove_track(Track*)", "trackRemoved(Track*)",
-					"private_add_track(Track*)", "trackAdded(Track*)", tr("Remove Track"));
+		"private_remove_track(Track*)", "trackRemoved(Track*)",
+		"private_add_track(Track*)", "trackAdded(Track*)",
+   		tr("Remove Track"));
 }
 
 bool Song::any_track_armed()
@@ -350,15 +332,15 @@ int Song::prepare_export(ExportSpecification* spec)
 		return -1;
 	}
 
-	exportSource = new WriteSource(spec);
+	m_exportSource = new WriteSource(spec);
 
 	return 1;
 }
 
 int Song::finish_audio_export()
 {
-	exportSource->finish_export();
-	delete exportSource;
+	m_exportSource->finish_export();
+	delete m_exportSource;
 	return 0;
 }
 
@@ -395,12 +377,12 @@ int Song::render(ExportSpecification* spec)
 	float* buf;
 
 	for (chn = 0; chn < spec->channels; ++chn) {
-		buf = masterOut->get_buffer(chn, nframes);
+		buf = m_masterOut->get_buffer(chn, nframes);
 
 		if (!buf) {
 			// Seem we are exporting at least to Stereo from an AudioBus with only one channel...
 			// Use the first channel..
-			buf = masterOut->get_buffer(0, nframes);
+			buf = m_masterOut->get_buffer(0, nframes);
 		}
 
 		for (x = 0; x < nframes; ++x) {
@@ -409,7 +391,7 @@ int Song::render(ExportSpecification* spec)
 	}
 
 
-	if (exportSource->process (nframes)) {
+	if (m_exportSource->process (nframes)) {
 		goto out;
 	}
 
@@ -437,7 +419,7 @@ out:
 }
 
 
-SnapList* Song::get_snap_list()
+SnapList* Song::get_snap_list() const
 {
 	return snaplist;
 }
@@ -528,7 +510,7 @@ void Song::start_seek()
 		resumeTransport = true;
 	}
 
-	diskio->prepare_for_seek();
+	m_diskio->prepare_for_seek();
 
 	if (!transport) {
 		emit seekStart(newTransportFramePos);
@@ -664,7 +646,7 @@ Command *Song::toggle_mute()
 
 Command* Song::work_next_edge()
 {
-	nframes_t w = acmanager->get_last_frame();
+	nframes_t w = m_acmanager->get_last_frame();
 
 	foreach(Track* track, m_tracks) {
 		AudioClip* c=track->get_clip_after(workingFrame);
@@ -737,8 +719,8 @@ int Song::process( nframes_t nframes )
 		return 0;
 	}
 
-	// zero the masterOut buffers
-	masterOut->silence_buffers(nframes);
+	// zero the m_masterOut buffers
+	m_masterOut->silence_buffers(nframes);
 
 	int processResult = 0;
 
@@ -760,14 +742,14 @@ int Song::process( nframes_t nframes )
 	}
 
 	// Mix the result into the AudioDevice "physical" buffers
-	if (playBackBus) {
-		Mixer::mix_buffers_with_gain(playBackBus->get_buffer(0, nframes), masterOut->get_buffer(0, nframes), nframes, m_gain);
-		Mixer::mix_buffers_with_gain(playBackBus->get_buffer(1, nframes), masterOut->get_buffer(1, nframes), nframes, m_gain);
+	if (m_playBackBus) {
+		Mixer::mix_buffers_with_gain(m_playBackBus->get_buffer(0, nframes), m_masterOut->get_buffer(0, nframes), nframes, m_gain);
+		Mixer::mix_buffers_with_gain(m_playBackBus->get_buffer(1, nframes), m_masterOut->get_buffer(1, nframes), nframes, m_gain);
 		
 		// Process all the plugins for this Song
-		QList<Plugin* >* pluginList = pluginChain->get_plugin_list();
+		QList<Plugin* >* pluginList = m_pluginChain->get_plugin_list();
 		for (int i=0; i<pluginList->size(); ++i) {
-			pluginList->at(i)->process(playBackBus, nframes);
+			pluginList->at(i)->process(m_playBackBus, nframes);
 		}
 	}
 
@@ -778,7 +760,7 @@ int Song::process( nframes_t nframes )
 int Song::process_export( nframes_t nframes )
 {
 	// Get the masterout buffers, and fill with zero's
-	masterOut->silence_buffers(nframes);
+	m_masterOut->silence_buffers(nframes);
 	memset (mixdown, 0, sizeof (audio_sample_t) * nframes);
 
 	// Process all Tracks.
@@ -786,8 +768,8 @@ int Song::process_export( nframes_t nframes )
 		m_tracks.at(i)->process(nframes);
 	}
 
-	Mixer::apply_gain_to_buffer(masterOut->get_buffer(0, nframes), nframes, m_gain);
-	Mixer::apply_gain_to_buffer(masterOut->get_buffer(1, nframes), nframes, m_gain);
+	Mixer::apply_gain_to_buffer(m_masterOut->get_buffer(0, nframes), nframes, m_gain);
+	Mixer::apply_gain_to_buffer(m_masterOut->get_buffer(1, nframes), nframes, m_gain);
 
 	// update the transportFrame
 	transportFrame += nframes;
@@ -823,30 +805,24 @@ float Song::get_gain() const
 	return m_gain;
 }
 
-void Song::update_cursor_pos()
-{
-	if (!transport)
-		emit cursorPosChanged();
-}
-
 QList<Track* > Song::get_tracks( ) const
 {
 	return m_tracks;
 }
 
-DiskIO * Song::get_diskio( )
+DiskIO * Song::get_diskio( ) const
 {
-	return diskio;
+	return m_diskio;
 }
 
-AudioClipManager * Song::get_audioclip_manager( )
+AudioClipManager * Song::get_audioclip_manager( ) const
 {
-	return acmanager;
+	return m_acmanager;
 }
 
-PluginChain* Song::get_plugin_chain()
+PluginChain* Song::get_plugin_chain() const
 {
-	return pluginChain;
+	return m_pluginChain;
 }
 
 int Song::get_track_index(qint64 id) const
@@ -879,12 +855,12 @@ void Song::handle_diskio_writebuffer_overrun( )
 
 void Song::audiodevice_started( )
 {
-	playBackBus = audiodevice().get_playback_bus("Playback 1");
+	m_playBackBus = audiodevice().get_playback_bus("Playback 1");
 }
 
 nframes_t Song::get_last_frame( ) const
 {
-	return acmanager->get_last_frame();
+	return m_acmanager->get_last_frame();
 }
 
 Command * Song::playhead_to_workcursor( )
@@ -909,6 +885,4 @@ void Song::private_remove_track(Track* track)
 	m_tracks.removeAll(track);
 }
 
-
 // eof
-

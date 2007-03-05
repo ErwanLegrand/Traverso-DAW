@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define SONG_H
 
 #include "ContextItem.h"
-#include <QHash>
 #include <QDomNode>
 #include "defines.h"
 
@@ -40,6 +39,7 @@ class AudioBus;
 class PluginChain;
 class SnapList;
 class Plugin;
+class TimeLine;
 
 struct ExportSpecification;
 
@@ -59,13 +59,6 @@ class Song : public ContextItem
 	Q_CLASSINFO("toggle_mute", tr("Mute: On/Off"))
 
 public:
-
-	enum EditMode
-	{
-		EDIT_NORMAL,
-		EDIT_TRACK_CURVES
-	};
-
 
 	Song(Project* project);
 	Song(Project* project, const QDomNode node);
@@ -89,15 +82,15 @@ public:
 	QDomNode get_state(QDomDocument doc);
 	QList<Track* > get_tracks() const;
 	
-	DiskIO*	get_diskio();
-	AudioClipManager* get_audioclip_manager();
-	AudioBus* get_master_out() const {return masterOut;}
-	SnapList* get_snap_list();
-	PluginChain* get_plugin_chain();
+	DiskIO*	get_diskio() const;
+	AudioClipManager* get_audioclip_manager() const;
+	AudioBus* get_master_out() const {return m_masterOut;}
+	SnapList* get_snap_list() const;
+	PluginChain* get_plugin_chain() const;
+	TimeLine* get_timeline() const {return m_timeline;}
 
 	// Set functions
 	void set_artists(const QString& pArtistis);
-	void update_cursor_pos();
 	void set_first_visible_frame(nframes_t pos);
 	void set_title(const QString& sTitle);
 	void set_work_at(nframes_t pos);
@@ -116,18 +109,9 @@ public:
 	
 	bool any_track_armed();
 	bool realtime_path() const {return realtimepath;}
-	bool is_transporting() const
-	{
-		return transport;
-	}
-	bool is_changed() const
-	{
-		return changed;
-	}
-	bool is_snap_on() const
-	{
-		return isSnapOn;
-	}
+	bool is_transporting() const {return transport;}
+	bool is_changed() const {return changed;}
+	bool is_snap_on() const	{return isSnapOn;}
 
 	void disconnect_from_audiodevice_and_delete();
 
@@ -139,17 +123,17 @@ public:
 private:
 	QList<Track* >		m_tracks;
 	Project*		m_project;
-	WriteSource*		exportSource;
-	AudioBus*		playBackBus;
-	Client* 		audiodeviceClient;
-	AudioBus*		masterOut;
-	DiskIO*			diskio;
-	AudioClipManager*	acmanager;
-	PluginChain*		pluginChain;
-	Plugin*			m_correlationMeterPlugin;
+	WriteSource*		m_exportSource;
+	AudioBus*		m_playBackBus;
+	Client* 		m_audiodeviceClient;
+	AudioBus*		m_masterOut;
+	DiskIO*			m_diskio;
+	AudioClipManager*	m_acmanager;
+	PluginChain*		m_pluginChain;
+	TimeLine*		m_timeline;
 
 	// The following data could be read/written by multiple threads
-	// (gui, audio and diskio thread). Therefore they should have 
+	// (gui, audio and m_diskio thread). Therefore they should have 
 	// atomic behaviour, still not sure if volatile size_t declaration
 	// would suffice, or should we use g_atomic_int_set/get() to make
 	// it 100% portable and working on all platforms...?
@@ -161,17 +145,11 @@ private:
 
 	
 	nframes_t 		firstVisibleFrame;
-	
 	float 			m_gain;
-	
 	QString 		artists;
 	QString 		title;
-
-	int 			activeTrackNumber;
 	qint64 			m_id;
 	int 			m_hzoom;
-	int			trackCount;
-
 	bool 			rendering;
 	bool 			changed;
 	bool 			isSnapOn;
@@ -217,7 +195,6 @@ public slots :
 signals:
 	void trackRemoved(Track* );
 	void trackAdded(Track* );
-	void cursorPosChanged();
 	void hzoomChanged();
 	void transferStarted();
 	void transferStopped();
