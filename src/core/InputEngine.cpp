@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.31 2007/02/15 21:14:49 r_sijrier Exp $
+$Id: InputEngine.cpp,v 1.32 2007/03/05 12:27:23 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -142,6 +142,11 @@ InputEngine::InputEngine()
 	locked=false; // THIS SHOULD CALL everythingLocked
 	activate();
 	
+#define profile
+
+#if defined (profile)
+	trav_time_t starttime = get_microseconds();
+#endif
 	QDir pluginsDir("lib/commandplugins");
 	foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
 		QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
@@ -153,6 +158,10 @@ InputEngine::InputEngine()
 			printf("InputEngine:: Plugin load failed with %s\n", QS_C(loader.errorString()));
 		}
 	}
+#if defined (profile)
+	int processtime = (int) (get_microseconds() - starttime);
+	printf("InputEngine::Plugin load time: %d useconds\n\n", processtime);
+#endif
 }
 
 InputEngine::~ InputEngine( )
@@ -208,6 +217,7 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat)
 
 	Command* k = 0;
 	QObject* item = 0;
+	int useX=0, useY=0;
 
 	QList<QObject* > list = cpointer().get_context_items();
 
@@ -225,8 +235,7 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat)
 			continue;
 		}
 		
-		IEAction::Data* data;
-		data = action->objects.value(QString(item->metaObject()->className()));
+		IEAction::Data* data = action->objects.value(QString(item->metaObject()->className()));
 		QString commandpluginname = "";
 		
 		if ( ! data ) {
@@ -236,6 +245,8 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat)
 			PMESG("setting slotsignature to %s", data->slotsignature);
 			slotsignature = data->slotsignature;
 			commandpluginname = data->commandpluginname;
+			useX = data->useX;
+			useY = data->useY;
 		}
 		
 		if (item == holdingCommand) {
@@ -289,7 +300,7 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat)
 	if (k && isHolding) {
 		if (k->begin_hold() != -1) {
 			k->set_valid(true);
-			k->set_cursor_shape(action->useX, action->useY);
+			k->set_cursor_shape(useX, useY);
 			holdingCommand = k;
 			set_jogging(true);
 		} else {
@@ -385,7 +396,7 @@ void InputEngine::catch_key_press(QKeyEvent * e )
 		return;
 	}
 	PENTER3;
-	process_press_event(e->key(), e, e->isAutoRepeat());
+	process_press_event(e->key(), e->isAutoRepeat());
 }
 
 void InputEngine::catch_key_release( QKeyEvent * e)
@@ -399,7 +410,7 @@ void InputEngine::catch_key_release( QKeyEvent * e)
 
 void InputEngine::catch_mousebutton_press( QMouseEvent * e )
 {
-	process_press_event(e->button(), e);
+	process_press_event(e->button());
 }
 
 void InputEngine::catch_mousebutton_release( QMouseEvent * e )
@@ -409,9 +420,9 @@ void InputEngine::catch_mousebutton_release( QMouseEvent * e )
 
 void InputEngine::catch_mousebutton_doubleclick( QMouseEvent * e )
 {
-	process_press_event(e->button(), e);
+	process_press_event(e->button());
 	process_release_event(e->button());
-	process_press_event(e->button(), e);
+	process_press_event(e->button());
 	process_release_event(e->button());
 }
 
@@ -425,17 +436,17 @@ void InputEngine::catch_scroll(QWheelEvent* e)
 		}
 	} else {
 		if (e->delta() > 0) {
-			process_press_event(MouseScrollVerticalUp, e);
+			process_press_event(MouseScrollVerticalUp);
 			process_release_event(MouseScrollVerticalUp);
 		}
 		if (e->delta() < 0) {
-			process_press_event(MouseScrollVerticalDown, e);
+			process_press_event(MouseScrollVerticalDown);
 			process_release_event(MouseScrollVerticalDown);
 		}
 	}
 }
 
-void InputEngine::process_press_event(int eventcode, QInputEvent* event, bool isAutoRepeat)
+void InputEngine::process_press_event(int eventcode, bool isAutoRepeat)
 {
 	if (isFirstFact) {
 		cpointer().inputengine_first_input_event();
@@ -911,16 +922,9 @@ void InputEngine::dispatch_hold()
 	}
 
 	if (wholeMapIndex>=0) {
-		IEAction* action = ieActions.at(wholeMapIndex);
-		if ((action->useX) && (action->useY)) {
-			// print("Move Mouse U/D/L/R",1);
-		} else if (action->useX) {
-			// print("Move Mouse Left/Right",1);
-		} else if(action->useY) {
-			// print("Move Mouse Up/Down",1);
-		}
 		broadcast_action(ieActions.at(wholeMapIndex));
-	} else {}
+	}
+	
 	stop_collecting();
 	// note that we dont call conclusion() here :-)
 }
@@ -1002,6 +1006,7 @@ int InputEngine::init_map(const QString& mapFilename)
 
 	QString keyFactType;
 	QString key1, key2, key3, key4, mouseHint, slot;
+	IEAction::Data* data;
 	
 	while( !node.isNull() ) {
 		QDomElement e = node.toElement();
@@ -1021,8 +1026,6 @@ int InputEngine::init_map(const QString& mapFilename)
 		key1 = e.attribute( "key1", "");
 		key2 = e.attribute( "key2", "" );
 		action->sortOrder = e.attribute( "sortorder", "1").toInt();
-
-		mouseHint = e.attribute( "mousehint", "" );
 		slot = e.attribute( "slotname", "" );
 
 		if (keyFactType == "FKEY")
@@ -1042,15 +1045,6 @@ int InputEngine::init_map(const QString& mapFilename)
 		else {
 			PWARN("keyFactType not supported!");
 		}
-
-		action->useX = action->useY = false;
-		
-		if (mouseHint == "LR")
-			action->useX = true;
-		if (mouseHint == "UD")
-			action->useY = true;
-		if (mouseHint == "LRUD")
-			action->useX = action->useY = true;
 
 		set_hexcode(action->fact1_key1, key1);
 		set_hexcode(action->fact1_key2, key2);
@@ -1074,7 +1068,7 @@ int InputEngine::init_map(const QString& mapFilename)
 		QDomNode objectNode = objectsNode.firstChild();
 	
 		while(!objectNode.isNull()) {
-			IEAction::Data* data = new IEAction::Data;
+			data = new IEAction::Data;
 			
 			QDomElement e = objectNode.toElement();
 			
@@ -1085,6 +1079,19 @@ int InputEngine::init_map(const QString& mapFilename)
 			data->description = e.attribute("description", "");
 			data->instantanious = e.attribute("instantanious", "0").toInt();
 			data->commandpluginname = e.attribute( "commandpluginname", "");
+			mouseHint = e.attribute( "mousehint", "" );
+			
+			data->useX = data->useY = false;
+		
+			if (mouseHint == "LR") {
+				data->useX = true;
+			}
+			if (mouseHint == "UD") {
+				data->useY = true;
+			}
+			if (mouseHint == "LRUD") {
+				data->useX = data->useY = true;
+			}
 			
 			if (QString(objectname) == "") {
 				PERROR("no objectname given in keyaction %s", QS_C(keyFactType));
@@ -1123,7 +1130,7 @@ int InputEngine::init_map(const QString& mapFilename)
 		}
 		if (!exists) {
 			ieActions.append(action);
-			PMESG2("ADDED action: type=%d keys=%d,%d,%d,%d useX=%d useY=%d, slot=%s", action->type, action->fact1_key1,action->fact1_key2,action->fact2_key1,action->fact2_key2,action->useX,action->useY, QS_C(slot));
+			PMESG2("ADDED action: type=%d keys=%d,%d,%d,%d useX=%d useY=%d, slot=%s", action->type, action->fact1_key1,action->fact1_key2,action->fact2_key1,action->fact2_key2,data->useX,data->useY, QS_C(slot));
 		}
 		
 		

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: InputEngine.h,v 1.10 2007/02/15 21:07:35 r_sijrier Exp $
+    $Id: InputEngine.h,v 1.11 2007/03/05 12:27:23 r_sijrier Exp $
 */
 
 #ifndef INPUTENGINE_H
@@ -83,6 +83,8 @@ struct IEAction
         	QString description;
         	int instantanious;
 		QString commandpluginname;
+		bool useX;
+		bool useY;
 	};
 
         QHash<QString, Data*> objects;
@@ -92,8 +94,6 @@ struct IEAction
         int fact1_key2;
         int fact2_key1;
         int fact2_key2;
-        bool useX;
-        bool useY;
         bool isInstantaneous;
         QByteArray keySequence;
         int sortOrder;
@@ -260,7 +260,7 @@ private:
 
         void set_jogging(bool jog);
         
-        void process_press_event(int eventcode, QInputEvent* event, bool isAutoRepeat=false);
+        void process_press_event(int eventcode, bool isAutoRepeat=false);
         void process_release_event(int eventcode);
         int find_index_for_single_fact(int type, int key1, int key2);
         
