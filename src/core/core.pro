@@ -58,7 +58,9 @@ SOURCES = AudioClip.cpp \
 	ViewPort.cpp \
 	WriteSource.cpp \
 	gdither.cpp \
-	SnapList.cpp
+	SnapList.cpp \
+	TimeLine.cpp \
+	Marker.cpp
 HEADERS = precompile.h \
 	AudioClip.h \
 	AudioClipList.h \
@@ -98,14 +100,17 @@ HEADERS = precompile.h \
 	noise.h \
 	FastDelegate.h \
 	SnapList.h \
-	CommandPlugin.h
+	CommandPlugin.h \
+	TimeLine.h \
+	Marker.h
 macx{
     QMAKE_LIBDIR += /usr/local/qt/lib
 }
 
 SOURCES -= MultiMeter.cpp \
 MtaRegionList.cpp \
-MtaRegion.cpp
+MtaRegion.cpp \
+ContextItem.cpp
 HEADERS -= MultiMeter.h \
 MtaRegion.h \
 MtaRegionList.h
