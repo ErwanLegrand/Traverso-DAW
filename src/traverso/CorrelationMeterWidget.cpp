@@ -220,6 +220,7 @@ void CorrelationMeterView::set_project(Project *project)
 	if (project) {
 		connect(project, SIGNAL(currentSongChanged(Song *)), this, SLOT(set_song(Song*)));
 	} else {
+		set_song(0);
 		timer.stop();
 	}
 }
@@ -266,7 +267,6 @@ void CorrelationMeterView::set_song(Song *song)
 
 void CorrelationMeterView::hide_event()
 {
-	printf("CorrelationMeterView::hide_event()\n");
 	if (m_song) {
 		if (m_meter) {
 			ie().process_command(m_song->get_plugin_chain()->remove_plugin(m_meter, false));

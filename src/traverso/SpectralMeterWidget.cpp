@@ -308,6 +308,7 @@ void SpectralMeterView::set_project(Project *project)
 		connect(project, SIGNAL(currentSongChanged(Song *)), this, SLOT(set_song(Song*)));
 		m_project = project;
 	} else {
+		set_song(0);
 		timer.stop();
 	}
 }
