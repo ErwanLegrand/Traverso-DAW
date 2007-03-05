@@ -25,7 +25,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.cpp,v 1.29 2007/02/23 15:36:02 r_sijrier Exp $
+$Id: Curve.cpp,v 1.30 2007/03/05 12:26:30 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -79,6 +79,7 @@ void Curve::init( )
 	m_lookup_cache.range.first = m_nodes.end();
 
 	m_defaultValue = 1.0f;
+	connect(this, SIGNAL(nodePositionChanged()), this, SLOT(set_changed()));
 }
 
 
@@ -517,8 +518,6 @@ Command* Curve::add_node(CurveNode* node, bool historable)
 			"private_add_node(CurveNode*)", "nodeAdded(CurveNode*)",
 			"private_remove_node(CurveNode*)", "nodeRemoved(CurveNode*)", 
 			"");
-	
-	connect(this, SIGNAL(nodePositionChanged()), this, SLOT(set_changed()));
 	
 	return cmd;
 }
