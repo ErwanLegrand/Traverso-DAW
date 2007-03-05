@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ClipsViewPort.h,v 1.4 2007/02/06 20:52:07 r_sijrier Exp $
+    $Id: ClipsViewPort.h,v 1.5 2007/03/05 20:51:24 r_sijrier Exp $
 */
 
 #ifndef CLIPS_VIEW_PORT_H
@@ -43,6 +43,7 @@ public:
 
 protected:
         void resizeEvent(QResizeEvent* e);
+	void paintEvent( QPaintEvent* e);
 
 private:
 	SongWidget*	m_sw;

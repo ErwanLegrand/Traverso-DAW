@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: BusMonitor.cpp,v 1.6 2006/10/18 12:08:56 r_sijrier Exp $
+$Id: BusMonitor.cpp,v 1.7 2007/03/05 20:51:23 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -67,6 +67,16 @@ void BusMonitor::resizeEvent( QResizeEvent * )
 	PENTER2;
 }
 
+QSize BusMonitor::sizeHint() const
+{
+	return QSize(120, 50);
+}
+
+QSize BusMonitor::minimumSizeHint() const
+{
+	return QSize(80, 50);
+}
+
 void BusMonitor::create_vu_meters( )
 {
 	PENTER;
@@ -106,4 +116,6 @@ void BusMonitor::create_vu_meters( )
 	vumeterLayout->setEnabled(true);
 }
 
+
 //eof
+

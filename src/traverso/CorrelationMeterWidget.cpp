@@ -83,6 +83,16 @@ void CorrelationMeterWidget::showEvent(QShowEvent * event)
 	m_item->show_event();
 }
 
+QSize CorrelationMeterWidget::minimumSizeHint() const
+{
+	return QSize(150, 50);
+}
+
+QSize CorrelationMeterWidget::sizeHint() const
+{
+	return QSize(220, 50);
+}
+
 void CorrelationMeterWidget::get_pointed_context_items(QList<ContextItem* > &list)
 {
 	printf("CorrelationMeterWidget::get_pointed_view_items\n");

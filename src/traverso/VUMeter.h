@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: VUMeter.h,v 1.6 2007/01/19 12:34:04 r_sijrier Exp $
+    $Id: VUMeter.h,v 1.7 2007/03/05 20:51:24 r_sijrier Exp $
 */
 
 #ifndef VUMETER_H
@@ -75,6 +75,8 @@ public:
 protected:
         void resizeEvent( QResizeEvent* e);
         void paintEvent( QPaintEvent* e);
+	QSize sizeHint () const;
+	QSize minimumSizeHint () const;
 
 private:
         bool			isActive;

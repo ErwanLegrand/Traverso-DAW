@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: VUMeter.cpp,v 1.13 2007/02/01 15:44:23 r_sijrier Exp $
+    $Id: VUMeter.cpp,v 1.14 2007/03/05 20:51:24 r_sijrier Exp $
 */
 
 #include "VUMeter.h"
@@ -171,6 +171,16 @@ void VUMeter::resizeEvent( QResizeEvent *  )
 		else ruler->hide();
 		drawTickmarks = dt;
 	}
+}
+
+QSize VUMeter::sizeHint() const
+{
+	return QSize(70, 50);
+}
+
+QSize VUMeter::minimumSizeHint() const
+{
+	return QSize(70, 50);
 }
 
 void VUMeter::calculate_lut_data()
@@ -669,3 +679,4 @@ int VUMeterLevel::get_meter_position(float f)
 
 
 //eof
+

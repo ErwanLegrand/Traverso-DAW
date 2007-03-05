@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: BusMonitor.h,v 1.3 2006/08/25 11:16:18 r_sijrier Exp $
+$Id: BusMonitor.h,v 1.4 2007/03/05 20:51:23 r_sijrier Exp $
 */
 
 #ifndef BUSMONITOR_H
@@ -40,7 +40,9 @@ public:
 
 protected:
 	void resizeEvent( QResizeEvent* e);
-
+	QSize sizeHint () const;
+	QSize minimumSizeHint () const;
+	
 private:
 	QHBoxLayout* 		layout;
 	QHBoxLayout* 		vumeterLayout;

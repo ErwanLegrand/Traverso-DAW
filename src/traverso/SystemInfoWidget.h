@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SystemInfoWidget.h,v 1.2 2006/10/18 12:08:56 r_sijrier Exp $
+    $Id: SystemInfoWidget.h,v 1.3 2007/03/05 20:51:24 r_sijrier Exp $
 */
 
 #ifndef RESOURCES_INFO_WIDGET_H
@@ -26,7 +26,7 @@
 #include <QPushButton>
 #include <QTimer>
 
-class ResourcesInfoWidget : public QPushButton
+class ResourcesInfoWidget : public QWidget
 {
         Q_OBJECT
 
@@ -34,8 +34,13 @@ public:
         ResourcesInfoWidget(QWidget* parent = 0);
         ~ResourcesInfoWidget() {};
 
+protected:
+	void paintEvent( QPaintEvent* e);
+	QSize sizeHint () const;
+	
 private:
         QTimer		updateTimer;
+	QString		m_info;
 
 private slots:
         void update_resources_status();

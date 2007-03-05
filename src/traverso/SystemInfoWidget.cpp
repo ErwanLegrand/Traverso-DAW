@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SystemInfoWidget.cpp,v 1.7 2007/02/08 20:51:38 r_sijrier Exp $
+$Id: SystemInfoWidget.cpp,v 1.8 2007/03/05 20:51:24 r_sijrier Exp $
 */
 
 #include "SystemInfoWidget.h"
@@ -41,9 +41,9 @@ $Id: SystemInfoWidget.cpp,v 1.7 2007/02/08 20:51:38 r_sijrier Exp $
 #include "Debugger.h"
 
 ResourcesInfoWidget::ResourcesInfoWidget( QWidget * parent )
-	: QPushButton(parent)
+	: QWidget(parent)
 {
-	setIcon(find_pixmap(":/memorysmall"));
+// 	setIcon(find_pixmap(":/memorysmall"));
 	connect(&updateTimer, SIGNAL(timeout()), this, SLOT(update_resources_status()));
 	update_resources_status();
 	updateTimer.start(1200);
@@ -83,12 +83,27 @@ void ResourcesInfoWidget::update_resources_status( )
 		writestatus.prepend("  ");
 	}
 	
-	setText(" R " + 
+	m_info = QString(" R " + 
 		readstatus + 
 		"  W " +
 		 writestatus + 
 		"  CPU " + cputime);
+	
+	update();
 }
+
+void ResourcesInfoWidget::paintEvent(QPaintEvent * e)
+{
+	QPainter painter(this);
+	painter.drawText(5, 18, m_info);
+}
+
+QSize ResourcesInfoWidget::sizeHint() const
+{
+	return QSize(220, 25);
+}
+
+
 
 
 
@@ -174,3 +189,4 @@ void HDDSpaceInfoWidget::update_harddisk_space_info( )
 }
 
 //eof
+

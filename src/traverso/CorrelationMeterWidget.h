@@ -50,6 +50,8 @@ protected:
         void resizeEvent( QResizeEvent* e);
 	void hideEvent ( QHideEvent * event );
 	void showEvent ( QShowEvent * event );
+	QSize minimumSizeHint () const;
+	QSize sizeHint () const;
 
 private:
 	CorrelationMeterView* m_item;

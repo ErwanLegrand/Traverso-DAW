@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongWidget.cpp,v 1.7 2007/02/06 20:52:07 r_sijrier Exp $
+    $Id: SongWidget.cpp,v 1.8 2007/03/05 20:51:24 r_sijrier Exp $
 */
 
 		
@@ -45,13 +45,15 @@ SongWidget::SongWidget(Song* song, QWidget* parent)
 	m_clipsViewPort = new ClipsViewPort(m_scene, this);
 	m_timeLine = new TimeLineViewPort(m_scene, this, m_clipsViewPort);
 	
-	m_clipsViewPort->setScene(m_scene);
+// 	m_clipsViewPort->setScene(m_scene);
 	
 	m_mainLayout = new QGridLayout(this);
 	m_mainLayout->addWidget(new QWidget(this), 0, 0);
 	m_mainLayout->addWidget(m_timeLine, 0, 1);
 	m_mainLayout->addWidget(m_trackPanel, 1, 0);
 	m_mainLayout->addWidget(m_clipsViewPort, 1, 1);
+	m_mainLayout->addWidget(m_clipsViewPort->horizontalScrollBar(), 2, 1);
+	m_mainLayout->addWidget(m_clipsViewPort->verticalScrollBar(), 1, 2);
 	
 	m_mainLayout->setMargin(0);
 	m_mainLayout->setSpacing(0);
@@ -96,6 +98,16 @@ SongWidget::~ SongWidget()
 }
 
 
+QSize SongWidget::minimumSizeHint() const
+{
+	return QSize(400, 200);
+}
+
+QSize SongWidget::sizeHint() const
+{
+	return QSize(700, 600);
+}
+
 void SongWidget::set_use_opengl( bool useOpenGL )
 {
 	m_clipsViewPort->setViewport(useOpenGL ? new QGLWidget(QGLFormat(QGL::SampleBuffers)) : new QWidget);
@@ -116,6 +128,4 @@ void SongWidget::load_theme_data()
 	
 }
 
-
 //eof
-

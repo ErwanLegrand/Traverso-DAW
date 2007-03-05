@@ -91,6 +91,15 @@ void SpectralMeterWidget::showEvent(QShowEvent * event)
 	m_item->show_event();
 }
 
+QSize SpectralMeterWidget::minimumSizeHint() const
+{
+	return QSize(150, 50);
+}
+
+QSize SpectralMeterWidget::sizeHint() const
+{
+	return QSize(300, 50);
+}
 
 void SpectralMeterWidget::get_pointed_context_items(QList<ContextItem* > &list)
 {
@@ -1159,6 +1168,3 @@ void SpectralMeterConfigWidget::load_configuration( )
 }
 
 //eof
-
-
-

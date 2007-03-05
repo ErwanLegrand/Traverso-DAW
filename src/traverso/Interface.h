@@ -69,6 +69,7 @@ protected:
 	void keyPressEvent ( QKeyEvent* e);
 	void keyReleaseEvent ( QKeyEvent* e);
 	void closeEvent ( QCloseEvent * event );
+	QSize sizeHint () const;
 // 	void wheelEvent ( QWheelEvent* e );
 	
 

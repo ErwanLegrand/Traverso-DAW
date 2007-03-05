@@ -79,21 +79,14 @@ Interface::Interface()
 	centerAreaWidget = new QStackedWidget(this);
 	setCentralWidget(centerAreaWidget);
 	
-	// BusMonitor
-	busMonitorDW = new QDockWidget("Master VU", this);
-	busMonitorDW->setObjectName("Master VU");
-
-	busMonitor = new BusMonitor(busMonitorDW, this);
-	busMonitorDW->setWidget(busMonitor);
-	addDockWidget(Qt::TopDockWidgetArea, busMonitorDW);
-	
 	// HistoryView 
 	historyDW = new QDockWidget(tr("History"), this);
 	historyDW->setObjectName("HistoryDockWidget");
 	historyWidget = new QUndoView(pm().get_undogroup(), historyDW);
 	historyWidget->setFocusPolicy(Qt::NoFocus);
 	historyDW->setWidget(historyWidget);
-	addDockWidget(Qt::RightDockWidgetArea, historyDW);
+	addDockWidget(Qt::TopDockWidgetArea, historyDW);
+	historyWidget->resize(100, 70);
 	
 	// AudioSources View
 	AudioSourcesDW = new QDockWidget(tr("AudioSources"), this);
@@ -104,7 +97,8 @@ Interface::Interface()
 	TreeModel* model = new TreeModel("hoi, test");
 	audiosourcesview->setModel(model);
 	AudioSourcesDW->setWidget(audiosourcesview);
-	addDockWidget(Qt::RightDockWidgetArea, AudioSourcesDW);
+	addDockWidget(Qt::TopDockWidgetArea, AudioSourcesDW);
+	AudioSourcesDW->hide();
 	
 	// Meter Widgets
 	correlationMeterDW = new QDockWidget(tr("Correlation Meter"), this);
@@ -112,15 +106,23 @@ Interface::Interface()
 	correlationMeter = new CorrelationMeterWidget(correlationMeterDW);
 	correlationMeter->setFocusPolicy(Qt::NoFocus);
 	correlationMeterDW->setWidget(correlationMeter);
-	addDockWidget(Qt::RightDockWidgetArea, correlationMeterDW);
+	addDockWidget(Qt::TopDockWidgetArea, correlationMeterDW);
 
 	spectralMeterDW = new QDockWidget(tr("FFT Spectrum"), this);
 	spectralMeterDW->setObjectName("SpectralMeterDockWidget");
 	spectralMeter = new SpectralMeterWidget(spectralMeterDW);
 	spectralMeter->setFocusPolicy(Qt::NoFocus);
 	spectralMeterDW->setWidget(spectralMeter);
-	addDockWidget(Qt::RightDockWidgetArea, spectralMeterDW);
+	addDockWidget(Qt::TopDockWidgetArea, spectralMeterDW);
 
+	// BusMonitor
+	busMonitorDW = new QDockWidget("Master VU", this);
+	busMonitorDW->setObjectName("Master VU");
+
+	busMonitor = new BusMonitor(busMonitorDW, this);
+	busMonitorDW->setWidget(busMonitor);
+	addDockWidget(Qt::TopDockWidgetArea, busMonitorDW);
+	
 	// Help widget
 	helpWindow = new Help(this);
 	
@@ -136,7 +138,7 @@ Interface::Interface()
 	
 	/** Read in the Interface settings and apply them
 	 */
-	resize(config().get_property("Interface", "size", QSize(400, 400)).toSize());
+	resize(config().get_property("Interface", "size", QSize(800, 600)).toSize());
 	move(config().get_property("Interface", "pos", QPoint(200, 200)).toPoint());
 	restoreState(config().get_property("Interface", "windowstate", "").toByteArray());
 
@@ -287,10 +289,10 @@ void Interface::create_menus( )
 	mainToolBar->addSeparator();
 	
 	resourcesInfo = new ResourcesInfoWidget(mainToolBar);
-	resourcesInfo->setFlat(true);
+// 	resourcesInfo->setFlat(true);
 	resourcesInfo->setFocusPolicy(Qt::NoFocus);
-	mainToolBar->addWidget(resourcesInfo);
-	
+	QAction* ac = mainToolBar->addWidget(resourcesInfo);
+	ac->setVisible(true);
 	
 	mainToolBar->addSeparator();
 	
@@ -686,6 +688,11 @@ void Interface::show_song_manager_dialog()
 		m_songManagerDialog = new SongManagerDialog(this);
 	}
 	m_songManagerDialog->show();
+}
+
+QSize Interface::sizeHint() const
+{
+	return QSize(800, 600);
 }
 
 // eof

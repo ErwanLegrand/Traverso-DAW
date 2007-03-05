@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ClipsViewPort.cpp,v 1.7 2007/02/07 23:24:05 r_sijrier Exp $
+$Id: ClipsViewPort.cpp,v 1.8 2007/03/05 20:51:24 r_sijrier Exp $
 */
 
 #include "ClipsViewPort.h"
@@ -36,8 +36,13 @@ $Id: ClipsViewPort.cpp,v 1.7 2007/02/07 23:24:05 r_sijrier Exp $
 ClipsViewPort::ClipsViewPort(QGraphicsScene* scene, SongWidget* sw)
 	: ViewPort(scene, sw)
 {
-	setAttribute(Qt::WA_NoSystemBackground);
+
 	m_sw = sw;
+	viewport()->setAttribute(Qt::WA_OpaquePaintEvent);
+	
+// 	setViewportUpdateMode(SmartViewportUpdate);
+	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 void ClipsViewPort::get_pointed_context_items(QList<ContextItem* > &list)
@@ -59,3 +64,9 @@ void ClipsViewPort::resizeEvent( QResizeEvent * e )
 }
 
 //eof
+
+void ClipsViewPort::paintEvent(QPaintEvent * e)
+{
+// 	printf("ClipsViewPort::paintEvent\n");
+	QGraphicsView::paintEvent(e);
+}

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongWidget.h,v 1.6 2007/02/06 20:52:07 r_sijrier Exp $
+    $Id: SongWidget.h,v 1.7 2007/03/05 20:51:24 r_sijrier Exp $
 */
 
 #ifndef SONG_WIDGET_H
@@ -48,6 +48,10 @@ public:
 	
 	void set_use_opengl(bool useOpenGL);
 	
+protected:
+	QSize minimumSizeHint () const;
+	QSize sizeHint () const;
+
 private:
 	QGridLayout*		m_mainLayout;
 	TrackPanelViewPort*	m_trackPanel;
