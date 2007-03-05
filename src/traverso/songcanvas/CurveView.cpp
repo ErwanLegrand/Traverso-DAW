@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.cpp,v 1.19 2007/02/23 15:35:36 r_sijrier Exp $
+$Id: CurveView.cpp,v 1.20 2007/03/05 12:32:57 r_sijrier Exp $
 */
 
 #include "CurveView.h"
@@ -39,7 +39,8 @@ class DragNode : public Command
 public:
 	DragNode(CurveNode* node, CurveView* curveview, int scalefactor, const QString& des);
 	
-        int do_action();
+	int prepare_actions();
+	int do_action();
         int undo_action();
 	int finish_hold();
         int begin_hold();
@@ -68,6 +69,16 @@ DragNode::DragNode(CurveNode* node, CurveView* curveview, int scalefactor, const
 	m_node = node;
 	m_curveView = curveview;
 	m_scalefactor = scalefactor;
+}
+
+int DragNode::prepare_actions()
+{
+	// CurveView node_moved() depends on blinking node
+	// to update the curveview, but during un/redo
+	// this makes no sense!!!!!!!
+	// So we fake this action to be failed, and thus
+	// it won't show up in the history 
+	return -1;
 }
 
 int DragNode::finish_hold()
