@@ -84,18 +84,18 @@ Command* PluginChain::add_plugin(Plugin * plugin, bool historable)
 	plugin->set_history_stack(get_history_stack());
 	
 	return new AddRemoveItemCommand( this, plugin, historable, m_song,
-						"private_add_plugin(Plugin*)", "pluginAdded(Plugin*)",
-						"private_remove_plugin(Plugin*)", "pluginRemoved(Plugin*)",
-				       tr("Add Plugin (%1)").arg(plugin->get_name()));
+		"private_add_plugin(Plugin*)", "pluginAdded(Plugin*)",
+		"private_remove_plugin(Plugin*)", "pluginRemoved(Plugin*)",
+		tr("Add Plugin (%1)").arg(plugin->get_name()));
 }
 
 
 Command* PluginChain::remove_plugin(Plugin* plugin, bool historable)
 {
 	return new AddRemoveItemCommand( this, plugin, historable, m_song,
-					 "private_remove_plugin(Plugin*)", "pluginRemoved(Plugin*)",
-					 "private_add_plugin(Plugin*)", "pluginAdded(Plugin*)",
-				       tr("Remove Plugin (%1)").arg(plugin->get_name()));
+		"private_remove_plugin(Plugin*)", "pluginRemoved(Plugin*)",
+		"private_add_plugin(Plugin*)", "pluginAdded(Plugin*)",
+		tr("Remove Plugin (%1)").arg(plugin->get_name()));
 }
 
 
