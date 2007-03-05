@@ -3,7 +3,6 @@
 #include "MoveEdge.h"
 #include "CopyClip.h"
 #include "TrackPan.h"
-#include "Crop.h"
 #include "Zoom.h"
 #include "Import.h"
 #include "PCommand.h"
