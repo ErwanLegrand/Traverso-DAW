@@ -30,7 +30,7 @@ HEADERS += \
 	songcanvas/TrackView.h \
 	songcanvas/ViewItem.h \
 	songcanvas/SongView.h \
-	songcanvas/TimeLineview.h \
+	songcanvas/TimeLineView.h \
 	songcanvas/TrackPanelView.h \
 	songcanvas/Cursors.h \
 	songcanvas/FadeView.h \
@@ -61,7 +61,8 @@ HEADERS += \
 	dialogs/settings/Pages.h \
 	dialogs/settings/SettingsDialog.h \
 	dialogs/project/SongManagerDialog.h \
-	dialogs/project/ProjectManagerDialog.h
+	dialogs/project/ProjectManagerDialog.h \
+	songcanvas/MarkerView.h
 SOURCES += \
 	songcanvas/AudioClipView.cpp \
 	songcanvas/SongWidget.cpp \
@@ -103,7 +104,8 @@ SOURCES += \
 	dialogs/settings/Pages.cpp \
 	dialogs/settings/SettingsDialog.cpp \
 	dialogs/project/SongManagerDialog.cpp \
-	dialogs/project/ProjectManagerDialog.cpp
+	dialogs/project/ProjectManagerDialog.cpp \
+	songcanvas/MarkerView.cpp
 FORMS += ui/ExportWidget.ui \
 	ui/AudioSourcesManagerWidget.ui \
 	ui/PluginSelectorDialog.ui \
