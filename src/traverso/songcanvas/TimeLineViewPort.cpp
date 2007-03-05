@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TimeLineViewPort.cpp,v 1.4 2007/02/23 13:51:26 r_sijrier Exp $
+    $Id: TimeLineViewPort.cpp,v 1.5 2007/03/05 12:33:37 r_sijrier Exp $
 */
 
 #include "TimeLineViewPort.h"
@@ -35,8 +35,8 @@ TimeLineViewPort::TimeLineViewPort(QGraphicsScene* scene, SongWidget* sw, ClipsV
 {
 	clipView = view;
 	
-	setMaximumHeight(21);
-	setMinimumHeight(21);
+	setMaximumHeight(30);
+	setMinimumHeight(30);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
@@ -66,4 +66,11 @@ void TimeLineViewPort::get_pointed_context_items(QList<ContextItem* > &list)
 	}
 }
 
+void TimeLineViewPort::scale_factor_changed()
+{
+	m_timeLineView->calculate_bounding_rect();
+}
+
+
 //eof
+

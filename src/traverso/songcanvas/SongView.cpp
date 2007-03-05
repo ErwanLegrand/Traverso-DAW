@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.22 2007/03/02 13:36:15 r_sijrier Exp $
+$Id: SongView.cpp,v 1.23 2007/03/05 12:33:37 r_sijrier Exp $
 */
 
 
@@ -29,6 +29,7 @@ $Id: SongView.cpp,v 1.22 2007/03/02 13:36:15 r_sijrier Exp $
 #include "Cursors.h"
 #include "ClipsViewPort.h"
 #include "TimeLineViewPort.h"
+#include "TimeLineView.h"
 #include "TrackPanelViewPort.h"
 #include "Themer.h"
 		
@@ -166,7 +167,9 @@ SongView::~SongView()
 void SongView::scale_factor_changed( )
 {
 	scalefactor = Peak::zoomStep[m_song->get_hzoom()];
+	m_tlvp->scale_factor_changed();
 	layout_tracks();
+	set_snap_range(m_clipsViewPort->horizontalScrollBar()->value() * scalefactor);
 }
 
 TrackView* SongView::get_trackview_under( QPointF point )
@@ -480,6 +483,7 @@ Command * SongView::play_cursor_move( )
 
 void SongView::set_snap_range(int start)
 {
+// 	printf("SongView::set_snap_range\n");
 	m_song->get_snap_list()->set_range(start * scalefactor, 
 					(start + m_clipsViewPort->viewport()->width()) * scalefactor,
 					scalefactor);
@@ -533,8 +537,8 @@ Command* SongView::scroll_left()
 void SongView::load_theme_data()
 {
 	m_trackSeperatingHeight = themer()->get_property("Song:track:seperatingheight", 0).toInt();
-	m_trackMinimumHeight = themer()->get_property("Song:track:minimumheight", 22).toInt();
-	m_trackMaximumHeight = themer()->get_property("Song:track:maximumheight", 22).toInt();
+	m_trackMinimumHeight = themer()->get_property("Song:track:minimumheight", 16).toInt();
+	m_trackMaximumHeight = themer()->get_property("Song:track:maximumheight", 300).toInt();
 	m_trackTopIndent = themer()->get_property("Song:track:topindent", 6).toInt();
 	
 	m_clipsViewPort->setBackgroundBrush(themer()->get_color("Song:background"));
@@ -543,7 +547,9 @@ void SongView::load_theme_data()
 	layout_tracks();
 }
 
+Command * SongView::add_marker()
+{
+	return m_tlvp->get_timeline_view()->add_marker();
+}
 
 //eof
-
-

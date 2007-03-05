@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -17,35 +17,154 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TimeLineView.cpp,v 1.7 2007/02/23 13:52:25 r_sijrier Exp $
 */
 
 #include "TimeLineView.h"
 
 #include <QPainter>
 
-#include "ProjectManager.h"
-#include "Project.h"
 #include "Themer.h"
 #include "SongView.h"
+#include "MarkerView.h"
+
+#include <ProjectManager.h>
+#include <Project.h>
+#include <Song.h>
+#include <TimeLine.h>
+#include <Marker.h>
+#include <ContextPointer.h>
 #include <Utils.h>
+#include <Command.h>
 #include <defines.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-TimeLineView::TimeLineView(SongView* view)
-	: ViewItem(0, 0)
+#define TIMELINEHEIGHT 30
+
+// TODO test if DragMarker class works as expected!!
+
+class DragMarker : public Command
 {
-	PENTERCONS2;
-	m_sv = view;
-	m_boundingRect = QRectF(0, 0, MAX_CANVAS_WIDTH, 21);
+	Q_OBJECT
+public:
+	DragMarker(Marker* marker, double scalefactor, const QString& des);
+
+	int prepare_actions();
+	int do_action();
+	int undo_action();
+	int finish_hold();
+	int begin_hold();
+	int jog();
+
+private :
+	Marker*		m_marker;
+	nframes_t	m_origWhen;
+	nframes_t	m_newWhen;
+	double 		m_scalefactor;
+
+public slots:
+	void move_left(bool autorepeat);
+	void move_right(bool autorepeat);
+};
+
+
+#include "TimeLineView.moc"
+
 	
-	view->scene()->addItem(this);
+DragMarker::DragMarker(Marker* marker, double scalefactor, const QString& des)
+	: Command(marker, des)
+{
+	m_marker = marker;
+	m_scalefactor = scalefactor;
 }
 
-TimeLineView::~ TimeLineView()
+int DragMarker::prepare_actions()
+{
+	return 1;
+}
+
+int DragMarker::finish_hold()
+{
+	return 1;
+}
+
+int DragMarker::begin_hold()
+{
+	m_origWhen = m_newWhen = m_marker->get_when();
+	
+	return 1;
+}
+
+
+int DragMarker::do_action()
+{
+	m_marker->set_when(m_newWhen);
+	return 1;
+}
+
+int DragMarker::undo_action()
+{
+	m_marker->set_when(m_origWhen);
+	return 1;
+}
+
+void DragMarker::move_left(bool )
+{
+	// Move 1 pixel to the left
+	m_newWhen = m_newWhen + (uint) ( 1 * m_scalefactor);
+	do_action();
+}
+
+void DragMarker::move_right(bool )
+{
+	// Move 1 pixel to the right
+	m_newWhen = m_newWhen - (uint) ( 1 * m_scalefactor);
+	do_action();
+}
+
+int DragMarker::jog()
+{
+	m_newWhen = (uint) (cpointer().scene_x() * m_scalefactor);
+	
+	return do_action();
+}
+
+
+// End DragMarker
+
+
+
+TimeLineView::TimeLineView(SongView* view)
+	: ViewItem(0, 0)
+	, m_blinkingMarker(0)
+{
+	PENTERCONS2;
+	
+	m_sv = view;
+	m_boundingRect = QRectF(0, 0, MAX_CANVAS_WIDTH, TIMELINEHEIGHT);
+	m_timeline = m_sv->get_song()->get_timeline();
+	m_samplerate = pm().get_project()->get_rate();
+	
+	view->scene()->addItem(this);
+	
+	load_theme_data();
+	
+	// Create MarkerViews for existing markers
+	foreach(Marker* marker, m_timeline->get_markers()) {
+		add_new_marker_view(marker);
+	}
+	
+	// Make connections to the 'core'
+	connect(m_timeline, SIGNAL(markerAdded(Marker*)), this, SLOT(add_new_marker_view(Marker*)));
+	connect(m_timeline, SIGNAL(markerRemoved(Marker*)), this, SLOT(remove_marker_view(Marker*)));
+
+	setAcceptsHoverEvents(true);
+}
+
+
+TimeLineView::~TimeLineView()
 {
 	PENTERDES;
 }
@@ -71,14 +190,13 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 	
 // 	printf("TimeLineView:: PAINT :: exposed rect is: x=%f, y=%f, w=%f, h=%f\n", option->exposedRect.x(), option->exposedRect.y(), option->exposedRect.width(), option->exposedRect.height());
 
-	int height = 21;
+	int height = TIMELINEHEIGHT;
 	
 	painter->fillRect(xstart, 0,  pixelcount, height, themer()->get_color("Timeline:background") );
 	
 	painter->setPen(themer()->get_color("Timeline:text"));
 	painter->setFont( QFont( "Bitstream Vera Sans", 9) );
 	
-	int rate = pm().get_project()->get_rate();
 	nframes_t lastb = xstart * m_sv->scalefactor + pixelcount * m_sv->scalefactor;
 	nframes_t firstFrame = xstart * m_sv->scalefactor;
 
@@ -90,11 +208,141 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 		}
 		if (x % 100 == 0) {
 			painter->drawLine(x, height - 13, x, height - 1);
-			painter->drawText(x + 4, height - 8, frame_to_smpte(b, rate) );
+			painter->drawText(x + 4, height - 8, frame_to_smpte(b, m_samplerate));
 		}
 		x++;
 	}
 }
 
+void TimeLineView::calculate_bounding_rect()
+{
+	update();
+	ViewItem::calculate_bounding_rect();
+}
+
+
+void TimeLineView::add_new_marker_view(Marker * marker)
+{
+	MarkerView* view = new MarkerView(marker, m_sv, this);
+	m_markerViews.append(view);
+	m_sv->scene()->addItem(view);
+}
+
+void TimeLineView::remove_marker_view(Marker * marker)
+{
+	foreach(MarkerView* view, m_markerViews) {
+		if (view->get_marker() == marker) {
+			m_markerViews.removeAll(view);
+			scene()->removeItem(view);
+			delete view;
+			return;
+		}
+	}
+}
+
+Command* TimeLineView::add_marker()
+{
+	QPointF point = mapFromScene(cpointer().scene_pos());
+	QString des = QString("Marker %1").arg(m_markerViews.count() + 1);
+	
+	Marker* marker = new Marker(m_timeline, (uint) (point.x() * m_sv->scalefactor));
+	marker->set_description(des);
+	
+	return m_timeline->add_marker(marker);
+}
+
+Command* TimeLineView::remove_marker()
+{
+	// TODO implementation left as exercise
+	
+	return 0;
+}
+
+void TimeLineView::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
+{
+	PENTER;
+	Q_UNUSED(event);
+	
+	m_blinkColor = themer()->get_color("Marker:blink");
+	m_blinkTimer.start(40);
+}
+
+void TimeLineView::hoverLeaveEvent ( QGraphicsSceneHoverEvent * event )
+{
+	PENTER;
+	Q_UNUSED(event);
+	
+	if (ie().is_holding()) {
+		event->ignore();
+		return;
+	}
+	
+	m_blinkTimer.stop();
+	if (m_blinkingMarker) {
+		// TODO add these functions, or something else to 
+		// let the user know which marker is to be moved!
+// 		m_blinkingMarker->set_color(themer()->get_color("Marker:default"));
+// 		m_blinkingMarker->decrease_size();
+		m_blinkingMarker = 0;
+	}
+}
+		
+		
+void TimeLineView::hoverMoveEvent ( QGraphicsSceneHoverEvent * event )
+{
+	QPoint pos((int)event->pos().x(), (int)event->pos().y());
+	
+	MarkerView* prevMarker = m_blinkingMarker;
+	m_blinkingMarker = m_markerViews.first();
+	
+	if (! m_blinkingMarker) {
+		return;
+	}
+	
+	foreach(MarkerView* markerView, m_markerViews) {
+		
+		QPoint nodePos((int)markerView->pos().x(), (int)markerView->pos().y());
+// 		printf("node x,y pos %d,%d\n", nodePos.x(), nodePos.y());
+		
+		int markerDist = (pos - nodePos).manhattanLength();
+		int blinkNodeDist = (pos - QPoint((int)m_blinkingMarker->x(), (int)m_blinkingMarker->y())).manhattanLength();
+		
+		if (markerDist < blinkNodeDist) {
+			m_blinkingMarker = markerView;
+		}
+	}
+	
+
+// TODO add these MarkerView functions, or something else to 
+// let the user know which marker is to be moved!
+	
+	if (prevMarker && (prevMarker != m_blinkingMarker) ) {
+// 		prevMarker->set_color(themer()->get_color("Marker:default"));
+		prevMarker->update();
+// 		prevMarker->decrease_size();
+// 		m_blinkingMarker->increase_size();
+	}
+	
+	if (!prevMarker && m_blinkingMarker) {
+// 		m_blinkingMarker->increase_size();
+	}
+}
+
+
+Command * TimeLineView::drag_marker()
+{
+	if (m_blinkingMarker) {
+		return new DragMarker(m_blinkingMarker->get_marker(), m_sv->scalefactor, tr("Drag Marker"));
+	}
+	
+	return 0;
+}
+
+void TimeLineView::load_theme_data()
+{
+	// TODO Load pixmap, fonts, colors from themer() !!
+	calculate_bounding_rect();
+}
 
 //eof
+

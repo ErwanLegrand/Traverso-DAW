@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2007 Remon Sijrier 
+    Copyright (C) 2007 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -19,57 +19,34 @@
  
 */
 
-#ifndef TIME_LINE_VIEW_H
-#define TIME_LINE_VIEW_H
+#ifndef MARKER_VIEW_H
+#define MARKER_VIEW_H
 
 #include "ViewItem.h"
 
-#include <QTimer>
-
-class SongView;
-class TimeLine;
-class MarkerView;
 class Marker;
+class SongView;
 
-class TimeLineView : public ViewItem
+class MarkerView : public ViewItem
 {
-        Q_OBJECT
-
+	Q_OBJECT
+	
 public:
-        TimeLineView(SongView* view);
-        ~TimeLineView();
+	MarkerView(Marker* marker, SongView* sv, ViewItem* parent);
+	~MarkerView() {}
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void calculate_bounding_rect();
 	void load_theme_data();
-
-protected:
-	void hoverEnterEvent ( QGraphicsSceneHoverEvent * event );
-	void hoverLeaveEvent ( QGraphicsSceneHoverEvent * event );
-	void hoverMoveEvent ( QGraphicsSceneHoverEvent * event );
-
+	
+	Marker* get_marker() const {return m_marker;}
+	
 private:
-	QList<MarkerView* > m_markerViews;
-	TimeLine* 	m_timeline;
-	MarkerView* 	m_blinkingMarker;
-	QTimer		m_blinkTimer;
-	QColor		m_blinkColor;
-	int		m_samplerate;
-
-	void update_softselected_marker(QPoint pos);
-	
-	
-public slots:
-        void hzoom_changed();
-	
-public slots:
-	Command* add_marker();
-	Command* remove_marker();
-	Command* drag_marker();
+	Marker* m_marker;
 	
 private slots:
-	void add_new_marker_view(Marker* marker);
-	void remove_marker_view(Marker* marker);
+	void update_position();
+	
 };
 
 #endif

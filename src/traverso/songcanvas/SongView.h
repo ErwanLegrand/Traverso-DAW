@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongView.h,v 1.9 2007/02/07 23:24:05 r_sijrier Exp $
+    $Id: SongView.h,v 1.10 2007/03/05 12:33:37 r_sijrier Exp $
 */
 
 #ifndef SONG_VIEW_H
@@ -120,6 +120,7 @@ public slots:
 	Command* play_cursor_move();
 	Command* set_editing_mode();
 	Command* set_curve_mode();
+	Command* add_marker();
 	
 private slots:
 	void scale_factor_changed();
