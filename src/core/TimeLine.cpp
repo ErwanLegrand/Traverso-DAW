@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "Song.h"
 #include "Marker.h"
-#include <AddRemoveItemCommand.h>
+#include <AddRemove.h>
 
 
 TimeLine::TimeLine(Song * song)
@@ -80,8 +80,8 @@ int TimeLine::set_state(const QDomNode & node)
 
 Command * TimeLine::add_marker(Marker* marker, bool historable)
 {
-	AddRemoveItemCommand* cmd;
-	cmd = new AddRemoveItemCommand(this, marker, historable, m_song,
+	AddRemove* cmd;
+	cmd = new AddRemove(this, marker, historable, m_song,
 		"private_add_marker(Marker*)", "markerAdded(Marker*)",
 		"private_remove_marker(Marker*)", "markerRemoved(Marker*)",
   		tr("Add Marker"));
@@ -97,8 +97,8 @@ Command * TimeLine::add_marker(Marker* marker, bool historable)
 
 Command* TimeLine::remove_marker(Marker* marker, bool historable)
 {
-	AddRemoveItemCommand* cmd;
-	cmd = new AddRemoveItemCommand(this, marker, historable, m_song,
+	AddRemove* cmd;
+	cmd = new AddRemove(this, marker, historable, m_song,
 		"private_remove_marker(Marker*)", "markerRemoved(Marker*)",
 		"private_add_marker(Marker*)", "markerAdded(Marker*)",
   		tr("Remove Marker"));

@@ -10,4 +10,4 @@
 #include "Fade.h"
 #include "Gain.h"
 #include "CommandGroup.h"
-#include "AddRemoveItemCommand.h"
+#include "AddRemove.h"

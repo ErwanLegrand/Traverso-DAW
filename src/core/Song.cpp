@@ -248,7 +248,7 @@ Command* Song::add_track(Track* track, bool historable)
 		}
 	}
 
-	return new AddRemoveItemCommand(this, track, historable, this,
+	return new AddRemove(this, track, historable, this,
 		"private_add_track(Track*)", "trackAdded(Track*)",
 		"private_remove_track(Track*)", "trackRemoved(Track*)",
    		tr("Add Track"));
@@ -257,7 +257,7 @@ Command* Song::add_track(Track* track, bool historable)
 
 Command* Song::remove_track(Track* track, bool historable)
 {
-	return new AddRemoveItemCommand(this, track, historable, this,
+	return new AddRemove(this, track, historable, this,
 		"private_remove_track(Track*)", "trackRemoved(Track*)",
 		"private_add_track(Track*)", "trackAdded(Track*)",
    		tr("Remove Track"));

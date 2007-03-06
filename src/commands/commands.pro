@@ -1,4 +1,4 @@
-SOURCES += AddRemoveItemCommand.cpp \
+SOURCES += AddRemove.cpp \
 ClipSelection.cpp \
 CommandGroup.cpp \
 CopyClip.cpp \
@@ -11,7 +11,7 @@ PCommand.cpp \
 SplitClip.cpp \
 TrackPan.cpp \
 Zoom.cpp
-HEADERS += AddRemoveItemCommand.h \
+HEADERS += AddRemove.h \
 ClipSelection.h \
 CommandGroup.h \
 commands.h \

@@ -195,7 +195,7 @@ Command* Track::remove_clip(AudioClip* clip, bool historable)
 {
 	PENTER;
 	m_song->get_audioclip_manager()->remove_clip(clip);
-	return new AddRemoveItemCommand(this, clip, historable, m_song,
+	return new AddRemove(this, clip, historable, m_song,
 			"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)",
 			"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)", tr("Remove Clip"));
 }
@@ -206,7 +206,7 @@ Command* Track::add_clip(AudioClip* clip, bool historable)
 	PENTER;
 	clip->set_track(this);
 	m_song->get_audioclip_manager()->add_clip(clip);
-	return new AddRemoveItemCommand(this, clip, historable, m_song,
+	return new AddRemove(this, clip, historable, m_song,
 			"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)",
 			"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)", tr("Add Clip"));
 }

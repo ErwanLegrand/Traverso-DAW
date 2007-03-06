@@ -25,7 +25,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.cpp,v 1.30 2007/03/05 12:26:30 r_sijrier Exp $
+$Id: Curve.cpp,v 1.31 2007/03/06 15:13:58 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -37,7 +37,7 @@ $Id: Curve.cpp,v 1.30 2007/03/05 12:26:30 r_sijrier Exp $
 #include "InputEngine.h"
 #include <QStringList>
 #include <QThread>
-#include <AddRemoveItemCommand.h>
+#include <AddRemove.h>
 #include <CommandGroup.h>
 
 // Always put me below _all_ includes, this is needed
@@ -513,8 +513,8 @@ Command* Curve::add_node(CurveNode* node, bool historable)
 {
 	PENTER2;
 	
-	AddRemoveItemCommand* cmd;
-	cmd = new AddRemoveItemCommand(this, node, historable, m_song,
+	AddRemove* cmd;
+	cmd = new AddRemove(this, node, historable, m_song,
 			"private_add_node(CurveNode*)", "nodeAdded(CurveNode*)",
 			"private_remove_node(CurveNode*)", "nodeRemoved(CurveNode*)", 
 			"");
@@ -542,9 +542,9 @@ Command* Curve::remove_node(CurveNode* node, bool historable)
 {
 	PENTER2;
 	
-	AddRemoveItemCommand* cmd;
+	AddRemove* cmd;
 	
-	cmd = new AddRemoveItemCommand(this, node, historable, m_song,
+	cmd = new AddRemove(this, node, historable, m_song,
 			"private_remove_node(CurveNode*)", "nodeRemoved(CurveNode*)", 
 			"private_add_node(CurveNode*)", "nodeAdded(CurveNode*)", 
 			"");
