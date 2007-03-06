@@ -423,8 +423,8 @@ int Project::start_export(ExportSpecification* spec)
 Command* Project::select()
 {
 	int index = ie().collected_number();
-	if (index < m_songs.size()) {
-		set_current_song(m_songs.at(index)->get_id());
+	if (index <= m_songs.size() && index > 0) {
+		set_current_song(m_songs.at(index - 1)->get_id());
 	}
 	return (Command*) 0;
 }
