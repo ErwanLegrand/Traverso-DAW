@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeView.cpp,v 1.10 2007/02/23 14:57:18 r_sijrier Exp $
+$Id: FadeView.cpp,v 1.11 2007/03/06 15:28:12 r_sijrier Exp $
 */
 
 #include "FadeView.h"
@@ -31,7 +31,7 @@ $Id: FadeView.cpp,v 1.10 2007/02/23 14:57:18 r_sijrier Exp $
 #include <Themer.h>
 #include <Fade.h>
 #include <InputEngine.h>
-#include <AddRemoveItemCommand.h>
+#include <AddRemove.h>
 
 #include "Song.h"
 
@@ -54,7 +54,7 @@ FadeView::FadeView(SongView* sv, AudioClipView* parent, FadeCurve * fadeCurve )
 		CurveNode* guinode = new CurveNode(m_guicurve, 
 				node->get_when() / m_sv->scalefactor,
 				node->get_value());
-		AddRemoveItemCommand* cmd = (AddRemoveItemCommand*) m_guicurve->add_node(guinode, false);
+		AddRemove* cmd = (AddRemove*) m_guicurve->add_node(guinode, false);
 		cmd->set_instantanious(true);
 		ie().process_command(cmd);
 	}

@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Tsar.h>
 #include <InputEngine.h>
 #include <Song.h>
-#include <AddRemoveItemCommand.h>
+#include <AddRemove.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -83,7 +83,7 @@ Command* PluginChain::add_plugin(Plugin * plugin, bool historable)
 {
 	plugin->set_history_stack(get_history_stack());
 	
-	return new AddRemoveItemCommand( this, plugin, historable, m_song,
+	return new AddRemove( this, plugin, historable, m_song,
 		"private_add_plugin(Plugin*)", "pluginAdded(Plugin*)",
 		"private_remove_plugin(Plugin*)", "pluginRemoved(Plugin*)",
 		tr("Add Plugin (%1)").arg(plugin->get_name()));
@@ -92,7 +92,7 @@ Command* PluginChain::add_plugin(Plugin * plugin, bool historable)
 
 Command* PluginChain::remove_plugin(Plugin* plugin, bool historable)
 {
-	return new AddRemoveItemCommand( this, plugin, historable, m_song,
+	return new AddRemove( this, plugin, historable, m_song,
 		"private_remove_plugin(Plugin*)", "pluginRemoved(Plugin*)",
 		"private_add_plugin(Plugin*)", "pluginAdded(Plugin*)",
 		tr("Remove Plugin (%1)").arg(plugin->get_name()));

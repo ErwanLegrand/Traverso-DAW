@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.cpp,v 1.20 2007/03/05 12:32:57 r_sijrier Exp $
+$Id: CurveView.cpp,v 1.21 2007/03/06 15:28:12 r_sijrier Exp $
 */
 
 #include "CurveView.h"
@@ -29,7 +29,7 @@ $Id: CurveView.cpp,v 1.20 2007/03/05 12:32:57 r_sijrier Exp $
 #include <Curve.h>
 #include <CurveNode.h>
 #include <ContextPointer.h>
-#include <AddRemoveItemCommand.h>
+#include <AddRemove.h>
 
 #include <Debugger.h>
 		
@@ -280,7 +280,7 @@ void CurveView::add_curvenode_view(CurveNode* node)
 	m_sv->scene()->addItem(nodeview);
 	m_nodeViews.append(nodeview);
 	
-	AddRemoveItemCommand* cmd = (AddRemoveItemCommand*) m_guicurve->add_node(nodeview, false);
+	AddRemove* cmd = (AddRemove*) m_guicurve->add_node(nodeview, false);
 	cmd->set_instantanious(true);
 	ie().process_command(cmd);
 	
@@ -298,7 +298,7 @@ void CurveView::remove_curvenode_view(CurveNode* node)
 			if (nodeview == m_blinkingNode) {
 				update_softselected_node(cpointer().pos());
 			}
-			AddRemoveItemCommand* cmd = (AddRemoveItemCommand*) m_guicurve->remove_node(nodeview, false);
+			AddRemove* cmd = (AddRemove*) m_guicurve->remove_node(nodeview, false);
 			cmd->set_instantanious(true);
 			ie().process_command(cmd);
 			
