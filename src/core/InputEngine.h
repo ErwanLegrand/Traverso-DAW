@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: InputEngine.h,v 1.11 2007/03/05 12:27:23 r_sijrier Exp $
+    $Id: InputEngine.h,v 1.12 2007/03/06 15:14:16 r_sijrier Exp $
 */
 
 #ifndef INPUTENGINE_H
@@ -114,34 +114,22 @@ struct MenuData {
         int		sortorder;
 };
 
-/** The InputEngine is the hearth of the Contextual Interface, and does all keyboard processing
- *
- * More info
- */ 
 class InputEngine
 {
 public:
 
-        //! process a QT press event */
         void catch_key_press(QKeyEvent *);
-
-
-        //! process a QT release event */
         void catch_key_release(QKeyEvent *);
-
         void catch_mousebutton_press( QMouseEvent * e );
         void catch_mousebutton_release( QMouseEvent * e );
         void catch_mousebutton_doubleclick( QMouseEvent * e );
-        
-        //! process a Qt Wheel Event
         void catch_scroll(QWheelEvent * e );
-        
-        //! Process a single command, which was made outside the InputEngine routines
         void process_command(Command* cmd);
 
         int collected_number();
 
-        bool is_holding();
+	bool is_jogging();
+	bool is_holding();
 
         QList<MenuData > get_contextitem_actionlist(QObject* item);
 
@@ -149,49 +137,15 @@ public:
 
         void jog();
 
-        bool is_jogging();
-
-        //! activate the actions recognition engine and start responding to them
         void activate();
-
-
-        //! Suspends the engine . No action will be handled until activate() is called again
         void suspend();
 
 
-        //! Initialize the JMB map using mapFilename as the map
-        //! @param mapFilename the jmb map file. More on jmb map files in here : libtraverso.h
         int init_map(const QString& mapFilename);
 
-
-        //! internal method. Not meant to be called by clients
-        void reset();
-
-
-        //! internal method. Not meant to be called by clients
         void set_clear_time(int time);
-
-
-        //! set the hold sensitiveness
         void set_hold_sensitiveness(int factor);
-
-
-        //! set the double press interval in ms
         void set_double_fact_interval(int time);
-
-
-        //! lock the JMB engine
-        void lock()
-                ;
-
-
-        //! return unlock the JMB engine */
-        void unlock();
-
-
-        //! return return true JMB engine is locked*/
-        bool is_locked();
-
 
 
 private:
@@ -215,7 +169,6 @@ private:
         bool 			isPressEventLocked;
         bool 			isHoldingOutput;
         bool 			isFirstFact;
-        bool 			locked;
         bool 			isDoubleKey;
         bool 			isJogging;
         bool 			isCollecting;
@@ -259,8 +212,8 @@ private:
         int broadcast_action(IEAction* action, bool autorepeat=false);
 
         void set_jogging(bool jog);
-        
-        void process_press_event(int eventcode, bool isAutoRepeat=false);
+	void reset();
+	void process_press_event(int eventcode, bool isAutoRepeat=false);
         void process_release_event(int eventcode);
         int find_index_for_single_fact(int type, int key1, int key2);
         

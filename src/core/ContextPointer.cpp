@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ContextPointer.cpp,v 1.10 2007/01/16 20:21:08 r_sijrier Exp $
+$Id: ContextPointer.cpp,v 1.11 2007/03/06 15:14:16 r_sijrier Exp $
 */
 
 #include "ContextPointer.h"
@@ -27,6 +27,32 @@ $Id: ContextPointer.cpp,v 1.10 2007/01/16 20:21:08 r_sijrier Exp $
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
+
+/**
+ * \class ContextPointer
+ * \brief ContextPointer forms the bridge between the ViewPort (GUI) and the InputEngine (core)
+ *	
+	Use it in classes that inherit ViewPort to discover ViewItems under <br />
+	the mouse cursor on the first input event x/y coordinates.<br />
+	
+	Also provides convenience functions to get ViewPort x/y coordinates<br />
+	as well as scene x/y coordinates, which can be used for example in the <br />
+	jog() implementation of Command classes.
+
+	ViewPort's mouse event handling automatically updates the state of ContextPointer <br />
+	as well as the InputEngine, which makes sure the mouse is grabbed and released <br />
+	during Hold type Command's.
+
+	Use cpointer() to get a reference to the singleton object!
+
+ *	\sa ViewPort, InputEngine
+ */
+
+
+/**
+ * 	
+ * @return A reference to the singleton (static) ContextPointer object
+ */
 ContextPointer& cpointer()
 {
 	static ContextPointer contextPointer;
@@ -40,6 +66,15 @@ ContextPointer::ContextPointer()
 	currentViewPort = 0;
 }
 
+/**
+ *  	Returns a list of all 'soft selected' ContextItems.
+	
+	To be able to also dispatch key facts to objects that 
+	don't inherit from ContextItem, but do inherit from
+	QObject, the returned list holds QObjects.
+
+ * @return A list of 'soft selected' ContextItems, as QObject's.
+ */
 QList< QObject * > ContextPointer::get_context_items( )
 {
 	PENTER;
@@ -74,6 +109,17 @@ QList< QObject * > ContextPointer::get_context_items( )
 	return contextItems;
 }
 
+/**
+ * 	Use this function to add an object that inherits from QObject <br />
+	permanently to the 'soft selected' item list.
+
+	The added object will always be added to the list returned in <br />
+	get_context_items(). This way, one can add objects that do not <br />
+	inherit ContextItem, to be processed into the key fact dispatching <br />
+	of InputEngine.
+
+ * @param item The QObject to be added to the 'soft selected' item list
+ */
 void ContextPointer::add_contextitem( QObject * item )
 {
 	if (! contextItemsList.contains(item))
@@ -86,6 +132,9 @@ void ContextPointer::remove_contextitem(QObject* item)
 	contextItemsList.removeAt(index);
 }
 
+/**
+ *        Called _only_ by InputEngine, not to be used anywhere else.
+ */
 void ContextPointer::grab_mouse( )
 {
 	if (currentViewPort)
@@ -93,12 +142,19 @@ void ContextPointer::grab_mouse( )
 
 }
 
+/**
+ *        Called _only_ by InputEngine, not to be used anywhere else.
+ */
 void ContextPointer::release_mouse( )
 {
 	if (currentViewPort)
 		currentViewPort->viewport()->releaseMouse();
 }
 
+/**
+ * 	The current pointed ViewPort
+ * @return The current pointed ViewPort, 0 if none is pointed
+ */
 ViewPort * ContextPointer::get_viewport( )
 {
 	if (currentViewPort) {
@@ -108,6 +164,11 @@ ViewPort * ContextPointer::get_viewport( )
 	return 0;
 }
 
+/**
+ * 	Used by InputEngine to reset the current ViewPort's HoldCursor<br />
+	after a 'Hold type' Command has been finished. Not be called <br />
+	from anywhere else
+ */
 void ContextPointer::reset_cursor( )
 {
 	Q_ASSERT(currentViewPort);

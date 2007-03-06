@@ -34,6 +34,12 @@ public:
 Q_DECLARE_INTERFACE(CommandInterface, "org.traversodaw.Command.CommandInterface/1.0");
 
 
+/**
+ * \class CommandPlugin
+ * \brief An abstract class to create new Command's which can be loaded dynamically
+ *	
+ */
+
 class CommandPlugin : public QObject
 {
 	Q_OBJECT

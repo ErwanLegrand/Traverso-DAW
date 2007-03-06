@@ -28,6 +28,16 @@ class Command;
 class QUndoStack;
 class QUndoGroup;
 
+/**
+ * \class ContextItem
+ * \brief Interface class for objects (both core and gui) that operate in a 'Soft Selection'
+ *	
+	Each core object that has/can have a visual representation should inherit from this class.
+
+	Only core objects that inherit this class need to set the historystack which <br />
+	they need to create/get themselves.
+ */
+
 class ContextItem : public QObject
 {
 	Q_OBJECT

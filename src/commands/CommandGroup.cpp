@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CommandGroup.cpp,v 1.2 2007/02/05 17:08:36 r_sijrier Exp $
+$Id: CommandGroup.cpp,v 1.3 2007/03/06 15:13:07 r_sijrier Exp $
 */
 
 #include "CommandGroup.h"
@@ -25,6 +25,12 @@ $Id: CommandGroup.cpp,v 1.2 2007/02/05 17:08:36 r_sijrier Exp $
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
+
+
+/** 	\class CommandGroup 
+ *	\brief A class to return a group of Command objects as one history object to the historystack
+ *	
+ */
 
 
 int CommandGroup::prepare_actions()

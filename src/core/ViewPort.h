@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ViewPort.h,v 1.8 2007/01/22 15:12:08 r_sijrier Exp $
+    $Id: ViewPort.h,v 1.9 2007/03/06 15:14:16 r_sijrier Exp $
 */
 
 #ifndef VIEWPORT_H
@@ -46,10 +46,10 @@ public :
         virtual void get_pointed_context_items(QList<ContextItem* > &list) = 0;
 
         // Set functions
-
 	void set_hold_cursor(const QString& cursorName);
 	void set_hold_cursor_text(const QString& text);
-        void reset_cursor();
+        
+	void reset_cursor();
 
 
 protected:
@@ -68,11 +68,8 @@ protected:
 private:
 
 	HoldCursor*	m_holdcursor;
-
-signals:
-        void contextChanged();
-
 };
+
 
 class HoldCursor : public ContextItem, public QGraphicsItem
 {
@@ -85,6 +82,7 @@ public:
 
 	void set_text(const QString& text);
 	void set_type(const QString& type);
+	void reset();
 
 	QRectF boundingRect() const;
 

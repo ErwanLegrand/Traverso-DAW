@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ContextPointer.h,v 1.10 2007/01/21 14:20:02 r_sijrier Exp $
+    $Id: ContextPointer.h,v 1.11 2007/03/06 15:14:16 r_sijrier Exp $
 */
 
 #ifndef CONTEXTPOINTER_H
@@ -33,25 +33,65 @@ class ContextItem;
 class ContextPointer : public QObject
 {
 public:
+        /**
+ 	 * 	Returns the current ViewPort's mouse x coordinate
+	
+         * @return The current ViewPort's mouse x coordinate
+         */
         inline int x() const {return m_x;}
+        
+	/**
+	 * 	Returns the current ViewPort's mouse y coordinate
+	
+         * @return The current ViewPort's mouse y coordinate
+         */
         inline int y() const {return m_y;}
+	
+	/**
+	 *        Convenience function, equals QPoint(cpointer().x(), cpointer().y())
+	 
+	* @return The current ViewPorts mouse position;
+	 */
+	
 	inline QPoint pos() {return QPoint(m_x, m_y);}
 	
+	/**
+	 * 	Convenience function that maps the ViewPort's mouse x <br />
+		coordinate to the scene x coordinate
+	
+	 * @return The current scene x coordinate, mapped from the ViewPort's mouse x coordinate
+	 */
 	inline int scene_x() const {
 		Q_ASSERT(currentViewPort);
 		return (int) currentViewPort->mapToScene(m_x, m_y).x();
 	}
 
+	/**
+	 * 	Convenience function that maps the ViewPort's mouse y <br />
+		coordinate to the ViewPort's scene y coordinate
+	
+	 * @return The current ViewPort's scene y coordinate, mapped from the ViewPort's mouse y coordinate
+	 */
 	inline int scene_y() const {
 		Q_ASSERT(currentViewPort);
 		return (int) currentViewPort->mapToScene(m_x, m_y).y();
 	}
 	
+	/**
+	 * 	Returns the current's ViewPort's mouse position in the ViewPort's scene position.
+	 * @return The current's ViewPort's mouse position in the ViewPort's scene position.
+	 */
 	inline QPointF scene_pos() const {
 		Q_ASSERT(currentViewPort);
 		return currentViewPort->mapToScene(m_x, m_y);
 	}
 	
+	/**
+	 *     	Used by ViewPort to update the internal state of ContextPointer
+		Not intended to be used somewhere else.
+	 * @param x The ViewPort's mouse x coordinate
+	 * @param y The ViewPort's mouse y coordinate
+	 */
 	inline void set_point(int x, int y)
         {
                 m_x = x;
@@ -59,16 +99,37 @@ public:
                 ie().jog();
         }
 	
+	/**
+	 *        Returns the ViewPort x coordinate on first input event.
+	 * @return The ViewPort x coordinate on first input event.
+	 */
 	inline int on_first_input_event_x() const {return m_onFirstInputEventX; }
+	
+	/**
+	 *        Returns the ViewPort y coordinate on first input event.
+	 * @return The ViewPort y coordinate on first input event.
+	 */
 	inline int on_first_input_event_y() const {return m_onFirstInputEventY; }
         
+	/**
+	 *        Returns the scene x coordinate on first input event.
+	 * @return The scene x coordinate on first input event.
+	 */
 	inline int on_first_input_event_scene_x() const {
 		return (int) currentViewPort->mapToScene(m_onFirstInputEventX, m_onFirstInputEventY).x(); 
 	}
+	
+	/**
+	 *        Returns the scene y coordinate on first input event.
+	 * @return The scene y coordinate on first input event.
+	 */
 	inline int on_first_input_event_scene_y() const {
 		return (int) currentViewPort->mapToScene(m_onFirstInputEventX, m_onFirstInputEventY).y(); 
 	}
 	
+	/**
+	 *        Called _only_ by InputEngine, not to be used anywhere else.
+	 */
 	inline void inputengine_first_input_event( )
 	{
 		m_onFirstInputEventX = m_x;
