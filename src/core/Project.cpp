@@ -144,7 +144,7 @@ int Project::load() // try to load the project by its title
 	
 	if (e.attribute("projectfileversion", "").toInt() != PROJECT_FILE_VERSION) {
 		PERROR("Project File Version does not match, cannot load project :-(");
-		info().warning("Project File Version does not match, cannot load project :-(");
+		info().warning("Project File Version does not match, unable to load Project!");
 		return -1;
 	}
 
@@ -177,7 +177,7 @@ int Project::load() // try to load the project by its title
 
 	set_current_song(m_currentSongId);
 
-	info().information( tr("Project loaded (%1)").arg(title) );
+	info().information( tr("Project '%1' loaded").arg(title) );
 
 	return 1;
 }
@@ -221,7 +221,7 @@ int Project::save()
 		doc.save(stream, 4);
 		data.close();
 
-		info().information( tr("Project saved (%1)").arg(title) );
+		info().information( tr("Project '%1' saved ").arg(title) );
 
 	} else {
 		info().critical( tr("Could not open project properties file for writing! (%1)").arg(fileName) );
@@ -285,7 +285,7 @@ void Project::set_current_song(qint64 id)
 	}
 	
 	if (!newcurrent) {
-		info().information( tr("Song doesn't exist! ( Song %1)").arg(id) );
+		info().information( tr("Song '%1' doesn't exist!").arg(id) );
 		emit currentSongChanged(0);
 		return;
 	}
