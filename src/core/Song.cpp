@@ -113,8 +113,8 @@ void Song::init()
 	connect(&audiodevice(), SIGNAL(started()), this, SLOT(audiodevice_started()));
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(resize_buffer()), Qt::DirectConnection);
 	connect(m_diskio, SIGNAL(seekFinished()), this, SLOT(seek_finished()), Qt::QueuedConnection);
-	connect (m_diskio, SIGNAL(readSourceBufferUnderRun()), this, SLOT(handle_m_diskio_readbuffer_underrun()));
-	connect (m_diskio, SIGNAL(writeSourceBufferOverRun()), this, SLOT(handle_m_diskio_writebuffer_overrun()));
+	connect (m_diskio, SIGNAL(readSourceBufferUnderRun()), this, SLOT(handle_diskio_readbuffer_underrun()));
+	connect (m_diskio, SIGNAL(writeSourceBufferOverRun()), this, SLOT(handle_diskio_writebuffer_overrun()));
 	connect(this, SIGNAL(transferStarted()), m_diskio, SLOT(start_io()));
 	connect(this, SIGNAL(transferStopped()), m_diskio, SLOT(stop_io()));
 
