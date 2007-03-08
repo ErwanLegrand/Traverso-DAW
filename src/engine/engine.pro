@@ -34,27 +34,25 @@ libtraverso.h \
 memops.h \
 precompile.h \
 Tsar.h
-
-
 release{
-PRECOMPILED_HEADER -= precompile.h 
+    PRECOMPILED_HEADER -= precompile.h 
 }
 
 unix{
-contains(DEFINES, SSE_OPTIMIZATIONS): SOURCES += sse_functions.S
+    contains(DEFINES, SSE_OPTIMIZATIONS): SOURCES += sse_functions.S
 }
 
 macx{
-SOURCES -= AlsaDriver.cpp
-HEADERS -= AlsaDriver.h
-LIBS -= -lasound
-QMAKE_LIBDIR += /usr/local/qt/lib 
+    SOURCES -= AlsaDriver.cpp
+    HEADERS -= AlsaDriver.h
+    LIBS -= -lasound
+    QMAKE_LIBDIR += /usr/local/qt/lib 
 }
 
 win32{
-LIBS -= -lasound
-SOURCES -= JackDriver.cpp
-HEADERS -= JackDriver.h
-SOURCES -= AlsaDriver.cpp
-HEADERS -= AlsaDriver.h
+    LIBS -= -lasound
+    SOURCES -= JackDriver.cpp
+    HEADERS -= JackDriver.h
+    SOURCES -= AlsaDriver.cpp
+    HEADERS -= AlsaDriver.h
 }
