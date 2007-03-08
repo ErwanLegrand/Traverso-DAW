@@ -46,10 +46,7 @@ HEADERS += \
 	Help.h \
 	Main.h \
 	ExportWidget.h \
-	MessageWidget.h \
-	OverViewWidget.h \
 	PluginSelectorDialog.h \
-	SystemInfoWidget.h \
 	AudioSourcesManagerWidget.h \
 	Traverso.h \
 	Interface.h \
@@ -62,7 +59,9 @@ HEADERS += \
 	dialogs/settings/SettingsDialog.h \
 	dialogs/project/SongManagerDialog.h \
 	dialogs/project/ProjectManagerDialog.h \
-	songcanvas/MarkerView.h
+	songcanvas/MarkerView.h \
+	widgets/InfoWidgets.h \
+	widgets/MessageWidget.h
 SOURCES += \
 	songcanvas/AudioClipView.cpp \
 	songcanvas/SongWidget.cpp \
@@ -91,10 +90,7 @@ SOURCES += \
 	Help.cpp \
 	Main.cpp \
 	ExportWidget.cpp \
-	MessageWidget.cpp \
-	OverViewWidget.cpp \
 	PluginSelectorDialog.cpp \
-	SystemInfoWidget.cpp \
 	AudioSourcesManagerWidget.cpp \
 	Interface.cpp \
 	VUMeter.cpp \
@@ -105,7 +101,9 @@ SOURCES += \
 	dialogs/settings/SettingsDialog.cpp \
 	dialogs/project/SongManagerDialog.cpp \
 	dialogs/project/ProjectManagerDialog.cpp \
-	songcanvas/MarkerView.cpp
+	songcanvas/MarkerView.cpp \
+	widgets/InfoWidgets.cpp \
+	widgets/MessageWidget.cpp
 FORMS += ui/ExportWidget.ui \
 	ui/AudioSourcesManagerWidget.ui \
 	ui/PluginSelectorDialog.ui \
