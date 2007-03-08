@@ -50,11 +50,22 @@ SystemResources::SystemResources(QWidget * parent)
 	: InfoWidget(parent)
 {
 	
-	m_writeBufferStatus = new QLabel(this);
-	m_readBufferStatus = new QLabel(this);
-/*	m_bar = new QProgressBar(this);
-	m_bar->setRange(0, 100);*/
-	m_cpuUsage = new QLabel(this);
+	m_writeBufferStatus = new SystemValueBar(this);
+	m_readBufferStatus = new SystemValueBar(this);
+	m_cpuUsage = new SystemValueBar(this);
+	m_icon = new QPushButton();
+	m_icon->setIcon(find_pixmap(":/memorysmall"));
+	m_icon->setFlat(true);
+	m_icon->setMaximumWidth(20);
+	m_icon->setFocusPolicy(Qt::NoFocus);
+	m_writeBufferStatus->set_range(0, 100);
+	m_readBufferStatus->set_range(0, 100);
+	m_cpuUsage->set_range(0, 100);
+	m_cpuUsage->set_int_rounding(false);
+	m_cpuUsage->setMinimumWidth(90);
+	m_readBufferStatus->set_text("R");
+	m_writeBufferStatus->set_text("W");
+	m_cpuUsage->set_text("CPU");
 	
 	connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update_status()));
 	
@@ -78,37 +89,9 @@ void SystemResources::update_status( )
 	}
 
 	
-// 	m_bar->setValue(bufReadStatus);
-	
-	QByteArray cputime = QByteArray::number(time, 'f', 2).append(" %");
-	if (time < 10.0) {
-		cputime.prepend("  ");
-	}
-	
-	QByteArray readstatus = QByteArray::number(bufReadStatus).append("%");
-	if (bufReadStatus < 100) {
-		readstatus.prepend("  ");
-	}
-	
-	QByteArray writestatus = QByteArray::number(bufWriteStatus).append("%");
-	if (bufWriteStatus < 100) {
-		writestatus.prepend("  ");
-	}
-	
-	QString string = " R " + readstatus;
-	if (m_readBufferStatus->text() != string) {
-		m_readBufferStatus->setText(string);
-	}
-	
-	string = " W " + writestatus;
-	if (m_writeBufferStatus->text() != string) {
-		m_writeBufferStatus->setText(string);
-	}
-	
-	string = " CPU " + cputime + " ";
-	if (m_cpuUsage->text() != string) {
-		m_cpuUsage->setText(string);
-	}
+	m_readBufferStatus->set_value(bufReadStatus);
+	m_writeBufferStatus->set_value(bufWriteStatus);
+	m_cpuUsage->set_value(time);
 }
 
 
@@ -122,18 +105,19 @@ void SystemResources::set_orientation(Qt::Orientation orientation)
 	
 	if (m_orientation == Qt::Horizontal) {
 		QHBoxLayout* lay = new QHBoxLayout(this);
+		lay->addSpacing(6);
+		lay->addWidget(m_icon);
 		lay->addWidget(m_readBufferStatus);
-// 		lay->addWidget(m_bar);
 		lay->addWidget(m_writeBufferStatus);
 		lay->addWidget(m_cpuUsage);
 		lay->setMargin(0);
+		lay->addSpacing(6);
 		setLayout(lay);
 // 		setFrameStyle(QFrame::StyledPanel);
 		setFrameStyle(QFrame::NoFrame);
 	} else {
 		QVBoxLayout* lay = new QVBoxLayout(this);
 		lay->addWidget(m_readBufferStatus);
-// 		lay->addWidget(m_bar);
 		lay->addWidget(m_writeBufferStatus);
 		lay->addWidget(m_cpuUsage);
 		lay->setMargin(0);
@@ -145,7 +129,7 @@ void SystemResources::set_orientation(Qt::Orientation orientation)
 QSize SystemResources::sizeHint() const
 {
 	if (m_orientation == Qt::Horizontal) {
-		return QSize(200, SYS_INFOBAR_HEIGHT_HOR_ORIENTATION);
+		return QSize(250, SYS_INFOBAR_HEIGHT_HOR_ORIENTATION);
 	}
 	
 	return QSize(100, SYS_INFOBAR_HEIGHT_HOR_ORIENTATION);
@@ -244,7 +228,7 @@ void DriverInfo::set_orientation(Qt::Orientation orientation)
 QSize DriverInfo::sizeHint() const
 {
 	if (m_orientation == Qt::Horizontal) {
-		return QSize(210, INFOBAR_HEIGH_HOR_ORIENTATION);
+		return QSize(250, INFOBAR_HEIGH_HOR_ORIENTATION);
 	}
 	
 	return QSize(100, INFOBAR_HEIGH_VER_ORIENTATION);
@@ -710,6 +694,84 @@ void SysInfoToolBar::orientation_changed(Qt::Orientation orientation)
 	action->setVisible(true);
 }
 
+
+SystemValueBar::SystemValueBar(QWidget * parent)
+	: QWidget(parent)
+{
+	m_current = m_min = m_max = 0;
+	m_text = "";
+	m_introunding = true;
+}
+
+void SystemValueBar::set_value(float value)
+{
+	if (m_current == value) {
+		return;
+	}
+	m_current = value;
+	update();
+}
+
+void SystemValueBar::set_range(float min, float max)
+{
+	m_min = min;
+	m_max = max;
+	update();
+}
+
+void SystemValueBar::set_text(const QString & text)
+{
+	m_text = text;
+}
+
+void SystemValueBar::paintEvent(QPaintEvent * e)
+{
+	QPainter painter(this);
+	
+	
+	painter.setRenderHints(QPainter::Antialiasing);
+	
+	QColor color;
+	if (m_current <= 100 && m_current > 30) {
+		color = QColor(  0, 255,   0);
+	} else if (m_current <= 30 && m_current > 20) {
+		color = QColor(255, 255,   0);
+	} else {
+		color = QColor(255, 0, 0);
+	}
+	
+	
+	int roundfactor = 0;
+	
+	QRect rect = QRect(0, (height() - 15) / 2, width(), 15);
+	painter.drawRect(rect);
+	
+	painter.setBrush(color);
+	painter.setPen(Qt::NoPen);
+	rect = QRect(1, (height() - 15) / 2 + 1, width() - 2 - (m_max - m_current), 13);
+	painter.drawRect(rect);
+	
+	painter.setPen(Qt::black);
+	painter.setFont(QFont("Bitstream Vera Sans", 8));
+	
+	if (m_introunding) {
+		painter.drawText(0, 0, width(), height(), Qt::AlignCenter, 
+				m_text + " " + QString::number((int)m_current).append("%"));
+	} else {
+		painter.drawText(0, 0, width(), height(), Qt::AlignCenter, 
+				 m_text + " " + QString::number(m_current, 'f', 2).append("%"));
+	}
+}
+
+QSize SystemValueBar::sizeHint() const
+{
+	return QSize(70, 25);
+}
+
+void SystemValueBar::set_int_rounding(bool rounding)
+{
+	m_introunding = rounding;
+}
 
 //eof
 
