@@ -29,18 +29,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Interface.h"
 #include "BusMonitor.h"
 #include "ProjectManager.h"
-#include "InfoBox.h"
 #include "AudioClipView.h"
-#include <Config.h>
-//#include "SongView.h"
 #include "TrackView.h"
 #include "ViewPort.h"
-#include "OverViewWidget.h"
 #include "Help.h"
 #include "AudioSourcesTreeWidget.h"
 #include <FadeCurve.h>
-#include "QuickDriverConfigWidget.h"
-#include "SystemInfoWidget.h"
+#include <Config.h>
+#include "widgets/InfoWidgets.h"
 
 #include "ExportWidget.h"
 #include "CorrelationMeterWidget.h"
@@ -126,8 +122,14 @@ Interface::Interface()
 	// Help widget
 	helpWindow = new Help(this);
 	
+	m_infoBar = new InfoToolBar(this);
+	addToolBar(m_infoBar);
+	
+	SysInfoToolBar* sysinfo = new SysInfoToolBar(this);
+	addToolBar(Qt::BottomToolBarArea, sysinfo);
+	
+	
 	// Some default values.
-	driverConfigWidget = 0;
 	currentSongWidget = 0;
 	exportWidget = 0;
 	m_settingsdialog = 0;
@@ -256,12 +258,6 @@ void Interface::keyReleaseEvent( QKeyEvent * e)
 	e->ignore();
 }
 
-// void Interface::wheelEvent( QWheelEvent * e )
-// {
-// 	ie().catch_scroll(e);
-// 	e->ignore();
-// }
-
 Command * Interface::show_export_widget( )
 {
 	if (! exportWidget)
@@ -272,40 +268,14 @@ Command * Interface::show_export_widget( )
 
 void Interface::create_menus( )
 {
-	mainToolBar = addToolBar(tr("MainToolBar"));
-// 	mainToolBar->setMovable(false);
-	mainToolBar->setObjectName("MainToolBar");
-	mainToolBar->setFocusPolicy(Qt::NoFocus);
-
+	QMenu* menu;
+	QAction* action;
+	 
+	menu = menuBar()->addMenu(tr("&File"));
 	
-	driverInfo = new DriverInfoWidget(mainToolBar);
-	driverInfo->setFlat(true);
-	driverInfo->setFocusPolicy(Qt::NoFocus);
-	
-	mainToolBar->addWidget(driverInfo);
-	connect(driverInfo, SIGNAL(clicked()), this, SLOT(show_driver_config_widget()));
-	
-	
-	mainToolBar->addSeparator();
-	
-	resourcesInfo = new ResourcesInfoWidget(mainToolBar);
-// 	resourcesInfo->setFlat(true);
-	resourcesInfo->setFocusPolicy(Qt::NoFocus);
-	QAction* ac = mainToolBar->addWidget(resourcesInfo);
-	ac->setVisible(true);
-	
-	mainToolBar->addSeparator();
-	
-	hddInfo = new HDDSpaceInfoWidget(mainToolBar);
-	hddInfo->setFlat(true);
-	hddInfo->setFocusPolicy(Qt::NoFocus);
-	mainToolBar->addWidget(hddInfo);
-	
-	
-	QMenu* menu = menuBar()->addMenu(tr("&File"));
-	
-	QAction* action = menu->addAction(tr("Open / Create"));
+	action = menu->addAction(tr("Open / Create"));
 	action->setIcon(style()->standardIcon(QStyle::SP_FileDialogContentsView));
+	action->setShortcuts(QKeySequence::Open);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_project_manager_dialog()));
 	
 	menu->addSeparator();
@@ -318,11 +288,15 @@ void Interface::create_menus( )
 	menu = menuBar()->addMenu(tr("&Project"));
 	
 	action = menu->addAction(tr("&Save"));
+	action->setShortcuts(QKeySequence::Save);
 	m_projectSaveAction = action;
 	action->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
 	connect(action, SIGNAL(triggered(bool)), &pm(), SLOT(save_project()));
 	
 	action = menu->addAction(tr("Manage Project"));
+	QList<QKeySequence> list;
+	list.append(QKeySequence("F4"));
+	action->setShortcuts(list);
 	action->setIcon(QIcon(find_pixmap(":/songmanager-16")));
 	m_projectSongManagerAction = action;
 	
@@ -347,7 +321,7 @@ void Interface::create_menus( )
 	
 	menu->addSeparator();
 	
-	menu->addAction(mainToolBar->toggleViewAction());
+	menu->addAction(m_infoBar->toggleViewAction());
 		
 		
 	action = menuBar()->addAction(tr("&Settings"));
@@ -366,15 +340,18 @@ void Interface::create_menus( )
 	action = menuBar()->addAction(tr("OpenGL"));
 	action->setEnabled(QGLFormat::hasOpenGL());
 	action->setCheckable(true);
-	connect(action, SIGNAL(toggled( bool )), this, SLOT(toggle_OpenGL(bool)));
+	connect(action, SIGNAL(toggled(bool)), this, SLOT(toggle_OpenGL(bool)));
 	
 	
+	action = menuBar()->addAction(tr("Undo"));
+	action->setIcon(QIcon(find_pixmap(":/undo-16")));
+	action->setShortcuts(QKeySequence::Undo);
+	connect(action, SIGNAL(triggered( bool )), this, SLOT(undo()));
 	
-		
-	
-    /*	DigitalClock* clock = new DigitalClock();
-	mainToolBar->addWidget(clock);*/
-	
+	action = menuBar()->addAction(tr("Redo"));
+	action->setIcon(QIcon(find_pixmap(":/redo-16")));
+	action->setShortcuts(QKeySequence::Redo);
+	connect(action, SIGNAL(triggered( bool )), this, SLOT(redo()));
 }
 
 void Interface::process_context_menu_action( QAction * action )
@@ -610,17 +587,6 @@ QMenu* Interface::create_fade_selector_menu(const QString& fadeTypeName)
 	return menu;
 }
 
-void Interface::show_driver_config_widget( )
-{
-	if (! driverConfigWidget) {
-		driverConfigWidget = new QuickDriverConfigWidget(this);
-	}
-	
-	// Hmmm, very weak positioning code imho. Can't find how to do it any better right now :(
-	driverConfigWidget->move(driverInfo->x() + x() + 2, geometry().y() + mainToolBar->height() - 2);
-	driverConfigWidget->show();
-}
-
 void Interface::toggle_OpenGL(bool toggled)
 {
 	foreach(SongWidget* widget, m_songWidgets) {
@@ -693,6 +659,16 @@ void Interface::show_song_manager_dialog()
 QSize Interface::sizeHint() const
 {
 	return QSize(800, 600);
+}
+
+void Interface::undo()
+{
+	pm().get_undogroup()->undo();
+}
+
+void Interface::redo()
+{
+	pm().get_undogroup()->redo();
 }
 
 // eof

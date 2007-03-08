@@ -32,7 +32,6 @@ class Project;
 class BusMonitor;
 class InfoBox;
 class ViewPort;
-class OverViewWidget;
 class ContextItem;
 class Command;
 
@@ -46,7 +45,6 @@ class QDockWidget;
 class QToolBar;
 class QToolButton;
 class QTreeView;
-class QuickDriverConfigWidget;
 class ResourcesInfoWidget;
 class DriverInfoWidget;
 class HDDSpaceInfoWidget;
@@ -56,6 +54,7 @@ class SpectralMeterWidget;
 class SettingsDialog;
 class ProjectManagerDialog;
 class SongManagerDialog;
+class InfoToolBar;
 
 class Interface : public QMainWindow
 {
@@ -70,8 +69,6 @@ protected:
 	void keyReleaseEvent ( QKeyEvent* e);
 	void closeEvent ( QCloseEvent * event );
 	QSize sizeHint () const;
-// 	void wheelEvent ( QWheelEvent* e );
-	
 
 private:
 	QStackedWidget* 	centerAreaWidget;
@@ -80,13 +77,11 @@ private:
 	QList<ViewPort* > 	currentProjectViewPortList;
 	QHash<QString, QMenu*>	m_contextMenus;
 	ExportWidget*		exportWidget;
-	OverViewWidget* 	overView;
 	QUndoView*		historyWidget;
 	QDockWidget* 		historyDW;
 	QDockWidget*		busMonitorDW;
 	QDockWidget*		AudioSourcesDW;
 	QTreeView* 		audiosourcesview;
-	QuickDriverConfigWidget* driverConfigWidget;
 	QDockWidget*		correlationMeterDW;
 	CorrelationMeterWidget*	correlationMeter;
 	QDockWidget*		spectralMeterDW;
@@ -94,6 +89,7 @@ private:
 	SettingsDialog*		m_settingsdialog;
 	ProjectManagerDialog*	m_projectManagerDialog;
 	SongManagerDialog*	m_songManagerDialog;
+	InfoToolBar* 		m_infoBar;
 
 	BusMonitor* 		busMonitor;
 	Help* 			helpWindow;
@@ -122,7 +118,6 @@ public slots :
 	void set_bus_out(QAction* action);
 	void set_fade_in_shape(QAction* action);
 	void set_fade_out_shape(QAction* action);
-	void show_driver_config_widget();
 	void toggle_OpenGL(bool);
 	void show_song_manager_dialog();
 
@@ -139,6 +134,8 @@ public slots :
 	
 private slots:
 	void delete_songwidget(Song*);
+	void undo();
+	void redo();
 };
 
 
