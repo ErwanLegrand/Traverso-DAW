@@ -55,6 +55,7 @@ class SettingsDialog;
 class ProjectManagerDialog;
 class SongManagerDialog;
 class InfoToolBar;
+class SysInfoToolBar;
 
 class Interface : public QMainWindow
 {
@@ -90,6 +91,7 @@ private:
 	ProjectManagerDialog*	m_projectManagerDialog;
 	SongManagerDialog*	m_songManagerDialog;
 	InfoToolBar* 		m_infoBar;
+	SysInfoToolBar* 	m_sysinfo;
 
 	BusMonitor* 		busMonitor;
 	Help* 			helpWindow;

@@ -125,8 +125,8 @@ Interface::Interface()
 	m_infoBar = new InfoToolBar(this);
 	addToolBar(m_infoBar);
 	
-	SysInfoToolBar* sysinfo = new SysInfoToolBar(this);
-	addToolBar(Qt::BottomToolBarArea, sysinfo);
+	m_sysinfo = new SysInfoToolBar(this);
+	addToolBar(Qt::BottomToolBarArea, m_sysinfo);
 	
 	
 	// Some default values.
@@ -322,6 +322,9 @@ void Interface::create_menus( )
 	menu->addSeparator();
 	
 	menu->addAction(m_infoBar->toggleViewAction());
+	m_infoBar->toggleViewAction()->setText(tr("Main Toolbar"));
+	menu->addAction(m_sysinfo->toggleViewAction());
+	m_sysinfo->toggleViewAction()->setText(tr("System Information"));
 		
 		
 	action = menuBar()->addAction(tr("&Settings"));
