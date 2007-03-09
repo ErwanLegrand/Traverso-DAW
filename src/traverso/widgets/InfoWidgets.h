@@ -35,6 +35,7 @@ class Project;
 class Song;
 class QuickDriverConfigWidget;
 class MessageWidget;
+class SystemValueBar;
 
 
 class InfoWidget : public QFrame
@@ -75,10 +76,10 @@ protected:
 	
 private:
 	QTimer	m_updateTimer;
-	QLabel*	m_readBufferStatus;
-	QLabel*	m_writeBufferStatus;
-	QLabel*	m_cpuUsage;
-	QProgressBar* m_bar;
+	SystemValueBar*	m_readBufferStatus;
+	SystemValueBar*	m_writeBufferStatus;
+	SystemValueBar*	m_cpuUsage;
+	QPushButton*	m_icon;
 
 	friend class SysInfoToolBar;
 	
@@ -243,6 +244,39 @@ private slots:
 	void orientation_changed(Qt::Orientation orientation);
 };
 
+
+class SystemValueBar : public QWidget
+{
+	Q_OBJECT
+			
+public: 
+	SystemValueBar(QWidget* parent);
+
+	void set_value(float value);
+	void set_range(float min, float max);
+	void set_text(const QString& text);
+	void set_int_rounding(bool rounding);
+	void add_range_color(float x0, float x1, QColor color);
+
+protected:
+	void paintEvent( QPaintEvent* e);
+	QSize sizeHint () const;
+	
+
+private:
+	struct RangeColor {
+		float x0;
+		float x1;
+		QColor color;
+	};
+		
+	QList<RangeColor> m_rangecolors;
+	QString m_text;
+	float m_min;
+	float m_max;
+	float m_current;
+	bool m_introunding;
+};
 
 #endif
 

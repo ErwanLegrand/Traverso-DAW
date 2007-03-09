@@ -58,11 +58,24 @@ SystemResources::SystemResources(QWidget * parent)
 	m_icon->setFlat(true);
 	m_icon->setMaximumWidth(20);
 	m_icon->setFocusPolicy(Qt::NoFocus);
+	
 	m_writeBufferStatus->set_range(0, 100);
+	m_writeBufferStatus->add_range_color(0, 40, QColor(255, 0, 0));
+	m_writeBufferStatus->add_range_color(40, 60, QColor(255, 255, 0));
+	m_writeBufferStatus->add_range_color(60, 100, QColor(227, 254, 227));
+	
 	m_readBufferStatus->set_range(0, 100);
+	m_readBufferStatus->add_range_color(0, 40, QColor(255, 0, 0));
+	m_readBufferStatus->add_range_color(40, 60, QColor(255, 255, 0));
+	m_readBufferStatus->add_range_color(60, 100, QColor(227, 254, 227));
+	
 	m_cpuUsage->set_range(0, 100);
 	m_cpuUsage->set_int_rounding(false);
 	m_cpuUsage->setMinimumWidth(90);
+	m_cpuUsage->add_range_color(0, 60, QColor(227, 254, 227));
+	m_cpuUsage->add_range_color(60, 75, QColor(255, 255, 0));
+	m_cpuUsage->add_range_color(75, 100, QColor(255, 0, 0));
+	
 	m_readBufferStatus->set_text("R");
 	m_writeBufferStatus->set_text("W");
 	m_cpuUsage->set_text("CPU");
@@ -231,7 +244,7 @@ QSize DriverInfo::sizeHint() const
 		return QSize(250, INFOBAR_HEIGH_HOR_ORIENTATION);
 	}
 	
-	return QSize(100, INFOBAR_HEIGH_VER_ORIENTATION);
+	return QSize(90, INFOBAR_HEIGH_VER_ORIENTATION);
 }
 
 void DriverInfo::show_driver_config_widget( )
@@ -455,7 +468,7 @@ void PlayHeadInfo::set_song(Song* song)
 	update();
 }
 
-void PlayHeadInfo::paintEvent(QPaintEvent * e)
+void PlayHeadInfo::paintEvent(QPaintEvent* )
 {
 	QPainter painter(this);
 	QString currentsmpte;
@@ -500,7 +513,7 @@ void PlayHeadInfo::stop_smpte_update_timer( )
 QSize PlayHeadInfo::sizeHint() const
 {
 	if (m_orientation == Qt::Horizontal)
-		return QSize(130, INFOBAR_HEIGH_HOR_ORIENTATION);
+		return QSize(140, INFOBAR_HEIGH_HOR_ORIENTATION);
 	
 	return QSize(100, INFOBAR_HEIGH_VER_ORIENTATION);
 }
@@ -512,7 +525,7 @@ QSize PlayHeadInfo::sizeHint() const
 InfoToolBar::InfoToolBar(QWidget * parent)
 	: QToolBar(parent)
 {
-	setObjectName("MainInfoBar");
+	setObjectName(tr("Main Toolbar"));
 	
 	driverInfo = new DriverInfo(this);
 	m_widgets.append(driverInfo);
@@ -659,13 +672,14 @@ QSize SongInfo::sizeHint() const
 		return QSize(500, INFOBAR_HEIGH_HOR_ORIENTATION);
 	}
 	
-	return QSize(100, INFOBAR_HEIGH_VER_ORIENTATION * 5 - 6);
+	return QSize(90, INFOBAR_HEIGH_VER_ORIENTATION * 5 - 6);
 	
 }
 
 SysInfoToolBar::SysInfoToolBar(QWidget * parent)
 	: QToolBar(parent)
 {
+	setObjectName(tr("System Information"));
 	message = new MessageWidget(this);
 	resourcesInfo = new SystemResources(this);
 	hddInfo = new HDDSpaceInfo(this);
@@ -708,7 +722,17 @@ void SystemValueBar::set_value(float value)
 	if (m_current == value) {
 		return;
 	}
+	
 	m_current = value;
+	
+	if (m_current > m_max) {
+		m_current  = m_max;
+	}
+	
+	if (m_current < m_min) {
+		m_current = m_min;
+	}
+	
 	update();
 }
 
@@ -724,31 +748,28 @@ void SystemValueBar::set_text(const QString & text)
 	m_text = text;
 }
 
-void SystemValueBar::paintEvent(QPaintEvent * e)
+void SystemValueBar::paintEvent(QPaintEvent* )
 {
 	QPainter painter(this);
-	
-	
 	painter.setRenderHints(QPainter::Antialiasing);
 	
-	QColor color;
-	if (m_current <= 100 && m_current > 30) {
-		color = QColor(  0, 255,   0);
-	} else if (m_current <= 30 && m_current > 20) {
-		color = QColor(255, 255,   0);
-	} else {
-		color = QColor(255, 0, 0);
+	QColor color = QColor(227, 254, 227);
+	
+	for (int i=0; i<m_rangecolors.size(); ++i) {
+		RangeColor range = m_rangecolors.at(i);
+		if (m_current <= range.x1 && m_current >= range.x0) {
+			color = range.color;
+			break;
+		}
 	}
-	
-	
-	int roundfactor = 0;
 	
 	QRect rect = QRect(0, (height() - 15) / 2, width(), 15);
 	painter.drawRect(rect);
 	
 	painter.setBrush(color);
 	painter.setPen(Qt::NoPen);
-	rect = QRect(1, (height() - 15) / 2 + 1, width() - 2 - (m_max - m_current), 13);
+	float scalefactor = width() / m_max;
+	rect = QRect(1, (height() - 15) / 2 + 1, width() - 2 - (int)(scalefactor* (m_max - m_current)), 13);
 	painter.drawRect(rect);
 	
 	painter.setPen(Qt::black);
@@ -773,5 +794,13 @@ void SystemValueBar::set_int_rounding(bool rounding)
 	m_introunding = rounding;
 }
 
-//eof
+void SystemValueBar::add_range_color(float x0, float x1, QColor color)
+{
+	RangeColor range;
+	range.x0 = x0;
+	range.x1 = x1;
+	range.color = color;
+	m_rangecolors.append(range);
+}
 
+//eof
