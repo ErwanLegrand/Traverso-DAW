@@ -427,6 +427,7 @@
 			<Object objectname="Track" slotsignature="remove_myself" modes="All" instantanious="0" />
 			<Object objectname="CurveView" slotsignature="remove_node" modes="All" instantanious="0" />
 			<Object objectname="PluginView" slotsignature="remove_plugin" modes="All" instantanious="0" />
+			<Object objectname="TimeLineView" slotsignature="remove_marker" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
 
