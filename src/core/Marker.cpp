@@ -23,10 +23,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "TimeLine.h"
 
-Marker::Marker(TimeLine* tl, nframes_t when)
+Marker::Marker(TimeLine* tl, nframes_t when, uint type)
 	: ContextItem()
 	, m_timeline(tl)
 	, m_when(when) 
+	, m_type(type)
 {
 	set_history_stack(m_timeline->get_history_stack());
 }
@@ -35,17 +36,23 @@ QDomNode Marker::get_state(QDomDocument doc)
 {
 	QDomElement domNode = doc.createElement("Marker");
 	
-	// TODO add all attributes that have to be saved to the dom element
-	
+	domNode.setAttribute("position",  QString::number(m_when));
+	domNode.setAttribute("description",  m_description);
+	domNode.setAttribute("type",  QString::number(m_type));
+
 	return domNode;
 }
 
 int Marker::set_state(const QDomNode & node)
 {
 	QDomElement e = node.toElement();
-	
-	// TODO retreive all the attributes to be restored from the dom element
-	
+
+	m_description = e.attribute("description", "");
+	QString stype = e.attribute("type", "0");
+	QString swhen = e.attribute("position", "0");
+	m_type = stype.toUInt();
+	m_when = swhen.toUInt();
+
 	return 1;
 }
 

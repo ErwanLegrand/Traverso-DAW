@@ -46,6 +46,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Utils.h"
 #include "ContextItem.h"
 #include "TimeLine.h"
+#include "Marker.h"
 
 #include <Plugin.h>
 #include <PluginChain.h>
@@ -157,9 +158,8 @@ int Song::set_state( const QDomNode & node )
 	set_first_visible_frame(e.attribute( "firstVisibleFrame", "0" ).toUInt());
 	set_work_at(e.attribute( "workingFrame", "0").toUInt());
 	
-	QDomNode timelineNode = node.firstChildElement("TimeLine");
-	m_timeline->set_state(timelineNode);
-	
+	m_timeline->set_state(node.firstChildElement("TimeLine"));
+
 	QDomNode tracksNode = node.firstChildElement("Tracks");
 	QDomNode trackNode = tracksNode.firstChild();
 

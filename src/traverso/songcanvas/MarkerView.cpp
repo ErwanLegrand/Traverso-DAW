@@ -23,6 +23,7 @@
 
 #include "SongView.h"
 
+#include <QColor>
 #include <Marker.h>
 #include <Utils.h>
 
@@ -60,7 +61,7 @@ void MarkerView::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
 	painter->setFont( QFont( "Bitstream Vera Sans", 7) );
 	
 	painter->setPen(QColor("#000000"));
-	painter->setBrush(QColor("#ff0000"));
+	painter->setBrush(m_fillColor);
 
 	const QPointF pts[3] = {
 			QPointF(0, 0),
@@ -89,5 +90,10 @@ void MarkerView::load_theme_data()
 	calculate_bounding_rect();
 }
 
+void MarkerView::set_color(QColor col)
+{
+	m_fillColor = col;
+	update();
+}
 
 //eof

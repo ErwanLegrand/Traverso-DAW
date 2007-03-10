@@ -36,47 +36,40 @@ TimeLine::TimeLine(Song * song)
 QDomNode TimeLine::get_state(QDomDocument doc)
 {
 	QDomElement domNode = doc.createElement("TimeLine");
-	
-	// TODO
-	// This function, as well as the set_state() doesn't make much sense
-	// although it works, it's better to add a get/set_state() function in Marker
-	// and add a xml node Markers, and add all Marker nodes as childs.
-	// For an example see Song::get/set_state() starting at:
-	// QDomNode tracksNode = node.firstChildElement("Tracks");
-	// and
-	// QDomNode tracksNode = doc.createElement("Tracks");
-	// This way, you can set/get whatever property you like for the Marker class
-	// If it makes sense to have different lists of markers of a certain type,
-	// well, I'll leave that to you :-)
-	// You could for example have different xml nodes for the different marker types
-	// or just one xml node, and use Marker::type() to sort on Marker type later in get_state()
-	
-	QStringList markerList;
-	
-	for (int i=0; i < m_markers.size(); ++i) {
-		markerList << QString::number(m_markers.at(i)->get_when());
+	QDomNode markersNode = doc.createElement("Markers");
+	domNode.appendChild(markersNode);
+
+	for (int i = 0; i < m_markers.size(); ++i) {
+		markersNode.appendChild(m_markers.at(i)->get_state(doc));
 	}
-	
-	domNode.setAttribute("markers",  markerList.join(";"));
-	
+
 	return domNode;
 }
 
 int TimeLine::set_state(const QDomNode & node)
 {
-	QDomElement e = node.toElement();
-	
-	QStringList markerList = e.attribute( "markers", "" ).split(";");
-	
-	for (int i=0; i<markerList.size(); ++i) {
-		nframes_t when = markerList.at(i).toUInt();
-		Marker* marker =  new Marker(this, when);
-		private_add_marker(marker);
+	m_markers.clear();
+
+	QDomNode markersNode = node.firstChildElement("Markers");
+	QDomNode markerNode = markersNode.firstChild();
+
+	while (!markerNode.isNull()) {
+		Marker* marker = new Marker(this, 0, 0);
+		marker->set_state(markerNode);
+		m_markers.append(marker);
+
+		markerNode = markerNode.nextSibling();
 	}
-	
+
 	return 1;
 }
 
+void TimeLine::set_markers(QList<Marker*> lst)
+{
+	for (int i = 0; i < lst.size(); ++i) {
+		private_add_marker(lst.at(i));
+	}
+}
 
 Command * TimeLine::add_marker(Marker* marker, bool historable)
 {

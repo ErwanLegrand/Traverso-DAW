@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SnapList.cpp,v 1.5 2007/02/01 15:49:00 r_sijrier Exp $
+$Id: SnapList.cpp,v 1.6 2007/03/10 21:57:01 n_doebelin Exp $
 */
 
 #include "SnapList.h"
@@ -26,6 +26,8 @@ $Id: SnapList.cpp,v 1.5 2007/02/01 15:49:00 r_sijrier Exp $
 #include "AudioClip.h"
 #include "AudioClipManager.h"
 #include "ContextPointer.h"
+#include "TimeLine.h"
+#include "Marker.h"
 
 #include <QString>
 
@@ -86,6 +88,13 @@ void SnapList::update_snaplist()
 	// Be able to snap to trackstart
 	xposList.append(0);
 
+	// add all markers
+	QList<Marker*> markerList = m_song->get_timeline()->get_markers();
+	for (int i = 0; i < markerList.size(); ++i) {
+		xposList.append(markerList.at(i)->get_when());
+	}
+
+	// add the working cursor's position
 	nframes_t workingframe = m_song->get_working_frame();
 	printf("workingframe xpos is %d\n",  workingframe / m_scalefactor);
 	if (workingframe >= m_rangeStart && workingframe <= m_rangeEnd) {
