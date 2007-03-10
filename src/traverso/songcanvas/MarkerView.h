@@ -39,13 +39,13 @@ public:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void calculate_bounding_rect();
 	void load_theme_data();
-	void set_color(QColor);
+	void set_active(bool);
 	
 	Marker* get_marker() const {return m_marker;}
 	
 private:
 	Marker* m_marker;
-	QColor m_fillColor;
+	QColor	m_fillColor;
 	
 private slots:
 	void update_position();

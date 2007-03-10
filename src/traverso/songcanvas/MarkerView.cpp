@@ -20,8 +20,8 @@
 */
 
 #include "MarkerView.h"
-
 #include "SongView.h"
+#include "Themer.h"
 
 #include <QColor>
 #include <Marker.h>
@@ -87,12 +87,17 @@ void MarkerView::update_position()
 
 void MarkerView::load_theme_data()
 {
+	m_fillColor = themer()->get_color("Marker:default");
 	calculate_bounding_rect();
 }
 
-void MarkerView::set_color(QColor col)
+void MarkerView::set_active(bool b)
 {
-	m_fillColor = col;
+	if (b) {
+		m_fillColor = themer()->get_color("Marker:blink");
+	} else {
+		m_fillColor = themer()->get_color("Marker:default");
+	}
 	update();
 }
 

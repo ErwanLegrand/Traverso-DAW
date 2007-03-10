@@ -96,5 +96,8 @@
 		
 		
 		<color name="Workcursor:default" red="255" green="0" blue="0" alpha="255" />
+		
+		<color name="Marker:default" red="128" green="0" blue="128" alpha="255" />
+		<color name="Marker:blink" red="255" green="0" blue="128" alpha="255" />
 	</colors>
 </Themer> 

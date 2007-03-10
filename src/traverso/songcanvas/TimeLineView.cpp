@@ -226,7 +226,7 @@ void TimeLineView::calculate_bounding_rect()
 void TimeLineView::add_new_marker_view(Marker * marker)
 {
 	MarkerView* view = new MarkerView(marker, m_sv, this);
-	view->set_color(themer()->get_color("Marker:default"));
+	view->set_active(false);
 	m_markerViews.append(view);
 	m_sv->scene()->addItem(view);
 }
@@ -247,10 +247,9 @@ void TimeLineView::remove_marker_view(Marker * marker)
 Command* TimeLineView::add_marker()
 {
 	QPointF point = mapFromScene(cpointer().scene_pos());
-	QString des = QString("Marker %1").arg(m_markerViews.count() + 1);
 	
 	Marker* marker = new Marker(m_timeline, (uint) (point.x() * m_sv->scalefactor));
-	marker->set_description(des);
+	marker->set_description("");
 	
 	return m_timeline->add_marker(marker);
 }
@@ -271,7 +270,7 @@ void TimeLineView::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
 	Q_UNUSED(event);
 
 	if (m_blinkingMarker) {
-		m_blinkingMarker->set_color(themer()->get_color("Marker:blink"));
+		m_blinkingMarker->set_active(true);
 		m_blinkTimer.start(40);
 	}
 }
@@ -290,8 +289,7 @@ void TimeLineView::hoverLeaveEvent ( QGraphicsSceneHoverEvent * event )
 	if (m_blinkingMarker) {
 		// TODO add these functions, or something else to 
 		// let the user know which marker is to be moved!
-		m_blinkingMarker->set_color(themer()->get_color("Marker:default"));
-// 		m_blinkingMarker->decrease_size();
+		m_blinkingMarker->set_active(false);
 		m_blinkingMarker = 0;
 	}
 }
@@ -324,12 +322,12 @@ void TimeLineView::hoverMoveEvent ( QGraphicsSceneHoverEvent * event )
 	
 
 	if (prevMarker && (prevMarker != m_blinkingMarker) ) {
-		prevMarker->set_color(themer()->get_color("Marker:default"));
-		m_blinkingMarker->set_color(themer()->get_color("Marker:blink"));
+		prevMarker->set_active(false);
+		m_blinkingMarker->set_active(true);
 	}
 	
 	if (!prevMarker && m_blinkingMarker) {
-		m_blinkingMarker->set_color(themer()->get_color("Marker:blink"));
+		m_blinkingMarker->set_active(true);
 	}
 }
 
