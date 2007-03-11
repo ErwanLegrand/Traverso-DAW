@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: JackDriver.cpp,v 1.11 2007/03/11 00:11:49 ingmar Exp $
+    $Id: JackDriver.cpp,v 1.12 2007/03/11 00:20:20 r_sijrier Exp $
 */
 
 #include "JackDriver.h"
@@ -25,7 +25,8 @@
 #include "AudioDevice.h"
 #include "AudioChannel.h"
 
-#include <glib.h>
+#include <Information.h>
+
 #include <jack/jack.h>
 
 #if defined (ALSA_SUPPORT)
@@ -114,7 +115,7 @@ int JackDriver::setup(bool capture, bool playback, const QString& )
         printf("Connecting to the Jack server...\n");
 
         if ( (client = jack_client_new (client_name)) == NULL) {
-                PWARN("Couldn't connect to the Jack server, is Jack running?");
+		info().warning(tr("Couldn't connect to the Jack server, is Jack running?"));
                 return -1;
         }
 
@@ -210,8 +211,9 @@ int JackDriver::setup(bool capture, bool playback, const QString& )
 	jack_on_shutdown(client, _on_jack_shutdown_callback, this);
 
 
-        printf("Connected successfully to the Jack server!\n");
-        return 1;
+	info().information(tr("Connected successfully to the Jack server!\n"));
+        
+	return 1;
 }
 
 int JackDriver::attach( )
