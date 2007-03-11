@@ -400,6 +400,11 @@
 			<Object objectname="Song" slotsignature="toggle_solo" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
+	<keyfact type="D_FKEY" key1="A" sortorder="10" >
+		<Objects>
+			<Object objectname="Song" slotsignature="toggle_arm" modes="All" instantanious="0" />
+		</Objects>
+	</keyfact>
 	<keyfact type="D_FKEY" key1="RETURN" sortorder="20" >
 		<Objects>
 			<Object objectname="SpectralMeterView" slotsignature="export_avarage_curve" modes="All" instantanious="0" />
