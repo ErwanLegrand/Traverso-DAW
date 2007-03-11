@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongView.h,v 1.10 2007/03/05 12:33:37 r_sijrier Exp $
+    $Id: SongView.h,v 1.11 2007/03/11 00:44:53 ingmar Exp $
 */
 
 #ifndef SONG_VIEW_H
@@ -52,7 +52,7 @@ class SongView : public ViewItem
 	Q_CLASSINFO("scroll_down", tr("Scroll: down"))
 	Q_CLASSINFO("shuttle", tr("Shuttle"))
 	Q_CLASSINFO("goto_begin", tr("Workcursor: To start"))
-	Q_CLASSINFO("goto_end", tr("Workcurosr: To end"))
+	Q_CLASSINFO("goto_end", tr("Workcursor: To end"))
 	Q_CLASSINFO("play_cursor_move", tr("Playcursor: Move"))
 	Q_CLASSINFO("set_editing_mode", tr("Mode: Edit"))
 	Q_CLASSINFO("set_curve_mode", tr("Mode: Curve"))
