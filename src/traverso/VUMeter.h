@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: VUMeter.h,v 1.8 2007/03/05 21:13:26 r_sijrier Exp $
+    $Id: VUMeter.h,v 1.9 2007/03/11 08:37:55 n_doebelin Exp $
 */
 
 #ifndef VUMETER_H
@@ -86,8 +86,6 @@ private:
         QString			m_name;
 	QLabel*			channelNameLabel;
 	QGridLayout*		glayout;
-	QBrush			bgBrush;
-	QLinearGradient		bgGradient;
 	VUMeterRuler*		ruler;
 	bool			drawTickmarks;
 	static QVector<float>	lut;
@@ -167,9 +165,7 @@ private:
         QPixmap		clearPixmap;
         QTimer 		timer,
 			phTimer;
-	QLinearGradient	gradient2D,
-			gradient3DLeft,
-			gradient3DRight;
+	QLinearGradient	gradient2D;
 
         float 			presetMark[7];
         float			tailDeltaY;

@@ -17,13 +17,12 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: VUMeter.cpp,v 1.15 2007/03/05 21:13:26 r_sijrier Exp $
+    $Id: VUMeter.cpp,v 1.16 2007/03/11 08:37:55 n_doebelin Exp $
 */
 
 #include "VUMeter.h"
 
 #include <QPainter>
-#include <QColor>
 #include <QGradient>
 #include <QSpacerItem>
 #include <QFontMetrics>
@@ -118,14 +117,6 @@ VUMeter::VUMeter(QWidget* parent, AudioBus* bus)
 	channelNameLabel->setAlignment(Qt::AlignHCenter);
 	glayout->addWidget(channelNameLabel, glayout->rowCount(), 0, 1, glayout->columnCount());
 
-	// define the background gradient
-	bgGradient.setStart(0,0);
-	bgGradient.setColorAt(0.0, QColor(255, 255, 255));
-	bgGradient.setColorAt(0.2, QColor(220, 220, 220));
-	bgGradient.setColorAt(0.8, QColor(200, 200, 200));
-	bgGradient.setColorAt(1.0, QColor(170, 170, 170));
-	bgBrush = QBrush(bgGradient);
-
 	// initialize some stuff
 	isActive = drawTickmarks = false;
 	
@@ -142,14 +133,12 @@ void VUMeter::paintEvent( QPaintEvent *  )
 	PENTER3;
 
 	QPainter painter(this);
-	painter.fillRect( 0 , 0 , width(), height() , bgBrush );
+	painter.fillRect( 0 , 0 , width(), height() , themer()->get_color("VUMeter:background:widget") );
 }
 
 void VUMeter::resizeEvent( QResizeEvent *  )
 {
 	PENTER3;
-	bgGradient.setFinalStop(QPointF(width(), 0));
-	bgBrush = QBrush(bgGradient);
 
 	QFontMetrics fm(QFont("Bitstream Vera Sans", FONT_SIZE));
 	
@@ -269,7 +258,7 @@ void VUMeterRuler::paintEvent( QPaintEvent*  )
 	float levelRange = float(height() - yOffset);
 
 	// draw line marks
-	painter.setPen(Qt::gray);
+	painter.setPen(themer()->get_color("VUMeter:font:inactive"));
 	for (uint j = 0; j < lineMark.size(); ++j) {
 		int idx = int(LUT_MULTIPLY * float((-lineMark[j] + 6)));
 
@@ -281,7 +270,7 @@ void VUMeterRuler::paintEvent( QPaintEvent*  )
 		painter.drawLine(0, height() - deltaY, TICK_LINE_LENGTH, height() - deltaY);
 	}
 
-	painter.setPen(Qt::black);
+	painter.setPen(themer()->get_color("VUMeter:font:active"));
 	QRect markRect(0, 0, width(), fm.ascent());
 
 	// draw the labels
@@ -362,22 +351,29 @@ void VUMeterOverLed::paintEvent( QPaintEvent*  )
         QPainter painter(this);
 
 	if (!isActive) {
-		painter.fillRect(0, 0, width(), height(), QColor(128, 0, 0));
+		painter.fillRect(0, 0, width(), height(), themer()->get_color("VUMeter:overled:inactive"));
 		return;
 	}
 
 	if (width() < THREE_D_LIMIT) {
-		painter.fillRect(0, 0, width(), height(), QColor(255, 0, 0));
+		painter.fillRect(0, 0, width(), height(), themer()->get_color("VUMeter:overled:active"));
 		return;
 	}
 
 	// draw in 3d mode
-	painter.fillRect(0, 0, width(), height(), QColor(  0, 0, 0));
-	painter.fillRect(2, 2, width()-4, height()-4, QColor(255, 0, 0));
-	painter.setPen(QColor(255, 128, 128));
+	QColor col = themer()->get_color("VUMeter:overled:active");
+	painter.fillRect(0, 0, width(), height(), themer()->get_color("VUMeter:background:bar"));
+	painter.fillRect(2, 2, width()-4, height()-4, col);
+
+	col.setRgb(255, 255, 255);
+	col.setAlpha(200);
+	painter.setPen(col);
 	painter.drawLine(1, 1, 1, height()-2);
 	painter.drawLine(1, 1, width()-2, 1);
-	painter.setPen(QColor(192, 0, 0));
+
+	col.setRgb(0, 0, 0);
+	col.setAlpha(100);
+	painter.setPen(col);
 	painter.drawLine(width()-2, 1, width()-2, height()-2);
 	painter.drawLine(1, height()-2, width()-2, height()-2);
 
@@ -425,7 +421,7 @@ VUMeterLevel::VUMeterLevel(QWidget* parent, AudioChannel* chan)
                 : QWidget(parent), m_channel(chan)
 {
 	setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
-        levelClearColor  = QColor("black");
+        levelClearColor  = themer()->get_color("VUMeter:background:bar");
         peak = 0.0;
 	tailDeltaY = peakHoldValue = rms = -120.0;
 	overCount = rmsIndex = 0;
@@ -521,7 +517,7 @@ void VUMeterLevel::paintEvent( QPaintEvent*  )
 
 	// draw Peak hold lines
 	if (PEAK_HOLD_MODE) {
-		painter.setPen(Qt::red);
+		painter.setPen(themer()->get_color("VUMeter:overled:active"));
 		// Comment by Remon: Same here
 		painter.drawLine(2, peakHoldLevel, width() - 3, peakHoldLevel);
 	}
@@ -540,13 +536,17 @@ void VUMeterLevel::resize_level_pixmap( )
 
 	// 3D look if there's enough space
 	if (width() >= THREE_D_LIMIT) {
-		gradient3DLeft.setFinalStop(QPointF(0.0, height()));
-		gradient3DRight.setFinalStop(QPointF(0.0, height()));
+		QColor lcol(Qt::white);
+		QColor rcol(Qt::black);
+		lcol.setAlpha(200);
+		rcol.setAlpha(100);
 
-		painter.fillRect(0, 0, 2, height(), gradient3DLeft);
-		painter.fillRect(width()-2, 0, width(), height(), gradient3DRight);
+		painter.setPen(lcol);
+		painter.drawLine(1, 0, 1, height());
+		painter.setPen(rcol);
+		painter.drawLine(width()-2, 0, width()-2, height());
 
-		painter.setPen(QPen(Qt::black));
+		painter.setPen(QPen(themer()->get_color("VUMeter:background:bar")));
 		painter.drawLine(0, 0, 0, height());
 		painter.drawLine(width()-1, 0, width()-1, height());
 	}
@@ -625,29 +625,13 @@ void VUMeterLevel::create_gradients()
 	float smooth = 0.05;
 
 	gradient2D.setStart(0,0);
-	gradient3DLeft.setStart(0,0);
-	gradient3DRight.setStart(0,0);
 	
-	gradient2D.setColorAt(0.0 , QColor(255,   0,   0));
-	gradient2D.setColorAt(zeroDB-smooth, QColor(255,   0,   0));
-	gradient2D.setColorAt(zeroDB+smooth, QColor(255, 255,   0));
-	gradient2D.setColorAt(msixDB-smooth, QColor(255, 255,   0));
-	gradient2D.setColorAt(msixDB+smooth, QColor(0, 255,   0));
-	gradient2D.setColorAt(1.0 , QColor(  0, 255,   0));
-
-	gradient3DLeft.setColorAt(0.0, QColor(255, 128, 128));
-	gradient3DLeft.setColorAt(zeroDB-smooth, QColor(255, 128,   128));
-	gradient3DLeft.setColorAt(zeroDB+smooth, QColor(255, 255,   128));
-	gradient3DLeft.setColorAt(msixDB-smooth, QColor(255, 255,   128));
-	gradient3DLeft.setColorAt(msixDB+smooth, QColor(128, 255,   128));
-	gradient3DLeft.setColorAt(1.0, QColor(128, 255, 128));
-
-	gradient3DRight.setColorAt(0.0, QColor(192,   0,   0));
-	gradient3DRight.setColorAt(zeroDB-smooth, QColor(192,   0,   0));
-	gradient3DRight.setColorAt(zeroDB+smooth, QColor(192, 192,   0));
-	gradient3DRight.setColorAt(msixDB-smooth, QColor(192, 192,   0));
-	gradient3DRight.setColorAt(msixDB+smooth, QColor(  0, 192,   0));
-	gradient3DRight.setColorAt(1.0, QColor(  0, 192,   0));
+	gradient2D.setColorAt(0.0 , themer()->get_color("VUMeter:foreground:6db"));
+	gradient2D.setColorAt(zeroDB-smooth, themer()->get_color("VUMeter:foreground:6db"));
+	gradient2D.setColorAt(zeroDB+smooth, themer()->get_color("VUMeter:foreground:0db"));
+	gradient2D.setColorAt(msixDB-smooth, themer()->get_color("VUMeter:foreground:0db"));
+	gradient2D.setColorAt(msixDB+smooth, themer()->get_color("VUMeter:foreground:-6db"));
+	gradient2D.setColorAt(1.0 , themer()->get_color("VUMeter:foreground:-60db"));
 }
 
 // accepts dB-values and returns the position in the widget from top

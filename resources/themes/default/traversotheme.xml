@@ -69,6 +69,17 @@
 		<color name="Meter:foreground:light" red="241" green="250" blue="255" alpha="255"/>
 		<color name="Meter:curve:average" red="255" green="0" blue="0" alpha="255" />
 		
+		<color name="VUMeter:background:widget" red="255" green="255" blue="255" alpha="255" />
+		<color name="VUMeter:background:bar" red="0" green="0" blue="0" alpha="255" />
+		<color name="VUMeter:foreground:6db" red="255" green="0" blue="0" alpha="255" />
+		<color name="VUMeter:foreground:0db" red="255" green="255" blue="0" alpha="255" />
+		<color name="VUMeter:foreground:-6db" red="0" green="255" blue="0" alpha="255" />
+		<color name="VUMeter:foreground:-60db" red="0" green="255" blue="255" alpha="255" />
+		<color name="VUMeter:font:active" red="0" green="0" blue="0" alpha="255" />
+		<color name="VUMeter:font:inactive" red="100" green="100" blue="100" alpha="255" />
+		<color name="VUMeter:overled:active" red="255" green="0" blue="0" alpha="255" />
+		<color name="VUMeter:overled:inactive" red="128" green="0" blue="0" alpha="255" />
+		
 		
 		<color name="InfoWidget:background" red="160" green="170" blue="150" alpha="255" />
 		
