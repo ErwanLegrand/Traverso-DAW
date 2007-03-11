@@ -51,7 +51,7 @@ class DragMarker : public Command
 {
 	Q_OBJECT
 public:
-	DragMarker(Marker* marker, double scalefactor, const QString& des);
+	DragMarker(MarkerView* mview, double scalefactor, const QString& des);
 
 	int prepare_actions();
 	int do_action();
@@ -61,7 +61,7 @@ public:
 	int jog();
 
 private :
-	Marker*		m_marker;
+	MarkerView*	m_mview;
 	nframes_t	m_origWhen;
 	nframes_t	m_newWhen;
 	double 		m_scalefactor;
@@ -75,10 +75,10 @@ public slots:
 #include "TimeLineView.moc"
 
 	
-DragMarker::DragMarker(Marker* marker, double scalefactor, const QString& des)
-	: Command(marker, des)
+DragMarker::DragMarker(MarkerView* mview, double scalefactor, const QString& des)
+	: Command(mview->get_marker(), des)
 {
-	m_marker = marker;
+	m_mview = mview;
 	m_scalefactor = scalefactor;
 }
 
@@ -89,12 +89,12 @@ int DragMarker::prepare_actions()
 
 int DragMarker::finish_hold()
 {
-	return 1;
+	return do_action();
 }
 
 int DragMarker::begin_hold()
 {
-	m_origWhen = m_newWhen = m_marker->get_when();
+	m_origWhen = m_newWhen = m_mview->get_marker()->get_when();
 	
 	return 1;
 }
@@ -102,13 +102,13 @@ int DragMarker::begin_hold()
 
 int DragMarker::do_action()
 {
-	m_marker->set_when(m_newWhen);
+	m_mview->get_marker()->set_when(m_newWhen);
 	return 1;
 }
 
 int DragMarker::undo_action()
 {
-	m_marker->set_when(m_origWhen);
+	m_mview->get_marker()->set_when(m_origWhen);
 	return 1;
 }
 
@@ -129,8 +129,8 @@ void DragMarker::move_right(bool )
 int DragMarker::jog()
 {
 	m_newWhen = (uint) (cpointer().scene_x() * m_scalefactor);
-	
-	return do_action();
+	m_mview->set_position(cpointer().scene_x());
+	return 1;
 }
 
 
@@ -335,7 +335,7 @@ void TimeLineView::hoverMoveEvent ( QGraphicsSceneHoverEvent * event )
 Command * TimeLineView::drag_marker()
 {
 	if (m_blinkingMarker) {
-		return new DragMarker(m_blinkingMarker->get_marker(), m_sv->scalefactor, tr("Drag Marker"));
+		return new DragMarker(m_blinkingMarker, m_sv->scalefactor, tr("Drag Marker"));
 	}
 	
 	return 0;

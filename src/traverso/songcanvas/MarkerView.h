@@ -40,12 +40,14 @@ public:
 	void calculate_bounding_rect();
 	void load_theme_data();
 	void set_active(bool);
+	void set_position(int);
 	
 	Marker* get_marker() const {return m_marker;}
 	
 private:
 	Marker* m_marker;
 	QColor	m_fillColor;
+	bool	m_active;
 	
 private slots:
 	void update_position();

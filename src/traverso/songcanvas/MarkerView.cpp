@@ -22,10 +22,12 @@
 #include "MarkerView.h"
 #include "SongView.h"
 #include "Themer.h"
+#include "ClipsViewPort.h"
 
 #include <QColor>
 #include <Marker.h>
 #include <Utils.h>
+#include <QDebug>
 
 #define MARKER_WIDTH 10
 
@@ -34,12 +36,9 @@ MarkerView::MarkerView(Marker* marker, SongView* sv, ViewItem* parentView)
 {
 	m_sv = sv;
 	m_marker = marker;
-	
-	QFontMetrics fm( QFont( "Bitstream Vera Sans", 7) );
-	int descriptionwidth = fm.width(m_marker->get_description());
-	
-	m_boundingRect = QRectF(0, 0, MARKER_WIDTH + descriptionwidth, 6.0);
-	
+	m_active = false;
+
+	calculate_bounding_rect();
 	load_theme_data();
 	
 	connect(m_marker, SIGNAL(positionChanged()), this, SLOT(update_position()));
@@ -49,11 +48,6 @@ void MarkerView::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
 {
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
-	
-	// TODO Add colors to theme file
-	// This kind of thing is an excelent candidate for pixmaps
-	// What about adding a themer->get_pixmap() function ?
-	// The pixmap, and perhaps other stuff should be loaded in load_theme_data() !!
 	
 	painter->save();
 
@@ -66,17 +60,30 @@ void MarkerView::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
 	const QPointF pts[3] = {
 			QPointF(0, 0),
 			QPointF(MARKER_WIDTH, 0),
-			QPointF(5, 9) };
+			QPointF(MARKER_WIDTH/2, 9) };
 
 	painter->drawPolygon(pts, 3);
 	painter->drawText(14, 8, m_marker->get_description());
+
+	if (m_active) {
+		painter->drawLine(MARKER_WIDTH/2, 9, MARKER_WIDTH/2, m_boundingRect.height());
+	}
 
 	painter->restore();
 }
 
 void MarkerView::calculate_bounding_rect()
 {
-	update_position();
+	QFontMetrics fm( QFont( "Bitstream Vera Sans", 7) );
+	int descriptionwidth = fm.width(m_marker->get_description()) + 1;
+
+// 	if (m_active) {
+		m_boundingRect = QRectF(0, 0, MARKER_WIDTH + descriptionwidth,
+				m_sv->get_clips_viewport()->sceneRect().height());
+// 	} else {
+// 		m_boundingRect = QRectF(0, 0, MARKER_WIDTH + descriptionwidth, 9.0);
+// 	}
+
 }
 
 void MarkerView::update_position()
@@ -85,20 +92,31 @@ void MarkerView::update_position()
 	setPos(m_marker->get_when() / m_sv->scalefactor - MARKER_WIDTH / 2, 0);
 }
 
+void MarkerView::set_position(int i)
+{
+	setPos(i - MARKER_WIDTH / 2, 0);
+}
+
 void MarkerView::load_theme_data()
 {
 	m_fillColor = themer()->get_color("Marker:default");
-	calculate_bounding_rect();
+	update_position();
 }
 
 void MarkerView::set_active(bool b)
 {
+	m_active = b;
+
 	if (b) {
 		m_fillColor = themer()->get_color("Marker:blink");
 	} else {
 		m_fillColor = themer()->get_color("Marker:default");
 	}
+
+	calculate_bounding_rect();
 	update();
 }
+
+
 
 //eof

@@ -36,9 +36,9 @@ QDomNode Marker::get_state(QDomDocument doc)
 {
 	QDomElement domNode = doc.createElement("Marker");
 	
-	domNode.setAttribute("position",  QString::number(m_when));
+	domNode.setAttribute("position",  m_when);
 	domNode.setAttribute("description",  m_description);
-	domNode.setAttribute("type",  QString::number(m_type));
+	domNode.setAttribute("type",  m_type);
 
 	return domNode;
 }
@@ -48,10 +48,8 @@ int Marker::set_state(const QDomNode & node)
 	QDomElement e = node.toElement();
 
 	m_description = e.attribute("description", "");
-	QString stype = e.attribute("type", "0");
-	QString swhen = e.attribute("position", "0");
-	m_type = stype.toUInt();
-	m_when = swhen.toUInt();
+	m_type = e.attribute("type", "0").toUInt();
+	m_when = e.attribute("position", "0").toUInt();
 
 	return 1;
 }
