@@ -644,6 +644,24 @@ Command *Song::toggle_mute()
 	return (Command*) 0;
 }
 
+Command *Song::toggle_arm()
+{
+	bool hasArmed = false;
+	foreach(Track* track, m_tracks) {
+		if (track->armed()) hasArmed = true;
+	}
+
+	foreach(Track* track, m_tracks) {
+		if (hasArmed) {
+			track->disarm();
+		} else {
+			track->arm();
+		}
+	}
+
+	return (Command*) 0;
+}
+
 Command* Song::work_next_edge()
 {
 	nframes_t w = m_acmanager->get_last_frame();

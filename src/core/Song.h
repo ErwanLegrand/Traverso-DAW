@@ -191,6 +191,7 @@ public slots :
 	Command* master_gain();
 	Command* toggle_solo();
 	Command* toggle_mute();
+	Command* toggle_arm();
 
 signals:
 	void trackRemoved(Track* );
