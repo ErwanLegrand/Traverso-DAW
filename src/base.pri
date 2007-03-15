@@ -19,6 +19,8 @@ CONFIG += debug
 
 DEFINES += JACK_SUPPORT
 DEFINES += ALSA_SUPPORT
+
+#DEFINES += STATIC_BUILD
 DEFINES += LV2_SUPPORT
 DEFINES += PRECOMPILED_HEADER
 #DEFINES += USE_MEM_CHECKER
@@ -30,6 +32,10 @@ DEFINES += PRECOMPILED_HEADER
 #QMAKE_CXXFLAGS_RELEASE += -mtune=pentium3
 #QMAKE_CXXFLAGS_RELEASE += -mtune=pentium4
 #QMAKE_CXXFLAGS_RELEASE += -mtune=pentium-m
+# nocona seems to work better for core2duo
+# QMAKE_CXXFLAGS_RELEASE += -march=nocona
+# gcc 4.3 has a core2 flag, though it's not released yet.
+#QMAKE_CXXFLAGS_RELEASE += -march=core2
 
 #
 # Use Memory Locking 
