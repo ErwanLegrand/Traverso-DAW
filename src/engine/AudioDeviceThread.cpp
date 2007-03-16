@@ -17,13 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDeviceThread.cpp,v 1.12 2006/10/19 10:47:26 r_sijrier Exp $
+$Id: AudioDeviceThread.cpp,v 1.13 2007/03/16 00:10:26 r_sijrier Exp $
 */
 
 #include "AudioDeviceThread.h"
 
 #include "AudioDevice.h"
 #include "Driver.h"
+#include <Information.h>
 
 #if defined (LINUX_BUILD)
 #include <sys/resource.h>
@@ -78,8 +79,7 @@ protected:
 AudioDeviceThread::AudioDeviceThread(AudioDevice* device)
 {
 	m_device = device;
-	transfer = false;
-	realTime = true;
+	m_realTime = false;
 	setTerminationEnabled(true);
 
 #ifndef MAC_OS_BUILD
@@ -98,6 +98,7 @@ void AudioDeviceThread::run()
 	WatchDogThread watchdog(this);
 	watchdog.start();
 
+	become_realtime(m_realTime);
 	
 	if (m_device->driver->start() < 0) {
 		watchdog.terminate();
@@ -105,8 +106,6 @@ void AudioDeviceThread::run()
 		return;
 	}
 
-	become_realtime(true);
-	
 	while (m_device->run_audio_thread()) {
 		if (m_device->get_driver()->run_cycle() < 0) {
 			PERROR("Driver cycle error, exiting!");
@@ -122,6 +121,7 @@ void AudioDeviceThread::run()
 
 int AudioDeviceThread::become_realtime( bool realtime )
 {
+	m_realTime = realtime;
 #if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 
 	/* RTC stuff */
@@ -129,14 +129,14 @@ int AudioDeviceThread::become_realtime( bool realtime )
 		struct sched_param param;
 		param.sched_priority = 70;
 		if (pthread_setschedparam (pthread_self(), SCHED_FIFO, &param) != 0) {
-			qWarning("Unable to set Audiodevice Thread to realtime priority!!!\n"
-				 "This most likely results in unreliable playback/capture and\n"
-				 "lots of buffer underruns (== sound drops).\n"
-				 "In the worst case the program can even abort!\n"
-				 "Please make sure you run this program with realtime privileges!!!\n");
+			info().critical(tr("Unable to set Audiodevice Thread to realtime priority!!!"
+				"This most likely results in unreliable playback/capture and"
+				"lots of buffer underruns (== sound drops)."
+				"In the worst case the program can even malfunction!"
+				"Please make sure you run this program with realtime privileges!!!"));
 			return -1;
 		} else {
-			qDebug("Running realtime");
+			printf("AudioThread: Running with realtime priority\n");
 			return 1;
 		}
 	}
@@ -159,3 +159,5 @@ void AudioDeviceThread::run_on_cpu( int cpu )
 	}
 #endif
 }
+
+//eof

@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <Song.h>
 #include <Track.h>
+#include <AudioClip.h>
 
 #include <PluginSelectorDialog.h>
 
@@ -101,6 +102,7 @@ void TrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 void TrackView::add_new_audioclipview( AudioClip * clip )
 {
 	PENTER;
+	printf("TrackView:: Adding new View for clip %lld\n", clip->get_id());
 	AudioClipView* clipView = new AudioClipView(m_sv, this, clip);
 	m_clipViews.append(clipView);
 }
@@ -110,7 +112,7 @@ void TrackView::remove_audioclipview( AudioClip * clip )
 	PENTER;
 	foreach(AudioClipView* view, m_clipViews) {
 		if (view->get_clip() == clip) {
-			printf("Removing clipview from track %d\n", m_track->get_id());
+			printf("Removing clipview for clip %lld\n", clip->get_id());
 			scene()->removeItem(view);
 			m_clipViews.removeAll(view);
 			delete view;

@@ -17,38 +17,25 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: BusMonitor.cpp,v 1.7 2007/03/05 20:51:23 r_sijrier Exp $
+$Id: BusMonitor.cpp,v 1.8 2007/03/16 00:10:26 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
 
 #include "BusMonitor.h"
-#include "Interface.h"
 #include "VUMeter.h"
+#include <QHBoxLayout>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
 
-BusMonitor::BusMonitor(QWidget* parent, Interface* iface)
-		: QWidget( parent)
+BusMonitor::BusMonitor(QWidget* parent)
+	: QWidget( parent)
 {
 	PENTERCONS;
-	m_interface = iface;
-	layout = new QHBoxLayout(this);
-	layout->setMargin(0);
-
-	vumeterLayoutWidget = new QWidget(this);
-	vumeterLayout = new QHBoxLayout(vumeterLayoutWidget);
-
-	vumeterLayout->setMargin(0);
-
-	vumeterLayoutWidget->setLayout(vumeterLayout);
-
-	layout->addWidget(vumeterLayoutWidget);
-	setLayout(layout);
-
+	
 	setAutoFillBackground(false);
 	
 	create_vu_meters();
@@ -62,58 +49,66 @@ BusMonitor::~BusMonitor()
 	PENTERDES;
 }
 
-void BusMonitor::resizeEvent( QResizeEvent * )
+void BusMonitor::resizeEvent( QResizeEvent* e)
 {
+	QWidget::resizeEvent(e);
 	PENTER2;
 }
 
 QSize BusMonitor::sizeHint() const
 {
-	return QSize(120, 50);
+	return QSize( (inMeters.size() + outMeters.size()) * 50, 140);
 }
 
 QSize BusMonitor::minimumSizeHint() const
 {
-	return QSize(80, 50);
+	return QSize((inMeters.size() + outMeters.size()) * 20, 50);
 }
 
 void BusMonitor::create_vu_meters( )
 {
 	PENTER;
 
-	vumeterLayout->setEnabled(false);
+	QLayout* lay = layout();
+	
+	if (lay) delete lay;
 
+	QHBoxLayout* layout = new QHBoxLayout(this);
+	layout->setMargin(0);
+	setLayout(layout);
+	
 	while( ! inMeters.isEmpty() ) {
 		VUMeter* meter = inMeters.takeFirst();
-		vumeterLayout->removeWidget( meter );
+		layout->removeWidget( meter );
 		delete meter;
 	}
 
 	while ( ! outMeters.isEmpty() ) {
 		VUMeter* meter = outMeters.takeFirst();
-		vumeterLayout->removeWidget( meter );
+		layout->removeWidget( meter );
 		delete meter;
 	}
-
+	
+	layout->addStretch(1);
 
 	QStringList list = audiodevice().get_capture_buses_names();
 	foreach(QString name, list)
 	{
 		AudioBus* bus = audiodevice().get_capture_bus(name.toAscii());
-		VUMeter* meter = new VUMeter( vumeterLayoutWidget, bus );
-		vumeterLayout->addWidget(meter);
+		VUMeter* meter = new VUMeter( this, bus );
+		layout->addWidget(meter);
 		inMeters.append(meter);
 	}
 
 	list = audiodevice().get_playback_buses_names();
 	foreach(QString name, list)
 	{
-		VUMeter* meter = new VUMeter( vumeterLayoutWidget, audiodevice().get_playback_bus(name.toAscii()) );
-		vumeterLayout->addWidget(meter);
+		VUMeter* meter = new VUMeter( this, audiodevice().get_playback_bus(name.toAscii()) );
+		layout->addWidget(meter);
 		outMeters.append(meter);
 	}
-
-	vumeterLayout->setEnabled(true);
+	
+	layout->addSpacing(4);
 }
 
 

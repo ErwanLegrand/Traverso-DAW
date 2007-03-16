@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -61,6 +61,36 @@ static const int MINIMUM_BUS_MONITOR_HEIGHT = 90;
 static const int MINIMUM_FLOATING_BUS_MONITOR_HEIGHT = 120;
 
 
+class HistoryWidget : public QUndoView
+{
+public:
+	HistoryWidget(QUndoGroup* group, QWidget* parent)
+		: QUndoView(group, parent) 
+	{
+	}
+	
+protected:
+	QSize sizeHint() const {
+		return QSize(120, 140);
+	}
+	QSize minimumSizeHint() const
+	{
+		return QSize(90, 90);
+	}
+};
+
+
+Interface* Interface::m_instance = 0;
+
+Interface* Interface::instance()
+{
+	if (m_instance == 0) {
+		m_instance = new Interface();
+	}
+
+	return m_instance;
+}
+
 Interface::Interface()
 	: QMainWindow( 0 )
 {
@@ -78,11 +108,10 @@ Interface::Interface()
 	// HistoryView 
 	historyDW = new QDockWidget(tr("History"), this);
 	historyDW->setObjectName("HistoryDockWidget");
-	historyWidget = new QUndoView(pm().get_undogroup(), historyDW);
+	historyWidget = new HistoryWidget(pm().get_undogroup(), historyDW);
 	historyWidget->setFocusPolicy(Qt::NoFocus);
 	historyDW->setWidget(historyWidget);
-	addDockWidget(Qt::TopDockWidgetArea, historyDW);
-	historyWidget->resize(100, 70);
+	addDockWidget(Qt::RightDockWidgetArea, historyDW);
 	
 	// AudioSources View
 	AudioSourcesDW = new QDockWidget(tr("AudioSources"), this);
@@ -103,6 +132,7 @@ Interface::Interface()
 	correlationMeter->setFocusPolicy(Qt::NoFocus);
 	correlationMeterDW->setWidget(correlationMeter);
 	addDockWidget(Qt::TopDockWidgetArea, correlationMeterDW);
+	correlationMeterDW->hide();
 
 	spectralMeterDW = new QDockWidget(tr("FFT Spectrum"), this);
 	spectralMeterDW->setObjectName("SpectralMeterDockWidget");
@@ -110,14 +140,15 @@ Interface::Interface()
 	spectralMeter->setFocusPolicy(Qt::NoFocus);
 	spectralMeterDW->setWidget(spectralMeter);
 	addDockWidget(Qt::TopDockWidgetArea, spectralMeterDW);
+	spectralMeterDW->hide();
 
 	// BusMonitor
 	busMonitorDW = new QDockWidget("Master VU", this);
 	busMonitorDW->setObjectName("Master VU");
 
-	busMonitor = new BusMonitor(busMonitorDW, this);
+	busMonitor = new BusMonitor(busMonitorDW);
 	busMonitorDW->setWidget(busMonitor);
-	addDockWidget(Qt::TopDockWidgetArea, busMonitorDW);
+	addDockWidget(Qt::RightDockWidgetArea, busMonitorDW);
 	
 	// Help widget
 	helpWindow = new Help(this);
@@ -140,7 +171,7 @@ Interface::Interface()
 	
 	/** Read in the Interface settings and apply them
 	 */
-	resize(config().get_property("Interface", "size", QSize(800, 600)).toSize());
+	resize(config().get_property("Interface", "size", QSize(900, 600)).toSize());
 	move(config().get_property("Interface", "pos", QPoint(200, 200)).toPoint());
 	restoreState(config().get_property("Interface", "windowstate", "").toByteArray());
 
@@ -173,11 +204,32 @@ void Interface::set_project(Project* project)
 		m_projectSaveAction->setEnabled(true);
 		m_projectSongManagerAction->setEnabled(true);
 		m_projectExportAction->setEnabled(true);
+		
+		// the project's songs will be deleted _after_
+		// the project has been deleted, which will happen after this
+		// function returns. When the songs have been disconnected from the
+		// audiodevice, delete_songwidget(Song* song) is called for all the songs
+		// in the project. Meanwhile, disable updates of the SongWidgets (and implicitily
+		// all their childrens) to avoid the (unlikely) situation of a paint event that 
+		// refers to data that was part of the then deleted project!
+		// The reason to not delete the SongWidgets right now is that the newly loaded project
+		// now will be able to create and show it's songcanvas first, which improves the 
+		// users experience a lot!
+		foreach(SongWidget* sw, m_songWidgets) {
+			sw->setUpdatesEnabled(false);
+		}
 	} else {
 		m_projectSaveAction->setEnabled(false);
 		m_projectSongManagerAction->setEnabled(false);
 		m_projectExportAction->setEnabled(false);
 		setWindowTitle("Traverso");
+		// No project loaded, the currently  loaded project will be deleted after this
+		// function returns, if the songcanvas is still painting (due playback e.g.) we
+		// could get a crash due canvas items refering to data that was managed by the project.
+		// so let's delete the SongWidgets before the project is deleted!
+		foreach(SongWidget* sw, m_songWidgets) {
+			delete_songwidget(sw->get_song());
+		}
 	}
 }
 
@@ -382,7 +434,7 @@ Command * Interface::show_context_menu( )
 		}
 		
 		QString className = item->metaObject()->className();
-		if (! className.contains("View") ) {
+		if (! className.contains("View") || className.contains("ViewPort") ) {
 			continue;
 		}
 		
@@ -397,11 +449,9 @@ Command * Interface::show_context_menu( )
 		if (i==0) {
 			toplevelmenu = menu;
 		} else {
-			if (!className.contains("ViewPort")) {
-				toplevelmenu->addSeparator();
-				QAction* action = toplevelmenu->insertMenu(action, menu);
-				action->setText(className.remove("View"));
-			}
+			toplevelmenu->addSeparator();
+			QAction* action = toplevelmenu->insertMenu(action, menu);
+			action->setText(className.remove("View"));
 		}
 	}
 	
@@ -420,7 +470,8 @@ QMenu* Interface::create_context_menu(QObject* item )
 	
 	connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(process_context_menu_action(QAction*)));
 	
-	QList<MenuData > list = ie().get_contextitem_actionlist( item );
+	QList<MenuData > list = ie().create_menudata_for( item );
+	
 	
 	qSort(list.begin(), list.end(), MenuData::smaller);
 
@@ -432,12 +483,63 @@ QMenu* Interface::create_context_menu(QObject* item )
 	menuAction->setEnabled(false);
 	menu->addSeparator();
 	menu->setFont(QFont("Bitstream Vera Sans", 8));
-	foreach(MenuData data, list) {
-		QString text = QString(data.description + "  " + data.keysequence);
-		QAction* action = new QAction(this);
-		action->setText(text);
-		action->setData(data.keysequence);
-		menu->addAction(action);
+	
+	QHash<QString, QList<MenuData>* > submenus;
+	
+	for (int i=0; i<list.size(); ++i) {
+		MenuData data = list.at(i);
+		
+		// Merge entries with equall action, but different key facts.
+		for (int j=i+1; j<list.size(); ++j) {
+			if (list.at(j).description == data.description) {
+				printf("Found equall description! %s\n", QS_C(data.description));
+				data.keysequence = data.keysequence + QByteArray(", " + list.at(j).keysequence);
+				list.removeAt(j);
+				break;
+			}
+		}
+		
+		if ( ! data.submenu.isEmpty() ) {
+			QList<MenuData>* list;
+			if ( ! submenus.contains(data.submenu)) {
+				submenus.insert(data.submenu, new QList<MenuData>());
+			}
+			list = submenus.value(data.submenu);
+			list->append(data);
+		} else {
+			QString text = QString(data.description + "  " + data.keysequence);
+			QAction* action = new QAction(this);
+			action->setText(text);
+			action->setData(data.keysequence);
+			menu->addAction(action);
+		}
+	}
+	
+	QList<QString> keys = submenus.keys();
+	foreach(QString key, keys) {
+		QList<MenuData>* list = submenus.value(key);
+		
+		qSort(list->begin(), list->end(), MenuData::smaller);
+
+		QMenu* sub = new QMenu();
+		sub->setFont(QFont("Bitstream Vera Sans", 8));
+		
+		QFont font("Bitstream Vera Sans", 8);
+		font.setBold(true);
+		sub->menuAction()->setFont(font);
+		
+		QAction* action = menu->insertMenu(0, sub);
+		action->setText(key);
+		printf("list size %d\n", list->size());
+		foreach(MenuData data, *list) {
+			QAction* action = new QAction(this);
+			QString text = QString(data.description + "  " + data.keysequence);
+			action->setText(text);
+			action->setData(data.keysequence);
+			sub->addAction(action);
+		}
+		
+		delete list;
 	}
 	
 	return menu;
@@ -520,7 +622,7 @@ void Interface::set_bus_out( QAction* action )
 	}
 }
 
-Command * Interface::select_fade_in_shape( )
+void Interface::select_fade_in_shape( )
 {
 	QMenu* menu = m_contextMenus.value("fadeInSelector");
 	
@@ -531,11 +633,9 @@ Command * Interface::select_fade_in_shape( )
 		
 	
 	menu->exec(QCursor::pos());
-	
-	return (Command*) 0;
 }
 
-Command * Interface::select_fade_out_shape( )
+void Interface::select_fade_out_shape( )
 {
 	QMenu* menu = m_contextMenus.value("fadeOutSelector");
 	
@@ -546,8 +646,6 @@ Command * Interface::select_fade_out_shape( )
 		
 	
 	menu->exec(QCursor::pos());
-	
-	return (Command*) 0;
 }
 
 

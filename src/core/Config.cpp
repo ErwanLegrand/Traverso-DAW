@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Config.cpp,v 1.10 2007/03/01 16:06:44 r_sijrier Exp $
+$Id: Config.cpp,v 1.11 2007/03/16 00:14:43 r_sijrier Exp $
 */
 
 #include "Config.h"
@@ -27,8 +27,6 @@ $Id: Config.cpp,v 1.10 2007/03/01 16:06:44 r_sijrier Exp $
 #include <QSettings>
 #include <QString>
 #include <QDir>
-#include <QFileDialog>
-#include <QMessageBox>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -84,38 +82,6 @@ void Config::check_and_load_configuration( )
 	// a change, overwrite with the newest version...
 	if (m_configs.value("ConfigFileVersion").toString() != CONFIG_FILE_VERSION) {
 		reset_settings();
-	}
-
-	QString projects_path = m_configs.value("Project/directory").toString();
-
-	QDir dir;
-	if ( (projects_path.isEmpty()) || (!dir.exists(projects_path)) ) {
-		if (projects_path.isEmpty())
-			projects_path = QDir::homePath();
-
-		QString newPath = QFileDialog::getExistingDirectory(0,
-				tr("Choose an existing or create a new Project Directory"),
-				projects_path );
-		if (dir.exists(newPath)) {
-			QMessageBox::information( 0, 
-					tr("Traverso - Information"), 
-					tr("Using existing Project directory: %1\n").arg(newPath), 
-					"OK", 
-					0 );
-		} else if (!dir.mkpath(newPath)) {
-			QMessageBox::warning( 0, 
-					      tr("Traverso - Warning"), 
-					      tr("Unable to create Project directory! \n") +
-							      tr("Please check permission for this directory: %1").arg(newPath) );
-			return;
-		} else {
-			QMessageBox::information( 0, 
-					tr("Traverso - Information"), 
-					tr("Created new Project directory for you here: %1\n").arg(newPath), 
-					"OK", 
-					0 );
-		}
-		set_property("Project", "directory", newPath);
 	}
 }
 

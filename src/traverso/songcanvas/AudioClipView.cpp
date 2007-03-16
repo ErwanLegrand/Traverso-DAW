@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -17,14 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.cpp,v 1.30 2007/02/27 19:52:22 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
 
 #include <QPainter>
 #include <QPainterPath>
-#include <QGraphicsScene>
 
 #include "AudioClipView.h"
 #include "SongView.h"
@@ -36,11 +34,9 @@ $Id: AudioClipView.cpp,v 1.30 2007/02/27 19:52:22 r_sijrier Exp $
 #include <Config.h>
 #include <FadeCurve.h>
 #include <Curve.h>
+#include <Interface.h>
 
-#include <MoveClip.h>
 #include <MoveEdge.h>
-#include <SplitClip.h>
-#include <Fade.h>
 
 
 // Always put me below _all_ includes, this is needed
@@ -230,7 +226,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		int availpeaks = peak->calculate_peaks(buffers[chan], m_song->get_hzoom(), xstart * m_sv->scalefactor + m_clip->get_source_start_frame(), peakdatacount);
 		
 		if (peakdatacount != availpeaks) {
-			PWARN("peakdatacount != availpeaks (%d, %d)", peakdatacount, availpeaks);
+// 			PWARN("peakdatacount != availpeaks (%d, %d)", peakdatacount, availpeaks);
 		}
 
 		if (availpeaks <= 0) {
@@ -449,17 +445,10 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 void AudioClipView::draw_clipinfo_area(QPainter* p, int xstart, int pixelcount)
 {
 	// clip info area bg
-	if (m_clip->get_track()->is_active())
-		p->fillRect(xstart, 0, pixelcount, m_infoAreaHeight, themer()->get_color("AudioClip:clipinfobackground"));
-	else
-		p->fillRect(xstart, 0, pixelcount, m_infoAreaHeight, themer()->get_color("AudioClip:clipinfobackground:inactive"));
-
+	p->fillRect(xstart, 0, pixelcount, m_infoAreaHeight, themer()->get_color("AudioClip:clipinfobackground:inactive"));
 
 	// Draw Clip Info Area
-	if (m_clip->get_track()->is_active())
-		p->drawPixmap(0, 0, clipNamePixmapActive, 0, 0, 600, m_infoAreaHeight);
-	else
-		p->drawPixmap(0, 0, clipNamePixmapInActive, 0, 0, 600, m_infoAreaHeight);
+	p->drawPixmap(0, 0, clipNamePixmapInActive, 0, 0, 600, m_infoAreaHeight);
 }
 
 
@@ -596,13 +585,6 @@ void AudioClipView::update_start_pos()
 	setPos(m_clip->get_track_start_frame() / m_sv->scalefactor, m_tv->get_childview_y_offset());
 }
 
-
-Command* AudioClipView::drag()
-{
-	return new MoveClip(m_sv, this, m_clip);
-}
-
-
 Command* AudioClipView::drag_edge()
 {
 	Q_ASSERT(m_song);
@@ -617,14 +599,6 @@ Command* AudioClipView::drag_edge()
 
 	return me;
 }
-
-
-Command* AudioClipView::split()
-{
-	Q_ASSERT(m_song);
-	return new SplitClip(m_sv, m_clip);
-}
-
 
 Command * AudioClipView::fade_range()
 {
@@ -670,11 +644,25 @@ void AudioClipView::start_peak_data_loading()
 	peak->start_peak_loading();
 }
 
-//eof
-
 void AudioClipView::hoverEnterEvent(QGraphicsSceneHoverEvent * event)
 {
 	update(m_boundingRect);
 }
 
+
+Command * AudioClipView::select_fade_in_shape( )
+{
+	Interface::instance()->select_fade_in_shape();
+	
+	return 0;
+}
+
+Command * AudioClipView::select_fade_out_shape( )
+{
+	Interface::instance()->select_fade_out_shape();
+	
+	return 0;
+}
+
+//eof
 

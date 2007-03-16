@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.h,v 1.14 2007/02/23 13:54:33 r_sijrier Exp $
+$Id: AudioClipView.h,v 1.15 2007/03/16 00:10:26 r_sijrier Exp $
 */
 
 #ifndef AUDIO_CLIP_VIEW_H
@@ -39,10 +39,10 @@ class Peak;
 class AudioClipView : public ViewItem
 {
 	Q_OBJECT
-	Q_CLASSINFO("drag", tr("Move Clip"))
 	Q_CLASSINFO("drag_edge", tr("Move Edge"))
-	Q_CLASSINFO("split", tr("Split"))
-	Q_CLASSINFO("fade_range", tr("Fade In/Out"))
+	Q_CLASSINFO("fade_range", tr("In/Out: Range"))
+	Q_CLASSINFO("select_fade_in_shape", tr("In: Select shape"));
+	Q_CLASSINFO("select_fade_out_shape", tr("Out: Select shape"));
 
 public:
 	AudioClipView(SongView* view, TrackView* parent, AudioClip* clip);
@@ -111,10 +111,10 @@ public slots:
 	void update_start_pos();
 	void position_changed();
 	
-	Command* drag();
 	Command* drag_edge();
-	Command* split();
 	Command* fade_range();
+	Command* select_fade_in_shape();
+	Command* select_fade_out_shape();
 	
 private slots:
 	void update_progress_info(int progress);

@@ -96,7 +96,11 @@ Traverso::Traverso(int &argc, char **argv )
 	prepare_audio_device();
 	
 	create_interface();
+	
+	audiodevice().make_audiothread_realtime(true);
 
+	QMetaObject::invokeMethod(&pm(), "start", Qt::QueuedConnection);
+	
 	setQuitOnLastWindowClosed(false);
 	connect(this, SIGNAL(lastWindowClosed()), &pm(), SLOT(exit()));
 }
@@ -104,16 +108,15 @@ Traverso::Traverso(int &argc, char **argv )
 Traverso::~Traverso()
 {
 	PENTERDES;
-	delete iface;
+	delete Interface::instance();
 }
 
 
 void Traverso::create_interface( )
 {
 	themer()->load();
-	iface = new Interface();
+	Interface* iface = Interface::instance();
 	iface->show();
-	QMetaObject::invokeMethod(&pm(), "start", Qt::QueuedConnection);
 }
 
 void Traverso::shutdown( int signal )
@@ -132,7 +135,7 @@ void Traverso::shutdown( int signal )
 			break;
 		case SIGSEGV:
 			printf("\nCatched the SIGSEGV signal!\n");
-			QMessageBox::critical( iface, "Crash",
+			QMessageBox::critical( Interface::instance(), "Crash",
 				"The program made an invalid operation and crashed :-(\n"
 				"Please, report this to us!");
 	}

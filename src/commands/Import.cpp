@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Import.cpp,v 1.13 2007/01/24 00:33:59 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -35,14 +34,14 @@ $Id: Import.cpp,v 1.13 2007/01/24 00:33:59 r_sijrier Exp $
 
 
 Import::Import(Track* track)
-		: Command(track, QObject::tr("Import Audio File"))
+	: Command(track, tr("Import Audio File"))
 {
 	m_track = track;
 }
 
 
 Import::Import(Track* track, const QString& fileName)
-		: Command(track, QObject::tr("Import Audio File"))
+	: Command(track, tr("Import Audio File"))
 {
 	m_track = track;
 	m_fileName = fileName;
@@ -56,9 +55,9 @@ int Import::prepare_actions()
 	PENTER;
 	if (m_fileName.isEmpty()) {
 		m_fileName = QFileDialog::getOpenFileName(0,
-				QObject::tr("Import audio source"),
+				tr("Import audio source"),
 				getenv("HOME"),
-				QObject::tr("All files (*);;Audio files (*.wav *.flac)"));
+				tr("All files (*);;Audio files (*.wav *.flac)"));
 	}
 
 	if (m_fileName.isEmpty()) {
@@ -78,17 +77,17 @@ int Import::prepare_actions()
 		return -1;
 	}
 
-	ReadSource* source = project->get_audiosource_manager()->get_readsource(m_fileName);
+	ReadSource* source = resources_manager()->get_readsource(m_fileName);
 	
 	if (! source ) {
 		PMESG("AudioSource not found in acm, requesting new one");
-		source = project->get_audiosource_manager()->new_readsource(dir, name);
+		source = resources_manager()->create_new_readsource(dir, name);
 		if (! source) {
 			PERROR("Can't import audiofile %s", QS_C(m_fileName));
 		}
 	}
 
-	m_clip = project->get_audiosource_manager()->new_audio_clip(name);
+	m_clip = resources_manager()->new_audio_clip(name);
 	m_clip->set_audio_source(source);
 	m_clip->set_song(m_track->get_song());
 	m_clip->set_track(m_track);
@@ -107,6 +106,8 @@ int Import::do_action()
 	
 	ie().process_command(m_track->add_clip(m_clip, false));
 	
+	resources_manager()->undo_remove_clip_from_database(m_clip->get_id());
+	
 	return 1;
 }
 
@@ -116,6 +117,8 @@ int Import::undo_action()
 	PENTER;
 		
 	ie().process_command(m_track->remove_clip(m_clip, false));
+	
+	resources_manager()->remove_clip_from_database(m_clip->get_id());
 	
 	return 1;
 }

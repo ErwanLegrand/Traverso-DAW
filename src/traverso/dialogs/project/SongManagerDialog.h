@@ -35,6 +35,10 @@ public:
         SongManagerDialog(QWidget* parent = 0);
         ~SongManagerDialog();
 
+protected:
+	void hideEvent ( QHideEvent * event );
+	void showEvent ( QShowEvent * event );
+
 public slots:
         void update_song_list();
 

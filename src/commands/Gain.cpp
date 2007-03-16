@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Gain.cpp,v 1.9 2007/01/24 00:35:07 r_sijrier Exp $
+$Id: Gain.cpp,v 1.10 2007/03/16 00:09:43 r_sijrier Exp $
 */
 
 #include "Gain.h"
@@ -26,21 +26,38 @@ $Id: Gain.cpp,v 1.9 2007/01/24 00:35:07 r_sijrier Exp $
 #include "ContextPointer.h"
 #include "Mixer.h"
 #include <ViewPort.h>
-
+#include <Track.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
 
-Gain::Gain(ContextItem* context, const QString& des, float gain)
-	: Command(context, des)
+Gain::Gain(ContextItem* context, QVariantList args)
+	: Command(context, "")
 {
 	gainObject = context;
+	
+	float gain = -1;
+	QString des = "";
+	
+	if (args.size() > 0) {
+		gain = args.at(0).toDouble();
+		des = QString(context->metaObject()->className()) + ": Reset gain";
+	} else {
+		des = QString(context->metaObject()->className()) + " Gain";
+	}
+	
+	setText(des);
 	
 	if (gain >= 0) {
 		newGain = gain;
 		get_gain_from_object(origGain);
+	}
+	
+	Track* track = qobject_cast<Track*>(context);
+	if (track && origGain == 0.5) {
+		newGain = 1.0;
 	}
 }
 

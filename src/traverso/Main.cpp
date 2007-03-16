@@ -17,13 +17,14 @@
 	along with this program; if not, write to the Free Software
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-	$Id: Main.cpp,v 1.6 2007/02/27 19:48:56 r_sijrier Exp $
+	$Id: Main.cpp,v 1.7 2007/03/16 00:10:26 r_sijrier Exp $
 */
 
 #include <signal.h>
 
 #include <QLocale>
 #include <QTranslator>
+#include <QtPlugin>
 #include "Traverso.h"
 #include "Main.h"
 #include "../config.h"
@@ -53,6 +54,10 @@ void catch_signal(int sig_num)
 }
 #endif
 
+#if defined (STATIC_BUILD)
+Q_IMPORT_PLUGIN(tcp_traversocommands);
+#endif
+		
 int main( int argc, char **argv )
 {
 	TRACE_OFF();

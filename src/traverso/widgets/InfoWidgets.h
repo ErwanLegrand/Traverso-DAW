@@ -160,6 +160,8 @@ protected slots:
 	void set_project(Project* project);
 	
 private slots:
+	void song_added(Song* song);
+	void song_removed(Song* song);
 	void update_songs();
 	void change_index_to(Song* song);
 	void index_changed(int index);
@@ -195,6 +197,7 @@ private slots:
 
 class SongInfo : public InfoWidget
 {
+	Q_OBJECT
 public:
 	SongInfo(QWidget* parent);
 	
@@ -202,6 +205,13 @@ protected:
 	void set_orientation(Qt::Orientation orientation);
 	QSize sizeHint() const;	
 	
+protected slots:
+	void set_song(Song* );
+	
+private slots:
+	void song_snap_changed();
+	void snap_combo_index_changed(int index);
+
 private:
 	PlayHeadInfo* 	m_playhead;
 	SongSelector* 	m_selector;

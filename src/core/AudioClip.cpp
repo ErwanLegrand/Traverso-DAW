@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier
+Copyright (C) 2005-2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.cpp,v 1.60 2007/02/23 13:49:53 r_sijrier Exp $
 */
 
 #include <cfloat>
@@ -38,7 +37,7 @@ $Id: AudioClip.cpp,v 1.60 2007/02/23 13:49:53 r_sijrier Exp $
 #include "DiskIO.h"
 #include "Export.h"
 #include "AudioClipManager.h"
-#include "AudioSourceManager.h"
+#include "ResourcesManager.h"
 #include "Curve.h"
 #include "FadeCurve.h"
 #include "Tsar.h"
@@ -77,7 +76,7 @@ AudioClip::AudioClip(const QDomNode& node)
 	QDomNode clipNode = node.firstChild();
 	
 	// It makes sense to set these values at this time allready
-	// they are for example used by the AudioSourcesManager!
+	// they are for example used by the ResourcesManager!
 	QDomElement e = node.toElement();
 	m_id = e.attribute("id", "").toLongLong();
 	m_readSourceId = e.attribute("source", "").toLongLong();
@@ -121,6 +120,8 @@ int AudioClip::set_state(const QDomNode& node)
 	m_normfactor =  e.attribute( "normfactor", "1.0" ).toFloat();
 
 	isSelected = e.attribute("selected", "0").toInt(); 
+	m_readSourceId = e.attribute("source", "").toLongLong();
+	isMuted =  e.attribute( "mute", "" ).toInt();
 
 	sourceStartFrame = e.attribute( "sourcestart", "" ).toUInt();
 	m_length = e.attribute( "length", "0" ).toUInt();
@@ -522,29 +523,9 @@ int AudioClip::init_recording( QByteArray name )
 	return 1;
 }
 
-Command* AudioClip::remove_from_selection()
-{
-	return new ClipSelection(this, "remove_from_selection", tr("Selection: Remove Clip"));
-}
-
-Command * AudioClip::add_to_selection()
-{
-	return new ClipSelection(this, "add_to_selection", tr ("Selection: Add Clip"));
-}
-
-Command* AudioClip::select()
-{
-	return new ClipSelection(this, "select_clip", tr("Select Clip"));
-}
-
 Command* AudioClip::mute()
 {
 	return new PCommand(this, "toggle_mute", tr("Toggle Mute"));
-}
-
-Command* AudioClip::reset_gain()
-{
-	return new Gain(this, tr("Clip Gain"), 1.0);
 }
 
 Command* AudioClip::reset_fade_in()
@@ -566,17 +547,6 @@ Command* AudioClip::reset_fade_both()
 	return (Command*) 0;
 }
 
-Command* AudioClip::gain()
-{
-	return new Gain(this, tr("Clip Gain"));
-}
-
-Command* AudioClip::copy()
-{
-	Q_ASSERT(m_song);
-	return new CopyClip(m_song, this);
-}
-
 AudioClip * AudioClip::prev_clip( )
 {
 	Q_ASSERT(m_track);
@@ -596,9 +566,9 @@ AudioClip* AudioClip::create_copy( )
 	Q_ASSERT(m_track);
 	QDomDocument doc("AudioClip");
 	QDomNode clipState = get_state(doc);
-	AudioClip* clip = new AudioClip(clipState);
+	AudioClip* clip = new AudioClip(tr("Copy of - ") + m_name);
 	clip->set_song(m_song);
-	clip->set_name( clip->get_name().prepend(tr("Copy of - ")) );
+	clip->set_track(m_track);
 	clip->set_state(clipState);
 	return clip;
 }
@@ -656,14 +626,16 @@ void AudioClip::finish_write_source( WriteSource * ws )
 		int channelCount, fileCount;
 		channelCount = fileCount = captureBus->get_channel_count(); 
 		
-		AudioSourceManager* asmanager = pm().get_project()->get_audiosource_manager();
-		ReadSource* rs = asmanager->new_readsource(dir,
-							name,
-							channelCount,
-							fileCount,
-							m_song->get_id(), 
-							audiodevice().get_bit_depth(), 
-							audiodevice().get_sample_rate() );
+		ReadSource* rs;
+		rs = resources_manager()->create_new_readsource(
+				dir,
+				name,
+				channelCount,
+				fileCount,
+				m_song->get_id(), 
+				audiodevice().get_bit_depth(), 
+				audiodevice().get_sample_rate() );
+		
 		if (rs) {
 			set_audio_source(rs);
 			m_song->get_diskio()->register_read_source( m_readSource );
@@ -716,6 +688,8 @@ void AudioClip::set_song( Song * song )
 	m_song = song;
 	if (m_readSource) {
 		m_song->get_diskio()->register_read_source( m_readSource );
+	} else {
+		PWARN("AudioClip::set_song() : Setting Song, but no ReadSource available!!");
 	}
 	
 	set_history_stack(m_song->get_history_stack());
@@ -930,12 +904,6 @@ void AudioClip::private_remove_fade( FadeCurve * fade )
 qint64 AudioClip::get_id( ) const
 {
 	return m_id;
-}
-
-
-int AudioClip::ref( )
-{
-	return m_refcount++;
 }
 
 int AudioClip::get_ref_count( ) const

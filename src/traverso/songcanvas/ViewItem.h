@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewItem.h,v 1.9 2007/02/23 13:55:07 r_sijrier Exp $
+$Id: ViewItem.h,v 1.10 2007/03/16 00:10:26 r_sijrier Exp $
 */
 
 #ifndef VIEW_ITEM_H
@@ -74,6 +74,8 @@ public:
 	 *	to make the theme change visible.
 	 */
 	virtual void load_theme_data() {};
+	
+	SongView* get_songview() const {return m_sv;}
 
 protected:
 

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.12 2007/01/11 11:50:21 r_sijrier Exp $
+$Id: AudioDevice.h,v 1.13 2007/03/16 00:10:26 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -53,6 +53,7 @@ public:
 
 	void add_client(Client* client);
 	void remove_client(Client* client);
+	void make_audiothread_realtime(bool realtime);
 
 	/**
 	 * Get the Playback AudioBus instance with name \a name.

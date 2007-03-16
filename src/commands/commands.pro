@@ -1,7 +1,6 @@
 SOURCES += AddRemove.cpp \
 ClipSelection.cpp \
 CommandGroup.cpp \
-CopyClip.cpp \
 Fade.cpp \
 Gain.cpp \
 Import.cpp \
@@ -10,12 +9,12 @@ MoveEdge.cpp \
 PCommand.cpp \
 SplitClip.cpp \
 TrackPan.cpp \
-Zoom.cpp
+Zoom.cpp \
+AudioClipExternalProcessing.cpp
 HEADERS += AddRemove.h \
 ClipSelection.h \
 CommandGroup.h \
 commands.h \
-CopyClip.h \
 Fade.h \
 Gain.h \
 Import.h \
@@ -25,7 +24,8 @@ PCommand.h \
 precompile.h \
 SplitClip.h \
 TrackPan.h \
-Zoom.h
+Zoom.h \
+AudioClipExternalProcessing.h
 TARGET = traversocommands
 DESTDIR = ../../lib
 TEMPLATE = lib

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier
+    Copyright (C) 2005-2007 Remon Sijrier
 
     This file is part of Traverso
 
@@ -17,7 +17,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: InputEngine.h,v 1.12 2007/03/06 15:14:16 r_sijrier Exp $
 */
 
 #ifndef INPUTENGINE_H
@@ -79,12 +78,16 @@ struct IEAction
 
         struct Data {
         	QStringList modes;
-        	char* slotsignature;
+		QVariantList arguments;
+        	QString slotsignature;
         	QString description;
         	int instantanious;
-		QString commandpluginname;
+		QString pluginname;
+		QString commandname;
+		QString submenu;
 		bool useX;
 		bool useY;
+		int sortorder;
 	};
 
         QHash<QString, Data*> objects;
@@ -96,7 +99,6 @@ struct IEAction
         int fact2_key2;
         bool isInstantaneous;
         QByteArray keySequence;
-        int sortOrder;
 };
 
 
@@ -111,11 +113,13 @@ struct MenuData {
         }
         QByteArray 	keysequence;
         QString		description;
+	QString		submenu;
         int		sortorder;
 };
 
-class InputEngine
+class InputEngine : public QObject
 {
+	Q_OBJECT
 public:
 
         void catch_key_press(QKeyEvent *);
@@ -131,7 +135,7 @@ public:
 	bool is_jogging();
 	bool is_holding();
 
-        QList<MenuData > get_contextitem_actionlist(QObject* item);
+	QList<MenuData > create_menudata_for(QObject* item);
 
         int broadcast_action_from_contextmenu(const QString& name);
 
@@ -150,7 +154,7 @@ public:
 
 private:
         InputEngine();
-        InputEngine(const InputEngine&) {}
+        InputEngine(const InputEngine&) : QObject() {}
         ~InputEngine();
 
         static const int 	STACK_SIZE = 4;

@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QPixmap>
 #include <QByteArray>
+#include <QDesktopWidget>
 
 #if HAVE_SYS_VFS_H
 #include <sys/vfs.h>
@@ -94,7 +95,7 @@ void SystemResources::update_status( )
 	int bufWriteStatus = 100;
 	
 	if (m_project) {
-		foreach(Song* song, m_project->get_song_list() ) {
+		foreach(Song* song, m_project->get_songs() ) {
 			bufReadStatus = std::min(song->get_diskio()->get_read_buffers_fill_status(), bufReadStatus);
 			bufWriteStatus = std::min(song->get_diskio()->get_write_buffers_fill_status(), bufWriteStatus);
 	// 		time += song->get_diskio()->get_cpu_time();
@@ -158,6 +159,7 @@ DriverInfo::DriverInfo( QWidget * parent )
 	m_driver->setIcon(find_pixmap(":/driver"));
 	m_driver->setToolTip(tr("Click to configure audiodevice"));
 	m_driver->setFlat(true);
+	m_driver->setFocusPolicy(Qt::NoFocus);
 	m_latency = new QLabel(this);
 	m_xruns = new QLabel(this);
 	m_rateBitdepth = new QLabel(this);
@@ -376,35 +378,45 @@ SongSelector::SongSelector(QWidget* parent)
 	
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 	connect(m_box, SIGNAL(activated(int)), this, SLOT(index_changed(int)));
-	
-	setFocusPolicy(Qt::NoFocus);
 }
 
 void SongSelector::set_project(Project * project)
 {
 	if ( ! project) {
+		m_project = project;
 		m_box->clear();
 		return;
 	}
 	
 	m_project = project;
 	
-	connect(m_project, SIGNAL(songAdded()), this, SLOT(update_songs()));
-	connect(m_project, SIGNAL(songRemoved()), this, SLOT(update_songs()));
+	connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(song_added(Song*)));
+	connect(m_project, SIGNAL(songRemoved(Song*)), this, SLOT(song_removed(Song*)));
 	connect(m_project, SIGNAL(currentSongChanged(Song*)), this, SLOT(change_index_to(Song*)));
 	
 	update_songs();
-	
 }
 
 void SongSelector::update_songs()
 {
 	m_box->clear();
-	foreach(Song* song, m_project->get_song_list()) {
+	foreach(Song* song, m_project->get_songs()) {
 		m_box->addItem(QString::number(m_project->get_song_index(song->get_id())) +
 			" " + song->get_title(),
 		       song->get_id());
 	}
+}
+
+void SongSelector::song_added(Song * song)
+{
+	connect(song, SIGNAL(propertieChanged()), this, SLOT(update_songs()));
+	update_songs();
+}
+
+void SongSelector::song_removed(Song * song)
+{
+	disconnect(song, SIGNAL(propertieChanged()), this, SLOT(update_songs()));
+	update_songs();
 }
 
 QSize SongSelector::sizeHint() const
@@ -424,9 +436,13 @@ void SongSelector::index_changed(int index)
 
 void SongSelector::change_index_to(Song* song)
 {
+	if (!song) {
+		return;
+	}
+	
 	int index = m_box->findData(song->get_id());
 	
-	Q_ASSERT(index != -1);
+// 	Q_ASSERT(index != -1);
 	
 	m_box->setCurrentIndex(index);
 }
@@ -578,6 +594,8 @@ InfoWidget::InfoWidget(QWidget* parent)
 	
 	setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
+	
+	setFocusPolicy(Qt::NoFocus);
 }
 
 
@@ -628,6 +646,8 @@ SongInfo::SongInfo(QWidget * parent)
 	menu->addAction("Song");
 	menu->addAction("Song using template");
 	m_addNew->setMenu(menu);
+	
+	connect(m_snap, SIGNAL(activated(int)), this, SLOT(snap_combo_index_changed(int)));
 }
 
 void SongInfo::set_orientation(Qt::Orientation orientation)
@@ -663,6 +683,40 @@ void SongInfo::set_orientation(Qt::Orientation orientation)
 		lay->setMargin(0);
 		setFrameStyle(QFrame::StyledPanel);
 		setLayout(lay);
+	}
+}
+
+void SongInfo::set_song(Song* song)
+{
+	m_song = song;
+	
+	if (m_song) {
+		connect(m_song, SIGNAL(snapChanged()), this, SLOT(song_snap_changed()));
+		song_snap_changed();
+	} else {
+		m_snap->setEnabled(false);
+	}
+}
+
+void SongInfo::song_snap_changed()
+{
+	if (m_song->is_snap_on()) {
+		m_snap->setCurrentIndex(0);
+	} else {
+		m_snap->setCurrentIndex(1);
+	}
+}
+
+void SongInfo::snap_combo_index_changed(int index)
+{
+	if (! m_song) {
+		return;
+	}
+	
+	if (index == 0) {
+		m_song->set_snapping(true);
+	} else {
+		m_song->set_snapping(false);
 	}
 }
 
@@ -804,3 +858,4 @@ void SystemValueBar::add_range_color(float x0, float x1, QColor color)
 }
 
 //eof
+

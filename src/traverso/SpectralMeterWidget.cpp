@@ -490,7 +490,7 @@ float SpectralMeterView::freq2db(float fl, float fu)
 	if (idxu <= 0) {
 		return DB_FLOOR;
 	}
-	if (idxl >= fft_size) {
+	if (idxl >= (int)fft_size) {
 		return DB_FLOOR;
 	}
 
@@ -604,7 +604,7 @@ Command* SpectralMeterView::screen_capture( )
 	}
 	
         if ( ! image.save(fn, "PNG")) {
-        	info().warning("Unable to write captured image to hard disk");
+        	info().warning(tr("FFT: Unable to write captured image to hard disk"));
         }
  
         return 0;
@@ -614,14 +614,17 @@ Command* SpectralMeterView::export_avarage_curve()
 {
 	// check if all requirements are met
 	if ((!show_average) || (!m_project)) {
-		printf("No average data available.");
+		printf("No average data available.\n");
+		info().warning(tr("FFT: No avarage curve used, not data to export!"));
+		info().information(tr("FFT: Enable avarage curve with < M > to generate data"));
 		return 0;
 	}
 
 	// check if there actually is data to export
 	int s = qMin(m_map_idx2freq.size(), m_avg_db.size());
 	if (!s) {
-		printf("No average data available.");
+		printf("No average data available.\n");
+		info().warning(tr("FFT: No avarage data to export!"));
 		return 0;
 	}
 

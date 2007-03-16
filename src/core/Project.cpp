@@ -31,12 +31,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Song.h"
 #include "ProjectManager.h"
 #include "Information.h"
-#include "AudioSourceManager.h"
+#include "ResourcesManager.h"
 #include "Export.h"
 #include "AudioDevice.h"
 #include "Config.h"
 #include "ContextPointer.h"
 #include "Utils.h"
+#include <AddRemove.h>
 
 #define PROJECT_FILE_VERSION 	1
 
@@ -49,15 +50,16 @@ Project::Project(const QString& pTitle)
 	: ContextItem(), title(pTitle)
 {
 	PENTERCONS;
-	m_currentSongId = 1;
+	m_currentSongId = -1;
 	engineer = "";
 
-	rootDir = config().get_property("Project", "directory", "/directory/unknown").toString() + title;
+	rootDir = config().get_property("Project", "directory", "/directory/unknown/").toString() + title;
 	sourcesDir = rootDir + "/audiosources";
 	m_rate = audiodevice().get_sample_rate();
 	m_bitDepth = audiodevice().get_bit_depth();
 
-	m_asmanager = new AudioSourceManager();
+	m_asmanager = new ResourcesManager();
+	m_hs = new QUndoStack(pm().get_undogroup());
 
 	cpointer().add_contextitem(this);
 }
@@ -69,48 +71,47 @@ Project::~Project()
 	cpointer().remove_contextitem(this);
 
 	foreach(Song* song, m_songs) {
-		 song->disconnect_from_audiodevice_and_delete();
+		song->schedule_for_deletion();
+		song->disconnect_from_audiodevice();
 	}
 
 	delete m_asmanager;
 }
 
 
-int Project::create(int pNumSongs)
+int Project::create(int songcount)
 {
 	PENTER;
-	PMESG("Creating new project %s  NumSongs=%d", title.toAscii().data(), pNumSongs);
+	PMESG("Creating new project %s  NumSongs=%d", title.toAscii().data(), songcount);
 
 	QDir dir;
 	if (dir.mkdir(rootDir) < 0) {
-		PERROR("Cannot create dir %s", rootDir.toAscii().data());
+		info().critical(tr("Cannot create dir %1").arg(rootDir));
 		return -1;
 	}
 
 	if (dir.mkdir(sourcesDir) < 0) {
-		PERROR("Cannot create dir %s", sourcesDir.toAscii().data());
+		info().critical(tr("Cannot create dir %1").arg(sourcesDir));
 		return -1;
 	}
 
 	QString peaksDir = rootDir + "/peakfiles/";
 
 	if (dir.mkdir(peaksDir) < 0) {
-		PERROR("Cannot create dir %s", peaksDir.toAscii().data());
+		info().critical(tr("Cannot create dir %1").arg(peaksDir));
 		return -1;
 	}
 
-	for (int i=0; i< pNumSongs; i++) {
+	for (int i=0; i< songcount; i++) {
 		Song* song = new Song(this);
-		m_songs.append(song);
-		emit songAdded();
+		private_add_song(song);
 	}
 
 	set_current_song(m_songs.first()->get_id());
 	
 	m_id = create_id();
 
-	save();
-	info().information("New project created");
+	info().information(tr("Created new Project %1").arg(title));
 	return 1;
 }
 
@@ -124,7 +125,8 @@ int Project::load() // try to load the project by its title
 	if (!file.open(QIODevice::ReadOnly))
 	{
 		file.close();
-		PWARN("Cannot open project properties file");
+		info().critical(tr("Project %1: Cannot open project properties file! (%2)")
+			       .arg(title).arg(file.errorString()));
 		return -1;
 	}
 
@@ -132,7 +134,8 @@ int Project::load() // try to load the project by its title
 	if (!doc.setContent(&file, &errorMsg))
 	{
 		file.close();
-		PWARN("Cannot set content of XML file (%s)", errorMsg.toAscii().data());
+		info().critical(tr("Project %1: Failed to parse project.traverso file! (%2)")
+				.arg(title).arg(errorMsg));
 		return -1;
 	}
 
@@ -151,7 +154,6 @@ int Project::load() // try to load the project by its title
 	title = e.attribute( "title", "" );
 	engineer = e.attribute( "engineer", "" );
 	m_description = e.attribute( "description", "No description set");
-	m_currentSongId = e.attribute("currentSongId", "0" ).toLongLong();
 	m_rate = e.attribute( "rate", "" ).toInt();
 	m_bitDepth = e.attribute( "bitdepth", "" ).toInt();
 	m_id = e.attribute("id", "0").toLongLong();
@@ -159,7 +161,7 @@ int Project::load() // try to load the project by its title
 	
 	// Load all the AudioSources for this project
 	
-	QDomNode asmNode = docElem.firstChildElement("AudioSourcesManager");
+	QDomNode asmNode = docElem.firstChildElement("ResourcesManager");
 	m_asmanager->set_state(asmNode);
 
 
@@ -170,14 +172,13 @@ int Project::load() // try to load the project by its title
 	while(!songNode.isNull())
 	{
 		Song* song = new Song(this, songNode);
-		m_songs.append(song);
-		emit songAdded();
+		ie().process_command(add_song(song, false));
 		songNode = songNode.nextSibling();
 	}
 
-	set_current_song(m_currentSongId);
+	set_current_song(e.attribute("currentSongId", "0" ).toLongLong());
 
-	info().information( tr("Project '%1' loaded").arg(title) );
+	info().information( tr("Project %1 loaded").arg(title) );
 
 	return 1;
 }
@@ -221,10 +222,10 @@ int Project::save()
 		doc.save(stream, 4);
 		data.close();
 
-		info().information( tr("Project '%1' saved ").arg(title) );
+		info().information( tr("Project %1 saved ").arg(title) );
 
 	} else {
-		info().critical( tr("Could not open project properties file for writing! (%1)").arg(fileName) );
+		info().critical( tr("Couldn't open Project properties file for writing! (%1)").arg(fileName) );
 		return -1;
 	}
 
@@ -257,23 +258,29 @@ bool Project::has_changed()
 }
 
 
-Song* Project::add_song()
+Command* Project::add_song(Song* song, bool historable)
 {
 	PENTER;
-	Song* song = new Song(this);
-
-	m_songs.append(song);
-	set_current_song(song->get_id());
 	
-	emit songAdded();
+	AddRemove* cmd;
+	cmd = new AddRemove(this, song, historable, 0,
+		"private_add_song(Song*)", "songAdded(Song*)",
+       		"private_remove_song(Song*)", "songRemoved(Song*)",
+       		tr("Song %1 added").arg(song->get_title()));
 	
-	return song;
+	cmd->set_instantanious(true);
+	
+	return cmd;
 }
 
 
 void Project::set_current_song(qint64 id)
 {
 	PENTER;
+	
+	if ( m_currentSongId == id) {
+		return;
+	}
 	
 	Song* newcurrent = 0;
 	
@@ -326,37 +333,17 @@ Song* Project::get_song(qint64 id) const
 }
 
 
-int Project::remove_song(qint64 id)
+Command* Project::remove_song(Song* song, bool historable)
 {
-	Song* toberemoved = 0;
+	AddRemove* cmd;
+	cmd = new AddRemove(this, song, historable, 0,
+		"private_remove_song(Song*)", "songRemoved(Song*)",
+		"private_add_song(Song*)", "songAdded(Song*)",
+		tr("Song %1 removed").arg(song->get_title()));
 	
-	foreach(Song* song, m_songs) {
-		if (song->get_id() == id) {
-			toberemoved = song;
-			break;
-		}
-	}
+	cmd->set_instantanious(true);
 	
-	if (toberemoved) {
-		m_songs.removeAll(toberemoved);
-		
-		qint64 newcurrent = 0;
-		
-		if (m_songs.size() > 0) {
-			newcurrent = m_songs.last()->get_id();
-		}
-		
-		set_current_song(newcurrent);
-
-		emit songRemoved();
-
-		toberemoved->disconnect_from_audiodevice_and_delete();
-
-	} else {
-		return -1;
-	}
-	
-	return 1;
+	return cmd;
 }
 
 
@@ -384,8 +371,9 @@ int Project::start_export(ExportSpecification* spec)
 	songsToRender.clear();
 
 	if (spec->allSongs) {
-		foreach(Song* song, m_songs)
-		songsToRender.append(song);
+		foreach(Song* song, m_songs) {
+			songsToRender.append(song);
+		}
 	} else {
 		Song* song = get_current_song();
 		if (!song) {
@@ -396,7 +384,7 @@ int Project::start_export(ExportSpecification* spec)
 
 
 	foreach(Song* song, songsToRender) {
-		PMESG("Starting export for song %d", song->get_id());
+		PMESG("Starting export for song %lld", song->get_id());
 		emit exportStartedForSong(song);
 
 		if (song->prepare_export(spec) < 0) {
@@ -439,24 +427,16 @@ int Project::get_bitdepth( ) const
 	return m_bitDepth;
 }
 
-QStringList Project::get_songs( ) const
-{
-	QStringList list;
-	foreach(Song* song, m_songs) {
-		list.append(song->get_title());
-	}
-	return list;
-}
-
 void Project::set_song_export_progress(int progress)
 {
-	overallExportProgress = (progress / songsToRender.count()) + (renderedSongs * (100 / songsToRender.count()) );
+	overallExportProgress = (progress / songsToRender.count()) + 
+			(renderedSongs * (100 / songsToRender.count()) );
 
 	emit songExportProgressChanged(progress);
 	emit overallExportProgressChanged(overallExportProgress);
 }
 
-QList<Song* > Project::get_song_list( ) const
+QList<Song* > Project::get_songs( ) const
 {
 	return m_songs;
 }
@@ -514,10 +494,31 @@ QString Project::get_audiosources_dir() const
 	return rootDir + "/audiosources/";
 }
 
-AudioSourceManager * Project::get_audiosource_manager( ) const
+ResourcesManager * Project::get_audiosource_manager( ) const
 {
 	return m_asmanager;
 }
 
-//eof
 
+void Project::private_add_song(Song * song)
+{
+	m_songs.append(song);
+	song->connect_to_audiodevice();
+}
+
+void Project::private_remove_song(Song * song)
+{
+	m_songs.removeAll(song);
+		
+	qint64 newcurrent = 0;
+		
+	if (m_songs.size() > 0) {
+		newcurrent = m_songs.last()->get_id();
+	}
+		
+	set_current_song(newcurrent);
+
+	song->disconnect_from_audiodevice();
+}
+
+//eof

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveClip.h,v 1.8 2007/02/07 23:22:20 r_sijrier Exp $
+    $Id: MoveClip.h,v 1.9 2007/03/16 00:09:43 r_sijrier Exp $
 */
 
 #ifndef MOVECLIPACTION_H
@@ -26,6 +26,7 @@
 #include "Command.h"
 
 #include <QPoint>
+#include <defines.h>
 
 class AudioClip;
 class Song;
@@ -35,8 +36,9 @@ class AudioClipView;
 
 class MoveClip : public Command
 {
+	Q_OBJECT
 public :
-        MoveClip(SongView* sv, AudioClipView* clipView, AudioClip* clip);
+	MoveClip(AudioClipView* clipView, QVariantList arguments);
         ~MoveClip();
 
         int begin_hold();
@@ -45,19 +47,33 @@ public :
         int do_action();
         int undo_action();
         int jog();
-
+	
 private :
-        Song* 		m_song;
         AudioClip* 	m_clip;
-	SongView* 	m_sv;
-	AudioClipView*	m_cv;
         nframes_t 	m_originalTrackFirstFrame;
         nframes_t 	m_newInsertFrame;
         Track* 		m_originTrack;
         Track* 		m_targetTrack;
-	QPoint		m_origPos;
-	int 		m_origXPos;
-	int 		m_horizontalScrollBarValue;
+	bool		m_isCopy;
+	
+	struct Data {
+		int 		origXPos;
+		int 		horizontalScrollBarValue;
+		int 		xoffset;
+		AudioClip* 	newclip;
+		Song* 		song;
+		SongView* 	sv;
+		AudioClipView*	view;
+		QPoint		origPos;
+	};
+			
+
+	Data* d;
+
+	void init_data(bool isCopy=false);
+
+private slots:
+	void audioclip_added(AudioClip* clip);
 };
 
 #endif

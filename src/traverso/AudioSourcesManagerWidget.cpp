@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioSourcesManagerWidget.cpp,v 1.2 2006/05/01 21:31:58 r_sijrier Exp $
+    $Id: AudioSourcesManagerWidget.cpp,v 1.3 2007/03/16 00:10:26 r_sijrier Exp $
 */
 
 #include "AudioSourcesManagerWidget.h"
@@ -62,7 +62,7 @@ void AudioSourcesManagerWidget::update_audio_sources_list()
         if (!s) {
                 return;
         }
-        /*	AudioSourceManager* asl= s->get_audiosources_list();
+        /*	ResourcesManager* asl= s->get_audiosources_list();
         	int tot = asl->get_total_sources();
         	treeAudioSourcesWidget->clear();
         	for (int i=0; i<tot; i++)
@@ -112,21 +112,21 @@ void AudioSourcesManagerWidget::on_removeUnusedSourcesButton_clicked( )
         /*	for (int i=0; i<numSongs; i++)
         		{
         		Song* s = pm().get_project()->get_song(i);
-        		AudioSourceManager* asl= s->get_audiosources_list();
+        		ResourcesManager* asl= s->get_audiosources_list();
         		int tot = asl->get_total_sources();
         		for (int i=tot-1; i>=0; --i)
         			{
         			AudioSource* a = asl->get_source_for_index(i);
         			if (!a)		//No audio source for this index, strange....
         				{
-        				PWARN("No audioSource for this index in AudioSourceManager!");
+        				PWARN("No audioSource for this index in ResourcesManager!");
         				continue;
         				}
         			QString aName = a->get_filename();
         			if (s->get_clips_count_for_audio(a) == 0)
         				{
         				if (asl->remove(a) < 0)
-        					PWARN("Could not remove audioSource from AudioSourceManager!");
+        					PWARN("Could not remove audioSource from ResourcesManager!");
         				QFile file(aName);
         				if (!file.remove())
         					{

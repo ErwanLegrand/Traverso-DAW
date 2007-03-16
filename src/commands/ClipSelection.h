@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ClipSelection.h,v 1.2 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #ifndef CLIPSELECTION_H
@@ -32,7 +31,7 @@ class AudioClipManager;
 class ClipSelection : public Command
 {
 public :
-	ClipSelection(AudioClip* clip, const char* slot, const QString& des);
+	ClipSelection(AudioClip* clip, QVariantList args);
 	ClipSelection(QList<AudioClip*> clips, AudioClipManager* manager, const char* slot, const QString& des);
 	~ClipSelection();
 

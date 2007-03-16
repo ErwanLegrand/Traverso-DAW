@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipManager.h,v 1.5 2007/01/22 15:12:08 r_sijrier Exp $
+$Id: AudioClipManager.h,v 1.6 2007/03/16 00:14:43 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIPMANAGER_H
@@ -34,10 +34,10 @@ class Song;
 class AudioClipManager : public ContextItem
 {
 	Q_OBJECT
-	Q_CLASSINFO("select_all_clips", tr("Selection: Select all"))
-	Q_CLASSINFO("deselect_all_clips", tr("Selection: Deselect all"))
-	Q_CLASSINFO("invert_clip_selection", tr("Selection: Invert"))
-	Q_CLASSINFO("delete_selected_clips", tr("Selection: Delete selected"))
+	Q_CLASSINFO("select_all_clips", tr("Select all"))
+	Q_CLASSINFO("deselect_all_clips", tr("Deselect all"))
+	Q_CLASSINFO("invert_clip_selection", tr("Invert"))
+	Q_CLASSINFO("delete_selected_clips", tr("Delete selected"))
 
 public:
 	AudioClipManager(Song* song);

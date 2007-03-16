@@ -65,6 +65,11 @@ public :
 	Interface();
 	~Interface();
 
+	static Interface* instance();
+	
+	void select_fade_in_shape();
+	void select_fade_out_shape();
+	
 protected:
 	void keyPressEvent ( QKeyEvent* e);
 	void keyReleaseEvent ( QKeyEvent* e);
@@ -108,6 +113,8 @@ private:
 	
 	void create_menus();
 	
+	static Interface* m_instance;
+	
 	QMenu* create_context_menu(QObject* item);
 	QMenu* create_fade_selector_menu(const QString& fadeTypeName);
 
@@ -130,8 +137,6 @@ public slots :
 	Command* show_context_menu();
 	Command* select_bus_in();
 	Command* select_bus_out();
-	Command* select_fade_in_shape();
-	Command* select_fade_out_shape();
 	Command* show_project_manager_dialog();
 	
 private slots:

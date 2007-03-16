@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.12 2007/02/23 13:55:59 r_sijrier Exp $
+$Id: TrackPanelView.cpp,v 1.13 2007/03/16 00:10:26 r_sijrier Exp $
 */
 
 #include <QGraphicsScene>
@@ -27,7 +27,6 @@ $Id: TrackPanelView.cpp,v 1.12 2007/02/23 13:55:59 r_sijrier Exp $
 #include "TrackPanelViewPort.h"
 #include <Track.h>
 #include "TrackPanelView.h"
-#include "PanelLed.h"
 #include <Utils.h>
 #include <Mixer.h>
 		
@@ -158,11 +157,10 @@ void TrackPanelView::update_pan()
 
 void TrackPanelView::draw_panel_track_name(QPainter* painter)
 {
-	painter->setRenderHint(QPainter::TextAntialiasing);
-	QString sid = QString::number(m_track->get_id());
+	QString sid = QString::number(m_track->get_sort_index() + 1);
 	painter->setFont( QFont( "Bitstream Vera Sans", 8) );
-	painter->drawText(4,12, sid);
-	painter->drawText(17, 12, m_track->get_name());
+	painter->drawText(4, 12, sid);
+	painter->drawText(20, 12, m_track->get_name());
 }
 
 

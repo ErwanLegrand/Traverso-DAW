@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TrackPan.h,v 1.3 2007/01/16 20:21:08 r_sijrier Exp $
+    $Id: TrackPan.h,v 1.4 2007/03/16 00:09:43 r_sijrier Exp $
 */
 
 #ifndef TRACKPAN_H
@@ -31,8 +31,7 @@ class Track;
 class TrackPan : public Command
 {
 public :
-        TrackPan(Track* track, Song* song);
-        ~TrackPan();
+        TrackPan(Track* track);
 
         int begin_hold();
         int finish_hold();

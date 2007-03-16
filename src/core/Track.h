@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -45,12 +45,7 @@ class Track : public ContextItem
 	Q_CLASSINFO("mute", tr("Mute"))
 	Q_CLASSINFO("toggle_arm", tr("Record: On/Off"))
 	Q_CLASSINFO("solo", tr("Solo"))
-	Q_CLASSINFO("gain", tr("Gain"))
-	Q_CLASSINFO("pan", tr("Panorama"))
-	Q_CLASSINFO("reset_gain", tr("Gain: Reset"))
-	Q_CLASSINFO("import_audiosource", tr("Import audio"))
 	Q_CLASSINFO("silence_others", tr("Silence other tracks"))
-	Q_CLASSINFO("remove_myself", tr("Remove"))
 
 public :
 	Track(Song* song, const QString& name, int height);
@@ -59,9 +54,6 @@ public :
 
 	static const int INITIAL_HEIGHT = 100;
 	static const int MINIMUM_HEIGHT = 25;
-
-	void activate();
-	void deactivate();
 
 	Command* add_clip(AudioClip* clip, bool historable=true);
 	Command* add_plugin(Plugin* plugin);
@@ -73,7 +65,6 @@ public :
 	
 	int arm();
 	int disarm();
-	void toggle_active();
 
 	// Get functions:
 	AudioClip* get_clip_after(nframes_t framePos);
@@ -110,7 +101,6 @@ public :
 	bool is_muted();
 	bool is_muted_by_solo();
 	bool is_solo();
-	bool is_active();
 	bool armed();
 	// End bool functions
 
@@ -134,7 +124,6 @@ private :
 	int m_sortIndex;
 	int m_height;
 
-	bool isActive;
 	bool isSolo;
 	bool isMuted;
 	bool isArmed;
@@ -151,7 +140,6 @@ signals:
 	void soloChanged(bool isSolo);
 	void armedChanged(bool isArmed);
 	void lockChanged(bool isLocked);
-	void isActiveChanged(bool isActive);
 	void gainChanged();
 	void panChanged();
 	void stateChanged();
@@ -167,12 +155,7 @@ public slots:
 	Command* mute();
 	Command* toggle_arm();
 	Command* solo();
-	Command* gain();
-	Command* pan();
-	Command* reset_gain();
-	Command* import_audiosource();
 	Command* silence_others();
-	Command* remove_myself();
 
 private slots:
 	void private_add_clip(AudioClip* clip);

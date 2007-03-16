@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: Traverso.h,v 1.7 2007/02/02 13:01:35 r_sijrier Exp $
+    $Id: Traverso.h,v 1.8 2007/03/16 00:10:26 r_sijrier Exp $
 */
 
 #ifndef Traverso_H
@@ -25,8 +25,6 @@
 
 #include <QApplication>
 #include <QSessionManager>
-
-class Interface;
 
 class Traverso : public QApplication
 {
@@ -44,8 +42,6 @@ protected:
         void commitData ( QSessionManager& manager );
 
 private :
-        Interface* iface;
-	
 	void init_sse();
         void prepare_audio_device();
 	void create_interface();

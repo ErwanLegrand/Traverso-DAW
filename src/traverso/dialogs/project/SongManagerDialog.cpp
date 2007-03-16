@@ -62,7 +62,7 @@ void SongManagerDialog::set_project(Project* project)
 {
 	m_project = project;
 	if (m_project) {
-		connect(m_project, SIGNAL(songAdded()), this, SLOT(update_song_list()));
+		connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(update_song_list()));
 		setWindowTitle("Manage Project - " + m_project->get_title());
 	} else {
 		setWindowTitle("Manage Project - No Project loaded!");
@@ -79,7 +79,7 @@ void SongManagerDialog::update_song_list( )
 	}
 
 	treeSongWidget->clear();
-	foreach(Song* song, m_project->get_song_list()) {
+	foreach(Song* song, m_project->get_songs()) {
 
 		QString songNr = QString::number(m_project->get_song_index(song->get_id()));
 		QString songName = "Song " + songNr + " - " + song->get_title();
@@ -160,7 +160,8 @@ void SongManagerDialog::on_deleteSongButton_clicked( )
 	
 	qint64 id = item->data(0, Qt::UserRole).toLongLong();
 	
-	m_project->remove_song(id);
+	// Hmmm, to which history stack should this one be pushed ???? :-(
+	ie().process_command(m_project->remove_song(m_project->get_song(id)));
 	
 	update_song_list();
 }
@@ -171,14 +172,37 @@ void SongManagerDialog::on_createSongButton_clicked( )
 		return;
 	}
 	
-	Song* song = m_project->add_song();
+	Song* song = new Song(m_project);
 	
 	song->set_title(newSongNameLineEdit->text());
 	song->set_artists(artistsLineEdit->text());
+	
+	// Hmmm, to which history stack should this one be pushed ???? :-(
+	ie().process_command(m_project->add_song(song));
 	
 	update_song_list();
 }
 
 
-//eof
+void SongManagerDialog::hideEvent(QHideEvent * event)
+{
+	QDialog::hideEvent(event);
+	
+	if (m_project) {
+		Song* song = m_project->get_current_song();
+		if (song) {
+			pm().get_undogroup()->setActiveStack(song->get_history_stack());
+		}
+	}
+}
 
+void SongManagerDialog::showEvent(QShowEvent * event)
+{
+	QDialog::showEvent(event);
+	
+	if (m_project) {
+		pm().get_undogroup()->setActiveStack(m_project->get_history_stack());
+	}
+}
+
+//eof

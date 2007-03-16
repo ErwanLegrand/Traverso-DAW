@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongWidget.cpp,v 1.8 2007/03/05 20:51:24 r_sijrier Exp $
+    $Id: SongWidget.cpp,v 1.9 2007/03/16 00:10:26 r_sijrier Exp $
 */
 
 		
@@ -37,6 +37,7 @@
 
 SongWidget::SongWidget(Song* song, QWidget* parent)
 	: QFrame(parent)
+	, m_song(song)
 {
 	m_scene = new QGraphicsScene();
 // 	m_scene->setItemIndexMethod(QGraphicsScene::NoIndex);
@@ -128,4 +129,10 @@ void SongWidget::load_theme_data()
 	
 }
 
+Song * SongWidget::get_song() const
+{
+	return m_song;
+}
+
 //eof
+

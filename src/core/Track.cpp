@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -28,8 +28,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "PluginChain.h"
 #include "Plugin.h"
 #include "InputEngine.h"
+#include "Information.h"
 #include "ProjectManager.h"
-#include "AudioSourceManager.h"
+#include "ResourcesManager.h"
 #include "Project.h"
 #include "Utils.h"
 
@@ -74,7 +75,7 @@ Track::~Track()
 
 void Track::init()
 {
-	isSolo = mutedBySolo = isActive = isMuted = isArmed = false;
+	isSolo = mutedBySolo = isMuted = isArmed = false;
 	set_history_stack(m_song->get_history_stack());
 	pluginChain = new PluginChain(this, m_song);
 }
@@ -144,9 +145,10 @@ int Track::set_state( const QDomNode & node )
 			QDomElement clipElement = clipNode.toElement();
 			qint64 id = clipElement.attribute("id", "").toLongLong();
 			
-			AudioClip* clip = pm().get_project()->get_audiosource_manager()->get_clip(id);
+			AudioClip* clip = resources_manager()->get_clip(id);
 			if (!clip) {
-				PERROR("Clip with id %ld not found!", (long)id);
+				info().critical(tr("Track: AudioClip with id %1 not \
+						found in Resources database!").arg(id));
 				break;
 			}
 			
@@ -196,8 +198,9 @@ Command* Track::remove_clip(AudioClip* clip, bool historable)
 	PENTER;
 	m_song->get_audioclip_manager()->remove_clip(clip);
 	return new AddRemove(this, clip, historable, m_song,
-			"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)",
-			"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)", tr("Remove Clip"));
+		"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)",
+		"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)", 
+   		tr("Remove Clip"));
 }
 
 
@@ -207,24 +210,9 @@ Command* Track::add_clip(AudioClip* clip, bool historable)
 	clip->set_track(this);
 	m_song->get_audioclip_manager()->add_clip(clip);
 	return new AddRemove(this, clip, historable, m_song,
-			"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)",
-			"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)", tr("Add Clip"));
-}
-
-
-void Track::activate()
-{
-	if (!isActive) {
-		isActive=true;
-	}
-}
-
-
-void Track::deactivate()
-{
-	if (isActive) {
-		isActive=false;
-	}
+		"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)",
+		"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)", 
+   		tr("Add Clip"));
 }
 
 
@@ -291,18 +279,6 @@ bool Track::armed()
 	return isArmed;
 }
 
-bool Track::is_active()
-{
-	return isActive;
-}
-
-void Track::toggle_active()
-{
-	isActive=!isActive;
-	emit isActiveChanged(isActive);
-}
-
-
 Command* Track::init_recording()
 {
 	PENTER2;
@@ -310,7 +286,7 @@ Command* Track::init_recording()
 		QByteArray name = "Audio-" + QByteArray::number(m_song->get_track_index(m_id)) + 
 				"-take-" + QByteArray::number(++numtakes);
 		
-		AudioClip* clip = pm().get_project()->get_audiosource_manager()->new_audio_clip(name);
+		AudioClip* clip = resources_manager()->new_audio_clip(name);
 		clip->set_song(m_song);
 		clip->set_track(this);
 		clip->set_track_start_frame(m_song->get_transport_frame());
@@ -492,31 +468,6 @@ Command* Track::solo(  )
 	return (Command*) 0;
 }
 
-Command* Track::gain()
-{
-	return new Gain(this, tr("Track %1 Gain").arg(m_song->get_track_index(m_id)));
-}
-
-Command* Track::reset_gain()
-{
-	float newGain = 0.5;
-	if (m_gain == 0.5) {
-		newGain = 1.0;
-	}
-	
-	return new Gain(this, tr("Track %1 Gain").arg(m_song->get_track_index(m_id)), newGain);
-}
-
-Command* Track::pan()
-{
-	return new TrackPan(this, m_song);
-}
-
-Command* Track::import_audiosource()
-{
-	return new Import(this);
-}
-
 Command* Track::silence_others( )
 {
 	return new PCommand(this, "solo", tr("Silence Others"));
@@ -583,12 +534,5 @@ int Track::get_sort_index( ) const
 {
 	return m_sortIndex;
 }
-
-
-Command * Track::remove_myself( )
-{
-	return m_song->remove_track(this);
-}
-
 
 // eof

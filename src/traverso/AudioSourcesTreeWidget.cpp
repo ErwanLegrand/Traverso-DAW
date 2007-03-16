@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSourcesTreeWidget.cpp,v 1.2 2007/02/02 00:01:02 r_sijrier Exp $
+$Id: AudioSourcesTreeWidget.cpp,v 1.3 2007/03/16 00:10:26 r_sijrier Exp $
 */ 
 
 
@@ -25,7 +25,7 @@ $Id: AudioSourcesTreeWidget.cpp,v 1.2 2007/02/02 00:01:02 r_sijrier Exp $
 
 #include <ProjectManager.h>
 #include <Project.h>
-#include <AudioSourceManager.h>
+#include <ResourcesManager.h>
 #include <AudioSource.h>
 #include <ReadSource.h>
 #include <AudioClip.h>
@@ -198,7 +198,7 @@ void TreeModel::setupModelData()
 	QStringList lines;
 	lines << "hoi" << "test";
 	
-	AudioSourceManager* asmanager;
+	ResourcesManager* asmanager;
 	if (m_project) {
 		asmanager = m_project->get_audiosource_manager();
 	} else {

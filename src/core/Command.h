@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Command.h,v 1.8 2007/01/18 21:17:57 r_sijrier Exp $
+    $Id: Command.h,v 1.9 2007/03/16 00:14:43 r_sijrier Exp $
 */
 
 #ifndef COMMAND_H
@@ -26,6 +26,8 @@
 #include <QObject>
 #include <QUndoCommand>
 #include <QUndoStack>
+#include <QVariantList>
+#include <QPoint>
 
 class HistoryStack;
 class ContextItem;

@@ -23,11 +23,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QApplication>
 #include <QFileInfo>
+#include <QDir>
+#include <QFileDialog>
+#include <QMessageBox>
 
 #include "Project.h"
 #include "Song.h"
 #include "ContextPointer.h"
-#include "AudioSourceManager.h"
+#include "ResourcesManager.h"
 #include "Information.h"
 #include "Config.h"
 #include "FileHelpers.h"
@@ -37,10 +40,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
+
+/**	\class ProjectManager
+	\brief ProjectManager is a singleton used for loading, creating and deleting Projects.
+ 
+ 
+ */
+
 QUndoGroup ProjectManager::undogroup;
 
 ProjectManager::ProjectManager()
-		: ContextItem()
+	: ContextItem()
 {
 	PENTERCONS;
 	currentProject = (Project*) 0;
@@ -49,10 +59,28 @@ ProjectManager::ProjectManager()
 	cpointer().add_contextitem(this);
 }
 
+/**
+ * 	Used to get a reference to the ProjectManager
+ * @return A reference to the ProjectManager singleton 
+ */
 ProjectManager& pm()
 {
 	static ProjectManager projMan;
 	return projMan;
+}
+
+/**
+ * 	The Resources Manager for the currently loaded Project
+
+ * @return A pointer to the Resources Manager of the loaded Project, 0 if no Project is loaded
+ */
+ResourcesManager* resources_manager()
+{
+	Project* proj = pm().get_project();
+	if (proj) {
+		return proj->get_audiosource_manager();
+	}
+	return 0;
 }
 
 void ProjectManager::set_current_project(Project* project)
@@ -83,7 +111,7 @@ Project* ProjectManager::create_new_project(int numSongs, const QString& project
 	PENTER;
 
 	if (project_exists(projectName)) {
-		PERROR("project %s already exists\n", projectName.toAscii().data());
+		info().critical(tr("Project %1 already exists!").arg(projectName));
 		return 0;
 	}
 
@@ -91,7 +119,7 @@ Project* ProjectManager::create_new_project(int numSongs, const QString& project
 
 	if (newProject->create(numSongs) < 0) {
 		delete newProject;
-		PERROR("couldn't create new project %s", projectName.toAscii().data());
+		info().critical(tr("Unable to create new Project %1").arg(projectName));
 		return 0;
 	}
 	
@@ -103,7 +131,7 @@ int ProjectManager::load_project(const QString& projectName)
 	PENTER;
 
 	if( ! project_exists(projectName) ) {
-		PERROR("project %s doesn't exist\n", projectName.toAscii().data());
+		PERROR("project %s doesn't exist!", projectName.toAscii().data());
 		return -1;
 	}
 
@@ -117,12 +145,12 @@ int ProjectManager::load_project(const QString& projectName)
 	if (currentProject->load() < 0) {
 		delete currentProject;
 		currentProject = 0;
-		set_current_project( (Project*) 0 );
-		PERROR("couldn't load project %s", projectName.toAscii().data());
+		set_current_project(0);
+		info().critical(tr("Unable to load Project %1").arg(projectName));
 		return -1;
 	}
 
-	return 0;
+	return 1;
 }
 
 int ProjectManager::remove_project( const QString& name )
@@ -130,7 +158,7 @@ int ProjectManager::remove_project( const QString& name )
 	// check if we are removing the currentProject, and delete it before removing its files
 	if (project_is_current(name)) {
 		PMESG("removing current project\n");
-		set_current_project( 0 );
+		set_current_project(0);
 	}
 
 	return FileHelper::remove_recursively( name );
@@ -166,7 +194,7 @@ Command* ProjectManager::save_project()
 	if (currentProject) {
 		currentProject->save();
 	} else {
-		info().information( tr("Open or create a project first!"));
+		info().information( tr("No Project to save, open or create a Project first!"));
 	}
 
 	return (Command*) 0;
@@ -179,6 +207,36 @@ Project * ProjectManager::get_project( )
 
 void ProjectManager::start( )
 {
+	QString defaultpath = config().get_property("Project", "DefaultDirectory", "").toString();
+	QString projects_path = config().get_property("Project", "directory", defaultpath).toString();
+
+	QDir dir;
+	if ( (projects_path.isEmpty()) || (!dir.exists(projects_path)) ) {
+		if (projects_path.isEmpty())
+			projects_path = QDir::homePath();
+
+		QString newPath = QFileDialog::getExistingDirectory(0,
+				tr("Choose an existing or create a new Project Directory"),
+				   projects_path );
+		if (dir.exists(newPath)) {
+			QMessageBox::information( 0, 
+					tr("Traverso - Information"), 
+					tr("Using existing Project directory: %1\n").arg(newPath), 
+					"OK", 0 );
+		} else if (!dir.mkpath(newPath)) {
+			QMessageBox::warning( 0, tr("Traverso - Warning"), 
+					tr("Unable to create Project directory! \n") +
+					tr("Please check permission for this directory: %1").arg(newPath) );
+			return;
+		} else {
+			QMessageBox::information( 0, 
+					tr("Traverso - Information"), 
+					tr("Created new Project directory for you here: %1\n").arg(newPath), 
+					"OK", 0 );
+		}
+		config().set_property("Project", "directory", newPath);
+	}
+	
 	bool loadProjectAtStartUp = config().get_property("Project", "loadLastUsed", 1).toBool();
 
 	if (loadProjectAtStartUp) {
@@ -188,10 +246,7 @@ void ProjectManager::start( )
 			projectToLoad="Untitled";
 
 		if (project_exists(projectToLoad)) {
-			if ( load_project(projectToLoad) < 0 ) {
-				PWARN("Cannot load project %s. Continuing anyway...", projectToLoad.toAscii().data());
-				info().warning( tr("Could not load project %1").arg(projectToLoad) );
-			}
+			load_project(projectToLoad);
 		} else {
 			Project* project;
 			if ( (project = create_new_project(1, "Untitled")) ) {
@@ -248,4 +303,18 @@ void ProjectManager::delete_song( Song * song )
 		
 }
 
+Command* ProjectManager::undo()
+{
+	undogroup.undo();
+	return 0;
+}
+
+Command* ProjectManager::redo()
+{
+	undogroup.redo();
+	return 0;
+}
+
+
 //eof
+

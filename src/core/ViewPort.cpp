@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewPort.cpp,v 1.7 2007/03/06 15:14:16 r_sijrier Exp $
+$Id: ViewPort.cpp,v 1.8 2007/03/16 00:14:43 r_sijrier Exp $
 */
 
 #include <QMouseEvent>
@@ -112,29 +112,33 @@ ViewPort::~ViewPort()
 void ViewPort::mouseMoveEvent(QMouseEvent* e)
 {
 	PENTER3;
-// 	printf("\nViewPort::mouseMoveEvent\n");
-// 	if (!ie().is_holding())
+	
+	// Changing the cursor, or perhaps some other thing generates
+	// a mouse move event, while the mouse really move, so we check
+	// if the mouse cursor really has changed position!
+	if (e->pos() == m_oldMousePos) {
+		return;
+	}
+	m_oldMousePos = e->pos();
 	QGraphicsView::mouseMoveEvent(e);
 	cpointer().set_point(e->x(), e->y());
 	e->accept();
 }
 
-void ViewPort::resizeEvent(QResizeEvent* e)
+void ViewPort::tabletEvent(QTabletEvent * event)
 {
-	PENTER3;
-	QGraphicsView::resizeEvent(e);
+	printf("ViewPort tablet event:: x, y: %d, %d\n", (int)event->x(), (int)event->y());
+	printf("ViewPort tablet event:: high resolution x, y: %d, %d\n\n", 
+	       			(int)event->hiResGlobalX(), (int)event->hiResGlobalY());
+	cpointer().set_point((int)event->x(), (int)event->y());
+	
+	QGraphicsView::tabletEvent(event);
 }
 
 void ViewPort::enterEvent(QEvent* e)
 {
 	QGraphicsView::enterEvent(e);
 	cpointer().set_current_viewport(this);
-}
-
-
-void ViewPort::leaveEvent(QEvent* e)
-{
-	QGraphicsView::leaveEvent(e);
 }
 
 
@@ -263,3 +267,4 @@ void HoldCursor::reset()
 }
 
 //eof
+

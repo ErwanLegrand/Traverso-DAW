@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: MoveClip.cpp,v 1.19 2007/02/07 23:22:20 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -36,30 +35,130 @@ $Id: MoveClip.cpp,v 1.19 2007/02/07 23:22:20 r_sijrier Exp $
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-MoveClip::MoveClip(SongView* sv, AudioClipView* cv, AudioClip* clip)
-	: Command(clip, QObject::tr("Move Clip"))
+/**
+  *	\class MoveClip
+	\brief A Command class for Dragging or Copy-dragging an AudioClip
+	 
+ */
+
+
+/**
+ * 	Creates  a Move Clip or Copy Clip Command object.
+	
+	Use the first entry in arguments to set the command to be
+	of type MoveClip (arguments.at(0) == false), or of type CopyClip
+	argument (arguments.at(0) == true)
+	
+	arguments is set in the keymap file, example: 
+	
+	\code 
+	<Object objectname="AudioClipView" mousehint="LRUD" pluginname="TraversoCommands" commandname="MoveClip"  arguments="false" />
+	\endcode
+ 
+ 
+ * @param cv The AudioClipView that is to be dragged/copied.
+ * @param arguments The first entry in the list is used to detect if it is a copy or drag Command
+ */
+MoveClip::MoveClip(AudioClipView* cv, QVariantList arguments)
+	: Command(cv->get_clip(), "")
+	, d(new Data)
 {
-	m_sv = sv;
-	m_cv = cv;
-	m_song = clip->get_song();
-	m_clip = clip;
+	if (arguments.size()) {
+		m_isCopy = arguments.at(0).toBool();
+	} else {
+		m_isCopy = false;
+	}
+	
+	QString des;
+	if (m_isCopy) {
+		des = tr("Copy Clip");
+		d->xoffset = cv->get_songview()->scalefactor * 4;
+	} else {
+		des = tr("Move Clip");
+	}
+	
+	setText(des);
+	
+	d->view = cv;
+	d->sv = d->view->get_songview();
+	d->song = d->sv->get_song();
 	m_targetTrack = 0;
+	m_clip = 0;
 }
 
 
 MoveClip::~MoveClip()
 {}
 
+void MoveClip::audioclip_added(AudioClip * clip)
+{
+	QList<QObject* > items = cpointer().get_context_items();
+	
+	printf("audioclip_added() : Clip has id %lld\n", clip->get_id());
+	
+	foreach(QObject* obj, items) {
+		AudioClipView* acv = qobject_cast<AudioClipView*>(obj);
+		
+		if ( ! acv) {
+			continue;
+		}
+		
+		if ( ! (acv->get_clip()->get_id() == d->newclip->get_id()) ) {
+			continue;
+		}
+		
+		d->view = acv;
+		init_data(true);
+		
+		disconnect(d->view->get_clip()->get_track(), SIGNAL(audioClipAdded(AudioClip*)),
+			this, SLOT(audioclip_added(AudioClip*)));
+		
+		printf("Found a match!!!!\n");
+		return;
+	}
+	
+	printf("MoveClip:: Added new AudioClip, but no AudioClipView available ???\n");
+}
+
+
+void MoveClip::init_data(bool isCopy)
+{
+	if (isCopy) {
+		m_clip = d->newclip;
+	} else {
+		m_clip = d->view->get_clip();
+	}
+	
+	m_originTrack = m_targetTrack = m_clip->get_track();
+	m_originalTrackFirstFrame = m_newInsertFrame = m_clip->get_track_start_frame();
+	d->origPos = cpointer().pos();
+	d->origXPos = cpointer().x();
+	d->horizontalScrollBarValue = d->sv->get_clips_viewport()->horizontalScrollBar()->value();
+	m_clip->set_snappable(false);
+	d->sv->start_shuttle(true, true);
+}
+
 
 int MoveClip::begin_hold()
 {
-	m_originTrack = m_targetTrack = m_clip->get_track();
-	m_originalTrackFirstFrame = m_newInsertFrame = m_clip->get_track_start_frame();
-	m_origPos = cpointer().pos();
-	m_origXPos = cpointer().x();
-	m_horizontalScrollBarValue = m_sv->get_clips_viewport()->horizontalScrollBar()->value();
-	m_clip->set_snappable(false);
-	m_sv->start_shuttle(true, true);
+	if (m_isCopy) {
+		d->newclip = resources_manager()->get_clip(d->view->get_clip()->get_id());
+		d->newclip->set_song(d->song);
+		d->newclip->set_track_start_frame(d->view->get_clip()->get_track_start_frame() + d->xoffset);
+		
+		printf("Orig Clip has id %lld\n", d->view->get_clip()->get_id());
+		printf("Created new Clip with id %lld\n", d->newclip->get_id());
+	
+		connect(d->view->get_clip()->get_track(), SIGNAL(audioClipAdded(AudioClip*)),
+			this, SLOT(audioclip_added(AudioClip*)));
+	
+		ie().process_command(d->view->get_clip()->get_track()->add_clip(d->newclip, false));
+		
+		return 1;
+	}
+
+	init_data();
+	
 	return 1;
 }
 
@@ -67,13 +166,15 @@ int MoveClip::begin_hold()
 int MoveClip::finish_hold()
 {
 	m_clip->set_snappable(true);
-	m_sv->start_shuttle(false);
-		return 1;
+	d->sv->start_shuttle(false);
+	return 1;
 }
 
 
 int MoveClip::prepare_actions()
 {
+	delete d;
+	
 	return 1;
 }
 
@@ -82,14 +183,21 @@ int MoveClip::do_action()
 {
 	PENTER;
 	if (!m_targetTrack) {
+		printf("do_action() (DELETE) : Clip has id %lld\n", m_clip->get_id());
 		PMESG("Deleting clip %p",m_clip);
 		ie().process_command(m_originTrack->remove_clip(m_clip, false));
 		m_targetTrack = (Track*) 0;
 	} else {
+		printf("do_action() : Clip has id %lld\n", m_clip->get_id());
 		ie().process_command(m_originTrack->remove_clip(m_clip, false));
 		m_clip->set_track_start_frame(m_newInsertFrame);
 		ie().process_command(m_targetTrack->add_clip(m_clip, false));
 	}
+	
+	if (m_isCopy) {
+		resources_manager()->undo_remove_clip_from_database(m_clip->get_id());
+	}
+	
 	return 1;
 }
 
@@ -97,33 +205,45 @@ int MoveClip::do_action()
 int MoveClip::undo_action()
 {
 	PENTER;
-	if (m_targetTrack)
+	if (m_targetTrack) {
 		ie().process_command(m_targetTrack->remove_clip(m_clip, false));
-	m_clip->set_track_start_frame(m_originalTrackFirstFrame);
-	ie().process_command(m_originTrack->add_clip(m_clip, false));
+	}
+	
+	if (m_isCopy) {
+		resources_manager()->remove_clip_from_database(m_clip->get_id());
+	} else {
+		m_clip->set_track_start_frame(m_originalTrackFirstFrame);
+		ie().process_command(m_originTrack->add_clip(m_clip, false));
+	}
+		
 	return 1;
 }
 
 
 int MoveClip::jog()
 {
-// 	printf("jog\n");
-	int scrollbardif = m_horizontalScrollBarValue - m_sv->get_clips_viewport()->horizontalScrollBar()->value();
 	
-	QPointF diffPoint(cpointer().pos() - m_origPos);
-	QPointF newPos(m_cv->pos() + diffPoint);
+	if (! m_clip) {
+		return 0;
+	}
 	
-	m_origPos = cpointer().pos();
+	printf("jog\n");
+	int scrollbardif = d->horizontalScrollBarValue - d->sv->get_clips_viewport()->horizontalScrollBar()->value();
+	
+	QPointF diffPoint(cpointer().pos() - d->origPos);
+	QPointF newPos(d->view->pos() + diffPoint);
+	
+	d->origPos = cpointer().pos();
 	
 // 	printf("newPos x, y is %f, %f\n", newPos.x(), newPos.y());
 	
-	TrackView* trackView = m_sv->get_trackview_under(cpointer().scene_pos());
+	TrackView* trackView = d->sv->get_trackview_under(cpointer().scene_pos());
 	if (!trackView) {
 // 		printf("no trackview returned\n");
-	} else if (trackView != m_cv->get_trackview()) {
+	} else if (trackView != d->view->get_trackview()) {
 // 		printf("Setting new TrackView!\n");
-		m_cv->set_trackview(trackView);
-		m_cv->setParentItem(trackView);
+		d->view->set_trackview(trackView);
+		d->view->setParentItem(trackView);
 		m_targetTrack = trackView->get_track();
 // 		printf("track id is %d\n", m_targetTrack->get_id());
 	}
@@ -131,10 +251,10 @@ int MoveClip::jog()
 
 	int newXPos = cpointer().x() - scrollbardif;
 
-	SnapList* slist = m_song->get_snap_list();
+	SnapList* slist = d->song->get_snap_list();
 
 	// must be signed int because it can be negative
-	int diff_f = (cpointer().x() - m_origXPos - scrollbardif) * m_sv->scalefactor;
+	int diff_f = (cpointer().x() - d->origXPos - scrollbardif) * d->sv->scalefactor;
 	nframes_t origTrackStartFrame = m_clip->get_track_start_frame();
 	nframes_t origTrackEndFrame = m_clip->get_track_end_frame();
 	long newTrackStartFrame = origTrackStartFrame + diff_f;
@@ -151,7 +271,7 @@ int MoveClip::jog()
 	int snapEndDiff = 0;
 	int snapDiff = 0;
 
-	if (m_song->is_snap_on()) {
+	if (d->song->is_snap_on()) {
 
 		// check if there is anything to snap
 		bool start_snapped = false;
@@ -164,12 +284,12 @@ int MoveClip::jog()
 		}
 
 		if (start_snapped) {
-			snapStartDiff = slist->get_snap_diff(newTrackStartFrame) / m_sv->scalefactor;
+			snapStartDiff = slist->get_snap_diff(newTrackStartFrame) / d->sv->scalefactor;
 			snapDiff = snapStartDiff; // in case both ends snapped, change this value later, else leave it
 		}
 
 		if (end_snapped) {
-			snapEndDiff = slist->get_snap_diff(newTrackEndFrame) / m_sv->scalefactor; 
+			snapEndDiff = slist->get_snap_diff(newTrackEndFrame) / d->sv->scalefactor; 
 			snapDiff = snapEndDiff; // in case both ends snapped, change this value later, else leave it
 		}
 
@@ -184,22 +304,21 @@ int MoveClip::jog()
 		}
 	}
 
-	m_newInsertFrame = newTrackStartFrame - (snapDiff * m_sv->scalefactor);
+	m_newInsertFrame = newTrackStartFrame - (snapDiff * d->sv->scalefactor);
 
 	// store the new position only if the clip was moved, but not if it stuck to a snap position
 	if (origTrackStartFrame != m_newInsertFrame) {
-		m_origPos.setX(newXPos);
+		d->origPos.setX(newXPos);
 	}
 
-	newPos.setX(m_newInsertFrame / m_sv->scalefactor);	
-	newPos.setY(m_cv->pos().y());
-	m_cv->setPos(newPos);
+	newPos.setX(m_newInsertFrame / d->sv->scalefactor);	
+	newPos.setY(d->view->pos().y());
+	d->view->setPos(newPos);
 	
-	m_sv->update_shuttle_factor();
+	d->sv->update_shuttle_factor();
 
 	return 1;
 }
-
 
 // eof
 

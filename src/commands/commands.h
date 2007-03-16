@@ -1,7 +1,6 @@
 #include "SplitClip.h"
 #include "MoveClip.h"
 #include "MoveEdge.h"
-#include "CopyClip.h"
 #include "TrackPan.h"
 #include "Zoom.h"
 #include "Import.h"
@@ -11,3 +10,4 @@
 #include "Gain.h"
 #include "CommandGroup.h"
 #include "AddRemove.h"
+#include "AudioClipExternalProcessing.h"

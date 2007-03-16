@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier
+Copyright (C) 2005-2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: InputEngine.cpp,v 1.33 2007/03/06 15:14:16 r_sijrier Exp $
 */
 
 #include "InputEngine.h"
@@ -182,6 +181,13 @@ InputEngine::InputEngine()
 #if defined (profile)
 	trav_time_t starttime = get_microseconds();
 #endif
+	
+	foreach (QObject* obj, QPluginLoader::staticInstances()) {
+		CommandPlugin* plug = qobject_cast<CommandPlugin*>(obj);
+		m_commandplugins.insert(plug->metaObject()->className(), plug);
+	}
+	
+#if !defined (STATIC_BUILD)
 	QDir pluginsDir("lib/commandplugins");
 	foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
 		QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
@@ -193,6 +199,9 @@ InputEngine::InputEngine()
 			printf("InputEngine:: Plugin load failed with %s\n", QS_C(loader.errorString()));
 		}
 	}
+	
+#endif
+
 #if defined (profile)
 	int processtime = (int) (get_microseconds() - starttime);
 	printf("InputEngine::Plugin load time: %d useconds\n\n", processtime);
@@ -238,7 +247,7 @@ int InputEngine::broadcast_action_from_contextmenu(const QString& keySequence)
 	}
 	
 	if ( action && (action->type == HOLDKEY) || (action->type == HKEY2) ) {
-		info().information(QObject::tr("Hold actions are not supported yet from Context Menu"));
+		info().information(tr("Hold actions are not supported from Context Menu"));
 		return -1;
 	}
 
@@ -256,7 +265,7 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat)
 
 	QList<QObject* > list = cpointer().get_context_items();
 
-	char* slotsignature = "";
+	QString slotsignature = "";
 	
 	if (holdingCommand) {
 		list.prepend(holdingCommand);
@@ -271,46 +280,51 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat)
 		}
 		
 		IEAction::Data* data = action->objects.value(QString(item->metaObject()->className()));
-		QString commandpluginname = "";
+		QString pluginname = "", commandname = "";
 		
 		if ( ! data ) {
 			PMESG("No data found for object %s", item->metaObject()->className());
 		} else {
 			PMESG("Data found for %s!", item->metaObject()->className());
-			PMESG("setting slotsignature to %s", data->slotsignature);
+			PMESG("setting slotsignature to %s", QS_C(data->slotsignature));
 			slotsignature = data->slotsignature;
-			commandpluginname = data->commandpluginname;
+			pluginname = data->pluginname;
+			commandname = data->commandname;
 			useX = data->useX;
 			useY = data->useY;
 		}
 		
 		if (item == holdingCommand) {
 			if (QMetaObject::invokeMethod(item,
-					slotsignature,
+					QS_C(slotsignature),
 					Qt::DirectConnection,
 					Q_ARG(bool, autorepeat) 
 					)) {
-				PMESG("HIT, invoking %s::%s", holdingCommand->metaObject()->className(), slotsignature);
+				PMESG("HIT, invoking %s::%s", holdingCommand->metaObject()->className(), QS_C(slotsignature));
 				break;
 			}
 		} else if ( ! holdingCommand) {
 			
-			if ( ! commandpluginname.isEmpty() ) {
-				CommandPlugin* plug = m_commandplugins.value(commandpluginname);
+			if ( ! pluginname.isEmpty() ) {
+				CommandPlugin* plug = m_commandplugins.value(pluginname);
 				if (!plug) {
-					PMESG("plugin not found for: %s", QS_C(commandpluginname));
+					info().critical(tr("Command Plugin %1 not found!").arg(pluginname));
 				} else {
-					PMESG("InputEngine:: Using plugin %s for command %s", QS_C(commandpluginname), data->slotsignature);
-					k = plug->create(item);
-					break;
-				}
+					if ( ! plug->implements(commandname) ) {
+						info().critical(tr("Plugin %1 doesn't implement Command %2").arg(pluginname).arg(commandname));
+					} else {
+						PMESG("InputEngine:: Using plugin %s for command %s", QS_C(pluginname), QS_C(data->commandname));
+						k = plug->create(item, commandname, data->arguments);
+						break;
+					}
+				} 
 			} 
 			
 			if (QMetaObject::invokeMethod(item,
-					slotsignature,
+					QS_C(slotsignature),
 					Qt::DirectConnection,
 					Q_RETURN_ARG(Command*, k))) {
-				PMESG("HIT, invoking %s::%s", item->metaObject()->className(), slotsignature);
+				PMESG("HIT, invoking %s::%s", item->metaObject()->className(), QS_C(slotsignature));
 				break;
 			}
 		} else {
@@ -1056,7 +1070,6 @@ int InputEngine::init_map(const QString& mapFilename)
 		keyFactType = e.attribute( "type", "" );
 		key1 = e.attribute( "key1", "");
 		key2 = e.attribute( "key2", "" );
-		action->sortOrder = e.attribute( "sortorder", "1").toInt();
 		slot = e.attribute( "slotname", "" );
 
 		if (keyFactType == "FKEY")
@@ -1105,12 +1118,22 @@ int InputEngine::init_map(const QString& mapFilename)
 			
 			QString objectname = e.attribute("objectname", "");
 			
-			data->slotsignature = qstrdup(e.attribute("slotsignature", "").toAscii().data());
+			data->slotsignature = e.attribute("slotsignature", "");
 			data->modes = e.attribute("modes", "").split(";");
 			data->description = e.attribute("description", "");
 			data->instantanious = e.attribute("instantanious", "0").toInt();
-			data->commandpluginname = e.attribute( "commandpluginname", "");
+			data->pluginname = e.attribute( "pluginname", "");
+			data->commandname = e.attribute( "commandname", "");
+			data->submenu = e.attribute("submenu", "");
+			data->sortorder = e.attribute( "sortorder", "0").toInt();
 			mouseHint = e.attribute( "mousehint", "" );
+			QString args = e.attribute("arguments", "");
+			if ( ! args.isEmpty() ) {
+				QStringList arglist = args.split(";");
+				for (int i=0; i<arglist.size(); ++i) {
+					data->arguments.append(arglist.at(i));
+				}
+			}
 			
 			data->useX = data->useY = false;
 		
@@ -1127,7 +1150,7 @@ int InputEngine::init_map(const QString& mapFilename)
 			if (QString(objectname) == "") {
 				PERROR("no objectname given in keyaction %s", QS_C(keyFactType));
 			}
-			if (QString(data->slotsignature) == "") {
+			if (data->slotsignature.isEmpty() && data->pluginname.isEmpty()) {
 				PERROR("no slotsignature given in keyaction %s, object %s", QS_C(keyFactType), QS_C(objectname));
 			}
 			if (QString(data->modes.join(";")) == "") {
@@ -1159,11 +1182,11 @@ int InputEngine::init_map(const QString& mapFilename)
 			}
 				
 		}
+		
 		if (!exists) {
 			ieActions.append(action);
 			PMESG2("ADDED action: type=%d keys=%d,%d,%d,%d useX=%d useY=%d, slot=%s", action->type, action->fact1_key1,action->fact1_key2,action->fact2_key1,action->fact2_key2,data->useX,data->useY, QS_C(slot));
 		}
-		
 		
 		node = node.nextSibling();
 	}
@@ -1291,63 +1314,90 @@ bool InputEngine::is_holding( )
 	return isHolding;
 }
 
-QList< MenuData > InputEngine::get_contextitem_actionlist(QObject* item)
+QList< MenuData > InputEngine::create_menudata_for(QObject* item)
 {
 	QList<MenuData > list;
 	ContextItem* contextitem;
-	QString slotsignature;
-	
 	
 	do {
-		const QMetaObject* mo = item->metaObject();
+		const QMetaObject* mo = item->metaObject(); 
 		const char* classname = mo->className();
 		
-		for (int i=0; i < mo->methodCount(); i++) {
-			
-			if ( ! (mo->method(i).methodType() == QMetaMethod::Slot) ) {
+		for (int i=0; i<ieActions.size(); i++) {
+			IEAction* ieaction = ieActions.at(i);
+					
+			IEAction::Data* iedata = ieaction->objects.value(classname);
+					
+			if ( ! iedata ) {
 				continue;
 			}
 			
-			slotsignature = mo->method(i).signature();
-			slotsignature = slotsignature.left(slotsignature.indexOf("("));
+			MenuData menudata;
 			
-			for (int i=0; i<ieActions.size(); i++) {
+			if ( ! iedata->pluginname.isEmpty() ) {
+				CommandPlugin* plug = m_commandplugins.value(iedata->pluginname);
 				
-				IEAction* ieaction = ieActions.at(i);
-				
-				IEAction::Data* iedata;
-				iedata = ieaction->objects.value(classname);
-				
-				if ( ! iedata ) {
+				if ( ! plug) {
 					continue;
 				}
-				
-				if ( ! ( iedata->slotsignature == slotsignature) ) {
-					continue;
-				}
-				
-				MenuData menudata;
-				int classInfoIndex = mo->indexOfClassInfo(QS_C(slotsignature));
-				
+				int classInfoIndex = plug->metaObject()->indexOfClassInfo(QS_C(iedata->commandname));
 				if (classInfoIndex >= 0) {
+					QMetaClassInfo classInfo = plug->metaObject()->classInfo(classInfoIndex);
+					// Set the translated string!
+					menudata.description = QCoreApplication::translate(classname, classInfo.value());
+				} else {
+					menudata.description = 
+						QString("Add a Q_CLASSINFO() in CommandPlug %1.h, Command %2 please")
+						.arg(iedata->pluginname).arg(iedata->commandname);
+					PWARN("%s", QS_C(menudata.description));
+				}
+	
+			} else {
+				int classInfoIndex = mo->indexOfClassInfo(QS_C(iedata->slotsignature));
+				int methodIndex = -1;
+				
+				for (int i=0; i < mo->methodCount(); i++) {
+			
+					if ( ! (mo->method(i).methodType() == QMetaMethod::Slot) ) {
+						continue;
+					}
+			
+					QString slotsignature = mo->method(i).signature();
+					slotsignature = slotsignature.left(slotsignature.indexOf("("));
+					if (iedata->slotsignature == slotsignature) {
+						methodIndex = i;
+						break;
+					}
+				}
+					
+				
+				if (classInfoIndex >= 0 && methodIndex >= 0) {
 					QMetaClassInfo classInfo = mo->classInfo(classInfoIndex);
 					// Set the translated string!
 					menudata.description = QCoreApplication::translate(classname, classInfo.value());
 				} else {
-					menudata.description = QString("Add a Q_CLASSINFO() for %1::%2 please").arg(classname).arg(slotsignature);
+					if (methodIndex >= 0) {
+						menudata.description = QString("Add a Q_CLASSINFO() for %1::%2 please")
+							.arg(classname).arg(iedata->slotsignature);
+						PWARN("%s", QS_C(menudata.description));
+					} else {
+						continue;
+					}
 				}
-				
-				menudata.keysequence = ieaction->keySequence;
-				menudata.sortorder = ieaction->sortOrder;
-				
-				list.append(menudata);
 			}
+			
+			menudata.keysequence = ieaction->keySequence;
+			menudata.sortorder = iedata->sortorder;
+			menudata.submenu = iedata->submenu;
+				
+			list.append(menudata);
 		}
-
+		
 		contextitem = qobject_cast<ContextItem*>(item);
 	} 
-	while ( contextitem && (item = contextitem->get_context()) );
-
+	while (contextitem && (item = contextitem->get_context()) );
+		
+	
 	return list;
 }
 

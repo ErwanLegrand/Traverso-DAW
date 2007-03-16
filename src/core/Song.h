@@ -46,17 +46,16 @@ struct ExportSpecification;
 class Song : public ContextItem
 {
 	Q_OBJECT
-	Q_CLASSINFO("go", tr("Start (Play/Record)"))
-	Q_CLASSINFO("add_new_track", tr("New Track"))
+	Q_CLASSINFO("go", tr("Play (Record)"))
 	Q_CLASSINFO("work_next_edge", tr("Workcursor: To next ege"))
 	Q_CLASSINFO("work_previous_edge", tr("Workcursor: To previous edge"))
 	Q_CLASSINFO("undo", tr("Undo"))
 	Q_CLASSINFO("redo", tr("Redo"))
 	Q_CLASSINFO("toggle_snap", tr("Snap: On/Off"))
 	Q_CLASSINFO("playhead_to_workcursor", tr("Playcursor: To workcursor"))
-	Q_CLASSINFO("master_gain", tr("Gain"))
 	Q_CLASSINFO("toggle_solo", tr("Solo: On/Off"))
 	Q_CLASSINFO("toggle_mute", tr("Mute: On/Off"))
+	Q_CLASSINFO("toggle_arm", tr("Arm: On/Off"))
 
 public:
 
@@ -96,6 +95,7 @@ public:
 	void set_work_at(nframes_t pos);
 	void set_transport_pos(nframes_t pos);
 	void set_hzoom(int hzoom);
+	void set_snapping(bool snap);
 
 	int process(nframes_t nframes);
 	int process_export(nframes_t nframes);
@@ -113,7 +113,9 @@ public:
 	bool is_changed() const {return changed;}
 	bool is_snap_on() const	{return isSnapOn;}
 
-	void disconnect_from_audiodevice_and_delete();
+	void disconnect_from_audiodevice();
+	void connect_to_audiodevice();
+	void schedule_for_deletion();
 
 	audio_sample_t* 	mixdown;
 	audio_sample_t*		gainbuffer;
@@ -160,7 +162,6 @@ private:
 	SnapList*		snaplist;
 
 	void init();
-	void connect_to_audiodevice();
 	int set_state( const QDomNode & node );
 
 	int finish_audio_export();
@@ -180,15 +181,11 @@ public slots :
 	float get_gain() const;
 
 	Command* go();
-	Command* add_new_track();
 
 	Command* work_next_edge();
 	Command* work_previous_edge();
-	Command* undo();
-	Command* redo();
 	Command* toggle_snap();
 	Command* playhead_to_workcursor();
-	Command* master_gain();
 	Command* toggle_solo();
 	Command* toggle_mute();
 	Command* toggle_arm();

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: AudioDeviceThread.h,v 1.3 2006/09/18 18:41:41 r_sijrier Exp $
+    $Id: AudioDeviceThread.h,v 1.4 2007/03/16 00:10:26 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICETHREAD_H
@@ -45,9 +45,7 @@ protected:
 
 private:
         AudioDevice* m_device;
-
-        bool transfer;
-        bool realTime;
+        bool m_realTime;
 };
 
 #endif

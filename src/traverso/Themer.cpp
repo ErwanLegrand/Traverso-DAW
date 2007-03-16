@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Themer.cpp,v 1.5 2007/02/27 19:50:03 r_sijrier Exp $
+$Id: Themer.cpp,v 1.6 2007/03/16 00:10:26 r_sijrier Exp $
 */
 
 #include "Themer.h"
@@ -27,6 +27,8 @@ $Id: Themer.cpp,v 1.5 2007/02/27 19:50:03 r_sijrier Exp $
 #include <QDir>
 #include <QTextStream>
 #include <QDomDocument>
+#include <QApplication>
+#include <QStyle>
 
 
 // Always put me below _all_ includes, this is needed

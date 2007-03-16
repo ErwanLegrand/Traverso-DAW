@@ -38,7 +38,6 @@ MarkerView::MarkerView(Marker* marker, SongView* sv, ViewItem* parentView)
 	m_marker = marker;
 	m_active = false;
 
-	calculate_bounding_rect();
 	load_theme_data();
 	
 	connect(m_marker, SIGNAL(positionChanged()), this, SLOT(update_position()));
@@ -74,15 +73,18 @@ void MarkerView::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
 
 void MarkerView::calculate_bounding_rect()
 {
+	prepareGeometryChange();
+	update_position();
+	
 	QFontMetrics fm( QFont( "Bitstream Vera Sans", 7) );
 	int descriptionwidth = fm.width(m_marker->get_description()) + 1;
 
-// 	if (m_active) {
+	if (m_active) {
 		m_boundingRect = QRectF(0, 0, MARKER_WIDTH + descriptionwidth,
 				m_sv->get_clips_viewport()->sceneRect().height());
-// 	} else {
-// 		m_boundingRect = QRectF(0, 0, MARKER_WIDTH + descriptionwidth, 9.0);
-// 	}
+	} else {
+		m_boundingRect = QRectF(0, 0, MARKER_WIDTH + descriptionwidth, 9.0);
+	}
 
 }
 
@@ -100,7 +102,7 @@ void MarkerView::set_position(int i)
 void MarkerView::load_theme_data()
 {
 	m_fillColor = themer()->get_color("Marker:default");
-	update_position();
+	calculate_bounding_rect();
 }
 
 void MarkerView::set_active(bool b)

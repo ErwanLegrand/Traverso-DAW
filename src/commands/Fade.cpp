@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier 
+Copyright (C) 2006-2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Fade.cpp,v 1.8 2007/02/23 14:00:24 r_sijrier Exp $
 */
 
 
@@ -45,7 +44,7 @@ FadeRange::FadeRange(AudioClip* clip, FadeCurve* curve, int direction)
 {
 	m_curve = curve;
 	m_direction = direction;
-	setText( (direction == 1) ? QObject::tr("Fade In: range") : QObject::tr("Fade Out: range"));
+	setText( (direction == 1) ? tr("Fade In: range") : tr("Fade Out: range"));
 }
 
 
@@ -128,6 +127,7 @@ int FadeBend::finish_hold()
 {
 	QCursor::setPos(mousePos);
 	m_fv->set_holding(false);
+	return 1;
 }
 
 void FadeBend::set_cursor_shape(int useX, int useY)
@@ -183,6 +183,7 @@ int FadeStrength::finish_hold()
 {
 	QCursor::setPos(mousePos);
 	m_fv->set_holding(false);
+	return 1;
 }
 
 

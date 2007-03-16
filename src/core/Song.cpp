@@ -46,7 +46,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Utils.h"
 #include "ContextItem.h"
 #include "TimeLine.h"
-#include "Marker.h"
 
 #include <Plugin.h>
 #include <PluginChain.h>
@@ -74,8 +73,6 @@ Song::Song(Project* project)
 		Track* track = create_track();
 		private_add_track(track);
 	}
-
-	connect_to_audiodevice();
 }
 
 Song::Song(Project* project, const QDomNode node)
@@ -84,8 +81,6 @@ Song::Song(Project* project, const QDomNode node)
 	PENTERCONS;
 	init();
 	set_state( node );
-
-	connect_to_audiodevice();
 }
 
 Song::~Song()
@@ -141,6 +136,9 @@ void Song::init()
 	
 	m_pluginChain = new PluginChain(this, this);
 	m_timeline = new TimeLine(this);
+	
+	m_audiodeviceClient = new Client("song_" + QByteArray::number(get_id()));
+	m_audiodeviceClient->set_process_callback( MakeDelegate(this, &Song::process) );
 }
 
 int Song::set_state( const QDomNode & node )
@@ -213,20 +211,22 @@ QDomNode Song::get_state(QDomDocument doc)
 void Song::connect_to_audiodevice( )
 {
 	PENTER;
-	m_audiodeviceClient = new Client("song_" + QByteArray::number(get_id()));
-	m_audiodeviceClient->set_process_callback( MakeDelegate(this, &Song::process) );
 	audiodevice().add_client(m_audiodeviceClient);
 }
 
-void Song::disconnect_from_audiodevice_and_delete()
+void Song::disconnect_from_audiodevice()
 {
 	PENTER;
 	if (transport) {
 		transport = false;
 	}
+	audiodevice().remove_client(m_audiodeviceClient);
+}
+
+void Song::schedule_for_deletion()
+{
 	scheduleForDeletion = true;
 	pm().scheduled_for_deletion(this);
-	audiodevice().remove_client(m_audiodeviceClient);
 }
 
 void Song::audiodevice_client_removed(Client* client )
@@ -498,6 +498,7 @@ void Song::set_transport_pos(nframes_t position)
 
 //
 //  Function _could_ be called in RealTime AudioThread processing path
+//  Be EXTREMELY carefull to not call functions() that have blocking behavior!!
 //
 void Song::start_seek()
 {
@@ -505,7 +506,6 @@ void Song::start_seek()
 	PMESG2("Song :: thread id is: %ld", QThread::currentThreadId ());
 	PMESG2("Song::start_seek()");
 	if (transport) {
-		transport = false;
 		realtimepath = false;
 		resumeTransport = true;
 	}
@@ -515,6 +515,7 @@ void Song::start_seek()
 	if (!transport) {
 		emit seekStart(newTransportFramePos);
 	} else {
+		transport = false;
 		RT_THREAD_EMIT(this, (void*)newTransportFramePos, seekStart(uint));
 	}
 
@@ -539,11 +540,15 @@ void Song::seek_finished()
 
 Command* Song::toggle_snap()
 {
-	isSnapOn=!isSnapOn;
+	set_snapping( ! isSnapOn );
+	return 0;
+}
 
-	emit propertieChanged();
 
-	return (Command*) 0;
+void Song::set_snapping(bool snapping)
+{
+	isSnapOn = snapping;
+	emit snapChanged();
 }
 
 /******************************** SLOTS *****************************/
@@ -556,14 +561,6 @@ Track* Song::create_track()
 
 	return track;
 }
-
-Command* Song::add_new_track()
-{
-	Track* track = create_track();
-
-	return add_track(track);
-}
-
 
 Command* Song::go()
 {
@@ -693,18 +690,6 @@ Command* Song::work_previous_edge()
 
 	emit setCursorAtEdge();
 
-	return (Command*) 0;
-}
-
-Command* Song::undo()
-{
-	m_hs->undo();
-	return (Command*) 0;
-}
-
-Command* Song::redo()
-{
-	m_hs->redo();
 	return (Command*) 0;
 }
 
@@ -886,11 +871,6 @@ Command * Song::playhead_to_workcursor( )
 	set_work_at( workingFrame );
 
 	return (Command*) 0;
-}
-
-Command * Song::master_gain( )
-{
-	return new Gain(this, tr("Master Gain"));
 }
 
 void Song::private_add_track(Track* track)

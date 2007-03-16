@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.22 2007/01/11 11:50:21 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.23 2007/03/16 00:10:26 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -364,7 +364,7 @@ int AudioDevice::create_driver(QString driverType, bool capture, bool playback, 
 	if (driverType == "Jack") {
 		driver = new JackDriver(this, m_rate, m_bufferSize);
 		if (driver->setup(capture, playback) < 0) {
-			printf("Jack Driver creation failed\n");
+			info().critical("Failed to create the Jack Driver");
 			delete driver;
 			driver = 0;
 			return -1;
@@ -378,7 +378,7 @@ int AudioDevice::create_driver(QString driverType, bool capture, bool playback, 
 	if (driverType == "ALSA") {
 		driver =  new AlsaDriver(this, m_rate, m_bufferSize);
 		if (driver->setup(capture,playback, cardDevice) < 0) {
-			printf("ALSA driver creation failed\n");
+			info().critical("Failed to create the ALSA Driver");
 			delete driver;
 			driver = 0;
 			return -1;
@@ -682,5 +682,15 @@ void AudioDevice::check_jack_shutdown()
 	}
 }
 
+void AudioDevice::make_audiothread_realtime(bool realtime)
+{
+	if (! driver)  {
+		return;
+	}
+	
+	if (audioThread) {
+		audioThread->become_realtime(realtime);
+	}
+}
 
 //eof

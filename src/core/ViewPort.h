@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ViewPort.h,v 1.9 2007/03/06 15:14:16 r_sijrier Exp $
+    $Id: ViewPort.h,v 1.10 2007/03/16 00:14:43 r_sijrier Exp $
 */
 
 #ifndef VIEWPORT_H
@@ -53,9 +53,7 @@ public :
 
 
 protected:
-        virtual void leaveEvent ( QEvent * );
         virtual void enterEvent ( QEvent * );
-        virtual void resizeEvent(QResizeEvent* e);
         virtual void paintEvent( QPaintEvent* e);
         virtual void mouseMoveEvent(QMouseEvent* e);
         virtual void mousePressEvent ( QMouseEvent * e );
@@ -64,10 +62,12 @@ protected:
 	virtual void wheelEvent ( QWheelEvent* e );
 	virtual void keyPressEvent ( QKeyEvent* e);
 	virtual void keyReleaseEvent ( QKeyEvent* e);
-
+	void tabletEvent ( QTabletEvent * event );
+	
 private:
 
 	HoldCursor*	m_holdcursor;
+	QPoint		m_oldMousePos;
 };
 
 

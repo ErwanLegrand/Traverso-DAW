@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AlsaDriver.cpp,v 1.13 2007/02/27 19:48:34 r_sijrier Exp $
+$Id: AlsaDriver.cpp,v 1.14 2007/03/16 00:10:26 r_sijrier Exp $
 */
 
 
@@ -29,6 +29,7 @@ $Id: AlsaDriver.cpp,v 1.13 2007/02/27 19:48:34 r_sijrier Exp $
 #include "AudioChannel.h"
 #include <Utils.h>
 #include <Config.h>
+#include <Information.h>
 
 #include <math.h>
 #include <stdio.h>
@@ -167,17 +168,17 @@ int AlsaDriver::setup(bool capture, bool playback, const QString& pcmName)
 		if (snd_pcm_open (&playback_handle, alsa_name_playback, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK) < 0) {
 			switch (errno) {
 			case EBUSY:
-				printf ("ALSA Driver: The playback device \"%s\" is already in use. Please stop the"
-					" application using it and run Traverso again\n",  playback_pcm_name);
+				info().information(tr("ALSA Driver: The playback device %1 is already in use. Please stop the"
+					" application using it and run Traverso again").arg(playback_pcm_name));
 				return -1;
 				break;
 
 			case EPERM:
-				printf ("ALSA Driver: You do not have permission to open the audio device \"%s\" for playback\n", playback_pcm_name);
+				info().information(tr("ALSA Driver: You do not have permission to open the audio device %1 for playback").arg(playback_pcm_name));
 				return -1;
 				break;
 			default:
-				PERROR ("snd_pcm_open(playback_handle, ..) failed with unknown error type");
+				info().warning(tr("snd_pcm_open(playback_handle, ..) failed with unknown error type"));
 			}
 
 			playback_handle = 0;
@@ -192,17 +193,17 @@ int AlsaDriver::setup(bool capture, bool playback, const QString& pcmName)
 		if (snd_pcm_open (&capture_handle, alsa_name_capture, SND_PCM_STREAM_CAPTURE,  SND_PCM_NONBLOCK) < 0) {
 			switch (errno) {
 			case EBUSY:
-				PWARN ("ALSA Driver: The capture device \"%s\" is already in use. Please stop the"
-				" application using it and run Traverso again", capture_pcm_name);
+				info().information(tr("ALSA Driver: The capture device %1 is already in use. Please stop the"
+				" application using it and run Traverso again").arg(capture_pcm_name));
 				return -1;
 				break;
 
 			case EPERM:
-				PWARN ("ALSA Driver: You do not have permission to open the audio device \"%s\" for capture", capture_pcm_name);
+				info().warning(tr("ALSA Driver: You do not have permission to open the audio device %1 for capture").arg(capture_pcm_name));
 				return -1;
 				break;
 			default:
-				PERROR ("snd_pcm_open(capture_handle, ...) failed with unknown error type");
+				info().warning(tr("ALSA Driver: snd_pcm_open(capture_handle, ...) failed with unknown error type"));
 			}
 
 			capture_handle = 0;
@@ -218,7 +219,7 @@ int AlsaDriver::setup(bool capture, bool playback, const QString& pcmName)
 
 			/* they asked for playback, but we can't do it */
 
-			PWARN ("ALSA: Cannot open PCM device %s for playback. Falling back to capture-only mode", "alsa_pcm");
+			info().warning(tr("ALSA Driver: Cannot open PCM device %1 for playback. Falling back to capture-only mode").arg("alsa_pcm"));
 
 			if (capture_handle == 0) {
 				/* can't do anything */
@@ -233,7 +234,7 @@ int AlsaDriver::setup(bool capture, bool playback, const QString& pcmName)
 
 			/* they asked for capture, but we can't do it */
 
-			PWARN ("ALSA: Cannot open PCM device %s for capture. Falling back to playback-only mode", "alsa_pcm");
+			info().warning(tr("ALSA: Cannot open PCM device %1 for capture. Falling back to playback-only mode").arg("alsa_pcm"));
 
 			if (playback_handle == 0) {
 				/* can't do anything */
@@ -551,6 +552,7 @@ int AlsaDriver::configure_stream(char *device_name,
 
 	if ((err = snd_pcm_hw_params (handle, hw_params)) < 0) {
 		PERROR ("ALSA: cannot set hardware parameters for %s", stream_name);
+		info().warning(tr("ALSA Driver: Unable to configure hardware, is it in use by another application?"));
 		return -1;
 	}
 

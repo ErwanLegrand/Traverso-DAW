@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.32 2007/02/23 13:49:53 r_sijrier Exp $
+$Id: AudioClip.h,v 1.33 2007/03/16 00:14:43 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -45,17 +45,11 @@ class AudioClip : public ContextItem
 {
 	Q_OBJECT
 	Q_CLASSINFO("mute", tr("Mute"))
-	Q_CLASSINFO("reset_gain", tr("Gain: Reset"))
-	Q_CLASSINFO("reset_fade_in", tr("Fade In: Reset"))
-	Q_CLASSINFO("reset_fade_out", tr("Fade Out: Reset"))
-	Q_CLASSINFO("reset_fade_both", tr("Fade: Reset both"))
-	Q_CLASSINFO("select", tr("Select"))
-	Q_CLASSINFO("remove_from_selection", tr("Selection: Remove"))
-	Q_CLASSINFO("copy", tr("Copy"))
-	Q_CLASSINFO("add_to_selection", tr("Selection: Add"))
-	Q_CLASSINFO("gain", tr("Gain"))
-	Q_CLASSINFO("clip_fade_in", tr("Fade In"))
-	Q_CLASSINFO("clip_fade_out", tr("Fade Out"))
+	Q_CLASSINFO("reset_fade_in", tr("In: Reset"))
+	Q_CLASSINFO("reset_fade_out", tr("Out: Reset"))
+	Q_CLASSINFO("reset_fade_both", tr("Reset both"))
+	Q_CLASSINFO("clip_fade_in", tr("In: Range"))
+	Q_CLASSINFO("clip_fade_out", tr("Out: Range"))
 	Q_CLASSINFO("normalize", tr("Normalize"))
 	Q_CLASSINFO("denormalize", tr("Normalize: reset"))
 
@@ -86,7 +80,6 @@ public:
 	int set_selected(bool selected);
 	int set_state( const QDomNode& node );
 	int get_ref_count() const;
-	int ref();
 
 	AudioClip* prev_clip();
 	AudioClip* next_clip();
@@ -169,9 +162,12 @@ private:
 	void set_track_end_frame(nframes_t endFrame);
 	void set_sources_active_state();
 	void process_capture(nframes_t nframes, uint channel);
+	int ref() {return m_refcount++;}
 	
 	
 	void calculate_normalization_factor(float targetdB = 0.0);
+	
+	friend class ResourcesManager;
 
 signals:
 	void stateChanged();
@@ -194,15 +190,9 @@ public slots:
 	float get_gain() const;
 	
 	Command* mute();
-	Command* reset_gain();
 	Command* reset_fade_in();
 	Command* reset_fade_out();
 	Command* reset_fade_both();
-	Command* select();
-	Command* remove_from_selection();
-	Command* copy();
-	Command* add_to_selection();
-	Command* gain();
         Command* clip_fade_in();
         Command* clip_fade_out();
         Command* normalize();

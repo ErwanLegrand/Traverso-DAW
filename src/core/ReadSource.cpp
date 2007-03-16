@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.cpp,v 1.18 2007/01/11 14:57:37 r_sijrier Exp $
+$Id: ReadSource.cpp,v 1.19 2007/03/16 00:14:43 r_sijrier Exp $
 */
 
 #include "ReadSource.h"
@@ -43,7 +43,9 @@ $Id: ReadSource.cpp,v 1.18 2007/01/11 14:57:37 r_sijrier Exp $
 
 // This constructor is called for existing (recorded/imported) audio sources
 ReadSource::ReadSource(const QDomNode node)
-	: AudioSource(node),  m_sources(), refcount(0)
+	: AudioSource(node)
+	, m_sources()
+	, m_refcount(0)
 {
 	Project* project = pm().get_project();
 	
@@ -58,7 +60,8 @@ ReadSource::ReadSource(const QDomNode node)
 
 
 ReadSource::ReadSource(const QString& dir, const QString& name)
-	: AudioSource(dir, name), refcount(0)
+	: AudioSource(dir, name)
+	, m_refcount(0)
 {
 	SNDFILE* sf;
 	SF_INFO  sfinfo;
@@ -74,8 +77,8 @@ ReadSource::ReadSource(const QString& dir, const QString& name)
 
 
 ReadSource::ReadSource(const QString& dir, const QString& name, int channelCount, int fileCount)
-	: AudioSource(dir, name), 
-	  refcount(0)
+	: AudioSource(dir, name)
+	, m_refcount(0)
 {
 	  m_channelCount = channelCount;
 	  m_fileCount = fileCount;
@@ -95,7 +98,7 @@ int ReadSource::init( )
 {
 	PENTER;
 	
-	Q_ASSERT(refcount);
+	Q_ASSERT(m_refcount);
 	
 	if (m_channelCount == 0) {
 		PERROR("ReadSource channel count is 0");
@@ -173,13 +176,6 @@ ReadSource * ReadSource::deep_copy( )
 	QDomNode rsnode = get_state(doc);
 	ReadSource* source = new ReadSource(rsnode);
 	return source;
-}
-
-
-int ReadSource::ref( )
-{
-	PENTER;
-	return refcount++;
 }
 
 

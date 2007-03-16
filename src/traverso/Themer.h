@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Themer.h,v 1.3 2007/02/27 19:50:03 r_sijrier Exp $
+    $Id: Themer.h,v 1.4 2007/03/16 00:10:26 r_sijrier Exp $
 */
 
 #ifndef COLORMANAGER_H
@@ -25,9 +25,12 @@
 
 #include <QObject>
 #include <QColor>
+#include <QFont>
 #include <QHash>
 #include <QString>
 #include <QFileSystemWatcher>
+#include <QVariant>
+#include <QPalette>
 
 class Themer : public QObject
 {
@@ -68,7 +71,6 @@ private slots:
 	
 signals:
 	void themeLoaded();
-	void styleChanged();
 };
 
 // use this function to get the Colormanager object

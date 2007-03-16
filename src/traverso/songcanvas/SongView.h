@@ -17,13 +17,14 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongView.h,v 1.11 2007/03/11 00:44:53 ingmar Exp $
+    $Id: SongView.h,v 1.12 2007/03/16 00:10:26 r_sijrier Exp $
 */
 
 #ifndef SONG_VIEW_H
 #define SONG_VIEW_H
 
 #include "ViewItem.h"
+#include <QTimer>
 
 class Song;
 class TrackView;
@@ -40,22 +41,23 @@ class SongView : public ViewItem
 {
         Q_OBJECT
 	Q_CLASSINFO("touch", tr("Touch"))
-	Q_CLASSINFO("hzoom_out", tr("Zoom: Horizontal Out"))
-	Q_CLASSINFO("hzoom_in", tr("Zoom: Horizontal In"))
-	Q_CLASSINFO("vzoom_out", tr("Zoom: Vertical Out"))
-	Q_CLASSINFO("vzoom_in", tr("Zoom: Vertical In"))
-	Q_CLASSINFO("zoom", tr("Zoom"))
+	Q_CLASSINFO("hzoom_out", tr("Horizontal Out"))
+	Q_CLASSINFO("hzoom_in", tr("Horizontal In"))
+	Q_CLASSINFO("vzoom_out", tr("Vertical Out"))
+	Q_CLASSINFO("vzoom_in", tr("Vertical In"))
+	Q_CLASSINFO("zoom", tr("Omnidirectional"))
 	Q_CLASSINFO("center", tr("Center View"))
-	Q_CLASSINFO("scroll_right", tr("Scroll: right"))
-	Q_CLASSINFO("scroll_left", tr("Scroll: left"))
-	Q_CLASSINFO("scroll_up", tr("Scroll: up"))
-	Q_CLASSINFO("scroll_down", tr("Scroll: down"))
+	Q_CLASSINFO("scroll_right", tr("Right"))
+	Q_CLASSINFO("scroll_left", tr("Left"))
+	Q_CLASSINFO("scroll_up", tr("Up"))
+	Q_CLASSINFO("scroll_down", tr("Down"))
 	Q_CLASSINFO("shuttle", tr("Shuttle"))
-	Q_CLASSINFO("goto_begin", tr("Workcursor: To start"))
-	Q_CLASSINFO("goto_end", tr("Workcursor: To end"))
+	Q_CLASSINFO("goto_begin", tr("To start"))
+	Q_CLASSINFO("goto_end", tr("To end"))
 	Q_CLASSINFO("play_cursor_move", tr("Playcursor: Move"))
 	Q_CLASSINFO("set_editing_mode", tr("Mode: Edit"))
 	Q_CLASSINFO("set_curve_mode", tr("Mode: Curve"))
+	Q_CLASSINFO("add_marker", tr("Add Marker"))
 
 public :
 

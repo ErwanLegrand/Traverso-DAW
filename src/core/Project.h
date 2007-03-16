@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 class Song;
-class AudioSourceManager;
+class ResourcesManager;
 struct ExportSpecification;
 
 class Project : public ContextItem
@@ -46,14 +46,13 @@ public :
 	int get_rate() const;
 	int get_bitdepth() const;
 	
-	AudioSourceManager* get_audiosource_manager() const;
+	ResourcesManager* get_audiosource_manager() const;
 	QString get_title() const;
 	QString get_engineer() const;
 	QString get_description() const;
 	QString get_root_dir() const;
 	QString get_audiosources_dir() const;
-	QStringList get_songs() const;
-	QList<Song* > get_song_list() const;
+	QList<Song* > get_songs() const;
 	Song* get_current_song() const ;
 	Song* get_song(qint64 id) const;
 	qint64 get_id() const;
@@ -68,14 +67,13 @@ public :
 	void set_current_song(qint64 id);
 
 	
-	Song* add_song();
+	Command* add_song(Song* song, bool historable=true);
+	Command* remove_song(Song* song, bool historable=true);
 	
 	bool has_changed();
 	
-	int create(int pNumSongs);
 	int save();
 	int load();
-	int remove_song(qint64 id);
 	int export_project(ExportSpecification* spec);
 	int start_export(ExportSpecification* spec);
 
@@ -87,7 +85,7 @@ private:
 	Project(const QString& title);
 	
 	QList<Song* >	m_songs;
-	AudioSourceManager* 	m_asmanager;
+	ResourcesManager* 	m_asmanager;
 
 	qint64		m_id;
 	QString 	title;
@@ -105,12 +103,18 @@ private:
 
 	qint64 		m_currentSongId;
 	
+	int create(int songcount);
+	
 	friend class ProjectManager;
+
+private slots:
+	void private_add_song(Song* song);
+	void private_remove_song(Song* song);
 
 signals:
 	void currentSongChanged(Song* );
-	void songAdded();
-	void songRemoved();
+	void songAdded(Song*);
+	void songRemoved(Song*);
 	void songExportProgressChanged(int );
 	void overallExportProgressChanged(int );
 	void exportFinished();

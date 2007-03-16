@@ -19,16 +19,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 */
 
+
+#ifndef COMMAND_PLUGIN_H
+#define COMMAND_PLUGIN_H
+
 #include <QtPlugin>
 #include <Command.h>
+#include <QStringList>
+#include <QHash>
+#include <QVariant>
 
 class CommandInterface
 {
 public:
 	virtual ~CommandInterface() {}
-	
-	virtual QString name() const = 0;
-	virtual Command* create(QObject* guiItem) = 0;
+	virtual Command* create(QObject* obj, const QString& command, QVariantList arguments) = 0;
 };
 
 Q_DECLARE_INTERFACE(CommandInterface, "org.traversodaw.Command.CommandInterface/1.0");
@@ -40,13 +45,27 @@ Q_DECLARE_INTERFACE(CommandInterface, "org.traversodaw.Command.CommandInterface/
  *	
  */
 
-class CommandPlugin : public QObject
+class CommandPlugin : public QObject, public CommandInterface
 {
 	Q_OBJECT
+	Q_INTERFACES(CommandInterface);
 
 public:
 	virtual ~CommandPlugin() {}
+	virtual Command* create(QObject* obj, const QString& command, QVariantList arguments) = 0;
 	
-	virtual QString name() const = 0;
-	virtual Command* create(QObject* guiItem) = 0;
+	virtual QStringList commands() const {
+		return QStringList(m_dict.keys());
+	}
+	
+	virtual bool implements(const QString& command) const {
+		return m_dict.contains(command);
+	}
+	
+protected:
+	QHash<QString, int> m_dict;
 };
+
+#endif
+
+//eof

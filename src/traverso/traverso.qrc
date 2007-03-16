@@ -40,13 +40,6 @@
 		<file alias="projectmanagement">../../resources/images/icons/32X32/projects.png</file>
 		<file alias="songmanagement">../../resources/images/icons/32X32/songs.png</file>
 		<file alias="audiosourcesmanagement">../../resources/images/icons/32X32/audiosources.png</file>
-		<file alias="globalproperties">../../resources/images/icons/32X32/advancedsettings.png</file>
-		<file alias="info">../../resources/images/icons/22x22/info.png</file>
-		<file alias="warning">../../resources/images/icons/22x22/warning.png</file>
-		<file alias="critical">../../resources/images/icons/22x22/critical.png</file>
-		<file alias="songview-22">../../resources/images/icons/22x22/songview.png</file>
-		<file alias="projectmanagement-22">../../resources/images/icons/22x22/projects.png</file>
-		<file alias="projectmanagement-16">../../resources/images/icons/16x16/projects.png</file>
 		<file alias="exit-16">../../resources/images/icons/16x16/exit.png</file>
 		<file alias="undo-16">../../resources/images/icons/16x16/undo.png</file>
 		<file alias="redo-16">../../resources/images/icons/16x16/redo.png</file>
@@ -54,6 +47,7 @@
 		<file alias="songmanager-16">../../resources/images/icons/16x16/contents.png</file>
 		<file alias="traverso_nl">../../traverso_nl.qm</file>
 		<file alias="traverso_de">../../traverso_de.qm</file>
+		<file alias="traverso_en">../../traverso_en.qm</file>
 		<file alias="index.html">../../resources/help/index.html</file>
 		<file alias="firststart.html">../../resources/help/firststart.html</file>
 		<file alias="theinterface.html">../../resources/help/theinterface.html</file>

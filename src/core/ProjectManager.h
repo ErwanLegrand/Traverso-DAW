@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 class Project;
 class Song;
 class Command;
+class ResourcesManager;
 
 class ProjectManager : public ContextItem
 {
@@ -54,6 +55,8 @@ public slots:
 	
 	Command* save_project();
 	Command* exit();
+	Command* undo();
+	Command* redo();
 
 
 private:
@@ -79,7 +82,10 @@ signals:
 };
 
 
-// use this function to access the settings
+// use this function to access the ProjectManager
 ProjectManager& pm();
+
+// Use this function to get the loaded Project's Resources Manager
+ResourcesManager* resources_manager();
 
 #endif

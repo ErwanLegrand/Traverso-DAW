@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ExportWidget.cpp,v 1.5 2007/02/28 21:23:09 r_sijrier Exp $
+    $Id: ExportWidget.cpp,v 1.6 2007/03/16 00:10:26 r_sijrier Exp $
 */
 
 #include "ExportWidget.h"
@@ -52,7 +52,10 @@ ExportWidget::ExportWidget( QWidget * parent )
                 spec = new ExportSpecification;
                 spec->exportdir = m_project->get_root_dir() + "/Export";
                 exportDirName->setText(spec->exportdir);
-                QStringList list = m_project->get_songs();
+                QStringList list;
+		foreach(Song* song, m_project->get_songs()) {
+			list.append(song->get_title());
+		}
                 QAbstractItemModel* model = new QStringListModel(list);
                 songListView->setModel(model);
                 songListView->setSelectionMode(QAbstractItemView::ExtendedSelection);

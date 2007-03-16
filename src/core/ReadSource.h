@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.h,v 1.14 2007/02/05 17:09:09 r_sijrier Exp $
+$Id: ReadSource.h,v 1.15 2007/03/16 00:14:43 r_sijrier Exp $
 */
 
 #ifndef READSOURCE_H
@@ -44,7 +44,6 @@ public :
 	int file_read(int channel, audio_sample_t* dst, nframes_t start, nframes_t cnt) const;
 
 	int init();
-	int ref();
 	void set_active(bool active);
 	
 	void set_audio_clip(AudioClip* clip);
@@ -55,11 +54,14 @@ public :
 
 private:
 	QList<PrivateReadSource*> m_sources;
-	int		refcount;
+	int	m_refcount;
+	int ref() { return m_refcount++;}
+
 	
 	int add_private_source(int channel, int channelNumber, const QString& fileName);
 	
 	friend class PrivateReadSource;
+	friend class ResourcesManager;
 };
 
 #endif

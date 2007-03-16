@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
+    Copyright (C) 2005-2007 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -17,7 +17,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TrackPan.cpp,v 1.6 2007/03/01 21:15:20 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -29,16 +28,12 @@
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-TrackPan::TrackPan(Track* track, Song* song)
-	: Command(track, QObject::tr("Track Pan"))
+TrackPan::TrackPan(Track* track)
+	: Command(track, tr("Track Pan"))
 {
         m_track = track;
-        m_song = song;
+        m_song = track->get_song();
 }
-
-
-TrackPan::~TrackPan()
-{}
 
 
 int TrackPan::prepare_actions()

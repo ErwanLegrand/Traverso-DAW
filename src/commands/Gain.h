@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Gain.h,v 1.7 2007/01/24 00:35:07 r_sijrier Exp $
+    $Id: Gain.h,v 1.8 2007/03/16 00:09:43 r_sijrier Exp $
 */
 
 #ifndef GAIN_H
@@ -34,7 +34,7 @@ class Gain : public Command
 	Q_OBJECT
 	
 public :
-        Gain(ContextItem* context, const QString& des, float gain = -1.0);
+        Gain(ContextItem* context, QVariantList args);
         ~Gain();
 
         int begin_hold();

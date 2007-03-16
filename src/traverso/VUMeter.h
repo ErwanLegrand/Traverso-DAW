@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: VUMeter.h,v 1.9 2007/03/11 08:37:55 n_doebelin Exp $
+    $Id: VUMeter.h,v 1.10 2007/03/16 00:10:26 r_sijrier Exp $
 */
 
 #ifndef VUMETER_H
@@ -38,17 +38,7 @@ class VUMeterRuler : public QWidget
 	Q_OBJECT
 	
 public:
-
-        VUMeterRuler(QWidget* parent);
-
-/**
- * Sets the offset from the top to the first tick mark (+6.0 dB) in pixels.
- * Set this value to the height of the 'over' LED (VUMeterOverLed) in order
- * to position the first tick mark at the top of the VUMeterLevel.
- *
- * @param i offset from top in pixels
- */
-	void setYOffset(int);
+       VUMeterRuler(QWidget* parent);
 
 protected:
         void paintEvent( QPaintEvent* e);
@@ -57,8 +47,6 @@ protected:
 private:
 	std::vector<int>	presetMark;
 	std::vector<int>	lineMark;
-	int			yOffset;
-
 };
 
 
@@ -80,14 +68,11 @@ protected:
 
 private:
         bool			isActive;
-        int 			m_id;
         int			m_channels;
-	int			minSpace;
+	int			m_minSpace;
         QString			m_name;
 	QLabel*			channelNameLabel;
-	QGridLayout*		glayout;
 	VUMeterRuler*		ruler;
-	bool			drawTickmarks;
 	static QVector<float>	lut;
 
 	static void calculate_lut_data();

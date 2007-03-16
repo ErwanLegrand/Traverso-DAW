@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: VUMeter.cpp,v 1.16 2007/03/11 08:37:55 n_doebelin Exp $
+    $Id: VUMeter.cpp,v 1.17 2007/03/16 00:10:26 r_sijrier Exp $
 */
 
 #include "VUMeter.h"
@@ -55,6 +55,7 @@
 
 static const int MAXIMUM_WIDTH	= 150;
 static const int FONT_SIZE 	= 7;
+static const int VULED_HEIGHT	= 8;
 
 // initialize static variables
 QVector<float> VUMeter::lut;
@@ -63,65 +64,79 @@ VUMeter::VUMeter(QWidget* parent, AudioBus* bus)
 	: QWidget(parent)
 {
 	setMaximumWidth(MAXIMUM_WIDTH);
+	m_minSpace = 0;
+	
+	int vulevelspacing = themer()->get_property("VUMeter:layout:vuspacing", 3).toInt();
+	int vulayoutspacing = themer()->get_property("VUMeter:layout:vulayoutspacing", 5).toInt();
+	int mainlayoutmargin = themer()->get_property("VUMeter:layout:mainlayoutmargin", 1).toInt();
+	int mainlayoutspacing = themer()->get_property("VUMeter:layout:mainlayoutspacing", 2).toInt();
+	
+	QWidget* levelLedLayoutwidget = new QWidget(this);
+	QHBoxLayout* levelLedLayout = new QHBoxLayout(levelLedLayoutwidget);
+	
+	levelLedLayout->setSpacing(0);
+	levelLedLayout->setMargin(0);
+	levelLedLayout->addSpacing(vulayoutspacing);
+	
+	levelLedLayoutwidget->setLayout(levelLedLayout);
+	
+	m_minSpace += levelLedLayout->spacing();
 
-	// the base layout
-	glayout= new QGridLayout(this);
-	int oldSpacing = glayout->spacing();
-	glayout->setSpacing(0);
-	setLayout( glayout );
-
-	// min_space holds the width above which the tick marks are shown
-	minSpace = 2*glayout->margin();
-	int yOffset = 0;
-
-	// adding all widget elements to the layout. j counts the channels, i counts
-	// the layout rows
-	int j = 0;
-	for (int i = 0; i < bus->get_channel_count() * 2; ++i) {
-		VUMeterOverLed* led = new VUMeterOverLed(this);
-		VUMeterLevel* level = new VUMeterLevel(this, bus->get_channel(j));
+	for (int i = 0; i < bus->get_channel_count(); ++i) {
+		QWidget* widget = new QWidget(this);
+		QVBoxLayout* levellayout = new QVBoxLayout(widget);
+		levellayout->setMargin(0);
+		levellayout->setSpacing(0);
+			
+		VUMeterOverLed* led = new VUMeterOverLed(levelLedLayoutwidget);
+		VUMeterLevel* level = new VUMeterLevel(levelLedLayoutwidget, bus->get_channel(i));
 		connect(level, SIGNAL(activate_over_led(bool)), led, SLOT(set_active(bool)));
-
-		glayout->addWidget(led, 0, i, 1, 1);
-		glayout->addWidget(level, 1, i, 1, 1);
-		minSpace += level->minimumWidth();
-		yOffset = led->minimumHeight();
-		++i;
-
-		// we don't want a spacer item after the last level meter, since the
-		// ruler widget should touch the last meter
-		if (i < bus->get_channel_count() * 2 - 1) {
-			glayout->addItem(new QSpacerItem(oldSpacing, 0, QSizePolicy::Fixed,
-					 QSizePolicy::Expanding), 0, i, 2, 1);
-			minSpace += oldSpacing;
-			++j;
+		
+		levellayout->addWidget(led);
+		levellayout->addWidget(level, 5);
+		
+		m_minSpace += level->minimumWidth();
+		
+		levelLedLayout->addWidget(widget);
+		
+		if (i < bus->get_channel_count() - 1)  {
+			levelLedLayout->addSpacing(vulevelspacing);
+			m_minSpace += vulevelspacing;
 		}
 	}
-
+		
 	// add a ruler with tickmarks and labels
 	ruler = new VUMeterRuler(this);
-	ruler->setYOffset(yOffset);
-	glayout->addWidget(ruler, 0, glayout->columnCount(), 2, 1 );
-	minSpace += ruler->maximumWidth();
-
+	levelLedLayout->addWidget(ruler);
+	m_minSpace += ruler->maximumWidth();
+		
+	levelLedLayout->addSpacing(vulayoutspacing);
+	m_minSpace += vulayoutspacing;
+	
 	// add a tooltip showing the channel name
 	m_name = bus->get_name();
 	m_channels = bus->get_channel_count();
 	setToolTip(m_name);
-
-	// add the channel name to the bottom of the widget
-	glayout->addItem(new QSpacerItem(0, oldSpacing, QSizePolicy::Expanding, QSizePolicy::Fixed),
-			 glayout->rowCount(), 0, 1, glayout->columnCount());
-	channelNameLabel = new QLabel(0);
-	channelNameLabel->setFont(QFont("Bitstream Vera Sans", FONT_SIZE));
-	channelNameLabel->setAlignment(Qt::AlignHCenter);
-	glayout->addWidget(channelNameLabel, glayout->rowCount(), 0, 1, glayout->columnCount());
-
+	
 	// initialize some stuff
-	isActive = drawTickmarks = false;
+	isActive = false;
 	
 	setAutoFillBackground(false);
 	setAttribute(Qt::WA_OpaquePaintEvent);
+	
+	channelNameLabel = new QLabel(this);
+	channelNameLabel->setFont(QFont("Bitstream Vera Sans", FONT_SIZE));
+	channelNameLabel->setAlignment(Qt::AlignHCenter);
+	
+	QVBoxLayout* mainlayout = new QVBoxLayout;
+	mainlayout->addSpacing(5);
+	mainlayout->addWidget(levelLedLayoutwidget, 5);
+	mainlayout->addWidget(channelNameLabel);
+	mainlayout->setMargin(mainlayoutmargin);
+	mainlayout->setSpacing(mainlayoutspacing);
+	m_minSpace += mainlayout->spacing();
+	
+	setLayout(mainlayout);
 }
 
 VUMeter::~ VUMeter( )
@@ -151,25 +166,21 @@ void VUMeter::resizeEvent( QResizeEvent *  )
 	}
 	channelNameLabel->setText(label);
 
-	bool dt = false;
-	if (width() >= minSpace) dt = true;
-
-	// check if the status of drawing tickmarks has changed
-	if (dt != drawTickmarks) {
-		if (dt) ruler->show();
-		else ruler->hide();
-		drawTickmarks = dt;
+	if (width() >= m_minSpace) {
+		ruler->show();
+	} else {
+		ruler->hide();
 	}
 }
 
 QSize VUMeter::sizeHint() const
 {
-	return QSize(70, 50);
+	return QSize(100, 200);
 }
 
 QSize VUMeter::minimumSizeHint() const
 {
-	return QSize(50, 40);
+	return QSize(100, 200);
 }
 
 void VUMeter::calculate_lut_data()
@@ -214,8 +225,6 @@ VUMeterRuler::VUMeterRuler(QWidget* parent)
 	setMinimumWidth(fm.width("-XX")+TICK_LINE_LENGTH + 3);
 	setMaximumWidth(fm.width("-XX")+TICK_LINE_LENGTH + 4);
 
-	yOffset = 0;
-
 	// labels
 	presetMark.push_back(6);
 	presetMark.push_back(0);
@@ -255,7 +264,7 @@ void VUMeterRuler::paintEvent( QPaintEvent*  )
 	painter.setFont(QFont("Bitstream Vera Sans", FONT_SIZE));
 
 	// offset is the space occupied by the 'over' LED
-	float levelRange = float(height() - yOffset);
+	float levelRange = float(height() - VULED_HEIGHT);
 
 	// draw line marks
 	painter.setPen(themer()->get_color("VUMeter:font:inactive"));
@@ -307,12 +316,6 @@ void VUMeterRuler::paintEvent( QPaintEvent*  )
 	}
 }
 
-void VUMeterRuler::setYOffset(int i)
-{
-	yOffset = i;
-}
-
-
 
 /**********************************************************************/
 /*                      VUMeterOverLed                                */
@@ -331,16 +334,15 @@ void VUMeterRuler::setYOffset(int i)
  * > 0.0 dB.
  */
 
-static const int MINIMUM_WIDTH		= 4;
-static const int MINIMUM_HEIGHT		= 8;
 static const int THREE_D_LIMIT		= 8;
 
 VUMeterOverLed::VUMeterOverLed(QWidget* parent)
                 : QWidget(parent)
 {
+	int minimumwidth = themer()->get_property("VUMeter:layout:minimumlevelwidth", 6).toInt();
 	setAutoFillBackground(false);
-        setMinimumWidth(MINIMUM_WIDTH);
-        setMinimumHeight(MINIMUM_HEIGHT);
+	setMinimumWidth(minimumwidth);
+        setMinimumHeight(VULED_HEIGHT);
 
 	isActive = false;
 }
@@ -418,33 +420,37 @@ static const bool SHOW_RMS = false;		// toggle RMS lines on / off
 
 
 VUMeterLevel::VUMeterLevel(QWidget* parent, AudioChannel* chan)
-                : QWidget(parent), m_channel(chan)
+	: QWidget(parent)
+	, m_channel(chan)
 {
-	setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
         levelClearColor  = themer()->get_color("VUMeter:background:bar");
-        peak = 0.0;
+	int minimumwidth = themer()->get_property("VUMeter:layout:minimumlevelwidth", 6).toInt();
+	
 	tailDeltaY = peakHoldValue = rms = -120.0;
 	overCount = rmsIndex = 0;
 	peakHoldFalling = false;
-	create_gradients();
-
+	peak = 0.0;
+	
+	// falloff speed, according to IEC 60268-18: 20 dB in 1.7 sec.
+	maxFalloff = 20.0 / (1700.0 / (float)UPDATE_FREQ);
+	
 	for (int i = 0; i < RMS_SAMPLES; i++) {
 		peakHistory[i] = 0.0;
 	}
 
-	// falloff speed, according to IEC 60268-18: 20 dB in 1.7 sec.
-	maxFalloff = 20.0 / (1700.0 / (float)UPDATE_FREQ);
-
-        setAttribute(Qt::WA_OpaquePaintEvent);
+	create_gradients();
+	
+	setAttribute(Qt::WA_OpaquePaintEvent);
         setAttribute(Qt::WA_PaintOnScreen);
 	setAutoFillBackground(false);
-        setMinimumWidth(MINIMUM_WIDTH);
+	setMinimumWidth(minimumwidth);
 
 	connect(&audiodevice(), SIGNAL(stopped()), this, SLOT(stop()));
 	connect(&timer, SIGNAL(timeout()), this, SLOT(update_peak()));
 	connect(&phTimer, SIGNAL(timeout()), this, SLOT(reset_peak_hold_value()));
 
 	timer.start(UPDATE_FREQ);
+	
 	if (PEAK_HOLD_MODE == 1) {
 		phTimer.start(PEAK_HOLD_TIME);
 	}
@@ -613,6 +619,17 @@ void VUMeterLevel::resizeEvent(QResizeEvent *)
 	resize_level_pixmap();
 }
 
+
+QSize VUMeterLevel::sizeHint() const
+{
+	return QSize(10, 40);
+}
+
+QSize VUMeterLevel::minimumSizeHint() const
+{
+	return QSize(10, 40);
+}
+
 void VUMeterLevel::reset_peak_hold_value()
 {
 	peakHoldFalling = true;
@@ -663,14 +680,3 @@ int VUMeterLevel::get_meter_position(float f)
 
 
 //eof
-
-QSize VUMeterLevel::sizeHint() const
-{
-	return QSize(10, 40);
-}
-
-QSize VUMeterLevel::minimumSizeHint() const
-{
-	return QSize(10, 40);
-}
-

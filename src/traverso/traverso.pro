@@ -8,7 +8,13 @@ include(../appbase.pri)
 RESOURCES += traverso.qrc
 PRECOMPILED_HEADER = precompile.h
 
+contains(DEFINES, STATIC_BUILD) {
+	QMAKE_LIBDIR += ../../lib/commandplugins
+	LIBS += -L../../lib/commandplugins -ltcp_traversocommands
+}
+
 LIBS +=  \
+	-ltraversosongcanvas \
 	-ltraversocore \
 	-ltraversocommands \
 	-ltraversoaudiobackend \
@@ -20,23 +26,6 @@ LIBS +=  \
 	$$system(pkg-config --libs glib-2.0) \
 
 HEADERS += \
-	songcanvas/AudioClipView.h \
-	songcanvas/SongWidget.h \
-	songcanvas/ClipsViewPort.h \
-	songcanvas/CurveView.h \
-	songcanvas/CurveNodeView.h \
-	songcanvas/TimeLineViewPort.h \
-	songcanvas/TrackPanelViewPort.h \
-	songcanvas/TrackView.h \
-	songcanvas/ViewItem.h \
-	songcanvas/SongView.h \
-	songcanvas/TimeLineView.h \
-	songcanvas/TrackPanelView.h \
-	songcanvas/Cursors.h \
-	songcanvas/FadeView.h \
-	songcanvas/FadeContextDialogView.h \
-	songcanvas/PluginView.h \
-	songcanvas/PluginChainView.h \
 	AudioSourcesTreeWidget.h \
 	BusMonitor.h \
 	BusSelector.h \
@@ -63,23 +52,6 @@ HEADERS += \
 	widgets/InfoWidgets.h \
 	widgets/MessageWidget.h
 SOURCES += \
-	songcanvas/AudioClipView.cpp \
-	songcanvas/SongWidget.cpp \
-	songcanvas/ClipsViewPort.cpp \
-	songcanvas/CurveView.cpp \
-	songcanvas/CurveNodeView.cpp \
-	songcanvas/TimeLineViewPort.cpp \
-	songcanvas/TrackPanelViewPort.cpp \
-	songcanvas/TrackView.cpp \
-	songcanvas/ViewItem.cpp \
-	songcanvas/SongView.cpp \
-	songcanvas/TimeLineView.cpp \
-	songcanvas/TrackPanelView.cpp \
-	songcanvas/Cursors.cpp \
-	songcanvas/FadeView.cpp \
-	songcanvas/FadeContextDialogView.cpp \
-	songcanvas/PluginView.cpp \
-	songcanvas/PluginChainView.cpp \
 	Traverso.cpp \
 	AudioSourcesTreeWidget.cpp \
 	BusMonitor.cpp \
@@ -137,9 +109,10 @@ contains(DEFINES, JACK_SUPPORT): LIBS += -ljack
     INCLUDEPATH -= ../plugins/LV2
 }
 
-
 QT += opengl
-QMAKE_LIBDIR = ./lib ../../lib
+
+QMAKE_LIBDIR = ./lib ../../lib 
+
 TARGET = traverso
 
 target.path = /usr/local/bin

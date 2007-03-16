@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
+    Copyright (C) 2005-2007 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -17,7 +17,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveEdge.cpp,v 1.13 2007/01/16 20:21:08 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -32,7 +31,7 @@
 #include "Debugger.h"
 
 MoveEdge::MoveEdge(AudioClipView* cv, SongView* sv, QByteArray whichEdge)
-	: Command(cv->get_clip(), QObject::tr("Move Clip Edge"))
+	: Command(cv->get_clip(), tr("Move Clip Edge"))
 {
         m_cv = cv;
         m_sv = sv;
