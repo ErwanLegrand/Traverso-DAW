@@ -23,6 +23,12 @@
 		<property name="Track:clipbottommargin" value="0" />
 		<property name="Track:paintbackground" value="0" />
 		
+		<property name="VUMeter:layout:vuspacing" value="3" />
+		<property name="VUMeter:layout:vulayoutspacing" value="5" />
+		<property name="VUMeter:layout:mainlayoutmargin" value="1" />
+		<property name="VUMeter:layout:mainlayoutspacing" value="2" />
+		<property name="VUMeter:layout:minimumlevelwidth" value="6" />
+		<property name="VUMeter:layout:minimumlevelwidth" value="6" />
 		
 	</properties>
 	<fonts>
