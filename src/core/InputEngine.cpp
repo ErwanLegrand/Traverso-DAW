@@ -293,8 +293,10 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat)
 			useX = data->useX;
 			useY = data->useY;
 		}
+
 		
 		if (item == holdingCommand) {
+			
 			if (QMetaObject::invokeMethod(item,
 					QS_C(slotsignature),
 					Qt::DirectConnection,
@@ -303,6 +305,41 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat)
 				PMESG("HIT, invoking %s::%s", holdingCommand->metaObject()->className(), QS_C(slotsignature));
 				break;
 			}
+			
+			IEAction::Data* holdingdata = action->objects.value("HoldCommand");
+			
+			if ( ! holdingdata) {
+				printf("No object=\"HoldCommand\" entry was defined in the keymap\n");
+				continue;
+			}
+			
+			QStringList strlist = holdingdata->slotsignature.split("::");
+			if (strlist.size() != 2) {
+				printf("HoldCommand slot_signature is not of type: ClassName::slot_signature \n");
+				continue;
+			}
+			
+			QString classname = strlist.at(0);
+			QString slot = strlist.at(1);
+			QObject* obj = 0;
+			
+			for (int j=0; j < list.size(); ++j) {
+				obj = list.at(j);
+				if (obj->metaObject()->className() == classname) {
+					break;
+				}
+			}
+			
+			if (obj) {
+				if (QMetaObject::invokeMethod(obj,
+					QS_C(slot),
+					Qt::DirectConnection,
+					Q_RETURN_ARG(Command*, k))) {
+						PMESG("HIT, invoking %s::%s", QS_C(classname), QS_C(slot));
+						break;
+					}
+			}
+		
 		} else if ( ! holdingCommand) {
 			
 			if ( ! pluginname.isEmpty() ) {
@@ -311,9 +348,11 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat)
 					info().critical(tr("Command Plugin %1 not found!").arg(pluginname));
 				} else {
 					if ( ! plug->implements(commandname) ) {
-						info().critical(tr("Plugin %1 doesn't implement Command %2").arg(pluginname).arg(commandname));
+						info().critical(tr("Plugin %1 doesn't implement Command %2")
+								.arg(pluginname).arg(commandname));
 					} else {
-						PMESG("InputEngine:: Using plugin %s for command %s", QS_C(pluginname), QS_C(data->commandname));
+						PMESG("InputEngine:: Using plugin %s for command %s",
+								QS_C(pluginname), QS_C(data->commandname));
 						k = plug->create(item, commandname, data->arguments);
 						break;
 					}
@@ -1476,3 +1515,8 @@ void IEAction::render_key_sequence(const QString& key1, const QString& key2)
 
 
 //eof
+
+Command * InputEngine::get_holding_command() const
+{
+	return holdingCommand;
+}

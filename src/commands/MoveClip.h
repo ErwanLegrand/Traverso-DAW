@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveClip.h,v 1.9 2007/03/16 00:09:43 r_sijrier Exp $
+    $Id: MoveClip.h,v 1.10 2007/03/16 13:14:15 r_sijrier Exp $
 */
 
 #ifndef MOVECLIPACTION_H
@@ -37,6 +37,9 @@ class AudioClipView;
 class MoveClip : public Command
 {
 	Q_OBJECT
+	Q_CLASSINFO("next_snap_pos", tr("To next snap position"));
+	Q_CLASSINFO("prev_snap_pos", tr("To previous snap position"));
+	
 public :
 	MoveClip(AudioClipView* clipView, QVariantList arguments);
         ~MoveClip();
@@ -58,7 +61,7 @@ private :
 	
 	struct Data {
 		int 		origXPos;
-		int 		horizontalScrollBarValue;
+		int 		hScrollbarValue;
 		int 		xoffset;
 		AudioClip* 	newclip;
 		Song* 		song;
@@ -72,6 +75,11 @@ private :
 
 	void init_data(bool isCopy=false);
 
+	
+public slots:
+	void next_snap_pos(bool autorepeat);
+	void prev_snap_pos(bool autorepeat);
+	
 private slots:
 	void audioclip_added(AudioClip* clip);
 };

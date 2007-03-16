@@ -417,27 +417,36 @@ void Interface::process_context_menu_action( QAction * action )
 
 Command * Interface::show_context_menu( )
 {
-	QList<QObject* > items = cpointer().get_context_items();
-	if (items.isEmpty()) {
-		printf("cpointer() returned empty list\n");
-		return 0;
-	}
+	QList<QObject* > items;
 	
-	QMenu* toplevelmenu;
-			
-	for (int i=0; i<items.size(); ++i) {
-		QObject* item = qobject_cast<QObject*>(items.at(i));
+	// In case of a holding action, show the menu for the holding command!
+	// If not, show the menu for the topmost context item, and it's 
+	// siblings as submenus
+	if (ie().is_holding()) {
+		items.append(ie().get_holding_command());
+	} else {
+		items = cpointer().get_context_items();
 		
-		if (! item) {
-			printf("cpointer() first returned item is NOT a QObject!!\n");
+		if (items.isEmpty()) {
+			printf("cpointer() returned empty list\n");
 			return 0;
 		}
 		
-		QString className = item->metaObject()->className();
-		if (! className.contains("View") || className.contains("ViewPort") ) {
-			continue;
+		// Filter out classes that don't need to show up in the menu
+		foreach(QObject* item, items) {
+			QString className = item->metaObject()->className();
+			if ( ( ! className.contains("View")) || className.contains("ViewPort") ) {
+				items.removeAll(item);
+			}
 		}
+	}
+
+	QMenu* toplevelmenu;
+			
+	for (int i=0; i<items.size(); ++i) {
+		QObject* item = items.at(i);
 		
+		QString className = item->metaObject()->className();
 		QMenu* menu = m_contextMenus.value(className);
 		
 		if ( ! menu ) {
@@ -454,8 +463,6 @@ Command * Interface::show_context_menu( )
 			action->setText(className.remove("View"));
 		}
 	}
-	
-	
 	
 	toplevelmenu->exec(QCursor::pos());
 	

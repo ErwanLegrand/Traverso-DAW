@@ -72,7 +72,7 @@ MoveClip::MoveClip(AudioClipView* cv, QVariantList arguments)
 	QString des;
 	if (m_isCopy) {
 		des = tr("Copy Clip");
-		d->xoffset = cv->get_songview()->scalefactor * 4;
+		d->xoffset = cv->get_songview()->scalefactor * 3;
 	} else {
 		des = tr("Move Clip");
 	}
@@ -133,7 +133,7 @@ void MoveClip::init_data(bool isCopy)
 	m_originalTrackFirstFrame = m_newInsertFrame = m_clip->get_track_start_frame();
 	d->origPos = cpointer().pos();
 	d->origXPos = cpointer().x();
-	d->horizontalScrollBarValue = d->sv->get_clips_viewport()->horizontalScrollBar()->value();
+	d->hScrollbarValue = d->sv->hscrollbar_value();
 	m_clip->set_snappable(false);
 	d->sv->start_shuttle(true, true);
 }
@@ -183,12 +183,9 @@ int MoveClip::do_action()
 {
 	PENTER;
 	if (!m_targetTrack) {
-		printf("do_action() (DELETE) : Clip has id %lld\n", m_clip->get_id());
-		PMESG("Deleting clip %p",m_clip);
 		ie().process_command(m_originTrack->remove_clip(m_clip, false));
 		m_targetTrack = (Track*) 0;
 	} else {
-		printf("do_action() : Clip has id %lld\n", m_clip->get_id());
 		ie().process_command(m_originTrack->remove_clip(m_clip, false));
 		m_clip->set_track_start_frame(m_newInsertFrame);
 		ie().process_command(m_targetTrack->add_clip(m_clip, false));
@@ -227,8 +224,7 @@ int MoveClip::jog()
 		return 0;
 	}
 	
-	printf("jog\n");
-	int scrollbardif = d->horizontalScrollBarValue - d->sv->get_clips_viewport()->horizontalScrollBar()->value();
+	int scrollbardif = d->hScrollbarValue - d->sv->hscrollbar_value();
 	
 	QPointF diffPoint(cpointer().pos() - d->origPos);
 	QPointF newPos(d->view->pos() + diffPoint);
@@ -320,5 +316,15 @@ int MoveClip::jog()
 	return 1;
 }
 
-// eof
 
+void MoveClip::next_snap_pos(bool autorepeat)
+{
+	// TODO implement me!
+}
+
+void MoveClip::prev_snap_pos(bool autorepeat)
+{
+	// TODO implement me!
+}
+
+// eof

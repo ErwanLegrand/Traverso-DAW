@@ -136,6 +136,7 @@ public:
 	bool is_holding();
 
 	QList<MenuData > create_menudata_for(QObject* item);
+	Command* get_holding_command() const;
 
         int broadcast_action_from_contextmenu(const QString& name);
 
