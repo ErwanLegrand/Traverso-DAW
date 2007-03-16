@@ -17,11 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSourceManager.h,v 1.7 2006/10/18 12:03:16 r_sijrier Exp $
+$Id: ResourcesManager.h,v 1.1 2007/03/16 00:40:10 r_sijrier Exp $
 */
 
-#ifndef AUDIOSOURCEMANAGER_H
-#define AUDIOSOURCEMANAGER_H
+#ifndef RESOURCES_MANAGER_H
+#define RESOURCES_MANAGER_H
 
 #include <QString>
 #include <QHash>
@@ -34,27 +34,36 @@ class AudioSource;
 class ReadSource;
 class AudioClip;
 
-class AudioSourceManager : public QObject
+class ResourcesManager : public QObject
 {
 	Q_OBJECT
 	
 public:
-	AudioSourceManager();
-	~AudioSourceManager();
+	ResourcesManager();
+	~ResourcesManager();
 
-	ReadSource* new_readsource(const QString& dir, const QString& name, int channelCount, int fileCount, int songId, int bitDepth, int rate=0 );
-	ReadSource* new_readsource(const QString& dir, const QString& name);
-	AudioClip* new_audio_clip(const QString& name);
-	
-	int remove (AudioSource* source);
 	int set_state( const QDomNode& node );
-
-	ReadSource* get_readsource(const QString& fileName);
+	QDomNode get_state(QDomDocument doc);
 	
-	ReadSource* get_readsource(qint64 id);
+	ReadSource* create_new_readsource(const QString& dir,
+				const QString& name,
+				int channelCount,
+				int fileCount,
+				int songId,
+				int bitDepth,
+				int rate=0 );
+	
+	ReadSource* create_new_readsource(const QString& dir, const QString& name);
+	AudioClip* new_audio_clip(const QString& name);
 	AudioClip* get_clip(qint64 id);
 	
-	QDomNode get_state(QDomDocument doc);
+	int remove_clip_from_database(qint64 id);
+	int undo_remove_clip_from_database(qint64 id);
+	
+
+	ReadSource* get_readsource(const QString& fileName);
+	ReadSource* get_readsource(qint64 id);
+	
 	
 	int get_total_sources();
 	
@@ -65,6 +74,7 @@ public:
 private:
 	QHash<qint64, ReadSource* >	m_sources;
 	QHash<qint64, AudioClip* >	m_clips;
+	QHash<qint64, AudioClip* >	m_deprecatedClips;
 	
 	
 signals:

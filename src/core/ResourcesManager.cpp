@@ -17,10 +17,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSourceManager.cpp,v 1.13 2007/02/15 23:10:16 r_sijrier Exp $
+$Id: ResourcesManager.cpp,v 1.1 2007/03/16 00:40:10 r_sijrier Exp $
 */
 
-#include "AudioSourceManager.h"
+#include "ResourcesManager.h"
 #include "WriteSource.h"
 #include "ReadSource.h"
 #include "Information.h"
@@ -31,14 +31,18 @@ $Id: AudioSourceManager.cpp,v 1.13 2007/02/15 23:10:16 r_sijrier Exp $
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
+/**	\class ResourcesManager
+	\brief A class used to load / save the state of, create and delete ReadSources and AudioClips
+ 
+ */
 
-AudioSourceManager::AudioSourceManager()
+ResourcesManager::ResourcesManager()
 {
 	PENTERCONS;
 }
 
 
-AudioSourceManager::~AudioSourceManager()
+ResourcesManager::~ResourcesManager()
 {
 	PENTERDES;
 	foreach(ReadSource* source, m_sources) {
@@ -48,16 +52,16 @@ AudioSourceManager::~AudioSourceManager()
 	}
 	
 	foreach(AudioClip* clip, m_clips) {
-			delete clip;
+		delete clip;
 	}
 
 }
 
 
-QDomNode AudioSourceManager::get_state( QDomDocument doc )
+QDomNode ResourcesManager::get_state( QDomDocument doc )
 {
 
-	QDomElement asmNode = doc.createElement("AudioSourcesManager");
+	QDomElement asmNode = doc.createElement("ResourcesManager");
 	
 	QDomElement audioSourcesElement = doc.createElement("AudioSources");
 	
@@ -71,9 +75,18 @@ QDomNode AudioSourceManager::get_state( QDomDocument doc )
 	QDomElement audioClipsElement = doc.createElement("AudioClips");
 	
 	foreach(AudioClip* clip, m_clips) {
+		// Omit all clips that were deprecated:
+		if (m_deprecatedClips.contains(clip->get_id())) {
+			continue;
+		}
+		
 // 		PWARN("Getting state of clip %s", QS_C(clip->get_name()));
+		// If the clip was refcounted, then it's state has been fully set
+		// and likely changed, so we can get the 'new' state from it.
 		if (clip->get_ref_count()) {
 			audioClipsElement.appendChild(clip->get_state(doc));
+		// In case it wasn't we should use the 'old' domNode which 
+		// was set during set_state();
 		} else {
 			audioClipsElement.appendChild(clip->m_domNode);
 		}
@@ -85,7 +98,7 @@ QDomNode AudioSourceManager::get_state( QDomDocument doc )
 }
 
 
-int AudioSourceManager::set_state( const QDomNode & node )
+int ResourcesManager::set_state( const QDomNode & node )
 {
 	QDomNode sourcesNode = node.firstChildElement("AudioSources").firstChild();
 	
@@ -111,23 +124,44 @@ int AudioSourceManager::set_state( const QDomNode & node )
 }
 
 
-int AudioSourceManager::remove(AudioSource* )
+int ResourcesManager::remove_clip_from_database(qint64 id)
 {
-	PENTER;
+	if ( ! m_clips.contains(id) ) {
+		info().critical(tr("ResourcesManager : AudioClip with id %1 not in database,"
+				"unable to remove it!").arg(id));
+		return -1;
+	}
 	
-	emit sourceRemoved();
+	printf("ResourcesManager:: Scheduling AudioClip with id %lld for removal\n", id);
 	
-	return -1;
+	m_deprecatedClips.insert(id, m_clips.value(id));
+	
+	return 1;
+}
+
+int ResourcesManager::undo_remove_clip_from_database(qint64 id)
+{
+	if ( ! m_clips.contains(id) ) {
+		info().critical(tr("ResourcesManager: AudioClip with id %1 not in database,"
+				"unable to UNDO removal!").arg(id));
+		return -1;
+	}
+	
+	printf("ResourcesManager:: UNDO scheduling AudioClip with id %lld for removal\n", id);
+	
+	m_deprecatedClips.remove(id);
+	
+	return 1;
 }
 
 
-int AudioSourceManager::get_total_sources()
+int ResourcesManager::get_total_sources()
 {
 	return m_sources.size();
 }
 
 
-ReadSource* AudioSourceManager::new_readsource(const QString& dir, const QString& name)
+ReadSource* ResourcesManager::create_new_readsource(const QString& dir, const QString& name)
 {
 	ReadSource* source = new ReadSource(dir, name);
 	m_sources.insert(source->get_id(), source);
@@ -136,7 +170,14 @@ ReadSource* AudioSourceManager::new_readsource(const QString& dir, const QString
 }
 
 
-ReadSource* AudioSourceManager::new_readsource( const QString& dir, const QString& name,  int channelCount, int fileCount, int songId, int bitDepth, int rate )
+ReadSource* ResourcesManager::create_new_readsource(
+		const QString& dir,
+		const QString& name,
+  		int channelCount,
+    		int fileCount,
+      		int songId,
+		int bitDepth,
+  		int rate )
 {
 	PENTER;
 	
@@ -159,7 +200,7 @@ ReadSource* AudioSourceManager::new_readsource( const QString& dir, const QStrin
 	return get_readsource(source->get_id());
 }
 
-ReadSource * AudioSourceManager::get_readsource( qint64 id )
+ReadSource * ResourcesManager::get_readsource( qint64 id )
 {
 	ReadSource* source = m_sources.value(id);
 	
@@ -177,7 +218,8 @@ ReadSource * AudioSourceManager::get_readsource( qint64 id )
 	}
 		
 	if ( source->init() < 0) {
-		info().warning( tr( "Failed to initialize ReadSource, removing from database: %1").arg(source->get_filename()) );
+		info().warning( tr( "Failed to initialize ReadSource, removing from database: %1")
+				.arg(source->get_filename()) );
 		m_sources.remove(id);
 		delete source;
 		source = 0;
@@ -186,7 +228,14 @@ ReadSource * AudioSourceManager::get_readsource( qint64 id )
 	return source;
 }
 
-ReadSource* AudioSourceManager::get_readsource(const QString& fileName)
+/**
+ * 	Mainly used for Importing audio files. If the file with \a fileName 
+	allready is in the database, a ReadSource will be returned, else 0.
+
+ * @param fileName The file name of the audio source
+ * @return A ReadSource if a ReadSource with the same file name is in the database, else 0
+ */
+ReadSource* ResourcesManager::get_readsource(const QString& fileName)
 {
 	foreach(ReadSource* rs, m_sources) {
 // 		PMESG("rs filename %s, filename %s", QS_C(rs->get_filename()), QS_C(fileName));
@@ -198,7 +247,21 @@ ReadSource* AudioSourceManager::get_readsource(const QString& fileName)
 	return 0;
 }
 
-AudioClip* AudioSourceManager::get_clip( qint64 id )
+/**
+ * 	Get the AudioClip with id \a id
+
+	This function will return 0 if no AudioClip was found with id \a id.
+	
+	Only ONE AudioClip instance with this id can be retrieved via this function. 
+	Using this function multiple times with the same id will implicitely create 
+	a new AudioClip with a new unique id!!
+
+ * @param id 	The unique id of the AudioClip to get
+ * @return 	The AudioClip with id \a id, 0 if no AudioClip was found, and a 
+		'deep copy' of the AudioClip with id \a id if the AudioClip was allready
+		getted before via this function.
+ */
+AudioClip* ResourcesManager::get_clip( qint64 id )
 {
 	AudioClip* clip = m_clips.value(id);
 	 
@@ -207,20 +270,37 @@ AudioClip* AudioSourceManager::get_clip( qint64 id )
 	}
 	
 	if (clip->ref()) {
-		PWARN("Creating deep copy of Clip %s", QS_C(clip->get_name()));
+		PMESG("Creating deep copy of Clip %s", QS_C(clip->get_name()));
 		clip = clip->create_copy();
+		
+		// It is NOT possible for 2 clips to have the same ID
+		// check for this, since it's absolutely crucial, and 
+		// indicates a design error somewhere ! (most likely in 
+		// AudioClip::create_copy();
+		Q_ASSERT( ! m_clips.contains(clip->get_id()) );
+		
+		m_clips.insert(clip->get_id(), clip);
+		
+		// Now that we have created a copy of the audioclip, start
+		// the usual get_clip routine again to properly init the clip
+		// and other stuff.
+		return get_clip(clip->get_id());
 	}
 	
 	ReadSource* source = get_readsource(clip->get_readsource_id());
 	
 	if (source) {
 		clip->set_audio_source(source);
+	} else {
+		info().critical(
+		     tr("ResourcesManager: AudioClip %1 required ReadSource with ID %2, but I don't have it!!")
+			.arg(clip->get_name()).arg(clip->get_readsource_id()));
 	}
 	
 	return clip;
 }
 
-AudioClip* AudioSourceManager::new_audio_clip(const QString& name)
+AudioClip* ResourcesManager::new_audio_clip(const QString& name)
 {
 	PENTER;
 	AudioClip* clip = new AudioClip(name);
@@ -228,12 +308,12 @@ AudioClip* AudioSourceManager::new_audio_clip(const QString& name)
 	return get_clip(clip->get_id());
 }
 
-QList<ReadSource*> AudioSourceManager::get_all_audio_sources( ) const
+QList<ReadSource*> ResourcesManager::get_all_audio_sources( ) const
 {
 	return m_sources.values();
 }
 
-QList< AudioClip * > AudioSourceManager::get_clips_for_source( ReadSource * source ) const
+QList< AudioClip * > ResourcesManager::get_clips_for_source( ReadSource * source ) const
 {
 	QList<AudioClip*> clips;
 	
@@ -249,4 +329,5 @@ QList< AudioClip * > AudioSourceManager::get_clips_for_source( ReadSource * sour
 
 
 //eof
+
 
