@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongView.h,v 1.12 2007/03/16 00:10:26 r_sijrier Exp $
+    $Id: SongView.h,v 1.13 2007/03/16 13:15:54 r_sijrier Exp $
 */
 
 #ifndef SONG_VIEW_H
@@ -76,6 +76,9 @@ public :
 	void load_theme_data();
 	void start_shuttle(bool start, bool drag=false);
 	void update_shuttle_factor();
+	
+	int hscrollbar_value() const;
+	int vscrollbar_value() const;
 
 	int		scalefactor;
 	ViewMode	viewmode;

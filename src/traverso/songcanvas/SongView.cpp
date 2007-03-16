@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.23 2007/03/05 12:33:37 r_sijrier Exp $
+$Id: SongView.cpp,v 1.24 2007/03/16 13:15:54 r_sijrier Exp $
 */
 
 
@@ -438,6 +438,10 @@ void SongView::update_shuttle()
 	
 	QScrollBar* vscrollbar = m_clipsViewPort->verticalScrollBar();
 	vscrollbar->setValue(vscrollbar->value() + m_shuttleYfactor);
+	
+	if (m_shuttleXfactor != 0) {
+		ie().jog();
+	}
 }
 
 
@@ -532,6 +536,16 @@ Command* SongView::scroll_left()
 	QScrollBar* scrollbar = m_clipsViewPort->horizontalScrollBar();
 	scrollbar->setValue(scrollbar->value() - 50); 
 	return (Command*) 0;
+}
+
+int SongView::hscrollbar_value() const
+{
+	return m_clipsViewPort->horizontalScrollBar()->value();
+}
+
+int SongView::vscrollbar_value() const
+{
+	return m_clipsViewPort->verticalScrollBar()->value();
 }
 
 void SongView::load_theme_data()
