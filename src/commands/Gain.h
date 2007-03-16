@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Gain.h,v 1.9 2007/03/16 13:14:15 r_sijrier Exp $
+    $Id: Gain.h,v 1.10 2007/03/16 14:23:39 r_sijrier Exp $
 */
 
 #ifndef GAIN_H
@@ -32,8 +32,8 @@ class ContextItem;
 class Gain : public Command
 {
 	Q_OBJECT
-	Q_CLASSINFO("increase_gain", "Increase");
-	Q_CLASSINFO("decrease_gain", "Decrease");
+	Q_CLASSINFO("increase_gain", tr("Increase"));
+	Q_CLASSINFO("decrease_gain", tr("Decrease"));
 	
 public :
         Gain(ContextItem* context, QVariantList args);

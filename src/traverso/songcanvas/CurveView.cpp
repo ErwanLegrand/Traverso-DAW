@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.cpp,v 1.21 2007/03/06 15:28:12 r_sijrier Exp $
+$Id: CurveView.cpp,v 1.22 2007/03/16 14:23:55 r_sijrier Exp $
 */
 
 #include "CurveView.h"
@@ -36,6 +36,9 @@ $Id: CurveView.cpp,v 1.21 2007/03/06 15:28:12 r_sijrier Exp $
 class DragNode : public Command
 {
 	Q_OBJECT
+	Q_CLASSINFO("move_up", tr("Move Up"));
+	Q_CLASSINFO("move_down", tr("Move Down"));
+	
 public:
 	DragNode(CurveNode* node, CurveView* curveview, int scalefactor, const QString& des);
 	
@@ -264,6 +267,12 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	path.addPolygon(polygon);
 	
 	painter->drawPath(path);
+	
+	if (xstart <= 80 && pixelcount >= 100 ) {
+		QFont font("Bitstream Vera Sans", 8);
+		painter->setFont(font);
+		painter->drawText(10, m_boundingRect.height() - 14, "Gain Curve");
+	}
 	
 	painter->restore();
 }
