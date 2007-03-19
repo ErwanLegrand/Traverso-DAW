@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AlsaDriver.cpp,v 1.14 2007/03/16 00:10:26 r_sijrier Exp $
+$Id: AlsaDriver.cpp,v 1.15 2007/03/19 11:18:57 r_sijrier Exp $
 */
 
 
@@ -1537,7 +1537,7 @@ int AlsaDriver::attach()
 
 		snprintf (buf, sizeof(buf) - 1, "capture_%lu", chn+1);
 
-		chan = device->register_capture_channel(buf, JACK_DEFAULT_AUDIO_TYPE, port_flags, frames_per_cycle, chn);
+		chan = device->register_capture_channel(buf, "32 bit float audio", port_flags, frames_per_cycle, chn);
 		chan->set_latency( frames_per_cycle + capture_frame_latency );
 		captureChannels.append(chan);
 
@@ -1549,7 +1549,7 @@ int AlsaDriver::attach()
 
 		snprintf (buf, sizeof(buf) - 1, "playback_%lu", chn+1);
 
-		chan = device->register_playback_channel(buf, JACK_DEFAULT_AUDIO_TYPE, port_flags, frames_per_cycle, chn);
+		chan = device->register_playback_channel(buf, "32 bit float audio", port_flags, frames_per_cycle, chn);
 		chan->set_latency( frames_per_cycle + capture_frame_latency );
 		playbackChannels.append(chan);
 	}

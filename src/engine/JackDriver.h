@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: JackDriver.h,v 1.5 2007/01/14 20:36:31 r_sijrier Exp $
+    $Id: JackDriver.h,v 1.6 2007/03/19 11:18:57 r_sijrier Exp $
 */
 
 #ifndef JACKDRIVER_H
@@ -38,8 +38,7 @@ public:
         int  process_callback (nframes_t nframes);
         int _read(nframes_t nframes);
         int _write(nframes_t nframes);
-        int _run_cycle();
-        int _null_cycle(nframes_t nframes);
+        int _run_cycle() {return 1;}
         int setup(bool capture=true, bool playback=true, const QString& cardDevice="hw:0");
         int attach();
         int start();

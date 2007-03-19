@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.23 2007/03/16 00:10:26 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.24 2007/03/19 11:18:57 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -30,6 +30,11 @@ $Id: AudioDevice.cpp,v 1.23 2007/03/16 00:10:26 r_sijrier Exp $
 #if defined (JACK_SUPPORT)
 #include "JackDriver.h"
 #endif
+
+#if defined (PORTAUDIO_SUPPORT)
+#include "PADriver.h"
+#endif
+
 #include "Driver.h"
 #include "Client.h"
 #include "AudioChannel.h"
@@ -149,6 +154,10 @@ AudioDevice::AudioDevice()
 #if defined (ALSA_SUPPORT)
 	availableDrivers << "ALSA";
 #endif
+	
+#if defined (PORTAUDIO_SUPPORT)
+	availableDrivers << "PortAudio";
+#endif
 
 	availableDrivers << "Null Driver";
 	
@@ -178,11 +187,13 @@ AudioDevice::~AudioDevice()
 
 void AudioDevice::free_memory()
 {
-	foreach(AudioBus* bus, captureBuses)
+	foreach(AudioBus* bus, captureBuses) {
 		delete bus;
+	}
 
-	foreach(AudioBus* bus, playbackBuses)
+	foreach(AudioBus* bus, playbackBuses) {
 		delete bus;
+	}
 
 	captureChannels.clear();
 	playbackChannels.clear();
@@ -349,9 +360,21 @@ void AudioDevice::set_parameters( int rate,
 	 
 	// This will activate the jack client
 	if (driverType == "Jack") {
-		driver->start();
+		
+		if (driver->start() == -1) {
+			// jack driver failed to start, fallback to Null Driver:
+			set_parameters(rate, bufferSize, "Null Driver");
+		}
+		
 		connect(&jackShutDownChecker, SIGNAL(timeout()), this, SLOT(check_jack_shutdown()));
 		jackShutDownChecker.start(500);
+	}
+	
+	if (driverType == "PortAudio") {
+		if (driver->start() == -1) {
+			// PortAudio driver failed to start, fallback to Null Driver:
+			set_parameters(rate, bufferSize, "Null Driver");
+		}
 	}
 
 	emit started();
@@ -364,7 +387,7 @@ int AudioDevice::create_driver(QString driverType, bool capture, bool playback, 
 	if (driverType == "Jack") {
 		driver = new JackDriver(this, m_rate, m_bufferSize);
 		if (driver->setup(capture, playback) < 0) {
-			info().critical("Failed to create the Jack Driver");
+			info().critical(tr("Failed to create the Jack Driver"));
 			delete driver;
 			driver = 0;
 			return -1;
@@ -378,7 +401,7 @@ int AudioDevice::create_driver(QString driverType, bool capture, bool playback, 
 	if (driverType == "ALSA") {
 		driver =  new AlsaDriver(this, m_rate, m_bufferSize);
 		if (driver->setup(capture,playback, cardDevice) < 0) {
-			info().critical("Failed to create the ALSA Driver");
+			info().critical(tr("Failed to create the ALSA Driver"));
 			delete driver;
 			driver = 0;
 			return -1;
@@ -388,6 +411,20 @@ int AudioDevice::create_driver(QString driverType, bool capture, bool playback, 
 	}
 #endif
 
+#if defined (PORTAUDIO_SUPPORT)
+	if (driverType == "PortAudio") {
+		driver = new PADriver(this, m_rate, m_bufferSize);
+		if (driver->setup(capture, playback, cardDevice) < 0) {
+			info().critical(tr("Failed to create the PortAudio Driver"));
+			delete driver;
+			driver = 0;
+			return -1;
+		}
+		m_driverType = driverType;
+		return 1;
+	}
+#endif
+	
 	if (driverType == "Null Driver") {
 		printf("Creating Null Driver...\n");
 		driver = new Driver(this, m_rate, m_bufferSize);
@@ -584,7 +621,13 @@ trav_time_t AudioDevice::get_cpu_time( )
 	if (driver && m_driverType == "Jack")
 		return ((JackDriver*)driver)->get_cpu_load();
 #endif
-
+	
+#if defined (PORTAUDIO_SUPPORT)
+	if (driver && m_driverType == "PortAudio")
+		return ((PADriver*)driver)->get_cpu_load();
+#endif
+	
+	
 	trav_time_t currentTime = get_microseconds();
 	float totaltime = 0;
 	trav_time_t value = 0;

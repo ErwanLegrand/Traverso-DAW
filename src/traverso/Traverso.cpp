@@ -212,6 +212,24 @@ void Traverso::prepare_audio_device( )
 		driverType = "ALSA";
 	}
 
+#if defined (ALSA_SUPPORT)
+	if (driverType == "ALSA") {
+		cardDevice = config().get_property("Hardware", "carddevice", "hw:0").toString();
+	}
+#endif
+	
+#if defined (PORTAUDIO_SUPPORT)
+	if (driverType == "PortAudio") {
+#if defined (LINUX_BUILD)
+		cardDevice = config().get_property("Hardware", "pahostapi", "alsa").toString();
+#elif defined (MAC_OS_BUILD)
+		cardDevice = config().get_property("Hardware", "pahostapi", "coreaudio").toString();
+#elif defined (WIN_BUILD)
+		cardDevice = config().get_property("Hardware", "pahostapi", "wmme").toString();
+#endif
+	}
+#endif // end PORTAUDIO_SUPPORT
+	
 	audiodevice().set_parameters(rate, bufferSize, driverType, capture, playback, cardDevice);
 }
 

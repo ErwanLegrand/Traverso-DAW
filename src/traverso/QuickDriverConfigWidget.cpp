@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: QuickDriverConfigWidget.cpp,v 1.5 2007/01/20 18:27:08 r_sijrier Exp $
+$Id: QuickDriverConfigWidget.cpp,v 1.6 2007/03/19 11:20:55 r_sijrier Exp $
 */
 
 #include "QuickDriverConfigWidget.h"
@@ -61,7 +61,26 @@ void QuickDriverConfigWidget::on_applyButton_clicked( )
 	int bufSize = periodBufferSizesList.at(latencyComboBox->currentIndex());
 	bool capture = config().get_property("Hardware", "capture", 1).toInt();
 	bool playback = config().get_property("Hardware", "playback", 1).toInt();
-	QString cardDevice = config().get_property("Hardware", "carddevice", "hw:0").toString();
+	QString cardDevice = "";
+	
+#if defined (ALSA_SUPPORT)
+	if (driver == "ALSA") {
+		cardDevice = config().get_property("Hardware", "carddevice", "hw:0").toString();
+	}
+#endif
+	
+#if defined (PORTAUDIO_SUPPORT)
+	if (driver == "PortAudio") {
+#if defined (LINUX_BUILD)
+		cardDevice = config().get_property("Hardware", "pahostapi", "alsa").toString();
+#elif defined (MAC_OS_BUILD)
+		cardDevice = config().get_property("Hardware", "pahostapi", "coreaudio").toString();
+#elif defined (WIN_BUILD)
+		cardDevice = config().get_property("Hardware", "pahostapi", "wmme").toString();
+#endif
+	}
+#endif // end PORTAUDIO_SUPPORT
+	
 	
 	audiodevice().set_parameters(rate, bufSize, driver, capture, playback, cardDevice);
 }

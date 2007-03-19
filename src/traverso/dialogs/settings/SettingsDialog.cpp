@@ -35,6 +35,7 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 	contentsWidget->setMovement(QListView::Static);
 	contentsWidget->setMaximumWidth(140);
 	contentsWidget->setMinimumWidth(135);
+	contentsWidget->setMinimumHeight(350);
 	contentsWidget->setSpacing(12);
 	
 	pagesWidget = new QStackedWidget;

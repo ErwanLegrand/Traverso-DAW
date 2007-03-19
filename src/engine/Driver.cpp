@@ -17,11 +17,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Driver.cpp,v 1.5 2007/01/11 11:50:21 r_sijrier Exp $
+$Id: Driver.cpp,v 1.6 2007/03/19 11:18:57 r_sijrier Exp $
 */
 
 #include "Driver.h"
-#include <QThread>
 #include "AudioDevice.h"
 #include "AudioChannel.h"
 

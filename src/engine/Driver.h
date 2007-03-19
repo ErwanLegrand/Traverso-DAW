@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Driver.h,v 1.4 2007/01/11 11:50:21 r_sijrier Exp $
+    $Id: Driver.h,v 1.5 2007/03/19 11:18:57 r_sijrier Exp $
 */
 
 #ifndef DRIVER_H
@@ -46,7 +46,7 @@ public:
         virtual int _read(nframes_t nframes);
         virtual int _write(nframes_t nframes);
         virtual int _null_cycle(nframes_t nframes);
-	virtual int setup(bool capture=true, bool playback=true, const QString& cardDevice="hw:0");
+	virtual int setup(bool capture=true, bool playback=true, const QString& cardDevice="none");
         virtual int attach();
         virtual int detach();
         virtual int start();

@@ -72,17 +72,24 @@ AudioDriverPage::AudioDriverPage(QWidget *parent)
 	restartDriverButtonLayout->addWidget(restartDriverButton);
 	
 	
-	QVBoxLayout *mainLayout = new QVBoxLayout;
-	mainLayout->addWidget(selectionGroup);
-	mainLayout->addWidget(m_driverConfigPage);
+	m_mainLayout = new QVBoxLayout;
+	m_mainLayout->addWidget(selectionGroup);
+
+#if defined (PORTAUDIO_SUPPORT)
+	m_portaudiodrivers = new PaDriverPage(this);
+	m_mainLayout->addWidget(m_portaudiodrivers);
+#endif
+	
+	m_mainLayout->addWidget(m_driverConfigPage);
 #if defined (ALSA_SUPPORT)
 	m_alsadevices = new AlsaDevicesPage(this);
-	mainLayout->addWidget(m_alsadevices);
+	m_mainLayout->addWidget(m_alsadevices);
 #endif
-	mainLayout->addLayout(restartDriverButtonLayout);
-	mainLayout->addStretch(1);
-	mainLayout->setSpacing(12);
-	setLayout(mainLayout);
+	
+	m_mainLayout->addLayout(restartDriverButtonLayout);
+	m_mainLayout->addStretch(1);
+	m_mainLayout->setSpacing(12);
+	setLayout(m_mainLayout);
 	
 	connect(m_driverCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(driver_combobox_index_changed(QString)));
 	connect(restartDriverButton, SIGNAL(clicked()), this, SLOT(restart_driver_button_clicked()));
@@ -119,6 +126,11 @@ void AudioDriverPage::save_config()
 	
 #endif
 
+	
+#if defined (PORTAUDIO_SUPPORT)
+	int paindex = m_portaudiodrivers->driverCombo->currentIndex();
+	config().set_property("Hardware", "pahostapi", m_portaudiodrivers->driverCombo->itemData(paindex));
+#endif
 }
 
 void AudioDriverPage::reset_default_config()
@@ -133,8 +145,20 @@ void AudioDriverPage::reset_default_config()
 	config().set_property("Hardware", "drivertype", "Jack");
 #else
 	config().set_property("Hardware", "drivertype", "Null Driver");
-	
 #endif
+	
+#if defined (PORTAUDIO_SUPPORT)
+#if defined (LINUX_BUILD)
+	config().set_property("Hardware", "pahostapi", "alsa");
+#endif
+#if defined (MAC_OS_BUILD)
+	config().set_property("Hardware", "pahostapi", "coreaudio");
+#endif
+#if defined (WIN_BUILD)
+	config().set_property("Hardware", "pahostapi", "wmme");
+#endif
+#endif //end PORTAUDIO_SUPPORT
+	
 	config().set_property("Hardware", "capture", 1);
 	config().set_property("Hardware", "playback", 1);
 	
@@ -194,6 +218,38 @@ void AudioDriverPage::load_config( )
 		m_alsadevices->devicesCombo->setCurrentIndex(index);
 	}
 #endif
+	
+#if defined (PORTAUDIO_SUPPORT)
+	m_portaudiodrivers->driverCombo->clear();
+	QString defaulthostapi = "";
+
+#if defined (LINUX_BUILD)
+	m_portaudiodrivers->driverCombo->addItem("ALSA", "alsa");
+	m_portaudiodrivers->driverCombo->addItem("Jack", "jack");
+	m_portaudiodrivers->driverCombo->addItem("OSS", "oss");
+	defaulthostapi = "jack";
+#endif
+
+#if defined (MAC_OS_BUILD)
+	m_portaudiodrivers->driverCombo->addItem("Core Audio", "coreaudio");
+	m_portaudiodrivers->driverCombo->addItem("Jack", "jack");
+	defaulthostapi = "coreaudio";
+#endif
+
+#if defined (WIN_BUILD)
+	m_portaudiodrivers->driverCombo->addItem("MME", "wmme");
+	m_portaudiodrivers->driverCombo->addItem("Direct Sound", "directx");
+	m_portaudiodrivers->driverCombo->addItem("ASIO", "asio");
+	defaulthostapi = "wmme";
+#endif
+	
+	QString hostapi = config().get_property("Hardware", "pahostapi", defaulthostapi).toString();
+	index = m_portaudiodrivers->driverCombo->findData(hostapi);
+	if (index >= 0) {
+		m_portaudiodrivers->driverCombo->setCurrentIndex(index);
+	}
+
+#endif //end PORTAUDIO_SUPPORT
 }
 
 
@@ -223,11 +279,19 @@ void AudioDriverPage::restart_driver_button_clicked()
 	QString cardDevice = "";
 
 #if defined (ALSA_SUPPORT)
-	config().get_property("Hardware", "carddevice", "hw:0").toString();
-	int index = m_alsadevices->devicesCombo->currentIndex();
-	cardDevice = m_alsadevices->devicesCombo->itemData(index).toString();
+	if (driver == "ALSA") {
+		int index = m_alsadevices->devicesCombo->currentIndex();
+		cardDevice = m_alsadevices->devicesCombo->itemData(index).toString();
+	}
 #endif
-		
+	
+#if defined (PORTAUDIO_SUPPORT)
+	if (driver == "PortAudio") {
+		int index = m_portaudiodrivers->driverCombo->currentIndex();
+		cardDevice = m_portaudiodrivers->driverCombo->itemData(index).toString();
+	}
+#endif
+			
 	audiodevice().set_parameters(rate, buffersize, driver, capture, playback, cardDevice);
 	
 	config().set_property("Hardware", "NumberOfPeriods", currentperiods);
@@ -237,7 +301,7 @@ void AudioDriverPage::restart_driver_button_clicked()
 
 void AudioDriverPage::driver_combobox_index_changed(QString driver)
 {
-	if (driver == "ALSA" || driver == "Null Driver") {
+	if (driver == "ALSA" || driver == "PortAudio" || driver == "Null Driver") {
 		m_driverConfigPage->setEnabled(true);
 	} else {
 		m_driverConfigPage->setEnabled(false);
@@ -246,8 +310,20 @@ void AudioDriverPage::driver_combobox_index_changed(QString driver)
 #if defined (ALSA_SUPPORT)
 	if (driver == "ALSA") {
 		m_alsadevices->show();
+		m_mainLayout->insertWidget(m_mainLayout->indexOf(m_driverConfigPage) + 1, m_alsadevices);
 	} else {
 		m_alsadevices->hide();
+		m_mainLayout->removeWidget(m_alsadevices);
+	}
+#endif
+
+#if defined (PORTAUDIO_SUPPORT)
+	if (driver == "PortAudio") {
+		m_portaudiodrivers->show();
+		m_mainLayout->insertWidget(m_mainLayout->indexOf(m_driverConfigPage), m_portaudiodrivers);
+	} else {
+		m_portaudiodrivers->hide();
+		m_mainLayout->removeWidget(m_portaudiodrivers);
 	}
 #endif
 }
@@ -291,6 +367,14 @@ AlsaDevicesPage::AlsaDevicesPage(QWidget * parent)
 }
 #endif
 
+
+#if defined (PORTAUDIO_SUPPORT)
+PaDriverPage::PaDriverPage(QWidget * parent)
+	: QWidget(parent)
+{
+	setupUi(this);
+}
+#endif
 
 
 ConfigPage::ConfigPage(QWidget * parent)

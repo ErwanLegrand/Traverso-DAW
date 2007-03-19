@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: JackDriver.cpp,v 1.13 2007/03/16 00:10:26 r_sijrier Exp $
+    $Id: JackDriver.cpp,v 1.14 2007/03/19 11:18:57 r_sijrier Exp $
 */
 
 #include "JackDriver.h"
@@ -54,11 +54,6 @@ JackDriver::~JackDriver( )
 	}
 }
 
-int JackDriver::_run_cycle( )
-{
-        return 1;
-}
-
 int JackDriver::_read( nframes_t nframes )
 {
         int portNumber = 0;
@@ -91,11 +86,6 @@ int JackDriver::_write( nframes_t nframes )
         return 1;
 }
 
-int JackDriver::_null_cycle( nframes_t )
-{
-        return 1;
-}
-
 int JackDriver::setup(bool capture, bool playback, const QString& )
 {
 	PENTER;
@@ -106,7 +96,7 @@ int JackDriver::setup(bool capture, bool playback, const QString& )
         int inputPortCount = 0;
         int outputPortCount = 0;
         client = 0;
-        AudioChannel* bus;
+        AudioChannel* channel;
         char buf[32];
         int port_flags;
         capture_frame_latency = playback_frame_latency =0;
@@ -185,9 +175,9 @@ int JackDriver::setup(bool capture, bool playback, const QString& )
 
                 snprintf (buf, sizeof(buf) - 1, "capture_%d", chn+1);
 
-                bus = device->register_capture_channel(buf, JACK_DEFAULT_AUDIO_TYPE, port_flags, frames_per_cycle, chn);
-                bus->set_latency( frames_per_cycle + capture_frame_latency );
-                captureChannels.append(bus);
+		channel = device->register_capture_channel(buf, JACK_DEFAULT_AUDIO_TYPE, port_flags, frames_per_cycle, chn);
+		channel->set_latency( frames_per_cycle + capture_frame_latency );
+		captureChannels.append(channel);
         }
 
 
@@ -196,9 +186,9 @@ int JackDriver::setup(bool capture, bool playback, const QString& )
 
                 snprintf (buf, sizeof(buf) - 1, "playback_%d", chn+1);
 
-                bus = device->register_playback_channel(buf, JACK_DEFAULT_AUDIO_TYPE, port_flags, frames_per_cycle, chn);
-                bus->set_latency( frames_per_cycle + capture_frame_latency );
-                playbackChannels.append(bus);
+		channel = device->register_playback_channel(buf, JACK_DEFAULT_AUDIO_TYPE, port_flags, frames_per_cycle, chn);
+		channel->set_latency( frames_per_cycle + capture_frame_latency );
+		playbackChannels.append(channel);
         }
 
 
@@ -225,9 +215,13 @@ int JackDriver::attach( )
 int JackDriver::start( )
 {
 	PENTER;
+        if (jack_activate (client)) {
+		//if jack_active() != 0, something went wrong!
+		return -1;
+	}
+	
 	m_running = 1;
-        jack_activate (client);
-        return 1;
+	return 1;
 }
 
 int JackDriver::stop( )

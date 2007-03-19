@@ -5,7 +5,7 @@ INCLUDEPATH += ../core
 TARGET = traversoaudiobackend
 DESTDIR = ../../lib 
 TEMPLATE = lib 
-LIBS += -lasound
+LIBS += -lasound -lportaudio
 
 
 SOURCES += AlsaDriver.cpp \
@@ -18,7 +18,8 @@ Client.cpp \
 Driver.cpp \
 JackDriver.cpp \
 memops.cpp \
-Tsar.cpp
+Tsar.cpp \
+PADriver.cpp
 HEADERS += AlsaDriver.h \
 AudioBus.h \
 AudioChannel.h \
@@ -33,9 +34,18 @@ JackDriver.h \
 libtraverso.h \
 memops.h \
 precompile.h \
-Tsar.h
+Tsar.h \
+PADriver.h
+
+
 release{
     PRECOMPILED_HEADER -= precompile.h 
+}
+
+!contains(DEFINES, PORTAUDIO_SUPPORT) {
+SOURCES -= PADriver.cpp
+HEADERS -= PADriver.h
+LIBS -= -lportaudio
 }
 
 unix{

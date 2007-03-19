@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.13 2007/03/16 00:10:26 r_sijrier Exp $
+$Id: AudioDevice.h,v 1.14 2007/03/19 11:18:57 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -129,6 +129,7 @@ private:
 
 	friend class AlsaDriver;
 	friend class JackDriver;
+	friend class PADriver;
 	friend class Driver;
 	friend class AudioDeviceThread;
 

@@ -34,6 +34,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ui_AlsaDevicesPage.h"
 #endif
 
+#if defined (PORTAUDIO_SUPPORT)
+#include "ui_PaDriverPage.h"
+#endif
+
+
 class DriverConfigPage : public QWidget, private Ui::DriverConfigPage
 {
 	Q_OBJECT
@@ -56,6 +61,17 @@ class AlsaDevicesPage : public QWidget, private Ui::AlsaDevicesPage
 {
 public:
 	AlsaDevicesPage(QWidget* parent = 0);
+private:
+	friend class AudioDriverPage;
+};
+#endif
+
+
+#if defined (PORTAUDIO_SUPPORT)
+class PaDriverPage : public QWidget, private Ui::PaDriverPage
+{
+public:
+	PaDriverPage(QWidget* parent = 0);
 private:
 	friend class AudioDriverPage;
 };
@@ -134,10 +150,15 @@ public:
 	void reset_default_config();
 
 private:
+	QVBoxLayout* m_mainLayout;
 	QComboBox* m_driverCombo;
 	DriverConfigPage* m_driverConfigPage;
 #if defined (ALSA_SUPPORT)
 	AlsaDevicesPage* m_alsadevices;
+#endif
+	
+#if defined (PORTAUDIO_SUPPORT)
+	PaDriverPage* m_portaudiodrivers;
 #endif
 	
 	void load_config();

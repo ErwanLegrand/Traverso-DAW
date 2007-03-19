@@ -19,9 +19,10 @@ CONFIG += debug
 
 DEFINES += JACK_SUPPORT
 DEFINES += ALSA_SUPPORT
+#DEFINES += PORTAUDIO_SUPPORT
+#DEFINES += LV2_SUPPORT
 
 #DEFINES += STATIC_BUILD
-DEFINES += LV2_SUPPORT
 DEFINES += PRECOMPILED_HEADER
 #DEFINES += USE_MEM_CHECKER
 
@@ -70,7 +71,6 @@ debug {
 
 
 unix {
-
 	DEFINES += LINUX_BUILD
 
 	release {
@@ -97,7 +97,7 @@ unix {
 	
 	contains(DEFINES, PRECOMPILED_HEADER):CONFIG += precompile_header
 	
-	contains(GCCVERSION, [45].[01234].[012345] ) {
+	contains(GCCVERSION, [45].[012345].[012345] ) {
 #		Makes only sense if there are loops to vectorize, which isn't the case (yet)
 #		Maybe gcc 4.2 will do a better job on certain loops?
 #		specially those in memops. would be nice if they get some optimization too...
@@ -117,6 +117,7 @@ macx {
 }
 
 win32 { 
+	DEFINES += WIN_BUILD
 	DEFINES -= ALSA_SUPPORT
 	DEFINES -= JACK_SUPPORT
 	DEFINES -= USE_MLOCK
