@@ -40,7 +40,8 @@ public:
 	int set_state(const QDomNode& node);
 	
 	QList<Marker*> get_markers() const {return m_markers;}
-	void set_markers(QList<Marker*>);
+	
+	Marker* get_marker(qint64 id);
 
 	Command* add_marker(Marker* marker, bool historable=true);
 	Command* remove_marker(Marker* marker, bool historable=true);

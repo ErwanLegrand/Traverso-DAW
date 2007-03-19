@@ -57,6 +57,7 @@ public:
 	ContextItem* get_context() const {return m_contextItem;}
 	
 	QUndoStack* get_history_stack() const {return m_hs;}
+	qint64 get_id() const {return m_id;}
 
 	void set_history_stack(QUndoStack* hs) {m_hs = hs;}
 
@@ -65,6 +66,7 @@ public:
 	
 protected:
 	QUndoStack* m_hs;
+	qint64 m_id;
 
 private:
 	ContextItem* m_contextItem;

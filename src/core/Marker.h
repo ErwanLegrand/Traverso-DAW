@@ -35,6 +35,7 @@ class Marker : public ContextItem
 	
 public:
 	Marker(TimeLine* tl, nframes_t when, uint type = 0);
+	Marker(TimeLine* tl, const QDomNode node);
 	~Marker() {};
 	
 	QDomNode get_state(QDomDocument doc);
@@ -44,8 +45,7 @@ public:
 	void set_when (nframes_t when);
 	
 	nframes_t get_when() const {return m_when;}
-	QString get_description() const {return m_description;}
-	
+	QString get_description() const;
 	
 private:
 	TimeLine* m_timeline;

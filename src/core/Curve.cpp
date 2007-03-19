@@ -25,7 +25,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.cpp,v 1.31 2007/03/06 15:13:58 r_sijrier Exp $
+$Id: Curve.cpp,v 1.32 2007/03/19 11:18:05 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -35,6 +35,7 @@ $Id: Curve.cpp,v 1.31 2007/03/06 15:13:58 r_sijrier Exp $
 #include "Song.h"
 #include "Track.h"
 #include "InputEngine.h"
+#include "Utils.h"
 #include <QStringList>
 #include <QThread>
 #include <AddRemove.h>
@@ -53,6 +54,7 @@ Curve::Curve(ContextItem* parent, Song* song)
 {
 	PENTERCONS;
 	Q_ASSERT(m_song);
+	m_id = create_id();
 	init();
 }
 
@@ -101,6 +103,8 @@ QDomNode Curve::get_state( QDomDocument doc )
 	
 	domNode.setAttribute("nodes",  nodesList.join(";"));
 	domNode.setAttribute("defaulvalue",  m_defaultValue);
+	domNode.setAttribute("id",  m_id);
+	
 	
 	return domNode;
 }
@@ -112,6 +116,7 @@ int Curve::set_state( const QDomNode & node )
 	
 	QStringList nodesList = e.attribute( "nodes", "" ).split(";");
 	m_defaultValue = e.attribute( "defaulvalue", "1.0" ).toDouble();
+	m_id = e.attribute("id", "0" ).toLongLong();
 	
 	for (int i=0; i<nodesList.size(); ++i) {
 		QStringList whenValueList = nodesList.at(i).split(",");

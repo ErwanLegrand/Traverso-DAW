@@ -55,7 +55,6 @@ public :
 	QList<Song* > get_songs() const;
 	Song* get_current_song() const ;
 	Song* get_song(qint64 id) const;
-	qint64 get_id() const;
 	int get_song_index(qint64 id) const;
 
 
@@ -87,7 +86,6 @@ private:
 	QList<Song* >	m_songs;
 	ResourcesManager* 	m_asmanager;
 
-	qint64		m_id;
 	QString 	title;
 	QString 	rootDir;
 	QString 	sourcesDir;

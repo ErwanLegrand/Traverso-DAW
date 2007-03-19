@@ -68,7 +68,6 @@ public:
 	int get_rate();
 	int get_bitdepth();
 	int get_numtracks() const {return m_tracks.size();}
-	qint64 get_id() const {return m_id;}
 	int get_track_index(qint64 id) const;
 	
 	nframes_t get_transport_frame() const;
@@ -150,7 +149,6 @@ private:
 	float 			m_gain;
 	QString 		artists;
 	QString 		title;
-	qint64 			m_id;
 	int 			m_hzoom;
 	bool 			rendering;
 	bool 			changed;

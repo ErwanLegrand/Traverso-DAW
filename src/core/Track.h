@@ -70,7 +70,6 @@ public :
 	AudioClip* get_clip_after(nframes_t framePos);
 	AudioClip* get_clip_before(nframes_t framePos);
 	void get_render_range(nframes_t& startframe, nframes_t& endframe);
-	qint64 get_id() const{return m_id;}
 	QString get_bus_in() const {return busIn;}
 	QString get_bus_out() const{return busOut;}
 	int get_height() const {return m_height;}
@@ -114,7 +113,6 @@ private :
 
 	float 	m_gain;
 	float 	m_pan;
-	qint64	m_id;
 	int numtakes;
 	QByteArray busIn;
 	QByteArray busOut;

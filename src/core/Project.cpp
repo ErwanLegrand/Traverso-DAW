@@ -441,12 +441,6 @@ QList<Song* > Project::get_songs( ) const
 	return m_songs;
 }
 
-
-qint64 Project::get_id() const
-{
-	return m_id;
-}
-
 int Project::get_song_index(qint64 id) const
 {
 	for (int i=0; i<m_songs.size(); ++i) {

@@ -901,11 +901,6 @@ void AudioClip::private_remove_fade( FadeCurve * fade )
 	m_fades.append(fade);
 }
 
-qint64 AudioClip::get_id( ) const
-{
-	return m_id;
-}
-
 int AudioClip::get_ref_count( ) const
 {
 	return m_refcount;

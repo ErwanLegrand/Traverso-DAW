@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.33 2007/03/16 00:14:43 r_sijrier Exp $
+$Id: AudioClip.h,v 1.34 2007/03/19 11:18:05 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -104,7 +104,6 @@ public:
 	int get_channels() const;
 	int get_rate() const;
 	int get_bitdepth() const;
-	qint64 get_id() const;
 	qint64 get_readsource_id() const;
 	
 	QString get_name() const;
@@ -154,7 +153,6 @@ private:
 	float	 		m_gain;
 	float			m_normfactor;
 	
-	qint64		m_id;
 	qint64		m_readSourceId;
 	int		m_refcount;
 

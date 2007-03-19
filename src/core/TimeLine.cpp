@@ -54,21 +54,12 @@ int TimeLine::set_state(const QDomNode & node)
 	QDomNode markerNode = markersNode.firstChild();
 
 	while (!markerNode.isNull()) {
-		Marker* marker = new Marker(this, 0, 0);
-		marker->set_state(markerNode);
+		Marker* marker = new Marker(this, markerNode);
 		m_markers.append(marker);
-
 		markerNode = markerNode.nextSibling();
 	}
 
 	return 1;
-}
-
-void TimeLine::set_markers(QList<Marker*> lst)
-{
-	for (int i = 0; i < lst.size(); ++i) {
-		private_add_marker(lst.at(i));
-	}
 }
 
 Command * TimeLine::add_marker(Marker* marker, bool historable)
@@ -115,5 +106,25 @@ void TimeLine::private_remove_marker(Marker * marker)
 	m_markers.removeAll(marker);
 }
 
+Marker * TimeLine::get_marker(qint64 id)
+{
+	// What about using a QHash instead of QList for storing our markers ?
+	// Then this function would be as simple as return m_markers.value(id);
+	// And most likely faster too :-)
+	// On the other hand, QList concumes less memory, and when marker count
+	// keeps below a certain value (< 100 or so), it perhaps doesn't make much sense
+	// The get_state() would use the foreach macro, as used below, to make things real easy ;-)
+	
+	foreach(Marker* marker, m_markers) {
+		if (marker->get_id() == id) {
+			return marker;
+		}
+	}
+	
+	return 0;
+}
+
+
 //eof
+
 
