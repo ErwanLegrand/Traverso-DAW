@@ -56,6 +56,8 @@ class ProjectManagerDialog;
 class SongManagerDialog;
 class InfoToolBar;
 class SysInfoToolBar;
+class CDTextDialog;
+class MarkerDialog;
 
 class Interface : public QMainWindow
 {
@@ -95,6 +97,8 @@ private:
 	SettingsDialog*		m_settingsdialog;
 	ProjectManagerDialog*	m_projectManagerDialog;
 	SongManagerDialog*	m_songManagerDialog;
+	CDTextDialog*		m_cdTextDialog;
+	MarkerDialog*		m_markerDialog;
 	InfoToolBar* 		m_infoBar;
 	SysInfoToolBar* 	m_sysinfo;
 
@@ -138,6 +142,8 @@ public slots :
 	Command* select_bus_in();
 	Command* select_bus_out();
 	Command* show_project_manager_dialog();
+	Command* show_cdtext_dialog();
+	Command* show_marker_dialog();
 	
 private slots:
 	void delete_songwidget(Song*);

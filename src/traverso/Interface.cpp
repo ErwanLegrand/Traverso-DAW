@@ -48,6 +48,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "dialogs/settings/SettingsDialog.h"
 #include "dialogs/project/ProjectManagerDialog.h"
 #include "dialogs/project/SongManagerDialog.h"
+#include "dialogs/CDTextDialog.h"
+#include "dialogs/MarkerDialog.h"
 
 
 // Always put me below _all_ includes, this is needed
@@ -166,6 +168,8 @@ Interface::Interface()
 	m_settingsdialog = 0;
 	m_projectManagerDialog = 0;
 	m_songManagerDialog = 0;
+	m_cdTextDialog = 0;
+	m_markerDialog = 0;
 	
 	create_menus();
 	
@@ -368,6 +372,14 @@ void Interface::create_menus( )
 	
 	menu->addSeparator();
 	
+	action = menu->addAction(tr("Marker Editor"));
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_marker_dialog()));
+	
+	action = menu->addAction(tr("CD Text Editor"));
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_cdtext_dialog()));
+	
+	menu->addSeparator();
+	
 	menu->addAction(correlationMeterDW->toggleViewAction());
 	menu->addAction(spectralMeterDW->toggleViewAction());
 	
@@ -471,7 +483,6 @@ Command * Interface::show_context_menu( )
 
 QMenu* Interface::create_context_menu(QObject* item )
 {
-	printf("entering create_context_menu\n");
 	QMenu* menu = new QMenu();
 	
 	
@@ -499,7 +510,6 @@ QMenu* Interface::create_context_menu(QObject* item )
 		// Merge entries with equall action, but different key facts.
 		for (int j=i+1; j<list.size(); ++j) {
 			if (list.at(j).description == data.description) {
-				printf("Found equall description! %s\n", QS_C(data.description));
 				data.keysequence = data.keysequence + QByteArray(", " + list.at(j).keysequence);
 				list.removeAt(j);
 				break;
@@ -537,7 +547,6 @@ QMenu* Interface::create_context_menu(QObject* item )
 		
 		QAction* action = menu->insertMenu(0, sub);
 		action->setText(key);
-		printf("list size %d\n", list->size());
 		foreach(MenuData data, *list) {
 			QAction* action = new QAction(this);
 			QString text = QString(data.description + "  " + data.keysequence);
@@ -762,6 +771,27 @@ void Interface::show_song_manager_dialog()
 		m_songManagerDialog = new SongManagerDialog(this);
 	}
 	m_songManagerDialog->show();
+}
+
+Command * Interface::show_cdtext_dialog()
+{
+	if (! m_cdTextDialog ) {
+		m_cdTextDialog = new CDTextDialog(this);
+	}
+	
+	m_cdTextDialog->show();
+	
+	return 0;
+}
+
+Command * Interface::show_marker_dialog()
+{
+	if (! m_markerDialog ) {
+		m_markerDialog = new MarkerDialog(this);
+	}
+	m_markerDialog->show();
+	
+	return 0;
 }
 
 QSize Interface::sizeHint() const

@@ -8,9 +8,9 @@ include(../appbase.pri)
 RESOURCES += traverso.qrc
 PRECOMPILED_HEADER = precompile.h
 
-contains(DEFINES, STATIC_BUILD) {
-	QMAKE_LIBDIR += ../../lib/commandplugins
-	LIBS += -L../../lib/commandplugins -ltcp_traversocommands
+contains(DEFINES, STATIC_BUILD){
+    QMAKE_LIBDIR += ../../lib/commandplugins
+    LIBS += -L../../lib/commandplugins -ltcp_traversocommands
 }
 
 LIBS +=  \
@@ -50,7 +50,9 @@ HEADERS += \
 	dialogs/project/ProjectManagerDialog.h \
 	songcanvas/MarkerView.h \
 	widgets/InfoWidgets.h \
-	widgets/MessageWidget.h
+	widgets/MessageWidget.h \
+	dialogs/CDTextDialog.h \
+	dialogs/MarkerDialog.h
 SOURCES += \
 	Traverso.cpp \
 	AudioSourcesTreeWidget.cpp \
@@ -75,7 +77,9 @@ SOURCES += \
 	dialogs/project/ProjectManagerDialog.cpp \
 	songcanvas/MarkerView.cpp \
 	widgets/InfoWidgets.cpp \
-	widgets/MessageWidget.cpp
+	widgets/MessageWidget.cpp \
+	dialogs/CDTextDialog.cpp \
+	dialogs/MarkerDialog.cpp
 FORMS += ui/ExportWidget.ui \
 	ui/AudioSourcesManagerWidget.ui \
 	ui/PluginSelectorDialog.ui \
@@ -83,12 +87,15 @@ FORMS += ui/ExportWidget.ui \
 	ui/QuickDriverConfigWidget.ui \
 	ui/DriverConfigPage.ui \
 	ui/AlsaDevicesPage.ui \
+	ui/PaDriverPage.ui \
 	ui/KeyboardConfigPage.ui \
 	ui/BehaviorConfigPage.ui \
 	ui/MemoryConfigPage.ui \
 	ui/ThemeConfigPage.ui \
 	ui/SongManagerDialog.ui \
-	ui/ProjectManagerDialog.ui
+	ui/ProjectManagerDialog.ui \
+	ui/MarkerDialog.ui \
+	ui/CDTextDialog.ui
 
 
 INCLUDEPATH += 	../core \
@@ -102,6 +109,11 @@ INCLUDEPATH += 	../core \
 
 contains(DEFINES, ALSA_SUPPORT): LIBS += -lasound
 !contains(DEFINES, ALSA_SUPPORT): FORMS -= ui/AlsaDevicesPage.ui
+
+contains(DEFINES, PORTAUDIO_SUPPORT): LIBS += -lportaudio
+!contains(DEFINES, PORTAUDIO_SUPPORT): FORMS -= ui/AlsaDevicesPage.ui
+
+
 contains(DEFINES, JACK_SUPPORT): LIBS += -ljack
 
 !contains(DEFINES, LV2_SUPPORT){
