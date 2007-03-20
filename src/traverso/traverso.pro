@@ -111,7 +111,7 @@ contains(DEFINES, ALSA_SUPPORT): LIBS += -lasound
 !contains(DEFINES, ALSA_SUPPORT): FORMS -= ui/AlsaDevicesPage.ui
 
 contains(DEFINES, PORTAUDIO_SUPPORT): LIBS += -lportaudio
-!contains(DEFINES, PORTAUDIO_SUPPORT): FORMS -= ui/AlsaDevicesPage.ui
+!contains(DEFINES, PORTAUDIO_SUPPORT): FORMS -= ui/PaDriverPage.ui
 
 
 contains(DEFINES, JACK_SUPPORT): LIBS += -ljack
