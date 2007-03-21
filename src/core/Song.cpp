@@ -55,7 +55,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Debugger.h"
 
 
-Song::Song(Project* project)
+Song::Song(Project* project, int numtracks)
 	: ContextItem()
 	, m_project(project)
 {
@@ -65,11 +65,10 @@ Song::Song(Project* project)
 	m_gain = 1.0f;
 	artists = tr("No artists name set");
 	m_hzoom = config().get_property("Song", "hzoomLevel", 14).toInt();
-	int tracksToCreate = config().get_property("Song", "trackCreationCount", 4).toInt();
 
 	init();
 
-	for (int i=1; i <= tracksToCreate; i++) {
+	for (int i=1; i <= numtracks; i++) {
 		Track* track = create_track();
 		private_add_track(track);
 	}

@@ -101,7 +101,7 @@ private:
 
 	qint64 		m_currentSongId;
 	
-	int create(int songcount);
+	int create(int songcount, int numtracks);
 	
 	friend class ProjectManager;
 

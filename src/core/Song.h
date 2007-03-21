@@ -59,7 +59,7 @@ class Song : public ContextItem
 
 public:
 
-	Song(Project* project);
+	Song(Project* project, int numtracks);
 	Song(Project* project, const QDomNode node);
 	~Song();
 

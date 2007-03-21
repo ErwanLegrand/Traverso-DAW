@@ -106,7 +106,7 @@ void ProjectManager::set_current_project(Project* project)
 
 }
 
-Project* ProjectManager::create_new_project(int numSongs, const QString& projectName)
+Project* ProjectManager::create_new_project(int numSongs, int numTracks, const QString& projectName)
 {
 	PENTER;
 
@@ -117,7 +117,7 @@ Project* ProjectManager::create_new_project(int numSongs, const QString& project
 
 	Project *newProject = new Project(projectName);
 
-	if (newProject->create(numSongs) < 0) {
+	if (newProject->create(numSongs, numTracks) < 0) {
 		delete newProject;
 		info().critical(tr("Unable to create new Project %1").arg(projectName));
 		return 0;
@@ -249,7 +249,7 @@ void ProjectManager::start( )
 			load_project(projectToLoad);
 		} else {
 			Project* project;
-			if ( (project = create_new_project(1, "Untitled")) ) {
+			if ( (project = create_new_project(1, 4, "Untitled")) ) {
 				project->set_description(tr("Default Project created by Traverso"));
 				project->save();
 				delete project;

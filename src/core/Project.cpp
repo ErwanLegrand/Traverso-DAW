@@ -79,7 +79,7 @@ Project::~Project()
 }
 
 
-int Project::create(int songcount)
+int Project::create(int songcount, int numtracks)
 {
 	PENTER;
 	PMESG("Creating new project %s  NumSongs=%d", title.toAscii().data(), songcount);
@@ -103,7 +103,7 @@ int Project::create(int songcount)
 	}
 
 	for (int i=0; i< songcount; i++) {
-		Song* song = new Song(this);
+		Song* song = new Song(this, numtracks);
 		private_add_song(song);
 	}
 

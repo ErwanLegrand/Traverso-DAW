@@ -35,7 +35,7 @@ class ProjectManager : public ContextItem
 {
 	Q_OBJECT
 public:
-	Project* create_new_project(int numSong, const QString& projectName);
+	Project* create_new_project(int numSong, int numTracks, const QString& projectName);
 	
 	int load_project(const QString& projectName);
 
