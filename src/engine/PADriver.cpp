@@ -123,6 +123,16 @@ int PADriver::setup(bool capture, bool playback, const QString& hostapi)
 			break;
 		}
 		
+		if (hostapi == "jack" && info->type == paJACK) {
+			printf("PADriver:: Found jack host api, using device %d\n", i);
+			deviceindex = i;
+			break;
+		}
+	}
+	
+	if (deviceindex == -1) {
+		info().warning(tr("PADriver:: hostapi %1 was not found by Portaudio!").arg(hostapi));
+		return -1;
 	}
 	
 		
@@ -134,11 +144,17 @@ int PADriver::setup(bool capture, bool playback, const QString& hostapi)
 	outputParameters.suggestedLatency = Pa_GetDeviceInfo( outputParameters.device )->defaultLowOutputLatency;
 	outputParameters.hostApiSpecificStreamInfo = NULL;
 	
+	inputParameters.device = deviceindex; 
+	inputParameters.channelCount = 2;
+	inputParameters.sampleFormat = paFloat32; /* 32 bit floating point output */
+	inputParameters.suggestedLatency = Pa_GetDeviceInfo( inputParameters.device )->defaultLowInputLatency;
+	inputParameters.hostApiSpecificStreamInfo = NULL;
+	
 	/* Open an audio I/O stream. */
 	// TODO configure the inputParameters, and give as argument instead of 0 (&inputParameters)
 	err = Pa_OpenStream(
 			&m_paStream,
-   			0,			// The input parameter
+   			&inputParameters,	// The input parameter
    			&outputParameters,	// The outputparameter
 			frame_rate,		// Set in the constructor
 			frames_per_cycle,	// Set in the constructor
