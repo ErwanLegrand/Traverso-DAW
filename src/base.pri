@@ -60,8 +60,8 @@ MOC_DIR = build
 UI_DIR = build 
 OBJECTS_DIR = build 
 
-# QMAKE_CXXFLAGS += $$system(pkg-config --cflags glib-2.0) -fstack-protector-all 
-
+QMAKE_CXXFLAGS += $$system(pkg-config --cflags glib-2.0) -fstack-protector-all 
+#QMAKE_CXXFLAGS += -fstack-protector-all 
 
 debug {
 #	DEFINES += RT_THREAD_CHECK
