@@ -17,12 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.26 2007/03/21 16:02:28 ingmar Exp $
+$Id: SongView.cpp,v 1.27 2007/03/21 16:21:41 ingmar Exp $
 */
 
 
 #include <QScrollBar>
-
 #include "SongView.h"
 #include "SongWidget.h"
 #include "TrackView.h"
@@ -274,7 +273,7 @@ Command* SongView::hzoom_in()
 }
 
 
-Command* SongView::vzoom_out()
+Command* SongView::vzoom_in()
 {
 	PENTER;
 	for (int i=0; i<m_trackViews.size(); ++i) {
@@ -294,7 +293,7 @@ Command* SongView::vzoom_out()
 }
 
 
-Command* SongView::vzoom_in()
+Command* SongView::vzoom_out()
 {
 	PENTER;
 	for (int i=0; i<m_trackViews.size(); ++i) {
