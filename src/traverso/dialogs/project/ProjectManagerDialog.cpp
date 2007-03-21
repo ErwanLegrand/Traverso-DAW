@@ -53,6 +53,9 @@ ProjectManagerDialog::ProjectManagerDialog( QWidget * parent )
 	
 	projectListView->header()->resizeSection(0, 160);
 	projectListView->header()->resizeSection(1, 30);
+	
+	trackCountSpinBox->setValue(config().get_property("Song", "trackCreationCount", 4).toInt());
+
 
 	connect(projectListView, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(projectitem_clicked(QTreeWidgetItem*,int)));
 }
@@ -207,9 +210,10 @@ void ProjectManagerDialog::on_createProjectButton_clicked( )
 	}
 	
 	int numSongs = songCountSpinBox->value();
+	int numTracks = trackCountSpinBox->value();
 	
 	Project* project;
-	if( (project = pm().create_new_project(numSongs, title)) ) {
+	if( (project = pm().create_new_project(numSongs, numTracks, title)) ) {
 		project->set_description(descriptionTextEdit->toPlainText());
 		project->set_engineer(newProjectEngineer->text());
 		project->save();

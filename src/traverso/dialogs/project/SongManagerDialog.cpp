@@ -44,13 +44,10 @@ SongManagerDialog::SongManagerDialog( QWidget * parent )
 	stringList << "Song Name" << "Tracks" << "Length h:m:s,fr" << "Size" ;
 	treeSongWidget->setHeaderLabels(stringList);
 	
-	m_project = pm().get_project();
-	if (m_project) {
-		setWindowTitle("Manage Project - " + m_project->get_title());
-	}
+	set_project(pm().get_project());
 	
-	update_song_list();
-
+	trackCountSpinBox->setValue(config().get_property("Song", "trackCreationCount", 4).toInt());
+	
 	connect(treeSongWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(songitem_clicked(QTreeWidgetItem*,int)));
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 }
@@ -61,13 +58,17 @@ SongManagerDialog::~SongManagerDialog()
 void SongManagerDialog::set_project(Project* project)
 {
 	m_project = project;
+	
 	if (m_project) {
-		connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(update_song_list()));
+		connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(song_added(Song*)));
+		connect(m_project, SIGNAL(songRemoved(Song*)), this, SLOT(song_removed(Song*)));
 		setWindowTitle("Manage Project - " + m_project->get_title());
 	} else {
 		setWindowTitle("Manage Project - No Project loaded!");
 		treeSongWidget->clear();
 	}
+	
+	update_song_list();
 }
 
 
@@ -77,6 +78,8 @@ void SongManagerDialog::update_song_list( )
 		printf("SongManagerDialog:: no project ?\n");
 		return;
 	}
+	
+	printf("update_song_list() \n");
 
 	treeSongWidget->clear();
 	foreach(Song* song, m_project->get_songs()) {
@@ -162,8 +165,6 @@ void SongManagerDialog::on_deleteSongButton_clicked( )
 	
 	// Hmmm, to which history stack should this one be pushed ???? :-(
 	ie().process_command(m_project->remove_song(m_project->get_song(id)));
-	
-	update_song_list();
 }
 
 void SongManagerDialog::on_createSongButton_clicked( )
@@ -172,15 +173,13 @@ void SongManagerDialog::on_createSongButton_clicked( )
 		return;
 	}
 	
-	Song* song = new Song(m_project);
+	int trackcount = trackCountSpinBox->value();
+	Song* song = new Song(m_project, trackcount);
 	
 	song->set_title(newSongNameLineEdit->text());
 	song->set_artists(artistsLineEdit->text());
 	
-	// Hmmm, to which history stack should this one be pushed ???? :-(
 	ie().process_command(m_project->add_song(song));
-	
-	update_song_list();
 }
 
 
@@ -205,4 +204,15 @@ void SongManagerDialog::showEvent(QShowEvent * event)
 	}
 }
 
+void SongManagerDialog::song_removed(Song * song)
+{
+	update_song_list();
+}
+
+void SongManagerDialog::song_added(Song * song)
+{
+	update_song_list();
+}
+
 //eof
+

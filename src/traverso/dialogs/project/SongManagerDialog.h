@@ -26,6 +26,7 @@
 #include <QDialog>
 
 class Project;
+class Song;
 
 class SongManagerDialog : public QDialog, protected Ui::SongManagerDialog
 {
@@ -51,6 +52,8 @@ private slots:
 	void on_renameSongButton_clicked();
         void on_deleteSongButton_clicked();
         void on_createSongButton_clicked();
+	void song_removed(Song* song);
+	void song_added(Song* song);
 };
 
 #endif
