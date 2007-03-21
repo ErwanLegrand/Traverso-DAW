@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.29 2007/03/21 18:32:55 r_sijrier Exp $
+$Id: SongView.cpp,v 1.30 2007/03/21 18:37:58 r_sijrier Exp $
 */
 
 
@@ -274,7 +274,7 @@ Command* SongView::hzoom_in()
 }
 
 
-Command* SongView::vzoom_out()
+Command* SongView::vzoom_in()
 {
 	PENTER;
 	for (int i=0; i<m_trackViews.size(); ++i) {
@@ -294,7 +294,7 @@ Command* SongView::vzoom_out()
 }
 
 
-Command* SongView::vzoom_in()
+Command* SongView::vzoom_out()
 {
 	PENTER;
 	for (int i=0; i<m_trackViews.size(); ++i) {
