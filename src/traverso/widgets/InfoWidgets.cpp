@@ -198,6 +198,7 @@ void DriverInfo::draw_information( )
 
 void DriverInfo::update_xrun_info( )
 {
+	set_orientation(Qt::Horizontal);
 	xrunCount++;
 	draw_information();
 }
