@@ -180,6 +180,7 @@
 	<keyfact type="FKEY" key1="MouseButtonLeft" >
 		<Objects>
 			<Object objectname="CurveView" slotsignature="add_node" modes="All" instantanious="0" />
+			<Object objectname="TrackPanelLed" slotsignature="toggle" modes="All" sortorder="1" />
 		</Objects>
 	</keyfact>
 	<keyfact type="FKEY" key1="MouseButtonRight" >
