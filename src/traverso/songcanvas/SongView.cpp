@@ -17,11 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.28 2007/03/21 18:09:59 ingmar Exp $
+$Id: SongView.cpp,v 1.29 2007/03/21 18:32:55 r_sijrier Exp $
 */
 
 
 #include <QScrollBar>
+
 #include "SongView.h"
 #include "SongWidget.h"
 #include "TrackView.h"
@@ -273,14 +274,14 @@ Command* SongView::hzoom_in()
 }
 
 
-Command* SongView::vzoom_in()
+Command* SongView::vzoom_out()
 {
 	PENTER;
 	for (int i=0; i<m_trackViews.size(); ++i) {
 		TrackView* view = m_trackViews.at(i);
 		Track* track = view->get_track();
 		int height = track->get_height();
-		height = (int) (height * 1,2);
+		height = (int) (height * 1.2);
 		if (height > m_trackMaximumHeight) {
 			height = m_trackMaximumHeight;
 		}
@@ -293,14 +294,14 @@ Command* SongView::vzoom_in()
 }
 
 
-Command* SongView::vzoom_out()
+Command* SongView::vzoom_in()
 {
 	PENTER;
 	for (int i=0; i<m_trackViews.size(); ++i) {
 		TrackView* view = m_trackViews.at(i);
 		Track* track = view->get_track();
 		int height = track->get_height();
-		height = (int) (height * 0,8);
+		height = (int) (height * 0.8);
 		if (height < m_trackMinimumHeight) {
 			height = m_trackMinimumHeight;
 		}
