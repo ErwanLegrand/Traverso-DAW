@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier
+Copyright (C) 2005-2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,12 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.13 2007/03/16 00:10:26 r_sijrier Exp $
+$Id: TrackPanelView.cpp,v 1.14 2007/03/21 15:11:34 r_sijrier Exp $
 */
 
 #include <QGraphicsScene>
 #include "TrackPanelView.h"
 #include "TrackView.h"
+#include "SongView.h"
 #include <Themer.h>
 #include "TrackPanelViewPort.h"
 #include <Track.h>
@@ -32,43 +33,37 @@ $Id: TrackPanelView.cpp,v 1.13 2007/03/16 00:10:26 r_sijrier Exp $
 		
 #include <Debugger.h>
 
-const int MUTE_LED_X = 10;
-const int SOLO_LED_X = 48;
-const int REC_LED_X = 86;
+#define MICRO_HEIGHT 35
+#define SMALL_HEIGHT 65
 
-TrackPanelView::TrackPanelView(TrackPanelViewPort* view, TrackView* trackView, Track * track )
+TrackPanelView::TrackPanelView(TrackView* trackView)
 	: ViewItem(0, trackView)
+	, m_tv(trackView)
 {
 	PENTERCONS;
 	
-	m_viewPort = view;
-	m_tv = trackView;
-	m_track = track;
+	m_viewPort = m_tv->get_songview()->get_trackpanel_view_port();
+	m_track = m_tv->get_track();
 	
 	m_viewPort->scene()->addItem(this);
 	
 	m_gainView = new TrackPanelGain(this, m_track);
 	m_gainView->set_width(m_viewPort->width() - 20);
-	m_gainView->setPos(10, 39);
 	m_viewPort->scene()->addItem(m_gainView);
 	
 	m_panView = new TrackPanelPan(this, m_track);
 	m_panView->set_width(m_viewPort->width() - 20);
-	m_panView->setPos(10, 54);
 	m_viewPort->scene()->addItem(m_panView);
 	
-	recLed = new TrackPanelLed(this, ":recled_on", ":/recled_off");
-	soloLed = new TrackPanelLed(this, ":/sololed_on", ":/sololed_off");
-	muteLed = new TrackPanelLed(this, ":/muteled_on", ":/muteled_off");
+	recLed = new TrackPanelLed(this, "rec", "toggle_arm");
+	soloLed = new TrackPanelLed(this, "solo", "solo");
+	muteLed = new TrackPanelLed(this, "mute", "mute");
 	
 	m_viewPort->scene()->addItem(recLed);
 	m_viewPort->scene()->addItem(soloLed);
 	m_viewPort->scene()->addItem(muteLed);
 	
-	muteLed->setPos(10, 18);
-	soloLed->setPos(48, 18);
-	recLed->setPos(86, 18);
-	
+
 	if (m_track->armed()) {
 		recLed->ison_changed(true);
 	}
@@ -85,9 +80,9 @@ TrackPanelView::TrackPanelView(TrackPanelViewPort* view, TrackView* trackView, T
 	m_viewPort->scene()->addItem(inBus);
 	m_viewPort->scene()->addItem(outBus);
 	
-	inBus->setPos(10, 70);
-	outBus->setPos(100, 70);
-
+	m_boundingRect = QRectF(0, 0, 200, m_track->get_height());
+	
+	layout_panel_items();
 	
 	connect(m_track, SIGNAL(armedChanged(bool)), recLed, SLOT(ison_changed(bool)));
 	connect(m_track, SIGNAL(soloChanged(bool)), soloLed, SLOT(ison_changed(bool)));
@@ -99,8 +94,9 @@ TrackPanelView::TrackPanelView(TrackPanelViewPort* view, TrackView* trackView, T
 	connect(m_track, SIGNAL(inBusChanged()), inBus, SLOT(bus_changed()));
 	connect(m_track, SIGNAL(outBusChanged()), outBus, SLOT(bus_changed()));
 	
+	connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_track_name()));
 	
-	m_boundingRect = QRectF(0, 0, 200, m_track->get_height());
+	
 // 	setFlags(ItemIsSelectable | ItemIsMovable);
 // 	setAcceptsHoverEvents(true);
 
@@ -139,9 +135,15 @@ void TrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
 	painter->drawLine(m_viewPort->width() - 1, 0,  m_viewPort->width() - 1, m_track->get_height() - 1);
 	painter->drawLine(m_viewPort->width() - 2, 0,  m_viewPort->width() - 2, m_track->get_height() - 1);
 	
-	draw_panel_track_name(painter);
+	if (xstart < 180) {
+		draw_panel_track_name(painter);
+	}
 }
 
+void TrackPanelView::update_track_name()
+{
+	update();
+}
 
 void TrackPanelView::update_gain()
 {
@@ -157,19 +159,61 @@ void TrackPanelView::update_pan()
 
 void TrackPanelView::draw_panel_track_name(QPainter* painter)
 {
-	QString sid = QString::number(m_track->get_sort_index() + 1);
-	painter->setFont( QFont( "Bitstream Vera Sans", 8) );
-	painter->drawText(4, 12, sid);
-	painter->drawText(20, 12, m_track->get_name());
+	QString title = QString::number(m_track->get_sort_index() + 1) + "  " + m_track->get_name();
+	QFont font = themer()->get_font("TrackPanel:name");
+	
+	if (m_track->get_height() < SMALL_HEIGHT) {
+		QFontMetrics fm(font);
+		title = fm.elidedText(title, Qt::ElideMiddle, 90);
+	}
+	
+	painter->setFont(font);
+	painter->drawText(4, 12, title);
 }
 
 
 void TrackPanelView::calculate_bounding_rect()
 {
+	prepareGeometryChange();
 	m_boundingRect = QRectF(0, 0, 200, m_track->get_height());
+	layout_panel_items();
+}
+
+void TrackPanelView::layout_panel_items()
+{
 	int height =  m_track->get_height();
 	
-	if ((inBus->pos().y() + inBus->boundingRect().height()) > height) {
+	m_gainView->setPos(10, 39);
+	m_panView->setPos(10, 54);
+	
+	inBus->setPos(10, 73);
+	outBus->setPos(100, 73);
+	
+	if (height < SMALL_HEIGHT) {
+		m_gainView->setPos(10, 20);
+		m_panView->setPos(10, 36);
+	} else {
+		muteLed->setPos(70, 19);
+		soloLed->setPos(118, 19);
+		recLed->setPos(162, 19);
+		muteLed->set_bounding_rect(QRectF(0, 0, 41, 14)); 
+		soloLed->set_bounding_rect(QRectF(0, 0, 38, 14)); 
+		recLed->set_bounding_rect(QRectF(0, 0, 30, 14)); 
+		
+		m_gainView->setPos(10, 39);
+		m_panView->setPos(10, 54);
+	}
+	
+	if (height < SMALL_HEIGHT) {
+		muteLed->setPos(90, 1.5);
+		soloLed->setPos(132, 1.5);
+		recLed->setPos(166, 1.5);
+		muteLed->set_bounding_rect(QRectF(0, 0, 39, 12)); 
+		soloLed->set_bounding_rect(QRectF(0, 0, 31, 12)); 
+		recLed->set_bounding_rect(QRectF(0, 0, 27, 12)); 
+	}
+	
+	if ((inBus->pos().y() + inBus->boundingRect().height()) >= height) {
 		inBus->hide();
 		outBus->hide();
 	} else {
@@ -177,23 +221,22 @@ void TrackPanelView::calculate_bounding_rect()
 		outBus->show();
 	}
 	
-	if ( (m_panView->pos().y() + m_panView->boundingRect().height()) > height) {
+	if ( (m_panView->pos().y() + m_panView->boundingRect().height()) >= height) {
 		m_panView->hide();
 	} else {
 		m_panView->show();
 	}
 	
-	if ( (m_gainView->pos().y() + m_panView->boundingRect().height()) > height) {
+	if ( (m_gainView->pos().y() + m_panView->boundingRect().height()) >= height) {
 		m_gainView->hide();
 	} else {
 		m_gainView->show();
 	}
-	update();
 }
 
 
 TrackPanelGain::TrackPanelGain(TrackPanelView* parent, Track * track)
-	: QGraphicsItem(parent)
+	: ViewItem(parent, track)
 {
 	m_track = track;
 }
@@ -224,7 +267,7 @@ void TrackPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem *
 	int cb = ( gain < 1 ? 100 + (int)(50 * gain) : abs((int)(10 * gain)) );
 	
 	painter->setPen(themer()->get_color("TrackPanel:text"));
-	painter->setFont( QFont( "Bitstream Vera Sans", (int)(GAIN_H*0.9)) );
+	painter->setFont(themer()->get_font("TrackPanel:gain"));
 	painter->drawText(0, GAIN_H + 1, "GAIN");
 	painter->drawRect(30, 0, sliderWidth, GAIN_H);
 	painter->fillRect(30, 0, sliderdbx, GAIN_H, QColor(cr,0,cb));
@@ -240,7 +283,7 @@ void TrackPanelGain::set_width(int width)
 
 
 TrackPanelPan::TrackPanelPan(TrackPanelView* parent, Track * track)
-	: QGraphicsItem(parent)
+	: ViewItem(parent, track)
 {
 	m_track = track;
 }
@@ -256,7 +299,7 @@ void TrackPanelPan::paint( QPainter * painter, const QStyleOptionGraphicsItem * 
 	//	int y;
 	QString s, span;
 	painter->setPen(themer()->get_color("TrackPanel:text"));
-	painter->setFont( QFont( "Bitstream Vera Sans", (int)(PAN_H*0.9)) );
+	painter->setFont(themer()->get_font("TrackPanel:pan"));
 
 	painter->drawText(0, PAN_H + 1, "PAN");
 
@@ -282,29 +325,67 @@ void TrackPanelPan::set_width(int width)
 
 
 
-TrackPanelLed::TrackPanelLed(TrackPanelView* parent, char * on, char * off )
+TrackPanelLed::TrackPanelLed(TrackPanelView* parent, const QString& name, const QString& toggleslot)
 	: ViewItem(parent, 0)
-	,  onType(on)
-	, offType(off)
+	, m_name(name)
+	, m_toggleslot(toggleslot)
 	, m_isOn(false)
 {
-	Q_ASSERT_X(find_pixmap(onType), "TrackPanelLed constructor", "pixmap for ontype could not be found!");
-	Q_ASSERT_X(find_pixmap(offType), "TrackPanelLed constructor", "pixmap for offtype could not be found!");
-	m_boundingRect = find_pixmap(onType).rect();
+	m_track = parent->get_track();
+// 	m_boundingRect = QRectF(-7, 0, 35, 14); 
+	setAcceptsHoverEvents(true);
 }
 
 void TrackPanelLed::paint(QPainter* painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
 {
 	PENTER;
-	Q_UNUSED(option);
 	Q_UNUSED(widget);
 	
+	bool mousehover = (option->state & QStyle::State_MouseOver);
+	int roundfactor = 30;
+	
+	painter->setRenderHint(QPainter::Antialiasing);
+	
 	if (m_isOn) {
-		painter->drawPixmap(0, 0, find_pixmap(onType));
+		QColor color = themer()->get_color("TrackPanel:" + m_name + "led");
+		if (mousehover) {
+			color = color.light(110);
+			painter->setPen(QColor(190, 190, 190));
+		} else {
+			painter->setPen(Qt::NoPen);
+		}
+		
+		painter->setBrush(color);
+		painter->drawRoundRect(m_boundingRect, roundfactor, roundfactor);
+		
+		painter->setFont(themer()->get_font("TrackPanel:led"));
+		painter->setPen(QColor(Qt::black));
+		
+		painter->drawText(m_boundingRect, Qt::AlignCenter, m_name);
 	} else {
-		painter->drawPixmap(0, 0, find_pixmap(offType));
+		QColor color = themer()->get_color("TrackPanel:led:inactive");
+		if (mousehover) {
+			color = color.light(110);
+		}
+		
+		painter->setPen(QColor(240, 240, 240));
+		painter->setBrush(color);
+		painter->drawRoundRect(m_boundingRect, roundfactor, roundfactor);
+		
+		painter->setFont(themer()->get_font("TrackPanel:led"));
+		painter->setPen(QColor(Qt::gray));
+		
+		painter->drawText(m_boundingRect, Qt::AlignCenter, m_name);
 	}
+	
 }
+
+void TrackPanelLed::set_bounding_rect(QRectF rect)
+{
+	prepareGeometryChange();
+	m_boundingRect = rect;
+}
+
 
 void TrackPanelLed::ison_changed(bool isOn)
 {
@@ -312,6 +393,15 @@ void TrackPanelLed::ison_changed(bool isOn)
         m_isOn = isOn;
 	update();
 }
+
+Command * TrackPanelLed::toggle()
+{
+	Command* com;
+	QMetaObject::invokeMethod(m_track, QS_C(m_toggleslot), Qt::DirectConnection, Q_RETURN_ARG(Command*, com));
+	return 0;
+}
+
+
 
 TrackPanelBus::TrackPanelBus(TrackPanelView* parent, Track* track, char* type)
 	: ViewItem(parent, 0)
@@ -330,7 +420,7 @@ void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 	QPixmap pix = find_pixmap(m_type);
 	
 	painter->setPen(themer()->get_color("TrackPanel:text"));
-	painter->setFont( QFont( "Bitstream Vera Sans", 8) );
+	painter->setFont(themer()->get_font("TrackPanel:bus"));
 	painter->drawPixmap(0, 0, pix);
 	painter->drawText(pix.width() + 5, 8, m_busName);
 }
@@ -339,7 +429,8 @@ void TrackPanelBus::bus_changed()
 {
 	QPixmap pix = find_pixmap(m_type);
 	m_boundingRect = pix.rect();
-	QFontMetrics fm(QFont( "Bitstream Vera Sans", 8));
+
+	QFontMetrics fm(themer()->get_font("TrackPanel:bus"));
 	prepareGeometryChange();
 	m_boundingRect.setWidth(pix.rect().width() + fm.width(m_busName) + 10);
 	

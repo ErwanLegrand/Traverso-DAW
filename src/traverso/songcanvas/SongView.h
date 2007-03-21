@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
+    Copyright (C) 2005-2007 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongView.h,v 1.13 2007/03/16 13:15:54 r_sijrier Exp $
+    $Id: SongView.h,v 1.14 2007/03/21 15:11:34 r_sijrier Exp $
 */
 
 #ifndef SONG_VIEW_H
@@ -61,7 +61,11 @@ class SongView : public ViewItem
 
 public :
 
-        SongView(ClipsViewPort* viewPort, TrackPanelViewPort* tpvp, TimeLineViewPort* tlvp, Song* song);
+        SongView(SongWidget* songwidget,
+		 	ClipsViewPort* viewPort,
+    			TrackPanelViewPort* tpvp, 
+       			TimeLineViewPort* tlvp, 
+	  		Song* song);
         ~SongView();
 	
 	void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*) {};
@@ -93,8 +97,11 @@ private:
 	WorkCursor*		m_workCursor;
 	int			m_shuttleXfactor;
 	int			m_shuttleYfactor;
+	int	m_sceneHeight;
 	bool			m_dragShuttle;
 	QTimer			m_shuttletimer;
+	QScrollBar*		m_vScrollBar;
+	QScrollBar*		m_hScrollBar;
 	
 	// Themeing data
 	int	m_trackSeperatingHeight;
@@ -107,6 +114,7 @@ private:
 
 public slots:
 	void set_snap_range(int);
+	void update_scrollbars();
 
 	Command* touch();
         Command* hzoom_out();
@@ -131,7 +139,6 @@ private slots:
 	void scale_factor_changed();
 	void add_new_trackview(Track*);
 	void remove_trackview(Track*);
-	void calculate_scene_rect();
 	void update_shuttle();
 	
 signals:

@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier 
+Copyright (C) 2006-2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ClipsViewPort.cpp,v 1.8 2007/03/05 20:51:24 r_sijrier Exp $
+$Id: ClipsViewPort.cpp,v 1.9 2007/03/21 15:11:34 r_sijrier Exp $
 */
 
 #include "ClipsViewPort.h"
@@ -52,21 +52,20 @@ void ClipsViewPort::get_pointed_context_items(QList<ContextItem* > &list)
 	foreach(QGraphicsItem* item, itemlist) {
 		list.append((ViewItem*)item);
 	}
-	list.append(m_sw->m_songView);
-	
-	printf("itemlist size is %d\n", itemlist.size());
+	list.append(m_sw->get_songview());
 }
 
 void ClipsViewPort::resizeEvent( QResizeEvent * e )
 {
 	ViewPort::resizeEvent(e);
-	m_sw->m_songView->set_snap_range(horizontalScrollBar()->value());
+	m_sw->get_songview()->update_scrollbars();
 }
 
-//eof
 
 void ClipsViewPort::paintEvent(QPaintEvent * e)
 {
 // 	printf("ClipsViewPort::paintEvent\n");
 	QGraphicsView::paintEvent(e);
 }
+
+//eof

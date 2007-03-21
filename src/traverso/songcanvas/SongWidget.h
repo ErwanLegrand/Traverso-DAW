@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2006 Remon Sijrier 
+    Copyright (C) 2006-2007 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongWidget.h,v 1.8 2007/03/16 00:10:26 r_sijrier Exp $
+    $Id: SongWidget.h,v 1.9 2007/03/21 15:11:34 r_sijrier Exp $
 */
 
 #ifndef SONG_WIDGET_H
@@ -44,22 +44,26 @@ public:
 	SongWidget(Song* song, QWidget* parent=0);
 	~SongWidget();
 	
-	SongView* m_songView;
-	
 	void set_use_opengl(bool useOpenGL);
 	Song* get_song() const;
+	SongView* get_songview() const;
 	
 protected:
 	QSize minimumSizeHint () const;
 	QSize sizeHint () const;
 
 private:
+	SongView* 		m_sv;
 	Song*			m_song;
 	QGridLayout*		m_mainLayout;
 	TrackPanelViewPort*	m_trackPanel;
 	TimeLineViewPort*	m_timeLine;
 	ClipsViewPort*		m_clipsViewPort;
 	QGraphicsScene* 	m_scene;
+	QScrollBar*		m_vScrollBar;
+	QScrollBar*		m_hScrollBar;
+	
+	friend class SongView;
 
 private slots:
 	void load_theme_data();

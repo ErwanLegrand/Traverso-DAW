@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.h,v 1.5 2007/02/14 11:32:14 r_sijrier Exp $
+$Id: TrackPanelView.h,v 1.6 2007/03/21 15:11:34 r_sijrier Exp $
 */
 
 #ifndef TRACK_PANEL_VIEW_H
@@ -31,8 +31,10 @@ class TrackPanelViewPort;
 class PanelLed;
 class TrackPanelView;
 
-class TrackPanelGain : public QGraphicsItem
+class TrackPanelGain : public ViewItem
 {
+	Q_OBJECT
+
 public:
 	TrackPanelGain(TrackPanelView* parent, Track* track);
 	TrackPanelGain(){}
@@ -46,8 +48,10 @@ private:
 	Track* m_track;
 };
 
-class TrackPanelPan : public QGraphicsItem
+class TrackPanelPan : public ViewItem
 {
+	Q_OBJECT
+	
 public:
 	TrackPanelPan(TrackPanelView* parent, Track* track);
 	TrackPanelPan(){}
@@ -68,18 +72,21 @@ class TrackPanelLed : public ViewItem
 {
 	Q_OBJECT
 public:
-	TrackPanelLed(TrackPanelView* view, char* on, char* off);
-	TrackPanelLed(){}
+	TrackPanelLed(TrackPanelView* view, const QString& name, const QString& toggleslot);
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+	void set_bounding_rect(QRectF rect);
 
 private:
-        QString onType;
-        QString offType;
-        bool m_isOn;
+	Track* m_track;
+        QString m_name;
+	QString m_toggleslot;
+	bool m_isOn;
 
 public slots:
         void ison_changed(bool isOn);
+	
+	Command* toggle();
 };
 
 class TrackPanelBus : public ViewItem
@@ -106,7 +113,7 @@ class TrackPanelView : public ViewItem
 	Q_OBJECT
 
 public:
-	TrackPanelView(TrackPanelViewPort* view, TrackView* trackView, Track* track);
+	TrackPanelView(TrackView* trackView);
 	~TrackPanelView();
 
 	enum {Type = UserType + 7};
@@ -114,6 +121,8 @@ public:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void calculate_bounding_rect();
 	int type() const;
+	
+	Track* get_track() const {return m_track;}
 	
 private:
 	Track*			m_track;
@@ -130,10 +139,12 @@ private:
 	TrackPanelBus*	outBus;
 	
 	void draw_panel_track_name(QPainter* painter);
+	void layout_panel_items();
 
 private slots:
 	void update_gain();
 	void update_pan();
+	void update_track_name();
 };
 
 inline int TrackPanelView::type() const {return Type;}

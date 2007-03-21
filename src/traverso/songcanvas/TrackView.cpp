@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier
+Copyright (C) 2005-2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -56,7 +56,7 @@ TrackView::TrackView(SongView* sv, Track * track)
 	setFlags(ItemIsSelectable | ItemIsMovable);
 // 	setAcceptsHoverEvents(true);
 
-	m_panel = new TrackPanelView(m_sv->get_trackpanel_view_port(), this, m_track);
+	m_panel = new TrackPanelView(this);
 	calculate_bounding_rect();
 	
 	m_pluginChainView = new PluginChainView(this, m_track->get_plugin_chain());
@@ -138,6 +138,7 @@ int TrackView::get_childview_y_offset() const
 
 void TrackView::move_to( int x, int y )
 {
+	Q_UNUSED(x);
 	setPos(0, y);
 	m_panel->setPos(-200, y);
 }
@@ -179,6 +180,7 @@ void TrackView::set_height( int height )
 
 void TrackView::calculate_bounding_rect()
 {
+	prepareGeometryChange();
 	m_boundingRect = QRectF(0, 0, MAX_CANVAS_WIDTH, m_track->get_height());
 	m_panel->calculate_bounding_rect();
 	ViewItem::calculate_bounding_rect();

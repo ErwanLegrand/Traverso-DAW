@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -17,13 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.24 2007/03/16 13:15:54 r_sijrier Exp $
+$Id: SongView.cpp,v 1.25 2007/03/21 15:11:34 r_sijrier Exp $
 */
 
 
 #include <QScrollBar>
 
 #include "SongView.h"
+#include "SongWidget.h"
 #include "TrackView.h"
 #include "TrackPanelView.h"
 #include "Cursors.h"
@@ -117,7 +118,11 @@ int PlayHeadMove::jog()
 
 
 		
-SongView::SongView(ClipsViewPort* viewPort, TrackPanelViewPort* tpvp, TimeLineViewPort* tlvp, Song* song)
+SongView::SongView(SongWidget* songwidget, 
+		   	ClipsViewPort* viewPort, 
+      			TrackPanelViewPort* tpvp, 
+	 		TimeLineViewPort* tlvp, 
+    			Song* song)
 	: ViewItem(0, song)
 {
 	setZValue(1);
@@ -126,6 +131,8 @@ SongView::SongView(ClipsViewPort* viewPort, TrackPanelViewPort* tpvp, TimeLineVi
 	m_clipsViewPort = viewPort;
 	m_tpvp = tpvp;
 	m_tlvp = tlvp;
+	m_vScrollBar = songwidget->m_vScrollBar;
+	m_hScrollBar = songwidget->m_hScrollBar;
 	
 	set_editing_mode();
 	
@@ -137,27 +144,34 @@ SongView::SongView(ClipsViewPort* viewPort, TrackPanelViewPort* tpvp, TimeLineVi
 	m_clipsViewPort->scene()->addItem(m_playCursor);
 	m_clipsViewPort->scene()->addItem(m_workCursor);
 	
+	m_clipsViewPort->setSceneRect(0, 0, MAX_CANVAS_WIDTH, MAX_CANVAS_HEIGHT);
+	m_tlvp->setSceneRect(0, -30, MAX_CANVAS_WIDTH, 0);
+	m_tpvp->setSceneRect(-200, 0, 0, MAX_CANVAS_HEIGHT);
+	
+	
 	scalefactor = Peak::zoomStep[m_song->get_hzoom()];
 	
 	foreach(Track* track, m_song->get_tracks()) {
 		add_new_trackview(track);
 	}
 	
+	connect(m_song, SIGNAL(hzoomChanged()), this, SLOT(scale_factor_changed()));
+	connect(m_song, SIGNAL(trackAdded(Track*)), this, SLOT(add_new_trackview(Track*)));
+	connect(m_song, SIGNAL(trackRemoved(Track*)), this, SLOT(remove_trackview(Track*)));
+	connect(m_song, SIGNAL(lastFramePositionChanged()), this, SLOT(update_scrollbars()));
+	connect(m_hScrollBar, SIGNAL(valueChanged(int)), this,SLOT(set_snap_range(int)));
+	connect(&m_shuttletimer, SIGNAL(timeout() ), this, SLOT (update_shuttle()) );
+	
+	connect(m_hScrollBar, SIGNAL(valueChanged(int)),
+		m_clipsViewPort->horizontalScrollBar(), SLOT(setValue(int)));
+	connect(m_vScrollBar, SIGNAL(valueChanged(int)),
+		m_clipsViewPort->verticalScrollBar(), SLOT(setValue(int)));
+
+
 	load_theme_data();
 	
 	// FIXME Center too position on song close!!
 	center();
-	
-	connect(m_song, SIGNAL(hzoomChanged()), this, SLOT(scale_factor_changed()));
-	connect(m_song, SIGNAL(trackAdded(Track*)), this, SLOT(add_new_trackview(Track*)));
-	connect(m_song, SIGNAL(trackRemoved(Track*)), this, SLOT(remove_trackview(Track*)));
-	connect(m_song, SIGNAL(lastFramePositionChanged()), this, SLOT(calculate_scene_rect()));
-	connect(m_clipsViewPort->horizontalScrollBar(), 
-		SIGNAL(valueChanged(int)),
-		this, 
-		SLOT(set_snap_range(int)));
-	connect(&m_shuttletimer, SIGNAL(timeout() ), this, SLOT (update_shuttle()) );
-
 }
 
 SongView::~SongView()
@@ -169,7 +183,6 @@ void SongView::scale_factor_changed( )
 	scalefactor = Peak::zoomStep[m_song->get_hzoom()];
 	m_tlvp->scale_factor_changed();
 	layout_tracks();
-	set_snap_range(m_clipsViewPort->horizontalScrollBar()->value() * scalefactor);
 }
 
 TrackView* SongView::get_trackview_under( QPointF point )
@@ -220,30 +233,25 @@ void SongView::remove_trackview(Track* track)
 	}
 }
 
-void SongView::calculate_scene_rect()
+void SongView::update_scrollbars()
 {
-	m_clipsViewPort->setUpdatesEnabled(false);
-	int totalheight = 0;
-	foreach(Track* track, m_song->get_tracks()) {
-		totalheight += track->get_height() + m_trackSeperatingHeight;
-	}
-	totalheight += 150;
-	int width = m_song->get_last_frame() / scalefactor + m_clipsViewPort->height() / 2;
+	int width = (m_song->get_last_frame() / scalefactor) - (m_clipsViewPort->width() / 4);
 	
-	m_clipsViewPort->setSceneRect(0, 0, width, totalheight);
-	m_tlvp->setSceneRect(0, -30, width, 0);
-	m_tpvp->setSceneRect(-200, 0, 0, totalheight);
+	m_hScrollBar->setRange(0, width);
+	m_hScrollBar->setSingleStep(m_clipsViewPort->width() / 10);
+	m_hScrollBar->setPageStep(m_clipsViewPort->width());
 	
-	m_playCursor->set_bounding_rect(QRectF(0, 0, 2, totalheight));
+	m_vScrollBar->setRange(0, m_sceneHeight);
+	m_vScrollBar->setSingleStep(m_clipsViewPort->height() / 10);
+	m_vScrollBar->setPageStep(m_clipsViewPort->height());
+	
+	m_playCursor->set_bounding_rect(QRectF(0, 0, 2, m_sceneHeight));
 	m_playCursor->update_position();
-	m_workCursor->set_bounding_rect(QRectF(0, 0, 2, totalheight));
+	m_workCursor->set_bounding_rect(QRectF(0, 0, 2, m_sceneHeight));
 	m_workCursor->update_position();
-	
-// 	center();
-	m_clipsViewPort->setUpdatesEnabled(true);
 
+	set_snap_range(m_hScrollBar->value() * scalefactor);
 }
-
 
 Command* SongView::zoom()
 {
@@ -308,8 +316,6 @@ Command* SongView::vzoom_in()
 
 void SongView::layout_tracks()
 {
-// 	m_clipsViewPort->viewport()->setUpdatesEnabled(false);
-
 	int verticalposition = m_trackTopIndent;
 	for (int i=0; i<m_trackViews.size(); ++i) {
 		TrackView* view = m_trackViews.at(i);
@@ -318,9 +324,8 @@ void SongView::layout_tracks()
 		verticalposition += (view->get_track()->get_height() + m_trackSeperatingHeight);
 	}
 	
-	calculate_scene_rect();
-	
-// 	m_clipsViewPort->viewport()->setUpdatesEnabled(true);
+	m_sceneHeight = verticalposition;
+	update_scrollbars();
 }
 
 

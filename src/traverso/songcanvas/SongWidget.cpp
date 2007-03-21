@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2006 Remon Sijrier 
+    Copyright (C) 2006-2007 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongWidget.cpp,v 1.9 2007/03/16 00:10:26 r_sijrier Exp $
+    $Id: SongWidget.cpp,v 1.10 2007/03/21 15:11:34 r_sijrier Exp $
 */
 
 		
@@ -40,29 +40,29 @@ SongWidget::SongWidget(Song* song, QWidget* parent)
 	, m_song(song)
 {
 	m_scene = new QGraphicsScene();
-// 	m_scene->setItemIndexMethod(QGraphicsScene::NoIndex);
+	m_vScrollBar = new QScrollBar(this);
+	m_hScrollBar = new QScrollBar(this);
+	m_hScrollBar->setOrientation(Qt::Horizontal);
 
 	m_trackPanel = new TrackPanelViewPort(m_scene, this);
 	m_clipsViewPort = new ClipsViewPort(m_scene, this);
 	m_timeLine = new TimeLineViewPort(m_scene, this, m_clipsViewPort);
-	
-// 	m_clipsViewPort->setScene(m_scene);
 	
 	m_mainLayout = new QGridLayout(this);
 	m_mainLayout->addWidget(new QWidget(this), 0, 0);
 	m_mainLayout->addWidget(m_timeLine, 0, 1);
 	m_mainLayout->addWidget(m_trackPanel, 1, 0);
 	m_mainLayout->addWidget(m_clipsViewPort, 1, 1);
-	m_mainLayout->addWidget(m_clipsViewPort->horizontalScrollBar(), 2, 1);
-	m_mainLayout->addWidget(m_clipsViewPort->verticalScrollBar(), 1, 2);
+	m_mainLayout->addWidget(m_hScrollBar, 2, 1);
+	m_mainLayout->addWidget(m_vScrollBar, 1, 2);
 	
 	m_mainLayout->setMargin(0);
 	m_mainLayout->setSpacing(0);
-	
+
 	setLayout(m_mainLayout);
 	
-	m_songView = new SongView(m_clipsViewPort, m_trackPanel, m_timeLine, song);
-	m_timeLine->set_songview(m_songView);
+	m_sv = new SongView(this, m_clipsViewPort, m_trackPanel, m_timeLine, song);
+	m_timeLine->set_songview(m_sv);
 	
 	connect(m_clipsViewPort->horizontalScrollBar(), 
 		SIGNAL(valueChanged(int)),
@@ -132,6 +132,11 @@ void SongWidget::load_theme_data()
 Song * SongWidget::get_song() const
 {
 	return m_song;
+}
+
+SongView * SongWidget::get_songview() const
+{
+	return m_sv;
 }
 
 //eof
