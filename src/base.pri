@@ -19,10 +19,10 @@ CONFIG += debug
 
 DEFINES += JACK_SUPPORT
 DEFINES += ALSA_SUPPORT
-#DEFINES += PORTAUDIO_SUPPORT
+DEFINES += PORTAUDIO_SUPPORT
 #DEFINES += LV2_SUPPORT
 
-#DEFINES += STATIC_BUILD
+DEFINES += STATIC_BUILD
 DEFINES += PRECOMPILED_HEADER
 #DEFINES += USE_MEM_CHECKER
 
@@ -60,7 +60,7 @@ MOC_DIR = build
 UI_DIR = build 
 OBJECTS_DIR = build 
 
-QMAKE_CXXFLAGS += $$system(pkg-config --cflags glib-2.0) -fstack-protector-all 
+# QMAKE_CXXFLAGS += $$system(pkg-config --cflags glib-2.0) -fstack-protector-all 
 
 
 debug {
