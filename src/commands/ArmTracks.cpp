@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ArmTracks.cpp,v 1.1 2007/03/22 01:33:12 r_sijrier Exp $
+$Id: ArmTracks.cpp,v 1.2 2007/03/22 01:39:25 r_sijrier Exp $
 */
 
 #include "ArmTracks.h"
@@ -72,7 +72,7 @@ int ArmTracks::undo_action()
 
 int ArmTracks::jog()
 {
-	TrackView* view = m_sv->get_trackview_under(cpointer().pos());
+	TrackView* view = m_sv->get_trackview_under(cpointer().scene_pos());
 	
 	if ( ! view ) {
 		return 0;
