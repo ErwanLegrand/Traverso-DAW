@@ -479,7 +479,7 @@
 	</keyfact>
 	<keyfact type="D_FKEY2" key1="C" key2="X" >
 		<Objects>
-			<Object objectname="AudioClip" slotsignature="delete_selected_clips" modes="All" sortorder="1" submenu="Selection" instantanious="0" />
+			<Object objectname="AudioClipManager" slotsignature="delete_selected_clips" modes="All" sortorder="1" submenu="Selection" instantanious="0" />
 		</Objects>
 	</keyfact>
 
