@@ -288,22 +288,23 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 		}
 		
 		IEAction::Data* data = action->objects.value(QString(item->metaObject()->className()));
-		QString pluginname = "", commandname = "";
 		
 		if ( ! data ) {
 			PMESG("No data found for object %s", item->metaObject()->className());
 			continue;
-		} else {
-			PMESG("Data found for %s!", item->metaObject()->className());
-			PMESG("setting slotsignature to %s", QS_C(data->slotsignature));
-			PMESG("setting pluginname to %s", QS_C(data->pluginname));
-			PMESG("setting plugincommand to %s", QS_C(data->commandname));
-			slotsignature = data->slotsignature;
-			pluginname = data->pluginname;
-			commandname = data->commandname;
-			useX = data->useX;
-			useY = data->useY;
 		}
+		
+		PMESG("Data found for %s!", item->metaObject()->className());
+		PMESG("setting slotsignature to %s", QS_C(data->slotsignature));
+		PMESG("setting pluginname to %s", QS_C(data->pluginname));
+		PMESG("setting plugincommand to %s", QS_C(data->commandname));
+		
+		QString pluginname = "", commandname = "";
+		slotsignature = data->slotsignature;
+		pluginname = data->pluginname;
+		commandname = data->commandname;
+		useX = data->useX;
+		useY = data->useY;
 
 		
 		if (item == holdingCommand) {
@@ -389,10 +390,6 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 				PMESG("nope %s wasn't the right one, next ...", item->metaObject()->className());
 			}
 		}
-	}
-	
-	if (! k ) {
-		PMESG("I'm sorry, none of the objects seem to implement keyfact %s", action->keySequence.data());
 	}
 	
 	if (k && (!isHolding)) {
