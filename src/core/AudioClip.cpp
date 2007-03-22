@@ -120,7 +120,7 @@ int AudioClip::set_state(const QDomNode& node)
 	m_normfactor =  e.attribute( "normfactor", "1.0" ).toFloat();
 
 	if (e.attribute("selected", "0").toInt() == 1) {
-		m_song->get_audioclip_manager()->add_to_selection(this);
+		m_song->get_audioclip_manager()->select_clip(this);
 	}
 	
 	m_readSourceId = e.attribute("source", "").toLongLong();
