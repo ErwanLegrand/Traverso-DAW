@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.14 2007/03/21 15:11:34 r_sijrier Exp $
+$Id: TrackPanelView.cpp,v 1.15 2007/03/22 18:36:56 r_sijrier Exp $
 */
 
 #include <QGraphicsScene>
@@ -338,7 +338,6 @@ TrackPanelLed::TrackPanelLed(TrackPanelView* parent, const QString& name, const 
 
 void TrackPanelLed::paint(QPainter* painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
 {
-	PENTER;
 	Q_UNUSED(widget);
 	
 	bool mousehover = (option->state & QStyle::State_MouseOver);
@@ -389,7 +388,6 @@ void TrackPanelLed::set_bounding_rect(QRectF rect)
 
 void TrackPanelLed::ison_changed(bool isOn)
 {
-        PENTER2;
         m_isOn = isOn;
 	update();
 }
@@ -413,7 +411,6 @@ TrackPanelBus::TrackPanelBus(TrackPanelView* parent, Track* track, char* type)
 
 void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
 {
-	PENTER;
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 	
