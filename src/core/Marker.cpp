@@ -50,6 +50,14 @@ QDomNode Marker::get_state(QDomDocument doc)
 	domNode.setAttribute("description",  m_description);
 	domNode.setAttribute("type",  m_type);
 	domNode.setAttribute("id",  m_id);
+	domNode.setAttribute("performer", m_performer);
+	domNode.setAttribute("composer", m_composer);
+	domNode.setAttribute("songwriter", m_songwriter);
+	domNode.setAttribute("arranger", m_arranger);
+	domNode.setAttribute("message", m_message);
+	domNode.setAttribute("isrc", m_isrc);
+	domNode.setAttribute("preemphasis", m_preemph);
+	domNode.setAttribute("copyprotection", m_copyprotect);
 
 	return domNode;
 }
@@ -62,6 +70,14 @@ int Marker::set_state(const QDomNode & node)
 	m_type = e.attribute("type", "0").toUInt();
 	m_when = e.attribute("position", "0").toUInt();
 	m_id = e.attribute("id", "0").toLongLong();
+	m_performer = e.attribute("performer", "");
+	m_composer = e.attribute("composer", "");
+	m_songwriter = e.attribute("songwriter", "");
+	m_arranger = e.attribute("arranger", "");
+	m_message = e.attribute("message", "");
+	m_isrc = e.attribute("isrc", "");
+	m_preemph = e.attribute("preemphasis", "0").toInt();
+	m_copyprotect = e.attribute("copyprotection", "0").toInt();
 
 	return 1;
 }
@@ -72,14 +88,76 @@ void Marker::set_when(nframes_t when)
 	emit positionChanged();
 }
 
-void Marker::set_description(const QString & des)
+void Marker::set_description(const QString &s)
 {
-	m_description = des;
+	m_description = s;
 }
 
-QString Marker::get_description() const
+void Marker::set_performer(const QString &s)
 {
-	return m_description;
+	m_performer = s;
 }
+
+void Marker::set_composer(const QString &s)
+{
+	m_composer = s;
+}
+
+void Marker::set_songwriter(const QString &s)
+{
+	m_songwriter = s;
+}
+
+void Marker::set_arranger(const QString &s)
+{
+	m_arranger = s;
+}
+
+void Marker::set_message(const QString &s)
+{
+	m_message = s;
+}
+
+void Marker::set_isrc(const QString &s)
+{
+	m_isrc = s;
+}
+
+void Marker::set_preemphasis(bool b)
+{
+	if (b) {
+		m_preemph = 1;
+	} else {
+		m_preemph = 0;
+	}
+}
+
+void Marker::set_copyprotect(bool b)
+{
+	if (b) {
+		m_copyprotect = 1;
+	} else {
+		m_copyprotect = 0;
+	}
+}
+
+bool Marker::get_preemphasis()
+{
+	if (m_preemph) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool Marker::get_copyprotect()
+{
+	if (m_copyprotect) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 
 //eof

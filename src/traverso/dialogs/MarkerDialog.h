@@ -26,6 +26,7 @@
 #include <QDialog>
 
 class Project;
+class Marker;
 
 class MarkerDialog : public QDialog, protected Ui::MarkerDialog
 {
@@ -38,10 +39,15 @@ public:
 	
 private:
 	Project* m_project;
+	Marker* m_marker;
+
+	Marker* get_marker(qint64);
 
 private slots:
 	void set_project(Project* project);
 	void update_marker_treeview();
+	void item_changed(QTreeWidgetItem *, QTreeWidgetItem *);
+	void description_changed(const QString &);
 
 
 };

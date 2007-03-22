@@ -27,6 +27,7 @@
 #include <TimeLine.h>
 #include <Marker.h>
 #include <Utils.h>
+#include <QDebug>
 
 MarkerDialog::MarkerDialog(QWidget * parent)
 	: QDialog(parent)
@@ -42,6 +43,9 @@ MarkerDialog::MarkerDialog(QWidget * parent)
 	
 	
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
+	connect(lineEditTitle, SIGNAL(textEdited(const QString &)), this, SLOT(description_changed(const QString &)));
+	connect(markersTreeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
+		 this, SLOT(item_changed(QTreeWidgetItem *, QTreeWidgetItem *)));
 }
 
 void MarkerDialog::set_project(Project * project)
@@ -59,10 +63,8 @@ void MarkerDialog::set_project(Project * project)
 
 void MarkerDialog::update_marker_treeview()
 {
-	// Just some sample function, remove/edit/delete as you like!!
-	
 	markersTreeWidget->clear();
-	
+
 	foreach(Song* song, m_project->get_songs()) {
 
 		TimeLine* tl = song->get_timeline();
@@ -70,14 +72,11 @@ void MarkerDialog::update_marker_treeview()
 		foreach(Marker* marker, tl->get_markers()) {
 			QString name = marker->get_description();
 			QString pos = frame_to_smpte(marker->get_when(), m_project->get_rate());
-			
+
 			QTreeWidgetItem* item = new QTreeWidgetItem(markersTreeWidget);
-			item->setTextAlignment(0, Qt::AlignHCenter);
-			item->setTextAlignment(1, Qt::AlignHCenter);
-			
 			item->setText(0, pos);
 			item->setText(1, name);
-			
+
 			// One can use the id to easily and very robustly get the marker via this id !!
 			// See for example usage SongManagerDialog::songitem_clicked();
 			// One also can get the creation time of the Marker via this id, with 
@@ -86,7 +85,75 @@ void MarkerDialog::update_marker_treeview()
 		}
 	}
 
+	markersTreeWidget->sortItems(0, Qt::AscendingOrder);
 }
+
+void MarkerDialog::item_changed(QTreeWidgetItem * current, QTreeWidgetItem * previous)
+{
+	m_marker = get_marker(current->data(0, Qt::UserRole).toLongLong());
+
+	if (!m_marker) {
+		return;
+	}
+
+	if (previous) {
+		Marker *marker = get_marker(previous->data(0, Qt::UserRole).toLongLong());
+		marker->set_description(lineEditTitle->text());
+		marker->set_performer(lineEditPerformer->text());
+		marker->set_composer(lineEditComposer->text());
+		marker->set_songwriter(lineEditSongwriter->text());
+		marker->set_arranger(lineEditArranger->text());
+		marker->set_message(lineEditMessage->text());
+		marker->set_isrc(lineEditIsrc->text());
+		marker->set_preemphasis(checkBoxPreEmph->isChecked());
+		marker->set_copyprotect(checkBoxCopy->isChecked());
+	}
+
+	lineEditTitle->setText(m_marker->get_description());
+	lineEditPerformer->setText(m_marker->get_performer());
+	lineEditComposer->setText(m_marker->get_composer());
+	lineEditSongwriter->setText(m_marker->get_songwriter());
+	lineEditArranger->setText(m_marker->get_arranger());
+	lineEditMessage->setText(m_marker->get_message());
+	lineEditIsrc->setText(m_marker->get_isrc());
+	checkBoxPreEmph->setChecked(m_marker->get_preemphasis());
+	checkBoxCopy->setChecked(m_marker->get_copyprotect());
+}
+
+// update the entry in the tree widget in real time
+void MarkerDialog::description_changed(const QString &s)
+{
+	QTreeWidgetItem* item = markersTreeWidget->currentItem();
+
+	if (!item) {
+		return;
+	}
+
+	if (!m_marker) {
+		return;
+	}
+
+	item->setText(1, s);
+	m_marker->set_description(s);
+}
+
+// find the marker based on it's id. Since each song has it's own timeline,
+// we need to iterate over all songs
+Marker * MarkerDialog::get_marker(qint64 id)
+{
+	foreach(Song* song, m_project->get_songs()) {
+
+		TimeLine* tl = song->get_timeline();
+		
+		foreach(Marker* marker, tl->get_markers()) {
+			if (marker->get_id() == id) {
+				return marker;
+			}
+		}
+	}
+	return 0;
+}
+
 
 //eof
 
