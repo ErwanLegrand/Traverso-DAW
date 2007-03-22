@@ -45,6 +45,7 @@ TraversoCommands::TraversoCommands()
 	m_dict.insert("MoveClip", MoveClipCommand);
 	m_dict.insert("CopyClip", MoveClipCommand);
 	m_dict.insert("SplitClip", SplitClipCommand);
+	m_dict.insert("ArmTracks", ArmTracksCommand);
 }
 
 Command* TraversoCommands::create(QObject* obj, const QString& command, QVariantList arguments)
@@ -147,6 +148,17 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 				return 0;
 			}
 			return new SplitClip(view);
+		}
+		
+		case ArmTracksCommand:
+		{
+			SongView* view = qobject_cast<SongView*>(obj);
+			if (!view) {
+				PERROR("TraversoCommands: Supplied QObject was not an SongView! "
+						"ArmTracksCommand needs an SongView as argument");
+				return 0;
+			}
+			return new ArmTracks(view);
 		}
 	}
 	
