@@ -32,11 +32,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
+Import::Import(const QString& fileName)
+	: Command("")
+{
+	m_fileName = fileName;
+	m_clip = 0;
+	m_track = 0;
+}
+
 
 Import::Import(Track* track)
 	: Command(track, tr("Import Audio File"))
 {
 	m_track = track;
+	m_clip = 0;
 }
 
 
@@ -44,6 +53,7 @@ Import::Import(Track* track, const QString& fileName)
 	: Command(track, tr("Import Audio File"))
 {
 	m_track = track;
+	m_clip = 0;
 	m_fileName = fileName;
 }
 
@@ -58,37 +68,46 @@ int Import::prepare_actions()
 				tr("Import audio source"),
 				getenv("HOME"),
 				tr("All files (*);;Audio files (*.wav *.flac)"));
+		
+		if (m_fileName.isEmpty()) {
+			PWARN("FileName is empty!");
+			return -1;
+		}
+		
+		create_readsource();
+		create_audioclip();
 	}
+	
+	return 1;
+}
 
-	if (m_fileName.isEmpty()) {
-		PWARN("FileName is empty!");
-		return -1;
-	}
-
+int Import::create_readsource()
+{
 	int splitpoint = m_fileName.lastIndexOf("/") + 1;
 	int length = m_fileName.length();
 
 	QString dir = m_fileName.left(splitpoint - 1) + "/";
-	QString name = m_fileName.right(length - splitpoint);
-
-	Project* project = pm().get_project();
-	if (!project) {
-		PWARN("No project loaded, can't import an AudioSource without a Project");
-		return -1;
-	}
-
-	ReadSource* source = resources_manager()->get_readsource(m_fileName);
+	m_name = m_fileName.right(length - splitpoint);
 	
-	if (! source ) {
+	m_source = resources_manager()->get_readsource(m_fileName);
+	
+	if (! m_source ) {
 		PMESG("AudioSource not found in acm, requesting new one");
-		source = resources_manager()->create_new_readsource(dir, name);
-		if (! source) {
+		m_source = resources_manager()->create_new_readsource(dir, m_name);
+		if (! m_source) {
 			PERROR("Can't import audiofile %s", QS_C(m_fileName));
+			return -1;
 		}
 	}
+	
+	return 1;
+}
 
-	m_clip = resources_manager()->new_audio_clip(name);
-	m_clip->set_audio_source(source);
+void Import::create_audioclip()
+{
+	Q_ASSERT(m_track);
+	m_clip = resources_manager()->new_audio_clip(m_name);
+	m_clip->set_audio_source(m_source);
 	m_clip->set_song(m_track->get_song());
 	m_clip->set_track(m_track);
 	m_clip->set_track_start_frame(0);
@@ -96,13 +115,21 @@ int Import::prepare_actions()
 	if (AudioClip* lastClip = m_track->get_cliplist().get_last()) {
 		m_clip->set_track_start_frame( lastClip->get_track_end_frame() + 1);
 	}
-	
-	return 1;
 }
+
+void Import::set_track(Track * track)
+{
+	m_track = track;
+}
+
 
 int Import::do_action()
 {
 	PENTER;
+	
+	if (! m_clip) {
+		create_audioclip();
+	}
 	
 	ie().process_command(m_track->add_clip(m_clip, false));
 	

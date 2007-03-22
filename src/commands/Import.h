@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Import.h,v 1.3 2007/01/16 20:21:08 r_sijrier Exp $
+    $Id: Import.h,v 1.4 2007/03/22 20:47:24 r_sijrier Exp $
 */
 
 #ifndef IMPORT_H
@@ -27,10 +27,12 @@
 
 class QString;
 class AudioClip;
+class ReadSource;
 
 class Import : public Command
 {
 public :
+	Import(const QString& fileName);
         Import(Track* track);
         Import(Track* track, const QString& fileName);
         ~Import();
@@ -38,11 +40,17 @@ public :
         int prepare_actions();
         int do_action();
         int undo_action();
+	
+	int create_readsource();
+	void create_audioclip();
+	void set_track(Track* track);
 
 private :
         Track* 		m_track;
         AudioClip*	m_clip;
+	ReadSource* 	m_source;
         QString 	m_fileName;
+	QString		m_name;
 };
 
 #endif

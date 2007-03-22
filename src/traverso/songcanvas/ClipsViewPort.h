@@ -29,6 +29,7 @@
 #include "ViewPort.h"
 
 class SongWidget;
+class Import;
 		
 class ClipsViewPort : public ViewPort
 {
@@ -48,7 +49,7 @@ protected:
 	void dragMoveEvent(QDragMoveEvent *event);
 private:
 	SongWidget*	m_sw;
-	Import*         import;
+	QList<Import*>	m_imports;
 	Track*          importTrack;
 	QString         importFileName;
 };

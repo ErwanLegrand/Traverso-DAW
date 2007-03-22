@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ClipsViewPort.cpp,v 1.10 2007/03/22 01:06:54 r_sijrier Exp $
+$Id: ClipsViewPort.cpp,v 1.11 2007/03/22 20:47:24 r_sijrier Exp $
 */
 
 #include "ClipsViewPort.h"
@@ -27,10 +27,14 @@ $Id: ClipsViewPort.cpp,v 1.10 2007/03/22 01:06:54 r_sijrier Exp $
 #include "TrackView.h"
 #include <libtraversocore.h>
 #include <Import.h>
+#include <CommandGroup.h>
 
 #include <QScrollBar>
 #include <QSet>
 #include <QPaintEngine>
+#include <QUrl>
+#include <QFileInfo>
+#include <QDir>
 		
 #include <Debugger.h>
 		
@@ -72,30 +76,35 @@ void ClipsViewPort::paintEvent(QPaintEvent * e)
 
 void ClipsViewPort::dragEnterEvent( QDragEnterEvent * event )
 {
-	QString fileName = event->mimeData()->text();
-	// TODO Use QUrl instead
-	int begin = fileName.indexOf("file:///");
-	if(begin != 0) {
-		return;
+	bool accepted = true;
+	m_imports.clear();
+	
+	if (event->mimeData()->hasUrls()) {
+
+		foreach(QUrl url, event->mimeData()->urls()) {
+			QString fileName = url.toLocalFile();
+			
+			if (fileName.isEmpty()) {
+				continue;
+			}
+			
+			Import* import = new Import(fileName);
+			m_imports.append(import);
+			
+			if (import->create_readsource() == -1) {
+				foreach(Import* import, m_imports) {
+					delete import;
+				}
+				m_imports.clear();
+				accepted = false;
+				break;
+			}
+		}
 	}
-
-	begin = 7;
-
-	int length = fileName.length();
-	importFileName = fileName.mid(begin, length);
-
-	begin = importFileName.lastIndexOf("/") + 1;
-
-	length = importFileName.length();
-	QString dir = importFileName.left(begin);
-	QString name = importFileName.right(length - begin);
-
-	ReadSource* source = resources_manager()->get_readsource(dir + name);
-	if (source) {
+	
+	if (accepted) {
 		event->acceptProposedAction();
-		delete source;
 	}
-
 }
 
 void ClipsViewPort::dropEvent( QDropEvent * event )
@@ -104,10 +113,15 @@ void ClipsViewPort::dropEvent( QDropEvent * event )
 		return;
 	}
 
-	import = new Import(importTrack, importFileName);
+	CommandGroup* group = new CommandGroup(m_sw->get_song(), 
+		       tr("Import %n audiofile(s)", "", m_imports.size()), true);
+	
+	foreach(Import* import, m_imports) {
+		import->set_track(importTrack);
+		group->add_command(import);
+	}
 
-	ie().process_command(import);
-	import = 0;
+	ie().process_command(group);
 }
 
 void ClipsViewPort::dragMoveEvent( QDragMoveEvent * event )
