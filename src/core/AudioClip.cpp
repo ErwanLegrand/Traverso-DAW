@@ -119,7 +119,10 @@ int AudioClip::set_state(const QDomNode& node)
 	set_gain( e.attribute( "gain", "" ).toFloat() );
 	m_normfactor =  e.attribute( "normfactor", "1.0" ).toFloat();
 
-	isSelected = e.attribute("selected", "0").toInt(); 
+	if (e.attribute("selected", "0").toInt() == 1) {
+		m_song->get_audioclip_manager()->add_to_selection(this);
+	}
+	
 	m_readSourceId = e.attribute("source", "").toLongLong();
 	isMuted =  e.attribute( "mute", "" ).toInt();
 
@@ -355,13 +358,10 @@ void AudioClip::set_gain(float gain)
 	emit gainChanged();
 }
 
-int AudioClip::set_selected(bool selected)
+void AudioClip::set_selected(bool selected)
 {
-	if (isSelected != selected) {
-		isSelected = selected;
-		emit stateChanged();
-	}
-	return 1;
+	isSelected = selected;
+	emit stateChanged();
 }
 
 //
@@ -699,11 +699,6 @@ void AudioClip::set_song( Song * song )
 	}
 	
 	gainEnvelope->set_history_stack(get_history_stack());
-	
-	
-	if (isSelected) {
-		m_song->get_audioclip_manager()->add_to_selection( this );
-	}
 }
 
 

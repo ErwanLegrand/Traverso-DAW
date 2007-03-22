@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.35 2007/03/22 18:17:59 r_sijrier Exp $
+$Id: AudioClip.h,v 1.36 2007/03/22 21:36:48 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -75,7 +75,7 @@ public:
 	void set_song(Song* song);
 	void set_snappable(bool snap);
 
-	int set_selected(bool selected);
+	void set_selected(bool selected);
 	int set_state( const QDomNode& node );
 	int get_ref_count() const;
 
@@ -143,13 +143,13 @@ private:
 	nframes_t		sourceLength;
 	nframes_t 		m_length;
 
-	bool 			isSelected;
-	bool 			isTake;
-	bool 			isMuted;
-	bool 			isRecording;
-	bool			m_isSnappable;
-	float	 		m_gain;
-	float			m_normfactor;
+	int 		isSelected;
+	bool 		isTake;
+	bool 		isMuted;
+	bool 		isRecording;
+	bool		m_isSnappable;
+	float	 	m_gain;
+	float		m_normfactor;
 	
 	qint64		m_readSourceId;
 	int		m_refcount;
