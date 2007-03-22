@@ -93,9 +93,9 @@ Traverso::Traverso(int &argc, char **argv )
 	
 	init_sse();
 	
-	prepare_audio_device();
-	
 	create_interface();
+	
+	prepare_audio_device();
 	
 	QMetaObject::invokeMethod(&pm(), "start", Qt::QueuedConnection);
 	
