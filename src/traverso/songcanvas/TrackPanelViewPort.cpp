@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TrackPanelViewPort.cpp,v 1.7 2007/03/21 15:11:34 r_sijrier Exp $
+    $Id: TrackPanelViewPort.cpp,v 1.8 2007/03/22 18:39:13 r_sijrier Exp $
 */
 
 #include "TrackPanelViewPort.h"
@@ -43,7 +43,7 @@ TrackPanelViewPort::TrackPanelViewPort(QGraphicsScene* scene, SongWidget* sw)
 
 void TrackPanelViewPort::paintEvent( QPaintEvent* e )
 {
-	PWARN("TrackPanelViewPort::paintEvent()");
+// 	PWARN("TrackPanelViewPort::paintEvent()");
 	QGraphicsView::paintEvent(e);
 }
 
