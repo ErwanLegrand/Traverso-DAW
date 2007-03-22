@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.24 2007/03/19 11:18:57 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.25 2007/03/22 02:17:13 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -722,17 +722,6 @@ void AudioDevice::check_jack_shutdown()
 			driver = 0;
 			set_parameters(44100, 1024, "Null Driver");
 		}
-	}
-}
-
-void AudioDevice::make_audiothread_realtime(bool realtime)
-{
-	if (! driver)  {
-		return;
-	}
-	
-	if (audioThread) {
-		audioThread->become_realtime(realtime);
 	}
 }
 

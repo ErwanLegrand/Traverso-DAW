@@ -97,8 +97,6 @@ Traverso::Traverso(int &argc, char **argv )
 	
 	create_interface();
 	
-	audiodevice().make_audiothread_realtime(true);
-
 	QMetaObject::invokeMethod(&pm(), "start", Qt::QueuedConnection);
 	
 	setQuitOnLastWindowClosed(false);
