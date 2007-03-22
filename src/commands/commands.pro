@@ -10,7 +10,8 @@ PCommand.cpp \
 SplitClip.cpp \
 TrackPan.cpp \
 Zoom.cpp \
-AudioClipExternalProcessing.cpp
+AudioClipExternalProcessing.cpp \
+ArmTracks.cpp
 HEADERS += AddRemove.h \
 ClipSelection.h \
 CommandGroup.h \
@@ -25,7 +26,8 @@ precompile.h \
 SplitClip.h \
 TrackPan.h \
 Zoom.h \
-AudioClipExternalProcessing.h
+AudioClipExternalProcessing.h \
+ArmTracks.h
 TARGET = traversocommands
 DESTDIR = ../../lib
 TEMPLATE = lib

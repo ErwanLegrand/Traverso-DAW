@@ -360,6 +360,12 @@
 			<Object objectname="AudioClipView" mousehint="LR" slotsignature="fade_range" modes="All" sortorder="30" submenu="Fade In/Out" instantanious="0" />
 		</Objects>
 	</keyfact>
+	<keyfact type="HKEY" key1="A" >
+		<Objects>
+			<Object objectname="SongView" mousehint="UD" modes="All" sortorder="3" pluginname="TraversoCommands" commandname="ArmTracks"  arguments="" />
+		</Objects>
+	</keyfact>
+	
 	
 	
 	<keyfact type="HKEY2" key1="F" key2="G" >
