@@ -51,7 +51,6 @@ private:
 	SongWidget*	m_sw;
 	QList<Import*>	m_imports;
 	Track*          importTrack;
-	QString         importFileName;
 };
 
 
