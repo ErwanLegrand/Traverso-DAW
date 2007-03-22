@@ -43,9 +43,14 @@ public:
 protected:
         void resizeEvent(QResizeEvent* e);
 	void paintEvent( QPaintEvent* e);
-
+	void dragEnterEvent(QDragEnterEvent *event);
+	void dropEvent(QDropEvent *event);
+	void dragMoveEvent(QDragMoveEvent *event);
 private:
 	SongWidget*	m_sw;
+	Import*         import;
+	Track*          importTrack;
+	QString         importFileName;
 };
 
 
