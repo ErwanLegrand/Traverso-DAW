@@ -74,7 +74,9 @@ int Import::prepare_actions()
 			return -1;
 		}
 		
-		create_readsource();
+		if (create_readsource() == -1) {
+			return -1;
+		}
 		create_audioclip();
 	}
 	
