@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.cpp,v 1.14 2007/02/04 15:31:40 r_sijrier Exp $
+$Id: WriteSource.cpp,v 1.15 2007/03/22 23:16:47 r_sijrier Exp $
 */
 
 #include "WriteSource.h"
@@ -85,7 +85,7 @@ int WriteSource::process (nframes_t nframes)
 
 		/* now do sample rate conversion */
 
-		if (sample_rate != spec->sample_rate) {
+		if (sample_rate != (uint)spec->sample_rate) {
 
 #if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 
@@ -244,6 +244,9 @@ int WriteSource::process (nframes_t nframes)
 int WriteSource::prepare_export (ExportSpecification* spec)
 {
 	PENTER;
+	
+	Q_ASSERT(spec->is_valid() == 1);
+	
 	char errbuf[256];
 	GDitherSize dither_size;
 
@@ -293,7 +296,9 @@ int WriteSource::prepare_export (ExportSpecification* spec)
 	/* XXX make sure we have enough disk space for the output */
 
 	QString name = m_fileName;
-	name.append("-ch" + QByteArray::number(m_channelNumber) + ".wav");
+	if (spec->isRecording) {
+		name.append("-ch" + QByteArray::number(m_channelNumber) + ".wav");
+	}
 	
 	if ((sf = sf_open (QS_C(name), SFM_WRITE, &sfinfo)) == 0) {
 		sf_error_str (0, errbuf, sizeof (errbuf) - 1);
@@ -302,7 +307,7 @@ int WriteSource::prepare_export (ExportSpecification* spec)
 	}
 
 
-	if (spec->sample_rate != sample_rate) {
+	if ((uint)spec->sample_rate != sample_rate) {
 #if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 		qDebug("Doing samplerate conversion");
 		int err;

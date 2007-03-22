@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ExportWidget.cpp,v 1.6 2007/03/16 00:10:26 r_sijrier Exp $
+    $Id: ExportWidget.cpp,v 1.7 2007/03/22 23:16:54 r_sijrier Exp $
 */
 
 #include "ExportWidget.h"
@@ -50,7 +50,7 @@ ExportWidget::ExportWidget( QWidget * parent )
                 info().information(tr("No project loaded, to export a project, load it first!"));
         } else {
                 spec = new ExportSpecification;
-                spec->exportdir = m_project->get_root_dir() + "/Export";
+                spec->exportdir = m_project->get_root_dir() + "/Export/";
                 exportDirName->setText(spec->exportdir);
                 QStringList list;
 		foreach(Song* song, m_project->get_songs()) {
@@ -84,7 +84,7 @@ ExportWidget::ExportWidget( QWidget * parent )
         audioTypeComboBox->insertItem(1, "AIFF");
         char  buffer [128] ;
         sf_command (NULL, SFC_GET_LIB_VERSION, buffer, sizeof (buffer));
-        if (QByteArray(buffer) == "libsndfile-1.0.12")
+        if (QByteArray(buffer) >= "libsndfile-1.0.12")
                 audioTypeComboBox->insertItem(2, "FLAC");
 
 
@@ -198,10 +198,13 @@ void ExportWidget::on_exportStartButton_clicked( )
         //TODO Make a ComboBox for this one too!
         spec->src_quality = SRC_SINC_MEDIUM_QUALITY; // SRC_SINC_BEST_QUALITY  SRC_SINC_FASTEST  SRC_ZERO_ORDER_HOLD  SRC_LINEAR
 
-        if (allSongsButton->isChecked())
+        if (allSongsButton->isChecked()) {
                 spec->allSongs = true;
-        else
+	} else {
                 spec->allSongs = false;
+	}
+	
+	spec->isRecording = false;
 
         m_project->export_project(spec);
 }
@@ -273,7 +276,7 @@ void ExportWidget::render_finished( )
 
 void ExportWidget::set_exporting_song( Song * song )
 {
-        QString name = QString::number(song->get_id()) + " - " + song->get_title();
+        QString name = QString::number(m_project->get_song_index(song->get_id())) + " - " + song->get_title();
         currentProcessingSongName->setText(name);
 }
 

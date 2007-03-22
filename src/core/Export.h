@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Export.h,v 1.2 2006/05/17 22:01:10 r_sijrier Exp $
+$Id: Export.h,v 1.3 2007/03/22 23:16:47 r_sijrier Exp $
 */
 
 #ifndef EXPORT_H
@@ -36,36 +36,39 @@ class Project;
 
 struct ExportSpecification
 {
-
-	nframes_t      		sample_rate;
-
-	int                 	src_quality;
-	uint32_t       		channels;
-	nframes_t      		start_frame;
-	nframes_t      		end_frame;
-	GDitherType         	dither_type;
+	ExportSpecification();
+	
+	int is_valid();
+	
+	int      	sample_rate;
+	int             src_quality;
+	int       	channels;
+	long		start_frame;
+	long long      	end_frame;
+	GDitherType     dither_type;
 
 	/* used exclusively during export */
 
-	float*              	dataF;
-	nframes_t		blocksize;
-	uint32_t        	data_width;
+	float*          dataF;
+	int		blocksize;
+	int	        data_width;
 
-	nframes_t      		total_frames;
-	int			format;
-	nframes_t      		pos;
-	QString			extension;
+	long      	total_frames;
+	int		format;
+	long      	pos;
+	QString		extension;
 
 	/* shared between UI thread and audio thread */
 
-	int 			progress;  /* audio thread sets this */
-	bool  			stop;      /* UI sets this */
-	bool  			running;   /* audio thread sets to false when export is done */
+	int 		progress;  /* audio thread sets this */
+	bool  		stop;      /* UI sets this */
+	bool  		running;   /* audio thread sets to false when export is done */
 
-	int   			status;
-	bool			allSongs;
-	QString			exportdir;
-	QString			name;
+	int   		status;
+	bool		allSongs;
+	int		isRecording;
+	QString		exportdir;
+	QString		name;
 };
 
 

@@ -495,6 +495,11 @@ int AudioClip::init_recording( QByteArray name )
 		spec->channels = 1;
 		spec->sample_rate = audiodevice().get_sample_rate();
 		spec->src_quality = SRC_SINC_MEDIUM_QUALITY;
+		spec->isRecording = true;
+		spec->start_frame = 0;
+		spec->end_frame = 0;
+		spec->total_frames = 0;
+		spec->blocksize = audiodevice().get_buffer_size();
 
 		QString songid = QString::number(m_song->get_id())  + "_";
 		if (m_song->get_id() < 10)

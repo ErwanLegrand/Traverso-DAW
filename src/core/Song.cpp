@@ -301,7 +301,7 @@ int Song::prepare_export(ExportSpecification* spec)
 			spec->end_frame = endframe;
 		}
 
-		if (startframe < spec->start_frame) {
+		if (startframe < (uint)spec->start_frame) {
 			spec->start_frame = startframe;
 		}
 
@@ -319,7 +319,7 @@ int Song::prepare_export(ExportSpecification* spec)
 	if (m_id < 10) {
 		idString.prepend("0");
 	}
-	spec->name =  idString +" - " + title + spec->extension;
+	spec->name =  "Song" + QString::number(m_project->get_song_index(m_id)) +"-" + title + spec->extension;
 
 	if (spec->start_frame >= spec->end_frame) {
 		PWARN("illegal frame range in export specification");
@@ -345,14 +345,14 @@ int Song::finish_audio_export()
 
 int Song::render(ExportSpecification* spec)
 {
-	uint32_t chn;
+	int chn;
 	uint32_t x;
 	int ret = -1;
 	int progress;
 	nframes_t this_nframes;
 	nframes_t nframes = spec->blocksize;
 
-	if (!spec->running || spec->stop || (this_nframes = std::min ((spec->end_frame - spec->pos), nframes)) == 0) {
+	if (!spec->running || spec->stop || (this_nframes = std::min ((nframes_t)(spec->end_frame - spec->pos), nframes)) == 0) {
 		process (nframes);
 		/*		PWARN("Finished Rendering for this song");
 				PWARN("running is %d", spec->running);
