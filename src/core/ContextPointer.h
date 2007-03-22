@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ContextPointer.h,v 1.11 2007/03/06 15:14:16 r_sijrier Exp $
+    $Id: ContextPointer.h,v 1.12 2007/03/22 13:35:42 r_sijrier Exp $
 */
 
 #ifndef CONTEXTPOINTER_H
@@ -151,6 +151,9 @@ public:
         void add_contextitem(QObject* item);
 
         void remove_contextitem(QObject* item);
+	
+	QList<QObject* > get_contextmenu_items() const;
+	void set_contextmenu_items(QList<QObject* > list);
 
 
 private:
@@ -168,7 +171,7 @@ private:
 
         ViewPort* currentViewPort;
         QList<QObject* > contextItemsList;
-
+	QList<QObject* > m_contextMenuItems;
 };
 
 #endif

@@ -251,11 +251,11 @@ int InputEngine::broadcast_action_from_contextmenu(const QString& keySequence)
 		return -1;
 	}
 
-	return broadcast_action(action);
+	return broadcast_action(action, false, true);
 }
 
 
-int InputEngine::broadcast_action(IEAction* action, bool autorepeat)
+int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromContextMenu)
 {
 	PENTER2;
 
@@ -263,13 +263,21 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat)
 	QObject* item = 0;
 	int useX=0, useY=0;
 
-	QList<QObject* > list = cpointer().get_context_items();
+	QList<QObject* > list;
+	 
+	if ( ! fromContextMenu ) {
+		list = cpointer().get_context_items();
+	} else {
+		list = cpointer().get_contextmenu_items();
+	}
 
 	QString slotsignature = "";
 	
 	if (holdingCommand) {
 		list.prepend(holdingCommand);
 	}
+	
+	PMESG("Trying to find IEAction for key sequence %s", action->keySequence.data());
 	
 	for (int i=0; i < list.size(); ++i) {
 		item = list.at(i);
@@ -1426,6 +1434,7 @@ QList< MenuData > InputEngine::create_menudata_for(QObject* item)
 			}
 			
 			menudata.keysequence = ieaction->keySequence;
+			menudata.iedata = ieaction->keySequence;
 			menudata.sortorder = iedata->sortorder;
 			menudata.submenu = iedata->submenu;
 				

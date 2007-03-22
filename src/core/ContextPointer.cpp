@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ContextPointer.cpp,v 1.11 2007/03/06 15:14:16 r_sijrier Exp $
+$Id: ContextPointer.cpp,v 1.12 2007/03/22 13:35:42 r_sijrier Exp $
 */
 
 #include "ContextPointer.h"
@@ -174,6 +174,16 @@ void ContextPointer::reset_cursor( )
 	Q_ASSERT(currentViewPort);
 		
 	currentViewPort->reset_cursor();
+}
+
+QList< QObject * > ContextPointer::get_contextmenu_items() const
+{
+	return m_contextMenuItems;
+}
+
+void ContextPointer::set_contextmenu_items(QList< QObject * > list)
+{
+	m_contextMenuItems = list;
 }
 
 //eof

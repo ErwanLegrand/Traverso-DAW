@@ -111,7 +111,8 @@ struct MenuData {
         {
                 return left->sortorder > right->sortorder;
         }
-        QByteArray 	keysequence;
+	QString 	keysequence;
+	QString		iedata;
         QString		description;
 	QString		submenu;
         int		sortorder;
@@ -214,7 +215,7 @@ private:
         void 			check_number_collection();
 
         //! call the slot that handler a given action
-        int broadcast_action(IEAction* action, bool autorepeat=false);
+        int broadcast_action(IEAction* action, bool autorepeat=false, bool fromContextMenu=false);
 
         void set_jogging(bool jog);
 	void reset();

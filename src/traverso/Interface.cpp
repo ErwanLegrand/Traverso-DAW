@@ -440,7 +440,7 @@ Command * Interface::show_context_menu( )
 		items = cpointer().get_context_items();
 		
 		if (items.isEmpty()) {
-			printf("cpointer() returned empty list\n");
+			printf("Interface::show_context_menu: cpointer() returned empty list\n");
 			return 0;
 		}
 		
@@ -452,6 +452,10 @@ Command * Interface::show_context_menu( )
 			}
 		}
 	}
+	
+	// 'Store' the contextitems under the mouse cursor, so the InputEngine
+	// dispatches the 'keyfact' from the menu to the 'pointed' objects!
+	cpointer().set_contextmenu_items(cpointer().get_context_items());
 
 	QMenu* toplevelmenu;
 			
@@ -459,18 +463,22 @@ Command * Interface::show_context_menu( )
 		QObject* item = items.at(i);
 		
 		QString className = item->metaObject()->className();
-		QMenu* menu = m_contextMenus.value(className);
-		
-		if ( ! menu ) {
-			printf("No menu for %s, creating new one\n", QS_C(className));
-			menu = create_context_menu(item);
-			m_contextMenus.insert(className, menu);
-		}
 		
 		if (i==0) {
-			toplevelmenu = menu;
+			toplevelmenu = m_contextMenus.value(className);
+		
+			if ( ! toplevelmenu ) {
+				printf("No menu for %s, creating new one\n", QS_C(className));
+				toplevelmenu = create_context_menu(item);
+				m_contextMenus.insert(className, toplevelmenu);
+				connect(toplevelmenu, SIGNAL(triggered(QAction*)), this, SLOT(process_context_menu_action(QAction*)));
+			} else {
+				break;
+			}
 		} else {
+			// Create submenus
 			toplevelmenu->addSeparator();
+			QMenu* menu = create_context_menu(item);
 			QAction* action = toplevelmenu->insertMenu(action, menu);
 			action->setText(className.remove("View"));
 		}
@@ -484,9 +492,6 @@ Command * Interface::show_context_menu( )
 QMenu* Interface::create_context_menu(QObject* item )
 {
 	QMenu* menu = new QMenu();
-	
-	
-	connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(process_context_menu_action(QAction*)));
 	
 	QList<MenuData > list = ie().create_menudata_for( item );
 	
@@ -510,12 +515,15 @@ QMenu* Interface::create_context_menu(QObject* item )
 		// Merge entries with equall action, but different key facts.
 		for (int j=i+1; j<list.size(); ++j) {
 			if (list.at(j).description == data.description) {
-				data.keysequence = data.keysequence + QByteArray(", " + list.at(j).keysequence);
+				data.keysequence = data.keysequence + ", " + list.at(j).keysequence;
 				list.removeAt(j);
 				break;
 			}
 		}
 		
+		// If this MenuData item is a submenu, add to the 
+		// list of submenus, which will be processed lateron
+		// Else, add the MenuData item as action in the Menu
 		if ( ! data.submenu.isEmpty() ) {
 			QList<MenuData>* list;
 			if ( ! submenus.contains(data.submenu)) {
@@ -527,11 +535,14 @@ QMenu* Interface::create_context_menu(QObject* item )
 			QString text = QString(data.description + "  " + data.keysequence);
 			QAction* action = new QAction(this);
 			action->setText(text);
-			action->setData(data.keysequence);
+			action->setData(data.iedata);
 			menu->addAction(action);
 		}
 	}
 	
+	// For all submenus, create the Menu, and add
+	// actions, a little code duplication here, adding action to the 
+	// menu is also done ~10 lines up ...
 	QList<QString> keys = submenus.keys();
 	foreach(QString key, keys) {
 		QList<MenuData>* list = submenus.value(key);
@@ -551,7 +562,7 @@ QMenu* Interface::create_context_menu(QObject* item )
 			QAction* action = new QAction(this);
 			QString text = QString(data.description + "  " + data.keysequence);
 			action->setText(text);
-			action->setData(data.keysequence);
+			action->setData(data.iedata);
 			sub->addAction(action);
 		}
 		
