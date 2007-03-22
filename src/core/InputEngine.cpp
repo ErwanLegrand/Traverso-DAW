@@ -292,9 +292,12 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 		
 		if ( ! data ) {
 			PMESG("No data found for object %s", item->metaObject()->className());
+			continue;
 		} else {
 			PMESG("Data found for %s!", item->metaObject()->className());
 			PMESG("setting slotsignature to %s", QS_C(data->slotsignature));
+			PMESG("setting pluginname to %s", QS_C(data->pluginname));
+			PMESG("setting plugincommand to %s", QS_C(data->commandname));
 			slotsignature = data->slotsignature;
 			pluginname = data->pluginname;
 			commandname = data->commandname;
@@ -304,51 +307,14 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 
 		
 		if (item == holdingCommand) {
-			
-			if (QMetaObject::invokeMethod(item,
-					QS_C(slotsignature),
-					Qt::DirectConnection,
-					Q_ARG(bool, autorepeat) 
-					)) {
+			if (QMetaObject::invokeMethod(item, QS_C(slotsignature), Qt::DirectConnection, Q_ARG(bool, autorepeat))) {
 				PMESG("HIT, invoking %s::%s", holdingCommand->metaObject()->className(), QS_C(slotsignature));
 				break;
 			}
-			
-			IEAction::Data* holdingdata = action->objects.value("HoldCommand");
-			
-			if ( ! holdingdata) {
-				printf("No object=\"HoldCommand\" entry was defined in the keymap\n");
-				continue;
-			}
-			
-			QStringList strlist = holdingdata->slotsignature.split("::");
-			if (strlist.size() != 2) {
-				printf("HoldCommand slot_signature is not of type: ClassName::slot_signature \n");
-				continue;
-			}
-			
-			QString classname = strlist.at(0);
-			QString slot = strlist.at(1);
-			QObject* obj = 0;
-			
-			for (int j=0; j < list.size(); ++j) {
-				obj = list.at(j);
-				if (obj->metaObject()->className() == classname) {
-					break;
-				}
-			}
-			
-			if (obj) {
-				if (QMetaObject::invokeMethod(obj,
-					QS_C(slot),
-					Qt::DirectConnection,
-					Q_RETURN_ARG(Command*, k))) {
-						PMESG("HIT, invoking %s::%s", QS_C(classname), QS_C(slot));
-						break;
-					}
-			}
+		}
 		
-		} else if ( ! holdingCommand) {
+		
+		if ( ! holdingCommand ) {
 			
 			if ( ! pluginname.isEmpty() ) {
 				CommandPlugin* plug = m_commandplugins.value(pluginname);
@@ -364,21 +330,71 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 						k = plug->create(item, commandname, data->arguments);
 						break;
 					}
-				} 
+				}
+				continue;
 			} 
+		}
+		
+		
+		IEAction::Data* delegatingdata;
+		QString delegatedobject;
+		
+		if (holdingCommand) {
+			delegatingdata = action->objects.value("HoldCommand");
+			delegatedobject = "HoldCommand";
+		} else {
+			delegatedobject = item->metaObject()->className();
+			delegatingdata = action->objects.value(delegatedobject);
+		}
 			
-			if (QMetaObject::invokeMethod(item,
-					QS_C(slotsignature),
-					Qt::DirectConnection,
-					Q_RETURN_ARG(Command*, k))) {
-				PMESG("HIT, invoking %s::%s", item->metaObject()->className(), QS_C(slotsignature));
-				break;
+		if ( ! delegatingdata) {
+			printf("No delegating data ? WEIRD\n");
+			continue;
+		}
+		
+		QStringList strlist = delegatingdata->slotsignature.split("::");
+		
+		if (strlist.size() == 2) {
+			PMESG("Detected delegate action, checking if it is valid!");
+			QString classname = strlist.at(0);
+			QString slot = strlist.at(1);
+			QObject* obj = 0;
+			bool validobject = false;
+			
+			for (int j=0; j < list.size(); ++j) {
+				obj = list.at(j);
+				if (obj->metaObject()->className() == classname) {
+					PMESG("Found an item in the contextitem list that equals delegated object");
+					validobject = true;
+					break;
+				}
+			}
+			
+			if (validobject) {
+				if (QMetaObject::invokeMethod(obj, QS_C(slot),  Qt::DirectConnection, Q_RETURN_ARG(Command*, k))) {
+					PMESG("HIT, invoking (delegated) %s::%s", QS_C(classname), QS_C(slot));
+					break;
+				} else {
+					PMESG("Delegated object slot call didn't work out, sorry!");
+					PMESG("%s::%s() --> %s::%s()", item->metaObject()->className(), QS_C(slot), QS_C(classname), QS_C(slot));
+				}
+			} else {
+				PMESG("Delegated object %s was not found in the context items list!", QS_C(classname));
 			}
 		} else {
-			PMESG("nope %s wasn't the right one, next ...", item->metaObject()->className());
+			if (QMetaObject::invokeMethod(item, QS_C(slotsignature), Qt::DirectConnection, Q_RETURN_ARG(Command*, k))) {
+				PMESG("HIT, invoking %s::%s", item->metaObject()->className(), QS_C(slotsignature));
+				break;
+			} else {
+				PMESG("nope %s wasn't the right one, next ...", item->metaObject()->className());
+			}
 		}
 	}
-
+	
+	if (! k ) {
+		PMESG("I'm sorry, none of the objects seem to implement keyfact %s", action->keySequence.data());
+	}
+	
 	if (k && (!isHolding)) {
 		if (k->prepare_actions() != -1) {
 			k->set_valid(true);
