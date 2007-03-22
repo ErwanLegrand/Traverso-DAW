@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.34 2007/03/19 11:18:05 r_sijrier Exp $
+$Id: AudioClip.h,v 1.35 2007/03/22 18:17:59 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -68,8 +68,6 @@ public:
 	
 	void set_blur(bool stat);
 	void set_track_start_frame(nframes_t newTrackFirstFrame);
-	void set_source_end_frame(nframes_t frame);
-	void set_source_start_frame(nframes_t frame);
 	void set_name(const QString& name);
 	void set_fade_in(nframes_t b);
 	void set_fade_out(nframes_t b);
@@ -157,6 +155,8 @@ private:
 	int		m_refcount;
 
 	void init();
+	void set_source_end_frame(nframes_t frame);
+	void set_source_start_frame(nframes_t frame);
 	void set_track_end_frame(nframes_t endFrame);
 	void set_sources_active_state();
 	void process_capture(nframes_t nframes, uint channel);
