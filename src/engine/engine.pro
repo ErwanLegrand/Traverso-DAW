@@ -48,6 +48,11 @@ HEADERS -= PADriver.h
 LIBS -= -lportaudio
 }
 
+!contains(DEFINES, JACK_SUPPORT) {
+	SOURCES -= JackDriver.cpp
+	HEADERS -= JackDriver.h
+}
+
 unix{
     contains(DEFINES, SSE_OPTIMIZATIONS): SOURCES += sse_functions.S
 }

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.15 2007/03/22 02:17:13 r_sijrier Exp $
+$Id: AudioDevice.h,v 1.16 2007/03/22 15:59:23 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -127,7 +127,6 @@ private:
 	friend AudioDevice& audiodevice();
 
 	friend class AlsaDriver;
-	friend class JackDriver;
 	friend class PADriver;
 	friend class Driver;
 	friend class AudioDeviceThread;
@@ -141,7 +140,10 @@ private:
 	QHash<QByteArray, AudioBus* >		playbackBuses;
 	QHash<QByteArray, AudioBus* >		captureBuses;
 	QStringList				availableDrivers;
+#if defined (JACK_SUPPORT)
 	QTimer					jackShutDownChecker;
+	friend class JackDriver;
+#endif
 
 	RingBufferNPT<trav_time_t>*	m_cpuTime;
 	volatile size_t		m_runAudioThread;
@@ -228,7 +230,9 @@ private slots:
 	void private_add_client(Client* client);
 	void private_remove_client(Client* client);
 	void audiothread_finished();
+#if defined (JACK_SUPPORT)
 	void check_jack_shutdown();
+#endif
 };
 
 

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.25 2007/03/22 02:17:13 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.26 2007/03/22 15:59:23 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -358,6 +358,7 @@ void AudioDevice::set_parameters( int rate,
 		}
 	}
 	 
+#if defined (JACK_SUPPORT)
 	// This will activate the jack client
 	if (driverType == "Jack") {
 		
@@ -369,7 +370,8 @@ void AudioDevice::set_parameters( int rate,
 		connect(&jackShutDownChecker, SIGNAL(timeout()), this, SLOT(check_jack_shutdown()));
 		jackShutDownChecker.start(500);
 	}
-	
+#endif
+		
 	if (driverType == "PortAudio") {
 		if (driver->start() == -1) {
 			// PortAudio driver failed to start, fallback to Null Driver:
@@ -710,6 +712,7 @@ void AudioDevice::xrun( )
 	RT_THREAD_EMIT(this, NULL, bufferUnderRun());
 }
 
+#if defined (JACK_SUPPORT)
 void AudioDevice::check_jack_shutdown()
 {
 	JackDriver* jackdriver = qobject_cast<JackDriver*>(driver);
@@ -724,5 +727,6 @@ void AudioDevice::check_jack_shutdown()
 		}
 	}
 }
+#endif
 
 //eof
