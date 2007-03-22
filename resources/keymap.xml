@@ -362,7 +362,7 @@
 	</keyfact>
 	<keyfact type="HKEY" key1="A" >
 		<Objects>
-			<Object objectname="SongView" mousehint="UD" modes="All" sortorder="3" pluginname="TraversoCommands" commandname="ArmTracks"  arguments="" />
+			<Object objectname="SongView" mousehint="UD" modes="All" sortorder="7" pluginname="TraversoCommands" commandname="ArmTracks"  arguments="" />
 		</Objects>
 	</keyfact>
 	
