@@ -25,7 +25,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.cpp,v 1.32 2007/03/19 11:18:05 r_sijrier Exp $
+$Id: Curve.cpp,v 1.33 2007/03/23 14:36:10 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -522,7 +522,7 @@ Command* Curve::add_node(CurveNode* node, bool historable)
 	cmd = new AddRemove(this, node, historable, m_song,
 			"private_add_node(CurveNode*)", "nodeAdded(CurveNode*)",
 			"private_remove_node(CurveNode*)", "nodeRemoved(CurveNode*)", 
-			"");
+			tr("Add CurveNode"));
 	
 	return cmd;
 }
@@ -552,7 +552,7 @@ Command* Curve::remove_node(CurveNode* node, bool historable)
 	cmd = new AddRemove(this, node, historable, m_song,
 			"private_remove_node(CurveNode*)", "nodeRemoved(CurveNode*)", 
 			"private_add_node(CurveNode*)", "nodeAdded(CurveNode*)", 
-			"");
+   			tr("Remove CurveNode"));
 			
 	return cmd;
 }
