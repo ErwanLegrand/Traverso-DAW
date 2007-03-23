@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.cpp,v 1.22 2007/03/16 14:23:55 r_sijrier Exp $
+$Id: CurveView.cpp,v 1.23 2007/03/23 14:36:27 r_sijrier Exp $
 */
 
 #include "CurveView.h"
@@ -332,7 +332,7 @@ void CurveView::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
 	Q_UNUSED(event);
 	
 	m_blinkColor = themer()->get_color("CurveNode:blink");
-// 	m_blinkTimer.start(40);
+	m_blinkTimer.start(40);
 }
 
 void CurveView::hoverLeaveEvent ( QGraphicsSceneHoverEvent * event )
