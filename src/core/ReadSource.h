@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.h,v 1.15 2007/03/16 00:14:43 r_sijrier Exp $
+$Id: ReadSource.h,v 1.16 2007/03/23 13:09:33 r_sijrier Exp $
 */
 
 #ifndef READSOURCE_H
@@ -27,7 +27,7 @@ $Id: ReadSource.h,v 1.15 2007/03/16 00:14:43 r_sijrier Exp $
 
 class AudioClip;
 class Peak;
-class PrivateReadSource;
+class MonoReader;
 
 class ReadSource : public AudioSource
 {
@@ -50,17 +50,17 @@ public :
 	Peak* get_peak(int channel);
 	nframes_t get_nframes() const;
 	
-	QList<PrivateReadSource*> get_private_sources() const {return m_sources;}
+	QList<MonoReader*> get_private_sources() const {return m_sources;}
 
 private:
-	QList<PrivateReadSource*> m_sources;
+	QList<MonoReader*> m_sources;
 	int	m_refcount;
 	int ref() { return m_refcount++;}
 
 	
 	int add_private_source(int channel, int channelNumber, const QString& fileName);
 	
-	friend class PrivateReadSource;
+	friend class MonoReader;
 	friend class ResourcesManager;
 };
 

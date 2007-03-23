@@ -17,11 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.cpp,v 1.19 2007/03/16 00:14:43 r_sijrier Exp $
+$Id: ReadSource.cpp,v 1.20 2007/03/23 13:09:33 r_sijrier Exp $
 */
 
 #include "ReadSource.h"
-#include "PrivateReadSource.h"
+#include "MonoReader.h"
 
 #include "Peak.h"
 #include "ProjectManager.h"
@@ -88,7 +88,7 @@ ReadSource::ReadSource(const QString& dir, const QString& name, int channelCount
 ReadSource::~ReadSource()
 {
 	PENTERDES;
-	foreach(PrivateReadSource* source, m_sources) {
+	foreach(MonoReader* source, m_sources) {
 		delete source;
 	}
 }
@@ -132,12 +132,12 @@ int ReadSource::init( )
 
 int ReadSource::add_private_source(int sourceChannelCount, int channelNumber, const QString& fileName)
 {
-	PrivateReadSource* source = new PrivateReadSource(this, sourceChannelCount, channelNumber, fileName);
+	MonoReader* source = new MonoReader(this, sourceChannelCount, channelNumber, fileName);
 	
 	if (source->init() > 0) {
 		m_sources.append(source);
 	} else {
-		PERROR("Failed to initialize a PrivateReadSource (%s)", QS_C(fileName));
+		PERROR("Failed to initialize a MonoReader (%s)", QS_C(fileName));
 		return -1;
 	}
 	
@@ -162,7 +162,7 @@ int ReadSource::rb_read(int channel, audio_sample_t* dst, nframes_t start, nfram
 void ReadSource::set_active(bool active)
 {
 	PENTER2;
-	foreach(PrivateReadSource* source, m_sources) {
+	foreach(MonoReader* source, m_sources) {
 		source->set_active(active);
 	}
 }
@@ -181,7 +181,7 @@ ReadSource * ReadSource::deep_copy( )
 
 void ReadSource::set_audio_clip( AudioClip * clip )
 {
-	foreach(PrivateReadSource* source, m_sources) {
+	foreach(MonoReader* source, m_sources) {
 		source->set_audio_clip(clip);
 	}
 }

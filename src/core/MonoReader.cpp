@@ -17,11 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PrivateReadSource.cpp,v 1.8 2007/02/15 21:15:11 r_sijrier Exp $
+$Id: MonoReader.cpp,v 1.1 2007/03/23 13:09:33 r_sijrier Exp $
 */
 
 
-#include "PrivateReadSource.h"
+#include "MonoReader.h"
 
 #include "Peak.h"
 #include "ProjectManager.h"
@@ -40,7 +40,7 @@ $Id: PrivateReadSource.cpp,v 1.8 2007/02/15 21:15:11 r_sijrier Exp $
 
 
 
-PrivateReadSource::PrivateReadSource(ReadSource* source, int sourceChannelCount, int channelNumber, const QString& fileName)
+MonoReader::MonoReader(ReadSource* source, int sourceChannelCount, int channelNumber, const QString& fileName)
 	: AudioSource(),
 	  m_source(source),
 	  m_buffer(0),
@@ -51,9 +51,10 @@ PrivateReadSource::PrivateReadSource(ReadSource* source, int sourceChannelCount,
 	  m_fileName(fileName)
 {
 	PENTERCONS;
+	m_bufferstatus = new BufferStatus;
 }
 
-PrivateReadSource::~PrivateReadSource()
+MonoReader::~MonoReader()
 {
 	PENTERDES;
 	if (m_buffer) {
@@ -67,10 +68,12 @@ PrivateReadSource::~PrivateReadSource()
 			qWarning("sf_close returned an error!");
 		}
 	}
+	
+	delete m_bufferstatus;
 }
 
 
-int PrivateReadSource::init( )
+int MonoReader::init( )
 {
 	PENTER;
 	
@@ -125,7 +128,7 @@ int PrivateReadSource::init( )
 }
 
 
-int PrivateReadSource::file_read (audio_sample_t* dst, nframes_t start, nframes_t cnt) const
+int MonoReader::file_read (audio_sample_t* dst, nframes_t start, nframes_t cnt) const
 {
 // 	PWARN("file_read");
 	// this equals checking if init() is called!
@@ -135,16 +138,26 @@ int PrivateReadSource::file_read (audio_sample_t* dst, nframes_t start, nframes_
 		return 0;
 	}
 	
+//#define profile
+	
 	if (sf_seek (m_sf, (off_t) start, SEEK_SET) < 0) {
 		char errbuf[256];
 		sf_error_str (0, errbuf, sizeof (errbuf) - 1);
 		PERROR("ReadAudioSource: could not seek to frame %d within %s (%s)", start, QS_C(m_fileName), errbuf);
 		return 0;
 	}
-	
 
+#if defined (profile)
+	trav_time_t starttime = get_microseconds();
+#endif
 	if (m_sfinfo.channels == 1) {
-		return sf_read_float (m_sf, dst, cnt);
+		int result = sf_read_float (m_sf, dst, cnt);
+#if defined (profile)
+		int processtime = (int) (get_microseconds() - starttime);
+		if (processtime > 40000)
+			printf("Process time for %s, channel %d: %d useconds\n\n", QS_C(m_fileName), m_channelNumber, processtime);
+#endif
+		return result;
 	}
 
 	float *ptr;
@@ -154,6 +167,11 @@ int PrivateReadSource::file_read (audio_sample_t* dst, nframes_t start, nframes_
 	audio_sample_t readbuffer[real_cnt];
 
 	int nread = sf_read_float (m_sf, readbuffer, real_cnt);
+#if defined (profile)
+	int processtime = (int) (get_microseconds() - starttime);
+	if (processtime > 40000)
+		printf("Process time for %s, channel %d: %d useconds\n\n", QS_C(m_fileName), m_channelNumber, processtime);
+#endif
 	ptr = readbuffer + m_channelNumber;
 	nread /= m_sfinfo.channels;
 
@@ -169,7 +187,7 @@ int PrivateReadSource::file_read (audio_sample_t* dst, nframes_t start, nframes_
 }
 
 
-int PrivateReadSource::rb_read(audio_sample_t* dst, nframes_t start, nframes_t count)
+int MonoReader::rb_read(audio_sample_t* dst, nframes_t start, nframes_t count)
 {
 
 	if ( ! m_rbReady ) {
@@ -209,7 +227,7 @@ int PrivateReadSource::rb_read(audio_sample_t* dst, nframes_t start, nframes_t c
 }
 
 
-int PrivateReadSource::rb_file_read( audio_sample_t * dst, nframes_t cnt )
+int MonoReader::rb_file_read( audio_sample_t * dst, nframes_t cnt )
 {
 	int readFrames = file_read( dst, m_rbFileReadPos, cnt);
 	m_rbFileReadPos += readFrames;
@@ -218,12 +236,12 @@ int PrivateReadSource::rb_file_read( audio_sample_t * dst, nframes_t cnt )
 }
 
 
-void PrivateReadSource::rb_seek_to_file_position( nframes_t position )
+void MonoReader::rb_seek_to_file_position( nframes_t position )
 {
 	Q_ASSERT(m_clip);
 	
 	if (m_rbFileReadPos == position) {
-		PMESG("ringbuffer allready at position %d", position);
+// 		printf("ringbuffer allready at position %d\n", position);
 		return;
 	}
 
@@ -251,7 +269,7 @@ void PrivateReadSource::rb_seek_to_file_position( nframes_t position )
 	m_rbRelativeFileReadPos = fileposition;
 }
 
-void PrivateReadSource::process_ringbuffer( audio_sample_t * framebuffer, bool seeking)
+void MonoReader::process_ringbuffer( audio_sample_t * framebuffer, bool seeking)
 {
 	// Do nothing if we passed the lenght of the AudioFile.
 	if (m_rbFileReadPos >= m_length) {
@@ -279,7 +297,11 @@ void PrivateReadSource::process_ringbuffer( audio_sample_t * framebuffer, bool s
 		}
 		printf("doing a full seek buffer fill\n");
 	} else 	if (m_syncInProgress) {
-		toRead = m_chunkSize * 2;
+		// Currently, we fill the buffer completely.
+		// For some reason, filling it with 1/4 at a time
+		// doesn't fill it consitently, and thus giving audible artifacts.
+/*		toRead = m_chunkSize * 2;*/
+		toRead = writeSpace;
 	} else if (chunkCount == 0) {
 		// If we are nearing the end of the source file it could be possible
 		// we only need to read the last samples which is smaller in size then 
@@ -287,7 +309,7 @@ void PrivateReadSource::process_ringbuffer( audio_sample_t * framebuffer, bool s
 		if ( (int) (m_source->m_length - m_rbFileReadPos) <= m_chunkSize) {
 			toRead = m_source->m_length - m_rbFileReadPos;
 		} else {
-		printf("chunkCount == 0, but not at end of file, this shouldn't happen!!\n");
+			printf("MonoReader:: chunkCount == 0, but not at end of file, this shouldn't happen!!\n");
 			return;
 		}
 	}
@@ -300,14 +322,14 @@ void PrivateReadSource::process_ringbuffer( audio_sample_t * framebuffer, bool s
 	
 }
 
-void PrivateReadSource::recover_from_buffer_underrun(nframes_t position)
+void MonoReader::recover_from_buffer_underrun(nframes_t position)
 {
 	printf("buffer underrun detected!\n");
 	m_bufferUnderRunDetected = 1;
 	start_resync(position);
 }
 
-void PrivateReadSource::start_resync( nframes_t position )
+void MonoReader::start_resync( nframes_t position )
 {
 // 	printf("starting resync!\n");
 	m_syncPos = position;
@@ -315,7 +337,7 @@ void PrivateReadSource::start_resync( nframes_t position )
 	m_needSync = 1;
 }
 
-void PrivateReadSource::finish_resync()
+void MonoReader::finish_resync()
 {
 // 	printf("sync finished\n");
 	m_needSync = 0;
@@ -324,7 +346,7 @@ void PrivateReadSource::finish_resync()
 	m_syncInProgress = false;
 }
 
-void PrivateReadSource::sync(audio_sample_t* framebuffer)
+void MonoReader::sync(audio_sample_t* framebuffer)
 {
 	PENTER;
 	if (!m_needSync) {
@@ -336,6 +358,9 @@ void PrivateReadSource::sync(audio_sample_t* framebuffer)
 		m_syncInProgress = true;
 	}
 	
+	// Currently, we fill the buffer completely.
+	// For some reason, filling it with 1/4 at a time
+	// doesn't fill it consitently, and thus giving audible artifacts.
 	process_ringbuffer(framebuffer);
 	
 	if (m_buffer->write_space() == 0) {
@@ -346,18 +371,18 @@ void PrivateReadSource::sync(audio_sample_t* framebuffer)
 }
 
 
-void PrivateReadSource::set_audio_clip( AudioClip * clip )
+void MonoReader::set_audio_clip( AudioClip * clip )
 {
 	Q_ASSERT(!m_clip);
 	m_clip = clip;
 }
 
-Peak* PrivateReadSource::get_peak( )
+Peak* MonoReader::get_peak( )
 {
 	return m_peak;
 }
 
-void PrivateReadSource::prepare_buffer( )
+void MonoReader::prepare_buffer( )
 {
 	PENTER;
 
@@ -383,31 +408,30 @@ void PrivateReadSource::prepare_buffer( )
 	start_resync(m_clip->get_song()->get_working_frame());
 }
 
-BufferStatus PrivateReadSource::get_buffer_status()
+BufferStatus* MonoReader::get_buffer_status()
 {
-	BufferStatus status;
 	int freespace = m_buffer->write_space();
 
 	if (m_rbFileReadPos >= m_length) {
-		status.fillStatus =  100;
+		m_bufferstatus->fillStatus =  100;
 		freespace = 0;
 	} else {
-		status.fillStatus = (int) (((float)freespace / m_bufferSize) * 100);
+		m_bufferstatus->fillStatus = (int) (((float)freespace / m_bufferSize) * 100);
 	}
 	
-	status.bufferUnderRun = m_bufferUnderRunDetected;
-	status.needSync = m_needSync;
+	m_bufferstatus->bufferUnderRun = m_bufferUnderRunDetected;
+	m_bufferstatus->needSync = m_needSync;
 
 	if ( ! m_isCompressedFile) {
-		status.priority = (int) (freespace / m_chunkSize);
+		m_bufferstatus->priority = (int) (freespace / m_chunkSize);
 	} else {
-		status.priority = (int) (freespace / m_chunkSize);
+		m_bufferstatus->priority = (int) (freespace / m_chunkSize);
 	}
 	
-	return status;
+	return m_bufferstatus;
 }
 
-void PrivateReadSource::set_active(bool active)
+void MonoReader::set_active(bool active)
 {
 	if (m_active == active)
 		return;

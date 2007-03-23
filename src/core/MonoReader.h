@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PrivateReadSource.h,v 1.6 2007/01/11 14:57:37 r_sijrier Exp $
+$Id: MonoReader.h,v 1.1 2007/03/23 13:09:33 r_sijrier Exp $
 */
 
 #ifndef PRIVATE_READSOURCE_H
@@ -35,7 +35,7 @@ class ReadSource;
 class QString;
 struct BufferStatus;
 
-class PrivateReadSource : public AudioSource
+class MonoReader : public AudioSource
 {
 public :
 	int rb_read(audio_sample_t* dst, nframes_t start, nframes_t cnt);
@@ -43,7 +43,7 @@ public :
 	void rb_seek_to_file_position(nframes_t position);
 
 	void process_ringbuffer(audio_sample_t* framebuffer, bool seeking=false);
-	BufferStatus get_buffer_status();
+	BufferStatus* get_buffer_status();
 
 	int file_read(audio_sample_t* dst, nframes_t start, nframes_t cnt) const;
 
@@ -58,8 +58,8 @@ public :
 	size_t is_active() const;
 
 private:
-	PrivateReadSource(ReadSource* source, int sourceChannelCount, int channelNumber, const QString& fileName);
-	~PrivateReadSource();
+	MonoReader(ReadSource* source, int sourceChannelCount, int channelNumber, const QString& fileName);
+	~MonoReader();
 	
 	ReadSource*	m_source;
 	RingBufferNPT<float>*	m_buffer;
@@ -85,6 +85,7 @@ private:
 	int		m_prio;
 	
 	AudioClip*	m_clip;
+	BufferStatus*	m_bufferstatus;
 	QString		m_fileName;
 	
 
@@ -98,7 +99,7 @@ private:
 	
 };
 
-inline size_t PrivateReadSource::is_active() const
+inline size_t MonoReader::is_active() const
 {
 	return m_active;
 }

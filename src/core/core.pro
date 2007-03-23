@@ -33,7 +33,7 @@ SOURCES = AudioClip.cpp \
 	InputEngine.cpp \
 	Mixer.cpp \
 	Peak.cpp \
-	PrivateReadSource.cpp \
+	MonoReader.cpp \
 	Project.cpp \
 	ProjectManager.cpp \
 	ReadSource.cpp \
@@ -68,7 +68,7 @@ HEADERS = precompile.h \
 	InputEngine.h \
 	Mixer.h \
 	Peak.h \
-	PrivateReadSource.h \
+	MonoReader.h \
 	Project.h \
 	ProjectManager.h \
 	ReadSource.h \

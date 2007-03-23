@@ -213,9 +213,9 @@ void AudioClip::set_sources_active_state()
 	}
 	
 	if ( m_track->is_muted() || m_track->is_muted_by_solo() || is_muted() ) {
-			m_readSource->set_active(false);
+		m_readSource->set_active(false);
 	} else {
-			m_readSource->set_active(true);
+		m_readSource->set_active(true);
 	}
 
 }
