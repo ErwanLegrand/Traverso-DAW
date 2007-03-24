@@ -2,21 +2,22 @@ Traverso - The Free Professional Audio Tools for Linux V x.x.x
 
 
 
-Traverso Contextual  ACTIONS - QUICK REFERENCE GUIDE, FOR THE IMPATIENTS ;-)
+Traverso Contextual  ACTIONS - QUICK REFERENCE GUIDE, FOR THE IMPATIENT ;-)
 ===========================================================
 
     ********************************************************************
-             IF YOU HAVE NEVER USED Traverso, READ AT LEAST THIS !
-    
+             IF YOU HAVE NEVER USED Traverso, READ AT LEAST THIS PART!
+
     Traverso is not hard to use, but you need to open your mind. Traverso
-    uses keyboard plus mouse actions, that we call "jmb". For short,
-    every time you see in this guide something like <K> , it will mean
-    "press a key 'K' in the keyboard" (only press, not hold it
-    !),pretty much as if you have clicked the key). Same way, [K]
-    means hold it,<<K>> means double- press the key and <KK> means
-    press two keys.  Examples : <J> - press the J [J] - hold the J
-    <<J>> - double-press the J <HJ> - press H and J at the same time
-	       
+    uses keyboard plus mouse actions, we call this concept "jmb". In short,
+    every time you see in this guide something like <K>, it means
+    "press 'K' key on the keyboard" (only press it, don't hold it!),
+    pretty much as if you would've clicked a mousebutton). Similarly, [K]
+    means hold it,<<K>> means double-press the key and <KK> means
+    press two keys at the same time. Examples : <J> - press the J 
+    [J] - hold the J, <<J>> - double-press the J, 
+    <HJ> - press H and J at the same time.
+
     Now, imagine that you are playing a very sophisticated video-game,
     and enjoy the power of Traverso :-)
     *********************************************************************
@@ -26,15 +27,14 @@ Traverso Contextual  ACTIONS - QUICK REFERENCE GUIDE, FOR THE IMPATIENTS ;-)
     TRY THIS :
     ==========
 
-    <PM> - Open the project manager , where you can import audio,
+    <PM> - Open the project manager, where you can import audio,
     		  create songs, and so on.
 
-    <CTRL S> - ( IT IS NOT HOLD CTRL AND THEN PRESS S !! IT IS CTRL
-    		  AND S PRESSED FASTLY AT THE SAME TIME ) - Save
-    		  current project.
+    <CTRL S> - ( It is not hold CTRL and press S!! It really means, press CTRL
+    		  and S at the same time ) - Save current project.
 
     <SPACE> - Play/Stop. If you have armed any track ( by <A> in the
-    		  track panel), it will record too.
+    		  track panel), it will record the input over that track too.
 
     [Z] - ( Hold Z and move the mouse ) - Magic Zoom Tool (the best of
     		  all known audio applications, including those from
@@ -44,7 +44,7 @@ Traverso Contextual  ACTIONS - QUICK REFERENCE GUIDE, FOR THE IMPATIENTS ;-)
     		  as the active one, and also you set the working
     		  position (from where play will start, for example).
 
-    [TAB] - The shuttle tool . Hold TAB and move the mouse left/right
+    [TAB] - The shuttle tool. Hold TAB and move the mouse left/right
 
     <<ESC>> - Exits Traverso
 
@@ -53,19 +53,23 @@ Traverso Contextual  ACTIONS - QUICK REFERENCE GUIDE, FOR THE IMPATIENTS ;-)
 	READ THE FULL Traverso Contextual  MAP SECTION IN THIS GUIDE BELOW FOR MORE
 	ADVANCED ACTIONS
     *********************************************************************
-    
 
+
+
+***
+NOTE: some parts of this help-file haven't been updated in a while, as traverso
+no has a much better PDF-manual.
+***
 
 
 
 WELCOME TO Traverso! 
 ==================
 
-Hello! By now you have already started Traverso, noticed the lack of
-menus, found the layout very cool, but couldn't do anything clicking
-on anywhere, so you decided to resort to the Help Reference the
-program gave you.  You also were about to give up using the program
-(and click on the little X button that your favorite window manager
+Hello! By now you have already started Traverso, found the layout very cool,
+but couldn't do much by clicking around, so you decided to resort to the
+Help Reference the program gave you. You also were about to give up using
+the program (and click on the little X button that your favorite window manager
 gives you to stop programs).
 
 Don't worry!
@@ -102,7 +106,7 @@ the mouse back and forth in the screen and generally, you end up with
 a sharp wrist pain. We think that using only a 1-button device when
 you have a 101-keys one right in front of you, is kind of a waste.
 
-Althought the tradicional kind of interface is interesting for
+Althought the traditional kind of interface is interesting for
 Graphics, Word, Vector and other types of editing programs, experience
 shows that for audio, unfortunately, there are too many different
 types of editing for only type of action.  Bottom line is that the
