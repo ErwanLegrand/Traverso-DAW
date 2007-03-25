@@ -80,6 +80,7 @@ private:
 	
 signals:
 	void positionChanged();
+	void descriptionChanged();
 
 };
 

@@ -23,8 +23,10 @@
 #include "Mixer.h"
 
 #include <QString>
+#include <QStringList>
 #include <QDateTime>
 #include <QPixmapCache>
+#include <QRegExp>
 
 
 QString frame_to_smpte ( nframes_t nframes, int rate )
@@ -41,6 +43,18 @@ QString frame_to_smpte ( nframes_t nframes, int rate )
 	spos.sprintf ( " %02d:%02d,%02d", mins, secs, frames );
 
 	return spos;
+}
+
+nframes_t smpte_to_frame( QString str, int rate )
+{
+	nframes_t out = 0;
+	QStringList lst = str.simplified().split(QRegExp("[;,:]"), QString::SkipEmptyParts);
+
+	if (lst.size() >= 1) out += lst.at(0).toInt() * 60 * rate;
+	if (lst.size() >= 2) out += lst.at(1).toInt() * rate;
+	if (lst.size() >= 3) out += lst.at(2).toInt() * rate / 30;
+
+	return out;
 }
 
 QString coefficient_to_dbstring ( float coeff )

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2007 Remon Sijrier 
+    Copyright (C) 2007 Remon Sijrier, Nicola Doebelin 
  
     This file is part of Traverso
  
@@ -21,6 +21,10 @@
 
 #include "MarkerDialog.h"
 
+#include <QMessageBox>
+#include <QHeaderView>
+#include <QPushButton>
+#include <QString>
 #include <ProjectManager.h>
 #include <Project.h>
 #include <Song.h>
@@ -38,34 +42,106 @@ MarkerDialog::MarkerDialog(QWidget * parent)
 	
 	if (m_project) {
 		setWindowTitle("Marker Editor - Project " + m_project->get_title());
-		update_marker_treeview();
+		set_project(m_project);
 	}
+
+	QString mask = "99:99,99";
+	lineEditPosition->setInputMask(mask);
 	
-	
+	// hide the first column if necessary
+	markersTreeWidget->header()->setSectionHidden(0, !checkBoxAllSongs->isChecked());
+
+	// connect signals which require an update of the song list
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
+	connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(update_songs()));
+	connect(m_project, SIGNAL(songRemoved(Song*)), this, SLOT(update_songs()));
+
+	// connect signals which require an update of the treeWidget's items
+	connect(comboBoxDisplaySong, SIGNAL(currentIndexChanged(int)), this, SLOT(update_marker_treeview()));
+	connect(checkBoxAllSongs, SIGNAL(toggled(bool)), this, SLOT(all_songs_toggled(bool)));
+
+	// connect other stuff related to the treeWidget
 	connect(lineEditTitle, SIGNAL(textEdited(const QString &)), this, SLOT(description_changed(const QString &)));
+	connect(lineEditPosition, SIGNAL(textEdited(const QString &)), this, SLOT(position_changed(const QString &)));
 	connect(markersTreeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
 		 this, SLOT(item_changed(QTreeWidgetItem *, QTreeWidgetItem *)));
+	connect(pushButtonRemove, SIGNAL(clicked()), this, SLOT(remove_marker()));
+
+	// connect the CD-Text widgets (LineEdits and ToolButtons)
+	connect(lineEditPosition, SIGNAL(returnPressed()), this, SLOT(position_enter()));
+	connect(lineEditTitle, SIGNAL(returnPressed()), this, SLOT(title_enter()));
+	connect(lineEditComposer, SIGNAL(returnPressed()), this, SLOT(composer_enter()));
+	connect(lineEditPerformer, SIGNAL(returnPressed()), this, SLOT(performer_enter()));
+	connect(lineEditArranger, SIGNAL(returnPressed()), this, SLOT(arranger_enter()));
+	connect(lineEditMessage, SIGNAL(returnPressed()), this, SLOT(message_enter()));
+	connect(lineEditSongwriter, SIGNAL(returnPressed()), this, SLOT(songwriter_enter()));
+	connect(lineEditIsrc, SIGNAL(returnPressed()), this, SLOT(isrc_enter()));
+
+	connect(toolButtonTitleAll, SIGNAL(clicked()), this, SLOT(title_all()));
+	connect(toolButtonComposerAll, SIGNAL(clicked()), this, SLOT(composer_all()));
+	connect(toolButtonPerformerAll, SIGNAL(clicked()), this, SLOT(performer_all()));
+	connect(toolButtonArrangerAll, SIGNAL(clicked()), this, SLOT(arranger_all()));
+	connect(toolButtonMessageAll, SIGNAL(clicked()), this, SLOT(message_all()));
+	connect(toolButtonSongwriterAll, SIGNAL(clicked()), this, SLOT(songwriter_all()));
+	connect(toolButtonCopyAll, SIGNAL(clicked()), this, SLOT(copy_all()));
+	connect(toolButtonPEmphAll, SIGNAL(clicked()), this, SLOT(pemph_all()));
 }
 
 void MarkerDialog::set_project(Project * project)
 {
 	m_project = project;
+	comboBoxDisplaySong->clear();
 	
 	if (! m_project) {
-		// clear dialog stuff
 		return;
 	}
 	
+	// fill the combo box with the names of the songs
+	m_songlist = m_project->get_songs();
+	for (int i = 0; i < m_songlist.size(); ++i) {
+		comboBoxDisplaySong->addItem(m_songlist.at(i)->get_title());
+	}
+
 	// Fill dialog with marker stuff....
 	update_marker_treeview();
 }
 
 void MarkerDialog::update_marker_treeview()
 {
+	// since the treeWidget will be cleared, point m_marker somewhere else
+	m_marker = (Marker*)0;
 	markersTreeWidget->clear();
 
-	foreach(Song* song, m_project->get_songs()) {
+	if (!m_songlist.size() || !m_project) {
+		return;
+	}
+
+	if (checkBoxAllSongs->isChecked()) { // loop through all songs
+		int i = 1;
+		foreach(Song* song, m_project->get_songs()) {
+
+			TimeLine* tl = song->get_timeline();
+		
+			foreach(Marker* marker, tl->get_markers()) {
+				QString name = marker->get_description();
+				QString pos = frame_to_smpte(marker->get_when(), m_project->get_rate());
+
+				QTreeWidgetItem* item = new QTreeWidgetItem(markersTreeWidget);
+				item->setText(0, QString("%1 %2").arg(i, 2, 10, QLatin1Char('0')).arg(song->get_title()));
+				item->setText(1, pos.simplified());
+				item->setText(2, name);
+				item->setData(0, Qt::UserRole, marker->get_id());
+			}
+			++i;
+		}
+	} else { // pick one song
+
+		if (comboBoxDisplaySong->currentIndex() >= m_songlist.size()) {
+			return;
+		}
+
+		int i = comboBoxDisplaySong->currentIndex();
+		Song *song = m_songlist.at(i);
 
 		TimeLine* tl = song->get_timeline();
 		
@@ -74,13 +150,9 @@ void MarkerDialog::update_marker_treeview()
 			QString pos = frame_to_smpte(marker->get_when(), m_project->get_rate());
 
 			QTreeWidgetItem* item = new QTreeWidgetItem(markersTreeWidget);
-			item->setText(0, pos);
-			item->setText(1, name);
-
-			// One can use the id to easily and very robustly get the marker via this id !!
-			// See for example usage SongManagerDialog::songitem_clicked();
-			// One also can get the creation time of the Marker via this id, with 
-			// the convenience function QTime extract_date_time(qint64 id), declared in Utils.h
+			item->setText(0, QString("%1 %2").arg(i, 2, 10, QLatin1Char('0')).arg(song->get_title()));
+			item->setText(1, pos.simplified());
+			item->setText(2, name);
 			item->setData(0, Qt::UserRole, marker->get_id());
 		}
 	}
@@ -90,6 +162,11 @@ void MarkerDialog::update_marker_treeview()
 
 void MarkerDialog::item_changed(QTreeWidgetItem * current, QTreeWidgetItem * previous)
 {
+	if (!current) {
+		m_marker = (Marker*)0;
+		return;
+	}
+
 	m_marker = get_marker(current->data(0, Qt::UserRole).toLongLong());
 
 	if (!m_marker) {
@@ -98,6 +175,7 @@ void MarkerDialog::item_changed(QTreeWidgetItem * current, QTreeWidgetItem * pre
 
 	if (previous) {
 		Marker *marker = get_marker(previous->data(0, Qt::UserRole).toLongLong());
+		marker->set_when(smpte_to_frame(lineEditPosition->text(), m_project->get_rate()));
 		marker->set_description(lineEditTitle->text());
 		marker->set_performer(lineEditPerformer->text());
 		marker->set_composer(lineEditComposer->text());
@@ -109,6 +187,7 @@ void MarkerDialog::item_changed(QTreeWidgetItem * current, QTreeWidgetItem * pre
 		marker->set_copyprotect(checkBoxCopy->isChecked());
 	}
 
+	lineEditPosition->setText(frame_to_smpte(m_marker->get_when(), m_project->get_rate()));
 	lineEditTitle->setText(m_marker->get_description());
 	lineEditPerformer->setText(m_marker->get_performer());
 	lineEditComposer->setText(m_marker->get_composer());
@@ -125,16 +204,26 @@ void MarkerDialog::description_changed(const QString &s)
 {
 	QTreeWidgetItem* item = markersTreeWidget->currentItem();
 
-	if (!item) {
+	if (!item || !m_marker) {
 		return;
 	}
 
-	if (!m_marker) {
+	item->setText(2, s);
+	m_marker->set_description(s);
+}
+
+// update the entry in the tree widget in real time
+void MarkerDialog::position_changed(const QString &s)
+{
+	QTreeWidgetItem* item = markersTreeWidget->currentItem();
+
+	if (!item || !m_marker) {
 		return;
 	}
 
 	item->setText(1, s);
-	m_marker->set_description(s);
+	m_marker->set_when(smpte_to_frame(s, m_project->get_rate()));
+	markersTreeWidget->sortItems(0, Qt::AscendingOrder);
 }
 
 // find the marker based on it's id. Since each song has it's own timeline,
@@ -154,6 +243,243 @@ Marker * MarkerDialog::get_marker(qint64 id)
 	return 0;
 }
 
+// One slot per widget, to avoid using QObject::sender() to determine the sender
+void MarkerDialog::position_enter()
+{
+	next_item(lineEditPosition);
+}
+
+void MarkerDialog::title_enter()
+{
+	next_item(lineEditTitle);
+}
+
+void MarkerDialog::performer_enter()
+{
+	next_item(lineEditPerformer);
+}
+
+void MarkerDialog::composer_enter()
+{
+	next_item(lineEditComposer);
+}
+
+void MarkerDialog::arranger_enter()
+{
+	next_item(lineEditArranger);
+}
+
+void MarkerDialog::songwriter_enter()
+{
+	next_item(lineEditSongwriter);
+}
+
+void MarkerDialog::message_enter()
+{
+	next_item(lineEditMessage);
+}
+
+void MarkerDialog::isrc_enter()
+{
+	next_item(lineEditIsrc);
+}
+
+// this handles the case when "enter" is pressed on a lineEdit. It sets the next item current,
+// and selects the text in the lineEdit
+void MarkerDialog::next_item(QLineEdit *ledit)
+{
+	QTreeWidgetItem *pitem = markersTreeWidget->currentItem();
+	int max = markersTreeWidget->topLevelItemCount();
+	int idx = markersTreeWidget->indexOfTopLevelItem(pitem);
+	int nidx = 0;
+
+	if (idx < max-1) {
+		nidx = idx + 1;
+	}
+
+	QTreeWidgetItem *citem = markersTreeWidget->topLevelItem(nidx);
+	markersTreeWidget->setCurrentItem(citem);
+	ledit->setSelection(0, ledit->text().length());
+}
+
+void MarkerDialog::title_all()
+{
+	QString str = lineEditTitle->text();
+	if (QMessageBox::question(this, tr("Set all Titles"), 
+					tr("Do you really want to set all titles to\n\"")
+					+str+"\"?", QMessageBox::Yes | QMessageBox::No, 
+					QMessageBox::Yes) == QMessageBox::No)
+	{
+		return;
+	}
+
+	for (int i = 0; i < markersTreeWidget->topLevelItemCount(); ++i) {
+		QTreeWidgetItem *it = markersTreeWidget->topLevelItem(i);
+		Marker *m = get_marker(it->data(0, Qt::UserRole).toLongLong());
+		m->set_description(str);
+		it->setText(1, str);
+	}
+}
+
+void MarkerDialog::performer_all()
+{
+	QString str = lineEditPerformer->text();
+	if (QMessageBox::question(this, tr("Set all Performers"), 
+					tr("Do you really want to set all performers to\n\"")
+					+str+"\"?", QMessageBox::Yes | QMessageBox::No, 
+					QMessageBox::Yes) == QMessageBox::No)
+	{
+		return;
+	}
+
+	for (int i = 0; i < markersTreeWidget->topLevelItemCount(); ++i) {
+		QTreeWidgetItem *it = markersTreeWidget->topLevelItem(i);
+		Marker *m = get_marker(it->data(0, Qt::UserRole).toLongLong());
+		m->set_performer(str);
+	}
+}
+
+void MarkerDialog::composer_all()
+{
+	QString str = lineEditComposer->text();
+	if (QMessageBox::question(this, tr("Set all Composers"), 
+					tr("Do you really want to set all composers to\n\"")
+					+str+"\"?", QMessageBox::Yes | QMessageBox::No, 
+					QMessageBox::Yes) == QMessageBox::No)
+	{
+		return;
+	}
+
+	for (int i = 0; i < markersTreeWidget->topLevelItemCount(); ++i) {
+		QTreeWidgetItem *it = markersTreeWidget->topLevelItem(i);
+		Marker *m = get_marker(it->data(0, Qt::UserRole).toLongLong());
+		m->set_composer(str);
+	}
+}
+
+void MarkerDialog::arranger_all()
+{
+	QString str = lineEditArranger->text();
+	if (QMessageBox::question(this, tr("Set all Arrangers"), 
+					tr("Do you really want to set all arrangers to\n\"")
+					+str+"\"?", QMessageBox::Yes | QMessageBox::No, 
+					QMessageBox::Yes) == QMessageBox::No)
+	{
+		return;
+	}
+
+	for (int i = 0; i < markersTreeWidget->topLevelItemCount(); ++i) {
+		QTreeWidgetItem *it = markersTreeWidget->topLevelItem(i);
+		Marker *m = get_marker(it->data(0, Qt::UserRole).toLongLong());
+		m->set_arranger(str);
+	}
+}
+
+void MarkerDialog::songwriter_all()
+{
+	QString str = lineEditSongwriter->text();
+	if (QMessageBox::question(this, tr("Set all Songwriters"), 
+					tr("Do you really want to set all songwriters to\n\"")
+					+str+"\"?", QMessageBox::Yes | QMessageBox::No, 
+					QMessageBox::Yes) == QMessageBox::No)
+	{
+		return;
+	}
+
+	for (int i = 0; i < markersTreeWidget->topLevelItemCount(); ++i) {
+		QTreeWidgetItem *it = markersTreeWidget->topLevelItem(i);
+		Marker *m = get_marker(it->data(0, Qt::UserRole).toLongLong());
+		m->set_songwriter(str);
+	}
+}
+
+void MarkerDialog::message_all()
+{
+	QString str = lineEditSongwriter->text();
+	if (QMessageBox::question(this, tr("Set all Messages"), 
+					tr("Do you really want to set all messages to\n\"")
+					+str+"\"?", QMessageBox::Yes | QMessageBox::No, 
+					QMessageBox::Yes) == QMessageBox::No)
+	{
+		return;
+	}
+
+	for (int i = 0; i < markersTreeWidget->topLevelItemCount(); ++i) {
+		QTreeWidgetItem *it = markersTreeWidget->topLevelItem(i);
+		Marker *m = get_marker(it->data(0, Qt::UserRole).toLongLong());
+		m->set_message(str);
+	}
+}
+
+void MarkerDialog::copy_all()
+{
+	QString str = "off";
+
+	if (checkBoxCopy->isChecked()) {
+		str = "on";
+	}
+
+	if (QMessageBox::question(this, tr("Set all Copy Protection Flags"), 
+					tr("Do you really want to set all copy protection flags to\n\"")
+					+str+"\"?", QMessageBox::Yes | QMessageBox::No, 
+					QMessageBox::Yes) == QMessageBox::No)
+	{
+		return;
+	}
+
+	for (int i = 0; i < markersTreeWidget->topLevelItemCount(); ++i) {
+		QTreeWidgetItem *it = markersTreeWidget->topLevelItem(i);
+		Marker *m = get_marker(it->data(0, Qt::UserRole).toLongLong());
+		m->set_copyprotect(checkBoxCopy->isChecked());
+	}
+}
+
+void MarkerDialog::pemph_all()
+{
+	QString str = "off";
+
+	if (checkBoxPreEmph->isChecked()) {
+		str = "on";
+	}
+
+	if (QMessageBox::question(this, tr("Set all Pre-Emphasis Flags"), 
+					tr("Do you really want to set all pre-emphasis flags to\n\"")
+					+str+"\"?", QMessageBox::Yes | QMessageBox::No, 
+					QMessageBox::Yes) == QMessageBox::No)
+	{
+		return;
+	}
+
+	for (int i = 0; i < markersTreeWidget->topLevelItemCount(); ++i) {
+		QTreeWidgetItem *it = markersTreeWidget->topLevelItem(i);
+		Marker *m = get_marker(it->data(0, Qt::UserRole).toLongLong());
+		m->set_preemphasis(checkBoxPreEmph->isChecked());
+	}
+}
+
+void MarkerDialog::update_songs()
+{
+	// this one does all we need
+	set_project(m_project);
+}
+
+// resizes the columns in the treeWidget and updates it's content
+void MarkerDialog::all_songs_toggled(bool b)
+{
+	markersTreeWidget->header()->setSectionHidden(0, !b);
+	update_marker_treeview();
+}
+
+void MarkerDialog::marker_moved()
+{
+
+}
+
+// Remon, need your help!
+// Couldn't find a working solution to delete markers via the button properly
+void MarkerDialog::remove_marker()
+{
+}
 
 //eof
 

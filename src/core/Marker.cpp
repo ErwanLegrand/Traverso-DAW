@@ -32,6 +32,15 @@ Marker::Marker(TimeLine* tl, nframes_t when, uint type)
 {
 	set_history_stack(m_timeline->get_history_stack());
 	m_id = create_id();
+
+	m_description = "";
+	m_performer = "";
+	m_composer = "";
+	m_arranger = "";
+	m_message = "";
+	m_isrc = "";
+	m_preemph = 0;
+	m_copyprotect = 0;
 }
 
 Marker::Marker(TimeLine * tl, const QDomNode node)
@@ -91,6 +100,7 @@ void Marker::set_when(nframes_t when)
 void Marker::set_description(const QString &s)
 {
 	m_description = s;
+	emit descriptionChanged();
 }
 
 void Marker::set_performer(const QString &s)
@@ -158,6 +168,5 @@ bool Marker::get_copyprotect()
 		return false;
 	}
 }
-
 
 //eof

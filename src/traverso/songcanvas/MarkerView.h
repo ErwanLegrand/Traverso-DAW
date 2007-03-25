@@ -51,7 +51,7 @@ private:
 	
 private slots:
 	void update_position();
-	
+	void update_drawing();
 };
 
 #endif

@@ -27,6 +27,7 @@
 
 class Project;
 class Marker;
+class Song;
 
 class MarkerDialog : public QDialog, protected Ui::MarkerDialog
 {
@@ -40,16 +41,39 @@ public:
 private:
 	Project* m_project;
 	Marker* m_marker;
+	QList<Song*> m_songlist;
 
 	Marker* get_marker(qint64);
+	void next_item(QLineEdit *);
 
 private slots:
 	void set_project(Project* project);
 	void update_marker_treeview();
 	void item_changed(QTreeWidgetItem *, QTreeWidgetItem *);
 	void description_changed(const QString &);
+	void position_changed(const QString &);
+	void marker_moved();
+	void update_songs();
+	void all_songs_toggled(bool);
+	void remove_marker();
 
+	void title_enter();
+	void position_enter();
+	void performer_enter();
+	void composer_enter();
+	void arranger_enter();
+	void songwriter_enter();
+	void message_enter();
+	void isrc_enter();
 
+	void title_all();
+	void performer_all();
+	void composer_all();
+	void arranger_all();
+	void songwriter_all();
+	void message_all();
+	void copy_all();
+	void pemph_all();
 };
 
 #endif

@@ -41,6 +41,7 @@ MarkerView::MarkerView(Marker* marker, SongView* sv, ViewItem* parentView)
 	load_theme_data();
 	
 	connect(m_marker, SIGNAL(positionChanged()), this, SLOT(update_position()));
+	connect(m_marker, SIGNAL(descriptionChanged()), this, SLOT(update_drawing()));
 }
 
 void MarkerView::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
@@ -119,6 +120,10 @@ void MarkerView::set_active(bool b)
 	update();
 }
 
-
+void MarkerView::update_drawing()
+{
+	calculate_bounding_rect();
+	update();
+}
 
 //eof

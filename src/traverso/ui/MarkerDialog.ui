@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>524</height>
+    <height>558</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -35,17 +35,10 @@
       </widget>
      </item>
      <item>
-      <widget class="QRadioButton" name="radioButtonCurrentSong" >
-       <property name="text" >
-        <string>current Song</string>
-       </property>
-       <property name="checked" >
-        <bool>true</bool>
-       </property>
-      </widget>
+      <widget class="QComboBox" name="comboBoxDisplaySong" />
      </item>
      <item>
-      <widget class="QRadioButton" name="radioButtonAllSongs" >
+      <widget class="QCheckBox" name="checkBoxAllSongs" >
        <property name="text" >
         <string>all Songs</string>
        </property>
@@ -58,6 +51,11 @@
      <property name="rootIsDecorated" >
       <bool>false</bool>
      </property>
+     <column>
+      <property name="text" >
+       <string>Song</string>
+      </property>
+     </column>
      <column>
       <property name="text" >
        <string>Position</string>
@@ -82,19 +80,8 @@
       <property name="spacing" >
        <number>6</number>
       </property>
-      <item row="0" column="0" colspan="2" >
-       <widget class="QCheckBox" name="checkBoxCopy" >
-        <property name="text" >
-         <string>Copy protection</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2" >
-       <widget class="QCheckBox" name="checkBoxPreEmph" >
-        <property name="text" >
-         <string>Pre-Emphasis</string>
-        </property>
-       </widget>
+      <item row="1" column="1" colspan="2" >
+       <widget class="QLineEdit" name="lineEditIsrc" />
       </item>
       <item row="1" column="0" >
        <widget class="QLabel" name="label_6" >
@@ -103,14 +90,64 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1" colspan="2" >
-       <widget class="QLineEdit" name="lineEditIsrc" />
+      <item row="3" column="2" >
+       <widget class="QToolButton" name="toolButtonPEmphAll" >
+        <property name="toolTip" >
+         <string>Apply to all</string>
+        </property>
+        <property name="text" >
+         <string>...</string>
+        </property>
+        <property name="icon" >
+         <iconset>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2" >
+       <widget class="QToolButton" name="toolButtonCopyAll" >
+        <property name="toolTip" >
+         <string>Apply to all</string>
+        </property>
+        <property name="text" >
+         <string>...</string>
+        </property>
+        <property name="icon" >
+         <iconset>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2" >
+       <widget class="QCheckBox" name="checkBoxPreEmph" >
+        <property name="text" >
+         <string>Pre-Emphasis</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="2" >
+       <widget class="QCheckBox" name="checkBoxCopy" >
+        <property name="text" >
+         <string>Copy protection</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" >
+       <widget class="QLabel" name="label_9" >
+        <property name="text" >
+         <string>Position:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" colspan="2" >
+       <widget class="QLineEdit" name="lineEditPosition" />
       </item>
      </layout>
     </widget>
    </item>
    <item>
     <widget class="QTabWidget" name="tabWidget" >
+     <property name="toolTip" >
+      <string/>
+     </property>
      <property name="currentIndex" >
       <number>0</number>
      </property>
@@ -137,8 +174,14 @@
        </item>
        <item row="0" column="2" >
         <widget class="QToolButton" name="toolButtonTitleAll" >
+         <property name="toolTip" >
+          <string>Apply to all</string>
+         </property>
          <property name="text" >
           <string>...</string>
+         </property>
+         <property name="icon" >
+          <iconset>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
          </property>
         </widget>
        </item>
@@ -154,8 +197,14 @@
        </item>
        <item row="1" column="2" >
         <widget class="QToolButton" name="toolButtonPerformerAll" >
+         <property name="toolTip" >
+          <string>Apply to all</string>
+         </property>
          <property name="text" >
           <string>...</string>
+         </property>
+         <property name="icon" >
+          <iconset>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
          </property>
         </widget>
        </item>
@@ -171,8 +220,14 @@
        </item>
        <item row="2" column="2" >
         <widget class="QToolButton" name="toolButtonComposerAll" >
+         <property name="toolTip" >
+          <string>Apply to all</string>
+         </property>
          <property name="text" >
           <string>...</string>
+         </property>
+         <property name="icon" >
+          <iconset>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
          </property>
         </widget>
        </item>
@@ -201,8 +256,14 @@
        </item>
        <item row="0" column="2" >
         <widget class="QToolButton" name="toolButtonSongwriterAll" >
+         <property name="toolTip" >
+          <string>Apply to all</string>
+         </property>
          <property name="text" >
           <string>...</string>
+         </property>
+         <property name="icon" >
+          <iconset>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
          </property>
         </widget>
        </item>
@@ -218,8 +279,14 @@
        </item>
        <item row="1" column="2" >
         <widget class="QToolButton" name="toolButtonArrangerAll" >
+         <property name="toolTip" >
+          <string>Apply to all</string>
+         </property>
          <property name="text" >
           <string>...</string>
+         </property>
+         <property name="icon" >
+          <iconset>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
          </property>
         </widget>
        </item>
@@ -235,8 +302,14 @@
        </item>
        <item row="2" column="2" >
         <widget class="QToolButton" name="toolButtonMessageAll" >
+         <property name="toolTip" >
+          <string>Apply to all</string>
+         </property>
          <property name="text" >
           <string>...</string>
+         </property>
+         <property name="icon" >
+          <iconset>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
          </property>
         </widget>
        </item>
@@ -252,6 +325,13 @@
      <property name="spacing" >
       <number>6</number>
      </property>
+     <item>
+      <widget class="QPushButton" name="pushButtonRemove" >
+       <property name="text" >
+        <string>&amp;Remove</string>
+       </property>
+      </widget>
+     </item>
      <item>
       <spacer>
        <property name="orientation" >
@@ -270,12 +350,37 @@
        <property name="text" >
         <string>&amp;Close</string>
        </property>
+       <property name="autoDefault" >
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
     </layout>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>markersTreeWidget</tabstop>
+  <tabstop>checkBoxCopy</tabstop>
+  <tabstop>toolButtonCopyAll</tabstop>
+  <tabstop>checkBoxPreEmph</tabstop>
+  <tabstop>toolButtonPEmphAll</tabstop>
+  <tabstop>lineEditIsrc</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>lineEditTitle</tabstop>
+  <tabstop>toolButtonTitleAll</tabstop>
+  <tabstop>lineEditPerformer</tabstop>
+  <tabstop>toolButtonPerformerAll</tabstop>
+  <tabstop>lineEditComposer</tabstop>
+  <tabstop>toolButtonComposerAll</tabstop>
+  <tabstop>lineEditSongwriter</tabstop>
+  <tabstop>toolButtonSongwriterAll</tabstop>
+  <tabstop>lineEditArranger</tabstop>
+  <tabstop>toolButtonArrangerAll</tabstop>
+  <tabstop>lineEditMessage</tabstop>
+  <tabstop>toolButtonMessageAll</tabstop>
+  <tabstop>pushButtonClose</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -285,12 +390,28 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>333</x>
-     <y>510</y>
+     <x>389</x>
+     <y>488</y>
     </hint>
     <hint type="destinationlabel" >
      <x>332</x>
      <y>523</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxAllSongs</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>comboBoxDisplaySong</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>276</x>
+     <y>18</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>241</x>
+     <y>15</y>
     </hint>
    </hints>
   </connection>
