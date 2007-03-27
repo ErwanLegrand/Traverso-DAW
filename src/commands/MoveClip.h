@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveClip.h,v 1.10 2007/03/16 13:14:15 r_sijrier Exp $
+    $Id: MoveClip.h,v 1.11 2007/03/27 19:50:22 r_sijrier Exp $
 */
 
 #ifndef MOVECLIPACTION_H
@@ -68,6 +68,9 @@ private :
 		SongView* 	sv;
 		AudioClipView*	view;
 		QPoint		origPos;
+		nframes_t	origTrackStartFrame;
+		nframes_t	origTrackEndFrame;
+		int 		resync;
 	};
 			
 

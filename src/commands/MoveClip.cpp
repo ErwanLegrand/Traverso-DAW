@@ -136,6 +136,9 @@ void MoveClip::init_data(bool isCopy)
 	d->hScrollbarValue = d->sv->hscrollbar_value();
 	m_clip->set_snappable(false);
 	d->sv->start_shuttle(true, true);
+	d->origTrackStartFrame = m_clip->get_track_start_frame();
+	d->origTrackEndFrame = m_clip->get_track_end_frame();
+	d->resync = config().get_property("AudioClip", "SyncDuringDrag", "0").toInt(); 
 }
 
 
@@ -251,10 +254,8 @@ int MoveClip::jog()
 
 	// must be signed int because it can be negative
 	int diff_f = (cpointer().x() - d->origXPos - scrollbardif) * d->sv->scalefactor;
-	nframes_t origTrackStartFrame = m_clip->get_track_start_frame();
-	nframes_t origTrackEndFrame = m_clip->get_track_end_frame();
-	long newTrackStartFrame = origTrackStartFrame + diff_f;
-	nframes_t newTrackEndFrame = origTrackEndFrame + diff_f;
+	long newTrackStartFrame = d->origTrackStartFrame + diff_f;
+	nframes_t newTrackEndFrame = d->origTrackEndFrame + diff_f;
 // 	printf("newTrackStartFrame is %d\n", newTrackStartFrame);
 
 	// attention: newTrackStartFrame is unsigned, can't check for negative values
@@ -303,13 +304,19 @@ int MoveClip::jog()
 	m_newInsertFrame = newTrackStartFrame - (snapDiff * d->sv->scalefactor);
 
 	// store the new position only if the clip was moved, but not if it stuck to a snap position
-	if (origTrackStartFrame != m_newInsertFrame) {
+	if (d->origTrackStartFrame != m_newInsertFrame) {
 		d->origPos.setX(newXPos);
 	}
 
 	newPos.setX(m_newInsertFrame / d->sv->scalefactor);	
 	newPos.setY(d->view->pos().y());
-	d->view->setPos(newPos);
+	
+	if (d->resync) {
+		m_clip->set_track_start_frame(m_newInsertFrame);
+	} else {
+		d->view->setPos(newPos);
+	}
+	
 	
 	d->sv->update_shuttle_factor();
 
