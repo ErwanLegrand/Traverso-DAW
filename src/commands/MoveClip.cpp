@@ -138,7 +138,7 @@ void MoveClip::init_data(bool isCopy)
 	d->sv->start_shuttle(true, true);
 	d->origTrackStartFrame = m_clip->get_track_start_frame();
 	d->origTrackEndFrame = m_clip->get_track_end_frame();
-	d->resync = config().get_property("AudioClip", "SyncDuringDrag", "0").toInt(); 
+	d->resync = config().get_property("AudioClip", "SyncDuringDrag", "0").toInt();
 }
 
 
