@@ -83,7 +83,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 Traverso::Traverso(int &argc, char **argv )
 	: QApplication ( argc, argv )
 {
-	QCoreApplication::setOrganizationName("Traverso");
+	QCoreApplication::setOrganizationName("Traverso-daw");
 	QCoreApplication::setApplicationName("Traverso");
 	
 	config().check_and_load_configuration();
@@ -127,7 +127,7 @@ void Traverso::shutdown( int signal )
 	
 	switch(signal) {
 		case SIGINT:
-			printf("\nCatched the SIGINT signal!\nSaving your work....\n\nShutting down Traverso!\n\n");
+			printf("\nCatched the SIGINT signal!\nShutting down Traverso!\n\n");
 			pm().exit();
 			return;
 			break;
