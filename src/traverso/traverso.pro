@@ -52,7 +52,8 @@ HEADERS += \
 	widgets/InfoWidgets.h \
 	widgets/MessageWidget.h \
 	dialogs/CDTextDialog.h \
-	dialogs/MarkerDialog.h
+	dialogs/MarkerDialog.h \
+	dialogs/BusSelectorDialog.h
 SOURCES += \
 	Traverso.cpp \
 	AudioSourcesTreeWidget.cpp \
@@ -79,7 +80,8 @@ SOURCES += \
 	widgets/InfoWidgets.cpp \
 	widgets/MessageWidget.cpp \
 	dialogs/CDTextDialog.cpp \
-	dialogs/MarkerDialog.cpp
+	dialogs/MarkerDialog.cpp \
+	dialogs/BusSelectorDialog.cpp
 FORMS += ui/ExportWidget.ui \
 	ui/AudioSourcesManagerWidget.ui \
 	ui/PluginSelectorDialog.ui \
@@ -95,7 +97,8 @@ FORMS += ui/ExportWidget.ui \
 	ui/SongManagerDialog.ui \
 	ui/ProjectManagerDialog.ui \
 	ui/MarkerDialog.ui \
-	ui/CDTextDialog.ui
+	ui/CDTextDialog.ui \
+	ui/BusSelectorDialog.ui
 
 
 INCLUDEPATH += 	../core \
@@ -123,7 +126,7 @@ contains(DEFINES, JACK_SUPPORT): LIBS += -ljack
 
 QT += opengl
 
-QMAKE_LIBDIR = ./lib ../../lib 
+QMAKE_LIBDIR = ../../lib 
 
 TARGET = traverso
 

@@ -50,6 +50,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "dialogs/project/SongManagerDialog.h"
 #include "dialogs/CDTextDialog.h"
 #include "dialogs/MarkerDialog.h"
+#include "dialogs/BusSelectorDialog.h"
 
 
 // Always put me below _all_ includes, this is needed
@@ -170,6 +171,7 @@ Interface::Interface()
 	m_songManagerDialog = 0;
 	m_cdTextDialog = 0;
 	m_markerDialog = 0;
+	m_busSelector = 0;
 	
 	create_menus();
 	
@@ -470,6 +472,14 @@ Command * Interface::show_context_menu( )
 			if ( ! toplevelmenu ) {
 				printf("No menu for %s, creating new one\n", QS_C(className));
 				toplevelmenu = create_context_menu(item);
+				if (! toplevelmenu ) {
+					if (items.size() > 1) {
+						toplevelmenu = new QMenu();
+					} else {
+						return 0;
+					}
+						
+				}
 				m_contextMenus.insert(className, toplevelmenu);
 				connect(toplevelmenu, SIGNAL(triggered(QAction*)), this, SLOT(process_context_menu_action(QAction*)));
 			} else {
@@ -479,6 +489,9 @@ Command * Interface::show_context_menu( )
 			// Create submenus
 			toplevelmenu->addSeparator();
 			QMenu* menu = create_context_menu(item);
+			if (! menu) {
+				continue;
+			}
 			QAction* action = toplevelmenu->insertMenu(action, menu);
 			action->setText(className.remove("View"));
 		}
@@ -494,6 +507,11 @@ QMenu* Interface::create_context_menu(QObject* item )
 	QMenu* menu = new QMenu();
 	
 	QList<MenuData > list = ie().create_menudata_for( item );
+	
+	if (list.size() == 0) {
+		// Empty menu!
+		return 0;
+	}
 	
 	
 	qSort(list.begin(), list.end(), MenuData::smaller);
@@ -572,81 +590,13 @@ QMenu* Interface::create_context_menu(QObject* item )
 	return menu;
 }
 
-
-Command* Interface::select_bus_in()
+void Interface::show_busselector(Track* track)
 {
-	PENTER;
-	QMenu* menu = m_contextMenus.value("busInMenu");
-	
-	if (!menu) {
-		menu = new QMenu();
-		m_contextMenus.insert("busInMenu", menu);
-		connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(set_bus_in(QAction*)));
+	if (! m_busSelector) {
+		m_busSelector = new BusSelectorDialog(this);
 	}
-		
-	
-	menu->clear();
-	
-	QStringList names = audiodevice().get_capture_buses_names();
-	
-	foreach(QString name, names) {
-		menu->addAction(name);
-	}
-	
-	menu->exec(QCursor::pos());
-	
-	return (Command*) 0;
-}
-
-
-Command* Interface::select_bus_out()
-{
-	QMenu* menu = m_contextMenus.value("busOutMenu");
-	
-	if (!menu) {
-		menu = new QMenu();
-		m_contextMenus.insert("busOutMenu", menu);
-		connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(set_bus_out(QAction*)));
-	}
-		
-	
-	menu->clear();
-	
-	QStringList names = audiodevice().get_playback_buses_names();
-	
-	foreach(QString name, names) {
-		menu->addAction(name);
-	}
-	
-	menu->exec(QCursor::pos());
-	
-	return (Command*) 0;
-}
-
-void Interface::set_bus_in( QAction* action )
-{
-	PENTER;
-	QList<QObject* > items = cpointer().get_context_items();
-	foreach(QObject* obj, items) {
-		TrackView* tv = qobject_cast<TrackView*>(obj);
-		if (tv) {
-			tv->get_track()->set_bus_in(action->text().toAscii());
-			break;
-		}
-	}
-}
-
-void Interface::set_bus_out( QAction* action )
-{
-	PENTER;
-	QList<QObject* > items = cpointer().get_context_items();
-	foreach(QObject* obj, items) {
-		TrackView* tv = qobject_cast<TrackView*>(obj);
-		if (tv) {
-			tv->get_track()->set_bus_out(action->text().toAscii());
-			break;
-		}
-	}
+	m_busSelector->set_current_track(track);	
+	m_busSelector->show();
 }
 
 void Interface::select_fade_in_shape( )
@@ -821,4 +771,3 @@ void Interface::redo()
 }
 
 // eof
-

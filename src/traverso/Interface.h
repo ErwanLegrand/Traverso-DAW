@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 class Help;
 class Song;
+class Track;
 class Project;
 class BusMonitor;
 class InfoBox;
@@ -58,6 +59,7 @@ class InfoToolBar;
 class SysInfoToolBar;
 class CDTextDialog;
 class MarkerDialog;
+class BusSelectorDialog;
 
 class Interface : public QMainWindow
 {
@@ -71,6 +73,7 @@ public :
 	
 	void select_fade_in_shape();
 	void select_fade_out_shape();
+	void show_busselector(Track* track);
 	
 protected:
 	void keyPressEvent ( QKeyEvent* e);
@@ -101,6 +104,7 @@ private:
 	MarkerDialog*		m_markerDialog;
 	InfoToolBar* 		m_infoBar;
 	SysInfoToolBar* 	m_sysinfo;
+	BusSelectorDialog*	m_busSelector;
 
 	BusMonitor* 		busMonitor;
 	Help* 			helpWindow;
@@ -127,8 +131,6 @@ public slots :
 	void show_song(Song* song);
 	void show_settings_dialog();
 	void process_context_menu_action(QAction* action);
-	void set_bus_in(QAction* action);
-	void set_bus_out(QAction* action);
 	void set_fade_in_shape(QAction* action);
 	void set_fade_out_shape(QAction* action);
 	void toggle_OpenGL(bool);
@@ -139,8 +141,6 @@ public slots :
 	Command* about_traverso();
 	Command* show_export_widget();
 	Command* show_context_menu();
-	Command* select_bus_in();
-	Command* select_bus_out();
 	Command* show_project_manager_dialog();
 	Command* show_cdtext_dialog();
 	Command* show_marker_dialog();
