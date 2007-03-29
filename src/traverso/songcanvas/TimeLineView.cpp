@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Themer.h"
 #include "SongView.h"
 #include "MarkerView.h"
+#include "SnapList.h"
 
 #include <ProjectManager.h>
 #include <Project.h>
@@ -89,12 +90,14 @@ int DragMarker::prepare_actions()
 
 int DragMarker::finish_hold()
 {
+	m_mview->get_marker()->set_snappable(true);
 	return do_action();
 }
 
 int DragMarker::begin_hold()
 {
 	m_origWhen = m_newWhen = m_mview->get_marker()->get_when();
+	m_mview->get_marker()->set_snappable(false);
 	
 	return 1;
 }
@@ -129,7 +132,13 @@ void DragMarker::move_right(bool )
 int DragMarker::jog()
 {
 	m_newWhen = (uint) (cpointer().scene_x() * m_scalefactor);
-	m_mview->set_position(cpointer().scene_x());
+
+	if (m_mview->get_marker()->get_timeline()->get_song()->is_snap_on()) {
+		SnapList* slist = m_mview->get_marker()->get_timeline()->get_song()->get_snap_list();
+		m_newWhen = slist->get_snap_value(m_newWhen);
+	}
+
+	m_mview->set_position(m_newWhen / m_scalefactor);
 	return 1;
 }
 

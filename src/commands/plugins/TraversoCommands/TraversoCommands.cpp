@@ -43,6 +43,8 @@ TraversoCommands::TraversoCommands()
 	m_dict.insert("ClipSelectionAdd", ClipSelectionCommand);
 	m_dict.insert("ClipSelectionRemove", ClipSelectionCommand);
 	m_dict.insert("MoveClip", MoveClipCommand);
+	m_dict.insert("DragEdge", DragEdgeCommand);
+	m_dict.insert("MoveClipOrEdge", MoveClipOrEdgeCommand);
 	m_dict.insert("CopyClip", MoveClipCommand);
 	m_dict.insert("SplitClip", SplitClipCommand);
 	m_dict.insert("ArmTracks", ArmTracksCommand);
@@ -136,9 +138,73 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 					"MoveClipCommand needs an AudioClipView as argument");
 				return 0;
 			}
-			return new MoveClip(view, arguments);
+
+			QString type;
+			if (arguments.size()) {
+				type = arguments.at(0).toString();
+			} else {
+				type = "move";  // Default Action
+			}
+			return new MoveClip(view, type);
 		}
 		
+		case DragEdgeCommand:
+		{
+			AudioClipView* view = qobject_cast<AudioClipView*>(obj);
+			if (!view) {
+				PERROR("TraversoCommands: Supplied QObject was not an AudioClipView! "
+					"DragEdgeCommand needs an AudioClipView as argument");
+				return 0;
+			}
+
+			int x = (int) (cpointer().on_first_input_event_scene_x() - view->scenePos().x());
+			bool anchorAudio = arguments[0].toBool();
+
+			if (x < (view->boundingRect().width() / 2)) {
+				if (anchorAudio) {
+					return new MoveClip(view, "anchored_left_edge_move");
+				} else {
+					return new MoveEdge(view, view->get_songview(), "set_left_edge");
+				}
+			} else {
+				if (anchorAudio) {
+					return new MoveClip(view, "anchored_right_edge_move");
+				} else {
+					return new MoveEdge(view, view->get_songview(), "set_right_edge");
+				}
+			}
+		}
+
+		case MoveClipOrEdgeCommand:
+		{
+			AudioClipView* view = qobject_cast<AudioClipView*>(obj);
+
+			if (!view) {
+				PERROR("TraversoCommands: Supplied QObject was not an AudioClipView! "
+					"MoveClipOrEdgeCommand needs an AudioClipView as argument");
+				return 0;
+			}
+
+			int x = (int) (cpointer().on_first_input_event_scene_x() - view->scenePos().x());
+			int edge_width = arguments[0].toInt();
+			bool anchorAudio = arguments[1].toBool();
+
+			if (x < edge_width) {
+				if (anchorAudio) {
+					return new MoveClip(view, "anchored_left_edge_move");
+				} else {
+					return new MoveEdge(view, view->get_songview(), "set_left_edge");
+				}
+			} else if (x > (view->boundingRect().width() - edge_width)) {
+				if (anchorAudio) {
+					return new MoveClip(view, "anchored_right_edge_move");
+				} else {
+					return new MoveEdge(view, view->get_songview(), "set_right_edge");
+				}
+			}
+			return new MoveClip(view, "move");
+		}
+
 		case SplitClipCommand:
 		{
 			AudioClipView* view = qobject_cast<AudioClipView*>(obj);

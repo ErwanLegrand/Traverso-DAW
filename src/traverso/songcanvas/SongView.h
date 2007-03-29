@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongView.h,v 1.14 2007/03/21 15:11:34 r_sijrier Exp $
+    $Id: SongView.h,v 1.15 2007/03/29 21:09:42 benjie Exp $
 */
 
 #ifndef SONG_VIEW_H
@@ -55,6 +55,7 @@ class SongView : public ViewItem
 	Q_CLASSINFO("goto_begin", tr("To start"))
 	Q_CLASSINFO("goto_end", tr("To end"))
 	Q_CLASSINFO("play_cursor_move", tr("Playcursor: Move"))
+	Q_CLASSINFO("work_cursor_move", tr("Workcursor: Move"))
 	Q_CLASSINFO("set_editing_mode", tr("Mode: Edit"))
 	Q_CLASSINFO("set_curve_mode", tr("Mode: Curve"))
 	Q_CLASSINFO("add_marker", tr("Add Marker"))
@@ -131,6 +132,7 @@ public slots:
         Command* goto_begin();
         Command* goto_end();
 	Command* play_cursor_move();
+	Command* work_cursor_move();
 	Command* set_editing_mode();
 	Command* set_curve_mode();
 	Command* add_marker();

@@ -20,18 +20,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 */
 
 #include "Marker.h"
+#include "Song.h"
 
 #include "TimeLine.h"
 #include "Utils.h"
 
 Marker::Marker(TimeLine* tl, nframes_t when, uint type)
 	: ContextItem()
+	, Snappable()
 	, m_timeline(tl)
-	, m_when(when) 
+	, m_when(when)
 	, m_type(type)
 {
 	set_history_stack(m_timeline->get_history_stack());
 	m_id = create_id();
+
+	set_snap_list(m_timeline->get_song()->get_snap_list());
 
 	m_description = "";
 	m_performer = "";
@@ -45,8 +49,10 @@ Marker::Marker(TimeLine* tl, nframes_t when, uint type)
 
 Marker::Marker(TimeLine * tl, const QDomNode node)
 	: ContextItem()
+	, Snappable()
 	, m_timeline(tl)
 {
+	set_snap_list(m_timeline->get_song()->get_snap_list());
 	set_history_stack(m_timeline->get_history_stack());
 	set_state(node);
 }

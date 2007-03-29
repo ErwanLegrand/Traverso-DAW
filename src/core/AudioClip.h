@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.36 2007/03/22 21:36:48 r_sijrier Exp $
+$Id: AudioClip.h,v 1.37 2007/03/29 21:09:42 benjie Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -28,6 +28,8 @@ $Id: AudioClip.h,v 1.36 2007/03/22 21:36:48 r_sijrier Exp $
 #include <QDomNode>
 
 #include "ContextItem.h"
+#include "SnapList.h"
+#include "Snappable.h"
 #include "defines.h"
 
 
@@ -41,7 +43,7 @@ class AudioBus;
 class FadeCurve;
 class Curve;
 
-class AudioClip : public ContextItem
+class AudioClip : public ContextItem, public Snappable
 {
 	Q_OBJECT
 	Q_CLASSINFO("mute", tr("Mute"))
@@ -73,7 +75,6 @@ public:
 	void set_fade_out(nframes_t b);
 	void set_track(Track* track);
 	void set_song(Song* song);
-	void set_snappable(bool snap);
 
 	void set_selected(bool selected);
 	int set_state( const QDomNode& node );
@@ -110,7 +111,6 @@ public:
 	bool is_take() const;
 	bool is_selected() const;
 	bool is_recording() const;
-	bool is_snappable() const {return m_isSnappable;}
 
 	static bool smaller(const AudioClip* left, const AudioClip* right )
 	{
@@ -147,7 +147,6 @@ private:
 	bool 		isTake;
 	bool 		isMuted;
 	bool 		isRecording;
-	bool		m_isSnappable;
 	float	 	m_gain;
 	float		m_normfactor;
 	

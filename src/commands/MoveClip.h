@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveClip.h,v 1.12 2007/03/29 11:08:18 r_sijrier Exp $
+    $Id: MoveClip.h,v 1.13 2007/03/29 21:09:42 benjie Exp $
 */
 
 #ifndef MOVECLIPACTION_H
@@ -41,7 +41,7 @@ class MoveClip : public Command
 	Q_CLASSINFO("prev_snap_pos", tr("To previous snap position"));
 	
 public :
-	MoveClip(AudioClipView* clipView, QVariantList arguments);
+	MoveClip(AudioClipView* clipView, QString type);
         ~MoveClip();
 
         int begin_hold();
@@ -54,10 +54,11 @@ public :
 private :
         AudioClip* 	m_clip;
         nframes_t 	m_originalTrackFirstFrame;
-        nframes_t 	m_newInsertFrame;
+        nframes_t 	m_posDiff;
+        nframes_t 	m_oldOppositeEdge;
         Track* 		m_originTrack;
         Track* 		m_targetTrack;
-	bool		m_isCopy;
+	QString		m_actionType;
 	
 	struct Data {
 		int 		origXPos;
@@ -82,6 +83,8 @@ private :
 public slots:
 	void next_snap_pos(bool autorepeat);
 	void prev_snap_pos(bool autorepeat);
+        void move_to_start(bool autorepeat);
+        void move_to_end(bool autorepeat);
 	
 private slots:
 	void audioclip_added(AudioClip* clip);

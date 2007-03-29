@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursors.h,v 1.9 2007/03/29 11:10:43 r_sijrier Exp $
+    $Id: Cursors.h,v 1.10 2007/03/29 21:09:42 benjie Exp $
 */
 
 #ifndef CURSORS_H
@@ -64,6 +64,7 @@ private:
         int 		m_animationScrollPosition;
 
 private slots:
+	void check_config();
         void play_start();
         void play_stop();
         void set_animation_value(int);

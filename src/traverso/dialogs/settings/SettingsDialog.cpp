@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02100-1301  USA.
 */
 
 #include <QtGui>
+#include <Config.h>
 
 #include "SettingsDialog.h"
 #include "Pages.h"
@@ -133,6 +134,7 @@ void SettingsDialog::save_config()
 	for (int i=0; i<pagesWidget->count(); ++i) {
 		qobject_cast<ConfigPage*>(pagesWidget->widget(i))->save_config();
 	}
+	config().save();
 }
 
 void SettingsDialog::restore_defaults_button_clicked()

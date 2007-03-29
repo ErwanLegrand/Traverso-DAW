@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SnapList.cpp,v 1.6 2007/03/10 21:57:01 n_doebelin Exp $
+$Id: SnapList.cpp,v 1.7 2007/03/29 21:09:42 benjie Exp $
 */
 
 #include "SnapList.h"
@@ -46,11 +46,12 @@ SnapList::SnapList(Song* song)
 	connect(m_song, SIGNAL(workingPosChanged()), this, SLOT(mark_dirty()));
 }
 
-void SnapList::mark_dirty()
+void SnapList::mark_dirty(Snappable *item)
 {
-	m_isDirty = true;
+	if (item->is_snappable()) {
+		m_isDirty = true;
+	}
 }
-
 
 void SnapList::update_snaplist()
 {
@@ -91,13 +92,15 @@ void SnapList::update_snaplist()
 	// add all markers
 	QList<Marker*> markerList = m_song->get_timeline()->get_markers();
 	for (int i = 0; i < markerList.size(); ++i) {
-		xposList.append(markerList.at(i)->get_when());
+		if (markerList.at(i)->is_snappable()) {
+			xposList.append(markerList.at(i)->get_when());
+		}
 	}
 
 	// add the working cursor's position
 	nframes_t workingframe = m_song->get_working_frame();
 	printf("workingframe xpos is %d\n",  workingframe / m_scalefactor);
-	if (workingframe >= m_rangeStart && workingframe <= m_rangeEnd) {
+	if (m_song->get_work_snap()->is_snappable() && workingframe >= m_rangeStart && workingframe <= m_rangeEnd) {
 		xposList.append(m_song->get_working_frame());
 	}
 	

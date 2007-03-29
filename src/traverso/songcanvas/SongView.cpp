@@ -17,11 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.31 2007/03/29 11:11:56 r_sijrier Exp $
+$Id: SongView.cpp,v 1.32 2007/03/29 21:09:42 benjie Exp $
 */
 
 
 #include <QScrollBar>
+#include <libtraversocore.h>
 
 #include "SongView.h"
 #include "SongWidget.h"
@@ -72,7 +73,7 @@ private :
 class PlayHeadMove : public Command
 {
 public :
-        PlayHeadMove(PlayHead* cursor, Song* song, SongView* sv);
+        PlayHeadMove(PlayHead* cursor, SongView* sv);
         ~PlayHeadMove(){PENTERDES;};
 
 	int finish_hold();
@@ -83,14 +84,16 @@ private :
 	PlayHead*	m_cursor;
 	Song*		m_song;
 	SongView*	m_sv;
+	bool		m_resync;
 };
 
-PlayHeadMove::PlayHeadMove(PlayHead* cursor, Song* song, SongView* sv)
+PlayHeadMove::PlayHeadMove(PlayHead* cursor, SongView* sv)
 	: Command("Play Cursor Move")
 	, m_cursor(cursor)
-	, m_song(song)
+	, m_song(sv->get_song())
 	, m_sv(sv)
 {
+	m_resync = config().get_property("AudioClip", "SyncDuringDrag", false).toBool();
 }
 
 int PlayHeadMove::finish_hold()
@@ -113,6 +116,66 @@ int PlayHeadMove::jog()
 		x = 0;
 	}
 	m_cursor->setPos(x, 0);
+	if (m_resync) {
+		m_song->set_transport_pos( (nframes_t) (cpointer().scene_x() * m_sv->scalefactor));
+	}
+	return 1;
+}
+
+
+		
+class WorkCursorMove : public Command
+{
+public :
+        WorkCursorMove (SongView* sv);
+        ~WorkCursorMove (){PENTERDES;};
+
+	int finish_hold();
+        int begin_hold();
+        int jog();
+
+private :
+	Song*		m_song;
+	SongView*	m_sv;
+};
+
+WorkCursorMove::WorkCursorMove(SongView* sv)
+	: Command("Play Cursor Move")
+	, m_song(sv->get_song())
+	, m_sv(sv)
+{
+}
+
+int WorkCursorMove::finish_hold()
+{
+	m_song->get_work_snap()->set_snappable(true);
+	return -1;
+}
+
+int WorkCursorMove::begin_hold()
+{
+	Snappable dummy;
+
+	m_song->get_work_snap()->set_snappable(false);
+	return 1;
+}
+
+int WorkCursorMove::jog()
+{
+	int x = cpointer().scene_x();
+
+	if (x < 0)
+		x = 0;
+
+	nframes_t newFrame = x * m_sv->scalefactor;
+
+	if (m_song->is_snap_on()) {
+		SnapList* slist = m_song->get_snap_list();
+		newFrame = slist->get_snap_value(newFrame);
+	}
+
+	m_song->set_work_at(newFrame);
+
 	return 1;
 }
 
@@ -492,7 +555,12 @@ Command * SongView::touch( )
 
 Command * SongView::play_cursor_move( )
 {
-	return new PlayHeadMove(m_playCursor, m_song, this);
+	return new PlayHeadMove(m_playCursor, this);
+}
+
+Command * SongView::work_cursor_move( )
+{
+	return new WorkCursorMove(this);
 }
 
 void SongView::set_snap_range(int start)

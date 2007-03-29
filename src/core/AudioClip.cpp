@@ -56,8 +56,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 AudioClip::AudioClip(const QString& name)
-	: ContextItem(),
-	  m_name(name)
+	: ContextItem()
+	, Snappable()
+	, m_name(name)
 {
 	PENTERCONS;
 	m_gain = m_normfactor = 1.0;
@@ -71,6 +72,7 @@ AudioClip::AudioClip(const QString& name)
 
 AudioClip::AudioClip(const QDomNode& node)
 	: ContextItem()
+	, Snappable()
 {
 	PENTERCONS;
 	QDomNode clipNode = node.firstChild();
@@ -105,7 +107,6 @@ void AudioClip::init()
 	fadeIn = 0;
 	fadeOut = 0;
 	m_refcount = 0;
-	m_isSnappable = true;
 	gainEnvelope = 0;
 }
 
@@ -609,7 +610,7 @@ AudioClip* AudioClip::create_copy( )
 	Q_ASSERT(m_track);
 	QDomDocument doc("AudioClip");
 	QDomNode clipState = get_state(doc);
-	AudioClip* clip = new AudioClip(tr("Copy of - ") + m_name);
+	AudioClip* clip = new AudioClip(m_name);
 	clip->set_song(m_song);
 	clip->set_track(m_track);
 	clip->set_state(clipState);
@@ -743,6 +744,8 @@ void AudioClip::set_song( Song * song )
 	}
 	
 	gainEnvelope->set_history_stack(get_history_stack());
+
+	set_snap_list(m_song->get_snap_list());
 }
 
 
@@ -958,13 +961,6 @@ void AudioClip::create_fade_out( )
 	fadeOut->set_shape("Linear");
 	THREAD_SAVE_CALL_EMIT_SIGNAL(this, fadeOut, private_add_fade(FadeCurve*), fadeAdded(FadeCurve*));
 }
-
-void AudioClip::set_snappable( bool snap )
-{
-	m_isSnappable = snap;
-	m_song->get_snap_list()->mark_dirty();
-}
-
 
 // eof
 

@@ -24,12 +24,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define MARKER_H
 
 #include "ContextItem.h"
+#include "Snappable.h"
 #include "defines.h"
 #include <QDomNode>
 
 class TimeLine;
 
-class Marker : public ContextItem
+class Marker : public ContextItem, public Snappable
 {
 	Q_OBJECT
 	

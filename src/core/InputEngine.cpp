@@ -242,7 +242,7 @@ int InputEngine::broadcast_action_from_contextmenu(const QString& keySequence)
 	}
 
 	if (! action) {
-		PERROR("ContextMenu keySequency doesn't apply to any InputEngine knows off!! (%s)", QS_C(keySequence));
+		PERROR("ContextMenu keySequence doesn't apply to any InputEngine knows off!! (%s)", QS_C(keySequence));
 		return -1;
 	}
 	

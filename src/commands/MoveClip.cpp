@@ -59,22 +59,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  * @param cv The AudioClipView that is to be dragged/copied.
  * @param arguments The first entry in the list is used to detect if it is a copy or drag Command
  */
-MoveClip::MoveClip(AudioClipView* cv, QVariantList arguments)
+MoveClip::MoveClip(AudioClipView* cv, QString type)
 	: Command(cv->get_clip(), "")
 	, d(new Data)
 {
-	if (arguments.size()) {
-		m_isCopy = arguments.at(0).toBool();
-	} else {
-		m_isCopy = false;
-	}
+	m_actionType = type;
 	
 	QString des;
-	if (m_isCopy) {
+	if (m_actionType == "copy") {
 		des = tr("Copy Clip");
 		d->xoffset = cv->get_songview()->scalefactor * 3;
-	} else {
+	} else if (m_actionType == "move") {
 		des = tr("Move Clip");
+	} else if (m_actionType == "anchored_left_edge_move" ||
+		m_actionType == "anchored_right_edge_move") {
+		des = tr("Move Anchored Edge");
+	} else if (m_actionType == "move_to_start") {
+		des = tr("Move Clip To Start");
+	} else if (m_actionType == "move_to_end") {
+		des = tr("Move Clip To End");
 	}
 	
 	setText(des);
@@ -83,7 +86,13 @@ MoveClip::MoveClip(AudioClipView* cv, QVariantList arguments)
 	d->sv = d->view->get_songview();
 	d->song = d->sv->get_song();
 	m_targetTrack = 0;
-	m_clip = 0;
+
+	if (m_actionType == "move_to_start" ||
+	    m_actionType == "move_to_end") {
+		init_data();
+	} else {
+		m_clip = 0;
+	}
 }
 
 
@@ -109,7 +118,7 @@ void MoveClip::audioclip_added(AudioClip * clip)
 		
 		d->view = acv;
 		init_data(true);
-		
+
 		disconnect(d->view->get_clip()->get_track(), SIGNAL(audioClipAdded(AudioClip*)),
 			this, SLOT(audioclip_added(AudioClip*)));
 		
@@ -128,9 +137,17 @@ void MoveClip::init_data(bool isCopy)
 	} else {
 		m_clip = d->view->get_clip();
 	}
-	
+
+	if (m_actionType == "anchored_left_edge_move") {
+		m_oldOppositeEdge = m_clip->get_track_start_frame() + m_clip->get_length();
+	}
+	else if (m_actionType == "anchored_right_edge_move") {
+		m_oldOppositeEdge = m_clip->get_track_start_frame();
+	}
+
 	m_originTrack = m_targetTrack = m_clip->get_track();
-	m_originalTrackFirstFrame = m_newInsertFrame = m_clip->get_track_start_frame();
+	m_originalTrackFirstFrame = m_clip->get_track_start_frame();
+	m_posDiff = 0;
 	d->origPos = cpointer().pos();
 	d->origXPos = cpointer().x();
 	d->hScrollbarValue = d->sv->hscrollbar_value();
@@ -144,7 +161,7 @@ void MoveClip::init_data(bool isCopy)
 
 int MoveClip::begin_hold()
 {
-	if (m_isCopy) {
+	if (m_actionType == "copy") {
 		d->newclip = resources_manager()->get_clip(d->view->get_clip()->get_id());
 		d->newclip->set_song(d->song);
 		d->newclip->set_track_start_frame(d->view->get_clip()->get_track_start_frame() + d->xoffset);
@@ -161,7 +178,7 @@ int MoveClip::begin_hold()
 	}
 
 	init_data();
-	
+
 	return 1;
 }
 
@@ -170,6 +187,11 @@ int MoveClip::finish_hold()
 {
 	m_clip->set_snappable(true);
 	d->sv->start_shuttle(false);
+
+	if (m_actionType == "anchored_right_edge_move") {
+		m_clip->set_left_edge(m_oldOppositeEdge);
+	}
+
 	return 1;
 }
 
@@ -185,17 +207,33 @@ int MoveClip::prepare_actions()
 int MoveClip::do_action()
 {
 	PENTER;
+	if (m_actionType == "move_to_start") {
+		move_to_start(false);
+		return 1;
+	}
+	else if (m_actionType == "move_to_end") {
+		move_to_end(false);
+		return 1;
+	}
+
 	if (!m_targetTrack) {
 		ie().process_command(m_originTrack->remove_clip(m_clip, false));
 		m_targetTrack = (Track*) 0;
 	} else {
 		ie().process_command(m_originTrack->remove_clip(m_clip, false));
-		m_clip->set_track_start_frame(m_newInsertFrame);
+		m_clip->set_track_start_frame(m_originalTrackFirstFrame + m_posDiff);
 		ie().process_command(m_targetTrack->add_clip(m_clip, false));
 	}
 	
-	if (m_isCopy) {
+	if (m_actionType == "copy") {
 		resources_manager()->undo_remove_clip_from_database(m_clip->get_id());
+	}
+
+	if (m_actionType == "anchored_left_edge_move") {
+		m_clip->set_right_edge(m_oldOppositeEdge);
+	}
+	else if (m_actionType == "anchored_right_edge_move") {
+		m_clip->set_left_edge(m_oldOppositeEdge);
 	}
 	
 	return 1;
@@ -209,13 +247,21 @@ int MoveClip::undo_action()
 		ie().process_command(m_targetTrack->remove_clip(m_clip, false));
 	}
 	
-	if (m_isCopy) {
+	if (m_actionType == "copy") {
 		resources_manager()->remove_clip_from_database(m_clip->get_id());
 	} else {
 		m_clip->set_track_start_frame(m_originalTrackFirstFrame);
 		ie().process_command(m_originTrack->add_clip(m_clip, false));
 	}
-		
+
+	if (m_actionType == "anchored_left_edge_move") {
+		m_clip->set_right_edge(m_oldOppositeEdge);
+	}
+	else if (m_actionType == "anchored_right_edge_move") {
+		m_clip->set_track_start_frame(m_oldOppositeEdge - m_posDiff);
+		m_clip->set_left_edge(m_oldOppositeEdge);
+	}
+	
 	return 1;
 }
 
@@ -236,21 +282,21 @@ int MoveClip::jog()
 	
 // 	printf("newPos x, y is %f, %f\n", newPos.x(), newPos.y());
 	
-	TrackView* trackView = d->sv->get_trackview_under(cpointer().scene_pos());
-	if (!trackView) {
-// 		printf("no trackview returned\n");
-	} else if (trackView != d->view->get_trackview()) {
-// 		printf("Setting new TrackView!\n");
-		d->view->set_trackview(trackView);
-		d->view->setParentItem(trackView);
-		m_targetTrack = trackView->get_track();
-// 		printf("track id is %d\n", m_targetTrack->get_id());
+	if (m_actionType != "anchored_left_edge_move" && m_actionType != "anchored_right_edge_move")
+	{
+		TrackView* trackView = d->sv->get_trackview_under(cpointer().scene_pos());
+		if (!trackView) {
+	// 		printf("no trackview returned\n");
+		} else if (trackView != d->view->get_trackview()) {
+	// 		printf("Setting new TrackView!\n");
+			d->view->set_trackview(trackView);
+			d->view->setParentItem(trackView);
+			m_targetTrack = trackView->get_track();
+	// 		printf("track id is %d\n", m_targetTrack->get_id());
+		}
 	}
-		
 
 	int newXPos = cpointer().x() - scrollbardif;
-
-	SnapList* slist = d->song->get_snap_list();
 
 	// must be signed int because it can be negative
 	int diff_f = (cpointer().x() - d->origXPos - scrollbardif) * d->sv->scalefactor;
@@ -270,13 +316,17 @@ int MoveClip::jog()
 
 	if (d->song->is_snap_on()) {
 
+		SnapList* slist = d->song->get_snap_list();
+
 		// check if there is anything to snap
 		bool start_snapped = false;
 		bool end_snapped = false;
-		if (slist->is_snap_value(newTrackStartFrame)) {
+		if (m_actionType != "anchored_right_edge_move" &&
+			slist->is_snap_value(newTrackStartFrame)) {
 			start_snapped = true;
 		}
-		if (slist->is_snap_value(newTrackEndFrame)) {
+		if (m_actionType != "anchored_left_edge_move" &&
+			slist->is_snap_value(newTrackEndFrame)) {
 			end_snapped = true;
 		}
 
@@ -301,20 +351,33 @@ int MoveClip::jog()
 		}
 	}
 
-	m_newInsertFrame = newTrackStartFrame - (snapDiff * d->sv->scalefactor);
+	newTrackStartFrame -= snapDiff * d->sv->scalefactor;
+	m_posDiff = newTrackStartFrame - m_originalTrackFirstFrame;
 
 	// store the new position only if the clip was moved, but not if it stuck to a snap position
-	if (d->origTrackStartFrame != m_newInsertFrame) {
+	if (d->origTrackStartFrame != newTrackStartFrame) {
 		d->origPos.setX(newXPos);
 	}
 
-	newPos.setX(m_newInsertFrame / d->sv->scalefactor);	
-	newPos.setY(d->view->pos().y());
-	
-	if (d->resync) {
-		m_clip->set_track_start_frame(m_newInsertFrame);
-	} else {
+	if (m_actionType == "anchored_left_edge_move" && !d->resync) {
+			m_clip->set_right_edge(m_oldOppositeEdge - m_posDiff);
+	}
+
+	if (m_actionType == "anchored_right_edge_move") {
+		m_clip->set_left_edge(m_oldOppositeEdge - m_posDiff);
+		newPos.setX(m_originalTrackFirstFrame / d->sv->scalefactor);
+		newPos.setY(d->view->pos().y());
 		d->view->setPos(newPos);
+	} else {
+		newPos.setX(newTrackStartFrame / d->sv->scalefactor);
+		newPos.setY(d->view->pos().y());
+		if (d->resync) {
+			m_clip->set_track_start_frame(newTrackStartFrame);
+			if (m_actionType == "anchored_left_edge_move")
+				m_clip->set_right_edge(m_oldOppositeEdge);
+		} else {
+			d->view->setPos(newPos);
+		}
 	}
 	
 	
@@ -326,12 +389,31 @@ int MoveClip::jog()
 
 void MoveClip::next_snap_pos(bool autorepeat)
 {
+	Q_UNUSED(autorepeat)
 	// TODO implement me!
 }
 
 void MoveClip::prev_snap_pos(bool autorepeat)
 {
+	Q_UNUSED(autorepeat)
 	// TODO implement me!
 }
+
+void MoveClip::move_to_start(bool autorepeat)
+{
+	Q_UNUSED(autorepeat)
+	m_clip->set_track_start_frame(0);
+}
+
+void MoveClip::move_to_end(bool autorepeat)
+{
+	Q_UNUSED(autorepeat)
+	Track *track = m_clip->get_track();
+	
+	ie().process_command(track->remove_clip(m_clip, false));
+	m_clip->set_track_start_frame(m_clip->get_song()->get_last_frame());
+	ie().process_command(track->add_clip(m_clip, false));
+}
+
 
 // eof

@@ -40,6 +40,7 @@ class PluginChain;
 class SnapList;
 class Plugin;
 class TimeLine;
+class Snappable;
 
 struct ExportSpecification;
 
@@ -86,6 +87,7 @@ public:
 	SnapList* get_snap_list() const;
 	PluginChain* get_plugin_chain() const;
 	TimeLine* get_timeline() const {return m_timeline;}
+	Snappable* get_work_snap() {return workSnap;}
 	Track* get_track(qint64 id);
 
 	// Set functions
@@ -159,6 +161,7 @@ private:
 	bool			realtimepath;
 	bool			scheduleForDeletion;
 	SnapList*		snaplist;
+	Snappable*		workSnap;
 
 	void init();
 	int set_state( const QDomNode & node );

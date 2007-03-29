@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioClipManager.cpp,v 1.8 2006/11/09 15:45:42 r_sijrier Exp $
+    $Id: AudioClipManager.cpp,v 1.9 2007/03/29 21:09:42 benjie Exp $
 */
  
 #include "AudioClipManager.h"
@@ -53,7 +53,7 @@ void AudioClipManager::add_clip( AudioClip * clip )
 	m_clips.append( clip );
 	
 	connect(clip, SIGNAL(trackEndFrameChanged()), this, SLOT(update_last_frame()));
-	connect(clip, SIGNAL(positionChanged()), m_song->get_snap_list(), SLOT(mark_dirty()));
+	connect(clip, SIGNAL(positionChanged()), m_song->get_snap_list(), SLOT(mark_dirty(clip)));
 	
 	update_last_frame();
 }
@@ -61,7 +61,7 @@ void AudioClipManager::add_clip( AudioClip * clip )
 void AudioClipManager::remove_clip( AudioClip * clip )
 {
 	PENTER;
-	disconnect(clip, SIGNAL(positionChanged()), m_song->get_snap_list(), SLOT(mark_dirty()));
+	disconnect(clip, SIGNAL(positionChanged()), m_song->get_snap_list(), SLOT(mark_dirty(clip)));
 	if (m_clips.removeAll(clip) == 0) {
 		PERROR("Clip %s was not in my list, couldn't remove it!!", QS_C(clip->get_name()));
 	}

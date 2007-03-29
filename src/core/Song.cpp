@@ -126,6 +126,8 @@ void Song::init()
 
 	transport = stopTransport = resumeTransport = false;
 	snaplist = new SnapList(this);
+	workSnap = new Snappable();
+	workSnap->set_snap_list(snaplist);
 	realtimepath = false;
 	scheduleForDeletion = false;
 	isSnapOn=true;
@@ -460,24 +462,25 @@ void Song::set_work_at(nframes_t pos)
 
 /** use this part if the work cursor should _not_ snap **/
 // 	newTransportFramePos = pos;
-// 	workingFrame = pos;
+ 	workingFrame = pos;
+	emit workingPosChanged();
 /** use this if it should snap **/
-	long position = snaplist->get_snap_value(pos);
-	workingFrame = position;
+//	long position = snaplist->get_snap_value(pos);
+//	workingFrame = position;
 /** **/
 
 // 	printf("position is %ld\n", position);
-	Q_ASSERT(position >= 0);
+//	Q_ASSERT(position >= 0);
 
-	newTransportFramePos = (uint) position;
+//	newTransportFramePos = (uint) position;
 
 	// If there is no transport, start_seek() will _not_ be
 	// called from within process(). So we do it now!
-	if (!transport) {
-		start_seek();
-	}
+//	if (!transport) {
+//		start_seek();
+//	}
 
-	seeking = 1;
+//	seeking = 1;
 }
 
 

@@ -36,12 +36,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Curve.h>
 #include <Interface.h>
 
-#include <MoveEdge.h>
-
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
+
 
 AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	: ViewItem(parent, clip), m_tv(parent), m_clip(clip)
@@ -585,21 +584,6 @@ void AudioClipView::update_start_pos()
 	setPos(m_clip->get_track_start_frame() / m_sv->scalefactor, m_tv->get_childview_y_offset());
 }
 
-Command* AudioClipView::drag_edge()
-{
-	Q_ASSERT(m_song);
-	int x = (int) ( cpointer().scene_pos() - scenePos()).x();
-
-	MoveEdge* me;
-
-	if (x < (m_boundingRect.width() / 2))
-		me =   new  MoveEdge(this, m_sv, "set_left_edge");
-	else
-		me = new MoveEdge(this, m_sv, "set_right_edge");
-
-	return me;
-}
-
 Command * AudioClipView::fade_range()
 {
 	Q_ASSERT(m_song);
@@ -646,6 +630,8 @@ void AudioClipView::start_peak_data_loading()
 
 void AudioClipView::hoverEnterEvent(QGraphicsSceneHoverEvent * event)
 {
+	Q_UNUSED(event);
+
 	update(m_boundingRect);
 }
 

@@ -46,6 +46,7 @@ SOURCES = AudioClip.cpp \
 	WriteSource.cpp \
 	gdither.cpp \
 	SnapList.cpp \
+	Snappable.cpp \
 	TimeLine.cpp \
 	Marker.cpp
 HEADERS = precompile.h \
@@ -87,6 +88,7 @@ HEADERS = precompile.h \
 	noise.h \
 	FastDelegate.h \
 	SnapList.h \
+	Snappable.h \
 	CommandPlugin.h \
 	TimeLine.h \
 	Marker.h

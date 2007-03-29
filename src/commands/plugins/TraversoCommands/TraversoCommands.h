@@ -40,6 +40,8 @@ class TraversoCommands : public CommandPlugin
 	Q_CLASSINFO("ClipSelectionRemove", tr("Remove from Selection"))
 	Q_CLASSINFO("ClipSelectionAdd", tr("Add to Selection"))
 	Q_CLASSINFO("MoveClip", tr("Move Clip"))
+	Q_CLASSINFO("DragEdge", tr("Drag Edge"))
+	Q_CLASSINFO("MoveClipOrEdge", tr("Move Or Resize Clip"))
 	Q_CLASSINFO("SplitClip", tr("Split"))
 	Q_CLASSINFO("ArmTracks", tr("Arm Tracks"))
 
@@ -57,6 +59,8 @@ private:
 		AudioClipExternalProcessingCommand,
   		ClipSelectionCommand,
     		MoveClipCommand,
+    		DragEdgeCommand,
+    		MoveClipOrEdgeCommand,
       		SplitClipCommand,
 		ArmTracksCommand
 	};

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursors.cpp,v 1.14 2007/03/29 11:10:43 r_sijrier Exp $
+    $Id: Cursors.cpp,v 1.15 2007/03/29 21:09:42 benjie Exp $
 */
 
 #include "Cursors.h"
@@ -39,8 +39,8 @@ PlayHead::PlayHead(SongView* sv, Song* song, ClipsViewPort* vp)
 	, m_vp(vp)
 {
 	m_sv = sv;
-	m_mode = (PlayHeadMode) config().get_property("PlayHead", "Scrollmode", ANIMATED_FLIP_PAGE).toInt();
-	m_follow = config().get_property("PlayHead", "Follow", true).toBool();
+	check_config();
+	connect(&(config()), SIGNAL(configChanged()), this, SLOT(check_config()));
 	
 	m_animation.setDuration(1300);
 	m_animation.setCurveShape(QTimeLine::SineCurve);
@@ -59,6 +59,12 @@ PlayHead::PlayHead(SongView* sv, Song* song, ClipsViewPort* vp)
 PlayHead::~PlayHead( )
 {
         PENTERDES2;
+}
+
+void PlayHead::check_config( )
+{
+	m_mode = (PlayHeadMode) config().get_property("PlayHead", "Scrollmode", ANIMATED_FLIP_PAGE).toInt();
+	m_follow = config().get_property("PlayHead", "Follow", true).toBool();
 }
 
 void PlayHead::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget )

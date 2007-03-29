@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Config.h,v 1.7 2007/01/20 18:46:20 r_sijrier Exp $
+$Id: Config.h,v 1.8 2007/03/29 21:09:42 benjie Exp $
 */
 
 #ifndef CONFIG_H
@@ -39,13 +39,16 @@ public:
 	
 	void init_input_engine();
 
+	void save();
+
+signals:
+	void configChanged();
+
 private:
 	Config() {}
 	~Config();
 
 	Config(const Config&);
-
-	void save();
 
 	// allow this function to create one instance
 	friend Config& config();

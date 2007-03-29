@@ -64,12 +64,17 @@ int MoveEdge::begin_hold()
         if (m_edge == "set_right_edge") {
                 m_newPos = m_originalPos = m_clip->get_track_end_frame();
 	}
+
+	m_clip->set_snappable(false);
+
         return 1;
 }
 
 
 int MoveEdge::finish_hold()
 {
+	m_clip->set_snappable(true);
+
         return 1;
 }
 
@@ -89,6 +94,12 @@ int MoveEdge::undo_action()
 int MoveEdge::jog()
 {
 	m_newPos = cpointer().scene_x() * m_sv->scalefactor;
+
+	if (m_sv->get_song()->is_snap_on()) {
+		SnapList* slist = m_sv->get_song()->get_snap_list();
+		m_newPos = slist->get_snap_value(m_newPos);
+	}
+
         return do_action();
 }
 

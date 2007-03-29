@@ -40,6 +40,7 @@ public:
 	int set_state(const QDomNode& node);
 	
 	QList<Marker*> get_markers() const {return m_markers;}
+	Song *get_song() const {return m_song;}
 	
 	Marker* get_marker(qint64 id);
 

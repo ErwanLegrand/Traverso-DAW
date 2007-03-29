@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Config.cpp,v 1.11 2007/03/16 00:14:43 r_sijrier Exp $
+$Id: Config.cpp,v 1.12 2007/03/29 21:09:42 benjie Exp $
 */
 
 #include "Config.h"
@@ -106,6 +106,7 @@ void Config::save( )
 		settings.setValue(i.key(), i.value());
 		++i;
 	}
+	emit configChanged();
 }
 
 QVariant Config::get_property( const QString & type, const QString & property, QVariant defaultValue )
