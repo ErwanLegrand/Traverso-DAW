@@ -406,6 +406,10 @@ void BehaviorPage::save_config()
 	config().set_property("Project", "DefaultDirectory", m_configpage->projectDirLineEdit->text());
 	config().set_property("Project", "loadLastUsed", m_configpage->loadLastProjectCheckBox->isChecked());
 	config().set_property("Song", "trackCreationCount", m_configpage->numberOfTrackSpinBox->value());
+	config().set_property("PlayHead", "Follow", m_configpage->keepCursorVisibleCheckBox->isChecked());
+	config().set_property("PlayHead", "Scrollmode", m_configpage->scrollModeComboBox->currentIndex());
+	config().set_property("AudioClip", "SyncDuringDrag", m_configpage->resyncAudioCheckBox->isChecked());
+
 	QString oncloseaction;
 	if (m_configpage->saveRadioButton->isChecked()) {
 		config().set_property("Project", "onclose", "save");
@@ -422,11 +426,20 @@ void BehaviorPage::load_config()
 	bool loadLastUsedProject = config().get_property("Project", "loadLastUsed", 1).toBool();
 	QString oncloseaction = config().get_property("Project", "onclose", "save").toString();
 	int defaultNumTracks = config().get_property("Song", "trackCreationCount", 6).toInt();
+	bool keepCursorVisible = config().get_property("PlayHead", "Follow", true).toBool();
+	bool scrollMode = config().get_property("PlayHead", "Scrollmode", 2).toInt();
+	bool resyncAudio = config().get_property("AudioClip", "SyncDuringDrag", true).toBool();
 	
 	m_configpage->projectDirLineEdit->setText(dir);
 	m_configpage->loadLastProjectCheckBox->setChecked(loadLastUsedProject);
 	m_configpage->numberOfTrackSpinBox->setValue(defaultNumTracks);
+	m_configpage->keepCursorVisibleCheckBox->setChecked(keepCursorVisible);
+	m_configpage->scrollModeComboBox->setCurrentIndex(scrollMode);
+	m_configpage->resyncAudioCheckBox->setChecked(resyncAudio);
 	
+	if (!keepCursorVisible)
+		m_configpage->scrollModeComboBox->setEnabled(true);
+
 	if (oncloseaction == "save") {
 		m_configpage->saveRadioButton->setChecked(true);
 	} else if (oncloseaction == "ask") {
@@ -443,6 +456,9 @@ void BehaviorPage::reset_default_config()
 	config().set_property("Project", "loadLastUsed", true);
 	config().set_property("Project", "onclose", "save");
 	config().set_property("Song", "trackCreationCount", 6);
+	config().set_property("PlayHead", "Follow", 0);
+	config().set_property("PlayHead", "Scrollmode", 2);
+	config().set_property("AudioClip", "SyncDuringDrag", false);
 	
 	load_config();
 }

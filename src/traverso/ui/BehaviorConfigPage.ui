@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>371</width>
-    <height>258</height>
+    <width>351</width>
+    <height>385</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -14,10 +14,10 @@
   </property>
   <layout class="QVBoxLayout" >
    <property name="margin" >
-    <number>0</number>
+    <number>9</number>
    </property>
    <property name="spacing" >
-    <number>12</number>
+    <number>6</number>
    </property>
    <item>
     <widget class="QGroupBox" name="groupBox" >
@@ -145,14 +145,14 @@
    <item>
     <widget class="QGroupBox" name="groupBox_2" >
      <property name="title" >
-      <string>New Song options</string>
+      <string>New Song Settings</string>
      </property>
      <layout class="QVBoxLayout" >
       <property name="margin" >
        <number>9</number>
       </property>
       <property name="spacing" >
-       <number>9</number>
+       <number>6</number>
       </property>
       <item>
        <layout class="QHBoxLayout" >
@@ -187,8 +187,89 @@
      </layout>
     </widget>
    </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_3" >
+     <property name="title" >
+      <string>Playback Settings</string>
+     </property>
+     <layout class="QVBoxLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item>
+       <layout class="QHBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QCheckBox" name="keepCursorVisibleCheckBox" >
+          <property name="text" >
+           <string>Keep Play Cursor Visible</string>
+          </property>
+          <property name="checked" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="scrollModeComboBox" >
+          <item>
+           <property name="text" >
+            <string>Jump</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Stay Centered</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Animated</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="resyncAudioCheckBox" >
+        <property name="text" >
+         <string>Continuously Adjust Audio While Dragging</string>
+        </property>
+        <property name="checked" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>keepCursorVisibleCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>scrollModeComboBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>178</x>
+     <y>325</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>224</x>
+     <y>326</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
