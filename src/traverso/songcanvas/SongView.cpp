@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.30 2007/03/21 18:37:58 r_sijrier Exp $
+$Id: SongView.cpp,v 1.31 2007/03/29 11:11:56 r_sijrier Exp $
 */
 
 
@@ -167,7 +167,12 @@ SongView::SongView(SongWidget* songwidget,
 	connect(m_vScrollBar, SIGNAL(valueChanged(int)),
 		m_clipsViewPort->verticalScrollBar(), SLOT(setValue(int)));
 
+	connect(m_clipsViewPort->horizontalScrollBar(), SIGNAL(valueChanged(int)),
+		  m_hScrollBar, SLOT(setValue(int)));
 
+	connect(m_clipsViewPort->verticalScrollBar(), SIGNAL(valueChanged(int)),
+		  m_vScrollBar, SLOT(setValue(int)));
+	
 	load_theme_data();
 	
 	// FIXME Center too position on song close!!
