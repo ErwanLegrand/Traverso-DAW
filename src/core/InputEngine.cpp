@@ -287,11 +287,36 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 			continue;
 		}
 		
-		IEAction::Data* data = action->objects.value(QString(item->metaObject()->className()));
+		IEAction::Data* data = action->objectUsingModifierKeys.value(QString(item->metaObject()->className()));
 		
-		if ( ! data ) {
-			PMESG("No data found for object %s", item->metaObject()->className());
-			continue;
+		if (data) {
+			PMESG("found match in objectUsingModierKeys");
+			bool modifierkeymatch = true;
+			
+			if (data->modifierkeys.size()) {
+				foreach(int key, data->modifierkeys) {
+					if ( ! m_activeModifierKeys.contains(key)) {
+						PMESG("m_activeModifierKeys doesn't contain code %d", key);
+						modifierkeymatch = false;
+						break;
+					}
+				}
+			} else {
+				modifierkeymatch = false;
+			}
+			
+			if (! modifierkeymatch) {
+				data = 0;
+			}
+		}
+		
+		if (! data ) {
+			data = action->objects.value(QString(item->metaObject()->className()));
+				
+			if (! data ) {
+				PMESG("No data found for object %s", item->metaObject()->className());
+				continue;
+			}
 		}
 		
 		PMESG("Data found for %s!", item->metaObject()->className());
@@ -559,6 +584,13 @@ void InputEngine::catch_scroll(QWheelEvent* e)
 
 void InputEngine::process_press_event(int eventcode, bool isAutoRepeat)
 {
+	if (is_modifier_keyfact(eventcode)) {
+		if ( (! isAutoRepeat) && (! m_activeModifierKeys.contains(eventcode)) ) {
+			m_activeModifierKeys.append(eventcode);
+		}
+		return;
+	}
+	
 	if (isFirstFact) {
 		cpointer().inputengine_first_input_event();
 	}
@@ -591,6 +623,11 @@ void InputEngine::process_press_event(int eventcode, bool isAutoRepeat)
 
 void InputEngine::process_release_event(int eventcode)
 {
+	if (is_modifier_keyfact(eventcode)) {
+		m_activeModifierKeys.removeAll(eventcode);
+		return;
+	}	
+		
 	if (isHolding) {
 		if (eventcode != holdEventCode) {
 			printf("release event during hold action, but NOT for holdaction itself!!\n");
@@ -636,6 +673,11 @@ bool InputEngine::is_fake(int codeVal)
 		&& ( codeVal!=eventStack[2] )
 		&& ( codeVal!=eventStack[3] );
 	return b;
+}
+
+bool InputEngine::is_modifier_keyfact(int eventcode)
+{
+	return m_modifierKeys.contains(eventcode);
 }
 
 // this is the method that detects wether a fact is double key (KK) or single key (K)
@@ -1107,14 +1149,35 @@ int InputEngine::init_map(const QString& mapFilename)
 	file.close();
 
 	QDomElement root = doc.documentElement();
-	QDomNode node = root.firstChild();
-
+	
+	
+	QDomNode modifierKeysNode = root.firstChildElement("ModifierKeys");
+	QDomNode modifierKeyNode = modifierKeysNode.firstChild();
+	
+	int keycode;
+	QString key;
+	
+	while( !modifierKeyNode.isNull() ) {
+		QDomElement e = modifierKeyNode.toElement();
+		
+		key = e.attribute( "key", "");
+		
+		set_hexcode(keycode, key);
+		m_modifierKeys.append(keycode);
+		
+		modifierKeyNode = modifierKeyNode.nextSibling();
+	}
+		
+	
+	QDomNode keyfactsNode = root.firstChildElement("Keyfacts");
+	QDomNode keyfactNode = keyfactsNode.firstChild();
+	
 	QString keyFactType;
-	QString key1, key2, key3, key4, mouseHint, slot;
+	QString key1, key2, key3, key4, mouseHint, slot, modifierKeys;
 	IEAction::Data* data;
 	
-	while( !node.isNull() ) {
-		QDomElement e = node.toElement();
+	while( !keyfactNode.isNull() ) {
+		QDomElement e = keyfactNode.toElement();
 		
 		if( e.isNull() ) {
 			continue;
@@ -1188,10 +1251,21 @@ int InputEngine::init_map(const QString& mapFilename)
 			data->sortorder = e.attribute( "sortorder", "0").toInt();
 			mouseHint = e.attribute( "mousehint", "" );
 			QString args = e.attribute("arguments", "");
+			modifierKeys = e.attribute("modifierkeys", "");
+			
 			if ( ! args.isEmpty() ) {
 				QStringList arglist = args.split(";");
 				for (int i=0; i<arglist.size(); ++i) {
 					data->arguments.append(arglist.at(i));
+				}
+			}
+			
+			if (! modifierKeys.isEmpty()) {
+				QStringList modifierlist = modifierKeys.split(";");
+				for (int i=0; i<modifierlist.size(); ++i) {
+					int keycode;
+					set_hexcode(keycode, modifierlist.at(i));
+					data->modifierkeys.append(keycode);
 				}
 			}
 			
@@ -1217,7 +1291,11 @@ int InputEngine::init_map(const QString& mapFilename)
 				PERROR("no modes given in keyaction %s, object %s", QS_C(keyFactType), QS_C(objectname));
 			}
 	
-			action->objects.insert(objectname, data);
+			if (modifierKeys.isEmpty()) {
+				action->objects.insert(objectname, data);
+			} else {
+				action->objectUsingModifierKeys.insert(objectname, data);
+			}
 		
 			objectNode = objectNode.nextSibling();
 		}
@@ -1248,7 +1326,7 @@ int InputEngine::init_map(const QString& mapFilename)
 			PMESG2("ADDED action: type=%d keys=%d,%d,%d,%d useX=%d useY=%d, slot=%s", action->type, action->fact1_key1,action->fact1_key2,action->fact2_key1,action->fact2_key2,data->useX,data->useY, QS_C(slot));
 		}
 		
-		node = node.nextSibling();
+		keyfactNode = keyfactNode.nextSibling();
 	}
 
 
@@ -1536,9 +1614,10 @@ void IEAction::render_key_sequence(const QString& key1, const QString& key2)
 }
 
 
-//eof
-
 Command * InputEngine::get_holding_command() const
 {
 	return holdingCommand;
 }
+
+//eof
+

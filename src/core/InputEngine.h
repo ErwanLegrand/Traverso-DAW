@@ -79,6 +79,7 @@ struct IEAction
         struct Data {
         	QStringList modes;
 		QVariantList arguments;
+		QList<int > modifierkeys;
         	QString slotsignature;
         	QString description;
         	int instantanious;
@@ -91,6 +92,7 @@ struct IEAction
 	};
 
         QHash<QString, Data*> objects;
+	QHash<QString, Data*> objectUsingModifierKeys;
 
         int type;
         int fact1_key1;
@@ -165,6 +167,8 @@ private:
         static const int 	RELEASE_EVENT = 2;
 
         QList<IEAction* >	ieActions;
+	QList<int>		m_modifierKeys;
+	QList<int>		m_activeModifierKeys;
 	QHash<QString, CommandPlugin*> m_commandplugins;
         EventCatcher 		catcher;
         Command* 		holdingCommand;
@@ -222,8 +226,9 @@ private:
 	void process_press_event(int eventcode, bool isAutoRepeat=false);
         void process_release_event(int eventcode);
         int find_index_for_single_fact(int type, int key1, int key2);
-        
-        int holdEventCode;
+	bool is_modifier_keyfact(int eventcode);
+
+	int holdEventCode;
 
         friend class EventCatcher;
 
