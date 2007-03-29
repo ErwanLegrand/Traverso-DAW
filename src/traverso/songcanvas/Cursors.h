@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursors.h,v 1.8 2007/02/02 09:47:20 r_sijrier Exp $
+    $Id: Cursors.h,v 1.9 2007/03/29 11:10:43 r_sijrier Exp $
 */
 
 #ifndef CURSORS_H
@@ -52,7 +52,7 @@ public:
 	};
 	
 	void set_mode(PlayHeadMode mode);
-	void toggle_folow();
+	void toggle_follow();
 
 private:
 	Song*		m_song;
