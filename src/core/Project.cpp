@@ -110,6 +110,7 @@ int Project::create(int songcount, int numtracks)
 	set_current_song(m_songs.first()->get_id());
 	
 	m_id = create_id();
+	m_importDir = config().get_property("Project", "DefaultDirectory", QDir::homePath()).toString();
 
 	info().information(tr("Created new Project %1").arg(title));
 	return 1;
@@ -157,6 +158,7 @@ int Project::load() // try to load the project by its title
 	m_rate = e.attribute( "rate", "" ).toInt();
 	m_bitDepth = e.attribute( "bitdepth", "" ).toInt();
 	m_id = e.attribute("id", "0").toLongLong();
+	m_importDir = e.attribute("importdir", QDir::homePath()); 
 	
 	
 	// Load all the AudioSources for this project
@@ -203,6 +205,8 @@ int Project::save()
 		properties.setAttribute("bitdepth", m_bitDepth);
 		properties.setAttribute("projectfileversion", PROJECT_FILE_VERSION);
 		properties.setAttribute("id", m_id);
+		properties.setAttribute("importdir", m_importDir);
+		
 		projectNode.appendChild(properties);
 
 		doc.appendChild(projectNode);
@@ -515,4 +519,15 @@ void Project::private_remove_song(Song * song)
 	song->disconnect_from_audiodevice();
 }
 
+QString Project::get_import_dir() const
+{
+	return m_importDir;
+}
+
+void Project::set_import_dir(const QString& dir)
+{
+	m_importDir = dir;
+}
+
 //eof
+

@@ -52,6 +52,7 @@ public :
 	QString get_description() const;
 	QString get_root_dir() const;
 	QString get_audiosources_dir() const;
+	QString get_import_dir() const;
 	QList<Song* > get_songs() const;
 	Song* get_current_song() const ;
 	Song* get_song(qint64 id) const;
@@ -64,6 +65,7 @@ public :
 	void set_description(const QString& des);
 	void set_song_export_progress(int pogress);
 	void set_current_song(qint64 id);
+	void set_import_dir(const QString& dir);
 
 	
 	Command* add_song(Song* song, bool historable=true);
@@ -91,6 +93,7 @@ private:
 	QString 	sourcesDir;
 	QString 	engineer;
 	QString		m_description;
+	QString		m_importDir;
 
 	int		m_rate;
 	int		m_bitDepth;

@@ -66,8 +66,12 @@ int Import::prepare_actions()
 	if (m_fileName.isEmpty()) {
 		m_fileName = QFileDialog::getOpenFileName(0,
 				tr("Import audio source"),
-				getenv("HOME"),
+				pm().get_project()->get_import_dir(),
 				tr("All files (*);;Audio files (*.wav *.flac)"));
+		
+		int splitpoint = m_fileName.lastIndexOf("/") + 1;
+		QString dir = m_fileName.left(splitpoint - 1);
+		pm().get_project()->set_import_dir(dir);
 		
 		if (m_fileName.isEmpty()) {
 			PWARN("FileName is empty!");
