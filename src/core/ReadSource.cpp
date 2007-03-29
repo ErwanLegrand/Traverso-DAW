@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.cpp,v 1.20 2007/03/23 13:09:33 r_sijrier Exp $
+$Id: ReadSource.cpp,v 1.21 2007/03/29 11:09:38 r_sijrier Exp $
 */
 
 #include "ReadSource.h"
@@ -108,29 +108,44 @@ int ReadSource::init( )
 	
 	QString fileName = m_dir + m_name;
 	
-	if (m_channelCount == 1 && m_fileCount == 1) {
-		if (add_private_source(1, 0, fileName) < 0) {
-			return -1;
-		}
-	} else if (m_channelCount == 2 && m_fileCount == 2) {
-		if ((add_private_source(1, 0, fileName + "-ch" + QByteArray::number(0) + ".wav") < 0) || 
-		    (add_private_source(1, 1, fileName + "-ch" + QByteArray::number(1) + ".wav") < 0)) {
-			return -1;
-		}
-	} else if (m_channelCount == 2 && m_fileCount == 1) {
-		if ((add_private_source(2, 0, fileName) < 0) || 
-		    (add_private_source(2, 1, fileName) < 0)) {
+	if (m_wasRecording) {
+		if (m_channelCount == 1 && m_fileCount == 1) {
+			if (add_mono_reader(1, 0, fileName + "-ch" + QByteArray::number(0) + ".wav") < 0) {
+				return -1;
+			}
+		} else if (m_channelCount == 2 && m_fileCount == 2) {
+			if ((add_mono_reader(1, 0, fileName + "-ch" + QByteArray::number(0) + ".wav") < 0) || 
+				  (add_mono_reader(1, 1, fileName + "-ch" + QByteArray::number(1) + ".wav") < 0)) {
+				return -1;
+			}
+		} else {
+			PERROR("WasRecording section: Unsupported combination of channelcount/filecount (%d/%d)", m_channelCount, m_fileCount);
 			return -1;
 		}
 	} else {
-		PERROR("Unsupported combination of channelcount/filecount (%d/%d)", m_channelCount, m_fileCount);
-		return -1;
+	
+		if (m_channelCount == 1 && m_fileCount == 1) {
+			if (add_mono_reader(1, 0, fileName) < 0) {
+				return -1;
+			}
+		} else if (m_channelCount == 2 && m_fileCount == 1) {
+			if ((add_mono_reader(2, 0, fileName) < 0) || 
+						(add_mono_reader(2, 1, fileName) < 0)) {
+				return -1;
+						}
+		} else {
+			PERROR("Unsupported combination of channelcount/filecount (%d/%d)", m_channelCount, m_fileCount);
+			return -1;
+		}
 	}
 	
+	
+	
+ 	
 	return 1;
 }
 
-int ReadSource::add_private_source(int sourceChannelCount, int channelNumber, const QString& fileName)
+int ReadSource::add_mono_reader(int sourceChannelCount, int channelNumber, const QString& fileName)
 {
 	MonoReader* source = new MonoReader(this, sourceChannelCount, channelNumber, fileName);
 	
@@ -198,6 +213,10 @@ nframes_t ReadSource::get_nframes( ) const
 	return m_length;
 }
 
+void ReadSource::set_was_recording(bool wasRecording)
+{
+	m_wasRecording = wasRecording;
+}
 
 //eof
 

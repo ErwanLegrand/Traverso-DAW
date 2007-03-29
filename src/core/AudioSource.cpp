@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSource.cpp,v 1.13 2007/01/11 14:57:36 r_sijrier Exp $
+$Id: AudioSource.cpp,v 1.14 2007/03/29 11:09:38 r_sijrier Exp $
 */
 
 
@@ -36,8 +36,9 @@ $Id: AudioSource.cpp,v 1.13 2007/01/11 14:57:36 r_sijrier Exp $
 
 // This constructor is called during file import
 AudioSource::AudioSource(const QString& dir, const QString& name)
-	: m_dir(dir),
-	  m_name(name)
+	: m_dir(dir)
+	, m_name(name)
+	, m_wasRecording(false)
 {
 	PENTERCONS;
 	m_fileName = m_dir + m_name;
@@ -47,9 +48,10 @@ AudioSource::AudioSource(const QString& dir, const QString& name)
 
 // This constructor is called for existing (recorded/imported) audio sources
 AudioSource::AudioSource(const QDomNode node)
-	: m_dir(""),
-	  m_name(""), 
-	  m_fileName("")
+	: m_dir("")
+	, m_name("")
+	, m_fileName("")
+	, m_wasRecording(false)
 {
 	set_state(node);
 }
@@ -71,6 +73,7 @@ QDomNode AudioSource::get_state( QDomDocument doc )
 	node.setAttribute("id", m_id);
 	node.setAttribute("name", m_name);
 	node.setAttribute("origbitdepth", m_origBitDepth);
+	node.setAttribute("wasrecording", m_wasRecording);
 
 	return node;
 }
@@ -88,6 +91,7 @@ int AudioSource::set_state( const QDomNode & node )
 	m_id = e.attribute("id", "").toLongLong();
 	set_name( e.attribute("name", "No name supplied?" ));
 	m_origBitDepth = e.attribute("origbitdepth", "0").toInt();
+	m_wasRecording = e.attribute("wasrecording", "0").toInt();
 	
 	return 1;
 }

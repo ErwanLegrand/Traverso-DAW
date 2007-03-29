@@ -150,6 +150,7 @@
 		<Objects>
 			<Object objectname="FadeCurve" slotsignature="toggle_bypass" modes="All" instantanious="0" />
 			<Object objectname="Plugin" slotsignature="toggle_bypass" modes="All" instantanious="0" />
+			<Object objectname="TrackView" slotsignature="select_bus" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
 	<keyfact type="FKEY" key1="M" >
@@ -181,6 +182,7 @@
 		<Objects>
 			<Object objectname="CurveView" slotsignature="add_node" modes="All" instantanious="0" />
 			<Object objectname="TrackPanelLed" slotsignature="toggle" modes="All" sortorder="1" />
+			<Object objectname="TrackPanelBus" slotsignature="TrackView::select_bus" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
 	<keyfact type="FKEY" key1="MouseButtonRight" >
@@ -210,7 +212,6 @@
 			<Object objectname="AudioClipView" slotsignature="select_fade_shape" modes="All" sortorder="32" submenu="Fade In/Out" instantanious="0" />
 		</Objects>
 	</keyfact>
-	
 	
 	
 	
@@ -272,11 +273,6 @@
 	<keyfact type="FKEY2" key1="K" key2="L" >
 		<Objects>
 			<Object objectname="Track" slotsignature="capture_from_channel_right" modes="All" instantanious="0" />
-		</Objects>
-	</keyfact>
-	<keyfact type="FKEY2" key1="B" key2="V" mousehint="UD" >
-		<Objects>
-			<Object objectname="Interface" slotsignature="select_bus_in" modes="All" instantanious="0" />
 		</Objects>
 	</keyfact>
 	<keyfact type="FKEY2" key1="F" key2="G" >

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.15 2007/03/22 18:36:56 r_sijrier Exp $
+$Id: TrackPanelView.cpp,v 1.16 2007/03/29 11:12:06 r_sijrier Exp $
 */
 
 #include <QGraphicsScene>
@@ -74,8 +74,8 @@ TrackPanelView::TrackPanelView(TrackView* trackView)
 		muteLed->ison_changed(true);
 	}
 	
-	inBus = new TrackPanelBus(this, m_track, ":/bus_in");
-	outBus = new TrackPanelBus(this, m_track, ":/bus_out");
+	inBus = new TrackPanelBus(this, m_track, TrackPanelBus::BUSIN);
+	outBus = new TrackPanelBus(this, m_track, TrackPanelBus::BUSOUT);
 	
 	m_viewPort->scene()->addItem(inBus);
 	m_viewPort->scene()->addItem(outBus);
@@ -401,12 +401,13 @@ Command * TrackPanelLed::toggle()
 
 
 
-TrackPanelBus::TrackPanelBus(TrackPanelView* parent, Track* track, char* type)
+TrackPanelBus::TrackPanelBus(TrackPanelView* parent, Track* track, int type)
 	: ViewItem(parent, 0)
 	, m_track(track)
 	, m_type(type)
 {
 	bus_changed();
+	setAcceptsHoverEvents(true);
 }
 
 void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
@@ -414,28 +415,55 @@ void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 	
-	QPixmap pix = find_pixmap(m_type);
+	QColor color = themer()->get_color("TrackPanel:led:inactive");
+	int roundfactor = 20;
 	
-	painter->setPen(themer()->get_color("TrackPanel:text"));
+	painter->setRenderHint(QPainter::Antialiasing);
+	
+	if (option->state & QStyle::State_MouseOver) {
+		color = color.light(110);
+	}
+	 
+	painter->setPen(QColor(240, 240, 240));
+	painter->setBrush(color);
+	painter->drawRoundRect(m_boundingRect, roundfactor, roundfactor);
+	
 	painter->setFont(themer()->get_font("TrackPanel:bus"));
-	painter->drawPixmap(0, 0, pix);
-	painter->drawText(pix.width() + 5, 8, m_busName);
+	painter->setPen(QColor(150, 150, 150));
+	
+	QString leftright = "";
+	
+	if ((m_type == BUSIN) && ! (m_track->capture_left_channel() && m_track->capture_right_channel()) ) {
+		if (m_track->capture_left_channel()) {
+			leftright = " L";
+		} else {
+			leftright = " R";
+		}
+	}
+	
+	painter->drawText(m_boundingRect.adjusted(15, 0, 0, 0), Qt::AlignCenter, m_busName + leftright);
+			
+	painter->drawPixmap(3, 3, m_pix);
 }
 
 void TrackPanelBus::bus_changed()
 {
-	QPixmap pix = find_pixmap(m_type);
-	m_boundingRect = pix.rect();
-
 	QFontMetrics fm(themer()->get_font("TrackPanel:bus"));
 	prepareGeometryChange();
-	m_boundingRect.setWidth(pix.rect().width() + fm.width(m_busName) + 10);
 	
-	if (m_type == ":/bus_in") {
+	if (m_type == BUSIN) {
 		m_busName =  m_track->get_bus_in();
+		m_pix = find_pixmap(":/bus_in");
+		m_boundingRect = m_pix.rect();
+		m_boundingRect.setWidth(m_pix.rect().width() + fm.width(m_busName) + 15);
 	} else {
 		m_busName = m_track->get_bus_out();
+		m_pix = find_pixmap(":/bus_out");
+		m_boundingRect = m_pix.rect();
+		m_boundingRect.setWidth(m_pix.rect().width() + fm.width(m_busName) + 10);
 	}
+	
+	m_boundingRect.setHeight(m_boundingRect.height() + 6);
 	
 	update();
 }

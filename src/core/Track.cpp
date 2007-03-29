@@ -78,6 +78,7 @@ void Track::init()
 	isSolo = mutedBySolo = isMuted = isArmed = false;
 	set_history_stack(m_song->get_history_stack());
 	pluginChain = new PluginChain(this, m_song);
+	m_captureRightChannel = m_captureLeftChannel = true;
 }
 
 QDomNode Track::get_state( QDomDocument doc )
@@ -95,6 +96,8 @@ QDomNode Track::get_state( QDomDocument doc )
 	node.setAttribute("numtakes", numtakes);
 	node.setAttribute("InBus", busIn.data());
 	node.setAttribute("OutBus", busOut.data());
+	node.setAttribute("CaptureLeftChannel", m_captureLeftChannel);
+	node.setAttribute("CaptureRightChannel", m_captureRightChannel);
 
 	QDomNode clips = doc.createElement("Clips");
 	
@@ -137,6 +140,12 @@ int Track::set_state( const QDomNode & node )
 	set_bus_out( e.attribute( "OutBus", "" ).toAscii() );
 	m_id = e.attribute( "id", "").toLongLong();
 	numtakes = e.attribute( "numtakes", "").toInt();
+	m_captureRightChannel = e.attribute("CaptureRightChannel", "1").toInt();
+	m_captureLeftChannel =  e.attribute("CaptureLeftChannel", "1").toInt();
+	// never ever allow both to be 0 at the same time!
+	if ( ! (m_captureRightChannel || m_captureLeftChannel) ) {
+		m_captureRightChannel = m_captureLeftChannel = 1;
+	}
 
 	QDomElement ClipsNode = node.firstChildElement("Clips");
 	if (!ClipsNode.isNull()) {
@@ -382,6 +391,8 @@ int Track::process( nframes_t nframes )
 {
 	int processResult = 0;
 	
+	// FIXME if arm() is called while playback, it will _not_ start 
+	// a recording, but instead start playing this track!!!!
 	if ( (isMuted || mutedBySolo) && ( ! isArmed) ) {
 		return 0;
 	}
@@ -535,4 +546,18 @@ int Track::get_sort_index( ) const
 	return m_sortIndex;
 }
 
+void Track::set_capture_left_channel(bool capture)
+{
+	m_captureLeftChannel = capture;
+	emit inBusChanged();
+}
+
+void Track::set_capture_right_channel(bool capture)
+{
+	printf("capture is %d\n", capture);
+	m_captureRightChannel = capture;
+	emit inBusChanged();
+}
+
 // eof
+

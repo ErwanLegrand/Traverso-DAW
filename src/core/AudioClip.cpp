@@ -461,7 +461,24 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 //
 void AudioClip::process_capture( nframes_t nframes, uint channel )
 {
-	WriteSource* source = writeSources.at(channel);
+	if (channel == 0) {
+		if ( ! m_track->capture_left_channel() ) {
+			return;
+		}
+	}
+		
+	if (channel == 1) {
+		if ( ! m_track->capture_right_channel()) {
+			return;
+		}
+	}
+	
+	int index = 0;
+	if (m_track->capture_left_channel() && m_track->capture_right_channel()) {
+		index = channel;
+	}
+	
+	WriteSource* source = writeSources.at(index);
 
 	nframes_t written = source->rb_write(captureBus->get_buffer(channel, nframes), nframes);
 
@@ -484,8 +501,29 @@ int AudioClip::init_recording( QByteArray name )
 		return -1;
 	}
 
+	int channelnumber = 0;
+	int channelcount = captureBus->get_channel_count();
+	if (! (m_track->capture_left_channel() && m_track->capture_right_channel()) ) {
+		channelcount = 1;
+	}
 
 	for (int chan=0; chan<captureBus->get_channel_count(); chan++) {
+		if (chan == 0) {
+			if ( ! m_track->capture_left_channel() ) {
+				continue;
+			}
+		}
+		
+		if (chan == 1) {
+			if ( ! m_track->capture_right_channel()) {
+				continue;
+			}
+		}
+		
+		if (m_track->capture_left_channel() && m_track->capture_right_channel()) {
+			channelnumber = chan;
+		}
+		
 		ExportSpecification*  spec = new ExportSpecification;
 
 		spec->exportdir = pm().get_project()->get_root_dir() + "/audiosources/";
@@ -510,13 +548,13 @@ int AudioClip::init_recording( QByteArray name )
 
 		spec->dataF = captureBus->get_buffer( chan, audiodevice().get_buffer_size());
 
-		WriteSource* ws = new WriteSource(spec, chan, captureBus->get_channel_count());
+		WriteSource* ws = new WriteSource(spec, channelnumber, channelcount);
 		ws->set_process_peaks( true );
 		ws->set_recording( true );
 
 		connect(ws, SIGNAL(exportFinished( WriteSource* )), this, SLOT(finish_write_source( WriteSource* )));
 
-		writeSources.insert(chan, ws);
+		writeSources.insert(channelnumber, ws);
 		m_song->get_diskio()->register_write_source( ws );
 	}
 
@@ -613,7 +651,7 @@ void AudioClip::finish_write_source( WriteSource * ws )
 {
 	PENTER;
 
-//  	printf("AudioClip::finish_write_source :  thread id is: %ld\n", QThread::currentThreadId ());
+	printf("AudioClip::finish_write_source :  thread id is: %ld\n", QThread::currentThreadId ());
 
 	QString dir;
 	QString name;
@@ -628,18 +666,19 @@ void AudioClip::finish_write_source( WriteSource * ws )
 	}
 	
 	if (writeSources.isEmpty()) {
-		int channelCount, fileCount;
-		channelCount = fileCount = captureBus->get_channel_count(); 
+		int channelCount = (m_track->capture_left_channel() && m_track->capture_right_channel()) ? 2 : 1;
 		
 		ReadSource* rs;
+		bool wasRecording = true;
 		rs = resources_manager()->create_new_readsource(
 				dir,
 				name,
 				channelCount,
-				fileCount,
-				m_song->get_id(), 
+    				channelCount,
+				m_song->get_id(),
 				audiodevice().get_bit_depth(), 
-				audiodevice().get_sample_rate() );
+				audiodevice().get_sample_rate(),
+				wasRecording );
 		
 		if (rs) {
 			set_audio_source(rs);

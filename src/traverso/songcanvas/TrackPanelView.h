@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.h,v 1.6 2007/03/21 15:11:34 r_sijrier Exp $
+$Id: TrackPanelView.h,v 1.7 2007/03/29 11:12:06 r_sijrier Exp $
 */
 
 #ifndef TRACK_PANEL_VIEW_H
@@ -93,15 +93,18 @@ class TrackPanelBus : public ViewItem
 {
 	Q_OBJECT
 public:
-	TrackPanelBus(TrackPanelView* view, Track* track, char* busType);
+	TrackPanelBus(TrackPanelView* view, Track* track, int busType);
 	TrackPanelBus(){}
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+	
+	enum { BUSIN, BUSOUT };
 
 private:
 	Track*	m_track;
-        QString m_type;
+        int	m_type;
 	QString m_busName;
+	QPixmap m_pix;
 
 public slots:
         void bus_changed();

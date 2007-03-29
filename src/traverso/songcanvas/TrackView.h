@@ -72,6 +72,7 @@ private:
 public slots:
 	Command* edit_properties();
 	Command* add_new_plugin();	
+	Command* select_bus();
 
 private slots:
 	void add_new_audioclipview(AudioClip* clip);

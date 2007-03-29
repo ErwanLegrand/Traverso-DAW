@@ -53,7 +53,7 @@ Project::Project(const QString& pTitle)
 	m_currentSongId = -1;
 	engineer = "";
 
-	rootDir = config().get_property("Project", "directory", "/directory/unknown/").toString() + title;
+	rootDir = config().get_property("Project", "directory", "/directory/unknown/").toString() + "/" + title;
 	sourcesDir = rootDir + "/audiosources";
 	m_rate = audiodevice().get_sample_rate();
 	m_bitDepth = audiodevice().get_bit_depth();

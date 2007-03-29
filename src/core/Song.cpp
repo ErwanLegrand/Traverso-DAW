@@ -882,4 +882,15 @@ void Song::private_remove_track(Track* track)
 	m_tracks.removeAll(track);
 }
 
+Track* Song::get_track(qint64 id)
+{
+	for (int i=0; i<m_tracks.size(); ++i) {
+		if (m_tracks.at(i)->get_id() == id) {
+			return m_tracks.at(i);
+		}
+	}
+	return 0;
+}
+
 // eof
+

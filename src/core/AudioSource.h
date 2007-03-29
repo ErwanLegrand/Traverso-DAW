@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSource.h,v 1.11 2007/01/11 14:57:36 r_sijrier Exp $
+$Id: AudioSource.h,v 1.12 2007/03/29 11:09:38 r_sijrier Exp $
 */
 
 #ifndef AUDIOSOURCE_H
@@ -71,6 +71,7 @@ protected:
 	QString		m_fileName;
 	nframes_t	m_length;
 	uint 		m_rate;
+	int		m_wasRecording;
 };
 
 

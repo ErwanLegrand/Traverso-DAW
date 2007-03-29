@@ -86,6 +86,7 @@ public:
 	SnapList* get_snap_list() const;
 	PluginChain* get_plugin_chain() const;
 	TimeLine* get_timeline() const {return m_timeline;}
+	Track* get_track(qint64 id);
 
 	// Set functions
 	void set_artists(const QString& pArtistis);

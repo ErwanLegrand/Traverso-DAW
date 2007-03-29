@@ -53,7 +53,6 @@ public :
 	~Track();
 
 	static const int INITIAL_HEIGHT = 100;
-	static const int MINIMUM_HEIGHT = 25;
 
 	Command* add_clip(AudioClip* clip, bool historable=true);
 	Command* add_plugin(Plugin* plugin);
@@ -93,6 +92,8 @@ public :
 	void set_pan(float pan);
 	void set_sort_index(int index);
 	void set_height(int h);
+	void set_capture_left_channel(bool capture);
+	void set_capture_right_channel(bool capture);
 	int set_state( const QDomNode& node );
 
 
@@ -101,6 +102,14 @@ public :
 	bool is_muted_by_solo();
 	bool is_solo();
 	bool armed();
+	bool capture_left_channel()
+	{
+		return m_captureLeftChannel;
+	}
+	bool capture_right_channel()
+	{
+		return m_captureRightChannel;
+	}
 	// End bool functions
 
 
@@ -126,6 +135,8 @@ private :
 	bool isMuted;
 	bool isArmed;
 	bool mutedBySolo;
+	bool m_captureLeftChannel;
+	bool m_captureRightChannel;
 
 	void set_armed(bool armed);
 	void init();

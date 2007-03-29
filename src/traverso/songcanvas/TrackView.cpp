@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TrackPanelViewPort.h"
 #include "SongView.h"
 #include "TrackPanelView.h"
+#include <Interface.h>
 
 #include <Song.h>
 #include <Track.h>
@@ -196,5 +197,13 @@ void TrackView::load_theme_data()
 	m_clipbottommargin = themer()->get_property("Track:clipbottommargin").toInt();
 }
 
+
+Command* TrackView::select_bus()
+{
+	Interface::instance()->show_busselector(m_track);
+	return 0; 
+}
+
 //eof
+
 

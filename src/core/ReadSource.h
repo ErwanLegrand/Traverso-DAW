@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.h,v 1.16 2007/03/23 13:09:33 r_sijrier Exp $
+$Id: ReadSource.h,v 1.17 2007/03/29 11:09:38 r_sijrier Exp $
 */
 
 #ifndef READSOURCE_H
@@ -45,6 +45,7 @@ public :
 
 	int init();
 	void set_active(bool active);
+	void set_was_recording(bool wasRecording);
 	
 	void set_audio_clip(AudioClip* clip);
 	Peak* get_peak(int channel);
@@ -55,10 +56,10 @@ public :
 private:
 	QList<MonoReader*> m_sources;
 	int	m_refcount;
-	int ref() { return m_refcount++;}
-
 	
-	int add_private_source(int channel, int channelNumber, const QString& fileName);
+	
+	int ref() { return m_refcount++;}
+	int add_mono_reader(int channel, int channelNumber, const QString& fileName);
 	
 	friend class MonoReader;
 	friend class ResourcesManager;
