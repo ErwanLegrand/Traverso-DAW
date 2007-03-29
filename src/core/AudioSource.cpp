@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSource.cpp,v 1.14 2007/03/29 11:09:38 r_sijrier Exp $
+$Id: AudioSource.cpp,v 1.15 2007/03/29 12:07:40 r_sijrier Exp $
 */
 
 
@@ -92,6 +92,13 @@ int AudioSource::set_state( const QDomNode & node )
 	set_name( e.attribute("name", "No name supplied?" ));
 	m_origBitDepth = e.attribute("origbitdepth", "0").toInt();
 	m_wasRecording = e.attribute("wasrecording", "0").toInt();
+	
+	// For older project files, this should properly detect if the 
+	// audio source was a recording or not., in fact this should suffice
+	// and the flag wasrecording would be unneeded, but oh well....
+	if (m_origSongId != -1 && m_channelCount == 2 && m_fileCount == 2) {
+		m_wasRecording = true;
+	}
 	
 	return 1;
 }
