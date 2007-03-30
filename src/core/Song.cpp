@@ -134,6 +134,8 @@ void Song::init()
 	changed = rendering = false;
 	firstVisibleFrame=workingFrame=0;
 	seeking = 0;
+	// TODO seek to old position on project exit ?
+	transportFrame = 0;
 	
 	m_pluginChain = new PluginChain(this, this);
 	m_timeline = new TimeLine(this);
