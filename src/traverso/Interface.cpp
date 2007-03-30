@@ -535,7 +535,6 @@ QMenu* Interface::create_context_menu(QObject* item )
 			if (list.at(j).description == data.description) {
 				data.keysequence = data.keysequence + ", " + list.at(j).keysequence;
 				list.removeAt(j);
-				break;
 			}
 		}
 		
