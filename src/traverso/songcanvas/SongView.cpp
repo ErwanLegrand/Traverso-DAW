@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.32 2007/03/29 21:09:42 benjie Exp $
+$Id: SongView.cpp,v 1.33 2007/03/30 07:33:33 benjie Exp $
 */
 
 
@@ -105,6 +105,7 @@ int PlayHeadMove::finish_hold()
 
 int PlayHeadMove::begin_hold()
 {
+	m_cursor->show();
 	m_cursor->set_active(false);
 	return 1;
 }
@@ -116,7 +117,7 @@ int PlayHeadMove::jog()
 		x = 0;
 	}
 	m_cursor->setPos(x, 0);
-	if (m_resync) {
+	if (m_resync && m_song->is_transporting()) {
 		m_song->set_transport_pos( (nframes_t) (cpointer().scene_x() * m_sv->scalefactor));
 	}
 	return 1;
@@ -127,7 +128,7 @@ int PlayHeadMove::jog()
 class WorkCursorMove : public Command
 {
 public :
-        WorkCursorMove (SongView* sv);
+        WorkCursorMove (PlayHead* cursor, SongView* sv);
         ~WorkCursorMove (){PENTERDES;};
 
 	int finish_hold();
@@ -137,18 +138,25 @@ public :
 private :
 	Song*		m_song;
 	SongView*	m_sv;
+	PlayHead*	m_playCursor;
 };
 
-WorkCursorMove::WorkCursorMove(SongView* sv)
+WorkCursorMove::WorkCursorMove(PlayHead* cursor, SongView* sv)
 	: Command("Play Cursor Move")
 	, m_song(sv->get_song())
 	, m_sv(sv)
+	, m_playCursor(cursor)
 {
 }
 
 int WorkCursorMove::finish_hold()
 {
 	m_song->get_work_snap()->set_snappable(true);
+
+	if (!m_song->is_transporting()) {
+		m_playCursor->setPos(cpointer().scene_x(), 0);
+		m_song->set_transport_pos( (nframes_t) (cpointer().scene_x() * m_sv->scalefactor));
+	}
 	return -1;
 }
 
@@ -203,7 +211,9 @@ SongView::SongView(SongWidget* songwidget,
 	
 	m_playCursor = new PlayHead(this, m_song, m_clipsViewPort);
 	m_workCursor = new WorkCursor(this, m_song);
-	
+	connect(m_song, SIGNAL(workingPosChanged()), m_workCursor, SLOT(update_position()));
+	connect(m_song, SIGNAL(workingPosChanged()), m_playCursor, SLOT(work_moved()));
+
 	m_clipsViewPort->scene()->addItem(m_playCursor);
 	m_clipsViewPort->scene()->addItem(m_workCursor);
 	
@@ -330,6 +340,7 @@ Command* SongView::hzoom_out()
 {
 	PENTER;
 	m_song->set_hzoom(m_song->get_hzoom() + 1);
+	center();
 	return (Command*) 0;
 }
 
@@ -338,6 +349,7 @@ Command* SongView::hzoom_in()
 {
 	PENTER;
 	m_song->set_hzoom(m_song->get_hzoom() - 1);
+	center();
 	return (Command*) 0;
 }
 
@@ -548,7 +560,12 @@ ClipsViewPort * SongView::get_clips_viewport() const
 Command * SongView::touch( )
 {
 	QPointF point = m_clipsViewPort->mapToScene(cpointer().pos());
-	m_song->set_work_at((uint) (point.x() * scalefactor));
+	m_song->set_work_at((nframes_t) (point.x() * scalefactor));
+
+	if (!m_song->is_transporting()) {
+		m_playCursor->setPos(point.x(), 0);
+		m_song->set_transport_pos( (nframes_t) (point.x() * scalefactor));
+	}
 
 	return 0;
 }
@@ -560,7 +577,7 @@ Command * SongView::play_cursor_move( )
 
 Command * SongView::work_cursor_move( )
 {
-	return new WorkCursorMove(this);
+	return new WorkCursorMove(m_playCursor, this);
 }
 
 void SongView::set_snap_range(int start)

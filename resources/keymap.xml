@@ -81,6 +81,7 @@
 		<keyfact type="FKEY" key1="Z" >
 			<Objects>
 				<Object objectname="SongView" slotsignature="hzoom_in" modes="All" sortorder="3" submenu="Zoom" instantanious="0" />
+				<Object objectname="SongView" slotsignature="hzoom_out" modes="All" sortorder="3" modifierkeys="ALT" submenu="Zoom" instantanious="0" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="S" >
@@ -184,7 +185,7 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="MouseButtonLeft" >
 			<Objects>
-				<Object objectname="CurveView" slotsignature="add_node" modes="All" instantanious="0" />
+				<Object objectname="SongView" slotsignature="touch" modes="All" sortorder="2" submenu="Work Cursor" instantanious="0" />
 				<Object objectname="TrackPanelLed" slotsignature="toggle" modes="All" sortorder="1" />
 				<Object objectname="TrackPanelBus" slotsignature="TrackView::select_bus" modes="All" instantanious="0" />
 			</Objects>
@@ -217,6 +218,12 @@
 			</Objects>
 		</keyfact>
 		
+		
+		<keyfact type="D_FKEY" key1="MouseButtonLeft" >
+			<Objects>
+				<Object objectname="CurveView" slotsignature="add_node" modes="All" instantanious="0" />
+			</Objects>
+		</keyfact>
 		<keyfact type="D_FKEY" key1="HOME" >
 			<Objects>
 				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" sortorder="8" pluginname="TraversoCommands" commandname="MoveClip"  arguments="move_to_start" />
@@ -317,11 +324,6 @@
 			<Object objectname="AudioClipView" mousehint="LR" modes="All" sortorder="8" pluginname="TraversoCommands" commandname="DragEdge"  arguments="false" />
 		</Objects>
 		</keyfact>
-		<keyfact type="HKEY2" key1="E" key2="R" >
-			<Objects>
-				<Object objectname="AudioClipView" mousehint="LR" modes="All" sortorder="8" pluginname="TraversoCommands" commandname="DragEdge"  arguments="true" />
-			</Objects>
-		</keyfact>
 		<keyfact type="HKEY" key1="G" >
 			<Objects>
 				<Object objectname="AudioClip" modes="All" sortorder="5" pluginname="TraversoCommands" commandname="Gain" />
@@ -346,7 +348,10 @@
 		<keyfact type="HKEY" key1="MouseButtonLeft" >
 			<Objects>
 				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" pluginname="TraversoCommands" commandname="MoveClipOrEdge" arguments="4;false" />
-				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" sortorder="9" modifierkeys="CTRL;ALT" pluginname="TraversoCommands" commandname="CopyClip"  arguments="copy" />
+				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" sortorder="9" modifierkeys="CTRL" pluginname="TraversoCommands" commandname="CopyClip"  arguments="copy" />
+				<Object objectname="CurveView" mousehint="LRUD" slotsignature="drag_node" modes="EditMode" sortorder="3" instantanious="1" />
+				<Object objectname="TimeLineView" mousehint="LR" slotsignature="drag_marker" modes="EditMode" sortorder="3" instantanious="1" />
+				<Object objectname="SongView" mousehint="LR" slotsignature="work_cursor_move" modes="All" sortorder="14" instantanious="0" />
 			</Objects>
 		</keyfact> 
 		<keyfact type="HKEY" key1="D" >

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursors.cpp,v 1.15 2007/03/29 21:09:42 benjie Exp $
+    $Id: Cursors.cpp,v 1.16 2007/03/30 07:33:33 benjie Exp $
 */
 
 #include "Cursors.h"
@@ -42,6 +42,7 @@ PlayHead::PlayHead(SongView* sv, Song* song, ClipsViewPort* vp)
 	check_config();
 	connect(&(config()), SIGNAL(configChanged()), this, SLOT(check_config()));
 	
+	// TODO: Make duration scale with scalefactor? (nonlinerly?)
 	m_animation.setDuration(1300);
 	m_animation.setCurveShape(QTimeLine::SineCurve);
 	
@@ -84,6 +85,8 @@ void PlayHead::paint( QPainter * painter, const QStyleOptionGraphicsItem * optio
 
 void PlayHead::play_start()
 {
+	show();
+
 	m_playTimer.start(20);
 	
 	if (m_animation.state() == QTimeLine::Running) {
@@ -212,6 +215,14 @@ void PlayHead::toggle_follow( )
 	m_follow = ! m_follow;
 }
 
+void PlayHead::work_moved()
+{
+	if (!m_song->is_transporting()) {
+		hide();
+	}
+}
+
+
 
 /**************************************************************/
 /*                    WorkCursor                              */
@@ -223,8 +234,6 @@ WorkCursor::WorkCursor(SongView* sv, Song* song)
 	, m_song(song)
 	, m_sv(sv)
 {
-	connect(m_song, SIGNAL(workingPosChanged()), this, SLOT(update_position()));
-	
 	setZValue(99);
 }
 

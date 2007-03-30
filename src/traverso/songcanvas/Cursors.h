@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursors.h,v 1.10 2007/03/29 21:09:42 benjie Exp $
+    $Id: Cursors.h,v 1.11 2007/03/30 07:33:33 benjie Exp $
 */
 
 #ifndef CURSORS_H
@@ -72,6 +72,7 @@ private slots:
         
 public slots:
         void update_position();
+        void work_moved();
 };
 
 

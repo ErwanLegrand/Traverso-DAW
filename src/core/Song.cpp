@@ -460,27 +460,8 @@ void Song::set_work_at(nframes_t pos)
 {
 	PENTER;
 
-/** use this part if the work cursor should _not_ snap **/
-// 	newTransportFramePos = pos;
  	workingFrame = pos;
 	emit workingPosChanged();
-/** use this if it should snap **/
-//	long position = snaplist->get_snap_value(pos);
-//	workingFrame = position;
-/** **/
-
-// 	printf("position is %ld\n", position);
-//	Q_ASSERT(position >= 0);
-
-//	newTransportFramePos = (uint) position;
-
-	// If there is no transport, start_seek() will _not_ be
-	// called from within process(). So we do it now!
-//	if (!transport) {
-//		start_seek();
-//	}
-
-//	seeking = 1;
 }
 
 
@@ -536,7 +517,6 @@ void Song::seek_finished()
 		resumeTransport = false;
 	}
 
-	emit workingPosChanged();
 	PMESG2("Song :: leaving seek_finished");
 }
 
@@ -870,7 +850,7 @@ nframes_t Song::get_last_frame( ) const
 
 Command * Song::playhead_to_workcursor( )
 {
-	set_work_at( workingFrame );
+	set_transport_pos( workingFrame );
 
 	return (Command*) 0;
 }
