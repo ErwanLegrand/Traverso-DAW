@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SnapList.h,v 1.6 2007/03/29 21:09:42 benjie Exp $
+$Id: SnapList.h,v 1.7 2007/03/31 07:12:37 benjie Exp $
 */
 
 #ifndef SNAPLIST_H
@@ -68,6 +68,7 @@ inline void SnapList::set_range(nframes_t start, nframes_t end, int scalefactor)
 	m_rangeStart = start;
 	m_rangeEnd = end;
 	m_scalefactor = scalefactor;
+	m_isDirty = true;
 };
 
 
