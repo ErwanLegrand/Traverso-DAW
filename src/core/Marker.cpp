@@ -100,7 +100,7 @@ int Marker::set_state(const QDomNode & node)
 void Marker::set_when(nframes_t when)
 {
 	m_when = when;
-	emit positionChanged();
+	emit positionChanged(this);
 }
 
 void Marker::set_description(const QString &s)

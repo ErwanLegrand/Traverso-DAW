@@ -75,7 +75,7 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	connect(m_clip, SIGNAL(gainChanged()), this, SLOT (gain_changed()));
 	connect(m_clip, SIGNAL(fadeAdded(FadeCurve*)), this, SLOT(add_new_fadeview( FadeCurve*)));
 	connect(m_clip, SIGNAL(fadeRemoved(FadeCurve*)), this, SLOT(remove_fadeview( FadeCurve*)));
-	connect(m_clip, SIGNAL(positionChanged()), this, SLOT(position_changed()));
+	connect(m_clip, SIGNAL(positionChanged(Snappable*)), this, SLOT(position_changed()));
 	
 	connect(m_sv, SIGNAL(viewModeChanged()), this, SLOT(repaint()));
 	
@@ -599,7 +599,7 @@ Command * AudioClipView::fade_range()
 }
 
 
-void AudioClipView::position_changed( )
+void AudioClipView::position_changed()
 {
 	calculate_bounding_rect();
 }

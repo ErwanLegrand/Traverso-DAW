@@ -257,7 +257,7 @@ void AudioClip::set_left_edge(long newFrame)
 		return;
 	}
 
-	emit positionChanged();
+	emit positionChanged(this);
 }
 
 void AudioClip::set_right_edge(long newFrame)
@@ -296,7 +296,7 @@ void AudioClip::set_right_edge(long newFrame)
 		return;
 	}
 
-	emit positionChanged();
+	emit positionChanged(this);
 }
 
 void AudioClip::set_source_start_frame(nframes_t frame)
@@ -317,7 +317,7 @@ void AudioClip::set_track_start_frame(nframes_t newTrackStartFrame)
 
 	set_track_end_frame(trackStartFrame + m_length);
 
-	emit positionChanged();
+	emit positionChanged(this);
 }
 
 void AudioClip::set_track_end_frame( nframes_t endFrame )

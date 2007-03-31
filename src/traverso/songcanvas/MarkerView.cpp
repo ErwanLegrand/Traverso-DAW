@@ -40,7 +40,7 @@ MarkerView::MarkerView(Marker* marker, SongView* sv, ViewItem* parentView)
 
 	load_theme_data();
 	
-	connect(m_marker, SIGNAL(positionChanged()), this, SLOT(update_position()));
+	connect(m_marker, SIGNAL(positionChanged(Snappable*)), this, SLOT(update_position(Snappable*)));
 	connect(m_marker, SIGNAL(descriptionChanged()), this, SLOT(update_drawing()));
 }
 
@@ -66,7 +66,7 @@ void MarkerView::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
 	painter->drawText(14, 8, m_marker->get_description());
 
 	if (m_active) {
-		painter->drawLine(MARKER_WIDTH/2, 9, MARKER_WIDTH/2, m_boundingRect.height());
+		painter->drawLine(MARKER_WIDTH/2, 9, MARKER_WIDTH/2, (int)m_boundingRect.height());
 	}
 
 	painter->restore();

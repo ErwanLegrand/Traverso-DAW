@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.37 2007/03/29 21:09:42 benjie Exp $
+$Id: AudioClip.h,v 1.38 2007/03/31 03:53:27 benjie Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -169,7 +169,7 @@ private:
 signals:
 	void stateChanged();
 	void muteChanged();
-	void positionChanged();
+	void positionChanged(Snappable*);
 	void trackEndFrameChanged();
 	void gainChanged();
 	void fadeAdded(FadeCurve*);

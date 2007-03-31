@@ -128,6 +128,7 @@ void Song::init()
 	snaplist = new SnapList(this);
 	workSnap = new Snappable();
 	workSnap->set_snap_list(snaplist);
+
 	realtimepath = false;
 	scheduleForDeletion = false;
 	isSnapOn=true;
@@ -463,6 +464,7 @@ void Song::set_work_at(nframes_t pos)
 	PENTER;
 
  	workingFrame = pos;
+	snaplist->mark_dirty(workSnap);
 	emit workingPosChanged();
 }
 

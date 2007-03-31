@@ -80,7 +80,7 @@ private:
 	uint	m_type;
 	
 signals:
-	void positionChanged();
+	void positionChanged(Snappable*);
 	void descriptionChanged();
 
 };
