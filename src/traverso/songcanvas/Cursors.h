@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursors.h,v 1.11 2007/03/30 07:33:33 benjie Exp $
+    $Id: Cursors.h,v 1.12 2007/04/02 19:23:06 benjie Exp $
 */
 
 #ifndef CURSORS_H
@@ -60,6 +60,7 @@ private:
         QTimeLine	m_animation;
         ClipsViewPort*	m_vp;
         bool 		m_follow;
+	bool		m_followDisabled;
         PlayHeadMode	m_mode;
         int 		m_animationScrollPosition;
 
@@ -73,6 +74,8 @@ private slots:
 public slots:
         void update_position();
         void work_moved();
+        void enable_follow();  // enable/disable follow only do anything if following is
+        void disable_follow(); // enabled in the config
 };
 
 

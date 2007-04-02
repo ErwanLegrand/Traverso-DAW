@@ -68,10 +68,6 @@ int SplitClip::do_action()
 {
 	PENTER;
 
-	if (!rightClip || !leftClip) {
-		return -1;
-	}
-
 	ie().process_command(m_track->remove_clip(m_clip, false));
 
 	ie().process_command(m_track->add_clip(leftClip, false));
@@ -86,10 +82,6 @@ int SplitClip::do_action()
 int SplitClip::undo_action()
 {
 	PENTER;
-
-	if (!rightClip || !leftClip) {
-		return -1;
-	}
 
 	ie().process_command(m_track->remove_clip(leftClip, false));
 	ie().process_command(m_track->remove_clip(rightClip, false));

@@ -199,6 +199,7 @@ signals:
 	void transferStarted();
 	void transferStopped();
 	void workingPosChanged();
+	void transportPosSet();
 	void firstVisibleFrameChanged();
 	void lastFramePositionChanged();
 	void seekStart(uint position);

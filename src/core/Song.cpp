@@ -479,6 +479,7 @@ void Song::set_transport_pos(nframes_t position)
 	}
 
 	seeking = 1;
+	emit transportPosSet();
 }
 
 

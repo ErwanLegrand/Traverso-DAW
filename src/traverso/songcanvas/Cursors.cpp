@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Cursors.cpp,v 1.16 2007/03/30 07:33:33 benjie Exp $
+    $Id: Cursors.cpp,v 1.17 2007/04/02 19:23:06 benjie Exp $
 */
 
 #include "Cursors.h"
@@ -87,6 +87,8 @@ void PlayHead::play_start()
 {
 	show();
 
+	m_followDisabled = false;
+
 	m_playTimer.start(20);
 	
 	if (m_animation.state() == QTimeLine::Running) {
@@ -98,13 +100,23 @@ void PlayHead::play_start()
 void PlayHead::play_stop()
 {
 	m_playTimer.stop();
-	
+
 	if (m_animation.state() == QTimeLine::Running) {
 		m_animation.stop();
 		m_animation.setCurrentTime(0);
 	}
-	
+
 	update();
+}
+
+void PlayHead::disable_follow()
+{
+	m_followDisabled = true;
+}
+
+void PlayHead::enable_follow()
+{
+	m_followDisabled = false;
 }
 
 void PlayHead::update_position()
@@ -117,12 +129,12 @@ void PlayHead::update_position()
 		return;
 	}
 	
-	QScrollBar* horizontalScrollbar = m_vp->horizontalScrollBar();
-	int vpWidth = m_vp->viewport()->width();
-	
-	if ( ! m_follow) {
+	if ( ! m_follow || m_followDisabled) {
 		return;
 	}
+	
+	QScrollBar* horizontalScrollbar = m_vp->horizontalScrollBar();
+	int vpWidth = m_vp->viewport()->width();
 	
 	if (m_mode == CENTERED) {
 		horizontalScrollbar->setValue((int)scenePos().x() - (int)(0.5 * vpWidth));

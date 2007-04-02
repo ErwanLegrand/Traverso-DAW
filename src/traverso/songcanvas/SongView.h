@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongView.h,v 1.15 2007/03/29 21:09:42 benjie Exp $
+    $Id: SongView.h,v 1.16 2007/04/02 19:23:06 benjie Exp $
 */
 
 #ifndef SONG_VIEW_H
@@ -103,6 +103,7 @@ private:
 	QTimer			m_shuttletimer;
 	QScrollBar*		m_vScrollBar;
 	QScrollBar*		m_hScrollBar;
+	bool			m_actOnPlayHead;
 	
 	// Themeing data
 	int	m_trackSeperatingHeight;
@@ -142,6 +143,8 @@ private slots:
 	void add_new_trackview(Track*);
 	void remove_trackview(Track*);
 	void update_shuttle();
+	void work_cursor_updated();
+	void play_head_updated();
 	
 signals:
 	void viewModeChanged();

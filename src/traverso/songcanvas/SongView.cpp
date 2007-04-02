@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.34 2007/04/02 04:52:49 benjie Exp $
+$Id: SongView.cpp,v 1.35 2007/04/02 19:23:06 benjie Exp $
 */
 
 
@@ -172,8 +172,9 @@ int WorkCursorMove::finish_hold()
 
 int WorkCursorMove::begin_hold()
 {
-	Snappable dummy;
-
+	if (m_song->is_transporting()) {
+		m_playCursor->disable_follow();
+	}
 	m_song->get_work_snap()->set_snappable(false);
 	return 1;
 }
@@ -224,6 +225,8 @@ SongView::SongView(SongWidget* songwidget,
 	m_workCursor = new WorkCursor(this, m_song);
 	connect(m_song, SIGNAL(workingPosChanged()), m_workCursor, SLOT(update_position()));
 	connect(m_song, SIGNAL(workingPosChanged()), m_playCursor, SLOT(work_moved()));
+	connect(m_song, SIGNAL(transportPosSet()), this, SLOT(play_head_updated()));
+	connect(m_song, SIGNAL(workingPosChanged()), this, SLOT(work_cursor_updated()));
 
 	m_clipsViewPort->scene()->addItem(m_playCursor);
 	m_clipsViewPort->scene()->addItem(m_workCursor);
@@ -424,8 +427,30 @@ Command* SongView::center()
 {
 	PENTER2;
 	QScrollBar* scrollbar = m_clipsViewPort->horizontalScrollBar();
-	scrollbar->setValue(m_song->get_working_frame() / scalefactor - m_clipsViewPort->width() / 2);
+
+	nframes_t centerX;
+	if (m_song->is_transporting() && m_actOnPlayHead) { 
+		centerX = m_song->get_transport_frame();
+	} else {
+		centerX = m_song->get_working_frame();
+	}
+
+	scrollbar->setValue(centerX / scalefactor - m_clipsViewPort->width() / 2);
 	return (Command*) 0;
+}
+
+
+void SongView::work_cursor_updated()
+{
+	m_actOnPlayHead = false;
+	m_playCursor->disable_follow();
+}
+
+
+void SongView::play_head_updated()
+{
+	m_actOnPlayHead = true;
+	m_playCursor->enable_follow();
 }
 
 
