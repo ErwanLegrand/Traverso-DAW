@@ -164,7 +164,7 @@ void SongManagerDialog::on_deleteSongButton_clicked( )
 	qint64 id = item->data(0, Qt::UserRole).toLongLong();
 	
 	// Hmmm, to which history stack should this one be pushed ???? :-(
-	ie().process_command(m_project->remove_song(m_project->get_song(id)));
+	Command::process_command(m_project->remove_song(m_project->get_song(id)));
 }
 
 void SongManagerDialog::on_createSongButton_clicked( )
@@ -179,7 +179,7 @@ void SongManagerDialog::on_createSongButton_clicked( )
 	song->set_title(newSongNameLineEdit->text());
 	song->set_artists(artistsLineEdit->text());
 	
-	ie().process_command(m_project->add_song(song));
+	Command::process_command(m_project->add_song(song));
 }
 
 

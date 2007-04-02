@@ -131,7 +131,6 @@ public:
         void catch_mousebutton_release( QMouseEvent * e );
         void catch_mousebutton_doubleclick( QMouseEvent * e );
         void catch_scroll(QWheelEvent * e );
-        void process_command(Command* cmd);
 
         int collected_number();
 

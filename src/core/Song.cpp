@@ -572,7 +572,7 @@ Command* Song::go()
 			}
 			group->setText(tr("Recording to %n Clip(s)", "", clipcount));
 			
-			ie().process_command(group);
+			Command::process_command(group);
 		}
 		
 		transport = true;

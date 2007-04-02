@@ -455,21 +455,6 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 	return 1;
 }
 
-void InputEngine::process_command(Command* cmd )
-{
-	Q_ASSERT(cmd);
-	
-	if (cmd->prepare_actions()) {
-		cmd->set_valid(true);
-		if (cmd->push_to_history_stack() < 0) {
-			// QUndoStack calls redo() for us, now it's not
-			// called, so we do it here!
-			cmd->redo();
-			delete cmd;
-		}
-	}
-}
-
 void InputEngine::jog()
 {
 	PENTER3;

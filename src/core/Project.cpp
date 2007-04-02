@@ -174,7 +174,7 @@ int Project::load() // try to load the project by its title
 	while(!songNode.isNull())
 	{
 		Song* song = new Song(this, songNode);
-		ie().process_command(add_song(song, false));
+		Command::process_command(add_song(song, false));
 		songNode = songNode.nextSibling();
 	}
 

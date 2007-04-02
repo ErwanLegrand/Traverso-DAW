@@ -171,7 +171,7 @@ int MoveClip::begin_hold()
 		connect(d->view->get_clip()->get_track(), SIGNAL(audioClipAdded(AudioClip*)),
 			this, SLOT(audioclip_added(AudioClip*)));
 	
-		ie().process_command(d->view->get_clip()->get_track()->add_clip(d->newclip, false));
+		Command::process_command(d->view->get_clip()->get_track()->add_clip(d->newclip, false));
 		
 		return 1;
 	}
@@ -217,12 +217,12 @@ int MoveClip::do_action()
 	}
 
 	if (!m_targetTrack) {
-		ie().process_command(m_originTrack->remove_clip(m_clip, false));
+		Command::process_command(m_originTrack->remove_clip(m_clip, false));
 		m_targetTrack = (Track*) 0;
 	} else {
-		ie().process_command(m_originTrack->remove_clip(m_clip, false));
+		Command::process_command(m_originTrack->remove_clip(m_clip, false));
 		m_clip->set_track_start_frame(m_originalTrackFirstFrame + m_posDiff);
-		ie().process_command(m_targetTrack->add_clip(m_clip, false));
+		Command::process_command(m_targetTrack->add_clip(m_clip, false));
 	}
 	
 	if (m_actionType == "copy") {
@@ -244,14 +244,14 @@ int MoveClip::undo_action()
 {
 	PENTER;
 	if (m_targetTrack) {
-		ie().process_command(m_targetTrack->remove_clip(m_clip, false));
+		Command::process_command(m_targetTrack->remove_clip(m_clip, false));
 	}
 	
 	if (m_actionType == "copy") {
 		resources_manager()->remove_clip_from_database(m_clip->get_id());
 	} else {
 		m_clip->set_track_start_frame(m_originalTrackFirstFrame);
-		ie().process_command(m_originTrack->add_clip(m_clip, false));
+		Command::process_command(m_originTrack->add_clip(m_clip, false));
 	}
 
 	if (m_actionType == "anchored_left_edge_move") {
@@ -410,9 +410,9 @@ void MoveClip::move_to_end(bool autorepeat)
 	Q_UNUSED(autorepeat)
 	Track *track = m_clip->get_track();
 	
-	ie().process_command(track->remove_clip(m_clip, false));
+	Command::process_command(track->remove_clip(m_clip, false));
 	m_clip->set_track_start_frame(m_clip->get_song()->get_last_frame());
-	ie().process_command(track->add_clip(m_clip, false));
+	Command::process_command(track->add_clip(m_clip, false));
 }
 
 

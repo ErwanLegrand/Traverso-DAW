@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.15 2007/02/27 19:46:54 r_sijrier Exp $
+$Id: FadeCurve.cpp,v 1.16 2007/04/02 21:05:43 r_sijrier Exp $
 */
  
 #include "FadeCurve.h"
@@ -26,7 +26,7 @@ $Id: FadeCurve.cpp,v 1.15 2007/02/27 19:46:54 r_sijrier Exp $
 #include <cmath>
 #include "Song.h"
 #include "AudioClip.h"
-#include "InputEngine.h"
+#include "Command.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -81,7 +81,7 @@ void FadeCurve::init()
 		QPointF p = get_curve_point(f);
 		
 		CurveNode* node = new CurveNode(this, p.x(), p.y());
-		ie().process_command( add_node(node, false) );
+		Command::process_command( add_node(node, false) );
 		
 // 		printf("adding node with x=%f, y=%f\n", p.x(), p.y());
 		

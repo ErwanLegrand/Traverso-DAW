@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.cpp,v 1.23 2007/03/23 14:36:27 r_sijrier Exp $
+$Id: CurveView.cpp,v 1.24 2007/04/02 21:05:43 r_sijrier Exp $
 */
 
 #include "CurveView.h"
@@ -291,7 +291,7 @@ void CurveView::add_curvenode_view(CurveNode* node)
 	
 	AddRemove* cmd = (AddRemove*) m_guicurve->add_node(nodeview, false);
 	cmd->set_instantanious(true);
-	ie().process_command(cmd);
+	Command::process_command(cmd);
 	
 	qSort(m_nodeViews.begin(), m_nodeViews.end(), Curve::smallerNode);
 	
@@ -309,7 +309,7 @@ void CurveView::remove_curvenode_view(CurveNode* node)
 			}
 			AddRemove* cmd = (AddRemove*) m_guicurve->remove_node(nodeview, false);
 			cmd->set_instantanious(true);
-			ie().process_command(cmd);
+			Command::process_command(cmd);
 			
 			delete nodeview;
 			update();

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Command.cpp,v 1.13 2007/03/06 15:14:16 r_sijrier Exp $
+$Id: Command.cpp,v 1.14 2007/04/02 21:05:43 r_sijrier Exp $
 */
 
 #include "Command.h"
@@ -257,6 +257,21 @@ void Command::set_cursor_shape( int useX, int useY )
 		view->reset_cursor();
 	}
 	
+}
+
+void Command::process_command(Command * cmd)
+{
+	Q_ASSERT(cmd);
+	
+	if (cmd->prepare_actions()) {
+		cmd->set_valid(true);
+		if (cmd->push_to_history_stack() < 0) {
+			// QUndoStack calls redo() for us, now it's not
+			// called, so we do it here!
+			cmd->redo();
+			delete cmd;
+		}
+	}
 }
 
 //eof

@@ -332,7 +332,7 @@ void SpectralMeterView::set_song(Song *song)
 	
 	if (m_song) {
 		if (m_meter) {
-			ie().process_command(m_song->get_plugin_chain()->remove_plugin(m_meter, false));
+			Command::process_command(m_song->get_plugin_chain()->remove_plugin(m_meter, false));
 			timer.stop();
 		}
 	}
@@ -361,7 +361,7 @@ void SpectralMeterView::set_song(Song *song)
 	
 	m_meter = new SpectralMeter();
 	m_meter->init();
-	ie().process_command( chain->add_plugin(m_meter, false) );
+	Command::process_command( chain->add_plugin(m_meter, false) );
 
 	timer.start(UPDATE_INTERVAL);
 }
@@ -371,7 +371,7 @@ void SpectralMeterView::hide_event()
 {
 	if (m_song) {
 		if (m_meter) {
-			ie().process_command(m_song->get_plugin_chain()->remove_plugin(m_meter, false));
+			Command::process_command(m_song->get_plugin_chain()->remove_plugin(m_meter, false));
 			timer.stop();
 		}
 	}

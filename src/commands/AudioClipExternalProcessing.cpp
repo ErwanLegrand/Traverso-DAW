@@ -75,10 +75,18 @@ int AudioClipExternalProcessing::prepare_actions()
 	m_processor->setProcessChannelMode(QProcess::MergedChannels);
 	
 	ReadSource* rs = resources_manager()->get_readsource(m_clip->get_readsource_id());
+/*	if (! rs) {
+		// This should NOT be possible, but just in case....
+		printf("resources manager didn't return a resource for the to be processed audioclip (%lld) !!!!\n",
+		       		m_clip->get_id());
+		return -1;
+	}*/
+	
 	QString name = rs->get_name();
 	
 	QString infilename = rs->get_filename();
-	QString outfilename = pm().get_project()->get_audiosources_dir() + name.remove(".wav").remove(".").append("-").append(command.simplified()).append(".wav");
+	QString outfilename = pm().get_project()->get_audiosources_dir() + name.remove(".wav").remove(".")
+							.append("-").append(command.simplified()).append(".wav");
 	
 	printf("infilename is %s\n", QS_C(infilename));
 	printf("outfilename is %s\n", QS_C(outfilename));
@@ -129,8 +137,8 @@ int AudioClipExternalProcessing::prepare_actions()
 int AudioClipExternalProcessing::do_action()
 {
 	PENTER;
-	ie().process_command(m_track->remove_clip(m_clip, false));
-	ie().process_command(m_track->add_clip(m_resultingclip, false));
+	Command::process_command(m_track->remove_clip(m_clip, false));
+	Command::process_command(m_track->add_clip(m_resultingclip, false));
 	
 	return 1;
 }
@@ -138,8 +146,8 @@ int AudioClipExternalProcessing::do_action()
 int AudioClipExternalProcessing::undo_action()
 {
 	PENTER;
-	ie().process_command(m_track->remove_clip(m_resultingclip, false));
-	ie().process_command(m_track->add_clip(m_clip, false));
+	Command::process_command(m_track->remove_clip(m_resultingclip, false));
+	Command::process_command(m_track->add_clip(m_clip, false));
 	return 1;
 }
 

@@ -137,7 +137,7 @@ int Import::do_action()
 		create_audioclip();
 	}
 	
-	ie().process_command(m_track->add_clip(m_clip, false));
+	Command::process_command(m_track->add_clip(m_clip, false));
 	
 	resources_manager()->undo_remove_clip_from_database(m_clip->get_id());
 	
@@ -149,7 +149,7 @@ int Import::undo_action()
 {
 	PENTER;
 		
-	ie().process_command(m_track->remove_clip(m_clip, false));
+	Command::process_command(m_track->remove_clip(m_clip, false));
 	
 	resources_manager()->remove_clip_from_database(m_clip->get_id());
 	

@@ -25,7 +25,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.cpp,v 1.33 2007/03/23 14:36:10 r_sijrier Exp $
+$Id: Curve.cpp,v 1.34 2007/04/02 21:05:43 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -123,7 +123,7 @@ int Curve::set_state( const QDomNode & node )
 		double when = whenValueList.at(0).toDouble();
 		double value = whenValueList.at(1).toDouble();
 		CurveNode* node = new CurveNode(this, when, value); 
-		ie().process_command( add_node(node, false) );
+		Command::process_command( add_node(node, false) );
 	}
 	
 	return 1;
@@ -511,7 +511,7 @@ void Curve::set_changed( )
  * @param historable Should the returned Command object be placed on the
  		history stack?
  * @return A Command object, if the call was generated from the InputEngine,
- 	it can be leaved alone, if it was a direct call, use ie().process_command()
+ 	it can be leaved alone, if it was a direct call, use Command::process_command()
  	to do the actuall work!!
  */
 Command* Curve::add_node(CurveNode* node, bool historable)
@@ -540,7 +540,7 @@ Command* Curve::add_node(CurveNode* node, bool historable)
  * @param historable Should the returned Command object be placed on the
  		history stack?
  * @return A Command object, if the call was generated from the InputEngine,
- 	it can be leaved alone, if it was a direct call, use ie().process_command()
+ 	it can be leaved alone, if it was a direct call, use Command::process_command()
  	to do the actuall work!!
  */
 Command* Curve::remove_node(CurveNode* node, bool historable)

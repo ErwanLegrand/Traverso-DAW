@@ -695,7 +695,7 @@ void AudioClip::finish_write_source( WriteSource * ws )
 			emit recordingFinished();
 		} else {
 			info().critical(tr("No ReadSource returned from asm after recording, removing clip from Track!"));
-			ie().process_command(m_track->remove_clip(this, false));
+			Command::process_command(m_track->remove_clip(this, false));
 		}
 	}
 }
