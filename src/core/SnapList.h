@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SnapList.h,v 1.8 2007/04/02 00:35:13 benjie Exp $
+$Id: SnapList.h,v 1.9 2007/04/02 04:52:49 benjie Exp $
 */
 
 #ifndef SNAPLIST_H
@@ -61,16 +61,6 @@ private:
 public slots:
 	void mark_dirty(Snappable *item);
 };
-
-inline void SnapList::set_range(nframes_t start, nframes_t end, int scalefactor)
-{
-// 	printf("setting xstart %d, xend %d scalefactor %d\n", start, end, scalefactor);
-	m_rangeStart = start;
-	m_rangeEnd = end;
-	m_scalefactor = scalefactor;
-	m_isDirty = true;
-};
-
 
 #endif
 

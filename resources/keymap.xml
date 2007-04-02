@@ -347,7 +347,7 @@
 		</keyfact>
 		<keyfact type="HKEY" key1="MouseButtonLeft" >
 			<Objects>
-				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" pluginname="TraversoCommands" commandname="MoveClipOrEdge" arguments="4;false" />
+				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" pluginname="TraversoCommands" commandname="MoveClip" arguments="move" />
 				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" sortorder="9" modifierkeys="CTRL" pluginname="TraversoCommands" commandname="CopyClip"  arguments="copy" />
 				<Object objectname="CurveView" mousehint="LRUD" slotsignature="drag_node" modes="EditMode" sortorder="3" instantanious="1" />
 				<Object objectname="TimeLineView" mousehint="LR" slotsignature="drag_marker" modes="EditMode" sortorder="3" instantanious="1" />

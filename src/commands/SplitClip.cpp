@@ -35,6 +35,8 @@ SplitClip::SplitClip(AudioClipView* view)
 	m_clip = view->get_clip();
 	m_sv = view->get_songview();
 	m_track = m_clip->get_track();
+	leftClip = 0;
+	rightClip = 0;
 	Q_ASSERT(m_clip->get_song());
 }
 
@@ -42,6 +44,10 @@ SplitClip::SplitClip(AudioClipView* view)
 int SplitClip::prepare_actions()
 {
 	nframes_t splitPoint = cpointer().scene_x() * m_sv->scalefactor;
+
+	if (splitPoint <= m_clip->get_track_start_frame() || splitPoint >= m_clip->get_track_start_frame() + m_clip->get_length()) {
+		return -1;
+	}
 
 	leftClip = resources_manager()->get_clip(m_clip->get_id());
 	rightClip = resources_manager()->get_clip(m_clip->get_id());
@@ -61,6 +67,11 @@ int SplitClip::prepare_actions()
 int SplitClip::do_action()
 {
 	PENTER;
+
+	if (!rightClip || !leftClip) {
+		return -1;
+	}
+
 	ie().process_command(m_track->remove_clip(m_clip, false));
 
 	ie().process_command(m_track->add_clip(leftClip, false));
@@ -75,6 +86,11 @@ int SplitClip::do_action()
 int SplitClip::undo_action()
 {
 	PENTER;
+
+	if (!rightClip || !leftClip) {
+		return -1;
+	}
+
 	ie().process_command(m_track->remove_clip(leftClip, false));
 	ie().process_command(m_track->remove_clip(rightClip, false));
 	

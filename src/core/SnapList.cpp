@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SnapList.cpp,v 1.10 2007/04/02 00:35:13 benjie Exp $
+$Id: SnapList.cpp,v 1.11 2007/04/02 04:52:49 benjie Exp $
 */
 
 #include "SnapList.h"
@@ -100,7 +100,7 @@ void SnapList::update_snaplist()
 
 	// add the working cursor's position
 	nframes_t workingframe = m_song->get_working_frame();
-	printf("workingframe xpos is %d\n",  workingframe / m_scalefactor);
+	//printf("workingframe xpos is %d\n",  workingframe / m_scalefactor);
 	if (m_song->get_work_snap()->is_snappable() && workingframe >= m_rangeStart && workingframe <= m_rangeEnd) {
 		xposList.append(m_song->get_working_frame());
 	}
@@ -241,5 +241,18 @@ int SnapList::get_snap_diff(nframes_t pos)
 	return pos - xposLut.at(i);
 }
 
+void SnapList::set_range(nframes_t start, nframes_t end, int scalefactor)
+{
+ 	//printf("setting xstart %d, xend %d scalefactor %d\n", start, end, scalefactor);
+
+	if (m_rangeStart == start && m_rangeEnd == end && m_scalefactor == scalefactor) {
+		return;
+	}
+
+	m_rangeStart = start;
+	m_rangeEnd = end;
+	m_scalefactor = scalefactor;
+	m_isDirty = true;
+};
 
 /* EOF */

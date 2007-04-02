@@ -148,10 +148,9 @@ void MoveClip::init_data(bool isCopy)
 	m_originTrack = m_targetTrack = m_clip->get_track();
 	m_originalTrackFirstFrame = m_clip->get_track_start_frame();
 	m_posDiff = 0;
-	d->origPos = cpointer().pos();
-	d->origXPos = cpointer().x();
+	d->origXPos = cpointer().on_first_input_event_x();
+	d->origPos = QPoint(d->origXPos, cpointer().on_first_input_event_y());
 	d->hScrollbarValue = d->sv->hscrollbar_value();
-	m_clip->set_snappable(false);
 	d->sv->start_shuttle(true, true);
 	d->origTrackStartFrame = m_clip->get_track_start_frame();
 	d->origTrackEndFrame = m_clip->get_track_end_frame();
@@ -178,6 +177,7 @@ int MoveClip::begin_hold()
 	}
 
 	init_data();
+	m_clip->set_snappable(false);
 
 	return 1;
 }

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.33 2007/03/30 07:33:33 benjie Exp $
+$Id: SongView.cpp,v 1.34 2007/04/02 04:52:49 benjie Exp $
 */
 
 
@@ -98,8 +98,12 @@ PlayHeadMove::PlayHeadMove(PlayHead* cursor, SongView* sv)
 
 int PlayHeadMove::finish_hold()
 {
+	int x = cpointer().scene_x();
+	if (x < 0) {
+		x = 0;
+	}
 	m_cursor->set_active(m_song->is_transporting());
-	m_song->set_transport_pos( (nframes_t) (cpointer().scene_x() * m_sv->scalefactor));
+	m_song->set_transport_pos( (nframes_t) (x * m_sv->scalefactor));
 	return -1;
 }
 
@@ -118,7 +122,7 @@ int PlayHeadMove::jog()
 	}
 	m_cursor->setPos(x, 0);
 	if (m_resync && m_song->is_transporting()) {
-		m_song->set_transport_pos( (nframes_t) (cpointer().scene_x() * m_sv->scalefactor));
+		m_song->set_transport_pos( (nframes_t) (x * m_sv->scalefactor));
 	}
 	return 1;
 }
@@ -151,11 +155,17 @@ WorkCursorMove::WorkCursorMove(PlayHead* cursor, SongView* sv)
 
 int WorkCursorMove::finish_hold()
 {
+	int x = cpointer().scene_x();
+
+	if (x < 0) {
+		x = 0;
+	}
+
 	m_song->get_work_snap()->set_snappable(true);
 
 	if (!m_song->is_transporting()) {
-		m_playCursor->setPos(cpointer().scene_x(), 0);
-		m_song->set_transport_pos( (nframes_t) (cpointer().scene_x() * m_sv->scalefactor));
+		m_playCursor->setPos(x, 0);
+		m_song->set_transport_pos( (nframes_t) (x * m_sv->scalefactor));
 	}
 	return -1;
 }
@@ -172,8 +182,9 @@ int WorkCursorMove::jog()
 {
 	int x = cpointer().scene_x();
 
-	if (x < 0)
+	if (x < 0) {
 		x = 0;
+	}
 
 	nframes_t newFrame = x * m_sv->scalefactor;
 
@@ -328,7 +339,7 @@ void SongView::update_scrollbars()
 	m_workCursor->set_bounding_rect(QRectF(0, 0, 2, m_sceneHeight));
 	m_workCursor->update_position();
 
-	set_snap_range(m_hScrollBar->value() * scalefactor);
+	set_snap_range(m_hScrollBar->value());
 }
 
 Command* SongView::zoom()
