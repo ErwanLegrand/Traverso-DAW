@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveNode.h,v 1.7 2007/02/23 13:49:53 r_sijrier Exp $
+$Id: CurveNode.h,v 1.8 2007/04/02 09:52:31 r_sijrier Exp $
 */
 
 #ifndef CURVENODE_H
@@ -57,10 +57,15 @@ public:
 	
 	Curve*	m_curve;
 	
-private:
-	double  coeff[4];
+	// declaring friend class Curve seems not to make any difference 
+	// when compiling on windows ? (not allowed to access compile error)
 	double 	when;
 	double 	value;
+	
+private:
+	double  coeff[4];
+/*	double 	when;
+	double 	value;*/
 	
 	friend class Curve;
 };

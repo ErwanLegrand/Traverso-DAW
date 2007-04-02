@@ -96,3 +96,6 @@ macx{
     QMAKE_LIBDIR += /usr/local/qt/lib
 }
 
+win32{
+    INCLUDEPATH += ../../3thparty/include .
+}

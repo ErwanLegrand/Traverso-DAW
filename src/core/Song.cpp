@@ -99,7 +99,7 @@ Song::~Song()
 void Song::init()
 {
 	PENTER2;
-	threadId = QThread::currentThreadId ();
+//	threadId = QThread::currentThreadId ();
 
 	m_diskio = new DiskIO(this);
 	
@@ -490,7 +490,7 @@ void Song::set_transport_pos(nframes_t position)
 void Song::start_seek()
 {
 	PMESG2("Song :: entering start_seek");
-	PMESG2("Song :: thread id is: %ld", QThread::currentThreadId ());
+// 	PMESG2("Song :: thread id is: %ld", QThread::currentThreadId ());
 	PMESG2("Song::start_seek()");
 	if (transport) {
 		realtimepath = false;

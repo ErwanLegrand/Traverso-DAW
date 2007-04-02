@@ -102,7 +102,7 @@ void AudioClip::init()
 	m_song = 0;
 	m_track = 0;
 	m_readSource = 0;
-	isRecording = false;
+	m_recordingStatus = NO_RECORDING;
 	isSelected = false;
 	fadeIn = 0;
 	fadeOut = 0;
@@ -372,7 +372,7 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 {
 	Q_ASSERT(m_song);
 	
-	if (isRecording) {
+	if (m_recordingStatus == RECORDING) {
 		process_capture(nframes, channel);
 		return 0;
 	}
@@ -474,6 +474,8 @@ void AudioClip::process_capture( nframes_t nframes, uint channel )
 		}
 	}
 	
+	m_length += (nframes / writeSources.size());
+	
 	int index = 0;
 	if (m_track->capture_left_channel() && m_track->capture_right_channel()) {
 		index = channel;
@@ -553,7 +555,8 @@ int AudioClip::init_recording( QByteArray name )
 		ws->set_process_peaks( true );
 		ws->set_recording( true );
 
-		connect(ws, SIGNAL(exportFinished( WriteSource* )), this, SLOT(finish_write_source( WriteSource* )));
+		connect(ws, SIGNAL(exportFinished( WriteSource* )), 
+			this, SLOT(finish_write_source( WriteSource* )));
 
 		writeSources.insert(channelnumber, ws);
 		m_song->get_diskio()->register_write_source( ws );
@@ -561,7 +564,7 @@ int AudioClip::init_recording( QByteArray name )
 
 	sourceStartFrame = 0;
 	isTake = 1;
-	isRecording = true;
+	m_recordingStatus = RECORDING;
 	connect(m_song, SIGNAL(transferStopped()), this, SLOT(finish_recording()));
 
 	return 1;
@@ -652,19 +655,23 @@ void AudioClip::finish_write_source( WriteSource * ws )
 {
 	PENTER;
 
-	printf("AudioClip::finish_write_source :  thread id is: %ld\n", QThread::currentThreadId ());
+// 	printf("AudioClip::finish_write_source :  thread id is: %ld\n", QThread::currentThreadId ());
 
 	QString dir;
 	QString name;
 	
-	for (int i=0; i<writeSources.size(); ++i) {
-		if (ws == writeSources.at(i)) {
-			writeSources.removeAt(i);
-			dir = ws->get_dir();
-			name = ws->get_name();
-			delete ws;
+	if (writeSources.contains(ws)) {
+		writeSources.removeAll(ws);
+		dir = ws->get_dir();
+		name = ws->get_name();
+		if (ws->m_peak->finish_processing() < 0) {
+			PERROR("write source peak::finish_processing() failed!");
 		}
+		delete ws;
+	} else {
+		qFatal("AudioClip: finished writesource not in writesources list !!");
 	}
+		
 	
 	if (writeSources.isEmpty()) {
 		int channelCount = (m_track->capture_left_channel() && m_track->capture_right_channel()) ? 2 : 1;
@@ -684,8 +691,11 @@ void AudioClip::finish_write_source( WriteSource * ws )
 		if (rs) {
 			set_audio_source(rs);
 			m_song->get_diskio()->register_read_source( m_readSource );
+			m_recordingStatus = NO_RECORDING;
+			emit recordingFinished();
 		} else {
-			PERROR("No ReadSource returned from asm after recording");
+			info().critical(tr("No ReadSource returned from asm after recording, removing clip from Track!"));
+			ie().process_command(m_track->remove_clip(this, false));
 		}
 	}
 }
@@ -693,14 +703,14 @@ void AudioClip::finish_write_source( WriteSource * ws )
 void AudioClip::finish_recording()
 {
 	PENTER;
+	
+	m_recordingStatus = FINISHING_RECORDING;
 
 	foreach(WriteSource* ws, writeSources) {
 		ws->set_recording(false);
 	}
 
 	disconnect(m_song, SIGNAL(transferStopped()), this, SLOT(finish_recording()));
-
-	isRecording = false;
 }
 
 int AudioClip::get_channels( ) const
@@ -708,8 +718,8 @@ int AudioClip::get_channels( ) const
 	if (m_readSource) {
 		return m_readSource->get_channel_count();
 	} else {
-		if (writeSources.size() > 0) {
-			writeSources.at(0)->get_channel_count();
+		if (writeSources.size()) {
+			return writeSources.size();
 		}
 	}
 	
@@ -825,9 +835,9 @@ nframes_t AudioClip::get_length() const
 	return m_length;
 }
 
-bool AudioClip::is_recording( ) const
+int AudioClip::recording_state( ) const
 {
-	return isRecording;
+	return m_recordingStatus;
 }
 
 nframes_t AudioClip::get_source_end_frame( ) const

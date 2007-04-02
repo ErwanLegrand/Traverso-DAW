@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.h,v 1.12 2007/03/23 13:09:33 r_sijrier Exp $
+$Id: DiskIO.h,v 1.13 2007/04/02 09:52:31 r_sijrier Exp $
 */
 
 #ifndef DISKIO_H
@@ -26,7 +26,10 @@ $Id: DiskIO.h,v 1.12 2007/03/23 13:09:33 r_sijrier Exp $
 #include <QMutex>
 #include <QList>
 #include <QTimer>
+
+#if ! defined (Q_WS_WIN)
 #include <glib.h>
+#endif
 
 #include "defines.h"
 

@@ -72,3 +72,7 @@ FORMS += ../ui/ExportWidget.ui \
 }
 
 QT += opengl
+
+win32 {
+      INCLUDEPATH += ../../../3thparty/include
+}

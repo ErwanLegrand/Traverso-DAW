@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.38 2007/03/31 03:53:27 benjie Exp $
+$Id: AudioClip.h,v 1.39 2007/04/02 09:52:31 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -61,6 +61,12 @@ public:
 	AudioClip(const QDomNode& node);
 	~AudioClip();
 
+	enum RecordingStatus {
+		NO_RECORDING,
+		RECORDING,
+  		FINISHING_RECORDING
+	};
+	
 	void create_fade_in();
 	void create_fade_out();
 	
@@ -110,7 +116,7 @@ public:
 	bool is_muted() const;
 	bool is_take() const;
 	bool is_selected() const;
-	bool is_recording() const;
+	int recording_state() const;
 
 	static bool smaller(const AudioClip* left, const AudioClip* right )
 	{
@@ -146,7 +152,7 @@ private:
 	int 		isSelected;
 	bool 		isTake;
 	bool 		isMuted;
-	bool 		isRecording;
+	RecordingStatus	m_recordingStatus;
 	float	 	m_gain;
 	float		m_normfactor;
 	
@@ -174,6 +180,7 @@ signals:
 	void gainChanged();
 	void fadeAdded(FadeCurve*);
 	void fadeRemoved(FadeCurve*);
+	void recordingFinished();
 
 public slots:
 	void finish_recording();

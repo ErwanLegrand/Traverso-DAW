@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.cpp,v 1.15 2007/03/22 23:16:47 r_sijrier Exp $
+$Id: WriteSource.cpp,v 1.16 2007/04/02 09:52:31 r_sijrier Exp $
 */
 
 #include "WriteSource.h"
@@ -391,17 +391,17 @@ int WriteSource::finish_export( )
 	}
 #endif
 
-	if (processPeaks) {
+/*	if (processPeaks) {
 		m_peak->finish_processing();
-	}
+	}*/
 		
 	if (diskio) {
 		diskio->unregister_write_source(this);
 	}
 
 
-/*	printf("WriteSource :: thread id is: %ld\n", QThread::currentThreadId ());
-	PWARN("WriteSource :: emiting exportFinished");*/
+	printf("WriteSource :: thread id is: %ld\n", QThread::currentThreadId ());
+	PWARN("WriteSource :: emiting exportFinished");
 	emit exportFinished( this );
 
 	return 1;

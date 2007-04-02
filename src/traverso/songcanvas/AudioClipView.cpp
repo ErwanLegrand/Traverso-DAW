@@ -79,6 +79,11 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	
 	connect(m_sv, SIGNAL(viewModeChanged()), this, SLOT(repaint()));
 	
+	if (m_clip->recording_state() == AudioClip::RECORDING) {
+		start_recording();
+		connect(m_clip, SIGNAL(recordingFinished()), this, SLOT(stop_recording()));
+	}
+	
 // 	setFlags(ItemIsSelectable | ItemIsMovable);
 	setAcceptsHoverEvents(true);
 }
@@ -90,13 +95,9 @@ AudioClipView::~ AudioClipView()
 
 void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-/*	PENTER;*/
+	PENTER;
 	Q_UNUSED(widget);
 	
-	if (m_clip->is_recording()) {
-		// For now, just exit. For later, draw the recording audio :-)
-		return;
-	}
 
 // 	printf("AudioClipView:: %s PAINT :: exposed rect is: x=%f, y=%f, w=%f, h=%f\n", QS_C(m_clip->get_name()), option->exposedRect.x(), option->exposedRect.y(), option->exposedRect.width(), option->exposedRect.height());
 	
@@ -105,6 +106,12 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	if (pixelcount == 0) {
 		PWARN("AudioClipView::paint : Exposed rectangle has 0 width ????");
 		return;
+	}
+	
+	if (m_clip->recording_state() == AudioClip::RECORDING) {
+// 		painter->fillRect(xstart, 0, pixelcount, m_height, themer()->get_color("AudioClip:background:recording"));
+		// For now, just exit. For later, draw the recording audio :-)
+// 		return;
 	}
 	
 	painter->save();
@@ -117,15 +124,19 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	if (m_drawbackground) {
 		bool mousehover = (option->state & QStyle::State_MouseOver);
 	
-		if (m_clip->is_muted()) {
-			m_backgroundColor = themer()->get_color("AudioClip:background:muted");
-			m_backgroundColorMouseHover = themer()->get_color("AudioClip:background:muted:mousehover");
-		} else if (m_clip->is_selected()) {
-			m_backgroundColor = themer()->get_color("AudioClip:background:selected");
-			m_backgroundColorMouseHover = themer()->get_color("AudioClip:background:selected:mousehover");
+		if (m_clip->recording_state() == AudioClip::RECORDING) {
+			m_backgroundColor = themer()->get_color("AudioClip:background:recording");
 		} else {
-			m_backgroundColor = themer()->get_color("AudioClip:background");
-			m_backgroundColorMouseHover = themer()->get_color("AudioClip:background:mousehover");
+			if (m_clip->is_muted()) {
+				m_backgroundColor = themer()->get_color("AudioClip:background:muted");
+				m_backgroundColorMouseHover = themer()->get_color("AudioClip:background:muted:mousehover");
+			} else if (m_clip->is_selected()) {
+				m_backgroundColor = themer()->get_color("AudioClip:background:selected");
+				m_backgroundColorMouseHover = themer()->get_color("AudioClip:background:selected:mousehover");
+			} else {
+				m_backgroundColor = themer()->get_color("AudioClip:background");
+				m_backgroundColorMouseHover = themer()->get_color("AudioClip:background:mousehover");
+			}
 		}
 
 		if (mousehover) {
@@ -158,7 +169,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 		QString buildProcess = "Building Peaks: " + si + "%";
 		painter->drawText(r, Qt::AlignVCenter, buildProcess);
 	
-	} else {
+	} else if (m_clip->recording_state() == AudioClip::NO_RECORDING) {
 		draw_peaks(painter, xstart, pixelcount);
 	}
 
@@ -228,11 +239,15 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 // 			PWARN("peakdatacount != availpeaks (%d, %d)", peakdatacount, availpeaks);
 		}
 
-		if (availpeaks <= 0) {
+		if (availpeaks == Peak::NO_PEAK_FILE) {
 			m_peakloadinglist.append(peak);
 			m_waitingForPeaks = true;
 			m_peakloadingcount++;
 		}
+		
+		if (availpeaks == Peak::PERMANENT_FAILURE || availpeaks == Peak::NO_PEAKDATA_FOUND) {
+			return;
+		}		
 	}
 	
 	
@@ -648,6 +663,37 @@ Command * AudioClipView::select_fade_out_shape( )
 	Interface::instance()->select_fade_out_shape();
 	
 	return 0;
+}
+
+void AudioClipView::start_recording()
+{
+	m_oldRecordingPos = 0;
+	connect(&m_recordingTimer, SIGNAL(timeout()), this, SLOT(update_recording()));
+	m_recordingTimer.start(750);
+}
+
+void AudioClipView::stop_recording()
+{
+	m_recordingTimer.stop();
+	prepareGeometryChange();
+	m_boundingRect = QRectF(0, 0, (m_clip->get_length() / m_sv->scalefactor), m_height);
+	update();
+}
+
+void AudioClipView::update_recording()
+{
+	if (m_clip->recording_state() != AudioClip::RECORDING) {
+		return;
+	}
+	
+	prepareGeometryChange();
+	nframes_t newPos = m_clip->get_length();
+	m_boundingRect = QRectF(0, 0, (newPos / m_sv->scalefactor), m_height);
+	
+	QRect updaterect = QRect(m_oldRecordingPos, 0, newPos, m_boundingRect.height());
+	update();
+	
+	m_oldRecordingPos = newPos;
 }
 
 //eof

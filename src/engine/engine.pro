@@ -70,4 +70,6 @@ win32{
     HEADERS -= JackDriver.h
     SOURCES -= AlsaDriver.cpp
     HEADERS -= AlsaDriver.h
+
+    INCLUDEPATH += ../../3thparty/include .
 }

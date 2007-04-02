@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.31 2007/03/23 13:09:33 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.32 2007/04/02 09:52:31 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
@@ -182,7 +182,7 @@ void DiskIO::seek( nframes_t position )
 {
 	PENTER;
 	
-	Q_ASSERT_X(m_song->threadId != QThread::currentThreadId (), "DiskIO::seek", "Error, running in gui thread!!!!!");
+//	Q_ASSERT_X(m_song->threadId != QThread::currentThreadId (), "DiskIO::seek", "Error, running in gui thread!!!!!");
 
 	mutex.lock();
 	
@@ -207,7 +207,7 @@ void DiskIO::seek( nframes_t position )
 // Internal function
 void DiskIO::do_work( )
 {
-	Q_ASSERT_X(m_song->threadId != QThread::currentThreadId (), "DiskIO::do_work", "Error, running in gui thread!!!!!");
+//	Q_ASSERT_X(m_song->threadId != QThread::currentThreadId (), "DiskIO::do_work", "Error, running in gui thread!!!!!");
 
 	QMutexLocker locker(&mutex);
 	
@@ -477,13 +477,13 @@ int DiskIO::get_read_buffers_fill_status( )
 
 void DiskIO::start_io( )
 {
-	Q_ASSERT_X(m_song->threadId != QThread::currentThreadId (), "DiskIO::start_io", "Error, running in gui thread!!!!!");
+//	Q_ASSERT_X(m_song->threadId != QThread::currentThreadId (), "DiskIO::start_io", "Error, running in gui thread!!!!!");
 	m_workTimer.start(UPDATE_INTERVAL);
 }
 
 void DiskIO::stop_io( )
 {
-	Q_ASSERT_X(m_song->threadId != QThread::currentThreadId (), "DiskIO::stop_io", "Error, running in gui thread!!!!!");
+//	Q_ASSERT_X(m_song->threadId != QThread::currentThreadId (), "DiskIO::stop_io", "Error, running in gui thread!!!!!");
 // 	m_workTimer.stop();
 }
 

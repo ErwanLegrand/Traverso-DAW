@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.h,v 1.16 2007/03/29 21:09:42 benjie Exp $
+$Id: AudioClipView.h,v 1.17 2007/04/02 09:52:31 r_sijrier Exp $
 */
 
 #ifndef AUDIO_CLIP_VIEW_H
@@ -26,6 +26,7 @@ $Id: AudioClipView.h,v 1.16 2007/03/29 21:09:42 benjie Exp $
 #include "ViewItem.h"
 #include <defines.h>
 #include <QList>
+#include <QTimer>
 
 class AudioClip;
 class Song;
@@ -75,6 +76,7 @@ private:
 
 	QPixmap clipNamePixmapActive;
 	QPixmap clipNamePixmapInActive;
+	QTimer m_recordingTimer;
 
 	float m_progress;
 	int m_peakloadingcount;
@@ -86,6 +88,7 @@ private:
 	int m_infoAreaHeight;
 	int m_mimimumheightforinfoarea;
 	int m_usePolygonPeakDrawing;
+	nframes_t m_oldRecordingPos;
 	
 	// theme data
 	int m_drawbackground;
@@ -117,6 +120,9 @@ public slots:
 private slots:
 	void update_progress_info(int progress);
 	void peaks_creation_finished(Peak* peak);
+	void start_recording();
+	void stop_recording();
+	void update_recording();
 };
 
 

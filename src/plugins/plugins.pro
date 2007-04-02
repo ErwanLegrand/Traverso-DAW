@@ -37,3 +37,7 @@ LV2/LV2PluginPropertiesDialog.h
 			LV2/LV2PluginPropertiesDialog.cpp
 	INCLUDEPATH -= LV2
 }
+
+win32{
+    INCLUDEPATH += ../../3thparty/include .
+}

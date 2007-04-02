@@ -13,3 +13,6 @@ INCLUDEPATH  += ../.. \
 		
 DESTDIR = ../../../../lib/commandplugins
 
+win32 { 
+     INCLUDEPATH += 	../../../../3thparty/include
+}

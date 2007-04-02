@@ -39,3 +39,7 @@ INCLUDEPATH += ../core \
 ../traverso \
 ../traverso/songcanvas \
 ../engine \
+
+win32{
+    INCLUDEPATH += ../../3thparty/include
+}

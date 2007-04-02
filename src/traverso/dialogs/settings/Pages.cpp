@@ -154,7 +154,7 @@ void AudioDriverPage::reset_default_config()
 #if defined (MAC_OS_BUILD)
 	config().set_property("Hardware", "pahostapi", "coreaudio");
 #endif
-#if defined (WIN_BUILD)
+#if defined (Q_WS_WIN)
 	config().set_property("Hardware", "pahostapi", "wmme");
 #endif
 #endif //end PORTAUDIO_SUPPORT
@@ -196,7 +196,8 @@ void AudioDriverPage::load_config( )
 		m_driverConfigPage->duplexComboBox->setCurrentIndex(2);
 	}
 	
-
+	int index;
+	
 #if defined (ALSA_SUPPORT)
 	m_alsadevices->devicesCombo->clear();
 	int periodsIndex = config().get_property("Hardware", "NumberOfPeriods", 1).toInt();
@@ -213,7 +214,7 @@ void AudioDriverPage::load_config( )
 	}
 	
 	QString defaultdevice =  config().get_property("Hardware", "carddevice", "hw:0").toString();
-	int index = m_alsadevices->devicesCombo->findData(defaultdevice);
+	index = m_alsadevices->devicesCombo->findData(defaultdevice);
 	if (index >= 0) {
 		m_alsadevices->devicesCombo->setCurrentIndex(index);
 	}
@@ -236,9 +237,9 @@ void AudioDriverPage::load_config( )
 	defaulthostapi = "coreaudio";
 #endif
 
-#if defined (WIN_BUILD)
+#if defined (Q_WS_WIN)
 	m_portaudiodrivers->driverCombo->addItem("MME", "wmme");
-	m_portaudiodrivers->driverCombo->addItem("Direct Sound", "directx");
+	m_portaudiodrivers->driverCombo->addItem("Direct Sound", "directsound");
 	m_portaudiodrivers->driverCombo->addItem("ASIO", "asio");
 	defaulthostapi = "wmme";
 #endif
@@ -268,6 +269,11 @@ void AudioDriverPage::restart_driver_button_clicked()
 		playback = 0;
 	}
 	
+
+	QString cardDevice = "";
+
+
+#if defined (ALSA_SUPPORT)
 	int periods = m_alsadevices->periodsCombo->currentText().toInt();
 	
 	// The AlsaDriver retrieves it's periods number directly from config()
@@ -276,9 +282,6 @@ void AudioDriverPage::restart_driver_button_clicked()
 	int currentperiods = config().get_property("Hardware", "NumberOfPeriods", 2).toInt();
 	config().set_property("Hardware", "NumberOfPeriods", periods);
 	
-	QString cardDevice = "";
-
-#if defined (ALSA_SUPPORT)
 	if (driver == "ALSA") {
 		int index = m_alsadevices->devicesCombo->currentIndex();
 		cardDevice = m_alsadevices->devicesCombo->itemData(index).toString();
@@ -294,7 +297,9 @@ void AudioDriverPage::restart_driver_button_clicked()
 			
 	audiodevice().set_parameters(rate, buffersize, driver, capture, playback, cardDevice);
 	
+#if defined (ALSA_SUPPORT)
 	config().set_property("Hardware", "NumberOfPeriods", currentperiods);
+#endif
 }
 
 

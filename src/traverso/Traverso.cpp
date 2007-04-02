@@ -62,7 +62,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 	<br />
 	<b>The traversoengine library provides a driver abstraction</b><br />
-	for the audio hardware, currenlty ALSA and jack deamon are supported as drivers.
+	for the audio hardware, currently ALSA, PortAudio and Jack are supported as drivers.
 
 	<br />
 	The Tsar class (singleton) is the key behind lockless, thus non blocking removing

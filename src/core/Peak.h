@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Peak.h,v 1.7 2007/02/12 19:57:54 r_sijrier Exp $
+$Id: Peak.h,v 1.8 2007/04/02 09:52:31 r_sijrier Exp $
 */
 
 #ifndef PEAK_H
@@ -65,6 +65,11 @@ public:
 	Peak(AudioSource* source, int channel = -1);
 	~Peak();
 
+	enum { 	NO_PEAKDATA_FOUND = -1,
+		NO_PEAK_FILE = -2,
+  		PERMANENT_FAILURE = -3
+	};
+		
 	void process(audio_sample_t* buffer, nframes_t frames);
 	int prepare_processing();
 	int finish_processing();
@@ -99,7 +104,6 @@ private:
 	QString			m_normFileName;
 
 	int create_from_scratch();
-	int create_buffers();
 
 	int read_header();
 	int write_header();

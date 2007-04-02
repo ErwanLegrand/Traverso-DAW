@@ -179,7 +179,7 @@ bool ProjectManager::project_is_current(const QString& title)
 bool ProjectManager::project_exists(const QString& title)
 {
 	QString project_dir = config().get_property("Project", "directory", "/directory/unknown").toString();
-	QString project_path = project_dir + title;
+	QString project_path = project_dir + "/" + title;
 	QFileInfo fileInfo(project_path);
 
 	if (fileInfo.exists()) {

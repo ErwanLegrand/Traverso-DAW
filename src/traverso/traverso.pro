@@ -23,7 +23,6 @@ LIBS +=  \
 	-lsamplerate \
 	-lslv2 \
 	-lfftw3 \
-	$$system(pkg-config --libs glib-2.0) \
 
 HEADERS += \
 	AudioSourcesTreeWidget.h \
@@ -140,13 +139,18 @@ DESTDIR_TARGET = /usr/local/bin
 unix{
     # if exists('sys/vfs.h')
     DEFINES += HAVE_SYS_VFS_H
-}
 
-macx{
-    LIBS -= -lasound
-}
+	# perhaps this doesn't cover mac os x ?
+	# if so, copy paste into  macx section...
+	$$system(pkg-config --libs glib-2.0)}
+
 
 win32{
-    LIBS -= -lslv2 -lsamplerate
-    INCLUDEPATH -= ../../src/plugins/LV2
+	LIBS -= -lslv2 -lfftw3
+	# -lwinmm is needed for wmme support!!
+	LIBS += -lfftw3-3 -lwinmm
+	INCLUDEPATH -= ../../src/plugins/LV2
+	INCLUDEPATH += ../../3thparty/include .
+	
+	QMAKE_LIBDIR = ../../lib ../../3thparty/lib
 }

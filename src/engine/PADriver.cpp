@@ -115,30 +115,48 @@ int PADriver::setup(bool capture, bool playback, const QString& hostapi)
 	PaDeviceIndex deviceindex = -1;
 	
 	for (int i=0; i<Pa_GetHostApiCount(); ++i) {
-		const PaHostApiInfo* info = Pa_GetHostApiInfo(i);
+		const PaHostApiInfo* inf = Pa_GetHostApiInfo(i);
 		
-		if (hostapi == "alsa" && info->type == paALSA) {
+		info().warning(tr("hostapi name is %1, deviceCount is %2").arg(inf->name).arg(inf->deviceCount));
+
+		if (hostapi == "alsa" && inf->type == paALSA) {
 			printf("PADriver:: Found alsa host api, using device %d\n", i);
 			deviceindex = i;
 			break;
 		}
 		
-		if (hostapi == "jack" && info->type == paJACK) {
+		if (hostapi == "jack" && inf->type == paJACK) {
 			printf("PADriver:: Found jack host api, using device %d\n", i);
 			deviceindex = i;
 			break;
 		}
+
+		if (hostapi == "wmme" && inf->type == paMME) {
+			printf("PADriver:: Found wmme host api, using device %d\n", i);
+			deviceindex = i;
+			break;
+		}
+		
+		if (hostapi == "directsound" && inf->type == paDirectSound ) {
+			printf("PADriver:: Found directsound host api, using device %d\n", i);
+			deviceindex = i;
+			break;
+		}
+		
 	}
 	
+
 	if (deviceindex == -1) {
 		info().warning(tr("PADriver:: hostapi %1 was not found by Portaudio!").arg(hostapi));
 		return -1;
 	}
 	
+	deviceindex = 0;
+//	info().information(tr("PADriver:: using device %1").arg(deviceindex));
 		
 	// Configure output parameters.
 	// TODO get the max channel count, and use that instead, of assuming 2
-	outputParameters.device = deviceindex; 
+	outputParameters.device = Pa_GetDefaultOutputDevice();
 	outputParameters.channelCount = 2;
 	outputParameters.sampleFormat = paFloat32; /* 32 bit floating point output */
 	outputParameters.suggestedLatency = Pa_GetDeviceInfo( outputParameters.device )->defaultLowOutputLatency;
@@ -153,14 +171,14 @@ int PADriver::setup(bool capture, bool playback, const QString& hostapi)
 	/* Open an audio I/O stream. */
 	// TODO configure the inputParameters, and give as argument instead of 0 (&inputParameters)
 	err = Pa_OpenStream(
-			&m_paStream,
-   			&inputParameters,	// The input parameter
-   			&outputParameters,	// The outputparameter
-			frame_rate,		// Set in the constructor
-			frames_per_cycle,	// Set in the constructor
-   			paNoFlag,		// Don't use any flags
-   			_process_callback, 	// our callback function
-			this );
+			    &m_paStream,
+       &inputParameters,	// The input parameter
+       &outputParameters,	// The outputparameter
+       frame_rate,		// Set in the constructor
+       frames_per_cycle,	// Set in the constructor
+       paNoFlag,		// Don't use any flags
+       _process_callback, 	// our callback function
+       this );
 	
 	if( err != paNoError ) {
 		info().warning(tr("PADriver:: PortAudio error: %1").arg(Pa_GetErrorText( err )) );
@@ -267,12 +285,12 @@ void PADriver::_on_pa_shutdown_callback(void * arg)
 }
 
 int PADriver::_process_callback(
-		const void *inputBuffer,
-   		void *outputBuffer,
-		unsigned long framesPerBuffer,
-		const PaStreamCallbackTimeInfo* timeInfo,
-		PaStreamCallbackFlags statusFlags,
-		void *arg )
+				const void *inputBuffer,
+    void *outputBuffer,
+    unsigned long framesPerBuffer,
+    const PaStreamCallbackTimeInfo* timeInfo,
+    PaStreamCallbackFlags statusFlags,
+    void *arg )
 {
 	Q_UNUSED(timeInfo);
 	Q_UNUSED(statusFlags);

@@ -22,9 +22,11 @@ DEFINES += ALSA_SUPPORT
 #DEFINES += PORTAUDIO_SUPPORT
 #DEFINES += LV2_SUPPORT
 
-DEFINES += STATIC_BUILD
+#DEFINES += STATIC_BUILD
 DEFINES += PRECOMPILED_HEADER
 #DEFINES += USE_MEM_CHECKER
+
+QMAKE_CXXFLAGS +=  -fstack-protector-all
 
 #
 # Uncomment the line which notes your CPU type
@@ -60,8 +62,6 @@ MOC_DIR = build
 UI_DIR = build 
 OBJECTS_DIR = build 
 
-QMAKE_CXXFLAGS += $$system(pkg-config --cflags glib-2.0)
-#QMAKE_CXXFLAGS += -fstack-protector-all 
 
 debug {
 #	DEFINES += RT_THREAD_CHECK
@@ -69,8 +69,14 @@ debug {
 #	DEFINES += USE_MEM_CHECKER
 }
 
+release {
+	DEFINES += QT_NO_DEBUG
+}
 
 unix {
+	
+	QMAKE_CXXFLAGS += $$system(pkg-config --cflags glib-2.0)
+	
 	DEFINES += LINUX_BUILD
 
 	release {
@@ -108,6 +114,8 @@ unix {
 }
 
 macx {
+	QMAKE_CXXFLAGS += $$system(pkg-config --cflags glib-2.0)
+	
 	DEFINES -= ALSA_SUPPORT
 	DEFINES += MAC_OS_BUILD
 	
@@ -118,8 +126,13 @@ macx {
 
 win32 { 
 	DEFINES += WIN_BUILD
+	DEFINES += PORTAUDIO_SUPPORT
 	DEFINES -= ALSA_SUPPORT
 	DEFINES -= JACK_SUPPORT
 	DEFINES -= USE_MLOCK
 	DEFINES -= LV2_SUPPORT
+	
+	release {
+   	        DEFINES -= USE_DEBUGGER
+	}
 }

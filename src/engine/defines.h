@@ -4,6 +4,15 @@
 #include <inttypes.h>
 #include "FastDelegate.h"
 
+#if defined (WIN_BUILD)
+// 'stolen' from the glib/atomic.h header file.
+// it's the only thing we need glib for on windows...
+# define g_atomic_int_get(atomic) 		(*(atomic))
+# define g_atomic_int_set(atomic, newval) 	((void) (*(atomic) = (newval)))
+#define gint int
+#endif // END WIN_BUILD
+
+
 using namespace fastdelegate;
 
 /**
@@ -42,53 +51,53 @@ typedef FastDelegate0<int> RunCycleCallback;
 enum PortFlags {
 
      /**
-      * if PortIsInput is set, then the port can receive
-      * data.
+	 * if PortIsInput is set, then the port can receive
+	 * data.
       */
-     PortIsInput = 0x1,
+	PortIsInput = 0x1,
 
      /**
-      * if PortIsOutput is set, then data can be read from
-      * the port.
+  * if PortIsOutput is set, then data can be read from
+  * the port.
       */
-     PortIsOutput = 0x2,
+ PortIsOutput = 0x2,
 
      /**
-      * if PortIsPhysical is set, then the port corresponds
-      * to some kind of physical I/O connector.
+  * if PortIsPhysical is set, then the port corresponds
+  * to some kind of physical I/O connector.
       */
-     PortIsPhysical = 0x4,
+ PortIsPhysical = 0x4,
 
      /**
-      * if PortCanMonitor is set, then a call to
-      * jack_port_request_monitor() makes sense.
-      *
-      * Precisely what this means is dependent on the client. A typical
-      * result of it being called with TRUE as the second argument is
-      * that data that would be available from an output port (with
-      * PortIsPhysical set) is sent to a physical output connector
-      * as well, so that it can be heard/seen/whatever.
-      *
-      * Clients that do not control physical interfaces
-      * should never create ports with this bit set.
+  * if PortCanMonitor is set, then a call to
+  * jack_port_request_monitor() makes sense.
+  *
+  * Precisely what this means is dependent on the client. A typical
+  * result of it being called with TRUE as the second argument is
+  * that data that would be available from an output port (with
+  * PortIsPhysical set) is sent to a physical output connector
+  * as well, so that it can be heard/seen/whatever.
+  *
+  * Clients that do not control physical interfaces
+  * should never create ports with this bit set.
       */
-     PortCanMonitor = 0x8,
+ PortCanMonitor = 0x8,
 
      /**
       * PortIsTerminal means:
-      *
-      *	for an input port: the data received by the port
-      *                    will not be passed on or made
-      *		           available at any other port
-      *
-      * for an output port: the data available at the port
-      *                    does not originate from any other port
-      *
-      * Audio synthesizers, I/O hardware interface clients, HDR
-      * systems are examples of clients that would set this flag for
-      * their ports.
+  *
+  *	for an input port: the data received by the port
+  *                    will not be passed on or made
+  *		           available at any other port
+  *
+  * for an output port: the data available at the port
+  *                    does not originate from any other port
+  *
+  * Audio synthesizers, I/O hardware interface clients, HDR
+  * systems are examples of clients that would set this flag for
+  * their ports.
       */
-     PortIsTerminal = 0x10
+ PortIsTerminal = 0x10
 };
 
 
@@ -97,8 +106,8 @@ enum PortFlags {
 #ifndef _TIMEVAL_DEFINED /* also in winsock[2].h */
 #define _TIMEVAL_DEFINED
 struct timeval {
-    long tv_sec;
-    long tv_usec;
+   long tv_sec;
+   long tv_usec;
 };
 #endif /* _TIMEVAL_DEFINED */
 #else
@@ -111,15 +120,15 @@ struct timeval {
 #include <windows.h>
 
 static inline int gettimeofday(struct timeval* tp, void* tzp) {
-    DWORD t;
+	DWORD t;
 //  t = timeGetTime();
-    t = 0;
-    tp->tv_sec = t / 1000;
-    tp->tv_usec = t % 1000;
-    /* 0 indicates that the call succeeded. */
-    return 0;
+	t = 0;
+	tp->tv_sec = t / 1000;
+	tp->tv_usec = t % 1000;
+	/* 0 indicates that the call succeeded. */
+	return 0;
 }
-
+	
 typedef uint8_t            u_int8_t;
 
 #endif

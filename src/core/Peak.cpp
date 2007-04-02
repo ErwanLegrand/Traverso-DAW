@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Peak.cpp,v 1.13 2007/02/12 19:57:54 r_sijrier Exp $
+$Id: Peak.cpp,v 1.14 2007/04/02 09:52:31 r_sijrier Exp $
 */
 
 #include "libtraversocore.h"
@@ -100,7 +100,7 @@ int Peak::read_header()
 	
 	Q_ASSERT(m_source);
 	
-	m_file = fopen(m_fileName.toAscii().data(),"r");
+	m_file = fopen(m_fileName.toAscii().data(),"rb");
 	
 	if (! m_file) {
 		PERROR("Couldn't open peak file for reading! (%s)", m_fileName.toAscii().data());
@@ -186,16 +186,42 @@ void Peak::start_peak_loading()
 	}
 }
 
+
+static int
+cnt_bits(unsigned long val, int & highbit)
+{
+	int cnt = 0;
+	highbit = 0;
+	while (val) {
+		if (val & 1) cnt++;
+		val>>=1;
+		highbit++;
+	}
+	return cnt;
+}
+
+// returns the next power of two greater or equal to val
+static unsigned long
+nearest_power_of_two(unsigned long val)
+{
+	int highbit;
+	if (cnt_bits(val, highbit) > 1) {
+		return 1<<highbit;
+	}
+	return val;
+}
+
+
 int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int pixelcount )
 {
 	PENTER3;
 	if (permanentFailure) {
-		return -1;
+		return PERMANENT_FAILURE;
 	}
 	
 	if(!peaksAvailable) {
 		if (read_header() < 0) {
-			return 0;
+			return NO_PEAK_FILE;
 		}
 	}
 	
@@ -206,7 +232,45 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 #endif
 	
 	// Macro view mode
-	if (zoomLevel > MAX_ZOOM_USING_SOURCEFILE) {
+	if (false) {
+		unsigned long val = nearest_power_of_two(256);
+		printf("Using VAL %ld measurements\n", val);
+		
+		int zoomlevel = zoomStep[zoomLevel];
+		
+		int offset = (startPos / zoomStep[zoomLevel-1]) * 2;
+		int nearestlevel = zoomlevel / 2;
+		int toread = pixelcount * 2;
+			
+		unsigned char readbuffer[toread];
+			
+			// Seek to the correct position in the buffer on hard disk
+		fseek(m_file, m_data.peakDataLevelOffsets[zoomLevel - 1 - SAVING_ZOOM_FACTOR] + offset, SEEK_SET);
+			
+		// Read in the pixelcount of peakdata
+		int read = fread(readbuffer, sizeof(unsigned char), toread, m_file);
+			
+			
+		float max = 0;
+		int bufpos = 0;
+		int totalnearestlevel = 0;
+		int totalinterpolatedlevel = 0;
+		uchar* bufpointer = (uchar*)buffer;
+			
+		for (int i=0; i<read; ++i) {
+			max = f_max(max, readbuffer[i]);
+			totalnearestlevel += nearestlevel;
+				
+			if ( (totalnearestlevel + zoomlevel/2) > (totalinterpolatedlevel + zoomlevel)) {
+				bufpointer[bufpos++] = (uchar)max;
+				max = 0;
+				totalinterpolatedlevel += zoomlevel;
+			}
+		}
+		
+		return pixelcount;
+	 
+	} else if (zoomLevel > MAX_ZOOM_USING_SOURCEFILE) {
 		
 		int offset = (startPos / zoomStep[zoomLevel]) * 2;
 		
@@ -230,10 +294,15 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 		int processtime = (int) (get_microseconds() - starttime);
 		printf("Process time: %d useconds\n\n", processtime);
 #endif
+
+		if (read == 0) {
+			return NO_PEAKDATA_FOUND;
+		}
+
 		return read;
-	}
+		
 	// Micro view mode
-	else {
+	} else {
 		nframes_t readFrames, toRead;
 		toRead = pixelcount * zoomStep[zoomLevel];
 		audio_sample_t buf[toRead];
@@ -296,7 +365,7 @@ int Peak::prepare_processing()
 	m_normFileName.append(".norm");
 	
 	// Create read/write enabled file
-	m_file = fopen(m_fileName.toAscii().data(),"w+");
+	m_file = fopen(m_fileName.toAscii().data(),"wb+");
 	
 	if (! m_file) {
 		PWARN("Couldn't open peak file for writing! (%s)", m_fileName.toAscii().data());
@@ -305,7 +374,7 @@ int Peak::prepare_processing()
 	}
 	
 	// Create the temporary normalization data file
-	m_normFile = fopen(m_normFileName.toAscii().data(), "w+");
+	m_normFile = fopen(m_normFileName.toAscii().data(), "wb+");
 	
 	if (! m_normFile) {
 		PWARN("Couldn't open normalization data file for writing! (%s)", m_normFileName.toAscii().data());
@@ -357,7 +426,10 @@ int Peak::finish_processing()
 	
 	fseek(m_file, m_data.peakDataOffset, SEEK_SET);
 	
- 	unsigned char* saveBuffer = new unsigned char[totalBufferSize];
+	// The routine below uses a different total buffer size calculation
+	// which might end up with a size >= totalbufferSize !!!
+	// Need to look into that, for now + 2 seems to work...
+ 	unsigned char* saveBuffer = new unsigned char[totalBufferSize + 2];
 	
 	int read = fread(saveBuffer, 1, processBufferSize, m_file);
 	
@@ -382,6 +454,10 @@ int Peak::finish_processing()
 		int count = 0;
 		
 		do {
+			if ((nextLevelBufferPos + 1) >= (totalBufferSize + 2)) {
+				printf("nextLevelBufferPos +1 is %d, totalBufferSize is %d\n", nextLevelBufferPos + 1, totalBufferSize + 2);
+				Q_ASSERT((nextLevelBufferPos + 1) < totalBufferSize);
+			}
 			saveBuffer[nextLevelBufferPos] = (unsigned char) f_max(saveBuffer[prevLevelBufferPos], saveBuffer[prevLevelBufferPos + 2]);
 			saveBuffer[nextLevelBufferPos + 1] = (unsigned char) f_max(saveBuffer[prevLevelBufferPos + 1], saveBuffer[prevLevelBufferPos + 3]);
 			nextLevelBufferPos += 2;
@@ -397,7 +473,7 @@ int Peak::finish_processing()
 	
 	if (written != totalBufferSize) {
 		PERROR("could not write complete buffer! (only %d)", written);
-		return -1;
+// 		return -1;
 	}
 	
 	fseek(m_normFile, 0, SEEK_SET);
@@ -411,7 +487,7 @@ int Peak::finish_processing()
 	m_data.normValuesDataOffset = m_data.peakDataOffset + totalBufferSize;
 	
 	fclose(m_normFile);
-	m_normFile = 0;
+	m_normFile = NULL;
 	
 	if( remove(m_normFileName.toAscii().data()) != 0 ) {
 		PERROR("Failed to remove temp. norm. data file! (%s)", m_normFileName.toAscii().data()); 
