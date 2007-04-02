@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SnapList.h,v 1.7 2007/03/31 07:12:37 benjie Exp $
+$Id: SnapList.h,v 1.8 2007/04/02 00:35:13 benjie Exp $
 */
 
 #ifndef SNAPLIST_H
@@ -48,7 +48,7 @@ public:
 
 private:
 	Song* 		m_song;
-	QList<int> 	xposList;
+	QList<nframes_t> 	xposList;
 	QList<int> 	xposLut;
 	QList<bool> 	xposBool;
 	bool		m_isDirty;

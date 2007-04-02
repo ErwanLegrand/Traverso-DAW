@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SnapList.cpp,v 1.9 2007/03/31 07:12:37 benjie Exp $
+$Id: SnapList.cpp,v 1.10 2007/04/02 00:35:13 benjie Exp $
 */
 
 #include "SnapList.h"
@@ -63,6 +63,11 @@ void SnapList::update_snaplist()
 	
 // 	printf("acList size is %d\n", acList->size());
 
+	// Be able to snap to trackstart
+	if (m_rangeStart == 0) {
+		xposList.append(0);
+	}
+
 	for( int i = 0; i < acList->size(); i++ ) {
 
 		AudioClip* clip = acList->at(i);
@@ -77,18 +82,15 @@ void SnapList::update_snaplist()
 			PERROR("clip xstart > xend, this must be a programming error!");
 			continue;  // something wrong, ignore this clip
 		}
-		if (startframe >= m_rangeStart) {
+		if (startframe >= m_rangeStart && startframe <= m_rangeEnd) {
 	 		xposList.append(startframe);
 		}
-		if (endframe <= m_rangeEnd) {
+		if (endframe >= m_rangeStart && endframe <= m_rangeEnd) {
 			xposList.append(endframe);
 		}
 	}
 
-	// Be able to snap to trackstart
-	xposList.append(0);
-
-	// add all markers
+	// add all on-screen markers
 	QList<Marker*> markerList = m_song->get_timeline()->get_markers();
 	for (int i = 0; i < markerList.size(); ++i) {
 		if (markerList.at(i)->is_snappable() && markerList.at(i)->get_when() >= m_rangeStart && markerList.at(i)->get_when() <= m_rangeEnd) {
@@ -106,16 +108,17 @@ void SnapList::update_snaplist()
 
 	// sort the list
 	qSort(xposList);
-	
+
 	int range = (m_rangeEnd - m_rangeStart) / m_scalefactor;
 
 	// create a linear lookup table
 	for (int i = 0; i <= range; ++i) {
-		xposLut.push_back(i);
+		xposLut.push_back(0);
 		xposBool.push_back(false);
 	}
 
 	int lastVal = -1;
+	int lastIndex = -1;
 	// now modify the regions around snap points in the lookup table
 	for (int i = 0; i < xposList.size(); i++) {
 		if (xposList.at(i) == lastVal) {
@@ -124,16 +127,16 @@ void SnapList::update_snaplist()
 
 		// check if neighbouring snap regions overlap.
 		// if yes, reduce SNAP_WIDTH to keep the border in the middle
-		int ls = - (SNAP_WIDTH * m_scalefactor);
+		int ls = -SNAP_WIDTH;
 
 		if (i > 0) {
-			if ( (xposList.at(i-1) - xposList.at(i)) > (2 * ls) ) {
-				ls = (xposList.at(i-1) - xposList.at(i)) / 2;
+			if ( (xposList.at(lastIndex) - xposList.at(i)) > (2 * ls) ) {
+				ls = ((xposList.at(lastIndex) - xposList.at(i)) / m_scalefactor) / 2;
 			}
 		}
 
-		for (int j = ls; j <= (SNAP_WIDTH * m_scalefactor); j+=m_scalefactor) {
-			int pos = (xposList.at(i) + j) / m_scalefactor; // index in the LUT
+		for (int j = ls; j <= SNAP_WIDTH; j++) {
+			int pos = (xposList.at(i) - m_rangeStart) / m_scalefactor + j; // index in the LUT
 
 			if (pos < 0) {
 				continue;
@@ -148,6 +151,7 @@ void SnapList::update_snaplist()
 		}
 
 		lastVal = xposList.at(i);
+		lastIndex = i;
 	}
 	
 	m_isDirty = false;

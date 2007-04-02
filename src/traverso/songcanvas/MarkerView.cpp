@@ -40,7 +40,7 @@ MarkerView::MarkerView(Marker* marker, SongView* sv, ViewItem* parentView)
 
 	load_theme_data();
 	
-	connect(m_marker, SIGNAL(positionChanged(Snappable*)), this, SLOT(update_position(Snappable*)));
+	connect(m_marker, SIGNAL(positionChanged(Snappable*)), this, SLOT(update_position()));
 	connect(m_marker, SIGNAL(descriptionChanged()), this, SLOT(update_drawing()));
 }
 
