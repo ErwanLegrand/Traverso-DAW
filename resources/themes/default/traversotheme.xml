@@ -51,6 +51,7 @@
 		<color name="AudioClip:wavemicroview"  red="150" green="150" blue="205"  alpha="255" />
 		<color name="AudioClip:wavemicroview:curvemode"  red="210" green="210" blue="255"  alpha="255" />
 		<color name="AudioClip:background:muted"  red="40" green="40" blue="40"  alpha="200" />
+		<color name="AudioClip:background:recording"  red="240" green="240" blue="249"  alpha="200" />
 		<color name="AudioClip:background:muted:mousehover"  red="40" green="40" blue="40"  alpha="200" />
 		<color name="AudioClip:background:selected"  red="101" green="111" blue="171"  alpha="200" />
 		<color name="AudioClip:background:selected:mousehover"  red="101" green="111" blue="171"  alpha="200" />
