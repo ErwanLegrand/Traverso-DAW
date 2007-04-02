@@ -302,7 +302,7 @@ Command* Track::init_recording()
 		
 		if (clip->init_recording(busIn) < 0) {
 			PERROR("Could not create AudioClip to record to!");
-			delete clip;
+			resources_manager()->remove_clip_from_database(clip->get_id());
 		} else {
 			return add_clip( clip );
 		}

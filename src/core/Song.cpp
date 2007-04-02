@@ -559,13 +559,18 @@ Command* Song::go()
 		emit transferStarted();
 		
 		if (any_track_armed()) {
-			CommandGroup* group = new CommandGroup(this, tr("Recording to Clip(s)"));
-			
+			CommandGroup* group = new CommandGroup(this, "");
+			int clipcount = 0;
 			foreach(Track* track, m_tracks) {
 				if (track->armed()) {
-					group->add_command(track->init_recording());
+					Command* cmd = track->init_recording();
+					if (cmd) {
+						group->add_command(cmd);
+						clipcount++;
+					}
 				}
 			}
+			group->setText(tr("Recording to %n Clip(s)", "", clipcount));
 			
 			ie().process_command(group);
 		}
