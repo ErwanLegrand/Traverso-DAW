@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ResourcesManager.cpp,v 1.2 2007/03/29 11:09:38 r_sijrier Exp $
+$Id: ResourcesManager.cpp,v 1.3 2007/04/02 09:53:40 r_sijrier Exp $
 */
 
 #include "ResourcesManager.h"
@@ -73,6 +73,10 @@ QDomNode ResourcesManager::get_state( QDomDocument doc )
 	
 	
 	QDomElement audioClipsElement = doc.createElement("AudioClips");
+	
+	if (m_clips.size() > 10000) {
+		Q_ASSERT(m_clips.size() < 10000);
+	}
 	
 	foreach(AudioClip* clip, m_clips) {
 		// Omit all clips that were deprecated:
