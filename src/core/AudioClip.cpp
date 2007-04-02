@@ -498,8 +498,8 @@ int AudioClip::init_recording( QByteArray name )
 	captureBus = audiodevice().get_capture_bus(name);
 
 	if (!captureBus) {
-		info().warning( tr("Unable to Record to Track") );
-		info().information( tr("AudioDevice doesn't have this Capture Bus: %1 (Track %2)").
+		info().critical(tr("Unable to Record to Track"));
+		info().warning(tr("AudioDevice doesn't have this Capture Bus: %1 (Track %2)").
 				arg(name.data()).arg(m_track->get_id()) );
 		return -1;
 	}
