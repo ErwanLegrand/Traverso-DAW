@@ -432,7 +432,7 @@ void BehaviorPage::load_config()
 	QString oncloseaction = config().get_property("Project", "onclose", "save").toString();
 	int defaultNumTracks = config().get_property("Song", "trackCreationCount", 6).toInt();
 	bool keepCursorVisible = config().get_property("PlayHead", "Follow", true).toBool();
-	bool scrollMode = config().get_property("PlayHead", "Scrollmode", 2).toInt();
+	int scrollMode = config().get_property("PlayHead", "Scrollmode", 2).toInt();
 	bool resyncAudio = config().get_property("AudioClip", "SyncDuringDrag", true).toBool();
 	
 	m_configpage->projectDirLineEdit->setText(dir);
