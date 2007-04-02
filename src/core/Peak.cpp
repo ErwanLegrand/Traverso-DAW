@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Peak.cpp,v 1.14 2007/04/02 09:52:31 r_sijrier Exp $
+$Id: Peak.cpp,v 1.15 2007/04/02 19:09:19 r_sijrier Exp $
 */
 
 #include "libtraversocore.h"
@@ -454,10 +454,7 @@ int Peak::finish_processing()
 		int count = 0;
 		
 		do {
-			if ((nextLevelBufferPos + 1) >= (totalBufferSize + 2)) {
-				printf("nextLevelBufferPos +1 is %d, totalBufferSize is %d\n", nextLevelBufferPos + 1, totalBufferSize + 2);
-				Q_ASSERT((nextLevelBufferPos + 1) < totalBufferSize);
-			}
+			Q_ASSERT((nextLevelBufferPos + 1) < (totalBufferSize + 2));
 			saveBuffer[nextLevelBufferPos] = (unsigned char) f_max(saveBuffer[prevLevelBufferPos], saveBuffer[prevLevelBufferPos + 2]);
 			saveBuffer[nextLevelBufferPos + 1] = (unsigned char) f_max(saveBuffer[prevLevelBufferPos + 1], saveBuffer[prevLevelBufferPos + 3]);
 			nextLevelBufferPos += 2;
