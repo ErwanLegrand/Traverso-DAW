@@ -33,6 +33,8 @@ NewSongDialog::NewSongDialog(QWidget * parent)
 	
 	set_project(pm().get_project());
 	
+	use_template_checkbox_state_changed(Qt::Unchecked);
+	
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 	connect(useTemplateCheckBox, SIGNAL(stateChanged (int)), this, SLOT(use_template_checkbox_state_changed(int)));
 }
