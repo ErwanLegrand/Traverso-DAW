@@ -52,7 +52,8 @@ HEADERS += \
 	widgets/MessageWidget.h \
 	dialogs/CDTextDialog.h \
 	dialogs/MarkerDialog.h \
-	dialogs/BusSelectorDialog.h
+	dialogs/BusSelectorDialog.h \
+	dialogs/NewSongDialog.h
 SOURCES += \
 	Traverso.cpp \
 	AudioSourcesTreeWidget.cpp \
@@ -80,7 +81,8 @@ SOURCES += \
 	widgets/MessageWidget.cpp \
 	dialogs/CDTextDialog.cpp \
 	dialogs/MarkerDialog.cpp \
-	dialogs/BusSelectorDialog.cpp
+	dialogs/BusSelectorDialog.cpp \
+	dialogs/NewSongDialog.cpp
 FORMS += ui/ExportWidget.ui \
 	ui/AudioSourcesManagerWidget.ui \
 	ui/PluginSelectorDialog.ui \
@@ -97,7 +99,8 @@ FORMS += ui/ExportWidget.ui \
 	ui/ProjectManagerDialog.ui \
 	ui/MarkerDialog.ui \
 	ui/CDTextDialog.ui \
-	ui/BusSelectorDialog.ui
+	ui/BusSelectorDialog.ui \
+	ui/NewSongdialog.ui \
 
 
 INCLUDEPATH += 	../core \
@@ -140,17 +143,17 @@ unix{
     # if exists('sys/vfs.h')
     DEFINES += HAVE_SYS_VFS_H
 
-	# perhaps this doesn't cover mac os x ?
-	# if so, copy paste into  macx section...
-	$$system(pkg-config --libs glib-2.0)}
+    # perhaps this doesn't cover mac os x ?
+    # if so, copy paste into  macx section...
+    $$system(pkg-config --libs glib-2.0)}
 
 
 win32{
-	LIBS -= -lslv2 -lfftw3
-	# -lwinmm is needed for wmme support!!
-	LIBS += -lfftw3-3 -lwinmm
-	INCLUDEPATH -= ../../src/plugins/LV2
-	INCLUDEPATH += ../../3thparty/include .
-	
-	QMAKE_LIBDIR = ../../lib ../../3thparty/lib
+    LIBS -= -lslv2 -lfftw3
+    # -lwinmm is needed for wmme support!!
+    LIBS += -lfftw3-3 -lwinmm
+    INCLUDEPATH -= ../../src/plugins/LV2
+    INCLUDEPATH += ../../3thparty/include .
+
+    QMAKE_LIBDIR = ../../lib ../../3thparty/lib
 }

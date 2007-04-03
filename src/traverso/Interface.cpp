@@ -51,6 +51,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "dialogs/CDTextDialog.h"
 #include "dialogs/MarkerDialog.h"
 #include "dialogs/BusSelectorDialog.h"
+#include <dialogs/NewSongDialog.h>
 
 
 // Always put me below _all_ includes, this is needed
@@ -172,6 +173,8 @@ Interface::Interface()
 	m_cdTextDialog = 0;
 	m_markerDialog = 0;
 	m_busSelector = 0;
+	m_newSongDialog = 0;
+	m_newTrackDialog = 0;
 	
 	create_menus();
 	
@@ -769,4 +772,16 @@ void Interface::redo()
 	pm().get_undogroup()->redo();
 }
 
+Command* Interface::show_newsong_dialog()
+{
+	if (! m_newSongDialog) {
+		m_newSongDialog = new NewSongDialog(this);
+	}
+	
+	m_newSongDialog->show();
+	
+	return 0;
+}
+
 // eof
+

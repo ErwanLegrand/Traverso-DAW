@@ -26,6 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QHeaderView>
+#include <dialogs/NewSongDialog.h>
+#include <Interface.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -36,17 +38,15 @@ SongManagerDialog::SongManagerDialog( QWidget * parent )
 {
 	setupUi(this);
 
-	treeSongWidget->setColumnCount(4);
-	treeSongWidget->header()->resizeSection(0, 200);
-	treeSongWidget->header()->resizeSection(1, 60);
-	treeSongWidget->header()->resizeSection(2, 120);
+	treeSongWidget->setColumnCount(3);
+	treeSongWidget->header()->resizeSection(0, 160);
+	treeSongWidget->header()->resizeSection(1, 55);
+	treeSongWidget->header()->resizeSection(2, 70);
 	QStringList stringList;
-	stringList << "Song Name" << "Tracks" << "Length h:m:s,fr" << "Size" ;
+	stringList << "Song Name" << "Tracks" << "Length";
 	treeSongWidget->setHeaderLabels(stringList);
 	
 	set_project(pm().get_project());
-	
-	trackCountSpinBox->setValue(config().get_property("Song", "trackCreationCount", 4).toInt());
 	
 	connect(treeSongWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(songitem_clicked(QTreeWidgetItem*,int)));
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
@@ -60,8 +60,8 @@ void SongManagerDialog::set_project(Project* project)
 	m_project = project;
 	
 	if (m_project) {
-		connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(song_added(Song*)));
-		connect(m_project, SIGNAL(songRemoved(Song*)), this, SLOT(song_removed(Song*)));
+		connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(update_song_list()));
+		connect(m_project, SIGNAL(songRemoved(Song*)), this, SLOT(update_song_list()));
 		setWindowTitle("Manage Project - " + m_project->get_title());
 	} else {
 		setWindowTitle("Manage Project - No Project loaded!");
@@ -94,11 +94,9 @@ void SongManagerDialog::update_song_list( )
 		QTreeWidgetItem* item = new QTreeWidgetItem(treeSongWidget);
 		item->setTextAlignment(1, Qt::AlignHCenter);
 		item->setTextAlignment(2, Qt::AlignHCenter);
-		item->setTextAlignment(3, Qt::AlignHCenter);
 		item->setText(0, songName);
 		item->setText(1, numberOfTracks);
 		item->setText(2, songLength);
-		item->setText(3, songSpaceAllocated);
 		
 		item->setData(0, Qt::UserRole, song->get_id());
 	}
@@ -169,17 +167,7 @@ void SongManagerDialog::on_deleteSongButton_clicked( )
 
 void SongManagerDialog::on_createSongButton_clicked( )
 {
-	if ( ! m_project) {
-		return;
-	}
-	
-	int trackcount = trackCountSpinBox->value();
-	Song* song = new Song(m_project, trackcount);
-	
-	song->set_title(newSongNameLineEdit->text());
-	song->set_artists(artistsLineEdit->text());
-	
-	Command::process_command(m_project->add_song(song));
+	Interface::instance()->show_newsong_dialog();
 }
 
 
@@ -202,16 +190,6 @@ void SongManagerDialog::showEvent(QShowEvent * event)
 	if (m_project) {
 		pm().get_undogroup()->setActiveStack(m_project->get_history_stack());
 	}
-}
-
-void SongManagerDialog::song_removed(Song * song)
-{
-	update_song_list();
-}
-
-void SongManagerDialog::song_added(Song * song)
-{
-	update_song_list();
 }
 
 //eof

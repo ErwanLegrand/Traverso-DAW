@@ -211,7 +211,9 @@ protected slots:
 private slots:
 	void song_snap_changed();
 	void snap_combo_index_changed(int index);
-
+	void add_new_song();
+	void add_new_track();
+	
 private:
 	PlayHeadInfo* 	m_playhead;
 	SongSelector* 	m_selector;

@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Utils.h>
 #include "QuickDriverConfigWidget.h"
 #include "MessageWidget.h" 
+#include <Interface.h>
 
 #include <QPixmap>
 #include <QByteArray>
@@ -410,13 +411,13 @@ void SongSelector::update_songs()
 
 void SongSelector::song_added(Song * song)
 {
-	connect(song, SIGNAL(propertieChanged()), this, SLOT(update_songs()));
+	connect(song, SIGNAL(propertyChanged()), this, SLOT(update_songs()));
 	update_songs();
 }
 
 void SongSelector::song_removed(Song * song)
 {
-	disconnect(song, SIGNAL(propertieChanged()), this, SLOT(update_songs()));
+	disconnect(song, SIGNAL(propertyChanged()), this, SLOT(update_songs()));
 	update_songs();
 }
 
@@ -588,10 +589,10 @@ InfoWidget::InfoWidget(QWidget* parent)
 	, m_song(0)
 	, m_project(0)
 {
-	QPalette pallet;
+/*	QPalette pallet;
 	pallet.setColor(QPalette::Background, QColor("#FFF4FF"));
 	setPalette(pallet);
-	setAutoFillBackground(true);
+	setAutoFillBackground(true);*/
 	
 	setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
@@ -643,9 +644,12 @@ SongInfo::SongInfo(QWidget * parent)
 	m_record->setMaximumHeight(22);
 	
 	QMenu* menu = new QMenu;
-	menu->addAction("Track");
-	menu->addAction("Song");
-	menu->addAction("Song using template");
+	QAction* action = menu->addAction("Track");
+	connect(action, SIGNAL(triggered()), this, SLOT(add_new_track()));
+	
+	action = menu->addAction("Song");
+	connect(action, SIGNAL(triggered()), this, SLOT(add_new_song()));
+	
 	m_addNew->setMenu(menu);
 	
 	connect(m_snap, SIGNAL(activated(int)), this, SLOT(snap_combo_index_changed(int)));
@@ -719,6 +723,16 @@ void SongInfo::snap_combo_index_changed(int index)
 	} else {
 		m_song->set_snapping(false);
 	}
+}
+
+
+void SongInfo::add_new_song()
+{
+	Interface::instance()->show_newsong_dialog();
+}
+
+void SongInfo::add_new_track()
+{
 }
 
 QSize SongInfo::sizeHint() const
