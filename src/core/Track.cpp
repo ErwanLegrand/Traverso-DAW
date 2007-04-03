@@ -81,10 +81,12 @@ void Track::init()
 	m_captureRightChannel = m_captureLeftChannel = true;
 }
 
-QDomNode Track::get_state( QDomDocument doc )
+QDomNode Track::get_state( QDomDocument doc, bool istemplate)
 {
 	QDomElement node = doc.createElement("Track");
-	node.setAttribute("id", m_id);
+	if (! istemplate ) {
+		node.setAttribute("id", m_id);
+	}
 	node.setAttribute("name", m_name);
 	node.setAttribute("gain", m_gain);
 	node.setAttribute("pan", m_pan);
@@ -99,20 +101,22 @@ QDomNode Track::get_state( QDomDocument doc )
 	node.setAttribute("CaptureLeftChannel", m_captureLeftChannel);
 	node.setAttribute("CaptureRightChannel", m_captureRightChannel);
 
-	QDomNode clips = doc.createElement("Clips");
+	if (! istemplate ) {
+		QDomNode clips = doc.createElement("Clips");
 	
-	foreach(AudioClip* clip, audioClipList) {
-		if (clip->get_length() == 0) {
-			PERROR("Clip lenght is 0! This shouldn't happen!!!!");
-			continue;
+		foreach(AudioClip* clip, audioClipList) {
+			if (clip->get_length() == 0) {
+				PERROR("Clip lenght is 0! This shouldn't happen!!!!");
+				continue;
+			}
+			
+			QDomElement clipNode = doc.createElement("Clip");
+			clipNode.setAttribute("id", clip->get_id() );
+			clips.appendChild(clipNode);
 		}
 		
-		QDomElement clipNode = doc.createElement("Clip");
-		clipNode.setAttribute("id", clip->get_id() );
-		clips.appendChild(clipNode);
+		node.appendChild(clips);
 	}
-	
-	node.appendChild(clips);
 	
 	QDomNode pluginChainNode = doc.createElement("PluginChain");
 	pluginChainNode.appendChild(pluginChain->get_state(doc));

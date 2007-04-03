@@ -76,7 +76,7 @@ public :
 	Song* get_song() const {return m_song;}
 	QString get_name() const {return m_name;}
 	int get_total_clips();
-	QDomNode get_state(QDomDocument doc);
+	QDomNode get_state(QDomDocument doc, bool istemplate=false);
 	AudioClipList get_cliplist() const {return audioClipList;}
 	PluginChain* get_plugin_chain() const {return pluginChain;}
 	int get_sort_index() const;

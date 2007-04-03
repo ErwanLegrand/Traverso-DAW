@@ -55,6 +55,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Debugger.h"
 
 
+Song::Song(Project* project)
+	: ContextItem()
+		, m_project(project)
+{
+	PENTERCONS;
+	title = tr("Untitled");
+	m_id = create_id();
+	m_gain = 1.0f;
+	artists = tr("No artists name set");
+	m_hzoom = config().get_property("Song", "hzoomLevel", 14).toInt();
+
+	init();
+}
+
 Song::Song(Project* project, int numtracks)
 	: ContextItem()
 	, m_project(project)
@@ -94,6 +108,7 @@ Song::~Song()
 	delete m_hs;
 	delete m_audiodeviceClient;
 	delete snaplist;
+	delete workSnap;
 }
 
 void Song::init()
@@ -179,10 +194,14 @@ int Song::set_state( const QDomNode & node )
 	return 1;
 }
 
-QDomNode Song::get_state(QDomDocument doc)
+QDomNode Song::get_state(QDomDocument doc, bool istemplate)
 {
 	QDomElement songNode = doc.createElement("Song");
-	songNode.setAttribute("id", m_id);
+	
+	if (! istemplate) {
+		songNode.setAttribute("id", m_id);
+	}
+	
 	QDomElement properties = doc.createElement("Properties");
 	properties.setAttribute("title", title);
 	properties.setAttribute("artists", artists);
@@ -449,7 +468,7 @@ void Song::set_gain(float gain)
 void Song::set_title(const QString& sTitle)
 {
 	title=sTitle;
-	emit propertieChanged();
+	emit propertyChanged();
 }
 
 void Song::set_first_visible_frame(nframes_t pos)

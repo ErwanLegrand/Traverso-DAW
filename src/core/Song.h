@@ -60,6 +60,7 @@ class Song : public ContextItem
 
 public:
 
+	Song(Project* project);
 	Song(Project* project, int numtracks);
 	Song(Project* project, const QDomNode node);
 	~Song();
@@ -78,7 +79,7 @@ public:
 	
 	QString get_title() const {return title;}
 	QString get_artists() const {return artists;}
-	QDomNode get_state(QDomDocument doc);
+	QDomNode get_state(QDomDocument doc, bool istemplate=false);
 	QList<Track* > get_tracks() const;
 	
 	DiskIO*	get_diskio() const;
@@ -98,6 +99,7 @@ public:
 	void set_transport_pos(nframes_t pos);
 	void set_hzoom(int hzoom);
 	void set_snapping(bool snap);
+	int set_state( const QDomNode & node );
 
 	int process(nframes_t nframes);
 	int process_export(nframes_t nframes);
@@ -164,7 +166,6 @@ private:
 	Snappable*		workSnap;
 
 	void init();
-	int set_state( const QDomNode & node );
 
 	int finish_audio_export();
 	void start_seek();
@@ -204,7 +205,7 @@ signals:
 	void lastFramePositionChanged();
 	void seekStart(uint position);
 	void snapChanged();
-	void propertieChanged();
+	void propertyChanged();
 	void setCursorAtEdge();
 	void masterGainChanged();
 
