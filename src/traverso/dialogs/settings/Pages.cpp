@@ -402,6 +402,7 @@ BehaviorPage::BehaviorPage(QWidget *parent)
 	m_configpage = new BehaviorConfigPage(this);
 	mainLayout->addWidget(m_configpage);
 	mainLayout->addStretch(1);
+	connect(&config(), SIGNAL(configChanged()), this, SLOT(update_follow()));
 	load_config();
 }
 
@@ -431,19 +432,16 @@ void BehaviorPage::load_config()
 	bool loadLastUsedProject = config().get_property("Project", "loadLastUsed", 1).toBool();
 	QString oncloseaction = config().get_property("Project", "onclose", "save").toString();
 	int defaultNumTracks = config().get_property("Song", "trackCreationCount", 6).toInt();
-	bool keepCursorVisible = config().get_property("PlayHead", "Follow", true).toBool();
 	int scrollMode = config().get_property("PlayHead", "Scrollmode", 2).toInt();
 	bool resyncAudio = config().get_property("AudioClip", "SyncDuringDrag", true).toBool();
 	
 	m_configpage->projectDirLineEdit->setText(dir);
 	m_configpage->loadLastProjectCheckBox->setChecked(loadLastUsedProject);
 	m_configpage->numberOfTrackSpinBox->setValue(defaultNumTracks);
-	m_configpage->keepCursorVisibleCheckBox->setChecked(keepCursorVisible);
 	m_configpage->scrollModeComboBox->setCurrentIndex(scrollMode);
 	m_configpage->resyncAudioCheckBox->setChecked(resyncAudio);
 	
-	if (!keepCursorVisible)
-		m_configpage->scrollModeComboBox->setEnabled(true);
+	update_follow();
 
 	if (oncloseaction == "save") {
 		m_configpage->saveRadioButton->setChecked(true);
@@ -454,6 +452,13 @@ void BehaviorPage::load_config()
 	}
 }
 
+
+void BehaviorPage::update_follow()
+{
+	bool keepCursorVisible = config().get_property("PlayHead", "Follow", true).toBool();
+	m_configpage->keepCursorVisibleCheckBox->setChecked(keepCursorVisible);
+	m_configpage->scrollModeComboBox->setEnabled(keepCursorVisible);
+}
 
 void BehaviorPage::reset_default_config()
 {
@@ -518,6 +523,7 @@ void AppearancePage::save_config()
 	config().set_property("Themer", "coloradjust", m_themepage->colorAdjustBox->value());
 	config().set_property("Themer", "style", m_themepage->styleCombo->currentText());
 	config().set_property("Themer", "usestylepallet", m_themepage->useStylePalletCheckBox->isChecked());
+	config().set_property("Interface", "OpenGL", m_themepage->useOpenGLCheckBox->isChecked());
 }
 
 void AppearancePage::load_config()
@@ -545,6 +551,7 @@ void AppearancePage::load_config()
 	QString theme  = config().get_property("Themer", "currenttheme", "TraversoLight").toString();
 	int coloradjust = config().get_property("Themer", "coloradjust", 100).toInt();
 	bool usestylepallete = config().get_property("Themer", "usestylepallet", "").toBool();
+	bool useOpenGL = config().get_property("Interface", "OpenGL", false).toBool();
 	
 	int index = m_themepage->styleCombo->findText(style);
 	m_themepage->styleCombo->setCurrentIndex(index);
@@ -553,7 +560,7 @@ void AppearancePage::load_config()
 	m_themepage->colorAdjustBox->setValue(coloradjust);
 	m_themepage->useStylePalletCheckBox->setChecked(usestylepallete);
 	m_themepage->themePathLineEdit->setText(themepath);
-	
+	m_themepage->useOpenGLCheckBox->setChecked(useOpenGL);	
 }
 
 void AppearancePage::reset_default_config()
@@ -566,6 +573,7 @@ void AppearancePage::reset_default_config()
 	QString systemstyle = QString(QApplication::style()->metaObject()->className()).remove("Q").remove("Style");
 	config().set_property("Themer", "style", systemstyle);
 	config().set_property("Themer", "usestylepallet", false);
+	config().set_property("Interface", "OpenGL", false);
 	
 	load_config();
 }

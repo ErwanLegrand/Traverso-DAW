@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongWidget.h,v 1.10 2007/04/02 09:52:31 r_sijrier Exp $
+    $Id: SongWidget.h,v 1.11 2007/04/03 21:25:25 benjie Exp $
 */
 
 #ifndef SONG_WIDGET_H
@@ -63,6 +63,7 @@ private:
 	QGraphicsScene* 	m_scene;
 	QScrollBar*		m_vScrollBar;
 	QScrollBar*		m_hScrollBar;
+	bool			m_usingOpenGL;
 	
 	friend class SongView;
 

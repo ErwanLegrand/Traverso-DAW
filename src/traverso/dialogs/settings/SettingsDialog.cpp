@@ -51,12 +51,13 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 	
 	QDialogButtonBox* buttonBox = new QDialogButtonBox(this);
 	
-	QPushButton* closeButton = buttonBox->addButton(QDialogButtonBox::Close);
-	QPushButton* saveButton = buttonBox->addButton(QDialogButtonBox::Save); 
+	QPushButton* cancelButton = buttonBox->addButton(QDialogButtonBox::Cancel);
+	QPushButton* okButton = buttonBox->addButton(QDialogButtonBox::Ok); 
 	QPushButton* restoreDefaultsButton = buttonBox->addButton(QDialogButtonBox::RestoreDefaults); 
 	
-	connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
-	connect(saveButton, SIGNAL(clicked()), this, SLOT(save_config()));
+	connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
+	connect(okButton, SIGNAL(clicked()), this, SLOT(save_config()));
+	connect(okButton, SIGNAL(clicked()), this, SLOT(close()));
 	connect(restoreDefaultsButton, SIGNAL(clicked()), this, SLOT(restore_defaults_button_clicked()));
 	
 	QHBoxLayout *buttonsLayout = new QHBoxLayout;

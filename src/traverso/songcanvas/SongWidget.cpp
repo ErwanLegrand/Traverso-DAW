@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongWidget.cpp,v 1.10 2007/03/21 15:11:34 r_sijrier Exp $
+    $Id: SongWidget.cpp,v 1.11 2007/04/03 21:25:25 benjie Exp $
 */
 
 		
@@ -28,6 +28,7 @@
 #include "SongView.h"
 #include "ViewItem.h"
 #include "Themer.h"
+#include "Config.h"
 
 #include <Song.h>
 #include <QtOpenGL>
@@ -86,6 +87,9 @@ SongWidget::SongWidget(Song* song, QWidget* parent)
 	
 	connect(themer(), SIGNAL(themeLoaded()), this, SLOT(load_theme_data()), Qt::QueuedConnection);
 	
+	m_usingOpenGL  = false;
+	set_use_opengl(config().get_property("Interface", "OpenGL", false).toBool());
+
 	setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 }
 
@@ -111,8 +115,11 @@ QSize SongWidget::sizeHint() const
 
 void SongWidget::set_use_opengl( bool useOpenGL )
 {
-	m_clipsViewPort->setViewport(useOpenGL ? new QGLWidget(QGLFormat(QGL::SampleBuffers)) : new QWidget);
-	m_trackPanel->setViewport(useOpenGL ? new QGLWidget(QGLFormat(QGL::SampleBuffers)) : new QWidget);
+	if (useOpenGL != m_usingOpenGL) {
+		m_clipsViewPort->setViewport(useOpenGL ? new QGLWidget(QGLFormat(QGL::SampleBuffers)) : new QWidget);
+		m_trackPanel->setViewport(useOpenGL ? new QGLWidget(QGLFormat(QGL::SampleBuffers)) : new QWidget);
+	}
+	m_usingOpenGL = useOpenGL;
 }
 
 

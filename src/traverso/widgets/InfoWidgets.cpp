@@ -627,10 +627,20 @@ SongInfo::SongInfo(QWidget * parent)
 {
 	m_selector = new SongSelector(this);
 	m_playhead = new PlayHeadInfo(this);
-	m_snap = new QComboBox(this);
-	m_snap->addItem("Snap: On");
-	m_snap->addItem("Snap: Off");
+
+	m_snap = new QToolButton(this);
+	m_snapAct = new QAction(tr("&Snap"), this);
+	m_snapAct->setCheckable(true);
+	m_snapAct->setToolTip(tr("Snap items to edges of other items while dragging."));
+	m_snap->setDefaultAction(m_snapAct);
 	m_snap->setFocusPolicy(Qt::NoFocus);
+
+	m_follow = new QToolButton(this);
+	m_followAct = new QAction(tr("S&croll Playback"), this);
+	m_followAct->setCheckable(true);
+	m_followAct->setToolTip(tr("Keep play cursor in view while playing or recording."));
+	m_follow->setDefaultAction(m_followAct);
+	m_follow->setFocusPolicy(Qt::NoFocus);
 	
 	m_addNew = new QPushButton(tr("Add new..."), this);
 	m_addNew->setFocusPolicy(Qt::NoFocus);
@@ -644,6 +654,7 @@ SongInfo::SongInfo(QWidget * parent)
 	m_record->setMaximumHeight(22);
 	
 	QMenu* menu = new QMenu;
+
 	QAction* action = menu->addAction("Track");
 	connect(action, SIGNAL(triggered()), this, SLOT(add_new_track()));
 	
@@ -652,7 +663,10 @@ SongInfo::SongInfo(QWidget * parent)
 	
 	m_addNew->setMenu(menu);
 	
-	connect(m_snap, SIGNAL(activated(int)), this, SLOT(snap_combo_index_changed(int)));
+	connect(m_snapAct, SIGNAL(triggered(bool)), this, SLOT(snap_state_changed(bool)));
+	connect(m_followAct, SIGNAL(triggered(bool)), this, SLOT(follow_state_changed(bool)));
+	connect(&config(), SIGNAL(configChanged()), this, SLOT(update_follow_state()));
+	update_follow_state();
 }
 
 void SongInfo::set_orientation(Qt::Orientation orientation)
@@ -669,6 +683,7 @@ void SongInfo::set_orientation(Qt::Orientation orientation)
 		lay->addWidget(m_playhead);
 		lay->addWidget(m_record);
 		lay->addWidget(m_snap);
+		lay->addWidget(m_follow);
 		lay->addWidget(m_selector);
 		lay->addWidget(m_addNew);
 		
@@ -682,6 +697,7 @@ void SongInfo::set_orientation(Qt::Orientation orientation)
 		lay->addWidget(m_playhead);
 		lay->addWidget(m_record);
 		lay->addWidget(m_snap);
+		lay->addWidget(m_follow);
 		lay->addWidget(m_addNew);
 		lay->addWidget(m_selector);
 		
@@ -696,33 +712,35 @@ void SongInfo::set_song(Song* song)
 	m_song = song;
 	
 	if (m_song) {
-		connect(m_song, SIGNAL(snapChanged()), this, SLOT(song_snap_changed()));
-		song_snap_changed();
+		connect(m_song, SIGNAL(snapChanged()), this, SLOT(update_snap_state()));
+		update_snap_state();
 	} else {
-		m_snap->setEnabled(false);
+		m_snapAct->setEnabled(false);
 	}
 }
 
-void SongInfo::song_snap_changed()
+void SongInfo::update_snap_state()
 {
-	if (m_song->is_snap_on()) {
-		m_snap->setCurrentIndex(0);
-	} else {
-		m_snap->setCurrentIndex(1);
-	}
+	m_snapAct->setChecked(m_song->is_snap_on());
 }
 
-void SongInfo::snap_combo_index_changed(int index)
+void SongInfo::snap_state_changed(bool state)
 {
 	if (! m_song) {
 		return;
 	}
-	
-	if (index == 0) {
-		m_song->set_snapping(true);
-	} else {
-		m_song->set_snapping(false);
-	}
+	m_song->set_snapping(state);
+}
+
+void SongInfo::update_follow_state()
+{
+	m_followAct->setChecked(config().get_property("PlayHead", "Follow", true).toBool());
+}
+
+void SongInfo::follow_state_changed(bool state)
+{
+	config().set_property("PlayHead", "Follow", state);
+	config().save();
 }
 
 

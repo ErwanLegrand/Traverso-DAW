@@ -189,6 +189,8 @@ Interface::Interface()
 	connect(&pm(), SIGNAL(aboutToDelete(Song*)), this, SLOT(delete_songwidget(Song*)));
 
 	cpointer().add_contextitem(this);
+
+	connect(&config(), SIGNAL(configChanged()), this, SLOT(update_opengl()));
 }
 
 Interface::~Interface()
@@ -334,7 +336,7 @@ void Interface::create_menus( )
 	 
 	menu = menuBar()->addMenu(tr("&File"));
 	
-	action = menu->addAction(tr("Open / Create"));
+	action = menu->addAction(tr("&Open / Create..."));
 	action->setIcon(style()->standardIcon(QStyle::SP_FileDialogContentsView));
 	action->setShortcuts(QKeySequence::Open);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_open_create_project_dialog()));
@@ -354,7 +356,7 @@ void Interface::create_menus( )
 	action->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
 	connect(action, SIGNAL(triggered(bool)), &pm(), SLOT(save_project()));
 	
-	action = menu->addAction(tr("Manage Project"));
+	action = menu->addAction(tr("&Manage Project..."));
 	QList<QKeySequence> list;
 	list.append(QKeySequence("F4"));
 	action->setShortcuts(list);
@@ -363,7 +365,7 @@ void Interface::create_menus( )
 	
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_project_manager_dialog()));
 	
-	action = menu->addAction(tr("Export"));
+	action = menu->addAction(tr("&Export..."));
 	action->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
 	m_projectExportAction = action;
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_export_widget()));
@@ -394,9 +396,15 @@ void Interface::create_menus( )
 	m_infoBar->toggleViewAction()->setText(tr("Main Toolbar"));
 	menu->addAction(m_sysinfo->toggleViewAction());
 	m_sysinfo->toggleViewAction()->setText(tr("System Information"));
-		
-		
-	action = menuBar()->addAction(tr("&Settings"));
+	
+	
+	menu = menuBar()->addMenu(tr("&Settings"));
+	menu->addAction(m_infoBar->get_snap_action());
+	menu->addAction(m_infoBar->get_follow_action());
+	
+	menu->addSeparator();
+
+	action = menu->addAction(tr("&Preferences..."));
 	connect(action, SIGNAL(triggered( bool )), this, SLOT(show_settings_dialog()));
 	
 	
@@ -407,12 +415,6 @@ void Interface::create_menus( )
 	
 	action = menu->addAction(tr("&About Traverso"));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(about_traverso()));
-	
-	
-	action = menuBar()->addAction(tr("OpenGL"));
-	action->setEnabled(QGLFormat::hasOpenGL());
-	action->setCheckable(true);
-	connect(action, SIGNAL(toggled(bool)), this, SLOT(toggle_OpenGL(bool)));
 	
 	
 	action = menuBar()->addAction(tr("Undo"));
@@ -667,8 +669,10 @@ QMenu* Interface::create_fade_selector_menu(const QString& fadeTypeName)
 	return menu;
 }
 
-void Interface::toggle_OpenGL(bool toggled)
+void Interface::update_opengl()
 {
+	bool toggled = config().get_property("Interface", "OpenGL", false).toBool();
+
 	foreach(SongWidget* widget, m_songWidgets) {
 		widget->set_use_opengl(toggled);
 	}

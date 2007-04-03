@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: QuickDriverConfigWidget.cpp,v 1.6 2007/03/19 11:20:55 r_sijrier Exp $
+$Id: QuickDriverConfigWidget.cpp,v 1.7 2007/04/03 21:25:25 benjie Exp $
 */
 
 #include "QuickDriverConfigWidget.h"
@@ -53,9 +53,14 @@ QuickDriverConfigWidget::~ QuickDriverConfigWidget( )
 {}
 
 
-void QuickDriverConfigWidget::on_applyButton_clicked( )
+void QuickDriverConfigWidget::on_cancelButton_clicked( )
 {
-// 	hide();
+	hide();
+	update_driver_info();
+}
+
+void QuickDriverConfigWidget::on_okButton_clicked( )
+{
 	QString driver = driverComboBox->currentText();
 	int rate = rateComboBox->currentText().toInt();
 	int bufSize = periodBufferSizesList.at(latencyComboBox->currentIndex());
@@ -83,13 +88,12 @@ void QuickDriverConfigWidget::on_applyButton_clicked( )
 	
 	
 	audiodevice().set_parameters(rate, bufSize, driver, capture, playback, cardDevice);
-}
 
-void QuickDriverConfigWidget::on_saveButton_clicked( )
-{
 	config().set_property("Hardware", "samplerate", rateComboBox->currentText().toInt());
 	config().set_property("Hardware", "bufferSize", periodBufferSizesList.at(latencyComboBox->currentIndex()));
 	config().set_property("Hardware", "drivertype", driverComboBox->currentText());
+
+	hide();
 }
 
 void QuickDriverConfigWidget::driver_combobox_index_changed( QString )

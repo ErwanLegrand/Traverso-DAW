@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: QuickDriverConfigWidget.h,v 1.1 2006/10/18 12:09:47 r_sijrier Exp $
+    $Id: QuickDriverConfigWidget.h,v 1.2 2007/04/03 21:25:25 benjie Exp $
 */
 
 #ifndef QUICK_DRIVERCONFIG_WIDGET_H
@@ -42,8 +42,8 @@ private:
         void update_driver_info();
 	
 private slots:
-	void on_applyButton_clicked();
-	void on_saveButton_clicked();
+	void on_cancelButton_clicked();
+	void on_okButton_clicked();
 	
 	void driver_combobox_index_changed(QString);
 	void rate_combobox_index_changed(QString);

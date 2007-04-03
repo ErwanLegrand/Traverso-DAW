@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Zoom.cpp,v 1.8 2007/01/16 20:21:08 r_sijrier Exp $
+    $Id: Zoom.cpp,v 1.9 2007/04/03 21:25:25 benjie Exp $
 */
 
 #include <libtraversocore.h>
@@ -97,10 +97,10 @@ int Zoom::jog()
 
         int vzy = y - verticalJogZoomLastY;
         if (vzy>10) {
-                m_sv->vzoom_out();
+                m_sv->vzoom_in();
                 verticalJogZoomLastY = verticalJogZoomLastY + 10;
         } else if (vzy<-10) {
-                m_sv->vzoom_in();
+                m_sv->vzoom_out();
                 verticalJogZoomLastY = verticalJogZoomLastY - 10;
         }
         return 1;

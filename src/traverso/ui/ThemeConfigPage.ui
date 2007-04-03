@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>372</width>
-    <height>321</height>
+    <width>346</width>
+    <height>410</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -17,7 +17,7 @@
     <number>0</number>
    </property>
    <property name="spacing" >
-    <number>12</number>
+    <number>6</number>
    </property>
    <item>
     <widget class="QGroupBox" name="groupBox" >
@@ -163,7 +163,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox_2" >
      <property name="title" >
-      <string>Theme options</string>
+      <string>Theme Options</string>
      </property>
      <layout class="QVBoxLayout" >
       <property name="margin" >
@@ -212,7 +212,7 @@
        <number>9</number>
       </property>
       <property name="spacing" >
-       <number>12</number>
+       <number>6</number>
       </property>
       <item>
        <layout class="QHBoxLayout" >
@@ -257,6 +257,38 @@
          <string>Use selected style's pallet</string>
         </property>
        </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_3" >
+     <property name="title" >
+      <string>Open GL Options</string>
+     </property>
+     <layout class="QVBoxLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item>
+       <layout class="QHBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QCheckBox" name="useOpenGLCheckBox" >
+          <property name="text" >
+           <string>Use OpenGL</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>

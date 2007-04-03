@@ -209,12 +209,16 @@ private:
 
 class BehaviorPage : public ConfigPage
 {
+	Q_OBJECT
 public:
 	BehaviorPage(QWidget *parent = 0);
 	void load_config();
 	void save_config();
 	void reset_default_config();
 	
+private slots:
+	void update_follow();
+
 private:
 	BehaviorConfigPage* m_configpage;
 };

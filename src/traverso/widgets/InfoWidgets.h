@@ -24,7 +24,9 @@
 
 #include <QPushButton>
 #include <QComboBox>
+#include <QAction>
 #include <QToolBar>
+#include <QToolButton>
 #include <QTimer>
 #include <QLabel>
 #include <QFrame>
@@ -200,6 +202,8 @@ class SongInfo : public InfoWidget
 	Q_OBJECT
 public:
 	SongInfo(QWidget* parent);
+	QAction *get_snap_action() {return m_snapAct;};
+	QAction *get_follow_action() {return m_followAct;};
 	
 protected:
 	void set_orientation(Qt::Orientation orientation);
@@ -209,15 +213,20 @@ protected slots:
 	void set_song(Song* );
 	
 private slots:
-	void song_snap_changed();
-	void snap_combo_index_changed(int index);
+	void update_snap_state();
+	void snap_state_changed(bool state);
+	void update_follow_state();
+	void follow_state_changed(bool state);
 	void add_new_song();
 	void add_new_track();
 	
 private:
 	PlayHeadInfo* 	m_playhead;
 	SongSelector* 	m_selector;
-	QComboBox*	m_snap;
+	QToolButton*	m_snap;
+	QAction*	m_snapAct;
+	QToolButton*	m_follow;
+	QAction*	m_followAct;
 	QPushButton*	m_addNew;
 	QPushButton*	m_record;
 };
@@ -229,6 +238,8 @@ class InfoToolBar : public QToolBar
 
 public:
 	InfoToolBar(QWidget* parent);
+	QAction *get_snap_action() {return m_songinfo->get_snap_action();};
+	QAction *get_follow_action() {return m_songinfo->get_follow_action();};
 
 private:
 	QList<InfoWidget* > m_widgets;

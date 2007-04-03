@@ -138,8 +138,8 @@ public slots :
 	void process_context_menu_action(QAction* action);
 	void set_fade_in_shape(QAction* action);
 	void set_fade_out_shape(QAction* action);
-	void toggle_OpenGL(bool);
-	
+	void update_opengl();
+
 	Command* show_song_widget();
 	Command* full_screen();
 	Command* about_traverso();
