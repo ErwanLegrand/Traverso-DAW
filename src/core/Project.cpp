@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier
+Copyright (C) 2005-2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -343,7 +343,7 @@ Command* Project::remove_song(Song* song, bool historable)
 	cmd = new AddRemove(this, song, historable, 0,
 		"private_remove_song(Song*)", "songRemoved(Song*)",
 		"private_add_song(Song*)", "songAdded(Song*)",
-		tr("Song %1 removed").arg(song->get_title()));
+		tr("Remove Song %1").arg(song->get_title()));
 	
 	cmd->set_instantanious(true);
 	
