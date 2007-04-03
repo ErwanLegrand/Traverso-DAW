@@ -194,40 +194,11 @@ int Project::save()
 	QFile data( fileName );
 
 	if (data.open( QIODevice::WriteOnly ) ) {
-		QDomElement projectNode = doc.createElement("Project");
-		QDomElement properties = doc.createElement("Properties");
-
-		properties.setAttribute("title", title);
-		properties.setAttribute("engineer", engineer);
-		properties.setAttribute("description", m_description);
-		properties.setAttribute("currentSongId", m_currentSongId);
-		properties.setAttribute("rate", m_rate);
-		properties.setAttribute("bitdepth", m_bitDepth);
-		properties.setAttribute("projectfileversion", PROJECT_FILE_VERSION);
-		properties.setAttribute("id", m_id);
-		properties.setAttribute("importdir", m_importDir);
-		
-		projectNode.appendChild(properties);
-
-		doc.appendChild(projectNode);
-
-		// Get the AudioSources Node, and append
-		projectNode.appendChild(m_asmanager->get_state( doc ));
-
-		// Get all the Songs
-		QDomNode songsNode = doc.createElement("Songs");
-
-		foreach(Song* song, m_songs)
-		songsNode.appendChild(song->get_state(doc));
-
-		projectNode.appendChild(songsNode);
-
+		get_state(doc);
 		QTextStream stream(&data);
 		doc.save(stream, 4);
 		data.close();
-
 		info().information( tr("Project %1 saved ").arg(title) );
-
 	} else {
 		info().critical( tr("Couldn't open Project properties file for writing! (%1)").arg(fileName) );
 		return -1;
@@ -235,6 +206,46 @@ int Project::save()
 
 	return 1;
 }
+
+
+QDomNode Project::get_state(QDomDocument doc, bool istemplate)
+{
+	QDomElement projectNode = doc.createElement("Project");
+	QDomElement properties = doc.createElement("Properties");
+
+	properties.setAttribute("title", title);
+	properties.setAttribute("engineer", engineer);
+	properties.setAttribute("description", m_description);
+	properties.setAttribute("currentSongId", m_currentSongId);
+	properties.setAttribute("rate", m_rate);
+	properties.setAttribute("bitdepth", m_bitDepth);
+	properties.setAttribute("projectfileversion", PROJECT_FILE_VERSION);
+	if (! istemplate) {
+		properties.setAttribute("id", m_id);
+	}
+	properties.setAttribute("importdir", m_importDir);
+		
+	projectNode.appendChild(properties);
+
+	doc.appendChild(projectNode);
+
+	// Get the AudioSources Node, and append
+	if (! istemplate) {
+		projectNode.appendChild(m_asmanager->get_state(doc));
+	}
+
+	// Get all the Songs
+	QDomNode songsNode = doc.createElement("Songs");
+
+	foreach(Song* song, m_songs) {
+		songsNode.appendChild(song->get_state(doc, istemplate));
+	}
+
+	projectNode.appendChild(songsNode);
+	
+	return projectNode;
+}
+
 
 void Project::set_title(const QString& pTitle)
 {

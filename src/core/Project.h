@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QString>
 #include <QList>
-
+#include <QDomNode>
 #include "ContextItem.h"
 
 
@@ -57,6 +57,7 @@ public :
 	Song* get_current_song() const ;
 	Song* get_song(qint64 id) const;
 	int get_song_index(qint64 id) const;
+	QDomNode get_state(QDomDocument doc, bool istemplate=false);
 
 
 	// Set functions

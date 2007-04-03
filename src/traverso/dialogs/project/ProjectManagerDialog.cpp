@@ -23,9 +23,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "libtraversocore.h"
 #include <QStringList>
-#include <QMessageBox>
-#include <QFileDialog>
+#include <QInputDialog>
 #include <QHeaderView>
+#include <QTextStream>
+#include <QFile>
+#include <QDir>
+#include <QMessageBox>
 #include <dialogs/project/NewSongDialog.h>
 #include <Interface.h>
 
@@ -88,8 +91,6 @@ void ProjectManagerDialog::update_song_list( )
 		return;
 	}
 	
-	printf("update_song_list() \n");
-
 	treeSongWidget->clear();
 	foreach(Song* song, m_project->get_songs()) {
 
@@ -136,8 +137,6 @@ void ProjectManagerDialog::on_renameSongButton_clicked( )
 	}
 	
 	QTreeWidgetItem* item = treeSongWidget->currentItem();
-	
-	
 	
 	if ( ! item) {
 		return;
@@ -213,13 +212,56 @@ void ProjectManagerDialog::on_songsExportButton_clicked()
 
 void ProjectManagerDialog::on_exportTemplateButton_clicked()
 {
-}
+	bool ok;
+	QString text = QInputDialog::getText(this, tr("Save Template"),
+					     tr("Enter Template name"),
+					     QLineEdit::Normal, "", &ok);
+	if (! ok || text.isEmpty()) {
+		return;
+	}
+	
+	QString fileName = QDir::homePath() + "/.traverso/ProjectTemplates/";
+	
+	QDir dir;
+	if (! dir.exists(fileName)) {
+		if (! dir.mkdir(fileName)) {
+			info().critical( tr("Couldn't open file %1 for writing!").arg(fileName));
+			return;
+		}
+	}
+	
+	fileName.append(text + ".tpt");
+	
+	QDomDocument doc(text);
+	
+	if (QFile::exists(fileName)) {
+		QMessageBox::StandardButton button = QMessageBox::question(this,
+				tr("Traverso - Information"),
+				tr("Template with name %1 allready exists!\n Do you want to overwrite it?").arg(fileName),
+				QMessageBox::Yes | QMessageBox::No,
+				QMessageBox::No);
+				
+		if (button == QMessageBox::No) {
+			return;
+		}
+	}
+	
+	QFile file(fileName);
 
-//eof
+	if (file.open( QIODevice::WriteOnly ) ) {
+		m_project->get_state(doc, true);
+		QTextStream stream(&file);
+		doc.save(stream, 4);
+		file.close();
+		info().information(tr("Saved Project Template: %1").arg(text));
+	} else {
+		info().critical( tr("Couldn't open file %1 for writing!").arg(fileName));
+	}
+	
+}
 
 void ProjectManagerDialog::accept()
 {
-	printf("accept\n");
 	if ( ! m_project ) {
 		hide();
 		return;
@@ -232,7 +274,6 @@ void ProjectManagerDialog::accept()
 
 void ProjectManagerDialog::reject()
 {
-	printf("reject\n");
 	if ( ! m_project ) {
 		hide();
 		return;
@@ -241,4 +282,6 @@ void ProjectManagerDialog::reject()
 	descriptionTextEdit->setText(m_project->get_description());
 	hide();
 }
+
+//eof
 
