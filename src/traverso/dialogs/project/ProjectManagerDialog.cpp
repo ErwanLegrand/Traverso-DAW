@@ -1,41 +1,33 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
- 
-    This file is part of Traverso
- 
-    Traverso is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
- 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
- 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
- 
+Copyright (C) 2005-2007 Remon Sijrier 
+
+This file is part of Traverso
+
+Traverso is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
+
 */
 
 #include "ProjectManagerDialog.h"
-#include "ui_ProjectManagerDialog.h"
 
-#include <QDir>
+#include "libtraversocore.h"
 #include <QStringList>
 #include <QMessageBox>
-#include <QTextStream>
-#include <QDomDocument>
 #include <QFileDialog>
 #include <QHeaderView>
-
-#include <Config.h>
-#include <Information.h>
-#include <ProjectManager.h>
-#include <Project.h>
-#include <Utils.h>
-
+#include <dialogs/project/NewSongDialog.h>
+#include <Interface.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -45,244 +37,208 @@ ProjectManagerDialog::ProjectManagerDialog( QWidget * parent )
 	: QDialog(parent)
 {
 	setupUi(this);
-	projectListView->setColumnCount(2);
-	update_projects_list();
+
+	treeSongWidget->setColumnCount(3);
+	treeSongWidget->header()->resizeSection(0, 160);
+	treeSongWidget->header()->resizeSection(1, 55);
+	treeSongWidget->header()->resizeSection(2, 70);
 	QStringList stringList;
-	stringList << "Project Name" << "Songs";
-	projectListView->setHeaderLabels(stringList);
+	stringList << "Song Name" << "Tracks" << "Length";
+	treeSongWidget->setHeaderLabels(stringList);
 	
-	projectListView->header()->resizeSection(0, 160);
-	projectListView->header()->resizeSection(1, 30);
+	set_project(pm().get_project());
 	
-	trackCountSpinBox->setValue(config().get_property("Song", "trackCreationCount", 4).toInt());
-
-
-	connect(projectListView, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(projectitem_clicked(QTreeWidgetItem*,int)));
+	undoButton->setIcon(QIcon(find_pixmap(":/undo-16")));
+	redoButton->setIcon(QIcon(find_pixmap(":/redo-16")));
+	
+	connect(treeSongWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(songitem_clicked(QTreeWidgetItem*,int)));
+	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 }
 
-ProjectManagerDialog::~ ProjectManagerDialog( )
+ProjectManagerDialog::~ProjectManagerDialog()
 {}
 
-void ProjectManagerDialog::update_projects_list()
+void ProjectManagerDialog::set_project(Project* project)
 {
-	projectListView->clear();
+	m_project = project;
 	
-	QString path = config().get_property("Project", "directory", getenv("HOME")).toString();
-
-	QDir dir(path);
-
-	QStringList list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+	if (m_project) {
+		connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(update_song_list()));
+		connect(m_project, SIGNAL(songRemoved(Song*)), this, SLOT(update_song_list()));
+		connect(m_project->get_history_stack(), SIGNAL(redoTextChanged ( const QString &)),
+			this, SLOT(redo_text_changed(const QString&)));
+		connect(m_project->get_history_stack(), SIGNAL(undoTextChanged ( const QString &)),
+			this, SLOT(undo_text_changed(const QString&)));
+		setWindowTitle("Manage Project - " + m_project->get_title());
+		descriptionTextEdit->setText(m_project->get_description());
+	} else {
+		setWindowTitle("Manage Project - No Project loaded!");
+		treeSongWidget->clear();
+		descriptionTextEdit->clear();
+	}
 	
-	foreach(QString dirname, list) {
+	update_song_list();
+}
+
+
+void ProjectManagerDialog::update_song_list( )
+{
+	if ( ! m_project) {
+		printf("ProjectManagerDialog:: no project ?\n");
+		return;
+	}
 	
-		/************ FROM HERE ****************/
-		QDomDocument doc("Project");
-		QString fileToOpen = path + "/" + dirname + "/project.traverso";
-		
-		QFile file(fileToOpen);
+	printf("update_song_list() \n");
 
-		if (!file.open(QIODevice::ReadOnly)) {
-			PWARN("ProjectManagerDialog:: Cannot open project properties file (%s)", fileToOpen.toAscii().data());
-			continue;
-		}
+	treeSongWidget->clear();
+	foreach(Song* song, m_project->get_songs()) {
 
-		QString errorMsg;
-		if (!doc.setContent(&file, &errorMsg)) {
-			file.close();
-			PWARN("ProjectManagerDialog:: Cannot set content of XML file (%s)", errorMsg.toAscii().data());
-			continue;
-		}
+		QString songNr = QString::number(m_project->get_song_index(song->get_id()));
+		QString songName = "Song " + songNr + " - " + song->get_title();
+		QString numberOfTracks = QString::number(song->get_numtracks());
+		QString songLength = frame_to_smpte(song->get_last_frame(), song->get_rate());
+		QString songStatus = song->is_changed()?"UnSaved":"Saved";
+		QString songSpaceAllocated = "Unknown";
 
-		file.close();
-
-		QDomElement docElem = doc.documentElement();
-		QDomNode propertiesNode = docElem.firstChildElement("Properties");
-		QDomElement e = propertiesNode.toElement();
-		QString title = e.attribute( "title", "" );
-		QString description = e.attribute("description", "No description set");
-		qint64 id = e.attribute( "id", "" ).toLongLong();
-		
-
-		QDomNode songsNode = docElem.firstChildElement("Songs");
-		QDomNode songNode = songsNode.firstChild();
-		int songCounter = 0;
-		
-		// count to get Songs number....
-		while(!songNode.isNull()) {
-			songCounter++;
-			songNode = songNode.nextSibling();
-		}
-
-		QString sNumSongs = QString::number(songCounter);
-
-		/*********** TO HERE THIS CODE IS DUPLICATE FROM THAT IN PROJECT.CC :-( 
-		Don't know if this is avoidable at all *********/
-
-
-		QTreeWidgetItem* item = new QTreeWidgetItem(projectListView);
-		item->setTextAlignment(0, Qt::AlignLeft);
+		QTreeWidgetItem* item = new QTreeWidgetItem(treeSongWidget);
 		item->setTextAlignment(1, Qt::AlignHCenter);
-		item->setText(0, title);
-		item->setText(1, sNumSongs);
-		QString html = "<html><head></head><body>Project: " + title + "<br /><br />";
-		html += tr("Description:") + "<br />";
-		html += description + "<br /><br />";
-		html += tr("Created on:") + " " + extract_date_time(id).toString() + "<br />";
-		html += "</body></html>";
-		item->setToolTip(0, html);
-	}
-}
-
-void ProjectManagerDialog::projectitem_clicked( QTreeWidgetItem* item, int)
-{
-	if (item) {
-		selectedProjectName->setText(item->text(0));
-	}
-}
-
-void ProjectManagerDialog::on_loadProjectButton_clicked( )
-{
-        // do we have the name of the project to load ?
-	QString title;
-	if (projectListView->currentItem()) {
-		title = projectListView->currentItem()->text(0);
-	}
-
-	if (title.isEmpty()) {
-		info().warning(tr("No Project selected!") );
-		info().information(tr("Select a project and click the 'Load' button again") );
-		return;
-	}
-	
-	Project* project = pm().get_project();
-
-	
-	if (project && (project->get_title() == title)) {
-		QMessageBox::StandardButton button = QMessageBox::question(this,
-			"Traverso - Question",
-   			"Are you sure you want to reopen the current project ?",
-      			QMessageBox::Ok | QMessageBox::Cancel,
-	 		QMessageBox::Cancel );
-		if (button == QMessageBox::Cancel) {
-			return;
-		}
-	}
+		item->setTextAlignment(2, Qt::AlignHCenter);
+		item->setText(0, songName);
+		item->setText(1, numberOfTracks);
+		item->setText(2, songLength);
 		
-	// first test if project exists
-	// Note: this shouldn't be needed really, the projects in the view
-	// should exist, but just in case someone removed it, you never know!
-	if (!pm().project_exists(title)) {
-		info().warning(tr("Project does not exist! (%1)").arg(title));
-		return;
-	}
-	
-	if (pm().load_project(title)<0) {
-		PERROR("Could not load project %s", title.toAscii().data());
+		item->setData(0, Qt::UserRole, song->get_id());
 	}
 }
 
-void ProjectManagerDialog::on_createProjectButton_clicked( )
+void ProjectManagerDialog::songitem_clicked( QTreeWidgetItem* item, int)
 {
-
-        // do we have the name of the project to create ?
-	QString title = newProjectName->text();
-	
-	if (title.length() == 0) {
-		info().information(tr("You must supply a name for the project!") );
+	if (!item) {
 		return;
 	}
 
+	Song* song;
 
-	// first test if project exists already
-	if (pm().project_exists(title)) {
-		switch (QMessageBox::information(this,
-			tr("Traverso - Question"),
-			tr("The Project \"%1\" already exists, do you want to remove it and replace it with a new one ?").arg(title),
-			tr("Yes"), tr("No"), QString::null, 1, -1)) 
-		{
-			case 0:
-			pm().remove_project(title);
-			break;
-			default:
-			return;
-			break;
-		}
-	}
+	qint64 id = item->data(0, Qt::UserRole).toLongLong();
+	song = m_project->get_song(id);
+
+	Q_ASSERT(song);
+		
+	selectedSongName->setText(song->get_title());
 	
-	int numSongs = songCountSpinBox->value();
-	int numTracks = trackCountSpinBox->value();
-	
-	Project* project;
-	if( (project = pm().create_new_project(numSongs, numTracks, title)) ) {
-		project->set_description(descriptionTextEdit->toPlainText());
-		project->set_engineer(newProjectEngineer->text());
-		project->save();
-		delete project;
-		update_projects_list();
-	} else {
-		info().warning(tr("Couldn't create project (%1)").arg(title) );
-	}
+	m_project->set_current_song(song->get_id());
 }
 
-void ProjectManagerDialog::on_deleteProjectbutton_clicked( )
+void ProjectManagerDialog::on_renameSongButton_clicked( )
 {
-        // do we have the name of the project to delete ?
-	QString title = selectedProjectName->text();
-
-	if (title.isEmpty()) {
-		info().information(tr("You must supply a name for the project!") );
+	if( ! m_project) {
 		return;
 	}
-
-        // first test if project exists
-	if (!pm().project_exists(title)) {
-		info().warning(tr("Project does not exist! (%1)").arg(title));
+	
+	QTreeWidgetItem* item = treeSongWidget->currentItem();
+	
+	
+	
+	if ( ! item) {
 		return;
 	}
+	
+	qint64 id = item->data(0, Qt::UserRole).toLongLong();
+	Song* song = m_project->get_song(id);
+	
+	Q_ASSERT(song);
+	
+	QString newtitle = selectedSongName->text();
+	
+	if (newtitle.isEmpty()) {
+		info().information(tr("No new Song name was supplied!"));
+		return;
+	}
+	
+	song->set_title(newtitle);
 
-	switch (QMessageBox::information(this,
-		tr("Traverso - Question"),
-		   tr("Are you sure that you want to remove the project %1 ? It's not possible to undo it !").arg(title).toAscii().data(),
-		      "Yes", "No", QString::null, 1, -1)) {
-			      case 0:
-				      pm().remove_project(title);
-				      update_projects_list();
-				      break;
-			      default:
-				      return;
-				      break;
-		      }
-		      return;
+	update_song_list();
 }
 
-
-void ProjectManagerDialog::on_projectDirSelectButton_clicked( )
+void ProjectManagerDialog::on_deleteSongButton_clicked( )
 {
-	QString path = config().get_property("Project", "DefaultDirectory", getenv("HOME")).toString();
+	QTreeWidgetItem* item = treeSongWidget->currentItem();
 	
-	QString newPath = QFileDialog::getExistingDirectory(this,
-			tr("Choose an existing or create a new Project Directory"), path);
-			
-	if (newPath.isEmpty() || newPath.isNull()) {
+	if ( ! item ) {
 		return;
 	}
 	
-	QDir dir;
+	qint64 id = item->data(0, Qt::UserRole).toLongLong();
 	
-	if (dir.exists(newPath)) {
-// 		QMessageBox::information( interface, tr("Traverso - Information"), tr("Using existing Project directory: %1\n").arg(newPath), "OK", 0 );
-	} else if (!dir.mkpath(newPath)) {
-		QMessageBox::warning( this, tr("Traverso - Warning"), tr("Unable to create Project directory! \n") +
-				tr("Please check permission for this directory: %1").arg(newPath) );
-		return;
-	} else {
-		QMessageBox::information( this, tr("Traverso - Information"), tr("Created new Project directory for you here: %1\n").arg(newPath), "OK", 0 );
-	}
-	
-	config().set_property("Project", "directory", newPath);
-	
-	update_projects_list();
+	Command::process_command(m_project->remove_song(m_project->get_song(id)));
 }
 
+void ProjectManagerDialog::on_createSongButton_clicked( )
+{
+	Interface::instance()->show_newsong_dialog();
+}
+
+void ProjectManagerDialog::redo_text_changed(const QString & text)
+{
+	redoButton->setText(text);
+}
+
+void ProjectManagerDialog::undo_text_changed(const QString & text)
+{
+	undoButton->setText(text);
+}
+
+void ProjectManagerDialog::on_undoButton_clicked()
+{
+	if (! m_project ) {
+		return;
+	}
+	
+	m_project->get_history_stack()->undo();
+}
+
+void ProjectManagerDialog::on_redoButton_clicked()
+{
+	if (! m_project ) {
+		return;
+	}
+	
+	m_project->get_history_stack()->redo();
+}
+
+void ProjectManagerDialog::on_songsExportButton_clicked()
+{
+	Interface::instance()->show_export_widget();
+}
+
+void ProjectManagerDialog::on_exportTemplateButton_clicked()
+{
+}
 
 //eof
+
+void ProjectManagerDialog::accept()
+{
+	printf("accept\n");
+	if ( ! m_project ) {
+		hide();
+		return;
+	}
+	
+	m_project->set_description(descriptionTextEdit->toPlainText());
+	
+	hide();
+}
+
+void ProjectManagerDialog::reject()
+{
+	printf("reject\n");
+	if ( ! m_project ) {
+		hide();
+		return;
+	}
+	
+	descriptionTextEdit->setText(m_project->get_description());
+	hide();
+}
+

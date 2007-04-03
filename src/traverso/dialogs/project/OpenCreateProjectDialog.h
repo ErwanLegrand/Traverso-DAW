@@ -17,43 +17,33 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
+    $Id: OpenCreateProjectDialog.h,v 1.1 2007/04/03 19:05:38 r_sijrier Exp $
 */
 
-#ifndef SONG_MANAGER_DIALOG_H
-#define SONG_MANAGER_DIALOG_H
+#ifndef PROJECT_MANAGER_DIALOG_H
+#define PROJECT_MANAGER_DIALOG_H
 
-#include "ui_SongManagerDialog.h"
+#include "ui_OpenCreateProjectDialog.h"
 #include <QDialog>
 
-class Project;
-class Song;
-
-class SongManagerDialog : public QDialog, protected Ui::SongManagerDialog
+class OpenCreateProjectDialog : public QDialog, protected Ui::OpenCreateProjectDialog
 {
-        Q_OBJECT
+Q_OBJECT
 
 public:
-        SongManagerDialog(QWidget* parent = 0);
-        ~SongManagerDialog();
-
-protected:
-	void hideEvent ( QHideEvent * event );
-	void showEvent ( QShowEvent * event );
-
-private:
-	Project* m_project;
+	OpenCreateProjectDialog(QWidget* parent = 0);
+	~OpenCreateProjectDialog();
 
 private slots:
-	void update_song_list();
-	void set_project(Project* project);
-	void songitem_clicked( QTreeWidgetItem* item, int);
-	void on_renameSongButton_clicked();
-        void on_deleteSongButton_clicked();
-        void on_createSongButton_clicked();
+	void update_projects_list();
+	void on_loadProjectButton_clicked();
+	void on_createProjectButton_clicked();
+	void on_deleteProjectbutton_clicked();
+	void on_projectDirSelectButton_clicked();
+	void projectitem_clicked( QTreeWidgetItem* , int  );
 };
 
 #endif
 
 //eof
-
 

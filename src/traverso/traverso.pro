@@ -45,7 +45,6 @@ HEADERS += \
 	precompile.h \
 	dialogs/settings/Pages.h \
 	dialogs/settings/SettingsDialog.h \
-	dialogs/project/SongManagerDialog.h \
 	dialogs/project/ProjectManagerDialog.h \
 	songcanvas/MarkerView.h \
 	widgets/InfoWidgets.h \
@@ -53,7 +52,8 @@ HEADERS += \
 	dialogs/CDTextDialog.h \
 	dialogs/MarkerDialog.h \
 	dialogs/BusSelectorDialog.h \
-	dialogs/NewSongDialog.h
+	dialogs/project/NewSongDialog.h \
+	dialogs/project/OpenCreateProjectDialog.h
 SOURCES += \
 	Traverso.cpp \
 	AudioSourcesTreeWidget.cpp \
@@ -74,7 +74,6 @@ SOURCES += \
 	QuickDriverConfigWidget.cpp \
 	dialogs/settings/Pages.cpp \
 	dialogs/settings/SettingsDialog.cpp \
-	dialogs/project/SongManagerDialog.cpp \
 	dialogs/project/ProjectManagerDialog.cpp \
 	songcanvas/MarkerView.cpp \
 	widgets/InfoWidgets.cpp \
@@ -82,7 +81,8 @@ SOURCES += \
 	dialogs/CDTextDialog.cpp \
 	dialogs/MarkerDialog.cpp \
 	dialogs/BusSelectorDialog.cpp \
-	dialogs/NewSongDialog.cpp
+	dialogs/project/NewSongDialog.cpp \
+	dialogs/project/OpenCreateProjectDialog.cpp
 FORMS += ui/ExportWidget.ui \
 	ui/AudioSourcesManagerWidget.ui \
 	ui/PluginSelectorDialog.ui \
@@ -100,7 +100,7 @@ FORMS += ui/ExportWidget.ui \
 	ui/MarkerDialog.ui \
 	ui/CDTextDialog.ui \
 	ui/BusSelectorDialog.ui \
-	ui/NewSongdialog.ui \
+	ui/OpenCreateProjectDialog.ui \
 
 
 INCLUDEPATH += 	../core \
@@ -145,7 +145,8 @@ unix{
 
     # perhaps this doesn't cover mac os x ?
     # if so, copy paste into  macx section...
-    $$system(pkg-config --libs glib-2.0)}
+    LIBS += $$system(pkg-config --libs glib-2.0)
+}
 
 
 win32{

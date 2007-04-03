@@ -47,11 +47,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "dialogs/settings/SettingsDialog.h"
 #include "dialogs/project/ProjectManagerDialog.h"
-#include "dialogs/project/SongManagerDialog.h"
+#include "dialogs/project/OpenCreateProjectDialog.h"
+#include <dialogs/project/NewSongDialog.h>
 #include "dialogs/CDTextDialog.h"
 #include "dialogs/MarkerDialog.h"
 #include "dialogs/BusSelectorDialog.h"
-#include <dialogs/NewSongDialog.h>
 
 
 // Always put me below _all_ includes, this is needed
@@ -169,7 +169,7 @@ Interface::Interface()
 	exportWidget = 0;
 	m_settingsdialog = 0;
 	m_projectManagerDialog = 0;
-	m_songManagerDialog = 0;
+	m_openCreateProjectDialog = 0;
 	m_cdTextDialog = 0;
 	m_markerDialog = 0;
 	m_busSelector = 0;
@@ -337,7 +337,7 @@ void Interface::create_menus( )
 	action = menu->addAction(tr("Open / Create"));
 	action->setIcon(style()->standardIcon(QStyle::SP_FileDialogContentsView));
 	action->setShortcuts(QKeySequence::Open);
-	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_project_manager_dialog()));
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_open_create_project_dialog()));
 	
 	menu->addSeparator();
 	
@@ -361,7 +361,7 @@ void Interface::create_menus( )
 	action->setIcon(QIcon(find_pixmap(":/songmanager-16")));
 	m_projectSongManagerAction = action;
 	
-	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_song_manager_dialog()));
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_project_manager_dialog()));
 	
 	action = menu->addAction(tr("Export"));
 	action->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
@@ -728,12 +728,12 @@ Command* Interface::show_project_manager_dialog()
 	return 0;
 }
 
-void Interface::show_song_manager_dialog()
+Command* Interface::show_open_create_project_dialog()
 {
-	if (! m_songManagerDialog ) {
-		m_songManagerDialog = new SongManagerDialog(this);
+	if (! m_openCreateProjectDialog ) {
+		m_openCreateProjectDialog = new OpenCreateProjectDialog(this);
 	}
-	m_songManagerDialog->show();
+	m_openCreateProjectDialog->show();
 }
 
 Command * Interface::show_cdtext_dialog()

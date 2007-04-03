@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
+    Copyright (C) 2005-2007 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -17,33 +17,50 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ProjectManagerDialog.h,v 1.2 2007/03/01 00:20:17 r_sijrier Exp $
 */
 
-#ifndef PROJECT_MANAGER_DIALOG_H
-#define PROJECT_MANAGER_DIALOG_H
+#ifndef SONG_MANAGER_DIALOG_H
+#define SONG_MANAGER_DIALOG_H
 
 #include "ui_ProjectManagerDialog.h"
 #include <QDialog>
 
+class Project;
+class Song;
+
 class ProjectManagerDialog : public QDialog, protected Ui::ProjectManagerDialog
 {
-Q_OBJECT
+        Q_OBJECT
 
 public:
-	ProjectManagerDialog(QWidget* parent = 0);
-	~ProjectManagerDialog();
+        ProjectManagerDialog(QWidget* parent = 0);
+        ~ProjectManagerDialog();
+
+private:
+	Project* m_project;
 
 private slots:
-	void update_projects_list();
-	void on_loadProjectButton_clicked();
-	void on_createProjectButton_clicked();
-	void on_deleteProjectbutton_clicked();
-	void on_projectDirSelectButton_clicked();
-	void projectitem_clicked( QTreeWidgetItem* , int  );
+	void update_song_list();
+	void set_project(Project* project);
+	void songitem_clicked( QTreeWidgetItem* item, int);
+	void on_renameSongButton_clicked();
+        void on_deleteSongButton_clicked();
+        void on_createSongButton_clicked();
+	
+	void redo_text_changed(const QString& text);
+	void undo_text_changed(const QString& text);
+	
+	void on_undoButton_clicked();
+	void on_redoButton_clicked();
+	void on_songsExportButton_clicked();
+	void on_exportTemplateButton_clicked();
+	
+	void accept();
+	void reject();
 };
 
 #endif
 
 //eof
+
 

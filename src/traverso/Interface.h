@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -54,7 +54,7 @@ class CorrelationMeterWidget;
 class SpectralMeterWidget;
 class SettingsDialog;
 class ProjectManagerDialog;
-class SongManagerDialog;
+class OpenCreateProjectDialog;
 class InfoToolBar;
 class SysInfoToolBar;
 class CDTextDialog;
@@ -101,7 +101,7 @@ private:
 	SpectralMeterWidget*	spectralMeter;
 	SettingsDialog*		m_settingsdialog;
 	ProjectManagerDialog*	m_projectManagerDialog;
-	SongManagerDialog*	m_songManagerDialog;
+	OpenCreateProjectDialog*	m_openCreateProjectDialog;
 	CDTextDialog*		m_cdTextDialog;
 	MarkerDialog*		m_markerDialog;
 	InfoToolBar* 		m_infoBar;
@@ -139,13 +139,13 @@ public slots :
 	void set_fade_in_shape(QAction* action);
 	void set_fade_out_shape(QAction* action);
 	void toggle_OpenGL(bool);
-	void show_song_manager_dialog();
-
+	
 	Command* show_song_widget();
 	Command* full_screen();
 	Command* about_traverso();
 	Command* show_export_widget();
 	Command* show_context_menu();
+	Command* show_open_create_project_dialog();
 	Command* show_project_manager_dialog();
 	Command* show_cdtext_dialog();
 	Command* show_marker_dialog();
