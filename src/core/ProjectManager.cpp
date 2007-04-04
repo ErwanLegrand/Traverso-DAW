@@ -115,13 +115,39 @@ Project* ProjectManager::create_new_project(int numSongs, int numTracks, const Q
 		return 0;
 	}
 
-	Project *newProject = new Project(projectName);
+	Project* newProject = new Project(projectName);
 
 	if (newProject->create(numSongs, numTracks) < 0) {
 		delete newProject;
 		info().critical(tr("Unable to create new Project %1").arg(projectName));
 		return 0;
 	}
+	
+	return newProject;
+}
+
+Project* ProjectManager::create_new_project(const QString& templatefile, const QString& projectName)
+{
+	if (project_exists(projectName)) {
+		info().critical(tr("Project %1 already exists!").arg(projectName));
+		return 0;
+	}
+
+	
+	Project* newProject = new Project(projectName);
+	
+	if (newProject->create(0, 0) < 0) {
+		delete newProject;
+		info().critical(tr("Unable to create new Project %1").arg(projectName));
+		return 0;
+	}
+	
+	if (newProject->load(templatefile) < 0) {
+		return 0;
+	}
+	
+	// title gets overwritten in newProject->load()
+	newProject->set_title(projectName);
 	
 	return newProject;
 }
@@ -317,4 +343,3 @@ Command* ProjectManager::redo()
 
 
 //eof
-

@@ -47,7 +47,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "dialogs/settings/SettingsDialog.h"
 #include "dialogs/project/ProjectManagerDialog.h"
-#include "dialogs/project/OpenCreateProjectDialog.h"
+#include "dialogs/project/OpenProjectDialog.h"
+#include "dialogs/project/NewProjectDialog.h"
 #include <dialogs/project/NewSongDialog.h>
 #include "dialogs/CDTextDialog.h"
 #include "dialogs/MarkerDialog.h"
@@ -169,7 +170,8 @@ Interface::Interface()
 	exportWidget = 0;
 	m_settingsdialog = 0;
 	m_projectManagerDialog = 0;
-	m_openCreateProjectDialog = 0;
+	m_openProjectDialog = 0;
+	m_newProjectDialog = 0;
 	m_cdTextDialog = 0;
 	m_markerDialog = 0;
 	m_busSelector = 0;
@@ -334,21 +336,19 @@ void Interface::create_menus( )
 	QMenu* menu;
 	QAction* action;
 	 
-	menu = menuBar()->addMenu(tr("&File"));
+	menu = menuBar()->addMenu(tr("&Project"));
 	
-	action = menu->addAction(tr("&Open / Create..."));
+	action = menu->addAction(tr("&New..."));
+	action->setIcon(style()->standardIcon(QStyle::SP_FileDialogContentsView));
+	action->setShortcuts(QKeySequence::New);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_newproject_dialog()));
+	
+	action = menu->addAction(tr("&Open..."));
 	action->setIcon(style()->standardIcon(QStyle::SP_FileDialogContentsView));
 	action->setShortcuts(QKeySequence::Open);
-	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_open_create_project_dialog()));
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_open_project_dialog()));
 	
 	menu->addSeparator();
-	
-	action = menu->addAction(tr("&Quit"));
-	action->setIcon(QIcon(find_pixmap(":/exit-16")));
-	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(exit()));
-	
-	
-	menu = menuBar()->addMenu(tr("&Project"));
 	
 	action = menu->addAction(tr("&Save"));
 	action->setShortcuts(QKeySequence::Save);
@@ -362,7 +362,6 @@ void Interface::create_menus( )
 	action->setShortcuts(list);
 	action->setIcon(QIcon(find_pixmap(":/songmanager-16")));
 	m_projectSongManagerAction = action;
-	
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_project_manager_dialog()));
 	
 	action = menu->addAction(tr("&Export..."));
@@ -370,9 +369,23 @@ void Interface::create_menus( )
 	m_projectExportAction = action;
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_export_widget()));
 	
+	menu->addSeparator();
+	
+	action = menu->addAction(tr("&Quit"));
+	action->setIcon(QIcon(find_pixmap(":/exit-16")));
+	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(exit()));
+	
+	
+	menu = menuBar()->addMenu(tr("&Song"));
+	
+	action = menu->addAction(tr("New &Track(s)"));
+	connect(action, SIGNAL(triggered()), this, SLOT(add_new_track()));
+	action = menu->addAction(tr("New &Song(s)"));
+	connect(action, SIGNAL(triggered()), this, SLOT(add_new_song()));
+
 	
 	menu = menuBar()->addMenu(tr("&Views"));
-	
+
 	menu->addAction(historyDW->toggleViewAction());
 	menu->addAction(busMonitorDW->toggleViewAction());
 	menu->addAction(AudioSourcesDW->toggleViewAction());
@@ -732,13 +745,24 @@ Command* Interface::show_project_manager_dialog()
 	return 0;
 }
 
-Command* Interface::show_open_create_project_dialog()
+Command* Interface::show_open_project_dialog()
 {
-	if (! m_openCreateProjectDialog ) {
-		m_openCreateProjectDialog = new OpenCreateProjectDialog(this);
+	if (! m_openProjectDialog ) {
+		m_openProjectDialog = new OpenProjectDialog(this);
 	}
-	m_openCreateProjectDialog->show();
+	m_openProjectDialog->show();
+	return 0;
 }
+
+Command * Interface::show_newproject_dialog()
+{
+	if (! m_newProjectDialog ) {
+		m_newProjectDialog = new NewProjectDialog(this);
+	}
+	m_newProjectDialog->show();
+	return 0;
+}
+
 
 Command * Interface::show_cdtext_dialog()
 {
@@ -787,5 +811,13 @@ Command* Interface::show_newsong_dialog()
 	return 0;
 }
 
-// eof
+void Interface::add_new_song()
+{
+	Interface::instance()->show_newsong_dialog();
+}
 
+void Interface::add_new_track()
+{
+}
+
+// eof

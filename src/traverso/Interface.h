@@ -54,7 +54,7 @@ class CorrelationMeterWidget;
 class SpectralMeterWidget;
 class SettingsDialog;
 class ProjectManagerDialog;
-class OpenCreateProjectDialog;
+class OpenProjectDialog;
 class InfoToolBar;
 class SysInfoToolBar;
 class CDTextDialog;
@@ -62,6 +62,7 @@ class MarkerDialog;
 class BusSelectorDialog;
 class NewSongDialog;
 class NewTrackDialog;
+class NewProjectDialog;
 
 class Interface : public QMainWindow
 {
@@ -101,7 +102,7 @@ private:
 	SpectralMeterWidget*	spectralMeter;
 	SettingsDialog*		m_settingsdialog;
 	ProjectManagerDialog*	m_projectManagerDialog;
-	OpenCreateProjectDialog*	m_openCreateProjectDialog;
+	OpenProjectDialog*	m_openProjectDialog;
 	CDTextDialog*		m_cdTextDialog;
 	MarkerDialog*		m_markerDialog;
 	InfoToolBar* 		m_infoBar;
@@ -109,6 +110,7 @@ private:
 	BusSelectorDialog*	m_busSelector;
 	NewSongDialog*		m_newSongDialog;
 	NewTrackDialog*		m_newTrackDialog;
+	NewProjectDialog*	m_newProjectDialog;
 
 
 	BusMonitor* 		busMonitor;
@@ -145,16 +147,19 @@ public slots :
 	Command* about_traverso();
 	Command* show_export_widget();
 	Command* show_context_menu();
-	Command* show_open_create_project_dialog();
+	Command* show_open_project_dialog();
 	Command* show_project_manager_dialog();
 	Command* show_cdtext_dialog();
 	Command* show_marker_dialog();
 	Command* show_newsong_dialog();
+	Command* show_newproject_dialog();
 	
 private slots:
 	void delete_songwidget(Song*);
 	void undo();
 	void redo();
+	void add_new_song();
+	void add_new_track();
 };
 
 

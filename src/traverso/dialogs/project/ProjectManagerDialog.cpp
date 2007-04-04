@@ -225,7 +225,7 @@ void ProjectManagerDialog::on_exportTemplateButton_clicked()
 	QDir dir;
 	if (! dir.exists(fileName)) {
 		if (! dir.mkdir(fileName)) {
-			info().critical( tr("Couldn't open file %1 for writing!").arg(fileName));
+			info().critical( tr("Unable to create directory %1!").arg(fileName));
 			return;
 		}
 	}

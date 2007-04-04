@@ -75,7 +75,7 @@ public :
 	bool has_changed();
 	
 	int save();
-	int load();
+	int load(QString projectfile = "");
 	int export_project(ExportSpecification* spec);
 	int start_export(ExportSpecification* spec);
 

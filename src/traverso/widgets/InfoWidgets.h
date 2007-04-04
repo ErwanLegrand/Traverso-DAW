@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
+    Copyright (C) 2005-2007 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -217,8 +217,6 @@ private slots:
 	void snap_state_changed(bool state);
 	void update_follow_state();
 	void follow_state_changed(bool state);
-	void add_new_song();
-	void add_new_track();
 	
 private:
 	PlayHeadInfo* 	m_playhead;
@@ -227,7 +225,6 @@ private:
 	QAction*	m_snapAct;
 	QToolButton*	m_follow;
 	QAction*	m_followAct;
-	QPushButton*	m_addNew;
 	QPushButton*	m_record;
 };
 

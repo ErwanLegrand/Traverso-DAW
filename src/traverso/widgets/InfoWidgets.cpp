@@ -642,26 +642,11 @@ SongInfo::SongInfo(QWidget * parent)
 	m_follow->setDefaultAction(m_followAct);
 	m_follow->setFocusPolicy(Qt::NoFocus);
 	
-	m_addNew = new QPushButton(tr("Add new..."), this);
-	m_addNew->setFocusPolicy(Qt::NoFocus);
-	m_addNew->setToolTip(tr("Create new Song or Track"));
-	m_addNew->setMaximumHeight(22);
-	
 	m_record = new QPushButton(tr("Record"));
 	m_record->setFocusPolicy(Qt::NoFocus);
 	m_record->setEnabled(false);
 	m_record->setIcon(find_pixmap(":/redled-16"));
 	m_record->setMaximumHeight(22);
-	
-	QMenu* menu = new QMenu;
-
-	QAction* action = menu->addAction("Track");
-	connect(action, SIGNAL(triggered()), this, SLOT(add_new_track()));
-	
-	action = menu->addAction("Song");
-	connect(action, SIGNAL(triggered()), this, SLOT(add_new_song()));
-	
-	m_addNew->setMenu(menu);
 	
 	connect(m_snapAct, SIGNAL(triggered(bool)), this, SLOT(snap_state_changed(bool)));
 	connect(m_followAct, SIGNAL(triggered(bool)), this, SLOT(follow_state_changed(bool)));
@@ -685,7 +670,6 @@ void SongInfo::set_orientation(Qt::Orientation orientation)
 		lay->addWidget(m_snap);
 		lay->addWidget(m_follow);
 		lay->addWidget(m_selector);
-		lay->addWidget(m_addNew);
 		
 		setLayout(lay);
 		lay->setMargin(0);
@@ -698,7 +682,6 @@ void SongInfo::set_orientation(Qt::Orientation orientation)
 		lay->addWidget(m_record);
 		lay->addWidget(m_snap);
 		lay->addWidget(m_follow);
-		lay->addWidget(m_addNew);
 		lay->addWidget(m_selector);
 		
 		lay->setMargin(0);
@@ -741,16 +724,6 @@ void SongInfo::follow_state_changed(bool state)
 {
 	config().set_property("PlayHead", "Follow", state);
 	config().save();
-}
-
-
-void SongInfo::add_new_song()
-{
-	Interface::instance()->show_newsong_dialog();
-}
-
-void SongInfo::add_new_track()
-{
 }
 
 QSize SongInfo::sizeHint() const

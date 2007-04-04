@@ -53,7 +53,8 @@ HEADERS += \
 	dialogs/MarkerDialog.h \
 	dialogs/BusSelectorDialog.h \
 	dialogs/project/NewSongDialog.h \
-	dialogs/project/OpenCreateProjectDialog.h
+	dialogs/project/NewProjectDialog.h \
+	dialogs/project/OpenProjectDialog.h
 SOURCES += \
 	Traverso.cpp \
 	AudioSourcesTreeWidget.cpp \
@@ -82,7 +83,8 @@ SOURCES += \
 	dialogs/MarkerDialog.cpp \
 	dialogs/BusSelectorDialog.cpp \
 	dialogs/project/NewSongDialog.cpp \
-	dialogs/project/OpenCreateProjectDialog.cpp
+	dialogs/project/NewProjectDialog.cpp \
+	dialogs/project/OpenProjectDialog.cpp
 FORMS += ui/ExportWidget.ui \
 	ui/AudioSourcesManagerWidget.ui \
 	ui/PluginSelectorDialog.ui \
@@ -100,7 +102,8 @@ FORMS += ui/ExportWidget.ui \
 	ui/MarkerDialog.ui \
 	ui/CDTextDialog.ui \
 	ui/BusSelectorDialog.ui \
-	ui/OpenCreateProjectDialog.ui \
+	ui/OpenProjectDialog.ui \
+	ui/NewProjectDialog.ui \
 
 
 INCLUDEPATH += 	../core \

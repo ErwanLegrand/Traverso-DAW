@@ -107,7 +107,9 @@ int Project::create(int songcount, int numtracks)
 		private_add_song(song);
 	}
 
-	set_current_song(m_songs.first()->get_id());
+	if (m_songs.size()) {
+		set_current_song(m_songs.first()->get_id());
+	}
 	
 	m_id = create_id();
 	m_importDir = config().get_property("Project", "DefaultDirectory", QDir::homePath()).toString();
@@ -117,11 +119,17 @@ int Project::create(int songcount, int numtracks)
 }
 
 
-int Project::load() // try to load the project by its title
+int Project::load(QString projectfile)
 {
 	PENTER;
 	QDomDocument doc("Project");
-	QFile file(rootDir + "/project.traverso");
+	
+	QFile file;
+	if (projectfile.isEmpty()) {
+		file.setFileName(rootDir + "/project.traverso");
+	} else {
+		file.setFileName(projectfile);
+	}
 
 	if (!file.open(QIODevice::ReadOnly))
 	{
@@ -222,7 +230,10 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
 	properties.setAttribute("projectfileversion", PROJECT_FILE_VERSION);
 	if (! istemplate) {
 		properties.setAttribute("id", m_id);
+	} else {
+		properties.setAttribute("title", "Template Project File!!");
 	}
+	
 	properties.setAttribute("importdir", m_importDir);
 		
 	projectNode.appendChild(properties);

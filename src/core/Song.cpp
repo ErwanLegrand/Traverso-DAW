@@ -218,7 +218,7 @@ QDomNode Song::get_state(QDomDocument doc, bool istemplate)
 	QDomNode tracksNode = doc.createElement("Tracks");
 
 	foreach(Track* track, m_tracks) {
-		tracksNode.appendChild(track->get_state(doc));
+		tracksNode.appendChild(track->get_state(doc, istemplate));
 	}
 
 	songNode.appendChild(tracksNode);

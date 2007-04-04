@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
+    Copyright (C) 2007 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -17,30 +17,26 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: OpenCreateProjectDialog.h,v 1.1 2007/04/03 19:05:38 r_sijrier Exp $
 */
 
-#ifndef PROJECT_MANAGER_DIALOG_H
-#define PROJECT_MANAGER_DIALOG_H
+#ifndef NEW_PROJECT_DIALOG_H
+#define NEW_PROJECT_DIALOG_H
 
-#include "ui_OpenCreateProjectDialog.h"
+#include "ui_NewProjectDialog.h"
 #include <QDialog>
 
-class OpenCreateProjectDialog : public QDialog, protected Ui::OpenCreateProjectDialog
+class NewProjectDialog : public QDialog, protected Ui::NewProjectDialog
 {
-Q_OBJECT
+	Q_OBJECT
 
 public:
-	OpenCreateProjectDialog(QWidget* parent = 0);
-	~OpenCreateProjectDialog();
+	NewProjectDialog(QWidget* parent = 0);
+	~NewProjectDialog();
 
 private slots:
-	void update_projects_list();
-	void on_loadProjectButton_clicked();
-	void on_createProjectButton_clicked();
-	void on_deleteProjectbutton_clicked();
-	void on_projectDirSelectButton_clicked();
-	void projectitem_clicked( QTreeWidgetItem* , int  );
+	void accept();
+	void use_template_checkbox_state_changed(int state);
+	void update_template_combobox();
 };
 
 #endif

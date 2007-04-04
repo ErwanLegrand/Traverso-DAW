@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
+    Copyright (C) 2007 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -19,8 +19,8 @@
  
 */
 
-#include "OpenCreateProjectDialog.h"
-#include "ui_OpenCreateProjectDialog.h"
+#include "OpenProjectDialog.h"
+#include "ui_OpenProjectDialog.h"
 
 #include <QDir>
 #include <QStringList>
@@ -41,7 +41,7 @@
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-OpenCreateProjectDialog::OpenCreateProjectDialog( QWidget * parent )
+OpenProjectDialog::OpenProjectDialog( QWidget * parent )
 	: QDialog(parent)
 {
 	setupUi(this);
@@ -54,16 +54,13 @@ OpenCreateProjectDialog::OpenCreateProjectDialog( QWidget * parent )
 	projectListView->header()->resizeSection(0, 160);
 	projectListView->header()->resizeSection(1, 30);
 	
-	trackCountSpinBox->setValue(config().get_property("Song", "trackCreationCount", 4).toInt());
-
-
 	connect(projectListView, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(projectitem_clicked(QTreeWidgetItem*,int)));
 }
 
-OpenCreateProjectDialog::~ OpenCreateProjectDialog( )
+OpenProjectDialog::~ OpenProjectDialog( )
 {}
 
-void OpenCreateProjectDialog::update_projects_list()
+void OpenProjectDialog::update_projects_list()
 {
 	projectListView->clear();
 	
@@ -82,14 +79,14 @@ void OpenCreateProjectDialog::update_projects_list()
 		QFile file(fileToOpen);
 
 		if (!file.open(QIODevice::ReadOnly)) {
-			PWARN("OpenCreateProjectDialog:: Cannot open project properties file (%s)", fileToOpen.toAscii().data());
+			PWARN("OpenProjectDialog:: Cannot open project properties file (%s)", fileToOpen.toAscii().data());
 			continue;
 		}
 
 		QString errorMsg;
 		if (!doc.setContent(&file, &errorMsg)) {
 			file.close();
-			PWARN("OpenCreateProjectDialog:: Cannot set content of XML file (%s)", errorMsg.toAscii().data());
+			PWARN("OpenProjectDialog:: Cannot set content of XML file (%s)", errorMsg.toAscii().data());
 			continue;
 		}
 
@@ -133,14 +130,14 @@ void OpenCreateProjectDialog::update_projects_list()
 	}
 }
 
-void OpenCreateProjectDialog::projectitem_clicked( QTreeWidgetItem* item, int)
+void OpenProjectDialog::projectitem_clicked( QTreeWidgetItem* item, int)
 {
 	if (item) {
 		selectedProjectName->setText(item->text(0));
 	}
 }
 
-void OpenCreateProjectDialog::on_loadProjectButton_clicked( )
+void OpenProjectDialog::on_loadProjectButton_clicked( )
 {
         // do we have the name of the project to load ?
 	QString title;
@@ -181,50 +178,7 @@ void OpenCreateProjectDialog::on_loadProjectButton_clicked( )
 	}
 }
 
-void OpenCreateProjectDialog::on_createProjectButton_clicked( )
-{
-
-        // do we have the name of the project to create ?
-	QString title = newProjectName->text();
-	
-	if (title.length() == 0) {
-		info().information(tr("You must supply a name for the project!") );
-		return;
-	}
-
-
-	// first test if project exists already
-	if (pm().project_exists(title)) {
-		switch (QMessageBox::information(this,
-			tr("Traverso - Question"),
-			tr("The Project \"%1\" already exists, do you want to remove it and replace it with a new one ?").arg(title),
-			tr("Yes"), tr("No"), QString::null, 1, -1)) 
-		{
-			case 0:
-			pm().remove_project(title);
-			break;
-			default:
-			return;
-			break;
-		}
-	}
-	
-	int numSongs = songCountSpinBox->value();
-	int numTracks = trackCountSpinBox->value();
-	
-	Project* project;
-	if( (project = pm().create_new_project(numSongs, numTracks, title)) ) {
-		project->set_description(descriptionTextEdit->toPlainText());
-		project->set_engineer(newProjectEngineer->text());
-		project->save();
-		delete project;
-		update_projects_list();
-	} else {
-		info().warning(tr("Couldn't create project (%1)").arg(title) );
-	}
-}
-
-void OpenCreateProjectDialog::on_deleteProjectbutton_clicked( )
+void OpenProjectDialog::on_deleteProjectbutton_clicked( )
 {
         // do we have the name of the project to delete ?
 	QString title = selectedProjectName->text();
@@ -256,7 +210,7 @@ void OpenCreateProjectDialog::on_deleteProjectbutton_clicked( )
 }
 
 
-void OpenCreateProjectDialog::on_projectDirSelectButton_clicked( )
+void OpenProjectDialog::on_projectDirSelectButton_clicked( )
 {
 	QString path = config().get_property("Project", "DefaultDirectory", getenv("HOME")).toString();
 	
