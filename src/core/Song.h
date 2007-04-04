@@ -188,7 +188,6 @@ public slots :
 	Command* work_next_edge();
 	Command* work_previous_edge();
 	Command* toggle_snap();
-	Command* playhead_to_workcursor();
 	Command* toggle_solo();
 	Command* toggle_mute();
 	Command* toggle_arm();

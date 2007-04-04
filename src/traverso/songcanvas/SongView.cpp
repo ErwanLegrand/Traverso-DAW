@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SongView.cpp,v 1.35 2007/04/02 19:23:06 benjie Exp $
+$Id: SongView.cpp,v 1.36 2007/04/04 02:24:38 benjie Exp $
 */
 
 
@@ -695,6 +695,17 @@ void SongView::load_theme_data()
 Command * SongView::add_marker()
 {
 	return m_tlvp->get_timeline_view()->add_marker();
+}
+
+Command * SongView::playhead_to_workcursor( )
+{
+	nframes_t work = m_song->get_working_frame();
+
+	m_song->set_transport_pos( work );
+	m_playCursor->setPos(work / scalefactor, 0);
+	m_playCursor->work_moved();
+
+	return (Command*) 0;
 }
 
 //eof

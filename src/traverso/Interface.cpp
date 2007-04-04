@@ -384,7 +384,7 @@ void Interface::create_menus( )
 	connect(action, SIGNAL(triggered()), this, SLOT(add_new_song()));
 
 	
-	menu = menuBar()->addMenu(tr("&Views"));
+	menu = menuBar()->addMenu(tr("&View"));
 
 	menu->addAction(historyDW->toggleViewAction());
 	menu->addAction(busMonitorDW->toggleViewAction());

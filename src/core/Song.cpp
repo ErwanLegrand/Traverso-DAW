@@ -880,13 +880,6 @@ nframes_t Song::get_last_frame( ) const
 	return m_acmanager->get_last_frame();
 }
 
-Command * Song::playhead_to_workcursor( )
-{
-	set_transport_pos( workingFrame );
-
-	return (Command*) 0;
-}
-
 void Song::private_add_track(Track* track)
 {
 	m_tracks.append(track);
