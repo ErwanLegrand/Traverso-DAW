@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CommandGroup.cpp,v 1.3 2007/03/06 15:13:07 r_sijrier Exp $
+$Id: CommandGroup.cpp,v 1.4 2007/04/04 09:17:30 r_sijrier Exp $
 */
 
 #include "CommandGroup.h"
@@ -35,6 +35,10 @@ $Id: CommandGroup.cpp,v 1.3 2007/03/06 15:13:07 r_sijrier Exp $
 
 int CommandGroup::prepare_actions()
 {
+	if (m_commands.size() == 0) {
+		return -1;
+	}
+	
 	foreach(Command* cmd, m_commands) {
 		cmd->prepare_actions();
 	}
