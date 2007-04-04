@@ -143,6 +143,9 @@ int Track::set_state( const QDomNode & node )
 	set_bus_in( e.attribute( "InBus", "" ).toAscii() );
 	set_bus_out( e.attribute( "OutBus", "" ).toAscii() );
 	m_id = e.attribute( "id", "").toLongLong();
+	if (m_id == 0) {
+		m_id = create_id();
+	}
 	numtakes = e.attribute( "numtakes", "").toInt();
 	m_captureRightChannel = e.attribute("CaptureRightChannel", "1").toInt();
 	m_captureLeftChannel =  e.attribute("CaptureLeftChannel", "1").toInt();

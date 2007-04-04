@@ -165,6 +165,9 @@ int Song::set_state( const QDomNode & node )
 	PENTER;
 	QDomNode propertiesNode = node.firstChildElement("Properties");
 	m_id = node.toElement().attribute( "id", "" ).toLongLong();
+	if (m_id == 0) {
+		m_id = create_id();
+	}
 
 	QDomElement e = propertiesNode.toElement();
 

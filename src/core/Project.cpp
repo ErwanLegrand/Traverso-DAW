@@ -50,7 +50,7 @@ Project::Project(const QString& pTitle)
 	: ContextItem(), title(pTitle)
 {
 	PENTERCONS;
-	m_currentSongId = -1;
+	m_currentSongId = 0;
 	engineer = "";
 
 	rootDir = config().get_property("Project", "directory", "/directory/unknown/").toString() + "/" + title;
@@ -166,6 +166,9 @@ int Project::load(QString projectfile)
 	m_rate = e.attribute( "rate", "" ).toInt();
 	m_bitDepth = e.attribute( "bitdepth", "" ).toInt();
 	m_id = e.attribute("id", "0").toLongLong();
+	if (m_id == 0) {
+		m_id = create_id();
+	}
 	m_importDir = e.attribute("importdir", QDir::homePath()); 
 	
 	
@@ -186,7 +189,15 @@ int Project::load(QString projectfile)
 		songNode = songNode.nextSibling();
 	}
 
-	set_current_song(e.attribute("currentSongId", "0" ).toLongLong());
+	qint64 id = e.attribute("currentSongId", "0" ).toLongLong();
+	
+	if ( id == 0) {
+		if (m_songs.size()) {
+			id = m_songs.first()->get_id();
+		}
+	}
+			
+	set_current_song(id);
 
 	info().information( tr("Project %1 loaded").arg(title) );
 
