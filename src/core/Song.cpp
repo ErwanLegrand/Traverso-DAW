@@ -520,8 +520,10 @@ void Song::start_seek()
 		resumeTransport = true;
 	}
 
+	// only sets a boolean flag, save to call.
 	m_diskio->prepare_for_seek();
 
+	// 'Tell' the diskio it should start a seek action.
 	if (!transport) {
 		emit seekStart(newTransportFramePos);
 	} else {
@@ -724,8 +726,9 @@ int Song::process( nframes_t nframes )
 {
 	// If no need for playback/record, return.
 // 	printf("Song-%d::process transport is %d\n", m_id, transport);
-	if (!transport)
+	if (!transport) {
 		return 0;
+	}
 
 	if (stopTransport) {
 		RT_THREAD_EMIT(this, 0, transferStopped());
@@ -736,6 +739,11 @@ int Song::process( nframes_t nframes )
 		return 0;
 	}
 
+	if (seeking) {
+		start_seek();
+		return 0;
+	}
+	
 	// zero the m_masterOut buffers
 	m_masterOut->silence_buffers(nframes);
 
@@ -748,11 +756,6 @@ int Song::process( nframes_t nframes )
 
 	// update the transportFrame
 	transportFrame += nframes;
-
-	if (seeking) {
-		start_seek();
-	}
-
 
 	if (!processResult) {
 		return 0;
