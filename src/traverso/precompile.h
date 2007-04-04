@@ -28,7 +28,4 @@
 #include <qgraphicsitem.h>
 #include <QGraphicsSceneMouseEvent>
 #include <QStyleOptionGraphicsItem>
-
-#include <glib.h>
-
 #include <stdlib.h>

@@ -25,6 +25,4 @@
 #include <QWheelEvent>
 #include <QUndoGroup>
 #include <qgraphicsview.h>
-
-#include <glib.h>
 #include <stdlib.h>

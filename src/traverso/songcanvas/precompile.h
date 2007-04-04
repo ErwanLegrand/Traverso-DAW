@@ -23,6 +23,4 @@
 #include <qgraphicsscene.h>
 #include <qgraphicsview.h>
 #include <qgraphicsitem.h>
-#include <glib.h>
-
 #include <stdlib.h>
