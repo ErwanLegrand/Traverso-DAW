@@ -15,7 +15,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    $Id: RingBufferNPT.h,v 1.3 2007/04/02 09:52:31 r_sijrier Exp $
+    $Id: RingBufferNPT.h,v 1.4 2007/04/04 19:41:55 r_sijrier Exp $
 */
 
 #ifndef ringbuffer_npt_h
@@ -26,6 +26,8 @@
 #if ! defined (Q_WS_WIN)
 #include <sys/mman.h>
 #include <glib.h>
+#else 
+#include <defines.h>
 #endif
 
 /* ringbuffer class where the element size is not required to be a power of two */
