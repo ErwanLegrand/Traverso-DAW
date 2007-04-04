@@ -1,72 +1,10 @@
 TOBEDONE FOR 0.40.0
 
-* Finish remaining problems due port to QGhraphicsView (remon: working on it)
-* New Theme class could be improved, at least existing code should make 
-  better use of it! I (remon) will update TrackView so one can have an
-  idea how it can be used, anyone else like to work on this?
-  E.g. by working on the default theme, and one for people that can't see
-  certain colors ??
-* Information Widget, which I'd like to place below the menubar. It'll show
-  the Song information, a menu to select another song, create a new song,
-  and so on, anyone willing to give it a try?
-* Track verticall zoom: fixed values, or analog ?
-* Snapping: make it work again (remon: working on it)
-	What about improving the drag audioclip command class to make use
-	of the new InputEngine capabilities ? ( F key -> move to next snap pos,
-	W key to previous snap pos, scroll -> .... ?) (anyone ?)
-* Number Input: make it work in combination with the HoldCursor.
-* Effect View: at least make it possible to 'add' the FadeCurve and Pan Curve.
-	(This more or less works allready, its just how we want to visualize it)
-* LV2 support: If no plugins get availble, leave it for now
-* AudioClip doesn't show up after recording! (does it still ?)
-* When Track::init_recording fails, traverso crashes afterwards!
-* Duplicates of AudioClips don't work yet! (they share the same settings, so when modifying the seconds audioclip
-	the changes get lost on saving!!)
-* Get rid of using < LEFTSHIFT > to set the workcursor position, at least, create
-  a new command for moving the work cursor in a similar way the playhead can be 
-  positioned. Key fact I've in mind: [ W ].
-  [ W ] + modifier keys (like Q and E) to set work cursor to next/previous snap position
-* There must be lot's of other nice features like the one mentioned above, which are trivial to implement!
-* User Manual, with at least a step by step introduction on how to get started, creating a project,
-  assigning Buses to tracks, arming a track, recording, un/redo, moving audioclips, split, copy, and so on.
+* Audible glitch when playing over a split point in a splitted audioclip :-( :-( :-(
 
+* I got a reproducable crash when adding a new track and importing an audio
+  file into it. After exiting and re-opening traverso, it works.
 
-Other items, some of them are suggestions from Nicola:
-
-Maybies for 0.40.0:
-
-* Move the Settings widget from the Manager widget to the menu bar, and use a QDialog to display it.
-  Divide the thing into logical catagories, there is an example of one in the demos or examples dir 
-  of the qt source code!!
-* Add menu entry "New Project" in the "File" menu, people expect it to be there ????
-
-* If (imported) audiosource can't be find, don't 'remove' the audiosource and related clips, but mark as 'audiosource has gone!' 
-* Add Traverso to the menu system!
-* Investigate the value of a snappable grid, based on the timeline where the grid is in seconds, milliseconds etc 
-* When jack is configured with only playback ports, traverso thinks they are capture buses :(
-* One thing I forgot to file a bug report for: If several audio clips are selected, all actions such as dragging, 
-	moving edges, gain, and (very important:) editing fades should be applied to all clips in the selection. 
-	Maybe this would be a good (easy to implement?) improvement which would justify another minor release.
-* (outside) processing with for example sox
-* 1. Monitoring: As soon as a track is armed for recording, the channel should be 'opened', that means the audio 
-	stream should be piped through the channel (including all plugins etc.), but just not recorded to disk. 
-	The VU metre should be active in order to show that a signal is coming in, and to allow to set the levels 
-	correctly. In most 'grown up' DAW programmes this behaviour is switchable (monitoring on/off). I don't know 
-	why, but it seems to be important to be able to switch it off. Probably to avoid feedbacks when setting up 
-	microphones etc., so as not to have to disarm each track.
-* 1.1 Playback / Record: I think we should distinguish between playing back and recording. In playback mode all 
-	tracks are played back, regardless of whether they are armed or not. In recording mode armed tracks should 
-	record and disarmed tracks should play back as usual. This will allow to implement 'overdubbing' funcionality 
-	with 'punch-in' and 'punch-out' markers easily. If someone is not familiar with these features, let me know and
-	I will elaborate on it.
-* 2. It would probably be a good thing to have a VU meter on each track. Once we have subgroups and aux busses it 
-	would be easier to follow the signal path visually, and also to see how the levels evolve after going through 
-	various plugins, splitting, merging etc.
-
-	
-	
-For some time later:
-
-* QGraphicsView:
-	case: During HoldCommand wheel event, after HoldCommand finished, 
-	key press events are duplicated (send twice that is)!
+* libsndfile:
+	How to record to files larger 4 GB
+	Sector misalignment, how to handle.

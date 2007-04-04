@@ -42,7 +42,7 @@ NewSongDialog::NewSongDialog(QWidget * parent)
 void NewSongDialog::accept()
 {
 	if (! m_project) {
-		info().information(tr("I can't create a new Song if here is no Project loaded!!"));
+		info().information(tr("I can't create a new Song if there is no Project loaded!!"));
 		return;
 	}
 	
@@ -55,7 +55,6 @@ void NewSongDialog::accept()
 	}
 	
 	int index = templateComboBox->currentIndex();
-	printf("index is %d\n", index);
 	bool usetemplate = false;
 	QDomNode node;
 	if (useTemplateCheckBox->isChecked() && index >= 0) {
