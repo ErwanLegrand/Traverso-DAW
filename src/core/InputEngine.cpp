@@ -1118,13 +1118,17 @@ void InputEngine::hold_output()
 }
 
 
-int InputEngine::init_map(const QString& mapFilename)
+int InputEngine::init_map(const QString& keymap)
 {
-	PENTER2;
-	PMESG2("INITIALIZING KEYMAP ... ");
-
+	PENTER;
+	
+	QString filename = ":/keymaps/" + keymap + ".xml";
+	if ( ! QFile::exists(filename)) {
+		filename = QDir::homePath() + "/.traverso/keymaps/" + keymap + ".xml";
+	}
+	
 	QDomDocument doc("keymap");
-	QFile file(mapFilename);
+	QFile file(filename);
 	if (!file.open(QIODevice::ReadOnly))
 		return -1;
 	if (!doc.setContent(&file)) {
@@ -1133,6 +1137,15 @@ int InputEngine::init_map(const QString& mapFilename)
 	}
 	file.close();
 
+	PMESG("Using keymap: %s", QS_C(keymap));
+	
+	foreach(IEAction* action, ieActions) {
+		delete action;
+	}
+	
+	ieActions.clear();
+	
+	
 	QDomElement root = doc.documentElement();
 	
 	
@@ -1437,6 +1450,11 @@ bool InputEngine::is_holding( )
 	return isHolding;
 }
 
+Command * InputEngine::get_holding_command() const
+{
+	return holdingCommand;
+}
+
 QList< MenuData > InputEngine::create_menudata_for(QObject* item)
 {
 	QList<MenuData > list;
@@ -1598,10 +1616,14 @@ void IEAction::render_key_sequence(const QString& key1, const QString& key2)
 	}
 }
 
-
-Command * InputEngine::get_holding_command() const
+IEAction::~ IEAction()
 {
-	return holdingCommand;
+	foreach(Data* data, objects) {
+		delete data;
+	}
+	foreach(Data* data, objectUsingModifierKeys) {
+		delete data;
+	}
 }
 
 //eof

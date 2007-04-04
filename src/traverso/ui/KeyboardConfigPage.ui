@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>114</height>
+    <width>341</width>
+    <height>285</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -17,7 +17,7 @@
     <number>0</number>
    </property>
    <property name="spacing" >
-    <number>12</number>
+    <number>6</number>
    </property>
    <item>
     <widget class="QLabel" name="keyboardLabel" >
@@ -145,6 +145,76 @@ p, li { white-space: pre-wrap; }
       </item>
      </layout>
     </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2" >
+     <property name="title" >
+      <string>Keymap</string>
+     </property>
+     <layout class="QVBoxLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>9</number>
+      </property>
+      <item>
+       <layout class="QHBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_2" >
+          <property name="text" >
+           <string>Select keymap</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="keymapComboBox" />
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QTextEdit" name="descriptionTextEdit" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="acceptDrops" >
+         <bool>false</bool>
+        </property>
+        <property name="frameShape" >
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="horizontalScrollBarPolicy" >
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="undoRedoEnabled" >
+         <bool>false</bool>
+        </property>
+        <property name="textInteractionFlags" >
+         <enum>Qt::NoTextInteraction</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>16</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>

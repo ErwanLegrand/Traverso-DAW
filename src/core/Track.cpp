@@ -142,7 +142,7 @@ int Track::set_state( const QDomNode & node )
 	set_pan( e.attribute( "pan", "" ).toFloat() );
 	set_bus_in( e.attribute( "InBus", "" ).toAscii() );
 	set_bus_out( e.attribute( "OutBus", "" ).toAscii() );
-	m_id = e.attribute( "id", "").toLongLong();
+	m_id = e.attribute("id", "0").toLongLong();
 	if (m_id == 0) {
 		m_id = create_id();
 	}

@@ -80,10 +80,15 @@ private:
 
 class KeyboardConfigPage : public QWidget, private Ui::KeyboardConfigPage
 {
+	Q_OBJECT
 public:
 	KeyboardConfigPage(QWidget* parent = 0);
 private:
 	friend class KeyboardPage;
+	
+private slots:
+	void keymap_index_changed(const QString& keymap);
+	void update_keymap_combo();
 };
 
 class BehaviorConfigPage : public QWidget, private Ui::BehaviorConfigPage

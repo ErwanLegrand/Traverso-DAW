@@ -75,7 +75,7 @@ public slots:
 struct IEAction
 {
         void render_key_sequence(const QString& key1, const QString& key2);
-
+	~IEAction();
         struct Data {
         	QStringList modes;
 		QVariantList arguments;

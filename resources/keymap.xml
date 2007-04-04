@@ -1,4 +1,8 @@
 <keymap>
+	<KeymapInfo version="1.0" author="R. Sijrier" 
+	    		description="The default keymap supplied by Traverso. It provides both the 'point and click'
+	    		interface, which most users are used too, and the more powerfull contextual interface, 
+			where mouse and keyboard are used together." />
 	<ModifierKeys>
 		<key key="CTRL" />
 		<key key="ALT" />

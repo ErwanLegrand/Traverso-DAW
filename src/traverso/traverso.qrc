@@ -14,7 +14,7 @@
 		<file alias="cursorGain">../../resources/images/cursorGain.xpm</file>
 		<file alias="traverso">../../resources/images/traverso.xpm</file>
 		<file alias="windowicon">../../resources/images/windowicon.xpm</file>
-		<file alias="keymap">../../resources/keymap.xml</file>
+		<file alias="keymaps/default.xml">../../resources/keymap.xml</file>
 		<file alias="fadeshapes">../../resources/fadeshapes.xml</file>
 		<file alias="themes/TraversoLight/traversotheme.xml">../../resources/themes/default/traversotheme.xml</file> 
 		<file alias="helpfile">../../resources/help.text</file>

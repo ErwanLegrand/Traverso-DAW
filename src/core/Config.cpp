@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Config.cpp,v 1.12 2007/03/29 21:09:42 benjie Exp $
+$Id: Config.cpp,v 1.13 2007/04/04 12:08:57 r_sijrier Exp $
 */
 
 #include "Config.h"
@@ -88,7 +88,7 @@ void Config::check_and_load_configuration( )
 
 void Config::init_input_engine( )
 {
-	ie().init_map(":/keymap");
+	ie().init_map(config().get_property("CCE", "keymap", "default").toString());
 	ie().set_clear_time(config().get_property("CCE", "clearTime", 2000).toInt());
 	ie().set_hold_sensitiveness(config().get_property("CCE", "holdTimeout", 200).toInt());
 	ie().set_double_fact_interval(config().get_property("CCE", "doublefactTimeout", 200).toInt());

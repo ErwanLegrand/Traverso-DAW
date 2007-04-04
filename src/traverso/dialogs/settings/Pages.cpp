@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Utils.h>
 #include <Themer.h>
 #include <InputEngine.h>
+#include <QDomDocument>
 
 
 /****************************************/
@@ -683,21 +684,35 @@ void KeyboardPage::load_config()
 	
 	m_configpage->doubleFactTimeoutSpinBox->setValue(doubleFactTimeout);
 	m_configpage->holdTimeoutSpinBox->setValue(holdTimeout);
+	
+	QString defaultkeymap = config().get_property("CCE", "keymap", "default").toString();
+	int index = m_configpage->keymapComboBox->findText(defaultkeymap);
+	if (index >= 0) {
+		m_configpage->keymapComboBox->setCurrentIndex(index);
+	}
 }
 
 void KeyboardPage::save_config()
 {
+	QString currentkeymap = config().get_property("CCE", "keymap", "default").toString();
+	QString newkeymap = m_configpage->keymapComboBox->currentText();
+	
 	config().set_property("CCE", "doublefactTimeout", m_configpage->doubleFactTimeoutSpinBox->value());
 	config().set_property("CCE", "holdTimeout", m_configpage->holdTimeoutSpinBox->value());
+	config().set_property("CCE", "keymap", newkeymap);
 	
 	ie().set_double_fact_interval(m_configpage->doubleFactTimeoutSpinBox->value());
 	ie().set_hold_sensitiveness(m_configpage->holdTimeoutSpinBox->value());
+	if (currentkeymap != newkeymap) {
+		ie().init_map(newkeymap);
+	}
 }
 
 void KeyboardPage::reset_default_config()
 {
-	config().set_property("CCE", "doublefactTimeout", 200);
-	config().set_property("CCE", "holdTimeout", 200);
+	config().set_property("CCE", "doublefactTimeout", 180);
+	config().set_property("CCE", "holdTimeout", 150);
+	config().set_property("CCE", "keymap", "default");
 	
 	load_config();
 }
@@ -706,8 +721,51 @@ KeyboardConfigPage::KeyboardConfigPage(QWidget * parent)
 	: QWidget(parent)
 {
 	setupUi(this);
+	connect(keymapComboBox, SIGNAL(currentIndexChanged(const QString)),
+		this, SLOT(keymap_index_changed(const QString)));
+	
+	update_keymap_combo();
 }
 
+void KeyboardConfigPage::keymap_index_changed(const QString& keymap)
+{
+	QString filename = ":/keymaps/" + keymap + ".xml";
+	if ( ! QFile::exists(filename)) {
+		filename = QDir::homePath() + "/.traverso/keymaps/" + keymap + ".xml";
+	}
+	
+	QDomDocument doc("keymap");
+	QFile file(filename);
+	if (!file.open(QIODevice::ReadOnly))
+		return;
+	if (!doc.setContent(&file)) {
+		file.close();
+		return;
+	}
+	file.close();
+
+	QDomElement root = doc.documentElement();
+	QDomNode mapinfo = root.firstChildElement("KeymapInfo");
+	QDomElement e = mapinfo.toElement();
+	QString description = e.attribute("description", tr("No description set for this keymap"));
+	
+	descriptionTextEdit->setHtml(description);
+}
+
+void KeyboardConfigPage::update_keymap_combo()
+{
+	keymapComboBox->clear();
+	
+	QDir keymapdir(":/keymaps");
+	foreach (QString filename, keymapdir.entryList(QDir::Files)) {
+		keymapComboBox->insertItem(0, filename.remove(".xml"));
+	}
+	
+	keymapdir.setPath(QDir::homePath() + "/.traverso/keymaps");
+	foreach (QString filename, keymapdir.entryList(QDir::Files)) {
+		keymapComboBox->insertItem(0, filename.remove(".xml"));
+	}
+}
 
 
 /****************************************/
