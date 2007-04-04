@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.cpp,v 1.32 2007/04/02 09:52:31 r_sijrier Exp $
+$Id: DiskIO.cpp,v 1.33 2007/04/04 10:08:44 r_sijrier Exp $
 */
 
 #include "DiskIO.h"
@@ -189,7 +189,7 @@ void DiskIO::seek( nframes_t position )
 	m_stopWork = 0;
 	m_seeking = true;
 
-	foreach(MonoReader* source, m_privateReadSources) {
+	foreach(MonoReader* source, m_monoReaders) {
 		source->rb_seek_to_file_position(position);
 	}
 	
@@ -270,9 +270,9 @@ int DiskIO::there_are_processable_sources( )
 			}
 		}
 		
-		for (int j=0; j<m_privateReadSources.size(); ++j) {
+		for (int j=0; j<m_monoReaders.size(); ++j) {
 
-			MonoReader* source = m_privateReadSources.at(j);
+			MonoReader* source = m_monoReaders.at(j);
 			BufferStatus* status = source->get_buffer_status();
 			
 			if (status->priority > i /*&& source->is_active()*/ && !status->needSync ) {
@@ -353,7 +353,7 @@ void DiskIO::register_read_source (ReadSource* source )
 
 	foreach(MonoReader* prs, source->get_private_sources()) {
 		prs->prepare_buffer();
-		m_privateReadSources.append(prs);
+		m_monoReaders.append(prs);
 	}
 		
 }
@@ -389,7 +389,7 @@ void DiskIO::unregister_read_source( ReadSource * source )
 	m_readSources.removeAll(source);
 
 	foreach(MonoReader* prs, source->get_private_sources()) {
-		m_privateReadSources.removeAll(prs);
+		m_monoReaders.removeAll(prs);
 	}
 }
 

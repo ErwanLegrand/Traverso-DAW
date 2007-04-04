@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.h,v 1.13 2007/04/02 09:52:31 r_sijrier Exp $
+$Id: DiskIO.h,v 1.14 2007/04/04 10:08:44 r_sijrier Exp $
 */
 
 #ifndef DISKIO_H
@@ -74,7 +74,7 @@ private:
 	Song* 			m_song;
 	volatile size_t		m_stopWork;
 	QList<ReadSource*>	m_readSources;
-	QList<MonoReader*> m_privateReadSources;
+	QList<MonoReader*> 	m_monoReaders;
 	QList<AudioSource*>	m_processableSources;
 	QList<WriteSource*>	m_writeSources;
 	DiskIOThread*		m_diskThread;
