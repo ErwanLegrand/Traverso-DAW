@@ -113,6 +113,10 @@ void NewProjectDialog::accept( )
 	project->set_engineer(newProjectEngineer->text());
 	project->save();
 	delete project;
+	
+	pm().load_project(title);
+	
+	hide();
 }
 
 void NewProjectDialog::use_template_checkbox_state_changed(int state)

@@ -193,7 +193,7 @@ int ProjectManager::remove_project( const QString& name )
 bool ProjectManager::project_is_current(const QString& title)
 {
 	QString path = config().get_property("Project", "directory", "/directory/unknown").toString();
-	path += title;
+	path += "/" + title;
 
 	if (currentProject && (currentProject->get_root_dir() == path)) {
 		return true;
