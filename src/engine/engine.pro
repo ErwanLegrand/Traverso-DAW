@@ -13,7 +13,6 @@ AudioBus.cpp \
 AudioChannel.cpp \
 AudioDevice.cpp \
 AudioDeviceThread.cpp \
-AudioPlugin.cpp \
 Client.cpp \
 Driver.cpp \
 JackDriver.cpp \
@@ -25,7 +24,6 @@ AudioBus.h \
 AudioChannel.h \
 AudioDevice.h \
 AudioDeviceThread.h \
-AudioPlugin.h \
 bitset.h \
 Client.h \
 defines.h \
@@ -36,21 +34,19 @@ memops.h \
 precompile.h \
 Tsar.h \
 PADriver.h
-
-
 release{
     PRECOMPILED_HEADER -= precompile.h 
 }
 
-!contains(DEFINES, PORTAUDIO_SUPPORT) {
-SOURCES -= PADriver.cpp
-HEADERS -= PADriver.h
-LIBS -= -lportaudio
+!contains(DEFINES, PORTAUDIO_SUPPORT){
+    SOURCES -= PADriver.cpp
+    HEADERS -= PADriver.h
+    LIBS -= -lportaudio
 }
 
-!contains(DEFINES, JACK_SUPPORT) {
-	SOURCES -= JackDriver.cpp
-	HEADERS -= JackDriver.h
+!contains(DEFINES, JACK_SUPPORT){
+    SOURCES -= JackDriver.cpp
+    HEADERS -= JackDriver.h
 }
 
 unix{
