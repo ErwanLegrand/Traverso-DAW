@@ -164,7 +164,7 @@ int Song::set_state( const QDomNode & node )
 {
 	PENTER;
 	QDomNode propertiesNode = node.firstChildElement("Properties");
-	m_id = node.toElement().attribute( "id", "" ).toLongLong();
+	m_id = node.toElement().attribute("id", "0").toLongLong();
 	if (m_id == 0) {
 		m_id = create_id();
 	}
@@ -575,13 +575,15 @@ Command* Song::go()
 {
 // 	printf("Song-%d::go transport is %d\n", m_id, transport);
 	
+	CommandGroup* group = 0;
+	
 	if (transport) {
 		stopTransport = true;
 	} else {
 		emit transferStarted();
 		
 		if (any_track_armed()) {
-			CommandGroup* group = new CommandGroup(this, "");
+			group = new CommandGroup(this, "");
 			int clipcount = 0;
 			foreach(Track* track, m_tracks) {
 				if (track->armed()) {
@@ -593,8 +595,6 @@ Command* Song::go()
 				}
 			}
 			group->setText(tr("Recording to %n Clip(s)", "", clipcount));
-			
-			Command::process_command(group);
 		}
 		
 		transport = true;
@@ -602,7 +602,7 @@ Command* Song::go()
 		realtimepath = true;
 	}
 	
-	return 0;
+	return group;
 }
 
 
