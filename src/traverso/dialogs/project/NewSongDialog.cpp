@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "NewSongDialog.h"
 
 #include <libtraversocore.h>
+#include <CommandGroup.h>
 
 NewSongDialog::NewSongDialog(QWidget * parent)
 	: QDialog(parent)
@@ -65,6 +66,8 @@ void NewSongDialog::accept()
 		node = templatesong->get_state(doc, usetemplate);
 	}
 	
+	CommandGroup* group = new CommandGroup(m_project, "");
+	
 	for (int i=0; i<count; ++i) {
 		Song* song;
 		if (usetemplate) {
@@ -74,8 +77,11 @@ void NewSongDialog::accept()
 			song = new Song(m_project, trackcount);
 		}
 		song->set_title(title);
-		Command::process_command(m_project->add_song(song));
+		group->add_command(m_project->add_song(song));
 	}
+	
+	group->setText(tr("Added %n Song(s)", "", count));
+	Command::process_command(group);
 		
 	hide();
 }

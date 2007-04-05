@@ -74,6 +74,8 @@ void ProjectManagerDialog::set_project(Project* project)
 			this, SLOT(undo_text_changed(const QString&)));
 		setWindowTitle("Manage Project - " + m_project->get_title());
 		descriptionTextEdit->setText(m_project->get_description());
+		redoButton->setText(m_project->get_history_stack()->redoText());
+		undoButton->setText(m_project->get_history_stack()->undoText());
 	} else {
 		setWindowTitle("Manage Project - No Project loaded!");
 		treeSongWidget->clear();

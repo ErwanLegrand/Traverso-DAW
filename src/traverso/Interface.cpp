@@ -50,6 +50,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "dialogs/project/OpenProjectDialog.h"
 #include "dialogs/project/NewProjectDialog.h"
 #include <dialogs/project/NewSongDialog.h>
+#include <dialogs/project/NewTrackDialog.h>
 #include "dialogs/CDTextDialog.h"
 #include "dialogs/MarkerDialog.h"
 #include "dialogs/BusSelectorDialog.h"
@@ -379,9 +380,9 @@ void Interface::create_menus( )
 	menu = menuBar()->addMenu(tr("&Song"));
 	
 	action = menu->addAction(tr("New &Track(s)"));
-	connect(action, SIGNAL(triggered()), this, SLOT(add_new_track()));
+	connect(action, SIGNAL(triggered()), this, SLOT(show_newtrack_dialog()));
 	action = menu->addAction(tr("New &Song(s)"));
-	connect(action, SIGNAL(triggered()), this, SLOT(add_new_song()));
+	connect(action, SIGNAL(triggered()), this, SLOT(show_newsong_dialog()));
 
 	
 	menu = menuBar()->addMenu(tr("&View"));
@@ -811,13 +812,15 @@ Command* Interface::show_newsong_dialog()
 	return 0;
 }
 
-void Interface::add_new_song()
+Command* Interface::show_newtrack_dialog()
 {
-	Interface::instance()->show_newsong_dialog();
-}
-
-void Interface::add_new_track()
-{
+	if (! m_newTrackDialog) {
+		m_newTrackDialog = new NewTrackDialog(this);
+	}
+	
+	m_newTrackDialog->show();
+	
+	return 0;
 }
 
 // eof

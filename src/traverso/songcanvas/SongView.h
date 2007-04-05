@@ -17,7 +17,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongView.h,v 1.17 2007/04/04 02:24:38 benjie Exp $
 */
 
 #ifndef SONG_VIEW_H
@@ -59,6 +58,7 @@ class SongView : public ViewItem
 	Q_CLASSINFO("set_editing_mode", tr("Mode: Edit"))
 	Q_CLASSINFO("set_curve_mode", tr("Mode: Curve"))
 	Q_CLASSINFO("add_marker", tr("Add Marker"))
+	Q_CLASSINFO("playhead_to_workcursor", tr("Playcursor: To workcursor"))
 
 public :
 

@@ -53,7 +53,6 @@ class Song : public ContextItem
 	Q_CLASSINFO("undo", tr("Undo"))
 	Q_CLASSINFO("redo", tr("Redo"))
 	Q_CLASSINFO("toggle_snap", tr("Snap: On/Off"))
-	Q_CLASSINFO("playhead_to_workcursor", tr("Playcursor: To workcursor"))
 	Q_CLASSINFO("toggle_solo", tr("Solo: On/Off"))
 	Q_CLASSINFO("toggle_mute", tr("Mute: On/Off"))
 	Q_CLASSINFO("toggle_arm", tr("Arm: On/Off"))

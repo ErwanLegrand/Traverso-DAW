@@ -152,14 +152,13 @@ public slots :
 	Command* show_cdtext_dialog();
 	Command* show_marker_dialog();
 	Command* show_newsong_dialog();
+	Command* show_newtrack_dialog();
 	Command* show_newproject_dialog();
 	
 private slots:
 	void delete_songwidget(Song*);
 	void undo();
 	void redo();
-	void add_new_song();
-	void add_new_track();
 };
 
 
