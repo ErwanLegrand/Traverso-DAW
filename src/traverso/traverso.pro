@@ -104,6 +104,7 @@ FORMS += ui/ExportWidget.ui \
 	ui/BusSelectorDialog.ui \
 	ui/OpenProjectDialog.ui \
 	ui/NewProjectDialog.ui \
+	ui/NewSongDialog.ui \
 
 
 INCLUDEPATH += 	../core \
