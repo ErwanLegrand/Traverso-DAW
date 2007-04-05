@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.17 2007/04/05 12:18:12 r_sijrier Exp $
+$Id: TrackPanelView.cpp,v 1.18 2007/04/05 22:55:37 r_sijrier Exp $
 */
 
 #include <QGraphicsScene>
@@ -297,6 +297,11 @@ Command* TrackPanelGain::gain_decrement()
 {
 	m_track->set_gain(m_track->get_gain() - 0.05);
 	return 0;
+}
+
+Command* TrackPanelGain::gain()
+{
+	return new Gain(m_track, QVariantList());
 }
 
 

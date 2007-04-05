@@ -343,7 +343,7 @@
 				<Object objectname="CurveView" mousehint="LRUD" slotsignature="drag_node" modes="EditMode" sortorder="3" instantanious="1" />
 				<Object objectname="TimeLineView" mousehint="LR" slotsignature="drag_marker" modes="EditMode" sortorder="3" instantanious="1" />
 				<Object objectname="SongView" mousehint="LR" slotsignature="work_cursor_move" modes="All" sortorder="14" instantanious="0" />
-				<Object objectname="TrackPanelGain" modes="All" sortorder="7" pluginname="TraversoCommands" commandname="Gain" />
+				<Object objectname="TrackPanelGain" mousehint="UD" slotsignature="gain" modes="All" instantanious="0" />
 				<Object objectname="TrackPanelPan" mousehint="LR"  modes="All" sortorder="8" pluginname="TraversoCommands" commandname="TrackPan" />
 			</Objects>
 		</keyfact> 

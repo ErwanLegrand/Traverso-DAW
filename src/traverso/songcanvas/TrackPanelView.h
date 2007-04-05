@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.h,v 1.8 2007/04/05 12:18:12 r_sijrier Exp $
+$Id: TrackPanelView.h,v 1.9 2007/04/05 22:55:37 r_sijrier Exp $
 */
 
 #ifndef TRACK_PANEL_VIEW_H
@@ -46,6 +46,7 @@ public:
 public slots:
 	Command* gain_increment();
 	Command* gain_decrement();
+	Command* gain();
 
 	
 private:
