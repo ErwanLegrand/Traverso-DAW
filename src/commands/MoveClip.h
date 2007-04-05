@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveClip.h,v 1.13 2007/03/29 21:09:42 benjie Exp $
+    $Id: MoveClip.h,v 1.14 2007/04/05 17:53:48 r_sijrier Exp $
 */
 
 #ifndef MOVECLIPACTION_H
@@ -52,7 +52,8 @@ public :
         int jog();
 	
 private :
-        AudioClip* 	m_clip;
+	Song* 		m_song;
+	AudioClip* 	m_clip;
         nframes_t 	m_originalTrackFirstFrame;
         nframes_t 	m_posDiff;
         nframes_t 	m_oldOppositeEdge;
@@ -65,7 +66,6 @@ private :
 		int 		hScrollbarValue;
 		int 		xoffset;
 		AudioClip* 	newclip;
-		Song* 		song;
 		SongView* 	sv;
 		AudioClipView*	view;
 		QPoint		origPos;

@@ -107,6 +107,7 @@ public:
 	
 	void solo_track(Track* track);
 	void create(int tracksToCreate);
+	void move_clip(Track* from, Track* too, AudioClip* clip, nframes_t pos);
 	Command* add_track(Track* track, bool historable=true);
 	Command* remove_track(Track* track, bool historable=true);
 	

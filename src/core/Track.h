@@ -54,10 +54,10 @@ public :
 
 	static const int INITIAL_HEIGHT = 100;
 
-	Command* add_clip(AudioClip* clip, bool historable=true);
+	Command* add_clip(AudioClip* clip, bool historable=true, bool ismove=false);
 	Command* add_plugin(Plugin* plugin);
 
-	Command* remove_clip(AudioClip* clip, bool historable=true);
+	Command* remove_clip(AudioClip* clip, bool historable=true, bool ismove=false);
 	Command* remove_plugin(Plugin* plugin);
 	
 	Command* init_recording();

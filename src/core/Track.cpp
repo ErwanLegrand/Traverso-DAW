@@ -209,10 +209,12 @@ AudioClip* Track::get_clip_before(nframes_t framePos)
 }
 
 
-Command* Track::remove_clip(AudioClip* clip, bool historable)
+Command* Track::remove_clip(AudioClip* clip, bool historable, bool ismove)
 {
 	PENTER;
-	m_song->get_audioclip_manager()->remove_clip(clip);
+	if (! ismove) {
+		m_song->get_audioclip_manager()->remove_clip(clip);
+	}
 	return new AddRemove(this, clip, historable, m_song,
 		"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)",
 		"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)", 
@@ -220,11 +222,13 @@ Command* Track::remove_clip(AudioClip* clip, bool historable)
 }
 
 
-Command* Track::add_clip(AudioClip* clip, bool historable)
+Command* Track::add_clip(AudioClip* clip, bool historable, bool ismove)
 {
 	PENTER;
 	clip->set_track(this);
-	m_song->get_audioclip_manager()->add_clip(clip);
+	if (! ismove) {
+		m_song->get_audioclip_manager()->add_clip(clip);
+	}
 	return new AddRemove(this, clip, historable, m_song,
 		"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)",
 		"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)", 

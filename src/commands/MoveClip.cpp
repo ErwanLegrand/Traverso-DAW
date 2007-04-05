@@ -84,7 +84,7 @@ MoveClip::MoveClip(AudioClipView* cv, QString type)
 	
 	d->view = cv;
 	d->sv = d->view->get_songview();
-	d->song = d->sv->get_song();
+	m_song = d->sv->get_song();
 	m_targetTrack = 0;
 
 	if (m_actionType == "move_to_start" ||
@@ -162,7 +162,8 @@ int MoveClip::begin_hold()
 {
 	if (m_actionType == "copy") {
 		d->newclip = resources_manager()->get_clip(d->view->get_clip()->get_id());
-		d->newclip->set_song(d->song);
+		d->newclip->set_song(m_song);
+		d->newclip->set_track(d->view->get_clip()->get_track());
 		d->newclip->set_track_start_frame(d->view->get_clip()->get_track_start_frame() + d->xoffset);
 		
 		printf("Orig Clip has id %lld\n", d->view->get_clip()->get_id());
@@ -218,11 +219,8 @@ int MoveClip::do_action()
 
 	if (!m_targetTrack) {
 		Command::process_command(m_originTrack->remove_clip(m_clip, false));
-		m_targetTrack = (Track*) 0;
 	} else {
-		Command::process_command(m_originTrack->remove_clip(m_clip, false));
-		m_clip->set_track_start_frame(m_originalTrackFirstFrame + m_posDiff);
-		Command::process_command(m_targetTrack->add_clip(m_clip, false));
+		m_song->move_clip(m_originTrack, m_targetTrack, m_clip, m_originalTrackFirstFrame + m_posDiff);
 	}
 	
 	if (m_actionType == "copy") {
@@ -282,8 +280,7 @@ int MoveClip::jog()
 	
 // 	printf("newPos x, y is %f, %f\n", newPos.x(), newPos.y());
 	
-	if (m_actionType != "anchored_left_edge_move" && m_actionType != "anchored_right_edge_move")
-	{
+	if (m_actionType != "anchored_left_edge_move" && m_actionType != "anchored_right_edge_move") {
 		TrackView* trackView = d->sv->get_trackview_under(cpointer().scene_pos());
 		if (!trackView) {
 	// 		printf("no trackview returned\n");
@@ -314,9 +311,9 @@ int MoveClip::jog()
 	int snapEndDiff = 0;
 	int snapDiff = 0;
 
-	if (d->song->is_snap_on()) {
+	if (m_song->is_snap_on()) {
 
-		SnapList* slist = d->song->get_snap_list();
+		SnapList* slist = m_song->get_snap_list();
 
 		// check if there is anything to snap
 		bool start_snapped = false;

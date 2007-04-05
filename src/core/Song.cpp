@@ -903,5 +903,18 @@ Track* Song::get_track(qint64 id)
 	return 0;
 }
 
+void Song::move_clip(Track * from, Track * too, AudioClip * clip, nframes_t pos)
+{
+	if (from == too) {
+		clip->set_track_start_frame(pos);
+		return;
+	}
+	
+	Command::process_command(from->remove_clip(clip, false, true));
+	Command::process_command(too->add_clip(clip, false, true));
+
+	clip->set_track_start_frame(pos);
+}
+
 // eof
 
