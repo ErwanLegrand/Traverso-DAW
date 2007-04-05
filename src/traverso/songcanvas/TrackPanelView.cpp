@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.16 2007/03/29 11:12:06 r_sijrier Exp $
+$Id: TrackPanelView.cpp,v 1.17 2007/04/05 12:18:12 r_sijrier Exp $
 */
 
 #include <QGraphicsScene>
@@ -30,6 +30,8 @@ $Id: TrackPanelView.cpp,v 1.16 2007/03/29 11:12:06 r_sijrier Exp $
 #include "TrackPanelView.h"
 #include <Utils.h>
 #include <Mixer.h>
+#include <Gain.h>
+#include <TrackPan.h>
 		
 #include <Debugger.h>
 
@@ -237,15 +239,15 @@ void TrackPanelView::layout_panel_items()
 
 TrackPanelGain::TrackPanelGain(TrackPanelView* parent, Track * track)
 	: ViewItem(parent, track)
+	, m_track(track)
 {
-	m_track = track;
+	setAcceptsHoverEvents(true);
 }
 
 void TrackPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
 {
-	Q_UNUSED(option);
 	Q_UNUSED(widget);
-	const int GAIN_H = 8;
+	const int height = 9;
 
 	int sliderWidth = (int)m_boundingRect.width() - 75;
 	float gain = m_track->get_gain();
@@ -264,35 +266,59 @@ void TrackPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem *
 	}
 
 	int cr = (gain >= 1 ? 30 + (int)(100 * gain) : (int)(50 * gain));
-	int cb = ( gain < 1 ? 100 + (int)(50 * gain) : abs((int)(10 * gain)) );
+	int cb = ( gain < 1 ? 150 + (int)(50 * gain) : abs((int)(10 * gain)) );
 	
 	painter->setPen(themer()->get_color("TrackPanel:text"));
 	painter->setFont(themer()->get_font("TrackPanel:gain"));
-	painter->drawText(0, GAIN_H + 1, "GAIN");
-	painter->drawRect(30, 0, sliderWidth, GAIN_H);
-	painter->fillRect(30, 0, sliderdbx, GAIN_H, QColor(cr,0,cb));
-	painter->drawText(sliderWidth + 35, GAIN_H, sgain);
+	painter->drawText(0, height + 1, "GAIN");
+	painter->drawRect(30, 0, sliderWidth, height);
+	
+	bool mousehover = (option->state & QStyle::State_MouseOver);
+	QColor color(cr,0,cb);
+	if (mousehover) {
+		color = color.light(140);
+	}
+	painter->fillRect(31, 1, sliderdbx, height-1, color);
+	painter->drawText(sliderWidth + 35, height, sgain);
 }
 
 void TrackPanelGain::set_width(int width)
 {
-	m_boundingRect = QRectF(0, 0, width, 8);
+	m_boundingRect = QRectF(0, 0, width, 9);
 }
 
+Command* TrackPanelGain::gain_increment()
+{
+	m_track->set_gain(m_track->get_gain() + 0.05);
+	return 0;
+}
 
+Command* TrackPanelGain::gain_decrement()
+{
+	m_track->set_gain(m_track->get_gain() - 0.05);
+	return 0;
+}
 
 
 TrackPanelPan::TrackPanelPan(TrackPanelView* parent, Track * track)
 	: ViewItem(parent, track)
+	, m_track(track)
 {
-	m_track = track;
+	setAcceptsHoverEvents(true);
 }
 
 void TrackPanelPan::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
 {
-	Q_UNUSED(option);
 	Q_UNUSED(widget);
-	const int PAN_H = 8;
+	
+	bool mousehover = (option->state & QStyle::State_MouseOver);
+	
+	QColor color = themer()->get_color("TrackPanel:slider:background");
+	if (mousehover) {
+		color = color.light(110);
+	}
+	
+	const int PAN_H = 9;
 
 	int sliderWidth = (int)m_boundingRect.width() - 75;
 	float v;
@@ -306,21 +332,34 @@ void TrackPanelPan::paint( QPainter * painter, const QStyleOptionGraphicsItem * 
 	v = m_track->get_pan();
 	span = QByteArray::number(v,'f',1);
 	s = ( v > 0 ? QString("+") + span :  span );
-	painter->fillRect(30, 0, sliderWidth, PAN_H, themer()->get_color("TrackPanel:slider:background"));
+	painter->fillRect(30, 0, sliderWidth, PAN_H, color);
 	painter->drawRect(30, 0, sliderWidth, PAN_H);
-	int pm= 30 + sliderWidth/2;
+	int pm= 31 + sliderWidth/2;
 	int z = abs((int)(v*(sliderWidth/2)));
 	int c = abs((int)(255*v));
-	if (v>=0)
-		painter->fillRect(pm, 0, z, PAN_H, QColor(c,0,0));
-	else
-		painter->fillRect(pm-z, 0, z, PAN_H, QColor(c,0,0));
+	if (v>=0) {
+		painter->fillRect(pm, 1, z, PAN_H-1, QColor(c,0,0));
+	} else {
+		painter->fillRect(pm-z, 1, z, PAN_H-1, QColor(c,0,0));
+	}
 	painter->drawText(30 + sliderWidth + 10, PAN_H + 1, s);
 }
 
 void TrackPanelPan::set_width(int width)
 {
-	m_boundingRect = QRectF(0, 0, width, 8);
+	m_boundingRect = QRectF(0, 0, width, 9);
+}
+
+Command* TrackPanelPan::pan_left()
+{
+	m_track->set_pan(m_track->get_pan() - 0.05);
+	return 0;
+}
+
+Command* TrackPanelPan::pan_right()
+{
+	m_track->set_pan(m_track->get_pan() + 0.05);
+	return 0;
 }
 
 
@@ -332,7 +371,6 @@ TrackPanelLed::TrackPanelLed(TrackPanelView* parent, const QString& name, const 
 	, m_isOn(false)
 {
 	m_track = parent->get_track();
-// 	m_boundingRect = QRectF(-7, 0, 35, 14); 
 	setAcceptsHoverEvents(true);
 }
 

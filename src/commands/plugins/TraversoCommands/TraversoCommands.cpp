@@ -55,22 +55,30 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 	switch (m_dict.value(command)) {
 		case GainCommand:
 		{
-			ContextItem* item = qobject_cast<ContextItem*>(obj);
-			if (!item) {
-				PERROR("TraversoCommands: Supplied QObject was not aContextItem, "
-					"GainCommand only works with ContextItem objects!!");
-				return 0;
+			Track* track = qobject_cast<Track*>(obj);
+			if (!track) {
+				TrackPanelGain* tpg = qobject_cast<TrackPanelGain*>(obj);
+				if (! tpg ) {
+					PERROR("TraversoCommands: Supplied QObject was not aContextItem, "
+						"GainCommand only works with ContextItem objects!!");
+					return 0;
+				}
+				track = (Track*)(tpg->get_context());
 			}
-			return new Gain(item, arguments);
+			return new Gain(track, arguments);
 		}
 		
 		case TrackPanCommand:
 		{
 			Track* track = qobject_cast<Track*>(obj);
 			if (! track) {
-				PERROR("TraversoCommands: Supplied QObject was not a Track! "
-					"TrackPanCommand needs a Track as argument");
-				return 0;
+				TrackPanelPan* tpp = qobject_cast<TrackPanelPan*>(obj);
+				if (! tpp ) {
+					PERROR("TraversoCommands: Supplied QObject was not a Track! "
+						"TrackPanCommand needs a Track as argument");
+					return 0;
+				}
+				track = (Track*)(tpp->get_context());
 			}
 			return new TrackPan(track);
 		}

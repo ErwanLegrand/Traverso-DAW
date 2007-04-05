@@ -206,6 +206,8 @@
 				<Object objectname="SongView" slotsignature="scroll_up" modes="All" sortorder="1" submenu="Scroll" instantanious="1" />
 				<Object objectname="Gain" slotsignature="increase_gain" modes="All" instantanious="1" />
 				<Object objectname="MoveClip" slotsignature="prev_snap_pos" modes="All" sortorder="2" instantanious="1" />
+				<Object objectname="TrackPanelPan" slotsignature="pan_right" modes="All" sortorder="1" instantanious="1" />
+				<Object objectname="TrackPanelGain" slotsignature="gain_increment" modes="All" sortorder="1" instantanious="1" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="MouseScrollVerticalDown" >
@@ -214,6 +216,8 @@
 				<Object objectname="SongView" slotsignature="scroll_down" modes="All" sortorder="2" submenu="Scroll" instantanious="1" />
 				<Object objectname="Gain" slotsignature="decrease_gain" modes="All" instantanious="1" />
 				<Object objectname="MoveClip" slotsignature="next_snap_pos" modes="All" sortorder="1" instantanious="1" />
+				<Object objectname="TrackPanelPan" slotsignature="pan_left" modes="All" sortorder="2" instantanious="1" />
+				<Object objectname="TrackPanelGain" slotsignature="gain_decrement" modes="All" sortorder="2" instantanious="1" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="F" >
@@ -222,23 +226,6 @@
 			</Objects>
 		</keyfact>
 		
-		
-		<keyfact type="D_FKEY" key1="MouseButtonLeft" >
-			<Objects>
-				<Object objectname="CurveView" slotsignature="add_node" modes="All" instantanious="0" />
-			</Objects>
-		</keyfact>
-		<keyfact type="D_FKEY" key1="HOME" >
-			<Objects>
-				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" sortorder="8" pluginname="TraversoCommands" commandname="MoveClip"  arguments="move_to_start" />
-			</Objects>
-		</keyfact>
-		<keyfact type="D_FKEY" key1="END" >
-			<Objects>
-				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" sortorder="8" pluginname="TraversoCommands" commandname="MoveClip"  arguments="move_to_end" />
-			</Objects>
-		</keyfact>
-
 		
 		
 		<keyfact type="FKEY2" key1="A" key2="B" >
@@ -356,6 +343,8 @@
 				<Object objectname="CurveView" mousehint="LRUD" slotsignature="drag_node" modes="EditMode" sortorder="3" instantanious="1" />
 				<Object objectname="TimeLineView" mousehint="LR" slotsignature="drag_marker" modes="EditMode" sortorder="3" instantanious="1" />
 				<Object objectname="SongView" mousehint="LR" slotsignature="work_cursor_move" modes="All" sortorder="14" instantanious="0" />
+				<Object objectname="TrackPanelGain" modes="All" sortorder="7" pluginname="TraversoCommands" commandname="Gain" />
+				<Object objectname="TrackPanelPan" mousehint="LR"  modes="All" sortorder="8" pluginname="TraversoCommands" commandname="TrackPan" />
 			</Objects>
 		</keyfact> 
 		<keyfact type="HKEY" key1="D" >
@@ -457,6 +446,7 @@
 			<Objects>
 				<Object objectname="AudioClip" modes="All" sortorder="22" pluginname="TraversoCommands" commandname="ResetGain" arguments="1.0" />
 				<Object objectname="Track" modes="All" sortorder="30" pluginname="TraversoCommands" commandname="ResetGain" arguments="0.5" />
+				<Object objectname="TrackPanelGain" modes="All" sortorder="30" pluginname="TraversoCommands" commandname="ResetGain" arguments="0.5" />
 			</Objects>
 		</keyfact>
 		<keyfact type="D_FKEY" key1="N" >
@@ -477,7 +467,25 @@
 				<Object objectname="TimeLineView" slotsignature="remove_marker" modes="All" instantanious="0" />
 			</Objects>
 		</keyfact>
-	
+		<keyfact type="D_FKEY" key1="MouseButtonLeft" >
+			<Objects>
+				<Object objectname="CurveView" slotsignature="add_node" modes="All" instantanious="0" />
+				<Object objectname="TrackPanelGain" modes="All" sortorder="30" pluginname="TraversoCommands" commandname="ResetGain" arguments="0.5" />
+			</Objects>
+		</keyfact>
+		<keyfact type="D_FKEY" key1="HOME" >
+			<Objects>
+				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" sortorder="8" pluginname="TraversoCommands" commandname="MoveClip"  arguments="move_to_start" />
+			</Objects>
+		</keyfact>
+		<keyfact type="D_FKEY" key1="END" >
+			<Objects>
+				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" sortorder="8" pluginname="TraversoCommands" commandname="MoveClip"  arguments="move_to_end" />
+			</Objects>
+		</keyfact>
+		
+		
+		
 		<keyfact type="D_FKEY2" key1="DEL" key2="T" >
 			<Objects>
 				<Object objectname="Song" slotsignature="remove_track" modes="All" sortorder="33" instantanious="0" />
