@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SnapList.cpp,v 1.12 2007/04/06 09:29:03 r_sijrier Exp $
+$Id: SnapList.cpp,v 1.13 2007/04/06 10:01:41 r_sijrier Exp $
 */
 
 #include "SnapList.h"
@@ -33,7 +33,7 @@ $Id: SnapList.cpp,v 1.12 2007/04/06 09:29:03 r_sijrier Exp $
 
 #include <Debugger.h>
 
-#define debugsnaplist
+//#define debugsnaplist
 
 #if defined (debugsnaplist)
 #define SLPRINT(args...) printf(args)
@@ -49,7 +49,7 @@ SnapList::SnapList(Song* song)
 {
 	m_isDirty = true;
 	m_rangeStart = 0;
-	m_rangeEnd = 900;
+	m_rangeEnd = 0;
 	m_scalefactor = 1;
 }
 
@@ -266,6 +266,10 @@ void SnapList::set_range(nframes_t start, nframes_t end, int scalefactor)
 
 nframes_t SnapList::next_snap_pos(nframes_t pos)
 {
+	if (m_isDirty) {
+		update_snaplist();
+	}
+	
 	int index = pos / m_scalefactor;
 	
 	nframes_t newpos = pos;
@@ -287,6 +291,10 @@ nframes_t SnapList::next_snap_pos(nframes_t pos)
 
 nframes_t SnapList::prev_snap_pos(nframes_t pos)
 {
+	if (m_isDirty) {
+		update_snaplist();
+	}
+	
 	if (! xposLut.size()) {
 		return pos;
 	}

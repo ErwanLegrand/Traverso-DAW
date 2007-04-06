@@ -98,7 +98,7 @@ int DragMarker::finish_hold()
 
 int DragMarker::begin_hold()
 {
-	m_origWhen = m_newWhen = m_mview->get_marker()->get_when();
+	m_origWhen = m_newWhen = m_marker->get_when();
 	m_marker->set_snappable(false);
 	
 	return 1;
