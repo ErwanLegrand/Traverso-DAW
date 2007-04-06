@@ -93,6 +93,7 @@ int DragMarker::prepare_actions()
 int DragMarker::finish_hold()
 {
 	m_marker->set_snappable(true);
+	m_mview->get_songview()->start_shuttle(false);
 	return do_action();
 }
 
@@ -100,6 +101,7 @@ int DragMarker::begin_hold()
 {
 	m_origWhen = m_newWhen = m_marker->get_when();
 	m_marker->set_snappable(false);
+	m_mview->get_songview()->start_shuttle(true, true);
 	
 	return 1;
 }
@@ -141,6 +143,7 @@ int DragMarker::jog()
 	}
 
 	m_mview->set_position(m_newWhen / m_scalefactor);
+	m_mview->get_songview()->update_shuttle_factor();
 	return 1;
 }
 

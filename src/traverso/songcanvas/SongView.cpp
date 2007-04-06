@@ -103,6 +103,7 @@ int PlayHeadMove::finish_hold()
 	}
 	m_cursor->set_active(m_song->is_transporting());
 	m_song->set_transport_pos( (nframes_t) (x * m_sv->scalefactor));
+	m_sv->start_shuttle(true);
 	return -1;
 }
 
@@ -110,6 +111,7 @@ int PlayHeadMove::begin_hold()
 {
 	m_cursor->show();
 	m_cursor->set_active(false);
+	m_sv->start_shuttle(true, true);
 	return 1;
 }
 
@@ -123,6 +125,9 @@ int PlayHeadMove::jog()
 	if (m_resync && m_song->is_transporting()) {
 		m_song->set_transport_pos( (nframes_t) (x * m_sv->scalefactor));
 	}
+	
+	m_sv->update_shuttle_factor();
+	
 	return 1;
 }
 
@@ -166,6 +171,7 @@ int WorkCursorMove::finish_hold()
 		m_playCursor->setPos(x, 0);
 		m_song->set_transport_pos( (nframes_t) (x * m_sv->scalefactor));
 	}
+	m_sv->start_shuttle(false);
 	return -1;
 }
 
@@ -175,6 +181,7 @@ int WorkCursorMove::begin_hold()
 		m_playCursor->disable_follow();
 	}
 	m_song->get_work_snap()->set_snappable(false);
+	m_sv->start_shuttle(true, true);
 	return 1;
 }
 
@@ -195,6 +202,7 @@ int WorkCursorMove::jog()
 
 	m_song->set_work_at(newFrame);
 
+	m_sv->update_shuttle_factor();
 	return 1;
 }
 
