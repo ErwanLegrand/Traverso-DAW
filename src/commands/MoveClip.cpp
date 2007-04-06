@@ -146,7 +146,7 @@ void MoveClip::init_data(bool isCopy)
 	}
 
 	m_originTrack = m_targetTrack = m_clip->get_track();
-	m_originalTrackFirstFrame = m_clip->get_track_start_frame();
+	m_originalTrackFirstFrame = d->snappos = m_clip->get_track_start_frame();
 	m_posDiff = 0;
 	d->origXPos = cpointer().on_first_input_event_x();
 	d->origPos = QPoint(d->origXPos, cpointer().on_first_input_event_y());
@@ -386,14 +386,18 @@ int MoveClip::jog()
 
 void MoveClip::next_snap_pos(bool autorepeat)
 {
-	Q_UNUSED(autorepeat)
-	// TODO implement me!
+	Q_UNUSED(autorepeat);
+	d->snappos = m_song->get_snap_list()->next_snap_pos(d->snappos);
+	m_posDiff = d->snappos - m_originalTrackFirstFrame;
+	m_clip->set_track_start_frame(d->snappos);
 }
 
 void MoveClip::prev_snap_pos(bool autorepeat)
 {
-	Q_UNUSED(autorepeat)
-	// TODO implement me!
+	Q_UNUSED(autorepeat);
+	d->snappos = m_song->get_snap_list()->prev_snap_pos(d->snappos);
+	m_posDiff = d->snappos - m_originalTrackFirstFrame;
+	m_clip->set_track_start_frame(d->snappos);
 }
 
 void MoveClip::move_to_start(bool autorepeat)

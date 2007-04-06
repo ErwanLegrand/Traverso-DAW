@@ -41,11 +41,13 @@
 		<keyfact type="FKEY" key1="LARROW" >
 			<Objects>
 				<Object objectname="SongView" slotsignature="scroll_left" modes="All" sortorder="1" submenu="Scroll" instantanious="0" />
+				<Object objectname="MoveClip" slotsignature="prev_snap_pos" modes="All" sortorder="1" instantanious="1" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="RARROW" >
 			<Objects>
 				<Object objectname="SongView" slotsignature="scroll_right" modes="All" sortorder="2" submenu="Scroll" instantanious="0" />
+				<Object objectname="MoveClip" slotsignature="next_snap_pos" modes="All" sortorder="1" instantanious="1" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="UARROW" >
@@ -92,6 +94,7 @@
 			<Objects>
 				<Object objectname="Project" slotsignature="select" modes="All" instantanious="0" />
 				<Object objectname="AudioClip" modes="All" sortorder="5" submenu="Selection" pluginname="TraversoCommands" commandname="ClipSelectionSelect" arguments="select_clip" />
+				<Object objectname="MoveClip" slotsignature="prev_snap_pos" modes="All" sortorder="1" instantanious="1" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="SPACE" >
@@ -223,6 +226,7 @@
 		<keyfact type="FKEY" key1="F" >
 			<Objects>
 				<Object objectname="AudioClipView" slotsignature="select_fade_shape" modes="All" sortorder="32" submenu="Fade In/Out" instantanious="0" />
+				<Object objectname="MoveClip" slotsignature="next_snap_pos" modes="All" sortorder="1" instantanious="1" />
 			</Objects>
 		</keyfact>
 		

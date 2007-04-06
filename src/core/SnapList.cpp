@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SnapList.cpp,v 1.11 2007/04/02 04:52:49 benjie Exp $
+$Id: SnapList.cpp,v 1.12 2007/04/06 09:29:03 r_sijrier Exp $
 */
 
 #include "SnapList.h"
@@ -32,6 +32,14 @@ $Id: SnapList.cpp,v 1.11 2007/04/02 04:52:49 benjie Exp $
 #include <QString>
 
 #include <Debugger.h>
+
+#define debugsnaplist
+
+#if defined (debugsnaplist)
+#define SLPRINT(args...) printf(args)
+#else
+#define SLPRINT(args...)
+#endif
 
 static const int SNAP_WIDTH = 10;
 
@@ -61,7 +69,7 @@ void SnapList::update_snaplist()
 	// collects all clip boundaries and adds them to the snap list
 	QList<AudioClip* >* acList = m_song->get_audioclip_manager()->get_clip_list();
 	
-// 	printf("acList size is %d\n", acList->size());
+	SLPRINT("acList size is %d\n", acList->size());
 
 	// Be able to snap to trackstart
 	if (m_rangeStart == 0) {
@@ -117,8 +125,8 @@ void SnapList::update_snaplist()
 		xposBool.push_back(false);
 	}
 
-	int lastVal = -1;
-	int lastIndex = -1;
+	long lastVal = -1;
+	long lastIndex = -1;
 	// now modify the regions around snap points in the lookup table
 	for (int i = 0; i < xposList.size(); i++) {
 		if (xposList.at(i) == lastVal) {
@@ -167,33 +175,34 @@ int SnapList::get_snap_value(nframes_t pos)
 	}
 	
 	int i = (pos - m_rangeStart) / m_scalefactor;
-// 	printf("get_snap_value:: i is %d\n", i);
+	SLPRINT("get_snap_value:: i is %d\n", i);
 	
 	// catch dangerous values:
 	if (i < 0) { 
-// 		printf("get_snap_value:: i < 0\n");
+		SLPRINT("get_snap_value:: i < 0\n");
 		return pos;
 	}
 
 	if (xposLut.isEmpty()) {
-// 		printf("get_snap_value:: empty lut\n");
+		SLPRINT("get_snap_value:: empty lut\n");
 		return pos;
 	}
 
 	if (i >= xposLut.size()) {
-// 		printf("get_snap_value:: i > xposLut.size()\n");
+		SLPRINT("get_snap_value:: i > xposLut.size()\n");
 		return pos;
 	}
 	
 	if (is_snap_value(pos)) {
-// 		printf("get_snap_value returns: %d (was %d)\n", xposLut.at(i), pos);
+		SLPRINT("get_snap_value returns: %d (was %d)\n", xposLut.at(i), pos);
 		return xposLut.at(i);
 	}
 	
 	
-// 	printf("get_snap_value returns: %d (was %d)\n", pos, pos);
+	SLPRINT("get_snap_value returns: %d (was %d)\n", pos, pos);
 	return pos;
 }
+
 // returns true if i is inside a snap area, else returns false
 bool SnapList::is_snap_value(nframes_t pos)
 {
@@ -202,7 +211,7 @@ bool SnapList::is_snap_value(nframes_t pos)
 	}
 	
 	int i = (pos - m_rangeStart) / m_scalefactor;
-// 	printf("is_snap_value:: i is %d\n", i);
+	SLPRINT("is_snap_value:: i is %d\n", i);
 	
 	// need to catch values outside the LUT. Return false in that case
 	if (i < 0) {
@@ -213,7 +222,7 @@ bool SnapList::is_snap_value(nframes_t pos)
 		return false;
 	}
 
-// 	printf("is_snap_value returns: %d\n", xposBool.at(i));
+	SLPRINT("is_snap_value returns: %d\n", xposBool.at(i));
 	return xposBool.at(i);
 }
 
@@ -226,7 +235,7 @@ int SnapList::get_snap_diff(nframes_t pos)
 	}
 	
 	int i = (pos - m_rangeStart) / m_scalefactor;
-// 	printf("get_snap_diff:: i is %d\n", i);
+	SLPRINT("get_snap_diff:: i is %d\n", i);
 	
 	// need to catch values outside the LUT. Return 0 in that case
 	if (i < 0) {
@@ -237,13 +246,13 @@ int SnapList::get_snap_diff(nframes_t pos)
 		return 0;
 	}
 
-// 	printf("get_snap_diff returns: %d\n", xposLut.at(i));
+	SLPRINT("get_snap_diff returns: %d\n", xposLut.at(i));
 	return pos - xposLut.at(i);
 }
 
 void SnapList::set_range(nframes_t start, nframes_t end, int scalefactor)
 {
- 	//printf("setting xstart %d, xend %d scalefactor %d\n", start, end, scalefactor);
+ 	SLPRINT("setting xstart %d, xend %d scalefactor %d\n", start, end, scalefactor);
 
 	if (m_rangeStart == start && m_rangeEnd == end && m_scalefactor == scalefactor) {
 		return;
@@ -255,4 +264,59 @@ void SnapList::set_range(nframes_t start, nframes_t end, int scalefactor)
 	m_isDirty = true;
 };
 
+nframes_t SnapList::next_snap_pos(nframes_t pos)
+{
+	int index = pos / m_scalefactor;
+	
+	nframes_t newpos = pos;
+	
+	if (index > xposLut.size()) {
+		index = xposLut.size() - 1;
+	}
+	
+	for (; index<xposLut.size(); ++index) {
+		nframes_t snap = xposLut.at(index);
+		if (snap > pos) {
+			newpos = snap;
+			break;
+		}
+	}
+	
+	return newpos;
+}
+
+nframes_t SnapList::prev_snap_pos(nframes_t pos)
+{
+	if (! xposLut.size()) {
+		return pos;
+	}
+	
+	nframes_t newpos = pos;
+	
+	int index = pos / m_scalefactor;
+	if (index > xposLut.size()) {
+		index = xposLut.size() - 1;
+	}
+	
+	do {
+		nframes_t snap = xposLut.at(index);
+		if (snap < pos && snap != 0) {
+			newpos = snap;
+			break;
+		}
+		index--;
+	} while (index >= 0);
+	
+	if (index == -1) {
+		return 0;
+	}
+	
+	if (newpos == pos) {
+		return pos;
+	}
+	
+	return newpos;
+}
+
 /* EOF */
+

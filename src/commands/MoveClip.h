@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveClip.h,v 1.14 2007/04/05 17:53:48 r_sijrier Exp $
+    $Id: MoveClip.h,v 1.15 2007/04/06 09:29:03 r_sijrier Exp $
 */
 
 #ifndef MOVECLIPACTION_H
@@ -72,6 +72,7 @@ private :
 		nframes_t	origTrackStartFrame;
 		nframes_t	origTrackEndFrame;
 		bool 		resync;
+		nframes_t	snappos;
 	};
 			
 

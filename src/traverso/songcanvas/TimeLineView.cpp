@@ -135,8 +135,8 @@ int DragMarker::jog()
 {
 	m_newWhen = (uint) (cpointer().scene_x() * m_scalefactor);
 
-	if (m_mview->get_marker()->get_timeline()->get_song()->is_snap_on()) {
-		SnapList* slist = m_mview->get_marker()->get_timeline()->get_song()->get_snap_list();
+	if (m_marker->get_timeline()->get_song()->is_snap_on()) {
+		SnapList* slist = m_marker->get_timeline()->get_song()->get_snap_list();
 		m_newWhen = slist->get_snap_value(m_newWhen);
 	}
 
