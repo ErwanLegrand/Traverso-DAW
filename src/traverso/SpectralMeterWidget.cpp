@@ -344,6 +344,7 @@ void SpectralMeterView::set_song(Song *song)
 	}
 	
 	PluginChain* chain = m_song->get_plugin_chain();
+	sample_rate = audiodevice().get_sample_rate();
 	
 	connect(m_song, SIGNAL(transferStarted()), this, SLOT(transfer_started()));
 	connect(m_song, SIGNAL(transferStopped()), this, SLOT(transfer_stopped()));
