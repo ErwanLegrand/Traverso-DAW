@@ -37,6 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Utils.h>
 #include <Command.h>
 #include <defines.h>
+#include <AddRemove.h>
 
 #include <QDebug>
 
@@ -142,7 +143,7 @@ int DragMarker::jog()
 		m_newWhen = slist->get_snap_value(m_newWhen);
 	}
 
-	m_mview->set_position(m_newWhen / m_scalefactor);
+	m_mview->set_position(int(m_newWhen / m_scalefactor));
 	m_mview->get_songview()->update_shuttle_factor();
 	return 1;
 }
@@ -204,8 +205,6 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 		xstart = 0;
 	}
 	
-// 	printf("TimeLineView:: PAINT :: exposed rect is: x=%f, y=%f, w=%f, h=%f\n", option->exposedRect.x(), option->exposedRect.y(), option->exposedRect.width(), option->exposedRect.height());
-
 	int height = TIMELINEHEIGHT;
 	
 	painter->fillRect(xstart, 0,  pixelcount, height, themer()->get_color("Timeline:background") );
@@ -262,7 +261,26 @@ Command* TimeLineView::add_marker()
 {
 	QPointF point = mapFromScene(cpointer().scene_pos());
 	
-	Marker* marker = new Marker(m_timeline, (uint) (point.x() * m_sv->scalefactor));
+	nframes_t when = (uint) (point.x() * m_sv->scalefactor);
+
+	// check if it is the first marker added to the timeline
+	if (!m_timeline->get_markers().size()) {
+		if (when > 0) {  // add one at the beginning of the song
+			Marker* m = new Marker(m_timeline, 0);
+			m->set_description("");
+			AddRemove *ca = (AddRemove*) m_timeline->add_marker(m);
+			Command::process_command(ca);
+		}
+
+		if (when < m_sv->get_song()->get_last_frame()) {  // add one at the end of the song
+			Marker* me = new Marker(m_timeline, m_sv->get_song()->get_last_frame(), 10);
+			me->set_description(tr("End"));
+			AddRemove *cb = (AddRemove*) m_timeline->add_marker(me);
+			Command::process_command(cb);
+		}
+	}
+
+	Marker* marker = new Marker(m_timeline, when);
 	marker->set_description("");
 	
 	return m_timeline->add_marker(marker);
@@ -352,6 +370,18 @@ Command * TimeLineView::drag_marker()
 		return new DragMarker(m_blinkingMarker, m_sv->scalefactor, tr("Drag Marker"));
 	}
 	
+	return 0;
+}
+
+Command * TimeLineView::clear_markers()
+{
+	QList<Marker*> lst = m_timeline->get_markers();
+
+	foreach(Marker *m, lst) {
+		AddRemove *ar = (AddRemove*) m_timeline->remove_marker(m);
+		Command::process_command(ar);
+	}
+
 	return 0;
 }
 

@@ -74,12 +74,14 @@ void ProjectManagerDialog::set_project(Project* project)
 			this, SLOT(undo_text_changed(const QString&)));
 		setWindowTitle("Manage Project - " + m_project->get_title());
 		descriptionTextEdit->setText(m_project->get_description());
+		lineEditTitle->setText(m_project->get_title());
 		redoButton->setText(m_project->get_history_stack()->redoText());
 		undoButton->setText(m_project->get_history_stack()->undoText());
 	} else {
 		setWindowTitle("Manage Project - No Project loaded!");
 		treeSongWidget->clear();
 		descriptionTextEdit->clear();
+		lineEditTitle->clear();
 	}
 	
 	update_song_list();
@@ -270,6 +272,7 @@ void ProjectManagerDialog::accept()
 	}
 	
 	m_project->set_description(descriptionTextEdit->toPlainText());
+	m_project->set_title(lineEditTitle->text());
 	
 	hide();
 }
@@ -282,6 +285,7 @@ void ProjectManagerDialog::reject()
 	}
 	
 	descriptionTextEdit->setText(m_project->get_description());
+	lineEditTitle->setText(m_project->get_title());
 	hide();
 }
 

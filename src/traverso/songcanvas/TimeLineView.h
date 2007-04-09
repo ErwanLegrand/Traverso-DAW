@@ -37,6 +37,7 @@ class TimeLineView : public ViewItem
 	Q_CLASSINFO("add_marker", tr("Add Marker"))
 	Q_CLASSINFO("remove_marker", tr("Remove Marker"))
 	Q_CLASSINFO("drag_marker", tr("Drag Marker"))
+	Q_CLASSINFO("clear_markers", tr("Clear all Markers"))
 
 public:
         TimeLineView(SongView* view);
@@ -69,6 +70,7 @@ public slots:
 	Command* add_marker();
 	Command* remove_marker();
 	Command* drag_marker();
+	Command* clear_markers();
 	
 private slots:
 	void add_new_marker_view(Marker* marker);

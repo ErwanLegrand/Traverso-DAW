@@ -52,10 +52,9 @@ private slots:
 	void item_changed(QTreeWidgetItem *, QTreeWidgetItem *);
 	void description_changed(const QString &);
 	void position_changed(const QString &);
-	void marker_moved();
 	void update_songs();
-	void all_songs_toggled(bool);
 	void remove_marker();
+	void export_toc();
 
 	void title_enter();
 	void position_enter();

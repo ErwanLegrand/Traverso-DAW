@@ -32,6 +32,10 @@
 #include <Marker.h>
 #include <Utils.h>
 #include <QDebug>
+#include <QTextStream>
+#include <QFileDialog>
+#include <QDateTime>
+#include <AddRemove.h>
 
 MarkerDialog::MarkerDialog(QWidget * parent)
 	: QDialog(parent)
@@ -49,7 +53,7 @@ MarkerDialog::MarkerDialog(QWidget * parent)
 	lineEditPosition->setInputMask(mask);
 	
 	// hide the first column if necessary
-	markersTreeWidget->header()->setSectionHidden(0, !checkBoxAllSongs->isChecked());
+	markersTreeWidget->header()->setSectionHidden(0, true);
 
 	// connect signals which require an update of the song list
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
@@ -58,7 +62,6 @@ MarkerDialog::MarkerDialog(QWidget * parent)
 
 	// connect signals which require an update of the treeWidget's items
 	connect(comboBoxDisplaySong, SIGNAL(currentIndexChanged(int)), this, SLOT(update_marker_treeview()));
-	connect(checkBoxAllSongs, SIGNAL(toggled(bool)), this, SLOT(all_songs_toggled(bool)));
 
 	// connect other stuff related to the treeWidget
 	connect(lineEditTitle, SIGNAL(textEdited(const QString &)), this, SLOT(description_changed(const QString &)));
@@ -85,6 +88,8 @@ MarkerDialog::MarkerDialog(QWidget * parent)
 	connect(toolButtonSongwriterAll, SIGNAL(clicked()), this, SLOT(songwriter_all()));
 	connect(toolButtonCopyAll, SIGNAL(clicked()), this, SLOT(copy_all()));
 	connect(toolButtonPEmphAll, SIGNAL(clicked()), this, SLOT(pemph_all()));
+
+	connect(pushButtonExport, SIGNAL(clicked()), this, SLOT(export_toc()));
 }
 
 void MarkerDialog::set_project(Project * project)
@@ -108,7 +113,7 @@ void MarkerDialog::set_project(Project * project)
 
 void MarkerDialog::update_marker_treeview()
 {
-	// since the treeWidget will be cleared, point m_marker somewhere else
+	// since the treeWidget will be cleared, point m_marker to somewhere else
 	m_marker = (Marker*)0;
 	markersTreeWidget->clear();
 
@@ -116,48 +121,27 @@ void MarkerDialog::update_marker_treeview()
 		return;
 	}
 
-	if (checkBoxAllSongs->isChecked()) { // loop through all songs
-		int i = 1;
-		foreach(Song* song, m_project->get_songs()) {
-
-			TimeLine* tl = song->get_timeline();
-		
-			foreach(Marker* marker, tl->get_markers()) {
-				QString name = marker->get_description();
-				QString pos = frame_to_smpte(marker->get_when(), m_project->get_rate());
-
-				QTreeWidgetItem* item = new QTreeWidgetItem(markersTreeWidget);
-				item->setText(0, QString("%1 %2").arg(i, 2, 10, QLatin1Char('0')).arg(song->get_title()));
-				item->setText(1, pos.simplified());
-				item->setText(2, name);
-				item->setData(0, Qt::UserRole, marker->get_id());
-			}
-			++i;
-		}
-	} else { // pick one song
-
-		if (comboBoxDisplaySong->currentIndex() >= m_songlist.size()) {
-			return;
-		}
-
-		int i = comboBoxDisplaySong->currentIndex();
-		Song *song = m_songlist.at(i);
-
-		TimeLine* tl = song->get_timeline();
-		
-		foreach(Marker* marker, tl->get_markers()) {
-			QString name = marker->get_description();
-			QString pos = frame_to_smpte(marker->get_when(), m_project->get_rate());
-
-			QTreeWidgetItem* item = new QTreeWidgetItem(markersTreeWidget);
-			item->setText(0, QString("%1 %2").arg(i, 2, 10, QLatin1Char('0')).arg(song->get_title()));
-			item->setText(1, pos.simplified());
-			item->setText(2, name);
-			item->setData(0, Qt::UserRole, marker->get_id());
-		}
+	if (comboBoxDisplaySong->currentIndex() >= m_songlist.size()) {
+		return;
 	}
 
-	markersTreeWidget->sortItems(0, Qt::AscendingOrder);
+	int i = comboBoxDisplaySong->currentIndex();
+	Song *song = m_songlist.at(i);
+
+	TimeLine* tl = song->get_timeline();
+		
+	foreach(Marker* marker, tl->get_markers()) {
+		QString name = marker->get_description();
+		QString pos = frame_to_smpte(marker->get_when(), m_project->get_rate());
+
+		QTreeWidgetItem* item = new QTreeWidgetItem(markersTreeWidget);
+		item->setText(0, QString("%1 %2").arg(i, 2, 10, QLatin1Char('0')).arg(song->get_title()));
+		item->setText(1, pos.simplified());
+		item->setText(2, name);
+		item->setData(0, Qt::UserRole, marker->get_id());
+	}
+
+	markersTreeWidget->sortItems(1, Qt::AscendingOrder);
 }
 
 void MarkerDialog::item_changed(QTreeWidgetItem * current, QTreeWidgetItem * previous)
@@ -223,7 +207,7 @@ void MarkerDialog::position_changed(const QString &s)
 
 	item->setText(1, s);
 	m_marker->set_when(smpte_to_frame(s, m_project->get_rate()));
-	markersTreeWidget->sortItems(0, Qt::AscendingOrder);
+	markersTreeWidget->sortItems(1, Qt::AscendingOrder);
 }
 
 // find the marker based on it's id. Since each song has it's own timeline,
@@ -463,22 +447,66 @@ void MarkerDialog::update_songs()
 	set_project(m_project);
 }
 
-// resizes the columns in the treeWidget and updates it's content
-void MarkerDialog::all_songs_toggled(bool b)
+void MarkerDialog::remove_marker()
 {
-	markersTreeWidget->header()->setSectionHidden(0, !b);
+	if (!m_marker) {
+		return;
+	}
+
+	Song *song = m_songlist.at(comboBoxDisplaySong->currentIndex());
+	TimeLine* tl = song->get_timeline();
+		
+	AddRemove *ar = (AddRemove*) tl->remove_marker(m_marker);
+	Command::process_command(ar);
 	update_marker_treeview();
 }
 
-void MarkerDialog::marker_moved()
+void MarkerDialog::export_toc()
 {
+	QString fn = QFileDialog::getSaveFileName (0, tr("Export Table of Contents"), m_project->get_root_dir(), tr("HTML File (*.html)"));
 
-}
+	// if aborted exit here
+	if (fn.isEmpty()) {
+		return;
+	}
 
-// Remon, need your help!
-// Couldn't find a working solution to delete markers via the button properly
-void MarkerDialog::remove_marker()
-{
+	QFile file(fn);
+
+	// check if the selected file can be opened for writing
+	if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+		printf("Could not open file for writing.");
+		return;
+	}
+
+	QTextStream out(&file);
+
+	out << "<html>\n  <head>\n  </head>\n\n  <body>\n";
+
+	out << "    <h1>" << m_project->get_title() << "</h1>\n";
+	out << "    <h2>" << m_project->get_description() << "</h2>\n";
+	
+	out << "    <hr>\n";
+	out << "    <table>\n      <tr><th>Position (mm:ss.frames)</th><th>Title</th>\n";
+
+	if (comboBoxDisplaySong->currentIndex() >= m_songlist.size()) {
+		return;
+	}
+
+	int i = comboBoxDisplaySong->currentIndex();
+	Song *song = m_songlist.at(i);
+
+	TimeLine* tl = song->get_timeline();
+		
+	foreach(Marker* marker, tl->get_markers()) {
+		QString name = marker->get_description();
+		QString pos = frame_to_smpte(marker->get_when(), m_project->get_rate());
+
+		out << "      <tr><td>" << pos << "</td>\n        <td>" << name << "</td></tr>\n";
+	}	
+
+	QDateTime dt = QDateTime::currentDateTime();
+
+	out << "    </table>\n  <hr>\n  " << dt.toString("MMM dd, yyyy, hh:mm") << "\n</body>\n</html>\n";
 }
 
 //eof
