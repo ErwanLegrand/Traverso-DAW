@@ -55,6 +55,11 @@ MarkerDialog::MarkerDialog(QWidget * parent)
 	// hide the first column if necessary
 	markersTreeWidget->header()->setSectionHidden(0, true);
 
+	pushButtonRemove->setAutoDefault(false);
+	pushButtonExport->setAutoDefault(false);
+	pushButtonClose->setAutoDefault(false);
+
+
 	// connect signals which require an update of the song list
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 	connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(update_songs()));
