@@ -471,6 +471,11 @@
 				<Object objectname="TimeLineView" slotsignature="remove_marker" modes="All" instantanious="0" />
 			</Objects>
 		</keyfact>
+		<keyfact type="D_FKEY" key1="C" >
+			<Objects>
+				<Object objectname="TimeLineView" slotsignature="clear_markers" modes="All" instantanious="0" />
+			</Objects>
+		</keyfact>
 		<keyfact type="D_FKEY" key1="MouseButtonLeft" >
 			<Objects>
 				<Object objectname="CurveView" slotsignature="add_node" modes="All" instantanious="0" />

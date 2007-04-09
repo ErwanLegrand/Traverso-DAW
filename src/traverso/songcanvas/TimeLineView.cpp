@@ -242,6 +242,7 @@ void TimeLineView::add_new_marker_view(Marker * marker)
 	view->set_active(false);
 	m_markerViews.append(view);
 	m_sv->scene()->addItem(view);
+	update();
 }
 
 void TimeLineView::remove_marker_view(Marker * marker)
