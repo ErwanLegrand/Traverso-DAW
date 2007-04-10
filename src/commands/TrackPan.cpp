@@ -28,11 +28,23 @@
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-TrackPan::TrackPan(Track* track)
-	: Command(track, tr("Track Pan"))
+TrackPan::TrackPan(Track* track, QVariantList args)
+	: Command(track, "")
 {
         m_track = track;
         m_song = track->get_song();
+	
+	QString des;
+	
+	if (args.size() > 0) {
+		newPan = args.at(0).toDouble();
+		des = tr("Track Pan: %1").arg("Reset");
+		origPan = m_track->get_pan();
+	} else {
+		des = tr("Track Pan");
+	}
+	
+	setText(des);
 }
 
 

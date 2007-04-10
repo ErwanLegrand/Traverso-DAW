@@ -35,6 +35,7 @@ TraversoCommands::TraversoCommands()
 	m_dict.insert("Gain", GainCommand);
 	m_dict.insert("ResetGain", GainCommand);
 	m_dict.insert("TrackPan", TrackPanCommand);
+	m_dict.insert("ResetTrackPan", TrackPanCommand);
 	m_dict.insert("ImportAudio", ImportAudioCommand);
 	m_dict.insert("AddNewTrack", AddNewTrackCommand);
 	m_dict.insert("RemoveTrack", RemoveTrackCommand);
@@ -76,7 +77,7 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 				}
 				track = (Track*)(tpp->get_context());
 			}
-			return new TrackPan(track);
+			return new TrackPan(track, arguments);
 		}
 		
 		case ImportAudioCommand:
