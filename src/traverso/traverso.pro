@@ -55,7 +55,8 @@ HEADERS += \
 	dialogs/project/NewSongDialog.h \
 	dialogs/project/NewProjectDialog.h \
 	dialogs/project/OpenProjectDialog.h \
-	dialogs/project/NewTrackDialog.h
+	dialogs/project/NewTrackDialog.h \
+	songcanvas/PositionIndicator.h
 SOURCES += \
 	Traverso.cpp \
 	AudioSourcesTreeWidget.cpp \
@@ -86,7 +87,8 @@ SOURCES += \
 	dialogs/project/NewSongDialog.cpp \
 	dialogs/project/NewProjectDialog.cpp \
 	dialogs/project/OpenProjectDialog.cpp \
-	dialogs/project/NewTrackDialog.cpp
+	dialogs/project/NewTrackDialog.cpp \
+	songcanvas/PositionIndicator.cpp
 FORMS += ui/ExportWidget.ui \
 	ui/AudioSourcesManagerWidget.ui \
 	ui/PluginSelectorDialog.ui \

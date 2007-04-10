@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.h,v 1.17 2007/04/02 09:52:31 r_sijrier Exp $
+$Id: AudioClipView.h,v 1.18 2007/04/10 17:11:48 r_sijrier Exp $
 */
 
 #ifndef AUDIO_CLIP_VIEW_H
@@ -36,6 +36,7 @@ class SongView;
 class TrackView;
 class FadeView;
 class Peak;
+class PositionIndicator;
 
 class AudioClipView : public ViewItem
 {
@@ -60,6 +61,7 @@ public:
 	
 	TrackView* get_trackview() const {return m_tv;}
 	void set_trackview(TrackView* view) {m_tv = view;}
+	void set_dragging(bool dragging);
 	
 	void load_theme_data();
 	
@@ -73,6 +75,7 @@ private:
 	Song*		m_song;
 	CurveView* 	curveView;
 	QList<Peak*> 	m_peakloadinglist;
+	PositionIndicator* m_posIndicator;
 
 	QPixmap clipNamePixmapActive;
 	QPixmap clipNamePixmapInActive;
@@ -84,6 +87,7 @@ private:
 	bool m_waitingForPeaks;
 	bool m_mergedView;
 	bool m_classicView;
+	bool m_dragging;
 	int m_height;
 	int m_infoAreaHeight;
 	int m_mimimumheightforinfoarea;

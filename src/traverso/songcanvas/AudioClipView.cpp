@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TrackView.h"
 #include "FadeView.h"
 #include "CurveView.h"
+#include "PositionIndicator.h"
 
 #include "Themer.h"
 #include <Config.h>
@@ -43,7 +44,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
-	: ViewItem(parent, clip), m_tv(parent), m_clip(clip)
+	: ViewItem(parent, clip)
+	, m_tv(parent)
+	, m_clip(clip)
+	, m_dragging(false)
 {
 	PENTERCONS;
 	
@@ -59,6 +63,7 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 
 	m_waitingForPeaks = false;
 	m_progress = m_peakloadingcount = 0;
+	m_posIndicator = 0;
 	m_song = m_clip->get_song();
 	
 	if (FadeCurve* curve = m_clip->get_fade_in()) {
@@ -194,6 +199,10 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	
 	if (!m_sv->viewmode == CurveMode) {
 // 		curveView->paint(painter, option, widget);
+	}
+	
+	if (m_dragging) {
+		m_posIndicator->set_value(frame_to_smpte(x() * m_sv->scalefactor, m_song->get_rate()));
 	}
 	
 	painter->restore();
@@ -691,10 +700,30 @@ void AudioClipView::update_recording()
 	m_boundingRect = QRectF(0, 0, (newPos / m_sv->scalefactor), m_height);
 	
 	QRect updaterect = QRect(m_oldRecordingPos, 0, newPos, m_boundingRect.height());
-	update();
+	update(updaterect);
 	
 	m_oldRecordingPos = newPos;
 }
+
+void AudioClipView::set_dragging(bool dragging)
+{
+	if (dragging) {
+		if (! m_posIndicator) {
+			m_posIndicator = new PositionIndicator(this);
+			scene()->addItem(m_posIndicator);
+			m_posIndicator->set_position(2, get_childview_y_offset() + 1);
+		}
+	} else {
+		if (m_posIndicator) {
+			scene()->removeItem(m_posIndicator);
+			delete m_posIndicator;
+			m_posIndicator = 0;
+		}
+	}
+	
+	m_dragging = dragging;
+}
+
 
 //eof
 

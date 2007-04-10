@@ -23,8 +23,10 @@
 #include "SongView.h"
 #include "Themer.h"
 #include "ClipsViewPort.h"
+#include "PositionIndicator.h"
 
 #include <QColor>
+#include <Song.h>
 #include <Marker.h>
 #include <Utils.h>
 #include <QDebug>
@@ -33,10 +35,12 @@
 
 MarkerView::MarkerView(Marker* marker, SongView* sv, ViewItem* parentView)
 	: ViewItem(parentView, marker)
+	, m_dragging(false)
 {
 	m_sv = sv;
 	m_marker = marker;
 	m_active = false;
+	m_posIndicator = 0;
 
 	load_theme_data();
 	
@@ -54,7 +58,7 @@ void MarkerView::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
 	painter->setRenderHint(QPainter::Antialiasing);
 	painter->setFont( QFont( "Bitstream Vera Sans", 7) );
 	
-	painter->setPen(QColor("#000000"));
+	painter->setPen(QColor(Qt::black));
 	painter->setBrush(m_fillColor);
 
 	const QPointF pts[3] = {
@@ -67,6 +71,11 @@ void MarkerView::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
 
 	if (m_active) {
 		painter->drawLine(MARKER_WIDTH/2, 9, MARKER_WIDTH/2, (int)m_boundingRect.height());
+	}
+	
+	if (m_dragging) {
+		m_posIndicator->set_value(frame_to_smpte( (x() + m_boundingRect.width() / 2 ) * m_sv->scalefactor,
+					  m_sv->get_song()->get_rate()));
 	}
 
 	painter->restore();
@@ -92,7 +101,7 @@ void MarkerView::calculate_bounding_rect()
 void MarkerView::update_position()
 {
 	// markerwidth / 2 == center of markerview !
-	setPos(m_marker->get_when() / m_sv->scalefactor - MARKER_WIDTH / 2, 0);
+	setPos( (long)(m_marker->get_when() / m_sv->scalefactor) - (MARKER_WIDTH / 2), 0);
 }
 
 void MarkerView::set_position(int i)
@@ -126,4 +135,24 @@ void MarkerView::update_drawing()
 	update();
 }
 
+void MarkerView::set_dragging(bool dragging)
+{
+	if (dragging) {
+		if (! m_posIndicator) {
+			m_posIndicator = new PositionIndicator(this);
+			scene()->addItem(m_posIndicator);
+			m_posIndicator->set_position(15, 0);
+		}
+	} else {
+		if (m_posIndicator) {
+			scene()->removeItem(m_posIndicator);
+			delete m_posIndicator;
+			m_posIndicator = 0;
+		}
+	}
+	
+	m_dragging = dragging;
+}
+
 //eof
+

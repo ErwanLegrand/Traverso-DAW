@@ -19,43 +19,29 @@
  
 */
 
-#ifndef MARKER_VIEW_H
-#define MARKER_VIEW_H
+#ifndef POSITION_INDICATOR_H
+#define POSITION_INDICATOR_H
 
 #include "ViewItem.h"
+#include <QPixmap>
 
-class Marker;
-class SongView;
-class QColor;
-class PositionIndicator;
-
-class MarkerView : public ViewItem
+class PositionIndicator : public ViewItem
 {
 	Q_OBJECT
 	
 public:
-	MarkerView(Marker* marker, SongView* sv, ViewItem* parent);
-	~MarkerView() {}
+	PositionIndicator(ViewItem* parent);
+	~PositionIndicator() {}
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void calculate_bounding_rect();
-	void load_theme_data();
-	void set_active(bool);
-	void set_position(int);
-	void set_dragging(bool dragging);
+	void set_position(int x, int y);
 	
-	Marker* get_marker() const {return m_marker;}
+	void set_value(const QString& value);
 	
 private:
-	Marker* m_marker;
-	QColor	m_fillColor;
-	bool	m_active;
-	bool	m_dragging;
-	PositionIndicator* m_posIndicator;
-	
-private slots:
-	void update_position();
-	void update_drawing();
+	QString m_value;
+	QPixmap m_background;
 };
 
 #endif

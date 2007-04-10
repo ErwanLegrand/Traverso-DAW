@@ -38,6 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Command.h>
 #include <defines.h>
 #include <AddRemove.h>
+#include <CommandGroup.h>
 
 #include <QDebug>
 
@@ -52,6 +53,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 class DragMarker : public Command
 {
 	Q_OBJECT
+	Q_CLASSINFO("move_left", tr("Move Left"))
+	Q_CLASSINFO("move_right", tr("Move right"))
+	
 public:
 	DragMarker(MarkerView* mview, double scalefactor, const QString& des);
 
@@ -64,7 +68,7 @@ public:
 
 private :
 	Marker*		m_marker;
-	MarkerView*	m_mview;
+	MarkerView*	m_view;
 	nframes_t	m_origWhen;
 	nframes_t	m_newWhen;
 	double 		m_scalefactor;
@@ -81,8 +85,8 @@ public slots:
 DragMarker::DragMarker(MarkerView* mview, double scalefactor, const QString& des)
 	: Command(mview->get_marker(), des)
 {
-	m_mview = mview;
-	m_marker= m_mview->get_marker();
+	m_view = mview;
+	m_marker= m_view->get_marker();
 	m_scalefactor = scalefactor;
 }
 
@@ -91,22 +95,22 @@ int DragMarker::prepare_actions()
 	return 1;
 }
 
-int DragMarker::finish_hold()
-{
-	m_marker->set_snappable(true);
-	m_mview->get_songview()->start_shuttle(false);
-	return do_action();
-}
-
 int DragMarker::begin_hold()
 {
 	m_origWhen = m_newWhen = m_marker->get_when();
 	m_marker->set_snappable(false);
-	m_mview->get_songview()->start_shuttle(true, true);
-	
+	m_view->get_songview()->start_shuttle(true, true);
+	m_view->set_dragging(true);	
 	return 1;
 }
 
+int DragMarker::finish_hold()
+{
+	m_marker->set_snappable(true);
+	m_view->get_songview()->start_shuttle(false);
+	m_view->set_dragging(false);
+	return do_action();
+}
 
 int DragMarker::do_action()
 {
@@ -123,28 +127,39 @@ int DragMarker::undo_action()
 void DragMarker::move_left(bool )
 {
 	// Move 1 pixel to the left
-	m_newWhen = m_newWhen + (uint) ( 1 * m_scalefactor);
+	long newpos = m_newWhen - (uint) ( 1 * m_scalefactor);
+	if (newpos < 0) {
+		newpos = 0;
+	}
+	m_newWhen = newpos;
 	do_action();
 }
 
 void DragMarker::move_right(bool )
 {
 	// Move 1 pixel to the right
-	m_newWhen = m_newWhen - (uint) ( 1 * m_scalefactor);
+	m_newWhen = m_newWhen + (uint) ( 1 * m_scalefactor);
 	do_action();
 }
 
 int DragMarker::jog()
 {
-	m_newWhen = (uint) (cpointer().scene_x() * m_scalefactor);
+	long newpos = (uint) (cpointer().scene_x() * m_scalefactor);
 
 	if (m_marker->get_timeline()->get_song()->is_snap_on()) {
 		SnapList* slist = m_marker->get_timeline()->get_song()->get_snap_list();
-		m_newWhen = slist->get_snap_value(m_newWhen);
+		newpos = slist->get_snap_value(newpos);
 	}
 
-	m_mview->set_position(int(m_newWhen / m_scalefactor));
-	m_mview->get_songview()->update_shuttle_factor();
+	if (newpos < 0 ) {
+		newpos = 0;
+	}
+	
+	m_newWhen = newpos;
+	m_view->set_position(int(m_newWhen / m_scalefactor));
+	
+	m_view->get_songview()->update_shuttle_factor();
+	
 	return 1;
 }
 
@@ -304,7 +319,7 @@ void TimeLineView::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
 
 	if (m_blinkingMarker) {
 		m_blinkingMarker->set_active(true);
-		m_blinkTimer.start(40);
+// 		m_blinkTimer.start(40);
 	}
 }
 
@@ -318,7 +333,7 @@ void TimeLineView::hoverLeaveEvent ( QGraphicsSceneHoverEvent * event )
 		return;
 	}
 	
-	m_blinkTimer.stop();
+// 	m_blinkTimer.stop();
 	if (m_blinkingMarker) {
 		// TODO add these functions, or something else to 
 		// let the user know which marker is to be moved!
@@ -377,13 +392,14 @@ Command * TimeLineView::drag_marker()
 Command * TimeLineView::clear_markers()
 {
 	QList<Marker*> lst = m_timeline->get_markers();
+	
+	CommandGroup* group = new CommandGroup(m_timeline, tr("Clear Markers"));
 
 	foreach(Marker *m, lst) {
-		AddRemove *ar = (AddRemove*) m_timeline->remove_marker(m);
-		Command::process_command(ar);
+		group->add_command(m_timeline->remove_marker(m));
 	}
 
-	return 0;
+	return group;
 }
 
 void TimeLineView::load_theme_data()

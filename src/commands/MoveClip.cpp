@@ -155,6 +155,7 @@ void MoveClip::init_data(bool isCopy)
 	d->origTrackStartFrame = m_clip->get_track_start_frame();
 	d->origTrackEndFrame = m_clip->get_track_end_frame();
 	d->resync = config().get_property("AudioClip", "SyncDuringDrag", false).toBool();
+	d->view->set_dragging(true);
 }
 
 
@@ -193,6 +194,8 @@ int MoveClip::finish_hold()
 		m_clip->set_left_edge(m_oldOppositeEdge);
 	}
 
+	d->view->set_dragging(false);
+	
 	return 1;
 }
 
