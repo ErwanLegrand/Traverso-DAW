@@ -54,6 +54,7 @@ MarkerDialog::MarkerDialog(QWidget * parent)
 	
 	// hide the first column if necessary
 	markersTreeWidget->header()->setSectionHidden(0, true);
+	markersTreeWidget->header()->resizeSection(1, 80);
 
 	pushButtonRemove->setAutoDefault(false);
 	pushButtonExport->setAutoDefault(false);
@@ -130,8 +131,16 @@ void MarkerDialog::update_marker_treeview()
 		return;
 	}
 
-	int i = comboBoxDisplaySong->currentIndex();
-	Song *song = m_songlist.at(i);
+	int index = comboBoxDisplaySong->currentIndex();
+	if (index < 0) {
+		index = 0;
+	}
+	
+	if (index >= m_songlist.size()) {
+		index = m_songlist.size() - 1;
+	}
+	
+	Song* song = m_songlist.at(index);
 
 	TimeLine* tl = song->get_timeline();
 		
@@ -140,7 +149,7 @@ void MarkerDialog::update_marker_treeview()
 		QString pos = frame_to_smpte(marker->get_when(), m_project->get_rate());
 
 		QTreeWidgetItem* item = new QTreeWidgetItem(markersTreeWidget);
-		item->setText(0, QString("%1 %2").arg(i, 2, 10, QLatin1Char('0')).arg(song->get_title()));
+		item->setText(0, QString("%1 %2").arg(index, 2, 10, QLatin1Char('0')).arg(song->get_title()));
 		item->setText(1, pos.simplified());
 		item->setText(2, name);
 		item->setData(0, Qt::UserRole, marker->get_id());
