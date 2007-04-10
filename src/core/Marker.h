@@ -75,7 +75,7 @@ private:
 		m_arranger,
 		m_message,
 		m_isrc;
-	int	m_preemph,
+	bool	m_preemph,
 		m_copyprotect;
 	uint	m_type;
 	

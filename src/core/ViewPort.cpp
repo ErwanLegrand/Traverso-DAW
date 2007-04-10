@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewPort.cpp,v 1.8 2007/03/16 00:14:43 r_sijrier Exp $
+$Id: ViewPort.cpp,v 1.9 2007/04/10 19:37:57 r_sijrier Exp $
 */
 
 #include <QMouseEvent>
@@ -117,7 +117,7 @@ void ViewPort::mouseMoveEvent(QMouseEvent* e)
 	// a mouse move event, while the mouse really move, so we check
 	// if the mouse cursor really has changed position!
 	if (e->pos() == m_oldMousePos) {
-		return;
+// 		return;
 	}
 	m_oldMousePos = e->pos();
 	QGraphicsView::mouseMoveEvent(e);
@@ -192,7 +192,7 @@ void ViewPort::reset_cursor( )
 	m_holdcursor->reset();
 }
 
-void ViewPort::set_hold_cursor( const QString & cursorName )
+void ViewPort::set_holdcursor( const QString & cursorName )
 {
 	viewport()->setCursor(Qt::BlankCursor);
 	
@@ -201,9 +201,14 @@ void ViewPort::set_hold_cursor( const QString & cursorName )
 	m_holdcursor->show();
 }
 
-void ViewPort::set_hold_cursor_text( const QString & text )
+void ViewPort::set_holdcursor_text( const QString & text )
 {
 	m_holdcursor->set_text(text);
+}
+
+void ViewPort::set_holdcursor_pos(QPoint pos)
+{
+	m_holdcursor->setPos(pos);
 }
 
 

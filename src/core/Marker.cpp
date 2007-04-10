@@ -141,38 +141,22 @@ void Marker::set_isrc(const QString &s)
 
 void Marker::set_preemphasis(bool b)
 {
-	if (b) {
-		m_preemph = 1;
-	} else {
-		m_preemph = 0;
-	}
+	m_preemph = b;
 }
 
 void Marker::set_copyprotect(bool b)
 {
-	if (b) {
-		m_copyprotect = 1;
-	} else {
-		m_copyprotect = 0;
-	}
+	m_copyprotect = b;
 }
 
 bool Marker::get_preemphasis()
 {
-	if (m_preemph) {
-		return true;
-	} else {
-		return false;
-	}
+	return m_preemph;
 }
 
 bool Marker::get_copyprotect()
 {
-	if (m_copyprotect) {
-		return true;
-	} else {
-		return false;
-	}
+	return m_copyprotect;
 }
 
 //eof

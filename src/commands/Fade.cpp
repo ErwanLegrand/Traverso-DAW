@@ -136,7 +136,7 @@ void FadeBend::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useY);
 	
 	mousePos = QCursor::pos();
-	cpointer().get_viewport()->set_hold_cursor(":/cursorHoldUd");
+	cpointer().get_viewport()->set_holdcursor(":/cursorHoldUd");
 }
 
 int FadeBend::jog()
@@ -193,7 +193,7 @@ void FadeStrength::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useY);
 	
 	mousePos = QCursor::pos();	
-	cpointer().get_viewport()->set_hold_cursor(":/cursorHoldUd");
+	cpointer().get_viewport()->set_holdcursor(":/cursorHoldUd");
 }
 
 int FadeStrength::jog()

@@ -30,6 +30,7 @@ PositionIndicator::PositionIndicator(ViewItem* parentView)
 	: ViewItem(parentView, 0)
 {
 	calculate_bounding_rect();
+	setZValue(100);
 }
 
 void PositionIndicator::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)

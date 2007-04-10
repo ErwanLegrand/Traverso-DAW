@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Gain.cpp,v 1.10 2007/03/16 00:09:43 r_sijrier Exp $
+$Id: Gain.cpp,v 1.11 2007/04/10 19:37:57 r_sijrier Exp $
 */
 
 #include "Gain.h"
@@ -119,7 +119,7 @@ void Gain::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useY);
 	
 	mousePos = QCursor::pos();	
-	cpointer().get_viewport()->set_hold_cursor(":/cursorGain");
+	cpointer().get_viewport()->set_holdcursor(":/cursorGain");
 }
 
 
@@ -135,7 +135,7 @@ void Gain::increase_gain( bool autorepeat )
 	get_gain_from_object(newGain);
 	
 	// Update the vieport's hold cursor with the _actuall_ gain value!
-	cpointer().get_viewport()->set_hold_cursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
+	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
 }
 
 void Gain::decrease_gain(bool autorepeat)
@@ -152,7 +152,7 @@ void Gain::decrease_gain(bool autorepeat)
 
 
 	// Update the vieport's hold cursor with the _actuall_ gain value!
-	cpointer().get_viewport()->set_hold_cursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
+	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
 }
 
 
@@ -180,7 +180,7 @@ int Gain::jog()
 	int result = get_gain_from_object(newGain);
 	
 	// Update the vieport's hold cursor!
-	cpointer().get_viewport()->set_hold_cursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
+	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
 	
 	// Set the mouse cursor back to the original position, so it doesn't leave the 
 	// object we're working on!

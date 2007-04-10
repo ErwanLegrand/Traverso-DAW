@@ -40,6 +40,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <SnapList.h>
 #include <ContextPointer.h>
 #include <Zoom.h>
+#include <PlayHeadMove.h>
+#include <WorkCursorMove.h>
 		
 #include <Debugger.h>
 
@@ -69,150 +71,12 @@ private :
 };
 
 
-class PlayHeadMove : public Command
-{
-public :
-        PlayHeadMove(PlayHead* cursor, SongView* sv);
-        ~PlayHeadMove(){PENTERDES;};
 
-	int finish_hold();
-        int begin_hold();
-        int jog();
-
-private :
-	PlayHead*	m_cursor;
-	Song*		m_song;
-	SongView*	m_sv;
-	bool		m_resync;
-};
-
-PlayHeadMove::PlayHeadMove(PlayHead* cursor, SongView* sv)
-	: Command("Play Cursor Move")
-	, m_cursor(cursor)
-	, m_song(sv->get_song())
-	, m_sv(sv)
-{
-	m_resync = config().get_property("AudioClip", "SyncDuringDrag", false).toBool();
-}
-
-int PlayHeadMove::finish_hold()
-{
-	int x = cpointer().scene_x();
-	if (x < 0) {
-		x = 0;
-	}
-	m_cursor->set_active(m_song->is_transporting());
-	m_song->set_transport_pos( (nframes_t) (x * m_sv->scalefactor));
-	m_sv->start_shuttle(true);
-	return -1;
-}
-
-int PlayHeadMove::begin_hold()
-{
-	m_cursor->show();
-	m_cursor->set_active(false);
-	m_sv->start_shuttle(true, true);
-	return 1;
-}
-
-int PlayHeadMove::jog()
-{
-	int x = cpointer().scene_x();
-	if (x < 0) {
-		x = 0;
-	}
-	m_cursor->setPos(x, 0);
-	if (m_resync && m_song->is_transporting()) {
-		m_song->set_transport_pos( (nframes_t) (x * m_sv->scalefactor));
-	}
-	
-	m_sv->update_shuttle_factor();
-	
-	return 1;
-}
-
-
-		
-class WorkCursorMove : public Command
-{
-public :
-        WorkCursorMove (PlayHead* cursor, SongView* sv);
-        ~WorkCursorMove (){PENTERDES;};
-
-	int finish_hold();
-        int begin_hold();
-        int jog();
-
-private :
-	Song*		m_song;
-	SongView*	m_sv;
-	PlayHead*	m_playCursor;
-};
-
-WorkCursorMove::WorkCursorMove(PlayHead* cursor, SongView* sv)
-	: Command("Play Cursor Move")
-	, m_song(sv->get_song())
-	, m_sv(sv)
-	, m_playCursor(cursor)
-{
-}
-
-int WorkCursorMove::finish_hold()
-{
-	int x = cpointer().scene_x();
-
-	if (x < 0) {
-		x = 0;
-	}
-
-	m_song->get_work_snap()->set_snappable(true);
-
-	if (!m_song->is_transporting()) {
-		m_playCursor->setPos(x, 0);
-		m_song->set_transport_pos( (nframes_t) (x * m_sv->scalefactor));
-	}
-	m_sv->start_shuttle(false);
-	return -1;
-}
-
-int WorkCursorMove::begin_hold()
-{
-	if (m_song->is_transporting()) {
-		m_playCursor->disable_follow();
-	}
-	m_song->get_work_snap()->set_snappable(false);
-	m_sv->start_shuttle(true, true);
-	return 1;
-}
-
-int WorkCursorMove::jog()
-{
-	int x = cpointer().scene_x();
-
-	if (x < 0) {
-		x = 0;
-	}
-
-	nframes_t newFrame = x * m_sv->scalefactor;
-
-	if (m_song->is_snap_on()) {
-		SnapList* slist = m_song->get_snap_list();
-		newFrame = slist->get_snap_value(newFrame);
-	}
-
-	m_song->set_work_at(newFrame);
-
-	m_sv->update_shuttle_factor();
-	return 1;
-}
-
-
-		
 SongView::SongView(SongWidget* songwidget, 
-		   	ClipsViewPort* viewPort, 
-      			TrackPanelViewPort* tpvp, 
-	 		TimeLineViewPort* tlvp, 
-    			Song* song)
+	ClipsViewPort* viewPort,
+	TrackPanelViewPort* tpvp,
+	TimeLineViewPort* tlvp,
+	Song* song)
 	: ViewItem(0, song)
 {
 	setZValue(1);
