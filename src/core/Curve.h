@@ -25,7 +25,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.h,v 1.17 2007/02/23 15:35:49 r_sijrier Exp $
 */
 
 #ifndef CURVE_H
@@ -51,6 +50,7 @@ public:
 
 	virtual QDomNode get_state(QDomDocument doc);
 	virtual int set_state( const QDomNode& node );
+	virtual int process(audio_sample_t* buffer, nframes_t pos, nframes_t nframes);
 	
 	Command* add_node(CurveNode* node, bool historable=true);
 	Command* remove_node(CurveNode* node, bool historable=true);

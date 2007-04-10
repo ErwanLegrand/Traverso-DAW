@@ -25,7 +25,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Curve.cpp,v 1.34 2007/04/02 21:05:43 r_sijrier Exp $
 */
 
 #include "Curve.h"
@@ -40,6 +39,7 @@ $Id: Curve.cpp,v 1.34 2007/04/02 21:05:43 r_sijrier Exp $
 #include <QThread>
 #include <AddRemove.h>
 #include <CommandGroup.h>
+#include "Mixer.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -53,7 +53,6 @@ Curve::Curve(ContextItem* parent, Song* song)
 	, m_song(song)
 {
 	PENTERCONS;
-	Q_ASSERT(m_song);
 	m_id = create_id();
 	init();
 }
@@ -62,7 +61,6 @@ Curve::Curve(ContextItem* parent, Song* song, const QDomNode node )
 	: ContextItem(parent)
 	, m_song(song)
 {
-	Q_ASSERT(m_song);
 	init();
 	set_state(node);
 }
@@ -76,6 +74,7 @@ Curve::~Curve()
 
 void Curve::init( )
 {
+	Q_ASSERT(m_song);
 	m_changed = true;
 	m_lookup_cache.left = -1;
 	m_lookup_cache.range.first = m_nodes.end();
@@ -117,17 +116,41 @@ int Curve::set_state( const QDomNode & node )
 	QStringList nodesList = e.attribute( "nodes", "" ).split(";");
 	m_defaultValue = e.attribute( "defaulvalue", "1.0" ).toDouble();
 	m_id = e.attribute("id", "0" ).toLongLong();
+	if (m_id == 0) {
+		m_id = create_id();
+	}
 	
 	for (int i=0; i<nodesList.size(); ++i) {
 		QStringList whenValueList = nodesList.at(i).split(",");
 		double when = whenValueList.at(0).toDouble();
 		double value = whenValueList.at(1).toDouble();
-		CurveNode* node = new CurveNode(this, when, value); 
+		CurveNode* node = new CurveNode(this, when, value);
 		Command::process_command( add_node(node, false) );
 	}
 	
 	return 1;
 }
+
+
+int Curve::process(audio_sample_t* buffer, nframes_t pos, nframes_t nframes)
+{
+	if ((pos + nframes) > get_range()) {
+		if (m_nodes.last()->value == 1.0) {
+			return 0;
+		}
+		Mixer::apply_gain_to_buffer(buffer, nframes, m_nodes.last()->value);
+		return 1;
+	}
+	
+	audio_sample_t mixdown[nframes];
+	
+	get_vector(pos, pos + nframes, mixdown, nframes);
+	
+	for (nframes_t n = 0; n < nframes; ++n) {
+		buffer[n] *= mixdown[n];
+	}
+}
+
 
 void Curve::solve ()
 {
@@ -570,7 +593,6 @@ void Curve::private_remove_node( CurveNode * node )
 	m_nodes.removeAll(node);
 	set_changed();
 }
-
 
 //eof
 
