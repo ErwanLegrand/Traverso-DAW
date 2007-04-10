@@ -383,36 +383,32 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 		return -1;	// Channel doesn't exist!!
 	}
 
-	bool showdebug = false;
-
-	if ( ((m_song->get_transport_frame() < (548864 + 3000))) && (channel == 0)) {
-// 		showdebug = true;
-	}
-
-	if (showdebug) {
+	
+// #define debug
+	
+#if defined (debug)
 		printf("%s\n", m_name.toAscii().data());
 		printf("trackStartFrame is %d\n", trackStartFrame);
 		printf("trackEndFrame is %d\n", trackEndFrame);
 		printf("song->transport is %d\n", m_song->get_transport_frame());
 		printf("diff trackEndFrame, song->transport is %d\n", (int)trackEndFrame - m_song->get_transport_frame());
 		printf("diff trackStartFrame, song->transport is %d\n", (int)trackStartFrame - m_song->get_transport_frame());
-	}
-
+		printf("clip trackEndFrame - song->transport_frame is %d\n", trackEndFrame - m_song->get_transport_frame());
+#endif
+	
 	nframes_t mix_pos;
 
-	if (showdebug) printf("clip trackEndFrame - song->transport_frame is %d\n", trackEndFrame - m_song->get_transport_frame());
 
 	if ( (trackStartFrame <= (m_song->get_transport_frame())) && (trackEndFrame > (m_song->get_transport_frame())) ) {
 		mix_pos = m_song->get_transport_frame() - trackStartFrame + sourceStartFrame;
-		if (showdebug) {
-			printf("mix_pos is %d\n", mix_pos);
-		}
+#if defined (debug)
+		printf("mix_pos is %d\n", mix_pos);
+#endif
 	} else {
-		if (showdebug) {
-			printf("Not processing this Clip\n\n");
-			printf("END %s\n\n", m_name.toAscii().data());
-		}
-
+#if defined (debug)
+		printf("Not processing this Clip\n\n");
+		printf("END %s\n\n", m_name.toAscii().data());
+#endif
 		return 0;
 	}
 
@@ -431,11 +427,11 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 		read_frames = m_readSource->file_read(channel, mixdown, mix_pos, nframes);
 	}
 
-	if (showdebug) {
-		printf("read frames is %d\n", read_frames);
-		printf("END %s\n\n", m_name.toAscii().data());
-	}
-
+#if defined (debug)
+	printf("read frames is %d\n", read_frames);
+	printf("END %s\n\n", m_name.toAscii().data());
+#endif
+	
 
 	if (read_frames == 0) {
 		return 0;
@@ -452,6 +448,8 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 	for (nframes_t n = 0; n < read_frames; ++n) {
 		mixdown[n] *= m_song->gainbuffer[n];
 	}
+	
+	
 
 
 	return 1;
