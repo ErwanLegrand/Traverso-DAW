@@ -57,6 +57,11 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 		case GainCommand:
 		{
 			ContextItem* item = qobject_cast<ContextItem*>(obj);
+			
+			if (item->metaObject()->className() == QString("TrackPanelGain")) {
+				item = item->get_context();
+			}
+			
 			if (!item) {
 				PERROR("TraversoCommands: Supplied QObject was not a ContextItem, "
 					"GainCommand only works with ContextItem objects!!");
