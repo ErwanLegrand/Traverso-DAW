@@ -650,6 +650,9 @@ void Interface::set_fade_in_shape( QAction * action )
 	foreach(QObject* obj, items) {
 		AudioClipView* acv = qobject_cast<AudioClipView*>(obj);
 		if (acv) {
+			if (! acv->get_clip()->get_fade_in() ) {
+				acv->get_clip()->set_fade_in(1);
+			}
 			acv->get_clip()->get_fade_in()->set_shape(action->data().toString());
 			break;
 		}
@@ -662,6 +665,9 @@ void Interface::set_fade_out_shape( QAction * action )
 	foreach(QObject* obj, items) {
 		AudioClipView* acv = qobject_cast<AudioClipView*>(obj);
 		if (acv) {
+			if (! acv->get_clip()->get_fade_out() ) {
+				acv->get_clip()->set_fade_out(1);
+			}
 			acv->get_clip()->get_fade_out()->set_shape(action->data().toString());
 			break;
 		}
