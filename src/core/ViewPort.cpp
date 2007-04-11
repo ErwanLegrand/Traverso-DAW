@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewPort.cpp,v 1.10 2007/04/11 15:56:35 r_sijrier Exp $
+$Id: ViewPort.cpp,v 1.11 2007/04/11 21:19:18 r_sijrier Exp $
 */
 
 #include <QMouseEvent>
@@ -27,6 +27,8 @@ $Id: ViewPort.cpp,v 1.10 2007/04/11 15:56:35 r_sijrier Exp $
 #include <QPainter>
 #include <QPixmap>
 #include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
+#include <QEvent>
 #include <QStyleOptionGraphicsItem>
 #include <Utils.h>
 
@@ -109,20 +111,44 @@ ViewPort::~ViewPort()
 }
 
 
-void ViewPort::mouseMoveEvent(QMouseEvent* e)
+void ViewPort::mouseMoveEvent(QMouseEvent* event)
 {
 	PENTER3;
 	// Qt generates mouse move events when the scrollbars move
 	// since a mouse move event generates a jog() call for the 
 	// active holding command, this has a number of nasty side effects :-(
 	// For now, we ignore such events....
-	if (e->pos() == m_oldMousePos) {
+	if (event->pos() == m_oldMousePos) {
 		return;
 	}
-	m_oldMousePos = e->pos();
-	QGraphicsView::mouseMoveEvent(e);
-	cpointer().set_point(e->x(), e->y());
-	e->accept();
+	
+	QGraphicsSceneMouseEvent mouseEvent(QEvent::GraphicsSceneMouseMove);
+	mouseEvent.setWidget(viewport());
+// 	mouseEvent.setButtonDownScenePos(d->mousePressButton, d->mousePressScenePoint);
+// 	mouseEvent.setButtonDownScreenPos(d->mousePressButton, d->mousePressScreenPoint);
+	mouseEvent.setScenePos(mapToScene(event->pos()));
+	mouseEvent.setScreenPos(event->globalPos());
+	mouseEvent.setLastScenePos(lastMouseMoveScenePoint);
+	mouseEvent.setLastScreenPos(mapFromScene(lastMouseMoveScenePoint));
+	mouseEvent.setButtons(event->buttons());
+	mouseEvent.setButton(event->button());
+	mouseEvent.setModifiers(event->modifiers());
+	lastMouseMoveScenePoint = mouseEvent.scenePos();
+	mouseEvent.setAccepted(false);
+	QApplication::sendEvent(scene(), &mouseEvent);
+	
+	m_oldMousePos = event->pos();
+	
+	if (!ie().is_holding()) {
+	QList<QGraphicsItem *> itemsUnderCursor = scene()->items(mapToScene(event->pos()));
+		if (itemsUnderCursor.size()) {
+			itemsUnderCursor.first()->setCursor(itemsUnderCursor.first()->cursor());
+		}
+	}
+
+// 	QGraphicsView::mouseMoveEvent(event);
+	cpointer().set_point(event->x(), event->y());
+	event->accept();
 }
 
 void ViewPort::tabletEvent(QTabletEvent * event)
@@ -187,14 +213,14 @@ void ViewPort::paintEvent( QPaintEvent* e )
 
 void ViewPort::reset_cursor( )
 {
-	QApplication::restoreOverrideCursor ();
+	viewport()->unsetCursor();
 	m_holdcursor->hide();
 	m_holdcursor->reset();
 }
 
 void ViewPort::set_holdcursor( const QString & cursorName )
 {
-	QApplication::setOverrideCursor(Qt::BlankCursor);
+	viewport()->setCursor(Qt::BlankCursor);
 	
 	m_holdcursor->setPos(cpointer().scene_pos());
 	m_holdcursor->set_type(cursorName);

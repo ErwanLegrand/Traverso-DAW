@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ViewPort.h,v 1.11 2007/04/10 19:37:57 r_sijrier Exp $
+    $Id: ViewPort.h,v 1.12 2007/04/11 21:19:18 r_sijrier Exp $
 */
 
 #ifndef VIEWPORT_H
@@ -51,6 +51,7 @@ public :
 	void set_holdcursor_pos(QPoint pos);
         
 	void reset_cursor();
+	void set_jogging(bool jog);
 
 
 protected:
@@ -69,6 +70,7 @@ private:
 
 	HoldCursor*	m_holdcursor;
 	QPoint		m_oldMousePos;
+	QPointF lastMouseMoveScenePoint;
 };
 
 
