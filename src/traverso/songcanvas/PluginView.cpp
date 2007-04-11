@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginView.cpp,v 1.11 2007/04/11 15:56:35 r_sijrier Exp $
 */
 
 #include "PluginView.h"
@@ -29,6 +28,7 @@ $Id: PluginView.cpp,v 1.11 2007/04/11 15:56:35 r_sijrier Exp $
 
 #include "Themer.h"
 #include <Plugin.h>
+#include <Utils.h>
 
 #if defined (LV2_SUPPORT)
 #include <LV2PluginPropertiesDialog.h>
