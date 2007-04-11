@@ -623,6 +623,19 @@ Command * AudioClipView::fade_range()
 	return 0;
 }
 
+Command * AudioClipView::reset_fade()
+{
+	Q_ASSERT(m_song);
+	int x = (int) ( cpointer().scene_pos() - scenePos()).x();
+
+	if (x < (m_boundingRect.width() / 2)) {
+		return m_clip->reset_fade_in();
+	} else {
+		return m_clip->reset_fade_out();
+	}
+
+	return 0;
+}
 
 void AudioClipView::position_changed()
 {
@@ -729,4 +742,3 @@ void AudioClipView::set_dragging(bool dragging)
 
 
 //eof
-

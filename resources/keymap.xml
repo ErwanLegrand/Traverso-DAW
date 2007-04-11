@@ -489,7 +489,12 @@
 				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" sortorder="8" pluginname="TraversoCommands" commandname="MoveClip"  arguments="move_to_end" />
 			</Objects>
 		</keyfact>
-		
+		<keyfact type="D_FKEY" key1="F" >
+			<Objects>
+				<Object objectname="AudioClipView" slotsignature="reset_fade" modes="All" sortorder="37" submenu="Fade In/Out" instantanious="0" />
+			</Objects>
+		</keyfact>
+
 		
 		
 		<keyfact type="D_FKEY2" key1="DEL" key2="T" >
