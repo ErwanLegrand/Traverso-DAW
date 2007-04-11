@@ -679,6 +679,10 @@ void AudioClip::finish_write_source( WriteSource * ws )
 				wasRecording );
 		
 		if (rs) {
+			// Reset the lenght, so the set_audio_sources() call will get the 
+			// lenght from the ReadSource, so we're 100% sure the correct lenght
+			// will be used!
+			m_length = 0;
 			set_audio_source(rs);
 			m_song->get_diskio()->register_read_source( m_readSource );
 			m_recordingStatus = NO_RECORDING;
