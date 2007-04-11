@@ -134,6 +134,10 @@ int Curve::set_state( const QDomNode & node )
 
 int Curve::process(audio_sample_t* buffer, nframes_t pos, nframes_t nframes)
 {
+	if (m_nodes.isEmpty()) {
+		return 0;
+	}
+	
 	if ((pos + nframes) > get_range()) {
 		if (m_nodes.last()->value == 1.0) {
 			return 0;
