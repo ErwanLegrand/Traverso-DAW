@@ -86,7 +86,6 @@ public :
 	int vscrollbar_value() const;
 
 	int		scalefactor;
-	ViewMode	viewmode;
 
 private:
         Song* 			m_song;
@@ -134,8 +133,6 @@ public slots:
         Command* goto_end();
 	Command* play_cursor_move();
 	Command* work_cursor_move();
-	Command* set_editing_mode();
-	Command* set_curve_mode();
 	Command* add_marker();
 	Command* playhead_to_workcursor();
 	
@@ -146,9 +143,6 @@ private slots:
 	void update_shuttle();
 	void work_cursor_updated();
 	void play_head_updated();
-	
-signals:
-	void viewModeChanged();
 };
 
 

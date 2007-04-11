@@ -63,6 +63,11 @@ public:
 	Song(Project* project, int numtracks);
 	Song(Project* project, const QDomNode node);
 	~Song();
+	
+	enum Mode {
+		EDIT,
+  		EFFECTS
+	};
 
 	// Get functions
 	int get_hzoom() const {	return m_hzoom;}
@@ -70,6 +75,7 @@ public:
 	int get_bitdepth();
 	int get_numtracks() const {return m_tracks.size();}
 	int get_track_index(qint64 id) const;
+	int get_mode() const {return m_mode;}
 	
 	nframes_t get_transport_frame() const;
 	nframes_t get_working_frame() const {return workingFrame;}
@@ -150,21 +156,22 @@ private:
 	volatile size_t		seeking;
 
 	
-	nframes_t 		firstVisibleFrame;
-	float 			m_gain;
-	QString 		artists;
-	QString 		title;
-	int 			m_hzoom;
-	bool 			rendering;
-	bool 			changed;
-	bool 			isSnapOn;
-	bool			resumeTransport;
-	bool 			stopTransport;
-	bool			realtimepath;
-	bool			scheduleForDeletion;
-	SnapList*		snaplist;
-	Snappable*		workSnap;
-
+	nframes_t 	firstVisibleFrame;
+	float 		m_gain;
+	QString 	artists;
+	QString 	title;
+	int		m_mode;
+	int 		m_hzoom;
+	bool 		rendering;
+	bool 		changed;
+	bool 		isSnapOn;
+	bool		resumeTransport;
+	bool 		stopTransport;
+	bool		realtimepath;
+	bool		scheduleForDeletion;
+	SnapList*	snaplist;
+	Snappable*	workSnap;
+	
 	void init();
 
 	int finish_audio_export();
@@ -191,6 +198,8 @@ public slots :
 	Command* toggle_solo();
 	Command* toggle_mute();
 	Command* toggle_arm();
+	Command* set_editing_mode();
+	Command* set_effects_mode();
 
 signals:
 	void trackRemoved(Track* );
@@ -207,6 +216,7 @@ signals:
 	void propertyChanged();
 	void setCursorAtEdge();
 	void masterGainChanged();
+	void modeChanged();
 
 private slots:
 	void private_add_track(Track* track);

@@ -35,6 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Song.h>
 #include <Track.h>
 #include <AudioClip.h>
+#include <Utils.h>
 
 #include <PluginSelectorDialog.h>
 
@@ -55,7 +56,7 @@ TrackView::TrackView(SongView* sv, Track * track)
 
 	m_track = track;
 	setFlags(ItemIsSelectable | ItemIsMovable);
-// 	setAcceptsHoverEvents(true);
+	setCursor(QCursor(find_pixmap(":/cursorFloatOverTrack")));
 
 	m_panel = new TrackPanelView(this);
 	calculate_bounding_rect();
@@ -204,6 +205,5 @@ Command* TrackView::select_bus()
 	return 0; 
 }
 
+
 //eof
-
-

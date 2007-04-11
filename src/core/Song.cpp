@@ -152,6 +152,7 @@ void Song::init()
 	seeking = 0;
 	// TODO seek to old position on project exit ?
 	transportFrame = 0;
+	m_mode = EDIT;
 	
 	m_pluginChain = new PluginChain(this, this);
 	m_timeline = new TimeLine(this);
@@ -914,6 +915,20 @@ void Song::move_clip(Track * from, Track * too, AudioClip * clip, nframes_t pos)
 	Command::process_command(too->add_clip(clip, false, true));
 
 	clip->set_track_start_frame(pos);
+}
+
+Command* Song::set_editing_mode( )
+{
+	m_mode = EDIT;
+	emit modeChanged();
+	return 0;
+}
+
+Command* Song::set_effects_mode( )
+{
+	m_mode = EFFECTS;
+	emit modeChanged();
+	return 0;
 }
 
 // eof

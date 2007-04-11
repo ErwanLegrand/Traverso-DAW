@@ -67,7 +67,6 @@ MessageWidget::MessageWidget( QWidget * parent )
 {
 	QHBoxLayout* lay = new QHBoxLayout;
 	lay->setMargin(1);
-// 	lay->addStretch(5);
 	
 	m_button = new QPushButton;
 	m_button->setIcon(style()->standardIcon(QStyle::SP_MessageBoxInformation).pixmap(14, 14));
@@ -76,8 +75,10 @@ MessageWidget::MessageWidget( QWidget * parent )
 	
 	MessageWidgetPrivate* message = new MessageWidgetPrivate(this);
 		
+	lay->addSpacing(6);
 	lay->addWidget(message);
 	lay->addWidget(m_button);
+	lay->addSpacing(6);
 	
 	setLayout(lay);
 

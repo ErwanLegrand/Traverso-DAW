@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginView.cpp,v 1.10 2007/02/23 13:52:38 r_sijrier Exp $
+$Id: PluginView.cpp,v 1.11 2007/04/11 15:56:35 r_sijrier Exp $
 */
 
 #include "PluginView.h"
@@ -58,6 +58,7 @@ PluginView::PluginView(TrackView* parent, Plugin* plugin, int index)
 	m_boundingRect = QRectF(0, 0, 100, 25);
 	
 	setAcceptsHoverEvents(true);
+	setCursor(QCursor(find_pixmap(":/cursorFloatOverPlugin")));
 }
 
 PluginView::~PluginView( )

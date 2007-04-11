@@ -82,7 +82,7 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	connect(m_clip, SIGNAL(fadeRemoved(FadeCurve*)), this, SLOT(remove_fadeview( FadeCurve*)));
 	connect(m_clip, SIGNAL(positionChanged(Snappable*)), this, SLOT(position_changed()));
 	
-	connect(m_sv, SIGNAL(viewModeChanged()), this, SLOT(repaint()));
+	connect(m_song, SIGNAL(modeChanged()), this, SLOT(repaint()));
 	
 	if (m_clip->recording_state() == AudioClip::RECORDING) {
 		start_recording();
@@ -91,6 +91,7 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	
 // 	setFlags(ItemIsSelectable | ItemIsMovable);
 	setAcceptsHoverEvents(true);
+	setCursor(QCursor(find_pixmap(":/cursorFloatOverClip")));
 }
 
 AudioClipView::~ AudioClipView()
@@ -197,7 +198,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 		painter->drawLine(1, m_infoAreaHeight, 1, m_height);*/
 	}
 	
-	if (!m_sv->viewmode == CurveMode) {
+	if (m_song->get_mode() == Song::EFFECTS) {
 // 		curveView->paint(painter, option, widget);
 	}
 	
@@ -396,7 +397,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		// Macroview, paint waveform with painterpath
 		} else {
 			
-			if (m_sv->viewmode == EditMode) {
+			if (m_song->get_mode() == Song::EDIT) {
 				p->setPen(themer()->get_color("AudioClip:wavemacroview:outline"));
 				if (m_fillwave) {
 					p->setBrush(themer()->get_color("AudioClip:wavemacroview:brush"));
@@ -654,8 +655,10 @@ void AudioClipView::start_peak_data_loading()
 
 void AudioClipView::hoverEnterEvent(QGraphicsSceneHoverEvent * event)
 {
-	Q_UNUSED(event);
-
+	if (ie().is_holding()) {
+		return;
+	}
+	
 	update(m_boundingRect);
 }
 

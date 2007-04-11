@@ -156,6 +156,7 @@ void MoveClip::init_data(bool isCopy)
 	d->origTrackEndFrame = m_clip->get_track_end_frame();
 	d->resync = config().get_property("AudioClip", "SyncDuringDrag", false).toBool();
 	d->view->set_dragging(true);
+	d->bypassjog = false;
 }
 
 
@@ -194,14 +195,13 @@ int MoveClip::finish_hold()
 		m_clip->set_left_edge(m_oldOppositeEdge);
 	}
 
-	d->view->set_dragging(false);
-	
 	return 1;
 }
 
 
 int MoveClip::prepare_actions()
 {
+	d->view->set_dragging(false);
 	delete d;
 	
 	return 1;
@@ -270,7 +270,7 @@ int MoveClip::undo_action()
 int MoveClip::jog()
 {
 	
-	if (! m_clip) {
+	if (! m_clip || d->bypassjog) {
 		return 0;
 	}
 	
@@ -390,6 +390,7 @@ int MoveClip::jog()
 void MoveClip::next_snap_pos(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
+	d->bypassjog = true;
 	d->snappos = m_song->get_snap_list()->next_snap_pos(d->snappos);
 	m_posDiff = d->snappos - m_originalTrackFirstFrame;
 	m_clip->set_track_start_frame(d->snappos);
@@ -398,6 +399,7 @@ void MoveClip::next_snap_pos(bool autorepeat)
 void MoveClip::prev_snap_pos(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
+	d->bypassjog = true;
 	d->snappos = m_song->get_snap_list()->prev_snap_pos(d->snappos);
 	m_posDiff = d->snappos - m_originalTrackFirstFrame;
 	m_clip->set_track_start_frame(d->snappos);

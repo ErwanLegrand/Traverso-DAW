@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Zoom.cpp,v 1.9 2007/04/03 21:25:25 benjie Exp $
+    $Id: Zoom.cpp,v 1.10 2007/04/11 15:56:34 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -29,6 +29,7 @@
 #include <QPoint>
 #include <ViewPort.h>
 #include <ClipsViewPort.h>
+#include <QApplication>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -69,8 +70,7 @@ void Zoom::set_cursor_shape( int useX, int useY )
 	Q_UNUSED(useX);
 	Q_UNUSED(useY);
 	
-	ViewPort* view = cpointer().get_viewport();
-	view->viewport()->setCursor(QCursor(find_pixmap(":/cursorZoom")));
+	QApplication::setOverrideCursor(QCursor(find_pixmap(":/cursorZoom")));
 	mousePos = QCursor::pos();	
 }
 

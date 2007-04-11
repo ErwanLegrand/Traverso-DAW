@@ -157,8 +157,6 @@ public slots :
 	
 private slots:
 	void delete_songwidget(Song*);
-	void undo();
-	void redo();
 };
 
 

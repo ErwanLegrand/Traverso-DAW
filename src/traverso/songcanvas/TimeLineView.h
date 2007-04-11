@@ -56,7 +56,6 @@ private:
 	QList<MarkerView* > m_markerViews;
 	TimeLine* 	m_timeline;
 	MarkerView* 	m_blinkingMarker;
-	QTimer		m_blinkTimer;
 	QColor		m_blinkColor;
 	int		m_samplerate;
 

@@ -50,10 +50,8 @@ public:
 protected:
 	Song*		m_song;
 	Project*	m_project;
-	Qt::Orientation	m_orientation;
 	
 	virtual QSize sizeHint() const {return QSize(size());}
-	virtual void set_orientation(Qt::Orientation orientation);
 
 private:
 	friend class InfoToolBar;
@@ -73,7 +71,6 @@ public:
         SystemResources(QWidget* parent = 0);
 
 protected:
-	void set_orientation(Qt::Orientation orientation);
 	QSize sizeHint () const;
 	
 private:
@@ -100,15 +97,11 @@ public:
         ~DriverInfo() {};
 
 protected:
-	void set_orientation(Qt::Orientation orientation);
 	QSize sizeHint () const;
 
 private:
         QTimer		updateTimer;
 	QPushButton*	m_driver;
-	QLabel*		m_rateBitdepth;
-	QLabel* 	m_latency;
-	QLabel*		m_xruns;
         int		xrunCount;
 	QuickDriverConfigWidget* driverConfigWidget;
 	
@@ -152,9 +145,6 @@ class SongSelector : public InfoWidget
 public:
 	SongSelector(QWidget* parent=0);
 
-protected:
-	QSize sizeHint() const;	
-
 private:
 	QComboBox* m_box;
 
@@ -167,7 +157,6 @@ private slots:
 	void update_songs();
 	void change_index_to(Song* song);
 	void index_changed(int index);
-		
 };
 
 
@@ -206,7 +195,6 @@ public:
 	QAction *get_follow_action() {return m_followAct;};
 	
 protected:
-	void set_orientation(Qt::Orientation orientation);
 	QSize sizeHint() const;	
 	
 protected slots:
@@ -217,11 +205,13 @@ private slots:
 	void snap_state_changed(bool state);
 	void update_follow_state();
 	void follow_state_changed(bool state);
+	void mode_index_changed(int index);
 	
 private:
 	PlayHeadInfo* 	m_playhead;
 	SongSelector* 	m_selector;
 	QToolButton*	m_snap;
+	QComboBox*	m_mode;
 	QAction*	m_snapAct;
 	QToolButton*	m_follow;
 	QAction*	m_followAct;
@@ -231,27 +221,18 @@ private:
 
 class InfoToolBar : public QToolBar
 {
-	Q_OBJECT
-
 public:
 	InfoToolBar(QWidget* parent);
 	QAction *get_snap_action() {return m_songinfo->get_snap_action();};
 	QAction *get_follow_action() {return m_songinfo->get_follow_action();};
 
 private:
-	QList<InfoWidget* > m_widgets;
-	DriverInfo* driverInfo;
 	SongInfo*	m_songinfo;
-	
-private slots:
-	void orientation_changed(Qt::Orientation orientation);
 };
 
 
 class SysInfoToolBar : public QToolBar
 {
-	Q_OBJECT
-
 public:
 	SysInfoToolBar(QWidget* parent);
 
@@ -259,9 +240,7 @@ private:
 	SystemResources* resourcesInfo;
 	HDDSpaceInfo* hddInfo;
 	MessageWidget* message;
-	
-private slots:
-	void orientation_changed(Qt::Orientation orientation);
+	DriverInfo* driverInfo;
 };
 
 
@@ -301,8 +280,4 @@ private:
 #endif
 
 //eof
-
-
-
-
 

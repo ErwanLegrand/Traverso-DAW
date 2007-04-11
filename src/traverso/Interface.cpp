@@ -102,7 +102,7 @@ Interface::Interface()
 {
 	PENTERCONS;
 	setWindowTitle("Traverso");
-	setMinimumSize(150, 100);
+	setMinimumSize(400, 300);
 	setWindowIcon(QPixmap (":/windowicon") );
 	//         setMaximumWidth(1024);
 	//         setMaximumHeight(768);
@@ -429,17 +429,6 @@ void Interface::create_menus( )
 	
 	action = menu->addAction(tr("&About Traverso"));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(about_traverso()));
-	
-	
-	action = menuBar()->addAction(tr("Undo"));
-	action->setIcon(QIcon(find_pixmap(":/undo-16")));
-	action->setShortcuts(QKeySequence::Undo);
-	connect(action, SIGNAL(triggered( bool )), this, SLOT(undo()));
-	
-	action = menuBar()->addAction(tr("Redo"));
-	action->setIcon(QIcon(find_pixmap(":/redo-16")));
-	action->setShortcuts(QKeySequence::Redo);
-	connect(action, SIGNAL(triggered( bool )), this, SLOT(redo()));
 }
 
 void Interface::process_context_menu_action( QAction * action )
@@ -795,16 +784,6 @@ Command * Interface::show_marker_dialog()
 QSize Interface::sizeHint() const
 {
 	return QSize(800, 600);
-}
-
-void Interface::undo()
-{
-	pm().get_undogroup()->undo();
-}
-
-void Interface::redo()
-{
-	pm().get_undogroup()->redo();
 }
 
 Command* Interface::show_newsong_dialog()

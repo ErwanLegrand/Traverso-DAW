@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.cpp,v 1.25 2007/04/10 17:11:48 r_sijrier Exp $
+$Id: CurveView.cpp,v 1.26 2007/04/11 15:56:35 r_sijrier Exp $
 */
 
 #include "CurveView.h"
@@ -29,6 +29,8 @@ $Id: CurveView.cpp,v 1.25 2007/04/10 17:11:48 r_sijrier Exp $
 #include <Curve.h>
 #include <CurveNode.h>
 #include <ContextPointer.h>
+#include <Song.h>
+
 #include <AddRemove.h>
 
 #include <Debugger.h>
@@ -179,7 +181,7 @@ CurveView::CurveView(SongView* sv, ViewItem* parentViewItem, Curve* curve)
 	connect(m_curve, SIGNAL(nodeAdded(CurveNode*)), this, SLOT(add_curvenode_view(CurveNode*)));
 	connect(m_curve, SIGNAL(nodeRemoved(CurveNode*)), this, SLOT(remove_curvenode_view(CurveNode*)));
 	connect(m_curve, SIGNAL(nodePositionChanged()), this, SLOT(node_moved()));
-	connect(m_sv, SIGNAL(viewModeChanged()), this, SLOT(set_view_mode()));
+	connect(m_sv->get_song(), SIGNAL(modeChanged()), this, SLOT(set_view_mode()));
 	
 	setAcceptsHoverEvents(true);
 	
@@ -207,7 +209,7 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	
 	QPen pen;
 	
-	if (m_sv->viewmode == CurveMode) {
+	if (m_sv->get_song()->get_mode() == Song::EFFECTS) {
 		pen.setColor(themer()->get_color("Curve:active"));
 	} else {
 		pen.setColor(themer()->get_color("Curve:inactive"));
@@ -368,6 +370,10 @@ void CurveView::hoverMoveEvent ( QGraphicsSceneHoverEvent * event )
 
 void CurveView::update_softselected_node( QPoint pos )
 {
+	if (ie().is_holding()) {
+		return;
+	}
+	
 	CurveNodeView* prevNode = m_blinkingNode;
 	m_blinkingNode = m_nodeViews.first();
 	
@@ -505,7 +511,7 @@ void CurveView::node_moved( )
 
 void CurveView::set_view_mode()
 {
-	if (m_sv->viewmode == CurveMode) {
+	if (m_sv->get_song()->get_mode() == Song::EFFECTS) {
 		show();
 	} else {
 		hide();

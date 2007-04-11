@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeView.cpp,v 1.12 2007/04/02 21:05:43 r_sijrier Exp $
+$Id: FadeView.cpp,v 1.13 2007/04/11 15:56:35 r_sijrier Exp $
 */
 
 #include "FadeView.h"
@@ -33,7 +33,8 @@ $Id: FadeView.cpp,v 1.12 2007/04/02 21:05:43 r_sijrier Exp $
 #include <InputEngine.h>
 #include <AddRemove.h>
 
-#include "Song.h"
+#include <Song.h>
+#include <Utils.h>
 
 #include <Debugger.h>
 
@@ -61,6 +62,7 @@ FadeView::FadeView(SongView* sv, AudioClipView* parent, FadeCurve * fadeCurve )
 	
 	load_theme_data();
 	setAcceptsHoverEvents(true);
+	setCursor(QCursor(find_pixmap(":/cursorFloatOverFade")));
 	
 	connect(m_fadeCurve, SIGNAL(stateChanged()), this, SLOT(state_changed()));
 	connect(m_fadeCurve, SIGNAL(rangeChanged()), this, SLOT(state_changed()));

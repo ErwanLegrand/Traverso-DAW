@@ -88,7 +88,7 @@ SongView::SongView(SongWidget* songwidget,
 	m_vScrollBar = songwidget->m_vScrollBar;
 	m_hScrollBar = songwidget->m_hScrollBar;
 	
-	set_editing_mode();
+	m_song->set_editing_mode();
 	
 	m_clipsViewPort->scene()->addItem(this);
 	
@@ -493,20 +493,6 @@ void SongView::set_snap_range(int start)
 	m_song->get_snap_list()->set_range(start * scalefactor, 
 					(start + m_clipsViewPort->viewport()->width()) * scalefactor,
 					scalefactor);
-}
-
-Command * SongView::set_editing_mode( )
-{
-	viewmode = EditMode;
-	emit viewModeChanged();
-	return 0;
-}
-
-Command * SongView::set_curve_mode( )
-{
-	viewmode = CurveMode;
-	emit viewModeChanged();
-	return 0;
 }
 
 Command* SongView::scroll_up( )

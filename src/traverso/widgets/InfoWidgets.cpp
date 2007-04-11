@@ -43,9 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-static const int INFOBAR_HEIGH_VER_ORIENTATION = 30;
-static const int INFOBAR_HEIGH_HOR_ORIENTATION = 28;
-static const int SYS_INFOBAR_HEIGHT_HOR_ORIENTATION = 24;
+static const int INFOBAR_HEIGH_HOR_ORIENTATION = 25;
 
 
 SystemResources::SystemResources(QWidget * parent)
@@ -65,11 +63,13 @@ SystemResources::SystemResources(QWidget * parent)
 	m_writeBufferStatus->add_range_color(0, 40, QColor(255, 0, 0));
 	m_writeBufferStatus->add_range_color(40, 60, QColor(255, 255, 0));
 	m_writeBufferStatus->add_range_color(60, 100, QColor(227, 254, 227));
+	m_writeBufferStatus->setMinimumWidth(60);
 	
 	m_readBufferStatus->set_range(0, 100);
 	m_readBufferStatus->add_range_color(0, 40, QColor(255, 0, 0));
 	m_readBufferStatus->add_range_color(40, 60, QColor(255, 255, 0));
 	m_readBufferStatus->add_range_color(60, 100, QColor(227, 254, 227));
+	m_readBufferStatus->setMinimumWidth(60);
 	
 	m_cpuUsage->set_range(0, 100);
 	m_cpuUsage->set_int_rounding(false);
@@ -81,6 +81,17 @@ SystemResources::SystemResources(QWidget * parent)
 	m_readBufferStatus->set_text("R");
 	m_writeBufferStatus->set_text("W");
 	m_cpuUsage->set_text("CPU");
+	
+	QHBoxLayout* lay = new QHBoxLayout(this);
+	lay->addSpacing(6);
+	lay->addWidget(m_icon);
+	lay->addWidget(m_readBufferStatus);
+	lay->addWidget(m_writeBufferStatus);
+	lay->addWidget(m_cpuUsage);
+	lay->setMargin(0);
+	lay->addSpacing(6);
+	setLayout(lay);
+	setFrameStyle(QFrame::NoFrame);
 	
 	connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update_status()));
 	
@@ -110,46 +121,10 @@ void SystemResources::update_status( )
 }
 
 
-void SystemResources::set_orientation(Qt::Orientation orientation)
-{
-	QLayout* lay = layout();
-	
-	if (lay) delete lay;
-	
-	InfoWidget::set_orientation(orientation);
-	
-	if (m_orientation == Qt::Horizontal) {
-		QHBoxLayout* lay = new QHBoxLayout(this);
-		lay->addSpacing(6);
-		lay->addWidget(m_icon);
-		lay->addWidget(m_readBufferStatus);
-		lay->addWidget(m_writeBufferStatus);
-		lay->addWidget(m_cpuUsage);
-		lay->setMargin(0);
-		lay->addSpacing(6);
-		setLayout(lay);
-// 		setFrameStyle(QFrame::StyledPanel);
-		setFrameStyle(QFrame::NoFrame);
-	} else {
-		QVBoxLayout* lay = new QVBoxLayout(this);
-		lay->addWidget(m_readBufferStatus);
-		lay->addWidget(m_writeBufferStatus);
-		lay->addWidget(m_cpuUsage);
-		lay->setMargin(0);
-		setFrameStyle(QFrame::StyledPanel);
-		setLayout(lay);
-	}
-}
-
 QSize SystemResources::sizeHint() const
 {
-	if (m_orientation == Qt::Horizontal) {
-		return QSize(250, SYS_INFOBAR_HEIGHT_HOR_ORIENTATION);
-	}
-	
-	return QSize(100, SYS_INFOBAR_HEIGHT_HOR_ORIENTATION);
+	return QSize(250, INFOBAR_HEIGH_HOR_ORIENTATION);
 }
-
 
 
 
@@ -161,11 +136,16 @@ DriverInfo::DriverInfo( QWidget * parent )
 	m_driver->setToolTip(tr("Click to configure audiodevice"));
 	m_driver->setFlat(true);
 	m_driver->setFocusPolicy(Qt::NoFocus);
-	m_latency = new QLabel(this);
-	m_xruns = new QLabel(this);
-	m_rateBitdepth = new QLabel(this);
 	
 	driverConfigWidget = 0;
+	
+	QHBoxLayout* lay = new QHBoxLayout(this);
+	lay->addWidget(m_driver);
+	lay->setMargin(0);
+	setLayout(lay);
+	
+// 	setFrameStyle(QFrame::StyledPanel);
+	setFrameStyle(QFrame::NoFrame);
 	
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(update_driver_info()));
 	connect(&audiodevice(), SIGNAL(bufferUnderRun()), this, SLOT(update_xrun_info()));
@@ -182,73 +162,33 @@ void DriverInfo::update_driver_info( )
 
 void DriverInfo::draw_information( )
 {
+	QString text;
 	QString latency = QString::number( ( (float)  (audiodevice().get_buffer_size() * 2) / audiodevice().get_sample_rate() ) * 1000, 'f', 2 ).append(" ms ");
 	
-	QByteArray xruns = "";
+	QByteArray xruns;
 	if (xrunCount) {
 		xruns = QByteArray::number(xrunCount).prepend(" xruns ");
 	}
 	
-	m_driver->setText(audiodevice().get_driver_type());
-	m_latency->setText(" @ " + latency);
-	m_rateBitdepth->setText(QString::number(audiodevice().get_sample_rate()) + 
+	text = audiodevice().get_driver_type() + "   " +
+			QString::number(audiodevice().get_sample_rate()) + 
 			"/" + 
-			QString::number(audiodevice().get_bit_depth()));
-	m_xruns->setText(xruns);
+			QString::number(audiodevice().get_bit_depth()) +
+			" @ " + latency +
+			xruns;
+	
+	m_driver->setText(text);
 }
 
 void DriverInfo::update_xrun_info( )
 {
-	set_orientation(Qt::Horizontal);
 	xrunCount++;
 	draw_information();
 }
 
-void DriverInfo::set_orientation(Qt::Orientation orientation)
-{
-	QLayout* lay = layout();
-	
-	if (lay) delete lay;
-	
-	InfoWidget::set_orientation(orientation);
-	
-	if (m_orientation == Qt::Horizontal) {
-		QHBoxLayout* lay = new QHBoxLayout(this);
-		
-		lay->addWidget(m_driver);
-		lay->addWidget(m_rateBitdepth);
-		lay->addWidget(m_latency);
-		if (xrunCount > 0) {
-			lay->addWidget(m_xruns);
-		}
-		
-		lay->setMargin(0);
-		setLayout(lay);
-// 		setFrameStyle(QFrame::StyledPanel);
-		setFrameStyle(QFrame::NoFrame);
-	} else {
-		QVBoxLayout* lay = new QVBoxLayout(this);
-		
-		lay->addWidget(m_driver);
-		lay->addWidget(m_rateBitdepth);
-		lay->addWidget(m_latency);
-		if (xrunCount > 0) {
-			lay->addWidget(m_xruns);
-		}
-		
-		lay->setMargin(0);
-		setFrameStyle(QFrame::StyledPanel);
-		setLayout(lay);
-	}
-}
-
 QSize DriverInfo::sizeHint() const
 {
-	if (m_orientation == Qt::Horizontal) {
-		return QSize(250, INFOBAR_HEIGH_HOR_ORIENTATION);
-	}
-	
-	return QSize(90, INFOBAR_HEIGH_VER_ORIENTATION);
+	return QSize(150, INFOBAR_HEIGH_HOR_ORIENTATION);
 }
 
 void DriverInfo::show_driver_config_widget( )
@@ -357,10 +297,7 @@ void HDDSpaceInfo::update_status( )
 
 QSize HDDSpaceInfo::sizeHint() const
 {
-	if (m_orientation == Qt::Horizontal)
-		return QSize(110, SYS_INFOBAR_HEIGHT_HOR_ORIENTATION);
-	
-	return QSize(100, SYS_INFOBAR_HEIGHT_HOR_ORIENTATION);
+	return QSize(70, INFOBAR_HEIGH_HOR_ORIENTATION);
 }
 
 
@@ -372,6 +309,7 @@ SongSelector::SongSelector(QWidget* parent)
 	setFrameStyle(QFrame::NoFrame);
 	
 	m_box = new QComboBox;
+	m_box->setMinimumWidth(140);
 	
 	QHBoxLayout* lay = new QHBoxLayout;
 	lay->setMargin(0);
@@ -403,8 +341,9 @@ void SongSelector::update_songs()
 {
 	m_box->clear();
 	foreach(Song* song, m_project->get_songs()) {
-		m_box->addItem(QString::number(m_project->get_song_index(song->get_id())) +
-			" " + song->get_title(),
+		m_box->addItem("Song " +
+			QString::number(m_project->get_song_index(song->get_id())) +
+			": " + song->get_title(),
 		       song->get_id());
 	}
 }
@@ -419,14 +358,6 @@ void SongSelector::song_removed(Song * song)
 {
 	disconnect(song, SIGNAL(propertyChanged()), this, SLOT(update_songs()));
 	update_songs();
-}
-
-QSize SongSelector::sizeHint() const
-{
-	if (m_orientation == Qt::Horizontal)
-		return QSize(140, INFOBAR_HEIGH_HOR_ORIENTATION);
-	
-	return QSize(100, INFOBAR_HEIGH_VER_ORIENTATION);
 }
 
 void SongSelector::index_changed(int index)
@@ -455,9 +386,6 @@ PlayHeadInfo::PlayHeadInfo(QWidget* parent)
 	: InfoWidget(parent)
 {
 	setAutoFillBackground(false);
-	
-	setToolTip(tr("Playhead position<br /><br />Click to change Playhead behavior"));
-	
 	connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update()));
 }
 
@@ -510,15 +438,15 @@ void PlayHeadInfo::paintEvent(QPaintEvent* )
 	painter.setFont(QFont("Bitstream Vera Sans", 13));
 	painter.setPen(fontcolor);
 	
-/*	painter.setBrush(background);
-	painter.setRenderHints(QPainter::Antialiasing);
-	painter.drawRoundRect(0, 0, width(), height(), 20);*/
-	
 	painter.drawText(QRect(0, 4, width() - 6, height() - 6), Qt::AlignCenter, currentsmpte);
 }
 
 void PlayHeadInfo::start_smpte_update_timer( )
 {
+/*	painter.setBrush(background);
+	painter.setRenderHints(QPainter::Antialiasing);
+	painter.drawRoundRect(0, 0, width(), height(), 20);*/
+	
 	m_updateTimer.start(150);
 }
 
@@ -530,13 +458,8 @@ void PlayHeadInfo::stop_smpte_update_timer( )
 
 QSize PlayHeadInfo::sizeHint() const
 {
-	if (m_orientation == Qt::Horizontal)
-		return QSize(140, INFOBAR_HEIGH_HOR_ORIENTATION);
-	
-	return QSize(100, INFOBAR_HEIGH_VER_ORIENTATION);
+	return QSize(140, INFOBAR_HEIGH_HOR_ORIENTATION);
 }
-
-
 
 
 
@@ -545,43 +468,13 @@ InfoToolBar::InfoToolBar(QWidget * parent)
 {
 	setObjectName(tr("Main Toolbar"));
 	
-	driverInfo = new DriverInfo(this);
-	m_widgets.append(driverInfo);
+	setMovable(false);
 	
 	m_songinfo = new SongInfo(this);
-	m_widgets.append(m_songinfo);
 	
-
-	connect(this, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(orientation_changed(Qt::Orientation)));
-	
-	orientation_changed(orientation());
+	QAction* action = addWidget(m_songinfo);
+	action->setVisible(true);
 }
-
-
-void InfoToolBar::orientation_changed(Qt::Orientation orientation)
-{
-	clear();
-	
-	QAction* action;
-	if (orientation == Qt::Horizontal) {
-		action = addWidget(driverInfo);
-		action->setVisible(true);
-		addSeparator();
-		action = addWidget(m_songinfo);
-		action->setVisible(true);
-		addSeparator();
-	} else {
-		action = addWidget(m_songinfo);
-		action->setVisible(true);
-		action = addWidget(driverInfo);
-		action->setVisible(true);
-	}
-	
-	foreach(InfoWidget* widget, m_widgets) {
-		widget->set_orientation(orientation);
-	}
-}
-
 
 
 InfoWidget::InfoWidget(QWidget* parent)
@@ -617,10 +510,6 @@ void InfoWidget::set_song(Song* song)
 	m_song = song;
 }
 
-void InfoWidget::set_orientation(Qt::Orientation orientation)
-{
-	m_orientation = orientation;
-}
 
 SongInfo::SongInfo(QWidget * parent)
 	: InfoWidget(parent)
@@ -642,52 +531,67 @@ SongInfo::SongInfo(QWidget * parent)
 	m_follow->setDefaultAction(m_followAct);
 	m_follow->setFocusPolicy(Qt::NoFocus);
 	
+	m_mode = new QComboBox(this);
+	m_mode->addItem("Mode: Edit");
+	m_mode->addItem("Mode: Effects");
+	m_mode->setFocusPolicy(Qt::NoFocus);
+	
 	m_record = new QPushButton(tr("Record"));
 	m_record->setFocusPolicy(Qt::NoFocus);
 	m_record->setEnabled(false);
 	m_record->setIcon(find_pixmap(":/redled-16"));
-	m_record->setMaximumHeight(22);
+	
+	
+	QToolButton* undobutton = new QToolButton(this);
+	QAction* action = new QAction(tr("Undo"), this);
+	action->setIcon(QIcon(find_pixmap(":/undo-16")));
+	action->setShortcuts(QKeySequence::Undo);
+	undobutton->setDefaultAction(action);
+	undobutton->setFocusPolicy(Qt::NoFocus);
+	undobutton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+	undobutton->setText(tr("Undo"));
+	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(undo()));
+	
+	QToolButton* redobutton = new QToolButton(this);
+	action = new QAction(tr("Redo"), this);
+	action->setIcon(QIcon(find_pixmap(":/redo-16")));
+	action->setShortcuts(QKeySequence::Redo);
+	redobutton->setDefaultAction(action);
+	redobutton->setFocusPolicy(Qt::NoFocus);
+	redobutton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+	redobutton->setText(tr("Redo"));
+	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(redo()));
+
+	/*	action = addAction(tr("Redo"));
+	action->setIcon(QIcon(find_pixmap(":/redo-16")));
+	action->setShortcuts(QKeySequence::Redo);
+	connect(action, SIGNAL(triggered( bool )), this, SLOT(redo()));*/
+	
+	QHBoxLayout* lay = new QHBoxLayout(this);
+		
+	lay->addWidget(m_mode);
+	lay->addWidget(m_snap);
+	lay->addWidget(m_follow);
+	lay->addWidget(m_record);
+	lay->addWidget(m_playhead);
+	lay->addWidget(m_selector);
+	lay->addStretch(5);
+// 	lay->addSpacing(12);
+	lay->addWidget(undobutton);
+	lay->addWidget(redobutton);
+		
+	setLayout(lay);
+	lay->setMargin(0);
+		
+	setFrameStyle(QFrame::NoFrame);
+	setMaximumHeight(INFOBAR_HEIGH_HOR_ORIENTATION);
 	
 	connect(m_snapAct, SIGNAL(triggered(bool)), this, SLOT(snap_state_changed(bool)));
 	connect(m_followAct, SIGNAL(triggered(bool)), this, SLOT(follow_state_changed(bool)));
 	connect(&config(), SIGNAL(configChanged()), this, SLOT(update_follow_state()));
+	connect(m_mode, SIGNAL(currentIndexChanged(int)), this, SLOT(mode_index_changed(int)));
+	
 	update_follow_state();
-}
-
-void SongInfo::set_orientation(Qt::Orientation orientation)
-{
-	QLayout* lay = layout();
-	
-	if (lay) delete lay;
-	
-	InfoWidget::set_orientation(orientation);
-	
-	if (m_orientation == Qt::Horizontal) {
-		QHBoxLayout* lay = new QHBoxLayout(this);
-		
-		lay->addWidget(m_playhead);
-		lay->addWidget(m_record);
-		lay->addWidget(m_snap);
-		lay->addWidget(m_follow);
-		lay->addWidget(m_selector);
-		
-		setLayout(lay);
-		lay->setMargin(0);
-		
-		setFrameStyle(QFrame::NoFrame);
-	} else {
-		QVBoxLayout* lay = new QVBoxLayout(this);
-		
-		lay->addWidget(m_playhead);
-		lay->addWidget(m_record);
-		lay->addWidget(m_snap);
-		lay->addWidget(m_follow);
-		lay->addWidget(m_selector);
-		
-		lay->setMargin(0);
-		setFrameStyle(QFrame::StyledPanel);
-		setLayout(lay);
-	}
 }
 
 void SongInfo::set_song(Song* song)
@@ -726,15 +630,21 @@ void SongInfo::follow_state_changed(bool state)
 	config().save();
 }
 
+void SongInfo::mode_index_changed(int index)
+{
+	if (index == 0) {
+		m_song->set_editing_mode();
+	} else {
+		m_song->set_effects_mode();
+	}
+}
+
 QSize SongInfo::sizeHint() const
 {
-	if (m_orientation == Qt::Horizontal) {
-		return QSize(500, INFOBAR_HEIGH_HOR_ORIENTATION);
-	}
-	
-	return QSize(90, INFOBAR_HEIGH_VER_ORIENTATION * 5 - 6);
-	
+	return QSize(400, INFOBAR_HEIGH_HOR_ORIENTATION);
 }
+
+
 
 SysInfoToolBar::SysInfoToolBar(QWidget * parent)
 	: QToolBar(parent)
@@ -743,31 +653,26 @@ SysInfoToolBar::SysInfoToolBar(QWidget * parent)
 	message = new MessageWidget(this);
 	resourcesInfo = new SystemResources(this);
 	hddInfo = new HDDSpaceInfo(this);
+	driverInfo = new DriverInfo(this);
 	
 	setMovable(false);
 	
-	connect(this, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(orientation_changed(Qt::Orientation)));
-	
-	orientation_changed(orientation());
-}
-
-void SysInfoToolBar::orientation_changed(Qt::Orientation orientation)
-{
-	clear();
-	
 	QAction* action;
 	
+	action = addWidget(driverInfo);
+	action->setVisible(true);
+	addSeparator();
 	action = addWidget(message);
 	action->setVisible(true);
 	addSeparator();
 	action = addWidget(resourcesInfo);
-	resourcesInfo->set_orientation(orientation);
 	action->setVisible(true);
 	addSeparator();
 	action = addWidget(hddInfo);
 	action->setVisible(true);
+	
+	setMaximumHeight(INFOBAR_HEIGH_HOR_ORIENTATION);
 }
-
 
 SystemValueBar::SystemValueBar(QWidget * parent)
 	: QWidget(parent)
@@ -846,7 +751,7 @@ void SystemValueBar::paintEvent(QPaintEvent* )
 
 QSize SystemValueBar::sizeHint() const
 {
-	return QSize(70, 25);
+	return QSize(60, 25);
 }
 
 void SystemValueBar::set_int_rounding(bool rounding)

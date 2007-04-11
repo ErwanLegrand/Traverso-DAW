@@ -15,12 +15,12 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="F1" >
 			<Objects>
-				<Object objectname="SongView" slotsignature="set_editing_mode" modes="All" sortorder="52" instantanious="0" />
+				<Object objectname="Song" slotsignature="set_editing_mode" modes="All" sortorder="52" instantanious="0" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="F2" >
 			<Objects>
-				<Object objectname="SongView" slotsignature="set_curve_mode" modes="All" sortorder="53" instantanious="0" />
+				<Object objectname="Song" slotsignature="set_effects_mode" modes="All" sortorder="53" instantanious="0" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="F11" >

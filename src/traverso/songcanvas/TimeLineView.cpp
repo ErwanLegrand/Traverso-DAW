@@ -319,7 +319,6 @@ void TimeLineView::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
 
 	if (m_blinkingMarker) {
 		m_blinkingMarker->set_active(true);
-// 		m_blinkTimer.start(40);
 	}
 }
 
@@ -333,7 +332,6 @@ void TimeLineView::hoverLeaveEvent ( QGraphicsSceneHoverEvent * event )
 		return;
 	}
 	
-// 	m_blinkTimer.stop();
 	if (m_blinkingMarker) {
 		// TODO add these functions, or something else to 
 		// let the user know which marker is to be moved!

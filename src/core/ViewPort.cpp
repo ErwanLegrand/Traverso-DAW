@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewPort.cpp,v 1.9 2007/04/10 19:37:57 r_sijrier Exp $
+$Id: ViewPort.cpp,v 1.10 2007/04/11 15:56:35 r_sijrier Exp $
 */
 
 #include <QMouseEvent>
@@ -112,12 +112,12 @@ ViewPort::~ViewPort()
 void ViewPort::mouseMoveEvent(QMouseEvent* e)
 {
 	PENTER3;
-	
-	// Changing the cursor, or perhaps some other thing generates
-	// a mouse move event, while the mouse really move, so we check
-	// if the mouse cursor really has changed position!
+	// Qt generates mouse move events when the scrollbars move
+	// since a mouse move event generates a jog() call for the 
+	// active holding command, this has a number of nasty side effects :-(
+	// For now, we ignore such events....
 	if (e->pos() == m_oldMousePos) {
-// 		return;
+		return;
 	}
 	m_oldMousePos = e->pos();
 	QGraphicsView::mouseMoveEvent(e);
@@ -187,14 +187,14 @@ void ViewPort::paintEvent( QPaintEvent* e )
 
 void ViewPort::reset_cursor( )
 {
-	viewport()->unsetCursor();
+	QApplication::restoreOverrideCursor ();
 	m_holdcursor->hide();
 	m_holdcursor->reset();
 }
 
 void ViewPort::set_holdcursor( const QString & cursorName )
 {
-	viewport()->setCursor(Qt::BlankCursor);
+	QApplication::setOverrideCursor(Qt::BlankCursor);
 	
 	m_holdcursor->setPos(cpointer().scene_pos());
 	m_holdcursor->set_type(cursorName);
