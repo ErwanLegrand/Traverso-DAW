@@ -210,7 +210,7 @@ InputEngine::InputEngine()
 
 InputEngine::~ InputEngine( )
 {
-	foreach(IEAction* action, ieActions) {
+	foreach(IEAction* action, m_ieActions) {
 		delete action;
 	}
 }
@@ -234,7 +234,7 @@ int InputEngine::broadcast_action_from_contextmenu(const QString& keySequence)
 	PENTER2;
 	IEAction* action = 0;
 
-	foreach(IEAction* ieaction, ieActions) {
+	foreach(IEAction* ieaction, m_ieActions) {
 		if (ieaction->keySequence == keySequence) {
 			action = ieaction;
 			break;
@@ -289,6 +289,8 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 		
 		IEAction::Data* data = action->objectUsingModifierKeys.value(QString(item->metaObject()->className()));
 		
+		// A match was found for actions using the modifier key
+		// let's see if it is valid for the current active modifier keys!
 		if (data) {
 			PMESG("found match in objectUsingModierKeys");
 			bool modifierkeymatch = true;
@@ -310,6 +312,8 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 			}
 		}
 		
+		// No match found for actions using a modifier key, let's see if there
+		// is one in the 'normal' actions list.
 		if (! data ) {
 			data = action->objects.value(QString(item->metaObject()->className()));
 				
@@ -317,6 +321,15 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 				PMESG("No data found for object %s", item->metaObject()->className());
 				continue;
 			}
+		}
+		
+		// Now that we found a match, we still have to check if 
+		// the current mode is valid for this data!
+		QString currentmode = m_modes.key(cpointer().get_current_mode());
+		QString allmodes = m_modes.key(0);
+		if ( (! data->modes.contains(currentmode)) && (! data->modes.contains(allmodes))) {
+			PMESG("%s on %s is not valid for mode %s", action->keySequence.data(), item->metaObject()->className(), QS_C(currentmode));
+			continue;
 		}
 		
 		PMESG("Data found for %s!", item->metaObject()->className());
@@ -434,6 +447,7 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 			k = 0;
 		}
 	}
+	
 	if (k && isHolding) {
 		if (k->begin_hold() != -1) {
 			k->set_valid(true);
@@ -588,7 +602,7 @@ void InputEngine::process_press_event(int eventcode, bool isAutoRepeat)
 		// the eventcode must be != the current active holding 
 		// command's eventcode!
 		if (index >= 0 && holdEventCode != eventcode) {
-			IEAction* action = ieActions.at(index);
+			IEAction* action = m_ieActions.at(index);
 			broadcast_action(action, isAutoRepeat);
 		}
 		return;
@@ -792,7 +806,7 @@ void InputEngine::push_fact(int k1,int k2)
 		PMESG3("First fact matches map in position %d",mapIndex);
 		// there is a single-fact action which matches this !! now must check if is not an immediate action
 		
-		if (!ieActions.at(mapIndex)->isInstantaneous) {
+		if (!m_ieActions.at(mapIndex)->isInstantaneous) {
 			PMESG3("Although this could be an SINGLE PRESS Action, it is not protected, so...");
 			// action is not an immediate action, so...
 			give_a_chance_for_second_fact();
@@ -870,7 +884,7 @@ int InputEngine::identify_first_fact()
 
 int InputEngine::find_index_for_single_fact( int type, int key1, int key2 )
 {
-	foreach(IEAction* action, ieActions) {
+	foreach(IEAction* action, m_ieActions) {
 			
 		if (action->type != type )
 			continue;
@@ -886,8 +900,8 @@ int InputEngine::find_index_for_single_fact( int type, int key1, int key2 )
 			( action->fact2_key2 == 0 )
 		) {
 			// 'i' is a candidate for first press
-			PMESG3("Found a match in map position %d, keyfact %s", ieActions.indexOf(action), action->keySequence.data());
-			return ieActions.indexOf(action);
+			PMESG3("Found a match in map position %d, keyfact %s", m_ieActions.indexOf(action), action->keySequence.data());
+			return m_ieActions.indexOf(action);
 		}
 	}
 	
@@ -974,7 +988,7 @@ int InputEngine::identify_first_and_second_facts_together()
 
 	// whole action type identified .
 	PMESG3("Searching for a %d action that matches %d,%d,%d,%d ", wholeActionType, fact1_k1, fact1_k2, fact2_k1, fact2_k2);
-	foreach(IEAction* action, ieActions) {
+	foreach(IEAction* action, m_ieActions) {
 		if ( action->type != wholeActionType )
 			continue;
 		int ap1k1 = action->fact1_key1;
@@ -997,7 +1011,7 @@ int InputEngine::identify_first_and_second_facts_together()
 		) {
 			// 'i' is a candidate the whole action
 			PMESG3("Found a match : action %s", action->keySequence.data());
-			return ieActions.indexOf(action);
+			return m_ieActions.indexOf(action);
 		}
 	}
 	PMESG3("No candidates found :-(");
@@ -1031,7 +1045,7 @@ void InputEngine::give_a_chance_for_second_fact()
 void InputEngine::dispatch_action(int mapIndex)
 {
 	PENTER2;
-	broadcast_action(ieActions.at(mapIndex));
+	broadcast_action(m_ieActions.at(mapIndex));
 }
 
 
@@ -1055,7 +1069,7 @@ void InputEngine::dispatch_hold()
 	}
 
 	if (wholeMapIndex>=0) {
-		broadcast_action(ieActions.at(wholeMapIndex));
+		broadcast_action(m_ieActions.at(wholeMapIndex));
 	}
 	
 	stop_collecting();
@@ -1140,11 +1154,13 @@ int InputEngine::init_map(const QString& keymap)
 
 	PMESG("Using keymap: %s", QS_C(keymap));
 	
-	foreach(IEAction* action, ieActions) {
+	foreach(IEAction* action, m_ieActions) {
 		delete action;
 	}
 	
-	ieActions.clear();
+	m_ieActions.clear();
+	m_modifierKeys.clear();
+	m_modes.clear();
 	
 	
 	QDomElement root = doc.documentElement();
@@ -1167,6 +1183,27 @@ int InputEngine::init_map(const QString& keymap)
 		modifierKeyNode = modifierKeyNode.nextSibling();
 	}
 		
+	
+	
+	QDomNode modesNode = root.firstChildElement("Modes");
+	QDomNode modeNode = modesNode.firstChild();
+	
+	int id;
+	QString modename;
+	
+	while( !modeNode.isNull() ) {
+		QDomElement e = modeNode.toElement();
+		
+		modename = e.attribute("name", "");
+		id = e.attribute("id", "-1").toInt();
+		
+		m_modes.insert(modename, id);
+		
+		modeNode = modeNode.nextSibling();
+	}
+	
+	
+	
 	
 	QDomNode keyfactsNode = root.firstChildElement("Keyfacts");
 	QDomNode keyfactNode = keyfactsNode.firstChild();
@@ -1242,7 +1279,6 @@ int InputEngine::init_map(const QString& keymap)
 			
 			data->slotsignature = e.attribute("slotsignature", "");
 			data->modes = e.attribute("modes", "").split(";");
-			data->description = e.attribute("description", "");
 			data->instantanious = e.attribute("instantanious", "0").toInt();
 			data->pluginname = e.attribute( "pluginname", "");
 			data->commandname = e.attribute( "commandname", "");
@@ -1303,8 +1339,8 @@ int InputEngine::init_map(const QString& keymap)
 		action->render_key_sequence(key1, key2);
 	
 		bool exists = false;
-		for (int i=0; i<ieActions.size(); ++i) {
-		 	IEAction* existingaction = ieActions.at(i);
+		for (int i=0; i<m_ieActions.size(); ++i) {
+		 	IEAction* existingaction = m_ieActions.at(i);
 			if ( 	(action->fact1_key1 == existingaction->fact1_key1) &&
 				(action->fact1_key2 == existingaction->fact1_key2) &&
 				(action->fact2_key1 == existingaction->fact2_key1) &&
@@ -1321,7 +1357,7 @@ int InputEngine::init_map(const QString& keymap)
 		}
 		
 		if (!exists) {
-			ieActions.append(action);
+			m_ieActions.append(action);
 			PMESG2("ADDED action: type=%d keys=%d,%d,%d,%d useX=%d useY=%d, slot=%s", action->type, action->fact1_key1,action->fact1_key2,action->fact2_key1,action->fact2_key2,data->useX,data->useY, QS_C(slot));
 		}
 		
@@ -1331,13 +1367,13 @@ int InputEngine::init_map(const QString& keymap)
 
 	PMESG2("Optimizing map for best performance ...");
 	int optimizedActions=0;
-	foreach(IEAction* action, ieActions) {
+	foreach(IEAction* action, m_ieActions) {
 		int c1A = action->fact1_key1;
 		int c2A = action->fact1_key2;
 
 		if ( (action->type == FKEY) ) {
 			bool alone = true;
-			foreach(IEAction* aloneAction, ieActions) {
+			foreach(IEAction* aloneAction, m_ieActions) {
 				if (action == aloneAction)
 					continue;
 				int tt    = aloneAction->type;
@@ -1364,7 +1400,7 @@ int InputEngine::init_map(const QString& keymap)
 
 		} else if ((action->type == FKEY2)) {
 			bool alone = true;
-			foreach(IEAction* aloneAction, ieActions) {
+			foreach(IEAction* aloneAction, m_ieActions) {
 				if (action == aloneAction)
 					continue;
 				int tt    = aloneAction->type;
@@ -1391,7 +1427,7 @@ int InputEngine::init_map(const QString& keymap)
 				action->isInstantaneous = false;
 		}
 	}
-	PMESG2("Keymap initialized! %d actions registered ( %d instantanious) .", ieActions.size(), optimizedActions);
+	PMESG2("Keymap initialized! %d actions registered ( %d instantanious) .", m_ieActions.size(), optimizedActions);
 
 	return 1;
 }
@@ -1465,8 +1501,8 @@ QList< MenuData > InputEngine::create_menudata_for(QObject* item)
 		const QMetaObject* mo = item->metaObject(); 
 		const char* classname = mo->className();
 		
-		for (int i=0; i<ieActions.size(); i++) {
-			IEAction* ieaction = ieActions.at(i);
+		for (int i=0; i<m_ieActions.size(); i++) {
+			IEAction* ieaction = m_ieActions.at(i);
 					
 			IEAction::Data* iedata = ieaction->objects.value(classname);
 					

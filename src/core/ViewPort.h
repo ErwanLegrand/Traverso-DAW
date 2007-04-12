@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ViewPort.h,v 1.12 2007/04/11 21:19:18 r_sijrier Exp $
+    $Id: ViewPort.h,v 1.13 2007/04/12 12:32:07 r_sijrier Exp $
 */
 
 #ifndef VIEWPORT_H
@@ -49,9 +49,12 @@ public :
 	void set_holdcursor(const QString& cursorName);
 	void set_holdcursor_text(const QString& text);
 	void set_holdcursor_pos(QPoint pos);
+	void set_current_mode(int mode);
         
 	void reset_cursor();
 	void set_jogging(bool jog);
+	
+	int get_current_mode() const {return m_mode;}
 
 
 protected:
@@ -67,7 +70,7 @@ protected:
 	void tabletEvent ( QTabletEvent * event );
 	
 private:
-
+	int m_mode;
 	HoldCursor*	m_holdcursor;
 	QPoint		m_oldMousePos;
 	QPointF lastMouseMoveScenePoint;

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ContextPointer.h,v 1.12 2007/03/22 13:35:42 r_sijrier Exp $
+    $Id: ContextPointer.h,v 1.13 2007/04/12 12:32:07 r_sijrier Exp $
 */
 
 #ifndef CONTEXTPOINTER_H
@@ -134,6 +134,13 @@ public:
 	{
 		m_onFirstInputEventX = m_x;
 		m_onFirstInputEventY = m_y;
+	}
+	
+	inline int get_current_mode() const {
+		if (currentViewPort) {
+			return currentViewPort->get_current_mode();
+		}
+		return -1;
 	}
 	
         void grab_mouse();

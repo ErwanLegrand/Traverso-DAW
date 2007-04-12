@@ -108,6 +108,7 @@ SongView::SongView(SongWidget* songwidget,
 	
 	
 	scalefactor = Peak::zoomStep[m_song->get_hzoom()];
+	song_mode_changed();
 	
 	foreach(Track* track, m_song->get_tracks()) {
 		add_new_trackview(track);
@@ -117,6 +118,7 @@ SongView::SongView(SongWidget* songwidget,
 	connect(m_song, SIGNAL(trackAdded(Track*)), this, SLOT(add_new_trackview(Track*)));
 	connect(m_song, SIGNAL(trackRemoved(Track*)), this, SLOT(remove_trackview(Track*)));
 	connect(m_song, SIGNAL(lastFramePositionChanged()), this, SLOT(update_scrollbars()));
+	connect(m_song, SIGNAL(modeChanged()), this, SLOT(song_mode_changed()));
 	connect(m_hScrollBar, SIGNAL(valueChanged(int)), this,SLOT(set_snap_range(int)));
 	connect(&m_shuttletimer, SIGNAL(timeout() ), this, SLOT (update_shuttle()) );
 	
@@ -146,6 +148,14 @@ void SongView::scale_factor_changed( )
 	scalefactor = Peak::zoomStep[m_song->get_hzoom()];
 	m_tlvp->scale_factor_changed();
 	layout_tracks();
+}
+
+void SongView::song_mode_changed()
+{
+	int mode = m_song->get_mode();
+	m_clipsViewPort->set_current_mode(mode);
+	m_tlvp->set_current_mode(mode);
+	m_tpvp->set_current_mode(mode);
 }
 
 TrackView* SongView::get_trackview_under( QPointF point )

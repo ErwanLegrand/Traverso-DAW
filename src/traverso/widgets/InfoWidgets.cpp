@@ -374,9 +374,6 @@ void SongSelector::change_index_to(Song* song)
 	}
 	
 	int index = m_box->findData(song->get_id());
-	
-// 	Q_ASSERT(index != -1);
-	
 	m_box->setCurrentIndex(index);
 }
 
@@ -407,14 +404,18 @@ void PlayHeadInfo::set_song(Song* song)
 	
 	if (!m_song) {
 		stop_smpte_update_timer();
-		m_playpixmap = QPixmap();
+		m_playpixmap = find_pixmap(":/playstart");
 		return;
 	}
 	
 	connect(m_song, SIGNAL(transferStopped()), this, SLOT(stop_smpte_update_timer()));
 	connect(m_song, SIGNAL(transferStarted()), this, SLOT(start_smpte_update_timer()));
 	
-	m_playpixmap = find_pixmap(":/playstart");
+	if (m_song->is_transporting()) {
+		m_playpixmap = find_pixmap(":/playstop");
+	} else {
+		m_playpixmap = find_pixmap(":/playstart");
+	}
 	
 	update();
 }
@@ -430,30 +431,24 @@ void PlayHeadInfo::paintEvent(QPaintEvent* )
 		currentsmpte = frame_to_smpte(m_song->get_transport_frame(), m_song->get_rate());
 	}
 	
-	int bgcolor = 60;
 	int fc = 170;
-	QColor background = QColor(bgcolor, bgcolor, bgcolor);
 	QColor fontcolor = QColor(fc, fc, fc);
 	
 	if (m_song && m_song->is_transporting()) {
-		background = QColor(40, 40, 40);
-		fontcolor = QColor(bgcolor, bgcolor, bgcolor);
+		fc = 60;
+		fontcolor = QColor(fc, fc, fc);
 	}
 	
 	painter.setFont(QFont("Bitstream Vera Sans", 13));
 	painter.setPen(fontcolor);
 	
 	painter.fillRect(0, 0, width(), height(), QColor(247, 246, 255));
-	painter.drawPixmap(4, 6, m_playpixmap);
+	painter.drawPixmap(8, 6, m_playpixmap);
 	painter.drawText(QRect(12, 4, width() - 6, height() - 6), Qt::AlignCenter, currentsmpte);
 }
 
 void PlayHeadInfo::start_smpte_update_timer( )
 {
-/*	painter.setBrush(background);
-	painter.setRenderHints(QPainter::Antialiasing);
-	painter.drawRoundRect(0, 0, width(), height(), 20);*/
-	
 	m_playpixmap = find_pixmap(":/playstop");
 	m_updateTimer.start(150);
 }
@@ -583,11 +578,6 @@ SongInfo::SongInfo(QWidget * parent)
 	redobutton->setText(tr("Redo"));
 	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(redo()));
 
-	/*	action = addAction(tr("Redo"));
-	action->setIcon(QIcon(find_pixmap(":/redo-16")));
-	action->setShortcuts(QKeySequence::Redo);
-	connect(action, SIGNAL(triggered( bool )), this, SLOT(redo()));*/
-	
 	QHBoxLayout* lay = new QHBoxLayout(this);
 		
 	lay->addWidget(undobutton);
@@ -601,7 +591,6 @@ SongInfo::SongInfo(QWidget * parent)
 	lay->addStretch(5);
 	lay->addWidget(m_mode);
 	lay->addWidget(m_selector);
-// 	lay->addSpacing(12);
 		
 	setLayout(lay);
 	lay->setMargin(0);
@@ -623,15 +612,29 @@ void SongInfo::set_song(Song* song)
 	
 	if (m_song) {
 		connect(m_song, SIGNAL(snapChanged()), this, SLOT(update_snap_state()));
+		connect(m_song, SIGNAL(modeChanged()), this, SLOT(update_mode_state()));
 		update_snap_state();
+		update_mode_state();
+		m_snapAct->setEnabled(true);
+		m_mode->setEnabled(true);
 	} else {
 		m_snapAct->setEnabled(false);
+		m_mode->setEnabled(false);
 	}
 }
 
 void SongInfo::update_snap_state()
 {
 	m_snapAct->setChecked(m_song->is_snap_on());
+}
+
+void SongInfo::update_mode_state()
+{
+	if (m_song->get_mode() == Song::EDIT) {
+		m_mode->setCurrentIndex(0);
+	} else {
+		m_mode->setCurrentIndex(1);
+	}
 }
 
 void SongInfo::snap_state_changed(bool state)

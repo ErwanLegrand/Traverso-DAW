@@ -141,6 +141,7 @@ private slots:
 	void update_shuttle();
 	void work_cursor_updated();
 	void play_head_updated();
+	void song_mode_changed();
 };
 
 

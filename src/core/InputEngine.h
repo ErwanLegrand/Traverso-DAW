@@ -81,7 +81,6 @@ struct IEAction
 		QVariantList arguments;
 		QList<int > modifierkeys;
         	QString slotsignature;
-        	QString description;
         	int instantanious;
 		QString pluginname;
 		QString commandname;
@@ -165,10 +164,11 @@ private:
         static const int 	PRESS_EVENT = 1;
         static const int 	RELEASE_EVENT = 2;
 
-        QList<IEAction* >	ieActions;
+        QList<IEAction* >	m_ieActions;
 	QList<int>		m_modifierKeys;
 	QList<int>		m_activeModifierKeys;
 	QHash<QString, CommandPlugin*> m_commandplugins;
+	QHash<QString, int>	m_modes;
         EventCatcher 		catcher;
         Command* 		holdingCommand;
         QString			sCollectedNumber;

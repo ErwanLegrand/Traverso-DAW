@@ -101,7 +101,7 @@ AudioClipView::~ AudioClipView()
 
 void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-	PENTER;
+	PENTER2;
 	Q_UNUSED(widget);
 	
 

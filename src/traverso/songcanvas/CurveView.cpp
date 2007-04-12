@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.cpp,v 1.26 2007/04/11 15:56:35 r_sijrier Exp $
+$Id: CurveView.cpp,v 1.27 2007/04/12 12:32:07 r_sijrier Exp $
 */
 
 #include "CurveView.h"
@@ -200,7 +200,7 @@ static bool smallerpoint(const QPointF& left, const QPointF& right) {
 void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
 {
 	Q_UNUSED(widget);
-	PENTER;
+	PENTER2;
 	
 	painter->save();
 	
@@ -330,7 +330,6 @@ void CurveView::calculate_bounding_rect()
 
 void CurveView::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
 {
-	PENTER;
 	Q_UNUSED(event);
 	
 	m_blinkColor = themer()->get_color("CurveNode:blink");
@@ -339,7 +338,6 @@ void CurveView::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
 
 void CurveView::hoverLeaveEvent ( QGraphicsSceneHoverEvent * event )
 {
-	PENTER;
 	Q_UNUSED(event);
 	
 	if (ie().is_holding()) {
@@ -358,7 +356,6 @@ void CurveView::hoverLeaveEvent ( QGraphicsSceneHoverEvent * event )
 		
 void CurveView::hoverMoveEvent ( QGraphicsSceneHoverEvent * event )
 {
-	PENTER;
 	QPoint point((int)event->pos().x(), (int)event->pos().y());
 	
 	update_softselected_node(point);

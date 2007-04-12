@@ -67,8 +67,8 @@ public:
 	~Song();
 	
 	enum Mode {
-		EDIT,
-  		EFFECTS
+		EDIT = 1,
+  		EFFECTS = 2
 	};
 
 	// Get functions

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewPort.cpp,v 1.12 2007/04/12 10:30:53 r_sijrier Exp $
+$Id: ViewPort.cpp,v 1.13 2007/04/12 12:32:07 r_sijrier Exp $
 */
 
 #include <QMouseEvent>
@@ -77,30 +77,30 @@ $Id: ViewPort.cpp,v 1.12 2007/04/12 10:30:53 r_sijrier Exp $
 
 ViewPort::ViewPort(QWidget* parent)
 	: QGraphicsView(parent)
+	, m_mode(0)
 {
 	PENTERCONS;
 	setFrameStyle(QFrame::NoFrame);
 	setAlignment(Qt::AlignLeft | Qt::AlignTop);
-        
-	setAttribute(Qt::WA_OpaquePaintEvent);
 }
 
 ViewPort::ViewPort(QGraphicsScene* scene, QWidget* parent)
 	: QGraphicsView(scene, parent)
+	, m_mode(0)
 {
 	PENTERCONS;
 	setFrameStyle(QFrame::NoFrame);
 	setAlignment(Qt::AlignLeft | Qt::AlignTop);
 	
-// 	setOptimizationFlag(DontAdjustForAntialiasing);
-// 	setOptimizationFlag(DontSavePainterState);
-// 	setOptimizationFlag(DontClipPainter);
+#if QT_VERSION >= 0x040300
+	setOptimizationFlag(DontAdjustForAntialiasing);
+	setOptimizationFlag(DontSavePainterState);
+	setOptimizationFlag(DontClipPainter);
+#endif
 
 	m_holdcursor = new HoldCursor();
 	scene->addItem(m_holdcursor);
 	m_holdcursor->hide();
-
-//         setAttribute(Qt::WA_OpaquePaintEvent);
 }
 
 ViewPort::~ViewPort()
@@ -237,6 +237,11 @@ void ViewPort::set_holdcursor_pos(QPoint pos)
 	m_holdcursor->setPos(pos);
 }
 
+void ViewPort::set_current_mode(int mode)
+{
+	m_mode = mode;
+}
+
 
 
 /**********************************************************************/
@@ -298,4 +303,3 @@ void HoldCursor::reset()
 }
 
 //eof
-

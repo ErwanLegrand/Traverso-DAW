@@ -206,6 +206,7 @@ private slots:
 	void update_snap_state();
 	void snap_state_changed(bool state);
 	void update_follow_state();
+	void update_mode_state();
 	void follow_state_changed(bool state);
 	void mode_index_changed(int index);
 	
