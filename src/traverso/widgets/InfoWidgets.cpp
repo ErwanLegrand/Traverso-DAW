@@ -620,6 +620,7 @@ void SongInfo::set_song(Song* song)
 		connect(m_song, SIGNAL(recordingStateChanged()), this, SLOT(update_recording_state()));
 		update_snap_state();
 		update_mode_state();
+		update_recording_state();
 		m_snapAct->setEnabled(true);
 		m_mode->setEnabled(true);
 		m_record->setEnabled(true);
