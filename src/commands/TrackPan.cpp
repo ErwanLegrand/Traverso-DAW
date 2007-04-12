@@ -57,7 +57,7 @@ int TrackPan::prepare_actions()
 int TrackPan::begin_hold()
 {
         origX = cpointer().x();
-        origPan = m_track->get_pan();
+        origPan = newPan = m_track->get_pan();
 
         return 1;
 }
@@ -65,6 +65,7 @@ int TrackPan::begin_hold()
 
 int TrackPan::finish_hold()
 {
+	QCursor::setPos(mousePos);
 	return 1;
 }
 
@@ -82,14 +83,25 @@ int TrackPan::undo_action()
         return 1;
 }
 
+void TrackPan::set_cursor_shape(int useX, int useY)
+{
+	Q_UNUSED(useX);
+	Q_UNUSED(useY);
+	
+	mousePos = QCursor::pos();
+	cpointer().get_viewport()->set_holdcursor(":/cursorHoldLr");
+}
 
 int TrackPan::jog()
 {
         float w = 600.0;
         float ofx = (float) origX - cpointer().x();
         float p = -2.0f *  (ofx) / w ;
-        newPan = p + origPan;
+	newPan = p + newPan;
         m_track->set_pan( newPan );
+	
+	origX = cpointer().x();
+	
         return 1;
 }
 

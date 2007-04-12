@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Gain.cpp,v 1.14 2007/04/12 18:28:39 benjie Exp $
+$Id: Gain.cpp,v 1.15 2007/04/12 18:50:21 r_sijrier Exp $
 */
 
 #include "Gain.h"
@@ -205,10 +205,6 @@ int Gain::jog()
 		cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
 	}
 
-	// Set the mouse cursor back to the original position, so it doesn't leave the 
-	// object we're working on!
-	// This avoids highlighting of other objects !!
-	// Note that due this, we don't have to set the origY variable in this funcion!!
 	origPos = cpointer().pos();
 
 	return result;

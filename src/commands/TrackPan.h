@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TrackPan.h,v 1.5 2007/04/10 17:12:19 r_sijrier Exp $
+    $Id: TrackPan.h,v 1.6 2007/04/12 18:50:21 r_sijrier Exp $
 */
 
 #ifndef TRACKPAN_H
@@ -41,8 +41,11 @@ public :
 
         int jog();
 
+	void set_cursor_shape(int useX, int useY);
+	
 private :
-        float origPan;
+	QPoint	mousePos;
+	float origPan;
         float newPan;
         int origX;
 
