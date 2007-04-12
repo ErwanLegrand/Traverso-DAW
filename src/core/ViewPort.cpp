@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewPort.cpp,v 1.13 2007/04/12 12:32:07 r_sijrier Exp $
+$Id: ViewPort.cpp,v 1.14 2007/04/12 12:48:17 r_sijrier Exp $
 */
 
 #include <QMouseEvent>
@@ -261,8 +261,8 @@ HoldCursor::~ HoldCursor( )
 void HoldCursor::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
 {
 	Q_UNUSED(widget);
+	Q_UNUSED(option);
 
-// 	printf("HoldCursor:: exposed rect is: x=%f, y=%f, w=%f, h=%f\n", option->exposedRect.x(), option->exposedRect.y(), option->exposedRect.width(), option->exposedRect.height());
 	
 	painter->drawPixmap(0, 0, m_pixmap);
 	
@@ -287,8 +287,8 @@ void HoldCursor::set_text( const QString & text )
 void HoldCursor::set_type( const QString & type )
 {
 	m_pixmap = find_pixmap(type);
-	int x = pos().x();
-	int y = pos().y();
+	int x = (int) pos().x();
+	int y = (int) pos().y();
 	setPos(x - m_pixmap.width() / 2, y - m_pixmap.height() / 2);
 }
 

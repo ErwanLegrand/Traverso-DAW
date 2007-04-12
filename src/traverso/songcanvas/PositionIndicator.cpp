@@ -47,7 +47,7 @@ void PositionIndicator::calculate_bounding_rect()
 	prepareGeometryChange();
 	m_boundingRect = QRectF(0, 0, 65, 14);
 	
-	m_background = QPixmap(m_boundingRect.width(), m_boundingRect.height());
+	m_background = QPixmap((int)m_boundingRect.width(), (int)m_boundingRect.height());
 	m_background.fill(QColor(Qt::transparent));
 	
 	QPainter painter(&m_background);
@@ -55,7 +55,7 @@ void PositionIndicator::calculate_bounding_rect()
 	painter.setBrush(QColor(255, 255, 255, 225));
 	painter.setPen(Qt::NoPen);
 	int rounding = 10;
-	painter.drawRoundRect(0, 0, m_boundingRect.width(), m_boundingRect.height(), rounding, rounding);
+	painter.drawRoundRect(0, 0, (int)m_boundingRect.width(), (int)m_boundingRect.height(), rounding, rounding);
 }
 
 void PositionIndicator::set_position(int x, int y)

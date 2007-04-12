@@ -203,7 +203,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	}
 	
 	if (m_dragging) {
-		m_posIndicator->set_value(frame_to_smpte(x() * m_sv->scalefactor, m_song->get_rate()));
+		m_posIndicator->set_value(frame_to_smpte( (nframes_t)(x() * m_sv->scalefactor), m_song->get_rate()));
 	}
 	
 	painter->restore();
@@ -666,8 +666,9 @@ void AudioClipView::start_peak_data_loading()
 	peak->start_peak_loading();
 }
 
-void AudioClipView::hoverEnterEvent(QGraphicsSceneHoverEvent * event)
+void AudioClipView::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {
+	Q_UNUSED(event)
 	if (ie().is_holding()) {
 		return;
 	}
@@ -715,7 +716,7 @@ void AudioClipView::update_recording()
 	nframes_t newPos = m_clip->get_length();
 	m_boundingRect = QRectF(0, 0, (newPos / m_sv->scalefactor), m_height);
 	
-	QRect updaterect = QRect(m_oldRecordingPos, 0, newPos, m_boundingRect.height());
+	QRect updaterect = QRect(m_oldRecordingPos, 0, newPos, (int)m_boundingRect.height());
 	update(updaterect);
 	
 	m_oldRecordingPos = newPos;

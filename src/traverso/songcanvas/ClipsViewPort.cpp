@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ClipsViewPort.cpp,v 1.12 2007/04/02 21:05:43 r_sijrier Exp $
+$Id: ClipsViewPort.cpp,v 1.13 2007/04/12 12:48:17 r_sijrier Exp $
 */
 
 #include "ClipsViewPort.h"
@@ -107,8 +107,10 @@ void ClipsViewPort::dragEnterEvent( QDragEnterEvent * event )
 	}
 }
 
-void ClipsViewPort::dropEvent( QDropEvent * event )
+void ClipsViewPort::dropEvent(QDropEvent* event )
 {
+	Q_UNUSED(event)
+	
 	if (!importTrack) {
 		return;
 	}
@@ -126,6 +128,8 @@ void ClipsViewPort::dropEvent( QDropEvent * event )
 
 void ClipsViewPort::dragMoveEvent( QDragMoveEvent * event )
 {
+	Q_UNUSED(event)
+			
 	Project* project = pm().get_project();
 	if (!project) {
 		return;
