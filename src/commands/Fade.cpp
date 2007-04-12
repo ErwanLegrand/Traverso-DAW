@@ -154,7 +154,7 @@ int FadeBend::jog()
 
 	oldValue = m_fade->get_bend_factor();
 	
-	QCursor::setPos(mousePos);
+	origY = cpointer().y();
 	
 	return 1;
 }
@@ -213,7 +213,7 @@ int FadeStrength::jog()
 	
 	oldValue = m_fade->get_strenght_factor();
 	
-	QCursor::setPos(mousePos);
+	origY = cpointer().y();
 
 	return 1;
 }

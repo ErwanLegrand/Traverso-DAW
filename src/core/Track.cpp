@@ -565,7 +565,6 @@ void Track::set_capture_left_channel(bool capture)
 
 void Track::set_capture_right_channel(bool capture)
 {
-	printf("capture is %d\n", capture);
 	m_captureRightChannel = capture;
 	emit inBusChanged();
 }

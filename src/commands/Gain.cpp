@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Gain.cpp,v 1.12 2007/04/11 21:19:17 r_sijrier Exp $
+$Id: Gain.cpp,v 1.13 2007/04/12 15:30:59 r_sijrier Exp $
 */
 
 #include "Gain.h"
@@ -186,7 +186,7 @@ int Gain::jog()
 	// object we're working on!
 	// This avoids highlighting of other objects !!
 	// Note that due this, we don't have to set the origY variable in this funcion!!
-	QCursor::setPos(mousePos);
+	origY = cpointer().y();
 	
 	return result;
 }
