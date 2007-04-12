@@ -145,6 +145,7 @@ public:
 
         void activate();
         void suspend();
+	void clear_modifier_keys();
 
 
         int init_map(const QString& mapFilename);

@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewPort.cpp,v 1.15 2007/04/12 15:30:59 r_sijrier Exp $
 */
 
 #include <QMouseEvent>
@@ -167,6 +166,14 @@ void ViewPort::enterEvent(QEvent* e)
 	cpointer().set_current_viewport(this);
 }
 
+void ViewPort::leaveEvent ( QEvent * event )
+{
+	QGraphicsView::leaveEvent(event);
+	// There can be many reasons for a leave event, sometimes
+	// this leaves the engine in a non-cleared state, e.g. modifier
+	// keys still can be active!! So we reset those manually here.
+	ie().clear_modifier_keys();
+}
 
 void ViewPort::keyPressEvent( QKeyEvent * e)
 {
@@ -209,7 +216,6 @@ void ViewPort::paintEvent( QPaintEvent* e )
 // 	PWARN("ViewPort::paintEvent()");
 	QGraphicsView::paintEvent(e);
 }
-
 
 void ViewPort::reset_cursor( )
 {
@@ -303,3 +309,4 @@ void HoldCursor::reset()
 }
 
 //eof
+

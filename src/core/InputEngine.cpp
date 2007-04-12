@@ -515,6 +515,7 @@ void InputEngine::reset()
 	fact2_k1 = 0;
 	fact2_k2 = 0;
 	wholeMapIndex = -1;
+	
 	for (int i=0; i < STACK_SIZE; i++) {
 		eventType[i] = 0;
 		eventStack[i] = 0;
@@ -522,6 +523,10 @@ void InputEngine::reset()
 	}
 }
 
+void InputEngine::clear_modifier_keys()
+{
+	m_activeModifierKeys.clear();
+}
 
 
 // Everthing starts here. Catch event takes anything happen in the keyboard
