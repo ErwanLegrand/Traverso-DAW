@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Gain.cpp,v 1.13 2007/04/12 15:30:59 r_sijrier Exp $
+$Id: Gain.cpp,v 1.14 2007/04/12 18:28:39 benjie Exp $
 */
 
 #include "Gain.h"
@@ -37,15 +37,20 @@ Gain::Gain(ContextItem* context, QVariantList args)
 	: Command(context, "")
 {
 	gainObject = context;
-	
+	horiz = false;
+
 	float gain = -1;
 	QString des = "";
 	
-	if (args.size() > 0) {
+	if (args.size() > 0 && args[0].toString() != "horizontal") {
 		gain = args.at(0).toDouble();
 		des = QString(context->metaObject()->className()) + ": Reset gain";
 	} else {
 		des = QString(context->metaObject()->className()) + " Gain";
+	}
+
+	if (args.size() > 0 && args[0].toString() == "horizontal") {
+		horiz = true;
 	}
 	
 	setText(des);
@@ -80,7 +85,7 @@ int Gain::begin_hold()
 		return -1;
 	}
 	newGain = origGain;
-	origY = cpointer().y();
+	origPos = QPoint(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
 	return 1;
 }
 
@@ -119,7 +124,11 @@ void Gain::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useY);
 	
 	mousePos = QCursor::pos();
-	cpointer().get_viewport()->set_holdcursor(":/cursorGain");
+	if (horiz) {
+		cpointer().get_viewport()->set_holdcursor(":/cursorHoldLr");
+	} else {
+		cpointer().get_viewport()->set_holdcursor(":/cursorGain");
+	}
 }
 
 
@@ -130,12 +139,14 @@ void Gain::increase_gain( bool autorepeat )
 	newGain = dB_to_scale_factor(dbFactor);
 	QMetaObject::invokeMethod(gainObject, "set_gain", Q_ARG(float, newGain));
 	
-	// now we get the new gain value from gainObject, since we don't know if 
-	// gainobject accepted the change or not!
-	get_gain_from_object(newGain);
+	if (!horiz) {
+		// now we get the new gain value from gainObject, since we don't know if 
+		// gainobject accepted the change or not!
+		get_gain_from_object(newGain);
 	
-	// Update the vieport's hold cursor with the _actuall_ gain value!
-	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
+		// Update the vieport's hold cursor with the _actuall_ gain value!
+		cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
+	}
 }
 
 void Gain::decrease_gain(bool autorepeat)
@@ -146,31 +157,41 @@ void Gain::decrease_gain(bool autorepeat)
 	
 	QMetaObject::invokeMethod(gainObject, "set_gain", Q_ARG(float, newGain));
 	
-	// now we get the new gain value from gainObject, since we don't know if 
-	// gainobject accepted the change or not!
-	get_gain_from_object(newGain);
+	if (!horiz) {
+		// now we get the new gain value from gainObject, since we don't know if 
+		// gainobject accepted the change or not!
+		get_gain_from_object(newGain);
 
-
-	// Update the vieport's hold cursor with the _actuall_ gain value!
-	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
+		// Update the vieport's hold cursor with the _actuall_ gain value!
+		cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
+	}
 }
 
 
 int Gain::jog()
 {
 	PENTER;
-	float ofy = 0;
+	float of = 0;
 	
 	float dbFactor = coefficient_to_dB(newGain);
 	
-	if (dbFactor > -1)
-		ofy = (origY - cpointer().y()) * 0.05;
-	if (dbFactor <= -1) {
-		ofy = (origY - cpointer().y()) * ((1 - dB_to_scale_factor(dbFactor)) / 3);
+	int diff;
+
+	if (horiz) {
+		diff = cpointer().x() - origPos.x();
+	} else {
+		diff = origPos.y() - cpointer().y();
 	}
-		
-		
-	newGain = dB_to_scale_factor( dbFactor + ofy );
+
+	if (dbFactor > -1) {
+		of = diff * 0.05;
+	}
+	if (dbFactor <= -1) {
+		of = diff * ((1 - dB_to_scale_factor(dbFactor)) / 3);
+	}
+	
+	
+	newGain = dB_to_scale_factor( dbFactor + of );
 	
 	// Set the gain for gainObject
 	QMetaObject::invokeMethod(gainObject, "set_gain", Q_ARG(float, newGain));
@@ -180,14 +201,16 @@ int Gain::jog()
 	int result = get_gain_from_object(newGain);
 	
 	// Update the vieport's hold cursor!
-	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
-	
+	if (!horiz) {
+		cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
+	}
+
 	// Set the mouse cursor back to the original position, so it doesn't leave the 
 	// object we're working on!
 	// This avoids highlighting of other objects !!
 	// Note that due this, we don't have to set the origY variable in this funcion!!
-	origY = cpointer().y();
-	
+	origPos = cpointer().pos();
+
 	return result;
 }
 

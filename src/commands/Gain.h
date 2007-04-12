@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Gain.h,v 1.10 2007/03/16 14:23:39 r_sijrier Exp $
+    $Id: Gain.h,v 1.11 2007/04/12 18:28:39 benjie Exp $
 */
 
 #ifndef GAIN_H
@@ -54,8 +54,9 @@ private :
 	ContextItem*	gainObject;
         float 		origGain;
         float 		newGain;
-        int 		origY;
+        QPoint 		origPos;
 	QPoint		mousePos;
+	bool		horiz;
 	
 	int get_gain_from_object(float& gain);
 	
