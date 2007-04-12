@@ -386,6 +386,8 @@ PlayHeadInfo::PlayHeadInfo(QWidget* parent)
 	: InfoWidget(parent)
 {
 	setAutoFillBackground(false);
+	setToolTip(tr("Start/stop playback. You should use the SpaceBar! ;-)"));
+	setMinimumWidth(110);
 	connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update()));
 }
 
@@ -405,11 +407,14 @@ void PlayHeadInfo::set_song(Song* song)
 	
 	if (!m_song) {
 		stop_smpte_update_timer();
+		m_playpixmap = QPixmap();
 		return;
 	}
 	
 	connect(m_song, SIGNAL(transferStopped()), this, SLOT(stop_smpte_update_timer()));
 	connect(m_song, SIGNAL(transferStarted()), this, SLOT(start_smpte_update_timer()));
+	
+	m_playpixmap = find_pixmap(":/playstart");
 	
 	update();
 }
@@ -438,7 +443,9 @@ void PlayHeadInfo::paintEvent(QPaintEvent* )
 	painter.setFont(QFont("Bitstream Vera Sans", 13));
 	painter.setPen(fontcolor);
 	
-	painter.drawText(QRect(0, 4, width() - 6, height() - 6), Qt::AlignCenter, currentsmpte);
+	painter.fillRect(0, 0, width(), height(), QColor(247, 246, 255));
+	painter.drawPixmap(4, 6, m_playpixmap);
+	painter.drawText(QRect(12, 4, width() - 6, height() - 6), Qt::AlignCenter, currentsmpte);
 }
 
 void PlayHeadInfo::start_smpte_update_timer( )
@@ -447,19 +454,33 @@ void PlayHeadInfo::start_smpte_update_timer( )
 	painter.setRenderHints(QPainter::Antialiasing);
 	painter.drawRoundRect(0, 0, width(), height(), 20);*/
 	
+	m_playpixmap = find_pixmap(":/playstop");
 	m_updateTimer.start(150);
 }
 
 void PlayHeadInfo::stop_smpte_update_timer( )
 {
 	m_updateTimer.stop();
+	m_playpixmap = find_pixmap(":/playstart");
 	update();
 }
 
 QSize PlayHeadInfo::sizeHint() const
 {
-	return QSize(140, INFOBAR_HEIGH_HOR_ORIENTATION);
+	return QSize(120, INFOBAR_HEIGH_HOR_ORIENTATION);
 }
+
+void PlayHeadInfo::mousePressEvent(QMouseEvent * event)
+{
+	if (! m_song) {
+		return;
+	}
+	
+	if (event->button() == Qt::LeftButton) {
+		m_song->go();
+	}
+}
+
 
 
 
@@ -569,16 +590,18 @@ SongInfo::SongInfo(QWidget * parent)
 	
 	QHBoxLayout* lay = new QHBoxLayout(this);
 		
-	lay->addWidget(m_mode);
+	lay->addWidget(undobutton);
+	lay->addWidget(redobutton);
+	lay->addStretch(1);
 	lay->addWidget(m_snap);
 	lay->addWidget(m_follow);
 	lay->addWidget(m_record);
+	lay->addStretch(1);
 	lay->addWidget(m_playhead);
-	lay->addWidget(m_selector);
 	lay->addStretch(5);
+	lay->addWidget(m_mode);
+	lay->addWidget(m_selector);
 // 	lay->addSpacing(12);
-	lay->addWidget(undobutton);
-	lay->addWidget(redobutton);
 		
 	setLayout(lay);
 	lay->setMargin(0);

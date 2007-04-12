@@ -55,8 +55,6 @@ class SongView : public ViewItem
 	Q_CLASSINFO("goto_end", tr("To end"))
 	Q_CLASSINFO("play_cursor_move", tr("Playcursor: Move"))
 	Q_CLASSINFO("work_cursor_move", tr("Workcursor: Move"))
-	Q_CLASSINFO("set_editing_mode", tr("Mode: Edit"))
-	Q_CLASSINFO("set_curve_mode", tr("Mode: Curve"))
 	Q_CLASSINFO("add_marker", tr("Add Marker"))
 	Q_CLASSINFO("playhead_to_workcursor", tr("Playcursor: To workcursor"))
 

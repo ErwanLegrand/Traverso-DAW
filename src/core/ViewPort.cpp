@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewPort.cpp,v 1.11 2007/04/11 21:19:18 r_sijrier Exp $
+$Id: ViewPort.cpp,v 1.12 2007/04/12 10:30:53 r_sijrier Exp $
 */
 
 #include <QMouseEvent>
@@ -140,7 +140,7 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 	m_oldMousePos = event->pos();
 	
 	if (!ie().is_holding()) {
-	QList<QGraphicsItem *> itemsUnderCursor = scene()->items(mapToScene(event->pos()));
+		QList<QGraphicsItem *> itemsUnderCursor = scene()->items(mapToScene(event->pos()));
 		if (itemsUnderCursor.size()) {
 			itemsUnderCursor.first()->setCursor(itemsUnderCursor.first()->cursor());
 		}

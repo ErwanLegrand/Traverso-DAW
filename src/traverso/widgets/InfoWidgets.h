@@ -169,11 +169,13 @@ public:
 	~PlayHeadInfo() {};
 
 protected:
+	void mousePressEvent ( QMouseEvent * event );
 	void paintEvent( QPaintEvent* e);
 	QSize sizeHint() const;	
 	
 private:
 	QTimer m_updateTimer;
+	QPixmap m_playpixmap;
 
 protected slots:
 	void set_project(Project* );
