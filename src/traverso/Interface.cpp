@@ -510,6 +510,26 @@ Command * Interface::show_context_menu( )
 	return 0;
 }
 
+QString create_keyfact_string(QString& keyfact, QList<int> modifiers) 
+{
+	QString modifierkey = "";
+	foreach(int key, modifiers) {
+		if (key == Qt::Key_Alt) {
+			modifierkey += "ALT+";
+		} else if (key == Qt::Key_Control) {
+			modifierkey += "CTRL+";
+		} else {
+			QKeySequence seq(key);
+			modifierkey += seq.toString() + " +";
+		}
+	}
+	if (!modifierkey.isEmpty()) {
+		modifierkey.prepend("(");
+		modifierkey.append(")");
+	}
+	return modifierkey + " " + keyfact;
+}
+
 QMenu* Interface::create_context_menu(QObject* item )
 {
 	QMenu* menu = new QMenu();
@@ -541,7 +561,10 @@ QMenu* Interface::create_context_menu(QObject* item )
 		// Merge entries with equall action, but different key facts.
 		for (int j=i+1; j<list.size(); ++j) {
 			if (list.at(j).description == data.description) {
-				data.keysequence = data.keysequence + ", " + list.at(j).keysequence;
+				QString mergestring = list.at(j).keysequence;
+				data.keysequence = create_keyfact_string(data.keysequence, data.modifierkeys) +
+						" ,  " +
+						create_keyfact_string(mergestring, list.at(j).modifierkeys);
 				list.removeAt(j);
 			}
 		}
@@ -557,7 +580,8 @@ QMenu* Interface::create_context_menu(QObject* item )
 			list = submenus.value(data.submenu);
 			list->append(data);
 		} else {
-			QString text = QString(data.description + "  " + data.keysequence);
+			QString keyfact = create_keyfact_string(data.keysequence, data.modifierkeys);
+			QString text = QString(data.description + "  " + keyfact);
 			QAction* action = new QAction(this);
 			action->setText(text);
 			action->setData(data.iedata);

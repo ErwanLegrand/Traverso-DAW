@@ -117,6 +117,7 @@ struct MenuData {
         QString		description;
 	QString		submenu;
         int		sortorder;
+	QList<int > 	modifierkeys;
 };
 
 class InputEngine : public QObject

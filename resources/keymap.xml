@@ -211,7 +211,6 @@
 				<Object objectname="DragNode" slotsignature="move_up" modes="CurveMode" instantanious="1" />
 				<Object objectname="SongView" slotsignature="scroll_up" modes="All" sortorder="1" submenu="Scroll" instantanious="1" />
 				<Object objectname="Gain" slotsignature="increase_gain" modes="All" instantanious="1" />
-				<Object objectname="MoveClip" slotsignature="prev_snap_pos" modes="All" sortorder="2" instantanious="1" />
 				<Object objectname="TrackPanelPan" slotsignature="pan_right" modes="All" sortorder="1" instantanious="1" />
 				<Object objectname="TrackPanelGain" slotsignature="gain_increment" modes="All" sortorder="1" instantanious="1" />
 			</Objects>
@@ -221,7 +220,6 @@
 				<Object objectname="DragNode" slotsignature="move_down" modes="CurveMode" instantanious="1" />
 				<Object objectname="SongView" slotsignature="scroll_down" modes="All" sortorder="2" submenu="Scroll" instantanious="1" />
 				<Object objectname="Gain" slotsignature="decrease_gain" modes="All" instantanious="1" />
-				<Object objectname="MoveClip" slotsignature="next_snap_pos" modes="All" sortorder="1" instantanious="1" />
 				<Object objectname="TrackPanelPan" slotsignature="pan_left" modes="All" sortorder="2" instantanious="1" />
 				<Object objectname="TrackPanelGain" slotsignature="gain_decrement" modes="All" sortorder="2" instantanious="1" />
 			</Objects>
@@ -339,11 +337,6 @@
 				<Object objectname="Track" slotsignature="silence_others" modes="All" sortorder="20" instantanious="0" />
 			</Objects>
 		</keyfact>
-		<keyfact type="HKEY" key1="C" >
-			<Objects>
-				<Object objectname="AudioClipView" mousehint="LRUD" modes="Edit" sortorder="9" pluginname="TraversoCommands" commandname="CopyClip"  arguments="copy" />
-			</Objects>
-		</keyfact>
 		<keyfact type="HKEY" key1="MouseButtonLeft" >
 			<Objects>
 				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" pluginname="TraversoCommands" commandname="MoveClip" arguments="move" />
@@ -355,6 +348,11 @@
 				<Object objectname="TrackPanelPan" mousehint="LR"  modes="All" sortorder="8" pluginname="TraversoCommands" commandname="TrackPan" />
 			</Objects>
 		</keyfact> 
+		<keyfact type="HKEY" key1="C" >
+			<Objects>
+				<Object objectname="AudioClipView" mousehint="LRUD" modes="Edit" sortorder="9" pluginname="TraversoCommands" commandname="CopyClip"  arguments="copy" />
+			</Objects>
+		</keyfact>
 		<keyfact type="HKEY" key1="D" >
 			<Objects>
 				<Object objectname="AudioClipView" mousehint="LRUD" modes="Edit" sortorder="3" pluginname="TraversoCommands" commandname="MoveClip"  arguments="move" />
