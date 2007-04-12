@@ -209,6 +209,8 @@ private slots:
 	void update_mode_state();
 	void follow_state_changed(bool state);
 	void mode_index_changed(int index);
+	void recording_button_state_changed(bool state);
+	void update_recording_state();
 	
 private:
 	PlayHeadInfo* 	m_playhead;
@@ -218,7 +220,8 @@ private:
 	QAction*	m_snapAct;
 	QToolButton*	m_follow;
 	QAction*	m_followAct;
-	QPushButton*	m_record;
+	QAction*	m_recAction;
+	QToolButton*	m_record;
 };
 
 

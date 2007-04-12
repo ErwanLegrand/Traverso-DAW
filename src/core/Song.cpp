@@ -147,7 +147,7 @@ void Song::init()
 	realtimepath = false;
 	scheduleForDeletion = false;
 	isSnapOn=true;
-	changed = rendering = false;
+	changed = rendering = m_recording = false;
 	firstVisibleFrame=workingFrame=0;
 	seeking = 0;
 	// TODO seek to old position on project exit ?
@@ -574,6 +574,17 @@ Track* Song::create_track()
 	return track;
 }
 
+Command* Song::go_and_record()
+{
+	if ( ! is_transporting() && ! m_recording) {
+		set_recording(true);
+	} else if (is_transporting() && m_recording) {
+		set_recording(false);
+	}
+	
+	return go();
+}
+
 Command* Song::go()
 {
 // 	printf("Song-%d::go transport is %d\n", m_id, transport);
@@ -585,7 +596,7 @@ Command* Song::go()
 	} else {
 		emit transferStarted();
 		
-		if (any_track_armed()) {
+		if (m_recording && any_track_armed()) {
 			group = new CommandGroup(this, "");
 			int clipcount = 0;
 			foreach(Track* track, m_tracks) {
@@ -929,6 +940,12 @@ Command* Song::set_effects_mode( )
 	m_mode = EFFECTS;
 	emit modeChanged();
 	return 0;
+}
+
+void Song::set_recording(bool recording)
+{
+	m_recording = recording;
+	emit recordingStateChanged();
 }
 
 // eof

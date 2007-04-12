@@ -552,10 +552,13 @@ SongInfo::SongInfo(QWidget * parent)
 	m_mode->addItem("Mode: Effects");
 	m_mode->setFocusPolicy(Qt::NoFocus);
 	
-	m_record = new QPushButton(tr("Record"));
+	m_record = new QToolButton(this);
+	m_recAction = new QAction(tr("Record"), this);
+	m_recAction->setCheckable(true);
+	m_recAction->setToolTip(tr("Toggle recording state on/off"));
+	m_record->setDefaultAction(m_recAction);
 	m_record->setFocusPolicy(Qt::NoFocus);
-	m_record->setEnabled(false);
-	m_record->setIcon(find_pixmap(":/redled-16"));
+	m_record->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 	
 	
 	QToolButton* undobutton = new QToolButton(this);
@@ -602,6 +605,7 @@ SongInfo::SongInfo(QWidget * parent)
 	connect(m_followAct, SIGNAL(triggered(bool)), this, SLOT(follow_state_changed(bool)));
 	connect(&config(), SIGNAL(configChanged()), this, SLOT(update_follow_state()));
 	connect(m_mode, SIGNAL(currentIndexChanged(int)), this, SLOT(mode_index_changed(int)));
+	connect(m_recAction, SIGNAL(triggered(bool)), this, SLOT(recording_button_state_changed(bool)));
 	
 	update_follow_state();
 }
@@ -613,13 +617,16 @@ void SongInfo::set_song(Song* song)
 	if (m_song) {
 		connect(m_song, SIGNAL(snapChanged()), this, SLOT(update_snap_state()));
 		connect(m_song, SIGNAL(modeChanged()), this, SLOT(update_mode_state()));
+		connect(m_song, SIGNAL(recordingStateChanged()), this, SLOT(update_recording_state()));
 		update_snap_state();
 		update_mode_state();
 		m_snapAct->setEnabled(true);
 		m_mode->setEnabled(true);
+		m_record->setEnabled(true);
 	} else {
 		m_snapAct->setEnabled(false);
 		m_mode->setEnabled(false);
+		m_record->setEnabled(false);
 	}
 }
 
@@ -664,6 +671,28 @@ void SongInfo::mode_index_changed(int index)
 		m_song->set_effects_mode();
 	}
 }
+
+void SongInfo::recording_button_state_changed(bool state)
+{
+	m_song->set_recording(state);
+	if (state) {
+		m_recAction->setIcon(find_pixmap(":/redled-16"));
+	} else {
+		m_recAction->setIcon(find_pixmap(":/redledinactive-16"));
+	}
+}
+
+void SongInfo::update_recording_state()
+{
+	if (m_song->is_recording()) {
+		m_recAction->setChecked(true);
+		m_recAction->setIcon(find_pixmap(":/redled-16"));
+	} else {
+		m_recAction->setChecked(false);
+		m_recAction->setIcon(find_pixmap(":/redledinactive-16"));
+	}
+}
+
 
 QSize SongInfo::sizeHint() const
 {
@@ -795,4 +824,3 @@ void SystemValueBar::add_range_color(float x0, float x1, QColor color)
 }
 
 //eof
-

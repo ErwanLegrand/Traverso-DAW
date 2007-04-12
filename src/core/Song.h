@@ -47,7 +47,8 @@ struct ExportSpecification;
 class Song : public ContextItem
 {
 	Q_OBJECT
-	Q_CLASSINFO("go", tr("Play (Record)"))
+	Q_CLASSINFO("go", tr("Play"))
+	Q_CLASSINFO("go_and_record", tr("Record"));
 	Q_CLASSINFO("work_next_edge", tr("Workcursor: To next ege"))
 	Q_CLASSINFO("work_previous_edge", tr("Workcursor: To previous edge"))
 	Q_CLASSINFO("undo", tr("Undo"))
@@ -107,6 +108,8 @@ public:
 	void set_hzoom(int hzoom);
 	void set_snapping(bool snap);
 	int set_state( const QDomNode & node );
+	void set_recording(bool recording);
+	
 
 	int process(nframes_t nframes);
 	int process_export(nframes_t nframes);
@@ -124,6 +127,7 @@ public:
 	bool is_transporting() const {return transport;}
 	bool is_changed() const {return changed;}
 	bool is_snap_on() const	{return isSnapOn;}
+	bool is_recording() const {return m_recording;}
 
 	void disconnect_from_audiodevice();
 	void connect_to_audiodevice();
@@ -171,6 +175,7 @@ private:
 	bool 		stopTransport;
 	bool		realtimepath;
 	bool		scheduleForDeletion;
+	bool		m_recording;
 	SnapList*	snaplist;
 	Snappable*	workSnap;
 	
@@ -193,7 +198,7 @@ public slots :
 	float get_gain() const;
 
 	Command* go();
-
+	Command* go_and_record();
 	Command* work_next_edge();
 	Command* work_previous_edge();
 	Command* toggle_snap();
@@ -219,6 +224,7 @@ signals:
 	void setCursorAtEdge();
 	void masterGainChanged();
 	void modeChanged();
+	void recordingStateChanged();
 
 private slots:
 	void private_add_track(Track* track);
