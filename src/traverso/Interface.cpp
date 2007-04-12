@@ -609,7 +609,8 @@ QMenu* Interface::create_context_menu(QObject* item )
 		action->setText(key);
 		foreach(MenuData data, *list) {
 			QAction* action = new QAction(this);
-			QString text = QString(data.description + "  " + data.keysequence);
+			QString keyfact = create_keyfact_string(data.keysequence, data.modifierkeys);
+			QString text = QString(data.description + "  " + keyfact);
 			action->setText(text);
 			action->setData(data.iedata);
 			sub->addAction(action);
