@@ -23,6 +23,7 @@
 #define WORKCURSOR_MOVE_H
 
 #include <Command.h>
+#include <defines.h>
 
 class Song;
 class SongView;
@@ -36,6 +37,7 @@ public :
 
 	int finish_hold();
 	int begin_hold();
+	void cancel_action();
 	int jog();
 
 	void set_cursor_shape(int useX, int useY);
@@ -44,6 +46,7 @@ private :
 	Song*		m_song;
 	SongView*	m_sv;
 	PlayHead*	m_playCursor;
+	nframes_t	m_origPos;
 };
 
 #endif

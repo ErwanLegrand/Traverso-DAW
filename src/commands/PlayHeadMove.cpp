@@ -44,7 +44,7 @@ int PlayHeadMove::finish_hold()
 	}
 	m_cursor->set_active(m_song->is_transporting());
 	m_song->set_transport_pos( (nframes_t) (x * m_sv->scalefactor));
-	m_sv->start_shuttle(true);
+	m_sv->start_shuttle(false);
 	return -1;
 }
 
@@ -52,9 +52,20 @@ int PlayHeadMove::begin_hold()
 {
 	m_cursor->show();
 	m_cursor->set_active(false);
+	m_origXPos = m_song->get_transport_frame() / m_sv->scalefactor;
 	m_sv->start_shuttle(true, true);
 	return 1;
 }
+
+void PlayHeadMove::cancel_action()
+{
+	m_sv->start_shuttle(false);
+	m_cursor->set_active(m_song->is_transporting());
+	if (!m_resync) {
+		m_cursor->setPos(m_origXPos, 0);
+	}
+}
+
 
 void PlayHeadMove::set_cursor_shape(int useX, int useY)
 {

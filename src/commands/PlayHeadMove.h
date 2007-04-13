@@ -36,6 +36,7 @@ public :
 
 	int finish_hold();
 	int begin_hold();
+	void cancel_action();
 	int jog();
 
 	void set_cursor_shape(int useX, int useY);
@@ -45,6 +46,7 @@ private :
 	Song*		m_song;
 	SongView*	m_sv;
 	bool		m_resync;
+	int		m_origXPos;
 };
 
 #endif

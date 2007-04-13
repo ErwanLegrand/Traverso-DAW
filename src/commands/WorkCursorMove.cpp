@@ -60,7 +60,14 @@ int WorkCursorMove::begin_hold()
 	}
 	m_song->get_work_snap()->set_snappable(false);
 	m_sv->start_shuttle(true, true);
+	m_origPos = m_song->get_working_frame();
 	return 1;
+}
+
+void WorkCursorMove::cancel_action()
+{
+	m_sv->start_shuttle(false);
+	m_song->set_work_at(m_origPos);
 }
 
 void WorkCursorMove::set_cursor_shape(int useX, int useY)

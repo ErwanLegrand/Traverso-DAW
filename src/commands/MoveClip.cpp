@@ -97,7 +97,11 @@ MoveClip::MoveClip(AudioClipView* cv, QString type)
 
 
 MoveClip::~MoveClip()
-{}
+{
+	if (d) {
+		delete d;
+	}
+}
 
 void MoveClip::audioclip_added(AudioClip * clip)
 {
@@ -157,6 +161,7 @@ void MoveClip::init_data(bool isCopy)
 	d->resync = config().get_property("AudioClip", "SyncDuringDrag", false).toBool();
 	d->view->set_dragging(true);
 	d->bypassjog = false;
+	d->origTrackView = d->view->get_trackview();
 }
 
 
@@ -190,10 +195,7 @@ int MoveClip::finish_hold()
 {
 	m_clip->set_snappable(true);
 	d->sv->start_shuttle(false);
-
-	if (m_actionType == "anchored_right_edge_move") {
-		m_clip->set_left_edge(m_oldOppositeEdge);
-	}
+	d->view->set_dragging(false);
 
 	return 1;
 }
@@ -201,8 +203,12 @@ int MoveClip::finish_hold()
 
 int MoveClip::prepare_actions()
 {
-	d->view->set_dragging(false);
 	delete d;
+	d = 0;
+	
+	if (m_actionType == "anchored_right_edge_move") {
+		m_clip->set_left_edge(m_oldOppositeEdge);
+	}
 	
 	return 1;
 }
@@ -266,6 +272,23 @@ int MoveClip::undo_action()
 	return 1;
 }
 
+void MoveClip::cancel_action()
+{
+	finish_hold();
+	
+	if (m_actionType == "copy") {
+		Command::process_command(m_originTrack->remove_clip(m_clip, false));
+		resources_manager()->remove_clip_from_database(m_clip->get_id());
+	} else if (m_actionType == "move") {
+		if (d->resync) {
+			m_clip->set_track_start_frame(m_originalTrackFirstFrame);
+		}
+		d->view->set_trackview(d->origTrackView);
+		d->view->setParentItem(d->origTrackView);
+		d->view->setPos(QPoint(m_originalTrackFirstFrame / d->sv->scalefactor,
+				d->origTrackView->get_childview_y_offset()));
+	}
+}
 
 int MoveClip::jog()
 {

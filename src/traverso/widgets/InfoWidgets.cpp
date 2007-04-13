@@ -310,6 +310,7 @@ SongSelector::SongSelector(QWidget* parent)
 	
 	m_box = new QComboBox;
 	m_box->setMinimumWidth(140);
+	m_box->setFocusPolicy(Qt::NoFocus);
 	
 	QHBoxLayout* lay = new QHBoxLayout;
 	lay->setMargin(0);

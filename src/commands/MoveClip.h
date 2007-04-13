@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveClip.h,v 1.16 2007/04/11 15:56:34 r_sijrier Exp $
+    $Id: MoveClip.h,v 1.17 2007/04/13 11:12:30 r_sijrier Exp $
 */
 
 #ifndef MOVECLIPACTION_H
@@ -32,6 +32,7 @@ class AudioClip;
 class Song;
 class Track;
 class SongView;
+class TrackView;
 class AudioClipView;
 
 class MoveClip : public Command
@@ -49,6 +50,7 @@ public :
         int prepare_actions();
         int do_action();
         int undo_action();
+	void cancel_action();
         int jog();
 	
 private :
@@ -68,6 +70,7 @@ private :
 		AudioClip* 	newclip;
 		SongView* 	sv;
 		AudioClipView*	view;
+		TrackView*	origTrackView;
 		QPoint		origPos;
 		nframes_t	origTrackStartFrame;
 		nframes_t	origTrackEndFrame;
