@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Command.cpp,v 1.16 2007/04/11 21:19:18 r_sijrier Exp $
+$Id: Command.cpp,v 1.17 2007/04/13 09:57:35 r_sijrier Exp $
 */
 
 #include "Command.h"
@@ -233,6 +233,16 @@ int Command::undo_action( )
 	return -1;
 }
 
+/**
+ * 	Cancels the action (makes only sense for hold type of actions).
+	Reimplement to undo any changes allready made, either be it 
+	data from the core that has changed, or e.g. gui items who
+	moved in the jog() function.
+ */
+void Command::cancel_action()
+{
+	// reimplement me
+}
 
 /**
  * 	Uses the mouse hints specified in the keymap.xml file to set a cursor
@@ -275,3 +285,4 @@ void Command::process_command(Command * cmd)
 }
 
 //eof
+

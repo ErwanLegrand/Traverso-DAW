@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Command.h,v 1.10 2007/04/02 21:05:43 r_sijrier Exp $
+    $Id: Command.h,v 1.11 2007/04/13 09:57:35 r_sijrier Exp $
 */
 
 #ifndef COMMAND_H
@@ -46,6 +46,7 @@ public :
         virtual int undo_action();
         virtual int jog();
         virtual void set_cursor_shape(int useX, int useY);
+	virtual void cancel_action();
         
 	void undo() {undo_action();}
 	void redo() {do_action();}

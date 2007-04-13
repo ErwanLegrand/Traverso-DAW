@@ -516,6 +516,7 @@ void InputEngine::reset()
 	fact1_k2 = 0;
 	isHolding = false;
 	isPressEventLocked = false;
+	m_cancelHold = false;
 	stackIndex = 0;
 	pressEventCounter = 0;
 	fact2_k1 = 0;
@@ -595,6 +596,12 @@ void InputEngine::catch_scroll(QWheelEvent* e)
 
 void InputEngine::process_press_event(int eventcode, bool isAutoRepeat)
 {
+	if (eventcode == Qt::Key_Escape && is_holding()) {
+		m_cancelHold = true;
+		finish_hold();
+		return;
+	}
+	
 	if (is_modifier_keyfact(eventcode)) {
 		if ( (! isAutoRepeat) && (! m_activeModifierKeys.contains(eventcode)) ) {
 			m_activeModifierKeys.append(eventcode);
@@ -1097,7 +1104,15 @@ void InputEngine::finish_hold()
 
 	isHolding = false;
 
-	if (holdingCommand) {
+	if (m_cancelHold) {
+		PMESG("Canceling this hold command");
+		if (holdingCommand) {
+			holdingCommand->cancel_action();
+			delete holdingCommand;
+			holdingCommand = 0;
+		}
+		cpointer().reset_cursor();
+	} else if (holdingCommand) {
 
 		holdingCommand->finish_hold();
 		cpointer().reset_cursor();
@@ -1118,7 +1133,7 @@ void InputEngine::finish_hold()
 			delete holdingCommand;
 		}
 
-		holdingCommand = (Command*) 0;
+		holdingCommand = 0;
 	}
 	
 	set_jogging(false);

@@ -183,6 +183,7 @@ private:
         bool 			isDoubleKey;
         bool 			isJogging;
         bool 			isCollecting;
+	bool			m_cancelHold;
 
         int 			fact1_k1;
         int 			fact1_k2;
