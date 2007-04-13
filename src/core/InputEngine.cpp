@@ -488,11 +488,11 @@ void InputEngine::jog()
 
 void InputEngine::set_jogging(bool jog)
 {
-// 	if (jog) {
-// 		cpointer().grab_mouse();
-// 	} else {
-// 		cpointer().release_mouse();
-// 	}
+	if (jog) {
+		cpointer().grab_mouse();
+	} else {
+		cpointer().release_mouse();
+	}
 
 	isJogging = jog;
 }
