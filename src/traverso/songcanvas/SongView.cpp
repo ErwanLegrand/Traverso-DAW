@@ -441,7 +441,7 @@ void SongView::update_shuttle()
 	QScrollBar* vscrollbar = m_clipsViewPort->verticalScrollBar();
 	vscrollbar->setValue(vscrollbar->value() + m_shuttleYfactor);
 	
-	if (m_shuttleXfactor != 0) {
+	if (m_shuttleXfactor != 0 || m_shuttleYfactor != 0) {
 		ie().jog();
 	}
 }

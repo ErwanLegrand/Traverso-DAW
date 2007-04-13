@@ -379,9 +379,9 @@ void Interface::create_menus( )
 	
 	menu = menuBar()->addMenu(tr("&Song"));
 	
-	action = menu->addAction(tr("New &Track(s)"));
+	action = menu->addAction(tr("New &Track(s)..."));
 	connect(action, SIGNAL(triggered()), this, SLOT(show_newtrack_dialog()));
-	action = menu->addAction(tr("New &Song(s)"));
+	action = menu->addAction(tr("New &Song(s)..."));
 	connect(action, SIGNAL(triggered()), this, SLOT(show_newsong_dialog()));
 
 	
