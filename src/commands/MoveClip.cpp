@@ -150,7 +150,7 @@ void MoveClip::init_data(bool isCopy)
 	}
 
 	m_originTrack = m_targetTrack = m_clip->get_track();
-	m_originalTrackFirstFrame = d->snappos = m_clip->get_track_start_frame();
+	m_originalTrackFirstFrame = m_clip->get_track_start_frame();
 	m_posDiff = 0;
 	d->origXPos = cpointer().on_first_input_event_x();
 	d->origPos = QPoint(d->origXPos, cpointer().on_first_input_event_y());
@@ -292,7 +292,6 @@ void MoveClip::cancel_action()
 
 int MoveClip::jog()
 {
-	
 	if (! m_clip || d->bypassjog) {
 		return 0;
 	}
@@ -304,18 +303,14 @@ int MoveClip::jog()
 	
 	d->origPos = cpointer().pos();
 	
-// 	printf("newPos x, y is %f, %f\n", newPos.x(), newPos.y());
-	
 	if (m_actionType != "anchored_left_edge_move" && m_actionType != "anchored_right_edge_move") {
 		TrackView* trackView = d->sv->get_trackview_under(cpointer().scene_pos());
 		if (!trackView) {
 	// 		printf("no trackview returned\n");
 		} else if (trackView != d->view->get_trackview()) {
-	// 		printf("Setting new TrackView!\n");
 			d->view->set_trackview(trackView);
 			d->view->setParentItem(trackView);
 			m_targetTrack = trackView->get_track();
-	// 		printf("track id is %d\n", m_targetTrack->get_id());
 		}
 	}
 
@@ -325,56 +320,15 @@ int MoveClip::jog()
 	int diff_f = (cpointer().x() - d->origXPos - scrollbardif) * d->sv->scalefactor;
 	long newTrackStartFrame = d->origTrackStartFrame + diff_f;
 	nframes_t newTrackEndFrame = d->origTrackEndFrame + diff_f;
-// 	printf("newTrackStartFrame is %d\n", newTrackStartFrame);
 
-	// attention: newTrackStartFrame is unsigned, can't check for negative values
 	if (newTrackStartFrame < 0) {
 		newTrackStartFrame = 0;
 	}
 
-	// "nframe_t" domain, but must be signed ints because they can become negative
-	int snapStartDiff = 0;
-	int snapEndDiff = 0;
-	int snapDiff = 0;
-
 	if (m_song->is_snap_on()) {
-
-		SnapList* slist = m_song->get_snap_list();
-
-		// check if there is anything to snap
-		bool start_snapped = false;
-		bool end_snapped = false;
-		if (m_actionType != "anchored_right_edge_move" &&
-			slist->is_snap_value(newTrackStartFrame)) {
-			start_snapped = true;
-		}
-		if (m_actionType != "anchored_left_edge_move" &&
-			slist->is_snap_value(newTrackEndFrame)) {
-			end_snapped = true;
-		}
-
-		if (start_snapped) {
-			snapStartDiff = slist->get_snap_diff(newTrackStartFrame) / d->sv->scalefactor;
-			snapDiff = snapStartDiff; // in case both ends snapped, change this value later, else leave it
-		}
-
-		if (end_snapped) {
-			snapEndDiff = slist->get_snap_diff(newTrackEndFrame) / d->sv->scalefactor; 
-			snapDiff = snapEndDiff; // in case both ends snapped, change this value later, else leave it
-		}
-
-		// If both snapped, check which one is closer. Do not apply this check if one of the
-		// ends hasn't snapped, because it's diff value will be 0 by default and will always
-		// be smaller than the actually snapped value.
-		if (start_snapped && end_snapped) {
-			if (abs(snapEndDiff) > abs(snapStartDiff))
-				snapDiff = snapStartDiff;
-			else
-				snapDiff = snapEndDiff;
-		}
+		calculate_snap_diff(newTrackStartFrame, newTrackEndFrame);
 	}
-
-	newTrackStartFrame -= snapDiff * d->sv->scalefactor;
+	
 	m_posDiff = newTrackStartFrame - m_originalTrackFirstFrame;
 
 	// store the new position only if the clip was moved, but not if it stuck to a snap position
@@ -396,13 +350,13 @@ int MoveClip::jog()
 		newPos.setY(d->view->pos().y());
 		if (d->resync) {
 			m_clip->set_track_start_frame(newTrackStartFrame);
-			if (m_actionType == "anchored_left_edge_move")
+			if (m_actionType == "anchored_left_edge_move") {
 				m_clip->set_right_edge(m_oldOppositeEdge);
+			}
 		} else {
 			d->view->setPos(newPos);
 		}
 	}
-	
 	
 	d->sv->update_shuttle_factor();
 
@@ -414,18 +368,28 @@ void MoveClip::next_snap_pos(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
 	d->bypassjog = true;
-	d->snappos = m_song->get_snap_list()->next_snap_pos(d->snappos);
-	m_posDiff = d->snappos - m_originalTrackFirstFrame;
-	m_clip->set_track_start_frame(d->snappos);
+	long trackStartFrame = m_song->get_snap_list()->next_snap_pos(m_clip->get_track_start_frame());
+	nframes_t trackEndFrame = m_song->get_snap_list()->next_snap_pos(m_clip->get_track_end_frame());
+	int startdiff = trackStartFrame - m_clip->get_track_start_frame();
+	int enddiff = trackEndFrame - m_clip->get_track_end_frame();
+	int diff = (abs(startdiff) < abs(enddiff)) ? startdiff : enddiff;
+	trackStartFrame = m_clip->get_track_start_frame() + diff;
+	m_posDiff = trackStartFrame - m_originalTrackFirstFrame;
+	m_clip->set_track_start_frame(trackStartFrame);
 }
 
 void MoveClip::prev_snap_pos(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
 	d->bypassjog = true;
-	d->snappos = m_song->get_snap_list()->prev_snap_pos(d->snappos);
-	m_posDiff = d->snappos - m_originalTrackFirstFrame;
-	m_clip->set_track_start_frame(d->snappos);
+	long trackStartFrame = m_song->get_snap_list()->prev_snap_pos(m_clip->get_track_start_frame());
+	nframes_t trackEndFrame = m_song->get_snap_list()->prev_snap_pos(m_clip->get_track_end_frame());
+	int startdiff = trackStartFrame - m_clip->get_track_start_frame();
+	int enddiff = trackEndFrame - m_clip->get_track_end_frame();
+	int diff = (abs(startdiff) < abs(enddiff)) ? startdiff : enddiff;
+	trackStartFrame = m_clip->get_track_start_frame() + diff;
+	m_posDiff = trackStartFrame - m_originalTrackFirstFrame;
+	m_clip->set_track_start_frame(trackStartFrame);
 }
 
 void MoveClip::move_to_start(bool autorepeat)
@@ -444,5 +408,48 @@ void MoveClip::move_to_end(bool autorepeat)
 	Command::process_command(track->add_clip(m_clip, false));
 }
 
+void MoveClip::calculate_snap_diff(long& leftframe, nframes_t rightframe)
+{
+	// "nframe_t" domain, but must be signed ints because they can become negative
+	int snapStartDiff = 0;
+	int snapEndDiff = 0;
+	int snapDiff = 0;
+	
+	SnapList* slist = m_song->get_snap_list();
+
+	// check if there is anything to snap
+	bool start_snapped = false;
+	bool end_snapped = false;
+	if (slist->is_snap_value(leftframe) && m_actionType != "anchored_right_edge_move") {
+		start_snapped = true;
+	}
+	
+	if (slist->is_snap_value(rightframe) && m_actionType != "anchored_left_edge_move") {
+		end_snapped = true;
+	}
+
+	if (start_snapped) {
+		snapStartDiff = slist->get_snap_diff(leftframe) / d->sv->scalefactor;
+		snapDiff = snapStartDiff; // in case both ends snapped, change this value later, else leave it
+	}
+
+	if (end_snapped) {
+		snapEndDiff = slist->get_snap_diff(rightframe) / d->sv->scalefactor; 
+		snapDiff = snapEndDiff; // in case both ends snapped, change this value later, else leave it
+	}
+
+	// If both snapped, check which one is closer. Do not apply this check if one of the
+	// ends hasn't snapped, because it's diff value will be 0 by default and will always
+	// be smaller than the actually snapped value.
+	if (start_snapped && end_snapped) {
+		if (abs(snapEndDiff) > abs(snapStartDiff))
+			snapDiff = snapStartDiff;
+		else
+			snapDiff = snapEndDiff;
+	}
+	
+	leftframe -= snapDiff * d->sv->scalefactor;
+}
 
 // eof
+
