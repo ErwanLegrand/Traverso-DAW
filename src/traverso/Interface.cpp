@@ -445,14 +445,12 @@ Command * Interface::show_context_menu( )
 	// If not, show the menu for the topmost context item, and it's 
 	// siblings as submenus
 	if (ie().is_holding()) {
-		items.append(ie().get_holding_command());
+		Command* holding = ie().get_holding_command();
+		if (holding) {
+			items.append(holding);
+		}
 	} else {
 		items = cpointer().get_context_items();
-		
-		if (items.isEmpty()) {
-			printf("Interface::show_context_menu: cpointer() returned empty list\n");
-			return 0;
-		}
 		
 		// Filter out classes that don't need to show up in the menu
 		foreach(QObject* item, items) {
@@ -461,6 +459,11 @@ Command * Interface::show_context_menu( )
 				items.removeAll(item);
 			}
 		}
+	}
+	
+	if (items.isEmpty()) {
+		printf("Interface:: No items under mouse to show context menu for!\n");
+		return 0;
 	}
 	
 	// 'Store' the contextitems under the mouse cursor, so the InputEngine
