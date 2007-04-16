@@ -1,14 +1,12 @@
 <!DOCTYPE TraversoTheming>
 <Themer>
-	<general fontscalefactor="1.0" someotherthing="whatever" />
+	<general version="1.0" />
 	<properties>
 		<property name="AudioClip:drawbackground" value="1" />
 		<property name="AudioClip:infoareaheight" value="13" />
 		<property name="AudioClip:mimimumheightforinfoarea" value="40" />
 		<property name="AudioClip:wavemicroview:antialiased" value="0" />
 		<property name="AudioClip:fillwave" value="1" />
-		<property name="AudioClip:paintrectified" value="0" />
-		<property name="AudioClip:paintmerged" value="0" />
 		
 		
 		<property name="Song:track:seperatingheight" value="0" />
@@ -28,8 +26,6 @@
 		<property name="VUMeter:layout:mainlayoutmargin" value="1" />
 		<property name="VUMeter:layout:mainlayoutspacing" value="2" />
 		<property name="VUMeter:layout:minimumlevelwidth" value="6" />
-		<property name="VUMeter:layout:minimumlevelwidth" value="6" />
-		
 	</properties>
 	<fonts>
 		<font name="AudioClip:title" size="8" family="Bitstream Vera Sans" />
