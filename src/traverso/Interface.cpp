@@ -754,15 +754,8 @@ void Interface::show_settings_dialog()
 
 void Interface::closeEvent(QCloseEvent * event)
 {
-	if (m_settingsdialog && m_settingsdialog->isVisible()) {
-		m_settingsdialog->close();
-	}
-	
-	if (pm().get_project() && pm().get_project()->is_save_to_close()) {
-		event->accept();
-	} else {
-		event->ignore();
-	}
+	event->ignore();
+	pm().exit();
 }
 
 Command* Interface::show_project_manager_dialog()

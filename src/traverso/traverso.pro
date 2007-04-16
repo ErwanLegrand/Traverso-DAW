@@ -101,6 +101,7 @@ FORMS += ui/ExportWidget.ui \
 	ui/BehaviorConfigPage.ui \
 	ui/MemoryConfigPage.ui \
 	ui/ThemeConfigPage.ui \
+	ui/PerformanceConfigPage.ui \
 	ui/SongManagerDialog.ui \
 	ui/ProjectManagerDialog.ui \
 	ui/MarkerDialog.ui \

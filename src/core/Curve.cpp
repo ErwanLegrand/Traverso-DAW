@@ -84,10 +84,10 @@ void Curve::init( )
 }
 
 
-QDomNode Curve::get_state( QDomDocument doc )
+QDomNode Curve::get_state(QDomDocument doc, const QString& name)
 {
 	PENTER3;
-	QDomElement domNode = doc.createElement("Curve");
+	QDomElement domNode = doc.createElement(name);
 	
 	QStringList nodesList;
 	

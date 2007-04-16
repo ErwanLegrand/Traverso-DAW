@@ -99,7 +99,6 @@ Traverso::Traverso(int &argc, char **argv )
 	
 	QMetaObject::invokeMethod(&pm(), "start", Qt::QueuedConnection);
 	
-	setQuitOnLastWindowClosed(false);
 	connect(this, SIGNAL(lastWindowClosed()), &pm(), SLOT(exit()));
 }
 

@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ui_BehaviorConfigPage.h"
 #include "ui_MemoryConfigPage.h"
 #include "ui_ThemeConfigPage.h"
+#include "ui_PerformanceConfigPage.h"
 
 #if defined (ALSA_SUPPORT)
 #include "ui_AlsaDevicesPage.h"
@@ -38,6 +39,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ui_PaDriverPage.h"
 #endif
 
+class PerformanceConfigPage : public QWidget, private Ui::PerformanceConfigPage
+{
+public:
+	PerformanceConfigPage(QWidget* parent = 0);
+
+private:
+	friend class PerformancePage;
+};
 
 class DriverConfigPage : public QWidget, private Ui::DriverConfigPage
 {
@@ -229,5 +238,16 @@ private:
 	BehaviorConfigPage* m_configpage;
 };
 
+class PerformancePage : public ConfigPage
+{
+public:
+	PerformancePage(QWidget *parent = 0);
+	void load_config();
+	void save_config();
+	void reset_default_config();
+	
+private:
+	PerformanceConfigPage* m_configpage;
+};
 
 #endif

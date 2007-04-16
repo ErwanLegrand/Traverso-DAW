@@ -444,13 +444,6 @@ void BehaviorPage::load_config()
 	
 	update_follow();
 
-	if (oncloseaction == "save") {
-		m_configpage->saveRadioButton->setChecked(true);
-	} else if (oncloseaction == "ask") {
-		m_configpage->askRadioButton->setChecked(true);
-	} else {
-		m_configpage->neverRadioButton->setChecked(true);
-	}
 }
 
 
@@ -526,7 +519,6 @@ void AppearancePage::save_config()
 	config().set_property("Themer", "usestylepallet", m_themepage->useStylePalletCheckBox->isChecked());
 	config().set_property("Themer", "paintaudiorectified", m_themepage->rectifiedCheckBox->isChecked());
 	config().set_property("Themer", "paintstereoaudioasmono", m_themepage->mergedCheckBox->isChecked());
-	config().set_property("Interface", "OpenGL", m_themepage->useOpenGLCheckBox->isChecked());
 }
 
 void AppearancePage::load_config()
@@ -554,7 +546,6 @@ void AppearancePage::load_config()
 	QString theme  = config().get_property("Themer", "currenttheme", "TraversoLight").toString();
 	int coloradjust = config().get_property("Themer", "coloradjust", 100).toInt();
 	bool usestylepallete = config().get_property("Themer", "usestylepallet", "").toBool();
-	bool useOpenGL = config().get_property("Interface", "OpenGL", false).toBool();
 	bool paintRectified = config().get_property("Themer", "paintaudiorectified", false).toBool();
 	bool paintStereoAsMono = config().get_property("Themer", "paintstereoaudioasmono", false).toBool();
 
@@ -565,7 +556,6 @@ void AppearancePage::load_config()
 	m_themepage->colorAdjustBox->setValue(coloradjust);
 	m_themepage->useStylePalletCheckBox->setChecked(usestylepallete);
 	m_themepage->themePathLineEdit->setText(themepath);
-	m_themepage->useOpenGLCheckBox->setChecked(useOpenGL);	
 	m_themepage->rectifiedCheckBox->setChecked(paintRectified);
 	m_themepage->mergedCheckBox->setChecked(paintStereoAsMono);
 }
@@ -580,7 +570,6 @@ void AppearancePage::reset_default_config()
 	QString systemstyle = QString(QApplication::style()->metaObject()->className()).remove("Q").remove("Style");
 	config().set_property("Themer", "style", systemstyle);
 	config().set_property("Themer", "usestylepallet", false);
-	config().set_property("Interface", "OpenGL", false);
 	config().set_property("Themer", "paintaudiorectified", false);
 	config().set_property("Themer", "paintstereoaudioasmono", false);
 	
@@ -592,8 +581,6 @@ ThemeConfigPage::ThemeConfigPage(QWidget * parent)
 	: QWidget(parent)
 {
 	setupUi(this);
-	// Until we find out how to make properly use of it, set disabled.
-	openGlGroupBox->hide();
 	themeSelecterCombo->setInsertPolicy(QComboBox::InsertAlphabetically);
 }
 
@@ -690,7 +677,7 @@ KeyboardPage::KeyboardPage(QWidget * parent)
 {
 	m_configpage = new KeyboardConfigPage(this);
 	mainLayout->addWidget(m_configpage);
-	mainLayout->addStretch(1);
+	mainLayout->addStretch(5);
 	
 	load_config();
 }
@@ -699,11 +686,9 @@ void KeyboardPage::load_config()
 {
 	int doubleFactTimeout = config().get_property("CCE", "doublefactTimeout", 200).toInt();
 	int holdTimeout = config().get_property("CCE", "holdTimeout", 200).toInt();
-	int jogUpdateInterval = config().get_property("CCE", "JogUpdateInterval", 28).toInt();
 	
 	m_configpage->doubleFactTimeoutSpinBox->setValue(doubleFactTimeout);
 	m_configpage->holdTimeoutSpinBox->setValue(holdTimeout);
-	m_configpage->jogUpdateIntervalSpinBox->setValue(1000 / jogUpdateInterval);
 	
 	QString defaultkeymap = config().get_property("CCE", "keymap", "default").toString();
 	int index = m_configpage->keymapComboBox->findText(defaultkeymap);
@@ -720,7 +705,6 @@ void KeyboardPage::save_config()
 	config().set_property("CCE", "doublefactTimeout", m_configpage->doubleFactTimeoutSpinBox->value());
 	config().set_property("CCE", "holdTimeout", m_configpage->holdTimeoutSpinBox->value());
 	config().set_property("CCE", "keymap", newkeymap);
-	config().set_property("CCE", "JogUpdateInterval", 1000 / m_configpage->jogUpdateIntervalSpinBox->value());	
 	
 	ie().set_double_fact_interval(m_configpage->doubleFactTimeoutSpinBox->value());
 	ie().set_hold_sensitiveness(m_configpage->holdTimeoutSpinBox->value());
@@ -734,7 +718,6 @@ void KeyboardPage::reset_default_config()
 	config().set_property("CCE", "doublefactTimeout", 180);
 	config().set_property("CCE", "holdTimeout", 150);
 	config().set_property("CCE", "keymap", "default");
-	config().set_property("CCE", "JogUpdateInterval", 28);	
 	load_config();
 }
 
@@ -830,4 +813,44 @@ MemoryConfigPage::MemoryConfigPage(QWidget * parent)
 	reloadWarningLabel->setPixmap(icon.pixmap(22, 22));
 }
 
+
+
+PerformancePage::PerformancePage(QWidget * parent)
+	: ConfigPage(parent)
+{
+	m_configpage = new PerformanceConfigPage(this);
+	mainLayout->addWidget(m_configpage);
+	mainLayout->addStretch(5);
+	
+	load_config();
+}
+
+void PerformancePage::load_config()
+{
+	int jogUpdateInterval = config().get_property("CCE", "JogUpdateInterval", 28).toInt();
+	bool useOpenGL = config().get_property("Interface", "OpenGL", false).toBool();
+	
+	m_configpage->jogUpdateIntervalSpinBox->setValue(1000 / jogUpdateInterval);
+	m_configpage->useOpenGLCheckBox->setChecked(useOpenGL);	
+}
+
+void PerformancePage::save_config()
+{
+	config().set_property("Interface", "OpenGL", m_configpage->useOpenGLCheckBox->isChecked());
+	config().set_property("CCE", "JogUpdateInterval", 1000 / m_configpage->jogUpdateIntervalSpinBox->value());	
+}
+
+void PerformancePage::reset_default_config()
+{
+	config().set_property("CCE", "JogUpdateInterval", 28);
+	config().set_property("Interface", "OpenGL", false);
+	load_config();
+}
+
+PerformanceConfigPage::PerformanceConfigPage(QWidget* parent)
+{
+	setupUi(this);
+}
+
 //eof
+

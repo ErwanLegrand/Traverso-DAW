@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ResourcesManager.cpp,v 1.3 2007/04/02 09:53:40 r_sijrier Exp $
+$Id: ResourcesManager.cpp,v 1.4 2007/04/16 18:44:26 r_sijrier Exp $
 */
 
 #include "ResourcesManager.h"
@@ -61,6 +61,7 @@ ResourcesManager::~ResourcesManager()
 QDomNode ResourcesManager::get_state( QDomDocument doc )
 {
 
+// 	printf("ResourcesManager::get_state\n");
 	QDomElement asmNode = doc.createElement("ResourcesManager");
 	
 	QDomElement audioSourcesElement = doc.createElement("AudioSources");
@@ -74,24 +75,24 @@ QDomNode ResourcesManager::get_state( QDomDocument doc )
 	
 	QDomElement audioClipsElement = doc.createElement("AudioClips");
 	
-	if (m_clips.size() > 10000) {
-		Q_ASSERT(m_clips.size() < 10000);
-	}
+	QList<AudioClip*> list = m_clips.values();
 	
-	foreach(AudioClip* clip, m_clips) {
+	
+	for (int i=0; i<list.size(); ++i) {
+		AudioClip* clip = list.at(i);
+		
 		// Omit all clips that were deprecated:
 		if (m_deprecatedClips.contains(clip->get_id())) {
 			continue;
 		}
 		
-// 		PWARN("Getting state of clip %s", QS_C(clip->get_name()));
 		// If the clip was refcounted, then it's state has been fully set
 		// and likely changed, so we can get the 'new' state from it.
 		if (clip->get_ref_count()) {
 			audioClipsElement.appendChild(clip->get_state(doc));
-		// In case it wasn't we should use the 'old' domNode which 
-		// was set during set_state();
 		} else {
+			// In case it wasn't we should use the 'old' domNode which 
+			// was set during set_state();
 			audioClipsElement.appendChild(clip->m_domNode);
 		}
 	}

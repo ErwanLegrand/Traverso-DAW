@@ -48,7 +48,7 @@ public:
 	Curve(ContextItem* parent, Song* song, const QDomNode node);
 	~Curve();
 
-	virtual QDomNode get_state(QDomDocument doc);
+	QDomNode get_state(QDomDocument doc, const QString& name);
 	virtual int set_state( const QDomNode& node );
 	virtual int process(audio_sample_t* buffer, nframes_t pos, nframes_t nframes);
 	

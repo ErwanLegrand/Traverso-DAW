@@ -36,15 +36,16 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 	contentsWidget->setMovement(QListView::Static);
 	contentsWidget->setMaximumWidth(140);
 	contentsWidget->setMinimumWidth(135);
-	contentsWidget->setMinimumHeight(350);
+	contentsWidget->setMinimumHeight(390);
 	contentsWidget->setSpacing(12);
 	
 	pagesWidget = new QStackedWidget;
-	pagesWidget->addWidget(new BehaviorPage);
-	pagesWidget->addWidget(new AppearancePage);
-	pagesWidget->addWidget(new AudioDriverPage);
-	pagesWidget->addWidget(new DiskIOPage);
-	pagesWidget->addWidget(new KeyboardPage);
+	pagesWidget->addWidget(new BehaviorPage(this));
+	pagesWidget->addWidget(new AppearancePage(this));
+	pagesWidget->addWidget(new AudioDriverPage(this));
+	pagesWidget->addWidget(new DiskIOPage(this));
+	pagesWidget->addWidget(new KeyboardPage(this));
+	pagesWidget->addWidget(new PerformancePage(this));
 	
 	createIcons();
 	contentsWidget->setCurrentRow(0);
@@ -116,6 +117,12 @@ void SettingsDialog::createIcons()
 	keyboardButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	keyboardButton->setSizeHint(QSize(100, 50));
 	
+	QListWidgetItem* performanceButton = new QListWidgetItem(contentsWidget);
+	performanceButton->setIcon(QIcon(":/performance"));
+	performanceButton->setText(tr("Performance"));
+	performanceButton->setTextAlignment(Qt::AlignHCenter);
+	performanceButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+	performanceButton->setSizeHint(QSize(100, 50));
 	
 	connect(contentsWidget,
 		SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)),

@@ -107,7 +107,7 @@ void AudioClip::init()
 	fadeIn = 0;
 	fadeOut = 0;
 	m_refcount = 0;
-	gainEnvelope = 0;
+	m_gainEnvelope = 0;
 }
 
 int AudioClip::set_state(const QDomNode& node)
@@ -148,9 +148,11 @@ int AudioClip::set_state(const QDomNode& node)
 			private_add_fade(fadeOut);
 		}
 		
-		QDomElement gainEnvelopeNode = curvesNode.firstChildElement("Curve");
-		if (!gainEnvelopeNode.isNull()) {
-			gainEnvelope->set_state( gainEnvelopeNode );
+		QDomElement m_gainEnvelopeNode = curvesNode.firstChildElement("GainCurve");
+		if (!m_gainEnvelopeNode.isNull()) {
+			m_gainEnvelope->set_state( m_gainEnvelopeNode );
+		} else {
+			init_gain_envelope();
 		}
 	}
 
@@ -183,7 +185,7 @@ QDomNode AudioClip::get_state( QDomDocument doc )
 	if (fadeOut) {
 		curves.appendChild(fadeOut->get_state(doc));
 	}
-	curves.appendChild(gainEnvelope->get_state(doc));
+	curves.appendChild(m_gainEnvelope->get_state(doc, "GainCurve"));
 
 	node.appendChild(curves);
 
@@ -442,7 +444,7 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 		m_fades.at(i)->process(mixdown, read_frames);
 	}
 	
-	gainEnvelope->process(mixdown, (m_song->get_transport_frame() - trackStartFrame), read_frames);
+	m_gainEnvelope->process(mixdown, (m_song->get_transport_frame() - trackStartFrame), read_frames);
 	
 	return 1;
 }
@@ -555,6 +557,9 @@ int AudioClip::init_recording( QByteArray name )
 	sourceStartFrame = 0;
 	isTake = 1;
 	m_recordingStatus = RECORDING;
+	
+	init_gain_envelope();
+	
 	connect(m_song, SIGNAL(transferStopped()), this, SLOT(finish_recording()));
 
 	return 1;
@@ -743,11 +748,11 @@ void AudioClip::set_song( Song * song )
 	
 	set_history_stack(m_song->get_history_stack());
 	
-	if (!gainEnvelope) {
-		gainEnvelope = new Curve(this, m_song);
+	if (!m_gainEnvelope) {
+		m_gainEnvelope = new Curve(this, m_song);
 	}
 	
-	gainEnvelope->set_history_stack(get_history_stack());
+	m_gainEnvelope->set_history_stack(get_history_stack());
 
 	set_snap_list(m_song->get_snap_list());
 }
@@ -964,6 +969,15 @@ void AudioClip::create_fade_out( )
 	fadeOut = new FadeCurve(this, m_song, "FadeOut");
 	fadeOut->set_shape("Linear");
 	THREAD_SAVE_CALL_EMIT_SIGNAL(this, fadeOut, private_add_fade(FadeCurve*), fadeAdded(FadeCurve*));
+}
+
+void AudioClip::init_gain_envelope()
+{
+	// FIXME Somehow Curves always should have 1 node, which is not allowed 
+	// to be removed, or moved horizontally, to avoid code like below..... !!!!!
+	// Add the default (first) node to the Gain Curve
+	CurveNode* node = new CurveNode(m_gainEnvelope, 0.0, 1.0);
+	Command::process_command(m_gainEnvelope->add_node(node, false));
 }
 
 // eof

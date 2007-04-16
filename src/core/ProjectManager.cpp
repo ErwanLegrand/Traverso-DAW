@@ -87,9 +87,7 @@ void ProjectManager::set_current_project(Project* project)
 {
 	PENTER;
 
-	if ( ! m_exitInProgress) {
-		emit projectLoaded(project);
-	}
+	emit projectLoaded(project);
 	
 	if (currentProject) {
 		if (m_exitInProgress) {

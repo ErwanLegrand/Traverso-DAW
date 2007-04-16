@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.39 2007/04/02 09:52:31 r_sijrier Exp $
+$Id: AudioClip.h,v 1.40 2007/04/16 18:44:26 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -95,7 +95,7 @@ public:
 	QDomNode get_state(QDomDocument doc);
 	FadeCurve* get_fade_in();
 	FadeCurve* get_fade_out();
-	Curve* get_gain_envelope() {return gainEnvelope;}
+	Curve* get_gain_envelope() {return m_gainEnvelope;}
 	
 	float get_norm_factor() const;
 	
@@ -139,7 +139,7 @@ private:
 	AudioBus*		captureBus;
 	FadeCurve*		fadeIn;
 	FadeCurve*		fadeOut;
-	Curve*			gainEnvelope;
+	Curve*			m_gainEnvelope;
 
 	QString 		m_name;
 	nframes_t 		trackStartFrame;
@@ -160,6 +160,7 @@ private:
 	int		m_refcount;
 
 	void init();
+	void init_gain_envelope();
 	void set_source_end_frame(nframes_t frame);
 	void set_source_start_frame(nframes_t frame);
 	void set_track_end_frame(nframes_t endFrame);

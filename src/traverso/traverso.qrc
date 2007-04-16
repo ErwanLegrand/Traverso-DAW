@@ -28,6 +28,7 @@
 		<file alias="driver">../../resources/images/driver.png</file>
 		<file alias="memorysmall">../../resources/images/memory.png</file>
 		<file alias="appearance">../../resources/images/appearance.png</file>
+		<file alias="performance">../../resources/images/performance.png</file>
 		<file alias="playstart">../../resources/images/player_play.png</file>
 		<file alias="playstop">../../resources/images/player_stop.png</file>
 		<file alias="projectmanagement">../../resources/images/icons/32X32/projects.png</file>
