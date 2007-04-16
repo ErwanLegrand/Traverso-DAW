@@ -524,6 +524,8 @@ void AppearancePage::save_config()
 	config().set_property("Themer", "coloradjust", m_themepage->colorAdjustBox->value());
 	config().set_property("Themer", "style", m_themepage->styleCombo->currentText());
 	config().set_property("Themer", "usestylepallet", m_themepage->useStylePalletCheckBox->isChecked());
+	config().set_property("Themer", "paintaudiorectified", m_themepage->rectifiedCheckBox->isChecked());
+	config().set_property("Themer", "paintstereoaudioasmono", m_themepage->mergedCheckBox->isChecked());
 	config().set_property("Interface", "OpenGL", m_themepage->useOpenGLCheckBox->isChecked());
 }
 
@@ -553,7 +555,9 @@ void AppearancePage::load_config()
 	int coloradjust = config().get_property("Themer", "coloradjust", 100).toInt();
 	bool usestylepallete = config().get_property("Themer", "usestylepallet", "").toBool();
 	bool useOpenGL = config().get_property("Interface", "OpenGL", false).toBool();
-	
+	bool paintRectified = config().get_property("Themer", "paintaudiorectified", false).toBool();
+	bool paintStereoAsMono = config().get_property("Themer", "paintstereoaudioasmono", false).toBool();
+
 	int index = m_themepage->styleCombo->findText(style);
 	m_themepage->styleCombo->setCurrentIndex(index);
 	index = m_themepage->themeSelecterCombo->findText(theme);
@@ -562,6 +566,8 @@ void AppearancePage::load_config()
 	m_themepage->useStylePalletCheckBox->setChecked(usestylepallete);
 	m_themepage->themePathLineEdit->setText(themepath);
 	m_themepage->useOpenGLCheckBox->setChecked(useOpenGL);	
+	m_themepage->rectifiedCheckBox->setChecked(paintRectified);
+	m_themepage->mergedCheckBox->setChecked(paintStereoAsMono);
 }
 
 void AppearancePage::reset_default_config()
@@ -575,6 +581,8 @@ void AppearancePage::reset_default_config()
 	config().set_property("Themer", "style", systemstyle);
 	config().set_property("Themer", "usestylepallet", false);
 	config().set_property("Interface", "OpenGL", false);
+	config().set_property("Themer", "paintaudiorectified", false);
+	config().set_property("Themer", "paintstereoaudioasmono", false);
 	
 	load_config();
 }
@@ -584,6 +592,8 @@ ThemeConfigPage::ThemeConfigPage(QWidget * parent)
 	: QWidget(parent)
 {
 	setupUi(this);
+	// Until we find out how to make properly use of it, set disabled.
+	openGlGroupBox->hide();
 	themeSelecterCombo->setInsertPolicy(QComboBox::InsertAlphabetically);
 }
 
@@ -594,6 +604,8 @@ void ThemeConfigPage::create_connections()
 	connect(useStylePalletCheckBox, SIGNAL(toggled(bool)), this, SLOT(use_selected_styles_pallet_checkbox_toggled(bool)));
 	connect(colorAdjustBox, SIGNAL(valueChanged(int)), this, SLOT(color_adjustbox_changed(int)));
 	connect(pathSelectButton, SIGNAL(clicked()), this, SLOT(dirselect_button_clicked()));
+	connect(rectifiedCheckBox, SIGNAL(toggled(bool)), this, SLOT(theme_option_changed()));
+	connect(mergedCheckBox, SIGNAL(toggled(bool)), this, SLOT(theme_option_changed()));
 }
 
 void ThemeConfigPage::style_index_changed(const QString& text)
@@ -661,6 +673,12 @@ void ThemeConfigPage::update_theme_combobox(const QString& path)
 	
 }
 
+void ThemeConfigPage::theme_option_changed()
+{
+	config().set_property("Themer", "paintaudiorectified", rectifiedCheckBox->isChecked());
+	config().set_property("Themer", "paintstereoaudioasmono", mergedCheckBox->isChecked());
+	themer()->load();
+}
 
 
 /****************************************/
@@ -681,9 +699,11 @@ void KeyboardPage::load_config()
 {
 	int doubleFactTimeout = config().get_property("CCE", "doublefactTimeout", 200).toInt();
 	int holdTimeout = config().get_property("CCE", "holdTimeout", 200).toInt();
+	int jogUpdateInterval = config().get_property("CCE", "JogUpdateInterval", 28).toInt();
 	
 	m_configpage->doubleFactTimeoutSpinBox->setValue(doubleFactTimeout);
 	m_configpage->holdTimeoutSpinBox->setValue(holdTimeout);
+	m_configpage->jogUpdateIntervalSpinBox->setValue(1000 / jogUpdateInterval);
 	
 	QString defaultkeymap = config().get_property("CCE", "keymap", "default").toString();
 	int index = m_configpage->keymapComboBox->findText(defaultkeymap);
@@ -700,6 +720,7 @@ void KeyboardPage::save_config()
 	config().set_property("CCE", "doublefactTimeout", m_configpage->doubleFactTimeoutSpinBox->value());
 	config().set_property("CCE", "holdTimeout", m_configpage->holdTimeoutSpinBox->value());
 	config().set_property("CCE", "keymap", newkeymap);
+	config().set_property("CCE", "JogUpdateInterval", 1000 / m_configpage->jogUpdateIntervalSpinBox->value());	
 	
 	ie().set_double_fact_interval(m_configpage->doubleFactTimeoutSpinBox->value());
 	ie().set_hold_sensitiveness(m_configpage->holdTimeoutSpinBox->value());
@@ -713,7 +734,7 @@ void KeyboardPage::reset_default_config()
 	config().set_property("CCE", "doublefactTimeout", 180);
 	config().set_property("CCE", "holdTimeout", 150);
 	config().set_property("CCE", "keymap", "default");
-	
+	config().set_property("CCE", "JogUpdateInterval", 28);	
 	load_config();
 }
 

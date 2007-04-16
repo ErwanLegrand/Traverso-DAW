@@ -73,6 +73,7 @@ public :
 	Command* remove_song(Song* song, bool historable=true);
 	
 	bool has_changed();
+	bool is_save_to_close();
 	
 	int save();
 	int load(QString projectfile = "");

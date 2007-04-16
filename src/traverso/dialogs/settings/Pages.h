@@ -129,6 +129,7 @@ private slots:
 	void theme_index_changed(const QString& theme);
 	void use_selected_styles_pallet_checkbox_toggled(bool);
 	void color_adjustbox_changed(int);
+	void theme_option_changed();
 };
 
 

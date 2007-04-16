@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.16 2007/04/02 21:05:43 r_sijrier Exp $
+$Id: FadeCurve.cpp,v 1.17 2007/04/16 09:08:31 r_sijrier Exp $
 */
  
 #include "FadeCurve.h"
@@ -298,7 +298,6 @@ QPointF FadeCurve::get_curve_point( float f)
 
 void FadeCurve::set_range(double when)
 {
-	printf("FadeCurve::set_range(%f)\n", when);
 	Curve::set_range(when);
 	emit rangeChanged();
 }

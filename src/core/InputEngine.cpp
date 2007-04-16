@@ -489,9 +489,9 @@ void InputEngine::jog()
 void InputEngine::set_jogging(bool jog)
 {
 	if (jog) {
-		cpointer().grab_mouse();
+		cpointer().jog_start();
 	} else {
-		cpointer().release_mouse();
+		cpointer().jog_finished();
 	}
 
 	isJogging = jog;

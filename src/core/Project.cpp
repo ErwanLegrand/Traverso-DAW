@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QFile>
 #include <QDir>
 #include <QTextStream>
+#include <QMessageBox>
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -31,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Song.h"
 #include "ProjectManager.h"
 #include "Information.h"
+#include "InputEngine.h"
 #include "ResourcesManager.h"
 #include "Export.h"
 #include "AudioDevice.h"
@@ -210,6 +212,11 @@ int Project::save()
 	PENTER;
 	QDomDocument doc("Project");
 	QString fileName = rootDir + "/project.traverso";
+	
+	QFile::remove(fileName + "~");
+	QFile backup(fileName);
+	backup.rename(fileName + "~");
+	
 	QFile data( fileName );
 
 	if (data.open( QIODevice::WriteOnly ) ) {
@@ -253,12 +260,14 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
 
 	// Get the AudioSources Node, and append
 	if (! istemplate) {
+// 		printf("getting resources state\n");
 		projectNode.appendChild(m_asmanager->get_state(doc));
 	}
 
 	// Get all the Songs
 	QDomNode songsNode = doc.createElement("Songs");
 
+// 	printf("getting all Songs states\n");
 	foreach(Song* song, m_songs) {
 		songsNode.appendChild(song->get_state(doc, istemplate));
 	}
@@ -560,6 +569,20 @@ QString Project::get_import_dir() const
 void Project::set_import_dir(const QString& dir)
 {
 	m_importDir = dir;
+}
+
+bool Project::is_save_to_close()
+{
+	foreach(Song* song, m_songs) {
+		if (song->is_recording() && song->is_transporting()) {
+			QMessageBox::information( 0, 
+				tr("Traverso - Information"), 
+				tr("You're still recording, please stop recording first to be able to quit the application!"),
+				   QMessageBox::Ok);
+			return false;
+		}
+	}
+	return true;
 }
 
 //eof

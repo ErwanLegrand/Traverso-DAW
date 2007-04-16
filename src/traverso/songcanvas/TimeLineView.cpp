@@ -39,6 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <defines.h>
 #include <AddRemove.h>
 #include <CommandGroup.h>
+#include <InputEngine.h>
 
 #include <QDebug>
 
@@ -209,7 +210,7 @@ void TimeLineView::hzoom_changed( )
 
 void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
-	PENTER;
+	PENTER3;
 	Q_UNUSED(widget);
 	
 	// When the scrollarea moves by a small value, the text

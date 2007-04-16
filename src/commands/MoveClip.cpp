@@ -107,8 +107,6 @@ void MoveClip::audioclip_added(AudioClip * clip)
 {
 	QList<QObject* > items = cpointer().get_context_items();
 	
-	printf("audioclip_added() : Clip has id %lld\n", clip->get_id());
-	
 	foreach(QObject* obj, items) {
 		AudioClipView* acv = qobject_cast<AudioClipView*>(obj);
 		
@@ -126,11 +124,8 @@ void MoveClip::audioclip_added(AudioClip * clip)
 		disconnect(d->view->get_clip()->get_track(), SIGNAL(audioClipAdded(AudioClip*)),
 			this, SLOT(audioclip_added(AudioClip*)));
 		
-		printf("Found a match!!!!\n");
 		return;
 	}
-	
-	printf("MoveClip:: Added new AudioClip, but no AudioClipView available ???\n");
 }
 
 

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.cpp,v 1.27 2007/04/12 12:32:07 r_sijrier Exp $
+$Id: CurveView.cpp,v 1.28 2007/04/16 09:08:31 r_sijrier Exp $
 */
 
 #include "CurveView.h"
@@ -30,6 +30,7 @@ $Id: CurveView.cpp,v 1.27 2007/04/12 12:32:07 r_sijrier Exp $
 #include <CurveNode.h>
 #include <ContextPointer.h>
 #include <Song.h>
+#include <InputEngine.h>
 
 #include <AddRemove.h>
 

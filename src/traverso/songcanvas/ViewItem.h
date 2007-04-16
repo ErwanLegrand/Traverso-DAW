@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewItem.h,v 1.14 2007/04/11 15:56:35 r_sijrier Exp $
+$Id: ViewItem.h,v 1.15 2007/04/16 09:08:31 r_sijrier Exp $
 */
 
 #ifndef VIEW_ITEM_H
@@ -29,6 +29,7 @@ $Id: ViewItem.h,v 1.14 2007/04/11 15:56:35 r_sijrier Exp $
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QStyleOptionGraphicsItem>
+#include <Utils.h>
 
 class SongView;
 		
@@ -55,6 +56,7 @@ public:
 	{
 		set_context_item(parentContext);
 		m_parentViewItem = parentViewItem;
+		setCursor(QCursor(find_pixmap(":/cursorFloat")));
 	}
 	
 	~ViewItem() {};

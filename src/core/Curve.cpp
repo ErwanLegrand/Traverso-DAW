@@ -484,16 +484,16 @@ double Curve::multipoint_eval(double x)
 void Curve::set_range(double when)
 {
 	if (m_nodes.isEmpty()) {
-		printf("Curve::guidata_set_range: no nodes!!");
+		printf("Curve::set_range: no nodes!!");
 		return;
 	}
 	if (m_nodes.last()->when == when) {
-		printf("Curve::guidata_set_range: new range == current range!\n");
+// 		printf("Curve::set_range: new range == current range!\n");
 		return;
 	}
 	
 	if (when < 0.0 ) {
-		printf("Curve::guidata_set_range: error, when < 0.0 !  (%f)\n", when);
+		printf("Curve::set_range: error, when < 0.0 !  (%f)\n", when);
 		return;
 	}
 	

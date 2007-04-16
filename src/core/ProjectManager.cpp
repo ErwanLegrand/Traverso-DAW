@@ -87,10 +87,27 @@ void ProjectManager::set_current_project(Project* project)
 {
 	PENTER;
 
-	emit projectLoaded(project);
+	if ( ! m_exitInProgress) {
+		emit projectLoaded(project);
+	}
 	
 	if (currentProject) {
-		currentProject->save();
+		if (m_exitInProgress) {
+			QString oncloseaction = config().get_property("Project", "onclose", "save").toString();
+			if (oncloseaction == "save") {
+				currentProject->save();
+			} else if (oncloseaction == "ask") {
+				if (QMessageBox::question(0, tr("Save Project"), 
+				    tr("Do you want to save the Project before quiting?"),
+						QMessageBox::Yes | QMessageBox::No,
+	  					QMessageBox::Yes) == QMessageBox::Yes)
+				{
+					currentProject->save();
+				}
+			}
+		} else {
+			currentProject->save();
+		}
 		delete currentProject;
 	}
 
@@ -298,10 +315,14 @@ QUndoGroup* ProjectManager::get_undogroup() const
 Command* ProjectManager::exit()
 {
 	PENTER;
-	m_exitInProgress = true;
 	
 	if (currentProject) {
-		set_current_project(0);
+		if (currentProject->is_save_to_close()) {
+			m_exitInProgress = true;
+			set_current_project(0);
+		} else {
+			return 0;
+		}
 	} else {
 		QApplication::exit();
 	}

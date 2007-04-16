@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>346</width>
-    <height>410</height>
+    <height>428</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -170,7 +170,7 @@
        <number>9</number>
       </property>
       <property name="spacing" >
-       <number>9</number>
+       <number>6</number>
       </property>
       <item>
        <layout class="QHBoxLayout" >
@@ -198,6 +198,20 @@
          </widget>
         </item>
        </layout>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="rectifiedCheckBox" >
+        <property name="text" >
+         <string>Paint audio rectified</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="mergedCheckBox" >
+        <property name="text" >
+         <string>Paint stereo audio as mono audio</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -262,7 +276,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_3" >
+    <widget class="QGroupBox" name="openGlGroupBox" >
      <property name="title" >
       <string>Open GL Options</string>
      </property>

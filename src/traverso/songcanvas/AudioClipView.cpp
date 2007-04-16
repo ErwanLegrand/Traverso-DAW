@@ -131,7 +131,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 		bool mousehover = (option->state & QStyle::State_MouseOver);
 	
 		if (m_clip->recording_state() == AudioClip::RECORDING) {
-			m_backgroundColor = themer()->get_color("AudioClip:background:recording");
+			m_backgroundColor = m_backgroundColorMouseHover = themer()->get_color("AudioClip:background:recording");
 		} else {
 			if (m_clip->is_muted()) {
 				m_backgroundColor = themer()->get_color("AudioClip:background:muted");
@@ -648,8 +648,8 @@ void AudioClipView::load_theme_data()
 	m_infoAreaHeight = themer()->get_property("AudioClip:infoareaheight", 16).toInt();
 	m_usePolygonPeakDrawing = themer()->get_property("AudioClip:polygonpeakdrawing", 0).toInt();
 	m_mimimumheightforinfoarea = themer()->get_property("AudioClip:mimimumheightforinfoarea", 45).toInt();
-	m_classicView = ! themer()->get_property("AudioClip:paintrectified", 0).toInt();
-	m_mergedView = themer()->get_property("AudioClip:paintmerged", 0).toInt();
+	m_classicView = ! config().get_property("Themer", "paintaudiorectified", false).toBool();
+	m_mergedView = config().get_property("Themer", "paintstereoaudioasmono", false).toBool();
 	m_fillwave = themer()->get_property("AudioClip:fillwave", 1).toInt();
 	recreate_clipname_pixmap();
 	calculate_bounding_rect();

@@ -17,11 +17,15 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ContextPointer.cpp,v 1.12 2007/03/22 13:35:42 r_sijrier Exp $
+$Id: ContextPointer.cpp,v 1.13 2007/04/16 09:08:31 r_sijrier Exp $
 */
 
 #include "ContextPointer.h"
 #include "ContextItem.h"
+#include "Config.h"
+#include "InputEngine.h"
+#include "Utils.h"
+
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -63,7 +67,10 @@ ContextPointer::ContextPointer()
 {
 	m_x = 0;
 	m_y = 0;
+	m_jogEvent = false;
 	currentViewPort = 0;
+	
+	connect(&m_jogTimer, SIGNAL(timeout()), this, SLOT(update_jog()));
 }
 
 /**
@@ -135,20 +142,27 @@ void ContextPointer::remove_contextitem(QObject* item)
 /**
  *        Called _only_ by InputEngine, not to be used anywhere else.
  */
-void ContextPointer::grab_mouse( )
+void ContextPointer::jog_start()
 {
-	if (currentViewPort)
+	if (currentViewPort) {
 		currentViewPort->viewport()->grabMouse();
-
+	}
+	m_jogEvent = true;
+	int interval = config().get_property("CCE", "JogUpdateInterval", 28).toInt();
+	m_jogTimer.start(interval);
 }
 
 /**
  *        Called _only_ by InputEngine, not to be used anywhere else.
  */
-void ContextPointer::release_mouse( )
+void ContextPointer::jog_finished()
 {
-	if (currentViewPort)
+	if (currentViewPort) {
 		currentViewPort->viewport()->releaseMouse();
+		currentViewPort->setCursor(QCursor(find_pixmap(":/cursorFloat")));
+
+	}
+	m_jogTimer.stop();
 }
 
 /**
@@ -186,4 +200,13 @@ void ContextPointer::set_contextmenu_items(QList< QObject * > list)
 	m_contextMenuItems = list;
 }
 
+void ContextPointer::update_jog()
+{
+	if (m_jogEvent) {
+		ie().jog();
+		m_jogEvent = false;
+	}
+}
+
 //eof
+

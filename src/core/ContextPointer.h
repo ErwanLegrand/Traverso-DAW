@@ -17,21 +17,23 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ContextPointer.h,v 1.13 2007/04/12 12:32:07 r_sijrier Exp $
+    $Id: ContextPointer.h,v 1.14 2007/04/16 09:08:31 r_sijrier Exp $
 */
 
 #ifndef CONTEXTPOINTER_H
 #define CONTEXTPOINTER_H
 
 #include <QObject>
+#include <QTimer>
 
-#include "InputEngine.h"
 #include "ViewPort.h"
 
 class ContextItem;
 
 class ContextPointer : public QObject
 {
+	Q_OBJECT
+
 public:
         /**
  	 * 	Returns the current ViewPort's mouse x coordinate
@@ -39,7 +41,7 @@ public:
          * @return The current ViewPort's mouse x coordinate
          */
         inline int x() const {return m_x;}
-        
+
 	/**
 	 * 	Returns the current ViewPort's mouse y coordinate
 	
@@ -49,7 +51,7 @@ public:
 	
 	/**
 	 *        Convenience function, equals QPoint(cpointer().x(), cpointer().y())
-	 
+	
 	* @return The current ViewPorts mouse position;
 	 */
 	
@@ -94,9 +96,9 @@ public:
 	 */
 	inline void set_point(int x, int y)
         {
-                m_x = x;
+		m_x = x;
                 m_y = y;
-                ie().jog();
+                m_jogEvent = true;
         }
 	
 	/**
@@ -110,7 +112,7 @@ public:
 	 * @return The ViewPort y coordinate on first input event.
 	 */
 	inline int on_first_input_event_y() const {return m_onFirstInputEventY; }
-        
+
 	/**
 	 *        Returns the scene x coordinate on first input event.
 	 * @return The scene x coordinate on first input event.
@@ -143,8 +145,8 @@ public:
 		return -1;
 	}
 	
-        void grab_mouse();
-        void release_mouse();
+        void jog_start();
+        void jog_finished();
 	void reset_cursor();
  
         ViewPort* get_viewport();
@@ -164,7 +166,7 @@ public:
 
 
 private:
-        ContextPointer();
+	ContextPointer();
         ContextPointer(const ContextPointer&);
 
         // allow this function to create one instance
@@ -172,13 +174,21 @@ private:
 
         int m_x;
         int m_y;
-        
+	
+	bool m_jogEvent;
+	
+	QTimer m_jogTimer;
+	
 	int m_onFirstInputEventX;
 	int m_onFirstInputEventY;
-
-        ViewPort* currentViewPort;
-        QList<QObject* > contextItemsList;
+	
+	ViewPort* currentViewPort;
+	QList<QObject* > contextItemsList;
 	QList<QObject* > m_contextMenuItems;
+	
+	
+private slots:
+	void update_jog();
 };
 
 #endif
