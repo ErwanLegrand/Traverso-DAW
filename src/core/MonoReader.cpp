@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: MonoReader.cpp,v 1.1 2007/03/23 13:09:33 r_sijrier Exp $
+$Id: MonoReader.cpp,v 1.2 2007/04/17 19:56:46 r_sijrier Exp $
 */
 
 
@@ -398,9 +398,9 @@ void MonoReader::prepare_buffer( )
 	m_bufferSize = (int) (size * audiodevice().get_sample_rate());
 
 	if ( ! m_isCompressedFile) {
-		m_chunkSize = m_bufferSize / 8;
+		m_chunkSize = m_bufferSize / DiskIO::bufferdividefactor;
 	} else {
-		m_chunkSize = m_bufferSize / 4;
+		m_chunkSize = m_bufferSize / (DiskIO::bufferdividefactor / 2);
 	}
 
 	m_buffer = new RingBufferNPT<float>(m_bufferSize);

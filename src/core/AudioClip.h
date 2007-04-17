@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClip.h,v 1.40 2007/04/16 18:44:26 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIP_H
@@ -42,6 +41,7 @@ class Peak;
 class AudioBus;
 class FadeCurve;
 class Curve;
+struct ExportSpecification;
 
 class AudioClip : public ContextItem, public Snappable
 {
@@ -140,7 +140,8 @@ private:
 	FadeCurve*		fadeIn;
 	FadeCurve*		fadeOut;
 	Curve*			m_gainEnvelope;
-
+	ExportSpecification*  	m_exportSpec;
+	
 	QString 		m_name;
 	nframes_t 		trackStartFrame;
 	nframes_t 		trackEndFrame;

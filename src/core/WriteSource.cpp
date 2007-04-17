@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.cpp,v 1.16 2007/04/02 09:52:31 r_sijrier Exp $
+$Id: WriteSource.cpp,v 1.17 2007/04/17 19:56:46 r_sijrier Exp $
 */
 
 #include "WriteSource.h"
@@ -40,6 +40,7 @@ WriteSource::WriteSource( ExportSpecification * specification )
 	, spec(specification)
 {
 	diskio = 0;
+	m_buffer = 0;
 	prepare_export(spec);
 }
 
@@ -49,6 +50,7 @@ WriteSource::WriteSource( ExportSpecification * specification, int channelNumber
 		m_channelNumber(channelNumber)
 {
 	diskio = 0;
+	m_buffer = 0;
 	m_channelCount = superChannelCount;
 	prepare_export(spec);
 }
@@ -56,8 +58,13 @@ WriteSource::WriteSource( ExportSpecification * specification, int channelNumber
 WriteSource::~WriteSource()
 {
 	PENTERDES;
-	if (m_peak)
+	if (m_peak) {
 		delete m_peak;
+	}
+	
+	if (m_buffer) {
+		delete m_buffer;
+	}
 		
 	//FIXME spec can be owned by someone else!!!! (ExportWidget for example)
 /*	if (spec) {
@@ -86,8 +93,6 @@ int WriteSource::process (nframes_t nframes)
 		/* now do sample rate conversion */
 
 		if (sample_rate != (uint)spec->sample_rate) {
-
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 
 			int err;
 
@@ -144,7 +149,6 @@ int WriteSource::process (nframes_t nframes)
 
 			float_buffer = dataF2;
 
-#endif
 		} else {
 
 			/* no SRC, keep it simple */
@@ -231,7 +235,7 @@ int WriteSource::process (nframes_t nframes)
 
 		if ((nframes_t) written != to_write) {
 			sf_error_str (sf, errbuf, sizeof (errbuf) - 1);
-			PWARN(("Export: could not write data to output file (%s)"), errbuf);
+			printf(("Export: could not write data to output file (%s)\n"), errbuf);
 			return -1;
 		}
 
@@ -258,9 +262,7 @@ int WriteSource::prepare_export (ExportSpecification* spec)
 	dataF2 = leftoverF = 0;
 	dither = 0;
 	output_data = 0;
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 	src_state = 0;
-#endif
 	
 
 	switch (spec->data_width) {
@@ -308,7 +310,6 @@ int WriteSource::prepare_export (ExportSpecification* spec)
 
 
 	if ((uint)spec->sample_rate != sample_rate) {
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 		qDebug("Doing samplerate conversion");
 		int err;
 
@@ -324,7 +325,6 @@ int WriteSource::prepare_export (ExportSpecification* spec)
 		max_leftover_frames = 4 * spec->blocksize;
 		leftoverF = new audio_sample_t[max_leftover_frames * channels];
 		leftover_frames = 0;
-#endif
 	} else {
 		out_samples_max = spec->blocksize * channels;
 	}
@@ -384,12 +384,10 @@ int WriteSource::finish_export( )
 		output_data = 0;
 	}
 
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 	if (src_state) {
 		src_delete (src_state);
 		src_state = 0;
 	}
-#endif
 
 /*	if (processPeaks) {
 		m_peak->finish_processing();
@@ -419,6 +417,8 @@ void WriteSource::set_process_peaks( bool process )
 	if (!processPeaks) {
 		return;
 	}
+	
+	Q_ASSERT(!m_peak);
 	
 	m_peak = new Peak(this, m_channelNumber);
 	
@@ -461,31 +461,14 @@ void WriteSource::process_ringbuffer( audio_sample_t* framebuffer, bool seek)
 		return;
 	}
 
-	// calculate the 'chunk' size 
-	int chunkSize = diskio->get_chunk_size();
-	
-	
-	// The amount of samples to write
-	int chunkCount = (int)(readSpace / chunkSize);
-	
-	if (chunkCount == 0) {
-		return;
-	}
-	
-	int toWrite = chunkCount * chunkSize;
-	
-	// Only write to hard disk if there is at least chunkSize of data
-	// to write. This makes writing much more efficient
-	if (toWrite >= (chunkSize*2)) {
-		toWrite = chunkSize * 2;
-	}
-	
-	rb_file_write(toWrite);
+	rb_file_write(readSpace);
 }
 
 void WriteSource::prepare_buffer( )
 {
-	m_buffer = new RingBufferNPT<audio_sample_t>(diskio->get_buffer_size());
+	m_buffersize = sample_rate * DiskIO::writebuffertime;
+	m_chunksize = m_buffersize / DiskIO::bufferdividefactor;
+	m_buffer = new RingBufferNPT<audio_sample_t>(m_buffersize);
 }
 
 void WriteSource::set_diskio( DiskIO * io )

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.h,v 1.10 2007/04/02 09:52:31 r_sijrier Exp $
+$Id: WriteSource.h,v 1.11 2007/04/17 19:56:46 r_sijrier Exp $
 */
 
 #ifndef WRITESOURCE_H
@@ -27,11 +27,7 @@ $Id: WriteSource.h,v 1.10 2007/04/02 09:52:31 r_sijrier Exp $
 #include "RingBufferNPT.h"
 #include <sndfile.h>
 #include "gdither.h"
-
-
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 #include <samplerate.h>
-#endif
 
 struct ExportSpecification;
 class Peak;
@@ -51,6 +47,8 @@ public :
 	int rb_file_write(nframes_t cnt);
 	void process_ringbuffer(audio_sample_t* framebuffer, bool seek);
 	int get_processable_buffer_space() const;
+	int get_chunck_size() const {return m_chunksize;}
+	int get_buffer_size() const {return m_buffersize;}
 
 	int process(nframes_t nframes);
 
@@ -79,10 +77,8 @@ private:
 	uint		channels;
 	uint32_t        sample_bytes;
 	nframes_t       leftover_frames;
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
 	SRC_DATA        src_data;
 	SRC_STATE*      src_state;
-#endif
 	nframes_t       max_leftover_frames;
 	float*		leftoverF;
 	float*		dataF2;
@@ -90,6 +86,10 @@ private:
 	bool		processPeaks;
 	size_t		m_isRecording;
 	int		m_channelNumber;
+	int	m_buffersize;
+	int	m_chunksize;
+	
+	
 
 signals:
 	void exportFinished(WriteSource* );

@@ -106,6 +106,7 @@ Traverso::~Traverso()
 {
 	PENTERDES;
 	delete Interface::instance();
+	delete themer();
 }
 
 
@@ -217,11 +218,11 @@ void Traverso::prepare_audio_device( )
 	
 #if defined (PORTAUDIO_SUPPORT)
 	if (driverType == "PortAudio") {
-#if defined (LINUX_BUILD)
+#if defined (Q_WS_X11)
 		cardDevice = config().get_property("Hardware", "pahostapi", "alsa").toString();
-#elif defined (MAC_OS_BUILD)
+#elif defined (Q_WS_MAC)
 		cardDevice = config().get_property("Hardware", "pahostapi", "coreaudio").toString();
-#elif defined (WIN_BUILD)
+#elif defined (Q_WS_WIN)
 		cardDevice = config().get_property("Hardware", "pahostapi", "wmme").toString();
 #endif
 	}

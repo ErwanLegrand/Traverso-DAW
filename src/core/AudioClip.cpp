@@ -478,7 +478,7 @@ void AudioClip::process_capture( nframes_t nframes, uint channel )
 	nframes_t written = source->rb_write(captureBus->get_buffer(channel, nframes), nframes);
 
 	if (written != nframes) {
-		PWARN("couldn't write nframes to buffer, only %d", written);
+		printf("couldn't write nframes %d to recording buffer, only %d\n", nframes, written);
 	}
 }
 
@@ -519,31 +519,31 @@ int AudioClip::init_recording( QByteArray name )
 			channelnumber = chan;
 		}
 		
-		ExportSpecification*  spec = new ExportSpecification;
+		m_exportSpec = new ExportSpecification;
 
-		spec->exportdir = pm().get_project()->get_root_dir() + "/audiosources/";
-		spec->format = SF_FORMAT_WAV;
-		spec->data_width = 1;	// 1 means float
-		spec->format |= SF_FORMAT_FLOAT;
-		spec->channels = 1;
-		spec->sample_rate = audiodevice().get_sample_rate();
-		spec->src_quality = SRC_SINC_MEDIUM_QUALITY;
-		spec->isRecording = true;
-		spec->start_frame = 0;
-		spec->end_frame = 0;
-		spec->total_frames = 0;
-		spec->blocksize = audiodevice().get_buffer_size();
+		m_exportSpec->exportdir = pm().get_project()->get_root_dir() + "/audiosources/";
+		m_exportSpec->format = SF_FORMAT_WAV;
+		m_exportSpec->data_width = 1;	// 1 means float
+		m_exportSpec->format |= SF_FORMAT_FLOAT;
+		m_exportSpec->channels = 1;
+		m_exportSpec->sample_rate = audiodevice().get_sample_rate();
+		m_exportSpec->src_quality = SRC_SINC_MEDIUM_QUALITY;
+		m_exportSpec->isRecording = true;
+		m_exportSpec->start_frame = 0;
+		m_exportSpec->end_frame = 0;
+		m_exportSpec->total_frames = 0;
+		m_exportSpec->blocksize = audiodevice().get_buffer_size();
 
 		QString songid = QString::number(m_song->get_id())  + "_";
 		if (m_song->get_id() < 10)
 			songid.prepend("0");
 		songid.prepend( "Song" );
 
-		spec->name = songid + m_name;
+		m_exportSpec->name = songid + m_name;
 
-		spec->dataF = captureBus->get_buffer( chan, audiodevice().get_buffer_size());
+		m_exportSpec->dataF = captureBus->get_buffer( chan, audiodevice().get_buffer_size());
 
-		WriteSource* ws = new WriteSource(spec, channelnumber, channelcount);
+		WriteSource* ws = new WriteSource(m_exportSpec, channelnumber, channelcount);
 		ws->set_process_peaks( true );
 		ws->set_recording( true );
 
@@ -669,6 +669,8 @@ void AudioClip::finish_write_source( WriteSource * ws )
 		
 	
 	if (writeSources.isEmpty()) {
+		delete m_exportSpec;
+		
 		int channelCount = (m_track->capture_left_channel() && m_track->capture_right_channel()) ? 2 : 1;
 		
 		ReadSource* rs;

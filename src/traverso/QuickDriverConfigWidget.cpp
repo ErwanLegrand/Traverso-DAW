@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: QuickDriverConfigWidget.cpp,v 1.7 2007/04/03 21:25:25 benjie Exp $
+$Id: QuickDriverConfigWidget.cpp,v 1.8 2007/04/17 19:56:46 r_sijrier Exp $
 */
 
 #include "QuickDriverConfigWidget.h"
@@ -76,11 +76,11 @@ void QuickDriverConfigWidget::on_okButton_clicked( )
 	
 #if defined (PORTAUDIO_SUPPORT)
 	if (driver == "PortAudio") {
-#if defined (LINUX_BUILD)
+#if defined (Q_WS_X11)
 		cardDevice = config().get_property("Hardware", "pahostapi", "alsa").toString();
-#elif defined (MAC_OS_BUILD)
+#elif defined (Q_WS_MAC)
 		cardDevice = config().get_property("Hardware", "pahostapi", "coreaudio").toString();
-#elif defined (WIN_BUILD)
+#elif defined (Q_WS_WIN)
 		cardDevice = config().get_property("Hardware", "pahostapi", "wmme").toString();
 #endif
 	}

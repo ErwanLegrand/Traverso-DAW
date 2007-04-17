@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier 
+Copyright (C) 2006-2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: DiskIO.h,v 1.14 2007/04/04 10:08:44 r_sijrier Exp $
 */
 
 #ifndef DISKIO_H
@@ -55,6 +54,9 @@ class DiskIO : public QObject
 public:
 	DiskIO(Song* song);
 	~DiskIO();
+	
+	static const int writebuffertime = 5;
+	static const int bufferdividefactor = 8;
 
 	void prepare_for_seek();
 
@@ -67,8 +69,6 @@ public:
 	trav_time_t get_cpu_time();
 	int get_write_buffers_fill_status();
 	int get_read_buffers_fill_status();
-	int get_buffer_size() const;
-	int get_chunk_size() const;
 
 private:
 	Song* 			m_song;
@@ -82,8 +82,6 @@ private:
 	QMutex			mutex;
 	gint			m_readBufferFillStatus;
 	gint			m_writeBufferFillStatus;
-	int			m_bufferSize;
-	int			m_minBufStatus;
 	RingBuffer*		cpuTimeBuffer;
 	trav_time_t		cycleStartTime;
 	trav_time_t		lastCpuReadTime;
@@ -113,16 +111,6 @@ signals:
 	void writeSourceBufferOverRun();
 
 };
-
-inline int DiskIO::get_buffer_size() const
-{
-	return m_bufferSize;
-}
-
-inline int DiskIO::get_chunk_size() const
-{
-	return m_bufferSize / 8;
-}
 
 #endif
 

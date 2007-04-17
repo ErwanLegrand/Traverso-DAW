@@ -113,8 +113,6 @@ void TrackView::remove_audioclipview( AudioClip * clip )
 	PENTER;
 	foreach(AudioClipView* view, m_clipViews) {
 		if (view->get_clip() == clip) {
-			printf("Removing clipview for clip %lld\n", clip->get_id());
-			scene()->removeItem(view);
 			m_clipViews.removeAll(view);
 			delete view;
 			return;

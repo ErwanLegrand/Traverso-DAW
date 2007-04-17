@@ -29,9 +29,9 @@
 #include <string.h>
 #ifdef USE_MLOCK
 
-#ifdef MAC_OS_BUILD
+#ifdef Q_WS_MAC
 #include <sys/types.h>
-#endif /* MAC_OS_BUILD */
+#endif /* Q_WS_MAC */
 
 #include <sys/mman.h>
 #endif /* USE_MLOCK */

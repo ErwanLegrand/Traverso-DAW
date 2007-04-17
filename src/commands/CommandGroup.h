@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: CommandGroup.h,v 1.3 2007/01/24 21:16:11 r_sijrier Exp $
+    $Id: CommandGroup.h,v 1.4 2007/04/17 19:56:45 r_sijrier Exp $
 */
 
 #ifndef COMMAND_GROUP_H
@@ -35,7 +35,7 @@ public :
         {
         	m_isHistorable = historable;
         };
-        ~CommandGroup() {};
+        ~CommandGroup();
 
         int prepare_actions();
         int do_action();

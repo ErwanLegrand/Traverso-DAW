@@ -110,7 +110,7 @@ void SystemResources::update_status( )
 		foreach(Song* song, m_project->get_songs() ) {
 			bufReadStatus = std::min(song->get_diskio()->get_read_buffers_fill_status(), bufReadStatus);
 			bufWriteStatus = std::min(song->get_diskio()->get_write_buffers_fill_status(), bufWriteStatus);
-	// 		time += song->get_diskio()->get_cpu_time();
+			time += song->get_diskio()->get_cpu_time();
 		}
 	}
 
@@ -144,7 +144,6 @@ DriverInfo::DriverInfo( QWidget * parent )
 	lay->setMargin(0);
 	setLayout(lay);
 	
-// 	setFrameStyle(QFrame::StyledPanel);
 	setFrameStyle(QFrame::NoFrame);
 	
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(update_driver_info()));
@@ -499,11 +498,6 @@ InfoWidget::InfoWidget(QWidget* parent)
 	, m_song(0)
 	, m_project(0)
 {
-/*	QPalette pallet;
-	pallet.setColor(QPalette::Background, QColor("#FFF4FF"));
-	setPalette(pallet);
-	setAutoFillBackground(true);*/
-	
 	setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 	

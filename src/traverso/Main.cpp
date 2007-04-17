@@ -17,7 +17,6 @@
 	along with this program; if not, write to the Free Software
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-	$Id: Main.cpp,v 1.7 2007/03/16 00:10:26 r_sijrier Exp $
 */
 
 #include <signal.h>
@@ -39,7 +38,7 @@ Traverso* traverso;
 int signalcount = 0;
 
 
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
+#if defined (Q_WS_X11) || defined (Q_WS_MAC)
 void catch_signal(int sig_num)
 {
 	if (!signalcount) {
@@ -63,7 +62,7 @@ int main( int argc, char **argv )
 	TRACE_OFF();
 	MEM_ON();
 
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
+#if defined (Q_WS_X11) || defined (Q_WS_MAC)
 	signal(SIGINT, catch_signal);
 	signal(SIGSEGV, catch_signal);
 #endif
@@ -91,22 +90,8 @@ int main( int argc, char **argv )
 				printf("\t--d3  \t\t Set debug level to 3 (SUPER_FLOOD)\n");
 				printf("\t--d4  \t\t Set debug level to 4 (ALL)\n");
 				printf("\t--log \t\t Create a ~/traverso.log file instead of dumping debug messages to stdout\n");
-// 				printf("\t--scanbuses \t List all hardware in and out buses\n");
 				printf("\n");
 				return 0;
-			}
-			if ((strcmp(argv[i],"--scanbuses")==0) || (strcmp(argv[i],"-h")==0)) {
-					return 0;
-			}
-			if (strcmp(argv[i],"--render")==0) {
-					printf("Render in batch mode is being implemented.\n");
-					// TODO
-					return 0;
-			}
-			if (strcmp(argv[i],"--renderwav")==0) {
-					printf("Render in batch mode is being implemented.\n");
-					// TODO
-					return 0;
 			}
 			if (strcmp(argv[i],"--memtrace")==0)
 					TRACE_ON();

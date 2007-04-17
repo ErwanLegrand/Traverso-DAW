@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDeviceThread.cpp,v 1.14 2007/03/22 02:17:13 r_sijrier Exp $
+$Id: AudioDeviceThread.cpp,v 1.15 2007/04/17 19:56:46 r_sijrier Exp $
 */
 
 #include "AudioDeviceThread.h"
@@ -26,7 +26,7 @@ $Id: AudioDeviceThread.cpp,v 1.14 2007/03/22 02:17:13 r_sijrier Exp $
 #include "Driver.h"
 #include <Information.h>
 
-#if defined (LINUX_BUILD)
+#if defined (Q_WS_X11)
 #include <sys/resource.h>
 #include <sched.h>
 #endif
@@ -52,7 +52,7 @@ public:
 protected:
 	void run()
 	{
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
+#if defined (Q_WS_X11) || defined (Q_WS_MAC)
 		struct sched_param param;
 		param.sched_priority = 90;
 		if (pthread_setschedparam (pthread_self(), SCHED_FIFO, &param) != 0) {}
@@ -66,7 +66,7 @@ protected:
 			if (guardedThread->watchdogCheck == 0) {
 				qCritical("WatchDog timed out!");
 //				guardedThread->terminate();
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
+#if defined (Q_WS_X11) || defined (Q_WS_MAC)
 				kill (-getpgrp(), SIGABRT);
 #endif
 			}
@@ -82,7 +82,7 @@ AudioDeviceThread::AudioDeviceThread(AudioDevice* device)
 	m_realTime = true;
 	setTerminationEnabled(true);
 
-#ifndef MAC_OS_BUILD
+#ifndef Q_WS_MAC
 	setStackSize(1000000);
 #endif
 
@@ -122,7 +122,7 @@ void AudioDeviceThread::run()
 int AudioDeviceThread::become_realtime( bool realtime )
 {
 	m_realTime = realtime;
-#if defined (LINUX_BUILD) || defined (MAC_OS_BUILD)
+#if defined (Q_WS_X11) || defined (Q_WS_MAC)
 
 	/* RTC stuff */
 	if (realtime) {
@@ -148,7 +148,7 @@ int AudioDeviceThread::become_realtime( bool realtime )
 
 void AudioDeviceThread::run_on_cpu( int cpu )
 {
-#if defined (LINUX_BUILD)
+#if defined (Q_WS_X11)
 	cpu_set_t mask;
 	CPU_ZERO(&mask);
 	CPU_SET(cpu, &mask);

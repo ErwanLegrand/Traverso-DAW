@@ -78,6 +78,7 @@ Project::~Project()
 	}
 
 	delete m_asmanager;
+	delete m_hs;
 }
 
 

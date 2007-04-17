@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.cpp,v 1.28 2007/04/16 09:08:31 r_sijrier Exp $
 */
 
 #include "CurveView.h"
@@ -192,6 +191,8 @@ CurveView::CurveView(SongView* sv, ViewItem* parentViewItem, Curve* curve)
 
 CurveView::~ CurveView( )
 {
+	m_guicurve->clear_curve();
+	delete m_guicurve;
 }
 
 static bool smallerpoint(const QPointF& left, const QPointF& right) {

@@ -156,7 +156,9 @@ SpectralMeterView::SpectralMeterView(SpectralMeterWidget* widget)
 
 SpectralMeterView::~SpectralMeterView()
 {
-// 	delete m_config;
+	if (m_meter) {
+		delete m_meter;
+	}
 }
 
 void SpectralMeterView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -332,6 +334,7 @@ void SpectralMeterView::set_song(Song *song)
 	
 	if (m_song) {
 		if (m_meter) {
+			// FIXME The removed plugin still needs to be deleted!!!!!!
 			Command::process_command(m_song->get_plugin_chain()->remove_plugin(m_meter, false));
 			timer.stop();
 		}

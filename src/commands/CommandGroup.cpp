@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CommandGroup.cpp,v 1.4 2007/04/04 09:17:30 r_sijrier Exp $
+$Id: CommandGroup.cpp,v 1.5 2007/04/17 19:56:45 r_sijrier Exp $
 */
 
 #include "CommandGroup.h"
@@ -32,6 +32,13 @@ $Id: CommandGroup.cpp,v 1.4 2007/04/04 09:17:30 r_sijrier Exp $
  *	
  */
 
+
+CommandGroup::~ CommandGroup()
+{
+	foreach(Command* cmd, m_commands) {
+		delete cmd;
+	}
+}
 
 int CommandGroup::prepare_actions()
 {
@@ -66,6 +73,3 @@ int CommandGroup::undo_action()
 
 // eof
 
-
- 
- 

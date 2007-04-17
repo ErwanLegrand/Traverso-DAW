@@ -149,10 +149,10 @@ void AudioDriverPage::reset_default_config()
 #endif
 	
 #if defined (PORTAUDIO_SUPPORT)
-#if defined (LINUX_BUILD)
+#if defined (Q_WS_X11)
 	config().set_property("Hardware", "pahostapi", "alsa");
 #endif
-#if defined (MAC_OS_BUILD)
+#if defined (Q_WS_MAC)
 	config().set_property("Hardware", "pahostapi", "coreaudio");
 #endif
 #if defined (Q_WS_WIN)
@@ -225,14 +225,14 @@ void AudioDriverPage::load_config( )
 	m_portaudiodrivers->driverCombo->clear();
 	QString defaulthostapi = "";
 
-#if defined (LINUX_BUILD)
+#if defined (Q_WS_X11)
 	m_portaudiodrivers->driverCombo->addItem("ALSA", "alsa");
 	m_portaudiodrivers->driverCombo->addItem("Jack", "jack");
 	m_portaudiodrivers->driverCombo->addItem("OSS", "oss");
 	defaulthostapi = "jack";
 #endif
 
-#if defined (MAC_OS_BUILD)
+#if defined (Q_WS_MAC)
 	m_portaudiodrivers->driverCombo->addItem("Core Audio", "coreaudio");
 	m_portaudiodrivers->driverCombo->addItem("Jack", "jack");
 	defaulthostapi = "coreaudio";

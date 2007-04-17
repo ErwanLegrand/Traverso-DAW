@@ -70,6 +70,10 @@ public:
 	{
 		return left->get_when() < right->get_when();
 	}
+	
+	// The 'GUI' curvenodes have double ownership, so get deleted twice
+	// to avoid this, use this function to not let this happen...
+	void clear_curve() {m_nodes.clear();}
 
 protected:
 	struct LookupCache {

@@ -120,16 +120,15 @@ Interface::Interface()
 	addDockWidget(Qt::RightDockWidgetArea, historyDW);
 	
 	// AudioSources View
-	AudioSourcesDW = new QDockWidget(tr("AudioSources"), this);
+/*	AudioSourcesDW = new QDockWidget(tr("AudioSources"), this);
 	AudioSourcesDW->setObjectName("AudioSourcesDockWidget");
 	audiosourcesview = new QTreeView(AudioSourcesDW);
 	audiosourcesview->setFocusPolicy(Qt::NoFocus);
-// 	audiosourcesview->setAnimated(true);
 	TreeModel* model = new TreeModel("hoi, test");
 	audiosourcesview->setModel(model);
 	AudioSourcesDW->setWidget(audiosourcesview);
 	addDockWidget(Qt::TopDockWidgetArea, AudioSourcesDW);
-	AudioSourcesDW->hide();
+	AudioSourcesDW->hide();*/
 	
 	// Meter Widgets
 	correlationMeterDW = new QDockWidget(tr("Correlation Meter"), this);
@@ -389,7 +388,7 @@ void Interface::create_menus( )
 
 	menu->addAction(historyDW->toggleViewAction());
 	menu->addAction(busMonitorDW->toggleViewAction());
-	menu->addAction(AudioSourcesDW->toggleViewAction());
+// 	menu->addAction(AudioSourcesDW->toggleViewAction());
 	
 	menu->addSeparator();
 	
@@ -535,7 +534,7 @@ QString create_keyfact_string(QString& keyfact, QList<int> modifiers)
 
 QMenu* Interface::create_context_menu(QObject* item )
 {
-	QMenu* menu = new QMenu();
+	QMenu* menu = new QMenu(this);
 	
 	QList<MenuData > list = ie().create_menudata_for( item );
 	
@@ -601,7 +600,7 @@ QMenu* Interface::create_context_menu(QObject* item )
 		
 		qSort(list->begin(), list->end(), MenuData::smaller);
 
-		QMenu* sub = new QMenu();
+		QMenu* sub = new QMenu(this);
 		sub->setFont(QFont("Bitstream Vera Sans", 8));
 		
 		QFont font("Bitstream Vera Sans", 8);

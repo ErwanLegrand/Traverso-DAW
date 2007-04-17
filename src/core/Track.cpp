@@ -302,21 +302,23 @@ bool Track::armed()
 Command* Track::init_recording()
 {
 	PENTER2;
-	if (isArmed) {
-		QByteArray name = "Audio-" + QByteArray::number(m_song->get_track_index(m_id)) + 
-				"-take-" + QByteArray::number(++numtakes);
-		
-		AudioClip* clip = resources_manager()->new_audio_clip(name);
-		clip->set_song(m_song);
-		clip->set_track(this);
-		clip->set_track_start_frame(m_song->get_transport_frame());
-		
-		if (clip->init_recording(busIn) < 0) {
-			PERROR("Could not create AudioClip to record to!");
-			resources_manager()->remove_clip_from_database(clip->get_id());
-		} else {
-			return add_clip( clip );
-		}
+	if ( ! isArmed) {
+		return 0;
+	}
+	
+	QString name = "Audio-" + QString::number(m_song->get_track_index(m_id)) +
+			"-take-" + QString::number(++numtakes);
+	
+	AudioClip* clip = resources_manager()->new_audio_clip(name);
+	clip->set_song(m_song);
+	clip->set_track(this);
+	clip->set_track_start_frame(m_song->get_transport_frame());
+	
+	if (clip->init_recording(busIn) < 0) {
+		PERROR("Could not create AudioClip to record to!");
+		resources_manager()->remove_clip_from_database(clip->get_id());
+	} else {
+		return add_clip( clip );
 	}
 	
 	return 0;

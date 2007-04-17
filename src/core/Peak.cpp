@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Peak.cpp,v 1.15 2007/04/02 19:09:19 r_sijrier Exp $
+$Id: Peak.cpp,v 1.16 2007/04/17 19:56:46 r_sijrier Exp $
 */
 
 #include "libtraversocore.h"
@@ -676,7 +676,7 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 PeakBuildThread::PeakBuildThread(Peak* peak)
 {
 	m_peak = peak;
-#ifndef MAC_OS_BUILD
+#ifndef Q_WS_MAC
 // 	setStackSize(20000);
 #endif
 }
