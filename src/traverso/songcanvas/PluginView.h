@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginView.h,v 1.6 2007/01/31 12:00:55 r_sijrier Exp $
+    $Id: PluginView.h,v 1.7 2007/04/17 11:51:20 r_sijrier Exp $
 */
 
 #ifndef PLUGIN_VIEW_H
@@ -60,7 +60,7 @@ private:
 
         int 		m_index;
         QString		m_name;
-
+	
 #if defined (LV2_SUPPORT)
         LV2PluginPropertiesDialog*	propertiesDialog;
 #endif

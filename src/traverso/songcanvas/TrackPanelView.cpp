@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.20 2007/04/11 22:46:36 r_sijrier Exp $
+$Id: TrackPanelView.cpp,v 1.21 2007/04/17 11:51:20 r_sijrier Exp $
 */
 
 #include <QGraphicsScene>
@@ -101,7 +101,7 @@ TrackPanelView::TrackPanelView(TrackView* trackView)
 	
 // 	setFlags(ItemIsSelectable | ItemIsMovable);
 // 	setAcceptsHoverEvents(true);
-	setCursor(QCursor(find_pixmap(":/cursorFloatOverTrack")));
+	setCursor(themer()->get_cursor("Track"));
 }
 
 TrackPanelView::~TrackPanelView( )

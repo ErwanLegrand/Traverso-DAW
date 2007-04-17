@@ -17,13 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Command.cpp,v 1.17 2007/04/13 09:57:35 r_sijrier Exp $
+$Id: Command.cpp,v 1.18 2007/04/17 11:51:20 r_sijrier Exp $
 */
 
 #include "Command.h"
 #include "ContextPointer.h"
 #include <ViewPort.h>
 #include <Utils.h>
+#include <Themer.h>
 #include "ContextItem.h"
 
 // Always put me below _all_ includes, this is needed
@@ -258,11 +259,11 @@ void Command::set_cursor_shape( int useX, int useY )
 	ViewPort* view = cpointer().get_viewport();
 	
 	if (useX && useY) {
-		 view->viewport()->setCursor(QCursor(find_pixmap(":/cursorHoldLrud")));
+		 view->viewport()->setCursor(themer()->get_cursor("LRUD"));
 	} else if (useX) {
-		 view->viewport()->setCursor(QCursor(find_pixmap(":/cursorHoldLr")));
+		view->viewport()->setCursor(themer()->get_cursor("LR"));
 	} else if (useY) {
-		 view->viewport()->setCursor(QCursor(find_pixmap(":/cursorHoldUd")));
+		view->viewport()->setCursor(themer()->get_cursor("UD"));
 	} else{
 		view->reset_cursor();
 	}

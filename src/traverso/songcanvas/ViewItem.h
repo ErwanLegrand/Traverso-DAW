@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewItem.h,v 1.15 2007/04/16 09:08:31 r_sijrier Exp $
+$Id: ViewItem.h,v 1.16 2007/04/17 11:51:20 r_sijrier Exp $
 */
 
 #ifndef VIEW_ITEM_H
@@ -29,7 +29,9 @@ $Id: ViewItem.h,v 1.15 2007/04/16 09:08:31 r_sijrier Exp $
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QStyleOptionGraphicsItem>
+#include <QCursor>
 #include <Utils.h>
+#include <Themer.h>
 
 class SongView;
 		
@@ -44,10 +46,11 @@ class SongView;
 #define MAX_CANVAS_HEIGHT 107374182
 #endif
 
+
 class ViewItem : public ContextItem, public QGraphicsItem
 {
 	Q_OBJECT
-			
+	
 public:
 
 	ViewItem(ViewItem* parentViewItem=0, ContextItem* parentContext=0)
@@ -56,7 +59,7 @@ public:
 	{
 		set_context_item(parentContext);
 		m_parentViewItem = parentViewItem;
-		setCursor(QCursor(find_pixmap(":/cursorFloat")));
+		setCursor(themer()->get_cursor("Default"));
 	}
 	
 	~ViewItem() {};
@@ -87,7 +90,6 @@ protected:
 	SongView* 	m_sv;
 	ViewItem*	m_parentViewItem;
 	QRectF		m_boundingRect;
-	
 };
 
 inline QRectF ViewItem::boundingRect() const {return m_boundingRect;}

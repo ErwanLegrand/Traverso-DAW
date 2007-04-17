@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Themer.cpp,v 1.6 2007/03/16 00:10:26 r_sijrier Exp $
+$Id: Themer.cpp,v 1.1 2007/04/17 11:51:20 r_sijrier Exp $
 */
 
 #include "Themer.h"
@@ -212,28 +212,39 @@ void Themer::load( )
 		propertyNode = propertyNode.nextSibling();
 	}
 	
+	m_cursors.clear();
+	m_cursors.insert("AudioClip", QCursor(find_pixmap(":/cursorFloatOverClip")));
+	m_cursors.insert("Track", QCursor(find_pixmap(":/cursorFloatOverTrack")));
+	m_cursors.insert("Plugin", QCursor(find_pixmap(":/cursorFloatOverPlugin")));
+	m_cursors.insert("Fade", QCursor(find_pixmap(":/cursorFloatOverFade")));
+	m_cursors.insert("Default", QCursor(find_pixmap(":/cursorFloat")));
+	m_cursors.insert("Zoom", QCursor(find_pixmap(":/cursorZoom")));
 	
+	m_cursors.insert("LRUD", QCursor(find_pixmap(":/cursorHoldLrud")));
+	m_cursors.insert("LR", QCursor(find_pixmap(":/cursorHoldLr")));
+	m_cursors.insert("UD", QCursor(find_pixmap(":/cursorHoldUd")));
 	emit themeLoaded();
 }
-
 
 QColor Themer::get_color(const QString& name) const
 {
 	return m_colors.value(name);
 }
 
-
 QFont Themer::get_font(const QString& fontname) const
 {
 	return m_fonts.value(fontname);
 }
-
 
 QVariant Themer::get_property(const QString& propertyname, const QVariant& defaultValue) const
 {
 	return m_properties.value(propertyname, defaultValue);
 }
 
+QCursor Themer::get_cursor(const QString & name) const
+{
+	return m_cursors.value(name);
+}
 
 void Themer::reload_on_themefile_change(const QString&)
 {
@@ -242,7 +253,6 @@ void Themer::reload_on_themefile_change(const QString&)
 	m_properties.clear();
 	load();
 }
-
 
 void Themer::set_path_and_theme(const QString& path, const QString& theme)
 {
@@ -278,3 +288,4 @@ void Themer::use_builtin_theme(const QString & theme)
 	reload_on_themefile_change("");
 }
 
+//eof

@@ -38,7 +38,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-
 PluginView::PluginView(TrackView* parent, Plugin* plugin, int index)
 	: ViewItem(parent, plugin)
 	, m_trackView(parent)
@@ -58,7 +57,7 @@ PluginView::PluginView(TrackView* parent, Plugin* plugin, int index)
 	m_boundingRect = QRectF(0, 0, 100, 25);
 	
 	setAcceptsHoverEvents(true);
-	setCursor(QCursor(find_pixmap(":/cursorFloatOverPlugin")));
+	setCursor(themer()->get_cursor("Plugin"));
 }
 
 PluginView::~PluginView( )
@@ -134,4 +133,5 @@ void PluginView::repaint( )
 {
 	update();
 }
+
 //eof

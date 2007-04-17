@@ -48,7 +48,8 @@ SOURCES = AudioClip.cpp \
 	SnapList.cpp \
 	Snappable.cpp \
 	TimeLine.cpp \
-	Marker.cpp
+	Marker.cpp \
+	Themer.cpp
 HEADERS = precompile.h \
 	AudioClip.h \
 	AudioClipList.h \
@@ -91,7 +92,8 @@ HEADERS = precompile.h \
 	Snappable.h \
 	CommandPlugin.h \
 	TimeLine.h \
-	Marker.h
+	Marker.h \
+	Themer.h
 macx{
     QMAKE_LIBDIR += /usr/local/qt/lib
 }

@@ -28,7 +28,6 @@ HEADERS += \
 	AudioSourcesTreeWidget.h \
 	BusMonitor.h \
 	BusSelector.h \
-	Themer.h \
 	ContextDialog.h \
 	FadeContextDialog.h \
 	Help.h \
@@ -62,7 +61,6 @@ SOURCES += \
 	AudioSourcesTreeWidget.cpp \
 	BusMonitor.cpp \
 	BusSelector.cpp \
-	Themer.cpp \
 	ContextDialog.cpp \
 	FadeContextDialog.cpp \
 	Help.cpp \

@@ -41,7 +41,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <Debugger.h>
 
-
 TrackView::TrackView(SongView* sv, Track * track)
 	: ViewItem(0, track)
 {
@@ -56,7 +55,7 @@ TrackView::TrackView(SongView* sv, Track * track)
 
 	m_track = track;
 	setFlags(ItemIsSelectable | ItemIsMovable);
-	setCursor(QCursor(find_pixmap(":/cursorFloatOverTrack")));
+	setCursor(themer()->get_cursor("Track"));
 
 	m_panel = new TrackPanelView(this);
 	calculate_bounding_rect();
@@ -205,5 +204,5 @@ Command* TrackView::select_bus()
 	return 0; 
 }
 
-
 //eof
+

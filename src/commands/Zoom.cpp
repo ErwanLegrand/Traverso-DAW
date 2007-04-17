@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Zoom.cpp,v 1.11 2007/04/11 21:19:17 r_sijrier Exp $
+    $Id: Zoom.cpp,v 1.12 2007/04/17 11:51:20 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -70,7 +70,7 @@ void Zoom::set_cursor_shape( int useX, int useY )
 	Q_UNUSED(useY);
 	
 	ViewPort* view = cpointer().get_viewport();
-	view->viewport()->setCursor(QCursor(find_pixmap(":/cursorZoom")));
+	view->viewport()->setCursor(themer()->get_cursor("Zoom"));
 	mousePos = QCursor::pos();	
 }
 

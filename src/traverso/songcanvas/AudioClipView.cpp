@@ -42,7 +42,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-
 AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	: ViewItem(parent, clip)
 	, m_tv(parent)
@@ -91,7 +90,7 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	
 // 	setFlags(ItemIsSelectable | ItemIsMovable);
 	setAcceptsHoverEvents(true);
-	setCursor(QCursor(find_pixmap(":/cursorFloatOverClip")));
+	setCursor(themer()->get_cursor("AudioClip"));
 }
 
 AudioClipView::~ AudioClipView()
@@ -703,6 +702,7 @@ void AudioClipView::stop_recording()
 	m_recordingTimer.stop();
 	prepareGeometryChange();
 	m_boundingRect = QRectF(0, 0, (m_clip->get_length() / m_sv->scalefactor), m_height);
+	curveView->calculate_bounding_rect();
 	update();
 }
 
@@ -718,7 +718,6 @@ void AudioClipView::update_recording()
 	
 	QRect updaterect = QRect(m_oldRecordingPos, 0, newPos, (int)m_boundingRect.height());
 	update(updaterect);
-	
 	m_oldRecordingPos = newPos;
 }
 
@@ -741,5 +740,5 @@ void AudioClipView::set_dragging(bool dragging)
 	m_dragging = dragging;
 }
 
-
 //eof
+

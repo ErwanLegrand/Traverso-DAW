@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ContextPointer.cpp,v 1.13 2007/04/16 09:08:31 r_sijrier Exp $
+$Id: ContextPointer.cpp,v 1.14 2007/04/17 11:51:20 r_sijrier Exp $
 */
 
 #include "ContextPointer.h"
@@ -25,6 +25,7 @@ $Id: ContextPointer.cpp,v 1.13 2007/04/16 09:08:31 r_sijrier Exp $
 #include "Config.h"
 #include "InputEngine.h"
 #include "Utils.h"
+#include "Themer.h"
 
 
 // Always put me below _all_ includes, this is needed
@@ -159,7 +160,7 @@ void ContextPointer::jog_finished()
 {
 	if (currentViewPort) {
 		currentViewPort->viewport()->releaseMouse();
-		currentViewPort->setCursor(QCursor(find_pixmap(":/cursorFloat")));
+		currentViewPort->setCursor(themer()->get_cursor("Default"));
 
 	}
 	m_jogTimer.stop();

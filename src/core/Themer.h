@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Themer.h,v 1.4 2007/03/16 00:10:26 r_sijrier Exp $
+    $Id: Themer.h,v 1.1 2007/04/17 11:51:20 r_sijrier Exp $
 */
 
 #ifndef COLORMANAGER_H
@@ -27,6 +27,7 @@
 #include <QColor>
 #include <QFont>
 #include <QHash>
+#include <QCursor>
 #include <QString>
 #include <QFileSystemWatcher>
 #include <QVariant>
@@ -48,15 +49,17 @@ public:
         QVariant get_property(const QString& propertyname, const QVariant& defaultValue=0) const;
 	QPalette system_palette() const {return m_systempallete;}
 	QStringList get_builtin_themes();
+	QCursor get_cursor(const QString& name) const;
 
 	static Themer* instance();
 	
 private:
         Themer();
 
-        QHash<QString , QColor>	 m_colors;
+        QHash<QString, QColor>	 m_colors;
 	QHash<QString, QVariant> m_properties;
 	QHash<QString, QFont>	m_fonts;
+	QHash<QString, QCursor>	m_cursors;
 	QFileSystemWatcher*	m_watcher;
         QString			m_themefile;
 	int			m_coloradjust;
