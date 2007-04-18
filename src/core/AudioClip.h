@@ -128,6 +128,8 @@ public:
 	}
 
 	QDomNode		m_domNode;
+	
+	void init_gain_envelope();
 
 private:
 	Track* 			m_track;
@@ -161,7 +163,6 @@ private:
 	int		m_refcount;
 
 	void init();
-	void init_gain_envelope();
 	void set_source_end_frame(nframes_t frame);
 	void set_source_start_frame(nframes_t frame);
 	void set_track_end_frame(nframes_t endFrame);

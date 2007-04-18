@@ -70,7 +70,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">(one for each audioclip * channel count) need to be refilled!&lt;/p>&lt;/body>&lt;/html></string>
           </property>
           <property name="text" >
-           <string>Read / Write buffer size (seconds)</string>
+           <string>Read buffer size (seconds)</string>
           </property>
          </widget>
         </item>

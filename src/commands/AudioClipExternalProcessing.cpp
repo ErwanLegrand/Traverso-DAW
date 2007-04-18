@@ -127,6 +127,8 @@ int AudioClipExternalProcessing::prepare_actions()
 		m_resultingclip->set_track(m_clip->get_track());
 		m_resultingclip->set_audio_source(source);
 		m_resultingclip->set_track_start_frame(m_clip->get_track_start_frame());
+		// FIXME!!!!!!!!!!!!!!!!!!!!
+		m_resultingclip->init_gain_envelope();
 	}
 	
 	

@@ -117,6 +117,8 @@ void Import::create_audioclip()
 	m_clip->set_song(m_track->get_song());
 	m_clip->set_track(m_track);
 	m_clip->set_track_start_frame(0);
+	// FIXME!!!!!!!!!!!!!!!!!!!!
+	m_clip->init_gain_envelope();
 
 	if (AudioClip* lastClip = m_track->get_cliplist().get_last()) {
 		m_clip->set_track_start_frame( lastClip->get_track_end_frame() + 1);

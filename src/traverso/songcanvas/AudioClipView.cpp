@@ -416,9 +416,17 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			if (m_classicView) {
 				QPolygonF polygonbottom(pixelcount);
 				
-				for (int x = xstart; x < (pixelcount+xstart); x++) {
-					polygontop.append( QPointF(x, pixeldata[chan][bufferpos++]) );
-					polygonbottom.append( QPointF(x, - pixeldata[chan][bufferpos++]) );
+				for (int x = xstart; x < (pixelcount+xstart); x+=2) {
+					if ( (x + 2) < (pixelcount+xstart)) {
+						float ytop = f_max(pixeldata[chan][bufferpos], pixeldata[chan][bufferpos + 2]);
+						float ybotom = f_max(pixeldata[chan][bufferpos + 1], pixeldata[chan][bufferpos + 3]);
+						polygontop.append( QPointF(x, ytop) );
+						polygonbottom.append( QPointF(x, - ybotom) );
+						bufferpos += 4;
+					} else {
+						polygontop.append( QPointF(x, pixeldata[chan][bufferpos++]) );
+						polygonbottom.append( QPointF(x, - pixeldata[chan][bufferpos++]) );
+					}
 				}
 				
 				path.addPolygon(polygontop);
