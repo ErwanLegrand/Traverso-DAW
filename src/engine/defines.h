@@ -4,7 +4,7 @@
 #include <inttypes.h>
 #include "FastDelegate.h"
 
-#if defined (Q_WS_WIN)
+#if defined (WIN_BUILD)
 // 'stolen' from the glib/atomic.h header file.
 // it's the only thing we need glib for on windows...
 # define g_atomic_int_get(atomic) 		(*(atomic))

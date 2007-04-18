@@ -9,8 +9,8 @@ CONFIG -= release debug
 # Choose debug or release build
 #
 
-CONFIG += debug
-#CONFIG += release
+#CONFIG += debug
+CONFIG += release
 
 #
 # Add support for Jack / ALSA audio driver. If you have a 
@@ -122,6 +122,7 @@ macx {
 }
 
 win32 { 
+	DEFINES += WIN_BUILD
 	DEFINES += PORTAUDIO_SUPPORT
 	DEFINES -= ALSA_SUPPORT
 	DEFINES -= JACK_SUPPORT
