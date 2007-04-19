@@ -55,8 +55,7 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	m_sv = sv;
 	m_tv->scene()->addItem(this);
 	
-	clipNamePixmapActive = QPixmap();
-	clipNamePixmapInActive = QPixmap();
+	m_clipnamePixmap = QPixmap();
 	
 	load_theme_data();
 
@@ -126,7 +125,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	clipRect.setHeight(clipRect.height());
 	painter->setClipRect(clipRect);
 	
-	if (m_drawbackground) {
+	if (false) {
 		bool mousehover = (option->state & QStyle::State_MouseOver);
 	
 		if (m_clip->recording_state() == AudioClip::RECORDING) {
@@ -221,12 +220,22 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	// which looks ugly when only parts of the clip is repainted
 	// when using a different color for the brush then the outline.
 	// Painting one more pixel makes it getting clipped away.....
-	pixelcount += 1;
+	pixelcount += 2;
 	// Seems like we need one pixel more to the left as well, to 
 	// make the outline painting painted correctly...
-	xstart = xstart - 1;
-	if (xstart < 0)
+	xstart -= 1;
+	// When painting skips one pixel at a time, we always have to start
+	// at an even position with an even amount of pixels to paint
+	if (xstart % 2) {
+		xstart -= 1;
+		pixelcount++;
+	}
+	if (xstart < 0) {
 		xstart = 0;
+	}
+	if (pixelcount % 2) {
+		pixelcount += 1;
+	}
 	
 	int channels = m_clip->get_channels();
 	bool microView = m_song->get_hzoom() > Peak::MAX_ZOOM_USING_SOURCEFILE ? 0 : 1;
@@ -416,17 +425,16 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			if (m_classicView) {
 				QPolygonF polygonbottom(pixelcount);
 				
-				for (int x = xstart; x < (pixelcount+xstart); x+=2) {
-					if ( (x + 2) < (pixelcount+xstart)) {
-						float ytop = f_max(pixeldata[chan][bufferpos], pixeldata[chan][bufferpos + 2]);
-						float ybotom = f_max(pixeldata[chan][bufferpos + 1], pixeldata[chan][bufferpos + 3]);
-						polygontop.append( QPointF(x, ytop) );
-						polygonbottom.append( QPointF(x, - ybotom) );
-						bufferpos += 4;
-					} else {
-						polygontop.append( QPointF(x, pixeldata[chan][bufferpos++]) );
-						polygonbottom.append( QPointF(x, - pixeldata[chan][bufferpos++]) );
-					}
+				int range = pixelcount+xstart;
+				for (int x = xstart; x < range; x+=2) {
+					float ytop = f_max(pixeldata[chan][bufferpos], pixeldata[chan][bufferpos + 2]);
+					float ybotom = f_max(pixeldata[chan][bufferpos + 1], pixeldata[chan][bufferpos + 3]);
+					polygontop.append( QPointF(x, ytop) );
+					polygonbottom.append( QPointF(x, - ybotom) );
+					bufferpos += 4;
+					
+/*					polygontop.append( QPointF(x, pixeldata[chan][bufferpos++]) );
+					polygonbottom.append( QPointF(x, - pixeldata[chan][bufferpos++]) );*/
 				}
 				
 				path.addPolygon(polygontop);
@@ -479,7 +487,7 @@ void AudioClipView::draw_clipinfo_area(QPainter* p, int xstart, int pixelcount)
 	p->fillRect(xstart, 0, pixelcount, m_infoAreaHeight, themer()->get_color("AudioClip:clipinfobackground:inactive"));
 
 	// Draw Clip Info Area
-	p->drawPixmap(0, 0, clipNamePixmapInActive, 0, 0, 600, m_infoAreaHeight);
+	p->drawPixmap(0, 0, m_clipnamePixmap, 0, 0, 600, m_infoAreaHeight);
 }
 
 
@@ -508,27 +516,18 @@ void AudioClipView::recreate_clipname_pixmap()
 	QString clipInfo = clipName  + "    " + sclipGain + "   " + sclipNormGain + "    " + sRate +  " Hz";
 	int clipInfoAreaWidth = 700;
 
-	clipNamePixmapActive = QPixmap(clipInfoAreaWidth, m_infoAreaHeight);
-	clipNamePixmapInActive = QPixmap(clipInfoAreaWidth, m_infoAreaHeight);
+	m_clipnamePixmap = QPixmap(clipInfoAreaWidth, m_infoAreaHeight);
 	
-	clipNamePixmapActive.fill(themer()->get_color("AudioClip:clipinfobackground"));
-	clipNamePixmapInActive.fill(themer()->get_color("AudioClip:clipinfobackground:inactive"));
+	m_clipnamePixmap.fill(Qt::transparent);
 
 
-	QPainter paint(&clipNamePixmapActive);
+	QPainter paint(&m_clipnamePixmap);
 	paint.setRenderHint(QPainter::TextAntialiasing );
 	paint.setPen(themer()->get_color("Text:dark"));
 	paint.setFont(themer()->get_font("AudioClip:title"));
 
 	QRect r = QRect(5, 0, clipInfoAreaWidth, m_infoAreaHeight);
 	paint.drawText( r, Qt::AlignVCenter, clipInfo);
-
-
-	QPainter painter(&clipNamePixmapInActive);
-	painter.setRenderHint(QPainter::TextAntialiasing );
-	painter.setPen(themer()->get_color("Text:dark"));
-	painter.setFont(themer()->get_font("AudioClip:title"));
-	painter.drawText( r, Qt::AlignVCenter, clipInfo);
 }
 
 void AudioClipView::update_progress_info( int progress )
