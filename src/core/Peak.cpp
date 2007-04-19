@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier
+Copyright (C) 2005-2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Peak.cpp,v 1.16 2007/04/17 19:56:46 r_sijrier Exp $
 */
 
 #include "libtraversocore.h"
@@ -43,10 +42,10 @@ const int Peak::MAX_ZOOM_USING_SOURCEFILE	= SAVING_ZOOM_FACTOR - 1;
 
 #define NORMALIZE_CHUNK_SIZE	10000
 #define PEAKFILE_MAJOR_VERSION	0
-#define PEAKFILE_MINOR_VERSION	5
+#define PEAKFILE_MINOR_VERSION	7
 
-int Peak::zoomStep[ZOOM_LEVELS] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096,
-				8192, 16384, 32768, 65536, 131072};
+int Peak::zoomStep[] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096,
+				8192, 16384, 32768, 65536, 131072, 262144};
 
 Peak::Peak(AudioSource* source, int channel)
 	: m_channel(channel)
@@ -270,7 +269,7 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 		
 		return pixelcount;
 	 
-	} else if (zoomLevel > MAX_ZOOM_USING_SOURCEFILE) {
+	} else if ( (zoomLevel - 1) > MAX_ZOOM_USING_SOURCEFILE) {
 		
 		int offset = (startPos / zoomStep[zoomLevel]) * 2;
 		
@@ -416,7 +415,7 @@ int Peak::finish_processing()
 	m_data.peakDataSizeForLevel[0] = processBufferSize;
 	totalBufferSize += processBufferSize;
 	
-	for( int i = SAVING_ZOOM_FACTOR + 1; i < ZOOM_LEVELS; ++i) {
+	for( int i = SAVING_ZOOM_FACTOR + 1; i < ZOOM_LEVELS+1; ++i) {
 		int size = processBufferSize / dividingFactor;
 		m_data.peakDataSizeForLevel[i - SAVING_ZOOM_FACTOR] = size;
 		totalBufferSize += size;
@@ -443,7 +442,7 @@ int Peak::finish_processing()
 	m_data.peakDataSizeForLevel[0] = processBufferSize;
 	m_data.peakDataLevelOffsets[0] = m_data.peakDataOffset;
 	
-	for (int i = SAVING_ZOOM_FACTOR+1; i < ZOOM_LEVELS; ++i) {
+	for (int i = SAVING_ZOOM_FACTOR+1; i < ZOOM_LEVELS+1; ++i) {
 	
 		int prevLevelSize = m_data.peakDataSizeForLevel[i - SAVING_ZOOM_FACTOR - 1];
 		m_data.peakDataLevelOffsets[i - SAVING_ZOOM_FACTOR] = m_data.peakDataLevelOffsets[i - SAVING_ZOOM_FACTOR - 1] + prevLevelSize;

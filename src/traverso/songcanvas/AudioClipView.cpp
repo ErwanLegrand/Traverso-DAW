@@ -55,9 +55,8 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	m_sv = sv;
 	m_tv->scene()->addItem(this);
 	
-	m_clipnamePixmap = QPixmap();
-	
 	load_theme_data();
+	create_clipinfo_string();
 
 	m_waitingForPeaks = false;
 	m_progress = m_peakloadingcount = 0;
@@ -84,7 +83,7 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	
 	if (m_clip->recording_state() == AudioClip::RECORDING) {
 		start_recording();
-		connect(m_clip, SIGNAL(recordingFinished()), this, SLOT(stop_recording()));
+		connect(m_clip, SIGNAL(recordingFinished()), this, SLOT(finish_recording()));
 	}
 	
 // 	setFlags(ItemIsSelectable | ItemIsMovable);
@@ -112,12 +111,6 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 		return;
 	}
 	
-	if (m_clip->recording_state() == AudioClip::RECORDING) {
-// 		painter->fillRect(xstart, 0, pixelcount, m_height, themer()->get_color("AudioClip:background:recording"));
-		// For now, just exit. For later, draw the recording audio :-)
-// 		return;
-	}
-	
 	painter->save();
 	
 	QRectF clipRect = m_boundingRect;
@@ -125,7 +118,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	clipRect.setHeight(clipRect.height());
 	painter->setClipRect(clipRect);
 	
-	if (false) {
+	if (m_drawbackground) {
 		bool mousehover = (option->state & QStyle::State_MouseOver);
 	
 		if (m_clip->recording_state() == AudioClip::RECORDING) {
@@ -215,7 +208,6 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 {
 	PENTER2;
 	
-	// FIXME ?
 	// when painting with a path, I _have_ to use path.lineTo()
 	// which looks ugly when only parts of the clip is repainted
 	// when using a different color for the brush then the outline.
@@ -251,7 +243,10 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	// for a certain Peak object, schedule it for loading.
 	for (int chan=0; chan < channels; chan++) {
 		Peak* peak = m_clip->get_peak_for_channel(chan);
-		int availpeaks = peak->calculate_peaks(buffers[chan], m_song->get_hzoom(), xstart * m_sv->scalefactor + m_clip->get_source_start_frame(), peakdatacount);
+		int availpeaks = peak->calculate_peaks( buffers[chan],
+							microView ? m_song->get_hzoom() : m_song->get_hzoom() + 1,
+							(xstart * m_sv->scalefactor) + m_clip->get_source_start_frame(),
+							microView ? peakdatacount : peakdatacount / 2);
 		
 		if (peakdatacount != availpeaks) {
 // 			PWARN("peakdatacount != availpeaks (%d, %d)", peakdatacount, availpeaks);
@@ -323,11 +318,13 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 					for (int i = 0; i < (pixelcount*2); ++i) {
 						pixeldata[chan][i] *= curvemixdown[curvemixdownpos];
 						i++;
-						pixeldata[chan][i] *= curvemixdown[curvemixdownpos++];
+						pixeldata[chan][i] *= curvemixdown[curvemixdownpos];
+						curvemixdownpos += 2;
 					}
 				} else {
 					for (int i = 0; i < (pixelcount*2); i+=2) {
-						pixeldata[chan][i] *= curvemixdown[curvemixdownpos++];
+						pixeldata[chan][i] *= curvemixdown[curvemixdownpos];
+						curvemixdownpos += 2;
 					}
 				}
 			}
@@ -383,11 +380,20 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		// Microview, paint waveform as polyline
 		if (microView) {
 		
-			p->setPen(themer()->get_color("AudioClip:wavemicroview"));
-			
 			QPolygon polygon;
 			short* mbuffer = (short*) buffers[chan];
 			int bufferPos = 0;
+			
+			ytrans = (height / 2) + (chan * height);
+			p->setMatrix(matrix().translate(1, ytrans).scale(1, scaleFactor), true);
+			
+			if (m_clip->is_selected()) {
+				p->setPen(themer()->get_color("AudioClip:channelseperator:selected"));
+			} else {
+				p->setPen(themer()->get_color("AudioClip:channelseperator"));
+			}
+			
+			p->drawLine(xstart, 0, xstart + pixelcount, 0);
 			
 			for (int x = xstart; x < (pixelcount+xstart); x++) {
 				polygon.append( QPoint(x, mbuffer[bufferPos++]) );
@@ -397,9 +403,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				p->setRenderHints(QPainter::Antialiasing);
 			}
 			
-			ytrans = (height / 2) + (chan * height);
-			
-			p->setMatrix(matrix().translate(1, ytrans).scale(1, scaleFactor), true);
+			p->setPen(themer()->get_color("AudioClip:wavemicroview"));
 			p->drawPolyline(polygon);
 		
 		// Macroview, paint waveform with painterpath
@@ -427,14 +431,8 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				
 				int range = pixelcount+xstart;
 				for (int x = xstart; x < range; x+=2) {
-					float ytop = f_max(pixeldata[chan][bufferpos], pixeldata[chan][bufferpos + 2]);
-					float ybotom = f_max(pixeldata[chan][bufferpos + 1], pixeldata[chan][bufferpos + 3]);
-					polygontop.append( QPointF(x, ytop) );
-					polygonbottom.append( QPointF(x, - ybotom) );
-					bufferpos += 4;
-					
-/*					polygontop.append( QPointF(x, pixeldata[chan][bufferpos++]) );
-					polygonbottom.append( QPointF(x, - pixeldata[chan][bufferpos++]) );*/
+					polygontop.append( QPointF(x, pixeldata[chan][bufferpos++]) );
+					polygonbottom.append( QPointF(x, - pixeldata[chan][bufferpos++]) );
 				}
 				
 				path.addPolygon(polygontop);
@@ -444,7 +442,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				ytrans = (height / 2) + (chan * height);
 			
 			} else {
-				for (int x = xstart; x < (pixelcount+xstart); x++) {
+				for (int x = xstart; x < (pixelcount+xstart); x+=2) {
 					polygontop.append( QPointF(x, pixeldata[chan][bufferpos]) );
 					bufferpos += 2;
 				}
@@ -454,7 +452,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				path.lineTo(xstart, 0);
 				
 				ytrans = height + (chan * height);
-				scaleFactor = 2 * ( (float) height * 0.95 / (Peak::MAX_DB_VALUE * 2)) * m_clip->get_gain() * m_clip->get_norm_factor();
+				scaleFactor =  (float) height * 0.95 * m_clip->get_gain() * m_clip->get_norm_factor() / Peak::MAX_DB_VALUE;
 			}
 			
 			if (m_mergedView) {
@@ -479,55 +477,22 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	}
 }
 
-
-
 void AudioClipView::draw_clipinfo_area(QPainter* p, int xstart, int pixelcount)
 {
 	// clip info area bg
 	p->fillRect(xstart, 0, pixelcount, m_infoAreaHeight, themer()->get_color("AudioClip:clipinfobackground:inactive"));
-
-	// Draw Clip Info Area
-	p->drawPixmap(0, 0, m_clipnamePixmap, 0, 0, 600, m_infoAreaHeight);
+	// clip info, only if xstart lies in the stringlenght range which is calculated by a rough estimate.
+	if (xstart < m_clipinfoString.size() * 6) {
+		p->setFont(themer()->get_font("AudioClip:title"));
+		p->drawText(5, 10, m_clipinfoString);
+	}
 }
 
-
-void AudioClipView::recreate_clipname_pixmap()
+void AudioClipView::create_clipinfo_string()
 {
 	PENTER;
-	int channels = m_clip->get_channels();
-	Q_ASSERT(channels < 8);
-	
-	int rate = m_clip->get_rate();
-	int bitDepth = m_clip->get_bitdepth();
-	bool isTake = m_clip->is_take();
-	QString clipName = m_clip->get_name();
-
-	QString sRate = QString::number(rate);
-	QString sBitDepth = QString::number(bitDepth);
-	QString sourceType = (isTake?"CAP":"SRC");
-	
-	QString sclipGain = "Gain: "+ coefficient_to_dbstring(m_clip->get_gain());
-	QString sclipNormGain = "Norm: "+ coefficient_to_dbstring(m_clip->get_norm_factor());
-	
-	QString sMuted = "";
-	if (m_clip->is_muted())
-		sMuted = "M";
-	
-	QString clipInfo = clipName  + "    " + sclipGain + "   " + sclipNormGain + "    " + sRate +  " Hz";
-	int clipInfoAreaWidth = 700;
-
-	m_clipnamePixmap = QPixmap(clipInfoAreaWidth, m_infoAreaHeight);
-	
-	m_clipnamePixmap.fill(Qt::transparent);
-
-
-	QPainter paint(&m_clipnamePixmap);
-	paint.setRenderHint(QPainter::TextAntialiasing );
-	paint.setPen(themer()->get_color("Text:dark"));
-	paint.setFont(themer()->get_font("AudioClip:title"));
-
-	QRect r = QRect(5, 0, clipInfoAreaWidth, m_infoAreaHeight);
-	paint.drawText( r, Qt::AlignVCenter, clipInfo);
+	QString sclipGain = "Gain: "+ coefficient_to_dbstring(m_clip->get_gain() * m_clip->get_norm_factor());
+	m_clipinfoString = m_clip->get_name()  + "    " + sclipGain + "   " + QString::number(m_clip->get_rate()) +  " Hz";
 }
 
 void AudioClipView::update_progress_info( int progress )
@@ -559,7 +524,7 @@ AudioClip * AudioClipView::get_clip( )
 
 void AudioClipView::gain_changed( )
 {
-	recreate_clipname_pixmap();
+	create_clipinfo_string();
 	update();
 }
 
@@ -596,7 +561,7 @@ void AudioClipView::calculate_bounding_rect()
 
 void AudioClipView::repaint( )
 {
-	update();
+	update(m_boundingRect);
 }
 
 void AudioClipView::set_height( int height )
@@ -657,7 +622,6 @@ void AudioClipView::load_theme_data()
 	m_classicView = ! config().get_property("Themer", "paintaudiorectified", false).toBool();
 	m_mergedView = config().get_property("Themer", "paintstereoaudioasmono", false).toBool();
 	m_fillwave = themer()->get_property("AudioClip:fillwave", 1).toInt();
-	recreate_clipname_pixmap();
 	calculate_bounding_rect();
 }
 
@@ -704,7 +668,7 @@ void AudioClipView::start_recording()
 	m_recordingTimer.start(750);
 }
 
-void AudioClipView::stop_recording()
+void AudioClipView::finish_recording()
 {
 	m_recordingTimer.stop();
 	prepareGeometryChange();
@@ -738,7 +702,6 @@ void AudioClipView::set_dragging(bool dragging)
 		}
 	} else {
 		if (m_posIndicator) {
-			scene()->removeItem(m_posIndicator);
 			delete m_posIndicator;
 			m_posIndicator = 0;
 		}

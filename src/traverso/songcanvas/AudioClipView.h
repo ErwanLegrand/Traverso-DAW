@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.h,v 1.21 2007/04/19 12:52:03 r_sijrier Exp $
 */
 
 #ifndef AUDIO_CLIP_VIEW_H
@@ -78,7 +77,6 @@ private:
 	QList<Peak*> 	m_peakloadinglist;
 	PositionIndicator* m_posIndicator;
 
-	QPixmap m_clipnamePixmap;
 	QTimer m_recordingTimer;
 
 	float m_progress;
@@ -99,8 +97,10 @@ private:
 	int m_fillwave;
 	QColor m_backgroundColor;
 	QColor m_backgroundColorMouseHover;
+	
+	QString m_clipinfoString;
 
-	void recreate_clipname_pixmap();
+	void create_clipinfo_string();
 
 	void draw_clipinfo_area(QPainter* painter, int xstart, int pixelcount);
 	void draw_peaks(QPainter* painter, int xstart, int pixelcount);
@@ -125,7 +125,7 @@ private slots:
 	void update_progress_info(int progress);
 	void peaks_creation_finished(Peak* peak);
 	void start_recording();
-	void stop_recording();
+	void finish_recording();
 	void update_recording();
 };
 

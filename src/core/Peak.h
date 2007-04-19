@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier
+Copyright (C) 2005-2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Peak.h,v 1.8 2007/04/02 09:52:31 r_sijrier Exp $
 */
 
 #ifndef PEAK_H
@@ -60,7 +59,7 @@ public:
 	static const int ZOOM_LEVELS = 18;
 	static const int MAX_ZOOM_USING_SOURCEFILE;
 	static const int MAX_DB_VALUE;
-	static int zoomStep[ZOOM_LEVELS];
+	static int zoomStep[ZOOM_LEVELS + 1];
 
 	Peak(AudioSource* source, int channel = -1);
 	~Peak();
