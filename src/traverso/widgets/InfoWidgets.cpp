@@ -721,8 +721,6 @@ SysInfoToolBar::SysInfoToolBar(QWidget * parent)
 	addSeparator();
 	action = addWidget(hddInfo);
 	action->setVisible(true);
-	
-	setMaximumHeight(INFOBAR_HEIGH_HOR_ORIENTATION);
 }
 
 SystemValueBar::SystemValueBar(QWidget * parent)
