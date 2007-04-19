@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipView.h,v 1.20 2007/04/17 11:51:20 r_sijrier Exp $
+$Id: AudioClipView.h,v 1.21 2007/04/19 12:52:03 r_sijrier Exp $
 */
 
 #ifndef AUDIO_CLIP_VIEW_H
@@ -78,8 +78,7 @@ private:
 	QList<Peak*> 	m_peakloadinglist;
 	PositionIndicator* m_posIndicator;
 
-	QPixmap clipNamePixmapActive;
-	QPixmap clipNamePixmapInActive;
+	QPixmap m_clipnamePixmap;
 	QTimer m_recordingTimer;
 
 	float m_progress;
