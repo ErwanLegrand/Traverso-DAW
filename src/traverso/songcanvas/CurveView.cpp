@@ -48,6 +48,7 @@ public:
 	int do_action();
         int undo_action();
 	int finish_hold();
+	void cancel_action();
         int begin_hold();
         int jog();
 
@@ -83,12 +84,20 @@ int DragNode::prepare_actions()
 	// this makes no sense!!!!!!!
 	// So we fake this action to be failed, and thus
 	// it won't show up in the history 
-	return -1;
+
+	// BEN: What?  This should be undoable.
+	// TODO: Figure out what that comment means...
+	return 1;
 }
 
 int DragNode::finish_hold()
 {
 	return 1;
+}
+
+void DragNode::cancel_action()
+{
+	undo_action();
 }
 
 int DragNode::begin_hold()

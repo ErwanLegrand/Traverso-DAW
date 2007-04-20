@@ -79,6 +79,13 @@ int MoveEdge::finish_hold()
 }
 
 
+void MoveEdge::cancel_action()
+{
+	finish_hold();
+	undo_action();
+}
+
+
 int MoveEdge::do_action()
 {
         return QMetaObject::invokeMethod(m_clip, m_edge.data(), Q_ARG(long, m_newPos));
