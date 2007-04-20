@@ -279,28 +279,31 @@ Command* TimeLineView::add_marker()
 	QPointF point = mapFromScene(cpointer().scene_pos());
 	
 	nframes_t when = (uint) (point.x() * m_sv->scalefactor);
+	
+	CommandGroup* group = new CommandGroup(m_timeline, "");
 
 	// check if it is the first marker added to the timeline
 	if (!m_timeline->get_markers().size()) {
 		if (when > 0) {  // add one at the beginning of the song
 			Marker* m = new Marker(m_timeline, 0);
 			m->set_description("");
-			AddRemove *ca = (AddRemove*) m_timeline->add_marker(m);
-			Command::process_command(ca);
+			group->add_command(m_timeline->add_marker(m));
 		}
 
 		if (when < m_sv->get_song()->get_last_frame()) {  // add one at the end of the song
 			Marker* me = new Marker(m_timeline, m_sv->get_song()->get_last_frame(), 10);
 			me->set_description(tr("End"));
-			AddRemove *cb = (AddRemove*) m_timeline->add_marker(me);
-			Command::process_command(cb);
+			group->add_command(m_timeline->add_marker(me));
 		}
 	}
 
 	Marker* marker = new Marker(m_timeline, when);
 	marker->set_description("");
 	
-	return m_timeline->add_marker(marker);
+	group->setText(tr("Add Marker"));
+	group->add_command(m_timeline->add_marker(marker));
+	
+	return group;
 }
 
 Command* TimeLineView::remove_marker()
