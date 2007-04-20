@@ -269,7 +269,7 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 		
 		return pixelcount;
 	 
-	} else if ( (zoomLevel - 1) > MAX_ZOOM_USING_SOURCEFILE) {
+	} else if ( zoomLevel > MAX_ZOOM_USING_SOURCEFILE) {
 		
 		int offset = (startPos / zoomStep[zoomLevel]) * 2;
 		

@@ -230,7 +230,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	}
 	
 	int channels = m_clip->get_channels();
-	bool microView = m_song->get_hzoom() > Peak::MAX_ZOOM_USING_SOURCEFILE ? 0 : 1;
+	bool microView = m_song->get_hzoom() > (Peak::MAX_ZOOM_USING_SOURCEFILE - 1) ? 0 : 1;
 	int peakdatacount = microView ? pixelcount : pixelcount * 2;
 
 	int buffersize = microView ? sizeof(short) * peakdatacount : sizeof(unsigned char) * peakdatacount;
