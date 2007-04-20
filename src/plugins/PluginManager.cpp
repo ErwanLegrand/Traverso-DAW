@@ -1,4 +1,4 @@
-/*Copyright (C) 2006 Remon Sijrier
+/*Copyright (C) 2006-2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -16,9 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginManager.cpp,v 1.7 2007/04/20 12:17:31 r_sijrier Exp $
-
-slv2 url: http://codeson.net/svn/libslv2/
 */
 
 

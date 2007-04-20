@@ -542,6 +542,7 @@ void AudioClipView::remove_fadeview( FadeCurve * fade )
 		FadeView* view = m_fadeViews.at(i);
 		if (view->get_fade() == fade) {
 			m_fadeViews.takeAt(i);
+			scene()->removeItem(view);
 			delete view;
 			break;
 		}

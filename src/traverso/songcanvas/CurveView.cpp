@@ -323,6 +323,7 @@ void CurveView::remove_curvenode_view(CurveNode* node)
 			cmd->set_instantanious(true);
 			Command::process_command(cmd);
 			
+			scene()->removeItem(nodeview);
 			delete nodeview;
 			update();
 			return;
