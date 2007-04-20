@@ -411,7 +411,7 @@ void Interface::create_menus( )
 	m_sysinfo->toggleViewAction()->setText(tr("System Information"));
 	
 	
-	menu = menuBar()->addMenu(tr("&Settings"));
+	menu = menuBar()->addMenu(tr("Se&ttings"));
 	menu->addAction(m_infoBar->get_snap_action());
 	menu->addAction(m_infoBar->get_follow_action());
 	
