@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AddRemove.cpp,v 1.1 2007/03/06 15:13:33 r_sijrier Exp $
+$Id: AddRemove.cpp,v 1.2 2007/04/20 08:44:48 benjie Exp $
 */
 
 #include "AddRemove.h"
@@ -34,7 +34,7 @@ $Id: AddRemove.cpp,v 1.1 2007/03/06 15:13:33 r_sijrier Exp $
 	AddRemove is a flexible class that let's you insert/remove objects into the audio <br />
 	processing execution path without using locks.<br />
 	It can also be used with objects that aren't in the audio processing chain, and don't <br />
-	need the thread savety. Use set_instantanious() to let the created AddRemove object<br />
+	need the thread safety. Use set_instantanious() to let the created AddRemove object<br />
 	know that it can bypass the thread save logic, and call the add/remove functions directly.
 
 	The example below is typical how this Command class should be used.
@@ -120,8 +120,6 @@ $Id: AddRemove.cpp,v 1.1 2007/03/06 15:13:33 r_sijrier Exp $
 
 AddRemove::AddRemove(ContextItem* parent, void* arg, const QString& des)
 	: Command(parent, des),
-	m_parentItem(parent),
-	m_arg(arg),
 	m_song(0),
 	m_doActionSlot(""),
 	m_undoActionSlot(""),

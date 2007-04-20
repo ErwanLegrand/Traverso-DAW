@@ -110,6 +110,8 @@ void BusSelectorDialog::accept()
 			m_currentTrack->set_capture_right_channel(true);
 		}
 	}
+
+	hide();
 }
 
 void BusSelectorDialog::reject()
