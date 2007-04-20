@@ -114,6 +114,7 @@ void TrackView::remove_audioclipview( AudioClip * clip )
 	foreach(AudioClipView* view, m_clipViews) {
 		if (view->get_clip() == clip) {
 			m_clipViews.removeAll(view);
+			scene()->removeItem(view);
 			delete view;
 			return;
 		}
