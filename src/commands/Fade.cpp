@@ -58,7 +58,7 @@ int FadeRange::prepare_actions()
 
 int FadeRange::begin_hold()
 {
-	origX = cpointer().x();
+	origX = cpointer().on_first_input_event_x();
 	newFade = origFade = m_curve->get_range();
 	return 1;
 }

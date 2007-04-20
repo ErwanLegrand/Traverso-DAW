@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QGraphicsSceneMouseEvent>
 #include <QEvent>
 #include <QStyleOptionGraphicsItem>
+#include <QApplication>
 #include <Utils.h>
 #include "InputEngine.h"
 
