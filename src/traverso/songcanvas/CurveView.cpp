@@ -85,14 +85,8 @@ int DragNode::prepare_actions()
 	// So we fake this action to be failed, and thus
 	// it won't show up in the history 
 
-	// BEN: What?  This should be undoable.
-	// TODO: Figure out what that comment means...
-	// Remon: @ Ben: Should it? Moving a node fills up the historystack
-	// rather quickly.
-	// The reason I returned -1 here is that the undo code relies on 
-	// a pre-condition that isn't satisfied all the time, and makes 
-	// Traverso segfault on undo when mouse cursor is not above the clip!
-	return 1;
+	// TODO: Fix this so DragNode commands can be undoable
+	return -1;
 }
 
 int DragNode::finish_hold()
