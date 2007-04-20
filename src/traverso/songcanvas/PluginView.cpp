@@ -54,10 +54,16 @@ PluginView::PluginView(TrackView* parent, Plugin* plugin, int index)
 	
 	m_track = m_trackView->get_track();
 	m_name = plugin->get_name();
-	m_boundingRect = QRectF(0, 0, 100, 25);
+	
+	QFontMetrics fm(themer()->get_font("Plugin:name"));
+	int fontwidth = fm.width(m_name);
+	
+	m_boundingRect = QRectF(0, 0, fontwidth + 8, 25);
 	
 	setAcceptsHoverEvents(true);
 	setCursor(themer()->get_cursor("Plugin"));
+	
+	connect(m_plugin, SIGNAL(bypassChanged()), this, SLOT(repaint()));
 }
 
 PluginView::~PluginView( )
@@ -77,28 +83,27 @@ void PluginView::paint(QPainter* painter, const QStyleOptionGraphicsItem *option
 	
 	QColor color;
 	if (m_plugin->is_bypassed()) {
-		color.setRgb(230, 0, 230, 80);
+		color = themer()->get_color("Plugin:background:bypassed");
 	} else {
-		color.setRgb(230, 0, 230, 170);
+		color = themer()->get_color("Plugin:background");
 	}
 
 	int height, width;
 	if (option->state & QStyle::State_MouseOver) {
 		height = 21;
-		width = 101;
+		width = m_boundingRect.width() + 1;
 		color = color.light(120);
 	} else {
 		height = 20;
-		width = 100;
+		width = m_boundingRect.width();
 	}
 	
 	QBrush brush(color);
 	QRect rect(0, 0, width, height); 
 	painter->fillRect(rect, brush);
-	painter->setPen(QColor(Qt::white));
+	painter->setPen(themer()->get_color("Plugin:text"));
+	painter->setFont(themer()->get_font("Plugin:name"));
 	painter->drawText(rect, Qt::AlignCenter, m_name);
-	
-	connect(m_plugin, SIGNAL(bypassChanged()), this, SLOT(repaint()));
 }
 
 

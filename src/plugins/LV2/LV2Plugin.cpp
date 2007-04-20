@@ -1,4 +1,4 @@
-/*Copyright (C) 2006 Remon Sijrier
+/*Copyright (C) 2006-2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -16,9 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: LV2Plugin.cpp,v 1.4 2007/01/19 12:15:27 r_sijrier Exp $
-
-slv2 url: http://codeson.net/svn/libslv2/
 */
 
 
@@ -28,21 +25,27 @@ slv2 url: http://codeson.net/svn/libslv2/
 #include <PluginManager.h>
 #include <AudioBus.h>
 #include <AudioDevice.h>
+#include <Utils.h>
+
 #include <Debugger.h>
 
-#define C_(x) x.toAscii().data()
 #define UC_(x) (const unsigned char* ) x.toAscii().data()
 
 
 
 LV2Plugin::LV2Plugin()
-	: Plugin(), m_instance(0), m_plugin(0)
+	: Plugin()
+	, m_instance(0)
+	, m_slv2plugin(0)
 {
 }
 
 
 LV2Plugin::LV2Plugin(char* pluginUri)
-	: Plugin(), m_pluginUri((char*) pluginUri), m_instance(0), m_plugin(0)
+	: Plugin()
+	, m_pluginUri((char*) pluginUri)
+	, m_instance(0)
+	, m_slv2plugin(0)
 {
 }
 
@@ -155,10 +158,10 @@ int LV2Plugin::init()
 	}
 
 	/* Create ports */
-	int numPorts  = slv2_plugin_get_num_ports(m_plugin);
-	printf("numports is %d\n", (int) numPorts);
+	m_portcount  = slv2_plugin_get_num_ports(m_slv2plugin);
+	printf("numports is %d\n", (int) m_portcount);
 
-	for (int i=0; i < numPorts; ++i) {
+	for (int i=0; i < m_portcount; ++i) {
 		LV2ControlPort* port = create_port(i);
 		if (port) {
 			m_controlPorts.append(port);
@@ -171,12 +174,12 @@ int LV2Plugin::init()
 	slv2_instance_activate(m_instance);
 	
 	if (m_audioInputPorts.size() == 0) {
-		PERROR("Plugin %s has no audio input ports set!!", C_(get_name()));
+		PERROR("Plugin %s has no audio input ports set!!", QS_C(get_name()));
 		return -1;
 	}
 
 	if (m_audioOutputPorts.size() == 0) {
-		PERROR("Plugin %s has no audio output ports set!!", C_(get_name()));
+		PERROR("Plugin %s has no audio output ports set!!", QS_C(get_name()));
 		return -1;
 	}
 	
@@ -186,24 +189,24 @@ int LV2Plugin::init()
 
 int LV2Plugin::create_instance()
 {
-	printf("URI:\t%s\n", C_(m_pluginUri));
+	printf("URI:\t%s\n", QS_C(m_pluginUri));
 
-	m_plugin = slv2_list_get_plugin_by_uri(PluginManager::instance()->get_slv2_plugin_list(), C_(m_pluginUri));
+	m_slv2plugin = slv2_plugins_get_by_uri(PluginManager::instance()->get_slv2_plugin_list(), QS_C(m_pluginUri));
 
 	
-	if (! m_plugin) {
-		fprintf(stderr, "Failed to find plugin %s.\n", C_(m_pluginUri));
+	if (! m_slv2plugin) {
+		fprintf(stderr, "Failed to find plugin %s.\n", QS_C(m_pluginUri));
 		return -1;
 	}
 
 	/* Get the plugin's name */
-	char* name = slv2_plugin_get_name(m_plugin);
+	char* name = slv2_plugin_get_name(m_slv2plugin);
 
 	printf("Name:\t%s\n", name);
 
 	/* Instantiate the plugin */
 	int samplerate = audiodevice().get_sample_rate();
-	m_instance = slv2_plugin_instantiate(m_plugin, samplerate, NULL);
+	m_instance = slv2_plugin_instantiate(m_slv2plugin, samplerate, NULL);
 
 	if (! m_instance) {
 		printf("Failed to instantiate plugin.\n");
@@ -222,57 +225,50 @@ void LV2Plugin::process(AudioBus* bus, unsigned long nframes)
 		return;
 	}
 			
-	/* Connect the AudioBus Channel buffers to the plugin instance */
-// 	for (int index = 0; index < (int)bus->get_channel_count(); ++index) {
+	for (int i=0; i<m_audioInputPorts.size(); ++i) {
+		AudioInputPort* port = m_audioInputPorts.at(i);
+		int index = port->get_index();
+		slv2_instance_connect_port(m_instance, index, bus->get_buffer(i, (nframes_t)nframes));
+	}
 	
-		slv2_instance_connect_port(m_instance, 1, bus->get_buffer(0, (nframes_t)nframes));
-		slv2_instance_connect_port(m_instance, 2, bus->get_buffer(0, (nframes_t)nframes));
-// 	}
-
+	for (int i=0; i<m_audioOutputPorts.size(); ++i) {
+		AudioOutputPort* port = m_audioOutputPorts.at(i);
+		int index = port->get_index();
+		slv2_instance_connect_port(m_instance, index, bus->get_buffer(i, (nframes_t)nframes));
+	}
+	
 	/* Run plugin for this cycle */
-	slv2_instance_run(m_instance, nframes);
-		
-		slv2_instance_connect_port(m_instance, 1, bus->get_buffer(1, (nframes_t)nframes));
-		slv2_instance_connect_port(m_instance, 2, bus->get_buffer(1, (nframes_t)nframes));
-	
 	slv2_instance_run(m_instance, nframes);
 }
 
 
-LV2ControlPort* LV2Plugin::create_port(int  portIndex)
+LV2ControlPort* LV2Plugin::create_port(int portIndex)
 {
-	LV2ControlPort* port = (LV2ControlPort*) 0;
+	LV2ControlPort* ctrlport = (LV2ControlPort*) 0;
 
-	/* Make sure this is a float port */
-	char* type = (char*) slv2_port_get_data_type(m_plugin, portIndex);
-
-	if (strcmp(type, SLV2_DATA_TYPE_FLOAT)) {
-		PERROR("Unrecognized data type.");
-		return port;
-	}
-
-	free(type);
-
+	
+	SLV2Port slvport = slv2_plugin_get_port_by_index(m_slv2plugin, portIndex);
+	
 	/* Get the port symbol (label) for console printing */
-	char* symbol = (char*) slv2_port_get_symbol(m_plugin, portIndex);
+	char* symbol = slv2_port_get_symbol(m_slv2plugin, slvport);
 
 	/* Get the 'class' of the port (control input, audio output, etc) */
-	enum SLV2PortClass portClass = slv2_port_get_class(m_plugin, portIndex);
-
+	SLV2PortClass portClass = slv2_port_get_class(m_slv2plugin, slvport);
+	
 	/* Create the port based on it's 'class' */
 	switch (portClass) {
-		case SLV2_CONTROL_RATE_INPUT:
-			port = new LV2ControlPort(this, portIndex);
+		case SLV2_CONTROL_INPUT:
+			ctrlport = new LV2ControlPort(this, portIndex, slv2_port_get_default_value(m_slv2plugin, slvport));
 			printf("Set %s to ", symbol);
 			break;
-		case SLV2_CONTROL_RATE_OUTPUT:
-			port = new LV2ControlPort(this, portIndex);
+		case SLV2_CONTROL_OUTPUT:
+			ctrlport = new LV2ControlPort(this, portIndex, 0);
 			printf("Set %s to ", symbol);
 			break;
-		case SLV2_AUDIO_RATE_INPUT:
+		case SLV2_AUDIO_INPUT:
 			m_audioInputPorts.append(new AudioInputPort(this, portIndex));
 			break;
-		case SLV2_AUDIO_RATE_OUTPUT:
+		case SLV2_AUDIO_OUTPUT:
 			m_audioOutputPorts.append(new AudioOutputPort(this, portIndex));
 			break;
 		default:
@@ -281,32 +277,36 @@ LV2ControlPort* LV2Plugin::create_port(int  portIndex)
 
 	free(symbol);
 
-	return port;
+	return ctrlport;
 }
 
 QString LV2Plugin::get_name( )
 {
-	return QString( (char*) slv2_plugin_get_name(m_plugin));
+	return QString(slv2_plugin_get_name(m_slv2plugin));
 }
 
 
 
 
-LV2ControlPort::LV2ControlPort(LV2Plugin* plugin, int index)
-	: PluginPort(plugin, index), m_plugin(plugin)
-{
-	m_controlValue = slv2_port_get_default_value(m_plugin->get_slv2_plugin(), m_index);
-	slv2_instance_connect_port(m_plugin->get_instance(), m_index, &m_controlValue);
+/*********************************************************/
+/*		LV2 Control Port			 */
+/*********************************************************/
 
-	printf(" %f\n", m_controlValue);
+
+LV2ControlPort::LV2ControlPort(LV2Plugin* plugin, int index, float value)
+	: PluginPort(plugin, index)
+	, m_lv2plugin(plugin)
+	, m_controlValue(value)
+{
+	slv2_instance_connect_port(m_lv2plugin->get_instance(), m_index, &m_controlValue);
 }
 
 LV2ControlPort::LV2ControlPort( LV2Plugin * plugin, const QDomNode node )
-	: PluginPort(plugin), m_plugin(plugin)
+	: PluginPort(plugin), m_lv2plugin(plugin)
 {
 	set_state(node);
 	
-	slv2_instance_connect_port(m_plugin->get_instance(), m_index, &m_controlValue);
+	slv2_instance_connect_port(m_lv2plugin->get_instance(), m_index, &m_controlValue);
 }
 
 
@@ -332,28 +332,22 @@ int LV2ControlPort::set_state( const QDomNode & node )
 
 float LV2ControlPort::get_min_control_value()
 {
-	return slv2_port_get_minimum_value (m_plugin->get_slv2_plugin(), m_index);
+	SLV2Port port = slv2_plugin_get_port_by_index(m_lv2plugin->get_slv2_plugin(), m_index);
+	return slv2_port_get_minimum_value (m_lv2plugin->get_slv2_plugin(), port);
 }
 
 float LV2ControlPort::get_max_control_value()
 {
-	return slv2_port_get_maximum_value (m_plugin->get_slv2_plugin(), m_index);
+	SLV2Port port = slv2_plugin_get_port_by_index(m_lv2plugin->get_slv2_plugin(), m_index);
+	return slv2_port_get_maximum_value (m_lv2plugin->get_slv2_plugin(), port);
 
 }
 
 QString LV2ControlPort::get_description()
 {
-	SLV2Property prop = slv2_port_get_property(m_plugin->get_slv2_plugin(), m_index, "lv2:symbol");
-
-        if (prop && prop->num_values == 1) {
-		return QString((char*)prop->values[0]);
-	}
-	
-	return QString("no desc. avail.");
+	SLV2Port port = slv2_plugin_get_port_by_index(m_lv2plugin->get_slv2_plugin(), m_index);
+	return QString(slv2_port_get_symbol(m_lv2plugin->get_slv2_plugin(), port));
 }
-
-
-/******* SLOTS ********/
 
 void LV2ControlPort::set_control_value(float value)
 {

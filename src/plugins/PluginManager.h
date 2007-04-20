@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginManager.h,v 1.3 2007/01/31 11:59:11 r_sijrier Exp $
+$Id: PluginManager.h,v 1.4 2007/04/20 12:17:31 r_sijrier Exp $
 */
 
 
@@ -43,7 +43,7 @@ public:
 	Plugin* get_plugin(const QDomNode node);
 
 #if defined (LV2_SUPPORT)
-	SLV2List get_slv2_plugin_list();
+	SLV2Plugins get_slv2_plugin_list();
 #endif
 
 private:
@@ -51,7 +51,8 @@ private:
 
 	static PluginManager* m_instance;
 #if defined (LV2_SUPPORT)
-	SLV2List	slv2PluginList;
+	SLV2World 	m_slv2World;
+	SLV2Plugins	m_slv2Plugins;
 #endif
 	void init();
 };

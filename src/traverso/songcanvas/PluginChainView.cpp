@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginChainView.cpp,v 1.8 2007/02/23 13:52:38 r_sijrier Exp $
+    $Id: PluginChainView.cpp,v 1.9 2007/04/20 12:17:31 r_sijrier Exp $
 */
 
 #include "PluginChainView.h"
@@ -72,16 +72,22 @@ PluginChainView::~PluginChainView( )
 void PluginChainView::add_new_pluginview( Plugin * plugin )
 {
 	PluginView* view = new PluginView(m_trackView, plugin, m_pluginViews.size());
-	m_pluginViews.append(view);
 	scene()->addItem(view);
-	view->setPos( ( m_pluginViews.size() -1 )* 120, m_boundingRect.height() - view->boundingRect().height());
+	
+	int x = 6;
+	foreach(PluginView* view, m_pluginViews) {
+		x += view->boundingRect().width() + 6;
+	}
+	
+	view->setPos(x, m_boundingRect.height() - view->boundingRect().height());
+	
+	m_pluginViews.append(view);
 }
 
 void PluginChainView::remove_pluginview( Plugin * plugin )
 {
 	foreach(PluginView* view, m_pluginViews) {
 		if (view->get_plugin() == plugin) {
-			printf("Removing pluginview\n");
 			m_pluginViews.removeAll(view);
 			delete view;
 		}

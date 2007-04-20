@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier
+Copyright (C) 2006-2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: LV2Plugin.h,v 1.3 2007/01/19 12:15:27 r_sijrier Exp $
 */
 
 
@@ -46,8 +45,8 @@ public:
 
 	void process(AudioBus* bus, unsigned long nframes);
 
-	SLV2Instance*  get_instance() const {return m_instance; }
-	SLV2Plugin* get_slv2_plugin() const {return m_plugin; }
+	SLV2Instance  get_instance() const {return m_instance; }
+	SLV2Plugin get_slv2_plugin() const {return m_slv2plugin; }
 
 	QList<LV2ControlPort* > get_control_ports() const { return m_controlPorts; }
 
@@ -59,8 +58,9 @@ public:
 
 private:
 	QString		m_pluginUri;
-	SLV2Instance*  	m_instance;    /**< Plugin "instance" (loaded shared lib) */
-	SLV2Plugin*    	m_plugin;      /**< Plugin "class" (actually just a few strings) */
+	SLV2Instance  	m_instance;
+	SLV2Plugin    	m_slv2plugin;
+	int		m_portcount;
 	
 	QList<LV2ControlPort* > 	m_controlPorts;
 	QList<AudioInputPort* >		m_audioInputPorts;
@@ -77,7 +77,7 @@ class LV2ControlPort : public PluginPort
 	Q_OBJECT
 
 public:
-	LV2ControlPort(LV2Plugin* plugin, int index);
+	LV2ControlPort(LV2Plugin* plugin, int index, float value);
 	LV2ControlPort(LV2Plugin* plugin, const QDomNode node);
 	~LV2ControlPort(){};
 
@@ -89,8 +89,8 @@ public:
 	QString get_description();
 
 private:
-	LV2Plugin*		m_plugin;
-	float			m_controlValue;
+	LV2Plugin*	m_lv2plugin;
+	float		m_controlValue;
 
 	int set_state( const QDomNode & node );
 

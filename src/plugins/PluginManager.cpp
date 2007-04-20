@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginManager.cpp,v 1.6 2007/02/01 15:45:29 r_sijrier Exp $
+$Id: PluginManager.cpp,v 1.7 2007/04/20 12:17:31 r_sijrier Exp $
 
 slv2 url: http://codeson.net/svn/libslv2/
 */
@@ -43,7 +43,7 @@ PluginManager::PluginManager()
 PluginManager::~PluginManager()
 {
 #if defined (LV2_SUPPORT)
-	slv2_list_free(slv2PluginList);
+	slv2_world_free(m_slv2World);
 #endif
 }
 
@@ -62,8 +62,9 @@ void PluginManager::init()
 {
 #if defined (LV2_SUPPORT)
 // LV2 part:
-	slv2PluginList  = slv2_list_new();
-	slv2_list_load_all(slv2PluginList);
+	m_slv2World = slv2_world_new();
+	slv2_world_load_all(m_slv2World);
+	m_slv2Plugins = slv2_world_get_all_plugins(m_slv2World);
 #endif
 }
 
@@ -108,9 +109,9 @@ Plugin* PluginManager::get_plugin(const  QDomNode node )
 
 #if defined (LV2_SUPPORT)
 
-SLV2List PluginManager::get_slv2_plugin_list()
+SLV2Plugins PluginManager::get_slv2_plugin_list()
 {
-	return slv2PluginList;
+	return m_slv2Plugins;
 }
 #endif
 

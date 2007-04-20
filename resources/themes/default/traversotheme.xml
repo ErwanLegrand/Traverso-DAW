@@ -34,6 +34,7 @@
 		<font name="TrackPanel:pan" size="7" family="Bitstream Vera Sans" />
 		<font name="TrackPanel:led" size="8" family="Bitstream Vera Sans" />
 		<font name="TrackPanel:bus" size="8" family="Bitstream Vera Sans" />
+		<font name="Plugin:name" size="8"  family="Bitstream Vera Sans" />
 	</fonts>
 	<colors>
 		<color name="Text:light" red="200" green="200" blue="200"  alpha="255" />
@@ -95,6 +96,9 @@
 		<color name="Playhead:active" red="180" green="189" blue="240" alpha="220" />
 		<color name="Playhead:inactive" red="180" green="189" blue="240" alpha="220" />
 		
+		<color name="Plugin:background" red="230" green="0" blue="230" alpha="170" />
+		<color name="Plugin:background:bypassed" red="230" green="0" blue="230" alpha="80" />
+		<color name="Plugin:text" red="255" green="255" blue="255" alpha="255" />
 		
 		<color name="Song:background" red="250" green="251" blue="255" alpha="255" />
 		
