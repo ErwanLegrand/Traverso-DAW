@@ -355,7 +355,7 @@
 		</keyfact>
 		<keyfact type="HKEY" key1="D" >
 			<Objects>
-				<Object objectname="AudioClipView" mousehint="LRUD" modes="Edit" sortorder="3" pluginname="TraversoCommands" commandname="MoveClip"  arguments="move" />
+				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" sortorder="3" pluginname="TraversoCommands" commandname="MoveClip"  arguments="move" />
 				<Object objectname="CurveView" mousehint="LRUD" slotsignature="drag_node" modes="Effects" sortorder="3" instantanious="1" />
 				<Object objectname="TimeLineView" mousehint="LR" slotsignature="drag_marker" modes="All" sortorder="3" instantanious="1" />
 			</Objects>
