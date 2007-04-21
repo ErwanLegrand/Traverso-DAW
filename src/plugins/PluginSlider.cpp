@@ -17,11 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginSlider.cpp,v 1.3 2007/02/08 20:51:38 r_sijrier Exp $
+$Id: PluginSlider.cpp,v 1.4 2007/04/21 15:26:49 r_sijrier Exp $
 */
 
 #include "PluginSlider.h"
-
+#include <Themer.h>
 
 PluginSlider::PluginSlider()
 	: QWidget()
@@ -57,20 +57,18 @@ void PluginSlider::paintEvent(QPaintEvent *)
 {
 	QPainter painter(this);
 	
-	QColor color;
+	QColor color = themer()->get_color("PluginSlider:value");
+	QColor background = themer()->get_color("PluginSlider:background");
 	
-	if (dragging) {
-		color.setRgb(169, 48, 111, 255);
-	} else {
-		if (highlight) {
-			color.setRgb(169, 48, 111, 220);
-		} else {
-			color.setRgb(169, 48, 111, 180);
-		}
+	if (highlight) {
+		color = color.light(110);
+		background = background.light(105);
 	}
 	
-	painter.fillRect(0, 0, width(), height(), QBrush(QColor("#C7E4D3")));
-	painter.fillRect(0, 0, m_xpos, height(), QBrush(color));
+	painter.setBrush(background);
+	painter.drawRect(0, 0, width() - 0.5, height()- 0.5);
+	painter.fillRect(1, 1, m_xpos - 2, height() - 2, QBrush(color));
+	painter.drawText(0, 0, width(), height(), Qt::AlignCenter, QString::number(m_value, 'f', 2));
 }
 
 void PluginSlider::mousePressEvent( QMouseEvent * e )

@@ -99,6 +99,8 @@
 		<color name="Plugin:background" red="230" green="0" blue="230" alpha="170" />
 		<color name="Plugin:background:bypassed" red="230" green="0" blue="230" alpha="80" />
 		<color name="Plugin:text" red="255" green="255" blue="255" alpha="255" />
+		<color name="PluginSlider:background" red="199" green="228" blue="211" alpha="255" />
+		<color name="PluginSlider:value"  red="240" green="190" blue="218"  alpha="255" />
 		
 		<color name="Song:background" red="250" green="251" blue="255" alpha="255" />
 		

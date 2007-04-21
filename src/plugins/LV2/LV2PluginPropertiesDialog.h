@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: LV2PluginPropertiesDialog.h,v 1.1 2006/07/31 13:24:46 r_sijrier Exp $
+$Id: LV2PluginPropertiesDialog.h,v 1.2 2007/04/21 15:26:49 r_sijrier Exp $
 */
 
 
@@ -30,15 +30,14 @@ class LV2Plugin;
 
 class LV2PluginPropertiesDialog : public QDialog
 {
-	public:
-		LV2PluginPropertiesDialog(LV2Plugin* plugin);
-		~LV2PluginPropertiesDialog(){};
+
+public:
+	LV2PluginPropertiesDialog(LV2Plugin* plugin);
+	~LV2PluginPropertiesDialog(){};
 
 
-	private:
-		LV2Plugin*	m_plugin;
-
-		void setup_gui();
+private:
+	LV2Plugin*	m_plugin;
 };
 
 #endif

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: LV2PluginPropertiesDialog.cpp,v 1.4 2007/01/19 12:15:27 r_sijrier Exp $
+$Id: LV2PluginPropertiesDialog.cpp,v 1.5 2007/04/21 15:26:49 r_sijrier Exp $
 */
 
 
@@ -34,30 +34,25 @@ $Id: LV2PluginPropertiesDialog.cpp,v 1.4 2007/01/19 12:15:27 r_sijrier Exp $
 
 
 LV2PluginPropertiesDialog::LV2PluginPropertiesDialog(LV2Plugin* plugin)
-	: QDialog(), m_plugin(plugin)
+	: QDialog()
+	, m_plugin(plugin)
 {
-	setup_gui();
-}
-
-void LV2PluginPropertiesDialog::setup_gui()
-{
-	QList<LV2ControlPort* > ports = m_plugin->get_control_ports();
-
 	QWidget* sliderWidget = new QWidget(this);
 	QVBoxLayout* sliderWidgetLayout = new QVBoxLayout;
 	sliderWidget->setLayout(sliderWidgetLayout);
 
 	QHBoxLayout* dialogLayout = new QHBoxLayout;
 	dialogLayout->addWidget(sliderWidget);
-	this->setLayout(dialogLayout);
+	dialogLayout->setMargin(0);
+	setLayout(dialogLayout);
 
 
-	resize(400, 300);
-
-	foreach(LV2ControlPort* port, ports) {
+	foreach(LV2ControlPort* port, m_plugin->get_control_ports()) {
 
 		QWidget* widget = new QWidget(sliderWidget);
-		QHBoxLayout *layout = new QHBoxLayout;
+		QHBoxLayout* lay = new QHBoxLayout();
+		lay->setSpacing(12);
+		lay->setMargin(3);
 
 		PluginSlider* slider = new PluginSlider();
 		slider->setFixedWidth(200);
@@ -68,32 +63,24 @@ void LV2PluginPropertiesDialog::setup_gui()
 
 		QLabel* minvalue = new QLabel();
 		minvalue->setNum(port->get_min_control_value());
-		minvalue->setFixedWidth(20);
+		minvalue->setFixedWidth(35);
 
 		QLabel* maxvalue = new QLabel();
 		maxvalue->setNum(port->get_max_control_value());
-		maxvalue->setFixedWidth(30);
-
-		QLabel* currentvalue = new QLabel();
-		currentvalue->setNum(port->get_control_value());
-		currentvalue->setFixedWidth(35);
-
-		connect(slider, SIGNAL(sliderValueChangedDouble(double)), currentvalue, SLOT(setNum (double)));
+		maxvalue->setFixedWidth(35);
 
 		QLabel* controlname = new QLabel(port->get_description());
-		controlname->setFixedWidth(80);
 
-		layout->addWidget(minvalue);
-		layout->addWidget(slider, 4);
-		layout->addWidget(maxvalue);
-		layout->addWidget(currentvalue);
-		layout->addWidget(controlname);
+		lay->addWidget(minvalue);
+		lay->addWidget(slider, 4);
+		lay->addWidget(maxvalue);
+		lay->addWidget(controlname);
+		lay->addStretch(1);
 
-		widget->setLayout(layout);
+		widget->setLayout(lay);
 
 		sliderWidgetLayout->addWidget(widget);
 	}
-
 }
 
 //eof
