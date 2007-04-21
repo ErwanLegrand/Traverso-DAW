@@ -79,14 +79,7 @@ DragNode::DragNode(CurveNode* node, CurveView* curveview, int scalefactor, const
 
 int DragNode::prepare_actions()
 {
-	// CurveView node_moved() depends on blinking node
-	// to update the curveview, but during un/redo
-	// this makes no sense!!!!!!!
-	// So we fake this action to be failed, and thus
-	// it won't show up in the history 
-
-	// TODO: Fix this so DragNode commands can be undoable
-	return -1;
+	return 1;
 }
 
 int DragNode::finish_hold()
@@ -105,7 +98,7 @@ int DragNode::begin_hold()
 	m_origPos.setY(m_node->get_value());
 	m_newPos = m_origPos;
 	
-	m_mousepos = cpointer().pos();
+	m_mousepos = QPoint(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
 	return 1;
 }
 
@@ -477,6 +470,11 @@ Command* CurveView::drag_node()
 
 void CurveView::node_moved( )
 {
+	if (!m_blinkingNode) {
+		update();
+		return;
+	}
+
 	CurveNodeView* prev = 0;
 	CurveNodeView* next = 0;
 	
