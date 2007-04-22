@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Export.cpp,v 1.2 2007/03/22 23:16:47 r_sijrier Exp $
+    $Id: Export.cpp,v 1.3 2007/04/22 20:05:38 n_doebelin Exp $
 */
 
 #include "Export.h"
@@ -61,7 +61,7 @@ ExportSpecification::ExportSpecification()
 	isRecording = -1;
 	exportdir = "";
 	name = "";
-	
+	writeToc = false;
 }
 
 int ExportSpecification::is_valid()

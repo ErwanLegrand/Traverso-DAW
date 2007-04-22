@@ -75,7 +75,7 @@ Command * TimeLine::add_marker(Marker* marker, bool historable)
 	// WARNING: this should change as soon as Markers modify anything related to audio 
 	// processing objects!!!!!!
 	cmd->set_instantanious(true);
-	
+
 	return cmd;
 }
 
@@ -92,7 +92,7 @@ Command* TimeLine::remove_marker(Marker* marker, bool historable)
 	// WARNING: this should change as soon as Markers modify anything related to audio 
 	// processing objects!!!!!!
 	cmd->set_instantanious(true);
-	
+
 	return cmd;
 }
 
@@ -124,6 +124,17 @@ Marker * TimeLine::get_marker(qint64 id)
 	return 0;
 }
 
+bool TimeLine::get_end_position(nframes_t & pos)
+{
+	foreach(Marker* marker, m_markers) {
+		if (marker->get_type() == 10) {
+			pos = marker->get_when();
+			return true;
+		}
+	}
+
+	return false;
+}
 
 //eof
 

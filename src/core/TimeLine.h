@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "ContextItem.h"
 #include <QDomNode>
+#include "defines.h"
 
 class Song;
 class Marker;
@@ -43,6 +44,7 @@ public:
 	Song *get_song() const {return m_song;}
 	
 	Marker* get_marker(qint64 id);
+	bool get_end_position(nframes_t &pos);
 
 	Command* add_marker(Marker* marker, bool historable=true);
 	Command* remove_marker(Marker* marker, bool historable=true);

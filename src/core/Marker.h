@@ -64,7 +64,8 @@ public:
 	QString get_isrc() const {return m_isrc;}
 	bool get_preemphasis();
 	bool get_copyprotect();
-	
+	uint get_type() {return m_type;};
+
 private:
 	TimeLine* m_timeline;
 	nframes_t m_when;

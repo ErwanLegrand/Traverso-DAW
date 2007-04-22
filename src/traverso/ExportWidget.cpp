@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ExportWidget.cpp,v 1.7 2007/03/22 23:16:54 r_sijrier Exp $
+    $Id: ExportWidget.cpp,v 1.8 2007/04/22 20:05:38 n_doebelin Exp $
 */
 
 #include "ExportWidget.h"
@@ -82,10 +82,11 @@ ExportWidget::ExportWidget( QWidget * parent )
 
         audioTypeComboBox->insertItem(0, "WAV");
         audioTypeComboBox->insertItem(1, "AIFF");
+	audioTypeComboBox->insertItem(2, "CD image (cdrdao)");
         char  buffer [128] ;
         sf_command (NULL, SFC_GET_LIB_VERSION, buffer, sizeof (buffer));
         if (QByteArray(buffer) >= "libsndfile-1.0.12")
-                audioTypeComboBox->insertItem(2, "FLAC");
+                audioTypeComboBox->insertItem(3, "FLAC");
 
 
         switch(audiodevice().get_sample_rate()) {
@@ -137,6 +138,10 @@ void ExportWidget::on_exportStartButton_clicked( )
                 spec->extension = ".aiff";
                 break;
         case	2:
+                spec->format = SF_FORMAT_WAV;
+                spec->extension = ".wav";
+                break;
+        case	3:
                 char  buffer [128] ;
                 sf_command (NULL, SFC_GET_LIB_VERSION, buffer, sizeof (buffer));
                 if (QByteArray(buffer) == "libsndfile-1.0.12") {
@@ -146,51 +151,63 @@ void ExportWidget::on_exportStartButton_clicked( )
                 break;
         }
 
-        switch (bitdepthComboBox->currentIndex()) {
-        case		0:
+	// check if CD-format is required
+	if (audioTypeComboBox->currentIndex() == 2) {
+
                 spec->data_width = 16;
-                spec->format |= SF_FORMAT_PCM_16;
-                break;
-        case		1:
-                spec->data_width = 24;
-                spec->format |= SF_FORMAT_PCM_24;
-                break;
-        case		2:
-                spec->data_width = 32;
-                spec->format |= SF_FORMAT_PCM_32;
-                break;
-        case		3:
-                spec->data_width = 1;	// 1 means float
-                spec->format |= SF_FORMAT_FLOAT;
-                break;
-        }
-
-        switch (channelComboBox->currentIndex()) {
-        case		0:
+	        spec->format |= SF_FORMAT_PCM_16;
                 spec->channels = 2;
-                break;
-        case		1:
-                spec->channels = 1;
-                break;
-        }
+		spec->sample_rate = 44100;
+		spec->writeToc = true;
 
-        switch (sampleRateComboBox->currentIndex()) {
-        case		0:
-                spec->sample_rate = 22050;
-                break;
-        case		1:
-                spec->sample_rate = 44100;
-                break;
-        case		2:
-                spec->sample_rate = 48000;
-                break;
-        case		3:
-                spec->sample_rate = 88200;
-                break;
-        case		4:
-                spec->sample_rate = 96000;
-                break;
-        }
+	} else {
+
+   	     switch (bitdepthComboBox->currentIndex()) {
+	        case		0:
+        	        spec->data_width = 16;
+	                spec->format |= SF_FORMAT_PCM_16;
+                	break;
+        	case		1:
+	                spec->data_width = 24;
+                	spec->format |= SF_FORMAT_PCM_24;
+        	        break;
+	        case		2:
+        	        spec->data_width = 32;
+	                spec->format |= SF_FORMAT_PCM_32;
+                	break;
+        	case		3:
+	                spec->data_width = 1;	// 1 means float
+                	spec->format |= SF_FORMAT_FLOAT;
+        	        break;
+	        }
+
+	        switch (channelComboBox->currentIndex()) {
+        	case		0:
+	                spec->channels = 2;
+                	break;
+        	case		1:
+	                spec->channels = 1;
+                	break;
+        	}
+	
+        	switch (sampleRateComboBox->currentIndex()) {
+	        case		0:
+                	spec->sample_rate = 22050;
+        	        break;
+	        case		1:
+                	spec->sample_rate = 44100;
+        	        break;
+	        case		2:
+                	spec->sample_rate = 48000;
+        	        break;
+	        case		3:
+                	spec->sample_rate = 88200;
+        	        break;
+	        case		4:
+                	spec->sample_rate = 96000;
+        	        break;
+	        }
+	}
 
         //TODO Make a ComboBox for this one too!
         spec->dither_type = GDitherTri;

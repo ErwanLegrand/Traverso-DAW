@@ -115,7 +115,7 @@ public:
 	int process_export(nframes_t nframes);
 	int prepare_export(ExportSpecification* spec);
 	int render(ExportSpecification* spec);
-	
+
 	void solo_track(Track* track);
 	void create(int tracksToCreate);
 	void move_clip(Track* from, Track* too, AudioClip* clip, nframes_t pos);
@@ -132,6 +132,7 @@ public:
 	void disconnect_from_audiodevice();
 	void connect_to_audiodevice();
 	void schedule_for_deletion();
+	void write_cdrdao_toc(ExportSpecification* spec);
 
 	audio_sample_t* 	mixdown;
 	audio_sample_t*		gainbuffer;

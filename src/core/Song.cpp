@@ -21,6 +21,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QTextStream>
 #include <QString>
+#include <QFile>
+#include <QFileInfo>
+#include <QList>
+#include <QMap>
+#include <QRegExp>
+#include <QDebug>
 
 #include <libtraverso.h>
 #include <commands.h>
@@ -46,6 +52,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Utils.h"
 #include "ContextItem.h"
 #include "TimeLine.h"
+#include "Marker.h"
 
 #include <Plugin.h>
 #include <PluginChain.h>
@@ -304,7 +311,6 @@ bool Song::any_track_armed()
 int Song::prepare_export(ExportSpecification* spec)
 {
 	PENTER;
-
 	if (transport) {
 		stopTransport = true;
 	}
@@ -335,6 +341,13 @@ int Song::prepare_export(ExportSpecification* spec)
 
 	}
 
+	if (m_timeline->get_end_position(endframe)) {
+		PMESG2("  End marker found at %d", endframe);
+		spec->end_frame = endframe;
+	} else {
+		PMESG2("  No end marker found");
+	}
+
 	spec->total_frames = spec->end_frame - spec->start_frame;
 
 // 	PWARN("Render length is: %s",frame_to_smpte(spec->total_frames, m_project->get_rate()).toAscii().data() );
@@ -357,6 +370,10 @@ int Song::prepare_export(ExportSpecification* spec)
 	if (spec->channels == 0) {
 		PWARN("Illegal channel count (0) in export specification");
 		return -1;
+	}
+
+	if (spec->writeToc) {
+		write_cdrdao_toc(spec);
 	}
 
 	m_exportSource = new WriteSource(spec);
@@ -807,6 +824,90 @@ int Song::process_export( nframes_t nframes )
 	transportFrame += nframes;
 
 	return 1;
+}
+
+void Song::write_cdrdao_toc(ExportSpecification* spec)
+{
+	QString idString = QString::number(m_id);
+	if (m_id < 10) {
+		idString.prepend("0");
+	}
+	QString name = spec->exportdir + "/";
+	QFileInfo fi(spec->name);
+	QString basename =  fi.completeBaseName() + ".toc";
+	name += basename;
+
+	QFile file(name);
+
+	// check if the selected file can be opened for writing
+	if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+		printf("Could not open file for writing.");
+		return;
+	}
+
+	QTextStream out(&file);
+	out << "CD_DA\n\n";
+	out << "CD_TEXT {\n";
+
+	out << "  LANGUAGE_MAP {\n    0 : EN\n  }\n\n";
+
+	out << "  LANGUAGE 0 {\n";
+	out << "    TITLE \"" << m_project->get_title() <<  "\"\n";
+	out << "    PERFORMER \"\"\n";
+	out << "    DISC_ID \"\"\n";
+	out << "    UPC_EAN \"\"\n\n";
+
+	out << "    ARRANGER \"\"\n";
+	out << "    SONGWRITER \"\"\n";
+	out << "    MESSAGE \"\"\n";
+	out << "    GENRE \"\"\n  }\n}\n\n";
+
+	QList<Marker*> mlist = m_timeline->get_markers();
+
+	// Sort the list according to Marker::get_when() values. This
+	// is the correct way to do it according to the Qt docu.
+	QMap<nframes_t, Marker*> mmap;
+	foreach(Marker *marker, mlist) {
+		mmap.insert(marker->get_when(), marker);
+	}
+	mlist = mmap.values();
+
+	for(int i = 0; i < mlist.size()-1; ++i) {
+		Marker *m_start = mlist.at(i);
+		Marker *m_end = mlist.at(i+1);
+
+		out << "TRACK AUDIO\n";
+
+		if (m_start->get_copyprotect()) {
+			out << "  NO COPY\n";
+		} else {
+			out << "  COPY\n";
+		}
+
+		if (m_start->get_preemphasis()) {
+			out << "  PRE_EMPHASIS\n";
+		}
+
+		out << "  CD_TEXT {\n    LANGUAGE 0 {\n";
+		out << "      TITLE \"" << m_start->get_description() << "\"\n";
+		out << "      PERFORMER \"" << m_start->get_performer() << "\"\n";
+		out << "      ISRC \"" << m_start->get_isrc() << "\"\n";
+		out << "      ARRANGER \"" << m_start->get_arranger() << "\"\n";
+		out << "      SONGWRITER \"" << m_start->get_songwriter() << "\"\n";
+		out << "      MESSAGE \"" << m_start->get_message() << "\"\n    }\n  }\n";
+
+		nframes_t start = m_start->get_when();
+		nframes_t end = m_end->get_when();
+		nframes_t length = end - start;
+
+		QString s_start = frame_to_smpte(start, m_project->get_rate());
+		QString s_length = frame_to_smpte(length, m_project->get_rate());
+
+		s_start.replace(QRegExp("[" + QRegExp::escape(",.;") + "]"), ":");
+		s_length.replace(QRegExp("[" + QRegExp::escape(",.;") + "]"), ":");
+
+		out << "  FILE \"" << spec->name << "\" " << s_start << " " << s_length << "\n\n";
+	}
 }
 
 void Song::resize_buffer( )
