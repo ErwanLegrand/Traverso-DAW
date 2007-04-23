@@ -116,6 +116,11 @@ void PlayHead::disable_follow()
 void PlayHead::enable_follow()
 {
 	m_followDisabled = false;
+	// This function is called after the song finished a seek action.
+	// if the song is still playing, update our position, and start moving again!
+	if (m_song->is_transporting()) {
+		play_start();
+	}
 }
 
 void PlayHead::update_position()

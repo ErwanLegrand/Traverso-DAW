@@ -519,7 +519,6 @@ void Song::set_transport_pos(nframes_t position)
 	}
 
 	seeking = 1;
-	emit transportPosSet();
 }
 
 
@@ -564,6 +563,7 @@ void Song::seek_finished()
 		resumeTransport = false;
 	}
 
+	emit transportPosSet();
 	PMESG2("Song :: leaving seek_finished");
 }
 
