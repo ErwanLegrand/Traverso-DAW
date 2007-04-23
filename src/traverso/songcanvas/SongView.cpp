@@ -87,6 +87,7 @@ SongView::SongView(SongWidget* songwidget,
 	m_tlvp = tlvp;
 	m_vScrollBar = songwidget->m_vScrollBar;
 	m_hScrollBar = songwidget->m_hScrollBar;
+	m_actOnPlayHead = true;
 	
 	m_song->set_editing_mode();
 	
