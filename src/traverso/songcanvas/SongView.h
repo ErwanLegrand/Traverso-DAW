@@ -142,6 +142,7 @@ private slots:
 	void work_cursor_updated();
 	void play_head_updated();
 	void song_mode_changed();
+	void hscrollbar_value_changed(int);
 };
 
 

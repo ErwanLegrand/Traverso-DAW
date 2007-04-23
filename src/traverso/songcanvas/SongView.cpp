@@ -119,11 +119,10 @@ SongView::SongView(SongWidget* songwidget,
 	connect(m_song, SIGNAL(trackRemoved(Track*)), this, SLOT(remove_trackview(Track*)));
 	connect(m_song, SIGNAL(lastFramePositionChanged()), this, SLOT(update_scrollbars()));
 	connect(m_song, SIGNAL(modeChanged()), this, SLOT(song_mode_changed()));
-	connect(m_hScrollBar, SIGNAL(valueChanged(int)), this,SLOT(set_snap_range(int)));
+	connect(m_hScrollBar, SIGNAL(valueChanged(int)), this,SLOT(set_snap_range(int))); 
 	connect(&m_shuttletimer, SIGNAL(timeout() ), this, SLOT (update_shuttle()) );
 	
-	connect(m_hScrollBar, SIGNAL(valueChanged(int)),
-		m_clipsViewPort->horizontalScrollBar(), SLOT(setValue(int)));
+	connect(m_hScrollBar, SIGNAL(valueChanged(int)), this, SLOT(hscrollbar_value_changed(int)));
 	connect(m_vScrollBar, SIGNAL(valueChanged(int)),
 		m_clipsViewPort->verticalScrollBar(), SLOT(setValue(int)));
 
@@ -131,7 +130,7 @@ SongView::SongView(SongWidget* songwidget,
 		  m_hScrollBar, SLOT(setValue(int)));
 
 	connect(m_clipsViewPort->verticalScrollBar(), SIGNAL(valueChanged(int)),
-		  m_vScrollBar, SLOT(setValue(int)));
+		  m_vScrollBar, SLOT(setValue(int))); 
 	
 	load_theme_data();
 	
@@ -224,6 +223,14 @@ void SongView::update_scrollbars()
 	m_workCursor->update_position();
 
 	set_snap_range(m_hScrollBar->value());
+}
+
+void SongView::hscrollbar_value_changed(int value)
+{
+	if (!ie().is_holding()) {
+		m_clipsViewPort->horizontalScrollBar()->setValue(value);
+		set_snap_range(m_hScrollBar->value());
+	}
 }
 
 Command* SongView::zoom()
@@ -576,3 +583,4 @@ Command * SongView::playhead_to_workcursor( )
 }
 
 //eof
+
