@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier
+    Copyright (C) 2005-2007 Remon Sijrier
 
     This file is part of Traverso
 
@@ -44,6 +44,20 @@ QString frame_to_smpte ( nframes_t nframes, int rate )
 
 	return spos;
 }
+
+QString frame_to_hms(double nframes, int rate)
+{
+	long unsigned int remainder;
+	int hours, mins, secs;
+
+	hours = (int) (nframes / (3600 * rate));
+	remainder = (long unsigned int) (nframes - (hours * 3600 * rate));
+	mins = (int) (remainder / ( 60 * rate ));
+	remainder -= mins * 60 * rate;
+	secs = (int) (remainder / rate);
+	return QString().sprintf("%02d:%02d:%02d", hours, mins, secs);
+}
+
 
 nframes_t smpte_to_frame( QString str, int rate )
 {
@@ -105,5 +119,5 @@ QPixmap find_pixmap ( const QString & pixname )
 	return pixmap;
 }
 
-//eof
 
+//eof

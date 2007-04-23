@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
+    Copyright (C) 2005-2007 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -31,6 +31,7 @@
 class QString;
 
 QString frame_to_smpte(nframes_t nframes, int rate);
+QString frame_to_hms(double nframes, int rate);
 nframes_t smpte_to_frame(QString str, int rate);
 QString coefficient_to_dbstring(float coeff);
 QDateTime extract_date_time(qint64 id);

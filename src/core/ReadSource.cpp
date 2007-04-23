@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier 
+Copyright (C) 2006-2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.cpp,v 1.21 2007/03/29 11:09:38 r_sijrier Exp $
 */
 
 #include "ReadSource.h"
@@ -50,7 +49,7 @@ ReadSource::ReadSource(const QDomNode node)
 	Project* project = pm().get_project();
 	
 	// Check if the audiofile exists in our project audiosources dir
-	// and give it priority over the dir as given by the project.traverso file
+	// and give it priority over the dir as given by the project.tpf file
 	// This makes it possible to move project directories without Traverso being
 	// unable to find it's audiosources!
 	if (QFile::exists(project->get_root_dir() + "/audiosources/" + m_name)) {

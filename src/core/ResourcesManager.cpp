@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier 
+Copyright (C) 2006-2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ResourcesManager.cpp,v 1.4 2007/04/16 18:44:26 r_sijrier Exp $
 */
 
 #include "ResourcesManager.h"
@@ -60,8 +59,8 @@ ResourcesManager::~ResourcesManager()
 
 QDomNode ResourcesManager::get_state( QDomDocument doc )
 {
+	PENTER;
 
-// 	printf("ResourcesManager::get_state\n");
 	QDomElement asmNode = doc.createElement("ResourcesManager");
 	
 	QDomElement audioSourcesElement = doc.createElement("AudioSources");
@@ -93,7 +92,7 @@ QDomNode ResourcesManager::get_state( QDomDocument doc )
 		} else {
 			// In case it wasn't we should use the 'old' domNode which 
 			// was set during set_state();
-			audioClipsElement.appendChild(clip->m_domNode);
+			audioClipsElement.appendChild(clip->get_dom_node()); 
 		}
 	}
 	

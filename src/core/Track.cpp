@@ -170,7 +170,7 @@ int Track::set_state( const QDomNode & node )
 			
 			clip->set_song(m_song);
 			clip->set_track(this);
-			clip->set_state(clip->m_domNode);
+			clip->set_state(clip->get_dom_node());
 			m_song->get_audioclip_manager()->add_clip(clip);
 			private_add_clip(clip);
 			

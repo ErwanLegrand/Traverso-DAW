@@ -129,7 +129,7 @@ int Project::load(QString projectfile)
 	
 	QFile file;
 	if (projectfile.isEmpty()) {
-		file.setFileName(rootDir + "/project.traverso");
+		file.setFileName(rootDir + "/project.tpf");
 	} else {
 		file.setFileName(projectfile);
 	}
@@ -146,7 +146,7 @@ int Project::load(QString projectfile)
 	if (!doc.setContent(&file, &errorMsg))
 	{
 		file.close();
-		info().critical(tr("Project %1: Failed to parse project.traverso file! (%2)")
+		info().critical(tr("Project %1: Failed to parse project.tpf file! (%2)")
 				.arg(title).arg(errorMsg));
 		return -1;
 	}
@@ -157,9 +157,8 @@ int Project::load(QString projectfile)
 	QDomNode propertiesNode = docElem.firstChildElement("Properties");
 	QDomElement e = propertiesNode.toElement();
 	
-	if (e.attribute("projectfileversion", "").toInt() != PROJECT_FILE_VERSION) {
-		PERROR("Project File Version does not match, cannot load project :-(");
-		info().warning("Project File Version does not match, unable to load Project!");
+	if (e.attribute("projectfileversion", "-1").toInt() != PROJECT_FILE_VERSION) {
+		info().warning(tr("Project File Version does not match, unable to load Project!"));
 		return -1;
 	}
 
@@ -212,11 +211,12 @@ int Project::save()
 {
 	PENTER;
 	QDomDocument doc("Project");
-	QString fileName = rootDir + "/project.traverso";
+	QString fileName = rootDir + "/project.tpf";
 	
 	QFile::remove(fileName + "~");
 	QFile backup(fileName);
 	backup.rename(fileName + "~");
+	QFile::remove(fileName);
 	
 	QFile data( fileName );
 
@@ -237,6 +237,8 @@ int Project::save()
 
 QDomNode Project::get_state(QDomDocument doc, bool istemplate)
 {
+	PENTER;
+	
 	QDomElement projectNode = doc.createElement("Project");
 	QDomElement properties = doc.createElement("Properties");
 
@@ -261,14 +263,12 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
 
 	// Get the AudioSources Node, and append
 	if (! istemplate) {
-// 		printf("getting resources state\n");
 		projectNode.appendChild(m_asmanager->get_state(doc));
 	}
 
 	// Get all the Songs
 	QDomNode songsNode = doc.createElement("Songs");
 
-// 	printf("getting all Songs states\n");
 	foreach(Song* song, m_songs) {
 		songsNode.appendChild(song->get_state(doc, istemplate));
 	}
