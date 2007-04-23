@@ -74,7 +74,7 @@ void OpenProjectDialog::update_projects_list()
 	
 		/************ FROM HERE ****************/
 		QDomDocument doc("Project");
-		QString fileToOpen = path + "/" + dirname + "/project.traverso";
+		QString fileToOpen = path + "/" + dirname + "/project.tpf";
 		
 		QFile file(fileToOpen);
 
