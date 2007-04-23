@@ -84,7 +84,7 @@ AudioClip::AudioClip(const QDomNode& node)
 	m_readSourceId = e.attribute("source", "").toLongLong();
 	m_name = e.attribute( "clipname", "" ) ;
 	isMuted =  e.attribute( "mute", "" ).toInt();
-	m_domNode = node;
+	m_domNode = node.cloneNode();
 	init();
 }
 
@@ -980,6 +980,11 @@ void AudioClip::init_gain_envelope()
 	// Add the default (first) node to the Gain Curve
 	CurveNode* node = new CurveNode(m_gainEnvelope, 0.0, 1.0);
 	Command::process_command(m_gainEnvelope->add_node(node, false));
+}
+
+QDomNode AudioClip::get_dom_node() const
+{
+	return m_domNode;
 }
 
 // eof

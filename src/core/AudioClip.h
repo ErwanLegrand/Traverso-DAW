@@ -112,6 +112,7 @@ public:
 	qint64 get_readsource_id() const;
 	
 	QString get_name() const;
+	QDomNode get_dom_node() const;
 	
 	bool is_muted() const;
 	bool is_take() const;
@@ -127,8 +128,6 @@ public:
 		return left->get_track_start_frame() > right->get_track_start_frame();
 	}
 
-	QDomNode		m_domNode;
-	
 	void init_gain_envelope();
 
 private:
@@ -143,6 +142,7 @@ private:
 	FadeCurve*		fadeOut;
 	Curve*			m_gainEnvelope;
 	ExportSpecification*  	m_exportSpec;
+	QDomNode		m_domNode;
 	
 	QString 		m_name;
 	nframes_t 		trackStartFrame;
