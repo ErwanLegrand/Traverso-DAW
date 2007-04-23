@@ -307,11 +307,11 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 		audio_sample_t buf[toRead];
 
 		if ( (readFrames = m_source->file_read(m_channel, buf, startPos, toRead)) != toRead) {
-			PWARN("Unable to read nframes %d (only %d available)", pixelcount, readFrames);
+			PWARN("Unable to read nframes %d (only %d available)", toRead, readFrames);
 			if (readFrames == 0) {
-				return -1;
+				return NO_PEAKDATA_FOUND;
 			}
-			pixelcount = readFrames;
+			pixelcount = readFrames / zoomStep[zoomLevel];
 		}
 
 		int count = 0;

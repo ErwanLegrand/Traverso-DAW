@@ -228,6 +228,9 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	if (pixelcount % 2) {
 		pixelcount += 1;
 	}
+	if ( (xstart + pixelcount) > m_boundingRect.width()) {
+		pixelcount = m_boundingRect.width() - xstart;
+	}
 	
 	int channels = m_clip->get_channels();
 	bool microView = m_song->get_hzoom() > (Peak::MAX_ZOOM_USING_SOURCEFILE - 1) ? 0 : 1;
@@ -242,6 +245,8 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	// Load peak data for all channels, if no peakdata is returned
 	// for a certain Peak object, schedule it for loading.
 	for (int chan=0; chan < channels; chan++) {
+		memset(buffers[chan], 0, buffersize * sizeof(unsigned char));
+		
 		Peak* peak = m_clip->get_peak_for_channel(chan);
 		int availpeaks = peak->calculate_peaks( buffers[chan],
 							microView ? m_song->get_hzoom() : m_song->get_hzoom() + 1,
@@ -616,6 +621,7 @@ Command * AudioClipView::reset_fade()
 void AudioClipView::position_changed()
 {
 	calculate_bounding_rect();
+	update();
 }
 
 void AudioClipView::load_theme_data()
