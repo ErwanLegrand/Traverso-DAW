@@ -171,11 +171,15 @@ public:
 protected:
 	void mousePressEvent ( QMouseEvent * event );
 	void paintEvent( QPaintEvent* e);
+	void resizeEvent( QResizeEvent * e );
 	QSize sizeHint() const;	
 	
 private:
 	QTimer m_updateTimer;
 	QPixmap m_playpixmap;
+	QPixmap m_background;
+	
+	void create_background();
 
 protected slots:
 	void set_project(Project* );

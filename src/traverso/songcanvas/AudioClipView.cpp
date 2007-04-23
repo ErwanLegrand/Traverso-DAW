@@ -211,7 +211,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	// when painting with a path, I _have_ to use path.lineTo()
 	// which looks ugly when only parts of the clip is repainted
 	// when using a different color for the brush then the outline.
-	// Painting one more pixel makes it getting clipped away.....
+	// Painting 2 more pixels makes it getting clipped away.....
 	pixelcount += 2;
 	// Seems like we need one pixel more to the left as well, to 
 	// make the outline painting painted correctly...
@@ -420,6 +420,10 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 					p->setBrush(themer()->get_color("AudioClip:wavemacroview:brush:curvemode"));
 				}
 			}
+			if (m_clip->is_muted()) {
+				p->setBrush(themer()->get_color("AudioClip:wavemacroview:brush:muted"));
+			}
+				
 			
 			QPainterPath path;
 			// in rectified view, we add an additional point, hence + 1

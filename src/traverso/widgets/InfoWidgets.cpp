@@ -33,10 +33,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QPixmap>
 #include <QByteArray>
 #include <QDesktopWidget>
+#include <QPalette>
 
-#if HAVE_SYS_VFS_H
 #include <sys/vfs.h>
-#endif
 
 
 // Always put me below _all_ includes, this is needed
@@ -254,44 +253,70 @@ void HDDSpaceInfo::set_song(Song* song)
 
 void HDDSpaceInfo::song_started()
 {
-	updateTimer.start(3000);
+	updateTimer.start(5000);
 	m_button->setEnabled(true);
+	update_status();
 }
 
 void HDDSpaceInfo::song_stopped()
 {
-	updateTimer.start(20000);
+	updateTimer.start(30000);
 	m_button->setEnabled(false);
+	update_status();
 }
 
 
 
 void HDDSpaceInfo::update_status( )
 {
-#if HAVE_SYS_VFS_H
-	Project* project = pm().get_project();
-
-	if (!project) {
+	if (!m_project) {
 		m_button->setText("No Info");
 		return;
 	}
 	
 	struct statfs fs;
-	statfs(project->get_root_dir().toAscii().data(), &fs);
+	statfs(QS_C(m_project->get_root_dir()), &fs);
 	double space = floor (fs.f_bavail * (fs.f_bsize / 1048576.0));
 
-	QString s;
-	if (space > 9216) {
-		s.setNum((space/1024), 'f', 2);
-		s.append(" GB");
-	} else {
-		s.setNum(space, 'f', 0);
-		s.append(" MB");
+	QList<Song*> recordingSongs;
+	foreach(Song* song, m_project->get_songs()) {
+		if (song->is_recording() && song->any_track_armed()) {
+			recordingSongs.append(song);
+		}
 	}
 	
-	m_button->setText(s);
-
-#endif
+	QString text;
+	
+	if (recordingSongs.size()) {
+		int recChannelCount = 0;
+		foreach(Song* song, recordingSongs) {
+			foreach(Track* track, song->get_tracks()) {
+				if (track->armed()) {
+					recChannelCount += track->capture_left_channel() ? 1 : 0;
+					recChannelCount += track->capture_right_channel() ? 1 : 0;
+				}
+			}
+		}
+		
+		uint rate = audiodevice().get_sample_rate();
+		double frames = ( (space * 1048576) / (sizeof(float) * recChannelCount));
+		text = frame_to_hms(frames, rate);
+		if (text < "00:30:00") {
+			QPalette pal;
+			pal.setColor(QPalette::ButtonText, QColor(Qt::red));
+			m_button->setPalette(pal);
+		}
+	} else {
+		if (space > 9216) {
+			text.setNum((space/1024), 'f', 2);
+			text.append(" GB");
+		} else {
+			text.setNum(space, 'f', 0);
+			text.append(" MB");
+		}
+	}
+	
+	m_button->setText(text);
 }
 
 QSize HDDSpaceInfo::sizeHint() const
@@ -385,6 +410,7 @@ PlayHeadInfo::PlayHeadInfo(QWidget* parent)
 	setAutoFillBackground(false);
 	setToolTip(tr("Start/stop playback. You should use the SpaceBar! ;-)"));
 	setMinimumWidth(110);
+	create_background();
 	connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update()));
 }
 
@@ -442,7 +468,7 @@ void PlayHeadInfo::paintEvent(QPaintEvent* )
 	painter.setFont(QFont("Bitstream Vera Sans", 13));
 	painter.setPen(fontcolor);
 	
-	painter.fillRect(0, 0, width(), height(), QColor(247, 246, 255));
+	painter.drawPixmap(0, 0, m_background);
 	painter.drawPixmap(8, 6, m_playpixmap);
 	painter.drawText(QRect(12, 4, width() - 6, height() - 6), Qt::AlignCenter, currentsmpte);
 }
@@ -463,6 +489,24 @@ void PlayHeadInfo::stop_smpte_update_timer( )
 QSize PlayHeadInfo::sizeHint() const
 {
 	return QSize(120, INFOBAR_HEIGH_HOR_ORIENTATION);
+}
+
+void PlayHeadInfo::resizeEvent(QResizeEvent * e)
+{
+	create_background();
+}
+
+
+void PlayHeadInfo::create_background()
+{
+	m_background = QPixmap(size());
+	QPainter painter(&m_background);
+	painter.setRenderHints(QPainter::Antialiasing);
+	m_background.fill(palette().background().color());
+	int round = 12;
+	painter.setPen(QColor(50, 50, 50));
+	painter.setBrush(QColor(250, 251, 255));
+	painter.drawRoundRect(m_background.rect(), round, round);
 }
 
 void PlayHeadInfo::mousePressEvent(QMouseEvent * event)
@@ -818,3 +862,4 @@ void SystemValueBar::add_range_color(float x0, float x1, QColor color)
 }
 
 //eof
+

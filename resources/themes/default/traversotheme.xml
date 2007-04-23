@@ -44,12 +44,13 @@
 		<color name="AudioClip:wavemacroview:outline" red="80" green="80" blue="120" alpha="255" />
 		<color name="AudioClip:wavemacroview:outline:curvemode" red="135" green="130" blue="255" alpha="255" />
 		<color name="AudioClip:wavemacroview:brush" red="145" green="145" blue="195" alpha="255" />
+		<color name="AudioClip:wavemacroview:brush:muted" red="185" green="185" blue="195" alpha="255" />
 		<color name="AudioClip:wavemacroview:brush:curvemode" red="232" green="230" blue="255" alpha="255" />
 		<color name="AudioClip:wavemicroview"  red="150" green="150" blue="205"  alpha="255" />
 		<color name="AudioClip:wavemicroview:curvemode"  red="210" green="210" blue="255"  alpha="255" />
-		<color name="AudioClip:background:muted"  red="40" green="40" blue="40"  alpha="200" />
+		<color name="AudioClip:background:muted"  red="230" green="230" blue="230"  alpha="200" />
 		<color name="AudioClip:background:recording"  red="240" green="240" blue="249"  alpha="200" />
-		<color name="AudioClip:background:muted:mousehover"  red="40" green="40" blue="40"  alpha="200" />
+		<color name="AudioClip:background:muted:mousehover"  red="235" green="235" blue="235"  alpha="200" />
 		<color name="AudioClip:background:selected"  red="101" green="111" blue="171"  alpha="200" />
 		<color name="AudioClip:background:selected:mousehover"  red="101" green="111" blue="171"  alpha="200" />
 		<color name="AudioClip:background"  red="246" green="246" blue="255"  alpha="120" />

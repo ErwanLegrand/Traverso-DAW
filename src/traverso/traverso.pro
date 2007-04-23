@@ -21,7 +21,6 @@ LIBS +=  \
 	-ltraversoplugins \
 	-lsndfile \
 	-lsamplerate \
-	-lslv2 \
 	-lfftw3 \
 
 HEADERS += \
@@ -129,9 +128,9 @@ contains(DEFINES, PORTAUDIO_SUPPORT): LIBS += -lportaudio
 
 contains(DEFINES, JACK_SUPPORT): LIBS += -ljack
 
-!contains(DEFINES, LV2_SUPPORT){
-    LIBS -= -lslv2
-    INCLUDEPATH -= ../plugins/LV2
+contains(DEFINES, LV2_SUPPORT){
+	LIBS += -lrdf -lrasqal	-lslv2
+	INCLUDEPATH +=	../3rdparty/slv2 ../plugins/LV2
 }
 
 QT += opengl

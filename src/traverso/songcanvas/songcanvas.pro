@@ -11,7 +11,6 @@ INCLUDEPATH += 	../../core \
 		../../engine \
 		../../commands \
 		../../plugins \
-		../../plugins/LV2 \
 		./
 		
 SOURCES += AudioClipView.cpp \
@@ -67,8 +66,10 @@ FORMS += ../ui/ExportWidget.ui \
 	../ui/ProjectManagerDialog.ui
 
 
-!contains(DEFINES, LV2_SUPPORT){
-    INCLUDEPATH -= ../plugins/LV2
+contains(DEFINES, LV2_SUPPORT){
+INCLUDEPATH +=	\
+	../../plugins/LV2 \
+	../../3rdparty/slv2 
 }
 
 QT += opengl

@@ -5,11 +5,13 @@ TARGET = traversoplugins
 DESTDIR = ../../lib 
 TEMPLATE = lib 
 
-INCLUDEPATH += ../core \
-		../engine \
-		../commands \
-		LV2 \
-		native \
+INCLUDEPATH += \
+	../core \
+	../engine \
+	../commands \
+	LV2 \
+	native \
+	../3rdparty/slv2
 		
 SOURCES += PluginChain.cpp \
 Plugin.cpp \

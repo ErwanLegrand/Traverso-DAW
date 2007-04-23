@@ -9,8 +9,8 @@ CONFIG -= release debug
 # Choose debug or release build
 #
 
-#CONFIG += debug
-CONFIG += release
+CONFIG += debug
+#CONFIG += release
 
 #
 # Add support for Jack / ALSA audio driver. If you have a 
@@ -20,7 +20,7 @@ CONFIG += release
 DEFINES += JACK_SUPPORT
 DEFINES += ALSA_SUPPORT
 #DEFINES += PORTAUDIO_SUPPORT
-#DEFINES += LV2_SUPPORT
+DEFINES += LV2_SUPPORT
 
 DEFINES += STATIC_BUILD
 DEFINES += PRECOMPILED_HEADER
