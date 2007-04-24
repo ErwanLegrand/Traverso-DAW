@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-200 Remon Sijrier
+Copyright (C) 2005-2007 Remon Sijrier
 
 This file is part of Traverso
 

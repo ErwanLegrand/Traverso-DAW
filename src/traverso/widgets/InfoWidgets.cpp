@@ -264,7 +264,7 @@ void HDDSpaceInfo::song_started()
 
 void HDDSpaceInfo::song_stopped()
 {
-	updateTimer.start(30000);
+	updateTimer.start(60000);
 	m_button->setEnabled(false);
 	update_status();
 }
@@ -285,7 +285,7 @@ void HDDSpaceInfo::update_status( )
 					(PULARGE_INTEGER)&totalbytes,
 					(PULARGE_INTEGER)&freebytes)) 
 	{
-		info().warning("HHDSpaceInfo: " + QString().sprintf("error: %lu", GetLastError()));
+// 		info().warning("HHDSpaceInfo: " + QString().sprintf("error: %lu", GetLastError()));
 		m_button->setText("No Info");
 		return;
 	}
