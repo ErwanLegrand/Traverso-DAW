@@ -117,12 +117,12 @@ struct timeval {
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
 
-#include <windows.h>
+#include <Windows.h>
 
 static inline int gettimeofday(struct timeval* tp, void* tzp) {
 	DWORD t;
-//  t = timeGetTime();
-	t = 0;
+	t = timeGetTime();
+// 	t = 0;
 	tp->tv_sec = t / 1000;
 	tp->tv_usec = t % 1000;
 	/* 0 indicates that the call succeeded. */

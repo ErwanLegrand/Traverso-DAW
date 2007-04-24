@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.26 2007/03/22 15:59:23 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.27 2007/04/24 14:45:55 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -625,8 +625,8 @@ trav_time_t AudioDevice::get_cpu_time( )
 #endif
 	
 #if defined (PORTAUDIO_SUPPORT)
-	if (driver && m_driverType == "PortAudio")
-		return ((PADriver*)driver)->get_cpu_load();
+/*	if (driver && m_driverType == "PortAudio")
+		return ((PADriver*)driver)->get_cpu_load();*/
 #endif
 	
 	
