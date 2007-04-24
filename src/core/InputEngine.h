@@ -147,6 +147,10 @@ public:
         void activate();
         void suspend();
 	void clear_modifier_keys();
+	
+	Command* succes();
+	Command* failure();
+	Command* did_not_implement();
 
 
         int init_map(const QString& mapFilename);
@@ -165,7 +169,14 @@ private:
         static const int 	MAX_ACTIONS = 300;
         static const int 	PRESS_EVENT = 1;
         static const int 	RELEASE_EVENT = 2;
+	
+	enum BroadcastResult {
+		SUCCES=1,
+		FAILURE=2,
+		DIDNOTIMPLEMENT=3
+	};
 
+	
         QList<IEAction* >	m_ieActions;
 	QList<int>		m_modifierKeys;
 	QList<int>		m_activeModifierKeys;
@@ -203,6 +214,7 @@ private:
         int 			assumeHoldTime;
         int 			doubleFactWaitTime;
         long 			eventTime[STACK_SIZE];
+	int			m_broadcastResult;
 
         bool 			is_fake( int keyval);
         int 			identify_first_fact();

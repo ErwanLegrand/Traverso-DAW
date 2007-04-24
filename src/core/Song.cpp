@@ -53,6 +53,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ContextItem.h"
 #include "TimeLine.h"
 #include "Marker.h"
+#include "InputEngine.h"
 
 #include <Plugin.h>
 #include <PluginChain.h>
@@ -633,7 +634,11 @@ Command* Song::go()
 		realtimepath = true;
 	}
 	
-	return group;
+	if (group) {
+		return group;
+	}
+	
+	return ie().succes();
 }
 
 

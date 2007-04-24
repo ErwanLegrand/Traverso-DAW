@@ -286,6 +286,9 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 	PMESG("Trying to find IEAction for key sequence %s", action->keySequence.data());
 	
 	for (int i=0; i < list.size(); ++i) {
+		k = 0;
+		m_broadcastResult = 0;
+		
 		item = list.at(i);
 		
 		if (!item) {
@@ -359,6 +362,7 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 		}
 		
 		
+		// We first try to find if there is a match in the loaded plugins.
 		if ( ! holdingCommand ) {
 			
 			if ( ! pluginname.isEmpty() ) {
@@ -373,106 +377,149 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 						PMESG("InputEngine:: Using plugin %s for command %s",
 								QS_C(pluginname), QS_C(data->commandname));
 						k = plug->create(item, commandname, data->arguments);
-						break;
 					}
 				}
-				continue;
 			} 
 		}
 		
+		// Either the plugins didn't have a match, or were holding.
+		if ( ! k ) {
 		
-		IEAction::Data* delegatingdata;
-		QString delegatedobject;
-		
-		if (holdingCommand) {
-			delegatingdata = action->objects.value("HoldCommand");
-			delegatedobject = "HoldCommand";
-		} else {
-			delegatedobject = item->metaObject()->className();
-			delegatingdata = action->objects.value(delegatedobject);
-		}
+			IEAction::Data* delegatingdata;
+			QString delegatedobject;
 			
-		if ( ! delegatingdata) {
-			printf("No delegating data ? WEIRD\n");
-			continue;
-		}
-		
-		QStringList strlist = delegatingdata->slotsignature.split("::");
-		
-		if (strlist.size() == 2) {
-			PMESG("Detected delegate action, checking if it is valid!");
-			QString classname = strlist.at(0);
-			QString slot = strlist.at(1);
-			QObject* obj = 0;
-			bool validobject = false;
-			
-			for (int j=0; j < list.size(); ++j) {
-				obj = list.at(j);
-				if (obj->metaObject()->className() == classname) {
-					PMESG("Found an item in the contextitem list that equals delegated object");
-					validobject = true;
-					break;
-				}
+			if (holdingCommand) {
+				delegatingdata = action->objects.value("HoldCommand");
+				delegatedobject = "HoldCommand";
+			} else {
+				delegatedobject = item->metaObject()->className();
+				delegatingdata = action->objects.value(delegatedobject);
+			}
+				
+			if ( ! delegatingdata) {
+				printf("No delegating data ? WEIRD\n");
+				continue;
 			}
 			
-			if (validobject) {
-				if (QMetaObject::invokeMethod(obj, QS_C(slot),  Qt::DirectConnection, Q_RETURN_ARG(Command*, k))) {
-					PMESG("HIT, invoking (delegated) %s::%s", QS_C(classname), QS_C(slot));
-					break;
+			QStringList strlist = delegatingdata->slotsignature.split("::");
+			
+			if (strlist.size() == 2) {
+				PMESG("Detected delegate action, checking if it is valid!");
+				QString classname = strlist.at(0);
+				QString slot = strlist.at(1);
+				QObject* obj = 0;
+				bool validobject = false;
+				
+				for (int j=0; j < list.size(); ++j) {
+					obj = list.at(j);
+					if (obj->metaObject()->className() == classname) {
+						PMESG("Found an item in the contextitem list that equals delegated object");
+						validobject = true;
+						break;
+					}
+				}
+				
+				if (validobject) {
+					if (QMetaObject::invokeMethod(obj, QS_C(slot),  Qt::DirectConnection, Q_RETURN_ARG(Command*, k))) {
+						PMESG("HIT, invoking (delegated) %s::%s", QS_C(classname), QS_C(slot));
+					} else {
+						PMESG("Delegated object slot call didn't work out, sorry!");
+						PMESG("%s::%s() --> %s::%s()", item->metaObject()->className(), QS_C(slot), QS_C(classname), QS_C(slot));
+					}
 				} else {
-					PMESG("Delegated object slot call didn't work out, sorry!");
-					PMESG("%s::%s() --> %s::%s()", item->metaObject()->className(), QS_C(slot), QS_C(classname), QS_C(slot));
+					PMESG("Delegated object %s was not found in the context items list!", QS_C(classname));
 				}
 			} else {
-				PMESG("Delegated object %s was not found in the context items list!", QS_C(classname));
-			}
-		} else {
-			if (QMetaObject::invokeMethod(item, QS_C(slotsignature), Qt::DirectConnection, Q_RETURN_ARG(Command*, k))) {
-				PMESG("HIT, invoking %s::%s", item->metaObject()->className(), QS_C(slotsignature));
-				break;
-			} else {
-				PMESG("nope %s wasn't the right one, next ...", item->metaObject()->className());
+				if (QMetaObject::invokeMethod(item, QS_C(slotsignature), Qt::DirectConnection, Q_RETURN_ARG(Command*, k))) {
+					PMESG("HIT, invoking %s::%s", item->metaObject()->className(), QS_C(slotsignature));
+				} else {
+					PMESG("nope %s wasn't the right one, next ...", item->metaObject()->className());
+				}
 			}
 		}
-	}
 	
-	if (k && (!isHolding)) {
-		if (k->prepare_actions() != -1) {
-			k->set_valid(true);
-			if (k->push_to_history_stack() < 0) {
-				// The command doesn't have a history stack, or wasn't
-				// historable for some reason.... At least call do_action
-				// since that still isn't done (should be done by QUndoStack...)
-				k->do_action();
+		
+		// Let's see if the ContextItem used either succes(), failure() or did_not_implement()
+		// return functions, so we can detect to either return happily, the action was succesfull
+		// but no command object needed to be returned, the action was not succesfull, and we 
+		// don't want to try lower level context items or the action was succesfull but we'd like 
+		// to give a lower level contextitem precedence over the current one.
+		if (m_broadcastResult) {
+			if (m_broadcastResult == SUCCES) {
+				PMESG("Broadcast Result indicates succes, but no returned Command object");
+				return 1;
+			}
+			if (m_broadcastResult == FAILURE) {
+				PMESG("Broadcast Result indicates failure, and doesn't want lower level items to be processed");
+				return 0;
+			}
+			if (m_broadcastResult == DIDNOTIMPLEMENT) {
+				PMESG("Broadcast Result indicates succes, but didn't want to perform it's action,"
+						 "so we continue traversing the contextitem list");
+				continue;
+			}
+		}
+		
+		if (k && (!isHolding)) {
+			if (k->prepare_actions() != -1) {
+				k->set_valid(true);
+				if (k->push_to_history_stack() < 0) {
+					// The command doesn't have a history stack, or wasn't
+					// historable for some reason.... At least call do_action
+					// since that still isn't done (should be done by QUndoStack...)
+					k->do_action();
+					delete k;
+					k = 0;
+				}
+			} else {
+				PWARN("prepare actions failed!");
 				delete k;
 				k = 0;
 			}
-		} else {
-			PWARN("prepare actions failed!");
-			delete k;
-			k = 0;
+			
+			break;
 		}
-	}
-	
-	if (k && isHolding) {
-		if (k->begin_hold() != -1) {
-			k->set_valid(true);
-			k->set_cursor_shape(useX, useY);
-			holdingCommand = k;
-			set_jogging(true);
-		} else {
-			PERROR("hold action begin_hold() failed!");
-			// OOPSSS, something went wrong when making the Command
-			// set following stuff to zero to make finish_hold do nothing
-			delete k;
-			k = 0;
-			set_jogging( false );
-			wholeMapIndex = -1;
+		
+		if (k && isHolding) {
+			if (k->begin_hold() != -1) {
+				k->set_valid(true);
+				k->set_cursor_shape(useX, useY);
+				holdingCommand = k;
+				set_jogging(true);
+			} else {
+				PERROR("hold action begin_hold() failed!");
+				// OOPSSS, something went wrong when making the Command
+				// set following stuff to zero to make finish_hold do nothing
+				delete k;
+				k = 0;
+				set_jogging( false );
+				wholeMapIndex = -1;
+			}
+			
+			break;
 		}
-	}
 	
+	}
 
 	return 1;
+}
+
+Command* InputEngine::succes()
+{
+	m_broadcastResult = SUCCES;
+	return 0;
+}
+
+Command* InputEngine::failure()
+{
+	m_broadcastResult = FAILURE;
+	return 0;
+}
+
+Command* InputEngine::did_not_implement()
+{
+	m_broadcastResult = DIDNOTIMPLEMENT;
+	return 0;
 }
 
 void InputEngine::jog()
