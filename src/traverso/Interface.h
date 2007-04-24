@@ -45,7 +45,7 @@ class QUndoView;
 class QDockWidget;
 class QToolBar;
 class QToolButton;
-class QTreeView;
+class ResourcesWidget;
 class ResourcesInfoWidget;
 class DriverInfoWidget;
 class HDDSpaceInfoWidget;
@@ -95,7 +95,7 @@ private:
 	QDockWidget* 		historyDW;
 	QDockWidget*		busMonitorDW;
 	QDockWidget*		AudioSourcesDW;
-	QTreeView* 		audiosourcesview;
+	ResourcesWidget* 		audiosourcesview;
 	QDockWidget*		correlationMeterDW;
 	CorrelationMeterWidget*	correlationMeter;
 	QDockWidget*		spectralMeterDW;

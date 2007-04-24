@@ -24,7 +24,6 @@ LIBS +=  \
 	-lfftw3 \
 
 HEADERS += \
-	AudioSourcesTreeWidget.h \
 	BusMonitor.h \
 	BusSelector.h \
 	ContextDialog.h \
@@ -54,10 +53,10 @@ HEADERS += \
 	dialogs/project/NewProjectDialog.h \
 	dialogs/project/OpenProjectDialog.h \
 	dialogs/project/NewTrackDialog.h \
-	songcanvas/PositionIndicator.h
+	songcanvas/PositionIndicator.h \
+	widgets/ResourcesWidget.h
 SOURCES += \
 	Traverso.cpp \
-	AudioSourcesTreeWidget.cpp \
 	BusMonitor.cpp \
 	BusSelector.cpp \
 	ContextDialog.cpp \
@@ -85,7 +84,8 @@ SOURCES += \
 	dialogs/project/NewProjectDialog.cpp \
 	dialogs/project/OpenProjectDialog.cpp \
 	dialogs/project/NewTrackDialog.cpp \
-	songcanvas/PositionIndicator.cpp
+	songcanvas/PositionIndicator.cpp \
+	widgets/ResourcesWidget.cpp
 FORMS += ui/ExportWidget.ui \
 	ui/AudioSourcesManagerWidget.ui \
 	ui/PluginSelectorDialog.ui \
@@ -107,7 +107,8 @@ FORMS += ui/ExportWidget.ui \
 	ui/OpenProjectDialog.ui \
 	ui/NewProjectDialog.ui \
 	ui/NewSongDialog.ui \
-	ui/NewTrackDialog.ui
+	ui/NewTrackDialog.ui \
+	ui/ResourcesWidget.ui
 
 
 INCLUDEPATH += 	../core \
@@ -129,8 +130,8 @@ contains(DEFINES, PORTAUDIO_SUPPORT): LIBS += -lportaudio
 contains(DEFINES, JACK_SUPPORT): LIBS += -ljack
 
 contains(DEFINES, LV2_SUPPORT){
-	LIBS += -lrdf -lrasqal	-lslv2
-	INCLUDEPATH +=	../3rdparty/slv2 ../plugins/LV2
+    LIBS += -lrdf -lrasqal	-lslv2
+    INCLUDEPATH +=	../3rdparty/slv2 ../plugins/LV2
 }
 
 QT += opengl

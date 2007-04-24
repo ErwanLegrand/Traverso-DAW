@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TrackView.h"
 #include "ViewPort.h"
 #include "Help.h"
-#include "AudioSourcesTreeWidget.h"
+#include "widgets/ResourcesWidget.h"
 #include <FadeCurve.h>
 #include <Config.h>
 #include "widgets/InfoWidgets.h"
@@ -120,15 +120,13 @@ Interface::Interface()
 	addDockWidget(Qt::RightDockWidgetArea, historyDW);
 	
 	// AudioSources View
-/*	AudioSourcesDW = new QDockWidget(tr("AudioSources"), this);
+	AudioSourcesDW = new QDockWidget(tr("Audio Bin"), this);
 	AudioSourcesDW->setObjectName("AudioSourcesDockWidget");
-	audiosourcesview = new QTreeView(AudioSourcesDW);
+	audiosourcesview = new ResourcesWidget(AudioSourcesDW);
 	audiosourcesview->setFocusPolicy(Qt::NoFocus);
-	TreeModel* model = new TreeModel("hoi, test");
-	audiosourcesview->setModel(model);
 	AudioSourcesDW->setWidget(audiosourcesview);
 	addDockWidget(Qt::TopDockWidgetArea, AudioSourcesDW);
-	AudioSourcesDW->hide();*/
+	AudioSourcesDW->hide();
 	
 	// Meter Widgets
 	correlationMeterDW = new QDockWidget(tr("Correlation Meter"), this);
@@ -388,7 +386,7 @@ void Interface::create_menus( )
 
 	menu->addAction(historyDW->toggleViewAction());
 	menu->addAction(busMonitorDW->toggleViewAction());
-// 	menu->addAction(AudioSourcesDW->toggleViewAction());
+	menu->addAction(AudioSourcesDW->toggleViewAction());
 	
 	menu->addSeparator();
 	

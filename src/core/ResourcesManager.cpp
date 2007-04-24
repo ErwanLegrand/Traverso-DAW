@@ -319,6 +319,11 @@ QList<ReadSource*> ResourcesManager::get_all_audio_sources( ) const
 	return m_sources.values();
 }
 
+QList< AudioClip * > ResourcesManager::get_all_clips() const
+{
+	return m_clips.values();
+}
+
 QList< AudioClip * > ResourcesManager::get_clips_for_source( ReadSource * source ) const
 {
 	QList<AudioClip*> clips;
@@ -335,5 +340,3 @@ QList< AudioClip * > ResourcesManager::get_clips_for_source( ReadSource * source
 
 
 //eof
-
-
