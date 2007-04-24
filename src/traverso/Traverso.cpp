@@ -109,9 +109,9 @@ Traverso::Traverso(int &argc, char **argv )
 Traverso::~Traverso()
 {
 	PENTERDES;
-	config().save();
 	delete Interface::instance();
 	delete themer();
+	config().save();
 }
 
 
