@@ -35,7 +35,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QDesktopWidget>
 #include <QPalette>
 
+#if defined (WIN_BUILD)
+#include <Windows.h>
+#else
 #include <sys/vfs.h>
+#endif
 
 
 // Always put me below _all_ includes, this is needed
@@ -274,9 +278,24 @@ void HDDSpaceInfo::update_status( )
 		return;
 	}
 	
+#if defined (WIN_BUILD)
+	__int64 freebytestocaller, totalbytes, freebytes; 
+	if (! GetDiskFreeSpaceEx ((const WCHAR*)(QS_C(m_project->get_root_dir())),
+					(PULARGE_INTEGER)&freebytestocaller,
+					(PULARGE_INTEGER)&totalbytes,
+					(PULARGE_INTEGER)&freebytes)) 
+	{
+		info().warning("HHDSpaceInfo: " + QString().sprintf("error: %lu", GetLastError()));
+		m_button->setText("No Info");
+		return;
+	}
+	
+	double space =  double(freebytestocaller / (1 << 20));
+#else
 	struct statfs fs;
 	statfs(QS_C(m_project->get_root_dir()), &fs);
 	double space = floor (fs.f_bavail * (fs.f_bsize / 1048576.0));
+#endif
 
 	QList<Song*> recordingSongs;
 	foreach(Song* song, m_project->get_songs()) {
@@ -436,6 +455,8 @@ void PlayHeadInfo::set_song(Song* song)
 	
 	connect(m_song, SIGNAL(transferStopped()), this, SLOT(stop_smpte_update_timer()));
 	connect(m_song, SIGNAL(transferStarted()), this, SLOT(start_smpte_update_timer()));
+	connect(m_song, SIGNAL(transportPosSet()), this, SLOT(update()));
+	
 	
 	if (m_song->is_transporting()) {
 		m_playpixmap = find_pixmap(":/playstop");
