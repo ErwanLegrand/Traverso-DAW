@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier
+Copyright (C) 2005-200 Remon Sijrier
 
 This file is part of Traverso
 
@@ -84,9 +84,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 Traverso::Traverso(int &argc, char **argv )
 	: QApplication ( argc, argv )
 {
-	QCoreApplication::setOrganizationName("Traverso-daw");
+	QCoreApplication::setOrganizationName("Traverso-DAW");
 	QCoreApplication::setApplicationName("Traverso");
-	
+	QCoreApplication::setOrganizationDomain("traverso-daw.org");
+		
 	qRegisterMetaType<InfoStruct>("InfoStruct");
 	
 	config().check_and_load_configuration();
@@ -108,6 +109,7 @@ Traverso::Traverso(int &argc, char **argv )
 Traverso::~Traverso()
 {
 	PENTERDES;
+	config().save();
 	delete Interface::instance();
 	delete themer();
 }

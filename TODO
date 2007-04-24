@@ -1,16 +1,14 @@
 TOBEDONE FOR 0.40.0
 
-* Curves should have a default (first) node which is not allowed to be removed, or moved horiztonally!!!
+* when changing the width of fades, the cursor should remain static (as in gain)
 
-* sometimes the project file seems to be filled from within a loop, perhaps this is due
-  some action is still in the tsar event queue being processed by the rt thread, while
-  at the same time, the gui thread starts the save routine, just guessing here though..
+* Curves should have a default (first) node which is not allowed to be removed, or moved horizontally!!!
 
 * Audible glitch when playing over a split point in a splitted audioclip :-( :-( :-(
-
-* I got a reproducable crash when adding a new track and importing an audio
-  file into it. After exiting and re-opening traverso, it works.
 
 * libsndfile:
 	How to record to files larger 4 GB
 	Sector misalignment, how to handle.
+
+Less important:
+* horizontal zooming with playhead animated causes 2 paints one at start, one at real pos during play!

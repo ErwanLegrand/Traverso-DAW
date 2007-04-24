@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier
+Copyright (C) 2006-2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Config.cpp,v 1.13 2007/04/04 12:08:57 r_sijrier Exp $
 */
 
 #include "Config.h"
@@ -43,12 +42,12 @@ Config& config()
 
 Config::~ Config( )
 {
-	save();
 }
 
 void Config::load_configuration()
 {
-	QSettings settings;
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Traverso-DAW", "Traverso");
+	
 	QStringList keys = settings.allKeys();
 	
 	foreach(QString key, keys) {
@@ -59,7 +58,8 @@ void Config::load_configuration()
 
 void Config::reset_settings( )
 {
-	QSettings settings;
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Traverso-DAW", "Traverso");
+	
 	settings.clear();
 
 	settings.setValue("ProgramVersion", VERSION);
@@ -72,7 +72,7 @@ void Config::reset_settings( )
 
 void Config::check_and_load_configuration( )
 {
-	QSettings::setPath ( QSettings::NativeFormat, QSettings::UserScope, QDir::homePath () + "/.traverso" );
+	QSettings::setPath (QSettings::IniFormat, QSettings::UserScope, QDir::homePath () + "/.traverso");
 	
 	load_configuration();
 	
@@ -98,7 +98,7 @@ void Config::init_input_engine( )
 
 void Config::save( )
 {
-	QSettings settings;
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Traverso-DAW", "Traverso");
 	
 	QHash<QString, QVariant>::const_iterator i = m_configs.constBegin();
 	
