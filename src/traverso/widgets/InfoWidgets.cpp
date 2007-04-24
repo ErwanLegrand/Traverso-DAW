@@ -572,11 +572,10 @@ InfoWidget::InfoWidget(QWidget* parent)
 
 void InfoWidget::set_project(Project* project )
 {
-	if (project) {
-		m_project = project;
+	m_project = project;
+	if (m_project) {
 		connect(m_project, SIGNAL(currentSongChanged(Song*)), this, SLOT(set_song(Song*)));
 	} else {
-		m_project = project;
 		set_song(0);
 	}
 }
@@ -684,10 +683,12 @@ void SongInfo::set_song(Song* song)
 		m_snapAct->setEnabled(true);
 		m_mode->setEnabled(true);
 		m_record->setEnabled(true);
+		m_follow->setEnabled(true);
 	} else {
 		m_snapAct->setEnabled(false);
 		m_mode->setEnabled(false);
 		m_record->setEnabled(false);
+		m_follow->setEnabled(false);
 	}
 }
 

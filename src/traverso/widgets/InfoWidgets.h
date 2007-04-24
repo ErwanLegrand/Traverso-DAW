@@ -57,8 +57,8 @@ private:
 	friend class InfoToolBar;
 
 protected slots:
-	void set_song(Song* );
-	void set_project(Project* );
+	virtual void set_song(Song* );
+	virtual void set_project(Project* );
 };
 
 
