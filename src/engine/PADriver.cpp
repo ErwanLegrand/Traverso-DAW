@@ -326,14 +326,10 @@ int PADriver::_process_callback(
 	
 	PADriver* driver  = static_cast<PADriver *> (arg);
 	
-	driver->device->transport_cycle_start(get_microseconds());
-	
 	driver->paInputBuffer = inputBuffer;
 	driver->paOutputBuffer = outputBuffer;
 	
 	driver->process_callback (framesPerBuffer);
-	
-	driver->device->transport_cycle_end(get_microseconds());
 	
 	return 0;
 }

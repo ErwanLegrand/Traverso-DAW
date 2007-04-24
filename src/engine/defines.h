@@ -122,7 +122,6 @@ struct timeval {
 static inline int gettimeofday(struct timeval* tp, void* tzp) {
 	DWORD t;
 	t = timeGetTime();
-// 	t = 0;
 	tp->tv_sec = t / 1000;
 	tp->tv_usec = t % 1000;
 	/* 0 indicates that the call succeeded. */
