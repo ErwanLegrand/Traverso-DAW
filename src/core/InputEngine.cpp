@@ -476,8 +476,6 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 				delete k;
 				k = 0;
 			}
-			
-			break;
 		}
 		
 		if (k && isHolding) {
@@ -495,10 +493,9 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 				set_jogging( false );
 				wholeMapIndex = -1;
 			}
-			
-			break;
 		}
-	
+		
+		break;
 	}
 
 	return 1;
