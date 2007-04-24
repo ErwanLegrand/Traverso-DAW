@@ -38,6 +38,7 @@ TraversoCommands::TraversoCommands()
 	m_dict.insert("ResetTrackPan", TrackPanCommand);
 	m_dict.insert("ImportAudio", ImportAudioCommand);
 	m_dict.insert("AddNewTrack", AddNewTrackCommand);
+	m_dict.insert("RemoveClip", RemoveClipCommand);
 	m_dict.insert("RemoveTrack", RemoveTrackCommand);
 	m_dict.insert("AudioClipExternalProcessing", AudioClipExternalProcessingCommand);
 	m_dict.insert("ClipSelectionSelect", ClipSelectionCommand);
@@ -105,6 +106,17 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 				return 0;
 			}
 			return song->add_track(new Track(song, "Unnamed", Track::INITIAL_HEIGHT));
+		}
+		
+		case RemoveClipCommand:
+		{
+			AudioClip* clip = qobject_cast<AudioClip*>(obj);
+			if (!clip) {
+				PERROR("TraversoCommands: Supplied QObject was not a Clip! "
+					"RemoveClipCommand needs a Clip as argument");
+				return 0;
+			}
+			return clip->get_track()->remove_clip(clip);
 		}
 		
 		case RemoveTrackCommand:

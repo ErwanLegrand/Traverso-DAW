@@ -93,7 +93,6 @@
 		<keyfact type="FKEY" key1="S" >
 			<Objects>
 				<Object objectname="Project" slotsignature="select" modes="All" instantanious="0" />
-				<Object objectname="AudioClip" modes="All" sortorder="5" submenu="Selection" pluginname="TraversoCommands" commandname="ClipSelectionSelect" arguments="select_clip" />
 				<Object objectname="MoveClip" slotsignature="prev_snap_pos" modes="All" sortorder="1" instantanious="1" />
 				<Object objectname="DragMarker" slotsignature="move_left" modes="All" sortorder="1" instantanious="1" />
 			</Objects>
@@ -262,21 +261,6 @@
 		<keyfact type="FKEY2" key1="Z" key2="A" >
 			<Objects>
 				<Object objectname="SongView" slotsignature="vzoom_in" modes="All" sortorder="5" submenu="Zoom" instantanious="0" />
-			</Objects>
-		</keyfact>
-		<keyfact type="FKEY2" key1="S" key2="D" >
-			<Objects>
-				<Object objectname="AudioClip" modes="All" sortorder="10" submenu="Selection" pluginname="TraversoCommands" commandname="ClipSelectionAdd" arguments="add_to_selection" />
-			</Objects>
-		</keyfact>
-		<keyfact type="FKEY2" key1="S" key2="A" >
-			<Objects>
-				<Object objectname="AudioClip" modes="All" sortorder="20" submenu="Selection" pluginname="TraversoCommands" commandname="ClipSelectionRemove" arguments="remove_from_selection" />
-			</Objects>
-		</keyfact>
-		<keyfact type="FKEY2" key1="A" key2="D" >
-			<Objects>
-				<Object objectname="AudioClipManager" slotsignature="invert_clip_selection" modes="All" sortorder="5" submenu="Selection" instantanious="0" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY2" key1="J" key2="L" >
@@ -467,6 +451,7 @@
 		</keyfact>
 		<keyfact type="D_FKEY" key1="R" >
 			<Objects>
+				<Object objectname="AudioClip" modes="All" sortorder="50" pluginname="TraversoCommands" commandname="RemoveClip" />
 				<Object objectname="Track" modes="All" sortorder="50" pluginname="TraversoCommands" commandname="RemoveTrack" />
 				<Object objectname="CurveView" slotsignature="remove_node" modes="All" instantanious="0" />
 				<Object objectname="PluginView" slotsignature="remove_plugin" modes="All" instantanious="0" />
@@ -506,16 +491,6 @@
 				<Object objectname="Song" slotsignature="remove_track" modes="All" sortorder="33" instantanious="0" />
 			</Objects>
 		</keyfact>
-		<keyfact type="D_FKEY2" key1="S" key2="D" >
-			<Objects>
-				<Object objectname="AudioClipManager" slotsignature="select_all_clips" modes="All" sortorder="5" submenu="Selection" instantanious="0" />
-			</Objects>
-		</keyfact>
-		<keyfact type="D_FKEY2" key1="S" key2="A" >
-			<Objects>
-				<Object objectname="AudioClipManager" slotsignature="deselect_all_clips" modes="All" sortorder="6" submenu="Selection" instantanious="0" />
-			</Objects>
-		</keyfact>
 		<keyfact type="D_FKEY2" key1="F" key2="G" >
 			<Objects>
 				<Object objectname="AudioClip" slotsignature="reset_fade_in" modes="All" sortorder="18" submenu="Fade In/Out" instantanious="0" />
@@ -529,11 +504,6 @@
 		<keyfact type="D_FKEY2" key1="F" key2="H" >
 			<Objects>
 				<Object objectname="AudioClip" slotsignature="reset_fade_both" modes="All" sortorder="38" submenu="Fade In/Out" instantanious="0" />
-			</Objects>
-		</keyfact>
-		<keyfact type="D_FKEY2" key1="C" key2="X" >
-			<Objects>
-				<Object objectname="AudioClipManager" slotsignature="delete_selected_clips" modes="All" sortorder="1" submenu="Selection" instantanious="0" />
 			</Objects>
 		</keyfact>
 	

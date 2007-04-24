@@ -35,6 +35,7 @@ class TraversoCommands : public CommandPlugin
 	Q_CLASSINFO("ImportAudio", tr("Import audio"))
 	Q_CLASSINFO("CopyClip", tr("Copy Clip"))
 	Q_CLASSINFO("AddNewTrack", tr("New Track"))
+	Q_CLASSINFO("RemoveClip", tr("Remove Clip"))
 	Q_CLASSINFO("RemoveTrack", tr("Remove Track"))
 	Q_CLASSINFO("AudioClipExternalProcessing", tr("External Processing"))
 	Q_CLASSINFO("ClipSelectionSelect", tr("Select"))
@@ -56,6 +57,7 @@ private:
   		TrackPanCommand,
     		ImportAudioCommand,
 		AddNewTrackCommand,
+  		RemoveClipCommand,
   		RemoveTrackCommand,
 		AudioClipExternalProcessingCommand,
   		ClipSelectionCommand,
