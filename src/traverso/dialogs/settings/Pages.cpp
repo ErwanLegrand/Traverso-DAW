@@ -684,8 +684,8 @@ KeyboardPage::KeyboardPage(QWidget * parent)
 
 void KeyboardPage::load_config()
 {
-	int doubleFactTimeout = config().get_property("CCE", "doublefactTimeout", 200).toInt();
-	int holdTimeout = config().get_property("CCE", "holdTimeout", 200).toInt();
+	int doubleFactTimeout = config().get_property("CCE", "doublefactTimeout", 180).toInt();
+	int holdTimeout = config().get_property("CCE", "holdTimeout", 150).toInt();
 	
 	m_configpage->doubleFactTimeoutSpinBox->setValue(doubleFactTimeout);
 	m_configpage->holdTimeoutSpinBox->setValue(holdTimeout);
