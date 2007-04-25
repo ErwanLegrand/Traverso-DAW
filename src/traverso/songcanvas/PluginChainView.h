@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2006 Remon Sijrier
+    Copyright (C) 2006-2007 Remon Sijrier
 
     This file is part of Traverso
 
@@ -17,7 +17,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginChainView.h,v 1.5 2007/04/25 13:45:18 r_sijrier Exp $
 */
 
 #ifndef PLUGIN_CHAIN_VIEW_H

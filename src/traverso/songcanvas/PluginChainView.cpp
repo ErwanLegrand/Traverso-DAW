@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2006 Remon Sijrier
+    Copyright (C) 2006-2007 Remon Sijrier
 
     This file is part of Traverso
 
@@ -17,7 +17,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginChainView.cpp,v 1.10 2007/04/25 13:45:18 r_sijrier Exp $
 */
 
 #include "PluginChainView.h"
@@ -56,6 +55,8 @@ PluginChainView::PluginChainView(SongView* sv, ViewItem* parent, PluginChain* ch
 	parent->scene()->addItem(this);
 	m_boundingRect = QRectF(0, 0, 0, 44);
 	
+	hide();
+	
 	QList<Plugin* >* pluginList = chain->get_plugin_list();
 	for (int i=0; i<pluginList->size(); ++i) {
 		Plugin* plugin = pluginList->at(i);
@@ -87,6 +88,7 @@ void PluginChainView::add_new_pluginview( Plugin * plugin )
 	view->setPos(x, m_boundingRect.height() - view->boundingRect().height());
 	
 	m_pluginViews.append(view);
+	show();
 }
 
 void PluginChainView::remove_pluginview( Plugin * plugin )
@@ -108,7 +110,9 @@ void PluginChainView::remove_pluginview( Plugin * plugin )
 		x += view->boundingRect().width() + 6;
 	}
 	
-	
+	if (!m_pluginViews.size()) {
+		hide();
+	}
 	m_parentViewItem->update();
 }
 
