@@ -121,6 +121,7 @@ int SplitClip::begin_hold()
 {
 	m_sv->start_shuttle(true, true);
 	m_splitcursor = new SplitCursor(m_cv);
+	m_cv->scene()->addItem(m_splitcursor);
 	return 1;
 }
 
