@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ui_ResourcesWidget.h"
 
 class Project;
+class Song;
 
 class ResourcesWidget : public QWidget, protected Ui::ResourcesWidget
 {
@@ -44,6 +45,10 @@ private:
 private slots:
 	void set_project(Project* project);
 	void update_tree_widgets();
+	void view_combo_box_index_changed(int index);
+	void song_combo_box_index_changed(int index);
+	void song_added(Song* song);
+	void song_removed(Song* song);
 };
 
 #endif

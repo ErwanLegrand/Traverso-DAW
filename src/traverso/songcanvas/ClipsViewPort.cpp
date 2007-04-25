@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ClipsViewPort.cpp,v 1.13 2007/04/12 12:48:17 r_sijrier Exp $
+$Id: ClipsViewPort.cpp,v 1.14 2007/04/25 15:58:50 r_sijrier Exp $
 */
 
 #include "ClipsViewPort.h"
@@ -72,13 +72,31 @@ void ClipsViewPort::paintEvent(QPaintEvent * e)
 // 	printf("ClipsViewPort::paintEvent\n");
 	QGraphicsView::paintEvent(e);
 }
-
+#include <QModelIndex>
 
 void ClipsViewPort::dragEnterEvent( QDragEnterEvent * event )
 {
-	bool accepted = true;
 	m_imports.clear();
+	m_resourcesImport.clear();
 	
+	// let's see if the D&D was from the resources bin.
+	if (event->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist")) {
+		QByteArray encodedData = event->mimeData()->data("application/x-qabstractitemmodeldatalist");
+		QDataStream stream(&encodedData, QIODevice::ReadOnly);
+		int r, c;
+		QMap<int, QVariant> v;
+		
+		while (!stream.atEnd()) {
+			stream >> r >> c >> v;
+			qint64 id = v.value(Qt::UserRole).toLongLong();
+			if (!id) {
+				continue;
+			}
+			m_resourcesImport.append(id);
+		}
+	}
+	
+	// and who knows, it could have been a D&D drop from a filemanager...
 	if (event->mimeData()->hasUrls()) {
 
 		foreach(QUrl url, event->mimeData()->urls()) {
@@ -91,24 +109,27 @@ void ClipsViewPort::dragEnterEvent( QDragEnterEvent * event )
 			Import* import = new Import(fileName);
 			m_imports.append(import);
 			
+			// If a readsource fails to init, the D&D should be
+			// marked as failed, cleanup allready created imports,
+			// and clear the import list.
 			if (import->create_readsource() == -1) {
 				foreach(Import* import, m_imports) {
 					delete import;
 				}
 				m_imports.clear();
-				accepted = false;
 				break;
 			}
 		}
 	}
 	
-	if (accepted) {
+	if (m_imports.size() || m_resourcesImport.size()) {
 		event->acceptProposedAction();
 	}
 }
 
 void ClipsViewPort::dropEvent(QDropEvent* event )
 {
+	PENTER;
 	Q_UNUSED(event)
 	
 	if (!importTrack) {
@@ -116,7 +137,19 @@ void ClipsViewPort::dropEvent(QDropEvent* event )
 	}
 
 	CommandGroup* group = new CommandGroup(m_sw->get_song(), 
-		       tr("Import %n audiofile(s)", "", m_imports.size()), true);
+		       tr("Import %n audiofile(s)", "", m_imports.size() + m_resourcesImport.size()), true);
+	
+	
+	foreach(qint64 id, m_resourcesImport) {
+		AudioClip* clip = resources_manager()->get_clip(id);
+		if (clip) {
+			clip->set_song(m_sw->get_song());
+			clip->set_track(importTrack);
+// 			clip->set_state(clip->get_dom_node());
+			clip->set_track_start_frame(0);
+			group->add_command(importTrack->add_clip(clip));
+		}
+	}
 	
 	foreach(Import* import, m_imports) {
 		import->set_track(importTrack);

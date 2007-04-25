@@ -120,7 +120,7 @@ Interface::Interface()
 	addDockWidget(Qt::RightDockWidgetArea, historyDW);
 	
 	// AudioSources View
-	AudioSourcesDW = new QDockWidget(tr("Audio Bin"), this);
+	AudioSourcesDW = new QDockWidget(tr("Resources Bin"), this);
 	AudioSourcesDW->setObjectName("AudioSourcesDockWidget");
 	audiosourcesview = new ResourcesWidget(AudioSourcesDW);
 	audiosourcesview->setFocusPolicy(Qt::NoFocus);
