@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.h,v 1.7 2007/02/23 13:54:33 r_sijrier Exp $
+$Id: CurveView.h,v 1.8 2007/04/25 01:34:02 benjie Exp $
 */
 
 #ifndef CURVE_VIEW_H
@@ -66,7 +66,7 @@ private:
 	int		m_blinkColorDirection;
 	QList<CurveNodeView*>	m_nodeViews;
 	
-	void update_softselected_node(QPoint pos);
+	void update_softselected_node(QPoint pos, bool force = false);
 
 public slots:
 	Command* add_node();

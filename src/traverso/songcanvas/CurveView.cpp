@@ -42,7 +42,7 @@ class DragNode : public Command
 	Q_CLASSINFO("move_down", tr("Move Down"));
 	
 public:
-	DragNode(CurveNode* node, CurveView* curveview, int scalefactor, const QString& des);
+	DragNode(CurveNode* node, CurveView* curveview, int scalefactor, long rangeMin, long rangeMax, const QString& des);
 	
 	int prepare_actions();
 	int do_action();
@@ -58,6 +58,8 @@ private :
 	int		m_scalefactor;
 	QPointF		m_origPos;
 	QPointF 	m_newPos;
+	long		m_rangeMin;
+	long		m_rangeMax;
 	QPoint		m_mousepos;
 
 public slots:
@@ -69,10 +71,12 @@ public slots:
 #include "CurveView.moc"
 
 	
-DragNode::DragNode(CurveNode* node, CurveView* curveview, int scalefactor, const QString& des)
+DragNode::DragNode(CurveNode* node, CurveView* curveview, int scalefactor, long rangeMin, long rangeMax, const QString& des)
 	: Command(curveview->get_context(), des)
 {
 	m_node = node;
+	m_rangeMin = rangeMin;
+	m_rangeMax = rangeMax;
 	m_curveView = curveview;
 	m_scalefactor = scalefactor;
 }
@@ -154,6 +158,12 @@ int DragNode::jog()
 		m_newPos.setY(1.0);
 	}
 	
+	if (m_newPos.x() < m_rangeMin) {
+		m_newPos.setX(m_rangeMin);
+	} else if (m_rangeMax != -1 && m_newPos.x() > m_rangeMax) {
+		m_newPos.setX(m_rangeMax);
+	}
+
 	return do_action();
 }
 
@@ -166,7 +176,7 @@ CurveView::CurveView(SongView* sv, ViewItem* parentViewItem, Curve* curve)
 	
 	m_sv = sv;
 	m_sv->scene()->addItem(this);
-	
+
 	load_theme_data();
 	
 	m_blinkColorDirection = 1;
@@ -363,15 +373,21 @@ void CurveView::hoverMoveEvent ( QGraphicsSceneHoverEvent * event )
 	QPoint point((int)event->pos().x(), (int)event->pos().y());
 	
 	update_softselected_node(point);
+
+	if (m_blinkingNode) {
+		setCursor(themer()->get_cursor("Default"));
+	} else {
+		setCursor(themer()->get_cursor("AudioClip"));
+	}
 // 	printf("mouse x,y pos %d,%d\n", point.x(), point.y());
 	
 // 	printf("\n");
 }
 
 
-void CurveView::update_softselected_node( QPoint pos )
+void CurveView::update_softselected_node( QPoint pos , bool force)
 {
-	if (ie().is_holding()) {
+	if (ie().is_holding() && !force) {
 		return;
 	}
 	
@@ -393,12 +409,18 @@ void CurveView::update_softselected_node( QPoint pos )
 			m_blinkingNode = nodeView;
 		}
 	}
+
+	if ((pos - QPoint(4, 4) - QPoint((int)m_blinkingNode->x(), (int)m_blinkingNode->y())).manhattanLength() > 10) {
+		m_blinkingNode = 0;
+	}
 	
 	if (prevNode && (prevNode != m_blinkingNode) ) {
 		prevNode->set_color(themer()->get_color("CurveNode:default"));
 		prevNode->update();
 		prevNode->decrease_size();
-		m_blinkingNode->increase_size();
+		if (m_blinkingNode) {
+			m_blinkingNode->increase_size();
+		}
 	}
 	if (!prevNode && m_blinkingNode) {
 		m_blinkingNode->increase_size();
@@ -459,13 +481,27 @@ Command* CurveView::remove_node()
 Command* CurveView::drag_node()
 {
 	PENTER;
-/*	QPoint pos(cpointer().on_first_input_event_scene_x(), cpointer().on_first_input_event_scene_y());
-	update_softselected_node(pos);*/
+
+	QPointF origPos(mapFromScene(cpointer().scene_pos()));
+
+	update_softselected_node(QPoint((int)origPos.x(), (int)origPos.y()), true);
 	
 	if (m_blinkingNode) {
-		return new DragNode(m_blinkingNode->get_curve_node(), this, m_sv->scalefactor, tr("Drag Node"));
+		long min = 0;
+		long max = -1;
+		QList<CurveNode* >* nodeList = m_curve->get_nodes();
+		CurveNode* node = m_blinkingNode->get_curve_node();
+		int index = nodeList->indexOf(node);
+
+		if (index > 0) {
+			min = nodeList->at(index-1)->get_when() + 1;
+		}
+		if (nodeList->size() > index + 1) {
+			max = nodeList->at(index+1)->get_when() - 1;
+		}
+		return new DragNode(m_blinkingNode->get_curve_node(), this, m_sv->scalefactor, min, max, tr("Drag Node"));
 	}
-	return 0;
+	return ie().did_not_implement();
 }
 
 void CurveView::node_moved( )
