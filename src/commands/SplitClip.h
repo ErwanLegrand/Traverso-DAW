@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
+    Copyright (C) 2005-2007 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -17,7 +17,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SplitClip.h,v 1.4 2007/04/25 21:23:40 r_sijrier Exp $
 */
 
 #ifndef SPLITCLIPACTION_H
