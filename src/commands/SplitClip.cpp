@@ -91,10 +91,10 @@ int SplitClip::do_action()
 {
 	PENTER;
 
-	Command::process_command(m_track->remove_clip(m_clip, false));
-
 	Command::process_command(m_track->add_clip(leftClip, false));
 	Command::process_command(m_track->add_clip(rightClip, false));
+	
+	Command::process_command(m_track->remove_clip(m_clip, false));
 	
 	resources_manager()->undo_remove_clip_from_database(leftClip->get_id());
 	resources_manager()->undo_remove_clip_from_database(rightClip->get_id());
@@ -106,10 +106,10 @@ int SplitClip::undo_action()
 {
 	PENTER;
 
+	Command::process_command(m_track->add_clip(m_clip, false));
+	
 	Command::process_command(m_track->remove_clip(leftClip, false));
 	Command::process_command(m_track->remove_clip(rightClip, false));
-	
-	Command::process_command(m_track->add_clip(m_clip, false));
 	
 	resources_manager()->remove_clip_from_database(leftClip->get_id());
 	resources_manager()->remove_clip_from_database(rightClip->get_id());
