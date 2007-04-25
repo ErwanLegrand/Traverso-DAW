@@ -53,14 +53,14 @@
 		<keyfact type="FKEY" key1="UARROW" >
 			<Objects>
 				<Object objectname="Gain" slotsignature="increase_gain" modes="All" instantanious="1" />
-				<Object objectname="DragNode" slotsignature="move_up" modes="CurveMode" instantanious="1" />
+				<Object objectname="DragNode" slotsignature="move_up" modes="Effects" instantanious="1" />
 				<Object objectname="SongView" slotsignature="scroll_up" modes="All" sortorder="4" submenu="Scroll" instantanious="1" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="DARROW" >
 			<Objects>
 				<Object objectname="Gain" slotsignature="decrease_gain" modes="All" instantanious="1" />
-				<Object objectname="DragNode" slotsignature="move_down" modes="CurveMode" instantanious="1" />
+				<Object objectname="DragNode" slotsignature="move_down" modes="Effects" instantanious="1" />
 				<Object objectname="SongView" slotsignature="scroll_down" modes="All" sortorder="4" submenu="Scroll" instantanious="1" />
 			</Objects>
 		</keyfact>
@@ -207,7 +207,7 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="MouseScrollVerticalUp" >
 			<Objects>
-				<Object objectname="DragNode" slotsignature="move_up" modes="CurveMode" instantanious="1" />
+				<Object objectname="DragNode" slotsignature="move_up" modes="Effects" instantanious="1" />
 				<Object objectname="SongView" slotsignature="scroll_up" modes="All" sortorder="1" submenu="Scroll" instantanious="1" />
 				<Object objectname="Gain" slotsignature="increase_gain" modes="All" instantanious="1" />
 				<Object objectname="TrackPanelPan" slotsignature="pan_right" modes="All" sortorder="1" instantanious="1" />
@@ -216,7 +216,7 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="MouseScrollVerticalDown" >
 			<Objects>
-				<Object objectname="DragNode" slotsignature="move_down" modes="CurveMode" instantanious="1" />
+				<Object objectname="DragNode" slotsignature="move_down" modes="Effects" instantanious="1" />
 				<Object objectname="SongView" slotsignature="scroll_down" modes="All" sortorder="2" submenu="Scroll" instantanious="1" />
 				<Object objectname="Gain" slotsignature="decrease_gain" modes="All" instantanious="1" />
 				<Object objectname="TrackPanelPan" slotsignature="pan_left" modes="All" sortorder="2" instantanious="1" />
