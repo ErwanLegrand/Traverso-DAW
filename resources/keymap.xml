@@ -375,6 +375,11 @@
 				<Object objectname="SongView" mousehint="UD" modes="All" sortorder="7" pluginname="TraversoCommands" commandname="ArmTracks"  arguments="" />
 			</Objects>
 		</keyfact>
+		<keyfact type="HKEY" key1="X" >
+			<Objects>
+				<Object objectname="AudioClipView" modes="All" sortorder="15" pluginname="TraversoCommands" commandname="SplitClip" />
+			</Objects>
+		</keyfact>
 		
 		
 		
