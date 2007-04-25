@@ -344,7 +344,9 @@ int MoveClip::jog()
 		newPos.setX(newTrackStartFrame / d->sv->scalefactor);
 		newPos.setY(d->view->pos().y());
 		if (d->resync) {
-			m_clip->set_track_start_frame(newTrackStartFrame);
+			if (m_clip->get_track_start_frame() != newTrackStartFrame) {
+				m_clip->set_track_start_frame(newTrackStartFrame);
+			}
 			if (m_actionType == "anchored_left_edge_move") {
 				m_clip->set_right_edge(m_oldOppositeEdge);
 			}
