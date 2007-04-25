@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier
+Copyright (C) 2006-2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -407,6 +407,7 @@ void CurveView::update_softselected_node( QPoint pos , bool force)
 		
 		if (nodeDist < blinkNodeDist) {
 			m_blinkingNode = nodeView;
+			m_blinkColor = themer()->get_color("CurveNode:blink");
 		}
 	}
 
@@ -440,7 +441,7 @@ void CurveView::update_blink_color()
 	red += (15 * m_blinkColorDirection);
 	blue += (15 * m_blinkColorDirection);
 	
-	if (red > 255) {
+	if (red > 255 || blue > 255) {
 		m_blinkColorDirection *= -1;
 		red = 255;
 		blue = 255;
