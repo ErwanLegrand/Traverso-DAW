@@ -121,13 +121,20 @@ int AudioClip::set_state(const QDomNode& node)
 	QDomElement e = node.toElement();
 
 	isTake = e.attribute( "take", "").toInt();
-	isMuted =  e.attribute( "mute", "" ).toInt();
 	set_gain( e.attribute( "gain", "" ).toFloat() );
 	m_normfactor =  e.attribute( "normfactor", "1.0" ).toFloat();
 
 	if (e.attribute("selected", "0").toInt() == 1) {
 		m_song->get_audioclip_manager()->select_clip(this);
 	}
+        
+	m_readSourceId = e.attribute("source", "").toLongLong();
+	isMuted =  e.attribute( "mute", "" ).toInt();
+
+	sourceStartFrame = e.attribute( "sourcestart", "" ).toUInt();
+	m_length = e.attribute( "length", "0" ).toUInt();
+	sourceEndFrame = sourceStartFrame + m_length;
+	set_track_start_frame( e.attribute( "trackstart", "" ).toUInt());
 	
 	QDomElement curvesNode = node.firstChildElement("Curves");
 	if (!curvesNode.isNull()) {
