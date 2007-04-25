@@ -38,6 +38,7 @@ public:
 	SplitCursor(ViewItem* parent)
 	: ViewItem(parent, 0) 
 	{
+		setZValue(parent->zValue() + 1);
 		m_boundingRect = QRectF(0, 0, 1, parent->boundingRect().height());
 	}
 	void paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) 
