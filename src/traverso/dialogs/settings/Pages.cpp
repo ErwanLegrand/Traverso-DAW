@@ -442,6 +442,14 @@ void BehaviorPage::load_config()
 	m_configpage->scrollModeComboBox->setCurrentIndex(scrollMode);
 	m_configpage->resyncAudioCheckBox->setChecked(resyncAudio);
 	
+	if (oncloseaction == "save") {
+		m_configpage->saveRadioButton->setChecked(true);
+	} else if (oncloseaction == "ask") {
+		m_configpage->askRadioButton->setChecked(true);
+	} else {
+		m_configpage->neverRadioButton->setChecked(true);
+	}
+	
 	update_follow();
 
 }
