@@ -17,14 +17,16 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginChainView.cpp,v 1.9 2007/04/20 12:17:31 r_sijrier Exp $
+    $Id: PluginChainView.cpp,v 1.10 2007/04/25 13:45:18 r_sijrier Exp $
 */
 
 #include "PluginChainView.h"
 
-#include <QGraphicsScene>
+#include <QScrollBar>
 
 #include "TrackView.h"
+#include "SongView.h"
+#include "ClipsViewPort.h"
 #include "PluginView.h"
 #include "Themer.h"
 #include <PluginChain.h>
@@ -42,15 +44,16 @@
 #include "Debugger.h"
 
 
-PluginChainView::PluginChainView(TrackView* parent, PluginChain* chain)
+PluginChainView::PluginChainView(SongView* sv, ViewItem* parent, PluginChain* chain)
 	: ViewItem(parent, parent)
-	, m_trackView(parent)
+		, m_sv(sv)
+	, m_pluginchain(chain)
 {
 	PENTERCONS;
 	
-	setZValue(parent->zValue() + 1);
+	setZValue(parent->zValue() + 2);
 	
-	m_trackView->scene()->addItem(this);
+	parent->scene()->addItem(this);
 	m_boundingRect = QRectF(0, 0, 0, 44);
 	
 	QList<Plugin* >* pluginList = chain->get_plugin_list();
@@ -61,6 +64,8 @@ PluginChainView::PluginChainView(TrackView* parent, PluginChain* chain)
 	
 	connect(chain, SIGNAL(pluginAdded(Plugin*)), this, SLOT(add_new_pluginview(Plugin*)));
 	connect(chain, SIGNAL(pluginRemoved(Plugin*)), this, SLOT(remove_pluginview(Plugin*)));
+	connect(m_sv->get_clips_viewport()->horizontalScrollBar(), SIGNAL(valueChanged(int)),
+		this, SLOT(scrollbar_value_changed(int)));
 	
 }
 
@@ -71,7 +76,7 @@ PluginChainView::~PluginChainView( )
 
 void PluginChainView::add_new_pluginview( Plugin * plugin )
 {
-	PluginView* view = new PluginView(m_trackView, plugin, m_pluginViews.size());
+	PluginView* view = new PluginView(this, m_pluginchain, plugin, m_pluginViews.size());
 	scene()->addItem(view);
 	
 	int x = 6;
@@ -97,7 +102,14 @@ void PluginChainView::remove_pluginview( Plugin * plugin )
 		m_pluginViews.at(i)->set_index(i);
 	}
 	
-	m_trackView->update();
+	int x = 6;
+	foreach(PluginView* view, m_pluginViews) {
+		view->setPos(x, m_boundingRect.height() - view->boundingRect().height());
+		x += view->boundingRect().width() + 6;
+	}
+	
+	
+	m_parentViewItem->update();
 }
 
 void PluginChainView::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
@@ -105,6 +117,11 @@ void PluginChainView::paint( QPainter * painter, const QStyleOptionGraphicsItem 
 	Q_UNUSED(painter);
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
+}
+
+void PluginChainView::scrollbar_value_changed(int value)
+{
+	setPos(value, y());
 }
 
 //eof

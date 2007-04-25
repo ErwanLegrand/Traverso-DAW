@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginChainView.h,v 1.4 2007/01/25 19:21:20 r_sijrier Exp $
+    $Id: PluginChainView.h,v 1.5 2007/04/25 13:45:18 r_sijrier Exp $
 */
 
 #ifndef PLUGIN_CHAIN_VIEW_H
@@ -27,7 +27,7 @@
 #include "ViewItem.h"
 #include <QString>
 
-class TrackView;
+class SongView;
 class Plugin;
 class PluginChain;
 class PluginView;
@@ -37,18 +37,20 @@ class PluginChainView : public ViewItem
         Q_OBJECT
 
 public:
-        PluginChainView(TrackView* view, PluginChain* chain);
+        PluginChainView(SongView* sv, ViewItem* parent, PluginChain* chain);
         ~PluginChainView();
 
         void paint(QPainter* painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 private:
-        TrackView* 		m_trackView;
+	PluginChain* m_pluginchain;
+        SongView* m_sv;
         QList<PluginView* >	m_pluginViews;
 
 public slots:
         void add_new_pluginview(Plugin* plugin);
         void remove_pluginview(Plugin* plugin);
+	void scrollbar_value_changed(int value);
 };
 
 #endif

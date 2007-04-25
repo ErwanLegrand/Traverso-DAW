@@ -1,6 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 	<qresource>
 		<file alias="cursorDrag">../../resources/images/cursorDrag.xpm</file>
+		<file alias="cursorDragNode">../../resources/images/cursorDragNode.xpm</file>
 		<file alias="cursorFloatOverClip">../../resources/images/cursorFloatOverClip.xpm</file>
 		<file alias="cursorFloatOverPlugin">../../resources/images/cursorFloatOverPlugin.xpm</file>
 		<file alias="cursorFloatOverFade">../../resources/images/cursorFloatOverFade.xpm</file>

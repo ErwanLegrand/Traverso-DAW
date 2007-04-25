@@ -60,7 +60,7 @@ TrackView::TrackView(SongView* sv, Track * track)
 	m_panel = new TrackPanelView(this);
 	calculate_bounding_rect();
 	
-	m_pluginChainView = new PluginChainView(this, m_track->get_plugin_chain());
+	m_pluginChainView = new PluginChainView(m_sv, this, m_track->get_plugin_chain());
 
 	connect(m_track, SIGNAL(audioClipAdded(AudioClip*)), this, SLOT(add_new_audioclipview(AudioClip*)));
 	connect(m_track, SIGNAL(audioClipRemoved(AudioClip*)), this, SLOT(remove_audioclipview(AudioClip*)));

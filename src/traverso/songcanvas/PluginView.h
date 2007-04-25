@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginView.h,v 1.7 2007/04/17 11:51:20 r_sijrier Exp $
+    $Id: PluginView.h,v 1.8 2007/04/25 13:45:18 r_sijrier Exp $
 */
 
 #ifndef PLUGIN_VIEW_H
@@ -32,8 +32,9 @@ class LV2PluginPropertiesDialog;
 #endif
 
 class TrackView;
+class PluginChainView;
 class Plugin;
-class Track;
+class PluginChain;
 
 class PluginView : public ViewItem
 {
@@ -42,7 +43,7 @@ class PluginView : public ViewItem
 	Q_CLASSINFO("remove_plugin", tr("Remove"))
 
 public:
-        PluginView(TrackView* view, Plugin* plugin, int index);
+	PluginView(PluginChainView* pcv, PluginChain* chain, Plugin* plugin, int index);
         ~PluginView();
 
 	enum {Type = UserType + 5};
@@ -54,9 +55,8 @@ public:
 	int type() const;
 
 private:
-        TrackView* 	m_trackView;
-        Track*		m_track;
-        Plugin*		m_plugin;
+	PluginChain*	m_pluginchain;
+	Plugin*		m_plugin;
 
         int 		m_index;
         QString		m_name;

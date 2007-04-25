@@ -23,11 +23,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QPainter>
 
-#include <Track.h>
 #include "TrackView.h"
+#include "PluginChainView.h"
 
-#include "Themer.h"
+#include <Themer.h>
 #include <Plugin.h>
+#include <PluginChain.h>
+#include <Track.h>
 #include <Utils.h>
 
 #if defined (LV2_SUPPORT)
@@ -38,11 +40,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-PluginView::PluginView(TrackView* parent, Plugin* plugin, int index)
+PluginView::PluginView(PluginChainView* parent, PluginChain* chain, Plugin* plugin, int index)
 	: ViewItem(parent, plugin)
-	, m_trackView(parent)
-	,  m_plugin(plugin)
-	,  m_index(index)
+	, m_pluginchain(chain)
+	, m_plugin(plugin)
+	, m_index(index)
 {
 	PENTERCONS;
 	
@@ -52,7 +54,6 @@ PluginView::PluginView(TrackView* parent, Plugin* plugin, int index)
 
 	setZValue(parent->zValue() + 2);
 	
-	m_track = m_trackView->get_track();
 	m_name = plugin->get_name();
 	
 	QFontMetrics fm(themer()->get_font("Plugin:name"));
@@ -121,7 +122,7 @@ Command * PluginView::edit_properties( )
 
 Command* PluginView::remove_plugin()
 {
-	return m_track->remove_plugin(m_plugin);
+	return m_pluginchain->remove_plugin(m_plugin);
 }
 
 Plugin * PluginView::get_plugin( )
