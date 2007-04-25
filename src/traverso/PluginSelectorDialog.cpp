@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier
+Copyright (C) 2006-2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,13 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginSelectorDialog.cpp,v 1.7 2007/04/20 12:18:19 r_sijrier Exp $
 */
 
 #include "PluginSelectorDialog.h"
 #include "ui_PluginSelectorDialog.h"
 
-#include <QStandardItemModel>
 #include <QHeaderView>
 
 #if defined (LV2_SUPPORT)
@@ -32,6 +30,7 @@ $Id: PluginSelectorDialog.cpp,v 1.7 2007/04/20 12:18:19 r_sijrier Exp $
 #include <Plugin.h>
 #include <PluginManager.h>
 #include <Information.h>
+#include <Utils.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -44,10 +43,8 @@ PluginSelectorDialog::PluginSelectorDialog( QWidget * p )
 {
 	setupUi(this);
 
-	QStandardItemModel *model = new QStandardItemModel();
-	QModelIndex parent;
-
-	model->insertColumns(0, 2, parent);
+	pluginTreeWidget->header()->setResizeMode(0, QHeaderView::ResizeToContents);
+	
 
 #if defined (LV2_SUPPORT)
 	SLV2Plugins pluginList = PluginManager::instance()->get_slv2_plugin_list();
@@ -55,22 +52,14 @@ PluginSelectorDialog::PluginSelectorDialog( QWidget * p )
 	for (uint i=0; i < slv2_plugins_size(pluginList); ++i) {
 		const SLV2Plugin p = slv2_plugins_get_at(pluginList, i);
 
-		model->insertRows(i, 1, parent);
-		QModelIndex index = model->index(i, 0, parent);
-		model->setData(index, QString( (char*) slv2_plugin_get_name(p)) );
-		index = model->index(i, 1, parent);
-		model->setData(index, QString( (char*) slv2_plugin_get_uri(p)) );
+		QTreeWidgetItem* item = new QTreeWidgetItem(pluginTreeWidget);
+		item->setText(0, QString( (char*) slv2_plugin_get_name(p)));
+		item->setData(0, Qt::UserRole, QString( (char*) slv2_plugin_get_uri(p)));
+		
 	}
 #endif
 
-	pluginTreeView->setModel(model);
-
-	QStringList stringList;
-	stringList << "Name" << "Uri";
-
-	pluginTreeView->header()->resizeSection(0, 200);
-
-	connect(pluginTreeView, SIGNAL(doubleClicked(QModelIndex&)), this, SLOT(model_double_clicked(QModelIndex&)));
+	connect(pluginTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(plugin_double_clicked()));
 }
 
 PluginSelectorDialog::~PluginSelectorDialog( )
@@ -78,6 +67,7 @@ PluginSelectorDialog::~PluginSelectorDialog( )
 
 void PluginSelectorDialog::on_cancelButton_clicked( )
 {
+	reject();
 }
 
 void PluginSelectorDialog::on_okButton_clicked( )
@@ -86,33 +76,39 @@ void PluginSelectorDialog::on_okButton_clicked( )
 	LV2Plugin* plugin = 0;
 
 
-	QModelIndex index = pluginTreeView->currentIndex();
-	if (index.column() == 0)
-		index = index.model()->index(index.row(), 1);
+	QList<QTreeWidgetItem *> list = pluginTreeWidget->selectedItems();
+	
+	if ( ! list.size()) {
+		printf("No plugin selected\n");
+		reject();
+		return;
+	}
+	
+	QTreeWidgetItem* item =  list.first();
+	
+	QString uri = item->data(0, Qt::UserRole).toString();
 
-	if (index.isValid()) {
-		QByteArray uri(index.data().toString().toAscii().data());
-
-		plugin = new LV2Plugin(uri.data());
-		if (plugin->init() > 0) {
-			m_plugin = plugin;
-		} else {
-			printf("Plugin init failed!");
-			info().warning(tr("Plugin initialization failed!"));
-			delete plugin;
-			plugin = 0;
-		}
+	plugin = new LV2Plugin(QS_C(uri));
+	
+	if (plugin->init() > 0) {
+		m_plugin = plugin;
 	} else {
-		printf("no index selected\n");
+		printf("Plugin init failed!");
+		info().warning(tr("Plugin initialization failed!"));
+		delete plugin;
+		plugin = 0;
+		reject();
 	}
 
 	m_plugin = plugin;
+	accept();
 #endif
 }
 
 
-void PluginSelectorDialog::model_double_clicked( const QModelIndex& index )
+void PluginSelectorDialog::plugin_double_clicked()
 {
+	on_okButton_clicked();
 }
 
 PluginSelectorDialog* PluginSelectorDialog::instance()

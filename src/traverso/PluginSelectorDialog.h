@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier 
+Copyright (C) 2006-2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginSelectorDialog.h,v 1.1 2006/07/31 13:27:59 r_sijrier Exp $
 */
 
 #ifndef PLUGIN_SELECTOR_DIALOG_H
@@ -49,7 +48,7 @@ private:
 private slots:
 	void on_okButton_clicked();
 	void on_cancelButton_clicked();
-	void model_double_clicked( const QModelIndex& index );
+	void plugin_double_clicked();
 	
 };
 
