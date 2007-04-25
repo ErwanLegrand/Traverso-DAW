@@ -128,27 +128,57 @@ int Project::load(QString projectfile)
 	QDomDocument doc("Project");
 	
 	QFile file;
+	QString filename;
 	if (projectfile.isEmpty()) {
-		file.setFileName(rootDir + "/project.tpf");
+		filename = rootDir + "/project.tpf";
+		file.setFileName(filename);
 	} else {
-		file.setFileName(projectfile);
+		filename = projectfile;
+		file.setFileName(filename);
 	}
 
 	if (!file.open(QIODevice::ReadOnly))
 	{
 		file.close();
-		info().critical(tr("Project %1: Cannot open project properties file! (%2)")
+		info().critical(tr("Project %1: Cannot open project.tpf file! (%2)")
 			       .arg(title).arg(file.errorString()));
-		return -1;
+		
+		QFile backup(filename + "~");
+		backup.copy(filename);
+		if (QFile::exists(filename.append("~"))) {
+			return load(filename);
+		} else {
+			info().information(tr("No backup project file available, unable to restore project"));
+			return -1;
+		}
 	}
 
 	QString errorMsg;
 	if (!doc.setContent(&file, &errorMsg))
 	{
-		file.close();
 		info().critical(tr("Project %1: Failed to parse project.tpf file! (%2)")
 				.arg(title).arg(errorMsg));
-		return -1;
+		
+		file.remove();
+		file.close();
+		if (! filename.contains("~")) {
+			// Trying to load backup!
+			QFile backup(filename + "~");
+			backup.copy(filename);
+			if (QFile::exists(filename.append("~"))) {
+				return load(filename);
+			} else {
+				info().information(tr("No backup project file available, unable to restore project"));
+				return -1;
+			}
+		} else {
+			return -1;
+		}
+	}
+	
+	if (filename.contains("~")) {
+		info().information(tr("Project file restored from older version (%1)")
+				.arg(QFileInfo(filename).lastModified().toString()));
 	}
 
 	file.close();
