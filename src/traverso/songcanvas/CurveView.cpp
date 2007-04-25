@@ -375,7 +375,7 @@ void CurveView::hoverMoveEvent ( QGraphicsSceneHoverEvent * event )
 	update_softselected_node(point);
 
 	if (m_blinkingNode) {
-		setCursor(themer()->get_cursor("Default"));
+		setCursor(themer()->get_cursor("CurveNode"));
 	} else {
 		setCursor(themer()->get_cursor("AudioClip"));
 	}
@@ -410,7 +410,7 @@ void CurveView::update_softselected_node( QPoint pos , bool force)
 		}
 	}
 
-	if ((pos - QPoint(4, 4) - QPoint((int)m_blinkingNode->x(), (int)m_blinkingNode->y())).manhattanLength() > 10) {
+	if ((pos - QPoint(4, 4) - QPoint((int)m_blinkingNode->x(), (int)m_blinkingNode->y())).manhattanLength() > 40) {
 		m_blinkingNode = 0;
 	}
 	

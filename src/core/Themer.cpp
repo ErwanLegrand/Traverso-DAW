@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Themer.cpp,v 1.1 2007/04/17 11:51:20 r_sijrier Exp $
+$Id: Themer.cpp,v 1.2 2007/04/25 12:43:32 r_sijrier Exp $
 */
 
 #include "Themer.h"
@@ -219,6 +219,7 @@ void Themer::load( )
 	m_cursors.insert("Fade", QCursor(find_pixmap(":/cursorFloatOverFade")));
 	m_cursors.insert("Default", QCursor(find_pixmap(":/cursorFloat")));
 	m_cursors.insert("Zoom", QCursor(find_pixmap(":/cursorZoom")));
+	m_cursors.insert("CurveNode", QCursor(find_pixmap(":/cursorDragNode")));
 	
 	m_cursors.insert("LRUD", QCursor(find_pixmap(":/cursorHoldLrud")));
 	m_cursors.insert("LR", QCursor(find_pixmap(":/cursorHoldLr")));
