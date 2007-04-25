@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TrackPan.h,v 1.6 2007/04/12 18:50:21 r_sijrier Exp $
+    $Id: TrackPan.h,v 1.7 2007/04/25 05:43:36 benjie Exp $
 */
 
 #ifndef TRACKPAN_H
@@ -38,6 +38,7 @@ public :
         int prepare_actions();
         int do_action();
         int undo_action();
+        void cancel_action();
 
         int jog();
 

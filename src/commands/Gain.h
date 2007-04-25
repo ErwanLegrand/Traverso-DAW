@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Gain.h,v 1.11 2007/04/12 18:28:39 benjie Exp $
+    $Id: Gain.h,v 1.12 2007/04/25 05:43:36 benjie Exp $
 */
 
 #ifndef GAIN_H
@@ -44,6 +44,7 @@ public :
         int prepare_actions();
         int do_action();
         int undo_action();
+        void cancel_action();
 
         
         int jog();

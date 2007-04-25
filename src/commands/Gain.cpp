@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Gain.cpp,v 1.16 2007/04/16 09:08:30 r_sijrier Exp $
+$Id: Gain.cpp,v 1.17 2007/04/25 05:43:36 benjie Exp $
 */
 
 #include "Gain.h"
@@ -115,6 +115,13 @@ int Gain::undo_action()
 	}
 	
 	return 1;
+}
+
+
+void Gain::cancel_action()
+{
+	finish_hold();
+	undo_action();
 }
 
 

@@ -83,6 +83,12 @@ int TrackPan::undo_action()
         return 1;
 }
 
+void TrackPan::cancel_action()
+{
+	finish_hold();
+	undo_action();
+}
+
 void TrackPan::set_cursor_shape(int useX, int useY)
 {
 	Q_UNUSED(useX);
