@@ -163,7 +163,8 @@ int SplitClip::jog()
 		m_splitPoint = slist->get_snap_value(m_splitPoint);
 	}
 	
-	m_splitcursor->setPos(m_splitPoint / m_sv->scalefactor, 0);
+	QPointF point = m_cv->mapFromScene(m_splitPoint / m_sv->scalefactor, cpointer().y());
+	m_splitcursor->setPos(point.x(), 0);
 	m_sv->update_shuttle_factor();
 	cpointer().get_viewport()->set_holdcursor_text(frame_to_smpte(m_splitPoint, m_clip->get_song()->get_rate()));
 	cpointer().get_viewport()->set_holdcursor_pos(QPoint(cpointer().scene_x() - 16, cpointer().scene_y() - 16));
