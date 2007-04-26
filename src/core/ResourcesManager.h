@@ -81,6 +81,7 @@ private:
 signals:
 	void sourceAdded();
 	void sourceRemoved();
+	void stateChanged();
 };
 
 

@@ -36,6 +36,7 @@ public:
 	static PluginSelectorDialog* instance();
 	
 	Plugin* get_selected_plugin();
+	void set_description(const QString& des);
 
 private:
 	PluginSelectorDialog(QWidget* parent = 0);

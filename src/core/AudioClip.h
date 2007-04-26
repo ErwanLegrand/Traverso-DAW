@@ -117,6 +117,7 @@ public:
 	bool is_muted() const;
 	bool is_take() const;
 	bool is_selected() const;
+	bool has_song() const;
 	int recording_state() const;
 
 	static bool smaller(const AudioClip* left, const AudioClip* right )

@@ -991,5 +991,13 @@ QDomNode AudioClip::get_dom_node() const
 	return m_domNode;
 }
 
+bool AudioClip::has_song() const
+{
+	if (m_song) {
+		return true;
+	}
+	return false;
+}
+
 // eof
 

@@ -231,6 +231,8 @@ ReadSource * ResourcesManager::get_readsource( qint64 id )
 		source = 0;
 	}
 	
+	emit stateChanged();
+	
 	return source;
 }
 
@@ -298,10 +300,14 @@ AudioClip* ResourcesManager::get_clip( qint64 id )
 	if (source) {
 		clip->set_audio_source(source);
 	} else {
-		info().critical(
+		// sometimes the source is set later...
+		// maybe that should become the default ?
+/*		info().critical(
 		     tr("ResourcesManager: AudioClip %1 required ReadSource with ID %2, but I don't have it!!")
-			.arg(clip->get_name()).arg(clip->get_readsource_id()));
+			.arg(clip->get_name()).arg(clip->get_readsource_id()));*/
 	}
+	
+	emit stateChanged();
 	
 	return clip;
 }

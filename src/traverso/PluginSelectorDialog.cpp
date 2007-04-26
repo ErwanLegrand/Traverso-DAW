@@ -128,4 +128,10 @@ Plugin* PluginSelectorDialog::get_selected_plugin( )
 	return plugin;
 }
 
+void PluginSelectorDialog::set_description(const QString & des)
+{
+	objectToAddPluginTooLabel->setText(des);
+}
+
 //eof
+

@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ClipsViewPort.cpp,v 1.14 2007/04/25 15:58:50 r_sijrier Exp $
 */
 
 #include "ClipsViewPort.h"
@@ -72,7 +71,7 @@ void ClipsViewPort::paintEvent(QPaintEvent * e)
 // 	printf("ClipsViewPort::paintEvent\n");
 	QGraphicsView::paintEvent(e);
 }
-#include <QModelIndex>
+
 
 void ClipsViewPort::dragEnterEvent( QDragEnterEvent * event )
 {
@@ -139,14 +138,34 @@ void ClipsViewPort::dropEvent(QDropEvent* event )
 	CommandGroup* group = new CommandGroup(m_sw->get_song(), 
 		       tr("Import %n audiofile(s)", "", m_imports.size() + m_resourcesImport.size()), true);
 	
-	
+	nframes_t startpos = 0;
+	if (AudioClip* lastClip = importTrack->get_cliplist().get_last()) {
+		startpos = lastClip->get_track_end_frame();
+	}
 	foreach(qint64 id, m_resourcesImport) {
 		AudioClip* clip = resources_manager()->get_clip(id);
 		if (clip) {
+			bool hadSong = clip->has_song();
 			clip->set_song(m_sw->get_song());
 			clip->set_track(importTrack);
-// 			clip->set_state(clip->get_dom_node());
-			clip->set_track_start_frame(0);
+			if (!hadSong) {
+				clip->set_state(clip->get_dom_node());
+			}
+			clip->set_track_start_frame(startpos);
+			startpos = clip->get_track_end_frame();
+			group->add_command(importTrack->add_clip(clip));
+			continue;
+		}
+		ReadSource* source = resources_manager()->get_readsource(id);
+		if (source) {
+			clip = resources_manager()->new_audio_clip(source->get_name());
+			clip->set_audio_source(source);
+			clip->set_song(importTrack->get_song());
+			clip->set_track(importTrack);
+			clip->set_track_start_frame(startpos);
+			startpos = clip->get_track_end_frame();
+			// FIXME!!!!!!!!!!!!!!!!!!!!
+			clip->init_gain_envelope();
 			group->add_command(importTrack->add_clip(clip));
 		}
 	}

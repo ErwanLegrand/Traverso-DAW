@@ -163,6 +163,9 @@ Command* TrackView::edit_properties( )
 
 Command* TrackView::add_new_plugin( )
 {
+	PluginSelectorDialog::instance()->set_description(tr("Track %1:  %2")
+			.arg(m_track->get_sort_index()+1).arg(m_track->get_name()));
+	
 	if (PluginSelectorDialog::instance()->exec() == QDialog::Accepted) {
 		Plugin* plugin = PluginSelectorDialog::instance()->get_selected_plugin();
 		if (plugin) {

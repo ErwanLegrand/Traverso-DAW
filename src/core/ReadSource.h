@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.h,v 1.17 2007/03/29 11:09:38 r_sijrier Exp $
+$Id: ReadSource.h,v 1.18 2007/04/26 18:57:57 r_sijrier Exp $
 */
 
 #ifndef READSOURCE_H
@@ -44,6 +44,7 @@ public :
 	int file_read(int channel, audio_sample_t* dst, nframes_t start, nframes_t cnt) const;
 
 	int init();
+	int get_ref_count() const {return m_refcount;}
 	void set_active(bool active);
 	void set_was_recording(bool wasRecording);
 	
