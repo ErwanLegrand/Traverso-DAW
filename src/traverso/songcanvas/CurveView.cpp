@@ -144,8 +144,11 @@ int DragNode::jog()
 	m_newPos.setX(m_newPos.x() + dx * m_scalefactor);
 	m_newPos.setY(m_newPos.y() - ( dy / m_curveView->boundingRect().height()) );
 	
-	if ( ((int)m_newPos.x()/ m_scalefactor) > m_curveView->boundingRect().width()) {
-		m_newPos.setX(m_curveView->boundingRect().width() * m_scalefactor);
+	if ( ((int)(m_newPos.x() - m_curveView->get_start_offset())/ m_scalefactor) > m_curveView->boundingRect().width()) {
+		m_newPos.setX(m_curveView->boundingRect().width() * m_scalefactor + m_curveView->get_start_offset());
+	}
+	if ( m_newPos.x() - m_curveView->get_start_offset() < 0) {
+		m_newPos.setX(m_curveView->get_start_offset());
 	}
 	
 	if (m_newPos.y() < 0.0) {
@@ -482,7 +485,7 @@ Command* CurveView::drag_node()
 {
 	PENTER;
 
-	QPointF origPos(mapFromScene(cpointer().scene_pos()));
+	QPointF origPos(mapFromScene(QPoint(cpointer().on_first_input_event_scene_x(), cpointer().on_first_input_event_scene_y())));
 
 	update_softselected_node(QPoint((int)origPos.x(), (int)origPos.y()), true);
 	
