@@ -38,6 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QStringList>
 #include <QThread>
 #include <AddRemove.h>
+#include <Command.h>
 #include <CommandGroup.h>
 #include "Mixer.h"
 
@@ -46,6 +47,54 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Debugger.h"
 
 using namespace std;
+
+
+class MoveNode : public Command
+{
+
+public:
+	MoveNode(Curve* curve, CurveNode* node, double when, double val, const QString& des);
+	
+	int prepare_actions();
+	int do_action();
+        int undo_action();
+
+private :
+	CurveNode*	m_node;
+	double		m_origWhen;
+	double		m_origVal;
+	double		m_newWhen;
+	double		m_newVal;
+};
+
+	
+MoveNode::MoveNode(Curve* curve, CurveNode* node, double when, double val, const QString& des)
+	: Command(curve, des)
+{
+	m_node = node;
+	m_origWhen = m_node->get_when();
+	m_origVal = m_node->get_value();
+	m_newWhen = when;
+	m_newVal = val;
+}
+
+int MoveNode::prepare_actions()
+{
+	return 1;
+}
+
+int MoveNode::do_action()
+{
+	m_node->set_when_and_value(m_newWhen, m_newVal);
+	return 1;
+}
+
+int MoveNode::undo_action()
+{
+	m_node->set_when_and_value(m_origWhen, m_origVal);
+	return 1;
+}
+
 
 
 Curve::Curve(ContextItem* parent, Song* song)
@@ -80,6 +129,7 @@ void Curve::init( )
 	m_lookup_cache.range.first = m_nodes.end();
 
 	m_defaultValue = 1.0f;
+	m_defaultInitialValue = 1.0f;	
 	connect(this, SIGNAL(nodePositionChanged()), this, SLOT(set_changed()));
 }
 
@@ -574,6 +624,14 @@ Command* Curve::remove_node(CurveNode* node, bool historable)
 {
 	PENTER2;
 	
+	if (m_nodes.size() == 1) {
+		MoveNode* cmd;
+
+		cmd = new MoveNode(this, node, 0.0f, m_defaultInitialValue, tr("Remove CurveNode"));
+
+		return cmd;
+	}
+
 	AddRemove* cmd;
 	
 	cmd = new AddRemove(this, node, historable, m_song,

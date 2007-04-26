@@ -62,6 +62,8 @@ public:
 	
 	QList<CurveNode* >* get_nodes() {return &m_nodes;}
 	Song* get_song() const {return m_song;}
+
+	double get_default_initial_value() {return m_defaultInitialValue;}
 	
 	// Set functions
 	virtual void set_range(double when);
@@ -74,6 +76,8 @@ public:
 	// The 'GUI' curvenodes have double ownership, so get deleted twice
 	// to avoid this, use this function to not let this happen...
 	void clear_curve() {m_nodes.clear();}
+
+	void set_default_initial_value(double val) {m_defaultInitialValue = val;}
 
 protected:
 	struct LookupCache {
@@ -97,6 +101,8 @@ private :
 	Song* m_song;
 	
 	double m_defaultValue;
+
+	double m_defaultInitialValue;
 	
 	double multipoint_eval (double x);
 	

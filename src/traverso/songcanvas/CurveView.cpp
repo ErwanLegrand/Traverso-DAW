@@ -471,11 +471,6 @@ Command* CurveView::remove_node()
 {
 	PENTER;
 	if (m_blinkingNode) {
-		// Never remove first node, temp fix since curves should have 
-		// some kind of 'fixed' default node that can't be removed ?
-		if (m_blinkingNode == m_nodeViews.first()) {
-			return 0;
-		}
 		CurveNode* node = m_blinkingNode->get_curve_node();
 		m_blinkingNode = 0;
 		return m_curve->remove_node(node);
