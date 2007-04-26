@@ -39,7 +39,8 @@ CurveNodeView::CurveNodeView( SongView * sv, CurveView* curveview, CurveNode * n
 	PENTERCONS;
 	m_sv = sv;
 	m_curveview = curveview;
-	m_boundingRect = QRectF(0, 0, 6, 6);
+	int size = themer()->get_property("CurveNode:diameter", 6).toInt();
+	m_boundingRect = QRectF(0, 0, size, size);
 	load_theme_data();
 	
 	connect(m_node->m_curve, SIGNAL(nodePositionChanged()), this, SLOT(update_pos()));
@@ -111,17 +112,19 @@ void CurveNodeView::update_pos( )
 	set_when_and_value((m_node->get_when() / m_sv->scalefactor), m_node->get_value());
 }
 
-void CurveNodeView::increase_size( )
+void CurveNodeView::set_selected( )
 {
-	m_boundingRect.setWidth(m_boundingRect.width() + 1);
-	m_boundingRect.setHeight(m_boundingRect.height() + 1);
+	int size = themer()->get_property("CurveNode:diameter", 6).toInt();
+	m_boundingRect.setWidth(size + 1);
+	m_boundingRect.setHeight(size + 1);
 	update_pos();
 }
 
-void CurveNodeView::decrease_size( )
+void CurveNodeView::reset_size( )
 {
-	m_boundingRect.setWidth(m_boundingRect.width() - 1);
-	m_boundingRect.setHeight(m_boundingRect.height() - 1);
+	int size = themer()->get_property("CurveNode:diameter", 6).toInt();
+	m_boundingRect.setWidth(size);
+	m_boundingRect.setHeight(size);
 	update_pos();
 }
 

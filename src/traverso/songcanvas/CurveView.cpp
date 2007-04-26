@@ -360,7 +360,7 @@ void CurveView::hoverLeaveEvent ( QGraphicsSceneHoverEvent * event )
 	m_blinkTimer.stop();
 	if (m_blinkingNode) {
 		m_blinkingNode->set_color(themer()->get_color("CurveNode:default"));
-		m_blinkingNode->decrease_size();
+		m_blinkingNode->reset_size();
 		m_blinkingNode = 0;
 	}
 }
@@ -416,13 +416,13 @@ void CurveView::update_softselected_node( QPoint pos , bool force)
 	if (prevNode && (prevNode != m_blinkingNode) ) {
 		prevNode->set_color(themer()->get_color("CurveNode:default"));
 		prevNode->update();
-		prevNode->decrease_size();
+		prevNode->reset_size();
 		if (m_blinkingNode) {
-			m_blinkingNode->increase_size();
+			m_blinkingNode->set_selected();
 		}
 	}
 	if (!prevNode && m_blinkingNode) {
-		m_blinkingNode->increase_size();
+		m_blinkingNode->set_selected();
 	}
 }
 

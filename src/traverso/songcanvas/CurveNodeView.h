@@ -41,8 +41,8 @@ public:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	int type() const;
 	void calculate_bounding_rect();
-	void increase_size();
-	void decrease_size();
+	void set_selected();
+	void reset_size();
 	
 	void set_color(QColor color);
 	void load_theme_data();

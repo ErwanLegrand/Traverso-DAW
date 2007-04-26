@@ -8,6 +8,7 @@
 		<property name="AudioClip:wavemicroview:antialiased" value="0" />
 		<property name="AudioClip:fillwave" value="1" />
 		
+		<property name="CurveNode:diameter" value="6" />
 		
 		<property name="Song:track:seperatingheight" value="0" />
 		<property name="Song:track:minimumheight" value="16" />
