@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier 
+Copyright (C) 2006-2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveView.h,v 1.8 2007/04/25 01:34:02 benjie Exp $
 */
 
 #ifndef CURVE_VIEW_H
@@ -51,6 +50,9 @@ public:
 	void calculate_bounding_rect();
 	void load_theme_data();
 	
+	void set_start_offset(nframes_t offset);
+	nframes_t get_start_offset() const {return m_startoffset;}
+	
 
 protected:
 	void hoverEnterEvent ( QGraphicsSceneHoverEvent * event );
@@ -65,6 +67,7 @@ private:
 	QColor		m_blinkColor;
 	int		m_blinkColorDirection;
 	QList<CurveNodeView*>	m_nodeViews;
+	nframes_t	m_startoffset;
 	
 	void update_softselected_node(QPoint pos, bool force = false);
 

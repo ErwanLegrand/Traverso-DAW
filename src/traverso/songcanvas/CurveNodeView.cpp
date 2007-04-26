@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier
+Copyright (C) 2006-2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveNodeView.cpp,v 1.7 2007/02/23 13:54:33 r_sijrier Exp $
 */
 
 #include "CurveNodeView.h"
@@ -28,16 +27,18 @@ $Id: CurveNodeView.cpp,v 1.7 2007/02/23 13:54:33 r_sijrier Exp $
 #include <CurveNode.h>
 #include <Themer.h>
 #include <Curve.h>
+#include "CurveView.h"
 
 #include <Debugger.h>
 
-CurveNodeView::CurveNodeView( SongView * sv, ViewItem * parentViewItem, CurveNode * node, Curve* guicurve)
-	: ViewItem(parentViewItem, 0)
+CurveNodeView::CurveNodeView( SongView * sv, CurveView* curveview, CurveNode * node, Curve* guicurve)
+	: ViewItem(curveview, 0)
 	, CurveNode(guicurve, node->get_when(), node->get_value())
 	, m_node(node)
 {
 	PENTERCONS;
 	m_sv = sv;
+	m_curveview = curveview;
 	m_boundingRect = QRectF(0, 0, 6, 6);
 	load_theme_data();
 	
@@ -104,7 +105,7 @@ void CurveNodeView::set_color(QColor color)
 
 void CurveNodeView::update_pos( )
 {
-	setPos( (m_node->get_when() / m_sv->scalefactor) - (m_boundingRect.width() / 2),
+	setPos( ((m_node->get_when() - m_curveview->get_start_offset()) / m_sv->scalefactor) - (m_boundingRect.width() / 2),
 	 	m_parentViewItem->boundingRect().height() - (m_node->get_value() * m_parentViewItem->boundingRect().height() + m_boundingRect.height() / 2 ));
 		
 	set_when_and_value((m_node->get_when() / m_sv->scalefactor), m_node->get_value());
@@ -131,3 +132,4 @@ void CurveNodeView::load_theme_data()
 }
 
 //eof
+

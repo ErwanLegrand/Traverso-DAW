@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier 
+Copyright (C) 2006-2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveNodeView.h,v 1.5 2007/02/23 13:54:33 r_sijrier Exp $
 */
 
 #ifndef CURVE_NODE_VIEW_H
@@ -27,12 +26,14 @@ $Id: CurveNodeView.h,v 1.5 2007/02/23 13:54:33 r_sijrier Exp $
 
 #include <CurveNode.h>
 
+class CurveView;
+
 class CurveNodeView : public ViewItem, public CurveNode
 {
 	Q_OBJECT
 
 public:
-	CurveNodeView(SongView* sv, ViewItem* parentViewItem, CurveNode* node, Curve* guicurve);
+	CurveNodeView(SongView* sv, CurveView* curveview, CurveNode* node, Curve* guicurve);
 	~CurveNodeView();
 	
 	enum {Type = UserType + 9};
@@ -48,6 +49,7 @@ public:
 	CurveNode* get_curve_node() const {return m_node;}
 	
 private:
+	CurveView*	m_curveview;
 	CurveNode*	m_node;
 	QColor		m_color;
 

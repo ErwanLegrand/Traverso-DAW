@@ -181,6 +181,7 @@ CurveView::CurveView(SongView* sv, ViewItem* parentViewItem, Curve* curve)
 	
 	m_blinkColorDirection = 1;
 	m_blinkingNode = 0;
+	m_startoffset = 0;
 	m_guicurve = new Curve(0, m_sv->get_song());
 	
 	QList<CurveNode* >* nodes = m_curve->get_nodes();
@@ -246,9 +247,9 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	float vector[pixelcount];
 	
 // 	printf("range: %d\n", (int)m_nodeViews.last()->pos().x());
-	
-	m_guicurve->get_vector(xstart,
-				xstart + pixelcount,
+	int offset = m_startoffset / m_sv->scalefactor;
+	m_guicurve->get_vector(xstart + offset,
+				xstart + pixelcount + offset,
     				vector,
     				pixelcount);
 	
@@ -257,7 +258,7 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	}
 	// We could miss the last one since we skip 3 pixels at a time.
 	// so, always add the last one!
-	polygon <<  QPointF(xstart + pixelcount-1, height - (vector[pixelcount-1] * height) );
+	polygon <<  QPointF(xstart + pixelcount, height - (vector[pixelcount-1] * height) );
 	
 	// Depending on the zoom level, curve nodes can end up to be aligned 
 	// vertically at the exact same x position. The curve line won't be painted
@@ -463,7 +464,8 @@ Command* CurveView::add_node()
 	PENTER;
 	QPointF point = mapFromScene(cpointer().scene_pos());
 	
-	CurveNode* node = new CurveNode(m_curve, point.x() * m_sv->scalefactor, (m_boundingRect.height() - point.y()) / m_boundingRect.height());
+	CurveNode* node = new CurveNode(m_curve, point.x() * m_sv->scalefactor + m_startoffset,
+					 (m_boundingRect.height() - point.y()) / m_boundingRect.height());
 	return m_curve->add_node(node);
 }
 
@@ -569,6 +571,11 @@ void CurveView::set_view_mode()
 void CurveView::load_theme_data()
 {
 	calculate_bounding_rect();
+}
+
+void CurveView::set_start_offset(nframes_t offset)
+{
+	m_startoffset = offset;
 }
 
 //eof

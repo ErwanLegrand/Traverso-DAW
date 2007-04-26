@@ -71,6 +71,11 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	}
 	
 	curveView = new CurveView(m_sv, this, m_clip->get_gain_envelope());
+	// CurveViews don't 'get' their start offset, it's only a property for AudioClips..
+	// So to be sure the CurveNodeViews start offset get updated as well,
+	// we call curveviews calculate_bounding_rect() function!
+	curveView->set_start_offset(m_clip->get_source_start_frame());
+	curveView->calculate_bounding_rect();
 	
 	connect(m_clip, SIGNAL(muteChanged()), this, SLOT(repaint()));
 	connect(m_clip, SIGNAL(stateChanged()), this, SLOT(repaint()));
@@ -279,7 +284,8 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	}
 	
 	int mixcurvedata = 0;
-	mixcurvedata |= curveView->get_vector(xstart, pixelcount, curvemixdown);
+	int offset = m_clip->get_source_start_frame() / m_sv->scalefactor;
+	mixcurvedata |= curveView->get_vector(xstart + offset, pixelcount, curvemixdown);
 	
 	float fademixdown[pixelcount];
 	for (int i = 0; i < m_fadeViews.size(); ++i) {
@@ -624,6 +630,12 @@ Command * AudioClipView::reset_fade()
 
 void AudioClipView::position_changed()
 {
+	// Update the curveview start offset, only needed for left edge dragging
+	// but who cares :)
+	// the calculate_bounding_rect() will update AudioClipViews children, so
+	// the CurveView and it's nodes get updated as well, no need to set
+	// the start offset for those manually!
+	curveView->set_start_offset(m_clip->get_source_start_frame());
 	calculate_bounding_rect();
 	update();
 }

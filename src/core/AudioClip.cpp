@@ -448,7 +448,7 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 		m_fades.at(i)->process(mixdown, read_frames);
 	}
 	
-	m_gainEnvelope->process(mixdown, (m_song->get_transport_frame() - trackStartFrame), read_frames);
+	m_gainEnvelope->process(mixdown, (m_song->get_transport_frame() - (trackStartFrame - sourceStartFrame)), read_frames);
 	
 	return 1;
 }
