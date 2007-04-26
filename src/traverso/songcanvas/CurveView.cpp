@@ -253,12 +253,9 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
     				vector,
     				pixelcount);
 	
-	for (int i=0; i<pixelcount; i+=3) {
+	for (int i=0; i<pixelcount; i++) {
 		polygon <<  QPointF(xstart + i, height - (vector[i] * height) );
 	}
-	// We could miss the last one since we skip 3 pixels at a time.
-	// so, always add the last one!
-	polygon <<  QPointF(xstart + pixelcount, height - (vector[pixelcount-1] * height) );
 	
 	// Depending on the zoom level, curve nodes can end up to be aligned 
 	// vertically at the exact same x position. The curve line won't be painted
