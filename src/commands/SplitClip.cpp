@@ -43,6 +43,7 @@ public:
 	}
 	void paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) 
 	{
+		painter->setPen(themer()->get_color("AudioClip:contour"));
 		painter->drawLine(0, 0, 0, (int)m_boundingRect.height());
 	}
 };
@@ -164,12 +165,12 @@ int SplitClip::jog()
 	}
 	
 	QPointF point = m_cv->mapFromScene(m_splitPoint / m_sv->scalefactor, cpointer().y());
-	int xpos = point.x();
+	int xpos = (int) point.x();
 	if (xpos < 0) {
 		xpos = 0;
 	}
 	if (xpos > m_cv->boundingRect().width()) {
-		xpos = m_cv->boundingRect().width();
+		xpos = (int)m_cv->boundingRect().width();
 	}
 	m_splitcursor->setPos(xpos, 0);
 	m_sv->update_shuttle_factor();
