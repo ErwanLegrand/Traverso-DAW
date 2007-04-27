@@ -80,11 +80,17 @@ int SplitClip::prepare_actions()
 	leftClip->set_song(m_clip->get_song());
 	leftClip->set_track_start_frame( m_clip->get_track_start_frame() );
 	leftClip->set_right_edge(m_splitPoint);
+	if (leftClip->get_fade_out()) {
+		leftClip->reset_fade_out();
+	}
 	
 	rightClip->set_song(m_clip->get_song());
 	rightClip->set_left_edge(m_splitPoint);
 	rightClip->set_track_start_frame(m_splitPoint);
-
+	if (rightClip->get_fade_in()) {
+		rightClip->reset_fade_in();
+	}
+	
 	return 1;
 }
 

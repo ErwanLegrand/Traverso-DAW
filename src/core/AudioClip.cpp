@@ -955,7 +955,7 @@ void AudioClip::private_add_fade( FadeCurve* fade )
 
 void AudioClip::private_remove_fade( FadeCurve * fade )
 {
-	m_fades.append(fade);
+	m_fades.removeAll(fade);
 }
 
 int AudioClip::get_ref_count( ) const
