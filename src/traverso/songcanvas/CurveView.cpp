@@ -478,7 +478,7 @@ Command* CurveView::remove_node()
 		m_blinkingNode = 0;
 		return m_curve->remove_node(node);
 	}
-	return 0;
+	return ie().did_not_implement();
 }
 
 Command* CurveView::drag_node()
