@@ -94,7 +94,7 @@ void ResourcesWidget::set_project(Project * project)
 	songComboBox->setEnabled(true);
 	
 	connect(m_project->get_audiosource_manager(), SIGNAL(sourceAdded()), this, SLOT(update_tree_widgets()));
-	connect(m_project->get_audiosource_manager(), SIGNAL(stateChanged()), this, SLOT(update_tree_widgets()));
+// 	connect(m_project->get_audiosource_manager(), SIGNAL(stateChanged()), this, SLOT(update_tree_widgets()));
 	connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(song_added(Song*)));
 	connect(m_project, SIGNAL(songRemoved(Song*)), this, SLOT(song_removed(Song*)));
 	
