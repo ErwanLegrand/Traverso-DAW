@@ -94,6 +94,7 @@ void ResourcesWidget::set_project(Project * project)
 	songComboBox->setEnabled(true);
 	
 	connect(m_project->get_audiosource_manager(), SIGNAL(sourceAdded()), this, SLOT(update_tree_widgets()));
+	connect(m_project->get_audiosource_manager(), SIGNAL(stateChanged()), this, SLOT(update_tree_widgets()));
 	connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(song_added(Song*)));
 	connect(m_project, SIGNAL(songRemoved(Song*)), this, SLOT(song_removed(Song*)));
 	
@@ -102,6 +103,9 @@ void ResourcesWidget::set_project(Project * project)
 
 void ResourcesWidget::update_tree_widgets()
 {
+	audioFileTreeWidget->clear();
+	clipTreeWidget->clear();
+	
 	foreach(ReadSource* rs, m_project->get_audiosource_manager()->get_all_audio_sources()) {
 		QTreeWidgetItem* item = new QTreeWidgetItem(audioFileTreeWidget);
 		QString duration = frame_to_ms(rs->get_nframes(), 44100);
@@ -109,6 +113,10 @@ void ResourcesWidget::update_tree_widgets()
 		item->setText(1, duration);
 		item->setData(0, Qt::UserRole, rs->get_id());
 		item->setToolTip(0, rs->get_name() + "   " + duration);
+		if (!rs->get_ref_count()) {
+			item->setForeground(0, QColor(Qt::lightGray));
+			item->setForeground(1, QColor(Qt::lightGray));
+		}
 	}
 	
 	
@@ -122,6 +130,13 @@ void ResourcesWidget::update_tree_widgets()
 		item->setText(3, frame_to_ms(clip->get_length(), clip->get_rate()));
 		item->setData(0, Qt::UserRole, clip->get_id());
 		item->setToolTip(0, clip->get_name() + "   " + start + " - " + end);
+		
+		if (!clip->get_ref_count()) {
+			item->setForeground(0, QColor(Qt::lightGray));
+			item->setForeground(1, QColor(Qt::lightGray));
+			item->setForeground(2, QColor(Qt::lightGray));
+			item->setForeground(3, QColor(Qt::lightGray));
+		}
 	}
 
 	clipTreeWidget->sortItems(0, Qt::AscendingOrder);
