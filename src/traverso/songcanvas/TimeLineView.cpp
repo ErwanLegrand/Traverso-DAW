@@ -65,6 +65,7 @@ public:
 	int undo_action();
 	int finish_hold();
 	int begin_hold();
+	void cancel_action();
 	int jog();
 
 private :
@@ -123,6 +124,12 @@ int DragMarker::undo_action()
 {
 	m_marker->set_when(m_origWhen);
 	return 1;
+}
+
+void DragMarker::cancel_action()
+{
+	finish_hold();
+	undo_action();
 }
 
 void DragMarker::move_left(bool )
