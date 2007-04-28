@@ -35,7 +35,7 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="F5" >
 			<Objects>
-				<Object objectname="TrackView" slotsignature="add_new_plugin" modes="All" sortorder="40" instantanious="0" />
+				<Object objectname="TrackView" slotsignature="add_new_plugin" modes="All" sortorder="13" instantanious="0" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="LARROW" >
@@ -334,7 +334,7 @@
 		</keyfact> 
 		<keyfact type="HKEY" key1="C" >
 			<Objects>
-				<Object objectname="AudioClipView" mousehint="LRUD" modes="Edit" sortorder="9" pluginname="TraversoCommands" commandname="CopyClip"  arguments="copy" />
+				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" sortorder="9" pluginname="TraversoCommands" commandname="CopyClip"  arguments="copy" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="D" >
