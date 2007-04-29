@@ -302,8 +302,8 @@
 		</keyfact>
 		<keyfact type="HKEY" key1="E" >
 			<Objects>
-			<Object objectname="AudioClipView" mousehint="LR" modes="All" sortorder="8" pluginname="TraversoCommands" commandname="DragEdge"  arguments="false" />
-		</Objects>
+				<Object objectname="AudioClipView" mousehint="LR" modes="All" sortorder="8" pluginname="TraversoCommands" commandname="DragEdge" arguments="false" />
+			</Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="G" >
 			<Objects>

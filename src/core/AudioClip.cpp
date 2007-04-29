@@ -588,8 +588,8 @@ Command* AudioClip::reset_fade_out()
 
 Command* AudioClip::reset_fade_both()
 {
-	set_fade_in(1);
-	set_fade_out(1);
+	reset_fade_in();
+	reset_fade_out();
 	return (Command*) 0;
 }
 
