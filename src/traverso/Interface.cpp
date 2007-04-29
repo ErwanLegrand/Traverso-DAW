@@ -43,6 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "SpectralMeterWidget.h"
 		
 		
+#include "Import.h"
 #include "songcanvas/SongWidget.h"
 
 #include "dialogs/settings/SettingsDialog.h"
@@ -381,6 +382,14 @@ void Interface::create_menus( )
 	action = menu->addAction(tr("New &Song(s)..."));
 	connect(action, SIGNAL(triggered()), this, SLOT(show_newsong_dialog()));
 
+	menu->addSeparator();
+
+	action = menu->addAction(tr("Import &Audio..."));
+	connect(action, SIGNAL(triggered()), this, SLOT(import_audio()));
+	action = menu->addAction(tr("Insert Si&lence..."));
+	action->setDisabled(true);
+	connect(action, SIGNAL(triggered()), this, SLOT(insert_silence()));
+	
 	
 	menu = menuBar()->addMenu(tr("&View"));
 
@@ -710,7 +719,27 @@ void Interface::update_opengl()
 	foreach(SongWidget* widget, m_songWidgets) {
 		widget->set_use_opengl(toggled);
 	}
-	
+}
+
+void Interface::import_audio()
+{
+	if (currentSongWidget->get_song()->get_numtracks() > 0) {
+		QList<Track* > tracks = currentSongWidget->get_song()->get_tracks();
+		Track*	shortestTrack = tracks.at(0);
+
+		for (int i=1; i<tracks.size(); i++) {
+			if (AudioClip* lastClip = tracks.at(i)->get_cliplist().get_last()) {
+				shortestTrack = tracks.at(i);
+			}
+		}
+		Import* cmd = new Import(shortestTrack);
+		Command::process_command(cmd);
+	}
+}
+
+void Interface::insert_silence()
+{
+	printf("FIXME: Interface::insert_silence()\n");
 }
 
 DigitalClock::DigitalClock(QWidget *parent)

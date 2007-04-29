@@ -141,6 +141,8 @@ public slots :
 	void set_fade_in_shape(QAction* action);
 	void set_fade_out_shape(QAction* action);
 	void update_opengl();
+	void import_audio();
+	void insert_silence();
 
 	Command* show_song_widget();
 	Command* full_screen();
