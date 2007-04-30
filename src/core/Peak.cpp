@@ -99,7 +99,7 @@ int Peak::read_header()
 	
 	Q_ASSERT(m_source);
 	
-	m_file = fopen(m_fileName.toAscii().data(),"rb");
+	m_file = fopen(m_fileName.toUtf8().data(),"rb");
 	
 	if (! m_file) {
 		PERROR("Couldn't open peak file for reading! (%s)", m_fileName.toAscii().data());
@@ -364,7 +364,7 @@ int Peak::prepare_processing()
 	m_normFileName.append(".norm");
 	
 	// Create read/write enabled file
-	m_file = fopen(m_fileName.toAscii().data(),"wb+");
+	m_file = fopen(m_fileName.toUtf8().data(),"wb+");
 	
 	if (! m_file) {
 		PWARN("Couldn't open peak file for writing! (%s)", m_fileName.toAscii().data());
@@ -373,7 +373,7 @@ int Peak::prepare_processing()
 	}
 	
 	// Create the temporary normalization data file
-	m_normFile = fopen(m_normFileName.toAscii().data(), "wb+");
+	m_normFile = fopen(m_normFileName.toUtf8().data(), "wb+");
 	
 	if (! m_normFile) {
 		PWARN("Couldn't open normalization data file for writing! (%s)", m_normFileName.toAscii().data());

@@ -594,7 +594,6 @@ void Project::private_remove_song(Song * song)
 
 QString Project::get_import_dir() const
 {
-	printf("import dir %s\n", QS_C(m_importDir));
 	return m_importDir;
 }
 

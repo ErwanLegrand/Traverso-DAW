@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: MonoReader.cpp,v 1.3 2007/04/30 13:49:59 r_sijrier Exp $
+$Id: MonoReader.cpp,v 1.4 2007/04/30 18:15:39 r_sijrier Exp $
 */
 
 
@@ -95,7 +95,7 @@ int MonoReader::init( )
 	memset (&m_sfinfo, 0, sizeof(m_sfinfo));
 
 
-	if ((m_sf = sf_open (QS_C(m_fileName), SFM_READ, &m_sfinfo)) == 0) {
+	if ((m_sf = sf_open ((m_fileName.toUtf8().data()), SFM_READ, &m_sfinfo)) == 0) {
 		PERROR("Couldn't open soundfile (%s)", QS_C(m_fileName));
 		return ReadSource::COULD_NOT_OPEN_FILE;
 	}
