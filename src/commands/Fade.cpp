@@ -84,6 +84,13 @@ int FadeRange::undo_action()
 }
 
 
+void FadeRange::cancel_action()
+{
+	finish_hold();
+	undo_action();
+}
+
+
 int FadeRange::jog()
 {
 	int dx = (origX - (cpointer().x()) ) * m_direction;
@@ -117,7 +124,7 @@ FadeBend::FadeBend(FadeView * fadeview)
 int FadeBend::begin_hold()
 {
 	PENTER;
-	origY = cpointer().y();
+	origY = cpointer().on_first_input_event_y();
 	oldValue =  m_fade->get_bend_factor();
 	m_fv->set_holding(true);
 	return 1;
@@ -172,7 +179,7 @@ FadeStrength::FadeStrength(FadeView* fadeview)
 int FadeStrength::begin_hold()
 {
 	PENTER;
-	origY = cpointer().y();
+	origY = cpointer().on_first_input_event_y();
 	oldValue =  m_fade->get_strenght_factor();
 	m_fv->set_holding(true);
 	return 1;
