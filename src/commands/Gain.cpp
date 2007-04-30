@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Gain.cpp,v 1.19 2007/04/30 11:08:18 r_sijrier Exp $
+$Id: Gain.cpp,v 1.20 2007/04/30 18:16:46 benjie Exp $
 */
 
 #include "Gain.h"
@@ -85,7 +85,7 @@ int Gain::begin_hold()
 		return -1;
 	}
 	newGain = origGain;
-	origPos = QPoint(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
+	origPos = cpointer().pos();
 	return 1;
 }
 
