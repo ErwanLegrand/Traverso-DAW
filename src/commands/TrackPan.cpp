@@ -106,7 +106,8 @@ int TrackPan::jog()
 	newPan = p + newPan;
         m_track->set_pan( newPan );
 	
-	origX = cpointer().x();
+// 	origX = cpointer().x();
+	QCursor::setPos(mousePos);
 	
         return 1;
 }
