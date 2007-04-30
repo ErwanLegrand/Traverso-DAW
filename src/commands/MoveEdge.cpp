@@ -49,7 +49,7 @@ int MoveEdge::prepare_actions()
 	
 	if (m_newPos == m_originalPos) {
 		// Nothing happened!
-		return 0;
+		return -1;
 	}
         
         return 1;

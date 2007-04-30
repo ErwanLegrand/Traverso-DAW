@@ -53,10 +53,10 @@ class SongView : public ViewItem
 	Q_CLASSINFO("shuttle", tr("Shuttle"))
 	Q_CLASSINFO("goto_begin", tr("To start"))
 	Q_CLASSINFO("goto_end", tr("To end"))
-	Q_CLASSINFO("play_cursor_move", tr("Playcursor: Move"))
+	Q_CLASSINFO("play_cursor_move", tr("Playhead: Move"))
 	Q_CLASSINFO("work_cursor_move", tr("Workcursor: Move"))
 	Q_CLASSINFO("add_marker", tr("Add Marker"))
-	Q_CLASSINFO("playhead_to_workcursor", tr("Playcursor: To workcursor"))
+	Q_CLASSINFO("playhead_to_workcursor", tr("Playhead: To workcursor"))
 
 public :
 

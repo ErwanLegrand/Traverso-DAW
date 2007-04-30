@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -17,62 +17,44 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CommandGroup.cpp,v 1.6 2007/04/30 10:09:11 r_sijrier Exp $
 */
 
-#include "CommandGroup.h"
+#include "RemoveClip.h"
+
+#include <AudioClip.h>
+#include <Track.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
+ 
 
-
-/** 	\class CommandGroup 
- *	\brief A class to return a group of Command objects as one history object to the historystack
- *	
- */
-
-
-CommandGroup::~ CommandGroup()
+RemoveClip::RemoveClip(AudioClip* clip)
+	: Command(clip, tr("Remove Clip"))
 {
-	foreach(Command* cmd, m_commands) {
-		delete cmd;
-	}
+	m_clip = clip;
+	m_track = m_clip->get_track();
 }
 
-int CommandGroup::prepare_actions()
-{
-	if (m_commands.size() == 0) {
-		return -1;
-	}
-	
-	int result = 1;
-	
-	foreach(Command* cmd, m_commands) {
-		if (cmd->prepare_actions() == -1) {
-			printf("one of the commands in the group failed prepare_actions\n");
-			result = -1;
-		}
-	}
-	
-	return result;
-}
 
-int CommandGroup::do_action()
+int RemoveClip::prepare_actions()
 {
-	foreach(Command* cmd, m_commands) {
-		cmd->do_action();
-	}
-	
 	return 1;
 }
 
-int CommandGroup::undo_action()
+
+int RemoveClip::do_action()
 {
-	foreach(Command* cmd, m_commands) {
-		cmd->undo_action();
-	}
-	
+	PENTER;
+	Command::process_command(m_track->remove_clip(m_clip, false));
+	return 1;
+}
+
+int RemoveClip::undo_action()
+{
+	PENTER;
+
+	Command::process_command(m_track->add_clip(m_clip, false));
 	return 1;
 }
 

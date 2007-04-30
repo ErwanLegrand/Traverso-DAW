@@ -13,7 +13,8 @@ Zoom.cpp \
 AudioClipExternalProcessing.cpp \
 ArmTracks.cpp \
 PlayHeadMove.cpp \
-WorkCursorMove.cpp
+WorkCursorMove.cpp \
+RemoveClip.cpp
 HEADERS += AddRemove.h \
 ClipSelection.h \
 CommandGroup.h \
@@ -31,7 +32,8 @@ Zoom.h \
 AudioClipExternalProcessing.h \
 ArmTracks.h \
 PlayHeadMove.h \
-WorkCursorMove.h
+WorkCursorMove.h \
+RemoveClip.h
 TARGET = traversocommands
 DESTDIR = ../../lib
 TEMPLATE = lib

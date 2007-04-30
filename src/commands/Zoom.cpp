@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Zoom.cpp,v 1.13 2007/04/20 06:12:39 benjie Exp $
+    $Id: Zoom.cpp,v 1.14 2007/04/30 10:09:11 r_sijrier Exp $
 */
 
 #include <libtraversocore.h>
@@ -43,7 +43,7 @@ Zoom::Zoom(SongView* sv)
 
 int Zoom::prepare_actions()
 {
-        return 0;
+        return -1;
 }
 
 

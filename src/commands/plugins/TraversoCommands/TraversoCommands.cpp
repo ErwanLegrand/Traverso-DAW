@@ -116,7 +116,7 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 					"RemoveClipCommand needs a Clip as argument");
 				return 0;
 			}
-			return clip->get_track()->remove_clip(clip);
+			return new RemoveClip(clip);
 		}
 		
 		case RemoveTrackCommand:

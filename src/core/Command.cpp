@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Command.cpp,v 1.18 2007/04/17 11:51:20 r_sijrier Exp $
+$Id: Command.cpp,v 1.19 2007/04/30 10:09:11 r_sijrier Exp $
 */
 
 #include "Command.h"
@@ -274,7 +274,7 @@ void Command::process_command(Command * cmd)
 {
 	Q_ASSERT(cmd);
 	
-	if (cmd->prepare_actions()) {
+	if (cmd->prepare_actions() != -1) {
 		cmd->set_valid(true);
 		if (cmd->push_to_history_stack() < 0) {
 			// QUndoStack calls redo() for us, now it's not

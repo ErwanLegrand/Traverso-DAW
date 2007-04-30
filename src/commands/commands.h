@@ -12,3 +12,4 @@
 #include "AddRemove.h"
 #include "AudioClipExternalProcessing.h"
 #include "ArmTracks.h"
+#include "RemoveClip.h"
