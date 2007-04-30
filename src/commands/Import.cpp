@@ -71,12 +71,13 @@ int Import::prepare_actions()
 		
 		int splitpoint = m_fileName.lastIndexOf("/") + 1;
 		QString dir = m_fileName.left(splitpoint - 1);
-		pm().get_project()->set_import_dir(dir);
 		
 		if (m_fileName.isEmpty()) {
 			PWARN("FileName is empty!");
 			return -1;
 		}
+		
+		pm().get_project()->set_import_dir(dir);
 		
 		if (create_readsource() == -1) {
 			return -1;
