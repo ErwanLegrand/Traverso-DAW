@@ -45,6 +45,7 @@ ReadSource::ReadSource(const QDomNode node)
 	: AudioSource(node)
 	, m_sources()
 	, m_refcount(0)
+	, m_error(0)
 {
 	Project* project = pm().get_project();
 	
@@ -61,6 +62,7 @@ ReadSource::ReadSource(const QDomNode node)
 ReadSource::ReadSource(const QString& dir, const QString& name)
 	: AudioSource(dir, name)
 	, m_refcount(0)
+	, m_error(0)
 {
 	SNDFILE* sf;
 	SF_INFO  sfinfo;
@@ -78,6 +80,7 @@ ReadSource::ReadSource(const QString& dir, const QString& name)
 ReadSource::ReadSource(const QString& dir, const QString& name, int channelCount, int fileCount)
 	: AudioSource(dir, name)
 	, m_refcount(0)
+	, m_error(0)
 {
 	  m_channelCount = channelCount;
 	  m_fileCount = fileCount;
@@ -101,7 +104,7 @@ int ReadSource::init( )
 	
 	if (m_channelCount == 0) {
 		PERROR("ReadSource channel count is 0");
-		return -1;
+		return (m_error = INVALID_CHANNEL_COUNT);
 	}
 	
 	
@@ -109,36 +112,33 @@ int ReadSource::init( )
 	
 	if (m_wasRecording) {
 		if (m_channelCount == 1 && m_fileCount == 1) {
-			if (add_mono_reader(1, 0, fileName + "-ch" + QByteArray::number(0) + ".wav") < 0) {
-				return -1;
+			if ( (m_error = add_mono_reader(1, 0, fileName + "-ch" + QByteArray::number(0) + ".wav")) < 0) {
+				return m_error;
 			}
 		} else if (m_channelCount == 2 && m_fileCount == 2) {
-			if ((add_mono_reader(1, 0, fileName + "-ch" + QByteArray::number(0) + ".wav") < 0) || 
-				  (add_mono_reader(1, 1, fileName + "-ch" + QByteArray::number(1) + ".wav") < 0)) {
-				return -1;
+			if (((m_error = add_mono_reader(1, 0, fileName + "-ch" + QByteArray::number(0) + ".wav") < 0)) || 
+				  ((m_error = add_mono_reader(1, 1, fileName + "-ch" + QByteArray::number(1) + ".wav")) < 0)) {
+				return m_error;
 			}
 		} else {
 			PERROR("WasRecording section: Unsupported combination of channelcount/filecount (%d/%d)", m_channelCount, m_fileCount);
-			return -1;
+			return (m_error = CHANNELCOUNT_FILECOUNT_MISMATCH);
 		}
 	} else {
 	
 		if (m_channelCount == 1 && m_fileCount == 1) {
-			if (add_mono_reader(1, 0, fileName) < 0) {
-				return -1;
+			if ((m_error = add_mono_reader(1, 0, fileName)) < 0) {
+				return m_error;
 			}
 		} else if (m_channelCount == 2 && m_fileCount == 1) {
-			if ((add_mono_reader(2, 0, fileName) < 0) || 
-						(add_mono_reader(2, 1, fileName) < 0)) {
-				return -1;
-						}
+			if (((m_error = add_mono_reader(2, 0, fileName)) < 0) || ((m_error = add_mono_reader(2, 1, fileName)) < 0)) {
+				return m_error;
+			}
 		} else {
 			PERROR("Unsupported combination of channelcount/filecount (%d/%d)", m_channelCount, m_fileCount);
-			return -1;
+			return (m_error = CHANNELCOUNT_FILECOUNT_MISMATCH);
 		}
 	}
-	
-	
 	
  	
 	return 1;
@@ -217,5 +217,24 @@ void ReadSource::set_was_recording(bool wasRecording)
 	m_wasRecording = wasRecording;
 }
 
-//eof
+int ReadSource::reset_filename(const QString & filename)
+{
+	m_error = 0;
+	
+	int splitpoint = filename.lastIndexOf("/") + 1;
+	int length = filename.length();
+	
+	QString dir = filename.left(splitpoint - 1) + "/";
+	QString name = filename.right(length - splitpoint);
+		
+	set_dir(dir);
+	set_name(name);
+	
+	if (init() < 0) {
+		return -1;
+	}
+	
+	return 1;
+}
 
+//eof

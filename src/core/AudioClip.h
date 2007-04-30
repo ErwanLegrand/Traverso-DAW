@@ -110,6 +110,7 @@ public:
 	int get_rate() const;
 	int get_bitdepth() const;
 	qint64 get_readsource_id() const;
+	ReadSource* get_readsource() const;
 	
 	QString get_name() const;
 	QDomNode get_dom_node() const;
@@ -118,6 +119,7 @@ public:
 	bool is_take() const;
 	bool is_selected() const;
 	bool has_song() const;
+	bool invalid_readsource() const {return m_invalidReadSource;}
 	int recording_state() const;
 
 	static bool smaller(const AudioClip* left, const AudioClip* right )
@@ -156,6 +158,7 @@ private:
 	int 		isSelected;
 	bool 		isTake;
 	bool 		isMuted;
+	bool		m_invalidReadSource;
 	RecordingStatus	m_recordingStatus;
 	float	 	m_gain;
 	float		m_normfactor;

@@ -170,7 +170,16 @@ ReadSource* ResourcesManager::create_new_readsource(const QString& dir, const QS
 	ReadSource* source = new ReadSource(dir, name);
 	m_sources.insert(source->get_id(), source);
 	source->set_created_by_song( -1 );
-	return get_readsource(source->get_id());
+	
+	source = get_readsource(source->get_id());
+	
+	if (source->get_error() < 0) {
+		m_sources.remove(source->get_id());
+		delete source;
+		return 0;
+	}
+
+	return source;
 }
 
 
@@ -202,8 +211,14 @@ ReadSource* ResourcesManager::create_new_readsource(
 		source->set_created_by_song( -1 );
 	}
 	
+	source = get_readsource(source->get_id());
+	if (source->get_error() < 0) {
+		m_sources.remove(source->get_id());
+		delete source;
+		return 0;
+	}
 
-	return get_readsource(source->get_id());
+	return source;
 }
 
 ReadSource * ResourcesManager::get_readsource( qint64 id )
@@ -211,6 +226,7 @@ ReadSource * ResourcesManager::get_readsource( qint64 id )
 	ReadSource* source = m_sources.value(id);
 	
 	if ( ! source ) {
+		PERROR("ReadSource with id %lld is not in my list!", id);
 		return 0;
 	}
 	
@@ -224,11 +240,8 @@ ReadSource * ResourcesManager::get_readsource( qint64 id )
 	}
 		
 	if ( source->init() < 0) {
-		info().warning( tr( "Failed to initialize ReadSource, removing from database: %1")
-				.arg(source->get_filename()) );
-		m_sources.remove(id);
-		delete source;
-		source = 0;
+		info().warning( tr("ResourcesManager::  Failed to initialize ReadSource %1")
+				.arg(source->get_filename()));
 	}
 	
 	emit stateChanged();

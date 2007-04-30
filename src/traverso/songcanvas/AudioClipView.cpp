@@ -37,6 +37,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Curve.h>
 #include <Interface.h>
 
+#include <QFileDialog>
+
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -122,6 +124,18 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	clipRect.setWidth(clipRect.width() + 1);
 	clipRect.setHeight(clipRect.height());
 	painter->setClipRect(clipRect);
+	
+	if (m_clip->invalid_readsource()) {
+		draw_clipinfo_area(painter, xstart, pixelcount);
+		painter->fillRect(xstart, 0, pixelcount, m_height, themer()->get_color("AudioClip:invalidreadsource"));
+		painter->setPen(themer()->get_color("AudioClip:contour"));
+		painter->drawRect(xstart, 0, pixelcount, m_height - 1);
+		painter->setPen(Qt::black);
+		painter->setFont( QFont( "Bitstream Vera Sans", 11 ) );
+		painter->drawText(30, 0, 300, m_height, Qt::AlignVCenter, tr("Click to reset AudioFile !"));
+		painter->restore();
+		return;
+	}
 	
 	if (m_drawbackground) {
 		bool mousehover = (option->state & QStyle::State_MouseOver);
@@ -735,6 +749,38 @@ void AudioClipView::set_dragging(bool dragging)
 	}
 	
 	m_dragging = dragging;
+}
+
+Command * AudioClipView::set_audio_file()
+{
+	if (m_clip->invalid_readsource()) {
+		ReadSource* rs = m_clip->get_readsource();
+		if ( ! rs ) {
+			return ie().failure();
+		}
+		
+		QString filename = QFileDialog::getOpenFileName(0,
+					tr("Reset Audio File for Clip: %1").arg(m_clip->get_name()),
+					rs->get_filename(),
+					tr("All files (*);;Audio files (*.wav *.flac)"));
+		
+		if (filename.isEmpty()) {
+			info().information(tr("No file selected!"));
+			return ie().failure();
+		}
+		
+		if (rs->reset_filename(filename) < 0) {
+			return ie().failure();
+		}
+			
+		m_clip->set_audio_source(rs);
+		
+		info().information(tr("Succesfully set AudioClip file to %1").arg(filename));
+		
+		return ie().succes();
+	}
+	
+	return ie().did_not_implement();
 }
 
 //eof

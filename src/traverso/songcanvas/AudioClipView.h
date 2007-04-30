@@ -44,6 +44,7 @@ class AudioClipView : public ViewItem
 	Q_CLASSINFO("select_fade_in_shape", tr("In: Select shape"));
 	Q_CLASSINFO("select_fade_out_shape", tr("Out: Select shape"));
 	Q_CLASSINFO("reset_fade", tr("In/Out: Reset"));
+	Q_CLASSINFO("set_audio_file", tr("Reset Audio File"));
 
 public:
 	AudioClipView(SongView* view, TrackView* parent, AudioClip* clip);
@@ -120,6 +121,7 @@ public slots:
 	Command* select_fade_in_shape();
 	Command* select_fade_out_shape();
 	Command* reset_fade();
+	Command* set_audio_file();
 	
 private slots:
 	void update_progress_info(int progress);

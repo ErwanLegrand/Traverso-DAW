@@ -107,7 +107,7 @@ void AudioClip::init()
 	m_track = 0;
 	m_readSource = 0;
 	m_recordingStatus = NO_RECORDING;
-	isSelected = false;
+	isSelected = m_invalidReadSource = false;
 	fadeIn = 0;
 	fadeOut = 0;
 	m_refcount = 0;
@@ -385,8 +385,8 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 
 	Q_ASSERT(m_readSource);
 
-	if (channel >= m_readSource->get_channel_count()) {
-		return -1;	// Channel doesn't exist!!
+	if (m_invalidReadSource || (channel >= m_readSource->get_channel_count())) {
+		return -1;
 	}
 
 	
@@ -630,6 +630,13 @@ void AudioClip::set_audio_source(ReadSource* rs)
 {
 	PENTER;
 	
+	int error = rs->get_error();
+	if (error < 0) {
+		m_invalidReadSource = true;
+	} else {
+		m_invalidReadSource = false;
+	}
+		
 	m_readSource = rs;
 	sourceLength = rs->get_nframes();
 
@@ -699,7 +706,7 @@ void AudioClip::finish_write_source( WriteSource * ws )
 			m_recordingStatus = NO_RECORDING;
 			emit recordingFinished();
 		} else {
-			info().critical(tr("No ReadSource returned from asm after recording, removing clip from Track!"));
+			info().critical(tr("No ReadSource returned from resources manager after recording, removing clip from Track!"));
 			Command::process_command(m_track->remove_clip(this, false));
 		}
 	}
@@ -997,6 +1004,11 @@ bool AudioClip::has_song() const
 		return true;
 	}
 	return false;
+}
+
+ReadSource * AudioClip::get_readsource() const
+{
+	return m_readSource;
 }
 
 // eof

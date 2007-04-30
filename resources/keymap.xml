@@ -197,6 +197,7 @@
 				<Object objectname="SongView" slotsignature="touch" modes="All" sortorder="2" submenu="Work Cursor" instantanious="0" />
 				<Object objectname="TrackPanelLed" slotsignature="toggle" modes="All" sortorder="1" />
 				<Object objectname="TrackPanelBus" slotsignature="TrackView::select_bus" modes="All" instantanious="0" />
+				<Object objectname="AudioClipView" slotsignature="set_audio_file" modes="All" sortorder="80" instantanious="0" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="MouseButtonRight" >

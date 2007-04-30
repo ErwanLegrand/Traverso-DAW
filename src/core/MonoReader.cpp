@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: MonoReader.cpp,v 1.2 2007/04/17 19:56:46 r_sijrier Exp $
+$Id: MonoReader.cpp,v 1.3 2007/04/30 13:49:59 r_sijrier Exp $
 */
 
 
@@ -97,21 +97,21 @@ int MonoReader::init( )
 
 	if ((m_sf = sf_open (QS_C(m_fileName), SFM_READ, &m_sfinfo)) == 0) {
 		PERROR("Couldn't open soundfile (%s)", QS_C(m_fileName));
-		return -1;
+		return ReadSource::COULD_NOT_OPEN_FILE;
 	}
 
 	if (m_sourceChannelCount > m_sfinfo.channels) {
 		PERROR("ReadAudioSource: file only contains %d channels; %d is invalid as a channel number", m_sfinfo.channels, m_sourceChannelCount);
 		sf_close (m_sf);
 		m_sf = 0;
-		return -1;
+		return ReadSource::INVALID_CHANNEL_COUNT;
 	}
 
 	if (m_sfinfo.channels == 0) {
 		PERROR("ReadAudioSource: not a valid channel count: %d", m_sfinfo.channels);
 		sf_close (m_sf);
 		m_sf = 0;
-		return -1;
+		return ReadSource::ZERO_CHANNELS;
 	}
 
 	m_source->m_length = m_sfinfo.frames;

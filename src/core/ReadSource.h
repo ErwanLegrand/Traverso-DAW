@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.h,v 1.18 2007/04/26 18:57:57 r_sijrier Exp $
+$Id: ReadSource.h,v 1.19 2007/04/30 13:49:59 r_sijrier Exp $
 */
 
 #ifndef READSOURCE_H
@@ -38,6 +38,13 @@ public :
 	ReadSource(const QString& dir, const QString& name, int channelCount, int fileCount);
 	~ReadSource();
 	
+	enum ReadSourceError {
+		COULD_NOT_OPEN_FILE = -1,
+  		INVALID_CHANNEL_COUNT = -2,
+    		ZERO_CHANNELS = -3,
+      		CHANNELCOUNT_FILECOUNT_MISMATCH = -4
+	};
+	
 	ReadSource* deep_copy();
 
 	int rb_read(int channel, audio_sample_t* dst, nframes_t start, nframes_t cnt);
@@ -45,6 +52,8 @@ public :
 
 	int init();
 	int get_ref_count() const {return m_refcount;}
+	int get_error() const {return m_error;}
+	int reset_filename(const QString& filename);
 	void set_active(bool active);
 	void set_was_recording(bool wasRecording);
 	
@@ -57,6 +66,7 @@ public :
 private:
 	QList<MonoReader*> m_sources;
 	int	m_refcount;
+	int	m_error;
 	
 	
 	int ref() { return m_refcount++;}
