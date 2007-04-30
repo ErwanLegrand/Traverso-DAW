@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier
+Copyright (C) 2006-2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.cpp,v 1.17 2007/04/17 19:56:46 r_sijrier Exp $
 */
 
 #include "WriteSource.h"
@@ -302,7 +301,7 @@ int WriteSource::prepare_export (ExportSpecification* spec)
 		name.append("-ch" + QByteArray::number(m_channelNumber) + ".wav");
 	}
 	
-	if ((sf = sf_open (QS_C(name), SFM_WRITE, &sfinfo)) == 0) {
+	if ((sf = sf_open(name.toUtf8().data(), SFM_WRITE, &sfinfo)) == 0) {
 		sf_error_str (0, errbuf, sizeof (errbuf) - 1);
 		PWARN("Export: cannot open output file \"%s\" (%s)", QS_C(m_fileName), errbuf);
 		return -1;
