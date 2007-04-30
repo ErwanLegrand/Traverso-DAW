@@ -126,8 +126,8 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	painter->setClipRect(clipRect);
 	
 	if (m_clip->invalid_readsource()) {
-		draw_clipinfo_area(painter, xstart, pixelcount);
 		painter->fillRect(xstart, 0, pixelcount, m_height, themer()->get_color("AudioClip:invalidreadsource"));
+		draw_clipinfo_area(painter, xstart, pixelcount);
 		painter->setPen(themer()->get_color("AudioClip:contour"));
 		painter->drawRect(xstart, 0, pixelcount, m_height - 1);
 		painter->setPen(Qt::black);

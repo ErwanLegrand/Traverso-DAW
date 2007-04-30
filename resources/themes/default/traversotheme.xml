@@ -62,6 +62,7 @@
 		<color name="AudioClip:clipinfobackground"  red="240" green="190" blue="218"  alpha="200" />
 		<color name="AudioClip:clipinfobackground:inactive"  red="199" green="190" blue="218"  alpha="200" />
 		<color name="AudioClip:sampleoverload" red="255" green="0" blue="0" alpha="255" />
+		<color name="AudioClip:invalidreadsource"  red="255" green="0" blue="0"  alpha="100" />
 		
 		
 		<color name="Curve:active" red="255" green="0" blue="255" alpha="255" />

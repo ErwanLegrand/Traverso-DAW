@@ -52,6 +52,11 @@
          <string>Both</string>
         </property>
        </item>
+       <item>
+        <property name="text" >
+         <string>Files</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item>
@@ -121,7 +126,7 @@
     </layout>
    </item>
   </layout>
-  <widget class="QWidget" name="" >
+  <widget class="QWidget" name="layoutWidget" >
    <property name="geometry" >
     <rect>
      <x>0</x>

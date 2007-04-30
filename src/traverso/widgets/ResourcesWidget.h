@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 class Project;
 class Song;
+class QListView;
+class QDirModel;
 
 class ResourcesWidget : public QWidget, protected Ui::ResourcesWidget
 {
@@ -40,6 +42,8 @@ public:
 	
 private:
 	Project* m_project;
+	QListView* m_dirView;
+	QDirModel* m_dirModel;
 	
 
 private slots:
@@ -49,6 +53,7 @@ private slots:
 	void song_combo_box_index_changed(int index);
 	void song_added(Song* song);
 	void song_removed(Song* song);
+	void dirview_item_clicked(const QModelIndex& index );
 };
 
 #endif

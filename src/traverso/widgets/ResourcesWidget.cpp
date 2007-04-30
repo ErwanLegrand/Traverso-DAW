@@ -32,7 +32,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Themer.h>
 
 #include <QHeaderView>
-
+#include <QDirModel>
+#include <QListView>
 
 ResourcesWidget::ResourcesWidget(QWidget * parent)
 	: QWidget(parent)
@@ -63,14 +64,20 @@ ResourcesWidget::ResourcesWidget(QWidget * parent)
 	audioFileTreeWidget->header()->setResizeMode(0, QHeaderView::ResizeToContents);
 	audioFileTreeWidget->header()->setResizeMode(1, QHeaderView::ResizeToContents);
 	
-	viewComboBox->setFocusPolicy(Qt::NoFocus);
-	songComboBox->setFocusPolicy(Qt::NoFocus);
-	clipTreeWidget->setFocusPolicy(Qt::NoFocus);
-	audioFileTreeWidget->setFocusPolicy(Qt::NoFocus);
-
+	m_dirModel = new QDirModel;
+	m_dirModel->setFilter(QDir::Dirs | QDir::Files);
+	m_dirView = new QListView;
+	m_dirView->setModel(m_dirModel);
+	m_dirView->setDragEnabled(true);
+	m_dirView->setDropIndicatorShown(true);
+	m_dirView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+	m_dirModel->setSorting(QDir::DirsFirst | QDir::Name | QDir::IgnoreCase);
+	layout()->addWidget(m_dirView);
+	m_dirView->hide();
 	
 	connect(viewComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(view_combo_box_index_changed(int)));
 	connect(songComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(song_combo_box_index_changed(int)));
+	connect(m_dirView, SIGNAL(clicked(const QModelIndex& )), this, SLOT(dirview_item_clicked(const QModelIndex&)));
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 }
 
@@ -148,14 +155,21 @@ void ResourcesWidget::view_combo_box_index_changed(int index)
 	if (index == 0) {
 		audioFileTreeWidget->show();
 		clipTreeWidget->hide();
+		m_dirView->hide();
 	} else if (index == 1) {
 		audioFileTreeWidget->hide();
 		clipTreeWidget->show();
-	} else {
+		m_dirView->hide();
+	} else if (index == 2) {
 		audioFileTreeWidget->show();
 		clipTreeWidget->show();
+		m_dirView->hide();
+	} else {
+		audioFileTreeWidget->hide();
+		clipTreeWidget->hide();
+		m_dirView->show();
+		m_dirView->setRootIndex(m_dirModel->index(m_project->get_import_dir()));
 	}
-		
 }
 
 void ResourcesWidget::song_combo_box_index_changed(int index)
@@ -174,5 +188,13 @@ void ResourcesWidget::song_removed(Song * song)
 	int index = songComboBox->findData(song->get_id());
 	songComboBox->removeItem(index);
 	update_tree_widgets();
+}
+
+void ResourcesWidget::dirview_item_clicked(const QModelIndex & index)
+{
+	if (m_dirModel->isDir(index)) {
+		m_dirView->setRootIndex(index);
+		m_project->set_import_dir(m_dirModel->filePath(index));
+	}
 }
 

@@ -166,6 +166,7 @@ void ViewPort::enterEvent(QEvent* e)
 {
 	QGraphicsView::enterEvent(e);
 	cpointer().set_current_viewport(this);
+	setFocus();
 }
 
 void ViewPort::leaveEvent ( QEvent * event )

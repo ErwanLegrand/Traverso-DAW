@@ -115,7 +115,7 @@ int Project::create(int songcount, int numtracks)
 	}
 	
 	m_id = create_id();
-	m_importDir = config().get_property("Project", "DefaultDirectory", QDir::homePath()).toString();
+	m_importDir = QDir::homePath();
 
 	info().information(tr("Created new Project %1").arg(title));
 	return 1;
@@ -594,6 +594,7 @@ void Project::private_remove_song(Song * song)
 
 QString Project::get_import_dir() const
 {
+	printf("import dir %s\n", QS_C(m_importDir));
 	return m_importDir;
 }
 
