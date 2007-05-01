@@ -102,6 +102,9 @@ int ReadSource::init( )
 	
 	Q_ASSERT(m_refcount);
 	
+	// Fake the samplerate, until it's set by a MonoReader!
+	m_rate = pm().get_project()->get_rate();
+	
 	if (m_channelCount == 0) {
 		PERROR("ReadSource channel count is 0");
 		return (m_error = INVALID_CHANNEL_COUNT);
