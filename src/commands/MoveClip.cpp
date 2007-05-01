@@ -205,6 +205,10 @@ int MoveClip::prepare_actions()
 		m_clip->set_left_edge(m_oldOppositeEdge);
 	}
 	
+	if (m_originTrack == m_targetTrack &&  m_posDiff == 0 && !(m_actionType == "copy")) {
+		return -1;
+	}
+	
 	return 1;
 }
 

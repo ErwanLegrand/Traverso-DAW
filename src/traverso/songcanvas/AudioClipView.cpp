@@ -749,6 +749,7 @@ void AudioClipView::set_dragging(bool dragging)
 	}
 	
 	m_dragging = dragging;
+	update();
 }
 
 Command * AudioClipView::set_audio_file()

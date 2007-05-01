@@ -1,8 +1,12 @@
 TOBEDONE FOR 0.40.0
 
-* when changing the width of fades, the cursor should remain static (as in gain)
+* FadeView merging code messes up start of clip when fade lenght is very short (1 or even 0 pixels)
 
-* Curves should have a default (first) node which is not allowed to be removed, or moved horizontally!!!
+* switching to effect mode crashes with 0 tracks
+
+* Curve copy should not use the same id!!!!!!
+
+* when changing the width of fades, the cursor should remain static (as in gain)
 
 * Audible glitch when playing over a split point in a splitted audioclip :-( :-( :-(
 
@@ -12,3 +16,6 @@ TOBEDONE FOR 0.40.0
 
 Less important:
 * horizontal zooming with playhead animated causes 2 paints one at start, one at real pos during play!
+
+* Painting last curve nodes has artifacts, 'fixed' by populating polygon with as many points as there are
+  pixels. This should get a real fix!!
