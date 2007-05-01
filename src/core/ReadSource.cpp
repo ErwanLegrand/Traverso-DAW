@@ -146,16 +146,19 @@ int ReadSource::init( )
 
 int ReadSource::add_mono_reader(int sourceChannelCount, int channelNumber, const QString& fileName)
 {
+	int result = 1;
+	
 	MonoReader* source = new MonoReader(this, sourceChannelCount, channelNumber, fileName);
 	
-	if (source->init() > 0) {
+	if ( (result = source->init()) > 0) {
 		m_sources.append(source);
 	} else {
 		PERROR("Failed to initialize a MonoReader (%s)", QS_C(fileName));
-		return -1;
+		delete source;
+		return result;
 	}
 	
-	return 1;
+	return result;
 }
 
 int ReadSource::file_read (int channel, audio_sample_t* dst, nframes_t start, nframes_t cnt) const

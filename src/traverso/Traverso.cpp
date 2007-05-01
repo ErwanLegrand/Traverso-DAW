@@ -97,11 +97,9 @@ Traverso::Traverso(int &argc, char **argv )
 	
 	init_sse();
 	
-	create_interface();
-	
 	prepare_audio_device();
 	
-	QMetaObject::invokeMethod(&pm(), "start", Qt::QueuedConnection);
+	QMetaObject::invokeMethod(this, "create_interface", Qt::QueuedConnection);
 	
 	connect(this, SIGNAL(lastWindowClosed()), &pm(), SLOT(exit()));
 }
@@ -120,6 +118,7 @@ void Traverso::create_interface( )
 	themer()->load();
 	Interface* iface = Interface::instance();
 	iface->show();
+	pm().start();
 }
 
 void Traverso::shutdown( int signal )

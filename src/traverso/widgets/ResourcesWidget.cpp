@@ -39,8 +39,7 @@ ResourcesWidget::ResourcesWidget(QWidget * parent)
 	: QWidget(parent)
 {
 	setupUi(this);
-/*	audioFileTreeWidget->hide();
-	clipTreeWidget->show();*/
+	
 	QPalette palette;
 	palette.setColor(QPalette::AlternateBase, themer()->get_color("Track:background"));
 	clipTreeWidget->setPalette(palette);
@@ -71,6 +70,8 @@ ResourcesWidget::ResourcesWidget(QWidget * parent)
 	m_dirView->setDragEnabled(true);
 	m_dirView->setDropIndicatorShown(true);
 	m_dirView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+	m_dirView->setAlternatingRowColors(true);
+	m_dirView->setPalette(palette);
 	m_dirModel->setSorting(QDir::DirsFirst | QDir::Name | QDir::IgnoreCase);
 	layout()->addWidget(m_dirView);
 	m_dirView->hide();
