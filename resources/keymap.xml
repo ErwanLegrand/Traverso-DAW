@@ -294,6 +294,11 @@
 				<Object objectname="SpectralMeterWidget" slotsignature="screen_capture" modes="All" instantanious="0" />
 			</Objects>
 		</keyfact>
+		<keyfact type="FKEY2" key1="I" key2="O" >
+			<Objects>
+				<Object objectname="TrackView" modes="All" sortorder="13"  slotsignature="insert_silence" instantanious="0" />
+			</Objects>
+		</keyfact>
 		
 		
 		<keyfact type="HKEY" key1="Z" sortorder="35" >

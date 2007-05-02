@@ -56,6 +56,8 @@ ReadSource::ReadSource(const QDomNode node)
 	if (QFile::exists(project->get_root_dir() + "/audiosources/" + m_name)) {
 		set_dir(project->get_root_dir() + "/audiosources/");
 	}
+	
+	m_silent = (m_channelCount == 0);
 }	
 
 
@@ -74,6 +76,7 @@ ReadSource::ReadSource(const QString& dir, const QString& name)
 	}
 
 	m_fileCount = 1;
+	m_silent = false;
 }
 
 
@@ -82,8 +85,20 @@ ReadSource::ReadSource(const QString& dir, const QString& name, int channelCount
 	, m_refcount(0)
 	, m_error(0)
 {
-	  m_channelCount = channelCount;
-	  m_fileCount = fileCount;
+	m_channelCount = channelCount;
+	m_fileCount = fileCount;
+	m_silent = false;
+}
+
+
+ReadSource::ReadSource()
+	: AudioSource("", tr("Silence"))
+	, m_refcount(0)
+	, m_error(0)
+{
+	m_channelCount = 0;
+	m_fileCount = 0;
+	m_silent = true;
 }
 
 
@@ -102,8 +117,17 @@ int ReadSource::init( )
 	
 	Q_ASSERT(m_refcount);
 	
+	Project* project = pm().get_project();
+	
 	// Fake the samplerate, until it's set by a MonoReader!
-	m_rate = pm().get_project()->get_rate();
+	m_rate = project->get_rate();
+	
+	if (m_silent) {
+		m_length = 2147483648L; // 2^31
+		m_channelCount = 0;
+		m_origBitDepth = project->get_bitdepth();
+		return 1;
+	}
 	
 	if (m_channelCount == 0) {
 		PERROR("ReadSource channel count is 0");

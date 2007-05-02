@@ -58,6 +58,7 @@ class OpenProjectDialog;
 class InfoToolBar;
 class SysInfoToolBar;
 class CDTextDialog;
+class InsertSilenceDialog;
 class MarkerDialog;
 class BusSelectorDialog;
 class NewSongDialog;
@@ -77,6 +78,7 @@ public :
 	void select_fade_in_shape();
 	void select_fade_out_shape();
 	void show_busselector(Track* track);
+	void set_insertsilence_track(Track* track);
 	
 protected:
 	void keyPressEvent ( QKeyEvent* e);
@@ -104,6 +106,7 @@ private:
 	ProjectManagerDialog*	m_projectManagerDialog;
 	OpenProjectDialog*	m_openProjectDialog;
 	CDTextDialog*		m_cdTextDialog;
+	InsertSilenceDialog*	m_insertSilenceDialog;
 	MarkerDialog*		m_markerDialog;
 	InfoToolBar* 		m_infoBar;
 	SysInfoToolBar* 	m_sysinfo;
@@ -142,7 +145,6 @@ public slots :
 	void set_fade_out_shape(QAction* action);
 	void update_opengl();
 	void import_audio();
-	void insert_silence();
 
 	Command* show_song_widget();
 	Command* full_screen();
@@ -152,6 +154,7 @@ public slots :
 	Command* show_open_project_dialog();
 	Command* show_project_manager_dialog();
 	Command* show_cdtext_dialog();
+	Command* show_insertsilence_dialog();
 	Command* show_marker_dialog();
 	Command* show_newsong_dialog();
 	Command* show_newtrack_dialog();

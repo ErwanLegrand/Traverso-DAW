@@ -54,6 +54,7 @@ public:
     				bool wasRecording=false);
 	
 	ReadSource* create_new_readsource(const QString& dir, const QString& name);
+	ReadSource* get_silent_readsource();
 	AudioClip* new_audio_clip(const QString& name);
 	AudioClip* get_clip(qint64 id);
 	
@@ -76,6 +77,7 @@ private:
 	QHash<qint64, ReadSource* >	m_sources;
 	QHash<qint64, AudioClip* >	m_clips;
 	QHash<qint64, AudioClip* >	m_deprecatedClips;
+	ReadSource*			m_silentReadSource;
 	
 	
 signals:

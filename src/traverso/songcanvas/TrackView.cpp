@@ -206,5 +206,12 @@ Command* TrackView::select_bus()
 	return 0; 
 }
 
+Command* TrackView::insert_silence()
+{
+	Interface::instance()->show_insertsilence_dialog();
+	Interface::instance()->set_insertsilence_track(m_track);
+	return 0; 
+}
+
 //eof
 

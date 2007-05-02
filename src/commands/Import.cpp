@@ -22,9 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <libtraversocore.h>
 
 #include <QFileDialog>
-#include <ReadSource.h>
+#include "ReadSource.h"
 #include "AudioClipList.h"
-
 #include "Import.h"
 #include "Utils.h"
 
@@ -38,14 +37,24 @@ Import::Import(const QString& fileName)
 	m_fileName = fileName;
 	m_clip = 0;
 	m_track = 0;
+	m_silent = false;
+	m_initialLength = 0;
 }
 
 
-Import::Import(Track* track)
-	: Command(track, tr("Import Audio File"))
+Import::Import(Track* track, bool silent, nframes_t length)
+	: Command(track, "")
 {
 	m_track = track;
 	m_clip = 0;
+	m_silent = silent;
+	m_initialLength = length;
+	
+	if (!m_silent) {
+		setText(tr("Import Audio File"));
+	} else {
+		setText(tr("Insert Silence"));
+	}
 }
 
 
@@ -55,6 +64,8 @@ Import::Import(Track* track, const QString& fileName)
 	m_track = track;
 	m_clip = 0;
 	m_fileName = fileName;
+	m_silent = false;
+	m_initialLength = 0;
 }
 
 Import::~Import()
@@ -63,7 +74,12 @@ Import::~Import()
 int Import::prepare_actions()
 {
 	PENTER;
-	if (m_fileName.isEmpty()) {
+	if (m_silent) {
+		m_source = resources_manager()->get_silent_readsource();
+		m_name = tr("Silence");
+		m_fileName = tr("Silence");
+		create_audioclip();
+	} else if (m_fileName.isEmpty()) {
 		m_fileName = QFileDialog::getOpenFileName(0,
 				tr("Import audio source"),
 				pm().get_project()->get_import_dir(),
@@ -117,12 +133,19 @@ void Import::create_audioclip()
 	m_clip->set_audio_source(m_source);
 	m_clip->set_song(m_track->get_song());
 	m_clip->set_track(m_track);
-	m_clip->set_track_start_frame(0);
 	// FIXME!!!!!!!!!!!!!!!!!!!!
 	m_clip->init_gain_envelope();
-
+	
+	nframes_t startFrame = 0;
+	
 	if (AudioClip* lastClip = m_track->get_cliplist().get_last()) {
-		m_clip->set_track_start_frame( lastClip->get_track_end_frame() + 1);
+		startFrame = lastClip->get_track_end_frame() + 1;
+	}
+
+	m_clip->set_track_start_frame(startFrame);
+	
+	if (m_initialLength > 0) {
+		m_clip->set_right_edge(m_initialLength + startFrame);
 	}
 }
 

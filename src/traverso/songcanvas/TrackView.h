@@ -36,6 +36,7 @@ class TrackView : public ViewItem
 	Q_CLASSINFO("edit_properties", tr("Edit properties"))
 	Q_CLASSINFO("add_new_plugin", tr("Add new Plugin")) 
 	Q_CLASSINFO("select_bus", tr("Select Bus")) 
+	Q_CLASSINFO("insert_silence", tr("Insert Silence")) 
 
 public:
 	TrackView(SongView* sv, Track* track);
@@ -74,6 +75,7 @@ public slots:
 	Command* edit_properties();
 	Command* add_new_plugin();	
 	Command* select_bus();
+	Command* insert_silence();
 
 private slots:
 	void add_new_audioclipview(AudioClip* clip);

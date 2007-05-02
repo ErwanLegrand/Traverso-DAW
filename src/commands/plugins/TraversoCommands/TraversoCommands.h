@@ -32,7 +32,8 @@ class TraversoCommands : public CommandPlugin
 	Q_CLASSINFO("ResetGain", tr("Gain: Reset"))
 	Q_CLASSINFO("TrackPan", tr("Panorama"))
 	Q_CLASSINFO("ResetTrackPan", tr("Panorama: Reset"))
-	Q_CLASSINFO("ImportAudio", tr("Import audio"))
+	Q_CLASSINFO("ImportAudio", tr("Import Audio"))
+	Q_CLASSINFO("InsertSilence", tr("Insert Silence"))
 	Q_CLASSINFO("CopyClip", tr("Copy Clip"))
 	Q_CLASSINFO("AddNewTrack", tr("New Track"))
 	Q_CLASSINFO("RemoveClip", tr("Remove Clip"))
@@ -56,6 +57,7 @@ private:
 		GainCommand,
   		TrackPanCommand,
     		ImportAudioCommand,
+    		InsertSilenceCommand,
 		AddNewTrackCommand,
   		RemoveClipCommand,
   		RemoveTrackCommand,

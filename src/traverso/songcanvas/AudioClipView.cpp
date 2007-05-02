@@ -165,30 +165,24 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 
 	int channels = m_clip->get_channels();
 
-	// Only continue if our AudioClip has more then 1 channel
-	if (channels == 0) {
-		PWARN("This AudioClipView has 0 channels!!!!!");
-		return;
+	if (channels > 0) {
+		if (m_waitingForPeaks) {
+			PMESG("Waiting for peaks!");
+			// Hmm, do we paint here something?
+			// Progress info, I think so....
+			painter->setPen(Qt::black);
+			QRect r(10, 0, 150, m_height);
+			painter->setFont( QFont( "Bitstream Vera Sans", 11 ) );
+			QString si;
+			si.setNum((int)m_progress);
+			if (m_progress == 100) m_progress = 0;
+			QString buildProcess = "Building Peaks: " + si + "%";
+			painter->drawText(r, Qt::AlignVCenter, buildProcess);
+		
+		} else if (m_clip->recording_state() == AudioClip::NO_RECORDING) {
+			draw_peaks(painter, xstart, pixelcount);
+		}
 	}
-	
-	
-	if (m_waitingForPeaks) {
-		PMESG("Waiting for peaks!");
-		// Hmm, do we paint here something?
-		// Progress info, I think so....
-		painter->setPen(Qt::black);
-		QRect r(10, 0, 150, m_height);
-		painter->setFont( QFont( "Bitstream Vera Sans", 11 ) );
-		QString si;
-		si.setNum((int)m_progress);
-		if (m_progress == 100) m_progress = 0;
-		QString buildProcess = "Building Peaks: " + si + "%";
-		painter->drawText(r, Qt::AlignVCenter, buildProcess);
-	
-	} else if (m_clip->recording_state() == AudioClip::NO_RECORDING) {
-		draw_peaks(painter, xstart, pixelcount);
-	}
-
 	
 	// Draw the contour
 	if (m_height < m_mimimumheightforinfoarea) {

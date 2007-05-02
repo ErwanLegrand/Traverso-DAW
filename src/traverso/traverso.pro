@@ -47,6 +47,7 @@ HEADERS += \
 	widgets/InfoWidgets.h \
 	widgets/MessageWidget.h \
 	dialogs/CDTextDialog.h \
+	dialogs/InsertSilenceDialog.h \
 	dialogs/MarkerDialog.h \
 	dialogs/BusSelectorDialog.h \
 	dialogs/project/NewSongDialog.h \
@@ -78,6 +79,7 @@ SOURCES += \
 	widgets/InfoWidgets.cpp \
 	widgets/MessageWidget.cpp \
 	dialogs/CDTextDialog.cpp \
+	dialogs/InsertSilenceDialog.cpp \
 	dialogs/MarkerDialog.cpp \
 	dialogs/BusSelectorDialog.cpp \
 	dialogs/project/NewSongDialog.cpp \
@@ -108,9 +110,8 @@ FORMS += ui/ExportWidget.ui \
 	ui/NewProjectDialog.ui \
 	ui/NewSongDialog.ui \
 	ui/NewTrackDialog.ui \
-	ui/ResourcesWidget.ui
-
-
+	ui/ResourcesWidget.ui \
+	ui/InsertSilenceDialog.ui
 INCLUDEPATH += 	../core \
 		../commands \
 		../engine \

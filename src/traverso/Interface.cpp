@@ -34,8 +34,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ViewPort.h"
 #include "Help.h"
 #include "widgets/ResourcesWidget.h"
-#include <FadeCurve.h>
-#include <Config.h>
+#include "FadeCurve.h"
+#include "Config.h"
 #include "widgets/InfoWidgets.h"
 
 #include "ExportWidget.h"
@@ -50,11 +50,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "dialogs/project/ProjectManagerDialog.h"
 #include "dialogs/project/OpenProjectDialog.h"
 #include "dialogs/project/NewProjectDialog.h"
-#include <dialogs/project/NewSongDialog.h>
-#include <dialogs/project/NewTrackDialog.h>
+#include "dialogs/project/NewSongDialog.h"
+#include "dialogs/project/NewTrackDialog.h"
 #include "dialogs/CDTextDialog.h"
 #include "dialogs/MarkerDialog.h"
 #include "dialogs/BusSelectorDialog.h"
+#include "dialogs/InsertSilenceDialog.h"
 
 
 // Always put me below _all_ includes, this is needed
@@ -172,6 +173,7 @@ Interface::Interface()
 	m_openProjectDialog = 0;
 	m_newProjectDialog = 0;
 	m_cdTextDialog = 0;
+	m_insertSilenceDialog = 0;
 	m_markerDialog = 0;
 	m_busSelector = 0;
 	m_newSongDialog = 0;
@@ -387,8 +389,7 @@ void Interface::create_menus( )
 	action = menu->addAction(tr("Import &Audio..."));
 	connect(action, SIGNAL(triggered()), this, SLOT(import_audio()));
 	action = menu->addAction(tr("Insert Si&lence..."));
-	action->setDisabled(true);
-	connect(action, SIGNAL(triggered()), this, SLOT(insert_silence()));
+	connect(action, SIGNAL(triggered()), this, SLOT(show_insertsilence_dialog()));
 	
 	
 	menu = menuBar()->addMenu(tr("&View"));
@@ -640,6 +641,13 @@ void Interface::show_busselector(Track* track)
 	m_busSelector->show();
 }
 
+void Interface::set_insertsilence_track(Track* track)
+{
+	if (m_insertSilenceDialog) {
+		m_insertSilenceDialog->setTrack(track);
+	}
+}
+
 void Interface::select_fade_in_shape( )
 {
 	QMenu* menu = m_contextMenus.value("fadeInSelector");
@@ -728,18 +736,14 @@ void Interface::import_audio()
 		Track*	shortestTrack = tracks.at(0);
 
 		for (int i=1; i<tracks.size(); i++) {
-			if (AudioClip* lastClip = tracks.at(i)->get_cliplist().get_last()) {
+			if (tracks.at(i)->get_cliplist().get_last() && tracks.at(i)->get_cliplist().get_last()->get_track_end_frame() > shortestTrack->get_cliplist().get_last()->get_track_end_frame()) {
 				shortestTrack = tracks.at(i);
 			}
 		}
+
 		Import* cmd = new Import(shortestTrack);
 		Command::process_command(cmd);
 	}
-}
-
-void Interface::insert_silence()
-{
-	printf("FIXME: Interface::insert_silence()\n");
 }
 
 DigitalClock::DigitalClock(QWidget *parent)
@@ -822,6 +826,20 @@ Command * Interface::show_cdtext_dialog()
 	
 	return 0;
 }
+
+
+Command * Interface::show_insertsilence_dialog()
+{
+	if (! m_insertSilenceDialog) {
+		m_insertSilenceDialog = new InsertSilenceDialog(this);
+	}
+	
+	m_insertSilenceDialog->setTrack(0);
+	m_insertSilenceDialog->show();
+	
+	return 0;
+}
+
 
 Command * Interface::show_marker_dialog()
 {

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
+    Copyright (C) 2007 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -17,43 +17,34 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Import.h,v 1.5 2007/05/02 05:58:20 benjie Exp $
 */
 
-#ifndef IMPORT_H
-#define IMPORT_H
+#ifndef INSERT_SILENCE_DIALOG_H
+#define INSERT_SILENCE_DIALOG_H
 
-#include "Command.h"
+#include "ui_InsertSilenceDialog.h"
+#include <QDialog>
 
-class QString;
-class AudioClip;
-class ReadSource;
+class Track;
 
-class Import : public Command
+class InsertSilenceDialog : public QDialog, protected Ui::InsertSilenceDialog
 {
-public :
-	Import(const QString& fileName);
-        Import(Track* track, bool silent = false, nframes_t length = 0);
-        Import(Track* track, const QString& fileName);
-        ~Import();
+	Q_OBJECT
 
-        int prepare_actions();
-        int do_action();
-        int undo_action();
-	
-	int create_readsource();
-	void create_audioclip();
-	void set_track(Track* track);
+public:
+	InsertSilenceDialog(QWidget* parent = 0);
+	~InsertSilenceDialog() {};
 
-private :
-        Track* 		m_track;
-        AudioClip*	m_clip;
-	ReadSource* 	m_source;
-        QString 	m_fileName;
-	QString		m_name;
-	bool		m_silent;
-	nframes_t	m_initialLength;
+	void setTrack(Track* track);
+
+private:
+	void accept();
+	void reject();
+
+	Track* m_track;
+
 };
 
 #endif
 
+//eof

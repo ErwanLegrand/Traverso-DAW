@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.h,v 1.19 2007/04/30 13:49:59 r_sijrier Exp $
+$Id: ReadSource.h,v 1.20 2007/05/02 05:58:20 benjie Exp $
 */
 
 #ifndef READSOURCE_H
@@ -36,6 +36,7 @@ public :
 	ReadSource(const QDomNode node);
 	ReadSource(const QString& dir, const QString& name);
 	ReadSource(const QString& dir, const QString& name, int channelCount, int fileCount);
+	ReadSource();  // For creating a 0-channel, silent ReadSource
 	~ReadSource();
 	
 	enum ReadSourceError {
@@ -67,7 +68,7 @@ private:
 	QList<MonoReader*> m_sources;
 	int	m_refcount;
 	int	m_error;
-	
+	bool	m_silent;
 	
 	int ref() { return m_refcount++;}
 	int add_mono_reader(int channel, int channelNumber, const QString& fileName);

@@ -37,6 +37,7 @@ TraversoCommands::TraversoCommands()
 	m_dict.insert("TrackPan", TrackPanCommand);
 	m_dict.insert("ResetTrackPan", TrackPanCommand);
 	m_dict.insert("ImportAudio", ImportAudioCommand);
+	m_dict.insert("InsertSilence", InsertSilenceCommand);
 	m_dict.insert("AddNewTrack", AddNewTrackCommand);
 	m_dict.insert("RemoveClip", RemoveClipCommand);
 	m_dict.insert("RemoveTrack", RemoveTrackCommand);
@@ -95,6 +96,17 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 				return 0;
 			}
 			return new Import(track);
+		}
+		
+		case InsertSilenceCommand:
+		{
+			Track* track = qobject_cast<Track*>(obj);
+			if (! track) {
+				PERROR("TraversoCommands: Supplied QObject was not a Track! "
+					"ImportAudioCommand needs a Track as argument");
+				return 0;
+			}
+			return new Import(track, 480000, true);
 		}
 		
 		case AddNewTrackCommand:

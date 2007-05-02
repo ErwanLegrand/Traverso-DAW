@@ -38,6 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 ResourcesManager::ResourcesManager()
 {
 	PENTERCONS;
+	m_silentReadSource = 0;
 }
 
 
@@ -110,6 +111,9 @@ int ResourcesManager::set_state( const QDomNode & node )
 		ReadSource* source = new ReadSource(sourcesNode);
 		m_sources.insert(source->get_id(), source);
 		sourcesNode = sourcesNode.nextSibling();
+		if (source->get_channel_count() == 0) {
+			m_silentReadSource = source;
+		}
 	}
 	
 	
@@ -220,6 +224,21 @@ ReadSource* ResourcesManager::create_new_readsource(
 
 	return source;
 }
+
+
+ReadSource* ResourcesManager::get_silent_readsource()
+{
+	if (!m_silentReadSource) {
+		m_silentReadSource = new ReadSource();
+		m_sources.insert(m_silentReadSource->get_id(), m_silentReadSource);
+		m_silentReadSource->set_created_by_song( -1 );
+		
+		m_silentReadSource = get_readsource(m_silentReadSource->get_id());
+	}
+	
+	return m_silentReadSource;
+}
+
 
 ReadSource * ResourcesManager::get_readsource( qint64 id )
 {
