@@ -835,6 +835,7 @@ Command * Interface::show_insertsilence_dialog()
 	}
 	
 	m_insertSilenceDialog->setTrack(0);
+	m_insertSilenceDialog->focusInput();
 	m_insertSilenceDialog->show();
 	
 	return 0;

@@ -36,6 +36,7 @@ public:
 	~InsertSilenceDialog() {};
 
 	void setTrack(Track* track);
+	void focusInput();
 
 private:
 	void accept();

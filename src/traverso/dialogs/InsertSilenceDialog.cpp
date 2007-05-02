@@ -44,6 +44,12 @@ void InsertSilenceDialog::setTrack(Track* track)
 	m_track = track;
 }
 
+void InsertSilenceDialog::focusInput()
+{
+	lengthSpinBox->setFocus();
+	lengthSpinBox->selectAll();
+}
+
 void InsertSilenceDialog::accept()
 {
 	Song* song = pm().get_project()->get_current_song();
