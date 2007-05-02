@@ -272,7 +272,7 @@ int DiskIO::there_are_processable_sources( )
 			MonoReader* source = m_monoReaders.at(j);
 			BufferStatus* status = source->get_buffer_status();
 			
-			if (status->priority > i /*&& source->is_active()*/ && !status->needSync ) {
+			if (status->priority > i && source->is_active() && !status->needSync ) {
 				
 				if ( (! m_seeking) && status->bufferUnderRun ) {
 					if (! m_hardDiskOverLoadCounter++) {
