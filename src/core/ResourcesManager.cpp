@@ -232,9 +232,9 @@ ReadSource* ResourcesManager::get_silent_readsource()
 		m_silentReadSource = new ReadSource();
 		m_sources.insert(m_silentReadSource->get_id(), m_silentReadSource);
 		m_silentReadSource->set_created_by_song( -1 );
-		
-		m_silentReadSource = get_readsource(m_silentReadSource->get_id());
 	}
+	
+	m_silentReadSource = get_readsource(m_silentReadSource->get_id());
 	
 	return m_silentReadSource;
 }
