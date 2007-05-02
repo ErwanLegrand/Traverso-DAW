@@ -280,7 +280,7 @@ void HDDSpaceInfo::update_status( )
 	
 #if defined (WIN_BUILD)
 	__int64 freebytestocaller, totalbytes, freebytes; 
-	if (! GetDiskFreeSpaceEx ((const WCHAR*)(QS_C(m_project->get_root_dir())),
+	if (! GetDiskFreeSpaceEx ((const WCHAR*)(m_project->get_root_dir().toUtf8().data()),
 					(PULARGE_INTEGER)&freebytestocaller,
 					(PULARGE_INTEGER)&totalbytes,
 					(PULARGE_INTEGER)&freebytes)) 
@@ -293,7 +293,7 @@ void HDDSpaceInfo::update_status( )
 	double space =  double(freebytestocaller / (1 << 20));
 #else
 	struct statfs fs;
-	statfs(QS_C(m_project->get_root_dir()), &fs);
+	statfs(m_project->get_root_dir().toUtf8().data(), &fs);
 	double space = floor (fs.f_bavail * (fs.f_bsize / 1048576.0));
 #endif
 
