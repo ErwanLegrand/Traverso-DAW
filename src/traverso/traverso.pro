@@ -166,4 +166,5 @@ win32{
     INCLUDEPATH += ../../3thparty/include .
 
     QMAKE_LIBDIR = ../../lib ../../3thparty/lib
+    RC_FILE = traverso.rc
 }
