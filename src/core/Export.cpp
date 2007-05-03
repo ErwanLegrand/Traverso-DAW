@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Export.cpp,v 1.3 2007/04/22 20:05:38 n_doebelin Exp $
+    $Id: Export.cpp,v 1.4 2007/05/03 18:12:07 r_sijrier Exp $
 */
 
 #include "Export.h"
@@ -62,6 +62,10 @@ ExportSpecification::ExportSpecification()
 	exportdir = "";
 	name = "";
 	writeToc = false;
+	normalize = false;
+	renderpass = WRITE_TO_HARDDISK;
+	normvalue = 1.0;
+	peakvalue = 0.0;
 }
 
 int ExportSpecification::is_valid()

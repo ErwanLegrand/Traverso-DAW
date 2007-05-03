@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>529</width>
-    <height>592</height>
+    <height>557</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -17,8 +17,8 @@
     <rect>
      <x>9</x>
      <y>9</y>
-     <width>463</width>
-     <height>339</height>
+     <width>511</width>
+     <height>367</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" >
@@ -179,6 +179,13 @@
          <item>
           <widget class="QComboBox" name="channelComboBox" />
          </item>
+         <item>
+          <widget class="QCheckBox" name="normalizeCheckBox" >
+           <property name="text" >
+            <string>Normalize</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
@@ -217,6 +224,19 @@
          <item>
           <widget class="QComboBox" name="sampleRateComboBox" />
          </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
         </layout>
        </item>
       </layout>
@@ -238,8 +258,8 @@
    <property name="geometry" >
     <rect>
      <x>9</x>
-     <y>354</y>
-     <width>294</width>
+     <y>382</y>
+     <width>511</width>
      <height>166</height>
     </rect>
    </property>

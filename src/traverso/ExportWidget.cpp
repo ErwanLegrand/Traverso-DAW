@@ -219,6 +219,8 @@ void ExportWidget::on_exportStartButton_clicked( )
                 spec->allSongs = false;
 	}
 	
+	spec->normalize = normalizeCheckBox->isChecked();
+	
 	spec->isRecording = false;
 
         m_project->export_project(spec);

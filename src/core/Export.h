@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Export.h,v 1.4 2007/04/22 20:05:38 n_doebelin Exp $
+$Id: Export.h,v 1.5 2007/05/03 18:12:07 r_sijrier Exp $
 */
 
 #ifndef EXPORT_H
@@ -39,6 +39,11 @@ struct ExportSpecification
 	ExportSpecification();
 	
 	int is_valid();
+	
+	enum RenderPass {
+		CALC_NORM_FACTOR,
+  		WRITE_TO_HARDDISK
+	};
 	
 	int      	sample_rate;
 	int             src_quality;
@@ -70,6 +75,10 @@ struct ExportSpecification
 	QString		exportdir;
 	QString		name;
 	bool		writeToc;
+	bool		normalize;
+	int		renderpass;
+	float		peakvalue;
+	float 		normvalue;
 };
 
 

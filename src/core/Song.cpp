@@ -376,8 +376,10 @@ int Song::prepare_export(ExportSpecification* spec)
 	if (spec->writeToc) {
 		write_cdrdao_toc(spec);
 	}
-
-	m_exportSource = new WriteSource(spec);
+	
+	if (spec->renderpass == ExportSpecification::WRITE_TO_HARDDISK) {
+		m_exportSource = new WriteSource(spec);
+	}
 
 	return 1;
 }
@@ -404,7 +406,11 @@ int Song::render(ExportSpecification* spec)
 				PWARN("running is %d", spec->running);
 				PWARN("stop is %d", spec->stop);
 				PWARN("this_nframes is %d", this_nframes);*/
-		return finish_audio_export();
+		if (spec->renderpass == ExportSpecification::WRITE_TO_HARDDISK) {
+			return finish_audio_export();
+		} else {
+			return 0;
+		}
 	}
 
 	/* do the usual stuff */
@@ -436,13 +442,34 @@ int Song::render(ExportSpecification* spec)
 	}
 
 
-	if (m_exportSource->process (nframes)) {
-		goto out;
+	int bufsize = spec->blocksize * spec->channels;
+	if (spec->normalize) {
+		if (spec->renderpass == ExportSpecification::CALC_NORM_FACTOR) {
+			spec->peakvalue = Mixer::compute_peak(spec->dataF, bufsize, spec->peakvalue);
+		}
 	}
+	
+	if (spec->renderpass == ExportSpecification::WRITE_TO_HARDDISK) {
+		if (spec->normalize) {
+			Mixer::apply_gain_to_buffer(spec->dataF, bufsize, spec->normvalue);
+		}
+		if (m_exportSource->process (nframes)) {
+			goto out;
+		}
+	}
+	
 
 	spec->pos += nframes;
 
-	progress = (int) (( 100.0 * (float)(spec->pos) ) / spec->total_frames);
+	if (! spec->normalize ) {
+		progress = (int) (( 100.0 * (float)(spec->pos) ) / spec->total_frames);
+	} else {
+		progress = (int) (( 100.0 * (float)(spec->pos) ) / (spec->total_frames * 2));
+		if (spec->renderpass == ExportSpecification::WRITE_TO_HARDDISK) {
+			progress += 50;
+		}
+	}
+	
 	if (progress > spec->progress) {
 		spec->progress = progress;
 		m_project->set_song_export_progress(progress);

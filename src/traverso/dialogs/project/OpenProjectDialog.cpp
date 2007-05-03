@@ -233,7 +233,9 @@ void OpenProjectDialog::on_projectDirSelectButton_clicked( )
 		QMessageBox::information( this, tr("Traverso - Information"), tr("Created new Project directory for you here: %1\n").arg(newPath), "OK", 0 );
 	}
 	
-	config().set_property("Project", "directory", newPath);
+	QDir newdir(newPath);
+	
+	config().set_property("Project", "directory", newdir.canonicalPath());
 	
 	update_projects_list();
 }

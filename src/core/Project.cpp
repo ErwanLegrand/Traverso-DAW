@@ -464,11 +464,36 @@ int Project::start_export(ExportSpecification* spec)
 		PMESG("Starting export for song %lld", song->get_id());
 		emit exportStartedForSong(song);
 
+		if (spec->normalize) {
+			spec->peakvalue = 0.0;
+			spec->renderpass = ExportSpecification::CALC_NORM_FACTOR;
+			
+			
+			if (song->prepare_export(spec) < 0) {
+				PERROR("Failed to prepare song for export");
+				continue;
+			}
+			
+			while(song->render(spec) > 0) {}
+			
+			spec->normvalue = 1.0 / spec->peakvalue;
+			
+			if (spec->peakvalue > (1.0 + FLT_EPSILON)) {
+				info().critical(tr("Detected clipping in exported audio! (%1)")
+						.arg(coefficient_to_dbstring(spec->peakvalue)));
+				spec->normvalue = 1.0;
+			}
+			
+			info().information(tr("calculated norm factor: %1").arg(coefficient_to_dbstring(spec->normvalue)));
+		}
+
+		spec->renderpass = ExportSpecification::WRITE_TO_HARDDISK;
+		
 		if (song->prepare_export(spec) < 0) {
 			PERROR("Failed to prepare song for export");
 			continue;
 		}
-
+		
 		while(song->render(spec) > 0) {}
 
 		renderedSongs++;
