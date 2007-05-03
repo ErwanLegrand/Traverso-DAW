@@ -157,6 +157,11 @@ unix{
     LIBS += $$system(pkg-config --libs glib-2.0)
 }
 
+macx{
+    contains(DEFINES, LV2_SUPPORT){
+        LIBS += -lraptor
+    }
+}
 
 win32{
     LIBS -= -lslv2 -lfftw3

@@ -114,11 +114,14 @@ unix {
 macx {
 	QMAKE_CXXFLAGS += $$system(pkg-config --cflags glib-2.0)
 	
+	DEFINES += OSX_BUILD
+	DEFINES += PORTAUDIO_SUPPORT
 	DEFINES -= ALSA_SUPPORT
-	
-	LIBS += -ljack
-		
+	DEFINES -= JACK_SUPPORT
+			
 	QMAKE_LFLAGS_SONAME  = -Wl,-install_name,@executable_path/../Frameworks/
+
+	INCLUDEPATH += /usr/local/include/glib-2.0
 }
 
 win32 { 

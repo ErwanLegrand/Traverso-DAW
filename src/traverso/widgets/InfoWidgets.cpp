@@ -37,6 +37,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #if defined (WIN_BUILD)
 #include <Windows.h>
+#elif defined (OSX_BUILD)
+#include <sys/param.h>
+#include <sys/mount.h>
 #else
 #include <sys/vfs.h>
 #endif
