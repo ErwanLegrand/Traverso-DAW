@@ -506,6 +506,9 @@ int AudioClip::init_recording( QByteArray name )
 		channelcount = 1;
 	}
 
+	qint64 newsourceid = create_id();
+	QString sourceid = QString::number(newsourceid);
+	
 	for (int chan=0; chan<captureBus->get_channel_count(); chan++) {
 		if (chan == 0) {
 			if ( ! m_track->capture_left_channel() ) {
@@ -537,19 +540,15 @@ int AudioClip::init_recording( QByteArray name )
 		m_exportSpec->end_frame = 0;
 		m_exportSpec->total_frames = 0;
 		m_exportSpec->blocksize = audiodevice().get_buffer_size();
-
-		QString songid = QString::number(m_song->get_id())  + "_";
-		if (m_song->get_id() < 10)
-			songid.prepend("0");
-		songid.prepend( "Song" );
-
-		m_exportSpec->name = songid + m_name;
-
+		m_exportSpec->name = m_name + "-" + sourceid;
 		m_exportSpec->dataF = captureBus->get_buffer( chan, audiodevice().get_buffer_size());
 
 		WriteSource* ws = new WriteSource(m_exportSpec, channelnumber, channelcount);
 		ws->set_process_peaks( true );
 		ws->set_recording( true );
+		// We had to create the id before creating the writesource, so 
+		// explicitely set it now, so it can be re-used for the resulting ReadSource!
+		ws->set_id(newsourceid);
 
 		connect(ws, SIGNAL(exportFinished( WriteSource* )), 
 			this, SLOT(finish_write_source( WriteSource* )));
@@ -665,11 +664,13 @@ void AudioClip::finish_write_source( WriteSource * ws )
 
 	QString dir;
 	QString name;
+	qint64 id;
 	
 	if (writeSources.contains(ws)) {
 		writeSources.removeAll(ws);
 		dir = ws->get_dir();
 		name = ws->get_name();
+		id = ws->get_id();
 		if (ws->m_peak->finish_processing() < 0) {
 			PERROR("write source peak::finish_processing() failed!");
 		}
@@ -697,6 +698,9 @@ void AudioClip::finish_write_source( WriteSource * ws )
 				wasRecording );
 		
 		if (rs) {
+			// Re-use the writesources id for this readsource, so the filename
+			// and the readsources id match!
+			rs->set_id(id);
 			// Reset the lenght, so the set_audio_sources() call will get the 
 			// lenght from the ReadSource, so we're 100% sure the correct lenght
 			// will be used!

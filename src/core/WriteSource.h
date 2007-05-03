@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.h,v 1.11 2007/04/17 19:56:46 r_sijrier Exp $
+$Id: WriteSource.h,v 1.12 2007/05/03 10:38:29 r_sijrier Exp $
 */
 
 #ifndef WRITESOURCE_H
@@ -61,7 +61,7 @@ public :
 
 	size_t is_recording() const;
 
-	ExportSpecification*		spec;
+	ExportSpecification*	spec;
 	void set_diskio(DiskIO* io );
 	Peak* 		m_peak;
 

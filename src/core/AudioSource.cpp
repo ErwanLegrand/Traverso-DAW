@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSource.cpp,v 1.15 2007/03/29 12:07:40 r_sijrier Exp $
+$Id: AudioSource.cpp,v 1.16 2007/05/03 10:38:29 r_sijrier Exp $
 */
 
 
@@ -38,7 +38,7 @@ $Id: AudioSource.cpp,v 1.15 2007/03/29 12:07:40 r_sijrier Exp $
 AudioSource::AudioSource(const QString& dir, const QString& name)
 	: m_dir(dir)
 	, m_name(name)
-	, m_wasRecording(false)
+	, m_wasRecording (false)
 {
 	PENTERCONS;
 	m_fileName = m_dir + m_name;
@@ -98,6 +98,12 @@ int AudioSource::set_state( const QDomNode & node )
 	// and the flag wasrecording would be unneeded, but oh well....
 	if (m_origSongId != -1 && m_channelCount == 2 && m_fileCount == 2) {
 		m_wasRecording = true;
+	}
+	
+	if (m_wasRecording) {
+		m_shortName = m_name.left(m_name.length() - 20);
+	} else {
+		m_shortName = m_name;
 	}
 	
 	return 1;
@@ -164,5 +170,15 @@ void AudioSource::set_channel_count( uint count )
 	m_channelCount = count;
 }
 
+void AudioSource::set_id(qint64 id)
+{
+	m_id = id;
+}
+
+QString AudioSource::get_short_name() const
+{
+	return m_shortName;
+}
 
 // eof
+

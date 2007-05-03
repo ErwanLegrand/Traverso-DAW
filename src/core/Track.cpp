@@ -306,8 +306,9 @@ Command* Track::init_recording()
 		return 0;
 	}
 	
-	QString name = "Audio-" + QString::number(m_song->get_track_index(m_id)) +
-			"-take-" + QString::number(++numtakes);
+	QString name = 	"s-" + QString::number(pm().get_project()->get_song_index(m_song->get_id())) +
+			"_track-" + QString::number(m_song->get_track_index(m_id)) +
+			"_take-" + QString::number(++numtakes);
 	
 	AudioClip* clip = resources_manager()->new_audio_clip(name);
 	clip->set_song(m_song);
