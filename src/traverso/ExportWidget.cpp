@@ -62,41 +62,51 @@ ExportWidget::ExportWidget( QWidget * parent )
                 connect(m_project, SIGNAL(exportStartedForSong(Song*)), this, SLOT (set_exporting_song(Song*)));
         }
 
-        bitdepthComboBox->insertItem(0, "16");
-        bitdepthComboBox->insertItem(1, "24");
-        bitdepthComboBox->insertItem(2, "32");
-        bitdepthComboBox->insertItem(3, "32 (float)");
+        bitdepthComboBox->insertItem(0, "8");
+        bitdepthComboBox->insertItem(1, "16");
+        bitdepthComboBox->insertItem(2, "24");
+        bitdepthComboBox->insertItem(3, "32");
+        bitdepthComboBox->insertItem(4, "32 (float)");
 
         channelComboBox->insertItem(0, "Stereo");
         channelComboBox->insertItem(1, "Mono");
 
-        sampleRateComboBox->insertItem(0, "22.050 Hz");
-        sampleRateComboBox->insertItem(1, "44.100 Hz");
-        sampleRateComboBox->insertItem(2, "48.000 Hz");
-        sampleRateComboBox->insertItem(3, "88.200 Hz");
-        sampleRateComboBox->insertItem(4, "96.000 Hz");
+        sampleRateComboBox->insertItem(0, "8.000 Hz");
+        sampleRateComboBox->insertItem(1, "11.025 Hz");
+        sampleRateComboBox->insertItem(2, "22.050 Hz");
+        sampleRateComboBox->insertItem(3, "44.100 Hz");
+        sampleRateComboBox->insertItem(4, "48.000 Hz");
+        sampleRateComboBox->insertItem(5, "88.200 Hz");
+        sampleRateComboBox->insertItem(6, "96.000 Hz");
 
 	audioTypeComboBox->insertItem(0, "WAV");
 	audioTypeComboBox->insertItem(1, "AIFF");
 	audioTypeComboBox->insertItem(2, "FLAC");
 	audioTypeComboBox->insertItem(3, "CD image (cdrdao)");
 
+	bitdepthComboBox->setCurrentIndex(1);
 
         switch(audiodevice().get_sample_rate()) {
-        case		22050:
+        case		8000:
                 sampleRateComboBox->setCurrentIndex(0);
                 break;
-        case		44100:
+        case		11025:
                 sampleRateComboBox->setCurrentIndex(1);
                 break;
-        case		48000:
+        case		22050:
                 sampleRateComboBox->setCurrentIndex(2);
                 break;
-        case		88200:
+        case		44100:
                 sampleRateComboBox->setCurrentIndex(3);
                 break;
-        case		96000:
+        case		48000:
                 sampleRateComboBox->setCurrentIndex(4);
+                break;
+        case		88200:
+                sampleRateComboBox->setCurrentIndex(5);
+                break;
+        case		96000:
+                sampleRateComboBox->setCurrentIndex(6);
                 break;
         }
 
@@ -162,18 +172,22 @@ void ExportWidget::on_exportStartButton_clicked( )
 
    	     switch (bitdepthComboBox->currentIndex()) {
 	        case		0:
+        	        spec->data_width = 8;
+	                spec->format |= SF_FORMAT_PCM_U8;
+                	break;
+	        case		1:
         	        spec->data_width = 16;
 	                spec->format |= SF_FORMAT_PCM_16;
                 	break;
-        	case		1:
+        	case		2:
 	                spec->data_width = 24;
                 	spec->format |= SF_FORMAT_PCM_24;
         	        break;
-	        case		2:
+	        case		3:
         	        spec->data_width = 32;
 	                spec->format |= SF_FORMAT_PCM_32;
                 	break;
-        	case		3:
+        	case		4:
 	                spec->data_width = 1;	// 1 means float
                 	spec->format |= SF_FORMAT_FLOAT;
         	        break;
@@ -190,18 +204,24 @@ void ExportWidget::on_exportStartButton_clicked( )
 	
         	switch (sampleRateComboBox->currentIndex()) {
 	        case		0:
-                	spec->sample_rate = 22050;
+                	spec->sample_rate = 8000;
         	        break;
 	        case		1:
-                	spec->sample_rate = 44100;
+                	spec->sample_rate = 11025;
         	        break;
 	        case		2:
-                	spec->sample_rate = 48000;
+                	spec->sample_rate = 22050;
         	        break;
 	        case		3:
-                	spec->sample_rate = 88200;
+                	spec->sample_rate = 44100;
         	        break;
 	        case		4:
+                	spec->sample_rate = 48000;
+        	        break;
+	        case		5:
+                	spec->sample_rate = 88200;
+        	        break;
+	        case		6:
                 	spec->sample_rate = 96000;
         	        break;
 	        }

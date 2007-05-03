@@ -214,8 +214,7 @@ int WriteSource::process (nframes_t nframes)
 
 		switch (spec->data_width) {
 		case 8:
-			/* XXXX no way to deliver 8 bit audio to libsndfile */
-			written = to_write;
+			written = sf_write_raw (sf, (void*) output_data, to_write * channels);
 			break;
 
 		case 16:
