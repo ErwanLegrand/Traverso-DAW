@@ -1,0 +1,19 @@
+[Desktop Entry]
+Name=Traverso
+Comment=Digital Audio Workstation
+#Comment[nl]=
+
+Encoding=UTF-8
+Version=1.0
+
+Type=Application
+Categories=Application;Qt;Audio;Music;Recorder;
+
+#MimeType=text/xml ???
+
+Exec=traverso
+TryExec=traverso
+Terminal=false
+StartupNotify=true
+
+Icon=traverso.png
