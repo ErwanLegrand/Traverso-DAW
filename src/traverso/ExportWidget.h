@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
+    Copyright (C) 2005-2007 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -17,7 +17,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ExportWidget.h,v 1.3 2007/02/28 21:23:09 r_sijrier Exp $
 */
 
 #ifndef EXPORTWIDGET_H
@@ -25,8 +24,8 @@
 
 #include "ui_ExportWidget.h"
 
-#include <QWidget>
 #include <QDialog>
+#include <QHBoxLayout>
 
 class Project;
 class Song;
@@ -43,7 +42,8 @@ public:
 private:
         Project*		m_project;
         ExportSpecification* 	spec;
-
+	QHBoxLayout* m_layout;
+	
         void show_progress_view();
         void show_settings_view();
 

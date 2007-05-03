@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
+    Copyright (C) 2005-2007 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -16,8 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
- 
-    $Id: ExportWidget.cpp,v 1.8 2007/04/22 20:05:38 n_doebelin Exp $
+
 */
 
 #include "ExportWidget.h"
@@ -43,6 +42,10 @@ ExportWidget::ExportWidget( QWidget * parent )
 	: QDialog(parent)
 {
         setupUi(this);
+	
+	m_layout = new QHBoxLayout(this);
+	m_layout->setMargin(0);
+	setLayout(m_layout);
 
         m_project = pm().get_project();
 
@@ -52,15 +55,8 @@ ExportWidget::ExportWidget( QWidget * parent )
                 spec = new ExportSpecification;
                 spec->exportdir = m_project->get_root_dir() + "/Export/";
                 exportDirName->setText(spec->exportdir);
-                QStringList list;
-		foreach(Song* song, m_project->get_songs()) {
-			list.append(song->get_title());
-		}
-                QAbstractItemModel* model = new QStringListModel(list);
-                songListView->setModel(model);
-                songListView->setSelectionMode(QAbstractItemView::ExtendedSelection);
-
-                connect(m_project, SIGNAL(songExportProgressChanged(int)), this, SLOT(update_song_progress(int)));
+		
+		connect(m_project, SIGNAL(songExportProgressChanged(int)), this, SLOT(update_song_progress(int)));
                 connect(m_project, SIGNAL(overallExportProgressChanged(int)), this, SLOT(update_overall_progress(int)));
                 connect(m_project, SIGNAL(exportFinished()), this, SLOT(render_finished()));
                 connect(m_project, SIGNAL(exportStartedForSong(Song*)), this, SLOT (set_exporting_song(Song*)));
@@ -80,13 +76,10 @@ ExportWidget::ExportWidget( QWidget * parent )
         sampleRateComboBox->insertItem(3, "88.200 Hz");
         sampleRateComboBox->insertItem(4, "96.000 Hz");
 
-        audioTypeComboBox->insertItem(0, "WAV");
-        audioTypeComboBox->insertItem(1, "AIFF");
-	audioTypeComboBox->insertItem(2, "CD image (cdrdao)");
-        char  buffer [128] ;
-        sf_command (NULL, SFC_GET_LIB_VERSION, buffer, sizeof (buffer));
-        if (QByteArray(buffer) >= "libsndfile-1.0.12")
-                audioTypeComboBox->insertItem(3, "FLAC");
+	audioTypeComboBox->insertItem(0, "WAV");
+	audioTypeComboBox->insertItem(1, "AIFF");
+	audioTypeComboBox->insertItem(2, "FLAC");
+	audioTypeComboBox->insertItem(3, "CD image (cdrdao)");
 
 
         switch(audiodevice().get_sample_rate()) {
@@ -107,8 +100,10 @@ ExportWidget::ExportWidget( QWidget * parent )
                 break;
         }
 
-        songListView->hide();
         show_settings_view();
+
+	connect(buttonBox, SIGNAL(accepted()), this, SLOT(on_exportStartButton_clicked()));
+	connect(buttonBox, SIGNAL(rejected()), this, SLOT(on_cancelButton_clicked()));
 }
 
 ExportWidget::~ ExportWidget( )
@@ -116,8 +111,11 @@ ExportWidget::~ ExportWidget( )
 
 void ExportWidget::on_exportStartButton_clicked( )
 {
-        show_progress_view();
-
+	if (m_project->is_recording()) {
+		info().warning(tr("Export during recording is not supported!"));
+		return;
+	}
+	
         QDir exportDir;
         QString dirName = exportDirName->text();
 
@@ -128,7 +126,11 @@ void ExportWidget::on_exportStartButton_clicked( )
                 }
         }
 
-        switch (audioTypeComboBox->currentIndex()) {
+	
+	show_progress_view();
+	
+	
+	switch (audioTypeComboBox->currentIndex()) {
         case	0:
                 spec->format = SF_FORMAT_WAV;
                 spec->extension = ".wav";
@@ -138,21 +140,17 @@ void ExportWidget::on_exportStartButton_clicked( )
                 spec->extension = ".aiff";
                 break;
         case	2:
-                spec->format = SF_FORMAT_WAV;
-                spec->extension = ".wav";
+		spec->format = SF_FORMAT_FLAC;
+		spec->extension = ".flac";
                 break;
         case	3:
-                char  buffer [128] ;
-                sf_command (NULL, SFC_GET_LIB_VERSION, buffer, sizeof (buffer));
-                if (QByteArray(buffer) == "libsndfile-1.0.12") {
-                        spec->format = 0x170000; // == SF_FORMAT_FLAC
-                        spec->extension = ".flac";
-                }
-                break;
+		spec->format = SF_FORMAT_WAV;
+		spec->extension = ".wav";
+		break;
         }
 
 	// check if CD-format is required
-	if (audioTypeComboBox->currentIndex() == 2) {
+	if (audioTypeComboBox->currentIndex() == 3) {
 
                 spec->data_width = 16;
 	        spec->format |= SF_FORMAT_PCM_16;
@@ -285,38 +283,38 @@ void ExportWidget::render_finished( )
         songProgressBar->setValue(0);
         overalProgressBar->setValue(0);
 
-        if (!spec->stop)
+        if (!spec->stop) {
                 hide();
+	}
 
         show_settings_view();
 }
 
 void ExportWidget::set_exporting_song( Song * song )
 {
-        QString name = QString::number(m_project->get_song_index(song->get_id())) + " - " + song->get_title();
-        currentProcessingSongName->setText(name);
+        QString name = tr("Progress of Song ") + 
+			QString::number(m_project->get_song_index(song->get_id())) + ": " +
+			song->get_title();
+
+	currentProcessingSongName->setText(name);
 }
 
 void ExportWidget::show_progress_view( )
 {
-        exportSpecificationsGroupBox->hide();
-        generalOptionsGroupBox->hide();
-        exportStartButton->hide();
-        ExportStateGroupBox->show();
-        resize(370, 160);
+	optionsWidget->hide();
+	progressWidget->show();
+	m_layout->removeWidget(optionsWidget);
+	m_layout->addWidget(progressWidget);
+	resize(370, 150);
 }
 
 void ExportWidget::show_settings_view( )
 {
-        exportSpecificationsGroupBox->show();
-        generalOptionsGroupBox->show();
-        exportStartButton->show();
-        ExportStateGroupBox->hide();
-
-        if (selectionSongButton->isChecked())
-                resize(370, 455);
-        else
-                resize(370, 330);
+	m_layout->removeWidget(progressWidget);
+	m_layout->addWidget(optionsWidget);
+	optionsWidget->show();
+	progressWidget->hide();
+	resize(370, 300);
 }
 
 

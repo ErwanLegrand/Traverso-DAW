@@ -275,7 +275,8 @@ void ProjectManager::start( )
 					tr("Created new Project directory for you here: %1\n").arg(newPath), 
 					"OK", 0 );
 		}
-		config().set_property("Project", "directory", newPath);
+		QDir newdir(newPath);
+		config().set_property("Project", "directory", newdir.canonicalPath());
 	}
 	
 	bool loadProjectAtStartUp = config().get_property("Project", "loadLastUsed", 1).toBool();

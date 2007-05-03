@@ -602,18 +602,26 @@ void Project::set_import_dir(const QString& dir)
 	m_importDir = dir;
 }
 
-bool Project::is_save_to_close()
+bool Project::is_save_to_close() const
+{
+	if (is_recording()) {
+		QMessageBox::information( 0, 
+				tr("Traverso - Information"), 
+				tr("You're still recording, please stop recording first to be able to exit the application!"),
+				QMessageBox::Ok);
+		return false;
+	}
+	return true;
+}
+
+bool Project::is_recording() const
 {
 	foreach(Song* song, m_songs) {
 		if (song->is_recording() && song->is_transporting()) {
-			QMessageBox::information( 0, 
-				tr("Traverso - Information"), 
-				tr("You're still recording, please stop recording first to be able to quit the application!"),
-				   QMessageBox::Ok);
-			return false;
+			return true;
 		}
 	}
-	return true;
+	return false;
 }
 
 //eof

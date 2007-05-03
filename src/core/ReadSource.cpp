@@ -245,6 +245,7 @@ nframes_t ReadSource::get_nframes( ) const
 void ReadSource::set_was_recording(bool wasRecording)
 {
 	m_wasRecording = wasRecording;
+	m_shortName = m_name.left(m_name.length() - 20);
 }
 
 int ReadSource::reset_filename(const QString & filename)
