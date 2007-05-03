@@ -182,7 +182,7 @@
          <item>
           <widget class="QCheckBox" name="normalizeCheckBox" >
            <property name="text" >
-            <string>Normalize</string>
+            <string>Calculate and apply normalization</string>
            </property>
           </widget>
          </item>
