@@ -484,7 +484,7 @@ ClipsViewPort * SongView::get_clips_viewport() const
 
 Command * SongView::touch( )
 {
-	QPointF point = m_clipsViewPort->mapToScene(cpointer().pos());
+	QPointF point = m_clipsViewPort->mapToScene(QPoint(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y()));
 	m_song->set_work_at((nframes_t) (point.x() * scalefactor));
 
 	if (!m_song->is_transporting()) {
