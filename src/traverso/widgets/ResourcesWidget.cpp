@@ -34,6 +34,102 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QHeaderView>
 #include <QDirModel>
 #include <QListView>
+#include <QPushButton>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QComboBox>
+
+class FileWidget : public QWidget
+{
+	Q_OBJECT
+public:
+	
+	FileWidget(QWidget* parent=0)
+	: QWidget(parent)
+	{
+		QPalette palette;
+		palette.setColor(QPalette::AlternateBase, themer()->get_color("Track:background"));
+		
+		m_dirModel = new QDirModel;
+		m_dirModel->setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
+		m_dirView = new QListView;
+		m_dirView->setModel(m_dirModel);
+		m_dirView->setDragEnabled(true);
+		m_dirView->setDropIndicatorShown(true);
+		m_dirView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+		m_dirView->setAlternatingRowColors(true);
+		m_dirView->setPalette(palette);
+		m_dirModel->setSorting(QDir::DirsFirst | QDir::Name | QDir::IgnoreCase);
+		
+		m_box = new QComboBox(this);
+		m_box->addItem("");
+		m_box->addItem(QDir::homePath());
+		m_box->addItem(QDir::rootPath());
+		QPushButton* button = new QPushButton(this);
+		QIcon icon = QApplication::style()->standardIcon(QStyle::SP_FileDialogToParent);
+		button->setIcon(icon);
+		
+		QHBoxLayout* hlay = new QHBoxLayout;
+		hlay->addWidget(m_box, 10);
+		hlay->addWidget(button);
+		hlay->addSpacing(2);
+		
+		QVBoxLayout* lay = new QVBoxLayout(this);
+		lay->setMargin(0);
+		lay->addLayout(hlay);
+		lay->addWidget(m_dirView);
+		
+		setLayout(lay);
+		
+		connect(m_dirView, SIGNAL(clicked(const QModelIndex& )), this, SLOT(dirview_item_clicked(const QModelIndex&)));
+		connect(button, SIGNAL(clicked()), this, SLOT(dir_up_button_clicked()));
+		connect(m_box, SIGNAL(activated(const QString&)), this, SLOT(box_actived(const QString&)));
+		
+	}
+	
+	void set_current_path(const QString& path) const;
+	
+private slots:
+	void dirview_item_clicked(const QModelIndex & index);
+	void dir_up_button_clicked();
+	void box_actived(const QString& path);
+	
+private:
+	QListView* m_dirView;
+	QDirModel* m_dirModel;
+	QComboBox* m_box;
+};
+
+#include "ResourcesWidget.moc"
+			 
+void FileWidget::dirview_item_clicked(const QModelIndex & index)
+{
+	if (m_dirModel->isDir(index)) {
+		m_dirView->setRootIndex(index);
+		pm().get_project()->set_import_dir(m_dirModel->filePath(index));
+		m_box->setItemText(0, m_dirModel->filePath(index));
+	}
+}
+
+void FileWidget::dir_up_button_clicked()
+{
+	QDir dir(m_dirModel->filePath(m_dirView->rootIndex()));
+	dir.cdUp();
+	m_dirView->setRootIndex(m_dirModel->index(dir.canonicalPath()));
+	m_box->setItemText(0, dir.canonicalPath());
+}
+
+void FileWidget::box_actived(const QString& path)
+{
+	m_dirView->setRootIndex(m_dirModel->index(path));
+}
+
+void FileWidget::set_current_path(const QString& path) const
+{
+	m_dirView->setRootIndex(m_dirModel->index(path));
+	m_box->setItemText(0, path);
+}
+
 
 ResourcesWidget::ResourcesWidget(QWidget * parent)
 	: QWidget(parent)
@@ -63,22 +159,13 @@ ResourcesWidget::ResourcesWidget(QWidget * parent)
 	audioFileTreeWidget->header()->setResizeMode(0, QHeaderView::ResizeToContents);
 	audioFileTreeWidget->header()->setResizeMode(1, QHeaderView::ResizeToContents);
 	
-	m_dirModel = new QDirModel;
-	m_dirModel->setFilter(QDir::Dirs | QDir::Files);
-	m_dirView = new QListView;
-	m_dirView->setModel(m_dirModel);
-	m_dirView->setDragEnabled(true);
-	m_dirView->setDropIndicatorShown(true);
-	m_dirView->setSelectionMode(QAbstractItemView::ExtendedSelection);
-	m_dirView->setAlternatingRowColors(true);
-	m_dirView->setPalette(palette);
-	m_dirModel->setSorting(QDir::DirsFirst | QDir::Name | QDir::IgnoreCase);
-	layout()->addWidget(m_dirView);
-	m_dirView->hide();
+	m_filewidget = new FileWidget(this);
+	layout()->addWidget(m_filewidget);
+	m_filewidget->hide();
+	
 	
 	connect(viewComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(view_combo_box_index_changed(int)));
 	connect(songComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(song_combo_box_index_changed(int)));
-	connect(m_dirView, SIGNAL(clicked(const QModelIndex& )), this, SLOT(dirview_item_clicked(const QModelIndex&)));
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 }
 
@@ -156,20 +243,20 @@ void ResourcesWidget::view_combo_box_index_changed(int index)
 	if (index == 0) {
 		audioFileTreeWidget->show();
 		clipTreeWidget->hide();
-		m_dirView->hide();
+		m_filewidget->hide();
 	} else if (index == 1) {
 		audioFileTreeWidget->hide();
 		clipTreeWidget->show();
-		m_dirView->hide();
+		m_filewidget->hide();
 	} else if (index == 2) {
 		audioFileTreeWidget->show();
 		clipTreeWidget->show();
-		m_dirView->hide();
+		m_filewidget->hide();
 	} else {
 		audioFileTreeWidget->hide();
 		clipTreeWidget->hide();
-		m_dirView->show();
-		m_dirView->setRootIndex(m_dirModel->index(m_project->get_import_dir()));
+		m_filewidget->show();
+		m_filewidget->set_current_path(m_project->get_import_dir());
 	}
 }
 
@@ -189,13 +276,5 @@ void ResourcesWidget::song_removed(Song * song)
 	int index = songComboBox->findData(song->get_id());
 	songComboBox->removeItem(index);
 	update_tree_widgets();
-}
-
-void ResourcesWidget::dirview_item_clicked(const QModelIndex & index)
-{
-	if (m_dirModel->isDir(index)) {
-		m_dirView->setRootIndex(index);
-		m_project->set_import_dir(m_dirModel->filePath(index));
-	}
 }
 

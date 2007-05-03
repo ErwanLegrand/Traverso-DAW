@@ -482,7 +482,6 @@ int Project::start_export(ExportSpecification* spec)
 			if (spec->peakvalue > (1.0 + FLT_EPSILON)) {
 				info().critical(tr("Detected clipping in exported audio! (%1)")
 						.arg(coefficient_to_dbstring(spec->peakvalue)));
-				spec->normvalue = 1.0;
 			}
 			
 			info().information(tr("calculated norm factor: %1").arg(coefficient_to_dbstring(spec->normvalue)));

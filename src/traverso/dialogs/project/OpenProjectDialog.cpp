@@ -176,6 +176,8 @@ void OpenProjectDialog::on_loadProjectButton_clicked( )
 	if (pm().load_project(title)<0) {
 		PERROR("Could not load project %s", title.toAscii().data());
 	}
+	
+	hide();
 }
 
 void OpenProjectDialog::on_deleteProjectbutton_clicked( )
