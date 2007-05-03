@@ -62,12 +62,16 @@ public:
 		m_dirModel->setSorting(QDir::DirsFirst | QDir::Name | QDir::IgnoreCase);
 		
 		m_box = new QComboBox(this);
+		m_box->addItem("");
+#if defined (Q_WS_WIN)
 		QFileInfoList list =  QDir::drives();
 		foreach(QFileInfo info, list) {
 			m_box->addItem(info.dir().canonicalPath());
 		}
-		m_box->addItem(QDir::homePath());
+#else
 		m_box->addItem(QDir::rootPath());
+		m_box->addItem(QDir::homePath());
+#endif
 		QPushButton* button = new QPushButton(this);
 		QIcon icon = QApplication::style()->standardIcon(QStyle::SP_FileDialogToParent);
 		button->setIcon(icon);
