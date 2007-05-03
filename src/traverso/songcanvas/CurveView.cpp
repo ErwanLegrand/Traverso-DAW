@@ -473,6 +473,11 @@ Command* CurveView::add_node()
 Command* CurveView::remove_node()
 {
 	PENTER;
+
+	QPointF origPos(mapFromScene(QPoint(cpointer().on_first_input_event_scene_x(), cpointer().on_first_input_event_scene_y())));
+
+	update_softselected_node(QPoint((int)origPos.x(), (int)origPos.y()), true);
+
 	if (m_blinkingNode) {
 		CurveNode* node = m_blinkingNode->get_curve_node();
 		m_blinkingNode = 0;
