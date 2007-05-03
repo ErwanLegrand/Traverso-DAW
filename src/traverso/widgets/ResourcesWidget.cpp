@@ -62,7 +62,10 @@ public:
 		m_dirModel->setSorting(QDir::DirsFirst | QDir::Name | QDir::IgnoreCase);
 		
 		m_box = new QComboBox(this);
-		m_box->addItem("");
+		QFileInfoList list =  QDir::drives();
+		foreach(QFileInfo info, list) {
+			m_box->addItem(info.dir().canonicalPath());
+		}
 		m_box->addItem(QDir::homePath());
 		m_box->addItem(QDir::rootPath());
 		QPushButton* button = new QPushButton(this);
