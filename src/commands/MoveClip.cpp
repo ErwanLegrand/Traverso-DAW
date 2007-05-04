@@ -430,12 +430,12 @@ void MoveClip::calculate_snap_diff(long& leftframe, nframes_t rightframe)
 	}
 
 	if (start_snapped) {
-		snapStartDiff = slist->get_snap_diff(leftframe) / d->sv->scalefactor;
+		snapStartDiff = slist->get_snap_diff(leftframe);
 		snapDiff = snapStartDiff; // in case both ends snapped, change this value later, else leave it
 	}
 
 	if (end_snapped) {
-		snapEndDiff = slist->get_snap_diff(rightframe) / d->sv->scalefactor; 
+		snapEndDiff = slist->get_snap_diff(rightframe); 
 		snapDiff = snapEndDiff; // in case both ends snapped, change this value later, else leave it
 	}
 
@@ -449,7 +449,7 @@ void MoveClip::calculate_snap_diff(long& leftframe, nframes_t rightframe)
 			snapDiff = snapEndDiff;
 	}
 	
-	leftframe -= snapDiff * d->sv->scalefactor;
+	leftframe -= snapDiff;
 }
 
 // eof
