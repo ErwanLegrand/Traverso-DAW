@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SnapList.cpp,v 1.13 2007/04/06 10:01:41 r_sijrier Exp $
+$Id: SnapList.cpp,v 1.14 2007/05/04 21:28:06 benjie Exp $
 */
 
 #include "SnapList.h"
@@ -137,9 +137,9 @@ void SnapList::update_snaplist()
 		// if yes, reduce SNAP_WIDTH to keep the border in the middle
 		int ls = -SNAP_WIDTH;
 
-		if (i > 0) {
-			if ( (xposList.at(lastIndex) - xposList.at(i)) > (2 * ls) ) {
-				ls = ((xposList.at(lastIndex) - xposList.at(i)) / m_scalefactor) / 2;
+		if (lastIndex > -1) {
+			if ( (xposList.at(i) - lastVal) < (2 * SNAP_WIDTH * m_scalefactor) ) {
+				ls = - (int) ((xposList.at(i) / m_scalefactor - lastVal / m_scalefactor) / 2);
 			}
 		}
 
