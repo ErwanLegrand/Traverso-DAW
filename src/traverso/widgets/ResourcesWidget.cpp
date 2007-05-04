@@ -145,26 +145,18 @@ ResourcesWidget::ResourcesWidget(QWidget * parent)
 	
 	QPalette palette;
 	palette.setColor(QPalette::AlternateBase, themer()->get_color("Track:background"));
-	clipTreeWidget->setPalette(palette);
-	clipTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
-	clipTreeWidget->setAlternatingRowColors(true);
-	clipTreeWidget->setDragEnabled(true);
-	clipTreeWidget->setDropIndicatorShown(true);
-	clipTreeWidget->setIndentation(12);
-	clipTreeWidget->header()->setResizeMode(0, QHeaderView::ResizeToContents);
-	clipTreeWidget->header()->setResizeMode(1, QHeaderView::ResizeToContents);
-	clipTreeWidget->header()->setResizeMode(2, QHeaderView::ResizeToContents);
-	clipTreeWidget->header()->setResizeMode(3, QHeaderView::ResizeToContents);
-	clipTreeWidget->hide();
+	sourcesTreeWidget->setPalette(palette);
+	sourcesTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
+	sourcesTreeWidget->setAlternatingRowColors(true);
+	sourcesTreeWidget->setDragEnabled(true);
+	sourcesTreeWidget->setDropIndicatorShown(true);
+	sourcesTreeWidget->setIndentation(18);
+	sourcesTreeWidget->header()->setResizeMode(0, QHeaderView::ResizeToContents);
+	sourcesTreeWidget->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+	sourcesTreeWidget->header()->setResizeMode(2, QHeaderView::ResizeToContents);
+	sourcesTreeWidget->header()->setResizeMode(3, QHeaderView::ResizeToContents);
+	sourcesTreeWidget->header()->setStretchLastSection(false);
 	
-	audioFileTreeWidget->setPalette(palette);
-	audioFileTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
-	audioFileTreeWidget->setAlternatingRowColors(true);
-	audioFileTreeWidget->setDragEnabled(true);
-	audioFileTreeWidget->setDropIndicatorShown(true);
-	audioFileTreeWidget->setIndentation(12);
-	audioFileTreeWidget->header()->setResizeMode(0, QHeaderView::ResizeToContents);
-	audioFileTreeWidget->header()->setResizeMode(1, QHeaderView::ResizeToContents);
 	
 	m_filewidget = new FileWidget(this);
 	layout()->addWidget(m_filewidget);
@@ -182,8 +174,7 @@ ResourcesWidget::~ ResourcesWidget()
 
 void ResourcesWidget::set_project(Project * project)
 {
-	audioFileTreeWidget->clear();
-	clipTreeWidget->clear();
+	sourcesTreeWidget->clear();
 	songComboBox->clear();
 	
 	m_project = project;
@@ -205,63 +196,59 @@ void ResourcesWidget::set_project(Project * project)
 
 void ResourcesWidget::update_tree_widgets()
 {
-	audioFileTreeWidget->clear();
-	clipTreeWidget->clear();
+	sourcesTreeWidget->clear();
 	
 	foreach(ReadSource* rs, m_project->get_audiosource_manager()->get_all_audio_sources()) {
-		QTreeWidgetItem* item = new QTreeWidgetItem(audioFileTreeWidget);
+		QTreeWidgetItem* item = new QTreeWidgetItem(sourcesTreeWidget);
 		QString duration = frame_to_ms(rs->get_nframes(), 44100);
 		item->setText(0, rs->get_short_name());
 		item->setText(1, duration);
+		item->setText(2, "");
+		item->setText(3, "");
 		item->setData(0, Qt::UserRole, rs->get_id());
 		item->setToolTip(0, rs->get_short_name() + "   " + duration);
 		if (!rs->get_ref_count()) {
 			item->setForeground(0, QColor(Qt::lightGray));
 			item->setForeground(1, QColor(Qt::lightGray));
-		}
-	}
-	
-	
-	foreach(AudioClip* clip, m_project->get_audiosource_manager()->get_all_clips()) {
-		QTreeWidgetItem* item = new QTreeWidgetItem(clipTreeWidget);
-		item->setText(0, clip->get_name());
-		QString start = frame_to_ms(clip->get_source_start_frame(), clip->get_rate());
-		QString end = frame_to_ms(clip->get_source_end_frame(), clip->get_rate());
-		item->setText(1, start);
-		item->setText(2, end);
-		item->setText(3, frame_to_ms(clip->get_length(), clip->get_rate()));
-		item->setData(0, Qt::UserRole, clip->get_id());
-		item->setToolTip(0, clip->get_name() + "   " + start + " - " + end);
-		
-		if (!clip->get_ref_count()) {
-			item->setForeground(0, QColor(Qt::lightGray));
-			item->setForeground(1, QColor(Qt::lightGray));
 			item->setForeground(2, QColor(Qt::lightGray));
 			item->setForeground(3, QColor(Qt::lightGray));
 		}
+		
+		foreach(AudioClip* clip, m_project->get_audiosource_manager()->get_all_clips()) {
+			if ( ! (clip->get_readsource_id() == rs->get_id())) {
+				continue;
+			}
+			QTreeWidgetItem* clipitem = new QTreeWidgetItem(item);
+			clipitem->setText(0, clip->get_name());
+			QString start = frame_to_ms(clip->get_source_start_frame(), clip->get_rate());
+			QString end = frame_to_ms(clip->get_source_end_frame(), clip->get_rate());
+			clipitem->setText(1, frame_to_ms(clip->get_length(), clip->get_rate()));
+			clipitem->setText(2, start);
+			clipitem->setText(3, end);
+			clipitem->setData(0, Qt::UserRole, clip->get_id());
+			clipitem->setToolTip(0, clip->get_name() + "   " + start + " - " + end);
+		
+			if (!clip->get_ref_count()) {
+				clipitem->setForeground(0, QColor(Qt::lightGray));
+				clipitem->setForeground(1, QColor(Qt::lightGray));
+				clipitem->setForeground(2, QColor(Qt::lightGray));
+				clipitem->setForeground(3, QColor(Qt::lightGray));
+			}
+		}
 	}
+	
+	
 
-	clipTreeWidget->sortItems(0, Qt::AscendingOrder);
-	audioFileTreeWidget->sortItems(0, Qt::AscendingOrder);
+	sourcesTreeWidget->sortItems(0, Qt::AscendingOrder);
 }
 
 void ResourcesWidget::view_combo_box_index_changed(int index)
 {
 	if (index == 0) {
-		audioFileTreeWidget->show();
-		clipTreeWidget->hide();
+		sourcesTreeWidget->show();
 		m_filewidget->hide();
 	} else if (index == 1) {
-		audioFileTreeWidget->hide();
-		clipTreeWidget->show();
-		m_filewidget->hide();
-	} else if (index == 2) {
-		audioFileTreeWidget->show();
-		clipTreeWidget->show();
-		m_filewidget->hide();
-	} else {
-		audioFileTreeWidget->hide();
-		clipTreeWidget->hide();
+		sourcesTreeWidget->hide();
 		m_filewidget->show();
 		m_filewidget->set_current_path(m_project->get_import_dir());
 	}

@@ -1,5 +1,7 @@
 TOBEDONE FOR 0.40.0
 
+* don't push mute/solo to history stack.
+
 * FadeView merging code messes up start of clip when fade lenght is very short (1 or even 0 pixels)
 
 * switching to effect mode crashes with 0 tracks

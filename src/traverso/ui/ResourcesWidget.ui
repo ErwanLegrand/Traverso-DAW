@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>151</width>
-    <height>289</height>
+    <width>540</width>
+    <height>530</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -39,17 +39,7 @@
        </property>
        <item>
         <property name="text" >
-         <string>Audio</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>Clips</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>Both</string>
+         <string>Sources</string>
         </property>
        </item>
        <item>
@@ -86,24 +76,21 @@
       <number>6</number>
      </property>
      <item>
-      <widget class="QTreeWidget" name="audioFileTreeWidget" >
+      <widget class="QTreeWidget" name="sourcesTreeWidget" >
+       <property name="sortingEnabled" >
+        <bool>false</bool>
+       </property>
+       <property name="animated" >
+        <bool>false</bool>
+       </property>
        <column>
         <property name="text" >
-         <string>Audio Name</string>
+         <string>Name</string>
         </property>
        </column>
        <column>
         <property name="text" >
          <string>Length</string>
-        </property>
-       </column>
-      </widget>
-     </item>
-     <item>
-      <widget class="QTreeWidget" name="clipTreeWidget" >
-       <column>
-        <property name="text" >
-         <string>Clip Name</string>
         </property>
        </column>
        <column>
@@ -114,11 +101,6 @@
        <column>
         <property name="text" >
          <string>End</string>
-        </property>
-       </column>
-       <column>
-        <property name="text" >
-         <string>Length</string>
         </property>
        </column>
       </widget>
