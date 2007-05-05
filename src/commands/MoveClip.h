@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveClip.h,v 1.18 2007/04/13 12:07:00 r_sijrier Exp $
+    $Id: MoveClip.h,v 1.19 2007/05/05 17:13:13 benjie Exp $
 */
 
 #ifndef MOVECLIPACTION_H
@@ -82,7 +82,7 @@ private :
 	Data* d;
 
 	void init_data(bool isCopy=false);
-	void calculate_snap_diff(long& leftframe, nframes_t rightframe);
+	void calculate_snap_diff(nframes_t& leftframe, nframes_t rightframe);
 
 	
 public slots:

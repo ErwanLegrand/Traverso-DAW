@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SnapList.cpp,v 1.14 2007/05/04 21:28:06 benjie Exp $
+$Id: SnapList.cpp,v 1.15 2007/05/05 17:13:13 benjie Exp $
 */
 
 #include "SnapList.h"
@@ -125,11 +125,11 @@ void SnapList::update_snaplist()
 		xposBool.push_back(false);
 	}
 
-	long lastVal = -1;
+	nframes_t lastVal = 0;
 	long lastIndex = -1;
 	// now modify the regions around snap points in the lookup table
 	for (int i = 0; i < xposList.size(); i++) {
-		if (xposList.at(i) == lastVal) {
+		if (lastIndex > -1 && xposList.at(i) == lastVal) {
 			continue;  // check for duplicates and skip them
 		}
 

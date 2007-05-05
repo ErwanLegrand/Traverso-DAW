@@ -317,11 +317,13 @@ int MoveClip::jog()
 
 	// must be signed int because it can be negative
 	int diff_f = (cpointer().x() - d->origXPos - scrollbardif) * d->sv->scalefactor;
-	long newTrackStartFrame = d->origTrackStartFrame + diff_f;
+	nframes_t newTrackStartFrame;
 	nframes_t newTrackEndFrame = d->origTrackEndFrame + diff_f;
 
-	if (newTrackStartFrame < 0) {
+	if (diff_f < 0 && d->origTrackStartFrame < (nframes_t) -diff_f) {
 		newTrackStartFrame = 0;
+	} else {
+		newTrackStartFrame = d->origTrackStartFrame + diff_f;
 	}
 
 	if (m_song->is_snap_on()) {
@@ -409,7 +411,7 @@ void MoveClip::move_to_end(bool autorepeat)
 	Command::process_command(track->add_clip(m_clip, false));
 }
 
-void MoveClip::calculate_snap_diff(long& leftframe, nframes_t rightframe)
+void MoveClip::calculate_snap_diff(nframes_t& leftframe, nframes_t rightframe)
 {
 	// "nframe_t" domain, but must be signed ints because they can become negative
 	int snapStartDiff = 0;
