@@ -62,15 +62,17 @@ public:
 		m_dirModel->setSorting(QDir::DirsFirst | QDir::Name | QDir::IgnoreCase);
 		
 		m_box = new QComboBox(this);
-		m_box->addItem("");
+		m_box->addItem("", "");
 #if defined (Q_WS_WIN)
 		QFileInfoList list =  QDir::drives();
+		m_box->addItem(tr("My Computer"), "");
+		m_box->addItem(tr("My Documents"), QDir::homePath() + "\\" + tr("My Documents"));
 		foreach(QFileInfo info, list) {
-			m_box->addItem(info.dir().canonicalPath());
+			m_box->addItem(info.dir().canonicalPath(), info.dir().canonicalPath());
 		}
 #else
-		m_box->addItem(QDir::rootPath());
-		m_box->addItem(QDir::homePath());
+		m_box->addItem(QDir::rootPath(), QDir::rootPath());
+		m_box->addItem(QDir::homePath(), QDir::homePath());
 #endif
 		QPushButton* button = new QPushButton(this);
 		QIcon icon = QApplication::style()->standardIcon(QStyle::SP_FileDialogToParent);
@@ -90,7 +92,7 @@ public:
 		
 		connect(m_dirView, SIGNAL(clicked(const QModelIndex& )), this, SLOT(dirview_item_clicked(const QModelIndex&)));
 		connect(button, SIGNAL(clicked()), this, SLOT(dir_up_button_clicked()));
-		connect(m_box, SIGNAL(activated(const QString&)), this, SLOT(box_actived(const QString&)));
+		connect(m_box, SIGNAL(activated(int)), this, SLOT(box_actived(int)));
 		
 	}
 	
@@ -99,7 +101,7 @@ public:
 private slots:
 	void dirview_item_clicked(const QModelIndex & index);
 	void dir_up_button_clicked();
-	void box_actived(const QString& path);
+	void box_actived(int i);
 	
 private:
 	QListView* m_dirView;
@@ -115,26 +117,48 @@ void FileWidget::dirview_item_clicked(const QModelIndex & index)
 		m_dirView->setRootIndex(index);
 		pm().get_project()->set_import_dir(m_dirModel->filePath(index));
 		m_box->setItemText(0, m_dirModel->filePath(index));
+		m_box->setItemData(0, m_dirModel->filePath(index));
+		m_box->setCurrentIndex(0);
 	}
 }
 
 void FileWidget::dir_up_button_clicked()
 {
 	QDir dir(m_dirModel->filePath(m_dirView->rootIndex()));
+	
+#if defined (Q_WS_WIN)
+	if (m_dirModel->filePath(m_dirView->rootIndex()) == "") {
+		return;
+	}
+	QString oldDir = dir.canonicalPath();
+#endif
+	
 	dir.cdUp();
+	QString text = dir.canonicalPath();
+	
+#if defined (Q_WS_WIN)
+	if (oldDir == dir.canonicalPath()) {
+		dir.setPath("");
+		text = tr("My Computer");
+	}
+#endif
+	
 	m_dirView->setRootIndex(m_dirModel->index(dir.canonicalPath()));
-	m_box->setItemText(0, dir.canonicalPath());
+	m_box->setItemText(0, text);
+	m_box->setItemData(0, dir.canonicalPath());
+	m_box->setCurrentIndex(0);
 }
 
-void FileWidget::box_actived(const QString& path)
+void FileWidget::box_actived(int i)
 {
-	m_dirView->setRootIndex(m_dirModel->index(path));
+	m_dirView->setRootIndex(m_dirModel->index(m_box->itemData(i).toString()));
 }
 
 void FileWidget::set_current_path(const QString& path) const
 {
 	m_dirView->setRootIndex(m_dirModel->index(path));
 	m_box->setItemText(0, path);
+	m_box->setItemData(0, path);
 }
 
 
