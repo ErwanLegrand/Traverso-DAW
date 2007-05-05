@@ -63,6 +63,9 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 			if (item->metaObject()->className() == QString("TrackPanelGain")) {
 				item = item->get_context();
 			}
+			if (item->metaObject()->className() == QString("SongPanelGain")) {
+				item = item->get_context();
+			}
 			
 			if (!item) {
 				PERROR("TraversoCommands: Supplied QObject was not a ContextItem, "
@@ -128,7 +131,7 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 					"RemoveClipCommand needs a Clip as argument");
 				return 0;
 			}
-			return new RemoveClip(clip);
+			return new AddRemoveClip(clip, AddRemoveClip::REMOVE);
 		}
 		
 		case RemoveTrackCommand:

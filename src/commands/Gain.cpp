@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Gain.cpp,v 1.20 2007/04/30 18:16:46 benjie Exp $
+$Id: Gain.cpp,v 1.21 2007/05/05 20:40:35 r_sijrier Exp $
 */
 
 #include "Gain.h"
@@ -27,6 +27,7 @@ $Id: Gain.cpp,v 1.20 2007/04/30 18:16:46 benjie Exp $
 #include "Mixer.h"
 #include <ViewPort.h>
 #include <Track.h>
+#include "Song.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -63,6 +64,11 @@ Gain::Gain(ContextItem* context, QVariantList args)
 	Track* track = qobject_cast<Track*>(context);
 	if (track && origGain == 0.5) {
 		newGain = 1.0;
+	} else {
+		Song* song = qobject_cast<Song*>(context);
+		if (song && origGain == 0.5) {
+			newGain = 1.0;
+		}
 	}
 }
 

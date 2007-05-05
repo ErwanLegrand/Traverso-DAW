@@ -213,6 +213,7 @@
 				<Object objectname="Gain" slotsignature="increase_gain" modes="All" instantanious="1" />
 				<Object objectname="TrackPanelPan" slotsignature="pan_right" modes="All" sortorder="1" instantanious="1" />
 				<Object objectname="TrackPanelGain" slotsignature="gain_increment" modes="All" sortorder="1" instantanious="1" />
+				<Object objectname="SongPanelGain" slotsignature="gain_increment" modes="All" sortorder="1" instantanious="1" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="MouseScrollVerticalDown" >
@@ -222,6 +223,7 @@
 				<Object objectname="Gain" slotsignature="decrease_gain" modes="All" instantanious="1" />
 				<Object objectname="TrackPanelPan" slotsignature="pan_left" modes="All" sortorder="2" instantanious="1" />
 				<Object objectname="TrackPanelGain" slotsignature="gain_decrement" modes="All" sortorder="2" instantanious="1" />
+				<Object objectname="SongPanelGain" slotsignature="gain_decrement" modes="All" sortorder="2" instantanious="1" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="F" >
@@ -315,6 +317,7 @@
 			<Objects>
 				<Object objectname="AudioClip" modes="All" sortorder="5" pluginname="TraversoCommands" commandname="Gain" />
 				<Object objectname="Track" modes="All" sortorder="7" pluginname="TraversoCommands" commandname="Gain" />
+				<Object objectname="Song" modes="All" sortorder="7" pluginname="TraversoCommands" commandname="Gain" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="P" sortorder="16" >
@@ -335,6 +338,7 @@
 				<Object objectname="TimeLineView" mousehint="LR" slotsignature="drag_marker" modes="All" sortorder="3" instantanious="1" />
 				<Object objectname="SongView" mousehint="LR" slotsignature="work_cursor_move" modes="All" sortorder="14" instantanious="0" />
 				<Object objectname="TrackPanelGain" modes="All" sortorder="7" pluginname="TraversoCommands" commandname="Gain" arguments="horizontal" />
+				<Object objectname="SongPanelGain" modes="All" sortorder="7" pluginname="TraversoCommands" commandname="Gain" arguments="horizontal" />
 				<Object objectname="TrackPanelPan" mousehint="LR"  modes="All" sortorder="8" pluginname="TraversoCommands" commandname="TrackPan" />
 			</Objects>
 		</keyfact> 
@@ -448,6 +452,7 @@
 				<Object objectname="AudioClip" modes="All" sortorder="22" pluginname="TraversoCommands" commandname="ResetGain" arguments="1.0" />
 				<Object objectname="Track" modes="All" sortorder="30" pluginname="TraversoCommands" commandname="ResetGain" arguments="0.5" />
 				<Object objectname="TrackPanelGain" modes="All" sortorder="30" pluginname="TraversoCommands" commandname="ResetGain" arguments="0.5" />
+				<Object objectname="Song" modes="All" sortorder="30" pluginname="TraversoCommands" commandname="ResetGain" arguments="0.5" />
 			</Objects>
 		</keyfact>
 		<keyfact type="D_FKEY" key1="N" >

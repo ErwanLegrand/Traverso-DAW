@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.h,v 1.10 2007/04/11 22:46:36 r_sijrier Exp $
+$Id: TrackPanelView.h,v 1.11 2007/05/05 20:40:35 r_sijrier Exp $
 */
 
 #ifndef TRACK_PANEL_VIEW_H
@@ -40,7 +40,6 @@ public:
 	TrackPanelGain(){}
 
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-	QRectF boundingRect() const {return m_boundingRect;}
 	void set_width(int width);
 
 public slots:
@@ -48,7 +47,6 @@ public slots:
 	Command* gain_decrement();
 	
 private:
-	QRectF	m_boundingRect;
 	Track* m_track;
 };
 
@@ -62,7 +60,6 @@ public:
 	
 
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-	QRectF boundingRect() const {return m_boundingRect;}
 	void set_width(int width);
 
 public slots:
@@ -70,7 +67,6 @@ public slots:
 	Command* pan_right();
 
 private:
-	QRectF	m_boundingRect;
 	Track* m_track;
 };
 

@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <libtraversocore.h>
 #include <Import.h>
 #include <CommandGroup.h>
+#include "RemoveClip.h"
 
 #include <QScrollBar>
 #include <QSet>
@@ -153,12 +154,14 @@ void ClipsViewPort::dropEvent(QDropEvent* event )
 			}
 			clip->set_track_start_frame(startpos);
 			startpos = clip->get_track_end_frame();
-			group->add_command(importTrack->add_clip(clip));
+			AddRemoveClip* arc = new AddRemoveClip(clip, AddRemoveClip::ADD);
+			arc->remove_from_database_when_removed(true);
+			group->add_command(arc);
 			continue;
 		}
 		ReadSource* source = resources_manager()->get_readsource(id);
 		if (source) {
-			clip = resources_manager()->new_audio_clip(source->get_name());
+			clip = resources_manager()->new_audio_clip(source->get_short_name());
 			clip->set_audio_source(source);
 			clip->set_song(importTrack->get_song());
 			clip->set_track(importTrack);
@@ -166,7 +169,9 @@ void ClipsViewPort::dropEvent(QDropEvent* event )
 			startpos = clip->get_track_end_frame();
 			// FIXME!!!!!!!!!!!!!!!!!!!!
 			clip->init_gain_envelope();
-			group->add_command(importTrack->add_clip(clip));
+			AddRemoveClip* arc = new AddRemoveClip(clip, AddRemoveClip::ADD);
+			arc->remove_from_database_when_removed(true);
+			group->add_command(arc);
 		}
 	}
 	

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongWidget.h,v 1.11 2007/04/03 21:25:25 benjie Exp $
+    $Id: SongWidget.h,v 1.12 2007/05/05 20:40:35 r_sijrier Exp $
 */
 
 #ifndef SONG_WIDGET_H
@@ -32,6 +32,7 @@ class QScrollBar;
 class TrackPanelViewPort;
 class TimeLineViewPort;
 class ClipsViewPort;
+class SongPanelViewPort;
 
 class Project;
 class Song;
@@ -60,6 +61,7 @@ private:
 	TrackPanelViewPort*	m_trackPanel;
 	TimeLineViewPort*	m_timeLine;
 	ClipsViewPort*		m_clipsViewPort;
+	SongPanelViewPort*	m_songPanelVP;
 	QGraphicsScene* 	m_scene;
 	QScrollBar*		m_vScrollBar;
 	QScrollBar*		m_hScrollBar;
