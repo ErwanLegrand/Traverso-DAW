@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongWidget.cpp,v 1.12 2007/05/05 20:40:35 r_sijrier Exp $
+    $Id: SongWidget.cpp,v 1.13 2007/05/05 21:11:07 r_sijrier Exp $
 */
 
 		
@@ -151,17 +151,12 @@ void SongPanelView::paint(QPainter * painter, const QStyleOptionGraphicsItem * o
 	int xstart = (int)option->exposedRect.x();
 	int pixelcount = (int)option->exposedRect.width();
 	
-	QColor color = themer()->get_color("Track:background");
-		
-// 	painter->fillRect(xstart, 0, pixelcount, 30, color);
-	
 	painter->setPen(themer()->get_color("TrackPanel:text"));
 	painter->setFont(themer()->get_font("TrackPanel:led"));
 	painter->drawText(10, 11, "Song: " + m_song->get_title());
 	
-	color = themer()->get_color("Track:cliptopoffset");
+	QColor color = themer()->get_color("Track:cliptopoffset");
 	painter->setPen(color);
-// 	painter->drawLine(200 - 1, 0,  200 - 1, 30 - 1);
 	painter->fillRect(xstart, 29, pixelcount, 1, color);
 }
 
@@ -207,7 +202,7 @@ SongPanelViewPort::SongPanelViewPort(QGraphicsScene * scene, SongWidget * sw)
 	setMaximumWidth(200);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	setBackgroundBrush(themer()->get_color("Song:background"));
+	setBackgroundBrush(themer()->get_color("SongPanel:background"));
 }
 
 

@@ -126,6 +126,8 @@
 		<color name="TrackPanel:recled" red="255" green="58" blue="58" alpha="255" />
 		<color name="TrackPanel:led:inactive" red="241" green="241" blue="255" alpha="255" />
 		
+		<color name="SongPanel:background" red="239" green="240" blue="244" alpha="255" />
+		
 		
 		<color name="Workcursor:default" red="255" green="0" blue="0" alpha="255" />
 		
