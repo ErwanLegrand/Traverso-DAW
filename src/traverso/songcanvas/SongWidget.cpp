@@ -17,7 +17,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SongWidget.cpp,v 1.13 2007/05/05 21:11:07 r_sijrier Exp $
 */
 
 		
@@ -180,7 +179,7 @@ public:
 	{
 		m_sv = sv;
 		m_spv = new SongPanelView(scene(), m_song);
-		m_spv->setPos(-200, -30);
+		m_spv->setPos(-220, -30);
 	}
 
 private:
@@ -193,7 +192,7 @@ private:
 SongPanelViewPort::SongPanelViewPort(QGraphicsScene * scene, SongWidget * sw)
 	: ViewPort(scene, sw)
 {
-	setSceneRect(-200, -30, 200, 0);
+	setSceneRect(-220, -30, 200, 0);
 	m_song = sw->get_song();
 	
 	setMaximumHeight(30);
