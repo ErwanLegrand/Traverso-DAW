@@ -333,6 +333,7 @@ void ResourcesWidget::source_nolonger_in_use(ReadSource * source)
 void ResourcesWidget::source_back_in_use(ReadSource * source)
 {
 	QTreeWidgetItem* item = m_sourceindices.value(source->get_id());
+	if (!item) return;
 	for (int i=0; i<5; ++i) {
 		item->setForeground(i, QColor(Qt::black));
 	}
@@ -342,7 +343,9 @@ void ResourcesWidget::add_new_clip_entry(AudioClip * clip)
 {
 	QTreeWidgetItem* sourceitem = m_sourceindices.value(clip->get_readsource_id());
 	
-	Q_ASSERT(sourceitem);
+	if (! sourceitem ) return;
+	
+// 	Q_ASSERT(sourceitem);
 	
 	QTreeWidgetItem* clipitem = new QTreeWidgetItem(sourceitem);
 	m_clipindices.insert(clip->get_id(), clipitem);
