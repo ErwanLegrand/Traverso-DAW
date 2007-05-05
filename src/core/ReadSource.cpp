@@ -45,6 +45,7 @@ ReadSource::ReadSource(const QDomNode node)
 	: AudioSource(node)
 	, m_sources()
 	, m_refcount(0)
+	, m_unrefcount(0)
 	, m_error(0)
 {
 	Project* project = pm().get_project();
@@ -64,6 +65,7 @@ ReadSource::ReadSource(const QDomNode node)
 ReadSource::ReadSource(const QString& dir, const QString& name)
 	: AudioSource(dir, name)
 	, m_refcount(0)
+	, m_unrefcount(0)
 	, m_error(0)
 {
 	SNDFILE* sf;
@@ -83,6 +85,7 @@ ReadSource::ReadSource(const QString& dir, const QString& name)
 ReadSource::ReadSource(const QString& dir, const QString& name, int channelCount, int fileCount)
 	: AudioSource(dir, name)
 	, m_refcount(0)
+	, m_unrefcount(0)
 	, m_error(0)
 {
 	m_channelCount = channelCount;
@@ -94,6 +97,7 @@ ReadSource::ReadSource(const QString& dir, const QString& name, int channelCount
 ReadSource::ReadSource()
 	: AudioSource("", tr("Silence"))
 	, m_refcount(0)
+	, m_unrefcount(0)
 	, m_error(0)
 {
 	m_channelCount = 0;

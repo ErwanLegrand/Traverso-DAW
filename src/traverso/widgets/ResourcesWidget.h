@@ -28,6 +28,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 class Project;
 class Song;
 class FileWidget;
+class AudioClip;
+class ReadSource;
+class QTreeWidgetItem;
 
 class ResourcesWidget : public QWidget, protected Ui::ResourcesWidget
 {
@@ -42,6 +45,10 @@ public:
 private:
 	Project* m_project;
 	FileWidget* m_filewidget;
+	QHash<qint64, QTreeWidgetItem*> m_clipindices;
+	QHash<qint64, QTreeWidgetItem*> m_sourceindices;
+	
+	void add_new_clip_entry(AudioClip* clip);
 	
 
 private slots:
@@ -51,6 +58,11 @@ private slots:
 	void song_combo_box_index_changed(int index);
 	void song_added(Song* song);
 	void song_removed(Song* song);
+	
+	void clip_removed(AudioClip* clip);
+	void clip_added(AudioClip* clip);
+	void source_nolonger_in_use(ReadSource* source);
+	void source_back_in_use(ReadSource* source);
 };
 
 #endif

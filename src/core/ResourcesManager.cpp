@@ -88,7 +88,7 @@ QDomNode ResourcesManager::get_state( QDomDocument doc )
 		
 		// If the clip was refcounted, then it's state has been fully set
 		// and likely changed, so we can get the 'new' state from it.
-		if (clip->get_ref_count()) {
+		if (m_gettedClips.contains(clip->get_id())) {
 			audioClipsElement.appendChild(clip->get_state(doc));
 		} else {
 			// In case it wasn't we should use the 'old' domNode which 
@@ -305,11 +305,14 @@ AudioClip* ResourcesManager::get_clip( qint64 id )
 {
 	AudioClip* clip = m_clips.value(id);
 	 
+	printf("ResourcesManager: Getting clip with id %lld\n", id);
 	if (! clip) {
 		return 0;
 	}
 	
-	if (clip->ref()) {
+	if (m_removedClips.contains(id)) {
+		clip = m_removedClips.take(id);
+	} else if (m_gettedClips.contains(id)) {
 		PMESG("Creating deep copy of Clip %s", QS_C(clip->get_name()));
 		clip = clip->create_copy();
 		
@@ -326,6 +329,8 @@ AudioClip* ResourcesManager::get_clip( qint64 id )
 		// and other stuff.
 		return get_clip(clip->get_id());
 	}
+	
+	m_gettedClips.insert(id, clip);
 	
 	ReadSource* source = get_readsource(clip->get_readsource_id());
 	
@@ -354,7 +359,11 @@ AudioClip* ResourcesManager::new_audio_clip(const QString& name)
 
 QList<ReadSource*> ResourcesManager::get_all_audio_sources( ) const
 {
-	return m_sources.values();
+	QList< ReadSource * > list = m_sources.values();
+	if (m_silentReadSource) {
+		list.removeAll(m_silentReadSource);
+	}
+	return list;
 }
 
 QList< AudioClip * > ResourcesManager::get_all_clips() const
@@ -375,6 +384,37 @@ QList< AudioClip * > ResourcesManager::get_clips_for_source( ReadSource * source
 	return clips;
 }
 
+void ResourcesManager::set_clip_removed(AudioClip * clip)
+{
+	ReadSource* source = m_sources.value(clip->get_readsource_id());
+	if (source) {
+		source->unref(true);
+		printf("ClipRemoved: refcount, unrefcount: %d, %d\n", source->get_ref_count(), source->get_unref_count());
+		if (source->get_unref_count() == 0) {
+			emit sourceNoLongerUsed(source);
+		}
+	}
+	m_removedClips.insert(clip->get_id(), clip);
+	emit clipRemoved(clip);
+}
 
+void ResourcesManager::set_clip_added(AudioClip * clip)
+{
+	ReadSource* source = m_sources.value(clip->get_readsource_id());
+	if (source) {
+		source->unref(false);
+		printf("ClipAdded: refcount, unrefcount: %d, %d\n", source->get_ref_count(), source->get_unref_count());
+		emit sourceBackInUse(source);
+	}
+	m_removedClips.take(clip->get_id());
+	emit clipAdded(clip);
+}
+
+
+bool ResourcesManager::is_clip_in_use(qint64 id) const
+{
+	return m_gettedClips.contains(id) && ! m_removedClips.contains(id);
+}
 
 //eof
+

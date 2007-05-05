@@ -637,6 +637,7 @@ void AudioClip::set_audio_source(ReadSource* rs)
 	}
 		
 	m_readSource = rs;
+	m_readSourceId = rs->get_id();
 	sourceLength = rs->get_nframes();
 
 	// If m_length isn't set yet, it means we are importing stuff instead of reloading from project file.
@@ -969,10 +970,10 @@ void AudioClip::private_remove_fade( FadeCurve * fade )
 	m_fades.removeAll(fade);
 }
 
-int AudioClip::get_ref_count( ) const
-{
-	return m_refcount;
-}
+// int AudioClip::get_ref_count( ) const
+// {
+// 	return m_refcount;
+// }
 
 void AudioClip::create_fade_in( )
 {

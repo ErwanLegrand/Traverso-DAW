@@ -23,39 +23,70 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <AudioClip.h>
 #include <Track.h>
+#include "ResourcesManager.h"
+#include "ProjectManager.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
  
 
-RemoveClip::RemoveClip(AudioClip* clip)
+AddRemoveClip::AddRemoveClip(AudioClip* clip, int type)
 	: Command(clip, tr("Remove Clip"))
 {
 	m_clip = clip;
 	m_track = m_clip->get_track();
+	m_type = type;
+	m_removeFromDataBase = false;
 }
 
 
-int RemoveClip::prepare_actions()
+int AddRemoveClip::prepare_actions()
 {
 	return 1;
 }
 
 
-int RemoveClip::do_action()
-{
-	PENTER;
-	Command::process_command(m_track->remove_clip(m_clip, false));
-	return 1;
-}
-
-int RemoveClip::undo_action()
+int AddRemoveClip::do_action()
 {
 	PENTER;
-
-	Command::process_command(m_track->add_clip(m_clip, false));
+	if (m_type == REMOVE) {
+		Command::process_command(m_track->remove_clip(m_clip, false));
+	}
+	
+	if (m_type == ADD) {
+		Command::process_command(m_track->add_clip(m_clip, false));
+	}
+	
+	if (m_removeFromDataBase) {
+		resources_manager()->undo_remove_clip_from_database(m_clip->get_id());
+	}
+	
 	return 1;
+}
+
+int AddRemoveClip::undo_action()
+{
+	PENTER;
+
+	if (m_type == REMOVE) {
+		Command::process_command(m_track->add_clip(m_clip, false));
+	}
+	
+	if (m_type == ADD) {
+		Command::process_command(m_track->remove_clip(m_clip, false));
+	}
+	
+	if (m_removeFromDataBase) {
+		resources_manager()->remove_clip_from_database(m_clip->get_id());
+	}
+	
+	return 1;
+}
+
+void AddRemoveClip::remove_from_database_when_removed(bool remove)
+{
+	m_removeFromDataBase = remove;
 }
 
 // eof

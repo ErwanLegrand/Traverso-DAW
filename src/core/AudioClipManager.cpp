@@ -17,13 +17,15 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioClipManager.cpp,v 1.11 2007/04/02 04:52:49 benjie Exp $
+    $Id: AudioClipManager.cpp,v 1.12 2007/05/05 20:43:58 r_sijrier Exp $
 */
  
 #include "AudioClipManager.h"
 
 #include "Song.h"
 #include "AudioClip.h"
+#include "ResourcesManager.h"
+#include "ProjectManager.h"
 #include "Track.h"
 #include "commands.h"
 #include "SnapList.h"
@@ -57,6 +59,7 @@ void AudioClipManager::add_clip( AudioClip * clip )
 	
 	m_song->get_snap_list()->mark_dirty(clip);
 	update_last_frame();
+	resources_manager()->set_clip_added(clip);
 }
 
 void AudioClipManager::remove_clip( AudioClip * clip )
@@ -68,6 +71,7 @@ void AudioClipManager::remove_clip( AudioClip * clip )
 	}
 	m_song->get_snap_list()->mark_dirty(clip);
 	update_last_frame();
+	resources_manager()->set_clip_removed(clip);
 }
 
 

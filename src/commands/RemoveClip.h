@@ -27,17 +27,26 @@
 class AudioClip;
 class Track;
 
-class RemoveClip : public Command
+class AddRemoveClip : public Command
 {
 public :
-	RemoveClip(AudioClip* clip);
-	~RemoveClip() {};
+	AddRemoveClip(AudioClip* clip, int type);
+	~AddRemoveClip() {};
+	
+	enum {
+		ADD,
+		REMOVE
+	};
 
 	int prepare_actions();
 	int do_action();
 	int undo_action();
+	
+	void remove_from_database_when_removed(bool remove);
 
 private :
+	int m_type;
+	bool m_removeFromDataBase;
 	AudioClip* m_clip;
 	Track* m_track;
 };

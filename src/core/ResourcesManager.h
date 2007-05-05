@@ -61,6 +61,10 @@ public:
 	int remove_clip_from_database(qint64 id);
 	int undo_remove_clip_from_database(qint64 id);
 	
+	void set_clip_removed(AudioClip* clip);
+	void set_clip_added(AudioClip* clip);
+	
+	bool is_clip_in_use(qint64) const;
 
 	ReadSource* get_readsource(const QString& fileName);
 	ReadSource* get_readsource(qint64 id);
@@ -76,6 +80,8 @@ public:
 private:
 	QHash<qint64, ReadSource* >	m_sources;
 	QHash<qint64, AudioClip* >	m_clips;
+	QHash<qint64, AudioClip* >	m_gettedClips;
+	QHash<qint64, AudioClip* >	m_removedClips;
 	QHash<qint64, AudioClip* >	m_deprecatedClips;
 	ReadSource*			m_silentReadSource;
 	
@@ -84,6 +90,11 @@ signals:
 	void sourceAdded();
 	void sourceRemoved();
 	void stateChanged();
+	void clipRemoved(AudioClip* clip);
+	void clipAdded(AudioClip* clip);
+	void sourceNoLongerUsed(ReadSource* source);
+	void sourceBackInUse(ReadSource* source);
+	void newSourceCreated(ReadSource* source);
 };
 
 

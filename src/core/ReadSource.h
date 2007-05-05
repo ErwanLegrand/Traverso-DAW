@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.h,v 1.20 2007/05/02 05:58:20 benjie Exp $
+$Id: ReadSource.h,v 1.21 2007/05/05 20:43:58 r_sijrier Exp $
 */
 
 #ifndef READSOURCE_H
@@ -53,6 +53,7 @@ public :
 
 	int init();
 	int get_ref_count() const {return m_refcount;}
+	int get_unref_count() const {return m_unrefcount;}
 	int get_error() const {return m_error;}
 	int reset_filename(const QString& filename);
 	void set_active(bool active);
@@ -67,10 +68,13 @@ public :
 private:
 	QList<MonoReader*> m_sources;
 	int	m_refcount;
+	int	m_unrefcount;
 	int	m_error;
+	int	m_usedByClips;
 	bool	m_silent;
 	
 	int ref() { return m_refcount++;}
+	int unref(bool b) { if (b) m_unrefcount++; else m_unrefcount--; return m_unrefcount;}
 	int add_mono_reader(int channel, int channelNumber, const QString& fileName);
 	
 	friend class MonoReader;

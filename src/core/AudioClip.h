@@ -84,7 +84,7 @@ public:
 
 	void set_selected(bool selected);
 	int set_state( const QDomNode& node );
-	int get_ref_count() const;
+// 	int get_ref_count() const;
 
 	AudioClip* prev_clip();
 	AudioClip* next_clip();
