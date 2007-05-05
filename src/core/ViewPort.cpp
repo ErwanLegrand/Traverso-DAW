@@ -303,7 +303,7 @@ void HoldCursor::set_type( const QString & type )
 
 QRectF HoldCursor::boundingRect( ) const
 {
-	return QRectF(0, 0, 120, 40);
+	return QRectF(0, 0, 130, 40);
 }
 
 void HoldCursor::reset()

@@ -45,7 +45,7 @@ void PositionIndicator::paint(QPainter * painter, const QStyleOptionGraphicsItem
 void PositionIndicator::calculate_bounding_rect()
 {
 	prepareGeometryChange();
-	m_boundingRect = QRectF(0, 0, 65, 14);
+	m_boundingRect = QRectF(0, 0, 70, 14);
 	
 	m_background = QPixmap((int)m_boundingRect.width(), (int)m_boundingRect.height());
 	m_background.fill(QColor(Qt::transparent));

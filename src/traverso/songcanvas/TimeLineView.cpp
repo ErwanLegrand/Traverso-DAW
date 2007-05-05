@@ -201,6 +201,25 @@ TimeLineView::TimeLineView(SongView* view)
 	connect(m_timeline, SIGNAL(markerRemoved(Marker*)), this, SLOT(remove_marker_view(Marker*)));
 
 	setAcceptsHoverEvents(true);
+
+	m_zooms[131072] = "5:00.000";
+	m_zooms[ 65536] = "2:30.000";
+	m_zooms[ 32768] = "1:00.000";
+	m_zooms[ 16384] = "0:30.000";
+	m_zooms[  8192] = "0:20.000";
+	m_zooms[  4096] = "0:10.000";
+	m_zooms[  2048] = "0:05.000";
+	m_zooms[  1024] = "0:02.000";
+	m_zooms[   512] = "0:01.000";
+	m_zooms[   256] = "0:00.800";
+	m_zooms[   128] = "0:00.400";
+	m_zooms[    64] = "0:00.200";
+	m_zooms[    32] = "0:00.100";
+	m_zooms[    16] = "0:00.050";
+	m_zooms[     8] = "0:00.020";
+	m_zooms[     4] = "0:00.010";
+	m_zooms[     2] = "0:00.005";
+	m_zooms[     1] = "0:00.002";
 }
 
 
@@ -235,20 +254,33 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 	painter->setPen(themer()->get_color("Timeline:text"));
 	painter->setFont( QFont( "Bitstream Vera Sans", 9) );
 	
-	nframes_t lastb = xstart * m_sv->scalefactor + pixelcount * m_sv->scalefactor;
-	nframes_t firstFrame = xstart * m_sv->scalefactor;
-
-	int x = xstart;
+	nframes_t major;
 	
-	for (nframes_t b = firstFrame; b < lastb; b += (m_sv->scalefactor) ) {
-		if (x %10 == 0) {
-			painter->drawLine(x, height - 5, x, height - 1);
-		}
-		if (x % 100 == 0) {
-			painter->drawLine(x, height - 13, x, height - 1);
-			painter->drawText(x + 4, height - 8, frame_to_smpte(b, m_samplerate));
-		}
-		x++;
+	if (m_zooms.contains(m_sv->scalefactor)) {
+		major = smpte_to_frame(m_zooms[m_sv->scalefactor], m_samplerate);
+	} else {
+		major = 120 * m_sv->scalefactor;
+	}
+
+	bool showMs = (m_sv->scalefactor < 512);
+
+	// minor is double so they line up right with the majors,
+	// despite not always being an even number of frames
+	double minor = major/10.0;
+
+	nframes_t firstFrame = xstart * m_sv->scalefactor;
+	nframes_t lastFrame = xstart * m_sv->scalefactor + pixelcount * m_sv->scalefactor;
+
+	// Draw minor ticks
+	for (int i = 0; i < (lastFrame-firstFrame+major) / minor; i++ ) {
+		int x = (((int)(firstFrame/major))*major + i * minor)/m_sv->scalefactor;
+		painter->drawLine(x, height - 5, x, height - 1);
+	}
+	
+	// Draw major ticks
+	for (nframes_t t = ((int)(firstFrame/major))*major; t < lastFrame; t += major ) {
+		painter->drawLine(t/m_sv->scalefactor, height - 13, t/m_sv->scalefactor, height - 1);
+		painter->drawText(t/m_sv->scalefactor + 4, height - 8, (showMs) ? frame_to_smpte(t, m_samplerate) : frame_to_ms(t, m_samplerate));
 	}
 }
 

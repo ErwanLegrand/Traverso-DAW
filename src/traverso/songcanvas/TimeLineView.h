@@ -59,6 +59,8 @@ private:
 	QColor		m_blinkColor;
 	int		m_samplerate;
 
+	QHash<nframes_t, QString>	m_zooms;	
+
 	void update_softselected_marker(QPoint pos);
 	
 	

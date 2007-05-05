@@ -27,6 +27,8 @@
 #include <QDateTime>
 #include <QPixmapCache>
 #include <QRegExp>
+#include <QLocale>
+#include <QChar>
 
 
 QString frame_to_smpte ( nframes_t nframes, int rate )
@@ -39,8 +41,8 @@ QString frame_to_smpte ( nframes_t nframes, int rate )
 	remainder = nframes - ( mins * 60 * rate );
 	secs = remainder / rate;
 	remainder -= secs * rate;
-	frames = remainder / ( rate / 30 );
-	spos.sprintf ( " %02d:%02d,%02d", mins, secs, frames );
+	frames = remainder / ( rate / 1000 );
+	spos.sprintf ( " %02d:%02d%c%03d", mins, secs, QLocale::system().decimalPoint().toAscii(), frames );
 
 	return spos;
 }
@@ -73,11 +75,11 @@ QString frame_to_ms(double nframes, int rate)
 nframes_t smpte_to_frame( QString str, int rate )
 {
 	nframes_t out = 0;
-	QStringList lst = str.simplified().split(QRegExp("[;,:]"), QString::SkipEmptyParts);
+	QStringList lst = str.simplified().split(QRegExp("[;,.:]"), QString::SkipEmptyParts);
 
 	if (lst.size() >= 1) out += lst.at(0).toInt() * 60 * rate;
 	if (lst.size() >= 2) out += lst.at(1).toInt() * rate;
-	if (lst.size() >= 3) out += lst.at(2).toInt() * rate / 30;
+	if (lst.size() >= 3) out += lst.at(2).toInt() * rate / 1000;
 
 	return out;
 }
