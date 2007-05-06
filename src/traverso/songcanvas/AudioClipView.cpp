@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QPainter>
 #include <QPainterPath>
+#include <QApplication>
+#include <QFont>
 
 #include "AudioClipView.h"
 #include "SongView.h"
@@ -52,6 +54,9 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 {
 	PENTERCONS;
 	
+	m_fontTitle = QApplication::font();
+	m_fontTitle.setPointSize(int(m_fontTitle.pointSize() * themer()->get_property("AudioClip:fontscale", 0.9).toDouble()));
+
 	setZValue(parent->zValue() + 1);
 	
 	m_sv = sv;
@@ -131,7 +136,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 		painter->setPen(themer()->get_color("AudioClip:contour"));
 		painter->drawRect(xstart, 0, pixelcount, m_height - 1);
 		painter->setPen(Qt::black);
-		painter->setFont( QFont( "Bitstream Vera Sans", 11 ) );
+		painter->setFont( m_fontTitle );
 		painter->drawText(30, 0, 300, m_height, Qt::AlignVCenter, tr("Click to reset AudioFile !"));
 		painter->restore();
 		return;
@@ -172,7 +177,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 			// Progress info, I think so....
 			painter->setPen(Qt::black);
 			QRect r(10, 0, 150, m_height);
-			painter->setFont( QFont( "Bitstream Vera Sans", 11 ) );
+			painter->setFont( m_fontTitle );
 			QString si;
 			si.setNum((int)m_progress);
 			if (m_progress == 100) m_progress = 0;
@@ -520,7 +525,7 @@ void AudioClipView::draw_clipinfo_area(QPainter* p, int xstart, int pixelcount)
 	p->fillRect(xstart, 0, pixelcount, m_infoAreaHeight, themer()->get_color("AudioClip:clipinfobackground:inactive"));
 	// clip info, only if xstart lies in the stringlenght range which is calculated by a rough estimate.
 	if (xstart < m_clipinfoString.size() * 6) {
-		p->setFont(themer()->get_font("AudioClip:title"));
+		p->setFont(m_fontTitle);
 		p->drawText(5, 10, m_clipinfoString);
 	}
 }

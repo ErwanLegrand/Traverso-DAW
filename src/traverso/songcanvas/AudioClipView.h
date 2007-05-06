@@ -36,6 +36,7 @@ class TrackView;
 class FadeView;
 class Peak;
 class PositionIndicator;
+class QFont;
 
 class AudioClipView : public ViewItem
 {
@@ -77,6 +78,7 @@ private:
 	CurveView* 	curveView;
 	QList<Peak*> 	m_peakloadinglist;
 	PositionIndicator* m_posIndicator;
+	QFont	m_fontTitle;
 
 	QTimer m_recordingTimer;
 

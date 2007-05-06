@@ -35,6 +35,7 @@ class Project;
 class Command;
 class QLinearGradient;
 class QColor;
+class QFont;
 
 
 class CorrelationMeterWidget : public ViewPort
@@ -84,6 +85,8 @@ private:
 	QColor		bgColor, fgColor,
 			hgColor, dtColor;
 	int		range;
+	QFont		m_font;
+
 	void save_configuration();
 	void load_configuration();
 

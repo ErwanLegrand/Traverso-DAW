@@ -17,14 +17,16 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: VUMeter.cpp,v 1.17 2007/03/16 00:10:26 r_sijrier Exp $
+    $Id: VUMeter.cpp,v 1.18 2007/05/06 22:05:17 n_doebelin Exp $
 */
 
 #include "VUMeter.h"
 
+#include <QApplication>
 #include <QPainter>
 #include <QGradient>
 #include <QSpacerItem>
+#include <QFont>
 #include <QFontMetrics>
 
 #include "Themer.h"
@@ -54,7 +56,6 @@
  */
 
 static const int MAXIMUM_WIDTH	= 150;
-static const int FONT_SIZE 	= 7;
 static const int VULED_HEIGHT	= 8;
 
 // initialize static variables
@@ -63,6 +64,9 @@ QVector<float> VUMeter::lut;
 VUMeter::VUMeter(QWidget* parent, AudioBus* bus)
 	: QWidget(parent)
 {
+	m_font = QApplication::font();
+	m_font.setPointSize(int(m_font.pointSize() * themer()->get_property("VUMeter:fontscale", 0.6).toDouble()));
+
 	setMaximumWidth(MAXIMUM_WIDTH);
 	m_minSpace = 0;
 	
@@ -125,7 +129,7 @@ VUMeter::VUMeter(QWidget* parent, AudioBus* bus)
 	setAttribute(Qt::WA_OpaquePaintEvent);
 	
 	channelNameLabel = new QLabel(this);
-	channelNameLabel->setFont(QFont("Bitstream Vera Sans", FONT_SIZE));
+	channelNameLabel->setFont(m_font);
 	channelNameLabel->setAlignment(Qt::AlignHCenter);
 	
 	QVBoxLayout* mainlayout = new QVBoxLayout;
@@ -155,7 +159,7 @@ void VUMeter::resizeEvent( QResizeEvent *  )
 {
 	PENTER3;
 
-	QFontMetrics fm(QFont("Bitstream Vera Sans", FONT_SIZE));
+	QFontMetrics fm(m_font);
 	
 	// Comment by Remon: Why the -1 here???? Without the -1 it seems to work correctly too?
 	// Reply by Nic: It doesn't here (PPC). The label can't become smaller than the text width,
@@ -220,8 +224,11 @@ static const float LUT_MULTIPLY		= 5.0;
 VUMeterRuler::VUMeterRuler(QWidget* parent)
                 : QWidget(parent)
 {
+	m_font = QApplication::font();
+	m_font.setPointSize(int(m_font.pointSize() * themer()->get_property("VUMeter:fontscale", 0.6).toDouble()));
+
 	setAutoFillBackground(false);
-	QFontMetrics fm(QFont("Bitstream Vera Sans", FONT_SIZE));
+	QFontMetrics fm(m_font);
 	setMinimumWidth(fm.width("-XX")+TICK_LINE_LENGTH + 3);
 	setMaximumWidth(fm.width("-XX")+TICK_LINE_LENGTH + 4);
 
@@ -256,12 +263,12 @@ void VUMeterRuler::paintEvent( QPaintEvent*  )
 {
 	PENTER4;
 
-	QFontMetrics fm(QFont("Bitstream Vera Sans", FONT_SIZE));
+	QFontMetrics fm(m_font);
 	QString spm;
 	int deltaY;
 
 	QPainter painter(this);
-	painter.setFont(QFont("Bitstream Vera Sans", FONT_SIZE));
+	painter.setFont(m_font);
 
 	// offset is the space occupied by the 'over' LED
 	float levelRange = float(height() - VULED_HEIGHT);

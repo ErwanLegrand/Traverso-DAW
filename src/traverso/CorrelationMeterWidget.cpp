@@ -32,6 +32,7 @@
 #include <Themer.h>
 #include <ContextPointer.h>
 #include <Config.h>
+#include <QApplication>
 
 #include <QtGui>
 #include <QDebug>
@@ -49,7 +50,7 @@ CorrelationMeterWidget::CorrelationMeterWidget(QWidget* parent)
 	PENTERCONS;
 	setMinimumWidth(40);
 	setMinimumHeight(10);
-	
+
 	m_item = new CorrelationMeterView(this);
 	
 	QGraphicsScene* scene = new QGraphicsScene(this);
@@ -114,6 +115,10 @@ CorrelationMeterView::CorrelationMeterView(CorrelationMeterWidget* widget)
 	, m_meter(0)
 	, m_song(0)
 {
+
+	m_font = QApplication::font();
+	m_font.setPointSize(int(m_font.pointSize() * themer()->get_property("CorrelationMeter:fontscale", 0.75).toDouble()));
+
 	fgColor = themer()->get_color("Meter:margin");
 	bgColor = themer()->get_color("Meter:background");
 	hgColor = themer()->get_color("Meter:grid");
@@ -182,8 +187,8 @@ void CorrelationMeterView::paint(QPainter *painter, const QStyleOptionGraphicsIt
 	painter->setPen(pen);
 	painter->drawLine(m_widget->width()/2 + centerOffset, 0, m_widget->width()/2 + centerOffset, m_widget->height());
 
-	painter->setFont(QFont("Bitstream Vera Sans", FONT_SIZE));
-	QFontMetrics fm(QFont("Bitstream Vera Sans", FONT_SIZE));
+	painter->setFont(m_font);
+	QFontMetrics fm(m_font);
 	
 	if (m_widget->height() < 2*fm.height()) {
 		return;

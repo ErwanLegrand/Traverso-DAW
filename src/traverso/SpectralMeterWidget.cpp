@@ -20,6 +20,7 @@
 */
 
 #include "SpectralMeterWidget.h"
+#include <QApplication>
 #include <Config.h>
 #include <Information.h>
 #include <PluginChain.h>
@@ -47,7 +48,6 @@
 
 static const float DEFAULT_VAL = -999.0f;
 static const int UPDATE_INTERVAL = 40;
-static const int FONT_SIZE = 7;
 static const uint MAX_SAMPLES = UINT_MAX;
 
 
@@ -128,7 +128,10 @@ SpectralMeterView::SpectralMeterView(SpectralMeterWidget* widget)
 	show_average = false;
 	sample_weight = 1;
 
-	QFontMetrics fm(QFont("Bitstream Vera Sans", FONT_SIZE));
+	m_font = QApplication::font();
+	m_font.setPointSize(int(m_font.pointSize() * themer()->get_property("FFTSpectrum:fontscale", 0.75).toDouble()));
+	
+	QFontMetrics fm(m_font);
 	margin_l = 5;
 	margin_r = fm.width("-XX") + 5;
 	margin_t = fm.ascent()/2 + 5;
@@ -244,8 +247,8 @@ void SpectralMeterView::update_background()
 
 	QPainter painter(&bgPixmap);
 	painter.fillRect(m_rect, themer()->get_color("Meter:background"));
-	painter.setFont(QFont("Bitstream Vera Sans", FONT_SIZE));
-	QFontMetrics fm(QFont("Bitstream Vera Sans", FONT_SIZE));
+	painter.setFont(m_font);
+	QFontMetrics fm(m_font);
 
 	QString spm;
 

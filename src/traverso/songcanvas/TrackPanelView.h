@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.h,v 1.11 2007/05/05 20:40:35 r_sijrier Exp $
+$Id: TrackPanelView.h,v 1.12 2007/05/06 22:05:17 n_doebelin Exp $
 */
 
 #ifndef TRACK_PANEL_VIEW_H
@@ -30,6 +30,7 @@ class TrackView;
 class TrackPanelViewPort;
 class PanelLed;
 class TrackPanelView;
+class QFont;
 
 class TrackPanelGain : public ViewItem
 {
@@ -48,6 +49,7 @@ public slots:
 	
 private:
 	Track* m_track;
+	QFont	m_fontGain;
 };
 
 class TrackPanelPan : public ViewItem
@@ -68,6 +70,7 @@ public slots:
 
 private:
 	Track* m_track;
+	QFont	m_fontPan;
 };
 
 
@@ -86,6 +89,7 @@ private:
         QString m_name;
 	QString m_toggleslot;
 	bool m_isOn;
+	QFont	m_fontLed;
 
 public slots:
         void ison_changed(bool isOn);
@@ -109,6 +113,7 @@ private:
         int	m_type;
 	QString m_busName;
 	QPixmap m_pix;
+	QFont	m_fontBus;
 
 public slots:
         void bus_changed();
@@ -144,6 +149,8 @@ private:
 	
 	TrackPanelBus*	inBus;
 	TrackPanelBus*	outBus;
+
+	QFont	m_fontName;
 	
 	void draw_panel_track_name(QPainter* painter);
 	void layout_panel_items();

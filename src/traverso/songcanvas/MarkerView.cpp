@@ -25,13 +25,14 @@
 #include "ClipsViewPort.h"
 #include "PositionIndicator.h"
 
+#include <QApplication>
+#include <QFont>
+#include <QFontMetrics>
 #include <QColor>
 #include <Song.h>
 #include <Marker.h>
 #include <Utils.h>
 #include <QDebug>
-
-#define MARKER_WIDTH 10
 
 MarkerView::MarkerView(Marker* marker, SongView* sv, ViewItem* parentView)
 	: ViewItem(parentView, marker)
@@ -41,6 +42,12 @@ MarkerView::MarkerView(Marker* marker, SongView* sv, ViewItem* parentView)
 	m_marker = marker;
 	m_active = false;
 	m_posIndicator = 0;
+
+	m_font = QApplication::font();
+	m_font.setPointSize(int(m_font.pointSize() * themer()->get_property("Marker:fontscale", 0.75).toDouble()));
+	QFontMetrics fm(m_font);
+	m_ascent = fm.ascent();
+	m_width = fm.width("NI"); // use any two letters to set the width of the marker indicator
 
 	load_theme_data();
 	
@@ -56,21 +63,21 @@ void MarkerView::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
 	painter->save();
 
 	painter->setRenderHint(QPainter::Antialiasing);
-	painter->setFont( QFont( "Bitstream Vera Sans", 7) );
+	painter->setFont( m_font );
 	
 	painter->setPen(QColor(Qt::black));
 	painter->setBrush(m_fillColor);
 
 	const QPointF pts[3] = {
 			QPointF(0, 0),
-			QPointF(MARKER_WIDTH, 0),
-			QPointF(MARKER_WIDTH/2, 9) };
+			QPointF(m_width, 0),
+			QPointF(m_width/2, m_ascent) };
 
 	painter->drawPolygon(pts, 3);
-	painter->drawText(14, 8, m_marker->get_description());
+	painter->drawText(m_width + 1, m_ascent, m_marker->get_description());
 
 	if (m_active) {
-		painter->drawLine(MARKER_WIDTH/2, 9, MARKER_WIDTH/2, (int)m_boundingRect.height());
+		painter->drawLine(m_width/2, m_ascent, m_width/2, (int)m_boundingRect.height());
 	}
 	
 	if (m_dragging) {
@@ -86,14 +93,14 @@ void MarkerView::calculate_bounding_rect()
 	prepareGeometryChange();
 	update_position();
 	
-	QFontMetrics fm( QFont( "Bitstream Vera Sans", 7) );
+	QFontMetrics fm( m_font );
 	int descriptionwidth = fm.width(m_marker->get_description()) + 1;
 
 	if (m_active) {
-		m_boundingRect = QRectF(0, 0, MARKER_WIDTH + descriptionwidth,
+		m_boundingRect = QRectF(-1, 0, m_width + descriptionwidth,
 				m_sv->get_clips_viewport()->sceneRect().height());
 	} else {
-		m_boundingRect = QRectF(0, 0, MARKER_WIDTH + descriptionwidth, 9.0);
+		m_boundingRect = QRectF(-1, 0, m_width + descriptionwidth, m_ascent);
 	}
 
 }
@@ -101,12 +108,12 @@ void MarkerView::calculate_bounding_rect()
 void MarkerView::update_position()
 {
 	// markerwidth / 2 == center of markerview !
-	setPos( (long)(m_marker->get_when() / m_sv->scalefactor) - (MARKER_WIDTH / 2), 0);
+	setPos( (long)(m_marker->get_when() / m_sv->scalefactor) - (m_width / 2), 0);
 }
 
 void MarkerView::set_position(int i)
 {
-	setPos(i - MARKER_WIDTH / 2, 0);
+	setPos(i - m_width / 2, 0);
 }
 
 void MarkerView::load_theme_data()

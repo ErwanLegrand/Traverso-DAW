@@ -30,6 +30,7 @@ class SongView;
 class TimeLine;
 class MarkerView;
 class Marker;
+class QFont;
 
 class TimeLineView : public ViewItem
 {
@@ -58,6 +59,7 @@ private:
 	MarkerView* 	m_blinkingMarker;
 	QColor		m_blinkColor;
 	int		m_samplerate;
+	QFont		m_font;
 
 	QHash<nframes_t, QString>	m_zooms;	
 

@@ -36,6 +36,7 @@ class QPixmap;
 class SpectralMeter;
 class Command;
 class SpectralMeterView;
+class QFont;
 
 
 class SpectralMeterConfigWidget : public QDialog, private Ui::SpectralMeterConfigWidget
@@ -117,6 +118,7 @@ private:
 	QVector<float>	m_map_idx2freq;
 	QRect		m_rect;
 	SpectralMeterConfigWidget *m_config;
+	QFont		m_font;
 	QPixmap		bgPixmap;
 	uint		num_bands;
 	uint		sample_rate;
@@ -146,7 +148,7 @@ private:
 	void		update_background();
 	float		freq2db(float, float);
 	QString		get_xmgr_string();
-	
+
 
 private slots:
 	void		set_project( Project* );

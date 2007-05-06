@@ -27,14 +27,20 @@
 		<property name="VUMeter:layout:mainlayoutmargin" value="1" />
 		<property name="VUMeter:layout:mainlayoutspacing" value="2" />
 		<property name="VUMeter:layout:minimumlevelwidth" value="6" />
+		
+		<property name="AudioCli:fontscale" value="0.9" />
+		<property name="VUMeter:fontscale" value="0.75" />
+		<property name="FFTSpectrum:fontscale" value="0.75" />
+		<property name="CorrelationMeter:fontscale" value="0.75" />
+		<property name="Timeline:fontscale" value="0.9" />
+		<property name="Marker:fontscale" value="0.9" />
+		<property name="TrackPanel:name:fontscale" value="1.0" />
+		<property name="TrackPanel:gain:fontscale" value="0.9" />
+		<property name="TrackPanel:pan:fontscale" value="0.9" />
+		<property name="TrackPanel:led:fontscale" value="0.9" />
+		<property name="TrackPanel:bus:fontscale" value="0.9" />
 	</properties>
 	<fonts>
-		<font name="AudioClip:title" size="8" family="Bitstream Vera Sans" />
-		<font name="TrackPanel:name" size="8" family="Bitstream Vera Sans" />
-		<font name="TrackPanel:gain" size="7" family="Bitstream Vera Sans" />
-		<font name="TrackPanel:pan" size="7" family="Bitstream Vera Sans" />
-		<font name="TrackPanel:led" size="8" family="Bitstream Vera Sans" />
-		<font name="TrackPanel:bus" size="8" family="Bitstream Vera Sans" />
 		<font name="Plugin:name" size="8"  family="Bitstream Vera Sans" />
 	</fonts>
 	<colors>

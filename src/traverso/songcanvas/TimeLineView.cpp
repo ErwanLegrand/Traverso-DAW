@@ -21,7 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "TimeLineView.h"
 
+#include <QApplication>
 #include <QPainter>
+#include <QFont>
 
 #include "Themer.h"
 #include "SongView.h"
@@ -181,7 +183,11 @@ TimeLineView::TimeLineView(SongView* view)
 	, m_blinkingMarker(0)
 {
 	PENTERCONS2;
-	
+
+	m_font = QApplication::font();
+	m_font.setPointSize(int(m_font.pointSize() * themer()->get_property("Timeline:fontscale", 0.85).toDouble()));
+
+
 	m_sv = view;
 	m_boundingRect = QRectF(0, 0, MAX_CANVAS_WIDTH, TIMELINEHEIGHT);
 	m_timeline = m_sv->get_song()->get_timeline();
@@ -252,7 +258,7 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 	painter->fillRect(xstart, 0,  pixelcount, height, themer()->get_color("Timeline:background") );
 	
 	painter->setPen(themer()->get_color("Timeline:text"));
-	painter->setFont( QFont( "Bitstream Vera Sans", 9) );
+	painter->setFont( m_font );
 	
 	nframes_t major;
 	

@@ -17,10 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.21 2007/04/17 11:51:20 r_sijrier Exp $
+$Id: TrackPanelView.cpp,v 1.22 2007/05/06 22:05:17 n_doebelin Exp $
 */
 
 #include <QGraphicsScene>
+#include <QApplication>
+#include <QFont>
 #include "TrackPanelView.h"
 #include "TrackView.h"
 #include "SongView.h"
@@ -65,6 +67,9 @@ TrackPanelView::TrackPanelView(TrackView* trackView)
 	m_viewPort->scene()->addItem(soloLed);
 	m_viewPort->scene()->addItem(muteLed);
 	
+
+	m_fontName = QApplication::font();
+	m_fontName.setPointSize(int(m_fontName.pointSize() * themer()->get_property("TrackPanel:name:fontscale", 0.9).toDouble()));
 
 	if (m_track->armed()) {
 		recLed->ison_changed(true);
@@ -162,14 +167,13 @@ void TrackPanelView::update_pan()
 void TrackPanelView::draw_panel_track_name(QPainter* painter)
 {
 	QString title = QString::number(m_track->get_sort_index() + 1) + "  " + m_track->get_name();
-	QFont font = themer()->get_font("TrackPanel:name");
 	
 	if (m_track->get_height() < SMALL_HEIGHT) {
-		QFontMetrics fm(font);
+		QFontMetrics fm(m_fontName);
 		title = fm.elidedText(title, Qt::ElideMiddle, 90);
 	}
 	
-	painter->setFont(font);
+	painter->setFont(m_fontName);
 	painter->drawText(4, 12, title);
 }
 
@@ -242,6 +246,10 @@ TrackPanelGain::TrackPanelGain(TrackPanelView* parent, Track * track)
 	, m_track(track)
 {
 	setAcceptsHoverEvents(true);
+
+	m_fontGain = QApplication::font();
+	m_fontGain.setPointSize(int(m_fontGain.pointSize() * themer()->get_property("TrackPanel:gain:fontscale", 0.9).toDouble()));
+
 }
 
 void TrackPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
@@ -269,7 +277,7 @@ void TrackPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem *
 	int cb = ( gain < 1 ? 150 + (int)(50 * gain) : abs((int)(10 * gain)) );
 	
 	painter->setPen(themer()->get_color("TrackPanel:text"));
-	painter->setFont(themer()->get_font("TrackPanel:gain"));
+	painter->setFont(m_fontGain);
 	painter->drawText(0, height + 1, "GAIN");
 	painter->drawRect(30, 0, sliderWidth, height);
 	
@@ -309,7 +317,10 @@ TrackPanelPan::TrackPanelPan(TrackPanelView* parent, Track * track)
 void TrackPanelPan::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
 {
 	Q_UNUSED(widget);
-	
+
+	m_fontPan = QApplication::font();
+	m_fontPan.setPointSize(int(m_fontPan.pointSize() * themer()->get_property("TrackPanel:pan:fontscale", 0.9).toDouble()));
+
 	bool mousehover = (option->state & QStyle::State_MouseOver);
 	
 	QColor color = themer()->get_color("TrackPanel:slider:background");
@@ -324,7 +335,7 @@ void TrackPanelPan::paint( QPainter * painter, const QStyleOptionGraphicsItem * 
 	//	int y;
 	QString s, span;
 	painter->setPen(themer()->get_color("TrackPanel:text"));
-	painter->setFont(themer()->get_font("TrackPanel:pan"));
+	painter->setFont(m_fontPan);
 
 	painter->drawText(0, PAN_H + 1, "PAN");
 
@@ -371,6 +382,10 @@ TrackPanelLed::TrackPanelLed(TrackPanelView* parent, const QString& name, const 
 {
 	m_track = parent->get_track();
 	setAcceptsHoverEvents(true);
+
+	m_fontLed = QApplication::font();
+	m_fontLed.setPointSize(int(m_fontLed.pointSize() * themer()->get_property("TrackPanel:led:fontscale", 0.9).toDouble()));
+
 }
 
 void TrackPanelLed::paint(QPainter* painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
@@ -394,7 +409,7 @@ void TrackPanelLed::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 		painter->setBrush(color);
 		painter->drawRoundRect(m_boundingRect, roundfactor, roundfactor);
 		
-		painter->setFont(themer()->get_font("TrackPanel:led"));
+		painter->setFont(m_fontLed);
 		painter->setPen(QColor(Qt::black));
 		
 		painter->drawText(m_boundingRect, Qt::AlignCenter, m_name);
@@ -408,7 +423,7 @@ void TrackPanelLed::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 		painter->setBrush(color);
 		painter->drawRoundRect(m_boundingRect, roundfactor, roundfactor);
 		
-		painter->setFont(themer()->get_font("TrackPanel:led"));
+		painter->setFont(m_fontLed);
 		painter->setPen(QColor(Qt::gray));
 		
 		painter->drawText(m_boundingRect, Qt::AlignCenter, m_name);
@@ -445,6 +460,10 @@ TrackPanelBus::TrackPanelBus(TrackPanelView* parent, Track* track, int type)
 {
 	bus_changed();
 	setAcceptsHoverEvents(true);
+
+	m_fontBus = QApplication::font();
+	m_fontBus.setPointSize(int(m_fontBus.pointSize() * themer()->get_property("TrackPanel:bus:fontscale", 0.9).toDouble()));
+
 }
 
 void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
@@ -465,7 +484,7 @@ void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 	painter->setBrush(color);
 	painter->drawRoundRect(m_boundingRect, roundfactor, roundfactor);
 	
-	painter->setFont(themer()->get_font("TrackPanel:bus"));
+	painter->setFont(m_fontBus);
 	painter->setPen(QColor(150, 150, 150));
 	
 	QString leftright = "";
