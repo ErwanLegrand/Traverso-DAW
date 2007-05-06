@@ -94,7 +94,7 @@ int PlayHeadMove::jog()
 	}
 	
 	m_sv->update_shuttle_factor();
-	cpointer().get_viewport()->set_holdcursor_text(frame_to_smpte(newpos, m_song->get_rate()));
+	cpointer().get_viewport()->set_holdcursor_text(frame_to_msms(newpos, m_song->get_rate()));
 	// Hmm, the alignment of the holdcursor isn't in the center, so we have to 
 	// substract half the width of it to make it appear centered... :-(
 	cpointer().get_viewport()->set_holdcursor_pos(QPoint(cpointer().scene_x() - 16, cpointer().scene_y() - 16));

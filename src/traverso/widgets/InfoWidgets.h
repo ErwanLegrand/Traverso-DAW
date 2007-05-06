@@ -186,8 +186,8 @@ protected slots:
 	void set_song(Song* );
 	
 private slots:
-	void start_smpte_update_timer();
-	void stop_smpte_update_timer();
+	void start_song_update_timer();
+	void stop_song_update_timer();
 };
 
 

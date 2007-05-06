@@ -31,9 +31,14 @@
 class QString;
 
 QString frame_to_smpte(nframes_t nframes, int rate);
+QString frame_to_msms(nframes_t nframes, int rate);
+QString frame_to_mst(nframes_t nframes, int rate);
+QString frame_to_cd(nframes_t nframes, int rate);
 QString frame_to_hms(double nframes, int rate);
 QString frame_to_ms(double nframes, int rate);
 nframes_t smpte_to_frame(QString str, int rate);
+nframes_t msms_to_frame(QString str, int rate);
+nframes_t cd_to_frame(QString str, int rate);
 QString coefficient_to_dbstring(float coeff);
 QDateTime extract_date_time(qint64 id);
 

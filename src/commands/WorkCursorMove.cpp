@@ -96,7 +96,7 @@ int WorkCursorMove::jog()
 	m_song->set_work_at(newFrame);
 
 	m_sv->update_shuttle_factor();
-	cpointer().get_viewport()->set_holdcursor_text(frame_to_smpte(newFrame, m_song->get_rate()));
+	cpointer().get_viewport()->set_holdcursor_text(frame_to_msms(newFrame, m_song->get_rate()));
 	// Hmm, the alignment of the holdcursor isn't in the center, so we have to 
 	// substract half the width of it to make it appear centered... :-(
 	cpointer().get_viewport()->set_holdcursor_pos(QPoint(cpointer().scene_x() - 16, cpointer().scene_y() - 16));

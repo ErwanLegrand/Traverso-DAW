@@ -351,7 +351,7 @@ int Song::prepare_export(ExportSpecification* spec)
 
 	spec->total_frames = spec->end_frame - spec->start_frame;
 
-// 	PWARN("Render length is: %s",frame_to_smpte(spec->total_frames, m_project->get_rate()).toAscii().data() );
+// 	PWARN("Render length is: %s",frame_to_msms(spec->total_frames, m_project->get_rate()).toAscii().data() );
 
 	spec->pos = spec->start_frame;
 	transportFrame = spec->start_frame;
@@ -932,8 +932,8 @@ void Song::write_cdrdao_toc(ExportSpecification* spec)
 		nframes_t end = m_end->get_when();
 		nframes_t length = end - start;
 
-		QString s_start = frame_to_smpte(start, m_project->get_rate());
-		QString s_length = frame_to_smpte(length, m_project->get_rate());
+		QString s_start = frame_to_msms(start, m_project->get_rate());
+		QString s_length = frame_to_msms(length, m_project->get_rate());
 
 		s_start.replace(QRegExp("[" + QRegExp::escape(",.;") + "]"), ":");
 		s_length.replace(QRegExp("[" + QRegExp::escape(",.;") + "]"), ":");

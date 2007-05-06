@@ -440,7 +440,7 @@ PlayHeadInfo::PlayHeadInfo(QWidget* parent)
 void PlayHeadInfo::set_project(Project* project )
 {
 	if (! project) {
-		stop_smpte_update_timer();
+		stop_song_update_timer();
 	}
 	
 	InfoWidget::set_project(project);
@@ -451,13 +451,13 @@ void PlayHeadInfo::set_song(Song* song)
 	m_song = song;
 	
 	if (!m_song) {
-		stop_smpte_update_timer();
+		stop_song_update_timer();
 		m_playpixmap = find_pixmap(":/playstart");
 		return;
 	}
 	
-	connect(m_song, SIGNAL(transferStopped()), this, SLOT(stop_smpte_update_timer()));
-	connect(m_song, SIGNAL(transferStarted()), this, SLOT(start_smpte_update_timer()));
+	connect(m_song, SIGNAL(transferStopped()), this, SLOT(stop_song_update_timer()));
+	connect(m_song, SIGNAL(transferStarted()), this, SLOT(start_song_update_timer()));
 	connect(m_song, SIGNAL(transportPosSet()), this, SLOT(update()));
 	
 	
@@ -473,12 +473,12 @@ void PlayHeadInfo::set_song(Song* song)
 void PlayHeadInfo::paintEvent(QPaintEvent* )
 {
 	QPainter painter(this);
-	QString currentsmpte;
+	QString currentTime;
 	
 	if (!m_song) {
-		currentsmpte = "0:00:0";
+		currentTime = "0:00.0";
 	} else {
-		currentsmpte = frame_to_smpte(m_song->get_transport_frame(), m_song->get_rate());
+		currentTime = frame_to_mst(m_song->get_transport_frame(), m_song->get_rate());
 	}
 	
 	int fc = 170;
@@ -494,16 +494,16 @@ void PlayHeadInfo::paintEvent(QPaintEvent* )
 	
 	painter.drawPixmap(0, 0, m_background);
 	painter.drawPixmap(8, 6, m_playpixmap);
-	painter.drawText(QRect(12, 4, width() - 6, height() - 6), Qt::AlignCenter, currentsmpte);
+	painter.drawText(QRect(12, 4, width() - 6, height() - 6), Qt::AlignCenter, currentTime);
 }
 
-void PlayHeadInfo::start_smpte_update_timer( )
+void PlayHeadInfo::start_song_update_timer( )
 {
 	m_playpixmap = find_pixmap(":/playstop");
 	m_updateTimer.start(150);
 }
 
-void PlayHeadInfo::stop_smpte_update_timer( )
+void PlayHeadInfo::stop_song_update_timer( )
 {
 	m_updateTimer.stop();
 	m_playpixmap = find_pixmap(":/playstart");

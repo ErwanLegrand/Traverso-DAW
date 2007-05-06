@@ -31,6 +31,7 @@
 #include <QChar>
 
 
+// Frame to MM:SS.30 (smpte time = 30ths of a second)
 QString frame_to_smpte ( nframes_t nframes, int rate )
 {
 	QString spos;
@@ -41,8 +42,59 @@ QString frame_to_smpte ( nframes_t nframes, int rate )
 	remainder = nframes - ( mins * 60 * rate );
 	secs = remainder / rate;
 	remainder -= secs * rate;
-	frames = remainder / ( rate / 1000 );
+	frames = remainder / ( rate / 30 );
+	spos.sprintf ( " %02d:%02d%c%02d", mins, secs, QLocale::system().decimalPoint().toAscii(), frames );
+
+	return spos;
+}
+
+// Frame to MM:SS.999 (ms)
+QString frame_to_msms ( nframes_t nframes, int rate )
+{
+	QString spos;
+	long unsigned int remainder;
+	int mins, secs, frames;
+
+	mins = nframes / ( 60 * rate );
+	remainder = nframes - ( mins * 60 * rate );
+	secs = remainder / rate;
+	remainder -= secs * rate;
+	frames = remainder * 1000 / rate;
 	spos.sprintf ( " %02d:%02d%c%03d", mins, secs, QLocale::system().decimalPoint().toAscii(), frames );
+
+	return spos;
+}
+
+// Frame to MM:SS.9 (tenths of a second)
+QString frame_to_mst ( nframes_t nframes, int rate )
+{
+	QString spos;
+	long unsigned int remainder;
+	int mins, secs, frames;
+
+	mins = nframes / ( 60 * rate );
+	remainder = nframes - ( mins * 60 * rate );
+	secs = remainder / rate;
+	remainder -= secs * rate;
+	frames = remainder / ( rate / 10 );
+	spos.sprintf ( " %02d:%02d%c%01d", mins, secs, QLocale::system().decimalPoint().toAscii(), frames );
+
+	return spos;
+}
+
+// Frame to MM:SS:75 (75ths of a second, for CD burning)
+QString frame_to_cd ( nframes_t nframes, int rate )
+{
+	QString spos;
+	long unsigned int remainder;
+	int mins, secs, frames;
+
+	mins = nframes / ( 60 * rate );
+	remainder = nframes - ( mins * 60 * rate );
+	secs = remainder / rate;
+	remainder -= secs * rate;
+	frames = remainder * 75 / rate;
+	spos.sprintf ( " %02d:%02d:%02d", mins, secs, frames );
 
 	return spos;
 }
@@ -79,7 +131,31 @@ nframes_t smpte_to_frame( QString str, int rate )
 
 	if (lst.size() >= 1) out += lst.at(0).toInt() * 60 * rate;
 	if (lst.size() >= 2) out += lst.at(1).toInt() * rate;
+	if (lst.size() >= 3) out += lst.at(2).toInt() * rate / 30;
+
+	return out;
+}
+
+nframes_t msms_to_frame( QString str, int rate )
+{
+	nframes_t out = 0;
+	QStringList lst = str.simplified().split(QRegExp("[;,.:]"), QString::SkipEmptyParts);
+
+	if (lst.size() >= 1) out += lst.at(0).toInt() * 60 * rate;
+	if (lst.size() >= 2) out += lst.at(1).toInt() * rate;
 	if (lst.size() >= 3) out += lst.at(2).toInt() * rate / 1000;
+
+	return out;
+}
+
+nframes_t cd_to_frame( QString str, int rate )
+{
+	nframes_t out = 0;
+	QStringList lst = str.simplified().split(QRegExp("[;,.:]"), QString::SkipEmptyParts);
+
+	if (lst.size() >= 1) out += lst.at(0).toInt() * 60 * rate;
+	if (lst.size() >= 2) out += lst.at(1).toInt() * rate;
+	if (lst.size() >= 3) out += lst.at(2).toInt() * rate / 75;
 
 	return out;
 }

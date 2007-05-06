@@ -101,7 +101,7 @@ void ProjectManagerDialog::update_song_list( )
 		QString songNr = QString::number(m_project->get_song_index(song->get_id()));
 		QString songName = "Song " + songNr + " - " + song->get_title();
 		QString numberOfTracks = QString::number(song->get_numtracks());
-		QString songLength = frame_to_smpte(song->get_last_frame(), song->get_rate());
+		QString songLength = frame_to_msms(song->get_last_frame(), song->get_rate());
 		QString songStatus = song->is_changed()?"UnSaved":"Saved";
 		QString songSpaceAllocated = "Unknown";
 

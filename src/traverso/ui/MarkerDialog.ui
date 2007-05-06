@@ -133,7 +133,7 @@
       <item row="0" column="0" >
        <widget class="QLabel" name="label_9" >
         <property name="text" >
-         <string>Position:</string>
+         <string>Position: (MM:SS:75ths)</string>
         </property>
        </widget>
       </item>

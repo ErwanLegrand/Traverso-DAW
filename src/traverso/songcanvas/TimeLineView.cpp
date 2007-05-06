@@ -257,7 +257,7 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 	nframes_t major;
 	
 	if (m_zooms.contains(m_sv->scalefactor)) {
-		major = smpte_to_frame(m_zooms[m_sv->scalefactor], m_samplerate);
+		major = msms_to_frame(m_zooms[m_sv->scalefactor], m_samplerate);
 	} else {
 		major = 120 * m_sv->scalefactor;
 	}
@@ -273,14 +273,14 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 
 	// Draw minor ticks
 	for (int i = 0; i < (lastFrame-firstFrame+major) / minor; i++ ) {
-		int x = (((int)(firstFrame/major))*major + i * minor)/m_sv->scalefactor;
+		int x = (int)(((int)(firstFrame/major))*major + i * minor)/m_sv->scalefactor;
 		painter->drawLine(x, height - 5, x, height - 1);
 	}
 	
 	// Draw major ticks
-	for (nframes_t t = ((int)(firstFrame/major))*major; t < lastFrame; t += major ) {
-		painter->drawLine(t/m_sv->scalefactor, height - 13, t/m_sv->scalefactor, height - 1);
-		painter->drawText(t/m_sv->scalefactor + 4, height - 8, (showMs) ? frame_to_smpte(t, m_samplerate) : frame_to_ms(t, m_samplerate));
+	for (nframes_t frame = ((int)(firstFrame/major))*major; frame < lastFrame; frame += major ) {
+		painter->drawLine(frame/m_sv->scalefactor, height - 13, frame/m_sv->scalefactor, height - 1);
+		painter->drawText(frame/m_sv->scalefactor + 4, height - 8, (showMs) ? frame_to_msms(frame, m_samplerate) : frame_to_ms(frame, m_samplerate));
 	}
 }
 

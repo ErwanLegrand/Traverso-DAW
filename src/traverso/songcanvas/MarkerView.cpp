@@ -74,7 +74,7 @@ void MarkerView::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
 	}
 	
 	if (m_dragging) {
-		m_posIndicator->set_value(frame_to_smpte( (x() + m_boundingRect.width() / 2 ) * m_sv->scalefactor,
+		m_posIndicator->set_value(frame_to_msms( (x() + m_boundingRect.width() / 2 ) * m_sv->scalefactor,
 					  m_sv->get_song()->get_rate()));
 	}
 
