@@ -569,7 +569,13 @@ int Peak::create_from_scratch()
 	
 	nframes_t readFrames = 0;
 	nframes_t totalReadFrames = 0;
-	nframes_t bufferSize = 65536;
+
+	#if defined (OSX_BUILD)
+		nframes_t bufferSize = 4096;
+	#else
+		nframes_t bufferSize = 65536;
+	#endif
+
 	int cycles = m_source->get_nframes() / bufferSize;
 	int counter = 0;
 	int p = 0;

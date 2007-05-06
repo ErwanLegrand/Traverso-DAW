@@ -122,6 +122,8 @@ macx {
 	QMAKE_LFLAGS_SONAME  = -Wl,-install_name,@executable_path/../Frameworks/
 
 	INCLUDEPATH += /usr/local/include/glib-2.0
+
+	RC_FILE = ../../resources/images/traverso_mac.icns
 }
 
 win32 { 

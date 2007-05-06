@@ -167,6 +167,11 @@ int PADriver::setup(bool capture, bool playback, const QString& hostapi)
 			break;
 		}
 		
+                if (hostapi == "coreaudio" && inf->type == paCoreAudio ) {
+			printf("PADriver:: Found directsound host api, using device %d\n", i);
+			deviceindex = i;
+			break;
+		}
 	}
 	
 
