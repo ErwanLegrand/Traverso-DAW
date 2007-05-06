@@ -23,8 +23,11 @@ DEFINES += ALSA_SUPPORT
 DEFINES += LV2_SUPPORT
 
 DEFINES += STATIC_BUILD
-DEFINES += PRECOMPILED_HEADER
 #DEFINES += USE_MEM_CHECKER
+
+!macx{
+	#DEFINES += PRECOMPILED_HEADER
+}
 
 #QMAKE_CXXFLAGS +=  -fstack-protector-all
 
@@ -118,7 +121,7 @@ macx {
 	DEFINES += PORTAUDIO_SUPPORT
 	DEFINES -= ALSA_SUPPORT
 	DEFINES -= JACK_SUPPORT
-			
+		
 	QMAKE_LFLAGS_SONAME  = -Wl,-install_name,@executable_path/../Frameworks/
 
 	INCLUDEPATH += /usr/local/include/glib-2.0

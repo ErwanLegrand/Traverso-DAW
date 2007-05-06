@@ -384,6 +384,16 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		float scaleFactor = ( (float) height * 0.90 / (Peak::MAX_DB_VALUE * 2)) * m_clip->get_gain() * m_clip->get_norm_factor();
 		float ytrans;
 		
+		if (m_mergedView) {
+			if (m_classicView) {
+				ytrans = (height / 2) * channels;
+				scaleFactor *= channels;
+			} else {
+				ytrans = height * channels;
+				scaleFactor *= channels;
+			}
+		}
+
 		// Draw channel seperator horizontal lines, if needed.
 		if (channels >= 2 && ! m_mergedView && m_classicView && chan >=1 ) {
 			p->save();
@@ -408,7 +418,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			int bufferPos = 0;
 			
 			ytrans = (height / 2) + (chan * height);
-			p->setMatrix(matrix().translate(1, ytrans).scale(1, scaleFactor), true);
+			p->setMatrix(matrix().translate(1, ytrans), true);
 			
 			if (m_clip->is_selected()) {
 				p->setPen(themer()->get_color("AudioClip:channelseperator:selected"));
@@ -419,7 +429,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			p->drawLine(xstart, 0, xstart + pixelcount, 0);
 			
 			for (int x = xstart; x < (pixelcount+xstart); x++) {
-				polygon.append( QPoint(x, mbuffer[bufferPos++]) );
+				polygon.append( QPoint(x, scaleFactor * mbuffer[bufferPos++]) );
 			}
 			
 			if (themer()->get_property("AudioClip:wavemicroview:antialiased", 0).toInt()) {
@@ -458,19 +468,31 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				
 				int range = pixelcount+xstart;
 				for (int x = xstart; x < range; x+=2) {
-					polygontop.append( QPointF(x, pixeldata[chan][bufferpos++]) );
-					polygonbottom.append( QPointF(x, - pixeldata[chan][bufferpos++]) );
+					polygontop.append( QPointF(x, scaleFactor * pixeldata[chan][bufferpos++]) );
+					polygonbottom.append( QPointF(x, -scaleFactor * pixeldata[chan][bufferpos++]) );
 				}
 				
 				path.addPolygon(polygontop);
 				path.lineTo(polygonbottom.last());
 				path.addPolygon(polygonbottom);
 				
-				ytrans = (height / 2) + (chan * height);
+				if (m_mergedView) {
+					ytrans = (height / 2) * channels;
+				} else {
+					ytrans = (height / 2) + (chan * height);
+				}
 			
 			} else {
+				scaleFactor =  (float) height * 0.95 * m_clip->get_gain() * m_clip->get_norm_factor() / Peak::MAX_DB_VALUE;
+				ytrans = height + (chan * height);
+		
+				if (m_mergedView) {
+					ytrans = height * channels;
+					scaleFactor *= channels;
+				}
+
 				for (int x = xstart; x < (pixelcount+xstart); x+=2) {
-					polygontop.append( QPointF(x, pixeldata[chan][bufferpos]) );
+					polygontop.append( QPointF(x, scaleFactor * pixeldata[chan][bufferpos]) );
 					bufferpos += 2;
 				}
 				
@@ -478,21 +500,9 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				path.addPolygon(polygontop);
 				path.lineTo(xstart, 0);
 				
-				ytrans = height + (chan * height);
-				scaleFactor =  (float) height * 0.95 * m_clip->get_gain() * m_clip->get_norm_factor() / Peak::MAX_DB_VALUE;
 			}
-			
-			if (m_mergedView) {
-				if (m_classicView) {
-					ytrans = (height / 2) * channels;
-					scaleFactor *= channels;
-				} else {
-					ytrans = height * channels;
-					scaleFactor *= channels;
-				}
-			}
-			
-			p->setMatrix(matrix().translate(1, ytrans).scale(1, scaleFactor), true);
+						
+			p->setMatrix(matrix().translate(1, ytrans), true);
 			p->drawPath(path);	
 		}
 		
