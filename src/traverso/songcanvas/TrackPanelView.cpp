@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.24 2007/05/07 11:09:00 r_sijrier Exp $
+$Id: TrackPanelView.cpp,v 1.25 2007/05/07 11:18:38 r_sijrier Exp $
 */
 
 #include <QGraphicsScene>
@@ -77,15 +77,6 @@ TrackPanelView::TrackPanelView(TrackView* trackView)
 	
 	m_viewPort->scene()->addItem(this);
 
-#if QT_VERSION < 0x040300
-	m_viewPort->scene()->addItem(m_gainView);
-	m_viewPort->scene()->addItem(m_panView);
-	m_viewPort->scene()->addItem(recLed);
-	m_viewPort->scene()->addItem(soloLed);
-	m_viewPort->scene()->addItem(muteLed);
-	m_viewPort->scene()->addItem(inBus);
-	m_viewPort->scene()->addItem(outBus);
-#endif
 	
 	m_boundingRect = QRectF(0, 0, 200, m_track->get_height());
 	
