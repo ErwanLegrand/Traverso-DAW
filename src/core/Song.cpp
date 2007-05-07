@@ -948,6 +948,12 @@ void Song::resize_buffer( )
 	delete [] gainbuffer;
 	mixdown = new audio_sample_t[audiodevice().get_buffer_size()];
 	gainbuffer = new audio_sample_t[audiodevice().get_buffer_size()];
+	foreach(Track* track, m_tracks) {
+		AudioBus* bus = audiodevice().get_capture_bus(track->get_bus_in().toAscii());
+		if (bus && track->armed()) {
+			bus->set_monitor_peaks(true);
+		}
+	}
 }
 
 int Song::get_bitdepth( )
