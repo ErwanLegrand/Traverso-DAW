@@ -61,7 +61,17 @@ void MarkerView::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
 	Q_UNUSED(widget);
 	
 	painter->save();
+	
+	int xstart = (int)option->exposedRect.x();
+	int clipx = (int)mapToParent(xstart, 0).x();
+	if (clipx < 0) {
+		painter->setClipRect(-clipx, 0, 30, (int)m_boundingRect.height());
+	}
 
+	if (m_active) {
+		painter->drawLine(m_width/2, m_ascent, m_width/2, (int)m_boundingRect.height());
+	}
+	
 	painter->setRenderHint(QPainter::Antialiasing);
 	painter->setFont( m_font );
 	
@@ -70,16 +80,12 @@ void MarkerView::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
 
 	const QPointF pts[3] = {
 			QPointF(0, 0),
-			QPointF(m_width, 0),
-			QPointF(m_width/2, m_ascent) };
+			QPointF(m_width + 0.5, 0),
+			QPointF((m_width+ 0.5)/2, m_ascent) };
 
 	painter->drawPolygon(pts, 3);
 	painter->drawText(m_width + 1, m_ascent, m_marker->get_description());
 
-	if (m_active) {
-		painter->drawLine(m_width/2, m_ascent, m_width/2, (int)m_boundingRect.height());
-	}
-	
 	if (m_dragging) {
 		m_posIndicator->set_value(frame_to_msms( (x() + m_boundingRect.width() / 2 ) * m_sv->scalefactor,
 					  m_sv->get_song()->get_rate()));

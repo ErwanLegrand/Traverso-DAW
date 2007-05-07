@@ -104,7 +104,7 @@ SongView::SongView(SongWidget* songwidget,
 	m_clipsViewPort->scene()->addItem(m_workCursor);
 	
 	m_clipsViewPort->setSceneRect(0, 0, MAX_CANVAS_WIDTH, MAX_CANVAS_HEIGHT);
-	m_tlvp->setSceneRect(0, -30, MAX_CANVAS_WIDTH, 0);
+	m_tlvp->setSceneRect(0, -TIMELINE_HEIGHT, MAX_CANVAS_WIDTH, 0);
 	m_tpvp->setSceneRect(-200, 0, 0, MAX_CANVAS_HEIGHT);
 	
 	

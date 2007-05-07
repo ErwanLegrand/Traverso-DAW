@@ -64,12 +64,8 @@ public:
 		m_box = new QComboBox(this);
 		m_box->addItem("", "");
 #if defined (Q_WS_WIN)
-		QFileInfoList list =  QDir::drives();
 		m_box->addItem(tr("My Computer"), "");
 		m_box->addItem(tr("My Documents"), QDir::homePath() + "\\" + tr("My Documents"));
-		foreach(QFileInfo info, list) {
-			m_box->addItem(info.dir().canonicalPath(), info.dir().canonicalPath());
-		}
 #else
 		m_box->addItem(QDir::rootPath(), QDir::rootPath());
 		m_box->addItem(QDir::homePath(), QDir::homePath());

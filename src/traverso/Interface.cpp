@@ -148,8 +148,8 @@ Interface::Interface()
 	spectralMeterDW->hide();
 
 	// BusMonitor
-	busMonitorDW = new QDockWidget("Master VU", this);
-	busMonitorDW->setObjectName("Master VU");
+	busMonitorDW = new QDockWidget("VU Meters", this);
+	busMonitorDW->setObjectName("VU Meters");
 
 	busMonitor = new BusMonitor(busMonitorDW);
 	busMonitorDW->setWidget(busMonitor);
@@ -414,7 +414,7 @@ void Interface::create_menus( )
 	menu->addSeparator();
 	
 	menu->addAction(m_infoBar->toggleViewAction());
-	m_infoBar->toggleViewAction()->setText(tr("Main Toolbar"));
+	m_infoBar->toggleViewAction()->setText(tr("Song Toolbar"));
 	menu->addAction(m_sysinfo->toggleViewAction());
 	m_sysinfo->toggleViewAction()->setText(tr("System Information"));
 	

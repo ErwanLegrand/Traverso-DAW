@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2006 Remon Sijrier 
+    Copyright (C) 2006-2007 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -17,7 +17,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TimeLineViewPort.cpp,v 1.5 2007/03/05 12:33:37 r_sijrier Exp $
 */
 
 #include "TimeLineViewPort.h"
@@ -35,8 +34,8 @@ TimeLineViewPort::TimeLineViewPort(QGraphicsScene* scene, SongWidget* sw, ClipsV
 {
 	clipView = view;
 	
-	setMaximumHeight(30);
-	setMinimumHeight(30);
+	setMaximumHeight(TIMELINE_HEIGHT);
+	setMinimumHeight(TIMELINE_HEIGHT);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
@@ -54,7 +53,7 @@ void TimeLineViewPort::set_songview( SongView * view )
 {
 	m_timeLineView = new TimeLineView(view);
 	scene()->addItem(m_timeLineView);
-	m_timeLineView->setPos(0, -30);
+	m_timeLineView->setPos(0, -TIMELINE_HEIGHT);
 }
 
 void TimeLineViewPort::get_pointed_context_items(QList<ContextItem* > &list)

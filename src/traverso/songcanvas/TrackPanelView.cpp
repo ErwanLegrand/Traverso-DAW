@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.22 2007/05/06 22:05:17 n_doebelin Exp $
+$Id: TrackPanelView.cpp,v 1.23 2007/05/07 10:31:22 r_sijrier Exp $
 */
 
 #include <QGraphicsScene>
@@ -138,9 +138,7 @@ void TrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
 		painter->fillRect(xstart, m_track->get_height() - m_tv->m_bottomborderwidth, pixelcount, m_tv->m_bottomborderwidth, color);
 	}
 
-	painter->setPen(themer()->get_color("Track:cliptopoffset"));
-	painter->drawLine(m_viewPort->width() - 1, 0,  m_viewPort->width() - 1, m_track->get_height() - 1);
-	painter->drawLine(m_viewPort->width() - 2, 0,  m_viewPort->width() - 2, m_track->get_height() - 1);
+	painter->fillRect(m_viewPort->width() - 2, 0, 2, m_track->get_height() - 1, themer()->get_color("Track:cliptopoffset"));
 	
 	if (xstart < 180) {
 		draw_panel_track_name(painter);
@@ -393,7 +391,7 @@ void TrackPanelLed::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 	Q_UNUSED(widget);
 	
 	bool mousehover = (option->state & QStyle::State_MouseOver);
-	int roundfactor = 30;
+	int roundfactor = 20;
 	
 	painter->setRenderHint(QPainter::Antialiasing);
 	
@@ -472,7 +470,7 @@ void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 	Q_UNUSED(widget);
 	
 	QColor color = themer()->get_color("TrackPanel:led:inactive");
-	int roundfactor = 20;
+	int roundfactor = 15;
 	
 	painter->setRenderHint(QPainter::Antialiasing);
 	
@@ -511,7 +509,7 @@ void TrackPanelBus::bus_changed()
 		m_busName =  m_track->get_bus_in();
 		m_pix = find_pixmap(":/bus_in");
 		m_boundingRect = m_pix.rect();
-		m_boundingRect.setWidth(m_pix.rect().width() + fm.width(m_busName) + 15);
+		m_boundingRect.setWidth(m_pix.rect().width() + fm.width(m_busName) + 10);
 	} else {
 		m_busName = m_track->get_bus_out();
 		m_pix = find_pixmap(":/bus_out");

@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Themer.h"
 #include "SongView.h"
 #include "MarkerView.h"
+#include "TimeLineViewPort.h"
 #include "SnapList.h"
 
 #include <ProjectManager.h>
@@ -48,8 +49,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
-
-#define TIMELINEHEIGHT 30
 
 // TODO test if DragMarker class works as expected!!
 
@@ -189,7 +188,7 @@ TimeLineView::TimeLineView(SongView* view)
 
 
 	m_sv = view;
-	m_boundingRect = QRectF(0, 0, MAX_CANVAS_WIDTH, TIMELINEHEIGHT);
+	m_boundingRect = QRectF(0, 0, MAX_CANVAS_WIDTH, TIMELINE_HEIGHT);
 	m_timeline = m_sv->get_song()->get_timeline();
 	m_samplerate = pm().get_project()->get_rate();
 	
@@ -253,7 +252,7 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 		xstart = 0;
 	}
 	
-	int height = TIMELINEHEIGHT;
+	int height = TIMELINE_HEIGHT;
 	
 	painter->fillRect(xstart, 0,  pixelcount, height, themer()->get_color("Timeline:background") );
 	

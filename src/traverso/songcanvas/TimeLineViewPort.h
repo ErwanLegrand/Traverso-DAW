@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TimeLineViewPort.h,v 1.3 2007/03/05 12:33:37 r_sijrier Exp $
+    $Id: TimeLineViewPort.h,v 1.4 2007/05/07 10:31:22 r_sijrier Exp $
 */
 
 #ifndef TIME_LINE_VIEW_PORT_H
@@ -29,6 +29,8 @@ class SongWidget;
 class SongView;
 class TimeLineView;
 class ClipsViewPort;
+
+#define TIMELINE_HEIGHT 32
 		
 class TimeLineViewPort : public ViewPort
 {

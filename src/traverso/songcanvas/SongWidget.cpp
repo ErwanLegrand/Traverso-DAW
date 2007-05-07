@@ -96,14 +96,14 @@ void SongPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem * 
 	painter->setPen(themer()->get_color("TrackPanel:text"));
 	painter->setFont(themer()->get_font("TrackPanel:gain"));
 	painter->drawText(0, height + 1, "GAIN");
-	painter->drawRect(30, 0, sliderWidth, height);
+	painter->drawRect(30, 1, sliderWidth, height);
 	
 	bool mousehover = (option->state & QStyle::State_MouseOver);
 	QColor color(cr,0,cb);
 	if (mousehover) {
 		color = color.light(140);
 	}
-	painter->fillRect(31, 1, sliderdbx, height-1, color);
+	painter->fillRect(31, 2, sliderdbx, height-1, color);
 	painter->drawText(sliderWidth + 35, height, sgain);
 }
 
@@ -142,7 +142,7 @@ SongPanelView::SongPanelView(QGraphicsScene* scene, Song* song)
 	m_gainview = new SongPanelGain(this, m_song);
 	m_gainview->setPos(10, 16);
 	scene->addItem(m_gainview);
-	m_boundingRect = QRectF(0, 0, 200, 30);
+	m_boundingRect = QRectF(0, 0, 200, TIMELINE_HEIGHT);
 }
 
 void SongPanelView::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
@@ -154,9 +154,10 @@ void SongPanelView::paint(QPainter * painter, const QStyleOptionGraphicsItem * o
 	painter->setFont(themer()->get_font("TrackPanel:led"));
 	painter->drawText(10, 11, "Song: " + m_song->get_title());
 	
-	QColor color = themer()->get_color("Track:cliptopoffset");
+	QColor color = QColor(Qt::darkGray);//themer()->get_color("Track:cliptopoffset");
 	painter->setPen(color);
-	painter->fillRect(xstart, 29, pixelcount, 1, color);
+	painter->fillRect(xstart, TIMELINE_HEIGHT - 2, pixelcount, 2, color);
+	painter->fillRect(199, 0, 1, TIMELINE_HEIGHT, color);
 }
 
 class SongPanelViewPort : public ViewPort
@@ -179,7 +180,7 @@ public:
 	{
 		m_sv = sv;
 		m_spv = new SongPanelView(scene(), m_song);
-		m_spv->setPos(-220, -30);
+		m_spv->setPos(-200, -TIMELINE_HEIGHT);
 	}
 
 private:
@@ -192,11 +193,11 @@ private:
 SongPanelViewPort::SongPanelViewPort(QGraphicsScene * scene, SongWidget * sw)
 	: ViewPort(scene, sw)
 {
-	setSceneRect(-220, -30, 200, 0);
+	setSceneRect(-200, -TIMELINE_HEIGHT, 200, 0);
 	m_song = sw->get_song();
 	
-	setMaximumHeight(30);
-	setMinimumHeight(30);
+	setMaximumHeight(TIMELINE_HEIGHT);
+	setMinimumHeight(TIMELINE_HEIGHT);
 	setMinimumWidth(200);
 	setMaximumWidth(200);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
