@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: VUMeter.h,v 1.12 2007/05/07 18:14:38 n_doebelin Exp $
+    $Id: VUMeter.h,v 1.13 2007/05/07 20:48:01 r_sijrier Exp $
 */
 
 #ifndef VUMETER_H
@@ -54,6 +54,7 @@ private:
 
 class VUMeter : public QWidget
 {
+	Q_OBJECT
 
 public:
         VUMeter(QWidget* parent, AudioBus* bus);
@@ -77,6 +78,10 @@ private:
 	static QVector<float>	lut;
 
 	static void calculate_lut_data();
+	
+private slots:
+	void peak_monitoring_stopped();
+	void peak_monitoring_started();
 };
 
 /**

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioBus.h,v 1.5 2006/10/16 23:58:31 r_sijrier Exp $
+$Id: AudioBus.h,v 1.6 2007/05/07 20:48:01 r_sijrier Exp $
 */
 
 
@@ -65,6 +65,8 @@ public:
 
 	void set_buffer_size(nframes_t size);
 	void set_monitor_peaks(bool monitor);
+	void reset_monitor_peaks();
+	bool is_monitoring_peaks() const {return m_monitors;}
 	
 	void monitor_peaks()
 	{
@@ -97,6 +99,10 @@ private:
 
 public slots:
 	void resize_buffer();
+	
+signals:
+	void monitoringPeaksStarted();
+	void monitoringPeaksStopped();
 	
 };
 

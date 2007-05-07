@@ -17,13 +17,15 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: BusMonitor.cpp,v 1.8 2007/03/16 00:10:26 r_sijrier Exp $
+$Id: BusMonitor.cpp,v 1.9 2007/05/07 20:48:01 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
 
 #include "BusMonitor.h"
 #include "VUMeter.h"
+#include "ProjectManager.h"
+#include "Project.h"
 #include <QHBoxLayout>
 
 // Always put me below _all_ includes, this is needed
@@ -41,6 +43,7 @@ BusMonitor::BusMonitor(QWidget* parent)
 	create_vu_meters();
 
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(create_vu_meters()));
+	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 }
 
 
@@ -96,14 +99,17 @@ void BusMonitor::create_vu_meters( )
 	{
 		AudioBus* bus = audiodevice().get_capture_bus(name.toAscii());
 		VUMeter* meter = new VUMeter( this, bus );
+		connect(bus, SIGNAL(monitoringPeaksStarted()), meter, SLOT(peak_monitoring_started()));
+		connect(bus, SIGNAL(monitoringPeaksStopped()), meter, SLOT(peak_monitoring_stopped()));
 		layout->addWidget(meter);
 		inMeters.append(meter);
+		meter->hide();
 	}
 
 	list = audiodevice().get_playback_buses_names();
-	foreach(QString name, list)
+	if (list.size())
 	{
-		VUMeter* meter = new VUMeter( this, audiodevice().get_playback_bus(name.toAscii()) );
+		VUMeter* meter = new VUMeter( this, audiodevice().get_playback_bus(list.at(0).toAscii()) );
 		layout->addWidget(meter);
 		outMeters.append(meter);
 	}
@@ -111,6 +117,15 @@ void BusMonitor::create_vu_meters( )
 	layout->addSpacing(4);
 }
 
+void BusMonitor::set_project(Project * project)
+{
+	QStringList list = audiodevice().get_capture_buses_names();
+	foreach(QString name, list)
+	{
+		AudioBus* bus = audiodevice().get_capture_bus(name.toAscii());
+		bus->reset_monitor_peaks();
+	}
+}
 
 //eof
 

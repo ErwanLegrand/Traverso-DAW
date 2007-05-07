@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: VUMeter.cpp,v 1.19 2007/05/07 18:14:38 n_doebelin Exp $
+    $Id: VUMeter.cpp,v 1.20 2007/05/07 20:48:01 r_sijrier Exp $
 */
 
 #include "VUMeter.h"
@@ -198,6 +198,16 @@ void VUMeter::calculate_lut_data()
 			lut.push_back(  7.5 + float(i+500) * 0.5 / 10.0);
 		}
 	}
+}
+
+void VUMeter::peak_monitoring_stopped()
+{
+	hide();
+}
+
+void VUMeter::peak_monitoring_started()
+{
+	show();
 }
 
 
