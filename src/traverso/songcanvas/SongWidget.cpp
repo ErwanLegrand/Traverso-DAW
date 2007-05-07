@@ -94,7 +94,7 @@ void SongPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem * 
 	int cb = ( gain < 1 ? 150 + (int)(50 * gain) : abs((int)(10 * gain)) );
 	
 	painter->setPen(themer()->get_color("TrackPanel:text"));
-	painter->setFont(themer()->get_font("TrackPanel:gain"));
+	painter->setFont(themer()->get_font("TrackPanel:fontscale:gain"));
 	painter->drawText(0, height + 1, "GAIN");
 	painter->drawRect(30, 1, sliderWidth, height);
 	
@@ -153,7 +153,7 @@ void SongPanelView::paint(QPainter * painter, const QStyleOptionGraphicsItem * o
 	int pixelcount = (int)option->exposedRect.width();
 	
 	painter->setPen(themer()->get_color("TrackPanel:text"));
-	painter->setFont(themer()->get_font("TrackPanel:led"));
+	painter->setFont(themer()->get_font("TrackPanel:fontscale:led"));
 	painter->drawText(10, 11, "Song: " + m_song->get_title());
 	
 	QColor color = QColor(Qt::darkGray);//themer()->get_color("Track:cliptopoffset");
