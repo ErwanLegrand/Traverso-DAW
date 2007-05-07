@@ -20,7 +20,6 @@
 */
 
 #include "SpectralMeterWidget.h"
-#include <QApplication>
 #include <Config.h>
 #include <Information.h>
 #include <PluginChain.h>
@@ -128,10 +127,7 @@ SpectralMeterView::SpectralMeterView(SpectralMeterWidget* widget)
 	show_average = false;
 	sample_weight = 1;
 
-	m_font = QApplication::font();
-	m_font.setPointSize(int(m_font.pointSize() * themer()->get_property("FFTSpectrum:fontscale", 0.75).toDouble()));
-	
-	QFontMetrics fm(m_font);
+	QFontMetrics fm(themer()->get_font("FFTSpectrum:fontscale:label"));
 	margin_l = 5;
 	margin_r = fm.width("-XX") + 5;
 	margin_t = fm.ascent()/2 + 5;
@@ -247,8 +243,8 @@ void SpectralMeterView::update_background()
 
 	QPainter painter(&bgPixmap);
 	painter.fillRect(m_rect, themer()->get_color("Meter:background"));
-	painter.setFont(m_font);
-	QFontMetrics fm(m_font);
+	painter.setFont(themer()->get_font("FFTSpectrum:fontscale:label"));
+	QFontMetrics fm(themer()->get_font("FFTSpectrum:fontscale:label"));
 
 	QString spm;
 

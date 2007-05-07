@@ -28,7 +28,6 @@ class Marker;
 class SongView;
 class QColor;
 class PositionIndicator;
-class QFont;
 
 class MarkerView : public ViewItem
 {
@@ -53,7 +52,6 @@ private:
 	bool	m_active;
 	bool	m_dragging;
 	PositionIndicator* m_posIndicator;
-	QFont	m_font;
 	int	m_ascent;
 	int	m_width;
 	

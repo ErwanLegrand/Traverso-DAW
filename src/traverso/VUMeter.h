@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: VUMeter.h,v 1.11 2007/05/06 22:05:17 n_doebelin Exp $
+    $Id: VUMeter.h,v 1.12 2007/05/07 18:14:38 n_doebelin Exp $
 */
 
 #ifndef VUMETER_H
@@ -32,7 +32,6 @@
 
 class AudioBus;
 class AudioChannel;
-class QFont;
 
 class VUMeterRuler : public QWidget
 {
@@ -73,7 +72,6 @@ private:
         int			m_channels;
 	int			m_minSpace;
         QString			m_name;
-	QFont			m_font;
 	QLabel*			channelNameLabel;
 	VUMeterRuler*		ruler;
 	static QVector<float>	lut;

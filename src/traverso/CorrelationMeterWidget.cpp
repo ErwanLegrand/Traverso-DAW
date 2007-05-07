@@ -32,7 +32,6 @@
 #include <Themer.h>
 #include <ContextPointer.h>
 #include <Config.h>
-#include <QApplication>
 
 #include <QtGui>
 #include <QDebug>
@@ -42,7 +41,6 @@
 #include "Debugger.h"
 
 static const float SMOOTH_SHIFT = 0.05;
-static const int FONT_SIZE = 7;
 
 CorrelationMeterWidget::CorrelationMeterWidget(QWidget* parent)
 	: ViewPort(parent)
@@ -115,10 +113,6 @@ CorrelationMeterView::CorrelationMeterView(CorrelationMeterWidget* widget)
 	, m_meter(0)
 	, m_song(0)
 {
-
-	m_font = QApplication::font();
-	m_font.setPointSize(int(m_font.pointSize() * themer()->get_property("CorrelationMeter:fontscale", 0.75).toDouble()));
-
 	fgColor = themer()->get_color("Meter:margin");
 	bgColor = themer()->get_color("Meter:background");
 	hgColor = themer()->get_color("Meter:grid");
@@ -187,8 +181,8 @@ void CorrelationMeterView::paint(QPainter *painter, const QStyleOptionGraphicsIt
 	painter->setPen(pen);
 	painter->drawLine(m_widget->width()/2 + centerOffset, 0, m_widget->width()/2 + centerOffset, m_widget->height());
 
-	painter->setFont(m_font);
-	QFontMetrics fm(m_font);
+	painter->setFont(themer()->get_font("CorrelationMeter:fontscale:label"));
+	QFontMetrics fm(themer()->get_font("CorrelationMeter:fontscale:label"));
 	
 	if (m_widget->height() < 2*fm.height()) {
 		return;

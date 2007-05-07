@@ -21,9 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "TimeLineView.h"
 
-#include <QApplication>
 #include <QPainter>
-#include <QFont>
 
 #include "Themer.h"
 #include "SongView.h"
@@ -43,6 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <AddRemove.h>
 #include <CommandGroup.h>
 #include <InputEngine.h>
+#include <QFont>
 
 #include <QDebug>
 
@@ -183,10 +182,6 @@ TimeLineView::TimeLineView(SongView* view)
 {
 	PENTERCONS2;
 
-	m_font = QApplication::font();
-	m_font.setPointSize(int(m_font.pointSize() * themer()->get_property("Timeline:fontscale", 0.85).toDouble()));
-
-
 	m_sv = view;
 	m_boundingRect = QRectF(0, 0, MAX_CANVAS_WIDTH, TIMELINE_HEIGHT);
 	m_timeline = m_sv->get_song()->get_timeline();
@@ -258,7 +253,7 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 	painter->fillRect(xstart, 0,  pixelcount, height, themer()->get_color("Timeline:background") );
 	
 	painter->setPen(themer()->get_color("Timeline:text"));
-	painter->setFont( m_font );
+	painter->setFont( themer()->get_font("Timeline:fontscale:label") );
 	
 	nframes_t major;
 	

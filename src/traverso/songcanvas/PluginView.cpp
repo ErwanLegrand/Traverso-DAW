@@ -56,7 +56,7 @@ PluginView::PluginView(PluginChainView* parent, PluginChain* chain, Plugin* plug
 	
 	m_name = plugin->get_name();
 	
-	QFontMetrics fm(themer()->get_font("Plugin:name"));
+	QFontMetrics fm(themer()->get_font("Plugin:fontscale:name"));
 	int fontwidth = fm.width(m_name);
 	
 	m_boundingRect = QRectF(0, 0, fontwidth + 8, 25);
@@ -103,7 +103,7 @@ void PluginView::paint(QPainter* painter, const QStyleOptionGraphicsItem *option
 	QRect rect(0, 0, width, height); 
 	painter->fillRect(rect, brush);
 	painter->setPen(themer()->get_color("Plugin:text"));
-	painter->setFont(themer()->get_font("Plugin:name"));
+	painter->setFont(themer()->get_font("Plugin:fontscale:name"));
 	painter->drawText(rect, Qt::AlignCenter, m_name);
 }
 

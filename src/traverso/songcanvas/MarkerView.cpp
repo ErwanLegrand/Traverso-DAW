@@ -25,7 +25,6 @@
 #include "ClipsViewPort.h"
 #include "PositionIndicator.h"
 
-#include <QApplication>
 #include <QFont>
 #include <QFontMetrics>
 #include <QColor>
@@ -43,9 +42,7 @@ MarkerView::MarkerView(Marker* marker, SongView* sv, ViewItem* parentView)
 	m_active = false;
 	m_posIndicator = 0;
 
-	m_font = QApplication::font();
-	m_font.setPointSize(int(m_font.pointSize() * themer()->get_property("Marker:fontscale", 0.75).toDouble()));
-	QFontMetrics fm(m_font);
+	QFontMetrics fm(themer()->get_font("Timeline:marker"));
 	m_ascent = fm.ascent();
 	m_width = fm.width("NI"); // use any two letters to set the width of the marker indicator
 
@@ -73,7 +70,7 @@ void MarkerView::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
 	}
 	
 	painter->setRenderHint(QPainter::Antialiasing);
-	painter->setFont( m_font );
+	painter->setFont(themer()->get_font("Timeline:fontscale:marker"));
 	
 	painter->setPen(QColor(Qt::black));
 	painter->setBrush(m_fillColor);
@@ -99,7 +96,7 @@ void MarkerView::calculate_bounding_rect()
 	prepareGeometryChange();
 	update_position();
 	
-	QFontMetrics fm( m_font );
+	QFontMetrics fm(themer()->get_font("Timeline:fontscale:marker"));
 	int descriptionwidth = fm.width(m_marker->get_description()) + 1;
 
 	if (m_active) {
