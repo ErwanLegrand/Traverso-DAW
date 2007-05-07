@@ -29,18 +29,19 @@
 		<property name="VUMeter:layout:minimumlevelwidth" value="6" />
 	</properties>
 	<fonts>
+		<font name="ContextMenu:fontscale:actions" value="1.0" />
 		<font name="Plugin:fontscale:name" value="0.9" />
 		<font name="AudioClip:fontscale:title" value="0.9" />
-		<font name="VUMeter:fontscale:label" value="0.7" />
-		<font name="FFTSpectrum:fontscale:label" value="0.7" />
-		<font name="CorrelationMeter:fontscale:label" value="0.7" />
+		<font name="VUMeter:fontscale:label" value="0.75" />
+		<font name="FFTSpectrum:fontscale:label" value="0.75" />
+		<font name="CorrelationMeter:fontscale:label" value="0.75" />
 		<font name="Timeline:fontscale:label" value="0.9" />
 		<font name="Timeline:fontscale:marker" value="0.9" />
-		<font name="TrackPanel:fontscale:name" value="1.0" />
-		<font name="TrackPanel:fontscale:gain" value="0.9" />
-		<font name="TrackPanel:fontscale:pan" value="0.9" />
-		<font name="TrackPanel:fontscale:led" value="0.9" />
-		<font name="TrackPanel:fontscale:bus" value="0.9" />
+		<font name="TrackPanel:fontscale:name" value="0.9" />
+		<font name="TrackPanel:fontscale:gain" value="0.8" />
+		<font name="TrackPanel:fontscale:pan" value="0.8" />
+		<font name="TrackPanel:fontscale:led" value="0.8" />
+		<font name="TrackPanel:fontscale:bus" value="0.8" />
 	</fonts>
 	<colors>
 		<color name="Text:light" red="200" green="200" blue="200"  alpha="255" />

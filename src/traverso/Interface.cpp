@@ -629,12 +629,12 @@ QMenu* Interface::create_context_menu(QObject* item, QList<MenuData >* menulist)
 		name = "noname";
 	}
 	QAction* menuAction = menu->addAction(name);
-	QFont font("Bitstream Vera Sans", 8);
+	QFont font(themer()->get_font("ContextMenu:fontscale:actions"));
 	font.setBold(true);
 	menuAction->setFont(font);
 	menuAction->setEnabled(false);
 	menu->addSeparator();
-	menu->setFont(QFont("Bitstream Vera Sans", 8));
+	menu->setFont(themer()->get_font("ContextMenu:fontscale:actions"));
 	
 	QHash<QString, QList<MenuData>* > submenus;
 	
@@ -684,9 +684,9 @@ QMenu* Interface::create_context_menu(QObject* item, QList<MenuData >* menulist)
 		qSort(list->begin(), list->end(), MenuData::smaller);
 
 		QMenu* sub = new QMenu(this);
-		sub->setFont(QFont("Bitstream Vera Sans", 8));
+		sub->setFont(themer()->get_font("ContextMenu:fontscale:actions"));
 		
-		QFont font("Bitstream Vera Sans", 8);
+		QFont font(themer()->get_font("ContextMenu:fontscale:actions"));
 		font.setBold(true);
 		sub->menuAction()->setFont(font);
 		
