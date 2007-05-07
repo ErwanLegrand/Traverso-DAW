@@ -316,9 +316,12 @@ void Interface::keyReleaseEvent( QKeyEvent * e)
 
 Command * Interface::show_export_widget( )
 {
-	if (! exportWidget)
+	if (! exportWidget) {
 		exportWidget = new ExportWidget(this);
-	exportWidget->show();
+	}
+	if (exportWidget->isHidden()) {
+		exportWidget->show();
+	}
 	return (Command*) 0;
 }
 

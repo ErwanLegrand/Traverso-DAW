@@ -240,9 +240,7 @@ void ExportWidget::on_exportStartButton_clicked( )
 	}
 	
 	spec->normalize = normalizeCheckBox->isChecked();
-	
 	spec->isRecording = false;
-
         m_project->export_project(spec);
 }
 
@@ -323,6 +321,7 @@ void ExportWidget::set_exporting_song( Song * song )
 
 void ExportWidget::show_progress_view( )
 {
+	buttonBox->setEnabled(false);
 	optionsWidget->hide();
 	progressWidget->show();
 	m_layout->removeWidget(optionsWidget);
@@ -337,6 +336,7 @@ void ExportWidget::show_settings_view( )
 	optionsWidget->show();
 	progressWidget->hide();
 	resize(370, 300);
+	buttonBox->setEnabled(true);
 }
 
 
