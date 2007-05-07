@@ -573,25 +573,42 @@ Command * Interface::export_keymap()
 		QString name = objects.key(objectlist);
 		
 		out << "<h3>" << name << "</h3>";
-		out << "<table><tr><td width=200>" << tr("<b>Description</b>") << "</td><td>" << tr("<b>Key Sequence</b>") << "</td></tr>";
+		out << "<table><tr><td width=220>" << tr("<b>Description</b>") << "</td><td>" << tr("<b>Key Sequence</b>") << "</td></tr>";
+		
+		QStringList result;
 		
 		foreach(const QMetaObject* mo, objectlist) {
 			QList<MenuData > list;
 			
 			ie().create_menudata_for_metaobject(mo, list);
 		
+			QList<QMenu* > menulist;
 			QMenu* menu = create_context_menu(0, &list);
 			if (menu) {
+				menulist.append(menu);
 				foreach(QAction* action, menu->actions()) {
-					QStringList strings = action->data().toStringList();
-					if (strings.size() >= 3) {
-						out << "<tr><td>" << strings.at(1) << "</td><td>" << strings.at(2) << "</td></tr>";
+					if (action->menu()) {
+						menulist.append(action->menu());
+					}
+				}
+				for (int i=0; i<menulist.size(); ++i) {
+					QMenu* somemenu = menulist.at(i);
+					foreach(QAction* action, somemenu->actions()) {
+						QStringList strings = action->data().toStringList();
+						if (strings.size() >= 3) {
+							QString submenuname = "";
+							if (i > 0) {
+								submenuname = somemenu->menuAction()->text() + "&#160;&#160;&#160;&#160;";
+							}
+							result += QString("<tr><td>") + submenuname + strings.at(1) + "</td><td>" + strings.at(2) + "</td></tr>";
+						}
 					}
 				}
 				delete menu;
 			}
-
 		}
+		result.sort();
+		out << result.join("");
 		out << "</table></br></br>";
 	}
 	
@@ -693,11 +710,13 @@ QMenu* Interface::create_context_menu(QObject* item, QList<MenuData >* menulist)
 		QAction* action = menu->insertMenu(0, sub);
 		action->setText(key);
 		foreach(MenuData data, *list) {
-			QAction* action = new QAction(this);
+			QAction* action = new QAction(sub);
 			QString keyfact = create_keyfact_string(data.keysequence, data.modifierkeys);
 			QString text = QString(data.description + "  " + keyfact);
 			action->setText(text);
-			action->setData(data.iedata);
+			QStringList strings;
+			strings << data.iedata << data.description << keyfact;
+			action->setData(strings);
 			sub->addAction(action);
 		}
 		
