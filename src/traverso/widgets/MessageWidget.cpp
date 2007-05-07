@@ -150,7 +150,7 @@ void MessageWidgetPrivate::paintEvent(QPaintEvent* )
 		begin = 40;
 
 // 	painter.setPen(QColor(Qt::white));
-	painter.setFont(QFont("Bitstream Vera Sans", fontSize));
+	painter.setFont(themer()->get_font("MessageWidget:fontscale:log"));
 	painter.setRenderHint(QPainter::TextAntialiasing);
 	painter.drawText(begin, 16, m_infoStruct.message);
 	painter.drawPixmap(begin - 35, 3, pm);

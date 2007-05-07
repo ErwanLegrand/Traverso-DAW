@@ -493,7 +493,7 @@ void PlayHeadInfo::paintEvent(QPaintEvent* )
 		fontcolor = QColor(fc, fc, fc);
 	}
 	
-	painter.setFont(QFont("Bitstream Vera Sans", 13));
+	painter.setFont(themer()->get_font("Playhead:fontscale:info"));
 	painter.setPen(fontcolor);
 	
 	painter.drawPixmap(0, 0, m_background);
@@ -860,7 +860,7 @@ void SystemValueBar::paintEvent(QPaintEvent* )
 	painter.drawRect(rect);
 	
 	painter.setPen(Qt::black);
-	painter.setFont(QFont("Bitstream Vera Sans", 8));
+	painter.setFont(themer()->get_font("InfoWidget:fontscale:values"));
 	
 	if (m_introunding) {
 		painter.drawText(0, 0, width(), height(), Qt::AlignCenter, 

@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QApplication>
 #include <Utils.h>
 #include "InputEngine.h"
+#include "Themer.h"
 
 #include "ViewPort.h"
 #include "ContextPointer.h"
@@ -276,11 +277,11 @@ void HoldCursor::paint( QPainter * painter, const QStyleOptionGraphicsItem * opt
 	painter->drawPixmap(0, 0, m_pixmap);
 	
 	if (!m_text.isEmpty()) {
-		QFontMetrics fm(QFont("Bitstream Vera Sans", 11));
+		QFontMetrics fm(themer()->get_font("ViewPort:fontscale:infocursor"));
 		int width = fm.width(m_text) + 4;
 		int height = fm.height();
 		QRect textArea = QRect(m_pixmap.width() + 10, m_pixmap.height() / 4, width, height);
-		painter->setFont(QFont("Bitstream Vera Sans", 11));
+		painter->setFont(themer()->get_font("ViewPort:fontscale:infocursor"));
 		painter->fillRect(textArea, QBrush(Qt::white));
 		painter->drawText(textArea, m_text);
 	}

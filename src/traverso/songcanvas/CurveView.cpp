@@ -286,8 +286,7 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	painter->drawPath(path);
 	
 	if (xstart <= 80 && pixelcount >= 100 ) {
-		QFont font("Bitstream Vera Sans", 8);
-		painter->setFont(font);
+		painter->setFont(themer()->get_font("CurveView:fontscale:label"));
 		painter->drawText(10, m_boundingRect.height() - 14, "Gain Curve");
 	}
 	

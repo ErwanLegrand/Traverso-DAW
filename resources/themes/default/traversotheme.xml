@@ -35,13 +35,18 @@
 		<font name="VUMeter:fontscale:label" value="0.75" />
 		<font name="FFTSpectrum:fontscale:label" value="0.75" />
 		<font name="CorrelationMeter:fontscale:label" value="0.75" />
-		<font name="Timeline:fontscale:label" value="0.9" />
-		<font name="Timeline:fontscale:marker" value="0.9" />
+		<font name="Timeline:fontscale:label" value="0.95" />
+		<font name="Timeline:fontscale:marker" value="0.95" />
 		<font name="TrackPanel:fontscale:name" value="0.9" />
 		<font name="TrackPanel:fontscale:gain" value="0.8" />
 		<font name="TrackPanel:fontscale:pan" value="0.8" />
-		<font name="TrackPanel:fontscale:led" value="0.8" />
-		<font name="TrackPanel:fontscale:bus" value="0.8" />
+		<font name="TrackPanel:fontscale:led" value="0.85" />
+		<font name="TrackPanel:fontscale:bus" value="0.85" />
+		<font name="InfoWidget:fontscale:values" value="0.75" />
+		<font name="Playhead:fontscale:info" value="1.50" />
+		<font name="CurveView:fontscale:label" value="0.75" />
+		<font name="ViewPort:fontscale:infocursor" value="0.95" />
+		<font name="MessageWidget:fontscale:log" value="1.0" />
 	</fonts>
 	<colors>
 		<color name="Text:light" red="200" green="200" blue="200"  alpha="255" />
