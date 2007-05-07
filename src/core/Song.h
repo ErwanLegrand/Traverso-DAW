@@ -49,7 +49,7 @@ class Song : public ContextItem
 	Q_OBJECT
 	Q_CLASSINFO("go", tr("Play"))
 	Q_CLASSINFO("go_and_record", tr("Record"));
-	Q_CLASSINFO("work_next_edge", tr("Workcursor: To next ege"))
+	Q_CLASSINFO("work_next_edge", tr("Workcursor: To next edge"))
 	Q_CLASSINFO("work_previous_edge", tr("Workcursor: To previous edge"))
 	Q_CLASSINFO("undo", tr("Undo"))
 	Q_CLASSINFO("redo", tr("Redo"))
