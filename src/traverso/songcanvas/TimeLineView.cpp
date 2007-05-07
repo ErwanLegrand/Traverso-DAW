@@ -192,8 +192,9 @@ TimeLineView::TimeLineView(SongView* view)
 	m_timeline = m_sv->get_song()->get_timeline();
 	m_samplerate = pm().get_project()->get_rate();
 	
+#if QT_VERSION < 0x040300
 	view->scene()->addItem(this);
-	
+#endif
 	load_theme_data();
 	
 	// Create MarkerViews for existing markers
@@ -301,7 +302,9 @@ void TimeLineView::add_new_marker_view(Marker * marker)
 	MarkerView* view = new MarkerView(marker, m_sv, this);
 	view->set_active(false);
 	m_markerViews.append(view);
+#if QT_VERSION < 0x040300
 	m_sv->scene()->addItem(view);
+#endif
 	update();
 }
 

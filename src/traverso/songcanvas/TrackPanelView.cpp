@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.23 2007/05/07 10:31:22 r_sijrier Exp $
+$Id: TrackPanelView.cpp,v 1.24 2007/05/07 11:09:00 r_sijrier Exp $
 */
 
 #include <QGraphicsScene>
@@ -49,25 +49,16 @@ TrackPanelView::TrackPanelView(TrackView* trackView)
 	m_viewPort = m_tv->get_songview()->get_trackpanel_view_port();
 	m_track = m_tv->get_track();
 	
-	m_viewPort->scene()->addItem(this);
-	
 	m_gainView = new TrackPanelGain(this, m_track);
 	m_gainView->set_width(m_viewPort->width() - 20);
-	m_viewPort->scene()->addItem(m_gainView);
 	
 	m_panView = new TrackPanelPan(this, m_track);
 	m_panView->set_width(m_viewPort->width() - 20);
-	m_viewPort->scene()->addItem(m_panView);
 	
 	recLed = new TrackPanelLed(this, "rec", "toggle_arm");
 	soloLed = new TrackPanelLed(this, "solo", "solo");
 	muteLed = new TrackPanelLed(this, "mute", "mute");
 	
-	m_viewPort->scene()->addItem(recLed);
-	m_viewPort->scene()->addItem(soloLed);
-	m_viewPort->scene()->addItem(muteLed);
-	
-
 	m_fontName = QApplication::font();
 	m_fontName.setPointSize(int(m_fontName.pointSize() * themer()->get_property("TrackPanel:name:fontscale", 0.9).toDouble()));
 
@@ -84,8 +75,17 @@ TrackPanelView::TrackPanelView(TrackView* trackView)
 	inBus = new TrackPanelBus(this, m_track, TrackPanelBus::BUSIN);
 	outBus = new TrackPanelBus(this, m_track, TrackPanelBus::BUSOUT);
 	
+	m_viewPort->scene()->addItem(this);
+
+#if QT_VERSION < 0x040300
+	m_viewPort->scene()->addItem(m_gainView);
+	m_viewPort->scene()->addItem(m_panView);
+	m_viewPort->scene()->addItem(recLed);
+	m_viewPort->scene()->addItem(soloLed);
+	m_viewPort->scene()->addItem(muteLed);
 	m_viewPort->scene()->addItem(inBus);
 	m_viewPort->scene()->addItem(outBus);
+#endif
 	
 	m_boundingRect = QRectF(0, 0, 200, m_track->get_height());
 	

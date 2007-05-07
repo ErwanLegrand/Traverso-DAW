@@ -60,7 +60,10 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	setZValue(parent->zValue() + 1);
 	
 	m_sv = sv;
+
+#if QT_VERSION < 0x040300
 	m_tv->scene()->addItem(this);
+#endif
 	
 	load_theme_data();
 	create_clipinfo_string();
@@ -575,7 +578,9 @@ void AudioClipView::add_new_fadeview( FadeCurve * fade )
 	PENTER;
 	FadeView* view = new FadeView(m_sv, this, fade);
 	m_fadeViews.append(view);
+#if QT_VERSION < 0x040300
 	scene()->addItem(view);
+#endif
 }
 
 void AudioClipView::remove_fadeview( FadeCurve * fade )

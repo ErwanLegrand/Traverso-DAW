@@ -45,14 +45,16 @@
 
 PluginChainView::PluginChainView(SongView* sv, ViewItem* parent, PluginChain* chain)
 	: ViewItem(parent, parent)
-		, m_sv(sv)
+	, m_sv(sv)
 	, m_pluginchain(chain)
 {
 	PENTERCONS;
 	
 	setZValue(parent->zValue() + 2);
 	
+#if QT_VERSION < 0x040300
 	parent->scene()->addItem(this);
+#endif
 	m_boundingRect = QRectF(0, 0, 0, 44);
 	
 	hide();
@@ -78,7 +80,9 @@ PluginChainView::~PluginChainView( )
 void PluginChainView::add_new_pluginview( Plugin * plugin )
 {
 	PluginView* view = new PluginView(this, m_pluginchain, plugin, m_pluginViews.size());
+#if QT_VERSION < 0x040300
 	scene()->addItem(view);
+#endif
 	
 	int x = 6;
 	foreach(PluginView* view, m_pluginViews) {

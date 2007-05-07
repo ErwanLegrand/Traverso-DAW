@@ -141,7 +141,9 @@ SongPanelView::SongPanelView(QGraphicsScene* scene, Song* song)
 	scene->addItem(this);
 	m_gainview = new SongPanelGain(this, m_song);
 	m_gainview->setPos(10, 16);
+#if QT_VERSION < 0x040300
 	scene->addItem(m_gainview);
+#endif
 	m_boundingRect = QRectF(0, 0, 200, TIMELINE_HEIGHT);
 }
 

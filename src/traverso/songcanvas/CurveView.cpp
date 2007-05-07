@@ -178,8 +178,9 @@ CurveView::CurveView(SongView* sv, ViewItem* parentViewItem, Curve* curve)
 	setZValue(parentViewItem->zValue() + 1);
 	
 	m_sv = sv;
+#if QT_VERSION < 0x040300
 	m_sv->scene()->addItem(this);
-
+#endif
 	load_theme_data();
 	
 	m_blinkColorDirection = 1;
@@ -302,7 +303,9 @@ int CurveView::get_vector(int xstart, int pixelcount, float* arg)
 void CurveView::add_curvenode_view(CurveNode* node)
 {
 	CurveNodeView* nodeview = new CurveNodeView(m_sv, this, node, m_guicurve);
+#if QT_VERSION < 0x040300
 	m_sv->scene()->addItem(nodeview);
+#endif
 	m_nodeViews.append(nodeview);
 	
 	AddRemove* cmd = (AddRemove*) m_guicurve->add_node(nodeview, false);
