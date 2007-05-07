@@ -49,7 +49,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
+#if defined (Q_WS_MAC)
+static const int SONG_TOOLBAR_HEIGHT = 27;
+#else
 static const int SONG_TOOLBAR_HEIGHT = 24;
+#endif
 
 
 SystemResources::SystemResources(QWidget * parent)
