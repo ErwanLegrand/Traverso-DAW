@@ -49,7 +49,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-static const int INFOBAR_HEIGH_HOR_ORIENTATION = 25;
+static const int SONG_TOOLBAR_HEIGHT = 24;
 
 
 SystemResources::SystemResources(QWidget * parent)
@@ -129,7 +129,7 @@ void SystemResources::update_status( )
 
 QSize SystemResources::sizeHint() const
 {
-	return QSize(250, INFOBAR_HEIGH_HOR_ORIENTATION);
+	return QSize(250, SONG_TOOLBAR_HEIGHT);
 }
 
 
@@ -193,7 +193,7 @@ void DriverInfo::update_xrun_info( )
 
 QSize DriverInfo::sizeHint() const
 {
-	return QSize(150, INFOBAR_HEIGH_HOR_ORIENTATION);
+	return QSize(150, SONG_TOOLBAR_HEIGHT);
 }
 
 void DriverInfo::show_driver_config_widget( )
@@ -343,7 +343,7 @@ void HDDSpaceInfo::update_status( )
 
 QSize HDDSpaceInfo::sizeHint() const
 {
-	return QSize(70, INFOBAR_HEIGH_HOR_ORIENTATION);
+	return QSize(70, SONG_TOOLBAR_HEIGHT);
 }
 
 
@@ -493,7 +493,7 @@ void PlayHeadInfo::paintEvent(QPaintEvent* )
 	painter.setPen(fontcolor);
 	
 	painter.drawPixmap(0, 0, m_background);
-	painter.drawPixmap(8, 6, m_playpixmap);
+	painter.drawPixmap(8, (height() - m_playpixmap.height()) / 2, m_playpixmap);
 	painter.drawText(QRect(12, 4, width() - 6, height() - 6), Qt::AlignCenter, currentTime);
 }
 
@@ -512,7 +512,7 @@ void PlayHeadInfo::stop_song_update_timer( )
 
 QSize PlayHeadInfo::sizeHint() const
 {
-	return QSize(120, INFOBAR_HEIGH_HOR_ORIENTATION);
+	return QSize(120, SONG_TOOLBAR_HEIGHT);
 }
 
 void PlayHeadInfo::resizeEvent(QResizeEvent * e)
@@ -661,7 +661,7 @@ SongInfo::SongInfo(QWidget * parent)
 	lay->setMargin(0);
 		
 	setFrameStyle(QFrame::NoFrame);
-	setMaximumHeight(INFOBAR_HEIGH_HOR_ORIENTATION);
+	setMaximumHeight(SONG_TOOLBAR_HEIGHT);
 	
 	connect(m_snapAct, SIGNAL(triggered(bool)), this, SLOT(snap_state_changed(bool)));
 	connect(m_followAct, SIGNAL(triggered(bool)), this, SLOT(follow_state_changed(bool)));
@@ -761,7 +761,7 @@ void SongInfo::update_recording_state()
 
 QSize SongInfo::sizeHint() const
 {
-	return QSize(400, INFOBAR_HEIGH_HOR_ORIENTATION);
+	return QSize(400, SONG_TOOLBAR_HEIGHT);
 }
 
 
