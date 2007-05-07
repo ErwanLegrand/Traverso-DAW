@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "../config.h"
 
 #include <libtraversocore.h>
+#include "libtraversosongcanvas.h"
 #include <AudioDevice.h>
 
 #include <QtOpenGL>
@@ -29,19 +30,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Interface.h"
 #include "BusMonitor.h"
 #include "ProjectManager.h"
-#include "AudioClipView.h"
-#include "TrackView.h"
 #include "ViewPort.h"
 #include "Help.h"
 #include "widgets/ResourcesWidget.h"
 #include "FadeCurve.h"
 #include "Config.h"
+#include "Plugin.h"
 #include "widgets/InfoWidgets.h"
 
 #include "ExportWidget.h"
 #include "CorrelationMeterWidget.h"
 #include "SpectralMeterWidget.h"
-		
 		
 #include "Import.h"
 #include "songcanvas/SongWidget.h"
@@ -278,15 +277,6 @@ void Interface::show_song(Song* song)
 	pm().get_undogroup()->setActiveStack(song->get_history_stack());
 }
 
-Command* Interface::show_song_widget()
-{
-	if (currentSongWidget) {
-		centerAreaWidget->setCurrentIndex(centerAreaWidget->indexOf(currentSongWidget));
-	}
-	
-	return (Command*) 0;
-}
-
 
 Command* Interface::about_traverso()
 {
@@ -440,7 +430,8 @@ void Interface::create_menus( )
 
 void Interface::process_context_menu_action( QAction * action )
 {
-	QString name = (action->data()).toString();
+	QStringList strings = action->data().toStringList();
+	QString name = strings.first();
 	ie().broadcast_action_from_contextmenu(name);
 }
 
@@ -524,6 +515,7 @@ QString create_keyfact_string(QString& keyfact, QList<int> modifiers)
 {
 	QString modifierkey = "";
 	foreach(int key, modifiers) {
+		if (keyfact.contains("+)")) continue;
 		if (key == Qt::Key_Alt) {
 			modifierkey += "ALT+";
 		} else if (key == Qt::Key_Control) {
@@ -540,11 +532,86 @@ QString create_keyfact_string(QString& keyfact, QList<int> modifiers)
 	return modifierkey + " " + keyfact;
 }
 
-QMenu* Interface::create_context_menu(QObject* item )
+Command * Interface::export_keymap()
+{
+	QTextStream out;
+	QFile data(QDir::homePath() + "/traversokeymap.html");
+	if (data.open(QFile::WriteOnly | QFile::Truncate)) {
+		out.setDevice(&data);
+	} else {
+		return 0;
+	}
+	
+	QMap<QString, QList<const QMetaObject*> > objects;
+	
+	QList<const QMetaObject*> songlist; songlist << &Song::staticMetaObject; songlist << &SongView::staticMetaObject;
+	QList<const QMetaObject*> tracklist; tracklist << &Track::staticMetaObject; tracklist << &TrackView::staticMetaObject;
+	QList<const QMetaObject*> cliplist; cliplist << &AudioClip::staticMetaObject; cliplist << &AudioClipView::staticMetaObject;
+	QList<const QMetaObject*> curvelist; curvelist << &Curve::staticMetaObject; curvelist << &CurveView::staticMetaObject;
+	QList<const QMetaObject*> timelinelist; timelinelist << &TimeLine::staticMetaObject; timelinelist << &TimeLineView::staticMetaObject;
+	QList<const QMetaObject*> markerlist; markerlist << &Marker::staticMetaObject; markerlist << &MarkerView::staticMetaObject;
+	QList<const QMetaObject*> pluginlist; pluginlist << &Plugin::staticMetaObject; pluginlist << &PluginView::staticMetaObject;
+	QList<const QMetaObject*> fadelist; fadelist << &FadeCurve::staticMetaObject; fadelist << &FadeView::staticMetaObject;
+	QList<const QMetaObject*> interfacelist; interfacelist << &Interface::staticMetaObject;
+	QList<const QMetaObject*> pmlist; pmlist << &ProjectManager::staticMetaObject;
+		
+	objects.insert("Song", songlist);
+	objects.insert("Track", tracklist);
+	objects.insert("AudioClip", cliplist);
+	objects.insert("Curve", curvelist);
+	objects.insert("TimeLine", timelinelist);
+	objects.insert("Marker", markerlist);
+	objects.insert("Plugin", pluginlist);
+	objects.insert("Fade", fadelist);
+	objects.insert("Interface", interfacelist);
+	objects.insert("ProjectManager", pmlist);
+	
+	
+	out << "<html><body><h1>Traverso keymap: " << config().get_property("CCE", "keymap", "default").toString();
+	
+	foreach(QList<const QMetaObject* > objectlist, objects.values()) {
+		QString name = objects.key(objectlist);
+		
+		out << "<h3>" << name << "</h3>";
+		out << "<table><tr><td width=200>" << tr("<b>Description</b>") << "</td><td>" << tr("<b>Key Sequence</b>") << "</td></tr>";
+		
+		foreach(const QMetaObject* mo, objectlist) {
+			QList<MenuData > list;
+			
+			ie().create_menudata_for_metaobject(mo, list);
+		
+			QMenu* menu = create_context_menu(0, &list);
+			if (menu) {
+				foreach(QAction* action, menu->actions()) {
+					QStringList strings = action->data().toStringList();
+					if (strings.size() >= 3) {
+						out << "<tr><td>" << strings.at(1) << "</td><td>" << strings.at(2) << "</td></tr>";
+					}
+				}
+				delete menu;
+			}
+
+		}
+		out << "</table></br></br>";
+	}
+	
+	out << "</body></html>";
+	
+	data.close();
+	
+	return 0;
+}
+
+QMenu* Interface::create_context_menu(QObject* item, QList<MenuData >* menulist)
 {
 	QMenu* menu = new QMenu(this);
 	
-	QList<MenuData > list = ie().create_menudata_for( item );
+	QList<MenuData > list;
+	if (item) {
+		 list = ie().create_menudata_for( item );
+	} else {
+		list = *menulist;
+	}
 	
 	if (list.size() == 0) {
 		// Empty menu!
@@ -554,7 +621,13 @@ QMenu* Interface::create_context_menu(QObject* item )
 	
 	qSort(list.begin(), list.end(), MenuData::smaller);
 
-	QString name = QString(item->metaObject()->className()).remove("View").remove("Panel");
+	
+	QString name;
+	if (item) {
+		 name = QString(item->metaObject()->className()).remove("View").remove("Panel");
+	} else {
+		name = "noname";
+	}
 	QAction* menuAction = menu->addAction(name);
 	QFont font("Bitstream Vera Sans", 8);
 	font.setBold(true);
@@ -594,7 +667,9 @@ QMenu* Interface::create_context_menu(QObject* item )
 			QString text = QString(data.description + "  " + keyfact);
 			QAction* action = new QAction(this);
 			action->setText(text);
-			action->setData(data.iedata);
+			QStringList strings;
+			strings << data.iedata << data.description << keyfact;
+			action->setData(strings);
 			menu->addAction(action);
 		}
 	}
@@ -879,4 +954,6 @@ Command* Interface::show_newtrack_dialog()
 	return 0;
 }
 
+
 // eof
+

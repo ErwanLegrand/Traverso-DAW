@@ -64,10 +64,17 @@ class BusSelectorDialog;
 class NewSongDialog;
 class NewTrackDialog;
 class NewProjectDialog;
+struct MenuData;
 
 class Interface : public QMainWindow
 {
 	Q_OBJECT
+	Q_CLASSINFO("show_export_widget", tr("Show Export Dialog"))
+	Q_CLASSINFO("show_context_menu", tr("Show Context Menu"))
+	Q_CLASSINFO("about_traverso", tr("About Traverso"))
+	Q_CLASSINFO("show_project_manager_dialog", tr("Show Project Management Dialog"))
+	Q_CLASSINFO("full_screen", tr("Full Screen"))
+	Q_CLASSINFO("export_keymap", tr("Export keymap"))
 
 public :
 	Interface();
@@ -133,7 +140,7 @@ private:
 	
 	static Interface* m_instance;
 	
-	QMenu* create_context_menu(QObject* item);
+	QMenu* create_context_menu(QObject* item, QList<MenuData >* list = 0);
 	QMenu* create_fade_selector_menu(const QString& fadeTypeName);
 
 public slots :
@@ -146,9 +153,9 @@ public slots :
 	void update_opengl();
 	void import_audio();
 
-	Command* show_song_widget();
 	Command* full_screen();
 	Command* about_traverso();
+	Command* export_keymap();
 	Command* show_export_widget();
 	Command* show_context_menu();
 	Command* show_open_project_dialog();

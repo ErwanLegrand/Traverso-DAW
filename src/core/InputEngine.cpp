@@ -1562,6 +1562,92 @@ Command * InputEngine::get_holding_command() const
 	return holdingCommand;
 }
 
+void InputEngine::create_menudata_for_metaobject(const QMetaObject * mo, QList< MenuData > & list) const
+{
+	const char* classname = mo->className();
+	
+	for (int i=0; i<m_ieActions.size(); i++) {
+		IEAction* ieaction = m_ieActions.at(i);
+					
+		QList<IEAction::Data*> datalist;
+		datalist.append(ieaction->objects.value(classname));
+		datalist.append(ieaction->objectUsingModifierKeys.value(classname));
+			
+		foreach(IEAction::Data* iedata, datalist) {
+					
+			if ( ! iedata ) {
+				continue;
+			}
+				
+			MenuData menudata;
+				
+			if ( ! iedata->pluginname.isEmpty() ) {
+				CommandPlugin* plug = m_commandplugins.value(iedata->pluginname);
+					
+				if ( ! plug) {
+					continue;
+				}
+				int classInfoIndex = plug->metaObject()->indexOfClassInfo(QS_C(iedata->commandname));
+				if (classInfoIndex >= 0) {
+					QMetaClassInfo classInfo = plug->metaObject()->classInfo(classInfoIndex);
+						// Set the translated string!
+					menudata.description = QCoreApplication::translate(classname, classInfo.value());
+				} else {
+					menudata.description = 
+							QString("Add a Q_CLASSINFO() in CommandPlug %1.h, Command %2 please")
+							.arg(iedata->pluginname).arg(iedata->commandname);
+					PWARN("%s", QS_C(menudata.description));
+				}
+		
+			} else {
+				int classInfoIndex = mo->indexOfClassInfo(QS_C(iedata->slotsignature));
+				int methodIndex = -1;
+					
+				for (int i=0; i < mo->methodCount(); i++) {
+				
+					if ( ! (mo->method(i).methodType() == QMetaMethod::Slot) ) {
+						continue;
+					}
+				
+					QString slotsignature = mo->method(i).signature();
+					slotsignature = slotsignature.left(slotsignature.indexOf("("));
+					if (iedata->slotsignature == slotsignature) {
+						methodIndex = i;
+						break;
+					}
+				}
+						
+					
+				if (classInfoIndex >= 0 && methodIndex >= 0) {
+					QMetaClassInfo classInfo = mo->classInfo(classInfoIndex);
+						// Set the translated string!
+					menudata.description = QCoreApplication::translate(classname, classInfo.value());
+				} else {
+					if (methodIndex >= 0) {
+						menudata.description = QString("Add a Q_CLASSINFO() for %1::%2 please")
+								.arg(classname).arg(iedata->slotsignature);
+						PWARN("%s", QS_C(menudata.description));
+					} else {
+						continue;
+					}
+				}
+			}
+				
+			menudata.keysequence = ieaction->keySequence;
+			menudata.iedata = ieaction->keySequence;
+			menudata.sortorder = iedata->sortorder;
+			menudata.submenu = iedata->submenu;
+			menudata.modifierkeys = iedata->modifierkeys;
+			if (menudata.modifierkeys.size()) {
+				menudata.iedata.prepend("++");
+			}
+					
+					
+			list.append(menudata);
+		}
+	}
+}
+
 QList< MenuData > InputEngine::create_menudata_for(QObject* item)
 {
 	QList<MenuData > list;
@@ -1569,88 +1655,8 @@ QList< MenuData > InputEngine::create_menudata_for(QObject* item)
 	
 	do {
 		const QMetaObject* mo = item->metaObject(); 
-		const char* classname = mo->className();
 		
-		for (int i=0; i<m_ieActions.size(); i++) {
-			IEAction* ieaction = m_ieActions.at(i);
-					
-			QList<IEAction::Data*> datalist;
-			datalist.append(ieaction->objects.value(classname));
-			datalist.append(ieaction->objectUsingModifierKeys.value(classname));
-			
-			foreach(IEAction::Data* iedata, datalist) {
-					
-				if ( ! iedata ) {
-					continue;
-				}
-				
-				MenuData menudata;
-				
-				if ( ! iedata->pluginname.isEmpty() ) {
-					CommandPlugin* plug = m_commandplugins.value(iedata->pluginname);
-					
-					if ( ! plug) {
-						continue;
-					}
-					int classInfoIndex = plug->metaObject()->indexOfClassInfo(QS_C(iedata->commandname));
-					if (classInfoIndex >= 0) {
-						QMetaClassInfo classInfo = plug->metaObject()->classInfo(classInfoIndex);
-						// Set the translated string!
-						menudata.description = QCoreApplication::translate(classname, classInfo.value());
-					} else {
-						menudata.description = 
-							QString("Add a Q_CLASSINFO() in CommandPlug %1.h, Command %2 please")
-							.arg(iedata->pluginname).arg(iedata->commandname);
-						PWARN("%s", QS_C(menudata.description));
-					}
-		
-				} else {
-					int classInfoIndex = mo->indexOfClassInfo(QS_C(iedata->slotsignature));
-					int methodIndex = -1;
-					
-					for (int i=0; i < mo->methodCount(); i++) {
-				
-						if ( ! (mo->method(i).methodType() == QMetaMethod::Slot) ) {
-							continue;
-						}
-				
-						QString slotsignature = mo->method(i).signature();
-						slotsignature = slotsignature.left(slotsignature.indexOf("("));
-						if (iedata->slotsignature == slotsignature) {
-							methodIndex = i;
-							break;
-						}
-					}
-						
-					
-					if (classInfoIndex >= 0 && methodIndex >= 0) {
-						QMetaClassInfo classInfo = mo->classInfo(classInfoIndex);
-						// Set the translated string!
-						menudata.description = QCoreApplication::translate(classname, classInfo.value());
-					} else {
-						if (methodIndex >= 0) {
-							menudata.description = QString("Add a Q_CLASSINFO() for %1::%2 please")
-								.arg(classname).arg(iedata->slotsignature);
-							PWARN("%s", QS_C(menudata.description));
-						} else {
-							continue;
-						}
-					}
-				}
-				
-				menudata.keysequence = ieaction->keySequence;
-				menudata.iedata = ieaction->keySequence;
-				menudata.sortorder = iedata->sortorder;
-				menudata.submenu = iedata->submenu;
-				menudata.modifierkeys = iedata->modifierkeys;
-				if (menudata.modifierkeys.size()) {
-					menudata.iedata.prepend("++");
-				}
-					
-					
-				list.append(menudata);
-			}
-		}
+		create_menudata_for_metaobject(mo, list);
 		
 		contextitem = qobject_cast<ContextItem*>(item);
 	} 
@@ -1744,4 +1750,5 @@ IEAction::~ IEAction()
 }
 
 //eof
+
 

@@ -139,6 +139,7 @@ public:
 
 	QList<MenuData > create_menudata_for(QObject* item);
 	Command* get_holding_command() const;
+	void create_menudata_for_metaobject(const QMetaObject* mo, QList<MenuData >& list) const;
 
         int broadcast_action_from_contextmenu(const QString& name);
 

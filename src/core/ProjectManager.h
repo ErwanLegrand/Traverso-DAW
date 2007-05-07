@@ -34,6 +34,9 @@ class ResourcesManager;
 class ProjectManager : public ContextItem
 {
 	Q_OBJECT
+	Q_CLASSINFO("save_project", tr("Save Project"))
+	Q_CLASSINFO("exit", tr("Exit application"))
+	
 public:
 	Project* create_new_project(int numSong, int numTracks, const QString& projectName);
 	Project* create_new_project(const QString& templatefile, const QString& projectName);
