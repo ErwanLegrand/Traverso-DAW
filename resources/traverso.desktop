@@ -7,7 +7,7 @@ Encoding=UTF-8
 Version=1.0
 
 Type=Application
-Categories=Application;Qt;Audio;Music;Recorder;
+Categories=Qt;Audio;Music;Recorder;Player
 
 #MimeType=text/xml ???
 
