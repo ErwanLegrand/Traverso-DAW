@@ -9,8 +9,8 @@ CONFIG -= release debug
 # Choose debug or release build
 #
 
-CONFIG += debug
-#CONFIG += release
+#CONFIG += debug
+CONFIG += release
 
 #
 # Add support for Jack / ALSA audio driver. If you have a 
@@ -19,8 +19,8 @@ CONFIG += debug
 
 DEFINES += JACK_SUPPORT
 DEFINES += ALSA_SUPPORT
-#DEFINES += PORTAUDIO_SUPPORT
-DEFINES += LV2_SUPPORT
+DEFINES += PORTAUDIO_SUPPORT
+#DEFINES += LV2_SUPPORT
 
 DEFINES += STATIC_BUILD
 #DEFINES += USE_MEM_CHECKER
@@ -78,6 +78,8 @@ release {
 
 unix {
 	
+	DEFINES += USE_CPU_AFFINITY
+	
 	QMAKE_CXXFLAGS += $$system(pkg-config --cflags glib-2.0)
 	
 	release {
@@ -121,9 +123,7 @@ macx {
 	DEFINES += PORTAUDIO_SUPPORT
 	DEFINES -= ALSA_SUPPORT
 	DEFINES -= JACK_SUPPORT
-		
 	QMAKE_LFLAGS_SONAME  = -Wl,-install_name,@executable_path/../Frameworks/
-
 	INCLUDEPATH += /usr/local/include/glib-2.0
 
 	RC_FILE = ../../resources/images/traverso_mac.icns
