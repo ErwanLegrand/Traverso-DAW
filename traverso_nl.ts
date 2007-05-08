@@ -39,7 +39,23 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;else the driver won&apos;t be able to initialize!&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For more info see chapter 3.1: &quot;The Driver Backend&quot; of the User Manual&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Apparaat:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;De echte of virtuele ALSA geluidskaart die wordt gebruikt.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Een echte ALSA geluidskaart is fysiek aanwezig in uw computersysteem.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Een virtuele geluidskaart werd in het .asoundrc bestand aangemaakt. &lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Dit bestand bevindt zich meestal in uw home folder.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Bij twijfel, kies de standaard-geluidskaart, dus de geluidskaart door uw distributie ingesteld, &lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;of het apparaat dat naar uw geluidskaart is vernoemd.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;In het laatste geval, verzeker u ervan dat geen andere applicaties van de geluidskaart gebruikmaken, &lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;zoniet zal de driver niet kunnen starten!&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Voor meer info, zie hoofdstuk 3.1: &quot;The Driver Backend&quot; van de gebruikershandleiding.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/AlsaDevicesPage.ui" line="64"/>
@@ -61,12 +77,24 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;However, some (buggy) alsa drivers don&apos;t work correctly &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;with the default of 2, if you experience very choppy audio, &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;please try to use 3 periods.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Number of Periods:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Audiodata wordt verwerkt in kleine deeltjes, de zogenaamde periods. &lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Deze waarde bepaalt hoeveel van deze deeltjes je audio kaart tegelijk behandelt&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;De standaardwaarde voldoet in de meeste gevallen, en geeft in ieder geval de laagste latency.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Sommige (slechtgeschreven) alsa drivers werken echter niet zoals het hoort&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;met de standaardwaarde van 2, dus indien audio op uw geluidskaart niet vlot speelt, &lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;probeer deze waarde eens op 3 te zetten.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/AlsaDevicesPage.ui" line="99"/>
         <source>Nr. of periods</source>
-        <translation>Nr. of periods</translation>
+        <translation>Aantal perioden</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/AlsaDevicesPage.ui" line="107"/>
@@ -180,7 +208,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/core/AudioClip.cpp" line="714"/>
         <source>No ReadSource returned from resources manager after recording, removing clip from Track!</source>
-        <translation type="unfinished"></translation>
+        <translation>De resources manager gaf geen ReadSource terug na de opname, de clip wordt uit de track verwijderd!</translation>
     </message>
     <message>
         <location filename="src/core/AudioClip.h" line="49"/>
@@ -246,17 +274,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/core/AudioClipManager.cpp" line="191"/>
         <source>Selection: Add Clip</source>
-        <translation type="unfinished"></translation>
+        <translation>Selectie: Clip toevoegen</translation>
     </message>
     <message>
         <location filename="src/core/AudioClipManager.cpp" line="198"/>
         <source>Selection: Remove Clip</source>
-        <translation type="unfinished"></translation>
+        <translation>Selectie: Clip verwijderen</translation>
     </message>
     <message>
         <location filename="src/core/AudioClipManager.cpp" line="205"/>
         <source>Selection: Invert</source>
-        <translation type="unfinished"></translation>
+        <translation>Selectie: Omkeren</translation>
     </message>
     <message>
         <location filename="src/core/AudioClipManager.cpp" line="211"/>
@@ -266,12 +294,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/core/AudioClipManager.h" line="37"/>
         <source>Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>Alles selecteren</translation>
     </message>
     <message>
         <location filename="src/core/AudioClipManager.h" line="38"/>
         <source>Deselect all</source>
-        <translation type="unfinished"></translation>
+        <translation>Alles deselecteren</translation>
     </message>
     <message>
         <location filename="src/core/AudioClipManager.h" line="39"/>
@@ -281,7 +309,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/core/AudioClipManager.h" line="40"/>
         <source>Delete selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Selectie: Wissen</translation>
     </message>
 </context>
 <context>
@@ -459,7 +487,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/AudioSourcesManagerWidget.ui" line="101"/>
         <source>Remove unused sources</source>
-        <translation>Verwijder niet gebruikt bronnen</translation>
+        <translation>Verwijder niet gebruikte bronnen</translation>
     </message>
 </context>
 <context>
@@ -482,7 +510,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/BehaviorConfigPage.ui" line="37"/>
         <source>Load last used project at startup</source>
-        <translation>Laatst geopende Project laden tijdens start</translation>
+        <translation>Laatst geopende project laden tijdens start</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/BehaviorConfigPage.ui" line="52"/>
@@ -629,17 +657,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/commands/ClipSelection.cpp" line="37"/>
         <source>Selection: Remove Clip</source>
-        <translation type="unfinished"></translation>
+        <translation>Selectie: Clip verwijderen</translation>
     </message>
     <message>
         <location filename="src/commands/ClipSelection.cpp" line="39"/>
         <source>Selection: Add Clip</source>
-        <translation type="unfinished"></translation>
+        <translation>Selectie: Clip toevoegen</translation>
     </message>
     <message>
         <location filename="src/commands/ClipSelection.cpp" line="41"/>
         <source>Select Clip</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecteer Clip</translation>
     </message>
 </context>
 <context>
@@ -769,7 +797,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/songcanvas/TimeLineView.cpp" line="56"/>
         <source>Move Left</source>
-        <translation>Naar links verplaasten</translation>
+        <translation>Naar links verplaatsen</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/TimeLineView.cpp" line="57"/>
@@ -811,17 +839,17 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Defines if both the Playback and Capture buses &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;of your soundcard are to be used, &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;or only the Playback or Capture bus(es).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Duplex mode:&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Bepaalt of zowel de Playback- als de Capturebus &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;van uw geluidskaart gebruikt worden, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;or slechts één van de twee.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/DriverConfigPage.ui" line="54"/>
         <source>Duplex mode</source>
-        <translation>Duplex modes</translation>
+        <translation>Duplex modus</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/DriverConfigPage.ui" line="62"/>
         <source>Full</source>
-        <translation>Volledig</translation>
+        <translation>Afspelen én Opnemen</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/DriverConfigPage.ui" line="67"/>
@@ -843,7 +871,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;New projects will use this samplerate as &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;the project&apos;s sample rate on creation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Sample rate:&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;De sample rate die de geluidskaart gebruikt.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Nieuwe projecten gebruiken deze standaard, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;bij het aanmaken.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/DriverConfigPage.ui" line="100"/>
@@ -853,32 +881,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/DriverConfigPage.ui" line="108"/>
         <source>22050</source>
-        <translation></translation>
+        <translation>22050</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/DriverConfigPage.ui" line="113"/>
         <source>32000</source>
-        <translation></translation>
+        <translation>32000</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/DriverConfigPage.ui" line="118"/>
         <source>44100</source>
-        <translation></translation>
+        <translation>44100</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/DriverConfigPage.ui" line="123"/>
         <source>48000</source>
-        <translation></translation>
+        <translation>48000</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/DriverConfigPage.ui" line="128"/>
         <source>88200</source>
-        <translation></translation>
+        <translation>88200</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/DriverConfigPage.ui" line="133"/>
         <source>96000</source>
-        <translation></translation>
+        <translation>96000</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/DriverConfigPage.ui" line="151"/>
@@ -890,7 +918,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Some people need low latencies, if you don&apos;t need it, &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;or don&apos;t know what it means, please leave the default setting!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Buffer latency:&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;De vertraging, bepaalt door de grootte van de audio buffers.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Soms is een lage vertraging gewenst. Zoniet, kunt U best&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;de standaardkeuze behouden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/DriverConfigPage.ui" line="161"/>
@@ -1031,12 +1059,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ExportWidget.cpp" line="134"/>
         <source>Unable to create export directory! Please check permissions for this directory: %1</source>
-        <translation>Kan export directory niet aanmaken! Controleer s.v.p. de permissies voor directory: %1</translation>
+        <translation>Kan export directory niet aanmaken! Controleer a.u.b. de permissies voor directory: %1</translation>
     </message>
     <message>
         <location filename="src/traverso/ExportWidget.cpp" line="125"/>
         <source>Export during recording is not supported!</source>
-        <translation>Tijdens opname geen export mogelijk!</translation>
+        <translation>Tijdens opname is exporteren niet mogelijk!</translation>
     </message>
     <message>
         <location filename="src/traverso/ExportWidget.cpp" line="318"/>
@@ -1059,7 +1087,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/FadeContextDialog.cpp" line="39"/>
         <source>Fade Editor</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -1121,7 +1149,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/widgets/ResourcesWidget.cpp" line="68"/>
         <source>My Documents</source>
-        <translation>Mijn documenten</translation>
+        <translation>Mijn Documenten</translation>
     </message>
 </context>
 <context>
@@ -1247,12 +1275,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/commands/Import.cpp" line="84"/>
         <source>Import audio source</source>
-        <translation type="unfinished">Importeer audio bestand</translation>
+        <translation>Importeer audio bestand</translation>
     </message>
     <message>
         <location filename="src/commands/Import.cpp" line="86"/>
         <source>All files (*);;Audio files (*.wav *.flac)</source>
-        <translation type="unfinished">Alle bestanden (*);;Audio bestanden (*.wav *.flac)</translation>
+        <translation>Alle bestanden (*);;Audio bestanden (*.wav *.flac)</translation>
     </message>
     <message>
         <location filename="src/commands/Import.cpp" line="62"/>
@@ -1283,12 +1311,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/core/InputEngine.cpp" line="245"/>
         <source>Modifier key actions are not supported from Context Menu</source>
-        <translation>Modificeer toetsen werken niet vanuit Context Menu</translation>
+        <translation>Modificeertoetsen werken niet vanuit Context Menu</translation>
     </message>
     <message>
         <location filename="src/core/InputEngine.cpp" line="255"/>
         <source>Hold actions are not supported from Context Menu</source>
-        <translation>Hold acties werken niet vanuit Context Menu</translation>
+        <translation>Holdacties werken niet vanuit Context Menu</translation>
     </message>
     <message>
         <location filename="src/core/InputEngine.cpp" line="371"/>
@@ -1298,7 +1326,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/core/InputEngine.cpp" line="375"/>
         <source>Plugin %1 doesn&apos;t implement Command %2</source>
-        <translation>Command %2 wordt niet geimplementeerd door Plugin %1</translation>
+        <translation>Command %2 wordt niet geïmplementeerd door Plugin %1</translation>
     </message>
 </context>
 <context>
@@ -1373,7 +1401,16 @@ See for more info the Help file
 
 Traverso is brought to you by the author, R. Sijrier, and all the people from Free Software world
 who made important technologies on which Traverso is based (Gcc, Qt, Xorg, Linux, and so on)</source>
-        <translation type="unfinished"></translation>
+        <translation>Traverso %1, gebruik makend van Qt %2
+
+Traverso is een Multitrack audio opname- en editingprogramma.
+
+Traverso kent een zeer krachtige interface, zodat opnemen en bewerken
+van audio zoveel sneller en aangenamer wordt!
+Voor meer info, zie de Help file
+
+Traverso werd mogelijk gemaakt door de auteur, R. Sijrier, en iedereen uit de Free Software world
+door hun bijdragen aan de technologiën waarop Traverso gebaseerd is (Gcc, Qt, Xorg, Linux, enz...)</translation>
     </message>
     <message>
         <location filename="src/traverso/Interface.cpp" line="125"/>
@@ -1438,17 +1475,17 @@ who made important technologies on which Traverso is based (Gcc, Qt, Xorg, Linux
     <message>
         <location filename="src/traverso/Interface.cpp" line="403"/>
         <source>Marker Editor</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/traverso/Interface.cpp" line="406"/>
         <source>CD Text Editor</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/traverso/Interface.cpp" line="417"/>
         <source>Song Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/traverso/Interface.cpp" line="419"/>
@@ -1511,12 +1548,24 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;if you don&apos;t have much experience yet, please leave the default of 180 ms.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For more information, see chapter 7: Key Actions. of the User Manual&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Keyboard dubbel klik interval:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;De maximum tijd (miliseconden) tussen 2 toetsaanslagen.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Deze bepaalt of 2 opeenvolgende toetsaanslagen een dubbelklik ( &amp;lt;&amp;lt; K &amp;gt;&amp;gt; of &amp;lt;&amp;lt; KK &amp;gt;&amp;gt;)&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; of 2 individuele acties vormen  ( a &amp;lt; K &amp;gt; en &amp;lt; K &amp;gt; actie, &lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;of &amp;lt; KK &amp;gt; en &amp;lt; KK &amp;gt; actie, bijvoorbeeld).&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ervaren gebruikers kunnen waarden tot minimum 150 ms proberen, &lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;maar voor de meeste gebruikers volstaat de standaardwaarde, 180 ms.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Voor meer informatie, zie hoofdstuk 7: Key Actions. of the User Manual&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/KeyboardConfigPage.ui" line="76"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Double fact timeout (ms)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">Double fact timeout</translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Toetsenbord dubbel-klik interval (ms)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/KeyboardConfigPage.ui" line="112"/>
@@ -1534,17 +1583,30 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;if you don&apos;t have much experience yet, please leave the default of 150 ms.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For more information, see chapter 7: &quot;Key Actions&quot; of the User Manual.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Hold interval:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;De maximum tijd (miliseconden) van een enkele toetsaanslag, voor deze als hold actie beschouwd wordt., &lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;zoals [ K ] of [ KK ].&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Hoe korter deze is, hoe sneller een ingedrukte toets &lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;als hold actie beschouwd zal worden. &lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ervaren gebruikers kunnen waarden tot minimum 110 ms proberen, &lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;maar voor de meeste gebruikers is de standaardwaarde van 150 ms voldoende.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Voor meer informatie, zie hoofdstuk 7: &quot;Key Actions&quot; of the User Manual.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/KeyboardConfigPage.ui" line="128"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Hold timeout (ms)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">Hold timeout</translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Hold interval (ms)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/KeyboardConfigPage.ui" line="159"/>
         <source>Keymap</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/traverso/ui/KeyboardConfigPage.ui" line="179"/>
@@ -1585,7 +1647,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/MarkerDialog.ui" line="13"/>
         <source>Markers</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/traverso/ui/MarkerDialog.ui" line="33"/>
@@ -1620,7 +1682,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/MarkerDialog.ui" line="89"/>
         <source>ISRC:</source>
-        <translation type="unfinished"></translation>
+        <translation>ISRC:</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/MarkerDialog.ui" line="306"/>
@@ -1635,7 +1697,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/MarkerDialog.ui" line="122"/>
         <source>Pre-Emphasis</source>
-        <translation type="unfinished"></translation>
+        <translation>Voorversterking</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/MarkerDialog.ui" line="129"/>
@@ -1735,7 +1797,20 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;it will take considerably more time to move (i.e. seeking) &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;the playhead to another positions, since all the buffers &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;(one for each audioclip * channel count) need to be refilled!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Read buffer size:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;De hoeveelheid audio data die in de leesbuffers opgeslagen kan worden (sec).&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;De standaardwaarde van 1 seconde is een goede keuze.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Als uw computer over weinig geheugen beschikt, kunt u deze waarde verlagen.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Als u buffer-underruns ervaart, bijvoorbeeld wanneer de harde schijf (bijna) verzadigd is, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;of wanneer u vaak buffer-underruns hebt, kunt u de waarde verhogen. &lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Waarden zoals 1.5 of 2.0 seconden zijn dan goede keuzes. &lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Het nadeel van grotere buffers, is dat het verplaatsen van de playhead naar andere posities &lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;veel langer zal duren, daar alle buffers (één voor iedere audioclip * het aantal kanalen)&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; eerst volledig opnieuw gevuld moeten worden!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/MemoryConfigPage.ui" line="73"/>
@@ -1771,12 +1846,12 @@ laden van het project.</translation>
     <message>
         <location filename="src/commands/MoveClip.cpp" line="76"/>
         <source>Move Anchored Edge</source>
-        <translation type="unfinished"></translation>
+        <translation>Verplaats vaste rand</translation>
     </message>
     <message>
         <location filename="src/commands/MoveClip.cpp" line="78"/>
         <source>Move Clip To Start</source>
-        <translation>Clip naar start verplaatsen</translation>
+        <translation>Clip naar begin verplaatsen</translation>
     </message>
     <message>
         <location filename="src/commands/MoveClip.cpp" line="80"/>
@@ -1789,7 +1864,7 @@ laden van het project.</translation>
     <message>
         <location filename="src/commands/MoveEdge.cpp" line="34"/>
         <source>Move Clip Edge</source>
-        <translation>Clip rand verplaatsen</translation>
+        <translation>Cliprand verplaatsen</translation>
     </message>
 </context>
 <context>
@@ -1842,12 +1917,12 @@ laden van het project.</translation>
     <message>
         <location filename="src/traverso/ui/NewProjectDialog.ui" line="127"/>
         <source>Engineer</source>
-        <translation>Engineer</translation>
+        <translation>Opnameleider</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/NewProjectDialog.ui" line="164"/>
         <source>Song count</source>
-        <translation>Song aantal</translation>
+        <translation>Aantal Songs</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/NewProjectDialog.ui" line="213"/>
@@ -1888,12 +1963,12 @@ laden van het project.</translation>
     <message>
         <location filename="src/traverso/ui/NewSongDialog.ui" line="51"/>
         <source>Song count</source>
-        <translation>Song aantal</translation>
+        <translation>Aantal Songs</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/NewSongDialog.ui" line="58"/>
         <source>Track count</source>
-        <translation>Track aantal</translation>
+        <translation>Aantal Tracks</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/NewSongDialog.ui" line="65"/>
@@ -1952,7 +2027,7 @@ laden van het project.</translation>
     <message>
         <location filename="src/traverso/dialogs/project/OpenProjectDialog.cpp" line="150"/>
         <source>Select a project and click the &apos;Load&apos; button again</source>
-        <translation>Selecteer een Project en klik opnieuw op de &quot;Laad&quot; knop</translation>
+        <translation>Selecteer een project en klik opnieuw op de &quot;Laad&quot; knop</translation>
     </message>
     <message>
         <location filename="src/traverso/dialogs/project/OpenProjectDialog.cpp" line="195"/>
@@ -1962,7 +2037,7 @@ laden van het project.</translation>
     <message>
         <location filename="src/traverso/dialogs/project/OpenProjectDialog.cpp" line="189"/>
         <source>You must supply a name for the project!</source>
-        <translation>U dient een Project naam op te geven!</translation>
+        <translation>U dient een projectnaam op te geven!</translation>
     </message>
     <message>
         <location filename="src/traverso/dialogs/project/OpenProjectDialog.cpp" line="200"/>
@@ -2037,12 +2112,12 @@ laden van het project.</translation>
     <message>
         <location filename="src/engine/PADriver.cpp" line="275"/>
         <source>PADriver:: PortAudio error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>PADriver:: fout in PortAudio: %1</translation>
     </message>
     <message>
         <location filename="src/engine/PADriver.cpp" line="174"/>
         <source>PADriver:: hostapi %1 was not found by Portaudio!</source>
-        <translation type="unfinished"></translation>
+        <translation>PADriver:: Portaudio kon hostapi %1 niet vinden!</translation>
     </message>
 </context>
 <context>
@@ -2050,12 +2125,12 @@ laden van het project.</translation>
     <message>
         <location filename="src/traverso/ui/PaDriverPage.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished">Form</translation>
+        <translation>Form</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/PaDriverPage.ui" line="25"/>
         <source>Portaudio drivers</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/traverso/ui/PaDriverPage.ui" line="45"/>
@@ -2069,7 +2144,16 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;It is recommended to use Traverso&apos;s native drivers instead of using PortAudio&apos;s, however, if the native drivers give problems, you might try the ones supplied by PortAudio instead!&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;PortAudio provides transparent driver support for multiple platforms, including Windows (see the wmme, direct x and asio options), and Mac OS X (see the CoreAudio and jack options)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;PortAudio Driver:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;De driver voor de PortAudio backend&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;PortAudio ondersteund verschillende driver backends. Voor sommige hiervan heeft Traverso ook rechtstreekse ondersteuning. &lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;In die gevallen is het aan te raden om voor Traverso&apos;s rechtstreekse drivers te kiezen, en niet deze van PortAudio. Soms, als de rechtstreekse drivers problemen geven, is het het proberen waard, om PortAudio samen met de onrechtstreekse drivers te proberen!&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;PortAudio zorgt voor transparente driverondersteuning voor verschillende platforumen, onder andere Windows (met de wmme, direct x en asio opties), en Mac OS X (met de CoreAudio en jack opties)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/PaDriverPage.ui" line="57"/>
@@ -2087,7 +2171,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/PerformanceConfigPage.ui" line="25"/>
         <source>Painting</source>
-        <translation>Graphisch renderen</translation>
+        <translation>Grafisch renderen</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/PerformanceConfigPage.ui" line="45"/>
@@ -2107,7 +2191,21 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;If for example moving an AudioClip still takes to much cpu,&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;you should consider to lower this value.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Het aantal maal per seconde dat Traverso de grafische elementen op uw scherm&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;hertekend, tijdens een drag &amp;amp; drop actie, zoals het verplaatsen van een audioclip,&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;of het veranderen van de gain.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;De standaardwaarde van 35 maal per seconde is een goed compromis &lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;tussen vloeiend beeld, en laag processorgebruik.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Als u het renderen niet vloeiend genoeg vindt,&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;kunt u deze waarde verhogen. Dit vergt echter een stuk meer van uw processor&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Indien het verplaatsen van een AudioClip nog teveel processoractiviteit veroorzaakt,&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;is het aangeraden om deze waarde wat te verlagen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/PerformanceConfigPage.ui" line="63"/>
@@ -2124,7 +2222,14 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Depending on your graphics card and driver support, this &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;can speed up painting considerably!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Versnelt het renderen van AudioClips en Tracks door gebruik te maken van&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;de 3D engine van uw grafische kaart.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Afhankelijk van uw type grafische kaart, en de driver support, &lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;kan dit het renderen duidelijk versnellen!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/PerformanceConfigPage.ui" line="101"/>
@@ -2145,7 +2250,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/PluginSelectorDialog.cpp" line="97"/>
         <source>Plugin initialization failed!</source>
-        <translation>Plugin initializatie faalde!</translation>
+        <translation>Plugin initialisatie faalde!</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/PluginSelectorDialog.ui" line="62"/>
@@ -2165,7 +2270,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/PluginSelectorDialog.ui" line="25"/>
         <source>Add Plugin too</source>
-        <translation>Voeg Plugin too aan</translation>
+        <translation>Voeg Plugin toe aan</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/PluginSelectorDialog.ui" line="33"/>
@@ -2301,12 +2406,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/core/Project.cpp" line="484"/>
         <source>Detected clipping in exported audio! (%1)</source>
-        <translation>Te hoog signaal gedecteerd in gexporteerde audio! (%1)</translation>
+        <translation>Te luid signaal gedecteerd in gexporteerde audio! (%1)</translation>
     </message>
     <message>
         <location filename="src/core/Project.cpp" line="487"/>
         <source>calculated norm factor: %1</source>
-        <translation>Normalizatie factor is: %1</translation>
+        <translation>Normalisatie factor is: %1</translation>
     </message>
     <message>
         <location filename="src/core/Project.cpp" line="634"/>
@@ -2316,7 +2421,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/core/Project.cpp" line="635"/>
         <source>You&apos;re still recording, please stop recording first to be able to exit the application!</source>
-        <translation>U bent aan het opnemen! U dient opnemen eerst te beeindingen om af te kunnen sluiten!</translation>
+        <translation>U bent aan het opnemen! U dient opnemen eerst te beëindingen om af te kunnen sluiten!</translation>
     </message>
 </context>
 <context>
@@ -2339,7 +2444,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/ProjectInfoWidget.ui" line="135"/>
         <source>Rate</source>
-        <translation>Rate</translation>
+        <translation>Sample-rate</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ProjectInfoWidget.ui" line="201"/>
@@ -2382,7 +2487,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/core/ProjectManager.cpp" line="99"/>
         <source>Do you want to save the Project before quiting?</source>
-        <translation>Wilt u het voor afsluiten het Project eerst nog opslaan?</translation>
+        <translation>Wilt u voor het afsluiten het Project eerst nog opslaan?</translation>
     </message>
     <message>
         <location filename="src/core/ProjectManager.cpp" line="147"/>
@@ -2407,7 +2512,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/core/ProjectManager.cpp" line="260"/>
         <source>Choose an existing or create a new Project Directory</source>
-        <translation>Selecteer een bestaande Project map, of maak een nieuwe</translation>
+        <translation>Selecteer een bestaande Project map, of maak een nieuwe aan</translation>
     </message>
     <message>
         <location filename="src/core/ProjectManager.cpp" line="274"/>
@@ -2418,7 +2523,7 @@ p, li { white-space: pre-wrap; }
         <location filename="src/core/ProjectManager.cpp" line="265"/>
         <source>Using existing Project directory: %1
 </source>
-        <translation>Maak gebruik van bestaande Project map: %1</translation>
+        <translation>Maakt gebruik van bestaande Project map: %1</translation>
     </message>
     <message>
         <location filename="src/core/ProjectManager.cpp" line="268"/>
@@ -2832,7 +2937,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/QuickDriverConfigWidget.ui" line="482"/>
         <source>Form</source>
-        <translation type="unfinished">Form</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="" line="6357106"/>
@@ -2842,42 +2947,42 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/QuickDriverConfigWidget.ui" line="573"/>
         <source>22050</source>
-        <translation type="unfinished">22050</translation>
+        <translation>22050</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/QuickDriverConfigWidget.ui" line="578"/>
         <source>32000</source>
-        <translation type="unfinished">32000</translation>
+        <translation>32000</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/QuickDriverConfigWidget.ui" line="583"/>
         <source>44100</source>
-        <translation type="unfinished">44100</translation>
+        <translation>44100</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/QuickDriverConfigWidget.ui" line="588"/>
         <source>48000</source>
-        <translation type="unfinished">48000</translation>
+        <translation>48000</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/QuickDriverConfigWidget.ui" line="593"/>
         <source>88200</source>
-        <translation type="unfinished">88200</translation>
+        <translation>88200</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/QuickDriverConfigWidget.ui" line="598"/>
         <source>96000</source>
-        <translation type="unfinished">96000</translation>
+        <translation>96000</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/QuickDriverConfigWidget.ui" line="638"/>
         <source>Latency (ms)</source>
-        <translation>Latencie (ms)</translation>
+        <translation>Vertraging (ms)</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/QuickDriverConfigWidget.ui" line="665"/>
         <source>Rate (Hz)</source>
-        <translation></translation>
+        <translation>Sample-rate (Hz)</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/QuickDriverConfigWidget.ui" line="686"/>
@@ -2908,17 +3013,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/core/ResourcesManager.cpp" line="139"/>
         <source>ResourcesManager : AudioClip with id %1 not in database,unable to remove it!</source>
-        <translation type="unfinished"></translation>
+        <translation>ResourcesManager : AudioClip met id %1 bestaat niet in de database, verwijderen onmogelijk!</translation>
     </message>
     <message>
         <location filename="src/core/ResourcesManager.cpp" line="154"/>
         <source>ResourcesManager: AudioClip with id %1 not in database,unable to UNDO removal!</source>
-        <translation type="unfinished"></translation>
+        <translation>ResourcesManager : AudioClip met id %1 bestaat niet in de database, verwijderen kan niet ongedaan gemaakt worden!</translation>
     </message>
     <message>
         <location filename="src/core/ResourcesManager.cpp" line="263"/>
         <source>ResourcesManager::  Failed to initialize ReadSource %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ResourcesManager::  ReadSource %1 kon niet geïnitialiseerd worden</translation>
     </message>
 </context>
 <context>
@@ -2926,7 +3031,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/ResourcesWidget.ui" line="13"/>
         <source>Form</source>
-        <translation type="unfinished">Form</translation>
+        <translation>Form</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ResourcesWidget.ui" line="42"/>
@@ -3002,17 +3107,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/core/Song.cpp" line="1016"/>
         <source>Hard Disk overload detected!</source>
-        <translation type="unfinished"></translation>
+        <translation>Overbelasting van de harde schijf gedetecteerd!</translation>
     </message>
     <message>
         <location filename="src/core/Song.cpp" line="1008"/>
         <source>Failed to fill ReadBuffer in time</source>
-        <translation type="unfinished"></translation>
+        <translation>Kon ReadBuffer niet op tijd vullen</translation>
     </message>
     <message>
         <location filename="src/core/Song.cpp" line="1017"/>
         <source>Failed to empty WriteBuffer in time</source>
-        <translation type="unfinished"></translation>
+        <translation>Kon WriteBuffer niet op tijd leggen</translation>
     </message>
     <message>
         <location filename="src/core/Song.cpp" line="289"/>
@@ -3055,22 +3160,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/core/Song.h" line="52"/>
         <source>Workcursor: To next ege</source>
-        <translation>WerkCursor: Naar volgende rand</translation>
+        <translation>Werkcursor: Naar volgende rand</translation>
     </message>
     <message>
         <location filename="src/core/Song.h" line="53"/>
         <source>Workcursor: To previous edge</source>
-        <translation>WerkCursor: Naar vorige rand</translation>
+        <translation>Werkcursor: Naar vorige rand</translation>
     </message>
     <message>
         <location filename="src/core/Song.h" line="54"/>
         <source>Undo</source>
-        <translation></translation>
+        <translation>Ongedaan maken</translation>
     </message>
     <message>
         <location filename="src/core/Song.h" line="55"/>
         <source>Redo</source>
-        <translation></translation>
+        <translation>Opnieuw</translation>
     </message>
     <message>
         <location filename="src/core/Song.h" line="56"/>
@@ -3181,7 +3286,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/SongInfoWidget.ui" line="186"/>
         <source>Gain</source>
-        <translation>Gain</translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -3511,7 +3616,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/SpectralMeterWidget.cpp" line="611"/>
         <source>FFT: Unable to write captured image to hard disk</source>
-        <translation>FFT: Kon scherm afdruk niet opslaan op hard schijf</translation>
+        <translation>FFT: Kon schermafdruk niet opslaan op hard schijf</translation>
     </message>
     <message>
         <location filename="src/traverso/SpectralMeterWidget.cpp" line="622"/>
@@ -3772,7 +3877,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/core/Track.cpp" line="167"/>
         <source>Track: AudioClip with id %1 not <byte value="x9"/><byte value="x9"/><byte value="x9"/><byte value="x9"/><byte value="x9"/><byte value="x9"/>found in Resources database!</source>
-        <translation type="unfinished"></translation>
+        <translation>Track: AudioClip met id %1 niet <byte value="x9"/>gevonden in Resources database!</translation>
     </message>
     <message>
         <location filename="src/core/Track.h" line="45"/>
@@ -3841,7 +3946,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/songcanvas/TrackView.cpp" line="167"/>
         <source>Track %1:  %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Track %1:  %2</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/TrackView.h" line="36"/>
@@ -3990,7 +4095,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/commands/plugins/TraversoCommands/TraversoCommands.h" line="47"/>
         <source>Move Or Resize Clip</source>
-        <translation type="unfinished"></translation>
+        <translation>Clip: Verplaatsen of grootte wijzigen</translation>
     </message>
     <message>
         <location filename="src/commands/plugins/TraversoCommands/TraversoCommands.h" line="48"/>
@@ -4026,7 +4131,20 @@ For more information, see the Help file, section:
  AudioDriver: &apos;Thread stalled error&apos;
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>De AudioDriver Thread lijkt gestopt/gecrashed!
+Dit maakt Traverso onbruikbaar, aangezien de AudioDriver Thread de basis van Traverso is
+Om een crash te vermijden, zal Traverso terugvallen op de &apos;Null Driver&apos;.
+Mogelijke oorzaken van dit probleem zijn: 
+
+* U hebt geen real-time privileges! Zorg er a.u.b. voor dat dit correct geconfigureerd is.
+
+* De audio chipset is niet (volledig) ondersteund, waarschijnlijk moet u bepaalde functionaliteit deactiveren.
+
+Voor meer informatie, zie de Help file, sectie: 
+
+ AudioDriver: &apos;Thread stalled error&apos;
+
+</translation>
     </message>
     <message>
         <location filename="src/engine/Tsar.cpp" line="176"/>
