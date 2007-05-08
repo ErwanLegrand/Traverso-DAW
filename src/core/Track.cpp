@@ -421,13 +421,17 @@ int Track::process( nframes_t nframes )
 	int result;
 	float gainFactor, panFactor;
 	
-	
+
 	for (int i=0; i<audioClipList.size(); ++i) {
 	
 		memset (mixdown, 0, sizeof (audio_sample_t) * nframes);
 		
 		AudioClip* clip = audioClipList.at(i);
 		
+		if (isArmed && clip->recording_state() == AudioClip::NO_RECORDING) {
+			if (isMuted || mutedBySolo)
+				continue;
+		}
 		
 		for (int chan=0; chan<bus->get_channel_count(); ++chan) {
 		
