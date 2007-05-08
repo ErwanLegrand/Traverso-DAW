@@ -50,11 +50,11 @@ ExportWidget::ExportWidget( QWidget * parent )
 
 	set_project(pm().get_project());
 
-        bitdepthComboBox->insertItem(0, "8");
-        bitdepthComboBox->insertItem(1, "16");
-        bitdepthComboBox->insertItem(2, "24");
-        bitdepthComboBox->insertItem(3, "32");
-        bitdepthComboBox->insertItem(4, "32 (float)");
+        //bitdepthComboBox->insertItem(0, "8");
+        bitdepthComboBox->insertItem(0, "16");
+        bitdepthComboBox->insertItem(1, "24");
+        bitdepthComboBox->insertItem(2, "32");
+        bitdepthComboBox->insertItem(3, "32 (float)");
 
         channelComboBox->insertItem(0, "Stereo");
         channelComboBox->insertItem(1, "Mono");
@@ -72,7 +72,7 @@ ExportWidget::ExportWidget( QWidget * parent )
 	audioTypeComboBox->insertItem(2, "FLAC");
 	audioTypeComboBox->insertItem(3, "CD image (cdrdao)");
 
-	bitdepthComboBox->setCurrentIndex(1);
+	bitdepthComboBox->setCurrentIndex(0);
 
         switch(audiodevice().get_sample_rate()) {
         case		8000:
@@ -160,23 +160,23 @@ void ExportWidget::on_exportStartButton_clicked( )
 	} else {
 
    	     switch (bitdepthComboBox->currentIndex()) {
+	        //case		0:
+        	//        spec->data_width = 8;
+	        //        spec->format |= SF_FORMAT_PCM_U8;
+                //	break;
 	        case		0:
-        	        spec->data_width = 8;
-	                spec->format |= SF_FORMAT_PCM_U8;
-                	break;
-	        case		1:
         	        spec->data_width = 16;
 	                spec->format |= SF_FORMAT_PCM_16;
                 	break;
-        	case		2:
+        	case		1:
 	                spec->data_width = 24;
                 	spec->format |= SF_FORMAT_PCM_24;
         	        break;
-	        case		3:
+	        case		2:
         	        spec->data_width = 32;
 	                spec->format |= SF_FORMAT_PCM_32;
                 	break;
-        	case		4:
+        	case		3:
 	                spec->data_width = 1;	// 1 means float
                 	spec->format |= SF_FORMAT_FLOAT;
         	        break;
