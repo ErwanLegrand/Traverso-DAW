@@ -301,6 +301,8 @@ void ProjectManager::start( )
 			}
 
 		}
+	} else {
+		set_current_project(0);
 	}
 }
 

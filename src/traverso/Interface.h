@@ -131,6 +131,7 @@ private:
 	QAction*		m_projectSaveAction;
 	QAction*		m_projectSongManagerAction;
 	QAction*		m_projectExportAction;
+	QAction*		m_songMenuAction;
 	
 	ResourcesInfoWidget*	resourcesInfo;
 	DriverInfoWidget*	driverInfo;

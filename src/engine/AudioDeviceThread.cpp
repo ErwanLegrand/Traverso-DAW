@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDeviceThread.cpp,v 1.17 2007/05/08 14:48:31 r_sijrier Exp $
+$Id: AudioDeviceThread.cpp,v 1.18 2007/05/08 16:44:31 r_sijrier Exp $
 */
 
 #include "AudioDeviceThread.h"
@@ -27,6 +27,7 @@ $Id: AudioDeviceThread.cpp,v 1.17 2007/05/08 14:48:31 r_sijrier Exp $
 #include <Information.h>
 
 #if defined (Q_WS_X11)
+#include <dlfcn.h>
 #include <sys/resource.h>
 #include <sched.h>
 #endif
@@ -146,16 +147,31 @@ int AudioDeviceThread::become_realtime( bool realtime )
 	return -1;
 }
 
+
+#if defined (Q_WS_X11)
+typedef int* (*setaffinity_func_type)(pid_t,unsigned int,cpu_set_t *);
+#endif
+
 void AudioDeviceThread::run_on_cpu( int cpu )
 {
-#if defined (USE_CPU_AFFINITY)
-	cpu_set_t mask;
-	CPU_ZERO(&mask);
-	CPU_SET(cpu, &mask);
-	if (sched_setaffinity(0, sizeof(mask), &mask)) {
-		PWARN("Unable to set CPU affinity");
-	} else {
-		PMESG("Running AudioDeviceThread on CPU %d", cpu);
+#if defined (Q_WS_X11)
+	void *setaffinity_handle = dlopen(NULL, RTLD_LAZY);// NULL might not be portable to platforms other than linux - tajmorton@gmail.com
+	
+	setaffinity_func_type setaffinity_func;
+	setaffinity_func = (setaffinity_func_type) dlsym(setaffinity_handle, "sched_setaffinity");
+	
+	if (setaffinity_func != NULL) {
+		cpu_set_t mask;
+		CPU_ZERO(&mask);
+		CPU_SET(cpu, &mask);
+		if (setaffinity_func(0, sizeof(mask), &mask)) {
+			PWARN("Unable to set CPU affinity\n");
+		} else {
+			PMESG("Running AudioDeviceThread on CPU %d\n", cpu);
+		}
+	}
+	else {
+		PWARN("Unable to set CPU affinity (glibc is too old)\n");
 	}
 #endif
 }

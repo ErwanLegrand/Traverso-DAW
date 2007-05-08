@@ -78,8 +78,6 @@ release {
 
 unix {
 	
-	DEFINES += USE_CPU_AFFINITY
-	
 	QMAKE_CXXFLAGS += $$system(pkg-config --cflags glib-2.0)
 	
 	release {

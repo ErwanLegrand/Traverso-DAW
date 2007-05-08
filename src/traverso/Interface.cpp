@@ -217,7 +217,8 @@ void Interface::set_project(Project* project)
 		m_projectSaveAction->setEnabled(true);
 		m_projectSongManagerAction->setEnabled(true);
 		m_projectExportAction->setEnabled(true);
-		
+		m_songMenuAction->setEnabled(true);
+
 		// the project's songs will be deleted _after_
 		// the project has been deleted, which will happen after this
 		// function returns. When the songs have been disconnected from the
@@ -235,6 +236,7 @@ void Interface::set_project(Project* project)
 		m_projectSaveAction->setEnabled(false);
 		m_projectSongManagerAction->setEnabled(false);
 		m_projectExportAction->setEnabled(false);
+		m_songMenuAction->setEnabled(false);
 		setWindowTitle("Traverso");
 		// No project loaded, the currently  loaded project will be deleted after this
 		// function returns, if the songcanvas is still painting (due playback e.g.) we
@@ -371,6 +373,7 @@ void Interface::create_menus( )
 	
 	
 	menu = menuBar()->addMenu(tr("&Song"));
+	m_songMenuAction = menu->menuAction();
 	
 	action = menu->addAction(tr("New &Track(s)..."));
 	connect(action, SIGNAL(triggered()), this, SLOT(show_newtrack_dialog()));

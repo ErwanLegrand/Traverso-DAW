@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: BusMonitor.cpp,v 1.9 2007/05/07 20:48:01 r_sijrier Exp $
+$Id: BusMonitor.cpp,v 1.10 2007/05/08 16:44:31 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -50,12 +50,6 @@ BusMonitor::BusMonitor(QWidget* parent)
 BusMonitor::~BusMonitor()
 {
 	PENTERDES;
-}
-
-void BusMonitor::resizeEvent( QResizeEvent* e)
-{
-	QWidget::resizeEvent(e);
-	PENTER2;
 }
 
 QSize BusMonitor::sizeHint() const
