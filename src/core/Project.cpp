@@ -430,6 +430,7 @@ int Project::export_project(ExportSpecification* spec)
 	spec->progress = 0;
 	spec->running = true;
 	spec->stop = false;
+	spec->breakout = false;
 
 	ExportThread* exportThread =  new ExportThread(this, spec);
 	exportThread->start();
@@ -441,7 +442,7 @@ int Project::start_export(ExportSpecification* spec)
 {
 	PMESG("Starting export, rate is %d bitdepth is %d", spec->sample_rate, spec->data_width );
 
-	spec->blocksize = audiodevice().get_buffer_size();
+	spec->blocksize = 32768;
 
 	spec->dataF = new audio_sample_t[spec->blocksize * spec->channels];
 
@@ -464,7 +465,8 @@ int Project::start_export(ExportSpecification* spec)
 	foreach(Song* song, songsToRender) {
 		PMESG("Starting export for song %lld", song->get_id());
 		emit exportStartedForSong(song);
-
+		spec->resumeTransport = false;
+		
 		if (spec->normalize) {
 			spec->peakvalue = 0.0;
 			spec->renderpass = ExportSpecification::CALC_NORM_FACTOR;
@@ -495,7 +497,17 @@ int Project::start_export(ExportSpecification* spec)
 		}
 		
 		while(song->render(spec) > 0) {}
-
+		
+		song->set_transport_pos(spec->resumeTransportFrame);
+		if (spec->resumeTransport) {
+			Command* k;
+			if (!QMetaObject::invokeMethod(song, "go",  Qt::QueuedConnection)) {
+				printf("Invoking Song::go() failed\n");
+			}
+		}
+		if (spec->breakout) {
+			break;
+		}
 		renderedSongs++;
 	}
 

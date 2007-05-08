@@ -129,16 +129,16 @@ void Song::init()
 	connect(this, SIGNAL(seekStart(uint)), m_diskio, SLOT(seek(uint)), Qt::QueuedConnection);
 	connect(&audiodevice(), SIGNAL(clientRemoved(Client*)), this, SLOT (audiodevice_client_removed(Client*)));
 	connect(&audiodevice(), SIGNAL(started()), this, SLOT(audiodevice_started()));
-	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(resize_buffer()), Qt::DirectConnection);
+	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(audiodevice_params_changed()), Qt::DirectConnection);
 	connect(m_diskio, SIGNAL(seekFinished()), this, SLOT(seek_finished()), Qt::QueuedConnection);
 	connect (m_diskio, SIGNAL(readSourceBufferUnderRun()), this, SLOT(handle_diskio_readbuffer_underrun()));
 	connect (m_diskio, SIGNAL(writeSourceBufferOverRun()), this, SLOT(handle_diskio_writebuffer_overrun()));
 	connect(this, SIGNAL(transferStarted()), m_diskio, SLOT(start_io()));
 	connect(this, SIGNAL(transferStopped()), m_diskio, SLOT(stop_io()));
 
-	mixdown = new audio_sample_t[audiodevice().get_buffer_size()];
-	gainbuffer = new audio_sample_t[audiodevice().get_buffer_size()];
+	mixdown = gainbuffer = 0;
 	m_masterOut = new AudioBus("Master Out", 2);
+	resize_buffer(false, audiodevice().get_buffer_size());
 	m_hs = new QUndoStack(pm().get_undogroup());
 	set_history_stack(m_hs);
 	m_acmanager = new AudioClipManager(this);
@@ -312,7 +312,11 @@ bool Song::any_track_armed()
 int Song::prepare_export(ExportSpecification* spec)
 {
 	PENTER;
+	
+	spec->resumeTransportFrame = transportFrame;
+	
 	if (transport) {
+		spec->resumeTransport = true;
 		stopTransport = true;
 	}
 
@@ -381,6 +385,8 @@ int Song::prepare_export(ExportSpecification* spec)
 		m_exportSource = new WriteSource(spec);
 	}
 
+	resize_buffer(false, spec->blocksize);
+
 	return 1;
 }
 
@@ -388,6 +394,7 @@ int Song::finish_audio_export()
 {
 	m_exportSource->finish_export();
 	delete m_exportSource;
+	resize_buffer(false, audiodevice().get_buffer_size());
 	return 0;
 }
 
@@ -942,18 +949,29 @@ void Song::write_cdrdao_toc(ExportSpecification* spec)
 	}
 }
 
-void Song::resize_buffer( )
+void Song::resize_buffer(bool updateArmStatus, nframes_t size)
 {
-	delete [] mixdown;
-	delete [] gainbuffer;
-	mixdown = new audio_sample_t[audiodevice().get_buffer_size()];
-	gainbuffer = new audio_sample_t[audiodevice().get_buffer_size()];
-	foreach(Track* track, m_tracks) {
-		AudioBus* bus = audiodevice().get_capture_bus(track->get_bus_in().toAscii());
-		if (bus && track->armed()) {
-			bus->set_monitor_peaks(true);
+	if (mixdown)
+		delete [] mixdown;
+	if (gainbuffer)
+		delete [] gainbuffer;
+	mixdown = new audio_sample_t[size];
+	gainbuffer = new audio_sample_t[size];
+	m_masterOut->set_buffer_size(size);
+	
+	if (updateArmStatus) {
+		foreach(Track* track, m_tracks) {
+			AudioBus* bus = audiodevice().get_capture_bus(track->get_bus_in().toAscii());
+			if (bus && track->armed()) {
+				bus->set_monitor_peaks(true);
+			}
 		}
 	}
+}
+
+void Song::audiodevice_params_changed()
+{
+	resize_buffer(true, audiodevice().get_buffer_size());
 }
 
 int Song::get_bitdepth( )

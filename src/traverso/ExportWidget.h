@@ -48,7 +48,8 @@ private:
         void show_settings_view();
 
 private slots:
-        void update_song_progress(int progress);
+	void set_project(Project* project);
+	void update_song_progress(int progress);
         void update_overall_progress(int progress);
         void render_finished();
         void set_exporting_song(Song* song);

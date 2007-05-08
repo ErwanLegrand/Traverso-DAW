@@ -184,6 +184,7 @@ private:
 
 	int finish_audio_export();
 	void start_seek();
+	void resize_buffer(bool updateArmStatus, nframes_t size);
 
 	Track* create_track();
 	
@@ -193,7 +194,7 @@ public slots :
 	void seek_finished();
 	void audiodevice_client_removed(Client* );
 	void audiodevice_started();
-	void resize_buffer();
+	void audiodevice_params_changed();
 	void set_gain(float gain);
 	
 	float get_gain() const;

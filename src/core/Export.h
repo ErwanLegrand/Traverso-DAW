@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Export.h,v 1.5 2007/05/03 18:12:07 r_sijrier Exp $
+$Id: Export.h,v 1.6 2007/05/08 01:15:59 r_sijrier Exp $
 */
 
 #ifndef EXPORT_H
@@ -67,6 +67,7 @@ struct ExportSpecification
 
 	int 		progress;  /* audio thread sets this */
 	bool  		stop;      /* UI sets this */
+	bool		breakout;
 	bool  		running;   /* audio thread sets to false when export is done */
 
 	int   		status;
@@ -79,6 +80,8 @@ struct ExportSpecification
 	int		renderpass;
 	float		peakvalue;
 	float 		normvalue;
+	bool 		resumeTransport;
+	nframes_t	resumeTransportFrame;
 };
 
 

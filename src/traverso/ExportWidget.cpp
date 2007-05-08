@@ -40,6 +40,7 @@
 
 ExportWidget::ExportWidget( QWidget * parent )
 	: QDialog(parent)
+	, spec(0)
 {
         setupUi(this);
 	
@@ -47,20 +48,7 @@ ExportWidget::ExportWidget( QWidget * parent )
 	m_layout->setMargin(0);
 	setLayout(m_layout);
 
-        m_project = pm().get_project();
-
-        if (!m_project) {
-                info().information(tr("No project loaded, to export a project, load it first!"));
-        } else {
-                spec = new ExportSpecification;
-                spec->exportdir = m_project->get_root_dir() + "/Export/";
-                exportDirName->setText(spec->exportdir);
-		
-		connect(m_project, SIGNAL(songExportProgressChanged(int)), this, SLOT(update_song_progress(int)));
-                connect(m_project, SIGNAL(overallExportProgressChanged(int)), this, SLOT(update_overall_progress(int)));
-                connect(m_project, SIGNAL(exportFinished()), this, SLOT(render_finished()));
-                connect(m_project, SIGNAL(exportStartedForSong(Song*)), this, SLOT (set_exporting_song(Song*)));
-        }
+	set_project(pm().get_project());
 
         bitdepthComboBox->insertItem(0, "8");
         bitdepthComboBox->insertItem(1, "16");
@@ -114,6 +102,7 @@ ExportWidget::ExportWidget( QWidget * parent )
 
 	connect(buttonBox, SIGNAL(accepted()), this, SLOT(on_exportStartButton_clicked()));
 	connect(buttonBox, SIGNAL(rejected()), this, SLOT(on_cancelButton_clicked()));
+	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 }
 
 ExportWidget::~ ExportWidget( )
@@ -255,6 +244,7 @@ void ExportWidget::on_exportStopButton_clicked( )
 {
         show_settings_view();
         spec->stop = true;
+	spec->breakout = true;
 }
 
 
@@ -339,7 +329,32 @@ void ExportWidget::show_settings_view( )
 	buttonBox->setEnabled(true);
 }
 
-
+void ExportWidget::set_project(Project * project)
+{
+	m_project = project;
+	if (! m_project) {
+		info().information(tr("No project loaded, to export a project, load it first!"));
+		setEnabled(false);
+		if (spec) {
+			delete spec;
+			spec = 0;
+		}
+	} else {
+		setEnabled(true);
+		if (spec) {
+			delete spec;
+			spec = 0;
+		}
+		spec = new ExportSpecification;
+		spec->exportdir = m_project->get_root_dir() + "/Export/";
+		exportDirName->setText(spec->exportdir);
+		
+		connect(m_project, SIGNAL(songExportProgressChanged(int)), this, SLOT(update_song_progress(int)));
+		connect(m_project, SIGNAL(overallExportProgressChanged(int)), this, SLOT(update_overall_progress(int)));
+		connect(m_project, SIGNAL(exportFinished()), this, SLOT(render_finished()));
+		connect(m_project, SIGNAL(exportStartedForSong(Song*)), this, SLOT (set_exporting_song(Song*)));
+	}
+}
 
 //eof
 

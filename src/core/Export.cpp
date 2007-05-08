@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Export.cpp,v 1.4 2007/05/03 18:12:07 r_sijrier Exp $
+    $Id: Export.cpp,v 1.5 2007/05/08 01:15:59 r_sijrier Exp $
 */
 
 #include "Export.h"
@@ -58,6 +58,8 @@ ExportSpecification::ExportSpecification()
 	extension = "";
 	
 	allSongs = false;
+	stop = false;
+	breakout = false;
 	isRecording = -1;
 	exportdir = "";
 	name = "";
