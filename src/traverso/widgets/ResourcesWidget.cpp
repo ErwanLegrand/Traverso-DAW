@@ -299,6 +299,7 @@ void ResourcesWidget::song_removed(Song * song)
 void ResourcesWidget::clip_removed(AudioClip * clip)
 {
 	QTreeWidgetItem* item = m_clipindices.value(clip->get_id());
+	if (!item) return;
 	for (int i=0; i<5; ++i) {
 		item->setForeground(i, QColor(Qt::lightGray));
 	}
