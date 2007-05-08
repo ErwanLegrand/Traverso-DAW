@@ -263,8 +263,6 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 		major = 120 * m_sv->scalefactor;
 	}
 
-	bool showMs = (m_sv->scalefactor < 512);
-
 	// minor is double so they line up right with the majors,
 	// despite not always being an even number of frames
 	double minor = major/10.0;
@@ -281,7 +279,7 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 	// Draw major ticks
 	for (nframes_t frame = ((int)(firstFrame/major))*major; frame < lastFrame; frame += major ) {
 		painter->drawLine(frame/m_sv->scalefactor, height - 13, frame/m_sv->scalefactor, height - 1);
-		painter->drawText(frame/m_sv->scalefactor + 4, height - 8, (showMs) ? frame_to_msms(frame, m_samplerate) : frame_to_ms(frame, m_samplerate));
+		painter->drawText(frame/m_sv->scalefactor + 4, height - 8, frame_to_text(frame, m_samplerate, m_sv->scalefactor));
 	}
 }
 

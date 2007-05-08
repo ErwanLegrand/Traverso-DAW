@@ -180,7 +180,7 @@ int SplitClip::jog()
 	}
 	m_splitcursor->setPos(xpos, 0);
 	m_sv->update_shuttle_factor();
-	cpointer().get_viewport()->set_holdcursor_text(frame_to_msms(m_splitPoint, m_clip->get_song()->get_rate()));
+	cpointer().get_viewport()->set_holdcursor_text(frame_to_text(m_splitPoint, m_clip->get_song()->get_rate(), m_sv->scalefactor));
 	cpointer().get_viewport()->set_holdcursor_pos(QPoint(cpointer().scene_x() - 16, cpointer().scene_y() - 16));
 	
 	return 1;

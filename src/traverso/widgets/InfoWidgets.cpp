@@ -482,7 +482,7 @@ void PlayHeadInfo::paintEvent(QPaintEvent* )
 	if (!m_song) {
 		currentTime = "0:00.0";
 	} else {
-		currentTime = frame_to_mst(m_song->get_transport_frame(), m_song->get_rate());
+		currentTime = frame_to_ms_2(m_song->get_transport_frame(), m_song->get_rate());
 	}
 	
 	int fc = 170;

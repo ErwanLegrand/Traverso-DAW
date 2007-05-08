@@ -211,7 +211,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	}
 	
 	if (m_dragging) {
-		m_posIndicator->set_value(frame_to_msms( (nframes_t)(x() * m_sv->scalefactor), m_song->get_rate()));
+		m_posIndicator->set_value(frame_to_text( (nframes_t)(x() * m_sv->scalefactor), m_song->get_rate(), m_sv->scalefactor));
 	}
 	
 	painter->restore();

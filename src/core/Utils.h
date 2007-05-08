@@ -30,9 +30,10 @@
 
 class QString;
 
+QString frame_to_text(nframes_t nframes, int rate, int scalefactor);
 QString frame_to_smpte(nframes_t nframes, int rate);
-QString frame_to_msms(nframes_t nframes, int rate);
-QString frame_to_mst(nframes_t nframes, int rate);
+QString frame_to_ms_3(nframes_t nframes, int rate);
+QString frame_to_ms_2(nframes_t nframes, int rate);
 QString frame_to_cd(nframes_t nframes, int rate);
 QString frame_to_hms(double nframes, int rate);
 QString frame_to_ms(double nframes, int rate);

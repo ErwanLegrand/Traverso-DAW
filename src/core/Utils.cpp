@@ -48,8 +48,18 @@ QString frame_to_smpte ( nframes_t nframes, int rate )
 	return spos;
 }
 
+// Frame to MM:SS.9{2-3} (hundredths or ms, based on scalefactor)
+QString frame_to_text(nframes_t nframes, int rate, int scalefactor)
+{
+	if (scalefactor >= 512) {
+		return frame_to_ms_2(nframes, rate);
+	} else {
+		return frame_to_ms_3(nframes, rate);
+	}
+}
+
 // Frame to MM:SS.999 (ms)
-QString frame_to_msms ( nframes_t nframes, int rate )
+QString frame_to_ms_3 ( nframes_t nframes, int rate )
 {
 	QString spos;
 	long unsigned int remainder;
@@ -65,8 +75,8 @@ QString frame_to_msms ( nframes_t nframes, int rate )
 	return spos;
 }
 
-// Frame to MM:SS.9 (tenths of a second)
-QString frame_to_mst ( nframes_t nframes, int rate )
+// Frame to MM:SS.99 (hundredths)
+QString frame_to_ms_2 ( nframes_t nframes, int rate )
 {
 	QString spos;
 	long unsigned int remainder;
@@ -76,8 +86,8 @@ QString frame_to_mst ( nframes_t nframes, int rate )
 	remainder = nframes - ( mins * 60 * rate );
 	secs = remainder / rate;
 	remainder -= secs * rate;
-	frames = remainder / ( rate / 10 );
-	spos.sprintf ( " %02d:%02d%c%01d", mins, secs, QLocale::system().decimalPoint().toAscii(), frames );
+	frames = remainder * 100 / rate;
+	spos.sprintf ( " %02d:%02d%c%02d", mins, secs, QLocale::system().decimalPoint().toAscii(), frames );
 
 	return spos;
 }
