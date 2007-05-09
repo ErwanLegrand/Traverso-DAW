@@ -35,7 +35,13 @@ class Marker : public ContextItem, public Snappable
 	Q_OBJECT
 	
 public:
-	Marker(TimeLine* tl, nframes_t when, uint type = 0);
+	enum Type {
+		CDTRACK,
+		TEMPORARY,
+		ENDMARKER
+	};
+
+	Marker(TimeLine* tl, nframes_t when, Type type = CDTRACK);
 	Marker(TimeLine* tl, const QDomNode node);
 	~Marker() {};
 	
@@ -64,7 +70,7 @@ public:
 	QString get_isrc() const {return m_isrc;}
 	bool get_preemphasis();
 	bool get_copyprotect();
-	uint get_type() {return m_type;};
+	Type get_type() {return m_type;};
 
 private:
 	TimeLine* m_timeline;
@@ -78,7 +84,7 @@ private:
 		m_isrc;
 	bool	m_preemph,
 		m_copyprotect;
-	uint	m_type;
+	Type	m_type;
 	
 signals:
 	void positionChanged(Snappable*);

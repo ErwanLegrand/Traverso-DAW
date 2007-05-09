@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TimeLine.h"
 #include "Utils.h"
 
-Marker::Marker(TimeLine* tl, nframes_t when, uint type)
+Marker::Marker(TimeLine* tl, nframes_t when, Type type)
 	: ContextItem()
 	, Snappable()
 	, m_timeline(tl)
@@ -63,7 +63,6 @@ QDomNode Marker::get_state(QDomDocument doc)
 	
 	domNode.setAttribute("position",  m_when);
 	domNode.setAttribute("description",  m_description);
-	domNode.setAttribute("type",  m_type);
 	domNode.setAttribute("id",  m_id);
 	domNode.setAttribute("performer", m_performer);
 	domNode.setAttribute("composer", m_composer);
@@ -74,6 +73,18 @@ QDomNode Marker::get_state(QDomDocument doc)
 	domNode.setAttribute("preemphasis", m_preemph);
 	domNode.setAttribute("copyprotection", m_copyprotect);
 
+	switch (m_type) {
+		case CDTRACK:
+			domNode.setAttribute("type",  "CDTRACK");
+			break;
+		case TEMPORARY:
+			domNode.setAttribute("type",  "TEMPORARY");
+			break;
+		case ENDMARKER:
+			domNode.setAttribute("type",  "ENDMARKER");
+			break;
+	}
+
 	return domNode;
 }
 
@@ -82,7 +93,7 @@ int Marker::set_state(const QDomNode & node)
 	QDomElement e = node.toElement();
 
 	m_description = e.attribute("description", "");
-	m_type = e.attribute("type", "0").toUInt();
+	QString tp = e.attribute("type", "CDTRACK");
 	m_when = e.attribute("position", "0").toUInt();
 	m_id = e.attribute("id", "0").toLongLong();
 	m_performer = e.attribute("performer", "");
@@ -93,6 +104,10 @@ int Marker::set_state(const QDomNode & node)
 	m_isrc = e.attribute("isrc", "");
 	m_preemph = e.attribute("preemphasis", "0").toInt();
 	m_copyprotect = e.attribute("copyprotection", "0").toInt();
+
+	if (tp == "CDTRACK") m_type = CDTRACK;
+	if (tp == "TEMPORARY") m_type = TEMPORARY;
+	if (tp == "ENDMARKER") m_type = ENDMARKER;
 
 	return 1;
 }

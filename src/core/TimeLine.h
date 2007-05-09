@@ -45,6 +45,7 @@ public:
 	
 	Marker* get_marker(qint64 id);
 	bool get_end_position(nframes_t &pos);
+	bool has_end_marker();
 
 	Command* add_marker(Marker* marker, bool historable=true);
 	Command* remove_marker(Marker* marker, bool historable=true);

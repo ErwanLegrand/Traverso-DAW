@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Export.h,v 1.6 2007/05/08 01:15:59 r_sijrier Exp $
+$Id: Export.h,v 1.7 2007/05/09 20:11:47 n_doebelin Exp $
 */
 
 #ifndef EXPORT_H
@@ -74,6 +74,7 @@ struct ExportSpecification
 	bool		allSongs;
 	int		isRecording;
 	QString		exportdir;
+	QString		basename;
 	QString		name;
 	bool		writeToc;
 	bool		normalize;

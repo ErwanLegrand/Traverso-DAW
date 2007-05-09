@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QDir>
 #include <QTextStream>
 #include <QMessageBox>
+#include <QString>
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -461,6 +462,7 @@ int Project::start_export(ExportSpecification* spec)
 		songsToRender.append(song);
 	}
 
+	QString cdrdaoImg = get_cdrdao_header(spec);
 
 	foreach(Song* song, songsToRender) {
 		PMESG("Starting export for song %lld", song->get_id());
@@ -496,6 +498,8 @@ int Project::start_export(ExportSpecification* spec)
 			continue;
 		}
 		
+		cdrdaoImg += song->get_cdrdao_tracklist(spec);
+
 		while(song->render(spec) > 0) {}
 		
 		song->set_transport_pos(spec->resumeTransportFrame);
@@ -511,6 +515,27 @@ int Project::start_export(ExportSpecification* spec)
 		renderedSongs++;
 	}
 
+	if (spec->writeToc) {
+		PMESG("Writing cdrdao toc-file");
+
+		QString name = spec->exportdir + "/";
+
+		if (spec->allSongs) {
+			// filename of the toc file is "project-name.toc"
+			name += get_title() + ".toc";
+		} else {
+			// filename of the toc file is "song-name.toc"
+			name += spec->basename + ".toc";
+		}
+
+		QFile file(name);
+
+		if (file.open(QFile::WriteOnly)) {
+			QTextStream out(&file);
+			out << cdrdaoImg;
+		}
+	}
+
 	PMESG("Export Finished");
 
 	spec->running = false;
@@ -520,6 +545,29 @@ int Project::start_export(ExportSpecification* spec)
 	emit exportFinished();
 
 	return 1;
+}
+
+QString Project::get_cdrdao_header(ExportSpecification* spec)
+{
+	QString output;
+
+	output += "CD_DA\n\n";
+	output += "CD_TEXT {\n";
+
+	output += "  LANGUAGE_MAP {\n    0 : EN\n  }\n\n";
+
+	output += "  LANGUAGE 0 {\n";
+	output += "    TITLE \"" + get_title() +  "\"\n";
+	output += "    PERFORMER \"\"\n";
+	output += "    DISC_ID \"\"\n";
+	output += "    UPC_EAN \"\"\n\n";
+
+	output += "    ARRANGER \"\"\n";
+	output += "    SONGWRITER \"\"\n";
+	output += "    MESSAGE \"\"\n";
+	output += "    GENRE \"\"\n  }\n}\n\n";
+
+	return output;
 }
 
 Command* Project::select()

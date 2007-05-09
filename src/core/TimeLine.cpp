@@ -127,8 +127,19 @@ Marker * TimeLine::get_marker(qint64 id)
 bool TimeLine::get_end_position(nframes_t & pos)
 {
 	foreach(Marker* marker, m_markers) {
-		if (marker->get_type() == 10) {
+		if (marker->get_type() == Marker::ENDMARKER) {
 			pos = marker->get_when();
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool TimeLine::has_end_marker()
+{
+	foreach(Marker* marker, m_markers) {
+		if (marker->get_type() == Marker::ENDMARKER) {
 			return true;
 		}
 	}

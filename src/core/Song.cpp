@@ -365,7 +365,8 @@ int Song::prepare_export(ExportSpecification* spec)
 	if (m_id < 10) {
 		idString.prepend("0");
 	}
-	spec->name =  "Song" + QString::number(m_project->get_song_index(m_id)) +"-" + title + spec->extension;
+	spec->basename = "Song" + QString::number(m_project->get_song_index(m_id)) +"-" + title;
+	spec->name = spec->basename + spec->extension;
 
 	if (spec->start_frame >= spec->end_frame) {
 		PWARN("illegal frame range in export specification");
@@ -377,10 +378,6 @@ int Song::prepare_export(ExportSpecification* spec)
 		return -1;
 	}
 
-	if (spec->writeToc) {
-		write_cdrdao_toc(spec);
-	}
-	
 	if (spec->renderpass == ExportSpecification::WRITE_TO_HARDDISK) {
 		m_exportSource = new WriteSource(spec);
 	}
@@ -865,43 +862,45 @@ int Song::process_export( nframes_t nframes )
 	return 1;
 }
 
-void Song::write_cdrdao_toc(ExportSpecification* spec)
+QString Song::get_cdrdao_tracklist(ExportSpecification* spec)
 {
-	QString idString = QString::number(m_id);
-	if (m_id < 10) {
-		idString.prepend("0");
-	}
-	QString name = spec->exportdir + "/";
-	QFileInfo fi(spec->name);
-	QString basename =  fi.completeBaseName() + ".toc";
-	name += basename;
-
-	QFile file(name);
-
-	// check if the selected file can be opened for writing
-	if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-		printf("Could not open file for writing.");
-		return;
-	}
-
-	QTextStream out(&file);
-	out << "CD_DA\n\n";
-	out << "CD_TEXT {\n";
-
-	out << "  LANGUAGE_MAP {\n    0 : EN\n  }\n\n";
-
-	out << "  LANGUAGE 0 {\n";
-	out << "    TITLE \"" << m_project->get_title() <<  "\"\n";
-	out << "    PERFORMER \"\"\n";
-	out << "    DISC_ID \"\"\n";
-	out << "    UPC_EAN \"\"\n\n";
-
-	out << "    ARRANGER \"\"\n";
-	out << "    SONGWRITER \"\"\n";
-	out << "    MESSAGE \"\"\n";
-	out << "    GENRE \"\"\n  }\n}\n\n";
+	QString output;
 
 	QList<Marker*> mlist = m_timeline->get_markers();
+
+	// Here we make the marker-stuff idiot-proof ;-). Traverso doesn't insist on having any
+	// marker at all, so we need to handle cases like:
+	// - no markers at all
+	// - one marker (doesn't make sense)
+	// - enough markers, but no end marker
+
+	if (mlist.size() < 2) {
+		switch (mlist.size()) {
+			case 0:
+				// no markers present. We add one at the beginning and one at the
+				// end of the render area.
+				mlist.append(new Marker(m_timeline, spec->start_frame, Marker::TEMPORARY));
+				mlist.append(new Marker(m_timeline, spec->end_frame, Marker::TEMPORARY));
+				break;
+			case 1:
+				// one marker is present. We add two more at the beginning
+				// and at the end of the render area. But we must check if 
+				// the present marker happens to be at one of these positions.
+				if (mlist.at(0)->get_when() != spec->start_frame) {
+					mlist.append(new Marker(m_timeline, spec->start_frame, Marker::TEMPORARY));
+				}
+				if (mlist.at(0)->get_when() != spec->end_frame) {
+					mlist.append(new Marker(m_timeline, spec->end_frame, Marker::TEMPORARY));
+				}
+				break;
+		}
+	} else {
+		// would be ok, but let's check if there is an end marker present. If not,
+		// add one to spec->end_frame
+		if (!m_timeline->has_end_marker()) {
+			mlist.append(new Marker(m_timeline, spec->end_frame, Marker::TEMPORARY));
+		}
+	}
 
 	// Sort the list according to Marker::get_when() values. This
 	// is the correct way to do it according to the Qt docu.
@@ -911,36 +910,36 @@ void Song::write_cdrdao_toc(ExportSpecification* spec)
 	}
 	mlist = mmap.values();
 
-	nframes_t start;
+	nframes_t start = 0;
 	for(int i = 0; i < mlist.size()-1; ++i) {
 		Marker *m_start = mlist.at(i);
 		Marker *m_end = mlist.at(i+1);
 
-		out << "TRACK AUDIO\n";
+		output += "TRACK AUDIO\n";
 
 		if (m_start->get_copyprotect()) {
-			out << "  NO COPY\n";
+			output += "  NO COPY\n";
 		} else {
-			out << "  COPY\n";
+			output += "  COPY\n";
 		}
 
 		if (m_start->get_preemphasis()) {
-			out << "  PRE_EMPHASIS\n";
+			output += "  PRE_EMPHASIS\n";
 		}
 
-		out << "  CD_TEXT {\n    LANGUAGE 0 {\n";
-		out << "      TITLE \"" << m_start->get_description() << "\"\n";
-		out << "      PERFORMER \"" << m_start->get_performer() << "\"\n";
-		out << "      ISRC \"" << m_start->get_isrc() << "\"\n";
-		out << "      ARRANGER \"" << m_start->get_arranger() << "\"\n";
-		out << "      SONGWRITER \"" << m_start->get_songwriter() << "\"\n";
-		out << "      MESSAGE \"" << m_start->get_message() << "\"\n    }\n  }\n";
+		output += "  CD_TEXT {\n    LANGUAGE 0 {\n";
+		output += "      TITLE \"" + m_start->get_description() + "\"\n";
+		output += "      PERFORMER \"" + m_start->get_performer() + "\"\n";
+		output += "      ISRC \"" + m_start->get_isrc() + "\"\n";
+		output += "      ARRANGER \"" + m_start->get_arranger() + "\"\n";
+		output += "      SONGWRITER \"" + m_start->get_songwriter() + "\"\n";
+		output += "      MESSAGE \"" + m_start->get_message() + "\"\n    }\n  }\n";
 
 		if (i == 0) {
 			start = cd_to_frame(frame_to_cd(m_start->get_when(), m_project->get_rate()), m_project->get_rate());
 			// I thought some cd players required a 2-second PREGAP on the first track?
 			// FIXME: Uncomment, remove, or make configurable in the Export dialog.
-			// out << "  PREGAP 0:02:00\n";
+			// output += "  PREGAP 0:02:00\n";
 		}
 
 		nframes_t end = cd_to_frame(frame_to_cd(m_end->get_when(), m_project->get_rate()), m_project->get_rate());
@@ -949,9 +948,25 @@ void Song::write_cdrdao_toc(ExportSpecification* spec)
 		QString s_start = frame_to_cd(start, m_project->get_rate());
 		QString s_length = frame_to_cd(length, m_project->get_rate());
 
-		out << "  FILE \"" << spec->name << "\" " << s_start << " " << s_length << "\n\n";
+		output += "  FILE \"" + spec->name + "\" " + s_start + " " + s_length + "\n\n";
 		start += length;
+
+		// check if the second marker is of type "Endmarker"
+		if (m_end->get_type() == 10) {
+			break;
+		}
 	}
+
+	// delete all temporary markers
+	for(int i = mlist.size() - 1; i >= 0; --i) {
+		Marker *marker = mlist.at(i);
+		if (marker->get_type() == Marker::TEMPORARY) {
+			mlist.removeAt(i);
+			delete marker;
+		}
+	}
+
+	return output;
 }
 
 void Song::resize_buffer(bool updateArmStatus, nframes_t size)

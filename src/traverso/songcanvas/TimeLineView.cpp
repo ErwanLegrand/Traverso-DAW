@@ -341,19 +341,19 @@ Command* TimeLineView::add_marker()
 	// check if it is the first marker added to the timeline
 	if (!m_timeline->get_markers().size()) {
 		if (when > 0) {  // add one at the beginning of the song
-			Marker* m = new Marker(m_timeline, 0);
+			Marker* m = new Marker(m_timeline, Marker::CDTRACK);
 			m->set_description("");
 			group->add_command(m_timeline->add_marker(m));
 		}
 
 		if (when < m_sv->get_song()->get_last_frame()) {  // add one at the end of the song
-			Marker* me = new Marker(m_timeline, m_sv->get_song()->get_last_frame(), 10);
+			Marker* me = new Marker(m_timeline, m_sv->get_song()->get_last_frame(), Marker::ENDMARKER);
 			me->set_description(tr("End"));
 			group->add_command(m_timeline->add_marker(me));
 		}
 	}
 
-	Marker* marker = new Marker(m_timeline, when);
+	Marker* marker = new Marker(m_timeline, when, Marker::CDTRACK);
 	marker->set_description("");
 	
 	group->setText(tr("Add Marker"));

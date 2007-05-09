@@ -108,6 +108,7 @@ private:
 	qint64 		m_currentSongId;
 	
 	int create(int songcount, int numtracks);
+	QString		get_cdrdao_header(ExportSpecification* spec);
 	
 	friend class ProjectManager;
 
