@@ -911,6 +911,7 @@ void Song::write_cdrdao_toc(ExportSpecification* spec)
 	}
 	mlist = mmap.values();
 
+	nframes_t start;
 	for(int i = 0; i < mlist.size()-1; ++i) {
 		Marker *m_start = mlist.at(i);
 		Marker *m_end = mlist.at(i+1);
@@ -935,14 +936,21 @@ void Song::write_cdrdao_toc(ExportSpecification* spec)
 		out << "      SONGWRITER \"" << m_start->get_songwriter() << "\"\n";
 		out << "      MESSAGE \"" << m_start->get_message() << "\"\n    }\n  }\n";
 
-		nframes_t start = m_start->get_when();
-		nframes_t end = m_end->get_when();
+		if (i == 0) {
+			start = cd_to_frame(frame_to_cd(m_start->get_when(), m_project->get_rate()), m_project->get_rate());
+			// I thought some cd players required a 2-second PREGAP on the first track?
+			// FIXME: Uncomment, remove, or make configurable in the Export dialog.
+			// out << "  PREGAP 0:02:00\n";
+		}
+
+		nframes_t end = cd_to_frame(frame_to_cd(m_end->get_when(), m_project->get_rate()), m_project->get_rate());
 		nframes_t length = end - start;
 
 		QString s_start = frame_to_cd(start, m_project->get_rate());
 		QString s_length = frame_to_cd(length, m_project->get_rate());
 
 		out << "  FILE \"" << spec->name << "\" " << s_start << " " << s_length << "\n\n";
+		start += length;
 	}
 }
 
