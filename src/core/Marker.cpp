@@ -77,11 +77,14 @@ QDomNode Marker::get_state(QDomDocument doc)
 		case CDTRACK:
 			domNode.setAttribute("type",  "CDTRACK");
 			break;
-		case TEMPORARY:
-			domNode.setAttribute("type",  "TEMPORARY");
-			break;
 		case ENDMARKER:
 			domNode.setAttribute("type",  "ENDMARKER");
+			break;
+		case TEMP_CDTRACK:
+			domNode.setAttribute("type",  "TEMP_CDTRACK");
+			break;
+		case TEMP_ENDMARKER:
+			domNode.setAttribute("type",  "TEMP_ENDMARKER");
 			break;
 	}
 
@@ -106,8 +109,9 @@ int Marker::set_state(const QDomNode & node)
 	m_copyprotect = e.attribute("copyprotection", "0").toInt();
 
 	if (tp == "CDTRACK") m_type = CDTRACK;
-	if (tp == "TEMPORARY") m_type = TEMPORARY;
 	if (tp == "ENDMARKER") m_type = ENDMARKER;
+	if (tp == "TEMP_CDTRACK") m_type = TEMP_CDTRACK;
+	if (tp == "TEMP_ENDMARKER") m_type = TEMP_ENDMARKER;
 
 	return 1;
 }

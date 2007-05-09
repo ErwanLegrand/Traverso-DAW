@@ -37,8 +37,9 @@ class Marker : public ContextItem, public Snappable
 public:
 	enum Type {
 		CDTRACK,
-		TEMPORARY,
-		ENDMARKER
+		ENDMARKER,
+		TEMP_CDTRACK,
+		TEMP_ENDMARKER
 	};
 
 	Marker(TimeLine* tl, nframes_t when, Type type = CDTRACK);
