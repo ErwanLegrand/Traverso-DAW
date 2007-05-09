@@ -237,16 +237,24 @@ void TimeLineView::hzoom_changed( )
 
 void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
-	PENTER3;
+	PENTER;
 	Q_UNUSED(widget);
+	
+	painter->save();
 	
 	// When the scrollarea moves by a small value, the text
 	// can be screwed up, so give it some room, 100 pixels should do!
 	int xstart = (int) option->exposedRect.x() - 100;
 	int pixelcount = (int) option->exposedRect.width() + 100;
+	int expheight = (int) option->exposedRect.height();
+	int top = (int) option->exposedRect.top();
+	bool paintText = top > 28 &&  expheight < 2 ? false : true;
+	
 	if (xstart < 0) {
 		xstart = 0;
 	}
+	
+	painter->setClipRect(m_boundingRect);
 	
 	int height = TIMELINE_HEIGHT;
 	
@@ -269,18 +277,26 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 
 	nframes_t firstFrame = xstart * m_sv->scalefactor;
 	nframes_t lastFrame = xstart * m_sv->scalefactor + pixelcount * m_sv->scalefactor;
+	int xstartoffset = m_sv->hscrollbar_value();
+	
+	painter->setMatrixEnabled(false);
 
 	// Draw minor ticks
 	for (int i = 0; i < (lastFrame-firstFrame+major) / minor; i++ ) {
 		int x = (int)(((int)(firstFrame/major))*major + i * minor)/m_sv->scalefactor;
-		painter->drawLine(x, height - 5, x, height - 1);
+		painter->drawLine(x - xstartoffset, height - 5, x - xstartoffset, height - 1);
 	}
 	
 	// Draw major ticks
 	for (nframes_t frame = ((int)(firstFrame/major))*major; frame < lastFrame; frame += major ) {
-		painter->drawLine(frame/m_sv->scalefactor, height - 13, frame/m_sv->scalefactor, height - 1);
-		painter->drawText(frame/m_sv->scalefactor + 4, height - 8, frame_to_text(frame, m_samplerate, m_sv->scalefactor));
+		int x = frame/m_sv->scalefactor - xstartoffset;
+		painter->drawLine(x, height - 13, x, height - 1);
+		if (paintText) {
+			painter->drawText(x + 4, height - 8, frame_to_text(frame, m_samplerate, m_sv->scalefactor));
+		}
 	}
+	
+	painter->restore();
 }
 
 void TimeLineView::calculate_bounding_rect()
