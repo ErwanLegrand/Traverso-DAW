@@ -372,39 +372,8 @@ Command* TimeLineView::remove_marker()
 	return 0;
 }
 
-void TimeLineView::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
+void TimeLineView::update_softselected_marker(QPoint pos)
 {
-	PENTER;
-	Q_UNUSED(event);
-
-	if (m_blinkingMarker) {
-		m_blinkingMarker->set_active(true);
-	}
-}
-
-void TimeLineView::hoverLeaveEvent ( QGraphicsSceneHoverEvent * event )
-{
-	PENTER;
-	Q_UNUSED(event);
-	
-	if (ie().is_holding()) {
-		event->ignore();
-		return;
-	}
-	
-	if (m_blinkingMarker) {
-		// TODO add these functions, or something else to 
-		// let the user know which marker is to be moved!
-		m_blinkingMarker->set_active(false);
-		m_blinkingMarker = 0;
-	}
-}
-		
-		
-void TimeLineView::hoverMoveEvent ( QGraphicsSceneHoverEvent * event )
-{
-	QPoint pos((int)event->pos().x(), (int)event->pos().y());
-	
 	MarkerView* prevMarker = m_blinkingMarker;
 	if (m_markerViews.size()) {
 		m_blinkingMarker = m_markerViews.first();
@@ -437,9 +406,47 @@ void TimeLineView::hoverMoveEvent ( QGraphicsSceneHoverEvent * event )
 	}
 }
 
+void TimeLineView::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
+{
+	PENTER;
+	Q_UNUSED(event);
+
+	if (m_blinkingMarker) {
+		m_blinkingMarker->set_active(true);
+	}
+}
+
+void TimeLineView::hoverLeaveEvent ( QGraphicsSceneHoverEvent * event )
+{
+	PENTER;
+	Q_UNUSED(event);
+	
+	if (ie().is_holding()) {
+		event->ignore();
+		return;
+	}
+	
+	if (m_blinkingMarker) {
+		// TODO add these functions, or something else to 
+		// let the user know which marker is to be moved!
+		m_blinkingMarker->set_active(false);
+		m_blinkingMarker = 0;
+	}
+}
+		
+		
+void TimeLineView::hoverMoveEvent ( QGraphicsSceneHoverEvent * event )
+{
+	QPoint pos((int)event->pos().x(), (int)event->pos().y());
+
+	update_softselected_marker(pos);
+}
+
 
 Command * TimeLineView::drag_marker()
 {
+	update_softselected_marker(QPoint(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y()));
+
 	if (m_blinkingMarker) {
 		return new DragMarker(m_blinkingMarker, m_sv->scalefactor, tr("Drag Marker"));
 	}
