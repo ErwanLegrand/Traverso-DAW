@@ -602,10 +602,10 @@ void ExportWidget::read_standard_output()
 	if (m_writingState == QUERY_DEVICE) {
 		char buf[1024];
 		while(m_burnprocess->readLine(buf, sizeof(buf)) != -1) {
-			QString stdout = buf;
-			if (stdout.contains("/dev/")) {
+			QByteArray data = QByteArray(buf);
+			if (data.contains("/dev/")) {
 				QString deviceName;
-				QStringList strlist = stdout.split(QRegExp("\\s+"));
+				QStringList strlist = QString(data).split(QRegExp("\\s+"));
 				for (int i=1; i<strlist.size(); ++i) {
 					QString token = strlist.at(i);
 					if (!token.contains("Rev:")) {
