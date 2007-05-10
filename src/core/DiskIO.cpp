@@ -348,7 +348,7 @@ void DiskIO::register_read_source (ReadSource* source )
 
 	m_readSources.append(source);
 
-	foreach(MonoReader* prs, source->get_private_sources()) {
+	foreach(MonoReader* prs, source->get_mono_readers()) {
 		prs->prepare_buffer();
 		m_monoReaders.append(prs);
 	}
@@ -385,7 +385,7 @@ void DiskIO::unregister_read_source( ReadSource * source )
 	
 	m_readSources.removeAll(source);
 
-	foreach(MonoReader* prs, source->get_private_sources()) {
+	foreach(MonoReader* prs, source->get_mono_readers()) {
 		m_monoReaders.removeAll(prs);
 	}
 }

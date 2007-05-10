@@ -125,7 +125,7 @@ int AudioClipExternalProcessing::prepare_actions()
 		// Clips live at project level, we have to set its Song, Track and ReadSource explicitely!!
 		m_resultingclip->set_song(m_clip->get_song());
 		m_resultingclip->set_track(m_clip->get_track());
-		m_resultingclip->set_audio_source(source);
+		resources_manager()->set_source_for_clip(m_resultingclip, source);
 		m_resultingclip->set_track_start_frame(m_clip->get_track_start_frame());
 		// FIXME!!!!!!!!!!!!!!!!!!!!
 		m_resultingclip->init_gain_envelope();

@@ -47,6 +47,7 @@ ReadSource::ReadSource(const QDomNode node)
 	, m_refcount(0)
 	, m_unrefcount(0)
 	, m_error(0)
+	, m_clip(0)
 {
 	Project* project = pm().get_project();
 	
@@ -67,6 +68,7 @@ ReadSource::ReadSource(const QString& dir, const QString& name)
 	, m_refcount(0)
 	, m_unrefcount(0)
 	, m_error(0)
+	, m_clip(0)
 {
 	SNDFILE* sf;
 	SF_INFO  sfinfo;
@@ -87,6 +89,7 @@ ReadSource::ReadSource(const QString& dir, const QString& name, int channelCount
 	, m_refcount(0)
 	, m_unrefcount(0)
 	, m_error(0)
+	, m_clip(0)
 {
 	m_channelCount = channelCount;
 	m_fileCount = fileCount;
@@ -99,6 +102,7 @@ ReadSource::ReadSource()
 	, m_refcount(0)
 	, m_unrefcount(0)
 	, m_error(0)
+	, m_clip(0)
 {
 	m_channelCount = 0;
 	m_fileCount = 0;
@@ -229,6 +233,9 @@ ReadSource * ReadSource::deep_copy( )
 
 void ReadSource::set_audio_clip( AudioClip * clip )
 {
+	PENTER;
+	Q_ASSERT(clip);
+	m_clip = clip;
 	foreach(MonoReader* source, m_sources) {
 		source->set_audio_clip(clip);
 	}
@@ -252,8 +259,12 @@ void ReadSource::set_was_recording(bool wasRecording)
 	m_shortName = m_name.left(m_name.length() - 20);
 }
 
-int ReadSource::reset_filename(const QString & filename)
+int ReadSource::set_file(const QString & filename)
 {
+	PENTER;
+	
+	Q_ASSERT(m_clip);
+
 	m_error = 0;
 	
 	int splitpoint = filename.lastIndexOf("/") + 1;
@@ -268,6 +279,8 @@ int ReadSource::reset_filename(const QString & filename)
 	if (init() < 0) {
 		return -1;
 	}
+	
+	set_audio_clip(m_clip);
 	
 	return 1;
 }

@@ -25,7 +25,7 @@
 #include "ui_ExportWidget.h"
 
 #include <QDialog>
-#include <QHBoxLayout>
+#include <QProcess>
 
 class Project;
 class Song;
@@ -40,12 +40,30 @@ public:
         ~ExportWidget();
 
 private:
-        Project*		m_project;
-        ExportSpecification* 	spec;
-	QHBoxLayout* m_layout;
+        Project* m_project;
+	QProcess* m_burnprocess;
+	ExportSpecification* 	m_exportSpec;
 	
         void show_progress_view();
         void show_settings_view();
+	
+	bool is_save_to_export();
+	void cd_render();
+	void write_to_cd();
+	
+	void update_cdburn_status(const QString& message, int type);
+	
+	enum {
+		NO_STATE,
+  		BURNING,
+    		ABORT_BURN,
+  		QUERY_DEVICE,
+    		UNLOCK_DEVICE,
+		NORMAL_MESSAGE,
+    		ERROR_MESSAGE
+	};
+	
+	int m_writingState;
 
 private slots:
 	void set_project(Project* project);
@@ -61,7 +79,16 @@ private slots:
         void on_allSongsButton_clicked();
         void on_currentSongButton_clicked();
 	void on_cancelButton_clicked();
-
+	
+	void start_burn_process();
+	void stop_burn_process();
+	void read_standard_output();
+	void cdrdao_process_started();
+	void cdrdao_process_finished(int exitcode, QProcess::ExitStatus exitstatus);
+	void cd_export_finished();
+	void cd_export_progress(int progress);
+	void unlock_device();
+	void query_devices();
 };
 
 #endif

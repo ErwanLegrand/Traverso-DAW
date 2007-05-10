@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.h,v 1.21 2007/05/05 20:43:58 r_sijrier Exp $
+$Id: ReadSource.h,v 1.22 2007/05/10 20:02:36 r_sijrier Exp $
 */
 
 #ifndef READSOURCE_H
@@ -55,7 +55,7 @@ public :
 	int get_ref_count() const {return m_refcount;}
 	int get_unref_count() const {return m_unrefcount;}
 	int get_error() const {return m_error;}
-	int reset_filename(const QString& filename);
+	int set_file(const QString& filename);
 	void set_active(bool active);
 	void set_was_recording(bool wasRecording);
 	
@@ -63,9 +63,10 @@ public :
 	Peak* get_peak(int channel);
 	nframes_t get_nframes() const;
 	
-	QList<MonoReader*> get_private_sources() const {return m_sources;}
+	QList<MonoReader*> get_mono_readers() const {return m_sources;}
 
 private:
+	AudioClip* m_clip;
 	QList<MonoReader*> m_sources;
 	int	m_refcount;
 	int	m_unrefcount;

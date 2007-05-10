@@ -162,7 +162,7 @@ void ClipsViewPort::dropEvent(QDropEvent* event )
 		ReadSource* source = resources_manager()->get_readsource(id);
 		if (source) {
 			clip = resources_manager()->new_audio_clip(source->get_short_name());
-			clip->set_audio_source(source);
+			resources_manager()->set_source_for_clip(clip, source);
 			clip->set_song(importTrack->get_song());
 			clip->set_track(importTrack);
 			clip->set_track_start_frame(startpos);

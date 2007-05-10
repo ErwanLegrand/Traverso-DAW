@@ -780,11 +780,11 @@ Command * AudioClipView::set_audio_file()
 			return ie().failure();
 		}
 		
-		if (rs->reset_filename(filename) < 0) {
+		if (rs->set_file(filename) < 0) {
 			return ie().failure();
 		}
 			
-		m_clip->set_audio_source(rs);
+		resources_manager()->set_source_for_clip(m_clip, rs);
 		
 		info().information(tr("Succesfully set AudioClip file to %1").arg(filename));
 		

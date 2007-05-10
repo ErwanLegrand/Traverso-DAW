@@ -468,6 +468,7 @@ int Project::start_export(ExportSpecification* spec)
 		PMESG("Starting export for song %lld", song->get_id());
 		emit exportStartedForSong(song);
 		spec->resumeTransport = false;
+		spec->resumeTransportFrame = song->get_transport_frame();
 		
 		if (spec->normalize) {
 			spec->peakvalue = 0.0;
@@ -488,7 +489,9 @@ int Project::start_export(ExportSpecification* spec)
 						.arg(coefficient_to_dbstring(spec->peakvalue)));
 			}
 			
-			info().information(tr("calculated norm factor: %1").arg(coefficient_to_dbstring(spec->normvalue)));
+			if (!spec->breakout) {
+				info().information(tr("calculated norm factor: %1").arg(coefficient_to_dbstring(spec->normvalue)));
+			}
 		}
 
 		spec->renderpass = ExportSpecification::WRITE_TO_HARDDISK;
@@ -527,6 +530,8 @@ int Project::start_export(ExportSpecification* spec)
 			// filename of the toc file is "song-name.toc"
 			name += spec->basename + ".toc";
 		}
+		
+		spec->tocFileName = name;
 
 		QFile file(name);
 

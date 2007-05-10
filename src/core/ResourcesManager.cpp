@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Information.h"
 #include "AudioClip.h"
 #include "Utils.h"
+#include "AudioDevice.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -187,41 +188,23 @@ ReadSource* ResourcesManager::create_new_readsource(const QString& dir, const QS
 }
 
 
-ReadSource* ResourcesManager::create_new_readsource(
+ReadSource* ResourcesManager::create_recording_source(
 		const QString& dir,
 		const QString& name,
   		int channelCount,
-    		int fileCount,
-      		int songId,
-		int bitDepth,
-  		int rate,
-		bool wasRecording)
+      		int songId)
 {
 	PENTER;
 	
-	ReadSource* source = new ReadSource(dir, name, channelCount, fileCount);
-	source->set_was_recording(wasRecording);
+	ReadSource* source = new ReadSource(dir, name, channelCount, channelCount);
+	
+	source->set_was_recording(true);
+	source->set_original_bit_depth(audiodevice().get_bit_depth());
+	source->set_created_by_song(songId);
+	source->ref();
+	
 	m_sources.insert(source->get_id(), source);
 	
-	if ( bitDepth ) {
-		source->set_original_bit_depth( bitDepth );
-	} else {
-		source->set_original_bit_depth( 16 );
-	}
-	
-	if ( songId ) {
-		source->set_created_by_song( songId );
-	} else {
-		source->set_created_by_song( -1 );
-	}
-	
-	source = get_readsource(source->get_id());
-	if (source->get_error() < 0) {
-		m_sources.remove(source->get_id());
-		delete source;
-		return 0;
-	}
-
 	return source;
 }
 
@@ -420,5 +403,9 @@ bool ResourcesManager::is_clip_in_use(qint64 id) const
 	return m_gettedClips.contains(id) && ! m_removedClips.contains(id);
 }
 
-//eof
+
+void ResourcesManager::set_source_for_clip(AudioClip * clip, ReadSource * source)
+{
+	clip->set_audio_source(source);
+}
 

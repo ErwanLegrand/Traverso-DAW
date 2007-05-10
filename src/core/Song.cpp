@@ -313,8 +313,6 @@ int Song::prepare_export(ExportSpecification* spec)
 {
 	PENTER;
 	
-	spec->resumeTransportFrame = transportFrame;
-	
 	if (transport) {
 		spec->resumeTransport = true;
 		stopTransport = true;

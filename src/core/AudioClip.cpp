@@ -563,6 +563,12 @@ int AudioClip::init_recording( QByteArray name )
 	
 	init_gain_envelope();
 	
+	ReadSource* rs;
+	rs = resources_manager()->create_recording_source(m_exportSpec->exportdir, m_exportSpec->name, channelcount, m_song->get_id());
+	rs->set_id(newsourceid);	
+	resources_manager()->set_source_for_clip(this, rs);
+	
+	
 	connect(m_song, SIGNAL(transferStopped()), this, SLOT(finish_recording()));
 
 	return 1;
@@ -682,38 +688,20 @@ void AudioClip::finish_write_source( WriteSource * ws )
 		
 	
 	if (writeSources.isEmpty()) {
+		Q_ASSERT(m_readSource);
 		delete m_exportSpec;
 		
-		int channelCount = (m_track->capture_left_channel() && m_track->capture_right_channel()) ? 2 : 1;
 		
-		ReadSource* rs;
-		bool wasRecording = true;
-		rs = resources_manager()->create_new_readsource(
-				dir,
-				name,
-				channelCount,
-    				channelCount,
-				m_song->get_id(),
-				audiodevice().get_bit_depth(), 
-				audiodevice().get_sample_rate(),
-				wasRecording );
-		
-		if (rs) {
-			// Re-use the writesources id for this readsource, so the filename
-			// and the readsources id match!
-			rs->set_id(id);
-			// Reset the lenght, so the set_audio_sources() call will get the 
-			// lenght from the ReadSource, so we're 100% sure the correct lenght
-			// will be used!
-			m_length = 0;
-			set_audio_source(rs);
-			m_song->get_diskio()->register_read_source( m_readSource );
-			m_recordingStatus = NO_RECORDING;
-			emit recordingFinished();
-		} else {
-			info().critical(tr("No ReadSource returned from resources manager after recording, removing clip from Track!"));
-			Command::process_command(m_track->remove_clip(this, false));
+		printf("finish: id %lld\n", get_id());
+		if (m_readSource->set_file(m_readSource->get_filename()) < 0) {
+			PERROR("Setting file for ReadSource failed after finishing recording");
 		}
+		
+// 		m_length = 0;
+		m_song->get_diskio()->register_read_source( m_readSource );
+		m_recordingStatus = NO_RECORDING;
+		
+		emit recordingFinished();
 	}
 }
 

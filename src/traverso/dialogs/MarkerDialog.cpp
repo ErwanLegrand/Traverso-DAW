@@ -315,7 +315,7 @@ void MarkerDialog::title_all()
 		QTreeWidgetItem *it = markersTreeWidget->topLevelItem(i);
 		Marker *m = get_marker(it->data(0, Qt::UserRole).toLongLong());
 		m->set_description(str);
-		it->setText(1, str);
+		it->setText(2, str);
 	}
 }
 

@@ -44,14 +44,10 @@ public:
 	int set_state( const QDomNode& node );
 	QDomNode get_state(QDomDocument doc);
 	
-	ReadSource* create_new_readsource(const QString& dir,
+	ReadSource* create_recording_source(const QString& dir,
 				const QString& name,
 				int channelCount,
-				int fileCount,
-				int songId,
-				int bitDepth,
-				int rate=0,
-    				bool wasRecording=false);
+				int songId);
 	
 	ReadSource* create_new_readsource(const QString& dir, const QString& name);
 	ReadSource* get_silent_readsource();
@@ -63,6 +59,7 @@ public:
 	
 	void set_clip_removed(AudioClip* clip);
 	void set_clip_added(AudioClip* clip);
+	void set_source_for_clip(AudioClip* clip, ReadSource* source);
 	
 	bool is_clip_in_use(qint64) const;
 

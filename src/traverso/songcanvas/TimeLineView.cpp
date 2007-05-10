@@ -283,8 +283,8 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 
 	// Draw minor ticks
 	for (int i = 0; i < (lastFrame-firstFrame+major) / minor; i++ ) {
-		int x = (int)(((int)(firstFrame/major))*major + i * minor)/m_sv->scalefactor;
-		painter->drawLine(x - xstartoffset, height - 5, x - xstartoffset, height - 1);
+		int x = (int)(((int)(firstFrame/major))*major + i * minor)/m_sv->scalefactor  - xstartoffset;
+		painter->drawLine(x, height - 5, x, height - 1);
 	}
 	
 	// Draw major ticks

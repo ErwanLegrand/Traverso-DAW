@@ -39,6 +39,7 @@
 		<file alias="undo-16">../../resources/images/icons/16x16/undo.png</file>
 		<file alias="redo-16">../../resources/images/icons/16x16/redo.png</file>
 		<file alias="redled-16">../../resources/images/icons/16x16/redled.png</file>
+		<file alias="refresh-16">../../resources/images/icons/16x16/reload.png</file>
 		<file alias="redledinactive-16">../../resources/images/icons/16x16/redledinactive.png</file>
 		<file alias="songmanager-16">../../resources/images/icons/16x16/contents.png</file>
 		<file alias="traverso_nl">../../traverso_nl.qm</file>

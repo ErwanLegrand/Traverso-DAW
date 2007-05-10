@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: BusMonitor.cpp,v 1.10 2007/05/08 16:44:31 r_sijrier Exp $
+$Id: BusMonitor.cpp,v 1.11 2007/05/10 20:02:36 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -54,12 +54,18 @@ BusMonitor::~BusMonitor()
 
 QSize BusMonitor::sizeHint() const
 {
-	return QSize( (inMeters.size() + outMeters.size()) * 50, 140);
+	int width = 0;
+	foreach(QWidget* widget, outMeters) {
+		if (! widget->isHidden()) {
+			width += widget->width();
+		}
+	}
+	return QSize(width, 140);
 }
 
 QSize BusMonitor::minimumSizeHint() const
 {
-	return QSize((inMeters.size() + outMeters.size()) * 20, 50);
+	return QSize(50, 50);
 }
 
 void BusMonitor::create_vu_meters( )

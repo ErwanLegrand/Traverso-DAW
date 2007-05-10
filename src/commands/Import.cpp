@@ -130,7 +130,7 @@ void Import::create_audioclip()
 {
 	Q_ASSERT(m_track);
 	m_clip = resources_manager()->new_audio_clip(m_name);
-	m_clip->set_audio_source(m_source);
+	resources_manager()->set_source_for_clip(m_clip, m_source);
 	m_clip->set_song(m_track->get_song());
 	m_clip->set_track(m_track);
 	// FIXME!!!!!!!!!!!!!!!!!!!!
