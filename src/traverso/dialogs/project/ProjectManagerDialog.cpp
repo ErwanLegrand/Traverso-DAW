@@ -293,7 +293,7 @@ void ProjectManagerDialog::accept()
 	m_project->set_arranger(lineEditArranger->text());
 	m_project->set_songwriter(lineEditSongwriter->text());
 	m_project->set_message(lineEditMessage->text());
-	m_project->set_genre(comboBoxGenre->currentText().toInt());
+	m_project->set_genre(comboBoxGenre->currentIndex());
 	
 	hide();
 }
