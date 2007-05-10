@@ -244,7 +244,6 @@ void ResourcesWidget::update_tree_widgets()
 		foreach(AudioClip* clip, resources_manager()->get_clips_for_source(rs)) {
 			QTreeWidgetItem* clipitem = new QTreeWidgetItem(item);
 			m_clipindices.insert(clip->get_id(), clipitem);
-			printf("update_tree_widgets: clip is %lld\n", clip->get_id());
 			clipitem->setText(0, clip->get_name());
 			QString start = frame_to_ms(clip->get_source_start_frame(), clip->get_rate());
 			QString end = frame_to_ms(clip->get_source_end_frame(), clip->get_rate());

@@ -38,6 +38,10 @@ class ExportWidget : public QDialog, protected Ui::ExportWidget
 public:
         ExportWidget(QWidget* parent = 0);
         ~ExportWidget();
+	
+	
+protected:
+	void closeEvent ( QCloseEvent * event );
 
 private:
         Project* m_project;

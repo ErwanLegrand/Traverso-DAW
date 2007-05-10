@@ -433,6 +433,7 @@ void ExportWidget::start_burn_process()
 	}
 	
 	cd_render();
+	closeButton->setEnabled(false);
 }
 
 
@@ -473,6 +474,8 @@ void ExportWidget::cdrdao_process_finished(int exitcode, QProcess::ExitStatus ex
 	
 	progressBar->setMaximum(100);
 	progressBar->setValue(0);
+	
+	closeButton->setEnabled(true);
 	
 	m_writingState = NO_STATE;
 	exportWidget->setEnabled(true);
@@ -674,4 +677,13 @@ void ExportWidget::read_standard_output()
 		return;
 	}	
 	
+}
+
+void ExportWidget::closeEvent(QCloseEvent * event)
+{
+	if (m_writingState != NO_STATE || !buttonBox->isEnabled()) {
+		event->setAccepted(false);
+		return;
+	}
+	QDialog::closeEvent(event);
 }
