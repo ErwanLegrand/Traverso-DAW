@@ -566,6 +566,7 @@ void ExportWidget::cd_export_finished()
 	if (cdDiskExportOnlyCheckBox->isChecked()) {
 		update_cdburn_status(tr("Export to disk finished!"), NORMAL_MESSAGE);
 		exportWidget->setEnabled(true);
+		closeButton->setEnabled(true);
 		optionsGroupBox->setEnabled(true);
 		return;
 	}

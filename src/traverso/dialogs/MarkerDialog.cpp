@@ -393,7 +393,7 @@ void MarkerDialog::songwriter_all()
 
 void MarkerDialog::message_all()
 {
-	QString str = lineEditSongwriter->text();
+	QString str = lineEditMessage->text();
 	if (QMessageBox::question(this, tr("Set all Messages"), 
 					tr("Do you really want to set all messages to\n\"")
 					+str+"\"?", QMessageBox::Yes | QMessageBox::No, 
