@@ -450,20 +450,15 @@ void ExportWidget::cdrdao_process_started()
 
 void ExportWidget::cdrdao_process_finished(int exitcode, QProcess::ExitStatus exitstatus)
 {
+	if (exitstatus == QProcess::CrashExit) {
+		update_cdburn_status(tr("CD Burn process failed!"), ERROR_MESSAGE);
+	}
+	
 	if (m_writingState == ABORT_BURN) {
 		update_cdburn_status(tr("CD Burn process stopped on user request."), NORMAL_MESSAGE);
 		startButton->show();
 		stopButton->hide();
 		stopButton->setEnabled(true);
-		unlock_device();
-		m_writingState = NO_STATE;
-		return;
-	}
-	
-	if (exitstatus == QProcess::CrashExit) {
-		update_cdburn_status(tr("CD Burn process failed!"), ERROR_MESSAGE);
-		unlock_device();
-		return;
 	}
 	
 	if (m_writingState == BURNING) {
@@ -472,11 +467,16 @@ void ExportWidget::cdrdao_process_finished(int exitcode, QProcess::ExitStatus ex
 		stopButton->hide();
 	}
 	
+	if (exitstatus == QProcess::CrashExit || m_writingState == ABORT_BURN) {
+		unlock_device();
+	}
+	
 	progressBar->setMaximum(100);
 	progressBar->setValue(0);
 	
 	m_writingState = NO_STATE;
 	exportWidget->setEnabled(true);
+	optionsGroupBox->setEnabled(true);
 }
 
 void ExportWidget::cd_render()
@@ -484,6 +484,7 @@ void ExportWidget::cd_render()
 	PENTER;
 	
 	exportWidget->setEnabled(false);
+	optionsGroupBox->setEnabled(false);
 	
 	update_cdburn_status(tr("Rendering Song(s)"), NORMAL_MESSAGE);
 	
@@ -543,7 +544,7 @@ void ExportWidget::write_to_cd()
 	QStringList arguments;
 	arguments << "write" << "--device" << device << "-n" << "--eject";
 	if (speedComboBox->currentIndex() != 0) {
-		arguments << "--speed" << speedComboBox->currentText();
+		arguments << "--speed" << speedComboBox->currentText().remove("x");
 	}
 	if (simulateCheckBox->isChecked()) {
 		arguments <<"--simulate";
@@ -562,6 +563,7 @@ void ExportWidget::cd_export_finished()
 	if (cdDiskExportOnlyCheckBox->isChecked()) {
 		update_cdburn_status(tr("Export to disk finished!"), NORMAL_MESSAGE);
 		exportWidget->setEnabled(true);
+		optionsGroupBox->setEnabled(true);
 		return;
 	}
 	
@@ -640,6 +642,7 @@ void ExportWidget::read_standard_output()
 	
 	if (stdout.contains("Unit not ready")) {
 		update_cdburn_status(tr("Waiting for CD Writer... (no disk inserted?)"), NORMAL_MESSAGE);
+		progressBar->setMaximum(0);
 		return;
 	}
 		
