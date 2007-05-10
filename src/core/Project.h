@@ -50,6 +50,13 @@ public :
 	QString get_title() const;
 	QString get_engineer() const;
 	QString get_description() const;
+	QString get_discid() const;
+	QString get_performer() const;
+	QString get_arranger() const;
+	QString get_songwriter() const;
+	QString get_message() const;
+	QString get_upc_ean() const;
+	int get_genre();
 	QString get_root_dir() const;
 	QString get_audiosources_dir() const;
 	QString get_import_dir() const;
@@ -64,6 +71,13 @@ public :
 	void set_title(const QString& pTitle);
 	void set_engineer(const QString& pEngineer);
 	void set_description(const QString& des);
+	void set_discid(const QString& pId);
+	void set_performer(const QString& pPerformer);
+	void set_arranger(const QString& pArranger);
+	void set_songwriter(const QString& pSongwriter);
+	void set_message(const QString& pMessage);
+	void set_upc_ean(const QString& pUPC);
+	void set_genre(int pGenre);
 	void set_song_export_progress(int pogress);
 	void set_current_song(qint64 id);
 	void set_import_dir(const QString& dir);
@@ -97,6 +111,13 @@ private:
 	QString 	engineer;
 	QString		m_description;
 	QString		m_importDir;
+	QString		m_discid;
+	int		m_genre;
+	QString		m_upcEan;
+	QString		m_performer;
+	QString		m_arranger;
+	QString		m_songwriter;
+	QString		m_message;
 
 	int		m_rate;
 	int		m_bitDepth;

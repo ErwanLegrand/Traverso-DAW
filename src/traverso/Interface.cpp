@@ -51,7 +51,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "dialogs/project/NewProjectDialog.h"
 #include "dialogs/project/NewSongDialog.h"
 #include "dialogs/project/NewTrackDialog.h"
-#include "dialogs/CDTextDialog.h"
 #include "dialogs/MarkerDialog.h"
 #include "dialogs/BusSelectorDialog.h"
 #include "dialogs/InsertSilenceDialog.h"
@@ -171,7 +170,6 @@ Interface::Interface()
 	m_projectManagerDialog = 0;
 	m_openProjectDialog = 0;
 	m_newProjectDialog = 0;
-	m_cdTextDialog = 0;
 	m_insertSilenceDialog = 0;
 	m_markerDialog = 0;
 	m_busSelector = 0;
@@ -398,9 +396,6 @@ void Interface::create_menus( )
 	
 	action = menu->addAction(tr("Marker Editor"));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_marker_dialog()));
-	
-	action = menu->addAction(tr("CD Text Editor"));
-	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_cdtext_dialog()));
 	
 	menu->addSeparator();
 	
@@ -914,19 +909,6 @@ Command * Interface::show_newproject_dialog()
 	m_newProjectDialog->show();
 	return 0;
 }
-
-
-Command * Interface::show_cdtext_dialog()
-{
-	if (! m_cdTextDialog ) {
-		m_cdTextDialog = new CDTextDialog(this);
-	}
-	
-	m_cdTextDialog->show();
-	
-	return 0;
-}
-
 
 Command * Interface::show_insertsilence_dialog()
 {

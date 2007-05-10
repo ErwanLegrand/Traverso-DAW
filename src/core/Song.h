@@ -132,7 +132,7 @@ public:
 	void disconnect_from_audiodevice();
 	void connect_to_audiodevice();
 	void schedule_for_deletion();
-	QString get_cdrdao_tracklist(ExportSpecification* spec);
+	QString get_cdrdao_tracklist(ExportSpecification* spec, bool pregap = false);
 
 	audio_sample_t* 	mixdown;
 	audio_sample_t*		gainbuffer;

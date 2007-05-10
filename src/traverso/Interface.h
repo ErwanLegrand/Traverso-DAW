@@ -57,7 +57,6 @@ class ProjectManagerDialog;
 class OpenProjectDialog;
 class InfoToolBar;
 class SysInfoToolBar;
-class CDTextDialog;
 class InsertSilenceDialog;
 class MarkerDialog;
 class BusSelectorDialog;
@@ -112,7 +111,6 @@ private:
 	SettingsDialog*		m_settingsdialog;
 	ProjectManagerDialog*	m_projectManagerDialog;
 	OpenProjectDialog*	m_openProjectDialog;
-	CDTextDialog*		m_cdTextDialog;
 	InsertSilenceDialog*	m_insertSilenceDialog;
 	MarkerDialog*		m_markerDialog;
 	InfoToolBar* 		m_infoBar;
@@ -161,7 +159,6 @@ public slots :
 	Command* show_context_menu();
 	Command* show_open_project_dialog();
 	Command* show_project_manager_dialog();
-	Command* show_cdtext_dialog();
 	Command* show_insertsilence_dialog();
 	Command* show_marker_dialog();
 	Command* show_newsong_dialog();

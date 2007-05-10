@@ -860,7 +860,7 @@ int Song::process_export( nframes_t nframes )
 	return 1;
 }
 
-QString Song::get_cdrdao_tracklist(ExportSpecification* spec)
+QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 {
 	QString output;
 
@@ -932,6 +932,11 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec)
 		output += "      ARRANGER \"" + m_start->get_arranger() + "\"\n";
 		output += "      SONGWRITER \"" + m_start->get_songwriter() + "\"\n";
 		output += "      MESSAGE \"" + m_start->get_message() + "\"\n    }\n  }\n";
+
+		// add a standard pregap if requested, but only if it is the first track
+		if (pregap && (i == 0)) {
+			output += "  PREGAP 00:02:00\n";
+		}
 
 		if (i == 0) {
 			start = cd_to_frame(frame_to_cd(m_start->get_when(), m_project->get_rate()), m_project->get_rate());

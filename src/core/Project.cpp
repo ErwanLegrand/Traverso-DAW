@@ -197,6 +197,13 @@ int Project::load(QString projectfile)
 	title = e.attribute( "title", "" );
 	engineer = e.attribute( "engineer", "" );
 	m_description = e.attribute( "description", "No description set");
+	m_discid = e.attribute( "discId", "" );
+	m_upcEan = e.attribute( "upc_ean", "" );
+	m_genre = e.attribute( "genre", "" ).toInt();
+	m_performer = e.attribute( "performer", "" );
+	m_arranger = e.attribute( "arranger", "" );
+	m_songwriter = e.attribute( "songwriter", "" );
+	m_message = e.attribute( "message", "" );
 	m_rate = e.attribute( "rate", "" ).toInt();
 	m_bitDepth = e.attribute( "bitdepth", "" ).toInt();
 	m_id = e.attribute("id", "0").toLongLong();
@@ -277,6 +284,13 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
 	properties.setAttribute("title", title);
 	properties.setAttribute("engineer", engineer);
 	properties.setAttribute("description", m_description);
+	properties.setAttribute("discId", m_discid );
+	properties.setAttribute("upc_ean", m_upcEan);
+	properties.setAttribute("genre", QString::number(m_genre));
+	properties.setAttribute("performer", m_performer);
+	properties.setAttribute("arranger", m_arranger);
+	properties.setAttribute("songwriter", m_songwriter);
+	properties.setAttribute("message", m_message);
 	properties.setAttribute("currentSongId", m_currentSongId);
 	properties.setAttribute("rate", m_rate);
 	properties.setAttribute("bitdepth", m_bitDepth);
@@ -325,6 +339,41 @@ void Project::set_engineer(const QString& pEngineer)
 void Project::set_description(const QString& des)
 {
 	m_description = des;
+}
+
+void Project::set_discid(const QString& pId)
+{
+	m_discid = pId;
+}
+
+void Project::set_performer(const QString& pPerformer)
+{
+	m_performer = pPerformer;
+}
+
+void Project::set_arranger(const QString& pArranger)
+{
+	m_arranger = pArranger;
+}
+
+void Project::set_songwriter(const QString& pSongwriter)
+{
+	m_songwriter = pSongwriter;
+}
+
+void Project::set_message(const QString& pMessage)
+{
+	m_message = pMessage;
+}
+
+void Project::set_upc_ean(const QString& pUpc)
+{
+	m_upcEan = pUpc;
+}
+
+void Project::set_genre(int pGenre)
+{
+	m_genre = pGenre;
 }
 
 bool Project::has_changed()
@@ -463,6 +512,7 @@ int Project::start_export(ExportSpecification* spec)
 	}
 
 	QString cdrdaoImg = get_cdrdao_header(spec);
+	bool pregap = true;
 
 	foreach(Song* song, songsToRender) {
 		PMESG("Starting export for song %lld", song->get_id());
@@ -501,7 +551,8 @@ int Project::start_export(ExportSpecification* spec)
 			continue;
 		}
 		
-		cdrdaoImg += song->get_cdrdao_tracklist(spec);
+		cdrdaoImg += song->get_cdrdao_tracklist(spec, pregap);
+		pregap = false; // only add the pregap at the first song
 
 		while(song->render(spec) > 0) {}
 		
@@ -563,14 +614,14 @@ QString Project::get_cdrdao_header(ExportSpecification* spec)
 
 	output += "  LANGUAGE 0 {\n";
 	output += "    TITLE \"" + get_title() +  "\"\n";
-	output += "    PERFORMER \"\"\n";
-	output += "    DISC_ID \"\"\n";
-	output += "    UPC_EAN \"\"\n\n";
+	output += "    PERFORMER \"" + get_performer() + "\"\n";
+	output += "    DISC_ID \"" + get_discid() + "\"\n";
+	output += "    UPC_EAN \"" + get_upc_ean() + "\"\n\n";
 
-	output += "    ARRANGER \"\"\n";
-	output += "    SONGWRITER \"\"\n";
-	output += "    MESSAGE \"\"\n";
-	output += "    GENRE \"\"\n  }\n}\n\n";
+	output += "    ARRANGER \"" + get_arranger() + "\"\n";
+	output += "    SONGWRITER \"" + get_songwriter() + "\"\n";
+	output += "    MESSAGE \"" + get_message() + "\"\n";
+	output += "    GENRE \"" + QString::number(get_genre()) + "\"\n  }\n}\n\n";
 
 	return output;
 }
@@ -643,6 +694,41 @@ QString Project::get_engineer( ) const
 QString Project::get_description() const
 {
 	return m_description;
+}
+
+QString Project::get_discid() const
+{
+	return m_discid;
+}
+
+QString Project::get_performer() const
+{
+	return m_performer;
+}
+
+QString Project::get_arranger() const
+{
+	return m_arranger;
+}
+
+QString Project::get_songwriter() const
+{
+	return m_songwriter;
+}
+
+QString Project::get_message() const
+{
+	return m_message;
+}
+
+QString Project::get_upc_ean() const
+{
+	return m_upcEan;
+}
+
+int Project::get_genre()
+{
+	return m_genre;
 }
 
 QString Project::get_root_dir( ) const

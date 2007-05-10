@@ -46,7 +46,6 @@ HEADERS += \
 	songcanvas/MarkerView.h \
 	widgets/InfoWidgets.h \
 	widgets/MessageWidget.h \
-	dialogs/CDTextDialog.h \
 	dialogs/InsertSilenceDialog.h \
 	dialogs/MarkerDialog.h \
 	dialogs/BusSelectorDialog.h \
@@ -78,7 +77,6 @@ SOURCES += \
 	songcanvas/MarkerView.cpp \
 	widgets/InfoWidgets.cpp \
 	widgets/MessageWidget.cpp \
-	dialogs/CDTextDialog.cpp \
 	dialogs/InsertSilenceDialog.cpp \
 	dialogs/MarkerDialog.cpp \
 	dialogs/BusSelectorDialog.cpp \
@@ -104,7 +102,6 @@ FORMS += ui/ExportWidget.ui \
 	ui/SongManagerDialog.ui \
 	ui/ProjectManagerDialog.ui \
 	ui/MarkerDialog.ui \
-	ui/CDTextDialog.ui \
 	ui/BusSelectorDialog.ui \
 	ui/OpenProjectDialog.ui \
 	ui/NewProjectDialog.ui \
