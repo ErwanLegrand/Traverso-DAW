@@ -31,6 +31,14 @@
 #include "Export.h"
 #include <AudioDevice.h>
 
+
+#if defined (Q_WS_WIN)
+#define CDRDAO_BIN	"cdrdao.exe"
+#else
+#define CDRDAO_BIN	"cdrdao"
+#endif
+
+
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
@@ -388,7 +396,7 @@ void ExportWidget::query_devices()
 	m_writingState = QUERY_DEVICE;
 	QStringList args;
 	args << "drive-info";
-	m_burnprocess->start("cdrdao", args);
+	m_burnprocess->start(CDRDAO_BIN, args);
 }
 
 void ExportWidget::unlock_device()
@@ -407,7 +415,7 @@ void ExportWidget::unlock_device()
 	
 	QStringList args;
 	args  << "unlock" << "--device" << device;
-	m_burnprocess->start("cdrdao", args);
+	m_burnprocess->start(CDRDAO_BIN, args);
 }
 
 
@@ -554,7 +562,7 @@ void ExportWidget::write_to_cd()
 	}
 	
 	arguments << m_exportSpec->tocFileName;
-	m_burnprocess->start("cdrdao", arguments);
+	m_burnprocess->start(CDRDAO_BIN, arguments);
 }
 
 void ExportWidget::cd_export_finished()
@@ -604,7 +612,11 @@ void ExportWidget::read_standard_output()
 		char buf[1024];
 		while(m_burnprocess->readLine(buf, sizeof(buf)) != -1) {
 			QByteArray data = QByteArray(buf);
+#if defined (Q_WS_WIN)
+			if (QString(data).contains(QRegExp("[0-9],[0-9],[0-9]:"))) {
+#else
 			if (data.contains("/dev/")) {
+#endif
 				QString deviceName;
 				QStringList strlist = QString(data).split(QRegExp("\\s+"));
 				for (int i=1; i<strlist.size(); ++i) {
@@ -624,11 +636,11 @@ void ExportWidget::read_standard_output()
 	}
 	
 	
-	QString stdout = m_burnprocess->readAllStandardOutput();
-	printf("CD Writing: %s\n", QS_C(stdout));
+	QString sout = m_burnprocess->readAllStandardOutput();
+	printf("CD Writing: %s\n", QS_C(sout));
 	
 	
-	if (stdout.contains("Disk seems to be written")) {
+	if (sout.contains("Disk seems to be written")) {
 		QMessageBox::information( 0, tr("Disc not empty"), 
 					  tr("Please, insert an empty disc and hit enter"),
 					     QMessageBox::Ok);
@@ -636,7 +648,7 @@ void ExportWidget::read_standard_output()
 		return;
 	}
 	
-	if (stdout.contains("Inserted disk is not empty and not appendable.")) {
+	if (sout.contains("Inserted disk is not empty and not appendable.")) {
 		QMessageBox::information( 0, tr("Disc not empty"),
 					  tr("Inserted disk is not empty, and cannot append data to it!"),
 					     QMessageBox::Ok);
@@ -644,15 +656,15 @@ void ExportWidget::read_standard_output()
 	}
 		
 	
-	if (stdout.contains("Unit not ready")) {
+	if (sout.contains("Unit not ready")) {
 		update_cdburn_status(tr("Waiting for CD Writer... (no disk inserted?)"), NORMAL_MESSAGE);
 		progressBar->setMaximum(0);
 		return;
 	}
 		
 		
-	if (stdout.contains("%") && stdout.contains("(") && stdout.contains(")")) {
-		QStringList strlist = stdout.split(" ");
+	if (sout.contains("%") && sout.contains("(") && sout.contains(")")) {
+		QStringList strlist = sout.split(" ");
 		if (strlist.size() > 7) {
 			int written = strlist.at(1).toInt();
 			int total = strlist.at(3).toInt();
@@ -669,8 +681,8 @@ void ExportWidget::read_standard_output()
 		return;
 	}
 	
-	if (stdout.contains("Writing track")) {
-		QStringList strlist = stdout.split(" ");
+	if (sout.contains("Writing track")) {
+		QStringList strlist = sout.split(" ");
 		if (strlist.size() > 3) {
 			QString text = strlist.at(0) + " " + strlist.at(1) + " " + strlist.at(2);
 			update_cdburn_status(text, NORMAL_MESSAGE);
