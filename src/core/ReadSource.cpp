@@ -96,6 +96,7 @@ ReadSource::ReadSource(const QString& dir, const QString& name, int channelCount
 	m_silent = false;
 	m_name = name  + "-" + QString::number(m_id);
 	m_fileName = m_dir + m_name;
+	m_length = 0;
 }
 
 
