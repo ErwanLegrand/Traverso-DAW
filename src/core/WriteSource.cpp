@@ -66,6 +66,7 @@ WriteSource::~WriteSource()
 	}
 	
 	if (m_spec->isRecording) {
+		delete [] m_spec->dataF;
 		delete m_spec;
 	}
 }
