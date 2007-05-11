@@ -103,7 +103,6 @@ void TrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 void TrackView::add_new_audioclipview( AudioClip * clip )
 {
 	PENTER;
-	printf("TrackView:: Adding new View for clip %lld\n", clip->get_id());
 	AudioClipView* clipView = new AudioClipView(m_sv, this, clip);
 	m_clipViews.append(clipView);
 }

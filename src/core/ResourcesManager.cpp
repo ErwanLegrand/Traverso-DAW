@@ -383,10 +383,6 @@ void ResourcesManager::set_clip_removed(AudioClip * clip)
 
 void ResourcesManager::set_clip_added(AudioClip * clip)
 {
-	if (clip->recording_state() != AudioClip::NO_RECORDING) {
-		return;
-	}
-	
 	ReadSource* source = m_sources.value(clip->get_readsource_id());
 	if (source) {
 		source->unref(false);

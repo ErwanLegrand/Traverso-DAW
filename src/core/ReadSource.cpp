@@ -61,7 +61,7 @@ ReadSource::ReadSource(const QDomNode node)
 	m_silent = (m_channelCount == 0);
 }	
 
-
+// constructor for file import
 ReadSource::ReadSource(const QString& dir, const QString& name)
 	: AudioSource(dir, name)
 	, m_refcount(0)
@@ -83,6 +83,7 @@ ReadSource::ReadSource(const QString& dir, const QString& name)
 }
 
 
+// Constructur for recorded audio.
 ReadSource::ReadSource(const QString& dir, const QString& name, int channelCount, int fileCount)
 	: AudioSource(dir, name)
 	, m_refcount(0)
@@ -93,6 +94,8 @@ ReadSource::ReadSource(const QString& dir, const QString& name, int channelCount
 	m_channelCount = channelCount;
 	m_fileCount = fileCount;
 	m_silent = false;
+	m_name = name  + "-" + QString::number(m_id);
+	m_fileName = m_dir + m_name;
 }
 
 

@@ -506,8 +506,12 @@ int AudioClip::init_recording( QByteArray name )
 		channelcount = 1;
 	}
 
-	qint64 newsourceid = create_id();
-	QString sourceid = QString::number(newsourceid);
+	ReadSource* rs = resources_manager()->create_recording_source(
+				pm().get_project()->get_root_dir() + "/audiosources/",
+				m_name, channelcount, m_song->get_id());
+	
+	resources_manager()->set_source_for_clip(this, rs);
+	QString sourceid = QString::number(rs->get_id());
 	
 	for (int chan=0; chan<captureBus->get_channel_count(); chan++) {
 		if (chan == 0) {
@@ -526,29 +530,26 @@ int AudioClip::init_recording( QByteArray name )
 			channelnumber = chan;
 		}
 		
-		m_exportSpec = new ExportSpecification;
+		ExportSpecification* spec = new ExportSpecification;
 
-		m_exportSpec->exportdir = pm().get_project()->get_root_dir() + "/audiosources/";
-		m_exportSpec->format = SF_FORMAT_WAV;
-		m_exportSpec->data_width = 1;	// 1 means float
-		m_exportSpec->format |= SF_FORMAT_FLOAT;
-		m_exportSpec->channels = 1;
-		m_exportSpec->sample_rate = audiodevice().get_sample_rate();
-		m_exportSpec->src_quality = SRC_SINC_MEDIUM_QUALITY;
-		m_exportSpec->isRecording = true;
-		m_exportSpec->start_frame = 0;
-		m_exportSpec->end_frame = 0;
-		m_exportSpec->total_frames = 0;
-		m_exportSpec->blocksize = audiodevice().get_buffer_size();
-		m_exportSpec->name = m_name + "-" + sourceid;
-		m_exportSpec->dataF = captureBus->get_buffer( chan, audiodevice().get_buffer_size());
+		spec->exportdir = pm().get_project()->get_root_dir() + "/audiosources/";
+		spec->format = SF_FORMAT_WAV;
+		spec->data_width = 1;	// 1 means float
+		spec->format |= SF_FORMAT_FLOAT;
+		spec->channels = 1;
+		spec->sample_rate = audiodevice().get_sample_rate();
+		spec->src_quality = SRC_SINC_MEDIUM_QUALITY;
+		spec->isRecording = true;
+		spec->start_frame = 0;
+		spec->end_frame = 0;
+		spec->total_frames = 0;
+		spec->blocksize = audiodevice().get_buffer_size();
+		spec->name = m_name + "-" + sourceid;
+		spec->dataF = captureBus->get_buffer( chan, audiodevice().get_buffer_size());
 
-		WriteSource* ws = new WriteSource(m_exportSpec, channelnumber, channelcount);
+		WriteSource* ws = new WriteSource(spec, channelnumber, channelcount);
 		ws->set_process_peaks( true );
 		ws->set_recording( true );
-		// We had to create the id before creating the writesource, so 
-		// explicitely set it now, so it can be re-used for the resulting ReadSource!
-		ws->set_id(newsourceid);
 
 		connect(ws, SIGNAL(exportFinished( WriteSource* )), 
 			this, SLOT(finish_write_source( WriteSource* )));
@@ -562,12 +563,6 @@ int AudioClip::init_recording( QByteArray name )
 	m_recordingStatus = RECORDING;
 	
 	init_gain_envelope();
-	
-	ReadSource* rs;
-	rs = resources_manager()->create_recording_source(m_exportSpec->exportdir, m_exportSpec->name, channelcount, m_song->get_id());
-	rs->set_id(newsourceid);	
-	resources_manager()->set_source_for_clip(this, rs);
-	
 	
 	connect(m_song, SIGNAL(transferStopped()), this, SLOT(finish_recording()));
 
@@ -689,16 +684,13 @@ void AudioClip::finish_write_source( WriteSource * ws )
 	
 	if (writeSources.isEmpty()) {
 		Q_ASSERT(m_readSource);
-		delete m_exportSpec;
-		
 		
 		printf("finish: id %lld\n", get_id());
 		if (m_readSource->set_file(m_readSource->get_filename()) < 0) {
 			PERROR("Setting file for ReadSource failed after finishing recording");
 		}
 		
-// 		m_length = 0;
-		m_song->get_diskio()->register_read_source( m_readSource );
+		m_song->get_diskio()->register_read_source(m_readSource);
 		m_recordingStatus = NO_RECORDING;
 		
 		emit recordingFinished();

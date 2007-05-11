@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: MonoReader.cpp,v 1.5 2007/05/10 20:02:36 r_sijrier Exp $
+$Id: MonoReader.cpp,v 1.6 2007/05/11 13:09:23 r_sijrier Exp $
 */
 
 
@@ -375,7 +375,6 @@ void MonoReader::set_audio_clip( AudioClip * clip )
 {
 	Q_ASSERT(!m_clip);
 	m_clip = clip;
-	printf("mono reader clip id %lld\n", m_clip->get_id());
 }
 
 Peak* MonoReader::get_peak( )

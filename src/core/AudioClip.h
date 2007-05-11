@@ -144,7 +144,6 @@ private:
 	FadeCurve*		fadeIn;
 	FadeCurve*		fadeOut;
 	Curve*			m_gainEnvelope;
-	ExportSpecification*  	m_exportSpec;
 	QDomNode		m_domNode;
 	
 	QString 		m_name;

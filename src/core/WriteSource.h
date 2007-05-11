@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.h,v 1.12 2007/05/03 10:38:29 r_sijrier Exp $
+$Id: WriteSource.h,v 1.13 2007/05/11 13:09:23 r_sijrier Exp $
 */
 
 #ifndef WRITESOURCE_H
@@ -51,17 +51,14 @@ public :
 	int get_buffer_size() const {return m_buffersize;}
 
 	int process(nframes_t nframes);
-
-	int prepare_export(ExportSpecification* spec);
+	
 	int finish_export();
-
 	void set_process_peaks(bool process);
 	void set_recording(int rec);
 	void prepare_buffer();
 
 	size_t is_recording() const;
 
-	ExportSpecification*	spec;
 	void set_diskio(DiskIO* io );
 	Peak* 		m_peak;
 
@@ -70,6 +67,7 @@ private:
 	SNDFILE*	sf;
 	SF_INFO 	sfinfo;
 	DiskIO*		diskio;
+	ExportSpecification*	m_spec;
 	
 	GDither         dither;
 	nframes_t       out_samples_max;
@@ -89,6 +87,7 @@ private:
 	int	m_buffersize;
 	int	m_chunksize;
 	
+	int prepare_export();
 	
 
 signals:
