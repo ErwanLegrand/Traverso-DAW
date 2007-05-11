@@ -294,21 +294,6 @@ void ExportWidget::on_fileSelectButton_clicked( )
 }
 
 
-void ExportWidget::on_selectionSongButton_clicked( )
-{
-        show_settings_view();
-}
-
-void ExportWidget::on_allSongsButton_clicked( )
-{
-        show_settings_view();
-}
-
-void ExportWidget::on_currentSongButton_clicked( )
-{
-        show_settings_view();
-}
-
 void ExportWidget::update_song_progress( int progress )
 {
         songProgressBar->setValue(progress);
@@ -523,6 +508,7 @@ void ExportWidget::cd_render()
 	
 	connect(m_project, SIGNAL(overallExportProgressChanged(int)), this, SLOT(cd_export_progress(int)));
 	connect(m_project, SIGNAL(exportFinished()), this, SLOT(cd_export_finished()));
+	
 	m_project->export_project(m_exportSpec);
 }
 
@@ -554,14 +540,17 @@ void ExportWidget::write_to_cd()
 	
 	QStringList arguments;
 	arguments << "write" << "--device" << device << "-n" << "--eject";
+	
 	if (speedComboBox->currentIndex() != 0) {
 		arguments << "--speed" << speedComboBox->currentText().remove("x");
 	}
+	
 	if (simulateCheckBox->isChecked()) {
 		arguments <<"--simulate";
 	}
 	
 	arguments << m_exportSpec->tocFileName;
+	
 	m_burnprocess->start(CDRDAO_BIN, arguments);
 }
 
@@ -641,6 +630,15 @@ void ExportWidget::read_standard_output()
 	
 	
 	if (sout.contains("Disk seems to be written")) {
+		int index = cdDeviceComboBox->currentIndex();
+		if (index != -1) {
+#if defined (Q_WS_WIN)
+			// No idea if this works.....
+			QProcess::execute("rsm.exe", QStringList() << "eject" << "/n0");
+#else
+			QProcess::execute("eject", QStringList() << cdDeviceComboBox->itemData(index).toString());
+#endif
+		}
 		QMessageBox::information( 0, tr("Disc not empty"), 
 					  tr("Please, insert an empty disc and hit enter"),
 					     QMessageBox::Ok);
@@ -664,7 +662,7 @@ void ExportWidget::read_standard_output()
 		
 		
 	if (sout.contains("%") && sout.contains("(") && sout.contains(")")) {
-		QStringList strlist = sout.split(" ");
+		QStringList strlist = sout.split(QRegExp("\\s+"));
 		if (strlist.size() > 7) {
 			int written = strlist.at(1).toInt();
 			int total = strlist.at(3).toInt();
@@ -682,7 +680,7 @@ void ExportWidget::read_standard_output()
 	}
 	
 	if (sout.contains("Writing track")) {
-		QStringList strlist = sout.split(" ");
+		QStringList strlist = sout.split(QRegExp("\\s+"));
 		if (strlist.size() > 3) {
 			QString text = strlist.at(0) + " " + strlist.at(1) + " " + strlist.at(2);
 			update_cdburn_status(text, NORMAL_MESSAGE);
