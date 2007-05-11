@@ -935,17 +935,24 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 		output += "      SONGWRITER \"" + startmarker->get_songwriter() + "\"\n";
 		output += "      MESSAGE \"" + startmarker->get_message() + "\"\n    }\n  }\n";
 
-		// add a standard pregap if requested, but only if it is the first track
-		if (pregap && (i == 0)) {
-			output += "  PREGAP 00:02:00\n";
-		}
-
+		// add some stuff only required for the first track (e.g. pre-gap)
 		if (i == 0) {
 			start = cd_to_frame(frame_to_cd(startmarker->get_when(), m_project->get_rate()), m_project->get_rate());
-			// I thought some cd players required a 2-second PREGAP on the first track?
-			// FIXME: Uncomment, remove, or make configurable in the Export dialog.
-			// output += "  PREGAP 0:02:00\n";
+
+			if (pregap) {
+				if (start == 0) {
+					// standard pregap, because we have a track marker at the beginning
+					output += "  PREGAP 00:02:00\n";
+				} else {
+					// no track marker at the beginning, thus use the part from 0 to the first
+					// track marker for the pregap
+					output += "  START " + frame_to_cd(start, m_project->get_rate()) + "\n";
+					start = 0;
+				}
+			}
+
 		}
+
 
 		nframes_t end = cd_to_frame(frame_to_cd(endmarker->get_when(), m_project->get_rate()), m_project->get_rate());
 		nframes_t length = end - start;

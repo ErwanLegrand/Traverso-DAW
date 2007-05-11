@@ -76,7 +76,7 @@ ExportWidget::ExportWidget( QWidget * parent )
 	audioTypeComboBox->insertItem(0, "WAV");
 	audioTypeComboBox->insertItem(1, "AIFF");
 	audioTypeComboBox->insertItem(2, "FLAC");
-	audioTypeComboBox->insertItem(3, "CD image (cdrdao)");
+// 	audioTypeComboBox->insertItem(3, "CD image (cdrdao)");
 
 	bitdepthComboBox->setCurrentIndex(0);
 
@@ -552,6 +552,10 @@ void ExportWidget::write_to_cd()
 	
 	arguments << m_exportSpec->tocFileName;
 	
+	if (m_writingState == BURNING) {
+		update_cdburn_status(tr("Waiting for CD-Writer..."), NORMAL_MESSAGE);
+	}
+
 	m_burnprocess->start(CDRDAO_BIN, arguments);
 }
 
