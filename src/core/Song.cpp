@@ -886,9 +886,11 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 				// one marker is present. We add two more at the beginning
 				// and at the end of the render area. But we must check if 
 				// the present marker happens to be at one of these positions.
-				if (mlist.at(0)->get_when() != spec->start_frame) {
-					mlist.append(new Marker(m_timeline, spec->start_frame, Marker::TEMP_CDTRACK));
-				}
+
+				// The commented part now goes into the pregap, thus it is deactivated here
+// 				if (mlist.at(0)->get_when() != spec->start_frame) {
+// 					mlist.append(new Marker(m_timeline, spec->start_frame, Marker::TEMP_CDTRACK));
+// 				}
 				if (mlist.at(0)->get_when() != spec->end_frame) {
 					mlist.append(new Marker(m_timeline, spec->end_frame, Marker::TEMP_ENDMARKER));
 				}
