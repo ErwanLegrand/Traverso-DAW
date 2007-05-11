@@ -540,7 +540,7 @@ void ExportWidget::write_to_cd()
 	QString device = cdDeviceComboBox->itemData(index).toString();
 	
 	QStringList arguments;
-	arguments << "write" << "--device" << device << "-n" << "--eject";
+	arguments << "write" << "--device" << device << "-n" << "--eject" << "--driver" << "generic-mmc:0x00010000";
 	
 	if (speedComboBox->currentIndex() != 0) {
 		arguments << "--speed" << speedComboBox->currentText().remove("x");
@@ -631,7 +631,10 @@ void ExportWidget::read_standard_output()
 	
 	
 	QString sout = m_burnprocess->readAllStandardOutput();
-	printf("CD Writing: %s\n", QS_C(sout));
+
+	if (!sout.simplified().isEmpty()) {
+		printf("CD Writing: %s\n", QS_C(sout));
+	}
 	
 	
 	if (sout.contains("Disk seems to be written")) {
