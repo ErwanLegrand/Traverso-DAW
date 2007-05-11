@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Export.h,v 1.8 2007/05/10 20:02:36 r_sijrier Exp $
+$Id: Export.h,v 1.9 2007/05/11 11:16:32 r_sijrier Exp $
 */
 
 #ifndef EXPORT_H
@@ -42,7 +42,8 @@ struct ExportSpecification
 	
 	enum RenderPass {
 		CALC_NORM_FACTOR,
-  		WRITE_TO_HARDDISK
+  		WRITE_TO_HARDDISK,
+    		CREATE_CDRDAO_TOC
 	};
 	
 	int      	sample_rate;
@@ -77,6 +78,7 @@ struct ExportSpecification
 	QString		basename;
 	QString		name;
 	QString		tocFileName;
+	QString		cdrdaoToc;
 	bool		writeToc;
 	bool		normalize;
 	int		renderpass;

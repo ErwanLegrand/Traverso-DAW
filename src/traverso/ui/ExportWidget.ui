@@ -701,7 +701,7 @@
          <item>
           <widget class="QPushButton" name="stopButton" >
            <property name="text" >
-            <string>Stop</string>
+            <string>Abort</string>
            </property>
           </widget>
          </item>

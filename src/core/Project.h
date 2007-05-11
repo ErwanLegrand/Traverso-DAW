@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 class Song;
 class ResourcesManager;
 struct ExportSpecification;
+class ExportThread;
 
 class Project : public ContextItem
 {
@@ -94,6 +95,7 @@ public :
 	int load(QString projectfile = "");
 	int export_project(ExportSpecification* spec);
 	int start_export(ExportSpecification* spec);
+	int create_cdrdao_toc(ExportSpecification* spec);
 
 
 public slots:
@@ -104,6 +106,7 @@ private:
 	
 	QList<Song* >	m_songs;
 	ResourcesManager* 	m_asmanager;
+	ExportThread* 	m_exportThread;
 
 	QString 	title;
 	QString 	rootDir;
@@ -129,7 +132,6 @@ private:
 	qint64 		m_currentSongId;
 	
 	int create(int songcount, int numtracks);
-	QString		get_cdrdao_header(ExportSpecification* spec);
 	
 	friend class ProjectManager;
 

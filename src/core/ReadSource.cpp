@@ -43,7 +43,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 // This constructor is called for existing (recorded/imported) audio sources
 ReadSource::ReadSource(const QDomNode node)
 	: AudioSource(node)
-	, m_sources()
 	, m_refcount(0)
 	, m_unrefcount(0)
 	, m_error(0)

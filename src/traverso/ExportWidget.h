@@ -79,9 +79,6 @@ private slots:
         void on_fileSelectButton_clicked();
         void on_exportStartButton_clicked();
         void on_exportStopButton_clicked();
-        void on_selectionSongButton_clicked();
-        void on_allSongsButton_clicked();
-        void on_currentSongButton_clicked();
 	void on_cancelButton_clicked();
 	
 	void start_burn_process();

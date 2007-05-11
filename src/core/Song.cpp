@@ -313,12 +313,14 @@ int Song::prepare_export(ExportSpecification* spec)
 {
 	PENTER;
 	
-	if (transport) {
+	if ( ! (spec->renderpass == ExportSpecification::CREATE_CDRDAO_TOC) ) {
+		if (transport) {
 		spec->resumeTransport = true;
 		stopTransport = true;
+		}
+		
+		rendering = true;
 	}
-
-	rendering = true;
 
 	spec->start_frame = INT_MAX;
 	spec->end_frame = 0;
@@ -359,23 +361,23 @@ int Song::prepare_export(ExportSpecification* spec)
 	transportFrame = spec->start_frame;
 	spec->progress = 0;
 
-	QString idString = QString::number(m_id);
-	if (m_id < 10) {
-		idString.prepend("0");
-	}
 	spec->basename = "Song" + QString::number(m_project->get_song_index(m_id)) +"-" + title;
 	spec->name = spec->basename + spec->extension;
 
 	if (spec->start_frame >= spec->end_frame) {
-		PWARN("illegal frame range in export specification");
+		info().warning(tr("Export start frame starts beyong export end frame!!"));
 		return -1;
 	}
 
 	if (spec->channels == 0) {
-		PWARN("Illegal channel count (0) in export specification");
+		info().warning(tr("Export tries to render to 0 channels wav file??"));
 		return -1;
 	}
 
+	if (spec->renderpass == ExportSpecification::CREATE_CDRDAO_TOC) {
+		return 1;
+	}
+	
 	if (spec->renderpass == ExportSpecification::WRITE_TO_HARDDISK) {
 		m_exportSource = new WriteSource(spec);
 	}
@@ -902,36 +904,36 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 
 	// Sort the list according to Marker::get_when() values. This
 	// is the correct way to do it according to the Qt docu.
-	QMap<nframes_t, Marker*> mmap;
+	QMap<nframes_t, Marker*> markermap;
 	foreach(Marker *marker, mlist) {
-		mmap.insert(marker->get_when(), marker);
+		markermap.insert(marker->get_when(), marker);
 	}
-	mlist = mmap.values();
+	mlist = markermap.values();
 
 	nframes_t start = 0;
 	for(int i = 0; i < mlist.size()-1; ++i) {
-		Marker *m_start = mlist.at(i);
-		Marker *m_end = mlist.at(i+1);
+		Marker* startmarker = mlist.at(i);
+		Marker* endmarker = mlist.at(i+1);
 
 		output += "TRACK AUDIO\n";
 
-		if (m_start->get_copyprotect()) {
+		if (startmarker->get_copyprotect()) {
 			output += "  NO COPY\n";
 		} else {
 			output += "  COPY\n";
 		}
 
-		if (m_start->get_preemphasis()) {
+		if (startmarker->get_preemphasis()) {
 			output += "  PRE_EMPHASIS\n";
 		}
 
 		output += "  CD_TEXT {\n    LANGUAGE 0 {\n";
-		output += "      TITLE \"" + m_start->get_description() + "\"\n";
-		output += "      PERFORMER \"" + m_start->get_performer() + "\"\n";
-		output += "      ISRC \"" + m_start->get_isrc() + "\"\n";
-		output += "      ARRANGER \"" + m_start->get_arranger() + "\"\n";
-		output += "      SONGWRITER \"" + m_start->get_songwriter() + "\"\n";
-		output += "      MESSAGE \"" + m_start->get_message() + "\"\n    }\n  }\n";
+		output += "      TITLE \"" + startmarker->get_description() + "\"\n";
+		output += "      PERFORMER \"" + startmarker->get_performer() + "\"\n";
+		output += "      ISRC \"" + startmarker->get_isrc() + "\"\n";
+		output += "      ARRANGER \"" + startmarker->get_arranger() + "\"\n";
+		output += "      SONGWRITER \"" + startmarker->get_songwriter() + "\"\n";
+		output += "      MESSAGE \"" + startmarker->get_message() + "\"\n    }\n  }\n";
 
 		// add a standard pregap if requested, but only if it is the first track
 		if (pregap && (i == 0)) {
@@ -939,13 +941,13 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 		}
 
 		if (i == 0) {
-			start = cd_to_frame(frame_to_cd(m_start->get_when(), m_project->get_rate()), m_project->get_rate());
+			start = cd_to_frame(frame_to_cd(startmarker->get_when(), m_project->get_rate()), m_project->get_rate());
 			// I thought some cd players required a 2-second PREGAP on the first track?
 			// FIXME: Uncomment, remove, or make configurable in the Export dialog.
 			// output += "  PREGAP 0:02:00\n";
 		}
 
-		nframes_t end = cd_to_frame(frame_to_cd(m_end->get_when(), m_project->get_rate()), m_project->get_rate());
+		nframes_t end = cd_to_frame(frame_to_cd(endmarker->get_when(), m_project->get_rate()), m_project->get_rate());
 		nframes_t length = end - start;
 
 		QString s_start = frame_to_cd(start, m_project->get_rate());
@@ -955,7 +957,7 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 		start += length;
 
 		// check if the second marker is of type "Endmarker"
-		if ((m_end->get_type() == Marker::ENDMARKER) || (m_end->get_type() == Marker::TEMP_ENDMARKER)) {
+		if ((endmarker->get_type() == Marker::ENDMARKER) || (endmarker->get_type() == Marker::TEMP_ENDMARKER)) {
 			break;
 		}
 	}

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Export.cpp,v 1.6 2007/05/09 20:11:47 n_doebelin Exp $
+    $Id: Export.cpp,v 1.7 2007/05/11 11:16:32 r_sijrier Exp $
 */
 
 #include "Export.h"
@@ -28,6 +28,7 @@
 #include "Debugger.h"
 
 ExportThread::ExportThread(Project* project, ExportSpecification* specification)
+	: QThread(project)
 {
         m_project = project;
         m_spec  = specification;

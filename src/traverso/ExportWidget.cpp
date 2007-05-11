@@ -498,13 +498,14 @@ void ExportWidget::cd_render()
 	} else {
 		m_exportSpec->allSongs = false;
 	}
-	QString name = m_exportSpec->exportdir + "/";
-	QFileInfo fi(m_exportSpec->name);
-	name += fi.completeBaseName() + ".toc";
-	m_exportSpec->tocFileName = name;
-
+	
 	m_exportSpec->normalize = cdNormalizeCheckBox->isChecked();
 	m_exportSpec->isRecording = false;
+	
+	if (m_project->create_cdrdao_toc(m_exportSpec) < 0) {
+		info().warning(tr("Creating CDROM table of contents failed, unable to write CD"));
+		return;
+	}
 	
 	connect(m_project, SIGNAL(overallExportProgressChanged(int)), this, SLOT(cd_export_progress(int)));
 	connect(m_project, SIGNAL(exportFinished()), this, SLOT(cd_export_finished()));

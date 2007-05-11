@@ -55,6 +55,7 @@ Project::Project(const QString& pTitle)
 {
 	PENTERCONS;
 	m_currentSongId = 0;
+	m_exportThread = 0;
 	engineer = "";
 
 	rootDir = config().get_property("Project", "directory", "/directory/unknown/").toString() + "/" + title;
@@ -477,13 +478,21 @@ Command* Project::remove_song(Song* song, bool historable)
 
 int Project::export_project(ExportSpecification* spec)
 {
+	if (!m_exportThread) {
+		m_exportThread = new ExportThread(this, spec);
+	}
+	
+	if (m_exportThread->isRunning()) {
+		info().warning(tr("Export allready in progress, cannot start it twice!"));
+		return -1;
+	}
+	
 	spec->progress = 0;
 	spec->running = true;
 	spec->stop = false;
 	spec->breakout = false;
 
-	ExportThread* exportThread =  new ExportThread(this, spec);
-	exportThread->start();
+	m_exportThread->start();
 
 	return 0;
 }
@@ -510,9 +519,6 @@ int Project::start_export(ExportSpecification* spec)
 		}
 		songsToRender.append(song);
 	}
-
-	QString cdrdaoImg = get_cdrdao_header(spec);
-	bool pregap = true;
 
 	foreach(Song* song, songsToRender) {
 		PMESG("Starting export for song %lld", song->get_id());
@@ -548,12 +554,9 @@ int Project::start_export(ExportSpecification* spec)
 		
 		if (song->prepare_export(spec) < 0) {
 			PERROR("Failed to prepare song for export");
-			continue;
+			break;
 		}
 		
-		cdrdaoImg += song->get_cdrdao_tracklist(spec, pregap);
-		pregap = false; // only add the pregap at the first song
-
 		while(song->render(spec) > 0) {}
 		
 		song->set_transport_pos(spec->resumeTransportFrame);
@@ -569,42 +572,38 @@ int Project::start_export(ExportSpecification* spec)
 		renderedSongs++;
 	}
 
-	if (spec->writeToc) {
-		PMESG("Writing cdrdao toc-file");
-
-		QString name = spec->exportdir + "/";
-
-		if (spec->allSongs) {
-			// filename of the toc file is "project-name.toc"
-			name += get_title() + ".toc";
-		} else {
-			// filename of the toc file is "song-name.toc"
-			name += spec->basename + ".toc";
-		}
-		
-		spec->tocFileName = name;
-
-		QFile file(name);
-
-		if (file.open(QFile::WriteOnly)) {
-			QTextStream out(&file);
-			out << cdrdaoImg;
-		}
-	}
-
 	PMESG("Export Finished");
 
 	spec->running = false;
 	overallExportProgress = 0;
-	delete spec->dataF;
+	
+	delete [] spec->dataF;
+	spec->dataF = 0;
 
 	emit exportFinished();
 
 	return 1;
 }
 
-QString Project::get_cdrdao_header(ExportSpecification* spec)
+int Project::create_cdrdao_toc(ExportSpecification* spec)
 {
+	QList<Song* > songs;
+	QString filename = spec->exportdir;
+	
+	if (spec->allSongs) {
+		foreach(Song* song, m_songs) {
+			songs.append(song);
+		}
+		// filename of the toc file is "project-name.toc"
+		filename += get_title() + ".toc";
+	} else {
+		Song* song = get_current_song();
+		if (!song) {
+			return -1;
+		}
+		songs.append(song);
+	}
+	
 	QString output;
 
 	output += "CD_DA\n\n";
@@ -623,7 +622,40 @@ QString Project::get_cdrdao_header(ExportSpecification* spec)
 	output += "    MESSAGE \"" + get_message() + "\"\n";
 	output += "    GENRE \"" + QString::number(get_genre()) + "\"\n  }\n}\n\n";
 
-	return output;
+	
+	bool pregap = true;
+	spec->renderpass = ExportSpecification::CREATE_CDRDAO_TOC;
+	
+	foreach(Song* song, songs) {
+		if (song->prepare_export(spec) < 0) {
+			return -1;
+		}
+		output += song->get_cdrdao_tracklist(spec, pregap);
+		pregap = false; // only add the pregap at the first song
+	}
+	
+
+	if (spec->writeToc) {
+		if (!spec->allSongs) {
+			// filename of the toc file is "song-name.toc"
+			filename += spec->basename + ".toc";
+		}
+		
+		spec->tocFileName = filename;
+
+		QFile file(filename);
+
+		if (file.open(QFile::WriteOnly)) {
+			printf("Saving cdrdao toc-file to %s\n", QS_C(spec->tocFileName));
+			QTextStream out(&file);
+			out << output;
+			file.close();
+		}
+	}
+	
+	spec->cdrdaoToc = output;
+	
+	return 1;
 }
 
 Command* Project::select()
