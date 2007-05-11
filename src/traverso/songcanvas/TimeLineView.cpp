@@ -445,7 +445,7 @@ void TimeLineView::hoverMoveEvent ( QGraphicsSceneHoverEvent * event )
 
 Command * TimeLineView::drag_marker()
 {
-	update_softselected_marker(QPoint(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y()));
+	update_softselected_marker(QPoint(cpointer().on_first_input_event_scene_x(), cpointer().on_first_input_event_scene_y()));
 
 	if (m_blinkingMarker) {
 		return new DragMarker(m_blinkingMarker, m_sv->scalefactor, tr("Drag Marker"));
