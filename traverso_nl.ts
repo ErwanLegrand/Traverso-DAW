@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS><TS version="1.1" language="nl">
+<defaultcodec></defaultcodec>
 <context>
     <name>AddRemoveClip</name>
     <message>
@@ -984,7 +985,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/ExportWidget.ui" line="494"/>
         <source>Start</source>
-        <translation type="unfinished">Start</translation>
+        <translation>Start</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportWidget.ui" line="297"/>
@@ -1084,42 +1085,42 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ExportWidget.cpp" line="413"/>
         <source>CD Writer not ready, no disk inserted?</source>
-        <translation type="unfinished"></translation>
+        <translation>De CD brander is niet gereed, zit er een schijfje in de lade?</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportWidget.ui" line="25"/>
         <source>Export</source>
-        <translation type="unfinished">Exporteer</translation>
+        <translation>Exporteer</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportWidget.ui" line="41"/>
         <source>Export to Harddisk</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporteren naar harde schijf</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportWidget.ui" line="420"/>
         <source>Burn to CD</source>
-        <translation type="unfinished"></translation>
+        <translation>Naar CD schrijven</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportWidget.ui" line="432"/>
         <source>Export to disk only</source>
-        <translation type="unfinished"></translation>
+        <translation>Enkel naar harde schijf schrijven</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportWidget.ui" line="439"/>
         <source>Simulate</source>
-        <translation type="unfinished"></translation>
+        <translation>Simuleren</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportWidget.ui" line="454"/>
         <source>Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Informatie</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportWidget.ui" line="508"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>Sluiten</translation>
     </message>
 </context>
 <context>
