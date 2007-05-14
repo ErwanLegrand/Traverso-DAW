@@ -250,6 +250,8 @@ void AudioDriverPage::load_config( )
 	if (index >= 0) {
 		m_portaudiodrivers->driverCombo->setCurrentIndex(index);
 	}
+	
+	m_driverConfigPage->update_latency_combobox();
 
 #endif //end PORTAUDIO_SUPPORT
 }
