@@ -142,6 +142,7 @@ int AudioClip::set_state(const QDomNode& node)
 		if (!fadeInNode.isNull()) {
 			fadeIn = new FadeCurve(this, m_song, "FadeIn");
 			fadeIn->set_state( fadeInNode );
+			fadeIn->set_history_stack(get_history_stack());
 			private_add_fade(fadeIn);
 		}
 
@@ -149,6 +150,7 @@ int AudioClip::set_state(const QDomNode& node)
 		if (!fadeOutNode.isNull()) {
 			fadeOut = new FadeCurve(this, m_song, "FadeOut");
 			fadeOut->set_state( fadeOutNode );
+			fadeOut->set_history_stack(get_history_stack());
 			private_add_fade(fadeOut);
 		}
 		
@@ -969,6 +971,7 @@ void AudioClip::create_fade_in( )
 {
 	fadeIn = new FadeCurve(this, m_song, "FadeIn");
 	fadeIn->set_shape("Linear");
+	fadeIn->set_history_stack(get_history_stack());
 	THREAD_SAVE_CALL_EMIT_SIGNAL(this, fadeIn, private_add_fade(FadeCurve*), fadeAdded(FadeCurve*));
 }
 
@@ -976,6 +979,7 @@ void AudioClip::create_fade_out( )
 {
 	fadeOut = new FadeCurve(this, m_song, "FadeOut");
 	fadeOut->set_shape("Linear");
+	fadeOut->set_history_stack(get_history_stack());
 	THREAD_SAVE_CALL_EMIT_SIGNAL(this, fadeOut, private_add_fade(FadeCurve*), fadeAdded(FadeCurve*));
 }
 
