@@ -126,7 +126,7 @@ static float round_float( float f)
 /******************************/
 
 FadeBend::FadeBend(FadeView * fadeview)
-	: Command(fadeview)
+	: Command(fadeview->get_fade())
 	, m_fade(fadeview->get_fade())
 	, m_fv(fadeview) 
 {
@@ -207,7 +207,7 @@ int FadeBend::jog()
 /******************************/
 
 FadeStrength::FadeStrength(FadeView* fadeview)
-	: Command(fadeview)
+	: Command(fadeview->get_fade())
 	, m_fade(fadeview->get_fade())
 	, m_fv(fadeview)
 {
