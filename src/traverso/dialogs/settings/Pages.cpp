@@ -201,7 +201,7 @@ void AudioDriverPage::load_config( )
 	
 #if defined (ALSA_SUPPORT)
 	m_alsadevices->devicesCombo->clear();
-	int periodsIndex = config().get_property("Hardware", "numberofperiods", 1).toInt();
+	int periodsIndex = config().get_property("Hardware", "numberofperiods", 2).toInt();
 	m_alsadevices->periodsCombo->setCurrentIndex(periodsIndex - 2);
 	
 	QString name;

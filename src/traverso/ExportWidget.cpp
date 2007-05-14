@@ -53,6 +53,8 @@ ExportWidget::ExportWidget( QWidget * parent )
         setupUi(this);
 	
 	stopButton->hide();
+	QIcon icon = QApplication::style()->standardIcon(QStyle::SP_DirClosedIcon);
+	fileSelectButton->setIcon(icon);
 	
 	set_project(pm().get_project());
 

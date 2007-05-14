@@ -111,7 +111,7 @@
                 <item>
                  <widget class="QPushButton" name="fileSelectButton" >
                   <property name="text" >
-                   <string>...</string>
+                   <string/>
                   </property>
                  </widget>
                 </item>
