@@ -753,6 +753,7 @@ void AudioClipView::set_dragging(bool dragging)
 		}
 	} else {
 		if (m_posIndicator) {
+			scene()->removeItem(m_posIndicator);
 			delete m_posIndicator;
 			m_posIndicator = 0;
 		}
