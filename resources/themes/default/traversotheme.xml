@@ -6,7 +6,7 @@
 		<property name="AudioClip:infoareaheight" value="13" />
 		<property name="AudioClip:mimimumheightforinfoarea" value="40" />
 		<property name="AudioClip:wavemicroview:antialiased" value="0" />
-		<property name="AudioClip:fillwave" value="0" />
+		<property name="AudioClip:fillwave" value="1" />
 		
 		<property name="CurveNode:diameter" value="6" />
 		
