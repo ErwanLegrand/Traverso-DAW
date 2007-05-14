@@ -12,8 +12,8 @@ SUBDIRS += src/engine \
            src/plugins \
            src/traverso/songcanvas \
 	   src/commands/plugins/TraversoCommands \
-           src/traverso \
-           src/3rdparty/slv2
+           src/3rdparty/slv2 \
+           src/traverso
 
 DISTFILES += \
 	ChangeLog \
