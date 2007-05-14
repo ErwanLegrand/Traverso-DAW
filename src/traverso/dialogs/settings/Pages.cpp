@@ -101,7 +101,7 @@ AudioDriverPage::AudioDriverPage(QWidget *parent)
 void AudioDriverPage::save_config()
 {
 	config().set_property("Hardware", "samplerate", m_driverConfigPage->rateComboBox->currentText());
-	config().set_property("Hardware", "bufferSize", 
+	config().set_property("Hardware", "buffersize", 
 	       m_driverConfigPage->periodBufferSizesList.at(m_driverConfigPage->latencyComboBox->currentIndex()));
 	
 	config().set_property("Hardware", "drivertype", m_driverCombo->currentText());
@@ -121,7 +121,7 @@ void AudioDriverPage::save_config()
 	
 #if defined (ALSA_SUPPORT)
 	int periods = m_alsadevices->periodsCombo->currentText().toInt();
-	config().set_property("Hardware", "NumberOfPeriods", periods);
+	config().set_property("Hardware", "numberofperiods", periods);
 	int index = m_alsadevices->devicesCombo->currentIndex();
 	config().set_property("Hardware", "carddevice", m_alsadevices->devicesCombo->itemData(index));
 	
@@ -137,11 +137,11 @@ void AudioDriverPage::save_config()
 void AudioDriverPage::reset_default_config()
 {
 	config().set_property("Hardware", "samplerate", 44100);
-	config().set_property("Hardware", "bufferSize", 1024);
+	config().set_property("Hardware", "buffersize", 1024);
 #if defined (ALSA_SUPPORT)
 	config().set_property("Hardware", "drivertype", "ALSA");
 	config().set_property("Hardware", "carddevice", "hw:0");
-	config().set_property("Hardware", "NumberOfPeriods", 2);
+	config().set_property("Hardware", "numberofperiods", 2);
 #elif defined (JACK_SUPPORT)
 	config().set_property("Hardware", "drivertype", "Jack");
 #else
@@ -201,7 +201,7 @@ void AudioDriverPage::load_config( )
 	
 #if defined (ALSA_SUPPORT)
 	m_alsadevices->devicesCombo->clear();
-	int periodsIndex = config().get_property("Hardware", "NumberOfPeriods", 1).toInt();
+	int periodsIndex = config().get_property("Hardware", "numberofperiods", 1).toInt();
 	m_alsadevices->periodsCombo->setCurrentIndex(periodsIndex - 2);
 	
 	QString name;
@@ -282,8 +282,8 @@ void AudioDriverPage::restart_driver_button_clicked()
 	// The AlsaDriver retrieves it's periods number directly from config()
 	// So there is no way to use the current selected one, other then
 	// setting it now, and restoring it afterwards...
-	int currentperiods = config().get_property("Hardware", "NumberOfPeriods", 2).toInt();
-	config().set_property("Hardware", "NumberOfPeriods", periods);
+	int currentperiods = config().get_property("Hardware", "numberofperiods", 2).toInt();
+	config().set_property("Hardware", "numberofperiods", periods);
 	
 	if (driver == "ALSA") {
 		int index = m_alsadevices->devicesCombo->currentIndex();
@@ -301,7 +301,7 @@ void AudioDriverPage::restart_driver_button_clicked()
 	audiodevice().set_parameters(rate, buffersize, driver, capture, playback, cardDevice);
 	
 #if defined (ALSA_SUPPORT)
-	config().set_property("Hardware", "NumberOfPeriods", currentperiods);
+	config().set_property("Hardware", "numberofperiods", currentperiods);
 #endif
 }
 
@@ -799,19 +799,19 @@ DiskIOPage::DiskIOPage(QWidget * parent)
 
 void DiskIOPage::load_config()
 {
-	double buffertime = config().get_property("Hardware", "PreBufferSize", 1.0).toDouble();
+	double buffertime = config().get_property("Hardware", "readbuffersize", 1.0).toDouble();
 	m_config->bufferTimeSpinBox->setValue(buffertime);
 }
 
 void DiskIOPage::save_config()
 {
 	double buffertime = m_config->bufferTimeSpinBox->value();
-	config().set_property("Hardware", "PreBufferSize", buffertime);
+	config().set_property("Hardware", "readbuffersize", buffertime);
 }
 
 void DiskIOPage::reset_default_config()
 {
-	config().set_property("Hardware", "PreBufferSize", 1.0);
+	config().set_property("Hardware", "readbuffersize", 1.0);
 	load_config();
 }
 

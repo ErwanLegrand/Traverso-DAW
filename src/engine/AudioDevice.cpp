@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.28 2007/04/24 15:30:08 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.29 2007/05/14 18:05:29 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -143,6 +143,7 @@ AudioDevice::AudioDevice()
 	m_runAudioThread = false;
 	driver = 0;
 	audioThread = 0;
+	m_bufferSize = 1024;
 	m_cpuTime = new RingBufferNPT<trav_time_t>(4096);
 
 	m_driverType = tr("No Driver Loaded");
@@ -212,6 +213,7 @@ void AudioDevice::show_descriptors( )
 
 void AudioDevice::set_buffer_size( nframes_t size )
 {
+	Q_ASSERT(size > 0);
 	m_bufferSize = size;
 }
 
@@ -703,7 +705,7 @@ void AudioDevice::audiothread_finished()
 		// so something certainly did go wrong when starting the beast
 		// Start the Null Driver to avoid problems with Tsar
 		PERROR("Alsa/Jack AudioThread stopped, but we didn't ask for it! Something apparently did go wrong :-(");
-		set_parameters(44100, 1024, "Null Driver");
+		set_parameters(44100, m_bufferSize, "Null Driver");
 	}
 }
 
@@ -723,7 +725,7 @@ void AudioDevice::check_jack_shutdown()
 			info().critical(tr("The Jack server has been shutdown!"));
 			delete driver;
 			driver = 0;
-			set_parameters(44100, 1024, "Null Driver");
+			set_parameters(44100, m_bufferSize, "Null Driver");
 		}
 	}
 }
