@@ -486,7 +486,7 @@
 		</keyfact>
 		<keyfact type="D_FKEY" key1="HOME" >
 			<Objects>
-				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" sortorder="8" pluginname="TraversoCommands" commandname="MoveClip"  arguments="move_to_start" />
+				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" sortorder="7" pluginname="TraversoCommands" commandname="MoveClip"  arguments="move_to_start" />
 			</Objects>
 		</keyfact>
 		<keyfact type="D_FKEY" key1="END" >
