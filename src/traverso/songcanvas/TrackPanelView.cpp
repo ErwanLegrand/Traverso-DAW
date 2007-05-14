@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.26 2007/05/07 18:14:38 n_doebelin Exp $
+$Id: TrackPanelView.cpp,v 1.27 2007/05/14 22:53:36 r_sijrier Exp $
 */
 
 #include <QGraphicsScene>
@@ -125,7 +125,7 @@ void TrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
 		painter->fillRect(xstart, m_track->get_height() - m_tv->m_bottomborderwidth, pixelcount, m_tv->m_bottomborderwidth, color);
 	}
 
-	painter->fillRect(m_viewPort->width() - 2, 0, 2, m_track->get_height() - 1, themer()->get_color("Track:cliptopoffset"));
+	painter->fillRect(m_viewPort->width() - 2, 0, 2, m_track->get_height() - 1, themer()->get_color("TrackPanel:trackseparation"));
 	
 	if (xstart < 180) {
 		draw_panel_track_name(painter);
