@@ -435,8 +435,7 @@ void ExportWidget::cdrdao_process_started()
 	PENTER;
 	
 	if (m_writingState == BURNING) {
-		return;
-		update_cdburn_status(tr("Starting burn process...."), NORMAL_MESSAGE);
+		update_cdburn_status(tr("Waiting for CD-Writer..."), NORMAL_MESSAGE);
 		progressBar->setMaximum(0);
 	}
 
@@ -552,10 +551,6 @@ void ExportWidget::write_to_cd()
 	
 	arguments << m_exportSpec->tocFileName;
 	
-	if (m_writingState == BURNING) {
-		update_cdburn_status(tr("Waiting for CD-Writer..."), NORMAL_MESSAGE);
-	}
-
 	m_burnprocess->start(CDRDAO_BIN, arguments);
 }
 
@@ -631,11 +626,13 @@ void ExportWidget::read_standard_output()
 	
 	
 	QString sout = m_burnprocess->readAllStandardOutput();
-
-	if (!sout.simplified().isEmpty()) {
-		printf("CD Writing: %s\n", QS_C(sout));
+	
+	if (sout.simplified().isEmpty()) {
+		return;
 	}
 	
+	printf("CD Writing: %s\n", QS_C(sout));
+
 	
 	if (sout.contains("Disk seems to be written")) {
 		int index = cdDeviceComboBox->currentIndex();
