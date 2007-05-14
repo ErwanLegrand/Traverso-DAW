@@ -39,12 +39,23 @@ static const float CURSOR_SPEED		= 150.0;
 static const float RASTER_SIZE		= 0.05;
 
 
-FadeRange::FadeRange(AudioClip* clip, FadeCurve* curve, int direction)
+FadeRange::FadeRange(AudioClip* clip, FadeCurve* curve)
 	: Command(clip, "")
 {
 	m_curve = curve;
-	m_direction = direction;
-	setText( (direction == 1) ? tr("Fade In: range") : tr("Fade Out: range"));
+	m_direction = (m_curve->get_fade_type() == FadeCurve::FadeIn) ? 1 : -1;
+	setText( (m_direction == 1) ? tr("Fade In: range") : tr("Fade Out: range"));
+}
+
+
+FadeRange::FadeRange(AudioClip* clip, FadeCurve* curve, double newVal)
+	: Command(clip, "")
+{
+	m_curve = curve;
+	m_direction = (m_curve->get_fade_type() == FadeCurve::FadeIn) ? 1 : -1;
+	setText( (m_direction == 1) ? tr("Fade In: reset") : tr("Fade Out: reset"));
+	origFade = m_curve->get_range();
+	newFade = newVal;
 }
 
 
@@ -115,10 +126,11 @@ static float round_float( float f)
 /******************************/
 
 FadeBend::FadeBend(FadeView * fadeview)
-	: Command("FadeBend")
+	: Command(fadeview)
 	, m_fade(fadeview->get_fade())
 	, m_fv(fadeview) 
 {
+	setText( (m_fade->get_fade_type() == FadeCurve::FadeIn) ? tr("Fade In: bend") : tr("Fade Out: bend"));
 }
 
 int FadeBend::begin_hold()
@@ -126,6 +138,7 @@ int FadeBend::begin_hold()
 	PENTER;
 	origY = cpointer().on_first_input_event_y();
 	oldValue =  m_fade->get_bend_factor();
+	newBend = origBend = oldValue;
 	m_fv->set_holding(true);
 	return 1;
 }
@@ -135,6 +148,29 @@ int FadeBend::finish_hold()
 	QCursor::setPos(mousePos);
 	m_fv->set_holding(false);
 	return 1;
+}
+
+int FadeBend::prepare_actions()
+{
+	return 1;
+}
+
+int FadeBend::do_action()
+{
+	m_fade->set_bend_factor(newBend);
+	return 1;
+}
+
+int FadeBend::undo_action()
+{
+	m_fade->set_bend_factor(origBend);
+	return 1;
+}
+
+void FadeBend::cancel_action()
+{
+	finish_hold();
+	undo_action();
 }
 
 void FadeBend::set_cursor_shape(int useX, int useY)
@@ -160,6 +196,7 @@ int FadeBend::jog()
 	}
 
 	oldValue = m_fade->get_bend_factor();
+	newBend = oldValue;
 	
 	origY = cpointer().y();
 	
@@ -170,10 +207,11 @@ int FadeBend::jog()
 /******************************/
 
 FadeStrength::FadeStrength(FadeView* fadeview)
-	: Command("FadeStrength")
+	: Command(fadeview)
 	, m_fade(fadeview->get_fade())
 	, m_fv(fadeview)
 {
+	setText( (m_fade->get_fade_type() == FadeCurve::FadeIn) ? tr("Fade In: strength") : tr("Fade Out: strength"));
 }
 
 int FadeStrength::begin_hold()
@@ -181,10 +219,10 @@ int FadeStrength::begin_hold()
 	PENTER;
 	origY = cpointer().on_first_input_event_y();
 	oldValue =  m_fade->get_strenght_factor();
+	newStrength = origStrength = oldValue;
 	m_fv->set_holding(true);
 	return 1;
 }
-
 
 int FadeStrength::finish_hold()
 {
@@ -193,6 +231,28 @@ int FadeStrength::finish_hold()
 	return 1;
 }
 
+int FadeStrength::prepare_actions()
+{
+	return 1;
+}
+
+int FadeStrength::do_action()
+{
+	m_fade->set_strength_factor(newStrength);
+	return 1;
+}
+
+int FadeStrength::undo_action()
+{
+	m_fade->set_strength_factor(origStrength);
+	return 1;
+}
+
+void FadeStrength::cancel_action()
+{
+	finish_hold();
+	undo_action();
+}
 
 void FadeStrength::set_cursor_shape(int useX, int useY)
 {
@@ -219,7 +279,8 @@ int FadeStrength::jog()
 	}
 	
 	oldValue = m_fade->get_strenght_factor();
-	
+	newStrength = oldValue;
+
 	origY = cpointer().y();
 
 	return 1;

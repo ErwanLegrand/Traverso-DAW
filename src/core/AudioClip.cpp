@@ -576,21 +576,21 @@ Command* AudioClip::mute()
 
 Command* AudioClip::reset_fade_in()
 {
-	set_fade_in(1);
-	return (Command*) 0;
+	return new FadeRange(this, fadeIn, 1.0);
 }
 
 Command* AudioClip::reset_fade_out()
 {
-	set_fade_out(1);
-	return (Command*) 0;
+	return new FadeRange(this, fadeOut, 1.0);
 }
 
 Command* AudioClip::reset_fade_both()
 {
-	reset_fade_in();
-	reset_fade_out();
-	return (Command*) 0;
+	CommandGroup* group = new CommandGroup(this, tr("Reset Fades"));
+	group->add_command(reset_fade_in());
+	group->add_command(reset_fade_out());
+
+	return group;
 }
 
 AudioClip * AudioClip::prev_clip( )
@@ -860,20 +860,18 @@ nframes_t AudioClip::get_track_start_frame( ) const
 
 Command * AudioClip::clip_fade_in( )
 {
-	int direction = 1;
 	if (!fadeIn) {
 		create_fade_in();
 	}
-	return new FadeRange(this, fadeIn, direction);
+	return new FadeRange(this, fadeIn);
 }
 
 Command * AudioClip::clip_fade_out( )
 {
-	int direction = -1;
 	if (!fadeOut) {
 		create_fade_out();
 	}
-	return new FadeRange(this, fadeOut, direction);
+	return new FadeRange(this, fadeOut);
 }
 
 Command * AudioClip::normalize( )
@@ -943,10 +941,22 @@ FadeCurve * AudioClip::get_fade_out( )
 void AudioClip::private_add_fade( FadeCurve* fade )
 {
 	m_fades.append(fade);
+	
+	if (fade->get_fade_type() == FadeCurve::FadeIn) {
+		fadeIn = fade;
+	} else if (fade->get_fade_type() == FadeCurve::FadeOut) {
+		fadeOut = fade;
+	}
 }
 
 void AudioClip::private_remove_fade( FadeCurve * fade )
 {
+	if (fade == fadeIn) {
+		fadeIn = 0;
+	} else if (fade == fadeOut) {
+		fadeOut = 0;
+	}
+	
 	m_fades.removeAll(fade);
 }
 

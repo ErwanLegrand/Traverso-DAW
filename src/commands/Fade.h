@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Fade.h,v 1.8 2007/04/30 04:07:38 benjie Exp $
+$Id: Fade.h,v 1.9 2007/05/14 22:45:06 benjie Exp $
 */
 
 #ifndef FADE_H
@@ -34,7 +34,8 @@ class SongView;
 class FadeRange : public Command
 {
 public :
-        FadeRange(AudioClip* clip, FadeCurve* curve, int direction);
+        FadeRange(AudioClip* clip, FadeCurve* curve);
+	FadeRange(AudioClip* clip, FadeCurve* curve, double newVal);
         ~FadeRange();
 
         int begin_hold();
@@ -64,6 +65,11 @@ public :
 
         int begin_hold();
 	int finish_hold();
+        int prepare_actions();
+        int do_action();
+        int undo_action();
+	void cancel_action();
+
 	int jog();
 
 	void set_cursor_shape(int useX, int useY);
@@ -71,6 +77,8 @@ public :
 private :
 	float	oldValue;
 	int	origY;
+	double	origStrength;
+	double	newStrength;
 	FadeCurve*	m_fade;
 	FadeView*	m_fv;
 	QPoint		mousePos;
@@ -85,6 +93,11 @@ public :
 
         int begin_hold();
 	int finish_hold();
+        int prepare_actions();
+        int do_action();
+        int undo_action();
+	void cancel_action();
+
 	int jog();
 	
 	void set_cursor_shape(int useX, int useY);
@@ -92,6 +105,8 @@ public :
 private :
 	float	oldValue;
 	int	origY;
+	double	origBend;
+	double	newBend;
 	FadeCurve*	m_fade;
 	FadeView*	m_fv;
 	QPoint		mousePos;
