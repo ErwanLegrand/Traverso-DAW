@@ -60,13 +60,13 @@
 		<color name="AudioClip:wavemacroview:brush:curvemode" red="232" green="230" blue="255" alpha="255" />
 		<color name="AudioClip:wavemicroview"  red="150" green="150" blue="205"  alpha="255" />
 		<color name="AudioClip:wavemicroview:curvemode"  red="210" green="210" blue="255"  alpha="255" />
-		<color name="AudioClip:background:muted"  red="235" green="235" blue="235"  alpha="160" />
-		<color name="AudioClip:background:recording"  red="255" green="255" blue="255"  alpha="160" />
-		<color name="AudioClip:background:muted:mousehover"  red="255" green="255" blue="255"  alpha="190" />
-		<color name="AudioClip:background:selected"  red="101" green="111" blue="171"  alpha="190" />
-		<color name="AudioClip:background:selected:mousehover"  red="101" green="111" blue="171"  alpha="190" />
-		<color name="AudioClip:background"  red="245" green="245" blue="255"  alpha="160" />
-		<color name="AudioClip:background:mousehover"  red="255" green="255" blue="255"  alpha="190" />
+		<color name="AudioClip:background:muted"  red="235" green="235" blue="235"  alpha="170" />
+		<color name="AudioClip:background:recording"  red="255" green="255" blue="255"  alpha="170" />
+		<color name="AudioClip:background:muted:mousehover"  red="245" green="245" blue="245"  alpha="170" />
+		<color name="AudioClip:background:selected"  red="101" green="111" blue="171"  alpha="170" />
+		<color name="AudioClip:background:selected:mousehover"  red="111" green="121" blue="182"  alpha="170" />
+		<color name="AudioClip:background"  red="248" green="248" blue="255"  alpha="170" />
+		<color name="AudioClip:background:mousehover"  red="255" green="255" blue="255"  alpha="170" />
 		<color name="AudioClip:channelseperator"  red="178" green="191" blue="182"  alpha="255" />
 		<color name="AudioClip:channelseperator:selected"  red="24" green="137" blue="210"  alpha="255" />
 		<color name="AudioClip:contour"  red="50" green="50" blue="50"  alpha="150" />
@@ -114,8 +114,8 @@
 		<color name="PluginSlider:background" red="199" green="228" blue="211" alpha="255" />
 		<color name="PluginSlider:value"  red="240" green="190" blue="218"  alpha="255" />
 		
-		<color name="Song:background" red="240" green="240" blue="240" alpha="255" />
-		<color name="SongPanel:background" red="240" green="240" blue="240" alpha="255" />
+		<color name="Song:background" red="248" green="248" blue="248" alpha="255" />
+		<color name="SongPanel:background" red="248" green="248" blue="248" alpha="255" />
 		
 		<color name="Timeline:background" red="180" green="189" blue="189" alpha="255" />
 		<color name="Timeline:text" red="0" green="0" blue="0" alpha="255" />
