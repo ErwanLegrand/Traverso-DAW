@@ -535,20 +535,21 @@ void ExportWidget::write_to_cd()
 		QMessageBox::information( 0, tr("No Burn Device"), 
 					  tr("No burn Device available!"),
 					     QMessageBox::Ok);
+		m_writingState = NO_STATE;
 		return;
 	}
 		
 	QString device = cdDeviceComboBox->itemData(index).toString();
 	
 	QStringList arguments;
-	arguments << "write" << "--device" << device << "-n" << "--eject" << "--driver" << "generic-mmc:0x00010000";
+	arguments << "write" << "--device" << device << "-n" << "--eject" << "--driver" << "generic-mmc";
 	
 	if (speedComboBox->currentIndex() != 0) {
 		arguments << "--speed" << speedComboBox->currentText().remove("x");
 	}
 	
 	if (simulateCheckBox->isChecked()) {
-		arguments <<"--simulate";
+		arguments << "--simulate";
 	}
 	
 	arguments << m_exportSpec->tocFileName;
@@ -602,9 +603,18 @@ void ExportWidget::read_standard_output()
 	if (m_writingState == QUERY_DEVICE) {
 		char buf[1024];
 		while(m_burnprocess->readLine(buf, sizeof(buf)) != -1) {
-			QByteArray data = QByteArray(buf);
+			QString data = QString(buf);
+			printf("%s\n", QS_C(data));
+			if (data.contains("trying to open")) {
+				update_cdburn_status(tr("Trying to access CD Writer ..."), NORMAL_MESSAGE);
+				return;
+			}
+			if (data.contains("Cannot open") || data.contains("Cannot setup")) {
+				update_cdburn_status(tr("Cannot access CD Writer, is it in use ?"), ERROR_MESSAGE);
+				return;
+			}
 #if defined (Q_WS_WIN)
-			if (QString(data).contains(QRegExp("[0-9],[0-9],[0-9]:"))) {
+			if (data.contains(QRegExp("[0-9],[0-9],[0-9]:"))) {
 #else
 			if (data.contains("/dev/")) {
 #endif
@@ -623,6 +633,9 @@ void ExportWidget::read_standard_output()
 				cdDeviceComboBox->addItem(deviceName, device);
 			}
 		}
+		
+		update_cdburn_status(tr("Information"), NORMAL_MESSAGE);
+		
 		return;
 	}
 	
