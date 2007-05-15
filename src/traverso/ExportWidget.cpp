@@ -355,6 +355,7 @@ void ExportWidget::set_project(Project * project)
 		}
 		m_exportSpec = new ExportSpecification;
 		m_exportSpec->exportdir = m_project->get_root_dir() + "/Export/";
+		m_exportSpec->renderfinished = false;
 		exportDirName->setText(m_exportSpec->exportdir);
 		
 		connect(m_project, SIGNAL(songExportProgressChanged(int)), this, SLOT(update_song_progress(int)));
@@ -412,6 +413,7 @@ void ExportWidget::stop_burn_process()
 		update_cdburn_status(tr("Aborting Render process ..."), NORMAL_MESSAGE);
 		m_exportSpec->stop = true;
 		m_exportSpec->breakout = true;
+		m_exportSpec->renderfinished = false;
 	}
 	if (m_writingState == BURNING) {
 		update_cdburn_status(tr("Aborting CD Burn process ..."), NORMAL_MESSAGE);
@@ -474,40 +476,61 @@ void ExportWidget::cd_render()
 {
 	PENTER;
 	
-	update_cdburn_status(tr("Rendering Song(s)"), NORMAL_MESSAGE);
+	if (m_wasClosed && m_exportSpec->renderfinished && (m_exportSpec->allSongs == cdAllSongsButton->isChecked()) ) {
+		
+		if (QMessageBox::question(this, tr("Rerender CD content"), 
+		    		tr("Is the previous CD render still valid, or should I rerender the CD content?"), 
+				QMessageBox::Yes | QMessageBox::No, 
+				QMessageBox::No) == QMessageBox::Yes)
+		{
+			m_exportSpec->renderfinished = false;
+			m_wasClosed = false;
+		}
+	}
+
 	
-	m_exportSpec->extension = ".wav";
-	m_exportSpec->data_width = 16;
-	m_exportSpec->format = SF_FORMAT_WAV;
-	m_exportSpec->format |= SF_FORMAT_PCM_16;
-	m_exportSpec->channels = 2;
-	m_exportSpec->sample_rate = 44100;
-	m_exportSpec->writeToc = true;
-	m_exportSpec->dither_type = GDitherTri;
-	m_exportSpec->src_quality = SRC_SINC_MEDIUM_QUALITY; // SRC_SINC_BEST_QUALITY  SRC_SINC_FASTEST  SRC_ZERO_ORDER_HOLD  SRC_LINEAR
-	if (cdAllSongsButton->isChecked()) {
-		m_exportSpec->allSongs = true;
+	if (!(m_exportSpec->renderfinished && (m_exportSpec->allSongs == cdAllSongsButton->isChecked()))) {
+		
+		m_exportSpec->extension = ".wav";
+		m_exportSpec->data_width = 16;
+		m_exportSpec->format = SF_FORMAT_WAV;
+		m_exportSpec->format |= SF_FORMAT_PCM_16;
+		m_exportSpec->channels = 2;
+		m_exportSpec->sample_rate = 44100;
+		m_exportSpec->writeToc = true;
+		m_exportSpec->dither_type = GDitherTri;
+		m_exportSpec->src_quality = SRC_SINC_MEDIUM_QUALITY; // SRC_SINC_BEST_QUALITY  SRC_SINC_FASTEST  SRC_ZERO_ORDER_HOLD  SRC_LINEAR
+		if (cdAllSongsButton->isChecked()) {
+			m_exportSpec->allSongs = true;
+		} else {
+			m_exportSpec->allSongs = false;
+		}
+		m_exportSpec->normalize = cdNormalizeCheckBox->isChecked();
+		m_exportSpec->isRecording = false;
+		m_exportSpec->stop = false;
+		m_exportSpec->breakout = false;
+		
+		if (m_project->create_cdrdao_toc(m_exportSpec) < 0) {
+			info().warning(tr("Creating CDROM table of contents failed, unable to write CD"));
+			return;
+		}
+	
+		m_writingState = RENDER;
+
+		connect(m_project, SIGNAL(overallExportProgressChanged(int)), this, SLOT(cd_export_progress(int)));
+		connect(m_project, SIGNAL(exportFinished()), this, SLOT(cd_export_finished()));
+	
+		update_cdburn_status(tr("Rendering Song(s)"), NORMAL_MESSAGE);
+		
+		disable_ui_interaction();
+		m_project->export_project(m_exportSpec);
 	} else {
-		m_exportSpec->allSongs = false;
+		if (cdDiskExportOnlyCheckBox->isChecked()) {
+			return;
+		}
+		disable_ui_interaction();
+		write_to_cd();
 	}
-	m_exportSpec->normalize = cdNormalizeCheckBox->isChecked();
-	m_exportSpec->isRecording = false;
-	m_exportSpec->stop = false;
-	m_exportSpec->breakout = false;
-	
-	if (m_project->create_cdrdao_toc(m_exportSpec) < 0) {
-		info().warning(tr("Creating CDROM table of contents failed, unable to write CD"));
-		return;
-	}
-	
-	m_writingState = RENDER;
-	
-	disable_ui_interaction();
-	
-	connect(m_project, SIGNAL(overallExportProgressChanged(int)), this, SLOT(cd_export_progress(int)));
-	connect(m_project, SIGNAL(exportFinished()), this, SLOT(cd_export_finished()));
-	
-	m_project->export_project(m_exportSpec);
 }
 
 void ExportWidget::write_to_cd()
@@ -556,6 +579,7 @@ void ExportWidget::cd_export_finished()
 	
 	if (cdDiskExportOnlyCheckBox->isChecked()) {
 		update_cdburn_status(tr("Export to disk finished!"), NORMAL_MESSAGE);
+		m_exportSpec->renderfinished = true;
 		enable_ui_interaction();
 		return;
 	}
@@ -566,6 +590,7 @@ void ExportWidget::cd_export_finished()
 		return;
 	}
 	
+	m_exportSpec->renderfinished = true;
 	write_to_cd();
 }
 
@@ -714,6 +739,13 @@ void ExportWidget::closeEvent(QCloseEvent * event)
 	QDialog::closeEvent(event);
 }
 
+void ExportWidget::reject()
+{
+	if (m_writingState == NO_STATE && buttonBox->isEnabled()) {
+		hide();
+	}
+}
+
 void ExportWidget::disable_ui_interaction()
 {
 	closeButton->setEnabled(false);
@@ -734,3 +766,9 @@ void ExportWidget::enable_ui_interaction()
 	stopButton->setEnabled(true);
 	progressBar->setValue(0);
 }
+
+void ExportWidget::set_was_closed()
+{
+	m_wasClosed = true;
+}
+

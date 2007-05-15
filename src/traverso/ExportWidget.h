@@ -39,9 +39,10 @@ public:
         ExportWidget(QWidget* parent = 0);
         ~ExportWidget();
 	
+	void set_was_closed();
 	
 protected:
-	void closeEvent ( QCloseEvent * event );
+	void closeEvent(QCloseEvent* event);
 
 private:
         Project* m_project;
@@ -58,6 +59,7 @@ private:
 	void enable_ui_interaction();
 	
 	void update_cdburn_status(const QString& message, int type);
+	void unlock_device();
 	
 	enum {
 		NO_STATE,
@@ -71,6 +73,7 @@ private:
 	};
 	
 	int m_writingState;
+	bool m_wasClosed;
 
 private slots:
 	void set_project(Project* project);
@@ -91,8 +94,9 @@ private slots:
 	void cdrdao_process_finished(int exitcode, QProcess::ExitStatus exitstatus);
 	void cd_export_finished();
 	void cd_export_progress(int progress);
-	void unlock_device();
 	void query_devices();
+	
+	void reject();
 };
 
 #endif

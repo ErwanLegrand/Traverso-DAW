@@ -320,6 +320,7 @@ Command * Interface::show_export_widget( )
 		exportWidget = new ExportWidget(this);
 	}
 	if (exportWidget->isHidden()) {
+		exportWidget->set_was_closed();
 		exportWidget->show();
 	}
 	return (Command*) 0;
