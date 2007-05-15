@@ -514,10 +514,9 @@ int Project::start_export(ExportSpecification* spec)
 		}
 	} else {
 		Song* song = get_current_song();
-		if (!song) {
-			return -1;
+		if (song) {
+			songsToRender.append(song);
 		}
-		songsToRender.append(song);
 	}
 
 	foreach(Song* song, songsToRender) {
