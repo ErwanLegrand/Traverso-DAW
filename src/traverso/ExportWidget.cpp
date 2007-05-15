@@ -489,7 +489,9 @@ void ExportWidget::cd_render()
 
 	m_wasClosed = false;
 	
-	if (!(m_exportSpec->renderfinished && (m_exportSpec->allSongs == cdAllSongsButton->isChecked()))) {
+	if ( !	(m_exportSpec->renderfinished && 
+		(m_exportSpec->allSongs == cdAllSongsButton->isChecked()) &&
+		(m_exportSpec->normalize == cdNormalizeCheckBox->isChecked())) ) {
 		
 		m_exportSpec->extension = ".wav";
 		m_exportSpec->data_width = 16;
