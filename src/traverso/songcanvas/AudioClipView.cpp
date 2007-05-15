@@ -250,7 +250,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	// boundary checking, important for microview only, macroview needs the additional
 	// pixels to paint the waveform correctly
 	if ( microView && ((xstart + pixelcount) > m_boundingRect.width()) ) {
-		pixelcount = m_boundingRect.width() - xstart;
+		pixelcount = (int) m_boundingRect.width() - xstart;
 	}
 	int channels = m_clip->get_channels();
 	int peakdatacount = microView ? pixelcount : pixelcount * 2;
@@ -433,7 +433,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			p->drawLine(xstart, 0, xstart + pixelcount, 0);
 			
 			for (int x = xstart; x < (pixelcount+xstart); x++) {
-				polygon.append( QPoint(x, scaleFactor * mbuffer[bufferPos++]) );
+				polygon.append( QPoint(x, (int) (scaleFactor * mbuffer[bufferPos++])) );
 			}
 			
 			if (themer()->get_property("AudioClip:wavemicroview:antialiased", 0).toInt()) {
@@ -627,7 +627,7 @@ void AudioClipView::update_start_pos()
 Command * AudioClipView::fade_range()
 {
 	Q_ASSERT(m_song);
-	int x = (int) ( cpointer().scene_pos() - scenePos()).x();
+	int x = (int) cpointer().on_first_input_event_scene_x() - scenePos().x();
 
 	if (x < (m_boundingRect.width() / 2)) {
 		return m_clip->clip_fade_in();
@@ -641,7 +641,7 @@ Command * AudioClipView::fade_range()
 Command * AudioClipView::reset_fade()
 {
 	Q_ASSERT(m_song);
-	int x = (int) ( cpointer().scene_pos() - scenePos()).x();
+	int x = (int) cpointer().on_first_input_event_scene_x() - scenePos().x();
 
 	if (x < (m_boundingRect.width() / 2)) {
 		return m_clip->reset_fade_in();
