@@ -563,7 +563,7 @@ Command * Interface::export_keymap()
 	objects.insert("ProjectManager", pmlist);
 	
 	
-	out << "<html><body><h1>Traverso keymap: " << config().get_property("CCE", "keymap", "default").toString();
+	out << "<html><body><h1>Traverso keymap: " << config().get_property("CCE", "keymap", "default").toString() << "</h1>";
 	
 	foreach(QList<const QMetaObject* > objectlist, objects.values()) {
 		QString name = objects.key(objectlist);
@@ -596,7 +596,10 @@ Command * Interface::export_keymap()
 							if (i > 0) {
 								submenuname = somemenu->menuAction()->text() + "&#160;&#160;&#160;&#160;";
 							}
-							result += QString("<tr><td>") + submenuname + strings.at(1) + "</td><td>" + strings.at(2) + "</td></tr>";
+							QString keyfact = strings.at(2);
+							keyfact.replace("<", "&lt;");
+									
+							result += QString("<tr><td>") + submenuname + strings.at(1) + "</td><td>" + keyfact + "</td></tr>";
 						}
 					}
 				}

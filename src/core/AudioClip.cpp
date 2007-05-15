@@ -553,8 +553,7 @@ int AudioClip::init_recording( QByteArray name )
 		ws->set_process_peaks( true );
 		ws->set_recording( true );
 
-		connect(ws, SIGNAL(exportFinished( WriteSource* )), 
-			this, SLOT(finish_write_source( WriteSource* )));
+		connect(ws, SIGNAL(exportFinished(WriteSource*)), this, SLOT(finish_write_source(WriteSource*)));
 
 		writeSources.insert(channelnumber, ws);
 		m_song->get_diskio()->register_write_source( ws );
@@ -664,17 +663,8 @@ void AudioClip::finish_write_source( WriteSource * ws )
 {
 	PENTER;
 
-// 	printf("AudioClip::finish_write_source :  thread id is: %ld\n", QThread::currentThreadId ());
-
-	QString dir;
-	QString name;
-	qint64 id;
-	
 	if (writeSources.contains(ws)) {
 		writeSources.removeAll(ws);
-		dir = ws->get_dir();
-		name = ws->get_name();
-		id = ws->get_id();
 		if (ws->m_peak->finish_processing() < 0) {
 			PERROR("write source peak::finish_processing() failed!");
 		}
@@ -687,12 +677,14 @@ void AudioClip::finish_write_source( WriteSource * ws )
 	if (writeSources.isEmpty()) {
 		Q_ASSERT(m_readSource);
 		
-		printf("finish: id %lld\n", get_id());
 		if (m_readSource->set_file(m_readSource->get_filename()) < 0) {
 			PERROR("Setting file for ReadSource failed after finishing recording");
 		}
 		
 		m_song->get_diskio()->register_read_source(m_readSource);
+		// re-inits the lenght from the audiofile due calling rsm->set_source_for_clip()
+		m_length = 0;
+		resources_manager()->set_source_for_clip(this, m_readSource);
 		m_recordingStatus = NO_RECORDING;
 		
 		emit recordingFinished();
@@ -881,10 +873,10 @@ Command * AudioClip::normalize( )
         bool ok;
         double d = QInputDialog::getDouble(0, tr("Normalization"),
                                            tr("Set Normalization level:"), 0.0, -120, 0, 1, &ok);
-        if (ok)
+        if (ok) {
 		calculate_normalization_factor(d);
+	}
 
-	// Hmm, this is not entirely true, but "almost" ;-)
 	emit gainChanged();
 
 	return (Command*) 0;
@@ -917,11 +909,13 @@ void AudioClip::calculate_normalization_factor(float targetdB)
 	}
 
 	if (maxamp == 0.0f) {
+		printf("AudioClip::normalization: max amplitude == 0\n");
 		/* don't even try */
 		return;
 	}
 
 	if (maxamp == target) {
+		printf("AudioClip::normalization: max amplitude == target amplitude\n");
 		/* we can't do anything useful */
 		return;
 	}

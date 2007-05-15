@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSource.cpp,v 1.17 2007/05/11 13:09:23 r_sijrier Exp $
+$Id: AudioSource.cpp,v 1.18 2007/05/15 20:06:31 r_sijrier Exp $
 */
 
 
@@ -162,12 +162,6 @@ QString AudioSource::get_name( ) const
 int AudioSource::get_bit_depth( ) const
 {
 	return m_origBitDepth;
-}
-
-void AudioSource::set_channel_count( uint count )
-{
-	PENTER;
-	m_channelCount = count;
 }
 
 QString AudioSource::get_short_name() const

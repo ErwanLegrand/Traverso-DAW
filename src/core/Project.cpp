@@ -537,9 +537,9 @@ int Project::start_export(ExportSpecification* spec)
 			
 			while(song->render(spec) > 0) {}
 			
-			spec->normvalue = 1.0 / spec->peakvalue;
+			spec->normvalue = (1.0 - FLT_EPSILON) / spec->peakvalue;
 			
-			if (spec->peakvalue > (1.0 + FLT_EPSILON)) {
+			if (spec->peakvalue > 1.0) {
 				info().critical(tr("Detected clipping in exported audio! (%1)")
 						.arg(coefficient_to_dbstring(spec->peakvalue)));
 			}

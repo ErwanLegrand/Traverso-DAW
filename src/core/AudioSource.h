@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSource.h,v 1.14 2007/05/11 13:09:23 r_sijrier Exp $
+$Id: AudioSource.h,v 1.15 2007/05/15 20:07:00 r_sijrier Exp $
 */
 
 #ifndef AUDIOSOURCE_H
@@ -58,8 +58,6 @@ public :
 	int get_rate() const;
 	uint get_channel_count() const;
 	int get_bit_depth() const;
-	
-	void set_channel_count(uint count);
 	
 protected:
 	uint		m_channelCount;
