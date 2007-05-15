@@ -378,12 +378,10 @@ void ExportWidget::query_devices()
 		printf("query_devices: burnprocess still running!\n");
 		return;
 	}
-	cdDeviceComboBox->clear();
-	printf("quering devices...\n");
+	
 	m_writingState = QUERY_DEVICE;
-	QStringList args;
-	args << "drive-info";
-	m_burnprocess->start(CDRDAO_BIN, args);
+	cdDeviceComboBox->clear();
+	m_burnprocess->start(CDRDAO_BIN, QStringList() << "drive-info");
 }
 
 void ExportWidget::unlock_device()
@@ -410,11 +408,17 @@ void ExportWidget::stop_burn_process()
 {
 	PENTER;
 	
-	update_cdburn_status(tr("Aborting CD Burn process ..."), NORMAL_MESSAGE);
+	if (m_writingState == RENDER) {
+		update_cdburn_status(tr("Aborting Render process ..."), NORMAL_MESSAGE);
+		m_exportSpec->stop = true;
+		m_exportSpec->breakout = true;
+	}
+	if (m_writingState == BURNING) {
+		update_cdburn_status(tr("Aborting CD Burn process ..."), NORMAL_MESSAGE);
+		m_burnprocess->terminate();
+		m_writingState = ABORT_BURN;
+	}
 	
-	m_burnprocess->terminate();
-	
-	m_writingState = ABORT_BURN;
 	stopButton->setEnabled(false);
 }
 
@@ -428,7 +432,6 @@ void ExportWidget::start_burn_process()
 	}
 	
 	cd_render();
-	closeButton->setEnabled(false);
 }
 
 
@@ -451,15 +454,10 @@ void ExportWidget::cdrdao_process_finished(int exitcode, QProcess::ExitStatus ex
 	
 	if (m_writingState == ABORT_BURN) {
 		update_cdburn_status(tr("CD Burn process stopped on user request."), NORMAL_MESSAGE);
-		startButton->show();
-		stopButton->hide();
-		stopButton->setEnabled(true);
 	}
 	
 	if (m_writingState == BURNING) {
 		update_cdburn_status(tr("CD Writing process finished!"), NORMAL_MESSAGE);
-		startButton->show();
-		stopButton->hide();
 	}
 	
 	if (exitstatus == QProcess::CrashExit || m_writingState == ABORT_BURN) {
@@ -469,19 +467,12 @@ void ExportWidget::cdrdao_process_finished(int exitcode, QProcess::ExitStatus ex
 	progressBar->setMaximum(100);
 	progressBar->setValue(0);
 	
-	closeButton->setEnabled(true);
-	
-	m_writingState = NO_STATE;
-	exportWidget->setEnabled(true);
-	optionsGroupBox->setEnabled(true);
+	enable_ui_interaction();
 }
 
 void ExportWidget::cd_render()
 {
 	PENTER;
-	
-	exportWidget->setEnabled(false);
-	optionsGroupBox->setEnabled(false);
 	
 	update_cdburn_status(tr("Rendering Song(s)"), NORMAL_MESSAGE);
 	
@@ -499,14 +490,19 @@ void ExportWidget::cd_render()
 	} else {
 		m_exportSpec->allSongs = false;
 	}
-	
 	m_exportSpec->normalize = cdNormalizeCheckBox->isChecked();
 	m_exportSpec->isRecording = false;
+	m_exportSpec->stop = false;
+	m_exportSpec->breakout = false;
 	
 	if (m_project->create_cdrdao_toc(m_exportSpec) < 0) {
 		info().warning(tr("Creating CDROM table of contents failed, unable to write CD"));
 		return;
 	}
+	
+	m_writingState = RENDER;
+	
+	disable_ui_interaction();
 	
 	connect(m_project, SIGNAL(overallExportProgressChanged(int)), this, SLOT(cd_export_progress(int)));
 	connect(m_project, SIGNAL(exportFinished()), this, SLOT(cd_export_finished()));
@@ -518,24 +514,19 @@ void ExportWidget::write_to_cd()
 {
 	PENTER;
 	if ( ! (m_burnprocess->state() == QProcess::NotRunning) ) {
-		m_writingState = NO_STATE;
 		info().critical(tr("Burn process is still running, cannot start it twice!!"));
 		return;
 	}
 	
 	m_writingState = BURNING;
-	
-	startButton->hide();
-	stopButton->show();
-	
 	progressBar->setValue(0);
 	
 	int index = cdDeviceComboBox->currentIndex();
 	if (index == -1) {
 		QMessageBox::information( 0, tr("No Burn Device"), 
-					  tr("No burn Device available!"),
+					  tr("No burn Device selected or available!"),
 					     QMessageBox::Ok);
-		m_writingState = NO_STATE;
+		enable_ui_interaction();
 		return;
 	}
 		
@@ -565,9 +556,13 @@ void ExportWidget::cd_export_finished()
 	
 	if (cdDiskExportOnlyCheckBox->isChecked()) {
 		update_cdburn_status(tr("Export to disk finished!"), NORMAL_MESSAGE);
-		exportWidget->setEnabled(true);
-		closeButton->setEnabled(true);
-		optionsGroupBox->setEnabled(true);
+		enable_ui_interaction();
+		return;
+	}
+	
+	if (m_exportSpec->breakout) {
+		update_cdburn_status(tr("Render process stopped on user request."), NORMAL_MESSAGE);
+		enable_ui_interaction();
 		return;
 	}
 	
@@ -717,4 +712,25 @@ void ExportWidget::closeEvent(QCloseEvent * event)
 		return;
 	}
 	QDialog::closeEvent(event);
+}
+
+void ExportWidget::disable_ui_interaction()
+{
+	closeButton->setEnabled(false);
+	exportWidget->setEnabled(false);
+	optionsGroupBox->setEnabled(false);
+	startButton->hide();
+	stopButton->show();
+}
+
+void ExportWidget::enable_ui_interaction()
+{
+	m_writingState = NO_STATE;
+	exportWidget->setEnabled(true);
+	optionsGroupBox->setEnabled(true);
+	closeButton->setEnabled(true);
+	startButton->show();
+	stopButton->hide();
+	stopButton->setEnabled(true);
+	progressBar->setValue(0);
 }

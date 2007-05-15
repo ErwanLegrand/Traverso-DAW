@@ -54,11 +54,14 @@ private:
 	bool is_save_to_export();
 	void cd_render();
 	void write_to_cd();
+	void disable_ui_interaction();
+	void enable_ui_interaction();
 	
 	void update_cdburn_status(const QString& message, int type);
 	
 	enum {
 		NO_STATE,
+  		RENDER,
   		BURNING,
     		ABORT_BURN,
   		QUERY_DEVICE,
