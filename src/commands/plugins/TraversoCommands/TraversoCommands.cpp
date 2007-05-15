@@ -176,6 +176,10 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 				return 0;
 			}
 
+			if (view->get_clip()->is_locked()) {
+				return 0;
+			}
+
 			QString type;
 			if (arguments.size()) {
 				type = arguments.at(0).toString();

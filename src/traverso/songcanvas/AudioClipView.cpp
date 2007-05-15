@@ -85,6 +85,7 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	
 	connect(m_clip, SIGNAL(muteChanged()), this, SLOT(repaint()));
 	connect(m_clip, SIGNAL(stateChanged()), this, SLOT(repaint()));
+	connect(m_clip, SIGNAL(lockChanged()), this, SLOT(repaint()));
 	connect(m_clip, SIGNAL(gainChanged()), this, SLOT (gain_changed()));
 	connect(m_clip, SIGNAL(fadeAdded(FadeCurve*)), this, SLOT(add_new_fadeview( FadeCurve*)));
 	connect(m_clip, SIGNAL(fadeRemoved(FadeCurve*)), this, SLOT(remove_fadeview( FadeCurve*)));
@@ -199,6 +200,12 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 		painter->drawRect(xstart, 0, pixelcount, m_height - 1);
 	}
 	
+	// Paint a pixmap if the clip is locked
+	if (m_clip->is_locked()) {
+		int center = m_clip->get_length() / (2 * m_sv->scalefactor);
+		painter->drawPixmap(center - 8, m_height - 20, find_pixmap(":/lock"));
+	}
+
 	// If the beginning of the clip is painted, add some effect to make it
 	// more visible that it _is_ the start of the clip ?????????
 	if (xstart == 0) {
@@ -219,7 +226,6 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 // 	printf("drawing clip\n");
 	
 }
-
 
 void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 {

@@ -54,6 +54,7 @@ class AudioClip : public ContextItem, public Snappable
 	Q_CLASSINFO("clip_fade_out", tr("Out: Range"))
 	Q_CLASSINFO("normalize", tr("Normalize"))
 	Q_CLASSINFO("denormalize", tr("Normalize: reset"))
+	Q_CLASSINFO("lock", tr("Lock"))
 
 public:
 
@@ -118,6 +119,7 @@ public:
 	bool is_muted() const;
 	bool is_take() const;
 	bool is_selected() const;
+	bool is_locked() const;
 	bool has_song() const;
 	bool invalid_readsource() const {return m_invalidReadSource;}
 	int recording_state() const;
@@ -157,6 +159,7 @@ private:
 	int 		isSelected;
 	bool 		isTake;
 	bool 		isMuted;
+	bool		isLocked;
 	bool		m_invalidReadSource;
 	RecordingStatus	m_recordingStatus;
 	float	 	m_gain;
@@ -181,6 +184,7 @@ private:
 signals:
 	void stateChanged();
 	void muteChanged();
+	void lockChanged();
 	void positionChanged(Snappable*);
 	void trackEndFrameChanged();
 	void gainChanged();
@@ -195,6 +199,7 @@ public slots:
 	void set_right_edge(long frame);
 	void track_audible_state_changed();
 	void toggle_mute();
+	void toggle_lock();
 	void set_gain(float g);
 
 	float get_gain() const;
@@ -207,6 +212,7 @@ public slots:
         Command* clip_fade_out();
         Command* normalize();
         Command* denormalize();
+	Command* lock();
 
 private slots:
 	void private_add_fade(FadeCurve* fade);

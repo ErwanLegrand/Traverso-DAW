@@ -180,6 +180,7 @@
 			<Objects>
 				<Object objectname="SpectralMeterView" slotsignature="reset" modes="All" instantanious="0" />
 				<Object objectname="FadeCurve" slotsignature="reset" modes="All" instantanious="0" />
+				<Object objectname="AudioClip" slotsignature="lock" modes="All" instantanious="0" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="R" >

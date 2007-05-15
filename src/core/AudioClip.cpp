@@ -108,6 +108,7 @@ void AudioClip::init()
 	m_readSource = 0;
 	m_recordingStatus = NO_RECORDING;
 	isSelected = m_invalidReadSource = false;
+	isLocked = true;
 	fadeIn = 0;
 	fadeOut = 0;
 	m_refcount = 0;
@@ -124,10 +125,16 @@ int AudioClip::set_state(const QDomNode& node)
 	set_gain( e.attribute( "gain", "" ).toFloat() );
 	m_normfactor =  e.attribute( "normfactor", "1.0" ).toFloat();
 
+	if (e.attribute( "locked", "1" ).toInt() == 1) {
+		isLocked = true;
+	} else {
+		isLocked = false;
+	}
+
 	if (e.attribute("selected", "0").toInt() == 1) {
 		m_song->get_audioclip_manager()->select_clip(this);
 	}
-        
+
 	m_readSourceId = e.attribute("source", "").toLongLong();
 	isMuted =  e.attribute( "mute", "" ).toInt();
 
@@ -180,6 +187,7 @@ QDomNode AudioClip::get_state( QDomDocument doc )
 	node.setAttribute("clipname", m_name );
 	node.setAttribute("selected", isSelected );
 	node.setAttribute("id", m_id );
+	node.setAttribute("locked", isLocked);
 
 	node.setAttribute("source", m_readSource->get_id());
 
@@ -204,6 +212,12 @@ void AudioClip::toggle_mute()
 	isMuted=!isMuted;
 	set_sources_active_state();
 	emit muteChanged();
+}
+
+void AudioClip::toggle_lock()
+{
+	isLocked = !isLocked;
+	emit lockChanged();
 }
 
 void AudioClip::track_audible_state_changed()
@@ -575,6 +589,11 @@ Command* AudioClip::mute()
 	return new PCommand(this, "toggle_mute", tr("Toggle Mute"));
 }
 
+Command* AudioClip::lock()
+{
+	return new PCommand(this, "toggle_lock", tr("Toggle Lock"));
+}
+
 Command* AudioClip::reset_fade_in()
 {
 	return new FadeRange(this, fadeIn, 1.0);
@@ -790,6 +809,11 @@ bool AudioClip::is_take( ) const
 bool AudioClip::is_muted( ) const
 {
 	return isMuted;
+}
+
+bool AudioClip::is_locked( ) const
+{
+	return isLocked;
 }
 
 QString AudioClip::get_name( ) const

@@ -12,6 +12,7 @@
 		<file alias="cursorHoldLr">../../resources/images/cursorHoldLr.xpm</file>
 		<file alias="cursorHoldUd">../../resources/images/cursorHoldUd.xpm</file>
 		<file alias="cursorGain">../../resources/images/cursorGain.xpm</file>
+		<file alias="lock">../../resources/images/lock.png</file>
 		<file alias="traverso">../../resources/images/traverso.xpm</file>
 		<file alias="windowicon">../../resources/images/windowicon.xpm</file>
 		<file alias="keymaps/default.xml">../../resources/keymap.xml</file>
