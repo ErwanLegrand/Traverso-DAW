@@ -484,10 +484,10 @@ void ExportWidget::cd_render()
 				QMessageBox::No) == QMessageBox::Yes)
 		{
 			m_exportSpec->renderfinished = false;
-			m_wasClosed = false;
 		}
 	}
 
+	m_wasClosed = false;
 	
 	if (!(m_exportSpec->renderfinished && (m_exportSpec->allSongs == cdAllSongsButton->isChecked()))) {
 		
