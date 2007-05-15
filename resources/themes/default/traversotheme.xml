@@ -66,7 +66,7 @@
 		<color name="AudioClip:background:selected"  red="101" green="111" blue="171"  alpha="170" />
 		<color name="AudioClip:background:selected:mousehover"  red="111" green="121" blue="182"  alpha="170" />
 		<color name="AudioClip:background"  red="249" green="249" blue="255"  alpha="170" />
-		<color name="AudioClip:background:mousehover"  red="255" green="255" blue="255"  alpha="160" />
+		<color name="AudioClip:background:mousehover"  red="255" green="255" blue="255"  alpha="170" />
 		<color name="AudioClip:channelseperator"  red="178" green="191" blue="182"  alpha="255" />
 		<color name="AudioClip:channelseperator:selected"  red="24" green="137" blue="210"  alpha="255" />
 		<color name="AudioClip:contour"  red="50" green="50" blue="50"  alpha="150" />

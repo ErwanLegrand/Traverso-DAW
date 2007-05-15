@@ -47,6 +47,7 @@ private :
 	SongView*	m_sv;
 	bool		m_resync;
 	int		m_origXPos;
+	int		m_newXPos;
 };
 
 #endif

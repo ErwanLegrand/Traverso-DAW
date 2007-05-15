@@ -436,7 +436,7 @@ void BehaviorPage::load_config()
 	QString oncloseaction = config().get_property("Project", "onclose", "save").toString();
 	int defaultNumTracks = config().get_property("Song", "trackCreationCount", 6).toInt();
 	int scrollMode = config().get_property("PlayHead", "Scrollmode", 2).toInt();
-	bool resyncAudio = config().get_property("AudioClip", "SyncDuringDrag", true).toBool();
+	bool resyncAudio = config().get_property("AudioClip", "SyncDuringDrag", false).toBool();
 	
 	m_configpage->projectDirLineEdit->setText(dir);
 	m_configpage->loadLastProjectCheckBox->setChecked(loadLastUsedProject);

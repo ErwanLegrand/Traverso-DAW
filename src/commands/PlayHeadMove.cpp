@@ -57,7 +57,7 @@ int PlayHeadMove::begin_hold()
 {
 	m_cursor->show();
 	m_cursor->set_active(false);
-	m_origXPos = m_song->get_transport_frame() / m_sv->scalefactor;
+	m_origXPos = m_newXPos = m_song->get_transport_frame() / m_sv->scalefactor;
 	m_sv->start_shuttle(true, true);
 	return 1;
 }
@@ -86,6 +86,12 @@ int PlayHeadMove::jog()
 	if (x < 0) {
 		x = 0;
 	}
+	if (x == m_newXPos) {
+		return 0;
+	}
+	
+	m_newXPos = x;
+	
 	m_cursor->setPos(x, 0);
 	
 	nframes_t newpos = (nframes_t) (x * m_sv->scalefactor);
