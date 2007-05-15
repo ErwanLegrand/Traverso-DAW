@@ -25,14 +25,12 @@ LIBS +=  \
 
 HEADERS += \
 	BusMonitor.h \
-	BusSelector.h \
 	ContextDialog.h \
 	FadeContextDialog.h \
 	Help.h \
 	Main.h \
 	ExportWidget.h \
 	PluginSelectorDialog.h \
-	AudioSourcesManagerWidget.h \
 	Traverso.h \
 	Interface.h \
 	VUMeter.h \
@@ -58,14 +56,12 @@ HEADERS += \
 SOURCES += \
 	Traverso.cpp \
 	BusMonitor.cpp \
-	BusSelector.cpp \
 	ContextDialog.cpp \
 	FadeContextDialog.cpp \
 	Help.cpp \
 	Main.cpp \
 	ExportWidget.cpp \
 	PluginSelectorDialog.cpp \
-	AudioSourcesManagerWidget.cpp \
 	Interface.cpp \
 	VUMeter.cpp \
 	CorrelationMeterWidget.cpp \

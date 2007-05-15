@@ -60,12 +60,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-static const int TOPPANEL_FIXED_HEIGHT = 140;
-static const int STATUS_CONTAINER_FIXED_HEIGHT = 20;
-static const int MINIMUM_BUS_MONITOR_WIDTH = 80;
-static const int MINIMUM_BUS_MONITOR_HEIGHT = 90;
-static const int MINIMUM_FLOATING_BUS_MONITOR_HEIGHT = 120;
-
 
 class HistoryWidget : public QUndoView
 {
