@@ -147,7 +147,7 @@ void Song::init()
 
 	m_playBackBus = audiodevice().get_playback_bus("Playback 1");
 
-	transport = stopTransport = resumeTransport = false;
+	m_transport = m_stopTransport = resumeTransport = false;
 	snaplist = new SnapList(this);
 	workSnap = new Snappable();
 	workSnap->set_snap_list(snaplist);
@@ -155,7 +155,7 @@ void Song::init()
 	realtimepath = false;
 	scheduleForDeletion = false;
 	isSnapOn=true;
-	changed = rendering = m_recording = false;
+	changed = m_rendering = m_recording = false;
 	firstVisibleFrame=workingFrame=0;
 	seeking = 0;
 	// TODO seek to old position on project exit ?
@@ -252,8 +252,8 @@ void Song::connect_to_audiodevice( )
 void Song::disconnect_from_audiodevice()
 {
 	PENTER;
-	if (transport) {
-		transport = false;
+	if (m_transport) {
+		m_transport = false;
 	}
 	audiodevice().remove_client(m_audiodeviceClient);
 }
@@ -314,12 +314,12 @@ int Song::prepare_export(ExportSpecification* spec)
 	PENTER;
 	
 	if ( ! (spec->renderpass == ExportSpecification::CREATE_CDRDAO_TOC) ) {
-		if (transport) {
-		spec->resumeTransport = true;
-		stopTransport = true;
+		if (m_transport) {
+			spec->resumeTransport = true;
+			m_stopTransport = true;
 		}
 		
-		rendering = true;
+		m_rendering = true;
 	}
 
 	spec->start_frame = INT_MAX;
@@ -358,7 +358,6 @@ int Song::prepare_export(ExportSpecification* spec)
 // 	PWARN("Render length is: %s",frame_to_ms_3(spec->total_frames, m_project->get_rate()).toAscii().data() );
 
 	spec->pos = spec->start_frame;
-	transportFrame = spec->start_frame;
 	spec->progress = 0;
 
 	spec->basename = "Song" + QString::number(m_project->get_song_index(m_id)) +"-" + title;
@@ -382,6 +381,8 @@ int Song::prepare_export(ExportSpecification* spec)
 		m_exportSource = new WriteSource(spec);
 	}
 
+	transportFrame = spec->start_frame;
+	
 	resize_buffer(false, spec->blocksize);
 
 	return 1;
@@ -488,7 +489,7 @@ out:
 	if (!ret) {
 		spec->running = false;
 		spec->status = ret;
-		rendering = false;
+		m_rendering = false;
 	}
 
 	return ret;
@@ -544,9 +545,9 @@ void Song::set_work_at(nframes_t pos)
 void Song::set_transport_pos(nframes_t position)
 {
 	newTransportFramePos = (uint) position;
-	// If there is no transport, start_seek() will _not_ be
+	// If there is no m_transport, start_seek() will _not_ be
 	// called from within process(). So we do it now!
-	if (!transport) {
+	if (!m_transport) {
 		start_seek();
 	}
 
@@ -564,7 +565,7 @@ void Song::start_seek()
 	PMESG2("Song :: entering start_seek");
 // 	PMESG2("Song :: thread id is: %ld", QThread::currentThreadId ());
 	PMESG2("Song::start_seek()");
-	if (transport) {
+	if (m_transport) {
 		realtimepath = false;
 		resumeTransport = true;
 	}
@@ -573,10 +574,10 @@ void Song::start_seek()
 	m_diskio->prepare_for_seek();
 
 	// 'Tell' the diskio it should start a seek action.
-	if (!transport) {
+	if (!m_transport) {
 		emit seekStart(newTransportFramePos);
 	} else {
-		transport = false;
+		m_transport = false;
 		RT_THREAD_EMIT(this, (void*)newTransportFramePos, seekStart(uint));
 	}
 
@@ -590,7 +591,7 @@ void Song::seek_finished()
 	seeking = 0;
 
 	if (resumeTransport) {
-		transport = true;
+		m_transport = true;
 		realtimepath = true;
 		resumeTransport = false;
 	}
@@ -636,12 +637,12 @@ Command* Song::go_and_record()
 
 Command* Song::go()
 {
-// 	printf("Song-%d::go transport is %d\n", m_id, transport);
+// 	printf("Song-%d::go m_transport is %d\n", m_id, m_transport);
 	
 	CommandGroup* group = 0;
 	
-	if (transport) {
-		stopTransport = true;
+	if (m_transport) {
+		m_stopTransport = true;
 	} else {
 		emit transferStarted();
 		
@@ -660,8 +661,8 @@ Command* Song::go()
 			group->setText(tr("Recording to %n Clip(s)", "", clipcount));
 		}
 		
-		transport = true;
-// 		printf("transport is %d\n", transport);
+		m_transport = true;
+// 		printf("m_transport is %d\n", m_transport);
 		realtimepath = true;
 	}
 	
@@ -790,16 +791,16 @@ void Song::set_hzoom( int hzoom )
 int Song::process( nframes_t nframes )
 {
 	// If no need for playback/record, return.
-// 	printf("Song-%d::process transport is %d\n", m_id, transport);
-	if (!transport) {
+// 	printf("Song-%d::process m_transport is %d\n", m_id, m_transport);
+	if (!m_transport) {
 		return 0;
 	}
 
-	if (stopTransport) {
+	if (m_stopTransport) {
 		RT_THREAD_EMIT(this, 0, transferStopped());
-		transport = false;
+		m_transport = false;
 		realtimepath = false;
-		stopTransport = false;
+		m_stopTransport = false;
 
 		return 0;
 	}
@@ -1060,7 +1061,7 @@ int Song::get_track_index(qint64 id) const
 
 void Song::handle_diskio_readbuffer_underrun( )
 {
-	if (transport) {
+	if (m_transport) {
 		printf("Song:: DiskIO ReadBuffer UnderRun signal received!\n");
 		info().critical(tr("Hard Disk overload detected!"));
 		info().critical(tr("Failed to fill ReadBuffer in time"));
@@ -1069,7 +1070,7 @@ void Song::handle_diskio_readbuffer_underrun( )
 
 void Song::handle_diskio_writebuffer_overrun( )
 {
-	if (transport) {
+	if (m_transport) {
 		printf("Song:: DiskIO WriteBuffer OverRun signal received!\n");
 		info().critical(tr("Hard Disk overload detected!"));
 		info().critical(tr("Failed to empty WriteBuffer in time"));

@@ -579,15 +579,15 @@ void ExportWidget::cd_export_finished()
 	disconnect(m_project, SIGNAL(overallExportProgressChanged(int)), this, SLOT(cd_export_progress(int)));
 	disconnect(m_project, SIGNAL(exportFinished()), this, SLOT(cd_export_finished()));
 	
-	if (cdDiskExportOnlyCheckBox->isChecked()) {
-		update_cdburn_status(tr("Export to disk finished!"), NORMAL_MESSAGE);
-		m_exportSpec->renderfinished = true;
+	if (m_exportSpec->breakout) {
+		m_exportSpec->renderfinished = false;
+		update_cdburn_status(tr("Render process stopped on user request."), NORMAL_MESSAGE);
 		enable_ui_interaction();
 		return;
 	}
 	
-	if (m_exportSpec->breakout) {
-		update_cdburn_status(tr("Render process stopped on user request."), NORMAL_MESSAGE);
+	if (cdDiskExportOnlyCheckBox->isChecked()) {
+		update_cdburn_status(tr("Export to disk finished!"), NORMAL_MESSAGE);
 		enable_ui_interaction();
 		return;
 	}

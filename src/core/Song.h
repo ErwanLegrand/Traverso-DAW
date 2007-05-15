@@ -124,7 +124,7 @@ public:
 	
 	bool any_track_armed();
 	bool realtime_path() const {return realtimepath;}
-	bool is_transporting() const {return transport;}
+	bool is_transporting() const {return m_transport;}
 	bool is_changed() const {return changed;}
 	bool is_snap_on() const	{return isSnapOn;}
 	bool is_recording() const {return m_recording;}
@@ -159,7 +159,7 @@ private:
 	volatile size_t		transportFrame;
 	volatile size_t		workingFrame;
 	volatile size_t		newTransportFramePos;
-	volatile size_t		transport;
+	volatile size_t		m_transport;
 	volatile size_t		seeking;
 
 	
@@ -169,11 +169,11 @@ private:
 	QString 	title;
 	int		m_mode;
 	int 		m_hzoom;
-	bool 		rendering;
+	bool 		m_rendering;
 	bool 		changed;
 	bool 		isSnapOn;
 	bool		resumeTransport;
-	bool 		stopTransport;
+	bool 		m_stopTransport;
 	bool		realtimepath;
 	bool		scheduleForDeletion;
 	bool		m_recording;
