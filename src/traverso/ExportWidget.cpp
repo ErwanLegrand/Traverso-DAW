@@ -479,7 +479,7 @@ void ExportWidget::cd_render()
 	if (m_wasClosed && m_exportSpec->renderfinished && (m_exportSpec->allSongs == cdAllSongsButton->isChecked()) ) {
 		
 		if (QMessageBox::question(this, tr("Rerender CD content"), 
-		    		tr("Is the previous CD render still valid, or should I rerender the CD content?"), 
+		    		tr("There is allready a CD render available.\nShould I rerender the CD content?"), 
 				QMessageBox::Yes | QMessageBox::No, 
 				QMessageBox::No) == QMessageBox::Yes)
 		{
