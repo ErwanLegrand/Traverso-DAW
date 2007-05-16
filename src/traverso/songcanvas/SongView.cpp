@@ -136,6 +136,7 @@ SongView::SongView(SongWidget* songwidget,
 	load_theme_data();
 	
 	// FIXME Center too position on song close!!
+	ensureVisible(0.0, 0.0, 0.0, 0.0);
 	center();
 }
 
