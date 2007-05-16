@@ -973,10 +973,8 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 	}
 
 	// delete all temporary markers
-	for(int i = mlist.size() - 1; i >= 0; --i) {
-		Marker *marker = mlist.at(i);
+	foreach(Marker* marker, mlist) {
 		if ((marker->get_type() == Marker::TEMP_CDTRACK) || (marker->get_type() == Marker::TEMP_ENDMARKER)) {
-			mlist.removeAt(i);
 			delete marker;
 		}
 	}
