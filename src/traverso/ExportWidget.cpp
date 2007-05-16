@@ -476,6 +476,11 @@ void ExportWidget::cd_render()
 {
 	PENTER;
 	
+	if ( ! (m_burnprocess->state() == QProcess::NotRunning) ) {
+		info().critical(tr("Burn process is still running, cannot start it twice!!"));
+		return;
+	}
+	
 	if (m_wasClosed && m_exportSpec->renderfinished && (m_exportSpec->allSongs == cdAllSongsButton->isChecked()) ) {
 		
 		if (QMessageBox::question(this, tr("Rerender CD content"), 
