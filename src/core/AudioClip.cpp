@@ -126,11 +126,7 @@ int AudioClip::set_state(const QDomNode& node)
 	set_gain( e.attribute( "gain", "" ).toFloat() );
 	m_normfactor =  e.attribute( "normfactor", "1.0" ).toFloat();
 
-	if (e.attribute( "locked", "1" ).toInt() == 1) {
-		isLocked = true;
-	} else {
-		isLocked = false;
-	}
+	isLocked = e.attribute( "locked", "0" ).toInt();
 
 	if (e.attribute("selected", "0").toInt() == 1) {
 		m_song->get_audioclip_manager()->select_clip(this);
@@ -665,6 +661,7 @@ void AudioClip::set_audio_source(ReadSource* rs)
 	// If m_length isn't set yet, it means we are importing stuff instead of reloading from project file.
 	// it's a bit weak this way, hopefull I'll get up something better in the future.
 	// The positioning-length-offset and such stuff is still a bit weak :(
+	// NOTE: don't change, audio recording (finish_writesource()) assumes there is checked for length == 0 !!!
 	if (m_length == 0) {
 		sourceEndFrame = rs->get_nframes();
 		m_length = sourceEndFrame;
