@@ -138,28 +138,6 @@ private slots:
 };
 
 
-class SongSelector : public InfoWidget
-{
-	Q_OBJECT
-
-public:
-	SongSelector(QWidget* parent=0);
-
-private:
-	QComboBox* m_box;
-
-protected slots:
-	void set_project(Project* project);
-	
-private slots:
-	void song_added(Song* song);
-	void song_removed(Song* song);
-	void update_songs();
-	void change_index_to(Song* song);
-	void index_changed(int index);
-};
-
-
 class PlayHeadInfo : public InfoWidget
 {
 	Q_OBJECT
@@ -204,6 +182,7 @@ protected:
 	QSize sizeHint() const;	
 	
 protected slots:
+	void set_project(Project* project);
 	void set_song(Song* );
 	
 private slots:
@@ -215,12 +194,17 @@ private slots:
 	void mode_index_changed(int index);
 	void recording_button_state_changed(bool state);
 	void update_recording_state();
+	void song_selector_song_added(Song* song);
+	void song_selector_song_removed(Song* song);
+	void song_selector_update_songs();
+	void song_selector_change_index_to(Song* song);
+	void song_selector_index_changed(int index);
 	
 private:
 	PlayHeadInfo* 	m_playhead;
-	SongSelector* 	m_selector;
 	QToolButton*	m_snap;
 	QComboBox*	m_mode;
+	QComboBox* 	m_songselectbox;
 	QAction*	m_snapAct;
 	QToolButton*	m_follow;
 	QAction*	m_followAct;

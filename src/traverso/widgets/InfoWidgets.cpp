@@ -352,84 +352,6 @@ QSize HDDSpaceInfo::sizeHint() const
 
 
 
-SongSelector::SongSelector(QWidget* parent)
-	: InfoWidget(parent)
-{
-	setToolTip(tr("Select Song to be displayed"));
-	setFrameStyle(QFrame::NoFrame);
-	
-	m_box = new QComboBox;
-	m_box->setMinimumWidth(140);
-	m_box->setFocusPolicy(Qt::NoFocus);
-	
-	QHBoxLayout* lay = new QHBoxLayout;
-	lay->setMargin(0);
-	lay->setSpacing(0);
-	lay->addWidget(m_box);
-	setLayout(lay);
-	
-	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
-	connect(m_box, SIGNAL(activated(int)), this, SLOT(index_changed(int)));
-}
-
-void SongSelector::set_project(Project * project)
-{
-	if ( ! project) {
-		m_project = project;
-		m_box->clear();
-		return;
-	}
-	
-	m_project = project;
-	
-	connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(song_added(Song*)));
-	connect(m_project, SIGNAL(songRemoved(Song*)), this, SLOT(song_removed(Song*)));
-	connect(m_project, SIGNAL(currentSongChanged(Song*)), this, SLOT(change_index_to(Song*)));
-	
-	update_songs();
-}
-
-void SongSelector::update_songs()
-{
-	m_box->clear();
-	foreach(Song* song, m_project->get_songs()) {
-		m_box->addItem("Song " +
-			QString::number(m_project->get_song_index(song->get_id())) +
-			": " + song->get_title(),
-		       song->get_id());
-	}
-}
-
-void SongSelector::song_added(Song * song)
-{
-	connect(song, SIGNAL(propertyChanged()), this, SLOT(update_songs()));
-	update_songs();
-}
-
-void SongSelector::song_removed(Song * song)
-{
-	disconnect(song, SIGNAL(propertyChanged()), this, SLOT(update_songs()));
-	update_songs();
-}
-
-void SongSelector::index_changed(int index)
-{
-	qint64 id = m_box->itemData(index).toLongLong();
-	
-	m_project->set_current_song(id);
-}
-
-void SongSelector::change_index_to(Song* song)
-{
-	if (!song) {
-		return;
-	}
-	
-	int index = m_box->findData(song->get_id());
-	m_box->setCurrentIndex(index);
-}
-
-
 
 PlayHeadInfo::PlayHeadInfo(QWidget* parent)
 	: InfoWidget(parent)
@@ -597,7 +519,11 @@ void InfoWidget::set_song(Song* song)
 SongInfo::SongInfo(QWidget * parent)
 	: InfoWidget(parent)
 {
-	m_selector = new SongSelector(this);
+	m_songselectbox = new QComboBox(this);
+	m_songselectbox->setMinimumWidth(140);
+	m_songselectbox->setToolTip(tr("Select Song to be displayed"));
+	connect(m_songselectbox, SIGNAL(activated(int)), this, SLOT(song_selector_index_changed(int)));
+	
 	m_playhead = new PlayHeadInfo(this);
 
 	m_snap = new QToolButton(this);
@@ -660,7 +586,7 @@ SongInfo::SongInfo(QWidget * parent)
 	lay->addWidget(m_playhead);
 	lay->addStretch(5);
 	lay->addWidget(m_mode);
-	lay->addWidget(m_selector);
+	lay->addWidget(m_songselectbox);
 		
 	setLayout(lay);
 	lay->setMargin(0);
@@ -767,6 +693,64 @@ void SongInfo::update_recording_state()
 QSize SongInfo::sizeHint() const
 {
 	return QSize(400, SONG_TOOLBAR_HEIGHT);
+}
+
+
+void SongInfo::set_project(Project * project)
+{
+	if ( ! project) {
+		m_project = project;
+		m_songselectbox->clear();
+		return;
+	}
+	
+	m_project = project;
+	
+	connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(song_selector_song_added(Song*)));
+	connect(m_project, SIGNAL(songRemoved(Song*)), this, SLOT(song_selector_song_removed(Song*)));
+	connect(m_project, SIGNAL(currentSongChanged(Song*)), this, SLOT(song_selector_change_index_to(Song*)));
+	
+	song_selector_update_songs();
+}
+
+void SongInfo::song_selector_update_songs()
+{
+	m_songselectbox->clear();
+	foreach(Song* song, m_project->get_songs()) {
+		m_songselectbox->addItem("Song " +
+				QString::number(m_project->get_song_index(song->get_id())) +
+				": " + song->get_title(),
+				song->get_id());
+	}
+}
+
+void SongInfo::song_selector_song_added(Song * song)
+{
+	connect(song, SIGNAL(propertyChanged()), this, SLOT(song_selector_update_songs()));
+	song_selector_update_songs();
+}
+
+void SongInfo::song_selector_song_removed(Song * song)
+{
+	disconnect(song, SIGNAL(propertyChanged()), this, SLOT(song_selector_update_songs()));
+	song_selector_update_songs();
+}
+
+void SongInfo::song_selector_index_changed(int index)
+{
+	qint64 id = m_songselectbox->itemData(index).toLongLong();
+	
+	m_project->set_current_song(id);
+}
+
+void SongInfo::song_selector_change_index_to(Song* song)
+{
+	if (!song) {
+		return;
+	}
+	
+	int index = m_songselectbox->findData(song->get_id());
+	m_songselectbox->setCurrentIndex(index);
 }
 
 
