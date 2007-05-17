@@ -890,10 +890,11 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 				// and at the end of the render area. But we must check if 
 				// the present marker happens to be at one of these positions.
 
-				// The commented part now goes into the pregap, thus it is deactivated here
-// 				if (mlist.at(0)->get_when() != spec->start_frame) {
-// 					mlist.append(new Marker(m_timeline, spec->start_frame, Marker::TEMP_CDTRACK));
-// 				}
+				// deactivate the next if-condition (only the first one) if you want the
+				// stuff before the first marker to go into the pre-gap
+				if (mlist.at(0)->get_when() != spec->start_frame) {
+					mlist.append(new Marker(m_timeline, spec->start_frame, Marker::TEMP_CDTRACK));
+				}
 				if (mlist.at(0)->get_when() != spec->end_frame) {
 					mlist.append(new Marker(m_timeline, spec->end_frame, Marker::TEMP_ENDMARKER));
 				}
