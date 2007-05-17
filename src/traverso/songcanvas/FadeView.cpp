@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeView.cpp,v 1.14 2007/04/17 11:51:20 r_sijrier Exp $
+$Id: FadeView.cpp,v 1.15 2007/05/17 06:55:43 benjie Exp $
 */
 
 #include "FadeView.h"
@@ -90,10 +90,15 @@ void FadeView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 	
 	QPolygonF polygon;
 	int xstart = (int)option->exposedRect.x();
+	int vector_start = xstart;
 	int height = (int)m_boundingRect.height();
 	float vector[pixelcount];
 	
-	m_guicurve->get_vector(xstart, xstart + pixelcount, vector, pixelcount);
+	if (m_fadeCurve->get_fade_type() == FadeCurve::FadeOut && m_guicurve->get_range() > m_parentViewItem->boundingRect().width()) {
+		vector_start += (int) m_guicurve->get_range() - m_parentViewItem->boundingRect().width();
+	}
+	
+	m_guicurve->get_vector(vector_start, vector_start + pixelcount, vector, pixelcount);
 	
 	for (int i=0; i<pixelcount; i++) {
 		polygon <<  QPointF(xstart + i, height - (vector[i] * height) );
@@ -201,7 +206,7 @@ void FadeView::calculate_bounding_rect()
 	}
 	
 	m_boundingRect = QRectF( 0, 0,
-	 			m_guicurve->get_range(), 
+	 			(m_guicurve->get_range() <= m_parentViewItem->boundingRect().width()) ? m_guicurve->get_range() : m_parentViewItem->boundingRect().width(), 
 				m_parentViewItem->get_height() );
 	
 	if (m_fadeCurve->get_fade_type() == FadeCurve::FadeOut) {

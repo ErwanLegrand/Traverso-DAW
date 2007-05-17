@@ -114,6 +114,8 @@ private:
 public slots:
 	void set_snap_range(int);
 	void update_scrollbars();
+	void stop_follow_play_head();
+	void follow_play_head();
 
 	Command* touch();
         Command* hzoom_out();
@@ -139,8 +141,6 @@ private slots:
 	void add_new_trackview(Track*);
 	void remove_trackview(Track*);
 	void update_shuttle();
-	void work_cursor_updated();
-	void play_head_updated();
 	void song_mode_changed();
 	void hscrollbar_value_changed(int);
 };

@@ -162,6 +162,7 @@ void MoveClip::init_data(bool isCopy)
 
 int MoveClip::begin_hold()
 {
+	d->sv->stop_follow_play_head();
 	if (m_actionType == "copy") {
 		d->newclip = resources_manager()->get_clip(d->view->get_clip()->get_id());
 		d->newclip->set_song(m_song);

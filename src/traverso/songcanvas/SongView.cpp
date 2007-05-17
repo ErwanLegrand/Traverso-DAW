@@ -97,8 +97,8 @@ SongView::SongView(SongWidget* songwidget,
 	m_workCursor = new WorkCursor(this, m_song);
 	connect(m_song, SIGNAL(workingPosChanged()), m_workCursor, SLOT(update_position()));
 	connect(m_song, SIGNAL(workingPosChanged()), m_playCursor, SLOT(work_moved()));
-	connect(m_song, SIGNAL(transportPosSet()), this, SLOT(play_head_updated()));
-	connect(m_song, SIGNAL(workingPosChanged()), this, SLOT(work_cursor_updated()));
+	connect(m_song, SIGNAL(transportPosSet()), this, SLOT(follow_play_head()));
+	connect(m_song, SIGNAL(workingPosChanged()), this, SLOT(stop_follow_play_head()));
 
 	m_clipsViewPort->scene()->addItem(m_playCursor);
 	m_clipsViewPort->scene()->addItem(m_workCursor);
@@ -120,7 +120,8 @@ SongView::SongView(SongWidget* songwidget,
 	connect(m_song, SIGNAL(trackRemoved(Track*)), this, SLOT(remove_trackview(Track*)));
 	connect(m_song, SIGNAL(lastFramePositionChanged()), this, SLOT(update_scrollbars()));
 	connect(m_song, SIGNAL(modeChanged()), this, SLOT(song_mode_changed()));
-	connect(m_hScrollBar, SIGNAL(valueChanged(int)), this,SLOT(set_snap_range(int))); 
+	connect(m_hScrollBar, SIGNAL(valueChanged(int)), this,SLOT(set_snap_range(int)));
+	connect(m_hScrollBar, SIGNAL(sliderMoved(int)), this,SLOT(stop_follow_play_head()));
 	connect(&m_shuttletimer, SIGNAL(timeout() ), this, SLOT (update_shuttle()) );
 	
 	connect(m_hScrollBar, SIGNAL(valueChanged(int)), this, SLOT(hscrollbar_value_changed(int)));
@@ -133,10 +134,11 @@ SongView::SongView(SongWidget* songwidget,
 	connect(m_clipsViewPort->verticalScrollBar(), SIGNAL(valueChanged(int)),
 		  m_vScrollBar, SLOT(setValue(int))); 
 	
+	m_vScrollBar->setValue(0.0);
+
 	load_theme_data();
 	
 	// FIXME Center too position on song close!!
-	ensureVisible(0.0, 0.0, 0.0, 0.0);
 	center();
 }
 
@@ -215,7 +217,8 @@ void SongView::update_scrollbars()
 	m_hScrollBar->setSingleStep(m_clipsViewPort->width() / 10);
 	m_hScrollBar->setPageStep(m_clipsViewPort->width());
 	
-	m_vScrollBar->setRange(0, m_sceneHeight);
+	m_vScrollBar->setRange(0, (m_sceneHeight < m_clipsViewPort->height()) ?
+		0 : m_sceneHeight - m_clipsViewPort->height());
 	m_vScrollBar->setSingleStep(m_clipsViewPort->height() / 10);
 	m_vScrollBar->setPageStep(m_clipsViewPort->height());
 	
@@ -330,14 +333,14 @@ Command* SongView::center()
 }
 
 
-void SongView::work_cursor_updated()
+void SongView::stop_follow_play_head()
 {
 	m_actOnPlayHead = false;
 	m_playCursor->disable_follow();
 }
 
 
-void SongView::play_head_updated()
+void SongView::follow_play_head()
 {
 	m_actOnPlayHead = true;
 	m_playCursor->enable_follow();
@@ -359,6 +362,7 @@ void SongView::start_shuttle(bool start, bool drag)
 	} else {
 		m_shuttletimer.stop();
 	}
+	stop_follow_play_head();
 }
 
 void SongView::update_shuttle_factor()
@@ -458,6 +462,7 @@ void SongView::update_shuttle()
 
 Command* SongView::goto_begin()
 {
+	stop_follow_play_head();
 	m_song->set_work_at(0);
 	center();
 	return (Command*) 0;
@@ -466,6 +471,7 @@ Command* SongView::goto_begin()
 
 Command* SongView::goto_end()
 {
+	stop_follow_play_head();
 	m_song->set_work_at(m_song->get_last_frame());
 	center();
 	return (Command*) 0;
@@ -531,6 +537,7 @@ Command* SongView::scroll_down( )
 Command* SongView::scroll_right()
 {
 	PENTER3;
+	stop_follow_play_head();
 	QScrollBar* scrollbar = m_clipsViewPort->horizontalScrollBar();
 	scrollbar->setValue(scrollbar->value() + 50);
 	return (Command*) 0;
@@ -540,6 +547,7 @@ Command* SongView::scroll_right()
 Command* SongView::scroll_left()
 {
 	PENTER3;
+	stop_follow_play_head();
 	QScrollBar* scrollbar = m_clipsViewPort->horizontalScrollBar();
 	scrollbar->setValue(scrollbar->value() - 50); 
 	return (Command*) 0;
@@ -570,6 +578,7 @@ void SongView::load_theme_data()
 
 Command * SongView::add_marker()
 {
+	stop_follow_play_head();
 	return m_tlvp->get_timeline_view()->add_marker();
 }
 

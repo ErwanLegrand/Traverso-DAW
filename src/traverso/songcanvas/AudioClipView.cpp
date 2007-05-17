@@ -314,8 +314,8 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		} else {
 			fademix = view->get_vector(xstart, pixelcount, curvemixdown);
 		}
-			
-		if (mixcurvedata && fademix) {
+		
+		if (mixcurvedata && fademix && view->get_fade()->get_range() > m_sv->scalefactor) {
 			for (int j=0; j<pixelcount; ++j) {
 				curvemixdown[j] *= fademixdown[j];
 			}

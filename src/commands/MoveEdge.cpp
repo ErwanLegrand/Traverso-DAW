@@ -66,6 +66,7 @@ int MoveEdge::begin_hold()
 	}
 
 	m_clip->set_snappable(false);
+	m_sv->stop_follow_play_head();
 
         return 1;
 }

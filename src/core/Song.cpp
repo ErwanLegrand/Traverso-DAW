@@ -186,6 +186,7 @@ int Song::set_state( const QDomNode & node )
 	set_hzoom(e.attribute( "hzoom", "" ).toInt());
 	set_first_visible_frame(e.attribute( "firstVisibleFrame", "0" ).toUInt());
 	set_work_at(e.attribute( "workingFrame", "0").toUInt());
+	set_transport_pos(e.attribute( "transportFrame", "0").toUInt());
 	
 	m_timeline->set_state(node.firstChildElement("TimeLine"));
 
@@ -219,6 +220,7 @@ QDomNode Song::get_state(QDomDocument doc, bool istemplate)
 	properties.setAttribute("artists", artists);
 	properties.setAttribute("firstVisibleFrame", firstVisibleFrame);
 	properties.setAttribute("workingFrame", (uint)workingFrame);
+	properties.setAttribute("transportFrame", (uint)transportFrame);
 	properties.setAttribute("hzoom", m_hzoom);
 	properties.setAttribute("mastergain", m_gain);
 	songNode.appendChild(properties);
