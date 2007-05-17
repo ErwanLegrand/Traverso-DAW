@@ -62,7 +62,7 @@ void MarkerView::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
 	int xstart = (int)option->exposedRect.x();
 	int clipx = (int)mapToParent(xstart, 0).x();
 	if (clipx < 0) {
-		painter->setClipRect(-clipx, 0, 30, (int)m_boundingRect.height());
+		painter->setClipRect(-clipx, 0, (int)m_boundingRect.width(), (int)m_boundingRect.height());
 	}
 
 	if (m_active) {
