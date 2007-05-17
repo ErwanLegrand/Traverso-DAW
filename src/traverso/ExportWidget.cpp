@@ -382,7 +382,11 @@ void ExportWidget::query_devices()
 	
 	m_writingState = QUERY_DEVICE;
 	cdDeviceComboBox->clear();
+#if defined (Q_WS_WIN)
+	m_burnprocess->start(CDRDAO_BIN, QStringList() << "scanbus");
+#else
 	m_burnprocess->start(CDRDAO_BIN, QStringList() << "drive-info");
+#endif
 }
 
 void ExportWidget::unlock_device()
@@ -631,7 +635,7 @@ void ExportWidget::read_standard_output()
 		char buf[1024];
 		while(m_burnprocess->readLine(buf, sizeof(buf)) != -1) {
 			QString data = QString(buf);
-			printf("%s\n", QS_C(data));
+			//printf("%s\n", QS_C(data));
 			if (data.contains("trying to open")) {
 				update_cdburn_status(tr("Trying to access CD Writer ..."), NORMAL_MESSAGE);
 				return;
@@ -641,7 +645,7 @@ void ExportWidget::read_standard_output()
 				return;
 			}
 #if defined (Q_WS_WIN)
-			if (data.contains(QRegExp("[0-9],[0-9],[0-9]:"))) {
+			if (data.contains(QRegExp("[0-9],[0-9],[0-9]"))) {
 #else
 			if (data.contains("/dev/")) {
 #endif
@@ -649,12 +653,13 @@ void ExportWidget::read_standard_output()
 				QStringList strlist = QString(data).split(QRegExp("\\s+"));
 				for (int i=1; i<strlist.size(); ++i) {
 					QString token = strlist.at(i);
-					if (!token.contains("Rev:")) {
-						deviceName += token + " ";
-					} else {
+					if (token.contains("Rev:")) {
 						break;
+					} else if (token != ":") {
+						deviceName += token + " ";
 					}
 				}
+				deviceName += "(" + strlist.at(0) + ")";
 				QString device = strlist.at(0);
 				device = device.remove(":");
 				cdDeviceComboBox->addItem(deviceName, device);
