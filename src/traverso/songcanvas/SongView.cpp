@@ -121,7 +121,7 @@ SongView::SongView(SongWidget* songwidget,
 	connect(m_song, SIGNAL(lastFramePositionChanged()), this, SLOT(update_scrollbars()));
 	connect(m_song, SIGNAL(modeChanged()), this, SLOT(song_mode_changed()));
 	connect(&m_shuttletimer, SIGNAL(timeout() ), this, SLOT (update_shuttle()) );
-	connect(m_hScrollBar, SIGNAL(sliderMoved(int)), this,SLOT(stop_follow_play_head()));
+	connect(m_hScrollBar, SIGNAL(sliderMoved(int)), this, SLOT(stop_follow_play_head()));
 	connect(m_hScrollBar, SIGNAL(valueChanged(int)), this, SLOT(hscrollbar_value_changed(int)));
 	connect(m_vScrollBar, SIGNAL(valueChanged(int)), m_clipsViewPort->verticalScrollBar(), SLOT(setValue(int)));
 	
@@ -518,7 +518,13 @@ Command* SongView::scroll_up( )
 
 Command* SongView::scroll_down( )
 {
-	set_vscrollbar_value(m_clipsViewPort->verticalScrollBar()->value() + 50);
+	int value = m_clipsViewPort->verticalScrollBar()->value() + 50;
+	
+	if (value > m_vScrollBar->maximum()) {
+		value = m_vScrollBar->maximum();
+	}
+
+	set_vscrollbar_value(value);
 	return 0;
 }
 
