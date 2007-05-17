@@ -418,6 +418,7 @@ void BehaviorPage::save_config()
 	config().set_property("PlayHead", "Follow", m_configpage->keepCursorVisibleCheckBox->isChecked());
 	config().set_property("PlayHead", "Scrollmode", m_configpage->scrollModeComboBox->currentIndex());
 	config().set_property("AudioClip", "SyncDuringDrag", m_configpage->resyncAudioCheckBox->isChecked());
+	config().set_property("AudioClip", "LockByDefault", m_configpage->lockClipsCheckBox->isChecked());
 
 	QString oncloseaction;
 	if (m_configpage->saveRadioButton->isChecked()) {
@@ -437,12 +438,14 @@ void BehaviorPage::load_config()
 	int defaultNumTracks = config().get_property("Song", "trackCreationCount", 6).toInt();
 	int scrollMode = config().get_property("PlayHead", "Scrollmode", 2).toInt();
 	bool resyncAudio = config().get_property("AudioClip", "SyncDuringDrag", false).toBool();
+	bool lockClips = config().get_property("AudioClip", "LockByDefault", false).toBool();
 	
 	m_configpage->projectDirLineEdit->setText(dir);
 	m_configpage->loadLastProjectCheckBox->setChecked(loadLastUsedProject);
 	m_configpage->numberOfTrackSpinBox->setValue(defaultNumTracks);
 	m_configpage->scrollModeComboBox->setCurrentIndex(scrollMode);
 	m_configpage->resyncAudioCheckBox->setChecked(resyncAudio);
+	m_configpage->lockClipsCheckBox->setChecked(lockClips);
 	
 	if (oncloseaction == "save") {
 		m_configpage->saveRadioButton->setChecked(true);
@@ -473,6 +476,7 @@ void BehaviorPage::reset_default_config()
 	config().set_property("PlayHead", "Follow", 0);
 	config().set_property("PlayHead", "Scrollmode", 2);
 	config().set_property("AudioClip", "SyncDuringDrag", false);
+	config().set_property("AudioClip", "LockByDefault", false);
 	
 	load_config();
 }

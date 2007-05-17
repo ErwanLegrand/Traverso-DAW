@@ -47,6 +47,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Project.h"
 #include "Utils.h"
 #include "Information.h"
+#include <Config.h>
 
 #include <commands.h>
 
@@ -108,7 +109,7 @@ void AudioClip::init()
 	m_readSource = 0;
 	m_recordingStatus = NO_RECORDING;
 	isSelected = m_invalidReadSource = false;
-	isLocked = true;
+	isLocked = config().get_property("AudioClip", "LockByDefault", false).toBool();
 	fadeIn = 0;
 	fadeOut = 0;
 	m_refcount = 0;
