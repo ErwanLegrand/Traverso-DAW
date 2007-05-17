@@ -20,7 +20,7 @@
 */
 
 #include "TimeLineViewPort.h"
-#include "ClipsViewPort.h"
+#include "SongView.h"
 #include "SongWidget.h"
 #include "TimeLineView.h"
 #include <QScrollBar>
@@ -29,11 +29,9 @@
 		
 #include <Debugger.h>
 
-TimeLineViewPort::TimeLineViewPort(QGraphicsScene* scene, SongWidget* sw, ClipsViewPort* view)
+TimeLineViewPort::TimeLineViewPort(QGraphicsScene* scene, SongWidget* sw)
 	: ViewPort(scene, sw)
 {
-	clipView = view;
-	
 	setMaximumHeight(TIMELINE_HEIGHT);
 	setMinimumHeight(TIMELINE_HEIGHT);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -43,10 +41,11 @@ TimeLineViewPort::TimeLineViewPort(QGraphicsScene* scene, SongWidget* sw, ClipsV
 
 void TimeLineViewPort::wheelEvent ( QWheelEvent * e )
 {
-	if (e->delta() > 0)
-		clipView->horizontalScrollBar()->setValue(clipView->horizontalScrollBar()->value() - clipView->horizontalScrollBar()->pageStep() / 6);
-	else
-		clipView->horizontalScrollBar()->setValue(clipView->horizontalScrollBar()->value() + clipView->horizontalScrollBar()->pageStep() / 6);
+	if (e->delta() > 0) {
+		m_sv->scroll_left();
+	} else {
+		m_sv->scroll_right();
+	}
 }
 
 void TimeLineViewPort::set_songview( SongView * view )
@@ -54,6 +53,7 @@ void TimeLineViewPort::set_songview( SongView * view )
 	m_timeLineView = new TimeLineView(view);
 	scene()->addItem(m_timeLineView);
 	m_timeLineView->setPos(0, -TIMELINE_HEIGHT);
+	m_sv = view;
 }
 
 void TimeLineViewPort::get_pointed_context_items(QList<ContextItem* > &list)

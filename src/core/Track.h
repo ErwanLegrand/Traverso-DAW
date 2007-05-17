@@ -60,7 +60,7 @@ public :
 	Command* remove_clip(AudioClip* clip, bool historable=true, bool ismove=false);
 	Command* remove_plugin(Plugin* plugin);
 	
-	Command* init_recording();
+	AudioClip* init_recording();
 	
 	int arm();
 	int disarm();

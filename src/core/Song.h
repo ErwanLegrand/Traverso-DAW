@@ -79,6 +79,7 @@ public:
 	int get_numtracks() const {return m_tracks.size();}
 	int get_track_index(qint64 id) const;
 	int get_mode() const {return m_mode;}
+	void get_scrollbar_xy(int& x, int& y) {x = m_sbx; y = m_sby;}
 	
 	nframes_t get_transport_frame() const;
 	nframes_t get_working_frame() const {return workingFrame;}
@@ -107,6 +108,7 @@ public:
 	void set_transport_pos(nframes_t pos);
 	void set_hzoom(int hzoom);
 	void set_snapping(bool snap);
+	void set_scrollbar_xy(int x, int y) {m_sbx = x; m_sby = y;}
 	int set_state( const QDomNode & node );
 	void set_recording(bool recording);
 	
@@ -169,6 +171,8 @@ private:
 	QString 	title;
 	int		m_mode;
 	int 		m_hzoom;
+	int		m_sbx;
+	int		m_sby;
 	bool 		m_rendering;
 	bool 		changed;
 	bool 		isSnapOn;

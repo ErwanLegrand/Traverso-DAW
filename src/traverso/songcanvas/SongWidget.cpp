@@ -223,7 +223,7 @@ SongWidget::SongWidget(Song* song, QWidget* parent)
 
 	m_trackPanel = new TrackPanelViewPort(m_scene, this);
 	m_clipsViewPort = new ClipsViewPort(m_scene, this);
-	m_timeLine = new TimeLineViewPort(m_scene, this, m_clipsViewPort);
+	m_timeLine = new TimeLineViewPort(m_scene, this);
 	m_songPanelVP = new SongPanelViewPort(m_scene, this);
 	
 	m_mainLayout = new QGridLayout(this);

@@ -183,7 +183,9 @@ int Song::set_state( const QDomNode & node )
 	title = e.attribute( "title", "" );
 	artists = e.attribute( "artists", "" );
 	set_gain(e.attribute( "mastergain", "1.0").toFloat() );
-	set_hzoom(e.attribute( "hzoom", "" ).toInt());
+	set_hzoom(e.attribute("hzoom", "" ).toInt());
+	m_sbx = e.attribute("sbx", "0").toInt();
+	m_sby = e.attribute("sby", "0").toInt();
 	set_first_visible_frame(e.attribute( "firstVisibleFrame", "0" ).toUInt());
 	set_work_at(e.attribute( "workingFrame", "0").toUInt());
 	set_transport_pos(e.attribute( "transportFrame", "0").toUInt());
@@ -222,6 +224,8 @@ QDomNode Song::get_state(QDomDocument doc, bool istemplate)
 	properties.setAttribute("workingFrame", (uint)workingFrame);
 	properties.setAttribute("transportFrame", (uint)transportFrame);
 	properties.setAttribute("hzoom", m_hzoom);
+	properties.setAttribute("sbx", m_sbx);
+	properties.setAttribute("sby", m_sby);
 	properties.setAttribute("mastergain", m_gain);
 	songNode.appendChild(properties);
 
@@ -653,9 +657,9 @@ Command* Song::go()
 			int clipcount = 0;
 			foreach(Track* track, m_tracks) {
 				if (track->armed()) {
-					Command* cmd = track->init_recording();
-					if (cmd) {
-						group->add_command(cmd);
+					AudioClip* clip = track->init_recording();
+					if (clip) {
+						group->add_command(new AddRemoveClip(clip, AddRemoveClip::ADD));
 						clipcount++;
 					}
 				}

@@ -299,7 +299,7 @@ bool Track::armed()
 	return isArmed;
 }
 
-Command* Track::init_recording()
+AudioClip* Track::init_recording()
 {
 	PENTER2;
 	if ( ! isArmed) {
@@ -318,7 +318,7 @@ Command* Track::init_recording()
 		PERROR("Could not create AudioClip to record to!");
 		resources_manager()->remove_clip_from_database(clip->get_id());
 	} else {
-		return add_clip( clip );
+		return clip;
 	}
 	
 	return 0;
