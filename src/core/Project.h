@@ -105,7 +105,7 @@ private:
 	Project(const QString& title);
 	
 	QList<Song* >	m_songs;
-	ResourcesManager* 	m_asmanager;
+	ResourcesManager* 	m_resourcesManager;
 	ExportThread* 	m_exportThread;
 
 	QString 	title;

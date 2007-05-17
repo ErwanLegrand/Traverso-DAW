@@ -154,7 +154,7 @@ void Song::init()
 
 	realtimepath = false;
 	scheduleForDeletion = false;
-	isSnapOn=true;
+	m_isSnapOn=true;
 	changed = m_rendering = m_recording = false;
 	firstVisibleFrame=workingFrame=0;
 	seeking = 0;
@@ -190,6 +190,7 @@ int Song::set_state( const QDomNode & node )
 	set_first_visible_frame(e.attribute( "firstVisibleFrame", "0" ).toUInt());
 	set_work_at(e.attribute( "workingFrame", "0").toUInt());
 	set_transport_pos(e.attribute( "transportFrame", "0").toUInt());
+	set_snapping(e.attribute("snapping", "0").toInt());
 	
 	m_timeline->set_state(node.firstChildElement("TimeLine"));
 
@@ -228,6 +229,7 @@ QDomNode Song::get_state(QDomDocument doc, bool istemplate)
 	properties.setAttribute("sbx", m_sbx);
 	properties.setAttribute("sby", m_sby);
 	properties.setAttribute("mastergain", m_gain);
+	properties.setAttribute("snapping", m_isSnapOn);
 	songNode.appendChild(properties);
 
 	doc.appendChild(songNode);
@@ -609,14 +611,14 @@ void Song::seek_finished()
 
 Command* Song::toggle_snap()
 {
-	set_snapping( ! isSnapOn );
+	set_snapping( ! m_isSnapOn );
 	return 0;
 }
 
 
 void Song::set_snapping(bool snapping)
 {
-	isSnapOn = snapping;
+	m_isSnapOn = snapping;
 	emit snapChanged();
 }
 

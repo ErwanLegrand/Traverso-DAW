@@ -115,7 +115,7 @@ int AudioClipExternalProcessing::prepare_actions()
 		
 		QString dir = pm().get_project()->get_audiosources_dir();
 	
-		ReadSource* source = resources_manager()->create_new_readsource(dir, name);
+		ReadSource* source = resources_manager()->import_source(dir, name);
 		if (!source) {
 			printf("ResourcesManager didn't return a ReadSource, most likely sox didn't understand your command\n");
 			return -1;

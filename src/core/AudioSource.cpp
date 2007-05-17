@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSource.cpp,v 1.18 2007/05/15 20:06:31 r_sijrier Exp $
+$Id: AudioSource.cpp,v 1.19 2007/05/17 21:38:15 r_sijrier Exp $
 */
 
 
@@ -38,6 +38,7 @@ $Id: AudioSource.cpp,v 1.18 2007/05/15 20:06:31 r_sijrier Exp $
 AudioSource::AudioSource(const QString& dir, const QString& name)
 	: m_dir(dir)
 	, m_name(name)
+	, m_shortName(name)
 	, m_wasRecording (false)
 {
 	PENTERCONS;
@@ -113,6 +114,7 @@ int AudioSource::set_state( const QDomNode & node )
 void AudioSource::set_name(const QString& name)
 {
 	m_name = name;
+	m_shortName = name;
 	m_fileName = m_dir + m_name;
 }
 

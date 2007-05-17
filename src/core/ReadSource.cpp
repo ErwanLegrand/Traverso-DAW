@@ -44,7 +44,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 ReadSource::ReadSource(const QDomNode node)
 	: AudioSource(node)
 	, m_refcount(0)
-	, m_unrefcount(0)
 	, m_error(0)
 	, m_clip(0)
 {
@@ -65,7 +64,6 @@ ReadSource::ReadSource(const QDomNode node)
 ReadSource::ReadSource(const QString& dir, const QString& name)
 	: AudioSource(dir, name)
 	, m_refcount(0)
-	, m_unrefcount(0)
 	, m_error(0)
 	, m_clip(0)
 {
@@ -83,27 +81,27 @@ ReadSource::ReadSource(const QString& dir, const QString& name)
 }
 
 
-// Constructur for recorded audio.
-ReadSource::ReadSource(const QString& dir, const QString& name, int channelCount, int fileCount)
+// Constructor for recorded audio.
+ReadSource::ReadSource(const QString& dir, const QString& name, int channelCount)
 	: AudioSource(dir, name)
 	, m_refcount(0)
-	, m_unrefcount(0)
 	, m_error(0)
 	, m_clip(0)
 {
-	m_channelCount = channelCount;
-	m_fileCount = fileCount;
+	m_channelCount = m_fileCount = channelCount;
 	m_silent = false;
 	m_name = name  + "-" + QString::number(m_id);
 	m_fileName = m_dir + m_name;
 	m_length = 0;
+	m_rate = pm().get_project()->get_rate();
+	m_wasRecording = true;
+	m_shortName = m_name.left(m_name.length() - 20);
 }
 
 
 ReadSource::ReadSource()
 	: AudioSource("", tr("Silence"))
 	, m_refcount(0)
-	, m_unrefcount(0)
 	, m_error(0)
 	, m_clip(0)
 {
@@ -254,12 +252,6 @@ Peak * ReadSource::get_peak( int channel )
 nframes_t ReadSource::get_nframes( ) const
 {
 	return m_length;
-}
-
-void ReadSource::set_was_recording(bool wasRecording)
-{
-	m_wasRecording = wasRecording;
-	m_shortName = m_name.left(m_name.length() - 20);
 }
 
 int ReadSource::set_file(const QString & filename)

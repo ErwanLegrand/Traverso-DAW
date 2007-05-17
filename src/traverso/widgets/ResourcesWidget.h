@@ -48,21 +48,23 @@ private:
 	QHash<qint64, QTreeWidgetItem*> m_clipindices;
 	QHash<qint64, QTreeWidgetItem*> m_sourceindices;
 	
-	void add_new_clip_entry(AudioClip* clip);
+	void update_clip_state(AudioClip* clip);
+	void update_source_state(qint64 id);
 	
-
 private slots:
 	void set_project(Project* project);
-	void update_tree_widgets();
+	void populate_tree();
+	
 	void view_combo_box_index_changed(int index);
 	void song_combo_box_index_changed(int index);
+	
 	void song_added(Song* song);
 	void song_removed(Song* song);
 	
-	void clip_removed(AudioClip* clip);
-	void clip_added(AudioClip* clip);
-	void source_nolonger_in_use(ReadSource* source);
-	void source_back_in_use(ReadSource* source);
+	void add_clip(AudioClip* clip);
+	void remove_clip(AudioClip* clip);
+	void add_source(ReadSource* source);
+	void remove_source(ReadSource* source);
 };
 
 #endif

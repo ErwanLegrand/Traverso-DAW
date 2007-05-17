@@ -202,7 +202,6 @@ void SongView::remove_trackview(Track* track)
 
 void SongView::update_scrollbars()
 {
-	printf("update_scrollbars()\n");
 	int width = (m_song->get_last_frame() / scalefactor) - (m_clipsViewPort->width() / 4);
 	
 	m_hScrollBar->setRange(0, width);

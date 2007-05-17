@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ReadSource.h"
 #include "Information.h"
 #include "AudioClip.h"
+#include "Project.h"
+#include "Song.h"
 #include "Utils.h"
 #include "AudioDevice.h"
 
@@ -36,7 +38,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
  */
 
-ResourcesManager::ResourcesManager()
+ResourcesManager::ResourcesManager(Project* project)
+	: QObject(project)
+	, m_project(project)
 {
 	PENTERCONS;
 	m_silentReadSource = 0;
@@ -46,14 +50,16 @@ ResourcesManager::ResourcesManager()
 ResourcesManager::~ResourcesManager()
 {
 	PENTERDES;
-	foreach(ReadSource* source, m_sources) {
-		if (! source->ref()) {
-			delete source;
+	foreach(SourceData* data, m_sources) {
+		if (! data->source->ref()) {
+			delete data->source;
 		}
+		delete data;
 	}
 	
-	foreach(AudioClip* clip, m_clips) {
-		delete clip;
+	foreach(ClipData* data, m_clips) {
+		delete data->clip;
+		delete data;
 	}
 
 }
@@ -63,33 +69,30 @@ QDomNode ResourcesManager::get_state( QDomDocument doc )
 {
 	PENTER;
 
-	QDomElement asmNode = doc.createElement("ResourcesManager");
+	QDomElement rsmNode = doc.createElement("ResourcesManager");
 	
 	QDomElement audioSourcesElement = doc.createElement("AudioSources");
 	
-	foreach(AudioSource* source, m_sources) {
+	foreach(SourceData* data, m_sources) {
+		AudioSource* source = (AudioSource*)data->source;
 		audioSourcesElement.appendChild(source->get_state(doc));
 	}
 	
-	asmNode.appendChild(audioSourcesElement);
+	rsmNode.appendChild(audioSourcesElement);
 	
 	
 	QDomElement audioClipsElement = doc.createElement("AudioClips");
 	
-	QList<AudioClip*> list = m_clips.values();
-	
-	
-	for (int i=0; i<list.size(); ++i) {
-		AudioClip* clip = list.at(i);
+	foreach(ClipData* data, m_clips) {
+		AudioClip* clip = data->clip;
 		
-		// Omit all clips that were deprecated:
-		if (m_deprecatedClips.contains(clip->get_id())) {
+		if (data->isCopy && data->removed) {
 			continue;
 		}
 		
-		// If the clip was refcounted, then it's state has been fully set
+		// If the clip was 'getted', then it's state has been fully set
 		// and likely changed, so we can get the 'new' state from it.
-		if (m_gettedClips.contains(clip->get_id())) {
+		if (data->inUse) {
 			audioClipsElement.appendChild(clip->get_state(doc));
 		} else {
 			// In case it wasn't we should use the 'old' domNode which 
@@ -98,9 +101,9 @@ QDomNode ResourcesManager::get_state( QDomDocument doc )
 		}
 	}
 	
-	asmNode.appendChild(audioClipsElement);
+	rsmNode.appendChild(audioClipsElement);
 	
-	return asmNode;
+	return rsmNode;
 }
 
 
@@ -110,7 +113,9 @@ int ResourcesManager::set_state( const QDomNode & node )
 	
 	while(!sourcesNode.isNull()) {
 		ReadSource* source = new ReadSource(sourcesNode);
-		m_sources.insert(source->get_id(), source);
+		SourceData* data = new SourceData();
+		data->source = source;
+		m_sources.insert(source->get_id(), data);
 		sourcesNode = sourcesNode.nextSibling();
 		if (source->get_channel_count() == 0) {
 			m_silentReadSource = source;
@@ -122,59 +127,35 @@ int ResourcesManager::set_state( const QDomNode & node )
 	
 	while(!clipsNode.isNull()) {
 		AudioClip* clip = new AudioClip(clipsNode);
-		m_clips.insert(clip->get_id(), clip);
+		ClipData* data = new ClipData();
+		data->clip = clip;
+		m_clips.insert(clip->get_id(), data);
 		clipsNode = clipsNode.nextSibling();
 	}
 	
 	
-	emit sourceAdded();
+	emit stateRestored();
 	
 	return 1;
 }
 
 
-int ResourcesManager::remove_clip_from_database(qint64 id)
+ReadSource* ResourcesManager::import_source(const QString& dir, const QString& name)
 {
-	if ( ! m_clips.contains(id) ) {
-		info().critical(tr("ResourcesManager : AudioClip with id %1 not in database,"
-				"unable to remove it!").arg(id));
-		return -1;
+	QString fileName = dir + name;
+	foreach(SourceData* data, m_sources) {
+		if (data->source->get_filename() == fileName) {
+			printf("id is %lld\n", data->source->get_id());
+			return get_readsource(data->source->get_id()); 
+		}
 	}
 	
-	printf("ResourcesManager:: Scheduling AudioClip with id %lld for removal\n", id);
-	
-	m_deprecatedClips.insert(id, m_clips.value(id));
-	
-	return 1;
-}
-
-int ResourcesManager::undo_remove_clip_from_database(qint64 id)
-{
-	if ( ! m_clips.contains(id) ) {
-		info().critical(tr("ResourcesManager: AudioClip with id %1 not in database,"
-				"unable to UNDO removal!").arg(id));
-		return -1;
-	}
-	
-	printf("ResourcesManager:: UNDO scheduling AudioClip with id %lld for removal\n", id);
-	
-	m_deprecatedClips.remove(id);
-	
-	return 1;
-}
-
-
-int ResourcesManager::get_total_sources()
-{
-	return m_sources.size();
-}
-
-
-ReadSource* ResourcesManager::create_new_readsource(const QString& dir, const QString& name)
-{
 	ReadSource* source = new ReadSource(dir, name);
-	m_sources.insert(source->get_id(), source);
-	source->set_created_by_song( -1 );
+	SourceData* data = new SourceData();
+	data->source = source;
+	source->set_created_by_song(m_project->get_current_song()->get_id());
+	
+	m_sources.insert(source->get_id(), data);
 	
 	source = get_readsource(source->get_id());
 	
@@ -183,27 +164,32 @@ ReadSource* ResourcesManager::create_new_readsource(const QString& dir, const QS
 		delete source;
 		return 0;
 	}
+	
+	emit sourceAdded(source);
 
 	return source;
 }
 
 
 ReadSource* ResourcesManager::create_recording_source(
-		const QString& dir,
-		const QString& name,
-  		int channelCount,
-      		int songId)
+	const QString& dir,
+	const QString& name,
+	int channelCount,
+	int songId)
 {
 	PENTER;
 	
-	ReadSource* source = new ReadSource(dir, name, channelCount, channelCount);
+	ReadSource* source = new ReadSource(dir, name, channelCount);
+	SourceData* data = new SourceData();
+	data->source = source;
 	
-	source->set_was_recording(true);
 	source->set_original_bit_depth(audiodevice().get_bit_depth());
 	source->set_created_by_song(songId);
 	source->ref();
 	
-	m_sources.insert(source->get_id(), source);
+	m_sources.insert(source->get_id(), data);
+	
+	emit sourceAdded(source);
 	
 	return source;
 }
@@ -213,7 +199,9 @@ ReadSource* ResourcesManager::get_silent_readsource()
 {
 	if (!m_silentReadSource) {
 		m_silentReadSource = new ReadSource();
-		m_sources.insert(m_silentReadSource->get_id(), m_silentReadSource);
+		SourceData* data = new SourceData();
+		data->source = m_silentReadSource;
+		m_sources.insert(m_silentReadSource->get_id(), data);
 		m_silentReadSource->set_created_by_song( -1 );
 	}
 	
@@ -225,16 +213,17 @@ ReadSource* ResourcesManager::get_silent_readsource()
 
 ReadSource * ResourcesManager::get_readsource( qint64 id )
 {
-	ReadSource* source = m_sources.value(id);
+	SourceData* data = m_sources.value(id);
 	
-	if ( ! source ) {
-		PERROR("ReadSource with id %lld is not in my list!", id);
+	if (!data) {
+		PWARN("ResourcesManager::get_readsource(): ReadSource with id %lld is not in my database!", id);
 		return 0;
 	}
 	
-	// When the AudioSource is first "get", do a ref counting.
+	ReadSource* source = data->source;
+	
+	// When the AudioSource is "get", do a ref counting.
 	// If the source allready was ref counted, create a deep copy
-	// and do the initialization
 	if (source->ref()) {
 		PWARN("Creating deep copy of ReadSource: %s", QS_C(source->get_name()));
 		source = source->deep_copy();
@@ -246,29 +235,9 @@ ReadSource * ResourcesManager::get_readsource( qint64 id )
 				.arg(source->get_filename()));
 	}
 	
-	emit stateChanged();
-	
 	return source;
 }
 
-/**
- * 	Mainly used for Importing audio files. If the file with \a fileName 
-	allready is in the database, a ReadSource will be returned, else 0.
-
- * @param fileName The file name of the audio source
- * @return A ReadSource if a ReadSource with the same file name is in the database, else 0
- */
-ReadSource* ResourcesManager::get_readsource(const QString& fileName)
-{
-	foreach(ReadSource* rs, m_sources) {
-// 		PMESG("rs filename %s, filename %s", QS_C(rs->get_filename()), QS_C(fileName));
-		if (rs->get_filename() == fileName) {
-			return get_readsource(rs->get_id()); 
-		}
-	}
-	
-	return 0;
-}
 
 /**
  * 	Get the AudioClip with id \a id
@@ -284,18 +253,17 @@ ReadSource* ResourcesManager::get_readsource(const QString& fileName)
 		'deep copy' of the AudioClip with id \a id if the AudioClip was allready
 		getted before via this function.
  */
-AudioClip* ResourcesManager::get_clip( qint64 id )
+AudioClip* ResourcesManager::get_clip(qint64 id)
 {
-	AudioClip* clip = m_clips.value(id);
+	ClipData* data = m_clips.value(id);
 	 
-	printf("ResourcesManager: Getting clip with id %lld\n", id);
-	if (! clip) {
+	if (!data) {
 		return 0;
 	}
 	
-	if (m_removedClips.contains(id)) {
-		clip = m_removedClips.take(id);
-	} else if (m_gettedClips.contains(id)) {
+	AudioClip* clip = data->clip;
+	
+	if (data->inUse && !data->removed) {
 		PMESG("Creating deep copy of Clip %s", QS_C(clip->get_name()));
 		clip = clip->create_copy();
 		
@@ -304,8 +272,11 @@ AudioClip* ResourcesManager::get_clip( qint64 id )
 		// indicates a design error somewhere ! (most likely in 
 		// AudioClip::create_copy();
 		Q_ASSERT( ! m_clips.contains(clip->get_id()) );
+		ClipData* copy = new ClipData();
+		copy->clip = clip;
+		copy->isCopy = true;
 		
-		m_clips.insert(clip->get_id(), clip);
+		m_clips.insert(clip->get_id(), copy);
 		
 		// Now that we have created a copy of the audioclip, start
 		// the usual get_clip routine again to properly init the clip
@@ -313,21 +284,13 @@ AudioClip* ResourcesManager::get_clip( qint64 id )
 		return get_clip(clip->get_id());
 	}
 	
-	m_gettedClips.insert(id, clip);
-	
-	ReadSource* source = get_readsource(clip->get_readsource_id());
+	ReadSource* source = get_readsource(data->clip->get_readsource_id());
 	
 	if (source) {
 		clip->set_audio_source(source);
-	} else {
-		// sometimes the source is set later...
-		// maybe that should become the default ?
-/*		info().critical(
-		     tr("ResourcesManager: AudioClip %1 required ReadSource with ID %2, but I don't have it!!")
-			.arg(clip->get_name()).arg(clip->get_readsource_id()));*/
 	}
 	
-	emit stateChanged();
+	data->inUse = true;
 	
 	return clip;
 }
@@ -336,13 +299,18 @@ AudioClip* ResourcesManager::new_audio_clip(const QString& name)
 {
 	PENTER;
 	AudioClip* clip = new AudioClip(name);
-	m_clips.insert(clip->get_id(), clip);
+	ClipData* data = new ClipData();
+	data->clip = clip;
+	m_clips.insert(clip->get_id(), data);
 	return get_clip(clip->get_id());
 }
 
 QList<ReadSource*> ResourcesManager::get_all_audio_sources( ) const
 {
-	QList< ReadSource * > list = m_sources.values();
+	QList< ReadSource * > list;
+	foreach(SourceData* data, m_sources) {
+		list.append(data->source);
+	}
 	if (m_silentReadSource) {
 		list.removeAll(m_silentReadSource);
 	}
@@ -351,57 +319,88 @@ QList<ReadSource*> ResourcesManager::get_all_audio_sources( ) const
 
 QList< AudioClip * > ResourcesManager::get_all_clips() const
 {
-	return m_clips.values();
+	QList<AudioClip* > list;
+	foreach(ClipData* data, m_clips) {
+		list.append(data->clip);
+	}
+	return list;
 }
 
-QList< AudioClip * > ResourcesManager::get_clips_for_source( ReadSource * source ) const
-{
-	QList<AudioClip*> clips;
-	
-	foreach(AudioClip* clip, m_clips) {
-		if (clip->get_readsource_id() == source->get_id()) {
-			clips.append(clip);
-		}
-	}
-	
-	return clips;
-}
 
-void ResourcesManager::set_clip_removed(AudioClip * clip)
+void ResourcesManager::mark_clip_removed(AudioClip * clip)
 {
-	ReadSource* source = m_sources.value(clip->get_readsource_id());
-	if (source) {
-		source->unref(true);
-		printf("ClipRemoved: refcount, unrefcount: %d, %d\n", source->get_ref_count(), source->get_unref_count());
-		if (source->get_unref_count() == 0) {
-			emit sourceNoLongerUsed(source);
-		}
+	ClipData* data = m_clips.value(clip->get_id());
+	if (!data) {
+		PERROR("Clip with id %lld is not in my database!", clip->get_id());
+		return;
 	}
-	m_removedClips.insert(clip->get_id(), clip);
+	data->removed = true;
+	
+	SourceData* sourcedata = m_sources.value(clip->get_readsource_id());
+	if (!sourcedata) {
+		PERROR("Source %lld not in database", clip->get_readsource_id());
+	}
+	sourcedata->clipCount--;
+	
 	emit clipRemoved(clip);
 }
 
-void ResourcesManager::set_clip_added(AudioClip * clip)
+void ResourcesManager::mark_clip_added(AudioClip * clip)
 {
-	ReadSource* source = m_sources.value(clip->get_readsource_id());
-	if (source) {
-		source->unref(false);
-		printf("ClipAdded: refcount, unrefcount: %d, %d\n", source->get_ref_count(), source->get_unref_count());
-		emit sourceBackInUse(source);
+	ClipData* clipdata = m_clips.value(clip->get_id());
+	if (!clipdata) {
+		PERROR("Clip with id %lld is not in my database!", clip->get_id());
+		return;
 	}
-	m_removedClips.take(clip->get_id());
+	clipdata->removed = false;
+	
+	SourceData* sourcedata = m_sources.value(clip->get_readsource_id());
+	if (!sourcedata) {
+		PERROR("Source %lld not in database", clip->get_readsource_id());
+	}
+	sourcedata->clipCount++;
+	
 	emit clipAdded(clip);
 }
 
 
 bool ResourcesManager::is_clip_in_use(qint64 id) const
 {
-	return m_gettedClips.contains(id) && ! m_removedClips.contains(id);
+	ClipData* data = m_clips.value(id);
+	if (!data) {
+		PERROR("Clip with id %lld is not in my database!", id);
+		return false;
+	}
+	return data->inUse && !data->removed;
 }
 
+bool ResourcesManager::is_source_in_use(qint64 id) const
+{
+	SourceData* data = m_sources.value(id);
+	if (!data) {
+		PERROR("Source with id %lld is not in my database!", id);
+		return false;
+	}
+	
+	return data->clipCount > 0 ? true : false;
+}
 
 void ResourcesManager::set_source_for_clip(AudioClip * clip, ReadSource * source)
 {
 	clip->set_audio_source(source);
+}
+
+ResourcesManager::SourceData::SourceData()
+{
+	source = 0;
+	clipCount = 0;
+}
+
+ResourcesManager::ClipData::ClipData()
+{
+	clip = 0;
+	inUse = false;
+	isCopy = false;
+	removed = false;
 }
 

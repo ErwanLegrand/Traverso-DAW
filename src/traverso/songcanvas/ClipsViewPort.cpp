@@ -153,7 +153,6 @@ void ClipsViewPort::dropEvent(QDropEvent* event )
 			clip->set_track_start_frame(startpos);
 			startpos = clip->get_track_end_frame();
 			AddRemoveClip* arc = new AddRemoveClip(clip, AddRemoveClip::ADD);
-			arc->remove_from_database_when_removed(true);
 			group->add_command(arc);
 			continue;
 		}
@@ -168,7 +167,6 @@ void ClipsViewPort::dropEvent(QDropEvent* event )
 			// FIXME!!!!!!!!!!!!!!!!!!!!
 			clip->init_gain_envelope();
 			AddRemoveClip* arc = new AddRemoveClip(clip, AddRemoveClip::ADD);
-			arc->remove_from_database_when_removed(true);
 			group->add_command(arc);
 		}
 	}

@@ -128,7 +128,7 @@ public:
 	bool realtime_path() const {return realtimepath;}
 	bool is_transporting() const {return m_transport;}
 	bool is_changed() const {return changed;}
-	bool is_snap_on() const	{return isSnapOn;}
+	bool is_snap_on() const	{return m_isSnapOn;}
 	bool is_recording() const {return m_recording;}
 
 	void disconnect_from_audiodevice();
@@ -175,7 +175,7 @@ private:
 	int		m_sby;
 	bool 		m_rendering;
 	bool 		changed;
-	bool 		isSnapOn;
+	bool 		m_isSnapOn;
 	bool		resumeTransport;
 	bool 		m_stopTransport;
 	bool		realtimepath;

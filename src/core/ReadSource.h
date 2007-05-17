@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.h,v 1.23 2007/05/11 11:16:32 r_sijrier Exp $
+$Id: ReadSource.h,v 1.24 2007/05/17 21:38:15 r_sijrier Exp $
 */
 
 #ifndef READSOURCE_H
@@ -35,7 +35,7 @@ class ReadSource : public AudioSource
 public :
 	ReadSource(const QDomNode node);
 	ReadSource(const QString& dir, const QString& name);
-	ReadSource(const QString& dir, const QString& name, int channelCount, int fileCount);
+	ReadSource(const QString& dir, const QString& name, int channelCount);
 	ReadSource();  // For creating a 0-channel, silent ReadSource
 	~ReadSource();
 	
@@ -53,11 +53,9 @@ public :
 
 	int init();
 	int get_ref_count() const {return m_refcount;}
-	int get_unref_count() const {return m_unrefcount;}
 	int get_error() const {return m_error;}
 	int set_file(const QString& filename);
 	void set_active(bool active);
-	void set_was_recording(bool wasRecording);
 	
 	void set_audio_clip(AudioClip* clip);
 	Peak* get_peak(int channel);
@@ -68,14 +66,12 @@ public :
 private:
 	QList<MonoReader*> m_sources;
 	int	m_refcount;
-	int	m_unrefcount;
 	int	m_error;
 	AudioClip* m_clip;
 	int	m_usedByClips;
 	bool	m_silent;
 	
 	int ref() { return m_refcount++;}
-	int unref(bool b) { if (b) m_unrefcount++; else m_unrefcount--; return m_unrefcount;}
 	int add_mono_reader(int channel, int channelNumber, const QString& fileName);
 	
 	friend class MonoReader;

@@ -104,9 +104,6 @@ int SplitClip::do_action()
 	
 	Command::process_command(m_track->remove_clip(m_clip, false));
 	
-	resources_manager()->undo_remove_clip_from_database(leftClip->get_id());
-	resources_manager()->undo_remove_clip_from_database(rightClip->get_id());
-	
 	return 1;
 }
 
@@ -118,9 +115,6 @@ int SplitClip::undo_action()
 	
 	Command::process_command(m_track->remove_clip(leftClip, false));
 	Command::process_command(m_track->remove_clip(rightClip, false));
-	
-	resources_manager()->remove_clip_from_database(leftClip->get_id());
-	resources_manager()->remove_clip_from_database(rightClip->get_id());
 	
 	return 1;
 }

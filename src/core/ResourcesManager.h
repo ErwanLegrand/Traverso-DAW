@@ -32,13 +32,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 class AudioSource;
 class ReadSource;
 class AudioClip;
+class Project;
 
 class ResourcesManager : public QObject
 {
 	Q_OBJECT
 	
 public:
-	ResourcesManager();
+	ResourcesManager(Project* project);
 	~ResourcesManager();
 
 	int set_state( const QDomNode& node );
@@ -49,49 +50,52 @@ public:
 				int channelCount,
 				int songId);
 	
-	ReadSource* create_new_readsource(const QString& dir, const QString& name);
+	ReadSource* import_source(const QString& dir, const QString& name);
 	ReadSource* get_silent_readsource();
 	AudioClip* new_audio_clip(const QString& name);
 	AudioClip* get_clip(qint64 id);
 	
-	int remove_clip_from_database(qint64 id);
-	int undo_remove_clip_from_database(qint64 id);
-	
-	void set_clip_removed(AudioClip* clip);
-	void set_clip_added(AudioClip* clip);
+	void mark_clip_removed(AudioClip* clip);
+	void mark_clip_added(AudioClip* clip);
 	void set_source_for_clip(AudioClip* clip, ReadSource* source);
 	
 	bool is_clip_in_use(qint64) const;
+	bool is_source_in_use(qint64 id) const;
 
-	ReadSource* get_readsource(const QString& fileName);
 	ReadSource* get_readsource(qint64 id);
 	
 	
-	int get_total_sources();
-	
 	QList<ReadSource*> get_all_audio_sources() const;
 	QList<AudioClip*> get_all_clips() const;
-	QList<AudioClip*> get_clips_for_source(ReadSource* source) const;
 
 
 private:
-	QHash<qint64, ReadSource* >	m_sources;
-	QHash<qint64, AudioClip* >	m_clips;
-	QHash<qint64, AudioClip* >	m_gettedClips;
-	QHash<qint64, AudioClip* >	m_removedClips;
-	QHash<qint64, AudioClip* >	m_deprecatedClips;
+	struct ClipData {
+		ClipData();
+		AudioClip* clip;
+		bool inUse;
+		bool isCopy;
+		bool removed;
+	};
+	
+	struct SourceData {
+		SourceData();
+		ReadSource* source;
+		int clipCount;
+	};
+	
+	Project* m_project;
+	QHash<qint64, SourceData* >	m_sources;
+	QHash<qint64, ClipData* >	m_clips;
 	ReadSource*			m_silentReadSource;
 	
 	
 signals:
-	void sourceAdded();
-	void sourceRemoved();
-	void stateChanged();
+	void stateRestored();
 	void clipRemoved(AudioClip* clip);
 	void clipAdded(AudioClip* clip);
-	void sourceNoLongerUsed(ReadSource* source);
-	void sourceBackInUse(ReadSource* source);
-	void newSourceCreated(ReadSource* source);
+	void sourceAdded(ReadSource* source);
+	void sourceRemoved(ReadSource* source);
 };
 
 

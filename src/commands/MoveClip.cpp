@@ -233,10 +233,6 @@ int MoveClip::do_action()
 		m_song->move_clip(m_originTrack, m_targetTrack, m_clip, m_originalTrackFirstFrame + m_posDiff);
 	}
 	
-	if (m_actionType == "copy") {
-		resources_manager()->undo_remove_clip_from_database(m_clip->get_id());
-	}
-
 	if (m_actionType == "anchored_left_edge_move") {
 		m_clip->set_right_edge(m_oldOppositeEdge);
 	}
@@ -255,9 +251,7 @@ int MoveClip::undo_action()
 		Command::process_command(m_targetTrack->remove_clip(m_clip, false));
 	}
 	
-	if (m_actionType == "copy") {
-		resources_manager()->remove_clip_from_database(m_clip->get_id());
-	} else {
+	if (m_actionType != "copy") {
 		m_clip->set_track_start_frame(m_originalTrackFirstFrame);
 		Command::process_command(m_originTrack->add_clip(m_clip, false));
 	}
@@ -279,7 +273,6 @@ void MoveClip::cancel_action()
 	
 	if (m_actionType == "copy") {
 		Command::process_command(m_originTrack->remove_clip(m_clip, false));
-		resources_manager()->remove_clip_from_database(m_clip->get_id());
 	} else if (m_actionType == "move") {
 		if (d->resync) {
 			m_clip->set_track_start_frame(m_originalTrackFirstFrame);

@@ -207,16 +207,16 @@ void ResourcesWidget::set_project(Project * project)
 	songComboBox->setEnabled(true);
 	ResourcesManager* rsmanager = m_project->get_audiosource_manager();
 	
-	connect(rsmanager, SIGNAL(sourceAdded()), this, SLOT(update_tree_widgets()));
-	connect(rsmanager, SIGNAL(clipAdded(AudioClip*)), this, SLOT(clip_added(AudioClip*)));
-	connect(rsmanager, SIGNAL(clipRemoved(AudioClip*)), this, SLOT(clip_removed(AudioClip*)));
-	connect(rsmanager, SIGNAL(sourceNoLongerUsed(ReadSource*)), this, SLOT(source_nolonger_in_use(ReadSource*)));
-	connect(rsmanager, SIGNAL(sourceBackInUse(ReadSource*)), this, SLOT(source_back_in_use(ReadSource*)));
+	connect(rsmanager, SIGNAL(stateRestored()), this, SLOT(populate_tree()));
+	connect(rsmanager, SIGNAL(clipAdded(AudioClip*)), this, SLOT(add_clip(AudioClip*)));
+	connect(rsmanager, SIGNAL(clipRemoved(AudioClip*)), this, SLOT(remove_clip(AudioClip*)));
+	connect(rsmanager, SIGNAL(sourceAdded(ReadSource*)), this, SLOT(add_source(ReadSource*)));
+	connect(rsmanager, SIGNAL(sourceRemoved(ReadSource*)), this, SLOT(remove_source(ReadSource*)));
 	connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(song_added(Song*)));
 	connect(m_project, SIGNAL(songRemoved(Song*)), this, SLOT(song_removed(Song*)));
 }
 
-void ResourcesWidget::update_tree_widgets()
+void ResourcesWidget::populate_tree()
 {
 	sourcesTreeWidget->clear();
 	
@@ -225,44 +225,12 @@ void ResourcesWidget::update_tree_widgets()
 	}
 	
 	foreach(ReadSource* rs, resources_manager()->get_all_audio_sources()) {
-		QTreeWidgetItem* item = new QTreeWidgetItem(sourcesTreeWidget);
-		m_sourceindices.insert(rs->get_id(), item);
-		QString duration = frame_to_ms(rs->get_nframes(), 44100);
-		item->setText(0, rs->get_short_name());
-		item->setText(1, duration);
-		item->setText(2, "");
-		item->setText(3, "");
-		item->setData(0, Qt::UserRole, rs->get_id());
-		item->setToolTip(0, rs->get_short_name() + "   " + duration);
-		if (!rs->get_ref_count()) {
-			item->setForeground(0, QColor(Qt::lightGray));
-			item->setForeground(1, QColor(Qt::lightGray));
-			item->setForeground(2, QColor(Qt::lightGray));
-			item->setForeground(3, QColor(Qt::lightGray));
-		}
-		
-		foreach(AudioClip* clip, resources_manager()->get_clips_for_source(rs)) {
-			QTreeWidgetItem* clipitem = new QTreeWidgetItem(item);
-			m_clipindices.insert(clip->get_id(), clipitem);
-			clipitem->setText(0, clip->get_name());
-			QString start = frame_to_ms(clip->get_source_start_frame(), clip->get_rate());
-			QString end = frame_to_ms(clip->get_source_end_frame(), clip->get_rate());
-			clipitem->setText(1, frame_to_ms(clip->get_length(), clip->get_rate()));
-			clipitem->setText(2, start);
-			clipitem->setText(3, end);
-			clipitem->setData(0, Qt::UserRole, clip->get_id());
-			clipitem->setToolTip(0, clip->get_name() + "   " + start + " - " + end);
-		
-			if (resources_manager()->is_clip_in_use(clip->get_id())) {
-				clipitem->setForeground(0, QColor(Qt::lightGray));
-				clipitem->setForeground(1, QColor(Qt::lightGray));
-				clipitem->setForeground(2, QColor(Qt::lightGray));
-				clipitem->setForeground(3, QColor(Qt::lightGray));
-			}
-		}
+		add_source(rs);
 	}
 	
-	
+	foreach(AudioClip* clip, resources_manager()->get_all_clips()) {
+		add_clip(clip);
+	}
 
 	sourcesTreeWidget->sortItems(0, Qt::AscendingOrder);
 }
@@ -281,7 +249,6 @@ void ResourcesWidget::view_combo_box_index_changed(int index)
 
 void ResourcesWidget::song_combo_box_index_changed(int index)
 {
-//	update_tree_widgets();
 }
 
 void ResourcesWidget::song_added(Song * song)
@@ -295,65 +262,101 @@ void ResourcesWidget::song_removed(Song * song)
 	songComboBox->removeItem(index);
 }
 
-void ResourcesWidget::clip_removed(AudioClip * clip)
-{
-	QTreeWidgetItem* item = m_clipindices.value(clip->get_id());
-	if (!item) return;
-	for (int i=0; i<5; ++i) {
-		item->setForeground(i, QColor(Qt::lightGray));
-	}
-}
-
-void ResourcesWidget::clip_added(AudioClip * clip)
+void ResourcesWidget::add_clip(AudioClip * clip)
 {
 	printf("clip_added: clip is %lld\n", clip->get_id());
+	
 	QTreeWidgetItem* item = m_clipindices.value(clip->get_id());
+	
 	if (!item) {
-		add_new_clip_entry(clip);
-		return;
+		QTreeWidgetItem* sourceitem = m_sourceindices.value(clip->get_readsource_id());
+	
+		if (! sourceitem ) return;
+	
+		QTreeWidgetItem* clipitem = new QTreeWidgetItem(sourceitem);
+		m_clipindices.insert(clip->get_id(), clipitem);
+	
+		QString start = frame_to_ms(clip->get_source_start_frame(), clip->get_rate());
+		QString end = frame_to_ms(clip->get_source_end_frame(), clip->get_rate());
+		
+		clipitem->setText(0, clip->get_name());
+		clipitem->setText(1, frame_to_ms(clip->get_length(), clip->get_rate()));
+		clipitem->setText(2, start);
+		clipitem->setText(3, end);
+		clipitem->setData(0, Qt::UserRole, clip->get_id());
+		clipitem->setToolTip(0, clip->get_name() + "   " + start + " - " + end);
+		
+		item = clipitem;
 	}
-	for (int i=0; i<5; ++i) {
-		item->setForeground(i, QColor(Qt::black));
-	}
+	
+	update_clip_state(clip);
 }
 
-void ResourcesWidget::source_nolonger_in_use(ReadSource * source)
+void ResourcesWidget::remove_clip(AudioClip * clip)
+{
+	QTreeWidgetItem* item = m_clipindices.value(clip->get_id());
+	
+	if (!item) {
+		 return;
+	}
+	
+	update_clip_state(clip);
+}
+
+void ResourcesWidget::add_source(ReadSource * source)
 {
 	QTreeWidgetItem* item = m_sourceindices.value(source->get_id());
-	if (!item) return;
-	for (int i=0; i<5; ++i) {
-		item->setForeground(i, QColor(Qt::lightGray));
+	
+	if (! item) {
+		QTreeWidgetItem* item = new QTreeWidgetItem(sourcesTreeWidget);
+		m_sourceindices.insert(source->get_id(), item);
+		QString duration = frame_to_ms(source->get_nframes(), 44100);
+		item->setText(0, source->get_short_name());
+		item->setText(1, duration);
+		item->setText(2, "");
+		item->setText(3, "");
+		item->setData(0, Qt::UserRole, source->get_id());
+		item->setToolTip(0, source->get_short_name() + "   " + duration);
 	}
+	
+	update_source_state(source->get_id());
 }
 
-void ResourcesWidget::source_back_in_use(ReadSource * source)
+void ResourcesWidget::remove_source(ReadSource * source)
 {
-	QTreeWidgetItem* item = m_sourceindices.value(source->get_id());
-	if (!item) return;
-	for (int i=0; i<5; ++i) {
-		item->setForeground(i, QColor(Qt::black));
-	}
 }
 
-void ResourcesWidget::add_new_clip_entry(AudioClip * clip)
+void ResourcesWidget::update_clip_state(AudioClip* clip)
 {
-	QTreeWidgetItem* sourceitem = m_sourceindices.value(clip->get_readsource_id());
+	QTreeWidgetItem* item = m_clipindices.value(clip->get_id());
+	Q_ASSERT(item);
 	
-	if (! sourceitem ) return;
+	if (resources_manager()->is_clip_in_use(clip->get_id())) {
+		for (int i=0; i<5; ++i) {
+			item->setForeground(i, QColor(Qt::black));
+		}
+	} else {
+		for (int i=0; i<5; ++i) {
+			item->setForeground(i, QColor(Qt::lightGray));
+		}
+	}
 	
-// 	Q_ASSERT(sourceitem);
+	update_source_state(clip->get_readsource_id());
+}
+
+void ResourcesWidget::update_source_state(qint64 id)
+{
+	QTreeWidgetItem* item = m_sourceindices.value(id);
+	Q_ASSERT(item);
 	
-	QTreeWidgetItem* clipitem = new QTreeWidgetItem(sourceitem);
-	m_clipindices.insert(clip->get_id(), clipitem);
-	printf("add_new_clip_entry: clip is %lld\n", clip->get_id());
-	
-	clipitem->setText(0, clip->get_name());
-	QString start = frame_to_ms(clip->get_source_start_frame(), clip->get_rate());
-	QString end = frame_to_ms(clip->get_source_end_frame(), clip->get_rate());
-	clipitem->setText(1, frame_to_ms(clip->get_length(), clip->get_rate()));
-	clipitem->setText(2, start);
-	clipitem->setText(3, end);
-	clipitem->setData(0, Qt::UserRole, clip->get_id());
-	clipitem->setToolTip(0, clip->get_name() + "   " + start + " - " + end);
+	if (resources_manager()->is_source_in_use(id)) {
+		for (int i=0; i<5; ++i) {
+			item->setForeground(i, QColor(Qt::black));
+		}
+	} else {
+		for (int i=0; i<5; ++i) {
+			item->setForeground(i, QColor(Qt::lightGray));
+		}
+	}
 }
 

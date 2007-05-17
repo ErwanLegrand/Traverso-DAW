@@ -42,8 +42,6 @@ public :
 	int do_action();
 	int undo_action();
 	
-	void remove_from_database_when_removed(bool remove);
-
 private :
 	int m_type;
 	bool m_removeFromDataBase;

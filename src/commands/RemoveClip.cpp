@@ -58,10 +58,6 @@ int AddRemoveClip::do_action()
 		Command::process_command(m_track->add_clip(m_clip, false));
 	}
 	
-	if (m_removeFromDataBase) {
-		resources_manager()->undo_remove_clip_from_database(m_clip->get_id());
-	}
-	
 	return 1;
 }
 
@@ -77,16 +73,7 @@ int AddRemoveClip::undo_action()
 		Command::process_command(m_track->remove_clip(m_clip, false));
 	}
 	
-	if (m_removeFromDataBase) {
-		resources_manager()->remove_clip_from_database(m_clip->get_id());
-	}
-	
 	return 1;
-}
-
-void AddRemoveClip::remove_from_database_when_removed(bool remove)
-{
-	m_removeFromDataBase = remove;
 }
 
 // eof

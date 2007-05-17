@@ -63,7 +63,7 @@ Project::Project(const QString& pTitle)
 	m_rate = audiodevice().get_sample_rate();
 	m_bitDepth = audiodevice().get_bit_depth();
 
-	m_asmanager = new ResourcesManager();
+	m_resourcesManager = new ResourcesManager(this);
 	m_hs = new QUndoStack(pm().get_undogroup());
 
 	cpointer().add_contextitem(this);
@@ -80,7 +80,6 @@ Project::~Project()
 		song->disconnect_from_audiodevice();
 	}
 
-	delete m_asmanager;
 	delete m_hs;
 }
 
@@ -217,7 +216,7 @@ int Project::load(QString projectfile)
 	// Load all the AudioSources for this project
 	
 	QDomNode asmNode = docElem.firstChildElement("ResourcesManager");
-	m_asmanager->set_state(asmNode);
+	m_resourcesManager->set_state(asmNode);
 
 
 	QDomNode songsNode = docElem.firstChildElement("Songs");
@@ -310,7 +309,7 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
 
 	// Get the AudioSources Node, and append
 	if (! istemplate) {
-		projectNode.appendChild(m_asmanager->get_state(doc));
+		projectNode.appendChild(m_resourcesManager->get_state(doc));
 	}
 
 	// Get all the Songs
@@ -774,7 +773,7 @@ QString Project::get_audiosources_dir() const
 
 ResourcesManager * Project::get_audiosource_manager( ) const
 {
-	return m_asmanager;
+	return m_resourcesManager;
 }
 
 

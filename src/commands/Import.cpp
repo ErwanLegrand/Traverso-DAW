@@ -89,7 +89,7 @@ int Import::prepare_actions()
 		QString dir = m_fileName.left(splitpoint - 1);
 		
 		if (m_fileName.isEmpty()) {
-			PWARN("FileName is empty!");
+			PWARN("Import:: FileName is empty!");
 			return -1;
 		}
 		
@@ -112,15 +112,10 @@ int Import::create_readsource()
 	QString dir = m_fileName.left(splitpoint - 1) + "/";
 	m_name = m_fileName.right(length - splitpoint);
 	
-	m_source = resources_manager()->get_readsource(m_fileName);
-	
-	if (! m_source ) {
-		PMESG("AudioSource not found in acm, requesting new one");
-		m_source = resources_manager()->create_new_readsource(dir, m_name);
-		if (! m_source) {
-			PERROR("Can't import audiofile %s", QS_C(m_fileName));
-			return -1;
-		}
+	m_source = resources_manager()->import_source(dir, m_name);
+	if (! m_source) {
+		PERROR("Can't import audiofile %s", QS_C(m_fileName));
+		return -1;
 	}
 	
 	return 1;
@@ -165,8 +160,6 @@ int Import::do_action()
 	
 	Command::process_command(m_track->add_clip(m_clip, false));
 	
-	resources_manager()->undo_remove_clip_from_database(m_clip->get_id());
-	
 	return 1;
 }
 
@@ -174,11 +167,7 @@ int Import::do_action()
 int Import::undo_action()
 {
 	PENTER;
-		
 	Command::process_command(m_track->remove_clip(m_clip, false));
-	
-	resources_manager()->remove_clip_from_database(m_clip->get_id());
-	
 	return 1;
 }
 
