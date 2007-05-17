@@ -518,13 +518,7 @@ Command* SongView::scroll_up( )
 
 Command* SongView::scroll_down( )
 {
-	int value = m_clipsViewPort->verticalScrollBar()->value() + 50;
-	
-	if (value > m_vScrollBar->maximum()) {
-		value = m_vScrollBar->maximum();
-	}
-
-	set_vscrollbar_value(value);
+	set_vscrollbar_value(m_clipsViewPort->verticalScrollBar()->value() + 50);
 	return 0;
 }
 
