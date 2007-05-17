@@ -58,7 +58,6 @@ void TimeLineViewPort::set_songview( SongView * view )
 
 void TimeLineViewPort::get_pointed_context_items(QList<ContextItem* > &list)
 {
-	printf("TimeLineViewPort::get_pointed_view_items\n");
 	QList<QGraphicsItem *> itemlist = items(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
 	foreach(QGraphicsItem* item, itemlist) {
 		list.append((ViewItem*)item);

@@ -52,7 +52,6 @@ ClipsViewPort::ClipsViewPort(QGraphicsScene* scene, SongWidget* sw)
 
 void ClipsViewPort::get_pointed_context_items(QList<ContextItem* > &list)
 {
-	printf("ClipsViewPort::get_pointed_view_items\n");
 	QList<QGraphicsItem *> itemlist = items(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
 	foreach(QGraphicsItem* item, itemlist) {
 		list.append((ViewItem*)item);
@@ -69,7 +68,6 @@ void ClipsViewPort::resizeEvent( QResizeEvent * e )
 
 void ClipsViewPort::paintEvent(QPaintEvent * e)
 {
-// 	printf("ClipsViewPort::paintEvent\n");
 	QGraphicsView::paintEvent(e);
 }
 

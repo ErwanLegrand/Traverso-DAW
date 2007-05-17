@@ -129,8 +129,7 @@ SongView::SongView(SongWidget* songwidget,
 	
 	int x, y;
 	m_song->get_scrollbar_xy(x, y);
-	printf("pagestep %d\n", m_hScrollBar->pageStep());
-	set_hscrollbar_value(x + m_clipsViewPort->horizontalScrollBar()->pageStep());
+	set_hscrollbar_value(x);
 	set_vscrollbar_value(y);
 }
 
@@ -203,10 +202,7 @@ void SongView::remove_trackview(Track* track)
 
 void SongView::update_scrollbars()
 {
-	if (!m_sceneHeight) {
-		return;
-	}
-	
+	printf("update_scrollbars()\n");
 	int width = (m_song->get_last_frame() / scalefactor) - (m_clipsViewPort->width() / 4);
 	
 	m_hScrollBar->setRange(0, width);
