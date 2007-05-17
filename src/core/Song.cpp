@@ -65,7 +65,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 Song::Song(Project* project)
 	: ContextItem()
-		, m_project(project)
+	, m_project(project)
 {
 	PENTERCONS;
 	title = tr("Untitled");
@@ -161,6 +161,7 @@ void Song::init()
 	// TODO seek to old position on project exit ?
 	transportFrame = 0;
 	m_mode = EDIT;
+	m_sbx = m_sby = 0;
 	
 	m_pluginChain = new PluginChain(this, this);
 	m_timeline = new TimeLine(this);

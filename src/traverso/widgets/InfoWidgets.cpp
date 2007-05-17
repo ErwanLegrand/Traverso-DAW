@@ -603,6 +603,24 @@ SongInfo::SongInfo(QWidget * parent)
 	update_follow_state();
 }
 
+void SongInfo::set_project(Project * project)
+{
+	m_project = project;
+	
+	if (!project) {
+		m_songselectbox->clear();
+		set_song(0);
+		return;
+	}
+	
+	connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(song_selector_song_added(Song*)));
+	connect(m_project, SIGNAL(songRemoved(Song*)), this, SLOT(song_selector_song_removed(Song*)));
+	connect(m_project, SIGNAL(currentSongChanged(Song*)), this, SLOT(song_selector_change_index_to(Song*)));
+	connect(m_project, SIGNAL(currentSongChanged(Song*)), this, SLOT(set_song(Song*)));
+	
+	song_selector_update_songs();
+}
+
 void SongInfo::set_song(Song* song)
 {
 	m_song = song;
@@ -693,24 +711,6 @@ void SongInfo::update_recording_state()
 QSize SongInfo::sizeHint() const
 {
 	return QSize(400, SONG_TOOLBAR_HEIGHT);
-}
-
-
-void SongInfo::set_project(Project * project)
-{
-	if ( ! project) {
-		m_project = project;
-		m_songselectbox->clear();
-		return;
-	}
-	
-	m_project = project;
-	
-	connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(song_selector_song_added(Song*)));
-	connect(m_project, SIGNAL(songRemoved(Song*)), this, SLOT(song_selector_song_removed(Song*)));
-	connect(m_project, SIGNAL(currentSongChanged(Song*)), this, SLOT(song_selector_change_index_to(Song*)));
-	
-	song_selector_update_songs();
 }
 
 void SongInfo::song_selector_update_songs()
