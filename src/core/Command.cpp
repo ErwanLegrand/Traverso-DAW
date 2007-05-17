@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Command.cpp,v 1.19 2007/04/30 10:09:11 r_sijrier Exp $
+$Id: Command.cpp,v 1.20 2007/05/17 22:50:22 r_sijrier Exp $
 */
 
 #include "Command.h"
@@ -283,6 +283,11 @@ void Command::process_command(Command * cmd)
 			delete cmd;
 		}
 	}
+}
+
+void Command::set_historable(bool historible)
+{
+	m_isHistorable = historible;
 }
 
 //eof

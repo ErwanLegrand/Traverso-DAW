@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <SongView.h>
 #include <AudioClipView.h>
 #include <ViewItem.h>
+#include "Fade.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -81,14 +82,18 @@ int SplitClip::prepare_actions()
 	leftClip->set_track_start_frame( m_clip->get_track_start_frame() );
 	leftClip->set_right_edge(m_splitPoint);
 	if (leftClip->get_fade_out()) {
-		leftClip->reset_fade_out();
+		FadeRange* cmd = (FadeRange*)leftClip->reset_fade_out();
+		cmd->set_historable(false);
+		Command::process_command(cmd);
 	}
 	
 	rightClip->set_song(m_clip->get_song());
 	rightClip->set_left_edge(m_splitPoint);
 	rightClip->set_track_start_frame(m_splitPoint);
 	if (rightClip->get_fade_in()) {
-		rightClip->reset_fade_in();
+		FadeRange* cmd = (FadeRange*)rightClip->reset_fade_in();
+		cmd->set_historable(false);
+		Command::process_command(cmd);
 	}
 	
 	return 1;

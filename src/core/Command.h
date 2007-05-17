@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Command.h,v 1.11 2007/04/13 09:57:35 r_sijrier Exp $
+    $Id: Command.h,v 1.12 2007/05/17 22:50:22 r_sijrier Exp $
 */
 
 #ifndef COMMAND_H
@@ -52,6 +52,7 @@ public :
 	void redo() {do_action();}
 
         void set_valid(bool valid);
+	void set_historable(bool historible);
         int push_to_history_stack();
 	
 	static void process_command(Command* cmd);
