@@ -176,7 +176,7 @@ InputEngine::InputEngine()
 	sCollectedNumber = "-1";
 	activate();
 	
-#define profile
+//#define profile
 
 #if defined (profile)
 	trav_time_t starttime = get_microseconds();

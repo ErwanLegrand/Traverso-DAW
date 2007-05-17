@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: MonoReader.cpp,v 1.8 2007/05/17 21:38:15 r_sijrier Exp $
+$Id: MonoReader.cpp,v 1.9 2007/05/17 23:29:39 r_sijrier Exp $
 */
 
 
@@ -273,7 +273,7 @@ void MonoReader::process_ringbuffer( audio_sample_t * framebuffer, bool seeking)
 {
 	// Do nothing if we passed the lenght of the AudioFile.
 	if (m_rbFileReadPos >= m_length) {
-		printf("returning, m_rbFileReadPos > m_length! (%d >  %d)\n", m_rbFileReadPos, m_source->m_length);
+// 		printf("returning, m_rbFileReadPos > m_length! (%d >  %d)\n", m_rbFileReadPos, m_source->m_length);
 		if (m_syncInProgress) {
 			finish_resync();
 		}

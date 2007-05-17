@@ -73,14 +73,15 @@ public:
 		QPushButton* button = new QPushButton(this);
 		QIcon icon = QApplication::style()->standardIcon(QStyle::SP_FileDialogToParent);
 		button->setIcon(icon);
+		button->setMaximumHeight(23);
 		
 		QHBoxLayout* hlay = new QHBoxLayout;
-		hlay->addWidget(m_box, 10);
 		hlay->addWidget(button);
-		hlay->addSpacing(2);
+		hlay->addWidget(m_box, 10);
 		
 		QVBoxLayout* lay = new QVBoxLayout(this);
 		lay->setMargin(0);
+		lay->setSpacing(6);
 		lay->addLayout(hlay);
 		lay->addWidget(m_dirView);
 		
@@ -264,8 +265,6 @@ void ResourcesWidget::song_removed(Song * song)
 
 void ResourcesWidget::add_clip(AudioClip * clip)
 {
-	printf("clip_added: clip is %lld\n", clip->get_id());
-	
 	QTreeWidgetItem* item = m_clipindices.value(clip->get_id());
 	
 	if (!item) {

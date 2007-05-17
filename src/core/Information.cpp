@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Information.cpp,v 1.3 2007/04/02 20:51:45 r_sijrier Exp $
+    $Id: Information.cpp,v 1.4 2007/05/17 23:29:39 r_sijrier Exp $
 */
 
 #include "Information.h"
@@ -37,7 +37,7 @@ void Information::information( const QString & mes )
         InfoStruct s;
         s.message = mes;
         s.type = INFO;
-	PWARN("Information::information %s", QS_C(mes));
+	PMESG("Information::information %s", QS_C(mes));
 	emit message(s);
 }
 

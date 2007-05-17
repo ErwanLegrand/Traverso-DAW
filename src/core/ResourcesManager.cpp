@@ -225,7 +225,7 @@ ReadSource * ResourcesManager::get_readsource( qint64 id )
 	// When the AudioSource is "get", do a ref counting.
 	// If the source allready was ref counted, create a deep copy
 	if (source->ref()) {
-		PWARN("Creating deep copy of ReadSource: %s", QS_C(source->get_name()));
+		PMESG("Creating deep copy of ReadSource: %s", QS_C(source->get_name()));
 		source = source->deep_copy();
 		source->ref();
 	}
