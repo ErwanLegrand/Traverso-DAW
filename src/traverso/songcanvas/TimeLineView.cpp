@@ -203,6 +203,8 @@ TimeLineView::TimeLineView(SongView* view)
 
 	setAcceptsHoverEvents(true);
 
+	m_zooms[524288] = "20:00.000";
+	m_zooms[262144] = "10:00.000";
 	m_zooms[131072] = "5:00.000";
 	m_zooms[ 65536] = "2:30.000";
 	m_zooms[ 32768] = "1:00.000";

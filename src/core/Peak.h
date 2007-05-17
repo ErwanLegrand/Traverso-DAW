@@ -44,8 +44,8 @@ public:
 struct PeakData {
 	int peakDataOffset;
 	int normValuesDataOffset;
-	int peakDataLevelOffsets[18 - 6];
-	int peakDataSizeForLevel[18 - 6];
+	int peakDataLevelOffsets[20 - 6];  // FIXME: Magic Numbers!
+	int peakDataSizeForLevel[20 - 6];
 	char label[6];	//TPFxxx -> Traverso Peak File version x.x.x
 	int version[2];
 
@@ -56,7 +56,7 @@ class Peak : public QObject
 	Q_OBJECT
 
 public:
-	static const int ZOOM_LEVELS = 18;
+	static const int ZOOM_LEVELS = 20;
 	static const int MAX_ZOOM_USING_SOURCEFILE;
 	static const int MAX_DB_VALUE;
 	static int zoomStep[ZOOM_LEVELS + 1];

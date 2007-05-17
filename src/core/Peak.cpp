@@ -42,10 +42,10 @@ const int Peak::MAX_ZOOM_USING_SOURCEFILE	= SAVING_ZOOM_FACTOR - 1;
 
 #define NORMALIZE_CHUNK_SIZE	10000
 #define PEAKFILE_MAJOR_VERSION	0
-#define PEAKFILE_MINOR_VERSION	7
+#define PEAKFILE_MINOR_VERSION	8
 
 int Peak::zoomStep[] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096,
-				8192, 16384, 32768, 65536, 131072, 262144};
+				8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576};
 
 Peak::Peak(AudioSource* source, int channel)
 	: m_channel(channel)
