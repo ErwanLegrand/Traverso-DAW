@@ -34,6 +34,8 @@
 
 #if defined (Q_WS_WIN)
 #define CDRDAO_BIN	"cdrdao.exe"
+#elif defined (OSX_BUILD)
+#define CDRDAO_BIN "/opt/local/bin/cdrdao"
 #else
 #define CDRDAO_BIN	"cdrdao"
 #endif
@@ -384,6 +386,8 @@ void ExportWidget::query_devices()
 	cdDeviceComboBox->clear();
 #if defined (Q_WS_WIN)
 	m_burnprocess->start(CDRDAO_BIN, QStringList() << "scanbus");
+#elif defined (OSX_BUILD)
+	// not possible to query devices on os x, workaround is included
 #else
 	m_burnprocess->start(CDRDAO_BIN, QStringList() << "drive-info");
 #endif
@@ -565,7 +569,10 @@ void ExportWidget::write_to_cd()
 	}
 		
 	QString device = cdDeviceComboBox->itemData(index).toString();
-	
+#if defined (OSX_BUILD)
+	device = cdDeviceComboBox->currentText();
+#endif
+
 	QStringList arguments;
 	arguments << "write" << "--device" << device << "-n" << "--eject" << "--driver" << "generic-mmc";
 	
@@ -578,7 +585,6 @@ void ExportWidget::write_to_cd()
 	}
 	
 	arguments << m_exportSpec->tocFileName;
-	
 	m_burnprocess->start(CDRDAO_BIN, arguments);
 }
 
@@ -665,6 +671,14 @@ void ExportWidget::read_standard_output()
 				cdDeviceComboBox->addItem(deviceName, device);
 			}
 		}
+		
+#if defined (OSX_BUILD)
+		cdDeviceComboBox->clear();
+		cdDeviceComboBox->addItem("IODVDServices");
+		cdDeviceComboBox->addItem("IODVDServices/2");
+		cdDeviceComboBox->addItem("IOCompactDiscServices");
+		cdDeviceComboBox->addItem("IOCompactDiscServices/2");
+#endif
 		
 		update_cdburn_status(tr("Information"), NORMAL_MESSAGE);
 		
