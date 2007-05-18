@@ -709,9 +709,10 @@ void PeakProcessor::start_task()
 	m_taskRunning = false;
 	
 	if (m_runningPeak->interuptPeakBuild) {
-		printf("PeakProcessor:: Deleting interrupted Peak!\n");
+		PMESG("PeakProcessor:: Deleting interrupted Peak!");
 		delete m_runningPeak;
 		m_runningPeak = 0;
+		m_wait.wakeAll();
 		return;
 	}
 	
@@ -754,20 +755,15 @@ void PeakProcessor::free_peak(Peak * peak)
 	m_queue.removeAll(peak);
 	
 	if (peak == m_runningPeak) {
-		printf("PeakProcessor:: Interrupting running build process!\n");
+		PMESG("PeakProcessor:: Interrupting running build process!");
 		peak->interuptPeakBuild =  true;
 		
-		m_mutex.unlock();
+		PMESG("PeakProcessor:: Waiting GUI thread until interrupt finished");
+		m_wait.wait(&m_mutex);
+		PMESG("PeakProcessor:: Resuming GUI thread");
 		
-		m_ppthread->exit(0);
-		if (!m_ppthread->wait(500)) {
-			printf("PeakProcessor:: Wait timed out!\n");
-		}
-		
-		m_ppthread->start();
-		
-		m_mutex.lock();
 		dequeue_queue();
+		
 		m_mutex.unlock();
 		
 		return;

@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QThread>
 #include <QMutex>
 #include <QQueue>
+#include <QWaitCondition>
 
 #include "defines.h"
 
@@ -45,6 +46,7 @@ public:
 private:
 	PPThread* m_ppthread;
 	QMutex m_mutex;
+	QWaitCondition m_wait;
 	bool m_taskRunning;
 	Peak* m_runningPeak;
 		
