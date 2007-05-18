@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Mixer.h"
 #include <QFileInfo>
 #include <QDateTime>
+#include <QMutexLocker>
 
 #include "Debugger.h"
 
@@ -177,12 +178,7 @@ int Peak::write_header()
 
 void Peak::start_peak_loading()
 {
-	Q_ASSERT(!peakBuildThread);
-	
-	if (!peakBuildThread) {
-		peakBuildThread = new PeakBuildThread(this);
-		peakBuildThread->start();
-	}
+	peakbuilder().queue_task(this);
 }
 
 
@@ -678,9 +674,24 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 /******** PEAK BUILD THREAD CLASS **********/
 /******************************************/
 
-PeakBuildThread::PeakBuildThread(Peak* peak)
+PeakBuildThread& peakbuilder()
 {
-	m_peak = peak;
+	static PeakBuildThread peakthread;
+	static long long count;
+	if (!count++) {
+		peakthread.moveToThread(&peakthread);
+	}
+	return peakthread;
+}
+
+
+
+PeakBuildThread::PeakBuildThread()
+{
+	m_runningTasks = 0;
+	start();
+	
+	connect(this, SIGNAL(newTask(Peak*)), this, SLOT(start_task(Peak*)), Qt::QueuedConnection);
 #ifndef Q_WS_MAC
 // 	setStackSize(20000);
 #endif
@@ -688,7 +699,40 @@ PeakBuildThread::PeakBuildThread(Peak* peak)
 
 void PeakBuildThread::run()
 {
-	if(m_peak->create_from_scratch() < 1) {
-		PWARN("Failed to create peak buffers");
-	}
+	exec();
 }
+
+void PeakBuildThread::start_task(Peak* peak)
+{
+	peak->create_from_scratch();
+	
+	m_mutex.lock();
+	m_runningTasks--;
+	
+	if (!m_queue.isEmpty()) {
+		m_runningTasks++;
+		Peak* peak = m_queue.dequeue();
+		m_mutex.unlock();
+		emit newTask(peak);
+		return;
+	}
+	m_mutex.unlock();
+}
+
+void PeakBuildThread::queue_task(Peak * peak)
+{
+	m_mutex.lock();
+	
+	m_queue.enqueue(peak);
+	
+	if (!m_runningTasks) {
+		m_runningTasks++;
+		Peak* peak = m_queue.dequeue();
+		m_mutex.unlock();
+		emit newTask(peak);
+		return;
+	}
+	
+	m_mutex.unlock();
+}
+

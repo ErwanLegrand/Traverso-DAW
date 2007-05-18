@@ -24,7 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QObject>
 #include <QThread>
-#include <QHash>
+#include <QMutex>
+#include <QQueue>
 
 #include "defines.h"
 
@@ -35,11 +36,36 @@ class Peak;
 
 class PeakBuildThread : public QThread
 {
+	Q_OBJECT
 public:
-	PeakBuildThread(Peak* peak);
-	Peak* m_peak;
+	
+	void queue_task(Peak* peak);
+	
+private:
+	QMutex m_mutex;
+	
 	void run();
+	
+	int m_runningTasks;
+		
+	QQueue<Peak* > m_queue;
+	
+	PeakBuildThread();
+	PeakBuildThread(const PeakBuildThread&);
+	// allow this function to create one instance
+	friend PeakBuildThread& peakbuilder();
+	
+private slots:
+	void start_task(Peak* peak);
+	
+signals:
+	void newTask(Peak* peak);
+
 };
+
+// use this function to access the ProjectManager
+PeakBuildThread& peakbuilder();
+
 
 struct PeakData {
 	int peakDataOffset;
