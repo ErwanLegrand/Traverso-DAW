@@ -715,6 +715,13 @@ void PeakProcessor::start_task()
 		return;
 	}
 	
+	foreach(Peak* peak, m_queue) {
+		if (m_runningPeak->m_fileName == peak->m_fileName) {
+			m_queue.removeAll(peak);
+			emit peak->finished(peak);
+		}
+	}
+	
 	m_runningPeak = 0;
 	
 	dequeue_queue();
