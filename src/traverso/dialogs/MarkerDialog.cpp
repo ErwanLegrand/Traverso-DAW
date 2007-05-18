@@ -24,6 +24,7 @@
 #include <QMessageBox>
 #include <QHeaderView>
 #include <QPushButton>
+#include <QCheckBox>
 #include <QString>
 #include <ProjectManager.h>
 #include <Project.h>
@@ -42,6 +43,8 @@ MarkerDialog::MarkerDialog(QWidget * parent)
 {
 	setupUi(this);
 	
+	checkBoxAllSongs->hide();
+
 	m_project = pm().get_project();
 	
 	if (m_project) {
