@@ -73,26 +73,20 @@ Peak::~Peak()
 {
 	PENTERDES;
 	
-	// TODO how make this work with the new peakbuilder ?
-// 	if (peakBuildThread) {
-// 		if (peakBuildThread->isRunning()) {
-// 			interuptPeakBuild = true;
-// 			peakBuildThread->wait();
-// 		}
-// 		
-// 		delete peakBuildThread;
-// 	}
-
 	if (m_file) {
 		fclose(m_file);
 	}
 	
 	if (m_normFile) {
 		fclose(m_normFile);
-		remove(m_normFileName.toAscii().data());
+		QFile::remove(m_normFileName);
 	}
 }
 
+void Peak::close()
+{
+	pp().free_peak(this);
+}
 
 int Peak::read_header()
 {
@@ -178,7 +172,7 @@ int Peak::write_header()
 
 void Peak::start_peak_loading()
 {
-	peakbuilder().queue_task(this);
+	pp().queue_task(this);
 }
 
 
@@ -481,7 +475,7 @@ int Peak::finish_processing()
 	fclose(m_normFile);
 	m_normFile = NULL;
 	
-	if( remove(m_normFileName.toAscii().data()) != 0 ) {
+	if (!QFile::remove(m_normFileName)) {
 		PERROR("Failed to remove temp. norm. data file! (%s)", m_normFileName.toAscii().data()); 
 	}
 	
@@ -674,65 +668,117 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 /******** PEAK BUILD THREAD CLASS **********/
 /******************************************/
 
-PeakBuildThread& peakbuilder()
+PeakProcessor& pp()
 {
-	static PeakBuildThread peakthread;
-	static long long count;
-	if (!count++) {
-		peakthread.moveToThread(&peakthread);
+	static PeakProcessor processor;
+	return processor;
+}
+
+
+PeakProcessor::PeakProcessor()
+{
+	m_ppthread = new PPThread(this);
+	m_ppthread->start();
+	m_taskRunning = false;
+	m_runningPeak = 0;
+
+	moveToThread(m_ppthread);
+	
+	connect(this, SIGNAL(newTask()), this, SLOT(start_task()), Qt::QueuedConnection);
+}
+
+
+PeakProcessor::~ PeakProcessor()
+{
+	m_ppthread->exit(0);
+	
+	if (!m_ppthread->wait(1000)) {
+		m_ppthread->terminate();
 	}
-	return peakthread;
+	
+	delete m_ppthread;
 }
 
 
-
-PeakBuildThread::PeakBuildThread()
+void PeakProcessor::start_task()
 {
-	m_runningTasks = 0;
-	start();
+	m_runningPeak->create_from_scratch();
 	
-	connect(this, SIGNAL(newTask(Peak*)), this, SLOT(start_task(Peak*)), Qt::QueuedConnection);
-#ifndef Q_WS_MAC
-// 	setStackSize(20000);
-#endif
-}
-
-void PeakBuildThread::run()
-{
-	exec();
-}
-
-void PeakBuildThread::start_task(Peak* peak)
-{
-	peak->create_from_scratch();
+	QMutexLocker locker(&m_mutex);
 	
-	m_mutex.lock();
-	m_runningTasks--;
+	m_taskRunning = false;
 	
-	if (!m_queue.isEmpty()) {
-		m_runningTasks++;
-		Peak* peak = m_queue.dequeue();
-		m_mutex.unlock();
-		emit newTask(peak);
+	if (m_runningPeak->interuptPeakBuild) {
+		printf("PeakProcessor:: Deleting interrupted Peak!\n");
+		delete m_runningPeak;
+		m_runningPeak = 0;
 		return;
 	}
-	m_mutex.unlock();
+	
+	m_runningPeak = 0;
+	
+	dequeue_queue();
 }
 
-void PeakBuildThread::queue_task(Peak * peak)
+void PeakProcessor::queue_task(Peak * peak)
 {
-	m_mutex.lock();
+	QMutexLocker locker(&m_mutex);
 	
 	m_queue.enqueue(peak);
 	
-	if (!m_runningTasks) {
-		m_runningTasks++;
-		Peak* peak = m_queue.dequeue();
+	if (!m_taskRunning) {
+		dequeue_queue();
+	}
+}
+
+void PeakProcessor::dequeue_queue()
+{
+	if (!m_queue.isEmpty()) {
+		m_taskRunning = true;
+		m_runningPeak = m_queue.dequeue();
+		emit newTask();
+	}
+}
+
+void PeakProcessor::free_peak(Peak * peak)
+{
+	m_mutex.lock();
+	
+	m_queue.removeAll(peak);
+	
+	if (peak == m_runningPeak) {
+		printf("PeakProcessor:: Interrupting running build process!\n");
+		peak->interuptPeakBuild =  true;
+		
 		m_mutex.unlock();
-		emit newTask(peak);
+		
+		m_ppthread->exit(0);
+		if (!m_ppthread->wait(500)) {
+			printf("PeakProcessor:: Wait timed out!\n");
+		}
+		
+		m_ppthread->start();
+		
+		m_mutex.lock();
+		dequeue_queue();
+		m_mutex.unlock();
+		
 		return;
 	}
 	
 	m_mutex.unlock();
+	
+	delete peak;
+}
+
+
+PPThread::PPThread(PeakProcessor * pp)
+{
+	m_pp = pp;
+}
+
+void PPThread::run()
+{
+	exec();
 }
 

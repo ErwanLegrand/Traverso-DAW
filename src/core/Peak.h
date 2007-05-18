@@ -32,39 +32,55 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 class ReadSource;
 class AudioSource;
 class Peak;
+class PPThread;
 
-
-class PeakBuildThread : public QThread
+class PeakProcessor : public QObject
 {
-	Q_OBJECT
+	Q_OBJECT	
+	
 public:
-	
 	void queue_task(Peak* peak);
-	
+	void free_peak(Peak* peak);
+
 private:
+	PPThread* m_ppthread;
 	QMutex m_mutex;
-	
-	void run();
-	
-	int m_runningTasks;
+	bool m_taskRunning;
+	Peak* m_runningPeak;
 		
 	QQueue<Peak* > m_queue;
 	
-	PeakBuildThread();
-	PeakBuildThread(const PeakBuildThread&);
+	void dequeue_queue();
+	
+	PeakProcessor();
+	~PeakProcessor();
+	PeakProcessor(const PeakProcessor&);
 	// allow this function to create one instance
-	friend PeakBuildThread& peakbuilder();
+	friend PeakProcessor& pp();
 	
 private slots:
-	void start_task(Peak* peak);
+	void start_task();
 	
 signals:
-	void newTask(Peak* peak);
+	void newTask();
 
 };
 
+class PPThread : public QThread
+{
+public:
+	PPThread(PeakProcessor* pp);
+	
+protected:
+	void run();
+	
+private:
+	PeakProcessor* m_pp;
+};
+
+
 // use this function to access the PeakBuildThread
-PeakBuildThread& peakbuilder();
+PeakProcessor& pp();
 
 
 struct PeakData {
@@ -100,7 +116,7 @@ public:
 	int finish_processing();
 	int calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int count);
 
-	void free_buffer_memory();
+	void close();
 	
 	void start_peak_loading();
 
@@ -132,7 +148,7 @@ private:
 	int read_header();
 	int write_header();
 
-	friend class PeakBuildThread;
+	friend class PeakProcessor;
 
 signals:
 	void finished(Peak*);
