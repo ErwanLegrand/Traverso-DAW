@@ -63,7 +63,7 @@ signals:
 
 };
 
-// use this function to access the ProjectManager
+// use this function to access the PeakBuildThread
 PeakBuildThread& peakbuilder();
 
 
@@ -108,7 +108,6 @@ public:
 
 private:
 	ReadSource* 		m_source;
-	PeakBuildThread*	peakBuildThread;
 	bool 			peaksAvailable;
 	bool			permanentFailure;
 	bool			interuptPeakBuild;

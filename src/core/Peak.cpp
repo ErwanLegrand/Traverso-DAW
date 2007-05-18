@@ -66,7 +66,6 @@ Peak::Peak(AudioSource* source, int channel)
 	}
 	
 	peaksAvailable = permanentFailure = interuptPeakBuild = false;
-	peakBuildThread = 0;
 	m_file = m_normFile = 0;
 }
 
@@ -74,14 +73,15 @@ Peak::~Peak()
 {
 	PENTERDES;
 	
-	if (peakBuildThread) {
-		if (peakBuildThread->isRunning()) {
-			interuptPeakBuild = true;
-			peakBuildThread->wait();
-		}
-		
-		delete peakBuildThread;
-	}
+	// TODO how make this work with the new peakbuilder ?
+// 	if (peakBuildThread) {
+// 		if (peakBuildThread->isRunning()) {
+// 			interuptPeakBuild = true;
+// 			peakBuildThread->wait();
+// 		}
+// 		
+// 		delete peakBuildThread;
+// 	}
 
 	if (m_file) {
 		fclose(m_file);
