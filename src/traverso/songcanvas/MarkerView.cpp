@@ -114,6 +114,11 @@ void MarkerView::update_position()
 	setPos( (long)(m_marker->get_when() / m_sv->scalefactor) - (m_width / 2), 0);
 }
 
+int MarkerView::position()
+{
+	return (pos().x() + m_width / 2);
+}
+
 void MarkerView::set_position(int i)
 {
 	setPos(i - m_width / 2, 0);

@@ -385,15 +385,16 @@ void TimeLineView::update_softselected_marker(QPoint pos)
 		return;
 	}
 	
+	int x = pos.x();
+	int blinkMarkerDist = abs(x - m_blinkingMarker->position());
+	
 	foreach(MarkerView* markerView, m_markerViews) {
-		
-		QPoint nodePos((int)markerView->pos().x(), (int)markerView->pos().y());
-		
-		int markerDist = (pos - nodePos).manhattanLength();
-		int blinkNodeDist = (pos - QPoint((int)m_blinkingMarker->x(), (int)m_blinkingMarker->y())).manhattanLength();
-		
-		if (markerDist < blinkNodeDist) {
+		int markerDist = abs(x - markerView->position());
+
+		fflush(stdout);
+		if (markerDist < blinkMarkerDist) {
 			m_blinkingMarker = markerView;
+			blinkMarkerDist = abs(x - m_blinkingMarker->position());
 		}
 	}
 	

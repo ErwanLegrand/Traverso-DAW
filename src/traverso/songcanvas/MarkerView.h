@@ -41,6 +41,7 @@ public:
 	void calculate_bounding_rect();
 	void load_theme_data();
 	void set_active(bool);
+	int position();
 	void set_position(int);
 	void set_dragging(bool dragging);
 	
