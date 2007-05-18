@@ -346,11 +346,6 @@ void AudioClip::set_track_end_frame( nframes_t endFrame )
 	emit trackEndFrameChanged();
 }
 
-void AudioClip::set_blur(bool )
-{
-	emit stateChanged();
-}
-
 void AudioClip::set_fade_in(nframes_t b)
 {
 	if (!fadeIn) {

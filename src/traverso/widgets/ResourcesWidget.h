@@ -32,6 +32,22 @@ class AudioClip;
 class ReadSource;
 class QTreeWidgetItem;
 
+class ClipTreeItem : public QObject, public QTreeWidgetItem
+{
+	Q_OBJECT
+	
+public:
+	ClipTreeItem(QTreeWidgetItem* parent, AudioClip* clip);
+
+
+public slots:
+	void clip_state_changed();	
+
+private:
+	AudioClip* m_clip;
+};
+
+
 class ResourcesWidget : public QWidget, protected Ui::ResourcesWidget
 {
 	Q_OBJECT
@@ -45,7 +61,7 @@ public:
 private:
 	Project* m_project;
 	FileWidget* m_filewidget;
-	QHash<qint64, QTreeWidgetItem*> m_clipindices;
+	QHash<qint64, ClipTreeItem*> m_clipindices;
 	QHash<qint64, QTreeWidgetItem*> m_sourceindices;
 	
 	void update_clip_state(AudioClip* clip);
@@ -66,5 +82,6 @@ private slots:
 	void add_source(ReadSource* source);
 	void remove_source(ReadSource* source);
 };
+
 
 #endif

@@ -75,7 +75,6 @@ public:
 	int init_recording(QByteArray bus);
 	int process(nframes_t nframes, audio_sample_t* channelBuffer, uint channel);
 	
-	void set_blur(bool stat);
 	void set_track_start_frame(nframes_t newTrackFirstFrame);
 	void set_name(const QString& name);
 	void set_fade_in(nframes_t b);

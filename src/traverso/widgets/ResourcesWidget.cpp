@@ -272,20 +272,12 @@ void ResourcesWidget::add_clip(AudioClip * clip)
 	
 		if (! sourceitem ) return;
 	
-		QTreeWidgetItem* clipitem = new QTreeWidgetItem(sourceitem);
+		ClipTreeItem* clipitem = new ClipTreeItem(sourceitem, clip);
 		m_clipindices.insert(clip->get_id(), clipitem);
 	
-		QString start = frame_to_ms(clip->get_source_start_frame(), clip->get_rate());
-		QString end = frame_to_ms(clip->get_source_end_frame(), clip->get_rate());
-		
-		clipitem->setText(0, clip->get_name());
-		clipitem->setText(1, frame_to_ms(clip->get_length(), clip->get_rate()));
-		clipitem->setText(2, start);
-		clipitem->setText(3, end);
 		clipitem->setData(0, Qt::UserRole, clip->get_id());
-		clipitem->setToolTip(0, clip->get_name() + "   " + start + " - " + end);
 		
-		item = clipitem;
+		connect(clip, SIGNAL(positionChanged(Snappable*)), clipitem, SLOT(clip_state_changed()));
 	}
 	
 	update_clip_state(clip);
@@ -327,18 +319,10 @@ void ResourcesWidget::remove_source(ReadSource * source)
 
 void ResourcesWidget::update_clip_state(AudioClip* clip)
 {
-	QTreeWidgetItem* item = m_clipindices.value(clip->get_id());
+	ClipTreeItem* item = m_clipindices.value(clip->get_id());
 	Q_ASSERT(item);
 	
-	if (resources_manager()->is_clip_in_use(clip->get_id())) {
-		for (int i=0; i<5; ++i) {
-			item->setForeground(i, QColor(Qt::black));
-		}
-	} else {
-		for (int i=0; i<5; ++i) {
-			item->setForeground(i, QColor(Qt::lightGray));
-		}
-	}
+	item->clip_state_changed();
 	
 	update_source_state(clip->get_readsource_id());
 }
@@ -357,5 +341,33 @@ void ResourcesWidget::update_source_state(qint64 id)
 			item->setForeground(i, QColor(Qt::lightGray));
 		}
 	}
+}
+
+ClipTreeItem::ClipTreeItem(QTreeWidgetItem * parent, AudioClip * clip)
+	: QTreeWidgetItem(parent)
+	, m_clip(clip)
+{
+}
+
+void ClipTreeItem::clip_state_changed()
+{
+	if (resources_manager()->is_clip_in_use(m_clip->get_id())) {
+		for (int i=0; i<5; ++i) {
+			setForeground(i, QColor(Qt::black));
+		}
+	} else {
+		for (int i=0; i<5; ++i) {
+			setForeground(i, QColor(Qt::lightGray));
+		}
+	}
+	
+	QString start = frame_to_ms(m_clip->get_source_start_frame(), m_clip->get_rate());
+	QString end = frame_to_ms(m_clip->get_source_end_frame(), m_clip->get_rate());
+		
+	setText(0, m_clip->get_name());
+	setText(1, frame_to_ms(m_clip->get_length(), m_clip->get_rate()));
+	setText(2, start);
+	setText(3, end);
+	setToolTip(0, m_clip->get_name() + "   " + start + " - " + end);
 }
 
