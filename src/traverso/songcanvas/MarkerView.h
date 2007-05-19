@@ -26,6 +26,7 @@
 
 class Marker;
 class SongView;
+class LineView;
 class QColor;
 class PositionIndicator;
 
@@ -49,6 +50,7 @@ public:
 	
 private:
 	Marker* m_marker;
+	LineView* m_line;
 	QColor	m_fillColor;
 	bool	m_active;
 	bool	m_dragging;

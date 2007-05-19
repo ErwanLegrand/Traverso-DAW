@@ -21,6 +21,7 @@
 
 #include "MarkerView.h"
 #include "SongView.h"
+#include "LineView.h"
 #include "Themer.h"
 #include "ClipsViewPort.h"
 #include "PositionIndicator.h"
@@ -39,14 +40,18 @@ MarkerView::MarkerView(Marker* marker, SongView* sv, ViewItem* parentView)
 {
 	m_sv = sv;
 	m_marker = marker;
-	m_active = false;
+	m_line = new LineView(this);
+	set_active(false);
 	m_posIndicator = 0;
 
 	QFontMetrics fm(themer()->get_font("Timeline:marker"));
 	m_ascent = fm.ascent();
 	m_width = fm.width("NI"); // use any two letters to set the width of the marker indicator
+	m_line->setPos(m_width / 2, m_ascent);
+	
 
 	load_theme_data();
+	
 	
 	connect(m_marker, SIGNAL(positionChanged(Snappable*)), this, SLOT(update_position()));
 	connect(m_marker, SIGNAL(descriptionChanged()), this, SLOT(update_drawing()));
@@ -65,10 +70,6 @@ void MarkerView::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
 		painter->setClipRect(-clipx, 0, (int)m_boundingRect.width(), (int)m_boundingRect.height());
 	}
 
-	if (m_active) {
-		painter->drawLine(m_width/2, m_ascent, m_width/2, (int)m_boundingRect.height());
-	}
-	
 	painter->setRenderHint(QPainter::Antialiasing);
 	painter->setFont(themer()->get_font("Timeline:fontscale:marker"));
 	
@@ -99,13 +100,8 @@ void MarkerView::calculate_bounding_rect()
 	QFontMetrics fm(themer()->get_font("Timeline:fontscale:marker"));
 	int descriptionwidth = fm.width(m_marker->get_description()) + 1;
 
-	if (m_active) {
-		m_boundingRect = QRectF(-1, 0, m_width + descriptionwidth,
-				m_sv->get_clips_viewport()->sceneRect().height());
-	} else {
-		m_boundingRect = QRectF(-1, 0, m_width + descriptionwidth, m_ascent);
-	}
-
+	m_line->set_bounding_rect(QRectF(-1, 0, m_width + descriptionwidth, m_sv->get_clips_viewport()->sceneRect().height()));
+	m_boundingRect = QRectF(-1, 0, m_width + descriptionwidth, m_ascent);
 }
 
 void MarkerView::update_position()
@@ -136,11 +132,13 @@ void MarkerView::set_active(bool b)
 
 	if (b) {
 		m_fillColor = themer()->get_color("Marker:blink");
+		m_line->set_color(QColor(0, 0, 0, 200));
 	} else {
 		m_fillColor = themer()->get_color("Marker:default");
+		m_line->set_color(QColor(0, 0, 0, 80));
 	}
 
-	calculate_bounding_rect();
+	m_line->update();
 	update();
 }
 

@@ -29,7 +29,7 @@ class AudioClip;
 class Track;
 class SongView;
 class AudioClipView;
-class SplitCursor;
+class LineView;
 
 class SplitClip : public Command
 {
@@ -56,7 +56,7 @@ private :
         AudioClip* leftClip;
         AudioClip* rightClip;
 	nframes_t m_splitPoint;
-	SplitCursor* m_splitcursor;
+	LineView* m_splitcursor;
 };
 
 #endif

@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <libtraversocore.h>
 #include <SongView.h>
 #include <AudioClipView.h>
+#include "LineView.h"
 #include <ViewItem.h>
 #include "Fade.h"
 
@@ -31,25 +32,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-class SplitCursor : public ViewItem
-{
-	Q_OBJECT
-public:
-		
-	SplitCursor(ViewItem* parent)
-	: ViewItem(parent, 0) 
-	{
-		setZValue(parent->zValue() + 1);
-		m_boundingRect = QRectF(0, 0, 1, parent->boundingRect().height());
-	}
-	void paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) 
-	{
-		painter->setPen(themer()->get_color("AudioClip:contour"));
-		painter->drawLine(0, 0, 0, (int)m_boundingRect.height());
-	}
-};
-
-#include "SplitClip.moc"
 
 SplitClip::SplitClip(AudioClipView* view)
 	: Command(view->get_clip(), tr("Split Clip"))
@@ -127,7 +109,8 @@ int SplitClip::undo_action()
 int SplitClip::begin_hold()
 {
 	m_sv->start_shuttle(true, true);
-	m_splitcursor = new SplitCursor(m_cv);
+	m_splitcursor = new LineView(m_cv);
+	m_splitcursor->set_color(themer()->get_color("AudioClip:contour"));
 	m_cv->scene()->addItem(m_splitcursor);
 	return 1;
 }

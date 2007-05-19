@@ -12,7 +12,7 @@ INCLUDEPATH += 	../../core \
 		../../commands \
 		../../plugins \
 		./
-		
+
 SOURCES += AudioClipView.cpp \
 ClipsViewPort.cpp \
 Cursors.cpp \
@@ -50,7 +50,8 @@ TimeLineViewPort.h \
 TrackPanelView.h \
 TrackPanelViewPort.h \
 TrackView.h \
-ViewItem.h
+ViewItem.h \
+LineView.h
 FORMS += ../ui/ExportWidget.ui \
 	../ui/AudioSourcesManagerWidget.ui \
 	../ui/PluginSelectorDialog.ui \
@@ -67,13 +68,13 @@ FORMS += ../ui/ExportWidget.ui \
 
 
 contains(DEFINES, LV2_SUPPORT){
-INCLUDEPATH +=	\
+    INCLUDEPATH +=	\
 	../../plugins/LV2 \
 	../../3rdparty/slv2 
 }
 
 QT += opengl
 
-win32 {
-      INCLUDEPATH += ../../../3thparty/include
+win32{
+    INCLUDEPATH += ../../../3thparty/include
 }
