@@ -77,6 +77,24 @@
      </property>
      <item>
       <widget class="QTreeWidget" name="sourcesTreeWidget" >
+       <property name="mouseTracking" >
+        <bool>false</bool>
+       </property>
+       <property name="editTriggers" >
+        <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <property name="alternatingRowColors" >
+        <bool>true</bool>
+       </property>
+       <property name="iconSize" >
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="textElideMode" >
+        <enum>Qt::ElideMiddle</enum>
+       </property>
        <property name="sortingEnabled" >
         <bool>false</bool>
        </property>

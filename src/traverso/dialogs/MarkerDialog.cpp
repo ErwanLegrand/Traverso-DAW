@@ -45,12 +45,7 @@ MarkerDialog::MarkerDialog(QWidget * parent)
 	
 	checkBoxAllSongs->hide();
 
-	m_project = pm().get_project();
-	
-	if (m_project) {
-		setWindowTitle("Marker Editor - Project " + m_project->get_title());
-		set_project(m_project);
-	}
+	set_project(pm().get_project());
 
 	QString mask = "99:99:99";
 	lineEditPosition->setInputMask(mask);
@@ -66,8 +61,6 @@ MarkerDialog::MarkerDialog(QWidget * parent)
 
 	// connect signals which require an update of the song list
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
-	connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(update_songs()));
-	connect(m_project, SIGNAL(songRemoved(Song*)), this, SLOT(update_songs()));
 
 	// connect signals which require an update of the treeWidget's items
 	connect(comboBoxDisplaySong, SIGNAL(currentIndexChanged(int)), this, SLOT(update_marker_treeview()));
@@ -109,6 +102,11 @@ void MarkerDialog::set_project(Project * project)
 	if (! m_project) {
 		return;
 	}
+	
+	setWindowTitle("Marker Editor - Project " + m_project->get_title());
+	
+	connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(update_songs()));
+	connect(m_project, SIGNAL(songRemoved(Song*)), this, SLOT(update_songs()));
 	
 	// fill the combo box with the names of the songs
 	m_songlist = m_project->get_songs();

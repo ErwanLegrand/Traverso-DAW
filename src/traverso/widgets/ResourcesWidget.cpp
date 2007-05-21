@@ -48,7 +48,7 @@ public:
 	: QWidget(parent)
 	{
 		QPalette palette;
-		palette.setColor(QPalette::AlternateBase, themer()->get_color("Track:background"));
+		palette.setColor(QPalette::AlternateBase, themer()->get_color("ResourcesBin:alternaterowcolor"));
 		
 		m_dirModel = new QDirModel;
 		m_dirModel->setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
@@ -165,7 +165,7 @@ ResourcesWidget::ResourcesWidget(QWidget * parent)
 	setupUi(this);
 	
 	QPalette palette;
-	palette.setColor(QPalette::AlternateBase, themer()->get_color("Track:background"));
+	palette.setColor(QPalette::AlternateBase, themer()->get_color("ResourcesBin:alternaterowcolor"));
 	sourcesTreeWidget->setPalette(palette);
 	sourcesTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
 	sourcesTreeWidget->setAlternatingRowColors(true);
@@ -196,6 +196,8 @@ ResourcesWidget::~ ResourcesWidget()
 void ResourcesWidget::set_project(Project * project)
 {
 	sourcesTreeWidget->clear();
+	m_sourceindices.clear();
+	m_clipindices.clear();
 	songComboBox->clear();
 	
 	m_project = project;
@@ -219,8 +221,6 @@ void ResourcesWidget::set_project(Project * project)
 
 void ResourcesWidget::populate_tree()
 {
-	sourcesTreeWidget->clear();
-	
 	if (!m_project) {
 		return;
 	}
@@ -274,8 +274,6 @@ void ResourcesWidget::add_clip(AudioClip * clip)
 	
 		ClipTreeItem* clipitem = new ClipTreeItem(sourceitem, clip);
 		m_clipindices.insert(clip->get_id(), clipitem);
-	
-		clipitem->setData(0, Qt::UserRole, clip->get_id());
 		
 		connect(clip, SIGNAL(positionChanged(Snappable*)), clipitem, SLOT(clip_state_changed()));
 	}
@@ -347,6 +345,7 @@ ClipTreeItem::ClipTreeItem(QTreeWidgetItem * parent, AudioClip * clip)
 	: QTreeWidgetItem(parent)
 	, m_clip(clip)
 {
+	setData(0, Qt::UserRole, clip->get_id());
 }
 
 void ClipTreeItem::clip_state_changed()

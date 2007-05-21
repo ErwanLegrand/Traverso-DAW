@@ -114,6 +114,8 @@
 		<color name="PluginSlider:background" red="199" green="228" blue="211" alpha="255" />
 		<color name="PluginSlider:value"  red="240" green="190" blue="218"  alpha="255" />
 		
+		<color name="ResourcesBin:alternaterowcolor" red="243" green="248" blue="255" alpha="255" />
+		
 		<color name="Song:background" red="248" green="248" blue="248" alpha="255" />
 		<color name="SongPanel:background" red="248" green="248" blue="248" alpha="255" />
 		

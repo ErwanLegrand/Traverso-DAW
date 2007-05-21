@@ -48,6 +48,9 @@
    </item>
    <item>
     <widget class="QTreeWidget" name="markersTreeWidget" >
+     <property name="editTriggers" >
+      <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::NoEditTriggers</set>
+     </property>
      <property name="rootIsDecorated" >
       <bool>false</bool>
      </property>

@@ -214,7 +214,7 @@ void OpenProjectDialog::on_deleteProjectbutton_clicked( )
 
 void OpenProjectDialog::on_projectDirSelectButton_clicked( )
 {
-	QString path = config().get_property("Project", "DefaultDirectory", getenv("HOME")).toString();
+	QString path = config().get_property("Project", "directory", getenv("HOME")).toString();
 	
 	QString newPath = QFileDialog::getExistingDirectory(this,
 			tr("Choose an existing or create a new Project Directory"), path);

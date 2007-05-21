@@ -678,11 +678,12 @@ PeakProcessor& pp()
 PeakProcessor::PeakProcessor()
 {
 	m_ppthread = new PPThread(this);
-	m_ppthread->start();
 	m_taskRunning = false;
 	m_runningPeak = 0;
 
 	moveToThread(m_ppthread);
+	
+	m_ppthread->start();
 	
 	connect(this, SIGNAL(newTask()), this, SLOT(start_task()), Qt::QueuedConnection);
 }
