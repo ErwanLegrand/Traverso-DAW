@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Zoom.cpp,v 1.14 2007/04/30 10:09:11 r_sijrier Exp $
+    $Id: Zoom.cpp,v 1.15 2007/05/22 20:54:22 benjie Exp $
 */
 
 #include <libtraversocore.h>
@@ -59,7 +59,6 @@ int Zoom::begin_hold()
 
 int Zoom::finish_hold()
 {
-	QCursor::setPos(mousePos);
 	return 1;
 }
 
