@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: MonoReader.cpp,v 1.10 2007/05/18 09:42:54 r_sijrier Exp $
+$Id: MonoReader.cpp,v 1.11 2007/05/22 21:14:19 r_sijrier Exp $
 */
 
 
@@ -195,10 +195,9 @@ int MonoReader::rb_read(audio_sample_t* dst, nframes_t start, nframes_t count)
 		return 0;
 	}
 
-
 	if (start != m_rbRelativeFileReadPos) {
 		int available = m_buffer->read_space();
-		if ( (start > m_rbRelativeFileReadPos) && ( (m_rbRelativeFileReadPos + available) > (start + count) ) ) {
+		if ( (start > m_rbRelativeFileReadPos) && (m_rbRelativeFileReadPos + available) > (start + count)) {
 			int advance = start - m_rbRelativeFileReadPos;
 			if (available < advance)
 				printf("available < advance !!!!!!!\n");
@@ -240,8 +239,11 @@ void MonoReader::rb_seek_to_file_position( nframes_t position )
 {
 	Q_ASSERT(m_clip);
 	
+	// calculate position relative to the file!
+	position -= (m_clip->get_track_start_frame() + m_clip->get_source_start_frame());
+	
 	if (m_rbFileReadPos == position) {
-// 		printf("ringbuffer allready at position %d\n", position);
+		printf("ringbuffer allready at position %d\n", position);
 		return;
 	}
 
@@ -255,7 +257,7 @@ void MonoReader::rb_seek_to_file_position( nframes_t position )
 	// if not, fill the buffer from the earliest point this clip
 	// will come into play.
 	if (fileposition < (int)m_clip->get_source_start_frame()) {
-// 		printf("not seeking to %d, but too %d\n\n", fileposition,m_clip->get_source_start_frame()); 
+// 		printf("not seeking to %ld, but too %d\n\n", fileposition,m_clip->get_source_start_frame()); 
 		// Song's start from 0, this makes a period start from
 		// 0 - 1023 for example, the nframes is 1024!
 		// Setting a songs new position is on 1024, and NOT 
@@ -296,7 +298,7 @@ void MonoReader::process_ringbuffer( audio_sample_t * framebuffer, bool seeking)
 			toRead = writeSpace / 2;
 		}
 		printf("doing a full seek buffer fill\n");
-	} else 	if (m_syncInProgress) {
+	} else if (m_syncInProgress) {
 		// Currently, we fill the buffer completely.
 		// For some reason, filling it with 1/4 at a time
 		// doesn't fill it consitently, and thus giving audible artifacts.
@@ -331,7 +333,7 @@ void MonoReader::recover_from_buffer_underrun(nframes_t position)
 
 void MonoReader::start_resync( nframes_t position )
 {
-// 	printf("starting resync!\n");
+	printf("starting resync!\n");
 	m_syncPos = position;
 	m_rbReady = 0;
 	m_needSync = 1;
@@ -339,11 +341,11 @@ void MonoReader::start_resync( nframes_t position )
 
 void MonoReader::finish_resync()
 {
-// 	printf("sync finished\n");
+	printf("sync finished\n");
 	m_needSync = 0;
 	m_bufferUnderRunDetected = 0;
 	m_rbReady = 1;
-	m_syncInProgress = false;
+	m_syncInProgress = 0;
 }
 
 void MonoReader::sync(audio_sample_t* framebuffer)
@@ -355,7 +357,7 @@ void MonoReader::sync(audio_sample_t* framebuffer)
 	
 	if (!m_syncInProgress) {
 		rb_seek_to_file_position(m_syncPos);
-		m_syncInProgress = true;
+		m_syncInProgress = 1;
 	}
 	
 	// Currently, we fill the buffer completely.
