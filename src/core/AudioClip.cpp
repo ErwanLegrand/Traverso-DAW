@@ -578,12 +578,16 @@ int AudioClip::init_recording( QByteArray name )
 
 Command* AudioClip::mute()
 {
-	return new PCommand(this, "toggle_mute", tr("Toggle Mute"));
+	PCommand* cmd = new PCommand(this, "toggle_mute", tr("Toggle Mute"));
+	cmd->set_historable(false);
+	return cmd;
 }
 
 Command* AudioClip::lock()
 {
-	return new PCommand(this, "toggle_lock", tr("Toggle Lock"));
+	PCommand* cmd = new PCommand(this, "toggle_lock", tr("Toggle Lock"));
+	cmd->set_historable(false);
+	return cmd;
 }
 
 Command* AudioClip::reset_fade_in()
