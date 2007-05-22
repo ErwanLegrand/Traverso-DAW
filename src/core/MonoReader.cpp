@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier 
+Copyright (C) 2006-2007 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: MonoReader.cpp,v 1.11 2007/05/22 21:14:19 r_sijrier Exp $
 */
 
 
@@ -243,7 +242,7 @@ void MonoReader::rb_seek_to_file_position( nframes_t position )
 	position -= (m_clip->get_track_start_frame() + m_clip->get_source_start_frame());
 	
 	if (m_rbFileReadPos == position) {
-		printf("ringbuffer allready at position %d\n", position);
+// 		printf("ringbuffer allready at position %d\n", position);
 		return;
 	}
 
@@ -297,7 +296,7 @@ void MonoReader::process_ringbuffer( audio_sample_t * framebuffer, bool seeking)
 		if (m_isCompressedFile) {
 			toRead = writeSpace / 2;
 		}
-		printf("doing a full seek buffer fill\n");
+// 		printf("doing a full seek buffer fill\n");
 	} else if (m_syncInProgress) {
 		// Currently, we fill the buffer completely.
 		// For some reason, filling it with 1/4 at a time
@@ -326,14 +325,14 @@ void MonoReader::process_ringbuffer( audio_sample_t * framebuffer, bool seeking)
 
 void MonoReader::recover_from_buffer_underrun(nframes_t position)
 {
-	printf("buffer underrun detected!\n");
+// 	printf("buffer underrun detected!\n");
 	m_bufferUnderRunDetected = 1;
 	start_resync(position);
 }
 
 void MonoReader::start_resync( nframes_t position )
 {
-	printf("starting resync!\n");
+// 	printf("starting resync!\n");
 	m_syncPos = position;
 	m_rbReady = 0;
 	m_needSync = 1;
@@ -341,7 +340,7 @@ void MonoReader::start_resync( nframes_t position )
 
 void MonoReader::finish_resync()
 {
-	printf("sync finished\n");
+// 	printf("sync finished\n");
 	m_needSync = 0;
 	m_bufferUnderRunDetected = 0;
 	m_rbReady = 1;
