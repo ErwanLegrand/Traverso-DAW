@@ -530,6 +530,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="refreshButton" >
+            <property name="text" >
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLabel" name="label_9" >
             <property name="text" >
              <string>Speed</string>
@@ -613,13 +620,6 @@
               <string>48x</string>
              </property>
             </item>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="refreshButton" >
-            <property name="text" >
-             <string/>
-            </property>
            </widget>
           </item>
          </layout>
