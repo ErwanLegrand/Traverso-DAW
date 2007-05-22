@@ -308,14 +308,14 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	float fademixdown[pixelcount];
 	for (int i = 0; i < m_fadeViews.size(); ++i) {
 		FadeView* view = m_fadeViews.at(i);
-		int fademix;
+		int fademix = 0;
 		if (mixcurvedata) {
 			fademix = view->get_vector(xstart, pixelcount, fademixdown);
 		} else {
 			fademix = view->get_vector(xstart, pixelcount, curvemixdown);
 		}
 		
-		if (mixcurvedata && fademix && view->get_fade()->get_range() > m_sv->scalefactor) {
+		if (mixcurvedata && fademix) {
 			for (int j=0; j<pixelcount; ++j) {
 				curvemixdown[j] *= fademixdown[j];
 			}
@@ -633,7 +633,7 @@ void AudioClipView::update_start_pos()
 Command * AudioClipView::fade_range()
 {
 	Q_ASSERT(m_song);
-	int x = (int) cpointer().on_first_input_event_scene_x() - scenePos().x();
+	int x = (int) (cpointer().on_first_input_event_scene_x() - scenePos().x());
 
 	if (x < (m_boundingRect.width() / 2)) {
 		return m_clip->clip_fade_in();
@@ -647,7 +647,7 @@ Command * AudioClipView::fade_range()
 Command * AudioClipView::reset_fade()
 {
 	Q_ASSERT(m_song);
-	int x = (int) cpointer().on_first_input_event_scene_x() - scenePos().x();
+	int x = (int) (cpointer().on_first_input_event_scene_x() - scenePos().x());
 
 	if (x < (m_boundingRect.width() / 2)) {
 		return m_clip->reset_fade_in();

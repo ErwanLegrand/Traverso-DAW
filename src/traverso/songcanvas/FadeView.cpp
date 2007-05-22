@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeView.cpp,v 1.15 2007/05/17 06:55:43 benjie Exp $
+$Id: FadeView.cpp,v 1.16 2007/05/22 19:52:43 r_sijrier Exp $
 */
 
 #include "FadeView.h"
@@ -95,7 +95,7 @@ void FadeView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 	float vector[pixelcount];
 	
 	if (m_fadeCurve->get_fade_type() == FadeCurve::FadeOut && m_guicurve->get_range() > m_parentViewItem->boundingRect().width()) {
-		vector_start += (int) m_guicurve->get_range() - m_parentViewItem->boundingRect().width();
+		vector_start += (int) (m_guicurve->get_range() - m_parentViewItem->boundingRect().width());
 	}
 	
 	m_guicurve->get_vector(vector_start, vector_start + pixelcount, vector, pixelcount);
@@ -162,16 +162,48 @@ void FadeView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
 int FadeView::get_vector(int xstart, int pixelcount, float * arg)
 {
+	// If boundingrect width is smaller then a pixel, don't even try
+	if (m_boundingRect.width() < 1.0) {
+		return 0;
+	}
+	
 	if (m_fadeCurve->get_fade_type() == FadeCurve::FadeOut) {
-		int mappedx = - (int) mapFromParent(0, 0).x();
-		// CurveView adjusts xstart with -1 and pixelcount with +2
-		// compensate for this!
-		if (false) {
-			m_guicurve->get_vector(mappedx, mappedx + pixelcount, arg, pixelcount);
-			return 1;
-		} else {
-			return 0;
+		
+		// If the fade widt is larger the the clipview, add the difference,
+		// since the 'start' of the fadeview lies beyond the left edge of the clip!
+		if (m_boundingRect.width() > m_parentViewItem->boundingRect().width()) {
+			xstart += (int)(m_boundingRect.width() - m_parentViewItem->boundingRect().width());
 		}
+		
+		// map the xstart position to the fadeviews x position
+		int mappedx = (int)mapFromParent(QPoint(xstart, 0)).x();
+		int x = mappedx;
+		float* p = arg;
+		
+		// check if the xstart lies before 'our' first pixel
+		if (mappedx < 0) {
+			x = 0;
+			// substract the difference from the pixelcount
+			pixelcount += mappedx;
+			
+			// point to the mapped location of the buffer.
+			p = arg - mappedx;
+			
+			// and if pixelcount is 0, there is nothing to do!
+			if (pixelcount <= 0) {
+				return 0;
+			}
+			
+			// Any pixels outside of our range shouldn't alter the waveform,
+			// so let's assign 1 to them!
+			for (int i=0; i < - mappedx; ++i) {
+				arg[i] = 1;
+			}
+		}
+
+		m_guicurve->get_vector(x, x + pixelcount, p, pixelcount);
+		
+		return 1;
 	}
 	
 	if (xstart < m_boundingRect.width()) {
@@ -181,19 +213,6 @@ int FadeView::get_vector(int xstart, int pixelcount, float * arg)
 	
 	return 0;
 }
-
-/*
-Command* FadeView::edit_properties()
-{
-	if (!m_dialog) {
-		m_dialog = new FadeContextDialog(m_fadeCurve);
-	}
-	
-	m_dialog->show();
-	
-	return 0;
-}
-*/
 
 void FadeView::calculate_bounding_rect()
 {
@@ -205,12 +224,15 @@ void FadeView::calculate_bounding_rect()
 		guinode->set_when_and_value(node->get_when() / m_sv->scalefactor, node->get_value());
 	}
 	
-	m_boundingRect = QRectF( 0, 0,
-	 			(m_guicurve->get_range() <= m_parentViewItem->boundingRect().width()) ? m_guicurve->get_range() : m_parentViewItem->boundingRect().width(), 
-				m_parentViewItem->get_height() );
+	double range = m_guicurve->get_range();
+	m_boundingRect = QRectF( 0, 0, range, m_parentViewItem->get_height() );
 	
 	if (m_fadeCurve->get_fade_type() == FadeCurve::FadeOut) {
-		setPos(m_parentViewItem->boundingRect().width() - m_boundingRect.width(), 
+		int diff = 0;
+		if (m_boundingRect.width() > m_parentViewItem->boundingRect().width()) {
+			diff = (int)(m_boundingRect.width() - m_parentViewItem->boundingRect().width());
+		}
+		setPos(m_parentViewItem->boundingRect().width() - m_boundingRect.width() + diff, 
 		       m_parentViewItem->get_childview_y_offset());
 	} else {
 		setPos(0, m_parentViewItem->get_childview_y_offset());
