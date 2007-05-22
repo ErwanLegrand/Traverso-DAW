@@ -205,7 +205,7 @@ int MonoReader::rb_read(audio_sample_t* dst, nframes_t start, nframes_t count)
 		} else {
 /*			if (m_wasActivated) {
 				m_wasActivated = 0;*/
-				start_resync(start);
+				start_resync(m_clip->get_song()->get_transport_frame());
 /*			} else {
 				recover_from_buffer_underrun(start);
 			}*/
@@ -239,9 +239,9 @@ void MonoReader::rb_seek_to_file_position( nframes_t position )
 	Q_ASSERT(m_clip);
 	
 	// calculate position relative to the file!
-	position -= (m_clip->get_track_start_frame() + m_clip->get_source_start_frame());
+	long fileposition = position - (m_clip->get_track_start_frame() - m_clip->get_source_start_frame());
 	
-	if (m_rbFileReadPos == position) {
+	if (m_rbFileReadPos == fileposition) {
 // 		printf("ringbuffer allready at position %d\n", position);
 		return;
 	}
@@ -250,12 +250,11 @@ void MonoReader::rb_seek_to_file_position( nframes_t position )
 		finish_resync();
 	}*/
 	
-	long fileposition = position;
 	
 	// check if the clip's start position is within the range
 	// if not, fill the buffer from the earliest point this clip
 	// will come into play.
-	if (fileposition < (int)m_clip->get_source_start_frame()) {
+	if (fileposition < 0) {
 // 		printf("not seeking to %ld, but too %d\n\n", fileposition,m_clip->get_source_start_frame()); 
 		// Song's start from 0, this makes a period start from
 		// 0 - 1023 for example, the nframes is 1024!
