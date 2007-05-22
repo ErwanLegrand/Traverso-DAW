@@ -196,6 +196,7 @@ int MonoReader::rb_read(audio_sample_t* dst, nframes_t start, nframes_t count)
 
 	if (start != m_rbRelativeFileReadPos) {
 		int available = m_buffer->read_space();
+// 		printf("start %d, m_rbFileReadPos %d\n", start, m_rbRelativeFileReadPos);
 		if ( (start > m_rbRelativeFileReadPos) && (m_rbRelativeFileReadPos + available) > (start + count)) {
 			int advance = start - m_rbRelativeFileReadPos;
 			if (available < advance)
@@ -203,12 +204,7 @@ int MonoReader::rb_read(audio_sample_t* dst, nframes_t start, nframes_t count)
 			m_buffer->increment_read_ptr(advance);
 			m_rbRelativeFileReadPos += advance;
 		} else {
-/*			if (m_wasActivated) {
-				m_wasActivated = 0;*/
-				start_resync(m_clip->get_song()->get_transport_frame());
-/*			} else {
-				recover_from_buffer_underrun(start);
-			}*/
+			start_resync(start + (m_clip->get_track_start_frame() + m_clip->get_source_start_frame()));
 			return 0;
 		}
 	}
@@ -239,7 +235,7 @@ void MonoReader::rb_seek_to_file_position( nframes_t position )
 	Q_ASSERT(m_clip);
 	
 	// calculate position relative to the file!
-	long fileposition = position - (m_clip->get_track_start_frame() - m_clip->get_source_start_frame());
+	long fileposition = position - (m_clip->get_track_start_frame() + m_clip->get_source_start_frame());
 	
 	if (m_rbFileReadPos == fileposition) {
 // 		printf("ringbuffer allready at position %d\n", position);
@@ -264,6 +260,7 @@ void MonoReader::rb_seek_to_file_position( nframes_t position )
 		fileposition = m_clip->get_source_start_frame() - 1;
 	}
 	
+// 	printf("seeking to %d\n", fileposition);
 	m_buffer->reset();
 	m_rbFileReadPos = fileposition;
 	m_rbRelativeFileReadPos = fileposition;
