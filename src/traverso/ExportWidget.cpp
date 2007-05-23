@@ -665,9 +665,9 @@ void ExportWidget::read_standard_output()
 						deviceName += token + " ";
 					}
 				}
-				deviceName += "(" + strlist.at(0) + ")";
 				QString device = strlist.at(0);
 				device = device.remove(":");
+				deviceName += "(" + device + ")";
 				cdDeviceComboBox->addItem(deviceName, device);
 			}
 		}
@@ -679,7 +679,6 @@ void ExportWidget::read_standard_output()
 		cdDeviceComboBox->addItem("IOCompactDiscServices");
 		cdDeviceComboBox->addItem("IOCompactDiscServices/2");
 #endif
-		
 		update_cdburn_status(tr("Information"), NORMAL_MESSAGE);
 		
 		return;
@@ -691,9 +690,6 @@ void ExportWidget::read_standard_output()
 	if (sout.simplified().isEmpty()) {
 		return;
 	}
-	
-	printf("CD Writing: %s\n", QS_C(sout));
-
 	
 	if (sout.contains("Disk seems to be written")) {
 		int index = cdDeviceComboBox->currentIndex();
@@ -754,6 +750,8 @@ void ExportWidget::read_standard_output()
 		return;
 	}	
 	
+	// Write out only the unhandled cdrdao lines
+	printf("CD Writing: %s\n", QS_C(sout.trimmed()));
 }
 
 void ExportWidget::closeEvent(QCloseEvent * event)
