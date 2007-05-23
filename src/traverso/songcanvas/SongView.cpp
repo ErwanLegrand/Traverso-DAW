@@ -136,8 +136,8 @@ SongView::SongView(SongWidget* songwidget,
 	float values[7] = {0.0, 0.2, 0.3, 0.8, 0.95, 1.5, 8.0};
 	
 	// Use these variables to fine tune the scroll during drag behavior
-	float dragWhens[7] =  {0.0, 0.9,  0.92, 0.97, 1.0, 1.1, 1.3};
-	float dragValues[7] = {0.0, 0.1, 0.3,  0.7,  0.95,  1.1,  2.0};
+	float dragWhens[7] =  {0.0, 0.9, 0.94, 0.97, 1.0, 1.1, 1.3};
+	float dragValues[7] = {0.0, 0.0, 0.2,  0.5,  0.85,  1.1,  2.0};
 	
 	for (int i=0; i<7; ++i) {
 		AddRemove* cmd = (AddRemove*) m_dragShuttleCurve->add_node(new CurveNode(m_dragShuttleCurve, dragWhens[i], dragValues[i]), false);
