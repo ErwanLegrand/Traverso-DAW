@@ -86,7 +86,8 @@ private slots:
         void on_exportStartButton_clicked();
         void on_exportStopButton_clicked();
 	void on_cancelButton_clicked();
-	
+	void export_only_changed(int state);
+
 	void start_burn_process();
 	void stop_burn_process();
 	void read_standard_output();

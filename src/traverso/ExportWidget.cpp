@@ -135,6 +135,7 @@ ExportWidget::ExportWidget( QWidget * parent )
 	connect(startButton, SIGNAL(clicked()), this, SLOT(start_burn_process()));
 	connect(stopButton, SIGNAL(clicked()), this, SLOT(stop_burn_process()));
 	connect(refreshButton, SIGNAL(clicked()), this, SLOT(query_devices()));
+	connect(cdDiskExportOnlyCheckBox, SIGNAL(stateChanged(int)), this, SLOT(export_only_changed(int)));
 		
 	query_devices();
 }
@@ -770,11 +771,21 @@ void ExportWidget::reject()
 	}
 }
 
+void ExportWidget::export_only_changed(int state)
+{
+	if (state == Qt::Checked) {
+		burnGroupBox->setEnabled(false);
+	} else {
+		burnGroupBox->setEnabled(true);
+	}
+}
+
 void ExportWidget::disable_ui_interaction()
 {
 	closeButton->setEnabled(false);
 	exportWidget->setEnabled(false);
 	optionsGroupBox->setEnabled(false);
+	burnGroupBox->setEnabled(false);
 	startButton->hide();
 	stopButton->show();
 }
@@ -784,6 +795,7 @@ void ExportWidget::enable_ui_interaction()
 	m_writingState = NO_STATE;
 	exportWidget->setEnabled(true);
 	optionsGroupBox->setEnabled(true);
+	burnGroupBox->setEnabled(true);
 	closeButton->setEnabled(true);
 	startButton->show();
 	stopButton->hide();
