@@ -214,7 +214,7 @@ void SongView::update_scrollbars()
 	
 	m_playCursor->set_bounding_rect(QRectF(0, 0, 2, m_vScrollBar->maximum() + m_clipsViewPort->height()));
 	m_playCursor->update_position();
-	m_workCursor->set_bounding_rect(QRectF(0, 0, 2, m_vScrollBar->maximum() + m_clipsViewPort->height()));
+	m_workCursor->set_bounding_rect(QRectF(0, 0, 1, m_vScrollBar->maximum() + m_clipsViewPort->height()));
 	m_workCursor->update_position();
 	
 	set_snap_range(m_hScrollBar->value());

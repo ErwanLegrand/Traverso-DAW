@@ -263,7 +263,7 @@ void WorkCursor::paint( QPainter * painter, const QStyleOptionGraphicsItem * opt
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 	
-	painter->fillRect(0, 0, 2, (int)m_boundingRect.height(), themer()->get_color("Workcursor:default"));
+	painter->fillRect(0, 0, (int)m_boundingRect.width(), (int)m_boundingRect.height(), themer()->get_color("Workcursor:default"));
 }
 
 void WorkCursor::update_position()
