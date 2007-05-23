@@ -35,6 +35,7 @@ class SongWidget;
 class TrackView;
 class PlayHead;
 class WorkCursor;
+class Curve;
 
 class SongView : public ViewItem
 {
@@ -87,6 +88,8 @@ public :
 
 private:
         Song* 			m_song;
+	Curve*			m_shuttleCurve;
+	Curve*			m_dragShuttleCurve;
 	PlayHead*		m_playCursor;
 	ClipsViewPort* 		m_clipsViewPort;
 	TrackPanelViewPort*	m_tpvp;

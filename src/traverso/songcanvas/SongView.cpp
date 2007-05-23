@@ -33,12 +33,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include "TimeLineView.h"
 #include "TrackPanelViewPort.h"
 #include "Themer.h"
+#include "AddRemove.h"
 		
-#include <Song.h>
-#include <Track.h>
-#include <Peak.h>
-#include <SnapList.h>
-#include <ContextPointer.h>
 #include <Zoom.h>
 #include <PlayHeadMove.h>
 #include <WorkCursorMove.h>
@@ -131,6 +127,27 @@ SongView::SongView(SongWidget* songwidget,
 	m_song->get_scrollbar_xy(x, y);
 	set_hscrollbar_value(x);
 	set_vscrollbar_value(y);
+	
+	m_shuttleCurve = new Curve(0, m_song);
+	m_dragShuttleCurve = new Curve(0, m_song);
+	
+	// Use these variables to fine tune the scroll behavior
+	float whens[7] = {0.0, 0.2, 0.5, 0.7, 0.8, 0.9, 1.3};
+	float values[7] = {0.0, 0.2, 0.3, 0.8, 0.95, 1.5, 8.0};
+	
+	// Use these variables to fine tune the scroll during drag behavior
+	float dragWhens[7] =  {0.0, 0.9,  0.92, 0.97, 1.0, 1.1, 1.3};
+	float dragValues[7] = {0.0, 0.1, 0.3,  0.7,  0.95,  1.1,  2.0};
+	
+	for (int i=0; i<7; ++i) {
+		AddRemove* cmd = (AddRemove*) m_dragShuttleCurve->add_node(new CurveNode(m_dragShuttleCurve, dragWhens[i], dragValues[i]), false);
+		cmd->set_instantanious(true);
+		Command::process_command(cmd);
+		
+		cmd = (AddRemove*) m_shuttleCurve->add_node(new CurveNode(m_shuttleCurve, whens[i], values[i]), false);
+		cmd->set_instantanious(true);
+		Command::process_command(cmd);
+	}
 }
 
 SongView::~SongView()
@@ -309,8 +326,6 @@ void SongView::layout_tracks()
 Command* SongView::center()
 {
 	PENTER2;
-	QScrollBar* scrollbar = m_clipsViewPort->horizontalScrollBar();
-
 	nframes_t centerX;
 	if (m_song->is_transporting() && m_actOnPlayHead) { 
 		centerX = m_song->get_transport_frame();
@@ -357,80 +372,60 @@ void SongView::start_shuttle(bool start, bool drag)
 
 void SongView::update_shuttle_factor()
 {
-	int shuttlespeed;
+	float vec[2];
+	int direction = 1;
 	
-// TODO Interpolate normalized value from a (Fade)Curve, anyone ?
-
-	if(m_dragShuttle) {
-		float normalizedX = (float) cpointer().x() / m_clipsViewPort->width();
-		shuttlespeed = 0;
-		if ( normalizedX > 0.87 || normalizedX < 0.13)
-			shuttlespeed = 3;
+	float normalizedX = (float) cpointer().x() / m_clipsViewPort->width();
 	
-		else if ( normalizedX > 0.90 || normalizedX < 0.10)
-			shuttlespeed = 8;
+	if (normalizedX < 0.5) {
+		normalizedX = 0.5 - normalizedX;
+		normalizedX *= 2;
+		direction = -1;
+	} else if (normalizedX > 0.5) {
+		normalizedX = normalizedX - 0.5;
+		normalizedX *= 2;
+		if (normalizedX > 1.0) {
+			normalizedX *= 1.15;
+		}
+	}
 	
-		else if ( normalizedX > 0.95 || normalizedX < 0.05)
-			shuttlespeed = 20;
-		
-		else if ( normalizedX > 0.98 || normalizedX < 0.02)
-			shuttlespeed = 30;
-	
-		m_shuttleXfactor = (int) ( (( normalizedX * 30 ) - 15) * shuttlespeed / 2 );
-		
-	
-		shuttlespeed = 0;
-		float normalizedY = (float) cpointer().y() / m_clipsViewPort->height();
-		
-		if ( normalizedY > 0.80 || normalizedY < 0.20)
-			shuttlespeed = 3;
-	
-		else if ( normalizedY > 0.90 || normalizedY < 0.10)
-			shuttlespeed = 8;
-	
-		else if ( normalizedY > 0.95 || normalizedY < 0.05)
-			shuttlespeed = 20;
-		
-		else if ( normalizedY > 0.98 || normalizedY < 0.02)
-			shuttlespeed = 30;
-		
-		m_shuttleYfactor = (int) ( (( normalizedY * 30 ) - 15) * shuttlespeed / 2 );
-	
+	if (m_dragShuttle) {
+		m_dragShuttleCurve->get_vector(normalizedX, normalizedX + 0.01, vec, 2);
 	} else {
-		shuttlespeed = 0;
-		float normalizedX = (float) cpointer().x() / m_clipsViewPort->width();
-		
-		if ( normalizedX > 0.6 || normalizedX < 0.4)
-			shuttlespeed = 7;
+		m_shuttleCurve->get_vector(normalizedX, normalizedX + 0.01, vec, 2);
+	}
 	
-		else if ( normalizedX > 0.85 || normalizedX < 0.15)
-			shuttlespeed = 15;
+	if (direction > 0) {
+		m_shuttleXfactor = (int) (vec[0] * 30);
+	} else {
+		m_shuttleXfactor = (int) (vec[0] * -30);
+	}
 	
-		else if ( normalizedX > 0.95 || normalizedX < 0.05)
-			shuttlespeed = 20;
+	direction = 1;
+	float normalizedY = (float) cpointer().y() / m_clipsViewPort->height();
 	
-		else if ( normalizedX > 0.98 || normalizedX < 0.02)
-			shuttlespeed = 30;
+	if (normalizedY < 0) normalizedY = 0;
+	if (normalizedY > 1) normalizedY = 1;
 	
-		m_shuttleXfactor = (int) ( (( normalizedX * 30 ) - 15) * shuttlespeed / 2 );
-		
-		
-		shuttlespeed = 0;
-		float normalizedY = (float) cpointer().y() / m_clipsViewPort->height();
-		
-		if ( normalizedY > 0.6 || normalizedY < 0.4)
-			shuttlespeed = 5;
-		
-		else if ( normalizedY > 0.80 || normalizedY < 0.20)
-			shuttlespeed = 15;
+	if (normalizedY < 0.5) {
+		normalizedY = 0.5 - normalizedY;
+		direction = -1;
+	} else if (normalizedY > 0.5) {
+		normalizedY = normalizedY - 0.5;
+	}
 	
-		else if ( normalizedY > 0.90 || normalizedY < 0.10)
-			shuttlespeed = 20;
+	normalizedY *= 2;
 	
-		else if ( normalizedY > 0.98 || normalizedY < 0.02)
-			shuttlespeed = 30;
-		
-		m_shuttleYfactor = (int) ( (( normalizedY * 30 ) - 15) * shuttlespeed / 2 );
+	if (m_dragShuttle) {
+		m_dragShuttleCurve->get_vector(normalizedY, normalizedY + 0.01, vec, 2);
+	} else {
+		m_shuttleCurve->get_vector(normalizedY, normalizedY + 0.01, vec, 2);
+	}
+	
+	if (direction > 0) {
+		m_shuttleYfactor = (int) (vec[0] * 30);
+	} else {
+		m_shuttleYfactor = (int) (vec[0] * -30);
 	}
 	
 }
