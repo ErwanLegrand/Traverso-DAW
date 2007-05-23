@@ -4,7 +4,7 @@
 #    This script is used to create a bundle for OS X     #
 ###                                                    ###
 
-QT_PATH=/usr/local/Trolltech/Qt-4.3.0-snapshot-20070505
+QT_PATH=/usr/local/Trolltech/Qt-4.3.0-snapshot-20070523
 
 mkdir -p traverso.app/Contents/Frameworks
 mkdir -p traverso.app/Contents/Frameworks/QtXml.framework/Versions/4/
@@ -20,10 +20,10 @@ cp /usr/local/lib/librasqal.0.dylib traverso.app/Contents/Frameworks
 cp /usr/local/lib/libglib-2.0.0.dylib traverso.app/Contents/Frameworks
 cp /usr/local/lib/libintl.8.dylib traverso.app/Contents/Frameworks
 cp /usr/local/lib/libraptor.1.dylib traverso.app/Contents/Frameworks
-cp /usr/local/Trolltech/Qt-4.3.0-snapshot-20070505/lib/QtXml.framework/Versions/4/QtXml traverso.app/Contents/Frameworks/QtXml.framework/Versions/4/
-cp /usr/local/Trolltech/Qt-4.3.0-snapshot-20070505/lib/QtOpenGL.framework/Versions/4/QtOpenGL traverso.app/Contents/Frameworks/QtOpenGL.framework/Versions/4/
-cp /usr/local/Trolltech/Qt-4.3.0-snapshot-20070505/lib/QtGui.framework/Versions/4/QtGui traverso.app/Contents/Frameworks/QtGui.framework/Versions/4/
-cp /usr/local/Trolltech/Qt-4.3.0-snapshot-20070505/lib/QtCore.framework/Versions/4/QtCore traverso.app/Contents/Frameworks/QtCore.framework/Versions/4/
+cp $QT_PATH/lib/QtXml.framework/Versions/4/QtXml traverso.app/Contents/Frameworks/QtXml.framework/Versions/4/
+cp $QT_PATH/lib/QtOpenGL.framework/Versions/4/QtOpenGL traverso.app/Contents/Frameworks/QtOpenGL.framework/Versions/4/
+cp $QT_PATH/lib/QtGui.framework/Versions/4/QtGui traverso.app/Contents/Frameworks/QtGui.framework/Versions/4/
+cp $QT_PATH/lib/QtCore.framework/Versions/4/QtCore traverso.app/Contents/Frameworks/QtCore.framework/Versions/4/
 
 install_name_tool -id @executable_path/../Frameworks/libsndfile.1.dylib traverso.app/Contents/Frameworks/libsndfile.1.dylib
 install_name_tool -id @executable_path/../Frameworks/libsamplerate.0.dylib traverso.app/Contents/Frameworks/libsamplerate.0.dylib
