@@ -234,6 +234,8 @@ void MonoReader::rb_seek_to_file_position( nframes_t position )
 {
 	Q_ASSERT(m_clip);
 	
+// 	printf("rb_seek_to_file_position:: seeking to %d\n", position);
+	
 	// calculate position relative to the file!
 	long fileposition = position - (m_clip->get_track_start_frame() + m_clip->get_source_start_frame());
 	
@@ -242,11 +244,6 @@ void MonoReader::rb_seek_to_file_position( nframes_t position )
 		return;
 	}
 
-/*	if (m_needSync) {
-		finish_resync();
-	}*/
-	
-	
 	// check if the clip's start position is within the range
 	// if not, fill the buffer from the earliest point this clip
 	// will come into play.
@@ -260,7 +257,7 @@ void MonoReader::rb_seek_to_file_position( nframes_t position )
 		fileposition = m_clip->get_source_start_frame() - 1;
 	}
 	
-// 	printf("seeking to %d\n", fileposition);
+// 	printf("rb_seek_to_file_position:: seeking to relative pos: %d\n", fileposition);
 	m_buffer->reset();
 	m_rbFileReadPos = fileposition;
 	m_rbRelativeFileReadPos = fileposition;
