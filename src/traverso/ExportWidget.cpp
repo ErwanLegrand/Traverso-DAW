@@ -29,6 +29,7 @@
 #include <QMessageBox>
 
 #include "Export.h"
+#include "Config.h"
 #include <AudioDevice.h>
 
 
@@ -384,7 +385,6 @@ void ExportWidget::query_devices()
 	}
 	
 	m_writingState = QUERY_DEVICE;
-	cdDeviceComboBox->clear();
 #if defined (Q_WS_WIN)
 	m_burnprocess->start(CDRDAO_BIN, QStringList() << "scanbus");
 #elif defined (OSX_BUILD)
@@ -443,6 +443,11 @@ void ExportWidget::start_burn_process()
 	}
 	
 	cd_render();
+	
+	int index = cdDeviceComboBox->currentIndex();
+	if (index != -1 && cdDeviceComboBox->itemData(index) != QVariant::Invalid) {
+		config().set_property("Cdrdao", "drive", cdDeviceComboBox->itemData(index));
+	}
 }
 
 
@@ -640,6 +645,10 @@ void ExportWidget::read_standard_output()
 	
 	if (m_writingState == QUERY_DEVICE) {
 		char buf[1024];
+		int previousIndex = cdDeviceComboBox->currentIndex();
+
+		cdDeviceComboBox->clear();
+
 		while(m_burnprocess->readLine(buf, sizeof(buf)) != -1) {
 			QString data = QString(buf);
 			//printf("%s\n", QS_C(data));
@@ -680,6 +689,19 @@ void ExportWidget::read_standard_output()
 		cdDeviceComboBox->addItem("IOCompactDiscServices");
 		cdDeviceComboBox->addItem("IOCompactDiscServices/2");
 #endif
+		// If combo box was empty, set it to saved drive.  Else, keep it on previously selected drive
+		if (previousIndex == -1) {
+			QString cdrdaoDrive = config().get_property("Cdrdao", "drive", "").toString();
+			if (cdrdaoDrive != "") {
+				int index = cdDeviceComboBox->findData(cdrdaoDrive);
+				if (index != -1) {
+					cdDeviceComboBox->setCurrentIndex(index);
+				}
+			}
+		} else {
+			cdDeviceComboBox->setCurrentIndex(previousIndex);
+		}
+		
 		update_cdburn_status(tr("Information"), NORMAL_MESSAGE);
 		
 		return;
