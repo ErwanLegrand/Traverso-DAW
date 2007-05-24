@@ -139,7 +139,7 @@ void Song::init()
 
 	mixdown = gainbuffer = 0;
 	m_masterOut = new AudioBus("Master Out", 2);
-	m_renderBus = new AudioBus("Master Out", 2);
+	m_renderBus = new AudioBus("Render Bus", 2);
 	resize_buffer(false, audiodevice().get_buffer_size());
 	m_hs = new QUndoStack(pm().get_undogroup());
 	set_history_stack(m_hs);
@@ -840,11 +840,11 @@ int Song::process( nframes_t nframes )
 
 	// Mix the result into the AudioDevice "physical" buffers
 	if (m_playBackBus) {
+		// Process all the plugins for this Song
+		m_pluginChain->process(m_masterOut, nframes);
+		
 		Mixer::mix_buffers_with_gain(m_playBackBus->get_buffer(0, nframes), m_masterOut->get_buffer(0, nframes), nframes, m_gain);
 		Mixer::mix_buffers_with_gain(m_playBackBus->get_buffer(1, nframes), m_masterOut->get_buffer(1, nframes), nframes, m_gain);
-		
-		// Process all the plugins for this Song
-		m_pluginChain->process(m_playBackBus, nframes);
 	}
 
 	
