@@ -125,9 +125,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	
 	painter->save();
 	
-	QRectF clipRect = m_boundingRect;
-	clipRect.setWidth(clipRect.width() + 1);
-	clipRect.setHeight(clipRect.height());
+	QRectF clipRect = m_boundingRect.adjusted(-1, -1, 1, 1);
 	painter->setClipRect(clipRect);
 	
 	if (m_clip->invalid_readsource()) {
@@ -196,8 +194,10 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	} else {
 		draw_clipinfo_area(painter, xstart, pixelcount);
 		painter->setPen(themer()->get_color("AudioClip:contour"));
-		painter->drawRect(xstart, 0, pixelcount, m_infoAreaHeight - 1);
-		painter->drawRect(xstart, 0, pixelcount, m_height - 1);
+		QRectF rectinfo(xstart, 0, pixelcount, m_infoAreaHeight - 1);
+		painter->drawRect(rectinfo);
+		QRectF rect(xstart, 0, pixelcount, m_height - 1);
+		painter->drawRect(rect);
 	}
 	
 	// Paint a pixmap if the clip is locked
@@ -206,25 +206,11 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 		painter->drawPixmap(center - 8, m_height - 20, find_pixmap(":/lock"));
 	}
 
-	// If the beginning of the clip is painted, add some effect to make it
-	// more visible that it _is_ the start of the clip ?????????
-	if (xstart == 0) {
-/*		painter->setPen(themer()->get_color("AudioClip:contour").light(115));
-		painter->drawLine(1, m_infoAreaHeight, 1, m_height);*/
-	}
-	
-	if (m_song->get_mode() == Song::EFFECTS) {
-// 		curveView->paint(painter, option, widget);
-	}
-	
 	if (m_dragging) {
 		m_posIndicator->set_value(frame_to_text( (nframes_t)(x() * m_sv->scalefactor), m_song->get_rate(), m_sv->scalefactor));
 	}
 	
 	painter->restore();
-
-// 	printf("drawing clip\n");
-	
 }
 
 void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
