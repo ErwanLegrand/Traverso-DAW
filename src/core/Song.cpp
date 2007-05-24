@@ -193,6 +193,7 @@ int Song::set_state( const QDomNode & node )
 	set_work_at(e.attribute( "workingFrame", "0").toUInt());
 	set_transport_pos(e.attribute( "transportFrame", "0").toUInt());
 	set_snapping(e.attribute("snapping", "0").toInt());
+	m_mode = e.attribute("mode", "0").toInt();
 	
 	m_timeline->set_state(node.firstChildElement("TimeLine"));
 
@@ -232,6 +233,7 @@ QDomNode Song::get_state(QDomDocument doc, bool istemplate)
 	properties.setAttribute("sby", m_sby);
 	properties.setAttribute("mastergain", m_gain);
 	properties.setAttribute("snapping", m_isSnapOn);
+	properties.setAttribute("mode", m_mode);
 	songNode.appendChild(properties);
 
 	doc.appendChild(songNode);

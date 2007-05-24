@@ -168,6 +168,9 @@ Command* TrackView::add_new_plugin( )
 	if (PluginSelectorDialog::instance()->exec() == QDialog::Accepted) {
 		Plugin* plugin = PluginSelectorDialog::instance()->get_selected_plugin();
 		if (plugin) {
+			// Force showing into effects mode, just in case the user adds
+			// a plugin in edit mode, which means it won't show up!
+			m_sv->get_song()->set_effects_mode();
 			return m_track->add_plugin(plugin);
 		}
 	}

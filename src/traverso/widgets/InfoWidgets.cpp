@@ -531,26 +531,23 @@ SongInfo::SongInfo(QWidget * parent)
 	m_snapAct->setCheckable(true);
 	m_snapAct->setToolTip(tr("Snap items to edges of other items while dragging."));
 	m_snap->setDefaultAction(m_snapAct);
-	m_snap->setFocusPolicy(Qt::NoFocus);
 
 	m_follow = new QToolButton(this);
 	m_followAct = new QAction(tr("S&croll Playback"), this);
 	m_followAct->setCheckable(true);
 	m_followAct->setToolTip(tr("Keep play cursor in view while playing or recording."));
 	m_follow->setDefaultAction(m_followAct);
-	m_follow->setFocusPolicy(Qt::NoFocus);
 	
-	m_mode = new QComboBox(this);
-	m_mode->addItem("Mode: Edit");
-	m_mode->addItem("Mode: Effects");
-	m_mode->setFocusPolicy(Qt::NoFocus);
+	m_effectButton = new QToolButton(this);
+	m_effectButton->setMinimumWidth(110);
+	m_effectAction = new QAction(tr("&Show Effects"), this);
+	m_effectAction->setCheckable(false);
 	
 	m_record = new QToolButton(this);
 	m_recAction = new QAction(tr("Record"), this);
 	m_recAction->setCheckable(true);
 	m_recAction->setToolTip(tr("Toggle recording state on/off"));
 	m_record->setDefaultAction(m_recAction);
-	m_record->setFocusPolicy(Qt::NoFocus);
 	m_record->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 	
 	
@@ -559,7 +556,6 @@ SongInfo::SongInfo(QWidget * parent)
 	action->setIcon(QIcon(find_pixmap(":/undo-16")));
 	action->setShortcuts(QKeySequence::Undo);
 	undobutton->setDefaultAction(action);
-	undobutton->setFocusPolicy(Qt::NoFocus);
 	undobutton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 	undobutton->setText(tr("Undo"));
 	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(undo()));
@@ -585,7 +581,7 @@ SongInfo::SongInfo(QWidget * parent)
 	lay->addStretch(1);
 	lay->addWidget(m_playhead);
 	lay->addStretch(5);
-	lay->addWidget(m_mode);
+	lay->addWidget(m_effectButton);
 	lay->addWidget(m_songselectbox);
 		
 	setLayout(lay);
@@ -597,7 +593,7 @@ SongInfo::SongInfo(QWidget * parent)
 	connect(m_snapAct, SIGNAL(triggered(bool)), this, SLOT(snap_state_changed(bool)));
 	connect(m_followAct, SIGNAL(triggered(bool)), this, SLOT(follow_state_changed(bool)));
 	connect(&config(), SIGNAL(configChanged()), this, SLOT(update_follow_state()));
-	connect(m_mode, SIGNAL(currentIndexChanged(int)), this, SLOT(mode_index_changed(int)));
+	connect(m_effectButton, SIGNAL(clicked()), this, SLOT(effect_button_clicked()));
 	connect(m_recAction, SIGNAL(triggered(bool)), this, SLOT(recording_button_state_changed(bool)));
 	
 	update_follow_state();
@@ -627,18 +623,18 @@ void SongInfo::set_song(Song* song)
 	
 	if (m_song) {
 		connect(m_song, SIGNAL(snapChanged()), this, SLOT(update_snap_state()));
-		connect(m_song, SIGNAL(modeChanged()), this, SLOT(update_mode_state()));
+		connect(m_song, SIGNAL(modeChanged()), this, SLOT(update_effects_state()));
 		connect(m_song, SIGNAL(recordingStateChanged()), this, SLOT(update_recording_state()));
 		update_snap_state();
-		update_mode_state();
+		update_effects_state();
 		update_recording_state();
 		m_snapAct->setEnabled(true);
-		m_mode->setEnabled(true);
+		m_effectButton->setEnabled(true);
 		m_record->setEnabled(true);
 		m_follow->setEnabled(true);
 	} else {
 		m_snapAct->setEnabled(false);
-		m_mode->setEnabled(false);
+		m_effectButton->setEnabled(false);
 		m_record->setEnabled(false);
 		m_follow->setEnabled(false);
 	}
@@ -649,12 +645,12 @@ void SongInfo::update_snap_state()
 	m_snapAct->setChecked(m_song->is_snap_on());
 }
 
-void SongInfo::update_mode_state()
+void SongInfo::update_effects_state()
 {
 	if (m_song->get_mode() == Song::EDIT) {
-		m_mode->setCurrentIndex(0);
+		m_effectButton->setText(tr("Show Effects"));
 	} else {
-		m_mode->setCurrentIndex(1);
+		m_effectButton->setText(tr("Hide Effects"));
 	}
 }
 
@@ -677,12 +673,12 @@ void SongInfo::follow_state_changed(bool state)
 	config().save();
 }
 
-void SongInfo::mode_index_changed(int index)
+void SongInfo::effect_button_clicked()
 {
-	if (index == 0) {
-		m_song->set_editing_mode();
-	} else {
+	if (m_song->get_mode() == Song::EDIT) {
 		m_song->set_effects_mode();
+	} else {
+		m_song->set_editing_mode();
 	}
 }
 

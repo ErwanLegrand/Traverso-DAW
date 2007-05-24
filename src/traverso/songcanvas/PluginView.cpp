@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier
+Copyright (C) 2005-2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -57,9 +57,9 @@ PluginView::PluginView(PluginChainView* parent, PluginChain* chain, Plugin* plug
 	m_name = plugin->get_name();
 	
 	QFontMetrics fm(themer()->get_font("Plugin:fontscale:name"));
-	int fontwidth = fm.width(m_name);
+	m_textwidth = fm.width(m_name);
 	
-	m_boundingRect = QRectF(0, 0, fontwidth + 8, 25);
+	calculate_bounding_rect();
 	
 	setAcceptsHoverEvents(true);
 	setCursor(themer()->get_cursor("Plugin"));
@@ -91,11 +91,11 @@ void PluginView::paint(QPainter* painter, const QStyleOptionGraphicsItem *option
 
 	int height, width;
 	if (option->state & QStyle::State_MouseOver) {
-		height = 21;
+		height = m_boundingRect.height() + 1;
 		width = m_boundingRect.width() + 1;
 		color = color.light(120);
 	} else {
-		height = 20;
+		height = m_boundingRect.height();
 		width = m_boundingRect.width();
 	}
 	
@@ -140,4 +140,17 @@ void PluginView::repaint( )
 	update();
 }
 
+void PluginView::calculate_bounding_rect()
+{
+	int height = 25;
+	int parentheight = m_parentViewItem->boundingRect().height();
+	if (parentheight < 30) {
+		height = parentheight - 4;
+	}
+	int y = parentheight - height;
+	m_boundingRect = QRectF(0, 0, m_textwidth + 8, height);
+	setPos(x(), y);
+}
+
 //eof
+

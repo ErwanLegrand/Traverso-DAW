@@ -85,8 +85,6 @@ SongView::SongView(SongWidget* songwidget,
 	m_hScrollBar = songwidget->m_hScrollBar;
 	m_actOnPlayHead = true;
 	
-	m_song->set_editing_mode();
-	
 	m_clipsViewPort->scene()->addItem(this);
 	
 	m_playCursor = new PlayHead(this, m_song, m_clipsViewPort);

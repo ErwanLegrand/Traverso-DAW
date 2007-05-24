@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2006 Remon Sijrier
+    Copyright (C) 2006-2007 Remon Sijrier
 
     This file is part of Traverso
 
@@ -17,7 +17,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: PluginView.h,v 1.9 2007/05/24 10:56:44 r_sijrier Exp $
 */
 
 #ifndef PLUGIN_VIEW_H
@@ -46,19 +45,18 @@ public:
 	PluginView(PluginChainView* pcv, PluginChain* chain, Plugin* plugin, int index);
         ~PluginView();
 
-	enum {Type = UserType + 5};
-        
 	Plugin* get_plugin();
         void set_index(int index);
 
         void paint(QPainter* painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-	int type() const;
+	void calculate_bounding_rect();
 
 private:
 	PluginChain*	m_pluginchain;
 	Plugin*		m_plugin;
 
         int 		m_index;
+	int		m_textwidth;
         QString		m_name;
 	
 #if defined (LV2_SUPPORT)
@@ -72,8 +70,6 @@ public slots:
 private slots:
 	void repaint();
 };
-
-inline int PluginView::type() const {return Type;}
 
 #endif
 

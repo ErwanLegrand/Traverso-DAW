@@ -202,7 +202,6 @@ CurveView::CurveView(SongView* sv, ViewItem* parentViewItem, Curve* curve)
 	setAcceptsHoverEvents(true);
 	
 	set_view_mode();
-	
 }
 
 CurveView::~ CurveView( )
@@ -565,6 +564,7 @@ void CurveView::set_view_mode()
 {
 	if (m_sv->get_song()->get_mode() == Song::EFFECTS) {
 		show();
+		printf("....\n");
 	} else {
 		hide();
 	}

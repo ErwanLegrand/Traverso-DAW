@@ -40,16 +40,20 @@ public:
         ~PluginChainView();
 
         void paint(QPainter* painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+	void calculate_bounding_rect();
 
 private:
 	PluginChain* m_pluginchain;
-        SongView* m_sv;
         QList<PluginView* >	m_pluginViews;
 
 public slots:
         void add_new_pluginview(Plugin* plugin);
         void remove_pluginview(Plugin* plugin);
 	void scrollbar_value_changed(int value);
+	
+private slots:
+	void set_view_mode();
+
 };
 
 #endif

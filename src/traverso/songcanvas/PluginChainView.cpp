@@ -32,6 +32,7 @@
 #include <Plugin.h>
 
 #include <Track.h>
+#include "Song.h"
 
 #if defined (LV2_SUPPORT)
 #include <LV2Plugin.h>
@@ -46,18 +47,16 @@
 PluginChainView::PluginChainView(SongView* sv, ViewItem* parent, PluginChain* chain)
 	: ViewItem(parent, parent)
 	, m_pluginchain(chain)
-	, m_sv(sv)
 {
 	PENTERCONS;
 	
 	setZValue(parent->zValue() + 2);
+	m_sv = sv;
+	calculate_bounding_rect();
 	
 #if QT_VERSION < 0x040300
 	parent->scene()->addItem(this);
 #endif
-	m_boundingRect = QRectF(0, 0, 0, 44);
-	
-	hide();
 	
 	foreach(Plugin* plugin, chain->get_plugin_list()) {
 		add_new_pluginview(plugin);
@@ -67,7 +66,9 @@ PluginChainView::PluginChainView(SongView* sv, ViewItem* parent, PluginChain* ch
 	connect(chain, SIGNAL(pluginRemoved(Plugin*)), this, SLOT(remove_pluginview(Plugin*)));
 	connect(m_sv->get_clips_viewport()->horizontalScrollBar(), SIGNAL(valueChanged(int)),
 		this, SLOT(scrollbar_value_changed(int)));
+	connect(m_sv->get_song(), SIGNAL(modeChanged()), this, SLOT(set_view_mode()));
 	
+	set_view_mode();
 }
 
 PluginChainView::~PluginChainView( )
@@ -90,7 +91,6 @@ void PluginChainView::add_new_pluginview( Plugin * plugin )
 	view->setPos(x, m_boundingRect.height() - view->boundingRect().height());
 	
 	m_pluginViews.append(view);
-	show();
 }
 
 void PluginChainView::remove_pluginview( Plugin * plugin )
@@ -128,6 +128,23 @@ void PluginChainView::paint( QPainter * painter, const QStyleOptionGraphicsItem 
 void PluginChainView::scrollbar_value_changed(int value)
 {
 	setPos(value, y());
+}
+
+void PluginChainView::set_view_mode()
+{
+	if (m_sv->get_song()->get_mode() == Song::EFFECTS) {
+		show();
+	} else {
+		hide();
+	}
+}
+
+void PluginChainView::calculate_bounding_rect()
+{
+	int y  = m_parentViewItem->boundingRect().height();
+	m_boundingRect = QRectF(0, 0, 0, y);
+	setPos(pos().x(), - 2);
+	ViewItem::calculate_bounding_rect();
 }
 
 //eof

@@ -189,9 +189,9 @@ private slots:
 	void update_snap_state();
 	void snap_state_changed(bool state);
 	void update_follow_state();
-	void update_mode_state();
+	void update_effects_state();
 	void follow_state_changed(bool state);
-	void mode_index_changed(int index);
+	void effect_button_clicked();
 	void recording_button_state_changed(bool state);
 	void update_recording_state();
 	void song_selector_song_added(Song* song);
@@ -203,12 +203,13 @@ private slots:
 private:
 	PlayHeadInfo* 	m_playhead;
 	QToolButton*	m_snap;
-	QComboBox*	m_mode;
+	QToolButton*	m_effectButton;
 	QComboBox* 	m_songselectbox;
 	QAction*	m_snapAct;
 	QToolButton*	m_follow;
 	QAction*	m_followAct;
 	QAction*	m_recAction;
+	QAction*	m_effectAction;
 	QToolButton*	m_record;
 };
 
