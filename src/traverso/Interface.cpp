@@ -328,7 +328,7 @@ void Interface::create_menus( )
 	menu = menuBar()->addMenu(tr("&Project"));
 	
 	action = menu->addAction(tr("&New..."));
-	action->setIcon(style()->standardIcon(QStyle::SP_FileDialogContentsView));
+	action->setIcon(find_pixmap(":/new-16"));
 	action->setShortcuts(QKeySequence::New);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_newproject_dialog()));
 	
