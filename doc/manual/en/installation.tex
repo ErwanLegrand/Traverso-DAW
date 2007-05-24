@@ -1,0 +1,59 @@
+The most convenient way to install Traverso is to use precompiled packages. For Traverso \Version\ binary packages are available for several popular Linux distributions. However, in the fast-living open source world, things can change rapidly. It is thus recommended to refer to the Traverso homepage in order to find up-to-date information on binary packages. Alternatively, compilation from source is the second best option, and explained here in detail. It's actually quite simple as you will see! The last option if the former two don't work, is to download the ``ready to run binary'', which is usually provided for the i386 platform on the Traverso website \cite{trav-hp}. Traverso successfully builds and runs on i386, ia64, and ppc platforms.
+
+\section{Binaries}
+The precompiled binaries are available from the following locations:
+
+\begin{description}
+	\item [(K)Ubuntu:] add the reference given in \cite{trav-repo} to your /etc/apt/sources.list, then run ``sudo apt-get update \&\& sudo apt-get install traverso''.
+	\item [Gentoo:] Traverso is part of the official distribution. New versions of Traverso appear in the Pro-Audio overlay first. You'll find more info at \cite{pro-audio-wiki}.
+	\item [SuSE:] Unofficial packages are available from \cite{jacklab-ref}
+\end{description}
+
+\section{Compiling from Source}
+This section describes how to compile Traverso from source on a (K,X)Ubuntu \Ubuntu\ system. For other distributions, the package names may be somewhat different, but you should be able to identify the correct package with your distributions package manager. Note that Traverso depends on the Qt library version 4.2.3 or newer (4.3 recommended).
+
+First you will need to make your system fit to compile Traverso. And while we're at it, install some more useful things. Use your favorite package manager (like synaptic or adept) to install the following packages:
+
+\begin{itemize}
+ \item libqt4-core, libqt4-gui, libqt4-dev
+ \item libsndfile1, libsndfile1-dev
+ \item libsamplerate0, libsamplerate0-dev
+ \item libjack0.100.0-0, libjack0.100.0-dev
+ \item libasound2, libasound2-dev
+ \item fftw3, fftw3-dev
+ \item jackd, qjackctl, gcc, g++, make
+ \item build-essential
+ \item (optional: libslv2, libslv2-dev from \cite{trav-repo})
+\end{itemize}
+On (K,X)Ubuntu the following will get you going:
+\begin{verbatim}
+$ sudo apt-get install build-essential libqt4-core \
+ libqt4-gui libqt4-dev libsndfile1 libsndfile1-dev \
+ libsamplerate0 libsamplerate0-dev libjack0.100.0-0 \
+ libjack0.100.0-dev libasound2 libasound2-dev \
+ fftw3 fftw3-dev jackd qjackctl gcc g++ make
+\end{verbatim}
+If some packages are not available, you should enable the universe repository. Instructions on how to add repositories are available for Kubuntu and Ubuntu on the distribution website and related forums / wikis.
+
+In case you have version 3 of the Qt library installed (which is the default in (K,X)Ubuntu), you must make sure that the tools of version 4 are used. Open a terminal, enter the following commands and always select the Qt4 version when asked:
+
+\begin{verbatim}
+$ sudo update-alternatives --config qmake
+$ sudo update-alternatives --config moc
+$ sudo update-alternatives --config uic
+\end{verbatim}
+
+Now your system is ready to compile Traverso from source! Download the latest stable release of Traverso from the Traverso homepage. Extract it in some directory like /home/you/traversosource/ and compile it with the following commands:
+
+\begin{verbatim}
+$ tar -zxvf traverso-x.x.x.tar.gz
+$ cd traverso-x.x.x
+$ ./cleancompile
+\end{verbatim}
+(The cleancompile script ensures that all traces of previous compilations are removed, and calls qmake and make to start the new compilation.) This will take some time, and if you followed the instructions above carefully, it should run through without errors. When the make process has finished and you get back the  command line prompt, check the last 10 lines for the word ``Error''. If you don't find it, everything is ok. If you find it, check again if you followed the instructions above correctly. Now you can install the software by typing the following lines:
+
+\begin{verbatim}
+$ sudo make install
+$ sudo echo /usr/local/lib >> /etc/ld.so.conf
+$ sudo ldconfig
+\end{verbatim}
