@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: LV2PluginPropertiesDialog.cpp,v 1.6 2007/05/24 10:56:43 r_sijrier Exp $
+$Id: LV2PluginPropertiesDialog.cpp,v 1.7 2007/05/24 23:24:03 r_sijrier Exp $
 */
 
 
@@ -34,12 +34,10 @@ $Id: LV2PluginPropertiesDialog.cpp,v 1.6 2007/05/24 10:56:43 r_sijrier Exp $
 #include <PluginSlider.h>
 #include "Command.h"
 
-LV2PluginPropertiesDialog::LV2PluginPropertiesDialog(LV2Plugin* plugin)
-	: QDialog()
+LV2PluginPropertiesDialog::LV2PluginPropertiesDialog(QWidget* parent, LV2Plugin* plugin)
+	: QDialog(parent)
 	, m_plugin(plugin)
 {
-	setModal(true);
-	
 	QWidget* sliderWidget = new QWidget(this);
 	QVBoxLayout* sliderWidgetLayout = new QVBoxLayout;
 	sliderWidget->setLayout(sliderWidgetLayout);
@@ -63,18 +61,20 @@ LV2PluginPropertiesDialog::LV2PluginPropertiesDialog(LV2Plugin* plugin)
 
 	foreach(LV2ControlPort* port, m_plugin->get_control_ports()) {
 
+		if (port->get_symbol() == "latency") {
+			continue;
+		}
+		
 		QWidget* widget = new QWidget(sliderWidget);
 		QHBoxLayout* lay = new QHBoxLayout();
 		lay->setSpacing(12);
 		lay->setMargin(3);
 
-		PluginSlider* slider = new PluginSlider();
+		PluginSlider* slider = new PluginSlider(port);
 		slider->setFixedWidth(200);
-		slider->set_minimum(port->get_min_control_value());
-		slider->set_maximum(port->get_max_control_value());
-		slider->set_value(port->get_control_value());
+		slider->update_slider_position();
+
 		connect(slider, SIGNAL(sliderValueChanged(float)), port, SLOT(set_control_value(float)));
-		
 		// in case the plugin has a slave 'map' the signal to the slave port control slot too!
 		if (m_plugin->get_slave()) {
 			connect(slider, SIGNAL(sliderValueChanged(float)), m_plugin->get_slave()->get_control_port_by_index(port->get_index()), SLOT(set_control_value(float)));

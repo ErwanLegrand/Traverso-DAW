@@ -94,15 +94,20 @@ public:
 	float get_control_value() {return m_controlValue; }
 	float get_min_control_value();
 	float get_max_control_value();
+	float get_default_value();
+	
 	QDomNode get_state(QDomDocument doc);
 
 	QString get_description();
+	QString get_symbol();
 
 private:
 	LV2Plugin*	m_lv2plugin;
 	float		m_controlValue;
-
+	
 	int set_state( const QDomNode & node );
+	void init();
+	QStringList get_hints();
 
 public slots:
 	void set_control_value(float value);

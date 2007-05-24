@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "TrackView.h"
 #include "PluginChainView.h"
+#include "Interface.h"
 
 #include <Themer.h>
 #include <Plugin.h>
@@ -112,7 +113,7 @@ Command * PluginView::edit_properties( )
 {
 #if defined (LV2_SUPPORT)
 	if (! propertiesDialog) {
-		propertiesDialog = new LV2PluginPropertiesDialog((LV2Plugin*) m_plugin);
+		propertiesDialog = new LV2PluginPropertiesDialog(Interface::instance(), (LV2Plugin*) m_plugin);
 		propertiesDialog->setWindowTitle(m_name);
 	} 
 	propertiesDialog->show();

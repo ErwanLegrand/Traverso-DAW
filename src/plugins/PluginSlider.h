@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginSlider.h,v 1.2 2006/08/09 21:12:45 r_sijrier Exp $
+$Id: PluginSlider.h,v 1.3 2007/05/24 23:24:03 r_sijrier Exp $
 */
 
 
@@ -28,21 +28,18 @@ $Id: PluginSlider.h,v 1.2 2006/08/09 21:12:45 r_sijrier Exp $
 #include <QPainter>
 #include <QMouseEvent>
 
+class LV2ControlPort;
 
 class PluginSlider : public QWidget
 {
 	Q_OBJECT
 	
 public:
-	PluginSlider();
+	PluginSlider(LV2ControlPort* port);
 	~PluginSlider(){};
 	
 	void paint(QPainter *);
-	
-	void set_maximum(float max);
-	void set_minimum(float min);
-	void set_value(float value);
-	void set_step_value(float value);
+	void update_slider_position();
 	
 protected:
 	void paintEvent(QPaintEvent *);
@@ -54,6 +51,7 @@ protected:
         void wheelEvent(QWheelEvent* e );
 	
 private:
+	LV2ControlPort* m_port;
 	float	m_max;
 	float	m_min;
 	float	m_value;
@@ -63,7 +61,6 @@ private:
 	bool 	dragging;
 	
 	void calculate_new_value(int mouseX);
-	void update_slider_position();
 	
 signals:
 	void sliderValueChanged(float value);

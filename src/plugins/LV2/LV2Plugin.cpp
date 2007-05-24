@@ -323,16 +323,27 @@ LV2ControlPort::LV2ControlPort(LV2Plugin* plugin, int index, float value)
 	, m_controlValue(value)
 {
 	slv2_instance_connect_port(m_lv2plugin->get_instance(), m_index, &m_controlValue);
+	init();
 }
 
 LV2ControlPort::LV2ControlPort( LV2Plugin * plugin, const QDomNode node )
 	: PluginPort(plugin), m_lv2plugin(plugin)
 {
 	set_state(node);
-	
 	slv2_instance_connect_port(m_lv2plugin->get_instance(), m_index, &m_controlValue);
+	init();
 }
 
+void LV2ControlPort::init()
+{
+	foreach(QString string, get_hints()) {
+		if (string == "http://lv2plug.in/ontology#logarithmic") {
+			m_hint = LOG_CONTROL;
+		} else  if (string == "http://lv2plug.in/ontology#integer") {
+			m_hint = INT_CONTROL;
+		}
+	}
+}
 
 QDomNode LV2ControlPort::get_state( QDomDocument doc )
 {
@@ -367,10 +378,34 @@ float LV2ControlPort::get_max_control_value()
 
 }
 
+float LV2ControlPort::get_default_value()
+{
+	SLV2Port port = slv2_plugin_get_port_by_index(m_lv2plugin->get_slv2_plugin(), m_index);
+	return slv2_port_get_default_value (m_lv2plugin->get_slv2_plugin(), port);
+}
+
+
 QString LV2ControlPort::get_description()
 {
 	SLV2Port port = slv2_plugin_get_port_by_index(m_lv2plugin->get_slv2_plugin(), m_index);
+	return QString(slv2_port_get_name(m_lv2plugin->get_slv2_plugin(), port));
+}
+
+QString LV2ControlPort::get_symbol()
+{
+	SLV2Port port = slv2_plugin_get_port_by_index(m_lv2plugin->get_slv2_plugin(), m_index);
 	return QString(slv2_port_get_symbol(m_lv2plugin->get_slv2_plugin(), port));
+}
+
+QStringList LV2ControlPort::get_hints()
+{
+	SLV2Port port = slv2_plugin_get_port_by_index(m_lv2plugin->get_slv2_plugin(), m_index);
+	SLV2Strings list = slv2_port_get_hints(m_lv2plugin->get_slv2_plugin(), port);
+	QStringList qslist;
+	for (unsigned i=0; i < slv2_strings_size(list); ++i) {
+		qslist << QString(slv2_strings_get_at(list, i));
+	}
+	return qslist;
 }
 
 void LV2ControlPort::set_control_value(float value)

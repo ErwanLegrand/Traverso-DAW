@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Plugin.h,v 1.5 2007/01/22 20:12:58 r_sijrier Exp $
+$Id: Plugin.h,v 1.6 2007/05/24 23:24:03 r_sijrier Exp $
 */
 
 
@@ -66,17 +66,25 @@ class PluginPort : public QObject
 {
 
 public:
-	PluginPort(QObject* parent, int index) : QObject(parent), m_index(index) {};
-	PluginPort(QObject* parent) : QObject(parent) {};
+	PluginPort(QObject* parent, int index) : QObject(parent), m_index(index), m_hint(FLOAT_CONTROL) {};
+	PluginPort(QObject* parent) : QObject(parent), m_hint(FLOAT_CONTROL) {};
 	~PluginPort(){};
 
 	virtual QDomNode get_state(QDomDocument doc);
 	virtual int set_state( const QDomNode & node ) = 0;
 	
+	enum PortHint {
+		FLOAT_CONTROL,
+  		INT_CONTROL,
+    		LOG_CONTROL
+	};
+	
 	int get_index() const {return m_index;}
+	int get_hint() const {return m_hint;}
 
 protected:
 	int	m_index;
+	int	m_hint;
 }; 
 
 
