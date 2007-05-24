@@ -100,7 +100,7 @@ void OpenProjectDialog::update_projects_list()
 		qint64 id = e.attribute( "id", "" ).toLongLong();
 		
 
-		QDomNode songsNode = docElem.firstChildElement("Songs");
+		QDomNode songsNode = docElem.firstChildElement("Sheets");
 		QDomNode songNode = songsNode.firstChild();
 		int songCounter = 0;
 		
