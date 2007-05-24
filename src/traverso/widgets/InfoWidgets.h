@@ -192,7 +192,7 @@ private slots:
 	void update_effects_state();
 	void follow_state_changed(bool state);
 	void effect_button_clicked();
-	void recording_button_state_changed(bool state);
+	void recording_button_clicked();
 	void update_recording_state();
 	void song_selector_song_added(Song* song);
 	void song_selector_song_removed(Song* song);

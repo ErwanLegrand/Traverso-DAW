@@ -545,8 +545,7 @@ SongInfo::SongInfo(QWidget * parent)
 	
 	m_record = new QToolButton(this);
 	m_recAction = new QAction(tr("Record"), this);
-	m_recAction->setCheckable(true);
-	m_recAction->setToolTip(tr("Toggle recording state on/off"));
+	m_recAction->setToolTip(tr("Start - Stop recording"));
 	m_record->setDefaultAction(m_recAction);
 	m_record->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 	
@@ -594,7 +593,7 @@ SongInfo::SongInfo(QWidget * parent)
 	connect(m_followAct, SIGNAL(triggered(bool)), this, SLOT(follow_state_changed(bool)));
 	connect(&config(), SIGNAL(configChanged()), this, SLOT(update_follow_state()));
 	connect(m_effectButton, SIGNAL(clicked()), this, SLOT(effect_button_clicked()));
-	connect(m_recAction, SIGNAL(triggered(bool)), this, SLOT(recording_button_state_changed(bool)));
+	connect(m_record, SIGNAL(clicked()), this, SLOT(recording_button_clicked()));
 	
 	update_follow_state();
 }
@@ -682,23 +681,27 @@ void SongInfo::effect_button_clicked()
 	}
 }
 
-void SongInfo::recording_button_state_changed(bool state)
+void SongInfo::recording_button_clicked()
 {
-	m_song->set_recording(state);
-	if (state) {
-		m_recAction->setIcon(find_pixmap(":/redled-16"));
-	} else {
+	Command* cmd;
+	if (m_song->is_transporting()) {
+		cmd = m_song->go();
 		m_recAction->setIcon(find_pixmap(":/redledinactive-16"));
+	} else {
+		cmd = m_song->go_and_record();
+		m_recAction->setIcon(find_pixmap(":/redled-16"));
+	}
+	
+	if (cmd) {
+		Command::process_command(cmd);
 	}
 }
 
 void SongInfo::update_recording_state()
 {
 	if (m_song->is_recording()) {
-		m_recAction->setChecked(true);
 		m_recAction->setIcon(find_pixmap(":/redled-16"));
 	} else {
-		m_recAction->setChecked(false);
 		m_recAction->setIcon(find_pixmap(":/redledinactive-16"));
 	}
 }

@@ -654,6 +654,10 @@ Command* Song::go()
 	
 	CommandGroup* group = 0;
 	
+	if (is_transporting() && m_recording) {
+		set_recording(false);
+	}
+	
 	if (m_transport) {
 		m_stopTransport = true;
 	} else {
