@@ -351,9 +351,7 @@ void SpectralMeterView::set_song(Song *song)
 	connect(m_song, SIGNAL(transferStarted()), this, SLOT(transfer_started()));
 	connect(m_song, SIGNAL(transferStopped()), this, SLOT(transfer_stopped()));
 
-	QList<Plugin* >* pluginList = chain->get_plugin_list();
-	for (int i=0; i<pluginList->size(); ++i) {
-		Plugin* plugin = pluginList->at(i);
+	foreach(Plugin* plugin, chain->get_plugin_list()) {
 		m_meter = qobject_cast<SpectralMeter*>(plugin);
 		
 		if (m_meter) {

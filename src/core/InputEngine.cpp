@@ -692,10 +692,10 @@ void InputEngine::process_release_event(int eventcode)
 		
 	if (isHolding) {
 		if (eventcode != holdEventCode) {
-			printf("release event during hold action, but NOT for holdaction itself!!\n");
+			PMESG("release event during hold action, but NOT for holdaction itself!!");
 			return;
 		} else {
-			printf("release event for hold action detected!\n");
+			PMESG("release event for hold action detected!");
 			holdEventCode = -100;
 		}
 	}

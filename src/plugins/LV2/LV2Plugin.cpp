@@ -33,11 +33,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 
-LV2Plugin::LV2Plugin()
+LV2Plugin::LV2Plugin(bool slave)
 	: Plugin()
 	, m_instance(0)
 	, m_slv2plugin(0)
+	, m_slave(0)
 {
+	m_isSlave = slave;
 }
 
 
@@ -46,6 +48,8 @@ LV2Plugin::LV2Plugin(char* pluginUri)
 	, m_pluginUri((char*) pluginUri)
 	, m_instance(0)
 	, m_slv2plugin(0)
+	, m_slave(0)
+	, m_isSlave(false)
 {
 }
 
@@ -147,6 +151,12 @@ int LV2Plugin::set_state(const QDomNode & node )
 	/* Activate the plugin instance */
 	slv2_instance_activate(m_instance);
 	
+	// The default is 2 channels in - out, if there is only 1 in - out, duplicate
+	// this plugin, and use it on the second channel
+	if (!m_isSlave && m_audioInputPorts.size() == 1 && m_audioOutputPorts.size() == 1) {
+		m_slave = create_copy();
+	}
+	
 	return 1;
 }
 
@@ -159,7 +169,7 @@ int LV2Plugin::init()
 
 	/* Create ports */
 	m_portcount  = slv2_plugin_get_num_ports(m_slv2plugin);
-	printf("numports is %d\n", (int) m_portcount);
+	PMESG("numports is %d", (int) m_portcount);
 
 	for (int i=0; i < m_portcount; ++i) {
 		LV2ControlPort* port = create_port(i);
@@ -183,13 +193,19 @@ int LV2Plugin::init()
 		return -1;
 	}
 	
+	// The default is 2 channels in - out, if there is only 1 in - out, duplicate
+	// this plugin, and use it on the second channel
+	if (!m_isSlave && m_audioInputPorts.size() == 1 && m_audioOutputPorts.size() == 1) {
+		m_slave = create_copy();
+	}
+	
 	return 1;
 }
 
 
 int LV2Plugin::create_instance()
 {
-	printf("URI:\t%s\n", QS_C(m_pluginUri));
+// 	printf("URI:\t%s\n", QS_C(m_pluginUri));
 
 	m_slv2plugin = slv2_plugins_get_by_uri(PluginManager::instance()->get_slv2_plugin_list(), QS_C(m_pluginUri));
 
@@ -202,7 +218,7 @@ int LV2Plugin::create_instance()
 	/* Get the plugin's name */
 	char* name = slv2_plugin_get_name(m_slv2plugin);
 
-	printf("Name:\t%s\n", name);
+// 	printf("Name:\t%s\n", name);
 
 	/* Instantiate the plugin */
 	int samplerate = audiodevice().get_sample_rate();
@@ -212,7 +228,7 @@ int LV2Plugin::create_instance()
 		printf("Failed to instantiate plugin.\n");
 		return -1;
 	} else {
-		printf("Succesfully instantiated plugin.\n\n");
+// 		printf("Succesfully instantiated plugin.\n\n");
 	}
 	
 	return 1;
@@ -224,21 +240,31 @@ void LV2Plugin::process(AudioBus* bus, unsigned long nframes)
 	if ( is_bypassed() ) {
 		return;
 	}
-			
+	
 	for (int i=0; i<m_audioInputPorts.size(); ++i) {
 		AudioInputPort* port = m_audioInputPorts.at(i);
 		int index = port->get_index();
+		// If we are a slave, then we are meant to operate on the second channel of the Bus!
+		if (m_isSlave) i = 1;
 		slv2_instance_connect_port(m_instance, index, bus->get_buffer(i, (nframes_t)nframes));
 	}
 	
 	for (int i=0; i<m_audioOutputPorts.size(); ++i) {
 		AudioOutputPort* port = m_audioOutputPorts.at(i);
 		int index = port->get_index();
+		// If we are a slave, then we are meant to operate on the second channel of the Bus!
+		if (m_isSlave) i = 1;
 		slv2_instance_connect_port(m_instance, index, bus->get_buffer(i, (nframes_t)nframes));
 	}
 	
 	/* Run plugin for this cycle */
 	slv2_instance_run(m_instance, nframes);
+	
+	// If we have a slave, and the bus has 2 channels, process the slave too!
+	if (m_slave && bus->get_channel_count() == 2) {
+		m_slave->process(bus, nframes);
+	}	
+	
 }
 
 
@@ -259,11 +285,9 @@ LV2ControlPort* LV2Plugin::create_port(int portIndex)
 	switch (portClass) {
 		case SLV2_CONTROL_INPUT:
 			ctrlport = new LV2ControlPort(this, portIndex, slv2_port_get_default_value(m_slv2plugin, slvport));
-			printf("Set %s to ", symbol);
 			break;
 		case SLV2_CONTROL_OUTPUT:
 			ctrlport = new LV2ControlPort(this, portIndex, 0);
-			printf("Set %s to ", symbol);
 			break;
 		case SLV2_AUDIO_INPUT:
 			m_audioInputPorts.append(new AudioInputPort(this, portIndex));
@@ -355,4 +379,33 @@ void LV2ControlPort::set_control_value(float value)
 }
 
 
+LV2ControlPort * LV2Plugin::get_control_port_by_index(int index) const
+{
+	foreach(LV2ControlPort* port, m_controlPorts) {
+		if (port->get_index() == index) {
+			return port;
+		}
+	}
+	return 0;
+}
+
+LV2Plugin * LV2Plugin::create_copy()
+{
+	QDomDocument doc("LV2Plugin");
+	QDomNode pluginState = get_state(doc);
+	LV2Plugin* plug = new LV2Plugin(true);
+	plug->set_state(pluginState);
+	return plug;
+}
+
+Command * LV2Plugin::toggle_bypass()
+{
+	Plugin::toggle_bypass();
+	if (m_slave) {
+		m_slave->toggle_bypass();
+	}
+	return  0;
+}
+
 //eof
+

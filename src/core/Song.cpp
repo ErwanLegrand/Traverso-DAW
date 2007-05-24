@@ -113,6 +113,7 @@ Song::~Song()
 
 	delete m_diskio;
 	delete m_masterOut;
+	delete m_renderBus;
 	delete m_hs;
 	delete m_audiodeviceClient;
 	delete snaplist;
@@ -138,6 +139,7 @@ void Song::init()
 
 	mixdown = gainbuffer = 0;
 	m_masterOut = new AudioBus("Master Out", 2);
+	m_renderBus = new AudioBus("Master Out", 2);
 	resize_buffer(false, audiodevice().get_buffer_size());
 	m_hs = new QUndoStack(pm().get_undogroup());
 	set_history_stack(m_hs);
@@ -415,7 +417,7 @@ int Song::render(ExportSpecification* spec)
 	nframes_t nframes = spec->blocksize;
 
 	if (!spec->running || spec->stop || (this_nframes = std::min ((nframes_t)(spec->end_frame - spec->pos), nframes)) == 0) {
-		process (nframes);
+		process_export (nframes);
 		/*		PWARN("Finished Rendering for this song");
 				PWARN("running is %d", spec->running);
 				PWARN("stop is %d", spec->stop);
@@ -842,10 +844,7 @@ int Song::process( nframes_t nframes )
 		Mixer::mix_buffers_with_gain(m_playBackBus->get_buffer(1, nframes), m_masterOut->get_buffer(1, nframes), nframes, m_gain);
 		
 		// Process all the plugins for this Song
-		QList<Plugin* >* pluginList = m_pluginChain->get_plugin_list();
-		for (int i=0; i<pluginList->size(); ++i) {
-			pluginList->at(i)->process(m_playBackBus, nframes);
-		}
+		m_pluginChain->process(m_playBackBus, nframes);
 	}
 
 	
@@ -1001,6 +1000,7 @@ void Song::resize_buffer(bool updateArmStatus, nframes_t size)
 	mixdown = new audio_sample_t[size];
 	gainbuffer = new audio_sample_t[size];
 	m_masterOut->set_buffer_size(size);
+	m_renderBus->set_buffer_size(size);
 	
 	if (updateArmStatus) {
 		foreach(Track* track, m_tracks) {

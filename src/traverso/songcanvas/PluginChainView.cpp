@@ -45,8 +45,8 @@
 
 PluginChainView::PluginChainView(SongView* sv, ViewItem* parent, PluginChain* chain)
 	: ViewItem(parent, parent)
-	, m_sv(sv)
 	, m_pluginchain(chain)
+	, m_sv(sv)
 {
 	PENTERCONS;
 	
@@ -59,9 +59,7 @@ PluginChainView::PluginChainView(SongView* sv, ViewItem* parent, PluginChain* ch
 	
 	hide();
 	
-	QList<Plugin* >* pluginList = chain->get_plugin_list();
-	for (int i=0; i<pluginList->size(); ++i) {
-		Plugin* plugin = pluginList->at(i);
+	foreach(Plugin* plugin, chain->get_plugin_list()) {
 		add_new_pluginview(plugin);
 	}
 	
@@ -86,7 +84,7 @@ void PluginChainView::add_new_pluginview( Plugin * plugin )
 	
 	int x = 6;
 	foreach(PluginView* view, m_pluginViews) {
-		x += view->boundingRect().width() + 6;
+		x += (int)view->boundingRect().width() + 6;
 	}
 	
 	view->setPos(x, m_boundingRect.height() - view->boundingRect().height());
@@ -111,7 +109,7 @@ void PluginChainView::remove_pluginview( Plugin * plugin )
 	int x = 6;
 	foreach(PluginView* view, m_pluginViews) {
 		view->setPos(x, m_boundingRect.height() - view->boundingRect().height());
-		x += view->boundingRect().width() + 6;
+		x += (int)view->boundingRect().width() + 6;
 	}
 	
 	if (!m_pluginViews.size()) {

@@ -37,9 +37,10 @@ class AudioOutputPort;
 
 class LV2Plugin : public Plugin
 {
+	Q_OBJECT
 
 public:
-	LV2Plugin();
+	LV2Plugin(bool slave=false);
 	LV2Plugin(char* pluginUri);
 	~LV2Plugin();
 
@@ -47,6 +48,9 @@ public:
 
 	SLV2Instance  get_instance() const {return m_instance; }
 	SLV2Plugin get_slv2_plugin() const {return m_slv2plugin; }
+	LV2ControlPort* get_control_port_by_index(int index) const;
+	LV2Plugin* create_copy();
+	LV2Plugin* get_slave() const {return m_slave;}
 
 	QList<LV2ControlPort* > get_control_ports() const { return m_controlPorts; }
 
@@ -61,6 +65,8 @@ private:
 	SLV2Instance  	m_instance;
 	SLV2Plugin    	m_slv2plugin;
 	int		m_portcount;
+	LV2Plugin* 	m_slave;
+	bool 		m_isSlave;
 	
 	QList<LV2ControlPort* > 	m_controlPorts;
 	QList<AudioInputPort* >		m_audioInputPorts;
@@ -69,6 +75,9 @@ private:
 	LV2ControlPort* create_port(int portIndex);
 
 	int create_instance();
+
+public slots:
+	Command* toggle_bypass();
 };
 
 

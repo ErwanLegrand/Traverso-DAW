@@ -261,9 +261,7 @@ void CorrelationMeterView::set_song(Song *song)
 	
 	PluginChain* chain = m_song->get_plugin_chain();
 	
-	QList<Plugin* >* pluginList = chain->get_plugin_list();
-	for (int i=0; i<pluginList->size(); ++i) {
-		Plugin* plugin = pluginList->at(i);
+	foreach(Plugin* plugin, chain->get_plugin_list()) {
 		m_meter = dynamic_cast<CorrelationMeter*>(plugin);
 		
 		if (m_meter) {

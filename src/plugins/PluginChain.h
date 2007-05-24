@@ -26,9 +26,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <ContextItem.h>
 #include <QList>
 #include <QDomNode>
+#include "Plugin.h"
 
-class Plugin;
 class Song;
+class AudioBus;
 
 class PluginChain : public ContextItem
 {
@@ -43,8 +44,9 @@ public:
 	
 	Command* add_plugin(Plugin* plugin, bool historable=true);
 	Command* remove_plugin(Plugin* plugin, bool historable=true);
+	void process(AudioBus* bus, unsigned long nframes);
 	
-	QList<Plugin* >* get_plugin_list() {return &m_pluginList;}
+	QList<Plugin* > get_plugin_list() {return m_pluginList;}
 	
 private:
 	QList<Plugin* >	m_pluginList;
@@ -60,6 +62,13 @@ private slots:
 
 
 };
+
+inline void PluginChain::process(AudioBus * bus, unsigned long nframes)
+{
+	for (int i=0; i<m_pluginList.size(); ++i) {
+		m_pluginList.at(i)->process(bus, nframes);
+	}
+}
 
 #endif
 

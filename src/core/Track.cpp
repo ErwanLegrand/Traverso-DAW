@@ -408,18 +408,16 @@ int Track::process( nframes_t nframes )
 	if ( (isMuted || mutedBySolo) && ( ! isArmed) ) {
 		return 0;
 	}
-		
-	AudioBus* bus = m_song->get_master_out();
 	
-	if (!bus) {
-		return 0;
-	}
+	// Get the 'render bus' from song, a bit hackish solution, but
+	// it avoids to have a dedicated render bus for each Track,
+	// or buffers located on the heap...
+	AudioBus* bus = m_song->get_render_bus();
+	bus->silence_buffers(nframes);
 	
-	audio_sample_t* channelBuffer;
 	audio_sample_t* mixdown = m_song->mixdown;
 	int result;
 	float gainFactor, panFactor;
-	
 
 	for (int i=0; i<audioClipList.size(); ++i) {
 	
@@ -434,8 +432,6 @@ int Track::process( nframes_t nframes )
 		
 		for (int chan=0; chan<bus->get_channel_count(); ++chan) {
 		
-			channelBuffer = bus->get_buffer(chan, nframes);
-			
 			result = clip->process(nframes, mixdown, chan);
 			
 			if (result == 0) {
@@ -458,17 +454,16 @@ int Track::process( nframes_t nframes )
 				gainFactor *= panFactor;
 			}
 			
-			Mixer::mix_buffers_with_gain(channelBuffer, mixdown, nframes, gainFactor);
+			Mixer::mix_buffers_with_gain(bus->get_channel(chan)->get_buffer(nframes), mixdown, nframes, gainFactor);
 		}
 	}
 	
-	QList<Plugin* >* pluginList = pluginChain->get_plugin_list();
-	
-	
-	for (int i=0; i<pluginList->size(); ++i) {
-		pluginList->at(i)->process(bus, nframes);
-	}
+	pluginChain->process(bus, nframes);
 		
+	for (int i=0; i<bus->get_channel_count(); ++i) {
+		Mixer::mix_buffers_no_gain(m_song->get_master_out()->get_buffer(i, nframes), bus->get_buffer(i, nframes), nframes);
+	}
+	
 	return processResult;
 }
 
