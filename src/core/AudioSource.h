@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSource.h,v 1.15 2007/05/15 20:07:00 r_sijrier Exp $
+$Id: AudioSource.h,v 1.16 2007/05/24 17:45:19 r_sijrier Exp $
 */
 
 #ifndef AUDIOSOURCE_H
@@ -44,7 +44,7 @@ public :
 	void set_name(const QString& name);
 	void set_dir(const QString& name);
 	void set_original_bit_depth(uint bitDepth);
-	void set_created_by_song(int id);
+	void set_created_by_song(qint64 id);
 	void set_sample_rate(int rate);
 	int set_state( const QDomNode& node );
 	
@@ -55,6 +55,7 @@ public :
 	QString get_name() const;
 	QString get_short_name() const;
 	qint64 get_id() const;
+	qint64 get_orig_song_id() const {return m_origSongId;}
 	int get_rate() const;
 	uint get_channel_count() const;
 	int get_bit_depth() const;
@@ -62,7 +63,7 @@ public :
 protected:
 	uint		m_channelCount;
 	uint		m_fileCount;
-	int		m_origSongId;
+	qint64		m_origSongId;
 	QString 	m_dir;
 	qint64		m_id;
 	QString 	m_name;

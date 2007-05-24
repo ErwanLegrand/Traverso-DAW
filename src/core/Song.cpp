@@ -216,7 +216,7 @@ int Song::set_state( const QDomNode & node )
 
 QDomNode Song::get_state(QDomDocument doc, bool istemplate)
 {
-	QDomElement songNode = doc.createElement("Song");
+	QDomElement songNode = doc.createElement("Sheet");
 	
 	if (! istemplate) {
 		songNode.setAttribute("id", m_id);

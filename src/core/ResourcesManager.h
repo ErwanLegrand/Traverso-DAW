@@ -48,7 +48,7 @@ public:
 	ReadSource* create_recording_source(const QString& dir,
 				const QString& name,
 				int channelCount,
-				int songId);
+				qint64 songId);
 	
 	ReadSource* import_source(const QString& dir, const QString& name);
 	ReadSource* get_silent_readsource();

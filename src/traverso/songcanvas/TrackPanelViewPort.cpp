@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TrackPanelViewPort.cpp,v 1.8 2007/03/22 18:39:13 r_sijrier Exp $
+    $Id: TrackPanelViewPort.cpp,v 1.9 2007/05/24 17:45:20 r_sijrier Exp $
 */
 
 #include "TrackPanelViewPort.h"
@@ -49,7 +49,6 @@ void TrackPanelViewPort::paintEvent( QPaintEvent* e )
 
 void TrackPanelViewPort::get_pointed_context_items(QList<ContextItem* > &list)
 {
-	printf("TrackPanelViewPort::get_pointed_view_items\n");
 	QList<QGraphicsItem *> itemlist = items(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
 	foreach(QGraphicsItem* item, itemlist) {
 		list.append((ViewItem*)item);

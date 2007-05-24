@@ -186,6 +186,7 @@ ResourcesWidget::ResourcesWidget(QWidget * parent)
 	
 	connect(viewComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(view_combo_box_index_changed(int)));
 	connect(songComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(song_combo_box_index_changed(int)));
+	connect(songComboBox, SIGNAL(activated(int)), this, SLOT(song_combo_box_index_changed(int)));
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 }
 
@@ -204,10 +205,13 @@ void ResourcesWidget::set_project(Project * project)
 	
 	if (!m_project) {
 		songComboBox->setEnabled(false);
+		m_currentSong = 0;
 		return;
 	}
 	
 	songComboBox->setEnabled(true);
+	m_currentSong = m_project->get_current_song();
+	
 	ResourcesManager* rsmanager = m_project->get_audiosource_manager();
 	
 	connect(rsmanager, SIGNAL(stateRestored()), this, SLOT(populate_tree()));
@@ -217,6 +221,7 @@ void ResourcesWidget::set_project(Project * project)
 	connect(rsmanager, SIGNAL(sourceRemoved(ReadSource*)), this, SLOT(remove_source(ReadSource*)));
 	connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(song_added(Song*)));
 	connect(m_project, SIGNAL(songRemoved(Song*)), this, SLOT(song_removed(Song*)));
+	connect(m_project, SIGNAL(currentSongChanged(Song*)), this, SLOT(set_current_song(Song*)));
 }
 
 void ResourcesWidget::populate_tree()
@@ -250,11 +255,14 @@ void ResourcesWidget::view_combo_box_index_changed(int index)
 
 void ResourcesWidget::song_combo_box_index_changed(int index)
 {
+	qint64 id = songComboBox->itemData(index).toLongLong();
+	Song* song = m_project->get_song(id);
+	set_current_song(song);
 }
 
 void ResourcesWidget::song_added(Song * song)
 {
-	songComboBox->addItem("Song " + QString::number(m_project->get_song_index(song->get_id())), song->get_id());
+	songComboBox->addItem("Sheet " + QString::number(m_project->get_song_index(song->get_id())), song->get_id());
 }
 
 void ResourcesWidget::song_removed(Song * song)
@@ -263,12 +271,44 @@ void ResourcesWidget::song_removed(Song * song)
 	songComboBox->removeItem(index);
 }
 
+void ResourcesWidget::set_current_song(Song * song)
+{
+	if (song) {
+		int index = songComboBox->findData(song->get_id());
+		if (index != -1) {
+			songComboBox->setCurrentIndex(index);
+		}
+	}
+	
+	m_currentSong = song;
+	
+	filter_on_current_song();
+}
+
+
+void ResourcesWidget::filter_on_current_song()
+{
+	if (!m_currentSong) {
+		return;
+	}
+	
+	foreach(ClipTreeItem* item, m_clipindices.values()) {
+		item->apply_filter(m_currentSong);
+	}
+
+	
+	foreach(SourceTreeItem* item, m_sourceindices.values()) {
+		item->apply_filter(m_currentSong);
+	}
+}
+
+
 void ResourcesWidget::add_clip(AudioClip * clip)
 {
-	QTreeWidgetItem* item = m_clipindices.value(clip->get_id());
+	ClipTreeItem* item = m_clipindices.value(clip->get_id());
 	
 	if (!item) {
-		QTreeWidgetItem* sourceitem = m_sourceindices.value(clip->get_readsource_id());
+		SourceTreeItem* sourceitem = m_sourceindices.value(clip->get_readsource_id());
 	
 		if (! sourceitem ) return;
 	
@@ -283,7 +323,7 @@ void ResourcesWidget::add_clip(AudioClip * clip)
 
 void ResourcesWidget::remove_clip(AudioClip * clip)
 {
-	QTreeWidgetItem* item = m_clipindices.value(clip->get_id());
+	ClipTreeItem* item = m_clipindices.value(clip->get_id());
 	
 	if (!item) {
 		 return;
@@ -294,10 +334,10 @@ void ResourcesWidget::remove_clip(AudioClip * clip)
 
 void ResourcesWidget::add_source(ReadSource * source)
 {
-	QTreeWidgetItem* item = m_sourceindices.value(source->get_id());
+	SourceTreeItem* item = m_sourceindices.value(source->get_id());
 	
 	if (! item) {
-		QTreeWidgetItem* item = new QTreeWidgetItem(sourcesTreeWidget);
+		SourceTreeItem* item = new SourceTreeItem(sourcesTreeWidget, source);
 		m_sourceindices.insert(source->get_id(), item);
 		QString duration = frame_to_ms(source->get_nframes(), 44100);
 		item->setText(0, source->get_short_name());
@@ -327,7 +367,7 @@ void ResourcesWidget::update_clip_state(AudioClip* clip)
 
 void ResourcesWidget::update_source_state(qint64 id)
 {
-	QTreeWidgetItem* item = m_sourceindices.value(id);
+	SourceTreeItem* item = m_sourceindices.value(id);
 	Q_ASSERT(item);
 	
 	if (resources_manager()->is_source_in_use(id)) {
@@ -341,7 +381,7 @@ void ResourcesWidget::update_source_state(qint64 id)
 	}
 }
 
-ClipTreeItem::ClipTreeItem(QTreeWidgetItem * parent, AudioClip * clip)
+ClipTreeItem::ClipTreeItem(SourceTreeItem * parent, AudioClip * clip)
 	: QTreeWidgetItem(parent)
 	, m_clip(clip)
 {
@@ -368,5 +408,45 @@ void ClipTreeItem::clip_state_changed()
 	setText(2, start);
 	setText(3, end);
 	setToolTip(0, m_clip->get_name() + "   " + start + " - " + end);
+}
+
+void ClipTreeItem::apply_filter(Song * song)
+{
+	if (m_clip->get_song_id() == song->get_id()) {
+		setHidden(false);
+	} else {
+		setHidden(true);
+	} 
+}
+
+
+
+SourceTreeItem::SourceTreeItem(QTreeWidget* parent, ReadSource * source)
+	: QTreeWidgetItem(parent)
+	, m_source(source)
+{
+}
+
+void SourceTreeItem::apply_filter(Song * song)
+{
+	if (m_source->get_orig_song_id() == song->get_id()) {
+		setHidden(false);
+		return;
+	}
+	
+	bool show = false;
+		
+	for (int i=0; i < childCount(); ++i) {
+		if (!child(i)->isHidden()) {
+			show = true;
+			break;
+		}
+	}
+		
+	if (show) {
+		setHidden(false);
+	} else {
+		setHidden(true);
+	}
 }
 

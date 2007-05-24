@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSource.cpp,v 1.19 2007/05/17 21:38:15 r_sijrier Exp $
+$Id: AudioSource.cpp,v 1.20 2007/05/24 17:45:19 r_sijrier Exp $
 */
 
 
@@ -69,7 +69,7 @@ QDomNode AudioSource::get_state( QDomDocument doc )
 	QDomElement node = doc.createElement("Source");
 	node.setAttribute("channelcount", m_channelCount);
 	node.setAttribute("filecount", m_fileCount);
-	node.setAttribute("origsongid", m_origSongId);
+	node.setAttribute("origsheetid", m_origSongId);
 	node.setAttribute("dir", m_dir);
 	node.setAttribute("id", m_id);
 	node.setAttribute("name", m_name);
@@ -87,7 +87,7 @@ int AudioSource::set_state( const QDomNode & node )
 	QDomElement e = node.toElement();
 	m_channelCount = e.attribute("channelcount", "0").toInt();
 	m_fileCount = e.attribute("filecount", "0").toInt();
-	m_origSongId = e.attribute("origsongid", "").toInt();
+	m_origSongId = e.attribute("origsheetid", "0").toLongLong();
 	set_dir( e.attribute("dir", "" ));
 	m_id = e.attribute("id", "").toLongLong();
 	set_name( e.attribute("name", "No name supplied?" ));
@@ -97,7 +97,7 @@ int AudioSource::set_state( const QDomNode & node )
 	// For older project files, this should properly detect if the 
 	// audio source was a recording or not., in fact this should suffice
 	// and the flag wasrecording would be unneeded, but oh well....
-	if (m_origSongId != -1 && m_channelCount == 2 && m_fileCount == 2) {
+	if (m_origSongId != 0 && m_channelCount == 2 && m_fileCount == 2) {
 		m_wasRecording = true;
 	}
 	
@@ -136,7 +136,7 @@ void AudioSource::set_original_bit_depth( uint bitDepth )
 	m_origBitDepth = bitDepth;
 }
 
-void AudioSource::set_created_by_song( int id )
+void AudioSource::set_created_by_song(qint64 id)
 {
 	m_origSongId = id;
 }

@@ -175,7 +175,7 @@ ReadSource* ResourcesManager::create_recording_source(
 	const QString& dir,
 	const QString& name,
 	int channelCount,
-	int songId)
+ 	qint64 songId)
 {
 	PENTER;
 	
@@ -357,8 +357,9 @@ void ResourcesManager::mark_clip_added(AudioClip * clip)
 	SourceData* sourcedata = m_sources.value(clip->get_readsource_id());
 	if (!sourcedata) {
 		PERROR("Source %lld not in database", clip->get_readsource_id());
+	} else {
+		sourcedata->clipCount++;
 	}
-	sourcedata->clipCount++;
 	
 	emit clipAdded(clip);
 }

@@ -110,6 +110,7 @@ public:
 	int get_rate() const;
 	int get_bitdepth() const;
 	qint64 get_readsource_id() const;
+	qint64 get_song_id() const {return m_songId;}
 	ReadSource* get_readsource() const;
 	
 	QString get_name() const;
@@ -165,6 +166,7 @@ private:
 	float		m_normfactor;
 	
 	qint64		m_readSourceId;
+	qint64		m_songId;
 	int		m_refcount;
 
 	void init();

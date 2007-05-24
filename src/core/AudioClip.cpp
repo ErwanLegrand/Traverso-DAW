@@ -66,7 +66,7 @@ AudioClip::AudioClip(const QString& name)
 	m_length = sourceStartFrame = sourceEndFrame = trackEndFrame = 0;
 	isMuted=false;
 	m_id = create_id();
-	m_readSourceId = 0;
+	m_readSourceId = m_songId = 0;
 	init();
 }
 
@@ -83,6 +83,7 @@ AudioClip::AudioClip(const QDomNode& node)
 	QDomElement e = node.toElement();
 	m_id = e.attribute("id", "").toLongLong();
 	m_readSourceId = e.attribute("source", "").toLongLong();
+	m_songId = e.attribute("sheet", "0").toLongLong();
 	m_name = e.attribute( "clipname", "" ) ;
 	isMuted =  e.attribute( "mute", "" ).toInt();
 	m_length = e.attribute( "length", "0" ).toUInt();
@@ -133,6 +134,7 @@ int AudioClip::set_state(const QDomNode& node)
 	}
 
 	m_readSourceId = e.attribute("source", "").toLongLong();
+	m_songId = e.attribute("sheet", "0").toLongLong();
 	isMuted =  e.attribute( "mute", "" ).toInt();
 
 	sourceStartFrame = e.attribute( "sourcestart", "" ).toUInt();
@@ -184,6 +186,7 @@ QDomNode AudioClip::get_state( QDomDocument doc )
 	node.setAttribute("clipname", m_name );
 	node.setAttribute("selected", isSelected );
 	node.setAttribute("id", m_id );
+	node.setAttribute("sheet", m_songId );
 	node.setAttribute("locked", isLocked);
 
 	node.setAttribute("source", m_readSource->get_id());
@@ -753,6 +756,8 @@ void AudioClip::set_song( Song * song )
 	} else {
 		PWARN("AudioClip::set_song() : Setting Song, but no ReadSource available!!");
 	}
+	
+	m_songId = song->get_id();
 	
 	set_history_stack(m_song->get_history_stack());
 	

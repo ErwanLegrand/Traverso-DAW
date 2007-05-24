@@ -164,6 +164,7 @@
 			<Objects>
 				<Object objectname="FadeCurve" slotsignature="toggle_bypass" modes="All" instantanious="0" />
 				<Object objectname="Plugin" slotsignature="toggle_bypass" modes="All" instantanious="0" />
+				<Object objectname="LV2Plugin" slotsignature="toggle_bypass" modes="All" instantanious="0" />
 				<Object objectname="TrackView" slotsignature="select_bus" modes="All" sortorder="8" instantanious="0" />
 			</Objects>
 		</keyfact>

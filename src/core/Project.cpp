@@ -43,7 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Utils.h"
 #include <AddRemove.h>
 
-#define PROJECT_FILE_VERSION 	1
+#define PROJECT_FILE_VERSION 	2
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -219,7 +219,7 @@ int Project::load(QString projectfile)
 	m_resourcesManager->set_state(asmNode);
 
 
-	QDomNode songsNode = docElem.firstChildElement("Songs");
+	QDomNode songsNode = docElem.firstChildElement("Sheets");
 	QDomNode songNode = songsNode.firstChild();
 
 	// Load all the Songs
@@ -230,7 +230,7 @@ int Project::load(QString projectfile)
 		songNode = songNode.nextSibling();
 	}
 
-	qint64 id = e.attribute("currentSongId", "0" ).toLongLong();
+	qint64 id = e.attribute("currentsheetid", "0" ).toLongLong();
 	
 	if ( id == 0) {
 		if (m_songs.size()) {
@@ -291,7 +291,7 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
 	properties.setAttribute("arranger", m_arranger);
 	properties.setAttribute("songwriter", m_songwriter);
 	properties.setAttribute("message", m_message);
-	properties.setAttribute("currentSongId", m_currentSongId);
+	properties.setAttribute("currentsheetid", m_currentSongId);
 	properties.setAttribute("rate", m_rate);
 	properties.setAttribute("bitdepth", m_bitDepth);
 	properties.setAttribute("projectfileversion", PROJECT_FILE_VERSION);
@@ -313,7 +313,7 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
 	}
 
 	// Get all the Songs
-	QDomNode songsNode = doc.createElement("Songs");
+	QDomNode songsNode = doc.createElement("Sheets");
 
 	foreach(Song* song, m_songs) {
 		songsNode.appendChild(song->get_state(doc, istemplate));
