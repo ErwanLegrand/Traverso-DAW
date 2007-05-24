@@ -91,12 +91,12 @@ void PluginView::paint(QPainter* painter, const QStyleOptionGraphicsItem *option
 
 	int height, width;
 	if (option->state & QStyle::State_MouseOver) {
-		height = m_boundingRect.height() + 1;
-		width = m_boundingRect.width() + 1;
+		height = (int)m_boundingRect.height() + 1;
+		width = (int)m_boundingRect.width() + 1;
 		color = color.light(120);
 	} else {
-		height = m_boundingRect.height();
-		width = m_boundingRect.width();
+		height = (int)m_boundingRect.height();
+		width = (int)m_boundingRect.width();
 	}
 	
 	QBrush brush(color);
@@ -143,7 +143,7 @@ void PluginView::repaint( )
 void PluginView::calculate_bounding_rect()
 {
 	int height = 25;
-	int parentheight = m_parentViewItem->boundingRect().height();
+	int parentheight = (int)m_parentViewItem->boundingRect().height();
 	if (parentheight < 30) {
 		height = parentheight - 4;
 	}

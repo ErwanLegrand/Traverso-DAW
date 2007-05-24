@@ -564,7 +564,6 @@ void CurveView::set_view_mode()
 {
 	if (m_sv->get_song()->get_mode() == Song::EFFECTS) {
 		show();
-		printf("....\n");
 	} else {
 		hide();
 	}
