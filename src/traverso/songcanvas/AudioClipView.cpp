@@ -801,5 +801,14 @@ Command * AudioClipView::set_audio_file()
 	return ie().did_not_implement();
 }
 
+void AudioClipView::set_trackview(TrackView * view)
+{
+	if (m_posIndicator) {
+		m_posIndicator->update();
+	}
+	m_tv = view;
+	setParentItem(m_tv);
+}
+
 //eof
 

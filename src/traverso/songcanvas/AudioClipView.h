@@ -61,7 +61,7 @@ public:
 	void calculate_bounding_rect();
 	
 	TrackView* get_trackview() const {return m_tv;}
-	void set_trackview(TrackView* view) {m_tv = view;}
+	void set_trackview(TrackView* view);
 	void set_dragging(bool dragging);
 	
 	void load_theme_data();

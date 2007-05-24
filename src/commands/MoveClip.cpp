@@ -278,7 +278,6 @@ void MoveClip::cancel_action()
 			m_clip->set_track_start_frame(m_originalTrackFirstFrame);
 		}
 		d->view->set_trackview(d->origTrackView);
-		d->view->setParentItem(d->origTrackView);
 		d->view->setPos(QPoint(m_originalTrackFirstFrame / d->sv->scalefactor,
 				d->origTrackView->get_childview_y_offset()));
 	}
@@ -303,7 +302,6 @@ int MoveClip::jog()
 	// 		printf("no trackview returned\n");
 		} else if (trackView != d->view->get_trackview()) {
 			d->view->set_trackview(trackView);
-			d->view->setParentItem(trackView);
 			m_targetTrack = trackView->get_track();
 		}
 	}
