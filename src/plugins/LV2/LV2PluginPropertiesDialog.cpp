@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier
+Copyright (C) 2006-2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: LV2PluginPropertiesDialog.cpp,v 1.7 2007/05/24 23:24:03 r_sijrier Exp $
 */
 
 
@@ -47,10 +46,11 @@ LV2PluginPropertiesDialog::LV2PluginPropertiesDialog(QWidget* parent, LV2Plugin*
 	optionsWidget->setLayout(optionsLayout);
 	QPushButton* bypassButton = new QPushButton(tr("Bypass"), optionsWidget);
 	QPushButton* closeButton = new QPushButton(tr("Close"), optionsWidget);
+	QPushButton* resetButton = new QPushButton(tr("Reset"), optionsWidget);
 	optionsLayout->addWidget(bypassButton);
+	optionsLayout->addWidget(resetButton);
 	optionsLayout->addStretch(10);
 	optionsLayout->addWidget(closeButton);
-	optionsLayout->setSpacing(0);
 	
 	QVBoxLayout* dialogLayout = new QVBoxLayout;
 	dialogLayout->addWidget(sliderWidget);
@@ -66,6 +66,7 @@ LV2PluginPropertiesDialog::LV2PluginPropertiesDialog(QWidget* parent, LV2Plugin*
 		}
 		
 		QWidget* widget = new QWidget(sliderWidget);
+		widget->setMaximumHeight(22);
 		QHBoxLayout* lay = new QHBoxLayout();
 		lay->setSpacing(12);
 		lay->setMargin(3);
@@ -73,6 +74,7 @@ LV2PluginPropertiesDialog::LV2PluginPropertiesDialog(QWidget* parent, LV2Plugin*
 		PluginSlider* slider = new PluginSlider(port);
 		slider->setFixedWidth(200);
 		slider->update_slider_position();
+		m_sliders.append(slider);
 
 		connect(slider, SIGNAL(sliderValueChanged(float)), port, SLOT(set_control_value(float)));
 		// in case the plugin has a slave 'map' the signal to the slave port control slot too!
@@ -104,12 +106,20 @@ LV2PluginPropertiesDialog::LV2PluginPropertiesDialog(QWidget* parent, LV2Plugin*
 	}
 	
 	connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
+	connect(resetButton, SIGNAL(clicked()), this, SLOT(reset_button_clicked()));
 	connect(bypassButton, SIGNAL(clicked()), this, SLOT(bypass_button_clicked()));
 }
 
 void LV2PluginPropertiesDialog::bypass_button_clicked()
 {
 	m_plugin->toggle_bypass();
+}
+
+void LV2PluginPropertiesDialog::reset_button_clicked()
+{
+	foreach(PluginSlider* slider, m_sliders) {
+		slider->reset_default_value();
+	}
 }
 
 //eof

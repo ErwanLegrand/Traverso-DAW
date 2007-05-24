@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier
+Copyright (C) 2006-2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: LV2PluginPropertiesDialog.h,v 1.4 2007/05/24 23:24:03 r_sijrier Exp $
 */
 
 
@@ -27,6 +26,7 @@ $Id: LV2PluginPropertiesDialog.h,v 1.4 2007/05/24 23:24:03 r_sijrier Exp $
 #include <QDialog>
 
 class LV2Plugin;
+class PluginSlider;
 
 class LV2PluginPropertiesDialog : public QDialog
 {
@@ -39,9 +39,11 @@ public:
 
 private:
 	LV2Plugin*	m_plugin;
+	QList<PluginSlider*> m_sliders;
 	
 private slots:
 	void bypass_button_clicked();
+	void reset_button_clicked();
 };
 
 #endif

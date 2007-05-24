@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier
+Copyright (C) 2006-2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PluginSlider.h,v 1.3 2007/05/24 23:24:03 r_sijrier Exp $
 */
 
 
@@ -39,6 +38,7 @@ public:
 	~PluginSlider(){};
 	
 	void paint(QPainter *);
+	void reset_default_value();
 	void update_slider_position();
 	
 protected:
