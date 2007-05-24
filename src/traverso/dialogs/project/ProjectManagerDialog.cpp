@@ -46,7 +46,7 @@ ProjectManagerDialog::ProjectManagerDialog( QWidget * parent )
 	treeSongWidget->header()->resizeSection(1, 55);
 	treeSongWidget->header()->resizeSection(2, 70);
 	QStringList stringList;
-	stringList << "Song Name" << "Tracks" << "Length";
+	stringList << "Sheet Name" << "Tracks" << "Length";
 	treeSongWidget->setHeaderLabels(stringList);
 	
 	set_project(pm().get_project());
@@ -113,7 +113,7 @@ void ProjectManagerDialog::update_song_list( )
 	foreach(Song* song, m_project->get_songs()) {
 
 		QString songNr = QString::number(m_project->get_song_index(song->get_id()));
-		QString songName = "Song " + songNr + " - " + song->get_title();
+		QString songName = "Sheet " + songNr + " - " + song->get_title();
 		QString numberOfTracks = QString::number(song->get_numtracks());
 		QString songLength = frame_to_ms_2(song->get_last_frame(), song->get_rate());
 		QString songStatus = song->is_changed()?"UnSaved":"Saved";
@@ -168,7 +168,7 @@ void ProjectManagerDialog::on_renameSongButton_clicked( )
 	QString newtitle = selectedSongName->text();
 	
 	if (newtitle.isEmpty()) {
-		info().information(tr("No new Song name was supplied!"));
+		info().information(tr("No new Sheet name was supplied!"));
 		return;
 	}
 	

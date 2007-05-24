@@ -521,7 +521,7 @@ SongInfo::SongInfo(QWidget * parent)
 {
 	m_songselectbox = new QComboBox(this);
 	m_songselectbox->setMinimumWidth(140);
-	m_songselectbox->setToolTip(tr("Select Song to be displayed"));
+	m_songselectbox->setToolTip(tr("Select Sheet to be displayed"));
 	connect(m_songselectbox, SIGNAL(activated(int)), this, SLOT(song_selector_index_changed(int)));
 	
 	m_playhead = new PlayHeadInfo(this);
@@ -717,7 +717,7 @@ void SongInfo::song_selector_update_songs()
 {
 	m_songselectbox->clear();
 	foreach(Song* song, m_project->get_songs()) {
-		m_songselectbox->addItem("Song " +
+		m_songselectbox->addItem("Sheet " +
 				QString::number(m_project->get_song_index(song->get_id())) +
 				": " + song->get_title(),
 				song->get_id());

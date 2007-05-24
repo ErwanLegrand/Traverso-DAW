@@ -161,7 +161,7 @@
            </sizepolicy>
           </property>
           <property name="text" >
-           <string>Song count</string>
+           <string>Sheet count</string>
           </property>
          </widget>
         </item>
@@ -210,7 +210,7 @@
            </sizepolicy>
           </property>
           <property name="text" >
-           <string>Tracks per Song</string>
+           <string>Tracks per Sheet</string>
           </property>
          </widget>
         </item>

@@ -48,7 +48,7 @@ OpenProjectDialog::OpenProjectDialog( QWidget * parent )
 	projectListView->setColumnCount(2);
 	update_projects_list();
 	QStringList stringList;
-	stringList << "Project Name" << "Songs";
+	stringList << "Project Name" << "Sheets";
 	projectListView->setHeaderLabels(stringList);
 	
 	projectListView->header()->resizeSection(0, 160);

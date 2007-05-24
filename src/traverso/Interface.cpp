@@ -365,12 +365,12 @@ void Interface::create_menus( )
 	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(exit()));
 	
 	
-	menu = menuBar()->addMenu(tr("&Song"));
+	menu = menuBar()->addMenu(tr("&Sheet"));
 	m_songMenuAction = menu->menuAction();
 	
 	action = menu->addAction(tr("New &Track(s)..."));
 	connect(action, SIGNAL(triggered()), this, SLOT(show_newtrack_dialog()));
-	action = menu->addAction(tr("New &Song(s)..."));
+	action = menu->addAction(tr("New &Sheet(s)..."));
 	connect(action, SIGNAL(triggered()), this, SLOT(show_newsong_dialog()));
 
 	menu->addSeparator();
@@ -400,7 +400,7 @@ void Interface::create_menus( )
 	menu->addSeparator();
 	
 	menu->addAction(m_infoBar->toggleViewAction());
-	m_infoBar->toggleViewAction()->setText(tr("Song Toolbar"));
+	m_infoBar->toggleViewAction()->setText(tr("Sheet Toolbar"));
 	menu->addAction(m_sysinfo->toggleViewAction());
 	m_sysinfo->toggleViewAction()->setText(tr("System Information"));
 	

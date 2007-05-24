@@ -154,7 +154,7 @@ void SongPanelView::paint(QPainter * painter, const QStyleOptionGraphicsItem * o
 	
 	painter->setPen(themer()->get_color("TrackPanel:text"));
 	painter->setFont(themer()->get_font("TrackPanel:fontscale:led"));
-	painter->drawText(10, 11, "Song: " + m_song->get_title());
+	painter->drawText(10, 11, "Sheet: " + m_song->get_title());
 	
 	QColor color = QColor(Qt::darkGray);//themer()->get_color("Track:cliptopoffset");
 	painter->setPen(color);

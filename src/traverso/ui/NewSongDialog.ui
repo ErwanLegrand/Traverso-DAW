@@ -41,14 +41,14 @@
        <item>
         <widget class="QLabel" name="label" >
          <property name="text" >
-          <string>New Song name</string>
+          <string>New Sheet name</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="label_3" >
          <property name="text" >
-          <string>Song count</string>
+          <string>Sheet count</string>
          </property>
         </widget>
        </item>

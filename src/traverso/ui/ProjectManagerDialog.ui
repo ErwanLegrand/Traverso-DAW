@@ -28,7 +28,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget" >
      <property name="currentIndex" >
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_4" >
       <attribute name="title" >
@@ -162,7 +162,7 @@
           <item>
            <widget class="QPushButton" name="songsExportButton" >
             <property name="text" >
-             <string>Song(s)</string>
+             <string>Sheet(s)</string>
             </property>
            </widget>
           </item>
@@ -209,7 +209,7 @@
      </widget>
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
-       <string>Songs</string>
+       <string>Sheets</string>
       </attribute>
       <layout class="QHBoxLayout" >
        <property name="margin" >
@@ -236,7 +236,7 @@
          </property>
          <column>
           <property name="text" >
-           <string>Song Name</string>
+           <string>Sheet Name</string>
           </property>
          </column>
          <column>
@@ -262,7 +262,7 @@
          <item>
           <widget class="QGroupBox" name="groupBox_4" >
            <property name="title" >
-            <string>Selected Song</string>
+            <string>Selected Sheet</string>
            </property>
            <layout class="QVBoxLayout" >
             <property name="margin" >
@@ -330,7 +330,7 @@
          <item>
           <widget class="QGroupBox" name="groupBox_2" >
            <property name="title" >
-            <string>New Song</string>
+            <string>New Sheet</string>
            </property>
            <layout class="QHBoxLayout" >
             <property name="margin" >
@@ -350,7 +350,7 @@
               <item>
                <widget class="QPushButton" name="createSongButton" >
                 <property name="text" >
-                 <string>Create new Song</string>
+                 <string>Create new Sheet</string>
                 </property>
                </widget>
               </item>

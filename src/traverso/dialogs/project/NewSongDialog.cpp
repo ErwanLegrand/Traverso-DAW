@@ -43,7 +43,7 @@ NewSongDialog::NewSongDialog(QWidget * parent)
 void NewSongDialog::accept()
 {
 	if (! m_project) {
-		info().information(tr("I can't create a new Song if there is no Project loaded!!"));
+		info().information(tr("I can't create a new Sheet if there is no Project loaded!!"));
 		return;
 	}
 	
@@ -62,7 +62,7 @@ void NewSongDialog::accept()
 		usetemplate = true;
 		Song* templatesong = m_project->get_song(templateComboBox->itemData(index).toLongLong());
 		Q_ASSERT(templatesong);
-		QDomDocument doc("Song");
+		QDomDocument doc("Sheet");
 		node = templatesong->get_state(doc, usetemplate);
 	}
 	
@@ -80,7 +80,7 @@ void NewSongDialog::accept()
 		group->add_command(m_project->add_song(song));
 	}
 	
-	group->setText(tr("Added %n Song(s)", "", count));
+	group->setText(tr("Added %n Sheet(s)", "", count));
 	Command::process_command(group);
 		
 	hide();
@@ -111,7 +111,7 @@ void NewSongDialog::update_template_combo()
 	templateComboBox->clear();
 	
 	foreach(Song* song, m_project->get_songs()) {
-		QString text = "Song " + QString::number(m_project->get_song_index(song->get_id())) +
+		QString text = "Sheet " + QString::number(m_project->get_song_index(song->get_id())) +
 				" " + song->get_title();
 		
 		templateComboBox->addItem(text, song->get_id());
