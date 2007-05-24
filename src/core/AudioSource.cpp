@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSource.cpp,v 1.20 2007/05/24 17:45:19 r_sijrier Exp $
+$Id: AudioSource.cpp,v 1.21 2007/05/24 18:48:48 r_sijrier Exp $
 */
 
 
@@ -75,6 +75,7 @@ QDomNode AudioSource::get_state( QDomDocument doc )
 	node.setAttribute("name", m_name);
 	node.setAttribute("origbitdepth", m_origBitDepth);
 	node.setAttribute("wasrecording", m_wasRecording);
+	node.setAttribute("length", m_length);
 
 	return node;
 }
@@ -90,6 +91,7 @@ int AudioSource::set_state( const QDomNode & node )
 	m_origSongId = e.attribute("origsheetid", "0").toLongLong();
 	set_dir( e.attribute("dir", "" ));
 	m_id = e.attribute("id", "").toLongLong();
+	m_length = e.attribute("length", "0").toUInt();
 	set_name( e.attribute("name", "No name supplied?" ));
 	m_origBitDepth = e.attribute("origbitdepth", "0").toInt();
 	m_wasRecording = e.attribute("wasrecording", "0").toInt();
