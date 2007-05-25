@@ -33,10 +33,12 @@ LV2/LV2PluginPropertiesDialog.h
 !contains(DEFINES, LV2_SUPPORT) {
 	HEADERS -= 	LV2/LV2Plugin.h \
 			LV2/LV2ControlPort.h \
-			LV2/LV2PluginPropertiesDialog.h
+			LV2/LV2PluginPropertiesDialog.h \
+                        PluginSlider.h
 	SOURCES -= 	LV2/LV2Plugin.cpp \
 			LV2/LV2ControlPort.cpp \
-			LV2/LV2PluginPropertiesDialog.cpp
+			LV2/LV2PluginPropertiesDialog.cpp \
+                        PluginSlider.cpp
 	INCLUDEPATH -= LV2
 }
 

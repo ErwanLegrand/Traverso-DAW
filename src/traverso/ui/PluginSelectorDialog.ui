@@ -83,8 +83,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>369</x>
-     <y>253</y>
+     <x>421</x>
+     <y>401</y>
     </hint>
     <hint type="destinationlabel" >
      <x>179</x>
@@ -99,12 +99,28 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>278</x>
-     <y>253</y>
+     <x>335</x>
+     <y>401</y>
     </hint>
     <hint type="destinationlabel" >
      <x>96</x>
      <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pluginTreeWidget</sender>
+   <signal>activated(QModelIndex)</signal>
+   <receiver>okButton</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>330</x>
+     <y>224</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>311</x>
+     <y>389</y>
     </hint>
    </hints>
   </connection>

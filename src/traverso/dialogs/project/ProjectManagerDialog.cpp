@@ -54,6 +54,8 @@ ProjectManagerDialog::ProjectManagerDialog( QWidget * parent )
 	undoButton->setIcon(QIcon(find_pixmap(":/undo-16")));
 	redoButton->setIcon(QIcon(find_pixmap(":/redo-16")));
 	
+	buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
+
 	connect(treeSongWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(songitem_clicked(QTreeWidgetItem*,int)));
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 }

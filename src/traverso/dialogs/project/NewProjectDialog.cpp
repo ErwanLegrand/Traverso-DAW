@@ -29,6 +29,7 @@
 #include <QDomDocument>
 #include <QFileDialog>
 #include <QHeaderView>
+#include <QPushButton>
 
 #include <Config.h>
 #include <Information.h>
@@ -49,6 +50,8 @@ NewProjectDialog::NewProjectDialog( QWidget * parent )
 	
 	use_template_checkbox_state_changed(Qt::Unchecked);
 	update_template_combobox();
+
+	buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
 
 	connect(useTemplateCheckBox, SIGNAL(stateChanged (int)), this, SLOT(use_template_checkbox_state_changed(int)));
 }

@@ -26,6 +26,7 @@
 #include <Song.h>
 #include <Track.h>
 #include <Project.h>
+#include <QPushButton>
 
 
 BusSelectorDialog::BusSelectorDialog(QWidget* parent)
@@ -35,6 +36,8 @@ BusSelectorDialog::BusSelectorDialog(QWidget* parent)
 	setupUi(this);
 	
 	update_buses_list_widget();
+	
+	buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
 	
 	connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
 	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));

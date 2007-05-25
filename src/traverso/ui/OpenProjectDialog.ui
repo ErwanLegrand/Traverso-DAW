@@ -1,6 +1,14 @@
 <ui version="4.0" >
  <class>OpenProjectDialog</class>
  <widget class="QDialog" name="OpenProjectDialog" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>224</width>
+    <height>229</height>
+   </rect>
+  </property>
   <property name="windowTitle" >
    <string>Open Project</string>
   </property>
@@ -141,34 +149,34 @@
  <resources/>
  <connections>
   <connection>
-   <sender>projectListView</sender>
-   <signal>doubleClicked(QModelIndex)</signal>
-   <receiver>loadProjectButton</receiver>
-   <slot>animateClick()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>196</x>
-     <y>204</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>460</x>
-     <y>310</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>buttonBox</sender>
    <signal>clicked(QAbstractButton*)</signal>
    <receiver>OpenProjectDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>29</x>
-     <y>547</y>
+     <x>163</x>
+     <y>218</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>355</x>
-     <y>527</y>
+     <x>223</x>
+     <y>228</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>projectListView</sender>
+   <signal>activated(QModelIndex)</signal>
+   <receiver>loadProjectButton</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>115</x>
+     <y>64</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>145</x>
+     <y>125</y>
     </hint>
    </hints>
   </connection>

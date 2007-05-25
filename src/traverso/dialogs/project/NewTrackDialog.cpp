@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 #include "NewTrackDialog.h"
+#include <QPushButton>
 
 #include <libtraversocore.h>
 #include <CommandGroup.h>
@@ -31,6 +32,8 @@ NewTrackDialog::NewTrackDialog(QWidget * parent)
 	setupUi(this);
 	
 	set_project(pm().get_project());
+	
+	buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
 	
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 }

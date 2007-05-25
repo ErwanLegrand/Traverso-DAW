@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <libtraversocore.h>
 #include <CommandGroup.h>
+#include <QPushButton>
 
 NewSongDialog::NewSongDialog(QWidget * parent)
 	: QDialog(parent)
@@ -35,6 +36,8 @@ NewSongDialog::NewSongDialog(QWidget * parent)
 	set_project(pm().get_project());
 	
 	use_template_checkbox_state_changed(Qt::Unchecked);
+	
+	buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
 	
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 	connect(useTemplateCheckBox, SIGNAL(stateChanged (int)), this, SLOT(use_template_checkbox_state_changed(int)));
