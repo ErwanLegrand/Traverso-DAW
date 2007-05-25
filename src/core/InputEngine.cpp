@@ -124,7 +124,7 @@ static void set_hexcode(int & variable, const QString& text)
 							variable = Qt::LeftButton;
 						} else if (text == "MouseButtonRight") {
 							variable = Qt::RightButton;
-						} else if (text == "MouseButtonMiddel") {
+						} else if (text == "MouseButtonMiddle") {
 							variable = Qt::MidButton;
 						} else if (text == "MouseButtonX1") {
 							variable = Qt::XButton1;
