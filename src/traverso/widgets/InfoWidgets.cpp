@@ -689,7 +689,10 @@ void SongInfo::recording_button_clicked()
 		m_recAction->setIcon(find_pixmap(":/redledinactive-16"));
 	} else {
 		cmd = m_song->go_and_record();
-		m_recAction->setIcon(find_pixmap(":/redled-16"));
+		if (cmd) {
+			m_recAction->setIcon(find_pixmap(":/redled-16"));
+		}
+
 	}
 	
 	if (cmd) {

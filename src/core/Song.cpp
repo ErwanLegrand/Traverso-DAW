@@ -639,6 +639,11 @@ Track* Song::create_track()
 
 Command* Song::go_and_record()
 {
+	if (!any_track_armed()) {
+		info().critical(tr("No Tracks armed to record too!"));
+		return 0;
+	}
+	
 	if ( ! is_transporting() && ! m_recording) {
 		set_recording(true);
 	} else if (is_transporting() && m_recording) {
