@@ -76,7 +76,7 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="W" >
 			<Objects>
-				<Object objectname="SongView" slotsignature="playhead_to_workcursor" modes="All" sortorder="8" instantanious="0" />
+				<Object objectname="SongView" slotsignature="touch_play_cursor" modes="All" sortorder="2" submenu="Playhead" instantanious="0" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="HOME" >
@@ -200,6 +200,11 @@
 				<Object objectname="TrackPanelLed" slotsignature="toggle" modes="All" sortorder="1" />
 				<Object objectname="TrackPanelBus" slotsignature="TrackView::select_bus" modes="All" instantanious="0" />
 				<Object objectname="AudioClipView" slotsignature="set_audio_file" modes="All" sortorder="80" instantanious="0" />
+			</Objects>
+		</keyfact>
+		<keyfact type="FKEY" key1="MouseButtonMiddle" >
+			<Objects>
+				<Object objectname="SongView" slotsignature="touch_play_cursor" modes="All" sortorder="2" submenu="Playhead" instantanious="0" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="MouseButtonRight" >
@@ -338,12 +343,22 @@
 				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" pluginname="TraversoCommands" commandname="MoveClip" arguments="move" />
 				<Object objectname="CurveView" mousehint="LRUD" slotsignature="drag_node" modes="Effects" sortorder="3" instantanious="1" />
 				<Object objectname="TimeLineView" mousehint="LR" slotsignature="drag_marker" modes="All" sortorder="3" instantanious="1" />
-				<Object objectname="SongView" mousehint="LR" slotsignature="work_cursor_move" modes="All" sortorder="14" instantanious="0" />
+				<Object objectname="SongView" mousehint="LR" slotsignature="work_cursor_move" modes="All" submenu="Work Cursor" sortorder="4" instantanious="0" />
 				<Object objectname="TrackPanelGain" modes="All" sortorder="7" pluginname="TraversoCommands" commandname="Gain" arguments="horizontal" />
 				<Object objectname="SongPanelGain" modes="All" sortorder="7" pluginname="TraversoCommands" commandname="Gain" arguments="horizontal" />
 				<Object objectname="TrackPanelPan" mousehint="LR"  modes="All" sortorder="8" pluginname="TraversoCommands" commandname="TrackPan" />
 			</Objects>
 		</keyfact> 
+		<keyfact type="HKEY" key1="MouseButtonMiddle" >
+			<Objects>
+				<Object objectname="SongView" mousehint="LR" slotsignature="play_cursor_move" modes="All" sortorder="8" submenu="Playhead" instantanious="0" />
+			</Objects>
+		</keyfact>
+		<keyfact type="HKEY" key1="W" >
+			<Objects>
+				<Object objectname="SongView" mousehint="LR" slotsignature="play_cursor_move" modes="All" sortorder="8" submenu="Playhead" instantanious="0" />
+			</Objects>
+		</keyfact>
 		<keyfact type="HKEY" key1="C" >
 			<Objects>
 				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" sortorder="9" pluginname="TraversoCommands" commandname="CopyClip"  arguments="copy" />
@@ -370,11 +385,6 @@
 		<keyfact type="HKEY" key1="SHIFT" >
 			<Objects>
 				<Object objectname="SongView" mousehint="LR" slotsignature="work_cursor_move" modes="All" sortorder="14" instantanious="0" />
-			</Objects>
-		</keyfact>
-		<keyfact type="HKEY" key1="SPACE" >
-			<Objects>
-				<Object objectname="SongView" mousehint="LR" slotsignature="play_cursor_move" modes="All" sortorder="14" instantanious="0" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="F" >
@@ -412,11 +422,6 @@
 		</keyfact>
 		
 		
-		<keyfact type="D_FKEY" key1="ESC" >
-			<Objects>
-				<Object objectname="ProjectManager" slotsignature="exit" modes="All" instantanious="0" />
-			</Objects>
-		</keyfact>
 		<keyfact type="D_FKEY" key1="T" >
 			<Objects>
 				<Object objectname="Song" modes="All" sortorder="22" pluginname="TraversoCommands" commandname="AddNewTrack" />
@@ -484,6 +489,11 @@
 		<keyfact type="D_FKEY" key1="MouseButtonLeft" >
 			<Objects>
 				<Object objectname="CurveView" slotsignature="add_node" modes="All" instantanious="0" />
+			</Objects>
+		</keyfact>
+		<keyfact type="D_FKEY" key1="W" >
+			<Objects>
+				<Object objectname="SongView" slotsignature="playhead_to_workcursor" modes="All" sortorder="12" submenu="Playhead" instantanious="0" />
 			</Objects>
 		</keyfact>
 		<keyfact type="D_FKEY" key1="HOME" >

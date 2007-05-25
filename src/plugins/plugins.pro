@@ -34,11 +34,11 @@ LV2/LV2PluginPropertiesDialog.h
 	HEADERS -= 	LV2/LV2Plugin.h \
 			LV2/LV2ControlPort.h \
 			LV2/LV2PluginPropertiesDialog.h \
-                        PluginSlider.h
+			PluginSlider.h
 	SOURCES -= 	LV2/LV2Plugin.cpp \
 			LV2/LV2ControlPort.cpp \
 			LV2/LV2PluginPropertiesDialog.cpp \
-                        PluginSlider.cpp
+			PluginSlider.cpp
 	INCLUDEPATH -= LV2
 }
 
