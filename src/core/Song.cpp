@@ -358,12 +358,23 @@ int Song::prepare_export(ExportSpecification* spec)
 		}
 
 	}
-
-	if (m_timeline->get_end_position(endframe)) {
-		PMESG2("  End marker found at %d", endframe);
-		spec->end_frame = endframe;
-	} else {
-		PMESG2("  No end marker found");
+	
+	if (spec->isCdExport) {
+		QList<Marker*> markers = m_timeline->get_markers();
+		if (markers.size() >= 2) {
+			startframe = markers.at(0)->get_when();
+			PMESG2("  Start marker found at %d", startframe);
+			spec->start_frame = startframe;
+		} else {
+			PMESG2("  No start marker found");
+		}
+		
+		if (m_timeline->get_end_position(endframe)) {
+			PMESG2("  End marker found at %d", endframe);
+			spec->end_frame = endframe;
+		} else {
+			PMESG2("  No end marker found");
+		}
 	}
 
 	spec->total_frames = spec->end_frame - spec->start_frame;
@@ -963,27 +974,20 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 		output += "      MESSAGE \"" + startmarker->get_message() + "\"\n    }\n  }\n";
 
 		// add some stuff only required for the first track (e.g. pre-gap)
-		if (i == 0) {
-			start = cd_to_frame(frame_to_cd(startmarker->get_when(), m_project->get_rate()), m_project->get_rate());
-
-			if (pregap) {
-				if (start == 0) {
-					// standard pregap, because we have a track marker at the beginning
-					output += "  PREGAP 00:02:00\n";
-				} else {
-					// no track marker at the beginning, thus use the part from 0 to the first
-					// track marker for the pregap
-					output += "  START " + frame_to_cd(start, m_project->get_rate()) + "\n";
-					start = 0;
-				}
-			}
-
+		if (i == 0 && pregap) {
+			//if (start == 0) {
+				// standard pregap, because we have a track marker at the beginning
+				output += "  PREGAP 00:02:00\n";
+			//} else {
+			//	// no track marker at the beginning, thus use the part from 0 to the first
+			//	// track marker for the pregap
+			//	output += "  START " + frame_to_cd(start, m_project->get_rate()) + "\n";
+			//	start = 0;
+			//}
 		}
-
-
-		nframes_t end = cd_to_frame(frame_to_cd(endmarker->get_when(), m_project->get_rate()), m_project->get_rate());
-		nframes_t length = end - start;
-
+		
+		nframes_t length = cd_to_frame(frame_to_cd(endmarker->get_when(), m_project->get_rate()), m_project->get_rate()) - cd_to_frame(frame_to_cd(startmarker->get_when(), m_project->get_rate()), m_project->get_rate());
+		
 		QString s_start = frame_to_cd(start, m_project->get_rate());
 		QString s_length = frame_to_cd(length, m_project->get_rate());
 

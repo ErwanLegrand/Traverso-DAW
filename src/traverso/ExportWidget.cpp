@@ -530,6 +530,7 @@ void ExportWidget::cd_render()
 		m_exportSpec->isRecording = false;
 		m_exportSpec->stop = false;
 		m_exportSpec->breakout = false;
+		m_exportSpec->isCdExport = true;
 		
 		if (m_project->create_cdrdao_toc(m_exportSpec) < 0) {
 			info().warning(tr("Creating CDROM table of contents failed, unable to write CD"));
@@ -809,7 +810,7 @@ void ExportWidget::enable_ui_interaction()
 	m_writingState = NO_STATE;
 	exportWidget->setEnabled(true);
 	optionsGroupBox->setEnabled(true);
-	burnGroupBox->setEnabled(true);
+	burnGroupBox->setDisabled(cdDiskExportOnlyCheckBox->isChecked());
 	closeButton->setEnabled(true);
 	startButton->show();
 	stopButton->hide();
