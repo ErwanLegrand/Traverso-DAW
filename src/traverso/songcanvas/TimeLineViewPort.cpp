@@ -62,6 +62,7 @@ void TimeLineViewPort::get_pointed_context_items(QList<ContextItem* > &list)
 	foreach(QGraphicsItem* item, itemlist) {
 		list.append((ViewItem*)item);
 	}
+	list.append(m_sv);
 }
 
 void TimeLineViewPort::scale_factor_changed()
