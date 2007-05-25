@@ -385,7 +385,7 @@ void AudioClip::set_selected(bool selected)
 //
 //  Function called in RealTime AudioThread processing path
 //
-int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
+int AudioClip::process(nframes_t nframes, audio_sample_t* buffer, uint channel)
 {
 	Q_ASSERT(m_song);
 	
@@ -400,37 +400,29 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 		return -1;
 	}
 
-	
-// #define debug
-	
-#if defined (debug)
-		printf("%s\n", m_name.toAscii().data());
-		printf("trackStartFrame is %d\n", trackStartFrame);
-		printf("trackEndFrame is %d\n", trackEndFrame);
-		printf("song->transport is %d\n", m_song->get_transport_frame());
-		printf("diff trackEndFrame, song->transport is %d\n", (int)trackEndFrame - m_song->get_transport_frame());
-		printf("diff trackStartFrame, song->transport is %d\n", (int)trackStartFrame - m_song->get_transport_frame());
-		printf("clip trackEndFrame - song->transport_frame is %d\n", trackEndFrame - m_song->get_transport_frame());
-#endif
-	
-	nframes_t mix_pos;
-
-
-	if ( (trackStartFrame <= (m_song->get_transport_frame())) && (trackEndFrame > (m_song->get_transport_frame())) ) {
-		mix_pos = m_song->get_transport_frame() - trackStartFrame + sourceStartFrame;
-#if defined (debug)
-		printf("mix_pos is %d\n", mix_pos);
-#endif
-	} else {
-#if defined (debug)
-		printf("Not processing this Clip\n\n");
-		printf("END %s\n\n", m_name.toAscii().data());
-#endif
+	if (isMuted || ( (m_gain * m_normfactor) == 0.0f) ) {
 		return 0;
 	}
+	
+	
+	nframes_t mix_pos;
+	audio_sample_t* mixdown;
 
 
-	if (isMuted || ( (m_gain * m_normfactor) == 0.0f) ) {
+	nframes_t transportFrame = m_song->get_transport_frame();
+	nframes_t upperRange = transportFrame + nframes;
+	
+	if ( (trackStartFrame < upperRange) && (trackEndFrame > transportFrame) ) {
+		if (transportFrame < trackStartFrame) {
+			uint offset = trackStartFrame - transportFrame;
+			mix_pos = sourceStartFrame;
+			mixdown = buffer + offset;
+			nframes = nframes - offset;
+		} else {
+			mix_pos = transportFrame - trackStartFrame + sourceStartFrame;
+			mixdown = buffer;
+		}
+	} else {
 		return 0;
 	}
 
@@ -443,12 +435,6 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* mixdown, uint channel)
 	} else {
 		read_frames = m_readSource->file_read(channel, mixdown, mix_pos, nframes);
 	}
-
-#if defined (debug)
-	printf("read frames is %d\n", read_frames);
-	printf("END %s\n\n", m_name.toAscii().data());
-#endif
-	
 
 	if (read_frames == 0) {
 		return 0;
