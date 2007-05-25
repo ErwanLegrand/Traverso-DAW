@@ -40,8 +40,8 @@ class Curve;
 class SongView : public ViewItem
 {
         Q_OBJECT
-	Q_CLASSINFO("touch", tr("Set Work Cursor"))
-	Q_CLASSINFO("touch_play_cursor", tr("Set Play Cursor"))
+	Q_CLASSINFO("touch", tr("Workcursor: Set"))
+	Q_CLASSINFO("touch_play_cursor", tr("Playhead: Set"))
 	Q_CLASSINFO("hzoom_out", tr("Horizontal Out"))
 	Q_CLASSINFO("hzoom_in", tr("Horizontal In"))
 	Q_CLASSINFO("vzoom_out", tr("Vertical Out"))
