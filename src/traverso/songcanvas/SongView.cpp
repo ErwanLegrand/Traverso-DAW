@@ -489,6 +489,16 @@ Command * SongView::touch( )
 	return 0;
 }
 
+Command * SongView::touch_play_cursor( )
+{
+	QPointF point = m_clipsViewPort->mapToScene(QPoint(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y()));
+	m_playCursor->setPos(point.x(), 0);
+	m_song->set_transport_pos( (nframes_t) (point.x() * scalefactor));
+	m_playCursor->show();
+
+	return 0;
+}
+
 Command * SongView::play_cursor_move( )
 {
 	return new PlayHeadMove(m_playCursor, this);

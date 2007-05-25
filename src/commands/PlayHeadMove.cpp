@@ -42,10 +42,10 @@ int PlayHeadMove::finish_hold()
 	if (x < 0) {
 		x = 0;
 	}
-
+	
 	// When SyncDuringDrag is true, don't seek in finish_hold()
 	// since that causes another audio glitch.
-	if (!m_resync) {
+	if (!(m_resync && m_song->is_transporting())) {
 		// if the song is transporting, the seek action will cause 
 		// the playcursor to be moved to the correct location.
 		// Until then hide it, it will be shown again when the seek is finished!

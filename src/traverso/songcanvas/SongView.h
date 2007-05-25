@@ -40,7 +40,8 @@ class Curve;
 class SongView : public ViewItem
 {
         Q_OBJECT
-	Q_CLASSINFO("touch", tr("Touch"))
+	Q_CLASSINFO("touch", tr("Set Work Cursor"))
+	Q_CLASSINFO("touch_play_cursor", tr("Set Play Cursor"))
 	Q_CLASSINFO("hzoom_out", tr("Horizontal Out"))
 	Q_CLASSINFO("hzoom_in", tr("Horizontal In"))
 	Q_CLASSINFO("vzoom_out", tr("Vertical Out"))
@@ -123,6 +124,7 @@ public slots:
 	void follow_play_head();
 
 	Command* touch();
+	Command* touch_play_cursor();
         Command* hzoom_out();
         Command* hzoom_in();
         Command* vzoom_out();
