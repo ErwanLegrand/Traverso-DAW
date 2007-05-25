@@ -195,6 +195,10 @@ void SongView::add_new_trackview(Track* track)
 	}
 	
 	m_trackViews.append(view);
+	if (m_trackViews.size() > 1) {
+		int height = m_trackViews.at(m_trackViews.size()-2)->get_track()->get_height();
+		m_trackViews.at(m_trackViews.size()-1)->get_track()->set_height(height);
+	}
 	
 	layout_tracks();
 }

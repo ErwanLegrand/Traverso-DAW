@@ -374,6 +374,11 @@ void Interface::create_menus( )
 	connect(action, SIGNAL(triggered()), this, SLOT(show_newsong_dialog()));
 
 	menu->addSeparator();
+	
+	action = menu->addAction(tr("Marker Editor..."));
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_marker_dialog()));
+	
+	menu->addSeparator();
 
 	action = menu->addAction(tr("Import &Audio..."));
 	connect(action, SIGNAL(triggered()), this, SLOT(import_audio()));
@@ -386,11 +391,6 @@ void Interface::create_menus( )
 	menu->addAction(historyDW->toggleViewAction());
 	menu->addAction(busMonitorDW->toggleViewAction());
 	menu->addAction(AudioSourcesDW->toggleViewAction());
-	
-	menu->addSeparator();
-	
-	action = menu->addAction(tr("Marker Editor"));
-	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_marker_dialog()));
 	
 	menu->addSeparator();
 	
