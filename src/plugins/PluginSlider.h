@@ -64,8 +64,6 @@ private:
 	
 signals:
 	void sliderValueChanged(float value);
-	void sliderValueChangedDouble(double value);
-	
 };
  
 #endif

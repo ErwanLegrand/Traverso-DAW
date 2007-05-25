@@ -58,7 +58,8 @@ void PluginSlider::paintEvent(QPaintEvent *)
 	if (m_xpos <= 1) m_xpos = 2;
 	
 	painter.setBrush(background);
-	painter.drawRect(0, 0, width() - 0.5, height() - 0.5);
+	QRectF rect(0.0, 0.0, width() - 0.5, height() - 0.5);
+	painter.drawRect(rect);
 	painter.fillRect(1, 1, m_xpos - 2, height() - 2, QBrush(color));
 	if (m_port->get_hint() == PluginPort::INT_CONTROL) {
 		painter.drawText(0, 0, width(), height(), Qt::AlignCenter, QString::number((int)m_value));
@@ -100,8 +101,12 @@ void PluginSlider::calculate_new_value(int mouseX)
 	
 	m_value = (relativePos * range) + m_min;
 	
+	// in case of INT_CONTROL, round float to nearest int value.
+	if (m_port->get_hint() == PluginPort::INT_CONTROL) {
+		m_value = float(int(0.5 + m_value));
+	}
+	
 	emit sliderValueChanged(m_value);
-	emit sliderValueChangedDouble((double)m_value);
 	
 	update();
 }
@@ -150,7 +155,6 @@ void PluginSlider::reset_default_value()
 {
 	m_value = m_port->get_default_value();
 	update_slider_position();
-	update();
 }
 
 //eof

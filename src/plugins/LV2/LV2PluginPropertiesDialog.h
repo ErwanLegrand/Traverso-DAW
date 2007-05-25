@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 class LV2Plugin;
 class PluginSlider;
+class QPushButton;
 
 class LV2PluginPropertiesDialog : public QDialog
 {
@@ -40,6 +41,7 @@ public:
 private:
 	LV2Plugin*	m_plugin;
 	QList<PluginSlider*> m_sliders;
+	QPushButton* m_bypassButton;
 	
 private slots:
 	void bypass_button_clicked();

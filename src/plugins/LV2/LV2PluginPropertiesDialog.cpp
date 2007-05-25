@@ -44,10 +44,12 @@ LV2PluginPropertiesDialog::LV2PluginPropertiesDialog(QWidget* parent, LV2Plugin*
 	QWidget* optionsWidget = new QWidget(this);
 	QHBoxLayout* optionsLayout = new QHBoxLayout;
 	optionsWidget->setLayout(optionsLayout);
-	QPushButton* bypassButton = new QPushButton(tr("Bypass"), optionsWidget);
+	m_bypassButton = new QPushButton(tr("Bypass"), optionsWidget);
+	m_bypassButton->setCheckable(true);
+	m_bypassButton->setChecked(plugin->is_bypassed());
 	QPushButton* closeButton = new QPushButton(tr("Close"), optionsWidget);
 	QPushButton* resetButton = new QPushButton(tr("Reset"), optionsWidget);
-	optionsLayout->addWidget(bypassButton);
+	optionsLayout->addWidget(m_bypassButton);
 	optionsLayout->addWidget(resetButton);
 	optionsLayout->addStretch(10);
 	optionsLayout->addWidget(closeButton);
@@ -107,12 +109,13 @@ LV2PluginPropertiesDialog::LV2PluginPropertiesDialog(QWidget* parent, LV2Plugin*
 	
 	connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
 	connect(resetButton, SIGNAL(clicked()), this, SLOT(reset_button_clicked()));
-	connect(bypassButton, SIGNAL(clicked()), this, SLOT(bypass_button_clicked()));
+	connect(m_bypassButton, SIGNAL(clicked()), this, SLOT(bypass_button_clicked()));
 }
 
 void LV2PluginPropertiesDialog::bypass_button_clicked()
 {
 	m_plugin->toggle_bypass();
+	m_bypassButton->setChecked(m_plugin->is_bypassed());
 }
 
 void LV2PluginPropertiesDialog::reset_button_clicked()
