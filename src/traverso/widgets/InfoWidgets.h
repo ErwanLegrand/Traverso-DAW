@@ -209,7 +209,6 @@ private:
 	QToolButton*	m_follow;
 	QAction*	m_followAct;
 	QAction*	m_recAction;
-	QAction*	m_effectAction;
 	QToolButton*	m_record;
 };
 

@@ -540,8 +540,8 @@ SongInfo::SongInfo(QWidget * parent)
 	
 	m_effectButton = new QToolButton(this);
 	m_effectButton->setMinimumWidth(110);
-	m_effectAction = new QAction(tr("&Show Effects"), this);
-	m_effectAction->setCheckable(false);
+	m_effectButton->setCheckable(true);
+	m_effectButton->setText(tr("&Show Effects"));
 	
 	m_record = new QToolButton(this);
 	m_recAction = new QAction(tr("Record"), this);
@@ -647,9 +647,9 @@ void SongInfo::update_snap_state()
 void SongInfo::update_effects_state()
 {
 	if (m_song->get_mode() == Song::EDIT) {
-		m_effectButton->setText(tr("Show Effects"));
+		m_effectButton->setChecked(false);
 	} else {
-		m_effectButton->setText(tr("Hide Effects"));
+		m_effectButton->setChecked(true);
 	}
 }
 
