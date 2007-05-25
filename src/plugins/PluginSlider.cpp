@@ -29,6 +29,7 @@ PluginSlider::PluginSlider(LV2ControlPort* port)
 	, m_port(port)
 {
 	setMaximumHeight(18);
+	setFixedWidth(200);
 	highlight = dragging = false;
 	
 	m_min = m_port->get_min_control_value();
@@ -38,7 +39,7 @@ PluginSlider::PluginSlider(LV2ControlPort* port)
 	if (m_port->get_hint() == PluginPort::INT_CONTROL) {
 		m_stepvalue = 1;
 	} else {
-		m_stepvalue = (m_max - m_min) / (width() / 25);
+		m_stepvalue = (m_max - m_min) / 16;
 	}
 }
 
@@ -85,7 +86,7 @@ void PluginSlider::mouseReleaseEvent( QMouseEvent * e )
 	calculate_new_value(e->x());
 }
 
-void PluginSlider::calculate_new_value(int mouseX)
+void PluginSlider::calculate_new_value(float mouseX)
 {	
 	if (mouseX < 0) 
 		mouseX = 0;
@@ -146,7 +147,7 @@ void PluginSlider::wheelEvent( QWheelEvent* e )
 void PluginSlider::update_slider_position( )
 {
 	float range = m_max - m_min;
-	int mouseX = (int) (( (float)width() / range) * (m_value - m_min));
+	float mouseX = ((float)width() / range) * (m_value - m_min);
 		
 	calculate_new_value(mouseX);
 }

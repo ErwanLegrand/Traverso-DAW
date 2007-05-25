@@ -60,7 +60,7 @@ private:
 	bool	highlight;
 	bool 	dragging;
 	
-	void calculate_new_value(int mouseX);
+	void calculate_new_value(float mouseX);
 	
 signals:
 	void sliderValueChanged(float value);

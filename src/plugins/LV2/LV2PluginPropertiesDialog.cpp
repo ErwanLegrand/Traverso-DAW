@@ -74,7 +74,6 @@ LV2PluginPropertiesDialog::LV2PluginPropertiesDialog(QWidget* parent, LV2Plugin*
 		lay->setMargin(3);
 
 		PluginSlider* slider = new PluginSlider(port);
-		slider->setFixedWidth(200);
 		slider->update_slider_position();
 		m_sliders.append(slider);
 
