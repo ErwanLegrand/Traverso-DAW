@@ -683,18 +683,7 @@ void SongInfo::effect_button_clicked()
 
 void SongInfo::recording_button_clicked()
 {
-	Command* cmd;
-	if (m_song->is_transporting()) {
-		cmd = m_song->go();
-		m_recAction->setIcon(find_pixmap(":/redledinactive-16"));
-	} else {
-		cmd = m_song->go_and_record();
-		if (cmd) {
-			m_recAction->setIcon(find_pixmap(":/redled-16"));
-		}
-
-	}
-	
+	Command* cmd = m_song->go_and_record();
 	if (cmd) {
 		Command::process_command(cmd);
 	}
