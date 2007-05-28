@@ -407,10 +407,11 @@ void ResourcesManager::destroy_clip(AudioClip * clip)
 	ClipData* data = m_clips.value(clip->get_id());
 	if (!data) {
 		PERROR("Clip with id %lld not in database", clip->get_id());
+	} else {
+		m_clips.remove(clip->get_id());
+		delete data;
+		delete clip;
 	}
 	
-	m_clips.remove(clip->get_id());
-	delete data;
-	delete clip;
 }
 

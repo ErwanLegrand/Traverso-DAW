@@ -718,7 +718,7 @@ void AudioClip::finish_recording()
 	}
 
 	disconnect(m_song, SIGNAL(transferStopped()), this, SLOT(finish_recording()));
-	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(get_capture_bus()));
+	disconnect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(get_capture_bus()));
 }
 
 int AudioClip::get_channels( ) const
