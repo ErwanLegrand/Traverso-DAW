@@ -463,7 +463,7 @@ float SpectralMeterView::freq2xpos(float f)
 	}
 
 	float d = log10(f) - lower_freq_log;
-	return (float)margin_l + d * m_rect.width() / (upper_freq_log - lower_freq_log);
+	return (float)m_rect.x() + d * m_rect.width() / (upper_freq_log - lower_freq_log);
 }
 
 // determines the highest db value for frequency rang fl-fu. Does all the interpolation etc.
