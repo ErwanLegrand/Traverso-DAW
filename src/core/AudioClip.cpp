@@ -173,8 +173,6 @@ int AudioClip::set_state(const QDomNode& node)
 
 QDomNode AudioClip::get_state( QDomDocument doc )
 {
-	Q_ASSERT(m_readSource);
-	
 	QDomElement node = doc.createElement("Clip");
 	node.setAttribute("trackstart", trackStartFrame);
 	node.setAttribute("sourcestart", sourceStartFrame);
@@ -189,7 +187,7 @@ QDomNode AudioClip::get_state( QDomDocument doc )
 	node.setAttribute("sheet", m_songId );
 	node.setAttribute("locked", isLocked);
 
-	node.setAttribute("source", m_readSource->get_id());
+	node.setAttribute("source", m_readSourceId);
 
 	QDomNode curves = doc.createElement("Curves");
 
@@ -394,9 +392,7 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* buffer, uint channel)
 		return 0;
 	}
 
-	Q_ASSERT(m_readSource);
-
-	if (m_invalidReadSource || (channel >= m_readSource->get_channel_count())) {
+	if (m_invalidReadSource) {
 		return -1;
 	}
 
@@ -404,6 +400,11 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* buffer, uint channel)
 		return 0;
 	}
 	
+	Q_ASSERT(m_readSource);
+	
+	if (channel >= m_readSource->get_channel_count()) {
+		return -1;
+	}
 	
 	nframes_t mix_pos;
 	audio_sample_t* mixdown;
@@ -467,6 +468,10 @@ void AudioClip::process_capture( nframes_t nframes, uint channel )
 		}
 	}
 	
+	if (!m_captureBus) {
+		return;
+	}
+	
 	m_length += (nframes / writeSources.size());
 	
 	int index = 0;
@@ -476,7 +481,7 @@ void AudioClip::process_capture( nframes_t nframes, uint channel )
 	
 	WriteSource* source = writeSources.at(index);
 
-	nframes_t written = source->rb_write(captureBus->get_buffer(channel, nframes), nframes);
+	nframes_t written = source->rb_write(m_captureBus->get_buffer(channel, nframes), nframes);
 
 	if (written != nframes) {
 		printf("couldn't write nframes %d to recording buffer, only %d\n", nframes, written);
@@ -488,9 +493,10 @@ int AudioClip::init_recording( QByteArray name )
 	Q_ASSERT(m_song);
 	Q_ASSERT(m_track);
 	
-	captureBus = audiodevice().get_capture_bus(name);
+	m_captureBusName = name;
+	get_capture_bus();
 
-	if (!captureBus) {
+	if (!m_captureBus) {
 		info().critical(tr("Unable to Record to Track"));
 		info().warning(tr("AudioDevice doesn't have this Capture Bus: %1 (Track %2)").
 				arg(name.data()).arg(m_track->get_id()) );
@@ -498,7 +504,7 @@ int AudioClip::init_recording( QByteArray name )
 	}
 
 	int channelnumber = 0;
-	int channelcount = captureBus->get_channel_count();
+	int channelcount = m_captureBus->get_channel_count();
 	if (! (m_track->capture_left_channel() && m_track->capture_right_channel()) ) {
 		channelcount = 1;
 	}
@@ -510,7 +516,7 @@ int AudioClip::init_recording( QByteArray name )
 	resources_manager()->set_source_for_clip(this, rs);
 	QString sourceid = QString::number(rs->get_id());
 	
-	for (int chan=0; chan<captureBus->get_channel_count(); chan++) {
+	for (int chan=0; chan<m_captureBus->get_channel_count(); chan++) {
 		if (chan == 0) {
 			if ( ! m_track->capture_left_channel() ) {
 				continue;
@@ -542,7 +548,7 @@ int AudioClip::init_recording( QByteArray name )
 		spec->total_frames = 0;
 		spec->blocksize = audiodevice().get_buffer_size();
 		spec->name = m_name + "-" + sourceid;
-		spec->dataF = captureBus->get_buffer( chan, audiodevice().get_buffer_size());
+		spec->dataF = m_captureBus->get_buffer( chan, audiodevice().get_buffer_size());
 
 		WriteSource* ws = new WriteSource(spec, channelnumber, channelcount);
 		ws->set_process_peaks( true );
@@ -561,6 +567,7 @@ int AudioClip::init_recording( QByteArray name )
 	init_gain_envelope();
 	
 	connect(m_song, SIGNAL(transferStopped()), this, SLOT(finish_recording()));
+	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(get_capture_bus()));
 
 	return 1;
 }
@@ -635,8 +642,12 @@ void AudioClip::set_audio_source(ReadSource* rs)
 {
 	PENTER;
 	
-	int error = rs->get_error();
-	if (error < 0) {
+	if (!rs) {
+		m_invalidReadSource = true;
+		return;
+	}
+	
+	if (rs->get_error() < 0) {
 		m_invalidReadSource = true;
 	} else {
 		m_invalidReadSource = false;
@@ -707,6 +718,7 @@ void AudioClip::finish_recording()
 	}
 
 	disconnect(m_song, SIGNAL(transferStopped()), this, SLOT(finish_recording()));
+	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(get_capture_bus()));
 }
 
 int AudioClip::get_channels( ) const
@@ -1014,6 +1026,11 @@ bool AudioClip::has_song() const
 ReadSource * AudioClip::get_readsource() const
 {
 	return m_readSource;
+}
+
+void AudioClip::get_capture_bus()
+{
+	m_captureBus = audiodevice().get_capture_bus(m_captureBusName);
 }
 
 // eof

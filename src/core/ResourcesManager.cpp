@@ -285,10 +285,7 @@ AudioClip* ResourcesManager::get_clip(qint64 id)
 	}
 	
 	ReadSource* source = get_readsource(data->clip->get_readsource_id());
-	
-	if (source) {
-		clip->set_audio_source(source);
-	}
+	clip->set_audio_source(source);
 	
 	data->inUse = true;
 	
@@ -403,5 +400,17 @@ ResourcesManager::ClipData::ClipData()
 	inUse = false;
 	isCopy = false;
 	removed = false;
+}
+
+void ResourcesManager::destroy_clip(AudioClip * clip)
+{
+	ClipData* data = m_clips.value(clip->get_id());
+	if (!data) {
+		PERROR("Clip with id %lld not in database", clip->get_id());
+	}
+	
+	m_clips.remove(clip->get_id());
+	delete data;
+	delete clip;
 }
 

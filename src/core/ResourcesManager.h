@@ -58,6 +58,7 @@ public:
 	void mark_clip_removed(AudioClip* clip);
 	void mark_clip_added(AudioClip* clip);
 	void set_source_for_clip(AudioClip* clip, ReadSource* source);
+	void destroy_clip(AudioClip* clip);
 	
 	bool is_clip_in_use(qint64) const;
 	bool is_source_in_use(qint64 id) const;

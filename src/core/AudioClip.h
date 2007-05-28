@@ -142,13 +142,14 @@ private:
 	ReadSource*		m_readSource;
 	QList<WriteSource* >	writeSources;
 	QList<FadeCurve* >	m_fades;
-	AudioBus*		captureBus;
+	AudioBus*		m_captureBus;
 	FadeCurve*		fadeIn;
 	FadeCurve*		fadeOut;
 	Curve*			m_gainEnvelope;
 	QDomNode		m_domNode;
 	
 	QString 		m_name;
+	QByteArray		m_captureBusName;
 	nframes_t 		trackStartFrame;
 	nframes_t 		trackEndFrame;
 	nframes_t 		sourceEndFrame;
@@ -218,6 +219,7 @@ public slots:
 private slots:
 	void private_add_fade(FadeCurve* fade);
 	void private_remove_fade(FadeCurve* fade);
+	void get_capture_bus();
 
 };
 
