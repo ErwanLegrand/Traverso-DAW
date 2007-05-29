@@ -361,6 +361,9 @@ void Interface::create_menus( )
 	menu->addSeparator();
 	
 	action = menu->addAction(tr("&Quit"));
+	list.clear();
+	list.append(QKeySequence("CTRL+Q"));
+	action->setShortcuts(list);
 	action->setIcon(QIcon(find_pixmap(":/exit-16")));
 	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(exit()));
 	
