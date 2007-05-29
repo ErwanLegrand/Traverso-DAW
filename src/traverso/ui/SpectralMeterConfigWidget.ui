@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>377</width>
     <height>364</height>
    </rect>
   </property>
@@ -13,20 +13,11 @@
    <string>FFT-Spectrum Configuration</string>
   </property>
   <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
    <property name="spacing" >
     <number>6</number>
-   </property>
-   <property name="leftMargin" >
-    <number>9</number>
-   </property>
-   <property name="topMargin" >
-    <number>9</number>
-   </property>
-   <property name="rightMargin" >
-    <number>9</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>9</number>
    </property>
    <item>
     <widget class="QGroupBox" name="groupBox" >
@@ -34,22 +25,10 @@
       <string>Frequency Range</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="leftMargin" >
+      <property name="margin" >
        <number>9</number>
       </property>
-      <property name="topMargin" >
-       <number>9</number>
-      </property>
-      <property name="rightMargin" >
-       <number>9</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>9</number>
-      </property>
-      <property name="horizontalSpacing" >
-       <number>6</number>
-      </property>
-      <property name="verticalSpacing" >
+      <property name="spacing" >
        <number>6</number>
       </property>
       <item row="5" column="0" colspan="2" >
@@ -61,11 +40,11 @@
       </item>
       <item row="4" column="1" >
        <widget class="QSpinBox" name="spinBoxNumBands" >
-        <property name="minimum" >
-         <number>4</number>
-        </property>
         <property name="maximum" >
          <number>2048</number>
+        </property>
+        <property name="minimum" >
+         <number>4</number>
         </property>
         <property name="value" >
          <number>16</number>
@@ -81,11 +60,11 @@
       </item>
       <item row="3" column="1" >
        <widget class="QSpinBox" name="spinBoxLowerDb" >
-        <property name="minimum" >
-         <number>-140</number>
-        </property>
         <property name="maximum" >
          <number>0</number>
+        </property>
+        <property name="minimum" >
+         <number>-140</number>
         </property>
         <property name="value" >
          <number>-140</number>
@@ -101,11 +80,11 @@
       </item>
       <item row="2" column="1" >
        <widget class="QSpinBox" name="spinBoxUpperDb" >
-        <property name="minimum" >
-         <number>-24</number>
-        </property>
         <property name="maximum" >
          <number>12</number>
+        </property>
+        <property name="minimum" >
+         <number>-24</number>
         </property>
        </widget>
       </item>
@@ -121,11 +100,11 @@
         <property name="suffix" >
          <string> Hz</string>
         </property>
-        <property name="minimum" >
-         <number>1</number>
-        </property>
         <property name="maximum" >
          <number>20000</number>
+        </property>
+        <property name="minimum" >
+         <number>1</number>
         </property>
         <property name="value" >
          <number>20</number>
@@ -144,11 +123,11 @@
         <property name="suffix" >
          <string> Hz</string>
         </property>
-        <property name="minimum" >
-         <number>100</number>
-        </property>
         <property name="maximum" >
          <number>96000</number>
+        </property>
+        <property name="minimum" >
+         <number>100</number>
         </property>
         <property name="value" >
          <number>20000</number>
@@ -171,22 +150,10 @@
       <string>Advanced FFT Options</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="leftMargin" >
+      <property name="margin" >
        <number>9</number>
       </property>
-      <property name="topMargin" >
-       <number>9</number>
-      </property>
-      <property name="rightMargin" >
-       <number>9</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>9</number>
-      </property>
-      <property name="horizontalSpacing" >
-       <number>6</number>
-      </property>
-      <property name="verticalSpacing" >
+      <property name="spacing" >
        <number>6</number>
       </property>
       <item row="0" column="0" >
@@ -269,20 +236,11 @@
    </item>
    <item>
     <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
      <property name="spacing" >
       <number>6</number>
-     </property>
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
      </property>
      <item>
       <widget class="QPushButton" name="buttonAdvanced" >
