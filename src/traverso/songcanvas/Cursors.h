@@ -61,7 +61,12 @@ private:
         bool 		m_follow;
 	bool		m_followDisabled;
         PlayHeadMode	m_mode;
-        int 		m_animationScrollPosition;
+        int 		m_animationScrollStartPos;
+	int		m_animFrameRange;
+	int		m_totalAnimFrames;
+	int		m_totalAnimValue;
+	
+	void calculate_total_anim_frames();
 
 private slots:
 	void check_config();

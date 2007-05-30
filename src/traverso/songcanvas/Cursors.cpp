@@ -32,6 +32,8 @@
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
+#define ANIME_DURATION 1000
+
 PlayHead::PlayHead(SongView* sv, Song* song, ClipsViewPort* vp)
 	: ViewItem(0, song)
 	, m_song(song)
@@ -42,7 +44,7 @@ PlayHead::PlayHead(SongView* sv, Song* song, ClipsViewPort* vp)
 	connect(&(config()), SIGNAL(configChanged()), this, SLOT(check_config()));
 	
 	// TODO: Make duration scale with scalefactor? (nonlinerly?)
-	m_animation.setDuration(800);
+	m_animation.setDuration(ANIME_DURATION);
 	m_animation.setCurveShape(QTimeLine::SineCurve);
 	
 	connect(m_song, SIGNAL(transferStarted()), this, SLOT(play_start()));
@@ -152,15 +154,18 @@ void PlayHead::update_position()
 		// If the playhead is _not_ in the viewports range, center it in the middle!
 		horizontalScrollbar->setValue((int) ((int)scenePos().x() - (0.5 * vpWidth)) );
 	
-	} else if (vppoint.x() > ( vpWidth * 0.82) ) {
+	} else if (vppoint.x() > ( vpWidth * 0.85) ) {
 		
 		// If the playhead is in the viewports range, and is nearing the end
 		// either start the animated flip page, or flip the page and place the 
 		// playhead cursor ~ 1/10 from the left viewport border
 		if (m_mode == ANIMATED_FLIP_PAGE) {
 			if (m_animation.state() != QTimeLine::Running) {
-				m_animation.setFrameRange(0, (int)(vpWidth * 0.75));
-				m_animationScrollPosition = horizontalScrollbar->value();
+				m_animFrameRange = (int)(vpWidth * 0.7);
+				m_totalAnimValue = 0;
+				m_animation.setFrameRange(0, m_animFrameRange);
+				calculate_total_anim_frames();
+				m_animationScrollStartPos = horizontalScrollbar->value();
 				//during the animation, we stop the play update timer
 				// to avoid unnecessary update/paint events
 				play_stop();
@@ -178,21 +183,27 @@ void PlayHead::set_animation_value(int value)
 	QPointF newPos(m_song->get_transport_frame() / m_sv->scalefactor, 0);
 	// calculate the motion distance of the playhead.
 	qreal deltaX = newPos.x() - pos().x();
-
-	// 16 seems to be the division factor with a QTimeLine running for
-	// 1300 ms, and 3/4 of the viewport width. Don't ask me why :-) 
-	// Due the playhead moves as well during the animation, we have to 
-	// compensate for this, by adding it's delta x to the animation 
-	// 'scroll' position
-	//
-	// And with the duration changed to 800, 9 is a good division factor
-	m_animationScrollPosition += (int)(value/9 + deltaX);
+	
+	// calculate the animation x diff.
+	int diff = float(int(0.5 + ((float)(value) / m_totalAnimFrames) * m_animFrameRange));
+	m_totalAnimValue += (diff + deltaX);
+	int newXPos = m_animationScrollStartPos + m_totalAnimValue;
 	
 	if (newPos != pos()) {
 		setPos(newPos);
 	}
 	
-	m_vp->horizontalScrollBar()->setValue(m_animationScrollPosition);
+	m_vp->horizontalScrollBar()->setValue(newXPos);
+}
+
+void PlayHead::calculate_total_anim_frames()
+{
+	int count = (ANIME_DURATION / 40) / 2;
+	m_totalAnimFrames = 0;
+	for (int i=0; i<count; ++i) {
+		m_totalAnimFrames += m_animation.frameForTime(i*40);
+	}
+	m_totalAnimFrames *= 2;
 }
 
 
