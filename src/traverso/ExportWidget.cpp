@@ -739,6 +739,20 @@ void ExportWidget::read_standard_output()
 	}
 		
 		
+	if (sout.contains("Turning BURN-Proof on")) {
+		update_cdburn_status(tr("Turning BURN-Proof on"), NORMAL_MESSAGE);
+		return;
+	}
+	
+	if (sout.contains("Writing track")) {
+		QStringList strlist = sout.split(QRegExp("\\s+"));
+		if (strlist.size() > 3) {
+			QString text = strlist.at(0) + " " + strlist.at(1) + " " + strlist.at(2);
+			update_cdburn_status(text, NORMAL_MESSAGE);
+		}
+		return;
+	}	
+	
 	if (sout.contains("%") && sout.contains("(") && sout.contains(")")) {
 		QStringList strlist = sout.split(QRegExp("\\s+"));
 		if (strlist.size() > 7) {
@@ -756,15 +770,6 @@ void ExportWidget::read_standard_output()
 		}
 		return;
 	}
-	
-	if (sout.contains("Writing track")) {
-		QStringList strlist = sout.split(QRegExp("\\s+"));
-		if (strlist.size() > 3) {
-			QString text = strlist.at(0) + " " + strlist.at(1) + " " + strlist.at(2);
-			update_cdburn_status(text, NORMAL_MESSAGE);
-		}
-		return;
-	}	
 	
 	// Write out only the unhandled cdrdao lines
 	printf("CD Writing: %s\n", QS_C(sout.trimmed()));
