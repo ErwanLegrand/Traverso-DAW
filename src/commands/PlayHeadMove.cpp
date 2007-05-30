@@ -95,21 +95,23 @@ int PlayHeadMove::jog()
 		return 0;
 	}
 	
-	m_newXPos = x;
-	m_newYPos = y;
-	
-	m_cursor->setPos(x, 0);
-	
-	nframes_t newpos = (nframes_t) (x * m_sv->scalefactor);
-	if (m_resync && m_song->is_transporting()) {
-		m_song->set_transport_pos(newpos);
+	if (x != m_newXPos) {
+		m_cursor->setPos(x, 0);
+		nframes_t newpos = (nframes_t) (x * m_sv->scalefactor);
+		if (m_resync && m_song->is_transporting()) {
+			m_song->set_transport_pos(newpos);
+		}
+		
+		m_sv->update_shuttle_factor();
+		cpointer().get_viewport()->set_holdcursor_text(frame_to_text(newpos, m_song->get_rate(), m_sv->scalefactor));
 	}
 	
-	m_sv->update_shuttle_factor();
-	cpointer().get_viewport()->set_holdcursor_text(frame_to_text(newpos, m_song->get_rate(), m_sv->scalefactor));
 	// Hmm, the alignment of the holdcursor isn't in the center, so we have to 
 	// substract half the width of it to make it appear centered... :-(
 	cpointer().get_viewport()->set_holdcursor_pos(QPoint(x - 16, y - 16));
+	
+	m_newXPos = x;
+	m_newYPos = y;
 	
 	return 1;
 }
