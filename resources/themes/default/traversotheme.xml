@@ -55,6 +55,7 @@
 		
 		<color name="AudioClip:wavemacroview:outline" red="80" green="80" blue="120" alpha="255" />
 		<color name="AudioClip:wavemacroview:outline:curvemode" red="135" green="130" blue="255" alpha="255" />
+		<color name="AudioClip:wavemacroview:outline:muted" red="90" green="90" blue="90" alpha="255" />
 		<color name="AudioClip:wavemacroview:brush" red="145" green="145" blue="195" alpha="255" />
 		<color name="AudioClip:wavemacroview:brush:muted" red="185" green="185" blue="195" alpha="255" />
 		<color name="AudioClip:wavemacroview:brush:curvemode" red="232" green="230" blue="255" alpha="255" />

@@ -453,6 +453,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			}
 			if (m_clip->is_muted()) {
 				p->setBrush(themer()->get_color("AudioClip:wavemacroview:brush:muted"));
+				p->setPen(themer()->get_color("AudioClip:wavemacroview:outline:muted"));
 			}
 				
 			
