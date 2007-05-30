@@ -82,6 +82,7 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	// we call curveviews calculate_bounding_rect() function!
 	curveView->set_start_offset(m_clip->get_source_start_frame());
 	curveView->calculate_bounding_rect();
+	connect(curveView, SIGNAL(curveModified()), m_sv, SLOT(stop_follow_play_head()));
 	
 	connect(m_clip, SIGNAL(muteChanged()), this, SLOT(repaint()));
 	connect(m_clip, SIGNAL(stateChanged()), this, SLOT(repaint()));

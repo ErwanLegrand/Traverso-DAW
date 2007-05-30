@@ -468,6 +468,8 @@ Command* CurveView::add_node()
 {
 	PENTER;
 	QPointF point = mapFromScene(cpointer().scene_pos());
+
+	emit curveModified();
 	
 	CurveNode* node = new CurveNode(m_curve, point.x() * m_sv->scalefactor + m_startoffset,
 					 (m_boundingRect.height() - point.y()) / m_boundingRect.height());
@@ -480,6 +482,8 @@ Command* CurveView::remove_node()
 	PENTER;
 
 	QPointF origPos(mapFromScene(QPoint(cpointer().on_first_input_event_scene_x(), cpointer().on_first_input_event_scene_y())));
+
+	emit curveModified();
 
 	update_softselected_node(QPoint((int)origPos.x(), (int)origPos.y()), true);
 
@@ -505,7 +509,9 @@ Command* CurveView::drag_node()
 		QList<CurveNode* >* nodeList = m_curve->get_nodes();
 		CurveNode* node = m_blinkingNode->get_curve_node();
 		int index = nodeList->indexOf(node);
-
+		
+		emit curveModified();
+		
 		if (index > 0) {
 			min = nodeList->at(index-1)->get_when() + 1;
 		}

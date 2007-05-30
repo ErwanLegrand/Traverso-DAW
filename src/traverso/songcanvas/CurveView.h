@@ -81,8 +81,10 @@ private slots:
 	void remove_curvenode_view(CurveNode* node);
 	void node_moved();
 	void set_view_mode();
-	
 	void update_blink_color();
+	
+signals :
+	void curveModified();
 };
 
 
