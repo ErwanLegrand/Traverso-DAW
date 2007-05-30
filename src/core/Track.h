@@ -37,6 +37,7 @@ class AudioClip;
 class Song;
 class PluginChain;
 class Plugin;
+class GainEnvelope;
 
 
 class Track : public ContextItem
@@ -78,7 +79,7 @@ public :
 	int get_total_clips();
 	QDomNode get_state(QDomDocument doc, bool istemplate=false);
 	AudioClipList get_cliplist() const {return audioClipList;}
-	PluginChain* get_plugin_chain() const {return pluginChain;}
+	PluginChain* get_plugin_chain() const {return m_pluginChain;}
 	int get_sort_index() const;
 	
 
@@ -118,9 +119,9 @@ public :
 private :
 	Song*		m_song;
 	AudioClipList 	audioClipList;
-	PluginChain*	pluginChain;
+	PluginChain*	m_pluginChain;
 
-	float 	m_gain;
+	GainEnvelope* m_fader;
 	float 	m_pan;
 	int numtakes;
 	QByteArray busIn;

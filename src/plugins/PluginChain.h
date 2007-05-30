@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QList>
 #include <QDomNode>
 #include "Plugin.h"
+#include "GainEnvelope.h"
 
 class Song;
 class AudioBus;
@@ -36,6 +37,7 @@ class PluginChain : public ContextItem
 	Q_OBJECT
 	
 public:
+	PluginChain(ContextItem* parent);
 	PluginChain(ContextItem* parent, Song* song);
 	~PluginChain();
 	
@@ -44,12 +46,18 @@ public:
 	
 	Command* add_plugin(Plugin* plugin, bool historable=true);
 	Command* remove_plugin(Plugin* plugin, bool historable=true);
-	void process(AudioBus* bus, unsigned long nframes);
+	void process_pre_fader(AudioBus* bus, unsigned long nframes);
+	void process_post_fader(AudioBus* bus, unsigned long nframes);
+	void process_fader(audio_sample_t* buffer, nframes_t pos, nframes_t nframes) {m_fader->process_gain(buffer, pos, nframes);}
+	
+	void set_song(Song* song);
 	
 	QList<Plugin* > get_plugin_list() {return m_pluginList;}
+	GainEnvelope* get_fader() const {return m_fader;}
 	
 private:
 	QList<Plugin* >	m_pluginList;
+	GainEnvelope*	m_fader;
 	Song*		m_song;
 	
 signals:
@@ -63,10 +71,22 @@ private slots:
 
 };
 
-inline void PluginChain::process(AudioBus * bus, unsigned long nframes)
+inline void PluginChain::process_pre_fader(AudioBus * bus, unsigned long nframes)
+{
+	return;
+	for (int i=0; i<m_pluginList.size(); ++i) {
+		Plugin* plugin = m_pluginList.at(i);
+		if (plugin == m_fader) return;
+		plugin->process(bus, nframes);
+	}
+}
+
+inline void PluginChain::process_post_fader(AudioBus * bus, unsigned long nframes)
 {
 	for (int i=0; i<m_pluginList.size(); ++i) {
-		m_pluginList.at(i)->process(bus, nframes);
+		Plugin* plugin = m_pluginList.at(i);
+// 		if (plugin == m_fader) continue;
+		plugin->process(bus, nframes);
 	}
 }
 

@@ -26,9 +26,7 @@
 #include "ViewItem.h"
 #include <QString>
 
-#if defined (LV2_SUPPORT)
-class LV2PluginPropertiesDialog;
-#endif
+class PluginPropertiesDialog;
 
 class TrackView;
 class PluginChainView;
@@ -59,9 +57,7 @@ private:
 	int		m_textwidth;
         QString		m_name;
 	
-#if defined (LV2_SUPPORT)
-        LV2PluginPropertiesDialog*	propertiesDialog;
-#endif
+        PluginPropertiesDialog* m_propertiesDialog;
 
 public slots:
 	Command* edit_properties();

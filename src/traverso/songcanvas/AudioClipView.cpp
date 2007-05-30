@@ -37,6 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <FadeCurve.h>
 #include <Curve.h>
 #include <Interface.h>
+#include "PluginChain.h"
 
 #include <QFileDialog>
 
@@ -76,7 +77,7 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 		add_new_fadeview(curve);
 	}
 	
-	curveView = new CurveView(m_sv, this, m_clip->get_gain_envelope());
+	curveView = new CurveView(m_sv, this, m_clip->get_plugin_chain()->get_fader()->get_curve());
 	// CurveViews don't 'get' their start offset, it's only a property for AudioClips..
 	// So to be sure the CurveNodeViews start offset get updated as well,
 	// we call curveviews calculate_bounding_rect() function!
@@ -378,7 +379,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		}
 	
 		
-		float scaleFactor = ( (float) height * 0.90 / (Peak::MAX_DB_VALUE * 2)) * m_clip->get_gain() * m_clip->get_norm_factor();
+		float scaleFactor = ( (float) height * 0.90 / (Peak::MAX_DB_VALUE * 2)) * m_clip->get_gain();
 		float ytrans;
 		
 		if (m_mergedView) {
@@ -480,7 +481,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				}
 			
 			} else {
-				scaleFactor =  (float) height * 0.95 * m_clip->get_gain() * m_clip->get_norm_factor() / Peak::MAX_DB_VALUE;
+				scaleFactor =  (float) height * 0.95 * m_clip->get_gain() / Peak::MAX_DB_VALUE;
 				ytrans = height + (chan * height);
 		
 				if (m_mergedView) {
@@ -525,7 +526,7 @@ void AudioClipView::draw_clipinfo_area(QPainter* p, int xstart, int pixelcount)
 void AudioClipView::create_clipinfo_string()
 {
 	PENTER;
-	QString sclipGain = "Gain: "+ coefficient_to_dbstring(m_clip->get_gain() * m_clip->get_norm_factor());
+	QString sclipGain = "Gain: "+ coefficient_to_dbstring(m_clip->get_gain());
 	m_clipinfoString = m_clip->get_name()  + "    " + sclipGain + "   " + QString::number(m_clip->get_rate()) +  " Hz";
 }
 

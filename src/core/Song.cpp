@@ -70,7 +70,6 @@ Song::Song(Project* project)
 	PENTERCONS;
 	title = tr("Untitled");
 	m_id = create_id();
-	m_gain = 1.0f;
 	artists = tr("No artists name set");
 	m_hzoom = config().get_property("Song", "hzoomLevel", 14).toInt();
 
@@ -84,7 +83,6 @@ Song::Song(Project* project, int numtracks)
 	PENTERCONS;
 	title = tr("Untitled");
 	m_id = create_id();
-	m_gain = 1.0f;
 	artists = tr("No artists name set");
 	m_hzoom = config().get_property("Song", "hzoomLevel", 14).toInt();
 
@@ -166,6 +164,8 @@ void Song::init()
 	m_sbx = m_sby = 0;
 	
 	m_pluginChain = new PluginChain(this, this);
+	m_fader = m_pluginChain->get_fader();
+	m_fader->set_gain(0.5);
 	m_timeline = new TimeLine(this);
 	
 	m_audiodeviceClient = new Client("song_" + QByteArray::number(get_id()));
@@ -234,7 +234,6 @@ QDomNode Song::get_state(QDomDocument doc, bool istemplate)
 	properties.setAttribute("hzoom", m_hzoom);
 	properties.setAttribute("sbx", m_sbx);
 	properties.setAttribute("sby", m_sby);
-	properties.setAttribute("mastergain", m_gain);
 	properties.setAttribute("snapping", m_isSnapOn);
 	properties.setAttribute("mode", m_mode);
 	songNode.appendChild(properties);
@@ -251,9 +250,9 @@ QDomNode Song::get_state(QDomDocument doc, bool istemplate)
 
 	songNode.appendChild(tracksNode);
 
-	QDomNode m_pluginChainNode = doc.createElement("PluginChain");
-	m_pluginChainNode.appendChild(m_pluginChain->get_state(doc));
-	songNode.appendChild(m_pluginChainNode);
+	QDomNode pluginChainNode = doc.createElement("PluginChain");
+	pluginChainNode.appendChild(m_pluginChain->get_state(doc));
+	songNode.appendChild(pluginChainNode);
 
 
 	return songNode;
@@ -541,7 +540,7 @@ void Song::set_gain(float gain)
 	if (gain > 2.0)
 		gain = 2.0;
 
-	m_gain = gain;
+	m_fader->set_gain(gain);
 
 	emit masterGainChanged();
 }
@@ -869,11 +868,10 @@ int Song::process( nframes_t nframes )
 
 	// Mix the result into the AudioDevice "physical" buffers
 	if (m_playBackBus) {
-		// Process all the plugins for this Song
-		m_pluginChain->process(m_masterOut, nframes);
+		Mixer::mix_buffers_with_gain(m_playBackBus->get_buffer(0, nframes), m_masterOut->get_buffer(0, nframes), nframes, get_gain());
+		Mixer::mix_buffers_with_gain(m_playBackBus->get_buffer(1, nframes), m_masterOut->get_buffer(1, nframes), nframes, get_gain());
 		
-		Mixer::mix_buffers_with_gain(m_playBackBus->get_buffer(0, nframes), m_masterOut->get_buffer(0, nframes), nframes, m_gain);
-		Mixer::mix_buffers_with_gain(m_playBackBus->get_buffer(1, nframes), m_masterOut->get_buffer(1, nframes), nframes, m_gain);
+		m_pluginChain->process_post_fader(m_masterOut, nframes);
 	}
 
 	
@@ -891,8 +889,8 @@ int Song::process_export( nframes_t nframes )
 		m_tracks.at(i)->process(nframes);
 	}
 
-	Mixer::apply_gain_to_buffer(m_masterOut->get_buffer(0, nframes), nframes, m_gain);
-	Mixer::apply_gain_to_buffer(m_masterOut->get_buffer(1, nframes), nframes, m_gain);
+	Mixer::apply_gain_to_buffer(m_masterOut->get_buffer(0, nframes), nframes, get_gain());
+	Mixer::apply_gain_to_buffer(m_masterOut->get_buffer(1, nframes), nframes, get_gain());
 
 	// update the transportFrame
 	transportFrame += nframes;
@@ -1056,7 +1054,7 @@ nframes_t Song::get_first_visible_frame( ) const
 
 float Song::get_gain() const
 {
-	return m_gain;
+	return m_fader->get_gain();
 }
 
 QList<Track* > Song::get_tracks( ) const

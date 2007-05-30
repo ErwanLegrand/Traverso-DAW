@@ -41,6 +41,7 @@ class SnapList;
 class Plugin;
 class TimeLine;
 class Snappable;
+class GainEnvelope;
 
 struct ExportSpecification;
 
@@ -168,7 +169,6 @@ private:
 
 	
 	nframes_t 	firstVisibleFrame;
-	float 		m_gain;
 	QString 	artists;
 	QString 	title;
 	int		m_mode;
@@ -185,6 +185,7 @@ private:
 	bool		m_recording;
 	SnapList*	snaplist;
 	Snappable*	workSnap;
+	GainEnvelope*	m_fader;
 	
 	void init();
 

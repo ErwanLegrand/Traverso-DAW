@@ -33,22 +33,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 
-LV2Plugin::LV2Plugin(bool slave)
-	: Plugin()
+LV2Plugin::LV2Plugin(Song* song, bool slave)
+	: Plugin(song)
 	, m_instance(0)
 	, m_slv2plugin(0)
-	, m_slave(0)
 {
 	m_isSlave = slave;
 }
 
 
-LV2Plugin::LV2Plugin(char* pluginUri)
-	: Plugin()
+LV2Plugin::LV2Plugin(Song* song, char* pluginUri)
+	: Plugin(song)
 	, m_pluginUri((char*) pluginUri)
 	, m_instance(0)
 	, m_slv2plugin(0)
-	, m_slave(0)
 	, m_isSlave(false)
 {
 }
@@ -66,30 +64,10 @@ LV2Plugin::~LV2Plugin()
 
 QDomNode LV2Plugin::get_state( QDomDocument doc )
 {
-	QDomElement node = doc.createElement("Plugin");
+	QDomElement node = Plugin::get_state(doc).toElement();
+	
 	node.setAttribute("type", "LV2Plugin");
 	node.setAttribute("uri", m_pluginUri);
-	node.setAttribute("bypassed", is_bypassed());
-	
-	QDomNode controlPortsNode = doc.createElement("ControlPorts");
-	
-	foreach(LV2ControlPort* port, m_controlPorts) {
-		controlPortsNode.appendChild(port->get_state(doc));
-	}
-	
-	QDomNode audioInputPortsNode = doc.createElement("AudioInputPorts");
-	foreach(AudioInputPort* port, m_audioInputPorts) {
-		audioInputPortsNode.appendChild(port->get_state(doc));
-	}
-	
-	QDomNode audioOutputPortsNode = doc.createElement("AudioOutputPorts");
-	foreach(AudioOutputPort* port, m_audioOutputPorts) {
-		audioOutputPortsNode.appendChild(port->get_state(doc));
-	}
-	
-	node.appendChild(controlPortsNode);
-	node.appendChild(audioInputPortsNode);
-	node.appendChild(audioOutputPortsNode);
 	
 	return node;
 }
@@ -97,10 +75,11 @@ QDomNode LV2Plugin::get_state( QDomDocument doc )
 
 int LV2Plugin::set_state(const QDomNode & node )
 {
+	Plugin::set_state(node);
+	
 	QDomElement e = node.toElement();
 	
 	m_pluginUri = e.attribute( "uri", "");
-	m_bypass = e.attribute( "bypassed", "0").toInt();
 	
 	if (create_instance() < 0) {
 		return -1;
@@ -168,10 +147,10 @@ int LV2Plugin::init()
 	}
 
 	/* Create ports */
-	m_portcount  = slv2_plugin_get_num_ports(m_slv2plugin);
-	PMESG("numports is %d", (int) m_portcount);
+	int portcount  = slv2_plugin_get_num_ports(m_slv2plugin);
+	PMESG("numports is %d", portcount);
 
-	for (int i=0; i < m_portcount; ++i) {
+	for (int i=0; i < portcount; ++i) {
 		LV2ControlPort* port = create_port(i);
 		if (port) {
 			m_controlPorts.append(port);
@@ -318,19 +297,18 @@ QString LV2Plugin::get_name( )
 
 
 LV2ControlPort::LV2ControlPort(LV2Plugin* plugin, int index, float value)
-	: PluginPort(plugin, index)
+	: PluginControlPort(plugin, index, value)
 	, m_lv2plugin(plugin)
-	, m_controlValue(value)
 {
-	slv2_instance_connect_port(m_lv2plugin->get_instance(), m_index, &m_controlValue);
+	slv2_instance_connect_port(m_lv2plugin->get_instance(), m_index, &m_value);
 	init();
 }
 
 LV2ControlPort::LV2ControlPort( LV2Plugin * plugin, const QDomNode node )
-	: PluginPort(plugin), m_lv2plugin(plugin)
+	: PluginControlPort(plugin, node)
+	, m_lv2plugin(plugin)
 {
-	set_state(node);
-	slv2_instance_connect_port(m_lv2plugin->get_instance(), m_index, &m_controlValue);
+	slv2_instance_connect_port(m_lv2plugin->get_instance(), m_index, &m_value);
 	init();
 }
 
@@ -347,21 +325,7 @@ void LV2ControlPort::init()
 
 QDomNode LV2ControlPort::get_state( QDomDocument doc )
 {
-	
-	QDomElement node = PluginPort::get_state(doc).toElement();
-	node.setAttribute("value", m_controlValue);
-	
-	return node;
-}
-
-
-int LV2ControlPort::set_state( const QDomNode & node )
-{
-	QDomElement e = node.toElement();
-	m_index = e.attribute( "index", "").toInt();
-	m_controlValue = e.attribute( "value", "").toFloat();
-	
-	return 1;
+	return PluginControlPort::get_state(doc);
 }
 
 
@@ -408,27 +372,11 @@ QStringList LV2ControlPort::get_hints()
 	return qslist;
 }
 
-void LV2ControlPort::set_control_value(float value)
-{
-	m_controlValue = value;
-}
-
-
-LV2ControlPort * LV2Plugin::get_control_port_by_index(int index) const
-{
-	foreach(LV2ControlPort* port, m_controlPorts) {
-		if (port->get_index() == index) {
-			return port;
-		}
-	}
-	return 0;
-}
-
 LV2Plugin * LV2Plugin::create_copy()
 {
 	QDomDocument doc("LV2Plugin");
 	QDomNode pluginState = get_state(doc);
-	LV2Plugin* plug = new LV2Plugin(true);
+	LV2Plugin* plug = new LV2Plugin(m_song, true);
 	plug->set_state(pluginState);
 	return plug;
 }

@@ -48,6 +48,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Utils.h"
 #include "Information.h"
 #include <Config.h>
+#include "PluginChain.h"
+#include "GainEnvelope.h"
 
 #include <commands.h>
 
@@ -62,7 +64,6 @@ AudioClip::AudioClip(const QString& name)
 	, m_name(name)
 {
 	PENTERCONS;
-	m_gain = m_normfactor = 1.0;
 	m_length = sourceStartFrame = sourceEndFrame = trackEndFrame = 0;
 	isMuted=false;
 	m_id = create_id();
@@ -114,19 +115,22 @@ void AudioClip::init()
 	fadeIn = 0;
 	fadeOut = 0;
 	m_refcount = 0;
-	m_gainEnvelope = 0;
+	m_pluginChain = new PluginChain(this);
+	m_fader = m_pluginChain->get_fader();
+	m_fader->automate_port(0, true);
+	m_fader->set_gain(1.0);
 }
 
 int AudioClip::set_state(const QDomNode& node)
 {
 	PENTER;
 	
+	Q_ASSERT(m_song);
+	
 	QDomElement e = node.toElement();
 
 	isTake = e.attribute( "take", "").toInt();
 	set_gain( e.attribute( "gain", "" ).toFloat() );
-	m_normfactor =  e.attribute( "normfactor", "1.0" ).toFloat();
-
 	isLocked = e.attribute( "locked", "0" ).toInt();
 
 	if (e.attribute("selected", "0").toInt() == 1) {
@@ -142,32 +146,27 @@ int AudioClip::set_state(const QDomNode& node)
 	sourceEndFrame = sourceStartFrame + m_length;
 	set_track_start_frame( e.attribute( "trackstart", "" ).toUInt());
 	
-	QDomElement curvesNode = node.firstChildElement("Curves");
-	if (!curvesNode.isNull()) {
-		QDomElement fadeInNode = curvesNode.firstChildElement("FadeIn");
-		if (!fadeInNode.isNull()) {
-			fadeIn = new FadeCurve(this, m_song, "FadeIn");
-			fadeIn->set_state( fadeInNode );
-			fadeIn->set_history_stack(get_history_stack());
-			private_add_fade(fadeIn);
-		}
-
-		QDomElement fadeOutNode = curvesNode.firstChildElement("FadeOut");
-		if (!fadeOutNode.isNull()) {
-			fadeOut = new FadeCurve(this, m_song, "FadeOut");
-			fadeOut->set_state( fadeOutNode );
-			fadeOut->set_history_stack(get_history_stack());
-			private_add_fade(fadeOut);
-		}
-		
-		QDomElement m_gainEnvelopeNode = curvesNode.firstChildElement("GainCurve");
-		if (!m_gainEnvelopeNode.isNull()) {
-			m_gainEnvelope->set_state( m_gainEnvelopeNode );
-		} else {
-			init_gain_envelope();
-		}
+	QDomElement fadeInNode = node.firstChildElement("FadeIn");
+	if (!fadeInNode.isNull()) {
+		fadeIn = new FadeCurve(this, m_song, "FadeIn");
+		fadeIn->set_state( fadeInNode );
+		fadeIn->set_history_stack(get_history_stack());
+		private_add_fade(fadeIn);
 	}
 
+	QDomElement fadeOutNode = node.firstChildElement("FadeOut");
+	if (!fadeOutNode.isNull()) {
+		fadeOut = new FadeCurve(this, m_song, "FadeOut");
+		fadeOut->set_state( fadeOutNode );
+		fadeOut->set_history_stack(get_history_stack());
+		private_add_fade(fadeOut);
+	}
+
+	QDomNode pluginChainNode = node.firstChildElement("PluginChain");
+	if (!pluginChainNode.isNull()) {
+		m_pluginChain->set_state(pluginChainNode);
+	}
+	
 	return 1;
 }
 
@@ -177,8 +176,6 @@ QDomNode AudioClip::get_state( QDomDocument doc )
 	node.setAttribute("trackstart", trackStartFrame);
 	node.setAttribute("sourcestart", sourceStartFrame);
 	node.setAttribute("length", m_length);
-	node.setAttribute("gain", m_gain);
-	node.setAttribute("normfactor", m_normfactor);
 	node.setAttribute("mute", isMuted);
 	node.setAttribute("take", isTake);
 	node.setAttribute("clipname", m_name );
@@ -189,18 +186,17 @@ QDomNode AudioClip::get_state( QDomDocument doc )
 
 	node.setAttribute("source", m_readSourceId);
 
-	QDomNode curves = doc.createElement("Curves");
-
 	if (fadeIn) {
-		curves.appendChild(fadeIn->get_state(doc));
+		node.appendChild(fadeIn->get_state(doc));
 	}
 	if (fadeOut) {
-		curves.appendChild(fadeOut->get_state(doc));
+		node.appendChild(fadeOut->get_state(doc));
 	}
-	curves.appendChild(m_gainEnvelope->get_state(doc, "GainCurve"));
 
-	node.appendChild(curves);
-
+	QDomNode pluginChainNode = doc.createElement("PluginChain");
+	pluginChainNode.appendChild(m_pluginChain->get_state(doc));
+	node.appendChild(pluginChainNode);
+	
 	return node;
 }
 
@@ -370,7 +366,8 @@ void AudioClip::set_gain(float gain)
 		gain = 0.0;
 	if (gain > 32.0)
 		gain = 32.0;
-	m_gain = gain;
+	
+	m_fader->set_gain(gain);
 	emit gainChanged();
 }
 
@@ -396,7 +393,7 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* buffer, uint channel)
 		return -1;
 	}
 
-	if (isMuted || ( (m_gain * m_normfactor) == 0.0f) ) {
+	if (isMuted || (get_gain() == 0.0f) ) {
 		return 0;
 	}
 	
@@ -446,7 +443,7 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* buffer, uint channel)
 		m_fades.at(i)->process(mixdown, read_frames);
 	}
 	
-	m_gainEnvelope->process(mixdown, (m_song->get_transport_frame() - (trackStartFrame - sourceStartFrame)), read_frames);
+	m_fader->process_gain(mixdown, (m_song->get_transport_frame() - (trackStartFrame - sourceStartFrame)), read_frames);
 	
 	return 1;
 }
@@ -563,8 +560,6 @@ int AudioClip::init_recording( QByteArray name )
 	sourceStartFrame = 0;
 	isTake = 1;
 	m_recordingStatus = RECORDING;
-	
-	init_gain_envelope();
 	
 	connect(m_song, SIGNAL(transferStopped()), this, SLOT(finish_recording()));
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(get_capture_bus()));
@@ -758,13 +753,7 @@ void AudioClip::set_song( Song * song )
 	m_songId = song->get_id();
 	
 	set_history_stack(m_song->get_history_stack());
-	
-	if (!m_gainEnvelope) {
-		m_gainEnvelope = new Curve(this, m_song);
-	}
-	
-	m_gainEnvelope->set_history_stack(get_history_stack());
-
+	m_pluginChain->set_song(m_song);
 	set_snap_list(m_song->get_snap_list());
 }
 
@@ -788,12 +777,7 @@ void AudioClip::set_name( const QString& name )
 
 float AudioClip::get_gain( ) const
 {
-	return m_gain;
-}
-
-float AudioClip::get_norm_factor( ) const
-{
-	return m_normfactor;
+	return m_fader->get_gain();
 }
 
 bool AudioClip::is_selected( ) const
@@ -901,17 +885,12 @@ Command * AudioClip::normalize( )
 		calculate_normalization_factor(d);
 	}
 
-	emit gainChanged();
-
 	return (Command*) 0;
 }
 
 Command * AudioClip::denormalize( )
 {
-	m_normfactor = 1.0;
-	// Hmm, this is not entirely true, but "almost" ;-)
-	emit gainChanged();
-
+	set_gain(1.0);
 	return (Command*) 0;
 }
 
@@ -945,7 +924,7 @@ void AudioClip::calculate_normalization_factor(float targetdB)
 	}
 
 	/* compute scale factor */
-	m_normfactor = target/maxamp;
+	set_gain(target/maxamp);
 }
 
 FadeCurve * AudioClip::get_fade_in( )
@@ -980,11 +959,6 @@ void AudioClip::private_remove_fade( FadeCurve * fade )
 	m_fades.removeAll(fade);
 }
 
-// int AudioClip::get_ref_count( ) const
-// {
-// 	return m_refcount;
-// }
-
 void AudioClip::create_fade_in( )
 {
 	fadeIn = new FadeCurve(this, m_song, "FadeIn");
@@ -999,15 +973,6 @@ void AudioClip::create_fade_out( )
 	fadeOut->set_shape("Linear");
 	fadeOut->set_history_stack(get_history_stack());
 	THREAD_SAVE_CALL_EMIT_SIGNAL(this, fadeOut, private_add_fade(FadeCurve*), fadeAdded(FadeCurve*));
-}
-
-void AudioClip::init_gain_envelope()
-{
-	// FIXME Somehow Curves always should have 1 node, which is not allowed 
-	// to be removed, or moved horizontally, to avoid code like below..... !!!!!
-	// Add the default (first) node to the Gain Curve
-	CurveNode* node = new CurveNode(m_gainEnvelope, 0.0, 1.0);
-	Command::process_command(m_gainEnvelope->add_node(node, false));
 }
 
 QDomNode AudioClip::get_dom_node() const

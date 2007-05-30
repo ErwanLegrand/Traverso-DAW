@@ -20,8 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 */
 
 
-#include "LV2PluginPropertiesDialog.h"
-#include "LV2Plugin.h"
+#include "PluginPropertiesDialog.h"
+#include "Plugin.h"
 
 #include <QSlider>
 #include <QLabel>
@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <PluginSlider.h>
 #include "Command.h"
 
-LV2PluginPropertiesDialog::LV2PluginPropertiesDialog(QWidget* parent, LV2Plugin* plugin)
+PluginPropertiesDialog::PluginPropertiesDialog(QWidget* parent, Plugin* plugin)
 	: QDialog(parent)
 	, m_plugin(plugin)
 {
@@ -61,7 +61,7 @@ LV2PluginPropertiesDialog::LV2PluginPropertiesDialog(QWidget* parent, LV2Plugin*
 	setLayout(dialogLayout);
 
 
-	foreach(LV2ControlPort* port, m_plugin->get_control_ports()) {
+	foreach(PluginControlPort* port, m_plugin->get_control_ports()) {
 
 		if (port->get_symbol() == "latency") {
 			continue;
@@ -111,13 +111,13 @@ LV2PluginPropertiesDialog::LV2PluginPropertiesDialog(QWidget* parent, LV2Plugin*
 	connect(m_bypassButton, SIGNAL(clicked()), this, SLOT(bypass_button_clicked()));
 }
 
-void LV2PluginPropertiesDialog::bypass_button_clicked()
+void PluginPropertiesDialog::bypass_button_clicked()
 {
 	m_plugin->toggle_bypass();
 	m_bypassButton->setChecked(m_plugin->is_bypassed());
 }
 
-void LV2PluginPropertiesDialog::reset_button_clicked()
+void PluginPropertiesDialog::reset_button_clicked()
 {
 	foreach(PluginSlider* slider, m_sliders) {
 		slider->reset_default_value();

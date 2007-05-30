@@ -73,9 +73,6 @@ void PluginSelectorDialog::on_cancelButton_clicked( )
 void PluginSelectorDialog::on_okButton_clicked( )
 {
 #if defined (LV2_SUPPORT)
-	LV2Plugin* plugin = 0;
-
-
 	QList<QTreeWidgetItem *> list = pluginTreeWidget->selectedItems();
 	
 	if ( ! list.size()) {
@@ -88,15 +85,9 @@ void PluginSelectorDialog::on_okButton_clicked( )
 	
 	QString uri = item->data(0, Qt::UserRole).toString();
 
-	plugin = new LV2Plugin(QS_C(uri));
+	Plugin* plugin = PluginManager::instance()->create_lv2_plugin(uri);
 	
-	if (plugin->init() > 0) {
-		m_plugin = plugin;
-	} else {
-		printf("Plugin init failed!");
-		info().warning(tr("Plugin initialization failed!"));
-		delete plugin;
-		plugin = 0;
+	if (!plugin) {
 		reject();
 	}
 

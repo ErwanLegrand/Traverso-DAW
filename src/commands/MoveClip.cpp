@@ -169,9 +169,6 @@ int MoveClip::begin_hold()
 		d->newclip->set_track(d->view->get_clip()->get_track());
 		d->newclip->set_track_start_frame(d->view->get_clip()->get_track_start_frame() + d->xoffset);
 		
-		printf("Orig Clip has id %lld\n", d->view->get_clip()->get_id());
-		printf("Created new Clip with id %lld\n", d->newclip->get_id());
-	
 		connect(d->view->get_clip()->get_track(), SIGNAL(audioClipAdded(AudioClip*)),
 			this, SLOT(audioclip_added(AudioClip*)));
 	

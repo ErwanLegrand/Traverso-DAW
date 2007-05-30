@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.18 2007/04/27 04:38:15 r_sijrier Exp $
+$Id: FadeCurve.cpp,v 1.19 2007/05/30 13:14:46 r_sijrier Exp $
 */
  
 #include "FadeCurve.h"
@@ -37,7 +37,7 @@ $Id: FadeCurve.cpp,v 1.18 2007/04/27 04:38:15 r_sijrier Exp $
 QStringList FadeCurve::defaultShapes = QStringList() << "Fastest" << "Fast" << "Linear"  << "Slow" << "Slowest";
 
 FadeCurve::FadeCurve(AudioClip* clip, Song* song, QString type )
-	: Curve(clip, song)
+	: Curve(clip)
 	, m_clip(clip)
 	, m_sType(type)
 {

@@ -33,9 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Track.h>
 #include <Utils.h>
 
-#if defined (LV2_SUPPORT)
-#include <LV2PluginPropertiesDialog.h>
-#endif
+#include <PluginPropertiesDialog.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -49,9 +47,7 @@ PluginView::PluginView(PluginChainView* parent, PluginChain* chain, Plugin* plug
 {
 	PENTERCONS;
 	
-#if defined (LV2_SUPPORT)
-	propertiesDialog = 0;
-#endif
+	m_propertiesDialog = 0;
 
 	setZValue(parent->zValue() + 2);
 	
@@ -71,11 +67,9 @@ PluginView::PluginView(PluginChainView* parent, PluginChain* chain, Plugin* plug
 PluginView::~PluginView( )
 {
 	PENTERDES2;
-#if defined (LV2_SUPPORT)
-	if (propertiesDialog) {
-		delete propertiesDialog;
+	if (m_propertiesDialog) {
+		delete m_propertiesDialog;
 	}
-#endif
 }
 
 void PluginView::paint(QPainter* painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -111,13 +105,11 @@ void PluginView::paint(QPainter* painter, const QStyleOptionGraphicsItem *option
 
 Command * PluginView::edit_properties( )
 {
-#if defined (LV2_SUPPORT)
-	if (! propertiesDialog) {
-		propertiesDialog = new LV2PluginPropertiesDialog(Interface::instance(), (LV2Plugin*) m_plugin);
-		propertiesDialog->setWindowTitle(m_name);
+	if (! m_propertiesDialog) {
+		m_propertiesDialog = new PluginPropertiesDialog(Interface::instance(), m_plugin);
+		m_propertiesDialog->setWindowTitle(m_name);
 	} 
-	propertiesDialog->show();
-#endif
+	m_propertiesDialog->show();
 	return (Command*) 0;
 }
 

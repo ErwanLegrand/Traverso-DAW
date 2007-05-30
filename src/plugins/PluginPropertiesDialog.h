@@ -20,41 +20,32 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 */
 
 
-#ifndef PLUGIN_MANAGER_H
-#define PLUGIN_MANAGER_H
+#ifndef LV2_PLUGIN_PROPERTIES_DIALOG_H
+#define LV2_PLUGIN_PROPERTIES_DIALOG_H
 
-#if defined (LV2_SUPPORT)
-#include <slv2/slv2.h>
-#endif
-
-#include <QDomDocument>
+#include <QDialog>
 
 class Plugin;
+class PluginSlider;
+class QPushButton;
 
-class PluginManager
+class PluginPropertiesDialog : public QDialog
 {
+	Q_OBJECT
 
 public:
-	~PluginManager();
+	PluginPropertiesDialog(QWidget* parent, Plugin* plugin);
+	~PluginPropertiesDialog(){};
 
-	static PluginManager* instance();
-
-	Plugin* get_plugin(const QDomNode node);
-
-#if defined (LV2_SUPPORT)
-	SLV2Plugins get_slv2_plugin_list();
-	Plugin* create_lv2_plugin(const QString& uri);
-#endif
 
 private:
-	PluginManager();
-
-	static PluginManager* m_instance;
-#if defined (LV2_SUPPORT)
-	SLV2World 	m_slv2World;
-	SLV2Plugins	m_slv2Plugins;
-#endif
-	void init();
+	Plugin*	m_plugin;
+	QList<PluginSlider*> m_sliders;
+	QPushButton* m_bypassButton;
+	
+private slots:
+	void bypass_button_clicked();
+	void reset_button_clicked();
 };
 
 #endif

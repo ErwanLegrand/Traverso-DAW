@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006-2007 Remon Sijrier
+Copyright (C) 2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -20,34 +20,38 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 */
 
 
-#ifndef LV2_PLUGIN_PROPERTIES_DIALOG_H
-#define LV2_PLUGIN_PROPERTIES_DIALOG_H
+#ifndef GAIN_ENVELOPE_H
+#define GAIN_ENVELOPE_H
 
-#include <QDialog>
+#include "Plugin.h"
 
-class LV2Plugin;
-class PluginSlider;
-class QPushButton;
+class Song;
+class Curve;
 
-class LV2PluginPropertiesDialog : public QDialog
+class GainEnvelope : public Plugin
 {
 	Q_OBJECT
-
-public:
-	LV2PluginPropertiesDialog(QWidget* parent, LV2Plugin* plugin);
-	~LV2PluginPropertiesDialog(){};
-
-
-private:
-	LV2Plugin*	m_plugin;
-	QList<PluginSlider*> m_sliders;
-	QPushButton* m_bypassButton;
 	
-private slots:
-	void bypass_button_clicked();
-	void reset_button_clicked();
+public:
+	GainEnvelope(Song* song);
+	~GainEnvelope(){};
+
+	QDomNode get_state(QDomDocument doc);
+	int set_state(const QDomNode & node );
+	void process(AudioBus* bus, unsigned long nframes);
+	void process_gain(audio_sample_t* buffer, nframes_t pos, nframes_t nframes);
+	
+	void set_song(Song* song);
+	void set_gain(float gain) {m_gain = gain;}
+	
+	float get_gain() const {return m_gain;}
+	Curve* get_curve() const;
+	QString get_name();
+	
+private:
+	float m_gain;
 };
+
 
 #endif
 
-//eof

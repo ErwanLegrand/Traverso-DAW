@@ -91,6 +91,8 @@ void PluginChainView::add_new_pluginview( Plugin * plugin )
 	view->setPos(x, m_boundingRect.height() - view->boundingRect().height());
 	
 	m_pluginViews.append(view);
+	
+	show();
 }
 
 void PluginChainView::remove_pluginview( Plugin * plugin )
@@ -115,6 +117,7 @@ void PluginChainView::remove_pluginview( Plugin * plugin )
 	if (!m_pluginViews.size()) {
 		hide();
 	}
+	
 	m_parentViewItem->update();
 }
 

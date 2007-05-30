@@ -190,7 +190,8 @@ CurveView::CurveView(SongView* sv, ViewItem* parentViewItem, Curve* curve)
 	m_blinkColorDirection = 1;
 	m_blinkingNode = 0;
 	m_startoffset = 0;
-	m_guicurve = new Curve(0, m_sv->get_song());
+	m_guicurve = new Curve(0);
+	m_guicurve->set_song(sv->get_song());
 	
 	QList<CurveNode* >* nodes = m_curve->get_nodes();
 	for (int i=0; i < nodes->size(); i++) {

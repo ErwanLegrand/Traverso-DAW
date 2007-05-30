@@ -21,10 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "PluginSlider.h"
 #include <Themer.h>
-#include "LV2Plugin.h"
 #include "Plugin.h"
 
-PluginSlider::PluginSlider(LV2ControlPort* port)
+PluginSlider::PluginSlider(PluginControlPort* port)
 	: QWidget()
 	, m_port(port)
 {

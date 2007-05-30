@@ -33,18 +33,27 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-PluginChain::PluginChain(ContextItem* parent, Song* song)
-	: ContextItem(parent), m_song(song)
+PluginChain::PluginChain(ContextItem * parent)
+	: ContextItem(parent)
 {
-	m_hs = parent->get_history_stack();
+	m_fader = new GainEnvelope(0);
 }
 
-PluginChain::~ PluginChain( )
+PluginChain::PluginChain(ContextItem* parent, Song* song)
+	: ContextItem(parent)
+{
+	m_fader = new GainEnvelope(song);
+	set_song(song);
+}
+
+PluginChain::~ PluginChain()
 {
 	PENTERDES;
 	foreach(Plugin* plugin, m_pluginList) {
 		delete plugin;
 	}
+	
+	delete m_fader;
 }
 
 
@@ -56,6 +65,8 @@ QDomNode PluginChain::get_state(QDomDocument doc)
 		pluginsNode.appendChild(plugin->get_state(doc));
 	}
 	
+	pluginsNode.appendChild(m_fader->get_state(doc));
+	
 	return pluginsNode;
 }
 
@@ -65,14 +76,18 @@ int PluginChain::set_state( const QDomNode & node )
 	QDomNode pluginNode = pluginsNode.firstChild();
 	
 	while(!pluginNode.isNull()) {
-		Plugin* plugin = PluginManager::instance()->get_plugin(pluginNode);
-		if (!plugin) {
-			PERROR("PluginManager couldn't create Plugin ????");
-			pluginNode = pluginNode.nextSibling();
-			continue;
+		if (pluginNode.toElement().attribute( "type", "") == "GainEnvelope") {
+			m_fader->set_state(pluginNode);
+		} else {
+			Plugin* plugin = PluginManager::instance()->get_plugin(pluginNode);
+			if (!plugin) {
+				pluginNode = pluginNode.nextSibling();
+				continue;
+			}
+			plugin->set_history_stack(get_history_stack());
+			private_add_plugin(plugin);
 		}
-		plugin->set_history_stack(get_history_stack());
-		private_add_plugin(plugin);
+		
 		pluginNode = pluginNode.nextSibling();
 	}
 	
@@ -113,9 +128,15 @@ void PluginChain::private_remove_plugin( Plugin * plugin )
 	if (index >=0 ) {
 		m_pluginList.removeAt(index);
 	} else {
-// 		QCritical("Plugin not found in list, this is invalid plugin remove!!!!!");
+		PERROR("Plugin not found in list, this is invalid plugin remove!!!!!");
 	}
 }
 
-//eof
+void PluginChain::set_song(Song * song)
+{
+	m_song = song;
+	set_history_stack(m_song->get_history_stack());
+	m_fader->set_song(song);
+}
+
 

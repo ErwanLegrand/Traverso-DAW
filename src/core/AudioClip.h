@@ -41,6 +41,8 @@ class Peak;
 class AudioBus;
 class FadeCurve;
 class Curve;
+class PluginChain;
+class GainEnvelope;
 struct ExportSpecification;
 
 class AudioClip : public ContextItem, public Snappable
@@ -84,7 +86,6 @@ public:
 
 	void set_selected(bool selected);
 	int set_state( const QDomNode& node );
-// 	int get_ref_count() const;
 
 	AudioClip* prev_clip();
 	AudioClip* next_clip();
@@ -95,9 +96,7 @@ public:
 	QDomNode get_state(QDomDocument doc);
 	FadeCurve* get_fade_in();
 	FadeCurve* get_fade_out();
-	Curve* get_gain_envelope() {return m_gainEnvelope;}
-	
-	float get_norm_factor() const;
+	PluginChain* get_plugin_chain() const {return m_pluginChain;}
 	
 	nframes_t get_length() const;
 	nframes_t get_track_start_frame() const;
@@ -133,8 +132,6 @@ public:
 		return left->get_track_start_frame() > right->get_track_start_frame();
 	}
 
-	void init_gain_envelope();
-
 private:
 	Track* 			m_track;
 	Song* 			m_song;
@@ -145,7 +142,8 @@ private:
 	AudioBus*		m_captureBus;
 	FadeCurve*		fadeIn;
 	FadeCurve*		fadeOut;
-	Curve*			m_gainEnvelope;
+	GainEnvelope*		m_fader;
+	PluginChain*		m_pluginChain;
 	QDomNode		m_domNode;
 	
 	QString 		m_name;
@@ -163,8 +161,6 @@ private:
 	bool		isLocked;
 	bool		m_invalidReadSource;
 	RecordingStatus	m_recordingStatus;
-	float	 	m_gain;
-	float		m_normfactor;
 	
 	qint64		m_readSourceId;
 	qint64		m_songId;

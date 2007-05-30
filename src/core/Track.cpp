@@ -49,7 +49,6 @@ Track::Track(Song* song, const QString& name, int height )
 {
 	PENTERCONS;
 	m_pan = numtakes = 0;
-	m_gain = 0.5;
 	m_sortIndex = -1;
 	m_id = create_id();
 	
@@ -77,7 +76,9 @@ void Track::init()
 {
 	isSolo = mutedBySolo = isMuted = isArmed = false;
 	set_history_stack(m_song->get_history_stack());
-	pluginChain = new PluginChain(this, m_song);
+	m_pluginChain = new PluginChain(this, m_song);
+	m_fader = m_pluginChain->get_fader();
+	m_fader->set_gain(1.0);
 	m_captureRightChannel = m_captureLeftChannel = true;
 }
 
@@ -88,7 +89,6 @@ QDomNode Track::get_state( QDomDocument doc, bool istemplate)
 		node.setAttribute("id", m_id);
 	}
 	node.setAttribute("name", m_name);
-	node.setAttribute("gain", m_gain);
 	node.setAttribute("pan", m_pan);
 	node.setAttribute("mute", isMuted);
 	node.setAttribute("solo", isSolo);
@@ -118,9 +118,9 @@ QDomNode Track::get_state( QDomDocument doc, bool istemplate)
 		node.appendChild(clips);
 	}
 	
-	QDomNode pluginChainNode = doc.createElement("PluginChain");
-	pluginChainNode.appendChild(pluginChain->get_state(doc));
-	node.appendChild(pluginChainNode);
+	QDomNode m_pluginChainNode = doc.createElement("PluginChain");
+	m_pluginChainNode.appendChild(m_pluginChain->get_state(doc));
+	node.appendChild(m_pluginChainNode);
 	
 	return node;
 }
@@ -138,7 +138,6 @@ int Track::set_state( const QDomNode & node )
 		solo();
 	}
 	set_muted_by_solo(e.attribute( "mutedbysolo", "0").toInt());
-	m_gain =  e.attribute( "gain", "" ).toFloat();
 	set_pan( e.attribute( "pan", "" ).toFloat() );
 	set_bus_in( e.attribute( "InBus", "" ).toAscii() );
 	set_bus_out( e.attribute( "OutBus", "" ).toAscii() );
@@ -178,8 +177,10 @@ int Track::set_state( const QDomNode & node )
 		}
 	}
 
-	QDomNode pluginChainNode = node.firstChildElement("PluginChain");
-	pluginChain->set_state(pluginChainNode);
+	QDomNode m_pluginChainNode = node.firstChildElement("PluginChain");
+	if (!m_pluginChainNode.isNull()) {
+		m_pluginChain->set_state(m_pluginChainNode);
+	}
 	
 	return 1;
 }
@@ -332,7 +333,7 @@ void Track::set_gain(float gain)
 		gain = 0.0;
 	if (gain > 2.0)
 		gain = 2.0;
-	m_gain = gain;
+	m_fader->set_gain(gain);
 	emit gainChanged();
 }
 
@@ -365,7 +366,7 @@ int Track::get_total_clips()
 
 float Track::get_gain( ) const
 {
-	return m_gain;
+	return m_fader->get_gain();
 }
 
 void Track::set_muted_by_solo(bool muted)
@@ -405,8 +406,6 @@ int Track::process( nframes_t nframes )
 {
 	int processResult = 0;
 	
-	// FIXME if arm() is called while playback, it will _not_ start 
-	// a recording, but instead start playing this track!!!!
 	if ( (isMuted || mutedBySolo) && ( ! isArmed) ) {
 		return 0;
 	}
@@ -421,6 +420,8 @@ int Track::process( nframes_t nframes )
 	int result;
 	float gainFactor, panFactor;
 
+	m_pluginChain->process_pre_fader(bus, nframes);
+	
 	for (int i=0; i<audioClipList.size(); ++i) {
 	
 		memset (mixdown, 0, sizeof (audio_sample_t) * nframes);
@@ -436,15 +437,13 @@ int Track::process( nframes_t nframes )
 		
 			result = clip->process(nframes, mixdown, chan);
 			
-			if (result == 0) {
+			if (result <= 0) {
 				continue;
 			}
 
-			if (result != -1) { // No such channel !!
-				processResult |= result;
-			}
+			processResult |= result;
 			
-			gainFactor = m_gain * clip->get_gain() * clip->get_norm_factor();
+			gainFactor = get_gain() * clip->get_gain();
 			
 			if ( (chan == 0) && (m_pan > 0)) {
 				panFactor = 1 - m_pan;
@@ -460,7 +459,7 @@ int Track::process( nframes_t nframes )
 		}
 	}
 	
-	pluginChain->process(bus, nframes);
+	m_pluginChain->process_post_fader(bus, nframes);
 		
 	for (int i=0; i<bus->get_channel_count(); ++i) {
 		Mixer::mix_buffers_no_gain(m_song->get_master_out()->get_buffer(i, nframes), bus->get_buffer(i, nframes), nframes);
@@ -541,12 +540,12 @@ void Track::private_remove_clip(AudioClip* clip)
 
 Command* Track::add_plugin( Plugin * plugin )
 {
-	return pluginChain->add_plugin(plugin);
+	return m_pluginChain->add_plugin(plugin);
 }
 
 Command* Track::remove_plugin( Plugin * plugin )
 {
-	return pluginChain->remove_plugin(plugin);
+	return m_pluginChain->remove_plugin(plugin);
 }
 
 void Track::set_sort_index( int index )

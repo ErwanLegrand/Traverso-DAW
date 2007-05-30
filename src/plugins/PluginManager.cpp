@@ -19,14 +19,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 */
 
 
+#include "ProjectManager.h"
+#include "Project.h"
+#include "Song.h"
 #include "PluginManager.h"
 #include "Plugin.h"
 #include "CorrelationMeter.h"
 #include "SpectralMeter.h"
+#include "Utils.h"
+#include "Information.h"
 
 #if defined (LV2_SUPPORT)
 #include <LV2Plugin.h>
 #endif
+
+#include "Debugger.h"
 
 PluginManager* PluginManager::m_instance = 0;
 
@@ -72,10 +79,11 @@ Plugin* PluginManager::get_plugin(const  QDomNode node )
 	QString type = e.attribute( "type", "");
 
 	Plugin* plugin = 0;
+	Song* song = pm().get_project()->get_current_song();
 
 #if defined (LV2_SUPPORT)
 	if (type == "LV2Plugin") {
-		plugin = new LV2Plugin();
+		plugin = new LV2Plugin(song);
 	}
 #endif
 	
@@ -99,6 +107,8 @@ Plugin* PluginManager::get_plugin(const  QDomNode node )
 			delete plugin;
 			plugin = 0;
 		}
+	} else {
+		PERROR("PluginManager couldn't create Plugin ???? (%s)", QS_C(type));
 	}
 
 	return plugin;
@@ -109,6 +119,20 @@ Plugin* PluginManager::get_plugin(const  QDomNode node )
 SLV2Plugins PluginManager::get_slv2_plugin_list()
 {
 	return m_slv2Plugins;
+}
+
+Plugin* PluginManager::create_lv2_plugin(const QString& uri)
+{
+	Song* song = pm().get_project()->get_current_song();
+	LV2Plugin* plugin = new LV2Plugin(song, QS_C(uri));
+	
+	if (plugin->init() < 0) {
+		info().warning(QObject::tr("Plugin %1 initialization failed!").arg(uri));
+		delete plugin;
+		plugin = 0;
+	}
+	
+	return plugin;
 }
 #endif
 

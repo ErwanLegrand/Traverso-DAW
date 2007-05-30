@@ -97,18 +97,16 @@ int MoveNode::undo_action()
 
 
 
-Curve::Curve(ContextItem* parent, Song* song)
+Curve::Curve(ContextItem* parent)
 	: ContextItem(parent)
-	, m_song(song)
 {
 	PENTERCONS;
 	m_id = create_id();
 	init();
 }
 
-Curve::Curve(ContextItem* parent, Song* song, const QDomNode node )
+Curve::Curve(ContextItem* parent, const QDomNode node )
 	: ContextItem(parent)
-	, m_song(song)
 {
 	init();
 	set_state(node);
@@ -123,13 +121,15 @@ Curve::~Curve()
 
 void Curve::init( )
 {
-	Q_ASSERT(m_song);
 	m_changed = true;
 	m_lookup_cache.left = -1;
 	m_lookup_cache.range.first = m_nodes.end();
 
 	m_defaultValue = 1.0f;
 	m_defaultInitialValue = 1.0f;	
+	
+	m_song = 0;
+	
 	connect(this, SIGNAL(nodePositionChanged()), this, SLOT(set_changed()));
 }
 
@@ -175,7 +175,7 @@ int Curve::set_state( const QDomNode & node )
 		double when = whenValueList.at(0).toDouble();
 		double value = whenValueList.at(1).toDouble();
 		CurveNode* node = new CurveNode(this, when, value);
-		Command::process_command( add_node(node, false) );
+		private_add_node(node);
 	}
 	
 	return 1;
@@ -632,6 +632,7 @@ Command* Curve::remove_node(CurveNode* node, bool historable)
 		return cmd;
 	}
 
+	
 	AddRemove* cmd;
 	
 	cmd = new AddRemove(this, node, historable, m_song,

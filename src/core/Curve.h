@@ -44,8 +44,8 @@ class Curve : public ContextItem
 	Q_OBJECT
 	
 public:
-	Curve(ContextItem* parent, Song* song);
-	Curve(ContextItem* parent, Song* song, const QDomNode node);
+	Curve(ContextItem* parent);
+	Curve(ContextItem* parent, const QDomNode node);
 	~Curve();
 
 	QDomNode get_state(QDomDocument doc, const QString& name);
@@ -67,6 +67,7 @@ public:
 	
 	// Set functions
 	virtual void set_range(double when);
+	void set_song(Song* song) {m_song = song;}
 	
 	static bool smallerNode(const CurveNode* left, const CurveNode* right )
 	{
@@ -85,6 +86,7 @@ protected:
 		std::pair<QList<CurveNode* >::iterator, QList<CurveNode* >::iterator> range;
 	};
 	
+	Song* m_song;
 	QList<CurveNode* > m_nodes;
 	LookupCache m_lookup_cache;
 	bool m_changed;
@@ -98,17 +100,14 @@ private :
 		}
 	};
 	
-	Song* m_song;
 	
 	double m_defaultValue;
-
 	double m_defaultInitialValue;
 	
 	double multipoint_eval (double x);
 	
 	void x_scale(double factor);
 	void solve ();
-	
 	void init();
 	
 	friend class CurveNode;

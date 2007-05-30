@@ -125,8 +125,10 @@ SongView::SongView(SongWidget* songwidget,
 	set_hscrollbar_value(x);
 	set_vscrollbar_value(y);
 	
-	m_shuttleCurve = new Curve(0, m_song);
-	m_dragShuttleCurve = new Curve(0, m_song);
+	m_shuttleCurve = new Curve(0);
+	m_shuttleCurve->set_song(m_song);
+	m_dragShuttleCurve = new Curve(0);
+	m_dragShuttleCurve->set_song(m_song);
 	
 	// Use these variables to fine tune the scroll behavior
 	float whens[7] = {0.0, 0.2, 0.5, 0.7, 0.8, 0.9, 1.3};

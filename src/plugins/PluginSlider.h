@@ -27,14 +27,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QPainter>
 #include <QMouseEvent>
 
-class LV2ControlPort;
+class PluginControlPort;
 
 class PluginSlider : public QWidget
 {
 	Q_OBJECT
 	
 public:
-	PluginSlider(LV2ControlPort* port);
+	PluginSlider(PluginControlPort* port);
 	~PluginSlider(){};
 	
 	void paint(QPainter *);
@@ -51,7 +51,7 @@ protected:
         void wheelEvent(QWheelEvent* e );
 	
 private:
-	LV2ControlPort* m_port;
+	PluginControlPort* m_port;
 	float	m_max;
 	float	m_min;
 	float	m_value;

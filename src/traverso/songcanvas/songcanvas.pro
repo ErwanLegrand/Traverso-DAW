@@ -11,6 +11,7 @@ INCLUDEPATH += 	../../core \
 		../../engine \
 		../../commands \
 		../../plugins \
+		../../plugins/native \
 		./
 
 SOURCES += AudioClipView.cpp \
