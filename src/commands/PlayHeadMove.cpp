@@ -60,7 +60,6 @@ int PlayHeadMove::finish_hold()
 
 int PlayHeadMove::begin_hold()
 {
-	m_cursor->show();
 	m_cursor->set_active(false);
 	m_origXPos = m_newXPos = m_song->get_transport_frame() / m_sv->scalefactor;
 	m_sv->start_shuttle(true, true);

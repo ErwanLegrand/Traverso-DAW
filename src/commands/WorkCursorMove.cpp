@@ -45,10 +45,6 @@ int WorkCursorMove::finish_hold()
 
 	m_song->get_work_snap()->set_snappable(true);
 
-	if (!m_song->is_transporting()) {
-		m_playCursor->setPos(x, 0);
-		m_song->set_transport_pos( (nframes_t) (x * m_sv->scalefactor));
-	}
 	m_sv->start_shuttle(false);
 	return -1;
 }

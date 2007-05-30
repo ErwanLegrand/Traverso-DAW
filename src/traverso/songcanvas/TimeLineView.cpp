@@ -49,7 +49,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-// TODO test if DragMarker class works as expected!!
+
+#define MARKER_SOFT_SELECTION_DISTANCE 50
+
 
 class DragMarker : public Command
 {
@@ -398,10 +400,15 @@ void TimeLineView::update_softselected_marker(QPoint pos)
 		}
 	}
 	
-
+	if (blinkMarkerDist > MARKER_SOFT_SELECTION_DISTANCE) {
+		m_blinkingMarker = 0;
+	}
+	
 	if (prevMarker && (prevMarker != m_blinkingMarker) ) {
 		prevMarker->set_active(false);
-		m_blinkingMarker->set_active(true);
+		if (m_blinkingMarker) {
+			m_blinkingMarker->set_active(true);
+		}
 	}
 	
 	if (!prevMarker && m_blinkingMarker) {
@@ -454,7 +461,7 @@ Command * TimeLineView::drag_marker()
 		return new DragMarker(m_blinkingMarker, m_sv->scalefactor, tr("Drag Marker"));
 	}
 	
-	return 0;
+	return ie().did_not_implement();
 }
 
 Command * TimeLineView::clear_markers()

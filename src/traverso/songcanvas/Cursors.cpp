@@ -42,7 +42,7 @@ PlayHead::PlayHead(SongView* sv, Song* song, ClipsViewPort* vp)
 	connect(&(config()), SIGNAL(configChanged()), this, SLOT(check_config()));
 	
 	// TODO: Make duration scale with scalefactor? (nonlinerly?)
-	m_animation.setDuration(1300);
+	m_animation.setDuration(800);
 	m_animation.setCurveShape(QTimeLine::SineCurve);
 	
 	connect(m_song, SIGNAL(transferStarted()), this, SLOT(play_start()));
@@ -53,7 +53,7 @@ PlayHead::PlayHead(SongView* sv, Song* song, ClipsViewPort* vp)
 	connect(&m_animation, SIGNAL(frameChanged(int)), this, SLOT(set_animation_value(int)));
 	connect(&m_animation, SIGNAL(finished()), this, SLOT(animation_finished()));
 	
-	setZValue(100);
+	setZValue(99);
 }
 
 PlayHead::~PlayHead( )
@@ -231,13 +231,6 @@ void PlayHead::toggle_follow( )
 	m_follow = ! m_follow;
 }
 
-void PlayHead::work_moved()
-{
-	if (!m_song->is_transporting()) {
-		hide();
-	}
-}
-
 
 
 /**************************************************************/
@@ -250,7 +243,7 @@ WorkCursor::WorkCursor(SongView* sv, Song* song)
 	, m_song(song)
 	, m_sv(sv)
 {
-	setZValue(99);
+	setZValue(100);
 }
 
 WorkCursor::~WorkCursor( )

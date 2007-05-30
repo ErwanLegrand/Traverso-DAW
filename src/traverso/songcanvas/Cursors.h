@@ -72,7 +72,6 @@ private slots:
         
 public slots:
         void update_position();
-        void work_moved();
         void enable_follow();  // enable/disable follow only do anything if following is
         void disable_follow(); // enabled in the config
 };

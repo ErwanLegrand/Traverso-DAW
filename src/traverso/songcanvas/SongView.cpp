@@ -90,10 +90,9 @@ SongView::SongView(SongWidget* songwidget,
 	m_playCursor = new PlayHead(this, m_song, m_clipsViewPort);
 	m_workCursor = new WorkCursor(this, m_song);
 	connect(m_song, SIGNAL(workingPosChanged()), m_workCursor, SLOT(update_position()));
-	connect(m_song, SIGNAL(workingPosChanged()), m_playCursor, SLOT(work_moved()));
 	connect(m_song, SIGNAL(transportPosSet()), this, SLOT(follow_play_head()));
 	connect(m_song, SIGNAL(workingPosChanged()), this, SLOT(stop_follow_play_head()));
-
+	
 	m_clipsViewPort->scene()->addItem(m_playCursor);
 	m_clipsViewPort->scene()->addItem(m_workCursor);
 	
@@ -351,6 +350,7 @@ void SongView::follow_play_head()
 {
 	m_actOnPlayHead = true;
 	m_playCursor->enable_follow();
+	m_playCursor->setPos(m_song->get_transport_frame() / scalefactor, 0);
 }
 
 
@@ -366,10 +366,10 @@ void SongView::start_shuttle(bool start, bool drag)
 		m_shuttletimer.start(40);
 		m_dragShuttle = drag;
 		m_shuttleYfactor = m_shuttleXfactor = 0;
+		stop_follow_play_head();
 	} else {
 		m_shuttletimer.stop();
 	}
-	stop_follow_play_head();
 }
 
 void SongView::update_shuttle_factor()
@@ -481,11 +481,6 @@ Command * SongView::touch( )
 	QPointF point = m_clipsViewPort->mapToScene(QPoint(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y()));
 	m_song->set_work_at((nframes_t) (point.x() * scalefactor));
 
-	if (!m_song->is_transporting()) {
-		m_playCursor->setPos(point.x(), 0);
-		m_song->set_transport_pos( (nframes_t) (point.x() * scalefactor));
-	}
-
 	return 0;
 }
 
@@ -494,7 +489,6 @@ Command * SongView::touch_play_cursor( )
 	QPointF point = m_clipsViewPort->mapToScene(QPoint(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y()));
 	m_playCursor->setPos(point.x(), 0);
 	m_song->set_transport_pos( (nframes_t) (point.x() * scalefactor));
-	m_playCursor->show();
 
 	return 0;
 }
@@ -581,7 +575,6 @@ Command * SongView::playhead_to_workcursor( )
 
 	m_song->set_transport_pos( work );
 	m_playCursor->setPos(work / scalefactor, 0);
-	m_playCursor->work_moved();
 
 	return (Command*) 0;
 }

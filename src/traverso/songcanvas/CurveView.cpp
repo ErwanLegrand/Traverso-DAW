@@ -34,7 +34,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <AddRemove.h>
 
 #include <Debugger.h>
-		
+
+
+#define NODE_SOFT_SELECTION_DISTANCE 40
+
+
 class DragNode : public Command
 {
 	Q_OBJECT
@@ -413,7 +417,7 @@ void CurveView::update_softselected_node( QPoint pos , bool force)
 		}
 	}
 
-	if ((pos - QPoint(4, 4) - QPoint((int)m_blinkingNode->x(), (int)m_blinkingNode->y())).manhattanLength() > 40) {
+	if ((pos - QPoint(4, 4) - QPoint((int)m_blinkingNode->x(), (int)m_blinkingNode->y())).manhattanLength() > NODE_SOFT_SELECTION_DISTANCE) {
 		m_blinkingNode = 0;
 	}
 	
