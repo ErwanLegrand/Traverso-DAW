@@ -191,10 +191,9 @@ int Song::set_state( const QDomNode & node )
 	m_sby = e.attribute("sby", "0").toInt();
 	set_first_visible_frame(e.attribute( "firstVisibleFrame", "0" ).toUInt());
 	set_work_at(e.attribute( "workingFrame", "0").toUInt());
-	set_transport_pos(e.attribute( "transportFrame", "0").toUInt());
-
-	emit transportPosSet();
-
+	transportFrame = e.attribute( "transportFrame", "0").toUInt();
+	// Start seeking to the 'old' transport pos
+	set_transport_pos(transportFrame);
 	set_snapping(e.attribute("snapping", "0").toInt());
 	m_mode = e.attribute("mode", "0").toInt();
 	
