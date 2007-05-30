@@ -132,7 +132,7 @@ int ReadSource::init( )
 	m_rate = project->get_rate();
 	
 	if (m_silent) {
-		m_length = 2147483648L; // 2^31
+		m_length = INT_MAX;
 		m_channelCount = 0;
 		m_origBitDepth = project->get_bitdepth();
 		return 1;

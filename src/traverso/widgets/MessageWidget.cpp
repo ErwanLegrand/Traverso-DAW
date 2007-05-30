@@ -142,14 +142,12 @@ void MessageWidgetPrivate::paintEvent(QPaintEvent* )
 
 
 	int stringLength = m_infoStruct.message.length();
-	int fontSize = 11;
 
 	int begin = (  width()  / 2 ) - ( (stringLength * 8) / 2 ) ;
 
 	if (begin < 40)
 		begin = 40;
 
-// 	painter.setPen(QColor(Qt::white));
 	painter.setFont(themer()->get_font("MessageWidget:fontscale:log"));
 	painter.setRenderHint(QPainter::TextAntialiasing);
 	painter.drawText(begin, 16, m_infoStruct.message);
