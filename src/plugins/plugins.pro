@@ -31,11 +31,10 @@ native/SpectralMeter.h \
 LV2/LV2Plugin.h \
 native/GainEnvelope.h \
 PluginPropertiesDialog.h
+
 !contains(DEFINES, LV2_SUPPORT){
     HEADERS -= 	LV2/LV2Plugin.h \
-		LV2/LV2ControlPort.h \
     SOURCES -= 	LV2/LV2Plugin.cpp \
-		LV2/LV2ControlPort.cpp \
     INCLUDEPATH -= LV2
 }
 
