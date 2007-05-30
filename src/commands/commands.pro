@@ -45,6 +45,8 @@ INCLUDEPATH += ../core \
 ../traverso \
 ../traverso/songcanvas \
 ../engine \
+../plugins \
+../plugins/native \
 
 win32{
     INCLUDEPATH += ../../3thparty/include

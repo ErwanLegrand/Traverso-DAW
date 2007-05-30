@@ -231,7 +231,9 @@ void PluginControlPort::set_use_automation(bool automation)
 		AddRemove* cmd = (AddRemove*)m_curve->add_node(node, false);
 		cmd->set_instantanious(true);
 		Command::process_command(cmd);
-		m_curve->set_song(m_plugin->get_song());
+		if (m_plugin->get_song()) {
+			m_curve->set_song(m_plugin->get_song());
+		}
 	}
 }
 

@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ContextItem.h"
 #include <QDomNode>
 #include "defines.h"
+#include "GainEnvelope.h"
 
 class Project;
 class Track;
@@ -41,7 +42,6 @@ class SnapList;
 class Plugin;
 class TimeLine;
 class Snappable;
-class GainEnvelope;
 
 struct ExportSpecification;
 
@@ -247,6 +247,12 @@ inline nframes_t Song::get_transport_frame() const
 {
 	return transportFrame;
 }
+
+inline float Song::get_gain() const
+{
+	return m_fader->get_gain();
+}
+
 
 #endif
 

@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "ContextItem.h"
 #include "AudioClipList.h"
+#include "GainEnvelope.h"
 
 #include "defines.h"
 
@@ -37,8 +38,6 @@ class AudioClip;
 class Song;
 class PluginChain;
 class Plugin;
-class GainEnvelope;
-
 
 class Track : public ContextItem
 {
@@ -172,6 +171,12 @@ private slots:
 	void private_remove_clip(AudioClip* clip);
 
 };
+
+
+inline float Track::get_gain( ) const
+{
+	return m_fader->get_gain();
+}
 
 #endif
 

@@ -67,7 +67,7 @@ public:
 	
 	// Set functions
 	virtual void set_range(double when);
-	void set_song(Song* song) {m_song = song;}
+	void set_song(Song* song);
 	
 	static bool smallerNode(const CurveNode* left, const CurveNode* right )
 	{

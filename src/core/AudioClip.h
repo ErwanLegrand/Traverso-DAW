@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "SnapList.h"
 #include "Snappable.h"
 #include "defines.h"
+#include "GainEnvelope.h"
 
 
 class Song;
@@ -42,7 +43,6 @@ class AudioBus;
 class FadeCurve;
 class Curve;
 class PluginChain;
-class GainEnvelope;
 struct ExportSpecification;
 
 class AudioClip : public ContextItem, public Snappable
@@ -221,6 +221,11 @@ private slots:
 
 
 inline qint64 AudioClip::get_readsource_id( ) const {return m_readSourceId;}
+
+inline float AudioClip::get_gain( ) const
+{
+	return m_fader->get_gain();
+}
 
 
 #endif

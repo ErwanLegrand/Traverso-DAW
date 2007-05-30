@@ -93,6 +93,9 @@ void GainEnvelope::set_song(Song * song)
 {
 	m_song = song;
 	set_history_stack(m_song->get_history_stack());
+	if (get_curve()) {
+		get_curve()->set_song(song);
+	}
 }
 
 void GainEnvelope::process(AudioBus * bus, unsigned long nframes)

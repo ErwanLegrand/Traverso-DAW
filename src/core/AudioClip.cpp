@@ -775,11 +775,6 @@ void AudioClip::set_name( const QString& name )
 	m_name = name;
 }
 
-float AudioClip::get_gain( ) const
-{
-	return m_fader->get_gain();
-}
-
 bool AudioClip::is_selected( ) const
 {
 	return isSelected;

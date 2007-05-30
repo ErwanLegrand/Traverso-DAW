@@ -9,7 +9,9 @@ INCLUDEPATH  += ../.. \
 		../../../core \
 		../../../traverso/songcanvas \
 		../../../commands \
-		../../../engine
+		../../../engine \
+		../../../plugins \
+		../../../plugins/native \
 		
 DESTDIR = ../../../../lib/commandplugins
 

@@ -1052,11 +1052,6 @@ nframes_t Song::get_first_visible_frame( ) const
 	return firstVisibleFrame;
 }
 
-float Song::get_gain() const
-{
-	return m_fader->get_gain();
-}
-
 QList<Track* > Song::get_tracks( ) const
 {
 	return m_tracks;

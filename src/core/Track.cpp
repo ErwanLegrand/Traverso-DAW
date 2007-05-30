@@ -118,9 +118,9 @@ QDomNode Track::get_state( QDomDocument doc, bool istemplate)
 		node.appendChild(clips);
 	}
 	
-	QDomNode m_pluginChainNode = doc.createElement("PluginChain");
-	m_pluginChainNode.appendChild(m_pluginChain->get_state(doc));
-	node.appendChild(m_pluginChainNode);
+	QDomNode pluginChainNode = doc.createElement("PluginChain");
+	pluginChainNode.appendChild(m_pluginChain->get_state(doc));
+	node.appendChild(pluginChainNode);
 	
 	return node;
 }
@@ -361,12 +361,6 @@ void Track::set_height(int h)
 int Track::get_total_clips()
 {
 	return audioClipList.count();
-}
-
-
-float Track::get_gain( ) const
-{
-	return m_fader->get_gain();
 }
 
 void Track::set_muted_by_solo(bool muted)

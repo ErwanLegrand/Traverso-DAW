@@ -657,5 +657,8 @@ void Curve::private_remove_node( CurveNode * node )
 	set_changed();
 }
 
-//eof
-
+void Curve::set_song(Song * song)
+{
+	m_song = song; 
+	set_history_stack(m_song->get_history_stack());
+}
