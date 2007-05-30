@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #if defined (LV2_SUPPORT)
 #include <LV2Plugin.h>
 #endif
+
+#include "Interface.h"
 #include <Plugin.h>
 #include <PluginManager.h>
 #include <Information.h>
@@ -38,8 +40,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 PluginSelectorDialog* PluginSelectorDialog::m_instance = 0;
 
-PluginSelectorDialog::PluginSelectorDialog( QWidget * p )
-	: QDialog(p)
+PluginSelectorDialog::PluginSelectorDialog(QWidget* parent)
+	: QDialog(parent)
 {
 	setupUi(this);
 
@@ -72,6 +74,8 @@ void PluginSelectorDialog::on_cancelButton_clicked( )
 
 void PluginSelectorDialog::on_okButton_clicked( )
 {
+	Plugin* plugin = 0;
+
 #if defined (LV2_SUPPORT)
 	QList<QTreeWidgetItem *> list = pluginTreeWidget->selectedItems();
 	
@@ -85,15 +89,16 @@ void PluginSelectorDialog::on_okButton_clicked( )
 	
 	QString uri = item->data(0, Qt::UserRole).toString();
 
-	Plugin* plugin = PluginManager::instance()->create_lv2_plugin(uri);
-	
+ 	plugin = PluginManager::instance()->create_lv2_plugin(uri);
+#endif
+
 	if (!plugin) {
 		reject();
 	}
 
 	m_plugin = plugin;
+	
 	accept();
-#endif
 }
 
 
@@ -105,7 +110,7 @@ void PluginSelectorDialog::plugin_double_clicked()
 PluginSelectorDialog* PluginSelectorDialog::instance()
 {
 	if (m_instance == 0) {
-		m_instance = new PluginSelectorDialog();
+		m_instance = new PluginSelectorDialog(Interface::instance());
 	}
 
 	return m_instance;
