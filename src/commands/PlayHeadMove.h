@@ -48,6 +48,7 @@ private :
 	bool		m_resync;
 	int		m_origXPos;
 	int		m_newXPos;
+	int		m_newYPos;
 };
 
 #endif

@@ -87,14 +87,16 @@ void PlayHeadMove::set_cursor_shape(int useX, int useY)
 int PlayHeadMove::jog()
 {
 	int x = cpointer().scene_x();
+	int y = cpointer().scene_y();
 	if (x < 0) {
 		x = 0;
 	}
-	if (x == m_newXPos) {
+	if (x == m_newXPos && y == m_newYPos) {
 		return 0;
 	}
 	
 	m_newXPos = x;
+	m_newYPos = y;
 	
 	m_cursor->setPos(x, 0);
 	
@@ -107,7 +109,7 @@ int PlayHeadMove::jog()
 	cpointer().get_viewport()->set_holdcursor_text(frame_to_text(newpos, m_song->get_rate(), m_sv->scalefactor));
 	// Hmm, the alignment of the holdcursor isn't in the center, so we have to 
 	// substract half the width of it to make it appear centered... :-(
-	cpointer().get_viewport()->set_holdcursor_pos(QPoint(cpointer().scene_x() - 16, cpointer().scene_y() - 16));
+	cpointer().get_viewport()->set_holdcursor_pos(QPoint(x - 16, y - 16));
 	
 	return 1;
 }

@@ -184,7 +184,9 @@ void PlayHead::set_animation_value(int value)
 	// Due the playhead moves as well during the animation, we have to 
 	// compensate for this, by adding it's delta x to the animation 
 	// 'scroll' position
-	m_animationScrollPosition += (int)(value/16 + deltaX);
+	//
+	// And with the duration changed to 800, 9 is a good division factor
+	m_animationScrollPosition += (int)(value/9 + deltaX);
 	
 	if (newPos != pos()) {
 		setPos(newPos);
