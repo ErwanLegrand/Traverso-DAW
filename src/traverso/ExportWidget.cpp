@@ -415,7 +415,7 @@ void ExportWidget::unlock_device()
 	QStringList args;
 	args  << "unlock" << "--device" << device;
 #if defined (Q_WS_MAC)
-	m_burnprocess->start(qApp->applicationDirPath() + "/cdrdao", args);
+	m_burnprocess->start(qApp->applicationDirPath() + "/cdrdao", args);
 #else
 	m_burnprocess->start(CDRDAO_BIN, args);
 #endif
