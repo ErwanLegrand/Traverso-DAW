@@ -74,6 +74,7 @@ private:
 	
 	int m_writingState;
 	bool m_wasClosed;
+	QString get_device(int index);
 
 private slots:
 	void set_project(Project* project);

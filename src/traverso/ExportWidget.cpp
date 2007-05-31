@@ -27,6 +27,7 @@
 #include <QFileDialog>
 #include <QByteArray>
 #include <QMessageBox>
+#include <QDebug>
 
 #include "Export.h"
 #include "Config.h"
@@ -35,12 +36,9 @@
 
 #if defined (Q_WS_WIN)
 #define CDRDAO_BIN	"cdrdao.exe"
-#elif defined (OSX_BUILD)
-#define CDRDAO_BIN "/opt/local/bin/cdrdao"
 #else
 #define CDRDAO_BIN	"cdrdao"
 #endif
-
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -54,7 +52,7 @@ ExportWidget::ExportWidget( QWidget * parent )
 	, m_exportSpec(0)
 {
         setupUi(this);
-	
+
 	stopButton->hide();
 	QIcon icon = QApplication::style()->standardIcon(QStyle::SP_DirClosedIcon);
 	fileSelectButton->setIcon(icon);
@@ -389,8 +387,12 @@ void ExportWidget::query_devices()
 
 #if defined (Q_WS_WIN)
 	m_burnprocess->start(CDRDAO_BIN, QStringList() << "scanbus");
-#elif defined (OSX_BUILD)
-	// not possible to query devices on os x, workaround is included
+#elif defined (Q_WS_MAC)
+	cdDeviceComboBox->clear();
+	cdDeviceComboBox->addItem("IODVDServices");
+	cdDeviceComboBox->addItem("IODVDServices/2");
+	cdDeviceComboBox->addItem("IOCompactDiscServices");
+	cdDeviceComboBox->addItem("IOCompactDiscServices/2");
 #else
 	m_burnprocess->start(CDRDAO_BIN, QStringList() << "drive-info");
 #endif
@@ -408,11 +410,15 @@ void ExportWidget::unlock_device()
 		return;
 	}
 		
-	QString device = cdDeviceComboBox->itemData(index).toString();
-	
+	QString device = get_device(index);
+
 	QStringList args;
 	args  << "unlock" << "--device" << device;
+#if defined (Q_WS_MAC)
+	m_burnprocess->start(qApp->applicationDirPath() + "/cdrdao", args);
+#else
 	m_burnprocess->start(CDRDAO_BIN, args);
+#endif
 }
 
 
@@ -577,11 +583,7 @@ void ExportWidget::write_to_cd()
 		return;
 	}
 		
-	QString device = cdDeviceComboBox->itemData(index).toString();
-#if defined (OSX_BUILD)
-	device = cdDeviceComboBox->currentText();
-#endif
-
+	QString device = get_device(index);
 	QStringList arguments;
 	arguments << "write" << "--device" << device << "-n" << "--eject" << "--driver" << "generic-mmc";
 	
@@ -594,7 +596,11 @@ void ExportWidget::write_to_cd()
 	}
 	
 	arguments << m_exportSpec->tocFileName;
+#if defined (Q_WS_MAC)
+	m_burnprocess->start(qApp->applicationDirPath() + "/cdrdao", arguments);
+#else
 	m_burnprocess->start(CDRDAO_BIN, arguments);
+#endif
 }
 
 void ExportWidget::cd_export_finished()
@@ -682,13 +688,6 @@ void ExportWidget::read_standard_output()
 			}
 		}
 		
-#if defined (OSX_BUILD)
-		cdDeviceComboBox->clear();
-		cdDeviceComboBox->addItem("IODVDServices");
-		cdDeviceComboBox->addItem("IODVDServices/2");
-		cdDeviceComboBox->addItem("IOCompactDiscServices");
-		cdDeviceComboBox->addItem("IOCompactDiscServices/2");
-#endif
 		QString cdrdaoDrive = config().get_property("Cdrdao", "drive", "").toString();
 		if (cdrdaoDrive != "") {
 			int index = cdDeviceComboBox->findData(cdrdaoDrive);
@@ -830,3 +829,11 @@ void ExportWidget::set_was_closed()
 	m_wasClosed = true;
 }
 
+QString ExportWidget::get_device(int index)
+{
+	#if defined (Q_WS_MAC)
+		return cdDeviceComboBox->currentText();
+	#else
+		return cdDeviceComboBox->itemData(index).toString();
+	#endif
+}
