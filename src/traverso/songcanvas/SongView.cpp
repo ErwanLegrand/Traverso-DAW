@@ -90,6 +90,7 @@ SongView::SongView(SongWidget* songwidget,
 	m_playCursor = new PlayHead(this, m_song, m_clipsViewPort);
 	m_workCursor = new WorkCursor(this, m_song);
 	connect(m_song, SIGNAL(workingPosChanged()), m_workCursor, SLOT(update_position()));
+	connect(m_song, SIGNAL(transferStarted()), this, SLOT(follow_play_head()));
 	connect(m_song, SIGNAL(transportPosSet()), this, SLOT(follow_play_head()));
 	connect(m_song, SIGNAL(workingPosChanged()), this, SLOT(stop_follow_play_head()));
 	
