@@ -262,8 +262,8 @@ void AudioClip::set_left_edge(long newFrame)
 
 		int movingToRight = newFrame - trackStartFrame;
 
-		if (movingToRight > availableFramesRight) {
-			movingToRight = availableFramesRight;
+		if (movingToRight > availableFramesRight - 4) {
+			movingToRight = availableFramesRight - 4;
 		}
 
 		trackStartFrame += movingToRight;
@@ -301,8 +301,8 @@ void AudioClip::set_right_edge(long newFrame)
 
 		int movingToLeft = trackEndFrame - newFrame;
 
-		if (movingToLeft > availableFramesLeft) {
-			movingToLeft = availableFramesLeft;
+		if (movingToLeft > availableFramesLeft - 4) {
+			movingToLeft = availableFramesLeft - 4;
 		}
 
 		set_track_end_frame( trackEndFrame - movingToLeft );
