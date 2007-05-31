@@ -385,6 +385,8 @@ void ExportWidget::query_devices()
 	}
 	
 	m_writingState = QUERY_DEVICE;
+	cdDeviceComboBox->clear();
+
 #if defined (Q_WS_WIN)
 	m_burnprocess->start(CDRDAO_BIN, QStringList() << "scanbus");
 #elif defined (OSX_BUILD)
