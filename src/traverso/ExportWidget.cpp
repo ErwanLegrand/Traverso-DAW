@@ -320,7 +320,7 @@ void ExportWidget::render_finished( )
 
 void ExportWidget::set_exporting_song( Song * song )
 {
-        QString name = tr("Progress of Song ") + 
+        QString name = tr("Progress of Sheet ") + 
 			QString::number(m_project->get_song_index(song->get_id())) + ": " +
 			song->get_title();
 
@@ -550,7 +550,7 @@ void ExportWidget::cd_render()
 		connect(m_project, SIGNAL(overallExportProgressChanged(int)), this, SLOT(cd_export_progress(int)));
 		connect(m_project, SIGNAL(exportFinished()), this, SLOT(cd_export_finished()));
 	
-		update_cdburn_status(tr("Rendering Song(s)"), NORMAL_MESSAGE);
+		update_cdburn_status(tr("Rendering Sheet(s)"), NORMAL_MESSAGE);
 		
 		disable_ui_interaction();
 		m_project->export_project(m_exportSpec);
