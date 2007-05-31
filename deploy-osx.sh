@@ -4,7 +4,9 @@
 #    This script is used to create a bundle for OS X     #
 ###                                                    ###
 
-QT_PATH=/usr/local/Trolltech/Qt-4.3.0-snapshot-20070523
+QT_PATH=/usr/local/Trolltech/Qt-4.3.0
+
+cp /opt/local/bin/cdrdao traverso.app/Contents/MacOS/
 
 mkdir -p traverso.app/Contents/Frameworks
 mkdir -p traverso.app/Contents/Frameworks/QtXml.framework/Versions/4/
@@ -56,4 +58,8 @@ install_name_tool -change $QT_PATH/lib/QtCore.framework/Versions/4/QtCore @execu
 install_name_tool -change $QT_PATH/lib/QtCore.framework/Versions/4/QtCore @executable_path/../Frameworks/QtCore.framework/Versions/4/QtCore traverso.app/Contents/Frameworks/QtOpenGL.framework/Versions/4/QtOpenGL
 install_name_tool -change $QT_PATH/lib/QtGui.framework/Versions/4/QtGui @executable_path/../Frameworks/QtGui.framework/Versions/4/QtGui traverso.app/Contents/Frameworks/QtOpenGL.framework/Versions/4/QtOpenGL
 
+install_name_tool -change /usr/local/lib/librasqal.0.dylib @executable_path/../Frameworks/librasqal.0.dylib traverso.app/Contents/Frameworks/librdf.0.dylib
+install_name_tool -change /usr/local/lib/libraptor.1.dylib @executable_path/../Frameworks/libraptor.1.dylib traverso.app/Contents/Frameworks/librdf.0.dylib
+install_name_tool -change /usr/local/lib/libraptor.1.dylib @executable_path/../Frameworks/libraptor.1.dylib traverso.app/Contents/Frameworks/librasqal.0.dylib
+install_name_tool -change /usr/local/lib/libintl.8.dylib @executable_path/../Frameworks/libintl.8.dylib traverso.app/Contents/Frameworks/libglib-2.0.0.dylib
 
