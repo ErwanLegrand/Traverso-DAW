@@ -117,7 +117,14 @@ void Traverso::create_interface( )
 	Interface* iface = Interface::instance();
 	prepare_audio_device();
 	iface->show();
-	pm().start();
+	QString projectToLoad;
+	foreach(QString string, QCoreApplication::arguments ()) {
+		if (string.contains("project.tpf")) {
+			projectToLoad = string;
+			break;
+		}
+	}
+	pm().start(projectToLoad);
 }
 
 void Traverso::shutdown( int signal )

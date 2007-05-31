@@ -246,7 +246,7 @@ Project * ProjectManager::get_project( )
 	return currentProject;
 }
 
-void ProjectManager::start( )
+void ProjectManager::start(QString projectToLoad)
 {
 	QString defaultpath = config().get_property("Project", "DefaultDirectory", "").toString();
 	QString projects_path = config().get_property("Project", "directory", defaultpath).toString();
@@ -281,8 +281,17 @@ void ProjectManager::start( )
 	
 	bool loadProjectAtStartUp = config().get_property("Project", "loadLastUsed", 1).toBool();
 
-	if (loadProjectAtStartUp) {
-		QString projectToLoad = config().get_property("Project", "current", "").toString();
+	if (loadProjectAtStartUp || !(projectToLoad.isEmpty())) {
+		if (!projectToLoad.isEmpty()) {
+			int splitpoint = projectToLoad.lastIndexOf("/");
+			QString dir = projectToLoad.left(splitpoint);
+			int splitpoint2 = dir.lastIndexOf("/") + 1;
+			projectToLoad = dir.right(splitpoint - splitpoint2);
+			dir = dir.remove(projectToLoad);
+			config().set_property("Project", "directory", dir);
+		} else {
+			projectToLoad = config().get_property("Project", "current", "").toString();
+		}
 
 		if ( projectToLoad.isNull() || projectToLoad.isEmpty() )
 			projectToLoad="Untitled";

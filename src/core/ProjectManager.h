@@ -55,7 +55,7 @@ public:
 
 
 public slots:
-	void start();
+	void start(QString projectToLoad);
 	
 	Command* save_project();
 	Command* exit();
