@@ -35,9 +35,11 @@ class TimeLineView : public ViewItem
 {
         Q_OBJECT
 	Q_CLASSINFO("add_marker", tr("Add Marker"))
+	Q_CLASSINFO("add_marker_at_playhead", tr("Add Marker at Playhead"))
 	Q_CLASSINFO("remove_marker", tr("Remove Marker"))
 	Q_CLASSINFO("drag_marker", tr("Drag Marker"))
 	Q_CLASSINFO("clear_markers", tr("Clear all Markers"))
+	Q_CLASSINFO("playhead_to_marker", tr("Playhead to Marker"))
 
 public:
         TimeLineView(SongView* view);
@@ -61,6 +63,7 @@ private:
 
 	QHash<nframes_t, QString>	m_zooms;	
 
+	Command* add_marker_at(nframes_t when);
 	void update_softselected_marker(QPoint pos);
 	
 	
@@ -69,10 +72,12 @@ public slots:
 	
 public slots:
 	Command* add_marker();
+	Command* add_marker_at_playhead();
 	Command* remove_marker();
 	Command* drag_marker();
 	Command* clear_markers();
-	
+	Command* playhead_to_marker();
+
 private slots:
 	void add_new_marker_view(Marker* marker);
 	void remove_marker_view(Marker* marker);

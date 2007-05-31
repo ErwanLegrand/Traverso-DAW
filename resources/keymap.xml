@@ -73,6 +73,7 @@
 		<keyfact type="FKEY" key1="V" >
 			<Objects>
 				<Object objectname="SongView" slotsignature="touch_play_cursor" modes="All" sortorder="2" submenu="Playhead" instantanious="0" />
+				<Object objectname="TimeLineView" slotsignature="playhead_to_marker" modes="All" sortorder="2" instantanious="0" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="W" >
@@ -176,6 +177,8 @@
 				<Object objectname="FadeCurve" slotsignature="set_mode" modes="All" instantanious="0" />
 				<Object objectname="TimeLineView" slotsignature="add_marker" modes="All" instantanious="0" />
 				<Object objectname="SongView" slotsignature="add_marker" modes="All" sortorder="23" instantanious="0" />
+				<Object objectname="TimeLineView" slotsignature="add_marker_at_playhead" modes="All" modifierkeys="CTRL" instantanious="0" />
+				<Object objectname="SongView" slotsignature="add_marker_at_playhead" modes="All" sortorder="24" modifierkeys="CTRL" instantanious="0" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="L" >

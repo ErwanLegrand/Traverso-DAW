@@ -568,8 +568,12 @@ void SongView::load_theme_data()
 
 Command * SongView::add_marker()
 {
-	stop_follow_play_head();
 	return m_tlvp->get_timeline_view()->add_marker();
+}
+
+Command * SongView::add_marker_at_playhead()
+{
+	return m_tlvp->get_timeline_view()->add_marker_at_playhead();
 }
 
 Command * SongView::playhead_to_workcursor( )

@@ -340,6 +340,18 @@ Command* TimeLineView::add_marker()
 	
 	nframes_t when = (uint) (point.x() * m_sv->scalefactor);
 	
+	return add_marker_at(when);
+}
+
+Command* TimeLineView::add_marker_at_playhead()
+{
+	nframes_t when = m_sv->get_song()->get_transport_frame();
+	
+	return add_marker_at(when);
+}
+
+Command* TimeLineView::add_marker_at(nframes_t when)
+{
 	CommandGroup* group = new CommandGroup(m_timeline, "");
 
 	// check if it is the first marker added to the timeline
@@ -364,6 +376,18 @@ Command* TimeLineView::add_marker()
 	group->add_command(m_timeline->add_marker(marker));
 	
 	return group;
+}
+
+Command* TimeLineView::playhead_to_marker()
+{
+	update_softselected_marker(QPoint(cpointer().on_first_input_event_scene_x(), cpointer().on_first_input_event_scene_y()));
+
+	if (m_blinkingMarker) {
+		m_sv->get_song()->set_transport_pos(m_blinkingMarker->get_marker()->get_when());
+		return 0;
+	}
+
+	return ie().did_not_implement();
 }
 
 Command* TimeLineView::remove_marker()
