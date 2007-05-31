@@ -434,6 +434,12 @@
 				<Object objectname="Interface" slotsignature="show_export_widget" modes="All" instantanious="0" />
 			</Objects>
 		</keyfact>
+		<keyfact type="D_FKEY" key1="RETURN" >
+			<Objects>
+				<Object objectname="SpectralMeterView" slotsignature="export_avarage_curve" modes="All" instantanious="0" />
+				<Object objectname="Interface" slotsignature="show_export_widget" modes="All" instantanious="0" />
+			</Objects>
+		</keyfact>
 		<keyfact type="D_FKEY" key1="U" >
 			<Objects>
 				<Object objectname="Song" slotsignature="toggle_mute" modes="All" sortorder="25" instantanious="0" />
@@ -447,12 +453,6 @@
 		<keyfact type="D_FKEY" key1="A" >
 			<Objects>
 				<Object objectname="Song" slotsignature="toggle_arm" modes="All" sortorder="24" instantanious="0" />
-			</Objects>
-		</keyfact>
-		<keyfact type="D_FKEY" key1="RETURN" >
-			<Objects>
-				<Object objectname="SpectralMeterView" slotsignature="export_avarage_curve" modes="All" instantanious="0" />
-				<Object objectname="Interface" slotsignature="show_export_widget" modes="All" instantanious="0" />
 			</Objects>
 		</keyfact>
 		<keyfact type="D_FKEY" key1="G" >
@@ -495,6 +495,11 @@
 		<keyfact type="D_FKEY" key1="W" >
 			<Objects>
 				<Object objectname="SongView" slotsignature="playhead_to_workcursor" modes="All" sortorder="12" submenu="Playhead" instantanious="0" />
+			</Objects>
+		</keyfact>
+		<keyfact type="D_FKEY" key1="V" >
+			<Objects>
+				<Object objectname="SongView" slotsignature="center_playhead" modes="All" sortorder="15" submenu="Playhead" instantanious="0" />
 			</Objects>
 		</keyfact>
 		<keyfact type="D_FKEY" key1="HOME" >

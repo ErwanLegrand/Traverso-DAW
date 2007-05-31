@@ -59,6 +59,7 @@ class SongView : public ViewItem
 	Q_CLASSINFO("work_cursor_move", tr("Workcursor: Move"))
 	Q_CLASSINFO("add_marker", tr("Add Marker"))
 	Q_CLASSINFO("playhead_to_workcursor", tr("Playhead: To workcursor"))
+	Q_CLASSINFO("center_playhead", tr("Playhead: Center"))
 
 public :
 
@@ -142,6 +143,7 @@ public slots:
 	Command* work_cursor_move();
 	Command* add_marker();
 	Command* playhead_to_workcursor();
+	Command* center_playhead();
 	
 private slots:
 	void scale_factor_changed();

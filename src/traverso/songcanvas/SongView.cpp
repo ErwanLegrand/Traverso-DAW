@@ -582,6 +582,16 @@ Command * SongView::playhead_to_workcursor( )
 	return (Command*) 0;
 }
 
+Command * SongView::center_playhead( )
+{
+	nframes_t centerX = m_song->get_transport_frame();
+	set_hscrollbar_value(centerX / scalefactor - m_clipsViewPort->width() / 2);
+	
+	follow_play_head();
+
+	return (Command*) 0;
+}
+
 void SongView::set_hscrollbar_value(int value)
 {
 	m_clipsViewPort->horizontalScrollBar()->setValue(value);
