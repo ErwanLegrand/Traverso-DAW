@@ -209,6 +209,7 @@
 		<keyfact type="FKEY" key1="MouseButtonMiddle" >
 			<Objects>
 				<Object objectname="SongView" slotsignature="touch_play_cursor" modes="All" sortorder="2" submenu="Playhead" instantanious="0" />
+				<Object objectname="TimeLineView" slotsignature="playhead_to_marker" modes="All" sortorder="2" instantanious="0" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="MouseButtonRight" >
