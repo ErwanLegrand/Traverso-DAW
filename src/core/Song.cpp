@@ -1162,5 +1162,10 @@ void Song::set_recording(bool recording)
 	emit recordingStateChanged();
 }
 
+void Song::set_temp_follow_state(bool state)
+{
+	emit tempFollowChanged(state);
+}
+
 // eof
 

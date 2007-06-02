@@ -623,7 +623,9 @@ void SongInfo::set_song(Song* song)
 	if (m_song) {
 		connect(m_song, SIGNAL(snapChanged()), this, SLOT(update_snap_state()));
 		connect(m_song, SIGNAL(modeChanged()), this, SLOT(update_effects_state()));
+		connect(m_song, SIGNAL(tempFollowChanged(bool)), this, SLOT(update_temp_follow_state(bool)));
 		connect(m_song, SIGNAL(recordingStateChanged()), this, SLOT(update_recording_state()));
+		connect(m_song, SIGNAL(transferStopped()), this, SLOT(update_follow_state()));
 		update_snap_state();
 		update_effects_state();
 		update_recording_state();
@@ -666,10 +668,21 @@ void SongInfo::update_follow_state()
 	m_followAct->setChecked(config().get_property("PlayHead", "Follow", true).toBool());
 }
 
+void SongInfo::update_temp_follow_state(bool state)
+{
+	if (m_song->is_transporting()) {
+		m_followAct->setChecked(state);
+	}
+}
+
 void SongInfo::follow_state_changed(bool state)
 {
-	config().set_property("PlayHead", "Follow", state);
-	config().save();
+	if (!m_song->is_transporting()) {
+		config().set_property("PlayHead", "Follow", state);
+		config().save();
+	} else {
+		m_song->set_temp_follow_state(state);
+	}
 }
 
 void SongInfo::effect_button_clicked()

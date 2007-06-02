@@ -124,6 +124,7 @@ public slots:
 	void update_scrollbars();
 	void stop_follow_play_head();
 	void follow_play_head();
+	void set_follow_state(bool state);
 
 	Command* touch();
 	Command* touch_play_cursor();

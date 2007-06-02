@@ -206,6 +206,8 @@ public slots :
 	
 	float get_gain() const;
 
+	void set_temp_follow_state(bool state);
+
 	Command* go();
 	Command* go_and_record();
 	Command* work_next_edge();
@@ -229,6 +231,7 @@ signals:
 	void lastFramePositionChanged();
 	void seekStart(uint position);
 	void snapChanged();
+	void tempFollowChanged(bool state);
 	void propertyChanged();
 	void setCursorAtEdge();
 	void masterGainChanged();

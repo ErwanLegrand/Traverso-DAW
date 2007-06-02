@@ -110,6 +110,7 @@ SongView::SongView(SongWidget* songwidget,
 	}
 	
 	connect(m_song, SIGNAL(hzoomChanged()), this, SLOT(scale_factor_changed()));
+	connect(m_song, SIGNAL(tempFollowChanged(bool)), this, SLOT(set_follow_state(bool)));
 	connect(m_song, SIGNAL(trackAdded(Track*)), this, SLOT(add_new_trackview(Track*)));
 	connect(m_song, SIGNAL(trackRemoved(Track*)), this, SLOT(remove_trackview(Track*)));
 	connect(m_song, SIGNAL(lastFramePositionChanged()), this, SLOT(update_scrollbars()));
@@ -344,16 +345,26 @@ Command* SongView::center()
 
 void SongView::stop_follow_play_head()
 {
-	m_actOnPlayHead = false;
-	m_playCursor->disable_follow();
+	m_song->set_temp_follow_state(false);
 }
 
 
 void SongView::follow_play_head()
 {
-	m_actOnPlayHead = true;
-	m_playCursor->enable_follow();
-	m_playCursor->setPos(m_song->get_transport_frame() / scalefactor, 0);
+	m_song->set_temp_follow_state(true);
+}
+
+
+void SongView::set_follow_state(bool state)
+{
+	if (state) {
+		m_actOnPlayHead = true;
+		m_playCursor->enable_follow();
+		m_playCursor->setPos(m_song->get_transport_frame() / scalefactor, 0);
+	} else {
+		m_actOnPlayHead = false;
+		m_playCursor->disable_follow();
+	}
 }
 
 

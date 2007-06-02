@@ -189,6 +189,7 @@ private slots:
 	void update_snap_state();
 	void snap_state_changed(bool state);
 	void update_follow_state();
+	void update_temp_follow_state(bool state);
 	void update_effects_state();
 	void follow_state_changed(bool state);
 	void effect_button_clicked();
