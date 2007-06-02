@@ -4,7 +4,6 @@
 	    		interface, which most users are used too, and the more powerfull contextual interface, 
 			where mouse and keyboard are used together." />
 	<ModifierKeys>
-		<key key="SHIFT" />
 		<key key="CTRL" />
 		<key key="ALT" />
 	</ModifierKeys>
@@ -70,10 +69,16 @@
 				<Object objectname="SongView" slotsignature="scroll_down" modes="All" sortorder="4" submenu="Scroll" instantanious="1" />
 			</Objects>
 		</keyfact>
-		<keyfact type="FKEY" key1="V" >
+		<keyfact type="FKEY" key1="SHIFT" >
 			<Objects>
 				<Object objectname="SongView" slotsignature="touch_play_cursor" modes="All" sortorder="2" submenu="Playhead" instantanious="0" />
 				<Object objectname="TimeLineView" slotsignature="playhead_to_marker" modes="All" sortorder="2" instantanious="0" />
+			</Objects>
+		</keyfact>
+		<keyfact type="FKEY" key1="V">
+			<Objects>
+				<Object objectname="SongView" slotsignature="playhead_to_workcursor" modes="All" sortorder="12" submenu="Playhead" instantanious="1" />
+				<Object objectname="SongView" slotsignature="center_playhead" modes="All" sortorder="15" modifierkeys="CTRL" submenu="Playhead" instantanious="1" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="W" >
@@ -313,12 +318,12 @@
 				<Object objectname="TrackView" modes="All" sortorder="13"  slotsignature="insert_silence" instantanious="0" />
 			</Objects>
 		</keyfact>
-		<keyfact type="FKEY2" key1="V" key2="B" >
+		<keyfact type="FKEY2" key1="V" key2="C" >
 			<Objects>
 				<Object objectname="SongView" slotsignature="playhead_to_workcursor" modes="All" sortorder="12" submenu="Playhead" instantanious="0" />
 			</Objects>
 		</keyfact>
-		<keyfact type="FKEY2" key1="V" key2="C" >
+		<keyfact type="FKEY2" key1="V" key2="B" >
 			<Objects>
 				<Object objectname="SongView" slotsignature="center_playhead" modes="All" sortorder="15" submenu="Playhead" instantanious="0" />
 			</Objects>
@@ -397,7 +402,7 @@
 				<Object objectname="SongView" mousehint="LRUD" slotsignature="shuttle" modes="All" sortorder="6" instantanious="0" />
 			</Objects>
 		</keyfact>
-		<keyfact type="HKEY" key1="V" >
+		<keyfact type="HKEY" key1="SHIFT" >
 			<Objects>
 				<Object objectname="SongView" mousehint="LR" slotsignature="play_cursor_move" modes="All" sortorder="8" submenu="Playhead" instantanious="0" />
 			</Objects>
@@ -519,6 +524,16 @@
 		<keyfact type="D_FKEY" key1="F" >
 			<Objects>
 				<Object objectname="AudioClipView" slotsignature="reset_fade" modes="All" sortorder="37" submenu="Fade In/Out" instantanious="0" />
+			</Objects>
+		</keyfact>
+		<keyfact type="D_FKEY" key1="W">
+			<Objects>
+				<Object objectname="SongView" slotsignature="playhead_to_workcursor" modes="All" sortorder="12" submenu="Playhead" instantanious="0" />
+			</Objects>
+		</keyfact>
+		<keyfact type="D_FKEY" key1="V">
+			<Objects>
+				<Object objectname="SongView" slotsignature="center_playhead" modes="All" sortorder="15" submenu="Playhead" instantanious="0" />
 			</Objects>
 		</keyfact>
 
