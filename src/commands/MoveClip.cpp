@@ -173,6 +173,7 @@ int MoveClip::begin_hold()
 			this, SLOT(audioclip_added(AudioClip*)));
 	
 		Command::process_command(d->view->get_clip()->get_track()->add_clip(d->newclip, false));
+		d->newclip->set_snappable(false);
 		
 		return 1;
 	}

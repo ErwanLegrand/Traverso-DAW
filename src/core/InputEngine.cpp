@@ -653,7 +653,7 @@ void InputEngine::process_press_event(int eventcode, bool isAutoRepeat)
 		return;
 	}
 	
-	if (isFirstFact) {
+	if (isFirstFact && !isHolding) {
 		cpointer().inputengine_first_input_event();
 		
 		// Here we jump straight to the <K> command if "K" is unambiguously an FKEY
