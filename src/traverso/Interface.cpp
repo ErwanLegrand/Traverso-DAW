@@ -354,6 +354,9 @@ void Interface::create_menus( )
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_project_manager_dialog()));
 	
 	action = menu->addAction(tr("&Export..."));
+	list.clear();
+	list.append(QKeySequence("F9"));
+	action->setShortcuts(list);
 	action->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
 	m_projectExportAction = action;
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_export_widget()));
