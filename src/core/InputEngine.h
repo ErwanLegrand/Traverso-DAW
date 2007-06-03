@@ -240,6 +240,7 @@ private:
 	void reset();
 	void process_press_event(int eventcode, bool isAutoRepeat=false);
         void process_release_event(int eventcode);
+	int find_index_for_instant_fkey( int key );
         int find_index_for_single_fact(int type, int key1, int key2);
 	bool is_modifier_keyfact(int eventcode);
 

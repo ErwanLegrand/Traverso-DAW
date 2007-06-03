@@ -654,6 +654,15 @@ void InputEngine::process_press_event(int eventcode, bool isAutoRepeat)
 	}
 	
 	if (isFirstFact) {
+		// Here we jump straight to the <K> command if "K" is unambiguously an FKEY
+		int fkey_index = find_index_for_instant_fkey(eventcode);
+		if (fkey_index >= 0) {
+			IEAction* action = m_ieActions.at(fkey_index);
+			broadcast_action(action, isAutoRepeat);
+			return;
+		}
+		
+		// Else, tell the cpointer that an event is starting
 		cpointer().inputengine_first_input_event();
 	}
 	
@@ -941,6 +950,29 @@ int InputEngine::identify_first_fact()
 	PMESG3("No single fact candidate action found. Keep going, since a 2nd fact might come soon");
 	give_a_chance_for_second_fact();
 	return -1;
+}
+
+
+// Only return a valid index if there is an FKEY defined for key, and there are no
+// other conflicting keyfacts (HOLDKEY, FKEY2, etc)
+int InputEngine::find_index_for_instant_fkey( int key )
+{
+	int fkey_index = find_index_for_single_fact(FKEY, key, 0);
+	if (fkey_index < 0) {
+		return -1;
+	}
+
+	foreach(IEAction* action, m_ieActions) {
+			
+		if (action->type == FKEY)
+			continue;
+		if (action->fact1_key1==key || action->fact1_key2==key) {
+			PMESG3("Found a conflict (%s) for instantaneous keyfact key=%d", action->keySequence.data(), key);
+			return -1;
+		}
+	}
+
+	return fkey_index;
 }
 
 
