@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS><TS version="1.1" language="nl">
+<defaultcodec></defaultcodec>
 <context>
     <name>AddRemoveClip</name>
     <message>
@@ -555,7 +556,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/BehaviorConfigPage.ui" line="148"/>
         <source>New Sheet Settings</source>
-        <translation type="unfinished">Nieuwe Song instellingen</translation>
+        <translation>Nieuwe Song instellingen</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/BehaviorConfigPage.ui" line="168"/>
@@ -604,6 +605,11 @@ p, li { white-space: pre-wrap; }
         <location filename="src/traverso/ui/BehaviorConfigPage.ui" line="205"/>
         <source>Lock Audio Clips by default</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message encoding="UTF-8">
+        <location filename="src/traverso/ui/BehaviorConfigPage.ui" line="193"/>
+        <source>Audio Clip Settings</source>
+        <translation>Audio Clip Instellingen</translation>
     </message>
 </context>
 <context>
@@ -1144,32 +1150,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ExportWidget.cpp" line="430"/>
         <source>Aborting Render process ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Render proces wordt afgebroken ...</translation>
     </message>
     <message>
         <location filename="src/traverso/ExportWidget.cpp" line="436"/>
         <source>Aborting CD Burn process ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Schrijven naar CD wordt afgebroken ...</translation>
     </message>
     <message>
         <location filename="src/traverso/ExportWidget.cpp" line="467"/>
         <source>Waiting for CD-Writer...</source>
-        <translation type="unfinished"></translation>
+        <translation>Wacht op CD-Writer...</translation>
     </message>
     <message>
         <location filename="src/traverso/ExportWidget.cpp" line="476"/>
         <source>CD Burn process failed!</source>
-        <translation type="unfinished"></translation>
+        <translation>Schrijven naar CD gefaald!</translation>
     </message>
     <message>
         <location filename="src/traverso/ExportWidget.cpp" line="480"/>
         <source>CD Burn process stopped on user request.</source>
-        <translation type="unfinished"></translation>
+        <translation>Schrijven naar CD door gebruiker afgebroken.</translation>
     </message>
     <message>
         <location filename="src/traverso/ExportWidget.cpp" line="484"/>
         <source>CD Writing process finished!</source>
-        <translation type="unfinished"></translation>
+        <translation>Schrijven naar CD geslaagd!</translation>
     </message>
     <message>
         <location filename="src/traverso/ExportWidget.cpp" line="508"/>
