@@ -257,7 +257,7 @@ void ProjectManagerDialog::on_exportTemplateButton_clicked()
 	if (QFile::exists(fileName)) {
 		QMessageBox::StandardButton button = QMessageBox::question(this,
 				tr("Traverso - Information"),
-				tr("Template with name %1 allready exists!\n Do you want to overwrite it?").arg(fileName),
+				tr("Template with name %1 already exists!\n Do you want to overwrite it?").arg(fileName),
 				QMessageBox::Yes | QMessageBox::No,
 				QMessageBox::No);
 				
