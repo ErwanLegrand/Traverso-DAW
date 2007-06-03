@@ -665,21 +665,26 @@ void SongInfo::snap_state_changed(bool state)
 
 void SongInfo::update_follow_state()
 {
-	m_followAct->setChecked(config().get_property("PlayHead", "Follow", true).toBool());
+	m_isFollowing = config().get_property("PlayHead", "Follow", true).toBool();
+	m_followAct->setChecked(m_isFollowing);
 }
 
 void SongInfo::update_temp_follow_state(bool state)
 {
-	if (m_song->is_transporting()) {
+	if (m_song->is_transporting() && m_isFollowing) {
 		m_followAct->setChecked(state);
 	}
 }
 
 void SongInfo::follow_state_changed(bool state)
 {
-	if (!m_song->is_transporting()) {
+	if (!m_song->is_transporting() || !m_isFollowing) {
+		m_isFollowing = state;
 		config().set_property("PlayHead", "Follow", state);
 		config().save();
+		if (m_song->is_transporting()) {
+			m_song->set_temp_follow_state(state);
+		}
 	} else {
 		m_song->set_temp_follow_state(state);
 	}

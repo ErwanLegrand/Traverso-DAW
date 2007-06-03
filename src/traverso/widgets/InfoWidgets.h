@@ -211,6 +211,7 @@ private:
 	QAction*	m_followAct;
 	QAction*	m_recAction;
 	QToolButton*	m_record;
+	bool		m_isFollowing;
 };
 
 
