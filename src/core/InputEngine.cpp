@@ -654,6 +654,8 @@ void InputEngine::process_press_event(int eventcode, bool isAutoRepeat)
 	}
 	
 	if (isFirstFact) {
+		cpointer().inputengine_first_input_event();
+		
 		// Here we jump straight to the <K> command if "K" is unambiguously an FKEY
 		int fkey_index = find_index_for_instant_fkey(eventcode);
 		if (fkey_index >= 0) {
@@ -661,9 +663,6 @@ void InputEngine::process_press_event(int eventcode, bool isAutoRepeat)
 			broadcast_action(action, isAutoRepeat);
 			return;
 		}
-		
-		// Else, tell the cpointer that an event is starting
-		cpointer().inputengine_first_input_event();
 	}
 	
 	if (isHolding) {
