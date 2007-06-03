@@ -1417,7 +1417,7 @@ int InputEngine::init_map(const QString& keymap)
 				(action->fact2_key2 == existingaction->fact2_key2) &&
 				(action->type == existingaction->type) ) {
 				exists = true;
-				QString errorstring = QString("InputEngine:: keyfact with: type=%1, key1='%2', key2='%3' allready exists!\n"
+				QString errorstring = QString("InputEngine:: keyfact with: type=%1, key1='%2', key2='%3' already exists!\n"
 						"You should only define keyfact types one time!!\n").arg(keyFactType).arg(key1).arg(key2); 
 				printf(QS_C(errorstring));
 				info().warning(errorstring);

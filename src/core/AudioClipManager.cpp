@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioClipManager.cpp,v 1.13 2007/05/17 21:38:15 r_sijrier Exp $
+    $Id: AudioClipManager.cpp,v 1.14 2007/06/03 12:56:32 ingmar Exp $
 */
  
 #include "AudioClipManager.h"
@@ -50,7 +50,7 @@ void AudioClipManager::add_clip( AudioClip * clip )
 {
 	PENTER;
 	if (m_clips.contains(clip)) {
-		PERROR("Trying to add clip %s, but it's allready in my list!!", QS_C(clip->get_name()));
+		PERROR("Trying to add clip %s, but it's already in my list!!", QS_C(clip->get_name()));
 	}
 	m_clips.append( clip );
 	

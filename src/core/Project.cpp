@@ -482,7 +482,7 @@ int Project::export_project(ExportSpecification* spec)
 	}
 	
 	if (m_exportThread->isRunning()) {
-		info().warning(tr("Export allready in progress, cannot start it twice!"));
+		info().warning(tr("Export already in progress, cannot start it twice!"));
 		return -1;
 	}
 	
