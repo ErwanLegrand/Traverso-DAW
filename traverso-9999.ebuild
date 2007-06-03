@@ -1,6 +1,6 @@
 # Copyright 1999-2007 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /home/ingmar/development/exherbo/temp/traverso/traverso/traverso-9999.ebuild,v 1.1 2007/06/03 23:13:47 ingmar Exp $
+# $Header: /home/ingmar/development/exherbo/temp/traverso/traverso/traverso-9999.ebuild,v 1.2 2007/06/03 23:15:52 ingmar Exp $
 
 inherit eutils qt4 toolchain-funcs cvs
 
@@ -11,7 +11,7 @@ SRC_URI=""
 IUSE="alsa jack lv2 sse"
 SLOT="0"
 LICENSE="GPL-2"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~ppc ~x86"
 
 RDEPEND="$(qt4_min_version 4.2.3)
 	alsa? ( media-libs/alsa-lib )
@@ -61,4 +61,7 @@ src_compile() {
 src_install() {
 	emake INSTALL_ROOT="${D}" install || die "emake install failed"
 	dodoc AUTHORS ChangeLog README
+
+	doicon resources/images/traverso-logo.svg
+	make_desktop_entry ${PN} Traverso /usr/share/pixmaps/traverso-logo.svg
 }
