@@ -55,6 +55,7 @@ class SongView : public ViewItem
 	Q_CLASSINFO("shuttle", tr("Shuttle"))
 	Q_CLASSINFO("goto_begin", tr("To start"))
 	Q_CLASSINFO("goto_end", tr("To end"))
+	Q_CLASSINFO("play_to_begin", tr("Playhead: To Start"))
 	Q_CLASSINFO("play_cursor_move", tr("Playhead: Move"))
 	Q_CLASSINFO("work_cursor_move", tr("Workcursor: Move"))
 	Q_CLASSINFO("add_marker", tr("Add Marker"))
@@ -141,6 +142,7 @@ public slots:
         Command* shuttle();
         Command* goto_begin();
         Command* goto_end();
+	Command* play_to_begin();
 	Command* play_cursor_move();
 	Command* work_cursor_move();
 	Command* add_marker();

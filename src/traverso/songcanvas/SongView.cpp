@@ -507,6 +507,14 @@ Command * SongView::touch_play_cursor( )
 	return 0;
 }
 
+Command * SongView::play_to_begin( )
+{
+	m_playCursor->setPos(0, 0);
+	m_song->set_transport_pos(0);
+
+	return 0;
+}
+
 Command * SongView::play_cursor_move( )
 {
 	return new PlayHeadMove(m_playCursor, this);

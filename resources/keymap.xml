@@ -523,12 +523,12 @@
 		</keyfact>
 		<keyfact type="D_FKEY" key1="W">
 			<Objects>
-				<Object objectname="SongView" slotsignature="playhead_to_workcursor" modes="All" sortorder="12" submenu="Playhead" instantanious="0" />
+				<Object objectname="SongView" slotsignature="goto_begin" modes="All" sortorder="5" submenu="Work Cursor" instantanious="0" />
 			</Objects>
 		</keyfact>
-		<keyfact type="D_FKEY" key1="V">
+		<keyfact type="D_FKEY" key1="SHIFT">
 			<Objects>
-				<Object objectname="SongView" slotsignature="center_playhead" modes="All" sortorder="15" submenu="Playhead" instantanious="0" />
+				<Object objectname="SongView" slotsignature="play_to_begin" modes="All" sortorder="1" submenu="Playhead" instantanious="0" />
 			</Objects>
 		</keyfact>
 
