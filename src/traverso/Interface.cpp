@@ -501,7 +501,11 @@ Command * Interface::show_context_menu( )
 				continue;
 			}
 			QAction* action = toplevelmenu->insertMenu(action, menu);
-			action->setText(className.remove("View"));
+			QString name = className.remove("View");
+
+			if (name == "Song") name = "Sheet"; // FIXME!!!
+
+			action->setText(name);
 		}
 	}
 	
@@ -554,7 +558,7 @@ Command * Interface::export_keymap()
 	QList<const QMetaObject*> interfacelist; interfacelist << &Interface::staticMetaObject;
 	QList<const QMetaObject*> pmlist; pmlist << &ProjectManager::staticMetaObject;
 		
-	objects.insert("Song", songlist);
+	objects.insert("Sheet", songlist);
 	objects.insert("Track", tracklist);
 	objects.insert("AudioClip", cliplist);
 	objects.insert("Curve", curvelist);
@@ -647,6 +651,9 @@ QMenu* Interface::create_context_menu(QObject* item, QList<MenuData >* menulist)
 	} else {
 		name = "noname";
 	}
+
+	if (name == "Song") name = "Sheet"; // FIXME!!!
+
 	QAction* menuAction = menu->addAction(name);
 	QFont font(themer()->get_font("ContextMenu:fontscale:actions"));
 	font.setBold(true);
@@ -660,7 +667,7 @@ QMenu* Interface::create_context_menu(QObject* item, QList<MenuData >* menulist)
 	for (int i=0; i<list.size(); ++i) {
 		MenuData data = list.at(i);
 		
-		// Merge entries with equall action, but different key facts.
+		// Merge entries with equal actions, but different key facts.
 		for (int j=i+1; j<list.size(); ++j) {
 			if (list.at(j).description == data.description) {
 				QString mergestring = list.at(j).keysequence;
