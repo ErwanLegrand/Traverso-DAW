@@ -76,6 +76,7 @@ private :
 	nframes_t	m_origWhen;
 	nframes_t	m_newWhen;
 	double 		m_scalefactor;
+	bool		m_bypassjog;
 
 public slots:
 	void move_left(bool autorepeat);
@@ -92,6 +93,7 @@ DragMarker::DragMarker(MarkerView* mview, double scalefactor, const QString& des
 	m_view = mview;
 	m_marker= m_view->get_marker();
 	m_scalefactor = scalefactor;
+	m_bypassjog = false;
 }
 
 int DragMarker::prepare_actions()
@@ -136,6 +138,7 @@ void DragMarker::cancel_action()
 
 void DragMarker::move_left(bool )
 {
+	m_bypassjog = true;
 	// Move 1 pixel to the left
 	long newpos = m_newWhen - (uint) ( 1 * m_scalefactor);
 	if (newpos < 0) {
@@ -147,6 +150,7 @@ void DragMarker::move_left(bool )
 
 void DragMarker::move_right(bool )
 {
+	m_bypassjog = true;
 	// Move 1 pixel to the right
 	m_newWhen = m_newWhen + (uint) ( 1 * m_scalefactor);
 	do_action();
@@ -154,6 +158,10 @@ void DragMarker::move_right(bool )
 
 int DragMarker::jog()
 {
+	if (m_bypassjog) {
+		return 0;
+	}
+	
 	long newpos = (uint) (cpointer().scene_x() * m_scalefactor);
 
 	if (m_marker->get_timeline()->get_song()->is_snap_on()) {
