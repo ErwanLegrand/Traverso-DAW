@@ -32,6 +32,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <InputEngine.h>
 #include <QDomDocument>
 
+#if defined (JACK_SUPPORT)
+RELAYTOOL_JACK
+#endif
+
 
 /****************************************/
 /*            AudioDriver               */
@@ -143,7 +147,8 @@ void AudioDriverPage::reset_default_config()
 	config().set_property("Hardware", "carddevice", "hw:0");
 	config().set_property("Hardware", "numberofperiods", 2);
 #elif defined (JACK_SUPPORT)
-	config().set_property("Hardware", "drivertype", "Jack");
+	if (libjack_is_present)
+		config().set_property("Hardware", "drivertype", "Jack");
 #else
 	config().set_property("Hardware", "drivertype", "Null Driver");
 #endif

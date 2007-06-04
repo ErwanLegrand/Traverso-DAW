@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.29 2007/05/14 18:05:29 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.30 2007/06/04 08:53:39 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -28,6 +28,7 @@ $Id: AudioDevice.cpp,v 1.29 2007/05/14 18:05:29 r_sijrier Exp $
 #endif
 
 #if defined (JACK_SUPPORT)
+RELAYTOOL_JACK
 #include "JackDriver.h"
 #endif
 
@@ -149,7 +150,8 @@ AudioDevice::AudioDevice()
 	m_driverType = tr("No Driver Loaded");
 
 #if defined (JACK_SUPPORT)
-	availableDrivers << "Jack";
+	if (libjack_is_present)
+		availableDrivers << "Jack";
 #endif
 
 #if defined (ALSA_SUPPORT)
@@ -362,15 +364,17 @@ void AudioDevice::set_parameters( int rate,
 	 
 #if defined (JACK_SUPPORT)
 	// This will activate the jack client
-	if (driverType == "Jack") {
-		
-		if (driver->start() == -1) {
-			// jack driver failed to start, fallback to Null Driver:
-			set_parameters(rate, bufferSize, "Null Driver");
+	if (libjack_is_present) {
+		if (driverType == "Jack") {
+			
+			if (driver->start() == -1) {
+				// jack driver failed to start, fallback to Null Driver:
+				set_parameters(rate, bufferSize, "Null Driver");
+			}
+			
+			connect(&jackShutDownChecker, SIGNAL(timeout()), this, SLOT(check_jack_shutdown()));
+			jackShutDownChecker.start(500);
 		}
-		
-		connect(&jackShutDownChecker, SIGNAL(timeout()), this, SLOT(check_jack_shutdown()));
-		jackShutDownChecker.start(500);
 	}
 #endif
 		
@@ -388,16 +392,18 @@ int AudioDevice::create_driver(QString driverType, bool capture, bool playback, 
 {
 
 #if defined (JACK_SUPPORT)
-	if (driverType == "Jack") {
-		driver = new JackDriver(this, m_rate, m_bufferSize);
-		if (driver->setup(capture, playback) < 0) {
-			info().critical(tr("Failed to create the Jack Driver"));
-			delete driver;
-			driver = 0;
-			return -1;
+	if (libjack_is_present) {
+		if (driverType == "Jack") {
+			driver = new JackDriver(this, m_rate, m_bufferSize);
+			if (driver->setup(capture, playback) < 0) {
+				info().critical(tr("Failed to create the Jack Driver"));
+				delete driver;
+				driver = 0;
+				return -1;
+			}
+			m_driverType = driverType;
+			return 1;
 		}
-		m_driverType = driverType;
-		return 1;
 	}
 #endif
 
@@ -622,8 +628,9 @@ QString AudioDevice::get_driver_type( ) const
 trav_time_t AudioDevice::get_cpu_time( )
 {
 #if defined (JACK_SUPPORT)
-	if (driver && m_driverType == "Jack")
-		return ((JackDriver*)driver)->get_cpu_load();
+	if (libjack_is_present)
+		if (driver && m_driverType == "Jack")
+			return ((JackDriver*)driver)->get_cpu_load();
 #endif
 	
 #if defined (PORTAUDIO_SUPPORT)
@@ -717,15 +724,17 @@ void AudioDevice::xrun( )
 #if defined (JACK_SUPPORT)
 void AudioDevice::check_jack_shutdown()
 {
-	JackDriver* jackdriver = qobject_cast<JackDriver*>(driver);
-	if (jackdriver) {
-		if ( ! jackdriver->is_jack_running()) {
-			jackShutDownChecker.stop();
-			printf("jack shutdown detected\n");
-			info().critical(tr("The Jack server has been shutdown!"));
-			delete driver;
-			driver = 0;
-			set_parameters(44100, m_bufferSize, "Null Driver");
+	if (libjack_is_present) {
+		JackDriver* jackdriver = qobject_cast<JackDriver*>(driver);
+		if (jackdriver) {
+			if ( ! jackdriver->is_jack_running()) {
+				jackShutDownChecker.stop();
+				printf("jack shutdown detected\n");
+				info().critical(tr("The Jack server has been shutdown!"));
+				delete driver;
+				driver = 0;
+				set_parameters(44100, m_bufferSize, "Null Driver");
+			}
 		}
 	}
 }

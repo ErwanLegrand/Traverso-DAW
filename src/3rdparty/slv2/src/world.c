@@ -174,7 +174,7 @@ slv2_world_load_all(SLV2World world)
 		slv2_world_load_path(world, lv2_path);
 	} else {
 		const char* const home = getenv("HOME");
-		const char* const suffix = "/.lv2:/usr/local/lib/lv2:usr/lib/lv2";
+		const char* const suffix = "/.lv2:/usr/local/lib/lv2:/usr/lib/lv2";
 		lv2_path = slv2_strjoin(home, suffix, NULL);
 
 		//fprintf(stderr, "$LV2_PATH is unset.  Using default path %s\n", lv2_path);

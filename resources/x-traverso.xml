@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info"
+	   xmlns:apkg="http://autopackage.org/xdgmime-extensions">>
+  <mime-type type="application/x-traverso">
+    <comment>Traverso Project</comment>
+    <!--<comment xml:lang="nn">PDF-dokument</comment>-->
+    <glob pattern="*.tpf" />
+    <apkg:icon>gnome-mime-application-x-traverso.png</apkg:icon>
+    <sub-class-of type="text/plain" /> <!-- gnome needs this to work around gnome bugzilla #309862 -->
+  </mime-type>
+</mime-info>

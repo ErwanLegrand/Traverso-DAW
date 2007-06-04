@@ -120,11 +120,8 @@ contains(DEFINES, ALSA_SUPPORT): LIBS += -lasound
 contains(DEFINES, PORTAUDIO_SUPPORT): LIBS += -lportaudio
 !contains(DEFINES, PORTAUDIO_SUPPORT): FORMS -= ui/PaDriverPage.ui
 
-
-contains(DEFINES, JACK_SUPPORT): LIBS += -ljack
-
 contains(DEFINES, LV2_SUPPORT){
-    LIBS += -lrdf -lrasqal	-lslv2
+    LIBS += -lslv2 -lrdf -lrasqal -lraptor #slv2 needs to come before rdf so the bogus dep stripper (-Wl,--as-needed) doesn't remove it
     INCLUDEPATH +=	../3rdparty/slv2 ../plugins/LV2
 }
 
@@ -148,9 +145,21 @@ unix{
     # perhaps this doesn't cover mac os x ?
     # if so, copy paste into  macx section...
     LIBS += $$system(pkg-config --libs glib-2.0)
+
+    contains(DEFINES, JACK_SUPPORT) {
+        system(which relaytool 2>/dev/null >/dev/null) {
+            LIBS += `relaytool --multilink libjack.so.0 libjack-0.100.0.so.0 --relay jack -ljack`
+        } else {
+            LIBS += -ljack
+        }
+    }
 }
 
 macx{
+    contains(DEFINES, JACK_SUPPORT) {
+        LIBS += -ljack
+    }
+
     contains(DEFINES, LV2_SUPPORT){
         LIBS += -lraptor
     }

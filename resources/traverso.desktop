@@ -7,11 +7,11 @@ Encoding=UTF-8
 Version=1.0
 
 Type=Application
-Categories=Qt;Audio;Music;Recorder;Player
+Categories=Application;Qt;AudioVideo;Audio;Music;Recorder;
 
-#MimeType=text/xml ???
+MimeType=application/x-traverso
 
-Exec=traverso
+Exec=traverso %f
 TryExec=traverso
 Terminal=false
 StartupNotify=true
