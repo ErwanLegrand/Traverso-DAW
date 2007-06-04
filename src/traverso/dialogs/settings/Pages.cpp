@@ -177,7 +177,7 @@ void AudioDriverPage::load_config( )
 	int buffersize = config().get_property("Hardware", "buffersize", 1024).toInt();
 #if defined (Q_WS_X11)
 	QString driverType = config().get_property("Hardware", "drivertype", "ALSA").toString();
-#elif
+#else
 	QString driverType = config().get_property("Hardware", "drivertype", "PortAudio").toString();
 #endif	
 	bool capture = config().get_property("Hardware", "capture", 1).toInt();
