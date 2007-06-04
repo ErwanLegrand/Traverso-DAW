@@ -18,7 +18,7 @@ CONFIG += debug
 # Mac OS X, ALSA support will be disabled automatically.
 #
 
-#DEFINES += JACK_SUPPORT
+DEFINES += JACK_SUPPORT
 DEFINES += ALSA_SUPPORT
 DEFINES += PORTAUDIO_SUPPORT
 DEFINES += LV2_SUPPORT
@@ -99,6 +99,12 @@ unix {
 	}
 	
 	GCCVERSION = $$system(gcc -dumpversion)
+	
+	system(which relaytool 2>/dev/null >/dev/null) {
+		DEFINES += RELAYTOOL_JACK="'extern int libjack_is_present; extern int libjack_symbol_is_present(char *s);'"
+	} else {
+		DEFINES += RELAYTOOL_JACK="'static const int libjack_is_present=1; static int __attribute__((unused)) libjack_symbol_is_present(char *m) { return 1; }'"
+	}
 	
 	contains(DEFINES, PRECOMPILED_HEADER):CONFIG += precompile_header
 	
