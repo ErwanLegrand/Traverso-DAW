@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Remon Sijrier
+Copyright (C) 2006-2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: WriteSource.h,v 1.13 2007/05/11 13:09:23 r_sijrier Exp $
 */
 
 #ifndef WRITESOURCE_H
@@ -45,7 +44,7 @@ public :
 
 	int rb_write(audio_sample_t* src, nframes_t cnt);
 	int rb_file_write(nframes_t cnt);
-	void process_ringbuffer(audio_sample_t* framebuffer, bool seek);
+	void process_ringbuffer(audio_sample_t* framebuffer, audio_sample_t* buffer, bool seek);
 	int get_processable_buffer_space() const;
 	int get_chunck_size() const {return m_chunksize;}
 	int get_buffer_size() const {return m_buffersize;}

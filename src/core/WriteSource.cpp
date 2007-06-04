@@ -442,9 +442,10 @@ void WriteSource::set_recording( int rec )
 	m_isRecording = rec;
 }
 
-void WriteSource::process_ringbuffer( audio_sample_t* framebuffer, bool seek)
+void WriteSource::process_ringbuffer( audio_sample_t* framebuffer, audio_sample_t* buffer, bool seek)
 {
 	Q_UNUSED(seek);
+	Q_UNUSED(buffer);
 
 	m_spec->dataF = framebuffer;
 	int readSpace = m_buffer->read_space();
