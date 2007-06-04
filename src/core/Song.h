@@ -139,6 +139,7 @@ public:
 	QString get_cdrdao_tracklist(ExportSpecification* spec, bool pregap = false);
 
 	audio_sample_t* 	mixdown;
+	audio_sample_t*		readbuffer;
 	audio_sample_t*		gainbuffer;
 	
 	unsigned long	threadId;

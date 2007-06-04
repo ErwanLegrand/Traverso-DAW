@@ -197,10 +197,10 @@ int ReadSource::add_mono_reader(int sourceChannelCount, int channelNumber, const
 	return result;
 }
 
-int ReadSource::file_read (int channel, audio_sample_t* dst, nframes_t start, nframes_t cnt) const
+int ReadSource::file_read (int channel, audio_sample_t* dst, nframes_t start, nframes_t cnt, audio_sample_t* readbuffer) const
 {
 	Q_ASSERT(channel < m_sources.size());
-	return m_sources.at(channel)->file_read(dst, start, cnt);
+	return m_sources.at(channel)->file_read(dst, start, cnt, readbuffer);
 }
 
 

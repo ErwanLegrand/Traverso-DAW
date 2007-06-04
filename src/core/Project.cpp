@@ -503,6 +503,7 @@ int Project::start_export(ExportSpecification* spec)
 	spec->blocksize = 32768;
 
 	spec->dataF = new audio_sample_t[spec->blocksize * spec->channels];
+	audio_sample_t* readbuffer = new audio_sample_t[spec->blocksize * spec->channels];
 
 	overallExportProgress = renderedSongs = 0;
 	songsToRender.clear();
@@ -523,6 +524,7 @@ int Project::start_export(ExportSpecification* spec)
 		emit exportStartedForSong(song);
 		spec->resumeTransport = false;
 		spec->resumeTransportFrame = song->get_transport_frame();
+		song->readbuffer = readbuffer;
 		
 		if (spec->normalize) {
 			spec->peakvalue = 0.0;
@@ -576,6 +578,7 @@ int Project::start_export(ExportSpecification* spec)
 	overallExportProgress = 0;
 	
 	delete [] spec->dataF;
+	delete [] readbuffer;
 	spec->dataF = 0;
 
 	emit exportFinished();

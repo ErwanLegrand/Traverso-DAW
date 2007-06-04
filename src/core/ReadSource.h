@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ReadSource.h,v 1.25 2007/05/30 13:14:46 r_sijrier Exp $
+$Id: ReadSource.h,v 1.26 2007/06/04 18:22:53 r_sijrier Exp $
 */
 
 #ifndef READSOURCE_H
@@ -49,7 +49,7 @@ public :
 	ReadSource* deep_copy();
 
 	int rb_read(int channel, audio_sample_t* dst, nframes_t start, nframes_t cnt);
-	int file_read(int channel, audio_sample_t* dst, nframes_t start, nframes_t cnt) const;
+	int file_read(int channel, audio_sample_t* dst, nframes_t start, nframes_t cnt, audio_sample_t* readbuffer) const;
 
 	int init();
 	int get_error() const {return m_error;}

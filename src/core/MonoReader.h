@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: MonoReader.h,v 1.1 2007/03/23 13:09:33 r_sijrier Exp $
+$Id: MonoReader.h,v 1.2 2007/06/04 18:22:52 r_sijrier Exp $
 */
 
 #ifndef PRIVATE_READSOURCE_H
@@ -39,18 +39,18 @@ class MonoReader : public AudioSource
 {
 public :
 	int rb_read(audio_sample_t* dst, nframes_t start, nframes_t cnt);
-	int rb_file_read(audio_sample_t* dst, nframes_t cnt);
+	int rb_file_read(audio_sample_t* dst, nframes_t cnt, audio_sample_t* readbuffer);
 	void rb_seek_to_file_position(nframes_t position);
 
-	void process_ringbuffer(audio_sample_t* framebuffer, bool seeking=false);
+	void process_ringbuffer(audio_sample_t* framebuffer, audio_sample_t* readbuffer, bool seeking=false);
 	BufferStatus* get_buffer_status();
 
-	int file_read(audio_sample_t* dst, nframes_t start, nframes_t cnt) const;
+	int file_read(audio_sample_t* dst, nframes_t start, nframes_t cnt, audio_sample_t* readbuffer) const;
 
 	int init();
 	int ref();
 	
-	void sync(audio_sample_t* framebuffer);
+	void sync(audio_sample_t* framebuffer, audio_sample_t* readbuffer);
 	void set_audio_clip(AudioClip* clip);
 	void prepare_buffer();
 

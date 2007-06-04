@@ -127,7 +127,7 @@ int MonoReader::init( )
 }
 
 
-int MonoReader::file_read (audio_sample_t* dst, nframes_t start, nframes_t cnt) const
+int MonoReader::file_read (audio_sample_t* dst, nframes_t start, nframes_t cnt, audio_sample_t* readbuffer) const
 {
 // 	PWARN("file_read");
 	// this equals checking if init() is called!
@@ -160,11 +160,11 @@ int MonoReader::file_read (audio_sample_t* dst, nframes_t start, nframes_t cnt) 
 	}
 
 	float *ptr;
-	int real_cnt = cnt * m_sfinfo.channels;
-
-
-	audio_sample_t readbuffer[real_cnt];
-
+	uint real_cnt = cnt * m_sfinfo.channels;
+	
+	// The readbuffer 'assumes' that there is max 2 channels...
+	Q_ASSERT(m_sfinfo.channels <= 2);
+	
 	int nread = sf_read_float (m_sf, readbuffer, real_cnt);
 #if defined (profile)
 	int processtime = (int) (get_microseconds() - starttime);
@@ -221,9 +221,9 @@ int MonoReader::rb_read(audio_sample_t* dst, nframes_t start, nframes_t count)
 }
 
 
-int MonoReader::rb_file_read( audio_sample_t * dst, nframes_t cnt )
+int MonoReader::rb_file_read(audio_sample_t* dst, nframes_t cnt, audio_sample_t* readbuffer )
 {
-	int readFrames = file_read( dst, m_rbFileReadPos, cnt);
+	int readFrames = file_read( dst, m_rbFileReadPos, cnt, readbuffer);
 	m_rbFileReadPos += readFrames;
 
 	return readFrames;
@@ -263,7 +263,7 @@ void MonoReader::rb_seek_to_file_position( nframes_t position )
 	m_rbRelativeFileReadPos = fileposition;
 }
 
-void MonoReader::process_ringbuffer( audio_sample_t * framebuffer, bool seeking)
+void MonoReader::process_ringbuffer( audio_sample_t * framebuffer, audio_sample_t* readbuffer, bool seeking)
 {
 	// Do nothing if we passed the lenght of the AudioFile.
 	if (m_rbFileReadPos >= m_length) {
@@ -309,7 +309,7 @@ void MonoReader::process_ringbuffer( audio_sample_t * framebuffer, bool seeking)
 	}
 	
 	// Read in the samples from source
-	nframes_t toWrite = rb_file_read(framebuffer, toRead);
+	nframes_t toWrite = rb_file_read(framebuffer, toRead, readbuffer);
 
 	// and write it to the ringbuffer
 	m_buffer->write(framebuffer, toWrite);
@@ -340,7 +340,7 @@ void MonoReader::finish_resync()
 	m_syncInProgress = 0;
 }
 
-void MonoReader::sync(audio_sample_t* framebuffer)
+void MonoReader::sync(audio_sample_t* framebuffer, audio_sample_t* readbuffer)
 {
 	PENTER;
 	if (!m_needSync) {
@@ -355,7 +355,7 @@ void MonoReader::sync(audio_sample_t* framebuffer)
 	// Currently, we fill the buffer completely.
 	// For some reason, filling it with 1/4 at a time
 	// doesn't fill it consitently, and thus giving audible artifacts.
-	process_ringbuffer(framebuffer);
+	process_ringbuffer(framebuffer, readbuffer);
 	
 	if (m_buffer->write_space() == 0) {
 		finish_resync();

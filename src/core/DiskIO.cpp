@@ -151,6 +151,8 @@ DiskIO::DiskIO(Song* song)
 	
 	// TODO This is a LARGE buffer, any ideas how to make it smaller ??
 	framebuffer = new audio_sample_t[audiodevice().get_sample_rate() * writebuffertime];
+	// We assume here that the audiofiles have max 2 channels, and readbuffer time is max 3 seconds.
+	m_readbuffer = new audio_sample_t[audiodevice().get_sample_rate() * 6];
 
 	// Move this instance to the workthread
 	moveToThread(m_diskThread);
@@ -167,6 +169,7 @@ DiskIO::~DiskIO()
 	stop();
 	delete cpuTimeBuffer;
 	delete [] framebuffer;
+	delete [] m_readbuffer;
 }
 
 /**
@@ -222,7 +225,7 @@ void DiskIO::do_work( )
 				return;
 			}
 	
-			source->process_ringbuffer(framebuffer, m_seeking);
+			source->process_ringbuffer(framebuffer, m_readbuffer, m_seeking);
 		}
 		
 		if (whilecount++ > 1000) {
@@ -302,7 +305,7 @@ int DiskIO::there_are_processable_sources( )
 				
 	
 	if (syncSources.size() > 0) {
-		syncSources.at(0)->sync(framebuffer);
+		syncSources.at(0)->sync(framebuffer, m_readbuffer);
 		return 1;
 	}
 	

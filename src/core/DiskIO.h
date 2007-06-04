@@ -88,6 +88,7 @@ private:
 	bool			m_seeking;
 	int			m_hardDiskOverLoadCounter;
 	audio_sample_t*		framebuffer;
+	audio_sample_t*		m_readbuffer;
 
 	
 	void update_time_usage();

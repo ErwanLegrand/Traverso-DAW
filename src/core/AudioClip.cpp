@@ -431,7 +431,7 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* buffer, uint channel)
 	if (m_song->realtime_path()) {
 		read_frames = m_readSource->rb_read(channel, mixdown, mix_pos, nframes);
 	} else {
-		read_frames = m_readSource->file_read(channel, mixdown, mix_pos, nframes);
+		read_frames = m_readSource->file_read(channel, mixdown, mix_pos, nframes, m_song->readbuffer);
 	}
 
 	if (read_frames == 0) {

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioSource.h,v 1.16 2007/05/24 17:45:19 r_sijrier Exp $
+$Id: AudioSource.h,v 1.17 2007/06/04 18:22:52 r_sijrier Exp $
 */
 
 #ifndef AUDIOSOURCE_H
@@ -40,6 +40,7 @@ public :
 	~AudioSource();
 	
 	virtual void process_ringbuffer(audio_sample_t* framebuffer, bool seeking=false);
+	virtual void process_ringbuffer(audio_sample_t* framebuffer, audio_sample_t* readbuffer, bool seeking=false);
 
 	void set_name(const QString& name);
 	void set_dir(const QString& name);
@@ -79,7 +80,7 @@ protected:
 inline uint AudioSource::get_channel_count( ) const {return m_channelCount;}
 
 inline void AudioSource::process_ringbuffer(audio_sample_t*, bool) {}
-
+inline void AudioSource::process_ringbuffer(audio_sample_t* , audio_sample_t* , bool ) {}
 inline qint64 AudioSource::get_id( ) const {return m_id;}
 
 #endif

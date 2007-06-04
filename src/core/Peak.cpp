@@ -295,8 +295,9 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 		nframes_t readFrames, toRead;
 		toRead = pixelcount * zoomStep[zoomLevel];
 		audio_sample_t buf[toRead];
+		audio_sample_t readbuffer[toRead*2];
 
-		if ( (readFrames = m_source->file_read(m_channel, buf, startPos, toRead)) != toRead) {
+		if ( (readFrames = m_source->file_read(m_channel, buf, startPos, toRead, readbuffer)) != toRead) {
 			PWARN("Unable to read nframes %d (only %d available)", toRead, readFrames);
 			if (readFrames == 0) {
 				return NO_PEAKDATA_FOUND;
@@ -553,27 +554,24 @@ int Peak::create_from_scratch()
 {
 	PENTER;
 	
+	int ret = -1;
+	
 	if (prepare_processing() < 0) {
-		return -1;
+		return ret;
 	}
 	
 	nframes_t readFrames = 0;
 	nframes_t totalReadFrames = 0;
 
-	#if defined (OSX_BUILD)
-		nframes_t bufferSize = 4096;
-	#else
-		nframes_t bufferSize = 65536;
-	#endif
+	nframes_t bufferSize = 65536;
 
 	int cycles = m_source->get_nframes() / bufferSize;
 	int counter = 0;
 	int p = 0;
-	audio_sample_t buf[bufferSize];
 
 	if (m_source->get_nframes() == 0) {
 		qWarning("Peak::create_from_scratch() : m_source (%s) has length 0", m_source->get_name().toAscii().data());
-		return -1;
+		return ret;
 	}
 
 	if (cycles == 0) {
@@ -581,16 +579,20 @@ int Peak::create_from_scratch()
 		cycles = m_source->get_nframes() / bufferSize;
 		if (cycles == 0) {
 			qDebug("source length is too short to display one pixel of the audio wave form in macro view");
-			return -1;
+			return ret;
 		}
 	}
 
+	audio_sample_t* buf = new audio_sample_t[bufferSize];
+	audio_sample_t* readbuffer = new audio_sample_t[bufferSize * 2];
+	
 	do {
 		if (interuptPeakBuild) {
-			return -1;
+			ret = -1;
+			goto out;
 		}
 		
-		readFrames = m_source->file_read(m_channel, buf, totalReadFrames, bufferSize);
+		readFrames = m_source->file_read(m_channel, buf, totalReadFrames, bufferSize, readbuffer);
 		process(buf, readFrames);
 		totalReadFrames += readFrames;
 		counter++;
@@ -605,10 +607,17 @@ int Peak::create_from_scratch()
 
 
 	if (finish_processing() < 0) {
-		return -1;
+		ret = -1;
+		goto out;
 	}
+	
+	ret = 1;
+	
+out:
+	delete [] buf;
+	delete [] readbuffer;
 	 
-	return 1;
+	return ret;
 }
 
 
@@ -626,7 +635,8 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 		int toRead = (int) ((startpos * NORMALIZE_CHUNK_SIZE) - startframe);
 		
 		audio_sample_t buf[toRead];
-		int read = m_source->file_read(m_channel, buf, startframe, toRead);
+		audio_sample_t readbuffer[toRead*2];
+		int read = m_source->file_read(m_channel, buf, startframe, toRead, readbuffer);
 		
 		maxamp = Mixer::compute_peak(buf, read, maxamp);
 	}
@@ -640,7 +650,8 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 	int endpos = (int) f;
 	int toRead = (int) ((f - (endframe / NORMALIZE_CHUNK_SIZE)) * NORMALIZE_CHUNK_SIZE);
 	audio_sample_t buf[toRead];
-	int read = m_source->file_read(m_channel, buf, endframe - toRead, toRead);
+	audio_sample_t readbuffer[toRead*2];
+	int read = m_source->file_read(m_channel, buf, endframe - toRead, toRead, readbuffer);
 	maxamp = Mixer::compute_peak(buf, read, maxamp);
 	
 	
