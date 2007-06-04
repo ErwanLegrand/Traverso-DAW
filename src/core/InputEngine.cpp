@@ -324,6 +324,11 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 		// No match found for actions using a modifier key, let's see if there
 		// is one in the 'normal' actions list.
 		if (! data ) {
+			// This test makes sure that we don't select an unmodified command
+			// when the user is holding down modifier keys.
+			if (m_activeModifierKeys.size() > 0) {
+				continue;
+			}
 			data = action->objects.value(QString(item->metaObject()->className()));
 				
 			if (! data ) {
