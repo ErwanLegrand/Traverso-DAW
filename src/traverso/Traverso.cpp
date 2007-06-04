@@ -202,7 +202,11 @@ void Traverso::prepare_audio_device( )
 {
 	int rate = config().get_property("Hardware", "samplerate", 44100).toInt();
 	int bufferSize = config().get_property("Hardware", "buffersize", 1024).toInt();
+#if defined (Q_WS_X11)
 	QString driverType = config().get_property("Hardware", "drivertype", "ALSA").toString();
+#elif
+	QString driverType = config().get_property("Hardware", "drivertype", "PortAudio").toString();
+#endif
 	QString cardDevice = config().get_property("Hardware", "carddevice", "hw:0").toString();
 	bool capture = config().get_property("Hardware", "capture", 1).toInt();
 	bool playback = config().get_property("Hardware", "playback", 1).toInt();
