@@ -269,6 +269,9 @@ SongWidget::SongWidget(Song* song, QWidget* parent)
 	set_use_opengl(config().get_property("Interface", "OpenGL", false).toBool());
 
 	setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+
+	cpointer().set_current_viewport(m_clipsViewPort);
+	m_clipsViewPort->setFocus();
 }
 
 
