@@ -10,8 +10,8 @@ CONFIG -= release debug
 # Choose debug or release build
 #
 
-CONFIG += debug
-#CONFIG += release
+#CONFIG += debug
+CONFIG += release
 
 #
 # Add support for Jack / ALSA audio driver. If you have a 
@@ -20,7 +20,7 @@ CONFIG += debug
 
 DEFINES += JACK_SUPPORT
 DEFINES += ALSA_SUPPORT
-DEFINES += PORTAUDIO_SUPPORT
+#DEFINES += PORTAUDIO_SUPPORT
 DEFINES += LV2_SUPPORT
 
 
@@ -45,12 +45,13 @@ DEFINES += USE_MLOCK
 ####### END USER CONFIGURATION ########
 ########################################
 
+#
+# uncomment if you have a patched Qt 4.3.0 !
+#
+#DEFINES += QT_430_SCROLLBAR_FIX
 
 
-
-
-#DEFINES += STATIC_BUILD
-DEFINES += QT_430_SCROLLBAR_FIX
+DEFINES += STATIC_BUILD
 !macx{
 	DEFINES += PRECOMPILED_HEADER
 }
