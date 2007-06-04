@@ -400,7 +400,7 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* buffer, uint channel)
 	Q_ASSERT(m_readSource);
 	
 	if (channel >= m_readSource->get_channel_count()) {
-		return -1;
+		return 1;
 	}
 	
 	nframes_t mix_pos;
