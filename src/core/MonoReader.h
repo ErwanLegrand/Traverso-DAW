@@ -19,8 +19,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 */
 
-#ifndef PRIVATE_READSOURCE_H
-#define PRIVATE_READSOURCE_H
+#ifndef MONO_READER_H
+#define MONO_READER_H
 
 #include "AudioSource.h"
 #include "RingBufferNPT.h"
