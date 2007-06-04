@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioBus.h,v 1.6 2007/05/07 20:48:01 r_sijrier Exp $
+$Id: AudioBus.h,v 1.7 2007/06/04 20:47:16 r_sijrier Exp $
 */
 
 
@@ -105,6 +105,18 @@ signals:
 	void monitoringPeaksStopped();
 	
 };
+
+
+/**
+ * Get the AudioChannel associated with \a channelNumber 
+ * @param channelNumber The channelNumber associated with this AudioBus's AudioChannel 
+ * @return The AudioChannel on succes, 0 on failure
+ */
+inline AudioChannel * AudioBus::get_channel( int channelNumber )
+{
+	return channels.at(channelNumber);
+}
+
 
 #endif
 

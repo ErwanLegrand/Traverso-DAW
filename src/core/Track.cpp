@@ -449,11 +449,11 @@ int Track::process( nframes_t nframes )
 				gainFactor *= panFactor;
 			}
 			
-			Mixer::mix_buffers_with_gain(bus->get_channel(chan)->get_buffer(nframes), mixdown, nframes, gainFactor);
+			Mixer::mix_buffers_with_gain(bus->get_buffer(chan, nframes), mixdown, nframes, gainFactor);
 		}
 	}
 	
-	m_pluginChain->process_post_fader(bus, nframes);
+	processResult |= m_pluginChain->process_post_fader(bus, nframes);
 		
 	for (int i=0; i<bus->get_channel_count(); ++i) {
 		Mixer::mix_buffers_no_gain(m_song->get_master_out()->get_buffer(i, nframes), bus->get_buffer(i, nframes), nframes);

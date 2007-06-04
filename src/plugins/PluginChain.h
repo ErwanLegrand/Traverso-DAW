@@ -47,7 +47,7 @@ public:
 	Command* add_plugin(Plugin* plugin, bool historable=true);
 	Command* remove_plugin(Plugin* plugin, bool historable=true);
 	void process_pre_fader(AudioBus* bus, unsigned long nframes);
-	void process_post_fader(AudioBus* bus, unsigned long nframes);
+	int process_post_fader(AudioBus* bus, unsigned long nframes);
 	void process_fader(audio_sample_t* buffer, nframes_t pos, nframes_t nframes) {m_fader->process_gain(buffer, pos, nframes);}
 	
 	void set_song(Song* song);
@@ -81,13 +81,19 @@ inline void PluginChain::process_pre_fader(AudioBus * bus, unsigned long nframes
 	}
 }
 
-inline void PluginChain::process_post_fader(AudioBus * bus, unsigned long nframes)
+inline int PluginChain::process_post_fader(AudioBus * bus, unsigned long nframes)
 {
+	if (!m_pluginList.size()) {
+		return 0;
+	}
+	
 	for (int i=0; i<m_pluginList.size(); ++i) {
 		Plugin* plugin = m_pluginList.at(i);
 // 		if (plugin == m_fader) continue;
 		plugin->process(bus, nframes);
 	}
+	
+	return 1;
 }
 
 #endif

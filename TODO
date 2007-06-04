@@ -1,23 +1,19 @@
 TOBEDONE FOR 0.40.0
 
-* don't push mute/solo to history stack.
+Sheet lenght temporarily reset to wrong value problem again when moving clip (undo/redo ..)
 
-* FadeView merging code messes up start of clip when fade lenght is very short (1 or even 0 pixels)
-
-* switching to effect mode crashes with 0 tracks
+Broken chipset, needs 3 periods:
+00:1b.0 Audio device: Intel Corporation 82801G (ICH7 Family) High Definition Audio Controller (rev 02)
 
 * Curve copy should not use the same id!!!!!!
 
 * when changing the width of fades, the cursor should remain static (as in gain)
-
-* Audible glitch when playing over a split point in a splitted audioclip :-( :-( :-(
 
 * libsndfile:
 	How to record to files larger 4 GB
 	Sector misalignment, how to handle.
 
 Less important:
-* horizontal zooming with playhead animated causes 2 paints one at start, one at real pos during play!
-
 * Painting last curve nodes has artifacts, 'fixed' by populating polygon with as many points as there are
   pixels. This should get a real fix!!
+
