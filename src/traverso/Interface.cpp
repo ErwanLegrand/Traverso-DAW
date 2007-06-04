@@ -672,7 +672,7 @@ QMenu* Interface::create_context_menu(QObject* item, QList<MenuData >* menulist)
 		
 		// Merge entries with equal actions, but different key facts.
 		for (int j=i+1; j<list.size(); ++j) {
-			if (list.at(j).description == data.description) {
+			if (list.at(j).description == data.description && list.at(j).submenu == data.submenu) {
 				QString mergestring = list.at(j).keysequence;
 				data.keysequence = create_keyfact_string(data.keysequence, data.modifierkeys) +
 						" ,  " +

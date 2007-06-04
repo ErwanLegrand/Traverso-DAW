@@ -213,7 +213,7 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="MouseButtonMiddle" >
 			<Objects>
-				<Object objectname="SongView" slotsignature="touch_play_cursor" modes="All" sortorder="2" submenu="Playhead" />
+				<Object objectname="SongView" slotsignature="touch_play_cursor" modes="All" sortorder="8" submenu="Playhead" />
 				<Object objectname="TimeLineView" slotsignature="playhead_to_marker" modes="All" sortorder="2" />
 			</Objects>
 		</keyfact>
@@ -366,12 +366,12 @@
 		</keyfact> 
 		<keyfact type="HKEY" key1="MouseButtonMiddle" >
 			<Objects>
-				<Object objectname="SongView" mousehint="LR" slotsignature="play_cursor_move" modes="All" sortorder="8" submenu="Playhead" />
+				<Object objectname="SongView" mousehint="LR" slotsignature="play_cursor_move" modes="All" sortorder="9" submenu="Playhead" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="W" >
 			<Objects>
-				<Object objectname="SongView" mousehint="LR" slotsignature="work_cursor_move" modes="All" sortorder="14" />
+				<Object objectname="SongView" mousehint="LR" slotsignature="work_cursor_move" modes="All" sortorder="14" submenu="Work Cursor" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="C" >
@@ -528,7 +528,7 @@
 		</keyfact>
 		<keyfact type="D_FKEY" key1="SHIFT">
 			<Objects>
-				<Object objectname="SongView" slotsignature="play_to_begin" modes="All" sortorder="1" submenu="Playhead" />
+				<Object objectname="SongView" slotsignature="play_to_begin" modes="All" sortorder="30" submenu="Playhead" />
 			</Objects>
 		</keyfact>
 

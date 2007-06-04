@@ -40,8 +40,8 @@ class Curve;
 class SongView : public ViewItem
 {
         Q_OBJECT
-	Q_CLASSINFO("touch", tr("Workcursor: Set"))
-	Q_CLASSINFO("touch_play_cursor", tr("Playhead: Set"))
+	Q_CLASSINFO("touch", tr("Set"))
+	Q_CLASSINFO("touch_play_cursor", tr("Set"))
 	Q_CLASSINFO("hzoom_out", tr("Horizontal Out"))
 	Q_CLASSINFO("hzoom_in", tr("Horizontal In"))
 	Q_CLASSINFO("vzoom_out", tr("Vertical Out"))
@@ -55,13 +55,13 @@ class SongView : public ViewItem
 	Q_CLASSINFO("shuttle", tr("Shuttle"))
 	Q_CLASSINFO("goto_begin", tr("To start"))
 	Q_CLASSINFO("goto_end", tr("To end"))
-	Q_CLASSINFO("play_to_begin", tr("Playhead: To Start"))
-	Q_CLASSINFO("play_cursor_move", tr("Playhead: Move"))
-	Q_CLASSINFO("work_cursor_move", tr("Workcursor: Move"))
+	Q_CLASSINFO("play_to_begin", tr("To Start"))
+	Q_CLASSINFO("play_cursor_move", tr("Move"))
+	Q_CLASSINFO("work_cursor_move", tr("Move"))
 	Q_CLASSINFO("add_marker", tr("Add Marker"))
 	Q_CLASSINFO("add_marker_at_playhead", tr("Add Marker at Playhead"))
-	Q_CLASSINFO("playhead_to_workcursor", tr("Playhead: To workcursor"))
-	Q_CLASSINFO("center_playhead", tr("Playhead: Center"))
+	Q_CLASSINFO("playhead_to_workcursor", tr("To workcursor"))
+	Q_CLASSINFO("center_playhead", tr("Center"))
 
 public :
 
