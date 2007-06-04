@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveEdge.h,v 1.7 2007/04/20 06:37:10 benjie Exp $
+    $Id: MoveEdge.h,v 1.8 2007/06/04 19:53:56 benjie Exp $
 */
 
 #ifndef MOVEEDGE_H
@@ -55,6 +55,7 @@ private :
         QByteArray	m_edge;
         long		m_originalPos;
         long		m_newPos;
+        long		m_otherEdgePos;
 };
 
 #endif

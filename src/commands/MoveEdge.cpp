@@ -60,9 +60,11 @@ int MoveEdge::begin_hold()
 	PENTER;
         if (m_edge == "set_left_edge") {
                 m_newPos = m_originalPos = m_clip->get_track_start_frame();
+		m_otherEdgePos = m_clip->get_track_end_frame();
 	}
         if (m_edge == "set_right_edge") {
                 m_newPos = m_originalPos = m_clip->get_track_end_frame();
+		m_otherEdgePos = m_clip->get_track_start_frame();
 	}
 
 	m_clip->set_snappable(false);
@@ -106,6 +108,14 @@ int MoveEdge::jog()
 	if (m_sv->get_song()->is_snap_on()) {
 		SnapList* slist = m_sv->get_song()->get_snap_list();
 		m_newPos = slist->get_snap_value(m_newPos);
+	}
+
+	if (m_edge == "set_right_edge" && m_newPos < m_otherEdgePos + (2 * m_sv->scalefactor)) {
+		m_newPos = m_otherEdgePos + (2 * m_sv->scalefactor);
+	}
+
+	if (m_edge == "set_left_edge" && m_newPos > m_otherEdgePos - (2 * m_sv->scalefactor)) {
+		m_newPos = m_otherEdgePos - (2 * m_sv->scalefactor);
 	}
 
         return do_action();
