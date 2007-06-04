@@ -46,8 +46,13 @@ ClipsViewPort::ClipsViewPort(QGraphicsScene* scene, SongWidget* sw)
 	viewport()->setAttribute(Qt::WA_OpaquePaintEvent);
 	
 // 	setViewportUpdateMode(SmartViewportUpdate);
+#if QT_VERSION == 0x040300 && (! QT_430_SCROLLBAR_FIX)
+	horizontalScrollBar()->setMaximumHeight(0);
+	verticalScrollBar()->setMaximumHeight(0);
+#else 
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+#endif 
 }
 
 void ClipsViewPort::get_pointed_context_items(QList<ContextItem* > &list)

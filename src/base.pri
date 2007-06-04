@@ -9,8 +9,8 @@ CONFIG -= release debug
 # Choose debug or release build
 #
 
-#CONFIG += debug
-CONFIG += release
+CONFIG += debug
+#CONFIG += release
 
 #
 # Add support for Jack / ALSA audio driver. If you have a 
@@ -19,14 +19,16 @@ CONFIG += release
 
 DEFINES += JACK_SUPPORT
 DEFINES += ALSA_SUPPORT
-#DEFINES += PORTAUDIO_SUPPORT
+DEFINES += PORTAUDIO_SUPPORT
 DEFINES += LV2_SUPPORT
 
-DEFINES += STATIC_BUILD
+#DEFINES += STATIC_BUILD
 #DEFINES += USE_MEM_CHECKER
 
+DEFINES += QT_430_SCROLLBAR_FIX
+
 !macx{
-	#DEFINES += PRECOMPILED_HEADER
+	DEFINES += PRECOMPILED_HEADER
 }
 
 #QMAKE_CXXFLAGS +=  -fstack-protector-all
