@@ -70,13 +70,23 @@ public:
 		m_box->addItem(QDir::rootPath(), QDir::rootPath());
 		m_box->addItem(QDir::homePath(), QDir::homePath());
 #endif
-		QPushButton* button = new QPushButton(this);
-		QIcon icon = QApplication::style()->standardIcon(QStyle::SP_FileDialogToParent);
-		button->setIcon(icon);
-		button->setMaximumHeight(23);
+		QPushButton* upButton = new QPushButton(this);
+		QIcon upIcon = QApplication::style()->standardIcon(QStyle::SP_FileDialogToParent);
+		upButton->setToolTip(tr("Parent Directory"));
+		upButton->setIcon(upIcon);
+		upButton->setMaximumHeight(25);
+		upButton->setMaximumWidth(30);
+		
+		QPushButton* refreshButton = new QPushButton(this);
+		QIcon refreshIcon = QApplication::style()->standardIcon(QStyle::SP_FileDialogNewFolder); // FIXME:  needs a better icon!
+		refreshButton->setToolTip(tr("Refresh File View"));
+		refreshButton->setIcon(refreshIcon);
+		refreshButton->setMaximumHeight(25);
+		refreshButton->setMaximumWidth(30);
 		
 		QHBoxLayout* hlay = new QHBoxLayout;
-		hlay->addWidget(button);
+		hlay->addWidget(upButton);
+		hlay->addWidget(refreshButton);
 		hlay->addWidget(m_box, 10);
 		
 		QVBoxLayout* lay = new QVBoxLayout(this);
@@ -88,7 +98,8 @@ public:
 		setLayout(lay);
 		
 		connect(m_dirView, SIGNAL(clicked(const QModelIndex& )), this, SLOT(dirview_item_clicked(const QModelIndex&)));
-		connect(button, SIGNAL(clicked()), this, SLOT(dir_up_button_clicked()));
+		connect(upButton, SIGNAL(clicked()), this, SLOT(dir_up_button_clicked()));
+		connect(refreshButton, SIGNAL(clicked()), this, SLOT(refresh_button_clicked()));
 		connect(m_box, SIGNAL(activated(int)), this, SLOT(box_actived(int)));
 		
 	}
@@ -98,6 +109,7 @@ public:
 private slots:
 	void dirview_item_clicked(const QModelIndex & index);
 	void dir_up_button_clicked();
+	void refresh_button_clicked();
 	void box_actived(int i);
 	
 private:
@@ -144,6 +156,11 @@ void FileWidget::dir_up_button_clicked()
 	m_box->setItemText(0, text);
 	m_box->setItemData(0, dir.canonicalPath());
 	m_box->setCurrentIndex(0);
+}
+
+void FileWidget::refresh_button_clicked()
+{
+	m_dirModel->refresh(m_dirView->rootIndex());
 }
 
 void FileWidget::box_actived(int i)
