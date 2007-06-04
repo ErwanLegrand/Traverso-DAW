@@ -72,11 +72,15 @@ public:
 
 private :
 	Marker*		m_marker;
-	MarkerView*	m_view;
 	nframes_t	m_origWhen;
 	nframes_t	m_newWhen;
-	double 		m_scalefactor;
-	bool		m_bypassjog;
+	struct Data {
+		MarkerView*	view;
+		double 		scalefactor;
+		bool		bypassjog;
+		int		jogBypassPos;
+	};
+	Data* d;
 
 public slots:
 	void move_left(bool autorepeat);
@@ -90,10 +94,11 @@ public slots:
 DragMarker::DragMarker(MarkerView* mview, double scalefactor, const QString& des)
 	: Command(mview->get_marker(), des)
 {
-	m_view = mview;
-	m_marker= m_view->get_marker();
-	m_scalefactor = scalefactor;
-	m_bypassjog = false;
+	d = new Data;
+	d->view = mview;
+	m_marker= d->view->get_marker();
+	d->scalefactor = scalefactor;
+	d->bypassjog = false;
 }
 
 int DragMarker::prepare_actions()
@@ -105,16 +110,17 @@ int DragMarker::begin_hold()
 {
 	m_origWhen = m_newWhen = m_marker->get_when();
 	m_marker->set_snappable(false);
-	m_view->get_songview()->start_shuttle(true, true);
-	m_view->set_dragging(true);	
+	d->view->get_songview()->start_shuttle(true, true);
+	d->view->set_dragging(true);	
 	return 1;
 }
 
 int DragMarker::finish_hold()
 {
 	m_marker->set_snappable(true);
-	m_view->get_songview()->start_shuttle(false);
-	m_view->set_dragging(false);
+	d->view->get_songview()->start_shuttle(false);
+	d->view->set_dragging(false);
+	delete d;
 	return do_action();
 }
 
@@ -138,9 +144,9 @@ void DragMarker::cancel_action()
 
 void DragMarker::move_left(bool )
 {
-	m_bypassjog = true;
+	d->bypassjog = true;
 	// Move 1 pixel to the left
-	long newpos = m_newWhen - (uint) ( 1 * m_scalefactor);
+	long newpos = m_newWhen - (uint) ( 1 * d->scalefactor);
 	if (newpos < 0) {
 		newpos = 0;
 	}
@@ -150,19 +156,25 @@ void DragMarker::move_left(bool )
 
 void DragMarker::move_right(bool )
 {
-	m_bypassjog = true;
+	d->bypassjog = true;
 	// Move 1 pixel to the right
-	m_newWhen = m_newWhen + (uint) ( 1 * m_scalefactor);
+	m_newWhen = m_newWhen + (uint) ( 1 * d->scalefactor);
 	do_action();
 }
 
 int DragMarker::jog()
 {
-	if (m_bypassjog) {
-		return 0;
+	if (d->bypassjog) {
+		int diff = d->jogBypassPos - cpointer().x();
+		if (std::abs(diff) > 15) {
+			d->bypassjog = false;
+		} else {
+			return 0;
+		}
 	}
 	
-	long newpos = (uint) (cpointer().scene_x() * m_scalefactor);
+	d->jogBypassPos = cpointer().x();
+	long newpos = (uint) (cpointer().scene_x() * d->scalefactor);
 
 	if (m_marker->get_timeline()->get_song()->is_snap_on()) {
 		SnapList* slist = m_marker->get_timeline()->get_song()->get_snap_list();
@@ -174,9 +186,9 @@ int DragMarker::jog()
 	}
 	
 	m_newWhen = newpos;
-	m_view->set_position(int(m_newWhen / m_scalefactor));
+	d->view->set_position(int(m_newWhen / d->scalefactor));
 	
-	m_view->get_songview()->update_shuttle_factor();
+	d->view->get_songview()->update_shuttle_factor();
 	
 	return 1;
 }
