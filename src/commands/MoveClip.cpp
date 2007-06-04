@@ -283,9 +283,20 @@ void MoveClip::cancel_action()
 
 int MoveClip::jog()
 {
-	if (! m_clip || d->bypassjog) {
+	if (!m_clip) {
 		return 0;
 	}
+	
+	if (d->bypassjog) {
+		QPoint diff = d->jogBypassPos - cpointer().pos();
+		if (diff.manhattanLength() > 35) {
+			d->bypassjog = false;
+		} else {
+			return 0;
+		}
+	}
+	
+	d->jogBypassPos = cpointer().pos();
 	
 	int scrollbardif = d->hScrollbarValue - d->sv->hscrollbar_value();
 	

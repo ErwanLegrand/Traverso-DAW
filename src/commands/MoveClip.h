@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveClip.h,v 1.19 2007/05/05 17:13:13 benjie Exp $
+    $Id: MoveClip.h,v 1.20 2007/06/04 15:51:03 r_sijrier Exp $
 */
 
 #ifndef MOVECLIPACTION_H
@@ -76,6 +76,7 @@ private :
 		nframes_t	origTrackEndFrame;
 		bool 		resync;
 		bool		bypassjog;
+		QPoint		jogBypassPos;
 	};
 			
 
