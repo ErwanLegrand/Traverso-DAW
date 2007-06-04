@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Import.h,v 1.5 2007/05/02 05:58:20 benjie Exp $
+    $Id: Import.h,v 1.6 2007/06/04 22:44:25 benjie Exp $
 */
 
 #ifndef IMPORT_H
@@ -35,6 +35,7 @@ public :
 	Import(const QString& fileName);
         Import(Track* track, bool silent = false, nframes_t length = 0);
         Import(Track* track, const QString& fileName);
+        Import(Track* track, const QString& fileName, nframes_t position);
         ~Import();
 
         int prepare_actions();
@@ -44,6 +45,7 @@ public :
 	int create_readsource();
 	void create_audioclip();
 	void set_track(Track* track);
+	void set_position(nframes_t position);
 
 private :
         Track* 		m_track;
@@ -53,6 +55,8 @@ private :
 	QString		m_name;
 	bool		m_silent;
 	nframes_t	m_initialLength;
+	bool		m_hasPosition;
+	nframes_t	m_position;
 };
 
 #endif

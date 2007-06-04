@@ -174,6 +174,9 @@ void ClipsViewPort::dropEvent(QDropEvent* event )
 	
 	foreach(Import* import, m_imports) {
 		import->set_track(importTrack);
+		if (m_imports.size() == 1) {
+			import->set_position(startpos);
+		}
 		group->add_command(import);
 	}
 

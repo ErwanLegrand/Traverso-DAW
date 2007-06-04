@@ -38,6 +38,7 @@ Import::Import(const QString& fileName)
 	m_clip = 0;
 	m_track = 0;
 	m_silent = false;
+	m_hasPosition = false;
 	m_initialLength = 0;
 }
 
@@ -48,6 +49,7 @@ Import::Import(Track* track, bool silent, nframes_t length)
 	m_track = track;
 	m_clip = 0;
 	m_silent = silent;
+	m_hasPosition = false;
 	m_initialLength = length;
 	
 	if (!m_silent) {
@@ -65,7 +67,20 @@ Import::Import(Track* track, const QString& fileName)
 	m_clip = 0;
 	m_fileName = fileName;
 	m_silent = false;
+	m_hasPosition = false;
 	m_initialLength = 0;
+}
+
+Import::Import(Track* track, const QString& fileName, nframes_t position)
+	: Command(track, tr("Import Audio File"))
+{
+	m_track = track;
+	m_clip = 0;
+	m_fileName = fileName;
+	m_silent = false;
+	m_initialLength = 0;
+	m_hasPosition = true;
+	m_position = position;
 }
 
 Import::~Import()
@@ -130,11 +145,13 @@ void Import::create_audioclip()
 	m_clip->set_track(m_track);
 	
 	nframes_t startFrame = 0;
-	
-	if (AudioClip* lastClip = m_track->get_cliplist().get_last()) {
-		startFrame = lastClip->get_track_end_frame() + 1;
+	if (!m_hasPosition) {
+		if (AudioClip* lastClip = m_track->get_cliplist().get_last()) {
+			startFrame = lastClip->get_track_end_frame() + 1;
+		}
+	} else {
+		startFrame = m_position;
 	}
-
 	m_clip->set_track_start_frame(startFrame);
 	
 	if (m_initialLength > 0) {
@@ -145,6 +162,13 @@ void Import::create_audioclip()
 void Import::set_track(Track * track)
 {
 	m_track = track;
+}
+
+
+void Import::set_position(nframes_t position)
+{
+	m_hasPosition = true;
+	m_position = position;
 }
 
 
