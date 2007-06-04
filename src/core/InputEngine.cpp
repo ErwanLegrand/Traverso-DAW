@@ -1385,7 +1385,6 @@ int InputEngine::init_map(const QString& keymap)
 			
 			data->slotsignature = e.attribute("slotsignature", "");
 			data->modes = e.attribute("modes", "").split(";");
-			data->instantanious = e.attribute("instantanious", "0").toInt();
 			data->pluginname = e.attribute( "pluginname", "");
 			data->commandname = e.attribute( "commandname", "");
 			data->submenu = e.attribute("submenu", "");

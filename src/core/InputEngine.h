@@ -81,7 +81,6 @@ struct IEAction
 		QVariantList arguments;
 		QList<int > modifierkeys;
         	QString slotsignature;
-        	int instantanious;
 		QString pluginname;
 		QString commandname;
 		QString submenu;
