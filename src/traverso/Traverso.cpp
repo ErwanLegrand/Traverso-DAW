@@ -204,7 +204,7 @@ void Traverso::prepare_audio_device( )
 	int bufferSize = config().get_property("Hardware", "buffersize", 1024).toInt();
 #if defined (Q_WS_X11)
 	QString driverType = config().get_property("Hardware", "drivertype", "ALSA").toString();
-#elif
+#else
 	QString driverType = config().get_property("Hardware", "drivertype", "PortAudio").toString();
 #endif
 	QString cardDevice = config().get_property("Hardware", "carddevice", "hw:0").toString();
