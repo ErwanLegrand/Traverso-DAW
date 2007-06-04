@@ -1,9 +1,10 @@
 ##### Do NOT modify this!###############
 CONFIG -= release debug
-################################
+########################################
 
 
 ###### START USER CONFIGURATION ########
+########################################
 
 #
 # Choose debug or release build
@@ -17,21 +18,11 @@ CONFIG += debug
 # Mac OS X, ALSA support will be disabled automatically.
 #
 
-DEFINES += JACK_SUPPORT
+#DEFINES += JACK_SUPPORT
 DEFINES += ALSA_SUPPORT
 DEFINES += PORTAUDIO_SUPPORT
 DEFINES += LV2_SUPPORT
 
-#DEFINES += STATIC_BUILD
-#DEFINES += USE_MEM_CHECKER
-
-DEFINES += QT_430_SCROLLBAR_FIX
-
-!macx{
-	DEFINES += PRECOMPILED_HEADER
-}
-
-#QMAKE_CXXFLAGS +=  -fstack-protector-all
 
 #
 # Uncomment the line which notes your CPU type
@@ -52,16 +43,22 @@ DEFINES += QT_430_SCROLLBAR_FIX
 DEFINES += USE_MLOCK
 
 ####### END USER CONFIGURATION ########
+########################################
 
 
 
 
-CONFIG += warn_on \
-#	  link_prl \
-	  qt
 
+#DEFINES += STATIC_BUILD
+DEFINES += QT_430_SCROLLBAR_FIX
+!macx{
+	DEFINES += PRECOMPILED_HEADER
+}
+#QMAKE_CXXFLAGS +=  -fstack-protector-all
+
+
+CONFIG += warn_on qt
 QT += xml
-
 
 MOC_DIR = build 
 UI_DIR = build 
@@ -85,7 +82,6 @@ unix {
 	release {
 		
 #		DEFINES += USE_DEBUGGER
-		
 #		QMAKE_CXXFLAGS_RELEASE += -g
 #		QMAKE_CXXFLAGS_RELEASE += -finline-functions
 		
