@@ -1,0 +1,115 @@
+# -*-shell-script-*-
+
+#
+# This is an example specfile. Delete these comments when you're done.
+#
+
+[Meta]
+RootName: @traverso-daw.org/traverso:$SOFTWAREVERSION
+DisplayName: Traverso Multitrack Editor
+ShortName: traverso
+Maintainer: John Smith <smith@mysite.org>
+Packager: Taj Morton <tajmorton@gmail.com>
+Summary: Traverso Multitrack Audio Recorder and Editor
+URL: http://traverso-daw.org
+License: GNU General Public License, Version 2
+SoftwareVersion: 0.40.0
+# SoftwareVersion: @VERSION@
+# Repository: http://www.mysite.org/downloads/myproject.xml
+
+# If you change the autopackage but not the software itself,
+# increment this number.
+
+# PackageVersion: 2
+
+# This is the version of the autopackage runtime this package is
+# written for. Increasing this number implies you have read the
+# "Migrating to 1.X" document and understand the impact it will have
+# on your package. Some APIs may change their behaviour and new
+# features will be enabled depending on what this is set to.
+AutopackageTarget: 1.2
+
+[BuildPrepare]
+# sanity checks:
+if [[ ! -z "$CXX2" ]]; then
+	red; outn "FAIL: "; normal;
+	out "Unset \$CXX2 before compiling to disable double-compilation."
+	exit 1
+fi
+
+if [[ -z "$APBUILD_STATIC" ]]; then
+	red; outn "FAIL: "; normal;
+	out "The \$APBUILD_STATIC variable is empty. This needs to be set as there"
+	out "are some libs that need to be statically linked into Traverso."
+	out "These will be set automatically if you run the make-autopackage.sh script."
+	exit 1
+fi
+
+if ! compareVersions 3.4 $($CXX1 --version|head -n1|awk -F' ' '{print $3'}); then
+	red; outn; "WARNING: "; normal;
+	out "You are compiling with G++ 3.3 or older. This is probably not"
+	out "what you want to do (and is *not* what you want to do if static"
+	out "Qt is compiled with something newer. Be very careful."
+fi
+
+$QTDIR/bin/qmake traverso.pro QMAKE_CXX=apg++ QMAKE_CC=apgcc
+make
+
+if [ `objdump -x /usr/bin/traverso |grep NEEDED|grep Qt|wc -l` -ne 0 ]; then
+	red; outn; "FAIL: "; normal;
+	out "This binary is linked dynamically against some Qt libs."
+	out "Make sure you're compiling against a static Qt."
+	out "\$QTDIR=$QTDIR"
+fi
+
+mkdir -p $build_root/bin
+mkdir -p $build_root/share/applications
+mkdir -p $build_root/share/icons/hicolor
+mkdir -p $build_root/share/mime/packages
+
+cp traverso $build_root/bin
+cp resources/traverso.desktop $build_root/share/applications
+cp resources/x-traverso.xml $build_root/share/mime/packages
+cp -R resources/freedesktop/icons/* "$build_root/share/icons/hicolor"
+
+[BuildUnprepare]
+unprepareBuild
+
+[Globals]
+# Anything put here will be run during makeinstall and at
+# install/uninstall time. Define useful variables here:
+
+export MY_VAR=1
+
+[Imports]
+echo '*' | import
+
+
+[Prepare]
+require @libpng.org/libpng 3.0
+require @freetype.org/freetype 6.3
+require @zlib.org/zlib 1.2
+# require @gtk.org/glib # TODO: figure out how glib's versioning works
+require @opengl.org/opengl 1.4
+require @mega-nerd.com/libsndfile 1.0
+require @xmlsoft.org/libxslt 1.1
+require @xmlsoft.org/libxml2 2.4
+
+
+# The user may have already installed the program from an RPM.
+# Let's try and uninstall it first. We only need one call if 3rd party
+# packages have split the program up into multiple packages.
+
+removeOwningPackage $PREFIX/bin/traverso
+
+[Install]
+# Put your installation script here. See the quickstart guide on
+# the website for an API cheat-sheet
+installExe bin/traverso
+installMenuItem Multimedia share/applications/traverso.desktop
+installMime share/mime/packages/x-traverso.xml
+installIcon share/icons/hicolor
+
+[Uninstall]
+# Usually just the following line is enough to uninstall everything
+uninstallFromLog
