@@ -78,7 +78,7 @@ public:
 		upButton->setMaximumWidth(30);
 		
 		QPushButton* refreshButton = new QPushButton(this);
-		QIcon refreshIcon = QApplication::style()->standardIcon(QStyle::SP_FileDialogNewFolder); // FIXME:  needs a better icon!
+		QIcon refreshIcon = QIcon(find_pixmap(":/refresh-16"));
 		refreshButton->setToolTip(tr("Refresh File View"));
 		refreshButton->setIcon(refreshIcon);
 		refreshButton->setMaximumHeight(25);

@@ -126,7 +126,9 @@ ExportWidget::ExportWidget( QWidget * parent )
 	m_writingState = NO_STATE;
 	
 	refreshButton->setIcon(QIcon(find_pixmap(":/refresh-16")));
-		
+	refreshButton->setMaximumHeight(26);
+	refreshButton->setMaximumWidth(30);
+	
 	connect(m_burnprocess, SIGNAL(readyReadStandardOutput()), this, SLOT(read_standard_output()));
 	connect(m_burnprocess, SIGNAL(started()), this, SLOT(cdrdao_process_started()));
 	connect(m_burnprocess, SIGNAL(finished(int, QProcess::ExitStatus)),

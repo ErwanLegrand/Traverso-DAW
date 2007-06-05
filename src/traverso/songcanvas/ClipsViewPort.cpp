@@ -172,10 +172,13 @@ void ClipsViewPort::dropEvent(QDropEvent* event )
 		}
 	}
 	
+	bool firstItem = true;
 	foreach(Import* import, m_imports) {
 		import->set_track(importTrack);
-		if (m_imports.size() == 1) {
+		if (firstItem) {
+			// Place first item at cursor, others at end of track.
 			import->set_position(startpos);
+			firstItem = false;
 		}
 		group->add_command(import);
 	}
