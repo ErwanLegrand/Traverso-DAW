@@ -15,7 +15,7 @@
 	<Keyfacts>
 		<keyfact type="FKEY" key1="H">
 			<Objects>
-				<Object objectname="Help" slotsignature="show_help" modes="All" />
+				<Object objectname="Interface" slotsignature="open_help_browser" modes="All" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="F1" >

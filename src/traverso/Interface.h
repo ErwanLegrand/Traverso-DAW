@@ -26,7 +26,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QMainWindow>
 #include <QHash>
 
-class Help;
 class Song;
 class Track;
 class Project;
@@ -122,8 +121,6 @@ private:
 
 
 	BusMonitor* 		busMonitor;
-	Help* 			helpWindow;
-
 	QToolBar* 		mainToolBar;
 	QToolButton*		openGlButton;
 	QAction*		m_projectSaveAction;
@@ -146,6 +143,7 @@ public slots :
 	void set_project(Project* project);
 	void show_song(Song* song);
 	void show_settings_dialog();
+	void open_help_browser();
 	void process_context_menu_action(QAction* action);
 	void set_fade_in_shape(QAction* action);
 	void set_fade_out_shape(QAction* action);

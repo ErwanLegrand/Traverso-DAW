@@ -31,19 +31,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "BusMonitor.h"
 #include "ProjectManager.h"
 #include "ViewPort.h"
-#include "Help.h"
-#include "widgets/ResourcesWidget.h"
 #include "FadeCurve.h"
 #include "Config.h"
 #include "Plugin.h"
-#include "widgets/InfoWidgets.h"
-
 #include "ExportWidget.h"
 #include "CorrelationMeterWidget.h"
 #include "SpectralMeterWidget.h"
 		
 #include "Import.h"
+
 #include "songcanvas/SongWidget.h"
+
+#include "widgets/InfoWidgets.h"
+#include "widgets/ResourcesWidget.h"
 
 #include "dialogs/settings/SettingsDialog.h"
 #include "dialogs/project/ProjectManagerDialog.h"
@@ -147,9 +147,6 @@ Interface::Interface()
 	busMonitorDW->setWidget(busMonitor);
 	addDockWidget(Qt::RightDockWidgetArea, busMonitorDW);
 	
-	// Help widget
-	helpWindow = new Help(this);
-	
 	m_infoBar = new InfoToolBar(this);
 	addToolBar(m_infoBar);
 	
@@ -194,8 +191,6 @@ Interface::~Interface()
 	config().set_property("Interface", "fullScreen", isFullScreen());
 	config().set_property("Interface", "pos", pos());
 	config().set_property("Interface", "windowstate", saveState());
-	
-	delete helpWindow;
 }
 
 
@@ -422,9 +417,9 @@ void Interface::create_menus( )
 	
 	
 	menu = menuBar()->addMenu("&Help");
-	action = menu->addAction(tr("&HandBook"));
+	action = menu->addAction(tr("&User Manual"));
 	action->setIcon(style()->standardIcon(QStyle::SP_DialogHelpButton));
-	connect(action, SIGNAL(triggered(bool)), helpWindow, SLOT(show_help()));
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(open_help_browser()));
 	
 	action = menu->addAction(tr("&About Traverso"));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(about_traverso()));
@@ -972,6 +967,12 @@ Command* Interface::show_newtrack_dialog()
 	return 0;
 }
 
+
+void Interface::open_help_browser()
+{
+	info().information(tr("Opening User Manual in external browser!"));
+	QDesktopServices::openUrl(QUrl("http://traverso-daw.org/UserManual"));
+}
 
 // eof
 

@@ -27,7 +27,6 @@ HEADERS += \
 	BusMonitor.h \
 	ContextDialog.h \
 	FadeContextDialog.h \
-	Help.h \
 	Main.h \
 	ExportWidget.h \
 	PluginSelectorDialog.h \
@@ -58,7 +57,6 @@ SOURCES += \
 	BusMonitor.cpp \
 	ContextDialog.cpp \
 	FadeContextDialog.cpp \
-	Help.cpp \
 	Main.cpp \
 	ExportWidget.cpp \
 	PluginSelectorDialog.cpp \
@@ -121,7 +119,7 @@ contains(DEFINES, PORTAUDIO_SUPPORT): LIBS += -lportaudio
 !contains(DEFINES, PORTAUDIO_SUPPORT): FORMS -= ui/PaDriverPage.ui
 
 contains(DEFINES, LV2_SUPPORT){
-    LIBS += -lslv2 -lrdf -lrasqal -lraptor #slv2 needs to come before rdf so the bogus dep stripper (-Wl,--as-needed) doesn't remove it
+    LIBS += -lslv2 -lrdf -lrasqal -lraptor
     INCLUDEPATH +=	../3rdparty/slv2 ../plugins/LV2
 }
 
@@ -146,17 +144,17 @@ unix{
     # if so, copy paste into  macx section...
     LIBS += $$system(pkg-config --libs glib-2.0)
 
-    contains(DEFINES, JACK_SUPPORT) {
-        system(which relaytool 2>/dev/null >/dev/null) {
+    contains(DEFINES, JACK_SUPPORT){
+        system(which relaytool 2>/dev/null >/dev/null){
             LIBS += `relaytool --multilink libjack.so.0 libjack-0.100.0.so.0 --relay jack -ljack`
-        } else {
+        }        else{
             LIBS += -ljack
         }
     }
 }
 
 macx{
-    contains(DEFINES, JACK_SUPPORT) {
+    contains(DEFINES, JACK_SUPPORT){
         LIBS += -ljack
     }
 

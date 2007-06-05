@@ -18,7 +18,6 @@
 		<file alias="keymaps/default.xml">../../resources/keymap.xml</file>
 		<file alias="fadeshapes">../../resources/fadeshapes.xml</file>
 		<file alias="themes/TraversoLight/traversotheme.xml">../../resources/themes/default/traversotheme.xml</file> 
-		<file alias="helpfile">../../resources/help.text</file>
 		<file alias="bus_in">../../resources/images/bus-in.xpm</file>
 		<file alias="bus_out">../../resources/images/bus-out.xpm</file>
 		<file alias="audiocard">../../resources/images/soundcard.png</file>
@@ -47,11 +46,5 @@
 		<file alias="traverso_nl">../../traverso_nl.qm</file>
 		<file alias="traverso_de">../../traverso_de.qm</file>
 		<file alias="traverso_en">../../traverso_en.qm</file>
-		<file alias="index.html">../../resources/help/index.html</file>
-		<file alias="firststart.html">../../resources/help/firststart.html</file>
-		<file alias="theinterface.html">../../resources/help/theinterface.html</file>
-		<file alias="keycommands.html">../../resources/help/keycommands.html</file>
-		<file alias="examples.html">../../resources/help/examples.html</file>
-		<file alias="quickstartreference.html">../../resources/help/quickstartreference.html</file>
 	</qresource>
 </RCC>
