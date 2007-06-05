@@ -44,7 +44,6 @@ public :
 	void set_dir(const QString& name);
 	void set_original_bit_depth(uint bitDepth);
 	void set_created_by_song(qint64 id);
-	void set_sample_rate(int rate);
 	int set_state( const QDomNode& node );
 	
 	

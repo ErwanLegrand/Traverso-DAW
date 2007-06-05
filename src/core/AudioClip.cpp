@@ -65,7 +65,7 @@ AudioClip::AudioClip(const QString& name)
 {
 	PENTERCONS;
 	m_length = sourceStartFrame = sourceEndFrame = trackEndFrame = 0;
-	isMuted=false;
+	m_isMuted=false;
 	m_id = create_id();
 	m_readSourceId = m_songId = 0;
 	init();
@@ -86,7 +86,7 @@ AudioClip::AudioClip(const QDomNode& node)
 	m_readSourceId = e.attribute("source", "").toLongLong();
 	m_songId = e.attribute("sheet", "0").toLongLong();
 	m_name = e.attribute( "clipname", "" ) ;
-	isMuted =  e.attribute( "mute", "" ).toInt();
+	m_isMuted =  e.attribute( "mute", "" ).toInt();
 	m_length = e.attribute( "length", "0" ).toUInt();
 	sourceStartFrame = e.attribute( "sourcestart", "" ).toUInt();
 	sourceEndFrame = sourceStartFrame + m_length;
@@ -110,11 +110,10 @@ void AudioClip::init()
 	m_track = 0;
 	m_readSource = 0;
 	m_recordingStatus = NO_RECORDING;
-	isSelected = m_invalidReadSource = false;
-	isLocked = config().get_property("AudioClip", "LockByDefault", false).toBool();
+	m_isSelected = m_invalidReadSource = false;
+	m_isLocked = config().get_property("AudioClip", "LockByDefault", false).toBool();
 	fadeIn = 0;
 	fadeOut = 0;
-	m_refcount = 0;
 	m_pluginChain = new PluginChain(this);
 	m_fader = m_pluginChain->get_fader();
 	m_fader->automate_port(0, true);
@@ -129,9 +128,9 @@ int AudioClip::set_state(const QDomNode& node)
 	
 	QDomElement e = node.toElement();
 
-	isTake = e.attribute( "take", "").toInt();
+	m_isTake = e.attribute( "take", "").toInt();
 	set_gain( e.attribute( "gain", "" ).toFloat() );
-	isLocked = e.attribute( "locked", "0" ).toInt();
+	m_isLocked = e.attribute( "locked", "0" ).toInt();
 
 	if (e.attribute("selected", "0").toInt() == 1) {
 		m_song->get_audioclip_manager()->select_clip(this);
@@ -139,7 +138,7 @@ int AudioClip::set_state(const QDomNode& node)
 
 	m_readSourceId = e.attribute("source", "").toLongLong();
 	m_songId = e.attribute("sheet", "0").toLongLong();
-	isMuted =  e.attribute( "mute", "" ).toInt();
+	m_isMuted =  e.attribute( "mute", "" ).toInt();
 
 	sourceStartFrame = e.attribute( "sourcestart", "" ).toUInt();
 	m_length = e.attribute( "length", "0" ).toUInt();
@@ -176,13 +175,13 @@ QDomNode AudioClip::get_state( QDomDocument doc )
 	node.setAttribute("trackstart", trackStartFrame);
 	node.setAttribute("sourcestart", sourceStartFrame);
 	node.setAttribute("length", m_length);
-	node.setAttribute("mute", isMuted);
-	node.setAttribute("take", isTake);
+	node.setAttribute("mute", m_isMuted);
+	node.setAttribute("take", m_isTake);
 	node.setAttribute("clipname", m_name );
-	node.setAttribute("selected", isSelected );
+	node.setAttribute("selected", m_isSelected );
 	node.setAttribute("id", m_id );
 	node.setAttribute("sheet", m_songId );
-	node.setAttribute("locked", isLocked);
+	node.setAttribute("locked", m_isLocked);
 
 	node.setAttribute("source", m_readSourceId);
 
@@ -203,14 +202,14 @@ QDomNode AudioClip::get_state( QDomDocument doc )
 void AudioClip::toggle_mute()
 {
 	PENTER;
-	isMuted=!isMuted;
+	m_isMuted=!m_isMuted;
 	set_sources_active_state();
 	emit muteChanged();
 }
 
 void AudioClip::toggle_lock()
 {
-	isLocked = !isLocked;
+	m_isLocked = !m_isLocked;
 	emit lockChanged();
 }
 
@@ -373,7 +372,7 @@ void AudioClip::set_gain(float gain)
 
 void AudioClip::set_selected(bool selected)
 {
-	isSelected = selected;
+	m_isSelected = selected;
 	emit stateChanged();
 }
 
@@ -393,7 +392,7 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* buffer, uint channel)
 		return -1;
 	}
 
-	if (isMuted || (get_gain() == 0.0f) ) {
+	if (m_isMuted || (get_gain() == 0.0f) ) {
 		return 0;
 	}
 	
@@ -558,7 +557,7 @@ int AudioClip::init_recording( QByteArray name )
 	}
 
 	sourceStartFrame = 0;
-	isTake = 1;
+	m_isTake = 1;
 	m_recordingStatus = RECORDING;
 	
 	connect(m_song, SIGNAL(transferStopped()), this, SLOT(finish_recording()));
@@ -598,18 +597,6 @@ Command* AudioClip::reset_fade_both()
 	group->add_command(reset_fade_out());
 
 	return group;
-}
-
-AudioClip * AudioClip::prev_clip( )
-{
-	Q_ASSERT(m_track);
-	return m_track->get_cliplist().prev(this);
-}
-
-AudioClip * AudioClip::next_clip( )
-{
-	Q_ASSERT(m_track);
-	return m_track->get_cliplist().next(this);
 }
 
 AudioClip* AudioClip::create_copy( )
@@ -777,22 +764,22 @@ void AudioClip::set_name( const QString& name )
 
 bool AudioClip::is_selected( ) const
 {
-	return isSelected;
+	return m_isSelected;
 }
 
 bool AudioClip::is_take( ) const
 {
-	return isTake;
+	return m_isTake;
 }
 
 bool AudioClip::is_muted( ) const
 {
-	return isMuted;
+	return m_isMuted;
 }
 
 bool AudioClip::is_locked( ) const
 {
-	return isLocked;
+	return m_isLocked;
 }
 
 QString AudioClip::get_name( ) const
@@ -922,12 +909,12 @@ void AudioClip::calculate_normalization_factor(float targetdB)
 	set_gain(target/maxamp);
 }
 
-FadeCurve * AudioClip::get_fade_in( )
+FadeCurve * AudioClip::get_fade_in( ) const
 {
 	return fadeIn;
 }
 
-FadeCurve * AudioClip::get_fade_out( )
+FadeCurve * AudioClip::get_fade_out( ) const
 {
 	return fadeOut;
 }

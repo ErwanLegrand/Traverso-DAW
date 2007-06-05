@@ -73,6 +73,9 @@ private:
 	
 	friend class MonoReader;
 	friend class ResourcesManager;
+	
+signals:
+	void stateChanged();
 };
 
 #endif

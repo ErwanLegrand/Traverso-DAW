@@ -34,16 +34,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 class Song;
-class AudioSource;
 class ReadSource;
 class WriteSource;
 class Track;
 class Peak;
 class AudioBus;
 class FadeCurve;
-class Curve;
 class PluginChain;
-struct ExportSpecification;
 
 class AudioClip : public ContextItem, public Snappable
 {
@@ -70,9 +67,6 @@ public:
   		FINISHING_RECORDING
 	};
 	
-	void create_fade_in();
-	void create_fade_out();
-	
 	void set_audio_source(ReadSource* source);
 	int init_recording(QByteArray bus);
 	int process(nframes_t nframes, audio_sample_t* channelBuffer, uint channel);
@@ -87,15 +81,13 @@ public:
 	void set_selected(bool selected);
 	int set_state( const QDomNode& node );
 
-	AudioClip* prev_clip();
-	AudioClip* next_clip();
 	AudioClip* create_copy();
 	Track* get_track() const;
 	Song* get_song() const;
 	Peak* get_peak_for_channel(int chan) const;
 	QDomNode get_state(QDomDocument doc);
-	FadeCurve* get_fade_in();
-	FadeCurve* get_fade_out();
+	FadeCurve* get_fade_in() const;
+	FadeCurve* get_fade_out() const;
 	PluginChain* get_plugin_chain() const {return m_pluginChain;}
 	
 	nframes_t get_length() const;
@@ -135,7 +127,6 @@ public:
 private:
 	Track* 			m_track;
 	Song* 			m_song;
-	AudioSource* 		audioSource;
 	ReadSource*		m_readSource;
 	QList<WriteSource* >	writeSources;
 	QList<FadeCurve* >	m_fades;
@@ -155,24 +146,24 @@ private:
 	nframes_t		sourceLength;
 	nframes_t 		m_length;
 
-	int 		isSelected;
-	bool 		isTake;
-	bool 		isMuted;
-	bool		isLocked;
+	int 		m_isSelected;
+	bool 		m_isTake;
+	bool 		m_isMuted;
+	bool		m_isLocked;
 	bool		m_invalidReadSource;
 	RecordingStatus	m_recordingStatus;
 	
 	qint64		m_readSourceId;
 	qint64		m_songId;
-	int		m_refcount;
 
+	void create_fade_in();
+	void create_fade_out();
 	void init();
 	void set_source_end_frame(nframes_t frame);
 	void set_source_start_frame(nframes_t frame);
 	void set_track_end_frame(nframes_t endFrame);
 	void set_sources_active_state();
 	void process_capture(nframes_t nframes, uint channel);
-	int ref() {return m_refcount++;}
 	
 	
 	void calculate_normalization_factor(float targetdB = 0.0);

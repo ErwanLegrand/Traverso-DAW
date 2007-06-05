@@ -61,6 +61,9 @@ public:
 
 private:
 	ReadSource* m_source;
+	
+public slots:
+	void source_state_changed();
 };
 
 class ResourcesWidget : public QWidget, protected Ui::ResourcesWidget

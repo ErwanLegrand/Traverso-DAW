@@ -354,16 +354,11 @@ void ResourcesWidget::add_source(ReadSource * source)
 	SourceTreeItem* item = m_sourceindices.value(source->get_id());
 	
 	if (! item) {
-		SourceTreeItem* item = new SourceTreeItem(sourcesTreeWidget, source);
+		item = new SourceTreeItem(sourcesTreeWidget, source);
 		m_sourceindices.insert(source->get_id(), item);
-		QString duration = frame_to_ms(source->get_nframes(), 44100);
-		item->setText(0, source->get_short_name());
-		item->setText(1, duration);
-		item->setText(2, "");
-		item->setText(3, "");
-		item->setData(0, Qt::UserRole, source->get_id());
-		item->setToolTip(0, source->get_short_name() + "   " + duration);
 	}
+	
+	item->source_state_changed();
 	
 	update_source_state(source->get_id());
 }
@@ -386,16 +381,7 @@ void ResourcesWidget::update_source_state(qint64 id)
 {
 	SourceTreeItem* item = m_sourceindices.value(id);
 	Q_ASSERT(item);
-	
-	if (resources_manager()->is_source_in_use(id)) {
-		for (int i=0; i<5; ++i) {
-			item->setForeground(i, QColor(Qt::black));
-		}
-	} else {
-		for (int i=0; i<5; ++i) {
-			item->setForeground(i, QColor(Qt::lightGray));
-		}
-	}
+	item->source_state_changed();
 }
 
 ClipTreeItem::ClipTreeItem(SourceTreeItem * parent, AudioClip * clip)
@@ -403,6 +389,7 @@ ClipTreeItem::ClipTreeItem(SourceTreeItem * parent, AudioClip * clip)
 	, m_clip(clip)
 {
 	setData(0, Qt::UserRole, clip->get_id());
+	connect(clip, SIGNAL(recordingFinished()), this, SLOT(clip_state_changed()));
 }
 
 void ClipTreeItem::clip_state_changed()
@@ -442,6 +429,7 @@ SourceTreeItem::SourceTreeItem(QTreeWidget* parent, ReadSource * source)
 	: QTreeWidgetItem(parent)
 	, m_source(source)
 {
+	connect(m_source, SIGNAL(stateChanged()), this, SLOT(source_state_changed()));
 }
 
 void SourceTreeItem::apply_filter(Song * song)
@@ -465,5 +453,29 @@ void SourceTreeItem::apply_filter(Song * song)
 	} else {
 		setHidden(true);
 	}
+}
+
+void SourceTreeItem::source_state_changed()
+{
+	if (resources_manager()->is_source_in_use(m_source->get_id())) {
+		for (int i=0; i<5; ++i) {
+			setForeground(i, QColor(Qt::black));
+		}
+	} else {
+		for (int i=0; i<5; ++i) {
+			setForeground(i, QColor(Qt::lightGray));
+		}
+	}
+	
+	int rate = m_source->get_rate();
+	if (rate == 0) rate = pm().get_project()->get_rate();
+	QString duration = frame_to_ms(m_source->get_nframes(), rate);
+	setText(0, m_source->get_short_name());
+	setText(1, duration);
+	setText(2, "");
+	setText(3, "");
+	setData(0, Qt::UserRole, m_source->get_id());
+	setToolTip(0, m_source->get_short_name() + "   " + duration);
+
 }
 

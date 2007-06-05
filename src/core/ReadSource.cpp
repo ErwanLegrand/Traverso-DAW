@@ -277,6 +277,8 @@ int ReadSource::set_file(const QString & filename)
 	
 	set_audio_clip(m_clip);
 	
+	emit stateChanged();
+	
 	return 1;
 }
 

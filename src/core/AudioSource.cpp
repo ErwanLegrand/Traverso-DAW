@@ -91,7 +91,6 @@ int AudioSource::set_state( const QDomNode & node )
 	set_dir( e.attribute("dir", "" ));
 	m_id = e.attribute("id", "").toLongLong();
 	m_length = e.attribute("length", "0").toUInt();
-	set_name( e.attribute("name", "No name supplied?" ));
 	m_origBitDepth = e.attribute("origbitdepth", "0").toInt();
 	m_wasRecording = e.attribute("wasrecording", "0").toInt();
 	
@@ -102,11 +101,7 @@ int AudioSource::set_state( const QDomNode & node )
 		m_wasRecording = true;
 	}
 	
-	if (m_wasRecording) {
-		m_shortName = m_name.left(m_name.length() - 20);
-	} else {
-		m_shortName = m_name;
-	}
+	set_name( e.attribute("name", "No name supplied?" ));
 	
 	return 1;
 }
@@ -115,7 +110,11 @@ int AudioSource::set_state( const QDomNode & node )
 void AudioSource::set_name(const QString& name)
 {
 	m_name = name;
-	m_shortName = name;
+	if (m_wasRecording) {
+		m_shortName = m_name.left(m_name.length() - 20);
+	} else {
+		m_shortName = m_name;
+	}
 	m_fileName = m_dir + m_name;
 }
 
@@ -140,11 +139,6 @@ void AudioSource::set_original_bit_depth( uint bitDepth )
 void AudioSource::set_created_by_song(qint64 id)
 {
 	m_origSongId = id;
-}
-
-void AudioSource::set_sample_rate( int rate )
-{
-	m_rate = rate;
 }
 
 QString AudioSource::get_filename( ) const
