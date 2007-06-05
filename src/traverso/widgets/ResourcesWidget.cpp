@@ -359,8 +359,6 @@ void ResourcesWidget::add_source(ReadSource * source)
 	}
 	
 	item->source_state_changed();
-	
-	update_source_state(source->get_id());
 }
 
 void ResourcesWidget::remove_source(ReadSource * source)
