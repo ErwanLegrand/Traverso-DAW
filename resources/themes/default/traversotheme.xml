@@ -81,7 +81,7 @@
 		<color name="Curve:inactive" red="255" green="0" blue="255" alpha="150" />
 		
 		<color name="CurveNode:default" red="255" green="0" blue="255" alpha="140" />
-		<color name="CurveNode:blink" red="170" green="255" blue="170" alpha="220" />
+		<color name="CurveNode:blink" red="120" green="120" blue="220" alpha="220" />
 		
 		<color name="Fade:default" red="255" green="0" blue="255" alpha="85" />
 		<color name="Fade:bypassed" red="255" green="0" blue="255" alpha="40" />

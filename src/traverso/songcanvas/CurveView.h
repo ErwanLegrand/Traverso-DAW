@@ -64,7 +64,7 @@ private:
 	Curve*		m_guicurve;
 	QTimer		m_blinkTimer;
 	CurveNodeView*	m_blinkingNode;
-	QColor		m_blinkColor;
+	int		m_blinkDarkness;
 	int		m_blinkColorDirection;
 	QList<CurveNodeView*>	m_nodeViews;
 	nframes_t	m_startoffset;

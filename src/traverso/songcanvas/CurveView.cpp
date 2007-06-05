@@ -291,7 +291,7 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	
 	if (xstart <= 80) {
 		painter->setFont(themer()->get_font("CurveView:fontscale:label"));
-		painter->drawText(10, m_boundingRect.height() - 14, "Gain Curve");
+		painter->drawText(10, (int)(m_boundingRect.height() - 14), "Gain Curve");
 	}
 	
 	painter->restore();
@@ -353,7 +353,6 @@ void CurveView::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
 {
 	Q_UNUSED(event);
 	
-	m_blinkColor = themer()->get_color("CurveNode:blink");
 	m_blinkTimer.start(40);
 }
 
@@ -414,7 +413,6 @@ void CurveView::update_softselected_node( QPoint pos , bool force)
 		
 		if (nodeDist < blinkNodeDist) {
 			m_blinkingNode = nodeView;
-			m_blinkColor = themer()->get_color("CurveNode:blink");
 		}
 	}
 
@@ -432,6 +430,7 @@ void CurveView::update_softselected_node( QPoint pos , bool force)
 	}
 	if (!prevNode && m_blinkingNode) {
 		m_blinkingNode->set_selected();
+		m_blinkDarkness = 100;
 	}
 }
 
@@ -442,24 +441,19 @@ void CurveView::update_blink_color()
 		return;
 	}
 	
-	int red = m_blinkColor.red();
-	int blue = m_blinkColor.blue();
+	m_blinkDarkness += (6 * m_blinkColorDirection);
 	
-	red += (15 * m_blinkColorDirection);
-	blue += (15 * m_blinkColorDirection);
-	
-	if (red > 255 || blue > 255) {
+	if (m_blinkDarkness >= 100) {
 		m_blinkColorDirection *= -1;
-		red = 255;
-		blue = 255;
-	} else if (red < 130) {
+		m_blinkDarkness = 100;
+	} else if (m_blinkDarkness <= 40) {
 		m_blinkColorDirection *= -1;
+		m_blinkDarkness = 40;
 	}
 	
-	m_blinkColor.setRed(red);
-	m_blinkColor.setBlue(blue);
+	QColor blinkColor = themer()->get_color("CurveNode:blink");
 	
-	m_blinkingNode->set_color(m_blinkColor);
+	m_blinkingNode->set_color(blinkColor.light(m_blinkDarkness));
 	
 	m_blinkingNode->update();
 }
