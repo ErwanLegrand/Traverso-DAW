@@ -306,8 +306,12 @@ AudioClip* Track::init_recording()
 	if ( ! isArmed) {
 		return 0;
 	}
-	
-	QString name = 	"track-" + QString::number(m_song->get_track_index(m_id)) +
+	int number = m_song->get_track_index(m_id);
+	QString snumber = QString::number(number);
+	if (number < 10) {
+		snumber.prepend("0");
+	}
+	QString name = 	"track-" + snumber +
 			"_take-" + QString::number(++numtakes);
 	
 	AudioClip* clip = resources_manager()->new_audio_clip(name);
