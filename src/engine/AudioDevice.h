@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.17 2007/06/05 13:10:56 r_sijrier Exp $
+$Id: AudioDevice.h,v 1.18 2007/06/05 16:18:14 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -140,6 +140,7 @@ private:
 	QHash<QByteArray, AudioBus* >		playbackBuses;
 	QHash<QByteArray, AudioBus* >		captureBuses;
 	QStringList				availableDrivers;
+	QTimer					m_xrunResetTimer;
 #if defined (JACK_SUPPORT)
 	QTimer					jackShutDownChecker;
 	friend class JackDriver;
@@ -234,6 +235,7 @@ private slots:
 	void private_remove_client(Client* client);
 	void audiothread_finished();
 	void switch_to_null_driver();
+	void reset_xrun_counter() {m_xrunCount = 0;}
 #if defined (JACK_SUPPORT)
 	void check_jack_shutdown();
 #endif

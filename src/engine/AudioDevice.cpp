@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.32 2007/06/05 13:24:56 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.33 2007/06/05 16:18:14 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -174,6 +174,8 @@ AudioDevice::AudioDevice()
 	tsar();
 	
 	connect(this, SIGNAL(xrunStormDetected()), this, SLOT(switch_to_null_driver()));
+	connect(&m_xrunResetTimer, SIGNAL(timeout()), this, SLOT(reset_xrun_counter()));
+	m_xrunResetTimer.start(30000);
 }
 
 AudioDevice::~AudioDevice()
