@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.31 2007/06/05 13:10:55 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.32 2007/06/05 13:24:56 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -752,7 +752,7 @@ void AudioDevice::check_jack_shutdown()
 void AudioDevice::switch_to_null_driver()
 {
 	info().critical(tr("AudioDevice:: Buffer underrun 'Storm' detected, switching to Null Driver"));
-	info().information(tr("AudioDevice:: If you have an Intel integrated audio card, please try using 3 periods, see Settings Dialog, Audio Driver"));
+	info().information(tr("AudioDevice:: For trouble shooting this problem, please see Chapter 11 from the user manual!"));
 	set_parameters(44100, m_bufferSize, "Null Driver");
 }
 
