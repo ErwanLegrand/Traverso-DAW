@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.16 2007/03/22 15:59:23 r_sijrier Exp $
+$Id: AudioDevice.h,v 1.17 2007/06/05 13:10:56 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -152,6 +152,7 @@ private:
 	uint 			m_bufferSize;
 	uint 			m_rate;
 	uint			m_bitdepth;
+	uint			m_xrunCount;
 	QString			m_driverType;
 
 	int run_one_cycle(nframes_t nframes, float delayed_usecs);
@@ -225,11 +226,14 @@ signals:
 	 * @param  The Client \a client which as been removed from the AudioDevice
 	 */
 	void clientRemoved(Client*);
+	
+	void xrunStormDetected();
 
 private slots:
 	void private_add_client(Client* client);
 	void private_remove_client(Client* client);
 	void audiothread_finished();
+	void switch_to_null_driver();
 #if defined (JACK_SUPPORT)
 	void check_jack_shutdown();
 #endif

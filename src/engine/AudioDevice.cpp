@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.30 2007/06/04 08:53:39 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.31 2007/06/05 13:10:55 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -145,6 +145,7 @@ AudioDevice::AudioDevice()
 	driver = 0;
 	audioThread = 0;
 	m_bufferSize = 1024;
+	m_xrunCount = 0;
 	m_cpuTime = new RingBufferNPT<trav_time_t>(4096);
 
 	m_driverType = tr("No Driver Loaded");
@@ -171,6 +172,8 @@ AudioDevice::AudioDevice()
 	// from here by for example the jack driver which could initialize tsar 
 	// from within the _jack client thread_ which makes the whole thing _fail_
 	tsar();
+	
+	connect(this, SIGNAL(xrunStormDetected()), this, SLOT(switch_to_null_driver()));
 }
 
 AudioDevice::~AudioDevice()
@@ -318,6 +321,7 @@ void AudioDevice::set_parameters( int rate,
 
 	m_rate = rate;
 	m_bufferSize = bufferSize;
+	m_xrunCount = 0;
 
 	shutdown();
 
@@ -719,6 +723,11 @@ void AudioDevice::audiothread_finished()
 void AudioDevice::xrun( )
 {
 	RT_THREAD_EMIT(this, NULL, bufferUnderRun());
+	
+	m_xrunCount++;
+	if (m_xrunCount > 30) {
+		RT_THREAD_EMIT(this, NULL, xrunStormDetected());
+	}
 }
 
 #if defined (JACK_SUPPORT)
@@ -740,4 +749,12 @@ void AudioDevice::check_jack_shutdown()
 }
 #endif
 
+void AudioDevice::switch_to_null_driver()
+{
+	info().critical(tr("AudioDevice:: Buffer underrun 'Storm' detected, switching to Null Driver"));
+	info().information(tr("AudioDevice:: If you have an Intel integrated audio card, please try using 3 periods, see Settings Dialog, Audio Driver"));
+	set_parameters(44100, m_bufferSize, "Null Driver");
+}
+
 //eof
+
