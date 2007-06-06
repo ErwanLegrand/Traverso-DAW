@@ -338,7 +338,7 @@ void TimeLineView::add_new_marker_view(Marker * marker)
 #if QT_VERSION < 0x040300
 	m_sv->scene()->addItem(view);
 #endif
-	update();
+	view->update();
 }
 
 void TimeLineView::remove_marker_view(Marker * marker)
