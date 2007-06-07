@@ -260,20 +260,22 @@ void ProjectManager::start(QString projectToLoad)
 				tr("Choose an existing or create a new Project Directory"),
 				   projects_path );
 		if (dir.exists(newPath)) {
-			QMessageBox::information( 0, 
-					tr("Traverso - Information"), 
-					tr("Using existing Project directory: %1\n").arg(newPath), 
-					"OK", 0 );
+			info().information(tr("Using existing Project directory: %1\n").arg(newPath));
+			//QMessageBox::information( 0, 
+			//		tr("Traverso - Information"), 
+			//		tr("Using existing Project directory: %1\n").arg(newPath), 
+			//		"OK", 0 );
 		} else if (!dir.mkpath(newPath)) {
 			QMessageBox::warning( 0, tr("Traverso - Warning"), 
 					tr("Unable to create Project directory! \n") +
 					tr("Please check permission for this directory: %1").arg(newPath) );
 			return;
 		} else {
-			QMessageBox::information( 0, 
-					tr("Traverso - Information"), 
-					tr("Created new Project directory for you here: %1\n").arg(newPath), 
-					"OK", 0 );
+			info().information(tr("Created new Project directory for you here: %1\n").arg(newPath));
+			//QMessageBox::information( 0, 
+			//		tr("Traverso - Information"), 
+			//		tr("Created new Project directory for you here: %1\n").arg(newPath), 
+			//		"OK", 0 );
 		}
 		QDir newdir(newPath);
 		config().set_property("Project", "directory", newdir.canonicalPath());
