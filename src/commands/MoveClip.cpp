@@ -225,11 +225,7 @@ int MoveClip::do_action()
 		return 1;
 	}
 
-	if (!m_targetTrack) {
-		Command::process_command(m_originTrack->remove_clip(m_clip, false));
-	} else {
-		m_song->move_clip(m_originTrack, m_targetTrack, m_clip, m_originalTrackFirstFrame + m_posDiff);
-	}
+	m_song->move_clip(m_originTrack, m_targetTrack, m_clip, m_originalTrackFirstFrame + m_posDiff);
 	
 	if (m_actionType == "anchored_left_edge_move") {
 		m_clip->set_right_edge(m_oldOppositeEdge);
@@ -245,13 +241,11 @@ int MoveClip::do_action()
 int MoveClip::undo_action()
 {
 	PENTER;
-	if (m_targetTrack) {
-		Command::process_command(m_targetTrack->remove_clip(m_clip, false));
-	}
 	
-	if (m_actionType != "copy") {
-		m_clip->set_track_start_frame(m_originalTrackFirstFrame);
-		Command::process_command(m_originTrack->add_clip(m_clip, false));
+	if (m_actionType == "copy") {
+		Command::process_command(m_targetTrack->remove_clip(m_clip, false));
+	} else {
+		m_song->move_clip(m_targetTrack, m_originTrack, m_clip, m_originalTrackFirstFrame);
 	}
 
 	if (m_actionType == "anchored_left_edge_move") {
