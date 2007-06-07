@@ -42,6 +42,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "songcanvas/SongWidget.h"
 
+#include "ui_QuickStart.h"
+
 #include "widgets/InfoWidgets.h"
 #include "widgets/ResourcesWidget.h"
 
@@ -166,6 +168,7 @@ Interface::Interface()
 	m_busSelector = 0;
 	m_newSongDialog = 0;
 	m_newTrackDialog = 0;
+	m_quickStart = 0;
 	
 	create_menus();
 	
@@ -270,14 +273,28 @@ void Interface::show_song(Song* song)
 Command* Interface::about_traverso()
 {
 	PENTER;
-	QString text(tr("Traverso %1, making use of Qt %2\n\n" 
-			"Traverso, a Multitrack audio recording and editing program.\n\n"
-			"Traverso uses a very powerfull interface concept, which makes recording\n"
-			"and editing audio much quicker and a pleasure to do!\n"
-			"See for more info the Help file\n\n"
-			"Traverso is brought to you by the author, R. Sijrier, and all the people from Free Software world\n"
-			"who made important technologies on which Traverso is based (Gcc, Qt, Xorg, Linux, and so on)").arg(VERSION).arg(QT_VERSION_STR));
+	QString text(tr("Traverso %1 (built with Qt %2)\n\n" 
+			"A multitrack audio recording and editing program.\n\n"
+			"Look in the Help menu for more info.\n\n"
+			"Traverso is brought to you by R. Sijrier and others,\n"
+			"including all the people from the Free Software world\n"
+			"who contributed the important technologies on which\n"
+			"Traverso is based (Gcc, Qt, Xorg, Linux, and so on)" ).arg(VERSION).arg(QT_VERSION_STR));
 	QMessageBox::about ( this, tr("About Traverso"), text);
+	
+	return (Command*) 0;
+}
+
+Command* Interface::quick_start()
+{
+	PENTER;
+	
+	if (m_quickStart == 0) {
+		m_quickStart = new QDialog();
+		Ui_QuickStartDialog *qsd = new Ui_QuickStartDialog();
+		qsd->setupUi(m_quickStart);
+	}
+	m_quickStart->show();
 	
 	return (Command*) 0;
 }
@@ -417,6 +434,9 @@ void Interface::create_menus( )
 	
 	
 	menu = menuBar()->addMenu("&Help");
+	action = menu->addAction(tr("&Getting Started"));
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(quick_start()));
+	
 	action = menu->addAction(tr("&User Manual"));
 	action->setIcon(style()->standardIcon(QStyle::SP_DialogHelpButton));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(open_help_browser()));

@@ -102,6 +102,7 @@ FORMS += ui/ExportWidget.ui \
 	ui/NewSongDialog.ui \
 	ui/NewTrackDialog.ui \
 	ui/ResourcesWidget.ui \
+	ui/QuickStart.ui \
 	ui/InsertSilenceDialog.ui
 INCLUDEPATH += 	../core \
 		../commands \

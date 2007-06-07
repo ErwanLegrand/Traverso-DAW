@@ -62,6 +62,7 @@ class BusSelectorDialog;
 class NewSongDialog;
 class NewTrackDialog;
 class NewProjectDialog;
+class Ui_QuickStartDialog;
 struct MenuData;
 
 class Interface : public QMainWindow
@@ -118,6 +119,7 @@ private:
 	NewSongDialog*		m_newSongDialog;
 	NewTrackDialog*		m_newTrackDialog;
 	NewProjectDialog*	m_newProjectDialog;
+	QDialog		*m_quickStart;
 
 
 	BusMonitor* 		busMonitor;
@@ -152,6 +154,7 @@ public slots :
 
 	Command* full_screen();
 	Command* about_traverso();
+	Command* quick_start();
 	Command* export_keymap();
 	Command* show_export_widget();
 	Command* show_context_menu();
