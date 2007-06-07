@@ -57,6 +57,9 @@ public:
 	
 	int init();
 	int set_state(const QDomNode & node );
+	
+	static PluginInfo get_plugin_info(const QString& uri);
+	static QString plugin_type(const QString& uri);
 
 private:
 	QString		m_pluginUri;

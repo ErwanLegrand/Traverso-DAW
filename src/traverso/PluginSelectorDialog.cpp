@@ -45,19 +45,41 @@ PluginSelectorDialog::PluginSelectorDialog(QWidget* parent)
 {
 	setupUi(this);
 
-	pluginTreeWidget->header()->setResizeMode(0, QHeaderView::ResizeToContents);
+	pluginTreeWidget->header()->resizeSection(0, 250);
+	pluginTreeWidget->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+	pluginTreeWidget->header()->resizeSection(2, 60);
 	
 
 #if defined (LV2_SUPPORT)
 	SLV2Plugins pluginList = PluginManager::instance()->get_slv2_plugin_list();
 
+	QMap<QString, SLV2Plugin> plugins;
+	
 	for (uint i=0; i < slv2_plugins_size(pluginList); ++i) {
-		const SLV2Plugin p = slv2_plugins_get_at(pluginList, i);
-
-		QTreeWidgetItem* item = new QTreeWidgetItem(pluginTreeWidget);
-		item->setText(0, QString( (char*) slv2_plugin_get_name(p)));
-		item->setData(0, Qt::UserRole, QString( (char*) slv2_plugin_get_uri(p)));
+		const SLV2Plugin plugin = slv2_plugins_get_at(pluginList, i);
+		const char* uri = slv2_plugin_get_uri(plugin);
+		QString type = LV2Plugin::plugin_type(uri);
+		plugins.insertMulti(type, plugin);
+	}
+	
+	foreach(SLV2Plugin plugin, plugins) {
+		const char* uri = slv2_plugin_get_uri(plugin);
+		PluginInfo pinfo = LV2Plugin::get_plugin_info(uri);
 		
+		if ( (pinfo.audioPortInCount == 1 && pinfo.audioPortOutCount ==  1) ||
+		     (pinfo.audioPortInCount == 2 && pinfo.audioPortOutCount ==  2) ) {
+			
+			QString inoutcount = pinfo.audioPortInCount == 1 ? "Mono" : "Stereo";
+			QString name = QString( (char*) slv2_plugin_get_name(plugin));
+			QString type = LV2Plugin::plugin_type(uri).remove("Plugin");
+			
+			QTreeWidgetItem* item = new QTreeWidgetItem(pluginTreeWidget);
+			item->setText(0, name);
+			item->setText(1, type);
+			item->setText(2, inoutcount);
+			item->setData(0, Qt::UserRole, QString(uri));
+			item->setToolTip(0, name);
+		}
 	}
 #endif
 

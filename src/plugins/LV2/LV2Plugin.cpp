@@ -195,10 +195,11 @@ int LV2Plugin::create_instance()
 	}
 
 	/* Get the plugin's name */
+	// TODO check if newer versions of slv2 DO NOT REQUIRE THIS CALL
+	// TO SUCCESFULLY INSTANTIATE THE PLUGIN !!!!!!!!!!!!!!!!!!
 	char* name = slv2_plugin_get_name(m_slv2plugin);
-
 // 	printf("Name:\t%s\n", name);
-
+	
 	/* Instantiate the plugin */
 	int samplerate = audiodevice().get_sample_rate();
 	m_instance = slv2_plugin_instantiate(m_slv2plugin, samplerate, NULL);
@@ -388,6 +389,56 @@ Command * LV2Plugin::toggle_bypass()
 		m_slave->toggle_bypass();
 	}
 	return  0;
+}
+
+PluginInfo LV2Plugin::get_plugin_info(const QString& uri)
+{
+	SLV2Plugin plugin = slv2_plugins_get_by_uri(PluginManager::instance()->get_slv2_plugin_list(), QS_C(uri));
+	
+	// TODO WHY THE HACK DO I NEED TO CALL THIS TO BE ABLE TO QUERY PLUGIN RDF DATA ????
+	char* name = slv2_plugin_get_name(plugin);
+	
+	int portcount  = slv2_plugin_get_num_ports(plugin);
+	PluginInfo info;
+
+	for (int i=0; i < portcount; ++i) {
+		SLV2Port slvport = slv2_plugin_get_port_by_index(plugin, i);
+		SLV2PortClass portClass = slv2_port_get_class(plugin, slvport);
+		switch (portClass) {
+			case SLV2_AUDIO_INPUT:
+				info.audioPortInCount++;
+				continue;
+			case SLV2_AUDIO_OUTPUT:
+				info.audioPortOutCount++;
+				continue;
+			case SLV2_CONTROL_INPUT: break;
+			case SLV2_CONTROL_OUTPUT: break;
+			case SLV2_MIDI_INPUT: break;
+			case SLV2_MIDI_OUTPUT: break;
+			case SLV2_UNKNOWN_PORT_CLASS: break;
+		}
+	}
+	
+	return info;
+}
+
+QString LV2Plugin::plugin_type(const QString & uri)
+{
+	SLV2Plugin plugin = slv2_plugins_get_by_uri(PluginManager::instance()->get_slv2_plugin_list(), QS_C(uri));
+	
+	// TODO WHY THE HACK DO I NEED TO CALL THIS TO BE ABLE TO QUERY PLUGIN RDF DATA ????
+	char* name = slv2_plugin_get_name(plugin);
+	Q_UNUSED(name);
+	
+	SLV2Strings list =  slv2_plugin_get_value_for_subject(plugin, "<>", "a");
+	for (unsigned i=0; i < slv2_strings_size(list); ++i) {
+		QString type =  slv2_strings_get_at(list, i);
+		if (type.contains("http://lv2plug.in/ontology#")) {
+			return type.remove("http://lv2plug.in/ontology#");
+		}
+	}
+	
+	return "";
 }
 
 //eof

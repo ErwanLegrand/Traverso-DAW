@@ -37,6 +37,15 @@ class AudioOutputPort;
 class Curve;
 class Song;
 
+struct PluginInfo {
+	PluginInfo() {
+		audioPortInCount = 0;
+		audioPortOutCount = 0;
+	}
+	int audioPortInCount;
+	int audioPortOutCount;
+};
+
 class Plugin : public ContextItem
 {
 	Q_OBJECT
@@ -61,7 +70,6 @@ public:
 	
 	void automate_port(int index, bool automate);
 	
-
 protected:
 	Plugin* m_slave;
 	Song* m_song;
