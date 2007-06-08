@@ -389,7 +389,7 @@ int Song::prepare_export(ExportSpecification* spec)
 	spec->name = spec->basename + spec->extension;
 
 	if (spec->start_frame >= spec->end_frame) {
-		info().warning(tr("Export start frame starts beyong export end frame!!"));
+		info().warning(tr("Export start frame starts beyond export end frame!!"));
 		return -1;
 	}
 
