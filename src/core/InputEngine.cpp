@@ -672,7 +672,6 @@ void InputEngine::process_press_event(int eventcode, bool isAutoRepeat)
 			// Here we jump straight to the <KL> command if "KL" is unambiguously an FKEY2
 			int fkey2_index = find_index_for_instant_fkey2(eventcode, eventStack[0]);
 			if (fkey2_index >= 0) {
-				printf("instant fkey2!\n");
 				IEAction* action = m_ieActions.at(fkey2_index);
 				broadcast_action(action, isAutoRepeat);
 				reset();
@@ -995,7 +994,6 @@ int InputEngine::find_index_for_instant_fkey( int key )
 // other conflicting keyfacts (HOLDKEY2, etc)
 int InputEngine::find_index_for_instant_fkey2( int key1, int key2 )
 {
-	printf("fkey2 ??  %d, %d\n", key1, key2);
 	int fkey2_index = find_index_for_single_fact(FKEY2, key1, key2);
 	if (fkey2_index < 0) {
 		return -1;
