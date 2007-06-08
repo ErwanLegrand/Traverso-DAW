@@ -633,6 +633,8 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 {
 	Q_ASSERT(m_file);
 	
+	audio_sample_t* readbuffer =  new audio_sample_t[NORMALIZE_CHUNK_SIZE*2];
+	
 	audio_sample_t maxamp = 0;
 	int startpos = startframe / NORMALIZE_CHUNK_SIZE;
 	
@@ -643,7 +645,6 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 		int toRead = (int) ((startpos * NORMALIZE_CHUNK_SIZE) - startframe);
 		
 		audio_sample_t buf[toRead];
-		audio_sample_t readbuffer[toRead*2];
 		int read = m_source->file_read(m_channel, buf, startframe, toRead, readbuffer);
 		
 		maxamp = Mixer::compute_peak(buf, read, maxamp);
@@ -658,10 +659,8 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 	int endpos = (int) f;
 	int toRead = (int) ((f - (endframe / NORMALIZE_CHUNK_SIZE)) * NORMALIZE_CHUNK_SIZE);
 	audio_sample_t buf[toRead];
-	audio_sample_t readbuffer[toRead*2];
 	int read = m_source->file_read(m_channel, buf, endframe - toRead, toRead, readbuffer);
 	maxamp = Mixer::compute_peak(buf, read, maxamp);
-	
 	
 	// Now that we have covered both boundary situations,
 	// read in the cached normvalues, and calculate the highest value!
@@ -670,13 +669,15 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 	
 	fseek(m_file, m_data.normValuesDataOffset + (startpos * sizeof(audio_sample_t)), SEEK_SET);
 	
-	read = fread(buffer, sizeof(audio_sample_t), count, m_file);
+	read = fread(readbuffer, sizeof(audio_sample_t), count, m_file);
 	
 	if (read != count) {
 		printf("could only read %d, %d requested\n", read, count);
 	}
 	
-	maxamp = Mixer::compute_peak(buffer, read, maxamp);
+	maxamp = Mixer::compute_peak(readbuffer, read, maxamp);
+	
+	delete [] readbuffer;
 	
 	return maxamp;
 }
