@@ -199,6 +199,7 @@ int LV2Plugin::create_instance()
 	// TO SUCCESFULLY INSTANTIATE THE PLUGIN !!!!!!!!!!!!!!!!!!
 	char* name = slv2_plugin_get_name(m_slv2plugin);
 // 	printf("Name:\t%s\n", name);
+	Q_UNUSED(name);
 	
 	/* Instantiate the plugin */
 	int samplerate = audiodevice().get_sample_rate();
@@ -397,6 +398,7 @@ PluginInfo LV2Plugin::get_plugin_info(const QString& uri)
 	
 	// TODO WHY THE HACK DO I NEED TO CALL THIS TO BE ABLE TO QUERY PLUGIN RDF DATA ????
 	char* name = slv2_plugin_get_name(plugin);
+	Q_UNUSED(name);
 	
 	int portcount  = slv2_plugin_get_num_ports(plugin);
 	PluginInfo info;
@@ -429,7 +431,6 @@ QString LV2Plugin::plugin_type(const QString & uri)
 	// TODO WHY THE HACK DO I NEED TO CALL THIS TO BE ABLE TO QUERY PLUGIN RDF DATA ????
 	char* name = slv2_plugin_get_name(plugin);
 	Q_UNUSED(name);
-	printf("using new functions\n");
 	SLV2Values values =  slv2_plugin_get_value(plugin, SLV2_QNAME, "a");
 	for (unsigned i=0; i < slv2_values_size(values); ++i) {
 		QString type =  slv2_value_as_string(slv2_values_get_at(values, i));
