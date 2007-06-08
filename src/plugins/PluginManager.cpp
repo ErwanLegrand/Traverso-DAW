@@ -68,6 +68,9 @@ void PluginManager::init()
 // LV2 part:
 	m_slv2World = slv2_world_new();
 	slv2_world_load_all(m_slv2World);
+#if defined (Q_WS_MAC)	
+	slv2_world_load_path(m_slv2World, qApp->applicationDirPath() + "/lv2/");
+#endif
 	m_slv2Plugins = slv2_world_get_all_plugins(m_slv2World);
 #endif
 }
