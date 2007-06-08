@@ -392,16 +392,14 @@ Command * LV2Plugin::toggle_bypass()
 	return  0;
 }
 
-PluginInfo LV2Plugin::get_plugin_info(const QString& uri)
+PluginInfo LV2Plugin::get_plugin_info(SLV2Plugin plugin)
 {
-	SLV2Plugin plugin = slv2_plugins_get_by_uri(PluginManager::instance()->get_slv2_plugin_list(), QS_C(uri));
+	PluginInfo info;
+	info.name = slv2_plugin_get_name(plugin);
+	info.uri = slv2_plugin_get_uri(plugin);
 	
-	// TODO WHY THE HACK DO I NEED TO CALL THIS TO BE ABLE TO QUERY PLUGIN RDF DATA ????
-	char* name = slv2_plugin_get_name(plugin);
-	Q_UNUSED(name);
 	
 	int portcount  = slv2_plugin_get_num_ports(plugin);
-	PluginInfo info;
 
 	for (int i=0; i < portcount; ++i) {
 		SLV2Port slvport = slv2_plugin_get_port_by_index(plugin, i);
@@ -418,6 +416,15 @@ PluginInfo LV2Plugin::get_plugin_info(const QString& uri)
 			case SLV2_MIDI_INPUT: break;
 			case SLV2_MIDI_OUTPUT: break;
 			case SLV2_UNKNOWN_PORT_CLASS: break;
+		}
+	}
+	
+	SLV2Values values =  slv2_plugin_get_value(plugin, SLV2_QNAME, "a");
+	for (unsigned i=0; i < slv2_values_size(values); ++i) {
+		QString type =  slv2_value_as_string(slv2_values_get_at(values, i));
+		if (type.contains("http://lv2plug.in/ontology#")) {
+			info.type = type.remove("http://lv2plug.in/ontology#");
+			break;
 		}
 	}
 	

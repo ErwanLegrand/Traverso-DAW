@@ -58,7 +58,7 @@ public:
 	int init();
 	int set_state(const QDomNode & node );
 	
-	static PluginInfo get_plugin_info(const QString& uri);
+	static PluginInfo get_plugin_info(SLV2Plugin plugin);
 	static QString plugin_type(const QString& uri);
 
 private:

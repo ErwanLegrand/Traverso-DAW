@@ -44,6 +44,9 @@ struct PluginInfo {
 	}
 	int audioPortInCount;
 	int audioPortOutCount;
+	QString type;
+	QString name;
+	QString uri;
 };
 
 class Plugin : public ContextItem
