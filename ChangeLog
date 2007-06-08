@@ -1,20 +1,40 @@
-xx-xx-xxxx Remon Sijrier <remon@vt.shuis.tudelft.nl>
-	* Released 0.xx.x
+09-06-2007 Remon Sijrier <remon at traverso-daw dot org>
+	* Released 0.40.0
 	
-	* Ported the SongView and related classes to QGraphicsView
-	* VUMeter restyling and made iec conformant by N. Doebelin.
+	* Various improvements on the Input Engine
+		Added mouse events support
+		Cancel hold commands feature added
+		Generally improved user experience
+		Modifier keys, like in old fashioned 'shortcut' keys
+		Modifer keys to be used _during_ a hold action, a list of options 
+		can be viewed _during_ the hold action, using either < Q > or right mouse button.
+		
+	* Command Plugin framework added, which can be used to extend Traverso's functionality,
+	  without having access to the core code!
+	* Updated resourcesmanager, added Resources Bin view, with integrated File Viewer, which 
+	  both support Drag and Drop to the Sheet
+	* Template export for both Sheets and Project as a whole, create new Sheets or Projects
+	  from a template...
+	* Driver support for PortAudio was added
+	* New commands (like [ X ] for 'animated' split), and improvements on existing commmands
+	* autoscroll 'move' actions when near the edge of the view.
+	* Reduced memory footprint
+	* AudioClips reflect gain curves.
+	* Port to Microsoft Windows.
+	* Many options added, which can be changed in an easy to use Settings Dialog
+	* CD burning added, using cdrdao to burn the exported Project
+	* Many usability improvements
+	* Ported the SongView and related classes to QGraphicsView (Majore change!)
 	* Major GUI refresh!
+	* Traverso is fully themeable now.
 	* Added HistoryView Widget, depends on QUndo framework
 	* Created Plugin 'framework'.
 	* LV2 plugin support has been added, using the Plugin 'framework'
-	* Created AddRemoveItemCommand. This command wil be used by ALL
+	* Created AddRemove Command. This command wil be used by ALL
 	  "Audio Processing Objects". The objects are added/removed directly
 	  if the associated Song isn't running, else it's using Tsar's thread
 	  save add/remove functionality.
 	  The command (of course) also provides un/redo support!
-	* Created HistoryWidget, updated HistoryStack to make this possible.
-	  Command classes have been updated with a description which is shown in 
-	  the HistoryView.
 	* Added a MenuBar to please non-guru users ;-)
 	* Peak class 'rewrite' (again).
 	  Now peaks for all zoom levels are stored on hard disk, and ONLY loaded
@@ -25,10 +45,30 @@ xx-xx-xxxx Remon Sijrier <remon@vt.shuis.tudelft.nl>
 	  Normalization levels are stored in the peak file, as to quickly calculate the 
 	  normalization factor for a certain range (results in instantanious normalization
 	  calculation !)
+	* (Re)Added visual cursor feedback on Hold Actions. 
+	* Many more things I can't remember.....
+
+
+09-06-2007 Ben Levitt
+	* Countless usability enhancements
+	* Countless fixes and improvements all over the place
+	* CD burning support for Windows added
+	* 'Cancel' support added to many Commands
+	* New 'Import Silence' added
+	* Improved snapping
+	* TimeLine View shows time in logical steps now
+	* Improvements on centering and following the playhead/work cursor.
+
+09-06-2007 Nicola Doebelin
+	* Correlation and Spectrum Meter added
+	* TOC export for cd burning
+	* (CD) Markers added
+	* User Manual
+	* CD Marker Dialog to edit Marker data
+	* Port to Mac OS X
 	* Fade's are a Curve class now, with a strength and bend value to calculate the shape
-	* Fade Editor View created, with Contextual Interface to edit the Fade shape in an 
-	  advanced way. Open with < E > on a Fade View 
-	* (Re)Added visuale cursor feedback on Hold Actions. 
+	* VUMeter 'rewrite', conform the IEC 268-18:1995 standard
+	* More things I can't remember.....
 
 
 19-08-2006 Remon Sijrier <remon@vt.shuis.tudelft.nl>
