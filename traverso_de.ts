@@ -450,12 +450,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/engine/AudioDevice.cpp" line="756"/>
         <source>AudioDevice:: Buffer underrun &apos;Storm&apos; detected, switching to Null Driver</source>
-        <translation type="unfinished"></translation>
+        <translation>AudioDevice: Puffer-Leerlauf in kurzer Folge mehrfach erkannt, wechsele zum Null-Treiber</translation>
     </message>
     <message>
         <location filename="src/engine/AudioDevice.cpp" line="757"/>
         <source>AudioDevice:: For trouble shooting this problem, please see Chapter 11 from the user manual!</source>
-        <translation type="unfinished"></translation>
+        <translation>AudioDevice: Um dieses Problem zu beheben, lesen Sie Kapitel 11 im Benutzerhandbuch!</translation>
     </message>
 </context>
 <context>
@@ -1596,12 +1596,12 @@ Should I re-render the CD content?</source>
     <message>
         <location filename="src/traverso/widgets/ResourcesWidget.cpp" line="75"/>
         <source>Parent Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Nächst höheres Verzeichnis</translation>
     </message>
     <message>
         <location filename="src/traverso/widgets/ResourcesWidget.cpp" line="82"/>
         <source>Refresh File View</source>
-        <translation type="unfinished"></translation>
+        <translation>Dateiansicht aktualisieren</translation>
     </message>
 </context>
 <context>
@@ -2235,22 +2235,31 @@ Traverso is brought to you by R. Sijrier and others,
 including all the people from the Free Software world
 who contributed the important technologies on which
 Traverso is based (Gcc, Qt, Xorg, Linux, and so on)</source>
-        <translation type="unfinished"></translation>
+        <translation>Traverso %1 (kompiliert gegen Qt %2)
+
+Ein Multi-Track Audio Recording- und Editing-Programm.
+
+Schauen Sie ins Hilfe-Menü für weitere Informationen.
+
+Traverso wird ihnen von R Sijrier und vielen Anderen zur Verfügung
+gestellt. Fallen viele Leute aus der Welt der freien Software,
+die zu den Technologien beigetragen haben, auf denen 
+Traverso basiert. (Gcc, Qt, Xorg, Linux, und so weiter...)</translation>
     </message>
     <message>
         <location filename="src/traverso/Interface.cpp" line="437"/>
         <source>&amp;Getting Started</source>
-        <translation type="unfinished"></translation>
+        <translation>Der Einstie&amp;g</translation>
     </message>
     <message>
         <location filename="src/traverso/Interface.cpp" line="440"/>
         <source>&amp;User Manual</source>
-        <translation type="unfinished"></translation>
+        <translation>Ben&amp;utzerhandbuch</translation>
     </message>
     <message>
         <location filename="src/traverso/Interface.cpp" line="993"/>
         <source>Opening User Manual in external browser!</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne Benutzerhandbuch in externem Browser!</translation>
     </message>
 </context>
 <context>
@@ -3208,12 +3217,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/PluginSelectorDialog.ui" line="38"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Typ</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/PluginSelectorDialog.ui" line="43"/>
         <source>In/Out</source>
-        <translation type="unfinished"></translation>
+        <translation>Ein-/Ausgang</translation>
     </message>
 </context>
 <context>
@@ -4208,7 +4217,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/QuickStart.ui" line="13"/>
         <source>Traverso: Getting Started</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/traverso/ui/QuickStart.ui" line="31"/>
@@ -4246,7 +4255,38 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-size:18pt; font-weight:600;&quot;&gt;Traverso: Einstieg&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Wenn man Ton in Traverso aufnimmt oder importiert, taucht er in einem der Tracks im aktuellen Sheet als Audio-Clip auf..  Es ist möglich, viele Eigenschaften und Optionen eines Clips zu ändern, indem man - den Mauszeiger ueber dem Clip haltend - diverse Tasten drückt.  Ähnlich lässt sich auch mit einem Track, einem Sheet als ganzes oder anderen Objekten in einem Sheet verfahren.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Um für ein Objekt im aktuellen Sheet eine Liste mit möglichen Befehlstasten zu erhalten, bewegt man den Mauszeiger über das Objekt und betätigt die rechte Maus-taste (oder die Taste Q auf der Tastatur).  Die Tastenkürzel für die möglichen Befehle finden sich im Menü.  Die Notation der Kürzel lautet wie folgt;.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;   &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt; K &amp;gt;  &lt;/span&gt; heisst: K-Taste betätigen und wieder los lassen. (wie klicken.)&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt;&amp;lt; K &amp;gt;&amp;gt;&lt;/span&gt; heisst: K-Taste zwei mal kurz hintereinander betätigen. (wie ein Doppelklick.)&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;    &lt;span style=&quot; font-weight:600;&quot;&gt;[ K ]&lt;/span&gt;    heisst: Maus bei gedrückter K-Taste bewegen.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;  &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt; KL &amp;gt; &lt;/span&gt; heisst: K- und L-Taste zur gleichen Zeit betätigen.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;   &lt;span style=&quot; font-weight:600;&quot;&gt;[ KL ]  &lt;/span&gt; heisst: Bei gedrückter K- und L-Taste die Maus bewegen.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Hier nun ein paar grundlegende Beispiele:&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;   &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt; LEER &amp;gt;&lt;/span&gt; ist Wiedergabe/Stop.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;   &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt; SHIFT &amp;gt;&lt;/span&gt;  platziert den Playhead. (Blaue vert. Linie zur Markierung des Startpunktes.)&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;       &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt; W &amp;gt;&lt;/span&gt;    platziert den Arbeitscursor. (rote vert. Linie.)&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;       &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt; V &amp;gt;    &lt;/span&gt; bewegt den Playhead zum Arbeitscursor.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;        &lt;span style=&quot; font-weight:600;&quot;&gt;[ D ] &lt;/span&gt;     Objekte verschieben (Audio Clip, Kurvenpunkte, etc)&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;        &lt;span style=&quot; font-weight:600;&quot;&gt;[ Z ]&lt;/span&gt;       Hinein-/Hinaus-Zoomen.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;        &lt;span style=&quot; font-weight:600;&quot;&gt;[ S ]&lt;/span&gt;<byte value="x9"/> in alle Richtungen scrollen (aka Shuttle) &lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Und einige Befehle für Audio-Clips:&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;   &lt;span style=&quot; font-weight:600;&quot;&gt;[ E ] &lt;/span&gt;  Linke oder Rechte Ecke des Clips ziehen.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;   &lt;span style=&quot; font-weight:600;&quot;&gt;[ F ]&lt;/span&gt;   Ein-/Ausblendungslänge eines Clips anpassen.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;   &lt;span style=&quot; font-weight:600;&quot;&gt;[ G ]   &lt;/span&gt;Clip Gain anpassen (ebenso für Tracks und Sheet)&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;  &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt; X &amp;gt;&lt;/span&gt;  Clip an aktueller Position spalten.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Für weitere Informationen, machen Sie massiv Gebrauch von Ihrer rechten Maus-Taste oder stöbern Sie im Traverso-Benutzerhandbuch.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -4469,7 +4509,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/core/Song.cpp" line="392"/>
         <source>Export start frame starts beyond export end frame!!</source>
-        <translation type="unfinished">Der erste Frame des Exports liegt hinter dem letzten Frame!!</translation>
+        <translation>Der erste Frame des Exports liegt hinter dem letzten Frame!!</translation>
     </message>
     <message>
         <location filename="src/core/Song.cpp" line="397"/>
@@ -4789,27 +4829,27 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/songcanvas/SongView.h" line="44"/>
         <source>Set</source>
-        <translation type="unfinished"></translation>
+        <translation>Set</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/SongView.h" line="58"/>
         <source>To Start</source>
-        <translation type="unfinished"></translation>
+        <translation>zum Start</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/SongView.h" line="60"/>
         <source>Move</source>
-        <translation type="unfinished"></translation>
+        <translation>Bewegen</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/SongView.h" line="63"/>
         <source>To workcursor</source>
-        <translation type="unfinished"></translation>
+        <translation>zum Arbeits-Cursor</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/SongView.h" line="64"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Center</translation>
     </message>
 </context>
 <context>
