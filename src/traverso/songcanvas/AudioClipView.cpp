@@ -243,7 +243,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	bool microView = m_song->get_hzoom() > (Peak::MAX_ZOOM_USING_SOURCEFILE - 1) ? 0 : 1;
 	// boundary checking, important for microview only, macroview needs the additional
 	// pixels to paint the waveform correctly
-	if ( microView && ((xstart + pixelcount) > m_boundingRect.width()) ) {
+	if ( /*microView && */((xstart + pixelcount) > m_boundingRect.width()) ) {
 		pixelcount = (int) m_boundingRect.width() - xstart;
 	}
 	int channels = m_clip->get_channels();

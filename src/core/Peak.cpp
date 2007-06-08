@@ -42,8 +42,8 @@ const int SAVING_ZOOM_FACTOR 			= 6;
 const int Peak::MAX_ZOOM_USING_SOURCEFILE	= SAVING_ZOOM_FACTOR - 1;
 
 #define NORMALIZE_CHUNK_SIZE	10000
-#define PEAKFILE_MAJOR_VERSION	0
-#define PEAKFILE_MINOR_VERSION	8
+#define PEAKFILE_MAJOR_VERSION	1
+#define PEAKFILE_MINOR_VERSION	0
 
 int Peak::zoomStep[] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096,
 				8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576};
@@ -265,7 +265,8 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 		
 		// Check if this zoom level has as many data as requested.
 		if ( (pixelcount + offset) > m_data.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR]) {
-// 			PERROR("pixelcount exceeds available data size! (pixelcount is: %d, available is %d", pixelcount, m_data.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR] - offset); 
+			// YES we know that sometimes we ommit the very last 'pixel' to avoid painting artifacts...
+//  			PERROR("pixelcount exceeds available data size! (pixelcount is: %d, available is %d", pixelcount, m_data.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR] - offset); 
 			pixelcount = m_data.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR] - offset;
 		}
 		
@@ -394,7 +395,7 @@ int Peak::finish_processing()
 {
 	PENTER;
 	
-	if (processedFrames != 64) { 
+	if (processedFrames != 64) {
 		fwrite(&peakUpperValue, 1, 1, m_file);
 		fwrite(&peakLowerValue, 1, 1, m_file);
 		processBufferSize += 2;
@@ -408,6 +409,13 @@ int Peak::finish_processing()
 	
 	for( int i = SAVING_ZOOM_FACTOR + 1; i < ZOOM_LEVELS+1; ++i) {
 		int size = processBufferSize / dividingFactor;
+		// If the size is an odd number, it means we have no data available for 
+		// the lower level data point, so we skip that data point.
+		// This does mean that the calculate_peaks() function can start to spit
+		// out errors about a missing last datapoint...
+		if (size % 2) {
+			size -= 1;
+		}
 		m_data.peakDataSizeForLevel[i - SAVING_ZOOM_FACTOR] = size;
 		totalBufferSize += size;
 		dividingFactor *= 2;
