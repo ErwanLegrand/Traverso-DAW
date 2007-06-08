@@ -660,13 +660,24 @@ void InputEngine::process_press_event(int eventcode, bool isAutoRepeat)
 	
 	if (isFirstFact && !isHolding) {
 		cpointer().inputengine_first_input_event();
-		
-		// Here we jump straight to the <K> command if "K" is unambiguously an FKEY
-		int fkey_index = find_index_for_instant_fkey(eventcode);
-		if (fkey_index >= 0) {
-			IEAction* action = m_ieActions.at(fkey_index);
-			broadcast_action(action, isAutoRepeat);
-			return;
+		if (eventStack[0] == 0) {
+			// Here we jump straight to the <K> command if "K" is unambiguously an FKEY
+			int fkey_index = find_index_for_instant_fkey(eventcode);
+			if (fkey_index >= 0) {
+				IEAction* action = m_ieActions.at(fkey_index);
+				broadcast_action(action, isAutoRepeat);
+				return;
+			}
+		} else {
+			// Here we jump straight to the <KL> command if "KL" is unambiguously an FKEY2
+			int fkey2_index = find_index_for_instant_fkey2(eventcode, eventStack[0]);
+			if (fkey2_index >= 0) {
+				printf("instant fkey2!\n");
+				IEAction* action = m_ieActions.at(fkey2_index);
+				broadcast_action(action, isAutoRepeat);
+				reset();
+				return;
+			}
 		}
 	}
 	
@@ -977,6 +988,30 @@ int InputEngine::find_index_for_instant_fkey( int key )
 	}
 
 	return fkey_index;
+}
+
+
+// Only return a valid index if there is an FKEY2 defined for key1, key2, and there are no
+// other conflicting keyfacts (HOLDKEY2, etc)
+int InputEngine::find_index_for_instant_fkey2( int key1, int key2 )
+{
+	printf("fkey2 ??  %d, %d\n", key1, key2);
+	int fkey2_index = find_index_for_single_fact(FKEY2, key1, key2);
+	if (fkey2_index < 0) {
+		return -1;
+	}
+
+	foreach(IEAction* action, m_ieActions) {
+			
+		if (action->type == D_FKEY2 || action->type == HKEY2) {
+			if ( (action->fact1_key1==key1 && action->fact1_key2==key2) ||
+			(action->fact1_key1==key2 && action->fact1_key2==key1) ) {
+				PMESG3("Found a conflict (%s) for instantaneous keyfact keys=%d,%d", action->keySequence.data(), key1, key2);
+				return -1;
+			}
+		}
+	}
+	return fkey2_index;
 }
 
 
