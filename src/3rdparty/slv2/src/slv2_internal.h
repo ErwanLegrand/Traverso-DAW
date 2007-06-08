@@ -16,8 +16,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef __SLV2_PRIVATE_TYPES_H__
-#define __SLV2_PRIVATE_TYPES_H__
+#ifndef __SLV2_INTERNAL_H__
+#define __SLV2_INTERNAL_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,22 +25,29 @@ extern "C" {
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <inttypes.h>
 #include <librdf.h>
-#include <slv2/pluginlist.h>
+#include <slv2/types.h>
 
 
-/** Reference to a port on some plugin.
- */
-struct _Port {
-	uint32_t index;   ///< LV2 index
-	char*    symbol;  ///< LV2 symbol
-	//char*    node_id; ///< RDF Node ID
+
+/* ********* PORT ********* */
+
+
+/** Reference to a port on some plugin. */
+struct _SLV2Port {
+	uint32_t index;  ///< LV2 index
+	char*    symbol; ///< LV2 symbol
 };
 
 
-SLV2Port slv2_port_new(uint32_t index, const char* symbol/*, const char* node_id*/);
+SLV2Port slv2_port_new(uint32_t index, const char* symbol);
 SLV2Port slv2_port_duplicate(SLV2Port port);
 void     slv2_port_free(SLV2Port port);
+
+
+
+/* ********* Plugin ********* */
 
 
 /** Record of an installed/available plugin.
@@ -48,12 +55,13 @@ void     slv2_port_free(SLV2Port port);
  * A simple reference to a plugin somewhere on the system. This just holds
  * paths of relevant files, the actual data therein isn't loaded into memory.
  */
-struct _Plugin {
-	struct _World*   world;
+struct _SLV2Plugin {
+	struct _SLV2World*   world;
 	librdf_uri*      plugin_uri;
-//	char*            bundle_url; // Bundle directory plugin was loaded from
-	char*            binary_uri; // lv2:binary
-	raptor_sequence* data_uris;  // rdfs::seeAlso
+//	char*            bundle_url; ///< Bundle directory plugin was loaded from
+	char*            binary_uri; ///< lv2:binary
+	SLV2PluginClass  plugin_class;
+	raptor_sequence* data_uris;  ///< rdfs::seeAlso
 	raptor_sequence* ports;
 	librdf_storage*  storage;
 	librdf_model*    rdf;
@@ -62,6 +70,13 @@ struct _Plugin {
 SLV2Plugin slv2_plugin_new(SLV2World world, librdf_uri* uri, const char* binary_uri);
 void       slv2_plugin_load(SLV2Plugin p);
 void       slv2_plugin_free(SLV2Plugin plugin);
+
+librdf_query_results* slv2_plugin_query(SLV2Plugin  plugin,
+                                        const char* sparql_str);
+
+
+
+/* ********* Plugins ********* */
 
 
 /** Create a new, empty plugin list.
@@ -72,20 +87,53 @@ SLV2Plugins
 slv2_plugins_new();
 
 
+
+/* ********* Instance ********* */
+
+
 /** Pimpl portion of SLV2Instance */
 struct _InstanceImpl {
 	void* lib_handle;
 };
 
 
+
+/* ********* Plugin Class ********* */
+
+
+struct _SLV2PluginClass {
+	struct _SLV2World* world;
+	char*              parent_uri;
+	char*              uri;
+	char*              label;
+};
+
+SLV2PluginClass slv2_plugin_class_new(SLV2World world, const char* parent_uri,
+                                      const char* uri, const char* label);
+void slv2_plugin_class_free(SLV2PluginClass class);
+
+
+
+/* ********* Plugin Classes ********* */
+
+
+SLV2PluginClasses slv2_plugin_classes_new();
+void              slv2_plugin_classes_free();
+
+
+
+/* ********* World ********* */
+
+
 /** Model of LV2 (RDF) data loaded from bundles.
  */
-struct _World {
-	librdf_world*       world;
-	librdf_storage*     storage;
-	librdf_model*       model;
-	librdf_parser*      parser;
-	SLV2Plugins plugins;
+struct _SLV2World {
+	librdf_world*     world;
+	librdf_storage*   storage;
+	librdf_model*     model;
+	librdf_parser*    parser;
+	SLV2PluginClasses plugin_classes;
+	SLV2Plugins       plugins;
 };
 
 /** Load all bundles found in \a search_path.
@@ -102,9 +150,32 @@ slv2_world_load_path(SLV2World   world,
                      const char* search_path);
 
 
+
+/* ********* Value ********* */
+
+
+typedef enum _SLV2ValueType {
+	SLV2_VALUE_URI,
+	SLV2_VALUE_STRING,
+	SLV2_VALUE_INT,
+	SLV2_VALUE_FLOAT
+} SLV2ValueType;
+
+struct _SLV2Value {
+	SLV2ValueType type;
+	char*         str_val; ///< always present
+	union {
+		int       int_val;
+		float     float_val;
+	} val;
+};
+
+SLV2Value slv2_value_new(SLV2ValueType type, const char* val);
+
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __SLV2_PRIVATE_TYPES_H__ */
+#endif /* __SLV2_INTERNAL_H__ */
 

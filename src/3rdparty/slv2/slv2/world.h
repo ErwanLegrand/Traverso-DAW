@@ -19,14 +19,15 @@
 #ifndef __SLV2_WORLD_H__
 #define __SLV2_WORLD_H__
 
-#include <slv2/pluginlist.h>
+#include <slv2/plugins.h>
+#include <slv2/pluginclasses.h>
+#include <librdf.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-
-/** \defgroup world Library context, data loading, etc.
+/** \defgroup world Library
  * 
  * The "world" represents all library state, and the data found in bundles'
  * manifest.ttl (ie it is an in-memory index of all things LV2 found).
@@ -50,6 +51,12 @@ extern "C" {
  */
 SLV2World
 slv2_world_new();
+
+
+/** Initialize a new, empty world, using an existing Redland context.
+ */
+SLV2World
+slv2_world_new_using_rdf_world(librdf_world* world);
 
 
 /** Destroy the world, mwahaha.
@@ -102,6 +109,24 @@ slv2_world_load_bundle(SLV2World   world,
                        const char* bundle_uri);
 
 
+/** Get the parent of all other plugin classes, lv2:Plugin.
+ *
+ * Time = O(1)
+ */
+SLV2PluginClass
+slv2_world_get_plugin_class(SLV2World world);
+
+
+/** Return a list of all found plugin classes.
+ *
+ * Returned list is owned by world and must not be freed by the caller.
+ * 
+ * Time = O(1)
+ */
+SLV2PluginClasses
+slv2_world_get_plugin_classes(SLV2World world);
+
+
 /** Return a list of all found plugins.
  *
  * The returned list contains just enough references to query
@@ -110,8 +135,8 @@ slv2_world_load_bundle(SLV2World   world,
  * a query (at which time the data is cached with the SLV2Plugin so future
  * queries are very fast).
  *
- * Returned plugins contain a reference to this world, world must not be
- * destroyed until plugins are finished with.
+ * Returned list must be freed by user with slv2_plugins_free.  The contained
+ * plugins are owned by \a world and must not be freed by caller.
  *
  * Time = O(1)
  */
@@ -125,8 +150,8 @@ slv2_world_get_all_plugins(SLV2World world);
  * \a include (a pointer to a function which takes an SLV2Plugin and returns
  * a bool) will be in the returned list.
  *
- * Returned plugins contain a reference to this world, world must not be
- * destroyed until plugins are finished with.
+ * Returned list must be freed by user with slv2_plugins_free.  The contained
+ * plugins are owned by \a world and must not be freed by caller.
  *
  * Time = O(n * Time(include))
  */
@@ -134,6 +159,19 @@ SLV2Plugins
 slv2_world_get_plugins_by_filter(SLV2World world,
                                  bool (*include)(SLV2Plugin));
 
+
+#if 0
+/** Return a list of found plugins in a given class.
+ *
+ * Returned list must be freed by user with slv2_plugins_free.  The contained
+ * plugins are owned by \a world and must not be freed by caller.
+ *
+ * Time = O(n)
+ */
+SLV2Plugins
+slv2_world_get_plugins_by_class(SLV2World       world,
+                                SLV2PluginClass plugin_class);
+#endif
 
 #if 0
 /** Get plugins filtered by a user-defined SPARQL query.

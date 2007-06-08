@@ -365,10 +365,10 @@ QString LV2ControlPort::get_symbol()
 QStringList LV2ControlPort::get_hints()
 {
 	SLV2Port port = slv2_plugin_get_port_by_index(m_lv2plugin->get_slv2_plugin(), m_index);
-	SLV2Strings list = slv2_port_get_hints(m_lv2plugin->get_slv2_plugin(), port);
+	SLV2Values values = slv2_port_get_hints(m_lv2plugin->get_slv2_plugin(), port);
 	QStringList qslist;
-	for (unsigned i=0; i < slv2_strings_size(list); ++i) {
-		qslist << QString(slv2_strings_get_at(list, i));
+	for (unsigned i=0; i < slv2_values_size(values); ++i) {
+		qslist << QString(slv2_value_as_string(slv2_values_get_at(values, i)));
 	}
 	return qslist;
 }
@@ -429,10 +429,10 @@ QString LV2Plugin::plugin_type(const QString & uri)
 	// TODO WHY THE HACK DO I NEED TO CALL THIS TO BE ABLE TO QUERY PLUGIN RDF DATA ????
 	char* name = slv2_plugin_get_name(plugin);
 	Q_UNUSED(name);
-	
-	SLV2Strings list =  slv2_plugin_get_value_for_subject(plugin, "<>", "a");
-	for (unsigned i=0; i < slv2_strings_size(list); ++i) {
-		QString type =  slv2_strings_get_at(list, i);
+	printf("using new functions\n");
+	SLV2Values values =  slv2_plugin_get_value(plugin, SLV2_QNAME, "a");
+	for (unsigned i=0; i < slv2_values_size(values); ++i) {
+		QString type =  slv2_value_as_string(slv2_values_get_at(values, i));
 		if (type.contains("http://lv2plug.in/ontology#")) {
 			return type.remove("http://lv2plug.in/ontology#");
 		}

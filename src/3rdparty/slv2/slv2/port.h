@@ -26,7 +26,7 @@ extern "C" {
 #include <slv2/types.h>
 #include <slv2/plugin.h>
 #include <slv2/port.h>
-#include <slv2/stringlist.h>
+#include <slv2/values.h>
 
 /** \addtogroup data
  * @{
@@ -37,7 +37,7 @@ extern "C" {
  *
  * Time = Query
  */
-SLV2Strings
+SLV2Values
 slv2_port_get_value(SLV2Plugin  plugin,
                     SLV2Port    port,
                     const char* property);
@@ -47,7 +47,7 @@ slv2_port_get_value(SLV2Plugin  plugin,
  *
  * Time = Query
  */
-SLV2Strings
+SLV2Values
 slv2_port_get_properties(SLV2Plugin plugin,
                          SLV2Port   port);
 
@@ -56,7 +56,7 @@ slv2_port_get_properties(SLV2Plugin plugin,
  *
  * Time = Query
  */
-SLV2Strings
+SLV2Values
 slv2_port_get_hints(SLV2Plugin plugin,
                     SLV2Port   port);
 

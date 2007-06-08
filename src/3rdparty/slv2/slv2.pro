@@ -14,12 +14,15 @@ DESTDIR = ../../../lib
 
 SOURCES += \
 	src/plugin.c \
+	src/pluginclass.c \
+	src/pluginclasses.c \
 	src/plugininstance.c \
-	src/pluginlist.c \
+	src/plugins.c \
 	src/port.c \
 	src/query.c \
-	src/stringlist.c \
 	src/util.c \
+	src/value.c \
+	src/values.c \
 	src/world.c
 }
 

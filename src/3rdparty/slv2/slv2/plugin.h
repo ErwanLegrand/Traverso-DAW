@@ -27,7 +27,7 @@ extern "C" {
 #include <stdbool.h>
 #include <slv2/types.h>
 #include <slv2/port.h>
-#include <slv2/stringlist.h>
+#include <slv2/values.h>
 
 /** \defgroup data Plugin data access
  *
@@ -60,20 +60,6 @@ bool
 slv2_plugin_verify(SLV2Plugin plugin);
 
 
-#if 0
-/** Duplicate a plugin.
- *
- * Use this if you want to keep an SLV2Plugin around but free the list it came
- * from.  Freeing the returned plugin with slv2_plugin_free is the caller's
- * responsibility.
- *
- * \return a newly allocated deep copy of \a plugin.
- */
-SLV2Plugin
-slv2_plugin_duplicate(SLV2Plugin plugin);
-#endif
-
-
 /** Get the URI of \a plugin.
  *
  * Any serialization that refers to plugins should refer to them by this.
@@ -104,7 +90,7 @@ slv2_plugin_get_uri(SLV2Plugin plugin);
  *
  * Time = O(1)
  */
-SLV2Strings
+SLV2Values
 slv2_plugin_get_data_uris(SLV2Plugin plugin);
 
 
@@ -134,6 +120,12 @@ char*
 slv2_plugin_get_name(SLV2Plugin plugin);
 
 
+/** Get the class this plugin belongs to (ie Filters).
+ */
+SLV2PluginClass
+slv2_plugin_get_class(SLV2Plugin plugin);
+
+
 /** Get a value associated with the plugin in a plugin's data files.
  *
  * Returns the ?object of all triples found of the form:
@@ -141,14 +133,18 @@ slv2_plugin_get_name(SLV2Plugin plugin);
  * <code>&lt;plugin-uri&gt; predicate ?object</code>
  * 
  * May return NULL if the property was not found, or if object is not
- * sensibly represented as an SLV2Strings (e.g. blank nodes).
+ * sensibly represented as an SLV2Values (e.g. blank nodes).
  *
- * Return value must be freed by caller with slv2_strings_free.
+ * Return value must be freed by caller with slv2_values_free.
+ *
+ * \a predicate must be either a URI or a QName.
+ * See SLV2URIType documentation for examples.
  *
  * Time = Query
  */
-SLV2Strings
+SLV2Values
 slv2_plugin_get_value(SLV2Plugin  p,
+                      SLV2URIType predicate_type,
                       const char* predicate);
 
 
@@ -162,15 +158,19 @@ slv2_plugin_get_value(SLV2Plugin  p,
  * (if information about it is contained in the plugin's data files).
  *
  * May return NULL if the property was not found, or if object is not
- * sensibly represented as an SLV2Strings (e.g. blank nodes).
+ * sensibly represented as an SLV2Values (e.g. blank nodes).
  *
- * Return value must be freed by caller with slv2_strings_free.
+ * \a predicate must be either a URI or a QName.
+ * See SLV2URIType documentation for examples.
+ *
+ * Return value must be freed by caller with slv2_values_free.
  *
  * Time = Query
  */
-SLV2Strings
+SLV2Values
 slv2_plugin_get_value_for_subject(SLV2Plugin  p,
-                                  const char* subject,
+                                  SLV2Value   subject,
+                                  SLV2URIType predicate_type,
                                   const char* predicate);
 
 
@@ -184,7 +184,7 @@ slv2_plugin_get_value_for_subject(SLV2Plugin  p,
  *
  * Time = Query
  */
-SLV2Strings
+SLV2Values
 slv2_plugin_get_properties(SLV2Plugin p);
 
 
@@ -197,7 +197,7 @@ slv2_plugin_get_properties(SLV2Plugin p);
  *
  * Time = Query
  */
-SLV2Strings
+SLV2Values
 slv2_plugin_get_hints(SLV2Plugin p);
 
 
@@ -242,7 +242,7 @@ slv2_plugin_get_latency_port(SLV2Plugin p);
  *
  * Time = Query
  */
-SLV2Strings
+SLV2Values
 slv2_plugin_get_supported_features(SLV2Plugin p);
 
 
@@ -253,7 +253,7 @@ slv2_plugin_get_supported_features(SLV2Plugin p);
  *
  * Time = Query
  */
-SLV2Strings
+SLV2Values
 slv2_plugin_get_required_features(SLV2Plugin p);
 
 
@@ -265,7 +265,7 @@ slv2_plugin_get_required_features(SLV2Plugin p);
  *
  * Time = Query
  */
-SLV2Strings
+SLV2Values
 slv2_plugin_get_optional_features(SLV2Plugin p);
 
 
@@ -273,15 +273,16 @@ slv2_plugin_get_optional_features(SLV2Plugin p);
  *
  * \param plugin The plugin to query.
  * \param sparql_str A SPARQL SELECT query.
- * \param variable The variable to return results for.
+ * \param variable The index of the variable to return results for
+ *     (i.e. with "<code>SELECT ?foo ?bar</code>" foo is 0, and bar is 1).
  * \return All matches for \a variable.
  *
  * Time = Query
  */
-SLV2Strings
+SLV2Values
 slv2_plugin_simple_query(SLV2Plugin  plugin,
                          const char* sparql_str,
-                         const char* variable);
+                         unsigned    variable);
 
 
 /** Query a plugin and return the number of results found.

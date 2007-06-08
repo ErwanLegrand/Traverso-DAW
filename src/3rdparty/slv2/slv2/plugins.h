@@ -16,20 +16,17 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef __SLV2_PLUGINLIST_H__
-#define __SLV2_PLUGINLIST_H__
+#ifndef __SLV2_PLUGINS_H__
+#define __SLV2_PLUGINS_H__
 
+#include <slv2/types.h>
 #include <slv2/plugin.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-
-typedef void* SLV2Plugins;
-
-
-/** \defgroup plugins Plugin lists
+/** \defgroup plugins Collections of plugins
  * 
  * These functions work with lists of plugins which come from an
  * SLV2World.  These lists contain only a weak reference to an LV2 plugin
@@ -91,5 +88,5 @@ slv2_plugins_get_at(SLV2Plugins list,
 }
 #endif
 
-#endif /* __SLV2_PLUGINLIST_H__ */
+#endif /* __SLV2_PLUGINS_H__ */
 

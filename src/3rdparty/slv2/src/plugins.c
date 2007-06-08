@@ -17,20 +17,18 @@
  */
 
 #define _XOPEN_SOURCE 500
-#include <limits.h>
 #include <string.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
 #include <assert.h>
-#include <dirent.h>
 #include <librdf.h>
 #include <slv2/types.h>
 #include <slv2/plugin.h>
-#include <slv2/pluginlist.h>
-#include <slv2/stringlist.h>
+#include <slv2/plugins.h>
+#include <slv2/values.h>
 #include <slv2/util.h>
-#include "private_types.h"
+#include "slv2_internal.h"
 
 	
 SLV2Plugins
@@ -184,7 +182,7 @@ slv2_plugins_load_bundle(SLV2Plugins list,
 
 		SLV2Plugin plugin = slv2_plugins_get_by_uri(list, subject);
 
-		if (plugin && data_uri && !slv2_strings_contains(plugin->data_uris, data_uri))
+		if (plugin && data_uri && !slv2_values_contains(plugin->data_uris, data_uri))
 			raptor_sequence_push(plugin->data_uris, strdup(data_uri));
 		
 		if (plugin && binary && !plugin->lib_uri)
@@ -308,8 +306,6 @@ slv2_plugins_get_by_uri(SLV2Plugins list, const char* uri)
 SLV2Plugin
 slv2_plugins_get_at(SLV2Plugins list, unsigned index)
 {	
-	assert(list);
-
 	if (index > INT_MAX)
 		return NULL;
 	else
