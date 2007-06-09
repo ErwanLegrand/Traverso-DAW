@@ -4,20 +4,4 @@ can find on the website.
 
 Website address:
 
-http://vt.shuis.tudelft.nl/~remon/traverso/
-
-Known issues:
-
-Traverso is going through a couple of development phases, and releases when
-certain milestone has been reached.
-This means there could be areas where Traverso is still weak.
-
-A summary of known weak areas:
-
-- Track adding/removing works however, un/redoing this sometimes messes up the TrackView
-  possibly crashing Traverso. It's advised to not un/redo a Track add/remove.
-  This will be fixed in a later release.
-- FLAC is supported from libsdnfile > 1.0.12, however strange problems occur 
-  when playing a flac file, which seems to be a problem related with the flac
-  support in libsndfile, and not having anything to do with Traverso.
-  Playing wav files via libsndfile works just fine!
+http://traverso-daw.org/

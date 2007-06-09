@@ -48,13 +48,15 @@ DEFINES += USE_MLOCK
 #
 # uncomment if you have a patched Qt 4.3.0 !
 #
-#DEFINES += QT_430_SCROLLBAR_FIX
+# DEFINES += QT_430_SCROLLBAR_FIX
 
 
 DEFINES += STATIC_BUILD
+
 !macx{
-	DEFINES += PRECOMPILED_HEADER
+#	DEFINES += PRECOMPILED_HEADER
 }
+
 #QMAKE_CXXFLAGS +=  -fstack-protector-all
 
 
