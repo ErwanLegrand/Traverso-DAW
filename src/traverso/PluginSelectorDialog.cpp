@@ -70,7 +70,7 @@ PluginSelectorDialog::PluginSelectorDialog(QWidget* parent)
 			
 			QTreeWidgetItem* item = new QTreeWidgetItem(pluginTreeWidget);
 			item->setText(0, pinfo.name);
-			item->setText(1, pinfo.type);
+			item->setText(1, pinfo.type.remove("Plugin"));
 			item->setText(2, inoutcount);
 			item->setData(0, Qt::UserRole, QString(pinfo.uri));
 			item->setToolTip(0, pinfo.name);
