@@ -673,8 +673,6 @@ Command* Song::go()
 {
 // 	printf("Song-%d::go m_transport is %d\n", m_id, m_transport);
 	
-	CommandGroup* group = 0;
-	
 	if (is_transporting() && m_recording) {
 		set_recording(false);
 	}
@@ -685,7 +683,7 @@ Command* Song::go()
 		emit transferStarted();
 		
 		if (m_recording && any_track_armed()) {
-			group = new CommandGroup(this, "");
+			CommandGroup* group = new CommandGroup(this, "");
 			int clipcount = 0;
 			foreach(Track* track, m_tracks) {
 				if (track->armed()) {
@@ -697,15 +695,11 @@ Command* Song::go()
 				}
 			}
 			group->setText(tr("Recording to %n Clip(s)", "", clipcount));
+			Command::process_command(group);
 		}
 		
 		m_transport = true;
-// 		printf("m_transport is %d\n", m_transport);
 		realtimepath = true;
-	}
-	
-	if (group) {
-		return group;
 	}
 	
 	return ie().succes();
