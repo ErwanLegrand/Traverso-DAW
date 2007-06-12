@@ -33,8 +33,8 @@ native/GainEnvelope.h \
 PluginPropertiesDialog.h
 
 !contains(DEFINES, LV2_SUPPORT){
-    HEADERS -= 	LV2/LV2Plugin.h \
-    SOURCES -= 	LV2/LV2Plugin.cpp \
+    HEADERS -= 	LV2/LV2Plugin.h
+    SOURCES -= 	LV2/LV2Plugin.cpp
     INCLUDEPATH -= LV2
 }
 
