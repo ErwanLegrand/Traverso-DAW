@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: JackDriver.cpp,v 1.14 2007/03/19 11:18:57 r_sijrier Exp $
+    $Id: JackDriver.cpp,v 1.15 2007/06/14 11:51:31 r_sijrier Exp $
 */
 
 #include "JackDriver.h"
@@ -234,7 +234,7 @@ int JackDriver::stop( )
 int JackDriver::process_callback (nframes_t nframes)
 {
         device->run_cycle( nframes, 0.0);
-        return 1;
+        return 0;
 }
 
 // Is there a way to get the device name from Jack? Can't find it :-(
