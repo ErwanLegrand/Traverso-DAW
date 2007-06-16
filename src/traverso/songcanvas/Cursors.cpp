@@ -139,11 +139,10 @@ void PlayHead::update_position()
 		return;
 	}
 	
-	QScrollBar* horizontalScrollbar = m_vp->horizontalScrollBar();
 	int vpWidth = m_vp->viewport()->width();
 	
 	if (m_mode == CENTERED) {
-		horizontalScrollbar->setValue((int)scenePos().x() - (int)(0.5 * vpWidth));
+		m_sv->set_hscrollbar_value((int)scenePos().x() - (int)(0.5 * vpWidth));
 		return;
 	}
 	 
@@ -152,7 +151,8 @@ void PlayHead::update_position()
 	if (vppoint.x() < 0 || (vppoint.x() > vpWidth)) {
 		
 		// If the playhead is _not_ in the viewports range, center it in the middle!
-		horizontalScrollbar->setValue((int) ((int)scenePos().x() - (0.5 * vpWidth)) );
+// 		horizontalScrollbar->setValue((int) ((int)scenePos().x() - (0.5 * vpWidth)) );
+		m_sv->set_hscrollbar_value((int)scenePos().x() - (int)(0.5 * vpWidth));
 	
 	} else if (vppoint.x() > ( vpWidth * 0.85) ) {
 		
@@ -165,14 +165,14 @@ void PlayHead::update_position()
 				m_totalAnimValue = 0;
 				m_animation.setFrameRange(0, m_animFrameRange);
 				calculate_total_anim_frames();
-				m_animationScrollStartPos = horizontalScrollbar->value();
+				m_animationScrollStartPos = m_sv->hscrollbar_value();
 				//during the animation, we stop the play update timer
 				// to avoid unnecessary update/paint events
 				play_stop();
 				m_animation.start();
 			}
 		} else {
-			horizontalScrollbar->setValue((int) ((int)scenePos().x() - (0.1 * vpWidth)) );
+			m_sv->set_hscrollbar_value((int) ((int)scenePos().x() - (0.1 * vpWidth)) );
 		}
 	}
 }
@@ -193,7 +193,7 @@ void PlayHead::set_animation_value(int value)
 		setPos(newPos);
 	}
 	
-	m_vp->horizontalScrollBar()->setValue(newXPos);
+	m_sv->set_hscrollbar_value(newXPos);
 }
 
 void PlayHead::calculate_total_anim_frames()

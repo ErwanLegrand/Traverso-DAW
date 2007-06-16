@@ -118,6 +118,8 @@ private:
 	void layout_tracks();
 	void set_hscrollbar_value(int value);
 	void set_vscrollbar_value(int value);
+	
+	friend class PlayHead;
 
 
 public slots:
