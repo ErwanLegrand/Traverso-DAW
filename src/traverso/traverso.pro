@@ -124,7 +124,9 @@ contains(DEFINES, LV2_SUPPORT){
     INCLUDEPATH +=	../3rdparty/slv2 ../plugins/LV2
 }
 
+contains(DEFINES, QT_OPENGL_SUPPORT){
 QT += opengl
+}
 
 QMAKE_LIBDIR = ../../lib 
 

@@ -873,6 +873,12 @@ void PerformancePage::reset_default_config()
 PerformanceConfigPage::PerformanceConfigPage(QWidget* parent)
 {
 	setupUi(this);
+
+#if defined (QT_OPENGL_SUPPORT)
+	useOpenGLCheckBox->setEnabled(true);
+#else
+	useOpenGLCheckBox->setEnabled(false);
+#endif
 }
 
 //eof

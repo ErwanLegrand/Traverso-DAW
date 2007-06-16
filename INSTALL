@@ -14,3 +14,26 @@ After compilation is finished, you can run traverso:
 $ ./traverso
 
 Have funn!
+
+
+NOTE for Packagers:
+
+The tarball as it is supplied should be suitable for creating a distribution
+package without major modification. 
+Traverso itself is build as a number of libraries, it's strongly adviced to 
+compile those statically, which is the default.
+To change compile options for all libs, edit src/base.pri
+
+Options that should be left alone:
+DEFINES += STATIC_BUILD   
+build Traverso libs statically, you really shouldn't change it
+
+#DEFINES += PORTAUDIO_SUPPORT  
+PortAudio support is only to be used for Windows and Mac OS X, Traverso has 
+excelent support for ALSA and Jack, so portaudio doesn't add anything for Linux
+except confusion for the users...
+It also depends on the 1.9 release, which is still unreleased which might introcude
+unwanted side effects (you could build against another version then we did e.g.)
+
+DEFINES that could be changed or e.g. compiler flag options, if you don't want to 
+build with SSE support by default.

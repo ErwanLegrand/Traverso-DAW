@@ -1,9 +1,10 @@
-TOBEDONE FOR 0.40.0
+TOBEDONE FOR 0.40.x
 
-Sheet lenght temporarily reset to wrong value problem again when moving clip (undo/redo ..)
+* add docs for preparing pc for realtime use! (limits.conf stuff)
 
-Broken chipset, needs 3 periods:
-00:1b.0 Audio device: Intel Corporation 82801G (ICH7 Family) High Definition Audio Controller (rev 02)
+* horizontal scroll bar doesn't move during play
+
+* sometimes audible glitch when playing over splitpoint..
 
 * Curve copy should not use the same id!!!!!!
 
@@ -17,3 +18,5 @@ Less important:
 * Painting last curve nodes has artifacts, 'fixed' by populating polygon with as many points as there are
   pixels. This should get a real fix!!
 
+* Bandpass filter wrong inited (or something like that) it crashes
+* Don't use flacs, they crash traverso :(

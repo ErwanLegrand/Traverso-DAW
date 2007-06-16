@@ -34,7 +34,12 @@
 #include "ContextPointer.h"
 #include "Mixer.h"
 
+#if defined (QT_OPENGL_SUPPORT)
 #include <QtOpenGL>
+#endif
+
+#include <QGridLayout>
+#include <QScrollBar>
 
 #include <Debugger.h>
 
@@ -298,8 +303,10 @@ QSize SongWidget::sizeHint() const
 void SongWidget::set_use_opengl( bool useOpenGL )
 {
 	if (useOpenGL != m_usingOpenGL) {
+#if defined (QT_OPENGL_SUPPORT)
 		m_clipsViewPort->setViewport(useOpenGL ? new QGLWidget(QGLFormat(QGL::SampleBuffers)) : new QWidget);
 		m_trackPanel->setViewport(useOpenGL ? new QGLWidget(QGLFormat(QGL::SampleBuffers)) : new QWidget);
+#endif
 	}
 	m_usingOpenGL = useOpenGL;
 }

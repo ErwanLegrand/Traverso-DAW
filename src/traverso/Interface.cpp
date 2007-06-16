@@ -23,9 +23,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <libtraversocore.h>
 #include "libtraversosongcanvas.h"
-#include <AudioDevice.h>
+#include <AudioDevice.h> 
 
-#include <QtOpenGL>
+#include <QDockWidget>
+#include <QUndoView>
+#include <QFile>
+#include <QDir>
+#include <QMenuBar>
+#include <QMessageBox>
+#include <QDesktopServices>
+#include <QTextStream>
 
 #include "Interface.h"
 #include "BusMonitor.h"

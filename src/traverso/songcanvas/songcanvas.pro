@@ -74,7 +74,9 @@ contains(DEFINES, LV2_SUPPORT){
 	../../3rdparty/slv2 
 }
 
+contains(DEFINES, QT_OPENGL_SUPPORT){
 QT += opengl
+}
 
 win32{
     INCLUDEPATH += ../../../3thparty/include
