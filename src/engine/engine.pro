@@ -49,6 +49,11 @@ release{
     HEADERS -= JackDriver.h
 }
 
+!contains(DEFINES, ALSA_SUPPORT){
+    SOURCES -= AlsaDriver.cpp
+    HEADERS -= AlsaDriver.h
+}
+
 unix{
     contains(DEFINES, SSE_OPTIMIZATIONS): SOURCES += sse_functions.S
 }
