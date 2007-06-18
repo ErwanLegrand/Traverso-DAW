@@ -419,6 +419,9 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* buffer, uint channel)
 			mix_pos = transportFrame - trackStartFrame + sourceStartFrame;
 			mixdown = buffer;
 		}
+		if (trackEndFrame < upperRange) {
+			nframes -= (upperRange - trackEndFrame);
+		}
 	} else {
 		return 0;
 	}
