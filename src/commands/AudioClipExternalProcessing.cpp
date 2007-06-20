@@ -51,9 +51,9 @@ public:
 	}
 
 	void run() {
-		uint buffersize = 4096;
+		uint buffersize = 16384;
 		audio_sample_t readbuffer[buffersize];
-		audio_sample_t mixdown[2 * buffersize];
+		audio_sample_t* mixdown = new audio_sample_t[2 * buffersize];
 	
 		ExportSpecification* spec = new ExportSpecification();
 		spec->start_frame = 0;
@@ -100,6 +100,7 @@ public:
 		delete writesource;
 		delete [] spec->dataF;
 		delete spec;
+		delete [] mixdown;
 	}
 
 private:
