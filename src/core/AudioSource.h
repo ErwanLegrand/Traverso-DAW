@@ -56,6 +56,7 @@ public :
 	qint64 get_orig_song_id() const {return m_origSongId;}
 	int get_rate() const;
 	uint get_channel_count() const;
+	uint get_file_count() const {return m_fileCount;}
 	int get_bit_depth() const;
 	
 protected:

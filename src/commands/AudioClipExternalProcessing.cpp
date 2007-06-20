@@ -30,18 +30,89 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Project.h>
 #include <ResourcesManager.h>
 #include <Utils.h>
+#include "Interface.h"
+#include "Export.h"
+#include "WriteSource.h"
 
-#include <QInputDialog>
+#include <QThread>
+#include <QFile>
 
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
+class MergeThread : public QThread
+{
+public:
+	MergeThread(ReadSource* source, QString outFileName) {
+		m_outFileName = outFileName;
+		m_readsource = source;
+	}
+
+	void run() {
+		uint buffersize = 4096;
+		audio_sample_t readbuffer[buffersize];
+		audio_sample_t mixdown[2 * buffersize];
+	
+		ExportSpecification* spec = new ExportSpecification();
+		spec->start_frame = 0;
+		spec->end_frame = m_readsource->get_nframes();
+		spec->total_frames = spec->end_frame;
+		spec->pos = 0;
+		spec->isRecording = false;
+		spec->extension = "wav";
+	
+		spec->exportdir = pm().get_project()->get_root_dir() + "/audiosources/";
+		spec->format = SF_FORMAT_WAV;
+		spec->data_width = 16;
+		spec->format |= SF_FORMAT_PCM_16;
+		spec->channels = 2;
+		spec->sample_rate = m_readsource->get_rate();
+		spec->blocksize = buffersize;
+		spec->name = m_outFileName;
+		spec->dataF = new audio_sample_t[buffersize * 2];
+	
+		WriteSource* writesource = new WriteSource(spec);
+	
+		do {
+			nframes_t this_nframes = std::min((nframes_t)(spec->end_frame - spec->pos), buffersize);
+			nframes_t nframes = this_nframes;
+		
+			memset (spec->dataF, 0, sizeof (spec->dataF[0]) * nframes * spec->channels);
+		
+			for (int chan=0; chan < 2; ++chan) {
+			
+				m_readsource->file_read(chan, mixdown, spec->pos, nframes, readbuffer);
+			
+				for (uint x = 0; x < nframes; ++x) {
+					spec->dataF[chan+(x*spec->channels)] = mixdown[x];
+				}
+			}
+		
+			writesource->process(buffersize);
+		
+			spec->pos += nframes;
+			
+		} while (spec->pos != spec->total_frames);
+		
+		writesource->finish_export();
+		delete writesource;
+		delete [] spec->dataF;
+		delete spec;
+	}
+
+private:
+	QString m_outFileName;
+	ReadSource* m_readsource;
+};
+
+
 AudioClipExternalProcessing::AudioClipExternalProcessing(AudioClip* clip)
 	: Command(clip, tr("Clip: External Processing"))
 {
 	m_clip = clip;
+	m_resultingclip = 0;
 	m_track = m_clip->get_track();
 }
 
@@ -52,83 +123,13 @@ AudioClipExternalProcessing::~AudioClipExternalProcessing()
 
 int AudioClipExternalProcessing::prepare_actions()
 {
-	bool ok;
+	ExternalProcessingDialog epdialog(Interface::instance(), this);
 	
-	QString command = QInputDialog::getText(
-				0, 
-				tr("Clip Processing"),
-				tr("Enter sox command"),
-				QLineEdit::Normal,
-     				"",
-				&ok );
+	epdialog.exec();
 	
-	if (! ok || command.isEmpty()) {
-		// Nothing typed in, or used hit cancel
-		printf("No input command, or cancel button clicked\n");
+	if (! m_resultingclip) {
 		return -1;
 	}
-	
-	printf("returned command: %s\n", QS_C(command));
-	
-	
-	m_processor = new QProcess(this);
-	m_processor->setProcessChannelMode(QProcess::MergedChannels);
-	
-	ReadSource* rs = resources_manager()->get_readsource(m_clip->get_readsource_id());
-/*	if (! rs) {
-		// This should NOT be possible, but just in case....
-		printf("resources manager didn't return a resource for the to be processed audioclip (%lld) !!!!\n",
-		       		m_clip->get_id());
-		return -1;
-	}*/
-	
-	QString name = rs->get_name();
-	
-	QString infilename = rs->get_filename();
-	QString outfilename = pm().get_project()->get_audiosources_dir() + name.remove(".wav").remove(".")
-							.append("-").append(command.simplified()).append(".wav");
-	
-	printf("infilename is %s\n", QS_C(infilename));
-	printf("outfilename is %s\n", QS_C(outfilename));
-	
-	QStringList arguments;
-	arguments.append(infilename);
-	arguments.append(outfilename);
-	arguments += command.split(QRegExp("\\s+"));
-	
-	printf("Complete command is %s\n", QS_C( arguments.join(" ")));
-	
-	m_processor->start("sox", arguments);
-	
-	QString result;
-	
-	if (! m_processor->waitForFinished() ) {
-		if (!result.isEmpty())
-		result = m_processor->errorString();
-		if (!result.isEmpty())
-			printf("output: \n %s", QS_C(result));
-		return -1;
-	} else {
-		result = m_processor->readAllStandardOutput();
-		if (!result.isEmpty())
-			printf("output: \n %s", QS_C(result));
-		
-		QString dir = pm().get_project()->get_audiosources_dir();
-	
-		ReadSource* source = resources_manager()->import_source(dir, name);
-		if (!source) {
-			printf("ResourcesManager didn't return a ReadSource, most likely sox didn't understand your command\n");
-			return -1;
-		}
-		
-		m_resultingclip = resources_manager()->new_audio_clip(name.remove(".wav"));
-		// Clips live at project level, we have to set its Song, Track and ReadSource explicitely!!
-		m_resultingclip->set_song(m_clip->get_song());
-		m_resultingclip->set_track(m_clip->get_track());
-		resources_manager()->set_source_for_clip(m_resultingclip, source);
-		m_resultingclip->set_track_start_frame(m_clip->get_track_start_frame());
-	}
-	
 	
 	return 1;
 }
@@ -153,5 +154,206 @@ int AudioClipExternalProcessing::undo_action()
 
 
 
-// eof
+/************************************************************************/
+/*				DIALOG 					*/
+/************************************************************************/
+
+
+ExternalProcessingDialog::ExternalProcessingDialog(QWidget * parent, AudioClipExternalProcessing* acep)
+	: QDialog(parent)
+{
+	setupUi(this);
+	m_acep = acep;
+	m_queryOptions = false;
+	m_merger = 0;
+	
+	m_processor = new QProcess(this);
+	m_processor->setProcessChannelMode(QProcess::MergedChannels);
+	
+	command_lineedit_text_changed("sox");
+	
+	connect(m_processor, SIGNAL(readyReadStandardOutput()), this, SLOT(read_standard_output()));
+	connect(m_processor, SIGNAL(started()), this, SLOT(process_started()));
+	connect(m_processor, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(process_finished(int, QProcess::ExitStatus)));
+	connect(m_processor, SIGNAL(error( QProcess::ProcessError)), this, SLOT(process_error(QProcess::ProcessError)));
+	connect(argsComboBox, SIGNAL(activated(const QString&)), this, SLOT(arg_combo_index_changed(const QString&)));
+	connect(programLineEdit, SIGNAL(textChanged(const QString&)), this, SLOT(command_lineedit_text_changed(const QString&)));
+	connect(startButton, SIGNAL(clicked()), this, SLOT(prepare_for_external_processing()));
+	connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
+}
+
+ExternalProcessingDialog::~ ExternalProcessingDialog()
+{
+	delete m_processor;
+}
+
+
+void ExternalProcessingDialog::prepare_for_external_processing()
+{
+	m_commandargs = argumentsLineEdit->text();
+	
+	ReadSource* rs = resources_manager()->get_readsource(m_acep->m_clip->get_readsource_id());
+	
+	//This should NOT be possible, but just in case....
+	if (! rs) {
+		printf("ExternalProcessing:: resources manager did NOT return a resource for the to be processed audioclip (%lld) !!!!\n", m_acep->m_clip->get_id());
+		return;
+	}
+	
+	m_filename = rs->get_name();
+	
+	m_infilename = rs->get_filename();
+	// remove the extension and any dots that might confuse the external program, append the 
+	// new name and again the extension.
+	m_outfilename = pm().get_project()->get_audiosources_dir() + 
+			m_filename.remove(".wav").remove(".").append("-").append(m_commandargs.simplified()).append(".wav");
+	
+	printf("infilename is %s\n", QS_C(m_infilename));
+	printf("outfilename is %s\n", QS_C(m_outfilename));
+	printf("Complete command is %s\n", QS_C(m_arguments.join(" ")));
+	
+	
+	if (rs->get_channel_count() == 2 && rs->get_file_count() == 2) {
+		m_merger = new MergeThread(rs, "merged.wav");
+		connect(m_merger, SIGNAL(finished()), this, SLOT(start_external_processing()));
+		m_merger->start();
+		statusText->setHtml(tr("Preparing audio data to a format that can be used by <b>%1</b>, this can take a while for large files!").arg(m_program));
+		progressBar->setMaximum(0);
+	} else {	
+		start_external_processing();
+	}
+}
+
+void ExternalProcessingDialog::start_external_processing()
+{
+	m_arguments.append("-S");
+	if (m_merger) {
+		progressBar->setMaximum(100);
+		m_arguments.append(pm().get_project()->get_audiosources_dir() + "merged.wav");
+		delete m_merger;
+	} else {
+		m_arguments.append(m_infilename);
+	}
+	m_arguments.append(m_outfilename);
+	m_arguments += m_commandargs.split(QRegExp("\\s+"));
+	
+	m_processor->start(m_program, m_arguments);
+}
+
+void ExternalProcessingDialog::read_standard_output()
+{
+	if (m_queryOptions) {
+		QString result = m_processor->readAllStandardOutput();
+		if (m_program == "sox") {
+			QStringList list = result.split("\n");
+			foreach(QString string, list) {
+				if (string.contains("Supported effects:")) {
+					result = string.remove("Supported effects:");
+					QStringList options = string.split(QRegExp("\\s+"));
+					foreach(QString string, options) {
+						if (!string.isEmpty())
+							argsComboBox->addItem(string);
+					}
+				}
+			}
+		}
+		return;
+	}
+	
+	QString result = m_processor->readAllStandardOutput();
+	
+	if (result.contains("%")) {
+		QStringList tokens = result.split(QRegExp("\\s+"));
+		foreach(QString token, tokens) {
+			if (token.contains("%")) {
+				token = token.remove("%)");
+				int number = (int)token.toDouble();
+				progressBar->setValue(number);
+				return;
+			}
+		}
+	}
+	
+	statusText->append(result);
+}
+
+void ExternalProcessingDialog::process_started()
+{
+	statusText->clear();
+}
+
+void ExternalProcessingDialog::process_finished(int exitcode, QProcess::ExitStatus exitstatus)
+{
+	Q_UNUSED(exitcode);
+	Q_UNUSED(exitstatus);
+	
+	if (m_queryOptions) {
+		m_queryOptions = false;
+		return;
+	}
+	
+	QString dir = pm().get_project()->get_audiosources_dir();
+	
+	// In case we used the merger, remove the file...
+	QFile::remove(dir + "/merged.wav");
+	
+	if (progressBar->value() != 100) {
+		// not sure if this is always valid, but it at least should be 100 all 
+		// the time, that is, after succesfull operation....
+		// so if not 100 -> unsucesfull, and we bail out
+		return;
+	}
+	
+	QString result = m_processor->readAllStandardOutput();
+	// print anything on command line we didn't catch
+	printf("output: \n %s", QS_C(result));
+		
+	ReadSource* source = resources_manager()->import_source(dir, m_filename);
+	if (!source) {
+		printf("ResourcesManager didn't return a ReadSource, most likely sox didn't understand your command\n");
+		return rejected();
+	}
+		
+	m_acep->m_resultingclip = resources_manager()->new_audio_clip(m_filename.remove(".wav"));
+	resources_manager()->set_source_for_clip(m_acep->m_resultingclip, source);
+	// Clips live at project level, we have to set its Song, Track and ReadSource explicitely!!
+	m_acep->m_resultingclip->set_song(m_acep->m_clip->get_song());
+	m_acep->m_resultingclip->set_track(m_acep->m_clip->get_track());
+	m_acep->m_resultingclip->set_track_start_frame(m_acep->m_clip->get_track_start_frame());
+	
+	close();
+}
+
+void ExternalProcessingDialog::query_options()
+{
+	m_queryOptions = true;
+	argsComboBox->clear();
+	m_processor->start(m_program, QStringList());
+}
+
+void ExternalProcessingDialog::arg_combo_index_changed(const QString & text)
+{
+	argumentsLineEdit->setText(text);	
+}
+
+void ExternalProcessingDialog::command_lineedit_text_changed(const QString & text)
+{
+	m_program = text;
+	if (m_program == "sox") {
+		query_options();
+		argsComboBox->show();
+		argsComboBox->setToolTip(tr("Available arguments for the sox program"));
+		return;
+	}
+	
+	argsComboBox->hide();
+}
+
+void ExternalProcessingDialog::process_error(QProcess::ProcessError error)
+{
+	if (error == QProcess::FailedToStart) {
+		statusText->setHtml(tr("Program <b>%1</b> not installed, or insufficient permissions to run!").arg(m_program));
+	}
+}
+
 
