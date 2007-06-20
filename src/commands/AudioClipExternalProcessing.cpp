@@ -208,10 +208,6 @@ void ExternalProcessingDialog::prepare_for_external_processing()
 	m_outfilename = pm().get_project()->get_audiosources_dir() + 
 			m_filename.remove(".wav").remove(".").append("-").append(m_commandargs.simplified()).append(".wav");
 	
-	printf("infilename is %s\n", QS_C(m_infilename));
-	printf("outfilename is %s\n", QS_C(m_outfilename));
-	printf("Complete command is %s\n", QS_C(m_arguments.join(" ")));
-	
 	
 	if (rs->get_channel_count() == 2 && rs->get_file_count() == 2) {
 		m_merger = new MergeThread(rs, "merged.wav");
@@ -226,7 +222,10 @@ void ExternalProcessingDialog::prepare_for_external_processing()
 
 void ExternalProcessingDialog::start_external_processing()
 {
-	m_arguments.append("-S");
+	if (m_program == "sox") {
+		m_arguments.append("-S");
+	}
+	
 	if (m_merger) {
 		progressBar->setMaximum(100);
 		m_arguments.append(pm().get_project()->get_audiosources_dir() + "merged.wav");
@@ -234,6 +233,7 @@ void ExternalProcessingDialog::start_external_processing()
 	} else {
 		m_arguments.append(m_infilename);
 	}
+	
 	m_arguments.append(m_outfilename);
 	m_arguments += m_commandargs.split(QRegExp("\\s+"));
 	
