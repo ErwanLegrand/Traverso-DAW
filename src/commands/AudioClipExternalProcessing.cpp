@@ -222,6 +222,8 @@ void ExternalProcessingDialog::prepare_for_external_processing()
 
 void ExternalProcessingDialog::start_external_processing()
 {
+	m_arguments.clear();
+	
 	if (m_program == "sox") {
 		m_arguments.append("-S");
 	}
