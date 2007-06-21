@@ -545,7 +545,7 @@ SongInfo::SongInfo(QWidget * parent)
 	
 	m_record = new QToolButton(this);
 	m_recAction = new QAction(tr("Record"), this);
-	m_recAction->setToolTip(tr("Start - Stop recording"));
+	m_recAction->setToolTip(tr("Set Sheet Recordable. <br /><br />Hit Spacebar afterwards to start recording!"));
 	m_record->setDefaultAction(m_recAction);
 	m_record->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 	
