@@ -193,6 +193,11 @@ void ExternalProcessingDialog::prepare_for_external_processing()
 {
 	m_commandargs = argumentsLineEdit->text();
 	
+	if (m_commandargs.isEmpty()) {
+		statusText->setText(tr("You have to supply an argument before starting the external process!"));
+		return;
+	}
+	
 	ReadSource* rs = resources_manager()->get_readsource(m_acep->m_clip->get_readsource_id());
 	
 	//This should NOT be possible, but just in case....
