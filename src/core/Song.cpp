@@ -126,6 +126,7 @@ void Song::init()
 	m_diskio = new DiskIO(this);
 	
 	connect(this, SIGNAL(seekStart(uint)), m_diskio, SLOT(seek(uint)), Qt::QueuedConnection);
+	connect(this, SIGNAL(prepareRecording()), this, SLOT(prepare_recording()));
 	connect(&audiodevice(), SIGNAL(clientRemoved(Client*)), this, SLOT (audiodevice_client_removed(Client*)));
 	connect(&audiodevice(), SIGNAL(started()), this, SLOT(audiodevice_started()));
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(audiodevice_params_changed()), Qt::DirectConnection);
@@ -147,19 +148,19 @@ void Song::init()
 
 	m_playBackBus = audiodevice().get_playback_bus("Playback 1");
 
-	m_transport = m_stopTransport = resumeTransport = false;
+	m_transport = m_stopTransport = resumeTransport = m_readyToRecord = false;
 	snaplist = new SnapList(this);
 	workSnap = new Snappable();
 	workSnap->set_snap_list(snaplist);
 
 	realtimepath = false;
-	scheduleForDeletion = false;
+	m_scheduledForDeletion = false;
 	m_isSnapOn=true;
-	changed = m_rendering = m_recording = false;
+	changed = m_rendering = m_recording = m_prepareRecording = false;
 	firstVisibleFrame=workingFrame=0;
-	seeking = 0;
+	m_seeking = m_startSeek = 0;
 	// TODO seek to old position on project exit ?
-	transportFrame = 0;
+	m_transportFrame = 0;
 	m_mode = EDIT;
 	m_sbx = m_sby = 0;
 	
@@ -170,6 +171,7 @@ void Song::init()
 	
 	m_audiodeviceClient = new Client("song_" + QByteArray::number(get_id()));
 	m_audiodeviceClient->set_process_callback( MakeDelegate(this, &Song::process) );
+	m_audiodeviceClient->set_transport_control_callback( MakeDelegate(this, &Song::transport_control) );
 }
 
 int Song::set_state( const QDomNode & node )
@@ -191,9 +193,9 @@ int Song::set_state( const QDomNode & node )
 	m_sby = e.attribute("sby", "0").toInt();
 	set_first_visible_frame(e.attribute( "firstVisibleFrame", "0" ).toUInt());
 	set_work_at(e.attribute( "workingFrame", "0").toUInt());
-	transportFrame = e.attribute( "transportFrame", "0").toUInt();
+	m_transportFrame = e.attribute( "transportFrame", "0").toUInt();
 	// Start seeking to the 'old' transport pos
-	set_transport_pos(transportFrame);
+	set_transport_pos(m_transportFrame);
 	set_snapping(e.attribute("snapping", "0").toInt());
 	m_mode = e.attribute("mode", "0").toInt();
 	
@@ -229,7 +231,7 @@ QDomNode Song::get_state(QDomDocument doc, bool istemplate)
 	properties.setAttribute("artists", artists);
 	properties.setAttribute("firstVisibleFrame", firstVisibleFrame);
 	properties.setAttribute("workingFrame", (uint)workingFrame);
-	properties.setAttribute("transportFrame", (uint)transportFrame);
+	properties.setAttribute("transportFrame", (uint)m_transportFrame);
 	properties.setAttribute("hzoom", m_hzoom);
 	properties.setAttribute("sbx", m_sbx);
 	properties.setAttribute("sby", m_sby);
@@ -266,7 +268,7 @@ void Song::connect_to_audiodevice( )
 void Song::disconnect_from_audiodevice()
 {
 	PENTER;
-	if (m_transport) {
+	if (is_transport_rolling()) {
 		m_transport = false;
 	}
 	audiodevice().remove_client(m_audiodeviceClient);
@@ -274,7 +276,7 @@ void Song::disconnect_from_audiodevice()
 
 void Song::schedule_for_deletion()
 {
-	scheduleForDeletion = true;
+	m_scheduledForDeletion = true;
 	pm().scheduled_for_deletion(this);
 }
 
@@ -282,7 +284,7 @@ void Song::audiodevice_client_removed(Client* client )
 {
 	PENTER;
 	if (m_audiodeviceClient == client) {
-		if (scheduleForDeletion) {
+		if (m_scheduledForDeletion) {
 			pm().delete_song(this);
 		}
 	}
@@ -328,9 +330,9 @@ int Song::prepare_export(ExportSpecification* spec)
 	PENTER;
 	
 	if ( ! (spec->renderpass == ExportSpecification::CREATE_CDRDAO_TOC) ) {
-		if (m_transport) {
+		if (is_transport_rolling()) {
 			spec->resumeTransport = true;
-			m_stopTransport = true;
+			stop_transport_rolling();
 		}
 		
 		m_rendering = true;
@@ -406,7 +408,7 @@ int Song::prepare_export(ExportSpecification* spec)
 		m_exportSource = new WriteSource(spec);
 	}
 
-	transportFrame = spec->start_frame;
+	m_transportFrame = spec->start_frame;
 	
 	resize_buffer(false, spec->blocksize);
 
@@ -566,19 +568,10 @@ void Song::set_work_at(nframes_t pos)
 	emit workingPosChanged();
 }
 
-
 void Song::set_transport_pos(nframes_t position)
 {
-	newTransportFramePos = (uint) position;
-	// If there is no m_transport, start_seek() will _not_ be
-	// called from within process(). So we do it now!
-	if (!m_transport) {
-		start_seek();
-	}
-
-	seeking = 1;
+	audiodevice().transport_seek_to(m_audiodeviceClient, position);
 }
-
 
 
 //
@@ -590,21 +583,20 @@ void Song::start_seek()
 	PMESG2("Song :: entering start_seek");
 // 	PMESG2("Song :: thread id is: %ld", QThread::currentThreadId ());
 	PMESG2("Song::start_seek()");
-	if (m_transport) {
+	
+	if (is_transport_rolling()) {
 		realtimepath = false;
 		resumeTransport = true;
 	}
 
+	m_transport = false;
+	m_startSeek = 0;
+	
 	// only sets a boolean flag, save to call.
 	m_diskio->prepare_for_seek();
 
 	// 'Tell' the diskio it should start a seek action.
-	if (!m_transport) {
-		emit seekStart(newTransportFramePos);
-	} else {
-		m_transport = false;
-		RT_THREAD_EMIT(this, (void*)newTransportFramePos, seekStart(uint));
-	}
+	RT_THREAD_EMIT(this, (void*)m_newTransportFramePos, seekStart(uint));
 
 	PMESG2("Song :: leaving start_seek");
 }
@@ -612,12 +604,11 @@ void Song::start_seek()
 void Song::seek_finished()
 {
 	PMESG2("Song :: entering seek_finished");
-	transportFrame = newTransportFramePos;
-	seeking = 0;
+	m_transportFrame = m_newTransportFramePos;
+	m_seeking = 0;
 
 	if (resumeTransport) {
-		m_transport = true;
-		realtimepath = true;
+		start_transport_rolling();
 		resumeTransport = false;
 	}
 
@@ -648,63 +639,6 @@ Track* Song::create_track()
 
 	return track;
 }
-
-Command* Song::go_and_record()
-{
-	if (!is_recording() && !is_transporting()) {
-		if (!any_track_armed()) {
-			info().critical(tr("No Tracks armed to record too!"));
-			return 0;
-		}
-	}
-	
-	if ( ! is_transporting() && ! m_recording) {
-		set_recording(true);
-		return go();
-	} else if (is_transporting() && m_recording) {
-		set_recording(false);
-		return go();
-	}
-	
-	return 0;
-}
-
-Command* Song::go()
-{
-// 	printf("Song-%d::go m_transport is %d\n", m_id, m_transport);
-	
-	if (is_transporting() && m_recording) {
-		set_recording(false);
-	}
-	
-	if (m_transport) {
-		m_stopTransport = true;
-	} else {
-		emit transferStarted();
-		
-		if (m_recording && any_track_armed()) {
-			CommandGroup* group = new CommandGroup(this, "");
-			int clipcount = 0;
-			foreach(Track* track, m_tracks) {
-				if (track->armed()) {
-					AudioClip* clip = track->init_recording();
-					if (clip) {
-						group->add_command(new AddRemoveClip(clip, AddRemoveClip::ADD));
-						clipcount++;
-					}
-				}
-			}
-			group->setText(tr("Recording to %n Clip(s)", "", clipcount));
-			Command::process_command(group);
-		}
-		
-		m_transport = true;
-		realtimepath = true;
-	}
-	
-	return ie().succes();
-}
-
 
 void Song::solo_track(Track* t)
 {
@@ -822,9 +756,13 @@ void Song::set_hzoom( int hzoom )
 //
 int Song::process( nframes_t nframes )
 {
+	if (m_startSeek) {
+		start_seek();
+		return 0;
+	}
+	
 	// If no need for playback/record, return.
-// 	printf("Song-%d::process m_transport is %d\n", m_id, m_transport);
-	if (!m_transport) {
+	if (!is_transport_rolling()) {
 		return 0;
 	}
 
@@ -837,11 +775,6 @@ int Song::process( nframes_t nframes )
 		return 0;
 	}
 
-	if (seeking) {
-		start_seek();
-		return 0;
-	}
-	
 	// zero the m_masterOut buffers
 	m_masterOut->silence_buffers(nframes);
 
@@ -852,8 +785,8 @@ int Song::process( nframes_t nframes )
 		processResult |= m_tracks.at(i)->process(nframes);
 	}
 
-	// update the transportFrame
-	transportFrame += nframes;
+	// update the m_transportFrame
+	m_transportFrame += nframes;
 
 	if (!processResult) {
 		return 0;
@@ -885,8 +818,8 @@ int Song::process_export( nframes_t nframes )
 	Mixer::apply_gain_to_buffer(m_masterOut->get_buffer(0, nframes), nframes, get_gain());
 	Mixer::apply_gain_to_buffer(m_masterOut->get_buffer(1, nframes), nframes, get_gain());
 
-	// update the transportFrame
-	transportFrame += nframes;
+	// update the m_transportFrame
+	m_transportFrame += nframes;
 
 	return 1;
 }
@@ -1077,7 +1010,7 @@ int Song::get_track_index(qint64 id) const
 
 void Song::handle_diskio_readbuffer_underrun( )
 {
-	if (m_transport) {
+	if (is_transport_rolling()) {
 		printf("Song:: DiskIO ReadBuffer UnderRun signal received!\n");
 		info().critical(tr("Hard Disk overload detected!"));
 		info().critical(tr("Failed to fill ReadBuffer in time"));
@@ -1086,7 +1019,7 @@ void Song::handle_diskio_readbuffer_underrun( )
 
 void Song::handle_diskio_writebuffer_overrun( )
 {
-	if (m_transport) {
+	if (is_transport_rolling()) {
 		printf("Song:: DiskIO WriteBuffer OverRun signal received!\n");
 		info().critical(tr("Hard Disk overload detected!"));
 		info().critical(tr("Failed to empty WriteBuffer in time"));
@@ -1150,15 +1083,188 @@ Command* Song::set_effects_mode( )
 	return 0;
 }
 
-void Song::set_recording(bool recording)
-{
-	m_recording = recording;
-	emit recordingStateChanged();
-}
-
 void Song::set_temp_follow_state(bool state)
 {
 	emit tempFollowChanged(state);
+}
+
+// Function is only to be called from GUI thread.
+Command * Song::set_recordable()
+{
+	// Do nothing is transport is rolling!
+	if (is_transport_rolling()) {
+		return 0;
+	}
+	
+	// Transport is not rolling, it's save now to switch 
+	// recording state to on /off
+	if (is_recording()) {
+		set_recording(false);
+	} else {
+		if (!any_track_armed()) {
+			info().critical(tr("No Tracks armed to record too!"));
+			return 0;
+		}
+		
+		set_recording(true);
+	}
+	
+	return 0;
+}
+
+// Function is only to be called from GUI thread.
+Command* Song::set_recordable_and_start_transport()
+{
+	if (!is_recording()) {
+		set_recordable();
+	}
+	
+	start_transport();
+	
+	return 0;
+}
+
+// Function is only to be called from GUI thread.
+Command* Song::start_transport()
+{
+	// Delegate the transport start (or if we are rolling stop)
+	// request to the audiodevice. Depending on the driver in use
+	// this call will return directly to us (by a call to transport_control),
+	// or handled by the driver
+	if (is_transport_rolling()) {
+		audiodevice().transport_stop(m_audiodeviceClient);
+	} else {
+		audiodevice().transport_start(m_audiodeviceClient);
+	}
+	
+	return ie().succes();
+}
+
+// Function can be called either from the GUI or RT thread.
+// So ALL functions called here need to be RT thread save!!
+int Song::transport_control(transport_state_t state)
+{
+	if (m_scheduledForDeletion) {
+		return true;
+	}
+	
+	switch(state.tranport) {
+	case TransportStopped:
+		if (is_transport_rolling()) {
+			stop_transport_rolling();
+		}
+		return true;
+	
+	case TransportStarting:
+		if (state.frame != m_transportFrame) {
+			if ( ! m_seeking ) {
+				m_newTransportFramePos = state.frame;
+				m_startSeek = 1;
+				m_seeking = 1;
+				
+				PMESG("tranport starting: initiating seek");
+				return false;
+			}
+		}
+		if (! m_seeking) {
+			if (is_recording()) {
+				if (!m_prepareRecording) {
+					m_prepareRecording = true;
+					// prepare_recording() is only to be called from the GUI thread
+					// so we delegate the prepare_recording() function call via a 
+					// RT thread save signal!
+					RT_THREAD_EMIT(this, 0, prepareRecording());
+					PMESG("transport starting: initiating prepare for record");
+					return false;
+				}
+				if (!m_readyToRecord) {
+					PMESG("transport starting: still preparing for record");
+					return false;
+				}
+			}
+					
+					
+			PMESG("tranport starting: seek finished");
+			return true;
+		} else {
+			PMESG("tranport starting: still seeking");
+			return false;
+		}
+	
+	case TransportRolling:
+		if (!is_transport_rolling()) {
+			// When the transport rolling request came from a non slave
+			// driver, we currently can assume it's comming from the GUI 
+			// thread, and TransportStarting never was called before!
+			// So in case we are recording we have to prepare for recording now!
+			if ( ! state.isSlave && is_recording() ) {
+				prepare_recording();
+			}
+			start_transport_rolling();
+		}
+		return true;
+	}
+	
+	return false;
+}
+
+// RT thread save function
+void Song::start_transport_rolling()
+{
+	realtimepath = true;
+	m_transport = 1;
+	
+	RT_THREAD_EMIT(this, 0, transferStarted());
+	
+	PMESG("tranport rolling");
+}
+
+// RT thread save function
+void Song::stop_transport_rolling()
+{
+	m_stopTransport = 1;
+	
+	if (is_recording()) {
+		set_recording(false);
+	}
+	
+	PMESG("tranport stopped");
+}
+
+// RT thread save function
+void Song::set_recording(bool recording)
+{
+	m_recording = recording;
+	
+	if (!m_recording) {
+		m_readyToRecord = false;
+		m_prepareRecording = false;
+	}
+	
+	RT_THREAD_EMIT(this, 0, recordingStateChanged());
+}
+
+
+// NON RT thread save function, should only be called from GUI thread!!
+void Song::prepare_recording()
+{
+	if (m_recording && any_track_armed()) {
+		CommandGroup* group = new CommandGroup(this, "");
+		int clipcount = 0;
+		foreach(Track* track, m_tracks) {
+			if (track->armed()) {
+				AudioClip* clip = track->init_recording();
+				if (clip) {
+					group->add_command(new AddRemoveClip(clip, AddRemoveClip::ADD));
+					clipcount++;
+				}
+			}
+		}
+		group->setText(tr("Recording to %n Clip(s)", "", clipcount));
+		Command::process_command(group);
+	}
+	
+	m_readyToRecord = true;
 }
 
 // eof

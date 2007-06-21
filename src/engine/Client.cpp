@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Client.cpp,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: Client.cpp,v 1.5 2007/06/21 14:31:10 r_sijrier Exp $
 */
 
 
@@ -69,4 +69,10 @@ void Client::set_process_callback( ProcessCallback call)
 	process = call;
 }
 
+void Client::set_transport_control_callback(TransportControlCallback callback)
+{
+	transport_control = callback;
+}
+
 //eof
+

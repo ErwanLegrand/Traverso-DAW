@@ -75,7 +75,7 @@ void PlayHead::paint( QPainter * painter, const QStyleOptionGraphicsItem * optio
 	Q_UNUSED(widget);
 	QColor color;
 	
-	if (m_song->is_transporting()) {
+	if (m_song->is_transport_rolling()) {
 	 	color = themer()->get_color("Playhead:active");
 	} else {
 		color = themer()->get_color("Playhead:inactive");
@@ -120,7 +120,7 @@ void PlayHead::enable_follow()
 	m_followDisabled = false;
 	// This function is called after the song finished a seek action.
 	// if the song is still playing, update our position, and start moving again!
-	if (m_song->is_transporting()) {
+	if (m_song->is_transport_rolling()) {
 		play_start();
 	}
 }
@@ -135,7 +135,7 @@ void PlayHead::update_position()
 		return;
 	}
 	
-	if ( ! m_follow || m_followDisabled || ! m_song->is_transporting()) {
+	if ( ! m_follow || m_followDisabled || ! m_song->is_transport_rolling()) {
 		return;
 	}
 	
@@ -151,7 +151,6 @@ void PlayHead::update_position()
 	if (vppoint.x() < 0 || (vppoint.x() > vpWidth)) {
 		
 		// If the playhead is _not_ in the viewports range, center it in the middle!
-// 		horizontalScrollbar->setValue((int) ((int)scenePos().x() - (0.5 * vpWidth)) );
 		m_sv->set_hscrollbar_value((int)scenePos().x() - (int)(0.5 * vpWidth));
 	
 	} else if (vppoint.x() > ( vpWidth * 0.85) ) {
@@ -209,7 +208,7 @@ void PlayHead::calculate_total_anim_frames()
 
 void PlayHead::animation_finished()
 {
-	if (m_song->is_transporting()) {
+	if (m_song->is_transport_rolling()) {
 		play_start();
 	}
 }

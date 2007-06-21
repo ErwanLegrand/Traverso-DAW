@@ -8,8 +8,8 @@ LIBS += -ltraversocommands \
 INCLUDEPATH += ../commands \
 	../engine \
 	../plugins \
-	../plugins/native \
-               . 
+	../plugins/native
+
 QMAKE_LIBDIR = ../../lib 
 TARGET = traversocore 
 DESTDIR = ../../lib 

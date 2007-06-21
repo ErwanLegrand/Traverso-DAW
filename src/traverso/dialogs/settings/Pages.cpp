@@ -136,6 +136,8 @@ void AudioDriverPage::save_config()
 	int paindex = m_portaudiodrivers->driverCombo->currentIndex();
 	config().set_property("Hardware", "pahostapi", m_portaudiodrivers->driverCombo->itemData(paindex));
 #endif
+	
+	config().set_property("Hardware", "jackslave", m_driverConfigPage->jackTransportCheckBox->isChecked());
 }
 
 void AudioDriverPage::reset_default_config()
@@ -168,6 +170,8 @@ void AudioDriverPage::reset_default_config()
 	config().set_property("Hardware", "capture", 1);
 	config().set_property("Hardware", "playback", 1);
 	
+	config().set_property("Hardware", "jackslave", false);
+
 	load_config();
 }
 
@@ -263,6 +267,9 @@ void AudioDriverPage::load_config( )
 	m_driverConfigPage->update_latency_combobox();
 
 #endif //end PORTAUDIO_SUPPORT
+
+	bool usetransport = config().get_property("Hardware", "jackslave", false).toBool();
+	m_driverConfigPage->jackTransportCheckBox->setChecked(usetransport);
 }
 
 
@@ -312,6 +319,8 @@ void AudioDriverPage::restart_driver_button_clicked()
 #if defined (ALSA_SUPPORT)
 	config().set_property("Hardware", "numberofperiods", currentperiods);
 #endif
+	
+	config().set_property("Hardware", "jackslave", m_driverConfigPage->jackTransportCheckBox->isChecked());
 }
 
 
@@ -319,9 +328,9 @@ void AudioDriverPage::restart_driver_button_clicked()
 void AudioDriverPage::driver_combobox_index_changed(QString driver)
 {
 	if (driver == "ALSA" || driver == "PortAudio" || driver == "Null Driver") {
-		m_driverConfigPage->setEnabled(true);
+		m_driverConfigPage->driverConfigGroupBox->show();
 	} else {
-		m_driverConfigPage->setEnabled(false);
+		m_driverConfigPage->driverConfigGroupBox->hide();
 	}
 	
 #if defined (ALSA_SUPPORT)
@@ -341,6 +350,14 @@ void AudioDriverPage::driver_combobox_index_changed(QString driver)
 	} else {
 		m_portaudiodrivers->hide();
 		m_mainLayout->removeWidget(m_portaudiodrivers);
+	}
+#endif
+	
+#if defined(JACK_SUPPORT)
+	if (libjack_is_present && driver == "Jack") {
+		m_driverConfigPage->jackGroupBox->show();
+	} else {
+		m_driverConfigPage->jackGroupBox->hide();
 	}
 #endif
 }

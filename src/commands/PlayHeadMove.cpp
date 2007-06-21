@@ -45,11 +45,11 @@ int PlayHeadMove::finish_hold()
 	
 	// When SyncDuringDrag is true, don't seek in finish_hold()
 	// since that causes another audio glitch.
-	if (!(m_resync && m_song->is_transporting())) {
+	if (!(m_resync && m_song->is_transport_rolling())) {
 		// if the song is transporting, the seek action will cause 
 		// the playcursor to be moved to the correct location.
 		// Until then hide it, it will be shown again when the seek is finished!
-		if (m_song->is_transporting()) {
+		if (m_song->is_transport_rolling()) {
 			m_cursor->hide();
 		}
 		m_song->set_transport_pos( (nframes_t) (x * m_sv->scalefactor));
@@ -69,7 +69,7 @@ int PlayHeadMove::begin_hold()
 void PlayHeadMove::cancel_action()
 {
 	m_sv->start_shuttle(false);
-	m_cursor->set_active(m_song->is_transporting());
+	m_cursor->set_active(m_song->is_transport_rolling());
 	if (!m_resync) {
 		m_cursor->setPos(m_origXPos, 0);
 	}
@@ -98,7 +98,7 @@ int PlayHeadMove::jog()
 	if (x != m_newXPos) {
 		m_cursor->setPos(x, 0);
 		nframes_t newpos = (nframes_t) (x * m_sv->scalefactor);
-		if (m_resync && m_song->is_transporting()) {
+		if (m_resync && m_song->is_transport_rolling()) {
 			m_song->set_transport_pos(newpos);
 		}
 		

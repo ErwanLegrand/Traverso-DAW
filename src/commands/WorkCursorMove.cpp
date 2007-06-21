@@ -51,7 +51,7 @@ int WorkCursorMove::finish_hold()
 
 int WorkCursorMove::begin_hold()
 {
-	if (m_song->is_transporting()) {
+	if (m_song->is_transport_rolling()) {
 		m_playCursor->disable_follow();
 	}
 	m_song->get_work_snap()->set_snappable(false);

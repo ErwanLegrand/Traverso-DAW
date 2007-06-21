@@ -34,6 +34,9 @@ ArmTracks.h \
 PlayHeadMove.h \
 WorkCursorMove.h \
 RemoveClip.h
+
+FORMS += ui/ExternalProcessing.ui
+
 TARGET = traversocommands
 DESTDIR = ../../lib
 TEMPLATE = lib

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: JackDriver.h,v 1.6 2007/03/19 11:18:57 r_sijrier Exp $
+    $Id: JackDriver.h,v 1.7 2007/06/21 14:31:11 r_sijrier Exp $
 */
 
 #ifndef JACKDRIVER_H
@@ -50,20 +50,29 @@ public:
         float get_cpu_load();
 	
 	size_t is_jack_running() const {return m_running == 1;}
+	jack_client_t* get_client() const {return client;}
+	void set_jack_slave(bool slave);
+	bool is_slave() const {return m_isSlave;}
 
 private:
 	volatile size_t	m_running;
         jack_client_t*	client;
         jack_port_t**	inputPorts;
         jack_port_t**	outputPorts;
+	bool		m_isSlave;
+	
+	int  jack_sync_callback (jack_transport_state_t, jack_position_t*);
 
         static int _xrun_callback(void *arg);
         static int  _process_callback (nframes_t nframes, void *arg);
         static int _bufsize_callback(jack_nframes_t nframes, void *arg);
 	static void _on_jack_shutdown_callback(void* arg);
-	
+	static int  _jack_sync_callback (jack_transport_state_t, jack_position_t*, void *arg);	
 signals:
-	void jackShutDown();	
+	void jackShutDown();
+	
+private slots:
+	void update_config();
 
 };
 

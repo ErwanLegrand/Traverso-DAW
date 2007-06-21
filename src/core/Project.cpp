@@ -826,7 +826,7 @@ bool Project::is_save_to_close() const
 bool Project::is_recording() const
 {
 	foreach(Song* song, m_songs) {
-		if (song->is_recording() && song->is_transporting()) {
+		if (song->is_recording() && song->is_transport_rolling()) {
 			return true;
 		}
 	}

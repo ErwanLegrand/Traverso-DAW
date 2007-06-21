@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: JackDriver.cpp,v 1.15 2007/06/14 11:51:31 r_sijrier Exp $
+    $Id: JackDriver.cpp,v 1.16 2007/06/21 14:31:11 r_sijrier Exp $
 */
 
 #include "JackDriver.h"
@@ -26,6 +26,7 @@
 #include "AudioChannel.h"
 
 #include <Information.h>
+#include "Config.h"
 
 #include <jack/jack.h>
 
@@ -44,6 +45,8 @@ JackDriver::JackDriver( AudioDevice * dev , int rate, nframes_t bufferSize)
         write = MakeDelegate(this, &JackDriver::_write);
         run_cycle = RunCycleCallback(this, &JackDriver::_run_cycle);
 	m_running = false;
+	
+	connect(&config(), SIGNAL(configChanged()), this, SLOT(update_config()));
 }
 
 JackDriver::~JackDriver( )
@@ -200,6 +203,7 @@ int JackDriver::setup(bool capture, bool playback, const QString& )
         jack_set_buffer_size_callback (client, _bufsize_callback, this);
 	jack_on_shutdown(client, _on_jack_shutdown_callback, this);
 
+	update_config();
 
 	info().information(tr("Jack Driver: Connected successfully to the jack server!"));
         
@@ -233,9 +237,28 @@ int JackDriver::stop( )
 
 int JackDriver::process_callback (nframes_t nframes)
 {
-        device->run_cycle( nframes, 0.0);
+	jack_position_t pos;
+	jack_transport_state_t state = jack_transport_query (client, &pos);
+	
+	transport_state_t tranportstate;
+	tranportstate.tranport = state;
+	tranportstate.frame = pos.frame;
+	device->transport_control(tranportstate);
+	
+	device->run_cycle( nframes, 0.0);
         return 0;
 }
+
+int JackDriver::jack_sync_callback (jack_transport_state_t state, jack_position_t* pos)
+{
+	transport_state_t tranportstate;
+	tranportstate.tranport = state;
+	tranportstate.frame = pos->frame;
+	tranportstate.isSlave = true;
+	
+	return device->transport_control(tranportstate);
+}
+
 
 // Is there a way to get the device name from Jack? Can't find it :-(
 // Since Jack uses ALSA, we ask it from ALSA directly :-)
@@ -294,5 +317,21 @@ void JackDriver::_on_jack_shutdown_callback( void * arg )
 	driver->m_running = -1;
 }
 
+int JackDriver::_jack_sync_callback (jack_transport_state_t state, jack_position_t* pos, void* arg)
+{
+	return static_cast<JackDriver*> (arg)->jack_sync_callback (state, pos);
+}
+
+void JackDriver::update_config()
+{
+	m_isSlave = config().get_property("Hardware", "jackslave", false).toBool();
+		
+	if (m_isSlave) {
+		jack_set_sync_callback (client, _jack_sync_callback, this);
+	} else {
+		jack_set_sync_callback(client, NULL, this);
+	}
+}
 
 //eof
+

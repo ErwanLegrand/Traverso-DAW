@@ -111,8 +111,8 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="SPACE" >
 			<Objects>
-				<Object objectname="Song" slotsignature="go" modes="All" sortorder="1" />
-				<Object objectname="Song" slotsignature="go_and_record" modes="All" modifierkeys="CTRL" sortorder="2" />
+				<Object objectname="Song" slotsignature="start_transport" modes="All" sortorder="1" />
+				<Object objectname="Song" slotsignature="set_recordable_and_start_transport" modes="All" modifierkeys="CTRL" sortorder="2" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="A" >

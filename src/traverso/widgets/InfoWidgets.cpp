@@ -388,7 +388,7 @@ void PlayHeadInfo::set_song(Song* song)
 	connect(m_song, SIGNAL(transportPosSet()), this, SLOT(update()));
 	
 	
-	if (m_song->is_transporting()) {
+	if (m_song->is_transport_rolling()) {
 		m_playpixmap = find_pixmap(":/playstop");
 	} else {
 		m_playpixmap = find_pixmap(":/playstart");
@@ -411,7 +411,7 @@ void PlayHeadInfo::paintEvent(QPaintEvent* )
 	int fc = 170;
 	QColor fontcolor = QColor(fc, fc, fc);
 	
-	if (m_song && m_song->is_transporting()) {
+	if (m_song && m_song->is_transport_rolling()) {
 		fc = 60;
 		fontcolor = QColor(fc, fc, fc);
 	}
@@ -467,7 +467,7 @@ void PlayHeadInfo::mousePressEvent(QMouseEvent * event)
 	}
 	
 	if (event->button() == Qt::LeftButton) {
-		m_song->go();
+		m_song->start_transport();
 	}
 }
 
@@ -671,18 +671,18 @@ void SongInfo::update_follow_state()
 
 void SongInfo::update_temp_follow_state(bool state)
 {
-	if (m_song->is_transporting() && m_isFollowing) {
+	if (m_song->is_transport_rolling() && m_isFollowing) {
 		m_followAct->setChecked(state);
 	}
 }
 
 void SongInfo::follow_state_changed(bool state)
 {
-	if (!m_song->is_transporting() || !m_isFollowing) {
+	if (!m_song->is_transport_rolling() || !m_isFollowing) {
 		m_isFollowing = state;
 		config().set_property("PlayHead", "Follow", state);
 		config().save();
-		if (m_song->is_transporting()) {
+		if (m_song->is_transport_rolling()) {
 			m_song->set_temp_follow_state(state);
 		}
 	} else {
@@ -701,10 +701,7 @@ void SongInfo::effect_button_clicked()
 
 void SongInfo::recording_button_clicked()
 {
-	Command* cmd = m_song->go_and_record();
-	if (cmd) {
-		Command::process_command(cmd);
-	}
+	m_song->set_recordable();
 }
 
 void SongInfo::update_recording_state()

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AddRemove.cpp,v 1.2 2007/04/20 08:44:48 benjie Exp $
+$Id: AddRemove.cpp,v 1.3 2007/06/21 14:31:10 r_sijrier Exp $
 */
 
 #include "AddRemove.h"
@@ -208,7 +208,7 @@ int AddRemove::do_action()
 	}
 	
 	if (m_song) {
-		if (m_song->is_transporting()) {
+		if (m_song->is_transport_rolling()) {
 			PMESG("Using Thread Save add/remove");
 			tsar().add_event(m_doActionEvent);
 		} else {
@@ -236,7 +236,7 @@ int AddRemove::undo_action()
 	}
 	
 	if (m_song) {
-		if (m_song->is_transporting()) {
+		if (m_song->is_transport_rolling()) {
 			PMESG("Using Thread Save add/remove");
 			tsar().add_event(m_undoActionEvent);
 		} else {

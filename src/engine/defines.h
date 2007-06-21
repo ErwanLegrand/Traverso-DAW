@@ -20,6 +20,19 @@ using namespace fastdelegate;
  */
 typedef uint32_t     nframes_t;
 
+enum {
+	TransportStopped = 0,
+	TransportRolling = 1,
+  	TransportLooping = 2,
+  	TransportStarting = 3
+};
+
+typedef struct {
+	int tranport;
+	nframes_t frame;
+	bool isSlave;
+} transport_state_t;
+
 /**
  * Type used to represent the value of free running
  * monotonic clock with units of microseconds.
@@ -33,6 +46,8 @@ typedef float audio_sample_t;
 
 typedef FastDelegate1<nframes_t, int> ProcessCallback;
 typedef FastDelegate0<int> RunCycleCallback;
+typedef FastDelegate1<transport_state_t, int> TransportControlCallback;
+
 
 
 /**

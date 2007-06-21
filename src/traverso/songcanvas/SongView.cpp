@@ -332,7 +332,7 @@ Command* SongView::center()
 {
 	PENTER2;
 	nframes_t centerX;
-	if (m_song->is_transporting() && m_actOnPlayHead) { 
+	if (m_song->is_transport_rolling() && m_actOnPlayHead) { 
 		centerX = m_song->get_transport_frame();
 	} else {
 		centerX = m_song->get_working_frame();

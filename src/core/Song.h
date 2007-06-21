@@ -48,8 +48,8 @@ struct ExportSpecification;
 class Song : public ContextItem
 {
 	Q_OBJECT
-	Q_CLASSINFO("go", tr("Play"))
-	Q_CLASSINFO("go_and_record", tr("Record"));
+	Q_CLASSINFO("start_transport", tr("Play"))
+	Q_CLASSINFO("set_recordable_and_start_transport", tr("Record"));
 	Q_CLASSINFO("work_next_edge", tr("Workcursor: To next edge"))
 	Q_CLASSINFO("work_previous_edge", tr("Workcursor: To previous edge"))
 	Q_CLASSINFO("undo", tr("Undo"))
@@ -80,6 +80,7 @@ public:
 	int get_numtracks() const {return m_tracks.size();}
 	int get_track_index(qint64 id) const;
 	int get_mode() const {return m_mode;}
+	int is_transport_rolling() const {return m_transport;}
 	void get_scrollbar_xy(int& x, int& y) {x = m_sbx; y = m_sby;}
 	
 	nframes_t get_transport_frame() const;
@@ -116,6 +117,8 @@ public:
 	
 
 	int process(nframes_t nframes);
+	// jackd only feature
+	int transport_control(transport_state_t state);
 	int process_export(nframes_t nframes);
 	int prepare_export(ExportSpecification* spec);
 	int render(ExportSpecification* spec);
@@ -128,7 +131,6 @@ public:
 	
 	bool any_track_armed();
 	bool realtime_path() const {return realtimepath;}
-	bool is_transporting() const {return m_transport;}
 	bool is_changed() const {return changed;}
 	bool is_snap_on() const	{return m_isSnapOn;}
 	bool is_recording() const {return m_recording;}
@@ -162,11 +164,12 @@ private:
 	// atomic behaviour, still not sure if volatile size_t declaration
 	// would suffice, or should we use g_atomic_int_set/get() to make
 	// it 100% portable and working on all platforms...?
-	volatile size_t		transportFrame;
+	volatile size_t		m_transportFrame;
 	volatile size_t		workingFrame;
-	volatile size_t		newTransportFramePos;
+	volatile size_t		m_newTransportFramePos;
 	volatile size_t		m_transport;
-	volatile size_t		seeking;
+	volatile size_t		m_seeking;
+	volatile size_t		m_startSeek;
 
 	
 	nframes_t 	firstVisibleFrame;
@@ -182,8 +185,10 @@ private:
 	bool		resumeTransport;
 	bool 		m_stopTransport;
 	bool		realtimepath;
-	bool		scheduleForDeletion;
+	bool		m_scheduledForDeletion;
 	bool		m_recording;
+	bool		m_prepareRecording;
+	bool		m_readyToRecord;
 	SnapList*	snaplist;
 	Snappable*	workSnap;
 	GainEnvelope*	m_fader;
@@ -192,6 +197,9 @@ private:
 
 	int finish_audio_export();
 	void start_seek();
+	void start_transport_rolling();
+	void stop_transport_rolling();
+	
 	void resize_buffer(bool updateArmStatus, nframes_t size);
 
 	Track* create_track();
@@ -209,8 +217,9 @@ public slots :
 
 	void set_temp_follow_state(bool state);
 
-	Command* go();
-	Command* go_and_record();
+	Command* start_transport();
+	Command* set_recordable();
+	Command* set_recordable_and_start_transport();
 	Command* work_next_edge();
 	Command* work_previous_edge();
 	Command* toggle_snap();
@@ -238,18 +247,19 @@ signals:
 	void masterGainChanged();
 	void modeChanged();
 	void recordingStateChanged();
-
+	void prepareRecording();
+	
 private slots:
 	void private_add_track(Track* track);
 	void private_remove_track(Track* track);
 	void handle_diskio_writebuffer_overrun();
 	void handle_diskio_readbuffer_underrun();
-
+	void prepare_recording();
 };
 
 inline nframes_t Song::get_transport_frame() const
 {
-	return transportFrame;
+	return m_transportFrame;
 }
 
 inline float Song::get_gain() const

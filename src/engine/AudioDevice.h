@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.18 2007/06/05 16:18:14 r_sijrier Exp $
+$Id: AudioDevice.h,v 1.19 2007/06/21 14:31:10 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -38,21 +38,28 @@ class Driver;
 class Client;
 class AudioChannel;
 class AudioBus;
+#if defined (JACK_SUPPORT)
+class JackDriver;
+#endif
 
 class AudioDevice : public QObject
 {
 	Q_OBJECT
 
 public:
-	void set_parameters(int rate, 
-			    		nframes_t bufferSize, 
-					const QString& driverType, 
-					bool capture=true, 
-					bool playback=true,
-			   		const QString& cardDevice="hw:0");
+	void set_parameters(	int rate, 
+				nframes_t bufferSize, 
+				const QString& driverType, 
+				bool capture=true,
+				bool playback=true,
+				const QString& device="hw:0" );
 
 	void add_client(Client* client);
 	void remove_client(Client* client);
+	
+	void transport_start(Client* client);
+	void transport_stop(Client* client);
+	int transport_seek_to(Client* client, nframes_t frame);
 
 	/**
 	 * Get the Playback AudioBus instance with name \a name.
@@ -143,6 +150,7 @@ private:
 	QTimer					m_xrunResetTimer;
 #if defined (JACK_SUPPORT)
 	QTimer					jackShutDownChecker;
+	JackDriver* slaved_jack_driver();
 	friend class JackDriver;
 #endif
 
@@ -158,6 +166,7 @@ private:
 
 	int run_one_cycle(nframes_t nframes, float delayed_usecs);
 	int create_driver(QString driverType, bool capture, bool playback, const QString& cardDevice);
+	int transport_control(transport_state_t state);
 
 	void setup_buses();
 	void post_process();

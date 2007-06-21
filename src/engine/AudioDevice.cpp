@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.33 2007/06/05 16:18:14 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.34 2007/06/21 14:31:10 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -42,7 +42,6 @@ RELAYTOOL_JACK
 #include "AudioBus.h"
 #include "Tsar.h"
 #include "Information.h"
-
 
 //#include <sys/mman.h>
 
@@ -151,8 +150,9 @@ AudioDevice::AudioDevice()
 	m_driverType = tr("No Driver Loaded");
 
 #if defined (JACK_SUPPORT)
-	if (libjack_is_present)
+	if (libjack_is_present) {
 		availableDrivers << "Jack";
+	}
 #endif
 
 #if defined (ALSA_SUPPORT)
@@ -175,6 +175,7 @@ AudioDevice::AudioDevice()
 	
 	connect(this, SIGNAL(xrunStormDetected()), this, SLOT(switch_to_null_driver()));
 	connect(&m_xrunResetTimer, SIGNAL(timeout()), this, SLOT(reset_xrun_counter()));
+	
 	m_xrunResetTimer.start(30000);
 }
 
@@ -749,6 +750,7 @@ void AudioDevice::check_jack_shutdown()
 		}
 	}
 }
+
 #endif
 
 void AudioDevice::switch_to_null_driver()
@@ -757,6 +759,90 @@ void AudioDevice::switch_to_null_driver()
 	info().information(tr("AudioDevice:: For trouble shooting this problem, please see Chapter 11 from the user manual!"));
 	set_parameters(44100, m_bufferSize, "Null Driver");
 }
+
+int AudioDevice::transport_control(transport_state_t state)
+{
+#if defined (JACK_SUPPORT)
+	if (!slaved_jack_driver()) {
+		return true;
+	}
+#endif	
+
+	int result = 0;
+	for (int i=0; i<clients.size(); ++i) {
+		result = clients.at(i)->transport_control(state);
+	}
+	return result;
+}
+
+void AudioDevice::transport_start(Client * client)
+{
+#if defined (JACK_SUPPORT)
+	JackDriver* jackdriver = slaved_jack_driver();
+	if (jackdriver) {
+		PMESG("using jack_transport_start");
+		jack_transport_start(jackdriver->get_client());
+		return;
+	}
+#endif
+	
+	transport_state_t state;
+	state.tranport = TransportRolling;
+	state.isSlave = false;
+	
+	client->transport_control(state);
+}
+
+void AudioDevice::transport_stop(Client * client)
+{
+#if defined (JACK_SUPPORT)
+	JackDriver* jackdriver = slaved_jack_driver();
+	if (jackdriver) {
+		PMESG("using jack_transport_stop");
+		jack_transport_stop(jackdriver->get_client());
+		return;
+	}
+#endif
+	
+	transport_state_t state;
+	state.tranport = TransportStopped;
+	
+	client->transport_control(state);
+}
+
+// return 0 if valid request, non-zero otherwise.
+int AudioDevice::transport_seek_to(Client* client, nframes_t frame)
+{
+#if defined (JACK_SUPPORT)
+	JackDriver* jackdriver = slaved_jack_driver();
+	if (jackdriver) {
+		PMESG("using jack_transport_locate");
+		return  jack_transport_locate(jackdriver->get_client(), frame);
+	}
+#endif
+	
+	transport_state_t state;
+	state.tranport = TransportStarting;
+	state.frame = frame;
+	
+	client->transport_control(state);
+	
+	return 0;
+}
+
+#if defined (JACK_SUPPORT)
+JackDriver* AudioDevice::slaved_jack_driver()
+{
+	if (libjack_is_present) {
+		JackDriver* jackdriver = qobject_cast<JackDriver*>(driver);
+		if (jackdriver && jackdriver->is_slave()) {
+			return jackdriver;
+		}
+	}
+	
+	return 0;
+}
+#endif
 
 //eof
 
