@@ -3,7 +3,7 @@ include(../../libbase.pri)
 contains(DEFINES, LV2_SUPPORT) {
 
 CONFIG -= dll qt 
-CONFIG += static  create_prl
+CONFIG += static
 TEMPLATE = lib 
 INCLUDEPATH += slv2
 QMAKE_CFLAGS_DEBUG += -std=c99
