@@ -143,10 +143,6 @@ unix{
     # if exists('sys/vfs.h')
     DEFINES += HAVE_SYS_VFS_H
 
-    # perhaps this doesn't cover mac os x ?
-    # if so, copy paste into  macx section...
-    LIBS += $$system(pkg-config --libs glib-2.0)
-
     contains(DEFINES, JACK_SUPPORT){
         system(which relaytool 2>/dev/null >/dev/null){
             LIBS += `relaytool --multilink libjack.so.0 libjack-0.100.0.so.0 --relay jack -ljack`

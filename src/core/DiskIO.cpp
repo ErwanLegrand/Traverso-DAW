@@ -262,8 +262,8 @@ int DiskIO::there_are_processable_sources( )
 					}
 				}
 				
-				if (space > g_atomic_int_get(&m_writeBufferFillStatus)) {
-					g_atomic_int_set(&m_writeBufferFillStatus, space);
+				if (space > t_atomic_int_get(&m_writeBufferFillStatus)) {
+					t_atomic_int_set(&m_writeBufferFillStatus, space);
 				}
 				
 				m_processableSources.append(source);
@@ -284,8 +284,8 @@ int DiskIO::there_are_processable_sources( )
 					}
 				}
 				
-				if (status->fillStatus > g_atomic_int_get(&m_readBufferFillStatus)) {
-					g_atomic_int_set(&m_readBufferFillStatus, status->fillStatus);
+				if (status->fillStatus > t_atomic_int_get(&m_readBufferFillStatus)) {
+					t_atomic_int_set(&m_readBufferFillStatus, status->fillStatus);
 				}
 				
 				m_processableSources.append(source);
@@ -455,10 +455,10 @@ trav_time_t DiskIO::get_cpu_time( )
  */
 int DiskIO::get_write_buffers_fill_status( )
 {
-	int space = g_atomic_int_get(&m_writeBufferFillStatus);
+	int space = t_atomic_int_get(&m_writeBufferFillStatus);
 	int size = audiodevice().get_sample_rate() * writebuffertime;
 	int status = (int) (((float)(size - space) / size) * 100);
-	g_atomic_int_set(&m_writeBufferFillStatus, 0);
+	t_atomic_int_set(&m_writeBufferFillStatus, 0);
 	
 	return status;
 }
@@ -470,8 +470,8 @@ int DiskIO::get_write_buffers_fill_status( )
  */
 int DiskIO::get_read_buffers_fill_status( )
 {
-	int status = 100 - g_atomic_int_get(&m_readBufferFillStatus);
-	g_atomic_int_set(&m_readBufferFillStatus, 0);
+	int status = 100 - t_atomic_int_get(&m_readBufferFillStatus);
+	t_atomic_int_set(&m_readBufferFillStatus, 0);
 	
 	return status;
 }

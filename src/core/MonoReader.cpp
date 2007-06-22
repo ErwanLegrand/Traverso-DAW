@@ -342,7 +342,7 @@ void MonoReader::finish_resync()
 
 void MonoReader::sync(audio_sample_t* framebuffer, audio_sample_t* readbuffer)
 {
-	PENTER;
+	PENTER2;
 	if (!m_needSync) {
 		return;
 	}

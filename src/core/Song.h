@@ -162,7 +162,7 @@ private:
 	// The following data could be read/written by multiple threads
 	// (gui, audio and m_diskio thread). Therefore they should have 
 	// atomic behaviour, still not sure if volatile size_t declaration
-	// would suffice, or should we use g_atomic_int_set/get() to make
+	// would suffice, or should we use t_atomic_int_set/get() to make
 	// it 100% portable and working on all platforms...?
 	volatile size_t		m_transportFrame;
 	volatile size_t		workingFrame;

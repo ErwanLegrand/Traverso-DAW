@@ -26,10 +26,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QList>
 #include <QTimer>
 
-#if ! defined (Q_WS_WIN)
-#include <glib.h>
-#endif
-
 #include "defines.h"
 
 class ReadSource;
@@ -80,8 +76,8 @@ private:
 	DiskIOThread*		m_diskThread;
 	QTimer			m_workTimer;
 	QMutex			mutex;
-	gint			m_readBufferFillStatus;
-	gint			m_writeBufferFillStatus;
+	volatile int		m_readBufferFillStatus;
+	volatile int		m_writeBufferFillStatus;
 	RingBuffer*		cpuTimeBuffer;
 	trav_time_t		cycleStartTime;
 	trav_time_t		lastCpuReadTime;

@@ -22,7 +22,7 @@ DEFINES += JACK_SUPPORT
 DEFINES += ALSA_SUPPORT
 #DEFINES += PORTAUDIO_SUPPORT
 DEFINES += LV2_SUPPORT
-#DEFINES += QT_OPENGL_SUPPORT
+DEFINES += QT_OPENGL_SUPPORT
 
 #
 # Uncomment the line which notes your CPU type
@@ -54,7 +54,7 @@ DEFINES += USE_MLOCK
 DEFINES += STATIC_BUILD
 
 !macx{
-#	DEFINES += PRECOMPILED_HEADER
+	DEFINES += PRECOMPILED_HEADER
 }
 
 #QMAKE_CXXFLAGS +=  -fstack-protector-all
@@ -79,8 +79,6 @@ release {
 }
 
 unix {
-	
-	QMAKE_CXXFLAGS += $$system(pkg-config --cflags glib-2.0)
 	
 	release {
 		
@@ -122,14 +120,11 @@ unix {
 }
 
 macx {
-	QMAKE_CXXFLAGS += $$system(pkg-config --cflags glib-2.0)
-	
 	DEFINES += OSX_BUILD
 	DEFINES += PORTAUDIO_SUPPORT
 	DEFINES -= ALSA_SUPPORT
 	DEFINES -= JACK_SUPPORT
 	QMAKE_LFLAGS_SONAME  = -Wl,-install_name,@executable_path/../Frameworks/
-	INCLUDEPATH += /usr/local/include/glib-2.0
 
 	RC_FILE = ../../resources/images/traverso_mac.icns
 }

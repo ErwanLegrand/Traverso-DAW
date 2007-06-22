@@ -4,13 +4,33 @@
 #include <inttypes.h>
 #include "FastDelegate.h"
 
-#if defined (WIN_BUILD)
-// 'stolen' from the glib/atomic.h header file.
-// it's the only thing we need glib for on windows...
-# define g_atomic_int_get(atomic) 		(*(atomic))
-# define g_atomic_int_set(atomic, newval) 	((void) (*(atomic) = (newval)))
-#define gint int
-#endif // END Q_WS_WIN
+// Implementation for atomic int get/set from glibc's atomic.h/c
+// to get rid of the glib dependency!
+// Arches that need memory bariers: ppc (which we support)
+// and sparc, alpha, ia64 which we do not support ??
+
+#if defined(__ppc__) || defined(__powerpc__) || defined(__PPC__)
+
+#  define ATOMIC_MEMORY_BARRIER __asm__ ("sync" : : : "memory")
+
+int t_atomic_int_get (volatile int *atomic)
+{
+	ATOMIC_MEMORY_BARRIER;
+	return *atomic;
+}
+
+void t_atomic_int_set (volatile int *atomic, int newval)
+{
+	*atomic = newval;
+	ATOMIC_MEMORY_BARRIER; 
+}
+
+#else
+
+# define t_atomic_int_get(atomic) 		(*(atomic))
+# define t_atomic_int_set(atomic, newval) 	((void) (*(atomic) = (newval)))
+
+#endif // ENDIF __ppc__
 
 
 using namespace fastdelegate;

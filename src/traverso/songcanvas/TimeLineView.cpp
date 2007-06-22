@@ -261,7 +261,7 @@ void TimeLineView::hzoom_changed( )
 
 void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
-	PENTER;
+	PENTER3;
 	Q_UNUSED(widget);
 	
 	painter->save();
@@ -462,7 +462,6 @@ void TimeLineView::update_softselected_marker(QPoint pos)
 
 void TimeLineView::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
 {
-	PENTER;
 	Q_UNUSED(event);
 
 	if (m_blinkingMarker) {
@@ -472,7 +471,6 @@ void TimeLineView::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
 
 void TimeLineView::hoverLeaveEvent ( QGraphicsSceneHoverEvent * event )
 {
-	PENTER;
 	Q_UNUSED(event);
 	
 	if (ie().is_holding()) {

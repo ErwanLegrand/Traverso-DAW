@@ -7,5 +7,4 @@
 #include <qapplication.h>
 #include <qtimer.h>
 
-#include <glib.h>
 #include <stdlib.h>
