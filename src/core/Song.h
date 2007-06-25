@@ -200,7 +200,7 @@ private:
 	int finish_audio_export();
 	void start_seek();
 	void start_transport_rolling(bool realtime);
-	void stop_transport_rolling(bool realtime);
+	void stop_transport_rolling();
 	
 	void resize_buffer(bool updateArmStatus, nframes_t size);
 

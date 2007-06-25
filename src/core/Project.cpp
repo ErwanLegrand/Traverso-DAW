@@ -394,7 +394,7 @@ Command* Project::add_song(Song* song, bool historable)
 	cmd = new AddRemove(this, song, historable, 0,
 		"private_add_song(Song*)", "songAdded(Song*)",
        		"private_remove_song(Song*)", "songRemoved(Song*)",
-       		tr("Song %1 added").arg(song->get_title()));
+       		tr("Sheet %1 added").arg(song->get_title()));
 	
 	cmd->set_instantanious(true);
 	
@@ -420,7 +420,7 @@ void Project::set_current_song(qint64 id)
 	}
 	
 	if (!newcurrent) {
-		info().information( tr("Song '%1' doesn't exist!").arg(id) );
+		info().information( tr("Sheet '%1' doesn't exist!").arg(id) );
 		emit currentSongChanged(0);
 		return;
 	}
@@ -467,7 +467,7 @@ Command* Project::remove_song(Song* song, bool historable)
 	cmd = new AddRemove(this, song, historable, 0,
 		"private_remove_song(Song*)", "songRemoved(Song*)",
 		"private_add_song(Song*)", "songAdded(Song*)",
-		tr("Remove Song %1").arg(song->get_title()));
+		tr("Remove Sheet %1").arg(song->get_title()));
 	
 	cmd->set_instantanious(true);
 	
@@ -553,7 +553,7 @@ int Project::start_export(ExportSpecification* spec)
 		spec->renderpass = ExportSpecification::WRITE_TO_HARDDISK;
 		
 		if (song->prepare_export(spec) < 0) {
-			PERROR("Failed to prepare song for export");
+			PERROR("Failed to prepare sheet for export");
 			break;
 		}
 		
@@ -561,9 +561,8 @@ int Project::start_export(ExportSpecification* spec)
 		
 		song->set_transport_pos(spec->resumeTransportFrame);
 		if (spec->resumeTransport) {
-			Command* k;
-			if (!QMetaObject::invokeMethod(song, "go",  Qt::QueuedConnection)) {
-				printf("Invoking Song::go() failed\n");
+			if (!QMetaObject::invokeMethod(song, "start_transport",  Qt::QueuedConnection)) {
+				printf("Invoking Song::start_transport() failed\n");
 			}
 		}
 		if (spec->breakout) {

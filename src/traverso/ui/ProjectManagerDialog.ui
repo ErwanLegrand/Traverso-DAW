@@ -75,7 +75,14 @@
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="lineEditTitle" />
+             <widget class="QLineEdit" name="lineEditTitle" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="acceptDrops" >
+               <bool>false</bool>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>

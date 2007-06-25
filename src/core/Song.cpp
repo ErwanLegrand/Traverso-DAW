@@ -334,7 +334,8 @@ int Song::prepare_export(ExportSpecification* spec)
 	if ( ! (spec->renderpass == ExportSpecification::CREATE_CDRDAO_TOC) ) {
 		if (is_transport_rolling()) {
 			spec->resumeTransport = true;
-			stop_transport_rolling(false);
+			// When transport is rolling, this equals stopping the transport!
+			start_transport();
 		}
 		
 		m_rendering = true;
@@ -1113,7 +1114,10 @@ int Song::transport_control(transport_state_t state)
 	switch(state.tranport) {
 	case TransportStopped:
 		if (is_transport_rolling()) {
-			stop_transport_rolling(state.realtime);
+			stop_transport_rolling();
+			if (is_recording()) {
+				set_recording(false, state.realtime);
+			}
 		}
 		return true;
 	
@@ -1188,14 +1192,9 @@ void Song::start_transport_rolling(bool realtime)
 }
 
 // RT thread save function
-void Song::stop_transport_rolling(bool realtime)
+void Song::stop_transport_rolling()
 {
 	m_stopTransport = 1;
-	
-	if (is_recording()) {
-		set_recording(false, realtime);
-	}
-	
 	PMESG("tranport stopped");
 }
 
