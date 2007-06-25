@@ -51,6 +51,7 @@ typedef struct {
 	int tranport;
 	nframes_t frame;
 	bool isSlave;
+	bool realtime;
 } transport_state_t;
 
 /**

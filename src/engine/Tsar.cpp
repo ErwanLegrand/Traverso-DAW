@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Tsar.cpp,v 1.8 2007/02/05 17:10:00 r_sijrier Exp $
+$Id: Tsar.cpp,v 1.9 2007/06/25 13:32:28 r_sijrier Exp $
 */
 
 #include "Tsar.h"
@@ -26,6 +26,7 @@ $Id: Tsar.cpp,v 1.8 2007/02/05 17:10:00 r_sijrier Exp $
 #include <QMetaMethod>
 #include <QMessageBox>
 #include <QCoreApplication>
+#include <QThread>
 		
 
 // Always put me below _all_ includes, this is needed
@@ -59,6 +60,10 @@ Tsar::Tsar()
 	m_events.append(new RingBufferNPT<TsarEvent>(100));
 	oldEvents = new RingBufferNPT<TsarEvent>(1000);
 	
+#if defined (THREAD_CHECK)
+	m_threadId = QThread::currentThreadId ();
+#endif
+	
 	connect(&finishOldEventsTimer, SIGNAL(timeout()), this, SLOT(finish_processed_events()));
 	
 	finishOldEventsTimer.start( 20 );
@@ -81,6 +86,9 @@ Tsar::~ Tsar( )
  */
 void Tsar::add_event(TsarEvent& event )
 {
+#if defined (THREAD_CHECK)
+	Q_ASSERT_X(m_threadId == QThread::currentThreadId (), "Tsar::add_event", "Adding event from other then GUI thread!!");
+#endif
 	m_events.at(0)->write(&event, 1);
 	m_eventCounter++;
 }
@@ -96,6 +104,9 @@ void Tsar::add_event(TsarEvent& event )
  */
 void Tsar::add_rt_event( TsarEvent& event )
 {
+#if defined (THREAD_CHECK)
+	Q_ASSERT_X(m_threadId != QThread::currentThreadId (), "Tsar::add_rt_event", "Adding event from NON-RT Thread!!");
+#endif
 	m_events.at(1)->write(&event, 1);
 }
 
@@ -104,7 +115,7 @@ void Tsar::add_rt_event( TsarEvent& event )
 //
 void Tsar::process_events( )
 {
-//#define profile
+// #define profile
 
 	for (int i=0; i<m_events.size(); ++i) {
 		RingBufferNPT<TsarEvent>* newEvents = m_events.at(i);

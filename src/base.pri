@@ -36,14 +36,17 @@ DEFINES += QT_OPENGL_SUPPORT
 # gcc 4.3 has a core2 flag, though it's not released yet.
 #QMAKE_CXXFLAGS_RELEASE += -march=core2
 
-#
-# Use Memory Locking 
-#
 
-DEFINES += USE_MLOCK
+#########################################
+#	END USER CONFIGURATION 		#
+#########################################
 
-####### END USER CONFIGURATION ########
-########################################
+
+
+
+#################################################
+#  OPTIONS WHO COULD BE USEFULL FOR PACKAGERS	#
+#################################################
 
 #
 # uncomment if you have a patched Qt 4.3.0 !
@@ -53,11 +56,23 @@ DEFINES += USE_MLOCK
 
 DEFINES += STATIC_BUILD
 
+#
+# Use Memory Locking 
+#
+DEFINES += USE_MLOCK
+
+
+#################################################
+#	NO CHANGES BELOW THIS LINE!!		#
+#################################################
+
+
 !macx{
-	DEFINES += PRECOMPILED_HEADER
+#	DEFINES += PRECOMPILED_HEADER
 }
 
-#QMAKE_CXXFLAGS +=  -fstack-protector-all
+# DEFINES += THREAD_CHECK
+# QMAKE_CXXFLAGS +=  -fstack-protector-all
 
 
 CONFIG += warn_on qt
@@ -69,7 +84,6 @@ OBJECTS_DIR = build
 
 
 debug {
-#	DEFINES += RT_THREAD_CHECK
 	DEFINES += USE_DEBUGGER
 #	DEFINES += USE_MEM_CHECKER
 }

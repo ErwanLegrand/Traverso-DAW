@@ -113,7 +113,7 @@ public:
 	void set_snapping(bool snap);
 	void set_scrollbar_xy(int x, int y) {m_sbx = x; m_sby = y;}
 	int set_state( const QDomNode & node );
-	void set_recording(bool recording);
+	void set_recording(bool recording, bool realtime);
 	
 
 	int process(nframes_t nframes);
@@ -130,7 +130,7 @@ public:
 	Command* remove_track(Track* track, bool historable=true);
 	
 	bool any_track_armed();
-	bool realtime_path() const {return realtimepath;}
+	bool realtime_path() const {return m_realtimepath;}
 	bool is_changed() const {return changed;}
 	bool is_snap_on() const	{return m_isSnapOn;}
 	bool is_recording() const {return m_recording;}
@@ -144,7 +144,9 @@ public:
 	audio_sample_t*		readbuffer;
 	audio_sample_t*		gainbuffer;
 	
+#if defined (THREAD_CHECK)
 	unsigned long	threadId;
+#endif
 
 private:
 	QList<Track* >		m_tracks;
@@ -182,9 +184,9 @@ private:
 	bool 		m_rendering;
 	bool 		changed;
 	bool 		m_isSnapOn;
-	bool		resumeTransport;
+	bool		m_resumeTransport;
 	bool 		m_stopTransport;
-	bool		realtimepath;
+	bool		m_realtimepath;
 	bool		m_scheduledForDeletion;
 	bool		m_recording;
 	bool		m_prepareRecording;
@@ -197,8 +199,8 @@ private:
 
 	int finish_audio_export();
 	void start_seek();
-	void start_transport_rolling();
-	void stop_transport_rolling();
+	void start_transport_rolling(bool realtime);
+	void stop_transport_rolling(bool realtime);
 	
 	void resize_buffer(bool updateArmStatus, nframes_t size);
 

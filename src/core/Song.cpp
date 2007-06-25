@@ -121,7 +121,9 @@ Song::~Song()
 void Song::init()
 {
 	PENTER2;
-//	threadId = QThread::currentThreadId ();
+#if defined (THREAD_CHECK)
+	threadId = QThread::currentThreadId ();
+#endif
 
 	m_diskio = new DiskIO(this);
 	
@@ -148,12 +150,12 @@ void Song::init()
 
 	m_playBackBus = audiodevice().get_playback_bus("Playback 1");
 
-	m_transport = m_stopTransport = resumeTransport = m_readyToRecord = false;
+	m_transport = m_stopTransport = m_resumeTransport = m_readyToRecord = false;
 	snaplist = new SnapList(this);
 	workSnap = new Snappable();
 	workSnap->set_snap_list(snaplist);
 
-	realtimepath = false;
+	m_realtimepath = false;
 	m_scheduledForDeletion = false;
 	m_isSnapOn=true;
 	changed = m_rendering = m_recording = m_prepareRecording = false;
@@ -332,7 +334,7 @@ int Song::prepare_export(ExportSpecification* spec)
 	if ( ! (spec->renderpass == ExportSpecification::CREATE_CDRDAO_TOC) ) {
 		if (is_transport_rolling()) {
 			spec->resumeTransport = true;
-			stop_transport_rolling();
+			stop_transport_rolling(false);
 		}
 		
 		m_rendering = true;
@@ -568,53 +570,6 @@ void Song::set_work_at(nframes_t pos)
 	emit workingPosChanged();
 }
 
-void Song::set_transport_pos(nframes_t position)
-{
-	audiodevice().transport_seek_to(m_audiodeviceClient, position);
-}
-
-
-//
-//  Function _could_ be called in RealTime AudioThread processing path
-//  Be EXTREMELY carefull to not call functions() that have blocking behavior!!
-//
-void Song::start_seek()
-{
-	PMESG2("Song :: entering start_seek");
-// 	PMESG2("Song :: thread id is: %ld", QThread::currentThreadId ());
-	PMESG2("Song::start_seek()");
-	
-	if (is_transport_rolling()) {
-		realtimepath = false;
-		resumeTransport = true;
-	}
-
-	m_transport = false;
-	m_startSeek = 0;
-	
-	// only sets a boolean flag, save to call.
-	m_diskio->prepare_for_seek();
-
-	// 'Tell' the diskio it should start a seek action.
-	RT_THREAD_EMIT(this, (void*)m_newTransportFramePos, seekStart(uint));
-
-	PMESG2("Song :: leaving start_seek");
-}
-
-void Song::seek_finished()
-{
-	PMESG2("Song :: entering seek_finished");
-	m_transportFrame = m_newTransportFramePos;
-	m_seeking = 0;
-
-	if (resumeTransport) {
-		start_transport_rolling();
-		resumeTransport = false;
-	}
-
-	emit transportPosSet();
-	PMESG2("Song :: leaving seek_finished");
-}
 
 Command* Song::toggle_snap()
 {
@@ -769,7 +724,7 @@ int Song::process( nframes_t nframes )
 	if (m_stopTransport) {
 		RT_THREAD_EMIT(this, 0, transferStopped());
 		m_transport = false;
-		realtimepath = false;
+		m_realtimepath = false;
 		m_stopTransport = false;
 
 		return 0;
@@ -1091,7 +1046,11 @@ void Song::set_temp_follow_state(bool state)
 // Function is only to be called from GUI thread.
 Command * Song::set_recordable()
 {
-	// Do nothing is transport is rolling!
+#if defined (THREAD_CHECK)
+	Q_ASSERT(QThread::currentThreadId() == threadId);
+#endif
+	
+	// Do nothing if transport is rolling!
 	if (is_transport_rolling()) {
 		return 0;
 	}
@@ -1099,14 +1058,14 @@ Command * Song::set_recordable()
 	// Transport is not rolling, it's save now to switch 
 	// recording state to on /off
 	if (is_recording()) {
-		set_recording(false);
+		set_recording(false, false);
 	} else {
 		if (!any_track_armed()) {
 			info().critical(tr("No Tracks armed to record too!"));
 			return 0;
 		}
 		
-		set_recording(true);
+		set_recording(true, false);
 	}
 	
 	return 0;
@@ -1127,6 +1086,9 @@ Command* Song::set_recordable_and_start_transport()
 // Function is only to be called from GUI thread.
 Command* Song::start_transport()
 {
+#if defined (THREAD_CHECK)
+	Q_ASSERT(QThread::currentThreadId() == threadId);
+#endif
 	// Delegate the transport start (or if we are rolling stop)
 	// request to the audiodevice. Depending on the driver in use
 	// this call will return directly to us (by a call to transport_control),
@@ -1151,7 +1113,7 @@ int Song::transport_control(transport_state_t state)
 	switch(state.tranport) {
 	case TransportStopped:
 		if (is_transport_rolling()) {
-			stop_transport_rolling();
+			stop_transport_rolling(state.realtime);
 		}
 		return true;
 	
@@ -1173,6 +1135,7 @@ int Song::transport_control(transport_state_t state)
 					// prepare_recording() is only to be called from the GUI thread
 					// so we delegate the prepare_recording() function call via a 
 					// RT thread save signal!
+					Q_ASSERT(state.realtime);
 					RT_THREAD_EMIT(this, 0, prepareRecording());
 					PMESG("transport starting: initiating prepare for record");
 					return false;
@@ -1198,9 +1161,10 @@ int Song::transport_control(transport_state_t state)
 			// thread, and TransportStarting never was called before!
 			// So in case we are recording we have to prepare for recording now!
 			if ( ! state.isSlave && is_recording() ) {
+				Q_ASSERT(!state.realtime);
 				prepare_recording();
 			}
-			start_transport_rolling();
+			start_transport_rolling(state.realtime);
 		}
 		return true;
 	}
@@ -1209,30 +1173,34 @@ int Song::transport_control(transport_state_t state)
 }
 
 // RT thread save function
-void Song::start_transport_rolling()
+void Song::start_transport_rolling(bool realtime)
 {
-	realtimepath = true;
+	m_realtimepath = true;
 	m_transport = 1;
 	
-	RT_THREAD_EMIT(this, 0, transferStarted());
+	if (realtime) {
+		RT_THREAD_EMIT(this, 0, transferStarted());
+	} else {
+		emit transferStarted();
+	}
 	
 	PMESG("tranport rolling");
 }
 
 // RT thread save function
-void Song::stop_transport_rolling()
+void Song::stop_transport_rolling(bool realtime)
 {
 	m_stopTransport = 1;
 	
 	if (is_recording()) {
-		set_recording(false);
+		set_recording(false, realtime);
 	}
 	
 	PMESG("tranport stopped");
 }
 
 // RT thread save function
-void Song::set_recording(bool recording)
+void Song::set_recording(bool recording, bool realtime)
 {
 	m_recording = recording;
 	
@@ -1241,13 +1209,21 @@ void Song::set_recording(bool recording)
 		m_prepareRecording = false;
 	}
 	
-	RT_THREAD_EMIT(this, 0, recordingStateChanged());
+	if (realtime) {
+		RT_THREAD_EMIT(this, 0, recordingStateChanged());
+	} else {
+		emit recordingStateChanged();
+	}
 }
 
 
 // NON RT thread save function, should only be called from GUI thread!!
 void Song::prepare_recording()
 {
+#if defined (THREAD_CHECK)
+	Q_ASSERT(QThread::currentThreadId() == threadId);
+#endif
+	
 	if (m_recording && any_track_armed()) {
 		CommandGroup* group = new CommandGroup(this, "");
 		int clipcount = 0;
@@ -1265,6 +1241,58 @@ void Song::prepare_recording()
 	}
 	
 	m_readyToRecord = true;
+}
+
+void Song::set_transport_pos(nframes_t position)
+{
+#if defined (THREAD_CHECK)
+	Q_ASSERT(QThread::currentThreadId() ==  threadId);
+#endif
+	audiodevice().transport_seek_to(m_audiodeviceClient, position);
+}
+
+
+//
+//  Function is ALWAYS called in RealTime AudioThread processing path
+//  Be EXTREMELY carefull to not call functions() that have blocking behavior!!
+//
+void Song::start_seek()
+{
+#if defined (THREAD_CHECK)
+	Q_ASSERT(threadId != QThread::currentThreadId ());
+#endif
+	
+	if (is_transport_rolling()) {
+		m_realtimepath = false;
+		m_resumeTransport = true;
+	}
+
+	m_transport = false;
+	m_startSeek = 0;
+	
+	// only sets a boolean flag, save to call.
+	m_diskio->prepare_for_seek();
+
+	// 'Tell' the diskio it should start a seek action.
+	RT_THREAD_EMIT(this, (void*)m_newTransportFramePos, seekStart(uint));
+}
+
+void Song::seek_finished()
+{
+#if defined (THREAD_CHECK)
+	Q_ASSERT_X(threadId == QThread::currentThreadId (), "Song::seek_finished", "Called from other Thread!");
+#endif
+	PMESG2("Song :: entering seek_finished");
+	m_transportFrame = m_newTransportFramePos;
+	m_seeking = 0;
+
+	if (m_resumeTransport) {
+		start_transport_rolling(false);
+		m_resumeTransport = false;
+	}
+
+	emit transportPosSet();
+	PMESG2("Song :: leaving seek_finished");
 }
 
 // eof
