@@ -665,7 +665,6 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 	// Now that we have covered both boundary situations,
 	// read in the cached normvalues, and calculate the highest value!
 	count = endpos - startpos;
-	audio_sample_t buffer[count];
 	
 	fseek(m_file, m_data.normValuesDataOffset + (startpos * sizeof(audio_sample_t)), SEEK_SET);
 	
