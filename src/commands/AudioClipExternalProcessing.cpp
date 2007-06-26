@@ -256,7 +256,7 @@ void ExternalProcessingDialog::read_standard_output()
 			QStringList list = result.split("\n");
 			foreach(QString string, list) {
 				if (string.contains("Supported effects:") || string.contains("effect:") || string.contains("SUPPORTED EFFECTS:")) {
-					result = string.remove("Supported effects:");
+					result = string.remove("Supported effects:").remove("effect:").remove("SUPPORTED EFFECTS:");
 					QStringList options = string.split(QRegExp("\\s+"));
 					foreach(QString string, options) {
 						if (!string.isEmpty())
