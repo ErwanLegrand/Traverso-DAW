@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.19 2007/05/30 13:14:46 r_sijrier Exp $
+$Id: FadeCurve.cpp,v 1.20 2007/06/26 20:08:51 r_sijrier Exp $
 */
  
 #include "FadeCurve.h"
@@ -57,7 +57,8 @@ FadeCurve::FadeCurve(AudioClip* clip, Song* song, QString type )
 	
 	m_bendFactor = 0.5;
 	m_strenghtFactor = 1;
-	m_mode = m_raster = 0;
+	m_mode = 2;
+	m_raster = 0;
 	m_bypass = false;
 	
 	init();

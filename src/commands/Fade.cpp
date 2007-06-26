@@ -30,6 +30,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <FadeView.h>
 #include <Peak.h>
 #include <Song.h>
+#include "Project.h"
+#include "ProjectManager.h"
 		
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -77,6 +79,7 @@ int FadeRange::begin_hold()
 
 int FadeRange::finish_hold()
 {
+	QCursor::setPos(m_mousePos);
 	return 1;
 }
 
@@ -101,6 +104,16 @@ void FadeRange::cancel_action()
 	undo_action();
 }
 
+void FadeRange::set_cursor_shape(int useX, int useY)
+{
+	Q_UNUSED(useX);
+	Q_UNUSED(useY);
+	
+	m_mousePos = QCursor::pos();
+	
+	cpointer().get_viewport()->set_holdcursor(":/cursorHoldLr");
+}
+
 
 int FadeRange::jog()
 {
@@ -112,7 +125,9 @@ int FadeRange::jog()
 	}
 	
 	m_curve->set_range( newFade );
-
+	
+	cpointer().get_viewport()->set_holdcursor_text(frame_to_ms_3(newFade, pm().get_project()->get_rate()));
+	
 	return 1;
 }
 

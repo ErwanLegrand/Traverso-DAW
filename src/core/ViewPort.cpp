@@ -146,6 +146,13 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 			itemsUnderCursor.first()->setCursor(itemsUnderCursor.first()->cursor());
 		}
 		QApplication::sendEvent(scene(), &mouseEvent);
+	} else {
+		// It can happen that a cursor is set for a newly created viewitem
+		// but we don't want that when the holdcursor is set!
+		// So force it back to be a blankcursor.
+		if (m_holdcursor->isVisible() && viewport()->cursor().shape() != Qt::BlankCursor) {
+			viewport()->setCursor(Qt::BlankCursor);
+		}
 	}
 
 // 	QGraphicsView::mouseMoveEvent(event);

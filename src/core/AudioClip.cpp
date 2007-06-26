@@ -947,7 +947,7 @@ void AudioClip::private_remove_fade( FadeCurve * fade )
 void AudioClip::create_fade_in( )
 {
 	fadeIn = new FadeCurve(this, m_song, "FadeIn");
-	fadeIn->set_shape("Linear");
+	fadeIn->set_shape("Fast");
 	fadeIn->set_history_stack(get_history_stack());
 	THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, fadeIn, private_add_fade(FadeCurve*), fadeAdded(FadeCurve*));
 }
@@ -955,7 +955,7 @@ void AudioClip::create_fade_in( )
 void AudioClip::create_fade_out( )
 {
 	fadeOut = new FadeCurve(this, m_song, "FadeOut");
-	fadeOut->set_shape("Linear");
+	fadeOut->set_shape("Fast");
 	fadeOut->set_history_stack(get_history_stack());
 	THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, fadeOut, private_add_fade(FadeCurve*), fadeAdded(FadeCurve*));
 }

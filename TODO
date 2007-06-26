@@ -6,11 +6,7 @@ TOBEDONE FOR 0.40.x
 
 * add docs for preparing pc for realtime use! (limits.conf stuff)
 
-* sometimes audible glitch when playing over splitpoint..
-
 * Curve copy should not use the same id!!!!!!
-
-* when changing the width of fades, the cursor should remain static (as in gain)
 
 * libsndfile:
 	How to record to files larger 4 GB

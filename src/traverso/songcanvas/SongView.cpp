@@ -601,6 +601,10 @@ Command * SongView::playhead_to_workcursor( )
 
 	m_song->set_transport_pos( work );
 	m_playCursor->setPos(work / scalefactor, 0);
+	
+	if (!m_song->is_transport_rolling()) {
+		center();
+	}
 
 	return (Command*) 0;
 }
