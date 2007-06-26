@@ -112,7 +112,7 @@ int FadeRange::jog()
 	}
 	
 	m_curve->set_range( newFade );
-	
+
 	return 1;
 }
 
@@ -197,6 +197,7 @@ int FadeBend::jog()
 
 	oldValue = m_fade->get_bend_factor();
 	newBend = oldValue;
+	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(newBend, 'f', 2));
 	
 	origY = cpointer().y();
 	
@@ -280,6 +281,7 @@ int FadeStrength::jog()
 	
 	oldValue = m_fade->get_strenght_factor();
 	newStrength = oldValue;
+	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(newStrength, 'f', 2));
 
 	origY = cpointer().y();
 
