@@ -53,7 +53,8 @@ ReadSource::ReadSource(const QDomNode node)
 	// and give it priority over the dir as given by the project.tpf file
 	// This makes it possible to move project directories without Traverso being
 	// unable to find it's audiosources!
-	if (QFile::exists(project->get_root_dir() + "/audiosources/" + m_name)) {
+	if ( QFile::exists(project->get_root_dir() + "/audiosources/" + m_name) || 
+	     QFile::exists(project->get_root_dir() + "/audiosources/" + m_name + "-ch0.wav") ) {
 		set_dir(project->get_root_dir() + "/audiosources/");
 	}
 	

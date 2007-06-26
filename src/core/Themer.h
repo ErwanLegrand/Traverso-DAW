@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Themer.h,v 1.1 2007/04/17 11:51:20 r_sijrier Exp $
+    $Id: Themer.h,v 1.2 2007/06/26 18:07:56 r_sijrier Exp $
 */
 
 #ifndef COLORMANAGER_H
@@ -29,9 +29,10 @@
 #include <QHash>
 #include <QCursor>
 #include <QString>
-#include <QFileSystemWatcher>
 #include <QVariant>
 #include <QPalette>
+
+class QFileSystemWatcher;
 
 class Themer : public QObject
 {

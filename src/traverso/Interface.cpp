@@ -168,7 +168,7 @@ Interface::Interface()
 	exportWidget = 0;
 	m_settingsdialog = 0;
 	m_projectManagerDialog = 0;
-	m_openProjectDialog = 0;
+	m_openProjectDialog = new OpenProjectDialog(this);
 	m_newProjectDialog = 0;
 	m_insertSilenceDialog = 0;
 	m_markerDialog = 0;
@@ -927,9 +927,6 @@ Command* Interface::show_project_manager_dialog()
 
 Command* Interface::show_open_project_dialog()
 {
-	if (! m_openProjectDialog ) {
-		m_openProjectDialog = new OpenProjectDialog(this);
-	}
 	m_openProjectDialog->show();
 	return 0;
 }

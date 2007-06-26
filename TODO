@@ -1,8 +1,10 @@
 TOBEDONE FOR 0.40.x
 
-* add docs for preparing pc for realtime use! (limits.conf stuff)
+* invert plugin for j_ack
 
-* horizontal scroll bar doesn't move during play
+* import file, peak creation starts, undo, redo (while peak creation still active) -> crash
+
+* add docs for preparing pc for realtime use! (limits.conf stuff)
 
 * sometimes audible glitch when playing over splitpoint..
 

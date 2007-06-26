@@ -69,7 +69,7 @@ public :
 
 
 	// Set functions
-	void set_title(const QString& pTitle);
+	void set_title(const QString& title);
 	void set_engineer(const QString& pEngineer);
 	void set_description(const QString& des);
 	void set_discid(const QString& pId);
@@ -108,7 +108,7 @@ private:
 	ResourcesManager* 	m_resourcesManager;
 	ExportThread* 	m_exportThread;
 
-	QString 	title;
+	QString 	m_title;
 	QString 	rootDir;
 	QString 	sourcesDir;
 	QString 	engineer;

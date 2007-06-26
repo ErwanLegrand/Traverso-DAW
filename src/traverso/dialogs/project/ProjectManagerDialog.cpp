@@ -287,8 +287,21 @@ void ProjectManagerDialog::accept()
 		return;
 	}
 	
+	QString newtitle = lineEditTitle->text();
+	
+	if (newtitle != m_project->get_title()) {
+		if (pm().project_exists(newtitle)) {
+			QMessageBox::warning( 0, 
+				tr("Traverso - Information"), 
+				tr("Project with title '%1' allready exists, please supply a different title!").arg(newtitle),
+				QMessageBox::Ok);
+			return rejected();
+		}
+	}
+
+	
+	m_project->set_title(newtitle);
 	m_project->set_description(descriptionTextEdit->toPlainText());
-	m_project->set_title(lineEditTitle->text());
 	m_project->set_discid(lineEditId->text());
 	m_project->set_upc_ean(lineEditUPC->text());
 	m_project->set_performer(lineEditPerformer->text());

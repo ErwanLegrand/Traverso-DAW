@@ -11,18 +11,18 @@
 
 #if defined(__ppc__) || defined(__powerpc__) || defined(__PPC__)
 
-#  define ATOMIC_MEMORY_BARRIER __asm__ ("sync" : : : "memory")
+#  define T_ATOMIC_MEMORY_BARRIER __asm__ ("sync" : : : "memory")
 
 int t_atomic_int_get (volatile int *atomic)
 {
-	ATOMIC_MEMORY_BARRIER;
+	T_ATOMIC_MEMORY_BARRIER;
 	return *atomic;
 }
 
 void t_atomic_int_set (volatile int *atomic, int newval)
 {
 	*atomic = newval;
-	ATOMIC_MEMORY_BARRIER; 
+	T_ATOMIC_MEMORY_BARRIER; 
 }
 
 #else

@@ -55,6 +55,7 @@ ProjectManager::ProjectManager()
 	PENTERCONS;
 	currentProject = (Project*) 0;
 	m_exitInProgress = false;
+	m_renamingDir = false;
 
 	cpointer().add_contextitem(this);
 }
@@ -194,6 +195,17 @@ int ProjectManager::load_project(const QString& projectName)
 	return 1;
 }
 
+int ProjectManager::load_renamed_project(const QString & name)
+{
+	Q_ASSERT(currentProject);
+	
+	delete currentProject;
+	currentProject= 0;
+	
+	return load_project(name);
+}
+
+
 int ProjectManager::remove_project( const QString& name )
 {
 	// check if we are removing the currentProject, and delete it before removing its files
@@ -261,10 +273,6 @@ void ProjectManager::start(QString projectToLoad)
 				   projects_path );
 		if (dir.exists(newPath)) {
 			info().information(tr("Using existing Project directory: %1\n").arg(newPath));
-			//QMessageBox::information( 0, 
-			//		tr("Traverso - Information"), 
-			//		tr("Using existing Project directory: %1\n").arg(newPath), 
-			//		"OK", 0 );
 		} else if (!dir.mkpath(newPath)) {
 			QMessageBox::warning( 0, tr("Traverso - Warning"), 
 					tr("Unable to create Project directory! \n") +
@@ -272,10 +280,6 @@ void ProjectManager::start(QString projectToLoad)
 			return;
 		} else {
 			info().information(tr("Created new Project directory for you here: %1\n").arg(newPath));
-			//QMessageBox::information( 0, 
-			//		tr("Traverso - Information"), 
-			//		tr("Created new Project directory for you here: %1\n").arg(newPath), 
-			//		"OK", 0 );
 		}
 		QDir newdir(newPath);
 		config().set_property("Project", "directory", newdir.canonicalPath());
@@ -286,11 +290,12 @@ void ProjectManager::start(QString projectToLoad)
 	if (loadProjectAtStartUp || !(projectToLoad.isEmpty())) {
 		if (!projectToLoad.isEmpty()) {
 			int splitpoint = projectToLoad.lastIndexOf("/");
-			QString dir = projectToLoad.left(splitpoint);
-			int splitpoint2 = dir.lastIndexOf("/") + 1;
-			projectToLoad = dir.right(splitpoint - splitpoint2);
-			dir = dir.remove(projectToLoad);
-			config().set_property("Project", "directory", dir);
+			QString dirpath = projectToLoad.left(splitpoint);
+			int splitpoint2 = dirpath.lastIndexOf("/") + 1;
+			projectToLoad = dirpath.right(splitpoint - splitpoint2);
+			dirpath = dir.remove(projectToLoad);
+			QDir dir(dirpath);
+			config().set_property("Project", "directory", dir.canonicalPath());
 		} else {
 			projectToLoad = config().get_property("Project", "current", "").toString();
 		}
@@ -301,16 +306,19 @@ void ProjectManager::start(QString projectToLoad)
 		if (project_exists(projectToLoad)) {
 			load_project(projectToLoad);
 		} else {
-			Project* project;
-			if ( (project = create_new_project(1, 4, "Untitled")) ) {
-				project->set_description(tr("Default Project created by Traverso"));
-				project->save();
-				delete project;
-				load_project("Untitled");
+			if (projectToLoad != "Untitled") {
+				info().critical(tr("Project %1 no longer could be found! (Did you remove or rename the Project directory ?)").arg(projectToLoad));
 			} else {
-				PWARN("Cannot create project Untitled. Continuing anyway...");
+				Project* project;
+				if ( (project = create_new_project(1, 4, "Untitled")) ) {
+					project->set_description(tr("Default Project created by Traverso"));
+					project->save();
+					delete project;
+					load_project("Untitled");
+				} else {
+					PWARN("Cannot create project Untitled. Continuing anyway...");
+				}
 			}
-
 		}
 	} else {
 		set_current_project(0);
@@ -375,4 +383,27 @@ Command* ProjectManager::redo()
 }
 
 
-//eof
+int ProjectManager::rename_project_dir(const QString & olddir, const QString & newdir)
+{
+	m_renamingDir = true;
+	
+	QDir dir(olddir);
+	
+	if ( ! dir.rename(olddir, newdir)) {
+		info().critical(tr("Could not rename Project directory to %1").arg(newdir));
+		return - 1;
+	}
+	
+	return 1;
+}
+
+bool ProjectManager::renaming_directory_in_progress()
+{
+	if (m_renamingDir) {
+		m_renamingDir = false;
+		return true;
+	}
+	
+	return false;
+}
+

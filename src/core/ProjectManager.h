@@ -42,13 +42,17 @@ public:
 	Project* create_new_project(const QString& templatefile, const QString& projectName);
 	
 	int load_project(const QString& projectName);
+	int load_renamed_project(const QString& name);
 
 	bool project_exists(const QString& title);
+	bool renaming_directory_in_progress();
 
 	int remove_project(const QString& title);
 	
 	void scheduled_for_deletion(Song* song);
 	void delete_song(Song* song);
+	
+	int rename_project_dir(const QString& olddir, const QString& newdir);
 
 	Project* get_project();
 	QUndoGroup* get_undogroup() const;
@@ -70,6 +74,7 @@ private:
 	Project* currentProject;
 	QList<Song*>	m_deletionSongList;
 	bool		m_exitInProgress;
+	bool		m_renamingDir;
 
 	bool clientRequestInProgress;
 	static QUndoGroup	undogroup;

@@ -29,13 +29,15 @@
 #include <QDomDocument>
 #include <QFileDialog>
 #include <QHeaderView>
+#include <QFileSystemWatcher>
+
 
 #include <Config.h>
 #include <Information.h>
 #include <ProjectManager.h>
 #include <Project.h>
 #include <Utils.h>
-
+#include "Interface.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -45,6 +47,12 @@ OpenProjectDialog::OpenProjectDialog( QWidget * parent )
 	: QDialog(parent)
 {
 	setupUi(this);
+	
+	QString path = config().get_property("Project", "directory", getenv("HOME")).toString();
+	m_watcher = new QFileSystemWatcher(this);
+	m_watcher->addPath(path);
+	m_dirchangeDetected = false;
+	
 	projectListView->setColumnCount(2);
 	update_projects_list();
 	QStringList stringList;
@@ -55,6 +63,7 @@ OpenProjectDialog::OpenProjectDialog( QWidget * parent )
 	projectListView->header()->resizeSection(1, 30);
 	
 	connect(projectListView, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(projectitem_clicked(QTreeWidgetItem*,int)));
+	connect(m_watcher, SIGNAL(directoryChanged(const QString&)), this, SLOT(project_dir_rename_detected(const QString&)));
 }
 
 OpenProjectDialog::~ OpenProjectDialog( )
@@ -62,6 +71,7 @@ OpenProjectDialog::~ OpenProjectDialog( )
 
 void OpenProjectDialog::update_projects_list()
 {
+	printf("update_projects_list()\n");
 	projectListView->clear();
 	
 	QString path = config().get_property("Project", "directory", getenv("HOME")).toString();
@@ -119,14 +129,26 @@ void OpenProjectDialog::update_projects_list()
 		QTreeWidgetItem* item = new QTreeWidgetItem(projectListView);
 		item->setTextAlignment(0, Qt::AlignLeft);
 		item->setTextAlignment(1, Qt::AlignHCenter);
+		
+		if (title != dirname) {
+			item->setIcon(0, style()->standardIcon(QStyle::SP_MessageBoxWarning));
+			QString html;
+			html += tr("<p>Project directory name <b>%1</b> is different from the Project title <b>%2</b>!</p>"
+				"<p>Did you rename the Project directory ? </p><p>Please rename the directory back to the "
+				"Project title <b>%1</b>, and change the Project title with the Project Manager Dialog!</p>")
+					.arg(dirname).arg(title);
+				item->setToolTip(0, html);
+		} else {
+			QString html = "<html><head></head><body>Project: " + title + "<br /><br />";
+			html += tr("Description:") + "<br />";
+			html += description + "<br /><br />";
+			html += tr("Created on:") + " " + extract_date_time(id).toString() + "<br />";
+			html += "</body></html>";
+			item->setToolTip(0, html);
+		}
+		
 		item->setText(0, title);
 		item->setText(1, sNumSongs);
-		QString html = "<html><head></head><body>Project: " + title + "<br /><br />";
-		html += tr("Description:") + "<br />";
-		html += description + "<br /><br />";
-		html += tr("Created on:") + " " + extract_date_time(id).toString() + "<br />";
-		html += "</body></html>";
-		item->setToolTip(0, html);
 	}
 }
 
@@ -169,7 +191,7 @@ void OpenProjectDialog::on_loadProjectButton_clicked( )
 	// Note: this shouldn't be needed really, the projects in the view
 	// should exist, but just in case someone removed it, you never know!
 	if (!pm().project_exists(title)) {
-		info().warning(tr("Project does not exist! (%1)").arg(title));
+		info().warning(tr("Project %1 does not exist, did you rename or remove the directory what that name ?").arg(title));
 		return;
 	}
 	
@@ -216,8 +238,11 @@ void OpenProjectDialog::on_projectDirSelectButton_clicked( )
 {
 	QString path = config().get_property("Project", "directory", getenv("HOME")).toString();
 	
+	QDir rootDir(path);
+	rootDir.cdUp();
+	
 	QString newPath = QFileDialog::getExistingDirectory(this,
-			tr("Choose an existing or create a new Project Directory"), path);
+			tr("Choose an existing or create a new Project Directory"), rootDir.canonicalPath());
 			
 	if (newPath.isEmpty() || newPath.isNull()) {
 		return;
@@ -239,8 +264,30 @@ void OpenProjectDialog::on_projectDirSelectButton_clicked( )
 	
 	config().set_property("Project", "directory", newdir.canonicalPath());
 	
+	m_watcher->addPath(newdir.canonicalPath());
+
+	
 	update_projects_list();
 }
 
+void OpenProjectDialog::project_dir_rename_detected(const QString & dirname)
+{
+	update_projects_list();
+	
+	if (m_dirchangeDetected || pm().renaming_directory_in_progress()) {
+		return;
+	}
+	
+	m_dirchangeDetected = true;
+	
+	QMessageBox::critical( Interface::instance(), 
+			tr("Traverso - Important"), 
+			tr("A Project directory changed outside of Traverso. \n\n"
+			   "This is NOT supported! Please undo this change now!\n\n"
+			   "If you want to rename a Project, use the Project Manager instead!").arg(dirname),
+			QMessageBox::Ok);
+
+	m_dirchangeDetected = false;
+}
 
 //eof

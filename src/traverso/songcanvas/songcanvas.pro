@@ -53,19 +53,6 @@ TrackPanelViewPort.h \
 TrackView.h \
 ViewItem.h \
 LineView.h
-FORMS += ../ui/ExportWidget.ui \
-	../ui/AudioSourcesManagerWidget.ui \
-	../ui/PluginSelectorDialog.ui \
-	../ui/SpectralMeterConfigWidget.ui \
-	../ui/QuickDriverConfigWidget.ui \
-	../ui/DriverConfigPage.ui \
-	../ui/AlsaDevicesPage.ui \
-	../ui/KeyboardConfigPage.ui \
-	../ui/BehaviorConfigPage.ui \
-	../ui/MemoryConfigPage.ui \
-	../ui/ThemeConfigPage.ui \
-	../ui/SongManagerDialog.ui \
-	../ui/ProjectManagerDialog.ui
 
 
 contains(DEFINES, LV2_SUPPORT){

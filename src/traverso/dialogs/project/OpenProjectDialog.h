@@ -25,6 +25,8 @@
 #include "ui_OpenProjectDialog.h"
 #include <QDialog>
 
+class QFileSystemWatcher;
+
 class OpenProjectDialog : public QDialog, protected Ui::OpenProjectDialog
 {
 Q_OBJECT
@@ -33,12 +35,18 @@ public:
 	OpenProjectDialog(QWidget* parent = 0);
 	~OpenProjectDialog();
 
+	
+private:
+	QFileSystemWatcher*	m_watcher;
+	bool	m_dirchangeDetected;
+
 private slots:
 	void update_projects_list();
 	void on_loadProjectButton_clicked();
 	void on_deleteProjectbutton_clicked();
 	void on_projectDirSelectButton_clicked();
 	void projectitem_clicked( QTreeWidgetItem* , int  );
+	void project_dir_rename_detected(const QString& dirname);
 };
 
 #endif

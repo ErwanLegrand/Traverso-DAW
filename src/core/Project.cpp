@@ -50,15 +50,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Debugger.h"
 
 
-Project::Project(const QString& pTitle)
-	: ContextItem(), title(pTitle)
+Project::Project(const QString& title)
+	: ContextItem(), m_title(title)
 {
 	PENTERCONS;
 	m_currentSongId = 0;
 	m_exportThread = 0;
 	engineer = "";
 
-	rootDir = config().get_property("Project", "directory", "/directory/unknown/").toString() + "/" + title;
+	rootDir = config().get_property("Project", "directory", "/directory/unknown/").toString() + "/" + m_title;
 	sourcesDir = rootDir + "/audiosources";
 	m_rate = audiodevice().get_sample_rate();
 	m_bitDepth = audiodevice().get_bit_depth();
@@ -87,7 +87,7 @@ Project::~Project()
 int Project::create(int songcount, int numtracks)
 {
 	PENTER;
-	PMESG("Creating new project %s  NumSongs=%d", title.toAscii().data(), songcount);
+	PMESG("Creating new project %s  NumSongs=%d", m_title.toAscii().data(), songcount);
 
 	QDir dir;
 	if (dir.mkdir(rootDir) < 0) {
@@ -119,7 +119,7 @@ int Project::create(int songcount, int numtracks)
 	m_id = create_id();
 	m_importDir = QDir::homePath();
 
-	info().information(tr("Created new Project %1").arg(title));
+	info().information(tr("Created new Project %1").arg(m_title));
 	return 1;
 }
 
@@ -143,7 +143,7 @@ int Project::load(QString projectfile)
 	{
 		file.close();
 		info().critical(tr("Project %1: Cannot open project.tpf file! (%2)")
-			       .arg(title).arg(file.errorString()));
+				.arg(m_title).arg(file.errorString()));
 		
 		QFile backup(filename + "~");
 		backup.copy(filename);
@@ -159,7 +159,7 @@ int Project::load(QString projectfile)
 	if (!doc.setContent(&file, &errorMsg))
 	{
 		info().critical(tr("Project %1: Failed to parse project.tpf file! (%2)")
-				.arg(title).arg(errorMsg));
+				.arg(m_title).arg(errorMsg));
 		
 		file.remove();
 		file.close();
@@ -194,7 +194,7 @@ int Project::load(QString projectfile)
 		return -1;
 	}
 
-	title = e.attribute( "title", "" );
+	m_title = e.attribute( "title", "" );
 	engineer = e.attribute( "engineer", "" );
 	m_description = e.attribute( "description", "No description set");
 	m_discid = e.attribute( "discId", "" );
@@ -240,7 +240,7 @@ int Project::load(QString projectfile)
 			
 	set_current_song(id);
 
-	info().information( tr("Project %1 loaded").arg(title) );
+	info().information( tr("Project %1 loaded").arg(m_title) );
 
 	return 1;
 }
@@ -264,7 +264,7 @@ int Project::save()
 		QTextStream stream(&data);
 		doc.save(stream, 4);
 		data.close();
-		info().information( tr("Project %1 saved ").arg(title) );
+		info().information( tr("Project %1 saved ").arg(m_title) );
 	} else {
 		info().critical( tr("Couldn't open Project properties file for writing! (%1)").arg(fileName) );
 		return -1;
@@ -281,7 +281,7 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
 	QDomElement projectNode = doc.createElement("Project");
 	QDomElement properties = doc.createElement("Properties");
 
-	properties.setAttribute("title", title);
+	properties.setAttribute("title", m_title);
 	properties.setAttribute("engineer", engineer);
 	properties.setAttribute("description", m_description);
 	properties.setAttribute("discId", m_discid );
@@ -325,9 +325,42 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
 }
 
 
-void Project::set_title(const QString& pTitle)
+void Project::set_title(const QString& title)
 {
-	title = pTitle;
+	if (title == m_title) {
+		// do nothing if the title is the same as the current one
+		return;
+	}
+	
+	if (pm().project_exists(title)) {
+		info().critical(tr("Project with title '%1' allready exists, not setting new title!").arg(title));
+		return;
+	}
+	
+	QString newrootdir = config().get_property("Project", "directory", "/directory/unknown/").toString() + "/" + title;
+	
+	QDir dir(rootDir);
+	
+	if ( ! dir.exists() ) {
+		info().critical(tr("Project directory %1 no longer exists, did you rename it? " 
+				"Shame on you! Please undo that, and come back later to rename your Project...").arg(rootDir));
+		return;
+	}
+	
+	m_title = title;
+	
+	save();
+	
+	if (pm().rename_project_dir(rootDir, newrootdir) < 0 ) {
+		return;
+	}
+	
+	QMessageBox::information( 0, 
+			tr("Traverso - Information"), 
+			tr("Project title changed, Project will to be reloaded to ensure proper operation"),
+			QMessageBox::Ok);
+	
+	pm().load_renamed_project(m_title);
 }
 
 
@@ -715,7 +748,7 @@ int Project::get_num_songs( ) const
 
 QString Project::get_title( ) const
 {
-	return title;
+	return m_title;
 }
 
 QString Project::get_engineer( ) const
