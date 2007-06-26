@@ -255,7 +255,7 @@ void ExternalProcessingDialog::read_standard_output()
 		if (m_program == "sox") {
 			QStringList list = result.split("\n");
 			foreach(QString string, list) {
-				if (string.contains("Supported effects:")) {
+				if (string.contains("Supported effects:") || string.contains("effect:")) {
 					result = string.remove("Supported effects:");
 					QStringList options = string.split(QRegExp("\\s+"));
 					foreach(QString string, options) {
@@ -336,7 +336,7 @@ void ExternalProcessingDialog::query_options()
 {
 	m_queryOptions = true;
 	argsComboBox->clear();
-	m_processor->start(m_program, QStringList());
+	m_processor->start(m_program, QStringList() << "-h");
 }
 
 void ExternalProcessingDialog::arg_combo_index_changed(const QString & text)
