@@ -502,7 +502,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			}
 						
 			p->setMatrix(matrix().translate(1, ytrans), true);
-			p->drawPath(path);	
+			p->drawPath(path);
 		}
 		
 		p->restore();
@@ -569,6 +569,7 @@ void AudioClipView::add_new_fadeview( FadeCurve * fade )
 	PENTER;
 	FadeView* view = new FadeView(m_sv, this, fade);
 	m_fadeViews.append(view);
+	connect(view, SIGNAL(fadeModified()), m_sv, SLOT(stop_follow_play_head()));
 #if QT_VERSION < 0x040300
 	scene()->addItem(view);
 #endif

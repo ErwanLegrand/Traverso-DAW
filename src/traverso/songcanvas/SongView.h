@@ -159,6 +159,7 @@ private slots:
 	void update_shuttle();
 	void song_mode_changed();
 	void hscrollbar_value_changed(int);
+	void hscrollbar_action(int);
 };
 
 

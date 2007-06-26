@@ -115,8 +115,9 @@ SongView::SongView(SongWidget* songwidget,
 	connect(m_song, SIGNAL(trackRemoved(Track*)), this, SLOT(remove_trackview(Track*)));
 	connect(m_song, SIGNAL(lastFramePositionChanged()), this, SLOT(update_scrollbars()));
 	connect(m_song, SIGNAL(modeChanged()), this, SLOT(song_mode_changed()));
-	connect(&m_shuttletimer, SIGNAL(timeout() ), this, SLOT (update_shuttle()) );
+	connect(&m_shuttletimer, SIGNAL(timeout()), this, SLOT (update_shuttle()));
 	connect(m_hScrollBar, SIGNAL(sliderMoved(int)), this, SLOT(stop_follow_play_head()));
+	connect(m_hScrollBar, SIGNAL(actionTriggered(int)), this, SLOT(hscrollbar_action(int)));
 	connect(m_hScrollBar, SIGNAL(valueChanged(int)), this, SLOT(hscrollbar_value_changed(int)));
 	connect(m_vScrollBar, SIGNAL(valueChanged(int)), m_clipsViewPort->verticalScrollBar(), SLOT(setValue(int)));
 	
@@ -565,6 +566,13 @@ Command* SongView::scroll_left()
 int SongView::hscrollbar_value() const
 {
 	return m_clipsViewPort->horizontalScrollBar()->value();
+}
+
+void SongView::hscrollbar_action(int action)
+{
+	if (action == QAbstractSlider::SliderPageStepAdd || action == QAbstractSlider::SliderPageStepSub) {
+		stop_follow_play_head();
+	}
 }
 
 int SongView::vscrollbar_value() const
