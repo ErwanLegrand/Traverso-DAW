@@ -274,7 +274,11 @@ void OpenProjectDialog::project_dir_rename_detected(const QString & dirname)
 {
 	update_projects_list();
 	
-	if (m_dirchangeDetected || pm().renaming_directory_in_progress()) {
+	if (pm().renaming_directory_in_progress()) {
+		return;
+	}
+	
+	if (m_dirchangeDetected) {
 		return;
 	}
 	
@@ -284,7 +288,7 @@ void OpenProjectDialog::project_dir_rename_detected(const QString & dirname)
 			tr("Traverso - Important"), 
 			tr("A Project directory changed outside of Traverso. \n\n"
 			   "This is NOT supported! Please undo this change now!\n\n"
-			   "If you want to rename a Project, use the Project Manager instead!").arg(dirname),
+			   "If you want to rename a Project, use the Project Manager instead!"),
 			QMessageBox::Ok);
 
 	m_dirchangeDetected = false;
