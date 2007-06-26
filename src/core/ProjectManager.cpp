@@ -58,6 +58,8 @@ ProjectManager::ProjectManager()
 	m_renamingDir = false;
 
 	cpointer().add_contextitem(this);
+	
+	connect(&m_resetDirRenamingTimer, SIGNAL(timemout), this, SLOT(reset_dir_renaming_progress()));
 }
 
 /**
@@ -386,6 +388,7 @@ Command* ProjectManager::redo()
 int ProjectManager::rename_project_dir(const QString & olddir, const QString & newdir)
 {
 	m_renamingDir = true;
+	m_resetDirRenamingTimer.start(1000);
 	
 	QDir dir(olddir);
 	
@@ -400,10 +403,14 @@ int ProjectManager::rename_project_dir(const QString & olddir, const QString & n
 bool ProjectManager::renaming_directory_in_progress()
 {
 	if (m_renamingDir) {
-		m_renamingDir = false;
 		return true;
 	}
 	
 	return false;
+}
+
+void ProjectManager::reset_dir_renaming_progress()
+{
+	m_renamingDir = false;
 }
 

@@ -35,9 +35,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QDesktopWidget>
 #include <QPalette>
 
-#if defined (WIN_BUILD)
+#if defined (Q_WS_WIN)
 #include <Windows.h>
-#elif defined (OSX_BUILD)
+#elif defined (Q_WS_MAC)
 #include <sys/param.h>
 #include <sys/mount.h>
 #else
@@ -285,7 +285,7 @@ void HDDSpaceInfo::update_status( )
 		return;
 	}
 	
-#if defined (WIN_BUILD)
+#if defined (Q_WS_WIN)
 	__int64 freebytestocaller, totalbytes, freebytes; 
 	if (! GetDiskFreeSpaceEx ((const WCHAR*)(m_project->get_root_dir().toUtf8().data()),
 					(PULARGE_INTEGER)&freebytestocaller,

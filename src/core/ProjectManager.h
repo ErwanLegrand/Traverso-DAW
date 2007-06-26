@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ContextItem.h"
 #include <QUndoGroup>
 #include <QList>
+#include <QTimer>
 
 class Project;
 class Song;
@@ -73,6 +74,7 @@ private:
 
 	Project* currentProject;
 	QList<Song*>	m_deletionSongList;
+	QTimer		m_resetDirRenamingTimer;
 	bool		m_exitInProgress;
 	bool		m_renamingDir;
 
@@ -88,6 +90,9 @@ private:
 signals:
 	void projectLoaded(Project* );
 	void aboutToDelete(Song* );
+	
+private slots:
+	void reset_dir_renaming_progress();
 };
 
 

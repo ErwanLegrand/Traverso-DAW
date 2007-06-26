@@ -71,7 +71,6 @@ OpenProjectDialog::~ OpenProjectDialog( )
 
 void OpenProjectDialog::update_projects_list()
 {
-	printf("update_projects_list()\n");
 	projectListView->clear();
 	
 	QString path = config().get_property("Project", "directory", getenv("HOME")).toString();
