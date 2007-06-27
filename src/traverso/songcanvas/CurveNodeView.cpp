@@ -40,6 +40,7 @@ CurveNodeView::CurveNodeView( SongView * sv, CurveView* curveview, CurveNode * n
 	m_sv = sv;
 	m_curveview = curveview;
 	int size = themer()->get_property("CurveNode:diameter", 6).toInt();
+	setCursor(themer()->get_cursor("CurveNode"));
 	m_boundingRect = QRectF(0, 0, size, size);
 	load_theme_data();
 	
