@@ -137,7 +137,7 @@ Project* ProjectManager::create_new_project(int numSongs, int numTracks, const Q
 
 	// Creating a new dir also emits the dir changed signal
 	// so we 'fake' a honored dir renaming here
-	m_renamingDir = true;
+	dir_rename_started();
 	
 	if (newProject->create(numSongs, numTracks) < 0) {
 		delete newProject;
@@ -160,7 +160,7 @@ Project* ProjectManager::create_new_project(const QString& templatefile, const Q
 	
 	// Creating a new dir also emits the dir changed signal
 	// so we 'fake' a honored dir renaming here
-	m_renamingDir = true;
+	dir_rename_started();
 	
 	if (newProject->create(0, 0) < 0) {
 		delete newProject;
@@ -395,8 +395,7 @@ Command* ProjectManager::redo()
 
 int ProjectManager::rename_project_dir(const QString & olddir, const QString & newdir)
 {
-	m_renamingDir = true;
-	m_resetDirRenamingTimer.start(1000);
+	dir_rename_started();
 	
 	QDir dir(olddir);
 	
@@ -420,5 +419,11 @@ bool ProjectManager::renaming_directory_in_progress()
 void ProjectManager::reset_dir_renaming_progress()
 {
 	m_renamingDir = false;
+}
+
+void ProjectManager::dir_rename_started()
+{
+	m_renamingDir = true;
+	m_resetDirRenamingTimer.start(1000);
 }
 

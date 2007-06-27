@@ -84,6 +84,8 @@ private:
 	void set_current_project(Project* pProject);
 	bool project_is_current(const QString& title);
 	
+	void dir_rename_started();
+	
 	// allow this function to create one instance
 	friend ProjectManager& pm();
 
