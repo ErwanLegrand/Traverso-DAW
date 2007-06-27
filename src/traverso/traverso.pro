@@ -82,7 +82,7 @@ SOURCES += \
 	widgets/ResourcesWidget.cpp
 FORMS += ui/ExportWidget.ui \
 	ui/AudioSourcesManagerWidget.ui \
-	ui/PluginSelectorDialog.ui \
+#	ui/PluginSelectorDialog.ui \
 	ui/SpectralMeterConfigWidget.ui \
 	ui/QuickDriverConfigWidget.ui \
 	ui/DriverConfigPage.ui \
