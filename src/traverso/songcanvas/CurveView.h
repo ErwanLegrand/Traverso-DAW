@@ -84,6 +84,8 @@ private slots:
 	void update_blink_color();
 	
 signals :
+	// emit from the gui so that we can stop following the playhead only
+	// when the user manually edits, not on undo/redo
 	void curveModified();
 };
 

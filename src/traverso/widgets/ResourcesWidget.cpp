@@ -262,9 +262,11 @@ void ResourcesWidget::view_combo_box_index_changed(int index)
 {
 	if (index == 0) {
 		sourcesTreeWidget->show();
+		songComboBox->show();
 		m_filewidget->hide();
 	} else if (index == 1) {
 		sourcesTreeWidget->hide();
+		songComboBox->hide();
 		m_filewidget->show();
 		m_filewidget->set_current_path(m_project->get_import_dir());
 	}

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeView.h,v 1.4 2007/06/26 23:43:21 benjie Exp $
+$Id: FadeView.h,v 1.5 2007/06/27 19:32:43 benjie Exp $
 */
 
 #ifndef FADE_VIEW_H
@@ -66,6 +66,8 @@ public slots:
 // 	Command* edit_properties();
 
 signals :
+	// emit from the gui so that we can stop following the playhead only
+	// when the user manually edits, not on undo/redo
 	void fadeModified();
 };
 
