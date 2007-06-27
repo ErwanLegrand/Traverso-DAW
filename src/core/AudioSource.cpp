@@ -75,6 +75,7 @@ QDomNode AudioSource::get_state( QDomDocument doc )
 	node.setAttribute("origbitdepth", m_origBitDepth);
 	node.setAttribute("wasrecording", m_wasRecording);
 	node.setAttribute("length", m_length);
+	node.setAttribute("rate", m_rate);
 
 	return node;
 }
@@ -91,6 +92,7 @@ int AudioSource::set_state( const QDomNode & node )
 	set_dir( e.attribute("dir", "" ));
 	m_id = e.attribute("id", "").toLongLong();
 	m_length = e.attribute("length", "0").toUInt();
+	m_rate = e.attribute("rate", "0").toUInt();
 	m_origBitDepth = e.attribute("origbitdepth", "0").toInt();
 	m_wasRecording = e.attribute("wasrecording", "0").toInt();
 	
