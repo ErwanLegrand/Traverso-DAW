@@ -135,6 +135,10 @@ Project* ProjectManager::create_new_project(int numSongs, int numTracks, const Q
 
 	Project* newProject = new Project(projectName);
 
+	// Creating a new dir also emits the dir changed signal
+	// so we 'fake' a honored dir renaming here
+	m_renamingDir = true;
+	
 	if (newProject->create(numSongs, numTracks) < 0) {
 		delete newProject;
 		info().critical(tr("Unable to create new Project %1").arg(projectName));
@@ -153,6 +157,10 @@ Project* ProjectManager::create_new_project(const QString& templatefile, const Q
 
 	
 	Project* newProject = new Project(projectName);
+	
+	// Creating a new dir also emits the dir changed signal
+	// so we 'fake' a honored dir renaming here
+	m_renamingDir = true;
 	
 	if (newProject->create(0, 0) < 0) {
 		delete newProject;
