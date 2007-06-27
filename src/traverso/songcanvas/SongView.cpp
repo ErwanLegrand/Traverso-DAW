@@ -588,7 +588,7 @@ void SongView::load_theme_data()
 	m_trackTopIndent = themer()->get_property("Song:track:topindent", 6).toInt();
 	
 	m_clipsViewPort->setBackgroundBrush(themer()->get_color("Song:background"));
-	m_tpvp->setBackgroundBrush(themer()->get_color("Song:background"));
+	m_tpvp->setBackgroundBrush(themer()->get_color("TrackPanel:background"));
 
 	layout_tracks();
 }

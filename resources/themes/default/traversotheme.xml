@@ -20,7 +20,7 @@
 		<property name="Track:bottomborderwidth" value="1" />
 		<property name="Track:cliptopmargin" value="3" />
 		<property name="Track:clipbottommargin" value="0" />
-		<property name="Track:paintbackground" value="1" />
+		<property name="Track:paintbackground" value="0" />
 		
 		<property name="VUMeter:layout:vuspacing" value="3" />
 		<property name="VUMeter:layout:vulayoutspacing" value="5" />
@@ -66,8 +66,8 @@
 		<color name="AudioClip:background:muted:mousehover"  red="245" green="245" blue="245"  alpha="170" />
 		<color name="AudioClip:background:selected"  red="101" green="111" blue="171"  alpha="170" />
 		<color name="AudioClip:background:selected:mousehover"  red="111" green="121" blue="182"  alpha="170" />
-		<color name="AudioClip:background"  red="249" green="249" blue="255"  alpha="170" />
-		<color name="AudioClip:background:mousehover"  red="255" green="255" blue="255"  alpha="170" />
+		<color name="AudioClip:background"  red="254" green="251" blue="254"  alpha="170" />
+		<color name="AudioClip:background:mousehover"  red="253" green="255" blue="253"  alpha="230" />
 		<color name="AudioClip:channelseperator"  red="178" green="191" blue="182"  alpha="255" />
 		<color name="AudioClip:channelseperator:selected"  red="24" green="137" blue="210"  alpha="255" />
 		<color name="AudioClip:contour"  red="50" green="50" blue="50"  alpha="150" />
@@ -117,8 +117,8 @@
 		
 		<color name="ResourcesBin:alternaterowcolor" red="243" green="248" blue="255" alpha="255" />
 		
-		<color name="Song:background" red="248" green="248" blue="248" alpha="255" />
-		<color name="SongPanel:background" red="248" green="248" blue="248" alpha="255" />
+		<color name="Song:background" red="244" green="244" blue="243" alpha="255" />
+		<color name="SongPanel:background" red="240" green="240" blue="248" alpha="255" />
 		
 		<color name="Timeline:background" red="180" green="189" blue="189" alpha="255" />
 		<color name="Timeline:text" red="0" green="0" blue="0" alpha="255" />
@@ -127,6 +127,7 @@
 		<color name="Track:clipbottomoffset" red="120" green="120" blue="160" alpha="255" />
 		<color name="Track:background" red="250" green="250" blue="251" alpha="100" />
 		
+		<color name="TrackPanel:background" red="250" green="250" blue="250" alpha="255" />
 		<color name="TrackPanel:text" red="0" green="0" blue="25" alpha="255" />
 		<color name="TrackPanel:slider:background" red="200" green="200" blue="240" alpha="255" />
 		<color name="TrackPanel:head:active" red="240" green="140" blue="150" alpha="255" />
