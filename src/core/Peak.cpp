@@ -633,10 +633,13 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 {
 	Q_ASSERT(m_file);
 	
-	audio_sample_t* readbuffer =  new audio_sample_t[NORMALIZE_CHUNK_SIZE*2];
+	int startpos = startframe / NORMALIZE_CHUNK_SIZE;
+	uint count = (endframe / NORMALIZE_CHUNK_SIZE) - startpos;
+	
+	uint buffersize = count < NORMALIZE_CHUNK_SIZE*2 ? NORMALIZE_CHUNK_SIZE*2 : count;
+	audio_sample_t* readbuffer =  new audio_sample_t[buffersize];
 	
 	audio_sample_t maxamp = 0;
-	int startpos = startframe / NORMALIZE_CHUNK_SIZE;
 	
 	// Read in the part not fully occupied by a cached normalize value
 	// and run compute_peak on it.
@@ -649,8 +652,6 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 		
 		maxamp = Mixer::compute_peak(buf, read, maxamp);
 	}
-	
-	int count = (endframe / NORMALIZE_CHUNK_SIZE) - startpos;
 	
 	
 	// Read in the part not fully occupied by a cached normalize value
