@@ -132,10 +132,10 @@ void MarkerView::set_active(bool b)
 
 	if (b) {
 		m_fillColor = themer()->get_color("Marker:blink");
-		m_line->set_color(QColor(0, 0, 0, 200));
+		m_line->set_color(QColor(0, 0, 0, 140));
 	} else {
 		m_fillColor = themer()->get_color("Marker:default");
-		m_line->set_color(QColor(0, 0, 0, 80));
+		m_line->set_color(QColor(0, 0, 0, 45));
 	}
 
 	m_line->update();

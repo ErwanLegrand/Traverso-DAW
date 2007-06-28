@@ -36,6 +36,7 @@ class TrackView;
 class FadeView;
 class Peak;
 class PositionIndicator;
+class AudioClipEditDialog;
 
 class AudioClipView : public ViewItem
 {
@@ -45,6 +46,7 @@ class AudioClipView : public ViewItem
 	Q_CLASSINFO("select_fade_out_shape", tr("Out: Select shape"));
 	Q_CLASSINFO("reset_fade", tr("In/Out: Reset"));
 	Q_CLASSINFO("set_audio_file", tr("Reset Audio File"));
+	Q_CLASSINFO("edit_properties", tr("Edit Properties"));
 
 public:
 	AudioClipView(SongView* view, TrackView* parent, AudioClip* clip);
@@ -77,6 +79,7 @@ private:
 	CurveView* 	curveView;
 	QList<Peak*> 	m_peakloadinglist;
 	PositionIndicator* m_posIndicator;
+	AudioClipEditDialog* m_editdialog;
 
 	QTimer m_recordingTimer;
 
@@ -98,6 +101,7 @@ private:
 	int m_fillwave;
 	QColor m_backgroundColor;
 	QColor m_backgroundColorMouseHover;
+	QBrush m_waveBrush;
 	
 	QString m_clipinfoString;
 
@@ -112,7 +116,6 @@ private:
 public slots:
 	void add_new_fadeview(FadeCurve* fade);
 	void remove_fadeview(FadeCurve* fade);
-	void gain_changed();
 	void repaint();
 	void update_start_pos();
 	void position_changed();
@@ -122,6 +125,7 @@ public slots:
 	Command* select_fade_out_shape();
 	Command* reset_fade();
 	Command* set_audio_file();
+	Command* edit_properties();
 	
 private slots:
 	void update_progress_info(int progress);
@@ -129,6 +133,7 @@ private slots:
 	void start_recording();
 	void finish_recording();
 	void update_recording();
+	void clip_state_changed();
 };
 
 

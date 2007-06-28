@@ -40,7 +40,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "PluginChain.h"
 
 #include <QFileDialog>
-
+#include "AudioClipEditDialog.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -68,6 +68,7 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	m_waitingForPeaks = false;
 	m_progress = m_peakloadingcount = 0;
 	m_posIndicator = 0;
+	m_editdialog = 0;
 	m_song = m_clip->get_song();
 	
 	if (FadeCurve* curve = m_clip->get_fade_in()) {
@@ -86,9 +87,8 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	connect(curveView, SIGNAL(curveModified()), m_sv, SLOT(stop_follow_play_head()));
 	
 	connect(m_clip, SIGNAL(muteChanged()), this, SLOT(repaint()));
-	connect(m_clip, SIGNAL(stateChanged()), this, SLOT(repaint()));
+	connect(m_clip, SIGNAL(stateChanged()), this, SLOT(clip_state_changed()));
 	connect(m_clip, SIGNAL(lockChanged()), this, SLOT(repaint()));
-	connect(m_clip, SIGNAL(gainChanged()), this, SLOT (gain_changed()));
 	connect(m_clip, SIGNAL(fadeAdded(FadeCurve*)), this, SLOT(add_new_fadeview( FadeCurve*)));
 	connect(m_clip, SIGNAL(fadeRemoved(FadeCurve*)), this, SLOT(remove_fadeview( FadeCurve*)));
 	connect(m_clip, SIGNAL(positionChanged(Snappable*)), this, SLOT(position_changed()));
@@ -107,6 +107,9 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 
 AudioClipView::~ AudioClipView()
 {
+	if (m_editdialog) {
+		delete m_editdialog;
+	}
 	PENTERDES;
 }
 
@@ -142,9 +145,9 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 		return;
 	}
 	
-	if (m_drawbackground) {
-		bool mousehover = (option->state & QStyle::State_MouseOver);
+	bool mousehover = (option->state & QStyle::State_MouseOver) || m_dragging;
 	
+	if (m_drawbackground) {
 		if (m_clip->recording_state() == AudioClip::RECORDING) {
 			m_backgroundColor = m_backgroundColorMouseHover = themer()->get_color("AudioClip:background:recording");
 		} else {
@@ -165,6 +168,19 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 		} else {
 			painter->fillRect(xstart, 0, pixelcount, m_height, m_backgroundColor);
 		}
+	}
+	
+	if (m_song->get_mode() == Song::EDIT) {
+		if (mousehover)
+			m_waveBrush = themer()->get_color("AudioClip:wavemacroview:brush:hover");
+		else
+			m_waveBrush = themer()->get_color("AudioClip:wavemacroview:brush");
+			
+	} else {
+		if (mousehover)
+			m_waveBrush = themer()->get_color("AudioClip:wavemacroview:brush:curvemode:hover");
+		else
+			m_waveBrush = themer()->get_color("AudioClip:wavemacroview:brush:curvemode");
 	}
 	
 
@@ -443,12 +459,12 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			if (m_song->get_mode() == Song::EDIT) {
 				p->setPen(themer()->get_color("AudioClip:wavemacroview:outline"));
 				if (m_fillwave) {
-					p->setBrush(themer()->get_color("AudioClip:wavemacroview:brush"));
+					p->setBrush(m_waveBrush);
 				}
 			} else  {
 				p->setPen(themer()->get_color("AudioClip:wavemacroview:outline:curvemode"));
 				if (m_fillwave) {
-					p->setBrush(themer()->get_color("AudioClip:wavemacroview:brush:curvemode"));
+					p->setBrush(m_waveBrush);
 				}
 			}
 			if (m_clip->is_muted()) {
@@ -556,12 +572,6 @@ void AudioClipView::peaks_creation_finished(Peak* peak)
 AudioClip * AudioClipView::get_clip( )
 {
 	return m_clip;
-}
-
-void AudioClipView::gain_changed( )
-{
-	create_clipinfo_string();
-	update();
 }
 
 void AudioClipView::add_new_fadeview( FadeCurve * fade )
@@ -800,5 +810,19 @@ void AudioClipView::set_trackview(TrackView * view)
 	setParentItem(m_tv);
 }
 
-//eof
+Command * AudioClipView::edit_properties()
+{
+	if (!m_editdialog) {
+		m_editdialog = new AudioClipEditDialog(m_clip, Interface::instance());
+	}
+	
+	m_editdialog->exec();
+	
+	return 0;
+}
 
+void AudioClipView::clip_state_changed()
+{
+	create_clipinfo_string();
+	update();
+}

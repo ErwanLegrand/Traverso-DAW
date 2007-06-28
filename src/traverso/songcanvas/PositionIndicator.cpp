@@ -52,7 +52,7 @@ void PositionIndicator::calculate_bounding_rect()
 	
 	QPainter painter(&m_background);
 	painter.setRenderHint(QPainter::Antialiasing);
-	painter.setBrush(QColor(255, 255, 255, 225));
+	painter.setBrush(QColor(255, 255, 255));
 	painter.setPen(Qt::NoPen);
 	int rounding = 10;
 	painter.drawRoundRect(0, 0, (int)m_boundingRect.width(), (int)m_boundingRect.height(), rounding, rounding);
