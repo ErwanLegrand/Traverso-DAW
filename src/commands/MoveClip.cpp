@@ -105,10 +105,10 @@ MoveClip::~MoveClip()
 
 void MoveClip::audioclip_added(AudioClip * clip)
 {
-	QList<QObject* > items = cpointer().get_context_items();
+	QList<AudioClipView* >* clipviews = d->view->get_trackview()->get_clipviews();
 	
-	foreach(QObject* obj, items) {
-		AudioClipView* acv = qobject_cast<AudioClipView*>(obj);
+	for (int i = 0; i < clipviews->size(); ++i) {
+		AudioClipView* acv = clipviews->at(i);
 		
 		if ( ! acv) {
 			continue;

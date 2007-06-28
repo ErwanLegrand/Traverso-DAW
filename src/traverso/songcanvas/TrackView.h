@@ -47,6 +47,7 @@ public:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	
 	Track* get_track() const;
+	QList<AudioClipView* >* get_clipviews() {return &m_clipViews;}
 	TrackPanelView* get_trackpanel_view() const;
 	
 	int get_childview_y_offset() const;
