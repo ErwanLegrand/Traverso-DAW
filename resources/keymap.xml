@@ -157,7 +157,6 @@
 				<Object objectname="TrackView" slotsignature="edit_properties" modes="All" sortorder="11" />
 				<Object objectname="PluginView" slotsignature="edit_properties" modes="All" />
 				<Object objectname="SpectralMeterView" slotsignature="edit_properties" modes="All" />
-				<Object objectname="TrackView" slotsignature="edit_properties" modes="All" sortorder="11" />
 				<Object objectname="AudioClipView" slotsignature="edit_properties" modes="All" sortorder="11" />
 				<Object objectname="TimeLineView" slotsignature="Interface::show_marker_dialog" modes="All" />
 			</Objects>
