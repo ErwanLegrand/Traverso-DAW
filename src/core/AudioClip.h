@@ -176,7 +176,6 @@ signals:
 	void lockChanged();
 	void positionChanged(Snappable*);
 	void trackEndFrameChanged();
-	void gainChanged();
 	void fadeAdded(FadeCurve*);
 	void fadeRemoved(FadeCurve*);
 	void recordingFinished();

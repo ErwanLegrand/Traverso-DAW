@@ -390,6 +390,7 @@ ClipTreeItem::ClipTreeItem(SourceTreeItem * parent, AudioClip * clip)
 {
 	setData(0, Qt::UserRole, clip->get_id());
 	connect(clip, SIGNAL(recordingFinished()), this, SLOT(clip_state_changed()));
+	connect(clip, SIGNAL(stateChanged()), this, SLOT(clip_state_changed()));
 }
 
 void ClipTreeItem::clip_state_changed()

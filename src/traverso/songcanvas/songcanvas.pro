@@ -8,6 +8,7 @@ PRECOMPILED_HEADER = precompile.h
 
 INCLUDEPATH += 	../../core \
 		../../traverso \
+		../../traverso/dialogs \
 		../../engine \
 		../../commands \
 		../../plugins \

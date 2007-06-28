@@ -367,7 +367,7 @@ void AudioClip::set_gain(float gain)
 		gain = 32.0;
 	
 	m_fader->set_gain(gain);
-	emit gainChanged();
+	emit stateChanged();
 }
 
 void AudioClip::set_selected(bool selected)
@@ -763,6 +763,7 @@ void AudioClip::set_track( Track * track )
 void AudioClip::set_name( const QString& name )
 {
 	m_name = name;
+	emit stateChanged();
 }
 
 bool AudioClip::is_selected( ) const

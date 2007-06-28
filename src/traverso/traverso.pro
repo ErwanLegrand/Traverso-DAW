@@ -51,7 +51,8 @@ HEADERS += \
 	dialogs/project/OpenProjectDialog.h \
 	dialogs/project/NewTrackDialog.h \
 	songcanvas/PositionIndicator.h \
-	widgets/ResourcesWidget.h
+	widgets/ResourcesWidget.h \
+	dialogs/AudioClipEditDialog.h
 SOURCES += \
 	Traverso.cpp \
 	BusMonitor.cpp \
@@ -79,10 +80,10 @@ SOURCES += \
 	dialogs/project/OpenProjectDialog.cpp \
 	dialogs/project/NewTrackDialog.cpp \
 	songcanvas/PositionIndicator.cpp \
-	widgets/ResourcesWidget.cpp
+	widgets/ResourcesWidget.cpp \
+	dialogs/AudioClipEditDialog.cpp
 FORMS += ui/ExportWidget.ui \
 	ui/AudioSourcesManagerWidget.ui \
-#	ui/PluginSelectorDialog.ui \
 	ui/SpectralMeterConfigWidget.ui \
 	ui/QuickDriverConfigWidget.ui \
 	ui/DriverConfigPage.ui \
@@ -103,7 +104,9 @@ FORMS += ui/ExportWidget.ui \
 	ui/NewTrackDialog.ui \
 	ui/ResourcesWidget.ui \
 	ui/QuickStart.ui \
-	ui/InsertSilenceDialog.ui
+	ui/InsertSilenceDialog.ui \
+	ui/AudioClipEditWidget.ui
+
 INCLUDEPATH += 	../core \
 		../commands \
 		../engine \
@@ -125,7 +128,7 @@ contains(DEFINES, LV2_SUPPORT){
 }
 
 contains(DEFINES, QT_OPENGL_SUPPORT){
-QT += opengl
+    QT += opengl
 }
 
 QMAKE_LIBDIR = ../../lib 
