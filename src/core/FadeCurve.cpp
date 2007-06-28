@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.21 2007/06/28 06:42:03 benjie Exp $
+$Id: FadeCurve.cpp,v 1.22 2007/06/28 13:10:01 r_sijrier Exp $
 */
  
 #include "FadeCurve.h"
@@ -350,7 +350,7 @@ Command* FadeCurve::set_mode( )
 	}
 }
 
-void FadeCurve::private_set_mode(int m)
+void FadeCurve::set_mode(int m)
 {
 	m_mode = m;
 

@@ -344,13 +344,13 @@ int FadeMode::prepare_actions()
 
 int FadeMode::do_action()
 {
-	m_fade->private_set_mode(m_newMode);
+	m_fade->set_mode(m_newMode);
 	return 1;
 }
 
 int FadeMode::undo_action()
 {
-	m_fade->private_set_mode(m_oldMode);
+	m_fade->set_mode(m_oldMode);
 	return 1;
 }
 

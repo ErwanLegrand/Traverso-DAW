@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.h,v 1.11 2007/06/28 06:42:03 benjie Exp $
+$Id: FadeCurve.h,v 1.12 2007/06/28 13:10:01 r_sijrier Exp $
 */
 
 #ifndef FADE_CURVE_H
@@ -73,7 +73,7 @@ public:
 	bool is_bypassed() const {return m_bypass;}
 	void set_range(double pos);
 
-	void private_set_mode(int m);
+	void set_mode(int m);
 
 private:
 	AudioClip*	m_clip;
