@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Fade.h,v 1.10 2007/06/26 20:08:51 r_sijrier Exp $
+$Id: Fade.h,v 1.11 2007/06/28 06:42:03 benjie Exp $
 */
 
 #ifndef FADE_H
@@ -64,6 +64,7 @@ class FadeStrength : public Command
 {
 public :
 	FadeStrength(FadeView* fadeview);
+	FadeStrength(FadeCurve* fade, double val);
         ~FadeStrength(){};
 
         int begin_hold();
@@ -92,6 +93,7 @@ class FadeBend : public Command
 {
 public :
 	FadeBend(FadeView* fadeview);
+	FadeBend(FadeCurve* fade, double val);
         ~FadeBend(){};
 
         int begin_hold();
@@ -113,6 +115,23 @@ private :
 	FadeCurve*	m_fade;
 	FadeView*	m_fv;
 	QPoint		mousePos;
+};
+
+
+class FadeMode : public Command
+{
+public :
+	FadeMode(FadeCurve* fade, int oldMode, int newMode);
+        ~FadeMode(){};
+
+        int prepare_actions();
+        int do_action();
+        int undo_action();
+
+private :
+	int		m_oldMode;
+	int		m_newMode;
+	FadeCurve*	m_fade;
 };
 
 

@@ -148,11 +148,21 @@ FadeBend::FadeBend(FadeView * fadeview)
 	setText( (m_fade->get_fade_type() == FadeCurve::FadeIn) ? tr("Fade In: bend") : tr("Fade Out: bend"));
 }
 
+FadeBend::FadeBend(FadeCurve *fade, double val)
+	: Command(fade)
+	, m_fade(fade)
+	, m_fv(0)
+{
+	setText( (m_fade->get_fade_type() == FadeCurve::FadeIn) ? tr("Fade In: bend") : tr("Fade Out: bend"));
+	origBend = m_fade->get_bend_factor();
+	newBend = val;
+}
+
 int FadeBend::begin_hold()
 {
 	PENTER;
 	origY = cpointer().on_first_input_event_y();
-	oldValue =  m_fade->get_bend_factor();
+	oldValue = m_fade->get_bend_factor();
 	newBend = origBend = oldValue;
 	m_fv->set_holding(true);
 	return 1;
@@ -230,11 +240,21 @@ FadeStrength::FadeStrength(FadeView* fadeview)
 	setText( (m_fade->get_fade_type() == FadeCurve::FadeIn) ? tr("Fade In: strength") : tr("Fade Out: strength"));
 }
 
+FadeStrength::FadeStrength(FadeCurve *fade, double val)
+	: Command(fade)
+	, m_fade(fade)
+	, m_fv(0)
+{
+	setText( (m_fade->get_fade_type() == FadeCurve::FadeIn) ? tr("Fade In: strength") : tr("Fade Out: strength"));
+	origStrength = m_fade->get_strenght_factor();
+	newStrength = val;
+}
+
 int FadeStrength::begin_hold()
 {
 	PENTER;
 	origY = cpointer().on_first_input_event_y();
-	oldValue =  m_fade->get_strenght_factor();
+	oldValue = m_fade->get_strenght_factor();
 	newStrength = origStrength = oldValue;
 	m_fv->set_holding(true);
 	return 1;
@@ -303,6 +323,36 @@ int FadeStrength::jog()
 	return 1;
 }
 
+
+/********** FadeMode **********/
+/******************************/
+
+FadeMode::FadeMode(FadeCurve* fade, int oldMode, int newMode)
+	: Command(fade)
+	, m_fade(fade)
+{
+	setText( (m_fade->get_fade_type() == FadeCurve::FadeIn) ? tr("Fade In: mode") : tr("Fade Out: mode"));
+
+	m_newMode = newMode;
+	m_oldMode = oldMode;
+}
+
+int FadeMode::prepare_actions()
+{
+	return 1;
+}
+
+int FadeMode::do_action()
+{
+	m_fade->private_set_mode(m_newMode);
+	return 1;
+}
+
+int FadeMode::undo_action()
+{
+	m_fade->private_set_mode(m_oldMode);
+	return 1;
+}
 
 
 // eof

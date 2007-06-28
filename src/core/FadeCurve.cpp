@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.20 2007/06/26 20:08:51 r_sijrier Exp $
+$Id: FadeCurve.cpp,v 1.21 2007/06/28 06:42:03 benjie Exp $
 */
  
 #include "FadeCurve.h"
@@ -25,8 +25,10 @@ $Id: FadeCurve.cpp,v 1.20 2007/06/26 20:08:51 r_sijrier Exp $
 #include <QFile>
 #include <cmath>
 #include "Song.h"
+#include "Fade.h"
 #include "AudioClip.h"
 #include "Command.h"
+#include "CommandGroup.h"
 #include <AddRemove.h>
 
 // Always put me below _all_ includes, this is needed
@@ -227,8 +229,12 @@ void FadeCurve::set_shape(QString shapeName)
 		return;
 	}
 	
-	set_bend_factor(fadeElement.attribute( "bendfactor", "0.5" ).toDouble());
-	set_strength_factor(fadeElement.attribute( "strengthfactor", "0.5" ).toDouble());
+	CommandGroup* group = new CommandGroup(this, tr("Fade Shape"));
+	
+	group->add_command(new FadeBend(this, fadeElement.attribute( "bendfactor", "0.5" ).toDouble()));
+	group->add_command(new FadeStrength(this, fadeElement.attribute( "strengthfactor", "0.5" ).toDouble()));
+	
+	Command::process_command(group);
 	
 	QStringList controlPointsList = fadeElement.attribute( "controlpoints", "" ).split(";");
 	
@@ -338,13 +344,17 @@ QList< QPointF > FadeCurve::get_control_points( )
 Command* FadeCurve::set_mode( )
 {
 	if (m_mode < 2) {
-		m_mode++;
+		return new FadeMode(this, m_mode, m_mode+1);
 	} else {
-		m_mode = 0;
+		return new FadeMode(this, m_mode, 0);
 	}
+}
+
+void FadeCurve::private_set_mode(int m)
+{
+	m_mode = m;
 
 	emit modeChanged();
-	return 0;
 }
 
 Command* FadeCurve::reset( )
