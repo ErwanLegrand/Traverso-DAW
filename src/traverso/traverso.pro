@@ -175,3 +175,11 @@ win32{
     QMAKE_LIBDIR = ../../lib ../../3thparty/lib
     RC_FILE = traverso.rc
 }
+
+contains(DEFINES, STATIC_BUILD){
+	contains(DEFINES, LV2_SUPPORT){
+		POST_TARGETDEPS += ../3rdparty/slv2
+	}
+	
+	POST_TARGETDEPS += ../engine ../commands ../core ../plugins songcanvas
+}
