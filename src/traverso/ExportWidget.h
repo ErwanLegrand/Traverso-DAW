@@ -73,6 +73,7 @@ private:
 	};
 	
 	int m_writingState;
+	int m_lastSheetExported;
 	bool m_wasClosed;
 	QString get_device(int index);
 

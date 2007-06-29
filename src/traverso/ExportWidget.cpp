@@ -124,6 +124,7 @@ ExportWidget::ExportWidget( QWidget * parent )
 	env << "LC_ALL=C";
 	m_burnprocess->setEnvironment(env);
 	m_writingState = NO_STATE;
+	m_lastSheetExported = -1;
 	
 	refreshButton->setIcon(QIcon(find_pixmap(":/refresh-16")));
 	refreshButton->setMaximumHeight(26);
@@ -505,6 +506,11 @@ void ExportWidget::cd_render()
 		return;
 	}
 	
+	// FIXME: We should instead check export wav file timestamps/revision numbers as a dirty test
+	if (! cdAllSongsButton->isChecked() && m_lastSheetExported != m_project->get_current_song_id()) {
+		m_exportSpec->renderfinished = false;
+	}
+	
 	if (m_wasClosed && m_exportSpec->renderfinished && (m_exportSpec->allSongs == cdAllSongsButton->isChecked()) ) {
 		
 		if (QMessageBox::question(this, tr("Rerender CD content"), 
@@ -556,6 +562,7 @@ void ExportWidget::cd_render()
 		
 		disable_ui_interaction();
 		m_project->export_project(m_exportSpec);
+		m_lastSheetExported = m_project->get_current_song_id();
 	} else {
 		if (cdDiskExportOnlyCheckBox->isChecked()) {
 			return;
