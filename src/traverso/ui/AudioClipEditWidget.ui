@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>485</width>
+    <width>523</width>
     <height>286</height>
    </rect>
   </property>
@@ -111,33 +111,27 @@
                <double>-120.000000000000000</double>
               </property>
               <property name="singleStep" >
-               <double>0.100000000000000</double>
+               <double>0.200000000000000</double>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="clipLengthSpinBox" >
-              <property name="decimals" >
-               <number>3</number>
+             <widget class="QTimeEdit" name="clipLengthEdit" >
+              <property name="currentSection" >
+               <enum>QDateTimeEdit::SecondSection</enum>
               </property>
-              <property name="maximum" >
-               <double>1200.000000000000000</double>
+              <property name="displayFormat" >
+               <string>h:mm:ss</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="clipStartSpinBox" >
-              <property name="suffix" >
-               <string/>
+             <widget class="QTimeEdit" name="clipStartEdit" >
+              <property name="currentSection" >
+               <enum>QDateTimeEdit::SecondSection</enum>
               </property>
-              <property name="decimals" >
-               <number>3</number>
-              </property>
-              <property name="maximum" >
-               <double>1200.000000000000000</double>
-              </property>
-              <property name="singleStep" >
-               <double>1.000000000000000</double>
+              <property name="displayFormat" >
+               <string>h:mm:ss</string>
               </property>
              </widget>
             </item>
@@ -208,7 +202,21 @@
          </widget>
         </item>
         <item>
-         <widget class="QDoubleSpinBox" name="doubleSpinBox_4" />
+         <widget class="QTimeEdit" name="fadeInEdit" >
+          <property name="maximumTime" >
+           <time>
+            <hour>22</hour>
+            <minute>0</minute>
+            <second>0</second>
+           </time>
+          </property>
+          <property name="currentSection" >
+           <enum>QDateTimeEdit::SecondSection</enum>
+          </property>
+          <property name="displayFormat" >
+           <string>h:mm:ss</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -233,7 +241,14 @@
          </widget>
         </item>
         <item>
-         <widget class="QDoubleSpinBox" name="doubleSpinBox_5" />
+         <widget class="QTimeEdit" name="fadeOutEdit" >
+          <property name="currentSection" >
+           <enum>QDateTimeEdit::SecondSection</enum>
+          </property>
+          <property name="displayFormat" >
+           <string>h:mm:ss</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
