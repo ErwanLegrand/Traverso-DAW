@@ -271,7 +271,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/AudioClipEditWidget.ui" line="19"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/traverso/ui/AudioClipEditWidget.ui" line="31"/>
@@ -289,7 +289,7 @@ p, li { white-space: pre-wrap; }
         <translation>Gain</translation>
     </message>
     <message>
-        <location filename="src/traverso/ui/AudioClipEditWidget.ui" line="231"/>
+        <location filename="src/traverso/ui/AudioClipEditWidget.ui" line="239"/>
         <source>Length</source>
         <translation>Lengte</translation>
     </message>
@@ -299,19 +299,24 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="src/traverso/ui/AudioClipEditWidget.ui" line="157"/>
+        <location filename="src/traverso/ui/AudioClipEditWidget.ui" line="151"/>
         <source>External Processing</source>
         <translation>Externe bewerking</translation>
     </message>
     <message>
-        <location filename="src/traverso/ui/AudioClipEditWidget.ui" line="194"/>
+        <location filename="src/traverso/ui/AudioClipEditWidget.ui" line="188"/>
         <source>Fade In</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/traverso/ui/AudioClipEditWidget.ui" line="219"/>
+        <location filename="src/traverso/ui/AudioClipEditWidget.ui" line="227"/>
         <source>Fade Out</source>
         <translation></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/ui/AudioClipEditWidget.ui" line="249"/>
+        <source>h:mm:ss</source>
+        <translation>u:mm:ss</translation>
     </message>
 </context>
 <context>
@@ -1016,7 +1021,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/DriverConfigPage.ui" line="176"/>
         <source>Jack</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/traverso/ui/DriverConfigPage.ui" line="188"/>
@@ -3022,32 +3027,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/core/Project.cpp" line="336"/>
         <source>Project with title &apos;%1&apos; allready exists, not setting new title!</source>
-        <translation type="unfinished"></translation>
+        <translation>Een project met titel &apos;%1&apos; bestaat reeds, titel niet aangepast!</translation>
     </message>
     <message>
         <location filename="src/core/Project.cpp" line="346"/>
         <source>Project directory %1 no longer exists, did you rename it? Shame on you! Please undo that, and come back later to rename your Project...</source>
-        <translation type="unfinished"></translation>
+        <translation>Projectmap %1 bestaat niet meer, hebt u deze verplaatst? Om het project een nieuwe naam te geven dient U dit eerst ongedaan te maken, daarna kunt U deze wijziging doorvoeren...</translation>
     </message>
     <message>
         <location filename="src/core/Project.cpp" line="360"/>
         <source>Project title changed, Project will to be reloaded to ensure proper operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Project titel aangepast. Het project wordt herladen...</translation>
     </message>
     <message>
         <location filename="src/core/Project.cpp" line="430"/>
         <source>Sheet %1 added</source>
-        <translation type="unfinished"></translation>
+        <translation>Sheet %1 toegevoegd</translation>
     </message>
     <message>
         <location filename="src/core/Project.cpp" line="456"/>
         <source>Sheet &apos;%1&apos; doesn&apos;t exist!</source>
-        <translation type="unfinished"></translation>
+        <translation>Sheet &apos;%1&apos; bestaat niet!</translation>
     </message>
     <message>
         <location filename="src/core/Project.cpp" line="503"/>
         <source>Remove Sheet %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwijder Sheet %1</translation>
     </message>
 </context>
 <context>
