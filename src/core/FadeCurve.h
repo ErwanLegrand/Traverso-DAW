@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.h,v 1.12 2007/06/28 13:10:01 r_sijrier Exp $
+$Id: FadeCurve.h,v 1.13 2007/06/30 16:19:10 n_doebelin Exp $
 */
 
 #ifndef FADE_CURVE_H
@@ -59,7 +59,7 @@ public:
 	void process(audio_sample_t* mixdown, nframes_t nframes);
 	
 	float get_bend_factor() {return m_bendFactor;}
-	float get_strenght_factor() {return m_strenghtFactor;}
+	float get_strength_factor() {return m_strenghtFactor;}
 	int get_mode() const {return m_mode;}
 	int get_raster() const {return m_raster;}
 	

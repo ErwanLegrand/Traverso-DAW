@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.22 2007/06/28 13:10:01 r_sijrier Exp $
+$Id: FadeCurve.cpp,v 1.23 2007/06/30 16:19:10 n_doebelin Exp $
 */
  
 #include "FadeCurve.h"
@@ -252,22 +252,28 @@ void FadeCurve::solve_node_positions( )
 {
 // 	printf("FadeCurve::solve_node_positions()\n");
 	// calculate control points values
-	if (m_mode == 0) {
-		m_controlPoints[1] = QPointF(m_strenghtFactor * (1.0 - m_bendFactor), m_strenghtFactor * m_bendFactor);
-		m_controlPoints[2] = QPointF(1.0 - (m_strenghtFactor * m_bendFactor), 1.0 - (m_strenghtFactor * (1.0 - m_bendFactor)));
+	if (m_mode == 0) { // bended
+		if (m_type == FadeIn) {
+			m_controlPoints[1] = QPointF(m_strenghtFactor * (1.0 - m_bendFactor), m_strenghtFactor * m_bendFactor);
+			m_controlPoints[2] = QPointF(1.0 - (m_strenghtFactor * m_bendFactor), 1.0 - (m_strenghtFactor * (1.0 - m_bendFactor)));
+		}
+		if (m_type == FadeOut) {
+			m_controlPoints[1] = QPointF(m_strenghtFactor * m_bendFactor, m_strenghtFactor * (1.0 - m_bendFactor));
+			m_controlPoints[2] = QPointF(1.0 - (m_strenghtFactor * (1.0 - m_bendFactor)), 1.0 - (m_strenghtFactor * m_bendFactor));
+		}
 	}
-	if (m_mode == 1) {
+	if (m_mode == 1) { // s-shape
 		m_controlPoints[1] = QPointF(m_strenghtFactor * (1.0 - m_bendFactor), m_strenghtFactor * m_bendFactor);
 		m_controlPoints[2] = QPointF(1.0 - (m_strenghtFactor * (1.0 - m_bendFactor)), 1.0 - (m_strenghtFactor * m_bendFactor));
 	}
-	if (m_mode == 2) {
+	if (m_mode == 2) { // long
 		if (m_type == FadeIn) {
 			m_controlPoints[1] = QPointF(m_strenghtFactor * (1.0 - m_bendFactor), m_strenghtFactor * m_bendFactor);
 			m_controlPoints[2] = QPointF(1.0, 1.0);
 		}
 		if (m_type == FadeOut) {
 			m_controlPoints[1] = QPointF(0.0, 0.0);
-			m_controlPoints[2] = QPointF(1.0 - (m_strenghtFactor * m_bendFactor), 1.0 - (m_strenghtFactor * (1.0 - m_bendFactor)));
+			m_controlPoints[2] = QPointF(1.0 - (m_strenghtFactor * (1.0 - m_bendFactor)), 1.0 - (m_strenghtFactor * m_bendFactor));
 		}
 	}
 

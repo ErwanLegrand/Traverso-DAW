@@ -54,6 +54,14 @@ public:
 		fadeInEdit->setDisplayFormat(TIME_FORMAT);
 		fadeOutEdit->setDisplayFormat(TIME_FORMAT);
 
+		fadeInModeBox->insertItem(1, "Bended");
+		fadeInModeBox->insertItem(2, "S-Shape");
+		fadeInModeBox->insertItem(3, "Long");
+
+		fadeOutModeBox->insertItem(1, "Bended");
+		fadeOutModeBox->insertItem(2, "S-Shape");
+		fadeOutModeBox->insertItem(3, "Long");
+
 		// Used to set gain and name
 		clip_state_changed();
 		
@@ -73,7 +81,18 @@ public:
 		connect(clipLengthEdit, SIGNAL(timeChanged(const QTime&)), this, SLOT(clip_length_edit_changed(const QTime&)));
 		
 		connect(fadeInEdit, SIGNAL(timeChanged(const QTime&)), this, SLOT(fadein_edit_changed(const QTime&)));
+		connect(fadeInModeBox, SIGNAL(currentIndexChanged(int)), this, SLOT(fadein_mode_edit_changed(int)));
+		connect(fadeInBendingBox, SIGNAL(valueChanged(double)), this, SLOT(fadein_bending_edit_changed(double)));
+		connect(fadeInStrengthBox, SIGNAL(valueChanged(double)), this, SLOT(fadein_strength_edit_changed(double)));
+		connect(fadeInLinearButton, SIGNAL(clicked()), this, SLOT(fadein_linear()));
+		connect(fadeInDefaultButton, SIGNAL(clicked()), this, SLOT(fadein_default()));
+
 		connect(fadeOutEdit, SIGNAL(timeChanged(const QTime&)), this, SLOT(fadeout_edit_changed(const QTime&)));
+		connect(fadeOutModeBox, SIGNAL(currentIndexChanged(int)), this, SLOT(fadeout_mode_edit_changed(int)));
+		connect(fadeOutBendingBox, SIGNAL(valueChanged(double)), this, SLOT(fadeout_bending_edit_changed(double)));
+		connect(fadeOutStrengthBox, SIGNAL(valueChanged(double)), this, SLOT(fadeout_strength_edit_changed(double)));
+		connect(fadeOutLinearButton, SIGNAL(clicked()), this, SLOT(fadeout_linear()));
+		connect(fadeOutDefaultButton, SIGNAL(clicked()), this, SLOT(fadeout_default()));
 		
 		connect(externalProcessingButton, SIGNAL(clicked()), this, SLOT(external_processing()));
 		connect(buttonBox, SIGNAL(accepted()), this, SLOT(save_changes()));
@@ -95,10 +114,29 @@ private slots:
 	void save_changes();
 	void clip_position_changed();
 	void gain_spinbox_value_changed(double value);
+
 	void fadein_length_changed();
 	void fadein_edit_changed(const QTime& time);
+	void fadein_mode_changed();
+	void fadein_mode_edit_changed(int index);
+	void fadein_bending_changed();
+	void fadein_bending_edit_changed(double value);
+	void fadein_strength_changed();
+	void fadein_strength_edit_changed(double value);
+	void fadein_linear();
+	void fadein_default();
+
 	void fadeout_edit_changed(const QTime& time);
 	void fadeout_length_changed();
+	void fadeout_mode_changed();
+	void fadeout_mode_edit_changed(int index);
+	void fadeout_bending_changed();
+	void fadeout_bending_edit_changed(double value);
+	void fadeout_strength_changed();
+	void fadeout_strength_edit_changed(double value);
+	void fadeout_linear();
+	void fadeout_default();
+
 	void clip_start_edit_changed(const QTime& time);
 	void clip_length_edit_changed(const QTime& time);
 	void update_clip_end();
@@ -245,6 +283,112 @@ void AudioClipEditWidget::clip_start_edit_changed(const QTime& time)
 	locked = false;
 }
 
+void AudioClipEditWidget::fadein_mode_changed()
+{
+	if (locked) return;
+
+	int m = m_clip->get_fade_in()->get_mode();
+	fadeInModeBox->setCurrentIndex(m);
+}
+
+void AudioClipEditWidget::fadeout_mode_changed()
+{
+	if (locked) return;
+
+	int m = m_clip->get_fade_out()->get_mode();
+	fadeOutModeBox->setCurrentIndex(m);
+}
+
+void AudioClipEditWidget::fadein_bending_changed()
+{
+	if (locked) return;
+	fadeInBendingBox->setValue(m_clip->get_fade_in()->get_bend_factor());
+}
+
+void AudioClipEditWidget::fadeout_bending_changed()
+{
+	if (locked) return;
+	fadeOutBendingBox->setValue(m_clip->get_fade_out()->get_bend_factor());
+}
+
+void AudioClipEditWidget::fadein_strength_changed()
+{
+	if (locked) return;
+	fadeInStrengthBox->setValue(m_clip->get_fade_in()->get_strength_factor());
+}
+
+void AudioClipEditWidget::fadeout_strength_changed()
+{
+	if (locked) return;
+	fadeOutStrengthBox->setValue(m_clip->get_fade_out()->get_strength_factor());
+}
+
+void AudioClipEditWidget::fadein_mode_edit_changed(int index)
+{
+	locked = true;
+	m_clip->get_fade_in()->set_mode(index);
+	locked = false;
+}
+
+void AudioClipEditWidget::fadeout_mode_edit_changed(int index)
+{
+	locked = true;
+	m_clip->get_fade_out()->set_mode(index);
+	locked = false;
+}
+
+void AudioClipEditWidget::fadein_bending_edit_changed(double value)
+{
+	locked = true;
+	m_clip->get_fade_in()->set_bend_factor(value);
+	locked = false;
+}
+
+void AudioClipEditWidget::fadeout_bending_edit_changed(double value)
+{
+	locked = true;
+	m_clip->get_fade_out()->set_bend_factor(value);
+	locked = false;
+}
+
+void AudioClipEditWidget::fadein_strength_edit_changed(double value)
+{
+	locked = true;
+	m_clip->get_fade_in()->set_strength_factor(value);
+	locked = false;
+}
+
+void AudioClipEditWidget::fadeout_strength_edit_changed(double value)
+{
+	locked = true;
+	m_clip->get_fade_out()->set_strength_factor(value);
+	locked = false;
+}
+
+void AudioClipEditWidget::fadein_linear()
+{
+	fadeInBendingBox->setValue(0.5);
+	fadeInStrengthBox->setValue(0.5);
+}
+
+void AudioClipEditWidget::fadein_default()
+{
+	fadeInBendingBox->setValue(0.0);
+	fadeInStrengthBox->setValue(0.5);
+}
+
+void AudioClipEditWidget::fadeout_linear()
+{
+	fadeOutBendingBox->setValue(0.5);
+	fadeOutStrengthBox->setValue(0.5);
+}
+
+void AudioClipEditWidget::fadeout_default()
+{
+	fadeOutBendingBox->setValue(0.0);
+	fadeOutStrengthBox->setValue(0.5);
+}
+
 nframes_t AudioClipEditWidget::qtime_to_nframes(const QTime & time, uint rate)
 {
 	return time.hour() * 3600 * rate + time.minute() * 60 * rate + time.second() * rate + (time.msec() * rate) / 1000;
@@ -272,11 +416,23 @@ void AudioClipEditWidget::fade_curve_added()
 {
 	if (m_clip->get_fade_in()) {
 		fadein_length_changed();
+		fadein_mode_changed();
+		fadein_bending_changed();
+		fadein_strength_changed();
 		connect(m_clip->get_fade_in(), SIGNAL(rangeChanged()), this, SLOT(fadein_length_changed()));
+		connect(m_clip->get_fade_in(), SIGNAL(modeChanged()), this, SLOT(fadein_mode_changed()));
+		connect(m_clip->get_fade_in(), SIGNAL(bendValueChanged()), this, SLOT(fadein_bending_changed()));
+		connect(m_clip->get_fade_in(), SIGNAL(strengthValueChanged()), this, SLOT(fadein_strength_changed()));
 	}
 	if (m_clip->get_fade_out()) {
 		fadeout_length_changed();
+		fadeout_mode_changed();
+		fadeout_bending_changed();
+		fadeout_strength_changed();
 		connect(m_clip->get_fade_out(), SIGNAL(rangeChanged()), this, SLOT(fadeout_length_changed()));
+		connect(m_clip->get_fade_out(), SIGNAL(modeChanged()), this, SLOT(fadeout_mode_changed()));
+		connect(m_clip->get_fade_out(), SIGNAL(bendValueChanged()), this, SLOT(fadeout_bending_changed()));
+		connect(m_clip->get_fade_out(), SIGNAL(strengthValueChanged()), this, SLOT(fadeout_strength_changed()));
 	}
 }
 
