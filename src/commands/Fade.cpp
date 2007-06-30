@@ -246,7 +246,7 @@ FadeStrength::FadeStrength(FadeCurve *fade, double val)
 	, m_fv(0)
 {
 	setText( (m_fade->get_fade_type() == FadeCurve::FadeIn) ? tr("Fade In: strength") : tr("Fade Out: strength"));
-	origStrength = m_fade->get_strenght_factor();
+	origStrength = m_fade->get_strength_factor();
 	newStrength = val;
 }
 
@@ -254,7 +254,7 @@ int FadeStrength::begin_hold()
 {
 	PENTER;
 	origY = cpointer().on_first_input_event_y();
-	oldValue = m_fade->get_strenght_factor();
+	oldValue = m_fade->get_strength_factor();
 	newStrength = origStrength = oldValue;
 	m_fv->set_holding(true);
 	return 1;
@@ -314,7 +314,7 @@ int FadeStrength::jog()
 		}
 	}
 	
-	oldValue = m_fade->get_strenght_factor();
+	oldValue = m_fade->get_strength_factor();
 	newStrength = oldValue;
 	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(newStrength, 'f', 2));
 

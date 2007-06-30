@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeContextDialog.cpp,v 1.5 2007/01/16 15:24:17 r_sijrier Exp $
+$Id: FadeContextDialog.cpp,v 1.6 2007/06/30 16:30:55 n_doebelin Exp $
 */
 
 #include "FadeContextDialog.h"
@@ -110,7 +110,7 @@ void FadeContextDialog::update_bend_value( )
 
 void FadeContextDialog::update_strength_value( )
 {
-	m_strengthLabel->setText(QString("Strength: %1").arg(m_fade->get_strenght_factor(), 0, 'f', 2)); 
+	m_strengthLabel->setText(QString("Strength: %1").arg(m_fade->get_strength_factor(), 0, 'f', 2)); 
 }
 
 void FadeContextDialog::update_raster_value( )
