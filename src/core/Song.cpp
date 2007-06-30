@@ -370,6 +370,8 @@ int Song::prepare_export(ExportSpecification* spec)
 		if (markers.size() >= 2) {
 			startframe = markers.at(0)->get_when();
 			PMESG2("  Start marker found at %d", startframe);
+			// round down to the start of the CD frome (75th of a sec)
+			startframe = cd_to_frame(frame_to_cd(startframe, m_project->get_rate()), m_project->get_rate());
 			spec->start_frame = startframe;
 		} else {
 			PMESG2("  No start marker found");
