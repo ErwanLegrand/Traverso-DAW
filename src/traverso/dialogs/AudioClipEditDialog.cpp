@@ -36,6 +36,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AudioClipExternalProcessing.h"
 #include "InputEngine.h"
 
+#define TIME_FORMAT "hh:mm:ss.zzz"
+
 class AudioClipEditWidget : public QWidget, protected Ui::AudioClipEditWidget
 {
 	Q_OBJECT
@@ -44,7 +46,14 @@ public:
 	AudioClipEditWidget(AudioClip* clip, QWidget* parent) : QWidget(parent), m_clip(clip)
 	{
 		setupUi(this);
-		
+
+		locked = false;
+
+		clipStartEdit->setDisplayFormat(TIME_FORMAT);
+		clipLengthEdit->setDisplayFormat(TIME_FORMAT);
+		fadeInEdit->setDisplayFormat(TIME_FORMAT);
+		fadeOutEdit->setDisplayFormat(TIME_FORMAT);
+
 		// Used to set gain and name
 		clip_state_changed();
 		
@@ -77,6 +86,8 @@ private:
 	friend class AudioClipEditDialog;
 	
 	nframes_t qtime_to_nframes(const QTime& time, uint rate);
+	QTime nframes_to_qtime(nframes_t nframes, uint rate);
+	bool locked;
 	
 private slots:
 	void external_processing();
@@ -90,6 +101,7 @@ private slots:
 	void fadeout_length_changed();
 	void clip_start_edit_changed(const QTime& time);
 	void clip_length_edit_changed(const QTime& time);
+	void update_clip_end();
 	
 	void fade_curve_added();
 };
@@ -144,27 +156,31 @@ void AudioClipEditWidget::gain_spinbox_value_changed(double value)
 
 void AudioClipEditWidget::clip_position_changed()
 {
-	QString clipLength = frame_to_ms(m_clip->get_length(), m_clip->get_rate());
-	QTime clipLengthTime = QTime::fromString(clipLength, "mm:ss");
+	if (locked) return;
+
+	QTime clipLengthTime = nframes_to_qtime(m_clip->get_length(), m_clip->get_rate());
 	clipLengthEdit->setTime(clipLengthTime);
 	
-	QString clipStart = frame_to_ms(m_clip->get_track_start_frame(), m_clip->get_rate());
-	QTime clipStartTime = QTime::fromString(clipStart, "mm:ss");
+	QTime clipStartTime = nframes_to_qtime(m_clip->get_track_start_frame(), m_clip->get_rate());
 	clipStartEdit->setTime(clipStartTime);
+
+	update_clip_end();
 }
 
 void AudioClipEditWidget::fadein_length_changed()
 {
 	if (ie().is_holding()) return;
-	QString length = frame_to_ms(m_clip->get_fade_in()->get_range(), m_clip->get_rate());
-	QTime fadeTime = QTime::fromString(length, "mm:ss");
+	if (locked) return;
+
+	QTime fadeTime = nframes_to_qtime(m_clip->get_fade_in()->get_range(), m_clip->get_rate());
 	fadeInEdit->setTime(fadeTime);
 }
 
 void AudioClipEditWidget::fadeout_length_changed()
 {
-	QString length = frame_to_ms(m_clip->get_fade_out()->get_range(), m_clip->get_rate());
-	QTime fadeTime = QTime::fromString(length, "mm:ss");
+	if (locked) return;
+
+	QTime fadeTime = nframes_to_qtime(m_clip->get_fade_out()->get_range(), m_clip->get_rate());
 	fadeOutEdit->setTime(fadeTime);
 }
 
@@ -175,44 +191,81 @@ void AudioClipEditWidget::fadein_edit_changed(const QTime& time)
 	// causes trouble when moving the right edge with the mouse! 
 	// This 'fixes' it .....
 	if (ie().is_holding()) return;
-	
+
+	locked = true;
 	nframes_t frames = qtime_to_nframes(time, m_clip->get_rate());
 	if (frames == 0) {
 		m_clip->set_fade_in(1);
 	} else {
 		m_clip->set_fade_in(frames);
 	}
+	locked = false;
 }
 
 void AudioClipEditWidget::fadeout_edit_changed(const QTime& time)
 {
 	if (ie().is_holding()) return;
+
+	locked = true;
 	nframes_t frames = qtime_to_nframes(time, m_clip->get_rate());
 	if (frames == 0) {
 		m_clip->set_fade_out(1);
 	} else {
 		m_clip->set_fade_out(frames);
 	}
+	locked = false;
 }
 
 void AudioClipEditWidget::clip_length_edit_changed(const QTime& time)
 {
 	if (ie().is_holding()) return;
-	
+
+	locked = true;
 	uint rate = m_clip->get_rate();
 	uint frames = qtime_to_nframes(time, rate);
-	m_clip->set_right_edge(frames);
+
+	if (frames >= m_clip->get_source_length()) {
+		frames = m_clip->get_source_length();
+		QTime clipLengthTime = nframes_to_qtime(frames, m_clip->get_rate());
+		clipLengthEdit->setTime(clipLengthTime);
+	}
+
+	m_clip->set_right_edge(frames + m_clip->get_track_start_frame());
+	update_clip_end();
+	locked = false;
 }
 
 void AudioClipEditWidget::clip_start_edit_changed(const QTime& time)
 {
 	if (ie().is_holding()) return;
+
+	locked = true;
 	m_clip->set_track_start_frame(qtime_to_nframes(time, m_clip->get_rate()));
+	update_clip_end();
+	locked = false;
 }
 
 nframes_t AudioClipEditWidget::qtime_to_nframes(const QTime & time, uint rate)
 {
-	return time.hour() * 3600 * rate + time.minute() * 60 * rate + time.second() * rate;
+	return time.hour() * 3600 * rate + time.minute() * 60 * rate + time.second() * rate + (time.msec() * rate) / 1000;
+}
+
+QTime AudioClipEditWidget::nframes_to_qtime(nframes_t nframes, uint rate)
+{
+	long unsigned int remainder;
+	int hours, mins, secs, msec;
+
+	remainder = nframes;
+	hours = remainder / (3600 * rate);
+	remainder -= ( hours * 3600 * rate );
+	mins = remainder / ( 60 * rate );
+	remainder -= ( mins * 60 * rate );
+	secs = remainder / rate;
+	remainder -= secs * rate;
+	msec = remainder * 1000 / rate;
+
+	QTime time(hours, mins, secs, msec);
+	return time;
 }
 
 void AudioClipEditWidget::fade_curve_added()
@@ -225,8 +278,13 @@ void AudioClipEditWidget::fade_curve_added()
 		fadeout_length_changed();
 		connect(m_clip->get_fade_out(), SIGNAL(rangeChanged()), this, SLOT(fadeout_length_changed()));
 	}
-
 }
 
+void AudioClipEditWidget::update_clip_end()
+{
+	nframes_t clipEndFrame = m_clip->get_track_start_frame() + m_clip->get_length();
+	QTime clipEndTime = nframes_to_qtime(clipEndFrame, m_clip->get_rate());
+	clipEndLineEdit->setText(clipEndTime.toString(TIME_FORMAT));
+}
 
 #include "AudioClipEditDialog.moc"
