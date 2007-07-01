@@ -69,4 +69,14 @@ The windowing function is highly FFT specific and it is beyond the scope of this
 
 \emph{Note:} For very large FFT sizes the update rate of the spectrum analyzer becomes low. This is not necessarily caused by CPU overload (although CPU load becomes higher for larger FFT sizes), but by the fact that it takes some time to fill the buffers with such large amounts of data. The widget waits until the buffers are full before updating the display.
 
+\section{External processing}
+Traverso allows to process audio clips offline by using external programs such as ``sox'' \cite{sox}, which expands the set of available effects even more. This feature is particularly handy for actions such as sample rate conversion, DC offset removal, phase inversion etc. On Linux the program ``sox'' must be installed, which is part of all major distributions and can be found in the software repositories. On Windows and Mac OS X the installer takes care of all dependencies.
 
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{images/external00}
+	\caption{By pressing \sact{E} on an audio clip, a dialog opens (left). Pressing the button ``External Processing'' opens another dialog (right) which allows to apply various offline effects.}
+	\label{fig_external01}
+\end{figure}
+
+A clip editor can be opened by pressing \sact{E} on the clip you want to process (\FigB~\ref{fig_external01}). By pressing the button ``External Processing'' in that dialog, the actual processing dialog will be opened (\FigB~\ref{fig_external01} right). Leave the program set to ``sox'', and select an effect from the ``Arguments'' box. Always leave the name of the argument in the box, and append your own arguments. Traverso will use this first entry to label the converted file. Confused? Ok, let's look at an example. Suppose we want to invert the phase of the file myfile.wav. Import it into Traverso, press \sact{E} on the clip, and press the button ``External Processing'' in the editor dialog. Leave the program name at ``sox'', and select the effect ``vol'' from the box. The first argument will be set to ``vol'' automatically. According to the sox manual, setting the volume to $-1.0$ inverts the phase, so enter ``$-1.0$'' after ``vol'' (without the quotes). Then press ``Start'' and wait until the process has finished. Traverso will automatically replace the clip with the converted version, which has the file name ``myfile-vol -1.0.wav''. This file will be placed in the ``audiosources'' directory inside your project directory, no matter where the original file was located. The original file will thus never be overwritten. More information about the sox effects can be found in the man page, which can be opened by entering ``man:sox'' in the address bar of konqueror, or ``man sox'' into a terminal.
