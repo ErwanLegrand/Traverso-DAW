@@ -7,6 +7,7 @@
 QT_PATH=/usr/local/Trolltech/Qt-4.3.0
 
 cp /opt/local/bin/cdrdao traverso.app/Contents/MacOS/
+cp /usr/local/bin/sox traverso.app/Contents/MacOS/
 
 mkdir -p traverso.app/Contents/Frameworks
 mkdir -p traverso.app/Contents/Frameworks/QtXml.framework/Versions/4/
@@ -62,4 +63,6 @@ install_name_tool -change /usr/local/lib/librasqal.0.dylib @executable_path/../F
 install_name_tool -change /usr/local/lib/libraptor.1.dylib @executable_path/../Frameworks/libraptor.1.dylib traverso.app/Contents/Frameworks/librdf.0.dylib
 install_name_tool -change /usr/local/lib/libraptor.1.dylib @executable_path/../Frameworks/libraptor.1.dylib traverso.app/Contents/Frameworks/librasqal.0.dylib
 #install_name_tool -change /usr/local/lib/libintl.8.dylib @executable_path/../Frameworks/libintl.8.dylib traverso.app/Contents/Frameworks/libglib-2.0.0.dylib
+
+mv traverso.app Traverso.app
 

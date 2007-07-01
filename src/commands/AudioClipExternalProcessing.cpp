@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QThread>
 #include <QFile>
+#include <QApplication>
 
 
 // Always put me below _all_ includes, this is needed
@@ -230,7 +231,7 @@ void ExternalProcessingDialog::start_external_processing()
 {
 	m_arguments.clear();
 	
-	if (m_program == "sox") {
+	if (m_program.right(3) == "sox") {
 		m_arguments.append("-S");
 	}
 	
@@ -252,7 +253,7 @@ void ExternalProcessingDialog::read_standard_output()
 {
 	if (m_queryOptions) {
 		QString result = m_processor->readAllStandardOutput();
-		if (m_program == "sox") {
+		if (m_program.right(3) == "sox") {
 			QStringList list = result.split("\n");
 			foreach(QString string, list) {
 				if (string.contains("Supported effects:") || string.contains("effect:") || string.contains("SUPPORTED EFFECTS:")) {
@@ -348,6 +349,10 @@ void ExternalProcessingDialog::command_lineedit_text_changed(const QString & tex
 {
 	m_program = text;
 	if (m_program == "sox") {
+		#if defined (Q_WS_MAC)
+			m_program = qApp->applicationDirPath() + "/sox";
+		#endif
+
 		query_options();
 		argsComboBox->show();
 		argsComboBox->setToolTip(tr("Available arguments for the sox program"));
