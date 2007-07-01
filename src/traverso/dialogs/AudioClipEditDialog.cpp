@@ -325,6 +325,7 @@ void AudioClipEditWidget::fadeout_strength_changed()
 
 void AudioClipEditWidget::fadein_mode_edit_changed(int index)
 {
+	if (!m_clip->get_fade_in()) return;
 	locked = true;
 	m_clip->get_fade_in()->set_mode(index);
 	locked = false;
@@ -332,6 +333,7 @@ void AudioClipEditWidget::fadein_mode_edit_changed(int index)
 
 void AudioClipEditWidget::fadeout_mode_edit_changed(int index)
 {
+	if (!m_clip->get_fade_out()) return;
 	locked = true;
 	m_clip->get_fade_out()->set_mode(index);
 	locked = false;
@@ -339,6 +341,7 @@ void AudioClipEditWidget::fadeout_mode_edit_changed(int index)
 
 void AudioClipEditWidget::fadein_bending_edit_changed(double value)
 {
+	if (!m_clip->get_fade_in()) return;
 	locked = true;
 	m_clip->get_fade_in()->set_bend_factor(value);
 	locked = false;
@@ -346,6 +349,7 @@ void AudioClipEditWidget::fadein_bending_edit_changed(double value)
 
 void AudioClipEditWidget::fadeout_bending_edit_changed(double value)
 {
+	if (!m_clip->get_fade_out()) return;
 	locked = true;
 	m_clip->get_fade_out()->set_bend_factor(value);
 	locked = false;
@@ -353,6 +357,7 @@ void AudioClipEditWidget::fadeout_bending_edit_changed(double value)
 
 void AudioClipEditWidget::fadein_strength_edit_changed(double value)
 {
+	if (!m_clip->get_fade_in()) return;
 	locked = true;
 	m_clip->get_fade_in()->set_strength_factor(value);
 	locked = false;
@@ -360,6 +365,7 @@ void AudioClipEditWidget::fadein_strength_edit_changed(double value)
 
 void AudioClipEditWidget::fadeout_strength_edit_changed(double value)
 {
+	if (!m_clip->get_fade_out()) return;
 	locked = true;
 	m_clip->get_fade_out()->set_strength_factor(value);
 	locked = false;
@@ -367,24 +373,28 @@ void AudioClipEditWidget::fadeout_strength_edit_changed(double value)
 
 void AudioClipEditWidget::fadein_linear()
 {
+	if (!m_clip->get_fade_in()) return;
 	fadeInBendingBox->setValue(0.5);
 	fadeInStrengthBox->setValue(0.5);
 }
 
 void AudioClipEditWidget::fadein_default()
 {
+	if (!m_clip->get_fade_in()) return;
 	fadeInBendingBox->setValue(0.0);
 	fadeInStrengthBox->setValue(0.5);
 }
 
 void AudioClipEditWidget::fadeout_linear()
 {
+	if (!m_clip->get_fade_out()) return;
 	fadeOutBendingBox->setValue(0.5);
 	fadeOutStrengthBox->setValue(0.5);
 }
 
 void AudioClipEditWidget::fadeout_default()
 {
+	if (!m_clip->get_fade_out()) return;
 	fadeOutBendingBox->setValue(0.0);
 	fadeOutStrengthBox->setValue(0.5);
 }
