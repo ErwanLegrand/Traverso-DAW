@@ -208,7 +208,7 @@ void ExternalProcessingDialog::prepare_for_external_processing()
 	}
 	
 	m_filename = rs->get_name();
-	m_newClipName= rs->get_short_name() + "-" + m_commandargs.simplified();
+	m_newClipName= rs->get_short_name().remove(".wav") + "-" + m_commandargs.simplified();
 	
 	m_infilename = rs->get_filename();
 	// remove the extension and any dots that might confuse the external program, append the 
