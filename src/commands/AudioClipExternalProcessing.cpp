@@ -232,7 +232,8 @@ void ExternalProcessingDialog::start_external_processing()
 {
 	m_arguments.clear();
 	
-	if (m_program.right(3) == "sox") {
+	// On mac os x (and perhaps windows) the full path is given, so we check if the path contains sox!
+	if (m_program.contains("sox")) {
 		m_arguments.append("-S");
 	}
 	
@@ -254,7 +255,8 @@ void ExternalProcessingDialog::read_standard_output()
 {
 	if (m_queryOptions) {
 		QString result = m_processor->readAllStandardOutput();
-		if (m_program.right(3) == "sox") {
+		// On mac os x (and perhaps windows) the full path is given, so we check if the path contains sox!
+		if (m_program.contains("sox")) {
 			QStringList list = result.split("\n");
 			foreach(QString string, list) {
 				if (string.contains("Supported effects:") || string.contains("effect:") || string.contains("SUPPORTED EFFECTS:")) {
@@ -348,7 +350,7 @@ void ExternalProcessingDialog::arg_combo_index_changed(const QString & text)
 
 void ExternalProcessingDialog::command_lineedit_text_changed(const QString & text)
 {
-	m_program = text;
+	m_program = text.simplified();
 	if (m_program == "sox") {
 		#if defined (Q_WS_MAC)
 			m_program = qApp->applicationDirPath() + "/sox";
