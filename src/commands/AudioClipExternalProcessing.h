@@ -53,6 +53,7 @@ private:
 	QString m_commandargs;
 	QString m_infilename;
 	QString m_outfilename;
+	QString m_newClipName;
 		
 	void query_options();
 	

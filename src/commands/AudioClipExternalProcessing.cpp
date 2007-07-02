@@ -208,6 +208,7 @@ void ExternalProcessingDialog::prepare_for_external_processing()
 	}
 	
 	m_filename = rs->get_name();
+	m_newClipName= rs->get_short_name() + "-" + m_commandargs.simplified();
 	
 	m_infilename = rs->get_filename();
 	// remove the extension and any dots that might confuse the external program, append the 
@@ -323,7 +324,7 @@ void ExternalProcessingDialog::process_finished(int exitcode, QProcess::ExitStat
 		return rejected();
 	}
 		
-	m_acep->m_resultingclip = resources_manager()->new_audio_clip(m_filename.remove(".wav"));
+	m_acep->m_resultingclip = resources_manager()->new_audio_clip(m_newClipName);
 	resources_manager()->set_source_for_clip(m_acep->m_resultingclip, source);
 	// Clips live at project level, we have to set its Song, Track and ReadSource explicitely!!
 	m_acep->m_resultingclip->set_song(m_acep->m_clip->get_song());
