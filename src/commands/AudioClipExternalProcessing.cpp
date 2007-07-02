@@ -281,7 +281,7 @@ void ExternalProcessingDialog::read_standard_output()
 				token = token.remove("%)");
 				bool ok;
 				int number = (int)token.toDouble(&ok);
-				if (ok) {
+				if (ok && number > progressBar->value()) {
 					progressBar->setValue(number);
 				}
 				return;
