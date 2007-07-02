@@ -279,8 +279,11 @@ void ExternalProcessingDialog::read_standard_output()
 		foreach(QString token, tokens) {
 			if (token.contains("%")) {
 				token = token.remove("%)");
-				int number = (int)token.toDouble();
-				progressBar->setValue(number);
+				bool ok;
+				int number = (int)token.toDouble(&ok);
+				if (ok) {
+					progressBar->setValue(number);
+				}
 				return;
 			}
 		}
@@ -304,17 +307,16 @@ void ExternalProcessingDialog::process_finished(int exitcode, QProcess::ExitStat
 		return;
 	}
 	
+	if (exitstatus == QProcess::CrashExit) {
+		statusText->setHtml(tr("Program <b>%1</b> crashed!").arg(m_program));
+		return;
+	}
+	
 	QString dir = pm().get_project()->get_audiosources_dir();
 	
 	// In case we used the merger, remove the file...
 	QFile::remove(dir + "/merged.wav");
 	
-	if (progressBar->value() != 100) {
-		// not sure if this is always valid, but it at least should be 100 all 
-		// the time, that is, after succesfull operation....
-		// so if not 100 -> unsucesfull, and we bail out
-		return;
-	}
 	
 	QString result = m_processor->readAllStandardOutput();
 	// print anything on command line we didn't catch
