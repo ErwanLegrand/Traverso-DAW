@@ -59,7 +59,7 @@ ProjectManager::ProjectManager()
 
 	cpointer().add_contextitem(this);
 	
-	connect(&m_resetDirRenamingTimer, SIGNAL(timemout), this, SLOT(reset_dir_renaming_progress()));
+	connect(&m_resetDirRenamingTimer, SIGNAL(timeout()), this, SLOT(reset_dir_renaming_progress()));
 }
 
 /**
