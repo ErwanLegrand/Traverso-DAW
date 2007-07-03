@@ -13,13 +13,13 @@
 
 #  define T_ATOMIC_MEMORY_BARRIER __asm__ ("sync" : : : "memory")
 
-int t_atomic_int_get (volatile int *atomic)
+static inline int t_atomic_int_get (volatile int *atomic)
 {
 	T_ATOMIC_MEMORY_BARRIER;
 	return *atomic;
 }
 
-void t_atomic_int_set (volatile int *atomic, int newval)
+static inline void t_atomic_int_set (volatile int *atomic, int newval)
 {
 	*atomic = newval;
 	T_ATOMIC_MEMORY_BARRIER; 
