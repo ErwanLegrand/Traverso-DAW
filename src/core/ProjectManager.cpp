@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QDir>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QFileSystemWatcher>
 
 #include "Project.h"
 #include "Song.h"
@@ -35,6 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Config.h"
 #include "FileHelpers.h"
 #include <AudioDevice.h>
+#include <Utils.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -55,11 +57,15 @@ ProjectManager::ProjectManager()
 	PENTERCONS;
 	currentProject = (Project*) 0;
 	m_exitInProgress = false;
-	m_renamingDir = false;
+	
+	m_watcher = new QFileSystemWatcher(0);
 
+	QString path = config().get_property("Project", "directory", getenv("HOME")).toString();
+	set_current_project_dir(path);
+	
 	cpointer().add_contextitem(this);
 	
-	connect(&m_resetDirRenamingTimer, SIGNAL(timeout()), this, SLOT(reset_dir_renaming_progress()));
+	connect(m_watcher, SIGNAL(directoryChanged(const QString&)), this, SLOT(project_dir_rename_detected(const QString&)));
 }
 
 /**
@@ -133,12 +139,11 @@ Project* ProjectManager::create_new_project(int numSongs, int numTracks, const Q
 		return 0;
 	}
 
+	QString newrootdir = config().get_property("Project", "directory", "/directory/unknown/").toString() + "/" + projectName;
+	m_projectDirs.append(newrootdir);
+	
 	Project* newProject = new Project(projectName);
 
-	// Creating a new dir also emits the dir changed signal
-	// so we 'fake' a honored dir renaming here
-	dir_rename_started();
-	
 	if (newProject->create(numSongs, numTracks) < 0) {
 		delete newProject;
 		info().critical(tr("Unable to create new Project %1").arg(projectName));
@@ -155,12 +160,10 @@ Project* ProjectManager::create_new_project(const QString& templatefile, const Q
 		return 0;
 	}
 
+	QString newrootdir = config().get_property("Project", "directory", "/directory/unknown/").toString() + "/" + projectName;
+	m_projectDirs.append(newrootdir);
 	
 	Project* newProject = new Project(projectName);
-	
-	// Creating a new dir also emits the dir changed signal
-	// so we 'fake' a honored dir renaming here
-	dir_rename_started();
 	
 	if (newProject->create(0, 0) < 0) {
 		delete newProject;
@@ -223,6 +226,9 @@ int ProjectManager::remove_project( const QString& name )
 		PMESG("removing current project\n");
 		set_current_project(0);
 	}
+	
+	QString oldrootdir = config().get_property("Project", "directory", "/directory/unknown/").toString() + "/" + name;
+	m_projectDirs.removeAll(oldrootdir);
 
 	return FileHelper::remove_recursively( name );
 }
@@ -395,9 +401,10 @@ Command* ProjectManager::redo()
 
 int ProjectManager::rename_project_dir(const QString & olddir, const QString & newdir)
 {
-	dir_rename_started();
-	
 	QDir dir(olddir);
+	
+	m_projectDirs.removeAll(olddir);
+	m_projectDirs.append(newdir);
 	
 	if ( ! dir.rename(olddir, newdir)) {
 		info().critical(tr("Could not rename Project directory to %1").arg(newdir));
@@ -407,23 +414,53 @@ int ProjectManager::rename_project_dir(const QString & olddir, const QString & n
 	return 1;
 }
 
-bool ProjectManager::renaming_directory_in_progress()
+void ProjectManager::set_current_project_dir(const QString & path)
 {
-	if (m_renamingDir) {
-		return true;
+	QDir newdir(path);
+	
+	config().set_property("Project", "directory", newdir.canonicalPath());
+	
+	QStringList list = newdir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+	m_projectDirs.clear();
+	
+	foreach(QString string, list) {
+		m_projectDirs += path + "/" + string;
 	}
 	
-	return false;
+	m_watcher->addPath(path);
 }
 
-void ProjectManager::reset_dir_renaming_progress()
+void ProjectManager::project_dir_rename_detected(const QString & dirname)
 {
-	m_renamingDir = false;
+	emit projectDirChangeDetected();
+	
+	QString path = config().get_property("Project", "directory", "").toString();
+	QDir dir(path);
+	
+	QStringList list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+	
+	bool startwhining = false;
+	foreach(QString string, list) {
+		if (!m_projectDirs.contains(path + "/" + string)) {
+			startwhining = true;
+			break;
+		}
+	}
+
+	
+	if (!startwhining) {
+		return;
+	}
+	
+	emit unsupportedProjectDirChangeDetected();
 }
 
-void ProjectManager::dir_rename_started()
+void ProjectManager::add_correct_project_path(const QString & path)
 {
-	m_renamingDir = true;
-	m_resetDirRenamingTimer.start(1000);
+	m_projectDirs.append(path);
 }
 
+void ProjectManager::remove_wrong_project_path(const QString & path)
+{
+	m_projectDirs.removeAll(path);
+}

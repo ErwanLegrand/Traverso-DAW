@@ -26,11 +26,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QUndoGroup>
 #include <QList>
 #include <QTimer>
+#include <QStringList>
 
 class Project;
 class Song;
 class Command;
 class ResourcesManager;
+class QFileSystemWatcher;
+
 
 class ProjectManager : public ContextItem
 {
@@ -46,12 +49,14 @@ public:
 	int load_renamed_project(const QString& name);
 
 	bool project_exists(const QString& title);
-	bool renaming_directory_in_progress();
 
 	int remove_project(const QString& title);
 	
 	void scheduled_for_deletion(Song* song);
 	void delete_song(Song* song);
+	void set_current_project_dir(const QString& path);
+	void add_correct_project_path(const QString& path);
+	void remove_wrong_project_path(const QString& path);
 	
 	int rename_project_dir(const QString& olddir, const QString& newdir);
 
@@ -74,9 +79,9 @@ private:
 
 	Project* currentProject;
 	QList<Song*>	m_deletionSongList;
-	QTimer		m_resetDirRenamingTimer;
 	bool		m_exitInProgress;
-	bool		m_renamingDir;
+	QStringList	m_projectDirs;
+	QFileSystemWatcher*	m_watcher;
 
 	bool clientRequestInProgress;
 	static QUndoGroup	undogroup;
@@ -84,17 +89,18 @@ private:
 	void set_current_project(Project* pProject);
 	bool project_is_current(const QString& title);
 	
-	void dir_rename_started();
-	
 	// allow this function to create one instance
 	friend ProjectManager& pm();
 
 signals:
 	void projectLoaded(Project* );
 	void aboutToDelete(Song* );
+	void currentProjectDirChanged();
+	void unsupportedProjectDirChangeDetected();
+	void projectDirChangeDetected();
 	
 private slots:
-	void reset_dir_renaming_progress();
+	void project_dir_rename_detected(const QString& dirname);
 };
 
 

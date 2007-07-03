@@ -168,6 +168,7 @@ public slots :
 	
 private slots:
 	void delete_songwidget(Song*);
+	void project_dir_change_detected();
 };
 
 

@@ -29,7 +29,6 @@
 #include <QDomDocument>
 #include <QFileDialog>
 #include <QHeaderView>
-#include <QFileSystemWatcher>
 
 
 #include <Config.h>
@@ -37,7 +36,6 @@
 #include <ProjectManager.h>
 #include <Project.h>
 #include <Utils.h>
-#include "Interface.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -48,11 +46,6 @@ OpenProjectDialog::OpenProjectDialog( QWidget * parent )
 {
 	setupUi(this);
 	
-	QString path = config().get_property("Project", "directory", getenv("HOME")).toString();
-	m_watcher = new QFileSystemWatcher(this);
-	m_watcher->addPath(path);
-	m_dirchangeDetected = false;
-	
 	projectListView->setColumnCount(2);
 	update_projects_list();
 	QStringList stringList;
@@ -62,8 +55,9 @@ OpenProjectDialog::OpenProjectDialog( QWidget * parent )
 	projectListView->header()->resizeSection(0, 160);
 	projectListView->header()->resizeSection(1, 30);
 	
+	connect(&pm(), SIGNAL(currentProjectDirChanged()), this, SLOT(update_projects_list()));
+	connect(&pm(), SIGNAL(projectDirChangeDetected()), this, SLOT(update_projects_list()));
 	connect(projectListView, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(projectitem_clicked(QTreeWidgetItem*,int)));
-	connect(m_watcher, SIGNAL(directoryChanged(const QString&)), this, SLOT(project_dir_rename_detected(const QString&)));
 }
 
 OpenProjectDialog::~ OpenProjectDialog( )
@@ -130,6 +124,12 @@ void OpenProjectDialog::update_projects_list()
 		item->setTextAlignment(1, Qt::AlignHCenter);
 		
 		if (title != dirname) {
+			// Let the ProjectManager know that this path is a correct one
+			// so it doesn't start whining when the directory is changed back 
+			// to the proper name!
+			pm().add_correct_project_path(path + "/" + title);
+			pm().remove_wrong_project_path(path + "/" + dirname);
+			
 			item->setIcon(0, style()->standardIcon(QStyle::SP_MessageBoxWarning));
 			QString html;
 			html += tr("<p>Project directory name <b>%1</b> is different from the Project title <b>%2</b>!</p>"
@@ -259,38 +259,7 @@ void OpenProjectDialog::on_projectDirSelectButton_clicked( )
 		QMessageBox::information( this, tr("Traverso - Information"), tr("Created new Project directory for you here: %1\n").arg(newPath), "OK", 0 );
 	}
 	
-	QDir newdir(newPath);
-	
-	config().set_property("Project", "directory", newdir.canonicalPath());
-	
-	m_watcher->addPath(newdir.canonicalPath());
-
-	
-	update_projects_list();
-}
-
-void OpenProjectDialog::project_dir_rename_detected(const QString & dirname)
-{
-	update_projects_list();
-	
-	if (pm().renaming_directory_in_progress()) {
-		return;
-	}
-	
-	if (m_dirchangeDetected) {
-		return;
-	}
-	
-	m_dirchangeDetected = true;
-	
-	QMessageBox::critical( Interface::instance(), 
-			tr("Traverso - Important"), 
-			tr("A Project directory changed outside of Traverso. \n\n"
-			   "This is NOT supported! Please undo this change now!\n\n"
-			   "If you want to rename a Project, use the Project Manager instead!"),
-			QMessageBox::Ok);
-
-	m_dirchangeDetected = false;
+	pm().set_current_project_dir(newPath);
 }
 
 //eof

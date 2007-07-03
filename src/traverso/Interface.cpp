@@ -168,7 +168,7 @@ Interface::Interface()
 	exportWidget = 0;
 	m_settingsdialog = 0;
 	m_projectManagerDialog = 0;
-	m_openProjectDialog = new OpenProjectDialog(this);
+	m_openProjectDialog = 0;
 	m_newProjectDialog = 0;
 	m_insertSilenceDialog = 0;
 	m_markerDialog = 0;
@@ -188,6 +188,7 @@ Interface::Interface()
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 	connect(&pm(), SIGNAL(aboutToDelete(Song*)), this, SLOT(delete_songwidget(Song*)));
+	connect(&pm(), SIGNAL(unsupportedProjectDirChangeDetected()), this, SLOT(project_dir_change_detected()));	
 
 	cpointer().add_contextitem(this);
 
@@ -927,6 +928,9 @@ Command* Interface::show_project_manager_dialog()
 
 Command* Interface::show_open_project_dialog()
 {
+	if (!m_openProjectDialog) {
+		m_openProjectDialog = new OpenProjectDialog(this);
+	}
 	m_openProjectDialog->show();
 	return 0;
 }
@@ -998,5 +1002,12 @@ void Interface::open_help_browser()
 	QDesktopServices::openUrl(QUrl("http://traverso-daw.org/UserManual"));
 }
 
-// eof
+void Interface::project_dir_change_detected()
+{
+	QMessageBox::critical(this, tr("Traverso - Important"), 
+			      tr("A Project directory changed outside of Traverso. \n\n"
+			      "This is NOT supported! Please undo this change now!\n\n"
+			      "If you want to rename a Project, use the Project Manager instead!"),
+	   			QMessageBox::Ok);
+}
 
