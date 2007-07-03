@@ -383,7 +383,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		// drawing by dy = m_infoAreaheight
 		int height;
 		
-		if (m_height > m_mimimumheightforinfoarea) {
+		if (m_height >= m_mimimumheightforinfoarea) {
 			p->setMatrix(matrix().translate(0, m_infoAreaHeight), true);
 			height = (m_height - m_infoAreaHeight) / channels;
 		} else {
@@ -617,7 +617,7 @@ void AudioClipView::set_height( int height )
 
 int AudioClipView::get_childview_y_offset() const
 {
-	return (m_height > m_mimimumheightforinfoarea) ? m_infoAreaHeight : 0;
+	return (m_height >= m_mimimumheightforinfoarea) ? m_infoAreaHeight : 0;
 }
 
 void AudioClipView::update_start_pos()
