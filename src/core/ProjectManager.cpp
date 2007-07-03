@@ -428,6 +428,8 @@ void ProjectManager::set_current_project_dir(const QString & path)
 	}
 	
 	m_watcher->addPath(path);
+	
+	emit projectDirChangeDetected();
 }
 
 void ProjectManager::project_dir_rename_detected(const QString & dirname)
