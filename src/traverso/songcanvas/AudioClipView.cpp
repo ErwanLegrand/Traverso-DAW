@@ -68,7 +68,6 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	m_waitingForPeaks = false;
 	m_progress = m_peakloadingcount = 0;
 	m_posIndicator = 0;
-	m_editdialog = 0;
 	m_song = m_clip->get_song();
 	
 	if (FadeCurve* curve = m_clip->get_fade_in()) {
@@ -107,9 +106,6 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 
 AudioClipView::~ AudioClipView()
 {
-	if (m_editdialog) {
-		delete m_editdialog;
-	}
 	PENTERDES;
 }
 
@@ -812,11 +808,9 @@ void AudioClipView::set_trackview(TrackView * view)
 
 Command * AudioClipView::edit_properties()
 {
-	if (!m_editdialog) {
-		m_editdialog = new AudioClipEditDialog(m_clip, Interface::instance());
-	}
+	AudioClipEditDialog editdialog(m_clip, Interface::instance());
 	
-	m_editdialog->exec();
+	editdialog.exec();
 	
 	return 0;
 }
