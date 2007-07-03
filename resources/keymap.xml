@@ -322,6 +322,11 @@
 				<Object objectname="SongView" slotsignature="center_playhead" modes="All" sortorder="15" submenu="Playhead" />
 			</Objects>
 		</keyfact>
+		<keyfact type="FKEY2" key1="E" key2="P" >
+			<Objects>
+				<Object objectname="AudioClip" modes="All" sortorder="18" pluginname="TraversoCommands" commandname="AudioClipExternalProcessing" />
+			</Objects>
+		</keyfact>
 		
 		
 		<keyfact type="HKEY" key1="Z" sortorder="35" >
@@ -505,14 +510,14 @@
 				<Object objectname="CurveView" slotsignature="add_node" modes="All" />
 			</Objects>
 		</keyfact>
-		<keyfact type="D_FKEY" key1="HOME" >
-			<Objects>
-				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" sortorder="7" pluginname="TraversoCommands" commandname="MoveClip"  arguments="move_to_start" />
-			</Objects>
-		</keyfact>
 		<keyfact type="D_FKEY" key1="END" >
 			<Objects>
 				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" sortorder="8" pluginname="TraversoCommands" commandname="MoveClip"  arguments="move_to_end" />
+			</Objects>
+		</keyfact>
+		<keyfact type="D_FKEY" key1="HOME" >
+			<Objects>
+				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" sortorder="7" pluginname="TraversoCommands" commandname="MoveClip"  arguments="move_to_start" />
 			</Objects>
 		</keyfact>
 		<keyfact type="D_FKEY" key1="F" >
