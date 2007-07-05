@@ -664,17 +664,20 @@ void InputEngine::process_press_event(int eventcode, bool isAutoRepeat)
 			// Here we jump straight to the <K> command if "K" is unambiguously an FKEY
 			int fkey_index = find_index_for_instant_fkey(eventcode);
 			if (fkey_index >= 0) {
+				catcher.holdTimer.stop(); // quit the holding check..
 				IEAction* action = m_ieActions.at(fkey_index);
 				broadcast_action(action, isAutoRepeat);
+				conclusion();
 				return;
 			}
 		} else {
 			// Here we jump straight to the <KL> command if "KL" is unambiguously an FKEY2
 			int fkey2_index = find_index_for_instant_fkey2(eventcode, eventStack[0]);
 			if (fkey2_index >= 0) {
+				catcher.holdTimer.stop(); // quit the holding check..
 				IEAction* action = m_ieActions.at(fkey2_index);
 				broadcast_action(action, isAutoRepeat);
-				reset();
+				conclusion();
 				return;
 			}
 		}
