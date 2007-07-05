@@ -1,4 +1,8 @@
-TOBEDONE FOR 0.40.x
+TOBEDONE FOR 0.4x.x
+
+* fade out < GH > is inverted
+
+* Export Widget: manually supplied export dir isn't used for the actual export source (WriteSource) path.
 
 * import file, peak creation starts, undo, redo (while peak creation still active) -> crash
 
@@ -7,8 +11,9 @@ TOBEDONE FOR 0.40.x
 * Curve copy should not use the same id!!!!!!
 
 * libsndfile:
-	How to record to files larger 4 GB
-	Sector misalignment, how to handle.
+	* How to record to files larger 4 GB
+	* Sector misalignment, how to handle.
+	* flac support is rather broken
 
 Less important:
 * Painting last curve nodes has artifacts, 'fixed' by populating polygon with as many points as there are
