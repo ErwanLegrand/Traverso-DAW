@@ -1,7 +1,5 @@
 TOBEDONE FOR 0.40.x
 
-* invert plugin for j_ack
-
 * import file, peak creation starts, undo, redo (while peak creation still active) -> crash
 
 * add docs for preparing pc for realtime use! (limits.conf stuff)

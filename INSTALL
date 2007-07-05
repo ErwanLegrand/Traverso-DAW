@@ -37,3 +37,9 @@ unwanted side effects (you could build against another version then we did e.g.)
 
 DEFINES that could be changed or e.g. compiler flag options, if you don't want to 
 build with SSE support by default.
+
+
+Qt 4.3.0 issue:
+See the website for an explanation!
+
+http://traverso-daw.org/requirements.html

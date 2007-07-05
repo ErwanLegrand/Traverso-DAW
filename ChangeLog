@@ -1,3 +1,18 @@
+05-07-2007 Remon Sijrier <remon at traverso-daw dot org>
+	* Released 0.41.0
+
+	* Merged patch from Fernando Lopez (iirc) to make jack > 0.105 work
+	* Jack transport control added
+	* AudioClip Edit dialog, with improvements from Nicola
+	* Reworked external processing dialog, with focus on sox support
+	* Slightly more contrast in the default theme.
+	* Fixed audible glitch when playing over spitpoint
+	* usual amount of bug fixes
+	* support for project renaming, detection if project dirs are renamed outside of traverso
+	  improved detection if projects dirs are renamed, with tooltip help in open project dialog
+	  to be able to restore the project dir name, so the project can be loaded.
+
+
 09-06-2007 Remon Sijrier <remon at traverso-daw dot org>
 	* Released 0.40.0
 	

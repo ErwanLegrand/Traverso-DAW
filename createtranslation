@@ -5,6 +5,6 @@ lupdate -verbose src/traverso/*.cpp src/traverso/*.h \
 	src/core/*.cpp src/core/*.h src/engine/*.cpp src/commands/*.cpp \
 	src/traverso/ui/*.ui src/commands/plugins/TraversoCommands/*.h \
 	src/commands/plugins/TraversoCommands/*.cpp \
- 	-ts traverso_nl.ts traverso_de.ts traverso_en.ts
+ 	-ts traverso_nl.ts traverso_de.ts traverso_en.ts traverso_pt.ts
 
-lrelease  -verbose traverso_nl.ts traverso_de.ts traverso_en.ts
+lrelease  -verbose traverso_nl.ts traverso_de.ts traverso_en.ts traverso_pt.ts
