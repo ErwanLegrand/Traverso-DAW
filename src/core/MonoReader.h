@@ -25,10 +25,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AudioSource.h"
 #include "RingBufferNPT.h"
 #include "defines.h"
-#include "sndfile.h"
 
 
 class AudioClip;
+class AbstractAudioReader;
 class Peak;
 class ReadSource;
 class QString;
@@ -63,8 +63,7 @@ private:
 	ReadSource*	m_source;
 	RingBufferNPT<float>*	m_buffer;
 	Peak* 		m_peak;
-	SNDFILE*	m_sf;
-	SF_INFO 	m_sfinfo;
+	AbstractAudioReader*	m_audioReader;
 	int 		m_sourceChannelCount;
 	int		m_channelNumber;
 	uint		m_length;

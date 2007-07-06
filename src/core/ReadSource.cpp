@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "ReadSource.h"
 #include "MonoReader.h"
+#include "AbstractAudioReader.h"
 
 #include "Peak.h"
 #include "ProjectManager.h"
@@ -68,13 +69,13 @@ ReadSource::ReadSource(const QString& dir, const QString& name)
 	, m_error(0)
 	, m_clip(0)
 {
-	SNDFILE* sf;
-	SF_INFO  sfinfo;
+	AbstractAudioReader* reader = AbstractAudioReader::create_audio_reader(m_fileName);
+
 	m_channelCount = 0;
 	
-	if ((sf = sf_open (QS_C(m_fileName), SFM_READ, &sfinfo)) != 0) {
-		m_channelCount = sfinfo.channels;
-		sf_close(sf);
+	if (reader) {
+		m_channelCount = reader->get_num_channels();
+		delete reader;
 	}
 
 	m_fileCount = 1;

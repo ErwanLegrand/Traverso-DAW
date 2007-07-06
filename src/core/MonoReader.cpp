@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <AudioDevice.h>
 #include <DiskIO.h>
 #include <Song.h>
+#include "AbstractAudioReader.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -44,7 +45,7 @@ MonoReader::MonoReader(ReadSource* source, int sourceChannelCount, int channelNu
 	  m_source(source),
 	  m_buffer(0),
 	  m_peak(0),
-	  m_sf(0),
+	  m_audioReader(0),
 	  m_sourceChannelCount(sourceChannelCount), 
 	  m_channelNumber(channelNumber), 
 	  m_fileName(fileName)
@@ -62,10 +63,8 @@ MonoReader::~MonoReader()
 	if (m_peak) {
 		m_peak->close();
 	}
-	if (m_sf) {
-		if (sf_close (m_sf)) {
-			qWarning("sf_close returned an error!");
-		}
+	if (m_audioReader) {
+		delete m_audioReader;
 	}
 	
 	delete m_bufferstatus;
@@ -76,7 +75,7 @@ int MonoReader::init( )
 {
 	PENTER;
 	
-	Q_ASSERT(m_sf == 0);
+	Q_ASSERT(m_audioReader == 0);
 	
 	m_rbFileReadPos = 0;
 	m_rbRelativeFileReadPos = 0;
@@ -87,37 +86,35 @@ int MonoReader::init( )
 	m_bufferUnderRunDetected = m_wasActivated = 0;
 	m_isCompressedFile = false;
 
-	/* although libsndfile says we don't need to set this,
-	valgrind and source code shows us that we do.
-	Really? Look it up !
-	*/
-	memset (&m_sfinfo, 0, sizeof(m_sfinfo));
 
+	//
+	// Uncomment the next line, and comment the one after that to try out dynamic resampling
+	//
 
-	if ((m_sf = sf_open ((m_fileName.toUtf8().data()), SFM_READ, &m_sfinfo)) == 0) {
-		PERROR("Couldn't open soundfile (%s)", QS_C(m_fileName));
+	//if ((m_audioReader = AbstractAudioReader::create_resampled_audio_reader(m_fileName)) == 0) {
+	if ((m_audioReader = AbstractAudioReader::create_audio_reader(m_fileName)) == 0) {
 		return ReadSource::COULD_NOT_OPEN_FILE;
 	}
 
-	if (m_sourceChannelCount > m_sfinfo.channels) {
-		PERROR("ReadAudioSource: file only contains %d channels; %d is invalid as a channel number", m_sfinfo.channels, m_sourceChannelCount);
-		sf_close (m_sf);
-		m_sf = 0;
+	if (m_sourceChannelCount > m_audioReader->get_num_channels()) {
+		PERROR("ReadAudioSource: file only contains %d channels; %d is invalid as a channel number", m_audioReader->get_num_channels(), m_sourceChannelCount);
+		delete m_audioReader;
+		m_audioReader = 0;
 		return ReadSource::INVALID_CHANNEL_COUNT;
 	}
 
-	if (m_sfinfo.channels == 0) {
-		PERROR("ReadAudioSource: not a valid channel count: %d", m_sfinfo.channels);
-		sf_close (m_sf);
-		m_sf = 0;
+	if (m_audioReader->get_num_channels() == 0) {
+		PERROR("ReadAudioSource: not a valid channel count: %d", m_audioReader->get_num_channels());
+		delete m_audioReader;
+		m_audioReader = 0;
 		return ReadSource::ZERO_CHANNELS;
 	}
 
-	m_source->m_length = m_sfinfo.frames;
-	m_length = m_sfinfo.frames;
-	m_source->m_rate = m_sfinfo.samplerate;
+	m_source->m_length = m_audioReader->get_length();
+	m_length = m_audioReader->get_length();
+	m_source->m_rate = m_audioReader->get_rate();
 
-	if ( (m_sfinfo.format & SF_FORMAT_TYPEMASK) == SF_FORMAT_FLAC ) {
+	if ( m_audioReader->is_compressed() ) {
 		m_isCompressedFile = true;
 	}
 	
@@ -129,28 +126,11 @@ int MonoReader::init( )
 
 int MonoReader::file_read (audio_sample_t* dst, nframes_t start, nframes_t cnt, audio_sample_t* readbuffer) const
 {
-// 	PWARN("file_read");
-	// this equals checking if init() is called!
-	Q_ASSERT(m_sf);
-	
-	if (start >= m_source->m_length) {
-		return 0;
-	}
-	
-//#define profile
-	
-	if (sf_seek (m_sf, (off_t) start, SEEK_SET) < 0) {
-		char errbuf[256];
-		sf_error_str (0, errbuf, sizeof (errbuf) - 1);
-		PERROR("ReadAudioSource: could not seek to frame %d within %s (%s)", start, QS_C(m_fileName), errbuf);
-		return 0;
-	}
-
 #if defined (profile)
 	trav_time_t starttime = get_microseconds();
 #endif
-	if (m_sfinfo.channels == 1) {
-		int result = sf_read_float (m_sf, dst, cnt);
+	if (m_audioReader->get_num_channels() == 1) {
+		int result = m_audioReader->read_from(dst, start, cnt);
 #if defined (profile)
 		int processtime = (int) (get_microseconds() - starttime);
 		if (processtime > 40000)
@@ -160,25 +140,25 @@ int MonoReader::file_read (audio_sample_t* dst, nframes_t start, nframes_t cnt, 
 	}
 
 	float *ptr;
-	uint real_cnt = cnt * m_sfinfo.channels;
+	uint real_cnt = cnt * m_audioReader->get_num_channels();
 	
 	// The readbuffer 'assumes' that there is max 2 channels...
-	Q_ASSERT(m_sfinfo.channels <= 2);
+	Q_ASSERT(m_audioReader->get_num_channels() <= 2);
 	
-	int nread = sf_read_float (m_sf, readbuffer, real_cnt);
+	int nread = m_audioReader->read_from(readbuffer, start, real_cnt);
 #if defined (profile)
 	int processtime = (int) (get_microseconds() - starttime);
 	if (processtime > 40000)
 		printf("Process time for %s, channel %d: %d useconds\n\n", QS_C(m_fileName), m_channelNumber, processtime);
 #endif
 	ptr = readbuffer + m_channelNumber;
-	nread /= m_sfinfo.channels;
+	nread /= m_audioReader->get_num_channels();
 
 	/* stride through the interleaved data */
 
 	for (int32_t n = 0; n < nread; ++n) {
 		dst[n] = *ptr;
-		ptr += m_sfinfo.channels;
+		ptr += m_audioReader->get_num_channels();
 	}
 
 
@@ -417,11 +397,7 @@ BufferStatus* MonoReader::get_buffer_status()
 	m_bufferstatus->bufferUnderRun = m_bufferUnderRunDetected;
 	m_bufferstatus->needSync = m_needSync;
 
-	if ( ! m_isCompressedFile) {
-		m_bufferstatus->priority = (int) (freespace / m_chunkSize);
-	} else {
-		m_bufferstatus->priority = (int) (freespace / m_chunkSize);
-	}
+	m_bufferstatus->priority = (int) (freespace / m_chunkSize);
 	
 	return m_bufferstatus;
 }

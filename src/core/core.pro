@@ -50,7 +50,11 @@ SOURCES = AudioClip.cpp \
 	Snappable.cpp \
 	TimeLine.cpp \
 	Marker.cpp \
-	Themer.cpp
+	Themer.cpp \
+	AbstractAudioReader.cpp \
+	SFAudioReader.cpp \
+	ResampleAudioReader.cpp \
+	VorbisAudioReader.cpp
 HEADERS = precompile.h \
 	AudioClip.h \
 	AudioClipList.h \
@@ -94,7 +98,11 @@ HEADERS = precompile.h \
 	CommandPlugin.h \
 	TimeLine.h \
 	Marker.h \
-	Themer.h
+	Themer.h \
+	AbstractAudioReader.h \
+	SFAudioReader.h \
+	ResampleAudioReader.h \
+	VorbisAudioReader.h
 macx{
     QMAKE_LIBDIR += /usr/local/qt/lib
 }
