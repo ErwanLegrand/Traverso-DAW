@@ -132,11 +132,13 @@ bool SFAudioReader::seek(nframes_t start)
 }
 
 
-int SFAudioReader::read(audio_sample_t* dst, nframes_t cnt)
+int SFAudioReader::read(audio_sample_t* dst, int sampleCount)
 {
 	Q_ASSERT(m_sf);
 	
-	int samplesRead = sf_read_float (m_sf, dst, cnt);
+	int samplesRead = sf_read_float (m_sf, dst, sampleCount);
+	
+	// FIXME: deinterlace here instead of in MonoReader
 	
 	m_nextFrame += samplesRead / get_num_channels();
 	

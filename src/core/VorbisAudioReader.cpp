@@ -37,17 +37,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 VorbisAudioReader::VorbisAudioReader(QString filename)
  : AbstractAudioReader(filename)
 {
-	m_file = fopen(QFile::encodeName(filename), "r");
+	m_file = fopen(QFile::encodeName(filename).data(), "rb");
 	if (!m_file) {
 		PERROR("Couldn't open file %s.", QS_C(filename));
 		return;
 	}
 	
-	if (ov_open(m_file, &m_vf, NULL, 0) < 0) {
+	if (ov_open(m_file, &m_vf, 0, 0) < 0) {
 		PERROR("Input does not appear to be an Ogg bitstream.");
+		fclose(m_file);
 		return;
 	}
 
+	ov_pcm_seek(&m_vf, 0);
 	m_vi = ov_info(&m_vf,-1);
 }
 
@@ -56,14 +58,13 @@ VorbisAudioReader::~VorbisAudioReader()
 {
 	if (m_file) {
 		ov_clear(&m_vf);
-		fclose(m_file);
 	}
 }
 
 
 bool VorbisAudioReader::can_decode(QString filename)
 {
-	FILE* file = fopen(QFile::encodeName(filename), "r");
+	FILE* file = fopen(QFile::encodeName(filename).data(), "rb");
 	if (!file) {
 		PERROR("Could not open file: %s.", QS_C(filename));
 		return false;
@@ -77,7 +78,6 @@ bool VorbisAudioReader::can_decode(QString filename)
 	}
 	
 	ov_clear(&of);
-	fclose(file);
 	
 	return true;
 }
@@ -95,7 +95,7 @@ int VorbisAudioReader::get_num_channels()
 int VorbisAudioReader::get_length()
 {
 	if (m_file) {
-		return ov_pcm_total(&m_vf, -1) / get_num_channels();
+		return ov_pcm_total(&m_vf, -1);
 	}
 	return 0;
 }
@@ -124,9 +124,9 @@ bool VorbisAudioReader::seek(nframes_t start)
 	if (start >= get_length()) {
 		return false;
 	}
-	//printf("seek to %lu\n", start);
-	if (ov_pcm_seek(&m_vf, start) < 0) {
-		PERROR("VorbisAudioReader: could not seek to frame %d within %s", start, QS_C(m_fileName));
+	
+	if (int result = ov_pcm_seek(&m_vf, start) < 0) {
+		PERROR("VorbisAudioReader: could not seek to frame %d within %s (%d)", start, QS_C(m_fileName), result);
 		return false;
 	}
 	
@@ -136,40 +136,42 @@ bool VorbisAudioReader::seek(nframes_t start)
 }
 
 
-int VorbisAudioReader::read(audio_sample_t* dst, nframes_t cnt)
+int VorbisAudioReader::read(audio_sample_t* dst, int sampleCount)
 {
 	Q_ASSERT(m_file);
 	
-	audio_sample_t** tmp;
-	int bs;
+	nframes_t totalRead = 0;
 	
-	int samplesRead = ov_read_float (&m_vf, &tmp, cnt, &bs);
-	
-	if (samplesRead == OV_HOLE) {
-		PERROR("VorbisAudioReader: OV_HOLE");
-		// recursive new try
-		return read(dst, cnt);
-	}
-	else if (samplesRead == 0) {
-		/* EOF */
-		return 0;
-	} else if (samplesRead < 0) {
-		/* error in the stream. */
-		return 0;
-	}
-	
-	int frames = samplesRead/get_num_channels();
-	for (int f=0; f < frames; f++) {
-		for (int c=0; c < get_num_channels(); c++) {
-			dst[f * get_num_channels() + c] = tmp[c][f];
+	while (totalRead < sampleCount) {
+		audio_sample_t** tmp;
+		int bs;
+		int samplesRead = ov_read_float(&m_vf, &tmp, (sampleCount - totalRead) / get_num_channels(), &bs);
+		
+		if (samplesRead == OV_HOLE) {
+			PERROR("VorbisAudioReader: OV_HOLE");
+			// recursive new try
+			return read(dst, sampleCount);
 		}
+		else if (samplesRead == 0) {
+			/* EOF */
+			break;
+		} else if (samplesRead < 0) {
+			/* error in the stream. */
+			break;
+		}
+		
+		// FIXME: Instead of interlacing here, deinterlace in other AudioReaders!! (since we deinterlace later anyway)
+		int frames = samplesRead;
+		for (int f=0; f < frames; f++) {
+			for (int c=0; c < get_num_channels(); c++) {
+				dst[totalRead + f * get_num_channels() + c] = tmp[c][f];
+			}
+		}
+		totalRead += samplesRead * get_num_channels();
 	}
 	
-	//printf("SFAudioReader: cnt = %lu, samplesRead = %d, length = %lu\n", cnt, samplesRead, get_length());
+	m_nextFrame += totalRead / get_num_channels();
 	
-	// m_nextFrame currently exists just for debugging
-	m_nextFrame += frames;
-	
-	return samplesRead;
+	return totalRead;
 }
 

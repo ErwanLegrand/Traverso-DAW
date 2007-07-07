@@ -126,37 +126,40 @@ bool ResampleAudioReader::seek(nframes_t start)
 
 
 // 
-int ResampleAudioReader::read(audio_sample_t* dst, nframes_t cnt)
+int ResampleAudioReader::read(audio_sample_t* dst, int sampleCount)
 {
 	Q_ASSERT(m_realReader);
 
 	if (audiodevice().get_sample_rate() == m_realReader->get_rate()) {
-		return m_realReader->read(dst, cnt);
+		return m_realReader->read(dst, sampleCount);
 	}
 	
-	nframes_t fileCnt = song_to_file_frame(cnt) + 4;
+	// The +1 means decode a tiny bit extra from the file to make sure we can get enough resampled data
+	nframes_t fileCnt = (song_to_file_frame(sampleCount / get_num_channels()) +1) * get_num_channels();
 	
 	// make sure that the reusable m_fileBuffer is big enough for this read
 	if (m_fileBufferLength < fileCnt) {
 		if (m_fileBuffer) {
 			delete m_fileBuffer;
 		}
-		m_fileBuffer = new audio_sample_t[fileCnt * get_num_channels()];
+		m_fileBuffer = new audio_sample_t[fileCnt];
 		m_fileBufferLength = fileCnt;
 	}
 	
-	if (cnt) printf("nextFrame = %lu, fileCnt = %lu\n", m_nextFrame, fileCnt);
 	int samplesRead;
-	samplesRead = m_realReader->read_from(m_fileBuffer, m_nextFrame, fileCnt);
-	if (cnt) printf("samplesRead = %d\n", samplesRead);
-	// FIXME: Why does samplesRead==0 when it shouldn't???
+	samplesRead = m_realReader->read(m_fileBuffer, fileCnt);
 	
-	m_nextFrame += samplesRead / get_num_channels();
+	if (samplesRead == fileCnt) {
+		m_nextFrame += sampleCount / get_num_channels();
+	}
+	else {
+		m_nextFrame += file_to_song_frame(samplesRead) / get_num_channels();
+	}
 	
 	m_srcData.data_in = m_fileBuffer;
 	m_srcData.input_frames = samplesRead / get_num_channels();
 	m_srcData.data_out = dst;
-	m_srcData.output_frames = cnt;
+	m_srcData.output_frames = sampleCount / get_num_channels();
 	m_srcData.src_ratio = (double) audiodevice().get_sample_rate() / m_realReader->get_rate();
 	src_set_ratio(m_srcState, m_srcData.src_ratio);
 	

@@ -155,6 +155,7 @@ int MonoReader::file_read (audio_sample_t* dst, nframes_t start, nframes_t cnt, 
 	nread /= m_audioReader->get_num_channels();
 
 	/* stride through the interleaved data */
+	// FIXME: deinterlace in AudioReader Classes instead of here
 
 	for (int32_t n = 0; n < nread; ++n) {
 		dst[n] = *ptr;

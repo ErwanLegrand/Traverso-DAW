@@ -37,7 +37,7 @@ public:
 	int get_rate();
 	bool is_compressed();
 	bool seek(nframes_t start);
-	int read(audio_sample_t* dst, nframes_t cnt);
+	int read(audio_sample_t* dst, int sampleCount);
 
 	// Shouldn't ever actually get called
 	static bool can_decode(QString filename) {return false;}
