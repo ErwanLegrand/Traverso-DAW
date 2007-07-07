@@ -427,7 +427,12 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			short* mbuffer = (short*) buffers[chan];
 			int bufferPos = 0;
 			
-			ytrans = (height / 2) + (chan * height);
+			if (m_mergedView) {
+				ytrans = (height / 2) * channels;
+			} else {
+				ytrans = (height / 2) + (chan * height);
+			}
+			
 			p->setMatrix(matrix().translate(1, ytrans), true);
 			
 			if (m_clip->is_selected()) {
