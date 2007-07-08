@@ -97,10 +97,24 @@ private:
 	// theme data
 	int m_drawbackground;
 	int m_fillwave;
-	QColor m_backgroundColor;
-	QColor m_backgroundColorMouseHover;
+	QColor m_backgroundColorTop;
+	QColor m_backgroundColorBottom;
+	QColor m_backgroundColorMouseHoverTop;
+	QColor m_backgroundColorMouseHoverBottom;
 	QBrush m_waveBrush;
-	
+	QBrush m_brushBgRecording;
+	QBrush m_brushBgMuted;
+	QBrush m_brushBgMutedHover;
+	QBrush m_brushBgSelected;
+	QBrush m_brushBgSelectedHover;
+	QBrush m_brushBg;
+	QBrush m_brushBgHover;
+	QBrush m_brushFg;
+	QBrush m_brushFgHover;
+	QBrush m_brushFgMuted;
+	QBrush m_brushFgEdit;
+	QBrush m_brushFgEditHover;
+
 	QString m_clipinfoString;
 
 	void create_clipinfo_string();
@@ -108,7 +122,8 @@ private:
 	void draw_clipinfo_area(QPainter* painter, int xstart, int pixelcount);
 	void draw_peaks(QPainter* painter, int xstart, int pixelcount);
 	void start_peak_data_loading();
-	
+	void create_brushes();
+
 	friend class FadeView;
 
 public slots:

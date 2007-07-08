@@ -63,6 +63,7 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 #endif
 	
 	load_theme_data();
+	create_brushes();
 	create_clipinfo_string();
 
 	m_waitingForPeaks = false;
@@ -145,41 +146,33 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	
 	if (m_drawbackground) {
 		if (m_clip->recording_state() == AudioClip::RECORDING) {
-			m_backgroundColor = m_backgroundColorMouseHover = themer()->get_color("AudioClip:background:recording");
+			painter->fillRect(xstart, 0, pixelcount, m_height, m_brushBgRecording);
 		} else {
 			if (m_clip->is_muted()) {
-				m_backgroundColor = themer()->get_color("AudioClip:background:muted");
-				m_backgroundColorMouseHover = themer()->get_color("AudioClip:background:muted:mousehover");
+				if (mousehover) painter->fillRect(xstart, 0, pixelcount, m_height, m_brushBgMutedHover);
+				else            painter->fillRect(xstart, 0, pixelcount, m_height, m_brushBgMuted);
 			} else if (m_clip->is_selected()) {
-				m_backgroundColor = themer()->get_color("AudioClip:background:selected");
-				m_backgroundColorMouseHover = themer()->get_color("AudioClip:background:selected:mousehover");
+				if (mousehover) painter->fillRect(xstart, 0, pixelcount, m_height, m_brushBgSelectedHover);
+				else            painter->fillRect(xstart, 0, pixelcount, m_height, m_brushBgSelected);
 			} else {
-				m_backgroundColor = themer()->get_color("AudioClip:background");
-				m_backgroundColorMouseHover = themer()->get_color("AudioClip:background:mousehover");
+				if (mousehover) painter->fillRect(xstart, 0, pixelcount, m_height, m_brushBgHover);
+				else            painter->fillRect(xstart, 0, pixelcount, m_height, m_brushBg);
 			}
 		}
-
-		if (mousehover) {
-			painter->fillRect(xstart, 0, pixelcount, m_height, m_backgroundColorMouseHover);
+	}
+	
+	if (m_clip->is_muted()) {
+		m_waveBrush = m_brushFgMuted;
+	} else {
+		if (m_song->get_mode() == Song::EDIT) {
+			if (mousehover) m_waveBrush = m_brushFgHover;
+			else            m_waveBrush = m_brushFg;
 		} else {
-			painter->fillRect(xstart, 0, pixelcount, m_height, m_backgroundColor);
+			if (mousehover) m_waveBrush = m_brushFgEditHover;
+			else            m_waveBrush = m_brushFgEdit;
 		}
 	}
 	
-	if (m_song->get_mode() == Song::EDIT) {
-		if (mousehover)
-			m_waveBrush = themer()->get_color("AudioClip:wavemacroview:brush:hover");
-		else
-			m_waveBrush = themer()->get_color("AudioClip:wavemacroview:brush");
-			
-	} else {
-		if (mousehover)
-			m_waveBrush = themer()->get_color("AudioClip:wavemacroview:brush:curvemode:hover");
-		else
-			m_waveBrush = themer()->get_color("AudioClip:wavemacroview:brush:curvemode");
-	}
-	
-
 	int channels = m_clip->get_channels();
 
 	if (channels > 0) {
@@ -456,20 +449,16 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		
 		// Macroview, paint waveform with painterpath
 		} else {
-			
+			if (m_fillwave) {
+				p->setBrush(m_waveBrush);
+			}
+
 			if (m_song->get_mode() == Song::EDIT) {
 				p->setPen(themer()->get_color("AudioClip:wavemacroview:outline"));
-				if (m_fillwave) {
-					p->setBrush(m_waveBrush);
-				}
 			} else  {
 				p->setPen(themer()->get_color("AudioClip:wavemacroview:outline:curvemode"));
-				if (m_fillwave) {
-					p->setBrush(m_waveBrush);
-				}
 			}
 			if (m_clip->is_muted()) {
-				p->setBrush(themer()->get_color("AudioClip:wavemacroview:brush:muted"));
 				p->setPen(themer()->get_color("AudioClip:wavemacroview:outline:muted"));
 			}
 				
@@ -538,6 +527,157 @@ void AudioClipView::draw_clipinfo_area(QPainter* p, int xstart, int pixelcount)
 	if (xstart < m_clipinfoString.size() * 6) {
 		p->setFont(themer()->get_font("AudioClip:fontscale:title"));
 		p->drawText(5, 10, m_clipinfoString);
+	}
+}
+
+void AudioClipView::create_brushes()
+{
+	// make sure the brushes are made from solid colors (not gradients) if top and bottom color are equal
+
+	// create brushes for background states
+	QColor bg_colRecTop = themer()->get_color("AudioClip:background:recording:top");
+	QColor bg_colRecBottom = themer()->get_color("AudioClip:background:recording:Bottom");
+	if (bg_colRecTop == bg_colRecBottom) {
+		m_brushBgRecording = QBrush(bg_colRecTop);
+	} else {
+		QLinearGradient bg_gradientRec(QPoint(0, 0), QPoint(0, m_height));
+		bg_gradientRec.setSpread(QGradient::RepeatSpread);
+		bg_gradientRec.setColorAt(0, bg_colRecTop);
+		bg_gradientRec.setColorAt(1, bg_colRecBottom);
+		m_brushBgRecording = QBrush(bg_gradientRec);
+	}
+
+	QColor bg_colMutedTop = themer()->get_color("AudioClip:background:muted:top");
+	QColor bg_colMutedBottom = themer()->get_color("AudioClip:background:muted:bottom");
+	if (bg_colMutedTop == bg_colMutedBottom) {
+		m_brushBgMuted = QBrush(bg_colMutedTop);
+	} else {
+		QLinearGradient bg_gradientMuted(QPoint(0, 0), QPoint(0, m_height));
+		bg_gradientMuted.setSpread(QGradient::RepeatSpread);
+		bg_gradientMuted.setColorAt(0, bg_colMutedTop);
+		bg_gradientMuted.setColorAt(1, bg_colMutedBottom);
+		m_brushBgMuted = QBrush(bg_gradientMuted);
+	}
+
+	QColor bg_colMutedHoverTop = themer()->get_color("AudioClip:background:muted:mousehover:top");
+	QColor bg_colMutedHoverBottom = themer()->get_color("AudioClip:background:muted:mousehover:bottom");
+	if (bg_colMutedHoverTop == bg_colMutedHoverBottom) {
+		m_brushBgMutedHover = QBrush(bg_colMutedHoverTop);
+	} else {
+		QLinearGradient bg_gradientMutedHover(QPoint(0, 0), QPoint(0, m_height));
+		bg_gradientMutedHover.setSpread(QGradient::RepeatSpread);
+		bg_gradientMutedHover.setColorAt(0, bg_colMutedHoverTop);
+		bg_gradientMutedHover.setColorAt(1, bg_colMutedHoverBottom);
+		m_brushBgMutedHover = QBrush(bg_gradientMutedHover);
+	}
+
+	QColor bg_colSelectedTop = themer()->get_color("AudioClip:background:selected:top");
+	QColor bg_colSelectedBottom = themer()->get_color("AudioClip:background:selected:bottom");
+	if (bg_colSelectedTop == bg_colSelectedBottom) {
+		m_brushBgSelected = QBrush(bg_colSelectedTop);
+	} else {
+		QLinearGradient bg_gradientSelected(QPoint(0, 0), QPoint(0, m_height));
+		bg_gradientSelected.setSpread(QGradient::RepeatSpread);
+		bg_gradientSelected.setColorAt(0, bg_colSelectedTop);
+		bg_gradientSelected.setColorAt(1, bg_colSelectedBottom);
+		m_brushBgSelected = QBrush(bg_gradientSelected);
+	}
+
+	QColor bg_colSelectedHoverTop = themer()->get_color("AudioClip:background:selected:mousehover:top");
+	QColor bg_colSelectedHoverBottom = themer()->get_color("AudioClip:background:selected:mousehover:bottom");
+	if (bg_colSelectedHoverTop == bg_colSelectedHoverBottom) {
+		m_brushBgSelectedHover = QBrush(bg_colSelectedHoverTop);
+	} else {
+		QLinearGradient bg_gradientSelectedHover(QPoint(0, 0), QPoint(0, m_height));
+		bg_gradientSelectedHover.setSpread(QGradient::RepeatSpread);
+		bg_gradientSelectedHover.setColorAt(0, bg_colSelectedHoverTop);
+		bg_gradientSelectedHover.setColorAt(1, bg_colSelectedHoverBottom);
+		m_brushBgSelectedHover = QBrush(bg_gradientSelectedHover);
+	}
+
+	QColor bg_colTop = themer()->get_color("AudioClip:background:top");
+	QColor bg_colBottom = themer()->get_color("AudioClip:background:bottom");
+	if (bg_colTop == bg_colBottom) {
+		m_brushBg = QBrush(bg_colTop);
+	} else {
+		QLinearGradient bg_gradient(QPoint(0, 0), QPoint(0, m_height));
+		bg_gradient.setSpread(QGradient::RepeatSpread);
+		bg_gradient.setColorAt(0, bg_colTop);
+		bg_gradient.setColorAt(1, bg_colBottom);
+		m_brushBg = QBrush(bg_gradient);
+	}
+
+	QColor bg_colHoverTop = themer()->get_color("AudioClip:background:mousehover:top");
+	QColor bg_colHoverBottom = themer()->get_color("AudioClip:background:mousehover:bottom");
+	if (bg_colHoverTop == bg_colHoverBottom) {
+		m_brushBgHover = QBrush(bg_colHoverTop);
+	} else {
+		QLinearGradient bg_gradientHover(QPoint(0, 0), QPoint(0, m_height));
+		bg_gradientHover.setSpread(QGradient::RepeatSpread);
+		bg_gradientHover.setColorAt(0, bg_colHoverTop);
+		bg_gradientHover.setColorAt(1, bg_colHoverBottom);
+		m_brushBgHover = QBrush(bg_gradientHover);
+	}
+
+	// Foreground (Waveforms)
+	QColor fg_colTop = themer()->get_color("AudioClip:wavemacroview:brush:top");
+	QColor fg_colBottom = themer()->get_color("AudioClip:wavemacroview:brush:bottom");
+	if (fg_colTop == fg_colBottom) {
+		m_brushFg = QBrush(fg_colTop);
+	} else {
+		QLinearGradient fg_gradient(QPoint(0, 0), QPoint(0, m_height));
+		fg_gradient.setSpread(QGradient::RepeatSpread);
+		fg_gradient.setColorAt(0, fg_colTop);
+		fg_gradient.setColorAt(1, fg_colBottom);
+		m_brushFg = QBrush(fg_gradient);
+	}
+
+	QColor fg_colHoverTop = themer()->get_color("AudioClip:wavemacroview:brush:hover:top");
+	QColor fg_colHoverBottom = themer()->get_color("AudioClip:wavemacroview:brush:hover:bottom");
+	if (fg_colHoverTop == fg_colHoverBottom) {
+		m_brushFgHover = QBrush(fg_colHoverTop);
+	} else {
+		QLinearGradient fg_gradientHover(QPoint(0, 0), QPoint(0, m_height));
+		fg_gradientHover.setSpread(QGradient::RepeatSpread);
+		fg_gradientHover.setColorAt(0, fg_colHoverTop);
+		fg_gradientHover.setColorAt(1, fg_colHoverBottom);
+		m_brushFgHover = QBrush(fg_gradientHover);
+	}
+
+	QColor fg_colEditTop = themer()->get_color("AudioClip:wavemacroview:brush:curvemode:top");
+	QColor fg_colEditBottom = themer()->get_color("AudioClip:wavemacroview:brush:curvemode:bottom");
+	if (fg_colEditTop == fg_colEditBottom) {
+		m_brushFgEdit = QBrush(fg_colEditTop);
+	} else {
+		QLinearGradient fg_gradientEdit(QPoint(0, 0), QPoint(0, m_height));
+		fg_gradientEdit.setSpread(QGradient::RepeatSpread);
+		fg_gradientEdit.setColorAt(0, fg_colEditTop);
+		fg_gradientEdit.setColorAt(1, fg_colEditBottom);
+		m_brushFgEdit = QBrush(fg_gradientEdit);
+	}
+
+	QColor fg_colEditHoverTop = themer()->get_color("AudioClip:wavemacroview:brush:curvemode:hover:top");
+	QColor fg_colEditHoverBottom = themer()->get_color("AudioClip:wavemacroview:brush:curvemode:hover:bottom");
+	if (fg_colEditHoverTop == fg_colEditHoverBottom) {
+		m_brushFgEditHover = QBrush(fg_colEditHoverTop);
+	} else {
+		QLinearGradient fg_gradientEditHover(QPoint(0, 0), QPoint(0, m_height));
+		fg_gradientEditHover.setSpread(QGradient::RepeatSpread);
+		fg_gradientEditHover.setColorAt(0, fg_colEditHoverTop);
+		fg_gradientEditHover.setColorAt(1, fg_colEditHoverBottom);
+		m_brushFgEditHover = QBrush(fg_gradientEditHover);
+	}
+
+	QColor fg_colMutedTop = themer()->get_color("AudioClip:wavemacroview:brush:muted:top");
+	QColor fg_colMutedBottom = themer()->get_color("AudioClip:wavemacroview:brush:muted:bottom");
+	if (fg_colMutedTop == fg_colMutedBottom) {
+		m_brushFgMuted = QBrush(fg_colMutedTop);
+	} else {
+		QLinearGradient fg_gradientMuted(QPoint(0, 0), QPoint(0, m_height));
+		fg_gradientMuted.setSpread(QGradient::RepeatSpread);
+		fg_gradientMuted.setColorAt(0, fg_colMutedTop);
+		fg_gradientMuted.setColorAt(1, fg_colMutedBottom);
+		m_brushFgMuted = QBrush(fg_gradientMuted);
 	}
 }
 
@@ -618,6 +758,7 @@ void AudioClipView::repaint( )
 void AudioClipView::set_height( int height )
 {
 	m_height = height;
+	create_brushes();
 }
 
 int AudioClipView::get_childview_y_offset() const
