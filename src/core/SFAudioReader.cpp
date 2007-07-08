@@ -86,7 +86,7 @@ int SFAudioReader::get_num_channels()
 }
 
 
-int SFAudioReader::get_length()
+nframes_t SFAudioReader::get_length()
 {
 	if (m_sf) {
 		return m_sfinfo.frames;

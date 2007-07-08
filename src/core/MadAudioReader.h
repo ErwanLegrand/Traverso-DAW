@@ -19,20 +19,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 */
 
-#ifndef VORBISAUDIOREADER_H
-#define VORBISAUDIOREADER_H
+#ifndef MADAUDIOREADER_H
+#define MADAUDIOREADER_H
 
-#include "AbstractAudioReader.h"
-#include "vorbis/codec.h"
-#include "vorbis/vorbisfile.h"
-#include "stdio.h"
+#include <AbstractAudioReader.h>
+
+extern "C" {
+#include <mad.h>
+}
 
 
-class VorbisAudioReader : public AbstractAudioReader
+class MadAudioReader : public AbstractAudioReader
 {
 public:
-	VorbisAudioReader(QString filename);
-	~VorbisAudioReader();
+	MadAudioReader(QString filename);
+	~MadAudioReader();
 
 	int get_num_channels();
 	nframes_t get_length();
@@ -44,9 +45,16 @@ public:
 	static bool can_decode(QString filename);
 
 protected:
-	FILE*		m_file;
-	OggVorbis_File	m_vf;
-	vorbis_info*	m_vi;
+	bool initDecoderInternal();
+	unsigned long countFrames();
+	bool createPcmSamples(mad_synth* synth);
+
+	static int	MaxAllowedRecoverableErrors;
+	nframes_t	m_frames;
+	int		m_channels;
+
+	class MadDecoderPrivate;
+	MadDecoderPrivate* d;
 };
 
 #endif

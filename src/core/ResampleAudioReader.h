@@ -33,7 +33,7 @@ public:
 	~ResampleAudioReader();
 
 	int get_num_channels();
-	int get_length();
+	nframes_t get_length();
 	int get_rate();
 	bool is_compressed();
 	bool seek(nframes_t start);
@@ -43,6 +43,8 @@ public:
 	static bool can_decode(QString filename) {return false;}
 
 protected:
+	void reset();
+	
 	nframes_t song_to_file_frame(nframes_t frame);
 	nframes_t file_to_song_frame(nframes_t frame);
 

@@ -15,7 +15,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  *
- *  $Id: gdither.cpp,v 1.2 2006/08/25 11:25:08 r_sijrier Exp $
+ *  $Id: gdither.cpp,v 1.3 2007/07/08 23:16:57 benjie Exp $
  */
 
 #include <gdither_types_internal.h>
@@ -240,7 +240,7 @@ inline static void gdither_innner_loop(const GDitherType dt,
     }
 }
 
-/* floating pint version of the inner loop function */
+/* floating point version of the inner loop function */
 inline static void gdither_innner_loop_fp(const GDitherType dt,
     const uint32_t stride, const float bias, const float scale,
 

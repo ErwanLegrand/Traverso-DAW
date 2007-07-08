@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "AbstractAudioReader.h"
 #include "SFAudioReader.h"
+#include "MadAudioReader.h"
 #include "VorbisAudioReader.h"
 #include "ResampleAudioReader.h"
 
@@ -67,6 +68,9 @@ AbstractAudioReader* AbstractAudioReader::create_audio_reader(QString filename)
 	
 	if (VorbisAudioReader::can_decode(filename)) {
 		newReader = new VorbisAudioReader(filename);
+	}
+	else if (MadAudioReader::can_decode(filename)) {
+		newReader = new MadAudioReader(filename);
 	}
 	else if (SFAudioReader::can_decode(filename)) {
 		newReader = new SFAudioReader(filename);

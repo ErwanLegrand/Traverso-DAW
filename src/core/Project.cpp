@@ -703,6 +703,7 @@ Command* Project::select()
 int Project::get_rate( ) const
 {
 	return m_rate;
+	//return audiodevice().get_sample_rate();
 }
 
 int Project::get_bitdepth( ) const

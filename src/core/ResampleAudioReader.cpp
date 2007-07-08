@@ -50,8 +50,7 @@ ResampleAudioReader::ResampleAudioReader(QString filename)
 		m_realReader = 0;
 	}
 	
-	m_srcData.end_of_input = 0;
-
+	reset();
 	seek(0);
 }
 
@@ -69,6 +68,14 @@ ResampleAudioReader::~ResampleAudioReader()
 }
 
 
+// Clear the samplerateconverter to a clean state (used on seek)
+void ResampleAudioReader::reset()
+{
+	src_reset(m_srcState);
+	m_srcData.end_of_input = 0;
+}
+
+
 // Get from child AudioReader
 int ResampleAudioReader::get_num_channels()
 {
@@ -80,7 +87,7 @@ int ResampleAudioReader::get_num_channels()
 
 
 // Get from child AudioReader, convert from file's frames to song's frames
-int ResampleAudioReader::get_length()
+nframes_t ResampleAudioReader::get_length()
 {
 	if (m_realReader) {
 		if (audiodevice().get_sample_rate() == m_realReader->get_rate()) {
@@ -119,13 +126,16 @@ bool ResampleAudioReader::seek(nframes_t start)
 		return m_realReader->seek(start);
 	}
 	
+	reset();
+	
 	m_nextFrame = start;
 	
 	return m_realReader->seek(song_to_file_frame(start));
 }
 
 
-// 
+// If no conversion is necessary, pass the read straight to the child AudioReader,
+// otherwise get data from childreader and use libsamplerate to convert
 int ResampleAudioReader::read(audio_sample_t* dst, int sampleCount)
 {
 	Q_ASSERT(m_realReader);

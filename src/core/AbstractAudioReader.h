@@ -36,7 +36,7 @@ public:
 	~AbstractAudioReader();
 	
 	virtual int get_num_channels() = 0;
-	virtual int get_length() = 0;
+	virtual nframes_t get_length() = 0;
 	virtual int get_rate() = 0;
 	virtual bool is_compressed() = 0;
 	int read_from(audio_sample_t* dst, nframes_t start, nframes_t cnt);

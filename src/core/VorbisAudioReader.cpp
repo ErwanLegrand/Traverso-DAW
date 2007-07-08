@@ -92,7 +92,7 @@ int VorbisAudioReader::get_num_channels()
 }
 
 
-int VorbisAudioReader::get_length()
+nframes_t VorbisAudioReader::get_length()
 {
 	if (m_file) {
 		return ov_pcm_total(&m_vf, -1);

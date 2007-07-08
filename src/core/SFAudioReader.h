@@ -33,7 +33,7 @@ public:
 	~SFAudioReader();
 
 	int get_num_channels();
-	int get_length();
+	nframes_t get_length();
 	int get_rate();
 	bool is_compressed();
 	bool seek(nframes_t start);
