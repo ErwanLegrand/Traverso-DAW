@@ -81,8 +81,6 @@ private:
 	CorrelationMeter*	m_meter;
 	Song*		m_song;
 	QLinearGradient	gradPhase;
-	QColor		bgColor, fgColor,
-			hgColor, dtColor;
 	int		range;
 
 	void save_configuration();

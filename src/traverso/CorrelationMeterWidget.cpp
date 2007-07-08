@@ -113,14 +113,9 @@ CorrelationMeterView::CorrelationMeterView(CorrelationMeterWidget* widget)
 	, m_meter(0)
 	, m_song(0)
 {
-	fgColor = themer()->get_color("Meter:margin");
-	bgColor = themer()->get_color("Meter:background");
-	hgColor = themer()->get_color("Meter:grid");
-	dtColor = themer()->get_color("Text:dark");
-
-	gradPhase.setColorAt(0.0,  themer()->get_color("Meter:foreground:light"));
-	gradPhase.setColorAt(0.5,  themer()->get_color("Meter:foreground"));
-	gradPhase.setColorAt(1.0,  themer()->get_color("Meter:foreground:light"));
+	gradPhase.setColorAt(0.0,  themer()->get_color("CorrelationMeter:foreground:side"));
+	gradPhase.setColorAt(0.5,  themer()->get_color("CorrelationMeter:foreground:center"));
+	gradPhase.setColorAt(1.0,  themer()->get_color("CorrelationMeter:foreground:side"));
 
 	load_configuration();
 
@@ -150,7 +145,7 @@ void CorrelationMeterView::paint(QPainter *painter, const QStyleOptionGraphicsIt
 
 	float r = 90.0f / range;
 
-	painter->fillRect(0, 0, m_widget->width(), m_widget->height(), bgColor);
+	painter->fillRect(0, 0, m_widget->width(), m_widget->height(), themer()->get_color("CorrelationMeter:background"));
 
 	int lend = int(0.5*m_widget->width() - (-coeff + 1.0) * r * m_widget->width() * (1.0 - fabs(direction)));
 	int rend = int(0.5*m_widget->width() + (-coeff + 1.0) * r * m_widget->width() * (1.0 - fabs(direction)));
@@ -158,28 +153,26 @@ void CorrelationMeterView::paint(QPainter *painter, const QStyleOptionGraphicsIt
 	int wdt = abs(lend - rend);
 	int centerOffset = int(m_widget->width() * r * direction);
 
+	int lpos = int((0.50 - r) * m_widget->width());
+	int cpos = m_widget->width()/2;
+	int rpos = int((0.50 + r) * m_widget->width());
+
 	gradPhase.setStart(QPointF(float(lend + centerOffset), 0.0));
 	gradPhase.setFinalStop(QPointF(float(rend + centerOffset), 0.0));
 	painter->fillRect(lend + centerOffset, 0, wdt, m_widget->height(), gradPhase);
 
-	painter->setPen(hgColor);
+	// center line
+	QPen pen(themer()->get_color("CorrelationMeter:centerline"));
+	pen.setWidth(3);
+	painter->setPen(pen);
+	painter->drawLine(m_widget->width()/2 + centerOffset, 0, m_widget->width()/2 + centerOffset, m_widget->height());
 
-	int lpos = int((0.50 - r) * m_widget->width());
-	int cpos = int(0.50 * m_widget->width());
-	int rpos = int((0.50 + r) * m_widget->width());
-
+	painter->setPen(themer()->get_color("CorrelationMeter:grid"));
 	painter->drawLine(cpos, 0, cpos, m_widget->height());
-
 	if (range > 180) {
 		painter->drawLine(lpos, 0, lpos, m_widget->height());
 		painter->drawLine(rpos, 0, rpos, m_widget->height());
 	}
-
-	// center line
-	QPen pen(hgColor);
-	pen.setWidth(3);
-	painter->setPen(pen);
-	painter->drawLine(m_widget->width()/2 + centerOffset, 0, m_widget->width()/2 + centerOffset, m_widget->height());
 
 	painter->setFont(themer()->get_font("CorrelationMeter:fontscale:label"));
 	QFontMetrics fm(themer()->get_font("CorrelationMeter:fontscale:label"));
@@ -188,8 +181,8 @@ void CorrelationMeterView::paint(QPainter *painter, const QStyleOptionGraphicsIt
 		return;
 	}
 
-	painter->setPen(dtColor);
-	painter->fillRect(0, 0, m_widget->width(), fm.height() + 1, fgColor);
+	painter->setPen(themer()->get_color("CorrelationMeter:text"));
+	painter->fillRect(0, 0, m_widget->width(), fm.height() + 1, themer()->get_color("CorrelationMeter:margin"));
 	painter->drawText(cpos - fm.width("C")/2, fm.ascent() + 1, "C");
 
 	if (range == 180) {
