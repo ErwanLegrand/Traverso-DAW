@@ -49,6 +49,8 @@ AbstractAudioReader::~AbstractAudioReader()
 // uses seek() and read() from AudioReader subclass
 int AbstractAudioReader::read_from(audio_sample_t* dst, nframes_t start, nframes_t cnt)
 {
+	m_mutex.lock();
+	
 	if (m_nextFrame != start) {
 		if (!seek(start)) {
 			return 0;
@@ -57,6 +59,7 @@ int AbstractAudioReader::read_from(audio_sample_t* dst, nframes_t start, nframes
 	
 	int samplesRead = read(dst, cnt);
 	
+	m_mutex.unlock();
 	return samplesRead;
 }
 
