@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.28 2007/06/27 21:01:21 r_sijrier Exp $
+$Id: TrackPanelView.cpp,v 1.29 2007/07/09 19:16:09 n_doebelin Exp $
 */
 
 #include <QGraphicsScene>
@@ -159,6 +159,7 @@ void TrackPanelView::draw_panel_track_name(QPainter* painter)
 		title = fm.elidedText(title, Qt::ElideMiddle, 90);
 	}
 	
+	painter->setPen(themer()->get_color("TrackPanel:text"));
 	painter->setFont(themer()->get_font("TrackPanel:fontscale:name"));
 	painter->drawText(4, 12, title);
 }
@@ -377,16 +378,14 @@ void TrackPanelLed::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 		QColor color = themer()->get_color("TrackPanel:" + m_name + "led");
 		if (mousehover) {
 			color = color.light(110);
-			painter->setPen(QColor(190, 190, 190));
-		} else {
-			painter->setPen(Qt::NoPen);
 		}
 		
+		painter->setPen(themer()->get_color("TrackPanel:led:margin:active"));
 		painter->setBrush(color);
 		painter->drawRoundRect(m_boundingRect, roundfactor, roundfactor);
 		
 		painter->setFont(themer()->get_font("TrackPanel:fontscale:led"));
-		painter->setPen(QColor(Qt::black));
+		painter->setPen(themer()->get_color("TrackPanel:led:font:active"));
 		
 		painter->drawText(m_boundingRect, Qt::AlignCenter, m_name);
 	} else {
@@ -395,12 +394,12 @@ void TrackPanelLed::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 			color = color.light(110);
 		}
 		
-		painter->setPen(QColor(240, 240, 240));
+		painter->setPen(themer()->get_color("TrackPanel:led:margin:inactive"));
 		painter->setBrush(color);
 		painter->drawRoundRect(m_boundingRect, roundfactor, roundfactor);
 		
 		painter->setFont(themer()->get_font("TrackPanel:fontscale:led"));
-		painter->setPen(QColor(Qt::gray));
+		painter->setPen(themer()->get_color("TrackPanel:led:font:inactive"));
 		
 		painter->drawText(m_boundingRect, Qt::AlignCenter, m_name);
 	}
@@ -443,7 +442,7 @@ void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 	
-	QColor color = themer()->get_color("TrackPanel:led:inactive");
+	QColor color = themer()->get_color("TrackPanel:bus:background");
 	int roundfactor = 15;
 	
 	painter->setRenderHint(QPainter::Antialiasing);
@@ -452,12 +451,12 @@ void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 		color = color.light(110);
 	}
 	 
-	painter->setPen(QColor(240, 240, 240));
+	painter->setPen(themer()->get_color("TrackPanel:bus:margin"));
 	painter->setBrush(color);
 	painter->drawRoundRect(m_boundingRect, roundfactor, roundfactor);
 	
 	painter->setFont(themer()->get_font("TrackPanel:fontscale:led"));
-	painter->setPen(QColor(150, 150, 150));
+	painter->setPen(themer()->get_color("TrackPanel:bus:font"));
 	
 	QString leftright = "";
 	
