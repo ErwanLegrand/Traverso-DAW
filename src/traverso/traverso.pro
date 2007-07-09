@@ -22,6 +22,7 @@ LIBS +=  \
 	-lsndfile \
 	-lsamplerate \
 	-lvorbisfile \
+	-lmad \
 	-lfftw3 \
 
 HEADERS += \
