@@ -41,7 +41,7 @@ public:
 	K3bMad();
 	~K3bMad();
 	
-	bool open( const QString& filename );
+	bool open(const QString& filename);
 	
 	/**
 	 * @return true if the mad stream contains data
@@ -250,7 +250,7 @@ bool K3bMad::skipTag()
 		
 		// skip the id3 tag
 		if (!m_inputFile.seek(offset)) {
-			PERROR("Couldn't seek to %u in %s", offset, m_inputFile.fileName());
+			PERROR("Couldn't seek to %u in %s", offset, QS_C(m_inputFile.fileName()));
 			return false;
 		}
 	}
@@ -529,27 +529,31 @@ bool MadAudioReader::can_decode(QString filename)
 	// It always takes waves for mp3 files so we introduce this hack to
 	// filter out wave files. :(
 	//
-	QFile f( filename );
-	if( !f.open( QIODevice::ReadOnly ) )
+	QFile f(filename);
+	if (!f.open( QIODevice::ReadOnly)) {
 		return false;
+	}
+	
 	char buffer[12];
-	if( f.read( buffer, 12 ) != 12 )
+	if (f.read(buffer, 12) != 12) {
 		return false;
-	if( !qstrncmp( buffer, "RIFF", 4 ) && !qstrncmp( buffer + 8, "WAVE", 4 ) )
+	}
+	if (!qstrncmp(buffer, "RIFF", 4) && !qstrncmp(buffer + 8, "WAVE", 4)) {
 		return false;
+	}
 	f.close();
 	
 	
 	K3bMad handle;
-	if( !handle.open( filename ) )
+	if (!handle.open(filename)) {
 		return false;
-	
+	}
 	handle.skipTag();
-	if( !handle.seekFirstHeader() )
+	if (!handle.seekFirstHeader()) {
 		return false;
-	
-	if( handle.findNextHeader() ) {
-		int c = MAD_NCHANNELS( &handle.madFrame->header );
+	}
+	if (handle.findNextHeader()) {
+		int c = MAD_NCHANNELS(&handle.madFrame->header);
 		int layer = handle.madFrame->header.layer;
 		unsigned int s = handle.madFrame->header.samplerate;
 		
@@ -559,18 +563,18 @@ bool MadAudioReader::can_decode(QString filename)
 		// for example wave files.
 		//
 		int cnt = 1;
-		while( handle.findNextHeader() ) {
+		while (handle.findNextHeader()) {
 			// compare the found headers
-			if( MAD_NCHANNELS( &handle.madFrame->header ) == c &&
-			handle.madFrame->header.layer == layer &&
-			handle.madFrame->header.samplerate == s ) {
+			if (MAD_NCHANNELS(&handle.madFrame->header) == c &&
+			    handle.madFrame->header.layer == layer &&
+			    handle.madFrame->header.samplerate == s) {
 				// only support layer III for now since otherwise some wave files
 				// are taken for layer I
-				if( ++cnt >= 5 ) {
+				if (++cnt >= 5) {
 					//stdout << "(MadDecoder) valid mpeg 1 layer " << layer 
 					//<< " file with " << c << " channels and a samplerate of "
 					//<< s << endl;
-					return ( layer == MAD_LAYER_III );
+					return (layer == MAD_LAYER_III);
 				}
 			}
 			else
@@ -642,11 +646,12 @@ bool MadAudioReader::seek(nframes_t start)
 	double posSecs = static_cast<double>(start) / get_rate();
 	
 	// seekPosition to seek after frame i
-	unsigned int frame = static_cast<unsigned int>( posSecs / mp3FrameSecs );
+	unsigned int frame = static_cast<unsigned int>(posSecs / mp3FrameSecs);
+	nframes_t frameOffset = (nframes_t)(start - (frame * mp3FrameSecs * get_rate() + 0.5)) * get_num_channels();
 	
 	// Rob said: 29 frames is the theoretically max frame reservoir limit (whatever that means...)
 	// it seems that mad needs at most 29 frames to get ready
-	unsigned int frameReservoirProtect = ( frame > 29 ? 29 : frame );
+	unsigned int frameReservoirProtect = (frame > 29 ? 29 : frame);
 	
 	frame -= frameReservoirProtect;
 	
@@ -655,13 +660,14 @@ bool MadAudioReader::seek(nframes_t start)
 	
 	// decode some frames ignoring MAD_ERROR_BADDATAPTR errors
 	unsigned int i = 1;
-	while( i <= frameReservoirProtect ) {
+	while (i <= frameReservoirProtect) {
 		d->handle->fillStreamBuffer();
-		if( mad_frame_decode( d->handle->madFrame, d->handle->madStream ) ) {
-			if( MAD_RECOVERABLE( d->handle->madStream->error ) ) {
-				if( d->handle->madStream->error == MAD_ERROR_BUFLEN )
+		if (mad_frame_decode( d->handle->madFrame, d->handle->madStream)) {
+			if (MAD_RECOVERABLE( d->handle->madStream->error)) {
+				if (d->handle->madStream->error == MAD_ERROR_BUFLEN) {
 					continue;
-				else if( d->handle->madStream->error != MAD_ERROR_BADDATAPTR ) {
+				}
+				else if (d->handle->madStream->error != MAD_ERROR_BADDATAPTR) {
 					//kdDebug() << "(K3bMadDecoder) Seeking: recoverable mad error ("
 					//<< mad_stream_errorstr(d->handle->madStream) << ")" << endl;
 					continue;
@@ -671,14 +677,30 @@ bool MadAudioReader::seek(nframes_t start)
 					//<< mad_stream_errorstr(d->handle->madStream) << ")" << endl;
 				}
 			}
-			else
-			return false;
+			else {
+				return false;
+			}
 		}
-	
-		if( i == frameReservoirProtect )  // synth only the last frame (Rob said so ;)
+		
+		if (i == frameReservoirProtect) {  // synth only the last frame (Rob said so ;)
 			mad_synth_frame( d->handle->madSynth, d->handle->madFrame );
-	
+		}
+		
 		++i;
+	}
+	
+	d->overflowStart = 0;
+	d->overflowSize = 0;
+	
+	// Seek to exact traverso frame, within this mp3 frame
+	if (frameOffset > 0) {
+		//printf("seekOffset: %lu (start: %lu)\n", frameOffset, start);
+		d->outputBuffer = 0; // Zeros so that we write to overflow
+		d->outputBufferEnd = 0;
+		d->outputPointer = d->outputBufferEnd + 1;
+		createPcmSamples(d->handle->madSynth);
+		d->overflowStart = frameOffset;
+		d->overflowSize -= frameOffset;
 	}
 	
 	m_nextFrame = start;
@@ -693,14 +715,17 @@ bool MadAudioReader::initDecoderInternal()
 	
 	d->bOutputFinished = false;
 	
-	if( !d->handle->open( m_fileName ) )
+	if (!d->handle->open(m_fileName)) {
 		return false;
+	}
 	
-	if( !d->handle->skipTag() )
+	if (!d->handle->skipTag()) {
 		return false;
+	}
 	
-	if( !d->handle->seekFirstHeader() )
+	if (!d->handle->seekFirstHeader()) {
 		return false;
+	}
 	
 	return true;
 }
@@ -733,12 +758,12 @@ unsigned long MadAudioReader::countFrames()
 		
 		// save the number of bytes to be read to decode i-1 frames at position i
 		// in other words: when seeking to seekPos the next decoded frame will be i
-		d->seekPositions.append( seekPos );
+		d->seekPositions.append(seekPos);
 	}
 	
-	if( !d->handle->inputError() && !error ) {
-		frames =  get_rate() * (d->handle->madTimer->seconds + 
-			(float)d->handle->madTimer->fraction/(float)MAD_TIMER_RESOLUTION);
+	if (!d->handle->inputError() && !error) {
+		frames =  get_rate() * (d->handle->madTimer->seconds + (unsigned long)(
+			(float)d->handle->madTimer->fraction/(float)MAD_TIMER_RESOLUTION));
 		//kdDebug() << "(K3bMadDecoder) length of track " << seconds << endl;
 	}
 
@@ -814,24 +839,29 @@ int MadAudioReader::read(audio_sample_t* dst, int sampleCount)
 		int padLength = (remainingSamplesRequested > remainingSamplesInFile) ? remainingSamplesInFile : remainingSamplesRequested;
 		memset(d->outputPointer, 0, padLength);
 		samplesWritten += padLength;
+		//printf("remainingSamplesRequested: %d, remainingSamplesInFile: %d (using: %d)\n", remainingSamplesRequested, remainingSamplesInFile, padLength);
 	}	
 	
-	//printf("at: %lu (total: %lu), request: %d (returned: %d)\n", m_nextFrame, m_frames, sampleCount/get_num_channels(), (samplesWritten)/get_num_channels());
+	//if (samplesWritten) printf("at: %lu (total: %lu), request: %d (returned: %d)\n", m_nextFrame, m_frames, sampleCount/get_num_channels(), samplesWritten/get_num_channels());
+	
+	// Truncate so we don't return too many samples
+	if (samplesWritten > remainingSamplesInFile) {
+		samplesWritten = remainingSamplesInFile;
+	}
 	
 	m_nextFrame += samplesWritten / get_num_channels();
 	return samplesWritten;
 }
 
 
-bool MadAudioReader::createPcmSamples( mad_synth* synth )
+bool MadAudioReader::createPcmSamples(mad_synth* synth)
 {
 	unsigned short nsamples = synth->pcm.length;
 	bool overflow = false;
 	
 	// now create the output
 	for (int i = 0; i < nsamples; i++) {
-		if (d->outputPointer >= d->outputBufferEnd) {
-			//printf("start overflowing\n");
+		if (overflow == false && d->outputPointer > d->outputBufferEnd) {
 			d->outputPointer = d->overflowBuffer;
 			overflow = true;
 		}
@@ -851,6 +881,7 @@ bool MadAudioReader::createPcmSamples( mad_synth* synth )
 		d->overflowSize = d->outputPointer - d->overflowBuffer;
 		d->overflowStart = 0;
 		d->outputPointer = d->outputBufferEnd;
+		//printf("overflowing %lu samples\n", d->overflowSize);
 	}
 	
 	return true;
