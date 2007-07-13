@@ -23,6 +23,7 @@ LIBS +=  \
 	-lsamplerate \
 	-lvorbisfile \
 	-lmad \
+	-lFLAC++ \
 	-lfftw3 \
 
 HEADERS += \
