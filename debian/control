@@ -2,7 +2,7 @@ Source: traverso
 Section: sound
 Priority: optional
 Maintainer: Nicola Doebelin <nicola@doebelin.org>
-Build-Depends: debhelper (>= 4.0.0), libqt4-dev (>= 4.2.3), libsndfile1-dev, libsamplerate0-dev, libjack0.100.0-dev, libasound2-dev, fftw3-dev (>= 3.1), librdf0-dev (>= 1.0.4)
+Build-Depends: debhelper (>= 4.0.0), libqt4-dev (>= 4.2.3), libsndfile1-dev, libsamplerate0-dev, libjack0.100.0-dev, libasound2-dev, fftw3-dev (>= 3.1), librdf0-dev (>= 1.0.4), libmad0-dev, libvorbis-dev, libflac++-dev
 Standards-Version: 3.6.2
 
 Package: traverso
