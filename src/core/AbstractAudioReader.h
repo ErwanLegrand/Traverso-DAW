@@ -39,11 +39,10 @@ public:
 	virtual int get_num_channels() = 0;
 	virtual nframes_t get_length() = 0;
 	virtual int get_rate() = 0;
-	virtual bool is_compressed() = 0;
 	int read_from(audio_sample_t* dst, nframes_t start, nframes_t cnt);
 	virtual bool seek(nframes_t start) = 0;
 	virtual int read(audio_sample_t* dst, int sampleCount) = 0;
-
+	
 	static AbstractAudioReader* create_audio_reader(QString filename);
 	static AbstractAudioReader* create_resampled_audio_reader(QString filename);
 	static bool can_decode(QString filename) { return false; };

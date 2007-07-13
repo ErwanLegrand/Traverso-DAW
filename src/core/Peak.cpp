@@ -97,7 +97,7 @@ int Peak::read_header()
 	m_file = fopen(m_fileName.toUtf8().data(),"rb");
 	
 	if (! m_file) {
-		PERROR("Couldn't open peak file for reading! (%s)", m_fileName.toAscii().data());
+		//PERROR("Couldn't open peak file for reading! (%s)", m_fileName.toAscii().data());
 		return -1;
 	}
 	
@@ -293,17 +293,30 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 		
 	// Micro view mode
 	} else {
-		nframes_t readFrames, toRead;
-		toRead = pixelcount * zoomStep[zoomLevel];
+		nframes_t toRead = pixelcount * zoomStep[zoomLevel];
 		audio_sample_t buf[toRead];
 		audio_sample_t readbuffer[toRead*2];
-
-		if ( (readFrames = m_source->file_read(m_channel, buf, startPos, toRead, readbuffer)) != toRead) {
-			PWARN("Unable to read nframes %d (only %d available)", toRead, readFrames);
-			if (readFrames == 0) {
+		
+		nframes_t readFrames = 0;
+		nframes_t totalReadFrames = 0;
+		int counter = 0;
+		int p = 0;
+		
+		do {
+			readFrames = m_source->file_read(m_channel, buf + totalReadFrames, startPos + totalReadFrames, toRead - totalReadFrames, readbuffer);
+			if (readFrames <= 0) {
+				PERROR("readFrames < 0");
+				break;
+			}
+			totalReadFrames += readFrames;
+		} while (totalReadFrames < toRead);
+		
+		if ( totalReadFrames != toRead) {
+			PWARN("Unable to read nframes %d (only %d available)", toRead, totalReadFrames);
+			if (totalReadFrames == 0) {
 				return NO_PEAKDATA_FOUND;
 			}
-			pixelcount = readFrames / zoomStep[zoomLevel];
+			pixelcount = totalReadFrames / zoomStep[zoomLevel];
 		}
 
 		int count = 0;
@@ -573,7 +586,6 @@ int Peak::create_from_scratch()
 
 	nframes_t bufferSize = 65536;
 
-	int cycles = m_source->get_nframes() / bufferSize;
 	int counter = 0;
 	int p = 0;
 
@@ -582,10 +594,9 @@ int Peak::create_from_scratch()
 		return ret;
 	}
 
-	if (cycles == 0) {
+	if (m_source->get_nframes() < bufferSize) {
 		bufferSize = 64;
-		cycles = m_source->get_nframes() / bufferSize;
-		if (cycles == 0) {
+		if (m_source->get_nframes() < bufferSize) {
 			qDebug("source length is too short to display one pixel of the audio wave form in macro view");
 			return ret;
 		}
@@ -601,17 +612,20 @@ int Peak::create_from_scratch()
 		}
 		
 		readFrames = m_source->file_read(m_channel, buf, totalReadFrames, bufferSize, readbuffer);
+		if (readFrames <= 0) {
+			PERROR("readFrames < 0 during peak building");
+			break;
+		}
 		process(buf, readFrames);
 		totalReadFrames += readFrames;
-		counter++;
-		p = (int) (counter*100) / cycles;
+		p = (int) ((float)totalReadFrames / ((float)m_source->get_nframes() / 100.0));
 		
 		if ( p > m_progress) {
 			emit progress(p - m_progress);
 			m_progress = p;
 		}
 		
-	} while(totalReadFrames != m_source->get_nframes());
+	} while (totalReadFrames < m_source->get_nframes());
 
 
 	if (finish_processing() < 0) {

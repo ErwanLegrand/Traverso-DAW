@@ -38,7 +38,6 @@ public:
 	int get_num_channels();
 	nframes_t get_length();
 	int get_rate();
-	bool is_compressed();
 	bool seek(nframes_t start);
 	int read(audio_sample_t* dst, int sampleCount);
 

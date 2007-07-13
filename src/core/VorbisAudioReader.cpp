@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 VorbisAudioReader::VorbisAudioReader(QString filename)
  : AbstractAudioReader(filename)
 {
-	m_file = fopen(QFile::encodeName(filename).data(), "rb");
+	m_file = fopen(filename.toUtf8().data(), "rb");
 	if (!m_file) {
 		PERROR("Couldn't open file %s.", QS_C(filename));
 		return;
@@ -64,7 +64,7 @@ VorbisAudioReader::~VorbisAudioReader()
 
 bool VorbisAudioReader::can_decode(QString filename)
 {
-	FILE* file = fopen(QFile::encodeName(filename).data(), "rb");
+	FILE* file = fopen(filename.toUtf8().data(), "rb");
 	if (!file) {
 		PERROR("Could not open file: %s.", QS_C(filename));
 		return false;
@@ -107,13 +107,6 @@ int VorbisAudioReader::get_rate()
 		return m_vi->rate;
 	}
 	return 0;
-}
-
-
-// Should this exist?  Should we just be smarter in MonoReader so we don't need this?
-bool VorbisAudioReader::is_compressed()
-{
-	return false;
 }
 
 

@@ -79,7 +79,6 @@ private:
 	volatile size_t	m_wasActivated;
 	volatile size_t	m_bufferUnderRunDetected;
 	bool		m_syncInProgress;
-	bool		m_isCompressedFile;
 	int		m_prio;
 	
 	AudioClip*	m_clip;

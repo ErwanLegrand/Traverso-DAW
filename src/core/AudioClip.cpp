@@ -436,7 +436,7 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* buffer, uint channel)
 		read_frames = m_readSource->file_read(channel, mixdown, mix_pos, nframes, m_song->readbuffer);
 	}
 
-	if (read_frames == 0) {
+	if (read_frames <= 0) {
 		return 0;
 	}
 

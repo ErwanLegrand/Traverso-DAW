@@ -1,8 +1,9 @@
 /*
 Copyright (C) 2007 Ben Levitt 
+ * This file based on the mp3 decoding plugin of the K3b project.
+ * Copyright (C) 1998-2007 Sebastian Trueg <trueg@k3b.org>
 
 This file is part of Traverso
-(Most of this Mp3 Reading code borrowed from K3b...)
 
 Traverso is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -324,7 +325,7 @@ void K3bMad::initMad()
 {
 	if (!m_madStructuresInitialized) {
 		mad_stream_init(madStream);
-		mad_timer_reset(madTimer);
+		mad_timer_set(madTimer, 0, 0, 0);
 		mad_frame_init(madFrame);
 		mad_synth_init(madSynth);
 		
@@ -582,7 +583,7 @@ bool MadAudioReader::can_decode(QString filename)
 		}
 	}
 	
-	PERROR("unsupported format: %s",QS_C(filename));
+	//PERROR("unsupported format: %s",QS_C(filename));
 	
 	return false;
 }
@@ -612,13 +613,6 @@ int MadAudioReader::get_rate()
 		return d->firstHeader.samplerate;
 	}
 	return 0;
-}
-
-
-// Should this exist?  Should we just be smarter in MonoReader so we don't need this?
-bool MadAudioReader::is_compressed()
-{
-	return false;
 }
 
 
@@ -837,17 +831,17 @@ int MadAudioReader::read(audio_sample_t* dst, int sampleCount)
 	int remainingSamplesInFile = get_length() * get_num_channels() - (m_nextFrame * get_num_channels() + samplesWritten);
 	if (remainingSamplesRequested > 0 && remainingSamplesInFile > 0) {
 		int padLength = (remainingSamplesRequested > remainingSamplesInFile) ? remainingSamplesInFile : remainingSamplesRequested;
-		memset(d->outputPointer, 0, padLength);
+		memset(d->outputPointer, 0, padLength * sizeof(audio_sample_t));
 		samplesWritten += padLength;
 		//printf("remainingSamplesRequested: %d, remainingSamplesInFile: %d (using: %d)\n", remainingSamplesRequested, remainingSamplesInFile, padLength);
-	}	
-	
-	//if (samplesWritten) printf("at: %lu (total: %lu), request: %d (returned: %d)\n", m_nextFrame, m_frames, sampleCount/get_num_channels(), samplesWritten/get_num_channels());
-	
+	}
+
 	// Truncate so we don't return too many samples
-	if (samplesWritten > remainingSamplesInFile) {
+	else if (samplesWritten > remainingSamplesInFile) {
 		samplesWritten = remainingSamplesInFile;
 	}
+	
+	//if (samplesWritten) printf("at: %lu (total: %lu), request: %d (returned: %d)\n", m_nextFrame, m_frames, sampleCount/get_num_channels(), samplesWritten/get_num_channels());
 	
 	m_nextFrame += samplesWritten / get_num_channels();
 	return samplesWritten;

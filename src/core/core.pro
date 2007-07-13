@@ -53,6 +53,7 @@ SOURCES = AudioClip.cpp \
 	Themer.cpp \
 	AbstractAudioReader.cpp \
 	SFAudioReader.cpp \
+	FlacAudioReader.cpp \
 	ResampleAudioReader.cpp \
 	VorbisAudioReader.cpp \
 	MadAudioReader.cpp
@@ -102,6 +103,7 @@ HEADERS = precompile.h \
 	Themer.h \
 	AbstractAudioReader.h \
 	SFAudioReader.h \
+	FlacAudioReader.h \
 	ResampleAudioReader.h \
 	VorbisAudioReader.h \
 	MadAudioReader.h

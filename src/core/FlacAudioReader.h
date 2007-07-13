@@ -19,33 +19,30 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 */
 
-#ifndef VORBISAUDIOREADER_H
-#define VORBISAUDIOREADER_H
+#ifndef FLACAUDIOREADER_H
+#define FLACAUDIOREADER_H
 
 #include "AbstractAudioReader.h"
-#include "vorbis/codec.h"
-#include "vorbis/vorbisfile.h"
-#include "stdio.h"
 
 
-class VorbisAudioReader : public AbstractAudioReader
+class FlacPrivate;
+
+class FlacAudioReader : public AbstractAudioReader
 {
 public:
-	VorbisAudioReader(QString filename);
-	~VorbisAudioReader();
+	FlacAudioReader(QString filename);
+	~FlacAudioReader();
 
 	int get_num_channels();
 	nframes_t get_length();
 	int get_rate();
 	bool seek(nframes_t start);
 	int read(audio_sample_t* dst, int sampleCount);
-
+	
 	static bool can_decode(QString filename);
 
 protected:
-	FILE*		m_file;
-	OggVorbis_File	m_vf;
-	vorbis_info*	m_vi;
+	FlacPrivate *m_flac;
 };
 
 #endif

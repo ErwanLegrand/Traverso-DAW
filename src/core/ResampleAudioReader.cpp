@@ -106,16 +106,6 @@ int ResampleAudioReader::get_rate()
 }
 
 
-// Still not sure if this is going to be necessary...
-bool ResampleAudioReader::is_compressed()
-{
-	if (m_realReader) {
-		return m_realReader->is_compressed();
-	}
-	return false;
-}
-
-
 // if no conversion is necessary, pass the seek straight to the child AudioReader,
 // otherwise convert and seek
 bool ResampleAudioReader::seek(nframes_t start)
@@ -138,14 +128,21 @@ bool ResampleAudioReader::seek(nframes_t start)
 // otherwise get data from childreader and use libsamplerate to convert
 int ResampleAudioReader::read(audio_sample_t* dst, int sampleCount)
 {
+	uint samplesRead;
 	Q_ASSERT(m_realReader);
 
+	// pass through if not changing sampleRate.
 	if (audiodevice().get_sample_rate() == m_realReader->get_rate()) {
-		return m_realReader->read(dst, sampleCount);
+		samplesRead = m_realReader->read(dst, sampleCount);
+		m_nextFrame += samplesRead / get_num_channels();
+		return samplesRead;
 	}
 	
-	// The +1 means decode a tiny bit extra from the file to make sure we can get enough resampled data
-	nframes_t fileCnt = (song_to_file_frame(sampleCount / get_num_channels()) +1) * get_num_channels();
+	nframes_t fileCnt = (song_to_file_frame(sampleCount / get_num_channels())) * get_num_channels();
+	
+	if (sampleCount && fileCnt / get_num_channels() < 1) {
+		fileCnt = get_num_channels();
+	}
 	
 	// make sure that the reusable m_fileBuffer is big enough for this read
 	if (m_fileBufferLength < fileCnt) {
@@ -156,16 +153,11 @@ int ResampleAudioReader::read(audio_sample_t* dst, int sampleCount)
 		m_fileBufferLength = fileCnt;
 	}
 	
-	int samplesRead;
 	samplesRead = m_realReader->read(m_fileBuffer, fileCnt);
 	
-	if (samplesRead == fileCnt) {
-		m_nextFrame += sampleCount / get_num_channels();
-	}
-	else {
-		m_nextFrame += file_to_song_frame(samplesRead) / get_num_channels();
-	}
+	//printf("Resampler: sampleCount %lu, fileCnt %lu, returned %lu\n", sampleCount/get_num_channels(), fileCnt/get_num_channels(), samplesRead/get_num_channels()); fflush(stdout);
 	
+	// Set up sample rate converter struct for s.r.c. processing
 	m_srcData.data_in = m_fileBuffer;
 	m_srcData.input_frames = samplesRead / get_num_channels();
 	m_srcData.data_out = dst;
@@ -174,11 +166,33 @@ int ResampleAudioReader::read(audio_sample_t* dst, int sampleCount)
 	src_set_ratio(m_srcState, m_srcData.src_ratio);
 	
 	if (src_process(m_srcState, &m_srcData)) {
-		PERROR("src_process() error!");
+		PERROR("Resampler: src_process() error!");
 		return 0;
 	}
 	
-	return m_srcData.output_frames_gen * get_num_channels();
+	samplesRead = m_srcData.output_frames_gen * get_num_channels();
+	
+	// Pad end of file with 0s if necessary
+	int remainingSamplesRequested = sampleCount - samplesRead;
+	int remainingSamplesInFile = get_length() * get_num_channels() - m_nextFrame * get_num_channels() - samplesRead;
+	
+	if (samplesRead == 0 && remainingSamplesRequested > 0 && remainingSamplesInFile > 0) {
+		int padLength = (remainingSamplesRequested > remainingSamplesInFile) ? remainingSamplesInFile : remainingSamplesRequested;
+		memset(dst+(samplesRead * sizeof(audio_sample_t)), 0, padLength * sizeof(audio_sample_t));
+		samplesRead += padLength;
+		printf("Resampler: padding: %d\n", padLength);
+	}	
+	
+	// Truncate so we don't return too many samples
+	if (samplesRead > remainingSamplesInFile) {
+		printf("Resampler: truncating: %d\n", samplesRead - remainingSamplesInFile);
+		samplesRead = remainingSamplesInFile;
+	}
+	
+	m_nextFrame += samplesRead / get_num_channels();
+	
+	//printf("Resampler: req: %d, got: %d\n", sampleCount, samplesRead);
+	return samplesRead;
 }
 
 

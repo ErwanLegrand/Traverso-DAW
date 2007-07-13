@@ -84,7 +84,6 @@ int MonoReader::init( )
 	m_syncInProgress = 0;
 	m_clip = 0;
 	m_bufferUnderRunDetected = m_wasActivated = 0;
-	m_isCompressedFile = false;
 
 
 	//
@@ -114,10 +113,6 @@ int MonoReader::init( )
 	m_length = m_audioReader->get_length();
 	m_source->m_rate = m_audioReader->get_rate();
 
-	if ( m_audioReader->is_compressed() ) {
-		m_isCompressedFile = true;
-	}
-	
 	m_peak = new Peak(m_source, m_channelNumber);
 	
 	return 1;
@@ -265,11 +260,6 @@ void MonoReader::process_ringbuffer( audio_sample_t * framebuffer, audio_sample_
 	
 	if (seeking) {
 		toRead = writeSpace;
-		// For whatever reason, but FLAC crashes when refilling the 
-		// buffer completely in one round! :-(
-		if (m_isCompressedFile) {
-			toRead = writeSpace / 2;
-		}
 // 		printf("doing a full seek buffer fill\n");
 	} else if (m_syncInProgress) {
 		// Currently, we fill the buffer completely.
@@ -364,20 +354,9 @@ void MonoReader::prepare_buffer( )
 
 	float size = config().get_property("Hardware", "readbuffersize", 1.0).toDouble();
 
-	if (m_isCompressedFile) {
-		size *= 2;
-		if (size > 3.0) {
-			size = 3.0;
-		}
-	}
-
 	m_bufferSize = (int) (size * audiodevice().get_sample_rate());
 
-	if ( ! m_isCompressedFile) {
-		m_chunkSize = m_bufferSize / DiskIO::bufferdividefactor;
-	} else {
-		m_chunkSize = m_bufferSize / (DiskIO::bufferdividefactor / 2);
-	}
+	m_chunkSize = m_bufferSize / DiskIO::bufferdividefactor;
 
 	m_buffer = new RingBufferNPT<float>(m_bufferSize);
 
