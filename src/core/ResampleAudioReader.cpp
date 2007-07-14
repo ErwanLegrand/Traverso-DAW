@@ -130,7 +130,12 @@ int ResampleAudioReader::read(audio_sample_t* dst, int sampleCount)
 {
 	uint samplesRead;
 	Q_ASSERT(m_realReader);
-
+	
+	/////////////////////////////////
+	// Ben says: FIXME: Add an overflow buffer, and grab more samples at a time, saving the extra to the overflow.
+	// This may improve performance? And should fix micro-view waveform painting errors.
+	/////////////////////////////////
+	
 	// pass through if not changing sampleRate.
 	if (audiodevice().get_sample_rate() == m_realReader->get_rate()) {
 		samplesRead = m_realReader->read(dst, sampleCount);
@@ -138,10 +143,10 @@ int ResampleAudioReader::read(audio_sample_t* dst, int sampleCount)
 		return samplesRead;
 	}
 	
-	nframes_t fileCnt = (song_to_file_frame(sampleCount / get_num_channels())) * get_num_channels();
+	uint fileCnt = (song_to_file_frame(sampleCount / get_num_channels())) * get_num_channels();
 	
 	if (sampleCount && fileCnt / get_num_channels() < 1) {
-		fileCnt = get_num_channels();
+		fileCnt = 1 * get_num_channels();
 	}
 	
 	// make sure that the reusable m_fileBuffer is big enough for this read
@@ -155,7 +160,7 @@ int ResampleAudioReader::read(audio_sample_t* dst, int sampleCount)
 	
 	samplesRead = m_realReader->read(m_fileBuffer, fileCnt);
 	
-	//printf("Resampler: sampleCount %lu, fileCnt %lu, returned %lu\n", sampleCount/get_num_channels(), fileCnt/get_num_channels(), samplesRead/get_num_channels()); fflush(stdout);
+	//printf("Resampler: sampleCount %lu, fileCnt %lu, returned %lu\n", sampleCount/get_num_channels(), fileCnt/get_num_channels(), samplesRead/get_num_channels());
 	
 	// Set up sample rate converter struct for s.r.c. processing
 	m_srcData.data_in = m_fileBuffer;
@@ -178,7 +183,7 @@ int ResampleAudioReader::read(audio_sample_t* dst, int sampleCount)
 	
 	if (samplesRead == 0 && remainingSamplesRequested > 0 && remainingSamplesInFile > 0) {
 		int padLength = (remainingSamplesRequested > remainingSamplesInFile) ? remainingSamplesInFile : remainingSamplesRequested;
-		memset(dst+(samplesRead * sizeof(audio_sample_t)), 0, padLength * sizeof(audio_sample_t));
+		memset(dst + samplesRead, 0, padLength * sizeof(audio_sample_t));
 		samplesRead += padLength;
 		printf("Resampler: padding: %d\n", padLength);
 	}	
