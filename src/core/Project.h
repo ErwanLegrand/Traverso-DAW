@@ -124,6 +124,7 @@ private:
 
 	int		m_rate;
 	int		m_bitDepth;
+	bool		m_useResampling;
 
 	int		overallExportProgress;
 	int 		renderedSongs;

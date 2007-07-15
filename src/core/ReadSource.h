@@ -54,6 +54,7 @@ public :
 	int get_error() const {return m_error;}
 	int set_file(const QString& filename);
 	void set_active(bool active);
+	void set_is_for_peaks(bool forPeaks);
 	
 	void set_audio_clip(AudioClip* clip);
 	Peak* get_peak(int channel);
@@ -67,6 +68,7 @@ private:
 	int	m_error;
 	AudioClip* m_clip;
 	bool	m_silent;
+	bool	m_forPeaks;
 	
 	int ref() { return m_refcount++;}
 	int add_mono_reader(int channel, int channelNumber, const QString& fileName);

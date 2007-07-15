@@ -58,6 +58,7 @@ Project::Project(const QString& title)
 	m_exportThread = 0;
 	engineer = "";
 
+	m_useResampling = config().get_property("Conversion", "DynamicResampling", false).toBool();
 	rootDir = config().get_property("Project", "directory", "/directory/unknown/").toString() + "/" + m_title;
 	sourcesDir = rootDir + "/audiosources";
 	m_rate = audiodevice().get_sample_rate();
@@ -702,8 +703,12 @@ Command* Project::select()
 
 int Project::get_rate( ) const
 {
+	// FIXME: Projects should eventually just use the universal samplerate
+	if (m_useResampling) {
+		return audiodevice().get_sample_rate();
+	}
+	
 	return m_rate;
-	//return audiodevice().get_sample_rate();
 }
 
 int Project::get_bitdepth( ) const

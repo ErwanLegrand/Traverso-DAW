@@ -60,6 +60,7 @@ ReadSource::ReadSource(const QDomNode node)
 	}
 	
 	m_silent = (m_channelCount == 0);
+	m_forPeaks = false;
 }	
 
 // constructor for file import
@@ -80,6 +81,7 @@ ReadSource::ReadSource(const QString& dir, const QString& name)
 
 	m_fileCount = 1;
 	m_silent = false;
+	m_forPeaks = false;
 }
 
 
@@ -92,6 +94,7 @@ ReadSource::ReadSource(const QString& dir, const QString& name, int channelCount
 {
 	m_channelCount = m_fileCount = channelCount;
 	m_silent = false;
+	m_forPeaks = false;
 	m_name = name  + "-" + QString::number(m_id);
 	m_fileName = m_dir + m_name;
 	m_length = 0;
@@ -101,6 +104,7 @@ ReadSource::ReadSource(const QString& dir, const QString& name, int channelCount
 }
 
 
+// Constructor for silent clips
 ReadSource::ReadSource()
 	: AudioSource("", tr("Silence"))
 	, m_refcount(0)
@@ -119,6 +123,12 @@ ReadSource::~ReadSource()
 	foreach(MonoReader* source, m_sources) {
 		delete source;
 	}
+}
+
+
+void ReadSource::set_is_for_peaks(bool forPeaks)
+{
+	m_forPeaks = forPeaks;
 }
 
 
@@ -188,7 +198,7 @@ int ReadSource::add_mono_reader(int sourceChannelCount, int channelNumber, const
 	
 	MonoReader* source = new MonoReader(this, sourceChannelCount, channelNumber, fileName);
 	
-	if ( (result = source->init()) > 0) {
+	if ( (result = source->init(m_forPeaks)) > 0) {
 		m_sources.append(source);
 	} else {
 		PERROR("Failed to initialize a MonoReader (%s)", QS_C(fileName));

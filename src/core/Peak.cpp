@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "Peak.h"
 #include "ReadSource.h"
+#include "ResourcesManager.h"
 #include "defines.h"
 #include "Mixer.h"
 #include <QFileInfo>
@@ -55,9 +56,9 @@ Peak::Peak(AudioSource* source, int channel)
 	
 	ReadSource* rs = qobject_cast<ReadSource*>(source);
 	if (rs) {
-		m_source = rs;
+		m_source = resources_manager()->get_readsource(rs->get_id(), true);
 	}
-	 
+	
 	if (source->get_channel_count() > 1) {
 		PMESG("Peak channel count is %d", source->get_channel_count());
 		m_fileName = pm().get_project()->get_root_dir() + "/peakfiles/" + source->get_name() + "-ch" + QByteArray::number(m_channel) + ".peak";
@@ -72,6 +73,10 @@ Peak::Peak(AudioSource* source, int channel)
 Peak::~Peak()
 {
 	PENTERDES;
+	
+	if (m_source) {
+		delete m_source;
+	}
 	
 	if (m_file) {
 		fclose(m_file);
@@ -299,8 +304,6 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 		
 		nframes_t readFrames = 0;
 		nframes_t totalReadFrames = 0;
-		int counter = 0;
-		int p = 0;
 		
 		do {
 			readFrames = m_source->file_read(m_channel, buf + totalReadFrames, startPos + totalReadFrames, toRead - totalReadFrames, readbuffer);
@@ -586,7 +589,6 @@ int Peak::create_from_scratch()
 
 	nframes_t bufferSize = 65536;
 
-	int counter = 0;
 	int p = 0;
 
 	if (m_source->get_nframes() == 0) {

@@ -211,7 +211,7 @@ ReadSource* ResourcesManager::get_silent_readsource()
 }
 
 
-ReadSource * ResourcesManager::get_readsource( qint64 id )
+ReadSource * ResourcesManager::get_readsource( qint64 id, bool forPeaks )
 {
 	SourceData* data = m_sources.value(id);
 	
@@ -229,7 +229,9 @@ ReadSource * ResourcesManager::get_readsource( qint64 id )
 		source = source->deep_copy();
 		source->ref();
 	}
-		
+	
+	source->set_is_for_peaks(forPeaks);
+	
 	if ( source->init() < 0) {
 		info().warning( tr("ResourcesManager::  Failed to initialize ReadSource %1")
 				.arg(source->get_filename()));

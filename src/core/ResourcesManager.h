@@ -63,7 +63,7 @@ public:
 	bool is_clip_in_use(qint64) const;
 	bool is_source_in_use(qint64 id) const;
 
-	ReadSource* get_readsource(qint64 id);
+	ReadSource* get_readsource(qint64 id, bool forPeaks = false);
 	
 	
 	QList<ReadSource*> get_all_audio_sources() const;
