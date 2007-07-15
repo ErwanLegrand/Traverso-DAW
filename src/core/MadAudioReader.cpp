@@ -691,7 +691,7 @@ bool MadAudioReader::seek(nframes_t start)
 		//printf("seekOffset: %lu (start: %lu)\n", frameOffset, start);
 		d->outputBuffer = 0; // Zeros so that we write to overflow
 		d->outputBufferEnd = 0;
-		d->outputPointer = d->outputBufferEnd + 1;
+		d->outputPointer = 0;
 		createPcmSamples(d->handle->madSynth);
 		d->overflowStart = frameOffset;
 		d->overflowSize -= frameOffset;
@@ -828,7 +828,7 @@ int MadAudioReader::read(audio_sample_t* dst, int sampleCount)
 	// is get_length() reporting incorrectly?
 	// are we not outputting the last mp3-frame for some reason?
 	int remainingSamplesRequested = sampleCount - samplesWritten;
-	int remainingSamplesInFile = (get_length() - m_nextFrame) * get_num_channels();
+	int remainingSamplesInFile = (get_length() - m_nextFrame) * get_num_channels() - samplesWritten;
 	if (remainingSamplesRequested > 0 && remainingSamplesInFile > 0) {
 		int padLength = (remainingSamplesRequested > remainingSamplesInFile) ? remainingSamplesInFile : remainingSamplesRequested;
 		memset(d->outputPointer, 0, padLength * sizeof(audio_sample_t));
@@ -851,13 +851,18 @@ int MadAudioReader::read(audio_sample_t* dst, int sampleCount)
 
 bool MadAudioReader::createPcmSamples(mad_synth* synth)
 {
-	unsigned short nframes = synth->pcm.length;
+	nframes_t nframes = synth->pcm.length;
 	bool overflow = false;
 	int i;
 	
+	if ((nframes + ((d->outputPointer - d->outputBuffer)/get_num_channels() + m_nextFrame)) > get_length()) {
+		nframes = get_length() - ((d->outputPointer - d->outputBuffer)/get_num_channels() + m_nextFrame);
+		//printf("!!!nframes: %lu, length: %lu, current: %lu\n", nframes, get_length(), (d->outputPointer - d->outputBuffer)/get_num_channels() + m_nextFrame);
+	}
+	
 	// now create the output
 	for (i = 0; i < nframes; i++) {
-		if (overflow == false && d->outputPointer > d->outputBufferEnd) {
+		if (overflow == false && d->outputPointer >= d->outputBufferEnd) {
 			d->outputPointer = d->overflowBuffer;
 			overflow = true;
 		}
