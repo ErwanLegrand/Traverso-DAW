@@ -93,7 +93,7 @@ int MonoReader::init(bool forPeaks)
 			converter_type = 4;  // Very fast, and acurate enough for drawing
 		}
 		else {
-			converter_type = config().get_property("Conversion", "RTResamplingConverterType", 0).toInt();
+			converter_type = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
 			// There should be another config option for ConverterType to use for export (higher quality)
 			//converter_type = config().get_property("Conversion", "ExportResamplingConverterType", 0).toInt();
 		}
