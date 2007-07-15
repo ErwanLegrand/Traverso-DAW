@@ -71,7 +71,7 @@ MonoReader::~MonoReader()
 }
 
 
-int MonoReader::init( )
+int MonoReader::init(bool forPeaks)
 {
 	PENTER;
 	
@@ -84,17 +84,29 @@ int MonoReader::init( )
 	m_syncInProgress = 0;
 	m_clip = 0;
 	m_bufferUnderRunDetected = m_wasActivated = 0;
-
-
-	//
-	// Uncomment the next line, and comment the one after that to try out dynamic resampling
-	//
-
-	//if ((m_audioReader = AbstractAudioReader::create_resampled_audio_reader(m_fileName)) == 0) {
-	if ((m_audioReader = AbstractAudioReader::create_audio_reader(m_fileName)) == 0) {
+	
+	bool useResampling = config().get_property("Conversion", "DynamicResampling", false).toBool();
+	
+	if (useResampling) {
+		int converter_type;
+		if (forPeaks) {
+			converter_type = 4;  // Very fast, and acurate enough for drawing
+		}
+		else {
+			converter_type = config().get_property("Conversion", "RTResamplingConverterType", 0).toInt();
+			// There should be another config option for ConverterType to use for export (higher quality)
+			//converter_type = config().get_property("Conversion", "ExportResamplingConverterType", 0).toInt();
+		}
+		m_audioReader = AbstractAudioReader::create_resampled_audio_reader(m_fileName, converter_type);
+	}
+	else {
+		m_audioReader = AbstractAudioReader::create_audio_reader(m_fileName);
+	}
+	
+	if (m_audioReader == 0) {
 		return ReadSource::COULD_NOT_OPEN_FILE;
 	}
-
+	
 	if (m_sourceChannelCount > m_audioReader->get_num_channels()) {
 		PERROR("ReadAudioSource: file only contains %d channels; %d is invalid as a channel number", m_audioReader->get_num_channels(), m_sourceChannelCount);
 		delete m_audioReader;
@@ -112,8 +124,13 @@ int MonoReader::init( )
 	m_source->m_length = m_audioReader->get_length();
 	m_length = m_audioReader->get_length();
 	m_source->m_rate = m_audioReader->get_rate();
-
-	m_peak = new Peak(m_source, m_channelNumber);
+	
+	if (!forPeaks) {
+		m_peak = new Peak(m_source, m_channelNumber);
+	}
+	else {
+		m_peak = 0;
+	}
 	
 	return 1;
 }

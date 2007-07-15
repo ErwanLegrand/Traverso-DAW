@@ -46,7 +46,7 @@ public :
 
 	int file_read(audio_sample_t* dst, nframes_t start, nframes_t cnt, audio_sample_t* readbuffer) const;
 
-	int init();
+	int init(bool forPeaks);
 	int ref();
 	
 	void sync(audio_sample_t* framebuffer, audio_sample_t* readbuffer);
