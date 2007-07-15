@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 // On init, creates a child AudioReader for any filetype, and a samplerate converter
-ResampleAudioReader::ResampleAudioReader(QString filename)
+ResampleAudioReader::ResampleAudioReader(QString filename, int converter_type)
  : AbstractAudioReader(filename)
 {
 	m_fileBuffer = 0;
@@ -42,8 +42,35 @@ ResampleAudioReader::ResampleAudioReader(QString filename)
 		return;
 	}
 	
+	m_srcState = 0;
+	init(converter_type);
+}
+
+
+ResampleAudioReader::~ResampleAudioReader()
+{
+	if (m_srcState) {
+		src_delete(m_srcState);
+	}
+	
+	if (m_realReader) {
+		delete m_realReader;
+	}
+	
+	if (m_fileBuffer) {
+		delete m_fileBuffer;
+	}
+}
+
+
+void ResampleAudioReader::init(int converter_type)
+{
+	if (m_srcState) {
+		src_delete(m_srcState);
+	}
+	
 	int error;
-	m_srcState = src_new (SRC_SINC_MEDIUM_QUALITY, m_realReader->get_num_channels(), &error);
+	m_srcState = src_new (converter_type, m_realReader->get_num_channels(), &error);
 	if (!m_srcState) {
 		PERROR("ResampleAudioReader: couldn't create libSampleRate SRC_STATE");
 		delete m_realReader;
@@ -52,19 +79,6 @@ ResampleAudioReader::ResampleAudioReader(QString filename)
 	
 	reset();
 	seek(0);
-}
-
-
-ResampleAudioReader::~ResampleAudioReader()
-{
-	if (m_realReader) {
-		src_delete(m_srcState);
-		delete m_realReader;
-	}
-
-	if (m_fileBuffer) {
-		delete m_fileBuffer;
-	}
 }
 
 
@@ -179,7 +193,7 @@ int ResampleAudioReader::read(audio_sample_t* dst, int sampleCount)
 	
 	// Pad end of file with 0s if necessary
 	int remainingSamplesRequested = sampleCount - samplesRead;
-	int remainingSamplesInFile = get_length() * get_num_channels() - m_nextFrame * get_num_channels() - samplesRead;
+	int remainingSamplesInFile = (get_length() - m_nextFrame - m_srcData.output_frames_gen) * get_num_channels();
 	
 	if (samplesRead == 0 && remainingSamplesRequested > 0 && remainingSamplesInFile > 0) {
 		int padLength = (remainingSamplesRequested > remainingSamplesInFile) ? remainingSamplesInFile : remainingSamplesRequested;

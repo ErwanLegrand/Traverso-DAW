@@ -29,9 +29,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 class ResampleAudioReader : public AbstractAudioReader
 {
 public:
-	ResampleAudioReader(QString filename);
+	ResampleAudioReader(QString filename, int converter_type);
 	~ResampleAudioReader();
-
+	
 	int get_num_channels();
 	nframes_t get_length();
 	int get_rate();
@@ -42,6 +42,7 @@ public:
 	static bool can_decode(QString filename) {return false;}
 
 protected:
+	void init(int converter_type);
 	void reset();
 	
 	nframes_t song_to_file_frame(nframes_t frame);

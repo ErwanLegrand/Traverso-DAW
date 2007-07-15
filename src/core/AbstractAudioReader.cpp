@@ -97,11 +97,11 @@ AbstractAudioReader* AbstractAudioReader::create_audio_reader(QString filename)
 
 // Static method used by other classes to get an automatically resampling AudioReader that wraps
 // an AudioReader chosen by create_audio_reader().
-AbstractAudioReader* AbstractAudioReader::create_resampled_audio_reader(QString filename)
+AbstractAudioReader* AbstractAudioReader::create_resampled_audio_reader(QString filename, int converter_type)
 {
 	ResampleAudioReader* newReader;
 
-	newReader = new ResampleAudioReader(filename);
+	newReader = new ResampleAudioReader(filename, converter_type);
 
 	if (newReader->get_rate() > 0) {
 		return newReader;

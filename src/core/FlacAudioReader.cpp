@@ -135,13 +135,18 @@ FLAC__StreamDecoderWriteStatus FlacPrivate::write_callback(const FLAC__Frame *fr
 	unsigned i, c, pos = 0;
 	unsigned frames = frame->header.blocksize;
 	
-	internalBuffer->resize(frames * frame->header.channels);
+	if (internalBuffer->size() > 0) {
+		// This shouldn't be happening, but if it does, the code can handle it now. :)
+		PERROR("internalBuffer is already non-empty");
+	}
+	
+	internalBuffer->resize(internalBuffer->size() + frames * frame->header.channels);
 	
 	for (i=0; i < frames; i++) {
 		// in FLAC channel 0 is left, 1 is right
 		for (c=0; c < frame->header.channels; c++) {
 			audio_sample_t value = (audio_sample_t)((float)buffer[c][i] / (float)((uint)1<<(frame->header.bits_per_sample)));
-			internalBuffer->data()[++pos] = value;
+			internalBuffer->data()[bufferStart + (++pos)] = value;
 		}
 	}
 	
@@ -358,6 +363,8 @@ bool FlacAudioReader::seek(nframes_t start)
 	m_flac->internalBuffer->resize(0);
 	m_flac->bufferStart = 0;
 	
+	m_flac->flush();
+	
 	if (!m_flac->seek(start)) {
 		PERROR("FlacAudioReader: could not seek to frame %d within %s", start, QS_C(m_fileName));
 		return false;
@@ -383,36 +390,42 @@ int FlacAudioReader::read(audio_sample_t* dst, int sampleCount)
 #ifdef LEGACY_FLAC
 			if (m_flac->get_state() == FLAC__SEEKABLE_STREAM_DECODER_END_OF_STREAM) {
 				//printf("flac file finish\n");
-				m_flac->finish();
-				m_flac->init();
+				m_flac->reset();
 				break;
 			}
 			else if(m_flac->get_state() == FLAC__SEEKABLE_STREAM_DECODER_OK) {
 				//printf("process1\n");
 				if (!m_flac->process_single()) {
 					PERROR("process_single() error\n");
+					m_flac->reset();
+					seek(m_nextFrame);
 					return -1;
 				}
 			}
 			else {
 				PERROR("flac_state() = %d\n", m_flac->get_state());
+				m_flac->reset();
+				seek(m_nextFrame);
 				return -1;
 			}
 #else
 			if (m_flac->get_state() == FLAC__STREAM_DECODER_END_OF_STREAM) {
 				//printf("flac file finish\n");
-				m_flac->finish();
-				m_flac->init();
+				m_flac->reset();
 				break;
 			}
 			else if(m_flac->get_state() < FLAC__STREAM_DECODER_END_OF_STREAM) {
 				if (!m_flac->process_single()) {
 					PERROR("process_single() error\n");
+					m_flac->reset();
+					seek(m_nextFrame);
 					return -1;
 				}
 			}
 			else {
 				PERROR("flac_state() = %d\n", m_flac->get_state());
+				m_flac->reset();
+				seek(m_nextFrame);
 				return -1;
 			}
 #endif
@@ -437,14 +450,18 @@ int FlacAudioReader::read(audio_sample_t* dst, int sampleCount)
 	}
 	
 	// Pad end of file with 0s if necessary.  (Shouldn't be necessary...)
-	/*int remainingSamplesRequested = sampleCount - samplesCoppied;
+	int remainingSamplesRequested = sampleCount - samplesCoppied;
 	int remainingSamplesInFile = get_length() * get_num_channels() - (m_nextFrame * get_num_channels() + samplesCoppied);
 	if (samplesCoppied == 0 && remainingSamplesInFile > 0) {
 		int padLength = (remainingSamplesRequested > remainingSamplesInFile) ? remainingSamplesInFile : remainingSamplesRequested;
-		printf("padLength: %d\n", padLength);
-		memset(dst + sampleCount - padLength, 0, padLength * sizeof(audio_sample_t));
-		samplesCoppied += remainingSamplesInFile;
-	}*/
+		//PERROR("padLength: %d", padLength);
+		memset(dst + samplesCoppied, 0, padLength * sizeof(audio_sample_t));
+		samplesCoppied += padLength;
+	}
+	if (samplesCoppied > sampleCount) {
+		//PERROR("Truncating");
+		samplesCoppied = sampleCount;
+	}
 	
 	m_nextFrame += samplesCoppied / get_num_channels();
 	

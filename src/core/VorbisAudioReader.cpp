@@ -141,8 +141,8 @@ int VorbisAudioReader::read(audio_sample_t* dst, int sampleCount)
 		int samplesRead = ov_read_float(&m_vf, &tmp, (sampleCount - totalRead) / get_num_channels(), &bs);
 		
 		if (samplesRead == OV_HOLE) {
+			// Hole detected: recursive retry
 			PERROR("VorbisAudioReader: OV_HOLE");
-			// recursive new try
 			return read(dst, sampleCount);
 		}
 		else if (samplesRead == 0) {
@@ -150,6 +150,7 @@ int VorbisAudioReader::read(audio_sample_t* dst, int sampleCount)
 			break;
 		} else if (samplesRead < 0) {
 			/* error in the stream. */
+			PERROR("VorbisFile decoding error");
 			break;
 		}
 		

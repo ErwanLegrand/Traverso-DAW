@@ -44,7 +44,7 @@ public:
 	virtual int read(audio_sample_t* dst, int sampleCount) = 0;
 	
 	static AbstractAudioReader* create_audio_reader(QString filename);
-	static AbstractAudioReader* create_resampled_audio_reader(QString filename);
+	static AbstractAudioReader* create_resampled_audio_reader(QString filename, int converter_type);
 	static bool can_decode(QString filename) { return false; };
 
 protected:

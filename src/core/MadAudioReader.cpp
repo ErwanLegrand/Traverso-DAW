@@ -745,7 +745,7 @@ unsigned long MadAudioReader::countFrames()
 			d->vbr = true;
 		}
 		//
-		// position in stream: postion in file minus the not yet used buffer
+		// position in stream: position in file minus the not yet used buffer
 		//
 		unsigned long long seekPos = d->handle->inputPos() - 
 		(d->handle->madStream->bufend - d->handle->madStream->this_frame + 1);
@@ -801,7 +801,7 @@ int MadAudioReader::read(audio_sample_t* dst, int sampleCount)
 		// one mad_frame represents a mp3-frame which is always 1152 samples
 		// for us that means we need 1152 samples per channel of output buffer
 		// for every frame
-		if (d->outputBufferEnd - d->outputPointer == 0) {
+		if (d->outputPointer >= d->outputBufferEnd) {
 			bOutputBufferFull = true;
 		}
 		else if (d->handle->decodeNextFrame()) {
@@ -821,27 +821,28 @@ int MadAudioReader::read(audio_sample_t* dst, int sampleCount)
 		}
 	}
 	
-	nframes_t samplesWritten = d->outputPointer - d->outputBuffer;
+	int samplesWritten = d->outputPointer - d->outputBuffer;
 	
 	// Pad end with zeros if necessary
 	// FIXME: This shouldn't be necessary!  :P
 	// is get_length() reporting incorrectly?
 	// are we not outputting the last mp3-frame for some reason?
 	int remainingSamplesRequested = sampleCount - samplesWritten;
-	int remainingSamplesInFile = get_length() * get_num_channels() - (m_nextFrame * get_num_channels() + samplesWritten);
+	int remainingSamplesInFile = (get_length() - m_nextFrame) * get_num_channels();
 	if (remainingSamplesRequested > 0 && remainingSamplesInFile > 0) {
 		int padLength = (remainingSamplesRequested > remainingSamplesInFile) ? remainingSamplesInFile : remainingSamplesRequested;
 		memset(d->outputPointer, 0, padLength * sizeof(audio_sample_t));
 		samplesWritten += padLength;
-		//printf("remainingSamplesRequested: %d, remainingSamplesInFile: %d (using: %d)\n", remainingSamplesRequested, remainingSamplesInFile, padLength);
+		PERROR("padding: %d", padLength);
 	}
 
 	// Truncate so we don't return too many samples
 	else if (samplesWritten > remainingSamplesInFile) {
+		PERROR("truncating by %d!", (samplesWritten - remainingSamplesInFile)/get_num_channels());
 		samplesWritten = remainingSamplesInFile;
 	}
 	
-	//if (samplesWritten) printf("at: %lu (total: %lu), request: %d (returned: %d)\n", m_nextFrame, m_frames, sampleCount/get_num_channels(), samplesWritten/get_num_channels());
+	//printf("at: %lu (total: %lu), request: %d (returned: %d)\n", m_nextFrame, m_frames, sampleCount/get_num_channels(), samplesWritten/get_num_channels());
 	
 	m_nextFrame += samplesWritten / get_num_channels();
 	return samplesWritten;
@@ -850,11 +851,12 @@ int MadAudioReader::read(audio_sample_t* dst, int sampleCount)
 
 bool MadAudioReader::createPcmSamples(mad_synth* synth)
 {
-	unsigned short nsamples = synth->pcm.length;
+	unsigned short nframes = synth->pcm.length;
 	bool overflow = false;
+	int i;
 	
 	// now create the output
-	for (int i = 0; i < nsamples; i++) {
+	for (i = 0; i < nframes; i++) {
 		if (overflow == false && d->outputPointer > d->outputBufferEnd) {
 			d->outputPointer = d->overflowBuffer;
 			overflow = true;
@@ -875,7 +877,10 @@ bool MadAudioReader::createPcmSamples(mad_synth* synth)
 		d->overflowSize = d->outputPointer - d->overflowBuffer;
 		d->overflowStart = 0;
 		d->outputPointer = d->outputBufferEnd;
-		//printf("overflowing %lu samples\n", d->overflowSize);
+		//printf("written: %d (overflow: %u)\n",  nframes * synth->pcm.channels - d->overflowSize, d->overflowSize);
+	}
+	else {
+		//printf("written: %d\n",  i * synth->pcm.channels);
 	}
 	
 	return true;
