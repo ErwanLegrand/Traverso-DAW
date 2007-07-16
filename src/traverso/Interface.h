@@ -91,6 +91,7 @@ protected:
 	void keyReleaseEvent ( QKeyEvent* e);
 	void closeEvent ( QCloseEvent * event );
 	QSize sizeHint () const;
+	void changeEvent(QEvent *event);
 
 private:
 	QStackedWidget* 	centerAreaWidget;

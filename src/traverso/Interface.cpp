@@ -328,6 +328,22 @@ void Interface::keyReleaseEvent( QKeyEvent * e)
 	e->ignore();
 }
 
+void Interface::changeEvent(QEvent *event)
+{
+	switch (event->type()) {
+		case QEvent::ActivationChange:
+		case QEvent::WindowStateChange:
+			// clean up the ie after Alt-Tab
+			// if problems remain, maybe ie().reset() will help...
+			ie().clear_modifier_keys();
+		default:
+			break;
+	}
+	
+	// pass the event on to the parent class
+	QMainWindow::changeEvent(event);
+}
+
 Command * Interface::show_export_widget( )
 {
 	if (! exportWidget) {
