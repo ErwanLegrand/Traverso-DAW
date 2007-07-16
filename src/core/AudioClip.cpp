@@ -894,13 +894,15 @@ void AudioClip::calculate_normalization_factor(float targetdB)
 	}
 
 	for (uint i=0; i<m_readSource->get_channel_count(); ++i) {
-		maxamp = f_max(m_readSource->get_peak(i)->get_max_amplitude(sourceStartFrame, sourceEndFrame), maxamp);
-	}
-
-	if (maxamp == 0.0f) {
-		printf("AudioClip::normalization: max amplitude == 0\n");
-		/* don't even try */
-		return;
+		double amp = m_readSource->get_peak(i)->get_max_amplitude(sourceStartFrame, sourceEndFrame);
+		
+		if (amp == 0.0f) {
+			printf("AudioClip::normalization: max amplitude == 0\n");
+			/* don't even try */
+			return;
+		}
+		
+		maxamp = f_max(amp, maxamp);
 	}
 
 	if (maxamp == target) {

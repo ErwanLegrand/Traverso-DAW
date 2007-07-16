@@ -647,7 +647,9 @@ out:
 
 audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 {
-	Q_ASSERT(m_file);
+	if (!m_file || !peaksAvailable) {
+		return 0.0f;
+	}
 	
 	int startpos = startframe / NORMALIZE_CHUNK_SIZE;
 	uint count = (endframe / NORMALIZE_CHUNK_SIZE) - startpos;
