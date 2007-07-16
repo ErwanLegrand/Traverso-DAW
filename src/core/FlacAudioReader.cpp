@@ -145,7 +145,7 @@ FLAC__StreamDecoderWriteStatus FlacPrivate::write_callback(const FLAC__Frame *fr
 	for (i=0; i < frames; i++) {
 		// in FLAC channel 0 is left, 1 is right
 		for (c=0; c < frame->header.channels; c++) {
-			audio_sample_t value = (audio_sample_t)((float)buffer[c][i] / (float)((uint)1<<(frame->header.bits_per_sample)));
+			audio_sample_t value = (audio_sample_t)((float)buffer[c][i] / (float)((uint)1<<(frame->header.bits_per_sample-1)));
 			internalBuffer->data()[bufferStart + (++pos)] = value;
 		}
 	}
