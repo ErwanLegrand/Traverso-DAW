@@ -102,10 +102,9 @@ AudioClip::~AudioClip()
 		m_song->get_diskio()->unregister_read_source(m_readSource);
 		delete m_readSource;
 	}
-	// FIXME crashes with a double free in ResourcesManager desctructor on deleting a ReadSource :(
-/*	foreach(Peak* peak, m_peaks) {
+	foreach(Peak* peak, m_peaks) {
 		peak->close();
-	}*/
+	}
 }
 
 void AudioClip::init()
