@@ -35,15 +35,16 @@ public:
 	int get_num_channels();
 	nframes_t get_length();
 	int get_rate();
-	bool is_compressed();
 	bool seek(nframes_t start);
-	int read(audio_sample_t* dst, int sampleCount);
+	nframes_t read(audio_sample_t** buffer, nframes_t frameCount);
 
 	static bool can_decode(QString filename);
 
 protected:
 	SNDFILE*	m_sf;
 	SF_INFO		m_sfinfo;
+	audio_sample_t	*m_tmpBuffer;
+	int		m_tmpBufferSize;
 };
 
 #endif

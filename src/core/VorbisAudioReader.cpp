@@ -127,41 +127,37 @@ bool VorbisAudioReader::seek(nframes_t start)
 }
 
 
-int VorbisAudioReader::read(audio_sample_t* dst, int sampleCount)
+nframes_t VorbisAudioReader::read(audio_sample_t** buffer, nframes_t frameCount)
 {
 	Q_ASSERT(m_file);
 	
-	nframes_t totalRead = 0;
+	nframes_t totalFramesRead = 0;
 	
-	while (totalRead < sampleCount) {
+	while (totalFramesRead < frameCount) {
 		audio_sample_t** tmp;
 		int bs;
-		int samplesRead = ov_read_float(&m_vf, &tmp, (sampleCount - totalRead) / get_num_channels(), &bs);
+		nframes_t framesRead = ov_read_float(&m_vf, &tmp, frameCount - totalFramesRead, &bs);
 		
-		if (samplesRead == OV_HOLE) {
+		if (framesRead == OV_HOLE) {
 			// Hole detected: recursive retry
 			PERROR("VorbisAudioReader: OV_HOLE");
-			return read(dst, sampleCount);
+			return read(buffer, frameCount);
 		}
-		else if (samplesRead == 0) {
+		else if (framesRead == 0) {
 			/* EOF */
 			break;
-		} else if (samplesRead < 0) {
+		} else if (framesRead < 0) {
 			/* error in the stream. */
 			PERROR("VorbisFile decoding error");
 			break;
 		}
 		
-		// FIXME: Instead of interlacing here, deinterlace in other AudioReaders!! (since we deinterlace later anyway)
-		int frames = samplesRead;
-		for (int f=0; f < frames; f++) {
-			for (int c=0; c < get_num_channels(); c++) {
-				dst[totalRead + f * get_num_channels() + c] = tmp[c][f];
-			}
+		for (int c=0; c < get_num_channels(); c++) {
+			memcpy(buffer[c] + totalFramesRead, tmp[c], framesRead * sizeof(audio_sample_t));
 		}
-		totalRead += samplesRead * get_num_channels();
+		totalFramesRead += framesRead;
 	}
 	
-	return totalRead;
+	return totalFramesRead;
 }
 

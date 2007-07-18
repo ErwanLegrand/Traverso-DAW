@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AbstractAudioReader.h"
 #include "SFAudioReader.h"
 #include "FlacAudioReader.h"
-#include "MadAudioReader.h"
+//#include "MadAudioReader.h"
 #include "VorbisAudioReader.h"
 #include "ResampleAudioReader.h"
 
@@ -49,7 +49,7 @@ AbstractAudioReader::~AbstractAudioReader()
 
 // Read cnt frames starting at start from the AudioReader, into dst
 // uses seek() and read() from AudioReader subclass
-int AbstractAudioReader::read_from(audio_sample_t* dst, nframes_t start, nframes_t cnt)
+nframes_t AbstractAudioReader::read_from(audio_sample_t** buffer, nframes_t start, nframes_t count)
 {
 	QMutexLocker locker( &m_mutex );
 	
@@ -65,11 +65,11 @@ int AbstractAudioReader::read_from(audio_sample_t* dst, nframes_t start, nframes
 	}
 	
 // 	printf("read_from:: after_seek from %d, framepos is %d\n", start, m_readPos);
-	int samplesRead = read(dst, cnt);
+	nframes_t framesRead = read(buffer, count);
 	
-	m_readPos += samplesRead / get_num_channels();
+	m_readPos += framesRead;
 	
-	return samplesRead;
+	return framesRead;
 }
 
 
@@ -87,9 +87,9 @@ AbstractAudioReader* AbstractAudioReader::create_audio_reader(const QString& fil
 	else if (SFAudioReader::can_decode(filename)) {
 		newReader = new SFAudioReader(filename);
 	}
-	else if (MadAudioReader::can_decode(filename)) {
-		newReader = new MadAudioReader(filename);
-	}
+//	else if (MadAudioReader::can_decode(filename)) {
+//		newReader = new MadAudioReader(filename);
+//	}
 	else {
 		return 0;
 	}

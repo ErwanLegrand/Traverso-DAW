@@ -211,32 +211,27 @@ int ReadSource::file_read(audio_sample_t** dst, nframes_t start, nframes_t cnt, 
 	trav_time_t starttime = get_microseconds();
 #endif
 	if (m_audioReader->get_num_channels() == 1) {
-		int result = m_audioReader->read_from(dst[0], start, cnt);
+		nframes_t result = m_audioReader->read_from(dst, start, cnt);
 #if defined (profile)
 		int processtime = (int) (get_microseconds() - starttime);
 		if (processtime > 40000)
 			printf("Process time for %s: %d useconds\n\n", QS_C(m_fileName), processtime);
 #endif
-		return result;
+		return (int)result;
 	}
 
 	float *ptr;
-	uint real_cnt = cnt * m_audioReader->get_num_channels();
 	
 	// The readbuffer 'assumes' that there is max 2 channels...
 	Q_ASSERT(m_audioReader->get_num_channels() <= 2);
 	
-	int nread = m_audioReader->read_from(readbuffer, start, real_cnt);
+	nframes_t nread = m_audioReader->read_from(dst, start, cnt);
 #if defined (profile)
 	int processtime = (int) (get_microseconds() - starttime);
 	if (processtime > 40000)
 		printf("Process time for %s: %d useconds\n\n", QS_C(m_fileName), processtime);
 #endif
-	ptr = readbuffer;
-	nread /= m_audioReader->get_num_channels();
-
-	/* stride through the interleaved data */
-	// FIXME: deinterlace in AudioReader Classes instead of here
+	/*ptr = readbuffer;
 
 	for (int32_t n = 0; n < nread; ++n) {
 		dst[0][n] = *ptr;
@@ -247,9 +242,8 @@ int ReadSource::file_read(audio_sample_t** dst, nframes_t start, nframes_t cnt, 
 	for (int32_t n = 0; n < nread; ++n) {
 		dst[1][n] = *ptr;
 		ptr += m_audioReader->get_num_channels();
-	}
-
-
+	}*/
+	
 	return nread;
 }
 

@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define RESAMPLEAUDIOREADER_H
 
 #include <AbstractAudioReader.h>
+#include <QVector>
 #include <samplerate.h>
 
 
@@ -37,7 +38,7 @@ public:
 	nframes_t get_length();
 	int get_rate();
 	bool seek(nframes_t start);
-	int read(audio_sample_t* dst, int sampleCount);
+	nframes_t read(audio_sample_t** buffer, nframes_t frameCount);
 
 
 protected:
@@ -46,12 +47,13 @@ protected:
 	
 	nframes_t song_to_file_frame(nframes_t frame);
 	nframes_t file_to_song_frame(nframes_t frame);
-
+	
+	bool			m_valid;
 	AbstractAudioReader*	m_reader;
-	SRC_STATE*	m_srcState;
-	SRC_DATA	m_srcData;
-	audio_sample_t	*m_fileBuffer;
-	long		m_fileBufferLength;
+	QVector<SRC_STATE*>	m_srcStates;
+	SRC_DATA		m_srcData;
+	QVector<audio_sample_t*> m_fileBuffers;
+	long			m_fileBufferLength;
 };
 
 #endif

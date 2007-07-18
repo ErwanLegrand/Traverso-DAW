@@ -767,11 +767,11 @@ unsigned long MadAudioReader::countFrames()
 }
 
 
-int MadAudioReader::read(audio_sample_t* dst, int sampleCount)
+nframes_t MadAudioReader::read(audio_sample_t** buffer, nframes_t frameCount)
 {
-	d->outputBuffer = dst;
-	d->outputBufferEnd = d->outputBuffer + sampleCount;
-	d->outputPointer = d->outputBuffer;
+	d->outputBuffers = buffer;
+	d->bufferSize = frameCount
+	d->bufferPos = 0;
 	
 	bool bOutputBufferFull = false;
 	

@@ -1256,6 +1256,7 @@ void Song::set_transport_pos(nframes_t position)
 #if defined (THREAD_CHECK)
 	Q_ASSERT(QThread::currentThreadId() ==  threadId);
 #endif
+	printf("set_transport_pos(%lu)\n", position);
 	audiodevice().transport_seek_to(m_audiodeviceClient, position);
 }
 

@@ -38,7 +38,7 @@ public:
 	nframes_t get_length();
 	int get_rate();
 	bool seek(nframes_t start);
-	int read(audio_sample_t* dst, int sampleCount);
+	nframes_t read(audio_sample_t** buffer, nframes_t frameCount);
 
 	static bool can_decode(QString filename);
 

@@ -41,11 +41,18 @@ SFAudioReader::SFAudioReader(QString filename)
 	if ((m_sf = sf_open ((m_fileName.toUtf8().data()), SFM_READ, &m_sfinfo)) == 0) {
 		PERROR("Couldn't open soundfile (%s)", QS_C(m_fileName));
 	}
+	
+	m_tmpBuffer = 0;
+	m_tmpBufferSize = 0;
 }
 
 
 SFAudioReader::~SFAudioReader()
 {
+	if (m_tmpBuffer) {
+		delete m_tmpBuffer;
+	}
+	
 	if (m_sf) {
 		if (sf_close(m_sf)) {
 			qWarning("sf_close returned an error!");
@@ -104,13 +111,6 @@ int SFAudioReader::get_rate()
 }
 
 
-// Should this exist?  Should we just be smarter in MonoReader so we don't need this?
-bool SFAudioReader::is_compressed()
-{
-	return ((m_sfinfo.format & SF_FORMAT_TYPEMASK) == SF_FORMAT_FLAC );
-}
-
-
 bool SFAudioReader::seek(nframes_t start)
 {
 	Q_ASSERT(m_sf);
@@ -131,14 +131,38 @@ bool SFAudioReader::seek(nframes_t start)
 }
 
 
-int SFAudioReader::read(audio_sample_t* dst, int sampleCount)
+nframes_t SFAudioReader::read(audio_sample_t** buffer, nframes_t frameCount)
 {
 	Q_ASSERT(m_sf);
 	
-	int samplesRead = sf_read_float (m_sf, dst, sampleCount);
+	// Make sure the temp buffer is big enough for this read
+	if (m_tmpBufferSize < frameCount) {
+		if (m_tmpBuffer) {
+			delete m_tmpBuffer;
+		}
+		m_tmpBuffer = new audio_sample_t[frameCount * get_num_channels()];
+	}
+	nframes_t framesRead = sf_readf_float(m_sf, m_tmpBuffer, frameCount);
 	
-	// FIXME: deinterlace here instead of in MonoReader
+	// De-interlace
+	switch (get_num_channels()) {
+		case 1:
+			memcpy(buffer[0], m_tmpBuffer, framesRead * sizeof(audio_sample_t));
+			break;	
+		case 2:
+			for (int f = 0; f < framesRead; f++) {
+				buffer[0][f] = m_tmpBuffer[f * 2];
+				buffer[1][f] = m_tmpBuffer[f * 2 + 1];
+			}
+			break;	
+		default:
+			for (int f = 0; f < framesRead; f++) {
+				for (int c = 0; c < get_num_channels(); c++) {
+					buffer[c][f] = m_tmpBuffer[f * get_num_channels() + c];
+				}
+			}
+	}
 	
-	return samplesRead;
+	return framesRead;
 }
 

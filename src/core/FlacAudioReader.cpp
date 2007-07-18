@@ -66,7 +66,9 @@ class FlacPrivate
 		}
 		
 		void cleanup() {
-			delete internalBuffer;
+			if (internalBuffer) {
+				delete internalBuffer;
+			}
 			file->close();
 			delete file;
 			finish();
@@ -81,8 +83,10 @@ class FlacPrivate
 		uint m_bitsPerSample;
 		uint m_samples;
 		
-		QVector<audio_sample_t>	*internalBuffer;
-		int			bufferStart;
+		audio_sample_t	*internalBuffer;
+		int		bufferSize;
+		int		bufferUsed;
+		int		bufferStart;
 		
 	protected:
 #ifdef LEGACY_FLAC
@@ -112,7 +116,9 @@ FlacPrivate::FlacPrivate(QString filename)
 			: FLAC::Decoder::Stream()
 #endif
 {
-	internalBuffer = new QVector<audio_sample_t>();
+	internalBuffer = 0;
+	bufferSize = 0;
+	bufferUsed = 0;
 	bufferStart = 0;
 	open(filename);
 	process_until_end_of_metadata();
@@ -135,20 +141,28 @@ FLAC__StreamDecoderWriteStatus FlacPrivate::write_callback(const FLAC__Frame *fr
 	unsigned i, c, pos = 0;
 	unsigned frames = frame->header.blocksize;
 	
-	if (internalBuffer->size() > 0) {
-		// This shouldn't be happening, but if it does, the code can handle it now. :)
+	if (bufferUsed > 0) {
+		// This shouldn't be happening
 		PERROR("internalBuffer is already non-empty");
 	}
 	
-	internalBuffer->resize(internalBuffer->size() + frames * frame->header.channels);
+	if (bufferSize < frames * frame->header.channels) {
+		if (internalBuffer) {
+			delete internalBuffer;
+		}
+		internalBuffer = new audio_sample_t[frames * frame->header.channels];
+		bufferSize = frames * frame->header.channels;
+	}
 	
 	for (i=0; i < frames; i++) {
 		// in FLAC channel 0 is left, 1 is right
 		for (c=0; c < frame->header.channels; c++) {
 			audio_sample_t value = (audio_sample_t)((float)buffer[c][i] / (float)((uint)1<<(frame->header.bits_per_sample-1)));
-			internalBuffer->data()[bufferStart + (pos++)] = value;
+			internalBuffer[pos++] = value;
 		}
 	}
+	
+	bufferUsed = frames * frame->header.channels;
 	
 	return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
@@ -360,7 +374,7 @@ bool FlacAudioReader::seek(nframes_t start)
 		return false;
 	}
 	
-	m_flac->internalBuffer->resize(0);
+	m_flac->bufferUsed = 0;
 	m_flac->bufferStart = 0;
 	
 	m_flac->flush();
@@ -374,16 +388,16 @@ bool FlacAudioReader::seek(nframes_t start)
 }
 
 
-int FlacAudioReader::read(audio_sample_t* dst, int sampleCount)
+nframes_t FlacAudioReader::read(audio_sample_t** buffer, nframes_t frameCount)
 {
 	Q_ASSERT(m_flac);
 	
-	int samplesToCopy;
-	int samplesAvailable;
-	int samplesCoppied = 0;
+	nframes_t framesToCopy;
+	nframes_t framesAvailable;
+	nframes_t framesCoppied = 0;
 	
-	while (samplesCoppied < sampleCount) {
-		if (m_flac->internalBuffer->size() == 0) {
+	while (framesCoppied < frameCount) {
+		if (m_flac->bufferUsed == 0) {
 			// want more data
 #ifdef LEGACY_FLAC
 			if (m_flac->get_state() == FLAC__SEEKABLE_STREAM_DECODER_END_OF_STREAM) {
@@ -429,40 +443,57 @@ int FlacAudioReader::read(audio_sample_t* dst, int sampleCount)
 #endif
 		}
 		
-		samplesAvailable = m_flac->internalBuffer->size() - m_flac->bufferStart;
-		samplesToCopy = (sampleCount - samplesCoppied < samplesAvailable) ? sampleCount - samplesCoppied : samplesAvailable;
-		for (int i = 0; i < samplesToCopy; i++) {
-			dst[samplesCoppied + i] = m_flac->internalBuffer->at(m_flac->bufferStart + i);
+		framesAvailable = (m_flac->bufferUsed - m_flac->bufferStart) / get_num_channels() ;
+		framesToCopy = (frameCount - framesCoppied < framesAvailable) ? frameCount - framesCoppied : framesAvailable;
+		switch (get_num_channels()) {
+			case 1:
+				memcpy(buffer[0] + framesCoppied, m_flac->internalBuffer + m_flac->bufferStart, framesToCopy);
+				break;
+			case 2:
+				for (int i = 0; i < framesToCopy; i++) {
+					buffer[0][framesCoppied + i] = m_flac->internalBuffer[m_flac->bufferStart + i * 2];
+					buffer[1][framesCoppied + i] = m_flac->internalBuffer[m_flac->bufferStart + i * 2 + 1];
+				}
+				break;
+			default:
+				for (int i = 0; i < framesToCopy; i++) {
+					for (int c = 0; c < get_num_channels(); c++) {
+						buffer[c][framesCoppied + i] = m_flac->internalBuffer[m_flac->bufferStart + i * get_num_channels() + c];
+					}
+				}
+				break;
 		}
 		
-		if(samplesToCopy == samplesAvailable) {
-			m_flac->internalBuffer->resize(0);
+		if(framesToCopy == framesAvailable) {
+			m_flac->bufferUsed = 0;
 			m_flac->bufferStart = 0;
 		}
 		else {
-			m_flac->bufferStart += samplesToCopy;
+			m_flac->bufferStart += framesToCopy * get_num_channels();
 		}
-		samplesCoppied += samplesToCopy;
+		framesCoppied += framesToCopy;
 		
-		//printf("samplesCoppied = %d (%d, %d)\n", samplesCoppied, m_flac->bufferStart, m_flac->internalBuffer->size());
+		//printf("samplesCoppied = %d (%d, %d)\n", samplesCoppied, m_flac->bufferStart, m_flac->buferSize);
 	}
 	
 	// Pad end of file with 0s if necessary.  (Shouldn't be necessary...)
-	int remainingSamplesRequested = sampleCount - samplesCoppied;
-	int remainingSamplesInFile = get_length() * get_num_channels() - (m_readPos * get_num_channels() + samplesCoppied);
-	if (samplesCoppied == 0 && remainingSamplesInFile > 0) {
-		int padLength = (remainingSamplesRequested > remainingSamplesInFile) ? remainingSamplesInFile : remainingSamplesRequested;
+	int remainingFramesRequested = frameCount - framesCoppied;
+	int remainingFramesInFile = get_length() - (m_readPos + framesCoppied);
+	if (framesCoppied == 0 && remainingFramesInFile > 0) {
+		int padLength = (remainingFramesRequested > remainingFramesInFile) ? remainingFramesInFile : remainingFramesRequested;
 		//PERROR("padLength: %d", padLength);
-		memset(dst + samplesCoppied, 0, padLength * sizeof(audio_sample_t));
-		samplesCoppied += padLength;
+		for (int c = 0; c < get_num_channels(); c++) {
+			memset(buffer[c] + framesCoppied, 0, padLength * sizeof(audio_sample_t));
+		}
+		framesCoppied += padLength;
 	}
-	if (samplesCoppied > sampleCount) {
+	if (framesCoppied > frameCount) {
 		//PERROR("Truncating");
-		samplesCoppied = sampleCount;
+		framesCoppied = frameCount;
 	}
 	
 	//printf("copied %d of %d.  nextFrame: %lu of %lu\n", samplesCoppied, sampleCount, m_readPos, get_length());
 	
-	return samplesCoppied;
+	return framesCoppied;
 }
 
