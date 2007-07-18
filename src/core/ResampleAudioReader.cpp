@@ -125,8 +125,8 @@ nframes_t ResampleAudioReader::get_length()
 int ResampleAudioReader::get_rate()
 {
 	if (m_reader) {
-		//return m_reader->get_rate();
-		return audiodevice().get_sample_rate();
+		return m_reader->get_rate();
+// 		return audiodevice().get_sample_rate();
 	}
 	
 	return 0;
