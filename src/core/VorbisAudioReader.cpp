@@ -123,8 +123,6 @@ bool VorbisAudioReader::seek(nframes_t start)
 		return false;
 	}
 	
-	m_nextFrame = start;
-
 	return true;
 }
 
@@ -163,8 +161,6 @@ int VorbisAudioReader::read(audio_sample_t* dst, int sampleCount)
 		}
 		totalRead += samplesRead * get_num_channels();
 	}
-	
-	m_nextFrame += totalRead / get_num_channels();
 	
 	return totalRead;
 }

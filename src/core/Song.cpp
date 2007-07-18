@@ -919,6 +919,13 @@ void Song::resize_buffer(bool updateArmStatus, nframes_t size)
 void Song::audiodevice_params_changed()
 {
 	resize_buffer(true, audiodevice().get_buffer_size());
+	
+	// The samplerate possibly has been changed, this initiates
+	// a seek in DiskIO, which clears the buffers and refills them
+	// with the correct resampled audio data!
+	// We need to seek to a different position then the current one,
+	// else the seek won't happen at all :)
+	set_transport_pos(m_transportFrame + audiodevice().get_buffer_size());
 }
 
 int Song::get_bitdepth( )

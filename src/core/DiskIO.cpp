@@ -150,7 +150,8 @@ DiskIO::DiskIO(Song* song)
 	m_hardDiskOverLoadCounter = 0;
 	
 	// TODO This is a LARGE buffer, any ideas how to make it smaller ??
-	framebuffer = new audio_sample_t[audiodevice().get_sample_rate() * writebuffertime];
+	framebuffer[0] = new audio_sample_t[audiodevice().get_sample_rate() * writebuffertime];
+	framebuffer[1] = new audio_sample_t[audiodevice().get_sample_rate() * writebuffertime];
 	// We assume here that the audiofiles have max 2 channels, and readbuffer time is max 3 seconds.
 	m_readbuffer = new audio_sample_t[audiodevice().get_sample_rate() * 6];
 
@@ -168,7 +169,8 @@ DiskIO::~DiskIO()
 	PENTERDES;
 	stop();
 	delete cpuTimeBuffer;
-	delete [] framebuffer;
+	delete [] framebuffer[0];
+	delete [] framebuffer[1];
 	delete [] m_readbuffer;
 }
 
@@ -189,7 +191,7 @@ void DiskIO::seek( nframes_t position )
 	m_stopWork = 0;
 	m_seeking = true;
 
-	foreach(MonoReader* source, m_monoReaders) {
+	foreach(ReadSource* source, m_readSources) {
 		source->rb_seek_to_file_position(position);
 	}
 	
@@ -243,7 +245,7 @@ void DiskIO::do_work( )
 int DiskIO::there_are_processable_sources( )
 {
 	m_processableSources.clear();
-	QList< MonoReader * > syncSources;
+	QList<ReadSource* > syncSources;
 		
 	for (int i=6; i >= 0; --i) {
 		
@@ -270,9 +272,9 @@ int DiskIO::there_are_processable_sources( )
 			}
 		}
 		
-		for (int j=0; j<m_monoReaders.size(); ++j) {
+		for (int j=0; j<m_readSources.size(); ++j) {
 
-			MonoReader* source = m_monoReaders.at(j);
+			ReadSource* source = m_readSources.at(j);
 			BufferStatus* status = source->get_buffer_status();
 			
 			if (status->priority > i && source->is_active() && !status->needSync ) {
@@ -304,7 +306,7 @@ int DiskIO::there_are_processable_sources( )
 	}
 				
 	
-	if (syncSources.size() > 0) {
+	if (syncSources.size() > 0) { 
 		syncSources.at(0)->sync(framebuffer, m_readbuffer);
 		return 1;
 	}
@@ -350,12 +352,7 @@ void DiskIO::register_read_source (ReadSource* source )
 	QMutexLocker locker(&mutex);
 
 	m_readSources.append(source);
-
-	foreach(MonoReader* prs, source->get_mono_readers()) {
-		prs->prepare_buffer();
-		m_monoReaders.append(prs);
-	}
-		
+	source->prepare_buffer();
 }
 
 /**
@@ -387,10 +384,6 @@ void DiskIO::unregister_read_source( ReadSource * source )
 	QMutexLocker locker(&mutex);
 	
 	m_readSources.removeAll(source);
-
-	foreach(MonoReader* prs, source->get_mono_readers()) {
-		m_monoReaders.removeAll(prs);
-	}
 }
 
 

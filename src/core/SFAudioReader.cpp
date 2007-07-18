@@ -115,6 +115,7 @@ bool SFAudioReader::seek(nframes_t start)
 {
 	Q_ASSERT(m_sf);
 	
+	
 	if (start >= get_length()) {
 		return false;
 	}
@@ -126,8 +127,6 @@ bool SFAudioReader::seek(nframes_t start)
 		return false;
 	}
 	
-	m_nextFrame = start;
-
 	return true;
 }
 
@@ -139,8 +138,6 @@ int SFAudioReader::read(audio_sample_t* dst, int sampleCount)
 	int samplesRead = sf_read_float (m_sf, dst, sampleCount);
 	
 	// FIXME: deinterlace here instead of in MonoReader
-	
-	m_nextFrame += samplesRead / get_num_channels();
 	
 	return samplesRead;
 }

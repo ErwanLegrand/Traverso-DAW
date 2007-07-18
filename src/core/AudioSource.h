@@ -38,7 +38,7 @@ public :
 	AudioSource(){};
 	~AudioSource();
 	
-	virtual void process_ringbuffer(audio_sample_t* framebuffer, audio_sample_t* readbuffer = 0, bool seeking=false);
+	virtual void process_ringbuffer(audio_sample_t** framebuffer, audio_sample_t* readbuffer = 0, bool seeking=false);
 
 	void set_name(const QString& name);
 	void set_dir(const QString& name);
@@ -56,12 +56,10 @@ public :
 	qint64 get_orig_song_id() const {return m_origSongId;}
 	int get_rate() const;
 	uint get_channel_count() const;
-	uint get_file_count() const {return m_fileCount;}
 	int get_bit_depth() const;
 	
 protected:
-	uint		m_channelCount;
-	uint		m_fileCount;
+	int		m_channelCount;
 	qint64		m_origSongId;
 	QString 	m_dir;
 	qint64		m_id;
@@ -77,7 +75,7 @@ protected:
 
 inline uint AudioSource::get_channel_count( ) const {return m_channelCount;}
 
-inline void AudioSource::process_ringbuffer(audio_sample_t*, audio_sample_t*, bool) {}
+inline void AudioSource::process_ringbuffer(audio_sample_t**, audio_sample_t*, bool) {}
 inline qint64 AudioSource::get_id( ) const {return m_id;}
 
 #endif

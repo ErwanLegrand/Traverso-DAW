@@ -697,8 +697,6 @@ bool MadAudioReader::seek(nframes_t start)
 		d->overflowSize -= frameOffset;
 	}
 	
-	m_nextFrame = start;
-	
 	return true;
 }
 
@@ -791,7 +789,6 @@ int MadAudioReader::read(audio_sample_t* dst, int sampleCount)
 			memcpy(d->outputBuffer, d->overflowBuffer + d->overflowStart, sampleCount * sizeof(audio_sample_t));
 			d->overflowSize -= sampleCount;
 			d->overflowStart += sampleCount;
-			m_nextFrame += sampleCount / get_num_channels();
 			return sampleCount;
 		}
 	}
@@ -828,7 +825,7 @@ int MadAudioReader::read(audio_sample_t* dst, int sampleCount)
 	// is get_length() reporting incorrectly?
 	// are we not outputting the last mp3-frame for some reason?
 	int remainingSamplesRequested = sampleCount - samplesWritten;
-	int remainingSamplesInFile = (get_length() - m_nextFrame) * get_num_channels() - samplesWritten;
+	int remainingSamplesInFile = (get_length() - m_readPos) * get_num_channels() - samplesWritten;
 	if (remainingSamplesRequested > 0 && remainingSamplesInFile > 0) {
 		int padLength = (remainingSamplesRequested > remainingSamplesInFile) ? remainingSamplesInFile : remainingSamplesRequested;
 		memset(d->outputPointer, 0, padLength * sizeof(audio_sample_t));
@@ -842,9 +839,8 @@ int MadAudioReader::read(audio_sample_t* dst, int sampleCount)
 		samplesWritten = remainingSamplesInFile;
 	}
 	
-	//printf("at: %lu (total: %lu), request: %d (returned: %d)\n", m_nextFrame, m_frames, sampleCount/get_num_channels(), samplesWritten/get_num_channels());
+	//printf("at: %lu (total: %lu), request: %d (returned: %d)\n", m_readPos, m_frames, sampleCount/get_num_channels(), samplesWritten/get_num_channels());
 	
-	m_nextFrame += samplesWritten / get_num_channels();
 	return samplesWritten;
 }
 
@@ -855,9 +851,9 @@ bool MadAudioReader::createPcmSamples(mad_synth* synth)
 	bool overflow = false;
 	int i;
 	
-	if ((nframes + ((d->outputPointer - d->outputBuffer)/get_num_channels() + m_nextFrame)) > get_length()) {
-		nframes = get_length() - ((d->outputPointer - d->outputBuffer)/get_num_channels() + m_nextFrame);
-		//printf("!!!nframes: %lu, length: %lu, current: %lu\n", nframes, get_length(), (d->outputPointer - d->outputBuffer)/get_num_channels() + m_nextFrame);
+	if ((nframes + ((d->outputPointer - d->outputBuffer)/get_num_channels() + m_readPos)) > get_length()) {
+		nframes = get_length() - ((d->outputPointer - d->outputBuffer)/get_num_channels() + m_readPos);
+		//printf("!!!nframes: %lu, length: %lu, current: %lu\n", nframes, get_length(), (d->outputPointer - d->outputBuffer)/get_num_channels() + m_readPos);
 	}
 	
 	// now create the output

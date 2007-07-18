@@ -370,8 +370,6 @@ bool FlacAudioReader::seek(nframes_t start)
 		return false;
 	}
 	
-	m_nextFrame = start;
-
 	return true;
 }
 
@@ -398,14 +396,14 @@ int FlacAudioReader::read(audio_sample_t* dst, int sampleCount)
 				if (!m_flac->process_single()) {
 					PERROR("process_single() error\n");
 					m_flac->reset();
-					seek(m_nextFrame);
+					seek(m_readPos);
 					return -1;
 				}
 			}
 			else {
-				PERROR("flac_state() = %d\n", m_flac->get_state());
+				PERROR("flac_state() = %d\n", int(m_flac->get_state()));
 				m_flac->reset();
-				seek(m_nextFrame);
+				seek(m_readPos);
 				return -1;
 			}
 #else
@@ -418,14 +416,14 @@ int FlacAudioReader::read(audio_sample_t* dst, int sampleCount)
 				if (!m_flac->process_single()) {
 					PERROR("process_single() error\n");
 					m_flac->reset();
-					seek(m_nextFrame);
+					seek(m_readPos);
 					return -1;
 				}
 			}
 			else {
-				PERROR("flac_state() = %d\n", m_flac->get_state());
+				PERROR("flac_state() = %d\n", int(m_flac->get_state()));
 				m_flac->reset();
-				seek(m_nextFrame);
+				seek(m_readPos);
 				return -1;
 			}
 #endif
@@ -451,7 +449,7 @@ int FlacAudioReader::read(audio_sample_t* dst, int sampleCount)
 	
 	// Pad end of file with 0s if necessary.  (Shouldn't be necessary...)
 	int remainingSamplesRequested = sampleCount - samplesCoppied;
-	int remainingSamplesInFile = get_length() * get_num_channels() - (m_nextFrame * get_num_channels() + samplesCoppied);
+	int remainingSamplesInFile = get_length() * get_num_channels() - (m_readPos * get_num_channels() + samplesCoppied);
 	if (samplesCoppied == 0 && remainingSamplesInFile > 0) {
 		int padLength = (remainingSamplesRequested > remainingSamplesInFile) ? remainingSamplesInFile : remainingSamplesRequested;
 		//PERROR("padLength: %d", padLength);
@@ -463,9 +461,7 @@ int FlacAudioReader::read(audio_sample_t* dst, int sampleCount)
 		samplesCoppied = sampleCount;
 	}
 	
-	m_nextFrame += samplesCoppied / get_num_channels();
-	
-	//printf("copied %d of %d.  nextFrame: %lu of %lu\n", samplesCoppied, sampleCount, m_nextFrame, get_length());
+	//printf("copied %d of %d.  nextFrame: %lu of %lu\n", samplesCoppied, sampleCount, m_readPos, get_length());
 	
 	return samplesCoppied;
 }

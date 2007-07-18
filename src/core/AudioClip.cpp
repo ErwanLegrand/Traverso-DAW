@@ -102,6 +102,10 @@ AudioClip::~AudioClip()
 		m_song->get_diskio()->unregister_read_source(m_readSource);
 		delete m_readSource;
 	}
+	// FIXME crashes with a double free in ResourcesManager desctructor on deleting a ReadSource :(
+/*	foreach(Peak* peak, m_peaks) {
+		peak->close();
+	}*/
 }
 
 void AudioClip::init()
@@ -379,12 +383,12 @@ void AudioClip::set_selected(bool selected)
 //
 //  Function called in RealTime AudioThread processing path
 //
-int AudioClip::process(nframes_t nframes, audio_sample_t* buffer, uint channel)
+int AudioClip::process(nframes_t nframes)
 {
 	Q_ASSERT(m_song);
 	
 	if (m_recordingStatus == RECORDING) {
-		process_capture(nframes, channel);
+// 		process_capture(nframes, channel);
 		return 0;
 	}
 
@@ -398,12 +402,13 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* buffer, uint channel)
 	
 	Q_ASSERT(m_readSource);
 	
-	if (channel >= m_readSource->get_channel_count()) {
+/*	if (channel >= m_readSource->get_channel_count()) {
 		return 1;
-	}
+	}*/
 	
+	AudioBus* bus = m_song->get_render_bus();
 	nframes_t mix_pos;
-	audio_sample_t* mixdown;
+	audio_sample_t* mixdown[get_channels()];
 
 
 	nframes_t transportFrame = m_song->get_transport_frame();
@@ -413,11 +418,17 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* buffer, uint channel)
 		if (transportFrame < trackStartFrame) {
 			uint offset = trackStartFrame - transportFrame;
 			mix_pos = sourceStartFrame;
-			mixdown = buffer + offset;
+// 			mixdown = buffer + offset;
+			for (int chan=0; chan<bus->get_channel_count(); ++chan) {
+				mixdown[chan] = bus->get_buffer(chan, nframes) + offset;
+			}
 			nframes = nframes - offset;
 		} else {
 			mix_pos = transportFrame - trackStartFrame + sourceStartFrame;
-			mixdown = buffer;
+// 			mixdown = buffer;
+			for (int chan=0; chan<bus->get_channel_count(); ++chan) {
+				mixdown[chan] = bus->get_buffer(chan, nframes);
+			}
 		}
 		if (trackEndFrame < upperRange) {
 			nframes -= (upperRange - trackEndFrame);
@@ -431,21 +442,27 @@ int AudioClip::process(nframes_t nframes, audio_sample_t* buffer, uint channel)
 
 
 	if (m_song->realtime_path()) {
-		read_frames = m_readSource->rb_read(channel, mixdown, mix_pos, nframes);
+		read_frames = m_readSource->rb_read(mixdown, mix_pos, nframes);
 	} else {
-		read_frames = m_readSource->file_read(channel, mixdown, mix_pos, nframes, m_song->readbuffer);
+		read_frames = m_readSource->file_read(mixdown, mix_pos, nframes, m_song->readbuffer);
 	}
-
+	
 	if (read_frames <= 0) {
 		return 0;
 	}
 
+	for (int chan=0; chan<bus->get_channel_count(); ++chan) {
 
-	for (int i=0; i<m_fades.size(); ++i) {
-		m_fades.at(i)->process(mixdown, read_frames);
+		for (int i=0; i<m_fades.size(); ++i) {
+			m_fades.at(i)->process(mixdown[chan], read_frames);
+		}
+		
+		m_fader->process_gain(mixdown[chan], (m_song->get_transport_frame() - (trackStartFrame - sourceStartFrame)), read_frames);
+		
+		Mixer::apply_gain_to_buffer(bus->get_buffer(chan, nframes), nframes, get_gain());
 	}
+
 	
-	m_fader->process_gain(mixdown, (m_song->get_transport_frame() - (trackStartFrame - sourceStartFrame)), read_frames);
 	
 	return 1;
 }
@@ -619,8 +636,10 @@ AudioClip* AudioClip::create_copy( )
 Peak* AudioClip::get_peak_for_channel( int chan ) const
 {
 	PENTER2;
-	Q_ASSERT(m_readSource);
-	return m_readSource->get_peak(chan);
+	if (chan >= m_peaks.size()) {
+		return 0;
+	}
+	return m_peaks.at(chan);
 }
 
 void AudioClip::set_audio_source(ReadSource* rs)
@@ -656,6 +675,16 @@ void AudioClip::set_audio_source(ReadSource* rs)
 	set_sources_active_state();
 
 	rs->set_audio_clip(this);
+	
+	foreach(Peak* peak, m_peaks) {
+		peak->close();
+	}
+	
+	m_peaks.clear();
+	
+	for (int chan=0; chan<m_readSource->get_channel_count(); ++chan) {
+		m_peaks.append(new Peak(rs, chan));
+	}
 
 	emit stateChanged();
 }
@@ -894,7 +923,7 @@ void AudioClip::calculate_normalization_factor(float targetdB)
 	}
 
 	for (uint i=0; i<m_readSource->get_channel_count(); ++i) {
-		double amp = m_readSource->get_peak(i)->get_max_amplitude(sourceStartFrame, sourceEndFrame);
+		double amp = get_peak_for_channel(i)->get_max_amplitude(sourceStartFrame, sourceEndFrame);
 		
 		if (amp == 0.0f) {
 			printf("AudioClip::normalization: max amplitude == 0\n");

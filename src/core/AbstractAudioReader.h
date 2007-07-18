@@ -31,9 +31,10 @@ class QString;
 
 class AbstractAudioReader : public QObject
 {
-Q_OBJECT
+	Q_OBJECT
+
 public:
-	AbstractAudioReader(QString filename);
+	AbstractAudioReader(const QString& filename);
 	~AbstractAudioReader();
 	
 	virtual int get_num_channels() = 0;
@@ -43,14 +44,13 @@ public:
 	virtual bool seek(nframes_t start) = 0;
 	virtual int read(audio_sample_t* dst, int sampleCount) = 0;
 	
-	static AbstractAudioReader* create_audio_reader(QString filename);
-	static AbstractAudioReader* create_resampled_audio_reader(QString filename, int converter_type);
-	static bool can_decode(QString filename) { return false; };
+	static AbstractAudioReader* create_audio_reader(const QString& filename);
+	static AbstractAudioReader* create_resampled_audio_reader(const QString& filename, int converter_type);
 
 protected:
 	QString		m_fileName;
 	QMutex		m_mutex;
-	nframes_t	m_nextFrame;
+	nframes_t	m_readPos;
 
 };
 

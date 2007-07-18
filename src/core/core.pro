@@ -34,7 +34,6 @@ SOURCES = AudioClip.cpp \
 	InputEngine.cpp \
 	Mixer.cpp \
 	Peak.cpp \
-	MonoReader.cpp \
 	Project.cpp \
 	ProjectManager.cpp \
 	ReadSource.cpp \
@@ -77,7 +76,6 @@ HEADERS = precompile.h \
 	InputEngine.h \
 	Mixer.h \
 	Peak.h \
-	MonoReader.h \
 	Project.h \
 	ProjectManager.h \
 	ReadSource.h \
@@ -114,3 +112,7 @@ macx{
 win32{
     INCLUDEPATH += ../../3thparty/include .
 }
+SOURCES -= MonoReader.cpp
+
+HEADERS -= MonoReader.h
+

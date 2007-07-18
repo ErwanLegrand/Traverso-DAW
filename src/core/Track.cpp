@@ -414,7 +414,6 @@ int Track::process( nframes_t nframes )
 	AudioBus* bus = m_song->get_render_bus();
 	bus->silence_buffers(nframes);
 	
-	audio_sample_t* mixdown = m_song->mixdown;
 	int result;
 	float gainFactor, panFactor;
 
@@ -422,8 +421,6 @@ int Track::process( nframes_t nframes )
 	
 	for (int i=0; i<audioClipList.size(); ++i) {
 	
-		memset (mixdown, 0, sizeof (audio_sample_t) * nframes);
-		
 		AudioClip* clip = audioClipList.at(i);
 		
 		if (isArmed && clip->recording_state() == AudioClip::NO_RECORDING) {
@@ -431,30 +428,30 @@ int Track::process( nframes_t nframes )
 				continue;
 		}
 		
-		for (int chan=0; chan<bus->get_channel_count(); ++chan) {
 		
-			result = clip->process(nframes, mixdown, chan);
-			
-			if (result <= 0) {
-				continue;
-			}
-
-			processResult |= result;
-			
-			gainFactor = get_gain() * clip->get_gain();
-			
-			if ( (chan == 0) && (m_pan > 0)) {
-				panFactor = 1 - m_pan;
-				gainFactor *= panFactor;
-			}
-			
-			if ( (chan == 1) && (m_pan < 0)) {
-				panFactor = 1 + m_pan;
-				gainFactor *= panFactor;
-			}
-			
-			Mixer::mix_buffers_with_gain(bus->get_buffer(chan, nframes), mixdown, nframes, gainFactor);
+		result = clip->process(nframes);
+		
+		if (result <= 0) {
+			continue;
 		}
+
+		processResult |= result;
+	}
+	
+	for (int chan=0; chan<bus->get_channel_count(); ++chan) {
+		gainFactor = get_gain();
+			
+		if ( (chan == 0) && (m_pan > 0)) {
+			panFactor = 1 - m_pan;
+			gainFactor *= panFactor;
+		}
+			
+		if ( (chan == 1) && (m_pan < 0)) {
+			panFactor = 1 + m_pan;
+			gainFactor *= panFactor;
+		}
+			
+		Mixer::apply_gain_to_buffer(bus->get_buffer(chan, nframes), nframes, gainFactor);
 	}
 	
 	processResult |= m_pluginChain->process_post_fader(bus, nframes);

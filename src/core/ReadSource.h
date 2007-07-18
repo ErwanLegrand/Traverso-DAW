@@ -23,10 +23,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define READSOURCE_H
 
 #include "AudioSource.h"
+#include "RingBufferNPT.h"
+#include "defines.h"
 
+class AbstractAudioReader;
 class AudioClip;
-class Peak;
-class MonoReader;
+struct BufferStatus;
 
 class ReadSource : public AudioSource
 {
@@ -47,37 +49,64 @@ public :
 	
 	ReadSource* deep_copy();
 
-	int rb_read(int channel, audio_sample_t* dst, nframes_t start, nframes_t cnt);
-	int file_read(int channel, audio_sample_t* dst, nframes_t start, nframes_t cnt, audio_sample_t* readbuffer) const;
+	int rb_read(audio_sample_t** dest, nframes_t start, nframes_t cnt);
+	void rb_seek_to_file_position(nframes_t position);
+	
+	int file_read(audio_sample_t** dst, nframes_t start, nframes_t cnt, audio_sample_t* readbuffer) const;
 
 	int init();
 	int get_error() const {return m_error;}
 	int set_file(const QString& filename);
 	void set_active(bool active);
-	void set_is_for_peaks(bool forPeaks);
 	
 	void set_audio_clip(AudioClip* clip);
-	Peak* get_peak(int channel);
 	nframes_t get_nframes() const;
 	
-	QList<MonoReader*> get_mono_readers() const {return m_sources;}
+	void sync(audio_sample_t** framebuffer, audio_sample_t* readbuffer);
+	void process_ringbuffer(audio_sample_t** framebuffer, audio_sample_t* readbuffer, bool seeking=false);
+	void prepare_buffer();
+	size_t is_active() const;
+	BufferStatus* get_buffer_status();
 
 private:
-	QList<MonoReader*> m_sources;
-	int	m_refcount;
-	int	m_error;
-	AudioClip* m_clip;
-	bool	m_silent;
-	bool	m_forPeaks;
+	QList<RingBufferNPT<float>*> m_buffers;
+	AbstractAudioReader*	m_audioReader;
+	AudioClip* 		m_clip;
+	int			m_refcount;
+	int			m_error;
+	bool			m_silent;
+	uint			m_bufferSize;
+	int			m_chunkSize;
+	nframes_t		m_rbFileReadPos;
+	nframes_t		m_rbRelativeFileReadPos;
+	volatile size_t		m_syncPos;
+	volatile size_t		m_rbReady;
+	volatile size_t		m_needSync;
+	volatile size_t		m_active;
+	volatile size_t		m_wasActivated;
+	volatile size_t		m_bufferUnderRunDetected;
+	bool			m_syncInProgress;
+	
+	BufferStatus*	m_bufferstatus;
 	
 	int ref() { return m_refcount++;}
-	int add_mono_reader(int channel, int channelNumber, const QString& fileName);
 	
-	friend class MonoReader;
+	void private_init();
+	void start_resync(nframes_t position);
+	void finish_resync();
+	void recover_from_buffer_underrun(nframes_t position);
+	int rb_file_read(audio_sample_t** dst, nframes_t cnt, audio_sample_t* readbuffer);
+
 	friend class ResourcesManager;
 	
 signals:
 	void stateChanged();
 };
+
+
+inline size_t ReadSource::is_active() const
+{
+	return m_active;
+}
 
 #endif

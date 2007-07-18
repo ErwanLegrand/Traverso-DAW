@@ -67,7 +67,6 @@ QDomNode AudioSource::get_state( QDomDocument doc )
 {
 	QDomElement node = doc.createElement("Source");
 	node.setAttribute("channelcount", m_channelCount);
-	node.setAttribute("filecount", m_fileCount);
 	node.setAttribute("origsheetid", m_origSongId);
 	node.setAttribute("dir", m_dir);
 	node.setAttribute("id", m_id);
@@ -87,7 +86,6 @@ int AudioSource::set_state( const QDomNode & node )
 	
 	QDomElement e = node.toElement();
 	m_channelCount = e.attribute("channelcount", "0").toInt();
-	m_fileCount = e.attribute("filecount", "0").toInt();
 	m_origSongId = e.attribute("origsheetid", "0").toLongLong();
 	set_dir( e.attribute("dir", "" ));
 	m_id = e.attribute("id", "").toLongLong();
@@ -99,7 +97,7 @@ int AudioSource::set_state( const QDomNode & node )
 	// For older project files, this should properly detect if the 
 	// audio source was a recording or not., in fact this should suffice
 	// and the flag wasrecording would be unneeded, but oh well....
-	if (m_origSongId != 0 && m_channelCount == 2 && m_fileCount == 2) {
+	if (m_origSongId != 0) {
 		m_wasRecording = true;
 	}
 	

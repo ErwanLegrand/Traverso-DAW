@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 class ResampleAudioReader : public AbstractAudioReader
 {
+
 public:
 	ResampleAudioReader(QString filename, int converter_type);
 	~ResampleAudioReader();
@@ -38,8 +39,6 @@ public:
 	bool seek(nframes_t start);
 	int read(audio_sample_t* dst, int sampleCount);
 
-	// Shouldn't ever actually get called
-	static bool can_decode(QString filename) {return false;}
 
 protected:
 	void init(int converter_type);
@@ -48,7 +47,7 @@ protected:
 	nframes_t song_to_file_frame(nframes_t frame);
 	nframes_t file_to_song_frame(nframes_t frame);
 
-	AbstractAudioReader*	m_realReader;
+	AbstractAudioReader*	m_reader;
 	SRC_STATE*	m_srcState;
 	SRC_DATA	m_srcData;
 	audio_sample_t	*m_fileBuffer;

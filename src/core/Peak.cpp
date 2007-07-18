@@ -56,7 +56,7 @@ Peak::Peak(AudioSource* source, int channel)
 	
 	ReadSource* rs = qobject_cast<ReadSource*>(source);
 	if (rs) {
-		m_source = resources_manager()->get_readsource(rs->get_id(), true);
+		m_source = resources_manager()->get_readsource(rs->get_id());
 	}
 	
 	if (source->get_channel_count() > 1) {
@@ -299,27 +299,23 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 	// Micro view mode
 	} else {
 		nframes_t toRead = pixelcount * zoomStep[zoomLevel];
-		audio_sample_t buf[toRead];
+		
+		// Maybe they can be created on the stack for better performance ?
+		audio_sample_t* audiobuf[m_source->get_channel_count()];
+		for (uint chan=0; chan < m_source->get_channel_count(); ++chan) {
+			audiobuf[chan] = new audio_sample_t[toRead];
+		}
 		audio_sample_t readbuffer[toRead*2];
 		
-		nframes_t readFrames = 0;
-		nframes_t totalReadFrames = 0;
+		nframes_t readFrames = m_source->file_read(audiobuf, startPos, toRead, readbuffer);
+
+		if (readFrames == 0) {
+			return NO_PEAKDATA_FOUND;
+		}
 		
-		do {
-			readFrames = m_source->file_read(m_channel, buf + totalReadFrames, startPos + totalReadFrames, toRead - totalReadFrames, readbuffer);
-			if (readFrames <= 0) {
-				PERROR("readFrames < 0");
-				break;
-			}
-			totalReadFrames += readFrames;
-		} while (totalReadFrames < toRead);
-		
-		if ( totalReadFrames != toRead) {
-			PWARN("Unable to read nframes %d (only %d available)", toRead, totalReadFrames);
-			if (totalReadFrames == 0) {
-				return NO_PEAKDATA_FOUND;
-			}
-			pixelcount = totalReadFrames / zoomStep[zoomLevel];
+		if ( readFrames != toRead) {
+			PWARN("Unable to read nframes %d (only %d available)", toRead, readFrames);
+			pixelcount = readFrames / zoomStep[zoomLevel];
 		}
 
 		int count = 0;
@@ -333,7 +329,7 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 			for(int i=0; i < zoomStep[zoomLevel]; i++) {
 				if (pos > readFrames)
 					break;
-				sample = buf[pos];
+				sample = audiobuf[m_channel][pos];
 				if (sample > valueMax)
 					valueMax = sample;
 				if (sample < valueMin)
@@ -356,6 +352,11 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 		int processtime = (int) (get_microseconds() - starttime);
 		printf("Process time: %d useconds\n\n", processtime);
 #endif
+		
+		for (uint chan=0; chan < m_source->get_channel_count(); ++chan) {
+			delete audiobuf[chan];
+		}
+		
 		return count;
 	}
 
@@ -604,7 +605,10 @@ int Peak::create_from_scratch()
 		}
 	}
 
-	audio_sample_t* buf = new audio_sample_t[bufferSize];
+	audio_sample_t* buffer[m_source->get_channel_count()];
+	for (uint chan=0; chan<m_source->get_channel_count(); ++chan) {
+		buffer[chan] = new audio_sample_t[bufferSize];
+	}
 	audio_sample_t* readbuffer = new audio_sample_t[bufferSize * 2];
 	
 	do {
@@ -613,12 +617,12 @@ int Peak::create_from_scratch()
 			goto out;
 		}
 		
-		readFrames = m_source->file_read(m_channel, buf, totalReadFrames, bufferSize, readbuffer);
+		readFrames = m_source->file_read(buffer, totalReadFrames, bufferSize, readbuffer);
 		if (readFrames <= 0) {
 			PERROR("readFrames < 0 during peak building");
 			break;
 		}
-		process(buf, readFrames);
+		process(buffer[m_channel], readFrames);
 		totalReadFrames += readFrames;
 		p = (int) ((float)totalReadFrames / ((float)m_source->get_nframes() / 100.0));
 		
@@ -638,7 +642,9 @@ int Peak::create_from_scratch()
 	ret = 1;
 	
 out:
-	delete [] buf;
+	for (uint chan=0; chan<m_source->get_channel_count(); ++chan) {
+		delete buffer[chan];
+	}
 	delete [] readbuffer;
 	 
 	return ret;
@@ -666,9 +672,9 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 		int toRead = (int) ((startpos * NORMALIZE_CHUNK_SIZE) - startframe);
 		
 		audio_sample_t buf[toRead];
-		int read = m_source->file_read(m_channel, buf, startframe, toRead, readbuffer);
+// 		int read = m_source->file_read(m_channel, buf, startframe, toRead, readbuffer);
 		
-		maxamp = Mixer::compute_peak(buf, read, maxamp);
+// 		maxamp = Mixer::compute_peak(buf, read, maxamp);
 	}
 	
 	
@@ -678,7 +684,8 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 	int endpos = (int) f;
 	int toRead = (int) ((f - (endframe / NORMALIZE_CHUNK_SIZE)) * NORMALIZE_CHUNK_SIZE);
 	audio_sample_t buf[toRead];
-	int read = m_source->file_read(m_channel, buf, endframe - toRead, toRead, readbuffer);
+// 	int read = m_source->file_read(m_channel, buf, endframe - toRead, toRead, readbuffer);
+	int read = 0;//m_source->file_read(m_channel, buf, endframe - toRead, toRead, readbuffer);
 	maxamp = Mixer::compute_peak(buf, read, maxamp);
 	
 	// Now that we have covered both boundary situations,

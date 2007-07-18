@@ -34,11 +34,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Debugger.h"
 
 
-AbstractAudioReader::AbstractAudioReader(QString filename)
+AbstractAudioReader::AbstractAudioReader(const QString& filename)
  : QObject(0)
 {
 	m_fileName = filename;
-	m_nextFrame = 0;
+	m_readPos = 0;
 }
 
 
@@ -53,20 +53,28 @@ int AbstractAudioReader::read_from(audio_sample_t* dst, nframes_t start, nframes
 {
 	QMutexLocker locker( &m_mutex );
 	
-	if (m_nextFrame != start) {
+// 	printf("read_from:: before_seek from %d, framepos is %d\n", start, m_readPos);
+	
+	if (m_readPos != start) {
+// 		printf("starting seek\n");
 		if (!seek(start)) {
 			return 0;
+		} else {
+			m_readPos = start;
 		}
 	}
 	
+// 	printf("read_from:: after_seek from %d, framepos is %d\n", start, m_readPos);
 	int samplesRead = read(dst, cnt);
+	
+	m_readPos += samplesRead / get_num_channels();
 	
 	return samplesRead;
 }
 
 
 // Static method used by other classes to get an AudioReader for the correct file type
-AbstractAudioReader* AbstractAudioReader::create_audio_reader(QString filename)
+AbstractAudioReader* AbstractAudioReader::create_audio_reader(const QString& filename)
 {
 	AbstractAudioReader* newReader;
 	
@@ -97,7 +105,7 @@ AbstractAudioReader* AbstractAudioReader::create_audio_reader(QString filename)
 
 // Static method used by other classes to get an automatically resampling AudioReader that wraps
 // an AudioReader chosen by create_audio_reader().
-AbstractAudioReader* AbstractAudioReader::create_resampled_audio_reader(QString filename, int converter_type)
+AbstractAudioReader* AbstractAudioReader::create_resampled_audio_reader(const QString& filename, int converter_type)
 {
 	ResampleAudioReader* newReader;
 

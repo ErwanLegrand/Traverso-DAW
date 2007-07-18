@@ -54,7 +54,8 @@ public:
 	void run() {
 		uint buffersize = 16384;
 		audio_sample_t readbuffer[buffersize];
-		audio_sample_t* mixdown = new audio_sample_t[2 * buffersize];
+		audio_sample_t* mixdown[2];
+		for (int i=0; i<2; ++i) mixdown[i] = new audio_sample_t[2 * buffersize];
 	
 		ExportSpecification* spec = new ExportSpecification();
 		spec->start_frame = 0;
@@ -82,12 +83,11 @@ public:
 		
 			memset (spec->dataF, 0, sizeof (spec->dataF[0]) * nframes * spec->channels);
 		
+			m_readsource->file_read(mixdown, spec->pos, nframes, readbuffer);
+			
 			for (int chan=0; chan < 2; ++chan) {
-			
-				m_readsource->file_read(chan, mixdown, spec->pos, nframes, readbuffer);
-			
 				for (uint x = 0; x < nframes; ++x) {
-					spec->dataF[chan+(x*spec->channels)] = mixdown[x];
+					spec->dataF[chan+(x*spec->channels)] = mixdown[chan][x];
 				}
 			}
 		
@@ -101,7 +101,8 @@ public:
 		delete writesource;
 		delete [] spec->dataF;
 		delete spec;
-		delete [] mixdown;
+		for (int i=0; i<2; ++i)
+			delete [] mixdown[i];
 	}
 
 private:
@@ -125,6 +126,7 @@ AudioClipExternalProcessing::~AudioClipExternalProcessing()
 
 int AudioClipExternalProcessing::prepare_actions()
 {
+	PENTER;
 	ExternalProcessingDialog epdialog(Interface::instance(), this);
 	
 	epdialog.exec();
@@ -217,15 +219,15 @@ void ExternalProcessingDialog::prepare_for_external_processing()
 			m_filename.remove(".wav").remove(".").append("-").append(m_commandargs.simplified()).append(".wav");
 	
 	
-	if (rs->get_channel_count() == 2 && rs->get_file_count() == 2) {
+/*	if (rs->get_channel_count() == 2 && rs->get_file_count() == 2) {
 		m_merger = new MergeThread(rs, "merged.wav");
 		connect(m_merger, SIGNAL(finished()), this, SLOT(start_external_processing()));
 		m_merger->start();
 		statusText->setHtml(tr("Preparing audio data to a format that can be used by <b>%1</b>, this can take a while for large files!").arg(m_program));
 		progressBar->setMaximum(0);
-	} else {	
+	} else {	*/
 		start_external_processing();
-	}
+// 	}
 }
 
 void ExternalProcessingDialog::start_external_processing()

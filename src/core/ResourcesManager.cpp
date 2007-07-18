@@ -211,7 +211,7 @@ ReadSource* ResourcesManager::get_silent_readsource()
 }
 
 
-ReadSource * ResourcesManager::get_readsource( qint64 id, bool forPeaks )
+ReadSource * ResourcesManager::get_readsource(qint64 id)
 {
 	SourceData* data = m_sources.value(id);
 	
@@ -229,8 +229,6 @@ ReadSource * ResourcesManager::get_readsource( qint64 id, bool forPeaks )
 		source = source->deep_copy();
 		source->ref();
 	}
-	
-	source->set_is_for_peaks(forPeaks);
 	
 	if ( source->init() < 0) {
 		info().warning( tr("ResourcesManager::  Failed to initialize ReadSource %1")
@@ -338,8 +336,9 @@ void ResourcesManager::mark_clip_removed(AudioClip * clip)
 	SourceData* sourcedata = m_sources.value(clip->get_readsource_id());
 	if (!sourcedata) {
 		PERROR("Source %lld not in database", clip->get_readsource_id());
+	} else {
+		sourcedata->clipCount--;
 	}
-	sourcedata->clipCount--;
 	
 	emit clipRemoved(clip);
 }

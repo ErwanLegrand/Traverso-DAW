@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "defines.h"
 
 class ReadSource;
-class MonoReader;
 class WriteSource;
 class AudioSource;
 class RingBuffer;
@@ -70,7 +69,6 @@ private:
 	Song* 			m_song;
 	volatile size_t		m_stopWork;
 	QList<ReadSource*>	m_readSources;
-	QList<MonoReader*> 	m_monoReaders;
 	QList<AudioSource*>	m_processableSources;
 	QList<WriteSource*>	m_writeSources;
 	DiskIOThread*		m_diskThread;
@@ -83,7 +81,7 @@ private:
 	trav_time_t		lastCpuReadTime;
 	bool			m_seeking;
 	int			m_hardDiskOverLoadCounter;
-	audio_sample_t*		framebuffer;
+	audio_sample_t*		framebuffer[2];
 	audio_sample_t*		m_readbuffer;
 
 	

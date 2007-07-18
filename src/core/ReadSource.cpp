@@ -29,7 +29,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AudioClip.h"
 #include "DiskIO.h"
 #include "Utils.h"
+#include "Song.h"
+#include "AudioDevice.h"
 #include <QFile>
+#include "Config.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -44,10 +47,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 // This constructor is called for existing (recorded/imported) audio sources
 ReadSource::ReadSource(const QDomNode node)
 	: AudioSource(node)
-	, m_refcount(0)
-	, m_error(0)
-	, m_clip(0)
 {
+	private_init();
+	
 	Project* project = pm().get_project();
 	
 	// Check if the audiofile exists in our project audiosources dir
@@ -60,41 +62,35 @@ ReadSource::ReadSource(const QDomNode node)
 	}
 	
 	m_silent = (m_channelCount == 0);
-	m_forPeaks = false;
 }	
 
 // constructor for file import
 ReadSource::ReadSource(const QString& dir, const QString& name)
 	: AudioSource(dir, name)
-	, m_refcount(0)
-	, m_error(0)
-	, m_clip(0)
 {
+	private_init();
+	
 	AbstractAudioReader* reader = AbstractAudioReader::create_audio_reader(m_fileName);
 
-	m_channelCount = 0;
-	
 	if (reader) {
 		m_channelCount = reader->get_num_channels();
 		delete reader;
+	} else {
+		m_channelCount = 0;
 	}
 
-	m_fileCount = 1;
 	m_silent = false;
-	m_forPeaks = false;
 }
 
 
 // Constructor for recorded audio.
 ReadSource::ReadSource(const QString& dir, const QString& name, int channelCount)
 	: AudioSource(dir, name)
-	, m_refcount(0)
-	, m_error(0)
-	, m_clip(0)
 {
-	m_channelCount = m_fileCount = channelCount;
+	private_init();
+	
+	m_channelCount = channelCount;
 	m_silent = false;
-	m_forPeaks = false;
 	m_name = name  + "-" + QString::number(m_id);
 	m_fileName = m_dir + m_name;
 	m_length = 0;
@@ -107,28 +103,35 @@ ReadSource::ReadSource(const QString& dir, const QString& name, int channelCount
 // Constructor for silent clips
 ReadSource::ReadSource()
 	: AudioSource("", tr("Silence"))
-	, m_refcount(0)
-	, m_error(0)
-	, m_clip(0)
 {
+	private_init();
+	
 	m_channelCount = 0;
-	m_fileCount = 0;
 	m_silent = true;
+}
+
+
+void ReadSource::private_init()
+{
+	m_refcount = 0;
+	m_error = 0;
+	m_clip = 0;
+	m_audioReader = 0;
 }
 
 
 ReadSource::~ReadSource()
 {
 	PENTERDES;
-	foreach(MonoReader* source, m_sources) {
-		delete source;
+	for(int i=0; i<m_buffers.size(); ++i) {
+		delete m_buffers.at(i);
 	}
-}
-
-
-void ReadSource::set_is_for_peaks(bool forPeaks)
-{
-	m_forPeaks = forPeaks;
+	
+	if (m_audioReader) {
+		delete m_audioReader;
+	}
+	
+	delete m_bufferstatus;
 }
 
 
@@ -156,80 +159,99 @@ int ReadSource::init( )
 	}
 	
 	
-	QString fileName = m_dir + m_name;
+	m_rbFileReadPos = 0;
+	m_rbRelativeFileReadPos = 0;
+	m_rbReady = 0;
+	m_needSync = 0;
+	m_syncInProgress = 0;
+	m_bufferUnderRunDetected = m_wasActivated = 0;
 	
-	if (m_wasRecording) {
-		if (m_channelCount == 1 && m_fileCount == 1) {
-			if ( (m_error = add_mono_reader(1, 0, fileName + "-ch" + QByteArray::number(0) + ".wav")) < 0) {
-				return m_error;
-			}
-		} else if (m_channelCount == 2 && m_fileCount == 2) {
-			if (((m_error = add_mono_reader(1, 0, fileName + "-ch" + QByteArray::number(0) + ".wav") < 0)) || 
-				  ((m_error = add_mono_reader(1, 1, fileName + "-ch" + QByteArray::number(1) + ".wav")) < 0)) {
-				return m_error;
-			}
-		} else {
-			PERROR("WasRecording section: Unsupported combination of channelcount/filecount (%d/%d)", m_channelCount, m_fileCount);
-			return (m_error = CHANNELCOUNT_FILECOUNT_MISMATCH);
-		}
-	} else {
+	bool useResampling = config().get_property("Conversion", "DynamicResampling", false).toBool();
 	
-		if (m_channelCount == 1 && m_fileCount == 1) {
-			if ((m_error = add_mono_reader(1, 0, fileName)) < 0) {
-				return m_error;
-			}
-		} else if (m_channelCount == 2 && m_fileCount == 1) {
-			if (((m_error = add_mono_reader(2, 0, fileName)) < 0) || ((m_error = add_mono_reader(2, 1, fileName)) < 0)) {
-				return m_error;
-			}
-		} else {
-			PERROR("Unsupported combination of channelcount/filecount (%d/%d)", m_channelCount, m_fileCount);
-			return (m_error = CHANNELCOUNT_FILECOUNT_MISMATCH);
-		}
+	if (useResampling) {
+		int converter_type;
+		converter_type = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
+		// There should be another config option for ConverterType to use for export (higher quality)
+		//converter_type = config().get_property("Conversion", "ExportResamplingConverterType", 0).toInt();
+		m_audioReader = AbstractAudioReader::create_resampled_audio_reader(m_fileName, converter_type);
+	}
+	else {
+		m_audioReader = AbstractAudioReader::create_audio_reader(m_fileName);
 	}
 	
- 	
+	if (m_audioReader == 0) {
+		return COULD_NOT_OPEN_FILE;
+	}
+	
+	if (m_channelCount > m_audioReader->get_num_channels()) {
+		PERROR("ReadAudioSource: file only contains %d channels; %d is invalid as a channel number", m_audioReader->get_num_channels(), m_channelCount);
+		delete m_audioReader;
+		m_audioReader = 0;
+		return INVALID_CHANNEL_COUNT;
+	}
+
+	if (m_audioReader->get_num_channels() == 0) {
+		PERROR("ReadAudioSource: not a valid channel count: %d", m_audioReader->get_num_channels());
+		delete m_audioReader;
+		m_audioReader = 0;
+		return ZERO_CHANNELS;
+	}
+
+	m_length = m_audioReader->get_length();
+	m_rate = m_audioReader->get_rate();
+	
+	m_bufferstatus = new BufferStatus;
+	
 	return 1;
 }
 
-int ReadSource::add_mono_reader(int sourceChannelCount, int channelNumber, const QString& fileName)
+
+int ReadSource::file_read(audio_sample_t** dst, nframes_t start, nframes_t cnt, audio_sample_t* readbuffer) const
 {
-	int result = 1;
-	
-	MonoReader* source = new MonoReader(this, sourceChannelCount, channelNumber, fileName);
-	
-	if ( (result = source->init(m_forPeaks)) > 0) {
-		m_sources.append(source);
-	} else {
-		PERROR("Failed to initialize a MonoReader (%s)", QS_C(fileName));
-		delete source;
+#if defined (profile)
+	trav_time_t starttime = get_microseconds();
+#endif
+	if (m_audioReader->get_num_channels() == 1) {
+		int result = m_audioReader->read_from(dst[0], start, cnt);
+#if defined (profile)
+		int processtime = (int) (get_microseconds() - starttime);
+		if (processtime > 40000)
+			printf("Process time for %s: %d useconds\n\n", QS_C(m_fileName), processtime);
+#endif
 		return result;
 	}
+
+	float *ptr;
+	uint real_cnt = cnt * m_audioReader->get_num_channels();
 	
-	return result;
-}
+	// The readbuffer 'assumes' that there is max 2 channels...
+	Q_ASSERT(m_audioReader->get_num_channels() <= 2);
+	
+	int nread = m_audioReader->read_from(readbuffer, start, real_cnt);
+#if defined (profile)
+	int processtime = (int) (get_microseconds() - starttime);
+	if (processtime > 40000)
+		printf("Process time for %s: %d useconds\n\n", QS_C(m_fileName), processtime);
+#endif
+	ptr = readbuffer;
+	nread /= m_audioReader->get_num_channels();
 
-int ReadSource::file_read (int channel, audio_sample_t* dst, nframes_t start, nframes_t cnt, audio_sample_t* readbuffer) const
-{
-	Q_ASSERT(channel < m_sources.size());
-	return m_sources.at(channel)->file_read(dst, start, cnt, readbuffer);
-}
+	/* stride through the interleaved data */
+	// FIXME: deinterlace in AudioReader Classes instead of here
 
-
-int ReadSource::rb_read(int channel, audio_sample_t* dst, nframes_t start, nframes_t cnt)
-{
-	Q_ASSERT(channel < m_sources.size());
-	return m_sources.at(channel)->rb_read(dst, start, cnt);
-
-}
-
-
-void ReadSource::set_active(bool active)
-{
-	PENTER2;
-	foreach(MonoReader* source, m_sources) {
-		source->set_active(active);
+	for (int32_t n = 0; n < nread; ++n) {
+		dst[0][n] = *ptr;
+		ptr += m_audioReader->get_num_channels();
 	}
+	
+	ptr = readbuffer+1;
+	for (int32_t n = 0; n < nread; ++n) {
+		dst[1][n] = *ptr;
+		ptr += m_audioReader->get_num_channels();
+	}
+
+
+	return nread;
 }
 
 
@@ -243,22 +265,11 @@ ReadSource * ReadSource::deep_copy( )
 	return source;
 }
 
-
 void ReadSource::set_audio_clip( AudioClip * clip )
 {
 	PENTER;
 	Q_ASSERT(clip);
 	m_clip = clip;
-	foreach(MonoReader* source, m_sources) {
-		source->set_audio_clip(clip);
-	}
-}
-
-
-Peak * ReadSource::get_peak( int channel )
-{
-	Q_ASSERT(channel < m_sources.size());
-	return m_sources.at(channel)->get_peak();
 }
 
 nframes_t ReadSource::get_nframes( ) const
@@ -294,4 +305,250 @@ int ReadSource::set_file(const QString & filename)
 	return 1;
 }
 
+
+
+
+int ReadSource::rb_read(audio_sample_t** dst, nframes_t start, nframes_t count)
+{
+
+	if ( ! m_rbReady ) {
+// 		printf("ringbuffer not ready\n");
+		return 0;
+	}
+
+	if (start != m_rbRelativeFileReadPos) {
+		int available = m_buffers.at(0)->read_space();
+// 		printf("start %d, m_rbFileReadPos %d\n", start, m_rbRelativeFileReadPos);
+		if ( (start > m_rbRelativeFileReadPos) && (m_rbRelativeFileReadPos + available) > (start + count)) {
+			int advance = start - m_rbRelativeFileReadPos;
+			if (available < advance) {
+				printf("available < advance !!!!!!!\n");
+			}
+			for (int i=m_buffers.size()-1; i>=0; --i) {
+				m_buffers.at(i)->increment_read_ptr(advance);
+			}
+			m_rbRelativeFileReadPos += advance;
+		} else {
+			start_resync(start + (m_clip->get_track_start_frame() + m_clip->get_source_start_frame()));
+			return 0;
+		}
+	}
+
+	nframes_t readcount = 0;
+	
+	for (int chan=0; chan<m_channelCount; ++chan) {
+		
+		readcount = m_buffers.at(chan)->read(dst[chan], count);
+
+		if (readcount != count) {
+		// Hmm, not sure what to do in this case....
+		}
+		
+	}
+
+	m_rbRelativeFileReadPos += readcount;
+	
+	return readcount;
+}
+
+
+int ReadSource::rb_file_read(audio_sample_t** dst, nframes_t cnt, audio_sample_t* readbuffer )
+{
+	int readFrames = file_read(dst, m_rbFileReadPos, cnt, readbuffer);
+	m_rbFileReadPos += readFrames;
+
+	return readFrames;
+}
+
+
+void ReadSource::rb_seek_to_file_position( nframes_t position )
+{
+	Q_ASSERT(m_clip);
+	
+// 	printf("rb_seek_to_file_position:: seeking to %d\n", position);
+	
+	// calculate position relative to the file!
+	long fileposition = position - (m_clip->get_track_start_frame() + m_clip->get_source_start_frame());
+	
+	if ((long)m_rbFileReadPos == fileposition) {
+// 		printf("ringbuffer allready at position %d\n", position);
+		return;
+	}
+
+	// check if the clip's start position is within the range
+	// if not, fill the buffer from the earliest point this clip
+	// will come into play.
+	if (fileposition < 0) {
+// 		printf("not seeking to %ld, but too %d\n\n", fileposition,m_clip->get_source_start_frame()); 
+		// Song's start from 0, this makes a period start from
+		// 0 - 1023 for example, the nframes is 1024!
+		// Setting a songs new position is on 1024, and NOT 
+		// 1023.. Hmm, something isn't correct here, but at least substract 1
+		// to make this thing work!
+		fileposition = m_clip->get_source_start_frame() - 1;
+	}
+	
+// 	printf("rb_seek_to_file_position:: seeking to relative pos: %d\n", fileposition);
+	for (int i=0; i<m_buffers.size(); ++i) {
+		m_buffers.at(i)->reset();
+	}
+	m_rbFileReadPos = fileposition;
+	m_rbRelativeFileReadPos = fileposition;
+}
+
+void ReadSource::process_ringbuffer(audio_sample_t** framebuffer, audio_sample_t* readbuffer, bool seeking)
+{
+	// Do nothing if we passed the lenght of the AudioFile.
+	if (m_rbFileReadPos >= m_length) {
+// 		printf("returning, m_rbFileReadPos > m_length! (%d >  %d)\n", m_rbFileReadPos, m_source->m_length);
+		if (m_syncInProgress) {
+			finish_resync();
+		}
+		return;
+	}
+	
+	// Calculate the number of samples we can write into the buffer
+	int writeSpace = m_buffers.at(0)->write_space();
+
+	// The amount of chunks which can be 'read'
+	int chunkCount = (int)(writeSpace / m_chunkSize);
+	
+	int toRead = m_chunkSize;
+	
+	if (seeking) {
+		toRead = writeSpace;
+// 		printf("doing a full seek buffer fill\n");
+	} else if (m_syncInProgress) {
+		// Currently, we fill the buffer completely.
+		// For some reason, filling it with 1/4 at a time
+		// doesn't fill it consitently, and thus giving audible artifacts.
+		/*		toRead = m_chunkSize * 2;*/
+		toRead = writeSpace;
+	} else if (chunkCount == 0) {
+		// If we are nearing the end of the source file it could be possible
+		// we only need to read the last samples which is smaller in size then 
+		// chunksize. If so, set toRead to m_source->m_length - rbFileReasPos
+		if ( (int) (m_length - m_rbFileReadPos) <= m_chunkSize) {
+			toRead = m_length - m_rbFileReadPos;
+		} else {
+			printf("MonoReader:: chunkCount == 0, but not at end of file, this shouldn't happen!!\n");
+			return;
+		}
+	}
+	
+	// Read in the samples from source
+	nframes_t toWrite = rb_file_read(framebuffer, toRead, readbuffer);
+
+	// and write it to the ringbuffer
+	for (int i=m_buffers.size()-1; i>=0; --i) {
+		m_buffers.at(i)->write(framebuffer[i], toWrite);
+	}
+}
+
+
+void ReadSource::recover_from_buffer_underrun(nframes_t position)
+{
+// 	printf("buffer underrun detected!\n");
+	m_bufferUnderRunDetected = 1;
+	start_resync(position);
+}
+
+void ReadSource::start_resync( nframes_t position )
+{
+// 	printf("starting resync!\n");
+	m_syncPos = position;
+	m_rbReady = 0;
+	m_needSync = 1;
+}
+
+void ReadSource::finish_resync()
+{
+// 	printf("sync finished\n");
+	m_needSync = 0;
+	m_bufferUnderRunDetected = 0;
+	m_rbReady = 1;
+	m_syncInProgress = 0;
+}
+
+void ReadSource::sync(audio_sample_t** framebuffer, audio_sample_t* readbuffer)
+{
+	PENTER2;
+	if (!m_needSync) {
+		return;
+	}
+	
+	if (!m_syncInProgress) {
+		rb_seek_to_file_position(m_syncPos);
+		m_syncInProgress = 1;
+	}
+	
+	// Currently, we fill the buffer completely.
+	// For some reason, filling it with 1/4 at a time
+	// doesn't fill it consitently, and thus giving audible artifacts.
+	process_ringbuffer(framebuffer, readbuffer);
+	
+	if (m_buffers.at(0)->write_space() == 0) {
+		finish_resync();
+	}
+	
+//         PWARN("Resyncing ringbuffer finished");
+}
+
+
+
+void ReadSource::prepare_buffer( )
+{
+	PENTER;
+	
+	Q_ASSERT(m_clip);
+
+	float size = config().get_property("Hardware", "readbuffersize", 1.0).toDouble();
+
+	m_bufferSize = (int) (size * audiodevice().get_sample_rate());
+
+	m_chunkSize = m_bufferSize / DiskIO::bufferdividefactor;
+
+	for (int i=0; i<m_channelCount; ++i) {
+		m_buffers.append(new RingBufferNPT<float>(m_bufferSize));
+	}
+
+	start_resync(m_clip->get_song()->get_working_frame());
+}
+
+BufferStatus* ReadSource::get_buffer_status()
+{
+	int freespace = m_buffers.at(0)->write_space();
+
+	if (m_rbFileReadPos >= m_length) {
+		m_bufferstatus->fillStatus =  100;
+		freespace = 0;
+	} else {
+		m_bufferstatus->fillStatus = (int) (((float)freespace / m_bufferSize) * 100);
+	}
+	
+	m_bufferstatus->bufferUnderRun = m_bufferUnderRunDetected;
+	m_bufferstatus->needSync = m_needSync;
+
+	m_bufferstatus->priority = (int) (freespace / m_chunkSize);
+	
+	return m_bufferstatus;
+}
+
+void ReadSource::set_active(bool active)
+{
+	if (m_active == active)
+		return;
+
+	if (active) {
+		m_active = 1;
+// 		m_wasActivated = 1;
+// 		printf("setting private readsource %s to active\n", QS_C(m_fileName));
+	} else {
+// 		printf("setting private readsource %s to IN-active\n", QS_C(m_fileName));
+		m_active = 0;
+	}
+}
+
+
 //eof
+

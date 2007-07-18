@@ -268,6 +268,10 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		nframes_t clipstartoffset = m_clip->get_source_start_frame();
 		
 		Peak* peak = m_clip->get_peak_for_channel(chan);
+		if (!peak) {
+			PERROR("No Peak object available for clip %s channel %d", QS_C(m_clip->get_name()), chan);
+			return;
+		}
 		int availpeaks = peak->calculate_peaks( buffers[chan],
 							microView ? m_song->get_hzoom() : m_song->get_hzoom() + 1,
 							(xstart * m_sv->scalefactor) + clipstartoffset,

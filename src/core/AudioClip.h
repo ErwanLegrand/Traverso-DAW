@@ -69,7 +69,7 @@ public:
 	
 	void set_audio_source(ReadSource* source);
 	int init_recording(QByteArray bus);
-	int process(nframes_t nframes, audio_sample_t* channelBuffer, uint channel);
+	int process(nframes_t nframes);
 	
 	void set_track_start_frame(nframes_t newTrackFirstFrame);
 	void set_name(const QString& name);
@@ -130,6 +130,7 @@ private:
 	ReadSource*		m_readSource;
 	QList<WriteSource* >	writeSources;
 	QList<FadeCurve* >	m_fades;
+	QList<Peak* >		m_peaks;
 	AudioBus*		m_captureBus;
 	FadeCurve*		fadeIn;
 	FadeCurve*		fadeOut;
@@ -146,15 +147,15 @@ private:
 	nframes_t		sourceLength;
 	nframes_t 		m_length;
 
-	int 		m_isSelected;
-	bool 		m_isTake;
-	bool 		m_isMuted;
-	bool		m_isLocked;
-	bool		m_invalidReadSource;
-	RecordingStatus	m_recordingStatus;
+	int 			m_isSelected;
+	bool 			m_isTake;
+	bool 			m_isMuted;
+	bool			m_isLocked;
+	bool			m_invalidReadSource;
+	RecordingStatus		m_recordingStatus;
 	
-	qint64		m_readSourceId;
-	qint64		m_songId;
+	qint64			m_readSourceId;
+	qint64			m_songId;
 
 	void create_fade_in();
 	void create_fade_out();
