@@ -20,7 +20,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 */
 
 #include "ReadSource.h"
-#include "MonoReader.h"
 #include "AbstractAudioReader.h"
 
 #include "Peak.h"
@@ -143,7 +142,7 @@ int ReadSource::init( )
 	
 	Project* project = pm().get_project();
 	
-	// Fake the samplerate, until it's set by a MonoReader!
+	// Fake the samplerate, until it's set by an AudioReader!
 	m_rate = project->get_rate();
 	
 	if (m_silent) {
@@ -431,7 +430,7 @@ void ReadSource::process_ringbuffer(audio_sample_t** framebuffer, audio_sample_t
 		if ( (int) (m_length - m_rbFileReadPos) <= m_chunkSize) {
 			toRead = m_length - m_rbFileReadPos;
 		} else {
-			printf("MonoReader:: chunkCount == 0, but not at end of file, this shouldn't happen!!\n");
+			printf("ReadSource:: chunkCount == 0, but not at end of file, this shouldn't happen!!\n");
 			return;
 		}
 	}

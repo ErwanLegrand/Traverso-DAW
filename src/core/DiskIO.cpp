@@ -70,7 +70,6 @@ const char *to_prio[] = { "none", "realtime", "best-effort", "idle", };
 
 #include "AudioSource.h"
 #include "ReadSource.h"
-#include "MonoReader.h"
 #include "WriteSource.h"
 #include "AudioDevice.h"
 #include "RingBuffer.h"
