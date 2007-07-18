@@ -78,17 +78,17 @@ AbstractAudioReader* AbstractAudioReader::create_audio_reader(const QString& fil
 {
 	AbstractAudioReader* newReader;
 	
-	if (VorbisAudioReader::can_decode(filename)) {
-		newReader = new VorbisAudioReader(filename);
-	}
-	else if (MadAudioReader::can_decode(filename)) {
-		newReader = new MadAudioReader(filename);
-	}
-	else if (FlacAudioReader::can_decode(filename)) {
+	if (FlacAudioReader::can_decode(filename)) {
 		newReader = new FlacAudioReader(filename);
+	}
+	else if (VorbisAudioReader::can_decode(filename)) {
+		newReader = new VorbisAudioReader(filename);
 	}
 	else if (SFAudioReader::can_decode(filename)) {
 		newReader = new SFAudioReader(filename);
+	}
+	else if (MadAudioReader::can_decode(filename)) {
+		newReader = new MadAudioReader(filename);
 	}
 	else {
 		return 0;
