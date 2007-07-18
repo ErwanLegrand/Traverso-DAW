@@ -165,7 +165,7 @@ nframes_t ResampleAudioReader::read(audio_sample_t** buffer, nframes_t frameCoun
 	// pass through if not changing sampleRate.
 	if (audiodevice().get_sample_rate() == (uint)m_reader->get_rate()) {
 		sourceFramesRead = m_reader->read(buffer, frameCount);
-		return framesRead;
+		return sourceFramesRead;
 	}
 	
 	nframes_t fileCnt = song_to_file_frame(frameCount);
@@ -185,7 +185,7 @@ nframes_t ResampleAudioReader::read(audio_sample_t** buffer, nframes_t frameCoun
 		m_fileBufferLength = fileCnt;
 	}
 	
-	framesRead = m_reader->read(m_fileBuffers.data(), fileCnt);
+	sourceFramesRead = m_reader->read(m_fileBuffers.data(), fileCnt);
 	
 	//printf("Resampler: sampleCount %lu, fileCnt %lu, returned %lu\n", sampleCount/get_num_channels(), fileCnt/get_num_channels(), samplesRead/get_num_channels());
 	
