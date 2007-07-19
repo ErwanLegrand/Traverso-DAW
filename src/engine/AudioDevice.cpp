@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.36 2007/06/25 13:32:28 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.37 2007/07/19 12:28:42 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -790,7 +790,7 @@ void AudioDevice::transport_start(Client * client)
 	state.tranport = TransportRolling;
 	state.isSlave = false;
 	state.realtime = false;
-	state.frame = 0; // get from client!!
+	state.location.set_position(0, get_sample_rate()); // get from client!!
 	
 	client->transport_control(state);
 }
@@ -810,27 +810,28 @@ void AudioDevice::transport_stop(Client * client)
 	state.tranport = TransportStopped;
 	state.isSlave = false;
 	state.realtime = false;
-	state.frame = 0; // get from client!!
+	state.location.set_position(0, get_sample_rate()); // get from client!!
 	
 	client->transport_control(state);
 }
 
 // return 0 if valid request, non-zero otherwise.
-int AudioDevice::transport_seek_to(Client* client, nframes_t frame)
+int AudioDevice::transport_seek_to(Client* client, TimeRef location)
 {
 #if defined (JACK_SUPPORT)
 	JackDriver* jackdriver = slaved_jack_driver();
 	if (jackdriver) {
 		PMESG("using jack_transport_locate");
-		return  jack_transport_locate(jackdriver->get_client(), frame);
+		nframes_t frames = location.to_frame(get_sample_rate());
+		return  jack_transport_locate(jackdriver->get_client(), frames);
 	}
 #endif
 	
 	transport_state_t state;
 	state.tranport = TransportStarting;
 	state.isSlave = false;
-	state.realtime = false;
-	state.frame = frame;
+	state.realtime = false; 
+	state.location = location;
 	
 	client->transport_control(state);
 	

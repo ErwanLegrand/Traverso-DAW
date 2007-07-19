@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.19 2007/06/21 14:31:10 r_sijrier Exp $
+$Id: AudioDevice.h,v 1.20 2007/07/19 12:28:42 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -59,7 +59,7 @@ public:
 	
 	void transport_start(Client* client);
 	void transport_stop(Client* client);
-	int transport_seek_to(Client* client, nframes_t frame);
+	int transport_seek_to(Client* client, TimeRef location);
 
 	/**
 	 * Get the Playback AudioBus instance with name \a name.

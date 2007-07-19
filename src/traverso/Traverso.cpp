@@ -89,6 +89,7 @@ Traverso::Traverso(int &argc, char **argv )
 	QCoreApplication::setOrganizationDomain("traverso-daw.org");
 		
 	qRegisterMetaType<InfoStruct>("InfoStruct");
+	qRegisterMetaType<TimeRef>("TimeRef");
 	
 	config().check_and_load_configuration();
 	

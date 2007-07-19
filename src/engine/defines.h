@@ -2,6 +2,7 @@
 #define TRAVERSO_TYPES_H
 
 #include <inttypes.h>
+#include <QtGlobal>
 #include "FastDelegate.h"
 
 // Implementation for atomic int get/set from glibc's atomic.h/c
@@ -47,11 +48,44 @@ enum {
   	TransportStarting = 3
 };
 
+// Unviversal samplerate for the frequences 22050, 32000, 44100, 88200, 96000 and 192000 Hz
+static const quint64 UNIVERSAL_SAMPLE_RATE = 28224000;
+
+struct TimeRef {
+	
+	TimeRef(){}
+	TimeRef(long position) : m_position(position) {}
+	
+	TimeRef(nframes_t frame, int rate) {
+		m_position = (UNIVERSAL_SAMPLE_RATE / rate) * frame;
+	}
+	
+	void set_position(nframes_t frame, int rate) {
+		m_position = (UNIVERSAL_SAMPLE_RATE / rate) * frame;
+	}
+	
+	void add_frames(nframes_t frames, int rate) {
+		m_position += ((UNIVERSAL_SAMPLE_RATE / rate) * frames);
+	}
+	
+	nframes_t to_frame(int rate) {
+		return nframes_t(m_position / (UNIVERSAL_SAMPLE_RATE / rate));
+	}
+	
+	friend int operator!=(const TimeRef& left, const TimeRef& right) {
+		return left.m_position != right.m_position;
+	}
+	
+private:
+	quint64 m_position;
+};
+
+
 typedef struct {
 	int tranport;
-	nframes_t frame;
 	bool isSlave;
 	bool realtime;
+	TimeRef location;
 } transport_state_t;
 
 /**
@@ -68,7 +102,6 @@ typedef float audio_sample_t;
 typedef FastDelegate1<nframes_t, int> ProcessCallback;
 typedef FastDelegate0<int> RunCycleCallback;
 typedef FastDelegate1<transport_state_t, int> TransportControlCallback;
-
 
 
 /**

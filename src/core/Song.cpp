@@ -162,7 +162,8 @@ void Song::init()
 	firstVisibleFrame=workingFrame=0;
 	m_seeking = m_startSeek = 0;
 	// TODO seek to old position on project exit ?
-	m_transportFrame = 0;
+// 	m_transportFrame = 0;
+	m_transportLocation.set_position(0, audiodevice().get_sample_rate());
 	m_mode = EDIT;
 	m_sbx = m_sby = 0;
 	
@@ -195,9 +196,10 @@ int Song::set_state( const QDomNode & node )
 	m_sby = e.attribute("sby", "0").toInt();
 	set_first_visible_frame(e.attribute( "firstVisibleFrame", "0" ).toUInt());
 	set_work_at(e.attribute( "workingFrame", "0").toUInt());
-	m_transportFrame = e.attribute( "transportFrame", "0").toUInt();
+// 	m_transportFrame = e.attribute( "transportFrame", "0").toUInt();
+	m_transportLocation.set_position(e.attribute( "transportFrame", "0").toUInt(), audiodevice().get_sample_rate());
 	// Start seeking to the 'old' transport pos
-	set_transport_pos(m_transportFrame);
+	set_transport_pos(m_transportLocation);
 	set_snapping(e.attribute("snapping", "0").toInt());
 	m_mode = e.attribute("mode", "0").toInt();
 	
@@ -233,7 +235,7 @@ QDomNode Song::get_state(QDomDocument doc, bool istemplate)
 	properties.setAttribute("artists", artists);
 	properties.setAttribute("firstVisibleFrame", firstVisibleFrame);
 	properties.setAttribute("workingFrame", (uint)workingFrame);
-	properties.setAttribute("transportFrame", (uint)m_transportFrame);
+	properties.setAttribute("transportFrame", (uint)m_transportLocation.to_frame(audiodevice().get_sample_rate()));
 	properties.setAttribute("hzoom", m_hzoom);
 	properties.setAttribute("sbx", m_sbx);
 	properties.setAttribute("sby", m_sby);
@@ -413,7 +415,8 @@ int Song::prepare_export(ExportSpecification* spec)
 		m_exportSource = new WriteSource(spec);
 	}
 
-	m_transportFrame = spec->start_frame;
+// 	m_transportFrame = spec->start_frame;
+	m_transportLocation.set_position(spec->start_frame, spec->sample_rate);
 	
 	resize_buffer(false, spec->blocksize);
 
@@ -744,7 +747,8 @@ int Song::process( nframes_t nframes )
 	}
 
 	// update the m_transportFrame
-	m_transportFrame += nframes;
+// 	m_transportFrame += nframes;
+	m_transportLocation.add_frames(nframes, audiodevice().get_sample_rate());
 
 	if (!processResult) {
 		return 0;
@@ -925,7 +929,9 @@ void Song::audiodevice_params_changed()
 	// with the correct resampled audio data!
 	// We need to seek to a different position then the current one,
 	// else the seek won't happen at all :)
-	set_transport_pos(m_transportFrame + audiodevice().get_buffer_size());
+	TimeRef location = m_transportLocation;
+	location.add_frames(audiodevice().get_buffer_size(), audiodevice().get_sample_rate());
+	set_transport_pos(location);
 }
 
 int Song::get_bitdepth( )
@@ -1131,9 +1137,9 @@ int Song::transport_control(transport_state_t state)
 		return true;
 	
 	case TransportStarting:
-		if (state.frame != m_transportFrame) {
+		if (state.location != m_transportLocation) {
 			if ( ! m_seeking ) {
-				m_newTransportFramePos = state.frame;
+				m_newTransportLocation = state.location;
 				m_startSeek = 1;
 				m_seeking = 1;
 				
@@ -1251,13 +1257,18 @@ void Song::prepare_recording()
 	m_readyToRecord = true;
 }
 
-void Song::set_transport_pos(nframes_t position)
+void Song::set_transport_pos(nframes_t frames)
+{
+	TimeRef location(frames, audiodevice().get_sample_rate());
+	set_transport_pos(location);
+}
+
+void Song::set_transport_pos(TimeRef location)
 {
 #if defined (THREAD_CHECK)
 	Q_ASSERT(QThread::currentThreadId() ==  threadId);
 #endif
-	printf("set_transport_pos(%lu)\n", position);
-	audiodevice().transport_seek_to(m_audiodeviceClient, position);
+	audiodevice().transport_seek_to(m_audiodeviceClient, location);
 }
 
 
@@ -1283,7 +1294,7 @@ void Song::start_seek()
 	m_diskio->prepare_for_seek();
 
 	// 'Tell' the diskio it should start a seek action.
-	RT_THREAD_EMIT(this, (void*)m_newTransportFramePos, seekStart(uint));
+	RT_THREAD_EMIT(this, (void*)m_newTransportLocation.to_frame(audiodevice().get_sample_rate()), seekStart(uint));
 }
 
 void Song::seek_finished()
@@ -1292,7 +1303,7 @@ void Song::seek_finished()
 	Q_ASSERT_X(threadId == QThread::currentThreadId (), "Song::seek_finished", "Called from other Thread!");
 #endif
 	PMESG2("Song :: entering seek_finished");
-	m_transportFrame = m_newTransportFramePos;
+	m_transportLocation  = m_newTransportLocation;
 	m_seeking = 0;
 
 	if (m_resumeTransport) {
@@ -1302,6 +1313,12 @@ void Song::seek_finished()
 
 	emit transportPosSet();
 	PMESG2("Song :: leaving seek_finished");
+}
+
+
+nframes_t Song::get_transport_frame()
+{
+	return m_transportLocation.to_frame(audiodevice().get_sample_rate());
 }
 
 // eof

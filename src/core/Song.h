@@ -83,7 +83,7 @@ public:
 	int is_transport_rolling() const {return m_transport;}
 	void get_scrollbar_xy(int& x, int& y) {x = m_sbx; y = m_sby;}
 	
-	nframes_t get_transport_frame() const;
+	nframes_t get_transport_frame();
 	nframes_t get_working_frame() const {return workingFrame;}
 	nframes_t get_first_visible_frame() const;
 	nframes_t get_last_frame() const;
@@ -108,7 +108,8 @@ public:
 	void set_first_visible_frame(nframes_t pos);
 	void set_title(const QString& sTitle);
 	void set_work_at(nframes_t pos);
-	void set_transport_pos(nframes_t pos);
+	void set_transport_pos(TimeRef location);
+	void set_transport_pos(nframes_t frames);
 	void set_hzoom(int hzoom);
 	void set_snapping(bool snap);
 	void set_scrollbar_xy(int x, int y) {m_sbx = x; m_sby = y;}
@@ -172,6 +173,9 @@ private:
 	volatile size_t		m_transport;
 	volatile size_t		m_seeking;
 	volatile size_t		m_startSeek;
+	
+	TimeRef			m_transportLocation;
+	TimeRef			m_newTransportLocation;
 
 	
 	nframes_t 	firstVisibleFrame;
@@ -258,11 +262,6 @@ private slots:
 	void handle_diskio_readbuffer_underrun();
 	void prepare_recording();
 };
-
-inline nframes_t Song::get_transport_frame() const
-{
-	return m_transportFrame;
-}
 
 inline float Song::get_gain() const
 {

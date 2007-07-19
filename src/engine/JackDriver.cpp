@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: JackDriver.cpp,v 1.18 2007/06/25 13:32:28 r_sijrier Exp $
+    $Id: JackDriver.cpp,v 1.19 2007/07/19 12:28:42 r_sijrier Exp $
 */
 
 #include "JackDriver.h"
@@ -242,7 +242,7 @@ int JackDriver::process_callback (nframes_t nframes)
 	
 	transport_state_t tranportstate;
 	tranportstate.tranport = state;
-	tranportstate.frame = pos.frame;
+	tranportstate.location = TimeRef(pos.frame, audiodevice().get_sample_rate());
 	tranportstate.realtime = true;
 	
 	device->transport_control(tranportstate);
@@ -255,7 +255,7 @@ int JackDriver::jack_sync_callback (jack_transport_state_t state, jack_position_
 {
 	transport_state_t tranportstate;
 	tranportstate.tranport = state;
-	tranportstate.frame = pos->frame;
+	tranportstate.location = TimeRef(pos->frame, audiodevice().get_sample_rate());
 	tranportstate.isSlave = true;
 	tranportstate.realtime = true;
 	
