@@ -140,11 +140,13 @@ bool ResampleAudioReader::seek(nframes_t start)
 	Q_ASSERT(m_reader);
 	
 	if (audiodevice().get_sample_rate() == (uint)m_reader->get_rate()) {
+		AbstractAudioReader::seek(start);
 		return m_reader->seek(start);
 	}
 	
 	reset();
 	
+	AbstractAudioReader::seek(start);
 	return m_reader->seek(song_to_file_frame(start));
 }
 

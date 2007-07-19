@@ -384,6 +384,8 @@ bool FlacAudioReader::seek(nframes_t start)
 		return false;
 	}
 	
+	AbstractAudioReader::seek(start);
+	
 	return true;
 }
 

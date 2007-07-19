@@ -219,6 +219,10 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 		}
 	}
 	
+	if (pixelcount <= 0) {
+		return 1;
+	}
+	
 // #define profile
 
 #if defined (profile)

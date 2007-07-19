@@ -39,8 +39,7 @@ public:
 	int get_rate();
 	bool seek(nframes_t start);
 	nframes_t read(audio_sample_t** buffer, nframes_t frameCount);
-
-
+	
 protected:
 	void init(int converter_type);
 	void reset();

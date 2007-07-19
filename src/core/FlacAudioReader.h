@@ -40,7 +40,7 @@ public:
 	nframes_t read(audio_sample_t** buffer, nframes_t sampleCount);
 	
 	static bool can_decode(QString filename);
-
+	
 protected:
 	FlacPrivate *m_flac;
 };

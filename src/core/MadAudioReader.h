@@ -40,14 +40,14 @@ public:
 	int get_rate();
 	bool seek(nframes_t start);
 	nframes_t read(audio_sample_t** buffer, nframes_t frameCount);
-
+	
 	static bool can_decode(QString filename);
-
+	
 protected:
 	bool initDecoderInternal();
 	unsigned long countFrames();
 	bool createPcmSamples(mad_synth* synth);
-
+	
 	static int	MaxAllowedRecoverableErrors;
 	nframes_t	m_frames;
 	int		m_channels;

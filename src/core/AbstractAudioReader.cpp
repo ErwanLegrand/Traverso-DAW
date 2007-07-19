@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AbstractAudioReader.h"
 #include "SFAudioReader.h"
 #include "FlacAudioReader.h"
-//#include "MadAudioReader.h"
+#include "MadAudioReader.h"
 #include "VorbisAudioReader.h"
 #include "ResampleAudioReader.h"
 
@@ -47,6 +47,13 @@ AbstractAudioReader::~AbstractAudioReader()
 }
 
 
+bool AbstractAudioReader::seek(nframes_t start)
+{
+	m_readPos = start;
+	return true;
+}
+
+
 // Read cnt frames starting at start from the AudioReader, into dst
 // uses seek() and read() from AudioReader subclass
 nframes_t AbstractAudioReader::read_from(audio_sample_t** buffer, nframes_t start, nframes_t count)
@@ -59,17 +66,19 @@ nframes_t AbstractAudioReader::read_from(audio_sample_t** buffer, nframes_t star
 // 		printf("starting seek\n");
 		if (!seek(start)) {
 			return 0;
-		} else {
-			m_readPos = start;
 		}
 	}
 	
-// 	printf("read_from:: after_seek from %d, framepos is %d\n", start, m_readPos);
-	nframes_t framesRead = read(buffer, count);
+	if (count) {
+	// 	printf("read_from:: after_seek from %d, framepos is %d\n", start, m_readPos);
+		nframes_t framesRead = read(buffer, count);
+		
+		m_readPos += framesRead;
+		
+		return framesRead;
+	}
 	
-	m_readPos += framesRead;
-	
-	return framesRead;
+	return 0;
 }
 
 
@@ -87,9 +96,9 @@ AbstractAudioReader* AbstractAudioReader::create_audio_reader(const QString& fil
 	else if (SFAudioReader::can_decode(filename)) {
 		newReader = new SFAudioReader(filename);
 	}
-//	else if (MadAudioReader::can_decode(filename)) {
-//		newReader = new MadAudioReader(filename);
-//	}
+	else if (MadAudioReader::can_decode(filename)) {
+		newReader = new MadAudioReader(filename);
+	}
 	else {
 		return 0;
 	}
