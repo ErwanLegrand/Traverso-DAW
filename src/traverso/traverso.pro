@@ -23,6 +23,7 @@ LIBS +=  \
 	-lsamplerate \
 	-lvorbisfile \
 	-lmad \
+	-lwavpack \
 	-lFLAC++ \
 	-lfftw3 \
 
