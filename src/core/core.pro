@@ -55,6 +55,7 @@ SOURCES = AudioClip.cpp \
 	FlacAudioReader.cpp \
 	ResampleAudioReader.cpp \
 	VorbisAudioReader.cpp \
+	WPAudioReader.cpp \
 	MadAudioReader.cpp
 HEADERS = precompile.h \
 	AudioClip.h \
@@ -104,6 +105,7 @@ HEADERS = precompile.h \
 	FlacAudioReader.h \
 	ResampleAudioReader.h \
 	VorbisAudioReader.h \
+	WPAudioReader.h \
 	MadAudioReader.h
 macx{
     QMAKE_LIBDIR += /usr/local/qt/lib
