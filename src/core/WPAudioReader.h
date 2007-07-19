@@ -43,6 +43,8 @@ public:
 protected:
 	WavpackContext*	m_wp;
 	bool		m_isFloat;
+	int		m_bitsPerSample;
+	int		m_channels;
 	int32_t		*m_tmpBuffer;
 	int		m_tmpBufferSize;
 };

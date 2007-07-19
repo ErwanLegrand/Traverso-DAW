@@ -32,7 +32,7 @@ class QString;
 class AbstractAudioReader : public QObject
 {
 	Q_OBJECT
-
+	
 public:
 	AbstractAudioReader(const QString& filename);
 	~AbstractAudioReader();

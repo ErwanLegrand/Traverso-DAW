@@ -40,6 +40,8 @@ WPAudioReader::WPAudioReader(QString filename)
 	}
 	
 	m_isFloat = ((WavpackGetMode(m_wp) & MODE_FLOAT) != 0);
+	m_bitsPerSample = WavpackGetBitsPerSample(m_wp);
+	m_channels = WavpackGetReducedChannels(m_wp);
 	
 	m_tmpBuffer = 0;
 	m_tmpBufferSize = 0;
@@ -77,7 +79,7 @@ bool WPAudioReader::can_decode(QString filename)
 int WPAudioReader::get_num_channels()
 {
 	if (m_wp) {
-		return WavpackGetReducedChannels(m_wp);
+		return m_channels;
 	}
 	return 0;
 }
@@ -158,19 +160,19 @@ nframes_t WPAudioReader::read(audio_sample_t** buffer, nframes_t frameCount)
 		switch (get_num_channels()) {
 			case 1:
 				for (int f = 0; f < framesRead; f++) {
-					buffer[0][f] = m_tmpBuffer[f];
+					buffer[0][f] = (float)((float)m_tmpBuffer[f]/ (float)((uint)1<<(m_bitsPerSample-1)));
 				}
 				break;	
 			case 2:
 				for (int f = 0; f < framesRead; f++) {
-					buffer[0][f] = m_tmpBuffer[f * 2];
-					buffer[1][f] = m_tmpBuffer[f * 2 + 1];
+					buffer[0][f] = (float)((float)m_tmpBuffer[f * 2]/ (float)((uint)1<<(m_bitsPerSample-1)));
+					buffer[1][f] = (float)((float)m_tmpBuffer[f * 2 + 1]/ (float)((uint)1<<(m_bitsPerSample-1)));
 				}
 				break;	
 			default:
 				for (int f = 0; f < framesRead; f++) {
 					for (int c = 0; c < get_num_channels(); c++) {
-						buffer[c][f] = m_tmpBuffer[f * get_num_channels() + c];
+						buffer[c][f] = (float)((float)m_tmpBuffer[f + get_num_channels() + c]/ (float)((uint)1<<(m_bitsPerSample-1)));
 					}
 				}
 		}
