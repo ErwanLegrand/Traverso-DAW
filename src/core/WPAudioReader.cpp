@@ -103,7 +103,7 @@ int WPAudioReader::get_rate()
 }
 
 
-bool WPAudioReader::seek(nframes_t start)
+bool WPAudioReader::seek_private(nframes_t start)
 {
 	Q_ASSERT(m_wp);
 	
@@ -117,13 +117,11 @@ bool WPAudioReader::seek(nframes_t start)
 		return false;
 	}
 	
-	AbstractAudioReader::seek(start);
-	
 	return true;
 }
 
 
-nframes_t WPAudioReader::read(audio_sample_t** buffer, nframes_t frameCount)
+nframes_t WPAudioReader::read_private(audio_sample_t** buffer, nframes_t frameCount)
 {
 	Q_ASSERT(m_wp);
 	

@@ -35,12 +35,13 @@ public:
 	int get_num_channels();
 	nframes_t get_length();
 	int get_rate();
-	bool seek(nframes_t start);
-	nframes_t read(audio_sample_t** buffer, nframes_t frameCount);
 
 	static bool can_decode(QString filename);
 
 protected:
+	bool seek_private(nframes_t start);
+	nframes_t read_private(audio_sample_t** buffer, nframes_t frameCount);
+	
 	WavpackContext*	m_wp;
 	bool		m_isFloat;
 	int		m_bitsPerSample;

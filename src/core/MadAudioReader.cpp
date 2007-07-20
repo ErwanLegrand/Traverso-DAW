@@ -623,7 +623,7 @@ int MadAudioReader::get_rate()
 }
 
 
-bool MadAudioReader::seek(nframes_t start)
+bool MadAudioReader::seek_private(nframes_t start)
 {
 	Q_ASSERT(d);
 	
@@ -692,8 +692,6 @@ bool MadAudioReader::seek(nframes_t start)
 	
 	d->overflowStart = 0;
 	d->overflowSize = 0;
-	
-	AbstractAudioReader::seek(start);
 	
 	// Seek to exact traverso frame, within this mp3 frame
 	if (frameOffset > 0) {
@@ -776,7 +774,7 @@ unsigned long MadAudioReader::countFrames()
 }
 
 
-nframes_t MadAudioReader::read(audio_sample_t** buffer, nframes_t frameCount)
+nframes_t MadAudioReader::read_private(audio_sample_t** buffer, nframes_t frameCount)
 {
 	d->outputBuffers = buffer;
 	d->outputSize = frameCount;

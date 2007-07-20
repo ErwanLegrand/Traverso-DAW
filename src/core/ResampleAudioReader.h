@@ -37,12 +37,13 @@ public:
 	int get_num_channels();
 	nframes_t get_length();
 	int get_rate();
-	bool seek(nframes_t start);
-	nframes_t read(audio_sample_t** buffer, nframes_t frameCount);
 	
 protected:
 	void init(int converter_type);
 	void reset();
+	
+	bool seek_private(nframes_t start);
+	nframes_t read_private(audio_sample_t** buffer, nframes_t frameCount);
 	
 	nframes_t song_to_file_frame(nframes_t frame);
 	nframes_t file_to_song_frame(nframes_t frame);

@@ -365,7 +365,7 @@ int FlacAudioReader::get_rate()
 }
 
 
-bool FlacAudioReader::seek(nframes_t start)
+bool FlacAudioReader::seek_private(nframes_t start)
 {
 	Q_ASSERT(m_flac);
 	
@@ -384,13 +384,11 @@ bool FlacAudioReader::seek(nframes_t start)
 		return false;
 	}
 	
-	AbstractAudioReader::seek(start);
-	
 	return true;
 }
 
 
-nframes_t FlacAudioReader::read(audio_sample_t** buffer, nframes_t frameCount)
+nframes_t FlacAudioReader::read_private(audio_sample_t** buffer, nframes_t frameCount)
 {
 	Q_ASSERT(m_flac);
 	

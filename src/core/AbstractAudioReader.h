@@ -41,13 +41,16 @@ public:
 	virtual nframes_t get_length() = 0;
 	virtual int get_rate() = 0;
 	nframes_t read_from(audio_sample_t** buffer, nframes_t start, nframes_t count);
-	virtual bool seek(nframes_t start);
-	virtual nframes_t read(audio_sample_t** buffer, nframes_t frameCount) = 0;
+	bool seek(nframes_t start);
+	nframes_t read(audio_sample_t** buffer, nframes_t frameCount);
 	
 	static AbstractAudioReader* create_audio_reader(const QString& filename);
 	static AbstractAudioReader* create_resampled_audio_reader(const QString& filename, int converter_type);
 
 protected:
+	virtual bool seek_private(nframes_t start) = 0;
+	virtual nframes_t read_private(audio_sample_t** buffer, nframes_t frameCount) = 0;
+	
 	QString		m_fileName;
 	QMutex		m_mutex;
 	nframes_t	m_readPos;

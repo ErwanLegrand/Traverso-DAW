@@ -48,13 +48,6 @@ AbstractAudioReader::~AbstractAudioReader()
 }
 
 
-bool AbstractAudioReader::seek(nframes_t start)
-{
-	m_readPos = start;
-	return true;
-}
-
-
 // Read cnt frames starting at start from the AudioReader, into dst
 // uses seek() and read() from AudioReader subclass
 nframes_t AbstractAudioReader::read_from(audio_sample_t** buffer, nframes_t start, nframes_t count)
@@ -63,16 +56,32 @@ nframes_t AbstractAudioReader::read_from(audio_sample_t** buffer, nframes_t star
 	
 // 	printf("read_from:: before_seek from %d, framepos is %d\n", start, m_readPos);
 	
-	if (m_readPos != start) {
-// 		printf("starting seek\n");
-		if (!seek(start)) {
-			return 0;
-		}
+	if (!seek(start)) {
+		return 0;
 	}
 	
+	return read(buffer, count);
+}
+
+
+bool AbstractAudioReader::seek(nframes_t start)
+{
+	if (m_readPos != start) {
+		if (!seek_private(start)) {
+			return false;
+		}
+		m_readPos = start;
+	}
+	
+	return true;
+}
+
+
+nframes_t AbstractAudioReader::read(audio_sample_t** buffer, nframes_t count)
+{
 	if (count) {
 	// 	printf("read_from:: after_seek from %d, framepos is %d\n", start, m_readPos);
-		nframes_t framesRead = read(buffer, count);
+		nframes_t framesRead = read_private(buffer, count);
 		
 		m_readPos += framesRead;
 		

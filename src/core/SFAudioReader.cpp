@@ -111,7 +111,7 @@ int SFAudioReader::get_rate()
 }
 
 
-bool SFAudioReader::seek(nframes_t start)
+bool SFAudioReader::seek_private(nframes_t start)
 {
 	Q_ASSERT(m_sf);
 	
@@ -127,13 +127,11 @@ bool SFAudioReader::seek(nframes_t start)
 		return false;
 	}
 	
-	AbstractAudioReader::seek(start);
-	
 	return true;
 }
 
 
-nframes_t SFAudioReader::read(audio_sample_t** buffer, nframes_t frameCount)
+nframes_t SFAudioReader::read_private(audio_sample_t** buffer, nframes_t frameCount)
 {
 	Q_ASSERT(m_sf);
 	

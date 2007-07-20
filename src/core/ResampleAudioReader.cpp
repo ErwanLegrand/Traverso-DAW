@@ -135,25 +135,23 @@ int ResampleAudioReader::get_rate()
 
 // if no conversion is necessary, pass the seek straight to the child AudioReader,
 // otherwise convert and seek
-bool ResampleAudioReader::seek(nframes_t start)
+bool ResampleAudioReader::seek_private(nframes_t start)
 {
 	Q_ASSERT(m_reader);
 	
 	if (audiodevice().get_sample_rate() == (uint)m_reader->get_rate()) {
-		AbstractAudioReader::seek(start);
 		return m_reader->seek(start);
 	}
 	
 	reset();
 	
-	AbstractAudioReader::seek(start);
 	return m_reader->seek(song_to_file_frame(start));
 }
 
 
 // If no conversion is necessary, pass the read straight to the child AudioReader,
 // otherwise get data from childreader and use libsamplerate to convert
-nframes_t ResampleAudioReader::read(audio_sample_t** buffer, nframes_t frameCount)
+nframes_t ResampleAudioReader::read_private(audio_sample_t** buffer, nframes_t frameCount)
 {
 	nframes_t sourceFramesRead;
 	nframes_t framesRead;
