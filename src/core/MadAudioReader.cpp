@@ -509,7 +509,7 @@ MadAudioReader::MadAudioReader(QString filename)
 		d->overflowBuffers.append(new audio_sample_t[1152]);
 	}
 	
-	seek(0);
+	seek_private(0);
 }
 
 
