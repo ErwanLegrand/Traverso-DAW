@@ -650,9 +650,13 @@ bool MadAudioReader::seek_private(nframes_t start)
 	unsigned int frame = static_cast<unsigned int>(posSecs / mp3FrameSecs);
 	nframes_t frameOffset = (nframes_t)(start - (frame * mp3FrameSecs * get_rate() + 0.5));
 	
-	// Rob said: 29 frames is the theoretically max frame reservoir limit (whatever that means...)
-	// it seems that mad needs at most 29 frames to get ready
-	unsigned int frameReservoirProtect = (frame > 29 ? 29 : frame);
+	// K3b source: Rob said: 29 frames is the theoretically max frame reservoir limit
+	// (whatever that means...) it seems that mad needs at most 29 frames to get ready
+	//
+	// Ben says: It looks like Rob (the author of MAD) implies here:
+	//    http://www.mars.org/mailman/public/mad-dev/2001-August/000321.html
+	// that 3 frames (1 + 2 extra) is enough... seems to work fine...
+	unsigned int frameReservoirProtect = (frame > 3 ? 3 : frame);
 	
 	frame -= frameReservoirProtect;
 	
@@ -835,7 +839,7 @@ nframes_t MadAudioReader::read_private(audio_sample_t** buffer, nframes_t frameC
 	// FIXME: This shouldn't be necessary!  :P
 	// is get_length() reporting incorrectly?
 	// are we not outputting the last mp3-frame for some reason?
-	int remainingFramesRequested = frameCount - framesWritten;
+	/*int remainingFramesRequested = frameCount - framesWritten;
 	int remainingFramesInFile = get_length() - (m_readPos + framesWritten);
 	if (remainingFramesRequested > 0 && remainingFramesInFile > 0) {
 		int padLength = (remainingFramesRequested > remainingFramesInFile) ? remainingFramesInFile : remainingFramesRequested;
@@ -850,7 +854,7 @@ nframes_t MadAudioReader::read_private(audio_sample_t** buffer, nframes_t frameC
 	if (framesWritten > remainingFramesInFile) {
 		printf("truncating by %d!\n", framesWritten - remainingFramesInFile);
 		framesWritten = remainingFramesInFile;
-	}
+	}*/
 	
 	//printf("at: %lu (total: %lu), request: %d (returned: %d)\n", m_readPos + framesWritten, m_frames, frameCount, framesWritten);
 	

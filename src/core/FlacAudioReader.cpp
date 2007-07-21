@@ -477,20 +477,20 @@ nframes_t FlacAudioReader::read_private(audio_sample_t** buffer, nframes_t frame
 	}
 	
 	// Pad end of file with 0s if necessary.  (Shouldn't be necessary...)
-	int remainingFramesRequested = frameCount - framesCoppied;
+	/*int remainingFramesRequested = frameCount - framesCoppied;
 	int remainingFramesInFile = get_length() - (m_readPos + framesCoppied);
 	if (framesCoppied == 0 && remainingFramesInFile > 0) {
 		int padLength = (remainingFramesRequested > remainingFramesInFile) ? remainingFramesInFile : remainingFramesRequested;
-		//PERROR("padLength: %d", padLength);
+		PERROR("padLength: %d", padLength);
 		for (int c = 0; c < get_num_channels(); c++) {
 			memset(buffer[c] + framesCoppied, 0, padLength * sizeof(audio_sample_t));
 		}
 		framesCoppied += padLength;
 	}
 	if (framesCoppied > frameCount) {
-		//PERROR("Truncating");
+		PERROR("Truncating");
 		framesCoppied = frameCount;
-	}
+	}*/
 	
 	//printf("copied %d of %d.  nextFrame: %lu of %lu\n", samplesCoppied, sampleCount, m_readPos, get_length());
 	
