@@ -53,7 +53,10 @@ protected:
 	QVector<SRC_STATE*>	m_srcStates;
 	SRC_DATA		m_srcData;
 	QVector<audio_sample_t*> m_fileBuffers;
+	QVector<audio_sample_t*> m_filePointers;
 	long			m_fileBufferLength;
+	long			m_overflowUsed;
+	bool			m_eof;
 };
 
 #endif

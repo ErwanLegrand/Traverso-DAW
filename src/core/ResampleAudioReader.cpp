@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Utils.h"
 #include "AudioDevice.h"
 
+#define OVERFLOW_SIZE 1024
+
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
@@ -40,6 +42,7 @@ ResampleAudioReader::ResampleAudioReader(QString filename, int converter_type)
 	}
 	
 	m_fileBuffers.resize(get_num_channels());
+	m_filePointers.resize(get_num_channels());
 	m_fileBufferLength = 0;
 	
 	init(converter_type);
@@ -76,10 +79,17 @@ void ResampleAudioReader::init(int converter_type)
 			m_reader = 0;
 			return;
 		}
+		m_srcStates.append(src_new(converter_type, 1, &error));
+		if (!m_srcStates[c]) {
+			PERROR("ResampleAudioReader: couldn't create libSampleRate SRC_STATE");
+			delete m_reader;
+			m_reader = 0;
+			return;
+		}
 	}
 	
 	reset();
-	seek(0);
+	seek_private(0);
 }
 
 
@@ -91,6 +101,8 @@ void ResampleAudioReader::reset()
 	}
 	
 	m_srcData.end_of_input = 0;
+	m_overflowUsed = 0;
+	m_eof = 0;
 }
 
 
@@ -153,20 +165,15 @@ bool ResampleAudioReader::seek_private(nframes_t start)
 // otherwise get data from childreader and use libsamplerate to convert
 nframes_t ResampleAudioReader::read_private(audio_sample_t** buffer, nframes_t frameCount)
 {
-	nframes_t sourceFramesRead;
-	nframes_t framesRead;
 	Q_ASSERT(m_reader);
-	
-	/////////////////////////////////
-	// Ben says: FIXME: Add an overflow buffer, and grab more samples at a time, saving the extra to the overflow.
-	// This may improve performance? And should fix micro-view waveform painting errors.
-	/////////////////////////////////
 	
 	// pass through if not changing sampleRate.
 	if (audiodevice().get_sample_rate() == (uint)m_reader->get_rate()) {
-		sourceFramesRead = m_reader->read(buffer, frameCount);
-		return sourceFramesRead;
+		return m_reader->read(buffer, frameCount);
 	}
+	
+	nframes_t bufferUsed;
+	nframes_t framesRead;
 	
 	nframes_t fileCnt = song_to_file_frame(frameCount);
 	
@@ -174,27 +181,44 @@ nframes_t ResampleAudioReader::read_private(audio_sample_t** buffer, nframes_t f
 		fileCnt = 1;
 	}
 	
-	// make sure that the reusable m_fileBuffers are big enough for this read
-	if ((uint)m_fileBufferLength < fileCnt) {
-		for (int c = 0; c < get_num_channels(); c++) {
-			if (m_fileBuffers.size()) {
-				delete m_fileBuffers[c];
+	bufferUsed = m_overflowUsed;
+	
+	if (!m_eof) { // FIXME: add and use Reader::eof()
+		// make sure that the reusable m_fileBuffers are big enough for this read + OVERFLOW_SIZE
+		if ((uint)m_fileBufferLength < fileCnt + OVERFLOW_SIZE) {
+			for (int c = 0; c < get_num_channels(); c++) {
+				if (m_fileBufferLength) {
+					delete m_fileBuffers[c];
+				}
+				m_fileBuffers[c] = new audio_sample_t[fileCnt + OVERFLOW_SIZE];
 			}
-			m_fileBuffers[c] = new audio_sample_t[fileCnt];
+			m_fileBufferLength = fileCnt + OVERFLOW_SIZE;
 		}
-		m_fileBufferLength = fileCnt;
+		
+		for (int c = 0; c < get_num_channels(); c++) {
+			m_filePointers[c] = m_fileBuffers[c] + m_overflowUsed;
+		}
+		
+		bufferUsed += m_reader->read(m_filePointers.data(), fileCnt + OVERFLOW_SIZE - m_overflowUsed);
+		//printf("Resampler: Read %lu of %lu (%lu)\n", bufferUsed, fileCnt + OVERFLOW_SIZE - m_overflowUsed, m_reader->get_length());
 	}
 	
-	sourceFramesRead = m_reader->read(m_fileBuffers.data(), fileCnt);
+	if (bufferUsed < fileCnt) {
+		m_srcData.end_of_input = 1;
+		m_eof = 1;
+	}
 	
-	//printf("Resampler: sampleCount %lu, fileCnt %lu, returned %lu\n", sampleCount/get_num_channels(), fileCnt/get_num_channels(), samplesRead/get_num_channels());
+	nframes_t framesToConvert = frameCount;
+	if (frameCount > get_length() - m_readPos) {
+		framesToConvert = get_length() - m_readPos;
+	}
 	
 	for (int c = 0; c < get_num_channels(); c++) {
 		// Set up sample rate converter struct for s.r.c. processing
 		m_srcData.data_in = m_fileBuffers[c];
-		m_srcData.input_frames = sourceFramesRead;
+		m_srcData.input_frames = bufferUsed;
 		m_srcData.data_out = buffer[c];
-		m_srcData.output_frames = frameCount;
+		m_srcData.output_frames = framesToConvert;
 		m_srcData.src_ratio = (double) audiodevice().get_sample_rate() / m_reader->get_rate();
 		src_set_ratio(m_srcStates[c], m_srcData.src_ratio);
 		
@@ -203,28 +227,37 @@ nframes_t ResampleAudioReader::read_private(audio_sample_t** buffer, nframes_t f
 			return 0;
 		}
 		framesRead = m_srcData.output_frames_gen;
-		printf("%lu -- ", framesRead);
 	}
-	printf("(frames read per channel)\n");
+	
+	m_overflowUsed = bufferUsed - m_srcData.input_frames_used;
+	
+	if (m_overflowUsed < 0) {
+		m_overflowUsed = 0;
+	}
+	
+	if (m_srcData.input_frames_used < bufferUsed) {
+		for (int c = 0; c < get_num_channels(); c++) {
+			memmove(m_fileBuffers[c], m_fileBuffers[c] + m_srcData.input_frames_used, m_overflowUsed * sizeof(audio_sample_t));
+		}
+	}
 	
 	// Pad end of file with 0s if necessary
-	int remainingFramesRequested = frameCount - framesRead;
-	int remainingFramesInFile = get_length() - m_readPos - m_srcData.output_frames_gen;
-	
-	if (framesRead == 0 && remainingFramesRequested > 0 && remainingFramesInFile > 0) {
-		int padLength = (remainingFramesRequested > remainingFramesInFile) ? remainingFramesInFile : remainingFramesRequested;
+	if (framesRead == 0 && m_readPos < get_length()) {
+		int padLength = m_readPos;
 		for (int c = 0; c < get_num_channels(); c++) {
 			memset(buffer[c] + framesRead, 0, padLength * sizeof(audio_sample_t));
 		}
 		framesRead += padLength;
 		printf("Resampler: padding: %d\n", padLength);
-	}	
+	}
 	
 	// Truncate so we don't return too many samples
-	if (framesRead > (uint)remainingFramesInFile) {
-		printf("Resampler: truncating: %d\n", framesRead - remainingFramesInFile);
-		framesRead = remainingFramesInFile;
-	}
+	/*if (m_readPos + framesRead > get_length()) {
+		printf("Resampler: truncating: %d\n", framesRead - (get_length() - m_readPos));
+		framesRead = get_length() - m_readPos;
+	}*/
+	
+	//printf("framesRead: %lu of %lu (overflow: %lu) (at: %lu of %lu)\n", framesRead, frameCount, m_overflowUsed, m_readPos + framesRead, get_length());
 	
 	return framesRead;
 }
