@@ -79,7 +79,7 @@ bool AbstractAudioReader::seek(nframes_t start)
 
 nframes_t AbstractAudioReader::read(audio_sample_t** buffer, nframes_t count)
 {
-	if (count) {
+	if (count && m_readPos < get_length()) {
 	// 	printf("read_from:: after_seek from %d, framepos is %d\n", start, m_readPos);
 		nframes_t framesRead = read_private(buffer, count);
 		

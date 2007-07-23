@@ -825,10 +825,12 @@ nframes_t MadAudioReader::read_private(audio_sample_t** buffer, nframes_t frameC
 			
 			// this fills the output buffer
 			if (!createPcmSamples(d->handle->madSynth)) {
+				PERROR("createPcmSamples");
 				return -1;
 			}
 		}
 		else if (d->handle->inputError()) {
+			PERROR("inputError");
 			return -1;
 		}
 	}
@@ -851,12 +853,12 @@ nframes_t MadAudioReader::read_private(audio_sample_t** buffer, nframes_t frameC
 	}
 
 	// Truncate so we don't return too many frames
-	if (framesWritten > remainingFramesInFile) {
-		printf("truncating by %d!\n", framesWritten - remainingFramesInFile);
-		framesWritten = remainingFramesInFile;
+	if (framesWritten + m_readPos > get_length()) {
+		printf("truncating by %d!\n", get_length() - (framesWritten + m_readPos));
+		framesWritten = get_length() - m_readPos;
 	}*/
 	
-	//printf("at: %lu (total: %lu), request: %d (returned: %d)\n", m_readPos + framesWritten, m_frames, frameCount, framesWritten);
+	//printf("request: %d (returned: %d), now at: %lu (total: %lu)\n", frameCount, framesWritten, m_readPos + framesWritten, m_frames);
 	
 	return framesWritten;
 }
@@ -870,7 +872,7 @@ bool MadAudioReader::createPcmSamples(mad_synth* synth)
 	bool		overflow = false;
 	int		i;
 	
-	if ((m_readPos + d->outputPos + nframes) > get_length()) {
+	if (writeBuffers && (m_readPos + d->outputPos + nframes) > get_length()) {
 		nframes = get_length() - (m_readPos + offset);
 		//printf("!!!nframes: %lu, length: %lu, current: %lu\n", nframes, get_length(), d->outputPos + m_readPos);
 	}
