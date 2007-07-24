@@ -799,12 +799,12 @@ nframes_t MadAudioReader::read_private(audio_sample_t** buffer, nframes_t frameC
 			// this fills the output buffer
 			if (!createPcmSamples(d->handle->madSynth)) {
 				PERROR("createPcmSamples");
-				return -1;
+				return 0;
 			}
 		}
 		else if (d->handle->inputError()) {
 			PERROR("inputError");
-			return -1;
+			return 0;
 		}
 	}
 	

@@ -389,14 +389,14 @@ nframes_t FlacAudioReader::read_private(audio_sample_t** buffer, nframes_t frame
 					PERROR("process_single() error\n");
 					m_flac->reset();
 					seek(m_readPos);
-					return -1;
+					return 0;
 				}
 			}
 			else {
 				PERROR("flac_state() = %d\n", int(m_flac->get_state()));
 				m_flac->reset();
 				seek(m_readPos);
-				return -1;
+				return 0;
 			}
 #else
 			if (m_flac->get_state() == FLAC__STREAM_DECODER_END_OF_STREAM) {
@@ -409,14 +409,14 @@ nframes_t FlacAudioReader::read_private(audio_sample_t** buffer, nframes_t frame
 					PERROR("process_single() error\n");
 					m_flac->reset();
 					seek(m_readPos);
-					return -1;
+					return 0;
 				}
 			}
 			else {
 				PERROR("flac_state() = %d\n", int(m_flac->get_state()));
 				m_flac->reset();
 				seek(m_readPos);
-				return -1;
+				return 0;
 			}
 #endif
 		}
