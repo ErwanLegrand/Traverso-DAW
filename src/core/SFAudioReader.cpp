@@ -42,6 +42,10 @@ SFAudioReader::SFAudioReader(QString filename)
 		PERROR("Couldn't open soundfile (%s)", QS_C(m_fileName));
 	}
 	
+	m_channels = m_sfinfo.channels;
+	m_length = m_sfinfo.frames;
+	m_rate = m_sfinfo.samplerate;
+	
 	m_tmpBuffer = 0;
 	m_tmpBufferSize = 0;
 }
@@ -84,39 +88,12 @@ bool SFAudioReader::can_decode(QString filename)
 }
 
 
-int SFAudioReader::get_num_channels()
-{
-	if (m_sf) {
-		return m_sfinfo.channels;
-	}
-	return 0;
-}
-
-
-nframes_t SFAudioReader::get_length()
-{
-	if (m_sf) {
-		return m_sfinfo.frames;
-	}
-	return 0;
-}
-
-
-int SFAudioReader::get_rate()
-{
-	if (m_sf) {
-		return m_sfinfo.samplerate;
-	}
-	return 0;
-}
-
-
 bool SFAudioReader::seek_private(nframes_t start)
 {
 	Q_ASSERT(m_sf);
 	
 	
-	if (start >= get_length()) {
+	if (start >= m_length) {
 		return false;
 	}
 	
@@ -140,12 +117,12 @@ nframes_t SFAudioReader::read_private(audio_sample_t** buffer, nframes_t frameCo
 		if (m_tmpBuffer) {
 			delete m_tmpBuffer;
 		}
-		m_tmpBuffer = new audio_sample_t[frameCount * get_num_channels()];
+		m_tmpBuffer = new audio_sample_t[frameCount * m_channels];
 	}
 	nframes_t framesRead = sf_readf_float(m_sf, m_tmpBuffer, frameCount);
 	
 	// De-interlace
-	switch (get_num_channels()) {
+	switch (m_channels) {
 		case 1:
 			memcpy(buffer[0], m_tmpBuffer, framesRead * sizeof(audio_sample_t));
 			break;	
@@ -157,8 +134,8 @@ nframes_t SFAudioReader::read_private(audio_sample_t** buffer, nframes_t frameCo
 			break;	
 		default:
 			for (int f = 0; f < framesRead; f++) {
-				for (int c = 0; c < get_num_channels(); c++) {
-					buffer[c][f] = m_tmpBuffer[f * get_num_channels() + c];
+				for (int c = 0; c < m_channels; c++) {
+					buffer[c][f] = m_tmpBuffer[f * m_channels + c];
 				}
 			}
 	}

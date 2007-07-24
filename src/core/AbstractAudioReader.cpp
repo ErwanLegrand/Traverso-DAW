@@ -64,6 +64,36 @@ nframes_t AbstractAudioReader::read_from(audio_sample_t** buffer, nframes_t star
 }
 
 
+int AbstractAudioReader::get_num_channels()
+{
+	return m_channels;
+}
+
+
+nframes_t AbstractAudioReader::get_length()
+{
+	return m_length;
+}
+
+
+int AbstractAudioReader::get_file_rate()
+{
+	return m_rate;
+}
+
+
+bool AbstractAudioReader::eof()
+{
+	return (m_readPos >= m_length);
+}
+
+
+nframes_t AbstractAudioReader::pos()
+{
+	return m_readPos;
+}
+
+
 bool AbstractAudioReader::seek(nframes_t start)
 {
 	if (m_readPos != start) {
@@ -79,7 +109,7 @@ bool AbstractAudioReader::seek(nframes_t start)
 
 nframes_t AbstractAudioReader::read(audio_sample_t** buffer, nframes_t count)
 {
-	if (count && m_readPos < get_length()) {
+	if (count && m_readPos < m_length) {
 	// 	printf("read_from:: after_seek from %d, framepos is %d\n", start, m_readPos);
 		nframes_t framesRead = read_private(buffer, count);
 		
@@ -116,27 +146,11 @@ AbstractAudioReader* AbstractAudioReader::create_audio_reader(const QString& fil
 		return 0;
 	}
 	
-	if (newReader->get_rate() <= 0) {
-		PERROR("new reader has rate=0!");
+	if (newReader->get_num_channels() <= 0) {
+		PERROR("new reader has 0 channels!");
 		return 0;
 	}
 
 	return newReader;
-}
-
-
-// Static method used by other classes to get an automatically resampling AudioReader that wraps
-// an AudioReader chosen by create_audio_reader().
-AbstractAudioReader* AbstractAudioReader::create_resampled_audio_reader(const QString& filename, int converter_type)
-{
-	ResampleAudioReader* newReader;
-
-	newReader = new ResampleAudioReader(filename, converter_type);
-
-	if (newReader->get_rate() > 0) {
-		return newReader;
-	}
-	
-	return 0;
 }
 

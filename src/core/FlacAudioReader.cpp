@@ -265,6 +265,12 @@ FlacAudioReader::FlacAudioReader(QString filename)
  : AbstractAudioReader(filename)
 {
 	m_flac = new FlacPrivate(filename);
+	
+	if (m_flac) {
+		m_channels = m_flac->m_channels;
+		m_length = m_flac->m_samples;
+		m_rate = m_flac->m_rate;
+	}
 }
 
 
@@ -334,34 +340,6 @@ bool FlacAudioReader::can_decode(QString filename)
 	
 	//PERROR("Return: Is%s a flac file: %s", ((valid) ? "" : " not"), QS_C(filename));
 	return valid;
-}
-
-
-int FlacAudioReader::get_num_channels()
-{
-	if (m_flac) {
-		return m_flac->m_channels;
-	}
-	return 0;
-}
-
-
-nframes_t FlacAudioReader::get_length()
-{
-	if (m_flac) {
-		// Is this returning one frame too long?
-		return m_flac->m_samples;
-	}
-	return 0;
-}
-
-
-int FlacAudioReader::get_rate()
-{
-	if (m_flac) {
-		return m_flac->m_rate;
-	}
-	return 0;
 }
 
 

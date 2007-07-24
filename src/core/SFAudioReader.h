@@ -31,11 +31,7 @@ class SFAudioReader : public AbstractAudioReader
 public:
 	SFAudioReader(QString filename);
 	~SFAudioReader();
-
-	int get_num_channels();
-	nframes_t get_length();
-	int get_rate();
-
+	
 	static bool can_decode(QString filename);
 
 protected:

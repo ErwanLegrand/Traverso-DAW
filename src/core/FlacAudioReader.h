@@ -32,10 +32,6 @@ class FlacAudioReader : public AbstractAudioReader
 public:
 	FlacAudioReader(QString filename);
 	~FlacAudioReader();
-
-	int get_num_channels();
-	nframes_t get_length();
-	int get_rate();
 	
 	static bool can_decode(QString filename);
 	

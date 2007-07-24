@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ResampleAudioReader.h"
 #include <QString>
 #include "Utils.h"
-#include "AudioDevice.h"
 
 #define OVERFLOW_SIZE 1024
 
@@ -40,6 +39,11 @@ ResampleAudioReader::ResampleAudioReader(QString filename, int converter_type)
 		PERROR("ResampleAudioReader: couldn't create AudioReader");
 		return;
 	}
+	
+	m_channels = m_reader->get_num_channels();
+	m_rate = m_reader->get_file_rate();
+	m_length = m_reader->get_length();
+	m_outputRate = m_rate;
 	
 	m_fileBuffers.resize(get_num_channels());
 	m_filePointers.resize(get_num_channels());
@@ -102,46 +106,22 @@ void ResampleAudioReader::reset()
 	
 	m_srcData.end_of_input = 0;
 	m_overflowUsed = 0;
-	m_eof = 0;
 }
 
 
-// Get from child AudioReader
-int ResampleAudioReader::get_num_channels()
+int ResampleAudioReader::get_output_rate()
 {
-	if (m_reader) {
-		return m_reader->get_num_channels();
-	}
-	
-	return 0;
+	return m_outputRate;
 }
 
 
-// Get from child AudioReader, convert from file's frames to song's frames
-nframes_t ResampleAudioReader::get_length()
+void ResampleAudioReader::set_output_rate(int rate)
 {
-	if (m_reader) {
-		if (audiodevice().get_sample_rate() == (uint)m_reader->get_rate()) {
-			return m_reader->get_length();
-		}
-		return file_to_song_frame(m_reader->get_length());
+	if (!m_reader) {
+		return;
 	}
-	
-	return 0;
-}
-
-
-// Always the rate of the audio device
-// Remon @ Ben: why is that? imo it should just return the real rate, how else
-// is anything gonna to know what the 'real' rate of an audiofile is ?
-int ResampleAudioReader::get_rate()
-{
-	if (m_reader) {
-		return m_reader->get_rate();
-// 		return audiodevice().get_sample_rate();
-	}
-	
-	return 0;
+	m_outputRate = rate;
+	m_length = file_to_song_frame(m_reader->get_length());
 }
 
 
@@ -151,7 +131,7 @@ bool ResampleAudioReader::seek_private(nframes_t start)
 {
 	Q_ASSERT(m_reader);
 	
-	if (audiodevice().get_sample_rate() == (uint)m_reader->get_rate()) {
+	if (m_outputRate == m_rate) {
 		return m_reader->seek(start);
 	}
 	
@@ -168,7 +148,7 @@ nframes_t ResampleAudioReader::read_private(audio_sample_t** buffer, nframes_t f
 	Q_ASSERT(m_reader);
 	
 	// pass through if not changing sampleRate.
-	if (audiodevice().get_sample_rate() == (uint)m_reader->get_rate()) {
+	if (m_outputRate == m_rate) {
 		return m_reader->read(buffer, frameCount);
 	}
 	
@@ -183,10 +163,10 @@ nframes_t ResampleAudioReader::read_private(audio_sample_t** buffer, nframes_t f
 	
 	bufferUsed = m_overflowUsed;
 	
-	if (!m_eof) { // FIXME: add and use Reader::eof()
+	if (!m_reader->eof()) {
 		// make sure that the reusable m_fileBuffers are big enough for this read + OVERFLOW_SIZE
 		if ((uint)m_fileBufferLength < fileCnt + OVERFLOW_SIZE) {
-			for (int c = 0; c < get_num_channels(); c++) {
+			for (int c = 0; c < m_channels; c++) {
 				if (m_fileBufferLength) {
 					delete m_fileBuffers[c];
 				}
@@ -195,7 +175,7 @@ nframes_t ResampleAudioReader::read_private(audio_sample_t** buffer, nframes_t f
 			m_fileBufferLength = fileCnt + OVERFLOW_SIZE;
 		}
 		
-		for (int c = 0; c < get_num_channels(); c++) {
+		for (int c = 0; c < m_channels; c++) {
 			m_filePointers[c] = m_fileBuffers[c] + m_overflowUsed;
 		}
 		
@@ -203,23 +183,22 @@ nframes_t ResampleAudioReader::read_private(audio_sample_t** buffer, nframes_t f
 		//printf("Resampler: Read %lu of %lu (%lu)\n", bufferUsed, fileCnt + OVERFLOW_SIZE - m_overflowUsed, m_reader->get_length());
 	}
 	
-	if (bufferUsed < fileCnt) {
+	if (m_reader->eof()) {
 		m_srcData.end_of_input = 1;
-		m_eof = 1;
 	}
 	
 	nframes_t framesToConvert = frameCount;
-	if (frameCount > get_length() - m_readPos) {
-		framesToConvert = get_length() - m_readPos;
+	if (frameCount > m_length - m_readPos) {
+		framesToConvert = m_length - m_readPos;
 	}
 	
-	for (int c = 0; c < get_num_channels(); c++) {
+	for (int c = 0; c < m_channels; c++) {
 		// Set up sample rate converter struct for s.r.c. processing
 		m_srcData.data_in = m_fileBuffers[c];
 		m_srcData.input_frames = bufferUsed;
 		m_srcData.data_out = buffer[c];
 		m_srcData.output_frames = framesToConvert;
-		m_srcData.src_ratio = (double) audiodevice().get_sample_rate() / m_reader->get_rate();
+		m_srcData.src_ratio = (double) m_outputRate / m_rate;
 		src_set_ratio(m_srcStates[c], m_srcData.src_ratio);
 		
 		if (src_process(m_srcStates[c], &m_srcData)) {
@@ -236,7 +215,7 @@ nframes_t ResampleAudioReader::read_private(audio_sample_t** buffer, nframes_t f
 	}
 	
 	if (m_srcData.input_frames_used < bufferUsed) {
-		for (int c = 0; c < get_num_channels(); c++) {
+		for (int c = 0; c < m_channels; c++) {
 			memmove(m_fileBuffers[c], m_fileBuffers[c] + m_srcData.input_frames_used, m_overflowUsed * sizeof(audio_sample_t));
 		}
 	}
@@ -244,7 +223,7 @@ nframes_t ResampleAudioReader::read_private(audio_sample_t** buffer, nframes_t f
 	// Pad end of file with 0s if necessary
 	if (framesRead == 0 && m_readPos < get_length()) {
 		int padLength = m_readPos;
-		for (int c = 0; c < get_num_channels(); c++) {
+		for (int c = 0; c < m_channels; c++) {
 			memset(buffer[c] + framesRead, 0, padLength * sizeof(audio_sample_t));
 		}
 		framesRead += padLength;
@@ -267,7 +246,7 @@ nframes_t ResampleAudioReader::song_to_file_frame(nframes_t frame)
 {
 	Q_ASSERT(m_reader);
 	
-	return (nframes_t)(frame * (((double) m_reader->get_rate()) / audiodevice().get_sample_rate()));
+	return (nframes_t)(frame * ((double) m_rate / m_outputRate));
 }
 
 
@@ -275,6 +254,6 @@ nframes_t ResampleAudioReader::file_to_song_frame(nframes_t frame)
 {
 	Q_ASSERT(m_reader);
 	
-	return (nframes_t)(frame * (((double) audiodevice().get_sample_rate()) / m_reader->get_rate()));
+	return (nframes_t)(frame * ((double) m_outputRate / m_rate));
 }
 

@@ -51,6 +51,10 @@ VorbisAudioReader::VorbisAudioReader(QString filename)
 
 	ov_pcm_seek(&m_vf, 0);
 	m_vi = ov_info(&m_vf,-1);
+	
+	m_channels = m_vi->channels;
+	m_length = ov_pcm_total(&m_vf, -1);
+	m_rate = m_vi->rate;
 }
 
 
@@ -83,38 +87,11 @@ bool VorbisAudioReader::can_decode(QString filename)
 }
 
 
-int VorbisAudioReader::get_num_channels()
-{
-	if (m_file) {
-		return m_vi->channels;
-	}
-	return 0;
-}
-
-
-nframes_t VorbisAudioReader::get_length()
-{
-	if (m_file) {
-		return ov_pcm_total(&m_vf, -1);
-	}
-	return 0;
-}
-
-
-int VorbisAudioReader::get_rate()
-{
-	if (m_file) {
-		return m_vi->rate;
-	}
-	return 0;
-}
-
-
 bool VorbisAudioReader::seek_private(nframes_t start)
 {
 	Q_ASSERT(m_file);
 	
-	if (start >= get_length()) {
+	if (start >= m_length) {
 		return false;
 	}
 	
@@ -152,7 +129,7 @@ nframes_t VorbisAudioReader::read_private(audio_sample_t** buffer, nframes_t fra
 			break;
 		}
 		
-		for (int c=0; c < get_num_channels(); c++) {
+		for (int c=0; c < m_channels; c++) {
 			memcpy(buffer[c] + totalFramesRead, tmp[c], framesRead * sizeof(audio_sample_t));
 		}
 		totalFramesRead += framesRead;

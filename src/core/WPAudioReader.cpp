@@ -42,6 +42,8 @@ WPAudioReader::WPAudioReader(QString filename)
 	m_isFloat = ((WavpackGetMode(m_wp) & MODE_FLOAT) != 0);
 	m_bitsPerSample = WavpackGetBitsPerSample(m_wp);
 	m_channels = WavpackGetReducedChannels(m_wp);
+	m_length = WavpackGetNumSamples(m_wp);
+	m_rate = WavpackGetSampleRate(m_wp);
 	
 	m_tmpBuffer = 0;
 	m_tmpBufferSize = 0;
@@ -76,39 +78,12 @@ bool WPAudioReader::can_decode(QString filename)
 }
 
 
-int WPAudioReader::get_num_channels()
-{
-	if (m_wp) {
-		return m_channels;
-	}
-	return 0;
-}
-
-
-nframes_t WPAudioReader::get_length()
-{
-	if (m_wp) {
-		return WavpackGetNumSamples(m_wp);
-	}
-	return 0;
-}
-
-
-int WPAudioReader::get_rate()
-{
-	if (m_wp) {
-		return WavpackGetSampleRate(m_wp);
-	}
-	return 0;
-}
-
-
 bool WPAudioReader::seek_private(nframes_t start)
 {
 	Q_ASSERT(m_wp);
 	
 	
-	if (start >= get_length()) {
+	if (start >= m_length) {
 		return false;
 	}
 	
@@ -130,13 +105,13 @@ nframes_t WPAudioReader::read_private(audio_sample_t** buffer, nframes_t frameCo
 		if (m_tmpBuffer) {
 			delete m_tmpBuffer;
 		}
-		m_tmpBuffer = new int32_t[frameCount * get_num_channels()];
+		m_tmpBuffer = new int32_t[frameCount * m_channels];
 	}
 	nframes_t framesRead = WavpackUnpackSamples(m_wp, m_tmpBuffer, frameCount);
 	
 	// De-interlace
 	if (m_isFloat) {
-		switch (get_num_channels()) {
+		switch (m_channels) {
 			case 1:
 				memcpy(buffer[0], m_tmpBuffer, framesRead * sizeof(audio_sample_t));
 				break;	
@@ -148,14 +123,14 @@ nframes_t WPAudioReader::read_private(audio_sample_t** buffer, nframes_t frameCo
 				break;	
 			default:
 				for (int f = 0; f < framesRead; f++) {
-					for (int c = 0; c < get_num_channels(); c++) {
-						buffer[c][f] = ((float*)m_tmpBuffer)[f * get_num_channels() + c];
+					for (int c = 0; c < m_channels; c++) {
+						buffer[c][f] = ((float*)m_tmpBuffer)[f * m_channels + c];
 					}
 				}
 		}
 	}
 	else {
-		switch (get_num_channels()) {
+		switch (m_channels) {
 			case 1:
 				for (int f = 0; f < framesRead; f++) {
 					buffer[0][f] = (float)((float)m_tmpBuffer[f]/ (float)((uint)1<<(m_bitsPerSample-1)));
@@ -169,8 +144,8 @@ nframes_t WPAudioReader::read_private(audio_sample_t** buffer, nframes_t frameCo
 				break;	
 			default:
 				for (int f = 0; f < framesRead; f++) {
-					for (int c = 0; c < get_num_channels(); c++) {
-						buffer[c][f] = (float)((float)m_tmpBuffer[f + get_num_channels() + c]/ (float)((uint)1<<(m_bitsPerSample-1)));
+					for (int c = 0; c < m_channels; c++) {
+						buffer[c][f] = (float)((float)m_tmpBuffer[f + m_channels + c]/ (float)((uint)1<<(m_bitsPerSample-1)));
 					}
 				}
 		}

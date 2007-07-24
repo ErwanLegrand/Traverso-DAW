@@ -34,9 +34,8 @@ public:
 	ResampleAudioReader(QString filename, int converter_type);
 	~ResampleAudioReader();
 	
-	int get_num_channels();
-	nframes_t get_length();
-	int get_rate();
+	int get_output_rate();
+	void set_output_rate(int rate);
 	
 protected:
 	void init(int converter_type);
@@ -56,7 +55,7 @@ protected:
 	QVector<audio_sample_t*> m_filePointers;
 	long			m_fileBufferLength;
 	long			m_overflowUsed;
-	bool			m_eof;
+	int			m_outputRate;
 };
 
 #endif

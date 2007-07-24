@@ -31,11 +31,7 @@ class WPAudioReader : public AbstractAudioReader
 public:
 	WPAudioReader(QString filename);
 	~WPAudioReader();
-
-	int get_num_channels();
-	nframes_t get_length();
-	int get_rate();
-
+	
 	static bool can_decode(QString filename);
 
 protected:
@@ -45,7 +41,6 @@ protected:
 	WavpackContext*	m_wp;
 	bool		m_isFloat;
 	int		m_bitsPerSample;
-	int		m_channels;
 	int32_t		*m_tmpBuffer;
 	int		m_tmpBufferSize;
 };

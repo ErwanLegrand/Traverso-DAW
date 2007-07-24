@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "ReadSource.h"
 #include "AbstractAudioReader.h"
+#include "ResampleAudioReader.h"
 
 #include "Peak.h"
 #include "ProjectManager.h"
@@ -172,7 +173,11 @@ int ReadSource::init( )
 		converter_type = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
 		// There should be another config option for ConverterType to use for export (higher quality)
 		//converter_type = config().get_property("Conversion", "ExportResamplingConverterType", 0).toInt();
-		m_audioReader = AbstractAudioReader::create_resampled_audio_reader(m_fileName, converter_type);
+		m_audioReader = new ResampleAudioReader(m_fileName, converter_type);
+		if (m_audioReader) {
+			output_rate_changed();
+			connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(output_rate_changed()));
+		}
 	}
 	else {
 		m_audioReader = AbstractAudioReader::create_audio_reader(m_fileName);
@@ -197,11 +202,17 @@ int ReadSource::init( )
 	}
 
 	m_length = m_audioReader->get_length();
-	m_rate = m_audioReader->get_rate();
+	m_rate = m_audioReader->get_file_rate();
 	
 	m_bufferstatus = new BufferStatus;
 	
 	return 1;
+}
+
+
+void ReadSource::output_rate_changed()
+{
+	((ResampleAudioReader*)m_audioReader)->set_output_rate(audiodevice().get_sample_rate());
 }
 
 
@@ -220,8 +231,6 @@ int ReadSource::file_read(audio_sample_t** dst, nframes_t start, nframes_t cnt, 
 		return (int)result;
 	}
 
-	float *ptr;
-	
 	// The readbuffer 'assumes' that there is max 2 channels...
 	Q_ASSERT(m_audioReader->get_num_channels() <= 2);
 	
@@ -231,18 +240,6 @@ int ReadSource::file_read(audio_sample_t** dst, nframes_t start, nframes_t cnt, 
 	if (processtime > 40000)
 		printf("Process time for %s: %d useconds\n\n", QS_C(m_fileName), processtime);
 #endif
-	/*ptr = readbuffer;
-
-	for (int32_t n = 0; n < nread; ++n) {
-		dst[0][n] = *ptr;
-		ptr += m_audioReader->get_num_channels();
-	}
-	
-	ptr = readbuffer+1;
-	for (int32_t n = 0; n < nread; ++n) {
-		dst[1][n] = *ptr;
-		ptr += m_audioReader->get_num_channels();
-	}*/
 	
 	return nread;
 }

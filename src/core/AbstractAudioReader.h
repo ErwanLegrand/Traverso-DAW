@@ -37,24 +37,29 @@ public:
 	AbstractAudioReader(const QString& filename);
 	~AbstractAudioReader();
 	
-	virtual int get_num_channels() = 0;
-	virtual nframes_t get_length() = 0;
-	virtual int get_rate() = 0;
+	int get_num_channels();
+	nframes_t get_length();
+	int get_file_rate();
+	bool eof();
+	nframes_t pos();
+	
 	nframes_t read_from(audio_sample_t** buffer, nframes_t start, nframes_t count);
 	bool seek(nframes_t start);
 	nframes_t read(audio_sample_t** buffer, nframes_t frameCount);
 	
 	static AbstractAudioReader* create_audio_reader(const QString& filename);
-	static AbstractAudioReader* create_resampled_audio_reader(const QString& filename, int converter_type);
-
+	
 protected:
 	virtual bool seek_private(nframes_t start) = 0;
 	virtual nframes_t read_private(audio_sample_t** buffer, nframes_t frameCount) = 0;
 	
 	QString		m_fileName;
 	QMutex		m_mutex;
-	nframes_t	m_readPos;
 
+	nframes_t	m_readPos;
+	nframes_t	m_channels;
+	nframes_t	m_length;
+	nframes_t	m_rate;
 };
 
 #endif

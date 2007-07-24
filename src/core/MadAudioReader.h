@@ -34,10 +34,6 @@ class MadAudioReader : public AbstractAudioReader
 public:
 	MadAudioReader(QString filename);
 	~MadAudioReader();
-
-	int get_num_channels();
-	nframes_t get_length();
-	int get_rate();
 	
 	static bool can_decode(QString filename);
 	
@@ -50,8 +46,6 @@ protected:
 	bool createPcmSamples(mad_synth* synth);
 	
 	static int	MaxAllowedRecoverableErrors;
-	nframes_t	m_frames;
-	int		m_channels;
 
 	class MadDecoderPrivate;
 	MadDecoderPrivate* d;

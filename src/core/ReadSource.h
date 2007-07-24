@@ -67,7 +67,10 @@ public :
 	void prepare_buffer();
 	size_t is_active() const;
 	BufferStatus* get_buffer_status();
-
+	
+public slots:
+	void output_rate_changed();
+	
 private:
 	QList<RingBufferNPT<float>*> m_buffers;
 	AbstractAudioReader*	m_audioReader;

@@ -484,11 +484,8 @@ MadAudioReader::MadAudioReader(QString filename)
 	d->handle = new K3bMad();
 	
 	initDecoderInternal();
-
-	m_channels = 0;
-	m_frames = countFrames();
 	
-	if (m_frames <= 0) {
+	if (m_length <= 0) {
 		d->handle->cleanup();
 		delete d->handle;
 		delete d;
@@ -504,7 +501,10 @@ MadAudioReader::MadAudioReader(QString filename)
 		case MAD_MODE_STEREO:
 			m_channels = 2;
 	}
-
+	
+	m_length = countFrames();
+	m_rate = d->firstHeader.samplerate;
+	
 	for (int c = 0; c < m_channels; c++) {
 		d->overflowBuffers.append(new audio_sample_t[1152]);
 	}
@@ -596,38 +596,11 @@ bool MadAudioReader::can_decode(QString filename)
 }
 
 
-int MadAudioReader::get_num_channels()
-{
-	if (d) {
-		return m_channels;
-	}
-	return 0;
-}
-
-
-nframes_t MadAudioReader::get_length()
-{
-	if (d) {
-		return m_frames;
-	}
-	return 0;
-}
-
-
-int MadAudioReader::get_rate()
-{
-	if (d) {
-		return d->firstHeader.samplerate;
-	}
-	return 0;
-}
-
-
 bool MadAudioReader::seek_private(nframes_t start)
 {
 	Q_ASSERT(d);
 	
-	if (start >= get_length()) {
+	if (start >= m_length) {
 		return false;
 	}
 	
@@ -644,11 +617,11 @@ bool MadAudioReader::seek_private(nframes_t start)
 	//
 	double mp3FrameSecs = static_cast<double>(d->firstHeader.duration.seconds) + static_cast<double>(d->firstHeader.duration.fraction) / static_cast<double>(MAD_TIMER_RESOLUTION);
 	
-	double posSecs = static_cast<double>(start) / get_rate();
+	double posSecs = static_cast<double>(start) / m_rate;
 	
 	// seekPosition to seek after frame i
 	unsigned int frame = static_cast<unsigned int>(posSecs / mp3FrameSecs);
-	nframes_t frameOffset = (nframes_t)(start - (frame * mp3FrameSecs * get_rate() + 0.5));
+	nframes_t frameOffset = (nframes_t)(start - (frame * mp3FrameSecs * m_rate + 0.5));
 	
 	// K3b source: Rob said: 29 frames is the theoretically max frame reservoir limit
 	// (whatever that means...) it seems that mad needs at most 29 frames to get ready
@@ -765,7 +738,7 @@ unsigned long MadAudioReader::countFrames()
 	}
 	
 	if (!d->handle->inputError() && !error) {
-		frames =  get_rate() * (d->handle->madTimer->seconds + (unsigned long)(
+		frames =  d->firstHeader.samplerate * (d->handle->madTimer->seconds + (unsigned long)(
 			(float)d->handle->madTimer->fraction/(float)MAD_TIMER_RESOLUTION));
 		//kdDebug() << "(K3bMadDecoder) length of track " << seconds << endl;
 	}
@@ -790,7 +763,7 @@ nframes_t MadAudioReader::read_private(audio_sample_t** buffer, nframes_t frameC
 	if (d->overflowSize > 0) {
 		if (d->overflowSize < frameCount) {
 			//printf("output all %d overflow samples\n", d->overflowSize);
-			for (int c = 0; c < get_num_channels(); c++) {
+			for (int c = 0; c < m_channels; c++) {
 				memcpy(d->outputBuffers[c], d->overflowBuffers[c] + d->overflowStart, d->overflowSize * sizeof(audio_sample_t));
 			}
 			d->outputPos += d->overflowSize;
@@ -799,7 +772,7 @@ nframes_t MadAudioReader::read_private(audio_sample_t** buffer, nframes_t frameC
 		}
 		else {
 			//printf("output %d overflow frames, returned from overflow\n", frameCount);
-			for (int c = 0; c < get_num_channels(); c++) {
+			for (int c = 0; c < m_channels; c++) {
 				memcpy(d->outputBuffers[c], d->overflowBuffers[c] + d->overflowStart, frameCount * sizeof(audio_sample_t));
 			}
 			d->overflowSize -= frameCount;
@@ -839,13 +812,13 @@ nframes_t MadAudioReader::read_private(audio_sample_t** buffer, nframes_t frameC
 	
 	// Pad end with zeros if necessary
 	// FIXME: This shouldn't be necessary!  :P
-	// is get_length() reporting incorrectly?
+	// is m_length reporting incorrectly?
 	// are we not outputting the last mp3-frame for some reason?
 	/*int remainingFramesRequested = frameCount - framesWritten;
-	int remainingFramesInFile = get_length() - (m_readPos + framesWritten);
+	int remainingFramesInFile = m_length - (m_readPos + framesWritten);
 	if (remainingFramesRequested > 0 && remainingFramesInFile > 0) {
 		int padLength = (remainingFramesRequested > remainingFramesInFile) ? remainingFramesInFile : remainingFramesRequested;
-		for (int c = 0; c < get_num_channels(); c++) {
+		for (int c = 0; c < m_channels; c++) {
 			//memset(d->outputBuffers[c] + framesWritten, 0, padLength * sizeof(audio_sample_t));
 		}
 		framesWritten += padLength;
@@ -853,12 +826,12 @@ nframes_t MadAudioReader::read_private(audio_sample_t** buffer, nframes_t frameC
 	}
 
 	// Truncate so we don't return too many frames
-	if (framesWritten + m_readPos > get_length()) {
-		printf("truncating by %d!\n", get_length() - (framesWritten + m_readPos));
-		framesWritten = get_length() - m_readPos;
+	if (framesWritten + m_readPos > m_length) {
+		printf("truncating by %d!\n", m_length - (framesWritten + m_readPos));
+		framesWritten = m_length - m_readPos;
 	}*/
 	
-	//printf("request: %d (returned: %d), now at: %lu (total: %lu)\n", frameCount, framesWritten, m_readPos + framesWritten, m_frames);
+	//printf("request: %d (returned: %d), now at: %lu (total: %lu)\n", frameCount, framesWritten, m_readPos + framesWritten, m_length);
 	
 	return framesWritten;
 }
@@ -872,9 +845,9 @@ bool MadAudioReader::createPcmSamples(mad_synth* synth)
 	bool		overflow = false;
 	int		i;
 	
-	if (writeBuffers && (m_readPos + d->outputPos + nframes) > get_length()) {
-		nframes = get_length() - (m_readPos + offset);
-		//printf("!!!nframes: %lu, length: %lu, current: %lu\n", nframes, get_length(), d->outputPos + m_readPos);
+	if (writeBuffers && (m_readPos + d->outputPos + nframes) > m_length) {
+		nframes = m_length - (m_readPos + offset);
+		//printf("!!!nframes: %lu, length: %lu, current: %lu\n", nframes, m_length, d->outputPos + m_readPos);
 	}
 	
 	// now create the output
