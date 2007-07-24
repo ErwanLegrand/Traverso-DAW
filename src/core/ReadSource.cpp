@@ -174,9 +174,13 @@ int ReadSource::init( )
 		// There should be another config option for ConverterType to use for export (higher quality)
 		//converter_type = config().get_property("Conversion", "ExportResamplingConverterType", 0).toInt();
 		m_audioReader = new ResampleAudioReader(m_fileName, converter_type);
-		if (m_audioReader) {
+		if (m_audioReader->get_num_channels()) {
 			output_rate_changed();
 			connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(output_rate_changed()));
+		}
+		else {
+			delete m_audioReader;
+			m_audioReader = 0;
 		}
 	}
 	else {
