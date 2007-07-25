@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define ABSTRACTAUDIOREADER_H
 
 #include <QObject>
-#include <QMutex>
 
 #include "defines.h"
 
@@ -54,7 +53,6 @@ protected:
 	virtual nframes_t read_private(audio_sample_t** buffer, nframes_t frameCount) = 0;
 	
 	QString		m_fileName;
-	QMutex		m_mutex;
 
 	nframes_t	m_readPos;
 	nframes_t	m_channels;

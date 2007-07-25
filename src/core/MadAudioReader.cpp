@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QFile>
 #include <QString>
 #include <QVector>
-#include "Utils.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -143,7 +142,7 @@ bool K3bMad::open(const QString& filename)
 	m_inputFile.setFileName(filename);
 	
 	if (!m_inputFile.open(QIODevice::ReadOnly)) {
-		PERROR("could not open file %s", QS_C(m_inputFile.fileName()));
+		PERROR("could not open file %s", m_inputFile.fileName().toUtf8().data());
 		return false;
 	}
 	
@@ -251,7 +250,7 @@ bool K3bMad::skipTag()
 		
 		// skip the id3 tag
 		if (!m_inputFile.seek(offset)) {
-			PERROR("Couldn't seek to %u in %s", offset, QS_C(m_inputFile.fileName()));
+			PERROR("Couldn't seek to %u in %s", offset, m_inputFile.fileName().toUtf8().data());
 			return false;
 		}
 	}

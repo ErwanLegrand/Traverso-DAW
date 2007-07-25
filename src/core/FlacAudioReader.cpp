@@ -27,7 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "FlacAudioReader.h"
 #include <QFile>
 #include <QString>
-#include "Utils.h"
 
 #include "FLAC/export.h"
 
@@ -384,7 +383,7 @@ bool FlacAudioReader::can_decode(QString filename)
 	QFile f(filename);
 
 	if (!f.open(QIODevice::ReadOnly)) {
-		PERROR("Could not open file %s", QS_C(filename));
+		PERROR("Could not open file %s", filename.toUtf8().data());
 		return false;
 	}
 
@@ -441,7 +440,7 @@ bool FlacAudioReader::seek_private(nframes_t start)
 	Q_ASSERT(m_flac);
 	
 	if (start >= get_length()) {
-		PERROR("FlacAudioReader: could not seek to frame %d within %s, it's past the end.", start, QS_C(m_fileName));
+		PERROR("FlacAudioReader: could not seek to frame %d within %s, it's past the end.", start, m_fileName.toUtf8().data());
 		return false;
 	}
 	
@@ -451,7 +450,7 @@ bool FlacAudioReader::seek_private(nframes_t start)
 	m_flac->flush();
 	
 	if (!m_flac->seek(start)) {
-		PERROR("FlacAudioReader: could not seek to frame %d within %s", start, QS_C(m_fileName));
+		PERROR("FlacAudioReader: could not seek to frame %d within %s", start, m_fileName.toUtf8().data());
 		return false;
 	}
 	

@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "VorbisAudioReader.h"
 #include <QFile>
 #include <QString>
-#include "Utils.h"
 
 #ifdef _WIN32
 #include <io.h>
@@ -39,7 +38,7 @@ VorbisAudioReader::VorbisAudioReader(QString filename)
 {
 	m_file = fopen(filename.toUtf8().data(), "rb");
 	if (!m_file) {
-		PERROR("Couldn't open file %s.", QS_C(filename));
+		PERROR("Couldn't open file %s.", filename.toUtf8().data());
 		return;
 	}
 	
@@ -70,7 +69,7 @@ bool VorbisAudioReader::can_decode(QString filename)
 {
 	FILE* file = fopen(filename.toUtf8().data(), "rb");
 	if (!file) {
-		PERROR("Could not open file: %s.", QS_C(filename));
+		PERROR("Could not open file: %s.", filename.toUtf8().data());
 		return false;
 	}
 	
@@ -96,7 +95,7 @@ bool VorbisAudioReader::seek_private(nframes_t start)
 	}
 	
 	if (int result = ov_pcm_seek(&m_vf, start) < 0) {
-		PERROR("VorbisAudioReader: could not seek to frame %d within %s (%d)", start, QS_C(m_fileName), result);
+		PERROR("VorbisAudioReader: could not seek to frame %d within %s (%d)", start, m_fileName.toUtf8().data(), result);
 		return false;
 	}
 	

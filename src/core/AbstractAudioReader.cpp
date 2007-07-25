@@ -28,7 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ResampleAudioReader.h"
 
 #include <QString>
-#include <QMutexLocker>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -52,8 +51,6 @@ AbstractAudioReader::~AbstractAudioReader()
 // uses seek() and read() from AudioReader subclass
 nframes_t AbstractAudioReader::read_from(audio_sample_t** buffer, nframes_t start, nframes_t count)
 {
-	QMutexLocker locker( &m_mutex );
-	
 // 	printf("read_from:: before_seek from %d, framepos is %d\n", start, m_readPos);
 	
 	if (!seek(start)) {

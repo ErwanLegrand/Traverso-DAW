@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "WPAudioReader.h"
 #include <QString>
-#include "Utils.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -36,7 +35,7 @@ WPAudioReader::WPAudioReader(QString filename)
 	m_wp = WavpackOpenFileInput(m_fileName.toUtf8().data(), error, OPEN_2CH_MAX, 1);
 	
 	if (m_wp == 0) {
-		PERROR("Couldn't open soundfile (%s) %s", QS_C(m_fileName), error);
+		PERROR("Couldn't open soundfile (%s) %s", filename.toUtf8().data(), error);
 	}
 	
 	m_isFloat = ((WavpackGetMode(m_wp) & MODE_FLOAT) != 0);
@@ -88,7 +87,7 @@ bool WPAudioReader::seek_private(nframes_t start)
 	}
 	
 	if (!WavpackSeekSample(m_wp, start)) {
-		PERROR("could not seek to frame %d within %s", start, QS_C(m_fileName));
+		PERROR("could not seek to frame %d within %s", start, m_fileName.toUtf8().data());
 		return false;
 	}
 	

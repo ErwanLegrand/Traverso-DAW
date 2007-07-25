@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "SFAudioReader.h"
 #include <QFile>
 #include <QString>
-#include "Utils.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -38,8 +37,8 @@ SFAudioReader::SFAudioReader(QString filename)
 	*/
 	memset (&m_sfinfo, 0, sizeof(m_sfinfo));
 
-	if ((m_sf = sf_open ((m_fileName.toUtf8().data()), SFM_READ, &m_sfinfo)) == 0) {
-		PERROR("Couldn't open soundfile (%s)", QS_C(m_fileName));
+	if ((m_sf = sf_open (m_fileName.toUtf8().data(), SFM_READ, &m_sfinfo)) == 0) {
+		PERROR("Couldn't open soundfile (%s)", m_fileName.toUtf8().data());
 	}
 	
 	m_channels = m_sfinfo.channels;
@@ -100,7 +99,7 @@ bool SFAudioReader::seek_private(nframes_t start)
 	if (sf_seek (m_sf, (off_t) start, SEEK_SET) < 0) {
 		char errbuf[256];
 		sf_error_str (0, errbuf, sizeof (errbuf) - 1);
-		PERROR("ReadAudioSource: could not seek to frame %d within %s (%s)", start, QS_C(m_fileName), errbuf);
+		PERROR("ReadAudioSource: could not seek to frame %d within %s (%s)", start, m_fileName.toUtf8().data(), errbuf);
 		return false;
 	}
 	
