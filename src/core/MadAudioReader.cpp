@@ -485,14 +485,6 @@ MadAudioReader::MadAudioReader(QString filename)
 	
 	initDecoderInternal();
 	
-	if (m_length <= 0) {
-		d->handle->cleanup();
-		delete d->handle;
-		delete d;
-		d = 0;
-		return;
-	}
-	
 	switch( d->firstHeader.mode ) {
 		case MAD_MODE_SINGLE_CHANNEL:
 			m_channels = 1;
@@ -503,6 +495,15 @@ MadAudioReader::MadAudioReader(QString filename)
 	}
 	
 	m_length = countFrames();
+	
+	if (m_length <= 0) {
+		d->handle->cleanup();
+		delete d->handle;
+		delete d;
+		d = 0;
+		return;
+	}
+	
 	m_rate = d->firstHeader.samplerate;
 	
 	for (int c = 0; c < m_channels; c++) {
