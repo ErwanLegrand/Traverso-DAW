@@ -29,12 +29,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QString>
 #include "Utils.h"
 
-#include "FLAC++/decoder.h"
+#include "FLAC/export.h"
 
-#if !defined FLACPP_API_VERSION_CURRENT || FLACPP_API_VERSION_CURRENT < 6
+#if !defined FLAC_API_VERSION_CURRENT || FLAC_API_VERSION_CURRENT < 6
 #define LEGACY_FLAC
+#include "FLAC/seekable_stream_decoder.h"
 #else
 #undef LEGACY_FLAC
+#include "FLAC/stream_decoder.h"
 #endif
 
 
@@ -44,39 +46,108 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 class FlacPrivate
-#ifdef LEGACY_FLAC
-  : public FLAC::Decoder::SeekableStream
-#else
-  : public FLAC::Decoder::Stream
-#endif
 {
 	public:
-		FlacPrivate(QString filename);
-		~FlacPrivate();
+		FlacPrivate(QString filename)
+		{
+			internalBuffer = 0;
+			bufferSize = 0;
+			bufferUsed = 0;
+			bufferStart = 0;
+			open(filename);
+		}
 		
-		bool open(QString filename) {
+		
+		~FlacPrivate()
+		{
+			cleanup();
+		}
+		
+		
+		bool open(QString filename)
+		{
 			file = new QFile(filename);
 			if (!file->open(QIODevice::ReadOnly)) {
 				return false;
 			}
 			
-			init();
-			process_until_end_of_metadata();
+#ifdef LEGACY_FLAC
+			flac = FLAC__seekable_stream_decoder_new();
+			
+			FLAC__seekable_stream_decoder_set_read_callback(flac, FlacPrivate::read_callback);
+			FLAC__seekable_stream_decoder_set_seek_callback(flac, FlacPrivate::seek_callback);
+			FLAC__seekable_stream_decoder_set_tell_callback(flac, FlacPrivate::tell_callback);
+			FLAC__seekable_stream_decoder_set_length_callback(flac, FlacPrivate::length_callback);
+			FLAC__seekable_stream_decoder_set_eof_callback(flac, FlacPrivate::eof_callback);
+			FLAC__seekable_stream_decoder_set_write_callback(flac, FlacPrivate::write_callback);
+			FLAC__seekable_stream_decoder_set_metadata_callback(flac, FlacPrivate::metadata_callback);
+			FLAC__seekable_stream_decoder_set_error_callback(flac, FlacPrivate::error_callback);
+			FLAC__seekable_stream_decoder_set_client_data(flac, this);
+			
+			FLAC__seekable_stream_decoder_init(flac);
+			FLAC__seekable_stream_decoder_process_until_end_of_metadata(flac);
+#else
+			flac = FLAC__stream_decoder_new();
+			
+			FLAC__stream_decoder_init_stream(flac,
+				FlacPrivate::read_callback,
+				FlacPrivate::seek_callback,
+				FlacPrivate::tell_callback,
+				FlacPrivate::length_callback,
+				FlacPrivate::eof_callback,
+				FlacPrivate::write_callback,
+				FlacPrivate::metadata_callback,
+				FlacPrivate::error_callback,
+				this);
+			
+			FLAC__stream_decoder_process_until_end_of_metadata(flac);
+#endif
 			return true;
 		}
 		
-		void cleanup() {
+		
+		bool is_valid() { return (flac != 0); }
+#ifdef LEGACY_FLAC
+		bool flush() { return FLAC__seekable_stream_decoder_flush(flac); }
+		bool finish() { return FLAC__seekable_stream_decoder_finish(flac); }
+		bool reset() { return FLAC__seekable_stream_decoder_reset(flac); }
+		bool process_single() { return FLAC__seekable_stream_decoder_process_single(flac); }
+		FLAC__SeekableStreamDecoderState get_state() { return FLAC__seekable_stream_decoder_get_state(flac); }
+#else
+		bool flush() { return FLAC__stream_decoder_flush(flac); }
+		bool finish() { return FLAC__stream_decoder_finish(flac); }
+		bool reset() { return FLAC__stream_decoder_reset(flac); }
+		bool process_single() { return FLAC__stream_decoder_process_single(flac); }
+		FLAC__StreamDecoderState get_state() { return FLAC__stream_decoder_get_state(flac); }
+#endif
+		
+		
+		void cleanup()
+		{
 			if (internalBuffer) {
 				delete internalBuffer;
 			}
 			file->close();
 			delete file;
+			
 			finish();
+			
+#ifdef LEGACY_FLAC
+			FLAC__seekable_stream_decoder_delete(flac);
+#else
+			FLAC__stream_decoder_delete(flac);
+#endif
 		}
 		
 		
-		bool seek(nframes_t start);
-		int read(audio_sample_t* dst, int sampleCount);
+		bool seek(nframes_t start)
+		{
+#ifdef LEGACY_FLAC
+			return FLAC__seekable_stream_decoder_seek_absolute(flac, start);
+#else
+			return FLAC__stream_decoder_seek_absolute(flac, start);
+#endif
+		}
 		
 		uint m_channels;
 		uint m_rate;
@@ -90,172 +161,193 @@ class FlacPrivate
 		
 	protected:
 #ifdef LEGACY_FLAC
-		virtual FLAC__SeekableStreamDecoderReadStatus read_callback(FLAC__byte buffer[], unsigned *bytes);
-		virtual FLAC__SeekableStreamDecoderSeekStatus seek_callback(FLAC__uint64 absolute_byte_offset);
-		virtual FLAC__SeekableStreamDecoderTellStatus tell_callback(FLAC__uint64 *absolute_byte_offset);
-		virtual FLAC__SeekableStreamDecoderLengthStatus length_callback(FLAC__uint64 *stream_length);
+		static FLAC__SeekableStreamDecoderReadStatus read_callback(const FLAC__SeekableStreamDecoder *decoder, FLAC__byte buffer[], unsigned *bytes, void *client_data);
+		static FLAC__SeekableStreamDecoderSeekStatus seek_callback(const FLAC__SeekableStreamDecoder *decoder, FLAC__uint64 absolute_byte_offset, void *client_data);
+		static FLAC__SeekableStreamDecoderTellStatus tell_callback(const FLAC__SeekableStreamDecoder *decoder, FLAC__uint64 *absolute_byte_offset, void *client_data);
+		static FLAC__SeekableStreamDecoderLengthStatus length_callback(const FLAC__SeekableStreamDecoder *decoder, FLAC__uint64 *stream_length, void *client_data);
+		static FLAC__bool eof_callback(const FLAC__SeekableStreamDecoder *decoder, void *client_data);
+		static void error_callback(const FLAC__SeekableStreamDecoder *decoder, FLAC__StreamDecoderErrorStatus s, void *client_data){ printf("!!! %d !!!\n", s); };
+		static void metadata_callback(const FLAC__SeekableStreamDecoder *decoder, const ::FLAC__StreamMetadata *metadata, void *client_data);
+		static FLAC__StreamDecoderWriteStatus write_callback(const FLAC__SeekableStreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const buffer[], void *client_data);
 #else
-		virtual FLAC__StreamDecoderReadStatus read_callback(FLAC__byte buffer[], size_t *bytes);
-		virtual FLAC__StreamDecoderSeekStatus seek_callback(FLAC__uint64 absolute_byte_offset);
-		virtual FLAC__StreamDecoderTellStatus tell_callback(FLAC__uint64 *absolute_byte_offset);
-		virtual FLAC__StreamDecoderLengthStatus length_callback(FLAC__uint64 *stream_length);
+		static FLAC__StreamDecoderReadStatus read_callback(const FLAC__StreamDecoder *decoder, FLAC__byte buffer[], size_t *bytes, void *client_data);
+		static FLAC__StreamDecoderSeekStatus seek_callback(const FLAC__StreamDecoder *decoder, FLAC__uint64 absolute_byte_offset, void *client_data);
+		static FLAC__StreamDecoderTellStatus tell_callback(const FLAC__StreamDecoder *decoder, FLAC__uint64 *absolute_byte_offset, void *client_data);
+		static FLAC__StreamDecoderLengthStatus length_callback(const FLAC__StreamDecoder *decoder, FLAC__uint64 *stream_length, void *client_data);
+		static FLAC__bool eof_callback(const FLAC__StreamDecoder *decoder, void *client_data);
+		static void error_callback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorStatus s, void *client_data){ printf("!!! %d !!!\n", s); };
+		static void metadata_callback(const FLAC__StreamDecoder *decoder, const ::FLAC__StreamMetadata *metadata, void *client_data);
+		static FLAC__StreamDecoderWriteStatus write_callback(const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const buffer[], void *client_data);
 #endif
-		virtual bool eof_callback();
-		virtual void error_callback(FLAC__StreamDecoderErrorStatus s){ printf("!!! %d !!!\n", s); };
-		virtual void metadata_callback(const ::FLAC__StreamMetadata *metadata);
-		virtual ::FLAC__StreamDecoderWriteStatus write_callback(const ::FLAC__Frame *frame, const FLAC__int32 * const buffer[]);
 		
 		QFile		*file;
+#ifdef LEGACY_FLAC
+		FLAC__SeekableStreamDecoder	*flac;
+#else
+		FLAC__StreamDecoder	*flac;
+#endif
 };
 
 
-FlacPrivate::FlacPrivate(QString filename)
 #ifdef LEGACY_FLAC
-			: FLAC::Decoder::SeekableStream()
+FLAC__StreamDecoderWriteStatus FlacPrivate::write_callback(const FLAC__SeekableStreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const buffer[], void *client_data)
 #else
-			: FLAC::Decoder::Stream()
+FLAC__StreamDecoderWriteStatus FlacPrivate::write_callback(const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const buffer[], void *client_data)
 #endif
 {
-	internalBuffer = 0;
-	bufferSize = 0;
-	bufferUsed = 0;
-	bufferStart = 0;
-	open(filename);
-	process_until_end_of_metadata();
-}
-
-
-FlacPrivate::~FlacPrivate()
-{
-	cleanup();
-}
-
-
-bool FlacPrivate::seek(nframes_t start)
-{
-	return seek_absolute(start);
-}
-
-
-FLAC__StreamDecoderWriteStatus FlacPrivate::write_callback(const FLAC__Frame *frame, const FLAC__int32 * const buffer[]) {
-	unsigned i, c, pos = 0;
-	unsigned frames = frame->header.blocksize;
+	FlacPrivate *fp = (FlacPrivate*)client_data;
 	
-	if (bufferUsed > 0) {
+	unsigned i, c, pos = 0;
+	int frames = frame->header.blocksize;
+	
+	if (fp->bufferUsed > 0) {
 		// This shouldn't be happening
 		PERROR("internalBuffer is already non-empty");
 	}
 	
-	if (bufferSize < frames * frame->header.channels) {
-		if (internalBuffer) {
-			delete internalBuffer;
+	if (fp->bufferSize < frames * frame->header.channels) {
+		if (fp->internalBuffer) {
+			delete fp->internalBuffer;
 		}
-		internalBuffer = new audio_sample_t[frames * frame->header.channels];
-		bufferSize = frames * frame->header.channels;
+		fp->internalBuffer = new audio_sample_t[frames * frame->header.channels];
+		fp->bufferSize = frames * frame->header.channels;
 	}
 	
 	for (i=0; i < frames; i++) {
 		// in FLAC channel 0 is left, 1 is right
 		for (c=0; c < frame->header.channels; c++) {
 			audio_sample_t value = (audio_sample_t)((float)buffer[c][i] / (float)((uint)1<<(frame->header.bits_per_sample-1)));
-			internalBuffer[pos++] = value;
+			fp->internalBuffer[pos++] = value;
 		}
 	}
 	
-	bufferUsed = frames * frame->header.channels;
+	fp->bufferUsed = frames * frame->header.channels;
 	
 	return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
 
 
 #ifdef LEGACY_FLAC
-FLAC__SeekableStreamDecoderReadStatus FlacPrivate::read_callback(FLAC__byte buffer[],                                                                             unsigned *bytes) {
-  long retval =  file->read((char *)buffer, (*bytes));
-  if(-1 == retval) {
-    return FLAC__SEEKABLE_STREAM_DECODER_READ_STATUS_ERROR;
-  } else {
-    (*bytes) = retval;
-    return FLAC__SEEKABLE_STREAM_DECODER_READ_STATUS_OK;
-  }
+FLAC__SeekableStreamDecoderReadStatus FlacPrivate::read_callback(const FLAC__SeekableStreamDecoder *decoder, FLAC__byte buffer[], unsigned *bytes, void *client_data)
+{
+	FlacPrivate *fp = (FlacPrivate*)client_data;
+	
+	long retval =  fp->file->read((char *)buffer, (*bytes));
+	if(retval == -1) {
+		return FLAC__SEEKABLE_STREAM_DECODER_READ_STATUS_ERROR;
+	} else {
+		(*bytes) = retval;
+		return FLAC__SEEKABLE_STREAM_DECODER_READ_STATUS_OK;
+	}
 }
 #else
-FLAC__StreamDecoderReadStatus FlacPrivate::read_callback(FLAC__byte buffer[],                                                                             size_t *bytes) {
-  long retval =  file->read((char *)buffer, (*bytes));
-  if(-1 == retval) {
-    return FLAC__STREAM_DECODER_READ_STATUS_ABORT;
-  } else {
-    (*bytes) = retval;
-    return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
-  }
+FLAC__StreamDecoderReadStatus FlacPrivate::read_callback(const FLAC__StreamDecoder *decoder, FLAC__byte buffer[], size_t *bytes, void *client_data)
+{
+	FlacPrivate *fp = (FlacPrivate*)client_data;
+	
+	long retval =  fp->file->read((char *)buffer, (*bytes));
+	if(retval == -1) {
+		return FLAC__STREAM_DECODER_READ_STATUS_ABORT;
+	} else {
+		(*bytes) = retval;
+		return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
+	}
 }
 #endif
 
 #ifdef LEGACY_FLAC
-FLAC__SeekableStreamDecoderSeekStatus 
-FlacPrivate::seek_callback(FLAC__uint64 absolute_byte_offset) {
-  if(!file->seek(absolute_byte_offset))
-    return FLAC__SEEKABLE_STREAM_DECODER_SEEK_STATUS_ERROR;
-  else
-    return FLAC__SEEKABLE_STREAM_DECODER_SEEK_STATUS_OK;
+FLAC__SeekableStreamDecoderSeekStatus FlacPrivate::seek_callback(const FLAC__SeekableStreamDecoder *decoder, FLAC__uint64 absolute_byte_offset, void *client_data)
+{
+	FlacPrivate *fp = (FlacPrivate*)client_data;
+	
+	if(!fp->file->seek(absolute_byte_offset))
+		return FLAC__SEEKABLE_STREAM_DECODER_SEEK_STATUS_ERROR;
+	else
+		return FLAC__SEEKABLE_STREAM_DECODER_SEEK_STATUS_OK;
 }
 #else
-FLAC__StreamDecoderSeekStatus 
-FlacPrivate::seek_callback(FLAC__uint64 absolute_byte_offset) {
-  if(file->seek(absolute_byte_offset) == FALSE)
-    return FLAC__STREAM_DECODER_SEEK_STATUS_ERROR;
-  else
-    return FLAC__STREAM_DECODER_SEEK_STATUS_OK;
+FLAC__StreamDecoderSeekStatus FlacPrivate::seek_callback(const FLAC__StreamDecoder *decoder, FLAC__uint64 absolute_byte_offset, void *client_data)
+{
+	FlacPrivate *fp = (FlacPrivate*)client_data;
+	
+	if(!fp->file->seek(absolute_byte_offset))
+		return FLAC__STREAM_DECODER_SEEK_STATUS_ERROR;
+	else
+		return FLAC__STREAM_DECODER_SEEK_STATUS_OK;
 }
 #endif
 
 #ifdef LEGACY_FLAC
-FLAC__SeekableStreamDecoderTellStatus 
-FlacPrivate::tell_callback(FLAC__uint64 *absolute_byte_offset) {
-  (*absolute_byte_offset) = file->pos();
-  return FLAC__SEEKABLE_STREAM_DECODER_TELL_STATUS_OK;
+FLAC__SeekableStreamDecoderTellStatus FlacPrivate::tell_callback(const FLAC__SeekableStreamDecoder *decoder, FLAC__uint64 *absolute_byte_offset, void *client_data)
+{
+	FlacPrivate *fp = (FlacPrivate*)client_data;
+	
+	(*absolute_byte_offset) = fp->file->pos();
+	return FLAC__SEEKABLE_STREAM_DECODER_TELL_STATUS_OK;
 }
 #else
-FLAC__StreamDecoderTellStatus 
-FlacPrivate::tell_callback(FLAC__uint64 *absolute_byte_offset) {
-  (*absolute_byte_offset) = file->pos();
-  return FLAC__STREAM_DECODER_TELL_STATUS_OK;
+FLAC__StreamDecoderTellStatus FlacPrivate::tell_callback(const FLAC__StreamDecoder *decoder, FLAC__uint64 *absolute_byte_offset, void *client_data)
+{
+	FlacPrivate *fp = (FlacPrivate*)client_data;
+	
+	(*absolute_byte_offset) = fp->file->pos();
+	return FLAC__STREAM_DECODER_TELL_STATUS_OK;
 }
 #endif
 
 #ifdef LEGACY_FLAC
-FLAC__SeekableStreamDecoderLengthStatus 
-FlacPrivate::length_callback(FLAC__uint64 *stream_length) {
-  (*stream_length) = file->size();
-  return FLAC__SEEKABLE_STREAM_DECODER_LENGTH_STATUS_OK;
+FLAC__SeekableStreamDecoderLengthStatus FlacPrivate::length_callback(const FLAC__SeekableStreamDecoder *decoder, FLAC__uint64 *stream_length, void *client_data)
+{
+	FlacPrivate *fp = (FlacPrivate*)client_data;
+	
+	(*stream_length) = fp->file->size();
+	return FLAC__SEEKABLE_STREAM_DECODER_LENGTH_STATUS_OK;
 }
 #else
-FLAC__StreamDecoderLengthStatus 
-FlacPrivate::length_callback(FLAC__uint64 *stream_length) {
-  (*stream_length) = file->size();
-  return FLAC__STREAM_DECODER_LENGTH_STATUS_OK;
+FLAC__StreamDecoderLengthStatus FlacPrivate::length_callback(const FLAC__StreamDecoder *decoder, FLAC__uint64 *stream_length, void *client_data)
+{
+	FlacPrivate *fp = (FlacPrivate*)client_data;
+	
+	(*stream_length) = fp->file->size();
+	return FLAC__STREAM_DECODER_LENGTH_STATUS_OK;
 }
 #endif
 
 
-void FlacPrivate::metadata_callback(const FLAC__StreamMetadata *metadata) {
-  switch (metadata->type) {
-  case FLAC__METADATA_TYPE_STREAMINFO:
-    m_channels = metadata->data.stream_info.channels;
-    m_rate = metadata->data.stream_info.sample_rate;
-    m_bitsPerSample = metadata->data.stream_info.bits_per_sample;
-    m_samples = metadata->data.stream_info.total_samples;
-    break;
-  case FLAC__METADATA_TYPE_VORBIS_COMMENT:
-    //comments = new FLAC::Metadata::VorbisComment((FLAC__StreamMetadata *)metadata, true);
-    break;
-  default:
-    break;
-  }
+#ifdef LEGACY_FLAC
+void FlacPrivate::metadata_callback(const FLAC__SeekableStreamDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data)
+#else
+void FlacPrivate::metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data)
+#endif
+{
+	FlacPrivate *fp = (FlacPrivate*)client_data;
+	
+	switch (metadata->type)
+	{
+		case FLAC__METADATA_TYPE_STREAMINFO:
+			fp->m_channels = metadata->data.stream_info.channels;
+			fp->m_rate = metadata->data.stream_info.sample_rate;
+			fp->m_bitsPerSample = metadata->data.stream_info.bits_per_sample;
+			fp->m_samples = metadata->data.stream_info.total_samples;
+			break;
+		case FLAC__METADATA_TYPE_VORBIS_COMMENT:
+			//comments = new FLAC::Metadata::VorbisComment((FLAC__StreamMetadata *)metadata, true);
+			break;
+		default:
+			break;
+	}
 }
 
 
-bool FlacPrivate::eof_callback() {
-  return file->atEnd();
+#ifdef LEGACY_FLAC
+FLAC__bool FlacPrivate::eof_callback(const FLAC__SeekableStreamDecoder *decoder, void *client_data)
+#else
+FLAC__bool FlacPrivate::eof_callback(const FLAC__StreamDecoder *decoder, void *client_data)
+#endif
+{
+	FlacPrivate *fp = (FlacPrivate*)client_data;
+	
+	return fp->file->atEnd();
 }
 
 
@@ -277,7 +369,7 @@ FlacAudioReader::FlacAudioReader(QString filename)
 FlacAudioReader::~FlacAudioReader()
 {
 	if (m_flac) {
-		m_flac->finish();
+		delete m_flac;
 	}
 }
 
@@ -336,6 +428,7 @@ bool FlacAudioReader::can_decode(QString filename)
 	FlacPrivate flac(filename);
 	
 	bool valid = flac.is_valid();
+	
 	flac.finish();
 	
 	//PERROR("Return: Is%s a flac file: %s", ((valid) ? "" : " not"), QS_C(filename));
@@ -380,11 +473,12 @@ nframes_t FlacAudioReader::read_private(audio_sample_t** buffer, nframes_t frame
 #ifdef LEGACY_FLAC
 			if (m_flac->get_state() == FLAC__SEEKABLE_STREAM_DECODER_END_OF_STREAM) {
 				//printf("flac file finish\n");
+				m_flac->flush();
 				m_flac->reset();
 				break;
 			}
 			else if(m_flac->get_state() == FLAC__SEEKABLE_STREAM_DECODER_OK) {
-				//printf("process1\n");
+				//printf("process\n");
 				if (!m_flac->process_single()) {
 					PERROR("process_single() error\n");
 					m_flac->reset();
@@ -401,10 +495,12 @@ nframes_t FlacAudioReader::read_private(audio_sample_t** buffer, nframes_t frame
 #else
 			if (m_flac->get_state() == FLAC__STREAM_DECODER_END_OF_STREAM) {
 				//printf("flac file finish\n");
+				m_flac->flush();
 				m_flac->reset();
 				break;
 			}
 			else if(m_flac->get_state() < FLAC__STREAM_DECODER_END_OF_STREAM) {
+				//printf("process\n");
 				if (!m_flac->process_single()) {
 					PERROR("process_single() error\n");
 					m_flac->reset();
@@ -470,7 +566,7 @@ nframes_t FlacAudioReader::read_private(audio_sample_t** buffer, nframes_t frame
 		framesCoppied = frameCount;
 	}*/
 	
-	//printf("copied %d of %d.  nextFrame: %lu of %lu\n", samplesCoppied, sampleCount, m_readPos, get_length());
+	//printf("copied %d of %d.  nextFrame: %lu of %lu\n", framesCoppied, frameCount, m_readPos, m_length); fflush(stdout);
 	
 	return framesCoppied;
 }

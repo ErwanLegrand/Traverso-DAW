@@ -24,7 +24,7 @@ LIBS +=  \
 	-lvorbisfile \
 	-lmad \
 	-lwavpack \
-	-lFLAC++ \
+	-lFLAC \
 	-lfftw3 \
 
 HEADERS += \
