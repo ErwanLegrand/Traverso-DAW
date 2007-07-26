@@ -80,6 +80,7 @@ private:
 	trav_time_t		cycleStartTime;
 	trav_time_t		lastCpuReadTime;
 	bool			m_seeking;
+	bool			m_sampleRateChanged;
 	int			m_hardDiskOverLoadCounter;
 	audio_sample_t*		framebuffer[2];
 	audio_sample_t*		m_readbuffer;
@@ -96,6 +97,7 @@ public slots:
 	void seek(uint position);
 	void start_io();
 	void stop_io();
+	void output_rate_changed();
 	
 private slots:
 	void do_work();

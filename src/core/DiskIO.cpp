@@ -144,7 +144,7 @@ DiskIO::DiskIO(Song* song)
 	m_diskThread = new DiskIOThread(this);
 	cpuTimeBuffer = new RingBuffer(128);
 	lastCpuReadTime = get_microseconds();
-	m_stopWork = m_seeking = 0;
+	m_stopWork = m_seeking = m_sampleRateChanged = 0;
 	m_readBufferFillStatus = 0;
 	m_hardDiskOverLoadCounter = 0;
 	
@@ -159,6 +159,7 @@ DiskIO::DiskIO(Song* song)
 	m_workTimer.moveToThread(m_diskThread);
 
 	connect(&m_workTimer, SIGNAL(timeout()), this, SLOT(do_work()));
+	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(output_rate_changed()));
 	
 	m_diskThread->start();
 }
@@ -191,8 +192,13 @@ void DiskIO::seek( nframes_t position )
 	m_seeking = true;
 
 	foreach(ReadSource* source, m_readSources) {
+		if (m_sampleRateChanged) {
+			source->output_rate_changed();
+		}
 		source->rb_seek_to_file_position(position);
 	}
+	
+	m_sampleRateChanged = false;
 	
 	mutex.unlock();
 
@@ -202,6 +208,12 @@ void DiskIO::seek( nframes_t position )
 	m_seeking = false;
 
 	emit seekFinished();
+}
+
+
+void DiskIO::output_rate_changed()
+{
+	m_sampleRateChanged = true;
 }
 
 

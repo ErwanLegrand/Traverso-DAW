@@ -176,7 +176,6 @@ int ReadSource::init( )
 		m_audioReader = new ResampleAudioReader(m_fileName, converter_type);
 		if (m_audioReader->get_num_channels()) {
 			output_rate_changed();
-			connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(output_rate_changed()));
 		}
 		else {
 			delete m_audioReader;
