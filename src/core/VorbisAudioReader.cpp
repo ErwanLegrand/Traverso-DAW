@@ -112,7 +112,7 @@ nframes_t VorbisAudioReader::read_private(audio_sample_t** buffer, nframes_t fra
 	while (totalFramesRead < frameCount) {
 		audio_sample_t** tmp;
 		int bs;
-		nframes_t framesRead = ov_read_float(&m_vf, &tmp, frameCount - totalFramesRead, &bs);
+		int framesRead = ov_read_float(&m_vf, &tmp, frameCount - totalFramesRead, &bs);
 		
 		if (framesRead == OV_HOLE) {
 			// Hole detected: recursive retry
