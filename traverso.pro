@@ -9,6 +9,7 @@ TEMPLATE = subdirs
 SUBDIRS += src/engine \
 	   src/commands \
            src/core \
+           src/audiofileio \
            src/plugins \
            src/traverso/songcanvas \
 	   src/commands/plugins/TraversoCommands \

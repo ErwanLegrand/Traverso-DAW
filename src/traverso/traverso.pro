@@ -16,6 +16,7 @@ contains(DEFINES, STATIC_BUILD){
 LIBS +=  \
 	-ltraversosongcanvas \
 	-ltraversocore \
+	-ltraversoaudiofileio \
 	-ltraversocommands \
 	-ltraversoaudiobackend \
 	-ltraversoplugins \
@@ -25,7 +26,7 @@ LIBS +=  \
 	-lmad \
 	-lwavpack \
 	-lFLAC \
-	-lfftw3 \
+	-lfftw3
 
 HEADERS += \
 	BusMonitor.h \
@@ -114,6 +115,8 @@ FORMS += ui/ExportWidget.ui \
 INCLUDEPATH += 	../core \
 		../commands \
 		../engine \
+		../audiofileio/decode \
+		../audiofileio/encode \
 		../plugins \
 		../plugins/LV2 \
 		../plugins/native \

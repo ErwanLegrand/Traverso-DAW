@@ -7,6 +7,8 @@ LIBS += -ltraversocommands \
 
 INCLUDEPATH += ../commands \
 	../engine \
+	../audiofileio/decode \
+	../audiofileio/encode \
 	../plugins \
 	../plugins/native
 
@@ -49,14 +51,7 @@ SOURCES = AudioClip.cpp \
 	Snappable.cpp \
 	TimeLine.cpp \
 	Marker.cpp \
-	Themer.cpp \
-	AbstractAudioReader.cpp \
-	SFAudioReader.cpp \
-	FlacAudioReader.cpp \
-	ResampleAudioReader.cpp \
-	VorbisAudioReader.cpp \
-	WPAudioReader.cpp \
-	MadAudioReader.cpp
+	Themer.cpp
 HEADERS = precompile.h \
 	AudioClip.h \
 	AudioClipList.h \
@@ -99,14 +94,7 @@ HEADERS = precompile.h \
 	CommandPlugin.h \
 	TimeLine.h \
 	Marker.h \
-	Themer.h \
-	AbstractAudioReader.h \
-	SFAudioReader.h \
-	FlacAudioReader.h \
-	ResampleAudioReader.h \
-	VorbisAudioReader.h \
-	WPAudioReader.h \
-	MadAudioReader.h
+	Themer.h
 macx{
     QMAKE_LIBDIR += /usr/local/qt/lib
 }
@@ -114,7 +102,3 @@ macx{
 win32{
     INCLUDEPATH += ../../3thparty/include .
 }
-SOURCES -= MonoReader.cpp
-
-HEADERS -= MonoReader.h
-
