@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.23 2007/06/30 16:19:10 n_doebelin Exp $
+$Id: FadeCurve.cpp,v 1.24 2007/08/02 22:01:36 benjie Exp $
 */
  
 #include "FadeCurve.h"
@@ -154,6 +154,8 @@ int FadeCurve::set_state( const QDomNode & node )
 	set_range(range);
 	
 	solve_node_positions();	
+	
+	emit stateChanged();
 	
 	return 1;
 }

@@ -117,6 +117,7 @@ void ReadSource::private_init()
 	m_error = 0;
 	m_clip = 0;
 	m_audioReader = 0;
+	m_bufferstatus = 0;
 }
 
 
@@ -131,7 +132,9 @@ ReadSource::~ReadSource()
 		delete m_audioReader;
 	}
 	
-	delete m_bufferstatus;
+	if (m_bufferstatus) {
+		delete m_bufferstatus;
+	}
 }
 
 

@@ -148,20 +148,26 @@ int AudioClip::set_state(const QDomNode& node)
 	sourceEndFrame = sourceStartFrame + m_length;
 	set_track_start_frame( e.attribute( "trackstart", "" ).toUInt());
 	
+	emit stateChanged();
+	
 	QDomElement fadeInNode = node.firstChildElement("FadeIn");
 	if (!fadeInNode.isNull()) {
-		fadeIn = new FadeCurve(this, m_song, "FadeIn");
+		if (!fadeIn) {
+			fadeIn = new FadeCurve(this, m_song, "FadeIn");
+			fadeIn->set_history_stack(get_history_stack());
+			private_add_fade(fadeIn);
+		}
 		fadeIn->set_state( fadeInNode );
-		fadeIn->set_history_stack(get_history_stack());
-		private_add_fade(fadeIn);
 	}
 
 	QDomElement fadeOutNode = node.firstChildElement("FadeOut");
 	if (!fadeOutNode.isNull()) {
-		fadeOut = new FadeCurve(this, m_song, "FadeOut");
+		if (!fadeOut) {
+			fadeOut = new FadeCurve(this, m_song, "FadeOut");
+			fadeOut->set_history_stack(get_history_stack());
+			private_add_fade(fadeOut);
+		}
 		fadeOut->set_state( fadeOutNode );
-		fadeOut->set_history_stack(get_history_stack());
-		private_add_fade(fadeOut);
 	}
 
 	QDomNode pluginChainNode = node.firstChildElement("PluginChain");
