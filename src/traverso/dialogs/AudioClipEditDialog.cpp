@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AudioClipEditDialog.h"
 
 #include <QWidget>
+#include <QDomDocument>
+#include <QDomElement>
 #include "ui_AudioClipEditWidget.h"
 
 #include "AudioClip.h"
@@ -48,7 +50,11 @@ public:
 		setupUi(this);
 
 		locked = false;
-
+		
+		// Used for cancelling the changes on Cancel button activated
+		QDomDocument tempDoc;
+		m_origState = clip->get_state(tempDoc);
+		
 		clipStartEdit->setDisplayFormat(TIME_FORMAT);
 		clipLengthEdit->setDisplayFormat(TIME_FORMAT);
 		fadeInEdit->setDisplayFormat(TIME_FORMAT);
@@ -96,12 +102,14 @@ public:
 		
 		connect(externalProcessingButton, SIGNAL(clicked()), this, SLOT(external_processing()));
 		connect(buttonBox, SIGNAL(accepted()), this, SLOT(save_changes()));
+		connect(buttonBox, SIGNAL(rejected()), this, SLOT(cancel_changes()));
 	}
 	
 	~AudioClipEditWidget() {}
 	
 private:
 	AudioClip* m_clip;
+	QDomNode m_origState;
 	friend class AudioClipEditDialog;
 	
 	nframes_t qtime_to_nframes(const QTime& time, uint rate);
@@ -112,6 +120,7 @@ private slots:
 	void external_processing();
 	void clip_state_changed();
 	void save_changes();
+	void cancel_changes();
 	void clip_position_changed();
 	void gain_spinbox_value_changed(double value);
 
@@ -184,6 +193,13 @@ void AudioClipEditWidget::save_changes()
 	} else {
 		clipNameLineEdit->setText(m_clip->get_name());
 	}		
+}
+
+void AudioClipEditWidget::cancel_changes()
+{
+	parentWidget()->hide();
+	m_clip->set_state(m_origState);
+	
 }
 
 void AudioClipEditWidget::gain_spinbox_value_changed(double value)
