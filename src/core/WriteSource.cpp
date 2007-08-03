@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <math.h>
 
 #include <AudioDevice.h>
+#include <AbstractAudioWriter.h>
+#include <SFAudioWriter.h>
 #include "Peak.h"
 #include "Utils.h"
 #include "DiskIO.h"
@@ -40,6 +42,7 @@ WriteSource::WriteSource( ExportSpecification * specification )
 {
 	diskio = 0;
 	m_buffer = 0;
+	m_writer = 0;
 	prepare_export();
 }
 
@@ -50,6 +53,7 @@ WriteSource::WriteSource( ExportSpecification * specification, int channelNumber
 {
 	diskio = 0;
 	m_buffer = 0;
+	m_writer = 0;
 	m_channelCount = superChannelCount;
 	prepare_export();
 }
@@ -68,6 +72,9 @@ WriteSource::~WriteSource()
 	if (m_spec->isRecording) {
 		delete m_spec;
 	}
+	if (m_writer) {
+		delete m_writer;
+	}
 }
 
 int WriteSource::process (nframes_t nframes)
@@ -76,8 +83,7 @@ int WriteSource::process (nframes_t nframes)
 	uint32_t chn;
 	uint32_t x;
 	uint32_t i;
-	sf_count_t written;
-	char errbuf[256];
+	nframes_t written;
 	nframes_t to_write = 0;
 	int cnt = 0;
 
@@ -209,33 +215,8 @@ int WriteSource::process (nframes_t nframes)
 		}
 
 		/* and export to disk */
-
-		switch (m_spec->data_width) {
-		case 8:
-			written = sf_write_raw (sf, (void*) output_data, to_write * channels);
-			break;
-
-		case 16:
-			written = sf_writef_short (sf, (short*) output_data, to_write);
-			break;
-
-		case 24:
-		case 32:
-			written = sf_writef_int (sf, (int*) output_data, to_write);
-			break;
-
-		default:
-			written = sf_writef_float (sf, float_buffer, to_write);
-			break;
-		}
-
-		if ((nframes_t) written != to_write) {
-			sf_error_str (sf, errbuf, sizeof (errbuf) - 1);
-			printf(("Export: could not write data to output file (%s)\n"), errbuf);
-			return -1;
-		}
-
-
+		written = m_writer->write(output_data, to_write);
+		
 	} while (leftover_frames >= nframes);
 
 	return 0;
@@ -247,7 +228,6 @@ int WriteSource::prepare_export()
 	
 	Q_ASSERT(m_spec->is_valid() == 1);
 	
-	char errbuf[256];
 	GDitherSize dither_size;
 
 	sample_rate = audiodevice().get_sample_rate();
@@ -279,32 +259,38 @@ int WriteSource::prepare_export()
 		break;
 	}
 
-	memset (&sfinfo, 0, sizeof(sfinfo));
-
-	sfinfo.format = m_spec->format;
-	sfinfo.samplerate = m_spec->sample_rate;
-	sfinfo.frames = m_spec->end_frame - m_spec->start_frame + 1;
-	sfinfo.channels = m_spec->channels;
-
-	if (sf_format_check(&sfinfo) == false) {
-		PWARN("sf_format_check returned false");
+	if (m_writer) {
+		delete m_writer;
 	}
-
-
-	/* XXX make sure we have enough disk space for the output */
-
+	
 	QString name = m_fileName;
 	if (m_spec->isRecording) {
 		name.append("-ch" + QByteArray::number(m_channelNumber) + ".wav");
 	}
 	
-	if ((sf = sf_open(name.toUtf8().data(), SFM_WRITE, &sfinfo)) == 0) {
-		sf_error_str (0, errbuf, sizeof (errbuf) - 1);
-		PWARN("Export: cannot open output file \"%s\" (%s)", QS_C(m_fileName), errbuf);
+	if (m_writer) {
+		delete m_writer;
+	}
+	
+	if (1) {
+		SFAudioWriter* sfWriter = new SFAudioWriter(name);
+		sfWriter->set_format(m_spec->format); // FIXME: keep SF_FORMAT within SFAudioWriter
+		m_writer = sfWriter;
+	}
+	else {
+		//WPAudioWriter* wpWriter = new WPAudioWriter(m_fileName);
+		//m_writer = wpWriter;
+	}
+	m_writer->set_rate(m_spec->sample_rate);
+	m_writer->set_bits_per_sample(m_spec->data_width);
+	m_writer->set_num_channels(m_spec->channels);
+	
+	/* XXX make sure we have enough disk space for the output */
+
+	if (m_writer->open() == false) {
 		return -1;
 	}
-
-
+	
 	if ((uint)m_spec->sample_rate != sample_rate) {
 		qDebug("Doing samplerate conversion");
 		int err;
@@ -360,11 +346,11 @@ int WriteSource::finish_export( )
 {
 	PENTER;
 
-	if (sf_close (sf)) {
-		qWarning("sf_close returned an error!");
+	if (m_writer) {
+		delete m_writer;
+		m_writer = 0;
 	}
-	sf = 0;
-
+	
 	if (dataF2)
 		delete dataF2;
 	if (leftoverF)

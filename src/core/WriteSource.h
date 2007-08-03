@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 struct ExportSpecification;
 class Peak;
 class DiskIO;
+class AbstractAudioWriter;
 
 /// WriteSource is an AudioSource only used for writing (recording, rendering) purposes
 class WriteSource : public AudioSource
@@ -63,11 +64,10 @@ public :
 
 private:
 	RingBufferNPT<audio_sample_t>*	m_buffer;
-	SNDFILE*	sf;
-	SF_INFO 	sfinfo;
-	DiskIO*		diskio;
-	ExportSpecification*	m_spec;
+	AbstractAudioWriter*		m_writer;
+	ExportSpecification*		m_spec;
 	
+	DiskIO*		diskio;
 	GDither         dither;
 	nframes_t       out_samples_max;
 	nframes_t       sample_rate;

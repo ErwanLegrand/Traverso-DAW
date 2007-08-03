@@ -1077,7 +1077,7 @@ Command * Song::set_recordable()
 		set_recording(false, false);
 	} else {
 		if (!any_track_armed()) {
-			info().critical(tr("No Tracks armed to record too!"));
+			info().critical(tr("No Tracks armed for recording!"));
 			return 0;
 		}
 		

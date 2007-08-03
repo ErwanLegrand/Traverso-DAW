@@ -16,14 +16,18 @@ SOURCES = decode/AbstractAudioReader.cpp \
 	decode/ResampleAudioReader.cpp \
 	decode/VorbisAudioReader.cpp \
 	decode/WPAudioReader.cpp \
-	decode/MadAudioReader.cpp
+	decode/MadAudioReader.cpp \
+	encode/AbstractAudioWriter.cpp \
+	encode/SFAudioWriter.cpp
 HEADERS = decode/AbstractAudioReader.h \
 	decode/SFAudioReader.h \
 	decode/FlacAudioReader.h \
 	decode/ResampleAudioReader.h \
 	decode/VorbisAudioReader.h \
 	decode/WPAudioReader.h \
-	decode/MadAudioReader.h
+	decode/MadAudioReader.h \
+	encode/AbstractAudioWriter.h \
+	encode/SFAudioWriter.h
 macx{
     QMAKE_LIBDIR += /usr/local/qt/lib
 }

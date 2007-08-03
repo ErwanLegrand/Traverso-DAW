@@ -188,5 +188,5 @@ contains(DEFINES, STATIC_BUILD){
 		POST_TARGETDEPS += ../3rdparty/slv2
 	}
 	
-	POST_TARGETDEPS += ../engine ../commands ../core ../plugins songcanvas
+	POST_TARGETDEPS += ../engine ../commands ../core ../audiofileio ../plugins songcanvas
 }
