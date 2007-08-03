@@ -33,17 +33,20 @@ class AbstractAudioWriter : public QObject
 	Q_OBJECT
 	
 public:
-	AbstractAudioWriter(const QString& filename);
+	AbstractAudioWriter();
 	~AbstractAudioWriter();
 	
 	void set_num_channels(int channels);
 	void set_bits_per_sample(int bits);
 	void set_rate(int rate);
+	virtual bool set_format_attribute(const QString& key, const QString& value) { return false; }
 	nframes_t pos();
 	
-	bool open();
+	bool open(const QString& filename);
 	nframes_t write(void* buffer, nframes_t frameCount);
 	void close();
+	
+	static AbstractAudioWriter* create_audio_writer(const QString& type);
 	
 protected:
 	virtual bool is_valid_format() = 0;

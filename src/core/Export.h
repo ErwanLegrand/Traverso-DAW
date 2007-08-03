@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Export.h,v 1.11 2007/05/25 23:37:24 benjie Exp $
+$Id: Export.h,v 1.12 2007/08/03 23:05:03 benjie Exp $
 */
 
 #ifndef EXPORT_H
@@ -25,8 +25,8 @@ $Id: Export.h,v 1.11 2007/05/25 23:37:24 benjie Exp $
 
 #include <QThread>
 #include <QString>
+#include <QMap>
 
-#include <sndfile.h>
 #include <samplerate.h>
 
 #include "defines.h"
@@ -55,12 +55,13 @@ struct ExportSpecification
 
 	/* used exclusively during export */
 
+	QString		writerType;
 	float*          dataF;
 	int		blocksize;
 	int	        data_width;
 
 	long      	total_frames;
-	int		format;
+	QMap<QString, QString>	extraFormat;
 	long      	pos;
 	QString		extension;
 

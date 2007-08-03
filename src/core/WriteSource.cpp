@@ -272,22 +272,19 @@ int WriteSource::prepare_export()
 		delete m_writer;
 	}
 	
-	if (1) {
-		SFAudioWriter* sfWriter = new SFAudioWriter(name);
-		sfWriter->set_format(m_spec->format); // FIXME: keep SF_FORMAT within SFAudioWriter
-		m_writer = sfWriter;
-	}
-	else {
-		//WPAudioWriter* wpWriter = new WPAudioWriter(m_fileName);
-		//m_writer = wpWriter;
-	}
+	m_writer = AbstractAudioWriter::create_audio_writer(m_spec->writerType);
 	m_writer->set_rate(m_spec->sample_rate);
 	m_writer->set_bits_per_sample(m_spec->data_width);
 	m_writer->set_num_channels(m_spec->channels);
 	
+	QString key;
+	foreach (key, m_spec->extraFormat.keys()) {
+		m_writer->set_format_attribute(key, m_spec->extraFormat[key]);
+	}
+	
 	/* XXX make sure we have enough disk space for the output */
 
-	if (m_writer->open() == false) {
+	if (m_writer->open(name) == false) {
 		return -1;
 	}
 	

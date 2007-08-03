@@ -34,18 +34,19 @@ class SFAudioWriter : public AbstractAudioWriter
 	Q_OBJECT
 	
 public:
-	SFAudioWriter(const QString& filename);
+	SFAudioWriter();
 	~SFAudioWriter();
 	
 	bool is_valid_format();
-	void set_format(int format);
+	bool set_format_attribute(const QString& key, const QString& value);
 	
 protected:
 	bool open_private();
 	nframes_t write_private(void* buffer, nframes_t frameCount);
 	void close_private();
+	int get_sf_format();
 	
-	int		m_format;	
+	int		m_fileType;	
 	SNDFILE*	m_sf;
 	SF_INFO 	m_sfinfo;
 };

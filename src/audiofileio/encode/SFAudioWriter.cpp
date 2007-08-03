@@ -28,8 +28,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Debugger.h"
 
 
-SFAudioWriter::SFAudioWriter(const QString& filename)
- : AbstractAudioWriter(filename)
+SFAudioWriter::SFAudioWriter()
+ : AbstractAudioWriter()
 {
 	m_sf = 0;
 }
@@ -46,7 +46,7 @@ SFAudioWriter::~SFAudioWriter()
 bool SFAudioWriter::is_valid_format()
 {
 	memset (&m_sfinfo, 0, sizeof(m_sfinfo));
-	m_sfinfo.format = m_format;
+	m_sfinfo.format = get_sf_format();
 	m_sfinfo.samplerate = m_rate;
 	m_sfinfo.channels = m_channels;
 	//m_sfinfo.frames = m_spec->end_frame - m_spec->start_frame + 1;
@@ -55,9 +55,24 @@ bool SFAudioWriter::is_valid_format()
 }
 
 
-void SFAudioWriter::set_format(int format)
+bool SFAudioWriter::set_format_attribute(const QString& key, const QString& value)
 {
-	m_format = format;
+	if (key == "filetype") {
+		if (value == "wav") {
+			m_fileType = SF_FORMAT_WAV;
+			return true;
+		}
+		else if (value == "aiff") {
+			m_fileType = SF_FORMAT_AIFF;
+			return true;
+		}
+		else if (value == "flac") {
+			m_fileType = SF_FORMAT_FLAC;
+			return true;
+		}
+	}
+	
+	return false;
 }
 
 
@@ -66,7 +81,7 @@ bool SFAudioWriter::open_private()
 	char errbuf[256];
 	
 	memset (&m_sfinfo, 0, sizeof(m_sfinfo));
-	m_sfinfo.format = m_format;
+	m_sfinfo.format = get_sf_format();
 	m_sfinfo.frames = 48000*100;
 	m_sfinfo.samplerate = m_rate;
 	m_sfinfo.channels = m_channels;
@@ -124,3 +139,30 @@ void SFAudioWriter::close_private()
 	}
 	m_sf = 0;
 }
+
+
+int SFAudioWriter::get_sf_format()
+{
+	int sfBitDepth;
+	
+	switch (m_sampleWidth) {
+		case 8:
+			sfBitDepth = SF_FORMAT_PCM_S8;
+			break;
+		case 16:
+			sfBitDepth = SF_FORMAT_PCM_16;
+			break;
+		case 24:
+			sfBitDepth = SF_FORMAT_PCM_24;
+			break;
+		case 32:
+			sfBitDepth = SF_FORMAT_PCM_32;
+			break;
+		default:
+			sfBitDepth = SF_FORMAT_FLOAT;
+			break;
+	}
+	
+	return (sfBitDepth | m_fileType);
+}
+

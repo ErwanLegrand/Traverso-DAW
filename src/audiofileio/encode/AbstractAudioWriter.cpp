@@ -30,10 +30,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Debugger.h"
 
 
-AbstractAudioWriter::AbstractAudioWriter(const QString& filename)
+AbstractAudioWriter::AbstractAudioWriter()
  : QObject(0)
 {
-	m_fileName = filename;
 	m_channels = 0;
 	m_rate = 0;
 	m_sampleWidth = 0;
@@ -72,11 +71,14 @@ nframes_t AbstractAudioWriter::pos()
 }
 
 
-bool AbstractAudioWriter::open()
+bool AbstractAudioWriter::open(const QString& filename)
 {
-	close();
+	if (m_isOpen) {
+		close();
+	}
 	
 	m_writePos = 0;
+	m_fileName = filename;
 	
 	m_isOpen = open_private();
 	
@@ -105,5 +107,28 @@ nframes_t AbstractAudioWriter::write(void* buffer, nframes_t count)
 		return framesWritten;
 	}
 	
+	return 0;
+}
+
+
+// Static method used by other classes to get an AudioWriter for the correct file type
+AbstractAudioWriter* AbstractAudioWriter::create_audio_writer(const QString& type)
+{
+	if (type == "sf") {
+		return new SFAudioWriter();
+	}
+	/*else if (type == "wp") {
+		return new WPAudioWriter();
+	}
+	else if (type == "mad") {
+		return new MadAudioWriter();
+	}
+	else if (type == "flac") {
+		return new FlacAudioWriter();
+	}
+	else if (type == "vorbis") {
+		return new VorbisAudioWriter();
+	}*/
+
 	return 0;
 }

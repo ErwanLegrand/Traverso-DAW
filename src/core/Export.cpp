@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Export.cpp,v 1.8 2007/05/25 23:37:24 benjie Exp $
+    $Id: Export.cpp,v 1.9 2007/08/03 23:05:03 benjie Exp $
 */
 
 #include "Export.h"
@@ -54,7 +54,6 @@ ExportSpecification::ExportSpecification()
 	data_width = -1;
 	
 	total_frames = -1;
-	format = SF_FORMAT_FLOAT;
 	pos = -1;
 	extension = "";
 	

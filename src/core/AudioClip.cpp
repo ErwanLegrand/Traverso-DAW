@@ -557,9 +557,9 @@ int AudioClip::init_recording( QByteArray name )
 		ExportSpecification* spec = new ExportSpecification;
 
 		spec->exportdir = pm().get_project()->get_root_dir() + "/audiosources/";
-		spec->format = SF_FORMAT_WAV;
+		spec->writerType = "sf";
+		spec->extraFormat["filetype"] = "wav";
 		spec->data_width = 1;	// 1 means float
-		spec->format |= SF_FORMAT_FLOAT;
 		spec->channels = 1;
 		spec->sample_rate = audiodevice().get_sample_rate();
 		spec->src_quality = SRC_SINC_MEDIUM_QUALITY;

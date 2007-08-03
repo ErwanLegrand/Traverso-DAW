@@ -66,9 +66,9 @@ public:
 		spec->extension = "wav";
 	
 		spec->exportdir = pm().get_project()->get_root_dir() + "/audiosources/";
-		spec->format = SF_FORMAT_WAV;
+		spec->writerType = "sf";
+		spec->extraFormat["filetype"] = "wav";
 		spec->data_width = 16;
-		spec->format |= SF_FORMAT_PCM_16;
 		spec->channels = 2;
 		spec->sample_rate = m_readsource->get_rate();
 		spec->blocksize = buffersize;
