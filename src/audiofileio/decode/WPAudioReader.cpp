@@ -115,13 +115,13 @@ nframes_t WPAudioReader::read_private(audio_sample_t** buffer, nframes_t frameCo
 				memcpy(buffer[0], m_tmpBuffer, framesRead * sizeof(audio_sample_t));
 				break;	
 			case 2:
-				for (int f = 0; f < framesRead; f++) {
+				for (nframes_t f = 0; f < framesRead; f++) {
 					buffer[0][f] = ((float*)m_tmpBuffer)[f * 2];
 					buffer[1][f] = ((float*)m_tmpBuffer)[f * 2 + 1];
 				}
 				break;	
 			default:
-				for (int f = 0; f < framesRead; f++) {
+				for (nframes_t f = 0; f < framesRead; f++) {
 					for (int c = 0; c < m_channels; c++) {
 						buffer[c][f] = ((float*)m_tmpBuffer)[f * m_channels + c];
 					}
@@ -131,18 +131,18 @@ nframes_t WPAudioReader::read_private(audio_sample_t** buffer, nframes_t frameCo
 	else {
 		switch (m_channels) {
 			case 1:
-				for (int f = 0; f < framesRead; f++) {
+				for (nframes_t f = 0; f < framesRead; f++) {
 					buffer[0][f] = (float)((float)m_tmpBuffer[f]/ (float)((uint)1<<(m_bitsPerSample-1)));
 				}
 				break;	
 			case 2:
-				for (int f = 0; f < framesRead; f++) {
+				for (nframes_t f = 0; f < framesRead; f++) {
 					buffer[0][f] = (float)((float)m_tmpBuffer[f * 2]/ (float)((uint)1<<(m_bitsPerSample-1)));
 					buffer[1][f] = (float)((float)m_tmpBuffer[f * 2 + 1]/ (float)((uint)1<<(m_bitsPerSample-1)));
 				}
 				break;	
 			default:
-				for (int f = 0; f < framesRead; f++) {
+				for (nframes_t f = 0; f < framesRead; f++) {
 					for (int c = 0; c < m_channels; c++) {
 						buffer[c][f] = (float)((float)m_tmpBuffer[f + m_channels + c]/ (float)((uint)1<<(m_bitsPerSample-1)));
 					}

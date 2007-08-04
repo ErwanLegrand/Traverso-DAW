@@ -42,7 +42,7 @@ protected:
 	bool		m_isFloat;
 	int		m_bitsPerSample;
 	int32_t		*m_tmpBuffer;
-	int		m_tmpBufferSize;
+	nframes_t	m_tmpBufferSize;
 };
 
 #endif

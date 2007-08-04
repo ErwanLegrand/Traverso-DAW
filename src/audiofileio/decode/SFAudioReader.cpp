@@ -118,7 +118,7 @@ nframes_t SFAudioReader::read_private(audio_sample_t** buffer, nframes_t frameCo
 		}
 		m_tmpBuffer = new audio_sample_t[frameCount * m_channels];
 	}
-	nframes_t framesRead = sf_readf_float(m_sf, m_tmpBuffer, frameCount);
+	int framesRead = sf_readf_float(m_sf, m_tmpBuffer, frameCount);
 	
 	// De-interlace
 	switch (m_channels) {

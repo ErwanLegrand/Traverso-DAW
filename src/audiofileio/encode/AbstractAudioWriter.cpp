@@ -65,6 +65,14 @@ void AbstractAudioWriter::set_rate(int rate)
 }
 
 
+bool AbstractAudioWriter::set_format_attribute(const QString& key, const QString& value)
+{
+	Q_UNUSED(key);
+	Q_UNUSED(value);
+	return false;
+}
+
+
 nframes_t AbstractAudioWriter::pos()
 {
 	return m_writePos;

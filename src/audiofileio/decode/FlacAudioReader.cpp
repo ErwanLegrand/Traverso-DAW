@@ -165,7 +165,7 @@ class FlacPrivate
 		static FLAC__SeekableStreamDecoderTellStatus tell_callback(const FLAC__SeekableStreamDecoder *decoder, FLAC__uint64 *absolute_byte_offset, void *client_data);
 		static FLAC__SeekableStreamDecoderLengthStatus length_callback(const FLAC__SeekableStreamDecoder *decoder, FLAC__uint64 *stream_length, void *client_data);
 		static FLAC__bool eof_callback(const FLAC__SeekableStreamDecoder *decoder, void *client_data);
-		static void error_callback(const FLAC__SeekableStreamDecoder *decoder, FLAC__StreamDecoderErrorStatus s, void *client_data){ printf("!!! %d !!!\n", s); };
+		static void error_callback(const FLAC__SeekableStreamDecoder *decoder, FLAC__StreamDecoderErrorStatus s, void *client_data){ Q_UNUSED(decoder); Q_UNUSED(client_data); printf("!!! %d !!!\n", s); };
 		static void metadata_callback(const FLAC__SeekableStreamDecoder *decoder, const ::FLAC__StreamMetadata *metadata, void *client_data);
 		static FLAC__StreamDecoderWriteStatus write_callback(const FLAC__SeekableStreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const buffer[], void *client_data);
 #else
@@ -194,17 +194,20 @@ FLAC__StreamDecoderWriteStatus FlacPrivate::write_callback(const FLAC__SeekableS
 FLAC__StreamDecoderWriteStatus FlacPrivate::write_callback(const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const buffer[], void *client_data)
 #endif
 {
+	Q_UNUSED(decoder);
+	
 	FlacPrivate *fp = (FlacPrivate*)client_data;
 	
-	unsigned i, c, pos = 0;
-	int frames = frame->header.blocksize;
+	uint		c;
+	nframes_t	pos = 0;
+	nframes_t	frames = frame->header.blocksize;
 	
 	if (fp->bufferUsed > 0) {
 		// This shouldn't be happening
 		PERROR("internalBuffer is already non-empty");
 	}
 	
-	if (fp->bufferSize < frames * frame->header.channels) {
+	if ((nframes_t)fp->bufferSize < frames * frame->header.channels) {
 		if (fp->internalBuffer) {
 			delete fp->internalBuffer;
 		}
@@ -212,7 +215,7 @@ FLAC__StreamDecoderWriteStatus FlacPrivate::write_callback(const FLAC__StreamDec
 		fp->bufferSize = frames * frame->header.channels;
 	}
 	
-	for (i=0; i < frames; i++) {
+	for (nframes_t i=0; i < frames; i++) {
 		// in FLAC channel 0 is left, 1 is right
 		for (c=0; c < frame->header.channels; c++) {
 			audio_sample_t value = (audio_sample_t)((float)buffer[c][i] / (float)((uint)1<<(frame->header.bits_per_sample-1)));
@@ -229,6 +232,8 @@ FLAC__StreamDecoderWriteStatus FlacPrivate::write_callback(const FLAC__StreamDec
 #ifdef LEGACY_FLAC
 FLAC__SeekableStreamDecoderReadStatus FlacPrivate::read_callback(const FLAC__SeekableStreamDecoder *decoder, FLAC__byte buffer[], unsigned *bytes, void *client_data)
 {
+	Q_UNUSED(decoder);
+	
 	FlacPrivate *fp = (FlacPrivate*)client_data;
 	
 	long retval =  fp->file->read((char *)buffer, (*bytes));
@@ -242,6 +247,8 @@ FLAC__SeekableStreamDecoderReadStatus FlacPrivate::read_callback(const FLAC__See
 #else
 FLAC__StreamDecoderReadStatus FlacPrivate::read_callback(const FLAC__StreamDecoder *decoder, FLAC__byte buffer[], size_t *bytes, void *client_data)
 {
+	Q_UNUSED(decoder);
+	
 	FlacPrivate *fp = (FlacPrivate*)client_data;
 	
 	long retval =  fp->file->read((char *)buffer, (*bytes));
@@ -257,6 +264,8 @@ FLAC__StreamDecoderReadStatus FlacPrivate::read_callback(const FLAC__StreamDecod
 #ifdef LEGACY_FLAC
 FLAC__SeekableStreamDecoderSeekStatus FlacPrivate::seek_callback(const FLAC__SeekableStreamDecoder *decoder, FLAC__uint64 absolute_byte_offset, void *client_data)
 {
+	Q_UNUSED(decoder);
+	
 	FlacPrivate *fp = (FlacPrivate*)client_data;
 	
 	if(!fp->file->seek(absolute_byte_offset))
@@ -267,6 +276,8 @@ FLAC__SeekableStreamDecoderSeekStatus FlacPrivate::seek_callback(const FLAC__See
 #else
 FLAC__StreamDecoderSeekStatus FlacPrivate::seek_callback(const FLAC__StreamDecoder *decoder, FLAC__uint64 absolute_byte_offset, void *client_data)
 {
+	Q_UNUSED(decoder);
+	
 	FlacPrivate *fp = (FlacPrivate*)client_data;
 	
 	if(!fp->file->seek(absolute_byte_offset))
@@ -279,6 +290,8 @@ FLAC__StreamDecoderSeekStatus FlacPrivate::seek_callback(const FLAC__StreamDecod
 #ifdef LEGACY_FLAC
 FLAC__SeekableStreamDecoderTellStatus FlacPrivate::tell_callback(const FLAC__SeekableStreamDecoder *decoder, FLAC__uint64 *absolute_byte_offset, void *client_data)
 {
+	Q_UNUSED(decoder);
+	
 	FlacPrivate *fp = (FlacPrivate*)client_data;
 	
 	(*absolute_byte_offset) = fp->file->pos();
@@ -287,6 +300,8 @@ FLAC__SeekableStreamDecoderTellStatus FlacPrivate::tell_callback(const FLAC__See
 #else
 FLAC__StreamDecoderTellStatus FlacPrivate::tell_callback(const FLAC__StreamDecoder *decoder, FLAC__uint64 *absolute_byte_offset, void *client_data)
 {
+	Q_UNUSED(decoder);
+	
 	FlacPrivate *fp = (FlacPrivate*)client_data;
 	
 	(*absolute_byte_offset) = fp->file->pos();
@@ -297,6 +312,8 @@ FLAC__StreamDecoderTellStatus FlacPrivate::tell_callback(const FLAC__StreamDecod
 #ifdef LEGACY_FLAC
 FLAC__SeekableStreamDecoderLengthStatus FlacPrivate::length_callback(const FLAC__SeekableStreamDecoder *decoder, FLAC__uint64 *stream_length, void *client_data)
 {
+	Q_UNUSED(decoder);
+	
 	FlacPrivate *fp = (FlacPrivate*)client_data;
 	
 	(*stream_length) = fp->file->size();
@@ -305,6 +322,8 @@ FLAC__SeekableStreamDecoderLengthStatus FlacPrivate::length_callback(const FLAC_
 #else
 FLAC__StreamDecoderLengthStatus FlacPrivate::length_callback(const FLAC__StreamDecoder *decoder, FLAC__uint64 *stream_length, void *client_data)
 {
+	Q_UNUSED(decoder);
+	
 	FlacPrivate *fp = (FlacPrivate*)client_data;
 	
 	(*stream_length) = fp->file->size();
@@ -319,6 +338,8 @@ void FlacPrivate::metadata_callback(const FLAC__SeekableStreamDecoder *decoder, 
 void FlacPrivate::metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data)
 #endif
 {
+	Q_UNUSED(decoder);
+	
 	FlacPrivate *fp = (FlacPrivate*)client_data;
 	
 	switch (metadata->type)
@@ -344,6 +365,8 @@ FLAC__bool FlacPrivate::eof_callback(const FLAC__SeekableStreamDecoder *decoder,
 FLAC__bool FlacPrivate::eof_callback(const FLAC__StreamDecoder *decoder, void *client_data)
 #endif
 {
+	Q_UNUSED(decoder);
+	
 	FlacPrivate *fp = (FlacPrivate*)client_data;
 	
 	return fp->file->atEnd();
@@ -523,13 +546,13 @@ nframes_t FlacAudioReader::read_private(audio_sample_t** buffer, nframes_t frame
 				memcpy(buffer[0] + framesCoppied, m_flac->internalBuffer + m_flac->bufferStart, framesToCopy);
 				break;
 			case 2:
-				for (int i = 0; i < framesToCopy; i++) {
+				for (nframes_t i = 0; i < framesToCopy; i++) {
 					buffer[0][framesCoppied + i] = m_flac->internalBuffer[m_flac->bufferStart + i * 2];
 					buffer[1][framesCoppied + i] = m_flac->internalBuffer[m_flac->bufferStart + i * 2 + 1];
 				}
 				break;
 			default:
-				for (int i = 0; i < framesToCopy; i++) {
+				for (nframes_t i = 0; i < framesToCopy; i++) {
 					for (int c = 0; c < get_num_channels(); c++) {
 						buffer[c][framesCoppied + i] = m_flac->internalBuffer[m_flac->bufferStart + i * get_num_channels() + c];
 					}

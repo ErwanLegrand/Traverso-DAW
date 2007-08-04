@@ -41,7 +41,7 @@ protected:
 	SNDFILE*	m_sf;
 	SF_INFO		m_sfinfo;
 	audio_sample_t	*m_tmpBuffer;
-	int		m_tmpBufferSize;
+	nframes_t	m_tmpBufferSize;
 };
 
 #endif

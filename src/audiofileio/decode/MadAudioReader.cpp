@@ -843,7 +843,7 @@ bool MadAudioReader::createPcmSamples(mad_synth* synth)
 	int		offset = d->outputPos;
 	nframes_t	nframes = synth->pcm.length;
 	bool		overflow = false;
-	int		i;
+	nframes_t	i;
 	
 	if (writeBuffers && (m_readPos + d->outputPos + nframes) > m_length) {
 		nframes = m_length - (m_readPos + offset);

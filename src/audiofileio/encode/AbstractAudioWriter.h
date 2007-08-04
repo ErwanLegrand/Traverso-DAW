@@ -39,7 +39,7 @@ public:
 	void set_num_channels(int channels);
 	void set_bits_per_sample(int bits);
 	void set_rate(int rate);
-	virtual bool set_format_attribute(const QString& key, const QString& value) { return false; }
+	virtual bool set_format_attribute(const QString& key, const QString& value);
 	nframes_t pos();
 	
 	bool open(const QString& filename);
@@ -58,8 +58,8 @@ protected:
 	bool		m_isOpen;
 	int		m_sampleWidth;
 	nframes_t	m_writePos;
-	nframes_t	m_channels;
-	nframes_t	m_rate;
+	int		m_channels;
+	int		m_rate;
 };
 
 #endif

@@ -55,9 +55,9 @@ protected:
 	QString		m_fileName;
 
 	nframes_t	m_readPos;
-	nframes_t	m_channels;
+	int		m_channels;
 	nframes_t	m_length;
-	nframes_t	m_rate;
+	int		m_rate;
 };
 
 #endif

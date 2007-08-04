@@ -213,7 +213,7 @@ nframes_t ResampleAudioReader::read_private(audio_sample_t** buffer, nframes_t f
 		m_overflowUsed = 0;
 	}
 	
-	if (m_srcData.input_frames_used < bufferUsed) {
+	if ((nframes_t)m_srcData.input_frames_used < bufferUsed) {
 		for (int c = 0; c < m_channels; c++) {
 			memmove(m_fileBuffers[c], m_fileBuffers[c] + m_srcData.input_frames_used, m_overflowUsed * sizeof(audio_sample_t));
 		}
