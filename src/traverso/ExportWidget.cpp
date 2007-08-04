@@ -180,15 +180,18 @@ void ExportWidget::on_exportStartButton_clicked( )
 	
 	switch (audioTypeComboBox->currentIndex()) {
         case	0:
-                m_exportSpec->format = SF_FORMAT_WAV;
+                m_exportSpec->writerType = "sf";
+                m_exportSpec->extraFormat["filetype"] = "wav";
                 m_exportSpec->extension = ".wav";
                 break;
         case	1:
-                m_exportSpec->format = SF_FORMAT_AIFF;
+                m_exportSpec->writerType = "sf";
+                m_exportSpec->extraFormat["filetype"] = "aiff";
                 m_exportSpec->extension = ".aiff";
                 break;
         case	2:
-		m_exportSpec->format = SF_FORMAT_FLAC;
+                m_exportSpec->writerType = "sf";
+                m_exportSpec->extraFormat["filetype"] = "flac";
 		m_exportSpec->extension = ".flac";
                 break;
         }
@@ -196,23 +199,18 @@ void ExportWidget::on_exportStartButton_clicked( )
 	switch (bitdepthComboBox->currentIndex()) {
 	//case		0:
 	//        m_exportSpec->data_width = 8;
-	//        m_exportSpec->format |= SF_FORMAT_PCM_U8;
 	//	break;
 	case		0:
 		m_exportSpec->data_width = 16;
-		m_exportSpec->format |= SF_FORMAT_PCM_16;
 		break;
 	case		1:
 		m_exportSpec->data_width = 24;
-		m_exportSpec->format |= SF_FORMAT_PCM_24;
 		break;
 	case		2:
 		m_exportSpec->data_width = 32;
-		m_exportSpec->format |= SF_FORMAT_PCM_32;
 		break;
 	case		3:
 		m_exportSpec->data_width = 1;	// 1 means float
-		m_exportSpec->format |= SF_FORMAT_FLOAT;
 		break;
 	}
 
@@ -319,6 +317,8 @@ void ExportWidget::render_finished( )
         show_settings_view();
 	
 	cdburningWidget->setEnabled(true);
+	
+	on_cancelButton_clicked();
 }
 
 void ExportWidget::set_exporting_song( Song * song )
@@ -530,8 +530,8 @@ void ExportWidget::cd_render()
 		
 		m_exportSpec->extension = ".wav";
 		m_exportSpec->data_width = 16;
-		m_exportSpec->format = SF_FORMAT_WAV;
-		m_exportSpec->format |= SF_FORMAT_PCM_16;
+		m_exportSpec->writerType = "sf";
+		m_exportSpec->extraFormat["filetype"] = "wav";
 		m_exportSpec->channels = 2;
 		m_exportSpec->sample_rate = 44100;
 		m_exportSpec->writeToc = true;
