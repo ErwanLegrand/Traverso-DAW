@@ -203,6 +203,8 @@ int Curve::process(audio_sample_t* buffer, nframes_t pos, nframes_t nframes)
 	for (nframes_t n = 0; n < nframes; ++n) {
 		buffer[n] *= mixdown[n];
 	}
+	
+	return 1;
 }
 
 

@@ -63,6 +63,7 @@ Track::Track( Song * song, const QDomNode node)
 	  m_song(song)
 {
 	PENTERCONS;
+	Q_UNUSED(node);
 	init();
 }
 

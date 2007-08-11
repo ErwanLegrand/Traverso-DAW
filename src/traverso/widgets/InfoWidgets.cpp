@@ -444,6 +444,7 @@ QSize PlayHeadInfo::sizeHint() const
 
 void PlayHeadInfo::resizeEvent(QResizeEvent * e)
 {
+	Q_UNUSED(e);
 	create_background();
 }
 

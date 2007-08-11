@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ContextDialog.h,v 1.2 2007/01/16 15:24:17 r_sijrier Exp $
+$Id: ContextDialog.h,v 1.3 2007/08/11 22:54:58 benjie Exp $
 */
 
 #ifndef CONTEXT_DIALOG_H
@@ -34,7 +34,7 @@ public:
 	ContextDialog();
 	~ContextDialog();
 	
-	void get_pointed_context_items(QList<ContextItem* > &list) {};
+	void get_pointed_context_items(QList<ContextItem* > &list) {Q_UNUSED(list);};
 
 protected:
         void keyPressEvent ( QKeyEvent* e);

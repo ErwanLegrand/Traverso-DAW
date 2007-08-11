@@ -184,9 +184,9 @@ void PlayHead::set_animation_value(int value)
 	qreal deltaX = newPos.x() - pos().x();
 	
 	// calculate the animation x diff.
-	int diff = float(int(0.5 + ((float)(value) / m_totalAnimFrames) * m_animFrameRange));
-	m_totalAnimValue += (diff + deltaX);
-	int newXPos = m_animationScrollStartPos + m_totalAnimValue;
+	int diff = (int)(0.5 + ((float)(value) / m_totalAnimFrames) * m_animFrameRange);
+	m_totalAnimValue += (int)(diff + deltaX);
+	int newXPos = (int)(m_animationScrollStartPos + m_totalAnimValue);
 	
 	if (newPos != pos()) {
 		setPos(newPos);

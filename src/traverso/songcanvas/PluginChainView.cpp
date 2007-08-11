@@ -144,7 +144,7 @@ void PluginChainView::set_view_mode()
 
 void PluginChainView::calculate_bounding_rect()
 {
-	int y  = m_parentViewItem->boundingRect().height();
+	int y = (int)(m_parentViewItem->boundingRect().height());
 	m_boundingRect = QRectF(0, 0, 0, y);
 	setPos(pos().x(), - 2);
 	ViewItem::calculate_bounding_rect();

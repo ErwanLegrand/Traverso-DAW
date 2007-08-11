@@ -434,6 +434,8 @@ void ProjectManager::set_current_project_dir(const QString & path)
 
 void ProjectManager::project_dir_rename_detected(const QString & dirname)
 {
+	Q_UNUSED(dirname);
+	
 	emit projectDirChangeDetected();
 	
 	QString path = config().get_property("Project", "directory", "").toString();

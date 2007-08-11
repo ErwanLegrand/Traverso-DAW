@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SpectralMeter.cpp,v 1.4 2007/01/15 23:54:57 r_sijrier Exp $
+$Id: SpectralMeter.cpp,v 1.5 2007/08/11 22:54:58 benjie Exp $
 
 */
 
@@ -181,7 +181,7 @@ int SpectralMeter::get_data(QVector<float> &specl, QVector<float> &specr)
 	m_databufferL->read(&left, 1);
 	m_databufferR->read(&right, 1);
 
-	for (uint i = 0; i < m_frlen; ++i) {
+	for (int i = 0; i < m_frlen; ++i) {
 		m_databufferL->read(&left, 1);
 		m_databufferR->read(&right, 1);
 		fftsigl[i] = (double)left * win[i];
@@ -195,7 +195,7 @@ int SpectralMeter::get_data(QVector<float> &specl, QVector<float> &specr)
 	float tmp;
 
 	// send the fft spectrum to the caller
-	for (uint i = 1; i < m_frlen/2 + 1; ++i) {
+	for (int i = 1; i < m_frlen/2 + 1; ++i) {
 		tmp = pow((float)fftspecl[i][0],2.0f) + pow((float)fftspecl[i][1],2.0f);
 		specl.push_back(tmp);
 		tmp = pow((float)fftspecr[i][0],2.0f) + pow((float)fftspecr[i][1],2.0f);

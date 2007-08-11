@@ -85,7 +85,7 @@ void MarkerView::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
 	painter->drawText(m_width + 1, m_ascent, m_marker->get_description());
 
 	if (m_dragging) {
-		m_posIndicator->set_value(frame_to_text( (x() + m_width / 2) * m_sv->scalefactor,
+		m_posIndicator->set_value(frame_to_text((nframes_t)((x() + m_width / 2) * m_sv->scalefactor),
 					  m_sv->get_song()->get_rate(), m_sv->scalefactor));
 	}
 
@@ -112,7 +112,7 @@ void MarkerView::update_position()
 
 int MarkerView::position()
 {
-	return (pos().x() + m_width / 2);
+	return (int)(pos().x() + m_width / 2);
 }
 
 void MarkerView::set_position(int i)

@@ -105,6 +105,8 @@ MoveClip::~MoveClip()
 
 void MoveClip::audioclip_added(AudioClip * clip)
 {
+	Q_UNUSED(clip);
+	
 	QList<AudioClipView* >* clipviews = d->view->get_trackview()->get_clipviews();
 	
 	for (int i = 0; i < clipviews->size(); ++i) {

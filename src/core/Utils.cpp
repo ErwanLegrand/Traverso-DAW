@@ -125,10 +125,10 @@ QString frame_to_hms(double nframes, int rate)
 QString frame_to_ms(double nframes, int rate)
 {
 	long unsigned int remainder;
-	int hours, mins, secs;
+	int mins, secs;
 
 	mins = (int) (nframes / ( 60 * rate ));
-	remainder = nframes - (mins * 60 * rate);
+	remainder = (long unsigned int) (nframes - (mins * 60 * rate));
 	secs = (int) (remainder / rate);
 	return QString().sprintf("%02d:%02d", mins, secs);
 }

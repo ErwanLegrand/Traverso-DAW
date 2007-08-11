@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.24 2007/08/02 22:01:36 benjie Exp $
+$Id: FadeCurve.cpp,v 1.25 2007/08/11 22:54:57 benjie Exp $
 */
  
 #include "FadeCurve.h"
@@ -43,6 +43,8 @@ FadeCurve::FadeCurve(AudioClip* clip, Song* song, QString type )
 	, m_clip(clip)
 	, m_sType(type)
 {
+	Q_UNUSED(song);
+	
 	if (type == "FadeIn") {
 		m_type = FadeIn;
 	}

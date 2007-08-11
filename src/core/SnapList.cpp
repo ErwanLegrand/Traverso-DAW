@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SnapList.cpp,v 1.15 2007/05/05 17:13:13 benjie Exp $
+$Id: SnapList.cpp,v 1.16 2007/08/11 22:54:57 benjie Exp $
 */
 
 #include "SnapList.h"
@@ -138,7 +138,7 @@ void SnapList::update_snaplist()
 		int ls = -SNAP_WIDTH;
 
 		if (lastIndex > -1) {
-			if ( (xposList.at(i) - lastVal) < (2 * SNAP_WIDTH * m_scalefactor) ) {
+			if ( (nframes_t)(xposList.at(i) - lastVal) < (nframes_t)(2 * SNAP_WIDTH * m_scalefactor) ) {
 				ls = - (int) ((xposList.at(i) / m_scalefactor - lastVal / m_scalefactor) / 2);
 			}
 		}

@@ -687,7 +687,7 @@ void AudioClip::set_audio_source(ReadSource* rs)
 	
 	m_peaks.clear();
 	
-	for (int chan=0; chan<m_readSource->get_channel_count(); ++chan) {
+	for (uint chan=0; chan<m_readSource->get_channel_count(); ++chan) {
 		m_peaks.append(new Peak(rs, chan));
 	}
 

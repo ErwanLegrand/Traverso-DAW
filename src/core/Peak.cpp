@@ -700,7 +700,7 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 	
 	read = fread(readbuffer, sizeof(audio_sample_t), count, m_file);
 	
-	if (read != count) {
+	if (read != (int)count) {
 		printf("could only read %d, %d requested\n", read, count);
 	}
 	

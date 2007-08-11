@@ -92,7 +92,7 @@ void PluginSlider::calculate_new_value(float mouseX)
 	if (mouseX > width())
 		mouseX = width();
 		
-	m_xpos = mouseX;
+	m_xpos = (int)mouseX;
 	
 	
 	float relativePos = ((float) mouseX) / width();

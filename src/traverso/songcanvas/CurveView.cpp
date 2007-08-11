@@ -508,10 +508,10 @@ Command* CurveView::drag_node()
 		emit curveModified();
 		
 		if (index > 0) {
-			min = nodeList->at(index-1)->get_when() + 1;
+			min = (long)(nodeList->at(index-1)->get_when() + 1);
 		}
 		if (nodeList->size() > index + 1) {
-			max = nodeList->at(index+1)->get_when() - 1;
+			max = (long)(nodeList->at(index+1)->get_when() - 1);
 		}
 		return new DragNode(m_blinkingNode->get_curve_node(), this, m_sv->scalefactor, min, max, tr("Drag Node"));
 	}

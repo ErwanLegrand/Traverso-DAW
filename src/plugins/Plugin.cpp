@@ -114,6 +114,7 @@ QDomNode PluginPort::get_state( QDomDocument doc )
 
 int PluginPort::set_state( const QDomNode & node )
 {
+	Q_UNUSED(node);
 	return 1;
 }
 

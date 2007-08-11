@@ -226,7 +226,7 @@ void AudioClipEditWidget::fadein_length_changed()
 	if (ie().is_holding()) return;
 	if (locked) return;
 
-	QTime fadeTime = nframes_to_qtime(m_clip->get_fade_in()->get_range(), m_clip->get_rate());
+	QTime fadeTime = nframes_to_qtime((nframes_t)(m_clip->get_fade_in()->get_range()), m_clip->get_rate());
 	fadeInEdit->setTime(fadeTime);
 }
 
@@ -234,7 +234,7 @@ void AudioClipEditWidget::fadeout_length_changed()
 {
 	if (locked) return;
 
-	QTime fadeTime = nframes_to_qtime(m_clip->get_fade_out()->get_range(), m_clip->get_rate());
+	QTime fadeTime = nframes_to_qtime((nframes_t)(m_clip->get_fade_out()->get_range()), m_clip->get_rate());
 	fadeOutEdit->setTime(fadeTime);
 }
 
