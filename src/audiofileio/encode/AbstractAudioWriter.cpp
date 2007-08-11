@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "AbstractAudioWriter.h"
 #include "SFAudioWriter.h"
-//#include "WPAudioWriter.h"
+#include "WPAudioWriter.h"
 
 #include <QString>
 
@@ -105,7 +105,7 @@ void AbstractAudioWriter::close()
 
 nframes_t AbstractAudioWriter::write(void* buffer, nframes_t count)
 {
-	if (count) {
+	if (buffer && count) {
 		nframes_t framesWritten = write_private(buffer, count);
 		
 		if (framesWritten > 0) {
@@ -125,10 +125,10 @@ AbstractAudioWriter* AbstractAudioWriter::create_audio_writer(const QString& typ
 	if (type == "sf") {
 		return new SFAudioWriter();
 	}
-	/*else if (type == "wp") {
+	else if (type == "wp") {
 		return new WPAudioWriter();
 	}
-	else if (type == "mad") {
+	/*else if (type == "mad") {
 		return new MadAudioWriter();
 	}
 	else if (type == "flac") {

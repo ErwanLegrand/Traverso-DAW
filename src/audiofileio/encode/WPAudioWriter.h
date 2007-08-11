@@ -19,36 +19,38 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 */
 
-#ifndef SFAUDIOWRITER_H
-#define SFAUDIOWRITER_H
+#ifndef WPAUDIOWRITER_H
+#define WPAUDIOWRITER_H
 
 #include "AbstractAudioWriter.h"
 
 #include "defines.h"
-#include "sndfile.h"
+#include "wavpack/wavpack.h"
 
 class QString;
 
-class SFAudioWriter : public AbstractAudioWriter
+class WPAudioWriter : public AbstractAudioWriter
 {
 	Q_OBJECT
 	
 public:
-	SFAudioWriter();
-	~SFAudioWriter();
+	WPAudioWriter();
+	~WPAudioWriter();
 	
-	bool set_format_attribute(const QString& key, const QString& value);
 	const char* get_default_extension();
 	
 protected:
 	bool open_private();
 	nframes_t write_private(void* buffer, nframes_t frameCount);
 	void close_private();
-	int get_sf_format();
+	int write_to_file(void *lpBuffer, uint32_t nNumberOfBytesToWrite, uint32_t *lpNumberOfBytesWritten);
 	
-	int		m_fileType;	
-	SNDFILE*	m_sf;
-	SF_INFO 	m_sfinfo;
+	static int write_block(void *id, void *data, int32_t length);
+	
+	WavpackConfig	m_config;
+	WavpackContext*	m_wp;
+	int32_t m_bytesWritten;
+	FILE*		m_file;
 };
 
 #endif

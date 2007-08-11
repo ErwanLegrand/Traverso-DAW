@@ -263,11 +263,6 @@ int WriteSource::prepare_export()
 		delete m_writer;
 	}
 	
-	QString name = m_fileName;
-	if (m_spec->isRecording) {
-		name.append("-ch" + QByteArray::number(m_channelNumber) + ".wav");
-	}
-	
 	if (m_writer) {
 		delete m_writer;
 	}
@@ -279,11 +274,18 @@ int WriteSource::prepare_export()
 	
 	QString key;
 	foreach (key, m_spec->extraFormat.keys()) {
-		m_writer->set_format_attribute(key, m_spec->extraFormat[key]);
+		if (m_writer->set_format_attribute(key, m_spec->extraFormat[key]) == false) {
+			printf("Invalid Extra Format Info: %s=%s\n", QS_C(key), QS_C(m_spec->extraFormat[key]));
+		}
 	}
 	
 	/* XXX make sure we have enough disk space for the output */
-
+	
+	QString name = m_fileName;
+	if (m_spec->isRecording) {
+		name.append("-ch" + QByteArray::number(m_channelNumber) + "." + m_writer->get_default_extension());
+	}
+	
 	if (m_writer->open(name) == false) {
 		return -1;
 	}

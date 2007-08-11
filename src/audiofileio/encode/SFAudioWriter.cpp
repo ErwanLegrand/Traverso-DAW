@@ -43,15 +43,9 @@ SFAudioWriter::~SFAudioWriter()
 }
 
 
-bool SFAudioWriter::is_valid_format()
+const char* SFAudioWriter::get_default_extension()
 {
-	memset (&m_sfinfo, 0, sizeof(m_sfinfo));
-	m_sfinfo.format = get_sf_format();
-	m_sfinfo.samplerate = m_rate;
-	m_sfinfo.channels = m_channels;
-	//m_sfinfo.frames = m_spec->end_frame - m_spec->start_frame + 1;
-	
-	return sf_format_check(&m_sfinfo);
+	return "wav";
 }
 
 

@@ -36,6 +36,8 @@ public:
 	AbstractAudioWriter();
 	~AbstractAudioWriter();
 	
+	virtual const char* get_default_extension() = 0;
+	
 	void set_num_channels(int channels);
 	void set_bits_per_sample(int bits);
 	void set_rate(int rate);
@@ -49,7 +51,6 @@ public:
 	static AbstractAudioWriter* create_audio_writer(const QString& type);
 	
 protected:
-	virtual bool is_valid_format() = 0;
 	virtual bool open_private() = 0;
 	virtual nframes_t write_private(void* buffer, nframes_t frameCount) = 0;
 	virtual void close_private() = 0;
