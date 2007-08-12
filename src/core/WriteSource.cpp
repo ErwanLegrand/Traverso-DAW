@@ -172,6 +172,8 @@ int WriteSource::process (nframes_t nframes)
 			for (chn = 0; chn < channels; ++chn) {
 				gdither_runf (dither, chn, to_write, float_buffer, output_data);
 			}
+			/* and export to disk */
+			written = m_writer->write(output_data, to_write);
 			break;
 
 		case 32:
@@ -197,6 +199,8 @@ int WriteSource::process (nframes_t nframes)
 					}
 				}
 			}
+			/* and export to disk */
+			written = m_writer->write(output_data, to_write);
 			break;
 
 		default:
@@ -211,12 +215,11 @@ int WriteSource::process (nframes_t nframes)
 					float_buffer[x] = -1.0f;
 				}
 			}
+			/* and export to disk */
+			written = m_writer->write(float_buffer, to_write);
 			break;
 		}
 
-		/* and export to disk */
-		written = m_writer->write(output_data, to_write);
-		
 	} while (leftover_frames >= nframes);
 
 	return 0;
