@@ -44,13 +44,15 @@ protected:
 	nframes_t write_private(void* buffer, nframes_t frameCount);
 	void close_private();
 	int write_to_file(void *lpBuffer, uint32_t nNumberOfBytesToWrite, uint32_t *lpNumberOfBytesWritten);
+	bool rewrite_first_block();
 	
 	static int write_block(void *id, void *data, int32_t length);
 	
 	WavpackConfig	m_config;
 	WavpackContext*	m_wp;
-	int32_t m_bytesWritten;
 	FILE*		m_file;
+	char*		m_firstBlock;
+	int32_t 	m_firstBlockSize;
 };
 
 #endif

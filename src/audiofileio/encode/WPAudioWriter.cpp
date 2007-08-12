@@ -32,6 +32,8 @@ WPAudioWriter::WPAudioWriter()
  : AbstractAudioWriter()
 {
 	m_wp = 0;
+	m_firstBlock = 0;
+	m_firstBlockSize = 0;
 }
 
 
@@ -39,6 +41,9 @@ WPAudioWriter::~WPAudioWriter()
 {
 	if (m_wp) {
 		close_private();
+	}
+	if (m_firstBlock) {
+		delete m_firstBlock;
 	}
 }
 
@@ -78,7 +83,8 @@ bool WPAudioWriter::open_private()
 		return false;
 	}
 	
-	m_bytesWritten = 0;
+	m_firstBlock = 0;
+	m_firstBlockSize = 0;
 	
 	return true;
 }
@@ -112,16 +118,35 @@ int WPAudioWriter::write_block(void *id, void *data, int32_t length)
 	uint32_t bcount;
 	
 	if (writer && writer->m_file && data && length) {
+		if (writer->m_firstBlock == 0) {
+			writer->m_firstBlock = new char[length];
+			memcpy(writer->m_firstBlock, data, length);
+			writer->m_firstBlockSize = length;
+		}
 		if (!writer->write_to_file(data, (uint32_t)length, (uint32_t*)&bcount) || bcount != (uint32_t)length) {
 			fclose(writer->m_file);
 			writer->m_wp = 0;
 			return false;
 		}
-		else {
-			writer->m_bytesWritten += length;
-		}
 	}
 
+	return true;
+}
+
+
+bool WPAudioWriter::rewrite_first_block()
+{
+	if (!m_firstBlock || !m_file || !m_wp) {
+		return false;
+	}
+	WavpackUpdateNumSamples (m_wp, m_firstBlock);
+	if (fseek(m_file, 0, SEEK_SET) != 0) {
+		return false;
+	}
+	if (!write_block(this, m_firstBlock, m_firstBlockSize)) {
+		return false;
+	}
+	
 	return true;
 }
 
@@ -160,14 +185,14 @@ nframes_t WPAudioWriter::write_private(void* buffer, nframes_t frameCount)
 void WPAudioWriter::close_private()
 {
 	WavpackFlushSamples(m_wp);
-	
-	// FIXME: Update stored num samples
-	// First Re-read first block
-	// Then WavpackUpdateNumSamples(m_wp, firstBlock);
-	// Then Re-write first block
-
+	rewrite_first_block();
 	WavpackCloseFile(m_wp);
 	fclose(m_file);
 	m_wp = 0;
+	if (m_firstBlock) {
+		delete m_firstBlock;
+		m_firstBlock = 0;
+		m_firstBlockSize = 0;
+	}
 }
 
