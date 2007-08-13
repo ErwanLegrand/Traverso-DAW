@@ -781,7 +781,8 @@ int Song::process_export( nframes_t nframes )
 	Mixer::apply_gain_to_buffer(m_masterOut->get_buffer(1, nframes), nframes, get_gain());
 
 	// update the m_transportFrame
-	m_transportFrame += nframes;
+// 	m_transportFrame += nframes;
+	m_transportLocation.add_frames(nframes, audiodevice().get_sample_rate());
 
 	return 1;
 }
@@ -930,7 +931,7 @@ void Song::audiodevice_params_changed()
 	// We need to seek to a different position then the current one,
 	// else the seek won't happen at all :)
 	TimeRef location = m_transportLocation;
-	location.add_frames(audiodevice().get_buffer_size(), audiodevice().get_sample_rate());
+	location.add_frames(1, audiodevice().get_sample_rate());
 	set_transport_pos(location);
 }
 
