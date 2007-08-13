@@ -71,6 +71,8 @@ void NewSongDialog::accept()
 	
 	CommandGroup* group = new CommandGroup(m_project, "");
 	
+	Song* firstNewSong = 0;
+	
 	for (int i=0; i<count; ++i) {
 		Song* song;
 		if (usetemplate) {
@@ -81,11 +83,18 @@ void NewSongDialog::accept()
 		}
 		song->set_title(title);
 		group->add_command(m_project->add_song(song));
+		if (i == 0) {
+			firstNewSong = song;
+		}
 	}
 	
 	group->setText(tr("Added %n Sheet(s)", "", count));
 	Command::process_command(group);
-		
+	
+	if (firstNewSong) {
+		m_project->set_current_song(firstNewSong->get_id());
+	}
+	
 	hide();
 }
 
