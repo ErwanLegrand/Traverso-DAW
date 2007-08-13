@@ -288,8 +288,9 @@ int WriteSource::prepare_export()
 	
 	QString name = m_fileName;
 	if (m_spec->isRecording) {
-		name.append("-ch" + QByteArray::number(m_channelNumber) + "." + m_writer->get_default_extension());
+		name.append("-ch" + QByteArray::number(m_channelNumber));
 	}
+	name.append(m_writer->get_extension());
 	
 	if (m_writer->open(name) == false) {
 		return -1;

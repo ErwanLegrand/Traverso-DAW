@@ -395,7 +395,7 @@ int Song::prepare_export(ExportSpecification* spec)
 	spec->progress = 0;
 
 	spec->basename = "Song" + QString::number(m_project->get_song_index(m_id)) +"-" + title;
-	spec->name = spec->basename + spec->extension;
+	spec->name = spec->basename;
 
 	if (spec->start_frame >= spec->end_frame) {
 		info().warning(tr("Export start frame starts beyond export end frame!!"));

@@ -36,7 +36,7 @@ public:
 	AbstractAudioWriter();
 	~AbstractAudioWriter();
 	
-	virtual const char* get_default_extension() = 0;
+	virtual const char* get_extension() = 0;
 	
 	void set_num_channels(int channels);
 	void set_bits_per_sample(int bits);

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Export.h,v 1.12 2007/08/03 23:05:03 benjie Exp $
+$Id: Export.h,v 1.13 2007/08/13 00:01:52 benjie Exp $
 */
 
 #ifndef EXPORT_H
@@ -63,7 +63,6 @@ struct ExportSpecification
 	long      	total_frames;
 	QMap<QString, QString>	extraFormat;
 	long      	pos;
-	QString		extension;
 
 	/* shared between UI thread and audio thread */
 

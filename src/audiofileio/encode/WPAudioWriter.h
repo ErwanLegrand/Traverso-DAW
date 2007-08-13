@@ -37,7 +37,7 @@ public:
 	WPAudioWriter();
 	~WPAudioWriter();
 	
-	const char* get_default_extension();
+	const char* get_extension();
 	
 protected:
 	bool open_private();

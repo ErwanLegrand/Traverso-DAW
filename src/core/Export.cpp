@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Export.cpp,v 1.9 2007/08/03 23:05:03 benjie Exp $
+    $Id: Export.cpp,v 1.10 2007/08/13 00:01:52 benjie Exp $
 */
 
 #include "Export.h"
@@ -55,7 +55,6 @@ ExportSpecification::ExportSpecification()
 	
 	total_frames = -1;
 	pos = -1;
-	extension = "";
 	
 	allSongs = false;
 	stop = false;
@@ -125,11 +124,6 @@ int ExportSpecification::is_valid()
 		return -1;
 	}
 	
-	if (extension.isEmpty() && isRecording == 0) {
-		printf("ExportSpecification: No extension configured!\n");
-		return -1;
-	}
-
 	if (exportdir.isEmpty()) {
 		printf("ExportSpecification: No export dir configured!\n");
 		return -1;

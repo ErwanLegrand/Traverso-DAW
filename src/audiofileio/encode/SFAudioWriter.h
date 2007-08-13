@@ -38,7 +38,7 @@ public:
 	~SFAudioWriter();
 	
 	bool set_format_attribute(const QString& key, const QString& value);
-	const char* get_default_extension();
+	const char* get_extension();
 	
 protected:
 	bool open_private();

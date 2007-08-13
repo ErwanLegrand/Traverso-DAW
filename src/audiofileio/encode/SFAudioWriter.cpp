@@ -43,9 +43,18 @@ SFAudioWriter::~SFAudioWriter()
 }
 
 
-const char* SFAudioWriter::get_default_extension()
+const char* SFAudioWriter::get_extension()
 {
-	return "wav";
+	if (m_fileType == SF_FORMAT_WAV) {
+		return ".wav";
+	}
+	else if (m_fileType == SF_FORMAT_AIFF) {
+		return ".aiff";
+	}
+	else if (m_fileType == SF_FORMAT_FLAC) {
+		return ".flac";
+	}
+	return ".raw";
 }
 
 

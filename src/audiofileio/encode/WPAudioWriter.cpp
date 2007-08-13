@@ -48,9 +48,9 @@ WPAudioWriter::~WPAudioWriter()
 }
 
 
-const char* WPAudioWriter::get_default_extension()
+const char* WPAudioWriter::get_extension()
 {
-	return "wv";
+	return ".wv";
 }
 
 

@@ -79,6 +79,7 @@ ExportWidget::ExportWidget( QWidget * parent )
 	audioTypeComboBox->insertItem(0, "WAV");
 	audioTypeComboBox->insertItem(1, "AIFF");
 	audioTypeComboBox->insertItem(2, "FLAC");
+	audioTypeComboBox->insertItem(3, "WAVPACK");
 // 	audioTypeComboBox->insertItem(3, "CD image (cdrdao)");
 
 	bitdepthComboBox->setCurrentIndex(0);
@@ -182,17 +183,17 @@ void ExportWidget::on_exportStartButton_clicked( )
         case	0:
                 m_exportSpec->writerType = "sf";
                 m_exportSpec->extraFormat["filetype"] = "wav";
-                m_exportSpec->extension = ".wav";
                 break;
         case	1:
                 m_exportSpec->writerType = "sf";
                 m_exportSpec->extraFormat["filetype"] = "aiff";
-                m_exportSpec->extension = ".aiff";
                 break;
         case	2:
                 m_exportSpec->writerType = "sf";
                 m_exportSpec->extraFormat["filetype"] = "flac";
-		m_exportSpec->extension = ".flac";
+                break;
+        case	3:
+                m_exportSpec->writerType = "wp";
                 break;
         }
 
@@ -528,7 +529,6 @@ void ExportWidget::cd_render()
 		(m_exportSpec->allSongs == cdAllSongsButton->isChecked()) &&
 		(m_exportSpec->normalize == cdNormalizeCheckBox->isChecked())) ) {
 		
-		m_exportSpec->extension = ".wav";
 		m_exportSpec->data_width = 16;
 		m_exportSpec->writerType = "sf";
 		m_exportSpec->extraFormat["filetype"] = "wav";
