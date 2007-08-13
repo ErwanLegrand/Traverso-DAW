@@ -178,6 +178,9 @@ void ExportWidget::on_exportStartButton_clicked( )
 	
 	show_progress_view();
 	
+	// clear extraformats, it might be different now from previous runs!
+	m_exportSpec->extraFormat.clear();
+	
 	
 	switch (audioTypeComboBox->currentIndex()) {
         case	0:
