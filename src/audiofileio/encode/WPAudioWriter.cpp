@@ -71,6 +71,7 @@ bool WPAudioWriter::open_private()
 	memset (&m_config, 0, sizeof(m_config));
 	m_config.bytes_per_sample = (m_sampleWidth == 1) ? 4 : m_sampleWidth/8;
 	m_config.bits_per_sample = (m_sampleWidth == 1) ? 32 : m_sampleWidth;
+	if (m_sampleWidth == 1) m_config.float_norm_exp = 127; // config->float_norm_exp,  select floating-point data (127 for +/-1.0)
 	m_config.channel_mask = (m_channels == 2) ? 3 : 4; // Microsoft standard (mono = 4, stereo = 3)
 	m_config.num_channels = m_channels;
 	m_config.sample_rate = m_rate;
