@@ -47,17 +47,6 @@ WPAudioWriter::~WPAudioWriter()
 	}
 }
 
-bool WPAudioWriter::set_format_attribute(const QString& key, const QString& value)
-{
-	if (key == "filetype") {
-		if (value == "wv") {
-			return true;
-		}
-	}
-	
-	return false;
-}
-
 const char* WPAudioWriter::get_extension()
 {
 	return ".wv";

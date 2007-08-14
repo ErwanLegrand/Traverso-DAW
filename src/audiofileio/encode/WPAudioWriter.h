@@ -37,7 +37,6 @@ public:
 	WPAudioWriter();
 	~WPAudioWriter();
 	
-	bool set_format_attribute(const QString& key, const QString& value);
 	const char* get_extension();
 	
 protected:
