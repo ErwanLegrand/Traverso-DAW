@@ -75,6 +75,18 @@ bool WPAudioWriter::open_private()
 	m_config.channel_mask = (m_channels == 2) ? 3 : 4; // Microsoft standard (mono = 4, stereo = 3)
 	m_config.num_channels = m_channels;
 	m_config.sample_rate = m_rate;
+	
+	// Make optional ?
+	
+	// CONFIG_HIGH_FLAG (default) ~ 1.5 times slower then FAST, ~ 20% extra compression then FAST
+	// CONFIG_VERY_HIGH_FLAG ~ 2 times slower then FAST, ~ 25 % extra compression then FAST
+	m_config.flags |= CONFIG_FAST_FLAG;
+	// This option reduces the storage of some floating-point data files by up to about 10% by eliminating some 
+	// information that has virtually no effect on the audio data. While this does technically make the compression 
+	// lossy, it retains all the advantages of floating point data (>600 dB of dynamic range, no clipping, and 25 bits 
+	// of resolution). This also affects large integer compression by limiting the resolution to 24 bits.
+// 	m_config.flags |= CONFIG_SKIP_WVX;
+	
 	WavpackSetConfiguration(m_wp, &m_config, -1);
 	
 	if (!WavpackPackInit(m_wp)) {
