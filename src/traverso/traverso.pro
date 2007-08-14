@@ -22,10 +22,6 @@ LIBS +=  \
 	-ltraversoplugins \
 	-lsndfile \
 	-lsamplerate \
-	-lvorbisfile \
-	-lmad \
-	-lwavpack \
-	-lFLAC \
 	-lfftw3
 
 HEADERS += \
@@ -155,11 +151,30 @@ unix{
 
     contains(DEFINES, JACK_SUPPORT){
         system(which relaytool 2>/dev/null >/dev/null){
-            LIBS += `relaytool --multilink libjack.so.0 libjack-0.100.0.so.0 --relay jack -ljack`
-        }        else{
+            LIBS += $$system(relaytool --multilink libjack.so.0 libjack-0.100.0.so.0 --relay jack -ljack)
+        } else{
             LIBS += -ljack
         }
     }
+
+    system(which relaytool 2>/dev/null >/dev/null) {
+        LIBS += $$system(relaytool --relay FLAC -lFLAC)
+        LIBS += $$system(relaytool --relay mad -lmad)
+        LIBS += $$system(relaytool --relay vorbisfile -lvorbisfile)
+        LIBS += $$system(relaytool --relay wavpack -lwavpack)
+    } else {
+        LIBS += -lvorbisfile \
+            -lmad \
+            -lFLAC \
+            -lwavpack
+    }
+}
+
+!unix { #non-unix systems don't have relaytool
+    LIBS += -lvorbisfile \
+        -lmad \
+        -lFLAC \
+        -lwavpack
 }
 
 macx{

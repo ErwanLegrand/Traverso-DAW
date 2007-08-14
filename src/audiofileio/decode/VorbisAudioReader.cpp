@@ -28,6 +28,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <fcntl.h>
 #endif
 
+RELAYTOOL_VORBISFILE
+
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
@@ -67,6 +69,10 @@ VorbisAudioReader::~VorbisAudioReader()
 
 bool VorbisAudioReader::can_decode(QString filename)
 {
+	if (!libvorbisfile_is_present) {
+		return false;
+	}
+	
 	FILE* file = fopen(filename.toUtf8().data(), "rb");
 	if (!file) {
 		PERROR("Could not open file: %s.", filename.toUtf8().data());

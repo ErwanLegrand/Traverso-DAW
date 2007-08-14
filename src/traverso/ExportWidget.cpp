@@ -40,6 +40,8 @@
 #define CDRDAO_BIN	"cdrdao"
 #endif
 
+RELAYTOOL_WAVPACK
+
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
@@ -79,9 +81,11 @@ ExportWidget::ExportWidget( QWidget * parent )
 	audioTypeComboBox->insertItem(0, "WAV");
 	audioTypeComboBox->insertItem(1, "AIFF");
 	audioTypeComboBox->insertItem(2, "FLAC");
-	audioTypeComboBox->insertItem(3, "WAVPACK");
-// 	audioTypeComboBox->insertItem(3, "CD image (cdrdao)");
-
+	
+	if (libwavpack_is_present) {
+		audioTypeComboBox->insertItem(3, "WAVPACK");
+	}
+	
 	bitdepthComboBox->setCurrentIndex(0);
 
         switch(audiodevice().get_sample_rate()) {

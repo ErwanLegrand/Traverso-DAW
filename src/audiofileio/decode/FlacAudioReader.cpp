@@ -38,6 +38,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "FLAC/stream_decoder.h"
 #endif
 
+RELAYTOOL_FLAC
+
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -398,6 +400,10 @@ FlacAudioReader::~FlacAudioReader()
 
 bool FlacAudioReader::can_decode(QString filename)
 {
+	if (!libFLAC_is_present) {
+		return false;
+	}
+	
 	// buffer large enough to read an ID3 tag header
 	char buf[10];
 

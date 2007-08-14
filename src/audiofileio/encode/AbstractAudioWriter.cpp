@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QString>
 
+RELAYTOOL_WAVPACK
+
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
@@ -125,7 +127,7 @@ AbstractAudioWriter* AbstractAudioWriter::create_audio_writer(const QString& typ
 	if (type == "sf") {
 		return new SFAudioWriter();
 	}
-	else if (type == "wp") {
+	else if (libwavpack_is_present && type == "wp") {
 		return new WPAudioWriter();
 	}
 	/*else if (type == "mad") {
