@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "libtraversocore.h"
 
 #include "Peak.h"
+
+#include "AbstractAudioReader.h"
 #include "ReadSource.h"
 #include "ResourcesManager.h"
 #include "defines.h"
@@ -311,7 +313,9 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 		}
 		audio_sample_t readbuffer[toRead*2];
 		
-		nframes_t readFrames = m_source->file_read(audiobuf, startPos, toRead, readbuffer);
+		DecodeBuffer decodebuffer(audiobuf, readbuffer, toRead, toRead*2);
+		
+		nframes_t readFrames = m_source->file_read(&decodebuffer, startPos, toRead);
 
 		if (readFrames == 0) {
 			return NO_PEAKDATA_FOUND;
@@ -358,7 +362,7 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 #endif
 		
 		for (uint chan=0; chan < m_source->get_channel_count(); ++chan) {
-			delete audiobuf[chan];
+			delete [] audiobuf[chan];
 		}
 		
 		return count;
@@ -615,13 +619,16 @@ int Peak::create_from_scratch()
 	}
 	audio_sample_t* readbuffer = new audio_sample_t[bufferSize * 2];
 	
+	DecodeBuffer decodebuffer(buffer, readbuffer, bufferSize, bufferSize*2);
+	
 	do {
 		if (interuptPeakBuild) {
 			ret = -1;
 			goto out;
 		}
 		
-		readFrames = m_source->file_read(buffer, totalReadFrames, bufferSize, readbuffer);
+		readFrames = m_source->file_read(&decodebuffer, totalReadFrames, bufferSize);
+		
 		if (readFrames <= 0) {
 			PERROR("readFrames < 0 during peak building");
 			break;
@@ -647,8 +654,9 @@ int Peak::create_from_scratch()
 	
 out:
 	for (uint chan=0; chan<m_source->get_channel_count(); ++chan) {
-		delete buffer[chan];
+		delete [] buffer[chan];
 	}
+	
 	delete [] readbuffer;
 	 
 	return ret;
@@ -675,10 +683,21 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 		startpos += 1;
 		int toRead = (int) ((startpos * NORMALIZE_CHUNK_SIZE) - startframe);
 		
-		audio_sample_t buf[toRead];
-// 		int read = m_source->file_read(m_channel, buf, startframe, toRead, readbuffer);
+		audio_sample_t* buffer[m_source->get_channel_count()];
+		for (uint chan=0; chan<m_source->get_channel_count(); ++chan) {
+			buffer[chan] = new audio_sample_t[toRead];
+		}
+		audio_sample_t readbuffer[toRead * 2];
+	
+		DecodeBuffer decodebuffer(buffer, readbuffer, toRead, toRead*2);
 		
-// 		maxamp = Mixer::compute_peak(buf, read, maxamp);
+		int read = m_source->file_read(&decodebuffer, startframe, toRead);
+		
+		maxamp = Mixer::compute_peak(buffer[m_channel], read, maxamp);
+		
+		for (uint chan=0; chan<m_source->get_channel_count(); ++chan) {
+			delete [] buffer[chan];
+		}
 	}
 	
 	

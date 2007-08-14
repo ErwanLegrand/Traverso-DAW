@@ -37,7 +37,7 @@ public:
 	
 protected:
 	bool seek_private(nframes_t start);
-	nframes_t read_private(audio_sample_t** buffer, nframes_t sampleCount);
+	nframes_t read_private(DecodeBuffer* buffer, nframes_t sampleCount);
 	
 	FlacPrivate *m_flac;
 };

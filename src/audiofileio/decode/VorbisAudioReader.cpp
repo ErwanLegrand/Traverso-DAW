@@ -102,6 +102,7 @@ bool VorbisAudioReader::seek_private(nframes_t start)
 	
 	if (int result = ov_pcm_seek(&m_vf, start) < 0) {
 		PERROR("VorbisAudioReader: could not seek to frame %d within %s (%d)", start, m_fileName.toUtf8().data(), result);
+		Q_UNUSED(result);
 		return false;
 	}
 	
@@ -109,7 +110,7 @@ bool VorbisAudioReader::seek_private(nframes_t start)
 }
 
 
-nframes_t VorbisAudioReader::read_private(audio_sample_t** buffer, nframes_t frameCount)
+nframes_t VorbisAudioReader::read_private(DecodeBuffer* buffer, nframes_t frameCount)
 {
 	Q_ASSERT(m_file);
 	
@@ -135,7 +136,7 @@ nframes_t VorbisAudioReader::read_private(audio_sample_t** buffer, nframes_t fra
 		}
 		
 		for (int c=0; c < m_channels; c++) {
-			memcpy(buffer[c] + totalFramesRead, tmp[c], framesRead * sizeof(audio_sample_t));
+			memcpy(buffer->destination[c] + totalFramesRead, tmp[c], framesRead * sizeof(audio_sample_t));
 		}
 		totalFramesRead += framesRead;
 	}

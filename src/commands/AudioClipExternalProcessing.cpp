@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "AudioClipExternalProcessing.h"
 
+#include "AbstractAudioReader.h"
 #include <AudioClip.h>
 #include <AudioClipView.h>
 #include <Track.h>
@@ -56,6 +57,7 @@ public:
 		audio_sample_t readbuffer[buffersize];
 		audio_sample_t* mixdown[2];
 		for (int i=0; i<2; ++i) mixdown[i] = new audio_sample_t[2 * buffersize];
+		DecodeBuffer decodebuffer(mixdown, readbuffer, buffersize, buffersize*2);
 	
 		ExportSpecification* spec = new ExportSpecification();
 		spec->start_frame = 0;
@@ -83,7 +85,7 @@ public:
 		
 			memset (spec->dataF, 0, sizeof (spec->dataF[0]) * nframes * spec->channels);
 		
-			m_readsource->file_read(mixdown, spec->pos, nframes, readbuffer);
+			m_readsource->file_read(&decodebuffer, spec->pos, nframes);
 			
 			for (int chan=0; chan < 2; ++chan) {
 				for (uint x = 0; x < nframes; ++x) {

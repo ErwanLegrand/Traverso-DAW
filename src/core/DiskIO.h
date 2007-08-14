@@ -34,6 +34,7 @@ class AudioSource;
 class RingBuffer;
 class DiskIOThread;
 class Song;
+struct DecodeBuffer;
 
 struct BufferStatus {
 	int	fillStatus;
@@ -54,6 +55,7 @@ public:
 	static const int bufferdividefactor = 8;
 
 	void prepare_for_seek();
+	void output_rate_changed();
 
 	void register_read_source(ReadSource* source);
 	void register_write_source(WriteSource* source);
@@ -69,8 +71,9 @@ private:
 	Song* 			m_song;
 	volatile size_t		m_stopWork;
 	QList<ReadSource*>	m_readSources;
-	QList<AudioSource*>	m_processableSources;
 	QList<WriteSource*>	m_writeSources;
+	QList<ReadSource*>	m_processableReadSources;
+	QList<WriteSource*>	m_processableWriteSources;
 	DiskIOThread*		m_diskThread;
 	QTimer			m_workTimer;
 	QMutex			mutex;
@@ -84,6 +87,7 @@ private:
 	int			m_hardDiskOverLoadCounter;
 	audio_sample_t*		framebuffer[2];
 	audio_sample_t*		m_readbuffer;
+	DecodeBuffer*		m_decodebuffer;
 
 	
 	void update_time_usage();
@@ -97,7 +101,6 @@ public slots:
 	void seek(uint position);
 	void start_io();
 	void stop_io();
-	void output_rate_changed();
 	
 private slots:
 	void do_work();

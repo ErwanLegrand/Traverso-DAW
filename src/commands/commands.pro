@@ -50,6 +50,7 @@ INCLUDEPATH += ../core \
 ../engine \
 ../plugins \
 ../plugins/native \
+../audiofileio/decode \
 
 win32{
     INCLUDEPATH += ../../3thparty/include

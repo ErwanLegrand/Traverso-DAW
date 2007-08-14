@@ -48,7 +48,7 @@ enum {
   	TransportStarting = 3
 };
 
-// Unviversal samplerate for the frequences 22050, 32000, 44100, 88200, 96000 and 192000 Hz
+// Universal samplerate for the frequences 22050, 32000, 44100, 88200, 96000 and 192000 Hz
 static const quint64 UNIVERSAL_SAMPLE_RATE = 28224000;
 
 struct TimeRef {

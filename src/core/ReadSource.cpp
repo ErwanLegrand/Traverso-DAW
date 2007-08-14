@@ -222,13 +222,15 @@ void ReadSource::output_rate_changed()
 }
 
 
-int ReadSource::file_read(audio_sample_t** dst, nframes_t start, nframes_t cnt, audio_sample_t* readbuffer) const
+int ReadSource::file_read(DecodeBuffer* buffer, nframes_t start, nframes_t cnt) const
 {
+#define profile
+	
 #if defined (profile)
 	trav_time_t starttime = get_microseconds();
 #endif
 	if (m_audioReader->get_num_channels() == 1) {
-		nframes_t result = m_audioReader->read_from(dst, start, cnt);
+		nframes_t result = m_audioReader->read_from(buffer, start, cnt);
 #if defined (profile)
 		int processtime = (int) (get_microseconds() - starttime);
 		if (processtime > 40000)
@@ -240,7 +242,7 @@ int ReadSource::file_read(audio_sample_t** dst, nframes_t start, nframes_t cnt, 
 	// The readbuffer 'assumes' that there is max 2 channels...
 	Q_ASSERT(m_audioReader->get_num_channels() <= 2);
 	
-	nframes_t nread = m_audioReader->read_from(dst, start, cnt);
+	nframes_t nread = m_audioReader->read_from(buffer, start, cnt);
 #if defined (profile)
 	int processtime = (int) (get_microseconds() - starttime);
 	if (processtime > 40000)
@@ -348,9 +350,9 @@ int ReadSource::rb_read(audio_sample_t** dst, nframes_t start, nframes_t count)
 }
 
 
-int ReadSource::rb_file_read(audio_sample_t** dst, nframes_t cnt, audio_sample_t* readbuffer )
+int ReadSource::rb_file_read(DecodeBuffer* buffer, nframes_t cnt)
 {
-	int readFrames = file_read(dst, m_rbFileReadPos, cnt, readbuffer);
+	int readFrames = file_read(buffer, m_rbFileReadPos, cnt);
 	m_rbFileReadPos += readFrames;
 
 	return readFrames;
@@ -392,7 +394,7 @@ void ReadSource::rb_seek_to_file_position( nframes_t position )
 	m_rbRelativeFileReadPos = fileposition;
 }
 
-void ReadSource::process_ringbuffer(audio_sample_t** framebuffer, audio_sample_t* readbuffer, bool seeking)
+void ReadSource::process_ringbuffer(DecodeBuffer* buffer, bool seeking)
 {
 	// Do nothing if we passed the lenght of the AudioFile.
 	if (m_rbFileReadPos >= m_length) {
@@ -433,11 +435,11 @@ void ReadSource::process_ringbuffer(audio_sample_t** framebuffer, audio_sample_t
 	}
 	
 	// Read in the samples from source
-	nframes_t toWrite = rb_file_read(framebuffer, toRead, readbuffer);
+	nframes_t toWrite = rb_file_read(buffer, toRead);
 
 	// and write it to the ringbuffer
 	for (int i=m_buffers.size()-1; i>=0; --i) {
-		m_buffers.at(i)->write(framebuffer[i], toWrite);
+		m_buffers.at(i)->write(buffer->destination[i], toWrite);
 	}
 }
 
@@ -466,7 +468,7 @@ void ReadSource::finish_resync()
 	m_syncInProgress = 0;
 }
 
-void ReadSource::sync(audio_sample_t** framebuffer, audio_sample_t* readbuffer)
+void ReadSource::sync(DecodeBuffer* buffer)
 {
 	PENTER2;
 	if (!m_needSync) {
@@ -481,7 +483,7 @@ void ReadSource::sync(audio_sample_t** framebuffer, audio_sample_t* readbuffer)
 	// Currently, we fill the buffer completely.
 	// For some reason, filling it with 1/4 at a time
 	// doesn't fill it consitently, and thus giving audible artifacts.
-	process_ringbuffer(framebuffer, readbuffer);
+	process_ringbuffer(buffer);
 	
 	if (m_buffers.at(0)->write_space() == 0) {
 		finish_resync();

@@ -126,7 +126,7 @@ class FlacPrivate
 		void cleanup()
 		{
 			if (internalBuffer) {
-				delete internalBuffer;
+				delete [] internalBuffer;
 			}
 			file->close();
 			delete file;
@@ -211,7 +211,7 @@ FLAC__StreamDecoderWriteStatus FlacPrivate::write_callback(const FLAC__StreamDec
 	
 	if ((nframes_t)fp->bufferSize < frames * frame->header.channels) {
 		if (fp->internalBuffer) {
-			delete fp->internalBuffer;
+			delete [] fp->internalBuffer;
 		}
 		fp->internalBuffer = new audio_sample_t[frames * frame->header.channels];
 		fp->bufferSize = frames * frame->header.channels;
@@ -487,7 +487,7 @@ bool FlacAudioReader::seek_private(nframes_t start)
 }
 
 
-nframes_t FlacAudioReader::read_private(audio_sample_t** buffer, nframes_t frameCount)
+nframes_t FlacAudioReader::read_private(DecodeBuffer* buffer, nframes_t frameCount)
 {
 	Q_ASSERT(m_flac);
 	
@@ -549,18 +549,18 @@ nframes_t FlacAudioReader::read_private(audio_sample_t** buffer, nframes_t frame
 		framesToCopy = (frameCount - framesCoppied < framesAvailable) ? frameCount - framesCoppied : framesAvailable;
 		switch (get_num_channels()) {
 			case 1:
-				memcpy(buffer[0] + framesCoppied, m_flac->internalBuffer + m_flac->bufferStart, framesToCopy);
+				memcpy(buffer->destination[0] + framesCoppied, m_flac->internalBuffer + m_flac->bufferStart, framesToCopy);
 				break;
 			case 2:
 				for (nframes_t i = 0; i < framesToCopy; i++) {
-					buffer[0][framesCoppied + i] = m_flac->internalBuffer[m_flac->bufferStart + i * 2];
-					buffer[1][framesCoppied + i] = m_flac->internalBuffer[m_flac->bufferStart + i * 2 + 1];
+					buffer->destination[0][framesCoppied + i] = m_flac->internalBuffer[m_flac->bufferStart + i * 2];
+					buffer->destination[1][framesCoppied + i] = m_flac->internalBuffer[m_flac->bufferStart + i * 2 + 1];
 				}
 				break;
 			default:
 				for (nframes_t i = 0; i < framesToCopy; i++) {
 					for (int c = 0; c < get_num_channels(); c++) {
-						buffer[c][framesCoppied + i] = m_flac->internalBuffer[m_flac->bufferStart + i * get_num_channels() + c];
+						buffer->destination[c][framesCoppied + i] = m_flac->internalBuffer[m_flac->bufferStart + i * get_num_channels() + c];
 					}
 				}
 				break;

@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 SFAudioReader::SFAudioReader(QString filename)
- : AbstractAudioReader(filename)
+	: AbstractAudioReader(filename)
 {
 	/* although libsndfile says we don't need to set this,
 	valgrind and source code shows us that we do.
@@ -44,18 +44,11 @@ SFAudioReader::SFAudioReader(QString filename)
 	m_channels = m_sfinfo.channels;
 	m_length = m_sfinfo.frames;
 	m_rate = m_sfinfo.samplerate;
-	
-	m_tmpBuffer = 0;
-	m_tmpBufferSize = 0;
 }
 
 
 SFAudioReader::~SFAudioReader()
 {
-	if (m_tmpBuffer) {
-		delete m_tmpBuffer;
-	}
-	
 	if (m_sf) {
 		if (sf_close(m_sf)) {
 			qWarning("sf_close returned an error!");
@@ -104,37 +97,34 @@ bool SFAudioReader::seek_private(nframes_t start)
 	}
 	
 	return true;
-}
+} 
 
 
-nframes_t SFAudioReader::read_private(audio_sample_t** buffer, nframes_t frameCount)
+nframes_t SFAudioReader::read_private(DecodeBuffer* buffer, nframes_t frameCount)
 {
 	Q_ASSERT(m_sf);
 	
-	// Make sure the temp buffer is big enough for this read
-	if (m_tmpBufferSize < frameCount) {
-		if (m_tmpBuffer) {
-			delete m_tmpBuffer;
-		}
-		m_tmpBuffer = new audio_sample_t[frameCount * m_channels];
-	}
-	int framesRead = sf_readf_float(m_sf, m_tmpBuffer, frameCount);
+	// Make sure the read buffer is big enough for this read
+	buffer->check_readbuffer_capacity(frameCount * m_channels); 
+	
+	int framesRead = sf_readf_float(m_sf, buffer->readBuffer, frameCount);
 	
 	// De-interlace
 	switch (m_channels) {
 		case 1:
-			memcpy(buffer[0], m_tmpBuffer, framesRead * sizeof(audio_sample_t));
+			memcpy(buffer->destination[0], buffer->readBuffer, framesRead * sizeof(audio_sample_t));
 			break;	
 		case 2:
 			for (int f = 0; f < framesRead; f++) {
-				buffer[0][f] = m_tmpBuffer[f * 2];
-				buffer[1][f] = m_tmpBuffer[f * 2 + 1];
+				int pos = f*2;
+				buffer->destination[0][f] = buffer->readBuffer[pos];
+				buffer->destination[1][f] = buffer->readBuffer[pos + 1];
 			}
 			break;	
 		default:
 			for (int f = 0; f < framesRead; f++) {
 				for (int c = 0; c < m_channels; c++) {
-					buffer[c][f] = m_tmpBuffer[f * m_channels + c];
+					buffer->destination[c][f] = buffer->readBuffer[f * m_channels + c];
 				}
 			}
 	}

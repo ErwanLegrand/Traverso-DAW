@@ -44,7 +44,7 @@ public :
 
 	int rb_write(audio_sample_t* src, nframes_t cnt);
 	int rb_file_write(nframes_t cnt);
-	void process_ringbuffer(audio_sample_t* framebuffer, audio_sample_t* buffer, bool seek);
+	void process_ringbuffer(audio_sample_t* buffer);
 	int get_processable_buffer_space() const;
 	int get_chunck_size() const {return m_chunksize;}
 	int get_buffer_size() const {return m_buffersize;}

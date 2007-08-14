@@ -35,7 +35,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 AbstractAudioReader::AbstractAudioReader(const QString& filename)
- : QObject(0)
 {
 	m_fileName = filename;
 	m_readPos = 0;
@@ -49,7 +48,7 @@ AbstractAudioReader::~AbstractAudioReader()
 
 // Read cnt frames starting at start from the AudioReader, into dst
 // uses seek() and read() from AudioReader subclass
-nframes_t AbstractAudioReader::read_from(audio_sample_t** buffer, nframes_t start, nframes_t count)
+nframes_t AbstractAudioReader::read_from(DecodeBuffer* buffer, nframes_t start, nframes_t count)
 {
 // 	printf("read_from:: before_seek from %d, framepos is %d\n", start, m_readPos);
 	
@@ -104,7 +103,7 @@ bool AbstractAudioReader::seek(nframes_t start)
 }
 
 
-nframes_t AbstractAudioReader::read(audio_sample_t** buffer, nframes_t count)
+nframes_t AbstractAudioReader::read(DecodeBuffer* buffer, nframes_t count)
 {
 	if (count && m_readPos < m_length) {
 	// 	printf("read_from:: after_seek from %d, framepos is %d\n", start, m_readPos);

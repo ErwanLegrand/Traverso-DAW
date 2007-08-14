@@ -1,6 +1,6 @@
 /*
 Copyright (C) 2007 Ben Levitt 
- * This file based on the mp3 decoding plugin of the K3b project.
+ * This file is based on the mp3 decoding plugin of the K3b project.
  * Copyright (C) 1998-2007 Sebastian Trueg <trueg@k3b.org>
 
 This file is part of Traverso
@@ -757,9 +757,9 @@ unsigned long MadAudioReader::countFrames()
 }
 
 
-nframes_t MadAudioReader::read_private(audio_sample_t** buffer, nframes_t frameCount)
+nframes_t MadAudioReader::read_private(DecodeBuffer* buffer, nframes_t frameCount)
 {
-	d->outputBuffers = buffer;
+	d->outputBuffers = buffer->destination;
 	d->outputSize = frameCount;
 	d->outputPos = 0;
 	

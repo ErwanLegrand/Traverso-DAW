@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 class AbstractAudioReader;
 class AudioClip;
 struct BufferStatus;
+struct DecodeBuffer;
 
 class ReadSource : public AudioSource
 {
@@ -52,7 +53,7 @@ public :
 	int rb_read(audio_sample_t** dest, nframes_t start, nframes_t cnt);
 	void rb_seek_to_file_position(nframes_t position);
 	
-	int file_read(audio_sample_t** dst, nframes_t start, nframes_t cnt, audio_sample_t* readbuffer) const;
+	int file_read(DecodeBuffer* buffer, nframes_t start, nframes_t cnt) const;
 
 	int init();
 	int get_error() const {return m_error;}
@@ -62,8 +63,8 @@ public :
 	void set_audio_clip(AudioClip* clip);
 	nframes_t get_nframes() const;
 	
-	void sync(audio_sample_t** framebuffer, audio_sample_t* readbuffer);
-	void process_ringbuffer(audio_sample_t** framebuffer, audio_sample_t* readbuffer, bool seeking=false);
+	void sync(DecodeBuffer* buffer);
+	void process_ringbuffer(DecodeBuffer* buffer, bool seeking=false);
 	void prepare_buffer();
 	size_t is_active() const;
 	BufferStatus* get_buffer_status();
@@ -98,7 +99,7 @@ private:
 	void start_resync(nframes_t position);
 	void finish_resync();
 	void recover_from_buffer_underrun(nframes_t position);
-	int rb_file_read(audio_sample_t** dst, nframes_t cnt, audio_sample_t* readbuffer);
+	int rb_file_read(DecodeBuffer* buffer, nframes_t cnt);
 
 	friend class ResourcesManager;
 	

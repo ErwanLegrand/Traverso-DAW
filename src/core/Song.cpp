@@ -930,8 +930,11 @@ void Song::audiodevice_params_changed()
 	// with the correct resampled audio data!
 	// We need to seek to a different position then the current one,
 	// else the seek won't happen at all :)
+	m_diskio->output_rate_changed();
+	
 	TimeRef location = m_transportLocation;
 	location.add_frames(1, audiodevice().get_sample_rate());
+	
 	set_transport_pos(location);
 }
 

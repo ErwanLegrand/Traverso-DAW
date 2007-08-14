@@ -22,19 +22,50 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #ifndef ABSTRACTAUDIOREADER_H
 #define ABSTRACTAUDIOREADER_H
 
-#include <QObject>
-
 #include "defines.h"
 
-class QString;
+#include <QString>
 
-class AbstractAudioReader : public QObject
+struct DecodeBuffer {
+	
+	DecodeBuffer() {
+		readBuffer = 0;
+		resampleBuffer = 0;
+		destinationChannelCount = destinationBufferSize = resampleBufferSize = readBufferSize = 0;
+	}
+	
+	DecodeBuffer(audio_sample_t** dest, audio_sample_t* readbuf, uint destbufsize, uint readbufsize) {
+		destination = dest;
+		readBuffer = readbuf;
+		destinationBufferSize = destbufsize;
+		readBufferSize = readbufsize;
+	}
+	
+	void check_readbuffer_capacity(uint size) {
+		if (readBufferSize < size) {
+			if (readBuffer) {
+				delete [] readBuffer;
+			}
+			readBuffer = new audio_sample_t[size];
+			readBufferSize = size;
+		}
+	}
+	
+	audio_sample_t** destination;
+	audio_sample_t* readBuffer;
+	audio_sample_t* resampleBuffer;
+	uint destinationChannelCount;
+	uint destinationBufferSize;
+	uint readBufferSize;
+	uint resampleBufferSize; // ????
+};
+
+class AbstractAudioReader
 {
-	Q_OBJECT
 	
 public:
 	AbstractAudioReader(const QString& filename);
-	~AbstractAudioReader();
+	virtual ~AbstractAudioReader();
 	
 	int get_num_channels();
 	nframes_t get_length();
@@ -42,15 +73,15 @@ public:
 	bool eof();
 	nframes_t pos();
 	
-	nframes_t read_from(audio_sample_t** buffer, nframes_t start, nframes_t count);
+	nframes_t read_from(DecodeBuffer* buffer, nframes_t start, nframes_t count);
 	bool seek(nframes_t start);
-	nframes_t read(audio_sample_t** buffer, nframes_t frameCount);
+	nframes_t read(DecodeBuffer* buffer, nframes_t frameCount);
 	
 	static AbstractAudioReader* create_audio_reader(const QString& filename);
 	
 protected:
 	virtual bool seek_private(nframes_t start) = 0;
-	virtual nframes_t read_private(audio_sample_t** buffer, nframes_t frameCount) = 0;
+	virtual nframes_t read_private(DecodeBuffer* buffer, nframes_t frameCount) = 0;
 	
 	QString		m_fileName;
 

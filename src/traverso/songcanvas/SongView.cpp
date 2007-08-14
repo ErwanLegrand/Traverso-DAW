@@ -154,6 +154,8 @@ SongView::SongView(SongWidget* songwidget,
 
 SongView::~SongView()
 {
+	delete m_dragShuttleCurve;
+	delete m_shuttleCurve;
 }
 		
 void SongView::scale_factor_changed( )

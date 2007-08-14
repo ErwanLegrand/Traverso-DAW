@@ -36,13 +36,11 @@ public:
 
 protected:
 	bool seek_private(nframes_t start);
-	nframes_t read_private(audio_sample_t** buffer, nframes_t frameCount);
+	nframes_t read_private(DecodeBuffer* buffer, nframes_t frameCount);
 	
 	WavpackContext*	m_wp;
 	bool		m_isFloat;
 	int		m_bitsPerSample;
-	int32_t		*m_tmpBuffer;
-	nframes_t	m_tmpBufferSize;
 };
 
 #endif

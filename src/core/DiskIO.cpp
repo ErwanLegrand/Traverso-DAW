@@ -68,6 +68,7 @@ const char *to_prio[] = { "none", "realtime", "best-effort", "idle", };
 
 #endif // endif Q_WS_X11
 
+#include "AbstractAudioReader.h"
 #include "AudioSource.h"
 #include "ReadSource.h"
 #include "WriteSource.h"
@@ -152,14 +153,16 @@ DiskIO::DiskIO(Song* song)
 	framebuffer[0] = new audio_sample_t[audiodevice().get_sample_rate() * writebuffertime];
 	framebuffer[1] = new audio_sample_t[audiodevice().get_sample_rate() * writebuffertime];
 	// We assume here that the audiofiles have max 2 channels, and readbuffer time is max 3 seconds.
-	m_readbuffer = new audio_sample_t[audiodevice().get_sample_rate() * 6];
+// 	m_readbuffer = new audio_sample_t[audiodevice().get_sample_rate() * 6];
+	m_decodebuffer = new DecodeBuffer;
+	m_decodebuffer->destination = framebuffer;
+	m_decodebuffer->readBufferSize = 0;
 
 	// Move this instance to the workthread
 	moveToThread(m_diskThread);
 	m_workTimer.moveToThread(m_diskThread);
 
 	connect(&m_workTimer, SIGNAL(timeout()), this, SLOT(do_work()));
-	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(output_rate_changed()));
 	
 	m_diskThread->start();
 }
@@ -172,6 +175,7 @@ DiskIO::~DiskIO()
 	delete [] framebuffer[0];
 	delete [] framebuffer[1];
 	delete [] m_readbuffer;
+	delete m_decodebuffer;
 }
 
 /**
@@ -230,15 +234,20 @@ void DiskIO::do_work( )
 	
 	while (there_are_processable_sources()) {
 		
-		for (int i=0; i<m_processableSources.size(); ++i) {
-			AudioSource* source = m_processableSources.at(i);
+		for (int i=0; i<m_processableReadSources.size(); ++i) {
+			ReadSource* source = m_processableReadSources.at(i);
 	
 			if (m_stopWork) {
 				update_time_usage();
 				return;
 			}
 	
-			source->process_ringbuffer(framebuffer, m_readbuffer, m_seeking);
+			source->process_ringbuffer(m_decodebuffer, m_seeking);
+		}
+		
+		for (int i=0; i<m_processableWriteSources.size(); ++i) {
+			WriteSource* source = m_processableWriteSources.at(i);
+			source->process_ringbuffer(framebuffer[0]);
 		}
 		
 		if (whilecount++ > 1000) {
@@ -255,7 +264,8 @@ void DiskIO::do_work( )
 // Internal function
 int DiskIO::there_are_processable_sources( )
 {
-	m_processableSources.clear();
+	m_processableReadSources.clear();
+	m_processableWriteSources.clear();
 	QList<ReadSource* > syncSources;
 		
 	for (int i=6; i >= 0; --i) {
@@ -279,7 +289,7 @@ int DiskIO::there_are_processable_sources( )
 					t_atomic_int_set(&m_writeBufferFillStatus, space);
 				}
 				
-				m_processableSources.append(source);
+				m_processableWriteSources.append(source);
 			}
 		}
 		
@@ -301,7 +311,7 @@ int DiskIO::there_are_processable_sources( )
 					t_atomic_int_set(&m_readBufferFillStatus, status->fillStatus);
 				}
 				
-				m_processableSources.append(source);
+				m_processableReadSources.append(source);
 			
 			} else if (status->needSync) {
 // 				printf("status == bufferUnderRun\n");
@@ -311,14 +321,14 @@ int DiskIO::there_are_processable_sources( )
 			}
 		}
 		
-		if (m_processableSources.size() > 0) {
+		if (m_processableReadSources.size() > 0 || m_processableWriteSources.size() > 0) {
 			return 1;
 		}
 	}
 				
 	
 	if (syncSources.size() > 0) { 
-		syncSources.at(0)->sync(framebuffer, m_readbuffer);
+		syncSources.at(0)->sync(m_decodebuffer);
 		return 1;
 	}
 	

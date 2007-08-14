@@ -64,7 +64,7 @@ ResampleAudioReader::~ResampleAudioReader()
 	}
 	
 	while (m_fileBuffers.size()) {
-		delete m_fileBuffers.back();
+		delete [] m_fileBuffers.back();
 		m_fileBuffers.pop_back();
 	}
 }
@@ -142,7 +142,7 @@ bool ResampleAudioReader::seek_private(nframes_t start)
 
 // If no conversion is necessary, pass the read straight to the child AudioReader,
 // otherwise get data from childreader and use libsamplerate to convert
-nframes_t ResampleAudioReader::read_private(audio_sample_t** buffer, nframes_t frameCount)
+nframes_t ResampleAudioReader::read_private(DecodeBuffer* buffer, nframes_t frameCount)
 {
 	Q_ASSERT(m_reader);
 	
@@ -167,7 +167,7 @@ nframes_t ResampleAudioReader::read_private(audio_sample_t** buffer, nframes_t f
 		if ((uint)m_fileBufferLength < fileCnt + OVERFLOW_SIZE) {
 			for (int c = 0; c < m_channels; c++) {
 				if (m_fileBufferLength) {
-					delete m_fileBuffers[c];
+					delete [] m_fileBuffers[c];
 				}
 				m_fileBuffers[c] = new audio_sample_t[fileCnt + OVERFLOW_SIZE];
 			}
@@ -178,7 +178,9 @@ nframes_t ResampleAudioReader::read_private(audio_sample_t** buffer, nframes_t f
 			m_filePointers[c] = m_fileBuffers[c] + m_overflowUsed;
 		}
 		
-		bufferUsed += m_reader->read(m_filePointers.data(), fileCnt + OVERFLOW_SIZE - m_overflowUsed);
+		// FIXME : this is of course very scary, needs proper fix!
+		buffer->destination = m_filePointers.data(); // ????
+		bufferUsed += m_reader->read(buffer, fileCnt + OVERFLOW_SIZE - m_overflowUsed);
 		//printf("Resampler: Read %lu of %lu (%lu)\n", bufferUsed, fileCnt + OVERFLOW_SIZE - m_overflowUsed, m_reader->get_length());
 	}
 	
@@ -195,7 +197,7 @@ nframes_t ResampleAudioReader::read_private(audio_sample_t** buffer, nframes_t f
 		// Set up sample rate converter struct for s.r.c. processing
 		m_srcData.data_in = m_fileBuffers[c];
 		m_srcData.input_frames = bufferUsed;
-		m_srcData.data_out = buffer[c];
+		m_srcData.data_out = buffer->destination[c];
 		m_srcData.output_frames = framesToConvert;
 		m_srcData.src_ratio = (double) m_outputRate / m_rate;
 		src_set_ratio(m_srcStates[c], m_srcData.src_ratio);
@@ -221,9 +223,10 @@ nframes_t ResampleAudioReader::read_private(audio_sample_t** buffer, nframes_t f
 	
 	// Pad end of file with 0s if necessary
 	if (framesRead == 0 && m_readPos < get_length()) {
+		// NOTE WHOOPTYDOOOO, are you sure about this Ben ???
 		int padLength = m_readPos;
 		for (int c = 0; c < m_channels; c++) {
-			memset(buffer[c] + framesRead, 0, padLength * sizeof(audio_sample_t));
+			memset(buffer->destination[c] + framesRead, 0, padLength * sizeof(audio_sample_t));
 		}
 		framesRead += padLength;
 		printf("Resampler: padding: %d\n", padLength);

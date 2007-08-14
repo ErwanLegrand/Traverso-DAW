@@ -51,6 +51,7 @@ private:
 	QQueue<InfoStruct >	m_messageQueue;
 	InfoStruct 		m_infoStruct;
 	QTextBrowser*		m_log;
+	QString			m_stringLog;
 	
 	void create_icons();
 	void log(InfoStruct infostruct);
@@ -99,10 +100,8 @@ MessageWidgetPrivate::MessageWidgetPrivate( QWidget * parent )
 	lay->addStretch(5);
 	setLayout(lay);
 	
-	m_log = new QTextBrowser(this);
-	m_log->setWindowFlags(Qt::Dialog);
-	m_log->resize(500, 200);
-	
+	m_log = 0;
+		
 	create_icons();
 	
 	connect(&info(), SIGNAL(message(InfoStruct)), this, SLOT(enqueue_message(InfoStruct)));
@@ -220,8 +219,13 @@ void MessageWidgetPrivate::log(InfoStruct infostruct)
 	}
 
 	QString image = "<td width=20><img src=\"" + iconpath + "\" /></td>";
-	m_log->append("<table width=100% " + color + " cellspacing=5><tr>" + 
-			image + time + "<td>" + infostruct.message + "</td></tr></table>");
+	QString string = "<table width=100% " + color + " cellspacing=5><tr>" + 
+			image + time + "<td>" + infostruct.message + "</td></tr></table>";
+	if (m_log) {
+		m_log->append(string);
+	} else {
+		m_stringLog.append(string);
+	}
 }
 
 QSize MessageWidgetPrivate::sizeHint() const
@@ -232,6 +236,14 @@ QSize MessageWidgetPrivate::sizeHint() const
 
 void MessageWidgetPrivate::show_history()
 {
+	if (!m_log) {
+		m_log = new QTextBrowser(this);
+		m_log->setWindowFlags(Qt::Dialog);
+		m_log->resize(500, 200);
+		m_log->append(m_stringLog);
+		m_stringLog.clear();
+	}
+
 	if (m_log->isHidden()) {
 		m_log->show();
 	} else {

@@ -45,18 +45,11 @@ WPAudioReader::WPAudioReader(QString filename)
 	m_channels = WavpackGetReducedChannels(m_wp);
 	m_length = WavpackGetNumSamples(m_wp);
 	m_rate = WavpackGetSampleRate(m_wp);
-	
-	m_tmpBuffer = 0;
-	m_tmpBufferSize = 0;
 }
 
 
 WPAudioReader::~WPAudioReader()
 {
-	if (m_tmpBuffer) {
-		delete m_tmpBuffer;
-	}
-	
 	if (m_wp) {
 		WavpackCloseFile(m_wp);
 	}
@@ -101,35 +94,37 @@ bool WPAudioReader::seek_private(nframes_t start)
 }
 
 
-nframes_t WPAudioReader::read_private(audio_sample_t** buffer, nframes_t frameCount)
+nframes_t WPAudioReader::read_private(DecodeBuffer* buffer, nframes_t frameCount)
 {
 	Q_ASSERT(m_wp);
 	
-	// Make sure the temp buffer is big enough for this read
-	if (m_tmpBufferSize < frameCount) {
-		if (m_tmpBuffer) {
-			delete m_tmpBuffer;
-		}
-		m_tmpBuffer = new int32_t[frameCount * m_channels];
-	}
-	nframes_t framesRead = WavpackUnpackSamples(m_wp, m_tmpBuffer, frameCount);
+	// Make sure the read buffer is big enough for this read
+	buffer->check_readbuffer_capacity(frameCount * m_channels);
+	
+	// WavPack only reads into a int32_t buffer...
+	int32_t* readbuffer = (int32_t*)buffer->readBuffer;
+	
+	nframes_t framesRead = WavpackUnpackSamples(m_wp, readbuffer, frameCount);
+	
+	const uint divider = ((uint)1<<(m_bitsPerSample-1));
 	
 	// De-interlace
 	if (m_isFloat) {
 		switch (m_channels) {
 			case 1:
-				memcpy(buffer[0], m_tmpBuffer, framesRead * sizeof(audio_sample_t));
+				memcpy(buffer->destination[0], readbuffer, framesRead * sizeof(audio_sample_t));
 				break;	
 			case 2:
 				for (nframes_t f = 0; f < framesRead; f++) {
-					buffer[0][f] = ((float*)m_tmpBuffer)[f * 2];
-					buffer[1][f] = ((float*)m_tmpBuffer)[f * 2 + 1];
+					uint pos = f*2;
+					buffer->destination[0][f] = ((float*)readbuffer)[pos];
+					buffer->destination[1][f] = ((float*)readbuffer)[pos + 1];
 				}
 				break;	
 			default:
 				for (nframes_t f = 0; f < framesRead; f++) {
 					for (int c = 0; c < m_channels; c++) {
-						buffer[c][f] = ((float*)m_tmpBuffer)[f * m_channels + c];
+						buffer->destination[c][f] = ((float*)readbuffer)[f * m_channels + c];
 					}
 				}
 		}
@@ -138,19 +133,20 @@ nframes_t WPAudioReader::read_private(audio_sample_t** buffer, nframes_t frameCo
 		switch (m_channels) {
 			case 1:
 				for (nframes_t f = 0; f < framesRead; f++) {
-					buffer[0][f] = (float)((float)m_tmpBuffer[f]/ (float)((uint)1<<(m_bitsPerSample-1)));
+					buffer->destination[0][f] = (float)((float)readbuffer[f]/ divider);
 				}
 				break;	
 			case 2:
 				for (nframes_t f = 0; f < framesRead; f++) {
-					buffer[0][f] = (float)((float)m_tmpBuffer[f * 2]/ (float)((uint)1<<(m_bitsPerSample-1)));
-					buffer[1][f] = (float)((float)m_tmpBuffer[f * 2 + 1]/ (float)((uint)1<<(m_bitsPerSample-1)));
+					uint pos = f*2;
+					buffer->destination[0][f] = (float)((float)readbuffer[pos]/ divider);
+					buffer->destination[1][f] = (float)((float)readbuffer[pos + 1]/ divider);
 				}
 				break;	
 			default:
 				for (nframes_t f = 0; f < framesRead; f++) {
 					for (int c = 0; c < m_channels; c++) {
-						buffer[c][f] = (float)((float)m_tmpBuffer[f + m_channels + c]/ (float)((uint)1<<(m_bitsPerSample-1)));
+						buffer->destination[c][f] = (float)((float)readbuffer[f + m_channels + c]/ divider);
 					}
 				}
 		}

@@ -51,6 +51,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "PluginChain.h"
 #include "GainEnvelope.h"
 
+#include "AbstractAudioReader.h"
+
 #include <commands.h>
 
 // Always put me below _all_ includes, this is needed
@@ -449,7 +451,8 @@ int AudioClip::process(nframes_t nframes)
 	if (m_song->realtime_path()) {
 		read_frames = m_readSource->rb_read(mixdown, mix_pos, nframes);
 	} else {
-		read_frames = m_readSource->file_read(mixdown, mix_pos, nframes, m_song->readbuffer);
+		DecodeBuffer buffer(mixdown, m_song->readbuffer, nframes, nframes*get_channels());
+		read_frames = m_readSource->file_read(&buffer, mix_pos, nframes);
 	}
 	
 	if (read_frames <= 0) {

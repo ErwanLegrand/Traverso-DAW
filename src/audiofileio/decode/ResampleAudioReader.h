@@ -42,7 +42,7 @@ protected:
 	void reset();
 	
 	bool seek_private(nframes_t start);
-	nframes_t read_private(audio_sample_t** buffer, nframes_t frameCount);
+	nframes_t read_private(DecodeBuffer* buffer, nframes_t frameCount);
 	
 	nframes_t song_to_file_frame(nframes_t frame);
 	nframes_t file_to_song_frame(nframes_t frame);
