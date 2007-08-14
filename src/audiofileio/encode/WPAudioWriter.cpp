@@ -43,7 +43,7 @@ WPAudioWriter::~WPAudioWriter()
 		close_private();
 	}
 	if (m_firstBlock) {
-		delete m_firstBlock;
+		delete [] m_firstBlock;
 	}
 }
 
@@ -186,7 +186,7 @@ nframes_t WPAudioWriter::write_private(void* buffer, nframes_t frameCount)
 			}
 		}
 		WavpackPackSamples(m_wp, tmp_buffer, frameCount);
-		delete tmp_buffer;
+		delete [] tmp_buffer;
 		return frameCount;
 	}
 	
@@ -203,7 +203,7 @@ void WPAudioWriter::close_private()
 	fclose(m_file);
 	m_wp = 0;
 	if (m_firstBlock) {
-		delete m_firstBlock;
+		delete [] m_firstBlock;
 		m_firstBlock = 0;
 		m_firstBlockSize = 0;
 	}
