@@ -53,3 +53,11 @@ unix {
 		DEFINES += RELAYTOOL_VORBISFILE="'static const int libvorbisfile_is_present=1; static int __attribute__((unused)) libvorbisfile_symbol_is_present(char *m) { return 1; }'"
 	}
 }
+
+!unix {
+	DEFINES += RELAYTOOL_FLAC="\"static const int libFLAC_is_present=1; static int __attribute__((unused)) libFLAC_symbol_is_present(char *) { return 1; }\""
+	
+	DEFINES += RELAYTOOL_MAD="\"static const int libmad_is_present=1; static int __attribute__((unused)) libmad_symbol_is_present(char *) { return 1; }\""
+	
+	DEFINES += RELAYTOOL_VORBISFILE="\"static const int libvorbisfile_is_present=1; static int __attribute__((unused)) libvorbisfile_symbol_is_present(char *) { return 1; }\""
+}

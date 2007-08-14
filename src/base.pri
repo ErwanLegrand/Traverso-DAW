@@ -142,7 +142,7 @@ unix {
 
 !unix {
 	# other systems have no relaytool
-	DEFINES += RELAYTOOL_WAVPACK="'static const int libwavpack_is_present=1; static int __attribute__((unused)) libwavpack_symbol_is_present(char *m) { return 1; }'"
+	DEFINES += RELAYTOOL_WAVPACK='"static const int libwavpack_is_present=1; static int __attribute__((unused)) libwavpack_symbol_is_present(char *) { return 1; }"'
 }
 
 macx {
