@@ -130,7 +130,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	QRectF clipRect = m_boundingRect.adjusted(-1, -1, 1, 1);
 	painter->setClipRect(clipRect);
 	
-	if (m_clip->invalid_readsource()) {
+	if (m_clip->is_readsource_invalid()) {
 		painter->fillRect(xstart, 0, pixelcount, m_height, themer()->get_color("AudioClip:invalidreadsource"));
 		draw_clipinfo_area(painter, xstart, pixelcount);
 		painter->setPen(themer()->get_color("AudioClip:contour"));
@@ -917,7 +917,7 @@ void AudioClipView::set_dragging(bool dragging)
 
 Command * AudioClipView::set_audio_file()
 {
-	if (m_clip->invalid_readsource()) {
+	if (m_clip->is_readsource_invalid()) {
 		ReadSource* rs = m_clip->get_readsource();
 		if ( ! rs ) {
 			return ie().failure();
