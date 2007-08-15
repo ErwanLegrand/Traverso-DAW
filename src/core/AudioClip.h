@@ -112,7 +112,7 @@ public:
 	bool is_selected() const;
 	bool is_locked() const;
 	bool has_song() const;
-	bool invalid_readsource() const {return m_invalidReadSource;}
+	bool invalid_readsource() const {return m_isReadSourceValid;}
 	int recording_state() const;
 
 	static bool smaller(const AudioClip* left, const AudioClip* right )
@@ -128,7 +128,7 @@ private:
 	Track* 			m_track;
 	Song* 			m_song;
 	ReadSource*		m_readSource;
-	QList<WriteSource* >	writeSources;
+	WriteSource*		m_recorder;
 	QList<FadeCurve* >	m_fades;
 	QList<Peak* >		m_peaks;
 	AudioBus*		m_captureBus;
@@ -151,7 +151,7 @@ private:
 	bool 			m_isTake;
 	bool 			m_isMuted;
 	bool			m_isLocked;
-	bool			m_invalidReadSource;
+	bool			m_isReadSourceValid;
 	RecordingStatus		m_recordingStatus;
 	
 	qint64			m_readSourceId;
@@ -164,7 +164,7 @@ private:
 	void set_source_start_frame(nframes_t frame);
 	void set_track_end_frame(nframes_t endFrame);
 	void set_sources_active_state();
-	void process_capture(nframes_t nframes, uint channel);
+	void process_capture(nframes_t nframes);
 	
 	
 	void calculate_normalization_factor(float targetdB = 0.0);
@@ -183,7 +183,7 @@ signals:
 
 public slots:
 	void finish_recording();
-	void finish_write_source(WriteSource* source);
+	void finish_write_source();
 	void set_left_edge(long frame);
 	void set_right_edge(long frame);
 	void track_audible_state_changed();

@@ -54,7 +54,7 @@ protected:
 	FILE*		m_file;
 	char*		m_firstBlock;
 	int32_t 	m_firstBlockSize;
-	int		m_qualityFlags;
+	int		m_configFlags;
 	int32_t*	m_tmp_buffer;
 	nframes_t	m_tmpBufferSize;
 };

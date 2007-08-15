@@ -57,16 +57,15 @@ Peak::Peak(AudioSource* source, int channel)
 	PENTERCONS;
 	
 	ReadSource* rs = qobject_cast<ReadSource*>(source);
+	
 	if (rs) {
 		m_source = resources_manager()->get_readsource(rs->get_id());
+	} else {
+		m_source = 0;
 	}
 	
-	if (source->get_channel_count() > 1) {
-		PMESG("Peak channel count is %d", source->get_channel_count());
-		m_fileName = pm().get_project()->get_root_dir() + "/peakfiles/" + source->get_name() + "-ch" + QByteArray::number(m_channel) + ".peak";
-	} else {
-		m_fileName = pm().get_project()->get_root_dir() + "/peakfiles/" + source->get_name() + ".peak";
-	}
+	m_fileName = source->get_filename() + "-ch" + QByteArray::number(m_channel) + ".peak";
+	m_fileName = m_fileName.replace(QRegExp("audiosources"), "peakfiles");
 	
 	peaksAvailable = permanentFailure = interuptPeakBuild = false;
 	m_file = m_normFile = 0;
@@ -104,7 +103,7 @@ int Peak::read_header()
 	m_file = fopen(m_fileName.toUtf8().data(),"rb");
 	
 	if (! m_file) {
-		//PERROR("Couldn't open peak file for reading! (%s)", m_fileName.toAscii().data());
+		PERROR("Couldn't open peak file for reading! (%s)", m_fileName.toAscii().data());
 		return -1;
 	}
 	
@@ -145,7 +144,7 @@ int Peak::read_header()
 	fread(m_data.peakDataSizeForLevel, sizeof(m_data.peakDataSizeForLevel), 1, m_file);
 	fread(&m_data.normValuesDataOffset, sizeof(m_data.normValuesDataOffset), 1, m_file);
 	fread(&m_data.peakDataOffset, sizeof(m_data.peakDataOffset), 1, m_file);
-
+	
 	peaksAvailable = true;
 	
 	return 1;
@@ -706,10 +705,20 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 	float f = (float) endframe / NORMALIZE_CHUNK_SIZE;
 	int endpos = (int) f;
 	int toRead = (int) ((f - (endframe / NORMALIZE_CHUNK_SIZE)) * NORMALIZE_CHUNK_SIZE);
-	audio_sample_t buf[toRead];
-// 	int read = m_source->file_read(m_channel, buf, endframe - toRead, toRead, readbuffer);
-	int read = 0;//m_source->file_read(m_channel, buf, endframe - toRead, toRead, readbuffer);
-	maxamp = Mixer::compute_peak(buf, read, maxamp);
+	
+	audio_sample_t* buffer[m_source->get_channel_count()];
+	for (uint chan=0; chan<m_source->get_channel_count(); ++chan) {
+		buffer[chan] = new audio_sample_t[toRead];
+	}
+	DecodeBuffer decodebuffer(buffer, readbuffer, toRead, toRead*2);
+	
+	int read = m_source->file_read(&decodebuffer, endframe - toRead, toRead);
+	
+	maxamp = Mixer::compute_peak(buffer[m_channel], read, maxamp);
+	
+	for (uint chan=0; chan<m_source->get_channel_count(); ++chan) {
+		delete [] buffer[chan];
+	}
 	
 	// Now that we have covered both boundary situations,
 	// read in the cached normvalues, and calculate the highest value!

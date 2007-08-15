@@ -115,7 +115,7 @@ void AudioClip::init()
 	m_track = 0;
 	m_readSource = 0;
 	m_recordingStatus = NO_RECORDING;
-	m_isSelected = m_invalidReadSource = false;
+	m_isSelected = m_isReadSourceValid = false;
 	m_isLocked = config().get_property("AudioClip", "LockByDefault", false).toBool();
 	fadeIn = 0;
 	fadeOut = 0;
@@ -395,11 +395,11 @@ int AudioClip::process(nframes_t nframes)
 	Q_ASSERT(m_song);
 	
 	if (m_recordingStatus == RECORDING) {
-// 		process_capture(nframes, channel);
+		process_capture(nframes);
 		return 0;
 	}
 
-	if (m_invalidReadSource) {
+	if (m_isReadSourceValid) {
 		return -1;
 	}
 
@@ -478,37 +478,32 @@ int AudioClip::process(nframes_t nframes)
 //
 //  Function called in RealTime AudioThread processing path
 //
-void AudioClip::process_capture( nframes_t nframes, uint channel )
+void AudioClip::process_capture(nframes_t nframes)
 {
-	if (channel == 0) {
-		if ( ! m_track->capture_left_channel() ) {
-			return;
-		}
-	}
-		
-	if (channel == 1) {
-		if ( ! m_track->capture_right_channel()) {
-			return;
-		}
-	}
-	
 	if (!m_captureBus) {
 		return;
 	}
 	
-	m_length += (nframes / writeSources.size());
+	m_length += nframes;
+	nframes_t written = 0;
 	
-	int index = 0;
 	if (m_track->capture_left_channel() && m_track->capture_right_channel()) {
-		index = channel;
+		audio_sample_t* buffer[2];
+		buffer[0] = m_captureBus->get_buffer(0, nframes);
+		buffer[1] = m_captureBus->get_buffer(1, nframes);
+		written = m_recorder->rb_write(buffer, nframes);
+	} else if (m_track->capture_left_channel()) {
+		audio_sample_t* buffer[1];
+		buffer[0] = m_captureBus->get_buffer(0, nframes);
+		written = m_recorder->rb_write(buffer, nframes);
+	} else if (m_track->capture_right_channel()) {
+		audio_sample_t* buffer[1];
+		buffer[0] = m_captureBus->get_buffer(1, nframes);
+		written = m_recorder->rb_write(buffer, nframes);
 	}
 	
-	WriteSource* source = writeSources.at(index);
-
-	nframes_t written = source->rb_write(m_captureBus->get_buffer(channel, nframes), nframes);
-
 	if (written != nframes) {
-		printf("couldn't write nframes %d to recording buffer, only %d\n", nframes, written);
+		printf("couldn't write nframes %d to recording buffer for channel 0, only %d\n", nframes, written);
 	}
 }
 
@@ -527,67 +522,50 @@ int AudioClip::init_recording( QByteArray name )
 		return -1;
 	}
 
-	int channelnumber = 0;
-	int channelcount = m_captureBus->get_channel_count();
-	if (! (m_track->capture_left_channel() && m_track->capture_right_channel()) ) {
+	sourceStartFrame = 0;
+	m_isTake = 1;
+	m_recordingStatus = RECORDING;
+	int channelcount;
+	
+	if (m_track->capture_left_channel() && m_track->capture_right_channel()) {
+		channelcount = 2;
+	} else {
 		channelcount = 1;
 	}
-
+	
 	ReadSource* rs = resources_manager()->create_recording_source(
 				pm().get_project()->get_root_dir() + "/audiosources/",
 				m_name, channelcount, m_song->get_id());
 	
 	resources_manager()->set_source_for_clip(this, rs);
+	
 	QString sourceid = QString::number(rs->get_id());
 	
-	for (int chan=0; chan<m_captureBus->get_channel_count(); chan++) {
-		if (chan == 0) {
-			if ( ! m_track->capture_left_channel() ) {
-				continue;
-			}
-		}
-		
-		if (chan == 1) {
-			if ( ! m_track->capture_right_channel()) {
-				continue;
-			}
-		}
-		
-		if (m_track->capture_left_channel() && m_track->capture_right_channel()) {
-			channelnumber = chan;
-		}
-		
-		ExportSpecification* spec = new ExportSpecification;
+	ExportSpecification* spec = new ExportSpecification;
 
-		spec->exportdir = pm().get_project()->get_root_dir() + "/audiosources/";
-		spec->writerType = "sndfile";
-		spec->extraFormat["filetype"] = "wav";
-		spec->data_width = 1;	// 1 means float
-		spec->channels = 1;
-		spec->sample_rate = audiodevice().get_sample_rate();
-		spec->src_quality = SRC_SINC_MEDIUM_QUALITY;
-		spec->isRecording = true;
-		spec->start_frame = 0;
-		spec->end_frame = 0;
-		spec->total_frames = 0;
-		spec->blocksize = audiodevice().get_buffer_size();
-		spec->name = m_name + "-" + sourceid;
-		spec->dataF = m_captureBus->get_buffer( chan, audiodevice().get_buffer_size());
+	spec->exportdir = pm().get_project()->get_root_dir() + "/audiosources/";
+	spec->writerType = "wavpack";
+	spec->extraFormat["quality"] = "fast";
+// 	spec->extraFormat["skip_wvx"] = "true";
+	spec->data_width = 1;	// 1 means float
+	spec->channels = channelcount;
+	spec->sample_rate = audiodevice().get_sample_rate();
+	spec->src_quality = SRC_SINC_MEDIUM_QUALITY;
+	spec->isRecording = true;
+	spec->start_frame = 0;
+	spec->end_frame = 0;
+	spec->total_frames = 0;
+	spec->blocksize = audiodevice().get_buffer_size();
+	spec->name = m_name + "-" + sourceid;
+	spec->dataF = m_captureBus->get_buffer(0, audiodevice().get_buffer_size());
 
-		WriteSource* ws = new WriteSource(spec, channelnumber, channelcount);
-		ws->set_process_peaks( true );
-		ws->set_recording( true );
-
-		connect(ws, SIGNAL(exportFinished(WriteSource*)), this, SLOT(finish_write_source(WriteSource*)));
-
-		writeSources.insert(channelnumber, ws);
-		m_song->get_diskio()->register_write_source( ws );
-	}
-
-	sourceStartFrame = 0;
-	m_isTake = 1;
-	m_recordingStatus = RECORDING;
+	m_recorder = new WriteSource(spec);
+	m_recorder->set_process_peaks( true );
+	m_recorder->set_recording( true );
 	
+	m_song->get_diskio()->register_write_source(m_recorder);
+	
+	connect(m_recorder, SIGNAL(exportFinished()), this, SLOT(finish_write_source()));
 	connect(m_song, SIGNAL(transferStopped()), this, SLOT(finish_recording()));
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(get_capture_bus()));
 
@@ -655,14 +633,14 @@ void AudioClip::set_audio_source(ReadSource* rs)
 	PENTER;
 	
 	if (!rs) {
-		m_invalidReadSource = true;
+		m_isReadSourceValid = true;
 		return;
 	}
 	
 	if (rs->get_error() < 0) {
-		m_invalidReadSource = true;
+		m_isReadSourceValid = true;
 	} else {
-		m_invalidReadSource = false;
+		m_isReadSourceValid = false;
 	}
 		
 	m_readSource = rs;
@@ -684,49 +662,45 @@ void AudioClip::set_audio_source(ReadSource* rs)
 
 	rs->set_audio_clip(this);
 	
-	foreach(Peak* peak, m_peaks) {
-		peak->close();
-	}
 	
-	m_peaks.clear();
+	if (m_recordingStatus == NO_RECORDING) {
+		
+		foreach(Peak* peak, m_peaks) {
+			peak->close();
+		}
 	
-	for (uint chan=0; chan<m_readSource->get_channel_count(); ++chan) {
-		m_peaks.append(new Peak(rs, chan));
+		m_peaks.clear();
+		
+		for (uint chan=0; chan<m_readSource->get_channel_count(); ++chan) {
+			m_peaks.append(new Peak(rs, chan));
+		}
 	}
 
 	emit stateChanged();
 }
 
-void AudioClip::finish_write_source( WriteSource * ws )
+void AudioClip::finish_write_source()
 {
 	PENTER;
-
-	if (writeSources.contains(ws)) {
-		writeSources.removeAll(ws);
-		if (ws->m_peak->finish_processing() < 0) {
-			PERROR("write source peak::finish_processing() failed!");
-		}
-		delete ws;
-	} else {
-		qFatal("AudioClip: finished writesource not in writesources list !!");
-	}
-		
 	
-	if (writeSources.isEmpty()) {
-		Q_ASSERT(m_readSource);
-		
-		if (m_readSource->set_file(m_readSource->get_filename()) < 0) {
-			PERROR("Setting file for ReadSource failed after finishing recording");
-		}
-		
+	Q_ASSERT(m_readSource);
+	
+	if (m_readSource->set_file(m_recorder->get_filename()) < 0) {
+		PERROR("Setting file for ReadSource failed after finishing recording");
+	} else {
 		m_song->get_diskio()->register_read_source(m_readSource);
 		// re-inits the lenght from the audiofile due calling rsm->set_source_for_clip()
 		m_length = 0;
-		resources_manager()->set_source_for_clip(this, m_readSource);
-		m_recordingStatus = NO_RECORDING;
-		
-		emit recordingFinished();
 	}
+	
+	delete m_recorder;
+	m_recorder = 0;
+	
+	m_recordingStatus = NO_RECORDING;
+	
+	resources_manager()->set_source_for_clip(this, m_readSource);
+	
+	emit recordingFinished();
 }
 
 void AudioClip::finish_recording()
@@ -734,10 +708,7 @@ void AudioClip::finish_recording()
 	PENTER;
 	
 	m_recordingStatus = FINISHING_RECORDING;
-
-	foreach(WriteSource* ws, writeSources) {
-		ws->set_recording(false);
-	}
+	m_recorder->set_recording(false);
 
 	disconnect(m_song, SIGNAL(transferStopped()), this, SLOT(finish_recording()));
 	disconnect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(get_capture_bus()));
@@ -748,8 +719,8 @@ int AudioClip::get_channels( ) const
 	if (m_readSource) {
 		return m_readSource->get_channel_count();
 	} else {
-		if (writeSources.size()) {
-			return writeSources.size();
+		if (m_recorder) {
+			return m_recorder->get_channel_count();
 		}
 	}
 	
@@ -771,7 +742,7 @@ Track* AudioClip::get_track( ) const
 void AudioClip::set_song( Song * song )
 {
 	m_song = song;
-	if (m_readSource) {
+	if (m_readSource && !m_isReadSourceValid) {
 		m_song->get_diskio()->register_read_source( m_readSource );
 	} else {
 		PWARN("AudioClip::set_song() : Setting Song, but no ReadSource available!!");

@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define WRITESOURCE_H
 
 #include "AudioSource.h"
-#include "RingBufferNPT.h"
+
 #include "gdither.h"
 #include <samplerate.h>
 
@@ -32,22 +32,21 @@ class Peak;
 class DiskIO;
 class AbstractAudioWriter;
 
-/// WriteSource is an AudioSource only used for writing (recording, rendering) purposes
+/// WriteSource is an AudioSource used for writing (recording, rendering) purposes
 class WriteSource : public AudioSource
 {
 	Q_OBJECT
 
 public :
 	WriteSource(ExportSpecification* spec);
-	WriteSource(ExportSpecification* spec, int channelNumber, int superChannelCount);
 	~WriteSource();
 
-	int rb_write(audio_sample_t* src, nframes_t cnt);
+	int rb_write(audio_sample_t** src, nframes_t cnt);
 	int rb_file_write(nframes_t cnt);
 	void process_ringbuffer(audio_sample_t* buffer);
 	int get_processable_buffer_space() const;
-	int get_chunck_size() const {return m_chunksize;}
-	int get_buffer_size() const {return m_buffersize;}
+	int get_chunck_size() const {return m_chunkSize;}
+	int get_buffer_size() const {return m_bufferSize;}
 
 	int process(nframes_t nframes);
 	
@@ -59,43 +58,41 @@ public :
 	size_t is_recording() const;
 
 	void set_diskio(DiskIO* io );
-	Peak* 		m_peak;
 
 private:
-	RingBufferNPT<audio_sample_t>*	m_buffer;
-	AbstractAudioWriter*		m_writer;
-	ExportSpecification*		m_spec;
+	AbstractAudioWriter*	m_writer;
+	ExportSpecification*	m_spec;
+	QList<Peak*>		m_peaks;
 	
-	DiskIO*		diskio;
-	GDither         dither;
-	nframes_t       out_samples_max;
-	nframes_t       sample_rate;
-	uint		channels;
-	uint32_t        sample_bytes;
-	nframes_t       leftover_frames;
-	SRC_DATA        src_data;
-	SRC_STATE*      src_state;
-	nframes_t       max_leftover_frames;
-	float*		leftoverF;
-	float*		dataF2;
-	void*           output_data;
-	bool		processPeaks;
+	DiskIO*		m_diskio;
+	GDither         m_dither;
+	bool		m_processPeaks;
 	size_t		m_isRecording;
-	int		m_channelNumber;
-	int	m_buffersize;
-	int	m_chunksize;
+	nframes_t       m_sampleRate;
+	uint32_t        m_sample_bytes;
+	
+	// Sample rate conversion variables
+	nframes_t       m_out_samples_max;
+	nframes_t       m_leftover_frames;
+	SRC_DATA        m_src_data;
+	SRC_STATE*      m_src_state;
+	nframes_t       m_max_leftover_frames;
+	float*		m_leftoverF;
+	float*		m_dataF2;
+	void*           m_output_data;
+	
 	
 	int prepare_export();
 	
 
 signals:
-	void exportFinished(WriteSource* );
+	void exportFinished();
 };
 
 
 inline int WriteSource::get_processable_buffer_space( ) const
 {
-	return m_buffer->read_space();
+	return m_buffers.at(0)->read_space();
 }
 
 inline size_t WriteSource::is_recording( ) const

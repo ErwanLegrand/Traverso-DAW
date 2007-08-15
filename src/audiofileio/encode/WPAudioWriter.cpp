@@ -36,7 +36,7 @@ WPAudioWriter::WPAudioWriter()
 	m_firstBlockSize = 0;
 	m_tmp_buffer = 0;
 	m_tmpBufferSize = 0;
-	m_qualityFlags = 0;
+	m_configFlags = 0;
 }
 
 
@@ -60,20 +60,20 @@ bool WPAudioWriter::set_format_attribute(const QString& key, const QString& valu
 {
 	if (key == "quality") {
 		// Clear quality before or-ing in the new quality value
-		m_qualityFlags &= ~(CONFIG_FAST_FLAG | CONFIG_HIGH_FLAG | CONFIG_VERY_HIGH_FLAG);
+		m_configFlags &= ~(CONFIG_FAST_FLAG | CONFIG_HIGH_FLAG | CONFIG_VERY_HIGH_FLAG);
 		
 		if (value == "fast") {
-			m_qualityFlags |= CONFIG_FAST_FLAG;
+			m_configFlags |= CONFIG_FAST_FLAG;
 			return true;
 		}
 		else if (value == "high") {
 			// CONFIG_HIGH_FLAG (default) ~ 1.5 times slower then FAST, ~ 20% extra compression then FAST
-			m_qualityFlags |= CONFIG_HIGH_FLAG;
+			m_configFlags |= CONFIG_HIGH_FLAG;
 			return true;
 		}
 		else if (value == "very_high") {
 			// CONFIG_VERY_HIGH_FLAG ~ 2 times slower then FAST, ~ 25 % extra compression then FAST
-			m_qualityFlags |= CONFIG_VERY_HIGH_FLAG;
+			m_configFlags |= CONFIG_VERY_HIGH_FLAG;
 			return true;
 		}
 	}
@@ -84,11 +84,11 @@ bool WPAudioWriter::set_format_attribute(const QString& key, const QString& valu
 			// information that has virtually no effect on the audio data. While this does technically make the compression 
 			// lossy, it retains all the advantages of floating point data (>600 dB of dynamic range, no clipping, and 25 bits 
 			// of resolution). This also affects large integer compression by limiting the resolution to 24 bits.
-			m_qualityFlags |= CONFIG_SKIP_WVX;
+			m_configFlags |= CONFIG_SKIP_WVX;
 			return true;
 		}
 		else if (value == "false") {
-			m_qualityFlags &= ~CONFIG_SKIP_WVX;
+			m_configFlags &= ~CONFIG_SKIP_WVX;
 			return true;
 		}
 	}
@@ -118,7 +118,7 @@ bool WPAudioWriter::open_private()
 	m_config.channel_mask = (m_channels == 2) ? 3 : 4; // Microsoft standard (mono = 4, stereo = 3)
 	m_config.num_channels = m_channels;
 	m_config.sample_rate = m_rate;
-	m_config.flags = m_qualityFlags;
+	m_config.flags = m_configFlags;
 	
 	WavpackSetConfiguration(m_wp, &m_config, -1);
 	

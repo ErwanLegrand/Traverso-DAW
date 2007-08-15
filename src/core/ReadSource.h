@@ -23,8 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define READSOURCE_H
 
 #include "AudioSource.h"
-#include "RingBufferNPT.h"
-#include "defines.h"
 
 class AbstractAudioReader;
 class AudioClip;
@@ -73,14 +71,11 @@ public slots:
 	void output_rate_changed();
 	
 private:
-	QList<RingBufferNPT<float>*> m_buffers;
 	AbstractAudioReader*	m_audioReader;
 	AudioClip* 		m_clip;
 	int			m_refcount;
 	int			m_error;
 	bool			m_silent;
-	uint			m_bufferSize;
-	int			m_chunkSize;
 	nframes_t		m_rbFileReadPos;
 	nframes_t		m_rbRelativeFileReadPos;
 	volatile size_t		m_syncPos;

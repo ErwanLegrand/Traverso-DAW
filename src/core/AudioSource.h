@@ -27,6 +27,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QObject>
 #include <QDomDocument>
 
+#include "RingBufferNPT.h"
+
+
 class QString;
 
 /// The base class for AudioSources like ReadSource and WriteSource
@@ -57,6 +60,11 @@ public :
 	int get_bit_depth() const;
 	
 protected:
+	QList<RingBufferNPT<audio_sample_t>*> 	m_buffers;
+	
+	uint		m_bufferSize;
+	uint		m_chunkSize;
+	
 	int		m_channelCount;
 	qint64		m_origSongId;
 	QString 	m_dir;
