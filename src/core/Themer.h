@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Themer.h,v 1.2 2007/06/26 18:07:56 r_sijrier Exp $
+    $Id: Themer.h,v 1.3 2007/08/15 16:08:07 n_doebelin Exp $
 */
 
 #ifndef COLORMANAGER_H
@@ -66,6 +66,8 @@ private:
 	int			m_coloradjust;
 	QPalette 		m_systempallete;
 	QString			m_currentTheme;
+
+	QColor get_default_color(const QString& name);
 
 	static Themer* m_instance;
         
