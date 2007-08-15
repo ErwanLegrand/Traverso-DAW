@@ -174,8 +174,8 @@ nframes_t ResampleAudioReader::read_private(DecodeBuffer* buffer, nframes_t fram
 			m_fileBufferLength = fileCnt + OVERFLOW_SIZE;
 		}
 		
-		for (int c = 0; c < m_channels; c++) {
-			m_filePointers[c] = m_fileBuffers[c] + m_overflowUsed;
+		for (int chan = 0; chan < m_channels; chan++) {
+			m_filePointers[chan] = m_fileBuffers[chan] + m_overflowUsed;
 		}
 		
 		// FIXME : this is of course very scary, needs proper fix!
@@ -193,16 +193,16 @@ nframes_t ResampleAudioReader::read_private(DecodeBuffer* buffer, nframes_t fram
 		framesToConvert = m_length - m_readPos;
 	}
 	
-	for (int c = 0; c < m_channels; c++) {
+	for (int chan = 0; chan < m_channels; chan++) {
 		// Set up sample rate converter struct for s.r.c. processing
-		m_srcData.data_in = m_fileBuffers[c];
+		m_srcData.data_in = m_fileBuffers[chan];
 		m_srcData.input_frames = bufferUsed;
-		m_srcData.data_out = buffer->destination[c];
+		m_srcData.data_out = buffer->destination[chan];
 		m_srcData.output_frames = framesToConvert;
 		m_srcData.src_ratio = (double) m_outputRate / m_rate;
-		src_set_ratio(m_srcStates[c], m_srcData.src_ratio);
+		src_set_ratio(m_srcStates[chan], m_srcData.src_ratio);
 		
-		if (src_process(m_srcStates[c], &m_srcData)) {
+		if (src_process(m_srcStates[chan], &m_srcData)) {
 			PERROR("Resampler: src_process() error!");
 			return 0;
 		}
@@ -216,20 +216,19 @@ nframes_t ResampleAudioReader::read_private(DecodeBuffer* buffer, nframes_t fram
 	}
 	
 	if ((nframes_t)m_srcData.input_frames_used < bufferUsed) {
-		for (int c = 0; c < m_channels; c++) {
-			memmove(m_fileBuffers[c], m_fileBuffers[c] + m_srcData.input_frames_used, m_overflowUsed * sizeof(audio_sample_t));
+		for (int chan = 0; chan < m_channels; chan++) {
+			memmove(m_fileBuffers[chan], m_fileBuffers[chan] + m_srcData.input_frames_used, m_overflowUsed * sizeof(audio_sample_t));
 		}
 	}
 	
 	// Pad end of file with 0s if necessary
 	if (framesRead == 0 && m_readPos < get_length()) {
-		// NOTE WHOOPTYDOOOO, are you sure about this Ben ???
-		int padLength = m_readPos;
-		for (int c = 0; c < m_channels; c++) {
-			memset(buffer->destination[c] + framesRead, 0, padLength * sizeof(audio_sample_t));
+		int padLength = get_length() - m_readPos;
+		printf("Resampler: padding: %d\n", padLength);
+		for (int chan = 0; chan < m_channels; chan++) {
+			memset(buffer->destination[chan], 0, padLength * sizeof(audio_sample_t));
 		}
 		framesRead += padLength;
-		printf("Resampler: padding: %d\n", padLength);
 	}
 	
 	// Truncate so we don't return too many samples
