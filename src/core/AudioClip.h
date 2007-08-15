@@ -112,7 +112,7 @@ public:
 	bool is_selected() const;
 	bool is_locked() const;
 	bool has_song() const;
-	bool invalid_readsource() const {return m_isReadSourceValid;}
+	bool is_readsource_invalid() const {return !m_isReadSourceValid;}
 	int recording_state() const;
 
 	static bool smaller(const AudioClip* left, const AudioClip* right )

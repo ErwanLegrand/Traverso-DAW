@@ -399,7 +399,7 @@ int AudioClip::process(nframes_t nframes)
 		return 0;
 	}
 
-	if (m_isReadSourceValid) {
+	if (!m_isReadSourceValid) {
 		return -1;
 	}
 
@@ -633,14 +633,14 @@ void AudioClip::set_audio_source(ReadSource* rs)
 	PENTER;
 	
 	if (!rs) {
-		m_isReadSourceValid = true;
+		m_isReadSourceValid = false;
 		return;
 	}
 	
 	if (rs->get_error() < 0) {
-		m_isReadSourceValid = true;
-	} else {
 		m_isReadSourceValid = false;
+	} else {
+		m_isReadSourceValid = true;
 	}
 		
 	m_readSource = rs;
@@ -742,7 +742,7 @@ Track* AudioClip::get_track( ) const
 void AudioClip::set_song( Song * song )
 {
 	m_song = song;
-	if (m_readSource && !m_isReadSourceValid) {
+	if (m_readSource && m_isReadSourceValid) {
 		m_song->get_diskio()->register_read_source( m_readSource );
 	} else {
 		PWARN("AudioClip::set_song() : Setting Song, but no ReadSource available!!");
