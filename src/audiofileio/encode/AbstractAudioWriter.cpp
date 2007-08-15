@@ -124,10 +124,10 @@ nframes_t AbstractAudioWriter::write(void* buffer, nframes_t count)
 // Static method used by other classes to get an AudioWriter for the correct file type
 AbstractAudioWriter* AbstractAudioWriter::create_audio_writer(const QString& type)
 {
-	if (type == "sf") {
+	if (type == "sndfile") {
 		return new SFAudioWriter();
 	}
-	else if (libwavpack_is_present && type == "wp") {
+	else if (libwavpack_is_present && type == "wavpack") {
 		return new WPAudioWriter();
 	}
 	/*else if (type == "mad") {

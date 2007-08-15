@@ -560,7 +560,7 @@ int AudioClip::init_recording( QByteArray name )
 		ExportSpecification* spec = new ExportSpecification;
 
 		spec->exportdir = pm().get_project()->get_root_dir() + "/audiosources/";
-		spec->writerType = "sf";
+		spec->writerType = "sndfile";
 		spec->extraFormat["filetype"] = "wav";
 		spec->data_width = 1;	// 1 means float
 		spec->channels = 1;

@@ -65,10 +65,9 @@ public:
 		spec->total_frames = spec->end_frame;
 		spec->pos = 0;
 		spec->isRecording = false;
-		spec->extraFormat["filetype"] = "wav";
 	
 		spec->exportdir = pm().get_project()->get_root_dir() + "/audiosources/";
-		spec->writerType = "sf";
+		spec->writerType = "sndfile";
 		spec->extraFormat["filetype"] = "wav";
 		spec->data_width = 16;
 		spec->channels = 2;

@@ -34,6 +34,9 @@ WPAudioWriter::WPAudioWriter()
 	m_wp = 0;
 	m_firstBlock = 0;
 	m_firstBlockSize = 0;
+	m_tmp_buffer = 0;
+	m_tmpBufferSize = 0;
+	m_qualityFlags = 0;
 }
 
 
@@ -50,6 +53,47 @@ WPAudioWriter::~WPAudioWriter()
 const char* WPAudioWriter::get_extension()
 {
 	return ".wv";
+}
+
+
+bool WPAudioWriter::set_format_attribute(const QString& key, const QString& value)
+{
+	if (key == "quality") {
+		// Clear quality before or-ing in the new quality value
+		m_qualityFlags &= ~(CONFIG_FAST_FLAG | CONFIG_HIGH_FLAG | CONFIG_VERY_HIGH_FLAG);
+		
+		if (value == "fast") {
+			m_qualityFlags |= CONFIG_FAST_FLAG;
+			return true;
+		}
+		else if (value == "high") {
+			// CONFIG_HIGH_FLAG (default) ~ 1.5 times slower then FAST, ~ 20% extra compression then FAST
+			m_qualityFlags |= CONFIG_HIGH_FLAG;
+			return true;
+		}
+		else if (value == "very_high") {
+			// CONFIG_VERY_HIGH_FLAG ~ 2 times slower then FAST, ~ 25 % extra compression then FAST
+			m_qualityFlags |= CONFIG_VERY_HIGH_FLAG;
+			return true;
+		}
+	}
+	
+	if (key == "skip_wvx") {
+		if (value == "true") {
+			// This option reduces the storage of some floating-point data files by up to about 10% by eliminating some 
+			// information that has virtually no effect on the audio data. While this does technically make the compression 
+			// lossy, it retains all the advantages of floating point data (>600 dB of dynamic range, no clipping, and 25 bits 
+			// of resolution). This also affects large integer compression by limiting the resolution to 24 bits.
+			m_qualityFlags |= CONFIG_SKIP_WVX;
+			return true;
+		}
+		else if (value == "false") {
+			m_qualityFlags &= ~CONFIG_SKIP_WVX;
+			return true;
+		}
+	}
+	
+	return false;
 }
 
 
@@ -74,17 +118,7 @@ bool WPAudioWriter::open_private()
 	m_config.channel_mask = (m_channels == 2) ? 3 : 4; // Microsoft standard (mono = 4, stereo = 3)
 	m_config.num_channels = m_channels;
 	m_config.sample_rate = m_rate;
-	
-	// Make optional ?
-	
-	// CONFIG_HIGH_FLAG (default) ~ 1.5 times slower then FAST, ~ 20% extra compression then FAST
-	// CONFIG_VERY_HIGH_FLAG ~ 2 times slower then FAST, ~ 25 % extra compression then FAST
-	m_config.flags |= CONFIG_FAST_FLAG;
-	// This option reduces the storage of some floating-point data files by up to about 10% by eliminating some 
-	// information that has virtually no effect on the audio data. While this does technically make the compression 
-	// lossy, it retains all the advantages of floating point data (>600 dB of dynamic range, no clipping, and 25 bits 
-	// of resolution). This also affects large integer compression by limiting the resolution to 24 bits.
-// 	m_config.flags |= CONFIG_SKIP_WVX;
+	m_config.flags = m_qualityFlags;
 	
 	WavpackSetConfiguration(m_wp, &m_config, -1);
 	
@@ -170,22 +204,27 @@ nframes_t WPAudioWriter::write_private(void* buffer, nframes_t frameCount)
 	// 8bit or 16bit sample in a 0-padded, int32_t
 	// 
 	if (m_sampleWidth > 1 && m_sampleWidth < 24) { // Not float, or 32bit int, or 24bit int
-		int32_t *tmp_buffer = new int32_t[frameCount * m_channels];
+		if (frameCount > m_tmpBufferSize) {
+			if (m_tmp_buffer) {
+				delete [] m_tmp_buffer;
+			}
+			m_tmp_buffer = new int32_t[frameCount * m_channels];
+			m_tmpBufferSize = frameCount;
+		}
 		for (nframes_t s = 0; s < frameCount * m_channels; s++) {
 			switch (m_sampleWidth) {
 				case 8:
-					tmp_buffer[s] = ((int8_t*)buffer)[s];
+					m_tmp_buffer[s] = ((int8_t*)buffer)[s];
 					break;
 				case 16:
-					tmp_buffer[s] = ((int16_t*)buffer)[s];
+					m_tmp_buffer[s] = ((int16_t*)buffer)[s];
 					break;
-				//case 24:
-				//	tmp_buffer[s] = ((int32_t*)buffer)[s]; //FIXME: does this need to read 3 bytes at a time??
-				//	break;
+				default:
+					// Less than 24 bit, but not 8 or 16 ?  This won't end well...
+					break;
 			}
 		}
-		WavpackPackSamples(m_wp, tmp_buffer, frameCount);
-		delete [] tmp_buffer;
+		WavpackPackSamples(m_wp, m_tmp_buffer, frameCount);
 		return frameCount;
 	}
 	
@@ -201,6 +240,13 @@ void WPAudioWriter::close_private()
 	WavpackCloseFile(m_wp);
 	fclose(m_file);
 	m_wp = 0;
+
+	if (m_tmp_buffer) {
+		delete [] m_tmp_buffer;
+		m_tmp_buffer = 0;
+	}
+	m_tmpBufferSize = 0;
+
 	if (m_firstBlock) {
 		delete [] m_firstBlock;
 		m_firstBlock = 0;

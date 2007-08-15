@@ -37,6 +37,7 @@ public:
 	WPAudioWriter();
 	~WPAudioWriter();
 	
+	bool set_format_attribute(const QString& key, const QString& value);
 	const char* get_extension();
 	
 protected:
@@ -53,6 +54,9 @@ protected:
 	FILE*		m_file;
 	char*		m_firstBlock;
 	int32_t 	m_firstBlockSize;
+	int		m_qualityFlags;
+	int32_t*	m_tmp_buffer;
+	nframes_t	m_tmpBufferSize;
 };
 
 #endif

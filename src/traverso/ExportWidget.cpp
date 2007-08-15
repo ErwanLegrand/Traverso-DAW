@@ -188,20 +188,22 @@ void ExportWidget::on_exportStartButton_clicked( )
 	
 	switch (audioTypeComboBox->currentIndex()) {
         case	0:
-                m_exportSpec->writerType = "sf";
-                m_exportSpec->extraFormat["filetype"] = "wav";
-                break;
+		m_exportSpec->writerType = "sndfile";
+		m_exportSpec->extraFormat["filetype"] = "wav";
+		break;
         case	1:
-                m_exportSpec->writerType = "sf";
-                m_exportSpec->extraFormat["filetype"] = "aiff";
-                break;
+		m_exportSpec->writerType = "sndfile";
+		m_exportSpec->extraFormat["filetype"] = "aiff";
+		break;
         case	2:
-                m_exportSpec->writerType = "sf";
-                m_exportSpec->extraFormat["filetype"] = "flac";
-                break;
+		m_exportSpec->writerType = "sndfile";
+		m_exportSpec->extraFormat["filetype"] = "flac";
+		break;
         case	3:
-                m_exportSpec->writerType = "wp";
-                break;
+		m_exportSpec->writerType = "wavpack";
+		m_exportSpec->extraFormat["quality"] = "high";
+		m_exportSpec->extraFormat["skip_wvx"] = "true";
+		break;
         }
 
 	switch (bitdepthComboBox->currentIndex()) {
@@ -537,7 +539,7 @@ void ExportWidget::cd_render()
 		(m_exportSpec->normalize == cdNormalizeCheckBox->isChecked())) ) {
 		
 		m_exportSpec->data_width = 16;
-		m_exportSpec->writerType = "sf";
+		m_exportSpec->writerType = "sndfile";
 		m_exportSpec->extraFormat["filetype"] = "wav";
 		m_exportSpec->channels = 2;
 		m_exportSpec->sample_rate = 44100;

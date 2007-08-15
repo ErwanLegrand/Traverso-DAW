@@ -266,12 +266,6 @@ int WriteSource::prepare_export()
 		delete m_writer;
 	}
 	
-	if (m_writer) {
-		delete m_writer;
-	}
-	
-	// Try out using the wavpack writer for all writing by switching these lines
-	// m_writer = AbstractAudioWriter::create_audio_writer("wp");
 	m_writer = AbstractAudioWriter::create_audio_writer(m_spec->writerType);
 	m_writer->set_rate(m_spec->sample_rate);
 	m_writer->set_bits_per_sample(m_spec->data_width);
