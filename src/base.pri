@@ -120,12 +120,12 @@ unix {
 
 		DEFINES += RELAYTOOL_WAVPACK="'extern int libwavpack_is_present; extern int libwavpack_symbol_is_present(char *s);'"
 	} else {
-		DEFINES += RELAYTOOL_JACK="'static const int libjack_is_present=1; static int __attribute__((unused)) libjack_symbol_is_present(char *m) { return 1; }'"
+		DEFINES += RELAYTOOL_JACK="'static const int libjack_is_present=1; static int __attribute__((unused)) libjack_symbol_is_present(char *) { return 1; }'"
 
 		# put WAVPACK def here so that we can check if it exists globally
 		# so that traverso/ExportWidget.cpp knows if it should offer
 		# WAVPACK as an export option
-		DEFINES += RELAYTOOL_WAVPACK="'static const int libwavpack_is_present=1; static int __attribute__((unused)) libwavpack_symbol_is_present(char *m) { return 1; }'"
+		DEFINES += RELAYTOOL_WAVPACK="'static const int libwavpack_is_present=1; static int __attribute__((unused)) libwavpack_symbol_is_present(char *) { return 1; }'"
 	}
 	
 	contains(DEFINES, PRECOMPILED_HEADER):CONFIG += precompile_header
