@@ -313,6 +313,7 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 		audio_sample_t readbuffer[toRead*2];
 		
 		DecodeBuffer decodebuffer(audiobuf, readbuffer, toRead, toRead*2);
+		decodebuffer.destinationChannelCount = 2;
 		
 		nframes_t readFrames = m_source->file_read(&decodebuffer, startPos, toRead);
 

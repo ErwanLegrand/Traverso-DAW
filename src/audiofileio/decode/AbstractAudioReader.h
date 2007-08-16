@@ -51,9 +51,48 @@ struct DecodeBuffer {
 		}
 	}
 	
+	void check_resamplebuffer_capacity(uint frames) {
+		if (resampleBufferSize < frames) {
+			if (!resampleBuffer) {
+				resampleBuffer = new audio_sample_t*[destinationChannelCount];
+			}
+			for (uint chan = 0; chan < destinationChannelCount; chan++) {
+				if (resampleBufferSize) {
+					delete [] resampleBuffer[chan];
+				}
+				resampleBuffer[chan] = new audio_sample_t[frames];
+			}
+			resampleBufferSize = frames;
+		}
+	}
+	
+	void prepare_for_child_read(nframes_t offset) {
+		if (resampleBuffer) {
+			origDestination = destination;
+			destination = resampleBuffer;
+			
+			// Let the child reader write into the buffer starting offset samples past the beginning.
+			// This lets the resampler prefill the buffers with the pre-existing overflow.
+			for (uint chan = 0; chan < destinationChannelCount; chan++) {
+				resampleBuffer[chan] += offset;
+			}
+		}
+	}
+	
+	void finish_child_read(nframes_t offset) {
+		if (origDestination) {
+			destination = origDestination;
+			
+			for (uint chan = 0; chan < destinationChannelCount; chan++) {
+				resampleBuffer[chan] -= offset;
+			}
+		}
+	}
+	
 	audio_sample_t** destination;
+	audio_sample_t** origDestination; // Used to store destination during a child read in the resampler
 	audio_sample_t* readBuffer;
-	audio_sample_t* resampleBuffer;
+	audio_sample_t** resampleBuffer;
 	uint destinationChannelCount;
 	uint destinationBufferSize;
 	uint readBufferSize;

@@ -154,6 +154,7 @@ DiskIO::DiskIO(Song* song)
 	framebuffer[1] = new audio_sample_t[audiodevice().get_sample_rate() * writebuffertime];
 	
 	m_decodebuffer = new DecodeBuffer;
+	m_decodebuffer->destinationChannelCount = 2;  // FIXME?: Hardcoding to 2 channels
 	m_decodebuffer->destination = framebuffer;
 	m_decodebuffer->readBufferSize = 0;
 

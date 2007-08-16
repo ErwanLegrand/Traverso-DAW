@@ -224,8 +224,6 @@ void ReadSource::output_rate_changed()
 
 int ReadSource::file_read(DecodeBuffer* buffer, nframes_t start, nframes_t cnt) const
 {
-#define profile
-	
 #if defined (profile)
 	trav_time_t starttime = get_microseconds();
 #endif

@@ -51,11 +51,10 @@ protected:
 	AbstractAudioReader*	m_reader;
 	QVector<SRC_STATE*>	m_srcStates;
 	SRC_DATA		m_srcData;
-	QVector<audio_sample_t*> m_fileBuffers;
-	QVector<audio_sample_t*> m_filePointers;
-	long			m_fileBufferLength;
+	audio_sample_t**	m_overflowBuffers;
 	long			m_overflowUsed;
 	int			m_outputRate;
+	nframes_t		m_readExtraFrames;
 };
 
 #endif
