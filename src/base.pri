@@ -138,6 +138,9 @@ unix {
 #		QMAKE_CXXFLAGS_RELEASE += -ftree-vectorizer-verbose=2 -ftree-vectorize
 	}
 	
+	# Enable large file support
+	QMAKE_CXXFLAGS += $$system(getconf LFS_CFLAGS)
+	
 }
 
 !unix {
