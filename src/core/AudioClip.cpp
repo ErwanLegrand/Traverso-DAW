@@ -544,9 +544,21 @@ int AudioClip::init_recording( QByteArray name )
 	ExportSpecification* spec = new ExportSpecification;
 
 	spec->exportdir = pm().get_project()->get_root_dir() + "/audiosources/";
-	spec->writerType = "wavpack";
-	spec->extraFormat["quality"] = "fast";
-// 	spec->extraFormat["skip_wvx"] = "true";
+
+	QString recordFormat = config().get_property("Recording", "FileFormat", "wav").toString();
+	if (recordFormat == "wavpack") {
+		spec->writerType = "wavpack";
+		bool useFast = config().get_property("Recording", "WavpackFast", false).toBool();
+		if (useFast) {
+			spec->extraFormat["quality"] = "fast";
+		}
+		// spec->extraFormat["skip_wvx"] = "true";
+	}
+	else {
+		spec->writerType = "sndfile";
+		spec->extraFormat["filetype"] = "wav";
+	}
+	
 	spec->data_width = 1;	// 1 means float
 	spec->channels = channelcount;
 	spec->sample_rate = audiodevice().get_sample_rate();
