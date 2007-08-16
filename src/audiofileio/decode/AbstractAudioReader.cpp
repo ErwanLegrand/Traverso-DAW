@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 AbstractAudioReader::AbstractAudioReader(const QString& filename)
 {
 	m_fileName = filename;
-	m_readPos = 0;
+	m_readPos = m_channels = m_length = 0;
 }
 
 
@@ -119,31 +119,48 @@ nframes_t AbstractAudioReader::read(DecodeBuffer* buffer, nframes_t count)
 
 
 // Static method used by other classes to get an AudioReader for the correct file type
-AbstractAudioReader* AbstractAudioReader::create_audio_reader(const QString& filename)
+AbstractAudioReader* AbstractAudioReader::create_audio_reader(const QString& filename, const QString& decoder)
 {
-	AbstractAudioReader* newReader;
+	AbstractAudioReader* newReader = 0;
 	
-	if (FlacAudioReader::can_decode(filename)) {
-		newReader = new FlacAudioReader(filename);
-	}
-	else if (VorbisAudioReader::can_decode(filename)) {
-		newReader = new VorbisAudioReader(filename);
-	}
-	else if (WPAudioReader::can_decode(filename)) {
-		newReader = new WPAudioReader(filename);
-	}
-	else if (SFAudioReader::can_decode(filename)) {
-		newReader = new SFAudioReader(filename);
-	}
-	else if (MadAudioReader::can_decode(filename)) {
-		newReader = new MadAudioReader(filename);
-	}
-	else {
-		return 0;
+	if ( ! (decoder.isEmpty() || decoder.isNull()) ) {
+		if (decoder == "sndfile") {
+			newReader = new SFAudioReader(filename);
+		} else if (decoder == "wavpack") {
+			newReader = new WPAudioReader(filename);
+		} else if (decoder == "flac") {
+			newReader = new FlacAudioReader(filename);
+		} else if (decoder == "vorbis") {
+			newReader = new VorbisAudioReader(filename);
+		} else if (decoder == "mad") {
+			newReader = new MadAudioReader(filename);
+		}
 	}
 	
-	if (newReader->get_num_channels() <= 0) {
-		PERROR("new reader has 0 channels!");
+	if ( (!newReader) || (!newReader->is_valid()) ) {
+	
+		if (FlacAudioReader::can_decode(filename)) {
+			newReader = new FlacAudioReader(filename);
+		}
+		else if (VorbisAudioReader::can_decode(filename)) {
+			newReader = new VorbisAudioReader(filename);
+		}
+		else if (WPAudioReader::can_decode(filename)) {
+			newReader = new WPAudioReader(filename);
+		}
+		else if (SFAudioReader::can_decode(filename)) {
+			newReader = new SFAudioReader(filename);
+		}
+		else if (MadAudioReader::can_decode(filename)) {
+			newReader = new MadAudioReader(filename);
+		}
+		else {
+			return 0;
+		}
+	}
+	
+	if (!newReader->is_valid()) {
+		PERROR("new reader is invalid! (channels: %d, frames: %d", newReader->get_num_channels(), newReader->get_length());
 		return 0;
 	}
 

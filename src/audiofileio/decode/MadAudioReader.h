@@ -35,6 +35,8 @@ public:
 	MadAudioReader(QString filename);
 	~MadAudioReader();
 	
+	QString decoder_type() const {return "mad";}
+	
 	static bool can_decode(QString filename);
 	
 protected:

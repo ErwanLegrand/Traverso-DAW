@@ -30,10 +30,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 // On init, creates a child AudioReader for any filetype, and a samplerate converter
-ResampleAudioReader::ResampleAudioReader(QString filename, int converter_type)
+ResampleAudioReader::ResampleAudioReader(QString filename, int converter_type, const QString& decoder)
  : AbstractAudioReader(filename)
 {
-	m_reader = AbstractAudioReader::create_audio_reader(filename);
+	m_reader = AbstractAudioReader::create_audio_reader(filename, decoder);
 	if (!m_reader) {
 		PERROR("ResampleAudioReader: couldn't create AudioReader");
 		return;
@@ -44,10 +44,7 @@ ResampleAudioReader::ResampleAudioReader(QString filename, int converter_type)
 	m_length = m_reader->get_length();
 	m_outputRate = m_rate;
 	
-	m_overflowBuffers = new audio_sample_t*[m_channels];
-	for (int chan = 0; chan < m_channels; chan++) {
-		m_overflowBuffers[chan] = new audio_sample_t[OVERFLOW_SIZE];
-	}
+	m_overflowBuffers = 0;
 	m_overflowUsed = 0;
 	
 	init(converter_type);
@@ -65,10 +62,12 @@ ResampleAudioReader::~ResampleAudioReader()
 		delete m_reader;
 	}
 	
-	for (int chan = 0; chan < m_channels; chan++) {
-		delete [] m_overflowBuffers[chan];
+	if (m_overflowBuffers) {
+		for (int chan = 0; chan < m_channels; chan++) {
+			delete [] m_overflowBuffers[chan];
+		}
+		delete [] m_overflowBuffers;
 	}
-	delete [] m_overflowBuffers;
 }
 
 
@@ -156,6 +155,8 @@ nframes_t ResampleAudioReader::read_private(DecodeBuffer* buffer, nframes_t fram
 	// pass through if not changing sampleRate.
 	if (m_outputRate == m_rate) {
 		return m_reader->read(buffer, frameCount);
+	} else if (!m_overflowBuffers) {
+		create_overflow_buffers();
 	}
 	
 	nframes_t bufferUsed;
@@ -262,5 +263,13 @@ nframes_t ResampleAudioReader::file_to_song_frame(nframes_t frame)
 	Q_ASSERT(m_reader);
 	
 	return (nframes_t)(frame * ((double) m_outputRate / m_rate));
+}
+
+void ResampleAudioReader::create_overflow_buffers()
+{
+	m_overflowBuffers = new audio_sample_t*[m_channels];
+	for (int chan = 0; chan < m_channels; chan++) {
+		m_overflowBuffers[chan] = new audio_sample_t[OVERFLOW_SIZE];
+	}
 }
 

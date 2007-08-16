@@ -39,11 +39,13 @@ SFAudioReader::SFAudioReader(QString filename)
 
 	if ((m_sf = sf_open (m_fileName.toUtf8().data(), SFM_READ, &m_sfinfo)) == 0) {
 		PERROR("Couldn't open soundfile (%s)", m_fileName.toUtf8().data());
+		return;
 	}
-	
+ 
 	m_channels = m_sfinfo.channels;
 	m_length = m_sfinfo.frames;
 	m_rate = m_sfinfo.samplerate;
+	
 }
 
 

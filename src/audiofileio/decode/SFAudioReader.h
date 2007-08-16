@@ -32,6 +32,8 @@ public:
 	SFAudioReader(QString filename);
 	~SFAudioReader();
 	
+	QString decoder_type() const {return "sndfile";}
+	
 	static bool can_decode(QString filename);
 
 protected:

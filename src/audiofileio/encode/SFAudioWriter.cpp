@@ -48,6 +48,9 @@ const char* SFAudioWriter::get_extension()
 	if (m_fileType == SF_FORMAT_WAV) {
 		return ".wav";
 	}
+	else if (m_fileType == SF_FORMAT_W64) {
+		return ".w64";
+	}
 	else if (m_fileType == SF_FORMAT_AIFF) {
 		return ".aiff";
 	}
@@ -63,6 +66,10 @@ bool SFAudioWriter::set_format_attribute(const QString& key, const QString& valu
 	if (key == "filetype") {
 		if (value == "wav") {
 			m_fileType = SF_FORMAT_WAV;
+			return true;
+		}
+		else if (value == "w64") {
+			m_fileType = SF_FORMAT_W64;
 			return true;
 		}
 		else if (value == "aiff") {

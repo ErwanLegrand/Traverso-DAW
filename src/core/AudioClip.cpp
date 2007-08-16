@@ -545,7 +545,7 @@ int AudioClip::init_recording( QByteArray name )
 	ExportSpecification* spec = new ExportSpecification;
 
 	spec->exportdir = pm().get_project()->get_root_dir() + "/audiosources/";
-
+	
 	QString recordFormat = config().get_property("Recording", "FileFormat", "wav").toString();
 	if (recordFormat == "wavpack") {
 		spec->writerType = "wavpack";

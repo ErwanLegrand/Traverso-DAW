@@ -20,12 +20,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AlsaDriver.cpp,v 1.16 2007/05/14 18:05:28 r_sijrier Exp $
+$Id: AlsaDriver.cpp,v 1.17 2007/08/16 14:26:51 r_sijrier Exp $
 */
 
 
 #include "AlsaDriver.h"
-#include "AudioDevice.h"
 #include "AudioChannel.h"
 #include <Utils.h>
 #include <Config.h>
@@ -45,6 +44,8 @@ $Id: AlsaDriver.cpp,v 1.16 2007/05/14 18:05:28 r_sijrier Exp $
 #include <string.h>
 #include <sys/time.h>
 #include <time.h>
+
+#include "AudioDevice.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!

@@ -382,7 +382,7 @@ FlacAudioReader::FlacAudioReader(QString filename)
 {
 	m_flac = new FlacPrivate(filename);
 	
-	if (m_flac) {
+	if (m_flac->is_valid()) {
 		m_channels = m_flac->m_channels;
 		m_length = m_flac->m_samples;
 		m_rate = m_flac->m_rate;

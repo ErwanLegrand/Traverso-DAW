@@ -176,8 +176,8 @@ int ReadSource::init( )
 		converter_type = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
 		// There should be another config option for ConverterType to use for export (higher quality)
 		//converter_type = config().get_property("Conversion", "ExportResamplingConverterType", 0).toInt();
-		m_audioReader = new ResampleAudioReader(m_fileName, converter_type);
-		if (m_audioReader->get_num_channels()) {
+		m_audioReader = new ResampleAudioReader(m_fileName, converter_type, m_decodertype);
+		if (m_audioReader->is_valid()) {
 			output_rate_changed();
 		}
 		else {
@@ -186,12 +186,15 @@ int ReadSource::init( )
 		}
 	}
 	else {
-		m_audioReader = AbstractAudioReader::create_audio_reader(m_fileName);
+		m_audioReader = AbstractAudioReader::create_audio_reader(m_fileName, m_decodertype);
 	}
 	
 	if (m_audioReader == 0) {
 		return COULD_NOT_OPEN_FILE;
 	}
+	
+	// (re)set the decoder type
+	m_decodertype = m_audioReader->decoder_type();
 	
 	if (m_channelCount > m_audioReader->get_num_channels()) {
 		PERROR("ReadAudioSource: file only contains %d channels; %d is invalid as a channel number", m_audioReader->get_num_channels(), m_channelCount);

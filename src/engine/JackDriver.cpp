@@ -17,13 +17,10 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: JackDriver.cpp,v 1.19 2007/07/19 12:28:42 r_sijrier Exp $
+    $Id: JackDriver.cpp,v 1.20 2007/08/16 14:26:51 r_sijrier Exp $
 */
 
 #include "JackDriver.h"
-
-#include "AudioDevice.h"
-#include "AudioChannel.h"
 
 #include <Information.h>
 #include "Config.h"
@@ -33,6 +30,9 @@
 #if defined (ALSA_SUPPORT)
 #include "AlsaDriver.h"
 #endif
+
+#include "AudioDevice.h"
+#include "AudioChannel.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!

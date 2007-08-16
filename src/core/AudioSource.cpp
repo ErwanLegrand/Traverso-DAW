@@ -75,6 +75,7 @@ QDomNode AudioSource::get_state( QDomDocument doc )
 	node.setAttribute("wasrecording", m_wasRecording);
 	node.setAttribute("length", m_length);
 	node.setAttribute("rate", m_rate);
+	node.setAttribute("decoder", m_decodertype);
 
 	return node;
 }
@@ -93,6 +94,7 @@ int AudioSource::set_state( const QDomNode & node )
 	m_rate = e.attribute("rate", "0").toUInt();
 	m_origBitDepth = e.attribute("origbitdepth", "0").toInt();
 	m_wasRecording = e.attribute("wasrecording", "0").toInt();
+	m_decodertype = e.attribute("decoder", "");
 	
 	// For older project files, this should properly detect if the 
 	// audio source was a recording or not., in fact this should suffice

@@ -34,6 +34,8 @@ public:
 	VorbisAudioReader(QString filename);
 	~VorbisAudioReader();
 	
+	QString decoder_type() const {return "vorbis";}
+	
 	static bool can_decode(QString filename);
 
 protected:

@@ -31,8 +31,10 @@ class ResampleAudioReader : public AbstractAudioReader
 {
 
 public:
-	ResampleAudioReader(QString filename, int converter_type);
+	ResampleAudioReader(QString filename, int converter_type, const QString& decoder);
 	~ResampleAudioReader();
+	
+	QString decoder_type() const {return m_reader->decoder_type();}
 	
 	int get_output_rate();
 	void set_output_rate(int rate);
@@ -55,6 +57,9 @@ protected:
 	long			m_overflowUsed;
 	int			m_outputRate;
 	nframes_t		m_readExtraFrames;
+	
+private:
+	void create_overflow_buffers();
 };
 
 #endif

@@ -75,7 +75,7 @@ bool VorbisAudioReader::can_decode(QString filename)
 	
 	FILE* file = fopen(filename.toUtf8().data(), "rb");
 	if (!file) {
-		PERROR("Could not open file: %s.", filename.toUtf8().data());
+		PERROR("Could not open file: %s", filename.toUtf8().data());
 		return false;
 	}
 	

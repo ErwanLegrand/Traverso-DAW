@@ -32,6 +32,8 @@ public:
 	WPAudioReader(QString filename);
 	~WPAudioReader();
 	
+	QString decoder_type() const {return "wavpack";}
+	
 	static bool can_decode(QString filename);
 
 protected:

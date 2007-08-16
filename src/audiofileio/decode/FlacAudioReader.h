@@ -33,6 +33,8 @@ public:
 	FlacAudioReader(QString filename);
 	~FlacAudioReader();
 	
+	QString decoder_type() const {return "flac";}
+
 	static bool can_decode(QString filename);
 	
 protected:

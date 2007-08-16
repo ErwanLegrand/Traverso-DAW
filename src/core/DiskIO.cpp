@@ -267,7 +267,7 @@ int DiskIO::there_are_processable_sources( )
 	m_processableWriteSources.clear();
 	QList<ReadSource* > syncSources;
 		
-	for (int i=6; i >= 0; --i) {
+	for (int i=(bufferdividefactor-2); i >= 0; --i) {
 		
 		for (int j=0; j<m_writeSources.size(); ++j) {
 			WriteSource* source = m_writeSources.at(j); 

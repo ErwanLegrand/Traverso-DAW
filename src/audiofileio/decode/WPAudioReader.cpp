@@ -38,6 +38,7 @@ WPAudioReader::WPAudioReader(QString filename)
 	
 	if (m_wp == 0) {
 		PERROR("Couldn't open soundfile (%s) %s", filename.toUtf8().data(), error);
+		return;
 	}
 	
 	m_isFloat = ((WavpackGetMode(m_wp) & MODE_FLOAT) != 0);

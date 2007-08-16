@@ -116,7 +116,10 @@ public:
 	bool seek(nframes_t start);
 	nframes_t read(DecodeBuffer* buffer, nframes_t frameCount);
 	
-	static AbstractAudioReader* create_audio_reader(const QString& filename);
+	bool is_valid() {return (m_channels > 0 && m_length > 0);}
+	virtual QString decoder_type() const = 0;
+	
+	static AbstractAudioReader* create_audio_reader(const QString& filename, const QString& decoder = 0);
 	
 protected:
 	virtual bool seek_private(nframes_t start) = 0;

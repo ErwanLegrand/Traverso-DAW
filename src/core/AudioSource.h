@@ -76,6 +76,7 @@ protected:
 	nframes_t	m_length;
 	uint 		m_rate;
 	int		m_wasRecording;
+	QString		m_decodertype;
 };
 
 

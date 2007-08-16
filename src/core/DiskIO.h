@@ -52,7 +52,7 @@ public:
 	~DiskIO();
 	
 	static const int writebuffertime = 5;
-	static const int bufferdividefactor = 8;
+	static const int bufferdividefactor = 5;
 
 	void prepare_for_seek();
 	void output_rate_changed();
