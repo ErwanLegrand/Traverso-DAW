@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "defines.h"
 
 #include <QObject>
-#include <QDomDocument>
 
 #include "RingBufferNPT.h"
 
@@ -36,19 +35,14 @@ class QString;
 class AudioSource : public QObject
 {
 public :
+	AudioSource();
 	AudioSource(const QString& dir, const QString& name);
-	AudioSource(const QDomNode node);
-	AudioSource(){};
 	~AudioSource();
 	
 	void set_name(const QString& name);
 	void set_dir(const QString& name);
 	void set_original_bit_depth(uint bitDepth);
 	void set_created_by_song(qint64 id);
-	int set_state( const QDomNode& node );
-	
-	
-	QDomNode get_state(QDomDocument doc);
 	QString get_filename() const;
 	QString get_dir() const;
 	QString get_name() const;
@@ -73,10 +67,8 @@ protected:
 	QString		m_shortName;
 	uint		m_origBitDepth;
 	QString		m_fileName;
-	nframes_t	m_length;
 	uint 		m_rate;
 	int		m_wasRecording;
-	QString		m_decodertype;
 };
 
 

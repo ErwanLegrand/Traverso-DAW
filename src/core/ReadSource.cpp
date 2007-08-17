@@ -46,12 +46,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 // This constructor is called for existing (recorded/imported) audio sources
 ReadSource::ReadSource(const QDomNode node)
-	: AudioSource(node)
+	: AudioSource()
 {
+	
+	set_state(node);
+	
 	private_init();
 	
 	Project* project = pm().get_project();
 	
+	// FIXME The check below no longer makes sense!!!!!
 	// Check if the audiofile exists in our project audiosources dir
 	// and give it priority over the dir as given by the project.tpf file
 	// This makes it possible to move project directories without Traverso being
@@ -93,7 +97,6 @@ ReadSource::ReadSource(const QString& dir, const QString& name, int channelCount
 	m_silent = false;
 	m_name = name  + "-" + QString::number(m_id);
 	m_fileName = m_dir + m_name;
-	m_length = 0;
 	m_rate = pm().get_project()->get_rate();
 	m_wasRecording = true;
 	m_shortName = m_name.left(m_name.length() - 20);
@@ -137,6 +140,51 @@ ReadSource::~ReadSource()
 	}
 }
 
+QDomNode ReadSource::get_state( QDomDocument doc )
+{
+	QDomElement node = doc.createElement("Source");
+	node.setAttribute("channelcount", m_channelCount);
+	node.setAttribute("origsheetid", m_origSongId);
+	node.setAttribute("dir", m_dir);
+	node.setAttribute("id", m_id);
+	node.setAttribute("name", m_name);
+	node.setAttribute("origbitdepth", m_origBitDepth);
+	node.setAttribute("wasrecording", m_wasRecording);
+	node.setAttribute("length", m_length.to_frame(m_rate));
+	node.setAttribute("rate", m_rate);
+	node.setAttribute("decoder", m_decodertype);
+
+	return node;
+}
+
+
+int ReadSource::set_state( const QDomNode & node )
+{
+	PENTER;
+	
+	QDomElement e = node.toElement();
+	m_channelCount = e.attribute("channelcount", "0").toInt();
+	m_origSongId = e.attribute("origsheetid", "0").toLongLong();
+	set_dir( e.attribute("dir", "" ));
+	m_id = e.attribute("id", "").toLongLong();
+	m_rate = e.attribute("rate", "0").toUInt();
+	m_length = TimeRef(e.attribute("length", "0").toUInt(), m_rate);
+	m_origBitDepth = e.attribute("origbitdepth", "0").toInt();
+	m_wasRecording = e.attribute("wasrecording", "0").toInt();
+	m_decodertype = e.attribute("decoder", "");
+	
+	// For older project files, this should properly detect if the 
+	// audio source was a recording or not., in fact this should suffice
+	// and the flag wasrecording would be unneeded, but oh well....
+	if (m_origSongId != 0) {
+		m_wasRecording = true;
+	}
+	
+	set_name( e.attribute("name", "No name supplied?" ));
+	
+	return 1;
+}
+
 
 int ReadSource::init( )
 {
@@ -150,7 +198,7 @@ int ReadSource::init( )
 	m_rate = project->get_rate();
 	
 	if (m_silent) {
-		m_length = INT_MAX;
+		m_length = TimeRef(UINT_MAX);
 		m_channelCount = 0;
 		m_origBitDepth = project->get_bitdepth();
 		return 1;
@@ -161,9 +209,6 @@ int ReadSource::init( )
 		return (m_error = INVALID_CHANNEL_COUNT);
 	}
 	
-	
-	m_rbFileReadPos = 0;
-	m_rbRelativeFileReadPos = 0;
 	m_rbReady = 0;
 	m_needSync = 0;
 	m_syncInProgress = 0;
@@ -210,8 +255,8 @@ int ReadSource::init( )
 		return ZERO_CHANNELS;
 	}
 
-	m_length = m_audioReader->get_length();
 	m_rate = m_audioReader->get_file_rate();
+	m_length = TimeRef(m_audioReader->get_length(), m_rate);
 	
 	m_bufferstatus = new BufferStatus;
 	
@@ -271,9 +316,9 @@ void ReadSource::set_audio_clip( AudioClip * clip )
 	m_clip = clip;
 }
 
-nframes_t ReadSource::get_nframes( ) const
+const nframes_t ReadSource::get_nframes( ) const
 {
-	return m_length;
+	return m_length.to_frame(m_rate);
 }
 
 int ReadSource::set_file(const QString & filename)
@@ -315,18 +360,20 @@ int ReadSource::rb_read(audio_sample_t** dst, nframes_t start, nframes_t count)
 		return 0;
 	}
 
-	if (start != m_rbRelativeFileReadPos) {
-		int available = m_buffers.at(0)->read_space();
+	nframes_t relativepos = m_rbRelativeFileReadPos.to_frame(m_rate);
+	
+	if (start != relativepos) {
+		uint available = m_buffers.at(0)->read_space();
 // 		printf("start %d, m_rbFileReadPos %d\n", start, m_rbRelativeFileReadPos);
-		if ( (start > m_rbRelativeFileReadPos) && (m_rbRelativeFileReadPos + available) > (start + count)) {
-			int advance = start - m_rbRelativeFileReadPos;
+		if ( (start > relativepos) && (relativepos + available) > (start + count)) {
+			uint advance = start - relativepos;
 			if (available < advance) {
 				printf("available < advance !!!!!!!\n");
 			}
 			for (int i=m_buffers.size()-1; i>=0; --i) {
 				m_buffers.at(i)->increment_read_ptr(advance);
 			}
-			m_rbRelativeFileReadPos += advance;
+			m_rbRelativeFileReadPos.add_frames(advance, m_rate);
 		} else {
 			start_resync(start + (m_clip->get_track_start_frame() + m_clip->get_source_start_frame()));
 			return 0;
@@ -345,7 +392,7 @@ int ReadSource::rb_read(audio_sample_t** dst, nframes_t start, nframes_t count)
 		
 	}
 
-	m_rbRelativeFileReadPos += readcount;
+	m_rbRelativeFileReadPos.add_frames(readcount, m_rate);
 	
 	return readcount;
 }
@@ -353,23 +400,23 @@ int ReadSource::rb_read(audio_sample_t** dst, nframes_t start, nframes_t count)
 
 int ReadSource::rb_file_read(DecodeBuffer* buffer, nframes_t cnt)
 {
-	int readFrames = file_read(buffer, m_rbFileReadPos, cnt);
-	m_rbFileReadPos += readFrames;
+	int readFrames = file_read(buffer, m_rbFileReadPos.to_frame(m_rate), cnt);
+	m_rbFileReadPos.add_frames(readFrames, m_rate);
 
 	return readFrames;
 }
 
 
-void ReadSource::rb_seek_to_file_position( nframes_t position )
+void ReadSource::rb_seek_to_file_position(TimeRef& position)
 {
 	Q_ASSERT(m_clip);
 	
 // 	printf("rb_seek_to_file_position:: seeking to %d\n", position);
 	
 	// calculate position relative to the file!
-	long fileposition = position - (m_clip->get_track_start_frame() + m_clip->get_source_start_frame());
+	TimeRef fileposition = position - TimeRef(m_clip->get_track_start_frame() + m_clip->get_source_start_frame(), m_rate);
 	
-	if ((long)m_rbFileReadPos == fileposition) {
+	if (m_rbFileReadPos == fileposition) {
 // 		printf("ringbuffer allready at position %d\n", position);
 		return;
 	}
@@ -384,7 +431,8 @@ void ReadSource::rb_seek_to_file_position( nframes_t position )
 		// Setting a songs new position is on 1024, and NOT 
 		// 1023.. Hmm, something isn't correct here, but at least substract 1
 		// to make this thing work!
-		fileposition = m_clip->get_source_start_frame() - 1;
+		// TODO check if this is still needed!
+		fileposition = TimeRef(m_clip->get_source_start_frame() - 1, m_rate);
 	}
 	
 // 	printf("rb_seek_to_file_position:: seeking to relative pos: %d\n", fileposition);
@@ -427,8 +475,9 @@ void ReadSource::process_ringbuffer(DecodeBuffer* buffer, bool seeking)
 		// If we are nearing the end of the source file it could be possible
 		// we only need to read the last samples which is smaller in size then 
 		// chunksize. If so, set toRead to m_source->m_length - rbFileReasPos
-		if ( (int) (m_length - m_rbFileReadPos) <= m_chunkSize) {
-			toRead = m_length - m_rbFileReadPos;
+		nframes_t available = (m_length - m_rbFileReadPos).to_frame(m_rate);
+		if (available <= m_chunkSize) {
+			toRead = available;
 		} else {
 			printf("ReadSource:: chunkCount == 0, but not at end of file, this shouldn't happen!!\n");
 			return;
@@ -454,7 +503,7 @@ void ReadSource::recover_from_buffer_underrun(nframes_t position)
 
 void ReadSource::start_resync( nframes_t position )
 {
-// 	printf("starting resync!\n");
+	printf("starting resync!\n");
 	m_syncPos = position;
 	m_rbReady = 0;
 	m_needSync = 1;
@@ -462,7 +511,7 @@ void ReadSource::start_resync( nframes_t position )
 
 void ReadSource::finish_resync()
 {
-// 	printf("sync finished\n");
+ 	printf("sync finished\n");
 	m_needSync = 0;
 	m_bufferUnderRunDetected = 0;
 	m_rbReady = 1;
@@ -477,7 +526,8 @@ void ReadSource::sync(DecodeBuffer* buffer)
 	}
 	
 	if (!m_syncInProgress) {
-		rb_seek_to_file_position(m_syncPos);
+		TimeRef position(m_syncPos, m_rate);
+		rb_seek_to_file_position(position);
 		m_syncInProgress = 1;
 	}
 	
@@ -500,6 +550,12 @@ void ReadSource::prepare_buffer( )
 	PENTER;
 	
 	Q_ASSERT(m_clip);
+	
+	for (int i=0; i<m_buffers.size();++i) {
+		delete m_buffers.at(i);
+	}
+	
+	m_buffers.clear();
 
 	float size = config().get_property("Hardware", "readbuffersize", 1.0).toDouble();
 

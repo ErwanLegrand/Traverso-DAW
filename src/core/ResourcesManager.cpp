@@ -74,7 +74,7 @@ QDomNode ResourcesManager::get_state( QDomDocument doc )
 	QDomElement audioSourcesElement = doc.createElement("AudioSources");
 	
 	foreach(SourceData* data, m_sources) {
-		AudioSource* source = (AudioSource*)data->source;
+		ReadSource* source = data->source;
 		audioSourcesElement.appendChild(source->get_state(doc));
 	}
 	

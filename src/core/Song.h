@@ -87,6 +87,9 @@ public:
 	nframes_t get_working_frame() const {return workingFrame;}
 	nframes_t get_first_visible_frame() const;
 	nframes_t get_last_frame() const;
+	const TimeRef& get_transport_location() const {return m_transportLocation;}
+	
+	const TimeRef& get_new_transport_location() const {return m_newTransportLocation;}
 	
 	QString get_title() const {return title;}
 	QString get_artists() const {return artists;}
@@ -185,6 +188,7 @@ private:
 	int 		m_hzoom;
 	int		m_sbx;
 	int		m_sby;
+	uint		m_currentSampleRate;
 	bool 		m_rendering;
 	bool 		changed;
 	bool 		m_isSnapOn;
@@ -245,7 +249,7 @@ signals:
 	void transportPosSet();
 	void firstVisibleFrameChanged();
 	void lastFramePositionChanged();
-	void seekStart(uint position);
+	void seekStart();
 	void snapChanged();
 	void tempFollowChanged(bool state);
 	void propertyChanged();

@@ -183,7 +183,7 @@ DiskIO::~DiskIO()
 * 
 * @param position The position to seek too 
 */
-void DiskIO::seek( nframes_t position )
+void DiskIO::seek()
 {
 	PENTER;
 	
@@ -193,12 +193,15 @@ void DiskIO::seek( nframes_t position )
 	
 	m_stopWork = 0;
 	m_seeking = true;
+	
+	TimeRef location = m_song->get_new_transport_location();
 
 	foreach(ReadSource* source, m_readSources) {
 		if (m_sampleRateChanged) {
 			source->output_rate_changed();
+			source->prepare_buffer();
 		}
-		source->rb_seek_to_file_position(position);
+		source->rb_seek_to_file_position(location);
 	}
 	
 	m_sampleRateChanged = false;

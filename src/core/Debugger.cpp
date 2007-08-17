@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Debugger.cpp,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
+    $Id: Debugger.cpp,v 1.2 2007/08/17 00:18:30 r_sijrier Exp $
 */
 
 #include <stdlib.h>
@@ -351,7 +351,7 @@ operator new(size_t siz, const char* file, long line)
                 ++nptrs;
         }
         if(traceFlag) {
-                printf("Allocated %u bytes at address %p (file: %s, line: %ld)\n", siz, p, file, line);
+                printf("Allocated %.2f KBytes at address %p (file: %s, line: %ld)\n", (float)siz/1024, p, file, line);
         }
         fflush(NULL);
         return p;
@@ -372,8 +372,10 @@ void operator delete(void* p)
                 free(p);
                 assert(nptrs > 0);
                 delPointer(p);
-                if(traceFlag)
-                        printf("Deleted %u bytes at address %p, file: %s, line: %ld\n", memMap[i].size, p, memMap[i].file, memMap[i].line);
+                if(traceFlag) {
+			if (memMap[i].size > 1024)
+				printf("Deleted %u bytes at address %p, file: %s, line: %ld\n", memMap[i].size, p, memMap[i].file, memMap[i].line);
+		}
         } else if(!p && activeFlag)
                 printf("Attempt to delete unknown pointer: %p\n", p);
         fflush(NULL);

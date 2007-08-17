@@ -47,13 +47,12 @@ AudioSource::AudioSource(const QString& dir, const QString& name)
 
 
 // This constructor is called for existing (recorded/imported) audio sources
-AudioSource::AudioSource(const QDomNode node)
+AudioSource::AudioSource()
 	: m_dir("")
 	, m_name("")
 	, m_fileName("")
 	, m_wasRecording(false)
 {
-	set_state(node);
 }
 
 
@@ -61,53 +60,6 @@ AudioSource::~AudioSource()
 {
 	PENTERDES;
 }
-
-
-QDomNode AudioSource::get_state( QDomDocument doc )
-{
-	QDomElement node = doc.createElement("Source");
-	node.setAttribute("channelcount", m_channelCount);
-	node.setAttribute("origsheetid", m_origSongId);
-	node.setAttribute("dir", m_dir);
-	node.setAttribute("id", m_id);
-	node.setAttribute("name", m_name);
-	node.setAttribute("origbitdepth", m_origBitDepth);
-	node.setAttribute("wasrecording", m_wasRecording);
-	node.setAttribute("length", m_length);
-	node.setAttribute("rate", m_rate);
-	node.setAttribute("decoder", m_decodertype);
-
-	return node;
-}
-
-
-int AudioSource::set_state( const QDomNode & node )
-{
-	PENTER;
-	
-	QDomElement e = node.toElement();
-	m_channelCount = e.attribute("channelcount", "0").toInt();
-	m_origSongId = e.attribute("origsheetid", "0").toLongLong();
-	set_dir( e.attribute("dir", "" ));
-	m_id = e.attribute("id", "").toLongLong();
-	m_length = e.attribute("length", "0").toUInt();
-	m_rate = e.attribute("rate", "0").toUInt();
-	m_origBitDepth = e.attribute("origbitdepth", "0").toInt();
-	m_wasRecording = e.attribute("wasrecording", "0").toInt();
-	m_decodertype = e.attribute("decoder", "");
-	
-	// For older project files, this should properly detect if the 
-	// audio source was a recording or not., in fact this should suffice
-	// and the flag wasrecording would be unneeded, but oh well....
-	if (m_origSongId != 0) {
-		m_wasRecording = true;
-	}
-	
-	set_name( e.attribute("name", "No name supplied?" ));
-	
-	return 1;
-}
-
 
 void AudioSource::set_name(const QString& name)
 {

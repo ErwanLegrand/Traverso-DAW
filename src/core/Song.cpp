@@ -127,7 +127,7 @@ void Song::init()
 
 	m_diskio = new DiskIO(this);
 	
-	connect(this, SIGNAL(seekStart(uint)), m_diskio, SLOT(seek(uint)), Qt::QueuedConnection);
+	connect(this, SIGNAL(seekStart()), m_diskio, SLOT(seek()), Qt::QueuedConnection);
 	connect(this, SIGNAL(prepareRecording()), this, SLOT(prepare_recording()));
 	connect(&audiodevice(), SIGNAL(clientRemoved(Client*)), this, SLOT (audiodevice_client_removed(Client*)));
 	connect(&audiodevice(), SIGNAL(started()), this, SLOT(audiodevice_started()));
@@ -166,6 +166,7 @@ void Song::init()
 	m_transportLocation.set_position(0, audiodevice().get_sample_rate());
 	m_mode = EDIT;
 	m_sbx = m_sby = 0;
+	m_currentSampleRate = audiodevice().get_sample_rate();
 	
 	m_pluginChain = new PluginChain(this, this);
 	m_fader = m_pluginChain->get_fader();
@@ -930,12 +931,16 @@ void Song::audiodevice_params_changed()
 	// with the correct resampled audio data!
 	// We need to seek to a different position then the current one,
 	// else the seek won't happen at all :)
-	m_diskio->output_rate_changed();
+	if (m_currentSampleRate != audiodevice().get_sample_rate()) {
+		m_currentSampleRate = audiodevice().get_sample_rate();
+		
+		m_diskio->output_rate_changed();
+		
+		TimeRef location = m_transportLocation;
+		location.add_frames(1, audiodevice().get_sample_rate());
 	
-	TimeRef location = m_transportLocation;
-	location.add_frames(1, audiodevice().get_sample_rate());
-	
-	set_transport_pos(location);
+		set_transport_pos(location);
+	}
 }
 
 int Song::get_bitdepth( )
@@ -1298,7 +1303,7 @@ void Song::start_seek()
 	m_diskio->prepare_for_seek();
 
 	// 'Tell' the diskio it should start a seek action.
-	RT_THREAD_EMIT(this, (void*)m_newTransportLocation.to_frame(audiodevice().get_sample_rate()), seekStart(uint));
+	RT_THREAD_EMIT(this, NULL, seekStart());
 }
 
 void Song::seek_finished()

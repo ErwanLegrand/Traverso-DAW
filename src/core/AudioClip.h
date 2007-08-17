@@ -140,12 +140,13 @@ private:
 	
 	QString 		m_name;
 	QByteArray		m_captureBusName;
-	nframes_t 		trackStartFrame;
-	nframes_t 		trackEndFrame;
-	nframes_t 		sourceEndFrame;
-	nframes_t 		sourceStartFrame;
-	nframes_t		sourceLength;
-	nframes_t 		m_length;
+	
+	mutable TimeRef 		m_trackStartLocation;
+	mutable TimeRef 		m_trackEndLocation;
+	mutable TimeRef 		m_sourceEndLocation;
+	mutable TimeRef 		m_sourceStartLocation;
+	mutable TimeRef			m_sourceLength;
+	mutable TimeRef 		m_length;
 
 	int 			m_isSelected;
 	bool 			m_isTake;
@@ -160,9 +161,9 @@ private:
 	void create_fade_in();
 	void create_fade_out();
 	void init();
-	void set_source_end_frame(nframes_t frame);
-	void set_source_start_frame(nframes_t frame);
-	void set_track_end_frame(nframes_t endFrame);
+	void set_source_end_location(const TimeRef& location);
+	void set_source_start_location(const TimeRef& location);
+	void set_track_end_location(const TimeRef& location);
 	void set_sources_active_state();
 	void process_capture(nframes_t nframes);
 	
@@ -176,7 +177,7 @@ signals:
 	void muteChanged();
 	void lockChanged();
 	void positionChanged(Snappable*);
-	void trackEndFrameChanged();
+	void trackEndLocationChanged();
 	void fadeAdded(FadeCurve*);
 	void fadeRemoved(FadeCurve*);
 	void recordingFinished();

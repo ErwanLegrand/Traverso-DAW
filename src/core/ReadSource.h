@@ -24,6 +24,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "AudioSource.h"
 
+#include <QDomDocument>
+
+
 class AbstractAudioReader;
 class AudioClip;
 struct BufferStatus;
@@ -47,9 +50,12 @@ public :
 	};
 	
 	ReadSource* deep_copy();
+	
+	int set_state( const QDomNode& node );
+	QDomNode get_state(QDomDocument doc);
 
 	int rb_read(audio_sample_t** dest, nframes_t start, nframes_t cnt);
-	void rb_seek_to_file_position(nframes_t position);
+	void rb_seek_to_file_position(TimeRef& position);
 	
 	int file_read(DecodeBuffer* buffer, nframes_t start, nframes_t cnt) const;
 
@@ -59,7 +65,8 @@ public :
 	void set_active(bool active);
 	
 	void set_audio_clip(AudioClip* clip);
-	nframes_t get_nframes() const;
+	const nframes_t get_nframes() const;
+	const TimeRef& get_length() const {return m_length;}
 	
 	void sync(DecodeBuffer* buffer);
 	void process_ringbuffer(DecodeBuffer* buffer, bool seeking=false);
@@ -76,8 +83,8 @@ private:
 	int			m_refcount;
 	int			m_error;
 	bool			m_silent;
-	nframes_t		m_rbFileReadPos;
-	nframes_t		m_rbRelativeFileReadPos;
+	TimeRef			m_rbFileReadPos;
+	TimeRef			m_rbRelativeFileReadPos;
 	volatile size_t		m_syncPos;
 	volatile size_t		m_rbReady;
 	volatile size_t		m_needSync;
@@ -85,6 +92,9 @@ private:
 	volatile size_t		m_wasActivated;
 	volatile size_t		m_bufferUnderRunDetected;
 	bool			m_syncInProgress;
+	
+	mutable TimeRef		m_length;
+	QString		m_decodertype;
 	
 	BufferStatus*	m_bufferstatus;
 	

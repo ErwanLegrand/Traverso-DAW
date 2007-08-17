@@ -49,12 +49,14 @@ enum {
 };
 
 // Universal samplerate for the frequences 22050, 32000, 44100, 88200, 96000 and 192000 Hz
-static const quint64 UNIVERSAL_SAMPLE_RATE = 28224000;
+static const qint64 UNIVERSAL_SAMPLE_RATE = 28224000;
 
 struct TimeRef {
 	
-	TimeRef(){}
-	TimeRef(long position) : m_position(position) {}
+	TimeRef() {
+		m_position = 0;
+	}
+	TimeRef(qint64 position) : m_position(position) {}
 	
 	TimeRef(nframes_t frame, int rate) {
 		m_position = (UNIVERSAL_SAMPLE_RATE / rate) * frame;
@@ -69,6 +71,7 @@ struct TimeRef {
 	}
 	
 	nframes_t to_frame(int rate) {
+		Q_ASSERT(rate);
 		return nframes_t(m_position / (UNIVERSAL_SAMPLE_RATE / rate));
 	}
 	
@@ -76,8 +79,46 @@ struct TimeRef {
 		return left.m_position != right.m_position;
 	}
 	
+	friend TimeRef operator-(const TimeRef& left, const TimeRef& right) {
+		return TimeRef(left.m_position - right.m_position);
+	}
+	
+	friend TimeRef& operator-=(TimeRef& left, const TimeRef& right) {
+		left.m_position -= right.m_position;
+		return left;
+	}
+	
+	friend TimeRef operator+(const TimeRef& left, const TimeRef& right) {
+		return TimeRef(left.m_position + right.m_position);
+	}
+	
+	friend TimeRef& operator+=(TimeRef& left, const TimeRef& right) {
+		left.m_position += right.m_position;
+		return left;
+	}
+	
+	friend int operator<(const TimeRef& left, const TimeRef& right) {
+		return left.m_position < right.m_position;
+	}
+	
+	friend int operator>(const TimeRef& left, const TimeRef& right) {
+		return left.m_position > right.m_position;
+	}
+	
+	friend int operator<=(const TimeRef& left, const TimeRef& right) {
+		return left.m_position <= right.m_position;
+	}
+	
+	friend int operator>=(const TimeRef& left, const TimeRef& right) {
+		return left.m_position >= right.m_position;
+	}
+	
+	friend int operator==(const TimeRef& left, const TimeRef& right) {
+		return left.m_position == right.m_position;
+	}
+	
 private:
-	quint64 m_position;
+	qint64 m_position;
 };
 
 

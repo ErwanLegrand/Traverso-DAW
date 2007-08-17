@@ -66,7 +66,6 @@ AudioClip::AudioClip(const QString& name)
 	, m_name(name)
 {
 	PENTERCONS;
-	m_length = sourceStartFrame = sourceEndFrame = trackEndFrame = 0;
 	m_isMuted=false;
 	m_id = create_id();
 	m_readSourceId = m_songId = 0;
@@ -77,6 +76,7 @@ AudioClip::AudioClip(const QString& name)
 AudioClip::AudioClip(const QDomNode& node)
 	: ContextItem()
 	, Snappable()
+	, m_readSource(0)
 {
 	PENTERCONS;
 	QDomNode clipNode = node.firstChild();
@@ -89,9 +89,11 @@ AudioClip::AudioClip(const QDomNode& node)
 	m_songId = e.attribute("sheet", "0").toLongLong();
 	m_name = e.attribute( "clipname", "" ) ;
 	m_isMuted =  e.attribute( "mute", "" ).toInt();
-	m_length = e.attribute( "length", "0" ).toUInt();
-	sourceStartFrame = e.attribute( "sourcestart", "" ).toUInt();
-	sourceEndFrame = sourceStartFrame + m_length;
+	// FIXME!!!!!!!
+	m_length = TimeRef(e.attribute( "length", "0" ).toUInt(), 44100);
+	m_sourceStartLocation = TimeRef(e.attribute( "sourcestart", "" ).toUInt(), 44100);
+	
+	m_sourceEndLocation = m_sourceStartLocation + m_length;
 	set_track_start_frame( e.attribute( "trackstart", "" ).toUInt());
 	m_domNode = node.cloneNode();
 	init();
@@ -145,10 +147,12 @@ int AudioClip::set_state(const QDomNode& node)
 	m_songId = e.attribute("sheet", "0").toLongLong();
 	m_isMuted =  e.attribute( "mute", "" ).toInt();
 
-	sourceStartFrame = e.attribute( "sourcestart", "" ).toUInt();
-	m_length = e.attribute( "length", "0" ).toUInt();
-	sourceEndFrame = sourceStartFrame + m_length;
-	set_track_start_frame( e.attribute( "trackstart", "" ).toUInt());
+	// FIXME!!!!!!!!
+	m_sourceStartLocation = TimeRef(e.attribute( "sourcestart", "" ).toUInt(), 44100);
+	m_length = TimeRef(e.attribute( "length", "0" ).toUInt(), 44100);
+	
+	m_sourceEndLocation = m_sourceStartLocation + m_length;
+	set_track_start_frame(e.attribute( "trackstart", "" ).toUInt());
 	
 	emit stateChanged();
 	
@@ -183,9 +187,9 @@ int AudioClip::set_state(const QDomNode& node)
 QDomNode AudioClip::get_state( QDomDocument doc )
 {
 	QDomElement node = doc.createElement("Clip");
-	node.setAttribute("trackstart", trackStartFrame);
-	node.setAttribute("sourcestart", sourceStartFrame);
-	node.setAttribute("length", m_length);
+	node.setAttribute("trackstart", m_trackStartLocation.to_frame(get_rate()));
+	node.setAttribute("sourcestart", m_sourceStartLocation.to_frame(get_rate()));
+	node.setAttribute("length", m_length.to_frame(get_rate()));
 	node.setAttribute("mute", m_isMuted);
 	node.setAttribute("take", m_isTake);
 	node.setAttribute("clipname", m_name );
@@ -247,37 +251,39 @@ void AudioClip::set_sources_active_state()
 
 }
 
-void AudioClip::set_left_edge(long newFrame)
+void AudioClip::set_left_edge(long frame)
 {
-	if (newFrame < 0) {
-		newFrame = 0;
+	if (frame < 0) {
+		frame = 0;
 	}
 	
-	if (newFrame < (long)trackStartFrame) {
+	TimeRef newLeftLocation(frame, get_rate());
+	
+	if (newLeftLocation < m_trackStartLocation) {
 
-		int availableFramesLeft = sourceStartFrame;
+		TimeRef availableTimeLeft = m_sourceStartLocation;
 
-		int movingToLeft = trackStartFrame - newFrame;
+		TimeRef movingToLeft = m_trackStartLocation - newLeftLocation;
 
-		if (movingToLeft > availableFramesLeft) {
-			movingToLeft = availableFramesLeft;
+		if (movingToLeft > availableTimeLeft) {
+			movingToLeft = availableTimeLeft;
 		}
 
-		trackStartFrame -= movingToLeft;
-		set_source_start_frame( sourceStartFrame - movingToLeft );
+		m_trackStartLocation -= movingToLeft;
+		set_source_start_location( m_sourceStartLocation - movingToLeft );
 
-	} else if (newFrame > (long)trackStartFrame) {
+	} else if (newLeftLocation > m_trackStartLocation) {
 
-		int availableFramesRight = m_length;
+		TimeRef availableTimeRight = m_length;
 
-		int movingToRight = newFrame - trackStartFrame;
+		TimeRef movingToRight = newLeftLocation - m_trackStartLocation;
 
-		if (movingToRight > availableFramesRight - 4) {
-			movingToRight = availableFramesRight - 4;
+		if (movingToRight > (availableTimeRight - TimeRef(4, get_rate())) ) {
+			movingToRight = (availableTimeRight - TimeRef(4, get_rate()));
 		}
 
-		trackStartFrame += movingToRight;
-		set_source_start_frame( sourceStartFrame + movingToRight );
+		m_trackStartLocation += movingToRight;
+		set_source_start_location( m_sourceStartLocation + movingToRight );
 
 	} else {
 		return;
@@ -286,37 +292,39 @@ void AudioClip::set_left_edge(long newFrame)
 	emit positionChanged(this);
 }
 
-void AudioClip::set_right_edge(long newFrame)
+void AudioClip::set_right_edge(long frame)
 {
-	if (newFrame < 0) {
-		newFrame = 0;
+	if (frame < 0) {
+		frame = 0;
 	}
 	
-	if (newFrame > (long)trackEndFrame) {
+	TimeRef newRightLocation(frame, get_rate());
+	
+	if (newRightLocation > m_trackEndLocation) {
 
-		int availableFramesRight = sourceLength - sourceEndFrame;
+		TimeRef availableTimeRight = m_sourceLength - m_sourceEndLocation;
 
-		int movingToRight = newFrame - trackEndFrame;
+		TimeRef movingToRight = newRightLocation - m_trackEndLocation;
 
-		if (movingToRight > availableFramesRight) {
-			movingToRight = availableFramesRight;
+		if (movingToRight > availableTimeRight) {
+			movingToRight = availableTimeRight;
 		}
 
-		set_track_end_frame( trackEndFrame + movingToRight );
-		set_source_end_frame( sourceEndFrame + movingToRight );
+		set_track_end_location( m_trackEndLocation + movingToRight );
+		set_source_end_location( m_sourceEndLocation + movingToRight );
 
-	} else if (newFrame < (long)trackEndFrame) {
+	} else if (newRightLocation < m_trackEndLocation) {
 
-		int availableFramesLeft = m_length;
+		TimeRef availableTimeLeft = m_length;
 
-		int movingToLeft = trackEndFrame - newFrame;
+		TimeRef movingToLeft = m_trackEndLocation - newRightLocation;
 
-		if (movingToLeft > availableFramesLeft - 4) {
-			movingToLeft = availableFramesLeft - 4;
+		if (movingToLeft > availableTimeLeft - TimeRef(4, get_rate())) {
+			movingToLeft = availableTimeLeft - TimeRef(4, get_rate());
 		}
 
-		set_track_end_frame( trackEndFrame - movingToLeft );
-		set_source_end_frame( sourceEndFrame - movingToLeft);
+		set_track_end_location( m_trackEndLocation - movingToLeft );
+		set_source_end_location( m_sourceEndLocation - movingToLeft);
 
 	} else {
 		return;
@@ -325,32 +333,32 @@ void AudioClip::set_right_edge(long newFrame)
 	emit positionChanged(this);
 }
 
-void AudioClip::set_source_start_frame(nframes_t frame)
+void AudioClip::set_source_start_location(const TimeRef& location)
 {
-	sourceStartFrame = frame;
-	m_length = sourceEndFrame - sourceStartFrame;
+	m_sourceStartLocation = location;
+	m_length = m_sourceEndLocation - m_sourceStartLocation;
 }
 
-void AudioClip::set_source_end_frame(nframes_t frame)
+void AudioClip::set_source_end_location(const TimeRef& location)
 {
-	sourceEndFrame = frame;
-	m_length = sourceEndFrame - sourceStartFrame;
+	m_sourceEndLocation = location;
+	m_length = m_sourceEndLocation - m_sourceStartLocation;
 }
 
 void AudioClip::set_track_start_frame(nframes_t newTrackStartFrame)
 {
-	trackStartFrame = newTrackStartFrame;
+	m_trackStartLocation = TimeRef(newTrackStartFrame, get_rate());
 
-	set_track_end_frame(trackStartFrame + m_length);
+	set_track_end_location(m_trackStartLocation + m_length);
 
 	emit positionChanged(this);
 }
 
-void AudioClip::set_track_end_frame( nframes_t endFrame )
+void AudioClip::set_track_end_location(const TimeRef& location)
 {
-// 	PWARN("trackEndFrame is %d", endFrame);
-	trackEndFrame = endFrame;
-	emit trackEndFrameChanged();
+// 	PWARN("m_trackEndLocation is %d", endFrame);
+	m_trackEndLocation = location;
+	emit trackEndLocationChanged();
 }
 
 void AudioClip::set_fade_in(nframes_t b)
@@ -409,36 +417,32 @@ int AudioClip::process(nframes_t nframes)
 	
 	Q_ASSERT(m_readSource);
 	
-/*	if (channel >= m_readSource->get_channel_count()) {
-		return 1;
-	}*/
-	
 	AudioBus* bus = m_song->get_render_bus();
 	nframes_t mix_pos;
 	audio_sample_t* mixdown[get_channels()];
 
 
-	nframes_t transportFrame = m_song->get_transport_frame();
-	nframes_t upperRange = transportFrame + nframes;
+	TimeRef transportLocation = m_song->get_transport_location();
+	TimeRef upperRange = TimeRef(transportLocation.to_frame(get_rate()) + nframes, get_rate());
 	
-	if ( (trackStartFrame < upperRange) && (trackEndFrame > transportFrame) ) {
-		if (transportFrame < trackStartFrame) {
-			uint offset = trackStartFrame - transportFrame;
-			mix_pos = sourceStartFrame;
-// 			mixdown = buffer + offset;
+	if ( (m_trackStartLocation < upperRange) && (m_trackEndLocation > transportLocation) ) {
+		if (transportLocation < m_trackStartLocation) {
+			uint offset = (m_trackStartLocation - transportLocation).to_frame(get_rate());
+			mix_pos = m_sourceStartLocation.to_frame(get_rate());
+			
 			for (int chan=0; chan<bus->get_channel_count(); ++chan) {
 				mixdown[chan] = bus->get_buffer(chan, nframes) + offset;
 			}
 			nframes = nframes - offset;
 		} else {
-			mix_pos = transportFrame - trackStartFrame + sourceStartFrame;
-// 			mixdown = buffer;
+			mix_pos = (transportLocation - m_trackStartLocation + m_sourceStartLocation).to_frame(audiodevice().get_sample_rate());
+			
 			for (int chan=0; chan<bus->get_channel_count(); ++chan) {
 				mixdown[chan] = bus->get_buffer(chan, nframes);
 			}
 		}
-		if (trackEndFrame < upperRange) {
-			nframes -= (upperRange - trackEndFrame);
+		if (m_trackEndLocation < upperRange) {
+			nframes -= (upperRange - m_trackEndLocation).to_frame(get_rate());
 		}
 	} else {
 		return 0;
@@ -466,7 +470,7 @@ int AudioClip::process(nframes_t nframes)
 			m_fades.at(i)->process(mixdown[chan], read_frames);
 		}
 		
-		m_fader->process_gain(mixdown[chan], (m_song->get_transport_frame() - (trackStartFrame - sourceStartFrame)), read_frames);
+		m_fader->process_gain(mixdown[chan], ((transportLocation - m_trackStartLocation - m_sourceStartLocation).to_frame(get_rate())), read_frames);
 		
 		Mixer::apply_gain_to_buffer(bus->get_buffer(chan, nframes), nframes, get_gain());
 	}
@@ -523,7 +527,7 @@ int AudioClip::init_recording( QByteArray name )
 		return -1;
 	}
 
-	sourceStartFrame = 0;
+	m_sourceStartLocation = TimeRef(0);
 	m_isTake = 1;
 	m_recordingStatus = RECORDING;
 	int channelcount;
@@ -658,18 +662,18 @@ void AudioClip::set_audio_source(ReadSource* rs)
 		
 	m_readSource = rs;
 	m_readSourceId = rs->get_id();
-	sourceLength = rs->get_nframes();
+	m_sourceLength = rs->get_length();
 
 	// If m_length isn't set yet, it means we are importing stuff instead of reloading from project file.
 	// it's a bit weak this way, hopefull I'll get up something better in the future.
 	// The positioning-length-offset and such stuff is still a bit weak :(
 	// NOTE: don't change, audio recording (finish_writesource()) assumes there is checked for length == 0 !!!
 	if (m_length == 0) {
-		sourceEndFrame = rs->get_nframes();
-		m_length = sourceEndFrame;
+		m_sourceEndLocation = rs->get_length();
+		m_length = m_sourceEndLocation;
 	}
 
-	set_track_end_frame( trackStartFrame + sourceLength - sourceStartFrame);
+	set_track_end_location(m_trackStartLocation + m_sourceLength - m_sourceStartLocation);
 
 	set_sources_active_state();
 
@@ -833,12 +837,12 @@ int AudioClip::get_rate( ) const
 
 nframes_t AudioClip::get_source_length( ) const
 {
-	return sourceLength;
+	return m_sourceLength.to_frame(get_rate());
 }
 
 nframes_t AudioClip::get_length() const
 {
-	return m_length;
+	return m_length.to_frame(get_rate());
 }
 
 int AudioClip::recording_state( ) const
@@ -848,22 +852,22 @@ int AudioClip::recording_state( ) const
 
 nframes_t AudioClip::get_source_end_frame( ) const
 {
-	return sourceEndFrame;
+	return m_sourceEndLocation.to_frame(get_rate());
 }
 
 nframes_t AudioClip::get_source_start_frame( ) const
 {
-	return sourceStartFrame;
+	return m_sourceStartLocation.to_frame(get_rate());
 }
 
 nframes_t AudioClip::get_track_end_frame( ) const
 {
-	return trackEndFrame;
+	return m_trackEndLocation.to_frame(get_rate());
 }
 
 nframes_t AudioClip::get_track_start_frame( ) const
 {
-	return trackStartFrame;
+	return m_trackStartLocation.to_frame(get_rate());
 }
 
 
@@ -915,7 +919,7 @@ void AudioClip::calculate_normalization_factor(float targetdB)
 	}
 
 	for (uint i=0; i<m_readSource->get_channel_count(); ++i) {
-		double amp = get_peak_for_channel(i)->get_max_amplitude(sourceStartFrame, sourceEndFrame);
+		double amp = get_peak_for_channel(i)->get_max_amplitude(m_sourceStartLocation.to_frame(get_rate()), m_sourceEndLocation.to_frame(get_rate()));
 		
 		if (amp == 0.0f) {
 			printf("AudioClip::normalization: max amplitude == 0\n");

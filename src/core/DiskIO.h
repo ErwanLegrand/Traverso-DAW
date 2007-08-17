@@ -98,7 +98,7 @@ private:
 	friend class DiskIOThread;
 
 public slots:
-	void seek(uint position);
+	void seek();
 	void start_io();
 	void stop_io();
 	

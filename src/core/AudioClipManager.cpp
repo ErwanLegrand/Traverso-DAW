@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioClipManager.cpp,v 1.15 2007/06/27 13:27:07 r_sijrier Exp $
+    $Id: AudioClipManager.cpp,v 1.16 2007/08/17 00:18:29 r_sijrier Exp $
 */
  
 #include "AudioClipManager.h"
@@ -56,7 +56,7 @@ void AudioClipManager::add_clip( AudioClip * clip )
 	
 	m_clips.append( clip );
 	
-	connect(clip, SIGNAL(trackEndFrameChanged()), this, SLOT(update_last_frame()));
+	connect(clip, SIGNAL(trackEndLocationChanged()), this, SLOT(update_last_frame()));
 	connect(clip, SIGNAL(positionChanged(Snappable*)), m_song->get_snap_list(), SLOT(mark_dirty(Snappable*)));
 	
 	m_song->get_snap_list()->mark_dirty(clip);
