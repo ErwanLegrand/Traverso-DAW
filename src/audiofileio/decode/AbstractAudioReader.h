@@ -118,6 +118,7 @@ public:
 	
 	bool is_valid() {return (m_channels > 0 && m_length > 0);}
 	virtual QString decoder_type() const = 0;
+	virtual void clear_buffers() {}
 	
 	static AbstractAudioReader* create_audio_reader(const QString& filename, const QString& decoder = 0);
 	

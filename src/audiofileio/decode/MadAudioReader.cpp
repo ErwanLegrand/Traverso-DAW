@@ -88,6 +88,9 @@ public:
 	bool findNextHeader();
 	bool checkFrameHeader(mad_header* header) const;
 	
+	void createInputBuffer();
+	void clearInputBuffer();
+	
 	mad_stream*   madStream;
 	mad_frame*    madFrame;
 	mad_synth*    madSynth;
@@ -113,11 +116,7 @@ K3bMad::K3bMad()
 	madSynth  = new mad_synth;
 	madTimer  = new mad_timer_t;
 	
-	//
-	// we allocate additional MAD_BUFFER_GUARD bytes to always be able to append the
-	// zero bytes needed for decoding the last frame.
-	//
-	m_inputBuffer = new unsigned char[INPUT_BUFFER_SIZE+MAD_BUFFER_GUARD];
+	m_inputBuffer = 0;
 }
 
 
@@ -130,7 +129,29 @@ K3bMad::~K3bMad()
 	delete madSynth;
 	delete madTimer;
 	
-	delete [] m_inputBuffer;
+	clearInputBuffer();
+}
+
+
+void K3bMad::createInputBuffer()
+{
+	if (!m_inputBuffer) {
+		//
+		// we allocate additional MAD_BUFFER_GUARD bytes to always be able to append the
+		// zero bytes needed for decoding the last frame.
+		//
+		m_inputBuffer = new unsigned char[INPUT_BUFFER_SIZE+MAD_BUFFER_GUARD];
+		memset(m_inputBuffer, 0, INPUT_BUFFER_SIZE+MAD_BUFFER_GUARD);
+	}
+}
+
+
+void K3bMad::clearInputBuffer()
+{
+	if (m_inputBuffer) {
+		delete [] m_inputBuffer;
+		m_inputBuffer = 0;
+	}
 }
 
 
@@ -150,8 +171,6 @@ bool K3bMad::open(const QString& filename)
 	
 	initMad();
 	
-	memset(m_inputBuffer, 0, INPUT_BUFFER_SIZE+MAD_BUFFER_GUARD);
-	
 	return true;
 }
 
@@ -170,6 +189,10 @@ bool K3bMad::fillStreamBuffer()
 	if (madStream->buffer == 0 || madStream->error == MAD_ERROR_BUFLEN) {
 		if (eof()) {
 			return false;
+		}
+		
+		if (!m_inputBuffer) {
+			createInputBuffer();
 		}
 		
 		long readSize, remaining;
@@ -468,7 +491,7 @@ public:
 	nframes_t	outputPos;
 	nframes_t	outputSize;
 	
-	QVector<audio_sample_t*> overflowBuffers;
+	audio_sample_t** overflowBuffers;
 	nframes_t	overflowSize;
 	nframes_t	overflowStart;
 	
@@ -507,11 +530,10 @@ MadAudioReader::MadAudioReader(QString filename)
 	
 	m_rate = d->firstHeader.samplerate;
 	
-	for (int c = 0; c < m_channels; c++) {
-		d->overflowBuffers.append(new audio_sample_t[1152]);
-	}
+	d->overflowBuffers = 0;
 	
 	seek_private(0);
+	clear_buffers();
 }
 
 
@@ -520,11 +542,37 @@ MadAudioReader::~MadAudioReader()
 	if (d) {
 		d->handle->cleanup();
 		delete d->handle;
-		while (d->overflowBuffers.size()) {
-			delete d->overflowBuffers.back();
-			d->overflowBuffers.pop_back();
-		}
+		clear_buffers();
 		delete d;
+	}
+}
+
+
+void MadAudioReader::create_buffers()
+{
+	if (!d->overflowBuffers) {
+		d->overflowBuffers = new audio_sample_t*[m_channels];
+		for (int chan = 0; chan < m_channels; chan++) {
+			d->overflowBuffers[chan] = new audio_sample_t[1152];
+		}
+	}
+}
+	
+
+void MadAudioReader::clear_buffers()
+{
+	if (d->overflowBuffers) {
+		for (int chan = 0; chan < m_channels; chan++) {
+			delete [] d->overflowBuffers[chan];
+		}
+		delete [] d->overflowBuffers;
+		d->overflowBuffers = 0;
+		d->overflowStart = 0;
+		d->overflowSize = 0;
+	}
+	
+	if (d && d->handle) {
+		d->handle->clearInputBuffer();
 	}
 }
 
@@ -769,8 +817,8 @@ nframes_t MadAudioReader::read_private(DecodeBuffer* buffer, nframes_t frameCoun
 	if (d->overflowSize > 0) {
 		if (d->overflowSize < frameCount) {
 			//printf("output all %d overflow samples\n", d->overflowSize);
-			for (int c = 0; c < m_channels; c++) {
-				memcpy(d->outputBuffers[c], d->overflowBuffers[c] + d->overflowStart, d->overflowSize * sizeof(audio_sample_t));
+			for (int chan = 0; chan < m_channels; chan++) {
+				memcpy(d->outputBuffers[chan], d->overflowBuffers[chan] + d->overflowStart, d->overflowSize * sizeof(audio_sample_t));
 			}
 			d->outputPos += d->overflowSize;
 			d->overflowSize = 0;
@@ -778,8 +826,8 @@ nframes_t MadAudioReader::read_private(DecodeBuffer* buffer, nframes_t frameCoun
 		}
 		else {
 			//printf("output %d overflow frames, returned from overflow\n", frameCount);
-			for (int c = 0; c < m_channels; c++) {
-				memcpy(d->outputBuffers[c], d->overflowBuffers[c] + d->overflowStart, frameCount * sizeof(audio_sample_t));
+			for (int chan = 0; chan < m_channels; chan++) {
+				memcpy(d->outputBuffers[chan], d->overflowBuffers[chan] + d->overflowStart, frameCount * sizeof(audio_sample_t));
 			}
 			d->overflowSize -= frameCount;
 			d->overflowStart += frameCount;
@@ -851,6 +899,10 @@ bool MadAudioReader::createPcmSamples(mad_synth* synth)
 	bool		overflow = false;
 	nframes_t	i;
 	
+	if (!d->overflowBuffers) {
+		create_buffers();
+	}
+	
 	if (writeBuffers && (m_readPos + d->outputPos + nframes) > m_length) {
 		nframes = m_length - (m_readPos + offset);
 		//printf("!!!nframes: %lu, length: %lu, current: %lu\n", nframes, m_length, d->outputPos + m_readPos);
@@ -859,7 +911,7 @@ bool MadAudioReader::createPcmSamples(mad_synth* synth)
 	// now create the output
 	for (i = 0; i < nframes; i++) {
 		if (overflow == false && d->outputPos + i >= d->outputSize) {
-			writeBuffers = d->overflowBuffers.data();
+			writeBuffers = d->overflowBuffers;
 			offset = 0 - i;
 			overflow = true;
 		}

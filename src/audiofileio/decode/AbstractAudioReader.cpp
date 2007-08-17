@@ -135,9 +135,14 @@ AbstractAudioReader* AbstractAudioReader::create_audio_reader(const QString& fil
 		} else if (decoder == "mad") {
 			newReader = new MadAudioReader(filename);
 		}
+		if (newReader && !newReader->is_valid()) {
+			PERROR("new %s reader is invalid! (channels: %d, frames: %d)", (const char *)(newReader->decoder_type().toUtf8()), newReader->get_num_channels(), newReader->get_length());
+			delete newReader;
+			newReader = 0;
+		}
 	}
 	
-	if ( (!newReader) || (!newReader->is_valid()) ) {
+	if (!newReader) {
 	
 		if (FlacAudioReader::can_decode(filename)) {
 			newReader = new FlacAudioReader(filename);
@@ -154,14 +159,12 @@ AbstractAudioReader* AbstractAudioReader::create_audio_reader(const QString& fil
 		else if (MadAudioReader::can_decode(filename)) {
 			newReader = new MadAudioReader(filename);
 		}
-		else {
-			return 0;
-		}
 	}
 	
-	if (!newReader->is_valid()) {
-		PERROR("new reader is invalid! (channels: %d, frames: %d", newReader->get_num_channels(), newReader->get_length());
-		return 0;
+	if (newReader && !newReader->is_valid()) {
+		PERROR("new %s reader is invalid! (channels: %d, frames: %d)", (const char *)(newReader->decoder_type().toUtf8()), newReader->get_num_channels(), newReader->get_length());
+		delete newReader;
+		newReader = 0;
 	}
 
 	return newReader;

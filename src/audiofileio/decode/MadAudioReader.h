@@ -36,6 +36,7 @@ public:
 	~MadAudioReader();
 	
 	QString decoder_type() const {return "mad";}
+	void clear_buffers();
 	
 	static bool can_decode(QString filename);
 	
@@ -43,6 +44,7 @@ protected:
 	bool seek_private(nframes_t start);
 	nframes_t read_private(DecodeBuffer* buffer, nframes_t frameCount);
 	
+	void create_buffers();
 	bool initDecoderInternal();
 	unsigned long countFrames();
 	bool createPcmSamples(mad_synth* synth);

@@ -35,6 +35,7 @@ public:
 	~ResampleAudioReader();
 	
 	QString decoder_type() const {return (m_reader) ? m_reader->decoder_type() : "";}
+	void clear_buffers();
 	
 	int get_output_rate();
 	void set_output_rate(int rate);

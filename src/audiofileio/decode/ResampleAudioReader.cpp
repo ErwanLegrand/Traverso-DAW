@@ -53,13 +53,15 @@ ResampleAudioReader::ResampleAudioReader(QString filename, int converter_type, c
 
 ResampleAudioReader::~ResampleAudioReader()
 {
+	if (!m_reader) {
+		return;
+	}
+	
+	delete m_reader;
+	
 	while (m_srcStates.size()) {
 		src_delete(m_srcStates.back());
 		m_srcStates.pop_back();
-	}
-	
-	if (m_reader) {
-		delete m_reader;
 	}
 	
 	if (m_overflowBuffers) {
@@ -67,6 +69,22 @@ ResampleAudioReader::~ResampleAudioReader()
 			delete [] m_overflowBuffers[chan];
 		}
 		delete [] m_overflowBuffers;
+	}
+}
+
+
+void ResampleAudioReader::clear_buffers()
+{
+	if (m_overflowBuffers) {
+		for (int chan = 0; chan < m_channels; chan++) {
+			delete [] m_overflowBuffers[chan];
+		}
+		delete [] m_overflowBuffers;
+		m_overflowBuffers = 0;
+	}
+	
+	if (m_reader) {
+		m_reader->clear_buffers();
 	}
 }
 

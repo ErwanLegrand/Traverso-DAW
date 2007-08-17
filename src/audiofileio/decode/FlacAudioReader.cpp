@@ -125,9 +125,7 @@ class FlacPrivate
 		
 		void cleanup()
 		{
-			if (internalBuffer) {
-				delete [] internalBuffer;
-			}
+			clear_buffers();
 			file->close();
 			delete file;
 			
@@ -140,6 +138,14 @@ class FlacPrivate
 #endif
 		}
 		
+		
+		void clear_buffers()
+		{
+			if (internalBuffer) {
+				delete [] internalBuffer;
+				internalBuffer = 0;
+			}
+		}
 		
 		bool seek(nframes_t start)
 		{
@@ -394,6 +400,14 @@ FlacAudioReader::~FlacAudioReader()
 {
 	if (m_flac) {
 		delete m_flac;
+	}
+}
+
+
+void FlacAudioReader::clear_buffers()
+{
+	if (m_flac) {
+		m_flac->clear_buffers();
 	}
 }
 
