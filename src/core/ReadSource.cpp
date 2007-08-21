@@ -266,7 +266,10 @@ int ReadSource::init( )
 
 void ReadSource::output_rate_changed()
 {
-	((ResampleAudioReader*)m_audioReader)->set_output_rate(audiodevice().get_sample_rate());
+	ResampleAudioReader* reader = dynamic_cast<ResampleAudioReader*>(m_audioReader);
+	if (reader) {
+		reader->set_output_rate(audiodevice().get_sample_rate());
+	}
 }
 
 
