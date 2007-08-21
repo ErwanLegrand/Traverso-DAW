@@ -312,8 +312,7 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 		}
 		audio_sample_t readbuffer[toRead*2];
 		
-		DecodeBuffer decodebuffer(audiobuf, readbuffer, toRead, toRead*2);
-		decodebuffer.destinationChannelCount = 2;
+		DecodeBuffer decodebuffer(audiobuf, readbuffer, toRead, toRead*2, 2);
 		
 		nframes_t readFrames = m_source->file_read(&decodebuffer, startPos, toRead);
 
@@ -619,7 +618,7 @@ int Peak::create_from_scratch()
 	}
 	audio_sample_t* readbuffer = new audio_sample_t[bufferSize * 2];
 	
-	DecodeBuffer decodebuffer(buffer, readbuffer, bufferSize, bufferSize*2);
+	DecodeBuffer decodebuffer(buffer, readbuffer, bufferSize, bufferSize*2, m_source->get_channel_count());
 	
 	do {
 		if (interuptPeakBuild) {
@@ -689,7 +688,7 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 		}
 		audio_sample_t readbuffer[toRead * 2];
 	
-		DecodeBuffer decodebuffer(buffer, readbuffer, toRead, toRead*2);
+		DecodeBuffer decodebuffer(buffer, readbuffer, toRead, toRead*2, m_source->get_channel_count());
 		
 		int read = m_source->file_read(&decodebuffer, startframe, toRead);
 		
@@ -711,7 +710,7 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 	for (uint chan=0; chan<m_source->get_channel_count(); ++chan) {
 		buffer[chan] = new audio_sample_t[toRead];
 	}
-	DecodeBuffer decodebuffer(buffer, readbuffer, toRead, toRead*2);
+	DecodeBuffer decodebuffer(buffer, readbuffer, toRead, toRead*2, m_source->get_channel_count());
 	
 	int read = m_source->file_read(&decodebuffer, endframe - toRead, toRead);
 	

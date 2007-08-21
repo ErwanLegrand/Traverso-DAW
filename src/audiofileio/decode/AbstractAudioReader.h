@@ -34,11 +34,12 @@ struct DecodeBuffer {
 		destinationChannelCount = destinationBufferSize = resampleBufferSize = readBufferSize = 0;
 	}
 	
-	DecodeBuffer(audio_sample_t** dest, audio_sample_t* readbuf, uint destbufsize, uint readbufsize) {
+	DecodeBuffer(audio_sample_t** dest, audio_sample_t* readbuf, uint destbufsize, uint readbufsize, uint channels) {
 		destination = dest;
 		readBuffer = readbuf;
 		destinationBufferSize = destbufsize;
 		readBufferSize = readbufsize;
+		destinationChannelCount = channels;
 	}
 	
 	void check_readbuffer_capacity(uint size) {

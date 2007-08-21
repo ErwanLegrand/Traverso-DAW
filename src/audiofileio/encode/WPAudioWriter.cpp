@@ -73,7 +73,7 @@ bool WPAudioWriter::set_format_attribute(const QString& key, const QString& valu
 		}
 		else if (value == "very_high") {
 			// CONFIG_VERY_HIGH_FLAG ~ 2 times slower then FAST, ~ 25 % extra compression then FAST
-			m_configFlags |= CONFIG_VERY_HIGH_FLAG;
+			m_configFlags |= CONFIG_VERY_HIGH_FLAG & CONFIG_HIGH_FLAG;
 			return true;
 		}
 	}

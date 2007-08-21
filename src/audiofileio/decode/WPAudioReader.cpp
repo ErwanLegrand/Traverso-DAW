@@ -34,7 +34,7 @@ WPAudioReader::WPAudioReader(QString filename)
 {
 	char error[80];
 	
-	m_wp = WavpackOpenFileInput(m_fileName.toUtf8().data(), error, OPEN_2CH_MAX, 1);
+	m_wp = WavpackOpenFileInput(m_fileName.toUtf8().data(), error, OPEN_2CH_MAX & OPEN_NORMALIZE, 1);
 	
 	if (m_wp == 0) {
 		PERROR("Couldn't open soundfile (%s) %s", filename.toUtf8().data(), error);
