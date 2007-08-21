@@ -57,7 +57,7 @@ public:
 		audio_sample_t readbuffer[buffersize];
 		audio_sample_t* mixdown[2];
 		for (int i=0; i<2; ++i) mixdown[i] = new audio_sample_t[2 * buffersize];
-		DecodeBuffer decodebuffer(mixdown, readbuffer, buffersize, buffersize*2);
+		DecodeBuffer decodebuffer(mixdown, readbuffer, buffersize, buffersize*2, 2);
 	
 		ExportSpecification* spec = new ExportSpecification();
 		spec->start_frame = 0;
