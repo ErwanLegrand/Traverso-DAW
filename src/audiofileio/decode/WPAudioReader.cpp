@@ -34,7 +34,7 @@ WPAudioReader::WPAudioReader(QString filename)
 {
 	char error[80];
 	
-	m_wp = WavpackOpenFileInput(m_fileName.toUtf8().data(), error, OPEN_2CH_MAX & OPEN_NORMALIZE, 1);
+	m_wp = WavpackOpenFileInput(m_fileName.toUtf8().data(), error, OPEN_2CH_MAX | OPEN_NORMALIZE | OPEN_WVC, 0);
 	
 	if (m_wp == 0) {
 		PERROR("Couldn't open soundfile (%s) %s", filename.toUtf8().data(), error);
@@ -65,7 +65,7 @@ bool WPAudioReader::can_decode(QString filename)
 	
 	char error[80];
 	
-	WavpackContext *wp = WavpackOpenFileInput(filename.toUtf8().data(), error, OPEN_2CH_MAX, 1);
+	WavpackContext *wp = WavpackOpenFileInput(filename.toUtf8().data(), error, OPEN_2CH_MAX | OPEN_NORMALIZE | OPEN_WVC, 0);
 	
 	if (wp == 0) {
 		return false;
@@ -147,7 +147,7 @@ nframes_t WPAudioReader::read_private(DecodeBuffer* buffer, nframes_t frameCount
 			default:
 				for (nframes_t f = 0; f < framesRead; f++) {
 					for (int c = 0; c < m_channels; c++) {
-						buffer->destination[c][f] = (float)((float)readbuffer[f + m_channels + c]/ divider);
+						buffer->destination[c][f] = (float)((float)readbuffer[f * m_channels + c]/ divider);
 					}
 				}
 		}
