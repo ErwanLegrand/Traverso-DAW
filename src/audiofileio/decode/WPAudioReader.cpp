@@ -43,6 +43,7 @@ WPAudioReader::WPAudioReader(QString filename)
 	
 	m_isFloat = ((WavpackGetMode(m_wp) & MODE_FLOAT) != 0);
 	m_bitsPerSample = WavpackGetBitsPerSample(m_wp);
+	m_bytesPerSample = WavpackGetBytesPerSample(m_wp);
 	m_channels = WavpackGetReducedChannels(m_wp);
 	m_length = WavpackGetNumSamples(m_wp);
 	m_rate = WavpackGetSampleRate(m_wp);
@@ -107,7 +108,7 @@ nframes_t WPAudioReader::read_private(DecodeBuffer* buffer, nframes_t frameCount
 	
 	nframes_t framesRead = WavpackUnpackSamples(m_wp, readbuffer, frameCount);
 	
-	const uint divider = ((uint)1<<(m_bitsPerSample-1));
+	const uint divider = ((uint)1<<(m_bytesPerSample * 8 - 1));
 	
 	// De-interlace
 	if (m_isFloat) {

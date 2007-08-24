@@ -43,6 +43,7 @@ protected:
 	WavpackContext*	m_wp;
 	bool		m_isFloat;
 	int		m_bitsPerSample;
+	int		m_bytesPerSample;
 };
 
 #endif
