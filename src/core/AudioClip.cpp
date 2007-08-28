@@ -90,8 +90,9 @@ AudioClip::AudioClip(const QDomNode& node)
 	m_name = e.attribute( "clipname", "" ) ;
 	m_isMuted =  e.attribute( "mute", "" ).toInt();
 	// FIXME!!!!!!!
-	m_length = TimeRef(e.attribute( "length", "0" ).toUInt(), 44100);
-	m_sourceStartLocation = TimeRef(e.attribute( "sourcestart", "" ).toUInt(), 44100);
+	bool ok;
+	m_length = TimeRef(e.attribute( "length", "0" ).toLongLong(&ok));
+	m_sourceStartLocation = TimeRef(e.attribute( "sourcestart", "" ).toLongLong(&ok));
 	
 	m_sourceEndLocation = m_sourceStartLocation + m_length;
 	set_track_start_frame( e.attribute( "trackstart", "" ).toUInt());
@@ -148,11 +149,12 @@ int AudioClip::set_state(const QDomNode& node)
 	m_isMuted =  e.attribute( "mute", "" ).toInt();
 
 	// FIXME!!!!!!!!
-	m_sourceStartLocation = TimeRef(e.attribute( "sourcestart", "" ).toUInt(), 44100);
-	m_length = TimeRef(e.attribute( "length", "0" ).toUInt(), 44100);
+	bool ok;
+	m_sourceStartLocation = TimeRef(e.attribute( "sourcestart", "" ).toLongLong(&ok));
+	m_length = TimeRef(e.attribute( "length", "0" ).toLongLong(&ok));
 	
 	m_sourceEndLocation = m_sourceStartLocation + m_length;
-	set_track_start_frame(e.attribute( "trackstart", "" ).toUInt());
+	set_track_start_frame(e.attribute( "trackstart", "" ).toLongLong(&ok));
 	
 	emit stateChanged();
 	
@@ -187,9 +189,9 @@ int AudioClip::set_state(const QDomNode& node)
 QDomNode AudioClip::get_state( QDomDocument doc )
 {
 	QDomElement node = doc.createElement("Clip");
-	node.setAttribute("trackstart", m_trackStartLocation.to_frame(get_rate()));
-	node.setAttribute("sourcestart", m_sourceStartLocation.to_frame(get_rate()));
-	node.setAttribute("length", m_length.to_frame(get_rate()));
+	node.setAttribute("trackstart", m_trackStartLocation.to_universal_frame());
+	node.setAttribute("sourcestart", m_sourceStartLocation.to_universal_frame());
+	node.setAttribute("length", m_length.to_universal_frame());
 	node.setAttribute("mute", m_isMuted);
 	node.setAttribute("take", m_isTake);
 	node.setAttribute("clipname", m_name );
@@ -418,7 +420,7 @@ int AudioClip::process(nframes_t nframes)
 	Q_ASSERT(m_readSource);
 	
 	AudioBus* bus = m_song->get_render_bus();
-	nframes_t mix_pos;
+	TimeRef mix_pos;
 	audio_sample_t* mixdown[get_channels()];
 
 
@@ -428,14 +430,14 @@ int AudioClip::process(nframes_t nframes)
 	if ( (m_trackStartLocation < upperRange) && (m_trackEndLocation > transportLocation) ) {
 		if (transportLocation < m_trackStartLocation) {
 			uint offset = (m_trackStartLocation - transportLocation).to_frame(get_rate());
-			mix_pos = m_sourceStartLocation.to_frame(get_rate());
+			mix_pos = m_sourceStartLocation;
 			
 			for (int chan=0; chan<bus->get_channel_count(); ++chan) {
 				mixdown[chan] = bus->get_buffer(chan, nframes) + offset;
 			}
 			nframes = nframes - offset;
 		} else {
-			mix_pos = (transportLocation - m_trackStartLocation + m_sourceStartLocation).to_frame(audiodevice().get_sample_rate());
+			mix_pos = (transportLocation - m_trackStartLocation + m_sourceStartLocation);
 			
 			for (int chan=0; chan<bus->get_channel_count(); ++chan) {
 				mixdown[chan] = bus->get_buffer(chan, nframes);
@@ -455,8 +457,7 @@ int AudioClip::process(nframes_t nframes)
 	if (m_song->realtime_path()) {
 		read_frames = m_readSource->rb_read(mixdown, mix_pos, nframes);
 	} else {
-		DecodeBuffer buffer(mixdown, m_song->readbuffer, nframes, nframes*get_channels(), get_channels());
-		buffer.destinationChannelCount = get_channels();
+		DecodeBuffer buffer;
 		read_frames = m_readSource->file_read(&buffer, mix_pos, nframes);
 	}
 	

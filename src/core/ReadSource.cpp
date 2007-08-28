@@ -273,32 +273,21 @@ void ReadSource::output_rate_changed()
 }
 
 
-int ReadSource::file_read(DecodeBuffer* buffer, nframes_t start, nframes_t cnt) const
+int ReadSource::file_read(DecodeBuffer* buffer, TimeRef& start, nframes_t cnt) const
 {
 #if defined (profile)
 	trav_time_t starttime = get_microseconds();
 #endif
-	if (m_audioReader->get_num_channels() == 1) {
-		nframes_t result = m_audioReader->read_from(buffer, start, cnt);
-#if defined (profile)
-		int processtime = (int) (get_microseconds() - starttime);
-		if (processtime > 40000)
-			printf("Process time for %s: %d useconds\n\n", QS_C(m_fileName), processtime);
-#endif
-		return (int)result;
-	}
+	nframes_t result = m_audioReader->read_from(buffer, start, cnt);
 
-	// The readbuffer 'assumes' that there is max 2 channels...
-	Q_ASSERT(m_audioReader->get_num_channels() <= 2);
-	
-	nframes_t nread = m_audioReader->read_from(buffer, start, cnt);
 #if defined (profile)
 	int processtime = (int) (get_microseconds() - starttime);
-	if (processtime > 40000)
+	if (processtime > 40000) {
 		printf("Process time for %s: %d useconds\n\n", QS_C(m_fileName), processtime);
+	}
 #endif
 	
-	return nread;
+	return result;
 }
 
 
@@ -355,7 +344,7 @@ int ReadSource::set_file(const QString & filename)
 
 
 
-int ReadSource::rb_read(audio_sample_t** dst, nframes_t start, nframes_t count)
+int ReadSource::rb_read(audio_sample_t** dst, TimeRef& start, nframes_t count)
 {
 
 	if ( ! m_rbReady ) {
@@ -363,22 +352,27 @@ int ReadSource::rb_read(audio_sample_t** dst, nframes_t start, nframes_t count)
 		return 0;
 	}
 
-	nframes_t relativepos = m_rbRelativeFileReadPos.to_frame(m_rate);
+	int devicerate = audiodevice().get_sample_rate();
 	
-	if (start != relativepos) {
-		uint available = m_buffers.at(0)->read_space();
-// 		printf("start %d, m_rbFileReadPos %d\n", start, m_rbRelativeFileReadPos);
-		if ( (start > relativepos) && (relativepos + available) > (start + count)) {
-			uint advance = start - relativepos;
-			if (available < advance) {
+	if (start != m_rbRelativeFileReadPos) {
+		
+		TimeRef availabletime(m_buffers.at(0)->read_space(), devicerate);
+		
+		if ( (start > m_rbRelativeFileReadPos) && (m_rbRelativeFileReadPos + availabletime) > (start + TimeRef(count, devicerate))) {
+			
+			TimeRef advance = start - m_rbRelativeFileReadPos;
+			if (availabletime < advance) {
 				printf("available < advance !!!!!!!\n");
 			}
 			for (int i=m_buffers.size()-1; i>=0; --i) {
-				m_buffers.at(i)->increment_read_ptr(advance);
+				m_buffers.at(i)->increment_read_ptr(advance.to_frame(devicerate));
 			}
-			m_rbRelativeFileReadPos.add_frames(advance, m_rate);
+			
+			m_rbRelativeFileReadPos += advance;
 		} else {
-			start_resync(start + (m_clip->get_track_start_frame() + m_clip->get_source_start_frame()));
+			printf("calling start_resync\n");
+			TimeRef synclocation = start + m_clip->get_track_start_location() + m_clip->get_source_start_location();
+			start_resync(synclocation);
 			return 0;
 		}
 	}
@@ -395,7 +389,7 @@ int ReadSource::rb_read(audio_sample_t** dst, nframes_t start, nframes_t count)
 		
 	}
 
-	m_rbRelativeFileReadPos.add_frames(readcount, m_rate);
+	m_rbRelativeFileReadPos.add_frames(readcount, devicerate);
 	
 	return readcount;
 }
@@ -403,7 +397,7 @@ int ReadSource::rb_read(audio_sample_t** dst, nframes_t start, nframes_t count)
 
 int ReadSource::rb_file_read(DecodeBuffer* buffer, nframes_t cnt)
 {
-	int readFrames = file_read(buffer, m_rbFileReadPos.to_frame(m_rate), cnt);
+	int readFrames = file_read(buffer, m_rbFileReadPos, cnt);
 	m_rbFileReadPos.add_frames(readFrames, m_rate);
 
 	return readFrames;
@@ -417,7 +411,7 @@ void ReadSource::rb_seek_to_file_position(TimeRef& position)
 // 	printf("rb_seek_to_file_position:: seeking to %d\n", position);
 	
 	// calculate position relative to the file!
-	TimeRef fileposition = position - TimeRef(m_clip->get_track_start_frame() + m_clip->get_source_start_frame(), m_rate);
+	TimeRef fileposition = position - m_clip->get_track_start_location() - m_clip->get_source_start_location();
 	
 	if (m_rbFileReadPos == fileposition) {
 // 		printf("ringbuffer allready at position %d\n", position);
@@ -497,14 +491,7 @@ void ReadSource::process_ringbuffer(DecodeBuffer* buffer, bool seeking)
 }
 
 
-void ReadSource::recover_from_buffer_underrun(nframes_t position)
-{
-// 	printf("buffer underrun detected!\n");
-	m_bufferUnderRunDetected = 1;
-	start_resync(position);
-}
-
-void ReadSource::start_resync( nframes_t position )
+void ReadSource::start_resync(TimeRef& position)
 {
 	printf("starting resync!\n");
 	m_syncPos = position;
@@ -529,8 +516,7 @@ void ReadSource::sync(DecodeBuffer* buffer)
 	}
 	
 	if (!m_syncInProgress) {
-		TimeRef position(m_syncPos, m_rate);
-		rb_seek_to_file_position(position);
+		rb_seek_to_file_position(m_syncPos);
 		m_syncInProgress = 1;
 	}
 	
@@ -570,7 +556,8 @@ void ReadSource::prepare_buffer( )
 		m_buffers.append(new RingBufferNPT<float>(m_bufferSize));
 	}
 
-	start_resync(m_clip->get_song()->get_working_frame());
+	TimeRef synclocation = m_clip->get_song()->get_working_location();
+	start_resync(synclocation);
 }
 
 BufferStatus* ReadSource::get_buffer_status()
@@ -610,3 +597,8 @@ void ReadSource::set_active(bool active)
 
 //eof
 
+int ReadSource::file_read(DecodeBuffer * buffer, nframes_t start, nframes_t cnt)
+{
+	TimeRef startlocation(start, get_rate() );
+	return file_read(buffer, startlocation, cnt);
+}

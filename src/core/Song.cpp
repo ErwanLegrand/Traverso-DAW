@@ -197,8 +197,10 @@ int Song::set_state( const QDomNode & node )
 	m_sby = e.attribute("sby", "0").toInt();
 	set_first_visible_frame(e.attribute( "firstVisibleFrame", "0" ).toUInt());
 	set_work_at(e.attribute( "workingFrame", "0").toUInt());
-// 	m_transportFrame = e.attribute( "transportFrame", "0").toUInt();
-	m_transportLocation.set_position(e.attribute( "transportFrame", "0").toUInt(), audiodevice().get_sample_rate());
+	
+	bool ok;
+	m_transportLocation = TimeRef(e.attribute( "transportlocation", "0").toLongLong(&ok));
+	
 	// Start seeking to the 'old' transport pos
 	set_transport_pos(m_transportLocation);
 	set_snapping(e.attribute("snapping", "0").toInt());
@@ -236,7 +238,7 @@ QDomNode Song::get_state(QDomDocument doc, bool istemplate)
 	properties.setAttribute("artists", artists);
 	properties.setAttribute("firstVisibleFrame", firstVisibleFrame);
 	properties.setAttribute("workingFrame", (uint)workingFrame);
-	properties.setAttribute("transportFrame", (uint)m_transportLocation.to_frame(audiodevice().get_sample_rate()));
+	properties.setAttribute("transportlocation", m_transportLocation.to_universal_frame());
 	properties.setAttribute("hzoom", m_hzoom);
 	properties.setAttribute("sbx", m_sbx);
 	properties.setAttribute("sby", m_sby);
@@ -1331,4 +1333,10 @@ nframes_t Song::get_transport_frame()
 }
 
 // eof
+
+TimeRef Song::get_working_location() const
+{
+	TimeRef location(workingFrame, audiodevice().get_sample_rate());
+	return location;
+}
 

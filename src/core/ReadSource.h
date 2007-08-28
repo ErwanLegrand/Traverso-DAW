@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 class AbstractAudioReader;
 class AudioClip;
 struct BufferStatus;
-struct DecodeBuffer;
+class DecodeBuffer;
 
 class ReadSource : public AudioSource
 {
@@ -54,10 +54,11 @@ public :
 	int set_state( const QDomNode& node );
 	QDomNode get_state(QDomDocument doc);
 
-	int rb_read(audio_sample_t** dest, nframes_t start, nframes_t cnt);
+	int rb_read(audio_sample_t** dest, TimeRef& start, nframes_t cnt);
 	void rb_seek_to_file_position(TimeRef& position);
 	
-	int file_read(DecodeBuffer* buffer, nframes_t start, nframes_t cnt) const;
+	int file_read(DecodeBuffer* buffer, TimeRef& start, nframes_t cnt) const;
+	int file_read(DecodeBuffer* buffer, nframes_t start, nframes_t cnt);
 
 	int init();
 	int get_error() const {return m_error;}
@@ -85,7 +86,7 @@ private:
 	bool			m_silent;
 	TimeRef			m_rbFileReadPos;
 	TimeRef			m_rbRelativeFileReadPos;
-	volatile size_t		m_syncPos;
+	TimeRef			m_syncPos;
 	volatile size_t		m_rbReady;
 	volatile size_t		m_needSync;
 	volatile size_t		m_active;
@@ -101,9 +102,8 @@ private:
 	int ref() { return m_refcount++;}
 	
 	void private_init();
-	void start_resync(nframes_t position);
+	void start_resync(TimeRef& position);
 	void finish_resync();
-	void recover_from_buffer_underrun(nframes_t position);
 	int rb_file_read(DecodeBuffer* buffer, nframes_t cnt);
 
 	friend class ResourcesManager;

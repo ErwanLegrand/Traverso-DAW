@@ -34,7 +34,7 @@ class AudioSource;
 class RingBuffer;
 class DiskIOThread;
 class Song;
-struct DecodeBuffer;
+class DecodeBuffer;
 
 struct BufferStatus {
 	int	fillStatus;

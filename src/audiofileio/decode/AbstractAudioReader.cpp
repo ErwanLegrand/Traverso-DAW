@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "WPAudioReader.h"
 #include "VorbisAudioReader.h"
 #include "ResampleAudioReader.h"
+#include "PeakDataReader.h"
 
 #include <QString>
 
@@ -106,7 +107,11 @@ bool AbstractAudioReader::seek(nframes_t start)
 nframes_t AbstractAudioReader::read(DecodeBuffer* buffer, nframes_t count)
 {
 	if (count && m_readPos < m_length) {
-	// 	printf("read_from:: after_seek from %d, framepos is %d\n", start, m_readPos);
+		
+		// Make sure the read buffer is big enough for this read
+		buffer->check_buffers_capacity(count, m_channels); 
+		
+		// printf("read_from:: after_seek from %d, framepos is %d\n", start, m_readPos);
 		nframes_t framesRead = read_private(buffer, count);
 		
 		m_readPos += framesRead;
@@ -128,6 +133,8 @@ AbstractAudioReader* AbstractAudioReader::create_audio_reader(const QString& fil
 			newReader = new SFAudioReader(filename);
 		} else if (decoder == "wavpack") {
 			newReader = new WPAudioReader(filename);
+		} else if (decoder == "peak") {
+			newReader = new PeakDataReader(filename); 
 		} else if (decoder == "flac") {
 			newReader = new FlacAudioReader(filename);
 		} else if (decoder == "vorbis") {
@@ -158,6 +165,9 @@ AbstractAudioReader* AbstractAudioReader::create_audio_reader(const QString& fil
 		}
 		else if (MadAudioReader::can_decode(filename)) {
 			newReader = new MadAudioReader(filename);
+		}
+		else if (PeakDataReader::can_decode(filename)) {
+			newReader = new PeakDataReader(filename);
 		}
 	}
 	

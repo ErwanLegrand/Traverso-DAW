@@ -100,9 +100,6 @@ nframes_t WPAudioReader::read_private(DecodeBuffer* buffer, nframes_t frameCount
 {
 	Q_ASSERT(m_wp);
 	
-	// Make sure the read buffer is big enough for this read
-	buffer->check_readbuffer_capacity(frameCount * m_channels);
-	
 	// WavPack only reads into a int32_t buffer...
 	int32_t* readbuffer = (int32_t*)buffer->readBuffer;
 	

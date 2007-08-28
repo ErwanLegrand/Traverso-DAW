@@ -97,6 +97,11 @@ public:
 	nframes_t get_source_end_frame() const;
 	nframes_t get_source_length() const;
 	
+	TimeRef& get_track_start_location() const {return m_trackStartLocation;}
+	TimeRef& get_track_end_location() const {return m_trackEndLocation;}
+	TimeRef& get_source_start_location() const {return m_sourceStartLocation;}
+	TimeRef& get_source_end_location() const {return m_sourceEndLocation;}
+	
 	int get_channels() const;
 	int get_rate() const;
 	int get_bitdepth() const;
@@ -141,12 +146,12 @@ private:
 	QString 		m_name;
 	QByteArray		m_captureBusName;
 	
-	mutable TimeRef 		m_trackStartLocation;
-	mutable TimeRef 		m_trackEndLocation;
-	mutable TimeRef 		m_sourceEndLocation;
-	mutable TimeRef 		m_sourceStartLocation;
-	mutable TimeRef			m_sourceLength;
-	mutable TimeRef 		m_length;
+	mutable TimeRef 	m_trackStartLocation;
+	mutable TimeRef 	m_trackEndLocation;
+	mutable TimeRef 	m_sourceEndLocation;
+	mutable TimeRef 	m_sourceStartLocation;
+	mutable TimeRef		m_sourceLength;
+	mutable TimeRef 	m_length;
 
 	int 			m_isSelected;
 	bool 			m_isTake;

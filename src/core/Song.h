@@ -88,6 +88,7 @@ public:
 	nframes_t get_first_visible_frame() const;
 	nframes_t get_last_frame() const;
 	const TimeRef& get_transport_location() const {return m_transportLocation;}
+	TimeRef get_working_location() const;
 	
 	const TimeRef& get_new_transport_location() const {return m_newTransportLocation;}
 	

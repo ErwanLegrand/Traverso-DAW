@@ -34,6 +34,8 @@ class ReadSource;
 class AudioSource;
 class Peak;
 class PPThread;
+class AbstractAudioReader;
+class DecodeBuffer;
 
 class PeakProcessor : public QObject
 {
@@ -116,7 +118,7 @@ public:
 	void process(audio_sample_t* buffer, nframes_t frames);
 	int prepare_processing();
 	int finish_processing();
-	int calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int count);
+	int calculate_peaks(float** buffer, int zoomLevel, nframes_t startPos, int count);
 
 	void close();
 	
@@ -144,7 +146,9 @@ private:
 	FILE*			m_normFile;
 	QString			m_fileName;
 	QString			m_normFileName;
-
+	AbstractAudioReader*	m_peakreader;
+	DecodeBuffer*		m_peakdataDecodeBuffer;
+	
 	int create_from_scratch();
 
 	int read_header();

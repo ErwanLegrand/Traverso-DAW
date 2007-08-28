@@ -254,8 +254,8 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	int channels = m_clip->get_channels();
 	int peakdatacount = microView ? pixelcount : pixelcount * 2;
 
-	int buffersize = microView ? sizeof(short) * peakdatacount : sizeof(unsigned char) * peakdatacount;
-	unsigned char buffers[channels][buffersize];
+	int buffersize = microView ? sizeof(short) * peakdatacount : sizeof(peak_data_t) * peakdatacount;
+	float* buffers[channels];
 	float pixeldata[channels][buffersize];
 	float curvemixdown[buffersize];
 	
@@ -263,7 +263,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	// Load peak data for all channels, if no peakdata is returned
 	// for a certain Peak object, schedule it for loading.
 	for (int chan=0; chan < channels; chan++) {
-		memset(buffers[chan], 0, buffersize * sizeof(unsigned char));
+// 		memset(buffers[chan], 0, buffersize * sizeof(peak_data_t));
 		
 		nframes_t clipstartoffset = m_clip->get_source_start_frame();
 		
@@ -272,7 +272,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			PERROR("No Peak object available for clip %s channel %d", QS_C(m_clip->get_name()), chan);
 			return;
 		}
-		int availpeaks = peak->calculate_peaks( buffers[chan],
+		int availpeaks = peak->calculate_peaks( &buffers[chan],
 							microView ? m_song->get_hzoom() : m_song->get_hzoom() + 1,
 							(xstart * m_sv->scalefactor) + clipstartoffset,
 							microView ? peakdatacount : peakdatacount / 2);

@@ -54,10 +54,7 @@ public:
 
 	void run() {
 		uint buffersize = 16384;
-		audio_sample_t readbuffer[buffersize];
-		audio_sample_t* mixdown[2];
-		for (int i=0; i<2; ++i) mixdown[i] = new audio_sample_t[2 * buffersize];
-		DecodeBuffer decodebuffer(mixdown, readbuffer, buffersize, buffersize*2, 2);
+		DecodeBuffer decodebuffer;
 	
 		ExportSpecification* spec = new ExportSpecification();
 		spec->start_frame = 0;
@@ -88,7 +85,7 @@ public:
 			
 			for (int chan=0; chan < 2; ++chan) {
 				for (uint x = 0; x < nframes; ++x) {
-					spec->dataF[chan+(x*spec->channels)] = mixdown[chan][x];
+					spec->dataF[chan+(x*spec->channels)] = decodebuffer.destination[chan][x];
 				}
 			}
 		
@@ -102,8 +99,6 @@ public:
 		delete writesource;
 		delete [] spec->dataF;
 		delete spec;
-		for (int i=0; i<2; ++i)
-			delete [] mixdown[i];
 	}
 
 private:

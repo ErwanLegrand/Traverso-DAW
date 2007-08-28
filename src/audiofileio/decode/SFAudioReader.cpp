@@ -106,9 +106,6 @@ nframes_t SFAudioReader::read_private(DecodeBuffer* buffer, nframes_t frameCount
 {
 	Q_ASSERT(m_sf);
 	
-	// Make sure the read buffer is big enough for this read
-	buffer->check_readbuffer_capacity(frameCount * m_channels); 
-	
 	int framesRead = sf_readf_float(m_sf, buffer->readBuffer, frameCount);
 	
 	// De-interlace

@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "ResampleAudioReader.h"
 #include <QString>
+#include "PeakDataReader.h"
 
 #define OVERFLOW_SIZE 512
 
@@ -271,6 +272,12 @@ nframes_t ResampleAudioReader::read_private(DecodeBuffer* buffer, nframes_t fram
 nframes_t ResampleAudioReader::song_to_file_frame(nframes_t frame)
 {
 	Q_ASSERT(m_reader);
+	
+	PeakDataReader* reader = dynamic_cast<PeakDataReader*>(m_reader);
+	if (reader) {
+// 		int diff = frame - (nframes_t)(frame * ((double) m_rate / m_outputRate));
+		return frame;
+	}
 	
 	return (nframes_t)(frame * ((double) m_rate / m_outputRate));
 }

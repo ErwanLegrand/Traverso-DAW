@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Peak.h"
 
 #include "AbstractAudioReader.h"
+#include "ResampleAudioReader.h"
 #include "ReadSource.h"
 #include "ResourcesManager.h"
 #include "defines.h"
@@ -35,7 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Debugger.h"
 
 /* Store for each zoomStep the upper and lower sample to hard disk as a
-* unsigned char. The top-top resolution is then 512 pixels, which should do
+* peak_data_t. The top-top resolution is then 512 pixels, which should do
 * Painting the waveform will be as simple as painting a line starting from the
 * lower value to the upper value.
 */
@@ -64,8 +65,8 @@ Peak::Peak(AudioSource* source, int channel)
 		m_source = 0;
 	}
 	
-	m_fileName = source->get_filename() + "-ch" + QByteArray::number(m_channel) + ".peak";
-	m_fileName = m_fileName.replace(QRegExp("audiosources"), "peakfiles");
+	m_fileName = source->get_name() + "-ch" + QByteArray::number(m_channel) + ".peak";
+	m_fileName.prepend(pm().get_project()->get_root_dir() + "/peakfiles/");
 	
 	peaksAvailable = permanentFailure = interuptPeakBuild = false;
 	m_file = m_normFile = 0;
@@ -145,8 +146,12 @@ int Peak::read_header()
 	fread(&m_data.normValuesDataOffset, sizeof(m_data.normValuesDataOffset), 1, m_file);
 	fread(&m_data.peakDataOffset, sizeof(m_data.peakDataOffset), 1, m_file);
 	
+	m_peakreader = new ResampleAudioReader(m_fileName, 4, "peak");
+	((ResampleAudioReader*)m_peakreader)->set_output_rate(32000);
+	m_peakdataDecodeBuffer = new DecodeBuffer;
+
 	peaksAvailable = true;
-	
+		
 	return 1;
 }
 
@@ -207,7 +212,7 @@ nearest_power_of_two(unsigned long val)
 }
 
 
-int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int pixelcount )
+int Peak::calculate_peaks(float** buffer, int zoomLevel, nframes_t startPos, int pixelcount )
 {
 	PENTER3;
 	if (permanentFailure) {
@@ -231,45 +236,7 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 #endif
 	
 	// Macro view mode
-	if (false) {
-		unsigned long val = nearest_power_of_two(256);
-		printf("Using VAL %ld measurements\n", val);
-		
-		int zoomlevel = zoomStep[zoomLevel];
-		
-		int offset = (startPos / zoomStep[zoomLevel-1]) * 2;
-		int nearestlevel = zoomlevel / 2;
-		int toread = pixelcount * 2;
-			
-		unsigned char readbuffer[toread];
-			
-			// Seek to the correct position in the buffer on hard disk
-		fseek(m_file, m_data.peakDataLevelOffsets[zoomLevel - 1 - SAVING_ZOOM_FACTOR] + offset, SEEK_SET);
-			
-		// Read in the pixelcount of peakdata
-		int read = fread(readbuffer, sizeof(unsigned char), toread, m_file);
-			
-			
-		float max = 0;
-		int bufpos = 0;
-		int totalnearestlevel = 0;
-		int totalinterpolatedlevel = 0;
-		uchar* bufpointer = (uchar*)buffer;
-			
-		for (int i=0; i<read; ++i) {
-			max = f_max(max, readbuffer[i]);
-			totalnearestlevel += nearestlevel;
-				
-			if ( (totalnearestlevel + zoomlevel/2) > (totalinterpolatedlevel + zoomlevel)) {
-				bufpointer[bufpos++] = (uchar)max;
-				max = 0;
-				totalinterpolatedlevel += zoomlevel;
-			}
-		}
-		
-		return pixelcount;
-	 
-	} else if ( zoomLevel > MAX_ZOOM_USING_SOURCEFILE) {
+	if ( zoomLevel > MAX_ZOOM_USING_SOURCEFILE) {
 		
 		int offset = (startPos / zoomStep[zoomLevel]) * 2;
 		
@@ -280,11 +247,13 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 			pixelcount = m_data.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR] - offset;
 		}
 		
-		// Seek to the correct position in the buffer on hard disk
+/*		// Seek to the correct position in the buffer on hard disk
 		fseek(m_file, m_data.peakDataLevelOffsets[zoomLevel - SAVING_ZOOM_FACTOR] + offset, SEEK_SET);
 		
 		// Read in the pixelcount of peakdata
-		int read = fread(buffer, sizeof(unsigned char), pixelcount, m_file);
+		int read = fread(buffer, sizeof(peak_data_t), pixelcount, m_file);*/
+		
+		int read = m_peakreader->read_from(m_peakdataDecodeBuffer, (nframes_t)(m_data.peakDataLevelOffsets[zoomLevel - SAVING_ZOOM_FACTOR] + offset)*sizeof(peak_data_t), (nframes_t)pixelcount);
 		
 		if (read != pixelcount) {
 			PERROR("Could not read in all peak data, pixelcount is %d, read count is %d", pixelcount, read);
@@ -298,6 +267,8 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 		if (read == 0) {
 			return NO_PEAKDATA_FOUND;
 		}
+		
+		*buffer = m_peakdataDecodeBuffer->destination[0];
 
 		return read;
 		
@@ -306,15 +277,7 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 		nframes_t toRead = pixelcount * zoomStep[zoomLevel];
 		
 		// Maybe they can be created on the stack for better performance ?
-		audio_sample_t* audiobuf[m_source->get_channel_count()];
-		for (uint chan=0; chan < m_source->get_channel_count(); ++chan) {
-			audiobuf[chan] = new audio_sample_t[toRead];
-		}
-		audio_sample_t readbuffer[toRead*2];
-		
-		DecodeBuffer decodebuffer(audiobuf, readbuffer, toRead, toRead*2, 2);
-		
-		nframes_t readFrames = m_source->file_read(&decodebuffer, startPos, toRead);
+		nframes_t readFrames = m_source->file_read(m_peakdataDecodeBuffer, startPos, toRead);
 
 		if (readFrames == 0) {
 			return NO_PEAKDATA_FOUND;
@@ -336,7 +299,7 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 			for(int i=0; i < zoomStep[zoomLevel]; i++) {
 				if (pos > readFrames)
 					break;
-				sample = audiobuf[m_channel][pos];
+				sample = m_peakdataDecodeBuffer->destination[m_channel][pos];
 				if (sample > valueMax)
 					valueMax = sample;
 				if (sample < valueMin)
@@ -359,10 +322,6 @@ int Peak::calculate_peaks(void* buffer, int zoomLevel, nframes_t startPos, int p
 		int processtime = (int) (get_microseconds() - starttime);
 		printf("Process time: %d useconds\n\n", processtime);
 #endif
-		
-		for (uint chan=0; chan < m_source->get_channel_count(); ++chan) {
-			delete [] audiobuf[chan];
-		}
 		
 		return count;
 	}
@@ -420,29 +379,21 @@ int Peak::finish_processing()
 	PENTER;
 	
 	if (processedFrames != 64) {
-		fwrite(&peakUpperValue, 1, 1, m_file);
-		fwrite(&peakLowerValue, 1, 1, m_file);
+		peak_data_t data = (peak_data_t)(peakUpperValue * MAX_DB_VALUE);
+		fwrite(&data, sizeof(peak_data_t), 1, m_file);
+		data = (peak_data_t)(-1 * peakLowerValue * MAX_DB_VALUE);
+		fwrite(&data, sizeof(peak_data_t), 1, m_file);
 		processBufferSize += 2;
 	}
 	
 	int totalBufferSize = 0;
-	int dividingFactor = 2;
 	
 	m_data.peakDataSizeForLevel[0] = processBufferSize;
 	totalBufferSize += processBufferSize;
 	
 	for( int i = SAVING_ZOOM_FACTOR + 1; i < ZOOM_LEVELS+1; ++i) {
-		int size = processBufferSize / dividingFactor;
-		// If the size is an odd number, it means we have no data available for 
-		// the lower level data point, so we skip that data point.
-		// This does mean that the calculate_peaks() function can start to spit
-		// out errors about a missing last datapoint...
-		if (size % 2) {
-			size -= 1;
-		}
-		m_data.peakDataSizeForLevel[i - SAVING_ZOOM_FACTOR] = size;
-		totalBufferSize += size;
-		dividingFactor *= 2;
+		m_data.peakDataSizeForLevel[i - SAVING_ZOOM_FACTOR] = m_data.peakDataSizeForLevel[i - SAVING_ZOOM_FACTOR - 1] / 2;
+		totalBufferSize += m_data.peakDataSizeForLevel[i - SAVING_ZOOM_FACTOR];
 	}
 	
 	
@@ -451,9 +402,9 @@ int Peak::finish_processing()
 	// The routine below uses a different total buffer size calculation
 	// which might end up with a size >= totalbufferSize !!!
 	// Need to look into that, for now + 2 seems to work...
- 	unsigned char* saveBuffer = new unsigned char[totalBufferSize + 2];
+ 	peak_data_t* saveBuffer = new peak_data_t[totalBufferSize + 1*sizeof(peak_data_t)];
 	
-	int read = fread(saveBuffer, 1, processBufferSize, m_file);
+	int read = fread(saveBuffer, sizeof(peak_data_t), processBufferSize, m_file);
 	
 	if (read != processBufferSize) {
 		PERROR("couldn't read in all saved data?? (%d read)", read);
@@ -476,9 +427,9 @@ int Peak::finish_processing()
 		int count = 0;
 		
 		do {
-			Q_ASSERT((nextLevelBufferPos + 1) < (totalBufferSize + 2));
-			saveBuffer[nextLevelBufferPos] = (unsigned char) f_max(saveBuffer[prevLevelBufferPos], saveBuffer[prevLevelBufferPos + 2]);
-			saveBuffer[nextLevelBufferPos + 1] = (unsigned char) f_max(saveBuffer[prevLevelBufferPos + 1], saveBuffer[prevLevelBufferPos + 3]);
+			Q_ASSERT(nextLevelBufferPos <= totalBufferSize);
+			saveBuffer[nextLevelBufferPos] = (peak_data_t) f_max(saveBuffer[prevLevelBufferPos], saveBuffer[prevLevelBufferPos + 2]);
+			saveBuffer[nextLevelBufferPos + 1] = (peak_data_t) f_max(saveBuffer[prevLevelBufferPos + 1], saveBuffer[prevLevelBufferPos + 3]);
 			nextLevelBufferPos += 2;
 			prevLevelBufferPos += 4;
 			count+=4;
@@ -488,7 +439,7 @@ int Peak::finish_processing()
 	
 	fseek(m_file, m_data.peakDataOffset, SEEK_SET);
 	
-	int written = fwrite(saveBuffer, 1, totalBufferSize, m_file);
+	int written = fwrite(saveBuffer, sizeof(peak_data_t), totalBufferSize, m_file);
 	
 	if (written != totalBufferSize) {
 		PERROR("could not write complete buffer! (only %d)", written);
@@ -546,12 +497,12 @@ void Peak::process(audio_sample_t* buffer, nframes_t nframes)
 		
 		if (processedFrames == 64) {
 		
-			unsigned char peakbuffer[2];
+			peak_data_t peakbuffer[2];
 
-			peakbuffer[0] = (unsigned char) (peakUpperValue * MAX_DB_VALUE );
-			peakbuffer[1] = (unsigned char) ((-1) * (peakLowerValue * MAX_DB_VALUE ));
+			peakbuffer[0] = (peak_data_t) (peakUpperValue * MAX_DB_VALUE );
+			peakbuffer[1] = (peak_data_t) ((-1) * (peakLowerValue * MAX_DB_VALUE ));
 			
-			int written = fwrite(peakbuffer, sizeof(unsigned char), 2, m_file);
+			int written = fwrite(peakbuffer, sizeof(peak_data_t), 2, m_file);
 			
 			if (written != 2) {
 				PWARN("couldnt write data, only (%d)", written);
@@ -570,7 +521,7 @@ void Peak::process(audio_sample_t* buffer, nframes_t nframes)
 			if (written != 1) {
 				PWARN("couldnt write data, only (%d)", written);
 			}
-
+ 
 			normValue = 0.0;
 			normProcessedFrames = 0;
 			normDataCount++;
@@ -586,6 +537,11 @@ int Peak::create_from_scratch()
 {
 	PENTER;
 	
+#define profile
+
+#if defined (profile)
+	trav_time_t starttime = get_microseconds();
+#endif
 	int ret = -1;
 	
 	if (prepare_processing() < 0) {
@@ -612,13 +568,7 @@ int Peak::create_from_scratch()
 		}
 	}
 
-	audio_sample_t* buffer[m_source->get_channel_count()];
-	for (uint chan=0; chan<m_source->get_channel_count(); ++chan) {
-		buffer[chan] = new audio_sample_t[bufferSize];
-	}
-	audio_sample_t* readbuffer = new audio_sample_t[bufferSize * 2];
-	
-	DecodeBuffer decodebuffer(buffer, readbuffer, bufferSize, bufferSize*2, m_source->get_channel_count());
+	DecodeBuffer decodebuffer;
 	
 	do {
 		if (interuptPeakBuild) {
@@ -632,7 +582,7 @@ int Peak::create_from_scratch()
 			PERROR("readFrames < 0 during peak building");
 			break;
 		}
-		process(buffer[m_channel], readFrames);
+		process(decodebuffer.destination[m_channel], readFrames);
 		totalReadFrames += readFrames;
 		p = (int) ((float)totalReadFrames / ((float)m_source->get_nframes() / 100.0));
 		
@@ -652,12 +602,12 @@ int Peak::create_from_scratch()
 	ret = 1;
 	
 out:
-	for (uint chan=0; chan<m_source->get_channel_count(); ++chan) {
-		delete [] buffer[chan];
-	}
-	
-	delete [] readbuffer;
 	 
+#if defined (profile)
+	long processtime = (long) (get_microseconds() - starttime);
+	printf("Process time: %d seconds\n\n", (int)(processtime/1000));
+#endif
+	
 	return ret;
 }
 
@@ -682,21 +632,9 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 		startpos += 1;
 		int toRead = (int) ((startpos * NORMALIZE_CHUNK_SIZE) - startframe);
 		
-		audio_sample_t* buffer[m_source->get_channel_count()];
-		for (uint chan=0; chan<m_source->get_channel_count(); ++chan) {
-			buffer[chan] = new audio_sample_t[toRead];
-		}
-		audio_sample_t readbuffer[toRead * 2];
-	
-		DecodeBuffer decodebuffer(buffer, readbuffer, toRead, toRead*2, m_source->get_channel_count());
+		int read = m_source->file_read(m_peakdataDecodeBuffer, startframe, toRead);
 		
-		int read = m_source->file_read(&decodebuffer, startframe, toRead);
-		
-		maxamp = Mixer::compute_peak(buffer[m_channel], read, maxamp);
-		
-		for (uint chan=0; chan<m_source->get_channel_count(); ++chan) {
-			delete [] buffer[chan];
-		}
+		maxamp = Mixer::compute_peak(m_peakdataDecodeBuffer->destination[m_channel], read, maxamp);
 	}
 	
 	
@@ -706,19 +644,9 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 	int endpos = (int) f;
 	int toRead = (int) ((f - (endframe / NORMALIZE_CHUNK_SIZE)) * NORMALIZE_CHUNK_SIZE);
 	
-	audio_sample_t* buffer[m_source->get_channel_count()];
-	for (uint chan=0; chan<m_source->get_channel_count(); ++chan) {
-		buffer[chan] = new audio_sample_t[toRead];
-	}
-	DecodeBuffer decodebuffer(buffer, readbuffer, toRead, toRead*2, m_source->get_channel_count());
+	int read = m_source->file_read(m_peakdataDecodeBuffer, endframe - toRead, toRead);
 	
-	int read = m_source->file_read(&decodebuffer, endframe - toRead, toRead);
-	
-	maxamp = Mixer::compute_peak(buffer[m_channel], read, maxamp);
-	
-	for (uint chan=0; chan<m_source->get_channel_count(); ++chan) {
-		delete [] buffer[chan];
-	}
+	maxamp = Mixer::compute_peak(m_peakdataDecodeBuffer->destination[m_channel], read, maxamp);
 	
 	// Now that we have covered both boundary situations,
 	// read in the cached normvalues, and calculate the highest value!

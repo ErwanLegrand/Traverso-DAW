@@ -26,38 +26,52 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QString>
 
-struct DecodeBuffer {
+class DecodeBuffer {
+	
+public:
 	
 	DecodeBuffer() {
+		destination = resampleBuffer = 0;
 		readBuffer = 0;
-		resampleBuffer = 0;
-		destinationChannelCount = destinationBufferSize = resampleBufferSize = readBufferSize = 0;
+		m_channels = destinationBufferSize = resampleBufferSize = readBufferSize = 0;
 	}
 	
-	DecodeBuffer(audio_sample_t** dest, audio_sample_t* readbuf, uint destbufsize, uint readbufsize, uint channels) {
-		destination = dest;
-		readBuffer = readbuf;
-		destinationBufferSize = destbufsize;
-		readBufferSize = readbufsize;
-		destinationChannelCount = channels;
-	}
-	
-	void check_readbuffer_capacity(uint size) {
-		if (readBufferSize < size) {
+	void check_buffers_capacity(uint size, uint channels) {
+		
+		if (m_channels < channels || destinationBufferSize < size) {
+			if (destination) {
+				for (uint chan = 0; chan < m_channels; chan++) {
+					delete [] destination[chan];
+				}
+				delete [] destination;
+			}
+			
+			m_channels = channels;
+			destination = new audio_sample_t*[m_channels];
+			
+			for (uint chan = 0; chan < m_channels; chan++) {
+				destination[chan] = new audio_sample_t[size];
+			}
+			
+			destinationBufferSize = size;
+		}
+		
+		if (readBufferSize < (size*m_channels)) {
 			if (readBuffer) {
 				delete [] readBuffer;
 			}
-			readBuffer = new audio_sample_t[size];
-			readBufferSize = size;
+			readBuffer = new audio_sample_t[size*m_channels];
+			readBufferSize = (size*m_channels);
 		}
 	}
 	
 	void check_resamplebuffer_capacity(uint frames) {
+		
 		if (resampleBufferSize < frames) {
 			if (!resampleBuffer) {
-				resampleBuffer = new audio_sample_t*[destinationChannelCount];
+				resampleBuffer = new audio_sample_t*[m_channels];
 			}
-			for (uint chan = 0; chan < destinationChannelCount; chan++) {
+			for (uint chan = 0; chan < m_channels; chan++) {
 				if (resampleBufferSize) {
 					delete [] resampleBuffer[chan];
 				}
@@ -74,7 +88,7 @@ struct DecodeBuffer {
 			
 			// Let the child reader write into the buffer starting offset samples past the beginning.
 			// This lets the resampler prefill the buffers with the pre-existing overflow.
-			for (uint chan = 0; chan < destinationChannelCount; chan++) {
+			for (uint chan = 0; chan < m_channels; chan++) {
 				resampleBuffer[chan] += offset;
 			}
 		}
@@ -84,20 +98,23 @@ struct DecodeBuffer {
 		if (origDestination) {
 			destination = origDestination;
 			
-			for (uint chan = 0; chan < destinationChannelCount; chan++) {
+			for (uint chan = 0; chan < m_channels; chan++) {
 				resampleBuffer[chan] -= offset;
 			}
 		}
 	}
 	
 	audio_sample_t** destination;
-	audio_sample_t** origDestination; // Used to store destination during a child read in the resampler
 	audio_sample_t* readBuffer;
 	audio_sample_t** resampleBuffer;
-	uint destinationChannelCount;
 	uint destinationBufferSize;
 	uint readBufferSize;
 	uint resampleBufferSize; // ????
+
+private:
+	uint m_channels;
+	audio_sample_t** origDestination; // Used to store destination during a child read in the resampler
+
 };
 
 class AbstractAudioReader
@@ -112,6 +129,11 @@ public:
 	int get_file_rate();
 	bool eof();
 	nframes_t pos();
+	
+	nframes_t read_from(DecodeBuffer* buffer, TimeRef& start, nframes_t count) {
+		return read_from(buffer, start.to_frame(m_rate), count);
+	}
+	bool seek(const TimeRef& start);
 	
 	nframes_t read_from(DecodeBuffer* buffer, nframes_t start, nframes_t count);
 	bool seek(nframes_t start);

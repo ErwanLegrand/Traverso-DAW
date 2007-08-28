@@ -75,6 +75,8 @@ struct TimeRef {
 		return nframes_t(m_position / (UNIVERSAL_SAMPLE_RATE / rate));
 	}
 	
+	qint64 to_universal_frame() const {return m_position;}
+	
 	friend int operator!=(const TimeRef& left, const TimeRef& right) {
 		return left.m_position != right.m_position;
 	}
@@ -138,6 +140,8 @@ typedef double trav_time_t;
 typedef unsigned long          channel_t;
 
 typedef float audio_sample_t;
+//typedef unsigned char peak_data_t;
+typedef short peak_data_t;
 
 
 typedef FastDelegate1<nframes_t, int> ProcessCallback;
