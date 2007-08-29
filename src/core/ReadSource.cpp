@@ -278,7 +278,7 @@ int ReadSource::file_read(DecodeBuffer* buffer, TimeRef& start, nframes_t cnt) c
 #if defined (profile)
 	trav_time_t starttime = get_microseconds();
 #endif
-	nframes_t result = m_audioReader->read_from(buffer, start, cnt);
+	nframes_t result = m_audioReader->read_from(buffer, start.to_frame(audiodevice().get_sample_rate()), cnt);
 
 #if defined (profile)
 	int processtime = (int) (get_microseconds() - starttime);
@@ -398,7 +398,7 @@ int ReadSource::rb_read(audio_sample_t** dst, TimeRef& start, nframes_t count)
 int ReadSource::rb_file_read(DecodeBuffer* buffer, nframes_t cnt)
 {
 	int readFrames = file_read(buffer, m_rbFileReadPos, cnt);
-	m_rbFileReadPos.add_frames(readFrames, m_rate);
+	m_rbFileReadPos.add_frames(readFrames, audiodevice().get_sample_rate());
 
 	return readFrames;
 }
@@ -429,7 +429,7 @@ void ReadSource::rb_seek_to_file_position(TimeRef& position)
 		// 1023.. Hmm, something isn't correct here, but at least substract 1
 		// to make this thing work!
 		// TODO check if this is still needed!
-		fileposition = TimeRef(m_clip->get_source_start_frame() - 1, m_rate);
+		fileposition = TimeRef(m_clip->get_source_start_frame() - 1, audiodevice().get_sample_rate());
 	}
 	
 // 	printf("rb_seek_to_file_position:: seeking to relative pos: %d\n", fileposition);
@@ -472,7 +472,7 @@ void ReadSource::process_ringbuffer(DecodeBuffer* buffer, bool seeking)
 		// If we are nearing the end of the source file it could be possible
 		// we only need to read the last samples which is smaller in size then 
 		// chunksize. If so, set toRead to m_source->m_length - rbFileReasPos
-		nframes_t available = (m_length - m_rbFileReadPos).to_frame(m_rate);
+		nframes_t available = (m_length - m_rbFileReadPos).to_frame(audiodevice().get_sample_rate());
 		if (available <= m_chunkSize) {
 			toRead = available;
 		} else {
