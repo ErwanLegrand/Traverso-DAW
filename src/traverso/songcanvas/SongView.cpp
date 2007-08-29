@@ -38,6 +38,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include <Zoom.h>
 #include <PlayHeadMove.h>
 #include <WorkCursorMove.h>
+
+#include "AudioDevice.h"
 		
 #include <Debugger.h>
 
@@ -103,6 +105,8 @@ SongView::SongView(SongWidget* songwidget,
 	
 	
 	scalefactor = Peak::zoomStep[m_song->get_hzoom()];
+	timeref_scalefactor = scalefactor * 882;
+	
 	song_mode_changed();
 	
 	foreach(Track* track, m_song->get_tracks()) {
@@ -161,6 +165,7 @@ SongView::~SongView()
 void SongView::scale_factor_changed( )
 {
 	scalefactor = Peak::zoomStep[m_song->get_hzoom()];
+	timeref_scalefactor = scalefactor * 882;
 	m_tlvp->scale_factor_changed();
 	layout_tracks();
 }
@@ -607,10 +612,10 @@ Command * SongView::add_marker_at_playhead()
 
 Command * SongView::playhead_to_workcursor( )
 {
-	nframes_t work = m_song->get_working_frame();
+	TimeRef worklocation = m_song->get_working_location();
 
-	m_song->set_transport_pos( work );
-	m_playCursor->setPos(work / scalefactor, 0);
+	m_song->set_transport_pos( worklocation );
+	m_playCursor->setPos(worklocation / timeref_scalefactor, 0);
 	
 	if (!m_song->is_transport_rolling()) {
 		center();

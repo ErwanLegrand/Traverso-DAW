@@ -89,6 +89,7 @@ public :
 	int vscrollbar_value() const;
 
 	int		scalefactor;
+	qint64		timeref_scalefactor;
 
 private:
         Song* 			m_song;

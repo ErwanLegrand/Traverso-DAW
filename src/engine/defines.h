@@ -75,7 +75,7 @@ struct TimeRef {
 		return nframes_t(m_position / (UNIVERSAL_SAMPLE_RATE / rate));
 	}
 	
-	qint64 to_universal_frame() const {return m_position;}
+	qint64 universal_frame() const {return m_position;}
 	
 	friend int operator!=(const TimeRef& left, const TimeRef& right) {
 		return left.m_position != right.m_position;
@@ -97,6 +97,10 @@ struct TimeRef {
 	friend TimeRef& operator+=(TimeRef& left, const TimeRef& right) {
 		left.m_position += right.m_position;
 		return left;
+	}
+	
+	friend int operator/(const TimeRef& left, const qint64 right) {
+		return (int)(left.m_position / right);
 	}
 	
 	friend int operator<(const TimeRef& left, const TimeRef& right) {

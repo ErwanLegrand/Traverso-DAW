@@ -189,9 +189,9 @@ int AudioClip::set_state(const QDomNode& node)
 QDomNode AudioClip::get_state( QDomDocument doc )
 {
 	QDomElement node = doc.createElement("Clip");
-	node.setAttribute("trackstart", m_trackStartLocation.to_universal_frame());
-	node.setAttribute("sourcestart", m_sourceStartLocation.to_universal_frame());
-	node.setAttribute("length", m_length.to_universal_frame());
+	node.setAttribute("trackstart", m_trackStartLocation.universal_frame());
+	node.setAttribute("sourcestart", m_sourceStartLocation.universal_frame());
+	node.setAttribute("length", m_length.universal_frame());
 	node.setAttribute("mute", m_isMuted);
 	node.setAttribute("take", m_isTake);
 	node.setAttribute("clipname", m_name );

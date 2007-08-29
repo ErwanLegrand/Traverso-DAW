@@ -127,7 +127,7 @@ void PlayHead::enable_follow()
 
 void PlayHead::update_position()
 {
-	QPointF newPos(m_song->get_transport_frame() / m_sv->scalefactor, 1);
+	QPointF newPos(m_song->get_transport_location() / m_sv->timeref_scalefactor, 1);
 	
 	if (newPos != pos() && (m_animation.state() != QTimeLine::Running)) {
 		setPos(newPos);
@@ -179,7 +179,7 @@ void PlayHead::update_position()
 
 void PlayHead::set_animation_value(int value)
 {
-	QPointF newPos(m_song->get_transport_frame() / m_sv->scalefactor, 0);
+	QPointF newPos(m_song->get_transport_location() / m_sv->timeref_scalefactor, 0);
 	// calculate the motion distance of the playhead.
 	qreal deltaX = newPos.x() - pos().x();
 	
@@ -273,7 +273,7 @@ void WorkCursor::paint( QPainter * painter, const QStyleOptionGraphicsItem * opt
 
 void WorkCursor::update_position()
 {
-	setPos(m_song->get_working_frame() / m_sv->scalefactor, 1);
+	setPos(m_song->get_working_location() / m_sv->timeref_scalefactor, 1);
 }
 
 void WorkCursor::set_bounding_rect( QRectF rect )

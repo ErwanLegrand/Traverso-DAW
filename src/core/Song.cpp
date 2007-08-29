@@ -238,7 +238,7 @@ QDomNode Song::get_state(QDomDocument doc, bool istemplate)
 	properties.setAttribute("artists", artists);
 	properties.setAttribute("firstVisibleFrame", firstVisibleFrame);
 	properties.setAttribute("workingFrame", (uint)workingFrame);
-	properties.setAttribute("transportlocation", m_transportLocation.to_universal_frame());
+	properties.setAttribute("transportlocation", m_transportLocation.universal_frame());
 	properties.setAttribute("hzoom", m_hzoom);
 	properties.setAttribute("sbx", m_sbx);
 	properties.setAttribute("sby", m_sby);
