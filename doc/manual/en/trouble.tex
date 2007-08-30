@@ -19,6 +19,18 @@
   \end{verbatim}
 
  If you are using OS X, disable the feature ``ignore accidental trackpad input'' in the system settings.
+
+ \item \textit{Traverso can't set the audio thread to real time priority}\\
+ Some Linux distributions don't allow to set the priority of the audio thread to real time. However, a too low priority can lead to xruns and dropouts during recording and playback. To avoid this, add the following lines to the file \texttt{/etc/security/limits.conf}, or if the lines are already there, change the numbers accordingly:
+
+\begin{tabular}{llll}
+\texttt{@audio} & \texttt{-} & \texttt{rtprio} & \texttt{90}\\
+\texttt{@audio} & \texttt{-} & \texttt{nice} & \texttt{-10}\\
+\texttt{@audio} & \texttt{-} & \texttt{memlock} & \texttt{3000000}\\
+\end{tabular}
+
+Then restart your computer.
+
 \end{itemize}
 
 
