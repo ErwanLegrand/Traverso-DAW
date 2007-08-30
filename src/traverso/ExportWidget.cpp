@@ -463,6 +463,7 @@ void ExportWidget::start_burn_process()
 		return;
 	}
 	
+	m_copyNumber = 0;
 	cd_render();
 	
 	int index = cdDeviceComboBox->currentIndex();
@@ -503,8 +504,21 @@ void ExportWidget::cdrdao_process_finished(int exitcode, QProcess::ExitStatus ex
 	
 	progressBar->setMaximum(100);
 	progressBar->setValue(0);
-	
-	enable_ui_interaction();
+
+	// check if we have to write another CD
+	bool writeAnotherCd = false;
+	if (m_copyNumber < spinBoxNumCopies->value()) {
+		if (QMessageBox::information(this, tr("Writing CD %1 of %2").arg(m_copyNumber+1).arg(spinBoxNumCopies->value()), tr("Please insert an empty CD and press OK to continue."), QMessageBox::Ok | QMessageBox::Cancel) == QMessageBox::Ok) {
+			writeAnotherCd = true;
+		}
+	}
+
+	if (writeAnotherCd) {
+		write_to_cd();
+	}
+	else {
+		enable_ui_interaction();
+	}
 }
 
 void ExportWidget::cd_render()
@@ -584,6 +598,9 @@ void ExportWidget::cd_render()
 void ExportWidget::write_to_cd()
 {
 	PENTER;
+
+	m_copyNumber++;
+
 	if ( ! (m_burnprocess->state() == QProcess::NotRunning) ) {
 		info().critical(tr("Burn process is still running, cannot start it twice!!"));
 		return;

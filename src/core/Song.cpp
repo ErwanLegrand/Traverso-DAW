@@ -884,7 +884,7 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 		QString s_start = frame_to_cd(start, m_project->get_rate());
 		QString s_length = frame_to_cd(length, m_project->get_rate());
 
-		output += "  FILE \"" + spec->name + "\" " + s_start + " " + s_length + "\n\n";
+		output += "  FILE \"" + spec->name + "." + spec->extraFormat["filetype"] + "\" " + s_start + " " + s_length + "\n\n";
 		start += length;
 
 		// check if the second marker is of type "Endmarker"

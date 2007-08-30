@@ -75,6 +75,7 @@ private:
 	int m_writingState;
 	int m_lastSheetExported;
 	bool m_wasClosed;
+	int m_copyNumber;
 	QString get_device(int index);
 
 private slots:
