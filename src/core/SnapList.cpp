@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SnapList.cpp,v 1.16 2007/08/11 22:54:57 benjie Exp $
+$Id: SnapList.cpp,v 1.17 2007/08/31 09:19:51 r_sijrier Exp $
 */
 
 #include "SnapList.h"
@@ -326,5 +326,11 @@ nframes_t SnapList::prev_snap_pos(nframes_t pos)
 	return newpos;
 }
 
-/* EOF */
-
+TimeRef SnapList::get_snap_value(TimeRef& location)
+{
+	if (location < 0) {
+		location = 0;
+	}
+	TimeRef snap(get_snap_value(location.to_frame(44100)), 44100);
+	return snap;
+}

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SnapList.h,v 1.10 2007/04/06 09:29:03 r_sijrier Exp $
+$Id: SnapList.h,v 1.11 2007/08/31 09:19:51 r_sijrier Exp $
 */
 
 #ifndef SNAPLIST_H
@@ -41,6 +41,7 @@ public:
 	~SnapList() {};
 
 	int get_snap_value(nframes_t);
+	TimeRef get_snap_value(TimeRef& location);
 	bool is_snap_value(nframes_t);
 	int get_snap_diff(nframes_t);
 	nframes_t next_snap_pos(nframes_t pos);

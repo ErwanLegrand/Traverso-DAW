@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveEdge.h,v 1.8 2007/06/04 19:53:56 benjie Exp $
+    $Id: MoveEdge.h,v 1.9 2007/08/31 09:19:51 r_sijrier Exp $
 */
 
 #ifndef MOVEEDGE_H
@@ -53,9 +53,9 @@ private :
 	AudioClipView*	m_cv;
 	SongView*	m_sv;
         QByteArray	m_edge;
-        long		m_originalPos;
-        long		m_newPos;
-        long		m_otherEdgePos;
+        TimeRef		m_originalPos;
+	TimeRef		m_newPos;
+	TimeRef		m_otherEdgePos;
 };
 
 #endif

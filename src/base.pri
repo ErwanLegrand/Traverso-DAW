@@ -10,8 +10,8 @@ CONFIG -= release debug
 # Choose debug or release build
 #
 
-#CONFIG += debug
-CONFIG += release
+CONFIG += debug
+#CONFIG += release
 
 #
 # Add support for Jack / ALSA audio driver. If you have a 
@@ -54,7 +54,7 @@ DEFINES += QT_OPENGL_SUPPORT
 # DEFINES += QT_430_SCROLLBAR_FIX
 
 
-DEFINES += STATIC_BUILD
+# DEFINES += STATIC_BUILD
 
 #
 # Use Memory Locking 
@@ -68,7 +68,7 @@ DEFINES += USE_MLOCK
 
 
 !macx{
-#	DEFINES += PRECOMPILED_HEADER
+	DEFINES += PRECOMPILED_HEADER
 }
 
 # DEFINES += THREAD_CHECK

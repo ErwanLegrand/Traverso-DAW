@@ -253,13 +253,11 @@ void AudioClip::set_sources_active_state()
 
 }
 
-void AudioClip::set_left_edge(long frame)
+void AudioClip::set_left_edge(TimeRef newLeftLocation)
 {
-	if (frame < 0) {
-		frame = 0;
+	if (newLeftLocation < 0) {
+		newLeftLocation = TimeRef(0);
 	}
-	
-	TimeRef newLeftLocation(frame, get_rate());
 	
 	if (newLeftLocation < m_trackStartLocation) {
 
@@ -294,13 +292,11 @@ void AudioClip::set_left_edge(long frame)
 	emit positionChanged(this);
 }
 
-void AudioClip::set_right_edge(long frame)
+void AudioClip::set_right_edge(TimeRef newRightLocation)
 {
-	if (frame < 0) {
-		frame = 0;
+	if (newRightLocation < 0) {
+		newRightLocation = TimeRef(0);
 	}
-	
-	TimeRef newRightLocation(frame, get_rate());
 	
 	if (newRightLocation > m_trackEndLocation) {
 

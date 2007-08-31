@@ -3,6 +3,7 @@
 
 #include <inttypes.h>
 #include <QtGlobal>
+#include <QMetaType>
 #include "FastDelegate.h"
 
 // Implementation for atomic int get/set from glibc's atomic.h/c
@@ -85,8 +86,18 @@ struct TimeRef {
 		return TimeRef(left.m_position - right.m_position);
 	}
 	
+	friend TimeRef operator-(const TimeRef& left, qint64 right) {
+		TimeRef location(left.m_position - right);
+		return location;
+	}
+	
 	friend TimeRef& operator-=(TimeRef& left, const TimeRef& right) {
 		left.m_position -= right.m_position;
+		return left;
+	}
+	
+	friend TimeRef& operator-=(TimeRef& left, qint64 right) {
+		left.m_position -= right;
 		return left;
 	}
 	
@@ -94,21 +105,34 @@ struct TimeRef {
 		return TimeRef(left.m_position + right.m_position);
 	}
 	
+	friend TimeRef operator+(const TimeRef& left, qint64 right) {
+		TimeRef location(left.m_position + right);
+		return location;
+	}
+	
 	friend TimeRef& operator+=(TimeRef& left, const TimeRef& right) {
 		left.m_position += right.m_position;
 		return left;
 	}
 	
-	friend int operator/(const TimeRef& left, const qint64 right) {
-		return (int)(left.m_position / right);
+	friend qreal operator/(const TimeRef& left, const qint64 right) {
+		return (qreal)left.m_position / right;
 	}
 	
 	friend int operator<(const TimeRef& left, const TimeRef& right) {
 		return left.m_position < right.m_position;
 	}
 	
+	friend int operator<(const TimeRef& left, qint64 right) {
+		return left.m_position < right;
+	}
+	
 	friend int operator>(const TimeRef& left, const TimeRef& right) {
 		return left.m_position > right.m_position;
+	}
+	
+	friend int operator>(const TimeRef& left, qint64 right) {
+		return left.m_position > right;
 	}
 	
 	friend int operator<=(const TimeRef& left, const TimeRef& right) {
@@ -127,7 +151,8 @@ private:
 	qint64 m_position;
 };
 
-
+Q_DECLARE_METATYPE(TimeRef);
+		
 typedef struct {
 	int tranport;
 	bool isSlave;
