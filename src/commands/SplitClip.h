@@ -55,7 +55,7 @@ private :
         AudioClip* m_clip;
         AudioClip* leftClip;
         AudioClip* rightClip;
-	nframes_t m_splitPoint;
+	TimeRef m_splitPoint;
 	LineView* m_splitcursor;
 };
 

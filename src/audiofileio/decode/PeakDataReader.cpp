@@ -43,7 +43,7 @@ PeakDataReader::PeakDataReader(QString filename)
 	fseek (m_file, 0, SEEK_END);
 	m_channels = 1;
 	m_length = ftell (m_file);
-	m_rate = 32000;
+	m_rate = 44100;
 	
 }
 
@@ -85,15 +85,15 @@ nframes_t PeakDataReader::read_private(DecodeBuffer* buffer, nframes_t frameCoun
 {
 	Q_ASSERT(m_file);
 	
-	int framesRead = fread(buffer->readBuffer, sizeof(peak_data_t), frameCount, m_file);
+	int framesRead = fread((void*)buffer->readBuffer, sizeof(peak_data_t), frameCount, m_file);
 	
-	peak_data_t* readbuffer = (peak_data_t*)buffer->readBuffer;
+	peak_data_t* readbuffer = (peak_data_t*)(buffer->readBuffer);
 	
 	// De-interlace
 	switch (m_channels) {
 		case 1:
 			for (int f = 0; f < framesRead; f++) {
-				buffer->destination[0][f] = (float)readbuffer[f];
+				buffer->destination[0][f] = readbuffer[f];
 			}
 			break;	
 		case 2:

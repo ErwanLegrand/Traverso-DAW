@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Song.h"
 #include "Marker.h"
 #include <AddRemove.h>
+#include "AudioDevice.h"
 
 
 TimeLine::TimeLine(Song * song)
@@ -124,11 +125,11 @@ Marker * TimeLine::get_marker(qint64 id)
 	return 0;
 }
 
-bool TimeLine::get_end_position(nframes_t & pos)
+bool TimeLine::get_end_position(TimeRef& pos)
 {
 	foreach(Marker* marker, m_markers) {
 		if (marker->get_type() == Marker::ENDMARKER) {
-			pos = marker->get_when();
+			pos = TimeRef(marker->get_when(), audiodevice().get_sample_rate());
 			return true;
 		}
 	}

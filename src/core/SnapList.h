@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006 Nicola Doebelin
+Copyright (C) 2006-2007 Nicola Doebelin, Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SnapList.h,v 1.11 2007/08/31 09:19:51 r_sijrier Exp $
 */
 
 #ifndef SNAPLIST_H
@@ -40,24 +39,23 @@ public:
 	SnapList(Song* song);
 	~SnapList() {};
 
-	int get_snap_value(nframes_t);
-	TimeRef get_snap_value(TimeRef& location);
-	bool is_snap_value(nframes_t);
-	int get_snap_diff(nframes_t);
-	nframes_t next_snap_pos(nframes_t pos);
-	nframes_t prev_snap_pos(nframes_t pos);
+	TimeRef get_snap_value(const TimeRef& location);
+	bool is_snap_value(const TimeRef& location);
+	qint64 get_snap_diff(const TimeRef& location);
+	TimeRef next_snap_pos(const TimeRef& location);
+	TimeRef prev_snap_pos(const TimeRef& location);
 	
-	void set_range(nframes_t start, nframes_t end, int scalefactor);
+	void set_range(const TimeRef& start, const TimeRef& end, int scalefactor);
 
 private:
 	Song* 		m_song;
-	QList<nframes_t> 	xposList;
-	QList<int> 	xposLut;
-	QList<bool> 	xposBool;
+	QList<TimeRef> 	m_xposList;
+	QList<TimeRef> 	m_xposLut;
+	QList<bool> 	m_xposBool;
 	bool		m_isDirty;
-	nframes_t	m_rangeStart;
-	nframes_t	m_rangeEnd;
-	int		m_scalefactor;
+	TimeRef		m_rangeStart;
+	TimeRef		m_rangeEnd;
+	qint64		m_scalefactor;
 
 	void update_snaplist();
 

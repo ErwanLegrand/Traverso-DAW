@@ -37,8 +37,14 @@ QString frame_to_ms_2(nframes_t nframes, int rate);
 QString frame_to_cd(nframes_t nframes, int rate);
 QString frame_to_hms(double nframes, int rate);
 QString frame_to_ms(double nframes, int rate);
+
+QString timeref_to_ms(const TimeRef& ref);
+QString timeref_to_ms_2 (const TimeRef& ref);
+QString timeref_to_ms_3 (const TimeRef& ref);
+QString timeref_to_text(const TimeRef& ref, int scalefactor);
+
 nframes_t smpte_to_frame(QString str, int rate);
-nframes_t msms_to_frame(QString str, int rate);
+TimeRef msms_to_timeref(QString str);
 nframes_t cd_to_frame(QString str, int rate);
 QString coefficient_to_dbstring(float coeff);
 QDateTime extract_date_time(qint64 id);

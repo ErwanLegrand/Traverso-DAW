@@ -66,9 +66,9 @@ public :
 	int disarm();
 
 	// Get functions:
-	AudioClip* get_clip_after(nframes_t framePos);
-	AudioClip* get_clip_before(nframes_t framePos);
-	void get_render_range(nframes_t& startframe, nframes_t& endframe);
+	AudioClip* get_clip_after(const TimeRef& pos);
+	AudioClip* get_clip_before(const TimeRef& pos);
+	void get_render_range(TimeRef& startlocation, TimeRef& endlocation);
 	QString get_bus_in() const {return busIn;}
 	QString get_bus_out() const{return busOut;}
 	int get_height() const {return m_height;}

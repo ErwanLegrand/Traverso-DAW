@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.25 2007/08/11 22:54:57 benjie Exp $
+$Id: FadeCurve.cpp,v 1.26 2007/09/10 18:42:48 r_sijrier Exp $
 */
  
 #include "FadeCurve.h"
@@ -30,6 +30,7 @@ $Id: FadeCurve.cpp,v 1.25 2007/08/11 22:54:57 benjie Exp $
 #include "Command.h"
 #include "CommandGroup.h"
 #include <AddRemove.h>
+#include "AudioDevice.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -174,17 +175,17 @@ void FadeCurve::process( audio_sample_t * mixdown, nframes_t nframes )
 	int fadepos = 0;
 	
 	if (m_type == FadeIn) {
-		if( !( m_song->get_transport_frame() < (m_clip->get_track_start_frame() + get_range()) ) ) {
+		if( !( m_song->get_transport_location() < (m_clip->get_track_start_location() + get_range()) ) ) {
 			return;
 		}
 		
-		fadepos = m_song->get_transport_frame() - m_clip->get_track_start_frame();	
+		fadepos = (m_song->get_transport_location() - m_clip->get_track_start_location()).to_frame(audiodevice().get_sample_rate());
 	} else {
-		if( !(m_song->get_transport_frame() > (m_clip->get_track_end_frame() - get_range())) ) {
+		if( !(m_song->get_transport_location() > (m_clip->get_track_end_location() - get_range())) ) {
 			return;
 		}
 		
-		fadepos = m_song->get_transport_frame() - (m_clip->get_track_end_frame() - (nframes_t)get_range());
+		fadepos = (m_song->get_transport_location() - (m_clip->get_track_end_location() - TimeRef(get_range(), audiodevice().get_sample_rate()))).to_frame(audiodevice().get_sample_rate());
 	}
 	
 // 	printf("mix_pos is %d, len is %d\n", mix_pos, fadeIn->get_range());

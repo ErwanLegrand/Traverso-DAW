@@ -68,7 +68,7 @@ MoveClip::MoveClip(AudioClipView* cv, QString type)
 	QString des;
 	if (m_actionType == "copy") {
 		des = tr("Copy Clip");
-		d->xoffset = cv->get_songview()->scalefactor * 3;
+		d->xoffset = TimeRef(cv->get_songview()->timeref_scalefactor * 3);
 	} else if (m_actionType == "move") {
 		des = tr("Move Clip");
 	} else if (m_actionType == "anchored_left_edge_move" ||
@@ -140,21 +140,21 @@ void MoveClip::init_data(bool isCopy)
 	}
 
 	if (m_actionType == "anchored_left_edge_move") {
-		m_oldOppositeEdge = m_clip->get_track_start_frame() + m_clip->get_length();
+		m_oldOppositeEdge = m_clip->get_track_start_location() + m_clip->get_length();
 	}
 	else if (m_actionType == "anchored_right_edge_move") {
-		m_oldOppositeEdge = m_clip->get_track_start_frame();
+		m_oldOppositeEdge = m_clip->get_track_start_location();
 	}
 
 	m_originTrack = m_targetTrack = m_clip->get_track();
-	m_originalTrackFirstFrame = m_clip->get_track_start_frame();
+	m_originalTrackStartLocation = m_clip->get_track_start_location();
 	m_posDiff = 0;
 	d->origXPos = cpointer().on_first_input_event_x();
 	d->origPos = QPoint(d->origXPos, cpointer().on_first_input_event_y());
 	d->hScrollbarValue = d->sv->hscrollbar_value();
 	d->sv->start_shuttle(true, true);
-	d->origTrackStartFrame = m_clip->get_track_start_frame();
-	d->origTrackEndFrame = m_clip->get_track_end_frame();
+	d->origTrackStartLocation = m_clip->get_track_start_location();
+	d->origTrackEndLocation = m_clip->get_track_end_location();
 	d->resync = config().get_property("AudioClip", "SyncDuringDrag", false).toBool();
 	d->view->set_dragging(true);
 	d->bypassjog = false;
@@ -169,7 +169,7 @@ int MoveClip::begin_hold()
 		d->newclip = resources_manager()->get_clip(d->view->get_clip()->get_id());
 		d->newclip->set_song(m_song);
 		d->newclip->set_track(d->view->get_clip()->get_track());
-		d->newclip->set_track_start_frame(d->view->get_clip()->get_track_start_frame() + d->xoffset);
+		d->newclip->set_track_start_location(d->view->get_clip()->get_track_start_location() + d->xoffset);
 		
 		connect(d->view->get_clip()->get_track(), SIGNAL(audioClipAdded(AudioClip*)),
 			this, SLOT(audioclip_added(AudioClip*)));
@@ -234,9 +234,9 @@ int MoveClip::do_action()
 
 	if (m_actionType == "copy") {
 		Command::process_command(m_targetTrack->add_clip(m_clip, false));
-		m_clip->set_track_start_frame(m_originalTrackFirstFrame + m_posDiff);
+		m_clip->set_track_start_location(m_originalTrackStartLocation + m_posDiff);
 	} else {
-		m_song->move_clip(m_originTrack, m_targetTrack, m_clip, m_originalTrackFirstFrame + m_posDiff);
+		m_song->move_clip(m_originTrack, m_targetTrack, m_clip, m_originalTrackStartLocation + m_posDiff);
 	}
 	
 	if (m_actionType == "anchored_left_edge_move") {
@@ -257,14 +257,14 @@ int MoveClip::undo_action()
 	if (m_actionType == "copy") {
 		Command::process_command(m_targetTrack->remove_clip(m_clip, false));
 	} else {
-		m_song->move_clip(m_targetTrack, m_originTrack, m_clip, m_originalTrackFirstFrame);
+		m_song->move_clip(m_targetTrack, m_originTrack, m_clip, m_originalTrackStartLocation);
 	}
 
 	if (m_actionType == "anchored_left_edge_move") {
 		m_clip->set_right_edge(m_oldOppositeEdge);
 	}
 	else if (m_actionType == "anchored_right_edge_move") {
-		m_clip->set_track_start_frame(m_oldOppositeEdge - m_posDiff);
+		m_clip->set_track_start_location(m_oldOppositeEdge - m_posDiff);
 		m_clip->set_left_edge(m_oldOppositeEdge);
 	}
 	
@@ -279,10 +279,10 @@ void MoveClip::cancel_action()
 		Command::process_command(m_originTrack->remove_clip(m_clip, false));
 	} else if (m_actionType == "move") {
 		if (d->resync) {
-			m_clip->set_track_start_frame(m_originalTrackFirstFrame);
+			m_clip->set_track_start_location(m_originalTrackStartLocation);
 		}
 		d->view->set_trackview(d->origTrackView);
-		d->view->setPos(QPoint(m_originalTrackFirstFrame / d->sv->scalefactor,
+		d->view->setPos(QPoint(m_originalTrackStartLocation / d->sv->timeref_scalefactor,
 				d->origTrackView->get_childview_y_offset()));
 	}
 }
@@ -324,24 +324,24 @@ int MoveClip::jog()
 	int newXPos = cpointer().x() - scrollbardif;
 
 	// must be signed int because it can be negative
-	int diff_f = (cpointer().x() - d->origXPos - scrollbardif) * d->sv->scalefactor;
-	nframes_t newTrackStartFrame;
-	nframes_t newTrackEndFrame = d->origTrackEndFrame + diff_f;
+	TimeRef diff_f = TimeRef((cpointer().x() - d->origXPos - scrollbardif) * d->sv->timeref_scalefactor);
+	TimeRef newTrackStartLocation;
+	TimeRef newTrackEndLocation = d->origTrackEndLocation + diff_f;
 
-	if (diff_f < 0 && d->origTrackStartFrame < (nframes_t) -diff_f) {
-		newTrackStartFrame = 0;
+	if (diff_f < 0 && d->origTrackStartLocation < (-1 * diff_f)) {
+		newTrackStartLocation = TimeRef(0);
 	} else {
-		newTrackStartFrame = d->origTrackStartFrame + diff_f;
+		newTrackStartLocation = d->origTrackStartLocation + diff_f;
 	}
 
 	if (m_song->is_snap_on()) {
-		calculate_snap_diff(newTrackStartFrame, newTrackEndFrame);
+		calculate_snap_diff(newTrackStartLocation, newTrackEndLocation);
 	}
 	
-	m_posDiff = newTrackStartFrame - m_originalTrackFirstFrame;
+	m_posDiff = newTrackStartLocation - m_originalTrackStartLocation;
 
 	// store the new position only if the clip was moved, but not if it stuck to a snap position
-	if (d->origTrackStartFrame != newTrackStartFrame) {
+	if (d->origTrackStartLocation != newTrackStartLocation) {
 		d->origPos.setX(newXPos);
 	}
 
@@ -351,15 +351,15 @@ int MoveClip::jog()
 
 	if (m_actionType == "anchored_right_edge_move") {
 		m_clip->set_left_edge(m_oldOppositeEdge - m_posDiff);
-		newPos.setX(m_originalTrackFirstFrame / d->sv->scalefactor);
+		newPos.setX(m_originalTrackStartLocation / d->sv->timeref_scalefactor);
 		newPos.setY(d->view->pos().y());
 		d->view->setPos(newPos);
 	} else {
-		newPos.setX(newTrackStartFrame / d->sv->scalefactor);
+		newPos.setX(newTrackStartLocation / d->sv->timeref_scalefactor);
 		newPos.setY(d->view->pos().y());
 		if (d->resync) {
-			if (m_clip->get_track_start_frame() != newTrackStartFrame) {
-				m_clip->set_track_start_frame(newTrackStartFrame);
+			if (m_clip->get_track_start_location() != newTrackStartLocation) {
+				m_clip->set_track_start_location(newTrackStartLocation);
 			}
 			if (m_actionType == "anchored_left_edge_move") {
 				m_clip->set_right_edge(m_oldOppositeEdge);
@@ -379,34 +379,35 @@ void MoveClip::next_snap_pos(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
 	d->bypassjog = true;
-	long trackStartFrame = m_song->get_snap_list()->next_snap_pos(m_clip->get_track_start_frame());
-	nframes_t trackEndFrame = m_song->get_snap_list()->next_snap_pos(m_clip->get_track_end_frame());
-	int startdiff = trackStartFrame - m_clip->get_track_start_frame();
-	int enddiff = trackEndFrame - m_clip->get_track_end_frame();
-	int diff = (abs(startdiff) < abs(enddiff)) ? startdiff : enddiff;
-	trackStartFrame = m_clip->get_track_start_frame() + diff;
-	m_posDiff = trackStartFrame - m_originalTrackFirstFrame;
-	m_clip->set_track_start_frame(trackStartFrame);
+	TimeRef trackStartLocation = m_song->get_snap_list()->next_snap_pos(m_clip->get_track_start_location());
+	TimeRef trackEndLocation = m_song->get_snap_list()->next_snap_pos(m_clip->get_track_end_location());
+	qint64 startdiff = (trackStartLocation - m_clip->get_track_start_location()).universal_frame();
+	qint64 enddiff = (trackEndLocation - m_clip->get_track_end_location()).universal_frame();
+	qint64 diff = (abs(startdiff) < abs(enddiff)) ? startdiff : enddiff;
+	trackStartLocation = m_clip->get_track_start_location() + diff;
+	m_posDiff = trackStartLocation - m_originalTrackStartLocation;
+	m_clip->set_track_start_location(trackStartLocation);
 }
 
 void MoveClip::prev_snap_pos(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
 	d->bypassjog = true;
-	long trackStartFrame = m_song->get_snap_list()->prev_snap_pos(m_clip->get_track_start_frame());
-	nframes_t trackEndFrame = m_song->get_snap_list()->prev_snap_pos(m_clip->get_track_end_frame());
-	int startdiff = trackStartFrame - m_clip->get_track_start_frame();
-	int enddiff = trackEndFrame - m_clip->get_track_end_frame();
-	int diff = (abs(startdiff) < abs(enddiff)) ? startdiff : enddiff;
-	trackStartFrame = m_clip->get_track_start_frame() + diff;
-	m_posDiff = trackStartFrame - m_originalTrackFirstFrame;
-	m_clip->set_track_start_frame(trackStartFrame);
+	TimeRef trackStartLocation = m_song->get_snap_list()->prev_snap_pos(m_clip->get_track_start_location());
+	TimeRef trackEndLocation = m_song->get_snap_list()->prev_snap_pos(m_clip->get_track_end_location());
+	qint64 startdiff = (trackStartLocation - m_clip->get_track_start_location()).universal_frame();
+	qint64 enddiff = (trackEndLocation - m_clip->get_track_end_location()).universal_frame();
+	qint64 diff = (abs(startdiff) < abs(enddiff)) ? startdiff : enddiff;
+	trackStartLocation = m_clip->get_track_start_location() + diff;
+	m_posDiff = trackStartLocation - m_originalTrackStartLocation;
+	m_clip->set_track_start_location(trackStartLocation);
 }
 
 void MoveClip::move_to_start(bool autorepeat)
 {
 	Q_UNUSED(autorepeat)
-	m_clip->set_track_start_frame(0);
+	TimeRef location(0);
+	m_clip->set_track_start_location(location);
 }
 
 void MoveClip::move_to_end(bool autorepeat)
@@ -415,37 +416,37 @@ void MoveClip::move_to_end(bool autorepeat)
 	Track *track = m_clip->get_track();
 	
 	Command::process_command(track->remove_clip(m_clip, false));
-	m_clip->set_track_start_frame(m_clip->get_song()->get_last_frame());
+	m_clip->set_track_start_location(m_clip->get_song()->get_last_location());
 	Command::process_command(track->add_clip(m_clip, false));
 }
 
-void MoveClip::calculate_snap_diff(nframes_t& leftframe, nframes_t rightframe)
+void MoveClip::calculate_snap_diff(TimeRef& leftlocation, TimeRef rightlocation)
 {
 	// "nframe_t" domain, but must be signed ints because they can become negative
-	int snapStartDiff = 0;
-	int snapEndDiff = 0;
-	int snapDiff = 0;
+	qint64 snapStartDiff = 0;
+	qint64 snapEndDiff = 0;
+	qint64 snapDiff = 0;
 	
 	SnapList* slist = m_song->get_snap_list();
 
 	// check if there is anything to snap
 	bool start_snapped = false;
 	bool end_snapped = false;
-	if (slist->is_snap_value(leftframe) && m_actionType != "anchored_right_edge_move") {
+	if (slist->is_snap_value(leftlocation) && m_actionType != "anchored_right_edge_move") {
 		start_snapped = true;
 	}
 	
-	if (slist->is_snap_value(rightframe) && m_actionType != "anchored_left_edge_move") {
+	if (slist->is_snap_value(rightlocation) && m_actionType != "anchored_left_edge_move") {
 		end_snapped = true;
 	}
 
 	if (start_snapped) {
-		snapStartDiff = slist->get_snap_diff(leftframe);
+		snapStartDiff = slist->get_snap_diff(leftlocation);
 		snapDiff = snapStartDiff; // in case both ends snapped, change this value later, else leave it
 	}
 
 	if (end_snapped) {
-		snapEndDiff = slist->get_snap_diff(rightframe); 
+		snapEndDiff = slist->get_snap_diff(rightlocation); 
 		snapDiff = snapEndDiff; // in case both ends snapped, change this value later, else leave it
 	}
 
@@ -459,7 +460,7 @@ void MoveClip::calculate_snap_diff(nframes_t& leftframe, nframes_t rightframe)
 			snapDiff = snapEndDiff;
 	}
 	
-	leftframe -= snapDiff;
+	leftlocation -= snapDiff;
 }
 
 // eof

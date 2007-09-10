@@ -159,7 +159,8 @@ void Song::init()
 	m_scheduledForDeletion = false;
 	m_isSnapOn=true;
 	changed = m_rendering = m_recording = m_prepareRecording = false;
-	firstVisibleFrame=workingFrame=0;
+	firstVisibleFrame=0;
+	m_workLocation=0;
 	m_seeking = m_startSeek = 0;
 	// TODO seek to old position on project exit ?
 // 	m_transportFrame = 0;
@@ -196,9 +197,9 @@ int Song::set_state( const QDomNode & node )
 	m_sbx = e.attribute("sbx", "0").toInt();
 	m_sby = e.attribute("sby", "0").toInt();
 	set_first_visible_frame(e.attribute( "firstVisibleFrame", "0" ).toUInt());
-	set_work_at(e.attribute( "workingFrame", "0").toUInt());
 	
 	bool ok;
+	set_work_at(e.attribute( "m_workLocation", "0").toLongLong(&ok));
 	m_transportLocation = TimeRef(e.attribute( "transportlocation", "0").toLongLong(&ok));
 	
 	// Start seeking to the 'old' transport pos
@@ -237,7 +238,7 @@ QDomNode Song::get_state(QDomDocument doc, bool istemplate)
 	properties.setAttribute("title", title);
 	properties.setAttribute("artists", artists);
 	properties.setAttribute("firstVisibleFrame", firstVisibleFrame);
-	properties.setAttribute("workingFrame", (uint)workingFrame);
+	properties.setAttribute("m_workLocation", m_workLocation.universal_frame());
 	properties.setAttribute("transportlocation", m_transportLocation.universal_frame());
 	properties.setAttribute("hzoom", m_hzoom);
 	properties.setAttribute("sbx", m_sbx);
@@ -349,23 +350,24 @@ int Song::prepare_export(ExportSpecification* spec)
 	spec->start_frame = INT_MAX;
 	spec->end_frame = 0;
 
-	nframes_t endframe, startframe;
+	TimeRef endlocation, startlocation;
+	int devicerate = audiodevice().get_sample_rate();
 
 	foreach (Track* track, m_tracks) {
-		track->get_render_range(startframe, endframe);
+		track->get_render_range(startlocation, endlocation);
 
 		if (track->is_solo()) {
-			spec->end_frame = endframe;
-			spec->start_frame = startframe;
+			spec->end_frame = endlocation.to_frame(devicerate);
+			spec->start_frame = startlocation.to_frame(devicerate);
 			break;
 		}
 
-		if (endframe > spec->end_frame) {
-			spec->end_frame = endframe;
+		if (endlocation.to_frame(devicerate) > spec->end_frame) {
+			spec->end_frame = endlocation.to_frame(devicerate);
 		}
 
-		if (startframe < (uint)spec->start_frame) {
-			spec->start_frame = startframe;
+		if (startlocation.to_frame(devicerate) < (uint)spec->start_frame) {
+			spec->start_frame = startlocation.to_frame(devicerate);
 		}
 
 	}
@@ -373,18 +375,18 @@ int Song::prepare_export(ExportSpecification* spec)
 	if (spec->isCdExport) {
 		QList<Marker*> markers = m_timeline->get_markers();
 		if (markers.size() >= 2) {
-			startframe = markers.at(0)->get_when();
-			PMESG2("  Start marker found at %d", startframe);
+			startlocation = TimeRef(markers.at(0)->get_when(), devicerate);
+			PMESG2("  Start marker found at %d", startlocation.to_frame(devicerate));
 			// round down to the start of the CD frome (75th of a sec)
-			startframe = cd_to_frame(frame_to_cd(startframe, m_project->get_rate()), m_project->get_rate());
-			spec->start_frame = startframe;
+			startlocation = TimeRef(cd_to_frame(frame_to_cd(startlocation.to_frame(devicerate), m_project->get_rate()), m_project->get_rate()), devicerate);
+			spec->start_frame = startlocation.to_frame(devicerate);
 		} else {
 			PMESG2("  No start marker found");
 		}
 		
-		if (m_timeline->get_end_position(endframe)) {
-			PMESG2("  End marker found at %d", endframe);
-			spec->end_frame = endframe;
+		if (m_timeline->get_end_position(endlocation)) {
+			PMESG2("  End marker found at %d", endlocation.to_frame(devicerate));
+			spec->end_frame = endlocation.to_frame(devicerate);
 		} else {
 			PMESG2("  No end marker found");
 		}
@@ -570,15 +572,12 @@ void Song::set_first_visible_frame(nframes_t pos)
 	emit firstVisibleFrameChanged();
 }
 
-void Song::set_work_at(nframes_t pos)
+void Song::set_work_at(const TimeRef& location)
 {
-	PENTER;
-
- 	workingFrame = pos;
+	m_workLocation = location;
 	snaplist->mark_dirty(workSnap);
 	emit workingPosChanged();
 }
-
 
 Command* Song::toggle_snap()
 {
@@ -673,35 +672,35 @@ Command *Song::toggle_arm()
 
 Command* Song::work_next_edge()
 {
-	nframes_t w = m_acmanager->get_last_frame();
+/*	nframes_t w = m_acmanager->get_last_frame();
 
 	foreach(Track* track, m_tracks) {
-		AudioClip* c=track->get_clip_after(workingFrame);
+		AudioClip* c=track->get_clip_after(m_workLocation);
 
-		if ((c) && (c->get_track_start_frame() < w && c->get_track_start_frame() > workingFrame))
-			w = c->get_track_start_frame();
+		if ((c) && (c->get_track_start_location() < w && c->get_track_start_location() > m_workLocation))
+			w = c->get_track_start_location();
 	}
 
 	set_work_at(w);
 
 	emit setCursorAtEdge();
-
+*/
 	return (Command*) 0;
 }
 
 Command* Song::work_previous_edge()
 {
-	nframes_t w = 0;
+/*	TimeRef w(0);
 	foreach(Track* track, m_tracks) {
-		AudioClip* c = track->get_clip_before(workingFrame);
-		if ((c) && (c->get_track_end_frame() >= w && c->get_track_end_frame() < workingFrame) )
-			w=c->get_track_end_frame();
+		AudioClip* c = track->get_clip_before(m_workLocation);
+		if ((c) && (c->get_track_end_location() >= w && c->get_track_end_location() < m_workLocation) )
+			w=c->get_track_end_location();
 	}
 
 	set_work_at(w);
 
 	emit setCursorAtEdge();
-
+*/
 	return (Command*) 0;
 }
 
@@ -1013,9 +1012,9 @@ void Song::audiodevice_started( )
 	m_playBackBus = audiodevice().get_playback_bus("Playback 1");
 }
 
-nframes_t Song::get_last_frame( ) const
+const TimeRef& Song::get_last_location() const
 {
-	return m_acmanager->get_last_frame();
+	return m_acmanager->get_last_location();
 }
 
 void Song::private_add_track(Track* track)
@@ -1038,17 +1037,17 @@ Track* Song::get_track(qint64 id)
 	return 0;
 }
 
-void Song::move_clip(Track * from, Track * too, AudioClip * clip, nframes_t pos)
+void Song::move_clip(Track * from, Track * too, AudioClip * clip, TimeRef location)
 {
 	if (from == too) {
-		clip->set_track_start_frame(pos);
+		clip->set_track_start_location(location);
 		return;
 	}
 	
 	Command::process_command(from->remove_clip(clip, false, true));
 	Command::process_command(too->add_clip(clip, false, true));
 
-	clip->set_track_start_frame(pos);
+	clip->set_track_start_location(location);
 }
 
 Command* Song::set_editing_mode( )
@@ -1268,12 +1267,6 @@ void Song::prepare_recording()
 	m_readyToRecord = true;
 }
 
-void Song::set_transport_pos(nframes_t frames)
-{
-	TimeRef location(frames, audiodevice().get_sample_rate());
-	set_transport_pos(location);
-}
-
 void Song::set_transport_pos(TimeRef location)
 {
 #if defined (THREAD_CHECK)
@@ -1327,16 +1320,4 @@ void Song::seek_finished()
 }
 
 
-nframes_t Song::get_transport_frame()
-{
-	return m_transportLocation.to_frame(audiodevice().get_sample_rate());
-}
-
 // eof
-
-TimeRef Song::get_working_location() const
-{
-	TimeRef location(workingFrame, audiodevice().get_sample_rate());
-	return location;
-}
-

@@ -557,7 +557,7 @@ int Project::start_export(ExportSpecification* spec)
 		PMESG("Starting export for song %lld", song->get_id());
 		emit exportStartedForSong(song);
 		spec->resumeTransport = false;
-		spec->resumeTransportFrame = song->get_transport_frame();
+		spec->resumeTransportLocation = song->get_transport_location();
 		song->readbuffer = readbuffer;
 		
 		if (spec->normalize) {
@@ -593,7 +593,7 @@ int Project::start_export(ExportSpecification* spec)
 		
 		while(song->render(spec) > 0) {}
 		
-// 		song->set_transport_pos(spec->resumeTransportFrame);
+		song->set_transport_pos(spec->resumeTransportLocation);
 		if (spec->resumeTransport) {
 			if (!QMetaObject::invokeMethod(song, "start_transport",  Qt::QueuedConnection)) {
 				printf("Invoking Song::start_transport() failed\n");

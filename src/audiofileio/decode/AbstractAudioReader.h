@@ -56,6 +56,9 @@ public:
 			destinationBufferSize = size;
 		}
 		
+		memset(destination[0], 0, destinationBufferSize * sizeof(audio_sample_t));
+
+		
 		if (readBufferSize < (size*m_channels)) {
 			if (readBuffer) {
 				delete [] readBuffer;

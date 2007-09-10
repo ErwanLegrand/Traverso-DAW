@@ -405,11 +405,11 @@ void ClipTreeItem::clip_state_changed()
 		}
 	}
 	
-	QString start = frame_to_ms(m_clip->get_source_start_frame(), m_clip->get_rate());
-	QString end = frame_to_ms(m_clip->get_source_end_frame(), m_clip->get_rate());
+	QString start = timeref_to_ms(m_clip->get_source_start_location());
+	QString end = timeref_to_ms(m_clip->get_source_end_location());
 		
 	setText(0, m_clip->get_name());
-	setText(1, frame_to_ms(m_clip->get_length(), m_clip->get_rate()));
+	setText(1, timeref_to_ms(m_clip->get_length()));
 	setText(2, start);
 	setText(3, end);
 	setToolTip(0, m_clip->get_name() + "   " + start + " - " + end);

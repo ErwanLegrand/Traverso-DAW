@@ -71,7 +71,7 @@ public:
 	int init_recording(QByteArray bus);
 	int process(nframes_t nframes);
 	
-	void set_track_start_frame(nframes_t newTrackFirstFrame);
+	void set_track_start_location(const TimeRef& location);
 	void set_name(const QString& name);
 	void set_fade_in(nframes_t b);
 	void set_fade_out(nframes_t b);
@@ -90,13 +90,8 @@ public:
 	FadeCurve* get_fade_out() const;
 	PluginChain* get_plugin_chain() const {return m_pluginChain;}
 	
-	nframes_t get_length() const;
-	nframes_t get_track_start_frame() const;
-	nframes_t get_track_end_frame() const;
-	nframes_t get_source_start_frame() const;
-	nframes_t get_source_end_frame() const;
-	nframes_t get_source_length() const;
-	
+	TimeRef& get_length() const;
+	TimeRef& get_source_length() const;
 	TimeRef& get_track_start_location() const {return m_trackStartLocation;}
 	TimeRef& get_track_end_location() const {return m_trackEndLocation;}
 	TimeRef& get_source_start_location() const {return m_sourceStartLocation;}
@@ -122,11 +117,11 @@ public:
 
 	static bool smaller(const AudioClip* left, const AudioClip* right )
 	{
-		return left->get_track_start_frame() < right->get_track_start_frame();
+		return left->get_track_start_location() < right->get_track_start_location();
 	}
 	static bool greater(const AudioClip* left, const AudioClip* right )
 	{
-		return left->get_track_start_frame() > right->get_track_start_frame();
+		return left->get_track_start_location() > right->get_track_start_location();
 	}
 
 private:

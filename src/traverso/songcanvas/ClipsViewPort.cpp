@@ -29,6 +29,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <CommandGroup.h>
 #include "RemoveClip.h"
 
+#include "AudioDevice.h"
+
 #include <QScrollBar>
 #include <QSet>
 #include <QPaintEngine>
@@ -142,7 +144,7 @@ void ClipsViewPort::dropEvent(QDropEvent* event )
 	CommandGroup* group = new CommandGroup(m_sw->get_song(), 
 		       tr("Import %n audiofile(s)", "", m_imports.size() + m_resourcesImport.size()), true);
 	
-	nframes_t startpos = mapFromGlobal(QCursor::pos()).x() * m_sw->get_songview()->scalefactor;
+	TimeRef startpos = mapFromGlobal(QCursor::pos()).x() * m_sw->get_songview()->timeref_scalefactor;
 	
 	foreach(qint64 id, m_resourcesImport) {
 		AudioClip* clip = resources_manager()->get_clip(id);
@@ -153,8 +155,8 @@ void ClipsViewPort::dropEvent(QDropEvent* event )
 			if (!hadSong) {
 				clip->set_state(clip->get_dom_node());
 			}
-			clip->set_track_start_frame(startpos);
-			startpos = clip->get_track_end_frame();
+			clip->set_track_start_location(startpos);
+			startpos = clip->get_track_end_location();
 			AddRemoveClip* arc = new AddRemoveClip(clip, AddRemoveClip::ADD);
 			group->add_command(arc);
 			continue;
@@ -165,8 +167,8 @@ void ClipsViewPort::dropEvent(QDropEvent* event )
 			resources_manager()->set_source_for_clip(clip, source);
 			clip->set_song(importTrack->get_song());
 			clip->set_track(importTrack);
-			clip->set_track_start_frame(startpos);
-			startpos = clip->get_track_end_frame();
+			clip->set_track_start_location(startpos);
+			startpos = clip->get_track_end_location();
 			AddRemoveClip* arc = new AddRemoveClip(clip, AddRemoveClip::ADD);
 			group->add_command(arc);
 		}

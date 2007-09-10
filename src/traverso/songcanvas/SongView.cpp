@@ -232,7 +232,7 @@ void SongView::remove_trackview(Track* track)
 
 void SongView::update_scrollbars()
 {
-	int width = (m_song->get_last_frame() / scalefactor) - (m_clipsViewPort->width() / 4);
+	int width = (int)(m_song->get_last_location() / timeref_scalefactor) - (m_clipsViewPort->width() / 4);
 	
 	m_hScrollBar->setRange(0, width);
 	m_hScrollBar->setSingleStep(m_clipsViewPort->width() / 10);
@@ -339,14 +339,14 @@ void SongView::layout_tracks()
 Command* SongView::center()
 {
 	PENTER2;
-	nframes_t centerX;
+	TimeRef centerX;
 	if (m_song->is_transport_rolling() && m_actOnPlayHead) { 
-		centerX = m_song->get_transport_frame();
+		centerX = m_song->get_transport_location();
 	} else {
-		centerX = m_song->get_working_frame();
+		centerX = m_song->get_work_location();
 	}
 
-	set_hscrollbar_value(centerX / scalefactor - m_clipsViewPort->width() / 2);
+	set_hscrollbar_value((int)(centerX / timeref_scalefactor) - m_clipsViewPort->width() / 2);
 	return (Command*) 0;
 }
 
@@ -368,7 +368,7 @@ void SongView::set_follow_state(bool state)
 	if (state) {
 		m_actOnPlayHead = true;
 		m_playCursor->enable_follow();
-		m_playCursor->setPos(m_song->get_transport_frame() / scalefactor, 0);
+		m_playCursor->setPos(m_song->get_transport_location() / timeref_scalefactor, 0);
 	} else {
 		m_actOnPlayHead = false;
 		m_playCursor->disable_follow();
@@ -481,7 +481,8 @@ Command* SongView::goto_begin()
 Command* SongView::goto_end()
 {
 	stop_follow_play_head();
-	m_song->set_work_at(m_song->get_last_frame());
+	TimeRef lastlocation = m_song->get_last_location();
+	m_song->set_work_at(lastlocation);
 	center();
 	return (Command*) 0;
 }
@@ -501,7 +502,7 @@ ClipsViewPort * SongView::get_clips_viewport() const
 Command * SongView::touch( )
 {
 	QPointF point = m_clipsViewPort->mapToScene(QPoint(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y()));
-	m_song->set_work_at((nframes_t) (point.x() * scalefactor));
+	m_song->set_work_at((qint64)(point.x() * timeref_scalefactor));
 
 	return 0;
 }
@@ -510,7 +511,7 @@ Command * SongView::touch_play_cursor( )
 {
 	QPointF point = m_clipsViewPort->mapToScene(QPoint(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y()));
 	m_playCursor->setPos(point.x(), 0);
-	m_song->set_transport_pos( (nframes_t) (point.x() * scalefactor));
+	m_song->set_transport_pos((qint64)(point.x() * timeref_scalefactor));
 
 	return 0;
 }
@@ -536,9 +537,9 @@ Command * SongView::work_cursor_move( )
 void SongView::set_snap_range(int start)
 {
 // 	printf("SongView::set_snap_range\n");
-	m_song->get_snap_list()->set_range(start * scalefactor, 
-					(start + m_clipsViewPort->viewport()->width()) * scalefactor,
-					scalefactor);
+	m_song->get_snap_list()->set_range(start * timeref_scalefactor, 
+					(start + m_clipsViewPort->viewport()->width()) * timeref_scalefactor,
+					timeref_scalefactor);
 }
 
 Command* SongView::scroll_up( )
@@ -612,9 +613,9 @@ Command * SongView::add_marker_at_playhead()
 
 Command * SongView::playhead_to_workcursor( )
 {
-	TimeRef worklocation = m_song->get_working_location();
+	TimeRef worklocation = m_song->get_work_location();
 
-	m_song->set_transport_pos( worklocation );
+	m_song->set_transport_pos(worklocation);
 	m_playCursor->setPos(worklocation / timeref_scalefactor, 0);
 	
 	if (!m_song->is_transport_rolling()) {
@@ -626,8 +627,8 @@ Command * SongView::playhead_to_workcursor( )
 
 Command * SongView::center_playhead( )
 {
-	nframes_t centerX = m_song->get_transport_frame();
-	set_hscrollbar_value(centerX / scalefactor - m_clipsViewPort->width() / 2);
+	TimeRef centerX = m_song->get_transport_location();
+	set_hscrollbar_value(centerX / timeref_scalefactor - m_clipsViewPort->width() / 2);
 	
 	follow_play_head();
 

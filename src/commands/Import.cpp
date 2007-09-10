@@ -43,7 +43,7 @@ Import::Import(const QString& fileName)
 }
 
 
-Import::Import(Track* track, bool silent, nframes_t length)
+Import::Import(Track* track, bool silent, const TimeRef& length)
 	: Command(track, "")
 {
 	m_track = track;
@@ -71,7 +71,7 @@ Import::Import(Track* track, const QString& fileName)
 	m_initialLength = 0;
 }
 
-Import::Import(Track* track, const QString& fileName, nframes_t position)
+Import::Import(Track* track, const QString& fileName, const TimeRef& position)
 	: Command(track, tr("Import Audio File"))
 {
 	m_track = track;
@@ -144,18 +144,18 @@ void Import::create_audioclip()
 	m_clip->set_song(m_track->get_song());
 	m_clip->set_track(m_track);
 	
-	nframes_t startFrame = 0;
+	TimeRef startLocation(0);
 	if (!m_hasPosition) {
 		if (AudioClip* lastClip = m_track->get_cliplist().get_last()) {
-			startFrame = lastClip->get_track_end_frame() + 1;
+			startLocation = lastClip->get_track_end_location() + 1;
 		}
 	} else {
-		startFrame = m_position;
+		startLocation = m_position;
 	}
-	m_clip->set_track_start_frame(startFrame);
+	m_clip->set_track_start_location(startLocation);
 	
 	if (m_initialLength > 0) {
-		m_clip->set_right_edge(m_initialLength + startFrame);
+		m_clip->set_right_edge(m_initialLength + startLocation);
 	}
 }
 
@@ -165,7 +165,7 @@ void Import::set_track(Track * track)
 }
 
 
-void Import::set_position(nframes_t position)
+void Import::set_position(const TimeRef& position)
 {
 	m_hasPosition = true;
 	m_position = position;

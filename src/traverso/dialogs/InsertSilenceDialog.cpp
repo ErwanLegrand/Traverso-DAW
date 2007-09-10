@@ -72,7 +72,7 @@ void InsertSilenceDialog::accept()
 			Track*	shortestTrack = tracks.at(0);
 	
 			for (int i=1; i<tracks.size(); i++) {
-				if (tracks.at(i)->get_cliplist().get_last() && tracks.at(i)->get_cliplist().get_last()->get_track_end_frame() > shortestTrack->get_cliplist().get_last()->get_track_end_frame()) {
+				if (tracks.at(i)->get_cliplist().get_last() && tracks.at(i)->get_cliplist().get_last()->get_track_end_location() > shortestTrack->get_cliplist().get_last()->get_track_end_location()) {
 					shortestTrack = tracks.at(i);
 				}
 			}

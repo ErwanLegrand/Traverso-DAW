@@ -83,12 +83,10 @@ public:
 	int is_transport_rolling() const {return m_transport;}
 	void get_scrollbar_xy(int& x, int& y) {x = m_sbx; y = m_sby;}
 	
-	nframes_t get_transport_frame();
-	nframes_t get_working_frame() const {return workingFrame;}
+	const TimeRef& get_work_location() const {return m_workLocation;}
 	nframes_t get_first_visible_frame() const;
-	nframes_t get_last_frame() const;
+	const TimeRef& get_last_location() const;
 	const TimeRef& get_transport_location() const {return m_transportLocation;}
-	TimeRef get_working_location() const;
 	
 	const TimeRef& get_new_transport_location() const {return m_newTransportLocation;}
 	
@@ -111,9 +109,8 @@ public:
 	void set_artists(const QString& pArtistis);
 	void set_first_visible_frame(nframes_t pos);
 	void set_title(const QString& sTitle);
-	void set_work_at(nframes_t pos);
+	void set_work_at(const TimeRef& location);
 	void set_transport_pos(TimeRef location);
-	void set_transport_pos(nframes_t frames);
 	void set_hzoom(int hzoom);
 	void set_snapping(bool snap);
 	void set_scrollbar_xy(int x, int y) {m_sbx = x; m_sby = y;}
@@ -130,7 +127,7 @@ public:
 
 	void solo_track(Track* track);
 	void create(int tracksToCreate);
-	void move_clip(Track* from, Track* too, AudioClip* clip, nframes_t pos);
+	void move_clip(Track* from, Track* too, AudioClip* clip, TimeRef location);
 	Command* add_track(Track* track, bool historable=true);
 	Command* remove_track(Track* track, bool historable=true);
 	
@@ -172,14 +169,14 @@ private:
 	// would suffice, or should we use t_atomic_int_set/get() to make
 	// it 100% portable and working on all platforms...?
 	volatile size_t		m_transportFrame;
-	volatile size_t		workingFrame;
 	volatile size_t		m_newTransportFramePos;
 	volatile size_t		m_transport;
 	volatile size_t		m_seeking;
 	volatile size_t		m_startSeek;
 	
-	TimeRef			m_transportLocation;
-	TimeRef			m_newTransportLocation;
+	TimeRef		m_transportLocation;
+	TimeRef		m_workLocation;
+	TimeRef		m_newTransportLocation;
 
 	
 	nframes_t 	firstVisibleFrame;

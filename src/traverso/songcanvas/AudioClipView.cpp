@@ -42,6 +42,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QFileDialog>
 #include "AudioClipEditDialog.h"
 
+#include "AudioDevice.h"
+
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
@@ -82,7 +84,7 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	// CurveViews don't 'get' their start offset, it's only a property for AudioClips..
 	// So to be sure the CurveNodeViews start offset get updated as well,
 	// we call curveviews calculate_bounding_rect() function!
-	curveView->set_start_offset(m_clip->get_source_start_frame());
+	curveView->set_start_offset(m_clip->get_source_start_location());
 	curveView->calculate_bounding_rect();
 	connect(curveView, SIGNAL(curveModified()), m_sv, SLOT(stop_follow_play_head()));
 	
@@ -209,12 +211,12 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	
 	// Paint a pixmap if the clip is locked
 	if (m_clip->is_locked()) {
-		int center = m_clip->get_length() / (2 * m_sv->scalefactor);
+		int center = m_clip->get_length() / (2 * m_sv->timeref_scalefactor);
 		painter->drawPixmap(center - 8, m_height - 20, find_pixmap(":/lock"));
 	}
 
 	if (m_dragging) {
-		m_posIndicator->set_value(frame_to_text( (nframes_t)(x() * m_sv->scalefactor), m_song->get_rate(), m_sv->scalefactor));
+		m_posIndicator->set_value(timeref_to_text(x() * m_sv->timeref_scalefactor, m_sv->timeref_scalefactor));
 	}
 	
 	painter->restore();
@@ -265,7 +267,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	for (int chan=0; chan < channels; chan++) {
 // 		memset(buffers[chan], 0, buffersize * sizeof(peak_data_t));
 		
-		nframes_t clipstartoffset = m_clip->get_source_start_frame();
+		TimeRef clipstartoffset = m_clip->get_source_start_location();
 		
 		Peak* peak = m_clip->get_peak_for_channel(chan);
 		if (!peak) {
@@ -274,7 +276,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		}
 		int availpeaks = peak->calculate_peaks( &buffers[chan],
 							microView ? m_song->get_hzoom() : m_song->get_hzoom() + 1,
-							(xstart * m_sv->scalefactor) + clipstartoffset,
+							(xstart * m_sv->scalefactor) + clipstartoffset.to_frame(audiodevice().get_sample_rate()),
 							microView ? peakdatacount : peakdatacount / 2);
 		
 		if (peakdatacount != availpeaks) {
@@ -299,7 +301,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	}
 	
 	int mixcurvedata = 0;
-	int offset = m_clip->get_source_start_frame() / m_sv->scalefactor;
+	int offset = m_clip->get_source_start_location() / m_sv->timeref_scalefactor;
 	mixcurvedata |= curveView->get_vector(xstart + offset, pixelcount, curvemixdown);
 	
 	float fademixdown[pixelcount];
@@ -748,7 +750,7 @@ void AudioClipView::calculate_bounding_rect()
 	prepareGeometryChange();
 // 	printf("AudioClipView::calculate_bounding_rect()\n");
 	set_height(m_tv->get_height());
-	m_boundingRect = QRectF(0, 0, (m_clip->get_length() / m_sv->scalefactor), m_height);
+	m_boundingRect = QRectF(0, 0, (m_clip->get_length() / m_sv->timeref_scalefactor), m_height);
 	update_start_pos();
 	ViewItem::calculate_bounding_rect();
 }
@@ -773,7 +775,7 @@ int AudioClipView::get_childview_y_offset() const
 void AudioClipView::update_start_pos()
 {
 // 	printf("AudioClipView::update_start_pos()\n");
-	setPos(m_clip->get_track_start_frame() / m_sv->scalefactor, m_tv->get_childview_y_offset());
+	setPos(m_clip->get_track_start_location() / m_sv->timeref_scalefactor, m_tv->get_childview_y_offset());
 }
 
 Command * AudioClipView::fade_range()
@@ -811,7 +813,7 @@ void AudioClipView::position_changed()
 	// the calculate_bounding_rect() will update AudioClipViews children, so
 	// the CurveView and it's nodes get updated as well, no need to set
 	// the start offset for those manually!
-	curveView->set_start_offset(m_clip->get_source_start_frame());
+	curveView->set_start_offset(m_clip->get_source_start_location());
 	calculate_bounding_rect();
 	update();
 }
@@ -875,7 +877,7 @@ void AudioClipView::finish_recording()
 {
 	m_recordingTimer.stop();
 	prepareGeometryChange();
-	m_boundingRect = QRectF(0, 0, (m_clip->get_length() / m_sv->scalefactor), m_height);
+	m_boundingRect = QRectF(0, 0, (m_clip->get_length() / m_sv->timeref_scalefactor), m_height);
 	curveView->calculate_bounding_rect();
 	update();
 }
@@ -887,12 +889,13 @@ void AudioClipView::update_recording()
 	}
 	
 	prepareGeometryChange();
-	nframes_t newPos = m_clip->get_length();
-	m_boundingRect = QRectF(0, 0, (newPos / m_sv->scalefactor), m_height);
+	TimeRef newPos = m_clip->get_length();
+	m_boundingRect = QRectF(0, 0, (newPos / m_sv->timeref_scalefactor), m_height);
 	
+/*	FIXME NONSENSE!!
 	QRect updaterect = QRect(m_oldRecordingPos, 0, newPos, (int)m_boundingRect.height());
 	update(updaterect);
-	m_oldRecordingPos = newPos;
+	m_oldRecordingPos = newPos;*/
 }
 
 void AudioClipView::set_dragging(bool dragging)

@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "CurveNodeView.h"
 #include "ClipsViewPort.h"
 #include <Themer.h>
+#include "AudioDevice.h"
 		
 #include <Curve.h>
 #include <CurveNode.h>
@@ -148,11 +149,12 @@ int DragNode::jog()
 	m_newPos.setX(m_newPos.x() + dx * m_scalefactor);
 	m_newPos.setY(m_newPos.y() - ( dy / m_curveView->boundingRect().height()) );
 	
-	if ( ((int)(m_newPos.x() - m_curveView->get_start_offset())/ m_scalefactor) > m_curveView->boundingRect().width()) {
-		m_newPos.setX(m_curveView->boundingRect().width() * m_scalefactor + m_curveView->get_start_offset());
+	TimeRef startoffset = m_curveView->get_start_offset();
+	if ( ((int)(m_newPos.x() - startoffset.to_frame(audiodevice().get_sample_rate()))/ m_scalefactor) > m_curveView->boundingRect().width()) {
+		m_newPos.setX(m_curveView->boundingRect().width() * m_scalefactor + startoffset.to_frame(audiodevice().get_sample_rate()));
 	}
-	if ( m_newPos.x() - m_curveView->get_start_offset() < 0) {
-		m_newPos.setX(m_curveView->get_start_offset());
+	if ( m_newPos.x() - startoffset.to_frame(audiodevice().get_sample_rate()) < 0) {
+		m_newPos.setX(startoffset.to_frame(audiodevice().get_sample_rate()));
 	}
 	
 	if (m_newPos.y() < 0.0) {
@@ -255,7 +257,7 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	float vector[pixelcount];
 	
 // 	printf("range: %d\n", (int)m_nodeViews.last()->pos().x());
-	int offset = m_startoffset / m_sv->scalefactor;
+	int offset = m_startoffset / m_sv->timeref_scalefactor;
 	m_guicurve->get_vector(xstart + offset,
 				xstart + pixelcount + offset,
     				vector,
@@ -466,7 +468,7 @@ Command* CurveView::add_node()
 
 	emit curveModified();
 	
-	CurveNode* node = new CurveNode(m_curve, point.x() * m_sv->scalefactor + m_startoffset,
+	CurveNode* node = new CurveNode(m_curve, point.x() * m_sv->scalefactor + m_startoffset.to_frame(audiodevice().get_sample_rate()),
 					 (m_boundingRect.height() - point.y()) / m_boundingRect.height());
 	return m_curve->add_node(node);
 }
@@ -579,7 +581,7 @@ void CurveView::load_theme_data()
 	calculate_bounding_rect();
 }
 
-void CurveView::set_start_offset(nframes_t offset)
+void CurveView::set_start_offset(const TimeRef& offset)
 {
 	m_startoffset = offset;
 }

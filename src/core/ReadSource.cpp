@@ -150,7 +150,7 @@ QDomNode ReadSource::get_state( QDomDocument doc )
 	node.setAttribute("name", m_name);
 	node.setAttribute("origbitdepth", m_origBitDepth);
 	node.setAttribute("wasrecording", m_wasRecording);
-	node.setAttribute("length", m_length.to_frame(m_rate));
+	node.setAttribute("length", m_length.universal_frame());
 	node.setAttribute("rate", m_rate);
 	node.setAttribute("decoder", m_decodertype);
 
@@ -168,7 +168,8 @@ int ReadSource::set_state( const QDomNode & node )
 	set_dir( e.attribute("dir", "" ));
 	m_id = e.attribute("id", "").toLongLong();
 	m_rate = e.attribute("rate", "0").toUInt();
-	m_length = TimeRef(e.attribute("length", "0").toUInt(), m_rate);
+	bool ok;
+	m_length = TimeRef(e.attribute("length", "0").toLongLong(&ok));
 	m_origBitDepth = e.attribute("origbitdepth", "0").toInt();
 	m_wasRecording = e.attribute("wasrecording", "0").toInt();
 	m_decodertype = e.attribute("decoder", "");
@@ -198,7 +199,7 @@ int ReadSource::init( )
 	m_rate = project->get_rate();
 	
 	if (m_silent) {
-		m_length = TimeRef(UINT_MAX);
+		m_length = TimeRef(LONG_LONG_MAX);
 		m_channelCount = 0;
 		m_origBitDepth = project->get_bitdepth();
 		return 1;
@@ -422,14 +423,14 @@ void ReadSource::rb_seek_to_file_position(TimeRef& position)
 	// if not, fill the buffer from the earliest point this clip
 	// will come into play.
 	if (fileposition < 0) {
-// 		printf("not seeking to %ld, but too %d\n\n", fileposition,m_clip->get_source_start_frame()); 
+// 		printf("not seeking to %ld, but too %d\n\n", fileposition,m_clip->get_source_start_location()); 
 		// Song's start from 0, this makes a period start from
 		// 0 - 1023 for example, the nframes is 1024!
 		// Setting a songs new position is on 1024, and NOT 
 		// 1023.. Hmm, something isn't correct here, but at least substract 1
 		// to make this thing work!
 		// TODO check if this is still needed!
-		fileposition = TimeRef(m_clip->get_source_start_frame() - 1, audiodevice().get_sample_rate());
+		fileposition = m_clip->get_source_start_location() - TimeRef(1, audiodevice().get_sample_rate());
 	}
 	
 // 	printf("rb_seek_to_file_position:: seeking to relative pos: %d\n", fileposition);
@@ -556,7 +557,7 @@ void ReadSource::prepare_buffer( )
 		m_buffers.append(new RingBufferNPT<float>(m_bufferSize));
 	}
 
-	TimeRef synclocation = m_clip->get_song()->get_working_location();
+	TimeRef synclocation = m_clip->get_song()->get_work_location();
 	start_resync(synclocation);
 }
 
@@ -599,6 +600,6 @@ void ReadSource::set_active(bool active)
 
 int ReadSource::file_read(DecodeBuffer * buffer, nframes_t start, nframes_t cnt)
 {
-	TimeRef startlocation(start, get_rate() );
+	TimeRef startlocation(start, get_rate());
 	return file_read(buffer, startlocation, cnt);
 }

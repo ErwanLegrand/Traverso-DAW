@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioClipManager.cpp,v 1.16 2007/08/17 00:18:29 r_sijrier Exp $
+    $Id: AudioClipManager.cpp,v 1.17 2007/09/10 18:42:48 r_sijrier Exp $
 */
  
 #include "AudioClipManager.h"
@@ -38,7 +38,7 @@ AudioClipManager::AudioClipManager( Song* song )
 	PENTERCONS;
 	m_song = song;
 	set_history_stack( m_song->get_history_stack() );
-	lastFrame = 0;
+	lastLocation = 0;
 }
 
 AudioClipManager::~ AudioClipManager( )
@@ -83,31 +83,19 @@ void AudioClipManager::update_last_frame( )
 {
 	PENTER;
 	
-	lastFrame = 0;
+	lastLocation = TimeRef(0);
 	
 	foreach(AudioClip* clip, m_clips) {
-		if (clip->get_track_end_frame() >= lastFrame)
-			lastFrame = clip->get_track_end_frame();
+		if (clip->get_track_end_location() >= lastLocation)
+			lastLocation = clip->get_track_end_location();
 	}
 	
 	emit m_song->lastFramePositionChanged();
 }
 
-nframes_t AudioClipManager::get_last_frame( )
+const TimeRef& AudioClipManager::get_last_location() const
 {
-	return lastFrame;
-}
-
-nframes_t AudioClipManager::get_start_frame( )
-{
-	nframes_t startframe = UINT_MAX;
-	
-	foreach(AudioClip* clip, m_clips) {
-		if (clip->get_track_start_frame() < startframe)
-			startframe = clip->get_track_start_frame();
-	}
-	
-	return startframe;
+	return lastLocation;
 }
 
 void AudioClipManager::get_selected_clips_state( QList< AudioClip * > & list )

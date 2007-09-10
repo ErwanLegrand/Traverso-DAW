@@ -52,7 +52,7 @@ int PlayHeadMove::finish_hold()
 		if (m_song->is_transport_rolling()) {
 			m_cursor->hide();
 		}
-		m_song->set_transport_pos( (nframes_t) (x * m_sv->scalefactor));
+		m_song->set_transport_pos(x * m_sv->timeref_scalefactor);
 	}
 	m_sv->start_shuttle(false);
 	return -1;
@@ -61,7 +61,7 @@ int PlayHeadMove::finish_hold()
 int PlayHeadMove::begin_hold()
 {
 	m_cursor->set_active(false);
-	m_origXPos = m_newXPos = m_song->get_transport_frame() / m_sv->scalefactor;
+	m_origXPos = m_newXPos = m_song->get_transport_location() / m_sv->timeref_scalefactor;
 	m_sv->start_shuttle(true, true);
 	return 1;
 }
@@ -97,13 +97,13 @@ int PlayHeadMove::jog()
 	
 	if (x != m_newXPos) {
 		m_cursor->setPos(x, 0);
-		nframes_t newpos = (nframes_t) (x * m_sv->scalefactor);
+		TimeRef newpos = x * m_sv->timeref_scalefactor;
 		if (m_resync && m_song->is_transport_rolling()) {
 			m_song->set_transport_pos(newpos);
 		}
 		
 		m_sv->update_shuttle_factor();
-		cpointer().get_viewport()->set_holdcursor_text(frame_to_text(newpos, m_song->get_rate(), m_sv->scalefactor));
+		cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(newpos, m_sv->timeref_scalefactor));
 	}
 	
 	// Hmm, the alignment of the holdcursor isn't in the center, so we have to 

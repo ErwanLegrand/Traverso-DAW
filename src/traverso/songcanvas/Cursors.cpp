@@ -273,7 +273,7 @@ void WorkCursor::paint( QPainter * painter, const QStyleOptionGraphicsItem * opt
 
 void WorkCursor::update_position()
 {
-	setPos(m_song->get_working_location() / m_sv->timeref_scalefactor, 1);
+	setPos(m_song->get_work_location() / m_sv->timeref_scalefactor, 1);
 }
 
 void WorkCursor::set_bounding_rect( QRectF rect )

@@ -50,8 +50,8 @@ public:
 	void calculate_bounding_rect();
 	void load_theme_data();
 	
-	void set_start_offset(nframes_t offset);
-	nframes_t get_start_offset() const {return m_startoffset;}
+	void set_start_offset(const TimeRef& offset);
+	const TimeRef& get_start_offset() const {return m_startoffset;}
 	
 
 protected:
@@ -67,7 +67,7 @@ private:
 	int		m_blinkDarkness;
 	int		m_blinkColorDirection;
 	QList<CurveNodeView*>	m_nodeViews;
-	nframes_t	m_startoffset;
+	TimeRef		m_startoffset;
 	
 	void update_softselected_node(QPoint pos, bool force = false);
 

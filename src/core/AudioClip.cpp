@@ -95,7 +95,7 @@ AudioClip::AudioClip(const QDomNode& node)
 	m_sourceStartLocation = TimeRef(e.attribute( "sourcestart", "" ).toLongLong(&ok));
 	
 	m_sourceEndLocation = m_sourceStartLocation + m_length;
-	set_track_start_frame( e.attribute( "trackstart", "" ).toUInt());
+	set_track_start_location( e.attribute( "trackstart", "" ).toLongLong(&ok));
 	m_domNode = node.cloneNode();
 	init();
 }
@@ -152,9 +152,8 @@ int AudioClip::set_state(const QDomNode& node)
 	bool ok;
 	m_sourceStartLocation = TimeRef(e.attribute( "sourcestart", "" ).toLongLong(&ok));
 	m_length = TimeRef(e.attribute( "length", "0" ).toLongLong(&ok));
-	
 	m_sourceEndLocation = m_sourceStartLocation + m_length;
-	set_track_start_frame(e.attribute( "trackstart", "" ).toLongLong(&ok));
+	set_track_start_location(e.attribute( "trackstart", "" ).toLongLong(&ok));
 	
 	emit stateChanged();
 	
@@ -343,12 +342,10 @@ void AudioClip::set_source_end_location(const TimeRef& location)
 	m_length = m_sourceEndLocation - m_sourceStartLocation;
 }
 
-void AudioClip::set_track_start_frame(nframes_t newTrackStartFrame)
+void AudioClip::set_track_start_location(const TimeRef& location)
 {
-	m_trackStartLocation = TimeRef(newTrackStartFrame, get_rate());
-
+	m_trackStartLocation = location;
 	set_track_end_location(m_trackStartLocation + m_length);
-
 	emit positionChanged(this);
 }
 
@@ -832,41 +829,20 @@ int AudioClip::get_rate( ) const
 	return audiodevice().get_sample_rate();
 }
 
-nframes_t AudioClip::get_source_length( ) const
+TimeRef& AudioClip::get_source_length( ) const
 {
-	return m_sourceLength.to_frame(get_rate());
+	return m_sourceLength;
 }
 
-nframes_t AudioClip::get_length() const
+TimeRef& AudioClip::get_length() const
 {
-	return m_length.to_frame(get_rate());
+	return m_length;
 }
 
 int AudioClip::recording_state( ) const
 {
 	return m_recordingStatus;
 }
-
-nframes_t AudioClip::get_source_end_frame( ) const
-{
-	return m_sourceEndLocation.to_frame(get_rate());
-}
-
-nframes_t AudioClip::get_source_start_frame( ) const
-{
-	return m_sourceStartLocation.to_frame(get_rate());
-}
-
-nframes_t AudioClip::get_track_end_frame( ) const
-{
-	return m_trackEndLocation.to_frame(get_rate());
-}
-
-nframes_t AudioClip::get_track_start_frame( ) const
-{
-	return m_trackStartLocation.to_frame(get_rate());
-}
-
 
 Command * AudioClip::clip_fade_in( )
 {

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveClip.h,v 1.20 2007/06/04 15:51:03 r_sijrier Exp $
+    $Id: MoveClip.h,v 1.21 2007/09/10 18:42:13 r_sijrier Exp $
 */
 
 #ifndef MOVECLIPACTION_H
@@ -56,9 +56,9 @@ public :
 private :
 	Song* 		m_song;
 	AudioClip* 	m_clip;
-        nframes_t 	m_originalTrackFirstFrame;
-        nframes_t 	m_posDiff;
-        nframes_t 	m_oldOppositeEdge;
+        TimeRef 	m_originalTrackStartLocation;
+        TimeRef 	m_posDiff;
+        TimeRef 	m_oldOppositeEdge;
         Track* 		m_originTrack;
         Track* 		m_targetTrack;
 	QString		m_actionType;
@@ -66,14 +66,14 @@ private :
 	struct Data {
 		int 		origXPos;
 		int 		hScrollbarValue;
-		int 		xoffset;
+		TimeRef		xoffset;
 		AudioClip* 	newclip;
 		SongView* 	sv;
 		AudioClipView*	view;
 		TrackView*	origTrackView;
 		QPoint		origPos;
-		nframes_t	origTrackStartFrame;
-		nframes_t	origTrackEndFrame;
+		TimeRef 	origTrackStartLocation;
+		TimeRef 	origTrackEndLocation;
 		bool 		resync;
 		bool		bypassjog;
 		QPoint		jogBypassPos;
@@ -83,7 +83,7 @@ private :
 	Data* d;
 
 	void init_data(bool isCopy=false);
-	void calculate_snap_diff(nframes_t& leftframe, nframes_t rightframe);
+	void calculate_snap_diff(TimeRef& leftlocation, TimeRef rightlocation);
 
 	
 public slots:

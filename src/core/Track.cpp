@@ -187,24 +187,24 @@ int Track::set_state( const QDomNode & node )
 }
 
 
-AudioClip* Track::get_clip_after(nframes_t framePos)
+AudioClip* Track::get_clip_after(const TimeRef& pos)
 {
 	AudioClip* clip;
 	for (int i=0; i < audioClipList.size(); ++i) {
 		clip = audioClipList.at(i);
-		if (clip->get_track_start_frame() > framePos)
+		if (clip->get_track_start_location() > pos)
 			return clip;
 	}
 	return (AudioClip*) 0;
 }
 
 
-AudioClip* Track::get_clip_before(nframes_t framePos)
+AudioClip* Track::get_clip_before(const TimeRef& pos)
 {
 	AudioClip* clip;
 	for (int i=0; i < audioClipList.size(); ++i) {
 		clip = audioClipList.at(i);
-		if (clip->get_track_start_frame() < framePos)
+		if (clip->get_track_start_location() < pos)
 			return clip;
 	}
 	return (AudioClip*) 0;
@@ -318,7 +318,7 @@ AudioClip* Track::init_recording()
 	AudioClip* clip = resources_manager()->new_audio_clip(name);
 	clip->set_song(m_song);
 	clip->set_track(this);
-	clip->set_track_start_frame(m_song->get_transport_frame());
+	clip->set_track_start_location(m_song->get_transport_location());
 	
 	if (clip->init_recording(busIn) < 0) {
 		PERROR("Could not create AudioClip to record to!");
@@ -498,13 +498,13 @@ void Track::set_name( const QString & name )
 	emit stateChanged();
 }
 
-void Track::get_render_range(nframes_t& startframe, nframes_t& endframe )
+void Track::get_render_range(TimeRef& startlocation, TimeRef& endlocation )
 {
 	if (audioClipList.size() == 0)
 		return;
 		
-	endframe = 0;
-	startframe = INT_MAX;
+	endlocation = 0;
+	startlocation = LONG_LONG_MAX;
 	
 	AudioClip* clip;
 	
@@ -512,12 +512,12 @@ void Track::get_render_range(nframes_t& startframe, nframes_t& endframe )
 		clip = audioClipList.at( i );
 		
 		if (! clip->is_muted() ) {
-			if (clip->get_track_end_frame() > endframe) {
-				endframe = clip->get_track_end_frame();
+			if (clip->get_track_end_location() > endlocation) {
+				endlocation = clip->get_track_end_location();
 			}
 			
-			if (clip->get_track_start_frame() < startframe) {
-				startframe = clip->get_track_start_frame();
+			if (clip->get_track_start_location() < startlocation) {
+				startlocation = clip->get_track_start_location();
 			}
 		}
 	}

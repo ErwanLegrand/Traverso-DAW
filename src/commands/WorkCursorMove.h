@@ -46,7 +46,7 @@ private :
 	Song*		m_song;
 	SongView*	m_sv;
 	PlayHead*	m_playCursor;
-	nframes_t	m_origPos;
+	TimeRef		m_origPos;
 };
 
 #endif

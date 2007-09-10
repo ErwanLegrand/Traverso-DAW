@@ -331,7 +331,7 @@ void ExternalProcessingDialog::process_finished(int exitcode, QProcess::ExitStat
 	// Clips live at project level, we have to set its Song, Track and ReadSource explicitely!!
 	m_acep->m_resultingclip->set_song(m_acep->m_clip->get_song());
 	m_acep->m_resultingclip->set_track(m_acep->m_clip->get_track());
-	m_acep->m_resultingclip->set_track_start_frame(m_acep->m_clip->get_track_start_frame());
+	m_acep->m_resultingclip->set_track_start_location(m_acep->m_clip->get_track_start_location());
 	
 	close();
 }

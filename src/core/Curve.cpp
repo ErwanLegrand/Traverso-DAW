@@ -295,7 +295,7 @@ void Curve::solve ()
 				double slope_before = ((x[i+1] - x[i]) / (y[i+1] - y[i]));
 				double slope_after = (xdelta / ydelta);
 
-				if (slope_after * slope_before < 0.0) {
+				if ((slope_after * slope_before) < 0.0) {
 					/* slope m_changed sign */
 					fpi = 0.0;
 				} else {
@@ -305,12 +305,9 @@ void Curve::solve ()
 			}
 
 			/* compute second derivative for either side of control point `i' */
-			
-			fppL = (((-2 * (fpi + (2 * fplast))) / (xdelta))) +
-				((6 * ydelta) / xdelta2);
-			
-			fppR = (2 * ((2 * fpi) + fplast) / xdelta) -
-				((6 * ydelta) / xdelta2);
+			double fractal = ((6 * ydelta) / xdelta2); // anyone knows a better name for it?
+			fppL = (((-2 * (fpi + (2 * fplast))) / (xdelta))) + fractal;
+			fppR = (2 * ((2 * fpi) + fplast) / xdelta) - fractal;
 			
 			/* compute polynomial coefficients */
 

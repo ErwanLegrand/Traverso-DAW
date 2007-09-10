@@ -41,8 +41,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <AddRemove.h>
 #include <CommandGroup.h>
 #include <InputEngine.h>
-#include <QFont>
+#include "AudioDevice.h"
 
+#include <QFont>
 #include <QDebug>
 
 // Always put me below _all_ includes, this is needed
@@ -174,7 +175,7 @@ int DragMarker::jog()
 	}
 	
 	d->jogBypassPos = cpointer().x();
-	long newpos = (uint) (cpointer().scene_x() * d->scalefactor);
+	TimeRef newpos = (cpointer().scene_x() * d->scalefactor * 882);
 
 	if (m_marker->get_timeline()->get_song()->is_snap_on()) {
 		SnapList* slist = m_marker->get_timeline()->get_song()->get_snap_list();
@@ -185,7 +186,7 @@ int DragMarker::jog()
 		newpos = 0;
 	}
 	
-	m_newWhen = newpos;
+	m_newWhen = newpos / 882;
 	d->view->set_position(int(m_newWhen / d->scalefactor));
 	
 	d->view->get_songview()->update_shuttle_factor();
@@ -207,7 +208,6 @@ TimeLineView::TimeLineView(SongView* view)
 	m_sv = view;
 	m_boundingRect = QRectF(0, 0, MAX_CANVAS_WIDTH, TIMELINE_HEIGHT);
 	m_timeline = m_sv->get_song()->get_timeline();
-	m_samplerate = pm().get_project()->get_rate();
 	
 #if QT_VERSION < 0x040300
 	view->scene()->addItem(this);
@@ -225,26 +225,26 @@ TimeLineView::TimeLineView(SongView* view)
 
 	setAcceptsHoverEvents(true);
 
-	m_zooms[524288] = "20:00.000";
-	m_zooms[262144] = "10:00.000";
-	m_zooms[131072] = "5:00.000";
-	m_zooms[ 65536] = "2:30.000";
-	m_zooms[ 32768] = "1:00.000";
-	m_zooms[ 16384] = "0:30.000";
-	m_zooms[  8192] = "0:20.000";
-	m_zooms[  4096] = "0:10.000";
-	m_zooms[  2048] = "0:05.000";
-	m_zooms[  1024] = "0:02.000";
-	m_zooms[   512] = "0:01.000";
-	m_zooms[   256] = "0:00.800";
-	m_zooms[   128] = "0:00.400";
-	m_zooms[    64] = "0:00.200";
-	m_zooms[    32] = "0:00.100";
-	m_zooms[    16] = "0:00.050";
-	m_zooms[     8] = "0:00.020";
-	m_zooms[     4] = "0:00.010";
-	m_zooms[     2] = "0:00.005";
-	m_zooms[     1] = "0:00.002";
+	m_zooms[524288 * 882] = "20:00.000";
+	m_zooms[262144 * 882] = "10:00.000";
+	m_zooms[131072 * 882] = "5:00.000";
+	m_zooms[ 65536 * 882] = "2:30.000";
+	m_zooms[ 32768 * 882] = "1:00.000";
+	m_zooms[ 16384 * 882] = "0:30.000";
+	m_zooms[  8192 * 882] = "0:20.000";
+	m_zooms[  4096 * 882] = "0:10.000";
+	m_zooms[  2048 * 882] = "0:05.000";
+	m_zooms[  1024 * 882] = "0:02.000";
+	m_zooms[   512 * 882] = "0:01.000";
+	m_zooms[   256 * 882] = "0:00.800";
+	m_zooms[   128 * 882] = "0:00.400";
+	m_zooms[    64 * 882] = "0:00.200";
+	m_zooms[    32 * 882] = "0:00.100";
+	m_zooms[    16 * 882] = "0:00.050";
+	m_zooms[     8 * 882] = "0:00.020";
+	m_zooms[     4 * 882] = "0:00.010";
+	m_zooms[     2 * 882] = "0:00.005";
+	m_zooms[     1 * 882] = "0:00.002";
 }
 
 
@@ -287,36 +287,37 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 	painter->setPen(themer()->get_color("Timeline:text"));
 	painter->setFont( themer()->get_font("Timeline:fontscale:label") );
 	
-	nframes_t major;
+	TimeRef major;
 	
-	if (m_zooms.contains(m_sv->scalefactor)) {
-		major = msms_to_frame(m_zooms[m_sv->scalefactor], m_samplerate);
+	if (m_zooms.contains(m_sv->timeref_scalefactor)) {
+		major = msms_to_timeref(m_zooms[m_sv->timeref_scalefactor]);
 	} else {
-		major = 120 * m_sv->scalefactor;
+		major = 120 * m_sv->timeref_scalefactor;
 	}
 
 	// minor is double so they line up right with the majors,
 	// despite not always being an even number of frames
 	double minor = major/10.0;
 
-	nframes_t firstFrame = xstart * m_sv->scalefactor;
-	nframes_t lastFrame = xstart * m_sv->scalefactor + pixelcount * m_sv->scalefactor;
+	TimeRef firstLocation = xstart * m_sv->timeref_scalefactor;
+	TimeRef lastLocation = xstart * m_sv->timeref_scalefactor + pixelcount * m_sv->timeref_scalefactor;
 	int xstartoffset = m_sv->hscrollbar_value();
 	
 	painter->setMatrixEnabled(false);
 
+	TimeRef firstlocactiondividedbymajorsquare = firstLocation/major*major;
 	// Draw minor ticks
-	for (int i = 0; i < (lastFrame-firstFrame+major) / minor; i++ ) {
-		int x = (int)(((int)(firstFrame/major))*major + i * minor)/m_sv->scalefactor  - xstartoffset;
+	for (qint64 i = 0; i < (lastLocation-firstLocation+major) / minor; i++ ) {
+		int x = (int)((firstlocactiondividedbymajorsquare + i * minor) / m_sv->timeref_scalefactor) - xstartoffset;
 		painter->drawLine(x, height - 5, x, height - 1);
 	}
 	
 	// Draw major ticks
-	for (nframes_t frame = ((int)(firstFrame/major))*major; frame < lastFrame; frame += major ) {
-		int x = frame/m_sv->scalefactor - xstartoffset;
+	for (TimeRef location = firstlocactiondividedbymajorsquare; location < lastLocation; location += major) {
+		int x = location/m_sv->timeref_scalefactor - xstartoffset;
 		painter->drawLine(x, height - 13, x, height - 1);
 		if (paintText) {
-			painter->drawText(x + 4, height - 8, frame_to_text(frame, m_samplerate, m_sv->scalefactor));
+			painter->drawText(x + 4, height - 8, timeref_to_text(location, m_sv->timeref_scalefactor));
 		}
 	}
 	
@@ -358,14 +359,15 @@ Command* TimeLineView::add_marker()
 {
 	QPointF point = mapFromScene(cpointer().scene_pos());
 	
-	nframes_t when = (uint) (point.x() * m_sv->scalefactor);
+	nframes_t when = (uint) (point.x() * m_sv->timeref_scalefactor);
 	
 	return add_marker_at(when);
 }
 
 Command* TimeLineView::add_marker_at_playhead()
 {
-	nframes_t when = m_sv->get_song()->get_transport_frame();
+	TimeRef location = m_sv->get_song()->get_transport_location();
+	nframes_t when = location.to_frame(audiodevice().get_sample_rate());
 	
 	return add_marker_at(when);
 }
@@ -382,8 +384,9 @@ Command* TimeLineView::add_marker_at(nframes_t when)
 			group->add_command(m_timeline->add_marker(m));
 		}
 
-		if (when < m_sv->get_song()->get_last_frame()) {  // add one at the end of the song
-			Marker* me = new Marker(m_timeline, m_sv->get_song()->get_last_frame(), Marker::ENDMARKER);
+		TimeRef lastlocation = m_sv->get_song()->get_last_location();
+		if (when < lastlocation.to_frame(audiodevice().get_sample_rate())) {  // add one at the end of the song
+			Marker* me = new Marker(m_timeline, lastlocation.to_frame(audiodevice().get_sample_rate()), Marker::ENDMARKER);
 			me->set_description(tr("End"));
 			group->add_command(m_timeline->add_marker(me));
 		}
@@ -403,7 +406,7 @@ Command* TimeLineView::playhead_to_marker()
 	update_softselected_marker(QPoint(cpointer().on_first_input_event_scene_x(), cpointer().on_first_input_event_scene_y()));
 
 	if (m_blinkingMarker) {
-		m_sv->get_song()->set_transport_pos(m_blinkingMarker->get_marker()->get_when());
+		m_sv->get_song()->set_transport_pos(m_blinkingMarker->get_marker()->get_when() * 882);
 		return 0;
 	}
 
@@ -500,7 +503,7 @@ Command * TimeLineView::drag_marker()
 	update_softselected_marker(QPoint(cpointer().on_first_input_event_scene_x(), cpointer().on_first_input_event_scene_y()));
 
 	if (m_blinkingMarker) {
-		return new DragMarker(m_blinkingMarker, m_sv->scalefactor, tr("Drag Marker"));
+		return new DragMarker(m_blinkingMarker, m_sv->timeref_scalefactor, tr("Drag Marker"));
 	}
 	
 	return ie().did_not_implement();

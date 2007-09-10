@@ -119,6 +119,22 @@ struct TimeRef {
 		return (qreal)left.m_position / right;
 	}
 	
+	friend TimeRef operator/(const TimeRef& left, const TimeRef& right) {
+		Q_ASSERT(right.m_position != 0);
+		TimeRef location(left.m_position / right.m_position);
+		return location;
+	}
+	
+	friend TimeRef operator*(const qint64 left, TimeRef& right) {
+		TimeRef location(left * right.m_position);
+		return location;
+	}
+	
+	friend TimeRef operator*(const TimeRef& left, TimeRef& right) {
+		TimeRef location(left.m_position * right.m_position);
+		return location;
+	}
+	
 	friend int operator<(const TimeRef& left, const TimeRef& right) {
 		return left.m_position < right.m_position;
 	}
@@ -169,8 +185,8 @@ typedef double trav_time_t;
 typedef unsigned long          channel_t;
 
 typedef float audio_sample_t;
-//typedef unsigned char peak_data_t;
-typedef short peak_data_t;
+typedef unsigned char peak_data_t;
+// typedef short peak_data_t;
 
 
 typedef FastDelegate1<nframes_t, int> ProcessCallback;

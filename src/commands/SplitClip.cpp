@@ -49,11 +49,11 @@ SplitClip::SplitClip(AudioClipView* view)
 
 int SplitClip::prepare_actions()
 {
-	if (! m_splitPoint) {
-		m_splitPoint = cpointer().scene_x() * m_sv->scalefactor;
+	if (m_splitPoint == 0) {
+		m_splitPoint = TimeRef(cpointer().scene_x() * m_sv->timeref_scalefactor);
 	}
 
-	if (m_splitPoint <= m_clip->get_track_start_frame() || m_splitPoint >= m_clip->get_track_start_frame() + m_clip->get_length()) {
+	if (m_splitPoint <= m_clip->get_track_start_location() || m_splitPoint >= m_clip->get_track_start_location() + m_clip->get_length()) {
 		return -1;
 	}
 
@@ -61,7 +61,7 @@ int SplitClip::prepare_actions()
 	rightClip = resources_manager()->get_clip(m_clip->get_id());
 	
 	leftClip->set_song(m_clip->get_song());
-	leftClip->set_track_start_frame( m_clip->get_track_start_frame() );
+	leftClip->set_track_start_location(m_clip->get_track_start_location());
 	leftClip->set_right_edge(m_splitPoint);
 	if (leftClip->get_fade_out()) {
 		FadeRange* cmd = (FadeRange*)leftClip->reset_fade_out();
@@ -71,7 +71,7 @@ int SplitClip::prepare_actions()
 	
 	rightClip->set_song(m_clip->get_song());
 	rightClip->set_left_edge(m_splitPoint);
-	rightClip->set_track_start_frame(m_splitPoint);
+	rightClip->set_track_start_location(m_splitPoint);
 	if (rightClip->get_fade_in()) {
 		FadeRange* cmd = (FadeRange*)rightClip->reset_fade_in();
 		cmd->set_historable(false);
@@ -145,14 +145,14 @@ int SplitClip::jog()
 		x = 0;
 	}
 
-	m_splitPoint = x * m_sv->scalefactor;
+	m_splitPoint = x * m_sv->timeref_scalefactor;
 
 	if (m_clip->get_song()->is_snap_on()) {
 		SnapList* slist = m_clip->get_song()->get_snap_list();
 		m_splitPoint = slist->get_snap_value(m_splitPoint);
 	}
 	
-	QPointF point = m_cv->mapFromScene(m_splitPoint / m_sv->scalefactor, cpointer().y());
+	QPointF point = m_cv->mapFromScene(m_splitPoint / m_sv->timeref_scalefactor, cpointer().y());
 	int xpos = (int) point.x();
 	if (xpos < 0) {
 		xpos = 0;
@@ -162,7 +162,7 @@ int SplitClip::jog()
 	}
 	m_splitcursor->setPos(xpos, 0);
 	m_sv->update_shuttle_factor();
-	cpointer().get_viewport()->set_holdcursor_text(frame_to_text(m_splitPoint, m_clip->get_song()->get_rate(), m_sv->scalefactor));
+	cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(m_splitPoint, m_sv->timeref_scalefactor));
 	cpointer().get_viewport()->set_holdcursor_pos(QPoint(cpointer().scene_x() - 16, cpointer().scene_y() - 16));
 	
 	return 1;

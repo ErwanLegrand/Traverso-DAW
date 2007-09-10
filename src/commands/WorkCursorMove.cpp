@@ -56,7 +56,7 @@ int WorkCursorMove::begin_hold()
 	}
 	m_song->get_work_snap()->set_snappable(false);
 	m_sv->start_shuttle(true, true);
-	m_origPos = m_song->get_working_frame();
+	m_origPos = m_song->get_work_location();
 	return 1;
 }
 
@@ -82,17 +82,17 @@ int WorkCursorMove::jog()
 		x = 0;
 	}
 
-	nframes_t newFrame = x * m_sv->scalefactor;
+	TimeRef newLocation = x * m_sv->timeref_scalefactor;
 
 	if (m_song->is_snap_on()) {
 		SnapList* slist = m_song->get_snap_list();
-		newFrame = slist->get_snap_value(newFrame);
+		newLocation = slist->get_snap_value(newLocation);
 	}
 
-	m_song->set_work_at(newFrame);
+	m_song->set_work_at(newLocation);
 
 	m_sv->update_shuttle_factor();
-	cpointer().get_viewport()->set_holdcursor_text(frame_to_text(newFrame, m_song->get_rate(), m_sv->scalefactor));
+	cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(newLocation, m_sv->timeref_scalefactor));
 	// Hmm, the alignment of the holdcursor isn't in the center, so we have to 
 	// substract half the width of it to make it appear centered... :-(
 	cpointer().get_viewport()->set_holdcursor_pos(QPoint(cpointer().scene_x() - 16, cpointer().scene_y() - 16));

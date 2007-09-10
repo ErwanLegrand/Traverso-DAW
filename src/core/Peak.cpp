@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "Peak.h"
 
-#include "AbstractAudioReader.h"
+#include "PeakDataReader.h"
 #include "ResampleAudioReader.h"
 #include "ReadSource.h"
 #include "ResourcesManager.h"
@@ -146,8 +146,7 @@ int Peak::read_header()
 	fread(&m_data.normValuesDataOffset, sizeof(m_data.normValuesDataOffset), 1, m_file);
 	fread(&m_data.peakDataOffset, sizeof(m_data.peakDataOffset), 1, m_file);
 	
-	m_peakreader = new ResampleAudioReader(m_fileName, 4, "peak");
-	((ResampleAudioReader*)m_peakreader)->set_output_rate(32000);
+	m_peakreader = new PeakDataReader(m_fileName);
 	m_peakdataDecodeBuffer = new DecodeBuffer;
 
 	peaksAvailable = true;
@@ -247,13 +246,8 @@ int Peak::calculate_peaks(float** buffer, int zoomLevel, nframes_t startPos, int
 			pixelcount = m_data.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR] - offset;
 		}
 		
-/*		// Seek to the correct position in the buffer on hard disk
-		fseek(m_file, m_data.peakDataLevelOffsets[zoomLevel - SAVING_ZOOM_FACTOR] + offset, SEEK_SET);
-		
-		// Read in the pixelcount of peakdata
-		int read = fread(buffer, sizeof(peak_data_t), pixelcount, m_file);*/
-		
-		int read = m_peakreader->read_from(m_peakdataDecodeBuffer, (nframes_t)(m_data.peakDataLevelOffsets[zoomLevel - SAVING_ZOOM_FACTOR] + offset)*sizeof(peak_data_t), (nframes_t)pixelcount);
+		nframes_t readposition = m_data.peakDataLevelOffsets[zoomLevel - SAVING_ZOOM_FACTOR] + offset;
+		int read = m_peakreader->read_from(m_peakdataDecodeBuffer, readposition, pixelcount);
 		
 		if (read != pixelcount) {
 			PERROR("Could not read in all peak data, pixelcount is %d, read count is %d", pixelcount, read);
