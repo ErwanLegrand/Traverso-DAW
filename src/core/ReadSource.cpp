@@ -311,7 +311,7 @@ void ReadSource::set_audio_clip( AudioClip * clip )
 
 const nframes_t ReadSource::get_nframes( ) const
 {
-	return m_length.to_frame(m_rate);
+	return m_audioReader->get_nframes();
 }
 
 int ReadSource::set_file(const QString & filename)
