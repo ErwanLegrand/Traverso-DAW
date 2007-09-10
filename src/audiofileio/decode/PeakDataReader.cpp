@@ -42,9 +42,8 @@ PeakDataReader::PeakDataReader(QString filename)
 	
 	fseek (m_file, 0, SEEK_END);
 	m_channels = 1;
-	m_length = ftell (m_file);
+	m_nframes = ftell (m_file);
 	m_rate = 44100;
-	
 }
 
 
@@ -68,7 +67,7 @@ bool PeakDataReader::seek_private(nframes_t start)
 	Q_ASSERT(m_file);
 	
 	
-	if (start >= m_length) {
+	if (start >= m_nframes) {
 		return false;
 	}
 	

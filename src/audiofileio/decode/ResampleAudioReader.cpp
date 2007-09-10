@@ -42,7 +42,9 @@ ResampleAudioReader::ResampleAudioReader(QString filename, int converter_type, c
 	
 	m_channels = m_reader->get_num_channels();
 	m_rate = m_reader->get_file_rate();
+	m_nframes = m_reader->get_nframes();
 	m_length = m_reader->get_length();
+
 	m_outputRate = m_rate;
 	
 	m_overflowBuffers = 0;
@@ -145,7 +147,7 @@ void ResampleAudioReader::set_output_rate(int rate)
 		return;
 	}
 	m_outputRate = rate;
-	m_length = file_to_song_frame(m_reader->get_length());
+	m_nframes = file_to_song_frame(m_reader->get_nframes());
 }
 
 
@@ -216,8 +218,8 @@ nframes_t ResampleAudioReader::read_private(DecodeBuffer* buffer, nframes_t fram
 	}
 	
 	nframes_t framesToConvert = frameCount;
-	if (frameCount > m_length - m_readPos) {
-		framesToConvert = m_length - m_readPos;
+	if (frameCount > m_nframes - m_readPos) {
+		framesToConvert = m_nframes - m_readPos;
 	}
 	
 	for (int chan = 0; chan < m_channels; chan++) {
@@ -248,8 +250,8 @@ nframes_t ResampleAudioReader::read_private(DecodeBuffer* buffer, nframes_t fram
 	}
 	
 	// Pad end of file with 0s if necessary
-	if (framesRead == 0 && m_readPos < get_length()) {
-		int padLength = get_length() - m_readPos;
+	if (framesRead == 0 && m_readPos < get_nframes()) {
+		int padLength = get_nframes() - m_readPos;
 		printf("Resampler: padding: %d\n", padLength);
 		for (int chan = 0; chan < m_channels; chan++) {
 			memset(buffer->destination[chan] + framesRead, 0, padLength * sizeof(audio_sample_t));
@@ -258,12 +260,12 @@ nframes_t ResampleAudioReader::read_private(DecodeBuffer* buffer, nframes_t fram
 	}
 	
 	// Truncate so we don't return too many samples
-	if (m_readPos + framesRead > get_length()) {
-		printf("Resampler: truncating: %d\n", framesRead - (get_length() - m_readPos));
-		framesRead = get_length() - m_readPos;
+	if (m_readPos + framesRead > get_nframes()) {
+		printf("Resampler: truncating: %d\n", framesRead - (get_nframes() - m_readPos));
+		framesRead = get_nframes() - m_readPos;
 	}
 	
-	//printf("framesRead: %lu of %lu (overflow: %lu) (at: %lu of %lu)\n", framesRead, frameCount, m_overflowUsed, m_readPos + framesRead, get_length());
+	//printf("framesRead: %lu of %lu (overflow: %lu) (at: %lu of %lu)\n", framesRead, frameCount, m_overflowUsed, m_readPos + framesRead, get_nframes());
 	
 	return framesRead;
 }

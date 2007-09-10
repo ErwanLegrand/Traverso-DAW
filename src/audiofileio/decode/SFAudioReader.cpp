@@ -43,9 +43,9 @@ SFAudioReader::SFAudioReader(QString filename)
 	}
  
 	m_channels = m_sfinfo.channels;
-	m_length = m_sfinfo.frames;
+	m_nframes = m_sfinfo.frames;
 	m_rate = m_sfinfo.samplerate;
-	
+	m_length = TimeRef(m_nframes, m_rate);
 }
 
 
@@ -87,7 +87,7 @@ bool SFAudioReader::seek_private(nframes_t start)
 	Q_ASSERT(m_sf);
 	
 	
-	if (start >= m_length) {
+	if (start >= m_nframes) {
 		return false;
 	}
 	

@@ -45,8 +45,9 @@ WPAudioReader::WPAudioReader(QString filename)
 	m_bitsPerSample = WavpackGetBitsPerSample(m_wp);
 	m_bytesPerSample = WavpackGetBytesPerSample(m_wp);
 	m_channels = WavpackGetReducedChannels(m_wp);
-	m_length = WavpackGetNumSamples(m_wp);
+	m_nframes = WavpackGetNumSamples(m_wp);
 	m_rate = WavpackGetSampleRate(m_wp);
+	m_length = TimeRef(m_nframes, m_rate);
 }
 
 
@@ -83,7 +84,7 @@ bool WPAudioReader::seek_private(nframes_t start)
 	Q_ASSERT(m_wp);
 	
 	
-	if (start >= m_length) {
+	if (start >= m_nframes) {
 		return false;
 	}
 	

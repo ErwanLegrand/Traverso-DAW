@@ -54,8 +54,9 @@ VorbisAudioReader::VorbisAudioReader(QString filename)
 	m_vi = ov_info(&m_vf,-1);
 	
 	m_channels = m_vi->channels;
-	m_length = ov_pcm_total(&m_vf, -1);
+	m_nframes = ov_pcm_total(&m_vf, -1);
 	m_rate = m_vi->rate;
+	m_length = TimeRef(m_nframes, m_rate);
 }
 
 
@@ -96,7 +97,7 @@ bool VorbisAudioReader::seek_private(nframes_t start)
 {
 	Q_ASSERT(m_file);
 	
-	if (start >= m_length) {
+	if (start >= m_nframes) {
 		return false;
 	}
 	

@@ -38,7 +38,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 AbstractAudioReader::AbstractAudioReader(const QString& filename)
 {
 	m_fileName = filename;
-	m_readPos = m_channels = m_length = 0;
+	m_readPos = m_channels = m_nframes = 0;
+	m_length = 0;
 }
 
 
@@ -67,12 +68,6 @@ int AbstractAudioReader::get_num_channels()
 }
 
 
-nframes_t AbstractAudioReader::get_length()
-{
-	return m_length;
-}
-
-
 int AbstractAudioReader::get_file_rate()
 {
 	return m_rate;
@@ -81,7 +76,7 @@ int AbstractAudioReader::get_file_rate()
 
 bool AbstractAudioReader::eof()
 {
-	return (m_readPos >= m_length);
+	return (m_readPos >= m_nframes);
 }
 
 
@@ -106,7 +101,7 @@ bool AbstractAudioReader::seek(nframes_t start)
 
 nframes_t AbstractAudioReader::read(DecodeBuffer* buffer, nframes_t count)
 {
-	if (count && m_readPos < m_length) {
+	if (count && m_readPos < m_nframes) {
 		
 		// Make sure the read buffer is big enough for this read
 		buffer->check_buffers_capacity(count, m_channels); 

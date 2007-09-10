@@ -390,8 +390,9 @@ FlacAudioReader::FlacAudioReader(QString filename)
 	
 	if (m_flac->is_valid()) {
 		m_channels = m_flac->m_channels;
-		m_length = m_flac->m_samples;
+		m_nframes = m_flac->m_samples;
 		m_rate = m_flac->m_rate;
+		m_length = TimeRef(m_nframes, m_rate);
 	}
 }
 

@@ -518,7 +518,7 @@ MadAudioReader::MadAudioReader(QString filename)
 			m_channels = 2;
 	}
 	
-	m_length = countFrames();
+	m_nframes = countFrames();
 	
 	if (m_length <= 0) {
 		d->handle->cleanup();
@@ -529,6 +529,8 @@ MadAudioReader::MadAudioReader(QString filename)
 	}
 	
 	m_rate = d->firstHeader.samplerate;
+	m_length = TimeRef(m_nframes, m_rate);
+
 	
 	d->overflowBuffers = 0;
 	
@@ -654,7 +656,7 @@ bool MadAudioReader::seek_private(nframes_t start)
 {
 	Q_ASSERT(d);
 	
-	if (start >= m_length) {
+	if (start >= m_nframes) {
 		return false;
 	}
 	
@@ -866,10 +868,10 @@ nframes_t MadAudioReader::read_private(DecodeBuffer* buffer, nframes_t frameCoun
 	
 	// Pad end with zeros if necessary
 	// FIXME: This shouldn't be necessary!  :P
-	// is m_length reporting incorrectly?
+	// is m_nframes reporting incorrectly?
 	// are we not outputting the last mp3-frame for some reason?
 	/*int remainingFramesRequested = frameCount - framesWritten;
-	int remainingFramesInFile = m_length - (m_readPos + framesWritten);
+	int remainingFramesInFile = m_nframes - (m_readPos + framesWritten);
 	if (remainingFramesRequested > 0 && remainingFramesInFile > 0) {
 		int padLength = (remainingFramesRequested > remainingFramesInFile) ? remainingFramesInFile : remainingFramesRequested;
 		for (int c = 0; c < m_channels; c++) {
@@ -880,9 +882,9 @@ nframes_t MadAudioReader::read_private(DecodeBuffer* buffer, nframes_t frameCoun
 	}
 
 	// Truncate so we don't return too many frames
-	if (framesWritten + m_readPos > m_length) {
+	if (framesWritten + m_readPos > m_nframes) {
 		printf("truncating by %d!\n", m_length - (framesWritten + m_readPos));
-		framesWritten = m_length - m_readPos;
+		framesWritten = m_nframes - m_readPos;
 	}*/
 	
 	//printf("request: %d (returned: %d), now at: %lu (total: %lu)\n", frameCount, framesWritten, m_readPos + framesWritten, m_length);
@@ -903,9 +905,9 @@ bool MadAudioReader::createPcmSamples(mad_synth* synth)
 		create_buffers();
 	}
 	
-	if (writeBuffers && (m_readPos + d->outputPos + nframes) > m_length) {
-		nframes = m_length - (m_readPos + offset);
-		//printf("!!!nframes: %lu, length: %lu, current: %lu\n", nframes, m_length, d->outputPos + m_readPos);
+	if (writeBuffers && (m_readPos + d->outputPos + nframes) > m_nframes) {
+		nframes = m_nframes - (m_readPos + offset);
+		//printf("!!!nframes: %lu, length: %lu, current: %lu\n", nframes, m_nframes, d->outputPos + m_readPos);
 	}
 	
 	// now create the output

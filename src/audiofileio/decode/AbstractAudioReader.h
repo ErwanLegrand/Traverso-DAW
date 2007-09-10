@@ -125,7 +125,8 @@ public:
 	virtual ~AbstractAudioReader();
 	
 	int get_num_channels();
-	nframes_t get_length();
+	const TimeRef& get_length() const {return m_length;}
+	nframes_t get_nframes() const {return m_nframes;}
 	int get_file_rate();
 	bool eof();
 	nframes_t pos();
@@ -139,7 +140,7 @@ public:
 	bool seek(nframes_t start);
 	nframes_t read(DecodeBuffer* buffer, nframes_t frameCount);
 	
-	bool is_valid() {return (m_channels > 0 && m_length > 0);}
+	bool is_valid() {return (m_channels > 0 && m_nframes > 0);}
 	virtual QString decoder_type() const = 0;
 	virtual void clear_buffers() {}
 	
@@ -153,7 +154,8 @@ protected:
 
 	nframes_t	m_readPos;
 	int		m_channels;
-	nframes_t	m_length;
+	TimeRef		m_length;
+	nframes_t	m_nframes;
 	int		m_rate;
 };
 

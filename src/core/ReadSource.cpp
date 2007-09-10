@@ -257,7 +257,7 @@ int ReadSource::init( )
 	}
 
 	m_rate = m_audioReader->get_file_rate();
-	m_length = TimeRef(m_audioReader->get_length(), m_rate);
+	m_length = m_audioReader->get_length();
 	
 	m_bufferstatus = new BufferStatus;
 	
