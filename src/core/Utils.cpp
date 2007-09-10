@@ -272,7 +272,7 @@ QString timeref_to_ms_3(const TimeRef& ref)
 
 QString timeref_to_text(const TimeRef & ref, int scalefactor)
 {
-	if (scalefactor >= 512*882) {
+	if (scalefactor >= 512*640) {
 		return timeref_to_ms_2(ref);
 	} else {
 		return timeref_to_ms_3(ref);

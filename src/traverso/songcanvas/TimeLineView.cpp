@@ -175,7 +175,7 @@ int DragMarker::jog()
 	}
 	
 	d->jogBypassPos = cpointer().x();
-	TimeRef newpos = (cpointer().scene_x() * d->scalefactor * 882);
+	TimeRef newpos = (cpointer().scene_x() * d->scalefactor * 640);
 
 	if (m_marker->get_timeline()->get_song()->is_snap_on()) {
 		SnapList* slist = m_marker->get_timeline()->get_song()->get_snap_list();
@@ -186,7 +186,7 @@ int DragMarker::jog()
 		newpos = 0;
 	}
 	
-	m_newWhen = newpos / 882;
+	m_newWhen = newpos / 640;
 	d->view->set_position(int(m_newWhen / d->scalefactor));
 	
 	d->view->get_songview()->update_shuttle_factor();
@@ -225,26 +225,26 @@ TimeLineView::TimeLineView(SongView* view)
 
 	setAcceptsHoverEvents(true);
 
-	m_zooms[524288 * 882] = "20:00.000";
-	m_zooms[262144 * 882] = "10:00.000";
-	m_zooms[131072 * 882] = "5:00.000";
-	m_zooms[ 65536 * 882] = "2:30.000";
-	m_zooms[ 32768 * 882] = "1:00.000";
-	m_zooms[ 16384 * 882] = "0:30.000";
-	m_zooms[  8192 * 882] = "0:20.000";
-	m_zooms[  4096 * 882] = "0:10.000";
-	m_zooms[  2048 * 882] = "0:05.000";
-	m_zooms[  1024 * 882] = "0:02.000";
-	m_zooms[   512 * 882] = "0:01.000";
-	m_zooms[   256 * 882] = "0:00.800";
-	m_zooms[   128 * 882] = "0:00.400";
-	m_zooms[    64 * 882] = "0:00.200";
-	m_zooms[    32 * 882] = "0:00.100";
-	m_zooms[    16 * 882] = "0:00.050";
-	m_zooms[     8 * 882] = "0:00.020";
-	m_zooms[     4 * 882] = "0:00.010";
-	m_zooms[     2 * 882] = "0:00.005";
-	m_zooms[     1 * 882] = "0:00.002";
+	m_zooms[524288 * 640] = "20:00.000";
+	m_zooms[262144 * 640] = "10:00.000";
+	m_zooms[131072 * 640] = "5:00.000";
+	m_zooms[ 65536 * 640] = "2:30.000";
+	m_zooms[ 32768 * 640] = "1:00.000";
+	m_zooms[ 16384 * 640] = "0:30.000";
+	m_zooms[  8192 * 640] = "0:20.000";
+	m_zooms[  4096 * 640] = "0:10.000";
+	m_zooms[  2048 * 640] = "0:05.000";
+	m_zooms[  1024 * 640] = "0:02.000";
+	m_zooms[   512 * 640] = "0:01.000";
+	m_zooms[   256 * 640] = "0:00.800";
+	m_zooms[   128 * 640] = "0:00.400";
+	m_zooms[    64 * 640] = "0:00.200";
+	m_zooms[    32 * 640] = "0:00.100";
+	m_zooms[    16 * 640] = "0:00.050";
+	m_zooms[     8 * 640] = "0:00.020";
+	m_zooms[     4 * 640] = "0:00.010";
+	m_zooms[     2 * 640] = "0:00.005";
+	m_zooms[     1 * 640] = "0:00.002";
 }
 
 
@@ -406,7 +406,7 @@ Command* TimeLineView::playhead_to_marker()
 	update_softselected_marker(QPoint(cpointer().on_first_input_event_scene_x(), cpointer().on_first_input_event_scene_y()));
 
 	if (m_blinkingMarker) {
-		m_sv->get_song()->set_transport_pos(m_blinkingMarker->get_marker()->get_when() * 882);
+		m_sv->get_song()->set_transport_pos(m_blinkingMarker->get_marker()->get_when() * 640);
 		return 0;
 	}
 

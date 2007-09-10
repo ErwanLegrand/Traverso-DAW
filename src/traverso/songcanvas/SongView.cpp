@@ -105,7 +105,7 @@ SongView::SongView(SongWidget* songwidget,
 	
 	
 	scalefactor = Peak::zoomStep[m_song->get_hzoom()];
-	timeref_scalefactor = scalefactor * 882;
+	timeref_scalefactor = scalefactor * 640;
 	
 	song_mode_changed();
 	
@@ -165,7 +165,7 @@ SongView::~SongView()
 void SongView::scale_factor_changed( )
 {
 	scalefactor = Peak::zoomStep[m_song->get_hzoom()];
-	timeref_scalefactor = scalefactor * 882;
+	timeref_scalefactor = scalefactor * 640;
 	m_tlvp->scale_factor_changed();
 	layout_tracks();
 }
