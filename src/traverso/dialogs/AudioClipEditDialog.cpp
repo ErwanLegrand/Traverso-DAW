@@ -426,16 +426,15 @@ TimeRef AudioClipEditWidget::qtime_to_timeref(const QTime & time)
 
 QTime AudioClipEditWidget::timeref_to_qtime(TimeRef& ref)
 {
-	long unsigned int remainder;
+	qint64 remainder;
 	int hours, mins, secs, msec;
 
 	qint64 universalframe = ref.universal_frame();
 	
-	remainder = universalframe;
-	hours = remainder / (3600 * UNIVERSAL_SAMPLE_RATE);
-	remainder -= ( hours * 3600 * UNIVERSAL_SAMPLE_RATE );
+	hours = universalframe / (3600 * UNIVERSAL_SAMPLE_RATE);
+	remainder = universalframe - (hours * 3600 * UNIVERSAL_SAMPLE_RATE);
 	mins = remainder / ( 60 * UNIVERSAL_SAMPLE_RATE );
-	remainder -= ( mins * 60 * UNIVERSAL_SAMPLE_RATE );
+	remainder = remainder - (mins * 60 * UNIVERSAL_SAMPLE_RATE );
 	secs = remainder / UNIVERSAL_SAMPLE_RATE;
 	remainder -= secs * UNIVERSAL_SAMPLE_RATE;
 	msec = remainder * 1000 / UNIVERSAL_SAMPLE_RATE;
