@@ -420,7 +420,7 @@ void AudioClipEditWidget::fadeout_default()
 
 TimeRef AudioClipEditWidget::qtime_to_timeref(const QTime & time)
 {
-	TimeRef ref(time.hour() * 3600 * UNIVERSAL_SAMPLE_RATE + time.minute() * 60 * UNIVERSAL_SAMPLE_RATE + time.second() * UNIVERSAL_SAMPLE_RATE + (time.msec() * UNIVERSAL_SAMPLE_RATE) / 1000);
+	TimeRef ref(time.hour() * ONE_HOUR_UNIVERSAL_SAMPLE_RATE + time.minute() * ONE_MINUTE_UNIVERSAL_SAMPLE_RATE + time.second() * UNIVERSAL_SAMPLE_RATE + (time.msec() * UNIVERSAL_SAMPLE_RATE) / 1000);
 	return ref;
 }
 
@@ -431,10 +431,10 @@ QTime AudioClipEditWidget::timeref_to_qtime(TimeRef& ref)
 
 	qint64 universalframe = ref.universal_frame();
 	
-	hours = universalframe / (3600 * UNIVERSAL_SAMPLE_RATE);
-	remainder = universalframe - (hours * 3600 * UNIVERSAL_SAMPLE_RATE);
-	mins = remainder / ( 60 * UNIVERSAL_SAMPLE_RATE );
-	remainder = remainder - (mins * 60 * UNIVERSAL_SAMPLE_RATE );
+	hours = universalframe / (ONE_HOUR_UNIVERSAL_SAMPLE_RATE);
+	remainder = universalframe - (hours * ONE_HOUR_UNIVERSAL_SAMPLE_RATE);
+	mins = remainder / ( ONE_MINUTE_UNIVERSAL_SAMPLE_RATE );
+	remainder = remainder - (mins * ONE_MINUTE_UNIVERSAL_SAMPLE_RATE );
 	secs = remainder / UNIVERSAL_SAMPLE_RATE;
 	remainder -= secs * UNIVERSAL_SAMPLE_RATE;
 	msec = remainder * 1000 / UNIVERSAL_SAMPLE_RATE;

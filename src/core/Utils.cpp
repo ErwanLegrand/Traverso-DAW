@@ -151,7 +151,7 @@ TimeRef msms_to_timeref(QString str)
 	TimeRef out = 0;
 	QStringList lst = str.simplified().split(QRegExp("[;,.:]"), QString::SkipEmptyParts);
 
-	if (lst.size() >= 1) out += lst.at(0).toInt() * 60 * UNIVERSAL_SAMPLE_RATE;
+	if (lst.size() >= 1) out += lst.at(0).toInt() * ONE_MINUTE_UNIVERSAL_SAMPLE_RATE;
 	if (lst.size() >= 2) out += lst.at(1).toInt() * UNIVERSAL_SAMPLE_RATE;
 	if (lst.size() >= 3) out += lst.at(2).toInt() * UNIVERSAL_SAMPLE_RATE / 1000;
 
@@ -225,8 +225,8 @@ QString timeref_to_ms(const TimeRef& ref)
 
 	qint64 universalframe = ref.universal_frame();
 	
-	mins = (int) (universalframe / ( 60 * UNIVERSAL_SAMPLE_RATE ));
-	remainder = (long unsigned int) (universalframe - (mins * 60 * UNIVERSAL_SAMPLE_RATE));
+	mins = (int) (universalframe / ( ONE_MINUTE_UNIVERSAL_SAMPLE_RATE ));
+	remainder = (long unsigned int) (universalframe - (mins * ONE_MINUTE_UNIVERSAL_SAMPLE_RATE));
 	secs = (int) (remainder / UNIVERSAL_SAMPLE_RATE);
 	return QString().sprintf("%02d:%02d", mins, secs);
 }
@@ -240,8 +240,8 @@ QString timeref_to_ms_2 (const TimeRef& ref)
 	
 	qint64 universalframe = ref.universal_frame();
 
-	mins = universalframe / ( 60 * UNIVERSAL_SAMPLE_RATE );
-	remainder = universalframe - ( mins * 60 * UNIVERSAL_SAMPLE_RATE );
+	mins = universalframe / ( ONE_MINUTE_UNIVERSAL_SAMPLE_RATE );
+	remainder = universalframe - ( mins * ONE_MINUTE_UNIVERSAL_SAMPLE_RATE );
 	secs = remainder / UNIVERSAL_SAMPLE_RATE;
 	remainder -= secs * UNIVERSAL_SAMPLE_RATE;
 	frames = remainder * 100 / UNIVERSAL_SAMPLE_RATE;
@@ -259,8 +259,8 @@ QString timeref_to_ms_3(const TimeRef& ref)
 	
 	qint64 universalframe = ref.universal_frame();
 
-	mins = universalframe / ( 60 * UNIVERSAL_SAMPLE_RATE );
-	remainder = universalframe - ( mins * 60 * UNIVERSAL_SAMPLE_RATE );
+	mins = universalframe / ( ONE_MINUTE_UNIVERSAL_SAMPLE_RATE );
+	remainder = universalframe - ( mins * ONE_MINUTE_UNIVERSAL_SAMPLE_RATE );
 	secs = remainder / UNIVERSAL_SAMPLE_RATE;
 	remainder -= secs * UNIVERSAL_SAMPLE_RATE;
 	frames = remainder * 1000 / UNIVERSAL_SAMPLE_RATE;

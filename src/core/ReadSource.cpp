@@ -311,6 +311,7 @@ void ReadSource::set_audio_clip( AudioClip * clip )
 
 const nframes_t ReadSource::get_nframes( ) const
 {
+	Q_ASSERT(m_audioReader);
 	return m_audioReader->get_nframes();
 }
 

@@ -51,6 +51,8 @@ enum {
 
 // Universal samplerate for the frequences 22050, 32000, 44100, 88200, 96000 and 192000 Hz
 static const qint64 UNIVERSAL_SAMPLE_RATE = 28224000;
+static const qint64 ONE_HOUR_UNIVERSAL_SAMPLE_RATE = 101606400000LL;
+static const qint64 ONE_MINUTE_UNIVERSAL_SAMPLE_RATE = 1693440000LL;
 
 struct TimeRef {
 	

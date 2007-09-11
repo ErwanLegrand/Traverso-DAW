@@ -470,7 +470,7 @@ void SourceTreeItem::source_state_changed()
 	
 	int rate = m_source->get_rate();
 	if (rate == 0) rate = pm().get_project()->get_rate();
-	QString duration = frame_to_ms(m_source->get_nframes(), rate);
+	QString duration = timeref_to_ms(m_source->get_length());
 	setText(0, m_source->get_short_name());
 	setText(1, duration);
 	setText(2, "");

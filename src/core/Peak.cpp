@@ -549,7 +549,7 @@ int Peak::create_from_scratch()
 
 	int p = 0;
 
-	if (m_source->get_nframes() == 0) {
+	if (m_source->get_length() == 0) {
 		qWarning("Peak::create_from_scratch() : m_source (%s) has length 0", m_source->get_name().toAscii().data());
 		return ret;
 	}
