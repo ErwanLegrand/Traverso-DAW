@@ -268,9 +268,9 @@ int Peak::calculate_peaks(float** buffer, int zoomLevel, nframes_t startPos, int
 		
 	// Micro view mode
 	} else {
+		// Calculate the amount of frames to be read
 		nframes_t toRead = pixelcount * zoomStep[zoomLevel];
 		
-		// Maybe they can be created on the stack for better performance ?
 		nframes_t readFrames = m_source->file_read(m_peakdataDecodeBuffer, startPos, toRead);
 
 		if (readFrames == 0) {
@@ -285,14 +285,17 @@ int Peak::calculate_peaks(float** buffer, int zoomLevel, nframes_t startPos, int
 		int count = 0;
 		nframes_t pos = 0;
 		audio_sample_t valueMax, valueMin, sample;
-		short* writeBuffer = (short*)buffer;
+		
+		// MicroView needs a buffer to store the calculated peakdata
+		// our decodebuffer's readbuffer is large enough for this purpose
+		// and it's no problem to use it at this point in the process chain.
+		float* peakdata = m_peakdataDecodeBuffer->readBuffer;
 
 		do {
 			valueMax = valueMin = 0;
 
 			for(int i=0; i < zoomStep[zoomLevel]; i++) {
-				if (pos > readFrames)
-					break;
+				Q_ASSERT(pos <= readFrames);
 				sample = m_peakdataDecodeBuffer->destination[m_channel][pos];
 				if (sample > valueMax)
 					valueMax = sample;
@@ -301,10 +304,10 @@ int Peak::calculate_peaks(float** buffer, int zoomLevel, nframes_t startPos, int
 				pos++;
 			}
 
-			if (valueMax > (valueMin * -1)) {
-				writeBuffer[count] = (short)(valueMax * MAX_DB_VALUE);
+			if (valueMax > abs(valueMin)) {
+				peakdata[count] = valueMax;
 			} else {
-				writeBuffer[count] = (short)(valueMin * MAX_DB_VALUE);
+				peakdata[count] = valueMin;
 			}
 			
 			count++;
@@ -316,6 +319,9 @@ int Peak::calculate_peaks(float** buffer, int zoomLevel, nframes_t startPos, int
 		int processtime = (int) (get_microseconds() - starttime);
 		printf("Process time: %d useconds\n\n", processtime);
 #endif
+		
+		// Assign the supplied buffer to the 'real' peakdata buffer.
+		*buffer = peakdata;
 		
 		return count;
 	}

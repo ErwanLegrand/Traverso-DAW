@@ -211,12 +211,12 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	
 	// Paint a pixmap if the clip is locked
 	if (m_clip->is_locked()) {
-		int center = m_clip->get_length() / (2 * m_sv->timeref_scalefactor);
+		int center = (int)(m_clip->get_length() / (2 * m_sv->timeref_scalefactor));
 		painter->drawPixmap(center - 8, m_height - 20, find_pixmap(":/lock"));
 	}
 
 	if (m_dragging) {
-		m_posIndicator->set_value(timeref_to_text(x() * m_sv->timeref_scalefactor, m_sv->timeref_scalefactor));
+		m_posIndicator->set_value(timeref_to_text((qint64)(x() * m_sv->timeref_scalefactor), m_sv->timeref_scalefactor));
 	}
 	
 	painter->restore();
@@ -301,7 +301,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	}
 	
 	int mixcurvedata = 0;
-	int offset = m_clip->get_source_start_location() / m_sv->timeref_scalefactor;
+	int offset = (int)(m_clip->get_source_start_location() / m_sv->timeref_scalefactor);
 	mixcurvedata |= curveView->get_vector(xstart + offset, pixelcount, curvemixdown);
 	
 	float fademixdown[pixelcount];
@@ -390,7 +390,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		}
 	
 		
-		float scaleFactor = ( (float) height * 0.90 / (Peak::MAX_DB_VALUE * 2)) * m_clip->get_gain();
+		float scaleFactor = ( (float) height * 0.90 / 2) * m_clip->get_gain();
 		float ytrans;
 		
 		if (m_mergedView) {
@@ -422,8 +422,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		// Microview, paint waveform as polyline
 		if (microView) {
 		
-			QPolygon polygon;
-			short* mbuffer = (short*) buffers[chan];
+			QPolygonF polygon;
 			int bufferPos = 0;
 			
 			if (m_mergedView) {
@@ -443,7 +442,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			p->drawLine(xstart, 0, xstart + pixelcount, 0);
 			
 			for (int x = xstart; x < (pixelcount+xstart); x++) {
-				polygon.append( QPoint(x, (int) (scaleFactor * mbuffer[bufferPos++])) );
+				polygon.append( QPointF(x, scaleFactor * buffers[chan][bufferPos++]) );
 			}
 			
 			if (themer()->get_property("AudioClip:wavemicroview:antialiased", 0).toInt()) {
@@ -468,6 +467,8 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				p->setPen(themer()->get_color("AudioClip:wavemacroview:outline:muted"));
 			}
 				
+			
+			scaleFactor = ( (float) height * 0.90 / (Peak::MAX_DB_VALUE * 2)) * m_clip->get_gain();
 			
 			QPainterPath path;
 			// in rectified view, we add an additional point, hence + 1
