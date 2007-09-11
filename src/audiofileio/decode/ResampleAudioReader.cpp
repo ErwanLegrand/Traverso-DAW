@@ -147,7 +147,7 @@ void ResampleAudioReader::set_output_rate(int rate)
 		return;
 	}
 	m_outputRate = rate;
-	m_nframes = file_to_song_frame(m_reader->get_nframes());
+	m_nframes = file_to_resampled_frame(m_reader->get_nframes());
 }
 
 
@@ -163,7 +163,7 @@ bool ResampleAudioReader::seek_private(nframes_t start)
 	
 	reset();
 	
-	return m_reader->seek(song_to_file_frame(start));
+	return m_reader->seek(resampled_to_file_frame(start));
 }
 
 
@@ -183,7 +183,7 @@ nframes_t ResampleAudioReader::read_private(DecodeBuffer* buffer, nframes_t fram
 	nframes_t bufferUsed;
 	nframes_t framesRead;
 	
-	nframes_t fileCnt = song_to_file_frame(frameCount);
+	nframes_t fileCnt = resampled_to_file_frame(frameCount);
 	
 	if (frameCount && !fileCnt) {
 		fileCnt = 1;
@@ -271,7 +271,7 @@ nframes_t ResampleAudioReader::read_private(DecodeBuffer* buffer, nframes_t fram
 }
 
 
-nframes_t ResampleAudioReader::song_to_file_frame(nframes_t frame)
+nframes_t ResampleAudioReader::resampled_to_file_frame(nframes_t frame)
 {
 	Q_ASSERT(m_reader);
 	
@@ -285,7 +285,7 @@ nframes_t ResampleAudioReader::song_to_file_frame(nframes_t frame)
 }
 
 
-nframes_t ResampleAudioReader::file_to_song_frame(nframes_t frame)
+nframes_t ResampleAudioReader::file_to_resampled_frame(nframes_t frame)
 {
 	Q_ASSERT(m_reader);
 	
