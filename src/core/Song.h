@@ -42,6 +42,7 @@ class SnapList;
 class Plugin;
 class TimeLine;
 class Snappable;
+class DecodeBuffer;
 
 struct ExportSpecification;
 
@@ -145,6 +146,7 @@ public:
 	audio_sample_t* 	mixdown;
 	audio_sample_t*		readbuffer;
 	audio_sample_t*		gainbuffer;
+	DecodeBuffer*		renderDecodeBuffer;
 	
 #if defined (THREAD_CHECK)
 	unsigned long	threadId;

@@ -304,7 +304,7 @@ int Peak::calculate_peaks(float** buffer, int zoomLevel, nframes_t startPos, int
 				pos++;
 			}
 
-			if (valueMax > abs(valueMin)) {
+			if (valueMax > fabs(valueMin)) {
 				peakdata[count] = valueMax;
 			} else {
 				peakdata[count] = valueMin;

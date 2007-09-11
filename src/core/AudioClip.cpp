@@ -450,16 +450,17 @@ int AudioClip::process(nframes_t nframes)
 	if (m_song->realtime_path()) {
 		read_frames = m_readSource->rb_read(mixdown, mix_pos, nframes);
 	} else {
-		DecodeBuffer buffer;
-		read_frames = m_readSource->file_read(&buffer, mix_pos, nframes);
+		m_song->renderDecodeBuffer->destination = mixdown;
+		read_frames = m_readSource->file_read(m_song->renderDecodeBuffer, mix_pos, nframes);
 	}
 	
 	if (read_frames <= 0) {
 		return 0;
 	}
+	
 
 	for (int chan=0; chan<bus->get_channel_count(); ++chan) {
-
+		
 		for (int i=0; i<m_fades.size(); ++i) {
 			m_fades.at(i)->process(mixdown[chan], read_frames);
 		}

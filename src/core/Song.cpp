@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <libtraverso.h>
 #include <commands.h>
 
+#include "AbstractAudioReader.h"
 #include <Client.h>
 #include "ProjectManager.h"
 #include "ContextPointer.h"
@@ -347,7 +348,7 @@ int Song::prepare_export(ExportSpecification* spec)
 		m_rendering = true;
 	}
 
-	spec->start_frame = INT_MAX;
+	spec->start_frame = UINT_MAX;
 	spec->end_frame = 0;
 
 	TimeRef endlocation, startlocation;
@@ -420,10 +421,12 @@ int Song::prepare_export(ExportSpecification* spec)
 		m_exportSource = new WriteSource(spec);
 	}
 
-// 	m_transportFrame = spec->start_frame;
-	m_transportLocation.set_position(spec->start_frame, spec->sample_rate);
+	m_transportLocation.set_position(spec->start_frame, devicerate);
 	
 	resize_buffer(false, spec->blocksize);
+	
+	renderDecodeBuffer = new DecodeBuffer;
+	renderDecodeBuffer->check_buffers_capacity(spec->blocksize, spec->channels);
 
 	return 1;
 }
@@ -432,6 +435,7 @@ int Song::finish_audio_export()
 {
 	m_exportSource->finish_export();
 	delete m_exportSource;
+	delete renderDecodeBuffer;
 	resize_buffer(false, audiodevice().get_buffer_size());
 	return 0;
 }
