@@ -118,7 +118,7 @@ public:
 	void process(audio_sample_t* buffer, nframes_t frames);
 	int prepare_processing();
 	int finish_processing();
-	int calculate_peaks(float** buffer, int zoomLevel, nframes_t startPos, int count);
+	int calculate_peaks(float** buffer, int zoomLevel, nframes_t startPos, int count, qreal& xscale);
 
 	void close();
 	

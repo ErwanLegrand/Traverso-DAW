@@ -211,9 +211,13 @@ nearest_power_of_two(unsigned long val)
 }
 
 
-int Peak::calculate_peaks(float** buffer, int zoomLevel, nframes_t startPos, int pixelcount )
+int Peak::calculate_peaks(float** buffer, int zoomLevel, nframes_t startPos, int pixelcount, qreal& xscale)
 {
 	PENTER3;
+	
+	// TODO determine the real xscale value
+	xscale = 1.0;
+	
 	if (permanentFailure) {
 		return PERMANENT_FAILURE;
 	}
