@@ -104,7 +104,7 @@ nframes_t AbstractAudioReader::read(DecodeBuffer* buffer, nframes_t count)
 	if (count && m_readPos < m_nframes) {
 		
 		// Make sure the read buffer is big enough for this read
-		buffer->check_buffers_capacity(count, m_channels); 
+		buffer->check_buffers_capacity(count, m_channels);
 		
 		// printf("read_from:: after_seek from %d, framepos is %d\n", start, m_readPos);
 		nframes_t framesRead = read_private(buffer, count);

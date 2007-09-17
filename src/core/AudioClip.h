@@ -84,7 +84,7 @@ public:
 	AudioClip* create_copy();
 	Track* get_track() const;
 	Song* get_song() const;
-	Peak* get_peak_for_channel(int chan) const;
+	Peak* get_peak() const {return m_peak;}
 	QDomNode get_state(QDomDocument doc);
 	FadeCurve* get_fade_in() const;
 	FadeCurve* get_fade_out() const;
@@ -130,7 +130,7 @@ private:
 	ReadSource*		m_readSource;
 	WriteSource*		m_recorder;
 	QList<FadeCurve* >	m_fades;
-	QList<Peak* >		m_peaks;
+	Peak* 			m_peak;
 	AudioBus*		m_captureBus;
 	FadeCurve*		fadeIn;
 	FadeCurve*		fadeOut;

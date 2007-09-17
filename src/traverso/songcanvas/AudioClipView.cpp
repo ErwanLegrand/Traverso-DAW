@@ -69,7 +69,7 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	create_clipinfo_string();
 
 	m_waitingForPeaks = false;
-	m_progress = m_peakloadingcount = 0;
+	m_progress = 0;
 	m_posIndicator = 0;
 	m_song = m_clip->get_song();
 	
@@ -258,19 +258,21 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	float pixeldata[channels][buffersize];
 	float curvemixdown[buffersize];
 	
+	Peak* peak = m_clip->get_peak();
+	if (!peak) {
+		PERROR("No Peak object available for clip %s", QS_C(m_clip->get_name()));
+		return;
+	}
+	
 	// Load peak data for all channels, if no peakdata is returned
 	// for a certain Peak object, schedule it for loading.
-	for (int chan=0; chan < channels; chan++) {
+	for (int chan=0; chan < channels; ++chan) {
 // 		memset(buffers[chan], 0, buffersize * sizeof(peak_data_t));
 		
 		TimeRef clipstartoffset = m_clip->get_source_start_location();
 		
-		Peak* peak = m_clip->get_peak_for_channel(chan);
-		if (!peak) {
-			PERROR("No Peak object available for clip %s channel %d", QS_C(m_clip->get_name()), chan);
-			return;
-		}
-		int availpeaks = peak->calculate_peaks( &buffers[chan],
+		int availpeaks = peak->calculate_peaks( chan,
+							&buffers[chan],
 							microView ? m_song->get_hzoom() : m_song->get_hzoom() + 1,
 							(xstart * m_sv->scalefactor) + clipstartoffset.to_frame(audiodevice().get_sample_rate()),
 							microView ? peakdatacount : peakdatacount / 2);
@@ -280,9 +282,11 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		}
 
 		if (availpeaks == Peak::NO_PEAK_FILE) {
-			m_peakloadinglist.append(peak);
+			connect(peak, SIGNAL(progress(int)), this, SLOT(update_progress_info(int)));
+			connect(peak, SIGNAL(finished()), this, SLOT (peak_creation_finished()));
 			m_waitingForPeaks = true;
-			m_peakloadingcount++;
+			peak->start_peak_loading();
+			return;
 		}
 		
 		if (availpeaks == Peak::PERMANENT_FAILURE || availpeaks == Peak::NO_PEAKDATA_FOUND) {
@@ -290,11 +294,6 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		}		
 	}
 	
-	
-	if (m_waitingForPeaks) {
-		start_peak_data_loading();
-		return;
-	}
 	
 	int mixcurvedata = 0;
 	int offset = (int)(m_clip->get_source_start_location() / m_sv->timeref_scalefactor);
@@ -695,24 +694,16 @@ void AudioClipView::create_clipinfo_string()
 
 void AudioClipView::update_progress_info( int progress )
 {
-	PENTER4;
-	float prev = m_progress;
-	m_progress +=  ((float)progress / m_peakloadingcount);
-	
-	if ((int)m_progress > (int)prev) {
-		update(10, 0, 150, m_height);
-	}
+// 	if (progress > m_progress) {
+// 	}
+	m_progress = progress;
+	update(10, 0, 150, m_height);
 }
 
-void AudioClipView::peaks_creation_finished(Peak* peak)
+void AudioClipView::peak_creation_finished()
 {
-	m_peakloadinglist.removeAll(peak);
-	if (m_peakloadinglist.size() > 0) {
-		start_peak_data_loading();
-	} else {
-		m_waitingForPeaks = false;
-		update();
-	}
+	m_waitingForPeaks = false;
+	update();
 }
 
 AudioClip * AudioClipView::get_clip( )
@@ -829,16 +820,6 @@ void AudioClipView::load_theme_data()
 	calculate_bounding_rect();
 }
 
-
-void AudioClipView::start_peak_data_loading()
-{
-	Peak* peak = m_peakloadinglist.first();
-	
-	connect(peak, SIGNAL(progress(int)), this, SLOT(update_progress_info(int)));
-	connect(peak, SIGNAL(finished(Peak*)), this, SLOT (peaks_creation_finished(Peak*)));
-	
-	peak->start_peak_loading();
-}
 
 void AudioClipView::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {

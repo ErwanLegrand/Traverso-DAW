@@ -76,7 +76,6 @@ private:
 	AudioClip* 	m_clip;
 	Song*		m_song;
 	CurveView* 	curveView;
-	QList<Peak*> 	m_peakloadinglist;
 	PositionIndicator* m_posIndicator;
 
 	QTimer m_recordingTimer;
@@ -121,7 +120,6 @@ private:
 
 	void draw_clipinfo_area(QPainter* painter, int xstart, int pixelcount);
 	void draw_peaks(QPainter* painter, int xstart, int pixelcount);
-	void start_peak_data_loading();
 	void create_brushes();
 
 	friend class FadeView;
@@ -142,7 +140,7 @@ public slots:
 	
 private slots:
 	void update_progress_info(int progress);
-	void peaks_creation_finished(Peak* peak);
+	void peak_creation_finished();
 	void start_recording();
 	void finish_recording();
 	void update_recording();

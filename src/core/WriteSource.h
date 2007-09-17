@@ -62,7 +62,7 @@ public :
 private:
 	AbstractAudioWriter*	m_writer;
 	ExportSpecification*	m_spec;
-	QList<Peak*>		m_peaks;
+	Peak*			m_peak;
 	
 	DiskIO*		m_diskio;
 	GDither         m_dither;

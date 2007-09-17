@@ -42,14 +42,15 @@ WriteSource::WriteSource( ExportSpecification* specification )
 {
 	m_diskio = 0;
 	m_writer = 0;
+	m_peak = 0;
 	prepare_export();
 }
 
 WriteSource::~WriteSource()
 {
 	PENTERDES;
-	foreach(Peak* peak, m_peaks) {
-		delete peak;
+	if (m_peak) {
+		delete m_peak;
 	}
 	
 	for(int i=0; i<m_buffers.size(); ++i) {
@@ -348,10 +349,8 @@ int WriteSource::finish_export( )
 		m_src_state = 0;
 	}
 
-	foreach(Peak* peak, m_peaks) {
-		if (peak->finish_processing() < 0) {
-			PERROR("WriteSource::finish_export : peak->finish_processing() failed!");
-		}
+	if (m_peak->finish_processing() < 0) {
+		PERROR("WriteSource::finish_export : peak->finish_processing() failed!");
 	}
 		
 	if (m_diskio) {
@@ -385,20 +384,17 @@ void WriteSource::set_process_peaks( bool process )
 		return;
 	}
 	
-	Q_ASSERT(m_peaks.isEmpty());
+	Q_ASSERT(!m_peak);
 	
-	for (int chan=0; chan < m_channelCount; ++chan) {
-		Peak* peak = new Peak(this, chan);
-	
-		if (peak->prepare_processing() < 0) {
-			PERROR("Cannot process peaks realtime");
-			m_processPeaks = false;
-			delete peak;
-			
-			return;
-		}
+	m_peak = new Peak(this);
+
+	if (m_peak->prepare_processing() < 0) {
+		PERROR("Cannot process peaks realtime");
+		m_processPeaks = false;
+		delete m_peak;
+		m_peak = 0;
 		
-		m_peaks.append(peak);
+		return;
 	}
 }
 
@@ -419,7 +415,7 @@ int WriteSource::rb_file_write(nframes_t cnt)
 			printf("WriteSource::rb_file_write() : could only process %d frames, %d were requested!\n", read, cnt);
 		}
 		
-		m_peaks.at(chan)->process(readbuffer[chan], read);
+		m_peak->process(chan, readbuffer[chan], read);
 	}
 
 	if (read > 0) {

@@ -107,8 +107,8 @@ AudioClip::~AudioClip()
 		m_song->get_diskio()->unregister_read_source(m_readSource);
 		delete m_readSource;
 	}
-	foreach(Peak* peak, m_peaks) {
-		peak->close();
+	if (m_peak) {
+		m_peak->close();
 	}
 }
 
@@ -117,6 +117,7 @@ void AudioClip::init()
 	m_song = 0;
 	m_track = 0;
 	m_readSource = 0;
+	m_peak = 0;
 	m_recordingStatus = NO_RECORDING;
 	m_isSelected = m_isReadSourceValid = false;
 	m_isLocked = config().get_property("AudioClip", "LockByDefault", false).toBool();
@@ -631,15 +632,6 @@ AudioClip* AudioClip::create_copy( )
 	return clip;
 }
 
-Peak* AudioClip::get_peak_for_channel( int chan ) const
-{
-	PENTER2;
-	if (chan >= m_peaks.size()) {
-		return 0;
-	}
-	return m_peaks.at(chan);
-}
-
 void AudioClip::set_audio_source(ReadSource* rs)
 {
 	PENTER;
@@ -676,16 +668,10 @@ void AudioClip::set_audio_source(ReadSource* rs)
 	
 	
 	if (m_recordingStatus == NO_RECORDING) {
-		
-		foreach(Peak* peak, m_peaks) {
-			peak->close();
+		if (m_peak) {
+			m_peak->close();
 		}
-	
-		m_peaks.clear();
-		
-		for (uint chan=0; chan<m_readSource->get_channel_count(); ++chan) {
-			m_peaks.append(new Peak(rs, chan));
-		}
+		m_peak = new Peak(rs);
 	}
 
 	emit stateChanged();
@@ -892,17 +878,15 @@ void AudioClip::calculate_normalization_factor(float targetdB)
 		target -= FLT_EPSILON;
 	}
 
-	for (uint i=0; i<m_readSource->get_channel_count(); ++i) {
-		double amp = get_peak_for_channel(i)->get_max_amplitude(m_sourceStartLocation.to_frame(get_rate()), m_sourceEndLocation.to_frame(get_rate()));
-		
-		if (amp == 0.0f) {
-			printf("AudioClip::normalization: max amplitude == 0\n");
-			/* don't even try */
-			return;
-		}
-		
-		maxamp = f_max(amp, maxamp);
+	double amp = m_peak->get_max_amplitude(m_sourceStartLocation.to_frame(get_rate()), m_sourceEndLocation.to_frame(get_rate()));
+	
+	if (amp == 0.0f) {
+		printf("AudioClip::normalization: max amplitude == 0\n");
+		/* don't even try */
+		return;
 	}
+	
+	maxamp = f_max(amp, maxamp);
 
 	if (maxamp == target) {
 		printf("AudioClip::normalization: max amplitude == target amplitude\n");

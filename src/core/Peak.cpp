@@ -52,26 +52,38 @@ const int Peak::MAX_ZOOM_USING_SOURCEFILE	= SAVING_ZOOM_FACTOR - 1;
 int Peak::zoomStep[] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096,
 				8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576};
 
-Peak::Peak(AudioSource* source, int channel)
-	: m_channel(channel)
+Peak::Peak(AudioSource* source)
 {
 	PENTERCONS;
+	
+	peaksAvailable = permanentFailure = interuptPeakBuild = false;
+	
+	QString sourcename = source->get_name();
+	QString path = pm().get_project()->get_root_dir() + "/peakfiles/";
+	
+	for (uint chan = 0; chan < source->get_channel_count(); ++ chan) {
+		ChannelData* data = new Peak::ChannelData;
+		
+		data->fileName = sourcename + "-ch" + QByteArray::number(chan) + ".peak";
+		data->fileName.prepend(path);
+		data->file = 0;
+		data->normFile = 0;
+		data->pd = 0;
+		
+		m_channelData.append(data);
+	}
 	
 	ReadSource* rs = qobject_cast<ReadSource*>(source);
 	
 	if (rs) {
+		// This Peak object was created by AudioClip, meant for reading peak data
 		m_source = resources_manager()->get_readsource(rs->get_id());
 		m_source->set_output_rate(44100);
 	} else {
+		// No ReadSource object? Then it's created by WriteSource for on the fly
+		// peak data creation, no m_source needed!
 		m_source = 0;
 	}
-	
-	m_fileName = source->get_name() + "-ch" + QByteArray::number(m_channel) + ".peak";
-	m_fileName.prepend(pm().get_project()->get_root_dir() + "/peakfiles/");
-	
-	peaksAvailable = permanentFailure = interuptPeakBuild = false;
-	m_file = m_normFile = 0;
-	m_pd = 0;
 }
 
 Peak::~Peak()
@@ -82,13 +94,17 @@ Peak::~Peak()
 		delete m_source;
 	}
 	
-	if (m_file) {
-		fclose(m_file);
-	}
-	
-	if (m_normFile) {
-		fclose(m_normFile);
-		QFile::remove(m_normFileName);
+	foreach(ChannelData* data, m_channelData) {
+		if (data->file) {
+			fclose(data->file);
+		}
+		
+		if (data->normFile) {
+			fclose(data->normFile);
+			QFile::remove(data->normFileName);
+		}
+		
+		delete data;
 	}
 }
 
@@ -103,52 +119,56 @@ int Peak::read_header()
 	
 	Q_ASSERT(m_source);
 	
-	m_file = fopen(m_fileName.toUtf8().data(),"rb");
-	
-	if (! m_file) {
-		PERROR("Couldn't open peak file for reading! (%s)", m_fileName.toAscii().data());
-		return -1;
-	}
-	
-	QFileInfo file(m_source->get_filename());
-	QFileInfo peakFile(m_fileName);
-	
-	QDateTime fileModTime = file.lastModified();
-	QDateTime peakModTime = peakFile.lastModified();
-	
-	if (fileModTime > peakModTime) {
-		PERROR("Source and Peak file modification time do not match");
-		printf("SourceFile modification time is %s\n", fileModTime.toString().toAscii().data());
-		printf("PeakFile modification time is %s\n", peakModTime.toString().toAscii().data());
-		return -1;
-	}
-	
-	
-	fseek(m_file, 0, SEEK_SET);
-
-	fread(m_data.label, sizeof(m_data.label), 1, m_file);
-	fread(m_data.version, sizeof(m_data.version), 1, m_file);
-
-	if ((m_data.label[0]!='T') ||
-		(m_data.label[1]!='R') ||
-		(m_data.label[2]!='A') ||
-		(m_data.label[3]!='V') ||
-		(m_data.label[4]!='P') ||
-		(m_data.label[5]!='F') ||
-		(m_data.version[0] != PEAKFILE_MAJOR_VERSION) ||
-		(m_data.version[1] != PEAKFILE_MINOR_VERSION)) {
-			printf("This file either isn't a Traverso Peak file, or the version doesn't match!\n");
-			fclose(m_file);
-			m_file = 0;
+	foreach(ChannelData* data, m_channelData) {
+		data->file = fopen(data->fileName.toUtf8().data(),"rb");
+		
+		if (! data->file) {
+			PERROR("Couldn't open peak file for reading! (%s)", data->fileName.toAscii().data());
 			return -1;
+		}
+		
+		QFileInfo file(m_source->get_filename());
+		QFileInfo peakFile(data->fileName);
+		
+		QDateTime fileModTime = file.lastModified();
+		QDateTime peakModTime = peakFile.lastModified();
+		
+		if (fileModTime > peakModTime) {
+			PERROR("Source and Peak file modification time do not match");
+			printf("SourceFile modification time is %s\n", fileModTime.toString().toAscii().data());
+			printf("PeakFile modification time is %s\n", peakModTime.toString().toAscii().data());
+			return -1;
+		}
+		
+		
+		fseek(data->file, 0, SEEK_SET);
+	
+		fread(data->headerdata.label, sizeof(data->headerdata.label), 1, data->file);
+		fread(data->headerdata.version, sizeof(data->headerdata.version), 1, data->file);
+	
+		if (	(data->headerdata.label[0]!='T') ||
+			(data->headerdata.label[1]!='R') ||
+			(data->headerdata.label[2]!='A') ||
+			(data->headerdata.label[3]!='V') ||
+			(data->headerdata.label[4]!='P') ||
+			(data->headerdata.label[5]!='F') ||
+			(data->headerdata.version[0] != PEAKFILE_MAJOR_VERSION) ||
+			(data->headerdata.version[1] != PEAKFILE_MINOR_VERSION)) {
+				printf("This file either isn't a Traverso Peak file, or the version doesn't match!\n");
+				fclose(data->file);
+				data->file = 0;
+				return -1;
+		}
+		
+		fread(data->headerdata.peakDataLevelOffsets, sizeof(data->headerdata.peakDataLevelOffsets), 1, data->file);
+		fread(data->headerdata.peakDataSizeForLevel, sizeof(data->headerdata.peakDataSizeForLevel), 1, data->file);
+		fread(&data->headerdata.normValuesDataOffset, sizeof(data->headerdata.normValuesDataOffset), 1, data->file);
+		fread(&data->headerdata.peakDataOffset, sizeof(data->headerdata.peakDataOffset), 1, data->file);
+		
+		data->peakreader = new PeakDataReader(data->fileName);
+		data->peakdataDecodeBuffer = new DecodeBuffer;
 	}
 	
-	fread(m_data.peakDataLevelOffsets, sizeof(m_data.peakDataLevelOffsets), 1, m_file);
-	fread(m_data.peakDataSizeForLevel, sizeof(m_data.peakDataSizeForLevel), 1, m_file);
-	fread(&m_data.normValuesDataOffset, sizeof(m_data.normValuesDataOffset), 1, m_file);
-	fread(&m_data.peakDataOffset, sizeof(m_data.peakDataOffset), 1, m_file);
-	
-	m_peakreader = new PeakDataReader(m_fileName);
 	m_peakdataDecodeBuffer = new DecodeBuffer;
 
 	peaksAvailable = true;
@@ -156,27 +176,27 @@ int Peak::read_header()
 	return 1;
 }
 
-int Peak::write_header()
+int Peak::write_header(ChannelData* data)
 {
 	PENTER;
 	
-	fseek (m_file, 0, SEEK_SET);
+	fseek (data->file, 0, SEEK_SET);
+
+	data->headerdata.label[0] = 'T';
+	data->headerdata.label[1] = 'R';
+	data->headerdata.label[2] = 'A';
+	data->headerdata.label[3] = 'V';
+	data->headerdata.label[4] = 'P';
+	data->headerdata.label[5] = 'F';
+	data->headerdata.version[0] = PEAKFILE_MAJOR_VERSION;
+	data->headerdata.version[1] = PEAKFILE_MINOR_VERSION;
 	
-	m_data.label[0] = 'T';
-	m_data.label[1] = 'R';
-	m_data.label[2] = 'A';
-	m_data.label[3] = 'V';
-	m_data.label[4] = 'P';
-	m_data.label[5] = 'F';
-	m_data.version[0] = PEAKFILE_MAJOR_VERSION;
-	m_data.version[1] = PEAKFILE_MINOR_VERSION;
-	
-	fwrite(m_data.label, sizeof(m_data.label), 1, m_file);
-	fwrite(m_data.version, sizeof(m_data.version), 1, m_file);
-	fwrite(m_data.peakDataLevelOffsets, sizeof(m_data.peakDataLevelOffsets), 1, m_file);
-	fwrite(m_data.peakDataSizeForLevel, sizeof(m_data.peakDataSizeForLevel), 1, m_file);
-	fwrite((void*) &m_data.normValuesDataOffset, sizeof(m_data.normValuesDataOffset), 1, m_file);
-	fwrite((void*) &m_data.peakDataOffset, sizeof(m_data.peakDataOffset), 1, m_file);
+	fwrite(data->headerdata.label, sizeof(data->headerdata.label), 1, data->file);
+	fwrite(data->headerdata.version, sizeof(data->headerdata.version), 1, data->file);
+	fwrite(data->headerdata.peakDataLevelOffsets, sizeof(data->headerdata.peakDataLevelOffsets), 1, data->file);
+	fwrite(data->headerdata.peakDataSizeForLevel, sizeof(data->headerdata.peakDataSizeForLevel), 1, data->file);
+	fwrite((void*) &data->headerdata.normValuesDataOffset, sizeof(data->headerdata.normValuesDataOffset), 1, data->file);
+	fwrite((void*) &data->headerdata.peakDataOffset, sizeof(data->headerdata.peakDataOffset), 1, data->file);
 	
 	return 1;
 }
@@ -213,7 +233,7 @@ nearest_power_of_two(unsigned long val)
 }
 
 
-int Peak::calculate_peaks(float** buffer, int zoomLevel, nframes_t startPos, int pixelcount)
+int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, nframes_t startPos, int pixelcount)
 {
 	PENTER3;
 	
@@ -231,6 +251,8 @@ int Peak::calculate_peaks(float** buffer, int zoomLevel, nframes_t startPos, int
 		return 1;
 	}
 	
+	ChannelData* data = m_channelData.at(chan);
+	
 // #define profile
 
 #if defined (profile)
@@ -243,14 +265,14 @@ int Peak::calculate_peaks(float** buffer, int zoomLevel, nframes_t startPos, int
 		int offset = (startPos / zoomStep[zoomLevel]) * 2;
 		
 		// Check if this zoom level has as many data as requested.
-		if ( (pixelcount + offset) > m_data.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR]) {
+		if ( (pixelcount + offset) > data->headerdata.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR]) {
 			// YES we know that sometimes we ommit the very last 'pixel' to avoid painting artifacts...
-//  			PERROR("pixelcount exceeds available data size! (pixelcount is: %d, available is %d", pixelcount, m_data.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR] - offset); 
-			pixelcount = m_data.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR] - offset;
+//  			PERROR("pixelcount exceeds available data size! (pixelcount is: %d, available is %d", pixelcount, data->headerdata.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR] - offset); 
+			pixelcount = data->headerdata.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR] - offset;
 		}
 		
-		nframes_t readposition = m_data.peakDataLevelOffsets[zoomLevel - SAVING_ZOOM_FACTOR] + offset;
-		int read = m_peakreader->read_from(m_peakdataDecodeBuffer, readposition, pixelcount);
+		nframes_t readposition = data->headerdata.peakDataLevelOffsets[zoomLevel - SAVING_ZOOM_FACTOR] + offset;
+		int read = data->peakreader->read_from(data->peakdataDecodeBuffer, readposition, pixelcount);
 		
 		if (read != pixelcount) {
 			PERROR("Could not read in all peak data, pixelcount is %d, read count is %d", pixelcount, read);
@@ -265,7 +287,7 @@ int Peak::calculate_peaks(float** buffer, int zoomLevel, nframes_t startPos, int
 			return NO_PEAKDATA_FOUND;
 		}
 		
-		*buffer = m_peakdataDecodeBuffer->destination[0];
+		*buffer = data->peakdataDecodeBuffer->destination[0];
 
 		return read;
 		
@@ -300,7 +322,7 @@ int Peak::calculate_peaks(float** buffer, int zoomLevel, nframes_t startPos, int
 
 			for(int i=0; i < zoomStep[zoomLevel]; i++) {
 				Q_ASSERT(pos <= readFrames);
-				sample = m_peakdataDecodeBuffer->destination[m_channel][pos];
+				sample = m_peakdataDecodeBuffer->destination[chan][pos];
 				if (sample > valueMax)
 					valueMax = sample;
 				if (sample < valueMin)
@@ -339,40 +361,45 @@ int Peak::prepare_processing()
 {
 	PENTER;
 	
-	m_normFileName = m_fileName;
-	m_normFileName.append(".norm");
-	
-	// Create read/write enabled file
-	m_file = fopen(m_fileName.toUtf8().data(),"wb+");
-	
-	if (! m_file) {
-		PWARN("Couldn't open peak file for writing! (%s)", m_fileName.toAscii().data());
-		permanentFailure  = true;
-		return -1;
+	foreach(ChannelData* data, m_channelData) {
+		
+		data->normFileName = data->fileName;
+		data->normFileName.append(".norm");
+		
+		// Create read/write enabled file
+		data->file = fopen(data->fileName.toUtf8().data(),"wb+");
+		
+		if (! data->file) {
+			PWARN("Couldn't open peak file for writing! (%s)", data->fileName.toAscii().data());
+			permanentFailure  = true;
+			return -1;
+		}
+		
+		// Create the temporary normalization data file
+		data->normFile = fopen(data->normFileName.toUtf8().data(), "wb+");
+		
+		if (! data->normFile) {
+			PWARN("Couldn't open normalization data file for writing! (%s)", data->normFileName.toAscii().data());
+			permanentFailure  = true;
+			return -1;
+		}
+		
+		// We need to know the peakDataOffset.
+		data->headerdata.peakDataOffset = 
+					sizeof(data->headerdata.label) + 
+					sizeof(data->headerdata.version) + 
+					sizeof(data->headerdata.peakDataLevelOffsets) + 
+					sizeof(data->headerdata.peakDataSizeForLevel) +
+					sizeof(data->headerdata.normValuesDataOffset) + 
+					sizeof(data->headerdata.peakDataOffset);
+					
+		// Now seek to the start position, so we can write the peakdata to it in the process function
+		fseek(data->file, data->headerdata.peakDataOffset, SEEK_SET);
+		
+		data->pd = new Peak::ProcessData;
+		data->pd->stepSize = TimeRef(1, m_source->get_file_rate());
 	}
 	
-	// Create the temporary normalization data file
-	m_normFile = fopen(m_normFileName.toUtf8().data(), "wb+");
-	
-	if (! m_normFile) {
-		PWARN("Couldn't open normalization data file for writing! (%s)", m_normFileName.toAscii().data());
-		permanentFailure  = true;
-		return -1;
-	}
-	
-	// We need to know the peakDataOffset.
-	m_data.peakDataOffset = sizeof(m_data.label) + 
-				sizeof(m_data.version) + 
-				sizeof(m_data.peakDataLevelOffsets) + 
-				sizeof(m_data.peakDataSizeForLevel) +
-				sizeof(m_data.normValuesDataOffset) + 
-				sizeof(m_data.peakDataOffset);
-				
-	// Now seek to the start position, so we can write the peakdata to it in the process function
-	fseek(m_file, m_data.peakDataOffset, SEEK_SET);
-	
-	m_pd = new Peak::ProcessData;
-	m_pd->stepSize = TimeRef(1, m_source->get_file_rate());
 	
 	return 1;
 }
@@ -382,160 +409,167 @@ int Peak::finish_processing()
 {
 	PENTER;
 	
-	if (m_pd->processLocation < m_pd->nextDataPointLocation) {
-		peak_data_t data = (peak_data_t)(m_pd->peakUpperValue * MAX_DB_VALUE);
-		fwrite(&data, sizeof(peak_data_t), 1, m_file);
-		data = (peak_data_t)(-1 * m_pd->peakLowerValue * MAX_DB_VALUE);
-		fwrite(&data, sizeof(peak_data_t), 1, m_file);
-		m_pd->processBufferSize += 2;
-	}
-	
-	int totalBufferSize = 0;
-	
-	m_data.peakDataSizeForLevel[0] = m_pd->processBufferSize;
-	totalBufferSize += m_pd->processBufferSize;
-	
-	for( int i = SAVING_ZOOM_FACTOR + 1; i < ZOOM_LEVELS+1; ++i) {
-		m_data.peakDataSizeForLevel[i - SAVING_ZOOM_FACTOR] = m_data.peakDataSizeForLevel[i - SAVING_ZOOM_FACTOR - 1] / 2;
-		totalBufferSize += m_data.peakDataSizeForLevel[i - SAVING_ZOOM_FACTOR];
-	}
-	
-	
-	fseek(m_file, m_data.peakDataOffset, SEEK_SET);
-	
-	// The routine below uses a different total buffer size calculation
-	// which might end up with a size >= totalbufferSize !!!
-	// Need to look into that, for now + 2 seems to work...
- 	peak_data_t* saveBuffer = new peak_data_t[totalBufferSize + 1*sizeof(peak_data_t)];
-	
-	int read = fread(saveBuffer, sizeof(peak_data_t), m_pd->processBufferSize, m_file);
-	
-	if (read != m_pd->processBufferSize) {
-		PERROR("couldn't read in all saved data?? (%d read)", read);
-	}
-	
-	
-	int prevLevelBufferPos = 0;
-	int nextLevelBufferPos;
-	m_data.peakDataSizeForLevel[0] = m_pd->processBufferSize;
-	m_data.peakDataLevelOffsets[0] = m_data.peakDataOffset;
-	
-	for (int i = SAVING_ZOOM_FACTOR+1; i < ZOOM_LEVELS+1; ++i) {
-	
-		int prevLevelSize = m_data.peakDataSizeForLevel[i - SAVING_ZOOM_FACTOR - 1];
-		m_data.peakDataLevelOffsets[i - SAVING_ZOOM_FACTOR] = m_data.peakDataLevelOffsets[i - SAVING_ZOOM_FACTOR - 1] + prevLevelSize;
-		prevLevelBufferPos = m_data.peakDataLevelOffsets[i - SAVING_ZOOM_FACTOR - 1] - m_data.peakDataOffset;
-		nextLevelBufferPos = m_data.peakDataLevelOffsets[i - SAVING_ZOOM_FACTOR] - m_data.peakDataOffset;
+	foreach(ChannelData* data, m_channelData) {
 		
-		
-		int count = 0;
-		
-		do {
-			Q_ASSERT(nextLevelBufferPos <= totalBufferSize);
-			saveBuffer[nextLevelBufferPos] = (peak_data_t) f_max(saveBuffer[prevLevelBufferPos], saveBuffer[prevLevelBufferPos + 2]);
-			saveBuffer[nextLevelBufferPos + 1] = (peak_data_t) f_max(saveBuffer[prevLevelBufferPos + 1], saveBuffer[prevLevelBufferPos + 3]);
-			nextLevelBufferPos += 2;
-			prevLevelBufferPos += 4;
-			count+=4;
+		if (data->pd->processLocation < data->pd->nextDataPointLocation) {
+			peak_data_t peakvalue = (peak_data_t)(data->pd->peakUpperValue * MAX_DB_VALUE);
+			fwrite(&peakvalue, sizeof(peak_data_t), 1, data->file);
+			peakvalue = (peak_data_t)(-1 * data->pd->peakLowerValue * MAX_DB_VALUE);
+			fwrite(&peakvalue, sizeof(peak_data_t), 1, data->file);
+			data->pd->processBufferSize += 2;
 		}
-		while (count < prevLevelSize);
+		
+		int totalBufferSize = 0;
+		
+		data->headerdata.peakDataSizeForLevel[0] = data->pd->processBufferSize;
+		totalBufferSize += data->pd->processBufferSize;
+		
+		for( int i = SAVING_ZOOM_FACTOR + 1; i < ZOOM_LEVELS+1; ++i) {
+			data->headerdata.peakDataSizeForLevel[i - SAVING_ZOOM_FACTOR] = data->headerdata.peakDataSizeForLevel[i - SAVING_ZOOM_FACTOR - 1] / 2;
+			totalBufferSize += data->headerdata.peakDataSizeForLevel[i - SAVING_ZOOM_FACTOR];
+		}
+		
+		
+		fseek(data->file, data->headerdata.peakDataOffset, SEEK_SET);
+		
+		// The routine below uses a different total buffer size calculation
+		// which might end up with a size >= totalbufferSize !!!
+		// Need to look into that, for now + 2 seems to work...
+		peak_data_t* saveBuffer = new peak_data_t[totalBufferSize + 1*sizeof(peak_data_t)];
+		
+		int read = fread(saveBuffer, sizeof(peak_data_t), data->pd->processBufferSize, data->file);
+		
+		if (read != data->pd->processBufferSize) {
+			PERROR("couldn't read in all saved data?? (%d read)", read);
+		}
+		
+		
+		int prevLevelBufferPos = 0;
+		int nextLevelBufferPos;
+		data->headerdata.peakDataSizeForLevel[0] = data->pd->processBufferSize;
+		data->headerdata.peakDataLevelOffsets[0] = data->headerdata.peakDataOffset;
+		
+		for (int i = SAVING_ZOOM_FACTOR+1; i < ZOOM_LEVELS+1; ++i) {
+		
+			int prevLevelSize = data->headerdata.peakDataSizeForLevel[i - SAVING_ZOOM_FACTOR - 1];
+			data->headerdata.peakDataLevelOffsets[i - SAVING_ZOOM_FACTOR] = data->headerdata.peakDataLevelOffsets[i - SAVING_ZOOM_FACTOR - 1] + prevLevelSize;
+			prevLevelBufferPos = data->headerdata.peakDataLevelOffsets[i - SAVING_ZOOM_FACTOR - 1] - data->headerdata.peakDataOffset;
+			nextLevelBufferPos = data->headerdata.peakDataLevelOffsets[i - SAVING_ZOOM_FACTOR] - data->headerdata.peakDataOffset;
+			
+			
+			int count = 0;
+			
+			do {
+				Q_ASSERT(nextLevelBufferPos <= totalBufferSize);
+				saveBuffer[nextLevelBufferPos] = (peak_data_t) f_max(saveBuffer[prevLevelBufferPos], saveBuffer[prevLevelBufferPos + 2]);
+				saveBuffer[nextLevelBufferPos + 1] = (peak_data_t) f_max(saveBuffer[prevLevelBufferPos + 1], saveBuffer[prevLevelBufferPos + 3]);
+				nextLevelBufferPos += 2;
+				prevLevelBufferPos += 4;
+				count+=4;
+			}
+			while (count < prevLevelSize);
+		}
+		
+		fseek(data->file, data->headerdata.peakDataOffset, SEEK_SET);
+		
+		int written = fwrite(saveBuffer, sizeof(peak_data_t), totalBufferSize, data->file);
+		
+		if (written != totalBufferSize) {
+			PERROR("could not write complete buffer! (only %d)", written);
+	// 		return -1;
+		}
+		
+		fseek(data->normFile, 0, SEEK_SET);
+		
+		read = fread(saveBuffer, sizeof(audio_sample_t), data->pd->normDataCount, data->normFile);
+		
+		if (read != data->pd->normDataCount) {
+			PERROR("Could not read in all (%d) norm. data, only %d", data->pd->normDataCount, read);
+		}
+		
+		data->headerdata.normValuesDataOffset = data->headerdata.peakDataOffset + totalBufferSize;
+		
+		fclose(data->normFile);
+		data->normFile = NULL;
+		
+		if (!QFile::remove(data->normFileName)) {
+			PERROR("Failed to remove temp. norm. data file! (%s)", data->normFileName.toAscii().data()); 
+		}
+		
+		written = fwrite(saveBuffer, sizeof(audio_sample_t), read, data->file);
+		
+		write_header(data);
+		
+		fclose(data->file);
+		data->file = 0;
+		
+		delete [] saveBuffer;
+		delete data->pd;
+		data->pd = 0;
+		
 	}
 	
-	fseek(m_file, m_data.peakDataOffset, SEEK_SET);
-	
-	int written = fwrite(saveBuffer, sizeof(peak_data_t), totalBufferSize, m_file);
-	
-	if (written != totalBufferSize) {
-		PERROR("could not write complete buffer! (only %d)", written);
-// 		return -1;
-	}
-	
-	fseek(m_normFile, 0, SEEK_SET);
-	
-	read = fread(saveBuffer, sizeof(audio_sample_t), m_pd->normDataCount, m_normFile);
-	
-	if (read != m_pd->normDataCount) {
-		PERROR("Could not read in all (%d) norm. data, only %d", m_pd->normDataCount, read);
-	}
-	
-	m_data.normValuesDataOffset = m_data.peakDataOffset + totalBufferSize;
-	
-	fclose(m_normFile);
-	m_normFile = NULL;
-	
-	if (!QFile::remove(m_normFileName)) {
-		PERROR("Failed to remove temp. norm. data file! (%s)", m_normFileName.toAscii().data()); 
-	}
-	
-	written = fwrite(saveBuffer, sizeof(audio_sample_t), read, m_file);
-	
-	write_header();
-	
-	fclose(m_file);
-	m_file = 0;
-	
-	delete [] saveBuffer;
-	delete m_pd;
-	m_pd = 0;
-	
-	emit finished(this);
+	emit finished();
 	
 	return 1;
 	
 }
 
 
-void Peak::process(audio_sample_t* buffer, nframes_t nframes)
+void Peak::process(uint channel, audio_sample_t* buffer, nframes_t nframes)
 {
+	ChannelData* data = m_channelData.at(channel);
+	ProcessData* pd = data->pd;
+
 	for (uint i=0; i < nframes; i++) {
 		
-		m_pd->processLocation += m_pd->stepSize;
+		pd->processLocation += pd->stepSize;
 		
 		audio_sample_t sample = buffer[i];
 		
-		m_pd->normValue = f_max(m_pd->normValue, fabsf(sample));
+		pd->normValue = f_max(pd->normValue, fabsf(sample));
 		
-		if (sample > m_pd->peakUpperValue) {
-			m_pd->peakUpperValue = sample;
+		if (sample > pd->peakUpperValue) {
+			pd->peakUpperValue = sample;
 		}
 		
-		if (sample < m_pd->peakLowerValue) {
-			m_pd->peakLowerValue = sample;
+		if (sample < pd->peakLowerValue) {
+			pd->peakLowerValue = sample;
 		}
 		
-		if (m_pd->processLocation >= m_pd->nextDataPointLocation) {
+		if (pd->processLocation >= pd->nextDataPointLocation) {
 		
 			peak_data_t peakbuffer[2];
 
-			peakbuffer[0] = (peak_data_t) (m_pd->peakUpperValue * MAX_DB_VALUE );
-			peakbuffer[1] = (peak_data_t) ((-1) * (m_pd->peakLowerValue * MAX_DB_VALUE ));
+			peakbuffer[0] = (peak_data_t) (pd->peakUpperValue * MAX_DB_VALUE );
+			peakbuffer[1] = (peak_data_t) ((-1) * (pd->peakLowerValue * MAX_DB_VALUE ));
 			
-			int written = fwrite(peakbuffer, sizeof(peak_data_t), 2, m_file);
+			int written = fwrite(peakbuffer, sizeof(peak_data_t), 2, data->file);
 			
 			if (written != 2) {
 				PWARN("couldnt write data, only (%d)", written);
 			}
 
-			m_pd->peakUpperValue = 0.0;
-			m_pd->peakLowerValue = 0.0;
+			pd->peakUpperValue = 0.0;
+			pd->peakLowerValue = 0.0;
 			
-			m_pd->processBufferSize+=2;
-			m_pd->nextDataPointLocation += m_pd->processRange;
+			pd->processBufferSize+=2;
+			pd->nextDataPointLocation += pd->processRange;
 		}
 		
-		if (m_pd->normProcessedFrames == NORMALIZE_CHUNK_SIZE) {
-			int written = fwrite(&m_pd->normValue, sizeof(audio_sample_t), 1, m_normFile);
+		if (pd->normProcessedFrames == NORMALIZE_CHUNK_SIZE) {
+			int written = fwrite(&pd->normValue, sizeof(audio_sample_t), 1, data->normFile);
 			
 			if (written != 1) {
 				PWARN("couldnt write data, only (%d)", written);
 			}
  
-			m_pd->normValue = 0.0;
-			m_pd->normProcessedFrames = 0;
-			m_pd->normDataCount++;
+			pd->normValue = 0.0;
+			pd->normProcessedFrames = 0;
+			pd->normDataCount++;
 		}
 		
-		m_pd->normProcessedFrames++;
+		pd->normProcessedFrames++;
 	}
 }
 
@@ -562,7 +596,7 @@ int Peak::create_from_scratch()
 
 	nframes_t bufferSize = 65536;
 
-	int p = 0;
+	int progression = 0;
 
 	if (m_source->get_length() == 0) {
 		qWarning("Peak::create_from_scratch() : m_source (%s) has length 0", m_source->get_name().toAscii().data());
@@ -591,13 +625,19 @@ int Peak::create_from_scratch()
 			PERROR("readFrames < 0 during peak building");
 			break;
 		}
-		process(decodebuffer.destination[m_channel], readFrames);
-		totalReadFrames += readFrames;
-		p = (int) ((float)totalReadFrames / ((float)m_source->get_nframes() / 100.0));
 		
-		if ( p > m_pd->progress) {
-			emit progress(p - m_pd->progress);
-			m_pd->progress = p;
+		for (uint chan = 0; chan < m_source->get_channel_count(); ++ chan) {
+			process(chan, decodebuffer.destination[chan], readFrames);
+		}
+		
+		totalReadFrames += readFrames;
+		progression = (int) ((float)totalReadFrames / ((float)m_source->get_nframes() / 100.0));
+		
+		ChannelData* data = m_channelData.at(0);
+		
+		if ( progression > data->pd->progress) {
+			emit progress(progression);
+			data->pd->progress = progression;
 		}
 		
 	} while (totalReadFrames < m_source->get_nframes());
@@ -625,7 +665,10 @@ out:
 
 audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 {
-	if (!m_file || !peaksAvailable) {
+	
+	ChannelData* data = m_channelData.at(0);
+	
+	if (!data->file || !peaksAvailable) {
 		return 0.0f;
 	}
 	
@@ -645,7 +688,9 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 		
 		int read = m_source->file_read(m_peakdataDecodeBuffer, startframe, toRead);
 		
-		maxamp = Mixer::compute_peak(m_peakdataDecodeBuffer->destination[m_channel], read, maxamp);
+		for (uint chan = 0; chan < m_source->get_channel_count(); ++ chan) {
+			maxamp = Mixer::compute_peak(m_peakdataDecodeBuffer->destination[chan], read, maxamp);
+		}
 	}
 	
 	
@@ -657,15 +702,17 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 	
 	int read = m_source->file_read(m_peakdataDecodeBuffer, endframe - toRead, toRead);
 	
-	maxamp = Mixer::compute_peak(m_peakdataDecodeBuffer->destination[m_channel], read, maxamp);
+	for (uint chan = 0; chan < m_source->get_channel_count(); ++ chan) {
+		maxamp = Mixer::compute_peak(m_peakdataDecodeBuffer->destination[chan], read, maxamp);
+	}
 	
 	// Now that we have covered both boundary situations,
 	// read in the cached normvalues, and calculate the highest value!
 	count = endpos - startpos;
 	
-	fseek(m_file, m_data.normValuesDataOffset + (startpos * sizeof(audio_sample_t)), SEEK_SET);
+	fseek(data->file, data->headerdata.normValuesDataOffset + (startpos * sizeof(audio_sample_t)), SEEK_SET);
 	
-	read = fread(readbuffer, sizeof(audio_sample_t), count, m_file);
+	read = fread(readbuffer, sizeof(audio_sample_t), count, data->file);
 	
 	if (read != (int)count) {
 		printf("could only read %d, %d requested\n", read, count);
@@ -734,9 +781,9 @@ void PeakProcessor::start_task()
 	}
 	
 	foreach(Peak* peak, m_queue) {
-		if (m_runningPeak->m_fileName == peak->m_fileName) {
+		if (m_runningPeak->m_source->get_filename() == peak->m_source->get_filename()) {
 			m_queue.removeAll(peak);
-			emit peak->finished(peak);
+			emit peak->finished();
 		}
 	}
 	

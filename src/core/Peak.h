@@ -87,7 +87,7 @@ private:
 PeakProcessor& pp();
 
 
-struct PeakData {
+struct PeakHeaderData {
 	int peakDataOffset;
 	int normValuesDataOffset;
 	int peakDataLevelOffsets[20 - 6];  // FIXME: Magic Numbers!
@@ -107,7 +107,7 @@ public:
 	static const int MAX_DB_VALUE;
 	static int zoomStep[ZOOM_LEVELS + 1];
 
-	Peak(AudioSource* source, int channel = -1);
+	Peak(AudioSource* source);
 	~Peak();
 
 	enum { 	NO_PEAKDATA_FOUND = -1,
@@ -115,10 +115,10 @@ public:
   		PERMANENT_FAILURE = -3
 	};
 		
-	void process(audio_sample_t* buffer, nframes_t frames);
+	void process(uint channel, audio_sample_t* buffer, nframes_t frames);
 	int prepare_processing();
 	int finish_processing();
-	int calculate_peaks(float** buffer, int zoomLevel, nframes_t startPos, int count);
+	int calculate_peaks(int chan, float** buffer, int zoomLevel, nframes_t startPos, int count);
 
 	void close();
 	
@@ -131,7 +131,6 @@ private:
 	bool 			peaksAvailable;
 	bool			permanentFailure;
 	bool			interuptPeakBuild;
-	int			m_channel;
 	
 	struct ProcessData {
 		ProcessData() {
@@ -140,6 +139,7 @@ private:
 			processRange = TimeRef(64, 44100);
 			nextDataPointLocation = processRange;
 		}
+		
 		audio_sample_t		peakUpperValue;
 		audio_sample_t		peakLowerValue;
 		audio_sample_t		normValue;
@@ -156,25 +156,29 @@ private:
 		int			normDataCount;
 	};
 	
-	ProcessData* 		m_pd;
-
-	PeakData		m_data;
-	FILE* 			m_file;
-	FILE*			m_normFile;
-	QString			m_fileName;
-	QString			m_normFileName;
-	AbstractAudioReader*	m_peakreader;
+	struct ChannelData {
+		QString		fileName;
+		QString		normFileName;
+		FILE* 		file;
+		FILE*		normFile;
+		PeakHeaderData	headerdata;
+		AbstractAudioReader*	peakreader;
+		ProcessData* 	pd;
+		DecodeBuffer*	peakdataDecodeBuffer;
+	};
+	
+	QList<ChannelData* >	m_channelData;
 	DecodeBuffer*		m_peakdataDecodeBuffer;
 	
 	int create_from_scratch();
 
 	int read_header();
-	int write_header();
+	int write_header(ChannelData* data);
 
 	friend class PeakProcessor;
 
 signals:
-	void finished(Peak*);
+	void finished();
 	void progress(int m_progress);
 };
 
