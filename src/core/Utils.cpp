@@ -98,6 +98,10 @@ QString frame_to_cd ( nframes_t nframes, int rate )
 	QString spos;
 	long unsigned int remainder;
 	int mins, secs, frames;
+	
+	if (rate != 44100) {
+		nframes = nframes * (44100/rate);
+	}
 
 	mins = nframes / ( 60 * rate );
 	remainder = nframes - ( mins * 60 * rate );

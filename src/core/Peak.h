@@ -118,7 +118,7 @@ public:
 	void process(audio_sample_t* buffer, nframes_t frames);
 	int prepare_processing();
 	int finish_processing();
-	int calculate_peaks(float** buffer, int zoomLevel, nframes_t startPos, int count, qreal& xscale);
+	int calculate_peaks(float** buffer, int zoomLevel, nframes_t startPos, int count);
 
 	void close();
 	
@@ -131,15 +131,32 @@ private:
 	bool 			peaksAvailable;
 	bool			permanentFailure;
 	bool			interuptPeakBuild;
-	nframes_t		processedFrames;
-	nframes_t		normProcessedFrames;
-	int			processBufferSize;
-	int			normDataCount;
-	int 			m_progress;
 	int			m_channel;
-	audio_sample_t		peakUpperValue;
-	audio_sample_t		peakLowerValue;
-	audio_sample_t		normValue;
+	
+	struct ProcessData {
+		ProcessData() {
+			normValue = peakUpperValue = peakLowerValue = 0;
+			processBufferSize = progress = normProcessedFrames = normDataCount = 0;
+			processRange = TimeRef(64, 44100);
+			nextDataPointLocation = processRange;
+		}
+		audio_sample_t		peakUpperValue;
+		audio_sample_t		peakLowerValue;
+		audio_sample_t		normValue;
+		
+		TimeRef			stepSize;
+		TimeRef			processRange;
+		TimeRef			processLocation;
+		TimeRef			nextDataPointLocation;
+		
+		nframes_t		normProcessedFrames;
+		
+		int 			progress;
+		int			processBufferSize;
+		int			normDataCount;
+	};
+	
+	ProcessData* 		m_pd;
 
 	PeakData		m_data;
 	FILE* 			m_file;

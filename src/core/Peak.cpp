@@ -61,6 +61,7 @@ Peak::Peak(AudioSource* source, int channel)
 	
 	if (rs) {
 		m_source = resources_manager()->get_readsource(rs->get_id());
+		m_source->set_output_rate(44100);
 	} else {
 		m_source = 0;
 	}
@@ -70,6 +71,7 @@ Peak::Peak(AudioSource* source, int channel)
 	
 	peaksAvailable = permanentFailure = interuptPeakBuild = false;
 	m_file = m_normFile = 0;
+	m_pd = 0;
 }
 
 Peak::~Peak()
@@ -211,12 +213,9 @@ nearest_power_of_two(unsigned long val)
 }
 
 
-int Peak::calculate_peaks(float** buffer, int zoomLevel, nframes_t startPos, int pixelcount, qreal& xscale)
+int Peak::calculate_peaks(float** buffer, int zoomLevel, nframes_t startPos, int pixelcount)
 {
 	PENTER3;
-	
-	// TODO determine the real xscale value
-	xscale = 1.0;
 	
 	if (permanentFailure) {
 		return PERMANENT_FAILURE;
@@ -275,7 +274,8 @@ int Peak::calculate_peaks(float** buffer, int zoomLevel, nframes_t startPos, int
 		// Calculate the amount of frames to be read
 		nframes_t toRead = pixelcount * zoomStep[zoomLevel];
 		
-		nframes_t readFrames = m_source->file_read(m_peakdataDecodeBuffer, startPos, toRead);
+		TimeRef startlocation(startPos, 44100);
+		nframes_t readFrames = m_source->file_read(m_peakdataDecodeBuffer, startlocation, toRead);
 
 		if (readFrames == 0) {
 			return NO_PEAKDATA_FOUND;
@@ -371,8 +371,8 @@ int Peak::prepare_processing()
 	// Now seek to the start position, so we can write the peakdata to it in the process function
 	fseek(m_file, m_data.peakDataOffset, SEEK_SET);
 	
-	normValue = peakUpperValue = peakLowerValue = 0;
-	processBufferSize = processedFrames = m_progress = normProcessedFrames = normDataCount = 0;
+	m_pd = new Peak::ProcessData;
+	m_pd->stepSize = TimeRef(1, m_source->get_file_rate());
 	
 	return 1;
 }
@@ -382,18 +382,18 @@ int Peak::finish_processing()
 {
 	PENTER;
 	
-	if (processedFrames != 64) {
-		peak_data_t data = (peak_data_t)(peakUpperValue * MAX_DB_VALUE);
+	if (m_pd->processLocation < m_pd->nextDataPointLocation) {
+		peak_data_t data = (peak_data_t)(m_pd->peakUpperValue * MAX_DB_VALUE);
 		fwrite(&data, sizeof(peak_data_t), 1, m_file);
-		data = (peak_data_t)(-1 * peakLowerValue * MAX_DB_VALUE);
+		data = (peak_data_t)(-1 * m_pd->peakLowerValue * MAX_DB_VALUE);
 		fwrite(&data, sizeof(peak_data_t), 1, m_file);
-		processBufferSize += 2;
+		m_pd->processBufferSize += 2;
 	}
 	
 	int totalBufferSize = 0;
 	
-	m_data.peakDataSizeForLevel[0] = processBufferSize;
-	totalBufferSize += processBufferSize;
+	m_data.peakDataSizeForLevel[0] = m_pd->processBufferSize;
+	totalBufferSize += m_pd->processBufferSize;
 	
 	for( int i = SAVING_ZOOM_FACTOR + 1; i < ZOOM_LEVELS+1; ++i) {
 		m_data.peakDataSizeForLevel[i - SAVING_ZOOM_FACTOR] = m_data.peakDataSizeForLevel[i - SAVING_ZOOM_FACTOR - 1] / 2;
@@ -408,16 +408,16 @@ int Peak::finish_processing()
 	// Need to look into that, for now + 2 seems to work...
  	peak_data_t* saveBuffer = new peak_data_t[totalBufferSize + 1*sizeof(peak_data_t)];
 	
-	int read = fread(saveBuffer, sizeof(peak_data_t), processBufferSize, m_file);
+	int read = fread(saveBuffer, sizeof(peak_data_t), m_pd->processBufferSize, m_file);
 	
-	if (read != processBufferSize) {
+	if (read != m_pd->processBufferSize) {
 		PERROR("couldn't read in all saved data?? (%d read)", read);
 	}
 	
 	
 	int prevLevelBufferPos = 0;
 	int nextLevelBufferPos;
-	m_data.peakDataSizeForLevel[0] = processBufferSize;
+	m_data.peakDataSizeForLevel[0] = m_pd->processBufferSize;
 	m_data.peakDataLevelOffsets[0] = m_data.peakDataOffset;
 	
 	for (int i = SAVING_ZOOM_FACTOR+1; i < ZOOM_LEVELS+1; ++i) {
@@ -452,10 +452,10 @@ int Peak::finish_processing()
 	
 	fseek(m_normFile, 0, SEEK_SET);
 	
-	read = fread(saveBuffer, sizeof(audio_sample_t), normDataCount, m_normFile);
+	read = fread(saveBuffer, sizeof(audio_sample_t), m_pd->normDataCount, m_normFile);
 	
-	if (read != normDataCount) {
-		PERROR("Could not read in all (%d) norm. data, only %d", normDataCount, read);
+	if (read != m_pd->normDataCount) {
+		PERROR("Could not read in all (%d) norm. data, only %d", m_pd->normDataCount, read);
 	}
 	
 	m_data.normValuesDataOffset = m_data.peakDataOffset + totalBufferSize;
@@ -475,6 +475,8 @@ int Peak::finish_processing()
 	m_file = 0;
 	
 	delete [] saveBuffer;
+	delete m_pd;
+	m_pd = 0;
 	
 	emit finished(this);
 	
@@ -487,24 +489,26 @@ void Peak::process(audio_sample_t* buffer, nframes_t nframes)
 {
 	for (uint i=0; i < nframes; i++) {
 		
+		m_pd->processLocation += m_pd->stepSize;
+		
 		audio_sample_t sample = buffer[i];
 		
-		if (sample > peakUpperValue) {
-			peakUpperValue = sample;
+		m_pd->normValue = f_max(m_pd->normValue, fabsf(sample));
+		
+		if (sample > m_pd->peakUpperValue) {
+			m_pd->peakUpperValue = sample;
 		}
 		
-		if (sample < peakLowerValue) {
-			peakLowerValue = sample;
+		if (sample < m_pd->peakLowerValue) {
+			m_pd->peakLowerValue = sample;
 		}
 		
-		normValue = f_max(normValue, fabsf(sample));
-		
-		if (processedFrames == 64) {
+		if (m_pd->processLocation >= m_pd->nextDataPointLocation) {
 		
 			peak_data_t peakbuffer[2];
 
-			peakbuffer[0] = (peak_data_t) (peakUpperValue * MAX_DB_VALUE );
-			peakbuffer[1] = (peak_data_t) ((-1) * (peakLowerValue * MAX_DB_VALUE ));
+			peakbuffer[0] = (peak_data_t) (m_pd->peakUpperValue * MAX_DB_VALUE );
+			peakbuffer[1] = (peak_data_t) ((-1) * (m_pd->peakLowerValue * MAX_DB_VALUE ));
 			
 			int written = fwrite(peakbuffer, sizeof(peak_data_t), 2, m_file);
 			
@@ -512,27 +516,26 @@ void Peak::process(audio_sample_t* buffer, nframes_t nframes)
 				PWARN("couldnt write data, only (%d)", written);
 			}
 
-			peakUpperValue = 0.0;
-			peakLowerValue = 0.0;
-			processedFrames = 0;
+			m_pd->peakUpperValue = 0.0;
+			m_pd->peakLowerValue = 0.0;
 			
-			processBufferSize+=2;
+			m_pd->processBufferSize+=2;
+			m_pd->nextDataPointLocation += m_pd->processRange;
 		}
 		
-		if (normProcessedFrames == NORMALIZE_CHUNK_SIZE) {
-			int written = fwrite(&normValue, sizeof(audio_sample_t), 1, m_normFile);
+		if (m_pd->normProcessedFrames == NORMALIZE_CHUNK_SIZE) {
+			int written = fwrite(&m_pd->normValue, sizeof(audio_sample_t), 1, m_normFile);
 			
 			if (written != 1) {
 				PWARN("couldnt write data, only (%d)", written);
 			}
  
-			normValue = 0.0;
-			normProcessedFrames = 0;
-			normDataCount++;
+			m_pd->normValue = 0.0;
+			m_pd->normProcessedFrames = 0;
+			m_pd->normDataCount++;
 		}
 		
-		processedFrames++;
-		normProcessedFrames++;
+		m_pd->normProcessedFrames++;
 	}
 }
 
@@ -551,6 +554,8 @@ int Peak::create_from_scratch()
 	if (prepare_processing() < 0) {
 		return ret;
 	}
+	
+	m_source->set_output_rate(m_source->get_file_rate());
 	
 	nframes_t readFrames = 0;
 	nframes_t totalReadFrames = 0;
@@ -590,9 +595,9 @@ int Peak::create_from_scratch()
 		totalReadFrames += readFrames;
 		p = (int) ((float)totalReadFrames / ((float)m_source->get_nframes() / 100.0));
 		
-		if ( p > m_progress) {
-			emit progress(p - m_progress);
-			m_progress = p;
+		if ( p > m_pd->progress) {
+			emit progress(p - m_pd->progress);
+			m_pd->progress = p;
 		}
 		
 	} while (totalReadFrames < m_source->get_nframes());
@@ -612,6 +617,8 @@ out:
 	printf("Process time: %d seconds\n\n", (int)(processtime/1000));
 #endif
 	
+	m_source->set_output_rate(44100);
+
 	return ret;
 }
 

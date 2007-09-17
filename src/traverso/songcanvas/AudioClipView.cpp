@@ -231,8 +231,8 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	// when using a different color for the brush then the outline.
 	// Painting 2 more pixels makes it getting clipped away.....
 	pixelcount += 2;
-	// When painting skips one pixel at a time, we always have to start
-	// at an even position with an even amount of pixels to paint
+/*	When painting skips one pixel at a time, we always have to start
+	at an even position with an even amount of pixels to paint*/
 	if (xstart % 2) {
 		xstart -= 1;
 		pixelcount++;
@@ -258,7 +258,6 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	float pixeldata[channels][buffersize];
 	float curvemixdown[buffersize];
 	
-	qreal xscale;
 	// Load peak data for all channels, if no peakdata is returned
 	// for a certain Peak object, schedule it for loading.
 	for (int chan=0; chan < channels; chan++) {
@@ -274,8 +273,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		int availpeaks = peak->calculate_peaks( &buffers[chan],
 							microView ? m_song->get_hzoom() : m_song->get_hzoom() + 1,
 							(xstart * m_sv->scalefactor) + clipstartoffset.to_frame(audiodevice().get_sample_rate()),
-							microView ? peakdatacount : peakdatacount / 2, 
-						       	xscale);
+							microView ? peakdatacount : peakdatacount / 2);
 		
 		if (peakdatacount != availpeaks) {
 // 			PWARN("peakdatacount != availpeaks (%d, %d)", peakdatacount, availpeaks);
@@ -476,8 +474,8 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			if (m_classicView) {
 				QPolygonF polygonbottom(pixelcount);
 				
-				int range = pixelcount+xstart;
-				for (int x = xstart; x < range; x+=2) {
+				int range = pixelcount;
+				for (int x = 0; x < range; x+=2) {
 					polygontop.append( QPointF(x, scaleFactor * pixeldata[chan][bufferpos++]) );
 					polygonbottom.append( QPointF(x, -scaleFactor * pixeldata[chan][bufferpos++]) );
 				}
@@ -511,12 +509,14 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				path.lineTo(xstart, 0);
 				
 			}
-					
-			p->setMatrix(matrix().scale(xscale, 1).translate(0, ytrans), true);
+			
+			p->setMatrix(matrix().translate(xstart, ytrans), true);
 			p->drawPath(path);
+			
 		}
 		
 		p->restore();
+		
 		
 		if (m_mergedView) {
 			break;

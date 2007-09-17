@@ -224,7 +224,7 @@ int ReadSource::init( )
 		//converter_type = config().get_property("Conversion", "ExportResamplingConverterType", 0).toInt();
 		m_audioReader = new ResampleAudioReader(m_fileName, converter_type, m_decodertype);
 		if (m_audioReader->is_valid()) {
-			output_rate_changed();
+			set_output_rate(audiodevice().get_sample_rate());
 		}
 		else {
 			delete m_audioReader;
@@ -265,11 +265,12 @@ int ReadSource::init( )
 }
 
 
-void ReadSource::output_rate_changed()
+void ReadSource::set_output_rate(int rate)
 {
+	Q_ASSERT(rate > 0);
 	ResampleAudioReader* reader = dynamic_cast<ResampleAudioReader*>(m_audioReader);
 	if (reader) {
-		reader->set_output_rate(audiodevice().get_sample_rate());
+		reader->set_output_rate(rate);
 	}
 }
 
@@ -279,7 +280,14 @@ int ReadSource::file_read(DecodeBuffer* buffer, TimeRef& start, nframes_t cnt) c
 #if defined (profile)
 	trav_time_t starttime = get_microseconds();
 #endif
-	nframes_t result = m_audioReader->read_from(buffer, start.to_frame(audiodevice().get_sample_rate()), cnt);
+	
+	int rate = audiodevice().get_sample_rate();
+	ResampleAudioReader* reader = dynamic_cast<ResampleAudioReader*>(m_audioReader);
+	if (reader) {
+		rate = reader->get_output_rate();
+	}
+	
+	nframes_t result = m_audioReader->read_from(buffer, start.to_frame(rate), cnt);
 
 #if defined (profile)
 	int processtime = (int) (get_microseconds() - starttime);
@@ -597,10 +605,16 @@ void ReadSource::set_active(bool active)
 }
 
 
-//eof
-
 int ReadSource::file_read(DecodeBuffer * buffer, nframes_t start, nframes_t cnt)
 {
 	TimeRef startlocation(start, get_rate());
 	return file_read(buffer, startlocation, cnt);
 }
+
+
+int ReadSource::get_file_rate() const
+{
+	Q_ASSERT(m_audioReader);
+	return m_audioReader->get_file_rate();
+}
+

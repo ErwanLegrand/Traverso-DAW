@@ -182,7 +182,9 @@ void DiskIO::seek()
 {
 	PENTER;
 	
-//	Q_ASSERT_X(m_song->threadId != QThread::currentThreadId (), "DiskIO::seek", "Error, running in gui thread!!!!!");
+#if defined (THREAD_CHECK)
+	Q_ASSERT_X(m_song->threadId != QThread::currentThreadId (), "DiskIO::seek", "Error, running in gui thread!!!!!");
+#endif
 
 	mutex.lock();
 	
@@ -193,7 +195,7 @@ void DiskIO::seek()
 
 	foreach(ReadSource* source, m_readSources) {
 		if (m_sampleRateChanged) {
-			source->output_rate_changed();
+			source->set_output_rate(audiodevice().get_sample_rate());
 			source->prepare_buffer();
 		}
 		source->rb_seek_to_file_position(location);

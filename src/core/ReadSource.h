@@ -67,6 +67,7 @@ public :
 	
 	void set_audio_clip(AudioClip* clip);
 	const nframes_t get_nframes() const;
+	int get_file_rate() const;
 	const TimeRef& get_length() const {return m_length;}
 	
 	void sync(DecodeBuffer* buffer);
@@ -75,8 +76,7 @@ public :
 	size_t is_active() const;
 	BufferStatus* get_buffer_status();
 	
-public slots:
-	void output_rate_changed();
+	void set_output_rate(int rate);
 	
 private:
 	AbstractAudioReader*	m_audioReader;
