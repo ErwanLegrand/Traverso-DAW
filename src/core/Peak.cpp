@@ -665,11 +665,10 @@ out:
 
 audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 {
-	
-	ChannelData* data = m_channelData.at(0);
-	
-	if (!data->file || !peaksAvailable) {
-		return 0.0f;
+	foreach(ChannelData* data, m_channelData) {
+		if (!data->file || !peaksAvailable) {
+			return 0.0f;
+		}
 	}
 	
 	int startpos = startframe / NORMALIZE_CHUNK_SIZE;
@@ -681,7 +680,7 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 	audio_sample_t maxamp = 0;
 	
 	// Read in the part not fully occupied by a cached normalize value
-	// and run compute_peak on it.
+	// at the left hand part and run compute_peak on it.
 	if (startframe != 0) {
 		startpos += 1;
 		int toRead = (int) ((startpos * NORMALIZE_CHUNK_SIZE) - startframe);
@@ -695,7 +694,7 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 	
 	
 	// Read in the part not fully occupied by a cached normalize value
-	// and run compute_peak on it.
+	// at the right hand part and run compute_peak on it.
 	float f = (float) endframe / NORMALIZE_CHUNK_SIZE;
 	int endpos = (int) f;
 	int toRead = (int) ((f - (endframe / NORMALIZE_CHUNK_SIZE)) * NORMALIZE_CHUNK_SIZE);
@@ -710,15 +709,17 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 	// read in the cached normvalues, and calculate the highest value!
 	count = endpos - startpos;
 	
-	fseek(data->file, data->headerdata.normValuesDataOffset + (startpos * sizeof(audio_sample_t)), SEEK_SET);
+	foreach(ChannelData* data, m_channelData) {
+		fseek(data->file, data->headerdata.normValuesDataOffset + (startpos * sizeof(audio_sample_t)), SEEK_SET);
 	
-	read = fread(readbuffer, sizeof(audio_sample_t), count, data->file);
+		read = fread(readbuffer, sizeof(audio_sample_t), count, data->file);
 	
-	if (read != (int)count) {
-		printf("could only read %d, %d requested\n", read, count);
+		if (read != (int)count) {
+			printf("could only read %d, %d requested\n", read, count);
+		}
+	
+		maxamp = Mixer::compute_peak(readbuffer, read, maxamp);
 	}
-	
-	maxamp = Mixer::compute_peak(readbuffer, read, maxamp);
 	
 	delete [] readbuffer;
 	
