@@ -297,7 +297,7 @@ int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, nframes_t sta
 		nframes_t toRead = pixelcount * zoomStep[zoomLevel];
 		
 		TimeRef startlocation(startPos, 44100);
-		nframes_t readFrames = m_source->file_read(m_peakdataDecodeBuffer, startlocation, toRead);
+		nframes_t readFrames = m_source->file_read(data->peakdataDecodeBuffer, startlocation, toRead);
 
 		if (readFrames == 0) {
 			return NO_PEAKDATA_FOUND;
@@ -315,14 +315,14 @@ int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, nframes_t sta
 		// MicroView needs a buffer to store the calculated peakdata
 		// our decodebuffer's readbuffer is large enough for this purpose
 		// and it's no problem to use it at this point in the process chain.
-		float* peakdata = m_peakdataDecodeBuffer->readBuffer;
+		float* peakdata = data->peakdataDecodeBuffer->readBuffer;
 
 		do {
 			valueMax = valueMin = 0;
 
 			for(int i=0; i < zoomStep[zoomLevel]; i++) {
 				Q_ASSERT(pos <= readFrames);
-				sample = m_peakdataDecodeBuffer->destination[chan][pos];
+				sample = data->peakdataDecodeBuffer->destination[chan][pos];
 				if (sample > valueMax)
 					valueMax = sample;
 				if (sample < valueMin)
