@@ -169,3 +169,61 @@ AbstractAudioReader* AbstractAudioReader::create_audio_reader(const QString& fil
 	return newReader;
 }
 
+void DecodeBuffer::check_buffers_capacity(uint size, uint channels)
+{
+/*	m_bufferSizeCheckCounter++;
+	m_totalCheckSize += size;
+	
+	if (((m_totalCheckSize / m_bufferSizeCheckCounter) + 128) < destinationBufferSize) {
+		m_smallerReadCounter++;
+		if (m_smallerReadCounter > 5) {
+			// Force recreation of the buffers;
+			destinationBufferSize = 0;
+			m_bufferSizeCheckCounter = m_smallerReadCounter = 0;
+			m_totalCheckSize = 0;
+		}
+	}*/
+				
+		
+	if (destinationBufferSize < size || m_channels < channels) {
+			
+		delete_destination_buffers();
+			
+		m_channels = channels;
+			
+		destination = new audio_sample_t*[m_channels];
+			
+		for (uint chan = 0; chan < m_channels; chan++) {
+			destination[chan] = new audio_sample_t[size];
+		}
+			
+		destinationBufferSize = size;
+// 		printf("resizing destination to %.3f KB\n", (float)size*4/1024);
+	}
+		
+	if (readBufferSize < (size*m_channels)) {
+			
+		delete_readbuffer();
+			
+		readBuffer = new audio_sample_t[size*m_channels];
+		readBufferSize = (size*m_channels);
+	}
+}
+
+void DecodeBuffer::check_resamplebuffer_capacity(uint frames)
+{
+		
+	if (resampleBufferSize < frames) {
+			
+		delete_resample_buffers();
+			
+		resampleBuffer = new audio_sample_t*[m_channels];
+			
+		for (uint chan = 0; chan < m_channels; chan++) {
+			resampleBuffer[chan] = new audio_sample_t[frames];
+		}
+			
+		resampleBufferSize = frames;
+// 		printf("resizing resamplebuffer to %.3f KB\n", (float)frames*4/1024);
+	}
+}

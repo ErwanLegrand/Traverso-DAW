@@ -29,57 +29,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 class DecodeBuffer {
 	
 public:
-	
 	DecodeBuffer() {
 		destination = resampleBuffer = 0;
 		readBuffer = 0;
 		m_channels = destinationBufferSize = resampleBufferSize = readBufferSize = 0;
+		m_bufferSizeCheckCounter = m_totalCheckSize = m_smallerReadCounter = 0;
+		
+	}
+	~DecodeBuffer() {
+		delete_destination_buffers();
+		delete_readbuffer();
+		delete_resample_buffers();
 	}
 	
-	void check_buffers_capacity(uint size, uint channels) {
-		
-		if (m_channels < channels || destinationBufferSize < size) {
-			if (destination) {
-				for (uint chan = 0; chan < m_channels; chan++) {
-					delete [] destination[chan];
-				}
-				delete [] destination;
-			}
-			
-			m_channels = channels;
-			destination = new audio_sample_t*[m_channels];
-			
-			for (uint chan = 0; chan < m_channels; chan++) {
-				destination[chan] = new audio_sample_t[size];
-			}
-			
-			destinationBufferSize = size;
-		}
-		
-		if (readBufferSize < (size*m_channels)) {
-			if (readBuffer) {
-				delete [] readBuffer;
-			}
-			readBuffer = new audio_sample_t[size*m_channels];
-			readBufferSize = (size*m_channels);
-		}
-	}
+	void check_buffers_capacity(uint size, uint channels);
 	
-	void check_resamplebuffer_capacity(uint frames) {
-		
-		if (resampleBufferSize < frames) {
-			if (!resampleBuffer) {
-				resampleBuffer = new audio_sample_t*[m_channels];
-			}
-			for (uint chan = 0; chan < m_channels; chan++) {
-				if (resampleBufferSize) {
-					delete [] resampleBuffer[chan];
-				}
-				resampleBuffer[chan] = new audio_sample_t[frames];
-			}
-			resampleBufferSize = frames;
-		}
-	}
+	void check_resamplebuffer_capacity(uint frames);
 	
 	void prepare_for_child_read(nframes_t offset) {
 		if (resampleBuffer) {
@@ -97,6 +62,7 @@ public:
 	void finish_child_read(nframes_t offset) {
 		if (origDestination) {
 			destination = origDestination;
+			origDestination = 0;
 			
 			for (uint chan = 0; chan < m_channels; chan++) {
 				resampleBuffer[chan] -= offset;
@@ -109,11 +75,44 @@ public:
 	audio_sample_t** resampleBuffer;
 	uint destinationBufferSize;
 	uint readBufferSize;
-	uint resampleBufferSize; // ????
+	uint resampleBufferSize;
 
 private:
 	uint m_channels;
+	uint m_smallerReadCounter;
+	long m_totalCheckSize;
+	uint m_bufferSizeCheckCounter;
 	audio_sample_t** origDestination; // Used to store destination during a child read in the resampler
+	
+	void delete_destination_buffers() {
+		if (destination) {
+			for (uint chan = 0; chan < m_channels; chan++) {
+				delete [] destination[chan];
+			}
+			delete [] destination;
+		}
+		destination = 0;
+		destinationBufferSize = 0;
+	}
+	
+	void delete_readbuffer() {
+		if (readBuffer) {
+			delete [] readBuffer;
+		}
+		readBuffer = 0;
+	}
+	
+	void delete_resample_buffers() {
+		if (resampleBuffer) {
+			for (uint chan = 0; chan < m_channels; chan++) {
+				if (resampleBufferSize) {
+					delete [] resampleBuffer[chan];
+				}
+			}
+			delete [] resampleBuffer;
+		}
+		resampleBuffer = 0;
+	}
 
 };
 
