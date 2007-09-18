@@ -23,8 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "Peak.h"
 
-#include "PeakDataReader.h"
-#include "ResampleAudioReader.h"
+#include "AbstractAudioReader.h" // Needed for DecodeBuffer declaration
 #include "ReadSource.h"
 #include "ResourcesManager.h"
 #include "defines.h"
@@ -41,22 +40,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 * lower value to the upper value.
 */
 
-const int Peak::MAX_DB_VALUE			= 120;
-const int SAVING_ZOOM_FACTOR 			= 6;
-const int Peak::MAX_ZOOM_USING_SOURCEFILE	= SAVING_ZOOM_FACTOR - 1;
-
 #define NORMALIZE_CHUNK_SIZE	10000
 #define PEAKFILE_MAJOR_VERSION	1
 #define PEAKFILE_MINOR_VERSION	0
 
-int Peak::zoomStep[] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096,
-				8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576};
+int Peak::zoomStep[] = {
+	// non-cached zoomlevels.
+	1, 2, 4, 8, 16, 32,
+ 	// Cached zoomlevels
+ 	64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576 
+};
 
 Peak::Peak(AudioSource* source)
 {
 	PENTERCONS;
 	
-	peaksAvailable = permanentFailure = interuptPeakBuild = false;
+	m_peaksAvailable = m_permanentFailure = m_interuptPeakBuild = false;
 	
 	QString sourcename = source->get_name();
 	QString path = pm().get_project()->get_root_dir() + "/peakfiles/";
@@ -165,13 +164,11 @@ int Peak::read_header()
 		fread(&data->headerdata.normValuesDataOffset, sizeof(data->headerdata.normValuesDataOffset), 1, data->file);
 		fread(&data->headerdata.peakDataOffset, sizeof(data->headerdata.peakDataOffset), 1, data->file);
 		
-		data->peakreader = new PeakDataReader(data->fileName);
+		data->peakreader = new PeakDataReader(data);
 		data->peakdataDecodeBuffer = new DecodeBuffer;
 	}
 	
-	m_peakdataDecodeBuffer = new DecodeBuffer;
-
-	peaksAvailable = true;
+	m_peaksAvailable = true;
 		
 	return 1;
 }
@@ -237,11 +234,11 @@ int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, nframes_t sta
 {
 	PENTER3;
 	
-	if (permanentFailure) {
+	if (m_permanentFailure) {
 		return PERMANENT_FAILURE;
 	}
 	
-	if(!peaksAvailable) {
+	if(!m_peaksAvailable) {
 		if (read_header() < 0) {
 			return NO_PEAK_FILE;
 		}
@@ -371,7 +368,7 @@ int Peak::prepare_processing()
 		
 		if (! data->file) {
 			PWARN("Couldn't open peak file for writing! (%s)", data->fileName.toAscii().data());
-			permanentFailure  = true;
+			m_permanentFailure  = true;
 			return -1;
 		}
 		
@@ -380,7 +377,7 @@ int Peak::prepare_processing()
 		
 		if (! data->normFile) {
 			PWARN("Couldn't open normalization data file for writing! (%s)", data->normFileName.toAscii().data());
-			permanentFailure  = true;
+			m_permanentFailure  = true;
 			return -1;
 		}
 		
@@ -589,8 +586,6 @@ int Peak::create_from_scratch()
 		return ret;
 	}
 	
-	m_source->set_output_rate(m_source->get_file_rate());
-	
 	nframes_t readFrames = 0;
 	nframes_t totalReadFrames = 0;
 
@@ -611,10 +606,12 @@ int Peak::create_from_scratch()
 		}
 	}
 
+	m_source->set_output_rate(m_source->get_file_rate());
+	
 	DecodeBuffer decodebuffer;
 	
 	do {
-		if (interuptPeakBuild) {
+		if (m_interuptPeakBuild) {
 			ret = -1;
 			goto out;
 		}
@@ -666,7 +663,7 @@ out:
 audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 {
 	foreach(ChannelData* data, m_channelData) {
-		if (!data->file || !peaksAvailable) {
+		if (!data->file || !m_peaksAvailable) {
 			return 0.0f;
 		}
 	}
@@ -678,17 +675,17 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 	audio_sample_t* readbuffer =  new audio_sample_t[buffersize];
 	
 	audio_sample_t maxamp = 0;
-	
+	DecodeBuffer decodebuffer;
 	// Read in the part not fully occupied by a cached normalize value
 	// at the left hand part and run compute_peak on it.
 	if (startframe != 0) {
 		startpos += 1;
 		int toRead = (int) ((startpos * NORMALIZE_CHUNK_SIZE) - startframe);
 		
-		int read = m_source->file_read(m_peakdataDecodeBuffer, startframe, toRead);
+		int read = m_source->file_read(&decodebuffer, startframe, toRead);
 		
 		for (uint chan = 0; chan < m_source->get_channel_count(); ++ chan) {
-			maxamp = Mixer::compute_peak(m_peakdataDecodeBuffer->destination[chan], read, maxamp);
+			maxamp = Mixer::compute_peak(decodebuffer.destination[chan], read, maxamp);
 		}
 	}
 	
@@ -699,10 +696,10 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 	int endpos = (int) f;
 	int toRead = (int) ((f - (endframe / NORMALIZE_CHUNK_SIZE)) * NORMALIZE_CHUNK_SIZE);
 	
-	int read = m_source->file_read(m_peakdataDecodeBuffer, endframe - toRead, toRead);
+	int read = m_source->file_read(&decodebuffer, endframe - toRead, toRead);
 	
 	for (uint chan = 0; chan < m_source->get_channel_count(); ++ chan) {
-		maxamp = Mixer::compute_peak(m_peakdataDecodeBuffer->destination[chan], read, maxamp);
+		maxamp = Mixer::compute_peak(decodebuffer.destination[chan], read, maxamp);
 	}
 	
 	// Now that we have covered both boundary situations,
@@ -773,7 +770,7 @@ void PeakProcessor::start_task()
 	
 	m_taskRunning = false;
 	
-	if (m_runningPeak->interuptPeakBuild) {
+	if (m_runningPeak->m_interuptPeakBuild) {
 		PMESG("PeakProcessor:: Deleting interrupted Peak!");
 		delete m_runningPeak;
 		m_runningPeak = 0;
@@ -821,7 +818,7 @@ void PeakProcessor::free_peak(Peak * peak)
 	
 	if (peak == m_runningPeak) {
 		PMESG("PeakProcessor:: Interrupting running build process!");
-		peak->interuptPeakBuild =  true;
+		peak->m_interuptPeakBuild =  true;
 		
 		PMESG("PeakProcessor:: Waiting GUI thread until interrupt finished");
 		m_wait.wait(&m_mutex);
@@ -850,3 +847,71 @@ void PPThread::run()
 	exec();
 }
 
+
+
+PeakDataReader::PeakDataReader(Peak::ChannelData* data)
+{
+	m_d = data;
+	fseek (m_d->file, 0, SEEK_END);
+	m_nframes = ftell (m_d->file);
+}
+
+
+nframes_t PeakDataReader::read_from(DecodeBuffer* buffer, nframes_t start, nframes_t count)
+{
+// 	printf("read_from:: before_seek from %d, framepos is %d\n", start, m_readPos);
+	
+	if (!seek(start)) {
+		return 0;
+	}
+	
+	return read(buffer, count);
+}
+
+
+bool PeakDataReader::seek(nframes_t start)
+{
+	if (m_readPos != start) {
+		Q_ASSERT(m_d->file);
+	
+	
+		if (start >= m_nframes) {
+			return false;
+		}
+	
+		if (fseek (m_d->file, start, SEEK_SET) < 0) {
+			PERROR("PeakDataReader: could not seek to data point %d within %s", start, m_d->fileName.toUtf8().data());
+			return false;
+		}
+	
+		m_readPos = start;
+	}
+	
+	return true;
+}
+
+
+nframes_t PeakDataReader::read(DecodeBuffer* buffer, nframes_t count)
+{
+	if ( ! (count && (m_readPos < m_nframes)) ) {
+		return 0;
+	}
+		
+	// Make sure the read buffer is big enough for this read
+	buffer->check_buffers_capacity(count, 1);
+	
+	// printf("read_from:: after_seek from %d, framepos is %d\n", start, m_readPos);
+	Q_ASSERT(m_d->file);
+
+	int framesRead = fread((void*)buffer->readBuffer, sizeof(peak_data_t), count, m_d->file);
+
+	peak_data_t* readbuffer = (peak_data_t*)(buffer->readBuffer);
+
+	for (int f = 0; f < framesRead; f++) {
+		buffer->destination[0][f] = readbuffer[f];
+	}
+
+	m_readPos += framesRead;
+	
+	return framesRead;
+}

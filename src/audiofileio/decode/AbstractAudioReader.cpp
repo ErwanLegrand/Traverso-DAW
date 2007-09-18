@@ -26,7 +26,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "WPAudioReader.h"
 #include "VorbisAudioReader.h"
 #include "ResampleAudioReader.h"
-#include "PeakDataReader.h"
 
 #include <QString>
 
@@ -128,8 +127,6 @@ AbstractAudioReader* AbstractAudioReader::create_audio_reader(const QString& fil
 			newReader = new SFAudioReader(filename);
 		} else if (decoder == "wavpack") {
 			newReader = new WPAudioReader(filename);
-		} else if (decoder == "peak") {
-			newReader = new PeakDataReader(filename); 
 		} else if (decoder == "flac") {
 			newReader = new FlacAudioReader(filename);
 		} else if (decoder == "vorbis") {
@@ -160,9 +157,6 @@ AbstractAudioReader* AbstractAudioReader::create_audio_reader(const QString& fil
 		}
 		else if (MadAudioReader::can_decode(filename)) {
 			newReader = new MadAudioReader(filename);
-		}
-		else if (PeakDataReader::can_decode(filename)) {
-			newReader = new PeakDataReader(filename);
 		}
 	}
 	

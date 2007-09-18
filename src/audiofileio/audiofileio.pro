@@ -19,8 +19,7 @@ SOURCES = decode/AbstractAudioReader.cpp \
 	decode/MadAudioReader.cpp \
 	encode/AbstractAudioWriter.cpp \
 	encode/SFAudioWriter.cpp \
-	encode/WPAudioWriter.cpp \
-	decode/PeakDataReader.cpp
+	encode/WPAudioWriter.cpp
 HEADERS = decode/AbstractAudioReader.h \
 	decode/SFAudioReader.h \
 	decode/FlacAudioReader.h \
@@ -63,5 +62,7 @@ unix{
 
     DEFINES += RELAYTOOL_VORBISFILE="\"static const int libvorbisfile_is_present=1; static int __attribute__((unused)) libvorbisfile_symbol_is_present(char *) { return 1; }\""
 }
-HEADERS -= PeakDataReader.h
+HEADERS -= PeakDataReader.h \
+decode/PeakDataReader.h
+SOURCES -= decode/PeakDataReader.cpp
 

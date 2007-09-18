@@ -34,8 +34,8 @@ class ReadSource;
 class AudioSource;
 class Peak;
 class PPThread;
-class AbstractAudioReader;
 class DecodeBuffer;
+class PeakDataReader;
 
 class PeakProcessor : public QObject
 {
@@ -87,24 +87,15 @@ private:
 PeakProcessor& pp();
 
 
-struct PeakHeaderData {
-	int peakDataOffset;
-	int normValuesDataOffset;
-	int peakDataLevelOffsets[20 - 6];  // FIXME: Magic Numbers!
-	int peakDataSizeForLevel[20 - 6];
-	char label[6];	//TPFxxx -> Traverso Peak File version x.x.x
-	int version[2];
-
-};
-
 class Peak : public QObject
 {
 	Q_OBJECT
 
 public:
 	static const int ZOOM_LEVELS = 20;
-	static const int MAX_ZOOM_USING_SOURCEFILE;
-	static const int MAX_DB_VALUE;
+	static const int SAVING_ZOOM_FACTOR = 6;
+	static const int MAX_ZOOM_USING_SOURCEFILE = SAVING_ZOOM_FACTOR - 1;
+	static const int MAX_DB_VALUE = 120;
 	static int zoomStep[ZOOM_LEVELS + 1];
 
 	Peak(AudioSource* source);
@@ -127,10 +118,10 @@ public:
 	audio_sample_t get_max_amplitude(nframes_t startframe, nframes_t endframe);
 
 private:
-	ReadSource* 		m_source;
-	bool 			peaksAvailable;
-	bool			permanentFailure;
-	bool			interuptPeakBuild;
+	ReadSource* 	m_source;
+	bool 		m_peaksAvailable;
+	bool		m_permanentFailure;
+	bool		m_interuptPeakBuild;
 	
 	struct ProcessData {
 		ProcessData() {
@@ -156,30 +147,55 @@ private:
 		int			normDataCount;
 	};
 	
+	struct PeakHeaderData {
+		int peakDataOffset;
+		int normValuesDataOffset;
+		int peakDataLevelOffsets[ZOOM_LEVELS - SAVING_ZOOM_FACTOR];
+		int peakDataSizeForLevel[ZOOM_LEVELS - SAVING_ZOOM_FACTOR];
+		char label[6];	//TPFxxx -> Traverso Peak File version x.x.x
+		int version[2];
+	};
+
 	struct ChannelData {
 		QString		fileName;
 		QString		normFileName;
 		FILE* 		file;
 		FILE*		normFile;
 		PeakHeaderData	headerdata;
-		AbstractAudioReader*	peakreader;
+		PeakDataReader*	peakreader;
 		ProcessData* 	pd;
 		DecodeBuffer*	peakdataDecodeBuffer;
 	};
 	
 	QList<ChannelData* >	m_channelData;
-	DecodeBuffer*		m_peakdataDecodeBuffer;
 	
 	int create_from_scratch();
-
 	int read_header();
 	int write_header(ChannelData* data);
 
 	friend class PeakProcessor;
+	friend class PeakDataReader;
 
 signals:
 	void finished();
 	void progress(int m_progress);
+};
+
+class PeakDataReader
+{
+public:
+	PeakDataReader(Peak::ChannelData* data);
+	~PeakDataReader(){};
+
+	nframes_t read_from(DecodeBuffer* buffer, nframes_t start, nframes_t count);
+
+private:
+	Peak::ChannelData* m_d;
+	nframes_t	m_readPos;
+	nframes_t	m_nframes;
+
+	bool seek(nframes_t start);
+	nframes_t read(DecodeBuffer* buffer, nframes_t frameCount);
 };
 
 
