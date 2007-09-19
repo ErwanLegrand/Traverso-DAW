@@ -29,21 +29,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 class DecodeBuffer {
 	
 public:
-	DecodeBuffer() {
-		destination = resampleBuffer = 0;
-		readBuffer = 0;
-		m_channels = destinationBufferSize = resampleBufferSize = readBufferSize = 0;
-		m_bufferSizeCheckCounter = m_totalCheckSize = m_smallerReadCounter = 0;
-		
-	}
+	DecodeBuffer();
 	~DecodeBuffer() {
 		delete_destination_buffers();
 		delete_readbuffer();
 		delete_resample_buffers();
 	}
 	
+	void use_custom_destination_buffer(bool custom);
 	void check_buffers_capacity(uint size, uint channels);
-	
 	void check_resamplebuffer_capacity(uint frames);
 	
 	void prepare_for_child_read(nframes_t offset) {
@@ -83,38 +77,11 @@ private:
 	long m_totalCheckSize;
 	uint m_bufferSizeCheckCounter;
 	audio_sample_t** origDestination; // Used to store destination during a child read in the resampler
+	bool m_noDestBuffer;
 	
-	void delete_destination_buffers() {
-		if (destination) {
-			for (uint chan = 0; chan < m_channels; chan++) {
-				delete [] destination[chan];
-			}
-			delete [] destination;
-		}
-		destination = 0;
-		destinationBufferSize = 0;
-	}
-	
-	void delete_readbuffer() {
-		if (readBuffer) {
-			delete [] readBuffer;
-		}
-		readBuffer = 0;
-		readBufferSize = 0;
-	}
-	
-	void delete_resample_buffers() {
-		if (resampleBuffer) {
-			for (uint chan = 0; chan < m_channels; chan++) {
-				if (resampleBufferSize) {
-					delete [] resampleBuffer[chan];
-				}
-			}
-			delete [] resampleBuffer;
-		}
-		resampleBuffer = 0;
-		resampleBufferSize = 0;
-	}
+	void delete_destination_buffers();
+	void delete_readbuffer();
+	void delete_resample_buffers();
 
 };
 

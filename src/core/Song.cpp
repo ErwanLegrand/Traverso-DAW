@@ -426,7 +426,7 @@ int Song::prepare_export(ExportSpecification* spec)
 	resize_buffer(false, spec->blocksize);
 	
 	renderDecodeBuffer = new DecodeBuffer;
-	renderDecodeBuffer->check_buffers_capacity(spec->blocksize, spec->channels);
+	renderDecodeBuffer->use_custom_destination_buffer(true);
 
 	return 1;
 }
