@@ -271,6 +271,11 @@ void ReadSource::set_output_rate(int rate)
 	ResampleAudioReader* reader = dynamic_cast<ResampleAudioReader*>(m_audioReader);
 	if (reader) {
 		reader->set_output_rate(rate);
+		// The length could have become slightly smaller/larger due
+		// rounding issues involved with converting to one samplerate to another.
+		// Should be at the order of one sample at most, but for reading purposes we 
+		// need sample accurate information!
+		m_length = reader->get_length();
 	}
 }
 
@@ -282,11 +287,6 @@ int ReadSource::file_read(DecodeBuffer* buffer, TimeRef& start, nframes_t cnt) c
 #endif
 	
 	int rate = audiodevice().get_sample_rate();
-	ResampleAudioReader* reader = dynamic_cast<ResampleAudioReader*>(m_audioReader);
-	if (reader) {
-		rate = reader->get_output_rate();
-	}
-	
 	nframes_t result = m_audioReader->read_from(buffer, start.to_frame(rate), cnt);
 
 #if defined (profile)
@@ -380,7 +380,6 @@ int ReadSource::rb_read(audio_sample_t** dst, TimeRef& start, nframes_t count)
 			
 			m_rbRelativeFileReadPos += advance;
 		} else {
-			printf("calling start_resync\n");
 			TimeRef synclocation = start + m_clip->get_track_start_location() + m_clip->get_source_start_location();
 			start_resync(synclocation);
 			return 0;
@@ -454,7 +453,7 @@ void ReadSource::process_ringbuffer(DecodeBuffer* buffer, bool seeking)
 {
 	// Do nothing if we passed the lenght of the AudioFile.
 	if (m_rbFileReadPos >= m_length) {
-// 		printf("returning, m_rbFileReadPos > m_length! (%d >  %d)\n", m_rbFileReadPos, m_source->m_length);
+// 		printf("returning, m_rbFileReadPos > m_length! (%d >  %d)\n", m_rbFileReadPos.to_frame(get_rate()), m_audioReader->get_nframes());
 		if (m_syncInProgress) {
 			finish_resync();
 		}
@@ -493,7 +492,7 @@ void ReadSource::process_ringbuffer(DecodeBuffer* buffer, bool seeking)
 	
 	// Read in the samples from source
 	nframes_t toWrite = rb_file_read(buffer, toRead);
-
+	
 	// and write it to the ringbuffer
 	for (int i=m_buffers.size()-1; i>=0; --i) {
 		m_buffers.at(i)->write(buffer->destination[i], toWrite);
@@ -503,7 +502,7 @@ void ReadSource::process_ringbuffer(DecodeBuffer* buffer, bool seeking)
 
 void ReadSource::start_resync(TimeRef& position)
 {
-	printf("starting resync!\n");
+// 	printf("starting resync!\n");
 	m_syncPos = position;
 	m_rbReady = 0;
 	m_needSync = 1;
@@ -511,7 +510,7 @@ void ReadSource::start_resync(TimeRef& position)
 
 void ReadSource::finish_resync()
 {
- 	printf("sync finished\n");
+//  	printf("sync finished\n");
 	m_needSync = 0;
 	m_bufferUnderRunDetected = 0;
 	m_rbReady = 1;
@@ -573,6 +572,8 @@ void ReadSource::prepare_buffer( )
 BufferStatus* ReadSource::get_buffer_status()
 {
 	int freespace = m_buffers.at(0)->write_space();
+	
+// 	printf("m_rbFileReadPos, m_length %d, %d\n", m_rbFileReadPos.to_frame(get_rate()), m_length.to_frame(get_rate()));
 
 	if (m_rbFileReadPos >= m_length) {
 		m_bufferstatus->fillStatus =  100;

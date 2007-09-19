@@ -147,6 +147,7 @@ void ResampleAudioReader::set_output_rate(int rate)
 	}
 	m_outputRate = rate;
 	m_nframes = file_to_resampled_frame(m_reader->get_nframes());
+	m_length = TimeRef(m_nframes, m_outputRate);
 }
 
 
@@ -161,7 +162,7 @@ bool ResampleAudioReader::seek_private(nframes_t start)
 	}
 	
 	reset();
-	
+// 	printf("ResampleAudioReader::seek_private: start: %d\n", resampled_to_file_frame(start));
 	return m_reader->seek(resampled_to_file_frame(start));
 }
 
@@ -264,7 +265,7 @@ nframes_t ResampleAudioReader::read_private(DecodeBuffer* buffer, nframes_t fram
 		framesRead = get_nframes() - m_readPos;
 	}
 	
-	//printf("framesRead: %lu of %lu (overflow: %lu) (at: %lu of %lu)\n", framesRead, frameCount, m_overflowUsed, m_readPos + framesRead, get_nframes());
+// 	printf("framesRead: %lu of %lu (overflow: %lu) (at: %lu of %lu)\n", framesRead, frameCount, m_overflowUsed, m_readPos /*+ framesRead*/, get_nframes());
 	
 	return framesRead;
 }
@@ -272,17 +273,15 @@ nframes_t ResampleAudioReader::read_private(DecodeBuffer* buffer, nframes_t fram
 
 nframes_t ResampleAudioReader::resampled_to_file_frame(nframes_t frame)
 {
-	Q_ASSERT(m_reader);
-	
-	return (nframes_t)(frame * ((double) m_rate / m_outputRate));
+	TimeRef location(frame, m_outputRate);
+	return location.to_frame(m_rate);
 }
 
 
 nframes_t ResampleAudioReader::file_to_resampled_frame(nframes_t frame)
 {
-	Q_ASSERT(m_reader);
-	
-	return (nframes_t)(frame * ((double) m_outputRate / m_rate));
+	TimeRef location(frame, m_rate);
+	return location.to_frame(m_outputRate);
 }
 
 void ResampleAudioReader::create_overflow_buffers()

@@ -100,6 +100,7 @@ private:
 			delete [] readBuffer;
 		}
 		readBuffer = 0;
+		readBufferSize = 0;
 	}
 	
 	void delete_resample_buffers() {
@@ -112,6 +113,7 @@ private:
 			delete [] resampleBuffer;
 		}
 		resampleBuffer = 0;
+		resampleBufferSize = 0;
 	}
 
 };
