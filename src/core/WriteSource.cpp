@@ -349,7 +349,7 @@ int WriteSource::finish_export( )
 		m_src_state = 0;
 	}
 
-	if (m_peak->finish_processing() < 0) {
+	if (m_peak && m_peak->finish_processing() < 0) {
 		PERROR("WriteSource::finish_export : peak->finish_processing() failed!");
 	}
 		
