@@ -274,7 +274,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		int availpeaks = peak->calculate_peaks( chan,
 							&buffers[chan],
 							microView ? m_song->get_hzoom() : m_song->get_hzoom() + 1,
-							(xstart * m_sv->scalefactor) + clipstartoffset.to_frame(audiodevice().get_sample_rate()),
+							(xstart * m_sv->scalefactor) + clipstartoffset.to_frame(44100),
 							microView ? peakdatacount : peakdatacount / 2);
 		
 		if (peakdatacount != availpeaks) {
