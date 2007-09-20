@@ -867,8 +867,6 @@ Command * AudioClip::denormalize( )
 
 void AudioClip::calculate_normalization_factor(float targetdB)
 {
-	double maxamp = 0;
-
 	float target = dB_to_scale_factor (targetdB);
 
 	if (target == 1.0f) {
@@ -878,16 +876,14 @@ void AudioClip::calculate_normalization_factor(float targetdB)
 		target -= FLT_EPSILON;
 	}
 
-	double amp = m_peak->get_max_amplitude(m_sourceStartLocation.to_frame(get_rate()), m_sourceEndLocation.to_frame(get_rate()));
+	double maxamp = m_peak->get_max_amplitude(m_sourceStartLocation.to_frame(get_rate()), m_sourceEndLocation.to_frame(get_rate()));
 	
-	if (amp == 0.0f) {
+	if (maxamp == 0.0f) {
 		printf("AudioClip::normalization: max amplitude == 0\n");
 		/* don't even try */
 		return;
 	}
 	
-	maxamp = f_max(amp, maxamp);
-
 	if (maxamp == target) {
 		printf("AudioClip::normalization: max amplitude == target amplitude\n");
 		/* we can't do anything useful */

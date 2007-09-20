@@ -129,7 +129,7 @@ bool TimeLine::get_end_position(TimeRef& pos)
 {
 	foreach(Marker* marker, m_markers) {
 		if (marker->get_type() == Marker::ENDMARKER) {
-			pos = TimeRef(marker->get_when(), audiodevice().get_sample_rate());
+			pos = marker->get_when();
 			return true;
 		}
 	}

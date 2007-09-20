@@ -61,7 +61,7 @@ class DragMarker : public Command
 	Q_CLASSINFO("move_right", tr("Move right"))
 	
 public:
-	DragMarker(MarkerView* mview, double scalefactor, const QString& des);
+	DragMarker(MarkerView* mview, qint64 scalefactor, const QString& des);
 
 	int prepare_actions();
 	int do_action();
@@ -73,11 +73,11 @@ public:
 
 private :
 	Marker*		m_marker;
-	nframes_t	m_origWhen;
-	nframes_t	m_newWhen;
+	TimeRef		m_origWhen;
+	TimeRef		m_newWhen;
 	struct Data {
 		MarkerView*	view;
-		double 		scalefactor;
+		qint64 		scalefactor;
 		bool		bypassjog;
 		int		jogBypassPos;
 	};
@@ -92,7 +92,7 @@ public slots:
 #include "TimeLineView.moc"
 
 	
-DragMarker::DragMarker(MarkerView* mview, double scalefactor, const QString& des)
+DragMarker::DragMarker(MarkerView* mview, qint64 scalefactor, const QString& des)
 	: Command(mview->get_marker(), des)
 {
 	d = new Data;
@@ -147,7 +147,7 @@ void DragMarker::move_left(bool )
 {
 	d->bypassjog = true;
 	// Move 1 pixel to the left
-	long newpos = m_newWhen - (uint) ( 1 * d->scalefactor);
+	TimeRef newpos = TimeRef(m_newWhen - d->scalefactor);
 	if (newpos < 0) {
 		newpos = 0;
 	}
@@ -159,7 +159,7 @@ void DragMarker::move_right(bool )
 {
 	d->bypassjog = true;
 	// Move 1 pixel to the right
-	m_newWhen = m_newWhen + (uint) ( 1 * d->scalefactor);
+	m_newWhen = m_newWhen + d->scalefactor;
 	do_action();
 }
 
@@ -186,7 +186,7 @@ int DragMarker::jog()
 		newpos = 0;
 	}
 	
-	m_newWhen = newpos / 640;
+	m_newWhen = qint64(newpos / 640);
 	d->view->set_position(int(m_newWhen / d->scalefactor));
 	
 	d->view->get_songview()->update_shuttle_factor();
@@ -297,7 +297,8 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 
 	// minor is double so they line up right with the majors,
 	// despite not always being an even number of frames
-	double minor = major/10.0;
+	// @Ben : is still still the same when using TimeRef based calculations?
+	TimeRef minor = qint64(major/10);
 
 	TimeRef firstLocation = xstart * m_sv->timeref_scalefactor;
 	TimeRef lastLocation = xstart * m_sv->timeref_scalefactor + pixelcount * m_sv->timeref_scalefactor;
@@ -314,7 +315,7 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 	
 	// Draw major ticks
 	for (TimeRef location = firstlocactiondividedbymajorsquare; location < lastLocation; location += major) {
-		int x = location/m_sv->timeref_scalefactor - xstartoffset;
+		int x = int(location/m_sv->timeref_scalefactor - xstartoffset);
 		painter->drawLine(x, height - 13, x, height - 1);
 		if (paintText) {
 			painter->drawText(x + 4, height - 8, timeref_to_text(location, m_sv->timeref_scalefactor));
@@ -406,7 +407,7 @@ Command* TimeLineView::playhead_to_marker()
 	update_softselected_marker(QPoint(cpointer().on_first_input_event_scene_x(), cpointer().on_first_input_event_scene_y()));
 
 	if (m_blinkingMarker) {
-		m_sv->get_song()->set_transport_pos(m_blinkingMarker->get_marker()->get_when() * 640);
+		m_sv->get_song()->set_transport_pos(m_blinkingMarker->get_marker()->get_when());
 		return 0;
 	}
 

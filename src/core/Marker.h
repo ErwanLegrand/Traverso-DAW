@@ -49,7 +49,7 @@ public:
 	QDomNode get_state(QDomDocument doc);
 	int set_state(const QDomNode& node);
 	
-	void set_when (nframes_t when);
+	void set_when (const TimeRef& when);
 	void set_description(const QString &);
 	void set_performer(const QString &);
 	void set_composer(const QString &);
@@ -61,7 +61,7 @@ public:
 	void set_copyprotect(bool);
 
 	TimeLine * get_timeline() const {return m_timeline;}
-	nframes_t get_when() const {return m_when;}
+	TimeRef get_when() const {return m_when;}
 	QString get_description() const {return m_description;}
 	QString get_performer() const {return m_performer;}
 	QString get_composer() const {return m_composer;}
@@ -75,7 +75,7 @@ public:
 
 private:
 	TimeLine* m_timeline;
-	nframes_t m_when;
+	TimeRef m_when;
 	QString	m_description,
 		m_performer,
 		m_composer,

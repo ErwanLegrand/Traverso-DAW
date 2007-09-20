@@ -287,6 +287,15 @@ int ReadSource::file_read(DecodeBuffer* buffer, TimeRef& start, nframes_t cnt) c
 #endif
 	
 	int rate = audiodevice().get_sample_rate();
+	
+	// Oh boy, the rate we have to use is the output rate of the resampled reader
+	// in case the audioreader is a ResampleAudioReader. Somehow Remon thinks it's
+	// better to use TimeRef based read_from() ....
+	ResampleAudioReader* reader = dynamic_cast<ResampleAudioReader*>(m_audioReader);
+	if (reader) {
+		rate = reader->get_output_rate();
+	}
+	
 	nframes_t result = m_audioReader->read_from(buffer, start.to_frame(rate), cnt);
 
 #if defined (profile)

@@ -61,7 +61,7 @@ QDomNode Marker::get_state(QDomDocument doc)
 {
 	QDomElement domNode = doc.createElement("Marker");
 	
-	domNode.setAttribute("position",  m_when);
+	domNode.setAttribute("position",  m_when.universal_frame());
 	domNode.setAttribute("description",  m_description);
 	domNode.setAttribute("id",  m_id);
 	domNode.setAttribute("performer", m_performer);
@@ -97,7 +97,8 @@ int Marker::set_state(const QDomNode & node)
 
 	m_description = e.attribute("description", "");
 	QString tp = e.attribute("type", "CDTRACK");
-	m_when = e.attribute("position", "0").toUInt();
+	bool ok;
+	m_when = e.attribute("position", "0").toLongLong(&ok);
 	m_id = e.attribute("id", "0").toLongLong();
 	m_performer = e.attribute("performer", "");
 	m_composer = e.attribute("composer", "");
@@ -116,7 +117,7 @@ int Marker::set_state(const QDomNode & node)
 	return 1;
 }
 
-void Marker::set_when(nframes_t when)
+void Marker::set_when(const TimeRef& when)
 {
 	m_when = when;
 	emit positionChanged(this);

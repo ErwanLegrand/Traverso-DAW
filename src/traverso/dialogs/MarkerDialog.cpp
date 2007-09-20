@@ -147,7 +147,7 @@ void MarkerDialog::update_marker_treeview()
 		
 	foreach(Marker* marker, tl->get_markers()) {
 		QString name = marker->get_description();
-		QString pos = frame_to_cd(marker->get_when(), m_project->get_rate());
+		QString pos = timeref_to_cd(marker->get_when());
 
 		QTreeWidgetItem* item = new QTreeWidgetItem(markersTreeWidget);
 		item->setText(0, QString("%1 %2").arg(index, 2, 10, QLatin1Char('0')).arg(song->get_title()));
@@ -174,7 +174,7 @@ void MarkerDialog::item_changed(QTreeWidgetItem * current, QTreeWidgetItem * pre
 
 	if (previous) {
 		Marker *marker = get_marker(previous->data(0, Qt::UserRole).toLongLong());
-		marker->set_when(cd_to_frame(lineEditPosition->text(), m_project->get_rate()));
+		marker->set_when(cd_to_timeref(lineEditPosition->text()));
 		marker->set_description(lineEditTitle->text());
 		marker->set_performer(lineEditPerformer->text());
 		marker->set_composer(lineEditComposer->text());
@@ -186,7 +186,7 @@ void MarkerDialog::item_changed(QTreeWidgetItem * current, QTreeWidgetItem * pre
 		marker->set_copyprotect(checkBoxCopy->isChecked());
 	}
 
-	lineEditPosition->setText(frame_to_cd(m_marker->get_when(), m_project->get_rate()));
+	lineEditPosition->setText(timeref_to_cd(m_marker->get_when()));
 	lineEditTitle->setText(m_marker->get_description());
 	lineEditPerformer->setText(m_marker->get_performer());
 	lineEditComposer->setText(m_marker->get_composer());
@@ -221,7 +221,8 @@ void MarkerDialog::position_changed(const QString &s)
 	}
 
 	item->setText(1, s);
-	m_marker->set_when(cd_to_frame(s, m_project->get_rate()));
+	TimeRef location = cd_to_timeref(s);
+	m_marker->set_when(location);
 	markersTreeWidget->sortItems(1, Qt::AscendingOrder);
 }
 
@@ -514,7 +515,7 @@ void MarkerDialog::export_toc()
 		
 	foreach(Marker* marker, tl->get_markers()) {
 		QString name = marker->get_description();
-		QString pos = frame_to_cd(marker->get_when(), m_project->get_rate());
+		QString pos = timeref_to_cd(marker->get_when());
 
 		out << "      <tr><td>" << pos << "</td>\n        <td>" << name << "</td></tr>\n";
 	}	

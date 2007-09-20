@@ -376,10 +376,10 @@ int Song::prepare_export(ExportSpecification* spec)
 	if (spec->isCdExport) {
 		QList<Marker*> markers = m_timeline->get_markers();
 		if (markers.size() >= 2) {
-			startlocation = TimeRef(markers.at(0)->get_when(), devicerate);
+			startlocation = markers.at(0)->get_when();
 			PMESG2("  Start marker found at %d", startlocation.to_frame(devicerate));
 			// round down to the start of the CD frome (75th of a sec)
-			startlocation = TimeRef(cd_to_frame(frame_to_cd(startlocation.to_frame(devicerate), m_project->get_rate()), m_project->get_rate()), devicerate);
+			startlocation = cd_to_timeref(timeref_to_cd(startlocation));
 			spec->start_frame = startlocation.to_frame(devicerate);
 		} else {
 			PMESG2("  No start marker found");
@@ -820,7 +820,7 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 
 				// deactivate the next if-condition (only the first one) if you want the
 				// stuff before the first marker to go into the pre-gap
-				if ((nframes_t)(mlist.at(0)->get_when()) != (nframes_t)(spec->start_frame)) {
+				if (mlist.at(0)->get_when().to_frame(audiodevice().get_sample_rate()) != (spec->start_frame)) {
 					mlist.append(new Marker(m_timeline, spec->start_frame, Marker::TEMP_CDTRACK));
 				}
 				if (mlist.at(0)->get_when() != spec->end_frame) {
@@ -838,13 +838,13 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 
 	// Sort the list according to Marker::get_when() values. This
 	// is the correct way to do it according to the Qt docu.
-	QMap<nframes_t, Marker*> markermap;
+	QMap<TimeRef, Marker*> markermap;
 	foreach(Marker *marker, mlist) {
 		markermap.insert(marker->get_when(), marker);
 	}
 	mlist = markermap.values();
 
-	nframes_t start = 0;
+	TimeRef start = 0;
 	for(int i = 0; i < mlist.size()-1; ++i) {
 		Marker* startmarker = mlist.at(i);
 		Marker* endmarker = mlist.at(i+1);
@@ -882,10 +882,10 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 			//}
 		}
 		
-		nframes_t length = cd_to_frame(frame_to_cd(endmarker->get_when(), m_project->get_rate()), m_project->get_rate()) - cd_to_frame(frame_to_cd(startmarker->get_when(), m_project->get_rate()), m_project->get_rate());
+		TimeRef length = cd_to_timeref(timeref_to_cd(endmarker->get_when())) - cd_to_timeref(timeref_to_cd(startmarker->get_when()));
 		
-		QString s_start = frame_to_cd(start, m_project->get_rate());
-		QString s_length = frame_to_cd(length, m_project->get_rate());
+		QString s_start = timeref_to_cd(start);
+		QString s_length = timeref_to_cd(length);
 
 		output += "  FILE \"" + spec->name + "." + spec->extraFormat["filetype"] + "\" " + s_start + " " + s_length + "\n\n";
 		start += length;

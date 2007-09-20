@@ -106,7 +106,7 @@ void MarkerView::calculate_bounding_rect()
 void MarkerView::update_position()
 {
 	// markerwidth / 2 == center of markerview !
-	setPos( (long)(m_marker->get_when() / m_sv->scalefactor) - (m_width / 2), 0);
+	setPos( (long)(m_marker->get_when() / m_sv->timeref_scalefactor) - (m_width / 2), 0);
 }
 
 int MarkerView::position()

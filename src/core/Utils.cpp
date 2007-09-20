@@ -92,27 +92,6 @@ QString frame_to_ms_2 ( nframes_t nframes, int rate )
 	return spos;
 }
 
-// Frame to MM:SS:75 (75ths of a second, for CD burning)
-QString frame_to_cd ( nframes_t nframes, int rate )
-{
-	QString spos;
-	long unsigned int remainder;
-	int mins, secs, frames;
-	
-	if (rate != 44100) {
-		nframes = nframes * (44100/rate);
-	}
-
-	mins = nframes / ( 60 * rate );
-	remainder = nframes - ( mins * 60 * rate );
-	secs = remainder / rate;
-	remainder -= secs * rate;
-	frames = remainder * 75 / rate;
-	spos.sprintf ( " %02d:%02d:%02d", mins, secs, frames );
-
-	return spos;
-}
-
 QString frame_to_hms(double nframes, int rate)
 {
 	long unsigned int remainder;
@@ -138,18 +117,6 @@ QString frame_to_ms(double nframes, int rate)
 }
 
 
-nframes_t smpte_to_frame( QString str, int rate )
-{
-	nframes_t out = 0;
-	QStringList lst = str.simplified().split(QRegExp("[;,.:]"), QString::SkipEmptyParts);
-
-	if (lst.size() >= 1) out += lst.at(0).toInt() * 60 * rate;
-	if (lst.size() >= 2) out += lst.at(1).toInt() * rate;
-	if (lst.size() >= 3) out += lst.at(2).toInt() * rate / 30;
-
-	return out;
-}
-
 TimeRef msms_to_timeref(QString str)
 {
 	TimeRef out = 0;
@@ -162,14 +129,14 @@ TimeRef msms_to_timeref(QString str)
 	return out;
 }
 
-nframes_t cd_to_frame( QString str, int rate )
+TimeRef cd_to_timeref(QString str)
 {
-	nframes_t out = 0;
+	TimeRef out = 0;
 	QStringList lst = str.simplified().split(QRegExp("[;,.:]"), QString::SkipEmptyParts);
 
-	if (lst.size() >= 1) out += lst.at(0).toInt() * 60 * rate;
-	if (lst.size() >= 2) out += lst.at(1).toInt() * rate;
-	if (lst.size() >= 3) out += lst.at(2).toInt() * rate / 75;
+	if (lst.size() >= 1) out += lst.at(0).toInt() * ONE_MINUTE_UNIVERSAL_SAMPLE_RATE;
+	if (lst.size() >= 2) out += lst.at(1).toInt() * UNIVERSAL_SAMPLE_RATE;
+	if (lst.size() >= 3) out += lst.at(2).toInt() * UNIVERSAL_SAMPLE_RATE / 75;
 
 	return out;
 }
@@ -273,6 +240,24 @@ QString timeref_to_ms_3(const TimeRef& ref)
 	return spos;
 }
 
+// Frame to MM:SS:75 (75ths of a second, for CD burning)
+QString timeref_to_cd (const TimeRef& ref)
+{
+	QString spos;
+	long unsigned int remainder;
+	int mins, secs, frames;
+	
+	qint64 universalframe = ref.universal_frame();
+	
+	mins = universalframe / ( ONE_MINUTE_UNIVERSAL_SAMPLE_RATE );
+	remainder = universalframe - ( mins * ONE_MINUTE_UNIVERSAL_SAMPLE_RATE );
+	secs = remainder / UNIVERSAL_SAMPLE_RATE;
+	remainder -= secs * UNIVERSAL_SAMPLE_RATE;
+	frames = remainder * 75 / UNIVERSAL_SAMPLE_RATE;
+	spos.sprintf ( " %02d:%02d:%02d", mins, secs, frames );
+
+	return spos;
+}
 
 QString timeref_to_text(const TimeRef & ref, int scalefactor)
 {
