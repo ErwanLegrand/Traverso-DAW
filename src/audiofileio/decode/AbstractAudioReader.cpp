@@ -175,7 +175,7 @@ DecodeBuffer::DecodeBuffer()
 	resampleBuffer = 0;
 	readBuffer = 0;
 	origDestination = 0;
-	m_noDestBuffer = false;
+	m_noDestBuffer = m_childReadActive = false;
 	m_channels = destinationBufferSize = resampleBufferSize = readBufferSize = 0;
 	m_bufferSizeCheckCounter = m_totalCheckSize = m_smallerReadCounter = 0;
 		
@@ -198,7 +198,7 @@ void DecodeBuffer::check_buffers_capacity(uint size, uint channels)
 	}*/
 				
 		
-	if (destinationBufferSize < size || m_channels < channels) {
+	if ((destinationBufferSize < size || m_channels < channels) && !m_childReadActive) {
 			
 		delete_destination_buffers();
 			

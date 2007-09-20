@@ -42,6 +42,7 @@ public:
 	
 	void prepare_for_child_read(nframes_t offset) {
 		if (resampleBuffer) {
+			m_childReadActive = true;
 			origDestination = destination;
 			destination = resampleBuffer;
 			
@@ -55,6 +56,7 @@ public:
 	
 	void finish_child_read(nframes_t offset) {
 		if (origDestination) {
+			m_childReadActive = false;
 			destination = origDestination;
 			origDestination = 0;
 			
@@ -78,6 +80,7 @@ private:
 	uint m_bufferSizeCheckCounter;
 	audio_sample_t** origDestination; // Used to store destination during a child read in the resampler
 	bool m_noDestBuffer;
+	bool m_childReadActive;
 	
 	void delete_destination_buffers();
 	void delete_readbuffer();

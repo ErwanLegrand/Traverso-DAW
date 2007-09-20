@@ -50,7 +50,6 @@ protected:
 	nframes_t resampled_to_file_frame(nframes_t frame);
 	nframes_t file_to_resampled_frame(nframes_t frame);
 	
-	bool			m_valid;
 	AbstractAudioReader*	m_reader;
 	QVector<SRC_STATE*>	m_srcStates;
 	SRC_DATA		m_srcData;
