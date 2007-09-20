@@ -31,33 +31,6 @@
 #include <QChar>
 
 
-// Frame to MM:SS.30 (smpte time = 30ths of a second)
-QString frame_to_smpte ( nframes_t nframes, int rate )
-{
-	QString spos;
-	long unsigned int remainder;
-	int mins, secs, frames;
-
-	mins = nframes / ( 60 * rate );
-	remainder = nframes - ( mins * 60 * rate );
-	secs = remainder / rate;
-	remainder -= secs * rate;
-	frames = remainder / ( rate / 30 );
-	spos.sprintf ( " %02d:%02d%c%02d", mins, secs, QLocale::system().decimalPoint().toAscii(), frames );
-
-	return spos;
-}
-
-// Frame to MM:SS.9{2-3} (hundredths or ms, based on scalefactor)
-QString frame_to_text(nframes_t nframes, int rate, int scalefactor)
-{
-	if (scalefactor >= 512) {
-		return frame_to_ms_2(nframes, rate);
-	} else {
-		return frame_to_ms_3(nframes, rate);
-	}
-}
-
 // Frame to MM:SS.999 (ms)
 QString frame_to_ms_3 ( nframes_t nframes, int rate )
 {
@@ -75,23 +48,6 @@ QString frame_to_ms_3 ( nframes_t nframes, int rate )
 	return spos;
 }
 
-// Frame to MM:SS.99 (hundredths)
-QString frame_to_ms_2 ( nframes_t nframes, int rate )
-{
-	QString spos;
-	long unsigned int remainder;
-	int mins, secs, frames;
-
-	mins = nframes / ( 60 * rate );
-	remainder = nframes - ( mins * 60 * rate );
-	secs = remainder / rate;
-	remainder -= secs * rate;
-	frames = remainder * 100 / rate;
-	spos.sprintf ( " %02d:%02d%c%02d", mins, secs, QLocale::system().decimalPoint().toAscii(), frames );
-
-	return spos;
-}
-
 QString frame_to_hms(double nframes, int rate)
 {
 	long unsigned int remainder;
@@ -104,18 +60,6 @@ QString frame_to_hms(double nframes, int rate)
 	secs = (int) (remainder / rate);
 	return QString().sprintf("%02d:%02d:%02d", hours, mins, secs);
 }
-
-QString frame_to_ms(double nframes, int rate)
-{
-	long unsigned int remainder;
-	int mins, secs;
-
-	mins = (int) (nframes / ( 60 * rate ));
-	remainder = (long unsigned int) (nframes - (mins * 60 * rate));
-	secs = (int) (remainder / rate);
-	return QString().sprintf("%02d:%02d", mins, secs);
-}
-
 
 TimeRef msms_to_timeref(QString str)
 {
