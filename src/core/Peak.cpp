@@ -230,7 +230,7 @@ nearest_power_of_two(unsigned long val)
 }
 
 
-int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, nframes_t startPos, int pixelcount)
+int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, TimeRef startlocation, int pixelcount)
 {
 	PENTER3;
 	
@@ -258,6 +258,7 @@ int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, nframes_t sta
 	
 	// Macro view mode
 	if ( zoomLevel > MAX_ZOOM_USING_SOURCEFILE) {
+		nframes_t startPos = startlocation.to_frame(44100);
 		
 		int offset = (startPos / zoomStep[zoomLevel]) * 2;
 		
@@ -293,7 +294,6 @@ int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, nframes_t sta
 		// Calculate the amount of frames to be read
 		nframes_t toRead = pixelcount * zoomStep[zoomLevel];
 		
-		TimeRef startlocation(startPos, 44100);
 		nframes_t readFrames = m_source->file_read(data->peakdataDecodeBuffer, startlocation, toRead);
 
 		if (readFrames == 0) {

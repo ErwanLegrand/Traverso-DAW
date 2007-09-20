@@ -109,7 +109,7 @@ public:
 	void process(uint channel, audio_sample_t* buffer, nframes_t frames);
 	int prepare_processing();
 	int finish_processing();
-	int calculate_peaks(int chan, float** buffer, int zoomLevel, nframes_t startPos, int count);
+	int calculate_peaks(int chan, float** buffer, int zoomLevel, TimeRef startlocation, int count);
 
 	void close();
 	
