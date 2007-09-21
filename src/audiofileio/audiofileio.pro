@@ -20,7 +20,9 @@ SOURCES = decode/AbstractAudioReader.cpp \
 	encode/AbstractAudioWriter.cpp \
 	encode/SFAudioWriter.cpp \
 	encode/WPAudioWriter.cpp \
+	encode/VorbisAudioWriter.cpp \
 	encode/LameAudioWriter.cpp
+
 HEADERS = decode/AbstractAudioReader.h \
 	decode/SFAudioReader.h \
 	decode/FlacAudioReader.h \
@@ -31,6 +33,7 @@ HEADERS = decode/AbstractAudioReader.h \
 	encode/AbstractAudioWriter.h \
 	encode/SFAudioWriter.h \
 	encode/WPAudioWriter.h \
+	encode/VorbisAudioWriter.h \
 	encode/LameAudioWriter.h
 macx{
     QMAKE_LIBDIR += /usr/local/qt/lib

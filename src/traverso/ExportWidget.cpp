@@ -85,6 +85,7 @@ ExportWidget::ExportWidget( QWidget * parent )
 		audioTypeComboBox->addItem("WAVPACK", "wavpack");
 	}
 	audioTypeComboBox->addItem("MP3", "mp3");
+	audioTypeComboBox->addItem("OGG", "ogg");
 	
 	bitdepthComboBox->setCurrentIndex(bitdepthComboBox->findData(16));
 	
@@ -132,6 +133,30 @@ ExportWidget::ExportWidget( QWidget * parent )
 	
 	mp3OptionsGroupBox->hide();
 	connect(mp3MethodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(mp3_method_changed(int)));
+	
+	
+	// Ogg Options Setup
+	oggMethodComboBox->addItem("Constant Bitrate", "manual");
+	oggMethodComboBox->addItem("Variable Bitrate", "vbr");
+	
+	oggBitrateComboBox->addItem("45", "45");
+	oggBitrateComboBox->addItem("64", "64");
+	oggBitrateComboBox->addItem("96", "96");
+	oggBitrateComboBox->addItem("112", "112");
+	oggBitrateComboBox->addItem("128", "128");
+	oggBitrateComboBox->addItem("160", "160");
+	oggBitrateComboBox->addItem("192", "192");
+	oggBitrateComboBox->addItem("224", "224");
+	oggBitrateComboBox->addItem("256", "256");
+	oggBitrateComboBox->addItem("320", "320");
+	oggBitrateComboBox->addItem("400", "400");
+	
+	oggMethodComboBox->setCurrentIndex(oggMethodComboBox->findData("vbr"));
+	oggBitrateComboBox->setCurrentIndex(oggBitrateComboBox->findData("160"));
+	ogg_method_changed(oggMethodComboBox->findData("vbr"));
+	
+	oggOptionsGroupBox->hide();
+	connect(oggMethodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ogg_method_changed(int)));
 	
 	
 	// CD Burning stuff....
@@ -190,9 +215,15 @@ void ExportWidget::audio_type_changed(int index)
 {
 	if (audioTypeComboBox->itemData(index).toString() == "mp3") {
 		mp3OptionsGroupBox->show();
+		oggOptionsGroupBox->hide();
+	}
+	else if (audioTypeComboBox->itemData(index).toString() == "ogg") {
+		oggOptionsGroupBox->show();
+		mp3OptionsGroupBox->hide();
 	}
 	else {
 		mp3OptionsGroupBox->hide();
+		oggOptionsGroupBox->hide();
 	}
 }
 
@@ -216,6 +247,26 @@ void ExportWidget::mp3_method_changed(int index)
 		mp3MinBitrateComboBox->show();
 		mp3MinBitrateLabel->show();
 		mp3MaxBitrateLabel->setText(tr("Maximum Bitrate"));
+	}
+}
+
+
+void ExportWidget::ogg_method_changed(int index)
+{
+	QString method = oggMethodComboBox->itemData(index).toString();
+	
+	if (method == "manual") {
+		oggBitrateComboBox->show();
+		oggBitrateLabel->show();
+		oggQualitySlider->hide();
+		oggQualityLabel->hide();
+	}
+	else {
+		// VBR
+		oggQualitySlider->show();
+		oggQualityLabel->show();
+		oggBitrateComboBox->hide();
+		oggBitrateLabel->hide();
 	}
 }
 
@@ -247,6 +298,11 @@ void ExportWidget::on_exportStartButton_clicked( )
 		m_exportSpec->writerType = "sndfile";
 		m_exportSpec->extraFormat["filetype"] = "flac";
 	}
+	else if (audioType == "wavpack") {
+		m_exportSpec->writerType = "wavpack";
+		m_exportSpec->extraFormat["quality"] = "high";
+		m_exportSpec->extraFormat["skip_wvx"] = "true";
+	}
 	else if (audioType == "mp3") {
 		m_exportSpec->writerType = "lame";
 		m_exportSpec->extraFormat["method"] = mp3MethodComboBox->itemData(mp3MethodComboBox->currentIndex()).toString();
@@ -254,10 +310,16 @@ void ExportWidget::on_exportStartButton_clicked( )
 		m_exportSpec->extraFormat["maxBitrate"] = mp3MaxBitrateComboBox->itemData(mp3MaxBitrateComboBox->currentIndex()).toString();
 		m_exportSpec->extraFormat["quality"] = QString::number(mp3QualitySlider->value());
 	}
-	else if (audioType == "wavpack") {
-		m_exportSpec->writerType = "wavpack";
-		m_exportSpec->extraFormat["quality"] = "high";
-		m_exportSpec->extraFormat["skip_wvx"] = "true";
+	else if (audioType == "ogg") {
+		m_exportSpec->writerType = "vorbis";
+		m_exportSpec->extraFormat["mode"] = oggMethodComboBox->itemData(oggMethodComboBox->currentIndex()).toString();
+		if (m_exportSpec->extraFormat["mode"] == "manual") {
+			m_exportSpec->extraFormat["bitrateNominal"] = oggBitrateComboBox->itemData(oggBitrateComboBox->currentIndex()).toString();
+			m_exportSpec->extraFormat["bitrateUpper"] = oggBitrateComboBox->itemData(oggBitrateComboBox->currentIndex()).toString();
+		}
+		else {
+			m_exportSpec->extraFormat["vbrQuality"] = QString::number(oggQualitySlider->value());
+		}
 	}
 	
 	m_exportSpec->data_width = bitdepthComboBox->itemData(channelComboBox->currentIndex()).toInt();

@@ -22,6 +22,7 @@ LIBS +=  \
 	-ltraversoplugins \
 	-lsndfile \
 	-lsamplerate \
+	-lvorbisenc \
 	-lfftw3
 
 HEADERS += \

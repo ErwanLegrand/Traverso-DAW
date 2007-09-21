@@ -1,0 +1,54 @@
+/*
+Copyright (C) 2007 Ben Levitt 
+
+This file is part of Traverso
+
+Traverso is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
+
+*/
+
+#ifndef VORBISAUDIOWRITER_H
+#define VORBISAUDIOWRITER_H
+
+#include "AbstractAudioWriter.h"
+#include "defines.h"
+
+
+class QString;
+
+class VorbisAudioWriter : public AbstractAudioWriter
+{
+	Q_OBJECT
+	
+public:
+	VorbisAudioWriter();
+	~VorbisAudioWriter();
+	
+	bool set_format_attribute(const QString& key, const QString& value);
+	const char* get_extension();
+	
+protected:
+	bool open_private();
+	bool writeOggHeaders();
+	nframes_t write_private(void* buffer, nframes_t frameCount);
+	long flushVorbis();
+	void cleanup();
+	void close_private();
+	
+	class	Private;
+	Private* d;
+};
+
+#endif

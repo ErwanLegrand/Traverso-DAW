@@ -93,6 +93,7 @@ private slots:
 
 	void audio_type_changed(int index);
 	void mp3_method_changed(int index);
+	void ogg_method_changed(int index);
 
 	void start_burn_process();
 	void stop_burn_process();

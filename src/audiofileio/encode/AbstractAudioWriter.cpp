@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "SFAudioWriter.h"
 #include "WPAudioWriter.h"
 #include "LameAudioWriter.h"
+#include "VorbisAudioWriter.h"
 
 #include <QString>
 
@@ -135,11 +136,11 @@ AbstractAudioWriter* AbstractAudioWriter::create_audio_writer(const QString& typ
 	else if (libmp3lame_is_present && type == "lame") {
 		return new LameAudioWriter();
 	}
-	/*else if (type == "flac") {
-		return new FlacAudioWriter();
-	}
 	else if (type == "vorbis") {
 		return new VorbisAudioWriter();
+	}
+	/*else if (type == "flac") {
+		return new FlacAudioWriter();
 	}*/
 
 	return 0;

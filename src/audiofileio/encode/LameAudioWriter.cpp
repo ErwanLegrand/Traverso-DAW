@@ -74,7 +74,6 @@ const char* LameAudioWriter::get_extension()
 
 bool LameAudioWriter::set_format_attribute(const QString& key, const QString& value)
 {
-
 	if (key == "method") {
 		if (value == "cbr") {
 			m_method = 0;
