@@ -52,7 +52,7 @@ private:
         void show_progress_view();
         void show_settings_view();
 	
-	bool is_save_to_export();
+	bool is_safe_to_export();
 	void cd_render();
 	void write_to_cd();
 	void disable_ui_interaction();
@@ -81,15 +81,18 @@ private:
 private slots:
 	void set_project(Project* project);
 	void update_song_progress(int progress);
-        void update_overall_progress(int progress);
-        void render_finished();
-        void set_exporting_song(Song* song);
+	void update_overall_progress(int progress);
+	void render_finished();
+	void set_exporting_song(Song* song);
 
-        void on_fileSelectButton_clicked();
-        void on_exportStartButton_clicked();
-        void on_exportStopButton_clicked();
+	void on_fileSelectButton_clicked();
+	void on_exportStartButton_clicked();
+	void on_exportStopButton_clicked();
 	void on_cancelButton_clicked();
 	void export_only_changed(int state);
+
+	void audio_type_changed(int index);
+	void mp3_method_changed(int index);
 
 	void start_burn_process();
 	void stop_burn_process();

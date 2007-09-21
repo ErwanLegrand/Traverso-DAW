@@ -19,7 +19,8 @@ SOURCES = decode/AbstractAudioReader.cpp \
 	decode/MadAudioReader.cpp \
 	encode/AbstractAudioWriter.cpp \
 	encode/SFAudioWriter.cpp \
-	encode/WPAudioWriter.cpp
+	encode/WPAudioWriter.cpp \
+	encode/LameAudioWriter.cpp
 HEADERS = decode/AbstractAudioReader.h \
 	decode/SFAudioReader.h \
 	decode/FlacAudioReader.h \
@@ -30,7 +31,7 @@ HEADERS = decode/AbstractAudioReader.h \
 	encode/AbstractAudioWriter.h \
 	encode/SFAudioWriter.h \
 	encode/WPAudioWriter.h \
-	decode/PeakDataReader.h
+	encode/LameAudioWriter.h
 macx{
     QMAKE_LIBDIR += /usr/local/qt/lib
 }
@@ -52,6 +53,8 @@ unix{
         DEFINES += RELAYTOOL_MAD="'static const int libmad_is_present=1; static int __attribute__((unused)) libmad_symbol_is_present(char *) { return 1; }'"
 
         DEFINES += RELAYTOOL_VORBISFILE="'static const int libvorbisfile_is_present=1; static int __attribute__((unused)) libvorbisfile_symbol_is_present(char *) { return 1; }'"
+
+        DEFINES += RELAYTOOL_MP3LAME="'static const int libmp3lame_is_present=1; static int __attribute__((unused)) libmp3lame_symbol_is_present(char *) { return 1; }'"
     }
 }
 
@@ -61,6 +64,8 @@ unix{
     DEFINES += RELAYTOOL_MAD="\"static const int libmad_is_present=1; static int __attribute__((unused)) libmad_symbol_is_present(char *) { return 1; }\""
 
     DEFINES += RELAYTOOL_VORBISFILE="\"static const int libvorbisfile_is_present=1; static int __attribute__((unused)) libvorbisfile_symbol_is_present(char *) { return 1; }\""
+    
+    DEFINES += RELAYTOOL_MP3LAME="\"static const int libmp3lame_is_present=1; static int __attribute__((unused)) libmp3lame_symbol_is_present(char *) { return 1; }\""
 }
 HEADERS -= PeakDataReader.h \
 decode/PeakDataReader.h

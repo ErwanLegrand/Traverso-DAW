@@ -520,7 +520,7 @@ MadAudioReader::MadAudioReader(QString filename)
 	
 	m_nframes = countFrames();
 	
-	if (m_length <= 0) {
+	if (m_nframes <= 0) {
 		d->handle->cleanup();
 		delete d->handle;
 		delete d;
@@ -530,7 +530,6 @@ MadAudioReader::MadAudioReader(QString filename)
 	
 	m_rate = d->firstHeader.samplerate;
 	m_length = TimeRef(m_nframes, m_rate);
-
 	
 	d->overflowBuffers = 0;
 	

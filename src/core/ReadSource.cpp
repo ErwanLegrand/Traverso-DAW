@@ -195,6 +195,8 @@ int ReadSource::init( )
 	
 	Project* project = pm().get_project();
 	
+	m_bufferstatus = new BufferStatus;
+	
 	// Fake the samplerate, until it's set by an AudioReader!
 	m_rate = project->get_rate();
 	
@@ -258,8 +260,6 @@ int ReadSource::init( )
 
 	m_rate = m_audioReader->get_file_rate();
 	m_length = m_audioReader->get_length();
-	
-	m_bufferstatus = new BufferStatus;
 	
 	return 1;
 }
@@ -458,6 +458,7 @@ void ReadSource::rb_seek_to_file_position(TimeRef& position)
 	m_rbRelativeFileReadPos = fileposition;
 }
 
+
 void ReadSource::process_ringbuffer(DecodeBuffer* buffer, bool seeking)
 {
 	// Do nothing if we passed the lenght of the AudioFile.
@@ -529,6 +530,11 @@ void ReadSource::finish_resync()
 void ReadSource::sync(DecodeBuffer* buffer)
 {
 	PENTER2;
+	
+	if (!m_audioReader) {
+		return;
+	}
+	
 	if (!m_needSync) {
 		return;
 	}

@@ -160,11 +160,13 @@ unix{
     system(which relaytool 2>/dev/null >/dev/null) {
         LIBS += $$system(relaytool --relay FLAC -lFLAC)
         LIBS += $$system(relaytool --relay mad -lmad)
+        LIBS += $$system(relaytool --relay mp3lame -lmp3lame)
         LIBS += $$system(relaytool --relay vorbisfile -lvorbisfile)
         LIBS += $$system(relaytool --relay wavpack -lwavpack)
     } else {
         LIBS += -lvorbisfile \
             -lmad \
+            -lmp3lame \
             -lFLAC \
             -lwavpack
     }
@@ -173,6 +175,7 @@ unix{
 !unix { #non-unix systems don't have relaytool
     LIBS += -lvorbisfile \
         -lmad \
+        -lmp3lame \
         -lFLAC \
         -lwavpack
 }

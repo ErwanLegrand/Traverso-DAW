@@ -60,66 +60,79 @@ ExportWidget::ExportWidget( QWidget * parent )
 	fileSelectButton->setIcon(icon);
 	
 	set_project(pm().get_project());
-
-        //bitdepthComboBox->insertItem(0, "8");
-        bitdepthComboBox->insertItem(0, "16");
-        bitdepthComboBox->insertItem(1, "24");
-        bitdepthComboBox->insertItem(2, "32");
-        bitdepthComboBox->insertItem(3, "32 (float)");
-
-        channelComboBox->insertItem(0, "Stereo");
-        channelComboBox->insertItem(1, "Mono");
-
-        sampleRateComboBox->insertItem(0, "8.000 Hz");
-        sampleRateComboBox->insertItem(1, "11.025 Hz");
-        sampleRateComboBox->insertItem(2, "22.050 Hz");
-        sampleRateComboBox->insertItem(3, "44.100 Hz");
-        sampleRateComboBox->insertItem(4, "48.000 Hz");
-        sampleRateComboBox->insertItem(5, "88.200 Hz");
-        sampleRateComboBox->insertItem(6, "96.000 Hz");
-
-	audioTypeComboBox->insertItem(0, "WAV");
-	audioTypeComboBox->insertItem(1, "AIFF");
-	audioTypeComboBox->insertItem(2, "FLAC");
 	
+	//bitdepthComboBox->addItem("8", 8);
+	bitdepthComboBox->addItem("16", 16);
+	bitdepthComboBox->addItem("24", 24);
+	bitdepthComboBox->addItem("32", 32);
+	bitdepthComboBox->addItem("32 (float)", 1);
+	
+	channelComboBox->addItem("Stereo", 2);
+	channelComboBox->addItem("Mono", 1);
+	
+	sampleRateComboBox->addItem("8.000 Hz", 8000);
+	sampleRateComboBox->addItem("11.025 Hz", 11025);
+	sampleRateComboBox->addItem("22.050 Hz", 22050);
+	sampleRateComboBox->addItem("44.100 Hz", 44100);
+	sampleRateComboBox->addItem("48.000 Hz", 48000);
+	sampleRateComboBox->addItem("88.200 Hz", 88200);
+	sampleRateComboBox->addItem("96.000 Hz", 96000);
+	
+	audioTypeComboBox->addItem("WAV", "wav");
+	audioTypeComboBox->addItem("AIFF", "aiff");
+	audioTypeComboBox->addItem("FLAC", "flac");
 	if (libwavpack_is_present) {
-		audioTypeComboBox->insertItem(3, "WAVPACK");
+		audioTypeComboBox->addItem("WAVPACK", "wavpack");
 	}
+	audioTypeComboBox->addItem("MP3", "mp3");
 	
-	bitdepthComboBox->setCurrentIndex(0);
-
-        switch(audiodevice().get_sample_rate()) {
-        case		8000:
-                sampleRateComboBox->setCurrentIndex(0);
-                break;
-        case		11025:
-                sampleRateComboBox->setCurrentIndex(1);
-                break;
-        case		22050:
-                sampleRateComboBox->setCurrentIndex(2);
-                break;
-        case		44100:
-                sampleRateComboBox->setCurrentIndex(3);
-                break;
-        case		48000:
-                sampleRateComboBox->setCurrentIndex(4);
-                break;
-        case		88200:
-                sampleRateComboBox->setCurrentIndex(5);
-                break;
-        case		96000:
-                sampleRateComboBox->setCurrentIndex(6);
-                break;
-        }
-
-        show_settings_view();
-
+	bitdepthComboBox->setCurrentIndex(bitdepthComboBox->findData(16));
+	
+	int rateIndex = sampleRateComboBox->findData(audiodevice().get_sample_rate());
+	if (rateIndex == -1) {
+		rateIndex = 0;
+	}
+	sampleRateComboBox->setCurrentIndex(rateIndex);
+	
+	show_settings_view();
+	
 	connect(buttonBox, SIGNAL(accepted()), this, SLOT(on_exportStartButton_clicked()));
 	connect(buttonBox, SIGNAL(rejected()), this, SLOT(on_cancelButton_clicked()));
 	connect(closeButton, SIGNAL(clicked()), this, SLOT(hide()));
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
-
-
+	connect(audioTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(audio_type_changed(int)));
+	
+	
+	// Mp3 Options Setup
+	mp3MethodComboBox->addItem("Constant Bitrate", "cbr");
+	mp3MethodComboBox->addItem("Average Bitrate", "abr");
+	mp3MethodComboBox->addItem("Variable Bitrate", "vbr-new");
+	
+	mp3MinBitrateComboBox->addItem("32 - recommended", "32");
+	mp3MinBitrateComboBox->addItem("64", "64");
+	mp3MinBitrateComboBox->addItem("96", "96");
+	mp3MinBitrateComboBox->addItem("128", "128");
+	mp3MinBitrateComboBox->addItem("160", "160");
+	mp3MinBitrateComboBox->addItem("192", "192");
+	mp3MinBitrateComboBox->addItem("256", "256");
+	mp3MinBitrateComboBox->addItem("320", "320");
+	
+	mp3MaxBitrateComboBox->addItem("32", "32");
+	mp3MaxBitrateComboBox->addItem("64", "64");
+	mp3MaxBitrateComboBox->addItem("96", "96");
+	mp3MaxBitrateComboBox->addItem("128", "128");
+	mp3MaxBitrateComboBox->addItem("160", "160");
+	mp3MaxBitrateComboBox->addItem("192", "192");
+	mp3MaxBitrateComboBox->addItem("256", "256");
+	mp3MaxBitrateComboBox->addItem("320", "320");
+	
+	mp3MethodComboBox->setCurrentIndex(mp3MethodComboBox->findData("vbr-new"));
+	mp3MinBitrateComboBox->setCurrentIndex(mp3MinBitrateComboBox->findData("32"));
+	mp3MaxBitrateComboBox->setCurrentIndex(mp3MaxBitrateComboBox->findData("192"));
+	
+	mp3OptionsGroupBox->hide();
+	connect(mp3MethodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(mp3_method_changed(int)));
+	
 	
 	// CD Burning stuff....
 	
@@ -151,7 +164,7 @@ ExportWidget::~ ExportWidget( )
 {}
 
 
-bool ExportWidget::is_save_to_export()
+bool ExportWidget::is_safe_to_export()
 {
 	PENTER;
 	if (m_project->is_recording()) {
@@ -169,12 +182,47 @@ bool ExportWidget::is_save_to_export()
 		}
 	}
 	
-	return  true;
+	return true;
 }
+
+
+void ExportWidget::audio_type_changed(int index)
+{
+	if (audioTypeComboBox->itemData(index).toString() == "mp3") {
+		mp3OptionsGroupBox->show();
+	}
+	else {
+		mp3OptionsGroupBox->hide();
+	}
+}
+
+
+void ExportWidget::mp3_method_changed(int index)
+{
+	QString method = mp3MethodComboBox->itemData(index).toString();
+	
+	if (method == "cbr") {
+		mp3MinBitrateComboBox->hide();
+		mp3MinBitrateLabel->hide();
+		mp3MaxBitrateLabel->setText(tr("Bitrate"));
+	}
+	else if (method == "abr") {
+		mp3MinBitrateComboBox->hide();
+		mp3MinBitrateLabel->hide();
+		mp3MaxBitrateLabel->setText(tr("Average Bitrate"));
+	}
+	else {
+		// VBR new or VBR old
+		mp3MinBitrateComboBox->show();
+		mp3MinBitrateLabel->show();
+		mp3MaxBitrateLabel->setText(tr("Maximum Bitrate"));
+	}
+}
+
 
 void ExportWidget::on_exportStartButton_clicked( )
 {
-	if (!is_save_to_export()) {
+	if (!is_safe_to_export()) {
 		return;
 	}
 	
@@ -186,84 +234,43 @@ void ExportWidget::on_exportStartButton_clicked( )
 	m_exportSpec->extraFormat.clear();
 	
 	
-	switch (audioTypeComboBox->currentIndex()) {
-        case	0:
+	QString audioType = audioTypeComboBox->itemData(audioTypeComboBox->currentIndex()).toString();
+	if (audioType == "wav") {
 		m_exportSpec->writerType = "sndfile";
 		m_exportSpec->extraFormat["filetype"] = "wav";
-		break;
-        case	1:
+	}
+	else if (audioType == "aiff") {
 		m_exportSpec->writerType = "sndfile";
 		m_exportSpec->extraFormat["filetype"] = "aiff";
-		break;
-        case	2:
+	}
+	else if (audioType == "flac") {
 		m_exportSpec->writerType = "sndfile";
 		m_exportSpec->extraFormat["filetype"] = "flac";
-		break;
-        case	3:
+	}
+	else if (audioType == "mp3") {
+		m_exportSpec->writerType = "lame";
+		m_exportSpec->extraFormat["method"] = mp3MethodComboBox->itemData(mp3MethodComboBox->currentIndex()).toString();
+		m_exportSpec->extraFormat["minBitrate"] = mp3MinBitrateComboBox->itemData(mp3MinBitrateComboBox->currentIndex()).toString();
+		m_exportSpec->extraFormat["maxBitrate"] = mp3MaxBitrateComboBox->itemData(mp3MaxBitrateComboBox->currentIndex()).toString();
+		m_exportSpec->extraFormat["quality"] = QString::number(mp3QualitySlider->value());
+	}
+	else if (audioType == "wavpack") {
 		m_exportSpec->writerType = "wavpack";
 		m_exportSpec->extraFormat["quality"] = "high";
 		m_exportSpec->extraFormat["skip_wvx"] = "true";
-		break;
-        }
-
-	switch (bitdepthComboBox->currentIndex()) {
-	//case		0:
-	//        m_exportSpec->data_width = 8;
-	//	break;
-	case		0:
-		m_exportSpec->data_width = 16;
-		break;
-	case		1:
-		m_exportSpec->data_width = 24;
-		break;
-	case		2:
-		m_exportSpec->data_width = 32;
-		break;
-	case		3:
-		m_exportSpec->data_width = 1;	// 1 means float
-		break;
 	}
-
-	switch (channelComboBox->currentIndex()) {
-	case		0:
-		m_exportSpec->channels = 2;
-		break;
-	case		1:
-		m_exportSpec->channels = 1;
-		break;
-	}
-
-	switch (sampleRateComboBox->currentIndex()) {
-	case		0:
-		m_exportSpec->sample_rate = 8000;
-		break;
-	case		1:
-		m_exportSpec->sample_rate = 11025;
-		break;
-	case		2:
-		m_exportSpec->sample_rate = 22050;
-		break;
-	case		3:
-		m_exportSpec->sample_rate = 44100;
-		break;
-	case		4:
-		m_exportSpec->sample_rate = 48000;
-		break;
-	case		5:
-		m_exportSpec->sample_rate = 88200;
-		break;
-	case		6:
-		m_exportSpec->sample_rate = 96000;
-		break;
-	}
-
-        //TODO Make a ComboBox for this one too!
-        m_exportSpec->dither_type = GDitherTri;
-
-        //TODO Make a ComboBox for this one too!
-        m_exportSpec->src_quality = SRC_SINC_MEDIUM_QUALITY; // SRC_SINC_BEST_QUALITY  SRC_SINC_FASTEST  SRC_ZERO_ORDER_HOLD  SRC_LINEAR
-
-        if (allSongsButton->isChecked()) {
+	
+	m_exportSpec->data_width = bitdepthComboBox->itemData(channelComboBox->currentIndex()).toInt();
+	m_exportSpec->channels = channelComboBox->itemData(channelComboBox->currentIndex()).toInt();
+	m_exportSpec->sample_rate = sampleRateComboBox->itemData(sampleRateComboBox->currentIndex()).toInt();
+	
+	//TODO Make a ComboBox for this one too!
+	m_exportSpec->dither_type = GDitherTri;
+	
+	//TODO Make a ComboBox for this one too!
+	m_exportSpec->src_quality = SRC_SINC_MEDIUM_QUALITY; // SRC_SINC_BEST_QUALITY  SRC_SINC_FASTEST  SRC_ZERO_ORDER_HOLD  SRC_LINEAR
+	
+	if (allSongsButton->isChecked()) {
                 m_exportSpec->allSongs = true;
 	} else {
                 m_exportSpec->allSongs = false;
@@ -288,43 +295,43 @@ void ExportWidget::on_cancelButton_clicked()
 
 void ExportWidget::on_exportStopButton_clicked( )
 {
-        show_settings_view();
-        m_exportSpec->stop = true;
+	show_settings_view();
+	m_exportSpec->stop = true;
 	m_exportSpec->breakout = true;
 }
 
 
 void ExportWidget::on_fileSelectButton_clicked( )
 {
-        if (!m_project) {
-                info().information(tr("No project loaded, to export a project, load it first!"));
-                return;
-        }
-
-        QString dirName = QFileDialog::getExistingDirectory(this, tr("Choose/create an export directory"), m_exportSpec->exportdir);
-
-        if (!dirName.isEmpty())
-                exportDirName->setText(dirName);
-
+	if (!m_project) {
+		info().information(tr("No project loaded, to export a project, load it first!"));
+		return;
+	}
+	
+	QString dirName = QFileDialog::getExistingDirectory(this, tr("Choose/create an export directory"), m_exportSpec->exportdir);
+	
+	if (!dirName.isEmpty()) {
+		exportDirName->setText(dirName);
+	}
 }
 
 
 void ExportWidget::update_song_progress( int progress )
 {
-        songProgressBar->setValue(progress);
+	songProgressBar->setValue(progress);
 }
 
 void ExportWidget::update_overall_progress( int progress )
 {
-        overalProgressBar->setValue(progress);
+	overalProgressBar->setValue(progress);
 }
 
 void ExportWidget::render_finished( )
 {
-        songProgressBar->setValue(0);
-        overalProgressBar->setValue(0);
-
-        show_settings_view();
+	songProgressBar->setValue(0);
+	overalProgressBar->setValue(0);
+	
+	show_settings_view();
 	
 	cdburningWidget->setEnabled(true);
 	
@@ -333,10 +340,10 @@ void ExportWidget::render_finished( )
 
 void ExportWidget::set_exporting_song( Song * song )
 {
-        QString name = tr("Progress of Sheet ") + 
-			QString::number(m_project->get_song_index(song->get_id())) + ": " +
-			song->get_title();
-
+	QString name = tr("Progress of Sheet ") + 
+		QString::number(m_project->get_song_index(song->get_id())) + ": " +
+		song->get_title();
+	
 	currentProcessingSongName->setText(name);
 }
 
@@ -459,7 +466,7 @@ void ExportWidget::start_burn_process()
 {
 	PENTER;
 	
-	if(!is_save_to_export()) {
+	if(!is_safe_to_export()) {
 		return;
 	}
 	
@@ -505,20 +512,22 @@ void ExportWidget::cdrdao_process_finished(int exitcode, QProcess::ExitStatus ex
 	progressBar->setMaximum(100);
 	progressBar->setValue(0);
 
-	// check if we have to write another CD
-	bool writeAnotherCd = false;
-	if (m_copyNumber < spinBoxNumCopies->value()) {
-		if (QMessageBox::information(this, tr("Writing CD %1 of %2").arg(m_copyNumber+1).arg(spinBoxNumCopies->value()), tr("Please insert an empty CD and press OK to continue."), QMessageBox::Ok | QMessageBox::Cancel) == QMessageBox::Ok) {
-			writeAnotherCd = true;
+	if (m_writingState == BURNING) {
+		// check if we have to write another CD
+		bool writeAnotherCd = false;
+		if (m_copyNumber < spinBoxNumCopies->value()) {
+			if (QMessageBox::information(this, tr("Writing CD %1 of %2").arg(m_copyNumber+1).arg(spinBoxNumCopies->value()), tr("Please insert an empty CD and press OK to continue."), QMessageBox::Ok | QMessageBox::Cancel) == QMessageBox::Ok) {
+				writeAnotherCd = true;
+			}
+		}
+	
+		if (writeAnotherCd) {
+			write_to_cd();
+			return;
 		}
 	}
-
-	if (writeAnotherCd) {
-		write_to_cd();
-	}
-	else {
-		enable_ui_interaction();
-	}
+	
+	enable_ui_interaction();
 }
 
 void ExportWidget::cd_render()

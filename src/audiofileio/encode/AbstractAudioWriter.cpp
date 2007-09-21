@@ -22,10 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AbstractAudioWriter.h"
 #include "SFAudioWriter.h"
 #include "WPAudioWriter.h"
+#include "LameAudioWriter.h"
 
 #include <QString>
 
 RELAYTOOL_WAVPACK
+RELAYTOOL_MP3LAME
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -130,10 +132,10 @@ AbstractAudioWriter* AbstractAudioWriter::create_audio_writer(const QString& typ
 	else if (libwavpack_is_present && type == "wavpack") {
 		return new WPAudioWriter();
 	}
-	/*else if (type == "mad") {
-		return new MadAudioWriter();
+	else if (libmp3lame_is_present && type == "lame") {
+		return new LameAudioWriter();
 	}
-	else if (type == "flac") {
+	/*else if (type == "flac") {
 		return new FlacAudioWriter();
 	}
 	else if (type == "vorbis") {
