@@ -123,11 +123,14 @@ bool LameAudioWriter::open_private()
 		return false;
 	}
 	
-	lame_set_in_samplerate(m_lameInfo->flags, m_rate);
+	if (m_channels == 1) {
+		lame_set_mode(m_lameInfo->flags, MONO);
+	}
+	
 	lame_set_num_channels(m_lameInfo->flags, m_channels);
+	lame_set_in_samplerate(m_lameInfo->flags, m_rate);
 	lame_set_out_samplerate(m_lameInfo->flags, m_rate);
 	
-
 	if(m_method == 0) {
 		// Constant Bitrate
 		lame_set_VBR(m_lameInfo->flags, vbr_off);
@@ -176,11 +179,22 @@ nframes_t LameAudioWriter::write_private(void* buffer, nframes_t frameCount)
 		m_buffer = new char[m_bufferSize];
 	}
 	
-	int size = lame_encode_buffer_interleaved(m_lameInfo->flags,
-						  (short*)buffer,
-						  frameCount,
-						  (unsigned char*)m_buffer,
-						  m_bufferSize);
+	int size;
+	if (m_channels == 1) {
+		size = lame_encode_buffer(m_lameInfo->flags,
+					(short*)buffer,
+					(short*)buffer,
+					frameCount,
+					(unsigned char*)m_buffer,
+					m_bufferSize);
+	}
+	else {
+		size = lame_encode_buffer_interleaved(m_lameInfo->flags,
+							(short*)buffer,
+							frameCount,
+							(unsigned char*)m_buffer,
+							m_bufferSize);
+	}
 	
 	if (size < 0) {
 		PERROR("lame_encode_buffer_interleaved failed.");

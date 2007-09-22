@@ -67,8 +67,8 @@ ExportWidget::ExportWidget( QWidget * parent )
 	bitdepthComboBox->addItem("32", 32);
 	bitdepthComboBox->addItem("32 (float)", 1);
 	
-	channelComboBox->addItem("Stereo", 2);
 	channelComboBox->addItem("Mono", 1);
+	channelComboBox->addItem("Stereo", 2);
 	
 	sampleRateComboBox->addItem("8.000 Hz", 8000);
 	sampleRateComboBox->addItem("11.025 Hz", 11025);
@@ -88,6 +88,7 @@ ExportWidget::ExportWidget( QWidget * parent )
 	audioTypeComboBox->addItem("OGG", "ogg");
 	
 	bitdepthComboBox->setCurrentIndex(bitdepthComboBox->findData(16));
+	channelComboBox->setCurrentIndex(channelComboBox->findData(2));
 	
 	int rateIndex = sampleRateComboBox->findData(audiodevice().get_sample_rate());
 	if (rateIndex == -1) {
@@ -181,7 +182,7 @@ ExportWidget::ExportWidget( QWidget * parent )
 	connect(stopButton, SIGNAL(clicked()), this, SLOT(stop_burn_process()));
 	connect(refreshButton, SIGNAL(clicked()), this, SLOT(query_devices()));
 	connect(cdDiskExportOnlyCheckBox, SIGNAL(stateChanged(int)), this, SLOT(export_only_changed(int)));
-		
+	
 	query_devices();
 }
 
@@ -214,16 +215,26 @@ bool ExportWidget::is_safe_to_export()
 void ExportWidget::audio_type_changed(int index)
 {
 	if (audioTypeComboBox->itemData(index).toString() == "mp3") {
-		mp3OptionsGroupBox->show();
 		oggOptionsGroupBox->hide();
+		mp3OptionsGroupBox->show();
+		bitdepthComboBox->setCurrentIndex(bitdepthComboBox->findData(16));
+		channelComboBox->setCurrentIndex(channelComboBox->findData(2));
+		bitdepthComboBox->setDisabled(true);
+		channelComboBox->setDisabled(true);
 	}
 	else if (audioTypeComboBox->itemData(index).toString() == "ogg") {
-		oggOptionsGroupBox->show();
 		mp3OptionsGroupBox->hide();
+		oggOptionsGroupBox->show();
+		bitdepthComboBox->setCurrentIndex(bitdepthComboBox->findData(16));
+		channelComboBox->setCurrentIndex(channelComboBox->findData(2));
+		bitdepthComboBox->setDisabled(true);
+		channelComboBox->setDisabled(true);
 	}
 	else {
 		mp3OptionsGroupBox->hide();
 		oggOptionsGroupBox->hide();
+		bitdepthComboBox->setEnabled(true);
+		channelComboBox->setEnabled(true);
 	}
 }
 
