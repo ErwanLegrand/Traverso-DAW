@@ -200,7 +200,7 @@ bool ExportWidget::is_safe_to_export()
 	
 	QDir exportDir;
 	QString dirName = exportDirName->text();
-
+	
 	if (!dirName.isEmpty() && !exportDir.exists(dirName)) {
 		if (!exportDir.mkpath(dirName)) {
 			info().warning(tr("Unable to create export directory! Please check permissions for this directory: %1").arg(dirName));
@@ -214,25 +214,28 @@ bool ExportWidget::is_safe_to_export()
 
 void ExportWidget::audio_type_changed(int index)
 {
-	if (audioTypeComboBox->itemData(index).toString() == "mp3") {
+	QString newType = audioTypeComboBox->itemData(index).toString();
+	
+	if (newType == "mp3") {
 		oggOptionsGroupBox->hide();
 		mp3OptionsGroupBox->show();
-		bitdepthComboBox->setCurrentIndex(bitdepthComboBox->findData(16));
-		channelComboBox->setCurrentIndex(channelComboBox->findData(2));
-		bitdepthComboBox->setDisabled(true);
-		channelComboBox->setDisabled(true);
 	}
-	else if (audioTypeComboBox->itemData(index).toString() == "ogg") {
+	else if (newType == "ogg") {
 		mp3OptionsGroupBox->hide();
 		oggOptionsGroupBox->show();
-		bitdepthComboBox->setCurrentIndex(bitdepthComboBox->findData(16));
-		channelComboBox->setCurrentIndex(channelComboBox->findData(2));
-		bitdepthComboBox->setDisabled(true);
-		channelComboBox->setDisabled(true);
 	}
 	else {
 		mp3OptionsGroupBox->hide();
 		oggOptionsGroupBox->hide();
+	}
+	
+	if (newType == "mp3" || newType == "ogg" || newType == "flac") {
+		channelComboBox->setCurrentIndex(channelComboBox->findData(2));
+		channelComboBox->setDisabled(true);
+		bitdepthComboBox->setCurrentIndex(bitdepthComboBox->findData(16));
+		bitdepthComboBox->setDisabled(true);
+	}
+	else {
 		bitdepthComboBox->setEnabled(true);
 		channelComboBox->setEnabled(true);
 	}
@@ -306,8 +309,13 @@ void ExportWidget::on_exportStartButton_clicked( )
 		m_exportSpec->extraFormat["filetype"] = "aiff";
 	}
 	else if (audioType == "flac") {
-		m_exportSpec->writerType = "sndfile";
-		m_exportSpec->extraFormat["filetype"] = "flac";
+		m_exportSpec->writerType = "flac";
+		if (bitdepthComboBox->itemData(channelComboBox->currentIndex()).toInt() == 1) {
+			// Change from float to int32
+			// FIXME: Need to do this _Before_ the user starts encoding
+			// (i.e. disable the float option when flac is selected)
+			bitdepthComboBox->setCurrentIndex(bitdepthComboBox->findData(32));
+		}
 	}
 	else if (audioType == "wavpack") {
 		m_exportSpec->writerType = "wavpack";
@@ -333,7 +341,7 @@ void ExportWidget::on_exportStartButton_clicked( )
 		}
 	}
 	
-	m_exportSpec->data_width = bitdepthComboBox->itemData(channelComboBox->currentIndex()).toInt();
+	m_exportSpec->data_width = bitdepthComboBox->itemData(bitdepthComboBox->currentIndex()).toInt();
 	m_exportSpec->channels = channelComboBox->itemData(channelComboBox->currentIndex()).toInt();
 	m_exportSpec->sample_rate = sampleRateComboBox->itemData(sampleRateComboBox->currentIndex()).toInt();
 	

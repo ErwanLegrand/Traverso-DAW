@@ -24,11 +24,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "WPAudioWriter.h"
 #include "LameAudioWriter.h"
 #include "VorbisAudioWriter.h"
+#include "FlacAudioWriter.h"
 
 #include <QString>
 
 RELAYTOOL_WAVPACK
 RELAYTOOL_MP3LAME
+RELAYTOOL_FLAC
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -139,9 +141,9 @@ AbstractAudioWriter* AbstractAudioWriter::create_audio_writer(const QString& typ
 	else if (type == "vorbis") {
 		return new VorbisAudioWriter();
 	}
-	/*else if (type == "flac") {
+	else if (libFLAC_is_present && type == "flac") {
 		return new FlacAudioWriter();
-	}*/
-
+	}
+	
 	return 0;
 }

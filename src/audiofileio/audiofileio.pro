@@ -20,6 +20,7 @@ SOURCES = decode/AbstractAudioReader.cpp \
 	encode/AbstractAudioWriter.cpp \
 	encode/SFAudioWriter.cpp \
 	encode/WPAudioWriter.cpp \
+	encode/FlacAudioWriter.cpp \
 	encode/VorbisAudioWriter.cpp \
 	encode/LameAudioWriter.cpp
 
@@ -33,6 +34,7 @@ HEADERS = decode/AbstractAudioReader.h \
 	encode/AbstractAudioWriter.h \
 	encode/SFAudioWriter.h \
 	encode/WPAudioWriter.h \
+	encode/FlacAudioWriter.h \
 	encode/VorbisAudioWriter.h \
 	encode/LameAudioWriter.h
 macx{

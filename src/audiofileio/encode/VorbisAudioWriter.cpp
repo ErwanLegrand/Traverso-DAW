@@ -32,6 +32,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QString>
 
+RELAYTOOL_VORBISFILE
+
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
@@ -262,13 +264,13 @@ nframes_t VorbisAudioWriter::write_private(void* buffer, nframes_t frameCount)
 	
 	// uninterleave samples
 	if (m_channels == 1) {
-		for (int i = 0; i < frameCount; i++) {
+		for (nframes_t i = 0; i < frameCount; i++) {
 			// FIXME: Currently assumes 16bit audio
 			writeBuffer[0][i]=( (data[i*4+1]<<8) | (0x00ff&(int)data[i*4]) ) / 32768.f;
 		}
 	}
 	else {
-		for (int i = 0; i < frameCount; i++) {
+		for (nframes_t i = 0; i < frameCount; i++) {
 			// FIXME: Currently assumes 16bit audio
 			writeBuffer[0][i]=( (data[i*4+1]<<8) | (0x00ff&(int)data[i*4]) ) / 32768.f;
 			writeBuffer[1][i]=( (data[i*4+3]<<8) | (0x00ff&(int)data[i*4+2]) ) / 32768.f;
