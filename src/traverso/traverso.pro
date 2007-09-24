@@ -22,9 +22,6 @@ LIBS +=  \
 	-ltraversoplugins \
 	-lsndfile \
 	-lsamplerate \
-	-lvorbis \
-	-lvorbisenc \
-	-logg \
 	-lfftw3
 
 HEADERS += \
@@ -164,10 +161,16 @@ unix{
         LIBS += $$system(relaytool --relay FLAC -lFLAC)
         LIBS += $$system(relaytool --relay mad -lmad)
         LIBS += $$system(relaytool --relay mp3lame -lmp3lame)
+        LIBS += $$system(relaytool --relay ogg -logg)
+        LIBS += $$system(relaytool --relay vorbis -lvorbis)
         LIBS += $$system(relaytool --relay vorbisfile -lvorbisfile)
+        LIBS += $$system(relaytool --relay vorbisenc -lvorbisenc)
         LIBS += $$system(relaytool --relay wavpack -lwavpack)
     } else {
-        LIBS += -lvorbisfile \
+        LIBS += -logg \
+            -lvorbis \
+            -lvorbisfile \
+            -lvorbisenc \
             -lmad \
             -lmp3lame \
             -lFLAC \
@@ -176,7 +179,10 @@ unix{
 }
 
 !unix { #non-unix systems don't have relaytool
-    LIBS += -lvorbisfile \
+    LIBS += -logg \
+        -lvorbis \
+        -lvorbisfile \
+        -lvorbisenc \
         -lmad \
         -lmp3lame \
         -lFLAC \

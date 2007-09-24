@@ -41,6 +41,9 @@
 #endif
 
 RELAYTOOL_WAVPACK
+RELAYTOOL_FLAC
+RELAYTOOL_MP3LAME
+RELAYTOOL_VORBISENC
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -80,12 +83,18 @@ ExportWidget::ExportWidget( QWidget * parent )
 	
 	audioTypeComboBox->addItem("WAV", "wav");
 	audioTypeComboBox->addItem("AIFF", "aiff");
-	audioTypeComboBox->addItem("FLAC", "flac");
+	if (libFLAC_is_present) {
+		audioTypeComboBox->addItem("FLAC", "flac");
+	}
 	if (libwavpack_is_present) {
 		audioTypeComboBox->addItem("WAVPACK", "wavpack");
 	}
-	audioTypeComboBox->addItem("MP3", "mp3");
-	audioTypeComboBox->addItem("OGG", "ogg");
+	if (libmp3lame_is_present) {
+		audioTypeComboBox->addItem("MP3", "mp3");
+	}
+	if (libvorbisenc_is_present) {
+		audioTypeComboBox->addItem("OGG", "ogg");
+	}
 	
 	bitdepthComboBox->setCurrentIndex(bitdepthComboBox->findData(16));
 	channelComboBox->setCurrentIndex(channelComboBox->findData(2));

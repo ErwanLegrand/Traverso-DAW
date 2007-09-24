@@ -314,15 +314,27 @@ static inline trav_time_t get_microseconds()
 #define RELAYTOOL_FLAC \
 	extern int libFLAC_is_present;\
  	extern int libFLAC_symbol_is_present(char *s);
- 	
- 	
+
+
 #define	RELAYTOOL_MAD \
 	extern int libmad_is_present;\
 	extern int libmad_symbol_is_present(char *s);
-	
+
+#define RELAYTOOL_OGG \
+	extern int libogg_is_present;\
+	extern int libogg_symbol_is_present(char *s);
+
+#define RELAYTOOL_VORBIS \
+	extern int libvorbis_is_present;\
+	extern int libvorbis_symbol_is_present(char *s);
+
 #define RELAYTOOL_VORBISFILE \
 	extern int libvorbisfile_is_present;\
 	extern int libvorbisfile_symbol_is_present(char *s);
+
+#define RELAYTOOL_VORBISENC \
+	extern int libvorbisenc_is_present;\
+	extern int libvorbisenc_symbol_is_present(char *s);
 
 
 #else
@@ -343,11 +355,23 @@ static inline trav_time_t get_microseconds()
 #define RELAYTOOL_MAD \
 	static const int libmad_is_present=1;\
 	static int __attribute__((unused)) libmad_symbol_is_present(char *) { return 1; }
-	
+
+#define RELAYTOOL_OGG \
+	static const int libogg_is_present=1;\
+	static int __attribute__((unused)) libogg_symbol_is_present(char *) { return 1; }
+
+#define RELAYTOOL_VORBIS \
+	static const int libvorbis_is_present=1;\
+	static int __attribute__((unused)) libvorbis_symbol_is_present(char *) { return 1; }
+
 #define RELAYTOOL_VORBISFILE \
 	static const int libvorbisfile_is_present=1;\
 	static int __attribute__((unused)) libvorbisfile_symbol_is_present(char *) { return 1; }
-	
+
+#define RELAYTOOL_VORBISENC \
+	static const int libvorbisenc_is_present=1;\
+	static int __attribute__((unused)) libvorbisenc_symbol_is_present(char *) { return 1; }
+
 #define RELAYTOOL_MP3LAME \
 	static const int libmp3lame_is_present=1;\
 	static int __attribute__((unused)) libmp3lame_symbol_is_present(char *) { return 1; }
