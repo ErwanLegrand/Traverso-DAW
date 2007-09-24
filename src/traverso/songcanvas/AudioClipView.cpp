@@ -254,8 +254,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	int peakdatacount = microView ? pixelcount : pixelcount * 2;
 
 	int buffersize = microView ? sizeof(short) * peakdatacount : sizeof(peak_data_t) * peakdatacount;
-	float* buffers[channels];
-	float pixeldata[channels][buffersize];
+	float* pixeldata[channels];
 	float curvemixdown[buffersize];
 	
 	Peak* peak = m_clip->get_peak();
@@ -267,12 +266,10 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	// Load peak data for all channels, if no peakdata is returned
 	// for a certain Peak object, schedule it for loading.
 	for (int chan=0; chan < channels; ++chan) {
-// 		memset(buffers[chan], 0, buffersize * sizeof(peak_data_t));
-		
 		TimeRef clipstartoffset = m_clip->get_source_start_location();
 		
 		int availpeaks = peak->calculate_peaks( chan,
-							&buffers[chan],
+							&pixeldata[chan],
 							microView ? m_song->get_hzoom() : m_song->get_hzoom() + 1,
 							(xstart * m_sv->timeref_scalefactor) + clipstartoffset,
 							microView ? peakdatacount : peakdatacount / 2);
@@ -324,11 +321,9 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	// and store it in the first channels pixeldata.
 	if (!microView) {
 		for (int chan=0; chan < channels; chan++) {
-			if (m_classicView) {
-				memcpy(pixeldata[chan], buffers[chan], pixelcount*2*sizeof(float));
-			} else {
-				for (int i = 0; i < (pixelcount*2); i+=2) {
-					pixeldata[chan][i] = - f_max(buffers[chan][i], - buffers[chan][i+1]);
+			if (!m_classicView) {
+				for (int i=0, j=0; i < (pixelcount*2); i+=2, ++j) {
+					pixeldata[chan][j] = - f_max(pixeldata[chan][i], - pixeldata[chan][i+1]);
 				}
 			}
 		}
@@ -433,7 +428,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			p->drawLine(xstart, 0, xstart + pixelcount, 0);
 			
 			for (int x = xstart; x < (pixelcount+xstart); x++) {
-				polygon.append( QPointF(x, scaleFactor * buffers[chan][bufferPos++]) );
+				polygon.append( QPointF(x, scaleFactor * pixeldata[chan][bufferPos++]) );
 			}
 			
 			if (themer()->get_property("AudioClip:wavemicroview:antialiased", 0).toInt()) {
@@ -496,7 +491,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 
 				for (int x = xstart; x < (pixelcount+xstart); x+=2) {
 					polygontop.append( QPointF(x, scaleFactor * pixeldata[chan][bufferpos]) );
-					bufferpos += 2;
+					bufferpos++;
 				}
 				
 				polygontop.append(QPointF(xstart + pixelcount, 0));
