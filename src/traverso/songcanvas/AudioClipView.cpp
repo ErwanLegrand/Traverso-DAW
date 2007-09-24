@@ -325,11 +325,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	if (!microView) {
 		for (int chan=0; chan < channels; chan++) {
 			if (m_classicView) {
-				for (int i = 0; i < (pixelcount*2); ++i) {
-					pixeldata[chan][i] = buffers[chan][i];
-					i++;
-					pixeldata[chan][i] = buffers[chan][i];
-				}
+				memcpy(pixeldata[chan], buffers[chan], pixelcount*2*sizeof(float));
 			} else {
 				for (int i = 0; i < (pixelcount*2); i+=2) {
 					pixeldata[chan][i] = - f_max(buffers[chan][i], - buffers[chan][i+1]);
