@@ -253,9 +253,8 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	int channels = m_clip->get_channels();
 	int peakdatacount = microView ? pixelcount : pixelcount * 2;
 
-	int buffersize = microView ? sizeof(short) * peakdatacount : sizeof(peak_data_t) * peakdatacount;
 	float* pixeldata[channels];
-	float curvemixdown[buffersize];
+	float curvemixdown[peakdatacount];
 	
 	Peak* peak = m_clip->get_peak();
 	if (!peak) {
@@ -270,9 +269,9 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		
 		int availpeaks = peak->calculate_peaks( chan,
 							&pixeldata[chan],
-							microView ? m_song->get_hzoom() : m_song->get_hzoom() + 1,
+							m_song->get_hzoom(),
 							(xstart * m_sv->timeref_scalefactor) + clipstartoffset,
-							microView ? peakdatacount : peakdatacount / 2);
+							peakdatacount);
 		
 		if (peakdatacount != availpeaks) {
 // 			PWARN("peakdatacount != availpeaks (%d, %d)", peakdatacount, availpeaks);
@@ -337,12 +336,12 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 						pixeldata[chan][i] *= curvemixdown[curvemixdownpos];
 						i++;
 						pixeldata[chan][i] *= curvemixdown[curvemixdownpos];
-						curvemixdownpos += 2;
+						curvemixdownpos ++;
 					}
 				} else {
-					for (int i = 0; i < (pixelcount*2); i+=2) {
+					for (int i = 0; i < pixelcount; i++) {
 						pixeldata[chan][i] *= curvemixdown[curvemixdownpos];
-						curvemixdownpos += 2;
+						curvemixdownpos ++;
 					}
 				}
 			}
@@ -465,7 +464,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				QPolygonF polygonbottom(pixelcount);
 				
 				int range = pixelcount;
-				for (int x = 0; x < range; x+=2) {
+				for (int x = 0; x < range; x++) {
 					polygontop.append( QPointF(x, scaleFactor * pixeldata[chan][bufferpos++]) );
 					polygonbottom.append( QPointF(x, -scaleFactor * pixeldata[chan][bufferpos++]) );
 				}

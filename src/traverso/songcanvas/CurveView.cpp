@@ -158,7 +158,6 @@ int DragNode::jog()
 	
 	m_newWhen = m_newWhen + dx * d->scalefactor;
 	m_newValue = m_newValue - ( dy / d->curveView->boundingRect().height());
-	printf("m_newWhen is %f, %d\n", m_newWhen, dx);
 	
 	TimeRef startoffset = d->curveView->get_start_offset();
 	if ( ((qint64(m_newWhen) - startoffset) / d->scalefactor) > d->curveView->boundingRect().width()) {

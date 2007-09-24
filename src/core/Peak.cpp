@@ -245,7 +245,7 @@ int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, TimeRef start
 	}
 	
 	if (pixelcount <= 0) {
-		return 1;
+		return NO_PEAKDATA_FOUND;
 	}
 	
 	ChannelData* data = m_channelData.at(chan);
@@ -265,8 +265,8 @@ int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, TimeRef start
 		// Check if this zoom level has as many data as requested.
 		if ( (pixelcount + offset) > data->headerdata.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR]) {
 			// YES we know that sometimes we ommit the very last 'pixel' to avoid painting artifacts...
-//  			PERROR("pixelcount exceeds available data size! (pixelcount is: %d, available is %d", pixelcount, data->headerdata.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR] - offset); 
-			pixelcount = data->headerdata.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR] - offset;
+ 			PERROR("pixelcount exceeds available data size! (pixelcount is: %d, available is %d", pixelcount, data->headerdata.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR] - offset); 
+// 			pixelcount = data->headerdata.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR] - offset;
 		}
 		
 		nframes_t readposition = data->headerdata.peakDataLevelOffsets[zoomLevel - SAVING_ZOOM_FACTOR] + offset;
@@ -898,9 +898,8 @@ nframes_t PeakDataReader::read(DecodeBuffer* buffer, nframes_t count)
 	}
 		
 	// Make sure the read buffer is big enough for this read
-	buffer->check_buffers_capacity(count*2, 1);
+	buffer->check_buffers_capacity(count, 1);
 	
-	// printf("read_from:: after_seek from %d, framepos is %d\n", start, m_readPos);
 	Q_ASSERT(m_d->file);
 
 	int framesRead = fread((void*)buffer->readBuffer, sizeof(peak_data_t), count, m_d->file);
@@ -908,7 +907,7 @@ nframes_t PeakDataReader::read(DecodeBuffer* buffer, nframes_t count)
 	peak_data_t* readbuffer = (peak_data_t*)(buffer->readBuffer);
 
 	for (int f = 0; f < framesRead; f++) {
-		buffer->destination[0][f] = readbuffer[f];
+		buffer->destination[0][f] = float(readbuffer[f]);
 	}
 
 	m_readPos += framesRead;
