@@ -50,7 +50,7 @@ public:
 
 	QDomNode get_state(QDomDocument doc, const QString& name);
 	virtual int set_state( const QDomNode& node );
-	virtual int process(audio_sample_t* buffer, nframes_t pos, nframes_t nframes);
+	virtual int process(audio_sample_t* buffer, const TimeRef& startlocation, const TimeRef& endlocation, nframes_t nframes);
 	
 	Command* add_node(CurveNode* node, bool historable=true);
 	Command* remove_node(CurveNode* node, bool historable=true);

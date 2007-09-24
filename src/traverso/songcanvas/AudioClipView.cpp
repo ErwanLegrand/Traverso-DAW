@@ -41,7 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QFileDialog>
 #include "AudioClipEditDialog.h"
-
+#include "Fade.h"
 #include "AudioDevice.h"
 
 // Always put me below _all_ includes, this is needed
@@ -774,12 +774,29 @@ Command * AudioClipView::fade_range()
 	int x = (int) (cpointer().on_first_input_event_scene_x() - scenePos().x());
 
 	if (x < (m_boundingRect.width() / 2)) {
-		return m_clip->clip_fade_in();
+		return clip_fade_in();
 	} else {
-		return m_clip->clip_fade_out();
+		return clip_fade_out();
 	}
 
 	return 0;
+}
+
+Command * AudioClipView::clip_fade_in( )
+{
+	if (! m_clip->get_fade_in()) {
+		// This implicitely creates the fadecurve
+		m_clip->set_fade_in(1);
+	}
+	return new FadeRange(m_clip, m_clip->get_fade_in(), m_sv->timeref_scalefactor);
+}
+
+Command * AudioClipView::clip_fade_out( )
+{
+	if (! m_clip->get_fade_out()) {
+		m_clip->set_fade_out(1);
+	}
+	return new FadeRange(m_clip, m_clip->get_fade_out(), m_sv->timeref_scalefactor);
 }
 
 Command * AudioClipView::reset_fade()

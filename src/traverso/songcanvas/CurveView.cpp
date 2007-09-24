@@ -58,14 +58,22 @@ public:
         int jog();
 
 private :
-	CurveView*	m_curveView;
-	CurveNode*	m_node;
-	int		m_scalefactor;
-	QPointF		m_origPos;
-	QPointF 	m_newPos;
-	long		m_rangeMin;
-	long		m_rangeMax;
-	QPoint		m_mousepos;
+	class	Private {
+		public:
+			CurveView*	curveView;
+			int		scalefactor;
+			long		rangeMin;
+			long		rangeMax;
+			QPoint		mousepos;
+	};
+	
+	Private* d;
+	CurveNode* m_node;
+	double	m_origWhen;
+	double	m_origValue;
+	double	m_newWhen;
+	double 	m_newValue;
+	
 
 public slots:
         void move_up(bool autorepeat);
@@ -78,12 +86,13 @@ public slots:
 	
 DragNode::DragNode(CurveNode* node, CurveView* curveview, int scalefactor, long rangeMin, long rangeMax, const QString& des)
 	: Command(curveview->get_context(), des)
+	, d(new Private)
 {
 	m_node = node;
-	m_rangeMin = rangeMin;
-	m_rangeMax = rangeMax;
-	m_curveView = curveview;
-	m_scalefactor = scalefactor;
+	d->rangeMin = rangeMin;
+	d->rangeMax = rangeMax;
+	d->curveView = curveview;
+	d->scalefactor = scalefactor;
 }
 
 int DragNode::prepare_actions()
@@ -93,46 +102,47 @@ int DragNode::prepare_actions()
 
 int DragNode::finish_hold()
 {
+	delete d;
 	return 1;
 }
 
 void DragNode::cancel_action()
 {
+	delete d;
 	undo_action();
 }
 
 int DragNode::begin_hold()
 {
-	m_origPos.setX(m_node->get_when());
-	m_origPos.setY(m_node->get_value());
-	m_newPos = m_origPos;
+	m_origWhen = m_newWhen = m_node->get_when();
+	m_origValue = m_newValue = m_node->get_value();
 	
-	m_mousepos = QPoint(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
+	d->mousepos = QPoint(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
 	return 1;
 }
 
 
 int DragNode::do_action()
 {
-	m_node->set_when_and_value(m_newPos.x(), m_newPos.y());
+	m_node->set_when_and_value(m_newWhen, m_newValue);
 	return 1;
 }
 
 int DragNode::undo_action()
 {
-	m_node->set_when_and_value(m_origPos.x(), m_origPos.y());
+	m_node->set_when_and_value(m_origWhen, m_origValue);
 	return 1;
 }
 
 void DragNode::move_up(bool )
 {
-	m_newPos.setY(m_newPos.y() + ( 1 / m_curveView->boundingRect().height()) );
+	m_newValue = m_newValue + ( 1 / d->curveView->boundingRect().height());
 	do_action();
 }
 
 void DragNode::move_down(bool )
 {
-	m_newPos.setY(m_newPos.y() - ( 1 / m_curveView->boundingRect().height()) );
+	m_newValue = m_newValue - ( 1 / d->curveView->boundingRect().height());
 	do_action();
 }
 
@@ -141,36 +151,37 @@ int DragNode::jog()
 	QPoint mousepos = cpointer().pos();
 	
 	int dx, dy;
-	dx = mousepos.x() - m_mousepos.x();
-	dy = mousepos.y() - m_mousepos.y();
+	dx = mousepos.x() - d->mousepos.x();
+	dy = mousepos.y() - d->mousepos.y();
 	
-	m_mousepos = mousepos;
+	d->mousepos = mousepos;
 	
-	m_newPos.setX(m_newPos.x() + dx * m_scalefactor);
-	m_newPos.setY(m_newPos.y() - ( dy / m_curveView->boundingRect().height()) );
+	m_newWhen = m_newWhen + dx * d->scalefactor;
+	m_newValue = m_newValue - ( dy / d->curveView->boundingRect().height());
+	printf("m_newWhen is %f, %d\n", m_newWhen, dx);
 	
-	TimeRef startoffset = m_curveView->get_start_offset();
-	if ( ((int)(m_newPos.x() - startoffset.to_frame(audiodevice().get_sample_rate()))/ m_scalefactor) > m_curveView->boundingRect().width()) {
-		m_newPos.setX(m_curveView->boundingRect().width() * m_scalefactor + startoffset.to_frame(audiodevice().get_sample_rate()));
+	TimeRef startoffset = d->curveView->get_start_offset();
+	if ( ((qint64(m_newWhen) - startoffset) / d->scalefactor) > d->curveView->boundingRect().width()) {
+		m_newWhen = double(d->curveView->boundingRect().width() * d->scalefactor + startoffset.universal_frame());
 	}
-	if ( m_newPos.x() - startoffset.to_frame(audiodevice().get_sample_rate()) < 0) {
-		m_newPos.setX(startoffset.to_frame(audiodevice().get_sample_rate()));
-	}
-	
-	if (m_newPos.y() < 0.0) {
-		m_newPos.setY(0.0);
-	}
-	if (m_newPos.x() < 0.0) {
-		m_newPos.setX(0.0);
-	}
-	if (m_newPos.y() > 1.0) {
-		m_newPos.setY(1.0);
+	if ((qint64(m_newWhen) - startoffset) < 0) {
+		m_newWhen = startoffset.universal_frame();
 	}
 	
-	if (m_newPos.x() < m_rangeMin) {
-		m_newPos.setX(m_rangeMin);
-	} else if (m_rangeMax != -1 && m_newPos.x() > m_rangeMax) {
-		m_newPos.setX(m_rangeMax);
+	if (m_newValue < 0.0) {
+		m_newValue = 0.0;
+	}
+	if (m_newValue > 1.0) {
+		m_newValue = 1.0;
+	}
+	if (m_newWhen < 0.0) {
+		m_newWhen = 0.0;
+	}
+	
+	if (m_newWhen < d->rangeMin) {
+		m_newWhen = d->rangeMin;
+	} else if (d->rangeMax != -1 && m_newWhen > d->rangeMax) {
+		m_newWhen = d->rangeMax;
 	}
 
 	return do_action();
@@ -257,7 +268,7 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	float vector[pixelcount];
 	
 // 	printf("range: %d\n", (int)m_nodeViews.last()->pos().x());
-	int offset = m_startoffset / m_sv->timeref_scalefactor;
+	int offset = int(m_startoffset / m_sv->timeref_scalefactor);
 	m_guicurve->get_vector(xstart + offset,
 				xstart + pixelcount + offset,
     				vector,
@@ -468,8 +479,11 @@ Command* CurveView::add_node()
 
 	emit curveModified();
 	
-	CurveNode* node = new CurveNode(m_curve, point.x() * m_sv->scalefactor + m_startoffset.to_frame(audiodevice().get_sample_rate()),
-					 (m_boundingRect.height() - point.y()) / m_boundingRect.height());
+	double when = point.x() * double(m_sv->timeref_scalefactor) + m_startoffset.universal_frame();
+	double value = (m_boundingRect.height() - point.y()) / m_boundingRect.height();
+	
+	CurveNode* node = new CurveNode(m_curve, when, value);
+	
 	return m_curve->add_node(node);
 }
 
@@ -501,8 +515,8 @@ Command* CurveView::drag_node()
 	update_softselected_node(QPoint((int)origPos.x(), (int)origPos.y()), true);
 	
 	if (m_blinkingNode) {
-		long min = 0;
-		long max = -1;
+		qint64 min = 0;
+		qint64 max = -1;
 		QList<CurveNode* >* nodeList = m_curve->get_nodes();
 		CurveNode* node = m_blinkingNode->get_curve_node();
 		int index = nodeList->indexOf(node);
@@ -510,12 +524,12 @@ Command* CurveView::drag_node()
 		emit curveModified();
 		
 		if (index > 0) {
-			min = (long)(nodeList->at(index-1)->get_when() + 1);
+			min = qint64(nodeList->at(index-1)->get_when() + 1);
 		}
 		if (nodeList->size() > index + 1) {
-			max = (long)(nodeList->at(index+1)->get_when() - 1);
+			max = qint64(nodeList->at(index+1)->get_when() - 1);
 		}
-		return new DragNode(m_blinkingNode->get_curve_node(), this, m_sv->scalefactor, min, max, tr("Drag Node"));
+		return new DragNode(m_blinkingNode->get_curve_node(), this, m_sv->timeref_scalefactor, min, max, tr("Drag Node"));
 	}
 	return ie().did_not_implement();
 }

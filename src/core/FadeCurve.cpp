@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.26 2007/09/10 18:42:48 r_sijrier Exp $
+$Id: FadeCurve.cpp,v 1.27 2007/09/24 16:58:38 r_sijrier Exp $
 */
  
 #include "FadeCurve.h"
@@ -164,7 +164,7 @@ int FadeCurve::set_state( const QDomNode & node )
 }
 
 
-void FadeCurve::process( audio_sample_t * mixdown, nframes_t nframes )
+void FadeCurve::process(audio_sample_t** mixdown, nframes_t nframes, uint channels)
 {
 
 	if (is_bypassed() || (get_range() < 16)) {
@@ -172,32 +172,33 @@ void FadeCurve::process( audio_sample_t * mixdown, nframes_t nframes )
 	}
 	
 	
-	int fadepos = 0;
+	TimeRef range = TimeRef(qint64(get_range()));
+	TimeRef fadepos = 0;
 	
 	if (m_type == FadeIn) {
-		if( !( m_song->get_transport_location() < (m_clip->get_track_start_location() + get_range()) ) ) {
+		if( !( m_song->get_transport_location() < (m_clip->get_track_start_location() + range) ) ) {
 			return;
 		}
 		
-		fadepos = (m_song->get_transport_location() - m_clip->get_track_start_location()).to_frame(audiodevice().get_sample_rate());
+		fadepos = m_song->get_transport_location() - m_clip->get_track_start_location();
 	} else {
-		if( !(m_song->get_transport_location() > (m_clip->get_track_end_location() - get_range())) ) {
+		if( !(m_song->get_transport_location() > (m_clip->get_track_end_location() - range)) ) {
 			return;
 		}
 		
-		fadepos = (m_song->get_transport_location() - (m_clip->get_track_end_location() - TimeRef(get_range(), audiodevice().get_sample_rate()))).to_frame(audiodevice().get_sample_rate());
+		fadepos = m_song->get_transport_location() - m_clip->get_track_end_location() - range;
 	}
-	
-// 	printf("mix_pos is %d, len is %d\n", mix_pos, fadeIn->get_range());
 
-	nframes_t limit = std::min (nframes, (uint) get_range());
+	TimeRef realframes(nframes, audiodevice().get_sample_rate());
+	TimeRef limit = std::min (realframes.universal_frame(), range.universal_frame());
 	
-	
-	get_vector(fadepos, fadepos + limit, m_song->gainbuffer, limit);
-	
+	get_vector(fadepos.universal_frame(), (fadepos + limit).universal_frame(), m_song->gainbuffer, limit.to_frame(audiodevice().get_sample_rate()));
 
-	for (nframes_t n = 0; n < limit; ++n) {
-		mixdown[n] *= m_song->gainbuffer[n];
+	nframes_t framerange = limit.to_frame(audiodevice().get_sample_rate());
+	for (int chan=0; chan<channels; ++chan) {
+		for (nframes_t frame = 0; frame < framerange; ++frame) {
+			mixdown[chan][frame] *= m_song->gainbuffer[frame];
+		}
 	}
 }
 

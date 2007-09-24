@@ -73,14 +73,16 @@ int GainEnvelope::set_state(const QDomNode & node)
 	return 1;
 }
 
-void GainEnvelope::process_gain(audio_sample_t* buffer, nframes_t pos, nframes_t nframes)
+void GainEnvelope::process_gain(audio_sample_t** buffer, const TimeRef& startlocation, const TimeRef& endlocation, nframes_t nframes, uint channels)
 {
 	PluginControlPort* port = m_controlPorts.at(0);
 	
-	Mixer::apply_gain_to_buffer(buffer, nframes, port->get_control_value());
-	
-	if (port->use_automation()) {
-		port->get_curve()->process(buffer, pos, nframes);
+	for (int chan=0; chan<channels; ++chan) {
+		Mixer::apply_gain_to_buffer(buffer[chan], nframes, port->get_control_value());
+		
+		if (port->use_automation()) {
+			port->get_curve()->process(buffer[chan], startlocation, endlocation, nframes);
+		}
 	}
 }
 

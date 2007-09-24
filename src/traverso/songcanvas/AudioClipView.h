@@ -41,6 +41,8 @@ class AudioClipView : public ViewItem
 {
 	Q_OBJECT
 	Q_CLASSINFO("fade_range", tr("In/Out: Range"))
+	Q_CLASSINFO("clip_fade_in", tr("In: Range"))
+	Q_CLASSINFO("clip_fade_out", tr("Out: Range"))
 	Q_CLASSINFO("select_fade_in_shape", tr("In: Select shape"));
 	Q_CLASSINFO("select_fade_out_shape", tr("Out: Select shape"));
 	Q_CLASSINFO("reset_fade", tr("In/Out: Reset"));
@@ -132,6 +134,8 @@ public slots:
 	void position_changed();
 	
 	Command* fade_range();
+	Command* clip_fade_in();
+	Command* clip_fade_out();
 	Command* select_fade_in_shape();
 	Command* select_fade_out_shape();
 	Command* reset_fade();

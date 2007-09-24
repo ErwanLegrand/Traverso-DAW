@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeView.cpp,v 1.18 2007/06/26 23:43:21 benjie Exp $
+$Id: FadeView.cpp,v 1.19 2007/09/24 16:58:39 r_sijrier Exp $
 */
 
 #include "FadeView.h"
@@ -53,7 +53,7 @@ FadeView::FadeView(SongView* sv, AudioClipView* parent, FadeCurve * fadeCurve )
 	
 	foreach(CurveNode* node, *m_fadeCurve->get_nodes()) {
 		CurveNode* guinode = new CurveNode(m_guicurve, 
-				node->get_when() / m_sv->scalefactor,
+				node->get_when() / m_sv->timeref_scalefactor,
 				node->get_value());
 		AddRemove* cmd = (AddRemove*) m_guicurve->add_node(guinode, false);
 		cmd->set_instantanious(true);
@@ -222,7 +222,7 @@ void FadeView::calculate_bounding_rect()
 	for (int i=0; i<guinodes->size(); ++i) {
 		CurveNode* node = nodes->at(i);
 		CurveNode* guinode = guinodes->at(i);
-		guinode->set_when_and_value(node->get_when() / m_sv->scalefactor, node->get_value());
+		guinode->set_when_and_value(node->get_when() / m_sv->timeref_scalefactor, node->get_value());
 	}
 	
 	double range = m_guicurve->get_range();

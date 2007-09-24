@@ -116,16 +116,7 @@ unix {
 	GCCVERSION = $$system(gcc -dumpversion)
 	
 	system(which relaytool 2>/dev/null >/dev/null) {
-		DEFINES += RELAYTOOL_JACK="'extern int libjack_is_present; extern int libjack_symbol_is_present(char *s);'"
-
-		DEFINES += RELAYTOOL_WAVPACK="'extern int libwavpack_is_present; extern int libwavpack_symbol_is_present(char *s);'"
-	} else {
-		DEFINES += RELAYTOOL_JACK="'static const int libjack_is_present=1; static int __attribute__((unused)) libjack_symbol_is_present(char *) { return 1; }'"
-
-		# put WAVPACK def here so that we can check if it exists globally
-		# so that traverso/ExportWidget.cpp knows if it should offer
-		# WAVPACK as an export option
-		DEFINES += RELAYTOOL_WAVPACK="'static const int libwavpack_is_present=1; static int __attribute__((unused)) libwavpack_symbol_is_present(char *) { return 1; }'"
+		DEFINES += RELAYTOOL_PRESENT
 	}
 	
 	contains(DEFINES, PRECOMPILED_HEADER):CONFIG += precompile_header
@@ -143,10 +134,6 @@ unix {
 	
 }
 
-!unix {
-	# other systems have no relaytool
-	DEFINES += RELAYTOOL_WAVPACK='"static const int libwavpack_is_present=1; static int __attribute__((unused)) libwavpack_symbol_is_present(char *) { return 1; }"'
-}
 
 macx {
 	DEFINES += OSX_BUILD

@@ -301,7 +301,60 @@ static inline trav_time_t get_microseconds()
 	return time;
 }
 
+#if defined (RELAYTOOL_PRESENT)
 
-#endif
+#define RELAYTOOL_JACK \
+	extern int libjack_is_present;\
+ 	extern int libjack_symbol_is_present(char *s);
+
+#define RELAYTOOL_WAVPACK \
+	extern int libwavpack_is_present;\
+	extern int libwavpack_symbol_is_present(char *s);
+
+#define RELAYTOOL_FLAC \
+	extern int libFLAC_is_present;\
+ 	extern int libFLAC_symbol_is_present(char *s);
+ 	
+ 	
+#define	RELAYTOOL_MAD \
+	extern int libmad_is_present;\
+	extern int libmad_symbol_is_present(char *s);
+	
+#define RELAYTOOL_VORBISFILE \
+	extern int libvorbisfile_is_present;\
+	extern int libvorbisfile_symbol_is_present(char *s);
+
+
+#else
+
+
+#define RELAYTOOL_JACK \
+ 	static const int libjack_is_present=1;\
+	static int __attribute__((unused)) libjack_symbol_is_present(char *) { return 1; }
+
+#define RELAYTOOL_WAVPACK \
+	static const int libwavpack_is_present=1;\
+	static int __attribute__((unused)) libwavpack_symbol_is_present(char *) { return 1; }
+
+#define RELAYTOOL_FLAC \
+	static const int libFLAC_is_present=1;\
+	static int __attribute__((unused)) libFLAC_symbol_is_present(char *) { return 1; }
+
+#define RELAYTOOL_MAD \
+	static const int libmad_is_present=1;\
+	static int __attribute__((unused)) libmad_symbol_is_present(char *) { return 1; }
+	
+#define RELAYTOOL_VORBISFILE \
+	static const int libvorbisfile_is_present=1;\
+	static int __attribute__((unused)) libvorbisfile_symbol_is_present(char *) { return 1; }
+	
+#define RELAYTOOL_MP3LAME \
+	static const int libmp3lame_is_present=1;\
+	static int __attribute__((unused)) libmp3lame_symbol_is_present(char *) { return 1; }
+
+#endif // endif RELAYTOOL_PRESENT
+
+
+#endif // endif TRAVERSO_TYPES_H
 
 //eof

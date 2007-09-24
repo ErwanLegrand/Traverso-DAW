@@ -107,10 +107,13 @@ void CurveNodeView::set_color(QColor color)
 
 void CurveNodeView::update_pos( )
 {
-	setPos( ((m_node->get_when() - m_curveview->get_start_offset()) / m_sv->scalefactor) - (m_boundingRect.width() / 2),
-	 	m_parentViewItem->boundingRect().height() - (m_node->get_value() * m_parentViewItem->boundingRect().height() + m_boundingRect.height() / 2 ));
+	qreal halfwidth = (m_boundingRect.width() / 2);
+	qreal parentheight = m_parentViewItem->boundingRect().height();
+	qreal when = ((qint64(m_node->get_when()) - m_curveview->get_start_offset()) / m_sv->timeref_scalefactor) - halfwidth;
+	qreal value = parentheight - (m_node->get_value() * parentheight + halfwidth);
+	setPos(when, value);
 		
-	set_when_and_value((m_node->get_when() / m_sv->scalefactor), m_node->get_value());
+	set_when_and_value((m_node->get_when() / m_sv->timeref_scalefactor), m_node->get_value());
 }
 
 void CurveNodeView::set_selected( )

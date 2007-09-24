@@ -149,7 +149,6 @@ int AudioClip::set_state(const QDomNode& node)
 	m_songId = e.attribute("sheet", "0").toLongLong();
 	m_isMuted =  e.attribute( "mute", "" ).toInt();
 
-	// FIXME!!!!!!!!
 	bool ok;
 	m_sourceStartLocation = TimeRef(e.attribute( "sourcestart", "" ).toLongLong(&ok));
 	m_length = TimeRef(e.attribute( "length", "0" ).toLongLong(&ok));
@@ -357,20 +356,20 @@ void AudioClip::set_track_end_location(const TimeRef& location)
 	emit trackEndLocationChanged();
 }
 
-void AudioClip::set_fade_in(nframes_t b)
+void AudioClip::set_fade_in(double range)
 {
 	if (!fadeIn) {
 		create_fade_in();
 	}
-	fadeIn->set_range( b );
+	fadeIn->set_range(range);
 }
 
-void AudioClip::set_fade_out(nframes_t b)
+void AudioClip::set_fade_out(double range)
 {
 	if (!fadeOut) {
 		create_fade_out();
 	}
-	fadeOut->set_range( b );
+	fadeOut->set_range(range);
 }
 
 void AudioClip::set_gain(float gain)
@@ -460,18 +459,13 @@ int AudioClip::process(nframes_t nframes)
 	}
 	
 
-	for (int chan=0; chan<bus->get_channel_count(); ++chan) {
-		
-		for (int i=0; i<m_fades.size(); ++i) {
-			m_fades.at(i)->process(mixdown[chan], read_frames);
-		}
-		
-		m_fader->process_gain(mixdown[chan], ((transportLocation - m_trackStartLocation - m_sourceStartLocation).to_frame(get_rate())), read_frames);
-		
-		Mixer::apply_gain_to_buffer(bus->get_buffer(chan, nframes), nframes, get_gain());
-	}
-
 	
+	for (int i=0; i<m_fades.size(); ++i) {
+		m_fades.at(i)->process(mixdown, read_frames, bus->get_channel_count());
+	}
+	
+	TimeRef startlocation = transportLocation - m_trackStartLocation - m_sourceStartLocation;
+	m_fader->process_gain(mixdown, startlocation, upperRange, read_frames, bus->get_channel_count());
 	
 	return 1;
 }
@@ -835,22 +829,6 @@ TimeRef& AudioClip::get_length() const
 int AudioClip::recording_state( ) const
 {
 	return m_recordingStatus;
-}
-
-Command * AudioClip::clip_fade_in( )
-{
-	if (!fadeIn) {
-		create_fade_in();
-	}
-	return new FadeRange(this, fadeIn);
-}
-
-Command * AudioClip::clip_fade_out( )
-{
-	if (!fadeOut) {
-		create_fade_out();
-	}
-	return new FadeRange(this, fadeOut);
 }
 
 Command * AudioClip::normalize( )

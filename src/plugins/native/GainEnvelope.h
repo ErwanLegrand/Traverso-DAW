@@ -39,7 +39,7 @@ public:
 	QDomNode get_state(QDomDocument doc);
 	int set_state(const QDomNode & node );
 	void process(AudioBus* bus, unsigned long nframes);
-	void process_gain(audio_sample_t* buffer, nframes_t pos, nframes_t nframes);
+	void process_gain(audio_sample_t** buffer, const TimeRef& startlocation, const TimeRef& endlocation, nframes_t nframes, uint channels);
 	
 	void set_song(Song* song);
 	void set_gain(float gain) {m_gain = gain;}

@@ -41,23 +41,26 @@ static const float CURSOR_SPEED		= 150.0;
 static const float RASTER_SIZE		= 0.05;
 
 
-FadeRange::FadeRange(AudioClip* clip, FadeCurve* curve)
+FadeRange::FadeRange(AudioClip* clip, FadeCurve* curve, qint64 scalefactor)
 	: Command(clip, "")
+	, d(new Private())
 {
 	m_curve = curve;
-	m_direction = (m_curve->get_fade_type() == FadeCurve::FadeIn) ? 1 : -1;
-	setText( (m_direction == 1) ? tr("Fade In: range") : tr("Fade Out: range"));
+	d->direction = (m_curve->get_fade_type() == FadeCurve::FadeIn) ? 1 : -1;
+	d->scalefactor = scalefactor;
+	setText( (d->direction == 1) ? tr("Fade In: range") : tr("Fade Out: range"));
 }
 
 
-FadeRange::FadeRange(AudioClip* clip, FadeCurve* curve, double newVal)
+FadeRange::FadeRange(AudioClip* clip, FadeCurve* curve, double newRange)
 	: Command(clip, "")
+	, d(new Private())
 {
 	m_curve = curve;
-	m_direction = (m_curve->get_fade_type() == FadeCurve::FadeIn) ? 1 : -1;
-	setText( (m_direction == 1) ? tr("Fade In: reset") : tr("Fade Out: reset"));
-	origFade = m_curve->get_range();
-	newFade = newVal;
+	d->direction = (m_curve->get_fade_type() == FadeCurve::FadeIn) ? 1 : -1;
+	m_origRange = m_curve->get_range();
+	m_newRange = newRange;
+	setText( (d->direction == 1) ? tr("Fade In: reset") : tr("Fade Out: reset"));
 }
 
 
@@ -71,29 +74,30 @@ int FadeRange::prepare_actions()
 
 int FadeRange::begin_hold()
 {
-	origX = cpointer().on_first_input_event_x();
-	newFade = origFade = m_curve->get_range();
+	d->origX = cpointer().on_first_input_event_x();
+	m_newRange = m_origRange = m_curve->get_range();
 	return 1;
 }
 
 
 int FadeRange::finish_hold()
 {
-	QCursor::setPos(m_mousePos);
+	QCursor::setPos(d->mousePos);
+	delete d;
 	return 1;
 }
 
 
 int FadeRange::do_action()
 {
-	m_curve->set_range( newFade );
+	m_curve->set_range( m_newRange );
 	return 1;
 }
 
 
 int FadeRange::undo_action()
 {
-	m_curve->set_range( origFade );
+	m_curve->set_range( m_origRange );
 	return 1;
 }
 
@@ -109,7 +113,7 @@ void FadeRange::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useX);
 	Q_UNUSED(useY);
 	
-	m_mousePos = QCursor::pos();
+	d->mousePos = QCursor::pos();
 	
 	cpointer().get_viewport()->set_holdcursor(":/cursorHoldLr");
 }
@@ -117,16 +121,16 @@ void FadeRange::set_cursor_shape(int useX, int useY)
 
 int FadeRange::jog()
 {
-	int dx = (origX - (cpointer().x()) ) * m_direction;
-	newFade = origFade - ( dx * Peak::zoomStep[m_curve->get_song()->get_hzoom() ]);
+	int dx = (d->origX - (cpointer().x()) ) * d->direction;
+	m_newRange = m_origRange - ( dx * d->scalefactor);
 	
-	if (newFade < 1) {
-		newFade = 1;
+	if (m_newRange < 1) {
+		m_newRange = 1;
 	}
 	
-	m_curve->set_range( newFade );
+	m_curve->set_range( m_newRange );
 	
-	cpointer().get_viewport()->set_holdcursor_text(frame_to_ms_3((nframes_t)newFade, pm().get_project()->get_rate()));
+	cpointer().get_viewport()->set_holdcursor_text(frame_to_ms_3((nframes_t)m_newRange, pm().get_project()->get_rate()));
 	
 	return 1;
 }

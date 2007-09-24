@@ -88,7 +88,6 @@ public :
 	int hscrollbar_value() const;
 	int vscrollbar_value() const;
 
-	int		scalefactor;
 	qint64		timeref_scalefactor;
 
 private:

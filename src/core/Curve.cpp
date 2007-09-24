@@ -181,14 +181,13 @@ int Curve::set_state( const QDomNode & node )
 	return 1;
 }
 
-
-int Curve::process(audio_sample_t* buffer, nframes_t pos, nframes_t nframes)
+int Curve::process(audio_sample_t * buffer, const TimeRef & startlocation, const TimeRef& endlocation, nframes_t nframes)
 {
 	if (m_nodes.isEmpty()) {
 		return 0;
 	}
 	
-	if ((pos + nframes) > get_range()) {
+	if (endlocation > qint64(get_range())) {
 		if (m_nodes.last()->value == 1.0) {
 			return 0;
 		}
@@ -198,7 +197,7 @@ int Curve::process(audio_sample_t* buffer, nframes_t pos, nframes_t nframes)
 	
 	audio_sample_t mixdown[nframes];
 	
-	get_vector(pos, pos + nframes, mixdown, nframes);
+	get_vector(startlocation.universal_frame(), endlocation.universal_frame(), mixdown, nframes);
 	
 	for (nframes_t n = 0; n < nframes; ++n) {
 		buffer[n] *= mixdown[n];

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.h,v 1.13 2007/06/30 16:19:10 n_doebelin Exp $
+$Id: FadeCurve.h,v 1.14 2007/09/24 16:58:38 r_sijrier Exp $
 */
 
 #ifndef FADE_CURVE_H
@@ -56,7 +56,7 @@ public:
 	QDomNode get_state(QDomDocument doc);
 	int set_state( const QDomNode & node );
 	
-	void process(audio_sample_t* mixdown, nframes_t nframes);
+	void process(audio_sample_t** mixdown, nframes_t nframes, uint channels);
 	
 	float get_bend_factor() {return m_bendFactor;}
 	float get_strength_factor() {return m_strenghtFactor;}

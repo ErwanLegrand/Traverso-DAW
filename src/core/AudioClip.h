@@ -49,8 +49,6 @@ class AudioClip : public ContextItem, public Snappable
 	Q_CLASSINFO("reset_fade_in", tr("In: Reset"))
 	Q_CLASSINFO("reset_fade_out", tr("Out: Reset"))
 	Q_CLASSINFO("reset_fade_both", tr("Reset both"))
-	Q_CLASSINFO("clip_fade_in", tr("In: Range"))
-	Q_CLASSINFO("clip_fade_out", tr("Out: Range"))
 	Q_CLASSINFO("normalize", tr("Normalize"))
 	Q_CLASSINFO("denormalize", tr("Normalize: reset"))
 	Q_CLASSINFO("lock", tr("Lock"))
@@ -73,8 +71,8 @@ public:
 	
 	void set_track_start_location(const TimeRef& location);
 	void set_name(const QString& name);
-	void set_fade_in(nframes_t b);
-	void set_fade_out(nframes_t b);
+	void set_fade_in(double range);
+	void set_fade_out(double range);
 	void set_track(Track* track);
 	void set_song(Song* song);
 
@@ -200,8 +198,6 @@ public slots:
 	Command* reset_fade_in();
 	Command* reset_fade_out();
 	Command* reset_fade_both();
-        Command* clip_fade_in();
-        Command* clip_fade_out();
         Command* normalize();
         Command* denormalize();
 	Command* lock();

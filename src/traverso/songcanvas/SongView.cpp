@@ -104,8 +104,7 @@ SongView::SongView(SongWidget* songwidget,
 	m_tpvp->setSceneRect(-200, 0, 0, MAX_CANVAS_HEIGHT);
 	
 	
-	scalefactor = Peak::zoomStep[m_song->get_hzoom()];
-	timeref_scalefactor = scalefactor * 640;
+	timeref_scalefactor = Peak::zoomStep[m_song->get_hzoom()] * 640;
 	
 	song_mode_changed();
 	
@@ -164,8 +163,7 @@ SongView::~SongView()
 		
 void SongView::scale_factor_changed( )
 {
-	scalefactor = Peak::zoomStep[m_song->get_hzoom()];
-	timeref_scalefactor = scalefactor * 640;
+	timeref_scalefactor = Peak::zoomStep[m_song->get_hzoom()] * 640;
 	m_tlvp->scale_factor_changed();
 	layout_tracks();
 }
