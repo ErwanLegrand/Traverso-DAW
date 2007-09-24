@@ -43,7 +43,6 @@ WriteSource::WriteSource( ExportSpecification* specification )
 	m_diskio = 0;
 	m_writer = 0;
 	m_peak = 0;
-	prepare_export();
 }
 
 WriteSource::~WriteSource()
@@ -325,6 +324,7 @@ int WriteSource::finish_export( )
 	PENTER;
 
 	if (m_writer) {
+		m_writer->close();
 		delete m_writer;
 		m_writer = 0;
 	}

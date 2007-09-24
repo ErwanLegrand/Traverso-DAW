@@ -45,7 +45,7 @@ protected:
 	nframes_t write_private(void* buffer, nframes_t frameCount);
 	long flushVorbis();
 	void cleanup();
-	void close_private();
+	bool close_private();
 	
 	class	Private;
 	Private* d;

@@ -509,16 +509,17 @@ MadAudioReader::MadAudioReader(QString filename)
 	
 	initDecoderInternal();
 	
+	m_nframes = countFrames();
+	
 	switch( d->firstHeader.mode ) {
 		case MAD_MODE_SINGLE_CHANNEL:
 			m_channels = 1;
+			break;
 		case MAD_MODE_DUAL_CHANNEL:
 		case MAD_MODE_JOINT_STEREO:
 		case MAD_MODE_STEREO:
 			m_channels = 2;
 	}
-	
-	m_nframes = countFrames();
 	
 	if (m_nframes <= 0) {
 		d->handle->cleanup();
@@ -683,7 +684,7 @@ bool MadAudioReader::seek_private(nframes_t start)
 	//
 	// Ben says: It looks like Rob (the author of MAD) implies here:
 	//    http://www.mars.org/mailman/public/mad-dev/2001-August/000321.html
-	// that 3 frames (1 + 2 extra) is enough... seems to work fine...
+	// that 3 frames (1 + 2 extra) is enough... much faster, and seems to work fine...
 	unsigned int frameReservoirProtect = (frame > 3 ? 3 : frame);
 	
 	frame -= frameReservoirProtect;
@@ -763,9 +764,7 @@ bool MadAudioReader::initDecoderInternal()
 
 
 unsigned long MadAudioReader::countFrames()
-	{
-	//kdDebug() << "(K3bMadDecoder::countFrames)" << endl;
-	
+{
 	unsigned long frames = 0;
 	bool error = false;
 	d->vbr = false;
@@ -795,12 +794,9 @@ unsigned long MadAudioReader::countFrames()
 	if (!d->handle->inputError() && !error) {
 		frames =  d->firstHeader.samplerate * (d->handle->madTimer->seconds + (unsigned long)(
 			(float)d->handle->madTimer->fraction/(float)MAD_TIMER_RESOLUTION));
-		//kdDebug() << "(K3bMadDecoder) length of track " << seconds << endl;
 	}
 
 	d->handle->cleanup();
-	
-	//kdDebug() << "(K3bMadDecoder::countFrames) end" << endl;
 	
 	return frames;
 }
@@ -865,29 +861,6 @@ nframes_t MadAudioReader::read_private(DecodeBuffer* buffer, nframes_t frameCoun
 	
 	nframes_t framesWritten = d->outputPos;
 	
-	// Pad end with zeros if necessary
-	// FIXME: This shouldn't be necessary!  :P
-	// is m_nframes reporting incorrectly?
-	// are we not outputting the last mp3-frame for some reason?
-	/*int remainingFramesRequested = frameCount - framesWritten;
-	int remainingFramesInFile = m_nframes - (m_readPos + framesWritten);
-	if (remainingFramesRequested > 0 && remainingFramesInFile > 0) {
-		int padLength = (remainingFramesRequested > remainingFramesInFile) ? remainingFramesInFile : remainingFramesRequested;
-		for (int c = 0; c < m_channels; c++) {
-			//memset(d->outputBuffers[c] + framesWritten, 0, padLength * sizeof(audio_sample_t));
-		}
-		framesWritten += padLength;
-		printf("padding: %d\n", padLength);
-	}
-
-	// Truncate so we don't return too many frames
-	if (framesWritten + m_readPos > m_nframes) {
-		printf("truncating by %d!\n", m_length - (framesWritten + m_readPos));
-		framesWritten = m_nframes - m_readPos;
-	}*/
-	
-	//printf("request: %d (returned: %d), now at: %lu (total: %lu)\n", frameCount, framesWritten, m_readPos + framesWritten, m_length);
-	
 	return framesWritten;
 }
 
@@ -906,7 +879,6 @@ bool MadAudioReader::createPcmSamples(mad_synth* synth)
 	
 	if (writeBuffers && (m_readPos + d->outputPos + nframes) > m_nframes) {
 		nframes = m_nframes - (m_readPos + offset);
-		//printf("!!!nframes: %lu, length: %lu, current: %lu\n", nframes, m_nframes, d->outputPos + m_readPos);
 	}
 	
 	// now create the output

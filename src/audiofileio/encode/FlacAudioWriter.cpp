@@ -92,11 +92,6 @@ const char* FlacAudioWriter::get_extension()
 
 bool FlacAudioWriter::set_format_attribute(const QString& key, const QString& value)
 {
-	if (key == "quality") {
-		d->quality = value.toInt();
-		return true;
-	}
-	
 	return false;
 }
 
@@ -112,7 +107,7 @@ bool FlacAudioWriter::open_private()
 	if ((d->encoder = FLAC__stream_encoder_new()) == NULL) {
 #endif
 		PERROR("ERROR: allocating encoder");
-		return 1;
+		return false;
 	}
 	
 	bool ok = true;
@@ -159,7 +154,7 @@ nframes_t FlacAudioWriter::write_private(void* buffer, nframes_t frameCount)
 {
 	FLAC__byte *data = (FLAC__byte *)buffer;
 	
-	if (d->bufferSize < frameCount * m_channels) {
+	if (d->bufferSize < (long)(frameCount * m_channels)) {
 		if (d->buffer) {
 			delete [] d->buffer;
 		}
@@ -190,7 +185,7 @@ nframes_t FlacAudioWriter::write_private(void* buffer, nframes_t frameCount)
 	bool ok = FLAC__seekable_stream_encoder_process_interleaved(d->encoder, d->buffer, frameCount);
 #endif
 	
-	return frameCount;
+	return ((ok) ? frameCount : 0);
 }
 
 
@@ -207,16 +202,19 @@ void FlacAudioWriter::cleanup()
 }
 
 
-void FlacAudioWriter::close_private()
+bool FlacAudioWriter::close_private()
 {
 #ifdef LEGACY_FLAC
 	FLAC__file_encoder_finish(d->encoder);
+	bool success = (FLAC__file_encoder_get_state(d->encoder) == FLAC__FILE_ENCODER_UNINITIALIZED);
 #else
-	FLAC__stream_encoder_finish(d->encoder);
+	bool success = FLAC__stream_encoder_finish(d->encoder);
 #endif
 	
 	// FIXME: Rewrite the header to store the real length (num samples)
 	
 	cleanup();
+	
+	return success;
 }
 

@@ -262,16 +262,20 @@ nframes_t VorbisAudioWriter::write_private(void* buffer, nframes_t frameCount)
 	// expose the buffer to submit data
 	float** writeBuffer = vorbis_analysis_buffer(d->vorbisDspState, frameCount);
 	
+	if (!writeBuffer) {
+		return 0;
+	}
+	
 	// uninterleave samples
 	if (m_channels == 1) {
 		for (nframes_t i = 0; i < frameCount; i++) {
-			// FIXME: Currently assumes 16bit audio
-			writeBuffer[0][i]=( (data[i*4+1]<<8) | (0x00ff&(int)data[i*4]) ) / 32768.f;
+			// Currently assumes 16bit audio
+			writeBuffer[0][i]=( (data[i*2+1]<<8) | (0x00ff&(int)data[i*2]) ) / 32768.f;
 		}
 	}
 	else {
 		for (nframes_t i = 0; i < frameCount; i++) {
-			// FIXME: Currently assumes 16bit audio
+			// Currently assumes 16bit audio
 			writeBuffer[0][i]=( (data[i*4+1]<<8) | (0x00ff&(int)data[i*4]) ) / 32768.f;
 			writeBuffer[1][i]=( (data[i*4+3]<<8) | (0x00ff&(int)data[i*4+2]) ) / 32768.f;
 		}
@@ -280,7 +284,9 @@ nframes_t VorbisAudioWriter::write_private(void* buffer, nframes_t frameCount)
 	// tell the library how much we actually submitted
 	vorbis_analysis_wrote(d->vorbisDspState, frameCount);
 	
-	return flushVorbis();
+	;
+	
+	return ((flushVorbis() != -1) ? frameCount : 0);
 }
 
 
@@ -290,6 +296,7 @@ long VorbisAudioWriter::flushVorbis()
 	// more involved (potentially parallel) processing.  Get a single
 	// block for encoding now
 	long writtenData = 0;
+	bool success = true;
 	
 	while (vorbis_analysis_blockout( d->vorbisDspState, d->vorbisBlock ) == 1) {
 		// analysis
@@ -302,15 +309,16 @@ long VorbisAudioWriter::flushVorbis()
 			
 			// write out pages (if any)
 			while (ogg_stream_pageout(d->oggStream, d->oggPage)) {
-				fwrite((char*)d->oggPage->header, 1, d->oggPage->header_len, d->fid);
-				fwrite((char*)d->oggPage->body, 1, d->oggPage->body_len, d->fid);
-				
+				if (fwrite((char*)d->oggPage->header, 1, d->oggPage->header_len, d->fid) != (uint)d->oggPage->header_len
+				|| fwrite((char*)d->oggPage->body, 1, d->oggPage->body_len, d->fid) != (uint)d->oggPage->body_len) {
+					success = false;
+				}
 				writtenData += (d->oggPage->header_len + d->oggPage->body_len);
 			}
 		}
 	}
 	
-	return writtenData;
+	return ((success) ? writtenData : -1);
 }
 
 
@@ -361,12 +369,18 @@ void VorbisAudioWriter::cleanup()
 }
 
 
-void VorbisAudioWriter::close_private()
+bool VorbisAudioWriter::close_private()
 {
+	bool success = true;
+	
 	if (d->vorbisDspState) {
 		vorbis_analysis_wrote(d->vorbisDspState, 0);
-		flushVorbis();
+		if (flushVorbis() == -1) {
+			success = false;
+		}
 	}
 	cleanup();
+	
+	return success;
 }
 

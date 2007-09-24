@@ -225,22 +225,35 @@ nframes_t WPAudioWriter::write_private(void* buffer, nframes_t frameCount)
 					break;
 			}
 		}
-		WavpackPackSamples(m_wp, m_tmp_buffer, frameCount);
+		if (WavpackPackSamples(m_wp, m_tmp_buffer, frameCount) == false) {
+			return 0;
+		}
 		return frameCount;
 	}
 	
-	WavpackPackSamples(m_wp, (int32_t *)buffer, frameCount);
+	if (WavpackPackSamples(m_wp, (int32_t *)buffer, frameCount) == false) {
+		return 0;
+	}
 	return frameCount;
 }
 
 
-void WPAudioWriter::close_private()
+bool WPAudioWriter::close_private()
 {
-	WavpackFlushSamples(m_wp);
-	rewrite_first_block();
+	bool success = true;
+	
+	if (WavpackFlushSamples(m_wp) == false) {
+		success = false;
+	}
+	if (rewrite_first_block() == false) {
+		success = false;
+	}
+	
 	WavpackCloseFile(m_wp);
-	fclose(m_file);
 	m_wp = 0;
+	
+	fclose(m_file);
+	m_file = 0;
 
 	if (m_tmp_buffer) {
 		delete [] m_tmp_buffer;
@@ -253,5 +266,7 @@ void WPAudioWriter::close_private()
 		m_firstBlock = 0;
 		m_firstBlockSize = 0;
 	}
+	
+	return success;
 }
 

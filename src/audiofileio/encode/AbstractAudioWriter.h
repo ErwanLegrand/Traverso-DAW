@@ -46,14 +46,14 @@ public:
 	
 	bool open(const QString& filename);
 	nframes_t write(void* buffer, nframes_t frameCount);
-	void close();
+	bool close();
 	
 	static AbstractAudioWriter* create_audio_writer(const QString& type);
 	
 protected:
 	virtual bool open_private() = 0;
 	virtual nframes_t write_private(void* buffer, nframes_t frameCount) = 0;
-	virtual void close_private() = 0;
+	virtual bool close_private() = 0;
 	
 	QString		m_fileName;
 	bool		m_isOpen;

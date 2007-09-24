@@ -403,7 +403,11 @@ int Song::prepare_export(ExportSpecification* spec)
 	spec->basename = "Song" + QString::number(m_project->get_song_index(m_id)) +"-" + title;
 	spec->name = spec->basename;
 
-	if (spec->start_frame >= spec->end_frame) {
+	if (spec->start_frame == spec->end_frame) {
+		info().warning(tr("No audio to export! (Is everything muted?)"));
+		return -1;
+	}
+	else if (spec->start_frame > spec->end_frame) {
 		info().warning(tr("Export start frame starts beyond export end frame!!"));
 		return -1;
 	}
@@ -419,6 +423,10 @@ int Song::prepare_export(ExportSpecification* spec)
 	
 	if (spec->renderpass == ExportSpecification::WRITE_TO_HARDDISK) {
 		m_exportSource = new WriteSource(spec);
+		if (m_exportSource->prepare_export() == -1) {
+			delete m_exportSource;
+			return -1;
+		}
 	}
 
 	m_transportLocation.set_position(spec->start_frame, devicerate);

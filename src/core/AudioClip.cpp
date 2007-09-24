@@ -573,6 +573,12 @@ int AudioClip::init_recording( QByteArray name )
 	spec->dataF = m_captureBus->get_buffer(0, audiodevice().get_buffer_size());
 
 	m_recorder = new WriteSource(spec);
+	if (m_recorder->prepare_export() == -1) {
+		delete m_recorder;
+		delete spec;
+		spec = 0;
+		return -1;
+	}
 	m_recorder->set_process_peaks( true );
 	m_recorder->set_recording( true );
 	

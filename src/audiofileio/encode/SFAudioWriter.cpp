@@ -142,12 +142,13 @@ nframes_t SFAudioWriter::write_private(void* buffer, nframes_t frameCount)
 }
 
 
-void SFAudioWriter::close_private()
+bool SFAudioWriter::close_private()
 {
-	if (sf_close(m_sf)) {
-		qWarning("sf_close returned an error!");
-	}
+	bool success = (sf_close(m_sf) == 0);
+	
 	m_sf = 0;
+	
+	return success;
 }
 
 

@@ -74,6 +74,12 @@ public:
 		spec->dataF = new audio_sample_t[buffersize * 2];
 	
 		WriteSource* writesource = new WriteSource(spec);
+		if (writesource->prepare_export() == -1) {
+			delete writesource;
+			delete [] spec->dataF;
+			delete spec;
+			return;
+		}
 	
 		do {
 			nframes_t this_nframes = std::min((nframes_t)(spec->end_frame - spec->pos), buffersize);

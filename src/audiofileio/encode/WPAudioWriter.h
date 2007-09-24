@@ -43,7 +43,7 @@ public:
 protected:
 	bool open_private();
 	nframes_t write_private(void* buffer, nframes_t frameCount);
-	void close_private();
+	bool close_private();
 	int write_to_file(void *lpBuffer, uint32_t nNumberOfBytesToWrite, uint32_t *lpNumberOfBytesWritten);
 	bool rewrite_first_block();
 	

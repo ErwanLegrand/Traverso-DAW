@@ -101,18 +101,22 @@ bool AbstractAudioWriter::open(const QString& filename)
 }
 
 
-void AbstractAudioWriter::close()
+bool AbstractAudioWriter::close()
 {
+	bool success = false;;
+	
 	if (m_isOpen) {
-		close_private();
+		success = close_private();
 		m_isOpen = false;
 	}
+	
+	return success;
 }
 
 
 nframes_t AbstractAudioWriter::write(void* buffer, nframes_t count)
 {
-	if (buffer && count) {
+	if (m_isOpen && buffer && count) {
 		nframes_t framesWritten = write_private(buffer, count);
 		
 		if (framesWritten > 0) {

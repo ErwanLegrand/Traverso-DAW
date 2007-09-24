@@ -230,14 +230,11 @@ void ExportWidget::audio_type_changed(int index)
 	}
 	
 	if (newType == "mp3" || newType == "ogg" || newType == "flac") {
-		channelComboBox->setCurrentIndex(channelComboBox->findData(2));
-		channelComboBox->setDisabled(true);
 		bitdepthComboBox->setCurrentIndex(bitdepthComboBox->findData(16));
 		bitdepthComboBox->setDisabled(true);
 	}
 	else {
 		bitdepthComboBox->setEnabled(true);
-		channelComboBox->setEnabled(true);
 	}
 }
 
@@ -310,12 +307,6 @@ void ExportWidget::on_exportStartButton_clicked( )
 	}
 	else if (audioType == "flac") {
 		m_exportSpec->writerType = "flac";
-		if (bitdepthComboBox->itemData(channelComboBox->currentIndex()).toInt() == 1) {
-			// Change from float to int32
-			// FIXME: Need to do this _Before_ the user starts encoding
-			// (i.e. disable the float option when flac is selected)
-			bitdepthComboBox->setCurrentIndex(bitdepthComboBox->findData(32));
-		}
 	}
 	else if (audioType == "wavpack") {
 		m_exportSpec->writerType = "wavpack";

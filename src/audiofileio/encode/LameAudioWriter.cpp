@@ -211,32 +211,38 @@ nframes_t LameAudioWriter::write_private(void* buffer, nframes_t frameCount)
 }
 
 
-void LameAudioWriter::close_private()
+bool LameAudioWriter::close_private()
 {
-	if (m_fid)
-	{
-		if (m_bufferSize < 7200) {
-			if (m_buffer) {
-				delete [] m_buffer;
-			}
-			m_bufferSize = 7200;
-			m_buffer = new char[m_bufferSize];
+	if (m_bufferSize < 7200) {
+		if (m_buffer) {
+			delete [] m_buffer;
 		}
-		
-		int size = lame_encode_flush(m_lameInfo->flags,
-					     (unsigned char*)m_buffer,
-					     m_bufferSize);
-		if(size > 0) {
-			fwrite(m_buffer, 1, size, m_fid);
-		}
-		
-		lame_mp3_tags_fid(m_lameInfo->flags, m_fid);
-		
-		lame_close(m_lameInfo->flags);
-		m_lameInfo->flags = 0;
-		
-		fclose(m_fid);
-		m_fid = 0;
+		m_bufferSize = 7200;
+		m_buffer = new char[m_bufferSize];
 	}
+	
+	bool success = true;
+	int size = lame_encode_flush(m_lameInfo->flags,
+					(unsigned char*)m_buffer,
+					m_bufferSize);
+	if (size < 0) {
+		PERROR("lame_encode_buffer_flush failed.");
+		success = false;
+	}
+	if (size > 0 && fwrite(m_buffer, 1, size, m_fid) != (nframes_t)size) {
+		PERROR("writing mp3 data failed.");
+		success = false;
+	}
+	else {
+		lame_mp3_tags_fid(m_lameInfo->flags, m_fid);
+	}
+	
+	lame_close(m_lameInfo->flags);
+	m_lameInfo->flags = 0;
+	
+	fclose(m_fid);
+	m_fid = 0;
+	
+	return success;
 }
 

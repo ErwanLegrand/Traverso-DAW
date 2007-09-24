@@ -50,6 +50,7 @@ public :
 
 	int process(nframes_t nframes);
 	
+	int prepare_export();
 	int finish_export();
 	void set_process_peaks(bool process);
 	void set_recording(int rec);
@@ -82,9 +83,6 @@ private:
 	void*           m_output_data;
 	
 	
-	int prepare_export();
-	
-
 signals:
 	void exportFinished();
 };

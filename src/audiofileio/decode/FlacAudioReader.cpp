@@ -439,15 +439,11 @@ bool FlacAudioReader::can_decode(QString filename)
 
 	if (0 == memcmp(buf, "ID3", 3)) {
 		// Found ID3 tag, try and seek past it.
-		//kdDebug() << "(K3bFLACDecorder) File " << filename << ": found ID3 tag" << endl;
-
 		// See www.id3.org for details of the header, note that the size field
 		// unpacks to 7-bit bytes, then the +10 is for the header itself.
 		int pos;
 		pos = ((buf[6]<<21)|(buf[7]<<14)|(buf[8]<<7)|buf[9]) + 10;
 
-		//kdDebug() << "(K3bFLACDecoder) " << filename << ": seeking to " 
-		//	<< pos << endl;
 		if (!f.seek(pos)) {
 			//PERROR("Couldn't seek to %d in file: %s", pos, QS_C(filename));
 			return false;
@@ -474,7 +470,6 @@ bool FlacAudioReader::can_decode(QString filename)
 	
 	flac.finish();
 	
-	//PERROR("Return: Is%s a flac file: %s", ((valid) ? "" : " not"), QS_C(filename));
 	return valid;
 }
 
@@ -589,27 +584,7 @@ nframes_t FlacAudioReader::read_private(DecodeBuffer* buffer, nframes_t frameCou
 			m_flac->bufferStart += framesToCopy * get_num_channels();
 		}
 		framesCoppied += framesToCopy;
-		
-		//printf("samplesCoppied = %d (%d, %d)\n", samplesCoppied, m_flac->bufferStart, m_flac->buferSize);
 	}
-	
-	// Pad end of file with 0s if necessary.  (Shouldn't be necessary...)
-	/*int remainingFramesRequested = frameCount - framesCoppied;
-	int remainingFramesInFile = get_length() - (m_readPos + framesCoppied);
-	if (framesCoppied == 0 && remainingFramesInFile > 0) {
-		int padLength = (remainingFramesRequested > remainingFramesInFile) ? remainingFramesInFile : remainingFramesRequested;
-		PERROR("padLength: %d", padLength);
-		for (int c = 0; c < get_num_channels(); c++) {
-			memset(buffer[c] + framesCoppied, 0, padLength * sizeof(audio_sample_t));
-		}
-		framesCoppied += padLength;
-	}
-	if (framesCoppied > frameCount) {
-		PERROR("Truncating");
-		framesCoppied = frameCount;
-	}*/
-	
-	//printf("copied %d of %d.  nextFrame: %lu of %lu\n", framesCoppied, frameCount, m_readPos, m_length); fflush(stdout);
 	
 	return framesCoppied;
 }

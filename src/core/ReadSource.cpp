@@ -244,8 +244,8 @@ int ReadSource::init( )
 	// (re)set the decoder type
 	m_decodertype = m_audioReader->decoder_type();
 	
-	if (m_channelCount > m_audioReader->get_num_channels()) {
-		PERROR("ReadAudioSource: file only contains %d channels; %d is invalid as a channel number", m_audioReader->get_num_channels(), m_channelCount);
+	if (m_audioReader->get_num_channels() > 2) {
+		PERROR("ReadAudioSource: file contains %d channels; only 2 channels are supported", m_audioReader->get_num_channels());
 		delete m_audioReader;
 		m_audioReader = 0;
 		return INVALID_CHANNEL_COUNT;
@@ -257,7 +257,8 @@ int ReadSource::init( )
 		m_audioReader = 0;
 		return ZERO_CHANNELS;
 	}
-
+	
+	m_channelCount = m_audioReader->get_num_channels();
 	m_rate = m_audioReader->get_file_rate();
 	m_length = m_audioReader->get_length();
 	
