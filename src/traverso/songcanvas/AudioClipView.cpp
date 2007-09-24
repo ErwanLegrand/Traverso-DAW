@@ -489,7 +489,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 					scaleFactor *= channels;
 				}
 
-				for (int x = xstart; x < (pixelcount+xstart); x+=2) {
+				for (int x=0; x<pixelcount; x+=2) {
 					polygontop.append( QPointF(x, scaleFactor * pixeldata[chan][bufferpos]) );
 					bufferpos++;
 				}
