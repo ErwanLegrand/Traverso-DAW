@@ -284,8 +284,6 @@ nframes_t VorbisAudioWriter::write_private(void* buffer, nframes_t frameCount)
 	// tell the library how much we actually submitted
 	vorbis_analysis_wrote(d->vorbisDspState, frameCount);
 	
-	;
-	
 	return ((flushVorbis() != -1) ? frameCount : 0);
 }
 
