@@ -182,7 +182,7 @@ nframes_t FlacAudioWriter::write_private(void* buffer, nframes_t frameCount)
 #ifdef LEGACY_FLAC
 	bool ok = FLAC__file_encoder_process_interleaved(d->encoder, d->buffer, frameCount);
 #else
-	bool ok = FLAC__seekable_stream_encoder_process_interleaved(d->encoder, d->buffer, frameCount);
+	bool ok = FLAC__stream_encoder_process_interleaved(d->encoder, d->buffer, frameCount);
 #endif
 	
 	return ((ok) ? frameCount : 0);
