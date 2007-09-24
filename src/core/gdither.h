@@ -15,7 +15,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  *
- *  $Id: gdither.h,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
+ *  $Id: gdither.h,v 1.2 2007/09/24 16:16:28 benjie Exp $
  */
 
 #ifndef GDITHER_H
@@ -34,8 +34,8 @@ extern "C" {
  *
  *   GDitherNone - straight nearest neighbour rounding. Theres no pressing
  *   reason to do this at 8 or 16 bit, but you might want to at 24, for some
- *   reason. At the lest it will save you writing int->float conversion code,
- *   which is arder than it sounds.
+ *   reason. At the least it will save you writing int->float conversion code,
+ *   which is harder than it sounds.
  *
  *   GDitherRect - mathematically most accurate, lowest noise floor, but not
  *   that good for audio. It is the fastest though.
@@ -82,7 +82,7 @@ void gdither_free(GDither s);
 void gdither_runf(GDither s, uint32_t channel, uint32_t length,
 		   float *x, void *y);
 
-/* see gdither_runf, vut input argument is double format */
+/* see gdither_runf, but input argument is double format */
 void gdither_run(GDither s, uint32_t channel, uint32_t length,
 		   double *x, void *y);
 
