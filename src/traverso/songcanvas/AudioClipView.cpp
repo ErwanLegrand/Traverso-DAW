@@ -129,7 +129,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	
 	painter->save();
 	
-	QRectF clipRect = m_boundingRect.adjusted(-1, -1, 1, 1);
+	QRectF clipRect = m_boundingRect.adjusted(0, -1, 1, 1);
 	painter->setClipRect(clipRect);
 	
 	if (m_clip->is_readsource_invalid()) {
@@ -231,18 +231,6 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	// when using a different color for the brush then the outline.
 	// Painting 2 more pixels makes it getting clipped away.....
 	pixelcount += 2;
-/*	When painting skips one pixel at a time, we always have to start
-	at an even position with an even amount of pixels to paint*/
-	if (xstart % 2) {
-		xstart -= 1;
-		pixelcount++;
-	}
-	if (xstart < 0) {
-		xstart = 0;
-	}
-	if (pixelcount % 2) {
-		pixelcount += 1;
-	}
 	
 	bool microView = m_song->get_hzoom() > (Peak::MAX_ZOOM_USING_SOURCEFILE - 1) ? 0 : 1;
 	// boundary checking, important for microview only, macroview needs the additional
@@ -262,14 +250,27 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		return;
 	}
 	
+/*	When painting skips one pixel at a time, we always have to start
+	at an even position for 'sample' accurate painting */
+	TimeRef clipstartoffset = m_clip->get_source_start_location();
+	int adjustforevenpixel = 0;
+	if (xstart % 2) {
+		xstart -= 1;
+		pixelcount += 1;
+	}
+
+	if ( (clipstartoffset.to_frame(44100) / Peak::zoomStep[m_song->get_hzoom()]) % 2) {
+		clipstartoffset -= m_sv->timeref_scalefactor;
+		adjustforevenpixel -= 1;
+	}
+	
 	// Load peak data for all channels, if no peakdata is returned
 	// for a certain Peak object, schedule it for loading.
 	for (int chan=0; chan < channels; ++chan) {
-		TimeRef clipstartoffset = m_clip->get_source_start_location();
 		
 		int availpeaks = peak->calculate_peaks( chan,
 							&pixeldata[chan],
-							m_song->get_hzoom(),
+							m_song->get_hzoom() + 1,
 							(xstart * m_sv->timeref_scalefactor) + clipstartoffset,
 							peakdatacount);
 		
@@ -336,12 +337,12 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 						pixeldata[chan][i] *= curvemixdown[curvemixdownpos];
 						i++;
 						pixeldata[chan][i] *= curvemixdown[curvemixdownpos];
-						curvemixdownpos ++;
+						curvemixdownpos += 2;
 					}
 				} else {
 					for (int i = 0; i < pixelcount; i++) {
 						pixeldata[chan][i] *= curvemixdown[curvemixdownpos];
-						curvemixdownpos ++;
+						curvemixdownpos += 2;
 					}
 				}
 			}
@@ -464,9 +465,11 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				QPolygonF polygonbottom(pixelcount);
 				
 				int range = pixelcount;
-				for (int x = 0; x < range; x++) {
-					polygontop.append( QPointF(x, scaleFactor * pixeldata[chan][bufferpos++]) );
-					polygonbottom.append( QPointF(x, -scaleFactor * pixeldata[chan][bufferpos++]) );
+				for (int x = 0; x < range; x+=2) {
+					if (x <= range) {
+						polygontop.append( QPointF(x, scaleFactor * pixeldata[chan][bufferpos++]) );
+						polygonbottom.append( QPointF(x, -scaleFactor * pixeldata[chan][bufferpos++]) );
+					}
 				}
 				
 				path.addPolygon(polygontop);
@@ -499,7 +502,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				
 			}
 			
-			p->setMatrix(matrix().translate(xstart, ytrans), true);
+			p->setMatrix(matrix().translate(xstart + adjustforevenpixel, ytrans), true);
 			p->drawPath(path);
 			
 		}
