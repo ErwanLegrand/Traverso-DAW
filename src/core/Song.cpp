@@ -165,7 +165,7 @@ void Song::init()
 	m_seeking = m_startSeek = 0;
 	// TODO seek to old position on project exit ?
 // 	m_transportFrame = 0;
-	m_transportLocation.set_position(0, audiodevice().get_sample_rate());
+	m_transportLocation = 0;
 	m_mode = EDIT;
 	m_sbx = m_sby = 0;
 	m_currentSampleRate = audiodevice().get_sample_rate();
@@ -352,7 +352,6 @@ int Song::prepare_export(ExportSpecification* spec)
 	spec->endLocation = 0;
 
 	TimeRef endlocation, startlocation;
-	int devicerate = audiodevice().get_sample_rate();
 
 	foreach (Track* track, m_tracks) {
 		track->get_render_range(startlocation, endlocation);
