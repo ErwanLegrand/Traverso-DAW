@@ -87,7 +87,8 @@ int WriteSource::process (nframes_t nframes)
 			int err;
 
 			m_src_data.output_frames = m_out_samples_max / m_channelCount;
-			m_src_data.end_of_input = ((m_spec->pos + nframes) >= m_spec->end_frame);
+			int rate = audiodevice().get_sample_rate();
+			m_src_data.end_of_input = ((m_spec->pos.to_frame(rate) + nframes) >= m_spec->endLocation.to_frame(rate));
 			m_src_data.data_out = m_dataF2;
 
 			if (m_leftover_frames > 0) {
@@ -388,7 +389,7 @@ void WriteSource::set_process_peaks( bool process )
 	
 	m_peak = new Peak(this);
 
-	if (m_peak->prepare_processing() < 0) {
+	if (m_peak->prepare_processing(audiodevice().get_sample_rate()) < 0) {
 		PERROR("Cannot process peaks realtime");
 		m_processPeaks = false;
 		delete m_peak;

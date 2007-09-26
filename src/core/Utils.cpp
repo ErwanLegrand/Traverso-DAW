@@ -31,36 +31,6 @@
 #include <QChar>
 
 
-// Frame to MM:SS.999 (ms)
-QString frame_to_ms_3 ( nframes_t nframes, int rate )
-{
-	QString spos;
-	long unsigned int remainder;
-	int mins, secs, frames;
-
-	mins = nframes / ( 60 * rate );
-	remainder = nframes - ( mins * 60 * rate );
-	secs = remainder / rate;
-	remainder -= secs * rate;
-	frames = remainder * 1000 / rate;
-	spos.sprintf ( " %02d:%02d%c%03d", mins, secs, QLocale::system().decimalPoint().toAscii(), frames );
-
-	return spos;
-}
-
-QString frame_to_hms(double nframes, int rate)
-{
-	long unsigned int remainder;
-	int hours, mins, secs;
-
-	hours = (int) (nframes / (3600 * rate));
-	remainder = (long unsigned int) (nframes - (hours * 3600 * rate));
-	mins = (int) (remainder / ( 60 * rate ));
-	remainder -= mins * 60 * rate;
-	secs = (int) (remainder / rate);
-	return QString().sprintf("%02d:%02d:%02d", hours, mins, secs);
-}
-
 TimeRef msms_to_timeref(QString str)
 {
 	TimeRef out = 0;
@@ -131,6 +101,21 @@ QPixmap find_pixmap ( const QString & pixname )
 	}
 
 	return pixmap;
+}
+
+QString timeref_to_hms(const TimeRef& ref)
+{
+	qint64 remainder;
+	int hours, mins, secs;
+
+	qint64 universalframe = ref.universal_frame();
+	
+	hours = (int) (universalframe / (3600 * UNIVERSAL_SAMPLE_RATE));
+	remainder = (long unsigned int) (universalframe - (hours * 3600 * UNIVERSAL_SAMPLE_RATE));
+	mins = (int) (remainder / ( ONE_MINUTE_UNIVERSAL_SAMPLE_RATE ));
+	remainder -= mins * ONE_MINUTE_UNIVERSAL_SAMPLE_RATE;
+	secs = (int) (remainder / UNIVERSAL_SAMPLE_RATE);
+	return QString().sprintf("%02d:%02d:%02d", hours, mins, secs);
 }
 
 QString timeref_to_ms(const TimeRef& ref)

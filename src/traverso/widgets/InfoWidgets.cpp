@@ -325,8 +325,8 @@ void HDDSpaceInfo::update_status( )
 		}
 		
 		uint rate = audiodevice().get_sample_rate();
-		double frames = ( (space * 1048576) / (sizeof(float) * recChannelCount));
-		text = frame_to_hms(frames, rate);
+		TimeRef time(qint64((space * 1048576) / (sizeof(float) * recChannelCount)), rate);
+		text = timeref_to_hms(time);
 		if (text < "00:30:00") {
 			QPalette pal;
 			pal.setColor(QPalette::ButtonText, QColor(Qt::red));

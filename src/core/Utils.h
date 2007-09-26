@@ -30,9 +30,7 @@
 
 class QString;
 
-QString frame_to_ms_3(nframes_t nframes, int rate);
-QString frame_to_hms(double nframes, int rate);
-
+QString timeref_to_hms(const TimeRef& ref);
 QString timeref_to_ms(const TimeRef& ref);
 QString timeref_to_ms_2 (const TimeRef& ref);
 QString timeref_to_ms_3 (const TimeRef& ref);

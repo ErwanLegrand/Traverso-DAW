@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Export.cpp,v 1.10 2007/08/13 00:01:52 benjie Exp $
+    $Id: Export.cpp,v 1.11 2007/09/26 20:46:32 r_sijrier Exp $
 */
 
 #include "Export.h"
@@ -45,15 +45,15 @@ ExportSpecification::ExportSpecification()
 	
 	src_quality = SRC_SINC_MEDIUM_QUALITY;
 	channels = -1;
-	start_frame = -1;
-	end_frame = -1;
+	startLocation = -1;
+	endLocation = -1;
 	dither_type = GDitherTri;
 	
 	dataF = 0;
 	blocksize = -1;
 	data_width = -1;
 	
-	total_frames = -1;
+	totalTime = -1;
 	pos = -1;
 	
 	allSongs = false;
@@ -84,12 +84,12 @@ int ExportSpecification::is_valid()
 		return -1;
 	}
 	
-	if (start_frame == -1) {
+	if (startLocation == -1) {
 		printf("ExportSpecification: No start frame configured!\n");
 		return -1;
 	}
 
-	if (end_frame == -1) {
+	if (endLocation == -1) {
 		printf("ExportSpecification: No end frame configured!\n");
 		return -1;
 	}
@@ -109,7 +109,7 @@ int ExportSpecification::is_valid()
 		return -1;
 	}
 
-	if (total_frames == -1) {
+	if (totalTime == -1) {
 		printf("ExportSpecification: No total frames configured!\n");
 		return -1;
 	}

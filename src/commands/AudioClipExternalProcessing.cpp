@@ -57,9 +57,9 @@ public:
 		DecodeBuffer decodebuffer;
 	
 		ExportSpecification* spec = new ExportSpecification();
-		spec->start_frame = 0;
-		spec->end_frame = m_readsource->get_nframes();
-		spec->total_frames = spec->end_frame;
+		spec->startLocation = 0;
+		spec->endLocation = TimeRef(m_readsource->get_nframes(), m_readsource->get_rate());
+		spec->totalTime = spec->endLocation;
 		spec->pos = 0;
 		spec->isRecording = false;
 	
@@ -82,7 +82,8 @@ public:
 		}
 	
 		do {
-			nframes_t this_nframes = std::min((nframes_t)(spec->end_frame - spec->pos), buffersize);
+			nframes_t diff = (spec->endLocation - spec->pos).to_frame(m_readsource->get_rate());
+			nframes_t this_nframes = std::min(diff, buffersize);
 			nframes_t nframes = this_nframes;
 		
 			memset (spec->dataF, 0, sizeof (spec->dataF[0]) * nframes * spec->channels);
@@ -99,7 +100,7 @@ public:
 		
 			spec->pos += nframes;
 			
-		} while (spec->pos != spec->total_frames);
+		} while (spec->pos != spec->totalTime);
 		
 		writesource->finish_export();
 		delete writesource;

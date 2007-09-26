@@ -95,7 +95,7 @@ bool SFAudioWriter::open_private()
 	m_sfinfo.frames = 48000*100;
 	m_sfinfo.samplerate = m_rate;
 	m_sfinfo.channels = m_channels;
-	//m_sfinfo.frames = m_spec->end_frame - m_spec->start_frame + 1;
+	//m_sfinfo.frames = m_spec->endLocation - m_spec->startLocation + 1;
 	
 	m_sf = sf_open(m_fileName.toUtf8().data(), SFM_WRITE, &m_sfinfo);
 	if (m_sf == 0) {

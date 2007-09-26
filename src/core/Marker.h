@@ -42,7 +42,7 @@ public:
 		TEMP_ENDMARKER
 	};
 
-	Marker(TimeLine* tl, nframes_t when, Type type = CDTRACK);
+	Marker(TimeLine* tl, const TimeRef when, Type type = CDTRACK);
 	Marker(TimeLine* tl, const QDomNode node);
 	~Marker() {};
 	

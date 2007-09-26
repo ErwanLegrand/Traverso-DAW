@@ -559,9 +559,9 @@ int AudioClip::init_recording( QByteArray name )
 	spec->sample_rate = audiodevice().get_sample_rate();
 	spec->src_quality = SRC_SINC_MEDIUM_QUALITY;
 	spec->isRecording = true;
-	spec->start_frame = 0;
-	spec->end_frame = 0;
-	spec->total_frames = 0;
+	spec->startLocation = 0;
+	spec->endLocation = 0;
+	spec->totalTime = 0;
 	spec->blocksize = audiodevice().get_buffer_size();
 	spec->name = m_name + "-" + sourceid;
 	spec->dataF = m_captureBus->get_buffer(0, audiodevice().get_buffer_size());

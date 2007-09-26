@@ -354,7 +354,7 @@ int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, TimeRef start
 }
 
 
-int Peak::prepare_processing()
+int Peak::prepare_processing(int rate)
 {
 	PENTER;
 	
@@ -394,7 +394,7 @@ int Peak::prepare_processing()
 		fseek(data->file, data->headerdata.peakDataOffset, SEEK_SET);
 		
 		data->pd = new Peak::ProcessData;
-		data->pd->stepSize = TimeRef(1, m_source->get_file_rate());
+		data->pd->stepSize = TimeRef(1, rate);
 	}
 	
 	
@@ -582,7 +582,7 @@ int Peak::create_from_scratch()
 #endif
 	int ret = -1;
 	
-	if (prepare_processing() < 0) {
+	if (prepare_processing(m_source->get_file_rate()) < 0) {
 		return ret;
 	}
 	

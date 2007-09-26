@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Export.h,v 1.14 2007/09/10 18:42:48 r_sijrier Exp $
+$Id: Export.h,v 1.15 2007/09/26 20:46:32 r_sijrier Exp $
 */
 
 #ifndef EXPORT_H
@@ -49,8 +49,8 @@ struct ExportSpecification
 	int      	sample_rate;
 	int             src_quality;
 	int       	channels;
-	long		start_frame;
-	long long      	end_frame;
+	TimeRef		startLocation;
+	TimeRef		endLocation;
 	GDitherType     dither_type;
 
 	/* used exclusively during export */
@@ -60,9 +60,9 @@ struct ExportSpecification
 	int		blocksize;
 	int	        data_width;
 
-	long      	total_frames;
+	TimeRef      	totalTime;
+	TimeRef      	pos;
 	QMap<QString, QString>	extraFormat;
-	long      	pos;
 
 	/* shared between UI thread and audio thread */
 

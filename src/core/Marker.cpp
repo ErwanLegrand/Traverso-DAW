@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TimeLine.h"
 #include "Utils.h"
 
-Marker::Marker(TimeLine* tl, nframes_t when, Type type)
+Marker::Marker(TimeLine* tl, const TimeRef when, Type type)
 	: ContextItem()
 	, Snappable()
 	, m_timeline(tl)

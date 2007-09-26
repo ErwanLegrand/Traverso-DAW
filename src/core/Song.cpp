@@ -348,8 +348,8 @@ int Song::prepare_export(ExportSpecification* spec)
 		m_rendering = true;
 	}
 
-	spec->start_frame = UINT_MAX;
-	spec->end_frame = 0;
+	spec->startLocation = LONG_LONG_MAX;
+	spec->endLocation = 0;
 
 	TimeRef endlocation, startlocation;
 	int devicerate = audiodevice().get_sample_rate();
@@ -358,17 +358,17 @@ int Song::prepare_export(ExportSpecification* spec)
 		track->get_render_range(startlocation, endlocation);
 
 		if (track->is_solo()) {
-			spec->end_frame = endlocation.to_frame(devicerate);
-			spec->start_frame = startlocation.to_frame(devicerate);
+			spec->endLocation = endlocation;
+			spec->startLocation = startlocation;
 			break;
 		}
 
-		if (endlocation.to_frame(devicerate) > spec->end_frame) {
-			spec->end_frame = endlocation.to_frame(devicerate);
+		if (endlocation > spec->endLocation) {
+			spec->endLocation = endlocation;
 		}
 
-		if (startlocation.to_frame(devicerate) < (uint)spec->start_frame) {
-			spec->start_frame = startlocation.to_frame(devicerate);
+		if (startlocation < spec->startLocation) {
+			spec->startLocation = startlocation;
 		}
 
 	}
@@ -380,34 +380,34 @@ int Song::prepare_export(ExportSpecification* spec)
 			PMESG2("  Start marker found at %d", startlocation.to_frame(devicerate));
 			// round down to the start of the CD frome (75th of a sec)
 			startlocation = cd_to_timeref(timeref_to_cd(startlocation));
-			spec->start_frame = startlocation.to_frame(devicerate);
+			spec->startLocation = startlocation;
 		} else {
 			PMESG2("  No start marker found");
 		}
 		
 		if (m_timeline->get_end_position(endlocation)) {
 			PMESG2("  End marker found at %d", endlocation.to_frame(devicerate));
-			spec->end_frame = endlocation.to_frame(devicerate);
+			spec->endLocation = endlocation;
 		} else {
 			PMESG2("  No end marker found");
 		}
 	}
 
-	spec->total_frames = spec->end_frame - spec->start_frame;
+	spec->totalTime = spec->endLocation - spec->startLocation;
 
-// 	PWARN("Render length is: %s",frame_to_ms_3(spec->total_frames, m_project->get_rate()).toAscii().data() );
+// 	PWARN("Render length is: %s",timeref_to_ms_3(spec->totalTime).toAscii().data() );
 
-	spec->pos = spec->start_frame;
+	spec->pos = spec->startLocation;
 	spec->progress = 0;
 
 	spec->basename = "Song" + QString::number(m_project->get_song_index(m_id)) +"-" + title;
 	spec->name = spec->basename;
 
-	if (spec->start_frame == spec->end_frame) {
+	if (spec->startLocation == spec->endLocation) {
 		info().warning(tr("No audio to export! (Is everything muted?)"));
 		return -1;
 	}
-	else if (spec->start_frame > spec->end_frame) {
+	else if (spec->startLocation > spec->endLocation) {
 		info().warning(tr("Export start frame starts beyond export end frame!!"));
 		return -1;
 	}
@@ -429,7 +429,7 @@ int Song::prepare_export(ExportSpecification* spec)
 		}
 	}
 
-	m_transportLocation.set_position(spec->start_frame, devicerate);
+	m_transportLocation = spec->startLocation;
 	
 	resize_buffer(false, spec->blocksize);
 	
@@ -454,10 +454,12 @@ int Song::render(ExportSpecification* spec)
 	uint32_t x;
 	int ret = -1;
 	int progress;
-	nframes_t this_nframes;
+	
+	nframes_t diff = (spec->endLocation - spec->pos).to_frame(audiodevice().get_sample_rate());
 	nframes_t nframes = spec->blocksize;
+	nframes_t this_nframes = std::min(diff, nframes);
 
-	if (!spec->running || spec->stop || (this_nframes = std::min ((nframes_t)(spec->end_frame - spec->pos), nframes)) == 0) {
+	if (!spec->running || spec->stop || this_nframes == 0) {
 		process_export (nframes);
 		/*		PWARN("Finished Rendering for this song");
 				PWARN("running is %d", spec->running);
@@ -516,12 +518,12 @@ int Song::render(ExportSpecification* spec)
 	}
 	
 
-	spec->pos += nframes;
+	spec->pos.add_frames(nframes, audiodevice().get_sample_rate());
 
 	if (! spec->normalize ) {
-		progress = (int) (( 100.0 * (float)(spec->pos) ) / spec->total_frames);
+		progress =  int((double(spec->pos.universal_frame()) / spec->totalTime.universal_frame()) * 100);
 	} else {
-		progress = (int) (( 100.0 * (float)(spec->pos) ) / (spec->total_frames * 2));
+		progress = (int) (double( 100 * spec->pos.universal_frame()) / (spec->totalTime.universal_frame() * 2));
 		if (spec->renderpass == ExportSpecification::WRITE_TO_HARDDISK) {
 			progress += 50;
 		}
@@ -818,8 +820,8 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 			case 0:
 				// no markers present. We add one at the beginning and one at the
 				// end of the render area.
-				mlist.append(new Marker(m_timeline, spec->start_frame, Marker::TEMP_CDTRACK));
-				mlist.append(new Marker(m_timeline, spec->end_frame, Marker::TEMP_ENDMARKER));
+				mlist.append(new Marker(m_timeline, spec->startLocation, Marker::TEMP_CDTRACK));
+				mlist.append(new Marker(m_timeline, spec->endLocation, Marker::TEMP_ENDMARKER));
 				break;
 			case 1:
 				// one marker is present. We add two more at the beginning
@@ -828,11 +830,11 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 
 				// deactivate the next if-condition (only the first one) if you want the
 				// stuff before the first marker to go into the pre-gap
-				if (mlist.at(0)->get_when().to_frame(audiodevice().get_sample_rate()) != (spec->start_frame)) {
-					mlist.append(new Marker(m_timeline, spec->start_frame, Marker::TEMP_CDTRACK));
+				if (mlist.at(0)->get_when() != (spec->startLocation)) {
+					mlist.append(new Marker(m_timeline, spec->startLocation, Marker::TEMP_CDTRACK));
 				}
-				if (mlist.at(0)->get_when() != spec->end_frame) {
-					mlist.append(new Marker(m_timeline, spec->end_frame, Marker::TEMP_ENDMARKER));
+				if (mlist.at(0)->get_when() != spec->endLocation) {
+					mlist.append(new Marker(m_timeline, spec->endLocation, Marker::TEMP_ENDMARKER));
 				}
 				break;
 		}
@@ -840,7 +842,7 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 		// would be ok, but let's check if there is an end marker present. If not,
 		// add one to spec->end_frame
 		if (!m_timeline->has_end_marker()) {
-			mlist.append(new Marker(m_timeline, spec->end_frame, Marker::TEMP_ENDMARKER));
+			mlist.append(new Marker(m_timeline, spec->endLocation, Marker::TEMP_ENDMARKER));
 		}
 	}
 

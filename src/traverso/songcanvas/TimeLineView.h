@@ -62,7 +62,7 @@ private:
 
 	QHash<nframes_t, QString>	m_zooms;	
 
-	Command* add_marker_at(nframes_t when);
+	Command* add_marker_at(const TimeRef when);
 	void update_softselected_marker(QPoint pos);
 	
 	

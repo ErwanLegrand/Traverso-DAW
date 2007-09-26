@@ -360,20 +360,17 @@ Command* TimeLineView::add_marker()
 {
 	QPointF point = mapFromScene(cpointer().scene_pos());
 	
-	nframes_t when = (uint) (point.x() * m_sv->timeref_scalefactor);
+	TimeRef when(point.x() * m_sv->timeref_scalefactor);
 	
 	return add_marker_at(when);
 }
 
 Command* TimeLineView::add_marker_at_playhead()
 {
-	TimeRef location = m_sv->get_song()->get_transport_location();
-	nframes_t when = location.to_frame(audiodevice().get_sample_rate());
-	
-	return add_marker_at(when);
+	return add_marker_at(m_sv->get_song()->get_transport_location());
 }
 
-Command* TimeLineView::add_marker_at(nframes_t when)
+Command* TimeLineView::add_marker_at(const TimeRef when)
 {
 	CommandGroup* group = new CommandGroup(m_timeline, "");
 
@@ -386,8 +383,8 @@ Command* TimeLineView::add_marker_at(nframes_t when)
 		}
 
 		TimeRef lastlocation = m_sv->get_song()->get_last_location();
-		if (when < lastlocation.to_frame(audiodevice().get_sample_rate())) {  // add one at the end of the song
-			Marker* me = new Marker(m_timeline, lastlocation.to_frame(audiodevice().get_sample_rate()), Marker::ENDMARKER);
+		if (when < lastlocation) {  // add one at the end of the song
+			Marker* me = new Marker(m_timeline, lastlocation, Marker::ENDMARKER);
 			me->set_description(tr("End"));
 			group->add_command(m_timeline->add_marker(me));
 		}
