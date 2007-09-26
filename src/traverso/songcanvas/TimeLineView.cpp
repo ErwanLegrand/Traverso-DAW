@@ -175,7 +175,7 @@ int DragMarker::jog()
 	}
 	
 	d->jogBypassPos = cpointer().x();
-	TimeRef newpos = (cpointer().scene_x() * d->scalefactor * 640);
+	TimeRef newpos = (cpointer().scene_x() * d->scalefactor);
 
 	if (m_marker->get_timeline()->get_song()->is_snap_on()) {
 		SnapList* slist = m_marker->get_timeline()->get_song()->get_snap_list();
@@ -186,7 +186,7 @@ int DragMarker::jog()
 		newpos = 0;
 	}
 	
-	m_newWhen = qint64(newpos / 640);
+	m_newWhen = newpos;
 	d->view->set_position(int(m_newWhen / d->scalefactor));
 	
 	d->view->get_songview()->update_shuttle_factor();
