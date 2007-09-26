@@ -48,11 +48,6 @@ DEFINES += QT_OPENGL_SUPPORT
 #  OPTIONS WHO COULD BE USEFULL FOR PACKAGERS	#
 #################################################
 
-#
-# uncomment if you have a patched Qt 4.3.0 !
-#
-# DEFINES += QT_430_SCROLLBAR_FIX
-
 
 # DEFINES += STATIC_BUILD
 

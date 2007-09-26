@@ -898,7 +898,7 @@ nframes_t PeakDataReader::read(DecodeBuffer* buffer, nframes_t count)
 	}
 		
 	// Make sure the read buffer is big enough for this read
-	buffer->check_buffers_capacity(count, 1);
+	buffer->check_buffers_capacity(count*2, 1);
 	
 	Q_ASSERT(m_d->file);
 

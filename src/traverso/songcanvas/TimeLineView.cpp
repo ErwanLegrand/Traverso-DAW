@@ -306,15 +306,15 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 	
 	painter->setMatrixEnabled(false);
 
-	TimeRef firstlocactiondividedbymajorsquare = firstLocation/major*major;
+	TimeRef factor = (firstLocation/major)*major;
 	// Draw minor ticks
 	for (qint64 i = 0; i < (lastLocation-firstLocation+major) / minor; i++ ) {
-		int x = (int)((firstlocactiondividedbymajorsquare + i * minor) / m_sv->timeref_scalefactor) - xstartoffset;
+		int x = (int)((factor + i * minor) / m_sv->timeref_scalefactor) - xstartoffset;
 		painter->drawLine(x, height - 5, x, height - 1);
 	}
 	
 	// Draw major ticks
-	for (TimeRef location = firstlocactiondividedbymajorsquare; location < lastLocation; location += major) {
+	for (TimeRef location = factor; location < lastLocation; location += major) {
 		int x = int(location/m_sv->timeref_scalefactor - xstartoffset);
 		painter->drawLine(x, height - 13, x, height - 1);
 		if (paintText) {

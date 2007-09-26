@@ -46,6 +46,8 @@ public:
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	int get_vector(int xstart, int pixelcount, float *arg);
+	bool has_nodes() const;
+	float get_default_value();
 	int type() const;
 	void calculate_bounding_rect();
 	void load_theme_data();

@@ -311,7 +311,12 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 
 int CurveView::get_vector(int xstart, int pixelcount, float* arg)
 {
+	if (m_guicurve->get_nodes()->size() == 1 && m_guicurve->get_nodes()->first()->value == 1.0) {
+		return 0;
+	}
+	
 	m_guicurve->get_vector(xstart, xstart + pixelcount, arg, pixelcount);
+	
 	return 1;
 }
 
@@ -599,5 +604,13 @@ void CurveView::set_start_offset(const TimeRef& offset)
 	m_startoffset = offset;
 }
 
-//eof
+bool CurveView::has_nodes() const
+{
+	return m_guicurve->get_nodes()->size() > 1 ? true : false;
+}
+
+float CurveView::get_default_value()
+{
+	return m_guicurve->get_nodes()->first()->value;
+}
 

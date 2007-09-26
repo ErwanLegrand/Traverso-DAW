@@ -238,11 +238,6 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	if ( /*microView && */((xstart + pixelcount) > m_boundingRect.width()) ) {
 		pixelcount = (int) m_boundingRect.width() - xstart;
 	}
-	int channels = m_clip->get_channels();
-	int peakdatacount = microView ? pixelcount : pixelcount * 2;
-
-	float* pixeldata[channels];
-	float curvemixdown[peakdatacount];
 	
 	Peak* peak = m_clip->get_peak();
 	if (!peak) {
@@ -264,15 +259,20 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		adjustforevenpixel -= 1;
 	}
 	
+	int channels = m_clip->get_channels();
+	int peakdatacount = microView ? pixelcount : pixelcount * 2;
+
+	float* pixeldata[channels];
+	
 	// Load peak data for all channels, if no peakdata is returned
 	// for a certain Peak object, schedule it for loading.
 	for (int chan=0; chan < channels; ++chan) {
 		
 		int availpeaks = peak->calculate_peaks( chan,
 							&pixeldata[chan],
-							m_song->get_hzoom() + 1,
-							(xstart * m_sv->timeref_scalefactor) + clipstartoffset,
-							peakdatacount);
+       							microView ? m_song->get_hzoom() : m_song->get_hzoom() + 1,
+				     			(xstart * m_sv->timeref_scalefactor) + clipstartoffset,
+							microView ? peakdatacount : peakdatacount / 2 + 2);
 		
 		if (peakdatacount != availpeaks) {
 // 			PWARN("peakdatacount != availpeaks (%d, %d)", peakdatacount, availpeaks);
@@ -292,20 +292,28 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	}
 	
 	
+	float curvemixdown[peakdatacount];
 	int mixcurvedata = 0;
+	float curveDefaultValue = 1.0;
 	int offset = (int)(m_clip->get_source_start_location() / m_sv->timeref_scalefactor);
-	mixcurvedata |= curveView->get_vector(xstart + offset, pixelcount, curvemixdown);
+	mixcurvedata |= curveView->has_nodes();
 	
-	float fademixdown[pixelcount];
+	if (mixcurvedata) {
+		mixcurvedata |= curveView->get_vector(xstart + offset, pixelcount, curvemixdown);
+	} else {
+		curveDefaultValue = curveView->get_default_value();
+	}
+		
 	for (int i = 0; i < m_fadeViews.size(); ++i) {
 		FadeView* view = m_fadeViews.at(i);
+		float fademixdown[pixelcount];
 		int fademix = 0;
 		if (mixcurvedata) {
 			fademix = view->get_vector(xstart, pixelcount, fademixdown);
 		} else {
 			fademix = view->get_vector(xstart, pixelcount, curvemixdown);
 		}
-		
+		printf("fademix is %d\n", fademix);
 		if (mixcurvedata && fademix) {
 			for (int j=0; j<pixelcount; ++j) {
 				curvemixdown[j] *= fademixdown[j];
@@ -320,30 +328,10 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	// Merged view: calculate highest value for all channels, 
 	// and store it in the first channels pixeldata.
 	if (!microView) {
-		for (int chan=0; chan < channels; chan++) {
-			if (!m_classicView) {
+		if (!m_classicView) {
+			for (int chan=0; chan < channels; chan++) {
 				for (int i=0, j=0; i < (pixelcount*2); i+=2, ++j) {
 					pixeldata[chan][j] = - f_max(pixeldata[chan][i], - pixeldata[chan][i+1]);
-				}
-			}
-		}
-		
-		if (mixcurvedata) {
-			int curvemixdownpos;
-			for (int chan=0; chan < channels; chan++) {
-				curvemixdownpos = 0;
-				if (m_classicView) {
-					for (int i = 0; i < (pixelcount*2); ++i) {
-						pixeldata[chan][i] *= curvemixdown[curvemixdownpos];
-						i++;
-						pixeldata[chan][i] *= curvemixdown[curvemixdownpos];
-						curvemixdownpos += 2;
-					}
-				} else {
-					for (int i = 0; i < pixelcount; i++) {
-						pixeldata[chan][i] *= curvemixdown[curvemixdownpos];
-						curvemixdownpos += 2;
-					}
 				}
 			}
 		}
@@ -356,6 +344,26 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			}
 		}
 		
+	}
+	
+	if (mixcurvedata) {
+		int curvemixdownpos;
+		for (int chan=0; chan < channels; chan++) {
+			curvemixdownpos = 0;
+			if (m_classicView) {
+				for (int i = 0; i < (pixelcount*2); ++i) {
+					pixeldata[chan][i] *= curvemixdown[curvemixdownpos];
+					i++;
+					pixeldata[chan][i] *= curvemixdown[curvemixdownpos];
+					curvemixdownpos += 2;
+				}
+			} else {
+				for (int i = 0; i < pixelcount; i++) {
+					pixeldata[chan][i] *= curvemixdown[curvemixdownpos];
+					curvemixdownpos += 2;
+				}
+			}
+		}
 	}
 	
 	
@@ -376,18 +384,9 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		}
 	
 		
-		float scaleFactor = ( (float) height * 0.90 / 2) * m_clip->get_gain();
+		float scaleFactor = ( (float) height * 0.90 / 2) * m_clip->get_gain() * curveDefaultValue;
 		float ytrans;
 		
-		if (m_mergedView) {
-			if (m_classicView) {
-				ytrans = (height / 2) * channels;
-				scaleFactor *= channels;
-			} else {
-				ytrans = height * channels;
-				scaleFactor *= channels;
-			}
-		}
 
 		// Draw channel seperator horizontal lines, if needed.
 		if (channels >= 2 && ! m_mergedView && m_classicView && chan >=1 ) {
@@ -454,7 +453,17 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			}
 				
 			
-			scaleFactor = ( (float) height * 0.90 / (Peak::MAX_DB_VALUE * 2)) * m_clip->get_gain();
+			scaleFactor = ( (float) height * 0.90 / (Peak::MAX_DB_VALUE * 2)) * m_clip->get_gain() * curveDefaultValue;
+			
+			if (m_mergedView) {
+				if (m_classicView) {
+					ytrans = (height / 2) * channels;
+					scaleFactor *= channels;
+				} else {
+					ytrans = height * channels;
+					scaleFactor *= channels;
+				}
+			}
 			
 			QPainterPath path;
 			// in rectified view, we add an additional point, hence + 1
@@ -466,10 +475,8 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				
 				int range = pixelcount;
 				for (int x = 0; x < range; x+=2) {
-					if (x <= range) {
-						polygontop.append( QPointF(x, scaleFactor * pixeldata[chan][bufferpos++]) );
-						polygonbottom.append( QPointF(x, -scaleFactor * pixeldata[chan][bufferpos++]) );
-					}
+					polygontop.append( QPointF(x, scaleFactor * pixeldata[chan][bufferpos++]) );
+					polygonbottom.append( QPointF(x, -scaleFactor * pixeldata[chan][bufferpos++]) );
 				}
 				
 				path.addPolygon(polygontop);
@@ -483,7 +490,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				}
 			
 			} else {
-				scaleFactor =  (float) height * 0.95 * m_clip->get_gain() / Peak::MAX_DB_VALUE;
+				scaleFactor =  (float) height * 0.95 * m_clip->get_gain() / Peak::MAX_DB_VALUE * curveDefaultValue;
 				ytrans = height + (chan * height);
 		
 				if (m_mergedView) {
