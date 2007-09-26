@@ -377,7 +377,7 @@ int Song::prepare_export(ExportSpecification* spec)
 		QList<Marker*> markers = m_timeline->get_markers();
 		if (markers.size() >= 2) {
 			startlocation = markers.at(0)->get_when();
-			PMESG2("  Start marker found at %d", startlocation.to_frame(devicerate));
+			PMESG2("  Start marker found at %s", QS_C(timeref_to_ms(startlocation)));
 			// round down to the start of the CD frome (75th of a sec)
 			startlocation = cd_to_timeref(timeref_to_cd(startlocation));
 			spec->startLocation = startlocation;
@@ -386,7 +386,7 @@ int Song::prepare_export(ExportSpecification* spec)
 		}
 		
 		if (m_timeline->get_end_position(endlocation)) {
-			PMESG2("  End marker found at %d", endlocation.to_frame(devicerate));
+			PMESG2("  End marker found at %s", QS_C(timeref_to_ms(endlocation)));
 			spec->endLocation = endlocation;
 		} else {
 			PMESG2("  No end marker found");

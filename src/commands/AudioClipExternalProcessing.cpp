@@ -58,7 +58,7 @@ public:
 	
 		ExportSpecification* spec = new ExportSpecification();
 		spec->startLocation = 0;
-		spec->endLocation = TimeRef(m_readsource->get_nframes(), m_readsource->get_rate());
+		spec->endLocation = m_readsource->get_length();
 		spec->totalTime = spec->endLocation;
 		spec->pos = 0;
 		spec->isRecording = false;

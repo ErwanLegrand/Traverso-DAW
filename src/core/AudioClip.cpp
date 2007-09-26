@@ -418,7 +418,7 @@ int AudioClip::process(nframes_t nframes)
 
 
 	TimeRef transportLocation = m_song->get_transport_location();
-	TimeRef upperRange = TimeRef(transportLocation.to_frame(get_rate()) + nframes, get_rate());
+	TimeRef upperRange = transportLocation + TimeRef(nframes, get_rate());
 	
 	if ( (m_trackStartLocation < upperRange) && (m_trackEndLocation > transportLocation) ) {
 		if (transportLocation < m_trackStartLocation) {
