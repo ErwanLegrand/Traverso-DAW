@@ -78,7 +78,7 @@ void GainEnvelope::process_gain(audio_sample_t** buffer, const TimeRef& startloc
 	PluginControlPort* port = m_controlPorts.at(0);
 	
 	for (int chan=0; chan<channels; ++chan) {
-		Mixer::apply_gain_to_buffer(buffer[chan], nframes, port->get_control_value());
+		Mixer::apply_gain_to_buffer(buffer[chan], nframes, m_gain);
 		
 		if (port->use_automation()) {
 			port->get_curve()->process(buffer[chan], startlocation, endlocation, nframes);
