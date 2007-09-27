@@ -559,7 +559,7 @@ nframes_t FlacAudioReader::read_private(DecodeBuffer* buffer, nframes_t frameCou
 		framesToCopy = (frameCount - framesCoppied < framesAvailable) ? frameCount - framesCoppied : framesAvailable;
 		switch (get_num_channels()) {
 			case 1:
-				memcpy(buffer->destination[0] + framesCoppied, m_flac->internalBuffer + m_flac->bufferStart, framesToCopy);
+				memcpy(buffer->destination[0] + framesCoppied, m_flac->internalBuffer + m_flac->bufferStart, framesToCopy * sizeof(audio_sample_t));
 				break;
 			case 2:
 				for (nframes_t i = 0; i < framesToCopy; i++) {
