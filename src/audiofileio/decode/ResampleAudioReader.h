@@ -31,17 +31,18 @@ class ResampleAudioReader : public AbstractAudioReader
 {
 
 public:
-	ResampleAudioReader(QString filename, int converter_type, const QString& decoder);
+	ResampleAudioReader(QString filename, const QString& decoder);
 	~ResampleAudioReader();
 	
 	QString decoder_type() const {return (m_reader) ? m_reader->decoder_type() : "";}
 	void clear_buffers();
 	
 	int get_output_rate();
+	int get_file_rate();
 	void set_output_rate(int rate);
+	void set_converter_type(int converter_type);
 	
 protected:
-	void init(int converter_type);
 	void reset();
 	
 	bool seek_private(nframes_t start);
@@ -56,6 +57,7 @@ protected:
 	audio_sample_t**	m_overflowBuffers;
 	long			m_overflowUsed;
 	int			m_outputRate;
+	bool			m_isResampleAvailable;
 	nframes_t		m_readExtraFrames;
 	
 private:

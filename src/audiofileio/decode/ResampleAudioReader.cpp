@@ -30,36 +30,33 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 // On init, creates a child AudioReader for any filetype, and a samplerate converter
-ResampleAudioReader::ResampleAudioReader(QString filename, int converter_type, const QString& decoder)
+ResampleAudioReader::ResampleAudioReader(QString filename, const QString& decoder)
  : AbstractAudioReader(filename)
 {
 	m_reader = AbstractAudioReader::create_audio_reader(filename, decoder);
 	if (!m_reader) {
 		PERROR("ResampleAudioReader: couldn't create AudioReader");
-		return;
+		m_channels = m_nframes = 0;
+	} else {
+		m_channels = m_reader->get_num_channels();
+		m_rate = m_reader->get_file_rate();
+		m_nframes = m_reader->get_nframes();
+		m_length = m_reader->get_length();
+
+		m_outputRate = m_rate;
 	}
 	
-	m_channels = m_reader->get_num_channels();
-	m_rate = m_reader->get_file_rate();
-	m_nframes = m_reader->get_nframes();
-	m_length = m_reader->get_length();
-
-	m_outputRate = m_rate;
-	
+	m_isResampleAvailable = false;
 	m_overflowBuffers = 0;
 	m_overflowUsed = 0;
-	
-	init(converter_type);
 }
 
 
 ResampleAudioReader::~ResampleAudioReader()
 {
-	if (!m_reader) {
-		return;
+	if (m_reader) {
+		delete m_reader;
 	}
-	
-	delete m_reader;
 	
 	while (m_srcStates.size()) {
 		src_delete(m_srcStates.back());
@@ -90,33 +87,6 @@ void ResampleAudioReader::clear_buffers()
 	}
 }
 
-
-void ResampleAudioReader::init(int converter_type)
-{
-	int error;
-	
-	for (int c = 0; c < m_reader->get_num_channels(); c++) {
-		m_srcStates.append(src_new(converter_type, 1, &error));
-		if (!m_srcStates[c]) {
-			PERROR("ResampleAudioReader: couldn't create libSampleRate SRC_STATE");
-			delete m_reader;
-			m_reader = 0;
-			return;
-		}
-		m_srcStates.append(src_new(converter_type, 1, &error));
-		if (!m_srcStates[c]) {
-			PERROR("ResampleAudioReader: couldn't create libSampleRate SRC_STATE");
-			delete m_reader;
-			m_reader = 0;
-			return;
-		}
-	}
-	
-	reset();
-	seek_private(0);
-}
-
-
 // Clear the samplerateconverter to a clean state (used on seek)
 void ResampleAudioReader::reset()
 {
@@ -133,12 +103,41 @@ void ResampleAudioReader::reset()
 	m_readExtraFrames = OVERFLOW_SIZE;
 }
 
+void ResampleAudioReader::set_converter_type(int converter_type)
+{
+	int error;
+	
+	while (m_srcStates.size()) {
+		src_delete(m_srcStates.back());
+		m_srcStates.pop_back();
+	}
+	
+	for (int c = 0; c < m_reader->get_num_channels(); c++) {
+		
+		m_srcStates.append(src_new(converter_type, 1, &error));
+		
+		if (!m_srcStates[c]) {
+			PERROR("ResampleAudioReader: couldn't create libSampleRate SRC_STATE");
+			m_isResampleAvailable = false;
+		} else {
+			m_isResampleAvailable = true;
+			clear_buffers();
+		}
+	}
+	
+	// seek_private will reset the src states!
+	seek_private(0);
+}
 
 int ResampleAudioReader::get_output_rate()
 {
 	return m_outputRate;
 }
 
+int ResampleAudioReader::get_file_rate()
+{
+	m_reader->get_file_rate();
+}
 
 void ResampleAudioReader::set_output_rate(int rate)
 {
@@ -157,7 +156,7 @@ bool ResampleAudioReader::seek_private(nframes_t start)
 {
 	Q_ASSERT(m_reader);
 	
-	if (m_outputRate == m_rate) {
+	if (m_outputRate == m_rate || !m_isResampleAvailable) {
 		return m_reader->seek(start);
 	}
 	
@@ -174,7 +173,7 @@ nframes_t ResampleAudioReader::read_private(DecodeBuffer* buffer, nframes_t fram
 	Q_ASSERT(m_reader);
 	
 	// pass through if not changing sampleRate.
-	if (m_outputRate == m_rate) {
+	if (m_outputRate == m_rate || !m_isResampleAvailable) {
 		return m_reader->read(buffer, frameCount);
 	} else if (!m_overflowBuffers) {
 		create_overflow_buffers();

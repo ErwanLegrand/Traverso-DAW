@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QDomDocument>
 
 
-class AbstractAudioReader;
+class ResampleAudioReader;
 class AudioClip;
 struct BufferStatus;
 class DecodeBuffer;
@@ -79,7 +79,7 @@ public :
 	void set_output_rate(int rate);
 	
 private:
-	AbstractAudioReader*	m_audioReader;
+	ResampleAudioReader*	m_audioReader;
 	AudioClip* 		m_clip;
 	int			m_refcount;
 	int			m_error;

@@ -102,11 +102,6 @@ public:
 	bool eof();
 	nframes_t pos();
 	
-	nframes_t read_from(DecodeBuffer* buffer, TimeRef& start, nframes_t count) {
-		return read_from(buffer, start.to_frame(m_rate), count);
-	}
-	bool seek(const TimeRef& start);
-	
 	nframes_t read_from(DecodeBuffer* buffer, nframes_t start, nframes_t count);
 	bool seek(nframes_t start);
 	nframes_t read(DecodeBuffer* buffer, nframes_t frameCount);

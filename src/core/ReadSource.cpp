@@ -20,10 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 */
 
 #include "ReadSource.h"
-#include "AbstractAudioReader.h"
 #include "ResampleAudioReader.h"
 
-#include "Peak.h"
 #include "ProjectManager.h"
 #include "Project.h"
 #include "AudioClip.h"
@@ -222,19 +220,18 @@ int ReadSource::init( )
 	if (useResampling) {
 		int converter_type;
 		converter_type = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
+		
 		// There should be another config option for ConverterType to use for export (higher quality)
 		//converter_type = config().get_property("Conversion", "ExportResamplingConverterType", 0).toInt();
-		m_audioReader = new ResampleAudioReader(m_fileName, converter_type, m_decodertype);
+		m_audioReader = new ResampleAudioReader(m_fileName, m_decodertype);
+		
 		if (m_audioReader->is_valid()) {
 			set_output_rate(audiodevice().get_sample_rate());
-		}
-		else {
+			m_audioReader->set_converter_type(converter_type);
+		} else {
 			delete m_audioReader;
 			m_audioReader = 0;
 		}
-	}
-	else {
-		m_audioReader = AbstractAudioReader::create_audio_reader(m_fileName, m_decodertype);
 	}
 	
 	if (m_audioReader == 0) {
@@ -243,22 +240,24 @@ int ReadSource::init( )
 	
 	// (re)set the decoder type
 	m_decodertype = m_audioReader->decoder_type();
+	m_channelCount = m_audioReader->get_num_channels();
 	
-	if (m_audioReader->get_num_channels() > 2) {
-		PERROR("ReadAudioSource: file contains %d channels; only 2 channels are supported", m_audioReader->get_num_channels());
+	// @Ben: I thought we support any channel count now ??
+	if (m_channelCount > 2) {
+		PERROR("ReadAudioSource: file contains %d channels; only 2 channels are supported", m_channelCount);
 		delete m_audioReader;
 		m_audioReader = 0;
 		return INVALID_CHANNEL_COUNT;
 	}
 
-	if (m_audioReader->get_num_channels() == 0) {
-		PERROR("ReadAudioSource: not a valid channel count: %d", m_audioReader->get_num_channels());
+	// Never reached, it's allready checked in AbstractAudioReader::is_valid() which was allready called!
+	if (m_channelCount == 0) {
+		PERROR("ReadAudioSource: not a valid channel count: %d", m_channelCount);
 		delete m_audioReader;
 		m_audioReader = 0;
 		return ZERO_CHANNELS;
 	}
 	
-	m_channelCount = m_audioReader->get_num_channels();
 	m_rate = m_audioReader->get_file_rate();
 	m_length = m_audioReader->get_length();
 	
@@ -269,43 +268,23 @@ int ReadSource::init( )
 void ReadSource::set_output_rate(int rate)
 {
 	Q_ASSERT(rate > 0);
-	ResampleAudioReader* reader = dynamic_cast<ResampleAudioReader*>(m_audioReader);
-	if (reader) {
-		reader->set_output_rate(rate);
-		// The length could have become slightly smaller/larger due
-		// rounding issues involved with converting to one samplerate to another.
-		// Should be at the order of one sample at most, but for reading purposes we 
-		// need sample accurate information!
-		m_length = reader->get_length();
-	}
+	
+	m_audioReader->set_output_rate(rate);
+	
+	// The length could have become slightly smaller/larger due
+	// rounding issues involved with converting to one samplerate to another.
+	// Should be at the order of one sample at most, but for reading purposes we 
+	// need sample accurate information!
+	m_length = m_audioReader->get_length();
 }
 
 
 int ReadSource::file_read(DecodeBuffer* buffer, TimeRef& start, nframes_t cnt) const
 {
-#if defined (profile)
-	trav_time_t starttime = get_microseconds();
-#endif
-	
-	int rate = audiodevice().get_sample_rate();
-	
-	// Oh boy, the rate we have to use is the output rate of the resampled reader
-	// in case the audioreader is a ResampleAudioReader. Somehow Remon thinks it's
-	// better to use TimeRef based read_from() ....
-	ResampleAudioReader* reader = dynamic_cast<ResampleAudioReader*>(m_audioReader);
-	if (reader) {
-		rate = reader->get_output_rate();
-	}
-	
+//	PROFILE_START;
+	int rate = m_audioReader->get_output_rate();
 	nframes_t result = m_audioReader->read_from(buffer, start.to_frame(rate), cnt);
-
-#if defined (profile)
-	int processtime = (int) (get_microseconds() - starttime);
-	if (processtime > 40000) {
-		printf("Process time for %s: %d useconds\n\n", QS_C(m_fileName), processtime);
-	}
-#endif
-	
+//	PROFILE_END("ReadSource::fileread");
 	return result;
 }
 
@@ -624,14 +603,19 @@ void ReadSource::set_active(bool active)
 
 int ReadSource::file_read(DecodeBuffer * buffer, nframes_t start, nframes_t cnt)
 {
-	TimeRef startlocation(start, get_rate());
+	TimeRef startlocation(start, m_audioReader->get_output_rate());
 	return file_read(buffer, startlocation, cnt);
 }
 
 
 int ReadSource::get_file_rate() const
 {
-	Q_ASSERT(m_audioReader);
-	return m_audioReader->get_file_rate();
+	if (m_audioReader) {
+		return m_audioReader->get_file_rate();
+	} else {
+		PERROR("ReadSource::get_file_rate(), but no audioreader available!!");
+	}
+	
+	return pm().get_project()->get_rate(); 
 }
 
