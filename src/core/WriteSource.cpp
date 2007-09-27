@@ -88,7 +88,7 @@ int WriteSource::process (nframes_t nframes)
 
 			m_src_data.output_frames = m_out_samples_max / m_channelCount;
 			int rate = audiodevice().get_sample_rate();
-			m_src_data.end_of_input = ((m_spec->pos.to_frame(rate) + nframes) >= m_spec->endLocation.to_frame(rate));
+			m_src_data.end_of_input = (m_spec->pos + TimeRef(nframes, rate)) >= m_spec->endLocation;
 			m_src_data.data_out = m_dataF2;
 
 			if (m_leftover_frames > 0) {

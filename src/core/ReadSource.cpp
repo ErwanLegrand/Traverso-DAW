@@ -269,6 +269,10 @@ void ReadSource::set_output_rate(int rate)
 {
 	Q_ASSERT(rate > 0);
 	
+	if (! m_audioReader) {
+		return;
+	}
+	
 	m_audioReader->set_output_rate(rate);
 	m_outputRate = rate;
 	
@@ -315,7 +319,9 @@ void ReadSource::set_audio_clip( AudioClip * clip )
 
 const nframes_t ReadSource::get_nframes( ) const
 {
-	Q_ASSERT(m_audioReader);
+	if (!m_audioReader) {
+		return 0;
+	}
 	return m_audioReader->get_nframes();
 }
 
@@ -432,7 +438,7 @@ void ReadSource::rb_seek_to_file_position(TimeRef& position)
 		// 1023.. Hmm, something isn't correct here, but at least substract 1
 		// to make this thing work!
 		// TODO check if this is still needed!
-		fileposition = m_clip->get_source_start_location() - TimeRef(1, audiodevice().get_sample_rate());
+		fileposition = m_clip->get_source_start_location() - TimeRef(1, m_outputRate);
 	}
 	
 // 	printf("rb_seek_to_file_position:: seeking to relative pos: %d\n", fileposition);
@@ -557,7 +563,7 @@ void ReadSource::prepare_buffer( )
 
 	float size = config().get_property("Hardware", "readbuffersize", 1.0).toDouble();
 
-	m_bufferSize = (int) (size * audiodevice().get_sample_rate());
+	m_bufferSize = (int) (size * m_outputRate);
 
 	m_chunkSize = m_bufferSize / DiskIO::bufferdividefactor;
 
