@@ -270,6 +270,7 @@ void ReadSource::set_output_rate(int rate)
 	Q_ASSERT(rate > 0);
 	
 	m_audioReader->set_output_rate(rate);
+	m_outputRate = rate;
 	
 	// The length could have become slightly smaller/larger due
 	// rounding issues involved with converting to one samplerate to another.
@@ -357,20 +358,18 @@ int ReadSource::rb_read(audio_sample_t** dst, TimeRef& start, nframes_t count)
 		return 0;
 	}
 
-	int devicerate = audiodevice().get_sample_rate();
-	
 	if (start != m_rbRelativeFileReadPos) {
 		
-		TimeRef availabletime(m_buffers.at(0)->read_space(), devicerate);
+		TimeRef availabletime(m_buffers.at(0)->read_space(), m_outputRate);
 		
-		if ( (start > m_rbRelativeFileReadPos) && (m_rbRelativeFileReadPos + availabletime) > (start + TimeRef(count, devicerate))) {
+		if ( (start > m_rbRelativeFileReadPos) && (m_rbRelativeFileReadPos + availabletime) > (start + TimeRef(count, m_outputRate))) {
 			
 			TimeRef advance = start - m_rbRelativeFileReadPos;
 			if (availabletime < advance) {
 				printf("available < advance !!!!!!!\n");
 			}
 			for (int i=m_buffers.size()-1; i>=0; --i) {
-				m_buffers.at(i)->increment_read_ptr(advance.to_frame(devicerate));
+				m_buffers.at(i)->increment_read_ptr(advance.to_frame(m_outputRate));
 			}
 			
 			m_rbRelativeFileReadPos += advance;
@@ -393,7 +392,7 @@ int ReadSource::rb_read(audio_sample_t** dst, TimeRef& start, nframes_t count)
 		
 	}
 
-	m_rbRelativeFileReadPos.add_frames(readcount, devicerate);
+	m_rbRelativeFileReadPos.add_frames(readcount, m_outputRate);
 	
 	return readcount;
 }
@@ -402,7 +401,7 @@ int ReadSource::rb_read(audio_sample_t** dst, TimeRef& start, nframes_t count)
 int ReadSource::rb_file_read(DecodeBuffer* buffer, nframes_t cnt)
 {
 	int readFrames = file_read(buffer, m_rbFileReadPos, cnt);
-	m_rbFileReadPos.add_frames(readFrames, audiodevice().get_sample_rate());
+	m_rbFileReadPos.add_frames(readFrames, m_outputRate);
 
 	return readFrames;
 }
@@ -477,7 +476,7 @@ void ReadSource::process_ringbuffer(DecodeBuffer* buffer, bool seeking)
 		// If we are nearing the end of the source file it could be possible
 		// we only need to read the last samples which is smaller in size then 
 		// chunksize. If so, set toRead to m_source->m_length - rbFileReasPos
-		nframes_t available = (m_length - m_rbFileReadPos).to_frame(audiodevice().get_sample_rate());
+		nframes_t available = (m_length - m_rbFileReadPos).to_frame(m_outputRate);
 		if (available <= m_chunkSize) {
 			toRead = available;
 		} else {

@@ -95,9 +95,10 @@ private:
 	bool			m_syncInProgress;
 	
 	mutable TimeRef		m_length;
-	QString		m_decodertype;
+	QString			m_decodertype;
+	int			m_outputRate;
 	
-	BufferStatus*	m_bufferstatus;
+	BufferStatus*		m_bufferstatus;
 	
 	int ref() { return m_refcount++;}
 	
