@@ -282,10 +282,16 @@ void ReadSource::set_output_rate(int rate)
 int ReadSource::file_read(DecodeBuffer* buffer, TimeRef& start, nframes_t cnt) const
 {
 //	PROFILE_START;
-	int rate = m_audioReader->get_output_rate();
-	nframes_t result = m_audioReader->read_from(buffer, start.to_frame(rate), cnt);
+	nframes_t result = m_audioReader->read_from(buffer, start, cnt);
 //	PROFILE_END("ReadSource::fileread");
 	return result;
+}
+
+
+int ReadSource::file_read(DecodeBuffer * buffer, nframes_t start, nframes_t cnt)
+{
+	// Any way to avoid this casting, anyone ??
+	return ((AbstractAudioReader*)m_audioReader)->read_from(buffer, start, cnt);
 }
 
 
@@ -599,14 +605,6 @@ void ReadSource::set_active(bool active)
 		m_active = 0;
 	}
 }
-
-
-int ReadSource::file_read(DecodeBuffer * buffer, nframes_t start, nframes_t cnt)
-{
-	TimeRef startlocation(start, m_audioReader->get_output_rate());
-	return file_read(buffer, startlocation, cnt);
-}
-
 
 int ReadSource::get_file_rate() const
 {

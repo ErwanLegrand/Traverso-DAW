@@ -112,6 +112,8 @@ void ResampleAudioReader::set_converter_type(int converter_type)
 		m_srcStates.pop_back();
 	}
 	
+	clear_buffers();
+	
 	for (int c = 0; c < m_reader->get_num_channels(); c++) {
 		
 		m_srcStates.append(src_new(converter_type, 1, &error));
@@ -119,9 +121,9 @@ void ResampleAudioReader::set_converter_type(int converter_type)
 		if (!m_srcStates[c]) {
 			PERROR("ResampleAudioReader: couldn't create libSampleRate SRC_STATE");
 			m_isResampleAvailable = false;
+			break;
 		} else {
 			m_isResampleAvailable = true;
-			clear_buffers();
 		}
 	}
 	
