@@ -118,7 +118,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	Q_UNUSED(widget);
 	
 
-// 	printf("AudioClipView:: %s PAINT :: exposed rect is: x=%f, y=%f, w=%f, h=%f\n", QS_C(m_clip->get_name()), option->exposedRect.x(), option->exposedRect.y(), option->exposedRect.width(), option->exposedRect.height());
+	printf("AudioClipView:: %s PAINT :: exposed rect is: x=%f, y=%f, w=%f, h=%f\n", QS_C(m_clip->get_name()), option->exposedRect.x(), option->exposedRect.y(), option->exposedRect.width(), option->exposedRect.height());
 	
 	int xstart = (int) option->exposedRect.x();
 	int pixelcount = (int) option->exposedRect.width();
@@ -887,14 +887,13 @@ void AudioClipView::update_recording()
 		return;
 	}
 	
-	prepareGeometryChange();
 	TimeRef newPos = m_clip->get_length();
 	m_boundingRect = QRectF(0, 0, (newPos / m_sv->timeref_scalefactor), m_height);
 	
-/*	FIXME NONSENSE!!
-	QRect updaterect = QRect(m_oldRecordingPos, 0, newPos, (int)m_boundingRect.height());
+	int updatewidth = int((newPos - m_oldRecordingPos) / m_sv->timeref_scalefactor);
+	QRect updaterect = QRect(int(m_oldRecordingPos / m_sv->timeref_scalefactor) - 1, 0, updatewidth, m_height);
 	update(updaterect);
-	m_oldRecordingPos = newPos;*/
+	m_oldRecordingPos = newPos;
 }
 
 void AudioClipView::set_dragging(bool dragging)
