@@ -130,7 +130,8 @@ int FadeRange::jog()
 	
 	m_curve->set_range( m_newRange );
 	
-	cpointer().get_viewport()->set_holdcursor_text(timeref_to_ms_3(m_newRange));
+	TimeRef location = TimeRef(m_newRange);
+	cpointer().get_viewport()->set_holdcursor_text(timeref_to_ms_3(location));
 	
 	return 1;
 }

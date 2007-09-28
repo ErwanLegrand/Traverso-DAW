@@ -282,7 +282,7 @@ void MoveClip::cancel_action()
 			m_clip->set_track_start_location(m_originalTrackStartLocation);
 		}
 		d->view->set_trackview(d->origTrackView);
-		d->view->setPos(QPoint(m_originalTrackStartLocation / d->sv->timeref_scalefactor,
+		d->view->setPos(QPoint((int)(m_originalTrackStartLocation / d->sv->timeref_scalefactor),
 				d->origTrackView->get_childview_y_offset()));
 	}
 }
@@ -329,7 +329,7 @@ int MoveClip::jog()
 	TimeRef newTrackEndLocation = d->origTrackEndLocation + diff_f;
 
 	if (diff_f < 0 && d->origTrackStartLocation < (-1 * diff_f)) {
-		newTrackStartLocation = TimeRef(0);
+		newTrackStartLocation = qint64(0);
 	} else {
 		newTrackStartLocation = d->origTrackStartLocation + diff_f;
 	}
@@ -406,7 +406,7 @@ void MoveClip::prev_snap_pos(bool autorepeat)
 void MoveClip::move_to_start(bool autorepeat)
 {
 	Q_UNUSED(autorepeat)
-	TimeRef location(0);
+	TimeRef location;
 	m_clip->set_track_start_location(location);
 }
 

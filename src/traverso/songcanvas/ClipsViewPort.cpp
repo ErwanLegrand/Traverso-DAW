@@ -139,7 +139,7 @@ void ClipsViewPort::dropEvent(QDropEvent* event )
 	CommandGroup* group = new CommandGroup(m_sw->get_song(), 
 		       tr("Import %n audiofile(s)", "", m_imports.size() + m_resourcesImport.size()), true);
 	
-	TimeRef startpos = mapFromGlobal(QCursor::pos()).x() * m_sw->get_songview()->timeref_scalefactor;
+	TimeRef startpos = TimeRef(mapFromGlobal(QCursor::pos()).x() * m_sw->get_songview()->timeref_scalefactor);
 	
 	foreach(qint64 id, m_resourcesImport) {
 		AudioClip* clip = resources_manager()->get_clip(id);

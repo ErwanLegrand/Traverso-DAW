@@ -57,7 +57,7 @@ public :
 	int rb_read(audio_sample_t** dest, TimeRef& start, nframes_t cnt);
 	void rb_seek_to_file_position(TimeRef& position);
 	
-	int file_read(DecodeBuffer* buffer, TimeRef& start, nframes_t cnt) const;
+	int file_read(DecodeBuffer* buffer, const TimeRef& start, nframes_t cnt) const;
 	int file_read(DecodeBuffer* buffer, nframes_t start, nframes_t cnt);
 
 	int init();

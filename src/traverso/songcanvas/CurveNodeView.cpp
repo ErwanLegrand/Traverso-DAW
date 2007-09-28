@@ -109,7 +109,7 @@ void CurveNodeView::update_pos( )
 {
 	qreal halfwidth = (m_boundingRect.width() / 2);
 	qreal parentheight = m_parentViewItem->boundingRect().height();
-	qreal when = ((qint64(m_node->get_when()) - m_curveview->get_start_offset()) / m_sv->timeref_scalefactor) - halfwidth;
+	qreal when = ((TimeRef(m_node->get_when()) - m_curveview->get_start_offset()) / m_sv->timeref_scalefactor) - halfwidth;
 	qreal value = parentheight - (m_node->get_value() * parentheight + halfwidth);
 	setPos(when, value);
 		

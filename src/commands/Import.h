@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Import.h,v 1.7 2007/09/10 18:42:13 r_sijrier Exp $
+    $Id: Import.h,v 1.8 2007/09/28 18:33:43 r_sijrier Exp $
 */
 
 #ifndef IMPORT_H
@@ -33,7 +33,7 @@ class Import : public Command
 {
 public :
 	Import(const QString& fileName);
-        Import(Track* track, bool silent = false, const TimeRef& length = 0);
+	Import(Track* track, const TimeRef& length, bool silent = false);
         Import(Track* track, const QString& fileName);
         Import(Track* track, const QString& fileName, const TimeRef& position);
         ~Import();

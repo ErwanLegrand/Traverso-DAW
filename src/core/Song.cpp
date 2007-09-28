@@ -200,7 +200,8 @@ int Song::set_state( const QDomNode & node )
 	set_first_visible_frame(e.attribute( "firstVisibleFrame", "0" ).toUInt());
 	
 	bool ok;
-	set_work_at(e.attribute( "m_workLocation", "0").toLongLong(&ok));
+	TimeRef location(e.attribute( "m_workLocation", "0").toLongLong(&ok));
+	set_work_at(location);
 	m_transportLocation = TimeRef(e.attribute( "transportlocation", "0").toLongLong(&ok));
 	
 	// Start seeking to the 'old' transport pos
@@ -853,7 +854,7 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 	}
 	mlist = markermap.values();
 
-	TimeRef start = 0;
+	TimeRef start;
 	for(int i = 0; i < mlist.size()-1; ++i) {
 		Marker* startmarker = mlist.at(i);
 		Marker* endmarker = mlist.at(i+1);

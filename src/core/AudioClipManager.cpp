@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioClipManager.cpp,v 1.17 2007/09/10 18:42:48 r_sijrier Exp $
+    $Id: AudioClipManager.cpp,v 1.18 2007/09/28 18:33:44 r_sijrier Exp $
 */
  
 #include "AudioClipManager.h"
@@ -83,7 +83,7 @@ void AudioClipManager::update_last_frame( )
 {
 	PENTER;
 	
-	lastLocation = TimeRef(0);
+	lastLocation = TimeRef();
 	
 	foreach(AudioClip* clip, m_clips) {
 		if (clip->get_track_end_location() >= lastLocation)

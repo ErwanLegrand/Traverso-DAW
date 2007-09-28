@@ -478,7 +478,7 @@ bool FlacAudioReader::seek_private(nframes_t start)
 {
 	Q_ASSERT(m_flac);
 	
-	if (start >= get_length()) {
+	if (start >= m_nframes) {
 		PERROR("FlacAudioReader: could not seek to frame %d within %s, it's past the end.", start, m_fileName.toUtf8().data());
 		return false;
 	}

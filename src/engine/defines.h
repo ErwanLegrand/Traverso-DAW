@@ -59,7 +59,8 @@ struct TimeRef {
 	TimeRef() {
 		m_position = 0;
 	}
-	TimeRef(qint64 position) : m_position(position) {}
+	explicit TimeRef(qint64 position) : m_position(position) {}
+	explicit TimeRef(double position) : m_position(qint64(position)) {}
 	
 	TimeRef(nframes_t frame, int rate) {
 		m_position = (UNIVERSAL_SAMPLE_RATE / rate) * frame;
@@ -75,6 +76,11 @@ struct TimeRef {
 	}
 	
 	qint64 universal_frame() const {return m_position;}
+	
+	TimeRef operator =(qint64 value) {
+		TimeRef ref(value);
+		return ref;
+	}
 	
 	friend int operator!=(const TimeRef& left, const TimeRef& right) {
 		return left.m_position != right.m_position;
@@ -159,6 +165,10 @@ struct TimeRef {
 	
 	friend int operator==(const TimeRef& left, const TimeRef& right) {
 		return left.m_position == right.m_position;
+	}
+	
+	friend int operator==(const TimeRef& left, qint64 right) {
+		return left.m_position == right;
 	}
 	
 private:

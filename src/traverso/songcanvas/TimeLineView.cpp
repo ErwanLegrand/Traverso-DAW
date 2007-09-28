@@ -175,7 +175,7 @@ int DragMarker::jog()
 	}
 	
 	d->jogBypassPos = cpointer().x();
-	TimeRef newpos = (cpointer().scene_x() * d->scalefactor);
+	TimeRef newpos = TimeRef(cpointer().scene_x() * d->scalefactor);
 
 	if (m_marker->get_timeline()->get_song()->is_snap_on()) {
 		SnapList* slist = m_marker->get_timeline()->get_song()->get_snap_list();
@@ -298,17 +298,17 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 	// minor is double so they line up right with the majors,
 	// despite not always being an even number of frames
 	// @Ben : is still still the same when using TimeRef based calculations?
-	TimeRef minor = qint64(major/10);
+	TimeRef minor = TimeRef(major/10);
 
-	TimeRef firstLocation = xstart * m_sv->timeref_scalefactor;
-	TimeRef lastLocation = xstart * m_sv->timeref_scalefactor + pixelcount * m_sv->timeref_scalefactor;
+	TimeRef firstLocation = TimeRef(xstart * m_sv->timeref_scalefactor);
+	TimeRef lastLocation = TimeRef(xstart * m_sv->timeref_scalefactor + pixelcount * m_sv->timeref_scalefactor);
 	int xstartoffset = m_sv->hscrollbar_value();
 	
 	painter->setMatrixEnabled(false);
 
 	TimeRef factor = (firstLocation/major)*major;
 	// Draw minor ticks
-	for (qint64 i = 0; i < (lastLocation-firstLocation+major) / minor; i++ ) {
+	for (qint64 i = 0; i < ((lastLocation-firstLocation+major) / minor).universal_frame(); i++ ) {
 		int x = (int)((factor + i * minor) / m_sv->timeref_scalefactor) - xstartoffset;
 		painter->drawLine(x, height - 5, x, height - 1);
 	}
@@ -377,7 +377,7 @@ Command* TimeLineView::add_marker_at(const TimeRef when)
 	// check if it is the first marker added to the timeline
 	if (!m_timeline->get_markers().size()) {
 		if (when > 0) {  // add one at the beginning of the song
-			Marker* m = new Marker(m_timeline, Marker::CDTRACK);
+			Marker* m = new Marker(m_timeline, TimeRef(), Marker::CDTRACK);
 			m->set_description("");
 			group->add_command(m_timeline->add_marker(m));
 		}

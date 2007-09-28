@@ -470,7 +470,7 @@ void SongView::update_shuttle()
 Command* SongView::goto_begin()
 {
 	stop_follow_play_head();
-	m_song->set_work_at(0);
+	m_song->set_work_at(TimeRef());
 	center();
 	return (Command*) 0;
 }
@@ -500,7 +500,7 @@ ClipsViewPort * SongView::get_clips_viewport() const
 Command * SongView::touch( )
 {
 	QPointF point = m_clipsViewPort->mapToScene(QPoint(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y()));
-	m_song->set_work_at((qint64)(point.x() * timeref_scalefactor));
+	m_song->set_work_at(TimeRef(point.x() * timeref_scalefactor));
 
 	return 0;
 }
@@ -509,7 +509,7 @@ Command * SongView::touch_play_cursor( )
 {
 	QPointF point = m_clipsViewPort->mapToScene(QPoint(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y()));
 	m_playCursor->setPos(point.x(), 0);
-	m_song->set_transport_pos((qint64)(point.x() * timeref_scalefactor));
+	m_song->set_transport_pos(TimeRef(point.x() * timeref_scalefactor));
 
 	return 0;
 }
@@ -517,7 +517,7 @@ Command * SongView::touch_play_cursor( )
 Command * SongView::play_to_begin( )
 {
 	m_playCursor->setPos(0, 0);
-	m_song->set_transport_pos(0);
+	m_song->set_transport_pos(TimeRef());
 
 	return 0;
 }
@@ -535,8 +535,8 @@ Command * SongView::work_cursor_move( )
 void SongView::set_snap_range(int start)
 {
 // 	printf("SongView::set_snap_range\n");
-	m_song->get_snap_list()->set_range(start * timeref_scalefactor, 
-					(start + m_clipsViewPort->viewport()->width()) * timeref_scalefactor,
+	m_song->get_snap_list()->set_range(TimeRef(start * timeref_scalefactor),
+					TimeRef((start + m_clipsViewPort->viewport()->width()) * timeref_scalefactor),
 					timeref_scalefactor);
 }
 
@@ -626,7 +626,7 @@ Command * SongView::playhead_to_workcursor( )
 Command * SongView::center_playhead( )
 {
 	TimeRef centerX = m_song->get_transport_location();
-	set_hscrollbar_value(centerX / timeref_scalefactor - m_clipsViewPort->width() / 2);
+	set_hscrollbar_value(int(centerX / timeref_scalefactor - m_clipsViewPort->width() / 2));
 	
 	follow_play_head();
 

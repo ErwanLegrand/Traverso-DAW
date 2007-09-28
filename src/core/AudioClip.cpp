@@ -95,7 +95,8 @@ AudioClip::AudioClip(const QDomNode& node)
 	m_sourceStartLocation = TimeRef(e.attribute( "sourcestart", "" ).toLongLong(&ok));
 	
 	m_sourceEndLocation = m_sourceStartLocation + m_length;
-	set_track_start_location( e.attribute( "trackstart", "" ).toLongLong(&ok));
+	TimeRef location(e.attribute( "trackstart", "" ).toLongLong(&ok));
+	set_track_start_location(location);
 	m_domNode = node.cloneNode();
 	init();
 }
@@ -153,7 +154,8 @@ int AudioClip::set_state(const QDomNode& node)
 	m_sourceStartLocation = TimeRef(e.attribute( "sourcestart", "" ).toLongLong(&ok));
 	m_length = TimeRef(e.attribute( "length", "0" ).toLongLong(&ok));
 	m_sourceEndLocation = m_sourceStartLocation + m_length;
-	set_track_start_location(e.attribute( "trackstart", "" ).toLongLong(&ok));
+	TimeRef location(e.attribute( "trackstart", "" ).toLongLong(&ok));
+	set_track_start_location(location);
 	
 	emit stateChanged();
 	
@@ -254,8 +256,8 @@ void AudioClip::set_sources_active_state()
 
 void AudioClip::set_left_edge(TimeRef newLeftLocation)
 {
-	if (newLeftLocation < 0) {
-		newLeftLocation = TimeRef(0);
+	if (newLeftLocation < qint64(0)) {
+		newLeftLocation = TimeRef();
 	}
 	
 	if (newLeftLocation < m_trackStartLocation) {
@@ -293,8 +295,8 @@ void AudioClip::set_left_edge(TimeRef newLeftLocation)
 
 void AudioClip::set_right_edge(TimeRef newRightLocation)
 {
-	if (newRightLocation < 0) {
-		newRightLocation = TimeRef(0);
+	if (newRightLocation < qint64(0)) {
+		newRightLocation = TimeRef();
 	}
 	
 	if (newRightLocation > m_trackEndLocation) {
@@ -479,7 +481,7 @@ void AudioClip::process_capture(nframes_t nframes)
 		return;
 	}
 	
-	m_length += nframes;
+	m_length.add_frames(nframes, get_rate());
 	nframes_t written = 0;
 	
 	if (m_track->capture_left_channel() && m_track->capture_right_channel()) {
@@ -517,7 +519,7 @@ int AudioClip::init_recording( QByteArray name )
 		return -1;
 	}
 
-	m_sourceStartLocation = TimeRef(0);
+	m_sourceStartLocation = TimeRef();
 	m_isTake = 1;
 	m_recordingStatus = RECORDING;
 	int channelcount;

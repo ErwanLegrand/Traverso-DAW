@@ -82,7 +82,7 @@ int WorkCursorMove::jog()
 		x = 0;
 	}
 
-	TimeRef newLocation = x * m_sv->timeref_scalefactor;
+	TimeRef newLocation(x * m_sv->timeref_scalefactor);
 
 	if (m_song->is_snap_on()) {
 		SnapList* slist = m_song->get_snap_list();

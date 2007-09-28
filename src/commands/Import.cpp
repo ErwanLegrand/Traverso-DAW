@@ -43,7 +43,7 @@ Import::Import(const QString& fileName)
 }
 
 
-Import::Import(Track* track, bool silent, const TimeRef& length)
+Import::Import(Track* track, const TimeRef& length, bool silent)
 	: Command(track, "")
 {
 	m_track = track;
@@ -144,7 +144,7 @@ void Import::create_audioclip()
 	m_clip->set_song(m_track->get_song());
 	m_clip->set_track(m_track);
 	
-	TimeRef startLocation(0);
+	TimeRef startLocation(qint64(0));
 	if (!m_hasPosition) {
 		if (AudioClip* lastClip = m_track->get_cliplist().get_last()) {
 			startLocation = lastClip->get_track_end_location() + 1;

@@ -886,7 +886,7 @@ void Interface::import_audio()
 			}
 		}
 
-		Import* cmd = new Import(shortestTrack);
+		Import* cmd = new Import(shortestTrack, TimeRef());
 		Command::process_command(cmd);
 	}
 }

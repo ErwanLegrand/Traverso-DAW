@@ -165,7 +165,7 @@ int ReadSource::set_state( const QDomNode & node )
 	m_origSongId = e.attribute("origsheetid", "0").toLongLong();
 	set_dir( e.attribute("dir", "" ));
 	m_id = e.attribute("id", "").toLongLong();
-	m_rate = e.attribute("rate", "0").toUInt();
+	m_rate = m_outputRate = e.attribute("rate", "0").toUInt();
 	bool ok;
 	m_length = TimeRef(e.attribute("length", "0").toLongLong(&ok));
 	m_origBitDepth = e.attribute("origbitdepth", "0").toInt();
@@ -196,7 +196,7 @@ int ReadSource::init( )
 	m_bufferstatus = new BufferStatus;
 	
 	// Fake the samplerate, until it's set by an AudioReader!
-	m_rate = project->get_rate();
+	m_rate = m_outputRate = project->get_rate();
 	
 	if (m_silent) {
 		m_length = TimeRef(LONG_LONG_MAX);
@@ -284,7 +284,7 @@ void ReadSource::set_output_rate(int rate)
 }
 
 
-int ReadSource::file_read(DecodeBuffer* buffer, TimeRef& start, nframes_t cnt) const
+int ReadSource::file_read(DecodeBuffer* buffer, const TimeRef& start, nframes_t cnt) const
 {
 //	PROFILE_START;
 	nframes_t result = m_audioReader->read_from(buffer, start, cnt);
@@ -295,8 +295,7 @@ int ReadSource::file_read(DecodeBuffer* buffer, TimeRef& start, nframes_t cnt) c
 
 int ReadSource::file_read(DecodeBuffer * buffer, nframes_t start, nframes_t cnt)
 {
-	// Any way to avoid this casting, anyone ??
-	return ((AbstractAudioReader*)m_audioReader)->read_from(buffer, start, cnt);
+	return m_audioReader->read_from(buffer, start, cnt);
 }
 
 

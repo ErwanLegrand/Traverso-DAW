@@ -451,7 +451,7 @@ int Track::process( nframes_t nframes )
 			panFactor = 1 + m_pan;
 			gainFactor *= panFactor;
 		}
-			
+		
 		Mixer::apply_gain_to_buffer(bus->get_buffer(chan, nframes), nframes, gainFactor);
 	}
 	

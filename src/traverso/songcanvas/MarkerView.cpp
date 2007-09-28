@@ -85,7 +85,7 @@ void MarkerView::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
 	painter->drawText(m_width + 1, m_ascent, m_marker->get_description());
 
 	if (m_dragging) {
-		m_posIndicator->set_value(timeref_to_text((x() + m_width / 2) * m_sv->timeref_scalefactor, m_sv->timeref_scalefactor));
+		m_posIndicator->set_value(timeref_to_text(TimeRef((x() + m_width / 2) * m_sv->timeref_scalefactor), m_sv->timeref_scalefactor));
 	}
 
 	painter->restore();

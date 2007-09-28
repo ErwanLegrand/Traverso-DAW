@@ -33,24 +33,24 @@
 
 TimeRef msms_to_timeref(QString str)
 {
-	TimeRef out = 0;
+	TimeRef out;
 	QStringList lst = str.simplified().split(QRegExp("[;,.:]"), QString::SkipEmptyParts);
 
-	if (lst.size() >= 1) out += lst.at(0).toInt() * ONE_MINUTE_UNIVERSAL_SAMPLE_RATE;
-	if (lst.size() >= 2) out += lst.at(1).toInt() * UNIVERSAL_SAMPLE_RATE;
-	if (lst.size() >= 3) out += lst.at(2).toInt() * UNIVERSAL_SAMPLE_RATE / 1000;
+	if (lst.size() >= 1) out += TimeRef(lst.at(0).toInt() * ONE_MINUTE_UNIVERSAL_SAMPLE_RATE);
+	if (lst.size() >= 2) out += TimeRef(lst.at(1).toInt() * UNIVERSAL_SAMPLE_RATE);
+	if (lst.size() >= 3) out += TimeRef(lst.at(2).toInt() * UNIVERSAL_SAMPLE_RATE / 1000);
 
 	return out;
 }
 
 TimeRef cd_to_timeref(QString str)
 {
-	TimeRef out = 0;
+	TimeRef out;
 	QStringList lst = str.simplified().split(QRegExp("[;,.:]"), QString::SkipEmptyParts);
 
-	if (lst.size() >= 1) out += lst.at(0).toInt() * ONE_MINUTE_UNIVERSAL_SAMPLE_RATE;
-	if (lst.size() >= 2) out += lst.at(1).toInt() * UNIVERSAL_SAMPLE_RATE;
-	if (lst.size() >= 3) out += lst.at(2).toInt() * UNIVERSAL_SAMPLE_RATE / 75;
+	if (lst.size() >= 1) out += TimeRef(lst.at(0).toInt() * ONE_MINUTE_UNIVERSAL_SAMPLE_RATE);
+	if (lst.size() >= 2) out += TimeRef(lst.at(1).toInt() * UNIVERSAL_SAMPLE_RATE);
+	if (lst.size() >= 3) out += TimeRef(lst.at(2).toInt() * UNIVERSAL_SAMPLE_RATE / 75);
 
 	return out;
 }

@@ -98,7 +98,7 @@ public:
 		
 			writesource->process(buffersize);
 		
-			spec->pos += nframes;
+			spec->pos.add_frames(nframes, m_readsource->get_rate());
 			
 		} while (spec->pos != spec->totalTime);
 		

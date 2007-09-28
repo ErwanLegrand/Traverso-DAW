@@ -98,7 +98,7 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 					"ImportAudioCommand needs a Track as argument");
 				return 0;
 			}
-			return new Import(track);
+			return new Import(track, TimeRef());
 		}
 		
 		case InsertSilenceCommand:
@@ -109,7 +109,7 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 					"ImportAudioCommand needs a Track as argument");
 				return 0;
 			}
-			return new Import(track, 480000, true);
+			return new Import(track, TimeRef(10*UNIVERSAL_SAMPLE_RATE), true);
 		}
 		
 		case AddNewTrackCommand:

@@ -52,7 +52,8 @@ int PlayHeadMove::finish_hold()
 		if (m_song->is_transport_rolling()) {
 			m_cursor->hide();
 		}
-		m_song->set_transport_pos(x * m_sv->timeref_scalefactor);
+		TimeRef location(x * m_sv->timeref_scalefactor);
+		m_song->set_transport_pos(location);
 	}
 	m_sv->start_shuttle(false);
 	return -1;
@@ -61,7 +62,7 @@ int PlayHeadMove::finish_hold()
 int PlayHeadMove::begin_hold()
 {
 	m_cursor->set_active(false);
-	m_origXPos = m_newXPos = m_song->get_transport_location() / m_sv->timeref_scalefactor;
+	m_origXPos = m_newXPos = int(m_song->get_transport_location() / m_sv->timeref_scalefactor);
 	m_sv->start_shuttle(true, true);
 	return 1;
 }
@@ -97,7 +98,7 @@ int PlayHeadMove::jog()
 	
 	if (x != m_newXPos) {
 		m_cursor->setPos(x, 0);
-		TimeRef newpos = x * m_sv->timeref_scalefactor;
+		TimeRef newpos(x * m_sv->timeref_scalefactor);
 		if (m_resync && m_song->is_transport_rolling()) {
 			m_song->set_transport_pos(newpos);
 		}

@@ -90,8 +90,8 @@ void ResampleAudioReader::clear_buffers()
 // Clear the samplerateconverter to a clean state (used on seek)
 void ResampleAudioReader::reset()
 {
-	for (int c = 0; c < m_reader->get_num_channels(); c++) {
-		src_reset(m_srcStates[c]);
+	foreach(SRC_STATE* state, m_srcStates) {
+		src_reset(state);
 	}
 	
 	m_srcData.end_of_input = 0;
@@ -149,6 +149,8 @@ void ResampleAudioReader::set_output_rate(int rate)
 	m_outputRate = rate;
 	m_nframes = file_to_resampled_frame(m_reader->get_nframes());
 	m_length = TimeRef(m_nframes, m_outputRate);
+	
+	reset();
 }
 
 

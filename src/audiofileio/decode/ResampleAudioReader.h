@@ -34,8 +34,12 @@ public:
 	ResampleAudioReader(QString filename, const QString& decoder);
 	~ResampleAudioReader();
 	
-	nframes_t read_from(DecodeBuffer* buffer, TimeRef start, nframes_t count) {
-		return AbstractAudioReader::read_from(buffer, start.to_frame(m_outputRate), count);
+	nframes_t read_from(DecodeBuffer* buffer, nframes_t start, nframes_t count) {
+		return AbstractAudioReader::read_from(buffer, start, count);
+	}
+	nframes_t read_from(DecodeBuffer* buffer, const TimeRef& start, nframes_t count) {
+		TimeRef location = start;
+		return AbstractAudioReader::read_from(buffer, location.to_frame(m_outputRate), count);
 	}
 	QString decoder_type() const {return (m_reader) ? m_reader->decoder_type() : "";}
 	void clear_buffers();

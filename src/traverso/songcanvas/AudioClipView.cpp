@@ -216,7 +216,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	}
 
 	if (m_dragging) {
-		m_posIndicator->set_value(timeref_to_text((qint64)(x() * m_sv->timeref_scalefactor), m_sv->timeref_scalefactor));
+		m_posIndicator->set_value(timeref_to_text(TimeRef(x() * m_sv->timeref_scalefactor), m_sv->timeref_scalefactor));
 	}
 	
 	painter->restore();
@@ -271,7 +271,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		int availpeaks = peak->calculate_peaks( chan,
 							&pixeldata[chan],
        							microView ? m_song->get_hzoom() : m_song->get_hzoom() + 1,
-				     			(xstart * m_sv->timeref_scalefactor) + clipstartoffset,
+				     			TimeRef(xstart * m_sv->timeref_scalefactor) + clipstartoffset,
 							microView ? peakdatacount : peakdatacount / 2 + 2);
 		
 		if (peakdatacount != availpeaks) {

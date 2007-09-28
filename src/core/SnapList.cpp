@@ -72,7 +72,7 @@ void SnapList::update_snaplist()
 
 	// Be able to snap to trackstart
 	if (m_rangeStart == 0) {
-		m_xposList.append(0);
+		m_xposList.append(TimeRef());
 	}
 
 	for( int i = 0; i < acList->size(); i++ ) {
@@ -120,11 +120,11 @@ void SnapList::update_snaplist()
 
 	// create a linear lookup table
 	for (int i = 0; i <= range; ++i) {
-		m_xposLut.push_back(0);
+		m_xposLut.push_back(TimeRef());
 		m_xposBool.push_back(false);
 	}
 
-	TimeRef lastVal = 0;
+	TimeRef lastVal;
 	long lastIndex = -1;
 	// now modify the regions around snap points in the lookup table
 	for (int i = 0; i < m_xposList.size(); i++) {
@@ -307,7 +307,7 @@ TimeRef SnapList::prev_snap_pos(const TimeRef& pos)
 	
 	do {
 		TimeRef snap = m_xposLut.at(index);
-		if (snap < pos && snap != 0) {
+		if (snap < pos && snap != TimeRef(qint64(0))) {
 			newpos = snap;
 			break;
 		}
@@ -315,7 +315,7 @@ TimeRef SnapList::prev_snap_pos(const TimeRef& pos)
 	} while (index >= 0);
 	
 	if (index == -1) {
-		return 0;
+		return TimeRef();
 	}
 	
 	if (newpos == pos) {
