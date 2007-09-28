@@ -115,7 +115,7 @@ public:
 	
 	void start_peak_loading();
 
-	audio_sample_t get_max_amplitude(nframes_t startframe, nframes_t endframe);
+	audio_sample_t get_max_amplitude(TimeRef startlocation, TimeRef endlocation);
 
 private:
 	ReadSource* 	m_source;

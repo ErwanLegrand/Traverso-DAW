@@ -862,7 +862,7 @@ void AudioClip::calculate_normalization_factor(float targetdB)
 		target -= FLT_EPSILON;
 	}
 
-	double maxamp = m_peak->get_max_amplitude(m_sourceStartLocation.to_frame(get_rate()), m_sourceEndLocation.to_frame(get_rate()));
+	double maxamp = m_peak->get_max_amplitude(m_sourceStartLocation, m_sourceEndLocation);
 	
 	if (maxamp == 0.0f) {
 		printf("AudioClip::normalization: max amplitude == 0\n");

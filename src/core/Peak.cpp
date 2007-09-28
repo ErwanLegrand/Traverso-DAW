@@ -660,14 +660,17 @@ out:
 }
 
 
-audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
+audio_sample_t Peak::get_max_amplitude(TimeRef startlocation, TimeRef endlocation)
 {
 	foreach(ChannelData* data, m_channelData) {
 		if (!data->file || !m_peaksAvailable) {
 			return 0.0f;
 		}
 	}
-	
+	int rate = m_source->get_file_rate();
+	m_source->set_output_rate(rate);
+	nframes_t startframe = startlocation.to_frame(rate);
+	nframes_t endframe = endlocation.to_frame(rate);
 	int startpos = startframe / NORMALIZE_CHUNK_SIZE;
 	uint count = (endframe / NORMALIZE_CHUNK_SIZE) - startpos;
 	
@@ -695,11 +698,12 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 	float f = (float) endframe / NORMALIZE_CHUNK_SIZE;
 	int endpos = (int) f;
 	int toRead = (int) ((f - (endframe / NORMALIZE_CHUNK_SIZE)) * NORMALIZE_CHUNK_SIZE);
-	
 	int read = m_source->file_read(&decodebuffer, endframe - toRead, toRead);
 	
-	for (uint chan = 0; chan < m_source->get_channel_count(); ++ chan) {
-		maxamp = Mixer::compute_peak(decodebuffer.destination[chan], read, maxamp);
+	if (read > 0) {
+		for (uint chan = 0; chan < m_source->get_channel_count(); ++ chan) {
+			maxamp = Mixer::compute_peak(decodebuffer.destination[chan], read, maxamp);
+		}
 	}
 	
 	// Now that we have covered both boundary situations,
@@ -709,7 +713,7 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 	foreach(ChannelData* data, m_channelData) {
 		fseek(data->file, data->headerdata.normValuesDataOffset + (startpos * sizeof(audio_sample_t)), SEEK_SET);
 	
-		read = fread(readbuffer, sizeof(audio_sample_t), count, data->file);
+		int read = fread(readbuffer, sizeof(audio_sample_t), count, data->file);
 	
 		if (read != (int)count) {
 			printf("could only read %d, %d requested\n", read, count);
@@ -719,6 +723,8 @@ audio_sample_t Peak::get_max_amplitude(nframes_t startframe, nframes_t endframe)
 	}
 	
 	delete [] readbuffer;
+	
+	m_source->set_output_rate(44100);
 	
 	return maxamp;
 }
