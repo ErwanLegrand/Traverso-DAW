@@ -893,7 +893,7 @@ void AudioClipView::update_recording()
 	int updatewidth = int((newPos - m_oldRecordingPos) / m_sv->timeref_scalefactor);
 	QRect updaterect = QRect(int(m_oldRecordingPos / m_sv->timeref_scalefactor) - 1, 0, updatewidth, m_height);
 	update(updaterect);
-	m_oldRecordingPos = newPos.to_frame(m_clip->get_rate());
+	m_oldRecordingPos = newPos;
 }
 
 void AudioClipView::set_dragging(bool dragging)

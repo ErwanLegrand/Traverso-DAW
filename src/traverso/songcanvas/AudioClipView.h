@@ -93,7 +93,7 @@ private:
 	int m_infoAreaHeight;
 	int m_mimimumheightforinfoarea;
 	int m_usePolygonPeakDrawing;
-	nframes_t m_oldRecordingPos;
+	TimeRef m_oldRecordingPos;
 	
 	// theme data
 	int m_drawbackground;
