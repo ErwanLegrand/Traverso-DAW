@@ -100,7 +100,6 @@ bool AbstractAudioReader::seek(nframes_t start)
 
 nframes_t AbstractAudioReader::read(DecodeBuffer* buffer, nframes_t count)
 {
-	printf("readcount %d\n", count);
 	if (count && m_readPos < m_nframes) {
 		
 		// Make sure the read buffer is big enough for this read
