@@ -79,7 +79,7 @@ void InsertSilenceDialog::accept()
 			m_track = shortestTrack;
 		}
 
-		TimeRef length = TimeRef(lengthSpinBox->value(), pm().get_project()->get_rate());
+		TimeRef length = TimeRef(lengthSpinBox->value() * UNIVERSAL_SAMPLE_RATE);
 		Import* cmd = new Import(m_track, length, true);
 		Command::process_command(cmd);
 	}
