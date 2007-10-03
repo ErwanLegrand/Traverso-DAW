@@ -111,7 +111,7 @@ int MoveEdge::undo_action()
 
 int MoveEdge::jog()
 {
-	m_newPos = cpointer().scene_x() * m_sv->timeref_scalefactor;
+	m_newPos = TimeRef(cpointer().scene_x() * m_sv->timeref_scalefactor);
 
 	if (m_sv->get_song()->is_snap_on()) {
 		SnapList* slist = m_sv->get_song()->get_snap_list();
