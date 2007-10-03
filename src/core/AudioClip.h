@@ -183,8 +183,6 @@ signals:
 public slots:
 	void finish_recording();
 	void finish_write_source();
-	void set_left_edge(long frame) {TimeRef location(frame, get_rate()); set_left_edge(location);}
-	void set_right_edge(long frame) {TimeRef location(frame, get_rate()); set_right_edge(location);}
 	void set_left_edge(TimeRef newLeftLocation);
 	void set_right_edge(TimeRef newRightLocation);
 	void track_audible_state_changed();

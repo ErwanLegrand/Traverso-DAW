@@ -295,7 +295,7 @@ void AudioClip::set_left_edge(TimeRef newLeftLocation)
 
 void AudioClip::set_right_edge(TimeRef newRightLocation)
 {
-	if (newRightLocation < qint64(0)) {
+	if (newRightLocation < TimeRef()) {
 		newRightLocation = TimeRef();
 	}
 	
