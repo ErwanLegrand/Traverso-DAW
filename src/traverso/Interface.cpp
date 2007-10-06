@@ -1066,9 +1066,9 @@ void Interface::show_restore_project_backup_dialog()
 void Interface::project_load_failed(QString project, QString reason)
 {
 	QMessageBox::critical(	this, tr("Traverso - Project load failed"), 
-				tr("The requested Project could not be loaded for the following reason:\n\n'%1'"
+				tr("The requested Project `%1` \ncould not be loaded for the following reason:\n\n'%2'"
 			      	"\n\nYou will now be given a list of available backups (if any) \n"
-				"to restore the Project from.").arg(reason),
+				"to restore the Project from.").arg(project).arg(reason),
 				QMessageBox::Ok);
 	
 	show_restore_project_backup_dialog(project);
