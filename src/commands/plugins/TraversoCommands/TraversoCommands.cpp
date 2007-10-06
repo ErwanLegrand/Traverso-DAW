@@ -109,7 +109,8 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 					"ImportAudioCommand needs a Track as argument");
 				return 0;
 			}
-			return new Import(track, TimeRef(10*UNIVERSAL_SAMPLE_RATE), true);
+			TimeRef length(10*UNIVERSAL_SAMPLE_RATE);
+			return new Import(track, length, true);
 		}
 		
 		case AddNewTrackCommand:
