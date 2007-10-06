@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FileHelpers.cpp,v 1.8 2007/04/17 19:56:46 r_sijrier Exp $
+$Id: FileHelpers.cpp,v 1.9 2007/10/06 14:17:58 r_sijrier Exp $
 */
 
 #include "FileHelpers.h"
@@ -26,6 +26,8 @@ $Id: FileHelpers.cpp,v 1.8 2007/04/17 19:56:46 r_sijrier Exp $
 #include "Config.h"
 #include <QDir>
 #include <Utils.h>
+#include <QObject>
+#include <QFile>
 
 #include "Debugger.h"
 
@@ -183,3 +185,24 @@ int FileHelper::copy_recursively(const QString& pNameFrom, const QString& pNameT
 	return -1;
 }
 
+QString FileHelper::fileerror_to_string(int error)
+{
+	switch(error) {
+		case QFile::NoError: return QObject::tr("No error occurred"); break;
+		case QFile::ReadError: return QObject::tr("An error occurred when reading from the file."); break;
+		case QFile::WriteError: return QObject::tr("An error occurred when writing to the file."); break;
+		case QFile::FatalError: return QObject::tr("A fatal error occurred."); break;
+		case QFile::OpenError: return QObject::tr("The file could not be opened."); break;
+		case QFile::ResourceError: return QObject::tr("Resourc error"); break;
+		case QFile::AbortError: return QObject::tr("The operation was aborted."); break;
+		case QFile::TimeOutError: return QObject::tr("A timeout occurred."); break;
+		case QFile::UnspecifiedError: return QObject::tr("An unspecified error occurred."); break;
+		case QFile::RemoveError: return QObject::tr("The file could not be removed."); break;
+		case QFile::RenameError: return QObject::tr("The file could not be renamed."); break;
+		case QFile::PositionError: return QObject::tr("The position in the file could not be changed."); break;
+		case QFile::ResizeError: return QObject::tr("The file could not be resized."); break;
+		case QFile::PermissionsError: return QObject::tr("The file could not be accessed."); break;
+		case QFile::CopyError: return QObject::tr("The file could not be copied."); break;
+		default: return QObject::tr("Unknown error");
+	}
+}

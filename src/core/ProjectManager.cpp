@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QFileSystemWatcher>
+#include <QTextStream>
+
 
 #include "Project.h"
 #include "Song.h"
@@ -198,6 +200,7 @@ int ProjectManager::load_project(const QString& projectName)
 	set_current_project(newProject);
 
 	if (currentProject->load() < 0) {
+		emit projectLoadFailed(currentProject->get_title());
 		delete currentProject;
 		currentProject = 0;
 		set_current_project(0);
@@ -459,7 +462,7 @@ void ProjectManager::project_dir_rename_detected(const QString & dirname)
 	emit unsupportedProjectDirChangeDetected();
 }
 
-void ProjectManager::add_correct_project_path(const QString & path)
+void ProjectManager::add_valid_project_path(const QString & path)
 {
 	m_projectDirs.append(path);
 }
@@ -468,3 +471,122 @@ void ProjectManager::remove_wrong_project_path(const QString & path)
 {
 	m_projectDirs.removeAll(path);
 }
+
+
+void ProjectManager::start_incremental_backup(const QString& projectname)
+{
+	if (! project_exists(projectname)) {
+		return;
+	}
+	
+	QString project_dir = config().get_property("Project", "directory", "/directory/unknown").toString();
+	QString project_path = project_dir + "/" + projectname;
+	QString fileName = project_path + "/project.tpf";
+	
+	QFile reader(fileName);
+	if (!reader.open(QIODevice::ReadOnly)) {
+		//
+		reader.close();
+		return;
+	}
+	
+	QDateTime time = QDateTime::currentDateTime();
+	QString writelocation = project_path + "/projectfilebackup/" + time.toString() + "__" + QString::number(time.toTime_t());
+	QFile compressedWriter(writelocation);
+	
+	if (!compressedWriter.open( QIODevice::WriteOnly ) ) {
+		compressedWriter.close();
+		return;
+	}
+	
+	
+	QByteArray array = reader.readAll();
+	QByteArray compressed = qCompress(array, 9);
+	QDataStream stream(&compressedWriter);
+	stream << compressed;
+	
+	compressedWriter.close();
+}
+
+int ProjectManager::restore_project_from_backup(const QString& projectname, uint restoretime)
+{
+	if (! project_exists(projectname)) {
+		return -1;
+	}
+	QString project_dir = config().get_property("Project", "directory", "/directory/unknown").toString();
+	QString project_path = project_dir + "/" + projectname;
+	QString backupDir = project_path + "/projectfilebackup";
+	
+	if (currentProject) {
+		currentProject->save();
+		set_current_project(0);
+		delete currentProject;
+		currentProject = 0;
+	}
+
+	QString fileName = project_path + "/project.tpf";
+	
+	QDir dir(backupDir);
+	QString backupfile;
+	
+	foreach (QString backup, dir.entryList(QDir::Files)) {
+		if (backup.right(10).toUInt() == restoretime) {
+			backupfile = backupDir + "/" + backup;
+			printf("backupfile %s\n", QS_C(backupfile));
+			break;
+		}
+	}
+	
+	QFile reader(backupfile);
+	if (!reader.open(QIODevice::ReadOnly)) {
+		//
+		reader.close();
+		return -1;
+	}
+	
+	
+	QFile writer(fileName);
+	if (!writer.open( QIODevice::WriteOnly | QIODevice::Text) ) {
+		PERROR("Could not open %s for writing!", QS_C(fileName));
+		writer.close();
+		return -1;
+	}
+	
+	QDataStream dataIn(&reader);
+	QByteArray compByteArray;
+	dataIn >> compByteArray;
+	
+	QByteArray a = qUncompress(compByteArray);
+	QTextStream stream(&writer);
+	stream << a;
+	
+	writer.close();
+	
+	return 1;
+}
+
+QList< uint > ProjectManager::get_backup_date_times(const QString& projectname)
+{
+	if (! project_exists(projectname)) {
+		return QList<uint>();
+	}
+	QString project_dir = config().get_property("Project", "directory", "/directory/unknown").toString();
+	QString backupDir = project_dir + "/" + projectname + "/projectfilebackup";
+	
+	QList<uint> dateList;
+	QDir dir(backupDir);
+	
+	foreach (QString filename, dir.entryList(QDir::Files)) {
+		bool ok;
+		uint date = filename.right(10).toUInt(&ok);
+		if (ok) {
+			dateList.append(date);
+		} else {
+			printf("filename: %s is not backupfile made by Traverso, removing it!\n", QS_C(filename));
+			QFile::remove(backupDir + "/" + filename);
+		}
+	}
+
+	return dateList;
+}
+

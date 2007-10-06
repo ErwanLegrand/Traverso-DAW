@@ -63,6 +63,7 @@ class NewSongDialog;
 class NewTrackDialog;
 class NewProjectDialog;
 class Ui_QuickStartDialog;
+class RestoreProjectBackupDialog;
 struct MenuData;
 
 class Interface : public QMainWindow
@@ -104,7 +105,7 @@ private:
 	QDockWidget* 		historyDW;
 	QDockWidget*		busMonitorDW;
 	QDockWidget*		AudioSourcesDW;
-	ResourcesWidget* 		audiosourcesview;
+	ResourcesWidget* 	audiosourcesview;
 	QDockWidget*		correlationMeterDW;
 	CorrelationMeterWidget*	correlationMeter;
 	QDockWidget*		spectralMeterDW;
@@ -120,7 +121,8 @@ private:
 	NewSongDialog*		m_newSongDialog;
 	NewTrackDialog*		m_newTrackDialog;
 	NewProjectDialog*	m_newProjectDialog;
-	QDialog		*m_quickStart;
+	QDialog*		m_quickStart;
+	RestoreProjectBackupDialog* m_restoreProjectBackupDialog;
 
 
 	BusMonitor* 		busMonitor;
@@ -152,6 +154,7 @@ public slots :
 	void set_fade_out_shape(QAction* action);
 	void update_opengl();
 	void import_audio();
+	void show_restore_project_backup_dialog();
 
 	Command* full_screen();
 	Command* about_traverso();
@@ -161,6 +164,7 @@ public slots :
 	Command* show_context_menu();
 	Command* show_open_project_dialog();
 	Command* show_project_manager_dialog();
+	Command* show_restore_project_backup_dialog(QString projectdir);
 	Command* show_insertsilence_dialog();
 	Command* show_marker_dialog();
 	Command* show_newsong_dialog();

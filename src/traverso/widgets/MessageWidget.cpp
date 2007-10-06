@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QTextBrowser>
 #include <QHBoxLayout>
 #include <QStyle>
+#include <QDialog>
 #include <Utils.h>
 #include "Themer.h"
 #include <QDir>
@@ -37,7 +38,7 @@ public:
 	MessageWidgetPrivate(QWidget* parent = 0);
 
 public slots:
-	void enqueue_message(InfoStruct );
+	void queue_message(InfoStruct );
 	void dequeue_messagequeue();
 	void show_history();
 
@@ -51,6 +52,7 @@ private:
 	QQueue<InfoStruct >	m_messageQueue;
 	InfoStruct 		m_infoStruct;
 	QTextBrowser*		m_log;
+	QDialog*		m_logDialog;
 	QString			m_stringLog;
 	
 	void create_icons();
@@ -104,7 +106,7 @@ MessageWidgetPrivate::MessageWidgetPrivate( QWidget * parent )
 		
 	create_icons();
 	
-	connect(&info(), SIGNAL(message(InfoStruct)), this, SLOT(enqueue_message(InfoStruct)));
+	connect(&info(), SIGNAL(message(InfoStruct)), this, SLOT(queue_message(InfoStruct)));
 	connect(&m_messageTimer, SIGNAL(timeout()), this, SLOT(dequeue_messagequeue()));
 }
 
@@ -159,7 +161,7 @@ void MessageWidgetPrivate::resizeEvent(QResizeEvent* )
 	update();
 }
 
-void MessageWidgetPrivate::enqueue_message( InfoStruct infostruct)
+void MessageWidgetPrivate::queue_message( InfoStruct infostruct)
 {
 	m_messageQueue.enqueue(infostruct);
 
@@ -168,15 +170,21 @@ void MessageWidgetPrivate::enqueue_message( InfoStruct infostruct)
 		update();
 	}
 
-	if (m_messageQueue.size() >= 0) {
-		m_messageTimer.start(3000);
+	if (m_messageQueue.size() <= 1) {
+		m_messageTimer.start(10000);
 	}
 
 	// If Queue size is >= 1 start to dequeue faster.
 	if (m_messageQueue.size() >= 1) {
-		m_messageTimer.start(2000);
+		m_messageTimer.start(1000);
 	}
 	
+	if (m_messageQueue.size() > 3) {
+		int skip = m_messageQueue.size() - 3;
+		for (int i=0; i<skip; ++i) {
+			dequeue_messagequeue();
+		}
+	}
 	
 	log(infostruct);
 
@@ -237,17 +245,20 @@ QSize MessageWidgetPrivate::sizeHint() const
 void MessageWidgetPrivate::show_history()
 {
 	if (!m_log) {
-		m_log = new QTextBrowser(this);
-		m_log->setWindowFlags(Qt::Dialog);
-		m_log->resize(500, 200);
+		m_logDialog = new QDialog(this);
+		m_log = new QTextBrowser(m_logDialog);
+		QHBoxLayout* lay = new QHBoxLayout(m_logDialog);
+		m_logDialog->setLayout(lay);
+		lay->addWidget(m_log);
+		m_logDialog->resize(500, 200);
 		m_log->append(m_stringLog);
 		m_stringLog.clear();
 	}
 
-	if (m_log->isHidden()) {
-		m_log->show();
+	if (m_logDialog->isHidden()) {
+		m_logDialog->show();
 	} else {
-		m_log->hide();
+		m_logDialog->hide();
 	}
 }
 

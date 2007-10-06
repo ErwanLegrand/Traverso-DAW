@@ -127,7 +127,7 @@ void OpenProjectDialog::update_projects_list()
 			// Let the ProjectManager know that this path is a correct one
 			// so it doesn't start whining when the directory is changed back 
 			// to the proper name!
-			pm().add_correct_project_path(path + "/" + title);
+			pm().add_valid_project_path(path + "/" + title);
 			pm().remove_wrong_project_path(path + "/" + dirname);
 			
 			item->setIcon(0, style()->standardIcon(QStyle::SP_MessageBoxWarning));

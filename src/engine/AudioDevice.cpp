@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.38 2007/09/26 21:19:39 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.39 2007/10/06 14:17:59 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -403,7 +403,7 @@ int AudioDevice::create_driver(QString driverType, bool capture, bool playback, 
 		if (driverType == "Jack") {
 			driver = new JackDriver(this, m_rate, m_bufferSize);
 			if (driver->setup(capture, playback) < 0) {
-				info().critical(tr("Failed to create the Jack Driver"));
+				info().warning(tr("Audiodevice: Failed to create the Jack Driver"));
 				delete driver;
 				driver = 0;
 				return -1;
@@ -418,7 +418,7 @@ int AudioDevice::create_driver(QString driverType, bool capture, bool playback, 
 	if (driverType == "ALSA") {
 		driver =  new AlsaDriver(this, m_rate, m_bufferSize);
 		if (driver->setup(capture,playback, cardDevice) < 0) {
-			info().critical(tr("Failed to create the ALSA Driver"));
+			info().warning(tr("Audiodevice: Failed to create the ALSA Driver"));
 			delete driver;
 			driver = 0;
 			return -1;
@@ -432,7 +432,7 @@ int AudioDevice::create_driver(QString driverType, bool capture, bool playback, 
 	if (driverType == "PortAudio") {
 		driver = new PADriver(this, m_rate, m_bufferSize);
 		if (driver->setup(capture, playback, cardDevice) < 0) {
-			info().critical(tr("Failed to create the PortAudio Driver"));
+			info().warning(tr("Audiodevice: Failed to create the PortAudio Driver"));
 			delete driver;
 			driver = 0;
 			return -1;

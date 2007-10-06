@@ -42,6 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ContextPointer.h"
 #include "Utils.h"
 #include <AddRemove.h>
+#include "FileHelpers.h"
 
 #define PROJECT_FILE_VERSION 	2
 
@@ -60,7 +61,7 @@ Project::Project(const QString& title)
 
 	m_useResampling = config().get_property("Conversion", "DynamicResampling", false).toBool();
 	rootDir = config().get_property("Project", "directory", "/directory/unknown/").toString() + "/" + m_title;
-	sourcesDir = rootDir + "/audiosources";
+	m_sourcesDir = rootDir + "/audiosources";
 	m_rate = audiodevice().get_sample_rate();
 	m_bitDepth = audiodevice().get_bit_depth();
 
@@ -88,26 +89,26 @@ Project::~Project()
 int Project::create(int songcount, int numtracks)
 {
 	PENTER;
-	PMESG("Creating new project %s  NumSongs=%d", m_title.toAscii().data(), songcount);
+	PMESG("Creating new project %s  NumSongs=%d", QS_C(m_title), songcount);
 
 	QDir dir;
 	if (dir.mkdir(rootDir) < 0) {
 		info().critical(tr("Cannot create dir %1").arg(rootDir));
 		return -1;
 	}
-
-	if (dir.mkdir(sourcesDir) < 0) {
-		info().critical(tr("Cannot create dir %1").arg(sourcesDir));
+	
+	if (create_peakfiles_dir() < 0) {
 		return -1;
 	}
-
-	QString peaksDir = rootDir + "/peakfiles/";
-
-	if (dir.mkdir(peaksDir) < 0) {
-		info().critical(tr("Cannot create dir %1").arg(peaksDir));
+	
+	if (create_audiosources_dir() < 0) {
 		return -1;
 	}
-
+	
+	if (create_projectfilebackup_dir() < 0) {
+		return -1;
+	}
+	
 	for (int i=0; i< songcount; i++) {
 		Song* song = new Song(this, numtracks);
 		private_add_song(song);
@@ -124,6 +125,43 @@ int Project::create(int songcount, int numtracks)
 	return 1;
 }
 
+int Project::create_audiosources_dir()
+{
+	QDir dir;
+	if (dir.mkdir(m_sourcesDir) < 0) {
+		info().critical(tr("Cannot create dir %1").arg(m_sourcesDir));
+		return -1;
+	}
+	
+	return 1;
+
+}
+
+int Project::create_peakfiles_dir()
+{
+	QDir dir;
+	QString peaksDir = rootDir + "/peakfiles/";
+
+	if (dir.mkdir(peaksDir) < 0) {
+		info().critical(tr("Cannot create dir %1").arg(peaksDir));
+		return -1;
+	}
+	
+	return 1;
+}
+
+int Project::create_projectfilebackup_dir()
+{
+	QDir dir;
+	QString path = rootDir + "/projectfilebackup/";
+
+	if (dir.mkdir(path) < 0) {
+		info().critical(tr("Cannot create dir %1").arg(path));
+		return -1;
+	}
+	
+	return 1;
+}
 
 int Project::load(QString projectfile)
 {
@@ -132,6 +170,7 @@ int Project::load(QString projectfile)
 	
 	QFile file;
 	QString filename;
+	
 	if (projectfile.isEmpty()) {
 		filename = rootDir + "/project.tpf";
 		file.setFileName(filename);
@@ -140,50 +179,22 @@ int Project::load(QString projectfile)
 		file.setFileName(filename);
 	}
 
-	if (!file.open(QIODevice::ReadOnly))
-	{
+	if (!file.open(QIODevice::ReadOnly)) {
 		file.close();
-		info().critical(tr("Project %1: Cannot open project.tpf file! (%2)")
+		info().critical(tr("Project %1: Cannot open project.tpf file! (Reason: %2)")
 				.arg(m_title).arg(file.errorString()));
 		
-		QFile backup(filename + "~");
-		backup.copy(filename);
-		if (QFile::exists(filename.append("~"))) {
-			return load(filename);
-		} else {
-			info().information(tr("No backup project file available, unable to restore project"));
-			return -1;
-		}
+		return -1;
 	}
 
 	QString errorMsg;
-	if (!doc.setContent(&file, &errorMsg))
-	{
-		info().critical(tr("Project %1: Failed to parse project.tpf file! (%2)")
+	if (!doc.setContent(&file, &errorMsg)) {
+		info().critical(tr("Project %1: Failed to parse project.tpf file! (Reason: %2)")
 				.arg(m_title).arg(errorMsg));
 		
-		file.remove();
-		file.close();
-		if (! filename.contains("~")) {
-			// Trying to load backup!
-			QFile backup(filename + "~");
-			backup.copy(filename);
-			if (QFile::exists(filename.append("~"))) {
-				return load(filename);
-			} else {
-				info().information(tr("No backup project file available, unable to restore project"));
-				return -1;
-			}
-		} else {
-			return -1;
-		}
+		return -1;
 	}
 	
-	if (filename.contains("~")) {
-		info().information(tr("Project file restored from older version (%1)")
-				.arg(QFileInfo(filename).lastModified().toString()));
-	}
-
 	file.close();
 
 	QDomElement docElem = doc.documentElement();
@@ -215,7 +226,6 @@ int Project::load(QString projectfile)
 	
 	
 	// Load all the AudioSources for this project
-	
 	QDomNode asmNode = docElem.firstChildElement("ResourcesManager");
 	m_resourcesManager->set_state(asmNode);
 
@@ -253,23 +263,21 @@ int Project::save()
 	QDomDocument doc("Project");
 	QString fileName = rootDir + "/project.tpf";
 	
-	QFile::remove(fileName + "~");
-	QFile backup(fileName);
-	backup.rename(fileName + "~");
-	QFile::remove(fileName);
-	
 	QFile data( fileName );
 
-	if (data.open( QIODevice::WriteOnly ) ) {
-		get_state(doc);
-		QTextStream stream(&data);
-		doc.save(stream, 4);
-		data.close();
-		info().information( tr("Project %1 saved ").arg(m_title) );
-	} else {
-		info().critical( tr("Couldn't open Project properties file for writing! (%1)").arg(fileName) );
+	if (!data.open( QIODevice::WriteOnly ) ) {
+		QString errorstring = FileHelper::fileerror_to_string(data.error());
+		info().critical( tr("Couldn't open Project properties file for writing! (File %1. Reason: %2)").arg(fileName).arg(errorstring) );
 		return -1;
 	}
+	
+	get_state(doc);
+	QTextStream stream(&data);
+	doc.save(stream, 4);
+	data.close();
+	info().information( tr("Project %1 saved ").arg(m_title) );
+	
+	pm().start_incremental_backup(m_title);
 
 	return 1;
 }
@@ -870,6 +878,4 @@ bool Project::is_recording() const
 	}
 	return false;
 }
-
-//eof
 

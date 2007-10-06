@@ -110,7 +110,7 @@ private:
 
 	QString 	m_title;
 	QString 	rootDir;
-	QString 	sourcesDir;
+	QString 	m_sourcesDir;
 	QString 	engineer;
 	QString		m_description;
 	QString		m_importDir;
@@ -133,6 +133,9 @@ private:
 	qint64 		m_currentSongId;
 	
 	int create(int songcount, int numtracks);
+	int create_audiosources_dir();
+	int create_peakfiles_dir();
+	int create_projectfilebackup_dir();
 	
 	friend class ProjectManager;
 

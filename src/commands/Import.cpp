@@ -144,7 +144,7 @@ void Import::create_audioclip()
 	m_clip->set_song(m_track->get_song());
 	m_clip->set_track(m_track);
 	
-	TimeRef startLocation(qint64(0));
+	TimeRef startLocation;
 	if (!m_hasPosition) {
 		if (AudioClip* lastClip = m_track->get_cliplist().get_last()) {
 			startLocation = lastClip->get_track_end_location() + 1;

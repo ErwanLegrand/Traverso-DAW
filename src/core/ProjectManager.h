@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QTimer>
 #include <QStringList>
 
+
 class Project;
 class Song;
 class Command;
@@ -49,16 +50,21 @@ public:
 	int load_renamed_project(const QString& name);
 
 	bool project_exists(const QString& title);
+	bool exit_in_progress() const {return m_exitInProgress;}
 
 	int remove_project(const QString& title);
 	
 	void scheduled_for_deletion(Song* song);
 	void delete_song(Song* song);
 	void set_current_project_dir(const QString& path);
-	void add_correct_project_path(const QString& path);
+	void add_valid_project_path(const QString& path);
 	void remove_wrong_project_path(const QString& path);
 	
 	int rename_project_dir(const QString& olddir, const QString& newdir);
+	int restore_project_from_backup(const QString& projectdir, uint restoretime);
+
+	QList<uint> get_backup_date_times(const QString& projectdir);
+	void start_incremental_backup(const QString& projectname);
 
 	Project* get_project();
 	QUndoGroup* get_undogroup() const;
@@ -98,6 +104,7 @@ signals:
 	void currentProjectDirChanged();
 	void unsupportedProjectDirChangeDetected();
 	void projectDirChangeDetected();
+	void projectLoadFailed(QString project);
 	
 private slots:
 	void project_dir_rename_detected(const QString& dirname);

@@ -53,7 +53,8 @@ HEADERS += \
 	dialogs/project/NewTrackDialog.h \
 	songcanvas/PositionIndicator.h \
 	widgets/ResourcesWidget.h \
-	dialogs/AudioClipEditDialog.h
+	dialogs/AudioClipEditDialog.h \
+	dialogs/RestoreProjectBackupDialog.h
 SOURCES += \
 	Traverso.cpp \
 	BusMonitor.cpp \
@@ -82,7 +83,8 @@ SOURCES += \
 	dialogs/project/NewTrackDialog.cpp \
 	songcanvas/PositionIndicator.cpp \
 	widgets/ResourcesWidget.cpp \
-	dialogs/AudioClipEditDialog.cpp
+	dialogs/AudioClipEditDialog.cpp \
+	dialogs/RestoreProjectBackupDialog.cpp
 FORMS += ui/ExportWidget.ui \
 	ui/AudioSourcesManagerWidget.ui \
 	ui/SpectralMeterConfigWidget.ui \
@@ -106,7 +108,8 @@ FORMS += ui/ExportWidget.ui \
 	ui/ResourcesWidget.ui \
 	ui/QuickStart.ui \
 	ui/InsertSilenceDialog.ui \
-	ui/AudioClipEditWidget.ui
+	ui/AudioClipEditWidget.ui \
+	ui/RestoreProjectBackupDialog.ui
 
 INCLUDEPATH += 	../core \
 		../commands \
@@ -152,12 +155,12 @@ unix{
     contains(DEFINES, JACK_SUPPORT){
         system(which relaytool 2>/dev/null >/dev/null){
             LIBS += $$system(relaytool --multilink libjack.so.0 libjack-0.100.0.so.0 --relay jack -ljack)
-        } else{
+        }        else{
             LIBS += -ljack
         }
     }
 
-    system(which relaytool 2>/dev/null >/dev/null) {
+    system(which relaytool 2>/dev/null >/dev/null){
         LIBS += $$system(relaytool --relay FLAC -lFLAC)
         LIBS += $$system(relaytool --relay mad -lmad)
         LIBS += $$system(relaytool --relay mp3lame -lmp3lame)
@@ -166,7 +169,7 @@ unix{
         LIBS += $$system(relaytool --relay vorbisfile -lvorbisfile)
         LIBS += $$system(relaytool --relay vorbisenc -lvorbisenc)
         LIBS += $$system(relaytool --relay wavpack -lwavpack)
-    } else {
+    }    else{
         LIBS += -logg \
             -lvorbis \
             -lvorbisfile \
@@ -178,7 +181,7 @@ unix{
     }
 }
 
-!unix { #non-unix systems don't have relaytool
+!unix{    #non-unix systems don't have relaytool
     LIBS += -logg \
         -lvorbis \
         -lvorbisfile \
@@ -211,9 +214,9 @@ win32{
 }
 
 contains(DEFINES, STATIC_BUILD){
-	contains(DEFINES, LV2_SUPPORT){
-		POST_TARGETDEPS += ../3rdparty/slv2
-	}
-	
-	POST_TARGETDEPS += ../engine ../commands ../core ../audiofileio ../plugins songcanvas
+    contains(DEFINES, LV2_SUPPORT){
+        POST_TARGETDEPS += ../3rdparty/slv2
+    }
+
+    POST_TARGETDEPS += ../engine ../commands ../core ../audiofileio ../plugins songcanvas
 }

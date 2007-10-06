@@ -63,7 +63,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "dialogs/MarkerDialog.h"
 #include "dialogs/BusSelectorDialog.h"
 #include "dialogs/InsertSilenceDialog.h"
-
+#include "dialogs/RestoreProjectBackupDialog.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -176,6 +176,7 @@ Interface::Interface()
 	m_newSongDialog = 0;
 	m_newTrackDialog = 0;
 	m_quickStart = 0;
+	m_restoreProjectBackupDialog = 0;
 	
 	create_menus();
 	
@@ -189,6 +190,7 @@ Interface::Interface()
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 	connect(&pm(), SIGNAL(aboutToDelete(Song*)), this, SLOT(delete_songwidget(Song*)));
 	connect(&pm(), SIGNAL(unsupportedProjectDirChangeDetected()), this, SLOT(project_dir_change_detected()));	
+	connect(&pm(), SIGNAL(projectLoadFailed(QString)), this, SLOT(show_restore_project_backup_dialog()));
 
 	cpointer().add_contextitem(this);
 
@@ -231,6 +233,9 @@ void Interface::set_project(Project* project)
 			sw->setUpdatesEnabled(false);
 		}
 	} else {
+		if (pm().exit_in_progress()) {
+			hide();
+		}
 		m_projectSaveAction->setEnabled(false);
 		m_projectSongManagerAction->setEnabled(false);
 		m_projectExportAction->setEnabled(false);
@@ -396,6 +401,13 @@ void Interface::create_menus( )
 	action->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
 	m_projectExportAction = action;
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_export_widget()));
+	
+	action = menu->addAction(tr("&Restore Backup..."));
+	list.clear();
+	list.append(QKeySequence("F10"));
+	action->setShortcuts(list);
+	action->setIcon(style()->standardIcon(QStyle::SP_FileDialogBack));
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_restore_project_backup_dialog()));
 	
 	menu->addSeparator();
 	
@@ -1025,5 +1037,29 @@ void Interface::project_dir_change_detected()
 			      "This is NOT supported! Please undo this change now!\n\n"
 			      "If you want to rename a Project, use the Project Manager instead!"),
 	   			QMessageBox::Ok);
+}
+
+Command * Interface::show_restore_project_backup_dialog(QString projectname)
+{
+	if (! m_restoreProjectBackupDialog) {
+		m_restoreProjectBackupDialog = new RestoreProjectBackupDialog(this);
+	}
+	
+	m_restoreProjectBackupDialog->set_project_name(projectname);
+	m_restoreProjectBackupDialog->show();
+	
+	
+	return 0;
+}
+
+void Interface::show_restore_project_backup_dialog()
+{
+	Project* project = pm().get_project();
+	
+	if (! project ) {
+		return;
+	}
+	
+	show_restore_project_backup_dialog(project->get_title());
 }
 
