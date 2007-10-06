@@ -190,7 +190,7 @@ Interface::Interface()
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 	connect(&pm(), SIGNAL(aboutToDelete(Song*)), this, SLOT(delete_songwidget(Song*)));
 	connect(&pm(), SIGNAL(unsupportedProjectDirChangeDetected()), this, SLOT(project_dir_change_detected()));	
-	connect(&pm(), SIGNAL(projectLoadFailed(QString)), this, SLOT(show_restore_project_backup_dialog()));
+	connect(&pm(), SIGNAL(projectLoadFailed(QString,QString)), this, SLOT(project_load_failed(QString,QString)));
 
 	cpointer().add_contextitem(this);
 
@@ -1061,5 +1061,16 @@ void Interface::show_restore_project_backup_dialog()
 	}
 	
 	show_restore_project_backup_dialog(project->get_title());
+}
+
+void Interface::project_load_failed(QString project, QString reason)
+{
+	QMessageBox::critical(	this, tr("Traverso - Project load failed"), 
+				tr("The requested Project could not be loaded for the following reason:\n\n'%1'"
+			      	"\n\nYou will now be given a list of available backups (if any) \n"
+				"to restore the Project from.").arg(reason),
+				QMessageBox::Ok);
+	
+	show_restore_project_backup_dialog(project);
 }
 

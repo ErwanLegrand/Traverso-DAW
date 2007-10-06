@@ -200,7 +200,7 @@ int ProjectManager::load_project(const QString& projectName)
 	set_current_project(newProject);
 
 	if (currentProject->load() < 0) {
-		emit projectLoadFailed(currentProject->get_title());
+		emit projectLoadFailed(currentProject->get_title(), currentProject->get_error_string());
 		delete currentProject;
 		currentProject = 0;
 		set_current_project(0);
@@ -482,16 +482,22 @@ void ProjectManager::start_incremental_backup(const QString& projectname)
 	QString project_dir = config().get_property("Project", "directory", "/directory/unknown").toString();
 	QString project_path = project_dir + "/" + projectname;
 	QString fileName = project_path + "/project.tpf";
+	QString backupdir = project_path + "/projectfilebackup";
+	
+	// Check if the projectfilebackup directory still exist
+	QDir dir;
+	if (!dir.exists(backupdir)) {
+		create_projectfilebackup_dir(project_path);
+	}
 	
 	QFile reader(fileName);
 	if (!reader.open(QIODevice::ReadOnly)) {
-		//
-		reader.close();
+		info().warning(tr("Projectfile backup: The project file %1 could not be opened for reading (Reason: %2)").arg(fileName).arg(reader.errorString()));
 		return;
 	}
 	
 	QDateTime time = QDateTime::currentDateTime();
-	QString writelocation = project_path + "/projectfilebackup/" + time.toString() + "__" + QString::number(time.toTime_t());
+	QString writelocation = backupdir + "/" + time.toString() + "__" + QString::number(time.toTime_t());
 	QFile compressedWriter(writelocation);
 	
 	if (!compressedWriter.open( QIODevice::WriteOnly ) ) {
@@ -588,5 +594,18 @@ QList< uint > ProjectManager::get_backup_date_times(const QString& projectname)
 	}
 
 	return dateList;
+}
+
+int ProjectManager::create_projectfilebackup_dir(const QString& rootDir)
+{
+	QDir dir;
+	QString path = rootDir + "/projectfilebackup/";
+
+	if (dir.mkdir(path) < 0) {
+		info().critical(tr("Cannot create dir %1").arg(path));
+		return -1;
+	}
+	
+	return 1;
 }
 

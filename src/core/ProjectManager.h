@@ -52,6 +52,7 @@ public:
 	bool project_exists(const QString& title);
 	bool exit_in_progress() const {return m_exitInProgress;}
 
+	int create_projectfilebackup_dir(const QString& rootDir);
 	int remove_project(const QString& title);
 	
 	void scheduled_for_deletion(Song* song);
@@ -104,7 +105,7 @@ signals:
 	void currentProjectDirChanged();
 	void unsupportedProjectDirChangeDetected();
 	void projectDirChangeDetected();
-	void projectLoadFailed(QString project);
+	void projectLoadFailed(QString,QString);
 	
 private slots:
 	void project_dir_rename_detected(const QString& dirname);

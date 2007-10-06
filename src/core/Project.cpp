@@ -44,7 +44,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <AddRemove.h>
 #include "FileHelpers.h"
 
-#define PROJECT_FILE_VERSION 	2
+#define PROJECT_FILE_VERSION 	3
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -60,8 +60,8 @@ Project::Project(const QString& title)
 	engineer = "";
 
 	m_useResampling = config().get_property("Conversion", "DynamicResampling", false).toBool();
-	rootDir = config().get_property("Project", "directory", "/directory/unknown/").toString() + "/" + m_title;
-	m_sourcesDir = rootDir + "/audiosources";
+	m_rootDir = config().get_property("Project", "directory", "/directory/unknown/").toString() + "/" + m_title;
+	m_sourcesDir = m_rootDir + "/audiosources";
 	m_rate = audiodevice().get_sample_rate();
 	m_bitDepth = audiodevice().get_bit_depth();
 
@@ -92,8 +92,8 @@ int Project::create(int songcount, int numtracks)
 	PMESG("Creating new project %s  NumSongs=%d", QS_C(m_title), songcount);
 
 	QDir dir;
-	if (dir.mkdir(rootDir) < 0) {
-		info().critical(tr("Cannot create dir %1").arg(rootDir));
+	if (dir.mkdir(m_rootDir) < 0) {
+		info().critical(tr("Cannot create dir %1").arg(m_rootDir));
 		return -1;
 	}
 	
@@ -105,7 +105,7 @@ int Project::create(int songcount, int numtracks)
 		return -1;
 	}
 	
-	if (create_projectfilebackup_dir() < 0) {
+	if (pm().create_projectfilebackup_dir(m_rootDir) < 0) {
 		return -1;
 	}
 	
@@ -140,23 +140,10 @@ int Project::create_audiosources_dir()
 int Project::create_peakfiles_dir()
 {
 	QDir dir;
-	QString peaksDir = rootDir + "/peakfiles/";
+	QString peaksDir = m_rootDir + "/peakfiles/";
 
 	if (dir.mkdir(peaksDir) < 0) {
 		info().critical(tr("Cannot create dir %1").arg(peaksDir));
-		return -1;
-	}
-	
-	return 1;
-}
-
-int Project::create_projectfilebackup_dir()
-{
-	QDir dir;
-	QString path = rootDir + "/projectfilebackup/";
-
-	if (dir.mkdir(path) < 0) {
-		info().critical(tr("Cannot create dir %1").arg(path));
 		return -1;
 	}
 	
@@ -172,7 +159,7 @@ int Project::load(QString projectfile)
 	QString filename;
 	
 	if (projectfile.isEmpty()) {
-		filename = rootDir + "/project.tpf";
+		filename = m_rootDir + "/project.tpf";
 		file.setFileName(filename);
 	} else {
 		filename = projectfile;
@@ -180,29 +167,36 @@ int Project::load(QString projectfile)
 	}
 
 	if (!file.open(QIODevice::ReadOnly)) {
-		file.close();
-		info().critical(tr("Project %1: Cannot open project.tpf file! (Reason: %2)")
-				.arg(m_title).arg(file.errorString()));
-		
-		return -1;
-	}
-
-	QString errorMsg;
-	if (!doc.setContent(&file, &errorMsg)) {
-		info().critical(tr("Project %1: Failed to parse project.tpf file! (Reason: %2)")
-				.arg(m_title).arg(errorMsg));
-		
+		m_errorString = tr("Project %1: Cannot open project.tpf file! (Reason: %2)").arg(m_title).arg(file.errorString());
+		info().critical(m_errorString);
 		return -1;
 	}
 	
-	file.close();
+	// Check if important directories still exist!
+	QDir dir;
+	if (!dir.exists(m_rootDir + "/peakfiles")) {
+		create_peakfiles_dir();
+	}
+	if (!dir.exists(m_rootDir + "/audiosources")) {
+		create_audiosources_dir();
+	}
 
+	
+	// Start setting and parsing the content of the xml file
+	QString errorMsg;
+	if (!doc.setContent(&file, &errorMsg)) {
+		m_errorString = tr("Project %1: Failed to parse project.tpf file! (Reason: %2)").arg(m_title).arg(errorMsg);
+		info().critical(m_errorString);
+		return -1;
+	}
+	
 	QDomElement docElem = doc.documentElement();
 	QDomNode propertiesNode = docElem.firstChildElement("Properties");
 	QDomElement e = propertiesNode.toElement();
 	
 	if (e.attribute("projectfileversion", "-1").toInt() != PROJECT_FILE_VERSION) {
-		info().warning(tr("Project File Version does not match, unable to load Project!"));
+		m_errorString = tr("Project File Version does not match, unable to load Project!");
+		info().warning(m_errorString);
 		return -1;
 	}
 
@@ -261,7 +255,7 @@ int Project::save()
 {
 	PENTER;
 	QDomDocument doc("Project");
-	QString fileName = rootDir + "/project.tpf";
+	QString fileName = m_rootDir + "/project.tpf";
 	
 	QFile data( fileName );
 
@@ -348,11 +342,11 @@ void Project::set_title(const QString& title)
 	
 	QString newrootdir = config().get_property("Project", "directory", "/directory/unknown/").toString() + "/" + title;
 	
-	QDir dir(rootDir);
+	QDir dir(m_rootDir);
 	
 	if ( ! dir.exists() ) {
 		info().critical(tr("Project directory %1 no longer exists, did you rename it? " 
-				"Shame on you! Please undo that, and come back later to rename your Project...").arg(rootDir));
+				"Shame on you! Please undo that, and come back later to rename your Project...").arg(m_rootDir));
 		return;
 	}
 	
@@ -360,7 +354,7 @@ void Project::set_title(const QString& title)
 	
 	save();
 	
-	if (pm().rename_project_dir(rootDir, newrootdir) < 0 ) {
+	if (pm().rename_project_dir(m_rootDir, newrootdir) < 0 ) {
 		return;
 	}
 	
@@ -812,12 +806,12 @@ int Project::get_genre()
 
 QString Project::get_root_dir( ) const
 {
-	return rootDir;
+	return m_rootDir;
 }
 
 QString Project::get_audiosources_dir() const
 {
-	return rootDir + "/audiosources/";
+	return m_rootDir + "/audiosources/";
 }
 
 ResourcesManager * Project::get_audiosource_manager( ) const

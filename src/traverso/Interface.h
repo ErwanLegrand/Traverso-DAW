@@ -155,6 +155,7 @@ public slots :
 	void update_opengl();
 	void import_audio();
 	void show_restore_project_backup_dialog();
+	void project_load_failed(QString project, QString reason);
 
 	Command* full_screen();
 	Command* about_traverso();

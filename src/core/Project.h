@@ -61,6 +61,7 @@ public :
 	QString get_root_dir() const;
 	QString get_audiosources_dir() const;
 	QString get_import_dir() const;
+	QString get_error_string() const {return m_errorString;}
 	QList<Song* > get_songs() const;
 	Song* get_current_song() const ;
 	Song* get_song(qint64 id) const;
@@ -109,7 +110,7 @@ private:
 	ExportThread* 	m_exportThread;
 
 	QString 	m_title;
-	QString 	rootDir;
+	QString 	m_rootDir;
 	QString 	m_sourcesDir;
 	QString 	engineer;
 	QString		m_description;
@@ -121,6 +122,7 @@ private:
 	QString		m_arranger;
 	QString		m_songwriter;
 	QString		m_message;
+	QString		m_errorString;
 
 	int		m_rate;
 	int		m_bitDepth;
@@ -135,7 +137,6 @@ private:
 	int create(int songcount, int numtracks);
 	int create_audiosources_dir();
 	int create_peakfiles_dir();
-	int create_projectfilebackup_dir();
 	
 	friend class ProjectManager;
 
