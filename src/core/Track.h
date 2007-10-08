@@ -38,6 +38,7 @@ class AudioClip;
 class Song;
 class PluginChain;
 class Plugin;
+class AudioBus;
 
 class Track : public ContextItem
 {
@@ -69,8 +70,8 @@ public :
 	AudioClip* get_clip_after(const TimeRef& pos);
 	AudioClip* get_clip_before(const TimeRef& pos);
 	void get_render_range(TimeRef& startlocation, TimeRef& endlocation);
-	QString get_bus_in() const {return busIn;}
-	QString get_bus_out() const{return busOut;}
+	QString get_bus_in() const {return m_busInName;}
+	QString get_bus_out() const{return m_busOutName;}
 	int get_height() const {return m_height;}
 	float get_pan() const {return m_pan;}
 	Song* get_song() const {return m_song;}
@@ -94,6 +95,8 @@ public :
 	void set_height(int h);
 	void set_capture_left_channel(bool capture);
 	void set_capture_right_channel(bool capture);
+	void set_playback_right_channel(bool play);
+	void set_playback_left_channel(bool play);
 	int set_state( const QDomNode& node );
 
 
@@ -102,29 +105,27 @@ public :
 	bool is_muted_by_solo();
 	bool is_solo();
 	bool armed();
-	bool capture_left_channel()
-	{
-		return m_captureLeftChannel;
-	}
-	bool capture_right_channel()
-	{
-		return m_captureRightChannel;
-	}
+	bool capture_left_channel() {return m_captureLeftChannel;}
+	bool capture_right_channel() {return m_captureRightChannel;}
+	bool playback_left_channel() {return m_playbackLeftChannel;}
+	bool playback_right_channel() {return m_playbackRightChannel;}
 	// End bool functions
 
 
 	int process(nframes_t nframes);
+	void assign_buses();
 
 private :
 	Song*		m_song;
 	AudioClipList 	audioClipList;
 	PluginChain*	m_pluginChain;
+	AudioBus*	m_outBus;
 
 	GainEnvelope* m_fader;
 	float 	m_pan;
 	int numtakes;
-	QByteArray busIn;
-	QByteArray busOut;
+	QByteArray m_busInName;
+	QByteArray m_busOutName;
 
 	QString m_name;
 
@@ -137,6 +138,8 @@ private :
 	bool mutedBySolo;
 	bool m_captureLeftChannel;
 	bool m_captureRightChannel;
+	bool m_playbackRightChannel;
+	bool m_playbackLeftChannel;
 
 	void set_armed(bool armed);
 	void init();
@@ -169,6 +172,7 @@ public slots:
 private slots:
 	void private_add_clip(AudioClip* clip);
 	void private_remove_clip(AudioClip* clip);
+	void private_assign_out_bus(AudioBus* bus);
 
 };
 

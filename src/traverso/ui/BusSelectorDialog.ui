@@ -5,34 +5,35 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>185</width>
-    <height>202</height>
+    <width>321</width>
+    <height>402</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Bus Selector</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>6</number>
+     </property>
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
      </property>
      <item>
       <widget class="QLabel" name="label_3" >
        <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>5</hsizetype>
-         <vsizetype>5</vsizetype>
+        <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
          <horstretch>2</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -45,9 +46,7 @@
      <item>
       <widget class="QComboBox" name="trackComboBox" >
        <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>5</hsizetype>
-         <vsizetype>0</vsizetype>
+        <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
          <horstretch>5</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -57,88 +56,154 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
+    <widget class="QGroupBox" name="groupBox_2" >
+     <property name="title" >
+      <string>Capture Buses</string>
      </property>
-     <property name="spacing" >
-      <number>9</number>
+     <layout class="QHBoxLayout" >
+      <item>
+       <widget class="QListWidget" name="busesListWidget" />
+      </item>
+      <item>
+       <layout class="QVBoxLayout" >
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_2" >
+          <property name="text" >
+           <string>Channels</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioBoth" >
+          <property name="text" >
+           <string>Both</string>
+          </property>
+          <property name="checked" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioLeftOnly" >
+          <property name="text" >
+           <string>Left</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioRightOnly" >
+          <property name="text" >
+           <string>Right</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>20</width>
+            <height>1</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="title" >
+      <string>Playback Buses</string>
      </property>
-     <item>
-      <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="label" >
-         <property name="text" >
-          <string>Capture Buses</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QListWidget" name="busesListWidget" />
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="label_2" >
-         <property name="text" >
-          <string>Channels</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="radioBoth" >
-         <property name="text" >
-          <string>Both</string>
-         </property>
-         <property name="checked" >
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="radioLeftOnly" >
-         <property name="text" >
-          <string>Left</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="radioRightOnly" >
-         <property name="text" >
-          <string>Right</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>1</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-    </layout>
+     <layout class="QHBoxLayout" >
+      <item>
+       <widget class="QListWidget" name="busesListWidgetPlayback" />
+      </item>
+      <item>
+       <layout class="QVBoxLayout" >
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_5" >
+          <property name="text" >
+           <string>Channels</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioBothPlayback" >
+          <property name="text" >
+           <string>Both</string>
+          </property>
+          <property name="checked" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioLeftOnlyPlayback" >
+          <property name="text" >
+           <string>Left</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioRightOnlyPlayback" >
+          <property name="text" >
+           <string>Right</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>20</width>
+            <height>1</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox" >

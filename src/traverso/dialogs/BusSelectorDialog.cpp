@@ -55,6 +55,15 @@ void BusSelectorDialog::update_buses_list_widget()
 		QListWidgetItem* item = new QListWidgetItem(busesListWidget);
 		item->setText(name);
 	}
+	
+	busesListWidgetPlayback->clear();
+	names.clear();
+	names << audiodevice().get_playback_buses_names();
+	
+	foreach(QString name, names) {
+		QListWidgetItem* item = new QListWidgetItem(busesListWidgetPlayback);
+		item->setText(name);
+	}
 }
 
 void BusSelectorDialog::current_track_changed(int index)
@@ -75,20 +84,39 @@ void BusSelectorDialog::current_track_changed(int index)
 	
 	QList<QListWidgetItem *> list = busesListWidget->findItems(m_currentTrack->get_bus_in(), Qt::MatchExactly);
 	
-	if (!list.size()) {
-		return;
+	if (list.size()) {
+		QListWidgetItem* item = list.at(0);
+		item->setSelected(true);
+		
+		if (m_currentTrack->capture_left_channel() && m_currentTrack->capture_right_channel()) {
+			radioBoth->setChecked(true);
+		} else if (m_currentTrack->capture_left_channel()) {
+			radioLeftOnly->setChecked(true);
+		} else {
+			radioRightOnly->setChecked(true);
+		}	
+	}
+
+
+	selectedlist = busesListWidgetPlayback->selectedItems();
+	
+	if (selectedlist.size()) {
+		selectedlist.at(0)->setSelected(false);
 	}
 	
-	QListWidgetItem* item = list.at(0);
-	item->setSelected(true);
+	list = busesListWidgetPlayback->findItems(m_currentTrack->get_bus_out(), Qt::MatchExactly);
 	
-	if (m_currentTrack->capture_left_channel() && m_currentTrack->capture_right_channel()) {
-		radioBoth->setChecked(true);
-	} else if (m_currentTrack->capture_left_channel()) {
-		radioLeftOnly->setChecked(true);
-	} else {
-		radioRightOnly->setChecked(true);
-	}	
+	if (list.size()) {
+		QListWidgetItem* item = list.at(0);
+		item->setSelected(true);
+		if (m_currentTrack->playback_left_channel() && m_currentTrack->playback_right_channel()) {
+			radioBothPlayback->setChecked(true);
+		} else if (m_currentTrack->playback_left_channel()) {
+			radioLeftOnlyPlayback->setChecked(true);
+		} else {
+			radioRightOnlyPlayback->setChecked(true);
+		}	
+	}
 }
 
 
@@ -114,6 +142,23 @@ void BusSelectorDialog::accept()
 		}
 	}
 
+	list = busesListWidgetPlayback->selectedItems();
+	
+	if (list.size()) {
+		m_currentTrack->set_bus_out(list.at(0)->text().toAscii());
+		
+		if (radioBothPlayback->isChecked()) {
+			m_currentTrack->set_playback_left_channel(true);
+			m_currentTrack->set_playback_right_channel(true);
+		} else if (radioLeftOnlyPlayback->isChecked()) {
+			m_currentTrack->set_playback_left_channel(true);
+			m_currentTrack->set_playback_right_channel(false);
+		} else {
+			m_currentTrack->set_playback_left_channel(false);
+			m_currentTrack->set_playback_right_channel(true);
+		}
+	}
+	
 	hide();
 }
 
