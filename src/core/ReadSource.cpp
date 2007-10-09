@@ -221,26 +221,23 @@ int ReadSource::init( )
 	
 	bool useResampling = config().get_property("Conversion", "DynamicResampling", false).toBool();
 	
-	if (useResampling) {
-		int converter_type;
-		converter_type = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
-		
-		// There should be another config option for ConverterType to use for export (higher quality)
-		//converter_type = config().get_property("Conversion", "ExportResamplingConverterType", 0).toInt();
-		m_audioReader = new ResampleAudioReader(m_fileName, m_decodertype);
-		
-		if (m_audioReader->is_valid()) {
-			set_output_rate(audiodevice().get_sample_rate());
-			m_audioReader->set_converter_type(converter_type);
-		} else {
-			PERROR("ReadSource:: audio reader is not valid! (reader channel count: %d, nframes: %d", m_audioReader->get_num_channels(), m_audioReader->get_nframes());
-			delete m_audioReader;
-			m_audioReader = 0;
-		}
+	int converter_type;
+	converter_type = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
+	
+	// There should be another config option for ConverterType to use for export (higher quality)
+	//converter_type = config().get_property("Conversion", "ExportResamplingConverterType", 0).toInt();
+	m_audioReader = new ResampleAudioReader(m_fileName, m_decodertype);
+	
+	if (!m_audioReader->is_valid()) {
+		PERROR("ReadSource:: audio reader is not valid! (reader channel count: %d, nframes: %d", m_audioReader->get_num_channels(), m_audioReader->get_nframes());
+		delete m_audioReader;
+		m_audioReader = 0;
+		return COULD_NOT_OPEN_FILE;
 	}
 	
-	if (m_audioReader == 0) {
-		return COULD_NOT_OPEN_FILE;
+	if (useResampling) {
+		set_output_rate(audiodevice().get_sample_rate());
+		m_audioReader->set_converter_type(converter_type);
 	}
 	
 	// (re)set the decoder type
@@ -412,6 +409,7 @@ int ReadSource::rb_file_read(DecodeBuffer* buffer, nframes_t cnt)
 {
 	int readFrames = file_read(buffer, m_rbFileReadPos, cnt);
 	m_rbFileReadPos.add_frames(readFrames, m_outputRate);
+// 	printf("file %s: readFrames, cnt: %d, %d\n", QS_C(m_fileName), readFrames, cnt);
 
 	return readFrames;
 }
