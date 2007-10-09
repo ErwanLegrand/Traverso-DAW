@@ -196,12 +196,16 @@ int ReadSource::init( )
 	m_bufferstatus = new BufferStatus;
 	
 	// Fake the samplerate, until it's set by an AudioReader!
-	m_rate = m_outputRate = project->get_rate();
+	if (project) {
+		m_rate = m_outputRate = project->get_rate();
+	} else {
+		m_rate = 44100;
+	}
 	
 	if (m_silent) {
 		m_length = TimeRef(LONG_LONG_MAX);
 		m_channelCount = 0;
-		m_origBitDepth = project->get_bitdepth();
+		m_origBitDepth = 16;
 		return 1;
 	}
 	
@@ -229,6 +233,7 @@ int ReadSource::init( )
 			set_output_rate(audiodevice().get_sample_rate());
 			m_audioReader->set_converter_type(converter_type);
 		} else {
+			PERROR("ReadSource:: audio reader is not valid! (reader channel count: %d, nframes: %d", m_audioReader->get_num_channels(), m_audioReader->get_nframes());
 			delete m_audioReader;
 			m_audioReader = 0;
 		}
