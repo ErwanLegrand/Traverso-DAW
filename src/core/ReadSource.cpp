@@ -219,10 +219,8 @@ int ReadSource::init( )
 	m_syncInProgress = 0;
 	m_bufferUnderRunDetected = m_wasActivated = 0;
 	
-	bool useResampling = config().get_property("Conversion", "DynamicResampling", false).toBool();
-	
-	int converter_type;
-	converter_type = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
+	bool useResampling = config().get_property("Conversion", "DynamicResampling", true).toBool();
+	int converter_type = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
 	
 	// There should be another config option for ConverterType to use for export (higher quality)
 	//converter_type = config().get_property("Conversion", "ExportResamplingConverterType", 0).toInt();
