@@ -55,7 +55,6 @@ private:
 	QDialog*		m_logDialog;
 	QString			m_stringLog;
 	
-	void create_icons();
 	void log(InfoStruct infostruct);
 };
 
@@ -103,8 +102,6 @@ MessageWidgetPrivate::MessageWidgetPrivate( QWidget * parent )
 	setLayout(lay);
 	
 	m_log = 0;
-		
-	create_icons();
 	
 	connect(&info(), SIGNAL(message(InfoStruct)), this, SLOT(queue_message(InfoStruct)));
 	connect(&m_messageTimer, SIGNAL(timeout()), this, SLOT(dequeue_messagequeue()));
@@ -213,20 +210,21 @@ void MessageWidgetPrivate::log(InfoStruct infostruct)
 {
 	QString time = "<td width=65>" + QTime::currentTime().toString().append(" :") + " </td>";
 	QString color;
-	QString iconpath;
+	QString iconname;
 	
 	if (infostruct.type == INFO) {
-		iconpath = QDir::home().path() + QString("/.traverso/.temp/iconinfo.png");
+		iconname = "iconinfo";
 		color  = "bgcolor=#F4FFF4";
 	} else if (infostruct.type == WARNING) {
-		iconpath = QDir::home().path() + QString("/.traverso/.temp/iconwarning.png");
+		iconname = "iconwarning";
 		color = "bgcolor=#FDFFD1";
 	} else if (infostruct.type == CRITICAL) {
-		iconpath = QDir::home().path() + QString("/.traverso/.temp/iconcritical.png");
+		iconname = "iconcritical";
 		color = "bgcolor=#FFC8C8";
 	}
 
-	QString image = "<td width=20><img src=\"" + iconpath + "\" /></td>";
+	
+	QString image = "<td width=20><img src=\"" + iconname +"\"/></td>";
 	QString string = "<table width=100% " + color + " cellspacing=5><tr>" + 
 			image + time + "<td>" + infostruct.message + "</td></tr></table>";
 	if (m_log) {
@@ -234,6 +232,7 @@ void MessageWidgetPrivate::log(InfoStruct infostruct)
 	} else {
 		m_stringLog.append(string);
 	}
+	
 }
 
 QSize MessageWidgetPrivate::sizeHint() const
@@ -247,6 +246,14 @@ void MessageWidgetPrivate::show_history()
 	if (!m_log) {
 		m_logDialog = new QDialog(this);
 		m_log = new QTextBrowser(m_logDialog);
+		
+		QImage img = style()->standardIcon(QStyle::SP_MessageBoxInformation).pixmap(15, 15).toImage();
+		m_log->document()->addResource(QTextDocument::ImageResource, QUrl("iconinfo"), img);
+		img = style()->standardIcon(QStyle::SP_MessageBoxWarning).pixmap(15, 15).toImage();
+		m_log->document()->addResource(QTextDocument::ImageResource, QUrl("iconwarning"), img);
+		img = style()->standardIcon(QStyle::SP_MessageBoxCritical).pixmap(15, 15).toImage();
+		m_log->document()->addResource(QTextDocument::ImageResource, QUrl("iconcritical"), img);
+		
 		QHBoxLayout* lay = new QHBoxLayout(m_logDialog);
 		m_logDialog->setLayout(lay);
 		lay->addWidget(m_log);
@@ -260,26 +267,6 @@ void MessageWidgetPrivate::show_history()
 	} else {
 		m_logDialog->hide();
 	}
-}
-
-void MessageWidgetPrivate::create_icons()
-{
-	QDir dir(QDir::home().path() + QString("/.traverso/.temp/"));
-	if (! dir.exists()) {
-		dir.mkdir(QDir::home().path() + QString("/.traverso/.temp/"));
-	}
-
-	QPixmap pix = style()->standardIcon(QStyle::SP_MessageBoxInformation).pixmap(15, 15);
-	QString iconpath = QDir::home().path() + QString("/.traverso/.temp/iconinfo.png");
-	pix.save(iconpath);
-	
-	pix  = style()->standardIcon(QStyle::SP_MessageBoxWarning).pixmap(15, 15);
-	iconpath = QDir::home().path() + QString("/.traverso/.temp/iconwarning.png");
-	pix.save(iconpath);
-	
-	pix = style()->standardIcon(QStyle::SP_MessageBoxCritical).pixmap(15, 15);
-	iconpath = QDir::home().path() + QString("/.traverso/.temp/iconcritical.png");
-	pix.save(iconpath);
 }
 
 //eof
