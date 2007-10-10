@@ -1,0 +1,42 @@
+<html>
+<head>
+<title>Project file conversion from version 2 -> 3</title>
+
+<style type="text/css">
+body {
+background-color: red
+}
+h4 {
+margin: 10px;
+}
+p {
+margin: 5px
+}
+ul {
+margin: 0px 4px 0px 0px;
+padding-left: 0px;
+}
+li {
+margin-top: 4px;
+margin-left: 0px;
+padding-left: 0px;
+}
+</style>
+ 
+</head>
+
+<body>
+<h4 align="center">Project file conversion from version 2 -> 3</h4>
+<p>
+Traverso 0.40.0 - 0.41.x is able to open project files with version 2.<br />From Traverso >= 0.42.0 it needs to be at version 3.
+</p>
+<br />
+<p>
+The conversion of the Project will consist of the following actions:
+</p>
+<ul>
+<li>Convert the project.tpf file to use universal sample rate for position and length, as opposed to using a fixed samplerate</li>
+<li>For performance reasons it was decided to start using interleaved audio files. For each <b>recorded</b> stereo file the 2 mono files will be merged into 1 stereo file.<br /><b>NOTE: This can take a long time for large files!</b></li>
+</ul>
+</body>
+</html>
