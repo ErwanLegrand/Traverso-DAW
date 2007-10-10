@@ -108,6 +108,7 @@ private:
 	int rb_file_read(DecodeBuffer* buffer, nframes_t cnt);
 
 	friend class ResourcesManager;
+	friend class ProjectConverter;
 	
 signals:
 	void stateChanged();

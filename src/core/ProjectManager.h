@@ -106,6 +106,7 @@ signals:
 	void unsupportedProjectDirChangeDetected();
 	void projectDirChangeDetected();
 	void projectLoadFailed(QString,QString);
+	void projectFileVersionMismatch(QString,QString);
 	
 private slots:
 	void project_dir_rename_detected(const QString& dirname);

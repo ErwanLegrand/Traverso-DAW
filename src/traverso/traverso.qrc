@@ -46,5 +46,6 @@
 		<file alias="traverso_nl">../../traverso_nl.qm</file>
 		<file alias="traverso_de">../../traverso_de.qm</file>
 		<file alias="traverso_en">../../traverso_en.qm</file>
+		<file alias="project_conversion_description_2_3">../../resources/projectconversion/2_to_3.html</file>
 	</qresource>
 </RCC>

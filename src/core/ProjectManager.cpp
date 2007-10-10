@@ -199,8 +199,17 @@ int ProjectManager::load_project(const QString& projectName)
 
 	set_current_project(newProject);
 
-	if (currentProject->load() < 0) {
-		emit projectLoadFailed(currentProject->get_title(), currentProject->get_error_string());
+	int err;
+	if ((err = currentProject->load()) < 0) {
+		switch (err) {
+			case Project::PROJECT_FILE_VERSION_MISMATCH: {
+				emit projectFileVersionMismatch(currentProject->get_root_dir(), currentProject->get_title());
+				break;
+			}
+			default: {
+				emit projectLoadFailed(currentProject->get_title(), currentProject->get_error_string());
+			}
+		}
 		delete currentProject;
 		currentProject = 0;
 		set_current_project(0);

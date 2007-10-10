@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "AudioClipExternalProcessing.h"
 
-#include "AbstractAudioReader.h"
 #include <AudioClip.h>
 #include <AudioClipView.h>
 #include <Track.h>
@@ -32,86 +31,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <ResourcesManager.h>
 #include <Utils.h>
 #include "Interface.h"
-#include "Export.h"
-#include "WriteSource.h"
 
-#include <QThread>
 #include <QFile>
-#include <QApplication>
-
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
-
-class MergeThread : public QThread
-{
-public:
-	MergeThread(ReadSource* source, QString outFileName) {
-		m_outFileName = outFileName;
-		m_readsource = source;
-	}
-
-	void run() {
-		uint buffersize = 16384;
-		DecodeBuffer decodebuffer;
-	
-		ExportSpecification* spec = new ExportSpecification();
-		spec->startLocation = 0;
-		spec->endLocation = m_readsource->get_length();
-		spec->totalTime = spec->endLocation;
-		spec->pos = 0;
-		spec->isRecording = false;
-	
-		spec->exportdir = pm().get_project()->get_root_dir() + "/audiosources/";
-		spec->writerType = "sndfile";
-		spec->extraFormat["filetype"] = "wav";
-		spec->data_width = 16;
-		spec->channels = 2;
-		spec->sample_rate = m_readsource->get_rate();
-		spec->blocksize = buffersize;
-		spec->name = m_outFileName;
-		spec->dataF = new audio_sample_t[buffersize * 2];
-	
-		WriteSource* writesource = new WriteSource(spec);
-		if (writesource->prepare_export() == -1) {
-			delete writesource;
-			delete [] spec->dataF;
-			delete spec;
-			return;
-		}
-	
-		do {
-			nframes_t diff = (spec->endLocation - spec->pos).to_frame(m_readsource->get_rate());
-			nframes_t this_nframes = std::min(diff, buffersize);
-			nframes_t nframes = this_nframes;
-		
-			memset (spec->dataF, 0, sizeof (spec->dataF[0]) * nframes * spec->channels);
-		
-			m_readsource->file_read(&decodebuffer, spec->pos, nframes);
-			
-			for (int chan=0; chan < 2; ++chan) {
-				for (uint x = 0; x < nframes; ++x) {
-					spec->dataF[chan+(x*spec->channels)] = decodebuffer.destination[chan][x];
-				}
-			}
-		
-			writesource->process(buffersize);
-		
-			spec->pos.add_frames(nframes, m_readsource->get_rate());
-			
-		} while (spec->pos != spec->totalTime);
-		
-		writesource->finish_export();
-		delete writesource;
-		delete [] spec->dataF;
-		delete spec;
-	}
-
-private:
-	QString m_outFileName;
-	ReadSource* m_readsource;
-};
 
 
 AudioClipExternalProcessing::AudioClipExternalProcessing(AudioClip* clip)
@@ -172,7 +97,6 @@ ExternalProcessingDialog::ExternalProcessingDialog(QWidget * parent, AudioClipEx
 	setupUi(this);
 	m_acep = acep;
 	m_queryOptions = false;
-	m_merger = 0;
 	
 	m_processor = new QProcess(this);
 	m_processor->setProcessChannelMode(QProcess::MergedChannels);
@@ -222,15 +146,7 @@ void ExternalProcessingDialog::prepare_for_external_processing()
 			m_filename.remove(".wav").remove(".").append("-").append(m_commandargs.simplified()).append(".wav");
 	
 	
-/*	if (rs->get_channel_count() == 2 && rs->get_file_count() == 2) {
-		m_merger = new MergeThread(rs, "merged.wav");
-		connect(m_merger, SIGNAL(finished()), this, SLOT(start_external_processing()));
-		m_merger->start();
-		statusText->setHtml(tr("Preparing audio data to a format that can be used by <b>%1</b>, this can take a while for large files!").arg(m_program));
-		progressBar->setMaximum(0);
-	} else {	*/
-		start_external_processing();
-// 	}
+	start_external_processing();
 }
 
 void ExternalProcessingDialog::start_external_processing()
@@ -242,14 +158,7 @@ void ExternalProcessingDialog::start_external_processing()
 		m_arguments.append("-S");
 	}
 	
-	if (m_merger) {
-		progressBar->setMaximum(100);
-		m_arguments.append(pm().get_project()->get_audiosources_dir() + "merged.wav");
-		delete m_merger;
-	} else {
-		m_arguments.append(m_infilename);
-	}
-	
+	m_arguments.append(m_infilename);
 	m_arguments.append(m_outfilename);
 	m_arguments += m_commandargs.split(QRegExp("\\s+"));
 	

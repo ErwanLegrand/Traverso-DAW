@@ -51,7 +51,9 @@ SOURCES = AudioClip.cpp \
 	Snappable.cpp \
 	TimeLine.cpp \
 	Marker.cpp \
-	Themer.cpp
+	Themer.cpp \
+	AudioFileMerger.cpp \
+	ProjectConverter.cpp
 HEADERS = precompile.h \
 	AudioClip.h \
 	AudioClipList.h \
@@ -94,7 +96,9 @@ HEADERS = precompile.h \
 	CommandPlugin.h \
 	TimeLine.h \
 	Marker.h \
-	Themer.h
+	Themer.h \
+	AudioFileMerger.h \
+	ProjectConverter.h
 macx{
     QMAKE_LIBDIR += /usr/local/qt/lib
 }

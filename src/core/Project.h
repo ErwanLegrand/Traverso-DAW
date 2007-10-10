@@ -97,6 +97,12 @@ public :
 	int export_project(ExportSpecification* spec);
 	int start_export(ExportSpecification* spec);
 	int create_cdrdao_toc(ExportSpecification* spec);
+	
+	enum {
+		SETTING_XML_CONTENT_FAILED = -1,
+  		PROJECT_FILE_COULD_NOT_BE_OPENED = -2,
+    		PROJECT_FILE_VERSION_MISMATCH = -3
+	};
 
 
 public slots:

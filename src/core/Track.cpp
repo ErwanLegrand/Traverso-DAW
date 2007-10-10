@@ -295,7 +295,7 @@ void Track::set_bus_out(QByteArray bus)
 		info().warning(tr("Track: Cannot assign OutBus to %1, it does not exist!").arg(bus.data()));
 	}
 	
-	if (m_outBus) {
+	if (m_outBus && !(m_busOutName.data() == QString("Out Bus"))) {
 		m_outBus->set_monitor_peaks(false);
 	}
 	

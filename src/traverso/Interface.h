@@ -155,7 +155,6 @@ public slots :
 	void update_opengl();
 	void import_audio();
 	void show_restore_project_backup_dialog();
-	void project_load_failed(QString project, QString reason);
 
 	Command* full_screen();
 	Command* about_traverso();
@@ -175,6 +174,8 @@ public slots :
 private slots:
 	void delete_songwidget(Song*);
 	void project_dir_change_detected();
+	void project_load_failed(QString project, QString reason);
+	void project_file_mismatch(QString rootdir, QString projectname);
 };
 
 

@@ -944,7 +944,7 @@ void Song::resize_buffer(bool updateArmStatus, nframes_t size)
 void Song::assign_buses()
 {
 	if (m_masterOut) {
-		m_masterOut->set_monitor_peaks(false);
+// 		m_masterOut->set_monitor_peaks(false);
 	}
 	m_playBackBus = audiodevice().get_playback_bus("Playback 1");
 	m_masterOut = audiodevice().get_playback_bus("Master Out");

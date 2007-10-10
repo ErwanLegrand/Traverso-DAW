@@ -64,6 +64,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "dialogs/BusSelectorDialog.h"
 #include "dialogs/InsertSilenceDialog.h"
 #include "dialogs/RestoreProjectBackupDialog.h"
+#include "dialogs/ProjectConverterDialog.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -191,6 +192,7 @@ Interface::Interface()
 	connect(&pm(), SIGNAL(aboutToDelete(Song*)), this, SLOT(delete_songwidget(Song*)));
 	connect(&pm(), SIGNAL(unsupportedProjectDirChangeDetected()), this, SLOT(project_dir_change_detected()));	
 	connect(&pm(), SIGNAL(projectLoadFailed(QString,QString)), this, SLOT(project_load_failed(QString,QString)));
+	connect(&pm(), SIGNAL(projectFileVersionMismatch(QString,QString)), this, SLOT(project_file_mismatch(QString,QString)), Qt::QueuedConnection);
 
 	cpointer().add_contextitem(this);
 
@@ -1074,3 +1076,11 @@ void Interface::project_load_failed(QString project, QString reason)
 	show_restore_project_backup_dialog(project);
 }
 
+
+
+void Interface::project_file_mismatch(QString rootdir, QString projectname)
+{
+	ProjectConverterDialog dialog(this);
+	dialog.set_project(rootdir, projectname);
+	dialog.exec();
+}

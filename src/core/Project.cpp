@@ -169,7 +169,7 @@ int Project::load(QString projectfile)
 	if (!file.open(QIODevice::ReadOnly)) {
 		m_errorString = tr("Project %1: Cannot open project.tpf file! (Reason: %2)").arg(m_title).arg(file.errorString());
 		info().critical(m_errorString);
-		return -1;
+		return PROJECT_FILE_COULD_NOT_BE_OPENED;
 	}
 	
 	// Check if important directories still exist!
@@ -187,7 +187,7 @@ int Project::load(QString projectfile)
 	if (!doc.setContent(&file, &errorMsg)) {
 		m_errorString = tr("Project %1: Failed to parse project.tpf file! (Reason: %2)").arg(m_title).arg(errorMsg);
 		info().critical(m_errorString);
-		return -1;
+		return SETTING_XML_CONTENT_FAILED;
 	}
 	
 	QDomElement docElem = doc.documentElement();
@@ -197,7 +197,7 @@ int Project::load(QString projectfile)
 	if (e.attribute("projectfileversion", "-1").toInt() != PROJECT_FILE_VERSION) {
 		m_errorString = tr("Project File Version does not match, unable to load Project!");
 		info().warning(m_errorString);
-		return -1;
+		return PROJECT_FILE_VERSION_MISMATCH;
 	}
 
 	m_title = e.attribute( "title", "" );
