@@ -406,7 +406,10 @@ int ReadSource::rb_read(audio_sample_t** dst, TimeRef& start, nframes_t count)
 int ReadSource::rb_file_read(DecodeBuffer* buffer, nframes_t cnt)
 {
 	int readFrames = file_read(buffer, m_rbFileReadPos, cnt);
-	m_rbFileReadPos.add_frames(readFrames, m_outputRate);
+	m_rbFileReadPos.add_frames(cnt, m_outputRate);
+	// FIXME it should work with the line like below, but it sometimes confuses DiskIO::do_work()
+	// it starts looping!
+// 	m_rbFileReadPos.add_frames(readFrames, m_outputRate);
 // 	printf("file %s: readFrames, cnt: %d, %d\n", QS_C(m_fileName), readFrames, cnt);
 
 	return readFrames;
