@@ -100,7 +100,6 @@ int ProjectConverter::start_conversion_from_version_2_to_3()
 	
 	QString version = projectelement.attribute("projectfileversion", "-1");
 	int projectrate = projectelement.attribute("rate", "44100").toInt();
-	printf("version is %s\n", QS_C(version));
 	version = QString::number(3);
 	projectelement.setAttribute("projectfileversion", version);
 

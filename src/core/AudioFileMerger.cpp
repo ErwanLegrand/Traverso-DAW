@@ -84,7 +84,7 @@ void AudioFileMerger::process_task(MergeTask task)
 	spec->exportdir = task.dir;
 	spec->writerType = "sndfile";
 	spec->extraFormat["filetype"] = "wav";
-	spec->data_width = 16;
+	spec->data_width = 1;	// 1 means float
 	spec->channels = 2;
 	spec->sample_rate = task.readsource0->get_rate();
 	spec->blocksize = buffersize;
@@ -98,6 +98,7 @@ void AudioFileMerger::process_task(MergeTask task)
 		delete spec;
 		return;
 	}
+	writesource->set_process_peaks(true);
 	
 	int oldprogress = 0;
 	do {

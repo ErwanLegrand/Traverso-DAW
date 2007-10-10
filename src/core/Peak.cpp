@@ -58,7 +58,14 @@ Peak::Peak(AudioSource* source)
 	m_peaksAvailable = m_permanentFailure = m_interuptPeakBuild = false;
 	
 	QString sourcename = source->get_name();
-	QString path = pm().get_project()->get_root_dir() + "/peakfiles/";
+	QString path;
+	Project* project = pm().get_project();
+	if (project) {
+		path = project->get_root_dir() + "/peakfiles/";
+	} else {
+		path = source->get_dir();
+		path = path.replace("audiosources", "peakfiles");
+	}
 	
 	for (uint chan = 0; chan < source->get_channel_count(); ++ chan) {
 		ChannelData* data = new Peak::ChannelData;
