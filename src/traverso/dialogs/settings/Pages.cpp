@@ -30,7 +30,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Utils.h>
 #include <Themer.h>
 #include <InputEngine.h>
+#include "Interface.h"
 #include <QDomDocument>
+#include <QPrinter>
+#include <QPrintDialog>
+#include <QTextEdit>
 
 #if defined (JACK_SUPPORT)
 RELAYTOOL_JACK
@@ -811,47 +815,35 @@ void KeyboardConfigPage::update_keymap_combo()
 	}
 }
 
-
-/****************************************/
-/*            DiskIO                    */
-/****************************************/
-
-
-DiskIOPage::DiskIOPage(QWidget * parent)
-	: ConfigPage(parent)
+void KeyboardConfigPage::on_exportButton_clicked()
 {
-	m_config = new MemoryConfigPage(this);
-	mainLayout->addWidget(m_config);
-	mainLayout->addStretch(5);
+	Interface::instance()->export_keymap();
+	QMessageBox::information( Interface::instance(), tr("KeyMap Export"), 
+		     tr("The exported keymap can be found here:\n\n %1").arg(QDir::homePath() + "/traversokeymap.html"),
+		     QMessageBox::Ok);
+}
+
+void KeyboardConfigPage::on_printButton_clicked()
+{
+	Interface::instance()->export_keymap();
+	QFile file(QDir::homePath() + "/traversokeymap.html");
+	if (!file.open(QIODevice::ReadOnly)) {
+		QMessageBox::information( Interface::instance(), tr("Printing KeyMap"), 
+			     tr("The keymap export failed:\n\n %1").arg(file.errorString()),
+			     QMessageBox::Ok);
+		return;
+	}
 	
-	load_config();
+	QPrinter printer(QPrinter::ScreenResolution);
+	QPrintDialog printDialog(&printer, Interface::instance());
+	if (printDialog.exec() == QDialog::Accepted) {
+		QString string = file.readAll();
+		QTextEdit edit;
+		edit.insertHtml(string);
+		edit.document()->print(&printer);
+	}
 }
 
-void DiskIOPage::load_config()
-{
-	double buffertime = config().get_property("Hardware", "readbuffersize", 1.0).toDouble();
-	m_config->bufferTimeSpinBox->setValue(buffertime);
-}
-
-void DiskIOPage::save_config()
-{
-	double buffertime = m_config->bufferTimeSpinBox->value();
-	config().set_property("Hardware", "readbuffersize", buffertime);
-}
-
-void DiskIOPage::reset_default_config()
-{
-	config().set_property("Hardware", "readbuffersize", 1.0);
-	load_config();
-}
-
-MemoryConfigPage::MemoryConfigPage(QWidget * parent)
-	: QWidget(parent)
-{
-	setupUi(this);
-	QIcon icon = QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation);
-	reloadWarningLabel->setPixmap(icon.pixmap(22, 22));
-}
 
 
 
@@ -872,18 +864,25 @@ void PerformancePage::load_config()
 	
 	m_configpage->jogUpdateIntervalSpinBox->setValue(1000 / jogUpdateInterval);
 	m_configpage->useOpenGLCheckBox->setChecked(useOpenGL);	
+
+
+	double buffertime = config().get_property("Hardware", "readbuffersize", 1.0).toDouble();
+	m_configpage->bufferTimeSpinBox->setValue(buffertime);
 }
 
 void PerformancePage::save_config()
 {
 	config().set_property("Interface", "OpenGL", m_configpage->useOpenGLCheckBox->isChecked());
 	config().set_property("CCE", "JogUpdateInterval", 1000 / m_configpage->jogUpdateIntervalSpinBox->value());	
+	double buffertime = m_configpage->bufferTimeSpinBox->value();
+	config().set_property("Hardware", "readbuffersize", buffertime);
 }
 
 void PerformancePage::reset_default_config()
 {
 	config().set_property("CCE", "JogUpdateInterval", 28);
 	config().set_property("Interface", "OpenGL", false);
+	config().set_property("Hardware", "readbuffersize", 1.0);
 	load_config();
 }
 
@@ -896,7 +895,119 @@ PerformanceConfigPage::PerformanceConfigPage(QWidget* parent)
 #else
 	useOpenGLCheckBox->setEnabled(false);
 #endif
+	QIcon icon = QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation);
+	reloadWarningLabel->setPixmap(icon.pixmap(22, 22));
 }
 
-//eof
+/****************************************/
+/*            Recording                 */
+/****************************************/
+
+
+RecordingPage::RecordingPage(QWidget * parent)
+	: ConfigPage(parent)
+{
+	m_config = new RecordingConfigPage(this);
+	mainLayout->addWidget(m_config);
+	mainLayout->addStretch(5);
+	
+	load_config();
+}
+
+void RecordingPage::load_config()
+{
+	bool useResampling = config().get_property("Conversion", "DynamicResampling", true).toBool();
+	if (useResampling) {
+		m_config->use_onthefly_resampling_checkbox_changed(Qt::Checked);
+	} else {
+		m_config->use_onthefly_resampling_checkbox_changed(Qt::Unchecked);
+	}
+	
+	QString recordFormat = config().get_property("Recording", "FileFormat", "wav").toString();
+	if (recordFormat == "wavpack") {
+		m_config->encoding_index_changed(1);
+	} else {
+		m_config->encoding_index_changed(0);
+	}
+	QString wavpackcompression = config().get_property("Recording", "WavpackCompressionType", "fast").toString();
+	if (wavpackcompression == "very_high") {
+		m_config->wavpackCompressionComboBox->setCurrentIndex(0);
+	} else if (wavpackcompression == "high") {
+		m_config->wavpackCompressionComboBox->setCurrentIndex(1);
+	} else {
+		m_config->wavpackCompressionComboBox->setCurrentIndex(2);
+	}		
+	
+	int index = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
+	m_config->ontheflyResampleComboBox->setCurrentIndex(index);
+	
+	index = config().get_property("Conversion", "ExportResamplingConverterType", 1).toInt();
+	m_config->exportDefaultResampleQualityComboBox->setCurrentIndex(index);
+	
+//	ontheflyResampleComboBox
+// 	exportDefaultResampleQualityComboBox
+// 	wavpackUseAlmostLosslessCheckBox
+}
+
+void RecordingPage::save_config()
+{
+	config().set_property("Conversion", "DynamicResampling", m_config->useResamplingCheckBox->isChecked());
+	config().set_property("Conversion", "RTResamplingConverterType", m_config->ontheflyResampleComboBox->currentIndex());
+	config().set_property("Conversion", "ExportResamplingConverterType", m_config->exportDefaultResampleQualityComboBox->currentIndex());
+	config().set_property("Recording", "FileFormat", m_config->encodingComboBox->itemData(m_config->encodingComboBox->currentIndex()).toString());
+	config().set_property("Recording", "WavpackCompressionType", m_config->wavpackCompressionComboBox->itemData(m_config->wavpackCompressionComboBox->currentIndex()).toString());
+	QString skipwvx = m_config->wavpackUseAlmostLosslessCheckBox->isChecked() ? "true" : "false";
+	config().set_property("Recording", "WavpackSkipWVX", skipwvx);
+}
+
+void RecordingPage::reset_default_config()
+{
+	config().set_property("Conversion", "DynamicResampling", true);
+	config().set_property("Conversion", "RTResamplingConverterType", 2);
+	config().set_property("Conversion", "ExportResamplingConverterType", 1);
+	config().set_property("Recording", "FileFormat", "wav");
+	config().set_property("Recording", "WavpackCompressionType", "fast");
+	config().set_property("Recording", "WavpackSkipWVX", "false");
+	
+	load_config();
+}
+
+RecordingConfigPage::RecordingConfigPage(QWidget * parent)
+	: QWidget(parent)
+{
+	setupUi(this);
+	
+	encodingInfoPushButton->setIcon(style()->standardIcon(QStyle::SP_FileDialogInfoView));
+	encodingComboBox->addItem("WAV", "wav");
+	encodingComboBox->addItem("WavPack", "wavpack");
+	wavpackCompressionComboBox->addItem("Very high", "very_high");
+	wavpackCompressionComboBox->addItem("High", "high");
+	wavpackCompressionComboBox->addItem("Fast", "fast");
+	
+	connect(encodingComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(encoding_index_changed(int)));
+	connect(useResamplingCheckBox, SIGNAL(stateChanged(int)), 
+		this, SLOT(use_onthefly_resampling_checkbox_changed(int)));
+}
+
+void RecordingConfigPage::encoding_index_changed(int index)
+{
+	encodingComboBox->setCurrentIndex(index);
+	if (index == 0) {
+		wacpackGroupBox->hide();
+	}
+	if (index == 1) {
+		wacpackGroupBox->show();
+	}
+}
+
+void RecordingConfigPage::use_onthefly_resampling_checkbox_changed(int state)
+{
+	if (state == Qt::Checked) {
+		useResamplingCheckBox->setChecked(true);
+		ontheflyResampleComboBox->setEnabled(true);
+	} else {
+		useResamplingCheckBox->setChecked(false);
+		ontheflyResampleComboBox->setEnabled(false);
+	}
+}
 

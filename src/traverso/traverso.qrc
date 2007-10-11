@@ -26,6 +26,7 @@
 		<file alias="audiocardsmall">../../resources/images/soundcardsmall.png</file>
 		<file alias="harddrivesmall">../../resources/images/harddrivesmall.png</file>
 		<file alias="diskdrive">../../resources/images/harddrive.png</file>
+		<file alias="audiosettings">../../resources/images/audiosettings.png</file>
 		<file alias="driver">../../resources/images/driver.png</file>
 		<file alias="memorysmall">../../resources/images/memory.png</file>
 		<file alias="appearance">../../resources/images/appearance.png</file>

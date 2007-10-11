@@ -43,7 +43,7 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 	pagesWidget->addWidget(new BehaviorPage(this));
 	pagesWidget->addWidget(new AppearancePage(this));
 	pagesWidget->addWidget(new AudioDriverPage(this));
-	pagesWidget->addWidget(new DiskIOPage(this));
+	pagesWidget->addWidget(new RecordingPage(this));
 	pagesWidget->addWidget(new KeyboardPage(this));
 	pagesWidget->addWidget(new PerformancePage(this));
 	
@@ -104,8 +104,8 @@ void SettingsDialog::createIcons()
 	driverButton->setSizeHint(QSize(100, 50));
 	
 	QListWidgetItem* diskioButton = new QListWidgetItem(contentsWidget);
-	diskioButton->setIcon(QIcon(":/diskdrive"));
-	diskioButton->setText(tr("Disk I/O"));
+	diskioButton->setIcon(QIcon(":/audiosettings"));
+	diskioButton->setText(tr("Audio Options"));
 	diskioButton->setTextAlignment(Qt::AlignHCenter);
 	diskioButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	diskioButton->setSizeHint(QSize(100, 50));

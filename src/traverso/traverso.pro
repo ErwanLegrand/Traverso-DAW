@@ -96,7 +96,7 @@ FORMS += ui/ExportWidget.ui \
 	ui/PaDriverPage.ui \
 	ui/KeyboardConfigPage.ui \
 	ui/BehaviorConfigPage.ui \
-	ui/MemoryConfigPage.ui \
+	ui/RecordingConfigPage.ui \
 	ui/ThemeConfigPage.ui \
 	ui/PerformanceConfigPage.ui \
 	ui/SongManagerDialog.ui \

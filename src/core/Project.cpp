@@ -59,7 +59,7 @@ Project::Project(const QString& title)
 	m_exportThread = 0;
 	engineer = "";
 
-	m_useResampling = config().get_property("Conversion", "DynamicResampling", false).toBool();
+	m_useResampling = config().get_property("Conversion", "DynamicResampling", true).toBool();
 	m_rootDir = config().get_property("Project", "directory", "/directory/unknown/").toString() + "/" + m_title;
 	m_sourcesDir = m_rootDir + "/audiosources";
 	m_rate = audiodevice().get_sample_rate();

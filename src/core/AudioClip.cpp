@@ -545,11 +545,10 @@ int AudioClip::init_recording( QByteArray name )
 	QString recordFormat = config().get_property("Recording", "FileFormat", "wav").toString();
 	if (recordFormat == "wavpack") {
 		spec->writerType = "wavpack";
-		bool useFast = config().get_property("Recording", "WavpackFast", false).toBool();
-		if (useFast) {
-			spec->extraFormat["quality"] = "fast";
-		}
-		// spec->extraFormat["skip_wvx"] = "true";
+		QString compression = config().get_property("Recording", "WavpackCompressionType", "fast").toString();
+		QString skipwvx = config().get_property("Recording", "WavpackSkipWVX", "false").toString();
+		spec->extraFormat["quality"] = compression;
+		spec->extraFormat["skip_wvx"] = skipwvx;
 	}
 	else {
 		spec->writerType = "sndfile";

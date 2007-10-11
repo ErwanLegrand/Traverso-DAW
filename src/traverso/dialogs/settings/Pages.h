@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ui_DriverConfigPage.h"
 #include "ui_KeyboardConfigPage.h"
 #include "ui_BehaviorConfigPage.h"
-#include "ui_MemoryConfigPage.h"
+#include "ui_RecordingConfigPage.h"
 #include "ui_ThemeConfigPage.h"
 #include "ui_PerformanceConfigPage.h"
 
@@ -98,6 +98,8 @@ private:
 private slots:
 	void keymap_index_changed(const QString& keymap);
 	void update_keymap_combo();
+	void on_exportButton_clicked();
+	void on_printButton_clicked();
 };
 
 class BehaviorConfigPage : public QWidget, private Ui::BehaviorConfigPage
@@ -112,12 +114,16 @@ private slots:
 };
 
 
-class MemoryConfigPage : public QWidget, private Ui::MemoryConfigPage
+class RecordingConfigPage : public QWidget, private Ui::RecordingConfigPage
 {
+	Q_OBJECT
 public:
-	MemoryConfigPage(QWidget* parent = 0);
+	RecordingConfigPage(QWidget* parent = 0);
 private:
-	friend class DiskIOPage;
+	friend class RecordingPage;
+private slots:
+	void encoding_index_changed(int index);
+	void use_onthefly_resampling_checkbox_changed(int state);
 };
 
 
@@ -160,7 +166,7 @@ class AudioDriverPage : public ConfigPage
 {
 	Q_OBJECT
 public:
-	    AudioDriverPage(QWidget *parent = 0);
+	AudioDriverPage(QWidget *parent = 0);
     	void save_config();
 	void reset_default_config();
 
@@ -184,15 +190,15 @@ private slots:
 };
 
 
-class DiskIOPage : public ConfigPage
+class RecordingPage : public ConfigPage
 {
 public:
-	DiskIOPage(QWidget *parent = 0);
+	RecordingPage(QWidget *parent = 0);
 	void load_config();
 	void save_config();
 	void reset_default_config();
 private:
-	MemoryConfigPage* m_config;
+	RecordingConfigPage* m_config;
 };
 
 
