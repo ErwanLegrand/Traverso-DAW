@@ -252,6 +252,9 @@ void ProjectConverter::finish_2_3_conversion()
 		delete source;
 	}
 	
+	// Exit the FileMerger event loop
+	m_merger->exit(0);	
+	
 	if ( ! m_merger->wait(1000) ) {
 		qWarning("FileMerger:: Still running after 1 second wait, terminating!");
 		m_merger->terminate();
