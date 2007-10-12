@@ -350,8 +350,8 @@ int DiskIO::stop( )
 
 	// Wait for the Thread to return from it's event loop. 1000 ms should be (more then) enough,
 	// if not, terminate this thread and print a warning!
-	if ( ! m_diskThread->wait(1000) ) {
-		qWarning("DiskIO :: Still running after 1 second wait, terminating!");
+	if ( ! m_diskThread->wait(2000) ) {
+		qWarning("DiskIO :: Still running after 2 second wait, terminating!");
 		m_diskThread->terminate();
 		res = -1;
 	}

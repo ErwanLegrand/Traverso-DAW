@@ -287,6 +287,7 @@ void ReadSource::set_output_rate(int rate)
 int ReadSource::file_read(DecodeBuffer* buffer, const TimeRef& start, nframes_t cnt) const
 {
 //	PROFILE_START;
+	Q_ASSERT(m_audioReader);
 	nframes_t result = m_audioReader->read_from(buffer, start, cnt);
 //	PROFILE_END("ReadSource::fileread");
 	return result;
@@ -295,6 +296,7 @@ int ReadSource::file_read(DecodeBuffer* buffer, const TimeRef& start, nframes_t 
 
 int ReadSource::file_read(DecodeBuffer * buffer, nframes_t start, nframes_t cnt)
 {
+	Q_ASSERT(m_audioReader);
 	return m_audioReader->read_from(buffer, start, cnt);
 }
 
