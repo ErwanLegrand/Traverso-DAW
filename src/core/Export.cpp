@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Export.cpp,v 1.11 2007/09/26 20:46:32 r_sijrier Exp $
+    $Id: Export.cpp,v 1.12 2007/10/12 10:06:29 r_sijrier Exp $
 */
 
 #include "Export.h"
@@ -32,6 +32,7 @@ ExportThread::ExportThread(Project* project, ExportSpecification* specification)
 {
         m_project = project;
         m_spec  = specification;
+	specification->thread = this;
 }
 
 void ExportThread::run( )

@@ -343,7 +343,15 @@ int Song::prepare_export(ExportSpecification* spec)
 		if (is_transport_rolling()) {
 			spec->resumeTransport = true;
 			// When transport is rolling, this equals stopping the transport!
-			start_transport();
+			// prepare_export() is called from another thread, so use a queued connection
+			// to call the function in the correct thread!
+			if (!QMetaObject::invokeMethod(this, "start_transport",  Qt::QueuedConnection)) {
+				printf("Invoking Song::start_transport() failed\n");
+				return -1;
+			}
+			// wait a number (5) of audiodevice process cycles to be sure we really stopped transport
+			uint msecs = (audiodevice().get_buffer_size() * 5 * 1000) / audiodevice().get_sample_rate();
+			spec->thread->sleep_for(msecs);
 		}
 		
 		m_rendering = true;

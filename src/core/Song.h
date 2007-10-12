@@ -111,7 +111,6 @@ public:
 	void set_first_visible_frame(nframes_t pos);
 	void set_title(const QString& sTitle);
 	void set_work_at(const TimeRef& location);
-	void set_transport_pos(TimeRef location);
 	void set_hzoom(int hzoom);
 	void set_snapping(bool snap);
 	void set_scrollbar_xy(int x, int y) {m_sbx = x; m_sby = y;}
@@ -222,6 +221,7 @@ public slots :
 	void audiodevice_started();
 	void audiodevice_params_changed();
 	void set_gain(float gain);
+	void set_transport_pos(TimeRef location);
 	
 	float get_gain() const;
 

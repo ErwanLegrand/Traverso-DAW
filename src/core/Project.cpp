@@ -595,7 +595,9 @@ int Project::start_export(ExportSpecification* spec)
 		
 		while(song->render(spec) > 0) {}
 		
-		song->set_transport_pos(spec->resumeTransportLocation);
+		if (!QMetaObject::invokeMethod(song, "set_transport_pos",  Qt::QueuedConnection, Q_ARG(TimeRef, spec->resumeTransportLocation))) {
+			printf("Invoking Song::set_transport_pos() failed\n");
+		}
 		if (spec->resumeTransport) {
 			if (!QMetaObject::invokeMethod(song, "start_transport",  Qt::QueuedConnection)) {
 				printf("Invoking Song::start_transport() failed\n");
