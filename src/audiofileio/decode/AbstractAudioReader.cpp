@@ -198,7 +198,7 @@ void DecodeBuffer::check_buffers_capacity(uint size, uint channels)
 	}*/
 				
 		
-	if ((destinationBufferSize < size || m_channels < channels) && !m_childReadActive && !m_noDestBuffer) {
+	if ((destinationBufferSize < size || m_channels < channels) && !m_childReadActive/* && !m_noDestBuffer*/) {
 			
 		delete_destination_buffers();
 			
