@@ -54,7 +54,6 @@ public :
 	int finish_export();
 	void set_process_peaks(bool process);
 	void set_recording(int rec);
-	void prepare_buffer();
 
 	size_t is_recording() const;
 
@@ -82,6 +81,8 @@ private:
 	float*		m_dataF2;
 	void*           m_output_data;
 	
+	
+	void prepare_rt_buffers();
 	
 signals:
 	void exportFinished();

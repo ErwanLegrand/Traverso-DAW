@@ -48,6 +48,7 @@ public:
 	int get_file_rate();
 	void set_output_rate(int rate);
 	void set_converter_type(int converter_type);
+	void set_resample_decode_buffer(DecodeBuffer* buffer);
 	
 protected:
 	void reset();
@@ -69,6 +70,8 @@ protected:
 	
 private:
 	void create_overflow_buffers();
+	DecodeBuffer* m_resampleDecodeBuffer;
+	bool m_resampleDecodeBufferIsMine;
 };
 
 #endif

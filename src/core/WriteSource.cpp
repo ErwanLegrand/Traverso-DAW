@@ -461,7 +461,7 @@ void WriteSource::process_ringbuffer(audio_sample_t* buffer)
 	rb_file_write(readSpace);
 }
 
-void WriteSource::prepare_buffer( )
+void WriteSource::prepare_rt_buffers( )
 {
 	m_bufferSize = m_sampleRate * DiskIO::writebuffertime;
 	m_chunkSize = m_bufferSize / DiskIO::bufferdividefactor;
@@ -473,6 +473,7 @@ void WriteSource::prepare_buffer( )
 void WriteSource::set_diskio( DiskIO * io )
 {
 	m_diskio = io;
+	prepare_rt_buffers();
 }
 
 //eof

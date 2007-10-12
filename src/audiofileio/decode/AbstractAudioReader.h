@@ -33,53 +33,20 @@ public:
 	~DecodeBuffer() {
 		delete_destination_buffers();
 		delete_readbuffer();
-		delete_resample_buffers();
 	}
 	
-	void use_custom_destination_buffer(bool custom);
 	void check_buffers_capacity(uint size, uint channels);
-	void check_resamplebuffer_capacity(uint frames);
-	
-	void prepare_for_child_read(nframes_t offset) {
-		if (resampleBuffer) {
-			m_childReadActive = true;
-			origDestination = destination;
-			destination = resampleBuffer;
-			
-			// Let the child reader write into the buffer starting offset samples past the beginning.
-			// This lets the resampler prefill the buffers with the pre-existing overflow.
-			for (uint chan = 0; chan < m_channels; chan++) {
-				resampleBuffer[chan] += offset;
-			}
-		}
-	}
-	
-	void finish_child_read(nframes_t offset) {
-		if (origDestination) {
-			m_childReadActive = false;
-			destination = origDestination;
-			origDestination = 0;
-			
-			for (uint chan = 0; chan < m_channels; chan++) {
-				resampleBuffer[chan] -= offset;
-			}
-		}
-	}
 	
 	audio_sample_t** destination;
 	audio_sample_t* readBuffer;
-	audio_sample_t** resampleBuffer;
 	uint destinationBufferSize;
 	uint readBufferSize;
-	uint resampleBufferSize;
 
 private:
 	uint m_channels;
 	uint m_smallerReadCounter;
 	long m_totalCheckSize;
 	uint m_bufferSizeCheckCounter;
-	audio_sample_t** origDestination; // Used to store destination during a child read in the resampler
-	bool m_noDestBuffer;
 	bool m_childReadActive;
 	
 	void delete_destination_buffers();

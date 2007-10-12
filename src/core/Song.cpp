@@ -127,6 +127,8 @@ void Song::init()
 #endif
 
 	m_diskio = new DiskIO(this);
+	m_currentSampleRate = audiodevice().get_sample_rate();
+	m_diskio->output_rate_changed(m_currentSampleRate);
 	
 	connect(this, SIGNAL(seekStart()), m_diskio, SLOT(seek()), Qt::QueuedConnection);
 	connect(this, SIGNAL(prepareRecording()), this, SLOT(prepare_recording()));
@@ -168,7 +170,6 @@ void Song::init()
 	m_transportLocation = 0;
 	m_mode = EDIT;
 	m_sbx = m_sby = 0;
-	m_currentSampleRate = audiodevice().get_sample_rate();
 	
 	m_pluginChain = new PluginChain(this, this);
 	m_fader = m_pluginChain->get_fader();
@@ -442,7 +443,7 @@ int Song::prepare_export(ExportSpecification* spec)
 	resize_buffer(false, spec->blocksize);
 	
 	renderDecodeBuffer = new DecodeBuffer;
-	renderDecodeBuffer->use_custom_destination_buffer(true);
+// 	renderDecodeBuffer->use_custom_destination_buffer(true);
 
 	return 1;
 }
@@ -957,7 +958,7 @@ void Song::audiodevice_params_changed()
 	if (m_currentSampleRate != audiodevice().get_sample_rate()) {
 		m_currentSampleRate = audiodevice().get_sample_rate();
 		
-		m_diskio->output_rate_changed();
+		m_diskio->output_rate_changed(m_currentSampleRate);
 		
 		TimeRef location = m_transportLocation;
 		location.add_frames(1, audiodevice().get_sample_rate());

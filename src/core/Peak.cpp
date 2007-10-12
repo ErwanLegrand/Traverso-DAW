@@ -84,7 +84,7 @@ Peak::Peak(AudioSource* source)
 	if (rs) {
 		// This Peak object was created by AudioClip, meant for reading peak data
 		m_source = resources_manager()->get_readsource(rs->get_id());
-		m_source->set_output_rate(44100);
+		m_source->set_output_rate(44100, true);
 	} else {
 		// No ReadSource object? Then it's created by WriteSource for on the fly
 		// peak data creation, no m_source needed!
@@ -272,7 +272,7 @@ int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, TimeRef start
 		// Check if this zoom level has as many data as requested.
 		if ( (pixelcount + offset) > data->headerdata.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR]) {
 			// YES we know that sometimes we ommit the very last 'pixel' to avoid painting artifacts...
- 			PERROR("pixelcount exceeds available data size! (pixelcount is: %d, available is %d", pixelcount, data->headerdata.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR] - offset); 
+//  			PERROR("pixelcount exceeds available data size! (pixelcount is: %d, available is %d", pixelcount, data->headerdata.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR] - offset); 
 // 			pixelcount = data->headerdata.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR] - offset;
 		}
 		
@@ -613,7 +613,7 @@ int Peak::create_from_scratch()
 		}
 	}
 
-	m_source->set_output_rate(m_source->get_file_rate());
+	m_source->set_output_rate(m_source->get_file_rate(), true);
 	
 	DecodeBuffer decodebuffer;
 	
@@ -661,7 +661,7 @@ out:
 	printf("Process time: %d seconds\n\n", (int)(processtime/1000));
 #endif
 	
-	m_source->set_output_rate(44100);
+	m_source->set_output_rate(44100, true);
 
 	return ret;
 }
@@ -675,7 +675,7 @@ audio_sample_t Peak::get_max_amplitude(TimeRef startlocation, TimeRef endlocatio
 		}
 	}
 	int rate = m_source->get_file_rate();
-	m_source->set_output_rate(rate);
+	m_source->set_output_rate(rate, true);
 	nframes_t startframe = startlocation.to_frame(rate);
 	nframes_t endframe = endlocation.to_frame(rate);
 	int startpos = startframe / NORMALIZE_CHUNK_SIZE;
@@ -731,7 +731,7 @@ audio_sample_t Peak::get_max_amplitude(TimeRef startlocation, TimeRef endlocatio
 	
 	delete [] readbuffer;
 	
-	m_source->set_output_rate(44100);
+	m_source->set_output_rate(44100, true);
 	
 	return maxamp;
 }

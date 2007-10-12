@@ -31,6 +31,7 @@ class ResampleAudioReader;
 class AudioClip;
 struct BufferStatus;
 class DecodeBuffer;
+class DiskIO;
 
 class ReadSource : public AudioSource
 {
@@ -66,21 +67,24 @@ public :
 	void set_active(bool active);
 	
 	void set_audio_clip(AudioClip* clip);
+	void set_diskio(DiskIO* diskio);
 	const nframes_t get_nframes() const;
 	int get_file_rate() const;
 	const TimeRef& get_length() const {return m_length;}
 	
 	void sync(DecodeBuffer* buffer);
 	void process_ringbuffer(DecodeBuffer* buffer, bool seeking=false);
-	void prepare_buffer();
+	void prepare_rt_buffers();
 	size_t is_active() const;
 	BufferStatus* get_buffer_status();
 	
-	void set_output_rate(int rate);
+	void set_output_rate(int rate, bool forceRate=false);
+	
 	
 private:
 	ResampleAudioReader*	m_audioReader;
 	AudioClip* 		m_clip;
+	DiskIO*			m_diskio;
 	int			m_refcount;
 	int			m_error;
 	bool			m_silent;

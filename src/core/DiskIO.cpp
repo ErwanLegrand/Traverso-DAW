@@ -153,6 +153,7 @@ DiskIO::DiskIO(Song* song)
 	framebuffer[0] = new audio_sample_t[audiodevice().get_sample_rate() * writebuffertime];
 	
 	m_decodebuffer = new DecodeBuffer;
+	m_resampleDecodeBuffer = new DecodeBuffer;
 
 	// Move this instance to the workthread
 	moveToThread(m_diskThread);
@@ -170,6 +171,7 @@ DiskIO::~DiskIO()
 	delete cpuTimeBuffer;
 	delete [] framebuffer[0];
 	delete m_decodebuffer;
+	delete m_resampleDecodeBuffer;
 }
 
 /**
@@ -195,8 +197,7 @@ void DiskIO::seek()
 
 	foreach(ReadSource* source, m_readSources) {
 		if (m_sampleRateChanged) {
-			source->set_output_rate(audiodevice().get_sample_rate());
-			source->prepare_buffer();
+			source->set_diskio(this);
 		}
 		source->rb_seek_to_file_position(location);
 	}
@@ -214,9 +215,10 @@ void DiskIO::seek()
 }
 
 
-void DiskIO::output_rate_changed()
+void DiskIO::output_rate_changed(int rate)
 {
 	m_sampleRateChanged = true;
+	m_outputRate = rate;
 }
 
 
@@ -369,10 +371,11 @@ void DiskIO::register_read_source (ReadSource* source )
 {
 	PENTER2;
 	
+	source->set_diskio(this);
+	
 	QMutexLocker locker(&mutex);
 
 	m_readSources.append(source);
-	source->prepare_buffer();
 }
 
 /**
@@ -386,7 +389,6 @@ void DiskIO::register_write_source( WriteSource * source )
 	PENTER2;
 	
 	source->set_diskio(this);
-	source->prepare_buffer();
 	
 	QMutexLocker locker(&mutex);
 
@@ -502,3 +504,4 @@ void DiskIO::stop_io( )
 }
 
 //eof
+

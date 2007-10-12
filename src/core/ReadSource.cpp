@@ -219,9 +219,6 @@ int ReadSource::init( )
 	m_syncInProgress = 0;
 	m_bufferUnderRunDetected = m_wasActivated = 0;
 	
-	bool useResampling = config().get_property("Conversion", "DynamicResampling", true).toBool();
-	int converter_type = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
-	
 	// There should be another config option for ConverterType to use for export (higher quality)
 	//converter_type = config().get_property("Conversion", "ExportResamplingConverterType", 0).toInt();
 	m_audioReader = new ResampleAudioReader(m_fileName, m_decodertype);
@@ -233,10 +230,10 @@ int ReadSource::init( )
 		return COULD_NOT_OPEN_FILE;
 	}
 	
-	if (useResampling) {
-		set_output_rate(audiodevice().get_sample_rate());
-		m_audioReader->set_converter_type(converter_type);
-	}
+	int converter_type = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
+	m_audioReader->set_converter_type(converter_type);
+	
+	set_output_rate(m_audioReader->get_file_rate());
 	
 	// (re)set the decoder type
 	m_decodertype = m_audioReader->decoder_type();
@@ -265,15 +262,22 @@ int ReadSource::init( )
 }
 
 
-void ReadSource::set_output_rate(int rate)
+void ReadSource::set_output_rate(int rate, bool forceRate)
 {
 	Q_ASSERT(rate > 0);
 	
 	if (! m_audioReader) {
+		printf("ReadSource::set_output_rate: No audioreader!\n");
 		return;
 	}
 	
-	m_audioReader->set_output_rate(rate);
+	bool useResampling = config().get_property("Conversion", "DynamicResampling", true).toBool();
+	if (useResampling || forceRate) {
+		m_audioReader->set_output_rate(rate);
+	} else {
+		set_output_rate(m_audioReader->get_file_rate());
+	}
+
 	m_outputRate = rate;
 	
 	// The length could have become slightly smaller/larger due
@@ -311,7 +315,7 @@ ReadSource * ReadSource::deep_copy( )
 	return source;
 }
 
-void ReadSource::set_audio_clip( AudioClip * clip )
+void ReadSource::set_audio_clip(AudioClip* clip)
 {
 	PENTER;
 	Q_ASSERT(clip);
@@ -509,6 +513,11 @@ void ReadSource::process_ringbuffer(DecodeBuffer* buffer, bool seeking)
 void ReadSource::start_resync(TimeRef& position)
 {
 // 	printf("starting resync!\n");
+	if (m_needSync || m_syncInProgress) {
+		printf("start_resync still in progress!\n");
+		return;
+	}
+		
 	m_syncPos = position;
 	m_rbReady = 0;
 	m_needSync = 1;
@@ -526,6 +535,7 @@ void ReadSource::finish_resync()
 void ReadSource::sync(DecodeBuffer* buffer)
 {
 	PENTER2;
+	printf("source::sync: %s\n", QS_C(m_fileName));
 	
 	if (!m_audioReader) {
 		return;
@@ -554,7 +564,7 @@ void ReadSource::sync(DecodeBuffer* buffer)
 
 
 
-void ReadSource::prepare_buffer( )
+void ReadSource::prepare_rt_buffers( )
 {
 	PENTER;
 	
@@ -625,5 +635,17 @@ int ReadSource::get_file_rate() const
 	}
 	
 	return pm().get_project()->get_rate(); 
+}
+
+void ReadSource::set_diskio(DiskIO * diskio)
+{
+	m_diskio = diskio;
+	set_output_rate(m_diskio->get_output_rate());
+	prepare_rt_buffers();
+	if (m_audioReader) {
+		printf("setting resample decode buffer\n");
+		m_audioReader->set_resample_decode_buffer(m_diskio->get_resample_decode_buffer());
+	}
+	
 }
 

@@ -55,7 +55,7 @@ public:
 	static const int bufferdividefactor = 5;
 
 	void prepare_for_seek();
-	void output_rate_changed();
+	void output_rate_changed(int rate);
 
 	void register_read_source(ReadSource* source);
 	void register_write_source(WriteSource* source);
@@ -66,6 +66,8 @@ public:
 	trav_time_t get_cpu_time();
 	int get_write_buffers_fill_status();
 	int get_read_buffers_fill_status();
+	int get_output_rate() {return m_outputRate;}
+	DecodeBuffer* get_resample_decode_buffer() {return m_resampleDecodeBuffer;}
 
 private:
 	Song* 			m_song;
@@ -88,6 +90,8 @@ private:
 	audio_sample_t*		framebuffer[2];
 	audio_sample_t*		m_readbuffer;
 	DecodeBuffer*		m_decodebuffer;
+	DecodeBuffer*		m_resampleDecodeBuffer;
+	int			m_outputRate;
 
 	
 	void update_time_usage();
