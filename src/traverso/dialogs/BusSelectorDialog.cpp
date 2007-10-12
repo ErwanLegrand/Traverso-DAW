@@ -109,13 +109,13 @@ void BusSelectorDialog::current_track_changed(int index)
 	if (list.size()) {
 		QListWidgetItem* item = list.at(0);
 		item->setSelected(true);
-		if (m_currentTrack->playback_left_channel() && m_currentTrack->playback_right_channel()) {
+/*		if (m_currentTrack->playback_left_channel() && m_currentTrack->playback_right_channel()) {
 			radioBothPlayback->setChecked(true);
 		} else if (m_currentTrack->playback_left_channel()) {
 			radioLeftOnlyPlayback->setChecked(true);
 		} else {
 			radioRightOnlyPlayback->setChecked(true);
-		}	
+		}	*/
 	}
 }
 
@@ -147,7 +147,7 @@ void BusSelectorDialog::accept()
 	if (list.size()) {
 		m_currentTrack->set_bus_out(list.at(0)->text().toAscii());
 		
-		if (radioBothPlayback->isChecked()) {
+/*		if (radioBothPlayback->isChecked()) {
 			m_currentTrack->set_playback_left_channel(true);
 			m_currentTrack->set_playback_right_channel(true);
 		} else if (radioLeftOnlyPlayback->isChecked()) {
@@ -156,7 +156,7 @@ void BusSelectorDialog::accept()
 		} else {
 			m_currentTrack->set_playback_left_channel(false);
 			m_currentTrack->set_playback_right_channel(true);
-		}
+		}*/
 	}
 	
 	hide();

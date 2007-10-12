@@ -209,7 +209,6 @@ private:
 	void start_seek();
 	void start_transport_rolling(bool realtime);
 	void stop_transport_rolling();
-	void assign_buses();
 	
 	void resize_buffer(bool updateArmStatus, nframes_t size);
 
@@ -220,6 +219,7 @@ private:
 public slots :
 	void seek_finished();
 	void audiodevice_client_removed(Client* );
+	void audiodevice_started();
 	void audiodevice_params_changed();
 	void set_gain(float gain);
 	

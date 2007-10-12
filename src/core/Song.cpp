@@ -111,6 +111,7 @@ Song::~Song()
 	delete [] gainbuffer;
 
 	delete m_diskio;
+	delete m_masterOut;
 	delete m_renderBus;
 	delete m_hs;
 	delete m_audiodeviceClient;
@@ -130,6 +131,7 @@ void Song::init()
 	connect(this, SIGNAL(seekStart()), m_diskio, SLOT(seek()), Qt::QueuedConnection);
 	connect(this, SIGNAL(prepareRecording()), this, SLOT(prepare_recording()));
 	connect(&audiodevice(), SIGNAL(clientRemoved(Client*)), this, SLOT (audiodevice_client_removed(Client*)));
+	connect(&audiodevice(), SIGNAL(started()), this, SLOT(audiodevice_started()));
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(audiodevice_params_changed()), Qt::DirectConnection);
 	connect(m_diskio, SIGNAL(seekFinished()), this, SLOT(seek_finished()), Qt::QueuedConnection);
 	connect (m_diskio, SIGNAL(readSourceBufferUnderRun()), this, SLOT(handle_diskio_readbuffer_underrun()));
@@ -137,12 +139,8 @@ void Song::init()
 	connect(this, SIGNAL(transferStarted()), m_diskio, SLOT(start_io()));
 	connect(this, SIGNAL(transferStopped()), m_diskio, SLOT(stop_io()));
 
-	m_playBackBus = 0;
-	m_masterOut = 0;
-	// Not entirely true, but this assigns the playback bus!
-	assign_buses();
-	
 	mixdown = gainbuffer = 0;
+	m_masterOut = new AudioBus("Master Out", 2);
 	m_renderBus = new AudioBus("Render Bus", 2);
 	resize_buffer(false, audiodevice().get_buffer_size());
 	m_hs = new QUndoStack(pm().get_undogroup());
@@ -150,6 +148,8 @@ void Song::init()
 	m_acmanager = new AudioClipManager(this);
 	
 	set_context_item( m_acmanager );
+
+	m_playBackBus = audiodevice().get_playback_bus("Playback 1");
 
 	m_transport = m_stopTransport = m_resumeTransport = m_readyToRecord = false;
 	snaplist = new SnapList(this);
@@ -770,14 +770,10 @@ int Song::process( nframes_t nframes )
 		return 0;
 	}
 
-	for (int chan=0; chan<m_masterOut->get_channel_count(); ++chan) {
-		Mixer::apply_gain_to_buffer(m_masterOut->get_buffer(chan, nframes), nframes, get_gain());
-	}
-	
 	// Mix the result into the AudioDevice "physical" buffers
 	if (m_playBackBus) {
-		Mixer::mix_buffers_no_gain(m_playBackBus->get_buffer(0, nframes), m_masterOut->get_buffer(0, nframes), nframes);
-		Mixer::mix_buffers_no_gain(m_playBackBus->get_buffer(1, nframes), m_masterOut->get_buffer(1, nframes), nframes);
+		Mixer::mix_buffers_with_gain(m_playBackBus->get_buffer(0, nframes), m_masterOut->get_buffer(0, nframes), nframes, get_gain());
+		Mixer::mix_buffers_with_gain(m_playBackBus->get_buffer(1, nframes), m_masterOut->get_buffer(1, nframes), nframes, get_gain());
 		
 		m_pluginChain->process_post_fader(m_masterOut, nframes);
 	}
@@ -941,25 +937,8 @@ void Song::resize_buffer(bool updateArmStatus, nframes_t size)
 	}
 }
 
-void Song::assign_buses()
-{
-	if (m_masterOut) {
-// 		m_masterOut->set_monitor_peaks(false);
-	}
-	m_playBackBus = audiodevice().get_playback_bus("Playback 1");
-	m_masterOut = audiodevice().get_playback_bus("Master Out");
-	if (m_masterOut) {
-		m_masterOut->set_monitor_peaks(true);
-	}
-	foreach(Track* track, m_tracks) {
-		track->assign_buses();
-	}
-}
-
 void Song::audiodevice_params_changed()
 {
-	assign_buses();
-	
 	resize_buffer(true, audiodevice().get_buffer_size());
 	
 	// The samplerate possibly has been changed, this initiates
@@ -1040,6 +1019,11 @@ void Song::handle_diskio_writebuffer_overrun( )
 		info().critical(tr("Hard Disk overload detected!"));
 		info().critical(tr("Failed to empty WriteBuffer in time"));
 	}
+}
+
+void Song::audiodevice_started( )
+{
+	m_playBackBus = audiodevice().get_playback_bus("Playback 1");
 }
 
 const TimeRef& Song::get_last_location() const
@@ -1350,3 +1334,4 @@ void Song::seek_finished()
 }
 
 
+// eof

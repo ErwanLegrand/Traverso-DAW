@@ -52,11 +52,10 @@ Track::Track(Song* song, const QString& name, int height )
 	m_sortIndex = -1;
 	m_id = create_id();
 	
+	busIn = "Capture 1";
+	busOut = "MasterOut";
+	
 	init();
-
-	m_busInName = "Capture 1";
-	m_busOutName = "Master Out";
-	set_bus_out(m_busOutName);
 }
 
 Track::Track( Song * song, const QDomNode node)
@@ -81,8 +80,7 @@ void Track::init()
 	m_pluginChain = new PluginChain(this, m_song);
 	m_fader = m_pluginChain->get_fader();
 	m_fader->set_gain(1.0);
-	m_captureRightChannel = m_captureLeftChannel = m_playbackRightChannel = m_playbackLeftChannel = true;
-	m_outBus = 0;
+	m_captureRightChannel = m_captureLeftChannel = true;
 }
 
 QDomNode Track::get_state( QDomDocument doc, bool istemplate)
@@ -99,12 +97,10 @@ QDomNode Track::get_state( QDomDocument doc, bool istemplate)
 	node.setAttribute("height", m_height);
 	node.setAttribute("sortindex", m_sortIndex);
 	node.setAttribute("numtakes", numtakes);
-	node.setAttribute("InBus", m_busInName.data());
-	node.setAttribute("OutBus", m_busOutName.data());
+	node.setAttribute("InBus", busIn.data());
+	node.setAttribute("OutBus", busOut.data());
 	node.setAttribute("CaptureLeftChannel", m_captureLeftChannel);
 	node.setAttribute("CaptureRightChannel", m_captureRightChannel);
-	node.setAttribute("PlaybackLeftChannel", m_playbackLeftChannel);
-	node.setAttribute("PlaybackRightChannel", m_playbackRightChannel);
 
 	if (! istemplate ) {
 		QDomNode clips = doc.createElement("Clips");
@@ -153,16 +149,9 @@ int Track::set_state( const QDomNode & node )
 	numtakes = e.attribute( "numtakes", "").toInt();
 	m_captureRightChannel = e.attribute("CaptureRightChannel", "1").toInt();
 	m_captureLeftChannel =  e.attribute("CaptureLeftChannel", "1").toInt();
-	m_playbackRightChannel = e.attribute("PlaybackRightChannel", "1").toInt();
-	m_playbackLeftChannel =  e.attribute("PlaybackLeftChannel", "1").toInt();
-	
 	// never ever allow both to be 0 at the same time!
 	if ( ! (m_captureRightChannel || m_captureLeftChannel) ) {
 		m_captureRightChannel = m_captureLeftChannel = 1;
-	}
-	// never ever allow both to be 0 at the same time!
-	if ( ! (m_playbackRightChannel || m_playbackLeftChannel) ) {
-		m_playbackRightChannel = m_playbackLeftChannel = 1;
 	}
 
 	QDomElement ClipsNode = node.firstChildElement("Clips");
@@ -253,7 +242,7 @@ int Track::arm()
 {
 	PENTER;
 	set_armed(true);
-	AudioBus* bus = audiodevice().get_capture_bus(m_busInName);
+	AudioBus* bus = audiodevice().get_capture_bus(busIn);
 	if (bus) {
 		bus->set_monitor_peaks(true);
 	}
@@ -265,7 +254,7 @@ int Track::disarm()
 {
 	PENTER;
 	set_armed(false);
-	AudioBus* bus = audiodevice().get_capture_bus(m_busInName);
+	AudioBus* bus = audiodevice().get_capture_bus(busIn);
 	if (bus) {
 		bus->set_monitor_peaks(false);
 	}
@@ -277,7 +266,7 @@ void Track::set_bus_in(QByteArray bus)
 	bool wasArmed=isArmed;
 	if (isArmed)
 		disarm();
-	m_busInName=bus;
+	busIn=bus;
 	if (wasArmed) {
 		arm();
 	}
@@ -287,37 +276,8 @@ void Track::set_bus_in(QByteArray bus)
 
 void Track::set_bus_out(QByteArray bus)
 {
-	PENTER;
-	AudioBus* newbus = audiodevice().get_playback_bus(bus);
-	if (newbus) {
-		newbus->set_monitor_peaks(true);
-	} else {
-		info().warning(tr("Track: Cannot assign OutBus to %1, it does not exist!").arg(bus.data()));
-	}
-	
-	if (m_outBus && !(m_busOutName.data() == QString("Out Bus"))) {
-		m_outBus->set_monitor_peaks(false);
-	}
-	
-	m_busOutName=bus;
-	
-	if (m_song->is_transport_rolling()) {
-		THREAD_SAVE_INVOKE(this, newbus, private_assign_out_bus(AudioBus*));
-	} else {
-		private_assign_out_bus(newbus);
-	}
-	
+	busOut=bus;
 	emit outBusChanged();
-}
-
-void Track::private_assign_out_bus(AudioBus* bus)
-{
-	PENTER;
-	m_outBus = bus;
-	// fallback to master out if bus does not exist!
-	if (!m_outBus) {
-		m_outBus = m_song->get_master_out();
-	}
 }
 
 bool Track::is_solo()
@@ -360,7 +320,7 @@ AudioClip* Track::init_recording()
 	clip->set_track(this);
 	clip->set_track_start_location(m_song->get_transport_location());
 	
-	if (clip->init_recording(m_busInName) < 0) {
+	if (clip->init_recording(busIn) < 0) {
 		PERROR("Could not create AudioClip to record to!");
 		resources_manager()->destroy_clip(clip);
 		return 0;
@@ -498,7 +458,7 @@ int Track::process( nframes_t nframes )
 	processResult |= m_pluginChain->process_post_fader(bus, nframes);
 		
 	for (int i=0; i<bus->get_channel_count(); ++i) {
-		Mixer::mix_buffers_no_gain(m_outBus->get_buffer(i, nframes), bus->get_buffer(i, nframes), nframes);
+		Mixer::mix_buffers_no_gain(m_song->get_master_out()->get_buffer(i, nframes), bus->get_buffer(i, nframes), nframes);
 	}
 	
 	return processResult;
@@ -606,19 +566,5 @@ void Track::set_capture_right_channel(bool capture)
 	emit inBusChanged();
 }
 
-void Track::set_playback_right_channel(bool play)
-{
-	m_playbackRightChannel = play;
-	emit outBusChanged();
-}
+// eof
 
-void Track::set_playback_left_channel(bool play)
-{
-	m_playbackLeftChannel = play;
-	emit outBusChanged();
-}
-
-void Track::assign_buses( )
-{
-	set_bus_out(m_busOutName);
-}

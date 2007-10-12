@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.21 2007/10/08 20:46:49 r_sijrier Exp $
+$Id: AudioDevice.h,v 1.22 2007/10/12 08:52:13 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -71,7 +71,10 @@ public:
 	 * @param name The name of the Playback Bus 
 	 * @return An AudioBus if one exists with name \a name, 0 on failure
 	 */
-	AudioBus* get_playback_bus(QByteArray name) const;
+	AudioBus* get_playback_bus(QByteArray name) const
+	{
+		return playbackBuses.value(name);
+	}
 	
 	/**
 	 * Get the Capture AudioBus instance with name \a name.
@@ -83,11 +86,10 @@ public:
 	 * @param name The name of the Capture Bus
 	 * @return An AudioBus if one exists with name \a name, 0 on failure
 	 */
-	AudioBus* get_capture_bus(QByteArray name) const {
-		return m_captureBuses.value(name);
+	AudioBus* get_capture_bus(QByteArray name) const
+	{
+		return captureBuses.value(name);
 	}
-	
-	AudioBus* create_virtual_playback_bus(QByteArray name, int channelcount);
 
 	QStringList get_capture_buses_names() const;
 	QStringList get_playback_buses_names() const;
@@ -137,19 +139,17 @@ private:
 	friend class AudioDeviceThread;
 
 
-	Driver* 				m_driver;
-	AudioDeviceThread* 			m_audioThread;
-	QList<Client *> 			m_clients;
-	QHash<QByteArray, AudioChannel* >	m_playbackChannels;
-	QHash<QByteArray, AudioChannel* >	m_captureChannels;
-	QHash<QByteArray, AudioBus* >		m_playbackBuses;
-	QHash<QByteArray, AudioBus* >		m_captureBuses;
-	QHash<QByteArray, AudioBus* >		m_virtualPlaybackBuses;
-	QStringList				m_availableDrivers;
+	Driver* 				driver;
+	AudioDeviceThread* 			audioThread;
+	QList<Client *> 			clients;
+	QHash<QByteArray, AudioChannel* >	playbackChannels;
+	QHash<QByteArray, AudioChannel* >	captureChannels;
+	QHash<QByteArray, AudioBus* >		playbackBuses;
+	QHash<QByteArray, AudioBus* >		captureBuses;
+	QStringList				availableDrivers;
 	QTimer					m_xrunResetTimer;
-	
 #if defined (JACK_SUPPORT)
-	QTimer					m_jackShutDownChecker;
+	QTimer					jackShutDownChecker;
 	JackDriver* slaved_jack_driver();
 	friend class JackDriver;
 #endif
@@ -196,7 +196,7 @@ private:
 
 	Driver* get_driver() const
 	{
-		return m_driver;
+		return driver;
 	}
 
 	void mili_sleep(int msec);
