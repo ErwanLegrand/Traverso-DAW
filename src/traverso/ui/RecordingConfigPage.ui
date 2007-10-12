@@ -1,0 +1,258 @@
+<ui version="4.0" >
+ <class>RecordingConfigPage</class>
+ <widget class="QWidget" name="RecordingConfigPage" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>425</width>
+    <height>304</height>
+   </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy>
+    <hsizetype>5</hsizetype>
+    <vsizetype>5</vsizetype>
+    <horstretch>0</horstretch>
+    <verstretch>1</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>0</number>
+   </property>
+   <property name="spacing" >
+    <number>9</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="title" >
+      <string>Recording</string>
+     </property>
+     <layout class="QVBoxLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item>
+       <layout class="QHBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label" >
+          <property name="text" >
+           <string>Encoding format</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QComboBox" name="encodingComboBox" />
+        </item>
+        <item>
+         <widget class="QPushButton" name="encodingInfoPushButton" >
+          <property name="text" >
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="wacpackGroupBox" >
+        <property name="title" >
+         <string>WavPack options</string>
+        </property>
+        <layout class="QVBoxLayout" >
+         <property name="margin" >
+          <number>9</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item>
+          <layout class="QHBoxLayout" >
+           <property name="margin" >
+            <number>0</number>
+           </property>
+           <property name="spacing" >
+            <number>6</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_4" >
+             <property name="text" >
+              <string>Compression type</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="wavpackCompressionComboBox" />
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="wavpackUseAlmostLosslessCheckBox" >
+           <property name="text" >
+            <string>Use almost lossless compression</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2" >
+     <property name="title" >
+      <string>Resampling</string>
+     </property>
+     <layout class="QVBoxLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item>
+       <widget class="QCheckBox" name="useResamplingCheckBox" >
+        <property name="text" >
+         <string>Enable on the fly resampling</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item>
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>0</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="label_3" >
+            <property name="text" >
+             <string>On the fly resample quality</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_2" >
+            <property name="text" >
+             <string>Default export resample quality</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>0</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QComboBox" name="ontheflyResampleComboBox" >
+            <item>
+             <property name="text" >
+              <string>Best</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>High</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Medium</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Fast</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="exportDefaultResampleQualityComboBox" >
+            <item>
+             <property name="text" >
+              <string>Best</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>High</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Medium</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Fast</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>16</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
