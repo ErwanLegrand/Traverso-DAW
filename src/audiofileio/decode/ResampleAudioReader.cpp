@@ -213,11 +213,16 @@ nframes_t ResampleAudioReader::read_private(DecodeBuffer* buffer, nframes_t fram
 		// Copy pre-existing overflow into the buffer
 		for (int chan = 0; chan < m_channels; chan++) {
 			memcpy(m_resampleDecodeBuffer->destination[chan], m_overflowBuffers[chan], m_overflowUsed * sizeof(audio_sample_t));
-			m_resampleDecodeBuffer->destination[chan] += m_overflowUsed;
 		}
 	}
 		
 	if (!m_reader->eof()) {
+		if (m_overflowUsed) {
+			for (int chan = 0; chan < m_channels; chan++) {
+				m_resampleDecodeBuffer->destination[chan] += m_overflowUsed;
+			}
+		}
+		
 		bufferUsed += m_reader->read(m_resampleDecodeBuffer, fileCnt + m_readExtraFrames - m_overflowUsed);
 		
 		if (m_overflowUsed) {
