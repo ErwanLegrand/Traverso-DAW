@@ -156,7 +156,7 @@ void ResampleAudioReader::set_output_rate(int rate)
 	m_nframes = file_to_resampled_frame(m_reader->get_nframes());
 	m_length = TimeRef(m_nframes, m_outputRate);
 	
-// 	reset();
+	reset();
 }
 
 
@@ -203,27 +203,27 @@ nframes_t ResampleAudioReader::read_private(DecodeBuffer* buffer, nframes_t fram
 		m_resampleDecodeBufferIsMine = true;
 	}
 
-	// Make sure the buffer has large enough resampleBuffers
-// 	buffer->check_resamplebuffer_capacity(fileCnt + m_readExtraFrames);
-	m_resampleDecodeBuffer->check_buffers_capacity(fileCnt + m_readExtraFrames, m_channels);
-	
+	if (!m_resampleDecodeBuffer->destination) {
+		reset();
+	}
 	
 	bufferUsed = m_overflowUsed;
+	
 	if (m_overflowUsed) {
 		// Copy pre-existing overflow into the buffer
 		for (int chan = 0; chan < m_channels; chan++) {
-// 			memcpy(buffer->resampleBuffer[chan], m_overflowBuffers[chan], m_overflowUsed * sizeof(audio_sample_t));
 			memcpy(m_resampleDecodeBuffer->destination[chan], m_overflowBuffers[chan], m_overflowUsed * sizeof(audio_sample_t));
+			m_resampleDecodeBuffer->destination[chan] += m_overflowUsed;
 		}
 	}
 		
 	if (!m_reader->eof()) {
-		for (int chan = 0; chan < m_channels; chan++) {
-			m_resampleDecodeBuffer->destination[chan] += m_overflowUsed;
-		}
 		bufferUsed += m_reader->read(m_resampleDecodeBuffer, fileCnt + m_readExtraFrames - m_overflowUsed);
-		for (int chan = 0; chan < m_channels; chan++) {
-			m_resampleDecodeBuffer->destination[chan] -= m_overflowUsed;
+		
+		if (m_overflowUsed) {
+			for (int chan = 0; chan < m_channels; chan++) {
+				m_resampleDecodeBuffer->destination[chan] -= m_overflowUsed;
+			}
 		}
 		//printf("Resampler: Read %lu of %lu (%lu)\n", bufferUsed, fileCnt + OVERFLOW_SIZE - m_overflowUsed, m_reader->get_length());
 	}
@@ -242,7 +242,6 @@ nframes_t ResampleAudioReader::read_private(DecodeBuffer* buffer, nframes_t fram
 	
 	for (int chan = 0; chan < m_channels; chan++) {
 		// Set up sample rate converter struct for s.r.c. processing
-// 		m_srcData.data_in = buffer->resampleBuffer[chan];
 		m_srcData.data_in = m_resampleDecodeBuffer->destination[chan];
 		m_srcData.input_frames = bufferUsed;
 		m_srcData.data_out = buffer->destination[chan];

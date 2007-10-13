@@ -180,22 +180,24 @@ DecodeBuffer::DecodeBuffer()
 
 void DecodeBuffer::check_buffers_capacity(uint size, uint channels)
 {
-/*	m_bufferSizeCheckCounter++;
+	m_bufferSizeCheckCounter++;
 	m_totalCheckSize += size;
 	
-	if (((m_totalCheckSize / m_bufferSizeCheckCounter) + 128) < destinationBufferSize) {
+	float meanvalue = (m_totalCheckSize / (float)m_bufferSizeCheckCounter);
+	
+	if (meanvalue < destinationBufferSize && ((meanvalue + 256) < destinationBufferSize) && !(destinationBufferSize == size)) {
 		m_smallerReadCounter++;
-		if (m_smallerReadCounter > 5) {
-			// Force recreation of the buffers;
-			destinationBufferSize = 0;
+		if (m_smallerReadCounter > 8) {
+// 			Force recreation of the buffers;
+			destinationBufferSize = readBufferSize = 0;
 			m_bufferSizeCheckCounter = m_smallerReadCounter = 0;
 			m_totalCheckSize = 0;
 		}
-	}*/
+	}
 				
 		
-	if ((destinationBufferSize < size || m_channels < channels)) {
-			
+	if (destinationBufferSize < size || m_channels < channels) {
+		
 		delete_destination_buffers();
 			
 		m_channels = channels;
@@ -207,7 +209,7 @@ void DecodeBuffer::check_buffers_capacity(uint size, uint channels)
 		}
 			
 		destinationBufferSize = size;
-// 		printf("resizing destination to %.3f KB\n", (float)size*4/1024);
+// 		printf("id %lld :: resizing destination to %.3f KB\n", id, (float)size*4/1024);
 	}
 		
 	if (readBufferSize < (size*m_channels)) {

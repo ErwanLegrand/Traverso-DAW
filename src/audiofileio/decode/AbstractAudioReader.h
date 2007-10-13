@@ -45,9 +45,8 @@ public:
 private:
 	uint m_channels;
 	uint m_smallerReadCounter;
-	long m_totalCheckSize;
+	quint64 m_totalCheckSize;
 	uint m_bufferSizeCheckCounter;
-	bool m_childReadActive;
 	
 	void delete_destination_buffers();
 	void delete_readbuffer();

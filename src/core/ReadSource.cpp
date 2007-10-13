@@ -535,7 +535,7 @@ void ReadSource::finish_resync()
 void ReadSource::sync(DecodeBuffer* buffer)
 {
 	PENTER2;
-	printf("source::sync: %s\n", QS_C(m_fileName));
+// 	printf("source::sync: %s\n", QS_C(m_fileName));
 	
 	if (!m_audioReader) {
 		return;
