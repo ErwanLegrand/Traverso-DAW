@@ -129,7 +129,7 @@ void PlayHead::update_position()
 {
 	QPointF newPos(m_song->get_transport_location() / m_sv->timeref_scalefactor, 1);
 	
-	if (newPos != pos() && (m_animation.state() != QTimeLine::Running)) {
+	if (int(newPos.x()) != int(pos().x()) && (m_animation.state() != QTimeLine::Running)) {
 		setPos(newPos);
 	} else {
 		return;
