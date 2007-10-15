@@ -102,6 +102,17 @@ Peak::~Peak()
 		if (data->normFile.isOpen()) {
 			QFile::remove(data->normFileName);
 		}
+#if QT_VERSION < 0x040400
+#if defined Q_WS_X11 || Q_WS_MAC
+		if (data->memory) {
+			uchar *start = data->memory - data->maps[data->memory].first;
+			int len = data->maps[data->memory].second;
+			if (-1 == munmap(start, len)) {
+			}
+			data->maps.remove(data->memory);
+		}
+#endif
+#endif
 		delete data;
 	}
 }
@@ -129,7 +140,21 @@ int Peak::read_header()
 #if QT_VERSION >= 0x040400
 		data->memory = data->file.map(0, data->file.size());
 		if (data->memory) {
-			PMESG3("Peak:: sucessfully mapped data into memory (%s)", QS_C(data->fileName));
+			PMESG3("Peak:: sucessfully mapped data into memory (%s)\n", QS_C(data->fileName));
+		}
+#else if defined Q_WS_X11 || Q_WS_MAC
+		int offset = 0;
+		int size = data->file.size();
+		int pagesSize = getpagesize();
+		int realOffset = offset / pagesSize;
+		int extra = offset % pagesSize;
+
+		void *mapAddress = mmap((void*)0, (size_t)size + extra,
+					 PROT_READ, MAP_SHARED, data->file.handle(), realOffset * pagesSize);
+		if (MAP_FAILED != mapAddress) {
+			uchar *address = extra + static_cast<uchar*>(mapAddress);
+			data->memory = address;
+			data->maps[address] = QPair<int,int>(extra, size);
 		}
 #endif
 		
@@ -918,6 +943,7 @@ nframes_t PeakDataReader::read(DecodeBuffer* buffer, nframes_t count)
 	peak_data_t* readbuffer;
 	
 	if (m_d->memory) {
+// 		printf("using memory mapped read\n");
 		readbuffer = (peak_data_t*)(m_d->memory + m_readPos*sizeof(peak_data_t));
 		framesRead = count;
 	} else {

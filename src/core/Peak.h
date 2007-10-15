@@ -170,6 +170,7 @@ private:
 		ProcessData* 	pd;
 		DecodeBuffer*	peakdataDecodeBuffer;
 		uchar*		memory;
+		QHash<uchar *, QPair<int /*offset*/, int /*handle|len*/> > maps;
 	};
 	
 	QList<ChannelData* >	m_channelData;
