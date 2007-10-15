@@ -55,7 +55,8 @@ HEADERS += \
 	widgets/ResourcesWidget.h \
 	dialogs/AudioClipEditDialog.h \
 	dialogs/RestoreProjectBackupDialog.h \
-	dialogs/ProjectConverterDialog.h 
+	dialogs/ProjectConverterDialog.h  \
+	dialogs/ExportDialog.h
 SOURCES += \
 	Traverso.cpp \
 	BusMonitor.cpp \
@@ -86,7 +87,8 @@ SOURCES += \
 	widgets/ResourcesWidget.cpp \
 	dialogs/AudioClipEditDialog.cpp \
 	dialogs/RestoreProjectBackupDialog.cpp \
-	dialogs/ProjectConverterDialog.cpp
+	dialogs/ProjectConverterDialog.cpp \
+	dialogs/ExportDialog.cpp
 FORMS += ui/ExportWidget.ui \
 	ui/AudioSourcesManagerWidget.ui \
 	ui/SpectralMeterConfigWidget.ui \
@@ -112,7 +114,8 @@ FORMS += ui/ExportWidget.ui \
 	ui/InsertSilenceDialog.ui \
 	ui/AudioClipEditWidget.ui \
 	ui/RestoreProjectBackupDialog.ui \
-	ui/ProjectConverterDialog.ui
+	ui/ProjectConverterDialog.ui \
+	ui/ExportDialog.ui
 
 INCLUDEPATH += 	../core \
 		../commands \

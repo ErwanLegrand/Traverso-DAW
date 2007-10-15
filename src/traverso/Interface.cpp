@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <QTextStream>
+#include <QStackedWidget>
 
 #include "Interface.h"
 #include "BusMonitor.h"
@@ -41,7 +42,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "FadeCurve.h"
 #include "Config.h"
 #include "Plugin.h"
-#include "ExportWidget.h"
 #include "CorrelationMeterWidget.h"
 #include "SpectralMeterWidget.h"
 		
@@ -65,6 +65,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "dialogs/InsertSilenceDialog.h"
 #include "dialogs/RestoreProjectBackupDialog.h"
 #include "dialogs/ProjectConverterDialog.h"
+#include "dialogs/ExportDialog.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -166,7 +167,7 @@ Interface::Interface()
 	
 	// Some default values.
 	currentSongWidget = 0;
-	exportWidget = 0;
+	m_exportDialog = 0;
 	m_settingsdialog = 0;
 	m_projectManagerDialog = 0;
 	m_openProjectDialog = 0;
@@ -353,12 +354,12 @@ void Interface::changeEvent(QEvent *event)
 
 Command * Interface::show_export_widget( )
 {
-	if (! exportWidget) {
-		exportWidget = new ExportWidget(this);
+	if (! m_exportDialog) {
+		m_exportDialog = new ExportDialog(this);
 	}
-	if (exportWidget->isHidden()) {
-		exportWidget->set_was_closed();
-		exportWidget->show();
+	if (m_exportDialog->isHidden()) {
+// 		m_exportDialog->set_was_closed();
+		m_exportDialog->show();
 	}
 	return (Command*) 0;
 }

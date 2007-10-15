@@ -36,7 +36,7 @@ class ContextItem;
 class Command;
 
 class QLabel;
-class ExportWidget;
+class ExportDialog;
 class QStackedWidget;
 class QHBoxLayout;
 class QVBoxLayout;
@@ -100,7 +100,7 @@ private:
 	SongWidget*		currentSongWidget;
 	QList<ViewPort* > 	currentProjectViewPortList;
 	QHash<QString, QMenu*>	m_contextMenus;
-	ExportWidget*		exportWidget;
+	ExportDialog*		m_exportDialog;
 	QUndoView*		historyWidget;
 	QDockWidget* 		historyDW;
 	QDockWidget*		busMonitorDW;

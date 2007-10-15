@@ -643,7 +643,6 @@ void ReadSource::set_diskio(DiskIO * diskio)
 	set_output_rate(m_diskio->get_output_rate());
 	prepare_rt_buffers();
 	if (m_audioReader) {
-		printf("setting resample decode buffer\n");
 		m_audioReader->set_resample_decode_buffer(m_diskio->get_resample_decode_buffer());
 	}
 	
