@@ -22,7 +22,6 @@
 #include "CDWritingDialog.h"
 
 #include <QMessageBox>
-#include <QProcess>
 
 #include "Export.h"
 #include "Config.h"
@@ -227,7 +226,7 @@ void CDWritingDialog::cdrdao_process_started()
 
 }
 
-void CDWritingDialog::cdrdao_process_finished(int exitcode, int exitstatus)
+void CDWritingDialog::cdrdao_process_finished(int exitcode, QProcess::ExitStatus exitstatus)
 {
 	if (exitstatus == QProcess::CrashExit) {
 		update_cdburn_status(tr("CD Burn process failed!"), ERROR_MESSAGE);

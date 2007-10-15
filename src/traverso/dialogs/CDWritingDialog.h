@@ -26,6 +26,7 @@
 
 #include <QDialog>
 #include <QCloseEvent>
+#include <QProcess>
 
 class Project;
 class Song;
@@ -86,7 +87,7 @@ private slots:
 	void stop_burn_process();
 	void read_standard_output();
 	void cdrdao_process_started();
-	void cdrdao_process_finished(int exitcode, int exitstatus);
+	void cdrdao_process_finished(int exitcode, QProcess::ExitStatus exitstatus);
 	void cd_export_finished();
 	void cd_export_progress(int progress);
 	void query_devices();
