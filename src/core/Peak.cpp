@@ -281,11 +281,7 @@ int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, TimeRef start
 	
 	ChannelData* data = m_channelData.at(chan);
 	
-// #define profile
-
-#if defined (profile)
-	trav_time_t starttime = get_microseconds();
-#endif
+// 	PROFILE_START;
 	
 	// Macro view mode
 	if ( zoomLevel > MAX_ZOOM_USING_SOURCEFILE) {
@@ -307,11 +303,8 @@ int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, TimeRef start
 			PERROR("Could not read in all peak data, pixelcount is %d, read count is %d", pixelcount, read);
 		}
 		
-#if defined (profile)
-		int processtime = (int) (get_microseconds() - starttime);
-		printf("Process time: %d useconds\n\n", processtime);
-#endif
-
+// 		PROFILE_END("Peak calculate_peaks");
+		
 		if (read == 0) {
 			return NO_PEAKDATA_FOUND;
 		}
@@ -369,10 +362,7 @@ int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, TimeRef start
 		} while(count < pixelcount);
 
 
-#if defined (profile)
-		int processtime = (int) (get_microseconds() - starttime);
-		printf("Process time: %d useconds\n\n", processtime);
-#endif
+// 		PROFILE_END("Peak calculate_peaks");		
 		
 		// Assign the supplied buffer to the 'real' peakdata buffer.
 		*buffer = peakdata;
@@ -604,11 +594,8 @@ int Peak::create_from_scratch()
 {
 	PENTER;
 	
-#define profile
-
-#if defined (profile)
-	trav_time_t starttime = get_microseconds();
-#endif
+// PROFILE_START;
+	
 	int ret = -1;
 	
 	if (prepare_processing(m_source->get_file_rate()) < 0) {
@@ -678,10 +665,7 @@ int Peak::create_from_scratch()
 	
 out:
 	 
-#if defined (profile)
-	long processtime = (long) (get_microseconds() - starttime);
-	printf("Process time: %d seconds\n\n", (int)(processtime/1000));
-#endif
+// 	PROFILE_END("Peak create from scratch");
 	
 	m_source->set_output_rate(44100, true);
 
@@ -942,8 +926,9 @@ nframes_t PeakDataReader::read(DecodeBuffer* buffer, nframes_t count)
 	int framesRead = 0;
 	peak_data_t* readbuffer;
 	
+// 	PROFILE_START;
+	
 	if (m_d->memory) {
-// 		printf("using memory mapped read\n");
 		readbuffer = (peak_data_t*)(m_d->memory + m_readPos*sizeof(peak_data_t));
 		framesRead = count;
 	} else {
@@ -954,6 +939,8 @@ nframes_t PeakDataReader::read(DecodeBuffer* buffer, nframes_t count)
 	for (int f = 0; f < framesRead; f++) {
 		buffer->destination[0][f] = float(readbuffer[f]);
 	}
+	
+// 	PROFILE_END("peakdata reader read");
 
 	m_readPos += framesRead;
 	
