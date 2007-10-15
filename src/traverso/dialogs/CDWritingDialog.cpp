@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2007 Remon Sijrier 
+    Copyright (C) 2007 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -19,19 +19,18 @@
 
 */
 
-#include "ExportWidget.h"
-#include "ui_ExportWidget.h"
+#include "CDWritingDialog.h"
 
-#include "libtraversocore.h"
-
-#include <QFileDialog>
-#include <QByteArray>
 #include <QMessageBox>
-#include <QDebug>
+#include <QProcess>
 
 #include "Export.h"
 #include "Config.h"
-#include <AudioDevice.h>
+#include "AudioDevice.h"
+#include "Project.h"
+#include "ProjectManager.h"
+#include "Information.h"
+#include "Utils.h"
 
 
 #if defined (Q_WS_WIN)
@@ -40,18 +39,11 @@
 #define CDRDAO_BIN	"cdrdao"
 #endif
 
-RELAYTOOL_WAVPACK
-RELAYTOOL_FLAC
-RELAYTOOL_MP3LAME
-RELAYTOOL_VORBISENC
-
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-
-
-ExportWidget::ExportWidget( QWidget * parent )
+CDWritingDialog::CDWritingDialog( QWidget * parent )
 	: QDialog(parent)
 	, m_burnprocess(0)
 	, m_exportSpec(0)
@@ -59,118 +51,11 @@ ExportWidget::ExportWidget( QWidget * parent )
         setupUi(this);
 
 	stopButton->hide();
-	QIcon icon = QApplication::style()->standardIcon(QStyle::SP_DirClosedIcon);
-	fileSelectButton->setIcon(icon);
-	
 	set_project(pm().get_project());
 	
-	//bitdepthComboBox->addItem("8", 8);
-	bitdepthComboBox->addItem("16", 16);
-	bitdepthComboBox->addItem("24", 24);
-	bitdepthComboBox->addItem("32", 32);
-	bitdepthComboBox->addItem("32 (float)", 1);
-	
-	channelComboBox->addItem("Mono", 1);
-	channelComboBox->addItem("Stereo", 2);
-	
-	sampleRateComboBox->addItem("8.000 Hz", 8000);
-	sampleRateComboBox->addItem("11.025 Hz", 11025);
-	sampleRateComboBox->addItem("22.050 Hz", 22050);
-	sampleRateComboBox->addItem("44.100 Hz", 44100);
-	sampleRateComboBox->addItem("48.000 Hz", 48000);
-	sampleRateComboBox->addItem("88.200 Hz", 88200);
-	sampleRateComboBox->addItem("96.000 Hz", 96000);
-	
-	audioTypeComboBox->addItem("WAV", "wav");
-	audioTypeComboBox->addItem("AIFF", "aiff");
-	if (libFLAC_is_present) {
-		audioTypeComboBox->addItem("FLAC", "flac");
-	}
-	if (libwavpack_is_present) {
-		audioTypeComboBox->addItem("WAVPACK", "wavpack");
-	}
-	if (libmp3lame_is_present) {
-		audioTypeComboBox->addItem("MP3", "mp3");
-	}
-	if (libvorbisenc_is_present) {
-		audioTypeComboBox->addItem("OGG", "ogg");
-	}
-	
-	bitdepthComboBox->setCurrentIndex(bitdepthComboBox->findData(16));
-	channelComboBox->setCurrentIndex(channelComboBox->findData(2));
-	
-	int rateIndex = sampleRateComboBox->findData(audiodevice().get_sample_rate());
-	if (rateIndex == -1) {
-		rateIndex = 0;
-	}
-	sampleRateComboBox->setCurrentIndex(rateIndex);
-	
-	show_settings_view();
-	
-	connect(buttonBox, SIGNAL(accepted()), this, SLOT(on_exportStartButton_clicked()));
-	connect(buttonBox, SIGNAL(rejected()), this, SLOT(on_cancelButton_clicked()));
 	connect(closeButton, SIGNAL(clicked()), this, SLOT(hide()));
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
-	connect(audioTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(audio_type_changed(int)));
-	
-	
-	// Mp3 Options Setup
-	mp3MethodComboBox->addItem("Constant Bitrate", "cbr");
-	mp3MethodComboBox->addItem("Average Bitrate", "abr");
-	mp3MethodComboBox->addItem("Variable Bitrate", "vbr-new");
-	
-	mp3MinBitrateComboBox->addItem("32 - recommended", "32");
-	mp3MinBitrateComboBox->addItem("64", "64");
-	mp3MinBitrateComboBox->addItem("96", "96");
-	mp3MinBitrateComboBox->addItem("128", "128");
-	mp3MinBitrateComboBox->addItem("160", "160");
-	mp3MinBitrateComboBox->addItem("192", "192");
-	mp3MinBitrateComboBox->addItem("256", "256");
-	mp3MinBitrateComboBox->addItem("320", "320");
-	
-	mp3MaxBitrateComboBox->addItem("32", "32");
-	mp3MaxBitrateComboBox->addItem("64", "64");
-	mp3MaxBitrateComboBox->addItem("96", "96");
-	mp3MaxBitrateComboBox->addItem("128", "128");
-	mp3MaxBitrateComboBox->addItem("160", "160");
-	mp3MaxBitrateComboBox->addItem("192", "192");
-	mp3MaxBitrateComboBox->addItem("256", "256");
-	mp3MaxBitrateComboBox->addItem("320", "320");
-	
-	mp3MethodComboBox->setCurrentIndex(mp3MethodComboBox->findData("vbr-new"));
-	mp3MinBitrateComboBox->setCurrentIndex(mp3MinBitrateComboBox->findData("32"));
-	mp3MaxBitrateComboBox->setCurrentIndex(mp3MaxBitrateComboBox->findData("192"));
-	
-	mp3OptionsGroupBox->hide();
-	connect(mp3MethodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(mp3_method_changed(int)));
-	
-	
-	// Ogg Options Setup
-	oggMethodComboBox->addItem("Constant Bitrate", "manual");
-	oggMethodComboBox->addItem("Variable Bitrate", "vbr");
-	
-	oggBitrateComboBox->addItem("45", "45");
-	oggBitrateComboBox->addItem("64", "64");
-	oggBitrateComboBox->addItem("96", "96");
-	oggBitrateComboBox->addItem("112", "112");
-	oggBitrateComboBox->addItem("128", "128");
-	oggBitrateComboBox->addItem("160", "160");
-	oggBitrateComboBox->addItem("192", "192");
-	oggBitrateComboBox->addItem("224", "224");
-	oggBitrateComboBox->addItem("256", "256");
-	oggBitrateComboBox->addItem("320", "320");
-	oggBitrateComboBox->addItem("400", "400");
-	
-	oggMethodComboBox->setCurrentIndex(oggMethodComboBox->findData("vbr"));
-	oggBitrateComboBox->setCurrentIndex(oggBitrateComboBox->findData("160"));
-	ogg_method_changed(oggMethodComboBox->findData("vbr"));
-	
-	oggOptionsGroupBox->hide();
-	connect(oggMethodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ogg_method_changed(int)));
-	
-	
-	// CD Burning stuff....
-	
+
 	m_burnprocess = new QProcess(this);
 	m_burnprocess->setProcessChannelMode(QProcess::MergedChannels);
 	QStringList env = QProcess::systemEnvironment();
@@ -195,256 +80,34 @@ ExportWidget::ExportWidget( QWidget * parent )
 	query_devices();
 }
 
-ExportWidget::~ ExportWidget( )
+CDWritingDialog::~ CDWritingDialog( )
 {}
 
 
-bool ExportWidget::is_safe_to_export()
+bool CDWritingDialog::is_safe_to_export()
 {
 	PENTER;
 	if (m_project->is_recording()) {
-		info().warning(tr("Export during recording is not supported!"));
+		info().warning(tr("CD Writing during recording is not supported!"));
 		return false;
-	}
-	
-	QDir exportDir;
-	QString dirName = exportDirName->text();
-	
-	if (!dirName.isEmpty() && !exportDir.exists(dirName)) {
-		if (!exportDir.mkpath(dirName)) {
-			info().warning(tr("Unable to create export directory! Please check permissions for this directory: %1").arg(dirName));
-			return false;
-		}
 	}
 	
 	return true;
 }
 
 
-void ExportWidget::audio_type_changed(int index)
+void CDWritingDialog::on_stopButton_clicked( )
 {
-	QString newType = audioTypeComboBox->itemData(index).toString();
-	
-	if (newType == "mp3") {
-		oggOptionsGroupBox->hide();
-		mp3OptionsGroupBox->show();
-	}
-	else if (newType == "ogg") {
-		mp3OptionsGroupBox->hide();
-		oggOptionsGroupBox->show();
-	}
-	else {
-		mp3OptionsGroupBox->hide();
-		oggOptionsGroupBox->hide();
-	}
-	
-	if (newType == "mp3" || newType == "ogg" || newType == "flac") {
-		bitdepthComboBox->setCurrentIndex(bitdepthComboBox->findData(16));
-		bitdepthComboBox->setDisabled(true);
-	}
-	else {
-		bitdepthComboBox->setEnabled(true);
-	}
-}
-
-
-void ExportWidget::mp3_method_changed(int index)
-{
-	QString method = mp3MethodComboBox->itemData(index).toString();
-	
-	if (method == "cbr") {
-		mp3MinBitrateComboBox->hide();
-		mp3MinBitrateLabel->hide();
-		mp3MaxBitrateLabel->setText(tr("Bitrate"));
-	}
-	else if (method == "abr") {
-		mp3MinBitrateComboBox->hide();
-		mp3MinBitrateLabel->hide();
-		mp3MaxBitrateLabel->setText(tr("Average Bitrate"));
-	}
-	else {
-		// VBR new or VBR old
-		mp3MinBitrateComboBox->show();
-		mp3MinBitrateLabel->show();
-		mp3MaxBitrateLabel->setText(tr("Maximum Bitrate"));
-	}
-}
-
-
-void ExportWidget::ogg_method_changed(int index)
-{
-	QString method = oggMethodComboBox->itemData(index).toString();
-	
-	if (method == "manual") {
-		oggBitrateComboBox->show();
-		oggBitrateLabel->show();
-		oggQualitySlider->hide();
-		oggQualityLabel->hide();
-	}
-	else {
-		// VBR
-		oggQualitySlider->show();
-		oggQualityLabel->show();
-		oggBitrateComboBox->hide();
-		oggBitrateLabel->hide();
-	}
-}
-
-
-void ExportWidget::on_exportStartButton_clicked( )
-{
-	if (!is_safe_to_export()) {
-		return;
-	}
-	
-	cdburningWidget->setEnabled(false);
-	
-	show_progress_view();
-	
-	// clear extraformats, it might be different now from previous runs!
-	m_exportSpec->extraFormat.clear();
-	
-	
-	QString audioType = audioTypeComboBox->itemData(audioTypeComboBox->currentIndex()).toString();
-	if (audioType == "wav") {
-		m_exportSpec->writerType = "sndfile";
-		m_exportSpec->extraFormat["filetype"] = "wav";
-	}
-	else if (audioType == "aiff") {
-		m_exportSpec->writerType = "sndfile";
-		m_exportSpec->extraFormat["filetype"] = "aiff";
-	}
-	else if (audioType == "flac") {
-		m_exportSpec->writerType = "flac";
-	}
-	else if (audioType == "wavpack") {
-		m_exportSpec->writerType = "wavpack";
-		m_exportSpec->extraFormat["quality"] = "high";
-		m_exportSpec->extraFormat["skip_wvx"] = "true";
-	}
-	else if (audioType == "mp3") {
-		m_exportSpec->writerType = "lame";
-		m_exportSpec->extraFormat["method"] = mp3MethodComboBox->itemData(mp3MethodComboBox->currentIndex()).toString();
-		m_exportSpec->extraFormat["minBitrate"] = mp3MinBitrateComboBox->itemData(mp3MinBitrateComboBox->currentIndex()).toString();
-		m_exportSpec->extraFormat["maxBitrate"] = mp3MaxBitrateComboBox->itemData(mp3MaxBitrateComboBox->currentIndex()).toString();
-		m_exportSpec->extraFormat["quality"] = QString::number(mp3QualitySlider->value());
-	}
-	else if (audioType == "ogg") {
-		m_exportSpec->writerType = "vorbis";
-		m_exportSpec->extraFormat["mode"] = oggMethodComboBox->itemData(oggMethodComboBox->currentIndex()).toString();
-		if (m_exportSpec->extraFormat["mode"] == "manual") {
-			m_exportSpec->extraFormat["bitrateNominal"] = oggBitrateComboBox->itemData(oggBitrateComboBox->currentIndex()).toString();
-			m_exportSpec->extraFormat["bitrateUpper"] = oggBitrateComboBox->itemData(oggBitrateComboBox->currentIndex()).toString();
-		}
-		else {
-			m_exportSpec->extraFormat["vbrQuality"] = QString::number(oggQualitySlider->value());
-		}
-	}
-	
-	m_exportSpec->data_width = bitdepthComboBox->itemData(bitdepthComboBox->currentIndex()).toInt();
-	m_exportSpec->channels = channelComboBox->itemData(channelComboBox->currentIndex()).toInt();
-	m_exportSpec->sample_rate = sampleRateComboBox->itemData(sampleRateComboBox->currentIndex()).toInt();
-	
-	//TODO Make a ComboBox for this one too!
-	m_exportSpec->dither_type = GDitherTri;
-	
-	//TODO Make a ComboBox for this one too!
-	m_exportSpec->src_quality = SRC_SINC_MEDIUM_QUALITY; // SRC_SINC_BEST_QUALITY  SRC_SINC_FASTEST  SRC_ZERO_ORDER_HOLD  SRC_LINEAR
-	
-	if (allSongsButton->isChecked()) {
-                m_exportSpec->allSongs = true;
-	} else {
-                m_exportSpec->allSongs = false;
-	}
-	
-	QString name = m_exportSpec->exportdir + "/";
-	QFileInfo fi(m_exportSpec->name);
-	name += fi.completeBaseName() + ".toc";
-	m_exportSpec->tocFileName = name;
-
-	m_exportSpec->normalize = normalizeCheckBox->isChecked();
-	m_exportSpec->isRecording = false;
-	m_project->export_project(m_exportSpec);
-}
-
-
-void ExportWidget::on_cancelButton_clicked()
-{
-	hide();
-}
-
-
-void ExportWidget::on_exportStopButton_clicked( )
-{
-	show_settings_view();
 	m_exportSpec->stop = true;
 	m_exportSpec->breakout = true;
 }
 
 
-void ExportWidget::on_fileSelectButton_clicked( )
-{
-	if (!m_project) {
-		info().information(tr("No project loaded, to export a project, load it first!"));
-		return;
-	}
-	
-	QString dirName = QFileDialog::getExistingDirectory(this, tr("Choose/create an export directory"), m_exportSpec->exportdir);
-	
-	if (!dirName.isEmpty()) {
-		exportDirName->setText(dirName);
-	}
-}
-
-
-void ExportWidget::update_song_progress( int progress )
-{
-	songProgressBar->setValue(progress);
-}
-
-void ExportWidget::update_overall_progress( int progress )
-{
-	overalProgressBar->setValue(progress);
-}
-
-void ExportWidget::render_finished( )
-{
-	songProgressBar->setValue(0);
-	overalProgressBar->setValue(0);
-	
-	show_settings_view();
-	
-	cdburningWidget->setEnabled(true);
-	
-	on_cancelButton_clicked();
-}
-
-void ExportWidget::set_exporting_song( Song * song )
-{
-	QString name = tr("Progress of Sheet ") + 
-		QString::number(m_project->get_song_index(song->get_id())) + ": " +
-		song->get_title();
-	
-	currentProcessingSongName->setText(name);
-}
-
-void ExportWidget::show_progress_view( )
-{
-	buttonBox->setEnabled(false);
-	stackedWidget->setCurrentIndex(1);
-}
-
-void ExportWidget::show_settings_view( )
-{
-	stackedWidget->setCurrentIndex(0);
-	buttonBox->setEnabled(true);
-}
-
-void ExportWidget::set_project(Project * project)
+void CDWritingDialog::set_project(Project * project)
 {
 	m_project = project;
 	if (! m_project) {
-		info().information(tr("No project loaded, to export a project, load it first!"));
+		info().information(tr("No project loaded, to write a project to CD, load it first!"));
 		setEnabled(false);
 		if (m_exportSpec) {
 			delete m_exportSpec;
@@ -459,16 +122,8 @@ void ExportWidget::set_project(Project * project)
 		m_exportSpec = new ExportSpecification;
 		m_exportSpec->exportdir = m_project->get_root_dir() + "/Export/";
 		m_exportSpec->renderfinished = false;
-		exportDirName->setText(m_exportSpec->exportdir);
-		
-		connect(m_project, SIGNAL(songExportProgressChanged(int)), this, SLOT(update_song_progress(int)));
-		connect(m_project, SIGNAL(overallExportProgressChanged(int)), this, SLOT(update_overall_progress(int)));
-		connect(m_project, SIGNAL(exportFinished()), this, SLOT(render_finished()));
-		connect(m_project, SIGNAL(exportStartedForSong(Song*)), this, SLOT (set_exporting_song(Song*)));
 	}
 }
-
-
 
 
 /****************************************************************/
@@ -476,7 +131,7 @@ void ExportWidget::set_project(Project * project)
 /****************************************************************/
 
 
-void ExportWidget::query_devices()
+void CDWritingDialog::query_devices()
 {
 	if ( ! (m_burnprocess->state() == QProcess::NotRunning) ) {
 		printf("query_devices: burnprocess still running!\n");
@@ -499,7 +154,7 @@ void ExportWidget::query_devices()
 #endif
 }
 
-void ExportWidget::unlock_device()
+void CDWritingDialog::unlock_device()
 {
 	if ( ! (m_burnprocess->state() == QProcess::NotRunning) ) {
 		return;
@@ -523,7 +178,7 @@ void ExportWidget::unlock_device()
 }
 
 
-void ExportWidget::stop_burn_process()
+void CDWritingDialog::stop_burn_process()
 {
 	PENTER;
 	
@@ -543,7 +198,7 @@ void ExportWidget::stop_burn_process()
 }
 
 
-void ExportWidget::start_burn_process()
+void CDWritingDialog::start_burn_process()
 {
 	PENTER;
 	
@@ -561,7 +216,7 @@ void ExportWidget::start_burn_process()
 }
 
 
-void ExportWidget::cdrdao_process_started()
+void CDWritingDialog::cdrdao_process_started()
 {
 	PENTER;
 	
@@ -572,7 +227,7 @@ void ExportWidget::cdrdao_process_started()
 
 }
 
-void ExportWidget::cdrdao_process_finished(int exitcode, QProcess::ExitStatus exitstatus)
+void CDWritingDialog::cdrdao_process_finished(int exitcode, int exitstatus)
 {
 	if (exitstatus == QProcess::CrashExit) {
 		update_cdburn_status(tr("CD Burn process failed!"), ERROR_MESSAGE);
@@ -611,7 +266,7 @@ void ExportWidget::cdrdao_process_finished(int exitcode, QProcess::ExitStatus ex
 	enable_ui_interaction();
 }
 
-void ExportWidget::cd_render()
+void CDWritingDialog::cd_render()
 {
 	PENTER;
 	
@@ -685,7 +340,7 @@ void ExportWidget::cd_render()
 	}
 }
 
-void ExportWidget::write_to_cd()
+void CDWritingDialog::write_to_cd()
 {
 	PENTER;
 
@@ -728,7 +383,7 @@ void ExportWidget::write_to_cd()
 #endif
 }
 
-void ExportWidget::cd_export_finished()
+void CDWritingDialog::cd_export_finished()
 {
 	PENTER;
 	disconnect(m_project, SIGNAL(overallExportProgressChanged(int)), this, SLOT(cd_export_progress(int)));
@@ -751,12 +406,12 @@ void ExportWidget::cd_export_finished()
 	write_to_cd();
 }
 
-void ExportWidget::cd_export_progress(int progress)
+void CDWritingDialog::cd_export_progress(int progress)
 {
 	progressBar->setValue(progress);
 }
 
-void ExportWidget::update_cdburn_status(const QString& message, int type)
+void CDWritingDialog::update_cdburn_status(const QString& message, int type)
 {
 	if (type == NORMAL_MESSAGE) {
 		QPalette palette;
@@ -773,7 +428,7 @@ void ExportWidget::update_cdburn_status(const QString& message, int type)
 	}
 }
 
-void ExportWidget::read_standard_output()
+void CDWritingDialog::read_standard_output()
 {
 	Q_ASSERT(m_burnprocess);
 	
@@ -901,23 +556,23 @@ void ExportWidget::read_standard_output()
 	printf("CD Writing: %s\n", QS_C(sout.trimmed()));
 }
 
-void ExportWidget::closeEvent(QCloseEvent * event)
+void CDWritingDialog::closeEvent(QCloseEvent * event)
 {
-	if (m_writingState != NO_STATE || !buttonBox->isEnabled()) {
+	if (m_writingState != NO_STATE) {
 		event->setAccepted(false);
 		return;
 	}
 	QDialog::closeEvent(event);
 }
 
-void ExportWidget::reject()
+void CDWritingDialog::reject()
 {
-	if (m_writingState == NO_STATE && buttonBox->isEnabled()) {
+	if (m_writingState == NO_STATE) {
 		hide();
 	}
 }
 
-void ExportWidget::export_only_changed(int state)
+void CDWritingDialog::export_only_changed(int state)
 {
 	if (state == Qt::Checked) {
 		burnGroupBox->setEnabled(false);
@@ -926,21 +581,17 @@ void ExportWidget::export_only_changed(int state)
 	}
 }
 
-void ExportWidget::disable_ui_interaction()
+void CDWritingDialog::disable_ui_interaction()
 {
 	closeButton->setEnabled(false);
-	exportWidget->setEnabled(false);
-	optionsGroupBox->setEnabled(false);
 	burnGroupBox->setEnabled(false);
 	startButton->hide();
 	stopButton->show();
 }
 
-void ExportWidget::enable_ui_interaction()
+void CDWritingDialog::enable_ui_interaction()
 {
 	m_writingState = NO_STATE;
-	exportWidget->setEnabled(true);
-	optionsGroupBox->setEnabled(true);
 	burnGroupBox->setDisabled(cdDiskExportOnlyCheckBox->isChecked());
 	closeButton->setEnabled(true);
 	startButton->show();
@@ -949,12 +600,12 @@ void ExportWidget::enable_ui_interaction()
 	progressBar->setValue(0);
 }
 
-void ExportWidget::set_was_closed()
+void CDWritingDialog::set_was_closed()
 {
 	m_wasClosed = true;
 }
 
-QString ExportWidget::get_device(int index)
+QString CDWritingDialog::get_device(int index)
 {
 	#if defined (Q_WS_MAC)
 		return cdDeviceComboBox->currentText();

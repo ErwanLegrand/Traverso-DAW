@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2007 Remon Sijrier 
+    Copyright (C) 2007 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -19,25 +19,25 @@
  
 */
 
-#ifndef EXPORTWIDGET_H
-#define EXPORTWIDGET_H
+#ifndef CD_WRITING_DIALOG_H
+#define CD_WRITING_DIALOG_H
 
-#include "ui_ExportWidget.h"
+#include "ui_CDWritingDialog.h"
 
 #include <QDialog>
-#include <QProcess>
 
 class Project;
 class Song;
 struct ExportSpecification;
+class QProcess;
 
-class ExportWidget : public QDialog, protected Ui::ExportWidget
+class CDWritingDialog : public QDialog, protected Ui::CDWritingDialog
 {
         Q_OBJECT
 
 public:
-        ExportWidget(QWidget* parent = 0);
-        ~ExportWidget();
+        CDWritingDialog(QWidget* parent = 0);
+        ~CDWritingDialog();
 	
 	void set_was_closed();
 	
@@ -50,7 +50,6 @@ private:
 	ExportSpecification* 	m_exportSpec;
 	
         void show_progress_view();
-        void show_settings_view();
 	
 	bool is_safe_to_export();
 	void cd_render();
@@ -80,26 +79,13 @@ private:
 
 private slots:
 	void set_project(Project* project);
-	void update_song_progress(int progress);
-	void update_overall_progress(int progress);
-	void render_finished();
-	void set_exporting_song(Song* song);
-
-	void on_fileSelectButton_clicked();
-	void on_exportStartButton_clicked();
-	void on_exportStopButton_clicked();
-	void on_cancelButton_clicked();
+	void on_stopButton_clicked();
 	void export_only_changed(int state);
-
-	void audio_type_changed(int index);
-	void mp3_method_changed(int index);
-	void ogg_method_changed(int index);
-
 	void start_burn_process();
 	void stop_burn_process();
 	void read_standard_output();
 	void cdrdao_process_started();
-	void cdrdao_process_finished(int exitcode, QProcess::ExitStatus exitstatus);
+	void cdrdao_process_finished(int exitcode, int exitstatus);
 	void cd_export_finished();
 	void cd_export_progress(int progress);
 	void query_devices();

@@ -66,6 +66,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "dialogs/RestoreProjectBackupDialog.h"
 #include "dialogs/ProjectConverterDialog.h"
 #include "dialogs/ExportDialog.h"
+#include "dialogs/CDWritingDialog.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -168,6 +169,7 @@ Interface::Interface()
 	// Some default values.
 	currentSongWidget = 0;
 	m_exportDialog = 0;
+	m_cdWritingDialog = 0;
 	m_settingsdialog = 0;
 	m_projectManagerDialog = 0;
 	m_openProjectDialog = 0;
@@ -364,6 +366,18 @@ Command * Interface::show_export_widget( )
 	return (Command*) 0;
 }
 
+Command * Interface::show_cd_writing_dialog( )
+{
+	if (! m_cdWritingDialog) {
+		m_cdWritingDialog = new CDWritingDialog(this);
+	}
+	if (m_cdWritingDialog->isHidden()) {
+// 		m_exportDialog->set_was_closed();
+		m_cdWritingDialog->show();
+	}
+	return (Command*) 0;
+}
+
 void Interface::create_menus( )
 {
 	QMenu* menu;
@@ -404,6 +418,13 @@ void Interface::create_menus( )
 	action->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
 	m_projectExportAction = action;
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_export_widget()));
+	
+	action = menu->addAction(tr("&CD Writing..."));
+	list.clear();
+	list.append(QKeySequence("F8"));
+	action->setShortcuts(list);
+	action->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_cd_writing_dialog()));
 	
 	action = menu->addAction(tr("&Restore Backup..."));
 	list.clear();

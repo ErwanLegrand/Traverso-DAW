@@ -29,7 +29,6 @@ HEADERS += \
 	ContextDialog.h \
 	FadeContextDialog.h \
 	Main.h \
-	ExportWidget.h \
 	PluginSelectorDialog.h \
 	Traverso.h \
 	Interface.h \
@@ -56,14 +55,14 @@ HEADERS += \
 	dialogs/AudioClipEditDialog.h \
 	dialogs/RestoreProjectBackupDialog.h \
 	dialogs/ProjectConverterDialog.h  \
-	dialogs/ExportDialog.h
+	dialogs/ExportDialog.h \
+	dialogs/CDWritingDialog.h
 SOURCES += \
 	Traverso.cpp \
 	BusMonitor.cpp \
 	ContextDialog.cpp \
 	FadeContextDialog.cpp \
 	Main.cpp \
-	ExportWidget.cpp \
 	PluginSelectorDialog.cpp \
 	Interface.cpp \
 	VUMeter.cpp \
@@ -88,7 +87,8 @@ SOURCES += \
 	dialogs/AudioClipEditDialog.cpp \
 	dialogs/RestoreProjectBackupDialog.cpp \
 	dialogs/ProjectConverterDialog.cpp \
-	dialogs/ExportDialog.cpp
+	dialogs/ExportDialog.cpp \
+	dialogs/CDWritingDialog.cpp
 FORMS += ui/ExportWidget.ui \
 	ui/AudioSourcesManagerWidget.ui \
 	ui/SpectralMeterConfigWidget.ui \
@@ -115,7 +115,9 @@ FORMS += ui/ExportWidget.ui \
 	ui/AudioClipEditWidget.ui \
 	ui/RestoreProjectBackupDialog.ui \
 	ui/ProjectConverterDialog.ui \
-	ui/ExportDialog.ui
+	ui/ExportDialog.ui \
+	ui/CDWritingDialog.ui
+
 
 INCLUDEPATH += 	../core \
 		../commands \

@@ -37,6 +37,7 @@ class Command;
 
 class QLabel;
 class ExportDialog;
+class CDWritingDialog;
 class QStackedWidget;
 class QHBoxLayout;
 class QVBoxLayout;
@@ -101,6 +102,7 @@ private:
 	QList<ViewPort* > 	currentProjectViewPortList;
 	QHash<QString, QMenu*>	m_contextMenus;
 	ExportDialog*		m_exportDialog;
+	CDWritingDialog*	m_cdWritingDialog;
 	QUndoView*		historyWidget;
 	QDockWidget* 		historyDW;
 	QDockWidget*		busMonitorDW;
@@ -161,6 +163,7 @@ public slots :
 	Command* quick_start();
 	Command* export_keymap();
 	Command* show_export_widget();
+	Command* show_cd_writing_dialog();
 	Command* show_context_menu();
 	Command* show_open_project_dialog();
 	Command* show_project_manager_dialog();
