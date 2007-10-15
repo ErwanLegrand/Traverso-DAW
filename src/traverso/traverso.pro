@@ -89,7 +89,7 @@ SOURCES += \
 	dialogs/ProjectConverterDialog.cpp \
 	dialogs/ExportDialog.cpp \
 	dialogs/CDWritingDialog.cpp
-FORMS += ui/ExportWidget.ui \
+FORMS += \
 	ui/AudioSourcesManagerWidget.ui \
 	ui/SpectralMeterConfigWidget.ui \
 	ui/QuickDriverConfigWidget.ui \
