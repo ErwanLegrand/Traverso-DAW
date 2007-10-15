@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QMutex>
 #include <QQueue>
 #include <QWaitCondition>
+#include <QFile>
 
 #include "defines.h"
 
@@ -157,14 +158,18 @@ private:
 	};
 
 	struct ChannelData {
+		ChannelData() {
+			memory = 0;
+		}
 		QString		fileName;
 		QString		normFileName;
-		FILE* 		file;
-		FILE*		normFile;
+		QFile 		file;
+		QFile		normFile;
 		PeakHeaderData	headerdata;
 		PeakDataReader*	peakreader;
 		ProcessData* 	pd;
 		DecodeBuffer*	peakdataDecodeBuffer;
+		uchar*		memory;
 	};
 	
 	QList<ChannelData* >	m_channelData;
