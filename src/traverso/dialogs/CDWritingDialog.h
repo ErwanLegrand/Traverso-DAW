@@ -25,6 +25,7 @@
 #include "ui_CDWritingDialog.h"
 
 #include <QDialog>
+#include <QCloseEvent>
 
 class Project;
 class Song;
