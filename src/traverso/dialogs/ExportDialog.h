@@ -48,8 +48,6 @@ private:
 	ExportSpecification* 	m_exportSpec;
 
 	bool is_safe_to_export();
-	void disable_ui_interaction();
-	void enable_ui_interaction();
 
 	int m_lastSheetExported;
 	bool m_wasClosed;

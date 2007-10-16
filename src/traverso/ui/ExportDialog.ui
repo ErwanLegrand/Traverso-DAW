@@ -347,7 +347,7 @@
                </layout>
               </item>
               <item>
-               <widget class="QCheckBox" name="wavpackUseAlmostLosslessCheckBox" >
+               <widget class="QCheckBox" name="skipWVXCheckBox" >
                 <property name="toolTip" >
                  <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
@@ -857,7 +857,7 @@ p, li { white-space: pre-wrap; }
        </layout>
       </item>
       <item>
-       <widget class="QProgressBar" name="songProgressBar" >
+       <widget class="QProgressBar" name="progressBar" >
         <property name="value" >
          <number>0</number>
         </property>

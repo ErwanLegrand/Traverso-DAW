@@ -205,6 +205,11 @@ Interface::Interface()
 Interface::~Interface()
 {
 	PENTERDES;
+	
+	if (m_exportDialog) {
+		delete m_exportDialog;
+	}
+	
 	config().set_property("Interface", "size", size());
 	config().set_property("Interface", "fullScreen", isFullScreen());
 	config().set_property("Interface", "pos", pos());

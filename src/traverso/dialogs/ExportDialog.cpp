@@ -89,15 +89,10 @@ ExportDialog::ExportDialog( QWidget * parent )
 		audioTypeComboBox->addItem("OGG", "ogg");
 	}
 	
-	bitdepthComboBox->setCurrentIndex(bitdepthComboBox->findData(16));
 	channelComboBox->setCurrentIndex(channelComboBox->findData(2));
 	
 	int rateIndex = sampleRateComboBox->findData(audiodevice().get_sample_rate());
-	if (rateIndex == -1) {
-		rateIndex = 0;
-	}
-	sampleRateComboBox->setCurrentIndex(rateIndex);
-	resampleQualityComboBox->setCurrentIndex(1);
+	sampleRateComboBox->setCurrentIndex(rateIndex >= 0 ? rateIndex : 3);
 	
 	connect(closeButton, SIGNAL(clicked()), this, SLOT(hide()));
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
@@ -127,9 +122,15 @@ ExportDialog::ExportDialog( QWidget * parent )
 	mp3MaxBitrateComboBox->addItem("256", "256");
 	mp3MaxBitrateComboBox->addItem("320", "320");
 	
-	mp3MethodComboBox->setCurrentIndex(mp3MethodComboBox->findData("vbr-new"));
-	mp3MinBitrateComboBox->setCurrentIndex(mp3MinBitrateComboBox->findData("32"));
-	mp3MaxBitrateComboBox->setCurrentIndex(mp3MaxBitrateComboBox->findData("192"));
+	QString option = config().get_property("ExportDialog", "mp3MethodComboBox", "vbr-new").toString();
+	int index = mp3MethodComboBox->findData(option);
+	mp3MethodComboBox->setCurrentIndex(index >=0 ? index : 0);
+	option = config().get_property("ExportDialog", "mp3MinBitrateComboBox", "32").toString();
+	index = mp3MinBitrateComboBox->findData(option);
+	mp3MinBitrateComboBox->setCurrentIndex(index >=0 ? index : 0);
+	option = config().get_property("ExportDialog", "mp3MaxBitrateComboBox", "192").toString();
+	index = mp3MaxBitrateComboBox->findData(option);
+	mp3MaxBitrateComboBox->setCurrentIndex(index >=0 ? index : 0);
 	
 	mp3OptionsGroupBox->hide();
 	connect(mp3MethodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(mp3_method_changed(int)));
@@ -151,9 +152,13 @@ ExportDialog::ExportDialog( QWidget * parent )
 	oggBitrateComboBox->addItem("320", "320");
 	oggBitrateComboBox->addItem("400", "400");
 	
-	oggMethodComboBox->setCurrentIndex(oggMethodComboBox->findData("vbr"));
-	oggBitrateComboBox->setCurrentIndex(oggBitrateComboBox->findData("160"));
-	ogg_method_changed(oggMethodComboBox->findData("vbr"));
+	option = config().get_property("ExportDialog", "oggMethodComboBox", "vbr").toString();
+	index = oggMethodComboBox->findData(option);
+	oggMethodComboBox->setCurrentIndex(index >=0 ? index : 0);
+	ogg_method_changed(index >=0 ? index : 0);
+	option = config().get_property("ExportDialog", "oggBitrateComboBox", "160").toString();
+	index = oggBitrateComboBox->findData(option);
+	oggBitrateComboBox->setCurrentIndex(index >= 0 ? index : 0);
 	
 	oggOptionsGroupBox->hide();
 	connect(oggMethodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ogg_method_changed(int)));
@@ -165,13 +170,43 @@ ExportDialog::ExportDialog( QWidget * parent )
 	wavpackCompressionComboBox->addItem("High", "high");
 	wavpackCompressionComboBox->addItem("Fast", "fast");
 	
-	audio_type_changed(0);
+	option = config().get_property("ExportDialog", "wavpackCompressionComboBox", "high").toString();
+	index = wavpackCompressionComboBox->findData(option);
+	wavpackCompressionComboBox->setCurrentIndex(index >= 0 ? index : 0);
+	bool checked = config().get_property("ExportDialog", "skipWVXCheckBox", "false").toBool();
+	skipWVXCheckBox->setChecked(checked);
+
 	
+	option = config().get_property("ExportDialog", "audioTypeComboBox", "wav").toString();
+	index = audioTypeComboBox->findData(option);
+	audioTypeComboBox->setCurrentIndex(index >= 0 ? index : 0);
+	
+	checked = config().get_property("ExportDialog", "normalizeCheckBox", "false").toBool();
+	normalizeCheckBox->setChecked(checked);
+	
+	index = config().get_property("ExportDialog", "resampleQualityComboBox", "1").toInt();
+	resampleQualityComboBox->setCurrentIndex(index >= 0 ? index : 1);
+	
+	option = config().get_property("ExportDialog", "bitdepthComboBox", "16").toString();
+	index = bitdepthComboBox->findData(option);
+	bitdepthComboBox->setCurrentIndex(index >= 0 ? index : 0);
 	setMaximumSize(400, 250);
 }
 
 ExportDialog::~ ExportDialog( )
-{}
+{
+	config().set_property("ExportDialog", "mp3MethodComboBox", mp3MethodComboBox->itemData(mp3MethodComboBox->currentIndex()).toString());
+	config().set_property("ExportDialog", "mp3MinBitrateComboBox", mp3MinBitrateComboBox->itemData(mp3MinBitrateComboBox->currentIndex()).toString());
+	config().set_property("ExportDialog", "mp3MaxBitrateComboBox", mp3MaxBitrateComboBox->itemData(mp3MaxBitrateComboBox->currentIndex()).toString());
+	config().set_property("ExportDialog", "oggMethodComboBox", oggMethodComboBox->itemData(oggMethodComboBox->currentIndex()).toString());
+	config().set_property("ExportDialog", "oggBitrateComboBox", oggBitrateComboBox->itemData(oggBitrateComboBox->currentIndex()).toString());
+	config().set_property("ExportDialog", "wavpackCompressionComboBox", wavpackCompressionComboBox->itemData(wavpackCompressionComboBox->currentIndex()).toString());
+	config().set_property("ExportDialog", "audioTypeComboBox", audioTypeComboBox->itemData(audioTypeComboBox->currentIndex()).toString());
+	config().set_property("ExportDialog", "normalizeCheckBox", normalizeCheckBox->isChecked());
+	config().set_property("ExportDialog", "skipWVXCheckBox", skipWVXCheckBox->isChecked());
+	config().set_property("ExportDialog", "resampleQualityComboBox", resampleQualityComboBox->currentIndex());
+	config().set_property("ExportDialog", "bitdepthComboBox", bitdepthComboBox->itemData(bitdepthComboBox->currentIndex()).toString());
+}
 
 
 bool ExportDialog::is_safe_to_export()
@@ -201,25 +236,21 @@ void ExportDialog::audio_type_changed(int index)
 	QString newType = audioTypeComboBox->itemData(index).toString();
 	
 	if (newType == "mp3") {
-// 		extraEncodingGroupBox->show();
 		mp3OptionsGroupBox->show();
 		oggOptionsGroupBox->hide();
 		wacpackGroupBox->hide();
 	}
 	else if (newType == "ogg") {
-// 		extraEncodingGroupBox->show();
 		oggOptionsGroupBox->show();
 		mp3OptionsGroupBox->hide();
 		wacpackGroupBox->hide();
 	}
 	else if (newType == "wavpack") {
-// 		extraEncodingGroupBox->show();
 		wacpackGroupBox->show();
 		mp3OptionsGroupBox->hide();
 		oggOptionsGroupBox->hide();
 	}
 	else {
-// 		extraEncodingGroupBox->hide();
 		mp3OptionsGroupBox->hide();
 		wacpackGroupBox->hide();
 		oggOptionsGroupBox->hide();
@@ -303,7 +334,7 @@ void ExportDialog::on_startButton_clicked( )
 	else if (audioType == "wavpack") {
 		m_exportSpec->writerType = "wavpack";
 		m_exportSpec->extraFormat["quality"] = wavpackCompressionComboBox->itemData(wavpackCompressionComboBox->currentIndex()).toString();
-		m_exportSpec->extraFormat["skip_wvx"] = wavpackUseAlmostLosslessCheckBox->isChecked() ? "true" : "false";
+		m_exportSpec->extraFormat["skip_wvx"] = skipWVXCheckBox->isChecked() ? "true" : "false";
 	}
 	else if (audioType == "mp3") {
 		m_exportSpec->writerType = "lame";
@@ -388,23 +419,18 @@ void ExportDialog::on_fileSelectButton_clicked( )
 
 void ExportDialog::update_song_progress( int progress )
 {
-	songProgressBar->setValue(progress);
 }
 
 void ExportDialog::update_overall_progress( int progress )
 {
-// 	overalProgressBar->setValue(progress);
+	progressBar->setValue(progress);
 }
 
 void ExportDialog::render_finished( )
 {
-	songProgressBar->setValue(0);
-// 	overalProgressBar->setValue(0);
 	startButton->show();
 	closeButton->show();
 	abortButton->hide();
-
-// 	on_closeButton_clicked();
 }
 
 void ExportDialog::set_exporting_song( Song * song )
@@ -448,39 +474,10 @@ void ExportDialog::set_project(Project * project)
 
 void ExportDialog::closeEvent(QCloseEvent * event)
 {
-/*	if (m_writingState != NO_STATE || !buttonBox->isEnabled()) {
-		event->setAccepted(false);
-		return;
-	}*/
 	QDialog::closeEvent(event);
 }
 
 void ExportDialog::reject()
 {
-/*	if (m_writingState == NO_STATE && buttonBox->isEnabled()) {
-		hide();
-	}*/
-}
-
-void ExportDialog::disable_ui_interaction()
-{
-/*	closeButton->setEnabled(false);
-	exportWidget->setEnabled(false);
-	optionsGroupBox->setEnabled(false);
-	burnGroupBox->setEnabled(false);
-	startButton->hide();
-	abortButton->show();*/
-}
-
-void ExportDialog::enable_ui_interaction()
-{
-/*	m_writingState = NO_STATE;
-	exportWidget->setEnabled(true);
-	optionsGroupBox->setEnabled(true);
-	burnGroupBox->setDisabled(cdDiskExportOnlyCheckBox->isChecked());
-	closeButton->setEnabled(true);
-	startButton->show();
-	abortButton->hide();
-	abortButton->setEnabled(true);
-	progressBar->setValue(0);*/
+	hide();
 }
