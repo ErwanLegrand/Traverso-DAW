@@ -269,9 +269,9 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		
 		int availpeaks = peak->calculate_peaks( chan,
 				&pixeldata[chan],
-    microView ? m_song->get_hzoom() : m_song->get_hzoom() + 1,
-				  TimeRef(xstart * m_sv->timeref_scalefactor) + clipstartoffset,
-					  microView ? peakdatacount : peakdatacount / 2 + 2);
+    				microView ? m_song->get_hzoom() : m_song->get_hzoom() + 1,
+				TimeRef(xstart * m_sv->timeref_scalefactor) + clipstartoffset,
+				microView ? peakdatacount : peakdatacount / 2 + 2);
 		
 		if (peakdatacount != availpeaks) {
 // 			PWARN("peakdatacount != availpeaks (%d, %d)", peakdatacount, availpeaks);
@@ -508,9 +508,9 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 					bufferpos++;
 				}
 				
-				m_polygontop.append(QPointF(xstart + pixelcount, 0));
+				m_polygontop.append(QPointF(pixelcount, 0));
 				path.addPolygon(m_polygontop);
-				path.lineTo(xstart, 0);
+				path.lineTo(0, 0);
 				
 			}
 			
