@@ -431,6 +431,7 @@ void ExportDialog::render_finished( )
 	startButton->show();
 	closeButton->show();
 	abortButton->hide();
+	progressBar->setValue(0);
 }
 
 void ExportDialog::set_exporting_song( Song * song )
@@ -474,10 +475,17 @@ void ExportDialog::set_project(Project * project)
 
 void ExportDialog::closeEvent(QCloseEvent * event)
 {
+	if (closeButton->isHidden()) {
+		event->setAccepted(false);
+		return;
+	}
 	QDialog::closeEvent(event);
 }
 
 void ExportDialog::reject()
 {
+	if (closeButton->isHidden()) {
+		return;
+	}
 	hide();
 }
