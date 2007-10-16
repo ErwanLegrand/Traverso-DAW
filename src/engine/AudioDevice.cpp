@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.41 2007/10/12 08:52:13 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.42 2007/10/16 13:43:00 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -852,5 +852,8 @@ JackDriver* AudioDevice::slaved_jack_driver()
 }
 #endif
 
-//eof
+TimeRef AudioDevice::get_buffer_latency()
+{
+	return TimeRef(m_bufferSize, m_rate);
+}
 

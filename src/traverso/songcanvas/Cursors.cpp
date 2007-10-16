@@ -22,6 +22,7 @@
 #include "Cursors.h"
 #include "SongView.h"
 #include "ClipsViewPort.h"
+#include "AudioDevice.h"
 #include <QPen>
 #include <Song.h>
 #include <Config.h>
@@ -128,6 +129,8 @@ void PlayHead::enable_follow()
 void PlayHead::update_position()
 {
 	QPointF newPos(m_song->get_transport_location() / m_sv->timeref_scalefactor, 1);
+	qreal playBufferTimePositionCompensation = audiodevice().get_buffer_latency() / m_sv->timeref_scalefactor;
+	newPos.setX(newPos.x() - playBufferTimePositionCompensation);
 	
 	if (int(newPos.x()) != int(pos().x()) && (m_animation.state() != QTimeLine::Running)) {
 		setPos(newPos);

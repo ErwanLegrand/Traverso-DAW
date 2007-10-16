@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.22 2007/10/12 08:52:13 r_sijrier Exp $
+$Id: AudioDevice.h,v 1.23 2007/10/16 13:43:00 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -102,6 +102,7 @@ public:
 
 	uint get_sample_rate() const;
 	uint get_bit_depth() const;
+	TimeRef get_buffer_latency();
 
 	/**
 	 * 
