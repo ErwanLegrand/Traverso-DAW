@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <defines.h>
 #include <QList>
 #include <QTimer>
+#include <QPolygonF>
 
 class AudioClip;
 class Song;
@@ -79,6 +80,8 @@ private:
 	Song*		m_song;
 	CurveView* 	curveView;
 	PositionIndicator* m_posIndicator;
+	QPolygonF m_polygonbottom;
+	QPolygonF m_polygontop;
 
 	QTimer m_recordingTimer;
 

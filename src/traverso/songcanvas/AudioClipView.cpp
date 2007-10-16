@@ -50,9 +50,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	: ViewItem(parent, clip)
-	, m_tv(parent)
-	, m_clip(clip)
-	, m_dragging(false)
+		, m_tv(parent)
+		, m_clip(clip)
+				, m_dragging(false)
 {
 	PENTERCONS;
 	
@@ -130,7 +130,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	painter->save();
 	
 	QRectF clipRect = m_boundingRect.adjusted(0, -1, 1, 1);
-	painter->setClipRect(clipRect);
+	painter->setClipRect(m_boundingRect);
 	
 	if (m_clip->is_readsource_invalid()) {
 		painter->fillRect(xstart, 0, pixelcount, m_height, themer()->get_color("AudioClip:invalidreadsource"));
@@ -225,7 +225,6 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 {
 	PENTER2;
-	
 	// when painting with a path, I _have_ to use path.lineTo()
 	// which looks ugly when only parts of the clip is repainted
 	// when using a different color for the brush then the outline.
@@ -269,10 +268,10 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	for (int chan=0; chan < channels; ++chan) {
 		
 		int availpeaks = peak->calculate_peaks( chan,
-							&pixeldata[chan],
-       							microView ? m_song->get_hzoom() : m_song->get_hzoom() + 1,
-				     			TimeRef(xstart * m_sv->timeref_scalefactor) + clipstartoffset,
-							microView ? peakdatacount : peakdatacount / 2 + 2);
+				&pixeldata[chan],
+    microView ? m_song->get_hzoom() : m_song->get_hzoom() + 1,
+				  TimeRef(xstart * m_sv->timeref_scalefactor) + clipstartoffset,
+					  microView ? peakdatacount : peakdatacount / 2 + 2);
 		
 		if (peakdatacount != availpeaks) {
 // 			PWARN("peakdatacount != availpeaks (%d, %d)", peakdatacount, availpeaks);
@@ -409,7 +408,9 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		// Microview, paint waveform as polyline
 		if (microView) {
 		
-			QPolygonF polygon;
+			m_polygontop.clear();
+			m_polygontop.reserve(pixelcount);
+			
 			int bufferPos = 0;
 			
 			if (m_mergedView) {
@@ -429,7 +430,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			p->drawLine(xstart, 0, xstart + pixelcount, 0);
 			
 			for (int x = xstart; x < (pixelcount+xstart); x++) {
-				polygon.append( QPointF(x, scaleFactor * pixeldata[chan][bufferPos++]) );
+				m_polygontop.append( QPointF(x, scaleFactor * pixeldata[chan][bufferPos++]) );
 			}
 			
 			if (themer()->get_property("AudioClip:wavemicroview:antialiased", 0).toInt()) {
@@ -437,7 +438,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			}
 			
 			p->setPen(themer()->get_color("AudioClip:wavemicroview"));
-			p->drawPolyline(polygon);
+			p->drawPolyline(m_polygontop);
 		
 		// Macroview, paint waveform with painterpath
 		} else {
@@ -469,21 +470,23 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			
 			QPainterPath path;
 			// in rectified view, we add an additional point, hence + 1
-			QPolygonF polygontop(pixelcount + 1);
+			m_polygontop.clear();
+			m_polygontop.reserve(pixelcount + 1);
 			int bufferpos = 0;
 						
 			if (m_classicView) {
-				QPolygonF polygonbottom(pixelcount);
+				m_polygonbottom.clear();
+				m_polygonbottom.reserve(pixelcount);
 				
 				int range = pixelcount;
 				for (int x = 0; x < range; x+=2) {
-					polygontop.append( QPointF(x, scaleFactor * pixeldata[chan][bufferpos++]) );
-					polygonbottom.append( QPointF(x, -scaleFactor * pixeldata[chan][bufferpos++]) );
+					m_polygontop.append( QPointF(x, scaleFactor * pixeldata[chan][bufferpos++]) );
+					m_polygonbottom.append( QPointF(x, -scaleFactor * pixeldata[chan][bufferpos++]) );
 				}
 				
-				path.addPolygon(polygontop);
-				path.lineTo(polygonbottom.last());
-				path.addPolygon(polygonbottom);
+				path.addPolygon(m_polygontop);
+				path.lineTo(m_polygonbottom.last());
+				path.addPolygon(m_polygonbottom);
 				
 				if (m_mergedView) {
 					ytrans = (height / 2) * channels;
@@ -501,19 +504,20 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				}
 
 				for (int x=0; x<pixelcount; x+=2) {
-					polygontop.append( QPointF(x, scaleFactor * pixeldata[chan][bufferpos]) );
+					m_polygontop.append( QPointF(x, scaleFactor * pixeldata[chan][bufferpos]) );
 					bufferpos++;
 				}
 				
-				polygontop.append(QPointF(xstart + pixelcount, 0));
-				path.addPolygon(polygontop);
+				m_polygontop.append(QPointF(xstart + pixelcount, 0));
+				path.addPolygon(m_polygontop);
 				path.lineTo(xstart, 0);
 				
 			}
 			
+			
 			p->setMatrix(matrix().translate(xstart + adjustforevenpixel, ytrans), true);
 			p->drawPath(path);
-			
+
 		}
 		
 		p->restore();
@@ -843,11 +847,11 @@ void AudioClipView::load_theme_data()
 void AudioClipView::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {
 	Q_UNUSED(event)
-	if (ie().is_holding()) {
+			if (ie().is_holding()) {
 		return;
-	}
+			}
 	
-	update(m_boundingRect);
+			update(m_boundingRect);
 }
 
 
@@ -925,9 +929,9 @@ Command * AudioClipView::set_audio_file()
 		}
 		
 		QString filename = QFileDialog::getOpenFileName(0,
-					tr("Reset Audio File for Clip: %1").arg(m_clip->get_name()),
-					rs->get_filename(),
-					tr("All files (*);;Audio files (*.wav *.flac)"));
+				tr("Reset Audio File for Clip: %1").arg(m_clip->get_name()),
+				   rs->get_filename(),
+						   tr("All files (*);;Audio files (*.wav *.flac)"));
 		
 		if (filename.isEmpty()) {
 			info().information(tr("No file selected!"));
