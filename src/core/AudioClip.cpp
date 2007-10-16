@@ -454,7 +454,7 @@ int AudioClip::process(nframes_t nframes)
 	} else {
 		read_frames = m_readSource->file_read(m_song->renderDecodeBuffer, mix_pos, nframes);
 		for (int chan=0; chan<bus->get_channel_count(); ++chan) {
-			mempcpy(mixdown[chan], m_song->renderDecodeBuffer->destination[chan], nframes * sizeof(audio_sample_t));
+			memcpy(mixdown[chan], m_song->renderDecodeBuffer->destination[chan], nframes * sizeof(audio_sample_t));
 		}
 	}
 	
