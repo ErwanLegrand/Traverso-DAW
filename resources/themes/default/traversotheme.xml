@@ -84,7 +84,7 @@
 		<color name="AudioClip:background:mousehover:bottom"  red="255" green="253" blue="255"  alpha="200" />
 		<color name="AudioClip:channelseperator"  red="178" green="191" blue="182"  alpha="255" />
 		<color name="AudioClip:channelseperator:selected"  red="24" green="137" blue="210"  alpha="255" />
-		<color name="AudioClip:contour"  red="50" green="50" blue="50"  alpha="150" />
+		<color name="AudioClip:contour"  red="80" green="80" blue="80"  alpha="255" />
 		<color name="AudioClip:clipinfobackground"  red="240" green="190" blue="218"  alpha="200" />
 		<color name="AudioClip:clipinfobackground:inactive"  red="199" green="190" blue="218"  alpha="200" />
 		<color name="AudioClip:sampleoverload" red="255" green="0" blue="0" alpha="255" />
