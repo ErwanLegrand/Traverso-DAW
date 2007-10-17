@@ -142,7 +142,7 @@ int Peak::read_header()
 		if (data->memory) {
 			PMESG3("Peak:: sucessfully mapped data into memory (%s)\n", QS_C(data->fileName));
 		}
-#elseif (defined Q_WS_X11 || defined Q_WS_MAC)
+#elseif defined(Q_WS_X11 || Q_WS_MAC)
 		int offset = 0;
 		int size = data->file.size();
 		int pagesSize = getpagesize();
