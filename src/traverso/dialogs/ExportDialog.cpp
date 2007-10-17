@@ -74,6 +74,11 @@ ExportDialog::ExportDialog( QWidget * parent )
 	sampleRateComboBox->addItem("88.200 Hz", 88200);
 	sampleRateComboBox->addItem("96.000 Hz", 96000);
 	
+	resampleQualityComboBox->addItem("Best", 0); // Best
+	resampleQualityComboBox->addItem("High", 1); // Medium
+	resampleQualityComboBox->addItem("Medium", 2); // Fastest
+	resampleQualityComboBox->addItem("Fast", 4); // Linear (Should we use ZERO_HOLD(3) instead?)
+	
 	audioTypeComboBox->addItem("WAV", "wav");
 	audioTypeComboBox->addItem("AIFF", "aiff");
 	if (libFLAC_is_present) {
@@ -98,6 +103,9 @@ ExportDialog::ExportDialog( QWidget * parent )
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 	connect(audioTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(audio_type_changed(int)));
 	
+	QString option;
+	int index;
+	bool checked;
 	
 	// Mp3 Options Setup
 	mp3MethodComboBox->addItem("Constant Bitrate", "cbr");
@@ -122,8 +130,13 @@ ExportDialog::ExportDialog( QWidget * parent )
 	mp3MaxBitrateComboBox->addItem("256", "256");
 	mp3MaxBitrateComboBox->addItem("320", "320");
 	
-	QString option = config().get_property("ExportDialog", "mp3MethodComboBox", "vbr-new").toString();
-	int index = mp3MethodComboBox->findData(option);
+	// First set to VBR, so that if we default to something else, it will trigger mp3_method_changed()
+	index = mp3MethodComboBox->findData("vbr-new");
+	mp3MethodComboBox->setCurrentIndex(index >=0 ? index : 0);
+	connect(mp3MethodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(mp3_method_changed(int)));
+	
+	option = config().get_property("ExportDialog", "mp3MethodComboBox", "vbr-new").toString();
+	index = mp3MethodComboBox->findData(option);
 	mp3MethodComboBox->setCurrentIndex(index >=0 ? index : 0);
 	option = config().get_property("ExportDialog", "mp3MinBitrateComboBox", "32").toString();
 	index = mp3MinBitrateComboBox->findData(option);
@@ -133,7 +146,6 @@ ExportDialog::ExportDialog( QWidget * parent )
 	mp3MaxBitrateComboBox->setCurrentIndex(index >=0 ? index : 0);
 	
 	mp3OptionsGroupBox->hide();
-	connect(mp3MethodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(mp3_method_changed(int)));
 	
 	
 	// Ogg Options Setup
@@ -152,6 +164,11 @@ ExportDialog::ExportDialog( QWidget * parent )
 	oggBitrateComboBox->addItem("320", "320");
 	oggBitrateComboBox->addItem("400", "400");
 	
+	// First set to VBR, so that if we default to something else, it will trigger ogg_method_changed()
+	index = oggMethodComboBox->findData("vbr");
+	oggMethodComboBox->setCurrentIndex(index >=0 ? index : 0);
+	connect(oggMethodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ogg_method_changed(int)));
+	
 	option = config().get_property("ExportDialog", "oggMethodComboBox", "vbr").toString();
 	index = oggMethodComboBox->findData(option);
 	oggMethodComboBox->setCurrentIndex(index >=0 ? index : 0);
@@ -161,7 +178,6 @@ ExportDialog::ExportDialog( QWidget * parent )
 	oggBitrateComboBox->setCurrentIndex(index >= 0 ? index : 0);
 	
 	oggOptionsGroupBox->hide();
-	connect(oggMethodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ogg_method_changed(int)));
 	
 	
 	// WavPack option
@@ -170,10 +186,10 @@ ExportDialog::ExportDialog( QWidget * parent )
 	wavpackCompressionComboBox->addItem("High", "high");
 	wavpackCompressionComboBox->addItem("Fast", "fast");
 	
-	option = config().get_property("ExportDialog", "wavpackCompressionComboBox", "high").toString();
+	option = config().get_property("ExportDialog", "wavpackCompressionComboBox", "very_high").toString();
 	index = wavpackCompressionComboBox->findData(option);
 	wavpackCompressionComboBox->setCurrentIndex(index >= 0 ? index : 0);
-	bool checked = config().get_property("ExportDialog", "skipWVXCheckBox", "false").toBool();
+	checked = config().get_property("ExportDialog", "skipWVXCheckBox", "false").toBool();
 	skipWVXCheckBox->setChecked(checked);
 
 	
@@ -185,6 +201,7 @@ ExportDialog::ExportDialog( QWidget * parent )
 	normalizeCheckBox->setChecked(checked);
 	
 	index = config().get_property("ExportDialog", "resampleQualityComboBox", "1").toInt();
+	index = resampleQualityComboBox->findData(index);
 	resampleQualityComboBox->setCurrentIndex(index >= 0 ? index : 1);
 	
 	option = config().get_property("ExportDialog", "bitdepthComboBox", "16").toString();
@@ -192,6 +209,7 @@ ExportDialog::ExportDialog( QWidget * parent )
 	bitdepthComboBox->setCurrentIndex(index >= 0 ? index : 0);
 	setMaximumSize(400, 250);
 }
+
 
 ExportDialog::~ ExportDialog( )
 {
@@ -204,7 +222,7 @@ ExportDialog::~ ExportDialog( )
 	config().set_property("ExportDialog", "audioTypeComboBox", audioTypeComboBox->itemData(audioTypeComboBox->currentIndex()).toString());
 	config().set_property("ExportDialog", "normalizeCheckBox", normalizeCheckBox->isChecked());
 	config().set_property("ExportDialog", "skipWVXCheckBox", skipWVXCheckBox->isChecked());
-	config().set_property("ExportDialog", "resampleQualityComboBox", resampleQualityComboBox->currentIndex());
+	config().set_property("ExportDialog", "resampleQualityComboBox", resampleQualityComboBox->itemData(resampleQualityComboBox->currentIndex()).toString());
 	config().set_property("ExportDialog", "bitdepthComboBox", bitdepthComboBox->itemData(bitdepthComboBox->currentIndex()).toString());
 }
 
@@ -236,19 +254,19 @@ void ExportDialog::audio_type_changed(int index)
 	QString newType = audioTypeComboBox->itemData(index).toString();
 	
 	if (newType == "mp3") {
-		mp3OptionsGroupBox->show();
 		oggOptionsGroupBox->hide();
 		wacpackGroupBox->hide();
+		mp3OptionsGroupBox->show();
 	}
 	else if (newType == "ogg") {
-		oggOptionsGroupBox->show();
 		mp3OptionsGroupBox->hide();
 		wacpackGroupBox->hide();
+		oggOptionsGroupBox->show();
 	}
 	else if (newType == "wavpack") {
-		wacpackGroupBox->show();
 		mp3OptionsGroupBox->hide();
 		oggOptionsGroupBox->hide();
+		wacpackGroupBox->show();
 	}
 	else {
 		mp3OptionsGroupBox->hide();
@@ -294,17 +312,17 @@ void ExportDialog::ogg_method_changed(int index)
 	QString method = oggMethodComboBox->itemData(index).toString();
 	
 	if (method == "manual") {
-		oggBitrateComboBox->show();
-		oggBitrateLabel->show();
 		oggQualitySlider->hide();
 		oggQualityLabel->hide();
+		oggBitrateComboBox->show();
+		oggBitrateLabel->show();
 	}
 	else {
 		// VBR
-		oggQualitySlider->show();
-		oggQualityLabel->show();
 		oggBitrateComboBox->hide();
 		oggBitrateLabel->hide();
+		oggQualitySlider->show();
+		oggQualityLabel->show();
 	}
 }
 
@@ -358,7 +376,7 @@ void ExportDialog::on_startButton_clicked( )
 	m_exportSpec->data_width = bitdepthComboBox->itemData(bitdepthComboBox->currentIndex()).toInt();
 	m_exportSpec->channels = channelComboBox->itemData(channelComboBox->currentIndex()).toInt();
 	m_exportSpec->sample_rate = sampleRateComboBox->itemData(sampleRateComboBox->currentIndex()).toInt();
-	m_exportSpec->src_quality = resampleQualityComboBox->currentIndex();
+	m_exportSpec->src_quality = resampleQualityComboBox->itemData(resampleQualityComboBox->currentIndex()).toInt();
 	
 	//TODO Make a ComboBox for this one too!
 	m_exportSpec->dither_type = GDitherTri;
