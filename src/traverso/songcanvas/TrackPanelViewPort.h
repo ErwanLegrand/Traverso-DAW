@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TrackPanelViewPort.h,v 1.3 2007/01/14 17:50:15 r_sijrier Exp $
+    $Id: TrackPanelViewPort.h,v 1.4 2007/10/17 14:46:18 r_sijrier Exp $
 */
 
 #ifndef TRACK_PANEL_VIEW_PORT_H
@@ -34,9 +34,6 @@ public:
 	~TrackPanelViewPort() {};
 	
         void get_pointed_context_items(QList<ContextItem* > &list);
-
-protected:
-        void paintEvent( QPaintEvent* e);
 
 private:
 	SongWidget*	m_sw;

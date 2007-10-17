@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TrackPanelViewPort.cpp,v 1.10 2007/06/27 21:01:21 r_sijrier Exp $
+    $Id: TrackPanelViewPort.cpp,v 1.11 2007/10/17 14:46:18 r_sijrier Exp $
 */
 
 #include "TrackPanelViewPort.h"
@@ -39,16 +39,6 @@ TrackPanelViewPort::TrackPanelViewPort(QGraphicsScene* scene, SongWidget* sw)
 	m_sw = sw;
 	
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-}
-
-void TrackPanelViewPort::paintEvent( QPaintEvent* e )
-{
-// 	PWARN("TrackPanelViewPort::paintEvent()");
-	QGraphicsView::paintEvent(e);
-	
-	// Acts as track / trackpanel seperator... Not the best place, but what can I do ?
-	QPainter painter(viewport());
-	painter.fillRect(width() - 2, 0, 2, height(), themer()->get_color("TrackPanel:trackseparation"));
 }
 
 void TrackPanelViewPort::get_pointed_context_items(QList<ContextItem* > &list)

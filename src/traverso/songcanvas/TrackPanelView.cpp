@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.29 2007/07/09 19:16:09 n_doebelin Exp $
+$Id: TrackPanelView.cpp,v 1.30 2007/10/17 14:46:18 r_sijrier Exp $
 */
 
 #include <QGraphicsScene>
@@ -126,7 +126,7 @@ void TrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
 	}
 
 	// Track / track panel seperator is painted in TrackPanelViewPort... not the best place perhaps ?
-// 	painter->fillRect(m_viewPort->width() - 2, 0, 2, m_track->get_height() - 1, themer()->get_color("TrackPanel:trackseparation"));
+	painter->fillRect(m_viewPort->width() - 3, 0, 3, m_track->get_height() - 1, themer()->get_color("TrackPanel:trackseparation"));
 	
 	if (xstart < 180) {
 		draw_panel_track_name(painter);
