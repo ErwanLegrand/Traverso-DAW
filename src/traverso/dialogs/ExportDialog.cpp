@@ -112,23 +112,23 @@ ExportDialog::ExportDialog( QWidget * parent )
 	mp3MethodComboBox->addItem("Average Bitrate", "abr");
 	mp3MethodComboBox->addItem("Variable Bitrate", "vbr-new");
 	
-	mp3MinBitrateComboBox->addItem("32 - recommended", "32");
-	mp3MinBitrateComboBox->addItem("64", "64");
-	mp3MinBitrateComboBox->addItem("96", "96");
-	mp3MinBitrateComboBox->addItem("128", "128");
-	mp3MinBitrateComboBox->addItem("160", "160");
-	mp3MinBitrateComboBox->addItem("192", "192");
-	mp3MinBitrateComboBox->addItem("256", "256");
-	mp3MinBitrateComboBox->addItem("320", "320");
+	mp3MinBitrateComboBox->addItem("32 Kbps - recommended", "32");
+	mp3MinBitrateComboBox->addItem("64 Kbps", "64");
+	mp3MinBitrateComboBox->addItem("96 Kbps", "96");
+	mp3MinBitrateComboBox->addItem("128 Kbps", "128");
+	mp3MinBitrateComboBox->addItem("160 Kbps", "160");
+	mp3MinBitrateComboBox->addItem("192 Kbps", "192");
+	mp3MinBitrateComboBox->addItem("256 Kbps", "256");
+	mp3MinBitrateComboBox->addItem("320 Kbps", "320");
 	
-	mp3MaxBitrateComboBox->addItem("32", "32");
-	mp3MaxBitrateComboBox->addItem("64", "64");
-	mp3MaxBitrateComboBox->addItem("96", "96");
-	mp3MaxBitrateComboBox->addItem("128", "128");
-	mp3MaxBitrateComboBox->addItem("160", "160");
-	mp3MaxBitrateComboBox->addItem("192", "192");
-	mp3MaxBitrateComboBox->addItem("256", "256");
-	mp3MaxBitrateComboBox->addItem("320", "320");
+	mp3MaxBitrateComboBox->addItem("32 Kbps", "32");
+	mp3MaxBitrateComboBox->addItem("64 Kbps", "64");
+	mp3MaxBitrateComboBox->addItem("96 Kbps", "96");
+	mp3MaxBitrateComboBox->addItem("128 Kbps", "128");
+	mp3MaxBitrateComboBox->addItem("160 Kbps", "160");
+	mp3MaxBitrateComboBox->addItem("192 Kbps", "192");
+	mp3MaxBitrateComboBox->addItem("256 Kbps", "256");
+	mp3MaxBitrateComboBox->addItem("320 Kbps", "320");
 	
 	// First set to VBR, so that if we default to something else, it will trigger mp3_method_changed()
 	index = mp3MethodComboBox->findData("vbr-new");
@@ -152,17 +152,17 @@ ExportDialog::ExportDialog( QWidget * parent )
 	oggMethodComboBox->addItem("Constant Bitrate", "manual");
 	oggMethodComboBox->addItem("Variable Bitrate", "vbr");
 	
-	oggBitrateComboBox->addItem("45", "45");
-	oggBitrateComboBox->addItem("64", "64");
-	oggBitrateComboBox->addItem("96", "96");
-	oggBitrateComboBox->addItem("112", "112");
-	oggBitrateComboBox->addItem("128", "128");
-	oggBitrateComboBox->addItem("160", "160");
-	oggBitrateComboBox->addItem("192", "192");
-	oggBitrateComboBox->addItem("224", "224");
-	oggBitrateComboBox->addItem("256", "256");
-	oggBitrateComboBox->addItem("320", "320");
-	oggBitrateComboBox->addItem("400", "400");
+	oggBitrateComboBox->addItem("45 Kbps", "45");
+	oggBitrateComboBox->addItem("64 Kbps", "64");
+	oggBitrateComboBox->addItem("96 Kbps", "96");
+	oggBitrateComboBox->addItem("112 Kbps", "112");
+	oggBitrateComboBox->addItem("128 Kbps", "128");
+	oggBitrateComboBox->addItem("160 Kbps", "160");
+	oggBitrateComboBox->addItem("192 Kbps", "192");
+	oggBitrateComboBox->addItem("224 Kbps", "224");
+	oggBitrateComboBox->addItem("256 Kbps", "256");
+	oggBitrateComboBox->addItem("320 Kbps", "320");
+	oggBitrateComboBox->addItem("400 Kbps", "400");
 	
 	// First set to VBR, so that if we default to something else, it will trigger ogg_method_changed()
 	index = oggMethodComboBox->findData("vbr");
