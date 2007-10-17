@@ -128,8 +128,8 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	
 	painter->save();
 	
-	QRectF clipRect = m_boundingRect.adjusted(0, -1, 1, 1);
-	painter->setClipRect(m_boundingRect);
+	QRectF clipRect = m_boundingRect.adjusted(-1, -1, 1, 1);
+	painter->setClipRect(clipRect);
 	
 	if (m_clip->is_readsource_invalid()) {
 		painter->fillRect(xstart, 0, pixelcount, m_height, themer()->get_color("AudioClip:invalidreadsource"));
