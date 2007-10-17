@@ -97,8 +97,7 @@ int Marker::set_state(const QDomNode & node)
 
 	m_description = e.attribute("description", "");
 	QString tp = e.attribute("type", "CDTRACK");
-	bool ok;
-	m_when = e.attribute("position", "0").toLongLong(&ok);
+	m_when = TimeRef(e.attribute("position", "0").toLongLong());
 	m_id = e.attribute("id", "0").toLongLong();
 	m_performer = e.attribute("performer", "");
 	m_composer = e.attribute("composer", "");
