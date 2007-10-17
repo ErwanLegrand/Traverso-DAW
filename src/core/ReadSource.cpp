@@ -412,11 +412,14 @@ int ReadSource::rb_read(audio_sample_t** dst, TimeRef& start, nframes_t count)
 int ReadSource::rb_file_read(DecodeBuffer* buffer, nframes_t cnt)
 {
 	int readFrames = file_read(buffer, m_rbFileReadPos, cnt);
-	m_rbFileReadPos.add_frames(cnt, m_outputRate);
-	// FIXME it should work with the line like below, but it sometimes confuses DiskIO::do_work()
-	// it starts looping!
-// 	m_rbFileReadPos.add_frames(readFrames, m_outputRate);
-// 	printf("file %s: readFrames, cnt: %d, %d\n", QS_C(m_fileName), readFrames, cnt);
+	if (readFrames == cnt) {
+		m_rbFileReadPos.add_frames(readFrames, m_outputRate);
+	} else {
+		printf("ERROR in ReadSource::rb_file_read %s : \nreadFrames %d, requested %d, m_rbFileReadPos %d\n", QS_C(m_fileName), readFrames, cnt, m_rbRelativeFileReadPos.to_frame(get_rate()));
+		// DiskIO will be confused when cnt != readframes, so just for the sake of
+		// not looping in DiskIO::do_work(), fake that the file_read() did work out correctly!
+		m_rbFileReadPos.add_frames(cnt, m_outputRate);
+	}
 
 	return readFrames;
 }
@@ -431,6 +434,7 @@ void ReadSource::rb_seek_to_file_position(TimeRef& position)
 	// calculate position relative to the file!
 	TimeRef fileposition = position - m_clip->get_track_start_location() - m_clip->get_source_start_location();
 	
+	// Do nothing if we are allready at the seek position
 	if (m_rbFileReadPos == fileposition) {
 // 		printf("ringbuffer allready at position %d\n", position);
 		return;
@@ -441,19 +445,16 @@ void ReadSource::rb_seek_to_file_position(TimeRef& position)
 	// will come into play.
 	if (fileposition < 0) {
 // 		printf("not seeking to %ld, but too %d\n\n", fileposition,m_clip->get_source_start_location()); 
-		// Song's start from 0, this makes a period start from
-		// 0 - 1023 for example, the nframes is 1024!
-		// Setting a songs new position is on 1024, and NOT 
-		// 1023.. Hmm, something isn't correct here, but at least substract 1
-		// to make this thing work!
-		// TODO check if this is still needed!
-		fileposition = m_clip->get_source_start_location() - TimeRef(1, m_outputRate);
+		fileposition = m_clip->get_source_start_location();
 	}
 	
 // 	printf("rb_seek_to_file_position:: seeking to relative pos: %d\n", fileposition);
+	
+	// The content of our buffers is no longer valid, so we empty them
 	for (int i=0; i<m_buffers.size(); ++i) {
 		m_buffers.at(i)->reset();
 	}
+	
 	m_rbFileReadPos = fileposition;
 	m_rbRelativeFileReadPos = fileposition;
 }
@@ -504,8 +505,10 @@ void ReadSource::process_ringbuffer(DecodeBuffer* buffer, bool seeking)
 	nframes_t toWrite = rb_file_read(buffer, toRead);
 	
 	// and write it to the ringbuffer
-	for (int i=m_buffers.size()-1; i>=0; --i) {
-		m_buffers.at(i)->write(buffer->destination[i], toWrite);
+	if (toWrite) {
+		for (int i=m_buffers.size()-1; i>=0; --i) {
+			m_buffers.at(i)->write(buffer->destination[i], toWrite);
+		}
 	}
 }
 
