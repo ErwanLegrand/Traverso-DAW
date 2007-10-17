@@ -411,7 +411,12 @@ int ReadSource::rb_read(audio_sample_t** dst, TimeRef& start, nframes_t count)
 
 int ReadSource::rb_file_read(DecodeBuffer* buffer, nframes_t cnt)
 {
-	int readFrames = file_read(buffer, m_rbFileReadPos, cnt);
+	TimeRef range(cnt, m_outputRate);
+	if ( (m_rbFileReadPos + range) > m_length) {
+		cnt = (m_length - m_rbFileReadPos).to_frame(m_outputRate);
+	}
+	
+	nframes_t readFrames = file_read(buffer, m_rbFileReadPos, cnt);
 	if (readFrames == cnt) {
 		m_rbFileReadPos.add_frames(readFrames, m_outputRate);
 	} else {
