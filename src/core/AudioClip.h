@@ -108,7 +108,7 @@ public:
 	bool is_muted() const;
 	bool is_take() const;
 	bool is_selected() const;
-	bool is_locked() const;
+	bool is_locked() const {return m_isLocked;}
 	bool has_song() const;
 	bool is_readsource_invalid() const {return !m_isReadSourceValid;}
 	int recording_state() const;

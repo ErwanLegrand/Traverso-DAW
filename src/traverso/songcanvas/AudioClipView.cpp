@@ -117,7 +117,6 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	PENTER2;
 	Q_UNUSED(widget);
 	
-
 // 	printf("AudioClipView:: %s PAINT :: exposed rect is: x=%f, y=%f, w=%f, h=%f\n", QS_C(m_clip->get_name()), option->exposedRect.x(), option->exposedRect.y(), option->exposedRect.width(), option->exposedRect.height());
 	
 	int xstart = (int) option->exposedRect.x();
@@ -234,7 +233,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	bool microView = m_song->get_hzoom() > (Peak::MAX_ZOOM_USING_SOURCEFILE - 1) ? 0 : 1;
 	// boundary checking, important for microview only, macroview needs the additional
 	// pixels to paint the waveform correctly
-	if ( /*microView && */((xstart + pixelcount) > m_boundingRect.width()) ) {
+	if ( /*microView &&*/ ((xstart + pixelcount) > m_boundingRect.width()) ) {
 		pixelcount = (int) m_boundingRect.width() - xstart;
 	}
 	
@@ -257,6 +256,10 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		clipstartoffset -= m_sv->timeref_scalefactor;
 		adjustforevenpixel -= 1;
 	}
+	
+	// Painting seems to start 1 pixel too much to the left
+	// this 'fixes it, but I'd rather like a real fix :D
+	adjustforevenpixel++;
 	
 	int channels = m_clip->get_channels();
 	int peakdatacount = microView ? pixelcount : pixelcount * 2;
@@ -302,7 +305,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	} else {
 		curveDefaultValue = curveView->get_default_value();
 	}
-		
+	
 	for (int i = 0; i < m_fadeViews.size(); ++i) {
 		FadeView* view = m_fadeViews.at(i);
 		float fademixdown[pixelcount];
@@ -369,7 +372,6 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	
 	
 	for (int chan=0; chan < channels; chan++) {
-		
 		p->save();
 		
 		// calculate the height of the area available for peak drawing 
@@ -473,7 +475,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			m_polygontop.clear();
 			m_polygontop.reserve(pixelcount + 1);
 			int bufferpos = 0;
-						
+
 			if (m_classicView) {
 				m_polygonbottom.clear();
 				m_polygonbottom.reserve(pixelcount);
@@ -481,13 +483,12 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				int range = pixelcount;
 				for (int x = 0; x < range; x+=2) {
 					m_polygontop.append( QPointF(x, scaleFactor * pixeldata[chan][bufferpos++]) );
-					m_polygonbottom.append( QPointF(range-x, -scaleFactor * pixeldata[chan][range - bufferpos++]) );
+					m_polygonbottom.append( QPointF(x, -scaleFactor * pixeldata[chan][bufferpos++]) );
 				}
 				
 				path.addPolygon(m_polygontop);
-				path.lineTo(m_polygonbottom.first());
+				path.lineTo(m_polygonbottom.last());
 				path.addPolygon(m_polygonbottom);
-				path.lineTo(m_polygontop.first());
 				
 				if (m_mergedView) {
 					ytrans = (height / 2) * channels;
@@ -515,10 +516,8 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				
 			}
 			
-			
 			p->setMatrix(matrix().translate(xstart + adjustforevenpixel, ytrans), true);
 			p->drawPath(path);
-
 		}
 		
 		p->restore();

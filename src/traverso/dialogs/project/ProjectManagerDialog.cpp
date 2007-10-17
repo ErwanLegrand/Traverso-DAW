@@ -349,7 +349,6 @@ void ProjectManagerDialog::reject()
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2, or (at your option)
  * any later version.
-
 ...
 
 #define tc_title        textcodes[0x00]
@@ -365,6 +364,7 @@ void ProjectManagerDialog::reject()
 
 #define tc_closed_info  textcodes[0x0d]
 #define tc_isrc         textcodes[0x0e]
+*/
 
 /*
  *      binaere Felder sind

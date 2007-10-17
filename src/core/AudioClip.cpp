@@ -790,11 +790,6 @@ bool AudioClip::is_muted( ) const
 	return m_isMuted;
 }
 
-bool AudioClip::is_locked( ) const
-{
-	return m_isLocked;
-}
-
 QString AudioClip::get_name( ) const
 {
 	return m_name;
