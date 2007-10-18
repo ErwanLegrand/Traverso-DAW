@@ -129,7 +129,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	painter->save();
 	
 	QRectF clipRect = m_boundingRect.adjusted(-1, -1, 1, 1);
-	painter->setClipRect(clipRect);
+	painter->setClipRect(m_boundingRect);
 	
 	if (m_clip->is_readsource_invalid()) {
 		painter->fillRect(xstart, 0, pixelcount, m_height, themer()->get_color("AudioClip:invalidreadsource"));
@@ -198,13 +198,14 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	// Draw the contour
 	if (m_height < m_mimimumheightforinfoarea) {
 		painter->setPen(themer()->get_color("AudioClip:contour"));
-		painter->drawRect(xstart, 0, pixelcount, m_height - 1);
+		QRectF rect(0.5, 0, m_boundingRect.width() - 1, m_height - 0.5);
+		painter->drawRect(rect);
 	} else {
 		draw_clipinfo_area(painter, xstart, pixelcount);
 		painter->setPen(themer()->get_color("AudioClip:contour"));
-		QRectF rectinfo(xstart, 0, pixelcount, m_infoAreaHeight - 1);
+		QRectF rectinfo(0.5, 0, m_boundingRect.width() - 1, m_infoAreaHeight - 0.5);
 		painter->drawRect(rectinfo);
-		QRectF rect(xstart, 0, pixelcount, m_height - 1);
+		QRectF rect(0.5, 0, m_boundingRect.width() - 1, m_height - 0.5);
 		painter->drawRect(rect);
 	}
 	
@@ -291,6 +292,8 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		if (availpeaks == Peak::PERMANENT_FAILURE || availpeaks == Peak::NO_PEAKDATA_FOUND) {
 			return;
 		}		
+		
+// 		pixelcount = std::min(pixelcount, availpeaks);
 	}
 	
 	
@@ -480,8 +483,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				m_polygonbottom.clear();
 				m_polygonbottom.reserve(pixelcount);
 				
-				int range = pixelcount;
-				for (int x = 0; x < range; x+=2) {
+				for (int x = 0; x < pixelcount; x+=2) {
 					m_polygontop.append( QPointF(x, scaleFactor * pixeldata[chan][bufferpos++]) );
 					m_polygonbottom.append( QPointF(x, -scaleFactor * pixeldata[chan][bufferpos++]) );
 				}
@@ -746,7 +748,7 @@ void AudioClipView::calculate_bounding_rect()
 	prepareGeometryChange();
 // 	printf("AudioClipView::calculate_bounding_rect()\n");
 	set_height(m_tv->get_height());
-	m_boundingRect = QRectF(0, 0, (m_clip->get_length() / m_sv->timeref_scalefactor), m_height);
+	m_boundingRect = QRectF(0, 0, (m_clip->get_length() / m_sv->timeref_scalefactor) + 0.5, m_height);
 	update_start_pos();
 	ViewItem::calculate_bounding_rect();
 }

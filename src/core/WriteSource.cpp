@@ -358,9 +358,6 @@ int WriteSource::finish_export( )
 		m_diskio->unregister_write_source(this);
 	}
 
-
-	printf("WriteSource :: thread id is: %ld\n", QThread::currentThreadId ());
-	PWARN("WriteSource :: emiting exportFinished");
 	emit exportFinished();
 
 	return 1;

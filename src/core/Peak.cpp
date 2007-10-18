@@ -288,11 +288,11 @@ int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, TimeRef start
 		nframes_t startPos = startlocation.to_frame(44100);
 		
 		int offset = (startPos / zoomStep[zoomLevel]) * 2;
+		int truncate = 0;
 		
 		// Check if this zoom level has as many data as requested.
 		if ( (pixelcount + offset) > data->headerdata.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR]) {
-			// YES we know that sometimes we ommit the very last 'pixel' to avoid painting artifacts...
-//  			PERROR("pixelcount exceeds available data size! (pixelcount is: %d, available is %d", pixelcount, data->headerdata.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR] - offset); 
+			truncate = pixelcount - (data->headerdata.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR] - offset);
 // 			pixelcount = data->headerdata.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR] - offset;
 		}
 		
@@ -309,8 +309,12 @@ int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, TimeRef start
 			return NO_PEAKDATA_FOUND;
 		}
 		
-		*buffer = data->peakdataDecodeBuffer->destination[0];
+		for (int i=(pixelcount-truncate); i<(pixelcount); ++i) {
+			data->peakdataDecodeBuffer->destination[0][i] = 0;
+		}
 
+		*buffer = data->peakdataDecodeBuffer->destination[0];
+		
 		return read;
 		
 	// Micro view mode
