@@ -128,7 +128,6 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	
 	painter->save();
 	
-	QRectF clipRect = m_boundingRect.adjusted(-1, -1, 1, 1);
 	painter->setClipRect(m_boundingRect);
 	
 	if (m_clip->is_readsource_invalid()) {
@@ -748,7 +747,7 @@ void AudioClipView::calculate_bounding_rect()
 	prepareGeometryChange();
 // 	printf("AudioClipView::calculate_bounding_rect()\n");
 	set_height(m_tv->get_height());
-	m_boundingRect = QRectF(0, 0, (m_clip->get_length() / m_sv->timeref_scalefactor) + 0.5, m_height);
+	m_boundingRect = QRectF(0, 0, (m_clip->get_length() / m_sv->timeref_scalefactor), m_height);
 	update_start_pos();
 	ViewItem::calculate_bounding_rect();
 }
