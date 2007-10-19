@@ -472,24 +472,31 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				}
 			}
 			
-			QPainterPath path;
-			// in rectified view, we add an additional point, hence + 1
+			// we add one start/stop point so reserve some more...
 			m_polygontop.clear();
-			m_polygontop.reserve(pixelcount + 1);
+			m_polygontop.reserve(pixelcount + 3);
 			int bufferpos = 0;
 
 			if (m_classicView) {
+				QPainterPath pathtop;
+				QPainterPath pathbottom;
+				
 				m_polygonbottom.clear();
-				m_polygonbottom.reserve(pixelcount);
+				m_polygonbottom.reserve(pixelcount + 3);
+				
+				m_polygontop.append(QPointF(0, 0));
+				m_polygonbottom.append(QPointF(0, 0));
 				
 				for (int x = 0; x < pixelcount; x+=2) {
 					m_polygontop.append( QPointF(x, scaleFactor * pixeldata[chan][bufferpos++]) );
 					m_polygonbottom.append( QPointF(x, -scaleFactor * pixeldata[chan][bufferpos++]) );
 				}
 				
-				path.addPolygon(m_polygontop);
-				path.lineTo(m_polygonbottom.last());
-				path.addPolygon(m_polygonbottom);
+				m_polygontop.append(QPointF(pixelcount, 0));
+				m_polygonbottom.append(QPointF(pixelcount, 0));
+				
+				pathtop.addPolygon(m_polygontop);
+				pathbottom.addPolygon(m_polygonbottom);
 				
 				if (m_mergedView) {
 					ytrans = (height / 2) * channels;
@@ -497,7 +504,14 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 					ytrans = (height / 2) + (chan * height);
 				}
 			
+				p->setMatrix(matrix().translate(xstart + adjustforevenpixel, ytrans), true);
+				
+				p->drawPath(pathtop);
+				p->drawPath(pathbottom);
+			
 			} else {
+				QPainterPath path;
+				
 				scaleFactor =  (float) height * 0.95 * m_clip->get_gain() / Peak::MAX_DB_VALUE * curveDefaultValue;
 				ytrans = height + (chan * height);
 		
@@ -515,10 +529,10 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				path.addPolygon(m_polygontop);
 				path.lineTo(0, 0);
 				
+				p->setMatrix(matrix().translate(xstart + adjustforevenpixel, ytrans), true);
+				p->drawPath(path);
 			}
 			
-			p->setMatrix(matrix().translate(xstart + adjustforevenpixel, ytrans), true);
-			p->drawPath(path);
 		}
 		
 		p->restore();
