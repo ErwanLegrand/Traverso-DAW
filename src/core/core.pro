@@ -53,7 +53,8 @@ SOURCES = AudioClip.cpp \
 	Marker.cpp \
 	Themer.cpp \
 	AudioFileMerger.cpp \
-	ProjectConverter.cpp
+	ProjectConverter.cpp \
+	Utils.cpp
 HEADERS = precompile.h \
 	AudioClip.h \
 	AudioClipList.h \
@@ -97,7 +98,8 @@ HEADERS = precompile.h \
 	Marker.h \
 	Themer.h \
 	AudioFileMerger.h \
-	ProjectConverter.h
+	ProjectConverter.h \
+	Utils.h
 macx{
     QMAKE_LIBDIR += /usr/local/qt/lib
 }
@@ -105,7 +107,3 @@ macx{
 win32{
     INCLUDEPATH += ../../3thparty/include .
 }
-SOURCES -= Utils.cpp
-
-HEADERS -= Utils.h
-
