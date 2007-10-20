@@ -7,6 +7,7 @@ TEMPLATE = lib
 PRECOMPILED_HEADER = precompile.h 
 
 INCLUDEPATH += 	../../core \
+		../../common \
 		../../traverso \
 		../../traverso/dialogs \
 		../../engine \

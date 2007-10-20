@@ -7,6 +7,7 @@ contains(DEFINES, STATIC_BUILD): CONFIG += static
 
 INCLUDEPATH  += ../.. \
 		../../../core \
+		../../../common \
 		../../../traverso/songcanvas \
 		../../../commands \
 		../../../engine \

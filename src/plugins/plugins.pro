@@ -7,6 +7,7 @@ TEMPLATE = lib
 
 INCLUDEPATH += \
 	../core \
+	../common \
 	../engine \
 	../commands \
 	LV2 \

@@ -6,6 +6,7 @@ LIBS += -ltraversocommands \
         -ltraversoaudiobackend
 
 INCLUDEPATH += ../commands \
+	../common \
 	../engine \
 	../audiofileio/decode \
 	../audiofileio/encode \

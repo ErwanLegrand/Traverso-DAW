@@ -2,7 +2,7 @@ include(../libbase.pri)
 
 INCLUDEPATH += decode encode \
 	../core \
-	../engine
+	../common
 
 QMAKE_LIBDIR = ../../lib 
 TARGET = traversoaudiofileio 

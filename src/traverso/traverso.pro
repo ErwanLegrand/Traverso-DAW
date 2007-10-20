@@ -121,6 +121,7 @@ FORMS += \
 
 INCLUDEPATH += 	../core \
 		../commands \
+		../common \
 		../engine \
 		../audiofileio/decode \
 		../audiofileio/encode \

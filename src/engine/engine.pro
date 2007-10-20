@@ -1,6 +1,7 @@
 include(../libbase.pri)
 
-INCLUDEPATH += ../core
+INCLUDEPATH += ../core \
+		../common \
 
 TARGET = traversoaudiobackend
 DESTDIR = ../../lib 

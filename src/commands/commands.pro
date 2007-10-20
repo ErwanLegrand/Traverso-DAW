@@ -48,6 +48,7 @@ INCLUDEPATH += ../core \
 ../traverso \
 ../traverso/songcanvas \
 ../engine \
+../common \
 ../plugins \
 ../plugins/native \
 ../audiofileio/decode \
