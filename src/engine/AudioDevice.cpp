@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.43 2007/10/20 17:38:18 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.44 2007/10/20 17:43:55 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -854,11 +854,6 @@ JackDriver* AudioDevice::slaved_jack_driver()
 TimeRef AudioDevice::get_buffer_latency()
 {
 	return TimeRef(m_bufferSize, m_rate);
-}
-
-void AudioDevice::emit_message(const QString & string, int severity)
-{ 
-	emit message(string, severity);
 }
 
 void AudioDevice::set_driver_properties(QHash< QString, QVariant > & properties)

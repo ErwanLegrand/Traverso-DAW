@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.24 2007/10/20 17:38:19 r_sijrier Exp $
+$Id: AudioDevice.h,v 1.25 2007/10/20 17:43:55 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -209,8 +209,7 @@ private:
 		WARNING = 1,
   		CRITICAL = 2
 	};
-  		
-	void emit_message(const QString& string, int severity);
+	
 	QVariant get_driver_property(const QString& property, QVariant defaultValue);
 
 signals:
