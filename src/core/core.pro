@@ -43,7 +43,6 @@ SOURCES = AudioClip.cpp \
 	RingBuffer.cpp \
 	Song.cpp \
 	Track.cpp \
-	Utils.cpp \
 	ViewPort.cpp \
 	WriteSource.cpp \
 	gdither.cpp \
@@ -82,7 +81,6 @@ HEADERS = precompile.h \
 	RingBufferNPT.h \
 	Song.h \
 	Track.h \
-	Utils.h \
 	ViewPort.h \
 	WriteSource.h \
 	libtraversocore.h \
@@ -106,3 +104,7 @@ macx{
 win32{
     INCLUDEPATH += ../../3thparty/include .
 }
+SOURCES -= Utils.cpp
+
+HEADERS -= Utils.h
+
