@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: JackDriver.cpp,v 1.21 2007/10/20 17:38:19 r_sijrier Exp $
+    $Id: JackDriver.cpp,v 1.22 2007/10/20 17:46:51 r_sijrier Exp $
 */
 
 #include "JackDriver.h"
@@ -103,7 +103,7 @@ int JackDriver::setup(bool capture, bool playback, const QString& )
         printf("Connecting to the Jack server...\n");
 
         if ( (client = jack_client_new (client_name)) == NULL) {
-// 		info().warning(tr("Jack Driver: Couldn't connect to the jack server, is jack running?"));
+		device->message(tr("Jack Driver: Couldn't connect to the jack server, is jack running?"), AudioDevice::WARNING);
                 return -1;
         }
 
@@ -200,7 +200,7 @@ int JackDriver::setup(bool capture, bool playback, const QString& )
 
 	update_config();
 
-// 	info().information(tr("Jack Driver: Connected successfully to the jack server!"));
+	device->message(tr("Jack Driver: Connected successfully to the jack server!"), AudioDevice::INFO);
         
 	return 1;
 }
