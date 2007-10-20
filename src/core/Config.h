@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Config.h,v 1.8 2007/03/29 21:09:42 benjie Exp $
+$Id: Config.h,v 1.9 2007/10/20 17:38:17 r_sijrier Exp $
 */
 
 #ifndef CONFIG_H
@@ -54,6 +54,7 @@ private:
 	friend Config& config();
 	
 	void load_configuration();
+	void set_audiodevice_driver_properties();
 	
 	QHash<QString, QVariant>	m_configs;
 

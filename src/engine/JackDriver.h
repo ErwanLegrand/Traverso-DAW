@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: JackDriver.h,v 1.8 2007/06/22 12:29:28 r_sijrier Exp $
+    $Id: JackDriver.h,v 1.9 2007/10/20 17:38:19 r_sijrier Exp $
 */
 
 #ifndef JACKDRIVER_H
@@ -52,6 +52,7 @@ public:
 	size_t is_jack_running() const {return m_running == 1;}
 	jack_client_t* get_client() const {return client;}
 	bool is_slave() const {return m_isSlave;}
+	void update_config();
 
 private:
 	volatile size_t	m_running;
@@ -70,9 +71,6 @@ private:
 signals:
 	void jackShutDown();
 	
-private slots:
-	void update_config();
-
 };
 
 

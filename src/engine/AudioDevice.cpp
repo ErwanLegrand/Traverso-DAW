@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.42 2007/10/16 13:43:00 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.43 2007/10/20 17:38:18 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -41,7 +41,6 @@ RELAYTOOL_JACK
 #include "AudioChannel.h"
 #include "AudioBus.h"
 #include "Tsar.h"
-#include "Information.h"
 
 //#include <sys/mman.h>
 
@@ -403,7 +402,7 @@ int AudioDevice::create_driver(QString driverType, bool capture, bool playback, 
 		if (driverType == "Jack") {
 			driver = new JackDriver(this, m_rate, m_bufferSize);
 			if (driver->setup(capture, playback) < 0) {
-				info().warning(tr("Audiodevice: Failed to create the Jack Driver"));
+				message(tr("Audiodevice: Failed to create the Jack Driver"), WARNING);
 				delete driver;
 				driver = 0;
 				return -1;
@@ -418,7 +417,7 @@ int AudioDevice::create_driver(QString driverType, bool capture, bool playback, 
 	if (driverType == "ALSA") {
 		driver =  new AlsaDriver(this, m_rate, m_bufferSize);
 		if (driver->setup(capture,playback, cardDevice) < 0) {
-			info().warning(tr("Audiodevice: Failed to create the ALSA Driver"));
+			message(tr("Audiodevice: Failed to create the ALSA Driver"), WARNING);
 			delete driver;
 			driver = 0;
 			return -1;
@@ -432,7 +431,7 @@ int AudioDevice::create_driver(QString driverType, bool capture, bool playback, 
 	if (driverType == "PortAudio") {
 		driver = new PADriver(this, m_rate, m_bufferSize);
 		if (driver->setup(capture, playback, cardDevice) < 0) {
-			info().warning(tr("Audiodevice: Failed to create the PortAudio Driver"));
+			message(tr("Audiodevice: Failed to create the PortAudio Driver"), WARNING);
 			delete driver;
 			driver = 0;
 			return -1;
@@ -742,7 +741,7 @@ void AudioDevice::check_jack_shutdown()
 			if ( ! jackdriver->is_jack_running()) {
 				jackShutDownChecker.stop();
 				printf("jack shutdown detected\n");
-				info().critical(tr("The Jack server has been shutdown!"));
+				message(tr("The Jack server has been shutdown!"), CRITICAL);
 				delete driver;
 				driver = 0;
 				set_parameters(44100, m_bufferSize, "Null Driver");
@@ -755,8 +754,8 @@ void AudioDevice::check_jack_shutdown()
 
 void AudioDevice::switch_to_null_driver()
 {
-	info().critical(tr("AudioDevice:: Buffer underrun 'Storm' detected, switching to Null Driver"));
-	info().information(tr("AudioDevice:: For trouble shooting this problem, please see Chapter 11 from the user manual!"));
+	message(tr("AudioDevice:: Buffer underrun 'Storm' detected, switching to Null Driver"), CRITICAL);
+	message(tr("AudioDevice:: For trouble shooting this problem, please see Chapter 11 from the user manual!"), INFO);
 	set_parameters(44100, m_bufferSize, "Null Driver");
 }
 
@@ -855,5 +854,26 @@ JackDriver* AudioDevice::slaved_jack_driver()
 TimeRef AudioDevice::get_buffer_latency()
 {
 	return TimeRef(m_bufferSize, m_rate);
+}
+
+void AudioDevice::emit_message(const QString & string, int severity)
+{ 
+	emit message(string, severity);
+}
+
+void AudioDevice::set_driver_properties(QHash< QString, QVariant > & properties)
+{
+	m_driverProperties = properties;
+	if (libjack_is_present) {
+		JackDriver* jackdriver = qobject_cast<JackDriver*>(driver);
+		if (jackdriver) {
+			jackdriver->update_config();
+		}
+	}
+}
+
+QVariant AudioDevice::get_driver_property(const QString& property, QVariant defaultValue)
+{
+	return m_driverProperties.value(property, defaultValue);
 }
 

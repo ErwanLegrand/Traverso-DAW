@@ -1,7 +1,8 @@
 include(../libbase.pri)
 
-INCLUDEPATH += decode encode \
-	../core \
+INCLUDEPATH += \
+	decode \
+	encode \
 	../common
 
 QMAKE_LIBDIR = ../../lib 

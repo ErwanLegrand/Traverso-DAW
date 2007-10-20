@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Config.h"
 #include "../config.h"
 #include "InputEngine.h"
+#include "AudioDevice.h"
 
 #include <QSettings>
 #include <QString>
@@ -53,6 +54,8 @@ void Config::load_configuration()
 	foreach(QString key, keys) {
 		m_configs.insert(key, settings.value(key));
 	}
+	
+	set_audiodevice_driver_properties();
 }
 
 
@@ -105,6 +108,9 @@ void Config::save( )
 		settings.setValue(i.key(), i.value());
 		++i;
 	}
+	
+	set_audiodevice_driver_properties();
+	
 	emit configChanged();
 }
 
@@ -127,4 +133,11 @@ void Config::set_property( const QString & type, const QString & property, QVari
 }
 
 
-//eof
+void Config::set_audiodevice_driver_properties()
+{
+	QHash<QString, QVariant> hardwareconfigs;
+	hardwareconfigs.insert("jackslave", get_property("Hardware", "jackslave", false));
+	hardwareconfigs.insert("numberofperiods", get_property("Hardware", "numberofperiods", 2));
+	
+	audiodevice().set_driver_properties(hardwareconfigs);
+}

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.23 2007/10/16 13:43:00 r_sijrier Exp $
+$Id: AudioDevice.h,v 1.24 2007/10/20 17:38:19 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -29,6 +29,8 @@ $Id: AudioDevice.h,v 1.23 2007/10/16 13:43:00 r_sijrier Exp $
 #include <QStringList>
 #include <QByteArray>
 #include <QTimer>
+#include <QVariant>
+
 
 #include "RingBufferNPT.h"
 #include "defines.h"
@@ -115,12 +117,12 @@ public:
 
 
 	void show_descriptors();
+	void set_driver_properties(QHash<QString, QVariant>& properties);
 
 	int shutdown();
 	
 	uint capture_buses_count() const;
 	uint playback_buses_count() const;
-
 
 	trav_time_t get_cpu_time();
 
@@ -128,8 +130,7 @@ public:
 private:
 	AudioDevice();
 	~AudioDevice();
-	AudioDevice(const AudioDevice&) : QObject()
-	{}
+	AudioDevice(const AudioDevice&) : QObject() {}
 
 	// allow this function to create one instance
 	friend AudioDevice& audiodevice();
@@ -164,6 +165,7 @@ private:
 	uint			m_bitdepth;
 	uint			m_xrunCount;
 	QString			m_driverType;
+	QHash<QString, QVariant> m_driverProperties;
 
 	int run_one_cycle(nframes_t nframes, float delayed_usecs);
 	int create_driver(QString driverType, bool capture, bool playback, const QString& cardDevice);
@@ -195,15 +197,21 @@ private:
 		m_cpuTime->write(&runcycleTime, 1);
 	}
 
-	Driver* get_driver() const
-	{
-		return driver;
-	}
+	Driver* get_driver() const {return driver;}
 
 	void mili_sleep(int msec);
 	void xrun();
 	
 	size_t run_audio_thread() const;
+	
+	enum {
+		INFO = 0,
+		WARNING = 1,
+  		CRITICAL = 2
+	};
+  		
+	void emit_message(const QString& string, int severity);
+	QVariant get_driver_property(const QString& property, QVariant defaultValue);
 
 signals:
 	/**
@@ -239,6 +247,8 @@ signals:
 	void clientRemoved(Client*);
 	
 	void xrunStormDetected();
+	
+	void message(QString, int);
 
 private slots:
 	void private_add_client(Client* client);

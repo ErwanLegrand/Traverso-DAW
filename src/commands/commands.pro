@@ -47,7 +47,6 @@ include(../libbase.pri)
 INCLUDEPATH += ../core \
 ../traverso \
 ../traverso/songcanvas \
-../engine \
 ../common \
 ../plugins \
 ../plugins/native \

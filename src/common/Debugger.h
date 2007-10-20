@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: Debugger.h,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
+    $Id: Debugger.h,v 1.1 2007/10/20 17:38:16 r_sijrier Exp $
 */
 
 #ifndef DEBUGGER_H

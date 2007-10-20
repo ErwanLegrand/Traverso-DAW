@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
+    Copyright (C) 2005-2007 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -17,7 +17,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Information.h,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
 */
 
 #ifndef INFORMATION_H
@@ -46,8 +45,7 @@ public:
         void critical(const QString& s);
 
 private:
-        Information()
-        {}
+        Information();
         Information(const Information&) : QObject()
         {}
 
@@ -57,6 +55,9 @@ private:
 
 signals:
         void message(InfoStruct );
+	
+private slots:
+	void audiodevice_message(QString message, int severity);
 };
 
 // use this function to propagate the Information

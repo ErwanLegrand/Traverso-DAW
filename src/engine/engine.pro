@@ -1,7 +1,6 @@
 include(../libbase.pri)
 
-INCLUDEPATH += ../core \
-		../common \
+INCLUDEPATH += ../common
 
 TARGET = traversoaudiobackend
 DESTDIR = ../../lib 
@@ -18,7 +17,6 @@ Client.cpp \
 Driver.cpp \
 JackDriver.cpp \
 memops.cpp \
-Tsar.cpp \
 PADriver.cpp
 HEADERS += AlsaDriver.h \
 AudioBus.h \
@@ -33,7 +31,6 @@ JackDriver.h \
 libtraverso.h \
 memops.h \
 precompile.h \
-Tsar.h \
 PADriver.h
 release{
     PRECOMPILED_HEADER -= precompile.h 

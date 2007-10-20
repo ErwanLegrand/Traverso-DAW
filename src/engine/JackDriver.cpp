@@ -17,13 +17,10 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: JackDriver.cpp,v 1.20 2007/08/16 14:26:51 r_sijrier Exp $
+    $Id: JackDriver.cpp,v 1.21 2007/10/20 17:38:19 r_sijrier Exp $
 */
 
 #include "JackDriver.h"
-
-#include <Information.h>
-#include "Config.h"
 
 #include <jack/jack.h>
 
@@ -45,8 +42,6 @@ JackDriver::JackDriver( AudioDevice * dev , int rate, nframes_t bufferSize)
         write = MakeDelegate(this, &JackDriver::_write);
         run_cycle = RunCycleCallback(this, &JackDriver::_run_cycle);
 	m_running = false;
-	
-	connect(&config(), SIGNAL(configChanged()), this, SLOT(update_config()));
 }
 
 JackDriver::~JackDriver( )
@@ -108,7 +103,7 @@ int JackDriver::setup(bool capture, bool playback, const QString& )
         printf("Connecting to the Jack server...\n");
 
         if ( (client = jack_client_new (client_name)) == NULL) {
-		info().warning(tr("Jack Driver: Couldn't connect to the jack server, is jack running?"));
+// 		info().warning(tr("Jack Driver: Couldn't connect to the jack server, is jack running?"));
                 return -1;
         }
 
@@ -205,7 +200,7 @@ int JackDriver::setup(bool capture, bool playback, const QString& )
 
 	update_config();
 
-	info().information(tr("Jack Driver: Connected successfully to the jack server!"));
+// 	info().information(tr("Jack Driver: Connected successfully to the jack server!"));
         
 	return 1;
 }
@@ -327,7 +322,8 @@ int JackDriver::_jack_sync_callback (jack_transport_state_t state, jack_position
 
 void JackDriver::update_config()
 {
-	m_isSlave = config().get_property("Hardware", "jackslave", false).toBool();
+	m_isSlave = device->get_driver_property("jackslave", false).toBool();
+	printf("m_isSlave %d\n", m_isSlave);
 		
 	if (m_isSlave) {
 		jack_set_sync_callback (client, _jack_sync_callback, this);

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
+    Copyright (C) 2005-2007 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -17,11 +17,11 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Information.cpp,v 1.4 2007/05/17 23:29:39 r_sijrier Exp $
 */
 
 #include "Information.h"
 #include "Utils.h"
+#include "AudioDevice.h"
 
 #include "Debugger.h"
 
@@ -60,4 +60,21 @@ void Information::critical( const QString & mes )
 	emit message(s);
 }
 
-//eof
+void Information::audiodevice_message(QString message, int severity)
+{
+	switch(severity) {
+		case 0: information(message);
+		break;
+		case 1: warning(message);
+		break;
+		case 2: critical(message);
+		break;
+		default: information(message);
+	}
+}
+
+Information::Information()
+{
+	connect(&audiodevice(), SIGNAL(message(QString, int)),
+		 this, SLOT(audiodevice_message(QString, int)));
+}

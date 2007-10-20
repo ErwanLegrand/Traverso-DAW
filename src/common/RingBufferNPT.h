@@ -15,7 +15,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    $Id: RingBufferNPT.h,v 1.5 2007/06/22 12:29:28 r_sijrier Exp $
+    $Id: RingBufferNPT.h,v 1.1 2007/10/20 17:38:17 r_sijrier Exp $
 */
 
 #ifndef ringbuffer_npt_h

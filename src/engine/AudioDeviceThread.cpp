@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier
+Copyright (C) 2005-2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,14 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDeviceThread.cpp,v 1.20 2007/10/12 08:52:13 r_sijrier Exp $
+$Id: AudioDeviceThread.cpp,v 1.21 2007/10/20 17:38:19 r_sijrier Exp $
 */
 
 #include "AudioDeviceThread.h"
 
 #include "AudioDevice.h"
 #include "Driver.h"
-#include <Information.h>
 
 #if defined (Q_WS_X11)
 #include <dlfcn.h>
@@ -130,11 +129,11 @@ int AudioDeviceThread::become_realtime( bool realtime )
 		struct sched_param param;
 		param.sched_priority = 70;
 		if (pthread_setschedparam (pthread_self(), SCHED_FIFO, &param) != 0) {
-			info().critical(tr("Unable to set Audiodevice Thread to realtime priority!!!"
+			m_device->message(tr("Unable to set Audiodevice Thread to realtime priority!!!"
 				"This most likely results in unreliable playback/capture and "
 				"lots of buffer underruns (== sound drops)."
 				"In the worst case the program can even malfunction!"
-				"Please make sure you run this program with realtime privileges!!!"));
+				"Please make sure you run this program with realtime privileges!!!"), AudioDevice::CRITICAL);
 			return -1;
 		} else {
 			printf("AudioThread: Running with realtime priority\n");
@@ -176,4 +175,3 @@ void AudioDeviceThread::run_on_cpu( int cpu )
 #endif
 }
 
-//eof

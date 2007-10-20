@@ -19,7 +19,13 @@ DESTDIR = ../../lib
 
 TEMPLATE = lib 
 
-SOURCES = AudioClip.cpp \
+SOURCES = \
+ 	../common/Utils.cpp \
+	../common/Tsar.cpp \
+	../common/Debugger.cpp \
+	../common/Mixer.cpp \
+	../common/RingBuffer.cpp \
+	AudioClip.cpp \
 	AudioClipList.cpp \
 	AudioClipManager.cpp \
 	AudioSource.cpp \
@@ -28,20 +34,17 @@ SOURCES = AudioClip.cpp \
 	ContextPointer.cpp \
 	Curve.cpp \
 	CurveNode.cpp \
-	Debugger.cpp \
 	DiskIO.cpp \
 	Export.cpp \
 	FadeCurve.cpp \
 	FileHelpers.cpp \
 	Information.cpp \
 	InputEngine.cpp \
-	Mixer.cpp \
 	Peak.cpp \
 	Project.cpp \
 	ProjectManager.cpp \
 	ReadSource.cpp \
 	ResourcesManager.cpp \
-	RingBuffer.cpp \
 	Song.cpp \
 	Track.cpp \
 	ViewPort.cpp \
@@ -53,9 +56,14 @@ SOURCES = AudioClip.cpp \
 	Marker.cpp \
 	Themer.cpp \
 	AudioFileMerger.cpp \
-	ProjectConverter.cpp \
-	Utils.cpp
+	ProjectConverter.cpp
 HEADERS = precompile.h \
+	../common/Utils.h \
+	../common/Tsar.h \
+	../common/Debugger.h \
+	../common/Mixer.h \
+	../common/RingBuffer.h \
+	../common/RingBufferNPT.h \
 	AudioClip.h \
 	AudioClipList.h \
 	AudioClipManager.h \
@@ -66,21 +74,17 @@ HEADERS = precompile.h \
 	ContextPointer.h \
 	CurveNode.h \
 	Curve.h \
-	Debugger.h \
 	DiskIO.h \
 	Export.h \
 	FadeCurve.h \
 	FileHelpers.h \
 	Information.h \
 	InputEngine.h \
-	Mixer.h \
 	Peak.h \
 	Project.h \
 	ProjectManager.h \
 	ReadSource.h \
 	ResourcesManager.h \
-	RingBuffer.h \
-	RingBufferNPT.h \
 	Song.h \
 	Track.h \
 	ViewPort.h \
@@ -98,8 +102,7 @@ HEADERS = precompile.h \
 	Marker.h \
 	Themer.h \
 	AudioFileMerger.h \
-	ProjectConverter.h \
-	Utils.h
+	ProjectConverter.h
 macx{
     QMAKE_LIBDIR += /usr/local/qt/lib
 }
