@@ -533,7 +533,6 @@ Command* CurveView::drag_node()
 		if (nodeList->size() > (index + 1)) {
 			max = qint64(nodeList->at(index+1)->get_when() - 1);
 		}
-		printf("min, max %lld %lld\n",min.universal_frame(), max.universal_frame());
 		return new DragNode(m_blinkingNode->get_curve_node(), this, m_sv->timeref_scalefactor, min, max, tr("Drag Node"));
 	}
 	return ie().did_not_implement();
