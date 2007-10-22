@@ -886,7 +886,7 @@ Command * AudioClipView::select_fade_out_shape( )
 
 void AudioClipView::start_recording()
 {
-	m_oldRecordingPos = 0;
+	m_oldRecordingPos = TimeRef();
 	connect(&m_recordingTimer, SIGNAL(timeout()), this, SLOT(update_recording()));
 	m_recordingTimer.start(750);
 }

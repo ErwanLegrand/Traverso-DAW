@@ -163,11 +163,10 @@ void Song::init()
 	m_isSnapOn=true;
 	changed = m_rendering = m_recording = m_prepareRecording = false;
 	firstVisibleFrame=0;
-	m_workLocation=0;
+	m_workLocation = TimeRef();
 	m_seeking = m_startSeek = 0;
 	// TODO seek to old position on project exit ?
-// 	m_transportFrame = 0;
-	m_transportLocation = 0;
+	m_transportLocation = TimeRef();
 	m_mode = EDIT;
 	m_sbx = m_sby = 0;
 	
@@ -365,7 +364,7 @@ int Song::prepare_export(ExportSpecification* spec)
 	}
 
 	spec->startLocation = LONG_LONG_MAX;
-	spec->endLocation = 0;
+	spec->endLocation = TimeRef();
 
 	TimeRef endlocation, startlocation;
 

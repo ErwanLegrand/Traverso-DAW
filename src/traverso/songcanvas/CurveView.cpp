@@ -47,7 +47,7 @@ class DragNode : public Command
 	Q_CLASSINFO("move_down", tr("Move Down"));
 	
 public:
-	DragNode(CurveNode* node, CurveView* curveview, int scalefactor, long rangeMin, long rangeMax, const QString& des);
+	DragNode(CurveNode* node, CurveView* curveview, qint64 scalefactor, TimeRef rangeMin, TimeRef rangeMax, const QString& des);
 	
 	int prepare_actions();
 	int do_action();
@@ -61,9 +61,9 @@ private :
 	class	Private {
 		public:
 			CurveView*	curveView;
-			int		scalefactor;
-			long		rangeMin;
-			long		rangeMax;
+			qint64		scalefactor;
+			TimeRef		rangeMin;
+			TimeRef		rangeMax;
 			QPoint		mousepos;
 	};
 	
@@ -84,7 +84,7 @@ public slots:
 #include "CurveView.moc"
 
 	
-DragNode::DragNode(CurveNode* node, CurveView* curveview, int scalefactor, long rangeMin, long rangeMax, const QString& des)
+DragNode::DragNode(CurveNode* node, CurveView* curveview, qint64 scalefactor, TimeRef rangeMin, TimeRef rangeMax, const QString& des)
 	: Command(curveview->get_context(), des)
 	, d(new Private)
 {
@@ -160,7 +160,7 @@ int DragNode::jog()
 	m_newValue = m_newValue - ( dy / d->curveView->boundingRect().height());
 	
 	TimeRef startoffset = d->curveView->get_start_offset();
-	if ( ((TimeRef(m_newWhen) - startoffset) / qint64(d->scalefactor)) > d->curveView->boundingRect().width()) {
+	if ( ((TimeRef(m_newWhen) - startoffset) / d->scalefactor) > d->curveView->boundingRect().width()) {
 		m_newWhen = double(d->curveView->boundingRect().width() * d->scalefactor + startoffset.universal_frame());
 	}
 	if ((TimeRef(m_newWhen) - startoffset) < TimeRef()) {
@@ -178,9 +178,9 @@ int DragNode::jog()
 	}
 	
 	if (m_newWhen < d->rangeMin) {
-		m_newWhen = d->rangeMin;
-	} else if (d->rangeMax != -1 && m_newWhen > d->rangeMax) {
-		m_newWhen = d->rangeMax;
+		m_newWhen = double(d->rangeMin.universal_frame());
+	} else if (d->rangeMax != qint64(-1) && m_newWhen > d->rangeMax) {
+		m_newWhen = double(d->rangeMax.universal_frame());
 	}
 
 	return do_action();
@@ -201,7 +201,7 @@ CurveView::CurveView(SongView* sv, ViewItem* parentViewItem, Curve* curve)
 	
 	m_blinkColorDirection = 1;
 	m_blinkingNode = 0;
-	m_startoffset = 0;
+	m_startoffset = TimeRef();
 	m_guicurve = new Curve(0);
 	m_guicurve->set_song(sv->get_song());
 	
@@ -519,8 +519,8 @@ Command* CurveView::drag_node()
 	update_softselected_node(QPoint((int)origPos.x(), (int)origPos.y()), true);
 	
 	if (m_blinkingNode) {
-		qint64 min = 0;
-		qint64 max = -1;
+		TimeRef min(qint64(0));
+		TimeRef max(qint64(-1));
 		QList<CurveNode* >* nodeList = m_curve->get_nodes();
 		CurveNode* node = m_blinkingNode->get_curve_node();
 		int index = nodeList->indexOf(node);
@@ -530,9 +530,10 @@ Command* CurveView::drag_node()
 		if (index > 0) {
 			min = qint64(nodeList->at(index-1)->get_when() + 1);
 		}
-		if (nodeList->size() > index + 1) {
+		if (nodeList->size() > (index + 1)) {
 			max = qint64(nodeList->at(index+1)->get_when() - 1);
 		}
+		printf("min, max %lld %lld\n",min.universal_frame(), max.universal_frame());
 		return new DragNode(m_blinkingNode->get_curve_node(), this, m_sv->timeref_scalefactor, min, max, tr("Drag Node"));
 	}
 	return ie().did_not_implement();

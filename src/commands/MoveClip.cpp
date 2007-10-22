@@ -148,7 +148,7 @@ void MoveClip::init_data(bool isCopy)
 
 	m_originTrack = m_targetTrack = m_clip->get_track();
 	m_originalTrackStartLocation = m_clip->get_track_start_location();
-	m_posDiff = 0;
+	m_posDiff = TimeRef();
 	d->origXPos = cpointer().on_first_input_event_x();
 	d->origPos = QPoint(d->origXPos, cpointer().on_first_input_event_y());
 	d->hScrollbarValue = d->sv->hscrollbar_value();

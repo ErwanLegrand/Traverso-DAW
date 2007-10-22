@@ -562,9 +562,9 @@ int AudioClip::init_recording( QByteArray name )
 	spec->sample_rate = audiodevice().get_sample_rate();
 	spec->src_quality = SRC_SINC_MEDIUM_QUALITY;
 	spec->isRecording = true;
-	spec->startLocation = 0;
-	spec->endLocation = 0;
-	spec->totalTime = 0;
+	spec->startLocation = TimeRef();
+	spec->endLocation = TimeRef();
+	spec->totalTime = TimeRef();
 	spec->blocksize = audiodevice().get_buffer_size();
 	spec->name = m_name + "-" + sourceid;
 	spec->dataF = m_captureBus->get_buffer(0, audiodevice().get_buffer_size());
@@ -691,7 +691,7 @@ void AudioClip::finish_write_source()
 	} else {
 		m_song->get_diskio()->register_read_source(m_readSource);
 		// re-inits the lenght from the audiofile due calling rsm->set_source_for_clip()
-		m_length = 0;
+		m_length = TimeRef();
 	}
 	
 	delete m_recorder;

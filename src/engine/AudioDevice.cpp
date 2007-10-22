@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.44 2007/10/20 17:43:55 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.45 2007/10/22 18:44:01 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -789,7 +789,7 @@ void AudioDevice::transport_start(Client * client)
 	state.tranport = TransportRolling;
 	state.isSlave = false;
 	state.realtime = false;
-	state.location = 0; // get from client!!
+	state.location = TimeRef(); // get from client!!
 	
 	client->transport_control(state);
 }
@@ -809,7 +809,7 @@ void AudioDevice::transport_stop(Client * client)
 	state.tranport = TransportStopped;
 	state.isSlave = false;
 	state.realtime = false;
-	state.location = 0; // get from client!!
+	state.location = TimeRef(); // get from client!!
 	
 	client->transport_control(state);
 }

@@ -503,7 +503,7 @@ void Track::get_render_range(TimeRef& startlocation, TimeRef& endlocation )
 	if (audioClipList.size() == 0)
 		return;
 		
-	endlocation = 0;
+	endlocation = TimeRef();
 	startlocation = LONG_LONG_MAX;
 	
 	AudioClip* clip;

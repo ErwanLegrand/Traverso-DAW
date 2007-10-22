@@ -47,8 +47,8 @@ SnapList::SnapList(Song* song)
 	, m_song(song)
 {
 	m_isDirty = true;
-	m_rangeStart = 0;
-	m_rangeEnd = 0;
+	m_rangeStart = TimeRef();
+	m_rangeEnd = TimeRef();
 	m_scalefactor = 1;
 }
 

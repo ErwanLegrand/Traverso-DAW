@@ -39,7 +39,7 @@ Import::Import(const QString& fileName)
 	m_track = 0;
 	m_silent = false;
 	m_hasPosition = false;
-	m_initialLength = 0;
+	m_initialLength = TimeRef();
 }
 
 
@@ -68,7 +68,7 @@ Import::Import(Track* track, const QString& fileName)
 	m_fileName = fileName;
 	m_silent = false;
 	m_hasPosition = false;
-	m_initialLength = 0;
+	m_initialLength = TimeRef();
 }
 
 Import::Import(Track* track, const QString& fileName, const TimeRef& position)
@@ -78,7 +78,7 @@ Import::Import(Track* track, const QString& fileName, const TimeRef& position)
 	m_clip = 0;
 	m_fileName = fileName;
 	m_silent = false;
-	m_initialLength = 0;
+	m_initialLength = TimeRef();
 	m_hasPosition = true;
 	m_position = position;
 }

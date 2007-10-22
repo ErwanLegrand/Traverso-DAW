@@ -77,9 +77,14 @@ struct TimeRef {
 	
 	qint64 universal_frame() const {return m_position;}
 	
-	TimeRef operator =(qint64 value) {
-		TimeRef ref(value);
-		return ref;
+	TimeRef& operator =(const qint64 value) {
+		m_position = value;
+		return *this;
+	}
+	
+	TimeRef& operator =(double value) {
+		m_position = qint64(value);
+		return *this;
 	}
 	
 	friend int operator!=(const TimeRef& left, const TimeRef& right) {
@@ -99,13 +104,11 @@ struct TimeRef {
 	}
 	
 	friend TimeRef operator-(const TimeRef& left, qint64 right) {
-		TimeRef location(left.m_position - right);
-		return location;
+		return TimeRef(left.m_position - right);
 	}
 	
 	friend TimeRef operator-(const TimeRef& left, double right) {
-		TimeRef location(left.m_position - qint64(right));
-		return location;
+		return TimeRef(left.m_position - qint64(right));
 	}
 	
 	friend TimeRef& operator-=(TimeRef& left, const TimeRef& right) {
@@ -128,13 +131,11 @@ struct TimeRef {
 	}
 	
 	friend TimeRef operator+(const TimeRef& left, qint64 right) {
-		TimeRef location(left.m_position + right);
-		return location;
+		return TimeRef(left.m_position + right);
 	}
 	
 	friend TimeRef operator+(const TimeRef& left, double right) {
-		TimeRef location(left.m_position + qint64(right));
-		return location;
+		return TimeRef(left.m_position + qint64(right));
 	}
 	
 	friend TimeRef& operator+=(TimeRef& left, const TimeRef& right) {
@@ -154,8 +155,7 @@ struct TimeRef {
 	
 	friend TimeRef operator/(const TimeRef& left, const TimeRef& right) {
 		Q_ASSERT(right.m_position != 0);
-		TimeRef location(left.m_position / right.m_position);
-		return location;
+		return TimeRef(left.m_position / right.m_position);
 	}
 	
 	friend qreal operator/(const TimeRef& left, const qint64 right) {
@@ -169,18 +169,15 @@ struct TimeRef {
 	}
 	
 	friend TimeRef operator*(const qint64 left, TimeRef& right) {
-		TimeRef location(left * right.m_position);
-		return location;
+		return TimeRef(left * right.m_position);
 	}
 	
 	friend TimeRef operator*(const TimeRef& left, const TimeRef& right) {
-		TimeRef location(left.m_position * right.m_position);
-		return location;
+		return TimeRef(left.m_position * right.m_position);
 	}
 	
 	friend TimeRef operator*(const TimeRef& left, double right) {
-		TimeRef location(left.m_position * qint64(right));
-		return location;
+		return TimeRef(left.m_position * qint64(right));
 	}
 	
 	friend int operator<(const TimeRef& left, const TimeRef& right) {
@@ -195,6 +192,10 @@ struct TimeRef {
 		return left.m_position < qint64(right);
 	}
 	
+	friend int operator<(double left, const TimeRef& right) {
+		return (qint64(left) < right.m_position);
+	}
+	
 	friend int operator>(const TimeRef& left, const TimeRef& right) {
 		return left.m_position > right.m_position;
 	}
@@ -205,6 +206,10 @@ struct TimeRef {
 	
 	friend int operator>(const TimeRef& left, double right) {
 		return left.m_position > qint64(right);
+	}
+	
+	friend int operator>(double left, const TimeRef& right) {
+		return left > right.m_position;
 	}
 	
 	friend int operator<=(const TimeRef& left, const TimeRef& right) {

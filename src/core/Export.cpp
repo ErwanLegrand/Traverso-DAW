@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Export.cpp,v 1.13 2007/10/22 16:49:43 r_sijrier Exp $
+    $Id: Export.cpp,v 1.14 2007/10/22 18:44:00 r_sijrier Exp $
 */
 
 #include "Export.h"
@@ -46,16 +46,16 @@ ExportSpecification::ExportSpecification()
 	
 	src_quality = SRC_SINC_MEDIUM_QUALITY;
 	channels = -1;
-	startLocation = -1;
-	endLocation = -1;
+	startLocation = qint64(-1);
+	endLocation = qint64(-1);
 	dither_type = GDitherTri;
 	
 	dataF = 0;
 	blocksize = -1;
 	data_width = -1;
 	
-	totalTime = -1;
-	pos = -1;
+	totalTime = qint64(-1);
+	pos = qint64(-1);
 	
 	allSongs = false;
 	stop = false;

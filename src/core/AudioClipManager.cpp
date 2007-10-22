@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioClipManager.cpp,v 1.18 2007/09/28 18:33:44 r_sijrier Exp $
+    $Id: AudioClipManager.cpp,v 1.19 2007/10/22 18:44:00 r_sijrier Exp $
 */
  
 #include "AudioClipManager.h"
@@ -38,7 +38,7 @@ AudioClipManager::AudioClipManager( Song* song )
 	PENTERCONS;
 	m_song = song;
 	set_history_stack( m_song->get_history_stack() );
-	lastLocation = 0;
+	lastLocation = TimeRef();
 }
 
 AudioClipManager::~ AudioClipManager( )

@@ -42,7 +42,7 @@ SplitClip::SplitClip(AudioClipView* view)
 	m_track = m_clip->get_track();
 	leftClip = 0;
 	rightClip = 0;
-	m_splitPoint = 0;
+	m_splitPoint = TimeRef();
 	Q_ASSERT(m_clip->get_song());
 }
 
