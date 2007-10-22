@@ -49,7 +49,7 @@ SplitClip::SplitClip(AudioClipView* view)
 
 int SplitClip::prepare_actions()
 {
-	if (m_splitPoint == 0) {
+	if (m_splitPoint == qint64(0)) {
 		m_splitPoint = TimeRef(cpointer().scene_x() * m_sv->timeref_scalefactor);
 	}
 

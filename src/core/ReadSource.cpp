@@ -448,7 +448,7 @@ void ReadSource::rb_seek_to_file_position(TimeRef& position)
 	// check if the clip's start position is within the range
 	// if not, fill the buffer from the earliest point this clip
 	// will come into play.
-	if (fileposition < 0) {
+	if (fileposition < TimeRef()) {
 // 		printf("not seeking to %ld, but too %d\n\n", fileposition,m_clip->get_source_start_location()); 
 		fileposition = m_clip->get_source_start_location();
 	}

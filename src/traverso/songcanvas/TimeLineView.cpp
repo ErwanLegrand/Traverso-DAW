@@ -148,8 +148,8 @@ void DragMarker::move_left(bool )
 	d->bypassjog = true;
 	// Move 1 pixel to the left
 	TimeRef newpos = TimeRef(m_newWhen - d->scalefactor);
-	if (newpos < 0) {
-		newpos = 0;
+	if (newpos < TimeRef()) {
+		newpos = TimeRef();
 	}
 	m_newWhen = newpos;
 	do_action();
@@ -182,8 +182,8 @@ int DragMarker::jog()
 		newpos = slist->get_snap_value(newpos);
 	}
 
-	if (newpos < 0 ) {
-		newpos = 0;
+	if (newpos < TimeRef()) {
+		newpos = TimeRef();
 	}
 	
 	m_newWhen = newpos;
@@ -298,7 +298,7 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 	// minor is double so they line up right with the majors,
 	// despite not always being an even number of frames
 	// @Ben : is still still the same when using TimeRef based calculations?
-	TimeRef minor = TimeRef(major/10);
+	TimeRef minor = TimeRef(major/qint64(10));
 
 	TimeRef firstLocation = TimeRef(xstart * m_sv->timeref_scalefactor);
 	TimeRef lastLocation = TimeRef(xstart * m_sv->timeref_scalefactor + pixelcount * m_sv->timeref_scalefactor);
@@ -376,7 +376,7 @@ Command* TimeLineView::add_marker_at(const TimeRef when)
 
 	// check if it is the first marker added to the timeline
 	if (!m_timeline->get_markers().size()) {
-		if (when > 0) {  // add one at the beginning of the song
+		if (when > TimeRef()) {  // add one at the beginning of the song
 			Marker* m = new Marker(m_timeline, TimeRef(), Marker::CDTRACK);
 			m->set_description("");
 			group->add_command(m_timeline->add_marker(m));

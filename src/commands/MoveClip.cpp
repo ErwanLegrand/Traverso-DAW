@@ -211,7 +211,7 @@ int MoveClip::prepare_actions()
 		Command::process_command(m_originTrack->remove_clip(m_clip, false));
 	}
 	
-	if (m_originTrack == m_targetTrack &&  m_posDiff == 0 && 
+	if (m_originTrack == m_targetTrack &&  m_posDiff == qint64(0) && 
 		   ! (m_actionType == "copy" || m_actionType == "move_to_start" || m_actionType == "move_to_end") ) {
 		return -1;
 	}
@@ -328,7 +328,7 @@ int MoveClip::jog()
 	TimeRef newTrackStartLocation;
 	TimeRef newTrackEndLocation = d->origTrackEndLocation + diff_f;
 
-	if (diff_f < 0 && d->origTrackStartLocation < (-1 * diff_f)) {
+	if (diff_f < TimeRef() && d->origTrackStartLocation < (-1 * diff_f)) {
 		newTrackStartLocation = qint64(0);
 	} else {
 		newTrackStartLocation = d->origTrackStartLocation + diff_f;

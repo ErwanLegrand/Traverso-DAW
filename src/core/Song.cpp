@@ -350,9 +350,15 @@ int Song::prepare_export(ExportSpecification* spec)
 				printf("Invoking Song::start_transport() failed\n");
 				return -1;
 			}
-			// wait a number (5) of audiodevice process cycles to be sure we really stopped transport
-			uint msecs = (audiodevice().get_buffer_size() * 5 * 1000) / audiodevice().get_sample_rate();
-			spec->thread->sleep_for(msecs);
+			int count = 0;
+			uint msecs = (audiodevice().get_buffer_size() * 1000) / audiodevice().get_sample_rate();
+			// wait a number (max 10) of process() cycles to be sure we really stopped transport
+			while (m_transport) {
+				spec->thread->sleep_for(msecs);
+				if (count > 10) {
+					break;
+				}
+			}
 		}
 		
 		m_rendering = true;

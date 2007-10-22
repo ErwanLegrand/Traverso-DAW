@@ -613,7 +613,7 @@ int Peak::create_from_scratch()
 
 	int progression = 0;
 
-	if (m_source->get_length() == 0) {
+	if (m_source->get_length() == TimeRef()) {
 		qWarning("Peak::create_from_scratch() : m_source (%s) has length 0", m_source->get_name().toAscii().data());
 		return ret;
 	}

@@ -86,12 +86,25 @@ struct TimeRef {
 		return left.m_position != right.m_position;
 	}
 	
+	friend int operator!=(const TimeRef& left, qint64 right) {
+		return left.m_position != right;
+	}
+	
+	friend int operator!=(const TimeRef& left, double right) {
+		return left.m_position != qint64(right);
+	}
+	
 	friend TimeRef operator-(const TimeRef& left, const TimeRef& right) {
 		return TimeRef(left.m_position - right.m_position);
 	}
 	
 	friend TimeRef operator-(const TimeRef& left, qint64 right) {
 		TimeRef location(left.m_position - right);
+		return location;
+	}
+	
+	friend TimeRef operator-(const TimeRef& left, double right) {
+		TimeRef location(left.m_position - qint64(right));
 		return location;
 	}
 	
@@ -105,6 +118,11 @@ struct TimeRef {
 		return left;
 	}
 	
+	friend TimeRef& operator-=(TimeRef& left, double right) {
+		left.m_position -= qint64(right);
+		return left;
+	}
+	
 	friend TimeRef operator+(const TimeRef& left, const TimeRef& right) {
 		return TimeRef(left.m_position + right.m_position);
 	}
@@ -114,13 +132,24 @@ struct TimeRef {
 		return location;
 	}
 	
+	friend TimeRef operator+(const TimeRef& left, double right) {
+		TimeRef location(left.m_position + qint64(right));
+		return location;
+	}
+	
 	friend TimeRef& operator+=(TimeRef& left, const TimeRef& right) {
 		left.m_position += right.m_position;
 		return left;
 	}
 	
-	friend qreal operator/(const TimeRef& left, const qint64 right) {
-		return (qreal)left.m_position / right;
+	friend TimeRef& operator+=(TimeRef& left, qint64 right) {
+		left.m_position += right;
+		return left;
+	}
+	
+	friend TimeRef& operator+=(TimeRef& left, double right) {
+		left.m_position += qint64(right);
+		return left;
 	}
 	
 	friend TimeRef operator/(const TimeRef& left, const TimeRef& right) {
@@ -129,13 +158,28 @@ struct TimeRef {
 		return location;
 	}
 	
+	friend qreal operator/(const TimeRef& left, const qint64 right) {
+		Q_ASSERT(right != 0);
+		return (qreal)left.m_position / right;
+	}
+	
+	friend qreal operator/(const TimeRef& left, double right) {
+		Q_ASSERT(right != 0);
+		return (qreal)left.m_position / qint64(right);
+	}
+	
 	friend TimeRef operator*(const qint64 left, TimeRef& right) {
 		TimeRef location(left * right.m_position);
 		return location;
 	}
 	
-	friend TimeRef operator*(const TimeRef& left, TimeRef& right) {
+	friend TimeRef operator*(const TimeRef& left, const TimeRef& right) {
 		TimeRef location(left.m_position * right.m_position);
+		return location;
+	}
+	
+	friend TimeRef operator*(const TimeRef& left, double right) {
+		TimeRef location(left.m_position * qint64(right));
 		return location;
 	}
 	
@@ -147,6 +191,10 @@ struct TimeRef {
 		return left.m_position < right;
 	}
 	
+	friend int operator<(const TimeRef& left, double right) {
+		return left.m_position < qint64(right);
+	}
+	
 	friend int operator>(const TimeRef& left, const TimeRef& right) {
 		return left.m_position > right.m_position;
 	}
@@ -155,12 +203,32 @@ struct TimeRef {
 		return left.m_position > right;
 	}
 	
+	friend int operator>(const TimeRef& left, double right) {
+		return left.m_position > qint64(right);
+	}
+	
 	friend int operator<=(const TimeRef& left, const TimeRef& right) {
 		return left.m_position <= right.m_position;
 	}
 	
+	friend int operator<=(const TimeRef& left, qint64 right) {
+		return left.m_position <= right;
+	}
+	
+	friend int operator<=(const TimeRef& left, double right) {
+		return left.m_position <= qint64(right);
+	}
+	
 	friend int operator>=(const TimeRef& left, const TimeRef& right) {
 		return left.m_position >= right.m_position;
+	}
+	
+	friend int operator>=(const TimeRef& left, qint64 right) {
+		return left.m_position >= right;
+	}
+	
+	friend int operator>=(const TimeRef& left, double right) {
+		return left.m_position >= qint64(right);
 	}
 	
 	friend int operator==(const TimeRef& left, const TimeRef& right) {
@@ -169,6 +237,10 @@ struct TimeRef {
 	
 	friend int operator==(const TimeRef& left, qint64 right) {
 		return left.m_position == right;
+	}
+	
+	friend int operator==(const TimeRef& left, double right) {
+		return left.m_position == qint64(right);
 	}
 	
 private:

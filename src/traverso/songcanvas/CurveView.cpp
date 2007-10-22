@@ -160,10 +160,10 @@ int DragNode::jog()
 	m_newValue = m_newValue - ( dy / d->curveView->boundingRect().height());
 	
 	TimeRef startoffset = d->curveView->get_start_offset();
-	if ( ((TimeRef(m_newWhen) - startoffset) / d->scalefactor) > d->curveView->boundingRect().width()) {
+	if ( ((TimeRef(m_newWhen) - startoffset) / qint64(d->scalefactor)) > d->curveView->boundingRect().width()) {
 		m_newWhen = double(d->curveView->boundingRect().width() * d->scalefactor + startoffset.universal_frame());
 	}
-	if ((TimeRef(m_newWhen) - startoffset) < 0) {
+	if ((TimeRef(m_newWhen) - startoffset) < TimeRef()) {
 		m_newWhen = startoffset.universal_frame();
 	}
 	

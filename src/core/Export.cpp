@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Export.cpp,v 1.12 2007/10/12 10:06:29 r_sijrier Exp $
+    $Id: Export.cpp,v 1.13 2007/10/22 16:49:43 r_sijrier Exp $
 */
 
 #include "Export.h"
@@ -85,12 +85,12 @@ int ExportSpecification::is_valid()
 		return -1;
 	}
 	
-	if (startLocation == -1) {
+	if (startLocation == qint64(-1)) {
 		printf("ExportSpecification: No start frame configured!\n");
 		return -1;
 	}
 
-	if (endLocation == -1) {
+	if (endLocation == qint64(-1)) {
 		printf("ExportSpecification: No end frame configured!\n");
 		return -1;
 	}
@@ -110,7 +110,7 @@ int ExportSpecification::is_valid()
 		return -1;
 	}
 
-	if (totalTime == -1) {
+	if (totalTime == qint64(-1)) {
 		printf("ExportSpecification: No total frames configured!\n");
 		return -1;
 	}
@@ -120,7 +120,7 @@ int ExportSpecification::is_valid()
 		return -1;
 	}
 
-	if (pos == -1 && isRecording == 0) {
+	if (pos == qint64(-1) && isRecording == 0) {
 		printf("ExportSpecification: No position configured!\n");
 		return -1;
 	}

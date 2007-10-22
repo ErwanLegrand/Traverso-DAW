@@ -25,6 +25,7 @@ SOURCES = \
 	../common/Debugger.cpp \
 	../common/Mixer.cpp \
 	../common/RingBuffer.cpp \
+	../common/Resampler.cpp \
 	AudioClip.cpp \
 	AudioClipList.cpp \
 	AudioClipManager.cpp \
@@ -64,6 +65,7 @@ HEADERS = precompile.h \
 	../common/Mixer.h \
 	../common/RingBuffer.h \
 	../common/RingBufferNPT.h \
+	../common/Resampler.h \
 	AudioClip.h \
 	AudioClipList.h \
 	AudioClipManager.h \

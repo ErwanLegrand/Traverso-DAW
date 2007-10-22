@@ -34,10 +34,10 @@
 #include <AudioDevice.h>
 
 
-RELAYTOOL_WAVPACK
-RELAYTOOL_FLAC
-RELAYTOOL_MP3LAME
-RELAYTOOL_VORBISENC
+RELAYTOOL_WAVPACK;
+RELAYTOOL_FLAC;
+RELAYTOOL_MP3LAME;
+RELAYTOOL_VORBISENC;
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -333,6 +333,11 @@ void ExportDialog::on_startButton_clicked( )
 		return;
 	}
 	
+	connect(m_project, SIGNAL(songExportProgressChanged(int)), this, SLOT(update_song_progress(int)));
+	connect(m_project, SIGNAL(overallExportProgressChanged(int)), this, SLOT(update_overall_progress(int)));
+	connect(m_project, SIGNAL(exportFinished()), this, SLOT(render_finished()));
+	connect(m_project, SIGNAL(exportStartedForSong(Song*)), this, SLOT (set_exporting_song(Song*)));
+	
 	// clear extraformats, it might be different now from previous runs!
 	m_exportSpec->extraFormat.clear();
 	
@@ -446,6 +451,11 @@ void ExportDialog::update_overall_progress( int progress )
 
 void ExportDialog::render_finished( )
 {
+	disconnect(m_project, SIGNAL(songExportProgressChanged(int)), this, SLOT(update_song_progress(int)));
+	disconnect(m_project, SIGNAL(overallExportProgressChanged(int)), this, SLOT(update_overall_progress(int)));
+	disconnect(m_project, SIGNAL(exportFinished()), this, SLOT(render_finished()));
+	disconnect(m_project, SIGNAL(exportStartedForSong(Song*)), this, SLOT (set_exporting_song(Song*)));
+	
 	startButton->show();
 	closeButton->show();
 	abortButton->hide();
@@ -481,11 +491,6 @@ void ExportDialog::set_project(Project * project)
 		m_exportSpec->exportdir = m_project->get_root_dir() + "/Export/";
 		m_exportSpec->renderfinished = false;
 		exportDirName->setText(m_exportSpec->exportdir);
-		
-		connect(m_project, SIGNAL(songExportProgressChanged(int)), this, SLOT(update_song_progress(int)));
-		connect(m_project, SIGNAL(overallExportProgressChanged(int)), this, SLOT(update_overall_progress(int)));
-		connect(m_project, SIGNAL(exportFinished()), this, SLOT(render_finished()));
-		connect(m_project, SIGNAL(exportStartedForSong(Song*)), this, SLOT (set_exporting_song(Song*)));
 	}
 }
 

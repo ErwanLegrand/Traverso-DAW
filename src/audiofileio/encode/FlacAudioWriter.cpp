@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "FLAC/stream_encoder.h"
 #endif
 
-RELAYTOOL_FLAC
+RELAYTOOL_FLAC;
 
 #include <QString>
 

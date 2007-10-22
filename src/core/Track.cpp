@@ -106,7 +106,7 @@ QDomNode Track::get_state( QDomDocument doc, bool istemplate)
 		QDomNode clips = doc.createElement("Clips");
 	
 		foreach(AudioClip* clip, audioClipList) {
-			if (clip->get_length() == 0) {
+			if (clip->get_length() == qint64(0)) {
 				PERROR("Clip lenght is 0! This shouldn't happen!!!!");
 				continue;
 			}

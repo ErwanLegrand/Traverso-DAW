@@ -658,7 +658,7 @@ void AudioClip::set_audio_source(ReadSource* rs)
 	// it's a bit weak this way, hopefull I'll get up something better in the future.
 	// The positioning-length-offset and such stuff is still a bit weak :(
 	// NOTE: don't change, audio recording (finish_writesource()) assumes there is checked for length == 0 !!!
-	if (m_length == 0) {
+	if (m_length == TimeRef()) {
 		m_sourceEndLocation = rs->get_length();
 		m_length = m_sourceEndLocation;
 	}

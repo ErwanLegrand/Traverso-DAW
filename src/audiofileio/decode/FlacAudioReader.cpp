@@ -38,7 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "FLAC/stream_decoder.h"
 #endif
 
-RELAYTOOL_FLAC
+RELAYTOOL_FLAC;
 
 
 // Always put me below _all_ includes, this is needed

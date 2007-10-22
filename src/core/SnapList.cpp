@@ -71,7 +71,7 @@ void SnapList::update_snaplist()
 	SLPRINT("acList size is %d\n", acList->size());
 
 	// Be able to snap to trackstart
-	if (m_rangeStart == 0) {
+	if (m_rangeStart == qint64(0)) {
 		m_xposList.append(TimeRef());
 	}
 
