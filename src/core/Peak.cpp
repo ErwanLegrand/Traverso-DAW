@@ -42,7 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #define NORMALIZE_CHUNK_SIZE	10000
 #define PEAKFILE_MAJOR_VERSION	1
-#define PEAKFILE_MINOR_VERSION	0
+#define PEAKFILE_MINOR_VERSION	1
 
 int Peak::zoomStep[] = {
 	// non-cached zoomlevels.
@@ -190,10 +190,10 @@ int Peak::read_header()
 				return -1;
 		}
 		
-		data->file.read((char*)data->headerdata.peakDataLevelOffsets, sizeof(data->headerdata.peakDataLevelOffsets));
+		data->file.read((char*)data->headerdata.peakDataOffsets, sizeof(data->headerdata.peakDataOffsets));
 		data->file.read((char*)data->headerdata.peakDataSizeForLevel, sizeof(data->headerdata.peakDataSizeForLevel));
 		data->file.read((char*)&data->headerdata.normValuesDataOffset, sizeof(data->headerdata.normValuesDataOffset));
-		data->file.read((char*)&data->headerdata.peakDataOffset, sizeof(data->headerdata.peakDataOffset));
+		data->file.read((char*)&data->headerdata.headerSize, sizeof(data->headerdata.headerSize));
 		
 		data->peakreader = new PeakDataReader(data);
 		data->peakdataDecodeBuffer = new DecodeBuffer;
@@ -221,10 +221,10 @@ int Peak::write_header(ChannelData* data)
 	
 	data->file.write((char*)data->headerdata.label, sizeof(data->headerdata.label));
 	data->file.write((char*)data->headerdata.version, sizeof(data->headerdata.version));
-	data->file.write((char*)data->headerdata.peakDataLevelOffsets, sizeof(data->headerdata.peakDataLevelOffsets));
+	data->file.write((char*)data->headerdata.peakDataOffsets, sizeof(data->headerdata.peakDataOffsets));
 	data->file.write((char*)data->headerdata.peakDataSizeForLevel, sizeof(data->headerdata.peakDataSizeForLevel));
 	data->file.write((char*) &data->headerdata.normValuesDataOffset, sizeof(data->headerdata.normValuesDataOffset));
-	data->file.write((char*) &data->headerdata.peakDataOffset, sizeof(data->headerdata.peakDataOffset));
+	data->file.write((char*) &data->headerdata.headerSize, sizeof(data->headerdata.headerSize));
 	
 	return 1;
 }
@@ -296,7 +296,7 @@ int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, TimeRef start
 // 			pixelcount = data->headerdata.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR] - offset;
 		}
 		
-		nframes_t readposition = data->headerdata.peakDataLevelOffsets[zoomLevel - SAVING_ZOOM_FACTOR] + offset;
+		nframes_t readposition = data->headerdata.headerSize + (data->headerdata.peakDataOffsets[zoomLevel - SAVING_ZOOM_FACTOR] + offset) * sizeof(peak_data_t);
 		int read = data->peakreader->read_from(data->peakdataDecodeBuffer, readposition, pixelcount);
 		
 		if (read != pixelcount) {
@@ -406,17 +406,17 @@ int Peak::prepare_processing(int rate)
 			return -1;
 		}
 		
-		// We need to know the peakDataOffset.
-		data->headerdata.peakDataOffset = 
+		// We need to know the headerSize.
+		data->headerdata.headerSize = 
 					sizeof(data->headerdata.label) + 
 					sizeof(data->headerdata.version) + 
-					sizeof(data->headerdata.peakDataLevelOffsets) + 
+					sizeof(data->headerdata.peakDataOffsets) + 
 					sizeof(data->headerdata.peakDataSizeForLevel) +
 					sizeof(data->headerdata.normValuesDataOffset) + 
-					sizeof(data->headerdata.peakDataOffset);
+					sizeof(data->headerdata.headerSize);
 					
 		// Now seek to the start position, so we can write the peakdata to it in the process function
-		data->file.seek(data->headerdata.peakDataOffset);
+		data->file.seek(data->headerdata.headerSize);
 		
 		data->pd = new Peak::ProcessData;
 		data->pd->stepSize = TimeRef(1, rate);
@@ -452,7 +452,7 @@ int Peak::finish_processing()
 		}
 		
 		
-		data->file.seek(data->headerdata.peakDataOffset);
+		data->file.seek(data->headerdata.headerSize);
 		
 		// The routine below uses a different total buffer size calculation
 		// which might end up with a size >= totalbufferSize !!!
@@ -469,14 +469,14 @@ int Peak::finish_processing()
 		int prevLevelBufferPos = 0;
 		int nextLevelBufferPos;
 		data->headerdata.peakDataSizeForLevel[0] = data->pd->processBufferSize;
-		data->headerdata.peakDataLevelOffsets[0] = data->headerdata.peakDataOffset;
+		data->headerdata.peakDataOffsets[0] = 0;
 		
 		for (int i = SAVING_ZOOM_FACTOR+1; i < ZOOM_LEVELS+1; ++i) {
 		
 			int prevLevelSize = data->headerdata.peakDataSizeForLevel[i - SAVING_ZOOM_FACTOR - 1];
-			data->headerdata.peakDataLevelOffsets[i - SAVING_ZOOM_FACTOR] = data->headerdata.peakDataLevelOffsets[i - SAVING_ZOOM_FACTOR - 1] + prevLevelSize;
-			prevLevelBufferPos = data->headerdata.peakDataLevelOffsets[i - SAVING_ZOOM_FACTOR - 1] - data->headerdata.peakDataOffset;
-			nextLevelBufferPos = data->headerdata.peakDataLevelOffsets[i - SAVING_ZOOM_FACTOR] - data->headerdata.peakDataOffset;
+			data->headerdata.peakDataOffsets[i - SAVING_ZOOM_FACTOR] = data->headerdata.peakDataOffsets[i - SAVING_ZOOM_FACTOR - 1] + prevLevelSize;
+			prevLevelBufferPos = data->headerdata.peakDataOffsets[i - SAVING_ZOOM_FACTOR - 1];
+			nextLevelBufferPos = data->headerdata.peakDataOffsets[i - SAVING_ZOOM_FACTOR];
 			
 			
 			int count = 0;
@@ -492,7 +492,7 @@ int Peak::finish_processing()
 			while (count < prevLevelSize);
 		}
 		
-		data->file.seek(data->headerdata.peakDataOffset);
+		data->file.seek(data->headerdata.headerSize);
 		
 		int written = data->file.write((char*)saveBuffer, sizeof(peak_data_t) * totalBufferSize) / sizeof(peak_data_t);
 		
@@ -509,7 +509,7 @@ int Peak::finish_processing()
 			PERROR("Could not read in all (%d) norm. data, only %d", data->pd->normDataCount, read);
 		}
 		
-		data->headerdata.normValuesDataOffset = data->headerdata.peakDataOffset + totalBufferSize;
+		data->headerdata.normValuesDataOffset = data->headerdata.headerSize + totalBufferSize;
 		
 		data->normFile.close();
 		
@@ -570,8 +570,8 @@ void Peak::process(uint channel, audio_sample_t* buffer, nframes_t nframes)
 				PWARN("couldnt write peak data, only (%d)", written);
 			}
 
-			pd->peakUpperValue = 0.0;
-			pd->peakLowerValue = 0.0;
+			pd->peakUpperValue = -1.0;
+			pd->peakLowerValue = 1.0;
 			
 			pd->processBufferSize+=2;
 			pd->nextDataPointLocation += pd->processRange;
@@ -933,7 +933,7 @@ nframes_t PeakDataReader::read(DecodeBuffer* buffer, nframes_t count)
 // 	PROFILE_START;
 	
 	if (m_d->memory) {
-		readbuffer = (peak_data_t*)(m_d->memory + m_readPos*sizeof(peak_data_t));
+		readbuffer = (peak_data_t*)(m_d->memory + m_readPos);
 		framesRead = count;
 	} else {
 		framesRead = m_d->file.read((char*)buffer->readBuffer, sizeof(peak_data_t) * count) / sizeof(peak_data_t);

@@ -98,7 +98,7 @@ public:
 	static const int ZOOM_LEVELS = 20;
 	static const int SAVING_ZOOM_FACTOR = 6;
 	static const int MAX_ZOOM_USING_SOURCEFILE = SAVING_ZOOM_FACTOR - 1;
-	static const int MAX_DB_VALUE = 120;
+	static const int MAX_DB_VALUE = 32767;
 	static int zoomStep[ZOOM_LEVELS + 1];
 
 	Peak(AudioSource* source);
@@ -151,9 +151,9 @@ private:
 	};
 	
 	struct PeakHeaderData {
-		int peakDataOffset;
+		int headerSize;
 		int normValuesDataOffset;
-		int peakDataLevelOffsets[ZOOM_LEVELS - SAVING_ZOOM_FACTOR];
+		int peakDataOffsets[ZOOM_LEVELS - SAVING_ZOOM_FACTOR];
 		int peakDataSizeForLevel[ZOOM_LEVELS - SAVING_ZOOM_FACTOR];
 		char label[6];	//TPFxxx -> Traverso Peak File version x.x.x
 		int version[2];
