@@ -200,6 +200,9 @@ ResourcesWidget::ResourcesWidget(QWidget * parent)
 	layout()->addWidget(m_filewidget);
 	m_filewidget->hide();
 	
+	m_currentSong = 0;
+	m_project = 0;
+	
 	
 	connect(viewComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(view_combo_box_index_changed(int)));
 	connect(songComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(song_combo_box_index_changed(int)));
@@ -292,6 +295,10 @@ void ResourcesWidget::song_removed(Song * song)
 
 void ResourcesWidget::set_current_song(Song * song)
 {
+	if (m_currentSong == song) {
+		return;
+	}
+	
 	if (song) {
 		int index = songComboBox->findData(song->get_id());
 		if (index != -1) {
@@ -311,6 +318,10 @@ void ResourcesWidget::filter_on_current_song()
 		return;
 	}
 	
+	// a lot of layouting could happen due apply_filter calls
+	// disable layouting to avoid cpu hogging!
+	setUpdatesEnabled(false);
+	
 	foreach(ClipTreeItem* item, m_clipindices.values()) {
 		item->apply_filter(m_currentSong);
 	}
@@ -319,6 +330,8 @@ void ResourcesWidget::filter_on_current_song()
 	foreach(SourceTreeItem* item, m_sourceindices.values()) {
 		item->apply_filter(m_currentSong);
 	}
+	
+	setUpdatesEnabled(true);
 }
 
 
@@ -418,9 +431,13 @@ void ClipTreeItem::clip_state_changed()
 void ClipTreeItem::apply_filter(Song * song)
 {
 	if (m_clip->get_song_id() == song->get_id()) {
-		setHidden(false);
+		if (isHidden()) {
+			setHidden(false);
+		}
 	} else {
-		setHidden(true);
+		if (!isHidden()) {
+			setHidden(true);
+		}
 	} 
 }
 
