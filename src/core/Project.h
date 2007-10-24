@@ -158,6 +158,7 @@ signals:
 	void overallExportProgressChanged(int );
 	void exportFinished();
 	void exportStartedForSong(Song* );
+	void projectLoadFinished();
 };
 
 #endif

@@ -32,6 +32,7 @@ class FileWidget;
 class AudioClip;
 class ReadSource;
 class SourceTreeItem;
+class QShowEvent;
 
 class ClipTreeItem : public QObject, public QTreeWidgetItem
 {
@@ -74,6 +75,9 @@ public:
 	ResourcesWidget(QWidget* parent=0);
 	~ResourcesWidget();
 
+protected:
+	void showEvent( QShowEvent * event );
+
 private:
 	Project* m_project;
 	Song* m_currentSong;
@@ -88,7 +92,7 @@ private:
 	
 private slots:
 	void set_project(Project* project);
-	void populate_tree();
+	void project_load_finished();
 	
 	void view_combo_box_index_changed(int index);
 	void song_combo_box_index_changed(int index);

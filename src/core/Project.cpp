@@ -246,6 +246,8 @@ int Project::load(QString projectfile)
 	set_current_song(id);
 
 	info().information( tr("Project %1 loaded").arg(m_title) );
+	
+	emit projectLoadFinished();
 
 	return 1;
 }

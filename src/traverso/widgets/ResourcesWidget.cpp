@@ -44,9 +44,16 @@ class FileWidget : public QWidget
 	Q_OBJECT
 public:
 	
-	FileWidget(QWidget* parent=0)
-	: QWidget(parent)
-	{
+	FileWidget(QWidget* parent=0) : QWidget(parent) {
+		m_dirModel = 0;
+	}
+	
+	void showEvent ( QShowEvent * event ) {
+		
+		if (m_dirModel) {
+			return;
+		}
+		
 		QPalette palette;
 		palette.setColor(QPalette::AlternateBase, themer()->get_color("ResourcesBin:alternaterowcolor"));
 		
@@ -101,7 +108,6 @@ public:
 		connect(upButton, SIGNAL(clicked()), this, SLOT(dir_up_button_clicked()));
 		connect(refreshButton, SIGNAL(clicked()), this, SLOT(refresh_button_clicked()));
 		connect(m_box, SIGNAL(activated(int)), this, SLOT(box_actived(int)));
-		
 	}
 	
 	void set_current_path(const QString& path) const;
@@ -179,6 +185,19 @@ void FileWidget::set_current_path(const QString& path) const
 ResourcesWidget::ResourcesWidget(QWidget * parent)
 	: QWidget(parent)
 {
+	sourcesTreeWidget = 0;
+}
+
+ResourcesWidget::~ ResourcesWidget()
+{
+}
+
+void ResourcesWidget::showEvent( QShowEvent * event ) 
+{
+	if (sourcesTreeWidget) {
+		return;
+	}
+	
 	setupUi(this);
 	
 	QPalette palette;
@@ -208,10 +227,11 @@ ResourcesWidget::ResourcesWidget(QWidget * parent)
 	connect(songComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(song_combo_box_index_changed(int)));
 	connect(songComboBox, SIGNAL(activated(int)), this, SLOT(song_combo_box_index_changed(int)));
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
-}
-
-ResourcesWidget::~ ResourcesWidget()
-{
+	
+	set_project(pm().get_project());
+	
+	// Fade a project load finished since we were not able to catch that signal!
+	project_load_finished();
 }
 
 void ResourcesWidget::set_project(Project * project)
@@ -230,25 +250,28 @@ void ResourcesWidget::set_project(Project * project)
 	}
 	
 	songComboBox->setEnabled(true);
-	m_currentSong = m_project->get_current_song();
 	
-	ResourcesManager* rsmanager = m_project->get_audiosource_manager();
-	
-	connect(rsmanager, SIGNAL(stateRestored()), this, SLOT(populate_tree()));
-	connect(rsmanager, SIGNAL(clipAdded(AudioClip*)), this, SLOT(add_clip(AudioClip*)));
-	connect(rsmanager, SIGNAL(clipRemoved(AudioClip*)), this, SLOT(remove_clip(AudioClip*)));
-	connect(rsmanager, SIGNAL(sourceAdded(ReadSource*)), this, SLOT(add_source(ReadSource*)));
-	connect(rsmanager, SIGNAL(sourceRemoved(ReadSource*)), this, SLOT(remove_source(ReadSource*)));
-	connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(song_added(Song*)));
-	connect(m_project, SIGNAL(songRemoved(Song*)), this, SLOT(song_removed(Song*)));
-	connect(m_project, SIGNAL(currentSongChanged(Song*)), this, SLOT(set_current_song(Song*)));
+	connect(m_project, SIGNAL(projectLoadFinished()), this, SLOT(project_load_finished()));
 }
 
-void ResourcesWidget::populate_tree()
+void ResourcesWidget::project_load_finished()
 {
 	if (!m_project) {
 		return;
 	}
+	
+	m_currentSong = m_project->get_current_song();
+	
+	ResourcesManager* rsmanager = m_project->get_audiosource_manager();
+	
+	connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(song_added(Song*)));
+	connect(m_project, SIGNAL(songRemoved(Song*)), this, SLOT(song_removed(Song*)));
+	connect(m_project, SIGNAL(currentSongChanged(Song*)), this, SLOT(set_current_song(Song*)));
+	
+	connect(rsmanager, SIGNAL(clipAdded(AudioClip*)), this, SLOT(add_clip(AudioClip*)));
+	connect(rsmanager, SIGNAL(clipRemoved(AudioClip*)), this, SLOT(remove_clip(AudioClip*)));
+	connect(rsmanager, SIGNAL(sourceAdded(ReadSource*)), this, SLOT(add_source(ReadSource*)));
+	connect(rsmanager, SIGNAL(sourceRemoved(ReadSource*)), this, SLOT(remove_source(ReadSource*)));
 	
 	foreach(ReadSource* rs, resources_manager()->get_all_audio_sources()) {
 		add_source(rs);

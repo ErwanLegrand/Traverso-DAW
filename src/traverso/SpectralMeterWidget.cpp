@@ -54,18 +54,7 @@ SpectralMeterWidget::SpectralMeterWidget(QWidget* parent)
 	: ViewPort(parent)
 {
 	PENTERCONS;
-	setMinimumWidth(40);
-	setMinimumHeight(10);
-	
-	m_item = new SpectralMeterView(this);
-	
-	QGraphicsScene* scene = new QGraphicsScene(this);
-	setScene(scene);
-	scene->addItem(m_item);
-	m_item->setPos(0,0);
-
-	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	m_item = 0;
 }
 
 SpectralMeterWidget::~SpectralMeterWidget()
@@ -74,18 +63,44 @@ SpectralMeterWidget::~SpectralMeterWidget()
 
 void SpectralMeterWidget::resizeEvent( QResizeEvent *  )
 {
-	m_item->resize();
+	if (m_item) {
+		m_item->resize();
+	}
 }
 
 void SpectralMeterWidget::hideEvent(QHideEvent * event)
 {
 	QWidget::hideEvent(event);
-	m_item->hide_event();
+	if (m_item) {
+		m_item->hide_event();
+	}
 }
 
 
 void SpectralMeterWidget::showEvent(QShowEvent * event)
 {
+	if (!m_item) {
+		setMinimumWidth(40);
+		setMinimumHeight(10);
+		
+		m_item = new SpectralMeterView(this);
+		
+		QGraphicsScene* scene = new QGraphicsScene(this);
+		setScene(scene);
+		scene->addItem(m_item);
+		m_item->setPos(0,0);
+		m_item->resize();
+		
+		Project* project = pm().get_project(); 
+		m_item->set_project(project);
+		if (project) {
+			m_item->set_song(project->get_current_song());
+		}
+	
+		setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+		setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	}
+	
 	QWidget::showEvent(event);
 	m_item->show_event();
 }

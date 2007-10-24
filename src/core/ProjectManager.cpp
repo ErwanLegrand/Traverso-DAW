@@ -216,7 +216,7 @@ int ProjectManager::load_project(const QString& projectName)
 		info().critical(tr("Unable to load Project %1").arg(projectName));
 		return -1;
 	}
-
+	
 	return 1;
 }
 
