@@ -484,19 +484,14 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				m_polygonbottom.clear();
 				m_polygonbottom.reserve(pixelcount + 3);
 				
-				m_polygontop.append(QPointF(0, 0));
-				m_polygonbottom.append(QPointF(0, 0));
-				
 				for (int x = 0; x < pixelcount; x+=2) {
 					m_polygontop.append( QPointF(x, scaleFactor * pixeldata[chan][bufferpos++]) );
 					m_polygonbottom.append( QPointF(x, -scaleFactor * pixeldata[chan][bufferpos++]) );
 				}
 				
-				m_polygontop.append(QPointF(pixelcount, 0));
-				m_polygonbottom.append(QPointF(pixelcount, 0));
-				
 				pathtop.addPolygon(m_polygontop);
 				pathbottom.addPolygon(m_polygonbottom);
+				pathtop.connectPath(pathbottom.toReversed());
 				
 				if (m_mergedView) {
 					ytrans = (height / 2) * channels;
@@ -507,7 +502,6 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				p->setMatrix(matrix().translate(xstart + adjustforevenpixel, ytrans), true);
 				
 				p->drawPath(pathtop);
-				p->drawPath(pathbottom);
 			
 			} else {
 				QPainterPath path;
