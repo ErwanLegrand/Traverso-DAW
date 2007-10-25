@@ -149,13 +149,13 @@ private:
 
 
 private slots:
-	void		set_project( Project* );
 	void		update_data();
 	void		transfer_started();
 	void		transfer_stopped();
 
 
 public slots:
+	void		set_project( Project* );
 	void		load_configuration();
 	void		set_song( Song* );
 	
