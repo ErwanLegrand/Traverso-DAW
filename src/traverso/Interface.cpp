@@ -551,6 +551,7 @@ Command * Interface::show_context_menu( )
 	cpointer().set_contextmenu_items(cpointer().get_context_items());
 
 	QMenu* toplevelmenu;
+	QAction* action = 0;
 			
 	for (int i=0; i<items.size(); ++i) {
 		QObject* item = items.at(i);
@@ -583,7 +584,7 @@ Command * Interface::show_context_menu( )
 			if (! menu) {
 				continue;
 			}
-			QAction* action = toplevelmenu->insertMenu(action, menu);
+			action = toplevelmenu->insertMenu(action, menu);
 			QString name = className.remove("View");
 
 			if (name == "Song") name = "Sheet"; // FIXME!!!
