@@ -24,7 +24,6 @@
 #include "AudioDevice.h"
 #include "AudioChannel.h"
 
-#include <Information.h>
 #include <Utils.h>
 
 // Always put me below _all_ includes, this is needed
@@ -127,7 +126,7 @@ int PADriver::setup(bool capture, bool playback, const QString& hostapi)
 	PaError err = Pa_Initialize();
 	
 	if( err != paNoError ) {
-		info().warning(tr("PADriver:: PortAudio error: %1").arg(Pa_GetErrorText( err )) );
+		device->message(tr("PADriver:: PortAudio error: %1").arg(Pa_GetErrorText( err )), AudioDevice::WARNING);
 		Pa_Terminate();
 		return -1;
 	} else {
@@ -141,7 +140,7 @@ int PADriver::setup(bool capture, bool playback, const QString& hostapi)
 	for (int i=0; i<Pa_GetHostApiCount(); ++i) {
 		const PaHostApiInfo* inf = Pa_GetHostApiInfo(i);
 		
-// 		info().warning(tr("hostapi name is %1, deviceCount is %2").arg(inf->name).arg(inf->deviceCount));
+// 		device->message(tr("hostapi name is %1, deviceCount is %2").arg(inf->name).arg(inf->deviceCount), AudioDevice::INFO);
 
 		if (hostapi == "alsa" && inf->type == paALSA) {
 			printf("PADriver:: Found alsa host api, using device %d\n", i);
@@ -176,12 +175,12 @@ int PADriver::setup(bool capture, bool playback, const QString& hostapi)
 	
 
 	if (deviceindex == -1) {
-		info().warning(tr("PADriver:: hostapi %1 was not found by Portaudio!").arg(hostapi));
+		device->message(tr("PADriver:: hostapi %1 was not found by Portaudio!").arg(hostapi), AudioDevice::WARNING);
 		return -1;
 	}
 	
 	deviceindex = 0;
-//	info().information(tr("PADriver:: using device %1").arg(deviceindex));
+//	device->message(tr("PADriver:: using device %1").arg(deviceindex), AudioDevice::INFO);
 		
 	// Configure output parameters.
 	// TODO get the max channel count, and use that instead, of assuming 2
@@ -215,7 +214,7 @@ int PADriver::setup(bool capture, bool playback, const QString& hostapi)
 			this );
 	
 	if( err != paNoError ) {
-		info().warning(tr("PADriver:: PortAudio error: %1").arg(Pa_GetErrorText( err )) );
+		device->message(tr("PADriver:: PortAudio error: %1").arg(Pa_GetErrorText( err )), AudioDevice::WARNING);
 		Pa_Terminate();
 		return -1;
 	} else {
@@ -261,7 +260,7 @@ int PADriver::start( )
 	PaError err = Pa_StartStream( m_paStream );
 	
 	if( err != paNoError ) {
-		info().warning(tr("PADriver:: PortAudio error: %1").arg(Pa_GetErrorText( err )) );
+		device->message((tr("PADriver:: PortAudio error: %1").arg(Pa_GetErrorText( err ))), AudioDevice::WARNING);
 		Pa_Terminate();
 		return -1;
 	} else {
@@ -277,7 +276,7 @@ int PADriver::stop( )
 	PaError err = Pa_CloseStream( m_paStream );
 	
 	if( err != paNoError ) {
-		info().warning(tr("PADriver:: PortAudio error: %1").arg(Pa_GetErrorText( err )) );
+		device->message((tr("PADriver:: PortAudio error: %1").arg(Pa_GetErrorText( err ))), AudioDevice::WARNING);
 		Pa_Terminate();
 	} else {
 		printf("PADriver:: Succesfully closed portaudio stream\n\n");
@@ -316,6 +315,7 @@ int PADriver::_xrun_callback( void * arg )
 
 void PADriver::_on_pa_shutdown_callback(void * arg)
 {
+	Q_UNUSED(arg);
 }
 
 int PADriver::_process_callback(
