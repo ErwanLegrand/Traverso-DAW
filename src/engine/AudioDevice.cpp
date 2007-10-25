@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.45 2007/10/22 18:44:01 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.46 2007/10/25 15:43:19 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -859,12 +859,14 @@ TimeRef AudioDevice::get_buffer_latency()
 void AudioDevice::set_driver_properties(QHash< QString, QVariant > & properties)
 {
 	m_driverProperties = properties;
+#if defined (JACK_SUPPORT)
 	if (libjack_is_present) {
 		JackDriver* jackdriver = qobject_cast<JackDriver*>(driver);
 		if (jackdriver) {
 			jackdriver->update_config();
 		}
 	}
+#endif
 }
 
 QVariant AudioDevice::get_driver_property(const QString& property, QVariant defaultValue)
