@@ -46,7 +46,3 @@ win32{
     INCLUDEPATH += ../../3thparty/include .
 }
 
-HEADERS -= PeakDataReader.h \
-decode/PeakDataReader.h
-SOURCES -= decode/PeakDataReader.cpp
-

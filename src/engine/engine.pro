@@ -53,7 +53,14 @@ release{
 }
 
 unix{
-    contains(DEFINES, SSE_OPTIMIZATIONS): SOURCES += sse_functions.S
+	contains(DEFINES, SSE_OPTIMIZATIONS) {
+		constain(DEFINES, USE_X86_64_ASM) {
+			SOURCES += sse_functions_64bit.S
+		}
+		contains(DEFINES, ARCH_X86) {
+			SOURCES += sse_functions.S
+		}
+	}
 }
 
 macx{

@@ -20,7 +20,7 @@ CONFIG += debug
 
 DEFINES += JACK_SUPPORT
 DEFINES += ALSA_SUPPORT
-#DEFINES += PORTAUDIO_SUPPORT
+DEFINES += PORTAUDIO_SUPPORT
 DEFINES += LV2_SUPPORT
 DEFINES += QT_OPENGL_SUPPORT
 
@@ -49,7 +49,7 @@ DEFINES += QT_OPENGL_SUPPORT
 #################################################
 
 
-# DEFINES += STATIC_BUILD
+DEFINES += STATIC_BUILD
 
 #
 # Use Memory Locking 
@@ -97,14 +97,46 @@ unix {
 		
 		MACHINETYPE = $$system(arch)
 		
-		contains( MACHINETYPE, x86_64 )	{
-			QMAKE_CXXFLAGS_RELEASE += -mtune=athlon64
+		X86_FLAGS = $$system(cat /proc/cpuinfo | grep '^flags')
+		
+		HOST_SUPPORTS_SSE = 0
+		
+		contains(X86_FLAGS, sse) {
+			HOST_SUPPORTS_SSE = 1
+			DEFINES += SSE_OPTIMIZATIONS
 		}
 		
-		contains( MACHINETYPE, i[456]86) {
-			DEFINES += SSE_OPTIMIZATIONS
-			QMAKE_CXXFLAGS_RELEASE += -msse -mfpmath=sse
+		contains(X86_FLAGS, mmx) {
+			QMAKE_CXXFLAGS_RELEASE += -mmmx
 		}
+		
+		contains(X86_FLAGS, 3dnow) {
+			QMAKE_CXXFLAGS_RELEASE += -m3dnow
+		}
+		
+		contains(MACHINETYPE, i586) {
+			QMAKE_CXXFLAGS_RELEASE += -march=i586
+		}
+
+		contains(MACHINETYPE, i686) {
+			QMAKE_CXXFLAGS_RELEASE += -march=i686
+			eval(HOST_SUPPORTS_SSE == 1) {
+				QMAKE_CXXFLAGS_RELEASE += -msse -mfpmath=sse
+				DEFINES += USE_XMMINTRIN
+			}
+		}
+
+		contains(MACHINETYPE, x86_64) {
+			eval(HOST_SUPPORTS_SSE == 1) {
+				QMAKE_CXXFLAGS_RELEASE += -msse -mfpmath=sse
+				DEFINES += USE_XMMINTRIN USE_X86_64_ASM
+			}
+		}
+		
+		contains(MACHINETYPE, i[456]86) {
+			DEFINES += ARCH_X86
+		}
+
 		
 	}
 	
@@ -138,6 +170,9 @@ macx {
 	QMAKE_LFLAGS_SONAME  = -Wl,-install_name,@executable_path/../Frameworks/
 
 	RC_FILE = ../../resources/images/traverso_mac.icns
+	
+# Uncomment if dest. target is (at least) tiger (works maybe on other targets as well ?)
+# DEFINES += BUILD_VECLIB_OPTIMIZATIONS
 }
 
 win32 { 

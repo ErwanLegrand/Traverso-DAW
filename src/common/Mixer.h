@@ -17,11 +17,11 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Mixer.h,v 1.1 2007/10/20 17:38:17 r_sijrier Exp $
+    $Id: Mixer.h,v 1.2 2007/10/27 17:57:15 r_sijrier Exp $
 */
 
-#ifndef MIXER_H
-#define MIXER_H
+#ifndef TRAVERSO_MIXER_H
+#define TRAVERSO_MIXER_H
 
 #include "defines.h"
 #include <cmath>
@@ -60,32 +60,40 @@ static inline float coefficient_to_dB (float coeff)
 }
 
 
-float default_compute_peak			(audio_sample_t*  buf, nframes_t nsamples, float current);
+float default_compute_peak			(const audio_sample_t*  buf, nframes_t nsamples, float current);
 void  default_apply_gain_to_buffer		(audio_sample_t*  buf, nframes_t nframes, float gain);
-void  default_mix_buffers_with_gain		(audio_sample_t*  dst, audio_sample_t*  src, nframes_t nframes, float gain);
-void  default_mix_buffers_no_gain		(audio_sample_t*  dst, audio_sample_t*  src, nframes_t nframes);
+void  default_mix_buffers_with_gain		(audio_sample_t*  dst, const audio_sample_t*  src, nframes_t nframes, float gain);
+void  default_mix_buffers_no_gain		(audio_sample_t*  dst, const audio_sample_t*  src, nframes_t nframes);
 
-#if defined (SSE_OPTIMIZATIONS)
+
+#if defined (ARCH_X86) && defined (SSE_OPTIMIZATIONS)
 
 extern "C"
 {
         /* SSE functions */
-        float x86_sse_compute_peak		(audio_sample_t*  buf, nframes_t nsamples, float current);
+        float x86_sse_compute_peak		(const audio_sample_t*  buf, nframes_t nsamples, float current);
         void  x86_sse_apply_gain_to_buffer	(audio_sample_t*  buf, nframes_t nframes, float gain);
-        void  x86_sse_mix_buffers_with_gain	(audio_sample_t*  dst, audio_sample_t*  src, nframes_t nframes, float gain);
-        void  x86_sse_mix_buffers_no_gain	(audio_sample_t*  dst, audio_sample_t*  src, nframes_t nframes);
+        void  x86_sse_mix_buffers_with_gain	(audio_sample_t*  dst, const audio_sample_t*  src, nframes_t nframes, float gain);
+        void  x86_sse_mix_buffers_no_gain	(audio_sample_t*  dst, const audio_sample_t*  src, nframes_t nframes);
 }
 #endif
 
+#if defined (__APPLE__)  && defined (BUILD_VECLIB_OPTIMIZATIONS)
 
+float veclib_compute_peak              (const audio_sample_t* buf, nframes_t nsamples, float current);
+void  veclib_apply_gain_to_buffer      (audio_sample_t* buf, nframes_t nframes, float gain);
+void  veclib_mix_buffers_with_gain     (audio_sample_t* dst, const audio_sample_t* src, nframes_t nframes, float gain);
+void  veclib_mix_buffers_no_gain       (audio_sample_t* dst, const audio_sample_t* src, nframes_t nframes);
+
+#endif
 
 class Mixer
 {
 public:
-        typedef float (*compute_peak_t)			(audio_sample_t* , nframes_t, float);
+        typedef float (*compute_peak_t)			(const audio_sample_t* , nframes_t, float);
         typedef void  (*apply_gain_to_buffer_t)		(audio_sample_t* , nframes_t, float);
-        typedef void  (*mix_buffers_with_gain_t)	(audio_sample_t* , audio_sample_t* , nframes_t, float);
-        typedef void  (*mix_buffers_no_gain_t)		(audio_sample_t* , audio_sample_t* , nframes_t);
+        typedef void  (*mix_buffers_with_gain_t)	(audio_sample_t* , const audio_sample_t* , nframes_t, float);
+        typedef void  (*mix_buffers_no_gain_t)		(audio_sample_t* , const audio_sample_t* , nframes_t);
 
         static compute_peak_t		compute_peak;
         static apply_gain_to_buffer_t	apply_gain_to_buffer;

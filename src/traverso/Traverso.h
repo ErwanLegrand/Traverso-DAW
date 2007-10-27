@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: Traverso.h,v 1.9 2007/05/01 21:11:42 r_sijrier Exp $
+    $Id: Traverso.h,v 1.10 2007/10/27 17:57:16 r_sijrier Exp $
 */
 
 #ifndef Traverso_H
@@ -44,6 +44,7 @@ protected:
 
 private :
 	void init_sse();
+	void setup_fpu();
         void prepare_audio_device();
 	
 private slots:

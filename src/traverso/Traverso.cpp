@@ -35,6 +35,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <ContextPointer.h>
 #include <Information.h>
 #include "defines.h"
+#include "fpu.h"
+#ifdef __SSE__
+#include <xmmintrin.h>
+#endif
+#if defined (__APPLE__)
+#include <Carbon/Carbon.h> // For Gestalt
+#endif
+
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -99,7 +107,8 @@ Traverso::Traverso(int &argc, char **argv )
 	
 	init_sse();
 	
-	QMetaObject::invokeMethod(this, "create_interface", Qt::QueuedConnection);
+ 	QMetaObject::invokeMethod(this, "create_interface", Qt::QueuedConnection);
+// 	create_interface();
 	
 	connect(this, SIGNAL(lastWindowClosed()), &pm(), SLOT(exit()));
 }
@@ -159,24 +168,14 @@ void Traverso::shutdown( int signal )
 void Traverso::init_sse( )
 {
 	bool generic_mix_functions = true;
+	
+	FPU fpu;
 
-#if defined (SSE_OPTIMIZATIONS)
+#if defined (ARCH_X86) && defined (SSE_OPTIMIZATIONS)
 
-	unsigned int use_sse = 0;
+	if (fpu.has_sse()) {
 
-	asm volatile (
-		"mov $1, %%eax\n"
-		"pushl %%ebx\n"
-		"cpuid\n"
-		"popl %%ebx\n"
-		"andl $33554432, %%edx\n"
-		"movl %%edx, %0\n"
-		: "=m" (use_sse)
-		:
-		: "%eax", "%ecx", "%edx", "memory");
-
-	if (use_sse) {
-		printf("Enabling SSE optimized routines\n");
+		printf("Using SSE optimized routines\n");
 
 		// SSE SET
 		Mixer::compute_peak		= x86_sse_compute_peak;
@@ -185,10 +184,32 @@ void Traverso::init_sse( )
 		Mixer::mix_buffers_no_gain 	= x86_sse_mix_buffers_no_gain;
 
 		generic_mix_functions = false;
+
+	}
+
+#elif defined (__APPLE__) && defined (BUILD_VECLIB_OPTIMIZATIONS)
+	long sysVersion = 0;
+
+	if (noErr != Gestalt(gestaltSystemVersion, &sysVersion))
+		sysVersion = 0;
+
+	if (sysVersion >= 0x00001040) { // Tiger at least
+		Mixer::compute_peak           = veclib_compute_peak;
+		Mixer::apply_gain_to_buffer   = veclib_apply_gain_to_buffer;
+		Mixer::mix_buffers_with_gain  = veclib_mix_buffers_with_gain;
+		Mixer::mix_buffers_no_gain    = veclib_mix_buffers_no_gain;
+
+		generic_mix_functions = false;
+
+		info << "Apple VecLib H/W specific optimizations in use" << endmsg;
 	}
 #endif
 
+	/* consider FPU denormal handling to be "h/w optimization" */
 
+	setup_fpu ();
+
+	
 	if (generic_mix_functions) {
 		Mixer::compute_peak 		= default_compute_peak;
 		Mixer::apply_gain_to_buffer 	= default_apply_gain_to_buffer;
@@ -199,6 +220,68 @@ void Traverso::init_sse( )
 	}
 
 }
+
+
+void Traverso::setup_fpu()
+{
+
+	// export TRAVERSO_RUNNING_UNDER_VALGRIND to disable assembler stuff below!
+	if (getenv("TRAVERSO_RUNNING_UNDER_VALGRIND")) {
+		printf("TRAVERSO_RUNNING_UNDER_VALGRIND=TRUE\n");
+		// valgrind doesn't understand this assembler stuff
+		// September 10th, 2007
+		return;
+	}
+
+#if defined(ARCH_X86) && defined(USE_XMMINTRIN)
+
+	int MXCSR;
+	FPU fpu;
+
+	/* XXX use real code to determine if the processor supports
+	DenormalsAreZero and FlushToZero
+	*/
+	
+	if (!fpu.has_flush_to_zero() && !fpu.has_denormals_are_zero()) {
+		return;
+	}
+
+	MXCSR  = _mm_getcsr();
+
+/*	switch (Config->get_denormal_model()) {
+		case DenormalNone:
+			MXCSR &= ~(_MM_FLUSH_ZERO_ON|0x8000);
+			break;
+
+		case DenormalFTZ:
+			if (fpu.has_flush_to_zero()) {
+				MXCSR |= _MM_FLUSH_ZERO_ON;
+			}
+			break;
+
+		case DenormalDAZ:*/
+			MXCSR &= ~_MM_FLUSH_ZERO_ON;
+			if (fpu.has_denormals_are_zero()) {
+				MXCSR |= 0x8000;
+			}
+// 			break;
+// 		
+// 		case DenormalFTZDAZ:
+// 			if (fpu.has_flush_to_zero()) {
+// 				if (fpu.has_denormals_are_zero()) {
+// 					MXCSR |= _MM_FLUSH_ZERO_ON | 0x8000;
+// 				} else {
+// 					MXCSR |= _MM_FLUSH_ZERO_ON;
+// 				}
+// 			}
+// 			break;
+// 	}
+
+	_mm_setcsr (MXCSR);
+
+#endif
+}
+
 
 void Traverso::prepare_audio_device( )
 {
