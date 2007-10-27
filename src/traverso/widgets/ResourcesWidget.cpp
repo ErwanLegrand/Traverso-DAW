@@ -49,6 +49,7 @@ public:
 	}
 	
 	void showEvent ( QShowEvent * event ) {
+		Q_UNUSED(event);
 		
 		if (m_dirModel) {
 			return;
@@ -194,6 +195,8 @@ ResourcesWidget::~ ResourcesWidget()
 
 void ResourcesWidget::showEvent( QShowEvent * event ) 
 {
+	Q_UNUSED(event);
+	
 	if (sourcesTreeWidget) {
 		return;
 	}
@@ -401,6 +404,7 @@ void ResourcesWidget::add_source(ReadSource * source)
 
 void ResourcesWidget::remove_source(ReadSource * source)
 {
+	Q_UNUSED(source);
 }
 
 void ResourcesWidget::update_clip_state(AudioClip* clip)
