@@ -298,7 +298,7 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 	// minor is double so they line up right with the majors,
 	// despite not always being an even number of frames
 	// @Ben : is still still the same when using TimeRef based calculations?
-	TimeRef minor = TimeRef(major/qint64(10));
+	double minor = double(major/double(10));
 
 	TimeRef firstLocation = TimeRef(xstart * m_sv->timeref_scalefactor);
 	TimeRef lastLocation = TimeRef(xstart * m_sv->timeref_scalefactor + pixelcount * m_sv->timeref_scalefactor);
@@ -308,7 +308,8 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 
 	TimeRef factor = (firstLocation/major)*major;
 	// Draw minor ticks
-	for (qint64 i = 0; i < ((lastLocation-firstLocation+major) / minor).universal_frame(); i++ ) {
+	TimeRef range((lastLocation-firstLocation+major) / minor);
+	for (qint64 i = 0; i < range.universal_frame(); i++ ) {
 		int x = (int)((factor + i * minor) / m_sv->timeref_scalefactor) - xstartoffset;
 		painter->drawLine(x, height - 5, x, height - 1);
 	}
