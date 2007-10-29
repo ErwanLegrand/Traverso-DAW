@@ -42,7 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #define NORMALIZE_CHUNK_SIZE	10000
 #define PEAKFILE_MAJOR_VERSION	1
-#define PEAKFILE_MINOR_VERSION	1
+#define PEAKFILE_MINOR_VERSION	2
 
 int Peak::zoomStep[] = {
 	// non-cached zoomlevels.
@@ -509,7 +509,7 @@ int Peak::finish_processing()
 			PERROR("Could not read in all (%d) norm. data, only %d", data->pd->normDataCount, read);
 		}
 		
-		data->headerdata.normValuesDataOffset = data->headerdata.headerSize + totalBufferSize;
+		data->headerdata.normValuesDataOffset = data->headerdata.headerSize + totalBufferSize * sizeof(peak_data_t);
 		
 		data->normFile.close();
 		
@@ -681,6 +681,7 @@ audio_sample_t Peak::get_max_amplitude(TimeRef startlocation, TimeRef endlocatio
 {
 	foreach(ChannelData* data, m_channelData) {
 		if (!data->file.isOpen() || !m_peaksAvailable) {
+			printf("either the file is not open, or no peak data available\n");
 			return 0.0f;
 		}
 	}
