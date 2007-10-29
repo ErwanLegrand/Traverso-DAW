@@ -103,7 +103,7 @@ Peak::~Peak()
 			QFile::remove(data->normFileName);
 		}
 #if QT_VERSION < 0x040400
-#if defined Q_WS_X11 || Q_WS_MAC
+##if defined Q_WS_X11 || defined Q_WS_MAC
 		if (data->memory) {
 			uchar *start = data->memory - data->maps[data->memory].first;
 			int len = data->maps[data->memory].second;
