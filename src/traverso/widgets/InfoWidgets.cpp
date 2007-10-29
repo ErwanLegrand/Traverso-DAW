@@ -325,7 +325,22 @@ void HDDSpaceInfo::update_status( )
 		}
 		
 		uint rate = audiodevice().get_sample_rate();
-		TimeRef time(qint64((space * 1048576) / (sizeof(float) * recChannelCount)), rate);
+		qint64 availabletime = (UNIVERSAL_SAMPLE_RATE / rate) * qint64(space * 1048576);
+		availabletime /= qint64(sizeof(float) * recChannelCount);
+ 		
+		QString recordFormat = config().get_property("Recording", "FileFormat", "wav").toString();
+		// I think a compression ratio of 40 % with wavpack is a safe estimation
+		// and 50% with skipwvx...
+		if (recordFormat == "wavpack") {
+			QString skipwvx = config().get_property("Recording", "WavpackSkipWVX", "false").toString();
+			if (skipwvx == "true") {
+				availabletime = qint64(availabletime / 0.5);
+			} else {
+				availabletime = qint64(availabletime / 0.6);
+			}
+		}
+		
+		TimeRef time(availabletime);
 		text = timeref_to_hms(time);
 		if (text < "00:30:00") {
 			QPalette pal;
