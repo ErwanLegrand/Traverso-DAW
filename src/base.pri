@@ -20,7 +20,7 @@ CONFIG += debug
 
 DEFINES += JACK_SUPPORT
 DEFINES += ALSA_SUPPORT
-DEFINES += PORTAUDIO_SUPPORT
+#DEFINES += PORTAUDIO_SUPPORT
 DEFINES += LV2_SUPPORT
 DEFINES += QT_OPENGL_SUPPORT
 
@@ -173,6 +173,7 @@ macx {
 	
 # Uncomment if dest. target is (at least) tiger (works maybe on other targets as well ?)
 # DEFINES += BUILD_VECLIB_OPTIMIZATIONS
+# LIBS += -framework Accelerate
 }
 
 win32 { 
