@@ -201,7 +201,7 @@ void Traverso::init_sse( )
 
 		generic_mix_functions = false;
 
-		info << "Apple VecLib H/W specific optimizations in use" << endmsg;
+		printf("Apple VecLib H/W specific optimizations in use\n");
 	}
 #endif
 
