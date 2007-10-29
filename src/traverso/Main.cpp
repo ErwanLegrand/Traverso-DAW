@@ -67,19 +67,19 @@ int main( int argc, char **argv )
 	signal(SIGSEGV, catch_signal);
 #endif
 
-	Debugger::set_debug_level(Debugger::OFF);
+	TraversoDebugger::set_debug_level(TraversoDebugger::OFF);
 	if (argc > 1) {
 		for (int i=1; i<argc; i++) {
 			if (strcmp(argv[i],"--d1")==0)
-					Debugger::set_debug_level(Debugger::BASIC);
+					TraversoDebugger::set_debug_level(TraversoDebugger::BASIC);
 			if (strcmp(argv[i],"--d2")==0)
-					Debugger::set_debug_level(Debugger::FLOOD);
+					TraversoDebugger::set_debug_level(TraversoDebugger::FLOOD);
 			if (strcmp(argv[i],"--d3")==0)
-					Debugger::set_debug_level(Debugger::SUPER_FLOOD);
+					TraversoDebugger::set_debug_level(TraversoDebugger::SUPER_FLOOD);
 			if (strcmp(argv[i],"--d4")==0)
-					Debugger::set_debug_level(Debugger::ALL);
+					TraversoDebugger::set_debug_level(TraversoDebugger::ALL);
 			if (strcmp(argv[i],"--log")==0)
-					Debugger::create_log("traverso.log");
+					TraversoDebugger::create_log("traverso.log");
 			if ((strcmp(argv[i],"--help")==0) || (strcmp(argv[i],"-h")==0)) {
 				printf("\nUsage: traverso [OPTIONS]\n\n");
 				printf("Valid OPTIONS are :\n\n");

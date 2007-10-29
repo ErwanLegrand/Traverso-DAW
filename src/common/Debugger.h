@@ -17,11 +17,11 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: Debugger.h,v 1.1 2007/10/20 17:38:16 r_sijrier Exp $
+    $Id: Debugger.h,v 1.2 2007/10/29 08:59:14 r_sijrier Exp $
 */
 
-#ifndef DEBUGGER_H
-#define DEBUGGER_H
+#ifndef TRAVERSO_DEBUGGER_H
+#define TRAVERSO_DEBUGGER_H
 
 #include <QString>
 
@@ -69,31 +69,31 @@ public:
 	~DestructorEnter();
 };
 
-#define PMESG(args...)          { using namespace Debugger; if (get_debug_level()>=BASIC)       { if (is_logging())  { QString x; x.sprintf(args); QString output = get_tabs() + "[ " + x + " ]\n"; log(output); } else { fill_tabs(); CHANGE_COLOR_MAGENTA; printf("[ "); printf(args); printf(" ]"); CHANGE_COLOR_WHITE; printf("\n"); } } }
-#define PMESG2(args...)         { using namespace Debugger; if (get_debug_level()>=FLOOD)       { if (is_logging())  { QString x; x.sprintf(args); QString output = get_tabs() + "[ " + x + " ]\n"; log(output); } else { fill_tabs(); CHANGE_COLOR_MAGENTA; printf("[ "); printf(args); printf(" ]"); CHANGE_COLOR_WHITE; printf("\n"); } } }
-#define PMESG3(args...)         { using namespace Debugger; if (get_debug_level()>=SUPER_FLOOD) { if (is_logging())  { QString x; x.sprintf(args); QString output = get_tabs() + "[ " + x + " ]\n"; log(output); } else { fill_tabs(); CHANGE_COLOR_MAGENTA; printf("[ "); printf(args); printf(" ]"); CHANGE_COLOR_WHITE; printf("\n"); } } }
-#define PMESG4(args...)         { using namespace Debugger; if (get_debug_level()>=ALL)         { if (is_logging())  { QString x; x.sprintf(args); QString output = get_tabs() + "[ " + x + " ]\n"; log(output); } else { fill_tabs(); CHANGE_COLOR_MAGENTA; printf("[ "); printf(args); printf(" ]"); CHANGE_COLOR_WHITE; printf("\n"); } } }
+#define PMESG(args...)          { using namespace TraversoDebugger; if (get_debug_level()>=BASIC)       { if (is_logging())  { QString x; x.sprintf(args); QString output = get_tabs() + "[ " + x + " ]\n"; log(output); } else { fill_tabs(); CHANGE_COLOR_MAGENTA; printf("[ "); printf(args); printf(" ]"); CHANGE_COLOR_WHITE; printf("\n"); } } }
+#define PMESG2(args...)         { using namespace TraversoDebugger; if (get_debug_level()>=FLOOD)       { if (is_logging())  { QString x; x.sprintf(args); QString output = get_tabs() + "[ " + x + " ]\n"; log(output); } else { fill_tabs(); CHANGE_COLOR_MAGENTA; printf("[ "); printf(args); printf(" ]"); CHANGE_COLOR_WHITE; printf("\n"); } } }
+#define PMESG3(args...)         { using namespace TraversoDebugger; if (get_debug_level()>=SUPER_FLOOD) { if (is_logging())  { QString x; x.sprintf(args); QString output = get_tabs() + "[ " + x + " ]\n"; log(output); } else { fill_tabs(); CHANGE_COLOR_MAGENTA; printf("[ "); printf(args); printf(" ]"); CHANGE_COLOR_WHITE; printf("\n"); } } }
+#define PMESG4(args...)         { using namespace TraversoDebugger; if (get_debug_level()>=ALL)         { if (is_logging())  { QString x; x.sprintf(args); QString output = get_tabs() + "[ " + x + " ]\n"; log(output); } else { fill_tabs(); CHANGE_COLOR_MAGENTA; printf("[ "); printf(args); printf(" ]"); CHANGE_COLOR_WHITE; printf("\n"); } } }
 
-#define PDEBUG(args...)         { using namespace Debugger; if (is_logging()) { QString x; x.sprintf(args); QString output = "DEBUG : " + QString(__FILE__) + "::" + QString(__FUNCTION__) + ":" + x + "\n"; log(output); } else { CHANGE_COLOR_GREEN; printf("DEBUG : ");printf("%s",__FILE__); printf("::"); printf("%s",__FUNCTION__); printf(":"); printf(args); CHANGE_COLOR_WHITE; printf("\n"); } }
-#define PERROR(args...)         { using namespace Debugger; if (is_logging()) { QString x; x.sprintf(args); QString output = "\n *** Error in " + QString(__PRETTY_FUNCTION__) + "\n" + x + "\n\n"; } else {  printf("\n"); CHANGE_COLOR_RED; printf("*** Error in "); printf("%s",__PRETTY_FUNCTION__); printf("\n"); printf(args); CHANGE_COLOR_WHITE; printf("\n\n"); } }
-#define PERROR2(args...)        { using namespace Debugger; if (is_logging()) { QString x; x.sprintf(args); QString output = "\n *** Error in " + QString(__PRETTY_FUNCTION__) + "\n" + x + "\n\n"; } else if (get_debug_level()>=FLOOD) {  printf("\n"); CHANGE_COLOR_RED; printf("*** Error in "); printf("%s",__PRETTY_FUNCTION__); printf("\n"); printf(args); CHANGE_COLOR_WHITE; printf("\n\n"); } }
-#define PWARN(args...)          { using namespace Debugger; if (is_logging()) { QString x; x.sprintf(args); QString output = "WARNING: " + x + "\n"; log(output); } else { CHANGE_COLOR_YELLOW; printf("WARNING: "); printf(args); CHANGE_COLOR_WHITE; printf("\n"); } }
-#define PWARN2(args...)         { using namespace Debugger; if (get_debug_level()>=FLOOD) { if (is_logging()) { QString x; x.sprintf(args); QString output = "WARNING: " + x + "\n"; log(output); } else { CHANGE_COLOR_YELLOW; printf("WARNING: "); printf(args); CHANGE_COLOR_WHITE; printf("\n"); } } }
+#define PDEBUG(args...)         { using namespace TraversoDebugger; if (is_logging()) { QString x; x.sprintf(args); QString output = "DEBUG : " + QString(__FILE__) + "::" + QString(__FUNCTION__) + ":" + x + "\n"; log(output); } else { CHANGE_COLOR_GREEN; printf("DEBUG : ");printf("%s",__FILE__); printf("::"); printf("%s",__FUNCTION__); printf(":"); printf(args); CHANGE_COLOR_WHITE; printf("\n"); } }
+#define PERROR(args...)         { using namespace TraversoDebugger; if (is_logging()) { QString x; x.sprintf(args); QString output = "\n *** Error in " + QString(__PRETTY_FUNCTION__) + "\n" + x + "\n\n"; } else {  printf("\n"); CHANGE_COLOR_RED; printf("*** Error in "); printf("%s",__PRETTY_FUNCTION__); printf("\n"); printf(args); CHANGE_COLOR_WHITE; printf("\n\n"); } }
+#define PERROR2(args...)        { using namespace TraversoDebugger; if (is_logging()) { QString x; x.sprintf(args); QString output = "\n *** Error in " + QString(__PRETTY_FUNCTION__) + "\n" + x + "\n\n"; } else if (get_debug_level()>=FLOOD) {  printf("\n"); CHANGE_COLOR_RED; printf("*** Error in "); printf("%s",__PRETTY_FUNCTION__); printf("\n"); printf(args); CHANGE_COLOR_WHITE; printf("\n\n"); } }
+#define PWARN(args...)          { using namespace TraversoDebugger; if (is_logging()) { QString x; x.sprintf(args); QString output = "WARNING: " + x + "\n"; log(output); } else { CHANGE_COLOR_YELLOW; printf("WARNING: "); printf(args); CHANGE_COLOR_WHITE; printf("\n"); } }
+#define PWARN2(args...)         { using namespace TraversoDebugger; if (get_debug_level()>=FLOOD) { if (is_logging()) { QString x; x.sprintf(args); QString output = "WARNING: " + x + "\n"; log(output); } else { CHANGE_COLOR_YELLOW; printf("WARNING: "); printf(args); CHANGE_COLOR_WHITE; printf("\n"); } } }
 
 
-#define PENTER			FunctionEnter enter(Debugger::BASIC, __FILE__, __FUNCTION__)
-#define PENTER2			FunctionEnter enter(Debugger::FLOOD, __FILE__, __FUNCTION__)
-#define PENTER3			FunctionEnter enter(Debugger::SUPER_FLOOD, __FILE__, __FUNCTION__)
-#define PENTER4			FunctionEnter enter(Debugger::ALL, __FILE__, __FUNCTION__)
+#define PENTER			FunctionEnter enter(TraversoDebugger::BASIC, __FILE__, __FUNCTION__)
+#define PENTER2			FunctionEnter enter(TraversoDebugger::FLOOD, __FILE__, __FUNCTION__)
+#define PENTER3			FunctionEnter enter(TraversoDebugger::SUPER_FLOOD, __FILE__, __FUNCTION__)
+#define PENTER4			FunctionEnter enter(TraversoDebugger::ALL, __FILE__, __FUNCTION__)
 
-#define PENTERCONS              ConstructorEnter enter(Debugger::BASIC, __FILE__, __FUNCTION__)
-#define PENTERDES                 DestructorEnter enter(Debugger::BASIC, __FILE__, __FUNCTION__)
-#define PENTERCONS2            ConstructorEnter enter(Debugger::FLOOD, __FILE__, __FUNCTION__)
-#define PENTERDES2               DestructorEnter enter(Debugger::FLOOD, __FILE__, __FUNCTION__)
-#define PENTERCONS3            ConstructorEnter enter(Debugger::SUPER_FLOOD, __FILE__, __FUNCTION__)
-#define PENTERDES3               DestructorEnter enter(Debugger::SUPER_FLOOD, __FILE__, __FUNCTION__)
-#define PENTERCONS4            ConstructorEnter enter(Debugger::ALL, __FILE__, __FUNCTION__)
-#define PENTERDES4               DestructorEnter enter(Debugger::ALL, __FILE__, __FUNCTION__)
+#define PENTERCONS              ConstructorEnter enter(TraversoDebugger::BASIC, __FILE__, __FUNCTION__)
+#define PENTERDES                 DestructorEnter enter(TraversoDebugger::BASIC, __FILE__, __FUNCTION__)
+#define PENTERCONS2            ConstructorEnter enter(TraversoDebugger::FLOOD, __FILE__, __FUNCTION__)
+#define PENTERDES2               DestructorEnter enter(TraversoDebugger::FLOOD, __FILE__, __FUNCTION__)
+#define PENTERCONS3            ConstructorEnter enter(TraversoDebugger::SUPER_FLOOD, __FILE__, __FUNCTION__)
+#define PENTERDES3               DestructorEnter enter(TraversoDebugger::SUPER_FLOOD, __FILE__, __FUNCTION__)
+#define PENTERCONS4            ConstructorEnter enter(TraversoDebugger::ALL, __FILE__, __FUNCTION__)
+#define PENTERDES4               DestructorEnter enter(TraversoDebugger::ALL, __FILE__, __FUNCTION__)
 
 #else
 
@@ -129,7 +129,7 @@ public:
 
 #endif
 /*!
- Debugger is a collection of macros that makes easier the job of debugging a  Application.
+ TraversoDebugger is a collection of macros that makes easier the job of debugging a  Application.
 
  PENTER - Outputs a message when entering a method in level 1. Used in the FIRST line of a method;
  PEXIT  - Outputs a message when leaving a method in level 1. Used in the LAST line of a method,
@@ -150,7 +150,7 @@ public:
  Same can be done for PENTERCONS2, PEXITCONS2, PENTERCONS3... and so on...
  */
 
-namespace Debugger
+namespace TraversoDebugger
         {
         static const int OFF = 0;         //< no debug output at all
         static const int BASIC = 1;       //< only level 1 calls
@@ -158,23 +158,23 @@ namespace Debugger
         static const int SUPER_FLOOD = 3; //< all previous plus low level JMB messages
         static const int ALL = 4;         //< all messages (including in timer loops)
 
-        //! Used internally by Debugger. Align the output with the level of execution in a given moment
+        //! Used internally by TraversoDebugger. Align the output with the level of execution in a given moment
         void fill_tabs();
 
-        //! Used internally by Debugger. Get a " " (space) sequence whch aligns the output with the level of execution in a given moment,
+        //! Used internally by TraversoDebugger. Get a " " (space) sequence whch aligns the output with the level of execution in a given moment,
         QString get_tabs();
 
 
-        //! Used internally by Debugger. Increase one level of execution in output messages
+        //! Used internally by TraversoDebugger. Increase one level of execution in output messages
         void more_tabs();
 
-        //! Used internally by Debugger. Decrease one level of execution in output messages
+        //! Used internally by TraversoDebugger. Decrease one level of execution in output messages
         void less_tabs();
 
         //! Set the debug level
         void set_debug_level(int l);
 
-        //! Used internally by Debugger. Returns true if debugOn flag is true.
+        //! Used internally by TraversoDebugger. Returns true if debugOn flag is true.
         int get_debug_level();
 
         //! create a log file "fn" under home dir and enable copy of all debugging messagem to this file.
@@ -183,7 +183,7 @@ namespace Debugger
         //! close the log file
         void close_log();
 
-        //! Used internally by Debugger. Feed the log file.
+        //! Used internally by TraversoDebugger. Feed the log file.
         void log(QString msg);
 
         //! Used internally to check if output is stdout or a log file

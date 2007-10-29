@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Debugger.cpp,v 1.1 2007/10/20 17:38:16 r_sijrier Exp $
+    $Id: Debugger.cpp,v 1.2 2007/10/29 08:59:14 r_sijrier Exp $
 */
 
 #include <stdlib.h>
@@ -25,7 +25,7 @@
 
 #include "Debugger.h"
 
-namespace Debugger
+namespace TraversoDebugger
 {
 int ntabs = 0;
 int debugLevel = OFF;
@@ -34,13 +34,13 @@ QString logFileName = 0;
 bool logging = false;
 }
 
-void Debugger::fill_tabs()
+void TraversoDebugger::fill_tabs()
 {
         for (int i=0; i < ntabs; i++)
                 printf("|   ");
 }
 
-QString Debugger::get_tabs()
+QString TraversoDebugger::get_tabs()
 {
         QString t="";
         for (int i=0; i < ntabs; i++)
@@ -49,36 +49,36 @@ QString Debugger::get_tabs()
 }
 
 
-void Debugger::more_tabs()
+void TraversoDebugger::more_tabs()
 {
         ntabs++;
 }
 
 
-void Debugger::less_tabs()
+void TraversoDebugger::less_tabs()
 {
         ntabs--;
 }
 
 
-void Debugger::set_debug_level(int l)
+void TraversoDebugger::set_debug_level(int l)
 {
         debugLevel = l;
 }
 
 
-int Debugger::get_debug_level()
+int TraversoDebugger::get_debug_level()
 {
         return debugLevel;
 }
 
 
-void Debugger::create_log(QString fn)
+void TraversoDebugger::create_log(QString fn)
 {
         logFileName = QString(getenv("HOME")) + "/" + fn;
         logFile = fopen(logFileName.toAscii(),"a+");
         if (!logFile) {
-                PERROR("Cannot create Debugger Log file (%s)",fn.toAscii().data());
+                PERROR("Cannot create TraversoDebugger Log file (%s)",fn.toAscii().data());
                 logging=false;
         } else {
                 fclose(logFile);
@@ -88,14 +88,14 @@ void Debugger::create_log(QString fn)
 
 
 
-void Debugger::close_log()
+void TraversoDebugger::close_log()
 {
         logging=false;
 }
 
 
 
-void Debugger::log(QString s)
+void TraversoDebugger::log(QString s)
 {
         const char* sc = s.toAscii();
         int len = s.length();
@@ -104,7 +104,7 @@ void Debugger::log(QString s)
         fclose(logFile);
 }
 
-bool Debugger::is_logging()
+bool TraversoDebugger::is_logging()
 {
         return logging;
 }
@@ -114,7 +114,7 @@ bool Debugger::is_logging()
 
 static void print_enter(int lvl, const char* file, const char* function)
 {
-        using namespace Debugger;
+        using namespace TraversoDebugger;
 
         if (get_debug_level()>=lvl) {
                 if (is_logging()) {
@@ -134,7 +134,7 @@ static void print_enter(int lvl, const char* file, const char* function)
 
 static void print_exit(int lvl, const char* file, const char* function)
 {
-        using namespace Debugger;
+        using namespace TraversoDebugger;
 
         if (get_debug_level()>=lvl) {
                 if (is_logging()) {
@@ -166,7 +166,7 @@ FunctionEnter::~ FunctionEnter( )
 ConstructorEnter::ConstructorEnter(int level, const char* file, const char* function)
                 : m_file(file), m_function(function), lvl(level)
 {
-        using namespace Debugger;
+        using namespace TraversoDebugger;
         if (get_debug_level()>=lvl) {
                 if (is_logging()) {
                         QString output = get_tabs() + "ENTERING " + QString(m_function) + " (CONSTRUCTOR)\n";
@@ -189,7 +189,7 @@ ConstructorEnter::ConstructorEnter(int level, const char* file, const char* func
 
 ConstructorEnter::~ ConstructorEnter( )
 {
-        using namespace Debugger;
+        using namespace TraversoDebugger;
         if (get_debug_level()>=lvl) {
                 if (is_logging()) {
                         less_tabs();
@@ -213,7 +213,7 @@ ConstructorEnter::~ ConstructorEnter( )
 DestructorEnter::DestructorEnter(int level, const char* file, const char* function)
                 : m_file(file), m_function(function), lvl(level)
 {
-        using namespace Debugger;
+        using namespace TraversoDebugger;
         if (get_debug_level()>=lvl) {
                 if (is_logging()) {
                         QString output = get_tabs() + "ENTERING " + QString(m_function) + " (DESTRUCTOR)\n";
@@ -236,7 +236,7 @@ DestructorEnter::DestructorEnter(int level, const char* file, const char* functi
 
 DestructorEnter::~ DestructorEnter( )
 {
-        using namespace Debugger;
+        using namespace TraversoDebugger;
         if (get_debug_level()>=lvl) {
                 if (is_logging()) {
                         less_tabs();
