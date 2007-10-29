@@ -120,7 +120,7 @@ QString timeref_to_hms(const TimeRef& ref)
 
 QString timeref_to_ms(const TimeRef& ref)
 {
-	long unsigned int remainder;
+	qint64 remainder;
 	int mins, secs;
 
 	qint64 universalframe = ref.universal_frame();
@@ -135,7 +135,7 @@ QString timeref_to_ms(const TimeRef& ref)
 QString timeref_to_ms_2 (const TimeRef& ref)
 {
 	QString spos;
-	long unsigned int remainder;
+	qint64 remainder;
 	int mins, secs, frames;
 	
 	qint64 universalframe = ref.universal_frame();
@@ -154,7 +154,7 @@ QString timeref_to_ms_2 (const TimeRef& ref)
 QString timeref_to_ms_3(const TimeRef& ref)
 {
 	QString spos;
-	long unsigned int remainder;
+	qint64 remainder;
 	int mins, secs, frames;
 	
 	qint64 universalframe = ref.universal_frame();
@@ -173,7 +173,7 @@ QString timeref_to_ms_3(const TimeRef& ref)
 QString timeref_to_cd (const TimeRef& ref)
 {
 	QString spos;
-	long unsigned int remainder;
+	qint64 remainder;
 	int mins, secs, frames;
 	
 	qint64 universalframe = ref.universal_frame();
