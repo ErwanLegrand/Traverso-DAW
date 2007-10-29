@@ -283,6 +283,12 @@ void ResourcesWidget::project_load_finished()
 	foreach(AudioClip* clip, resources_manager()->get_all_clips()) {
 		add_clip(clip);
 	}
+	
+	foreach(Song* song, m_project->get_songs()) {
+		song_added(song);
+	}
+	
+	set_current_song(m_currentSong);
 
 	sourcesTreeWidget->sortItems(0, Qt::AscendingOrder);
 }
