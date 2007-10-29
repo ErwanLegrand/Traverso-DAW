@@ -249,6 +249,16 @@ void OpenProjectDialog::on_projectDirSelectButton_clicked( )
 	
 	QDir dir;
 	
+	QFileInfo fi(newPath);
+	if (dir.exists(newPath) && !fi.isWritable()) {
+		QMessageBox::warning( 0, tr("Traverso - Warning"), 
+				      tr("This directory is not writable by you! \n") +
+					tr("Please check permission for this directory or "
+					"choose another one:\n\n %1").arg(newPath) );
+		return;
+	} 
+
+	
 	if (dir.exists(newPath)) {
 // 		QMessageBox::information( interface, tr("Traverso - Information"), tr("Using existing Project directory: %1\n").arg(newPath), "OK", 0 );
 	} else if (!dir.mkpath(newPath)) {

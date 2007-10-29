@@ -293,12 +293,23 @@ void ProjectManager::start(QString projectToLoad)
 
 	QDir dir;
 	if ( (projects_path.isEmpty()) || (!dir.exists(projects_path)) ) {
-		if (projects_path.isEmpty())
+		if (projects_path.isEmpty()) {
 			projects_path = QDir::homePath();
+		}
 
 		QString newPath = QFileDialog::getExistingDirectory(0,
 				tr("Choose an existing or create a new Project Directory"),
 				   projects_path );
+		
+		QFileInfo fi(newPath);
+		if (dir.exists(newPath) && !fi.isWritable()) {
+			QMessageBox::warning( 0, tr("Traverso - Warning"), 
+					      tr("This directory is not writable by you! \n") +
+					      tr("Please check permission for this directory or "
+						"choose another one:\n\n %1").arg(newPath) );
+			return;
+		} 
+		
 		if (dir.exists(newPath)) {
 			info().information(tr("Using existing Project directory: %1\n").arg(newPath));
 		} else if (!dir.mkpath(newPath)) {
