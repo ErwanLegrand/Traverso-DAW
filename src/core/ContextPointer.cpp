@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ContextPointer.cpp,v 1.14 2007/04/17 11:51:20 r_sijrier Exp $
+$Id: ContextPointer.cpp,v 1.15 2007/10/29 15:08:48 r_sijrier Exp $
 */
 
 #include "ContextPointer.h"
@@ -160,8 +160,9 @@ void ContextPointer::jog_finished()
 {
 	if (currentViewPort) {
 		currentViewPort->viewport()->releaseMouse();
-		currentViewPort->setCursor(themer()->get_cursor("Default"));
-
+		// This issues a mouse move event, so the cursor
+		// will change to the item that's below it....
+		QCursor::setPos(QCursor::pos()-QPoint(1,1));
 	}
 	m_jogTimer.stop();
 }

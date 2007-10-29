@@ -144,6 +144,9 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 		QList<QGraphicsItem *> itemsUnderCursor = scene()->items(mapToScene(event->pos()));
 		if (itemsUnderCursor.size()) {
 			itemsUnderCursor.first()->setCursor(itemsUnderCursor.first()->cursor());
+		} else {
+			// If no item is below the mouse, default to default cursor
+			viewport()->setCursor(themer()->get_cursor("Default"));
 		}
 		QApplication::sendEvent(scene(), &mouseEvent);
 	} else {
