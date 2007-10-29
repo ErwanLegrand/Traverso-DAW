@@ -70,10 +70,10 @@ public:
 	Project* get_project();
 	QUndoGroup* get_undogroup() const;
 
+	void start();
+	void start(const QString& basepath, const QString& projectname);
 
 public slots:
-	void start(QString projectToLoad);
-	
 	Command* save_project();
 	Command* exit();
 	Command* undo();

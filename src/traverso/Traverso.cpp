@@ -121,21 +121,42 @@ Traverso::~Traverso()
 	config().save();
 }
 
-
+#include <QFileInfo>
+#include <QDir>
 void Traverso::create_interface( )
 {
 	themer()->load();
 	Interface* iface = Interface::instance();
 	prepare_audio_device();
 	iface->show();
-	QString projectToLoad;
+	
+	QString projectToLoad = "";
+	
 	foreach(QString string, QCoreApplication::arguments ()) {
 		if (string.contains("project.tpf")) {
 			projectToLoad = string;
 			break;
 		}
 	}
-	pm().start(projectToLoad);
+	
+	// The user clicked on a project.tpf file, start extracting the 
+	// baseproject directory, and the project name from the filename.
+	if (!projectToLoad.isEmpty()) {
+		QFileInfo fi(projectToLoad);
+		QDir projectdir(fi.path());
+		QDir baseprojectdir(fi.path());
+		baseprojectdir.cdUp();
+		QString baseprojectdirpath = baseprojectdir.path();
+		QString projectdirpath = projectdir.path();
+		QString projectname = projectdirpath.mid(baseprojectdirpath.length() + 1, projectdirpath.length());
+		
+		if (!projectname.isEmpty() && ! baseprojectdirpath.isEmpty()) {
+			pm().start(baseprojectdirpath, projectname);
+			return;
+		}
+	}
+	
+	pm().start();
 }
 
 void Traverso::shutdown( int signal )

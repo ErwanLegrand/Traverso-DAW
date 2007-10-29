@@ -286,7 +286,7 @@ Project * ProjectManager::get_project( )
 	return currentProject;
 }
 
-void ProjectManager::start(QString projectToLoad)
+void ProjectManager::start()
 {
 	QString defaultpath = config().get_property("Project", "DefaultDirectory", "").toString();
 	QString projects_path = config().get_property("Project", "directory", defaultpath).toString();
@@ -320,27 +320,19 @@ void ProjectManager::start(QString projectToLoad)
 		} else {
 			info().information(tr("Created new Project directory for you here: %1\n").arg(newPath));
 		}
+		
 		QDir newdir(newPath);
 		config().set_property("Project", "directory", newdir.canonicalPath());
 	}
 	
 	bool loadProjectAtStartUp = config().get_property("Project", "loadLastUsed", 1).toBool();
 
-	if (loadProjectAtStartUp || !(projectToLoad.isEmpty())) {
-		if (!projectToLoad.isEmpty()) {
-			int splitpoint = projectToLoad.lastIndexOf("/");
-			QString dirpath = projectToLoad.left(splitpoint);
-			int splitpoint2 = dirpath.lastIndexOf("/") + 1;
-			projectToLoad = dirpath.right(splitpoint - splitpoint2);
-			dirpath = dir.remove(projectToLoad);
-			QDir dir(dirpath);
-			config().set_property("Project", "directory", dir.canonicalPath());
-		} else {
-			projectToLoad = config().get_property("Project", "current", "").toString();
-		}
+	if (loadProjectAtStartUp) {
+		QString projectToLoad = config().get_property("Project", "current", "").toString();
 
-		if ( projectToLoad.isNull() || projectToLoad.isEmpty() )
+		if (projectToLoad.isNull() || projectToLoad.isEmpty()) {
 			projectToLoad="Untitled";
+		}
 
 		if (project_exists(projectToLoad)) {
 			load_project(projectToLoad);
@@ -364,6 +356,14 @@ void ProjectManager::start(QString projectToLoad)
 	}
 }
 
+void ProjectManager::start(const QString & basepath, const QString & projectname)
+{
+	config().set_property("Project", "directory", basepath);
+	
+	if (project_exists(projectname)) {
+		load_project(projectname);
+	}
+}
 
 QUndoGroup* ProjectManager::get_undogroup() const
 {
@@ -628,4 +628,3 @@ int ProjectManager::create_projectfilebackup_dir(const QString& rootDir)
 	
 	return 1;
 }
-
