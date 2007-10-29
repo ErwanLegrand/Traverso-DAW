@@ -261,9 +261,7 @@ int WriteSource::prepare_export()
 		}
 	}
 	
-	/* XXX make sure we have enough disk space for the output */
-	
-	m_fileName.append(m_writer->get_extension());
+	set_name(get_name() + m_writer->get_extension());
 	
 	if (m_writer->open(m_fileName) == false) {
 		return -1;
