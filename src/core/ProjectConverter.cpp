@@ -50,6 +50,8 @@ int ProjectConverter::start()
 			return -1;
 		}
 	}
+	
+	return 1;
 }
 
 void ProjectConverter::set_project(const QString & rootdir, const QString & name)

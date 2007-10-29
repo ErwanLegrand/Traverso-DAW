@@ -228,6 +228,8 @@ void CDWritingDialog::cdrdao_process_started()
 
 void CDWritingDialog::cdrdao_process_finished(int exitcode, QProcess::ExitStatus exitstatus)
 {
+	Q_UNUSED(exitcode);
+	
 	if (exitstatus == QProcess::CrashExit) {
 		update_cdburn_status(tr("CD Burn process failed!"), ERROR_MESSAGE);
 	}

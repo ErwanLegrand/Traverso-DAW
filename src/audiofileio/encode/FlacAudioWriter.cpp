@@ -92,6 +92,8 @@ const char* FlacAudioWriter::get_extension()
 
 bool FlacAudioWriter::set_format_attribute(const QString& key, const QString& value)
 {
+	Q_UNUSED(key);
+	Q_UNUSED(value);
 	return false;
 }
 
