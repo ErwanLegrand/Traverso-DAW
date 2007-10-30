@@ -22,7 +22,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AbstractAudioReader.h"
 #include "SFAudioReader.h"
 #include "FlacAudioReader.h"
+#if defined MP3_DECODE_SUPPORT
 #include "MadAudioReader.h"
+#endif
 #include "WPAudioReader.h"
 #include "VorbisAudioReader.h"
 #include "ResampleAudioReader.h"
@@ -131,9 +133,13 @@ AbstractAudioReader* AbstractAudioReader::create_audio_reader(const QString& fil
 			newReader = new FlacAudioReader(filename);
 		} else if (decoder == "vorbis") {
 			newReader = new VorbisAudioReader(filename);
-		} else if (decoder == "mad") {
+		}
+#if defined MP3_DECODE_SUPPORT
+		else if (decoder == "mad") {
 			newReader = new MadAudioReader(filename);
 		}
+#endif
+		
 		if (newReader && !newReader->is_valid()) {
 			PERROR("new %s reader is invalid! (channels: %d, frames: %d)", (const char *)(newReader->decoder_type().toUtf8()), newReader->get_num_channels(), newReader->get_nframes());
 			delete newReader;
@@ -155,9 +161,11 @@ AbstractAudioReader* AbstractAudioReader::create_audio_reader(const QString& fil
 		else if (SFAudioReader::can_decode(filename)) {
 			newReader = new SFAudioReader(filename);
 		}
+#if defined MP3_DECODE_SUPPORT
 		else if (MadAudioReader::can_decode(filename)) {
 			newReader = new MadAudioReader(filename);
 		}
+#endif
 	}
 	
 	if (newReader && !newReader->is_valid()) {

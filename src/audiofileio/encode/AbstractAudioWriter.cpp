@@ -22,15 +22,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AbstractAudioWriter.h"
 #include "SFAudioWriter.h"
 #include "WPAudioWriter.h"
+#if defined MP3_ENCODE_SUPPORT
 #include "LameAudioWriter.h"
+#endif
 #include "VorbisAudioWriter.h"
 #include "FlacAudioWriter.h"
 
 #include <QString>
 
-RELAYTOOL_WAVPACK
-RELAYTOOL_MP3LAME
-RELAYTOOL_FLAC
+RELAYTOOL_WAVPACK;
+RELAYTOOL_MP3LAME;
+RELAYTOOL_FLAC;
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -139,9 +141,11 @@ AbstractAudioWriter* AbstractAudioWriter::create_audio_writer(const QString& typ
 	else if (libwavpack_is_present && type == "wavpack") {
 		return new WPAudioWriter();
 	}
+#if defined MP3_ENCODE_SUPPORT
 	else if (libmp3lame_is_present && type == "lame") {
 		return new LameAudioWriter();
 	}
+#endif
 	else if (type == "vorbis") {
 		return new VorbisAudioWriter();
 	}

@@ -229,3 +229,10 @@ contains(DEFINES, STATIC_BUILD){
 
     POST_TARGETDEPS += ../engine ../commands ../core ../audiofileio ../plugins songcanvas
 }
+
+!contains(DEFINES, MP3_ENCODE_SUPPORT){
+	LIBS -= -lmp3lame
+}
+!contains(DEFINES, MP3_DECODE_SUPPORT){
+	LIBS -= -lmad
+}

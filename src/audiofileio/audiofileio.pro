@@ -46,3 +46,12 @@ win32{
     INCLUDEPATH += ../../3thparty/include .
 }
 
+!contains(DEFINES, MP3_ENCODE_SUPPORT) {
+	SOURCES -= encode/LameAudioWriter.cpp
+	HEADERS -= encode/LameAudioWriter.h
+}
+
+!contains(DEFINES, MP3_DECODE_SUPPORT) {
+	SOURCES -= decode/MadAudioReader.cpp
+	HEADERS -= decode/MadAudioReader.h
+}

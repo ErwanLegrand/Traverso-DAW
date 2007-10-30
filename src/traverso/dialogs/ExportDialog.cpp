@@ -87,9 +87,11 @@ ExportDialog::ExportDialog( QWidget * parent )
 	if (libwavpack_is_present) {
 		audioTypeComboBox->addItem("WAVPACK", "wavpack");
 	}
+#if defined MP3_ENCODE_SUPPORT
 	if (libmp3lame_is_present) {
 		audioTypeComboBox->addItem("MP3", "mp3");
 	}
+#endif
 	if (libvorbisenc_is_present) {
 		audioTypeComboBox->addItem("OGG", "ogg");
 	}
