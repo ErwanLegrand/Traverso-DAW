@@ -887,6 +887,7 @@ void PerformancePage::reset_default_config()
 }
 
 PerformanceConfigPage::PerformanceConfigPage(QWidget* parent)
+	: QWidget(parent)
 {
 	setupUi(this);
 
