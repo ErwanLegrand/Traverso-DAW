@@ -224,10 +224,10 @@ win32{
 
 contains(DEFINES, STATIC_BUILD){
     contains(DEFINES, LV2_SUPPORT){
-        POST_TARGETDEPS += ../3rdparty/slv2
+        PRE_TARGETDEPS += slv2
     }
 
-    POST_TARGETDEPS += ../engine ../commands ../core ../audiofileio ../plugins songcanvas
+    PRE_TARGETDEPS += traversoaudiobackend traversocommands traversocore traversoaudiofileio traversoplugins traversosongcanvas
 }
 
 !contains(DEFINES, MP3_ENCODE_SUPPORT){
