@@ -10,8 +10,8 @@ CONFIG -= release debug
 # Choose debug or release build
 #
 
-CONFIG += debug
-#CONFIG += release
+#CONFIG += debug
+CONFIG += release
 
 #
 # Add support for Jack / ALSA audio driver. If you have a 
@@ -21,7 +21,7 @@ CONFIG += debug
 DEFINES += JACK_SUPPORT
 DEFINES += ALSA_SUPPORT
 DEFINES += PORTAUDIO_SUPPORT
-DEFINES += LV2_SUPPORT
+#DEFINES += LV2_SUPPORT
 DEFINES += QT_OPENGL_SUPPORT
 DEFINES += MP3_ENCODE_SUPPORT
 DEFINES += MP3_DECODE_SUPPORT
@@ -65,7 +65,7 @@ DEFINES += USE_MLOCK
 
 
 !macx{
-	DEFINES += PRECOMPILED_HEADER
+#	DEFINES += PRECOMPILED_HEADER
 }
 
 # DEFINES += THREAD_CHECK
@@ -97,7 +97,7 @@ unix {
 #		QMAKE_CXXFLAGS_RELEASE += -g
 #		QMAKE_CXXFLAGS_RELEASE += -finline-functions
 		
-		MACHINETYPE = $$system(arch)
+		MACHINETYPE = $$system(uname -m)
 		
 		X86_FLAGS = $$system(cat /proc/cpuinfo | grep '^flags')
 		
