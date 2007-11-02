@@ -25,7 +25,6 @@ AudioDevice.h \
 AudioDeviceThread.h \
 bitset.h \
 Client.h \
-defines.h \
 Driver.h \
 JackDriver.h \
 libtraverso.h \
