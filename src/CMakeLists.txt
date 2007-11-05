@@ -1,12 +1,13 @@
-#Subdirectories
-ADD_SUBDIRECTORY(3rdparty ${CMAKE_SOURCE_DIR}/src/bin)
 ADD_SUBDIRECTORY(engine ${CMAKE_SOURCE_DIR}/src/bin)
 ADD_SUBDIRECTORY(audiofileio ${CMAKE_SOURCE_DIR}/src/bin)
 ADD_SUBDIRECTORY(commands ${CMAKE_SOURCE_DIR}/src/bin)
 ADD_SUBDIRECTORY(core ${CMAKE_SOURCE_DIR}/src/bin)
+ADD_SUBDIRECTORY(3rdparty ${CMAKE_SOURCE_DIR}/src/bin)
 ADD_SUBDIRECTORY(plugins ${CMAKE_SOURCE_DIR}/src/bin)
+ADD_SUBDIRECTORY(traverso/songcanvas ${CMAKE_SOURCE_DIR}/src/bin)
 ADD_SUBDIRECTORY(traverso ${CMAKE_SOURCE_DIR}/src/bin)
 
 IF(USE_PCH)
     ADD_PRECOMPILED_HEADER(precompiled_headers precompile.h)
 ENDIF(USE_PCH)
+

@@ -1,5 +1,3 @@
-ADD_SUBDIRECTORY(songcanvas ${CMAKE_SOURCE_DIR}/src/bin)
-
 INCLUDE_DIRECTORIES(
 ${CMAKE_SOURCE_DIR}/src/audiofileio/decode
 ${CMAKE_SOURCE_DIR}/src/audiofileio/encode
@@ -166,12 +164,5 @@ TARGET_LINK_LIBRARIES(traverso
 ENDIF(HAVE_ALSA)
 
 IF(USE_PCH)
-    ADD_DEPENDENCIES(traversosongcanvas precompiled_headers)
-    ADD_DEPENDENCIES(traversocore precompiled_headers)
-    ADD_DEPENDENCIES(traversocommands precompiled_headers)
-    ADD_DEPENDENCIES(traversoaudiobackend precompiled_headers)
-    ADD_DEPENDENCIES(traversoplugins precompiled_headers)
-    ADD_DEPENDENCIES(traversoaudiofileio precompiled_headers)
-    ADD_DEPENDENCIES(tcp_traversocommands precompiled_headers)
+    ADD_DEPENDENCIES(traverso precompiled_headers)
 ENDIF(USE_PCH)
-
