@@ -239,7 +239,29 @@ IF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
   SET(CPACK_SOURCE_PACKAGE_FILE_NAME "traverso-${VERSION}")
   SET(CPACK_SOURCE_GENERATOR TBZ2)
 ## I'll make this prettier later - ignore any tarballs in the root
-  SET(CPACK_SOURCE_IGNORE_FILES CMakeCache.txt  "~$" "\\\\.cvsignore$" "^${PROJECT_SOURCE_DIR}.*/CVS/" "^${PROJECT_SOURCE_DIR}/debian/" "^${PROJECT_SOURCE_DIR}/old/" "^${PROJECT_SOURCE_DIR}.*/CVSROOT/" "^${PROJECT_SOURCE_DIR}.*/autom4te.cache/")
+  SET(CPACK_SOURCE_IGNORE_FILES 
+	CMakeCache.txt
+	"~$"
+	"Makefile$"
+	"\\\\.cvsignore$" 
+	"\\\\.tar$"
+	"^${PROJECT_SOURCE_DIR}/traverso"
+	"^${PROJECT_SOURCE_DIR}/cmake_uninstall.cmake"
+	"^${PROJECT_SOURCE_DIR}.*/precompile.h.gch"
+	"^${PROJECT_SOURCE_DIR}.*/cmake_install.cmake"
+	"^${PROJECT_SOURCE_DIR}/CPackConfig.cmake"
+	"^${PROJECT_SOURCE_DIR}/CPackSourceConfig.cmake"
+	"^${PROJECT_SOURCE_DIR}/make-autopackage.sh"
+	"^${PROJECT_SOURCE_DIR}/_CPack_Packages/"
+	"^${PROJECT_SOURCE_DIR}.*/CMakeFiles/"
+	"^${PROJECT_SOURCE_DIR}.*/CVS/"
+	"^${PROJECT_SOURCE_DIR}.*/bin/"
+	"^${PROJECT_SOURCE_DIR}.*/lib/"
+	"^${PROJECT_SOURCE_DIR}/debian/"
+	"^${PROJECT_SOURCE_DIR}/cmake/"
+	"^${PROJECT_SOURCE_DIR}/autopackage/"
+	"^${PROJECT_SOURCE_DIR}.*/CVSROOT/"
+	"^${PROJECT_SOURCE_DIR}/doc/")
   INCLUDE(CPack)
 ENDIF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
 
