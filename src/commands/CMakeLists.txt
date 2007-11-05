@@ -35,6 +35,7 @@ RemoveClip.cpp
 SET(TRAVERSO_COMMANDS_MOC_CLASSES
 Gain.h
 MoveClip.h
+AudioClipExternalProcessing.h
 )
 
 SET(TRAVERSO_COMMANDS_UI_FILES

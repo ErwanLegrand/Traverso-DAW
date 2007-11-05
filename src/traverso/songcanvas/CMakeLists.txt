@@ -27,7 +27,6 @@ CurveNodeView.cpp
 CurveView.cpp
 FadeContextDialogView.cpp
 FadeView.cpp
-LineView.cpp
 MarkerView.cpp
 PluginChainView.cpp
 PluginView.cpp
@@ -61,6 +60,11 @@ SongView.h
 SongWidget.h
 TrackPanelView.h
 TimeLineView.h
+LineView.h
+)
+
+SET(TRAVERSO_SONGCANVAS_UI_FILES
+ui/AudioClipEditDialog.ui
 )
 
 QT4_WRAP_CPP(TRAVERSO_SONGCANVAS_MOC_SOURCES ${TRAVERSO_SONGCANVAS_MOC_CLASSES})
