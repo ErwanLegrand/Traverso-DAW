@@ -52,7 +52,6 @@ HEADERS += \
 	dialogs/project/NewTrackDialog.h \
 	songcanvas/PositionIndicator.h \
 	widgets/ResourcesWidget.h \
-	dialogs/AudioClipEditDialog.h \
 	dialogs/RestoreProjectBackupDialog.h \
 	dialogs/ProjectConverterDialog.h  \
 	dialogs/ExportDialog.h \
@@ -84,7 +83,6 @@ SOURCES += \
 	dialogs/project/NewTrackDialog.cpp \
 	songcanvas/PositionIndicator.cpp \
 	widgets/ResourcesWidget.cpp \
-	dialogs/AudioClipEditDialog.cpp \
 	dialogs/RestoreProjectBackupDialog.cpp \
 	dialogs/ProjectConverterDialog.cpp \
 	dialogs/ExportDialog.cpp \
@@ -112,7 +110,6 @@ FORMS += \
 	ui/ResourcesWidget.ui \
 	ui/QuickStart.ui \
 	ui/InsertSilenceDialog.ui \
-	ui/AudioClipEditWidget.ui \
 	ui/RestoreProjectBackupDialog.ui \
 	ui/ProjectConverterDialog.ui \
 	ui/ExportDialog.ui \
@@ -222,13 +219,6 @@ win32{
     RC_FILE = traverso.rc
 }
 
-contains(DEFINES, STATIC_BUILD){
-    contains(DEFINES, LV2_SUPPORT){
-        PRE_TARGETDEPS += slv2
-    }
-
-    PRE_TARGETDEPS += traversoaudiobackend traversocommands traversocore traversoaudiofileio traversoplugins traversosongcanvas
-}
 
 !contains(DEFINES, MP3_ENCODE_SUPPORT){
 	LIBS -= -lmp3lame
