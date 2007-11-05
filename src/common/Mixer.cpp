@@ -17,12 +17,12 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Mixer.cpp,v 1.2 2007/10/27 17:57:15 r_sijrier Exp $
+    $Id: Mixer.cpp,v 1.3 2007/11/05 19:19:23 r_sijrier Exp $
 */
 
 #include "Mixer.h"
 #include "defines.h"
-#include <cmath>
+#include <cmath> // used for fabs
 
 Mixer::compute_peak_t			Mixer::compute_peak 		= 0;
 Mixer::apply_gain_to_buffer_t		Mixer::apply_gain_to_buffer 	= 0;

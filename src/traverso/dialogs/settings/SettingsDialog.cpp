@@ -19,7 +19,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02100-1301  USA.
 
 */
 
-#include <QtGui>
+#include <QListWidgetItem>
+#include <QStackedWidget>
+#include <QDialogButtonBox>
+
+
 #include <Config.h>
 
 #include "SettingsDialog.h"

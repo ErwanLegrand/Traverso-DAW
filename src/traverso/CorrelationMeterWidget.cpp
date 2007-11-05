@@ -19,7 +19,6 @@
 
 */
 
-#include <libtraverso.h>
 
 #include "CorrelationMeterWidget.h"
 #include <PluginChain.h>
@@ -32,8 +31,7 @@
 #include <Themer.h>
 #include <ContextPointer.h>
 #include <Config.h>
-
-#include <QtGui>
+#include <cmath> // used for fabs
 #include <QDebug>
 
 // Always put me below _all_ includes, this is needed

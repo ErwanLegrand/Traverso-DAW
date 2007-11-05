@@ -33,7 +33,9 @@
 #include <ContextPointer.h>
 #include <Themer.h>
 
-#include <QtGui>
+#include <QFileDialog>
+#include <QInputDialog>
+#include <QTextStream>
 
 #include <math.h>
 #include <limits.h>

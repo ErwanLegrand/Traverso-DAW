@@ -19,7 +19,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 */
 
-#include <QtGui>
+#include <QDir>
+#include <QFile>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QStyle>
+#include <QStyleFactory>
 
 #include "Pages.h"
 #include <AudioDevice.h>
