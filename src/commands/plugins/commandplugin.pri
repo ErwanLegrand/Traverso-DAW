@@ -10,6 +10,7 @@ INCLUDEPATH  += ../.. \
 		../../../common \
 		../../../traverso/songcanvas \
 		../../../commands \
+		../../../commands/build \
 		../../../plugins \
 		../../../plugins/native \
 		

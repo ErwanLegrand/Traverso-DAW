@@ -12,6 +12,7 @@ INCLUDEPATH += 	../../core \
 		../../traverso/dialogs \
 		../../engine \
 		../../commands \
+		../../commands/build \
 		../../plugins \
 		../../plugins/native \
 		./
