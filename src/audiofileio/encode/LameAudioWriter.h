@@ -30,7 +30,6 @@ class QString;
 
 class LameAudioWriter : public AbstractAudioWriter
 {
-	Q_OBJECT
 	
 public:
 	LameAudioWriter();

@@ -30,7 +30,6 @@ class QString;
 
 class FlacAudioWriter : public AbstractAudioWriter
 {
-	Q_OBJECT
 	
 public:
 	FlacAudioWriter();

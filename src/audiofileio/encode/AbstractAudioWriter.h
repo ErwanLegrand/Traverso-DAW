@@ -22,19 +22,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #ifndef ABSTRACTAUDIOWRITER_H
 #define ABSTRACTAUDIOWRITER_H
 
-#include <QObject>
-
 #include "defines.h"
 
 class QString;
 
-class AbstractAudioWriter : public QObject
+class AbstractAudioWriter
 {
-	Q_OBJECT
 	
 public:
 	AbstractAudioWriter();
-	~AbstractAudioWriter();
+	virtual ~AbstractAudioWriter();
 	
 	virtual const char* get_extension() = 0;
 	

@@ -31,7 +31,6 @@ class QString;
 
 class SFAudioWriter : public AbstractAudioWriter
 {
-	Q_OBJECT
 	
 public:
 	SFAudioWriter();

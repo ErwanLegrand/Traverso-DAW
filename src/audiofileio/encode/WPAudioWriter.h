@@ -31,7 +31,6 @@ class QString;
 
 class WPAudioWriter : public AbstractAudioWriter
 {
-	Q_OBJECT
 	
 public:
 	WPAudioWriter();

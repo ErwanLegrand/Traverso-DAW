@@ -30,7 +30,6 @@ class QString;
 
 class VorbisAudioWriter : public AbstractAudioWriter
 {
-	Q_OBJECT
 	
 public:
 	VorbisAudioWriter();

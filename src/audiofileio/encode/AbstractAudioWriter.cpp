@@ -40,7 +40,6 @@ RELAYTOOL_FLAC;
 
 
 AbstractAudioWriter::AbstractAudioWriter()
- : QObject(0)
 {
 	m_channels = 0;
 	m_rate = 0;
