@@ -124,5 +124,3 @@ void PluginPropertiesDialog::reset_button_clicked()
 	}
 }
 
-//eof
-

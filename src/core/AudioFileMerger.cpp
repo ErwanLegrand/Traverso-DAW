@@ -135,3 +135,4 @@ void AudioFileMerger::process_task(MergeTask task)
 	
 	emit taskFinished(name.left(length-28));
 }
+

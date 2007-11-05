@@ -1347,5 +1347,3 @@ void Song::seek_finished()
 	PMESG2("Song :: leaving seek_finished");
 }
 
-
-// eof

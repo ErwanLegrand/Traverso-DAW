@@ -178,4 +178,3 @@ bool Marker::get_copyprotect()
 	return m_copyprotect;
 }
 
-//eof

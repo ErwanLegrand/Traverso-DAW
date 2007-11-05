@@ -236,29 +236,29 @@ void Peak::start_peak_loading()
 }
 
 
-static int
-cnt_bits(unsigned long val, int & highbit)
-{
-	int cnt = 0;
-	highbit = 0;
-	while (val) {
-		if (val & 1) cnt++;
-		val>>=1;
-		highbit++;
-	}
-	return cnt;
-}
-
-// returns the next power of two greater or equal to val
-static unsigned long
-nearest_power_of_two(unsigned long val)
-{
-	int highbit;
-	if (cnt_bits(val, highbit) > 1) {
-		return 1<<highbit;
-	}
-	return val;
-}
+// static int
+// cnt_bits(unsigned long val, int & highbit)
+// {
+// 	int cnt = 0;
+// 	highbit = 0;
+// 	while (val) {
+// 		if (val & 1) cnt++;
+// 		val>>=1;
+// 		highbit++;
+// 	}
+// 	return cnt;
+// }
+// 
+// // returns the next power of two greater or equal to val
+// static unsigned long
+// nearest_power_of_two(unsigned long val)
+// {
+// 	int highbit;
+// 	if (cnt_bits(val, highbit) > 1) {
+// 		return 1<<highbit;
+// 	}
+// 	return val;
+// }
 
 
 int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, TimeRef startlocation, int pixelcount)
@@ -951,3 +951,4 @@ nframes_t PeakDataReader::read(DecodeBuffer* buffer, nframes_t count)
 	
 	return framesRead;
 }
+

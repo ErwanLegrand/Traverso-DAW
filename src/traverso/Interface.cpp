@@ -1112,3 +1112,4 @@ void Interface::project_file_mismatch(QString rootdir, QString projectname)
 	dialog.set_project(rootdir, projectname);
 	dialog.exec();
 }
+

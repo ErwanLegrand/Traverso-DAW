@@ -285,6 +285,4 @@ void WorkCursor::set_bounding_rect( QRectF rect )
 }
 
 
-//eof
-
 

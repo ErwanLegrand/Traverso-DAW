@@ -628,3 +628,4 @@ int ProjectManager::create_projectfilebackup_dir(const QString& rootDir)
 	
 	return 1;
 }
+

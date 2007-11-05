@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeView.cpp,v 1.19 2007/09/24 16:58:39 r_sijrier Exp $
+$Id: FadeView.cpp,v 1.20 2007/11/05 15:49:32 r_sijrier Exp $
 */
 
 #include "FadeView.h"
@@ -273,6 +273,4 @@ void FadeView::load_theme_data()
 {
 	calculate_bounding_rect();
 }
-
-//eof
 

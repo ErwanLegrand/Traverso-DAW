@@ -166,5 +166,3 @@ void MarkerView::set_dragging(bool dragging)
 	m_dragging = dragging;
 }
 
-//eof
-

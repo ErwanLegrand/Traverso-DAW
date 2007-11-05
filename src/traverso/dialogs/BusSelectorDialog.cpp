@@ -184,5 +184,6 @@ void BusSelectorDialog::set_current_track(Track * track)
 	trackComboBox->setCurrentIndex(index);
 }
 
+
 //eof
 

@@ -276,5 +276,4 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 
 Q_EXPORT_PLUGIN2(tcp_traversocommands, TraversoCommands)
 
-
 // eof

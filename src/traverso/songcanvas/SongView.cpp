@@ -650,5 +650,3 @@ void SongView::set_vscrollbar_value(int value)
 	m_song->set_scrollbar_xy(m_hScrollBar->value(), m_vScrollBar->value());
 }
 
-//eof
-

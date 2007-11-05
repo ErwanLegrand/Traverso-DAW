@@ -272,4 +272,5 @@ void OpenProjectDialog::on_projectDirSelectButton_clicked( )
 	pm().set_current_project_dir(newPath);
 }
 
+
 //eof

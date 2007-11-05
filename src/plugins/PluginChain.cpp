@@ -139,4 +139,3 @@ void PluginChain::set_song(Song * song)
 	m_fader->set_song(song);
 }
 
-

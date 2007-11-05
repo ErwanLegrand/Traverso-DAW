@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.29 2007/10/16 13:15:07 r_sijrier Exp $
+$Id: FadeCurve.cpp,v 1.30 2007/11/05 15:49:30 r_sijrier Exp $
 */
  
 #include "FadeCurve.h"
@@ -393,6 +393,4 @@ Command* FadeCurve::toggle_raster( )
 	emit rasterChanged();
 	return 0;
 }
-
-//eof
 

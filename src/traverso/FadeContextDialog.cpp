@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeContextDialog.cpp,v 1.6 2007/06/30 16:30:55 n_doebelin Exp $
+$Id: FadeContextDialog.cpp,v 1.7 2007/11/05 15:49:31 r_sijrier Exp $
 */
 
 #include "FadeContextDialog.h"
@@ -136,6 +136,5 @@ void FadeContextDialog::update_mode_value( )
 	}
 }
 
-//eof
 
 

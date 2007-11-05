@@ -68,5 +68,3 @@ void PositionIndicator::set_value(const QString & value)
 	m_value = value;
 }
 
-//eof
-

@@ -215,5 +215,3 @@ Command* TrackView::insert_silence()
 	return 0; 
 }
 
-//eof
-

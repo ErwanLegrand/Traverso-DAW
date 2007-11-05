@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FileHelpers.cpp,v 1.9 2007/10/06 14:17:58 r_sijrier Exp $
+$Id: FileHelpers.cpp,v 1.10 2007/11/05 15:49:30 r_sijrier Exp $
 */
 
 #include "FileHelpers.h"
@@ -130,9 +130,12 @@ int FileHelper::copy_recursively(const QString& pNameFrom, const QString& pNameT
 		int fileDescFrom = fileFrom.handle();
 		int fileDescTo = fileTo.handle();
 
+#if defined(DHAVE_SYS_STAT_H)
 		struct stat fileStat;
-		if (fstat(fileDescFrom, &fileStat) == 0)
+		if (fstat(fileDescFrom, &fileStat) == 0) {
 			bufferSize = (int)fileStat.st_blksize;
+		}
+#endif
 
 		void *buffer = malloc(sizeof(char) * bufferSize);
 		// QMemArray<char> buffer(bufferSize);

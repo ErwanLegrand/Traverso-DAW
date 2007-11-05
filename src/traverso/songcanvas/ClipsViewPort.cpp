@@ -216,4 +216,3 @@ void ClipsViewPort::dragMoveEvent( QDragMoveEvent * event )
 	}
 }
 
-//eof

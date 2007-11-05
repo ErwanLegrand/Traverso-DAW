@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewItem.h,v 1.16 2007/04/17 11:51:20 r_sijrier Exp $
+$Id: ViewItem.h,v 1.17 2007/11/05 15:49:32 r_sijrier Exp $
 */
 
 #ifndef VIEW_ITEM_H
@@ -53,15 +53,7 @@ class ViewItem : public ContextItem, public QGraphicsItem
 	
 public:
 
-	ViewItem(ViewItem* parentViewItem=0, ContextItem* parentContext=0)
-	: ContextItem(parentViewItem)
-	, QGraphicsItem(parentViewItem)
-	{
-		set_context_item(parentContext);
-		m_parentViewItem = parentViewItem;
-		setCursor(themer()->get_cursor("Default"));
-	}
-	
+	ViewItem(ViewItem* parentViewItem=0, ContextItem* parentContext=0);
 	~ViewItem() {};
 	
 	enum {Type = UserType + 1};

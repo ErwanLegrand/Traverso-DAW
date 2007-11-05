@@ -308,4 +308,5 @@ void CorrelationMeterView::load_configuration()
 	range = config().get_property("CorrelationMeter", "Range", 360).toInt();
 }
 
+
 //eof

@@ -150,5 +150,3 @@ void PluginChainView::calculate_bounding_rect()
 	ViewItem::calculate_bounding_rect();
 }
 
-//eof
-

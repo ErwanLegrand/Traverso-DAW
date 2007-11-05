@@ -30,36 +30,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Themer.h"
 #include <QDir>
 
-class MessageWidgetPrivate : public QWidget
-{
-	Q_OBJECT
-
-public:
-	MessageWidgetPrivate(QWidget* parent = 0);
-
-public slots:
-	void queue_message(InfoStruct );
-	void dequeue_messagequeue();
-	void show_history();
-
-protected:
-	void resizeEvent( QResizeEvent* e);
-	void paintEvent( QPaintEvent* e);
-	QSize sizeHint() const;
-
-private:
-	QTimer			m_messageTimer;
-	QQueue<InfoStruct >	m_messageQueue;
-	InfoStruct 		m_infoStruct;
-	QTextBrowser*		m_log;
-	QDialog*		m_logDialog;
-	QString			m_stringLog;
-	
-	void log(InfoStruct infostruct);
-};
-
-#include "MessageWidget.moc"
-
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"

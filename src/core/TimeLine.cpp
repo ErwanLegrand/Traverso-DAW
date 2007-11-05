@@ -148,6 +148,3 @@ bool TimeLine::has_end_marker()
 	return false;
 }
 
-//eof
-
-

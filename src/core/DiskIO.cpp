@@ -503,5 +503,3 @@ void DiskIO::stop_io( )
 // 	m_workTimer.stop();
 }
 
-//eof
-

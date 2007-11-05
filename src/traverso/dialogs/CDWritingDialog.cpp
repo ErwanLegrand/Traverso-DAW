@@ -614,3 +614,4 @@ QString CDWritingDialog::get_device(int index)
 		return cdDeviceComboBox->itemData(index).toString();
 	#endif
 }
+

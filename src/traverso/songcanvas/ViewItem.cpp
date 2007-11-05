@@ -17,10 +17,20 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewItem.cpp,v 1.4 2007/04/17 11:51:20 r_sijrier Exp $
+$Id: ViewItem.cpp,v 1.5 2007/11/05 15:49:32 r_sijrier Exp $
 */
 
 
 #include "ViewItem.h"
+
+ViewItem::ViewItem(ViewItem* parentViewItem, ContextItem* parentContext)
+	: ContextItem(parentViewItem)
+	, QGraphicsItem(parentViewItem)
+{
+	set_context_item(parentContext);
+	m_parentViewItem = parentViewItem;
+	setCursor(themer()->get_cursor("Default"));
+}
+
 
 //eof

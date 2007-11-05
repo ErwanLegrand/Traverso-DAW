@@ -92,5 +92,6 @@ void InsertSilenceDialog::reject()
 	hide();
 }
 
+
 //eof
 

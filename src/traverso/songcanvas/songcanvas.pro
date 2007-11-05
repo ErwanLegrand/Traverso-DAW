@@ -33,7 +33,9 @@ TimeLineViewPort.cpp \
 TrackPanelView.cpp \
 TrackPanelViewPort.cpp \
 TrackView.cpp \
-ViewItem.cpp
+ViewItem.cpp \
+dialogs/AudioClipEditDialog.cpp
+
 HEADERS += AudioClipView.h \
 ClipsViewPort.h \
 Cursors.h \
@@ -54,7 +56,11 @@ TrackPanelView.h \
 TrackPanelViewPort.h \
 TrackView.h \
 ViewItem.h \
-LineView.h
+LineView.h \
+dialogs/AudioClipEditDialog.h
+
+FORMS += \
+ui/AudioClipEditDialog.ui \
 
 
 contains(DEFINES, LV2_SUPPORT){

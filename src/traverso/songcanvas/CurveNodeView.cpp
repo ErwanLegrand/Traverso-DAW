@@ -138,5 +138,4 @@ void CurveNodeView::load_theme_data()
 	calculate_bounding_rect();
 }
 
-//eof
 

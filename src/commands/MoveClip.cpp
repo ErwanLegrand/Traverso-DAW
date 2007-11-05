@@ -463,5 +463,6 @@ void MoveClip::calculate_snap_diff(TimeRef& leftlocation, TimeRef rightlocation)
 	leftlocation -= snapDiff;
 }
 
+
 // eof
 

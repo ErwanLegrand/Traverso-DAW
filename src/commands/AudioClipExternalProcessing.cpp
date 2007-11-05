@@ -32,12 +32,53 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Utils.h>
 #include "Interface.h"
 
+#include "ui_ExternalProcessing.h"
+
 #include <QFile>
+#include <QDialog>
+
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
+
+
+class ExternalProcessingDialog : public QDialog, protected Ui::ExternalProcessing
+{
+	Q_OBJECT
+	
+	public:
+		ExternalProcessingDialog(QWidget* parent, AudioClipExternalProcessing* acep);
+		~ExternalProcessingDialog();
+
+
+	private:
+		AudioClipExternalProcessing* m_acep;
+		QProcess* m_processor;
+		QString m_filename;
+		QString m_program;
+		bool m_queryOptions;
+		QStringList m_arguments;
+		QString m_commandargs;
+		QString m_infilename;
+		QString m_outfilename;
+		QString m_newClipName;
+		
+		void query_options();
+	
+	private slots:
+		void read_standard_output();
+		void prepare_for_external_processing();
+		void process_started();
+		void process_finished(int exitcode, QProcess::ExitStatus exitstatus);
+		void arg_combo_index_changed ( const QString & text );
+		void start_external_processing();
+		void command_lineedit_text_changed(const QString & text);
+		void process_error(QProcess::ProcessError error);
+};
+
+#include "AudioClipExternalProcessing.moc"
 
 AudioClipExternalProcessing::AudioClipExternalProcessing(AudioClip* clip)
 	: Command(clip, tr("Clip: External Processing"))
@@ -287,5 +328,4 @@ void ExternalProcessingDialog::process_error(QProcess::ProcessError error)
 		statusText->setHtml(tr("Program <b>%1</b> not installed, or insufficient permissions to run!").arg(m_program));
 	}
 }
-
 

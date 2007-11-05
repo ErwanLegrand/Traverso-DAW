@@ -40,7 +40,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "PluginChain.h"
 
 #include <QFileDialog>
-#include "AudioClipEditDialog.h"
+#include "dialogs/AudioClipEditDialog.h"
 #include "Fade.h"
 #include "AudioDevice.h"
 
@@ -984,3 +984,4 @@ void AudioClipView::clip_state_changed()
 	create_clipinfo_string();
 	update();
 }
+

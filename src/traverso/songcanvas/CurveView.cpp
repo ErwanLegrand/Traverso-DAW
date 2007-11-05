@@ -38,51 +38,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 #define NODE_SOFT_SELECTION_DISTANCE 40
-
-
-class DragNode : public Command
-{
-	Q_OBJECT
-	Q_CLASSINFO("move_up", tr("Move Up"));
-	Q_CLASSINFO("move_down", tr("Move Down"));
-	
-public:
-	DragNode(CurveNode* node, CurveView* curveview, qint64 scalefactor, TimeRef rangeMin, TimeRef rangeMax, const QString& des);
-	
-	int prepare_actions();
-	int do_action();
-        int undo_action();
-	int finish_hold();
-	void cancel_action();
-        int begin_hold();
-        int jog();
-
-private :
-	class	Private {
-		public:
-			CurveView*	curveView;
-			qint64		scalefactor;
-			TimeRef		rangeMin;
-			TimeRef		rangeMax;
-			QPoint		mousepos;
-	};
-	
-	Private* d;
-	CurveNode* m_node;
-	double	m_origWhen;
-	double	m_origValue;
-	double	m_newWhen;
-	double 	m_newValue;
-	
-
-public slots:
-        void move_up(bool autorepeat);
-        void move_down(bool autorepeat);
-};
-
-
-#include "CurveView.moc"
-
 	
 DragNode::DragNode(CurveNode* node, CurveView* curveview, qint64 scalefactor, TimeRef rangeMin, TimeRef rangeMax, const QString& des)
 	: Command(curveview->get_context(), des)

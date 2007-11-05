@@ -25,7 +25,6 @@
 #include "ClipsViewPort.h"
 #include "TimeLineViewPort.h"
 #include "SongView.h"
-#include "ViewItem.h"
 #include "Themer.h"
 #include "Config.h"
 
@@ -42,27 +41,6 @@
 #include <QScrollBar>
 
 #include <Debugger.h>
-
-
-class SongPanelGain : public ViewItem
-{
-	Q_OBJECT
-public:
-	SongPanelGain(ViewItem* parent, Song* song);
-	SongPanelGain(){}
-
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-
-public slots:
-	Command* gain_increment();
-	Command* gain_decrement();
-	
-private slots:
-	void update_gain() {update();}
-
-private:
-	Song* m_song;
-};
 
 
 SongPanelGain::SongPanelGain(ViewItem* parent, Song* song)
@@ -124,20 +102,6 @@ Command* SongPanelGain::gain_decrement()
 	return 0;
 }
 
-
-class SongPanelView : public ViewItem
-{
-	Q_OBJECT
-public:
-	SongPanelView(QGraphicsScene* scene, Song* song);
-	~SongPanelView() {}
-	
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-	
-private:
-	SongPanelGain* m_gainview;
-	Song* m_song;
-};
 
 SongPanelView::SongPanelView(QGraphicsScene* scene, Song* song)
 	: ViewItem(0, 0)
@@ -211,10 +175,6 @@ SongPanelViewPort::SongPanelViewPort(QGraphicsScene * scene, SongWidget * sw)
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setBackgroundBrush(themer()->get_color("SongPanel:background"));
 }
-
-
-#include "SongWidget.moc"
-
 
 
 SongWidget::SongWidget(Song* song, QWidget* parent)
@@ -334,7 +294,4 @@ SongView * SongWidget::get_songview() const
 {
 	return m_sv;
 }
-
-//eof
-
 

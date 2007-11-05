@@ -145,5 +145,3 @@ void PluginView::calculate_bounding_rect()
 	setPos(x(), y);
 }
 
-//eof
-

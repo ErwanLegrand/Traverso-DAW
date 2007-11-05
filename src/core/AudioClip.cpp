@@ -947,5 +947,3 @@ void AudioClip::get_capture_bus()
 	m_captureBus = audiodevice().get_capture_bus(m_captureBusName);
 }
 
-// eof
-

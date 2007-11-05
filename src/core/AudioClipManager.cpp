@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioClipManager.cpp,v 1.19 2007/10/22 18:44:00 r_sijrier Exp $
+    $Id: AudioClipManager.cpp,v 1.20 2007/11/05 15:49:29 r_sijrier Exp $
 */
  
 #include "AudioClipManager.h"
@@ -206,6 +206,5 @@ Command* AudioClipManager::delete_selected_clips()
 	}
 	return group;
 }
-
 
 //eof

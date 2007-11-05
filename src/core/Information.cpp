@@ -78,3 +78,4 @@ Information::Information()
 	connect(&audiodevice(), SIGNAL(message(QString, int)),
 		 this, SLOT(audiodevice_message(QString, int)));
 }
+

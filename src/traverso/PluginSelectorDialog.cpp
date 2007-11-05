@@ -145,5 +145,3 @@ void PluginSelectorDialog::set_description(const QString & des)
 	objectToAddPluginTooLabel->setText(des);
 }
 
-//eof
-

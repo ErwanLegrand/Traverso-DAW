@@ -36,7 +36,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Marker.h>
 #include <ContextPointer.h>
 #include <Utils.h>
-#include <Command.h>
 #include <defines.h>
 #include <AddRemove.h>
 #include <CommandGroup.h>
@@ -54,44 +53,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define MARKER_SOFT_SELECTION_DISTANCE 50
 
 
-class DragMarker : public Command
-{
-	Q_OBJECT
-	Q_CLASSINFO("move_left", tr("Move Left"))
-	Q_CLASSINFO("move_right", tr("Move right"))
-	
-public:
-	DragMarker(MarkerView* mview, qint64 scalefactor, const QString& des);
-
-	int prepare_actions();
-	int do_action();
-	int undo_action();
-	int finish_hold();
-	int begin_hold();
-	void cancel_action();
-	int jog();
-
-private :
-	Marker*		m_marker;
-	TimeRef		m_origWhen;
-	TimeRef		m_newWhen;
-	struct Data {
-		MarkerView*	view;
-		qint64 		scalefactor;
-		bool		bypassjog;
-		int		jogBypassPos;
-	};
-	Data* d;
-
-public slots:
-	void move_left(bool autorepeat);
-	void move_right(bool autorepeat);
-};
-
-
-#include "TimeLineView.moc"
-
-	
 DragMarker::DragMarker(MarkerView* mview, qint64 scalefactor, const QString& des)
 	: Command(mview->get_marker(), des)
 {
@@ -526,6 +487,4 @@ void TimeLineView::load_theme_data()
 	// TODO Load pixmap, fonts, colors from themer() !!
 	calculate_bounding_rect();
 }
-
-//eof
 

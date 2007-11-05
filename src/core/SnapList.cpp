@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 //#define debugsnaplist
 
-#if defined (debugsnaplist)
+#if defined(debugsnaplist)
 #define SLPRINT(args...) printf(args)
 #else
 #define SLPRINT(args...)

@@ -242,3 +242,4 @@ bool PluginControlPort::use_automation()
 {
 	return m_automation;
 }
+

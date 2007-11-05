@@ -28,11 +28,38 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 class Project;
 class Song;
-class FileWidget;
 class AudioClip;
 class ReadSource;
 class SourceTreeItem;
 class QShowEvent;
+class QListView;
+class QDirModel;
+class QComboBox;
+
+class FileWidget : public QWidget
+{
+	Q_OBJECT
+public:
+
+	FileWidget(QWidget* parent=0) : QWidget(parent) {
+		m_dirModel = 0;
+	}
+
+	void showEvent ( QShowEvent * event );
+	void set_current_path(const QString& path) const;
+
+private slots:
+	void dirview_item_clicked(const QModelIndex & index);
+	void dir_up_button_clicked();
+	void refresh_button_clicked();
+	void box_actived(int i);
+
+private:
+	QListView* m_dirView;
+	QDirModel* m_dirModel;
+	QComboBox* m_box;
+};
+
 
 class ClipTreeItem : public QObject, public QTreeWidgetItem
 {

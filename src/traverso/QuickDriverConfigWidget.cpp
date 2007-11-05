@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: QuickDriverConfigWidget.cpp,v 1.10 2007/05/25 04:13:11 benjie Exp $
+$Id: QuickDriverConfigWidget.cpp,v 1.11 2007/11/05 15:49:31 r_sijrier Exp $
 */
 
 #include "QuickDriverConfigWidget.h"
@@ -148,7 +148,6 @@ void QuickDriverConfigWidget::driver_params_changed( )
 		update_driver_info();
 	}
 }
-
 
 
 //eof

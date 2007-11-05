@@ -359,5 +359,3 @@ int FadeMode::undo_action()
 	return 1;
 }
 
-
-// eof

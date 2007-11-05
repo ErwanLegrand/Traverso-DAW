@@ -157,5 +157,3 @@ void PluginSlider::reset_default_value()
 	update_slider_position();
 }
 
-//eof
-

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ContextPointer.cpp,v 1.15 2007/10/29 15:08:48 r_sijrier Exp $
+$Id: ContextPointer.cpp,v 1.16 2007/11/05 15:49:30 r_sijrier Exp $
 */
 
 #include "ContextPointer.h"
@@ -209,6 +209,4 @@ void ContextPointer::update_jog()
 		m_jogEvent = false;
 	}
 }
-
-//eof
 

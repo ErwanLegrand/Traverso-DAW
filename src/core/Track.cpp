@@ -566,5 +566,3 @@ void Track::set_capture_right_channel(bool capture)
 	emit inBusChanged();
 }
 
-// eof
-

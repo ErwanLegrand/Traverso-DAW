@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CorrelationMeter.cpp,v 1.1 2006/11/27 21:53:42 r_sijrier Exp $
+$Id: CorrelationMeter.cpp,v 1.2 2007/11/05 15:49:31 r_sijrier Exp $
 
 */
 
@@ -233,5 +233,3 @@ QString CorrelationMeter::get_name( )
 	return QString(tr("Correlation Meter"));
 }
 
-//eof
- 

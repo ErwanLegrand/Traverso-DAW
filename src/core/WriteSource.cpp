@@ -471,5 +471,3 @@ void WriteSource::set_diskio( DiskIO * io )
 	prepare_rt_buffers();
 }
 
-//eof
-

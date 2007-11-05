@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Tsar.cpp,v 1.1 2007/10/20 17:38:17 r_sijrier Exp $
+$Id: Tsar.cpp,v 1.2 2007/11/05 15:49:29 r_sijrier Exp $
 */
 
 #include "Tsar.h"
@@ -313,7 +313,6 @@ void Tsar::process_event_slot_signal(const TsarEvent & event )
 	process_event_slot(event);
 	process_event_signal(event);
 }
-
 
 //eof
 

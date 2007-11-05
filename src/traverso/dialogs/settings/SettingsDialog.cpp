@@ -154,3 +154,4 @@ void SettingsDialog::restore_defaults_button_clicked()
 		PERROR("SettingsDialog::restore_defaults_button_clicked: No ConfigPage found!!??\n");
 	}
 }
+

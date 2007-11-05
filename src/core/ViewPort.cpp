@@ -322,5 +322,5 @@ void HoldCursor::reset()
 	m_text = "";
 }
 
-//eof
+
 

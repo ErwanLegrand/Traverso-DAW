@@ -141,3 +141,4 @@ void Config::set_audiodevice_driver_properties()
 	
 	audiodevice().set_driver_properties(hardwareconfigs);
 }
+

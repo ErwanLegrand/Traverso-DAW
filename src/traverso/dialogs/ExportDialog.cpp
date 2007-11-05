@@ -514,3 +514,4 @@ void ExportDialog::reject()
 	}
 	hide();
 }
+
