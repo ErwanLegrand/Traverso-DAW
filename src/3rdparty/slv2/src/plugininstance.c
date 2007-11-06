@@ -32,7 +32,7 @@
 
 SLV2Instance
 slv2_plugin_instantiate(SLV2Plugin               plugin,
-                        uint32_t                 sample_rate,
+                        double                   sample_rate,
                         const LV2_Host_Feature** host_features)
 {
 	struct _Instance* result = NULL;
@@ -67,10 +67,7 @@ slv2_plugin_instantiate(SLV2Plugin               plugin,
 		// Search for plugin by URI
 		
 		// FIXME: Kluge to get bundle path (containing directory of binary)
-		char* bundle_path = strdup(plugin->binary_uri);
-		char* const bundle_path_end = strrchr(bundle_path, '/');
-		if (bundle_path_end)
-		*(bundle_path_end+1) = '\0';
+		const char* bundle_path = slv2_uri_to_path(slv2_plugin_get_bundle_uri(plugin));
 		printf("Bundle path: %s\n", bundle_path);
 		
 		for (uint32_t i=0; 1; ++i) {
@@ -100,24 +97,23 @@ slv2_plugin_instantiate(SLV2Plugin               plugin,
 				break;
 			}
 		}
-
-		free(bundle_path);
 	}
 
-	assert(result);
-	assert(slv2_plugin_get_num_ports(plugin) > 0);
+	if (result) {
+		assert(slv2_plugin_get_num_ports(plugin) > 0);
 
-	// Failed to instantiate
-	if (result->lv2_handle == NULL) {
-		//printf("Failed to instantiate %s\n", plugin->plugin_uri);
-		free(result);
-		return NULL;
+		// Failed to instantiate
+		if (result->lv2_handle == NULL) {
+			//printf("Failed to instantiate %s\n", plugin->plugin_uri);
+			free(result);
+			return NULL;
+		}
+
+		// "Connect" all ports to NULL (catches bugs)
+		for (uint32_t i=0; i < slv2_plugin_get_num_ports(plugin); ++i)
+			result->lv2_descriptor->connect_port(result->lv2_handle, i, NULL);
 	}
 
-	// "Connect" all ports to NULL (catches bugs)
-	for (uint32_t i=0; i < slv2_plugin_get_num_ports(plugin); ++i)
-		result->lv2_descriptor->connect_port(result->lv2_handle, i, NULL);
-	
 	if (local_host_features)
 		free(host_features);
 
@@ -128,6 +124,9 @@ slv2_plugin_instantiate(SLV2Plugin               plugin,
 void
 slv2_instance_free(SLV2Instance instance)
 {
+	if (!instance)
+		return;
+
 	struct _Instance* i = (struct _Instance*)instance;
 	i->lv2_descriptor->cleanup(i->lv2_handle);
 	i->lv2_descriptor = NULL;

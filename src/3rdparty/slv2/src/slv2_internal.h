@@ -28,6 +28,7 @@ extern "C" {
 #include <inttypes.h>
 #include <librdf.h>
 #include <slv2/types.h>
+#include <slv2/lv2-gtk2gui.h>
 
 
 
@@ -58,8 +59,8 @@ void     slv2_port_free(SLV2Port port);
 struct _SLV2Plugin {
 	struct _SLV2World*   world;
 	librdf_uri*      plugin_uri;
-//	char*            bundle_url; ///< Bundle directory plugin was loaded from
-	char*            binary_uri; ///< lv2:binary
+	librdf_uri*      bundle_uri; ///< Bundle directory plugin was loaded from
+	librdf_uri*      binary_uri; ///< lv2:binary
 	SLV2PluginClass  plugin_class;
 	raptor_sequence* data_uris;  ///< rdfs::seeAlso
 	raptor_sequence* ports;
@@ -67,7 +68,7 @@ struct _SLV2Plugin {
 	librdf_model*    rdf;
 };
 
-SLV2Plugin slv2_plugin_new(SLV2World world, librdf_uri* uri, const char* binary_uri);
+SLV2Plugin slv2_plugin_new(SLV2World world, librdf_uri* uri, librdf_uri* bundle_uri, librdf_uri* binary_uri);
 void       slv2_plugin_load(SLV2Plugin p);
 void       slv2_plugin_free(SLV2Plugin plugin);
 
@@ -97,6 +98,14 @@ struct _InstanceImpl {
 };
 
 
+/* ********* GUI Instance ********* */
+struct _SLV2GUIInstanceImpl {
+	void*                   lib_handle;
+	const LV2UI_Descriptor* lv2ui_descriptor;
+	LV2UI_Handle            lv2ui_handle;
+	void*                   widget;
+};
+
 
 /* ********* Plugin Class ********* */
 
@@ -110,7 +119,7 @@ struct _SLV2PluginClass {
 
 SLV2PluginClass slv2_plugin_class_new(SLV2World world, const char* parent_uri,
                                       const char* uri, const char* label);
-void slv2_plugin_class_free(SLV2PluginClass class);
+void slv2_plugin_class_free(SLV2PluginClass plugin_class);
 
 
 
@@ -124,17 +133,31 @@ void              slv2_plugin_classes_free();
 
 /* ********* World ********* */
 
-
 /** Model of LV2 (RDF) data loaded from bundles.
  */
 struct _SLV2World {
+	bool              local_world;
 	librdf_world*     world;
 	librdf_storage*   storage;
 	librdf_model*     model;
 	librdf_parser*    parser;
 	SLV2PluginClasses plugin_classes;
 	SLV2Plugins       plugins;
+	librdf_node*      lv2_specification_node;
+	librdf_node*      lv2_plugin_node;
+	librdf_node*      rdf_a_node;
+
+	void (*rdf_lock)(void*);
+	void (*rdf_unlock)(void*);
+	void* rdf_lock_data;
+	int rdf_lock_count;
 };
+
+void
+slv2_world_lock_if_necessary(SLV2World world);
+
+void
+slv2_world_unlock_if_necessary(SLV2World world);
 
 /** Load all bundles found in \a search_path.
  *
@@ -149,6 +172,21 @@ void
 slv2_world_load_path(SLV2World   world,
                      const char* search_path);
 
+	
+void
+slv2_world_load_specifications(SLV2World world);
+
+void
+slv2_world_load_file(SLV2World world, librdf_uri* file_uri);
+
+
+/* ********* GUI ********* */
+
+struct _SLV2GUI {
+	SLV2GUIType type;
+	char*       uri;
+};
+
 
 
 /* ********* Value ********* */
@@ -158,19 +196,22 @@ typedef enum _SLV2ValueType {
 	SLV2_VALUE_URI,
 	SLV2_VALUE_STRING,
 	SLV2_VALUE_INT,
-	SLV2_VALUE_FLOAT
+	SLV2_VALUE_FLOAT,
+	SLV2_VALUE_GUI
 } SLV2ValueType;
 
 struct _SLV2Value {
 	SLV2ValueType type;
 	char*         str_val; ///< always present
 	union {
-		int       int_val;
-		float     float_val;
+		int         int_val;
+		float       float_val;
+		SLV2GUIType gui_type_val;
 	} val;
 };
 
 SLV2Value slv2_value_new(SLV2ValueType type, const char* val);
+
 
 
 #ifdef __cplusplus

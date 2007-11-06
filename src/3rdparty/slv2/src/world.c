@@ -16,6 +16,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include "../config.h"
+
 #define _XOPEN_SOURCE 500
 #include <string.h>
 #include <stdlib.h>
@@ -25,7 +27,6 @@
 #include <slv2/world.h>
 #include <slv2/slv2.h>
 #include <slv2/util.h>
-#include "config.h"
 #include "slv2_internal.h"
 
 
@@ -35,25 +36,54 @@ slv2_world_new()
 	SLV2World world = (SLV2World)malloc(sizeof(struct _SLV2World));
 
 	world->world = librdf_new_world();
+	if (!world->world)
+		goto fail;
+	
+	world->local_world = true;
+
 	librdf_world_open(world->world);
 	
 	world->storage = librdf_new_storage(world->world, "hashes", NULL,
 			"hash-type='memory'");
+	if (!world->storage)
+		goto fail;
 
 	world->model = librdf_new_model(world->world, world->storage, NULL);
+	if (!world->model)
+		goto fail;
 
 	world->parser = librdf_new_parser(world->world, "turtle", NULL, NULL);
+	if (!world->parser)
+		goto fail;
 
 	world->plugin_classes = slv2_plugin_classes_new();
 	
 	// Add the ever-present lv2:Plugin to classes
-	static const char* lv2_plugin_uri = "http://lv2plug.in/ontology#Plugin";
+	static const char* lv2_plugin_uri = "http://lv2plug.in/ns/lv2core#Plugin";
 	raptor_sequence_push(world->plugin_classes, slv2_plugin_class_new(
 				world, NULL, lv2_plugin_uri, "Plugin"));
 	
 	world->plugins = slv2_plugins_new();
+	
+	world->lv2_specification_node = librdf_new_node_from_uri_string(world->world,
+			(unsigned char*)"http://lv2plug.in/ns/lv2core#Specification");
+	
+	world->lv2_plugin_node = librdf_new_node_from_uri_string(world->world,
+			(unsigned char*)"http://lv2plug.in/ns/lv2core#Plugin");
+	
+	world->rdf_a_node = librdf_new_node_from_uri_string(world->world,
+			(unsigned char*)"http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
 
+	world->rdf_lock = NULL;
+	world->rdf_unlock = NULL;
+	world->rdf_lock_data = NULL;
+	world->rdf_lock_count = 0;
+	
 	return world;
+
+fail:
+	free(world);
+	return NULL;
 }
 
 
@@ -63,30 +93,65 @@ slv2_world_new_using_rdf_world(librdf_world* rdf_world)
 	SLV2World world = (SLV2World)malloc(sizeof(struct _SLV2World));
 
 	world->world = rdf_world;
+	if (!world->world)
+		goto fail;
+	
+	world->local_world = false;
 
 	world->storage = librdf_new_storage(world->world, "hashes", NULL,
 			"hash-type='memory'");
+	if (!world->storage)
+		goto fail;
 
 	world->model = librdf_new_model(world->world, world->storage, NULL);
+	if (!world->model)
+		goto fail;
 
 	world->parser = librdf_new_parser(world->world, "turtle", NULL, NULL);
+	if (!world->parser)
+		goto fail;
 
 	world->plugin_classes = slv2_plugin_classes_new();
 	
 	// Add the ever-present lv2:Plugin to classes
-	static const char* lv2_plugin_uri = "http://lv2plug.in/ontology#Plugin";
+	static const char* lv2_plugin_uri = "http://lv2plug.in/ns/lv2core#Plugin";
 	raptor_sequence_push(world->plugin_classes, slv2_plugin_class_new(
 				world, NULL, lv2_plugin_uri, "Plugin"));
 	
 	world->plugins = slv2_plugins_new();
+	
+	world->lv2_specification_node = librdf_new_node_from_uri_string(world->world,
+			(unsigned char*)"http://lv2plug.in/ns/lv2core#Specification");
+	
+	world->lv2_plugin_node = librdf_new_node_from_uri_string(rdf_world,
+			(unsigned char*)"http://lv2plug.in/ns/lv2core#Plugin");
+	
+	world->rdf_a_node = librdf_new_node_from_uri_string(rdf_world,
+			(unsigned char*)"http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+	
+	world->rdf_lock = NULL;
+	world->rdf_unlock = NULL;
+	world->rdf_lock_data = NULL;
+	world->rdf_lock_count = 0;
 
 	return world;
+
+fail:
+	free(world);
+	return NULL;
 }
 
 
 void
 slv2_world_free(SLV2World world)
 {
+	if (world->rdf_lock)
+		world->rdf_lock(world->rdf_lock_data);
+
+	librdf_free_node(world->lv2_specification_node);
+	librdf_free_node(world->lv2_plugin_node);
+	librdf_free_node(world->rdf_a_node);
+
 	for (int i=0; i < raptor_sequence_size(world->plugins); ++i)
 		slv2_plugin_free(raptor_sequence_get_at(world->plugins, i));
 	raptor_free_sequence(world->plugins);
@@ -104,16 +169,92 @@ slv2_world_free(SLV2World world)
 	librdf_free_storage(world->storage);
 	world->storage = NULL;
 	
-	librdf_free_world(world->world);
+	if (world->local_world)
+		librdf_free_world(world->world);
+
 	world->world = NULL;
+	
+	if (world->rdf_unlock)
+		world->rdf_unlock(world->rdf_lock_data);
 
 	free(world);
 }
 
 
 void
+slv2_world_set_rdf_lock_function(SLV2World world, void (*lock)(void*), void* data)
+{
+	world->rdf_lock = lock;
+	world->rdf_lock_data = data;
+}
+
+
+void
+slv2_world_set_rdf_unlock_function(SLV2World world, void (*unlock)(void*))
+{
+	world->rdf_unlock = unlock;
+}
+
+
+void
+slv2_world_lock_if_necessary(SLV2World world)
+{
+	if (world->rdf_lock) {
+	
+		if (world->rdf_lock_count == 0)
+			world->rdf_lock(world->rdf_lock_data);
+
+		++world->rdf_lock_count;
+	
+	}
+}
+
+
+void
+slv2_world_unlock_if_necessary(SLV2World world)
+{
+	if (world->rdf_lock && world->rdf_lock_count > 0) {
+
+		if (world->rdf_lock_count == 1 && world->rdf_unlock)
+			world->rdf_unlock(world->rdf_lock_data);
+
+		world->rdf_lock_count = 0;
+
+	}
+}
+
+
+/** Load the entire contents of a file into the world model.
+ */
+void
+slv2_world_load_file(SLV2World world, librdf_uri* file_uri)
+{
+	slv2_world_lock_if_necessary(world);
+	
+	librdf_storage* storage = librdf_new_storage(world->world, 
+			"memory", NULL, NULL);
+	librdf_model* model = librdf_new_model(world->world,
+			storage, NULL);
+	librdf_parser_parse_into_model(world->parser, file_uri, NULL, 
+			model);
+
+	librdf_stream* stream = librdf_model_as_stream(model);
+	librdf_model_add_statements(world->model, stream);
+	librdf_free_stream(stream);
+	
+	librdf_free_model(model);
+	librdf_free_storage(storage);
+
+	slv2_world_unlock_if_necessary(world);
+}
+
+
+
+void
 slv2_world_load_bundle(SLV2World world, const char* bundle_uri_str)
 {
+	slv2_world_lock_if_necessary(world);
+
 	librdf_uri* bundle_uri = librdf_new_uri(world->world,
 			(const unsigned char*)bundle_uri_str);
 
@@ -122,28 +263,24 @@ slv2_world_load_bundle(SLV2World world, const char* bundle_uri_str)
 
 	/* Parse the manifest into a temporary model */
 	librdf_storage* manifest_storage = librdf_new_storage(world->world, 
-			"hashes", NULL, "hash-type='memory'");
+			"memory", NULL, NULL);
 	librdf_model* manifest_model = librdf_new_model(world->world,
 			manifest_storage, NULL);
 	librdf_parser_parse_into_model(world->parser, manifest_uri, NULL, 
 			manifest_model);
-	
-	/* Find any plugins declared in the manifest and add references
-	 * to their manifest files as one of their data files */
-	unsigned char* query_string = (unsigned char*)
-		"PREFIX : <http://lv2plug.in/ontology#>\n"
-		"SELECT DISTINCT ?plugin\n"
-		"WHERE { ?plugin a :Plugin }\n";
 
-	librdf_query* q = librdf_new_query(world->world, "sparql",
-			NULL, query_string, NULL);
+	/* Query statement: ?plugin a lv2:Plugin */
+	librdf_statement* q = librdf_new_statement_from_nodes(world->world,
+			NULL, world->rdf_a_node, world->lv2_plugin_node);
 
-	librdf_query_results* results = librdf_query_execute(q, manifest_model);
+	librdf_stream* results = librdf_model_find_statements(manifest_model, q);
 
-	while (!librdf_query_results_finished(results)) {
+	while (!librdf_stream_end(results)) {
+		librdf_statement* s = librdf_stream_get_object(results);
 
-		librdf_node* plugin_node = librdf_query_results_get_binding_value(results, 0);
+		librdf_node* plugin_node = librdf_new_node_from_node(librdf_statement_get_subject(s));
 
+		/* Add ?plugin rdfs:seeAlso <manifest.ttl>*/
 		librdf_node* subject = plugin_node;
 		librdf_node* predicate = librdf_new_node_from_uri_string(world->world, 
 				(unsigned char*)"http://www.w3.org/2000/01/rdf-schema#seeAlso");
@@ -151,21 +288,65 @@ slv2_world_load_bundle(SLV2World world, const char* bundle_uri_str)
 				manifest_uri);
 
 		librdf_model_add(world->model, subject, predicate, object);
+		
+		/* Add ?plugin slv2:bundleURI <file://some/path> */
+		subject = librdf_new_node_from_node(plugin_node);
+		predicate = librdf_new_node_from_uri_string(world->world, 
+				(unsigned char*)"http://drobilla.net/ns/slv2#bundleURI");
+		object = librdf_new_node_from_uri(world->world, bundle_uri);
 
-		librdf_query_results_next(results);
+		librdf_model_add(world->model, subject, predicate, object);
+
+		librdf_stream_next(results);
 	}
+	
+	librdf_free_stream(results);
+	
+	/* Query statement: ?specification a lv2:Specification */
+	q = librdf_new_statement_from_nodes(world->world,
+			NULL, world->rdf_a_node, world->lv2_specification_node);
+
+	results = librdf_model_find_statements(manifest_model, q);
+
+	while (!librdf_stream_end(results)) {
+		librdf_statement* s = librdf_stream_get_object(results);
+
+		librdf_node* spec_node = librdf_new_node_from_node(librdf_statement_get_subject(s));
+
+		/* Add ?specification rdfs:seeAlso <manifest.ttl> */
+		librdf_node* subject = spec_node;
+		librdf_node* predicate = librdf_new_node_from_uri_string(world->world, 
+				(unsigned char*)"http://www.w3.org/2000/01/rdf-schema#seeAlso");
+		librdf_node* object = librdf_new_node_from_uri(world->world,
+				manifest_uri);
+		
+		librdf_model_add(world->model, subject, predicate, object);
+		
+		/* Add ?specification slv2:bundleURI <file://some/path> */
+		subject = librdf_new_node_from_node(spec_node);
+		predicate = librdf_new_node_from_uri_string(world->world, 
+				(unsigned char*)"http://drobilla.net/ns/slv2#bundleURI");
+		object = librdf_new_node_from_uri(world->world, bundle_uri);
+
+		librdf_model_add(world->model, subject, predicate, object);
+
+		librdf_stream_next(results);
+	}
+	
+	librdf_free_stream(results);
 	
 	/* Join the temporary model to the main model */
 	librdf_stream* manifest_stream = librdf_model_as_stream(manifest_model);
 	librdf_model_add_statements(world->model, manifest_stream);
 	librdf_free_stream(manifest_stream);
 
-	librdf_free_query(q);
-	librdf_free_query_results(results);
 	librdf_free_model(manifest_model);
+	free(q);
 	librdf_free_storage(manifest_storage);
 	librdf_free_uri(manifest_uri);
 	librdf_free_uri(bundle_uri);
+	
+	slv2_world_unlock_if_necessary(world);
 }
 
 
@@ -236,6 +417,39 @@ slv2_plugin_compare_by_uri(const void* a, const void* b)
 }
 */
 
+void
+slv2_world_load_specifications(SLV2World world)
+{
+	unsigned char* query_string = (unsigned char*)
+    	"PREFIX : <http://lv2plug.in/ns/lv2core#>\n"
+		"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+		"SELECT DISTINCT ?spec ?data WHERE {\n"
+		"	?spec a            :Specification ;\n"
+		"         rdfs:seeAlso ?data .\n"
+		"}\n";
+	
+	librdf_query* q = librdf_new_query(world->world, "sparql", NULL, query_string, NULL);
+	
+	librdf_query_results* results = librdf_query_execute(q, world->model);
+
+	while (!librdf_query_results_finished(results)) {
+		librdf_node* spec_node = librdf_query_results_get_binding_value(results, 0);
+		//librdf_uri*  spec_uri  = librdf_node_get_uri(spec_node);
+		librdf_node* data_node = librdf_query_results_get_binding_value(results, 1);
+		librdf_uri*  data_uri  = librdf_node_get_uri(data_node);
+
+		slv2_world_load_file(world, data_uri);
+
+		librdf_free_node(spec_node);
+		librdf_free_node(data_node);
+
+		librdf_query_results_next(results);
+	}
+
+	librdf_free_query_results(results);
+	librdf_free_query(q);
+}
+
 
 void
 slv2_world_load_plugin_classes(SLV2World world)
@@ -246,10 +460,10 @@ slv2_world_load_plugin_classes(SLV2World world)
 	// FIXME: This loads things that aren't plugin categories
 	
 	unsigned char* query_string = (unsigned char*)
-    	"PREFIX : <http://lv2plug.in/ontology#>\n"
+    	"PREFIX : <http://lv2plug.in/ns/lv2core#>\n"
 		"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 		"SELECT DISTINCT ?class ?parent ?label WHERE {\n"
-		//"	?plugin a :Plugin; a ?class .\n"
+		//"	?plugin a ?class .\n"
 		"	?class a rdfs:Class; rdfs:subClassOf ?parent; rdfs:label ?label\n"
 		"} ORDER BY ?class\n";
 	
@@ -266,8 +480,6 @@ slv2_world_load_plugin_classes(SLV2World world)
 		librdf_node* label_node  = librdf_query_results_get_binding_value(results, 2);
 		const char*  label       = (const char*)librdf_node_get_literal_value(label_node);
 
-		//printf("CLASS: %s / %s\n", librdf_uri_as_string(parent_uri), librdf_uri_as_string(class_uri));
-		
 		SLV2PluginClass plugin_class = slv2_plugin_class_new(world,
 				(const char*)librdf_uri_as_string(parent_uri),
 				(const char*)librdf_uri_as_string(class_uri),
@@ -315,8 +527,12 @@ slv2_world_load_all(SLV2World world)
 		slv2_world_load_path(world, lv2_path);
 	} else {
 		const char* const home = getenv("HOME");
-		const char* const suffix = "/.lv2:/usr/local/lib/lv2:/usr/lib/lv2";
-		lv2_path = slv2_strjoin(home, suffix, NULL);
+		if (home) {
+			const char* const suffix = "/.lv2:/usr/local/lib/lv2:/usr/lib/lv2";
+			lv2_path = slv2_strjoin(home, suffix, NULL);
+		} else {
+			lv2_path = strdup("/usr/local/lib/lv2:/usr/lib/lv2");
+		}
 
 		slv2_world_load_path(world, lv2_path);
 
@@ -326,14 +542,17 @@ slv2_world_load_all(SLV2World world)
 	
 	/* 3. Query out things to cache */
 
+	slv2_world_load_specifications(world);
+
 	slv2_world_load_plugin_classes(world);
 
 	// Find all plugins and associated data files
 	unsigned char* query_string = (unsigned char*)
-    	"PREFIX : <http://lv2plug.in/ontology#>\n"
+    	"PREFIX : <http://lv2plug.in/ns/lv2core#>\n"
 		"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-		"SELECT DISTINCT ?plugin ?data ?binary\n"
-		"WHERE { ?plugin a :Plugin; rdfs:seeAlso ?data\n"
+		"PREFIX slv2: <http://drobilla.net/ns/slv2#>\n"
+		"SELECT DISTINCT ?plugin ?data ?bundle ?binary\n"
+		"WHERE { ?plugin a :Plugin; slv2:bundleURI ?bundle; rdfs:seeAlso ?data\n"
 		"OPTIONAL { ?plugin :binary ?binary } }\n"
 		"ORDER BY ?plugin\n";
 	
@@ -348,7 +567,9 @@ slv2_world_load_all(SLV2World world)
 		librdf_uri*  plugin_uri  = librdf_node_get_uri(plugin_node);
 		librdf_node* data_node   = librdf_query_results_get_binding_value(results, 1);
 		librdf_uri*  data_uri    = librdf_node_get_uri(data_node);
-		librdf_node* binary_node = librdf_query_results_get_binding_value(results, 2);
+		librdf_node* bundle_node = librdf_query_results_get_binding_value(results, 2);
+		librdf_uri*  bundle_uri  = librdf_node_get_uri(bundle_node);
+		librdf_node* binary_node = librdf_query_results_get_binding_value(results, 3);
 		librdf_uri*  binary_uri  = librdf_node_get_uri(binary_node);
 		
 		SLV2Plugin plugin = slv2_plugins_get_by_uri(world->plugins,
@@ -356,8 +577,7 @@ slv2_world_load_all(SLV2World world)
 		
 		// Create a new SLV2Plugin
 		if (!plugin) {
-			plugin = slv2_plugin_new(world, plugin_uri,
-					(const char*)librdf_uri_as_string(binary_uri));
+			plugin = slv2_plugin_new(world, plugin_uri, bundle_uri, binary_uri);
 			raptor_sequence_push(world->plugins, plugin);
 		}
 		
@@ -369,6 +589,7 @@ slv2_world_load_all(SLV2World world)
 		
 		librdf_free_node(plugin_node);
 		librdf_free_node(data_node);
+		librdf_free_node(bundle_node);
 		librdf_free_node(binary_node);
 
 		librdf_query_results_next(results);
@@ -389,7 +610,7 @@ void
 slv2_world_serialize(const char* filename)
 {
 	librdf_uri* lv2_uri = librdf_new_uri(slv2_rdf_world,
-			(unsigned char*)"http://lv2plug.in/ontology#");
+			(unsigned char*)"http://lv2plug.in/ns/lv2core#");
 	
 	librdf_uri* rdfs_uri = librdf_new_uri(slv2_rdf_world,
 			(unsigned char*)"http://www.w3.org/2000/01/rdf-schema#");

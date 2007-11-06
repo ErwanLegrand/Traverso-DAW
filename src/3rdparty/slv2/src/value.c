@@ -50,11 +50,24 @@ slv2_value_new(SLV2ValueType type, const char* str)
 }
 
 
+SLV2Value
+slv2_value_duplicate(SLV2Value val)
+{
+	SLV2Value result = (SLV2Value)malloc(sizeof(struct _SLV2Value));
+	result->str_val = strdup(val->str_val);
+	result->type = val->type;
+	result->val = val->val;
+	return result;
+}
+
+
 void
 slv2_value_free(SLV2Value val)
 {
-	free(val->str_val);
-	free(val);
+	if (val) {
+		free(val->str_val);
+		free(val);
+	}
 }
 
 
@@ -63,8 +76,10 @@ slv2_value_equals(SLV2Value value, SLV2Value other)
 {
 	if (value->type != other->type)
 		return false;
-	else
+	else if (value && other)
 		return ! strcmp(value->str_val, other->str_val);
+	else
+		return true;
 }
 
 
@@ -75,6 +90,7 @@ slv2_value_get_turtle_token(SLV2Value value)
 	char*  result = NULL;
 
 	switch (value->type) {
+	case SLV2_VALUE_GUI:
 	case SLV2_VALUE_URI:
 		len = strlen(value->str_val) + 3;
 		result = calloc(len, sizeof(char));
@@ -103,14 +119,14 @@ slv2_value_get_turtle_token(SLV2Value value)
 bool
 slv2_value_is_uri(SLV2Value value)
 {
-	return (value->type == SLV2_VALUE_URI);
+	return (value->type == SLV2_VALUE_URI || value->type == SLV2_VALUE_GUI);
 }
 
 
 const char*
 slv2_value_as_uri(SLV2Value value)
 {
-	assert(slv2_value_is_uri(value));
+	assert(slv2_value_is_uri(value) || slv2_value_is_gui(value));
 	return value->str_val;
 }
 
@@ -167,5 +183,20 @@ slv2_value_as_float(SLV2Value value)
 		return value->val.float_val;
 	else // slv2_value_is_int(value)
 		return (float)value->val.int_val;
+}
+
+
+bool
+slv2_value_is_gui(SLV2Value value)
+{
+	return (value->type == SLV2_VALUE_GUI);
+}
+
+
+SLV2GUIType
+slv2_value_as_gui_type(SLV2Value value)
+{
+	assert(slv2_value_is_gui(value));
+	return value->val.gui_type_val;
 }
 

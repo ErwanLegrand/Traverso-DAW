@@ -80,7 +80,28 @@ const char*
 slv2_plugin_get_uri(SLV2Plugin plugin);
 
 
+/** Get the (resolvable) URI of the plugins "main" bundle.
+ *
+ * This returns the URI of the bundle where the plugin itself was found.
+ * Note that the data for a plugin may be spread over many bundles, that is,
+ * slv2_plugin_get_data_uris may returns URIs which are not below this one.
+ *
+ * Typical hosts should not need to use this function.
+ *
+ * Note this always returns a fully qualified URI.  If you want a local
+ * filesystem path, use slv2_uri_to_path.
+ * 
+ * \return a shared string which must not be modified or freed.
+ *
+ * Time = O(1)
+ */
+const char*
+slv2_plugin_get_bundle_uri(SLV2Plugin plugin);
+
+
 /** Get the (resolvable) URIs of the RDF data files that define a plugin.
+ *
+ * Typical hosts should not need to use this function.
  *
  * Note this always returns fully qualified URIs.  If you want local
  * filesystem paths, use slv2_uri_to_path.
@@ -319,6 +340,32 @@ slv2_plugin_get_port_by_index(SLV2Plugin plugin,
 SLV2Port
 slv2_plugin_get_port_by_symbol(SLV2Plugin  plugin,
                                const char* symbol);
+
+
+/** Get a list of all GUIs available for this plugin.
+ *
+ * Note this returns the URI of the GUI, and not the path/URI to its shared
+ * library, use slv2_plugin_gui_get_library_uri with the values returned
+ * here for that.
+ *
+ * \param plugin The plugin to get the GUIs for. 
+ *
+ * Time = Query
+ */
+SLV2Values
+slv2_plugin_get_guis(SLV2Plugin plugin);
+
+
+/** Get the URI for a GUI library.
+ *
+ * \param plugin The plugin that the GUI is for.
+ * \param gui    A GUI identifier as returned by slv2_plugin_get_guis() (with type SLV2_VALUE_GUI).
+ *
+ * Time = Query
+ */
+SLV2Value
+slv2_plugin_get_gui_library_uri(SLV2Plugin plugin, 
+                                SLV2Value  gui);
 
 
 /** @} */

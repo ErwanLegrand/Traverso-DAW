@@ -259,25 +259,34 @@ LV2ControlPort* LV2Plugin::create_port(int portIndex)
 	/* Get the port symbol (label) for console printing */
 	char* symbol = slv2_port_get_symbol(m_slv2plugin, slvport);
 
-	/* Get the 'class' of the port (control input, audio output, etc) */
-	SLV2PortClass portClass = slv2_port_get_class(m_slv2plugin, slvport);
+	/* Get the 'direction' of the port (input, output) */
+	SLV2PortDirection portDirection = slv2_port_get_direction(m_slv2plugin, slvport);
+
+	/* Get the 'data type' of the port (control, audio) */
+	SLV2PortDataType portDataType = slv2_port_get_data_type(m_slv2plugin, slvport);	
 	
-	/* Create the port based on it's 'class' */
-	switch (portClass) {
-		case SLV2_CONTROL_INPUT:
-			ctrlport = new LV2ControlPort(this, portIndex, slv2_port_get_default_value(m_slv2plugin, slvport));
-			break;
-		case SLV2_CONTROL_OUTPUT:
-			ctrlport = new LV2ControlPort(this, portIndex, 0);
-			break;
-		case SLV2_AUDIO_INPUT:
-			m_audioInputPorts.append(new AudioInputPort(this, portIndex));
-			break;
-		case SLV2_AUDIO_OUTPUT:
-			m_audioOutputPorts.append(new AudioOutputPort(this, portIndex));
-			break;
+	/* Create the port based on it's 'direction' and 'data type' */
+	switch (portDataType) {
+		case SLV2_PORT_DATA_TYPE_CONTROL:
+			switch (portDirection) {
+			case SLV2_PORT_DIRECTION_INPUT:
+					ctrlport = new LV2ControlPort(this, portIndex, slv2_port_get_default_value(m_slv2plugin, slvport));
+					break;
+			case SLV2_PORT_DIRECTION_OUTPUT:
+					ctrlport = new LV2ControlPort(this, portIndex, 0);
+					break;
+			}
+		case SLV2_PORT_DATA_TYPE_AUDIO:
+			switch (portDirection) {
+			case SLV2_PORT_DIRECTION_INPUT:
+					m_audioInputPorts.append(new AudioInputPort(this, portIndex));
+					break;
+			case SLV2_PORT_DIRECTION_OUTPUT:
+					m_audioOutputPorts.append(new AudioOutputPort(this, portIndex));
+					break;
+			}
 		default:
-			PERROR("ERROR: Unknown port type!");
+			PERROR("ERROR: Unknown port data type!");
 	}
 
 	free(symbol);
@@ -317,9 +326,9 @@ LV2ControlPort::LV2ControlPort( LV2Plugin * plugin, const QDomNode node )
 void LV2ControlPort::init()
 {
 	foreach(QString string, get_hints()) {
-		if (string == "http://lv2plug.in/ontology#logarithmic") {
+		if (string == "http://lv2plug.in/ns/lv2core#logarithmic") {
 			m_hint = LOG_CONTROL;
-		} else  if (string == "http://lv2plug.in/ontology#integer") {
+		} else  if (string == "http://lv2plug.in/ns/lv2core#integer") {
 			m_hint = INT_CONTROL;
 		}
 	}
@@ -403,27 +412,30 @@ PluginInfo LV2Plugin::get_plugin_info(SLV2Plugin plugin)
 
 	for (int i=0; i < portcount; ++i) {
 		SLV2Port slvport = slv2_plugin_get_port_by_index(plugin, i);
-		SLV2PortClass portClass = slv2_port_get_class(plugin, slvport);
-		switch (portClass) {
-			case SLV2_AUDIO_INPUT:
-				info.audioPortInCount++;
+		SLV2PortDirection portDirection = slv2_port_get_direction(plugin, slvport);
+		SLV2PortDataType portDataType = slv2_port_get_data_type(plugin, slvport);
+		switch (portDataType) {
+		case SLV2_PORT_DATA_TYPE_AUDIO:
+			switch (portDirection) {
+			case SLV2_PORT_DIRECTION_INPUT:
+					info.audioPortInCount++;
+					continue;
+			case SLV2_PORT_DIRECTION_OUTPUT:
+					info.audioPortOutCount++;
 				continue;
-			case SLV2_AUDIO_OUTPUT:
-				info.audioPortOutCount++;
-				continue;
-			case SLV2_CONTROL_INPUT: break;
-			case SLV2_CONTROL_OUTPUT: break;
-			case SLV2_MIDI_INPUT: break;
-			case SLV2_MIDI_OUTPUT: break;
-			case SLV2_UNKNOWN_PORT_CLASS: break;
+			}
+		case SLV2_PORT_DATA_TYPE_CONTROL: break;
+		case SLV2_PORT_DATA_TYPE_MIDI: break;
+		case SLV2_PORT_DATA_TYPE_OSC: break;
+		case SLV2_PORT_DATA_TYPE_UNKNOWN: break;
 		}
 	}
 	
 	SLV2Values values =  slv2_plugin_get_value(plugin, SLV2_QNAME, "a");
 	for (unsigned i=0; i < slv2_values_size(values); ++i) {
 		QString type =  slv2_value_as_string(slv2_values_get_at(values, i));
-		if (type.contains("http://lv2plug.in/ontology#")) {
-			info.type = type.remove("http://lv2plug.in/ontology#");
+		if (type.contains("http://lv2plug.in/ns/lv2core#")) {
+			info.type = type.remove("http://lv2plug.in/ns/lv2core#");
 			break;
 		}
 	}
@@ -441,8 +453,8 @@ QString LV2Plugin::plugin_type(const QString & uri)
 	SLV2Values values =  slv2_plugin_get_value(plugin, SLV2_QNAME, "a");
 	for (unsigned i=0; i < slv2_values_size(values); ++i) {
 		QString type =  slv2_value_as_string(slv2_values_get_at(values, i));
-		if (type.contains("http://lv2plug.in/ontology#")) {
-			return type.remove("http://lv2plug.in/ontology#");
+		if (type.contains("http://lv2plug.in/ns/lv2core#")) {
+			return type.remove("http://lv2plug.in/ns/lv2core#");
 		}
 	}
 	

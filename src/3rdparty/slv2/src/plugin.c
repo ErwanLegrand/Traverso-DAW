@@ -33,12 +33,13 @@
 
 /* private */
 SLV2Plugin
-slv2_plugin_new(SLV2World world, librdf_uri* uri, const char* binary_uri)
+slv2_plugin_new(SLV2World world, librdf_uri* uri, librdf_uri* bundle_uri, librdf_uri* binary_uri)
 {
 	struct _SLV2Plugin* plugin = malloc(sizeof(struct _SLV2Plugin));
 	plugin->world = world;
 	plugin->plugin_uri = librdf_new_uri_from_uri(uri);
-	plugin->binary_uri = strdup(binary_uri);
+	plugin->bundle_uri = librdf_new_uri_from_uri(bundle_uri);
+	plugin->binary_uri = librdf_new_uri_from_uri(binary_uri);
 	plugin->plugin_class = NULL;
 	plugin->data_uris = slv2_values_new();
 	plugin->ports = raptor_new_sequence((void (*)(void*))&slv2_port_free, NULL);
@@ -56,8 +57,11 @@ slv2_plugin_free(SLV2Plugin p)
 	librdf_free_uri(p->plugin_uri);
 	p->plugin_uri = NULL;
 	
-	//free(p->bundle_url);
-	free(p->binary_uri);
+	librdf_free_uri(p->bundle_uri);
+	p->bundle_uri = NULL;
+	
+	librdf_free_uri(p->binary_uri);
+	p->binary_uri = NULL;
 	
 	raptor_free_sequence(p->ports);
 	p->ports = NULL;
@@ -73,6 +77,7 @@ slv2_plugin_free(SLV2Plugin p)
 	}
 	
 	slv2_values_free(p->data_uris);
+	p->data_uris = NULL;
 
 	free(p);
 }
@@ -184,7 +189,7 @@ slv2_plugin_load(SLV2Plugin p)
 	
 	// Load ports
 	query = (const unsigned char*)
-		"PREFIX : <http://lv2plug.in/ontology#>\n"
+		"PREFIX : <http://lv2plug.in/ns/lv2core#>\n"
 		"SELECT DISTINCT ?port ?symbol ?index WHERE {\n"
 		"<>    :port   ?port .\n"
 		"?port :symbol ?symbol ;\n"
@@ -238,17 +243,24 @@ slv2_plugin_get_uri(SLV2Plugin p)
 }
 
 
-SLV2Values
-slv2_plugin_get_data_uris(SLV2Plugin p)
+const char*
+slv2_plugin_get_bundle_uri(SLV2Plugin p)
 {
-	return p->data_uris;
+	return (const char*)librdf_uri_as_string(p->bundle_uri);
 }
 
 
 const char*
 slv2_plugin_get_library_uri(SLV2Plugin p)
 {
-	return p->binary_uri;
+	return (const char*)librdf_uri_as_string(p->binary_uri);
+}
+
+
+SLV2Values
+slv2_plugin_get_data_uris(SLV2Plugin p)
+{
+	return p->data_uris;
 }
 
 
@@ -290,7 +302,7 @@ slv2_plugin_verify(SLV2Plugin plugin)
 		librdf_node* license_node = librdf_query_results_get_binding_value(results, 2);
 		librdf_node* port_node = librdf_query_results_get_binding_value(results, 3);
 
-		if (!strcmp(type_str, "http://lv2plug.in/ontology#Plugin"))
+		if (!strcmp(type_str, "http://lv2plug.in/ns/lv2core#Plugin"))
 			has_type = true;
 		
 		if (name_node)
@@ -347,7 +359,7 @@ slv2_plugin_get_value(SLV2Plugin  p,
                       const char* predicate)
 {
 	char* query = NULL;
-
+	
 	/* Hack around broken RASQAL, full URI predicates don't work :/ */
 
 	if (predicate_type == SLV2_URI) {
@@ -377,7 +389,7 @@ slv2_plugin_get_value_for_subject(SLV2Plugin  p,
                                   SLV2URIType predicate_type,
                                   const char* predicate)
 {
-	if (subject->type != SLV2_VALUE_URI) {
+	if ( ! slv2_value_is_uri(subject)) {
 		fprintf(stderr, "slv2_plugin_get_value_for_subject error: "
 				"passed non-URI subject\n");
 		return NULL;
@@ -387,22 +399,25 @@ slv2_plugin_get_value_for_subject(SLV2Plugin  p,
 
 	/* Hack around broken RASQAL, full URI predicates don't work :/ */
 
+	char* subject_token = slv2_value_get_turtle_token(subject);
+
 	if (predicate_type == SLV2_URI) {
 		query = slv2_strjoin(
 			"PREFIX slv2predicate: <", predicate, ">",
 			"SELECT DISTINCT ?value WHERE { \n",
-			slv2_value_get_turtle_token(subject), " slv2predicate: ?value \n"
+			subject_token, " slv2predicate: ?value \n"
 			"}\n", NULL);
 	} else {
     	query = slv2_strjoin(
 			"SELECT DISTINCT ?value WHERE { \n",
-			slv2_value_get_turtle_token(subject), " ", predicate, " ?value \n"
+			subject_token, " ", predicate, " ?value \n"
 			"}\n", NULL);
 	}
 
 	SLV2Values result = slv2_plugin_simple_query(p, query, 0);
 	
 	free(query);
+	free(subject_token);
 
 	return result;
 }
@@ -425,6 +440,9 @@ slv2_plugin_get_hints(SLV2Plugin p)
 uint32_t
 slv2_plugin_get_num_ports(SLV2Plugin p)
 {
+	if (!p->rdf)
+		slv2_plugin_load(p);
+	
 	return raptor_sequence_size(p->ports);
 }
 
@@ -439,9 +457,11 @@ slv2_plugin_has_latency(SLV2Plugin p)
 		"           lv2:index    ?index .\n"
 		"}\n";
 
-	SLV2Values result = slv2_plugin_simple_query(p, query, 0);
+	SLV2Values results = slv2_plugin_simple_query(p, query, 0);
+	const bool latent = (slv2_values_size(results) > 0);
+	slv2_values_free(results);
 	
-	return (slv2_values_size(result) > 0);
+	return latent;
 }
 
 
@@ -514,6 +534,9 @@ SLV2Port
 slv2_plugin_get_port_by_index(SLV2Plugin p,
                               uint32_t   index)
 {
+	if (!p->rdf)
+		slv2_plugin_load(p);
+	
 	return raptor_sequence_get_at(p->ports, (int)index);
 }
 
@@ -522,6 +545,9 @@ SLV2Port
 slv2_plugin_get_port_by_symbol(SLV2Plugin  p,
                                const char* symbol)
 {
+	if (!p->rdf)
+		slv2_plugin_load(p);
+	
 	// FIXME: sort plugins and do a binary search
 	for (int i=0; i < raptor_sequence_size(p->ports); ++i) {
 		SLV2Port port = raptor_sequence_get_at(p->ports, i);
@@ -529,6 +555,80 @@ slv2_plugin_get_port_by_symbol(SLV2Plugin  p,
 			return port;
 	}
 
+	return NULL;
+}
+
+
+SLV2Values
+slv2_plugin_get_guis(SLV2Plugin plugin)
+{
+	if (!plugin->rdf)
+		slv2_plugin_load(plugin);
+
+	SLV2Values result = slv2_plugin_get_value(plugin, SLV2_URI, 
+			"http://ll-plugins.nongnu.org/lv2/ext/gtk2gui#gui");
+
+	for (int i=0; i < raptor_sequence_size(result); ++i) {
+		SLV2Value val = (SLV2Value)raptor_sequence_get_at(result, i);
+		val->type = SLV2_VALUE_GUI;
+		val->val.gui_type_val = SLV2_GUI_TYPE_GTK2;
+	}
+
+	return result;
+}
+
+
+SLV2Value
+slv2_plugin_get_gui_library_uri(SLV2Plugin plugin, 
+                                SLV2Value  gui)
+{
+	assert(gui->type == SLV2_VALUE_GUI);
+	
+	if (!plugin->rdf)
+		slv2_plugin_load(plugin);
+
+	SLV2Values values =  slv2_plugin_get_value_for_subject(plugin, gui, SLV2_URI,
+			"http://ll-plugins.nongnu.org/lv2/ext/gtk2gui#binary");
+
+	if (!values || slv2_values_size(values) == 0) {
+		slv2_values_free(values);
+		return NULL;
+	}
+
+	SLV2Value value = slv2_values_get_at(values, 0);
+	if (!slv2_value_is_uri(value)) {
+		slv2_values_free(values);
+		return NULL;
+	}
+
+	value = slv2_value_duplicate(value);
+	slv2_values_free(values);
+
+	return value;
+}
+
+
+const char*
+slv2_gui_type_get_uri(SLV2GUIType type)
+{
+	if (type == SLV2_GUI_TYPE_GTK2)
+		return "http://ll-plugins.nongnu.org/lv2/ext/gtk2gui";
+	else
+		return NULL;
+}
+
+
+void*
+slv2_plugin_load_gui(SLV2Plugin plugin,
+                     SLV2Value  gui)
+{
+	SLV2Value lib_uri = slv2_plugin_get_gui_library_uri(plugin, gui);
+
+	if (!lib_uri)
+		return NULL;
+
+	//LV2UI_Handle handle =
+	//
 	return NULL;
 }
 

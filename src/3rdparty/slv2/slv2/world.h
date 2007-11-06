@@ -48,6 +48,8 @@ extern "C" {
 
 
 /** Initialize a new, empty world.
+ *
+ * If initialization fails, NULL is returned.
  */
 SLV2World
 slv2_world_new();
@@ -68,6 +70,31 @@ slv2_world_new_using_rdf_world(librdf_world* world);
 void
 slv2_world_free(SLV2World world);
 
+#if 0
+/** Set the RDF lock function.
+ *
+ * If set, this function will be called before any calls to librdf functions.
+ * This can be used to make SLV2 thread-safe.
+ *
+ * \a lock will be called with \a data as a parameter, whenever SLV2 is going
+ * to perform an RDF operation.
+ */
+void
+slv2_world_set_rdf_lock_function(SLV2World world, void (*lock)(void*), void* data);
+
+
+/** Set the unlock function.
+ *
+ * This is the counterpart to the RDF lock function set with
+ * slv2_world_set_rdf_lock_function.  Be sure to call this after locking,
+ * or a deadlock will occur.
+ *
+ * \a unlock will be called with the same data pointer set with
+ * slv2_world_set_rdf_lock_function.
+ */
+void
+slv2_world_set_rdf_unlock_function(SLV2World world, void (*unlock)(void*));
+#endif
 
 /** Load all installed LV2 bundles on the system.
  *
@@ -184,7 +211,7 @@ slv2_world_get_plugins_by_class(SLV2World       world,
  *
  * \b Example: Get all plugins with at least 1 audio input and output:
 <tt> \verbatim
-PREFIX : <http://lv2plug.in/ontology#>
+PREFIX : <http://lv2plug.in/ns/lv2core#>
 SELECT DISTINCT ?plugin WHERE {
     ?plugin  :port  [ a :AudioPort; a :InputPort ] ;
              :port  [ a :AudioPort; a :OutputPort ] .
