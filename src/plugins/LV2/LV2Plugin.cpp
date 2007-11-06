@@ -148,7 +148,6 @@ int LV2Plugin::init()
 
 	/* Create ports */
 	int portcount  = slv2_plugin_get_num_ports(m_slv2plugin);
-	PMESG("numports is %d", portcount);
 
 	for (int i=0; i < portcount; ++i) {
 		LV2ControlPort* port = create_port(i);
@@ -251,7 +250,6 @@ LV2ControlPort* LV2Plugin::create_port(int portIndex)
 	
 	/* Get the port symbol (label) for console printing */
 	char* symbol = slv2_port_get_symbol(m_slv2plugin, slvport);
-	printf("port symbol %s\n", symbol);
 
 	/* Get the 'direction' of the port (input, output) */
 	SLV2PortDirection portDirection = slv2_port_get_direction(m_slv2plugin, slvport);
@@ -275,11 +273,9 @@ LV2ControlPort* LV2Plugin::create_port(int portIndex)
 		case SLV2_PORT_DATA_TYPE_AUDIO:
 			switch (portDirection) {
 			case SLV2_PORT_DIRECTION_INPUT:
-					printf("ading new audio input port\n");
 					m_audioInputPorts.append(new AudioInputPort(this, portIndex));
 					break;
 			case SLV2_PORT_DIRECTION_OUTPUT:
-					printf("ading new audio output port\n");
 					m_audioOutputPorts.append(new AudioOutputPort(this, portIndex));
 					break;
 			case SLV2_PORT_DIRECTION_UNKNOWN: break;
