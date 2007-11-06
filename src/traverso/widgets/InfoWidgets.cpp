@@ -41,7 +41,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <sys/param.h>
 #include <sys/mount.h>
 #else
+#if defined(HAVE_SYS_VFS_H)
 #include <sys/vfs.h>
+#endif
 #endif
 
 
@@ -285,6 +287,8 @@ void HDDSpaceInfo::update_status( )
 		return;
 	}
 	
+	double space = 0.0;
+	
 #if defined (Q_WS_WIN)
 	__int64 freebytestocaller, totalbytes, freebytes; 
 	if (! GetDiskFreeSpaceEx ((const WCHAR*)(m_project->get_root_dir().toUtf8().data()),
@@ -297,11 +301,18 @@ void HDDSpaceInfo::update_status( )
 		return;
 	}
 	
-	double space =  double(freebytestocaller / (1 << 20));
+	space =  double(freebytestocaller / (1 << 20));
 #else
+
+#if !defined(HAVE_SYS_VFS_H)
+	m_button->setText("No Info");
+	return;
+#else
+	
 	struct statfs fs;
 	statfs(m_project->get_root_dir().toUtf8().data(), &fs);
-	double space = floor (fs.f_bavail * (fs.f_bsize / 1048576.0));
+	space = floor (fs.f_bavail * (fs.f_bsize / 1048576.0));
+#endif
 #endif
 
 	QList<Song*> recordingSongs;

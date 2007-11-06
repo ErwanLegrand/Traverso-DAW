@@ -16,11 +16,16 @@ SET (VERSION_MINOR "42")
 SET (VERSION_PATCH "0")
 SET (VERSION_SUFFIX "")
 SET (VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}${VERSION_SUFFIX})
-MESSAGE(STATUS "Traverso ${VERSION} will be built to install into ${CMAKE_INSTALL_PREFIX}")
 
+MESSAGE(STATUS "Traverso ${VERSION} will be built to install into ${CMAKE_INSTALL_PREFIX}")
 
 OPTION(WANT_JACK    	"Include Jack (Jack Audio Connection Kit) support" ON)
 OPTION(WANT_ALSA    	"Include ALSA (Advanced Linux Sound Architecture) support" ON)
+OPTION(WANT_PORTAUDIO	"Include PortAudio support (Driver support for Mac OS X and Windows" ON)
+OPTION(WANT_LV2		"Include LV2 Plugin support" ON)
+OPTION(USE_SYSTEM_SLV2_LIBRARY "Use system installed slv2 library. If not found, the internal one is compiled and used which needs the rdf development headers" OFF)
+OPTION(WANT_MP3_DECODE	"Include mp3 decoding support, for playing mp3 files" ON)
+OPTION(WANT_MP3_ENCODE	"Include mp3 encoding support, for creating mp3 files" ON)
 OPTION(WANT_PCH     	"Use precompiled headers" ON)
 OPTION(WANT_DEBUG   	"Debug build" ON)
 OPTION(WANT_OPENGL	"Build Traverso with OpenGL support" ON)
@@ -41,6 +46,7 @@ IF (WANT_VERSIONING AND NOT CACHED_VERSIONING)
   ENDIF (NOT CUSTOM_VERSIONTAG)
 ENDIF (WANT_VERSIONING AND NOT CACHED_VERSIONING)
 
+
 #BUILD SETUP
 #None, Debug, Release, .. or custom ones
 IF(WANT_DEBUG)
@@ -50,13 +56,30 @@ ELSE(WANT_DEBUG)
   SET(CMAKE_BUILD_TYPE RELEASE)
 ENDIF(WANT_DEBUG)
 
+
 IF(WANT_TRAVERSO_DEBUG)
   ADD_DEFINITIONS(-DUSE_DEBUGGER)
 ENDIF(WANT_TRAVERSO_DEBUG)
 
+
+# Static build is perfectly fine now, targets are properly relinked when needed!
+ADD_DEFINITIONS(-DSTATIC_BUILD)
+
+
 # Moves the Traverso exec. to the root dir and libs to the root's lib dir.
-SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR})
+SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/bin)
 SET(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/lib)
+
+
+SET(MINIMAL_ALSA_VERSION 1.0.0)
+SET(MINIMAL_JACK_VERSION 0.100)
+SET(MINIMAL_PORTAUDIO_VERSION 19)
+SET(MINIMAL_SLV2_VERSION 0.2.0)
+SET(MINIMAL_WAVPACK_VERSION 4.40.0)
+SET(MINIMAL_OGG_VORBIS_VERSION 1.1.2)
+SET(MINIMAL_MAD_VERSION 0.15.0)
+SET(MINIMAL_FLAC_VERSION 1.1.2)
+SET(MINIMAL_FFTW_VERSION 3.0.0)
 
 
 IF(APPLE)
@@ -92,6 +115,8 @@ FIND_PACKAGE(Qt4 REQUIRED)
 include(${QT_USE_FILE})
 
 
+INCLUDE (ConfigureChecks.cmake)
+
 IF(WANT_OPENGL)
 	IF(QT_QTOPENGL_FOUND)
 		ADD_DEFINITIONS(-DQT_OPENGL_SUPPORT)
@@ -101,7 +126,12 @@ ENDIF(WANT_OPENGL)
 
 
 IF(WANT_ALSA)
-	PKG_CHECK_MODULES(ALSA  alsa>=1.0.0)
+	CHECK_INCLUDE_FILE("alsa/asoundlib.h" HAVE_ASOUNDLIB_H)
+	IF(NOT HAVE_ASOUNDLIB_H)
+		MESSAGE(FATAL_ERROR "alsa support requested, but alsa development headers could not be found!\nPlease install the alsa development package (Usually called libasound-dev), remove CMakeCache.txt and run cmake again")
+	ENDIF(NOT HAVE_ASOUNDLIB_H)
+	
+	PKG_CHECK_MODULES(ALSA  alsa>=${MINIMAL_ALSA_VERSION})
 	IF (ALSA_FOUND)
   		MESSAGE("-- ALSA Library Found OK")
 		ADD_DEFINITIONS(-DALSA_SUPPORT)
@@ -113,33 +143,138 @@ ENDIF(WANT_ALSA)
 
 
 IF(WANT_JACK)
-	PKG_CHECK_MODULES(JACK jack>=0.100)
+	CHECK_INCLUDE_FILE("jack/jack.h" HAVE_JACK_H)
+	IF(NOT HAVE_JACK_H)
+		MESSAGE(FATAL_ERROR "jack support requested, but jack development headers could not be found!\nPlease install the jack development package, remove CMakeCache.txt and run cmake again")
+	ENDIF(NOT HAVE_JACK_H)
+	
+	PKG_CHECK_MODULES(JACK jack>=${MINIMAL_JACK_VERSION})
 	IF(JACK_FOUND)
 		ADD_DEFINITIONS(-DJACK_SUPPORT)
 		MESSAGE("-- Jack Library Found OK")
 		SET(HAVE_JACK TRUE)
 		SET(JACK_LIBS ${JACK_LIBRARIES})
-		#MESSAGE("JACK_LIBS: ${JACK_LIBS}")
 		LIST(APPEND JACK_LIB_DIR ${JACK_LIBDIR} ${JACK_LIBRARY_DIRS})
-		#MESSAGE("JACK_LIB_DIR: ${JACK_LIB_DIR}")
 		LIST(APPEND JACK_INC_DIR ${JACK_INCLUDEDIR} ${JACK_INCLUDE_DIRS})
-		#MESSAGE("JACK_INC_DIR: ${JACK_INC_DIR}")
+	ELSE(JACK_FOUND)
+		MESSAGE(FATAL_ERROR "jack support requested, but jack libraries could not be found!\nPlease install the jack runtime libraries, remove CMakeCache.txt and run cmake again")
 	ENDIF(JACK_FOUND)
 ELSE(WANT_JACK)
 	MESSAGE("-- Jack support: Disabled")
 ENDIF(WANT_JACK)
 
 
-ADD_DEFINITIONS(-DLV2_SUPPORT)
-ADD_DEFINITIONS(-DSTATIC_BUILD)
+IF(WANT_PORTAUDIO)
+	CHECK_INCLUDE_FILE("portaudio.h" HAVE_PORTAUDIO_H)
+	IF(NOT HAVE_PORTAUDIO_H)
+		MESSAGE(FATAL_ERROR "PortAudio support requested, but PortAudio development headers could not be found!\nPlease install the PortAudio development package, remove CMakeCache.txt and run cmake again")
+	ENDIF(NOT HAVE_PORTAUDIO_H)
+	PKG_CHECK_MODULES(PORTAUDIO portaudio-2.0>=${MINIMAL_PORTAUDIO_VERSION})
+	IF(PORTAUDIO_FOUND)
+		ADD_DEFINITIONS(-DPORTAUDIO_SUPPORT)
+		MESSAGE("-- PortAudio Library Found OK")
+		SET(HAVE_PORTAUDIO TRUE)
+	ENDIF(PORTAUDIO_FOUND)
+ENDIF(WANT_PORTAUDIO)
+
+IF(WANT_LV2)
+	IF(USE_SYSTEM_SLV2_LIBRARY)
+		CHECK_INCLUDE_FILE("slv2/slv2.h" HAVE_SLV2_H)
+		IF(NOT HAVE_SLV2_H)
+			MESSAGE(FATAL_ERROR "lv2 support requested, but slv2 development headers could not be found!\nPlease install the slv2 development package (Usually called libslv2-dev), remove CMakeCache.txt and run cmake again")
+		ENDIF(NOT HAVE_SLV2_H)
+		
+		PKG_CHECK_MODULES(SLV2  libslv2>=${MINIMAL_SLV2_VERSION})
+		IF (SLV2_FOUND)
+			MESSAGE("-- slv2 Library Found OK")
+			SET(HAVE_SYSTEM_SLV2 TRUE)
+		ENDIF(SLV2_FOUND)
+	ELSE(USE_SYSTEM_SLV2_LIBRARY)
+		CHECK_INCLUDE_FILE("librdf.h" HAVE_LIBRDF_H)
+		IF(NOT HAVE_LIBRDF_H)
+			MESSAGE(FATAL_ERROR "lv2 support requested using internal slv2 lib, but the needed rdf development headers could not be found!\nPlease install the rdf development package (Usually called librdf-dev), remove CMakeCache.txt and run cmake again")
+		ENDIF(NOT HAVE_LIBRDF_H)
+		
+		SET(USE_INTERNAL_SLV2_LIB TRUE)
+	ENDIF(USE_SYSTEM_SLV2_LIBRARY)
+	
+	ADD_DEFINITIONS(-DLV2_SUPPORT)
+	SET(HAVE_SLV2 TRUE)
+ENDIF(WANT_LV2)
 
 
-PKG_CHECK_MODULES(WAVPACK  wavpack>=4.40.0)
+CHECK_INCLUDE_FILE("wavpack/wavpack.h" HAVE_WAVPACK_H)
+IF(NOT HAVE_WAVPACK_H)
+	MESSAGE(FATAL_ERROR "WavPack development headers could not be found!\nPlease install the WavPack development package, remove CMakeCache.txt and run cmake again")
+ENDIF(NOT HAVE_WAVPACK_H)
+PKG_CHECK_MODULES(WAVPACK  wavpack>=${MINIMAL_WAVPACK_VERSION})
 IF (WAVPACK_FOUND)
   MESSAGE("-- WavPack Library Found OK")
 ELSE(WAVPACK_FOUND)
-  MESSAGE(FATAL_ERROR "No WavPack found (WavPack >= 4.41.0 needs to be installed!)")
+  MESSAGE(FATAL_ERROR "No WavPack found (WavPack >= ${MINIMAL_WAVPACK_VERSION} needs to be installed!)")
 ENDIF(WAVPACK_FOUND)
+
+
+CHECK_INCLUDE_FILE("vorbis/vorbisfile.h" HAVE_VORBISFILE_H)
+IF(NOT HAVE_VORBISFILE_H)
+	MESSAGE(FATAL_ERROR "Ogg Vorbis development headers could not be found!\nPlease install the Ogg Vorbis development package, remove CMakeCache.txt and run cmake again")
+ENDIF(NOT HAVE_VORBISFILE_H)
+PKG_CHECK_MODULES(VORBIS  vorbis>=${MINIMAL_OGG_VORBIS_VERSION})
+IF (VORBIS_FOUND)
+  MESSAGE("-- Ogg Vorbis Library Found OK")
+ELSE(VORBIS_FOUND)
+  MESSAGE(FATAL_ERROR "No Ogg Vorbis found (Ogg Vorbis >= ${MINIMAL_OGG_VORBIS_VERSION} needs to be installed!)")
+ENDIF(VORBIS_FOUND)
+
+
+CHECK_INCLUDE_FILE("FLAC/export.h" HAVE_FLAC_H)
+IF(NOT HAVE_FLAC_H)
+	MESSAGE(FATAL_ERROR "FLAC development headers could not be found!\nPlease install the FLAC development package, remove CMakeCache.txt and run cmake again")
+ENDIF(NOT HAVE_FLAC_H)
+PKG_CHECK_MODULES(FLAC  flac>=${MINIMAL_FLAC_VERSION})
+IF (FLAC_FOUND)
+  MESSAGE("-- FLAC Library Found OK")
+ELSE(FLAC_FOUND)
+  MESSAGE(FATAL_ERROR "No FLAC found (FLAC >= ${MINIMAL_FLAC_VERSION} needs to be installed!)")
+ENDIF(FLAC_FOUND)
+
+
+IF(WANT_MP3_DECODE)
+	CHECK_INCLUDE_FILE("mad.h" HAVE_MAD_H)
+	IF(NOT HAVE_MAD_H)
+		MESSAGE(FATAL_ERROR "MP3 decoding support requested, but mp3 development headers (mad.h) could not be found!\nPlease install the mp3 development package (Usually called libmad0-dev), remove CMakeCache.txt and run cmake again")
+	ENDIF(NOT HAVE_MAD_H)
+	PKG_CHECK_MODULES(MAD mad>=${MINIMAL_MAD_VERSION})
+	IF(MAD_FOUND)
+		ADD_DEFINITIONS(-DMP3_DECODE_SUPPORT)
+		MESSAGE("-- MP3 Decoding Library Found OK")
+		SET(HAVE_MP3_DECODING TRUE)
+	ENDIF(MAD_FOUND)
+ENDIF(WANT_MP3_DECODE)
+
+
+IF(WANT_MP3_ENCODE)
+	CHECK_INCLUDE_FILE("lame/lame.h" HAVE_LAME_H)
+	IF(NOT HAVE_LAME_H)
+		MESSAGE(FATAL_ERROR "MP3 encoding support requested, but mp3 development headers (lame.h) could not be found!\nPlease install the lame development package (Usually called liblame-dev), remove CMakeCache.txt and run cmake again")
+	ENDIF(NOT HAVE_LAME_H)
+		ADD_DEFINITIONS(-DMP3_ENCODE_SUPPORT)
+		MESSAGE("-- Building with mp3 encoding support enabled")
+		SET(HAVE_MP3_ENCODING TRUE)
+	ENDIF(LAME_FOUND)
+ENDIF(WANT_MP3_ENCODE)
+
+
+CHECK_INCLUDE_FILE("fftw3.h" HAVE_FFTW3_H)
+IF(NOT HAVE_FFTW3_H)
+	MESSAGE(FATAL_ERROR "FFTW3 development headers could not be found!\nPlease install the FFTW3 development package (fftw3-dev), remove CMakeCache.txt and run cmake again")
+ENDIF(NOT HAVE_FFTW3_H)
+PKG_CHECK_MODULES(FFTW3  fftw3>=${MINIMAL_FFTW_VERSION})
+IF (FFTW3_FOUND)
+  MESSAGE("-- FFTW3 Library Found OK")
+ELSE(FFTW3_FOUND)
+  MESSAGE(FATAL_ERROR "No FFTW3 found (FFTW3 >= ${MINIMAL_FFTW_VERSION} needs to be installed!)")
+ENDIF(FFTW3_FOUND)
 
 
 # Check GCC for PCH support
@@ -158,9 +293,7 @@ ELSE(WANT_PCH)
 ENDIF(WANT_PCH)
 
 
-INCLUDE (ConfigureChecks.cmake)
-
-CHECK_INCLUDE_FILE("sys/sys/vfs.h" HAVE_SYS_VFS_H)
+CHECK_INCLUDE_FILE("sys/vfs.h" HAVE_SYS_VFS_H)
 IF(HAVE_SYS_VFS_H)
 	ADD_DEFINITIONS(-DHAVE_SYS_VFS_H)
 ENDIF(HAVE_SYS_VFS_H)
@@ -171,10 +304,9 @@ IF(HAVE_SYS_STAT_H)
 ENDIF(HAVE_SYS_STAT_H)
 
 
-#Create configure files.. config.h and uninstall
-#config.h
+#Create configure files.. config.h
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/src/config.h)
-ADD_DEFINITIONS("-DHAVE_CONFIG_H")
+
 
 #uninstall
 CONFIGURE_FILE(
@@ -184,6 +316,7 @@ CONFIGURE_FILE(
 
 ADD_CUSTOM_TARGET(uninstall "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
 
+
 #Set up include dirs with all found packages
 INCLUDE_DIRECTORIES(
 ${CMAKE_SOURCE_DIR}/src/common
@@ -191,20 +324,20 @@ ${QT_INCLUDE_DIR}
 ${QT_QTCORE_INCLUDE_DIR}
 )
 
+
 #Set up libraries to link with all found packages
 LINK_LIBRARIES (
 ${QT_QT_LIBRARY}
 )
 
+
 IF(WIN32)
   LINK_LIBRARIES(
     ${QT_QTMAIN_LIBRARY}
   )
-ENDIF(WIN32)
-
-IF(WIN32)
   ADD_DEFINITIONS(-DQT_DLL)
 ENDIF(WIN32)
+
 
 IF(APPLE)
   LINK_LIBRARIES( "-undefined dynamic_lookup" ) 
@@ -216,14 +349,15 @@ ENDIF(APPLE)
 ADD_SUBDIRECTORY(src)
 
 
+# TODO
 #Install our READMEs etc.
-INSTALL(FILES
-AUTHORS
-README
-TODO
+# INSTALL(FILES
+# AUTHORS
+# README
+# 
+#   DESTINATION ${CMAKE_SOURCE_DIR}/src/
+# )
 
-  DESTINATION ${CMAKE_SOURCE_DIR}/src/
-)
 
 # If the cmake version includes cpack, use it
 IF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
@@ -244,8 +378,7 @@ IF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
 	"~$"
 	"Makefile$"
 	"\\\\.cvsignore$" 
-	"\\\\.tar$"
-	"^${PROJECT_SOURCE_DIR}/traverso"
+	"^${PROJECT_SOURCE_DIR}.*/*tar.*"
 	"^${PROJECT_SOURCE_DIR}/cmake_uninstall.cmake"
 	"^${PROJECT_SOURCE_DIR}.*/precompile.h.gch"
 	"^${PROJECT_SOURCE_DIR}.*/cmake_install.cmake"
@@ -265,3 +398,23 @@ IF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
   INCLUDE(CPack)
 ENDIF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
 
+
+IF(USE_INTERNAL_SLV2_LIB)
+	SET(SLV2OPTIONS "${HAVE_SLV2} (Using internal library)")
+ENDIF(USE_INTERNAL_SLV2_LIB)
+IF(USE_SYSTEM_SLV2_LIBRARY)
+	SET(SLV2OPTIONS "${HAVE_SLV2} (Using system library)")
+ENDIF(USE_SYSTEM_SLV2_LIBRARY)
+
+
+MESSAGE("")
+MESSAGE("Build options:")
+MESSAGE("Building in mode	:	${CMAKE_BUILD_TYPE}")
+MESSAGE("ALSA support		:	${HAVE_ALSA}")
+MESSAGE("Jack support		:	${HAVE_JACK}")
+MESSAGE("PortAudio support	:	${HAVE_PORTAUDIO}")
+MESSAGE("SLV2 support		:	${SLV2OPTIONS}")
+MESSAGE("MP3 read support	:	${HAVE_MP3_DECODING}")
+MESSAGE("MP3 writing support	:	${HAVE_MP3_ENCODING}")
+MESSAGE("OpenGL support		:	${HAVE_OPENGL}")
+MESSAGE("")

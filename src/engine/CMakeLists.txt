@@ -16,7 +16,6 @@ AudioDeviceThread.cpp
 Client.cpp
 Driver.cpp
 memops.cpp
-PADriver.cpp
 )
 
 IF(HAVE_ALSA)
@@ -36,6 +35,13 @@ IF(HAVE_JACK)
 	${TRAVERSO_ENGINE_MOC_CLASSES}
 	)
 ENDIF(HAVE_JACK)
+
+IF(HAVE_PORTAUDIO)
+	SET(TRAVERSO_ENGINE_SOURCES
+	PADriver.cpp
+	${TRAVERSO_ENGINE_SOURCES}
+	)
+ENDIF(HAVE_PORTAUDIO)
 
 
 SET(TRAVERSO_ENGINE_LIBRARY "traversoaudiobackend")

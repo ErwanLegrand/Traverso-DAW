@@ -7,12 +7,18 @@ ${CMAKE_SOURCE_DIR}/src/core
 ${CMAKE_SOURCE_DIR}/src/engine
 ${CMAKE_SOURCE_DIR}/src/plugins
 ${CMAKE_SOURCE_DIR}/src/plugins/LV2
-${CMAKE_SOURCE_DIR}/src/3rdparty/slv2
 ${CMAKE_SOURCE_DIR}/src/plugins/native
 ${CMAKE_SOURCE_DIR}/src/traverso/songcanvas
 ${QT_QTGUI_INCLUDE_DIR}
 ${QT_QTXML_INCLUDE_DIR}
 )
+
+IF(USE_INTERNAL_SLV2_LIB)
+	INCLUDE_DIRECTORIES(
+	${CMAKE_SOURCE_DIR}/src/3rdparty/slv2
+	)
+ENDIF(USE_INTERNAL_SLV2_LIB)
+
 
 SET(TRAVERSO_GUI_SOURCES
 Traverso.cpp
@@ -135,20 +141,48 @@ TARGET_LINK_LIBRARIES(traverso
 	vorbis
 	vorbisfile
 	vorbisenc
-	mad
-	mp3lame
 	FLAC
-	traversoslv2
-	rdf
-	rasqal
-	raptor
 	fftw3
 )
 
+IF(HAVE_PORTAUDIO)
+	TARGET_LINK_LIBRARIES(traverso
+		portaudio
+	)
+ENDIF(HAVE_PORTAUDIO)
+
+IF(HAVE_SLV2)
+	IF(USE_SYSTEM_SLV2_LIBRARY)
+		TARGET_LINK_LIBRARIES(traverso
+			slv2
+		)
+	ELSE(USE_SYSTEM_SLV2_LIBRARY)
+		TARGET_LINK_LIBRARIES(traverso
+			rdf
+			rasqal
+			raptor
+			traversoslv2
+		)
+	ENDIF(USE_SYSTEM_SLV2_LIBRARY)
+ENDIF(HAVE_SLV2)
+
+IF(HAVE_MP3_DECODING)
+	TARGET_LINK_LIBRARIES(traverso
+		mad
+	)
+ENDIF(HAVE_MP3_DECODING)
+
+IF(HAVE_MP3_ENCODING)
+	TARGET_LINK_LIBRARIES(traverso
+		mp3lame
+	)
+ENDIF(HAVE_MP3_ENCODING)
+
+
 IF(HAVE_OPENGL)
-TARGET_LINK_LIBRARIES(traverso
-${QT_QTOPENGL_LIBRARY}
-)
+	TARGET_LINK_LIBRARIES(traverso
+	${QT_QTOPENGL_LIBRARY}
+	)
 ENDIF(HAVE_OPENGL)
 
 IF(HAVE_ALSA)
