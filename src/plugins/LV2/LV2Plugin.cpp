@@ -421,8 +421,10 @@ PluginInfo LV2Plugin::get_plugin_info(SLV2Plugin plugin)
 					continue;
 			case SLV2_PORT_DIRECTION_OUTPUT:
 					info.audioPortOutCount++;
-				continue;
+					continue;
+			case SLV2_PORT_DIRECTION_UNKNOWN: break;
 			}
+			break;
 		case SLV2_PORT_DATA_TYPE_CONTROL: break;
 		case SLV2_PORT_DATA_TYPE_MIDI: break;
 		case SLV2_PORT_DATA_TYPE_OSC: break;
