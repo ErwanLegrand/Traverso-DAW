@@ -374,7 +374,7 @@ QString LV2ControlPort::get_symbol()
 QStringList LV2ControlPort::get_hints()
 {
 	SLV2Port port = slv2_plugin_get_port_by_index(m_lv2plugin->get_slv2_plugin(), m_index);
-	SLV2Values values = slv2_port_get_hints(m_lv2plugin->get_slv2_plugin(), port);
+	SLV2Values values = slv2_port_get_properties(m_lv2plugin->get_slv2_plugin(), port);
 	QStringList qslist;
 	for (unsigned i=0; i < slv2_values_size(values); ++i) {
 		qslist << QString(slv2_value_as_string(slv2_values_get_at(values, i)));
