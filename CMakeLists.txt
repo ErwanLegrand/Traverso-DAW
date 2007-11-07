@@ -23,13 +23,13 @@ OPTION(WANT_JACK    	"Include Jack (Jack Audio Connection Kit) support" ON)
 OPTION(WANT_ALSA    	"Include ALSA (Advanced Linux Sound Architecture) support" ON)
 OPTION(WANT_PORTAUDIO	"Include PortAudio support (Driver support for Mac OS X and Windows" ON)
 OPTION(WANT_LV2		"Include LV2 Plugin support" ON)
-OPTION(USE_SYSTEM_SLV2_LIBRARY "Use system installed slv2 library. If not found, the internal one is compiled and used which needs the rdf development headers" OFF)
+OPTION(USE_SYSTEM_SLV2_LIBRARY "Use system installed slv2 library. If not found, the internal one is compiled and used which needs the rdf development headers" ON)
 OPTION(WANT_MP3_DECODE	"Include mp3 decoding support, for playing mp3 files" ON)
 OPTION(WANT_MP3_ENCODE	"Include mp3 encoding support, for creating mp3 files" ON)
-OPTION(WANT_PCH     	"Use precompiled headers" ON)
-OPTION(WANT_DEBUG   	"Debug build" ON)
+OPTION(WANT_PCH     	"Use precompiled headers" OFF)
+OPTION(WANT_DEBUG   	"Debug build" OFF)
 OPTION(WANT_OPENGL	"Build Traverso with OpenGL support" ON)
-OPTION(WANT_TRAVERSO_DEBUG "Provides 4 levels of debug ouput on the command line" ON)
+OPTION(WANT_TRAVERSO_DEBUG "Provides 4 levels of debug ouput on the command line, always on for DEBUG builds" OFF)
 
 
 SET(MAIN_DIR_NAME "src")
@@ -289,22 +289,6 @@ ELSE(FFTW3_FOUND)
 ENDIF(FFTW3_FOUND)
 
 
-# Check GCC for PCH support
-SET(USE_PCH FALSE)
-IF(WANT_PCH)
-    FIND_PACKAGE(PCHSupport)
-    IF(PCHSupport_FOUND)
-        SET(USE_PCH TRUE)
-        SET(CMAKE_CXX_FLAGS_DEBUG  "${CMAKE_CXX_FLAGS_DEBUG} -include ${CMAKE_SOURCE_DIR}/src/precompile.h -Winvalid-pch")
-        SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -include ${CMAKE_SOURCE_DIR}/src/precompile.h -Winvalid-pch")
-        MESSAGE(STATUS "Enabling precompiled headers for GCC ${gcc_compiler_version}") 
-    ENDIF(PCHSupport_FOUND)
-ELSE(WANT_PCH)
-#QT_DEFENITIONS are added by pch, so when no pch support add them now!
-	ADD_DEFINITIONS(${QT_DEFINITIONS})
-ENDIF(WANT_PCH)
-
-
 CHECK_INCLUDE_FILE("sys/vfs.h" HAVE_SYS_VFS_H)
 IF(HAVE_SYS_VFS_H)
 	ADD_DEFINITIONS(-DHAVE_SYS_VFS_H)
@@ -355,6 +339,87 @@ IF(APPLE)
   LINK_LIBRARIES( "-undefined dynamic_lookup" ) 
   LINK_LIBRARIES( "-framework CoreFoundation" ) 
 ENDIF(APPLE)
+
+
+CHECK_FUNCTION_EXISTS(posix_memalign HAVE_POSIX_MEMALIGN)
+IF(NOT HAVE_POSIX_MEMALIGN)
+	ADD_DEFINITIONS(-DNO_POSIX_MEMALIGN)
+	MESSAGE("Did not find posix_memalign(), using malloc")
+ENDIF(NOT HAVE_POSIX_MEMALIGN)
+
+
+execute_process(
+	COMMAND uname -m
+	OUTPUT_VARIABLE uname_invoke_result
+	RESULT_VARIABLE uname_failed
+)
+
+execute_process(
+	COMMAND cat /proc/cpuinfo
+	COMMAND grep ^flags
+	OUTPUT_VARIABLE cat_invoke_result
+	RESULT_VARIABLE cat_failed
+)
+
+IF(UNIX)
+	IF(NOT WANT_DEBUG)
+		SET(HOST_SUPPORTS_SSE FALSE)
+		
+		IF(cat_invoke_result MATCHES sse)
+			SET(HOST_SUPPORTS_SSE TRUE)
+			ADD_DEFINITIONS(-DSSE_OPTIMIZATIONS)
+		ENDIF(cat_invoke_result MATCHES sse)
+		
+		IF(cat_invoke_result MATCHES mmx)
+			SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -mmmx")
+		ENDIF(cat_invoke_result MATCHES mmx)
+				
+		IF(cat_invoke_result MATCHES 3dnow)
+			SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -m3dnow")
+		ENDIF(cat_invoke_result MATCHES 3dnow)
+				
+		IF(uname_invoke_result MATCHES i586)
+			SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -march=i586")
+		ENDIF(uname_invoke_result MATCHES i586)
+				
+		IF(uname_invoke_result MATCHES i686)
+			SET(uname_invoke_result  "${CMAKE_CXX_FLAGS_RELEASE} -march=i686")
+			IF(HOST_SUPPORTS_SSE)
+				SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -msse -mfpmath=sse")
+				ADD_DEFINITIONS(-DUSE_XMMINTRIN)
+			ENDIF(HOST_SUPPORTS_SSE)
+		ENDIF(uname_invoke_result MATCHES i686)
+				
+		IF(uname_invoke_result MATCHES x86_64)
+			IF(HOST_SUPPORTS_SSE)
+				SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -msse -mfpmath=sse")
+				ADD_DEFINITIONS(-DUSE_XMMINTRIN -DUSE_X86_64_ASM)
+				SET(IS_ARCH_X86_64 TRUE)
+			ENDIF(HOST_SUPPORTS_SSE)
+		ENDIF(uname_invoke_result MATCHES x86_64)
+		
+		IF(uname_invoke_result MATCHES i[456]86)
+			ADD_DEFINITIONS(-DARCH_X86)
+			SET(IS_ARCH_X86 TRUE)
+		ENDIF(uname_invoke_result MATCHES i[456]86)
+	ENDIF(NOT WANT_DEBUG)
+ENDIF(UNIX)
+
+# Check GCC for PCH support
+SET(USE_PCH FALSE)
+IF(WANT_PCH)
+    FIND_PACKAGE(PCHSupport)
+    IF(PCHSupport_FOUND)
+        SET(USE_PCH TRUE)
+        SET(CMAKE_CXX_FLAGS_DEBUG  "${CMAKE_CXX_FLAGS_DEBUG} -include ${CMAKE_SOURCE_DIR}/src/precompile.h -Winvalid-pch")
+        SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -include ${CMAKE_SOURCE_DIR}/src/precompile.h -Winvalid-pch")
+        MESSAGE(STATUS "Enabling precompiled headers for GCC ${gcc_compiler_version}") 
+    ENDIF(PCHSupport_FOUND)
+ELSE(WANT_PCH)
+#QT_DEFENITIONS are added by pch, so when no pch support add them now!
+	ADD_DEFINITIONS(${QT_DEFINITIONS})
+ENDIF(WANT_PCH)
+
 
 
 #Add our source subdirs
