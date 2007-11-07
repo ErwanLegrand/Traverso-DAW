@@ -95,7 +95,7 @@ IF(UNIX)
 		ENDIF(IS_ARCH_X86_64)
 		
 		add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/sse_functions.o
-			COMMAND as ${ASM_COMPILE_FLAGS} ${ASM_FILE} -o ${CMAKE_CURRENT_BINARY_DIR}/sse_functions.o
+			COMMAND as ${ASM_FILE} -o ${CMAKE_CURRENT_BINARY_DIR}/sse_functions.o
 			DEPENDS ${ASM_FILE}
 		)
 		SET(SSE_OBJECT_FILE ${CMAKE_CURRENT_BINARY_DIR}/sse_functions.o)
