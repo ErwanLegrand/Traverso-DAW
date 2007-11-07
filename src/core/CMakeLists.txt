@@ -49,7 +49,6 @@ Marker.cpp
 Themer.cpp
 AudioFileMerger.cpp
 ProjectConverter.cpp
-fpu.cc
 )
 
 SET(TRAVERSO_CORE_MOC_CLASSES

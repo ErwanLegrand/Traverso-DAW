@@ -58,8 +58,7 @@ SOURCES = \
 	Marker.cpp \
 	Themer.cpp \
 	AudioFileMerger.cpp \
-	ProjectConverter.cpp \
- 	fpu.cc
+	ProjectConverter.cpp
 HEADERS = precompile.h \
 	../common/Utils.h \
 	../common/Tsar.h \
@@ -105,8 +104,7 @@ HEADERS = precompile.h \
 	Marker.h \
 	Themer.h \
 	AudioFileMerger.h \
-	ProjectConverter.h \
-	fpu.h
+	ProjectConverter.h
 macx{
     QMAKE_LIBDIR += /usr/local/qt/lib
 }

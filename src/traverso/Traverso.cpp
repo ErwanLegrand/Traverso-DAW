@@ -194,7 +194,7 @@ void Traverso::init_sse( )
 
 #if defined (ARCH_X86) && defined (SSE_OPTIMIZATIONS)
 
-	if (true) {
+	if (fpu.has_sse()) {
 
 		printf("Using SSE optimized routines\n");
 

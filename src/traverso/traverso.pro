@@ -25,6 +25,7 @@ LIBS +=  \
 	-lfftw3
 
 HEADERS += \
+ 	../common/fpu.h \
 	BusMonitor.h \
 	ContextDialog.h \
 	FadeContextDialog.h \
@@ -57,6 +58,7 @@ HEADERS += \
 	dialogs/ExportDialog.h \
 	dialogs/CDWritingDialog.h
 SOURCES += \
+ 	../common/fpu.cc \
 	Traverso.cpp \
 	BusMonitor.cpp \
 	ContextDialog.cpp \
