@@ -16,8 +16,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef __SLV2_PLUGINS_H__
-#define __SLV2_PLUGINS_H__
+#ifndef __SLV2_PLUGIN_UIS_H__
+#define __SLV2_PLUGIN_UIS_H__
 
 #include <slv2/types.h>
 #include <slv2/plugin.h>
@@ -27,6 +27,7 @@ extern "C" {
 #endif
 
 /** \addtogroup collections
+ *
  * @{
  */
 
@@ -37,14 +38,13 @@ extern "C" {
  * are owned by the world).  \a list is invalid after this call.
  */
 void
-slv2_plugins_free(SLV2World   world,
-                  SLV2Plugins list);
+slv2_uis_free(SLV2UIs list);
 
 
 /** Get the number of plugins in the list.
  */
 unsigned
-slv2_plugins_size(SLV2Plugins list);
+slv2_uis_size(SLV2UIs list);
 
 
 /** Get a plugin from the list by URI.
@@ -56,9 +56,9 @@ slv2_plugins_size(SLV2Plugins list);
  * 
  * \return NULL if plugin with \a url not found in \a list.
  */
-SLV2Plugin
-slv2_plugins_get_by_uri(SLV2Plugins list,
-                        const char* uri);
+SLV2UI
+slv2_uis_get_by_uri(SLV2UIs     list,
+                    const char* uri);
 
 
 /** Get a plugin from the list by index.
@@ -72,9 +72,9 @@ slv2_plugins_get_by_uri(SLV2Plugins list,
  *
  * \return NULL if \a index out of range.
  */
-SLV2Plugin
-slv2_plugins_get_at(SLV2Plugins list,
-                    unsigned    index);
+SLV2UI
+slv2_uis_get_at(SLV2UIs  list,
+                unsigned index);
 
 
 /** @} */
@@ -83,5 +83,5 @@ slv2_plugins_get_at(SLV2Plugins list,
 }
 #endif
 
-#endif /* __SLV2_PLUGINS_H__ */
+#endif /* __SLV2_PLUGIN_UIS_H__ */
 

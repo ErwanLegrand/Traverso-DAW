@@ -16,59 +16,67 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef __SLV2_VALUES_H__
-#define __SLV2_VALUES_H__
-
-#include <stdbool.h>
-#include <slv2/value.h>
+#ifndef __SLV2_PLUGIN_UI_H__
+#define __SLV2_PLUGIN_UI_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/** \defgroup collections Collections of values/objects
- *
- * Ordered collections of typed values which are fast for random
- * access by index (i.e. a fancy array).
- *
+/** \addtogroup data
  * @{
  */
 
 
-/** Allocate a new, empty SLV2Values
- */
-SLV2Values
-slv2_values_new();
-
-
-/** Get the number of elements in a string list.
- */
-unsigned
-slv2_values_size(SLV2Values list);
-
-
-/** Get a string from a string list at the given index.
+/** Get the URI of a Plugin UI.
  *
- * @return the element at \a index, or NULL if index is out of range.
+ * \param ui The Plugin UI
  *
  * Time = O(1)
  */
-SLV2Value
-slv2_values_get_at(SLV2Values list, unsigned index);
+const char*
+slv2_ui_get_uri(SLV2UI ui);
 
 
-/** Return whether \a list contains \a string.
+/** Get the types (URIs of RDF classes) of a Plugin UI.
  *
- * Time = O(n)
+ * \param ui The Plugin UI
+ *
+ * Time = O(1)
+ */
+SLV2Values
+slv2_ui_get_types(SLV2UI ui);
+
+
+/** Check whether a plugin UI is a given type.
+ *
+ * \param ui       The Plugin UI
+ * \param type_uri The URI of the LV2 UI type to check this UI against
+ *
+ * Time = O(1)
  */
 bool
-slv2_values_contains(SLV2Values list, SLV2Value value);
+slv2_ui_is_type(SLV2UI ui, const char* type_uri);
+	
 
-
-/** Free a string list.
+/** Get the URI for a Plugin UI's bundle.
+ *
+ * \param ui The Plugin UI
+ *
+ * Time = O(1)
  */
-void
-slv2_values_free(SLV2Values);
+const char*
+slv2_ui_get_bundle_uri(SLV2UI ui);
+
+
+/** Get the URI for a Plugin UI's shared library.
+ *
+ * \param ui The Plugin UI
+ *
+ * Time = O(1)
+ */
+const char*
+slv2_ui_get_binary_uri(SLV2UI ui);
 
 
 /** @} */
@@ -77,5 +85,5 @@ slv2_values_free(SLV2Values);
 }
 #endif
 
-#endif /* __SLV2_VALUES_H__ */
+#endif /* __SLV2_PLUGIN_UI_H__ */
 

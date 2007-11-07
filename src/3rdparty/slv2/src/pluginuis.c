@@ -17,41 +17,44 @@
  */
 
 #define _XOPEN_SOURCE 500
-
 #include <string.h>
 #include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
 #include <librdf.h>
+#include <slv2/types.h>
+#include <slv2/pluginuis.h>
+#include <slv2/pluginui.h>
+#include <slv2/util.h>
 #include "slv2_internal.h"
-#include <slv2/pluginclass.h>
-#include <slv2/pluginclasses.h>
-
 
 	
-SLV2PluginClasses
-slv2_plugin_classes_new()
+SLV2UIs
+slv2_uis_new()
 {
-	return raptor_new_sequence((void (*)(void*))&slv2_plugin_class_free, NULL);
+	return raptor_new_sequence((void (*)(void*))&slv2_ui_free, NULL);
+	//return raptor_new_sequence(NULL, NULL);
 }
 
 
 void
-slv2_plugin_classes_free(SLV2PluginClasses list)
+slv2_uis_free(SLV2UIs list)
 {
-	//if (list != world->plugin_classes)
 	if (list)
 		raptor_free_sequence(list);
 }
 
 
 unsigned
-slv2_plugin_classes_size(SLV2PluginClasses list)
+slv2_uis_size(SLV2UIs list)
 {
 	return (list ? raptor_sequence_size(list) : 0);
 }
 
 
-SLV2PluginClass
-slv2_plugin_classes_get_by_uri(SLV2PluginClasses list, const char* uri)
+SLV2UI
+slv2_uis_get_by_uri(SLV2UIs list, const char* uri)
 {
 	// good old fashioned binary search
 	
@@ -62,12 +65,12 @@ slv2_plugin_classes_get_by_uri(SLV2PluginClasses list, const char* uri)
 	while (upper >= lower) {
 		i = lower + ((upper - lower) / 2);
 
-		SLV2PluginClass p = raptor_sequence_get_at(list, i);
-	
-		const int cmp = strcmp(slv2_plugin_class_get_uri(p), uri);
-		
+		SLV2UI ui = raptor_sequence_get_at(list, i);
+
+		const int cmp = strcmp(slv2_ui_get_uri(ui), uri);
+
 		if (cmp == 0)
-			return p;
+			return ui;
 		else if (cmp > 0)
 			upper = i - 1;
 		else
@@ -78,12 +81,12 @@ slv2_plugin_classes_get_by_uri(SLV2PluginClasses list, const char* uri)
 }
 
 
-SLV2PluginClass
-slv2_plugin_classes_get_at(SLV2PluginClasses list, unsigned index)
+SLV2UI
+slv2_uis_get_at(SLV2UIs list, unsigned index)
 {	
 	if (index > INT_MAX)
 		return NULL;
 	else
-		return (SLV2PluginClass)raptor_sequence_get_at(list, (int)index);
+		return (SLV2UI)raptor_sequence_get_at(list, (int)index);
 }
 

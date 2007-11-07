@@ -28,7 +28,7 @@ extern "C" {
 #include <inttypes.h>
 #include <librdf.h>
 #include <slv2/types.h>
-#include <slv2/lv2-gtk2gui.h>
+#include <slv2/lv2_gui.h>
 
 
 
@@ -98,12 +98,12 @@ struct _InstanceImpl {
 };
 
 
-/* ********* GUI Instance ********* */
-struct _SLV2GUIInstanceImpl {
+/* ********* UI Instance ********* */
+struct _SLV2UIInstanceImpl {
 	void*                   lib_handle;
 	const LV2UI_Descriptor* lv2ui_descriptor;
 	LV2UI_Handle            lv2ui_handle;
-	void*                   widget;
+	LV2UI_Widget            widget;
 };
 
 
@@ -112,8 +112,8 @@ struct _SLV2GUIInstanceImpl {
 
 struct _SLV2PluginClass {
 	struct _SLV2World* world;
-	char*              parent_uri;
-	char*              uri;
+	librdf_uri*        parent_uri;
+	librdf_uri*        uri;
 	char*              label;
 };
 
@@ -141,23 +141,13 @@ struct _SLV2World {
 	librdf_storage*   storage;
 	librdf_model*     model;
 	librdf_parser*    parser;
+	SLV2PluginClass   lv2_plugin_class;
 	SLV2PluginClasses plugin_classes;
 	SLV2Plugins       plugins;
 	librdf_node*      lv2_specification_node;
 	librdf_node*      lv2_plugin_node;
 	librdf_node*      rdf_a_node;
-
-	void (*rdf_lock)(void*);
-	void (*rdf_unlock)(void*);
-	void* rdf_lock_data;
-	int rdf_lock_count;
 };
-
-void
-slv2_world_lock_if_necessary(SLV2World world);
-
-void
-slv2_world_unlock_if_necessary(SLV2World world);
 
 /** Load all bundles found in \a search_path.
  *
@@ -180,13 +170,23 @@ void
 slv2_world_load_file(SLV2World world, librdf_uri* file_uri);
 
 
-/* ********* GUI ********* */
+/* ********* Plugin UI ********* */
 
-struct _SLV2GUI {
-	SLV2GUIType type;
-	char*       uri;
+struct _SLV2UI {
+	librdf_uri* uri;
+	librdf_uri* bundle_uri;
+	librdf_uri* binary_uri;
+	SLV2Values  types;
 };
 
+SLV2UIs slv2_uis_new();
+SLV2UI
+slv2_ui_new(SLV2World   world,
+            librdf_uri* uri,
+            librdf_uri* type_uri,
+            librdf_uri* binary_uri);
+
+void slv2_ui_free(SLV2UI ui);
 
 
 /* ********* Value ********* */
@@ -197,16 +197,14 @@ typedef enum _SLV2ValueType {
 	SLV2_VALUE_STRING,
 	SLV2_VALUE_INT,
 	SLV2_VALUE_FLOAT,
-	SLV2_VALUE_GUI
 } SLV2ValueType;
 
 struct _SLV2Value {
 	SLV2ValueType type;
 	char*         str_val; ///< always present
 	union {
-		int         int_val;
-		float       float_val;
-		SLV2GUIType gui_type_val;
+		int   int_val;
+		float float_val;
 	} val;
 };
 

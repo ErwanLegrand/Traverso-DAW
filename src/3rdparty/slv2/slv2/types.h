@@ -69,13 +69,6 @@ typedef enum _SLV2URIType {
 } SLV2URIType;
 
 
-/** A type of plugin GUI (corresponding to some LV2 GUI extension).
- */
-typedef enum _SLV2GUIType {
-	SLV2_GUI_TYPE_GTK2 ///< http://ll-plugins.nongnu.org/lv2/ext/gtk2gui
-} SLV2GUIType;
-
-
 /** A port on a plugin.  Opaque, but valid to compare to NULL. */
 typedef struct _SLV2Port* SLV2Port;
 
@@ -108,8 +101,12 @@ typedef struct _SLV2Value* SLV2Value;
 typedef void* SLV2Values;
 
 
-/** A plugin GUI */
-typedef void* SLV2GUI;
+/** A plugin UI */
+typedef struct _SLV2UI* SLV2UI;
+
+
+/** A collection of plugin UIs. */
+typedef void* SLV2UIs;
 
 
 #ifdef __cplusplus

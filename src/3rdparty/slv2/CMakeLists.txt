@@ -3,6 +3,9 @@ INCLUDE_DIRECTORIES(
 
 SET(TRAVERSO_SLV2_SOURCES
 src/plugin.c
+src/pluginui.c
+src/pluginuiinstance.c
+src/pluginuis.c
 src/pluginclass.c
 src/pluginclasses.c
 src/plugininstance.c
