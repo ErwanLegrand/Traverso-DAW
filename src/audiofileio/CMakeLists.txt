@@ -10,14 +10,27 @@ decode/FlacAudioReader.cpp
 decode/ResampleAudioReader.cpp
 decode/VorbisAudioReader.cpp
 decode/WPAudioReader.cpp
-decode/MadAudioReader.cpp
 encode/AbstractAudioWriter.cpp
 encode/SFAudioWriter.cpp
 encode/WPAudioWriter.cpp
 encode/FlacAudioWriter.cpp
 encode/VorbisAudioWriter.cpp
-encode/LameAudioWriter.cpp
 )
+
+IF(HAVE_MP3_DECODING)
+	SET(TRAVERSO_AUDIOFILEIO_SOURCES
+		${TRAVERSO_AUDIOFILEIO_SOURCES}
+		decode/MadAudioReader.cpp
+	)
+ENDIF(HAVE_MP3_DECODING)
+
+IF(HAVE_MP3_ENCODING)
+	SET(TRAVERSO_AUDIOFILEIO_SOURCES
+		${TRAVERSO_AUDIOFILEIO_SOURCES}
+		encode/LameAudioWriter.cpp
+	)
+ENDIF(HAVE_MP3_ENCODING)
+
 
 SET(TRAVERSO_AUDIOFILEIO_LIBRARY "traversoaudiofileio")
 
