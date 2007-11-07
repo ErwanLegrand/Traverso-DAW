@@ -89,10 +89,14 @@ IF(APPLE)
   SET(CMAKE_CXX_FLAGS_DEBUG "-O2 -g3 -fno-inline-functions -Wall")
   SET(CMAKE_C_FLAGS_DEBUG "-O2 -g3 -fno-inline-functions -Wall")
   SET(BUILD_MAC_BUNDLE 1)
+# Uncomment if dest. target is (at least) tiger (works maybe on other targets as well ?)
+# DEFINES += BUILD_VECLIB_OPTIMIZATIONS
+# LIBS += -framework Accelerate
 ELSE(APPLE)
   SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3 -Wall")
   SET(CMAKE_C_FLAGS_DEBUG "-O0 -g3 -Wall")
 ENDIF(APPLE)
+
 SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -Wall")
 SET(CMAKE_C_FLAGS_RELEASE "-O2 -Wall")
 
@@ -401,6 +405,7 @@ IF(UNIX)
 		IF(uname_invoke_result MATCHES i[456]86)
 			ADD_DEFINITIONS(-DARCH_X86)
 			SET(IS_ARCH_X86 TRUE)
+			SET(ASM_COMPILE_FLAGS -mtune=i486)
 		ENDIF(uname_invoke_result MATCHES i[456]86)
 	ENDIF(NOT WANT_DEBUG)
 ENDIF(UNIX)
