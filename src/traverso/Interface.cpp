@@ -550,7 +550,7 @@ Command * Interface::show_context_menu( )
 	// dispatches the 'keyfact' from the menu to the 'pointed' objects!
 	cpointer().set_contextmenu_items(cpointer().get_context_items());
 
-	QMenu* toplevelmenu;
+	QMenu* toplevelmenu = 0;
 	QAction* action = 0;
 			
 	for (int i=0; i<items.size(); ++i) {
@@ -593,7 +593,10 @@ Command * Interface::show_context_menu( )
 		}
 	}
 	
-	toplevelmenu->exec(QCursor::pos());
+	// It's impossible there is NO toplevelmenu, but oh well...
+	if (toplevelmenu) {
+		toplevelmenu->exec(QCursor::pos());
+	}
 	
 	return 0;
 }

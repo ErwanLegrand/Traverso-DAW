@@ -190,7 +190,7 @@ nframes_t ResampleAudioReader::read_private(DecodeBuffer* buffer, nframes_t fram
 	}
 	
 	nframes_t bufferUsed;
-	nframes_t framesRead;
+	nframes_t framesRead = 0;
 	
 	nframes_t fileCnt = resampled_to_file_frame(frameCount);
 	
