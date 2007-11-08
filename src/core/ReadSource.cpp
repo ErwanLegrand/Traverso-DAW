@@ -275,7 +275,7 @@ void ReadSource::set_output_rate(int rate, bool forceRate)
 	if (useResampling || forceRate) {
 		m_audioReader->set_output_rate(rate);
 	} else {
-		set_output_rate(m_audioReader->get_file_rate());
+		m_audioReader->set_output_rate(m_audioReader->get_file_rate());
 	}
 
 	m_outputRate = rate;
