@@ -23,10 +23,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdio.h>
 
 #include <fpu.h>
-
-#include "Debugger.h"
 
 FPU::FPU ()
 {
@@ -83,7 +82,7 @@ FPU::FPU ()
 		if (posix_memalign ((void**)&fxbuf, 16, 512)) 
 #endif			
 		{
-			PERROR("cannot allocate 16 byte aligned buffer for h/w feature detection");
+			printf("FPU() ERROR: cannot allocate 16 byte aligned buffer for h/w feature detection");
 		} else {
 			
 			asm volatile (
