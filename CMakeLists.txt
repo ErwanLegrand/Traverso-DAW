@@ -30,6 +30,8 @@ OPTION(WANT_PCH     	"Use precompiled headers" OFF)
 OPTION(WANT_DEBUG   	"Debug build" OFF)
 OPTION(WANT_OPENGL	"Build Traverso with OpenGL support" ON)
 OPTION(WANT_TRAVERSO_DEBUG "Provides 4 levels of debug ouput on the command line, always on for DEBUG builds" OFF)
+OPTION(WANT_THREAD_CHECK"Checks at runtime if functions are called from the correct thread, used by developers for debugging" OFF)
+OPTION(WANT_VECLIB_OPTIMIZATIONS "Build with veclib optimizations (Only for PPC based Mac OS X)" OFF)
 
 
 SET(MAIN_DIR_NAME "src")
@@ -54,6 +56,7 @@ IF(WANT_DEBUG)
   SET(WANT_TRAVERSO_DEBUG ON)
 ELSE(WANT_DEBUG)
   SET(CMAKE_BUILD_TYPE RELEASE)
+  ADD_DEFINITIONS(-DQT_NO_DEBUG)
 ENDIF(WANT_DEBUG)
 
 
@@ -82,26 +85,13 @@ SET(MINIMAL_FLAC_VERSION 1.1.2)
 SET(MINIMAL_FFTW_VERSION 3.0.0)
 
 
-IF(APPLE)
-  SET( ENV{MACOSX_DEPLOYMENT_TARGET} 10.3 ) 
-  SET( ENV{LD_PREBIND} 1 )
-  SET( ENV{LD_PREBIND_ALLOW_OVERLAP} 1 )
-  SET(CMAKE_CXX_FLAGS_DEBUG "-O2 -g3 -fno-inline-functions -Wall")
-  SET(CMAKE_C_FLAGS_DEBUG "-O2 -g3 -fno-inline-functions -Wall")
-  SET(BUILD_MAC_BUNDLE 1)
-# Uncomment if dest. target is (at least) tiger (works maybe on other targets as well ?)
-# DEFINES += BUILD_VECLIB_OPTIMIZATIONS
-# LIBS += -framework Accelerate
-ELSE(APPLE)
-  SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3 -Wall")
-  SET(CMAKE_C_FLAGS_DEBUG "-O0 -g3 -Wall")
-ENDIF(APPLE)
+SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3 -Wall")
+SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -Wall -fPIC")
 
-SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -Wall")
-SET(CMAKE_C_FLAGS_RELEASE "-O2 -Wall")
 
 INCLUDE (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
 TEST_BIG_ENDIAN(WORDS_BIGENDIAN)
+
 
 # Check for PKG-CONFIG
 FIND_PACKAGE(PkgConfig REQUIRED)
@@ -110,6 +100,7 @@ IF(PKG_CONFIG_FOUND)
 ELSE(PKG_CONFIG_FOUND)
     MESSAGE(FATAL_ERROR "Program pkg-config not found")
 ENDIF(PKG_CONFIG_FOUND)
+
 
 #FIND DEPENDENCIES
 SET (QT_MIN_VERSION "4.2.0")
@@ -131,46 +122,6 @@ ELSE(WANT_OPENGL)
 ENDIF(WANT_OPENGL)
 
 
-IF(WANT_ALSA)
-	CHECK_INCLUDE_FILE("alsa/asoundlib.h" HAVE_ASOUNDLIB_H)
-	IF(NOT HAVE_ASOUNDLIB_H)
-		MESSAGE(FATAL_ERROR "alsa support requested, but alsa development headers could not be found!\nPlease install the alsa development package (Usually called libasound-dev), remove CMakeCache.txt and run cmake again")
-	ENDIF(NOT HAVE_ASOUNDLIB_H)
-	
-	PKG_CHECK_MODULES(ALSA  alsa>=${MINIMAL_ALSA_VERSION})
-	IF (ALSA_FOUND)
-  		MESSAGE("-- ALSA Library Found OK")
-		ADD_DEFINITIONS(-DALSA_SUPPORT)
-	  	SET(HAVE_ALSA TRUE)
-	ENDIF(ALSA_FOUND)
-ELSE(WANT_ALSA)
-	MESSAGE("-- ALSA support: Disabled")
-  	SET(HAVE_ALSA FALSE)
-ENDIF(WANT_ALSA)
-
-
-IF(WANT_JACK)
-	CHECK_INCLUDE_FILE("jack/jack.h" HAVE_JACK_H)
-	IF(NOT HAVE_JACK_H)
-		MESSAGE(FATAL_ERROR "jack support requested, but jack development headers could not be found!\nPlease install the jack development package, remove CMakeCache.txt and run cmake again")
-	ENDIF(NOT HAVE_JACK_H)
-	
-	PKG_CHECK_MODULES(JACK jack>=${MINIMAL_JACK_VERSION})
-	IF(JACK_FOUND)
-		ADD_DEFINITIONS(-DJACK_SUPPORT)
-		MESSAGE("-- Jack Library Found OK")
-		SET(HAVE_JACK TRUE)
-		SET(JACK_LIBS ${JACK_LIBRARIES})
-		LIST(APPEND JACK_LIB_DIR ${JACK_LIBDIR} ${JACK_LIBRARY_DIRS})
-		LIST(APPEND JACK_INC_DIR ${JACK_INCLUDEDIR} ${JACK_INCLUDE_DIRS})
-	ELSE(JACK_FOUND)
-		MESSAGE(FATAL_ERROR "jack support requested, but jack libraries could not be found!\nPlease install the jack runtime libraries, remove CMakeCache.txt and run cmake again")
-	ENDIF(JACK_FOUND)
-ELSE(WANT_JACK)
-	MESSAGE("-- Jack support: Disabled")
-	SET(HAVE_JACK FALSE)
-ENDIF(WANT_JACK)
-
 
 IF(WANT_PORTAUDIO)
 	CHECK_INCLUDE_FILE("portaudio.h" HAVE_PORTAUDIO_H)
@@ -186,6 +137,7 @@ IF(WANT_PORTAUDIO)
 ELSE(WANT_PORTAUDIO)
 		SET(HAVE_PORTAUDIO FALSE)
 ENDIF(WANT_PORTAUDIO)
+
 
 IF(WANT_LV2)
 	IF(USE_SYSTEM_SLV2_LIBRARY)
@@ -331,20 +283,6 @@ ${QT_QT_LIBRARY}
 )
 
 
-IF(WIN32)
-  LINK_LIBRARIES(
-    ${QT_QTMAIN_LIBRARY}
-  )
-  ADD_DEFINITIONS(-DQT_DLL)
-ENDIF(WIN32)
-
-
-IF(APPLE)
-  LINK_LIBRARIES( "-undefined dynamic_lookup" ) 
-  LINK_LIBRARIES( "-framework CoreFoundation" ) 
-ENDIF(APPLE)
-
-
 CHECK_FUNCTION_EXISTS(posix_memalign HAVE_POSIX_MEMALIGN)
 IF(NOT HAVE_POSIX_MEMALIGN)
 	ADD_DEFINITIONS(-DNO_POSIX_MEMALIGN)
@@ -352,21 +290,126 @@ IF(NOT HAVE_POSIX_MEMALIGN)
 ENDIF(NOT HAVE_POSIX_MEMALIGN)
 
 
-execute_process(
-	COMMAND uname -m
-	OUTPUT_VARIABLE uname_invoke_result
-	RESULT_VARIABLE uname_failed
-)
+CHECK_FUNCTION_EXISTS(mlock HAVE_MLOCK)
+IF(HAVE_MLOCK)
+	ADD_DEFINITIONS(-DUSE_MLOCK)
+ENDIF(HAVE_MLOCK)
 
-execute_process(
-	COMMAND cat /proc/cpuinfo
-	COMMAND grep ^flags
-	OUTPUT_VARIABLE cat_invoke_result
-	RESULT_VARIABLE cat_failed
-)
+
+# Enable large file support
+# TODO
+# QMAKE_CXXFLAGS += $$system(getconf LFS_CFLAGS)
+
 
 IF(UNIX)
+	
+	# Check GCC for PCH support
+	SET(USE_PCH FALSE)
+	IF(WANT_PCH)
+	FIND_PACKAGE(PCHSupport)
+	IF(PCHSupport_FOUND)
+		SET(USE_PCH TRUE)
+		SET(CMAKE_CXX_FLAGS_DEBUG  "${CMAKE_CXX_FLAGS_DEBUG} -include ${CMAKE_SOURCE_DIR}/src/precompile.h -Winvalid-pch")
+		SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -include ${CMAKE_SOURCE_DIR}/src/precompile.h -Winvalid-pch")
+		MESSAGE(STATUS "Enabling precompiled headers for GCC ${gcc_compiler_version}") 
+	ENDIF(PCHSupport_FOUND)
+	ELSE(WANT_PCH)
+	#QT_DEFENITIONS are added by pch, so when no pch support add them now!
+		ADD_DEFINITIONS(${QT_DEFINITIONS})
+	ENDIF(WANT_PCH)
+
+	
+#BEGIN Mac OS X section
+	IF(APPLE)
+# @ MAC OS X builders, I've NO IDEA what this should be, please have a look at it
+# It should be possible to create a working bundle with CPack using stuff
+# defined here ....???
+		SET( ENV{MACOSX_DEPLOYMENT_TARGET} 10.3 ) 
+		SET( ENV{LD_PREBIND} 1 )
+		SET( ENV{LD_PREBIND_ALLOW_OVERLAP} 1 )
+
+#		Bundle setup
+		SET(BUILD_MAC_BUNDLE 1)
+		set(MACOSX_BUNDLE_ICON_FILE ${PROJECT_SOURCE_DIR}/resources/images/traverso_mac.icns)
+		
+		
+		IF(WANT_VECLIB_OPTIMIZATIONS)
+			ADD_DEFINITIONS(-DBUILD_VECLIB_OPTIMIZATIONS)
+			LINK_LIBRARIES( "-framework Accelerate" ) 
+		ENDIF(WANT_VECLIB_OPTIMIZATIONS)
+		
+# This was copy pasted from another project, please remove if it's not needed!!
+		LINK_LIBRARIES( "-undefined dynamic_lookup" ) 
+		LINK_LIBRARIES( "-framework CoreFoundation" ) 
+	ENDIF(APPLE)
+# END Mac OS X section
+
+
+#BEGIN LINUX section
+	IF(WANT_ALSA)
+		CHECK_INCLUDE_FILE("alsa/asoundlib.h" HAVE_ASOUNDLIB_H)
+		IF(NOT HAVE_ASOUNDLIB_H)
+			MESSAGE(FATAL_ERROR "alsa support requested, but alsa development headers could not be found!\nPlease install the alsa development package (Usually called libasound-dev), remove CMakeCache.txt and run cmake again")
+		ENDIF(NOT HAVE_ASOUNDLIB_H)
+		
+		PKG_CHECK_MODULES(ALSA  alsa>=${MINIMAL_ALSA_VERSION})
+		IF (ALSA_FOUND)
+			MESSAGE("-- ALSA Library Found OK")
+			ADD_DEFINITIONS(-DALSA_SUPPORT)
+			SET(HAVE_ALSA TRUE)
+		ENDIF(ALSA_FOUND)
+	ELSE(WANT_ALSA)
+		MESSAGE("-- ALSA support: Disabled")
+		SET(HAVE_ALSA FALSE)
+	ENDIF(WANT_ALSA)
+
+
+	find_program(RELAYTOOL_EXECUTABLE NAMES relaytool)
+	IF(RELAYTOOL_EXECUTABLE)
+		ADD_DEFINITIONS(-DRELAYTOOL_PRESENT)
+	ENDIF(RELAYTOOL_EXECUTABLE)
+
+# END LINUX section
+
+
+	IF(WANT_JACK)
+		CHECK_INCLUDE_FILE("jack/jack.h" HAVE_JACK_H)
+		IF(NOT HAVE_JACK_H)
+			MESSAGE(FATAL_ERROR "jack support requested, but jack development headers could not be found!\nPlease install the jack development package, remove CMakeCache.txt and run cmake again")
+		ENDIF(NOT HAVE_JACK_H)
+		
+		PKG_CHECK_MODULES(JACK jack>=${MINIMAL_JACK_VERSION})
+		IF(JACK_FOUND)
+			ADD_DEFINITIONS(-DJACK_SUPPORT)
+			MESSAGE("-- Jack Library Found OK")
+			SET(HAVE_JACK TRUE)
+			SET(JACK_LIBS ${JACK_LIBRARIES})
+			LIST(APPEND JACK_LIB_DIR ${JACK_LIBDIR} ${JACK_LIBRARY_DIRS})
+			LIST(APPEND JACK_INC_DIR ${JACK_INCLUDEDIR} ${JACK_INCLUDE_DIRS})
+		ELSE(JACK_FOUND)
+			MESSAGE(FATAL_ERROR "jack support requested, but jack libraries could not be found!\nPlease install the jack runtime libraries, remove CMakeCache.txt and run cmake again")
+		ENDIF(JACK_FOUND)
+	ELSE(WANT_JACK)
+		MESSAGE("-- Jack support: Disabled")
+		SET(HAVE_JACK FALSE)
+	ENDIF(WANT_JACK)
+
+	
 	IF(NOT WANT_DEBUG)
+#		Detect the architecture we are compiling on
+		execute_process(
+			COMMAND uname -m
+			OUTPUT_VARIABLE uname_invoke_result
+			RESULT_VARIABLE uname_failed
+		)
+# 		Get the cpu flags to add the most optimal optimization flags to the compiler
+		execute_process(
+			COMMAND cat /proc/cpuinfo
+			COMMAND grep ^flags
+			OUTPUT_VARIABLE cat_invoke_result
+			RESULT_VARIABLE cat_failed
+		)
+		
 		SET(HOST_SUPPORTS_SSE FALSE)
 		
 		IF(cat_invoke_result MATCHES sse)
@@ -407,22 +450,25 @@ IF(UNIX)
 			SET(IS_ARCH_X86 TRUE)
 		ENDIF(uname_invoke_result MATCHES i[456]86)
 	ENDIF(NOT WANT_DEBUG)
+
+
+ELSE(UNIX)
+	
+# Windows section
+	IF(WIN32)
+		LINK_LIBRARIES(
+		${QT_QTMAIN_LIBRARY}
+		)
+		ADD_DEFINITIONS(-DQT_DLL)
+	ENDIF(WIN32)
+
+
 ENDIF(UNIX)
 
-# Check GCC for PCH support
-SET(USE_PCH FALSE)
-IF(WANT_PCH)
-    FIND_PACKAGE(PCHSupport)
-    IF(PCHSupport_FOUND)
-        SET(USE_PCH TRUE)
-        SET(CMAKE_CXX_FLAGS_DEBUG  "${CMAKE_CXX_FLAGS_DEBUG} -include ${CMAKE_SOURCE_DIR}/src/precompile.h -Winvalid-pch")
-        SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -include ${CMAKE_SOURCE_DIR}/src/precompile.h -Winvalid-pch")
-        MESSAGE(STATUS "Enabling precompiled headers for GCC ${gcc_compiler_version}") 
-    ENDIF(PCHSupport_FOUND)
-ELSE(WANT_PCH)
-#QT_DEFENITIONS are added by pch, so when no pch support add them now!
-	ADD_DEFINITIONS(${QT_DEFINITIONS})
-ENDIF(WANT_PCH)
+
+IF(WANT_THREAD_CHECK)
+	ADD_DEFINITIONS(-DTHREAD_CHECK)
+ENDIF(WANT_THREAD_CHECK)
 
 
 
@@ -497,6 +543,7 @@ QT_X11_X11_LIBRARY
 QT_X11_m_LIBRARY
 QT_X11_Xext_LIBRARY
 LIBRARY_OUTPUT_PATH
+WANT_THREAD_CHECK
 )
 
 

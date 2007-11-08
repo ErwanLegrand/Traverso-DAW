@@ -125,9 +125,87 @@ ADD_EXECUTABLE(traverso
     ${TRAVERSO_RESOURCES}
 )
 
-SET_TARGET_PROPERTIES(traverso
-    PROPERTIES
-    CMAKE_CXX_FLAGS_RELEASE "-fPIC")
+
+SET(JACK_LIB jack)
+SET(FLAC_LIB FLAC)
+SET(MAD_LIB mad)
+SET(LAME_LIB mp3lame)
+SET(OGG_LIB ogg)
+SET(VORBIS_LIB vorbis)
+SET(VORBIS_FILE_LIB vorbisfile)
+SET(VORBIS_ENC_LIB vorbisenc)
+SET(WAVPACK_LIB wavpack)
+
+IF(LINUX)
+find_program(RELAYTOOL_EXECUTABLE NAMES relaytool)
+IF(RELAYTOOL_EXECUTABLE)
+	
+	execute_process(
+		COMMAND relaytool --multilink libjack.so.0 libjack-0.100.0.so.0 --relay jack -ljack
+		OUTPUT_VARIABLE relaytool_invoke_result
+		RESULT_VARIABLE relaytool_failed
+	)
+	SET(JACK_LIB relaytool_invoke_result)
+
+	execute_process(
+		COMMAND relaytool --relay FLAC -lFLAC
+		OUTPUT_VARIABLE relaytool_invoke_result
+		RESULT_VARIABLE relaytool_failed
+	)
+	SET(FLAC_LIB relaytool_invoke_result)
+
+	execute_process(
+		COMMAND relaytool --relay mad -lmad
+		OUTPUT_VARIABLE relaytool_invoke_result
+		RESULT_VARIABLE relaytool_failed
+	)
+	SET(MAD_LIB relaytool_invoke_result)
+
+	execute_process(
+		COMMAND relaytool --relay mp3lame -lmp3lame
+		OUTPUT_VARIABLE relaytool_invoke_result
+		RESULT_VARIABLE relaytool_failed
+	)
+	SET(LAME_LIB relaytool_invoke_result)
+
+	execute_process(
+		COMMAND relaytool --relay ogg -logg
+		OUTPUT_VARIABLE relaytool_invoke_result
+		RESULT_VARIABLE relaytool_failed
+	)
+	SET(OGG_LIB relaytool_invoke_result)
+
+	execute_process(
+		COMMAND relaytool --relay vorbis -lvorbis
+		OUTPUT_VARIABLE relaytool_invoke_result
+		RESULT_VARIABLE relaytool_failed
+	)
+	SET(VORBIS_LIB relaytool_invoke_result)
+
+	execute_process(
+		COMMAND relaytool --relay vorbisfile -lvorbisfile
+		OUTPUT_VARIABLE relaytool_invoke_result
+		RESULT_VARIABLE relaytool_failed
+	)
+	SET(VORBIS_FILE_LIB relaytool_invoke_result)
+
+	execute_process(
+		COMMAND relaytool --relay vorbisenc -lvorbisenc
+		OUTPUT_VARIABLE relaytool_invoke_result
+		RESULT_VARIABLE relaytool_failed
+	)
+	SET(VORBIS_ENC_LIB relaytool_invoke_result)
+
+	execute_process(
+		COMMAND relaytool --relay wavpack -lwavpack
+		OUTPUT_VARIABLE relaytool_invoke_result
+		RESULT_VARIABLE relaytool_failed
+	)
+	SET(WAVPACK_LIB relaytool_invoke_result)
+
+ENDIF(RELAYTOOL_EXECUTABLE)
+ENDIF(LINUX)
+
 
 TARGET_LINK_LIBRARIES(traverso
 	${QT_LIBRARIES}
@@ -141,12 +219,12 @@ TARGET_LINK_LIBRARIES(traverso
 	traversocommands
 	samplerate
 	sndfile
-	wavpack
-	ogg
-	vorbis
-	vorbisfile
-	vorbisenc
-	FLAC
+	${WAVPACK_LIB}
+	${OGG_LIB}
+	${VORBIS_LIB}
+	${VORBIS_FILE_LIB}
+	${VORBIS_ENC_LIB}
+	${FLAC_LIB}
 	fftw3
 )
 
@@ -173,20 +251,20 @@ ENDIF(HAVE_SLV2)
 
 IF(HAVE_MP3_DECODING)
 	TARGET_LINK_LIBRARIES(traverso
-		mad
+		${MAD_LIB}
 	)
 ENDIF(HAVE_MP3_DECODING)
 
 IF(HAVE_MP3_ENCODING)
 	TARGET_LINK_LIBRARIES(traverso
-		mp3lame
+		${LAME_LIB}
 	)
 ENDIF(HAVE_MP3_ENCODING)
 
 
 IF(HAVE_OPENGL)
 	TARGET_LINK_LIBRARIES(traverso
-	${QT_QTOPENGL_LIBRARY}
+		${QT_QTOPENGL_LIBRARY}
 	)
 ENDIF(HAVE_OPENGL)
 
@@ -198,7 +276,7 @@ ENDIF(HAVE_ALSA)
 
 IF(HAVE_ALSA)
 TARGET_LINK_LIBRARIES(traverso
-	jack
+	${JACK_LIB}
 )
 ENDIF(HAVE_ALSA)
 
