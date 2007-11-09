@@ -42,7 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #define NORMALIZE_CHUNK_SIZE	10000
 #define PEAKFILE_MAJOR_VERSION	1
-#define PEAKFILE_MINOR_VERSION	2
+#define PEAKFILE_MINOR_VERSION	3
 
 int Peak::zoomStep[] = {
 	// non-cached zoomlevels.
@@ -562,7 +562,7 @@ void Peak::process(uint channel, audio_sample_t* buffer, nframes_t nframes)
 			peak_data_t peakbuffer[2];
 
 			peakbuffer[0] = (peak_data_t) (pd->peakUpperValue * MAX_DB_VALUE );
-			peakbuffer[1] = (peak_data_t) ((-1) * (pd->peakLowerValue * MAX_DB_VALUE ));
+			peakbuffer[1] = (peak_data_t) (-1 * (pd->peakLowerValue * MAX_DB_VALUE ));
 			
 			int written = data->file.write((char*)peakbuffer, sizeof(peak_data_t) * 2) / sizeof(peak_data_t);
 			
@@ -570,8 +570,8 @@ void Peak::process(uint channel, audio_sample_t* buffer, nframes_t nframes)
 				PWARN("couldnt write peak data, only (%d)", written);
 			}
 
-			pd->peakUpperValue = -1.0;
-			pd->peakLowerValue = 1.0;
+			pd->peakUpperValue = -10.0;
+			pd->peakLowerValue = 10.0;
 			
 			pd->processBufferSize+=2;
 			pd->nextDataPointLocation += pd->processRange;
