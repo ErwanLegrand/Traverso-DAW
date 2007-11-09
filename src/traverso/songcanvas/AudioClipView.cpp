@@ -459,7 +459,6 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				p->setPen(themer()->get_color("AudioClip:wavemacroview:outline:muted"));
 			}
 				
-			
 			scaleFactor = ( (float) height * 0.90 / (Peak::MAX_DB_VALUE * 2)) * m_clip->get_gain() * curveDefaultValue;
 			
 			if (m_mergedView) {
@@ -501,6 +500,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			
 				p->setMatrix(matrix().translate(xstart + adjustforevenpixel, ytrans), true);
 				
+				p->drawLine(0, 0, pixelcount, 0);
 				p->drawPath(pathtop);
 			
 			} else {
