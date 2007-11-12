@@ -42,7 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #define NORMALIZE_CHUNK_SIZE	10000
 #define PEAKFILE_MAJOR_VERSION	1
-#define PEAKFILE_MINOR_VERSION	3
+#define PEAKFILE_MINOR_VERSION	4
 
 int Peak::zoomStep[] = {
 	// non-cached zoomlevels.

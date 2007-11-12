@@ -98,9 +98,9 @@ public:
 	static const int ZOOM_LEVELS = 20;
 	static const int SAVING_ZOOM_FACTOR = 6;
 	static const int MAX_ZOOM_USING_SOURCEFILE = SAVING_ZOOM_FACTOR - 1;
-	// Use ~ 1/2 the range of peak_data_t (== short) so we have headroom
-	// for samples that lay beyond the range [-1, 1]
-	static const int MAX_DB_VALUE = 16000;
+	// Use ~ 1/4 the range of peak_data_t (== short) so we have headroom
+	// for samples in the range [-4, +4] or + 12 dB
+	static const int MAX_DB_VALUE = 8000;
 	static int zoomStep[ZOOM_LEVELS + 1];
 
 	Peak(AudioSource* source);
