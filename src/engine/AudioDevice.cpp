@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.46 2007/10/25 15:43:19 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.47 2007/11/12 18:52:14 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -264,11 +264,16 @@ int AudioDevice::run_one_cycle( nframes_t nframes, float  )
 		return -1;
 	}
 
-	for (int i=0; i<clients.size(); ++i) {
-		if (clients.at(i)->process(nframes) < 0) {
+	AudioProcessingItem* item = m_clients.begin();
+	while(item) {
+		((Client*)item)->process(nframes);
+		item = m_clients.get_next(item);
+	}
+/*	for (int i=0; i<m_clients.size(); ++i) {
+		if (m_clients.at(i)->process(nframes) < 0) {
 			// ?
 		}
-	}
+	}*/
 	
 	if (driver->write(nframes) < 0) {
 		qDebug("driver write failed!");
@@ -669,19 +674,14 @@ void AudioDevice::post_process( )
 
 void AudioDevice::private_add_client(Client* client)
 {
-// 	printf("Adding client %s\n", client->m_name.toAscii().data());
-	clients.append(client);
+	m_clients.prepend(client);
 }
 
 void AudioDevice::private_remove_client(Client* client)
 {
-	int index = clients.indexOf(client);
-
-	if (index >= 0) {
-		clients.removeAt( index );
+	if (!m_clients.remove(client)) {
+		printf("AudioDevice:: Client was not in clients list, failed to remove it!\n");
 	}
-
-// 	printf("Removing client %s\n", client->m_name.toAscii().data());
 }
 
 /**
@@ -768,9 +768,16 @@ int AudioDevice::transport_control(transport_state_t state)
 #endif	
 
 	int result = 0;
-	for (int i=0; i<clients.size(); ++i) {
-		result = clients.at(i)->transport_control(state);
+/*	for (int i=0; i<m_clients.size(); ++i) {
+		result = m_clients.at(i)->transport_control(state);
+	}*/
+	
+	AudioProcessingItem* item = m_clients.begin();
+	while(item) {
+		result = ((Client*)item)->transport_control(state);
+		item = m_clients.get_next(item);
 	}
+	
 	return result;
 }
 

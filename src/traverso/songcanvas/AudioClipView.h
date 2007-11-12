@@ -105,6 +105,7 @@ private:
 	QColor m_backgroundColorBottom;
 	QColor m_backgroundColorMouseHoverTop;
 	QColor m_backgroundColorMouseHoverBottom;
+	QColor minINFLineColor;
 	QBrush m_waveBrush;
 	QBrush m_brushBgRecording;
 	QBrush m_brushBgMuted;

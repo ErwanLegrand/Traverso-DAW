@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QDomNode>
 
 #include "ContextItem.h"
+#include "AudioProcessingItem.h"
 #include "SnapList.h"
 #include "Snappable.h"
 #include "defines.h"
@@ -42,7 +43,7 @@ class AudioBus;
 class FadeCurve;
 class PluginChain;
 
-class AudioClip : public ContextItem, public Snappable
+class AudioClip : public ContextItem, public AudioProcessingItem, public Snappable
 {
 	Q_OBJECT
 	Q_CLASSINFO("mute", tr("Mute"))
@@ -105,7 +106,6 @@ public:
 	QString get_name() const;
 	QDomNode get_dom_node() const;
 	
-	bool is_muted() const;
 	bool is_take() const;
 	bool is_selected() const;
 	bool is_locked() const {return m_isLocked;}
@@ -132,8 +132,6 @@ private:
 	AudioBus*		m_captureBus;
 	FadeCurve*		fadeIn;
 	FadeCurve*		fadeOut;
-	GainEnvelope*		m_fader;
-	PluginChain*		m_pluginChain;
 	QDomNode		m_domNode;
 	
 	QString 		m_name;
@@ -148,7 +146,6 @@ private:
 
 	int 			m_isSelected;
 	bool 			m_isTake;
-	bool 			m_isMuted;
 	bool			m_isLocked;
 	bool			m_isReadSourceValid;
 	RecordingStatus		m_recordingStatus;

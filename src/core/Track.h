@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ContextItem.h"
 #include "AudioClipList.h"
 #include "GainEnvelope.h"
+#include "AudioProcessingItem.h"
 
 #include "defines.h"
 
@@ -39,7 +40,7 @@ class Song;
 class PluginChain;
 class Plugin;
 
-class Track : public ContextItem
+class Track : public ContextItem, public AudioProcessingItem
 {
 	Q_OBJECT
 	Q_CLASSINFO("mute", tr("Mute"))
@@ -98,7 +99,6 @@ public :
 
 
 	//Bool functions:
-	bool is_muted();
 	bool is_muted_by_solo();
 	bool is_solo();
 	bool armed();
@@ -118,9 +118,7 @@ public :
 private :
 	Song*		m_song;
 	AudioClipList 	audioClipList;
-	PluginChain*	m_pluginChain;
 
-	GainEnvelope* m_fader;
 	float 	m_pan;
 	int numtakes;
 	QByteArray busIn;
@@ -132,7 +130,6 @@ private :
 	int m_height;
 
 	bool isSolo;
-	bool isMuted;
 	bool isArmed;
 	bool mutedBySolo;
 	bool m_captureLeftChannel;
@@ -176,6 +173,16 @@ private slots:
 inline float Track::get_gain( ) const
 {
 	return m_fader->get_gain();
+}
+
+inline void Track::private_add_clip(AudioClip* clip)
+{
+	audioClipList.add_clip(clip);
+}
+
+inline void Track::private_remove_clip(AudioClip* clip)
+{
+	audioClipList.remove_clip(clip);
 }
 
 #endif

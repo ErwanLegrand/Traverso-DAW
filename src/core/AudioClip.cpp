@@ -785,11 +785,6 @@ bool AudioClip::is_take( ) const
 	return m_isTake;
 }
 
-bool AudioClip::is_muted( ) const
-{
-	return m_isMuted;
-}
-
 QString AudioClip::get_name( ) const
 {
 	return m_name;

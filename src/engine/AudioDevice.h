@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.25 2007/10/20 17:43:55 r_sijrier Exp $
+$Id: AudioDevice.h,v 1.26 2007/11/12 18:52:14 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -25,6 +25,7 @@ $Id: AudioDevice.h,v 1.25 2007/10/20 17:43:55 r_sijrier Exp $
 
 #include <QObject>
 #include <QList>
+#include <QVector>
 #include <QHash>
 #include <QStringList>
 #include <QByteArray>
@@ -33,6 +34,7 @@ $Id: AudioDevice.h,v 1.25 2007/10/20 17:43:55 r_sijrier Exp $
 
 
 #include "RingBufferNPT.h"
+#include "APILinkedList.h"
 #include "defines.h"
 
 class AudioDeviceThread;
@@ -143,7 +145,7 @@ private:
 
 	Driver* 				driver;
 	AudioDeviceThread* 			audioThread;
-	QList<Client *> 			clients;
+	APILinkedList				m_clients;
 	QHash<QByteArray, AudioChannel* >	playbackChannels;
 	QHash<QByteArray, AudioChannel* >	captureChannels;
 	QHash<QByteArray, AudioBus* >		playbackBuses;

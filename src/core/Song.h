@@ -23,8 +23,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define SONG_H
 
 #include "ContextItem.h"
+#include "AudioProcessingItem.h"
 #include <QDomNode>
 #include "defines.h"
+#include "APILinkedList.h"
 #include "GainEnvelope.h"
 
 class Project;
@@ -46,7 +48,7 @@ class DecodeBuffer;
 
 struct ExportSpecification;
 
-class Song : public ContextItem
+class Song : public ContextItem, public AudioProcessingItem
 {
 	Q_OBJECT
 	Q_CLASSINFO("start_transport", tr("Play"))
@@ -79,7 +81,7 @@ public:
 	int get_rate();
 	int get_bitdepth();
 	int get_numtracks() const {return m_tracks.size();}
-	int get_track_index(qint64 id) const;
+	int get_track_index(qint64 id);
 	int get_mode() const {return m_mode;}
 	int is_transport_rolling() const {return m_transport;}
 	void get_scrollbar_xy(int& x, int& y) {x = m_sbx; y = m_sby;}
@@ -94,7 +96,7 @@ public:
 	QString get_title() const {return title;}
 	QString get_artists() const {return artists;}
 	QDomNode get_state(QDomDocument doc, bool istemplate=false);
-	QList<Track* > get_tracks() const;
+	QList<Track* > get_tracks();
 	
 	DiskIO*	get_diskio() const;
 	AudioClipManager* get_audioclip_manager() const;
@@ -152,7 +154,7 @@ public:
 #endif
 
 private:
-	QList<Track* >		m_tracks;
+	APILinkedList		m_tracks;
 	Project*		m_project;
 	WriteSource*		m_exportSource;
 	AudioBus*		m_playBackBus;
@@ -161,7 +163,6 @@ private:
 	AudioBus*		m_renderBus;
 	DiskIO*			m_diskio;
 	AudioClipManager*	m_acmanager;
-	PluginChain*		m_pluginChain;
 	TimeLine*		m_timeline;
 
 	// The following data could be read/written by multiple threads
@@ -200,7 +201,6 @@ private:
 	bool		m_readyToRecord;
 	SnapList*	snaplist;
 	Snappable*	workSnap;
-	GainEnvelope*	m_fader;
 	
 	void init();
 

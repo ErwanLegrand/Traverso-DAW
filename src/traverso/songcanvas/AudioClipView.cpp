@@ -337,7 +337,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		if (!m_classicView) {
 			for (int chan=0; chan < channels; chan++) {
 				for (int i=0, j=0; i < (pixelcount*2); i+=2, ++j) {
-					pixeldata[chan][j] = - f_max(pixeldata[chan][i], - pixeldata[chan][i+1]);
+					pixeldata[chan][j] = - fabs(f_max(pixeldata[chan][i], - pixeldata[chan][i+1]));
 				}
 			}
 		}
@@ -500,8 +500,10 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			
 				p->setMatrix(matrix().translate(xstart + adjustforevenpixel, ytrans), true);
 				
-				p->drawLine(0, 0, pixelcount, 0);
 				p->drawPath(pathtop);
+				// Draw 'the' -INF line
+				p->setPen(minINFLineColor);
+				p->drawLine(0, 0, pixelcount, 0);
 			
 			} else {
 				QPainterPath path;
@@ -849,6 +851,7 @@ void AudioClipView::load_theme_data()
 	m_classicView = ! config().get_property("Themer", "paintaudiorectified", false).toBool();
 	m_mergedView = config().get_property("Themer", "paintstereoaudioasmono", false).toBool();
 	m_fillwave = themer()->get_property("AudioClip:fillwave", 1).toInt();
+	minINFLineColor = themer()->get_color("AudioClip:wavemicroview").dark(115);
 	calculate_bounding_rect();
 }
 

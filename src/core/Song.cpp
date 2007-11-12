@@ -255,8 +255,11 @@ QDomNode Song::get_state(QDomDocument doc, bool istemplate)
 	
 	QDomNode tracksNode = doc.createElement("Tracks");
 
-	foreach(Track* track, m_tracks) {
+	AudioProcessingItem* item = m_tracks.begin();
+	while(item) {
+		Track* track = (Track*)item;
 		tracksNode.appendChild(track->get_state(doc, istemplate));
+		item = m_tracks.get_next(item);
 	}
 
 	songNode.appendChild(tracksNode);
@@ -302,11 +305,14 @@ void Song::audiodevice_client_removed(Client* client )
 
 Command* Song::add_track(Track* track, bool historable)
 {
-	foreach(Track* existingTrack, m_tracks) {
-		if (existingTrack->is_solo()) {
+	AudioProcessingItem* item = m_tracks.begin();
+	while(item) {
+		Track* track = (Track*)item;
+		if (track->is_solo()) {
 			track->set_muted_by_solo( true );
 			break;
 		}
+		item = m_tracks.get_next(item);
 	}
 
 	return new AddRemove(this, track, historable, this,
@@ -326,10 +332,12 @@ Command* Song::remove_track(Track* track, bool historable)
 
 bool Song::any_track_armed()
 {
-	foreach(Track* track, m_tracks) {
-		if (track->armed()) {
+	AudioProcessingItem* item = m_tracks.begin();
+	while(item) {
+		if (((Track*)item)->armed()) {
 			return true;
 		}
+		item = m_tracks.get_next(item);
 	}
 	return false;
 }
@@ -368,7 +376,9 @@ int Song::prepare_export(ExportSpecification* spec)
 
 	TimeRef endlocation, startlocation;
 
-	foreach (Track* track, m_tracks) {
+	AudioProcessingItem* item = m_tracks.begin();
+	while(item) {
+		Track* track = (Track*)item;
 		track->get_render_range(startlocation, endlocation);
 
 		if (track->is_solo()) {
@@ -384,7 +394,8 @@ int Song::prepare_export(ExportSpecification* spec)
 		if (startlocation < spec->startLocation) {
 			spec->startLocation = startlocation;
 		}
-
+		
+		item = m_tracks.get_next(item);
 	}
 	
 	if (spec->isCdExport) {
@@ -639,14 +650,20 @@ void Song::solo_track(Track* t)
 	t->set_solo(!wasSolo);
 
 	bool hasSolo = false;
-	foreach(Track* track, m_tracks) {
+	AudioProcessingItem* item = m_tracks.begin();
+	while(item) {
+		Track* track = (Track*)item;
 		track->set_muted_by_solo(!track->is_solo());
 		if (track->is_solo()) hasSolo = true;
+		item = m_tracks.get_next(item);
 	}
 
 	if (!hasSolo) {
-		foreach(Track* track, m_tracks) {
+		AudioProcessingItem* item = m_tracks.begin();
+		while(item) {
+			Track* track = (Track*)item;
 			track->set_muted_by_solo(false);
+			item = m_tracks.get_next(item);
 		}
 	}
 }
@@ -654,13 +671,19 @@ void Song::solo_track(Track* t)
 Command* Song::toggle_solo()
 {
 	bool hasSolo = false;
-	foreach(Track* track, m_tracks) {
+	AudioProcessingItem* item = m_tracks.begin();
+	while(item) {
+		Track* track = (Track*)item;
 		if (track->is_solo()) hasSolo = true;
+		item = m_tracks.get_next(item);
 	}
 
-	foreach(Track* track, m_tracks) {
+	item = m_tracks.begin();
+	while(item) {
+		Track* track = (Track*)item;
 		track->set_solo(!hasSolo);
 		track->set_muted_by_solo(false);
+		item = m_tracks.get_next(item);
 	}
 
 	return (Command*) 0;
@@ -669,12 +692,18 @@ Command* Song::toggle_solo()
 Command *Song::toggle_mute()
 {
 	bool hasMute = false;
-	foreach(Track* track, m_tracks) {
+	AudioProcessingItem* item = m_tracks.begin();
+	while(item) {
+		Track* track = (Track*)item;
 		if (track->is_muted()) hasMute = true;
+		item = m_tracks.get_next(item);
 	}
 
-	foreach(Track* track, m_tracks) {
+	item = m_tracks.begin();
+	while(item) {
+		Track* track = (Track*)item;
 		track->set_muted(!hasMute);
+		item = m_tracks.get_next(item);
 	}
 
 	return (Command*) 0;
@@ -683,16 +712,22 @@ Command *Song::toggle_mute()
 Command *Song::toggle_arm()
 {
 	bool hasArmed = false;
-	foreach(Track* track, m_tracks) {
+	AudioProcessingItem* item = m_tracks.begin();
+	while(item) {
+		Track* track = (Track*)item;
 		if (track->armed()) hasArmed = true;
+		item = m_tracks.get_next(item);
 	}
 
-	foreach(Track* track, m_tracks) {
+	item = m_tracks.begin();
+	while(item) {
+		Track* track = (Track*)item;
 		if (hasArmed) {
 			track->disarm();
 		} else {
 			track->arm();
 		}
+		item = m_tracks.get_next(item);
 	}
 
 	return (Command*) 0;
@@ -772,8 +807,11 @@ int Song::process( nframes_t nframes )
 	int processResult = 0;
 
 	// Process all Tracks.
-	for (int i=0; i<m_tracks.size(); ++i) {
-		processResult |= m_tracks.at(i)->process(nframes);
+	AudioProcessingItem* item = m_tracks.begin();
+	while(item) {
+		Track* track = (Track*)item;
+		processResult |= track->process(nframes);
+		item = m_tracks.get_next(item);
 	}
 
 	// update the m_transportFrame
@@ -803,8 +841,10 @@ int Song::process_export( nframes_t nframes )
 	memset (mixdown, 0, sizeof (audio_sample_t) * nframes);
 
 	// Process all Tracks.
-	for (int i=0; i<m_tracks.size(); ++i) {
-		m_tracks.at(i)->process(nframes);
+	AudioProcessingItem* item = m_tracks.begin();
+	while(item) {
+		Track* track = (Track*)item;
+		track->process(nframes);
 	}
 
 	Mixer::apply_gain_to_buffer(m_masterOut->get_buffer(0, nframes), nframes, get_gain());
@@ -942,11 +982,14 @@ void Song::resize_buffer(bool updateArmStatus, nframes_t size)
 	m_renderBus->set_buffer_size(size);
 	
 	if (updateArmStatus) {
-		foreach(Track* track, m_tracks) {
+		AudioProcessingItem* item = m_tracks.begin();
+		while(item) {
+			Track* track = (Track*)item;
 			AudioBus* bus = audiodevice().get_capture_bus(track->get_bus_in().toAscii());
 			if (bus && track->armed()) {
 				bus->set_monitor_peaks(true);
 			}
+			item = m_tracks.get_next(item);
 		}
 	}
 }
@@ -987,9 +1030,17 @@ nframes_t Song::get_first_visible_frame( ) const
 	return firstVisibleFrame;
 }
 
-QList<Track* > Song::get_tracks( ) const
+QList<Track* > Song::get_tracks( )
 {
-	return m_tracks;
+	QList<Track*> list;
+	AudioProcessingItem* item = m_tracks.begin();
+	while(item) {
+		Track* track = (Track*)item;
+		list.append(track);
+		item = m_tracks.get_next(item);
+	}
+
+	return list;
 }
 
 DiskIO * Song::get_diskio( ) const
@@ -1007,12 +1058,17 @@ PluginChain* Song::get_plugin_chain() const
 	return m_pluginChain;
 }
 
-int Song::get_track_index(qint64 id) const
+int Song::get_track_index(qint64 id)
 {
-	for (int i=0; i<m_tracks.size(); ++i) {
-		if (m_tracks.at(i)->get_id() == id) {
+	AudioProcessingItem* item = m_tracks.begin();
+	int i=0;
+	while(item) {
+		Track* track = (Track*)item;
+		if (track->get_id() == id) {
 			return i + 1;
 		}
+		++i;
+		item = m_tracks.get_next(item);
 	}
 	return 0;
 }
@@ -1052,15 +1108,18 @@ void Song::private_add_track(Track* track)
 
 void Song::private_remove_track(Track* track)
 {
-	m_tracks.removeAll(track);
+	m_tracks.remove(track);
 }
 
 Track* Song::get_track(qint64 id)
 {
-	for (int i=0; i<m_tracks.size(); ++i) {
-		if (m_tracks.at(i)->get_id() == id) {
-			return m_tracks.at(i);
+	AudioProcessingItem* item = m_tracks.begin();
+	while(item) {
+		Track* track = (Track*)item;
+		if (track->get_id() == id) {
+			return track;
 		}
+		item = m_tracks.get_next(item);
 	}
 	return 0;
 }
@@ -1279,7 +1338,9 @@ void Song::prepare_recording()
 	if (m_recording && any_track_armed()) {
 		CommandGroup* group = new CommandGroup(this, "");
 		int clipcount = 0;
-		foreach(Track* track, m_tracks) {
+		AudioProcessingItem* item = m_tracks.begin();
+		while(item) {
+			Track* track = (Track*)item;
 			if (track->armed()) {
 				AudioClip* clip = track->init_recording();
 				if (clip) {
@@ -1287,6 +1348,7 @@ void Song::prepare_recording()
 					clipcount++;
 				}
 			}
+			item = m_tracks.get_next(item);
 		}
 		group->setText(tr("Recording to %n Clip(s)", "", clipcount));
 		Command::process_command(group);

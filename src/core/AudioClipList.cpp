@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
+    Copyright (C) 2005-2007 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -17,80 +17,75 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioClipList.cpp,v 1.1 2006/04/20 14:51:39 r_sijrier Exp $
+    $Id: AudioClipList.cpp,v 1.2 2007/11/12 18:52:13 r_sijrier Exp $
 */
 
 #include "AudioClipList.h"
-
-#include "AudioClip.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-
-void AudioClipList::add_clip( AudioClip * clip )
-{
-        append(clip);
-        sort();
-}
-
-int AudioClipList::remove_clip( AudioClip * clip )
-{
-        int index;
-        if ( (index = clip_index(clip)) >= 0 ) {
-                removeAt(index);
-                sort();
-                return 1;
-        }
-        return -1;
-}
-
-AudioClip * AudioClipList::next( AudioClip * clip )
-{
-        if ( (!isEmpty()) &&  (! (clip == last())) ) {
-                int index = clip_index(clip);
-                if (index >= 0)
-                        return at(index + 1);
-        }
-        return (AudioClip*) 0;
-}
-
-AudioClip * AudioClipList::prev( AudioClip * clip )
-{
-        if ( (!isEmpty()) && (! (clip == first())) ) {
-                int index = clip_index(clip);
-                //FIXME
-                if (index >= 0)
-                        return at(index - 1);
-        }
-        return (AudioClip*) 0;
-}
-
-int AudioClipList::clip_index( AudioClip * clip )
-{
-        AudioClip* c;
-        for (int i=0; i<size(); ++i) {
-                c = at(i);
-                if (c == clip) {
-                        return i;
-                }
-        }
-        return -1;
-}
-
-void AudioClipList::sort()
-{
-        if(!isEmpty())
-                qSort(begin(), end(), AudioClip::smaller);
-}
-
 AudioClip * AudioClipList::get_last( )
 {
-        if(!isEmpty())
-                return last();
-        return (AudioClip*) 0;
+	if (!size()) {
+		return 0;
+	}
+	
+	if (size() == 1) {
+		return (AudioClip*)begin();
+	}
+	
+	AudioProcessingItem* item = begin();
+	AudioProcessingItem* result = item;
+	
+	while (item) {
+		item = item->next;
+		if (item) {
+			result = item;
+		}
+	}
+		
+	return (AudioClip*)result;
 }
+
+// Untested functions, which aren't in use anyways...
+// AudioClip * AudioClipList::next( AudioClip * clip )
+// {
+// 	AudioProcessingItem* item = begin();
+// 	while(item) {
+// 		AudioClip* c = (AudioClip*)item;
+// 		if (clip == c) {
+// 			return (AudioClip*)c->next;
+// 		}
+// 		item = item->next;
+// 	}
+// 	
+//         return (AudioClip*) 0;
+// }
+// 
+// AudioClip * AudioClipList::prev( AudioClip * clip )
+// {
+// 	if (size() <= 1) {
+// 		return 0;
+// 	}
+// 	
+// 	AudioProcessingItem* item = begin();
+// 	AudioProcessingItem* prev = item;
+// 	item = item->next;
+// 	
+// 	while (item) {
+// 		AudioClip* c = (AudioClip*)item;
+// 		if (clip == c) {
+// 			return (AudioClip*)prev;
+// 		}
+// 		prev = item;
+// 		item = item->next;
+// 	}
+// 	
+// 	return (AudioClip*) 0;
+// }
+
 
 //eof
 
