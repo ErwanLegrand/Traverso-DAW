@@ -307,8 +307,8 @@ Command* Song::add_track(Track* track, bool historable)
 {
 	AudioProcessingItem* item = m_tracks.begin();
 	while(item) {
-		Track* track = (Track*)item;
-		if (track->is_solo()) {
+		Track* existing = (Track*)item;
+		if (existing->is_solo()) {
 			track->set_muted_by_solo( true );
 			break;
 		}
