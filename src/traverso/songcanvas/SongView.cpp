@@ -137,8 +137,8 @@ SongView::SongView(SongWidget* songwidget,
 	m_dragShuttleCurve->set_song(m_song);
 	
 	// Use these variables to fine tune the scroll behavior
-	float whens[7] = {0.0, 0.2, 0.5, 0.7, 0.8, 0.9, 1.3};
-	float values[7] = {0.0, 0.2, 0.3, 0.8, 0.95, 1.5, 8.0};
+	float whens[7] = {0.0, 0.2, 0.3, 0.4, 0.6, 0.9, 1.2};
+	float values[7] = {0.0, 0.1, 0.3, 0.8, 0.95, 1.5, 8.0};
 	
 	// Use these variables to fine tune the scroll during drag behavior
 	float dragWhens[7] =  {0.0, 0.9, 0.94, 0.98, 1.0, 1.1, 1.3};
@@ -429,7 +429,9 @@ void SongView::update_shuttle_factor()
 	if (normalizedY < 0) normalizedY = 0;
 	if (normalizedY > 1) normalizedY = 1;
 	
-	if (normalizedY < 0.5) {
+	if (normalizedY > 0.35 && normalizedY < 0.65) {
+		normalizedY = 0;
+	} else if (normalizedY < 0.5) {
 		normalizedY = 0.5 - normalizedY;
 		direction = -1;
 	} else if (normalizedY > 0.5) {
