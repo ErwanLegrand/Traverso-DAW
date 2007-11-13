@@ -230,7 +230,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	// Painting 2 more pixels makes it getting clipped away.....
 	pixelcount += 2;
 	
-	bool microView = m_song->get_hzoom() > (Peak::MAX_ZOOM_USING_SOURCEFILE - 1) ? 0 : 1;
+	bool microView = m_song->get_hzoom() > (Peak::MAX_ZOOM_USING_SOURCEFILE -1) ? 0 : 1;
 	// boundary checking, important for microview only, macroview needs the additional
 	// pixels to paint the waveform correctly
 	if ( /*microView &&*/ ((xstart + pixelcount) > m_boundingRect.width()) ) {
@@ -434,7 +434,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			p->drawLine(xstart, 0, xstart + pixelcount, 0);
 			
 			for (int x = xstart; x < (pixelcount+xstart); x++) {
-				m_polygontop.append( QPointF(x, scaleFactor * pixeldata[chan][bufferPos++]) );
+				m_polygontop.append( QPointF(x, -scaleFactor * pixeldata[chan][bufferPos++]) );
 			}
 			
 			if (themer()->get_property("AudioClip:wavemicroview:antialiased", 0).toInt()) {
