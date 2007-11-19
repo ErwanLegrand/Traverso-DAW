@@ -198,7 +198,7 @@ int Curve::process(
 	float gain = lastnode->value * makeupgain;
 	
 	if (endlocation > qint64(get_range())) {
-		if (gain == 1.0) {
+		if (gain == 1.0f) {
 			return 0;
 		}
 		for (uint chan=0; chan<channels; ++chan) {
@@ -206,6 +206,8 @@ int Curve::process(
 		}
 		return 1;
 	}
+	
+	gain = makeupgain;
 	
 	get_vector(startlocation.universal_frame(), endlocation.universal_frame(), m_song->mixdown, nframes);
 	
