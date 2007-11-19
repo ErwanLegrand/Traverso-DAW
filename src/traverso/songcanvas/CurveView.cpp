@@ -194,6 +194,7 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	int xstart = (int) option->exposedRect.x();
 	int pixelcount = (int) option->exposedRect.width();
 	int height = int(m_boundingRect.height());
+	int offset = int(m_startoffset / m_sv->timeref_scalefactor);
 	
 	QPen pen;
 	
@@ -205,6 +206,7 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	
 	painter->save();
 	painter->setPen(pen);
+	painter->setClipRect(m_boundingRect);
 	
 	
 	if (m_nodeViews.size() == 1) {
@@ -216,21 +218,26 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	
 	if (m_nodeViews.first()->when > xstart) {
 		int y = int(height - (m_nodeViews.first()->value * height));
-		int length = int(m_nodeViews.first()->when) - xstart;
-		painter->drawLine(xstart, y, xstart + length, y);
-		xstart += length;
-		pixelcount -= length;
+		int length = int(m_nodeViews.first()->when) - xstart - offset;
+		if (length > 0) {
+			painter->drawLine(xstart, y, xstart + length, y);
+			xstart += length;
+			pixelcount -= length;
+		}
 		if (pixelcount <= 0) {
 			painter->restore();
 			return;
 		}
 	}
 	
-	if (m_nodeViews.last()->when < (xstart + pixelcount)) {
+	if (m_nodeViews.last()->when < (xstart + pixelcount + offset)) {
 		int y = int(height - (m_nodeViews.last()->value * height));
-		int length = (xstart + pixelcount) - int(m_nodeViews.last()->when);
-		painter->drawLine(int(m_nodeViews.last()->when), y, int(m_nodeViews.last()->when + length) -1 , y);
-		pixelcount -= length;
+		int x = int(m_nodeViews.last()->when) - offset;
+		int length = (xstart + pixelcount) - int(m_nodeViews.last()->when) + offset;
+		if (length > 0) {
+			painter->drawLine(x, y, x + length - 1, y);
+			pixelcount -= length;
+		}
 		if (pixelcount <= 0) {
 			painter->restore();
 			return;
@@ -247,14 +254,12 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 		xstart = 0;
 	}
 	
-	painter->setClipRect(m_boundingRect);
 	painter->setRenderHint(QPainter::Antialiasing);
 	
 	QPolygonF polygon;
 	float vector[pixelcount];
 	
 // 	printf("range: %d\n", (int)m_nodeViews.last()->pos().x());
-	int offset = int(m_startoffset / m_sv->timeref_scalefactor);
 	m_guicurve->get_vector(xstart + offset,
 				xstart + pixelcount + offset,
     				vector,
