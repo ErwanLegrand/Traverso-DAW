@@ -272,8 +272,11 @@ ADD_CUSTOM_TARGET(uninstall "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/c
 #Set up include dirs with all found packages
 INCLUDE_DIRECTORIES(
 ${CMAKE_SOURCE_DIR}/src/common
+${CMAKE_SOURCE_DIR}/src/core
+${CMAKE_SOURCE_DIR}/src/traverso/songcanvas
 ${QT_INCLUDE_DIR}
 ${QT_QTCORE_INCLUDE_DIR}
+${QT_QTXML_INCLUDE_DIR}
 )
 
 
