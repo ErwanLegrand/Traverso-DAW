@@ -45,6 +45,7 @@ MACRO(ADD_PRECOMPILED_HEADER _targetName _input)
 	   -I${CMAKE_SOURCE_DIR}/src/common
 	   -I${CMAKE_SOURCE_DIR}/src/traverso/songcanvas
            ${QT_DEFINITIONS}
+           ${TRAVERSO_DEFINES}
            -x c++-header
            -o ${_output} ${_source}
         DEPENDS ${_source} )
