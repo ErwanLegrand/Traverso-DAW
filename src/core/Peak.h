@@ -95,8 +95,8 @@ class Peak : public QObject
 	Q_OBJECT
 
 public:
-	static const int ZOOM_LEVELS = 20;
-	static const int SAVING_ZOOM_FACTOR = 6;
+	static const int ZOOM_LEVELS = 22;
+	static const int SAVING_ZOOM_FACTOR = 8;
 	static const int MAX_ZOOM_USING_SOURCEFILE = SAVING_ZOOM_FACTOR - 1;
 	// Use ~ 1/4 the range of peak_data_t (== short) so we have headroom
 	// for samples in the range [-4, +4] or + 12 dB

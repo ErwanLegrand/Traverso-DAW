@@ -46,7 +46,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 int Peak::zoomStep[] = {
 	// non-cached zoomlevels.
-	1, 2, 4, 8, 16, 32,
+	1, 2, 4, 8, 12, 16, 24, 32,
  	// Cached zoomlevels
  	64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576 
 };
