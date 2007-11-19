@@ -189,31 +189,32 @@ int Curve::process(
 	float makeupgain
 	)
 {
+	// Do nothing if there are no nodes!
 	if (m_nodes.isEmpty()) {
 		return 0;
 	}
 	
-	CurveNode* lastnode = (CurveNode*)m_nodes.last();
-	
-	float gain = lastnode->value * makeupgain;
-	
+	// Check if we are beyond the last node and only apply gain if != 1.0
 	if (endlocation > qint64(get_range())) {
+		float gain = ((CurveNode*)m_nodes.last())->value * makeupgain;
+		
 		if (gain == 1.0f) {
 			return 0;
 		}
+		
 		for (uint chan=0; chan<channels; ++chan) {
 			Mixer::apply_gain_to_buffer(buffer[chan], nframes, gain);
 		}
+		
 		return 1;
 	}
 	
-	gain = makeupgain;
-	
+	// Calculate the vector, an apply to the buffer including the makeup gain.
 	get_vector(startlocation.universal_frame(), endlocation.universal_frame(), m_song->mixdown, nframes);
 	
 	for (uint chan=0; chan<channels; ++chan) {
 		for (nframes_t n = 0; n < nframes; ++n) {
-			buffer[chan][n] *= (m_song->mixdown[n] * gain);
+			buffer[chan][n] *= (m_song->mixdown[n] * makeupgain);
 		}
 	}
 	
