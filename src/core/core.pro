@@ -28,7 +28,6 @@ SOURCES = \
 	../common/RingBuffer.cpp \
 	../common/Resampler.cpp \
 	AudioClip.cpp \
-	AudioClipList.cpp \
 	AudioClipManager.cpp \
 	AudioSource.cpp \
 	Command.cpp \
@@ -68,7 +67,6 @@ HEADERS = precompile.h \
 	../common/RingBufferNPT.h \
 	../common/Resampler.h \
 	AudioClip.h \
-	AudioClipList.h \
 	AudioClipManager.h \
 	AudioSource.h \
 	Command.h \

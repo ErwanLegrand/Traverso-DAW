@@ -36,6 +36,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QDomDocument>
 
 #include "CurveNode.h"
+#include "defines.h"
+
 
 class Song;
 
@@ -50,62 +52,43 @@ public:
 
 	QDomNode get_state(QDomDocument doc, const QString& name);
 	virtual int set_state( const QDomNode& node );
-	virtual int process(audio_sample_t* buffer, const TimeRef& startlocation, const TimeRef& endlocation, nframes_t nframes);
+	int process(audio_sample_t** buffer, const TimeRef& startlocation, const TimeRef& endlocation, nframes_t nframes, uint channels, float makeupgain=1.0f);
 	
 	Command* add_node(CurveNode* node, bool historable=true);
 	Command* remove_node(CurveNode* node, bool historable=true);
 	
 	// Get functions
 	double get_range() const;
-	
 	void get_vector (double x0, double x1, float *arg, int32_t veclen);
-	
-	QList<CurveNode* >* get_nodes() {return &m_nodes;}
+	APILinkedList& get_nodes() {return m_nodes;}
 	Song* get_song() const {return m_song;}
 
-	double get_default_initial_value() {return m_defaultInitialValue;}
-	
 	// Set functions
 	virtual void set_range(double when);
 	void set_song(Song* song);
 	
-	static bool smallerNode(const CurveNode* left, const CurveNode* right )
-	{
+	static bool smallerNode(const CurveNode* left, const CurveNode* right ) {
 		return left->get_when() < right->get_when();
 	}
 	
-	// The 'GUI' curvenodes have double ownership, so get deleted twice
-	// to avoid this, use this function to not let this happen...
 	void clear_curve() {m_nodes.clear();}
 
-	void set_default_initial_value(double val) {m_defaultInitialValue = val;}
-
 protected:
-	struct LookupCache {
-		double left;  /* leftmost x coordinate used when finding "range" */
-		std::pair<QList<CurveNode* >::iterator, QList<CurveNode* >::iterator> range;
-	};
-	
 	Song* m_song;
-	QList<CurveNode* > m_nodes;
-	LookupCache m_lookup_cache;
-	bool m_changed;
 
 private :
-	
-	
-	struct Comparator {
-		bool operator() (const CurveNode* a, const CurveNode* b) { 
-			return a->when < b->when;
-		}
+	APILinkedList m_nodes;
+	struct LookupCache {
+		double left;  /* leftmost x coordinate used when finding "range" */
+		std::pair<CurveNode*, CurveNode*> range;
+		
 	};
-	
-	
+	LookupCache m_lookup_cache;
+	bool m_changed;
 	double m_defaultValue;
-	double m_defaultInitialValue;
+	
 	
 	double multipoint_eval (double x);
-	
 	void x_scale(double factor);
 	void solve ();
 	void init();
@@ -131,8 +114,8 @@ signals :
 
 inline double Curve::get_range( ) const
 {
-	if ( ! m_nodes.isEmpty()) {
-		return m_nodes.last()->when;
+	if (m_nodes.size()) {
+		return ((CurveNode*)m_nodes.last())->when;
 	}
 		
 	return 0;

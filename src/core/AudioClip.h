@@ -111,23 +111,16 @@ public:
 	bool is_locked() const {return m_isLocked;}
 	bool has_song() const;
 	bool is_readsource_invalid() const {return !m_isReadSourceValid;}
-	int recording_state() const;
+	bool is_smaller_then(APILinkedListNode* node) {return ((AudioClip*)node)->get_track_start_location() < get_track_start_location();}
 
-	static bool smaller(const AudioClip* left, const AudioClip* right )
-	{
-		return left->get_track_start_location() < right->get_track_start_location();
-	}
-	static bool greater(const AudioClip* left, const AudioClip* right )
-	{
-		return left->get_track_start_location() > right->get_track_start_location();
-	}
+	int recording_state() const;
 
 private:
 	Track* 			m_track;
 	Song* 			m_song;
 	ReadSource*		m_readSource;
 	WriteSource*		m_recorder;
-	QList<FadeCurve* >	m_fades;
+	APILinkedList		m_fades;
 	Peak* 			m_peak;
 	AudioBus*		m_captureBus;
 	FadeCurve*		fadeIn;

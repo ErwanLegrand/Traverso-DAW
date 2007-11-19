@@ -18,7 +18,6 @@ ${CMAKE_SOURCE_DIR}/src/common/Mixer.cpp
 ${CMAKE_SOURCE_DIR}/src/common/RingBuffer.cpp
 ${CMAKE_SOURCE_DIR}/src/common/Resampler.cpp
 AudioClip.cpp
-AudioClipList.cpp
 AudioClipManager.cpp
 AudioSource.cpp
 Command.cpp

@@ -327,7 +327,7 @@ void HDDSpaceInfo::update_status( )
 	if (recordingSongs.size()) {
 		int recChannelCount = 0;
 		foreach(Song* song, recordingSongs) {
-			foreach(Track* track, song->get_tracks()) {
+			apill_foreach(Track* track, Track, song->get_tracks()) {
 				if (track->armed()) {
 					recChannelCount += track->capture_left_channel() ? 1 : 0;
 					recChannelCount += track->capture_right_channel() ? 1 : 0;

@@ -53,15 +53,15 @@ void InsertSilenceDialog::focusInput()
 void InsertSilenceDialog::accept()
 {
 	Song* song = pm().get_project()->get_current_song();
-	QList<Track* > tracks = song->get_tracks();
+	APILinkedList tracks = song->get_tracks();
 
 	// Make sure track is still in the song
 	if (m_track){
 		Track*	foundTrack = 0;
 
-		for (int i=0; i<tracks.size(); i++) {
-			if (tracks.at(i) == m_track) {
-				foundTrack = tracks.at(i);
+		apill_foreach(Track* track, Track, tracks) {
+			if (track == m_track) {
+				foundTrack = track;
 			}
 		}
 		m_track = foundTrack;
@@ -69,11 +69,11 @@ void InsertSilenceDialog::accept()
 
 	if (song->get_numtracks() > 0) {
 		if (!m_track){
-			Track*	shortestTrack = tracks.at(0);
+			Track*	shortestTrack = (Track*)tracks.first();
 	
-			for (int i=1; i<tracks.size(); i++) {
-				if (tracks.at(i)->get_cliplist().get_last() && tracks.at(i)->get_cliplist().get_last()->get_track_end_location() > shortestTrack->get_cliplist().get_last()->get_track_end_location()) {
-					shortestTrack = tracks.at(i);
+			apill_foreach(Track* track, Track, tracks) {
+				if (track->get_cliplist().last() && ((AudioClip*)track->get_cliplist().last())->get_track_end_location() > ((AudioClip*)shortestTrack->get_cliplist().last())->get_track_end_location()) {
+					shortestTrack = track;
 				}
 			}
 			m_track = shortestTrack;

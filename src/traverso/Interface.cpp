@@ -922,12 +922,12 @@ void Interface::update_opengl()
 void Interface::import_audio()
 {
 	if (currentSongWidget->get_song()->get_numtracks() > 0) {
-		QList<Track* > tracks = currentSongWidget->get_song()->get_tracks();
-		Track*	shortestTrack = tracks.at(0);
+		APILinkedList tracks = currentSongWidget->get_song()->get_tracks();
+		Track*	shortestTrack = (Track*)tracks.first();
 
-		for (int i=1; i<tracks.size(); i++) {
-			if (tracks.at(i)->get_cliplist().get_last() && tracks.at(i)->get_cliplist().get_last()->get_track_end_location() > shortestTrack->get_cliplist().get_last()->get_track_end_location()) {
-				shortestTrack = tracks.at(i);
+		apill_foreach(Track* track, Track, tracks) {
+			if (track->get_cliplist().last() && ((AudioClip*)track->get_cliplist().last())->get_track_end_location() > ((AudioClip*)shortestTrack->get_cliplist().last())->get_track_end_location()) {
+				shortestTrack = track;
 			}
 		}
 

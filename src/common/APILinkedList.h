@@ -24,72 +24,107 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QDebug>
 
-#include "AudioProcessingItem.h"
+#define apill_foreach(variable, upcasttype, apillist) \
+	for(APILinkedListNode* apillnode = apillist.first(); apillnode!=0; apillnode = apillnode->next) \
+		if (variable = (upcasttype*)apillnode) \
+
+
+class APILinkedListNode
+{
+public:
+	APILinkedListNode () : next(0) {}
+	virtual ~APILinkedListNode () {}
+	APILinkedListNode* next;
+	virtual bool is_smaller_then(APILinkedListNode* node) = 0;
+};
 
 class APILinkedList
 {
 public:
-	APILinkedList() : m_size(0), m_head(0) {}
+	APILinkedList() : m_size(0), m_head(0), m_last(0) {}
 	~APILinkedList() {}
 	
-	void append(AudioProcessingItem* item);
-	void prepend(AudioProcessingItem * item);
-	void add_after(AudioProcessingItem* after, AudioProcessingItem* item);
-	int remove(AudioProcessingItem* item);
+	void append(APILinkedListNode* item);
+	void add_and_sort(APILinkedListNode* node);
+	void prepend(APILinkedListNode * item);
+	int remove(APILinkedListNode* item);
 	
-	AudioProcessingItem* begin() {return m_head;}
-	AudioProcessingItem* get_next(AudioProcessingItem* item) {return item->next;}
+	APILinkedListNode* first() const {return m_head;}
+	APILinkedListNode* last() const {return m_last;}
 	int size() const {return m_size;}
+	void clear() {m_head = 0; m_last = 0; m_size=0;}
+	bool isEmpty() {return m_size == 0 ? true : false;}
+	int indexOf(APILinkedListNode* node);
+	APILinkedListNode* at(int i);
 
-			
 private:
 	int m_size;
-	AudioProcessingItem* m_head;
+	APILinkedListNode* m_head;
+	APILinkedListNode* m_last;
+	APILinkedListNode* slow_last() const;
+
+	void insert(APILinkedListNode* after, APILinkedListNode* item);
 };
 
-inline void APILinkedList::prepend(AudioProcessingItem * item)
+// T = O(1)
+inline void APILinkedList::prepend(APILinkedListNode * item)
 {
 	item->next = m_head;
 	m_head = item;
-}
-
-inline void APILinkedList::append(AudioProcessingItem * item)
-{
-	if(m_head) {
-		AudioProcessingItem *q,*temp;
-		q = m_head;
-		while( q->next != 0 ) {
-			q = q->next;
-		}
-
-		temp = item;
-		temp->next = 0;
-		q->next = temp;
-	} else {
-		m_head = item;
-		m_head->next = 0;
+	if (!m_size) {
+		m_last = item;
+		m_last->next = 0;
 	}
 	m_size++;
+	Q_ASSERT(m_last == slow_last());
 }
 
-inline int APILinkedList::remove(AudioProcessingItem * item)
+// T = O(1)
+inline void APILinkedList::append(APILinkedListNode * item)
 {
-	AudioProcessingItem *q,*r;
+	if(m_head) {
+		m_last->next = item;
+		m_last = item;
+	} else {
+		m_head = item;
+		m_last = item;
+	}
+	
+	m_last->next = 0;
+	m_size++;
+	
+	Q_ASSERT(m_last == slow_last());
+}
+
+// T = O(n)
+inline int APILinkedList::remove(APILinkedListNode * item)
+{
+	Q_ASSERT(item);
+	
+	APILinkedListNode *q,*r;
 	q = m_head;
-	if(q == item)
-	{
+	if(q == item) {
 		m_head = q->next;
 		m_size--;
+		if (m_size == 0) {
+			m_last = 0;
+		}
+		Q_ASSERT(m_last == slow_last());
 		return 1;
 	}
 
 	r = q;
-	while( q!=0 )
-	{
-		if( q == item )
-		{
+	q = q->next;
+	
+	while( q!=0 ) {
+		if( q == item ) {
 			r->next = q->next;
 			m_size--;
+			if (!q->next) {
+				m_last = r;
+				m_last->next = 0;
+			}
+			Q_ASSERT(m_last == slow_last());
 			return 1;
 		}
 
@@ -100,16 +135,98 @@ inline int APILinkedList::remove(AudioProcessingItem * item)
 	return 0;
 }
 
-inline void APILinkedList::add_after(AudioProcessingItem* after, AudioProcessingItem* item)
+// T = O(1)
+inline void APILinkedList::insert(APILinkedListNode* after, APILinkedListNode* item)
 {
 	Q_ASSERT(after);
 	Q_ASSERT(item);
 	
-	AudioProcessingItem* temp;
+	APILinkedListNode* temp;
 
 	temp = item;
 	temp->next = after->next;
 	after->next = temp;
+	
+	if (after == m_last) {
+		m_last = item;
+		m_last->next = 0;
+	}
+	m_size++;
+	
+	Q_ASSERT(m_last == slow_last());
+}
+
+// T = O(n)
+inline APILinkedListNode * APILinkedList::slow_last() const
+{
+	if (!m_head) {
+		return 0;
+	}
+	
+	APILinkedListNode* last = m_head;
+	
+	while(last->next) {
+		last = last->next;
+	}
+	
+	return last;
+}
+
+// T = O(n)
+inline void APILinkedList::add_and_sort(APILinkedListNode * node)
+{
+	if (!m_size) {
+		append(node);
+	} else {
+		APILinkedListNode* q = m_head;
+		if (node->is_smaller_then(q)) {
+			prepend(node);
+		} else {
+			APILinkedListNode* afternode = q;
+			while (q) {
+				if (!node->is_smaller_then(q)) {
+					afternode = q;
+				} else {
+					break;
+				}
+				q = q->next;
+			}
+			insert(afternode, node);
+		}
+	}
+}
+
+inline int APILinkedList::indexOf(APILinkedListNode* node)
+{
+	Q_ASSERT(node);
+	int index = 0;
+	
+	APILinkedListNode* q = m_head;
+	while (q) {
+		if (q == node) {
+			return index;
+		}
+		++index;
+		q = q->next;
+	}
+	return -1;
+}
+
+inline APILinkedListNode * APILinkedList::at(int i)
+{
+	Q_ASSERT(i >= 0);
+	Q_ASSERT(i < m_size);
+	
+	int loopcounter = 0;
+	APILinkedListNode* q = m_head;
+	while (q) {
+		if (loopcounter == i) {
+			return q;
+		}
+		q = q->next;
+		++loopcounter;
+	}
+	return 0;
 }
 
 #endif

@@ -173,7 +173,7 @@ void BusSelectorDialog::set_current_track(Track * track)
 	
 	Song* song = pm().get_project()->get_current_song();
 	
-	foreach(Track* track, song->get_tracks()) {
+	apill_foreach(Track* track, Track, song->get_tracks()) {
 		QString fulltitle = QString::number(track->get_sort_index() + 1) + " " + track->get_name();
 		trackComboBox->addItem(fulltitle, track->get_id());
 	}

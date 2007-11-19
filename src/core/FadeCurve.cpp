@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.30 2007/11/05 15:49:30 r_sijrier Exp $
+$Id: FadeCurve.cpp,v 1.31 2007/11/19 11:18:53 r_sijrier Exp $
 */
  
 #include "FadeCurve.h"
@@ -287,14 +287,17 @@ void FadeCurve::solve_node_positions( )
 
 	// calculate curve nodes values
 	float f = 0.0;
-	QList<CurveNode* >* nodes = get_nodes();
- 	for (int i = 1; i < (nodes->size() -1); i++) {
-		f += 1.0/ (nodes->size() - 1);
+	APILinkedList list = get_nodes();
+	int listsize = list.size();
+	if (listsize > 0) {
+		APILinkedListNode* node = list.first()->next;
 		
-		CurveNode* node = nodes->at(i);
-		QPointF p = get_curve_point(f);
-		node->set_relative_when_and_value(p.x(), p.y());
-		
+		while (node) {
+			f += 1.0 / (listsize - 1);
+			QPointF p = get_curve_point(f);
+			((CurveNode*)node)->set_relative_when_and_value(p.x(), p.y());
+			node = node->next;
+		}
 	}
 	
 	set_changed();

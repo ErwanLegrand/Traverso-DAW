@@ -105,9 +105,7 @@ QDomNode Track::get_state( QDomDocument doc, bool istemplate)
 	if (! istemplate ) {
 		QDomNode clips = doc.createElement("Clips");
 	
-		AudioProcessingItem* item = audioClipList.begin();
-		while(item) {
-			AudioClip* clip = (AudioClip*)item;
+		apill_foreach(AudioClip* clip, AudioClip, audioClipList) {
 			if (clip->get_length() == qint64(0)) {
 				PERROR("Clip lenght is 0! This shouldn't happen!!!!");
 				continue;
@@ -116,8 +114,6 @@ QDomNode Track::get_state( QDomDocument doc, bool istemplate)
 			QDomElement clipNode = doc.createElement("Clip");
 			clipNode.setAttribute("id", clip->get_id() );
 			clips.appendChild(clipNode);
-			
-			item = item->next;
 		}
 		
 		node.appendChild(clips);
@@ -193,14 +189,10 @@ int Track::set_state( const QDomNode & node )
 
 AudioClip* Track::get_clip_after(const TimeRef& pos)
 {
-	AudioProcessingItem* item = audioClipList.begin();
-	while(item) {
-		AudioClip* clip = (AudioClip*)item;
+	apill_foreach(AudioClip* clip, AudioClip, audioClipList) {
 		if (clip->get_track_start_location() > pos) {
 			return clip;
 		}
-		
-		item = item->next;
 	}
 	return (AudioClip*) 0;
 }
@@ -208,13 +200,10 @@ AudioClip* Track::get_clip_after(const TimeRef& pos)
 
 AudioClip* Track::get_clip_before(const TimeRef& pos)
 {
-	AudioProcessingItem* item = audioClipList.begin();
-	while(item) {
-		AudioClip* clip = (AudioClip*)item;
+	apill_foreach(AudioClip* clip, AudioClip, audioClipList) {
 		if (clip->get_track_start_location() < pos) {
 			return clip;
 		}
-		item = item->next;
 	}
 	return (AudioClip*) 0;
 }
@@ -246,6 +235,15 @@ Command* Track::add_clip(AudioClip* clip, bool historable, bool ismove)
    		tr("Add Clip"));
 }
 
+void Track::private_add_clip(AudioClip* clip)
+{
+	audioClipList.add_and_sort(clip);
+}
+
+void Track::private_remove_clip(AudioClip* clip)
+{
+	audioClipList.remove(clip);
+}
 
 int Track::arm()
 {
@@ -424,13 +422,9 @@ int Track::process( nframes_t nframes )
 
 	m_pluginChain->process_pre_fader(bus, nframes);
 	
-	AudioProcessingItem* item = audioClipList.begin();
-	while(item) {
-		AudioClip* clip = (AudioClip*)item;
-		
+	apill_foreach(AudioClip* clip, AudioClip, audioClipList) {
 		if (isArmed && clip->recording_state() == AudioClip::NO_RECORDING) {
 			if (m_isMuted || mutedBySolo) {
-				item = item->next;
 				continue;
 			}
 		}
@@ -439,13 +433,10 @@ int Track::process( nframes_t nframes )
 		result = clip->process(nframes);
 		
 		if (result <= 0) {
-			item = item->next;
 			continue;
 		}
 
 		processResult |= result;
-		
-		item = item->next;
 	}
 	
 	for (int chan=0; chan<bus->get_channel_count(); ++chan) {
@@ -515,10 +506,7 @@ void Track::get_render_range(TimeRef& startlocation, TimeRef& endlocation )
 	endlocation = TimeRef();
 	startlocation = LONG_LONG_MAX;
 	
-	AudioProcessingItem* item = audioClipList.begin();
-	while(item) {
-		AudioClip* clip = (AudioClip*)item;
-		
+	apill_foreach(AudioClip* clip, AudioClip, audioClipList) {
 		if (! clip->is_muted() ) {
 			if (clip->get_track_end_location() > endlocation) {
 				endlocation = clip->get_track_end_location();
@@ -528,8 +516,6 @@ void Track::get_render_range(TimeRef& startlocation, TimeRef& endlocation )
 				startlocation = clip->get_track_start_location();
 			}
 		}
-		
-		item = item->next;
 	}
 	
 }

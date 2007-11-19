@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QFileDialog>
 #include "ReadSource.h"
-#include "AudioClipList.h"
 #include "Import.h"
 #include "Utils.h"
 
@@ -146,7 +145,7 @@ void Import::create_audioclip()
 	
 	TimeRef startLocation;
 	if (!m_hasPosition) {
-		if (AudioClip* lastClip = m_track->get_cliplist().get_last()) {
+		if (AudioClip* lastClip = (AudioClip*)m_track->get_cliplist().last()) {
 			startLocation = lastClip->get_track_end_location();
 		}
 	} else {

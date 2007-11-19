@@ -24,9 +24,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define GAIN_ENVELOPE_H
 
 #include "Plugin.h"
+#include "Curve.h"
+#include "Mixer.h"
 
 class Song;
-class Curve;
 
 class GainEnvelope : public Plugin
 {
@@ -51,6 +52,20 @@ public:
 private:
 	float m_gain;
 };
+
+
+inline void GainEnvelope::process_gain(audio_sample_t** buffer, const TimeRef& startlocation, const TimeRef& endlocation, nframes_t nframes, uint channels)
+{
+	PluginControlPort* port = m_controlPorts.at(0);
+	
+	if (port->use_automation()) {
+		port->get_curve()->process(buffer, startlocation, endlocation, nframes, channels, m_gain);
+	} else {
+		for (uint chan=0; chan<channels; ++chan) {
+			Mixer::apply_gain_to_buffer(buffer[chan], nframes, m_gain);
+		}
+	}
+}
 
 
 #endif

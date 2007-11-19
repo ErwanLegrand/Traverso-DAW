@@ -22,20 +22,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #ifndef AUDIO_PROCESSING_ITEM_H
 #define AUDIO_PROCESSING_ITEM_H
 
+#include "APILinkedList.h"
+
 class GainEnvelope;
 class PluginChain;
 
-class AudioProcessingItem 
+class AudioProcessingItem : public APILinkedListNode
 {
 public:
 	AudioProcessingItem () {}
 	~AudioProcessingItem () {}
 	
 	bool is_muted() const {return m_isMuted;}
+	virtual bool is_smaller_then(APILinkedListNode* node) = 0;
 
-	
-	AudioProcessingItem *next;
-	
 protected:
 	GainEnvelope* m_fader;
 	PluginChain* m_pluginChain;

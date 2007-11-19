@@ -463,13 +463,12 @@ int AudioClip::process(nframes_t nframes)
 	}
 	
 
-	
-	for (int i=0; i<m_fades.size(); ++i) {
-		m_fades.at(i)->process(mixdown, read_frames, bus->get_channel_count());
+	apill_foreach(FadeCurve* fade, FadeCurve, m_fades) {
+		fade->process(mixdown, read_frames, bus->get_channel_count());
 	}
 	
-	TimeRef startlocation = transportLocation - m_trackStartLocation - m_sourceStartLocation;
-	m_fader->process_gain(mixdown, startlocation, upperRange, read_frames, bus->get_channel_count());
+	TimeRef endlocation = mix_pos + TimeRef(read_frames, get_rate());
+	m_fader->process_gain(mixdown, mix_pos, endlocation, read_frames, bus->get_channel_count());
 	
 	return 1;
 }
@@ -900,7 +899,7 @@ void AudioClip::private_remove_fade( FadeCurve * fade )
 		fadeOut = 0;
 	}
 	
-	m_fades.removeAll(fade);
+	m_fades.remove(fade);
 }
 
 void AudioClip::create_fade_in( )

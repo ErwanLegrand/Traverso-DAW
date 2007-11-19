@@ -66,11 +66,8 @@ TrackView::TrackView(SongView* sv, Track * track)
 	connect(m_track, SIGNAL(audioClipRemoved(AudioClip*)), this, SLOT(remove_audioclipview(AudioClip*)));
 	
 	
-	AudioProcessingItem* item = m_track->get_cliplist().begin();
-	while(item) {
-		AudioClip* clip = (AudioClip*)item;
+	apill_foreach(AudioClip* clip, AudioClip, m_track->get_cliplist()) {
 		add_new_audioclipview(clip);
-		item = item->next;
 	}
 }
 

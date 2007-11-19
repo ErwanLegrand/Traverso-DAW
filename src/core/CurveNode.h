@@ -17,17 +17,17 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CurveNode.h,v 1.8 2007/04/02 09:52:31 r_sijrier Exp $
+$Id: CurveNode.h,v 1.9 2007/11/19 11:18:53 r_sijrier Exp $
 */
 
 #ifndef CURVENODE_H
 #define CURVENODE_H
 
-#include "defines.h"
+#include "APILinkedList.h"
 
 class Curve;
 
-class CurveNode
+class CurveNode : public APILinkedListNode
 {
 
 public:
@@ -53,8 +53,9 @@ public:
 	
 	double get_when() const {return when;}
 	double get_value() const {return value;}
-
 	
+	bool is_smaller_then(APILinkedListNode* node) {return ((CurveNode*)node)->when > when;}
+
 	Curve*	m_curve;
 	
 	// declaring friend class Curve seems not to make any difference 

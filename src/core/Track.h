@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QByteArray>
 
 #include "ContextItem.h"
-#include "AudioClipList.h"
 #include "GainEnvelope.h"
 #include "AudioProcessingItem.h"
 
@@ -76,11 +75,14 @@ public :
 	float get_pan() const {return m_pan;}
 	Song* get_song() const {return m_song;}
 	QString get_name() const {return m_name;}
+	
 	int get_total_clips();
 	QDomNode get_state(QDomDocument doc, bool istemplate=false);
-	AudioClipList get_cliplist() const {return audioClipList;}
 	PluginChain* get_plugin_chain() const {return m_pluginChain;}
+	APILinkedList& get_cliplist() {return audioClipList;}
 	int get_sort_index() const;
+	bool is_smaller_then(APILinkedListNode* node) {return ((Track*)node)->get_sort_index() < get_sort_index();}
+
 	
 
 	// Set functions:
@@ -117,7 +119,7 @@ public :
 
 private :
 	Song*		m_song;
-	AudioClipList 	audioClipList;
+	APILinkedList 	audioClipList;
 
 	float 	m_pan;
 	int numtakes;
@@ -173,16 +175,6 @@ private slots:
 inline float Track::get_gain( ) const
 {
 	return m_fader->get_gain();
-}
-
-inline void Track::private_add_clip(AudioClip* clip)
-{
-	audioClipList.add_clip(clip);
-}
-
-inline void Track::private_remove_clip(AudioClip* clip)
-{
-	audioClipList.remove_clip(clip);
 }
 
 #endif

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeView.cpp,v 1.20 2007/11/05 15:49:32 r_sijrier Exp $
+$Id: FadeView.cpp,v 1.21 2007/11/19 11:18:54 r_sijrier Exp $
 */
 
 #include "FadeView.h"
@@ -51,7 +51,8 @@ FadeView::FadeView(SongView* sv, AudioClipView* parent, FadeCurve * fadeCurve )
 	m_guicurve = new Curve(0);
 	m_guicurve->set_song(m_sv->get_song());
 	
-	foreach(CurveNode* node, *m_fadeCurve->get_nodes()) {
+	
+	apill_foreach(CurveNode* node, CurveNode, m_fadeCurve->get_nodes()) {
 		CurveNode* guinode = new CurveNode(m_guicurve, 
 				node->get_when() / m_sv->timeref_scalefactor,
 				node->get_value());
@@ -217,12 +218,20 @@ int FadeView::get_vector(int xstart, int pixelcount, float * arg)
 
 void FadeView::calculate_bounding_rect()
 {
-	QList<CurveNode*>* guinodes = m_guicurve->get_nodes();
-	QList<CurveNode*>* nodes = m_fadeCurve->get_nodes();
-	for (int i=0; i<guinodes->size(); ++i) {
-		CurveNode* node = nodes->at(i);
-		CurveNode* guinode = guinodes->at(i);
-		guinode->set_when_and_value(node->get_when() / m_sv->timeref_scalefactor, node->get_value());
+	APILinkedList guinodes = m_guicurve->get_nodes();
+	APILinkedList nodes = m_fadeCurve->get_nodes();
+	
+	APILinkedListNode* node = nodes.first();
+	APILinkedListNode* guinode = guinodes.first();
+	
+	while (node) {
+		CurveNode* cnode = (CurveNode*)node;
+		CurveNode* cguinode = (CurveNode*)guinode;
+		
+		cguinode->set_when_and_value(cnode->get_when() / m_sv->timeref_scalefactor, cnode->get_value());
+		
+		node = node->next;
+		guinode = guinode->next;
 	}
 	
 	double range = m_guicurve->get_range();

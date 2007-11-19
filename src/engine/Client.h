@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Client.h,v 1.6 2007/11/12 18:52:14 r_sijrier Exp $
+$Id: Client.h,v 1.7 2007/11/19 11:18:54 r_sijrier Exp $
 */
 
 #ifndef CLIENT_H
@@ -25,11 +25,11 @@ $Id: Client.h,v 1.6 2007/11/12 18:52:14 r_sijrier Exp $
 
 #include <QString>
 #include <QObject>
-#include "AudioProcessingItem.h"
+#include "APILinkedList.h"
 
 #include "defines.h"
 
-class Client : public QObject, public AudioProcessingItem
+class Client : public QObject, public APILinkedListNode
 {
 	Q_OBJECT
 
@@ -39,6 +39,7 @@ public:
 
 	void set_process_callback(ProcessCallback call);
 	void set_transport_control_callback(TransportControlCallback call);
+	bool is_smaller_then(APILinkedListNode* ) {return false;}
 
 	
 	ProcessCallback process;

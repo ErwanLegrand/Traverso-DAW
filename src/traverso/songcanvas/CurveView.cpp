@@ -160,9 +160,8 @@ CurveView::CurveView(SongView* sv, ViewItem* parentViewItem, Curve* curve)
 	m_guicurve = new Curve(0);
 	m_guicurve->set_song(sv->get_song());
 	
-	QList<CurveNode* >* nodes = m_curve->get_nodes();
-	for (int i=0; i < nodes->size(); i++) {
-		add_curvenode_view(nodes->at(i));
+	apill_foreach(CurveNode* node, CurveNode, m_curve->get_nodes()) {
+		add_curvenode_view(node);
 	}
 	
 	connect(&m_blinkTimer, SIGNAL(timeout()), this, SLOT(update_blink_color()));
@@ -236,7 +235,7 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	// vertically at the exact same x position. The curve line won't be painted
 	// by the routine above (it doesn't catch the second node position obviously)
 	// so we add curvenodes _always_ to solve this problem easily :-)
-	foreach(CurveNodeView* view, m_nodeViews) {
+	apill_foreach(CurveNodeView* view, CurveNodeView, m_nodeViews) {
 		qreal x = view->x();
 		if ( (x > xstart) && x < (xstart + pixelcount)) {
 			polygon <<  QPointF( x + view->boundingRect().width() / 2,
@@ -266,7 +265,7 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 
 int CurveView::get_vector(int xstart, int pixelcount, float* arg)
 {
-	if (m_guicurve->get_nodes()->size() == 1 && m_guicurve->get_nodes()->first()->value == 1.0) {
+	if (m_guicurve->get_nodes().size() == 1 && ((CurveNode*)m_guicurve->get_nodes().first())->value == 1.0) {
 		return 0;
 	}
 	
@@ -295,7 +294,7 @@ void CurveView::add_curvenode_view(CurveNode* node)
 
 void CurveView::remove_curvenode_view(CurveNode* node)
 {
-	foreach(CurveNodeView* nodeview, m_nodeViews) {
+	apill_foreach(CurveNodeView* nodeview, CurveNodeView, m_nodeViews) {
 		if (nodeview->get_curve_node() == node) {
 			m_nodeViews.removeAll(nodeview);
 			if (nodeview == m_blinkingNode) {
@@ -344,8 +343,8 @@ void CurveView::hoverLeaveEvent ( QGraphicsSceneHoverEvent * event )
 		m_blinkingNode = 0;
 	}
 }
-		
-		
+	
+	
 void CurveView::hoverMoveEvent ( QGraphicsSceneHoverEvent * event )
 {
 	QPoint point((int)event->pos().x(), (int)event->pos().y());
@@ -476,17 +475,17 @@ Command* CurveView::drag_node()
 	if (m_blinkingNode) {
 		TimeRef min(qint64(0));
 		TimeRef max(qint64(-1));
-		QList<CurveNode* >* nodeList = m_curve->get_nodes();
+		APILinkedList nodeList = m_curve->get_nodes();
 		CurveNode* node = m_blinkingNode->get_curve_node();
-		int index = nodeList->indexOf(node);
+		int index = nodeList.indexOf(node);
 		
 		emit curveModified();
 		
 		if (index > 0) {
-			min = qint64(nodeList->at(index-1)->get_when() + 1);
+			min = qint64(((CurveNode*)nodeList.at(index-1))->get_when() + 1);
 		}
-		if (nodeList->size() > (index + 1)) {
-			max = qint64(nodeList->at(index+1)->get_when() - 1);
+		if (nodeList.size() > (index + 1)) {
+			max = qint64(((CurveNode*)nodeList.at(index+1))->get_when() - 1);
 		}
 		return new DragNode(m_blinkingNode->get_curve_node(), this, m_sv->timeref_scalefactor, min, max, tr("Drag Node"));
 	}
@@ -561,11 +560,11 @@ void CurveView::set_start_offset(const TimeRef& offset)
 
 bool CurveView::has_nodes() const
 {
-	return m_guicurve->get_nodes()->size() > 1 ? true : false;
+	return m_guicurve->get_nodes().size() > 1 ? true : false;
 }
 
 float CurveView::get_default_value()
 {
-	return m_guicurve->get_nodes()->first()->value;
+	return ((CurveNode*)m_guicurve->get_nodes().first())->value;
 }
 

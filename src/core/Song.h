@@ -96,7 +96,7 @@ public:
 	QString get_title() const {return title;}
 	QString get_artists() const {return artists;}
 	QDomNode get_state(QDomDocument doc, bool istemplate=false);
-	QList<Track* > get_tracks();
+	APILinkedList& get_tracks() {return m_tracks;}
 	
 	DiskIO*	get_diskio() const;
 	AudioClipManager* get_audioclip_manager() const;
@@ -138,6 +138,7 @@ public:
 	bool is_changed() const {return changed;}
 	bool is_snap_on() const	{return m_isSnapOn;}
 	bool is_recording() const {return m_recording;}
+	bool is_smaller_then(APILinkedListNode* node) {return false;}
 
 	void disconnect_from_audiodevice();
 	void connect_to_audiodevice();
