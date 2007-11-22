@@ -123,6 +123,8 @@ void MarkerDialog::set_project(Project * project)
 
 void MarkerDialog::update_marker_treeview()
 {
+	int currentIndex = markersTreeWidget->indexOfTopLevelItem(markersTreeWidget->currentItem());
+
 	// since the treeWidget will be cleared, point m_marker to somewhere else
 	m_marker = (Marker*)0;
 	markersTreeWidget->clear();
@@ -160,6 +162,12 @@ void MarkerDialog::update_marker_treeview()
 	}
 
 	markersTreeWidget->sortItems(1, Qt::AscendingOrder);
+
+	if (currentIndex > markersTreeWidget->topLevelItemCount()) {
+		currentIndex = markersTreeWidget->topLevelItemCount();
+	}
+
+	markersTreeWidget->setCurrentItem(markersTreeWidget->topLevelItem(currentIndex));
 }
 
 void MarkerDialog::item_changed(QTreeWidgetItem * current, QTreeWidgetItem * previous)
