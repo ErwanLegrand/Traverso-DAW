@@ -34,6 +34,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02100-1301  USA.
 SettingsDialog::SettingsDialog(QWidget* parent)
 	: QDialog(parent)
 {
+	m_saving = false;
+	
 	contentsWidget = new QListWidget;
 	contentsWidget->setViewMode(QListView::IconMode);
 	contentsWidget->setIconSize(QSize(32, 32));
@@ -80,6 +82,8 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 	setLayout(mainLayout);
 	
 	setWindowTitle(tr("Configure - Traverso"));
+	
+	connect(&config(), SIGNAL(configChanged()), this, SLOT(external_change_to_settings()));
 	
 	resize(500, 400);
 }
@@ -146,7 +150,9 @@ void SettingsDialog::save_config()
 	for (int i=0; i<pagesWidget->count(); ++i) {
 		qobject_cast<ConfigPage*>(pagesWidget->widget(i))->save_config();
 	}
+	m_saving = true;
 	config().save();
+	m_saving = false;
 }
 
 void SettingsDialog::restore_defaults_button_clicked()
@@ -156,6 +162,15 @@ void SettingsDialog::restore_defaults_button_clicked()
 		page->reset_default_config();
 	} else {
 		PERROR("SettingsDialog::restore_defaults_button_clicked: No ConfigPage found!!??\n");
+	}
+}
+
+void SettingsDialog::external_change_to_settings()
+{
+	if (!m_saving) {
+		for (int i=0; i<pagesWidget->count(); ++i) {
+			qobject_cast<ConfigPage*>(pagesWidget->widget(i))->load_config();
+		}
 	}
 }
 

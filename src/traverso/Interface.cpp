@@ -499,11 +499,22 @@ void Interface::create_menus( )
 	
 	
 	menu = menuBar()->addMenu(tr("Se&ttings"));
+	
+	QMenu* submenu = menu->addMenu(tr("&Recording File Format"));
+	action = submenu->addAction("WAVE");
+	connect(action, SIGNAL(triggered( bool )), this, SLOT(change_recording_format_to_wav()));
+	action = submenu->addAction("WavPack");
+	connect(action, SIGNAL(triggered( bool )), this, SLOT(change_recording_format_to_wavpack()));
+	action = submenu->addAction("WAVE-64");
+	connect(action, SIGNAL(triggered( bool )), this, SLOT(change_recording_format_to_wav64()));
+	
+	menu->addSeparator();
+	
 	menu->addAction(m_infoBar->get_snap_action());
 	menu->addAction(m_infoBar->get_follow_action());
 	
 	menu->addSeparator();
-
+	
 	action = menu->addAction(tr("&Preferences..."));
 	connect(action, SIGNAL(triggered( bool )), this, SLOT(show_settings_dialog()));
 	
@@ -1124,5 +1135,26 @@ void Interface::project_file_mismatch(QString rootdir, QString projectname)
 	ProjectConverterDialog dialog(this);
 	dialog.set_project(rootdir, projectname);
 	dialog.exec();
+}
+
+void Interface::change_recording_format_to_wav()
+{
+	config().set_property("Recording", "FileFormat", "wav");
+	info().information(tr("Changed encoding for recording to %1").arg("WAVE"));
+	config().save();
+}
+
+void Interface::change_recording_format_to_wav64()
+{
+	config().set_property("Recording", "FileFormat", "w64");
+	info().information(tr("Changed encoding for recording to %1").arg("WAVE-64"));
+	config().save();
+}
+
+void Interface::change_recording_format_to_wavpack()
+{
+	config().set_property("Recording", "FileFormat", "wavpack");
+	info().information(tr("Changed encoding for recording to %1").arg("WavPack"));
+	config().save();
 }
 

@@ -157,6 +157,9 @@ public slots :
 	void update_opengl();
 	void import_audio();
 	void show_restore_project_backup_dialog();
+	void change_recording_format_to_wav();
+	void change_recording_format_to_wav64();
+	void change_recording_format_to_wavpack();
 
 	Command* full_screen();
 	Command* about_traverso();

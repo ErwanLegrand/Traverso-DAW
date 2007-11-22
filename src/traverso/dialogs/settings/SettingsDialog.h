@@ -44,10 +44,13 @@ private:
 	QListWidget *contentsWidget;
 	QStackedWidget *pagesWidget;
 	
+	bool m_saving;
+	
 
 private slots:
 	void save_config();
 	void restore_defaults_button_clicked();
+	void external_change_to_settings();
 };
 
 #endif

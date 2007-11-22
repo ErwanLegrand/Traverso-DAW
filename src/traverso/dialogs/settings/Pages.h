@@ -156,6 +156,7 @@ class ConfigPage : public QWidget
 public:
 	ConfigPage(QWidget* parent);
 	virtual void save_config() = 0;
+	virtual void load_config() = 0;
 	virtual void reset_default_config() = 0;
 protected:
 	QVBoxLayout* mainLayout;
