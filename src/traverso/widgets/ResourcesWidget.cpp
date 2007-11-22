@@ -186,10 +186,13 @@ void ResourcesWidget::showEvent( QShowEvent * event )
 	sourcesTreeWidget->setDragEnabled(true);
 	sourcesTreeWidget->setDropIndicatorShown(true);
 	sourcesTreeWidget->setIndentation(18);
-	sourcesTreeWidget->header()->setResizeMode(0, QHeaderView::ResizeToContents);
-	sourcesTreeWidget->header()->setResizeMode(1, QHeaderView::ResizeToContents);
-	sourcesTreeWidget->header()->setResizeMode(2, QHeaderView::ResizeToContents);
+	sourcesTreeWidget->header()->setResizeMode(0, QHeaderView::Stretch);
+	sourcesTreeWidget->header()->setResizeMode(1, QHeaderView::Fixed);
+	sourcesTreeWidget->header()->setResizeMode(2, QHeaderView::Fixed);
 	sourcesTreeWidget->header()->setResizeMode(3, QHeaderView::ResizeToContents);
+	sourcesTreeWidget->header()->resizeSection(1, 60);
+	sourcesTreeWidget->header()->resizeSection(2, 60);
+	sourcesTreeWidget->header()->resizeSection(3, 60);
 	sourcesTreeWidget->header()->setStretchLastSection(false);
 	
 	
@@ -238,8 +241,6 @@ void ResourcesWidget::project_load_finished()
 		return;
 	}
 	
-	m_currentSong = m_project->get_current_song();
-	
 	ResourcesManager* rsmanager = m_project->get_audiosource_manager();
 	
 	connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(song_added(Song*)));
@@ -263,7 +264,7 @@ void ResourcesWidget::project_load_finished()
 		song_added(song);
 	}
 	
-	set_current_song(m_currentSong);
+	set_current_song(m_project->get_current_song());
 
 	sourcesTreeWidget->sortItems(0, Qt::AscendingOrder);
 }
@@ -325,10 +326,6 @@ void ResourcesWidget::filter_on_current_song()
 		return;
 	}
 	
-	// a lot of layouting could happen due apply_filter calls
-	// disable layouting to avoid cpu hogging!
-	setUpdatesEnabled(false);
-	
 	foreach(ClipTreeItem* item, m_clipindices.values()) {
 		item->apply_filter(m_currentSong);
 	}
@@ -337,8 +334,6 @@ void ResourcesWidget::filter_on_current_song()
 	foreach(SourceTreeItem* item, m_sourceindices.values()) {
 		item->apply_filter(m_currentSong);
 	}
-	
-	setUpdatesEnabled(true);
 }
 
 
@@ -353,6 +348,10 @@ void ResourcesWidget::add_clip(AudioClip * clip)
 	
 		ClipTreeItem* clipitem = new ClipTreeItem(sourceitem, clip);
 		m_clipindices.insert(clip->get_id(), clipitem);
+		
+		clipitem->setTextAlignment(1, Qt::AlignHCenter);
+		clipitem->setTextAlignment(2, Qt::AlignHCenter);
+		clipitem->setTextAlignment(3, Qt::AlignHCenter);
 		
 		connect(clip, SIGNAL(positionChanged(Snappable*)), clipitem, SLOT(clip_state_changed()));
 	}
@@ -378,6 +377,9 @@ void ResourcesWidget::add_source(ReadSource * source)
 	if (! item) {
 		item = new SourceTreeItem(sourcesTreeWidget, source);
 		m_sourceindices.insert(source->get_id(), item);
+		item->setTextAlignment(1, Qt::AlignHCenter);
+		item->setTextAlignment(2, Qt::AlignHCenter);
+		item->setTextAlignment(3, Qt::AlignHCenter);
 	}
 	
 	item->source_state_changed();
