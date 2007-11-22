@@ -37,6 +37,7 @@
 #include <QFileDialog>
 #include <QDateTime>
 #include <AddRemove.h>
+#include <QMap>
 
 MarkerDialog::MarkerDialog(QWidget * parent)
 	: QDialog(parent)
@@ -523,8 +524,18 @@ void MarkerDialog::export_toc()
 	Song *song = m_songlist.at(i);
 
 	TimeLine* tl = song->get_timeline();
-		
+	QMap<TimeRef, Marker*> markerMap;
+
+	// convert the list into a map, because the list is not sorted, but the
+	// map is sorted automatically
 	foreach(Marker* marker, tl->get_markers()) {
+		markerMap.insert(marker->get_when(), marker);
+	}
+
+	QMapIterator<TimeRef, Marker*> iter(markerMap);
+	while (iter.hasNext()) {
+		iter.next();
+		Marker *marker = iter.value();
 		QString name = marker->get_description();
 		QString pos = timeref_to_cd(marker->get_when());
 
