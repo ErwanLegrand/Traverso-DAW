@@ -163,8 +163,8 @@ void MarkerDialog::update_marker_treeview()
 
 	markersTreeWidget->sortItems(1, Qt::AscendingOrder);
 
-	if (currentIndex > markersTreeWidget->topLevelItemCount()) {
-		currentIndex = markersTreeWidget->topLevelItemCount();
+	if (currentIndex >= markersTreeWidget->topLevelItemCount()) {
+		currentIndex = markersTreeWidget->topLevelItemCount() - 1;
 	}
 
 	markersTreeWidget->setCurrentItem(markersTreeWidget->topLevelItem(currentIndex));
