@@ -93,7 +93,8 @@ private:
 	bool clientRequestInProgress;
 	static QUndoGroup	undogroup;
 	
-	void set_current_project(Project* pProject);
+	void set_current_project(Project* project);
+	void cleanup_backupfiles_for_project(const QString& projectname);
 	bool project_is_current(const QString& title);
 	
 	// allow this function to create one instance

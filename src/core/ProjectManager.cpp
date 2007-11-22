@@ -100,6 +100,8 @@ void ProjectManager::set_current_project(Project* project)
 
 	emit projectLoaded(project);
 	
+	QString oldprojectname = "";
+	
 	if (currentProject) {
 		if (m_exitInProgress) {
 			QString oncloseaction = config().get_property("Project", "onclose", "save").toString();
@@ -117,6 +119,8 @@ void ProjectManager::set_current_project(Project* project)
 		} else {
 			currentProject->save();
 		}
+		
+		oldprojectname = currentProject->get_title();
 		delete currentProject;
 	}
 
@@ -128,6 +132,10 @@ void ProjectManager::set_current_project(Project* project)
 	if (currentProject) {
 		title = currentProject->get_title();
 		config().set_property("Project", "current", title);
+	}
+	
+	if ( ! oldprojectname.isEmpty() ) {
+		cleanup_backupfiles_for_project(oldprojectname);
 	}
 
 }
@@ -532,7 +540,21 @@ void ProjectManager::start_incremental_backup(const QString& projectname)
 	stream << compressed;
 	
 	compressedWriter.close();
+}
+
+
+void ProjectManager::cleanup_backupfiles_for_project(const QString & projectname)
+{
+	if (! project_exists(projectname)) {
+		return;
+	}
 	
+	QString project_dir = config().get_property("Project", "directory", "/directory/unknown").toString();
+	QString project_path = project_dir + "/" + projectname;
+	QString backupdir = project_path + "/projectfilebackup";
+	
+	// Check if the projectfilebackup directory still exist
+	QDir dir(backupdir);
 	// A map to insert files based on their time value,
 	// so it's sorted on date automatically
 	QMap<int, QString> map;
@@ -562,6 +584,7 @@ void ProjectManager::start_incremental_backup(const QString& projectname)
 		}
 	}
 }
+
 
 int ProjectManager::restore_project_from_backup(const QString& projectname, uint restoretime)
 {
