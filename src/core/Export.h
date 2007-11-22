@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Export.h,v 1.16 2007/10/12 10:06:30 r_sijrier Exp $
+$Id: Export.h,v 1.17 2007/11/22 15:07:01 r_sijrier Exp $
 */
 
 #ifndef EXPORT_H
@@ -98,19 +98,20 @@ class ExportThread : public QThread
 {
 	Q_OBJECT
 
-	public:
-		ExportThread(Project* project, ExportSpecification* spec);
-		~ExportThread()
-		{}
+public:
+	ExportThread(Project* project);
+	~ExportThread()
+	{}
 
-		void run();
-		void sleep_for(uint msecs) {
-			msleep(msecs);
-		}
+	void run();
+	void sleep_for(uint msecs) {
+		msleep(msecs);
+	}
+	void set_specification(ExportSpecification* spec);
 
-	private:
-		Project*		m_project;
-		ExportSpecification*	m_spec;
+private:
+	Project*		m_project;
+	ExportSpecification*	m_spec;
 };
 
 

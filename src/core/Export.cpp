@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Export.cpp,v 1.14 2007/10/22 18:44:00 r_sijrier Exp $
+    $Id: Export.cpp,v 1.15 2007/11/22 15:07:01 r_sijrier Exp $
 */
 
 #include "Export.h"
@@ -27,13 +27,18 @@
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-ExportThread::ExportThread(Project* project, ExportSpecification* specification)
+ExportThread::ExportThread(Project* project)
 	: QThread(project)
 {
         m_project = project;
-        m_spec  = specification;
-	specification->thread = this;
 }
+
+void ExportThread::set_specification(ExportSpecification * spec)
+{
+	m_spec  = spec;
+	m_spec->thread = this;
+}
+
 
 void ExportThread::run( )
 {
@@ -137,5 +142,3 @@ int ExportSpecification::is_valid()
 
 	return 1;
 }
-
-//eof

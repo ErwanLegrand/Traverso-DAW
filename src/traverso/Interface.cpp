@@ -361,25 +361,35 @@ void Interface::changeEvent(QEvent *event)
 
 Command * Interface::show_export_widget( )
 {
+	if (m_cdWritingDialog && !m_cdWritingDialog->isHidden()) {
+		return 0;
+	}
+	
 	if (! m_exportDialog) {
 		m_exportDialog = new ExportDialog(this);
 	}
+	
 	if (m_exportDialog->isHidden()) {
-// 		m_exportDialog->set_was_closed();
 		m_exportDialog->show();
 	}
+	
 	return (Command*) 0;
 }
 
 Command * Interface::show_cd_writing_dialog( )
 {
+	if (m_exportDialog && !m_exportDialog->isHidden()) {
+		return 0;
+	}
+	
 	if (! m_cdWritingDialog) {
 		m_cdWritingDialog = new CDWritingDialog(this);
 	}
+	
 	if (m_cdWritingDialog->isHidden()) {
-// 		m_exportDialog->set_was_closed();
 		m_cdWritingDialog->show();
 	}
+	
 	return (Command*) 0;
 }
 

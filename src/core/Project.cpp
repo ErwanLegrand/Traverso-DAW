@@ -512,8 +512,10 @@ Command* Project::remove_song(Song* song, bool historable)
 
 int Project::export_project(ExportSpecification* spec)
 {
+	PENTER;
+	
 	if (!m_exportThread) {
-		m_exportThread = new ExportThread(this, spec);
+		m_exportThread = new ExportThread(this);
 	}
 	
 	if (m_exportThread->isRunning()) {
@@ -526,6 +528,7 @@ int Project::export_project(ExportSpecification* spec)
 	spec->stop = false;
 	spec->breakout = false;
 
+	m_exportThread->set_specification(spec);
 	m_exportThread->start();
 
 	return 0;

@@ -105,6 +105,7 @@ void CDWritingDialog::on_stopButton_clicked( )
 void CDWritingDialog::set_project(Project * project)
 {
 	m_project = project;
+	
 	if (! m_project) {
 		info().information(tr("No project loaded, to write a project to CD, load it first!"));
 		setEnabled(false);
@@ -228,6 +229,8 @@ void CDWritingDialog::cdrdao_process_started()
 
 void CDWritingDialog::cdrdao_process_finished(int exitcode, QProcess::ExitStatus exitstatus)
 {
+	PENTER;
+	
 	Q_UNUSED(exitcode);
 	
 	if (exitstatus == QProcess::CrashExit) {
