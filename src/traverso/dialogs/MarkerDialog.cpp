@@ -112,6 +112,9 @@ void MarkerDialog::set_project(Project * project)
 	m_songlist = m_project->get_songs();
 	for (int i = 0; i < m_songlist.size(); ++i) {
 		comboBoxDisplaySong->addItem(m_songlist.at(i)->get_title());
+		connect(m_songlist.at(i)->get_timeline(), SIGNAL(markerAdded(Marker*)), this, SLOT(update_marker_treeview()));
+		connect(m_songlist.at(i)->get_timeline(), SIGNAL(markerRemoved(Marker*)), this, SLOT(update_marker_treeview()));
+		connect(m_songlist.at(i)->get_timeline(), SIGNAL(markerDragged(Marker*)), this, SLOT(update_marker_treeview()));
 	}
 
 	// Fill dialog with marker stuff....

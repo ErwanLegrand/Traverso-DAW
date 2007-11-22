@@ -48,6 +48,8 @@ public:
 	
 	QDomNode get_state(QDomDocument doc);
 	int set_state(const QDomNode& node);
+
+	void was_updated();
 	
 	void set_when (const TimeRef& when);
 	void set_description(const QString &);
@@ -90,6 +92,7 @@ private:
 signals:
 	void positionChanged(Snappable*);
 	void descriptionChanged();
+	void wasDragged(Marker*);
 
 };
 

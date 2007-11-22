@@ -116,6 +116,11 @@ int Marker::set_state(const QDomNode & node)
 	return 1;
 }
 
+void Marker::was_updated()
+{
+	emit wasDragged(this);
+}
+
 void Marker::set_when(const TimeRef& when)
 {
 	m_when = when;

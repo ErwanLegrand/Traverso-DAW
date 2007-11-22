@@ -89,6 +89,7 @@ int DragMarker::finish_hold()
 int DragMarker::do_action()
 {
 	m_marker->set_when(m_newWhen);
+	m_marker->was_updated();
 	return 1;
 }
 

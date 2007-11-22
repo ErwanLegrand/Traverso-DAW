@@ -57,6 +57,7 @@ int TimeLine::set_state(const QDomNode & node)
 	while (!markerNode.isNull()) {
 		Marker* marker = new Marker(this, markerNode);
 		m_markers.append(marker);
+		connect(marker, SIGNAL(wasDragged(Marker*)), this, SLOT(marker_dragged(Marker*)));
 		markerNode = markerNode.nextSibling();
 	}
 
@@ -100,6 +101,7 @@ Command* TimeLine::remove_marker(Marker* marker, bool historable)
 void TimeLine::private_add_marker(Marker * marker)
 {
 	m_markers.append(marker);
+	connect(marker, SIGNAL(wasDragged(Marker*)), this, SLOT(marker_dragged(Marker*)));
 }
 
 void TimeLine::private_remove_marker(Marker * marker)
@@ -167,5 +169,10 @@ bool TimeLine::has_end_marker()
 	}
 
 	return false;
+}
+
+void TimeLine::marker_dragged(Marker *marker)
+{
+	emit markerDragged(marker);
 }
 

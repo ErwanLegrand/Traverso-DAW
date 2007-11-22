@@ -58,10 +58,12 @@ private:
 private slots:
 	void private_add_marker(Marker* marker);
 	void private_remove_marker(Marker* marker);
+	void marker_dragged(Marker* marker);
 
 signals:
 	void markerAdded(Marker*);
 	void markerRemoved(Marker*);
+	void markerDragged(Marker*);
 };
 
 #endif
