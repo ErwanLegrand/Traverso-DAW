@@ -194,6 +194,7 @@ void ResourcesWidget::showEvent( QShowEvent * event )
 	sourcesTreeWidget->header()->resizeSection(2, 60);
 	sourcesTreeWidget->header()->resizeSection(3, 60);
 	sourcesTreeWidget->header()->setStretchLastSection(false);
+	sourcesTreeWidget->setUniformRowHeights(true);
 	
 	
 	m_filewidget = new FileWidget(this);
