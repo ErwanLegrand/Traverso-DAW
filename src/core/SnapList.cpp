@@ -98,7 +98,7 @@ void SnapList::update_snaplist()
 	}
 
 	// add all on-screen markers
-	QList<Marker*> markerList = m_song->get_timeline()->get_markers();
+	QList<Marker*> markerList = m_song->get_timeline()->get_markers().values();
 	for (int i = 0; i < markerList.size(); ++i) {
 		if (markerList.at(i)->is_snappable() && markerList.at(i)->get_when() >= m_rangeStart && markerList.at(i)->get_when() <= m_rangeEnd) {
 			m_xposList.append(markerList.at(i)->get_when());

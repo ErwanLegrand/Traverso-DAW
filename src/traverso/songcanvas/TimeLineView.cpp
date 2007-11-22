@@ -472,7 +472,7 @@ Command * TimeLineView::drag_marker()
 
 Command * TimeLineView::clear_markers()
 {
-	QList<Marker*> lst = m_timeline->get_markers();
+	QMap<TimeRef, Marker*> lst = m_timeline->get_markers();
 	
 	CommandGroup* group = new CommandGroup(m_timeline, tr("Clear Markers"));
 

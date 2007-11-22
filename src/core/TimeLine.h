@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ContextItem.h"
 #include <QDomNode>
 #include "defines.h"
+#include <QMap>
 
 class Song;
 class Marker;
@@ -40,7 +41,7 @@ public:
 	QDomNode get_state(QDomDocument doc);
 	int set_state(const QDomNode& node);
 	
-	QList<Marker*> get_markers() const {return m_markers;}
+	QMap<TimeRef, Marker*> get_markers() const {return m_markers;}
 	Song *get_song() const {return m_song;}
 	
 	Marker* get_marker(qint64 id);
@@ -53,7 +54,7 @@ public:
 
 private:
 	Song* m_song;
-	QList<Marker*> m_markers;
+	QMap<TimeRef, Marker*> m_markers;
 
 private slots:
 	void private_add_marker(Marker* marker);

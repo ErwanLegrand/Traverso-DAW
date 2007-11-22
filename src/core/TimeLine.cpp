@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Marker.h"
 #include <AddRemove.h>
 #include "AudioDevice.h"
+#include <QMultiMap>
 
 
 TimeLine::TimeLine(Song * song)
@@ -40,8 +41,8 @@ QDomNode TimeLine::get_state(QDomDocument doc)
 	QDomNode markersNode = doc.createElement("Markers");
 	domNode.appendChild(markersNode);
 
-	for (int i = 0; i < m_markers.size(); ++i) {
-		markersNode.appendChild(m_markers.at(i)->get_state(doc));
+	foreach (Marker *marker, m_markers) {
+		markersNode.appendChild(marker->get_state(doc));
 	}
 
 	return domNode;
@@ -56,7 +57,7 @@ int TimeLine::set_state(const QDomNode & node)
 
 	while (!markerNode.isNull()) {
 		Marker* marker = new Marker(this, markerNode);
-		m_markers.append(marker);
+		m_markers.insertMulti(marker->get_when(), marker);
 		connect(marker, SIGNAL(wasDragged(Marker*)), this, SLOT(marker_dragged(Marker*)));
 		markerNode = markerNode.nextSibling();
 	}
@@ -100,13 +101,14 @@ Command* TimeLine::remove_marker(Marker* marker, bool historable)
 
 void TimeLine::private_add_marker(Marker * marker)
 {
-	m_markers.append(marker);
+	m_markers.insertMulti(marker->get_when(), marker);
 	connect(marker, SIGNAL(wasDragged(Marker*)), this, SLOT(marker_dragged(Marker*)));
 }
 
 void TimeLine::private_remove_marker(Marker * marker)
 {
-	m_markers.removeAll(marker);
+	QMultiMap<TimeRef, Marker*>::iterator i = QMultiMap<TimeRef, Marker*>(m_markers).find(marker->get_when(), marker);
+	m_markers.erase(i);
 }
 
 Marker * TimeLine::get_marker(qint64 id)

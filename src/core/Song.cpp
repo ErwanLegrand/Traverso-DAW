@@ -392,7 +392,7 @@ int Song::prepare_export(ExportSpecification* spec)
 	}
 	
 	if (spec->isCdExport) {
-		QList<Marker*> markers = m_timeline->get_markers();
+		QMap<TimeRef, Marker*> markers = m_timeline->get_markers();
 		
 		if (m_timeline->get_start_location(startlocation)) {
 			PMESG2("  Start marker found at %s", QS_C(timeref_to_ms(startlocation)));
@@ -825,7 +825,7 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 {
 	QString output;
 
-	QList<Marker*> mlist = m_timeline->get_markers();
+	QMap<TimeRef, Marker*> mlist = m_timeline->get_markers();
 
 	// Here we make the marker-stuff idiot-proof ;-). Traverso doesn't insist on having any
 	// marker at all, so we need to handle cases like:
@@ -838,44 +838,44 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 			case 0:
 				// no markers present. We add one at the beginning and one at the
 				// end of the render area.
-				mlist.append(new Marker(m_timeline, spec->startLocation, Marker::TEMP_CDTRACK));
-				mlist.append(new Marker(m_timeline, spec->endLocation, Marker::TEMP_ENDMARKER));
+				mlist.insertMulti(spec->startLocation, new Marker(m_timeline, spec->startLocation, Marker::TEMP_CDTRACK));
+				mlist.insertMulti(spec->endLocation, new Marker(m_timeline, spec->endLocation, Marker::TEMP_ENDMARKER));
 				break;
 			case 1:
 				// one marker is present. We add two more at the beginning
-				// and at the end of the render area. But we must check if 
-				// the present marker happens to be at one of these positions.
+				// and at the end of the render area. If the present marker
+				// happened to be at either the start or the end position,
+				// it will now be overwritten, so we will never end up with
+				// two markers at the same position. just make sure NOT to 
+				// use 'insertMulti', use 'insert' instead.
 
 				// deactivate the next if-condition (only the first one) if you want the
 				// stuff before the first marker to go into the pre-gap
-				if (mlist.at(0)->get_when() != (spec->startLocation)) {
-					mlist.append(new Marker(m_timeline, spec->startLocation, Marker::TEMP_CDTRACK));
-				}
-				if (mlist.at(0)->get_when() != spec->endLocation) {
-					mlist.append(new Marker(m_timeline, spec->endLocation, Marker::TEMP_ENDMARKER));
-				}
+				mlist.insert(spec->startLocation, new Marker(m_timeline, spec->startLocation, Marker::TEMP_CDTRACK));
+				mlist.insert(spec->endLocation, new Marker(m_timeline, spec->endLocation, Marker::TEMP_ENDMARKER));
 				break;
 		}
 	} else {
-		// would be ok, but let's check if there is an end marker present. If not,
-		// add one to spec->end_frame
-		if (!m_timeline->has_end_marker()) {
-			mlist.append(new Marker(m_timeline, spec->endLocation, Marker::TEMP_ENDMARKER));
-		}
+		// would be ok, but let's add a marker at the end anyway, and overwrite
+		// the one that could be there already.
+		mlist.insert(spec->endLocation, new Marker(m_timeline, spec->endLocation, Marker::TEMP_ENDMARKER));
 	}
-
-	// Sort the list according to Marker::get_when() values. This
-	// is the correct way to do it according to the Qt docu.
-	QMap<TimeRef, Marker*> markermap;
-	foreach(Marker *marker, mlist) {
-		markermap.insert(marker->get_when(), marker);
-	}
-	mlist = markermap.values();
 
 	TimeRef start;
-	for(int i = 0; i < mlist.size()-1; ++i) {
-		Marker* startmarker = mlist.at(i);
-		Marker* endmarker = mlist.at(i+1);
+	QMapIterator<TimeRef, Marker*> istart(mlist);
+	QMapIterator<TimeRef, Marker*> iend(mlist);
+
+			// istart is element 0
+	iend.next();	// set this one to element 1
+
+	bool isFirstTrack = true;
+
+	while (iend.hasNext()) {
+		istart.next();
+		iend.next();
+
+		Marker* startmarker = istart.value();
+		Marker* endmarker = iend.value();
 
 		output += "TRACK AUDIO\n";
 
@@ -898,7 +898,8 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 		output += "      MESSAGE \"" + startmarker->get_message() + "\"\n    }\n  }\n";
 
 		// add some stuff only required for the first track (e.g. pre-gap)
-		if (i == 0 && pregap) {
+		if (isFirstTrack && pregap) {
+			isFirstTrack = false;
 			//if (start == 0) {
 				// standard pregap, because we have a track marker at the beginning
 				output += "  PREGAP 00:02:00\n";
