@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Interface.h"
 
 #include <QFile>
+#include <QCompleter>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -103,6 +104,8 @@ ExternalProcessingDialog::ExternalProcessingDialog(QWidget * parent, AudioClipEx
 	m_processor = new QProcess(this);
 	m_processor->setProcessChannelMode(QProcess::MergedChannels);
 	
+	m_completer = 0;
+	
 	command_lineedit_text_changed("sox");
 	
 	connect(m_processor, SIGNAL(readyReadStandardOutput()), this, SLOT(read_standard_output()));
@@ -171,6 +174,10 @@ void ExternalProcessingDialog::read_standard_output()
 {
 	if (m_queryOptions) {
 		QString result = m_processor->readAllStandardOutput();
+		// This list is used to collect the availabe arguments for the 
+		// arugment lineedit completer.
+		QStringList completionlist;
+		
 		// On mac os x (and perhaps windows) the full path is given, so we check if the path contains sox!
 		if (m_program.contains("sox")) {
 			QStringList list = result.split("\n");
@@ -179,12 +186,23 @@ void ExternalProcessingDialog::read_standard_output()
 					result = string.remove("Supported effects:").remove("effect:").remove("SUPPORTED EFFECTS:");
 					QStringList options = string.split(QRegExp("\\s+"));
 					foreach(QString string, options) {
-						if (!string.isEmpty())
+						if (!string.isEmpty()) {
 							argsComboBox->addItem(string);
+							completionlist << string;
+						}
 					}
 				}
 			}
 		}
+			// If there was allready a completer, delete it.
+		if (m_completer) {
+			delete m_completer;
+		}
+			
+			// Set the completer for the arguments line edit.
+		m_completer = new QCompleter(completionlist, this);
+		argumentsLineEdit->setCompleter(m_completer);
+		
 		return;
 	}
 	

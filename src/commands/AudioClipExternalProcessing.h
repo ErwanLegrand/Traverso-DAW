@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 class AudioClip;
 class Track;
 class AudioClipExternalProcessing;
+class QCompleter;
 
 class ExternalProcessingDialog : public QDialog, protected Ui::ExternalProcessing
 {
@@ -43,6 +44,7 @@ public:
 private:
 	AudioClipExternalProcessing* m_acep;
 	QProcess* m_processor;
+	QCompleter* m_completer;
 	QString m_filename;
 	QString m_program;
 	bool m_queryOptions;
@@ -80,7 +82,6 @@ private :
 	Track* m_track;
 	AudioClip* m_clip;
 	AudioClip* m_resultingclip;
-	QProcess* m_processor;
 	
 	friend class ExternalProcessingDialog;
 	
