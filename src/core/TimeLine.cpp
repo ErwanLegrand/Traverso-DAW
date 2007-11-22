@@ -125,17 +125,38 @@ Marker * TimeLine::get_marker(qint64 id)
 	return 0;
 }
 
-bool TimeLine::get_end_position(TimeRef& pos)
+bool TimeLine::get_end_location(TimeRef& location)
 {
 	foreach(Marker* marker, m_markers) {
 		if (marker->get_type() == Marker::ENDMARKER) {
-			pos = marker->get_when();
+			location = marker->get_when();
 			return true;
 		}
 	}
 
 	return false;
 }
+
+bool TimeLine::get_start_location(TimeRef & location)
+{
+	TimeRef result(LONG_LONG_MAX);
+	
+	foreach(Marker* marker, m_markers) {
+		if ( ! (marker->get_type() == Marker::ENDMARKER) ) {
+			if (marker->get_when() < result) {
+				result = marker->get_when();
+			}
+		}
+	}
+	
+	if (result != LONG_LONG_MAX) {
+		location = result;
+		return true;
+	}
+	
+	return false;
+}
+
 
 bool TimeLine::has_end_marker()
 {

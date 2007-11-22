@@ -44,7 +44,8 @@ public:
 	Song *get_song() const {return m_song;}
 	
 	Marker* get_marker(qint64 id);
-	bool get_end_position(TimeRef& pos);
+	bool get_end_location(TimeRef& location);
+	bool get_start_location(TimeRef& location);
 	bool has_end_marker();
 
 	Command* add_marker(Marker* marker, bool historable=true);

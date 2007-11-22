@@ -354,10 +354,12 @@ int Song::prepare_export(ExportSpecification* spec)
 			// wait a number (max 10) of process() cycles to be sure we really stopped transport
 			while (m_transport) {
 				spec->thread->sleep_for(msecs);
+				count++;
 				if (count > 10) {
 					break;
 				}
 			}
+			printf("Song::prepare_export: had to wait %d process cycles before the transport was stopped\n", count);
 		}
 		
 		m_rendering = true;
@@ -367,7 +369,7 @@ int Song::prepare_export(ExportSpecification* spec)
 	spec->endLocation = TimeRef();
 
 	TimeRef endlocation, startlocation;
-
+	
 	apill_foreach(Track* track, Track, m_tracks) {
 		track->get_render_range(startlocation, endlocation);
 
@@ -388,17 +390,17 @@ int Song::prepare_export(ExportSpecification* spec)
 	
 	if (spec->isCdExport) {
 		QList<Marker*> markers = m_timeline->get_markers();
-		if (markers.size() >= 2) {
-			startlocation = markers.at(0)->get_when();
+		
+		if (m_timeline->get_start_location(startlocation)) {
 			PMESG2("  Start marker found at %s", QS_C(timeref_to_ms(startlocation)));
-			// round down to the start of the CD frome (75th of a sec)
+			// round down to the start of the CD frame (75th of a sec)
 			startlocation = cd_to_timeref(timeref_to_cd(startlocation));
 			spec->startLocation = startlocation;
 		} else {
 			PMESG2("  No start marker found");
-		}
+		}			
 		
-		if (m_timeline->get_end_position(endlocation)) {
+		if (m_timeline->get_end_location(endlocation)) {
 			PMESG2("  End marker found at %s", QS_C(timeref_to_ms(endlocation)));
 			spec->endLocation = endlocation;
 		} else {
