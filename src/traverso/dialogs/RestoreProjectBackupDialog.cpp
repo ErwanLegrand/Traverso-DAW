@@ -65,6 +65,8 @@ void RestoreProjectBackupDialog::populate_treeview()
 	currentDateLable->setText(QDateTime::currentDateTime ().toString("dd-MM-yy hh:mm:ss"));
 	
 	QList<uint> list = pm().get_backup_date_times(m_projectname);
+	qSort(list.begin(), list.end(), qGreater<int>());
+	
 	QDateTime datetime;
 	foreach(uint time, list) {
 		QTreeWidgetItem* item = new QTreeWidgetItem(dateTreeWidget);
@@ -73,8 +75,6 @@ void RestoreProjectBackupDialog::populate_treeview()
 		item->setText(1, datetime.toString("hh:mm:ss"));
 		item->setData(0, Qt::UserRole, time);
 	}
-	
-	dateTreeWidget->sortItems(0, Qt::DescendingOrder);
 	
 	if (list.size()) {
 		QTreeWidgetItem* item = dateTreeWidget->invisibleRootItem()->child(0);
