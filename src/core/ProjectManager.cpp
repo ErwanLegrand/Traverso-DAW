@@ -505,7 +505,7 @@ void ProjectManager::start_incremental_backup(const QString& projectname)
 	QString backupdir = project_path + "/projectfilebackup";
 	
 	// Check if the projectfilebackup directory still exist
-	QDir dir;
+	QDir dir(backupdir);
 	if (!dir.exists(backupdir)) {
 		create_projectfilebackup_dir(project_path);
 	}
@@ -532,6 +532,35 @@ void ProjectManager::start_incremental_backup(const QString& projectname)
 	stream << compressed;
 	
 	compressedWriter.close();
+	
+	// A map to insert files based on their time value,
+	// so it's sorted on date automatically
+	QMap<int, QString> map;
+	QStringList entrylist = dir.entryList(QDir::Files);
+	
+	// If there are more then 1000 saves, remove the last 200!
+	if (entrylist.size() > 1000) {
+		printf("more then thousand backup files, deleting oldest 200\n");
+		
+		int key;
+		foreach (QString file, dir.entryList(QDir::Files)) {
+			key = file.right(10).toUInt();
+			map.insert(key, file);
+		}
+		
+		QList<QString> tobedeleted = map.values();
+		
+		if (tobedeleted.size() < 201) {
+			return;
+		}
+
+		for(int i=0; i<200; ++i) {
+			QFile file(backupdir + "/" + tobedeleted.at(i));
+			if ( ! file.remove() ) {
+				printf("Could not remove file %s (Reason: %s)\n", QS_C(tobedeleted.at(i)), QS_C(FileHelper::fileerror_to_string(file.error())));
+			}
+		}
+	}
 }
 
 int ProjectManager::restore_project_from_backup(const QString& projectname, uint restoretime)
