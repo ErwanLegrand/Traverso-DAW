@@ -102,6 +102,7 @@ public:
 	AudioClipManager* get_audioclip_manager() const;
 	AudioBus* get_master_out() const {return m_masterOut;}
 	AudioBus* get_render_bus() const {return m_renderBus;}
+	AudioBus* get_clip_render_bus() const {return m_clipRenderBus;}
 	SnapList* get_snap_list() const;
 	PluginChain* get_plugin_chain() const;
 	TimeLine* get_timeline() const {return m_timeline;}
@@ -162,6 +163,7 @@ private:
 	Client* 		m_audiodeviceClient;
 	AudioBus*		m_masterOut;
 	AudioBus*		m_renderBus;
+	AudioBus*		m_clipRenderBus;
 	DiskIO*			m_diskio;
 	AudioClipManager*	m_acmanager;
 	TimeLine*		m_timeline;

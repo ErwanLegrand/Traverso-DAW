@@ -414,7 +414,9 @@ int AudioClip::process(nframes_t nframes)
 	
 	Q_ASSERT(m_readSource);
 	
-	AudioBus* bus = m_song->get_render_bus();
+	AudioBus* bus = m_song->get_clip_render_bus();
+	AudioBus* sendbus = m_song->get_render_bus();
+	
 	TimeRef mix_pos;
 	audio_sample_t* mixdown[get_channels()];
 
@@ -469,6 +471,10 @@ int AudioClip::process(nframes_t nframes)
 	
 	TimeRef endlocation = mix_pos + TimeRef(read_frames, get_rate());
 	m_fader->process_gain(mixdown, mix_pos, endlocation, read_frames, bus->get_channel_count());
+	
+	for (int i=0; i<bus->get_channel_count(); ++i) {
+		Mixer::mix_buffers_no_gain(sendbus->get_buffer(i, nframes), bus->get_buffer(i, nframes), nframes);
+	}
 	
 	return 1;
 }
