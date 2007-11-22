@@ -735,6 +735,14 @@ void SongInfo::update_recording_state()
 {
 	if (m_song->is_recording()) {
 		m_recAction->setIcon(find_pixmap(":/redled-16"));
+		QString recordFormat = config().get_property("Recording", "FileFormat", "wav").toString();
+		int count = 0;
+		apill_foreach(Track* track, Track, m_song->get_tracks()) {
+			if (track->armed()) {
+				count++;
+			}
+		}
+		info().information(tr("Recording to %1 Tracks, encoding format: %2").arg(count).arg(recordFormat));
 	} else {
 		m_recAction->setIcon(find_pixmap(":/redledinactive-16"));
 	}
