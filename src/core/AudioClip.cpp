@@ -557,7 +557,10 @@ int AudioClip::init_recording( QByteArray name )
 		spec->extraFormat["quality"] = compression;
 		spec->extraFormat["skip_wvx"] = skipwvx;
 	}
-	else {
+	else if (recordFormat == "w64") {
+		spec->writerType = "sndfile";
+		spec->extraFormat["filetype"] = "w64";
+	} else {
 		spec->writerType = "sndfile";
 		spec->extraFormat["filetype"] = "wav";
 	}

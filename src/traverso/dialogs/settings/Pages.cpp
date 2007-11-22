@@ -932,9 +932,12 @@ void RecordingPage::load_config()
 	QString recordFormat = config().get_property("Recording", "FileFormat", "wav").toString();
 	if (recordFormat == "wavpack") {
 		m_config->encoding_index_changed(1);
+	} else if (recordFormat == "w64") {
+		m_config->encoding_index_changed(2);
 	} else {
 		m_config->encoding_index_changed(0);
 	}
+	
 	QString wavpackcompression = config().get_property("Recording", "WavpackCompressionType", "fast").toString();
 	if (wavpackcompression == "very_high") {
 		m_config->wavpackCompressionComboBox->setCurrentIndex(0);
@@ -949,10 +952,6 @@ void RecordingPage::load_config()
 	
 	index = config().get_property("Conversion", "ExportResamplingConverterType", 1).toInt();
 	m_config->exportDefaultResampleQualityComboBox->setCurrentIndex(index);
-	
-//	ontheflyResampleComboBox
-// 	exportDefaultResampleQualityComboBox
-// 	wavpackUseAlmostLosslessCheckBox
 }
 
 void RecordingPage::save_config()
@@ -983,9 +982,9 @@ RecordingConfigPage::RecordingConfigPage(QWidget * parent)
 {
 	setupUi(this);
 	
-	encodingInfoPushButton->setIcon(style()->standardIcon(QStyle::SP_FileDialogInfoView));
 	encodingComboBox->addItem("WAV", "wav");
 	encodingComboBox->addItem("WavPack", "wavpack");
+	encodingComboBox->addItem("WAV64", "w64");
 	wavpackCompressionComboBox->addItem("Very high", "very_high");
 	wavpackCompressionComboBox->addItem("High", "high");
 	wavpackCompressionComboBox->addItem("Fast", "fast");
@@ -998,10 +997,9 @@ RecordingConfigPage::RecordingConfigPage(QWidget * parent)
 void RecordingConfigPage::encoding_index_changed(int index)
 {
 	encodingComboBox->setCurrentIndex(index);
-	if (index == 0) {
+	if (index != 1) {
 		wacpackGroupBox->hide();
-	}
-	if (index == 1) {
+	} else {
 		wacpackGroupBox->show();
 	}
 }
