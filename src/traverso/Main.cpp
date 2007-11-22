@@ -90,6 +90,7 @@ int main( int argc, char **argv )
 				printf("\t--d3  \t\t Set debug level to 3 (SUPER_FLOOD)\n");
 				printf("\t--d4  \t\t Set debug level to 4 (ALL)\n");
 				printf("\t--log \t\t Create a ~/traverso.log file instead of dumping debug messages to stdout\n");
+				printf("\t--show-compile-options\t\t Print options used during compilation\n");
 				printf("\n");
 				return 0;
 			}
@@ -97,6 +98,10 @@ int main( int argc, char **argv )
 					TRACE_ON();
 			if (strcmp(argv[i],"-v")==0) {
 				printf("Traverso %s\n", VERSION);
+				return 0;
+			}
+			if (strcmp(argv[i],"--show-compile-options")==0) {
+				printf("Traverso compile options: %s\n", TRAVERSO_DEFINES);
 				return 0;
 			}
 		}
