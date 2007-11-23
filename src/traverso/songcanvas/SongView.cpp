@@ -440,16 +440,24 @@ void SongView::update_shuttle_factor()
 	
 	normalizedY *= 2;
 	
-	if (m_dragShuttle) {
-		m_dragShuttleCurve->get_vector(normalizedY, normalizedY + 0.01, vec, 2);
+	m_shuttleCurve->get_vector(normalizedY, normalizedY + 0.01, vec, 2);
+	
+	int yscale;
+	
+	if (m_trackViews.size()) {
+		int total =0;
+		foreach(TrackView* view, m_trackViews) {
+			total += view->get_height();
+		}
+		yscale = total / (10 * m_trackViews.size());
 	} else {
-		m_shuttleCurve->get_vector(normalizedY, normalizedY + 0.01, vec, 2);
+		yscale = m_clipsViewPort->viewport()->height() / 10;
 	}
 	
 	if (direction > 0) {
-		m_shuttleYfactor = (int) (vec[0] * 30);
+		m_shuttleYfactor = (int) (vec[0] * yscale);
 	} else {
-		m_shuttleYfactor = (int) (vec[0] * -30);
+		m_shuttleYfactor = (int) (vec[0] * -yscale);
 	}
 	
 }
