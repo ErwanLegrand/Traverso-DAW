@@ -80,12 +80,6 @@ QDomNode Marker::get_state(QDomDocument doc)
 		case ENDMARKER:
 			domNode.setAttribute("type",  "ENDMARKER");
 			break;
-		case TEMP_CDTRACK:
-			domNode.setAttribute("type",  "TEMP_CDTRACK");
-			break;
-		case TEMP_ENDMARKER:
-			domNode.setAttribute("type",  "TEMP_ENDMARKER");
-			break;
 	}
 
 	return domNode;
@@ -110,15 +104,8 @@ int Marker::set_state(const QDomNode & node)
 
 	if (tp == "CDTRACK") m_type = CDTRACK;
 	if (tp == "ENDMARKER") m_type = ENDMARKER;
-	if (tp == "TEMP_CDTRACK") m_type = TEMP_CDTRACK;
-	if (tp == "TEMP_ENDMARKER") m_type = TEMP_ENDMARKER;
 
 	return 1;
-}
-
-void Marker::was_updated()
-{
-	emit wasDragged(this);
 }
 
 void Marker::set_when(const TimeRef& when)

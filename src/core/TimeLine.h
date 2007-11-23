@@ -24,11 +24,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "ContextItem.h"
 #include <QDomNode>
+#include <QList>
 #include "defines.h"
-#include <QMap>
 
 class Song;
 class Marker;
+class Snappable;
 class Command;
 
 class TimeLine : public ContextItem
@@ -41,7 +42,7 @@ public:
 	QDomNode get_state(QDomDocument doc);
 	int set_state(const QDomNode& node);
 	
-	QMap<TimeRef, Marker*> get_markers() const {return m_markers;}
+	QList<Marker*> get_markers() const {return m_markers;}
 	Song *get_song() const {return m_song;}
 	
 	Marker* get_marker(qint64 id);
@@ -54,17 +55,17 @@ public:
 
 private:
 	Song* m_song;
-	QMap<TimeRef, Marker*> m_markers;
+	QList<Marker*> m_markers;
 
 private slots:
 	void private_add_marker(Marker* marker);
 	void private_remove_marker(Marker* marker);
-	void marker_dragged(Marker* marker);
+	void marker_position_changed(Snappable* snap);
 
 signals:
 	void markerAdded(Marker*);
 	void markerRemoved(Marker*);
-	void markerDragged(Marker*);
+	void markerPositionChanged(Marker*);
 };
 
 #endif

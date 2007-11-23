@@ -37,7 +37,7 @@
 #include <QFileDialog>
 #include <QDateTime>
 #include <AddRemove.h>
-#include <QMap>
+#include "Information.h"
 
 MarkerDialog::MarkerDialog(QWidget * parent)
 	: QDialog(parent)
@@ -115,7 +115,7 @@ void MarkerDialog::set_project(Project * project)
 		comboBoxDisplaySong->addItem(m_songlist.at(i)->get_title());
 		connect(m_songlist.at(i)->get_timeline(), SIGNAL(markerAdded(Marker*)), this, SLOT(update_marker_treeview()));
 		connect(m_songlist.at(i)->get_timeline(), SIGNAL(markerRemoved(Marker*)), this, SLOT(update_marker_treeview()));
-		connect(m_songlist.at(i)->get_timeline(), SIGNAL(markerDragged(Marker*)), this, SLOT(update_marker_treeview()));
+		connect(m_songlist.at(i)->get_timeline(), SIGNAL(markerPositionChanged(Marker*)), this, SLOT(update_marker_treeview()));
 	}
 
 	// Fill dialog with marker stuff....
@@ -478,6 +478,11 @@ void MarkerDialog::update_songs()
 void MarkerDialog::remove_marker()
 {
 	if (!m_marker) {
+		return;
+	}
+	
+	if (m_marker->get_type() == Marker::ENDMARKER) {
+		info().information(tr("It's not possible to remove the endmarker!!"));
 		return;
 	}
 

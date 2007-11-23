@@ -39,8 +39,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <defines.h>
 #include <AddRemove.h>
 #include <CommandGroup.h>
-#include <InputEngine.h>
-#include "AudioDevice.h"
+#include "Information.h"
+#include "InputEngine.h"
 
 #include <QFont>
 #include <QDebug>
@@ -83,13 +83,13 @@ int DragMarker::finish_hold()
 	d->view->get_songview()->start_shuttle(false);
 	d->view->set_dragging(false);
 	delete d;
-	return do_action();
+	
+	return 1;
 }
 
 int DragMarker::do_action()
 {
 	m_marker->set_when(m_newWhen);
-	m_marker->was_updated();
 	return 1;
 }
 
@@ -378,6 +378,10 @@ Command* TimeLineView::remove_marker()
 {
 	if (m_blinkingMarker) {
 		Marker* marker = m_blinkingMarker->get_marker();
+		if (marker->get_type() == Marker::ENDMARKER) {
+			info().information(tr("It's not possible to remove the endmarker!!"));
+			return ie().failure();
+		}
 		return m_timeline->remove_marker(marker);
 	}
 
@@ -472,11 +476,9 @@ Command * TimeLineView::drag_marker()
 
 Command * TimeLineView::clear_markers()
 {
-	QMap<TimeRef, Marker*> lst = m_timeline->get_markers();
-	
 	CommandGroup* group = new CommandGroup(m_timeline, tr("Clear Markers"));
 
-	foreach(Marker *m, lst) {
+	foreach(Marker *m, m_timeline->get_markers()) {
 		group->add_command(m_timeline->remove_marker(m));
 	}
 

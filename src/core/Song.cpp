@@ -392,7 +392,7 @@ int Song::prepare_export(ExportSpecification* spec)
 	}
 	
 	if (spec->isCdExport) {
-		QMap<TimeRef, Marker*> markers = m_timeline->get_markers();
+		QList<Marker*> markers = m_timeline->get_markers();
 		
 		if (m_timeline->get_start_location(startlocation)) {
 			PMESG2("  Start marker found at %s", QS_C(timeref_to_ms(startlocation)));
@@ -825,7 +825,8 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 {
 	QString output;
 
-	QMap<TimeRef, Marker*> mlist = m_timeline->get_markers();
+	QList<Marker*> mlist = m_timeline->get_markers();
+	QList<Marker*> tempmarkers;
 
 	// Here we make the marker-stuff idiot-proof ;-). Traverso doesn't insist on having any
 	// marker at all, so we need to handle cases like:
@@ -833,50 +834,58 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 	// - one marker (doesn't make sense)
 	// - enough markers, but no end marker
 
+	Marker* temp;
+	
 	if (mlist.size() < 2) {
 		switch (mlist.size()) {
 			case 0:
 				// no markers present. We add one at the beginning and one at the
 				// end of the render area.
-				mlist.insertMulti(spec->startLocation, new Marker(m_timeline, spec->startLocation, Marker::TEMP_CDTRACK));
-				mlist.insertMulti(spec->endLocation, new Marker(m_timeline, spec->endLocation, Marker::TEMP_ENDMARKER));
+				temp = new Marker(m_timeline, spec->startLocation, Marker::CDTRACK);
+				tempmarkers.append(temp);
+				mlist.prepend(temp);
+				temp = new Marker(m_timeline, spec->endLocation, Marker::ENDMARKER);
+				tempmarkers.append(temp);
+				mlist.append(temp);
 				break;
 			case 1:
-				// one marker is present. We add two more at the beginning
-				// and at the end of the render area. If the present marker
+				// one marker is present. We add two more, one at the beginning
+				// and one at the end of the render area. If the present marker
 				// happened to be at either the start or the end position,
 				// it will now be overwritten, so we will never end up with
-				// two markers at the same position. just make sure NOT to 
-				// use 'insertMulti', use 'insert' instead.
+				// two markers at the same position.
 
 				// deactivate the next if-condition (only the first one) if you want the
 				// stuff before the first marker to go into the pre-gap
-				mlist.insert(spec->startLocation, new Marker(m_timeline, spec->startLocation, Marker::TEMP_CDTRACK));
-				mlist.insert(spec->endLocation, new Marker(m_timeline, spec->endLocation, Marker::TEMP_ENDMARKER));
+				if (mlist.at(0)->get_when() != (spec->startLocation)) {
+					temp = new Marker(m_timeline, spec->startLocation, Marker::CDTRACK);
+					tempmarkers.append(temp);
+					mlist.prepend(temp);
+				}
+				if (mlist.at(0)->get_when() != (spec->startLocation)) {
+					temp = new Marker(m_timeline, spec->endLocation, Marker::ENDMARKER);
+					tempmarkers.append(temp);
+					mlist.append(temp);
+				}
 				break;
 		}
 	} else {
-		// would be ok, but let's add a marker at the end anyway, and overwrite
-		// the one that could be there already.
-		mlist.insert(spec->endLocation, new Marker(m_timeline, spec->endLocation, Marker::TEMP_ENDMARKER));
+		 // would be ok, but let's check if there is an end marker present. If not,
+		// add one to spec->end_frame
+		if (!m_timeline->has_end_marker()) {
+			temp = new Marker(m_timeline, spec->endLocation, Marker::ENDMARKER);
+			tempmarkers.append(temp);
+			mlist.append(temp);
+		}
 	}
 
 	TimeRef start;
-	QMapIterator<TimeRef, Marker*> istart(mlist);
-	QMapIterator<TimeRef, Marker*> iend(mlist);
-
-			// istart is element 0
-	iend.next();	// set this one to element 1
-
-	bool isFirstTrack = true;
-
-	while (iend.hasNext()) {
-		istart.next();
-		iend.next();
-
-		Marker* startmarker = istart.value();
-		Marker* endmarker = iend.value();
-
+	
+	for(int i = 0; i < mlist.size()-1; ++i) {
+		
+		Marker* startmarker = mlist.at(i);
+		Marker* endmarker = mlist.at(i+1);
+		
 		output += "TRACK AUDIO\n";
 
 		if (startmarker->get_copyprotect()) {
@@ -898,8 +907,7 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 		output += "      MESSAGE \"" + startmarker->get_message() + "\"\n    }\n  }\n";
 
 		// add some stuff only required for the first track (e.g. pre-gap)
-		if (isFirstTrack && pregap) {
-			isFirstTrack = false;
+		if ((i == 0) && pregap) {
 			//if (start == 0) {
 				// standard pregap, because we have a track marker at the beginning
 				output += "  PREGAP 00:02:00\n";
@@ -920,16 +928,14 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 		start += length;
 
 		// check if the second marker is of type "Endmarker"
-		if ((endmarker->get_type() == Marker::ENDMARKER) || (endmarker->get_type() == Marker::TEMP_ENDMARKER)) {
+		if (endmarker->get_type() == Marker::ENDMARKER) {
 			break;
 		}
 	}
 
 	// delete all temporary markers
-	foreach(Marker* marker, mlist) {
-		if ((marker->get_type() == Marker::TEMP_CDTRACK) || (marker->get_type() == Marker::TEMP_ENDMARKER)) {
-			delete marker;
-		}
+	foreach(Marker* marker, tempmarkers) {
+		delete marker;
 	}
 
 	return output;

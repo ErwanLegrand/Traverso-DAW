@@ -25,8 +25,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Marker.h"
 #include <AddRemove.h>
 #include "AudioDevice.h"
-#include <QMultiMap>
 
+static bool smallerMarker(const Marker* left, const Marker* right )
+{
+	return left->get_when() < right->get_when();
+}
 
 TimeLine::TimeLine(Song * song)
 	: ContextItem(song)
@@ -57,16 +60,20 @@ int TimeLine::set_state(const QDomNode & node)
 
 	while (!markerNode.isNull()) {
 		Marker* marker = new Marker(this, markerNode);
-		m_markers.insertMulti(marker->get_when(), marker);
-		connect(marker, SIGNAL(wasDragged(Marker*)), this, SLOT(marker_dragged(Marker*)));
+		connect(marker, SIGNAL(positionChanged(Snappable*)), this, SLOT(marker_position_changed(Snappable*)));
+		m_markers.append(marker);
 		markerNode = markerNode.nextSibling();
 	}
 
+	qSort(m_markers.begin(), m_markers.end(), smallerMarker);
+	
 	return 1;
 }
 
 Command * TimeLine::add_marker(Marker* marker, bool historable)
 {
+	connect(marker, SIGNAL(positionChanged(Snappable*)), this, SLOT(marker_position_changed(Snappable*)));
+	
 	AddRemove* cmd;
 	cmd = new AddRemove(this, marker, historable, m_song,
 		"private_add_marker(Marker*)", "markerAdded(Marker*)",
@@ -101,25 +108,17 @@ Command* TimeLine::remove_marker(Marker* marker, bool historable)
 
 void TimeLine::private_add_marker(Marker * marker)
 {
-	m_markers.insertMulti(marker->get_when(), marker);
-	connect(marker, SIGNAL(wasDragged(Marker*)), this, SLOT(marker_dragged(Marker*)));
+	m_markers.append(marker);
+	qSort(m_markers.begin(), m_markers.end(), smallerMarker);
 }
 
 void TimeLine::private_remove_marker(Marker * marker)
 {
-	QMultiMap<TimeRef, Marker*>::iterator i = QMultiMap<TimeRef, Marker*>(m_markers).find(marker->get_when(), marker);
-	m_markers.erase(i);
+	m_markers.removeAll(marker);
 }
 
 Marker * TimeLine::get_marker(qint64 id)
 {
-	// What about using a QHash instead of QList for storing our markers ?
-	// Then this function would be as simple as return m_markers.value(id);
-	// And most likely faster too :-)
-	// On the other hand, QList concumes less memory, and when marker count
-	// keeps below a certain value (< 100 or so), it perhaps doesn't make much sense
-	// The get_state() would use the foreach macro, as used below, to make things real easy ;-)
-	
 	foreach(Marker* marker, m_markers) {
 		if (marker->get_id() == id) {
 			return marker;
@@ -143,18 +142,8 @@ bool TimeLine::get_end_location(TimeRef& location)
 
 bool TimeLine::get_start_location(TimeRef & location)
 {
-	TimeRef result(LONG_LONG_MAX);
-	
-	foreach(Marker* marker, m_markers) {
-		if ( ! (marker->get_type() == Marker::ENDMARKER) ) {
-			if (marker->get_when() < result) {
-				result = marker->get_when();
-			}
-		}
-	}
-	
-	if (result != LONG_LONG_MAX) {
-		location = result;
+	if (m_markers.size() > 0) {
+		location = m_markers.first()->get_when();
 		return true;
 	}
 	
@@ -173,8 +162,9 @@ bool TimeLine::has_end_marker()
 	return false;
 }
 
-void TimeLine::marker_dragged(Marker *marker)
+void TimeLine::marker_position_changed(Snappable* snap)
 {
-	emit markerDragged(marker);
+	qSort(m_markers.begin(), m_markers.end(), smallerMarker);
+	emit markerPositionChanged((Marker*)snap);
 }
 

@@ -121,7 +121,11 @@ void MarkerView::set_position(int i)
 
 void MarkerView::load_theme_data()
 {
-	m_fillColor = themer()->get_color("Marker:default");
+	if (m_marker->get_type() == Marker::ENDMARKER) {
+		m_fillColor = themer()->get_color("Marker:end");
+	} else {
+		m_fillColor = themer()->get_color("Marker:default");
+	}
 	calculate_bounding_rect();
 }
 
@@ -130,10 +134,18 @@ void MarkerView::set_active(bool b)
 	m_active = b;
 
 	if (b) {
-		m_fillColor = themer()->get_color("Marker:blink");
+		if (m_marker->get_type() == Marker::ENDMARKER) {
+			m_fillColor = themer()->get_color("Marker:blinkend");
+		} else {
+			m_fillColor = themer()->get_color("Marker:blink");
+		}
 		m_line->set_color(QColor(0, 0, 0, 140));
 	} else {
-		m_fillColor = themer()->get_color("Marker:default");
+		if (m_marker->get_type() == Marker::ENDMARKER) {
+			m_fillColor = themer()->get_color("Marker:end");
+		} else {
+			m_fillColor = themer()->get_color("Marker:default");
+		}
 		m_line->set_color(QColor(0, 0, 0, 45));
 	}
 
