@@ -65,21 +65,44 @@ SpectralMeterWidget::~SpectralMeterWidget()
 
 void SpectralMeterWidget::resizeEvent( QResizeEvent *  )
 {
-	if (m_item) {
-		m_item->resize();
-	}
+	PENTER;
+	get_item()->resize();
 }
 
 void SpectralMeterWidget::hideEvent(QHideEvent * event)
 {
+	PENTER;
 	QWidget::hideEvent(event);
-	if (m_item) {
-		m_item->hide_event();
-	}
+	get_item()->hide_event();
 }
 
 
 void SpectralMeterWidget::showEvent(QShowEvent * event)
+{
+	PENTER;
+	QWidget::showEvent(event);
+	get_item()->show_event();
+}
+
+QSize SpectralMeterWidget::minimumSizeHint() const
+{
+	return QSize(150, 50);
+}
+
+QSize SpectralMeterWidget::sizeHint() const
+{
+	return QSize(300, 50);
+}
+
+void SpectralMeterWidget::get_pointed_context_items(QList<ContextItem* > &list)
+{
+	QList<QGraphicsItem *> itemlist = items(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
+	foreach(QGraphicsItem* item, itemlist) {
+		list.append((ViewItem*)item);
+	}
+}
+
+SpectralMeterView * SpectralMeterWidget::get_item()
 {
 	if (!m_item) {
 		setMinimumWidth(40);
@@ -103,27 +126,9 @@ void SpectralMeterWidget::showEvent(QShowEvent * event)
 		setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	}
 	
-	QWidget::showEvent(event);
-	m_item->show_event();
+	return m_item;
 }
 
-QSize SpectralMeterWidget::minimumSizeHint() const
-{
-	return QSize(150, 50);
-}
-
-QSize SpectralMeterWidget::sizeHint() const
-{
-	return QSize(300, 50);
-}
-
-void SpectralMeterWidget::get_pointed_context_items(QList<ContextItem* > &list)
-{
-	QList<QGraphicsItem *> itemlist = items(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
-	foreach(QGraphicsItem* item, itemlist) {
-		list.append((ViewItem*)item);
-	}
-}
 
 
 
@@ -398,7 +403,14 @@ void SpectralMeterView::hide_event()
 
 void SpectralMeterView::show_event()
 {
-	set_song(m_song);
+	if (m_song) {
+		if (m_meter) {
+			Command::process_command(m_song->get_plugin_chain()->add_plugin(m_meter, false));
+			timer.start(UPDATE_INTERVAL);
+		} else {
+			set_song(m_song);
+		}
+	}
 }
 
 
@@ -1190,3 +1202,4 @@ void SpectralMeterConfigWidget::load_configuration( )
 }
 
 //eof
+

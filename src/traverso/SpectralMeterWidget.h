@@ -76,6 +76,7 @@ protected:
 	
 private:
 	SpectralMeterView* m_item;
+	SpectralMeterView* get_item();
 };
 
 
@@ -98,7 +99,6 @@ public:
 	
 	void resize();
 	void hide_event();
-	void show_event();
 
 private:
 	SpectralMeterWidget* m_widget;
@@ -158,7 +158,8 @@ public slots:
 	void		set_project( Project* );
 	void		load_configuration();
 	void		set_song( Song* );
-	
+	void 		show_event();
+
 	Command*	edit_properties();
 	Command*	set_mode();
 	Command*	reset();

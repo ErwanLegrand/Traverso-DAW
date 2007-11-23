@@ -279,7 +279,14 @@ void CorrelationMeterView::hide_event()
 
 void CorrelationMeterView::show_event()
 {
-	set_song(m_song);
+	if (m_song) {
+		if (m_meter) {
+			Command::process_command(m_song->get_plugin_chain()->add_plugin(m_meter, false));
+			timer.start(40);
+		} else {
+			set_song(m_song);
+		}
+	}
 }
 
 
