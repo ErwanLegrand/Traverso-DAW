@@ -47,6 +47,7 @@ public :
 	int get_processable_buffer_space() const;
 	int get_chunck_size() const {return m_chunkSize;}
 	int get_buffer_size() const {return m_bufferSize;}
+	Peak* get_peak() {return m_peak;}
 
 	int process(nframes_t nframes);
 	

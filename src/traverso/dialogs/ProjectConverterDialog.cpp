@@ -93,3 +93,10 @@ void ProjectConverterDialog::on_loadProjectButton_clicked()
 	reject();
 }
 
+void ProjectConverterDialog::on_stopConversionButton_clicked()
+{
+	m_converter->stop_conversion();
+	stopConversionButton->hide();
+	closeButton->show();
+}
+

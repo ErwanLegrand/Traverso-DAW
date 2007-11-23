@@ -39,6 +39,7 @@ public:
 	
 	void set_project(const QString& rootdir, const QString& name);
 	int start();
+	void stop_conversion();
 	QString get_conversion_description();
 
 private:
@@ -59,6 +60,7 @@ private slots:
 	void file_merge_started(QString file);
 	void file_merge_finished(QString file);
 	void finish_2_3_conversion();
+	void processing_stopped();
 
 signals:
 	void progress(int);

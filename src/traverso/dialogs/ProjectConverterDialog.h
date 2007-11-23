@@ -51,6 +51,7 @@ private slots:
 	void converter_messages(QString);
 	void conversion_finished();
 	void on_loadProjectButton_clicked();
+	void on_stopConversionButton_clicked();
 };
 
 #endif

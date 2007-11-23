@@ -38,6 +38,7 @@ public:
 	}
 	
 	void enqueue_task(ReadSource* source0, ReadSource* source2, const QString& dir, const QString& outfilename);
+	void stop_merging();
 
 		
 private slots:
@@ -53,6 +54,7 @@ private:
 	
 	QQueue<MergeTask> m_tasks;
 	QMutex m_mutex;
+	bool m_stopMerging;
 	
 	void process_task(MergeTask task);
 	
@@ -61,6 +63,7 @@ signals:
 	void progress(int);
 	void taskStarted(QString);
 	void taskFinished(QString);
+	void processingStopped();
 };
 
 #endif

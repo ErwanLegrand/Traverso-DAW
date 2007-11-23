@@ -34,6 +34,7 @@
 ProjectConverter::ProjectConverter() 
 {
 	m_projectfileversion = -1;
+	m_merger = 0;
 	connect(this, SIGNAL(conversionFinished()), this, SLOT(conversion_finished()));
 }
 
@@ -56,6 +57,17 @@ int ProjectConverter::start()
 
 void ProjectConverter::set_project(const QString & rootdir, const QString & name)
 {
+	m_readsources.clear();
+	m_filesToMerge = 0;
+	m_filesMerged = 0;
+	if (m_merger) {
+		delete m_merger;
+	}
+	m_document.clear();
+	
+	
+	m_projectfileversion = -1;
+	
 	m_rootdir = rootdir;
 	m_projectname = name;
 
@@ -95,6 +107,7 @@ int ProjectConverter::start_conversion_from_version_2_to_3()
 	connect(m_merger, SIGNAL(progress(int)), this, SIGNAL(progress(int)));
 	connect(m_merger, SIGNAL(taskStarted(QString)), this, SLOT(file_merge_started(QString)));
 	connect(m_merger, SIGNAL(taskFinished(QString)), this, SLOT(file_merge_finished(QString)));
+	connect(m_merger, SIGNAL(processingStopped()), this, SLOT(processing_stopped()));
 	
 	QDomElement docElem = m_document.documentElement();
 	QDomNode propertiesNode = docElem.firstChildElement("Properties");
@@ -117,6 +130,7 @@ int ProjectConverter::start_conversion_from_version_2_to_3()
 		qint64 id = readsourceelement.attribute("id", "").toLongLong();
 		QString dir = readsourceelement.attribute("dir", "" );
 		QString name = readsourceelement.attribute("name", "No name supplied?" );
+		bool wasrecording = readsourceelement.attribute("wasrecording", 0).toInt();
 
 		if (filecount == 2 && channelcount == 2 && dir == (m_rootdir + "/audiosources/")) {
 			ReadSource* readsource0 = new ReadSource(dir, name + "-ch0.wav");
@@ -136,6 +150,14 @@ int ProjectConverter::start_conversion_from_version_2_to_3()
 			readsourceelement.setAttribute("length", readsource0->get_length().universal_frame());
 			readsourceelement.setAttribute("rate", readsource0->get_rate());
 			
+		} else {
+			// The version 2 of the project file didn't have the full name
+			// including the channel number, it was added by ReadSource so 
+			// we have to do it now since newer version of ReadSource no longer add
+			// the channel number + extension to the readsource name.
+			if (!name.contains(".wav") && wasrecording && channelcount == 1) {
+				readsourceelement.setAttribute("name", name + "-ch0.wav");
+			}
 		}
 			
 			
@@ -267,5 +289,17 @@ void ProjectConverter::finish_2_3_conversion()
 	save_converted_document();
 	
 	emit conversionFinished();
+}
+
+void ProjectConverter::stop_conversion()
+{
+	if (m_merger && m_merger->isRunning()) {
+		m_merger->stop_merging();
+	}
+}
+
+void ProjectConverter::processing_stopped()
+{
+	emit message(tr("Conversion stopped on user request, you can continue to use this Project with Traverso <= 0.41.0, or reopen it with this version of Traverso and start the conversion again"));
 }
 
