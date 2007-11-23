@@ -199,7 +199,10 @@ void DriverInfo::update_xrun_info( )
 
 QSize DriverInfo::sizeHint() const
 {
-	return QSize(150, SONG_TOOLBAR_HEIGHT);
+	if (xrunCount > 0) {
+		return QSize(240, SONG_TOOLBAR_HEIGHT);
+	}
+	return QSize(200, SONG_TOOLBAR_HEIGHT);
 }
 
 void DriverInfo::show_driver_config_widget( )
@@ -373,7 +376,7 @@ void HDDSpaceInfo::update_status( )
 
 QSize HDDSpaceInfo::sizeHint() const
 {
-	return QSize(70, SONG_TOOLBAR_HEIGHT);
+	return QSize(90, SONG_TOOLBAR_HEIGHT);
 }
 
 
