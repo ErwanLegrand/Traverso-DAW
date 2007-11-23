@@ -1,23 +1,28 @@
 TOBEDONE FOR 0.4x.x
 
-* fade out < GH > is inverted
+* http://traverso-daw.org/forum/index.php/topic,60.msg161.html#msg161
+	(random crashes on mac os x, unable to reproduce locally)
 
-* Export Widget: manually supplied export dir isn't used for the actual export source (WriteSource) path.
+* Bandpass filter wrong inited (or something like that) it crashes
 
-* import file, peak creation starts, undo, redo (while peak creation still active) -> crash
+
+
+Less important:
+* when a menu is open, the viewport no longer tracks mouse move events. closing the menu and NOT
+  moving the mouse delegates actions to the wrong object under the mouse.
 
 * add docs for preparing pc for realtime use! (limits.conf stuff)
 
 * Curve copy should not use the same id!!!!!!
 
 * libsndfile:
-	* How to record to files larger 4 GB
 	* Sector misalignment, how to handle.
-	* flac support is rather broken
 
-Less important:
+* moving a clip doesn't update the Track's cliplist (does it need to be updated ?)
+
+* files with a very large DC offset are painted wrong in rectified view ? (see yo-vega.ogg as example)
+
+* < Z > and < Z X > centers on the viewport and layouts the tracks, causing 2 paint events!
+
 * Painting last curve nodes has artifacts, 'fixed' by populating polygon with as many points as there are
   pixels. This should get a real fix!!
-
-* Bandpass filter wrong inited (or something like that) it crashes
-* Don't use flacs, they crash traverso :(
