@@ -39,6 +39,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QVBoxLayout>
 #include <QComboBox>
 
+#define LENGTH_SECTION_WIDTH 60
+#define COLUMN_INDENTION 18
+
 void FileWidget::showEvent( QShowEvent * event ) {
 	Q_UNUSED(event);
 		
@@ -185,14 +188,14 @@ void ResourcesWidget::showEvent( QShowEvent * event )
 	sourcesTreeWidget->setAlternatingRowColors(true);
 	sourcesTreeWidget->setDragEnabled(true);
 	sourcesTreeWidget->setDropIndicatorShown(true);
-	sourcesTreeWidget->setIndentation(18);
-	sourcesTreeWidget->header()->setResizeMode(0, QHeaderView::Stretch);
+	sourcesTreeWidget->setIndentation(COLUMN_INDENTION);
+	sourcesTreeWidget->header()->setResizeMode(0, QHeaderView::Fixed);
 	sourcesTreeWidget->header()->setResizeMode(1, QHeaderView::Fixed);
 	sourcesTreeWidget->header()->setResizeMode(2, QHeaderView::Fixed);
-	sourcesTreeWidget->header()->setResizeMode(3, QHeaderView::ResizeToContents);
-	sourcesTreeWidget->header()->resizeSection(1, 60);
-	sourcesTreeWidget->header()->resizeSection(2, 60);
-	sourcesTreeWidget->header()->resizeSection(3, 60);
+	sourcesTreeWidget->header()->setResizeMode(3, QHeaderView::Fixed);
+	sourcesTreeWidget->header()->resizeSection(1, LENGTH_SECTION_WIDTH);
+	sourcesTreeWidget->header()->resizeSection(2, LENGTH_SECTION_WIDTH);
+	sourcesTreeWidget->header()->resizeSection(3, LENGTH_SECTION_WIDTH);
 	sourcesTreeWidget->header()->setStretchLastSection(false);
 	sourcesTreeWidget->setUniformRowHeights(true);
 	
@@ -352,7 +355,7 @@ void ResourcesWidget::add_clip(AudioClip * clip)
 		
 		clipitem->setTextAlignment(1, Qt::AlignHCenter);
 		clipitem->setTextAlignment(2, Qt::AlignHCenter);
-		clipitem->setTextAlignment(3, Qt::AlignHCenter);
+		clipitem->setTextAlignment(3, Qt::AlignLeft);
 		
 		connect(clip, SIGNAL(positionChanged(Snappable*)), clipitem, SLOT(clip_state_changed()));
 	}
@@ -380,7 +383,7 @@ void ResourcesWidget::add_source(ReadSource * source)
 		m_sourceindices.insert(source->get_id(), item);
 		item->setTextAlignment(1, Qt::AlignHCenter);
 		item->setTextAlignment(2, Qt::AlignHCenter);
-		item->setTextAlignment(3, Qt::AlignHCenter);
+		item->setTextAlignment(3, Qt::AlignLeft);
 	}
 	
 	item->source_state_changed();
@@ -506,5 +509,18 @@ void SourceTreeItem::source_state_changed()
 	setData(0, Qt::UserRole, m_source->get_id());
 	setToolTip(0, m_source->get_short_name() + "   " + duration);
 
+}
+
+void ResourcesWidget::resizeEvent(QResizeEvent * e)
+{
+	if (sourcesTreeWidget) {
+		int w = width() - COLUMN_INDENTION;
+		int nameSectionWidth = w - (3 * LENGTH_SECTION_WIDTH);
+		if (nameSectionWidth < 130) {
+			nameSectionWidth = 130;
+		}
+		
+		sourcesTreeWidget->header()->resizeSection(0, nameSectionWidth);
+	}
 }
 

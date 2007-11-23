@@ -104,6 +104,7 @@ public:
 
 protected:
 	void showEvent( QShowEvent * event );
+	void resizeEvent( QResizeEvent * e );
 
 private:
 	Project* m_project;
