@@ -199,7 +199,7 @@ Interface::Interface()
 
 	cpointer().add_contextitem(this);
 
-	connect(&config(), SIGNAL(configChanged()), this, SLOT(update_opengl()));
+	connect(&config(), SIGNAL(configChanged()), this, SLOT(config_changed()));
 }
 
 Interface::~Interface()
@@ -501,12 +501,15 @@ void Interface::create_menus( )
 	menu = menuBar()->addMenu(tr("Se&ttings"));
 	
 	QMenu* submenu = menu->addMenu(tr("&Recording File Format"));
-	action = submenu->addAction("WAVE");
-	connect(action, SIGNAL(triggered( bool )), this, SLOT(change_recording_format_to_wav()));
-	action = submenu->addAction("WavPack");
-	connect(action, SIGNAL(triggered( bool )), this, SLOT(change_recording_format_to_wavpack()));
-	action = submenu->addAction("WAVE-64");
-	connect(action, SIGNAL(triggered( bool )), this, SLOT(change_recording_format_to_wav64()));
+	m_wavAction = submenu->addAction("WAVE");
+	connect(m_wavAction, SIGNAL(triggered( bool )), this, SLOT(change_recording_format_to_wav()));
+	m_wavpackAction = submenu->addAction("WavPack");
+	connect(m_wavpackAction, SIGNAL(triggered( bool )), this, SLOT(change_recording_format_to_wavpack()));
+	m_wav64Action = submenu->addAction("WAVE-64");
+	connect(m_wav64Action, SIGNAL(triggered( bool )), this, SLOT(change_recording_format_to_wav64()));
+	
+	// fake a config changed 'signal-slot' action, to set the encoding menu icons
+	config_changed();
 	
 	menu->addSeparator();
 	
@@ -931,12 +934,24 @@ QMenu* Interface::create_fade_selector_menu(const QString& fadeTypeName)
 	return menu;
 }
 
-void Interface::update_opengl()
+void Interface::config_changed()
 {
 	bool toggled = config().get_property("Interface", "OpenGL", false).toBool();
 
 	foreach(SongWidget* widget, m_songWidgets) {
 		widget->set_use_opengl(toggled);
+	}
+	
+	QString encoding = config().get_property("Recording", "FileFormat", "").toString();
+	m_wavAction->setIcon(QIcon());
+	m_wav64Action->setIcon(QIcon());
+	m_wavpackAction->setIcon(QIcon());
+	if (encoding == "wav") {
+		m_wavAction->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
+	} else if (encoding == "wavpack") {
+		m_wavpackAction->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
+	} else if (encoding == "w64") {
+		m_wav64Action->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
 	}
 }
 

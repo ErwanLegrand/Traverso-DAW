@@ -134,6 +134,9 @@ private:
 	QAction*		m_projectSongManagerAction;
 	QAction*		m_projectExportAction;
 	QAction*		m_songMenuAction;
+	QAction*		m_wavAction;
+	QAction*		m_wav64Action;
+	QAction*		m_wavpackAction;
 	
 	ResourcesInfoWidget*	resourcesInfo;
 	DriverInfoWidget*	driverInfo;
@@ -154,7 +157,7 @@ public slots :
 	void process_context_menu_action(QAction* action);
 	void set_fade_in_shape(QAction* action);
 	void set_fade_out_shape(QAction* action);
-	void update_opengl();
+	void config_changed();
 	void import_audio();
 	void show_restore_project_backup_dialog();
 	void change_recording_format_to_wav();
