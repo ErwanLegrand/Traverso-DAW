@@ -598,17 +598,21 @@ BufferStatus* ReadSource::get_buffer_status()
 	int freespace = m_buffers.at(0)->write_space();
 	
 // 	printf("m_rbFileReadPos, m_length %lld, %lld\n", m_rbFileReadPos.universal_frame(), m_length.universal_frame());
-	
-	if (m_rbFileReadPos >= m_length || !m_active) {
+	TimeRef transport = m_clip->get_song()->get_transport_location();
+	TimeRef syncstartlocation = m_clip->get_track_start_location();
+	bool transportBeforeSyncStartLocation = transport < (syncstartlocation - (3 * UNIVERSAL_SAMPLE_RATE));
+	bool transportAfterClipEndLocation = transport > (m_clip->get_track_end_location() + (3 * UNIVERSAL_SAMPLE_RATE));
+			
+	if (m_rbFileReadPos >= m_length || !m_active || transportBeforeSyncStartLocation || transportAfterClipEndLocation) {
 		m_bufferstatus->fillStatus =  100;
 		freespace = 0;
+		m_bufferstatus->needSync = false;
 	} else {
 		m_bufferstatus->fillStatus = (int) (((float)freespace / m_bufferSize) * 100);
+		m_bufferstatus->needSync = m_needSync;
 	}
 	
 	m_bufferstatus->bufferUnderRun = m_bufferUnderRunDetected;
-	m_bufferstatus->needSync = m_needSync;
-
 	m_bufferstatus->priority = (int) (freespace / m_chunkSize);
 	
 	return m_bufferstatus;

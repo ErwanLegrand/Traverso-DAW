@@ -225,7 +225,9 @@ void DiskIO::output_rate_changed(int rate)
 // Internal function
 void DiskIO::do_work( )
 {
-//	Q_ASSERT_X(m_song->threadId != QThread::currentThreadId (), "DiskIO::do_work", "Error, running in gui thread!!!!!");
+#if defined (THREAD_CHECK)
+	Q_ASSERT_X(m_song->threadId != QThread::currentThreadId (), "DiskIO::do_work", "Error, running in gui thread!!!!!");
+#endif
 
 	QMutexLocker locker(&mutex);
 	
