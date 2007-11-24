@@ -62,10 +62,10 @@
 		<color name="AudioClip:wavemacroview:brush:hover:bottom" red="80" green="80" blue="220" alpha="255" />
 		<color name="AudioClip:wavemacroview:brush:muted:top" red="200" green="200" blue="200" alpha="255" />
 		<color name="AudioClip:wavemacroview:brush:muted:bottom" red="200" green="200" blue="200" alpha="255" />
-		<color name="AudioClip:wavemacroview:brush:curvemode:top" red="50" green="50" blue="150" alpha="255" />
-		<color name="AudioClip:wavemacroview:brush:curvemode:bottom" red="50" green="50" blue="150" alpha="255" />
-		<color name="AudioClip:wavemacroview:brush:curvemode:hover:top" red="50" green="50" blue="200" alpha="255" />
-		<color name="AudioClip:wavemacroview:brush:curvemode:hover:bottom" red="100" green="100" blue="200" alpha="255" />
+		<color name="AudioClip:wavemacroview:brush:curvemode:top" red="80" green="80" blue="180" alpha="255" />
+		<color name="AudioClip:wavemacroview:brush:curvemode:bottom" red="80" green="80" blue="180" alpha="255" />
+		<color name="AudioClip:wavemacroview:brush:curvemode:hover:top" red="80" green="80" blue="220" alpha="255" />
+		<color name="AudioClip:wavemacroview:brush:curvemode:hover:bottom" red="80" green="80" blue="220" alpha="255" />
 		<color name="AudioClip:wavemicroview"  red="50" green="50" blue="200" alpha="255" />
 		<color name="AudioClip:wavemicroview:curvemode"  red="50" green="50" blue="200" alpha="255" />
 		<color name="AudioClip:background:muted:top"  red="150" green="150" blue="150"  alpha="150" />
