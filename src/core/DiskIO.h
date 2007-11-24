@@ -76,6 +76,8 @@ private:
 	QList<WriteSource*>	m_writeSources;
 	QList<ReadSource*>	m_processableReadSources;
 	QList<WriteSource*>	m_processableWriteSources;
+	QList<QPair<BufferStatus*, ReadSource*> > m_readersStatus;
+	QList<QPair<int, WriteSource*> > m_writersStatus;
 	DiskIOThread*		m_diskThread;
 	QTimer			m_workTimer;
 	QMutex			mutex;

@@ -75,7 +75,6 @@ public :
 	void sync(DecodeBuffer* buffer);
 	void process_ringbuffer(DecodeBuffer* buffer, bool seeking=false);
 	void prepare_rt_buffers();
-	size_t is_active() const;
 	BufferStatus* get_buffer_status();
 	
 	void set_output_rate(int rate, bool forceRate=false);
@@ -117,11 +116,5 @@ private:
 signals:
 	void stateChanged();
 };
-
-
-inline size_t ReadSource::is_active() const
-{
-	return m_active;
-}
 
 #endif

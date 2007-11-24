@@ -251,7 +251,7 @@ void DiskIO::do_work( )
 			source->process_ringbuffer(framebuffer[0]);
 		}
 		
-		if (whilecount++ > 1000) {
+		if (whilecount++ > 2000) {
 			printf("DiskIO::do_work -> probably detected a loop here, or do_work() is REALLY buzy!!\n");
 			break;
 		}
@@ -267,13 +267,30 @@ int DiskIO::there_are_processable_sources( )
 {
 	m_processableReadSources.clear();
 	m_processableWriteSources.clear();
+	m_readersStatus.clear();
+	m_writersStatus.clear();
 	QList<ReadSource* > syncSources;
-		
+
+	
+	for (int j=0; j<m_writeSources.size(); ++j) {
+		WriteSource* source = m_writeSources.at(j); 
+		int space = source->get_processable_buffer_space();
+		QPair<int, WriteSource*> data(space, source);
+		m_writersStatus.append(data);
+	}
+	
+	for (int j=0; j<m_readSources.size(); ++j) {
+		ReadSource* source = m_readSources.at(j);
+		BufferStatus* status = source->get_buffer_status();
+		m_readersStatus.append(QPair<BufferStatus*, ReadSource*>(status, source));
+	}
+	
+
 	for (int i=(bufferdividefactor-2); i >= 0; --i) {
 		
-		for (int j=0; j<m_writeSources.size(); ++j) {
-			WriteSource* source = m_writeSources.at(j); 
-			int space = source->get_processable_buffer_space();
+		for(int pair=0; pair<m_writersStatus.size(); ++pair) {
+			WriteSource* source = m_writersStatus.at(pair).second;
+			int space = m_writersStatus.at(pair).first;
 			int prio = (int) (space  / source->get_chunck_size());
 			
 			// If the source stopped recording, it will write it's remaining samples in the next 
@@ -294,12 +311,11 @@ int DiskIO::there_are_processable_sources( )
 			}
 		}
 		
-		for (int j=0; j<m_readSources.size(); ++j) {
-
-			ReadSource* source = m_readSources.at(j);
-			BufferStatus* status = source->get_buffer_status();
+		for(int pair=0; pair<m_readersStatus.size(); ++pair) {
+			ReadSource* source = m_readersStatus.at(pair).second;
+			BufferStatus* status = m_readersStatus.at(pair).first;
 			
-			if (status->priority > i && source->is_active() && !status->needSync ) {
+			if (status->priority > i && !status->needSync ) {
 				
 				if ( (! m_seeking) && status->bufferUnderRun ) {
 					if (! m_hardDiskOverLoadCounter++) {
@@ -315,7 +331,7 @@ int DiskIO::there_are_processable_sources( )
 				m_processableReadSources.append(source);
 			
 			} else if (status->needSync) {
-// 				printf("status == bufferUnderRun\n");
+				// printf("status == bufferUnderRun\n");
 				if (syncSources.size() == 0) {
 					syncSources.append(source);
 				}
@@ -326,7 +342,7 @@ int DiskIO::there_are_processable_sources( )
 			return 1;
 		}
 	}
-				
+	
 	
 	if (syncSources.size() > 0) { 
 		syncSources.at(0)->sync(m_decodebuffer);

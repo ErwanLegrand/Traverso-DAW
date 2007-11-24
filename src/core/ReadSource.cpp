@@ -282,7 +282,7 @@ void ReadSource::set_output_rate(int rate, bool forceRate)
 	
 	// The length could have become slightly smaller/larger due
 	// rounding issues involved with converting to one samplerate to another.
-	// Should be at the order of one sample at most, but for reading purposes we 
+	// Should be at the order of one - two samples at most, but for reading purposes we 
 	// need sample accurate information!
 	m_length = m_audioReader->get_length();
 }
@@ -418,7 +418,6 @@ int ReadSource::rb_file_read(DecodeBuffer* buffer, nframes_t cnt)
 		// We either passed the end of the file, or our audio reader
 		// is doing weird things, is broken, invalid or something else
 		// Set the rinbuffer file readpos to m_length so processing stops here!
-		// * Due resample rounding issues, we nev
 		m_rbFileReadPos = m_length;
 	}
 
@@ -599,8 +598,8 @@ BufferStatus* ReadSource::get_buffer_status()
 	int freespace = m_buffers.at(0)->write_space();
 	
 // 	printf("m_rbFileReadPos, m_length %lld, %lld\n", m_rbFileReadPos.universal_frame(), m_length.universal_frame());
-
-	if (m_rbFileReadPos >= m_length) {
+	
+	if (m_rbFileReadPos >= m_length || !m_active) {
 		m_bufferstatus->fillStatus =  100;
 		freespace = 0;
 	} else {
@@ -622,10 +621,7 @@ void ReadSource::set_active(bool active)
 
 	if (active) {
 		m_active = 1;
-// 		m_wasActivated = 1;
-// 		printf("setting private readsource %s to active\n", QS_C(m_fileName));
 	} else {
-// 		printf("setting private readsource %s to IN-active\n", QS_C(m_fileName));
 		m_active = 0;
 	}
 }
@@ -649,6 +645,5 @@ void ReadSource::set_diskio(DiskIO * diskio)
 	if (m_audioReader) {
 		m_audioReader->set_resample_decode_buffer(m_diskio->get_resample_decode_buffer());
 	}
-	
 }
 
