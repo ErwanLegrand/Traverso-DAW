@@ -103,6 +103,11 @@ ViewPort::ViewPort(QGraphicsScene* scene, QWidget* parent)
 	m_holdcursor = new HoldCursor();
 	scene->addItem(m_holdcursor);
 	m_holdcursor->hide();
+	// m_holdCursorActive is a replacement for m_holdcursor->isVisible()
+	// in mouseMoveEvents, which crashes when a hold action in one viewport
+	// ends with the mouse upon a different viewport.
+	// Should get a proper fix ?
+	m_holdCursorActive = false;
 }
 
 ViewPort::~ViewPort()
@@ -153,7 +158,7 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 		// It can happen that a cursor is set for a newly created viewitem
 		// but we don't want that when the holdcursor is set!
 		// So force it back to be a blankcursor.
-		if (m_holdcursor->isVisible() && viewport()->cursor().shape() != Qt::BlankCursor) {
+		if (m_holdCursorActive /* was m_holdcursor->isVisible() */ && viewport()->cursor().shape() != Qt::BlankCursor) {
 			viewport()->setCursor(Qt::BlankCursor);
 		}
 	}
@@ -236,6 +241,7 @@ void ViewPort::reset_cursor( )
 	viewport()->unsetCursor();
 	m_holdcursor->hide();
 	m_holdcursor->reset();
+	m_holdCursorActive = false;
 }
 
 void ViewPort::set_holdcursor( const QString & cursorName )
@@ -245,6 +251,7 @@ void ViewPort::set_holdcursor( const QString & cursorName )
 	m_holdcursor->setPos(cpointer().scene_pos());
 	m_holdcursor->set_type(cursorName);
 	m_holdcursor->show();
+	m_holdCursorActive = true;
 }
 
 void ViewPort::set_holdcursor_text( const QString & text )

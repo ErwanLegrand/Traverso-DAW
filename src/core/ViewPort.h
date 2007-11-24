@@ -71,6 +71,7 @@ protected:
 	
 private:
 	int m_mode;
+	bool	m_holdCursorActive;
 	HoldCursor*	m_holdcursor;
 	QPoint		m_oldMousePos;
 	QPointF lastMouseMoveScenePoint;
