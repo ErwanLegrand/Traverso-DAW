@@ -1,0 +1,53 @@
+<!DOCTYPE TraversoTheming>
+<Themer>
+	<general version="1.0" />
+	<properties>
+		<property name="AudioClip:drawbackground" value="1" />
+		<property name="AudioClip:infoareaheight" value="13" />
+		<property name="AudioClip:mimimumheightforinfoarea" value="40" />
+		<property name="AudioClip:wavemicroview:antialiased" value="0" />
+		<property name="AudioClip:fillwave" value="1" />
+		
+		<property name="CurveNode:diameter" value="6" />
+		
+		<property name="Song:track:seperatingheight" value="0" />
+		<property name="Song:track:minimumheight" value="16" />
+		<property name="Song:track:maximumheight" value="600" />
+		<property name="Song:track:topindent" value="0" />
+		
+		
+		<property name="Track:topborderwidth" value="0" />
+		<property name="Track:bottomborderwidth" value="1" />
+		<property name="Track:cliptopmargin" value="3" />
+		<property name="Track:clipbottommargin" value="0" />
+		<property name="Track:paintbackground" value="0" />
+		
+		<property name="VUMeter:layout:vuspacing" value="3" />
+		<property name="VUMeter:layout:vulayoutspacing" value="5" />
+		<property name="VUMeter:layout:mainlayoutmargin" value="1" />
+		<property name="VUMeter:layout:mainlayoutspacing" value="2" />
+		<property name="VUMeter:layout:minimumlevelwidth" value="6" />
+	</properties>
+	<fonts>
+		<font name="ContextMenu:fontscale:actions" value="0.95" />
+		<font name="Plugin:fontscale:name" value="0.9" />
+		<font name="AudioClip:fontscale:title" value="0.9" />
+		<font name="VUMeter:fontscale:label" value="0.75" />
+		<font name="FFTMeter:fontscale:label" value="0.75" />
+		<font name="CorrelationMeter:fontscale:label" value="0.75" />
+		<font name="Timeline:fontscale:label" value="0.9" />
+		<font name="Timeline:fontscale:marker" value="0.95" />
+		<font name="TrackPanel:fontscale:name" value="0.9" />
+		<font name="TrackPanel:fontscale:gain" value="0.8" />
+		<font name="TrackPanel:fontscale:pan" value="0.8" />
+		<font name="TrackPanel:fontscale:led" value="0.9" />
+		<font name="TrackPanel:fontscale:bus" value="0.85" />
+		<font name="InfoWidget:fontscale:values" value="0.9" />
+		<font name="Playhead:fontscale:info" value="1.50" />
+		<font name="CurveView:fontscale:label" value="0.75" />
+		<font name="ViewPort:fontscale:infocursor" value="0.95" />
+		<font name="MessageWidget:fontscale:log" value="1.0" />
+	</fonts>
+	<colors>
+	</colors>
+</Themer> 
