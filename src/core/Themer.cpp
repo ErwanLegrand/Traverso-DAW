@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Themer.cpp,v 1.7 2007/11/05 15:49:30 r_sijrier Exp $
+$Id: Themer.cpp,v 1.8 2007/11/24 10:27:15 r_sijrier Exp $
 */
 
 #include "Themer.h"
@@ -56,26 +56,52 @@ Themer::Themer()
 {
 	m_watcher = new QFileSystemWatcher(this);
 	QString themepath = config().get_property("Themer", "themepath", "").toString();
+	
+	// No theme path specified, fall back on built in themes only
 	if (themepath.isEmpty()) {
 		themepath = ":/themes";
 	}
-	m_currentTheme = config().get_property("Themer", "currenttheme", "TraversoLight").toString();
 	
-	if (get_builtin_themes().contains(m_currentTheme)) {
-		themepath = ":/themes";
-	}
-
-	m_themefile =  themepath + "/" + m_currentTheme + "/traversotheme.xml";
-	m_coloradjust = -1;
+	// Detect and set theme based on current style
+	// but only when no theme was specified by the user!
 	
+	m_currentTheme = config().get_property("Themer", "currenttheme", "").toString();
 	m_systempallete = QApplication::palette();
 	
 	QString style = config().get_property("Themer", "style", "").toString();
 	QString currentStyle = QString(QApplication::style()->metaObject()->className()).remove("Q").remove("Style");
+	
+	if (style.isEmpty()) {
+		style = currentStyle;
+		config().set_property("Themer", "style", currentStyle);
+	}
+	
 	if (style != currentStyle) {
 		QApplication::setStyle(style);
+		currentStyle = style;
+		config().set_property("Themer", "style", currentStyle);
 	}
+	
+	if (m_currentTheme.isEmpty()) {
+		if (currentStyle  == "Cleanlooks") {
+			m_currentTheme = "ubuntu";
+		} else if (currentStyle == "Plastique") {
+			m_currentTheme = "TraversoLight";
+		} else {
+			m_currentTheme = "TraversoLight";
+		}
+		config().set_property("Themer", "currenttheme", m_currentTheme);
+	}
+	
+	if (get_builtin_themes().contains(m_currentTheme)) {
+		themepath = ":/themes";
+	}
+	
+	m_themefile =  themepath + "/" + m_currentTheme + "/traversotheme.xml";
+	m_coloradjust = -1;
+	
 	bool usestylepallete = config().get_property("Themer", "usestylepallet", "").toBool();
+	
 	if (usestylepallete) {
 		QApplication::setPalette(QApplication::style()->standardPalette());
 	}
@@ -282,7 +308,7 @@ void Themer::set_color_adjust_value(int value)
 QStringList Themer::get_builtin_themes()
 {
 	QStringList list;
-	list << "TraversoLight";
+	list << "system-palette" << "medium-contrast" << "ubuntu" << "TraversoLight";
 	return list;
 }
 
@@ -429,8 +455,10 @@ QColor Themer::get_default_color(const QString & name)
 
 		if (name == "Workcursor:default") c = p.color(QPalette::WindowText);
 		
-		if (name == "Marker:default") c = p.color(QPalette::Highlight);
-		if (name == "Marker:blink") c = Qt::red;
+		if (name == "Marker:default") c = Qt::red;
+		if (name == "Marker:blink") c = p.color(QPalette::Highlight);
+		if (name == "Marker:end") c = Qt::blue;
+		if (name == "Marker:blinkend") c = p.color(QPalette::Highlight);
 
 	return c;
 }
