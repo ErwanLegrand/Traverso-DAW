@@ -103,6 +103,11 @@ inline int APILinkedList::remove(APILinkedListNode * item)
 	
 	APILinkedListNode *q,*r;
 	q = m_head;
+	
+	if (!q) {
+		return 0;
+	}
+	
 	if(q == item) {
 		m_head = q->next;
 		m_size--;
