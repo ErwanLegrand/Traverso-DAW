@@ -411,19 +411,15 @@ int ReadSource::rb_read(audio_sample_t** dst, TimeRef& start, nframes_t count)
 
 int ReadSource::rb_file_read(DecodeBuffer* buffer, nframes_t cnt)
 {
-	TimeRef range(cnt, m_outputRate);
-	if ( (m_rbFileReadPos + range) > m_length) {
-		cnt = (m_length - m_rbFileReadPos).to_frame(m_outputRate);
-	}
-	
 	nframes_t readFrames = file_read(buffer, m_rbFileReadPos, cnt);
 	if (readFrames == cnt) {
 		m_rbFileReadPos.add_frames(readFrames, m_outputRate);
 	} else {
-		printf("ERROR in ReadSource::rb_file_read %s : \nreadFrames %d, requested %d, m_rbFileReadPos %d\n", QS_C(m_fileName), readFrames, cnt, m_rbRelativeFileReadPos.to_frame(get_rate()));
-		// DiskIO will be confused when cnt != readframes, so just for the sake of
-		// not looping in DiskIO::do_work(), fake that the file_read() did work out correctly!
-		m_rbFileReadPos.add_frames(cnt, m_outputRate);
+		// We either passed the end of the file, or our audio reader
+		// is doing weird things, is broken, invalid or something else
+		// Set the rinbuffer file readpos to m_length so processing stops here!
+		// * Due resample rounding issues, we nev
+		m_rbFileReadPos = m_length;
 	}
 
 	return readFrames;
@@ -602,7 +598,7 @@ BufferStatus* ReadSource::get_buffer_status()
 {
 	int freespace = m_buffers.at(0)->write_space();
 	
-// 	printf("m_rbFileReadPos, m_length %d, %d\n", m_rbFileReadPos.to_frame(get_rate()), m_length.to_frame(get_rate()));
+// 	printf("m_rbFileReadPos, m_length %lld, %lld\n", m_rbFileReadPos.universal_frame(), m_length.universal_frame());
 
 	if (m_rbFileReadPos >= m_length) {
 		m_bufferstatus->fillStatus =  100;
