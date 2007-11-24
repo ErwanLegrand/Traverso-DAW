@@ -418,7 +418,8 @@ int AudioClip::process(nframes_t nframes)
 	AudioBus* sendbus = m_song->get_render_bus();
 	
 	TimeRef mix_pos;
-	audio_sample_t* mixdown[get_channels()];
+	int channelcount = get_channels();
+	audio_sample_t* mixdown[channelcount];
 
 
 	TimeRef transportLocation = m_song->get_transport_location();
@@ -455,8 +456,10 @@ int AudioClip::process(nframes_t nframes)
 		read_frames = m_readSource->rb_read(mixdown, mix_pos, nframes);
 	} else {
 		read_frames = m_readSource->file_read(m_song->renderDecodeBuffer, mix_pos, nframes);
-		for (int chan=0; chan<bus->get_channel_count(); ++chan) {
-			memcpy(mixdown[chan], m_song->renderDecodeBuffer->destination[chan], nframes * sizeof(audio_sample_t));
+		if (read_frames > 0) {
+			for (int chan=0; chan<channelcount; ++chan) {
+				memcpy(mixdown[chan], m_song->renderDecodeBuffer->destination[chan], read_frames * sizeof(audio_sample_t));
+			}
 		}
 	}
 	
@@ -466,14 +469,18 @@ int AudioClip::process(nframes_t nframes)
 	
 
 	apill_foreach(FadeCurve* fade, FadeCurve, m_fades) {
-		fade->process(mixdown, read_frames, bus->get_channel_count());
+		fade->process(mixdown, read_frames, channelcount);
 	}
 	
 	TimeRef endlocation = mix_pos + TimeRef(read_frames, get_rate());
-	m_fader->process_gain(mixdown, mix_pos, endlocation, read_frames, bus->get_channel_count());
+	m_fader->process_gain(mixdown, mix_pos, endlocation, read_frames, channelcount);
 	
-	for (int i=0; i<bus->get_channel_count(); ++i) {
-		Mixer::mix_buffers_no_gain(sendbus->get_buffer(i, nframes), bus->get_buffer(i, nframes), nframes);
+	if (channelcount == 1) {
+		Mixer::mix_buffers_no_gain(sendbus->get_buffer(0, read_frames), bus->get_buffer(0, read_frames), read_frames);
+		Mixer::mix_buffers_no_gain(sendbus->get_buffer(1, read_frames), bus->get_buffer(0, read_frames), read_frames);
+	} else if (channelcount == 2) {
+		Mixer::mix_buffers_no_gain(sendbus->get_buffer(0, read_frames), bus->get_buffer(0, read_frames), read_frames);
+		Mixer::mix_buffers_no_gain(sendbus->get_buffer(1, read_frames), bus->get_buffer(1, read_frames), read_frames);
 	}
 	
 	return 1;
