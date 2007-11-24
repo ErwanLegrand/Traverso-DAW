@@ -539,9 +539,9 @@ int Song::render(ExportSpecification* spec)
 	spec->pos.add_frames(nframes, audiodevice().get_sample_rate());
 
 	if (! spec->normalize ) {
-		progress =  int((double(spec->pos.universal_frame()) / spec->totalTime.universal_frame()) * 100);
+		progress =  int((double((spec->pos - spec->startLocation).universal_frame()) / spec->totalTime.universal_frame()) * 100);
 	} else {
-		progress = (int) (double( 100 * spec->pos.universal_frame()) / (spec->totalTime.universal_frame() * 2));
+		progress = (int) (double( 100 * (spec->pos - spec->startLocation).universal_frame()) / (spec->totalTime.universal_frame() * 2));
 		if (spec->renderpass == ExportSpecification::WRITE_TO_HARDDISK) {
 			progress += 50;
 		}
