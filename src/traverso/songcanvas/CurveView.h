@@ -49,6 +49,7 @@ class DragNode : public Command
 		void cancel_action();
 		int begin_hold();
 		int jog();
+		void set_cursor_shape(int useX, int useY);
 
 	private :
 		class	Private {

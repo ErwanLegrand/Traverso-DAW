@@ -102,6 +102,11 @@ void DragNode::move_down(bool )
 	do_action();
 }
 
+void DragNode::set_cursor_shape(int useX, int useY)
+{
+	cpointer().get_viewport()->set_holdcursor(":/cursorHoldLrud");
+}
+
 int DragNode::jog()
 {
 	QPoint mousepos = cpointer().pos();
@@ -139,6 +144,12 @@ int DragNode::jog()
 		m_newWhen = double(d->rangeMax.universal_frame());
 	}
 
+	// NOTE: this obviously only makes sense when the Node == GainEnvelope Node
+	// Use a delegate (or something similar) in the future that set's the correct value.
+	float dbFactor = coefficient_to_dB(m_newValue);
+	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
+	cpointer().get_viewport()->set_holdcursor_pos(d->mousepos);
+	
 	return do_action();
 }
 
