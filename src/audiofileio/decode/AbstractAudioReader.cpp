@@ -188,7 +188,7 @@ DecodeBuffer::DecodeBuffer()
 
 void DecodeBuffer::check_buffers_capacity(uint size, uint channels)
 {
-	m_bufferSizeCheckCounter++;
+/*	m_bufferSizeCheckCounter++;
 	m_totalCheckSize += size;
 	
 	float meanvalue = (m_totalCheckSize / (float)m_bufferSizeCheckCounter);
@@ -201,7 +201,7 @@ void DecodeBuffer::check_buffers_capacity(uint size, uint channels)
 			m_bufferSizeCheckCounter = m_smallerReadCounter = 0;
 			m_totalCheckSize = 0;
 		}
-	}
+	}*/
 	
 		
 	if (destinationBufferSize < size || m_channels < channels) {
