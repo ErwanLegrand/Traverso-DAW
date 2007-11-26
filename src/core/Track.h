@@ -79,9 +79,9 @@ public :
 	int get_total_clips();
 	QDomNode get_state(QDomDocument doc, bool istemplate=false);
 	PluginChain* get_plugin_chain() const {return m_pluginChain;}
-	APILinkedList& get_cliplist() {return audioClipList;}
+	APILinkedList& get_cliplist() {return m_clips;}
 	int get_sort_index() const;
-	bool is_smaller_then(APILinkedListNode* node) {return ((Track*)node)->get_sort_index() < get_sort_index();}
+	bool is_smaller_then(APILinkedListNode* node) {return ((Track*)node)->get_sort_index() > get_sort_index();}
 
 	
 
@@ -119,7 +119,7 @@ public :
 
 private :
 	Song*		m_song;
-	APILinkedList 	audioClipList;
+	APILinkedList 	m_clips;
 
 	float 	m_pan;
 	int numtakes;
@@ -157,6 +157,7 @@ signals:
 
 public slots:
 	void set_gain(float gain);
+	void clip_position_changed(AudioClip* clip);
 	
 	float get_gain() const;
 

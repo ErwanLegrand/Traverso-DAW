@@ -105,7 +105,7 @@ QDomNode Track::get_state( QDomDocument doc, bool istemplate)
 	if (! istemplate ) {
 		QDomNode clips = doc.createElement("Clips");
 	
-		apill_foreach(AudioClip* clip, AudioClip, audioClipList) {
+		apill_foreach(AudioClip* clip, AudioClip, m_clips) {
 			if (clip->get_length() == qint64(0)) {
 				PERROR("Clip lenght is 0! This shouldn't happen!!!!");
 				continue;
@@ -189,7 +189,7 @@ int Track::set_state( const QDomNode & node )
 
 AudioClip* Track::get_clip_after(const TimeRef& pos)
 {
-	apill_foreach(AudioClip* clip, AudioClip, audioClipList) {
+	apill_foreach(AudioClip* clip, AudioClip, m_clips) {
 		if (clip->get_track_start_location() > pos) {
 			return clip;
 		}
@@ -200,7 +200,7 @@ AudioClip* Track::get_clip_after(const TimeRef& pos)
 
 AudioClip* Track::get_clip_before(const TimeRef& pos)
 {
-	apill_foreach(AudioClip* clip, AudioClip, audioClipList) {
+	apill_foreach(AudioClip* clip, AudioClip, m_clips) {
 		if (clip->get_track_start_location() < pos) {
 			return clip;
 		}
@@ -237,12 +237,12 @@ Command* Track::add_clip(AudioClip* clip, bool historable, bool ismove)
 
 void Track::private_add_clip(AudioClip* clip)
 {
-	audioClipList.add_and_sort(clip);
+	m_clips.add_and_sort(clip);
 }
 
 void Track::private_remove_clip(AudioClip* clip)
 {
-	audioClipList.remove(clip);
+	m_clips.remove(clip);
 }
 
 int Track::arm()
@@ -367,7 +367,7 @@ void Track::set_height(int h)
 
 int Track::get_total_clips()
 {
-	return audioClipList.size();
+	return m_clips.size();
 }
 
 void Track::set_muted_by_solo(bool muted)
@@ -422,7 +422,7 @@ int Track::process( nframes_t nframes )
 
 	m_pluginChain->process_pre_fader(bus, nframes);
 	
-	apill_foreach(AudioClip* clip, AudioClip, audioClipList) {
+	apill_foreach(AudioClip* clip, AudioClip, m_clips) {
 		if (isArmed && clip->recording_state() == AudioClip::NO_RECORDING) {
 			if (m_isMuted || mutedBySolo) {
 				continue;
@@ -500,13 +500,13 @@ void Track::set_name( const QString & name )
 
 void Track::get_render_range(TimeRef& startlocation, TimeRef& endlocation )
 {
-	if (audioClipList.size() == 0)
+	if (m_clips.size() == 0)
 		return;
 		
 	endlocation = TimeRef();
 	startlocation = LONG_LONG_MAX;
 	
-	apill_foreach(AudioClip* clip, AudioClip, audioClipList) {
+	apill_foreach(AudioClip* clip, AudioClip, m_clips) {
 		if (! clip->is_muted() ) {
 			if (clip->get_track_end_location() > endlocation) {
 				endlocation = clip->get_track_end_location();
@@ -552,3 +552,7 @@ void Track::set_capture_right_channel(bool capture)
 	emit inBusChanged();
 }
 
+void Track::clip_position_changed(AudioClip * clip)
+{
+	m_clips.sort(clip);
+}

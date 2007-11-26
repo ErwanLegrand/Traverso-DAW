@@ -111,7 +111,7 @@ public:
 	bool is_locked() const {return m_isLocked;}
 	bool has_song() const;
 	bool is_readsource_invalid() const {return !m_isReadSourceValid;}
-	bool is_smaller_then(APILinkedListNode* node) {return ((AudioClip*)node)->get_track_start_location() < get_track_start_location();}
+	bool is_smaller_then(APILinkedListNode* node) {return ((AudioClip*)node)->get_track_start_location() > get_track_start_location();}
 
 	int recording_state() const;
 

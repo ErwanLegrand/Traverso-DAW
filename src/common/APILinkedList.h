@@ -53,6 +53,7 @@ public:
 	APILinkedListNode* last() const {return m_last;}
 	int size() const {return m_size;}
 	void clear() {m_head = 0; m_last = 0; m_size=0;}
+	void sort(APILinkedListNode* node);
 	bool isEmpty() {return m_size == 0 ? true : false;}
 	int indexOf(APILinkedListNode* node);
 	APILinkedListNode* at(int i);
@@ -101,25 +102,23 @@ inline int APILinkedList::remove(APILinkedListNode * item)
 {
 	Q_ASSERT(item);
 	
-	APILinkedListNode *q,*r;
-	q = m_head;
-	
-	if (!q) {
+	if (!m_size) {
 		return 0;
 	}
 	
-	if(q == item) {
-		m_head = q->next;
+	if(m_head == item) {
+		m_head = m_head->next;
 		m_size--;
 		if (m_size == 0) {
-			m_last = 0;
+			m_last = m_head = 0;
 		}
 		Q_ASSERT(m_last == slow_last());
 		return 1;
 	}
 
-	r = q;
-	q = q->next;
+	APILinkedListNode *q,*r;
+	r = m_head;
+	q = m_head->next;
 	
 	while( q!=0 ) {
 		if( q == item ) {
@@ -164,7 +163,7 @@ inline void APILinkedList::insert(APILinkedListNode* after, APILinkedListNode* i
 // T = O(n)
 inline APILinkedListNode * APILinkedList::slow_last() const
 {
-	if (!m_head) {
+	if (!m_size) {
 		return 0;
 	}
 	
@@ -232,6 +231,13 @@ inline APILinkedListNode * APILinkedList::at(int i)
 		++loopcounter;
 	}
 	return 0;
+}
+
+inline void APILinkedList::sort(APILinkedListNode* node)
+{
+	if (remove(node)) {
+		add_and_sort(node);
+	}
 }
 
 #endif

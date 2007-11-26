@@ -76,6 +76,7 @@ AudioClip::AudioClip(const QString& name)
 AudioClip::AudioClip(const QDomNode& node)
 	: ContextItem()
 	, Snappable()
+	, m_track(0)
 	, m_readSource(0)
 {
 	PENTERCONS;
@@ -348,6 +349,9 @@ void AudioClip::set_track_start_location(const TimeRef& location)
 {
 	m_trackStartLocation = location;
 	set_track_end_location(m_trackStartLocation + m_length);
+	if (m_track) {
+		THREAD_SAVE_INVOKE(m_track, this, clip_position_changed(AudioClip*));
+	}
 	emit positionChanged(this);
 }
 
