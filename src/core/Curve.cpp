@@ -728,7 +728,7 @@ Command* Curve::remove_node(CurveNode* node, bool historable)
 {
 	PENTER2;
 	
-	if (m_nodes.size() == 1) {
+	if (m_nodes.first() == node) {
 		MoveNode* cmd;
 
 		cmd = new MoveNode(this, node, 0.0f, 1.0f, tr("Remove CurveNode"));
