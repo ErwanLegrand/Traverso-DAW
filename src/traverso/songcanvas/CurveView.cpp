@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <InputEngine.h>
 
 #include <AddRemove.h>
+#include "CommandGroup.h"
 
 #include <Debugger.h>
 
@@ -606,3 +607,14 @@ float CurveView::get_default_value()
 	return ((CurveNode*)m_guicurve->get_nodes().first())->value;
 }
 
+Command * CurveView::remove_all_nodes()
+{
+	CommandGroup* group = new CommandGroup(m_curve, tr("Clear Nodes"));
+
+	apill_foreach(CurveNode* node, CurveNode, m_curve->get_nodes()) {
+		group->add_command(m_curve->remove_node(node));
+	}
+
+	return group;
+
+}

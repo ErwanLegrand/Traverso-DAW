@@ -558,6 +558,12 @@
 				<Object objectname="AudioClip" slotsignature="reset_fade_both" modes="All" sortorder="38" submenu="Fade In/Out" />
 			</Objects>
 		</keyfact>
+		<keyfact type="D_FKEY2" key1="C" key2="X" >
+			<Objects>
+				<Object objectname="CurveView" slotsignature="remove_all_nodes" modes="Effects" sortorder="40" />
+			</Objects>
+		</keyfact>
+		
 	
 		<keyfact type="S_FKEY_FKEY" key1="W" key2="E" >
 			<Objects>

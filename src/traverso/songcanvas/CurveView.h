@@ -79,6 +79,7 @@ class CurveView : public ViewItem
 	Q_OBJECT
 	Q_CLASSINFO("add_node", tr("New node"))
 	Q_CLASSINFO("remove_node", tr("Remove node"))
+	Q_CLASSINFO("remove_all_nodes", tr("Remove all Nodes"))
 	Q_CLASSINFO("drag_node", tr("Move node"))
 
 public:
@@ -119,6 +120,7 @@ private:
 public slots:
 	Command* add_node();
 	Command* remove_node();
+	Command* remove_all_nodes();
 	Command* drag_node();
 	
 private slots:
