@@ -182,7 +182,69 @@ int ProjectConverter::start_conversion_from_version_2_to_3()
 		clipelement.setAttribute("trackstart", TimeRef(trackStart, rate).universal_frame());
 		clipelement.setAttribute("sourcestart", TimeRef(sourceStartFrame, rate).universal_frame());
 		clipelement.setAttribute("length", TimeRef(length, rate).universal_frame());
+		
+		QDomElement fadeInNode = clipsNode.firstChildElement("FadeIn");
+		if (!fadeInNode.isNull()) {
+			QDomElement e = fadeInNode.toElement();
+			QString rangestring = e.attribute("range", "1");
+			double range;
+			if (rangestring == "nan" || rangestring == "inf") {
+				printf("FadeCurve::set_state: stored range was not a number!\n");
+				range = 1;
+			} else {
+				range = rangestring.toDouble();
+			}
+			if (range > 1.0) {
+				e.setAttribute("range", TimeRef(nframes_t(range), rate).universal_frame());
+			}
+		}
+		QDomElement fadeOutNode = clipsNode.firstChildElement("FadeOut");
+		if (!fadeOutNode.isNull()) {
+			QDomElement e = fadeOutNode.toElement();
+			QString rangestring = e.attribute("range", "1");
+			double range;
+			if (rangestring == "nan" || rangestring == "inf") {
+				printf("FadeCurve::set_state: stored range was not a number!\n");
+				range = 1;
+			} else {
+				range = rangestring.toDouble();
+			}
+			if (range > 1.0)
+				e.setAttribute("range", TimeRef(nframes_t(range), rate).universal_frame());
+		}
 			
+		QDomNode pluginChainNode = clipsNode.firstChildElement("PluginChain");
+		if (!pluginChainNode.isNull()) {
+			QDomNode pluginsNode = pluginChainNode.firstChild();
+			QDomNode pluginNode = pluginsNode.firstChild();
+
+			while(!pluginNode.isNull()) {
+				if (pluginNode.toElement().attribute( "type", "") == "GainEnvelope") {
+					QDomElement controlPortsNode = pluginNode.firstChildElement("ControlPorts");
+					if (!controlPortsNode.isNull()) {
+						QDomNode portNode = controlPortsNode.firstChild();
+		
+						if(!portNode.isNull()) {
+							QDomElement curveNode = portNode.firstChildElement("PortAutomation");
+							if (!curveNode.isNull()) {
+								QDomElement e = curveNode.toElement();
+								QStringList nodesList = e.attribute( "nodes", "" ).split(";");
+								QStringList newNodesList;
+								for (int i=0; i<nodesList.size(); ++i) {
+									QStringList whenValueList = nodesList.at(i).split(",");
+									double when = whenValueList.at(0).toDouble();
+									double value = whenValueList.at(1).toDouble();
+									newNodesList << QString::number(TimeRef(nframes_t(when), rate).universal_frame(), 'g', 24).append(",").append(QString::number(value));
+									e.setAttribute("nodes",  newNodesList.join(";"));
+								}
+							}
+						}
+					}
+				}
+				pluginNode = pluginNode.nextSibling();
+			}
+		}
+		
 		clipsNode = clipsNode.nextSibling();
 	}
 		
