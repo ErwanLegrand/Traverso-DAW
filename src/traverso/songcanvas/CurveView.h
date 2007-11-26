@@ -36,42 +36,51 @@ class CurveView;
 class DragNode : public Command
 {
 	Q_OBJECT
-			Q_CLASSINFO("move_up", tr("Move Up"));
+	Q_CLASSINFO("move_up", tr("Move Up"));
 	Q_CLASSINFO("move_down", tr("Move Down"));
 	
-	public:
-		DragNode(CurveNode* node, CurveView* curveview, qint64 scalefactor, TimeRef rangeMin, TimeRef rangeMax, const QString& des);
-	
-		int prepare_actions();
-		int do_action();
-		int undo_action();
-		int finish_hold();
-		void cancel_action();
-		int begin_hold();
-		int jog();
-		void set_cursor_shape(int useX, int useY);
+public:
+	DragNode(CurveNode* node,
+		CurveView* curveview,
+   		qint64 scalefactor,
+      		TimeRef rangeMin,
+		TimeRef rangeMax,
+  		const QString& des);
 
-	private :
-		class	Private {
-			public:
-				CurveView*	curveView;
-				qint64		scalefactor;
-				TimeRef		rangeMin;
-				TimeRef		rangeMax;
-				QPoint		mousepos;
-		};
-	
-		Private* d;
-		CurveNode* m_node;
-		double	m_origWhen;
-		double	m_origValue;
-		double	m_newWhen;
-		double 	m_newValue;
-	
+	int prepare_actions();
+	int do_action();
+	int undo_action();
+	int finish_hold();
+	void cancel_action();
+	int begin_hold();
+	int jog();
+	void set_cursor_shape(int useX, int useY);
+	void set_vertical_only();
 
-	public slots:
-		void move_up(bool autorepeat);
-		void move_down(bool autorepeat);
+private :
+	class	Private {
+		public:
+			CurveView*	curveView;
+			qint64		scalefactor;
+			TimeRef		rangeMin;
+			TimeRef		rangeMax;
+			QPoint		mousepos;
+			bool		verticalOnly;
+	};
+
+	Private* d;
+	CurveNode* m_node;
+	double	m_origWhen;
+	double	m_origValue;
+	double	m_newWhen;
+	double 	m_newValue;
+	
+	int calculate_and_set_node_values();
+
+
+public slots:
+	void move_up(bool autorepeat);
+	void move_down(bool autorepeat);
 };
 
 
@@ -82,6 +91,7 @@ class CurveView : public ViewItem
 	Q_CLASSINFO("remove_node", tr("Remove node"))
 	Q_CLASSINFO("remove_all_nodes", tr("Remove all Nodes"))
 	Q_CLASSINFO("drag_node", tr("Move node"))
+	Q_CLASSINFO("drag_node_vertical_only", tr("Move node (vertical only)"))
 
 public:
 	CurveView(SongView* sv, ViewItem* parentViewItem, Curve* curve);
@@ -123,6 +133,7 @@ public slots:
 	Command* remove_node();
 	Command* remove_all_nodes();
 	Command* drag_node();
+	Command* drag_node_vertical_only();
 	
 private slots:
 	void add_curvenode_view(CurveNode* node);

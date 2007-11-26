@@ -439,6 +439,12 @@
 				<Object objectname="Song" modes="All" sortorder="4" pluginname="TraversoCommands" commandname="Gain" />
 			</Objects>
 		</keyfact>
+		<keyfact type="HKEY2" key1="D" key2="V" >
+			<Objects>
+		<Object objectname="CurveView" mousehint="UD" slotsignature="drag_node_vertical_only" modes="Effects" sortorder="4" />
+			</Objects>
+		</keyfact>
+
 		
 		
 		<keyfact type="D_FKEY" key1="T" >

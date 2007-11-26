@@ -40,7 +40,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #define NODE_SOFT_SELECTION_DISTANCE 40
 	
-DragNode::DragNode(CurveNode* node, CurveView* curveview, qint64 scalefactor, TimeRef rangeMin, TimeRef rangeMax, const QString& des)
+DragNode::DragNode(CurveNode* node,
+	CurveView* curveview,
+	qint64 scalefactor,
+	TimeRef rangeMin,
+	TimeRef rangeMax,
+	const QString& des)
 	: Command(curveview->get_context(), des)
 	, d(new Private)
 {
@@ -49,6 +54,12 @@ DragNode::DragNode(CurveNode* node, CurveView* curveview, qint64 scalefactor, Ti
 	d->rangeMax = rangeMax;
 	d->curveView = curveview;
 	d->scalefactor = scalefactor;
+	d->verticalOnly = false;
+}
+
+void DragNode::set_vertical_only()
+{
+	d->verticalOnly = true;
 }
 
 int DragNode::prepare_actions()
@@ -93,13 +104,13 @@ int DragNode::undo_action()
 void DragNode::move_up(bool )
 {
 	m_newValue = m_newValue + ( 1 / d->curveView->boundingRect().height());
-	do_action();
+	calculate_and_set_node_values();
 }
 
 void DragNode::move_down(bool )
 {
 	m_newValue = m_newValue - ( 1 / d->curveView->boundingRect().height());
-	do_action();
+	calculate_and_set_node_values();
 }
 
 void DragNode::set_cursor_shape(int useX, int useY)
@@ -117,7 +128,9 @@ int DragNode::jog()
 	
 	d->mousepos = mousepos;
 	
-	m_newWhen = m_newWhen + dx * d->scalefactor;
+	if (!d->verticalOnly) {
+		m_newWhen = m_newWhen + dx * d->scalefactor;
+	}
 	m_newValue = m_newValue - ( dy / d->curveView->boundingRect().height());
 	
 	TimeRef startoffset = d->curveView->get_start_offset();
@@ -128,6 +141,11 @@ int DragNode::jog()
 		m_newWhen = startoffset.universal_frame();
 	}
 	
+	return calculate_and_set_node_values();
+}
+
+int DragNode::calculate_and_set_node_values()
+{
 	if (m_newValue < 0.0) {
 		m_newValue = 0.0;
 	}
@@ -152,6 +170,7 @@ int DragNode::jog()
 	
 	return do_action();
 }
+
 
 		
 CurveView::CurveView(SongView* sv, ViewItem* parentViewItem, Curve* curve)
@@ -542,6 +561,21 @@ Command* CurveView::drag_node()
 	return ie().did_not_implement();
 }
 
+
+Command * CurveView::drag_node_vertical_only()
+{
+	DragNode* drag = qobject_cast<DragNode*>(drag_node());
+	
+	if (!drag) {
+		return 0;
+	}
+	
+	drag->set_vertical_only();
+	
+	return drag;
+}
+
+
 void CurveView::node_moved( )
 {
 	if (!m_blinkingNode) {
@@ -629,3 +663,4 @@ Command * CurveView::remove_all_nodes()
 	return group;
 
 }
+
