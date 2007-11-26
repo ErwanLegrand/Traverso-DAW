@@ -202,14 +202,14 @@ void DecodeBuffer::check_buffers_capacity(uint size, uint channels)
 			m_totalCheckSize = 0;
 		}
 	}
-				
+	
 		
 	if (destinationBufferSize < size || m_channels < channels) {
 		
 		delete_destination_buffers();
-			
+
 		m_channels = channels;
-			
+	
 		destination = new audio_sample_t*[m_channels];
 			
 		for (uint chan = 0; chan < m_channels; chan++) {
@@ -232,6 +232,12 @@ void DecodeBuffer::check_buffers_capacity(uint size, uint channels)
 void DecodeBuffer::delete_destination_buffers()
 {
 	if (destination) {
+		int destChannelcount = (sizeof(destination) / sizeof(destination[0]));
+		if (destChannelcount != m_channels) {
+			PERROR("destination channel count != m_channels: dest channel %d, m_channels %d", destChannelcount, m_channels);
+			m_channels = destChannelcount;
+		}
+		
 		for (uint chan = 0; chan < m_channels; chan++) {
 			delete [] destination[chan];
 		}
