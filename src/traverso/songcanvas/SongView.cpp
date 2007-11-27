@@ -199,17 +199,32 @@ void SongView::add_new_trackview(Track* track)
 {
 	TrackView* view = new TrackView(this, track);
 	
+	int sortIndex = track->get_sort_index();
+	
+	if (sortIndex < 0) {
+		sortIndex = m_trackViews.size();
+		track->set_sort_index(sortIndex);
+	} else {
+		foreach(TrackView* view, m_trackViews) {
+			if (view->get_track()->get_sort_index() == sortIndex) {
+				sortIndex = m_trackViews.size();
+				track->set_sort_index(sortIndex);
+				break;
+			}
+		}
+		
+		qSort(m_trackViews.begin(), m_trackViews.end(), smallerTrackView);
+	
+		for(int i=0; i<m_trackViews.size(); ++i) {
+			m_trackViews.at(i)->get_track()->set_sort_index(i);
+		}
+	}
+	
 	m_trackViews.append(view);
 	
 	if (m_trackViews.size() > 1) {
 		int height = m_trackViews.at(m_trackViews.size()-2)->get_track()->get_height();
 		m_trackViews.at(m_trackViews.size()-1)->get_track()->set_height(height);
-	}
-	
-	qSort(m_trackViews.begin(), m_trackViews.end(), smallerTrackView);
-	
-	for(int i=0; i<m_trackViews.size(); ++i) {
-		m_trackViews.at(i)->get_track()->set_sort_index(i);
 	}
 	
 	layout_tracks();
