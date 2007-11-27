@@ -166,7 +166,10 @@ int DragNode::calculate_and_set_node_values()
 	// Use a delegate (or something similar) in the future that set's the correct value.
 	float dbFactor = coefficient_to_dB(m_newValue);
 	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
-	cpointer().get_viewport()->set_holdcursor_pos(d->mousepos);
+	cpointer().get_viewport()->set_holdcursor_pos(d->mousepos +
+			QPoint(d->curveView->get_songview()->hscrollbar_value(),
+			d->curveView->get_songview()->vscrollbar_value()) -
+			QPoint(16, 16));
 	
 	return do_action();
 }
