@@ -69,6 +69,10 @@ private :
 };
 
 
+static bool smallerTrackView(const TrackView* left, const TrackView* right )
+{
+	return left->get_track()->get_sort_index() < right->get_track()->get_sort_index();
+}
 
 SongView::SongView(SongWidget* songwidget, 
 	ClipsViewPort* viewPort,
@@ -191,7 +195,6 @@ TrackView* SongView::get_trackview_under( QPointF point )
 	
 }
 
-
 void SongView::add_new_trackview(Track* track)
 {
 	TrackView* view = new TrackView(this, track);
@@ -208,6 +211,8 @@ void SongView::add_new_trackview(Track* track)
 		int height = m_trackViews.at(m_trackViews.size()-2)->get_track()->get_height();
 		m_trackViews.at(m_trackViews.size()-1)->get_track()->set_height(height);
 	}
+	
+	qSort(m_trackViews.begin(), m_trackViews.end(), smallerTrackView);
 	
 	for(int i=0; i<m_trackViews.size(); ++i) {
 		m_trackViews.at(i)->get_track()->set_sort_index(i);
