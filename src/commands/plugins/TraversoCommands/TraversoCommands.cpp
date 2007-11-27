@@ -76,6 +76,12 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 				item = view->get_context();
 			}
 			
+			// ugly hack to avoid assigning a songview when the 
+			// mouse cursor is above the trackpanel....
+			if (cpointer().scene_x() < 0) {
+				songview = 0;
+			}
+			
 			if (!item) {
 				PERROR("TraversoCommands: Supplied QObject was not a ContextItem, "
 					"GainCommand only works with ContextItem objects!!");
