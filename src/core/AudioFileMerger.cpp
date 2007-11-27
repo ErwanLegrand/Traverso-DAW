@@ -150,8 +150,6 @@ void AudioFileMerger::process_task(MergeTask task)
 	delete [] spec->dataF;
 	delete spec;
 	
-	emit taskFinished(name.left(length-28));
-	
 	//  The user asked to stop processing, exit the event loop
 	// and signal we're done.
 	if (m_stopMerging) {
@@ -159,7 +157,10 @@ void AudioFileMerger::process_task(MergeTask task)
 		wait(1000);
 		m_tasks.clear();
 		emit processingStopped();
+		return;
 	}
+	
+	emit taskFinished(name.left(length-28));
 }
 
 void AudioFileMerger::stop_merging()
