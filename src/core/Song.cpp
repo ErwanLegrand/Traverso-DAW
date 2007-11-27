@@ -1056,7 +1056,7 @@ const TimeRef& Song::get_last_location() const
 
 void Song::private_add_track(Track* track)
 {
-	m_tracks.append(track);
+	m_tracks.add_and_sort(track);
 }
 
 void Song::private_remove_track(Track* track)

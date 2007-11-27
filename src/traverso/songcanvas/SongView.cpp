@@ -209,6 +209,10 @@ void SongView::add_new_trackview(Track* track)
 		m_trackViews.at(m_trackViews.size()-1)->get_track()->set_height(height);
 	}
 	
+	for(int i=0; i<m_trackViews.size(); ++i) {
+		m_trackViews.at(i)->get_track()->set_sort_index(i);
+	}
+	
 	layout_tracks();
 }
 
@@ -222,10 +226,15 @@ void SongView::remove_trackview(Track* track)
 			m_trackViews.removeAll(view);
 			delete view;
 			delete tpv;
-			layout_tracks();
-			return;
+			break;
 		}
 	}
+	
+	for(int i=0; i<m_trackViews.size(); ++i) {
+		m_trackViews.at(i)->get_track()->set_sort_index(i);
+	}
+	
+	layout_tracks();
 }
 
 void SongView::update_scrollbars()
