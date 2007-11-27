@@ -474,7 +474,11 @@ void SongView::update_shuttle_factor()
 	
 	normalizedY *= 2;
 	
-	m_shuttleCurve->get_vector(normalizedY, normalizedY + 0.01, vec, 2);
+	if (m_dragShuttle) {
+		m_dragShuttleCurve->get_vector(normalizedY, normalizedY + 0.01, vec, 2);
+	} else {
+		m_shuttleCurve->get_vector(normalizedY, normalizedY + 0.01, vec, 2);
+	}
 	
 	int yscale;
 	
@@ -494,6 +498,9 @@ void SongView::update_shuttle_factor()
 		m_shuttleYfactor = (int) (vec[0] * -yscale);
 	}
 	
+	if (m_dragShuttle) {
+		m_shuttleYfactor *= 4;
+	}
 }
 
 
