@@ -272,9 +272,21 @@ void SongView::update_scrollbars()
 
 void SongView::hscrollbar_value_changed(int value)
 {
-	if (!ie().is_holding()) {
+	// This slot is called when the hscrollbar value changes,
+	// which can be due shuttling.
+	// In that very case, we do NOT set the hscrollbar value AGAIN
+	// but in case of a non-shuttle command, we call ie().jog to give the 
+	// command the opportunity to update itself for the changed
+	// viewport / mouse coordinates.
+	if (ie().is_holding()) {
+		Shuttle* s = dynamic_cast<Shuttle*>(ie().get_holding_command());
+		if (!s) {
+			ie().jog();
+		}
+	} else {
 		m_clipsViewPort->horizontalScrollBar()->setValue(value);
 	}
+	
 	set_snap_range(m_hScrollBar->value());
 }
 

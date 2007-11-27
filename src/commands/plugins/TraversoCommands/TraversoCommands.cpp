@@ -59,12 +59,21 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 		case GainCommand:
 		{
 			ContextItem* item = qobject_cast<ContextItem*>(obj);
+			SongView* songview = 0;
 			
 			if (item->metaObject()->className() == QString("TrackPanelGain")) {
 				item = item->get_context();
-			}
-			if (item->metaObject()->className() == QString("SongPanelGain")) {
+			} else if (item->metaObject()->className() == QString("SongPanelGain")) {
 				item = item->get_context();
+			} else if (AudioClipView* view = qobject_cast<AudioClipView*>(item)) {
+				songview = view->get_songview();
+				item = view->get_context();
+			} else if (TrackView* view = qobject_cast<TrackView*>(item)) {
+				songview = view->get_songview();
+				item = view->get_context();
+			} else if (SongView* view = qobject_cast<SongView*>(item)) {
+				songview = view;
+				item = view->get_context();
 			}
 			
 			if (!item) {
@@ -72,7 +81,7 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 					"GainCommand only works with ContextItem objects!!");
 				return 0;
 			}
-			return new Gain(item, arguments);
+			return new Gain(item, songview, arguments);
 		}
 		
 		case TrackPanCommand:

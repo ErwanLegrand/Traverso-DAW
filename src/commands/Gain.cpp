@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Gain.cpp,v 1.22 2007/10/29 09:00:09 r_sijrier Exp $
+$Id: Gain.cpp,v 1.23 2007/11/27 20:20:42 r_sijrier Exp $
 */
 
 #include "Gain.h"
@@ -28,14 +28,16 @@ $Id: Gain.cpp,v 1.22 2007/10/29 09:00:09 r_sijrier Exp $
 #include <ViewPort.h>
 #include <Track.h>
 #include "Song.h"
+#include "SongView.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
 
-Gain::Gain(ContextItem* context, QVariantList args)
+Gain::Gain(ContextItem* context, SongView* sv, QVariantList args)
 	: Command(context, "")
+	, m_sv(sv)
 {
 	gainObject = context;
 	horiz = false;
@@ -221,6 +223,12 @@ int Gain::jog()
 	// Update the vieport's hold cursor!
 	if (!horiz) {
 		cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
+		if (m_sv) {
+			cpointer().get_viewport()->set_holdcursor_pos(origPos +
+				QPoint(m_sv->hscrollbar_value(),
+				m_sv->vscrollbar_value()) -
+				QPoint(16, 16));
+		}
 	}
 
 	QCursor::setPos(mousePos);

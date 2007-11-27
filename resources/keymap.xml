@@ -341,8 +341,8 @@
 		</keyfact>
 		<keyfact type="HKEY" key1="G" >
 			<Objects>
-				<Object objectname="AudioClip" modes="All" sortorder="5" pluginname="TraversoCommands" commandname="Gain" />
-				<Object objectname="Track" modes="All" sortorder="7" pluginname="TraversoCommands" commandname="Gain" />
+				<Object objectname="AudioClipView" modes="All" sortorder="5" pluginname="TraversoCommands" commandname="Gain" />
+				<Object objectname="TrackView" modes="All" sortorder="7" pluginname="TraversoCommands" commandname="Gain" />
 				<Object objectname="Song" modes="All" sortorder="7" pluginname="TraversoCommands" commandname="Gain" />
 			</Objects>
 		</keyfact>
@@ -436,7 +436,7 @@
 		</keyfact>
 		<keyfact type="HKEY2" key1="S" key2="G" >
 			<Objects>
-				<Object objectname="Song" modes="All" sortorder="4" pluginname="TraversoCommands" commandname="Gain" />
+				<Object objectname="SongView" modes="All" sortorder="4" pluginname="TraversoCommands" commandname="Gain" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY2" key1="D" key2="V" >
