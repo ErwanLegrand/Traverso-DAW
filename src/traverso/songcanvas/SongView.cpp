@@ -198,6 +198,7 @@ TrackView* SongView::get_trackview_under( QPointF point )
 void SongView::add_new_trackview(Track* track)
 {
 	TrackView* view = new TrackView(this, track);
+	m_trackViews.append(view);
 	
 	int sortIndex = track->get_sort_index();
 	
@@ -212,15 +213,13 @@ void SongView::add_new_trackview(Track* track)
 				break;
 			}
 		}
-		
-		qSort(m_trackViews.begin(), m_trackViews.end(), smallerTrackView);
-	
-		for(int i=0; i<m_trackViews.size(); ++i) {
-			m_trackViews.at(i)->get_track()->set_sort_index(i);
-		}
 	}
 	
-	m_trackViews.append(view);
+	qSort(m_trackViews.begin(), m_trackViews.end(), smallerTrackView);
+	
+	for(int i=0; i<m_trackViews.size(); ++i) {
+		m_trackViews.at(i)->get_track()->set_sort_index(i);
+	}
 	
 	if (m_trackViews.size() > 1) {
 		int height = m_trackViews.at(m_trackViews.size()-2)->get_track()->get_height();
