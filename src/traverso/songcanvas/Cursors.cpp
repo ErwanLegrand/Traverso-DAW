@@ -271,7 +271,11 @@ void WorkCursor::paint( QPainter * painter, const QStyleOptionGraphicsItem * opt
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 	
-	painter->fillRect(0, 0, (int)m_boundingRect.width(), (int)m_boundingRect.height(), themer()->get_color("Workcursor:default"));
+	if (m_pix.height() != int(m_boundingRect.height())) {
+		update_background();
+	}
+	
+	painter->drawPixmap(0, 0, m_boundingRect.width(), m_boundingRect.height(), m_pix);
 }
 
 void WorkCursor::update_position()
@@ -282,6 +286,19 @@ void WorkCursor::update_position()
 void WorkCursor::set_bounding_rect( QRectF rect )
 {
 	m_boundingRect = rect;
+}
+
+void WorkCursor::update_background()
+{
+	m_pix = QPixmap(int(m_boundingRect.width()), int(m_boundingRect.height()));
+	m_pix.fill(Qt::transparent);
+	QPainter p(&m_pix);
+	QPen pen;
+	pen.setWidth(4);
+	pen.setStyle(Qt::DashDotLine);
+	pen.setColor(themer()->get_color("Workcursor:default"));
+	p.setPen(pen);
+	p.drawLine(0, 0, int(m_boundingRect.width()), int(m_boundingRect.height()));
 }
 
 

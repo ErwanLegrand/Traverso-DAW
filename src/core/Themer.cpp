@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Themer.cpp,v 1.8 2007/11/24 10:27:15 r_sijrier Exp $
+$Id: Themer.cpp,v 1.9 2007/11/27 13:11:56 r_sijrier Exp $
 */
 
 #include "Themer.h"
@@ -413,8 +413,8 @@ QColor Themer::get_default_color(const QString & name)
 		
 		if (name == "InfoWidget:background") c = p.color(QPalette::Window);
 
-		if (name == "Playhead:active") c = Qt::red;
-		if (name == "Playhead:inactive") c = p.color(QPalette::Mid);
+		if (name == "Playhead:active") c = QColor(255, 0, 0, 180);
+		if (name == "Playhead:inactive") c = QColor(255, 0, 0, 120);
 		
 		if (name == "Plugin:background") c = p.color(QPalette::Button);
 		if (name == "Plugin:background:bypassed") c = p.color(QPalette::Light);
@@ -453,7 +453,7 @@ QColor Themer::get_default_color(const QString & name)
 		if (name == "TrackPanel:bus:background") c = p.color(QPalette::Button);
 		if (name == "TrackPanel:bus:margin") c = p.color(QPalette::Dark);
 
-		if (name == "Workcursor:default") c = p.color(QPalette::WindowText);
+		if (name == "Workcursor:default") c = QColor(100, 50, 100, 180);
 		
 		if (name == "Marker:default") c = Qt::red;
 		if (name == "Marker:blink") c = p.color(QPalette::Highlight);

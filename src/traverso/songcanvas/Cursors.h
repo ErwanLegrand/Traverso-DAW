@@ -97,6 +97,9 @@ public:
 private:
 	Song*		m_song;
 	SongView*	m_sv;
+	QPixmap		m_pix;
+	
+	void update_background();
 
 public slots:
         void update_position();
