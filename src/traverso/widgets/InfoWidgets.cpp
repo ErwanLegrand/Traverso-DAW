@@ -339,7 +339,7 @@ void HDDSpaceInfo::update_status( )
 		}
 		
 		uint rate = audiodevice().get_sample_rate();
-		qint64 availabletime = (UNIVERSAL_SAMPLE_RATE / rate) * qint64(space * 1048576);
+		qint64 availabletime = qint64(UNIVERSAL_SAMPLE_RATE / rate) * qint64(space * 1048576);
 		availabletime /= qint64(sizeof(float) * recChannelCount);
  		
 		QString recordFormat = config().get_property("Recording", "FileFormat", "wav").toString();
