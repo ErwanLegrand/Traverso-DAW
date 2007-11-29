@@ -500,14 +500,32 @@ void Interface::create_menus( )
 	
 	menu = menuBar()->addMenu(tr("Se&ttings"));
 	
-	QMenu* submenu = menu->addMenu(tr("&Recording File Format"));
-	m_wavAction = submenu->addAction("WAVE");
-	connect(m_wavAction, SIGNAL(triggered( bool )), this, SLOT(change_recording_format_to_wav()));
-	m_wavpackAction = submenu->addAction("WavPack");
-	connect(m_wavpackAction, SIGNAL(triggered( bool )), this, SLOT(change_recording_format_to_wavpack()));
-	m_wav64Action = submenu->addAction("WAVE-64");
-	connect(m_wav64Action, SIGNAL(triggered( bool )), this, SLOT(change_recording_format_to_wav64()));
+	m_encodingMenu = menu->addMenu(tr("&Recording File Format"));
 	
+	action = m_encodingMenu->addAction("WAVE");
+	action->setData("wav");
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_recording_format_to_wav()));
+	action = m_encodingMenu->addAction("WavPack");
+	action->setData("wavpack");
+	connect(action, SIGNAL(triggered( bool )), this, SLOT(change_recording_format_to_wavpack()));
+	action = m_encodingMenu->addAction("WAVE-64");
+	action->setData("w64");
+	connect(action, SIGNAL(triggered( bool )), this, SLOT(change_recording_format_to_wav64()));
+	
+	m_resampleQualityMenu = menu->addMenu(tr("&Resample Quality"));
+	action = m_resampleQualityMenu->addAction("Best");
+	action->setData(0);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_best()));
+	action = m_resampleQualityMenu->addAction("High");
+	action->setData(1);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_high()));
+	action = m_resampleQualityMenu->addAction("Medium");
+	action->setData(2);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_medium()));
+	action = m_resampleQualityMenu->addAction("Fast");
+	action->setData(3);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_fast()));
+
 	// fake a config changed 'signal-slot' action, to set the encoding menu icons
 	config_changed();
 	
@@ -943,15 +961,25 @@ void Interface::config_changed()
 	}
 	
 	QString encoding = config().get_property("Recording", "FileFormat", "").toString();
-	m_wavAction->setIcon(QIcon());
-	m_wav64Action->setIcon(QIcon());
-	m_wavpackAction->setIcon(QIcon());
-	if (encoding == "wav") {
-		m_wavAction->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
-	} else if (encoding == "wavpack") {
-		m_wavpackAction->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
-	} else if (encoding == "w64") {
-		m_wav64Action->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
+	QList<QAction* > actions = m_encodingMenu->actions();
+	
+	foreach(QAction* action, actions) {
+		if (action->data().toString() == encoding) {
+			action->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
+		} else {
+			action->setIcon(QIcon());
+		}
+	}
+	
+	int quality = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
+	actions = m_resampleQualityMenu->actions();
+	
+	foreach(QAction* action, actions) {
+		if (action->data().toInt() == quality) {
+			action->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
+		} else {
+			action->setIcon(QIcon());
+		}
 	}
 }
 
@@ -1155,21 +1183,49 @@ void Interface::project_file_mismatch(QString rootdir, QString projectname)
 void Interface::change_recording_format_to_wav()
 {
 	config().set_property("Recording", "FileFormat", "wav");
-	info().information(tr("Changed encoding for recording to %1").arg("WAVE"));
+	save_config_and_emit_message(tr("Changed encoding for recording to %1").arg("WAVE"));
 	config().save();
 }
 
 void Interface::change_recording_format_to_wav64()
 {
 	config().set_property("Recording", "FileFormat", "w64");
-	info().information(tr("Changed encoding for recording to %1").arg("WAVE-64"));
-	config().save();
+	save_config_and_emit_message(tr("Changed encoding for recording to %1").arg("WAVE-64"));
 }
 
 void Interface::change_recording_format_to_wavpack()
 {
 	config().set_property("Recording", "FileFormat", "wavpack");
-	info().information(tr("Changed encoding for recording to %1").arg("WavPack"));
+	save_config_and_emit_message(tr("Changed encoding for recording to %1").arg("WavPack"));
+}
+
+void Interface::change_resample_quality_to_best()
+{
+	config().set_property("Conversion", "RTResamplingConverterType", 0);
+	save_config_and_emit_message(tr("Changed resample quality to: %1").arg("Best"));
+}
+
+void Interface::change_resample_quality_to_high()
+{
+	config().set_property("Conversion", "RTResamplingConverterType", 1);
+	save_config_and_emit_message(tr("Changed resample quality to: %1").arg("High"));
+}
+
+void Interface::change_resample_quality_to_medium()
+{
+	config().set_property("Conversion", "RTResamplingConverterType", 2);
+	save_config_and_emit_message(tr("Changed resample quality to: %1").arg("Medium"));
+}
+
+void Interface::change_resample_quality_to_fast()
+{
+	config().set_property("Conversion", "RTResamplingConverterType", 3);
+	save_config_and_emit_message(tr("Changed resample quality to: %1").arg("Fast"));
+}
+
+void Interface::save_config_and_emit_message(const QString & message)
+{
+	info().information(message);
 	config().save();
 }
 

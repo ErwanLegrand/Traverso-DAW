@@ -146,6 +146,7 @@ DiskIO::DiskIO(Song* song)
 	cpuTimeBuffer = new RingBuffer(128);
 	lastCpuReadTime = get_microseconds();
 	m_stopWork = m_seeking = m_sampleRateChanged = 0;
+	m_resampleQuality = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
 	m_readBufferFillStatus = 0;
 	m_hardDiskOverLoadCounter = 0;
 	
@@ -194,9 +195,16 @@ void DiskIO::seek()
 	m_seeking = true;
 	
 	TimeRef location = m_song->get_new_transport_location();
+	bool resampleQualityChanged = false;
+	int quality = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
+	if (quality != m_resampleQuality) {
+		resampleQualityChanged = true;
+		m_resampleQuality = quality;
+	}
+		
 
 	foreach(ReadSource* source, m_readSources) {
-		if (m_sampleRateChanged) {
+		if (m_sampleRateChanged || resampleQualityChanged) {
 			source->set_diskio(this);
 		}
 		source->rb_seek_to_file_position(location);
@@ -283,10 +291,8 @@ int DiskIO::there_are_processable_sources( )
 	
 	for (int j=0; j<m_readSources.size(); ++j) {
 		ReadSource* source = m_readSources.at(j);
-		if (source->get_channel_count() > 0) {
 			BufferStatus* status = source->get_buffer_status();
 			m_readersStatus.append(QPair<BufferStatus*, ReadSource*>(status, source));
-		}
 	}
 	
 
@@ -390,6 +396,10 @@ int DiskIO::stop( )
 void DiskIO::register_read_source (ReadSource* source )
 {
 	PENTER2;
+	
+	if (source->get_channel_count() == 0) {
+		return;
+	}
 	
 	source->set_diskio(this);
 	

@@ -664,9 +664,12 @@ void ReadSource::set_diskio(DiskIO * diskio)
 {
 	m_diskio = diskio;
 	set_output_rate(m_diskio->get_output_rate());
-	prepare_rt_buffers();
+	
 	if (m_audioReader) {
 		m_audioReader->set_resample_decode_buffer(m_diskio->get_resample_decode_buffer());
+		m_audioReader->set_converter_type(m_diskio->get_resample_quality());
 	}
+	
+	prepare_rt_buffers();
 }
 

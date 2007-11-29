@@ -134,15 +134,15 @@ private:
 	QAction*		m_projectSongManagerAction;
 	QAction*		m_projectExportAction;
 	QAction*		m_songMenuAction;
-	QAction*		m_wavAction;
-	QAction*		m_wav64Action;
-	QAction*		m_wavpackAction;
+	QMenu*			m_encodingMenu;
+	QMenu*			m_resampleQualityMenu;
 	
 	ResourcesInfoWidget*	resourcesInfo;
 	DriverInfoWidget*	driverInfo;
 	HDDSpaceInfoWidget*	hddInfo;
 	
 	void create_menus();
+	void save_config_and_emit_message(const QString& message);
 	
 	static Interface* m_instance;
 	
@@ -163,6 +163,10 @@ public slots :
 	void change_recording_format_to_wav();
 	void change_recording_format_to_wav64();
 	void change_recording_format_to_wavpack();
+	void change_resample_quality_to_best();
+	void change_resample_quality_to_high();
+	void change_resample_quality_to_medium();
+	void change_resample_quality_to_fast();
 
 	Command* full_screen();
 	Command* about_traverso();

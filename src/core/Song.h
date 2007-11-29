@@ -270,6 +270,7 @@ private slots:
 	void handle_diskio_readbuffer_underrun();
 	void prepare_recording();
 	void clip_finished_recording(AudioClip* clip);
+	void config_changed();
 };
 
 inline float Song::get_gain() const

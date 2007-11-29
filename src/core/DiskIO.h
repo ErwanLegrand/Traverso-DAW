@@ -68,6 +68,7 @@ public:
 	int get_write_buffers_fill_status();
 	int get_read_buffers_fill_status();
 	int get_output_rate() {return m_outputRate;}
+	int get_resample_quality() {return m_resampleQuality;}
 	DecodeBuffer* get_resample_decode_buffer() {return m_resampleDecodeBuffer;}
 
 private:
@@ -88,6 +89,7 @@ private:
 	trav_time_t		cycleStartTime;
 	trav_time_t		lastCpuReadTime;
 	bool			m_seeking;
+	int			m_resampleQuality;
 	bool			m_sampleRateChanged;
 	int			m_hardDiskOverLoadCounter;
 	audio_sample_t*		framebuffer[2];

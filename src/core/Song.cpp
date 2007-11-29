@@ -139,6 +139,7 @@ void Song::init()
 	connect(m_diskio, SIGNAL(seekFinished()), this, SLOT(seek_finished()), Qt::QueuedConnection);
 	connect (m_diskio, SIGNAL(readSourceBufferUnderRun()), this, SLOT(handle_diskio_readbuffer_underrun()));
 	connect (m_diskio, SIGNAL(writeSourceBufferOverRun()), this, SLOT(handle_diskio_writebuffer_overrun()));
+	connect(&config(), SIGNAL(configChanged()), this, SLOT(config_changed()));
 	connect(this, SIGNAL(transferStarted()), m_diskio, SLOT(start_io()));
 	connect(this, SIGNAL(transferStopped()), m_diskio, SLOT(stop_io()));
 
@@ -1378,5 +1379,18 @@ void Song::seek_finished()
 
 	emit transportPosSet();
 	PMESG2("Song :: leaving seek_finished");
+}
+
+void Song::config_changed()
+{
+	PENTER;
+	
+	int quality = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
+	if (m_diskio->get_resample_quality() != quality) {
+		TimeRef location = m_transportLocation;
+		location.add_frames(1, audiodevice().get_sample_rate());
+	
+		set_transport_pos(location);
+	}
 }
 
