@@ -283,8 +283,10 @@ int DiskIO::there_are_processable_sources( )
 	
 	for (int j=0; j<m_readSources.size(); ++j) {
 		ReadSource* source = m_readSources.at(j);
-		BufferStatus* status = source->get_buffer_status();
-		m_readersStatus.append(QPair<BufferStatus*, ReadSource*>(status, source));
+		if (source->get_channel_count() > 0) {
+			BufferStatus* status = source->get_buffer_status();
+			m_readersStatus.append(QPair<BufferStatus*, ReadSource*>(status, source));
+		}
 	}
 	
 
