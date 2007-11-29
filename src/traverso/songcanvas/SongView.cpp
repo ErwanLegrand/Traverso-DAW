@@ -483,13 +483,9 @@ void SongView::update_shuttle_factor()
 	int yscale;
 	
 	if (m_trackViews.size()) {
-		int total =0;
-		foreach(TrackView* view, m_trackViews) {
-			total += view->get_height();
-		}
-		yscale = total / (10 * m_trackViews.size());
+		yscale = int(mean_track_height() / 10);
 	} else {
-		yscale = m_clipsViewPort->viewport()->height() / 10;
+		yscale = int(m_clipsViewPort->viewport()->height() / 10);
 	}
 	
 	if (direction > 0) {
@@ -503,6 +499,19 @@ void SongView::update_shuttle_factor()
 	}
 }
 
+int SongView::mean_track_height()
+{
+	int total =0;
+	int mean = 0;
+	
+	foreach(TrackView* view, m_trackViews) {
+		total += view->get_height();
+	}
+	
+	mean = total / m_trackViews.size();
+	
+	return mean;
+}
 
 void SongView::update_shuttle()
 {
@@ -593,13 +602,13 @@ void SongView::set_snap_range(int start)
 
 Command* SongView::scroll_up( )
 {
-	set_vscrollbar_value(m_clipsViewPort->verticalScrollBar()->value() - 50);
+	set_vscrollbar_value(m_clipsViewPort->verticalScrollBar()->value() - mean_track_height());
 	return 0;
 }
 
 Command* SongView::scroll_down( )
 {
-	set_vscrollbar_value(m_clipsViewPort->verticalScrollBar()->value() + 50);
+	set_vscrollbar_value(m_clipsViewPort->verticalScrollBar()->value() + mean_track_height());
 	return 0;
 }
 

@@ -119,6 +119,8 @@ private:
 	void set_hscrollbar_value(int value);
 	void set_vscrollbar_value(int value);
 	
+	int mean_track_height();
+	
 	friend class PlayHead;
 
 
