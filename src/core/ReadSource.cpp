@@ -214,6 +214,10 @@ int ReadSource::init( )
 		return (m_error = INVALID_CHANNEL_COUNT);
 	}
 	
+	if ( ! QFile::exists(m_fileName)) {
+		return (m_error = FILE_DOES_NOT_EXIST);
+	}
+	
 	m_rbReady = 0;
 	m_needSync = 0;
 	m_syncInProgress = 0;
@@ -227,7 +231,7 @@ int ReadSource::init( )
 		PERROR("ReadSource:: audio reader is not valid! (reader channel count: %d, nframes: %d", m_audioReader->get_num_channels(), m_audioReader->get_nframes());
 		delete m_audioReader;
 		m_audioReader = 0;
-		return COULD_NOT_OPEN_FILE;
+		return (m_error = COULD_NOT_OPEN_FILE);
 	}
 	
 	int converter_type = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
@@ -244,7 +248,7 @@ int ReadSource::init( )
 		PERROR("ReadAudioSource: file contains %d channels; only 2 channels are supported", m_channelCount);
 		delete m_audioReader;
 		m_audioReader = 0;
-		return INVALID_CHANNEL_COUNT;
+		return (m_error = INVALID_CHANNEL_COUNT);
 	}
 
 	// Never reached, it's allready checked in AbstractAudioReader::is_valid() which was allready called!
@@ -252,7 +256,7 @@ int ReadSource::init( )
 		PERROR("ReadAudioSource: not a valid channel count: %d", m_channelCount);
 		delete m_audioReader;
 		m_audioReader = 0;
-		return ZERO_CHANNELS;
+		return (m_error = ZERO_CHANNELS);
 	}
 	
 	m_rate = m_audioReader->get_file_rate();
@@ -363,17 +367,27 @@ int ReadSource::set_file(const QString & filename)
 
 int ReadSource::rb_read(audio_sample_t** dst, TimeRef& start, nframes_t count)
 {
+// 	static int runcount;
+// 	runcount++;
 
 	if ( ! m_rbReady ) {
 // 		printf("ringbuffer not ready\n");
 		return 0;
 	}
 
+	TimeRef diff = m_rbRelativeFileReadPos - start;
+	if (diff.universal_frame() > 0 && diff.to_frame(m_outputRate) == 0) {
+		m_rbRelativeFileReadPos = start;
+// 		printf("diff == %d\n", diff.to_frame(m_outputRate));
+	}
+	
 	if (start != m_rbRelativeFileReadPos) {
 		
 		TimeRef availabletime(m_buffers.at(0)->read_space(), m_outputRate);
+/*		printf("rb_read:: m_rbRelativeFileReadPos, start: %lld, %lld\n", m_rbRelativeFileReadPos.universal_frame(), start.universal_frame());
+		printf("rb_read:: availabletime %d\n", availabletime.to_frame(m_outputRate));*/
 		
-		if ( (start > m_rbRelativeFileReadPos) && (m_rbRelativeFileReadPos + availabletime) > (start + TimeRef(count, m_outputRate))) {
+		if ( (start > m_rbRelativeFileReadPos) && ((m_rbRelativeFileReadPos + availabletime) > (start + TimeRef(count, m_outputRate))) ) {
 			
 			TimeRef advance = start - m_rbRelativeFileReadPos;
 			if (availabletime < advance) {
@@ -384,6 +398,8 @@ int ReadSource::rb_read(audio_sample_t** dst, TimeRef& start, nframes_t count)
 			}
 			
 			m_rbRelativeFileReadPos += advance;
+// 			printf("rb_read:: advance %d\n", advance.to_frame(m_outputRate));
+// 			printf("rb_read:: m_rbRelativeFileReadPos after advance %d\n", m_rbRelativeFileReadPos.to_frame(m_outputRate));
 		} else {
 			TimeRef synclocation = start + m_clip->get_track_start_location() + m_clip->get_source_start_location();
 			start_resync(synclocation);
@@ -404,6 +420,8 @@ int ReadSource::rb_read(audio_sample_t** dst, TimeRef& start, nframes_t count)
 	}
 
 	m_rbRelativeFileReadPos.add_frames(readcount, m_outputRate);
+/*	if (runcount < 20)
+		printf("rb_read:: m_rbRelativeFileReadPos after add_frames %lld\n", m_rbRelativeFileReadPos.universal_frame());*/
 	
 	return readcount;
 }
@@ -457,6 +475,7 @@ void ReadSource::rb_seek_to_file_position(TimeRef& position)
 	
 	m_rbFileReadPos = fileposition;
 	m_rbRelativeFileReadPos = fileposition;
+// 	printf("rb_seek_to_file_position:: m_rbRelativeFileReadPos, synclocation: %d, %d\n", m_rbRelativeFileReadPos.to_frame(m_outputRate), fileposition.to_frame(m_outputRate));
 }
 
 

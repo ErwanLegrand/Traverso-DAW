@@ -47,7 +47,7 @@ public :
 		COULD_NOT_OPEN_FILE = -1,
   		INVALID_CHANNEL_COUNT = -2,
     		ZERO_CHANNELS = -3,
-      		CHANNELCOUNT_FILECOUNT_MISMATCH = -4
+      		FILE_DOES_NOT_EXIST = -4
 	};
 	
 	ReadSource* deep_copy();

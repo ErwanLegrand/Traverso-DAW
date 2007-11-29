@@ -713,7 +713,9 @@ void AudioClip::set_audio_source(ReadSource* rs)
 		if (m_peak) {
 			m_peak->close();
 		}
-		m_peak = new Peak(rs);
+		if (m_isReadSourceValid) {
+			m_peak = new Peak(rs);
+		}
 	}
 
 	emit stateChanged();
