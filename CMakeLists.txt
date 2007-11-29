@@ -30,7 +30,7 @@ OPTION(WANT_PCH     	"Use precompiled headers" OFF)
 OPTION(WANT_DEBUG   	"Debug build" OFF)
 OPTION(WANT_OPENGL	"Build Traverso with OpenGL support" ON)
 OPTION(WANT_TRAVERSO_DEBUG "Provides 4 levels of debug ouput on the command line, always on for DEBUG builds" OFF)
-OPTION(WANT_THREAD_CHECK"Checks at runtime if functions are called from the correct thread, used by developers for debugging" OFF)
+OPTION(WANT_THREAD_CHECK	"Checks at runtime if functions are called from the correct thread, used by developers for debugging" OFF)
 OPTION(WANT_VECLIB_OPTIMIZATIONS "Build with veclib optimizations (Only for PPC based Mac OS X)" OFF)
 
 
@@ -85,8 +85,8 @@ SET(MINIMAL_FLAC_VERSION 1.1.2)
 SET(MINIMAL_FFTW_VERSION 3.0.0)
 
 
-SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3 -Wall")
-SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -Wall -fPIC")
+SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3 -Wall ${CXX_FLAGS}")
+SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -Wall -fPIC ${CXX_FLAGS}")
 
 
 INCLUDE (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
@@ -519,9 +519,10 @@ IF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
 	"^${PROJECT_SOURCE_DIR}.*/CMakeFiles/"
 	"^${PROJECT_SOURCE_DIR}.*/CVS/"
 	"^${PROJECT_SOURCE_DIR}.*/bin/"
+	"^${PROJECT_SOURCE_DIR}.*/build/"
+	"^${PROJECT_SOURCE_DIR}.*/buildfiles/"
 	"^${PROJECT_SOURCE_DIR}.*/lib/"
 	"^${PROJECT_SOURCE_DIR}/debian/"
-	"^${PROJECT_SOURCE_DIR}/cmake/"
 	"^${PROJECT_SOURCE_DIR}/autopackage/"
 	"^${PROJECT_SOURCE_DIR}.*/CVSROOT/"
 	"^${PROJECT_SOURCE_DIR}/doc/")
