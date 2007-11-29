@@ -271,11 +271,16 @@ TimeRef SnapList::next_snap_pos(const TimeRef& pos)
 	
 	int index = (int)(pos / m_scalefactor);
 	
-	TimeRef newpos = pos;
+	if (pos < TimeRef()) {
+		PERROR("pos < 0");
+		return TimeRef();
+	}
 	
 	if (index > m_xposLut.size()) {
 		index = m_xposLut.size() - 1;
 	}
+	
+	TimeRef newpos = pos;
 	
 	for (; index<m_xposLut.size(); ++index) {
 		TimeRef snap = m_xposLut.at(index);
@@ -294,20 +299,26 @@ TimeRef SnapList::prev_snap_pos(const TimeRef& pos)
 		update_snaplist();
 	}
 	
+	if (pos < TimeRef()) {
+		PERROR("pos < 0");
+		return TimeRef();
+	}
+	
 	if (! m_xposLut.size()) {
 		return pos;
 	}
 	
-	TimeRef newpos = pos;
-	
 	int index = (int)(pos / m_scalefactor);
+	
 	if (index > m_xposLut.size()) {
 		index = m_xposLut.size() - 1;
 	}
 	
+	TimeRef newpos = pos;
+	
 	do {
 		TimeRef snap = m_xposLut.at(index);
-		if (snap < pos && snap != TimeRef(qint64(0))) {
+		if (snap < pos && snap != TimeRef()) {
 			newpos = snap;
 			break;
 		}
