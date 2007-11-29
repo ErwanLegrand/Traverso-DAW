@@ -70,6 +70,7 @@ public :
 	void set_diskio(DiskIO* diskio);
 	const nframes_t get_nframes() const;
 	int get_file_rate() const;
+	int get_output_rate() const {return m_outputRate;}
 	const TimeRef& get_length() const {return m_length;}
 	
 	void sync(DecodeBuffer* buffer);
