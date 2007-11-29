@@ -157,6 +157,7 @@ public:
 
 private:
 	APILinkedList		m_tracks;
+	QList<AudioClip*>	m_recordingClips;
 	Project*		m_project;
 	WriteSource*		m_exportSource;
 	AudioBus*		m_playBackBus;
@@ -268,6 +269,7 @@ private slots:
 	void handle_diskio_writebuffer_overrun();
 	void handle_diskio_readbuffer_underrun();
 	void prepare_recording();
+	void clip_finished_recording(AudioClip* clip);
 };
 
 inline float Song::get_gain() const

@@ -419,6 +419,7 @@ int AudioClip::process(nframes_t nframes)
 	Q_ASSERT(m_readSource);
 	
 	AudioBus* bus = m_song->get_clip_render_bus();
+	bus->silence_buffers(nframes);
 	AudioBus* sendbus = m_song->get_render_bus();
 	
 	TimeRef mix_pos;
@@ -426,33 +427,41 @@ int AudioClip::process(nframes_t nframes)
 	audio_sample_t* mixdown[channelcount];
 
 
+	int outputRate = m_readSource->get_output_rate();
 	TimeRef transportLocation = m_song->get_transport_location();
-	TimeRef upperRange = transportLocation + TimeRef(nframes, get_rate());
+	TimeRef upperRange = transportLocation + TimeRef(nframes, outputRate);
+	
 	
 	if ( (m_trackStartLocation < upperRange) && (m_trackEndLocation > transportLocation) ) {
+		// FIXME wrong calculation!
 		if (transportLocation < m_trackStartLocation) {
-			uint offset = (m_trackStartLocation - transportLocation).to_frame(get_rate());
+			uint offset = (m_trackStartLocation - transportLocation).to_frame(outputRate);
 			mix_pos = m_sourceStartLocation;
+// 			printf("offset %d\n", offset);
 			
 			for (int chan=0; chan<bus->get_channel_count(); ++chan) {
-				mixdown[chan] = bus->get_buffer(chan, nframes) + offset;
+				audio_sample_t* buf = bus->get_buffer(chan, nframes);
+				mixdown[chan] = buf + offset;
 			}
 			nframes = nframes - offset;
 		} else {
 			mix_pos = (transportLocation - m_trackStartLocation + m_sourceStartLocation);
+// 			printf("else: Setting mix pos to start location %d\n", mix_pos.to_frame(96000));
 			
 			for (int chan=0; chan<bus->get_channel_count(); ++chan) {
 				mixdown[chan] = bus->get_buffer(chan, nframes);
 			}
 		}
 		if (m_trackEndLocation < upperRange) {
-			nframes -= (upperRange - m_trackEndLocation).to_frame(get_rate());
+			nframes -= (upperRange - m_trackEndLocation).to_frame(outputRate);
+// 			printf("if (m_trackEndLocation < upperRange): nframes %d\n", nframes);
 		}
 	} else {
 		return 0;
 	}
 
 
+// 	printf("Setting mix pos to start location %d\n", mix_pos.to_frame(outputRate));
 	int read_frames = 0;
 
 
@@ -468,8 +477,13 @@ int AudioClip::process(nframes_t nframes)
 	}
 	
 	if (read_frames <= 0) {
+// 		printf("read_frames == 0\n");
 		return 0;
 	}
+	
+	if (read_frames != nframes) {
+// 		printf("read_frames, nframes %d, %d\n", read_frames, nframes);
+	}		
 	
 
 	apill_foreach(FadeCurve* fade, FadeCurve, m_fades) {
@@ -480,11 +494,11 @@ int AudioClip::process(nframes_t nframes)
 	m_fader->process_gain(mixdown, mix_pos, endlocation, read_frames, channelcount);
 	
 	if (channelcount == 1) {
-		Mixer::mix_buffers_no_gain(sendbus->get_buffer(0, read_frames), bus->get_buffer(0, read_frames), read_frames);
-		Mixer::mix_buffers_no_gain(sendbus->get_buffer(1, read_frames), bus->get_buffer(0, read_frames), read_frames);
+		Mixer::mix_buffers_no_gain(sendbus->get_buffer(0, nframes), bus->get_buffer(0, nframes), nframes);
+		Mixer::mix_buffers_no_gain(sendbus->get_buffer(1, nframes), bus->get_buffer(0, nframes), nframes);
 	} else if (channelcount == 2) {
-		Mixer::mix_buffers_no_gain(sendbus->get_buffer(0, read_frames), bus->get_buffer(0, read_frames), read_frames);
-		Mixer::mix_buffers_no_gain(sendbus->get_buffer(1, read_frames), bus->get_buffer(1, read_frames), read_frames);
+		Mixer::mix_buffers_no_gain(sendbus->get_buffer(0, nframes), bus->get_buffer(0, nframes), nframes);
+		Mixer::mix_buffers_no_gain(sendbus->get_buffer(1, nframes), bus->get_buffer(1, nframes), nframes);
 	}
 	
 	return 1;
@@ -623,12 +637,18 @@ Command* AudioClip::lock()
 
 Command* AudioClip::reset_fade_in()
 {
-	return new FadeRange(this, fadeIn, 1.0);
+	if (fadeIn) {
+		return new FadeRange(this, fadeIn, 1.0);
+	}
+	return 0;
 }
 
 Command* AudioClip::reset_fade_out()
 {
-	return new FadeRange(this, fadeOut, 1.0);
+	if (fadeOut) {
+		return new FadeRange(this, fadeOut, 1.0);
+	}
+	return 0;
 }
 
 Command* AudioClip::reset_fade_both()
@@ -720,7 +740,7 @@ void AudioClip::finish_write_source()
 	
 	resources_manager()->set_source_for_clip(this, m_readSource);
 	
-	emit recordingFinished();
+	emit recordingFinished(this);
 }
 
 void AudioClip::finish_recording()

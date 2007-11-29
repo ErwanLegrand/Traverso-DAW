@@ -250,7 +250,7 @@ int Project::load(QString projectfile)
 }
 
 
-int Project::save()
+int Project::save(bool autosave)
 {
 	PENTER;
 	QDomDocument doc("Project");
@@ -268,7 +268,10 @@ int Project::save()
 	QTextStream stream(&data);
 	doc.save(stream, 4);
 	data.close();
-	info().information( tr("Project %1 saved ").arg(m_title) );
+	
+	if (!autosave) {
+		info().information( tr("Project %1 saved ").arg(m_title) );
+	}
 	
 	pm().start_incremental_backup(m_title);
 

@@ -168,7 +168,7 @@ signals:
 	void trackEndLocationChanged();
 	void fadeAdded(FadeCurve*);
 	void fadeRemoved(FadeCurve*);
-	void recordingFinished();
+	void recordingFinished(AudioClip*);
 
 public slots:
 	void finish_recording();

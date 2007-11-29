@@ -99,7 +99,7 @@ AudioClipView::AudioClipView(SongView* sv, TrackView* parent, AudioClip* clip )
 	
 	if (m_clip->recording_state() == AudioClip::RECORDING) {
 		start_recording();
-		connect(m_clip, SIGNAL(recordingFinished()), this, SLOT(finish_recording()));
+		connect(m_clip, SIGNAL(recordingFinished(AudioClip*)), this, SLOT(finish_recording()));
 	}
 	
 // 	setFlags(ItemIsSelectable | ItemIsMovable);

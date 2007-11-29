@@ -92,7 +92,7 @@ public :
 	bool is_save_to_close() const;
 	bool is_recording() const;
 	
-	int save();
+	int save(bool autosave=false);
 	int load(QString projectfile = "");
 	int export_project(ExportSpecification* spec);
 	int start_export(ExportSpecification* spec);

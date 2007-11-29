@@ -1292,6 +1292,15 @@ void Song::prepare_recording()
 			if (track->armed()) {
 				AudioClip* clip = track->init_recording();
 				if (clip) {
+					// For autosave purposes, we connect the recordingfinished
+					// signal to the clip_finished_recording() slot, and add this
+					// clip to our recording clip list.
+					// At the time the cliplist is empty, we're sure the recording 
+					// session is finished, at which time an autosave makes sense.
+					connect(clip, SIGNAL(recordingFinished(AudioClip*)), 
+						this, SLOT(clip_finished_recording(AudioClip*)));
+					m_recordingClips.append(clip);
+					
 					group->add_command(new AddRemoveClip(clip, AddRemoveClip::ADD));
 					clipcount++;
 				}
@@ -1303,6 +1312,21 @@ void Song::prepare_recording()
 	
 	m_readyToRecord = true;
 }
+
+void Song::clip_finished_recording(AudioClip * clip)
+{
+	if (!m_recordingClips.removeAll(clip)) {
+		PERROR("clip %s was not in recording clip list, cannot remove it!", QS_C(clip->get_name()));
+	}
+	
+	if (m_recordingClips.isEmpty()) {
+		// seems we finished recording completely now
+		// all clips have set their resulting ReadSource
+		// length and whatsoever, let's do an autosave:
+		m_project->save(true);
+	}
+}
+
 
 void Song::set_transport_pos(TimeRef location)
 {
