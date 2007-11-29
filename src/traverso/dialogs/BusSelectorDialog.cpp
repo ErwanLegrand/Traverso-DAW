@@ -35,6 +35,9 @@ BusSelectorDialog::BusSelectorDialog(QWidget* parent)
 {
 	setupUi(this);
 	
+	playbackBusesGroupBox->hide();
+	resize(300, 200);
+	
 	update_buses_list_widget();
 	
 	buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);

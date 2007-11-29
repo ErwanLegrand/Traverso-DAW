@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>321</width>
-    <height>402</height>
+    <height>389</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -43,12 +43,25 @@
       </widget>
      </item>
      <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
       <widget class="QComboBox" name="trackComboBox" >
        <property name="sizePolicy" >
         <sizepolicy>
-         <hsizetype>0</hsizetype>
+         <hsizetype>5</hsizetype>
          <vsizetype>0</vsizetype>
-         <horstretch>5</horstretch>
+         <horstretch>4</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
@@ -129,7 +142,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox" >
+    <widget class="QGroupBox" name="playbackBusesGroupBox" >
      <property name="title" >
       <string>Playback Buses</string>
      </property>
