@@ -111,7 +111,14 @@ void ResampleAudioReader::reset()
 
 void ResampleAudioReader::set_converter_type(int converter_type)
 {
+	PENTER;
+	
 	int error;
+	
+	if ( (float(m_outputRate) / get_file_rate()) > 2.0 && converter_type == 3 ) {
+		printf("ResampleAudioReader::set_converter_type: src does not support a resample ratio > 2 with converter type Fast, using quality Medium\n");
+		converter_type = 2;
+	}
 	
 	while (m_srcStates.size()) {
 		src_delete(m_srcStates.back());
