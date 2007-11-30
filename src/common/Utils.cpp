@@ -170,7 +170,7 @@ QString timeref_to_ms_3(const TimeRef& ref)
 	return spos;
 }
 
-// Frame to MM:SS:75 (75ths of a second, for CD burning)
+// Frame to HH:MM:SS,75 (75ths of a second, for CD burning)
 QString timeref_to_cd (const TimeRef& ref)
 {
 	QString spos;
