@@ -38,6 +38,7 @@
 #include <QDateTime>
 #include <AddRemove.h>
 #include "Information.h"
+#include "PCommand.h"
 
 MarkerDialog::MarkerDialog(QWidget * parent)
 	: QDialog(parent)
@@ -48,12 +49,12 @@ MarkerDialog::MarkerDialog(QWidget * parent)
 
 	set_project(pm().get_project());
 
-	QString mask = "99:99:99";
+	QString mask = "99:99:99,99";
 	lineEditPosition->setInputMask(mask);
 	
 	// hide the first column if necessary
 	markersTreeWidget->header()->setSectionHidden(0, true);
-	markersTreeWidget->header()->resizeSection(1, 80);
+	markersTreeWidget->header()->resizeSection(1, 100);
 
 	pushButtonRemove->setAutoDefault(false);
 	pushButtonExport->setAutoDefault(false);
@@ -112,7 +113,7 @@ void MarkerDialog::set_project(Project * project)
 	// fill the combo box with the names of the songs
 	m_songlist = m_project->get_songs();
 	for (int i = 0; i < m_songlist.size(); ++i) {
-		comboBoxDisplaySong->addItem(m_songlist.at(i)->get_title());
+		comboBoxDisplaySong->addItem("Sheet " + QString::number(i+1) + ": " + m_songlist.at(i)->get_title());
 		connect(m_songlist.at(i)->get_timeline(), SIGNAL(markerAdded(Marker*)), this, SLOT(update_marker_treeview()));
 		connect(m_songlist.at(i)->get_timeline(), SIGNAL(markerRemoved(Marker*)), this, SLOT(update_marker_treeview()));
 		connect(m_songlist.at(i)->get_timeline(), SIGNAL(markerPositionChanged(Marker*)), this, SLOT(update_marker_treeview()));
@@ -120,6 +121,23 @@ void MarkerDialog::set_project(Project * project)
 
 	// Fill dialog with marker stuff....
 	update_marker_treeview();
+}
+
+
+void MarkerDialog::song_to_be_showed(Song * song)
+{
+	int index = -1;
+	for (int i=0; i<m_songlist.size(); ++i) {
+		if (song == m_songlist.at(i)) {
+			index = i;
+			break;
+		}
+	}
+	
+	if (index != -1 && index < m_songlist.size()) {
+		comboBoxDisplaySong->setCurrentIndex(index);
+	}
+		
 }
 
 void MarkerDialog::update_marker_treeview()
@@ -161,8 +179,6 @@ void MarkerDialog::update_marker_treeview()
 		item->setText(2, name);
 		item->setData(0, Qt::UserRole, marker->get_id());
 	}
-
-	markersTreeWidget->sortItems(1, Qt::AscendingOrder);
 
 	if (currentIndex >= markersTreeWidget->topLevelItemCount()) {
 		currentIndex = markersTreeWidget->topLevelItemCount() - 1;
@@ -233,6 +249,20 @@ void MarkerDialog::position_changed(const QString &s)
 	}
 
 	item->setText(1, s);
+	
+// 	AAAH, wouldn't it be sooo fun to have un/redo when 
+// 	editing the Markers from here ?
+// 	But the realtime thing plays not nice, what about only
+// 	calling this function when the user hits enter ?
+
+// 	TimeRef newpos = cd_to_timeref(s);
+// 	TimeRef oldpos = m_marker->get_when();
+// 	QVariant newv, oldv;
+// 	newv.setValue(newpos);
+// 	oldv.setValue(oldpos);
+// 	PCommand* command = new PCommand(m_marker, "set_when", oldv, newv, tr("Move Marker (from Marker Editor)"));
+// 	Command::process_command(command);
+
 	TimeRef location = cd_to_timeref(s);
 	m_marker->set_when(location);
 	markersTreeWidget->sortItems(1, Qt::AscendingOrder);
@@ -543,4 +573,3 @@ void MarkerDialog::export_toc()
 
 
 //eof
-

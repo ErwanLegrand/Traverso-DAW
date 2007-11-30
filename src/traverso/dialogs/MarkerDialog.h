@@ -37,6 +37,8 @@ public:
 	MarkerDialog(QWidget* parent = 0);
 	~MarkerDialog() {};
 	
+	void song_to_be_showed(Song* song);
+	
 	
 private:
 	Project* m_project;

@@ -47,7 +47,6 @@ public:
 	QDomNode get_state(QDomDocument doc);
 	int set_state(const QDomNode& node);
 
-	void set_when (const TimeRef& when);
 	void set_description(const QString &);
 	void set_performer(const QString &);
 	void set_composer(const QString &);
@@ -70,6 +69,11 @@ public:
 	bool get_preemphasis();
 	bool get_copyprotect();
 	Type get_type() {return m_type;};
+	
+
+public slots:
+	void set_when (const TimeRef& when);
+
 
 private:
 	TimeLine* m_timeline;
