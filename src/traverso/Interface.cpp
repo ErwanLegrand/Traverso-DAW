@@ -1088,6 +1088,7 @@ Command * Interface::show_marker_dialog()
 	if (! m_markerDialog ) {
 		m_markerDialog = new MarkerDialog(this);
 	}
+	m_markerDialog->song_to_be_showed(pm().get_project()->get_current_song());
 	m_markerDialog->show();
 	
 	return 0;
