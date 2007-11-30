@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PCommand.cpp,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
+$Id: PCommand.cpp,v 1.5 2007/11/30 19:31:49 r_sijrier Exp $
 */
 
 #include "PCommand.h"
@@ -29,10 +29,20 @@ $Id: PCommand.cpp,v 1.4 2006/09/07 09:36:52 r_sijrier Exp $
 
 
 PCommand::PCommand(ContextItem* item, char* slot, const QString& des)
-		: Command(item, des)
+	: Command(item, des)
+	, m_contextitem(item)
+	, m_slot(slot)
 {
-	m_contextitem = item;
-	m_slot = slot;
+}
+
+PCommand::PCommand(ContextItem * item, char * slot, QVariant doValue, QVariant undoValue, const QString & des)
+	: Command(item, des)
+	, m_contextitem(item)
+	, m_slot(slot)
+	, m_doValue(doValue)
+	, m_undoValue(undoValue)
+{
+	
 }
 
 
@@ -47,12 +57,32 @@ int PCommand::prepare_actions()
 int PCommand::do_action()
 {
 	PENTER;
+	if (!m_doValue.isNull()) {
+		if (m_doValue.typeName() == QString("TimeRef")) {
+			if (QMetaObject::invokeMethod(m_contextitem, m_slot, Qt::DirectConnection, Q_ARG(TimeRef, m_doValue.value<TimeRef>()))) {
+				return 1;
+			}
+		}
+		
+		return -1;
+	}
+	 
 	return QMetaObject::invokeMethod(m_contextitem, m_slot);
 }
 
 int PCommand::undo_action()
 {
 	PENTER;
+	if (!m_undoValue.isNull()) {
+		if (m_undoValue.typeName() == QString("TimeRef")) {
+			if (QMetaObject::invokeMethod(m_contextitem, m_slot, Qt::DirectConnection, Q_ARG(TimeRef, m_undoValue.value<TimeRef>()))) {
+				return 1;
+			}
+		}
+		
+		return -1;
+	}
+	
 	return QMetaObject::invokeMethod(m_contextitem, m_slot);
 }
 
@@ -65,7 +95,4 @@ int PCommand::begin_hold( )
 {
 	return QMetaObject::invokeMethod(m_contextitem, m_slot);
 }
-
-// eof
-
 
