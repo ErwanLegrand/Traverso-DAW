@@ -215,7 +215,7 @@ FLAC__StreamDecoderWriteStatus FlacPrivate::write_callback(const FLAC__StreamDec
 		PERROR("internalBuffer is already non-empty");
 	}
 	
-	if ((nframes_t)fp->bufferSize < frames * frame->header.channels) {
+	if (!fp->internalBuffer || (nframes_t)fp->bufferSize < frames * frame->header.channels) {
 		if (fp->internalBuffer) {
 			delete [] fp->internalBuffer;
 		}
