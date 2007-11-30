@@ -206,6 +206,8 @@ int ReadSource::init( )
 		m_length = TimeRef(LONG_LONG_MAX);
 		m_channelCount = 0;
 		m_origBitDepth = 16;
+		m_bufferstatus->fillStatus =  100;
+		m_bufferstatus->needSync = false;
 		return 1;
 	}
 	
@@ -369,7 +371,11 @@ int ReadSource::rb_read(audio_sample_t** dst, TimeRef& start, nframes_t count)
 {
 // 	static int runcount;
 // 	runcount++;
-
+	
+	if (m_channelCount == 0) {
+		return count;
+	}
+	
 	if ( ! m_rbReady ) {
 // 		printf("ringbuffer not ready\n");
 		return 0;
@@ -481,6 +487,10 @@ void ReadSource::rb_seek_to_file_position(TimeRef& position)
 
 void ReadSource::process_ringbuffer(DecodeBuffer* buffer, bool seeking)
 {
+	if (m_channelCount == 0) {
+		return;
+	}
+	
 	// Do nothing if we passed the lenght of the AudioFile.
 	if (m_rbFileReadPos >= m_length) {
 // 		printf("returning, m_rbFileReadPos > m_length! (%d >  %d)\n", m_rbFileReadPos.to_frame(get_rate()), m_audioReader->get_nframes());
@@ -614,6 +624,10 @@ void ReadSource::prepare_rt_buffers( )
 
 BufferStatus* ReadSource::get_buffer_status()
 {
+	if (m_channelCount == 0) {
+		return m_bufferstatus;
+	}
+	
 	int freespace = m_buffers.at(0)->write_space();
 	
 // 	printf("m_rbFileReadPos, m_length %lld, %lld\n", m_rbFileReadPos.universal_frame(), m_length.universal_frame());
