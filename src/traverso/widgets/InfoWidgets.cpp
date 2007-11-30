@@ -339,8 +339,8 @@ void HDDSpaceInfo::update_status( )
 		}
 		
 		uint rate = audiodevice().get_sample_rate();
-		qint64 availabletime = qint64(UNIVERSAL_SAMPLE_RATE / rate) * qint64(space * 1048576);
-		availabletime /= qint64(sizeof(float) * recChannelCount);
+		double availabletime = (double(UNIVERSAL_SAMPLE_RATE) / rate) * space * 1048576.0;
+		availabletime /= double(sizeof(float) * recChannelCount);
  		
 		QString recordFormat = config().get_property("Recording", "FileFormat", "wav").toString();
 		// I think a compression ratio of 40 % with wavpack is a safe estimation

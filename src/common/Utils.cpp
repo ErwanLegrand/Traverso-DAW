@@ -112,7 +112,7 @@ QString timeref_to_hms(const TimeRef& ref)
 	qint64 universalframe = ref.universal_frame();
 	
 	hours = (int) (universalframe / ONE_HOUR_UNIVERSAL_SAMPLE_RATE);
-	remainder = (long unsigned int) (universalframe - (hours * ONE_HOUR_UNIVERSAL_SAMPLE_RATE));
+	remainder = qint64(universalframe - (hours * ONE_HOUR_UNIVERSAL_SAMPLE_RATE));
 	mins = (int) (remainder / ( ONE_MINUTE_UNIVERSAL_SAMPLE_RATE ));
 	remainder -= mins * ONE_MINUTE_UNIVERSAL_SAMPLE_RATE;
 	secs = (int) (remainder / UNIVERSAL_SAMPLE_RATE);
