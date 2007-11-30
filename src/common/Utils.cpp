@@ -48,9 +48,10 @@ TimeRef cd_to_timeref(QString str)
 	TimeRef out;
 	QStringList lst = str.simplified().split(QRegExp("[;,.:]"), QString::SkipEmptyParts);
 
-	if (lst.size() >= 1) out += TimeRef(lst.at(0).toInt() * ONE_MINUTE_UNIVERSAL_SAMPLE_RATE);
-	if (lst.size() >= 2) out += TimeRef(lst.at(1).toInt() * UNIVERSAL_SAMPLE_RATE);
-	if (lst.size() >= 3) out += TimeRef(lst.at(2).toInt() * UNIVERSAL_SAMPLE_RATE / 75);
+	if (lst.size() >= 1) out += TimeRef(lst.at(0).toInt() * ONE_HOUR_UNIVERSAL_SAMPLE_RATE);
+	if (lst.size() >= 2) out += TimeRef(lst.at(1).toInt() * ONE_MINUTE_UNIVERSAL_SAMPLE_RATE);
+	if (lst.size() >= 3) out += TimeRef(lst.at(2).toInt() * UNIVERSAL_SAMPLE_RATE);
+	if (lst.size() >= 4) out += TimeRef(lst.at(3).toInt() * UNIVERSAL_SAMPLE_RATE / 75);
 
 	return out;
 }
@@ -174,19 +175,22 @@ QString timeref_to_cd (const TimeRef& ref)
 {
 	QString spos;
 	qint64 remainder;
-	int mins, secs, frames;
+	int hours, mins, secs, frames;
 	
 	qint64 universalframe = ref.universal_frame();
 	
-	mins = universalframe / ( ONE_MINUTE_UNIVERSAL_SAMPLE_RATE );
-	remainder = universalframe - ( mins * ONE_MINUTE_UNIVERSAL_SAMPLE_RATE );
-	secs = remainder / UNIVERSAL_SAMPLE_RATE;
+	hours = int(universalframe / ONE_HOUR_UNIVERSAL_SAMPLE_RATE);
+	remainder = qint64(universalframe - (hours * ONE_HOUR_UNIVERSAL_SAMPLE_RATE));
+	mins = (int) (remainder / ( ONE_MINUTE_UNIVERSAL_SAMPLE_RATE ));
+	remainder -= mins * ONE_MINUTE_UNIVERSAL_SAMPLE_RATE;
+	secs = (int) (remainder / UNIVERSAL_SAMPLE_RATE);
 	remainder -= secs * UNIVERSAL_SAMPLE_RATE;
 	frames = remainder * 75 / UNIVERSAL_SAMPLE_RATE;
-	spos.sprintf ( " %02d:%02d:%02d", mins, secs, frames );
+	spos.sprintf("%02d:%02d:%02d,%02d", hours, mins, secs, frames );
 
 	return spos;
 }
+
 
 QString timeref_to_text(const TimeRef & ref, int scalefactor)
 {
