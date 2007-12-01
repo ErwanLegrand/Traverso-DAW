@@ -17,11 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PCommand.cpp,v 1.5 2007/11/30 19:31:49 r_sijrier Exp $
+$Id: PCommand.cpp,v 1.6 2007/12/01 16:19:44 r_sijrier Exp $
 */
 
 #include "PCommand.h"
 #include "ContextItem.h"
+#include "defines.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
