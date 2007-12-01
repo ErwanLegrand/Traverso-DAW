@@ -36,9 +36,11 @@ QString timeref_to_ms_2 (const TimeRef& ref);
 QString timeref_to_ms_3 (const TimeRef& ref);
 QString timeref_to_text(const TimeRef& ref, int scalefactor);
 QString timeref_to_cd(const TimeRef& ref);
+QString timeref_to_cd_including_hours(const TimeRef& ref);
 
 TimeRef msms_to_timeref(QString str);
 TimeRef cd_to_timeref(QString str);
+TimeRef cd_to_timeref_including_hours(QString str);
 QString coefficient_to_dbstring(float coeff);
 QDateTime extract_date_time(qint64 id);
 
