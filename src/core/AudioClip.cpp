@@ -420,55 +420,57 @@ int AudioClip::process(nframes_t nframes)
 	
 	AudioBus* bus = m_song->get_clip_render_bus();
 	bus->silence_buffers(nframes);
-	AudioBus* sendbus = m_song->get_render_bus();
 	
 	TimeRef mix_pos;
 	int channelcount = get_channels();
 	audio_sample_t* mixdown[channelcount];
+	uint framesToProcess = nframes;
 
 
 	int outputRate = m_readSource->get_output_rate();
 	TimeRef transportLocation = m_song->get_transport_location();
-	TimeRef upperRange = transportLocation + TimeRef(nframes, outputRate);
+	TimeRef upperRange = transportLocation + TimeRef(framesToProcess, outputRate);
 	
 	
 	if ( (m_trackStartLocation < upperRange) && (m_trackEndLocation > transportLocation) ) {
-		// FIXME wrong calculation!
 		if (transportLocation < m_trackStartLocation) {
-			uint offset = (m_trackStartLocation - transportLocation).to_frame(outputRate);
+			// Using to_frame() for both the m_trackStartLocation and transportLocation seems to round 
+			// better then using (m_trackStartLocation - transportLocation).to_frame()
+			// TODO : fine out why!
+			uint offset = (m_trackStartLocation).to_frame(outputRate) - transportLocation.to_frame(outputRate);
 			mix_pos = m_sourceStartLocation;
 // 			printf("offset %d\n", offset);
 			
 			for (int chan=0; chan<bus->get_channel_count(); ++chan) {
-				audio_sample_t* buf = bus->get_buffer(chan, nframes);
+				audio_sample_t* buf = bus->get_buffer(chan, framesToProcess);
 				mixdown[chan] = buf + offset;
 			}
-			nframes = nframes - offset;
+			framesToProcess = framesToProcess - offset;
 		} else {
 			mix_pos = (transportLocation - m_trackStartLocation + m_sourceStartLocation);
 // 			printf("else: Setting mix pos to start location %d\n", mix_pos.to_frame(96000));
 			
 			for (int chan=0; chan<bus->get_channel_count(); ++chan) {
-				mixdown[chan] = bus->get_buffer(chan, nframes);
+				mixdown[chan] = bus->get_buffer(chan, framesToProcess);
 			}
 		}
 		if (m_trackEndLocation < upperRange) {
-			nframes -= (upperRange - m_trackEndLocation).to_frame(outputRate);
-// 			printf("if (m_trackEndLocation < upperRange): nframes %d\n", nframes);
+			// Using to_frame() for both the upperRange and m_trackEndLocation seems to round 
+			// better then using (upperRange - m_trackEndLocation).to_frame()
+			// TODO : fine out why!
+			framesToProcess -= upperRange.to_frame(outputRate) - m_trackEndLocation.to_frame(outputRate);
+// 			printf("if (m_trackEndLocation < upperRange): framesToProcess %d\n", framesToProcess);
 		}
 	} else {
 		return 0;
 	}
 
-
-// 	printf("Setting mix pos to start location %d\n", mix_pos.to_frame(outputRate));
-	int read_frames = 0;
-
+	uint read_frames = 0;
 
 	if (m_song->realtime_path()) {
-		read_frames = m_readSource->rb_read(mixdown, mix_pos, nframes);
+		read_frames = m_readSource->rb_read(mixdown, mix_pos, framesToProcess);
 	} else {
-		read_frames = m_readSource->file_read(m_song->renderDecodeBuffer, mix_pos, nframes);
+		read_frames = m_readSource->file_read(m_song->renderDecodeBuffer, mix_pos, framesToProcess);
 		if (read_frames > 0) {
 			for (int chan=0; chan<channelcount; ++chan) {
 				memcpy(mixdown[chan], m_song->renderDecodeBuffer->destination[chan], read_frames * sizeof(audio_sample_t));
@@ -481,8 +483,8 @@ int AudioClip::process(nframes_t nframes)
 		return 0;
 	}
 	
-	if (read_frames != nframes) {
-// 		printf("read_frames, nframes %d, %d\n", read_frames, nframes);
+	if (read_frames != framesToProcess) {
+		printf("read_frames, framesToProcess %d, %d\n", read_frames, framesToProcess);
 	}		
 	
 
@@ -493,6 +495,10 @@ int AudioClip::process(nframes_t nframes)
 	TimeRef endlocation = mix_pos + TimeRef(read_frames, get_rate());
 	m_fader->process_gain(mixdown, mix_pos, endlocation, read_frames, channelcount);
 	
+	AudioBus* sendbus = m_song->get_render_bus();
+	
+	// NEVER EVER FORGET that the mixing should be done on the WHOLE buffer, not just part of it
+	// so use an unmodified nframes variable!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 	if (channelcount == 1) {
 		Mixer::mix_buffers_no_gain(sendbus->get_buffer(0, nframes), bus->get_buffer(0, nframes), nframes);
 		Mixer::mix_buffers_no_gain(sendbus->get_buffer(1, nframes), bus->get_buffer(0, nframes), nframes);

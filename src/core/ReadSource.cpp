@@ -369,9 +369,6 @@ int ReadSource::set_file(const QString & filename)
 
 int ReadSource::rb_read(audio_sample_t** dst, TimeRef& start, nframes_t count)
 {
-// 	static int runcount;
-// 	runcount++;
-	
 	if (m_channelCount == 0) {
 		return count;
 	}
@@ -382,9 +379,14 @@ int ReadSource::rb_read(audio_sample_t** dst, TimeRef& start, nframes_t count)
 	}
 
 	TimeRef diff = m_rbRelativeFileReadPos - start;
-	if (diff.universal_frame() > 0 && diff.to_frame(m_outputRate) == 0) {
+	// In universal frame positioning, it is possible (somehow) that the start 
+	// location and m_rbRelativeFileReadPos differ very very slighly, and when
+	// converted to frames, the difference is much smaller then 1 frame.
+	// To catch these kind of I think 'rounding issues' we convert to frames here
+	// and see if the diff in frames == 0, in which case it should be fine to make 
+	// our m_rbRelativeFileReadPos equal to start, and thus avoiding unwanted resync actions!
+	if ( (diff.universal_frame() > 0) && (diff.to_frame(m_outputRate) == 0) ) {
 		m_rbRelativeFileReadPos = start;
-// 		printf("diff == %d\n", diff.to_frame(m_outputRate));
 	}
 	
 	if (start != m_rbRelativeFileReadPos) {
@@ -404,8 +406,8 @@ int ReadSource::rb_read(audio_sample_t** dst, TimeRef& start, nframes_t count)
 			}
 			
 			m_rbRelativeFileReadPos += advance;
-// 			printf("rb_read:: advance %d\n", advance.to_frame(m_outputRate));
-// 			printf("rb_read:: m_rbRelativeFileReadPos after advance %d\n", m_rbRelativeFileReadPos.to_frame(m_outputRate));
+/*			printf("rb_read:: advance %d\n", advance.to_frame(m_outputRate));
+			printf("rb_read:: m_rbRelativeFileReadPos after advance %d\n", m_rbRelativeFileReadPos.to_frame(m_outputRate));*/
 		} else {
 			TimeRef synclocation = start + m_clip->get_track_start_location() + m_clip->get_source_start_location();
 			start_resync(synclocation);
@@ -420,14 +422,13 @@ int ReadSource::rb_read(audio_sample_t** dst, TimeRef& start, nframes_t count)
 		readcount = m_buffers.at(chan)->read(dst[chan], count);
 
 		if (readcount != count) {
+			printf("readcount, count: %d, %d\n", readcount, count);
 		// Hmm, not sure what to do in this case....
 		}
 		
 	}
 
 	m_rbRelativeFileReadPos.add_frames(readcount, m_outputRate);
-/*	if (runcount < 20)
-		printf("rb_read:: m_rbRelativeFileReadPos after add_frames %lld\n", m_rbRelativeFileReadPos.universal_frame());*/
 	
 	return readcount;
 }
@@ -546,7 +547,7 @@ void ReadSource::start_resync(TimeRef& position)
 {
 // 	printf("starting resync!\n");
 	if (m_needSync || m_syncInProgress) {
-		printf("start_resync still in progress!\n");
+// 		printf("start_resync still in progress!\n");
 		return;
 	}
 		
