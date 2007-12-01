@@ -436,7 +436,7 @@ int AudioClip::process(nframes_t nframes)
 		if (transportLocation < m_trackStartLocation) {
 			// Using to_frame() for both the m_trackStartLocation and transportLocation seems to round 
 			// better then using (m_trackStartLocation - transportLocation).to_frame()
-			// TODO : fine out why!
+			// TODO : find out why!
 			uint offset = (m_trackStartLocation).to_frame(outputRate) - transportLocation.to_frame(outputRate);
 			mix_pos = m_sourceStartLocation;
 // 			printf("offset %d\n", offset);
@@ -457,7 +457,7 @@ int AudioClip::process(nframes_t nframes)
 		if (m_trackEndLocation < upperRange) {
 			// Using to_frame() for both the upperRange and m_trackEndLocation seems to round 
 			// better then using (upperRange - m_trackEndLocation).to_frame()
-			// TODO : fine out why!
+			// TODO : find out why!
 			framesToProcess -= upperRange.to_frame(outputRate) - m_trackEndLocation.to_frame(outputRate);
 // 			printf("if (m_trackEndLocation < upperRange): framesToProcess %d\n", framesToProcess);
 		}
