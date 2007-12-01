@@ -602,13 +602,13 @@ void SongView::set_snap_range(int start)
 
 Command* SongView::scroll_up( )
 {
-	set_vscrollbar_value(m_clipsViewPort->verticalScrollBar()->value() - mean_track_height());
+	set_vscrollbar_value(m_clipsViewPort->verticalScrollBar()->value() - int(mean_track_height() * 0.75));
 	return 0;
 }
 
 Command* SongView::scroll_down( )
 {
-	set_vscrollbar_value(m_clipsViewPort->verticalScrollBar()->value() + mean_track_height());
+	set_vscrollbar_value(m_clipsViewPort->verticalScrollBar()->value() + int(mean_track_height() * 0.75));
 	return 0;
 }
 
