@@ -181,6 +181,9 @@ SongWidget::SongWidget(Song* song, QWidget* parent)
 	: QFrame(parent)
 	, m_song(song)
 {
+	if (!m_song) {
+		return;
+	}
 	m_scene = new QGraphicsScene();
 	m_vScrollBar = new QScrollBar(this);
 	m_hScrollBar = new QScrollBar(this);
@@ -242,6 +245,9 @@ SongWidget::SongWidget(Song* song, QWidget* parent)
 
 SongWidget::~ SongWidget()
 {
+	if (!m_song) {
+		return;
+	}
 	delete m_trackPanel;
 	delete m_clipsViewPort;
 	delete m_timeLine;
@@ -262,6 +268,10 @@ QSize SongWidget::sizeHint() const
 
 void SongWidget::set_use_opengl( bool useOpenGL )
 {
+	if (!m_song) {
+		return;
+	}
+	
 	if (useOpenGL != m_usingOpenGL) {
 #if defined (QT_OPENGL_SUPPORT)
 		m_clipsViewPort->setViewport(useOpenGL ? new QGLWidget(QGLFormat(QGL::SampleBuffers)) : new QWidget);

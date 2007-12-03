@@ -255,6 +255,9 @@ void Interface::set_project(Project* project)
 		// function returns, if the songcanvas is still painting (due playback e.g.) we
 		// could get a crash due canvas items refering to data that was managed by the project.
 		// so let's delete the SongWidgets before the project is deleted!
+		if (m_songWidgets.contains(0)) {
+			delete m_songWidgets.take(0);
+		}
 		foreach(SongWidget* sw, m_songWidgets) {
 			delete_songwidget(sw->get_song());
 		}
@@ -275,11 +278,23 @@ void Interface::delete_songwidget(Song* song)
 void Interface::show_song(Song* song)
 {
 	PENTER;
-	if (!song) {
-		return;
-	}
 	
-	SongWidget* songWidget = m_songWidgets.value(song);
+	SongWidget* songWidget;
+	
+	if (!song) {
+		Project* project = pm().get_project();
+		if (project && project->get_songs().size() == 0) {
+			songWidget = m_songWidgets.value(0);
+			
+			if (!songWidget) {
+				songWidget = new SongWidget(0, centerAreaWidget);
+				centerAreaWidget->addWidget(songWidget);
+				m_songWidgets.insert(0, songWidget);
+			}
+		}
+	} else {
+		songWidget = m_songWidgets.value(song);
+	}
 	
 	if (!songWidget) {
 		songWidget = new SongWidget(song, centerAreaWidget);
@@ -289,7 +304,10 @@ void Interface::show_song(Song* song)
 	currentSongWidget = songWidget;
 	centerAreaWidget->setCurrentIndex(centerAreaWidget->indexOf(songWidget));
 	songWidget->setFocus();
-	pm().get_undogroup()->setActiveStack(song->get_history_stack());
+	
+	if (song) {
+		pm().get_undogroup()->setActiveStack(song->get_history_stack());
+	}
 }
 
 

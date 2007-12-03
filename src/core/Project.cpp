@@ -108,7 +108,8 @@ int Project::create(int songcount, int numtracks)
 	
 	for (int i=0; i< songcount; i++) {
 		Song* song = new Song(this, numtracks);
-		private_add_song(song);
+		m_songs.append(song);
+		song->connect_to_audiodevice();
 	}
 
 	if (m_songs.size()) {
@@ -444,7 +445,7 @@ void Project::set_current_song(qint64 id)
 {
 	PENTER;
 	
-	if ( m_currentSongId == id) {
+	if (m_currentSongId == id) {
 		return;
 	}
 	
@@ -829,13 +830,21 @@ ResourcesManager * Project::get_audiosource_manager( ) const
 
 void Project::private_add_song(Song * song)
 {
+	PENTER;
 	m_songs.append(song);
 	song->connect_to_audiodevice();
+	
+	set_current_song(song->get_id());
 }
 
 void Project::private_remove_song(Song * song)
 {
+	PENTER;
 	m_songs.removeAll(song);
+	
+	if (m_songs.isEmpty()) {
+		m_currentSongId = -1;
+	}
 		
 	qint64 newcurrent = 0;
 		

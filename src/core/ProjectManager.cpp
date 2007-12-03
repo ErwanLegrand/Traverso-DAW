@@ -384,7 +384,13 @@ Command* ProjectManager::exit()
 	PENTER;
 	
 	if (currentProject) {
-		if (currentProject->is_save_to_close()) {
+		if (currentProject->get_songs().size() == 0) {
+			// No sheets to unregister from the audiodevice,
+			// just save and quit:
+			set_current_project(0);
+			QApplication::exit();
+			return 0;
+		} else if (currentProject->is_save_to_close()) {
 			m_exitInProgress = true;
 			set_current_project(0);
 		} else {
