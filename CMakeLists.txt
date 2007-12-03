@@ -84,9 +84,22 @@ SET(MINIMAL_MAD_VERSION 0.15.0)
 SET(MINIMAL_FLAC_VERSION 1.1.2)
 SET(MINIMAL_FFTW_VERSION 3.0.0)
 
-
 SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3 -Wall ${CXX_FLAGS}")
 SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -Wall -fPIC ${CXX_FLAGS}")
+
+# Detect the flags to be used for large file support
+execute_process(
+	COMMAND getconf LFS_CFLAGS
+	OUTPUT_VARIABLE getconf_invoke_result
+	RESULT_VARIABLE getconf_failed
+)
+
+# remove linebrakes, white spaces (getconf_invoke_result)
+string(REGEX REPLACE "[\r\n]"                  " " getconf_invoke_result "${getconf_invoke_result}")
+
+# now we have the proper flags for large file support, so set these!
+SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${getconf_invoke_result}")
+SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${getconf_invoke_result}")
 
 
 INCLUDE (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
@@ -294,11 +307,6 @@ CHECK_FUNCTION_EXISTS(mlock HAVE_MLOCK)
 IF(HAVE_MLOCK)
 	LIST(APPEND TRAVERSO_DEFINES -DUSE_MLOCK)
 ENDIF(HAVE_MLOCK)
-
-
-# Enable large file support
-# TODO
-# QMAKE_CXXFLAGS += $$system(getconf LFS_CFLAGS)
 
 
 IF(UNIX)
