@@ -232,7 +232,7 @@ void DecodeBuffer::check_buffers_capacity(uint size, uint channels)
 void DecodeBuffer::delete_destination_buffers()
 {
 	if (destination) {
-		int destChannelcount = (sizeof(destination) / sizeof(destination[0]));
+		uint destChannelcount = (sizeof(destination) / sizeof(destination[0]));
 		if (destChannelcount != m_channels) {
 			PERROR("destination channel count != m_channels: dest channel %d, m_channels %d", destChannelcount, m_channels);
 			m_channels = destChannelcount;
