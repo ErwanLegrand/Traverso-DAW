@@ -152,11 +152,11 @@ void AudioDriverPage::save_config()
 void AudioDriverPage::reset_default_config()
 {
 	config().set_property("Hardware", "samplerate", 44100);
-	config().set_property("Hardware", "buffersize", 1024);
+	config().set_property("Hardware", "buffersize", 512);
 #if defined (ALSA_SUPPORT)
 	config().set_property("Hardware", "drivertype", "ALSA");
 	config().set_property("Hardware", "carddevice", "hw:0");
-	config().set_property("Hardware", "numberofperiods", 2);
+	config().set_property("Hardware", "numberofperiods", 3);
 #elif defined (JACK_SUPPORT)
 	if (libjack_is_present)
 		config().set_property("Hardware", "drivertype", "Jack");
@@ -187,7 +187,7 @@ void AudioDriverPage::reset_default_config()
 void AudioDriverPage::load_config( )
 {
 	int samplerate = config().get_property("Hardware", "samplerate", 44100).toInt();
-	int buffersize = config().get_property("Hardware", "buffersize", 1024).toInt();
+	int buffersize = config().get_property("Hardware", "buffersize", 512).toInt();
 #if defined (Q_WS_X11)
 	QString driverType = config().get_property("Hardware", "drivertype", "ALSA").toString();
 #else
@@ -223,7 +223,7 @@ void AudioDriverPage::load_config( )
 	
 #if defined (ALSA_SUPPORT)
 	m_alsadevices->devicesCombo->clear();
-	int periodsIndex = config().get_property("Hardware", "numberofperiods", 2).toInt();
+	int periodsIndex = config().get_property("Hardware", "numberofperiods", 3).toInt();
 	m_alsadevices->periodsCombo->setCurrentIndex(periodsIndex - 2);
 	
 	QString name;
@@ -307,7 +307,7 @@ void AudioDriverPage::restart_driver_button_clicked()
 	// The AlsaDriver retrieves it's periods number directly from config()
 	// So there is no way to use the current selected one, other then
 	// setting it now, and restoring it afterwards...
-	int currentperiods = config().get_property("Hardware", "numberofperiods", 2).toInt();
+	int currentperiods = config().get_property("Hardware", "numberofperiods", 3).toInt();
 	config().set_property("Hardware", "numberofperiods", periods);
 	
 	if (driver == "ALSA") {

@@ -137,7 +137,7 @@ void Config::set_audiodevice_driver_properties()
 {
 	QHash<QString, QVariant> hardwareconfigs;
 	hardwareconfigs.insert("jackslave", get_property("Hardware", "jackslave", false));
-	hardwareconfigs.insert("numberofperiods", get_property("Hardware", "numberofperiods", 2));
+	hardwareconfigs.insert("numberofperiods", get_property("Hardware", "numberofperiods", 3));
 	
 	audiodevice().set_driver_properties(hardwareconfigs);
 }

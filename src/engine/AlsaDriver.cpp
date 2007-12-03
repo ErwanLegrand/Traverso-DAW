@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AlsaDriver.cpp,v 1.18 2007/10/20 17:38:18 r_sijrier Exp $
+$Id: AlsaDriver.cpp,v 1.19 2007/12/03 16:24:20 r_sijrier Exp $
 */
 
 
@@ -100,7 +100,7 @@ AlsaDriver::~AlsaDriver()
 
 int AlsaDriver::setup(bool capture, bool playback, const QString& pcmName)
 {
-	unsigned long user_nperiods = device->get_driver_property("numberofperiods", 2).toInt();
+	unsigned long user_nperiods = device->get_driver_property("numberofperiods", 3).toInt();
 	char *playback_pcm_name = pcmName.toAscii().data();
 	char *capture_pcm_name = pcmName.toAscii().data();
 	int shorts_first = false;

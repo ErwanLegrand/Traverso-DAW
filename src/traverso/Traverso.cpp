@@ -307,7 +307,7 @@ void Traverso::setup_fpu()
 void Traverso::prepare_audio_device( )
 {
 	int rate = config().get_property("Hardware", "samplerate", 44100).toInt();
-	int bufferSize = config().get_property("Hardware", "buffersize", 1024).toInt();
+	int bufferSize = config().get_property("Hardware", "buffersize", 512).toInt();
 #if defined (Q_WS_X11)
 	QString driverType = config().get_property("Hardware", "drivertype", "ALSA").toString();
 #else

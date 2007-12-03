@@ -678,6 +678,10 @@ void SongInfo::update_snap_state()
 
 void SongInfo::update_effects_state()
 {
+	if (!m_song) {
+		return;
+	}
+	
 	if (m_song->get_mode() == Song::EDIT) {
 		m_effectButton->setChecked(false);
 	} else {
@@ -708,6 +712,10 @@ void SongInfo::update_temp_follow_state(bool state)
 
 void SongInfo::follow_state_changed(bool state)
 {
+	if (!m_song) {
+		return;
+	}
+	
 	if (!m_song->is_transport_rolling() || !m_isFollowing) {
 		m_isFollowing = state;
 		config().set_property("PlayHead", "Follow", state);
