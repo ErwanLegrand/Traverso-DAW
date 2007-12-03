@@ -1,3 +1,63 @@
+03-12-2007 Remon Sijrier <remon at traverso-daw dot org>
+	* Reworked core and GUI code to work with Universal Sample Rate (TimeRef struct)
+	  instead of the samplerate dependend nframes_t
+	  This allows Traverso to mix files of different samplerate freely, making
+	  the samplerate of the audio as independend as the bitdepth of the audio.
+	* Merged MonoReader and ReadSource into ReadSource
+	* Audio data is store interleaved on hard disk now, in an attempt to improve
+	  hard disk bandwidth, and cpu usage, specially for compressed audio files.
+	* Compile Traverso with large file support.
+	* Calculate Peak data in a samplerate independend way (using 44.1 KHz as reference)
+	* Added a "Restore Backup" solution, which stores the latest 1000 saves. Restoring 
+	  a backup from the "Restore from Backup" dialog is very easy and fail save.
+	* Auto save after a recording finished, since this this is likely a very important 
+	  point in time to create a backup file
+	* Added project converter to convert projects from Traverso < 0.42.0 to Traverso 0.42.0
+	* Splitted Export/Burn to CD dialog into 2: Export Dialog and Write CD dialog
+	* mmap peak data by using Qt 4.4 new mmap function, or if not compiled with Qt 4.4
+	  use our own code (which equals that of Qt 4.4)
+	* More accurate Peak data calculation, improved and faster Waveform drawing.
+	* Sync sse code to Ardour2's one, added Veclib optimizations (apple ppc only)
+	  check if processor has denormal as zero capabilities and use it if it's there.
+	* Added support to compile Traverso with cmake. qmake still works, but the intention is
+	  to move to using cmake exclusively
+	* Updated slv2 code to 0.3.0 (svn (7-11-2007)), added option to compile against system installed slv2
+	* Adding and removing of audio processing objects is faster and even more Real Time save now.
+	* Curve processing (e.g. Gain curve) is much faster now
+	* Shuttle tuning.
+	* Fixed bug in CD TOC export, sometimes resulting in no audio exported!
+	* Added WAV64 is recording format.
+	* Added 2 submenus to the Settings Menu:
+		- Select recording encoding format, after selection the new recording will be recorded with
+		  the selected encoding
+		- Select the resample quality, the new quality will be used directly. When changing the quality
+		  during playback or recording, a short sillence will occur vs no recording during a small amount
+		  of time (the time it takes to seek to the current + 'one buffer time' location)
+	* Default to use 3 periods and a period size of 512 frames when using the ALSA driver.
+	* Tons of bug fixes, old ones, new ones and various improvements all over the place.
+
+
+03-12-2007 Nicola Doebelin
+	* Created 3 new Themes
+	* Updated the User Manual to 0.42.0 and translated to German
+	* Updated German translation of the GUI
+	* Some small improvements on the CD Burning Dialog and Marker Editor
+
+
+03-12-2007 Ben Levitt
+	* Created Abstraction for reading writing audio files
+	  Added support for native reading/writing to:
+	  	- FLAC
+	  	- Ogg Vorbis
+	  	- WavPack
+	  	- MP3
+	* Created an Resampled Audio reader which is a wrapper for the available
+	  reader classes, and applies sample rate conversion on the read data.
+	* Created GUI elements to select type and parameters of encoder in the Export Dialog.
+	* Improvements and bugs fixes.
+
+
+
 05-07-2007 Remon Sijrier <remon at traverso-daw dot org>
 	* Released 0.41.0
 
