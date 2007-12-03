@@ -419,7 +419,7 @@ int Song::prepare_export(ExportSpecification* spec)
 	spec->pos = spec->startLocation;
 	spec->progress = 0;
 
-	spec->basename = "Song" + QString::number(m_project->get_song_index(m_id)) +"-" + title;
+	spec->basename = "Sheet_" + QString::number(m_project->get_song_index(m_id)) +"-" + title;
 	spec->name = spec->basename;
 
 	if (spec->startLocation == spec->endLocation) {
