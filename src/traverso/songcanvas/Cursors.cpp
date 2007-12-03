@@ -282,7 +282,7 @@ void WorkCursor::paint( QPainter * painter, const QStyleOptionGraphicsItem * opt
 		update_background();
 	}
 	
-	painter->drawPixmap(0, 0, m_boundingRect.width(), m_boundingRect.height(), m_pix);
+	painter->drawPixmap(0, 0, int(m_boundingRect.width()), int(m_boundingRect.height()), m_pix);
 }
 
 void WorkCursor::update_position()

@@ -187,7 +187,7 @@ QString timeref_to_cd (const TimeRef& ref)
 {
 	QString spos;
 	qint64 remainder;
-	int hours, mins, secs, frames;
+	int mins, secs, frames;
 	
 	qint64 universalframe = ref.universal_frame();
 	
