@@ -422,7 +422,7 @@ int ReadSource::rb_read(audio_sample_t** dst, TimeRef& start, nframes_t count)
 		readcount = m_buffers.at(chan)->read(dst[chan], count);
 
 		if (readcount != count) {
-			printf("readcount, count: %d, %d\n", readcount, count);
+			PMESG("readcount, count: %d, %d", readcount, count);
 		// Hmm, not sure what to do in this case....
 		}
 		
