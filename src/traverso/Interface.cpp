@@ -279,7 +279,7 @@ void Interface::show_song(Song* song)
 {
 	PENTER;
 	
-	SongWidget* songWidget;
+	SongWidget* songWidget = 0;
 	
 	if (!song) {
 		Project* project = pm().get_project();
