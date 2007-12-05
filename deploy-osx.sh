@@ -79,6 +79,7 @@ install_name_tool -change /usr/local/lib/libwavpack.1.dylib @executable_path/../
 install_name_tool -change /usr/local/lib/libFLAC++.6.dylib @executable_path/../Frameworks/libFLAC++.6.dylib traverso.app/Contents/MacOS/traverso
 install_name_tool -change /usr/local/lib/libFLAC.8.dylib @executable_path/../Frameworks/libFLAC.8.dylib traverso.app/Contents/MacOS/traverso
 install_name_tool -change /usr/local/lib/libmp3lame.0.dylib @executable_path/../Frameworks/libmp3lame.0.dylib traverso.app/Contents/MacOS/traverso
+install_name_tool -change /usr/local/lib/liblo.0.dylib @executable_path/../Frameworks/liblo.0.dylib traverso.app/Contents/MacOS/traverso
 install_name_tool -change /usr/local/lib/libst.0.dylib @executable_path/../Frameworks/libst.0.dylib traverso.app/Contents/MacOS/sox
 install_name_tool -change /usr/local/lib/libsndfile.1.dylib @executable_path/../Frameworks/libsndfile.1.dylib traverso.app/Contents/MacOS/sox
 install_name_tool -change /usr/local/lib/libsamplerate.0.dylib @executable_path/../Frameworks/libsamplerate.0.dylib traverso.app/Contents/MacOS/sox
