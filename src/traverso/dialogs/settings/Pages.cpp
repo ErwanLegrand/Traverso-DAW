@@ -830,21 +830,14 @@ void KeyboardConfigPage::on_exportButton_clicked()
 
 void KeyboardConfigPage::on_printButton_clicked()
 {
-	Interface::instance()->export_keymap();
-	QFile file(QDir::homePath() + "/traversokeymap.html");
-	if (!file.open(QIODevice::ReadOnly)) {
-		QMessageBox::information( Interface::instance(), tr("Printing KeyMap"), 
-			     tr("The keymap export failed:\n\n %1").arg(file.errorString()),
-			     QMessageBox::Ok);
-		return;
-	}
-	
+	QString kmap;
+	Interface::instance()->get_keymap(kmap);
+
 	QPrinter printer(QPrinter::ScreenResolution);
 	QPrintDialog printDialog(&printer, Interface::instance());
 	if (printDialog.exec() == QDialog::Accepted) {
-		QString string = file.readAll();
 		QTextEdit edit;
-		edit.insertHtml(string);
+		edit.insertHtml(kmap);
 		edit.document()->print(&printer);
 	}
 }

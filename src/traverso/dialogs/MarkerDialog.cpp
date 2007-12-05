@@ -543,7 +543,7 @@ void MarkerDialog::export_toc()
 
 	QTextStream out(&file);
 
-	out << "<html>\n  <head>\n  </head>\n\n  <body>\n";
+	out << "<html>\n  <head>\n    <meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n  </head>\n\n  <body>\n";
 
 	out << "    <h1>" << m_project->get_title() << "</h1>\n";
 	out << "    <h2>" << m_project->get_description() << "</h2>\n";

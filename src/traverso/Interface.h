@@ -172,6 +172,7 @@ public slots :
 	Command* about_traverso();
 	Command* quick_start();
 	Command* export_keymap();
+	Command* get_keymap(QString &);
 	Command* show_export_widget();
 	Command* show_cd_writing_dialog();
 	Command* show_context_menu();

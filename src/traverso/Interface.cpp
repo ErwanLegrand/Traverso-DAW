@@ -691,6 +691,17 @@ Command * Interface::export_keymap()
 	} else {
 		return 0;
 	}
+
+	QString str;
+	(Command *) get_keymap(str);
+	out << str;
+
+	data.close();
+	return 0;
+}
+
+Command * Interface::get_keymap(QString &str)
+{
 	
 	QMap<QString, QList<const QMetaObject*> > objects;
 	
@@ -717,13 +728,13 @@ Command * Interface::export_keymap()
 	objects.insert("ProjectManager", pmlist);
 	
 	
-	out << "<html><body><h1>Traverso keymap: " << config().get_property("CCE", "keymap", "default").toString() << "</h1>";
+	str = "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"></head><body><h1>Traverso keymap: " + config().get_property("CCE", "keymap", "default").toString() + "</h1>";
 	
 	foreach(QList<const QMetaObject* > objectlist, objects.values()) {
 		QString name = objects.key(objectlist);
 		
-		out << "<h3>" << name << "</h3>";
-		out << "<table><tr><td width=220>" << tr("<b>Description</b>") << "</td><td>" << tr("<b>Key Sequence</b>") << "</td></tr>";
+		str += "<h3>" + name + "</h3>";
+		str += "<table><tr><td width=220>" + tr("<b>Description</b>") + "</td><td>" + tr("<b>Key Sequence</b>") + "</td></tr>";
 		
 		QStringList result;
 		
@@ -761,13 +772,11 @@ Command * Interface::export_keymap()
 			}
 		}
 		result.sort();
-		out << result.join("");
-		out << "</table></br></br>";
+		str += result.join("");
+		str += "</table></br></br>";
 	}
 	
-	out << "</body></html>";
-	
-	data.close();
+	str += "</body></html>";
 	
 	return 0;
 }
