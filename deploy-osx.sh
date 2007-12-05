@@ -36,6 +36,7 @@ cp /usr/local/lib/libraptor.1.dylib traverso.app/Contents/Frameworks
 cp /usr/local/lib/libst.0.dylib traverso.app/Contents/Frameworks
 cp /usr/local/lib/libwavpack.1.dylib traverso.app/Contents/Frameworks
 cp /usr/local/lib/libmp3lame.0.dylib traverso.app/Contents/Frameworks
+cp /usr/local/lib/liblo.0.dylib traverso.app/Contents/Frameworks
 cp $QT_PATH/lib/QtXml.framework/Versions/4/QtXml traverso.app/Contents/Frameworks/QtXml.framework/Versions/4/
 cp $QT_PATH/lib/QtOpenGL.framework/Versions/4/QtOpenGL traverso.app/Contents/Frameworks/QtOpenGL.framework/Versions/4/
 cp $QT_PATH/lib/QtGui.framework/Versions/4/QtGui traverso.app/Contents/Frameworks/QtGui.framework/Versions/4/
@@ -57,6 +58,7 @@ install_name_tool -id @executable_path/../Frameworks/libwavpack.1.dylib traverso
 install_name_tool -id @executable_path/../Frameworks/libFLAC++.6.dylib traverso.app/Contents/Frameworks/libFLAC++.6.dylib
 install_name_tool -id @executable_path/../Frameworks/libFLAC.8.dylib traverso.app/Contents/Frameworks/libFLAC.8.dylib
 install_name_tool -id @executable_path/../Frameworks/libmp3lame.0.dylib traverso.app/Contents/Frameworks/libmp3lame.0.dylib
+install_name_tool -id @executable_path/../Frameworks/liblo.0.dylib traverso.app/Contents/Frameworks/liblo.0.dylib
 install_name_tool -id @executable_path/../Frameworks/QtXml.framework/Versions/4/QtXml traverso.app/Contents/Frameworks/QtXml.framework/Versions/4/QtXml
 install_name_tool -id @executable_path/../Frameworks/QtOpenGL.framework/Versions/4/QtOpenGL traverso.app/Contents/Frameworks/QtOpenGL.framework/Versions/4/QtOpenGL
 install_name_tool -id @executable_path/../Frameworks/QtGui.framework/Versions/4/QtGui traverso.app/Contents/Frameworks/QtGui.framework/Versions/4/QtGui
