@@ -202,7 +202,7 @@ void MarkerDialog::item_changed(QTreeWidgetItem * current, QTreeWidgetItem * pre
 
 	if (previous) {
 		Marker *marker = get_marker(previous->data(0, Qt::UserRole).toLongLong());
-		marker->set_when(cd_to_timeref(lineEditPosition->text()));
+		marker->set_when(cd_to_timeref_including_hours(lineEditPosition->text()));
 		marker->set_description(lineEditTitle->text());
 		marker->set_performer(lineEditPerformer->text());
 		marker->set_composer(lineEditComposer->text());
