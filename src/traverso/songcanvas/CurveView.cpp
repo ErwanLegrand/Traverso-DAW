@@ -370,12 +370,7 @@ void CurveView::remove_curvenode_view(CurveNode* node)
 		if (nodeview->get_curve_node() == node) {
 			m_nodeViews.removeAll(nodeview);
 			if (nodeview == m_blinkingNode) {
-				// Add a force update (variable true) to fix a crash when:
-				// [ D ] for dragging node, then < Q > for context menu DragNode
-				// release [ D ], close Menu, do CTRL + Z -> Crash
-				// The real problem is that after closing the menu the InputEngine is left
-				// in Holding state, when [ D ] was released when the Menu was open.
-				update_softselected_node(cpointer().pos(), true);
+				update_softselected_node(cpointer().pos());
 			}
 			AddRemove* cmd = (AddRemove*) m_guicurve->remove_node(nodeview, false);
 			cmd->set_instantanious(true);
