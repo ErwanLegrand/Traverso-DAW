@@ -94,6 +94,7 @@ protected:
 	void closeEvent ( QCloseEvent * event );
 	QSize sizeHint () const;
 	void changeEvent(QEvent *event);
+	bool eventFilter(QObject *obj, QEvent *ev);
 
 private:
 	QStackedWidget* 	centerAreaWidget;

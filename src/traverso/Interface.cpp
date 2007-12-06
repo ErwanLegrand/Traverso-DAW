@@ -361,6 +361,28 @@ void Interface::keyReleaseEvent( QKeyEvent * e)
 	e->ignore();
 }
 
+bool Interface::eventFilter(QObject * obj, QEvent * event)
+{
+	QMenu* menu = qobject_cast<QMenu*>(obj);
+	
+	// If the installed filter was for a QMenu, we need to
+	// delegate key releases to the InputEngine, e.g. a hold 
+	// action would never finish if we release the hold key 
+	// on the open Menu, resulting in weird behavior!
+	if (menu) {
+		if (event->type() == QEvent::KeyRelease) {
+			QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+			ie().catch_key_release(keyEvent);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	return false;
+}
+
+
 void Interface::changeEvent(QEvent *event)
 {
 	switch (event->type()) {
@@ -783,8 +805,6 @@ Command * Interface::get_keymap(QString &str)
 
 QMenu* Interface::create_context_menu(QObject* item, QList<MenuData >* menulist)
 {
-	QMenu* menu = new QMenu(this);
-	
 	QList<MenuData > list;
 	if (item) {
 		 list = ie().create_menudata_for( item );
@@ -796,7 +816,6 @@ QMenu* Interface::create_context_menu(QObject* item, QList<MenuData >* menulist)
 		// Empty menu!
 		return 0;
 	}
-	
 	
 	qSort(list.begin(), list.end(), MenuData::smaller);
 
@@ -810,6 +829,9 @@ QMenu* Interface::create_context_menu(QObject* item, QList<MenuData >* menulist)
 
 	if (name == "Song") name = "Sheet"; // FIXME!!!
 
+	QMenu* menu = new QMenu(this);
+	menu->installEventFilter(this);
+	
 	QAction* menuAction = menu->addAction(name);
 	QFont font(themer()->get_font("ContextMenu:fontscale:actions"));
 	font.setBold(true);
