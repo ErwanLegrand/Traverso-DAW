@@ -97,7 +97,7 @@ int Import::prepare_actions()
 		m_fileName = QFileDialog::getOpenFileName(0,
 				tr("Import audio source"),
 				pm().get_project()->get_import_dir(),
-				tr("All files (*);;Audio files (*.wav *.flac)"));
+				tr("All files (*);;Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)"));
 		
 		int splitpoint = m_fileName.lastIndexOf("/") + 1;
 		QString dir = m_fileName.left(splitpoint - 1);
