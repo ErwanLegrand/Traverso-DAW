@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: JackDriver.cpp,v 1.23 2007/10/29 09:00:10 r_sijrier Exp $
+    $Id: JackDriver.cpp,v 1.24 2007/12/07 13:21:49 r_sijrier Exp $
 */
 
 #include "JackDriver.h"
@@ -327,7 +327,6 @@ int JackDriver::_jack_sync_callback (jack_transport_state_t state, jack_position
 void JackDriver::update_config()
 {
 	m_isSlave = device->get_driver_property("jackslave", false).toBool();
-	printf("m_isSlave %d\n", m_isSlave);
 		
 	if (m_isSlave) {
 		jack_set_sync_callback (client, _jack_sync_callback, this);
