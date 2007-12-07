@@ -1,6 +1,7 @@
 lupdate -verbose src/traverso/*.cpp src/traverso/*.h \
 	src/traverso/songcanvas/*.cpp src/traverso/songcanvas/*.h \
 	src/traverso/songcanvas/dialogs/*.cpp src/traverso/songcanvas/dialogs/*.h \
+	src/traverso/songcanvas/ui/*.ui \
 	src/traverso/widgets/*.cpp src/traverso/dialogs/project/*.cpp \
 	src/traverso/dialogs/settings/*.cpp \
 	src/core/*.cpp src/core/*.h src/engine/*.cpp src/commands/*.cpp \
