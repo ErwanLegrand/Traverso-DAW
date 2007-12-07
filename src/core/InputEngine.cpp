@@ -402,7 +402,7 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 			}
 				
 			if ( ! delegatingdata) {
-				printf("No delegating data ? WEIRD\n");
+				PMESG("No delegating data ? WEIRD");
 				continue;
 			}
 			
