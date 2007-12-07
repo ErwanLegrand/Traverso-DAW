@@ -281,92 +281,92 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="13"/>
         <source>Dialog</source>
-        <translation type="obsolete">Dialog</translation>
+        <translation>Dialog</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="29"/>
         <source>Clip Parameters</source>
-        <translation type="obsolete">Clip-Einstellungen</translation>
+        <translation>Clip-Einstellungen</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="54"/>
         <source>External Processing</source>
-        <translation type="obsolete">Externe Verarbeitung</translation>
+        <translation>Externe Bearbeitung</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="84"/>
         <source>hh:mm:ss.sss</source>
-        <translation type="obsolete">hh:mm:ss.sss</translation>
+        <translation>hh:mm:ss.sss</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="97"/>
         <source>TextLabel</source>
-        <translation type="obsolete">TextLabel</translation>
+        <translation>TextLabel</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="104"/>
         <source>End</source>
-        <translation type="obsolete">Ende</translation>
+        <translation>Ende</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="282"/>
         <source>Length</source>
-        <translation type="obsolete">Länge</translation>
+        <translation>Länge</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="118"/>
         <source>Track start</source>
-        <translation type="obsolete">Track-Anfang</translation>
+        <translation>Track-Anfang</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="125"/>
         <source>Gain</source>
-        <translation type="obsolete">Volumen</translation>
+        <translation>Volumen</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="132"/>
         <source>Name</source>
-        <translation type="obsolete">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="140"/>
         <source>Fades</source>
-        <translation type="obsolete">Fades</translation>
+        <translation>Fades</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="152"/>
         <source>Fade In</source>
-        <translation type="obsolete">Fade In</translation>
+        <translation>Fade In</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="272"/>
         <source>Mode</source>
-        <translation type="obsolete">Modus</translation>
+        <translation>Modus</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="265"/>
         <source>Bending</source>
-        <translation type="obsolete">Gebogen (Bending)</translation>
+        <translation>Gebogen (Bending)</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="292"/>
         <source>Strength</source>
-        <translation type="obsolete">Stärke (Strength)</translation>
+        <translation>Stärke (Strength)</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="309"/>
         <source>&amp;Linear</source>
-        <translation type="obsolete">&amp;Linear</translation>
+        <translation>&amp;Linear</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="316"/>
         <source>&amp;Default</source>
-        <translation type="obsolete">&amp;Zurücksetzen</translation>
+        <translation>&amp;Zurücksetzen</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="243"/>
         <source>Fade Out</source>
-        <translation type="obsolete">Fade Out</translation>
+        <translation>Fade Out</translation>
     </message>
 </context>
 <context>
@@ -2710,7 +2710,7 @@ Should I re-render the CD content?</source>
     <message>
         <location filename="src/commands/Import.cpp" line="100"/>
         <source>All files (*);;Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)</source>
-        <translation type="unfinished">Alle Dateien (*);;Audiodateien (*.wav, *.flac)</translation>
+        <translation>Alle Dateien (*);;Audiodateien (*.wav *.flac *.ogg *.mp3 *.wv *.w64)</translation>
     </message>
     <message>
         <location filename="src/commands/Import.cpp" line="74"/>
