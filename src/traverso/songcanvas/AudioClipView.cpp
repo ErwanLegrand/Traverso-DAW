@@ -146,17 +146,17 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	
 	if (m_drawbackground) {
 		if (m_clip->recording_state() == AudioClip::RECORDING) {
-			painter->fillRect(xstart, 0, pixelcount, m_height, m_brushBgRecording);
+			painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBgRecording);
 		} else {
 			if (m_clip->is_muted()) {
-				if (mousehover) painter->fillRect(xstart, 0, pixelcount, m_height, m_brushBgMutedHover);
-				else            painter->fillRect(xstart, 0, pixelcount, m_height, m_brushBgMuted);
+				if (mousehover) painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBgMutedHover);
+				else            painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBgMuted);
 			} else if (m_clip->is_selected()) {
-				if (mousehover) painter->fillRect(xstart, 0, pixelcount, m_height, m_brushBgSelectedHover);
-				else            painter->fillRect(xstart, 0, pixelcount, m_height, m_brushBgSelected);
+				if (mousehover) painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBgSelectedHover);
+				else            painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBgSelected);
 			} else {
-				if (mousehover) painter->fillRect(xstart, 0, pixelcount, m_height, m_brushBgHover);
-				else            painter->fillRect(xstart, 0, pixelcount, m_height, m_brushBg);
+				if (mousehover) painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBgHover);
+				else            painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBg);
 			}
 		}
 	}
@@ -543,7 +543,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 void AudioClipView::draw_clipinfo_area(QPainter* p, int xstart, int pixelcount)
 {
 	// clip info area bg
-	p->fillRect(xstart, 0, pixelcount, m_infoAreaHeight, themer()->get_color("AudioClip:clipinfobackground:inactive"));
+	p->fillRect(xstart, 0, pixelcount+1, m_infoAreaHeight, themer()->get_color("AudioClip:clipinfobackground:inactive"));
 	// clip info, only if xstart lies in the stringlenght range which is calculated by a rough estimate.
 	if (xstart < m_clipinfoString.size() * 6) {
 		p->setFont(themer()->get_font("AudioClip:fontscale:title"));
