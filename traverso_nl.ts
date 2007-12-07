@@ -437,6 +437,16 @@ p, li { white-space: pre-wrap; }
         <source>Edit Properties</source>
         <translation></translation>
     </message>
+    <message>
+        <location filename="src/traverso/songcanvas/AudioClipView.h" line="45"/>
+        <source>In: Range</source>
+        <translation>In: Lengte</translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/AudioClipView.h" line="46"/>
+        <source>Out: Range</source>
+        <translation>Out: Lengte</translation>
+    </message>
 </context>
 <context>
     <name>AudioDevice</name>
@@ -446,12 +456,12 @@ p, li { white-space: pre-wrap; }
         <translation>Geen Driver geladen</translation>
     </message>
     <message>
-        <location filename="src/engine/AudioDevice.cpp" line="612"/>
+        <location filename="src/engine/AudioDevice.cpp" line="614"/>
         <source>No Device Configured</source>
         <translation>Geen Apparaat geconfigureerd</translation>
     </message>
     <message>
-        <location filename="src/engine/AudioDevice.cpp" line="742"/>
+        <location filename="src/engine/AudioDevice.cpp" line="744"/>
         <source>The Jack server has been shutdown!</source>
         <translation>De Jack server is afgesloten!</translation>
     </message>
@@ -471,29 +481,29 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Maken van de PortAudio Driver is mislukt</translation>
     </message>
     <message>
-        <location filename="src/engine/AudioDevice.cpp" line="755"/>
+        <location filename="src/engine/AudioDevice.cpp" line="757"/>
         <source>AudioDevice:: Buffer underrun &apos;Storm&apos; detected, switching to Null Driver</source>
         <translation>AudioApparaat:: Lange serie &apos;buffer underruns&apos; ervaren, schakelt over op de Null Driver</translation>
     </message>
     <message>
-        <location filename="src/engine/AudioDevice.cpp" line="756"/>
+        <location filename="src/engine/AudioDevice.cpp" line="758"/>
         <source>AudioDevice:: For trouble shooting this problem, please see Chapter 11 from the user manual!</source>
         <translation>AudioApparaat:: Om dit probleem op te lossen, zie Hoofdstuk 11 van de gebuikershandleiding!</translation>
     </message>
     <message>
-        <location filename="src/engine/AudioDevice.cpp" line="408"/>
+        <location filename="src/engine/AudioDevice.cpp" line="410"/>
         <source>Audiodevice: Failed to create the Jack Driver</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio apparaat: Maken van de Jack Driver mislukte</translation>
     </message>
     <message>
-        <location filename="src/engine/AudioDevice.cpp" line="423"/>
+        <location filename="src/engine/AudioDevice.cpp" line="425"/>
         <source>Audiodevice: Failed to create the ALSA Driver</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio apparaat: Maken van de ALSA Driver mislukte</translation>
     </message>
     <message>
-        <location filename="src/engine/AudioDevice.cpp" line="437"/>
+        <location filename="src/engine/AudioDevice.cpp" line="439"/>
         <source>Audiodevice: Failed to create the PortAudio Driver</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio apparaat: Maken van de PortAudio Driver mislukte</translation>
     </message>
 </context>
 <context>
@@ -709,7 +719,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/BusSelectorDialog.ui" line="147"/>
         <source>Playback Buses</source>
-        <translation type="unfinished"></translation>
+        <translation>Afspeel Bussen</translation>
     </message>
 </context>
 <context>
@@ -745,152 +755,152 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="13"/>
         <source>CD Writing</source>
-        <translation type="unfinished"></translation>
+        <translation>CD Schrijven</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="25"/>
         <source>General Options</source>
-        <translation type="unfinished">Algemen opties</translation>
+        <translation>Algemene opties</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="45"/>
         <source>Write current Sheet</source>
-        <translation type="unfinished"></translation>
+        <translation>Schrijf huidig Werkblad (Sheet)</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="55"/>
         <source>Write all Sheets</source>
-        <translation type="unfinished"></translation>
+        <translation>Schrijf alle Werkbladen (Sheets)</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="64"/>
         <source>Calculate and apply normalization</source>
-        <translation type="unfinished">Bereken en pas normalizatie toe</translation>
+        <translation>Bereken en pas normalizatie toe</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="71"/>
         <source>Export wav and toc files only (don&apos;t write CD)</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporteer aleen wave en toc bestanden (CD niet schrijven)</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="81"/>
         <source>Burning Device</source>
-        <translation type="unfinished">CD brander</translation>
+        <translation>CD brander</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="130"/>
         <source>Number of copies</source>
-        <translation type="unfinished"></translation>
+        <translation>Aantal kopieën</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="157"/>
         <source>Simulate</source>
-        <translation type="unfinished">Simuleren</translation>
+        <translation>Simuleren</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="164"/>
         <source>Speed</source>
-        <translation type="unfinished">Snelheid</translation>
+        <translation>Snelheid</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="175"/>
         <source>auto</source>
-        <translation type="unfinished"></translation>
+        <translation>automatisch</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="180"/>
         <source>1x</source>
-        <translation type="unfinished"></translation>
+        <translation>1x</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="185"/>
         <source>2x</source>
-        <translation type="unfinished"></translation>
+        <translation>2x</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="190"/>
         <source>4x</source>
-        <translation type="unfinished"></translation>
+        <translation>4x</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="195"/>
         <source>8x</source>
-        <translation type="unfinished"></translation>
+        <translation>8x</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="200"/>
         <source>12x</source>
-        <translation type="unfinished"></translation>
+        <translation>12x</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="205"/>
         <source>16x</source>
-        <translation type="unfinished"></translation>
+        <translation>16x</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="210"/>
         <source>20x</source>
-        <translation type="unfinished"></translation>
+        <translation>20x</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="215"/>
         <source>24x</source>
-        <translation type="unfinished"></translation>
+        <translation>24x</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="220"/>
         <source>28x</source>
-        <translation type="unfinished"></translation>
+        <translation>28x</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="225"/>
         <source>32x</source>
-        <translation type="unfinished"></translation>
+        <translation>32x</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="230"/>
         <source>36x</source>
-        <translation type="unfinished"></translation>
+        <translation>36x</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="235"/>
         <source>40x</source>
-        <translation type="unfinished"></translation>
+        <translation>40x</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="240"/>
         <source>44x</source>
-        <translation type="unfinished"></translation>
+        <translation>44x</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="245"/>
         <source>48x</source>
-        <translation type="unfinished"></translation>
+        <translation>48x</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="258"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Status</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="270"/>
         <source>Information</source>
-        <translation type="unfinished">Informatie</translation>
+        <translation>Informatie</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="319"/>
         <source>Start Writing</source>
-        <translation type="unfinished"></translation>
+        <translation>Schrijven starten</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="326"/>
         <source>Abort</source>
-        <translation type="unfinished">Afbreken</translation>
+        <translation>Afbreken</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/CDWritingDialog.ui" line="333"/>
         <source>Close</source>
-        <translation type="unfinished">Sluiten</translation>
+        <translation>Sluiten</translation>
     </message>
 </context>
 <context>
@@ -986,7 +996,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/core/Curve.cpp" line="695"/>
         <source>There is allready a node at this exact position, not adding a new node</source>
-        <translation type="unfinished"></translation>
+        <translation>Er is al een node op precies deze locatie. Node wordt niet toegevoegd</translation>
     </message>
 </context>
 <context>
@@ -1014,17 +1024,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/songcanvas/CurveView.cpp" line="660"/>
         <source>Clear Nodes</source>
-        <translation type="unfinished"></translation>
+        <translation>Nodes verwijderen</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/CurveView.h" line="92"/>
         <source>Remove all Nodes</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Nodes verwijderen</translation>
     </message>
     <message>
         <location filename="src/traverso/songcanvas/CurveView.h" line="94"/>
         <source>Move node (vertical only)</source>
-        <translation type="unfinished"></translation>
+        <translation>Verplaats Node (vertikaal)</translation>
     </message>
 </context>
 <context>
@@ -1048,7 +1058,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DigitalClock</name>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1033"/>
+        <location filename="src/traverso/Interface.cpp" line="1073"/>
         <source>Digital Clock</source>
         <translation>Digitale klok</translation>
     </message>
@@ -1210,67 +1220,67 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="21"/>
         <source>Export</source>
-        <translation type="unfinished">Exporteer</translation>
+        <translation>Exporteer</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="47"/>
         <source>General Options</source>
-        <translation type="unfinished">Algemen opties</translation>
+        <translation>Algemene opties</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="67"/>
         <source>Export current Sheet</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporteer huidig Werkblad</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="77"/>
         <source>Export all Sheets</source>
-        <translation type="unfinished"></translation>
+        <translation>Schrijf alle Werkbladen (Sheets)</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="107"/>
         <source>Export directory</source>
-        <translation type="unfinished">Export map</translation>
+        <translation>Exporteer map</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="149"/>
         <source>Format Options</source>
-        <translation type="unfinished">Formatteer opties</translation>
+        <translation>Formatteer opties</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="161"/>
         <source>Encoding</source>
-        <translation type="unfinished"></translation>
+        <translation>Encoding</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="189"/>
         <source>File Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Bestands type</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="199"/>
         <source>Channels</source>
-        <translation type="unfinished">Kanalen</translation>
+        <translation>Kanalen</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="252"/>
         <source>Normalize Audio</source>
-        <translation type="unfinished"></translation>
+        <translation>Normalizeer Audio</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="275"/>
         <source>Bitdepth</source>
-        <translation type="unfinished">Bit diepte</translation>
+        <translation>Bit diepte</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="323"/>
         <source>WavPack options (lossless compression)</source>
-        <translation type="unfinished"></translation>
+        <translation>WavPack opties (lossless compressie)</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="343"/>
         <source>Compression type</source>
-        <translation type="unfinished"></translation>
+        <translation>Compressie soort</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="355"/>
@@ -1282,87 +1292,87 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;While this does technically make the compression lossy, it retains all the advantages of floating point data (&amp;gt;600 dB of dynamic range, no clipping, and 25 bits of resolution). &lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This also affects large integer compression by limiting the resolution to 24 bits.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Deze optie reduceert de grote van het bestand bij sommige floating-point geluids-data tot wel 10%. Het heeft vrijwel geen effect op de kwaliteit van het geluid.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Technisch gesproken is de compressie niet langer lossless, maar behoud het wel al de voordelen van floating point audio (&amp;gt;600 dB dynamisch bereik, geen clipping en 25 bit resolutie). &lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Het heeft ook effect bij comprimeren van 32 bit integer audio data door te comprimeren naar 24 bit resolutie.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="365"/>
         <source>Skip WVX for extra compression (semi-lossless)</source>
-        <translation type="unfinished"></translation>
+        <translation>Sla WVX over voor extra compressie (semi-lossless)</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="383"/>
         <source>Ogg Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Ogg opties</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="403"/>
         <source>Bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitrate</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="485"/>
         <source>Quality (Smallest &lt;-&gt; Best)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kwaliteit (Kleinste &lt;-&gt; Beste)</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="544"/>
         <source>Encoding Method</source>
-        <translation type="unfinished"></translation>
+        <translation>Encoding methode</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="524"/>
         <source>MP3 Options</source>
-        <translation type="unfinished"></translation>
+        <translation>MP3 opties</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="562"/>
         <source>Maximum Bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum Bitrate</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="580"/>
         <source>Minimum Bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimum Bitrate</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="598"/>
         <source>Quality (Fastest &lt;-&gt; Best)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kwaliteit (Snelste &lt;-&gt; Beste)</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="728"/>
         <source>Sample Rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Sample rate</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="758"/>
         <source>Conversion quality</source>
-        <translation type="unfinished"></translation>
+        <translation>Conversie kwaliteit</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="806"/>
         <source>Export status</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporteer status</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="826"/>
         <source>-</source>
-        <translation type="unfinished"></translation>
+        <translation>-</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="888"/>
         <source>Abort Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Stop Exporteren</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="901"/>
         <source>Start Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Start Exporteren</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ExportDialog.ui" line="908"/>
         <source>Close</source>
-        <translation type="unfinished">Sluiten</translation>
+        <translation>Sluiten</translation>
     </message>
 </context>
 <context>
@@ -1710,7 +1720,7 @@ Wilt U de CD opnieuw renderen?</translation>
     <message>
         <location filename="src/commands/AudioClipExternalProcessing.cpp" line="245"/>
         <source>Program &lt;b&gt;%1&lt;/b&gt; crashed!</source>
-        <translation type="unfinished"></translation>
+        <translation>Programma &lt;b&gt;%1&lt;/b&gt; crashte!</translation>
     </message>
 </context>
 <context>
@@ -1974,8 +1984,8 @@ Wilt U de CD opnieuw renderen?</translation>
     </message>
     <message>
         <location filename="src/commands/Import.cpp" line="100"/>
-        <source>All files (*);;Audio files (*.wav *.flac)</source>
-        <translation>Alle bestanden (*);;Audio bestanden (*.wav *.flac)</translation>
+        <source>All files (*);;Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)</source>
+        <translation>Alle bestanden (*);;Audio bestanden(*.wav *.flac *.ogg *.mp3 *.wv *.w64)</translation>
     </message>
     <message>
         <location filename="src/commands/Import.cpp" line="74"/>
@@ -2055,12 +2065,12 @@ Wilt U de CD opnieuw renderen?</translation>
         <translation>Over Traverso</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="433"/>
+        <location filename="src/traverso/Interface.cpp" line="464"/>
         <source>&amp;Save</source>
         <translation>&amp;Opslaan</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="471"/>
+        <location filename="src/traverso/Interface.cpp" line="502"/>
         <source>&amp;Quit</source>
         <translation>&amp;Afsluiten</translation>
     </message>
@@ -2070,7 +2080,7 @@ Wilt U de CD opnieuw renderen?</translation>
         <translation type="obsolete">&amp;Handboek</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="569"/>
+        <location filename="src/traverso/Interface.cpp" line="600"/>
         <source>&amp;About Traverso</source>
         <translation>&amp;Over Traverso</translation>
     </message>
@@ -2113,27 +2123,27 @@ door hun bijdragen aan de technologiën waarop Traverso gebaseerd is (Gcc, Qt, X
         <translation>Bronnen Bak</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="419"/>
+        <location filename="src/traverso/Interface.cpp" line="450"/>
         <source>&amp;Project</source>
         <translation>&amp;Project</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="421"/>
+        <location filename="src/traverso/Interface.cpp" line="452"/>
         <source>&amp;New...</source>
         <translation>&amp;Nieuw...</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="426"/>
+        <location filename="src/traverso/Interface.cpp" line="457"/>
         <source>&amp;Open...</source>
         <translation>&amp;Openen...</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="439"/>
+        <location filename="src/traverso/Interface.cpp" line="470"/>
         <source>&amp;Manage Project...</source>
         <translation>&amp;Project Beheer...</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="447"/>
+        <location filename="src/traverso/Interface.cpp" line="478"/>
         <source>&amp;Export...</source>
         <translation>&amp;Exporteren...</translation>
     </message>
@@ -2143,7 +2153,7 @@ door hun bijdragen aan de technologiën waarop Traverso gebaseerd is (Gcc, Qt, X
         <translation type="obsolete">&amp;Song</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="482"/>
+        <location filename="src/traverso/Interface.cpp" line="513"/>
         <source>New &amp;Track(s)...</source>
         <translation>Nieuwe &amp;Track(s)...</translation>
     </message>
@@ -2153,42 +2163,42 @@ door hun bijdragen aan de technologiën waarop Traverso gebaseerd is (Gcc, Qt, X
         <translation type="obsolete">Nieuwe &amp;Song(s)...</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="494"/>
+        <location filename="src/traverso/Interface.cpp" line="525"/>
         <source>Import &amp;Audio...</source>
         <translation>Importeer &amp;Audio...</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="496"/>
+        <location filename="src/traverso/Interface.cpp" line="527"/>
         <source>Insert Si&amp;lence...</source>
         <translation>Sti&amp;lte invoegen...</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="500"/>
+        <location filename="src/traverso/Interface.cpp" line="531"/>
         <source>&amp;View</source>
         <translation>&amp;Beeld</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="516"/>
+        <location filename="src/traverso/Interface.cpp" line="547"/>
         <source>System Information</source>
         <translation>Systeem Informatie</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="519"/>
+        <location filename="src/traverso/Interface.cpp" line="550"/>
         <source>Se&amp;ttings</source>
         <translation>Op&amp;ties</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="557"/>
+        <location filename="src/traverso/Interface.cpp" line="588"/>
         <source>&amp;Preferences...</source>
         <translation>&amp;Voorkeuren...</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="726"/>
+        <location filename="src/traverso/Interface.cpp" line="768"/>
         <source>&lt;b&gt;Description&lt;/b&gt;</source>
         <translation>&lt;b&gt;Beschrijving&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="726"/>
+        <location filename="src/traverso/Interface.cpp" line="768"/>
         <source>&lt;b&gt;Key Sequence&lt;/b&gt;</source>
         <translation>&lt;b&gt;Toetsencombinatie&lt;/b&gt;</translation>
     </message>
@@ -2218,22 +2228,22 @@ door hun bijdragen aan de technologiën waarop Traverso gebaseerd is (Gcc, Qt, X
         <translation>Exporteer Keymap</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="479"/>
+        <location filename="src/traverso/Interface.cpp" line="510"/>
         <source>&amp;Sheet</source>
         <translation>&amp;Sheet</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="484"/>
+        <location filename="src/traverso/Interface.cpp" line="515"/>
         <source>New &amp;Sheet(s)...</source>
         <translation>Nieuw &amp;Sheet(s)...</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="489"/>
+        <location filename="src/traverso/Interface.cpp" line="520"/>
         <source>Marker Editor...</source>
         <translation>Marker Manager...</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="514"/>
+        <location filename="src/traverso/Interface.cpp" line="545"/>
         <source>Sheet Toolbar</source>
         <translation>Sheet Werkbalk</translation>
     </message>
@@ -2260,61 +2270,64 @@ onder meer iedereen uit de Free Software world,
 door hun bijdragen aan de technologiën waarop Traverso gebaseerd is (Gcc, Qt, Xorg, Linux, enz...)</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="562"/>
+        <location filename="src/traverso/Interface.cpp" line="593"/>
         <source>&amp;Getting Started</source>
         <translation>Om te be&amp;ginnen</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="565"/>
+        <location filename="src/traverso/Interface.cpp" line="596"/>
         <source>&amp;User Manual</source>
         <translation>Gebr&amp;uikershandleiding</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1145"/>
+        <location filename="src/traverso/Interface.cpp" line="1185"/>
         <source>Opening User Manual in external browser!</source>
         <translation>Opent de gebruikershandleiding in een externe browser!</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="455"/>
+        <location filename="src/traverso/Interface.cpp" line="486"/>
         <source>&amp;CD Writing...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;CD Schrijven...</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="462"/>
+        <location filename="src/traverso/Interface.cpp" line="493"/>
         <source>&amp;Restore Backup...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Herstel Backup...</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="521"/>
+        <location filename="src/traverso/Interface.cpp" line="552"/>
         <source>&amp;Recording File Format</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Opname Bestand Formaat</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="533"/>
+        <location filename="src/traverso/Interface.cpp" line="564"/>
         <source>&amp;Resample Quality</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Resample Kwaliteit</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1151"/>
+        <location filename="src/traverso/Interface.cpp" line="1191"/>
         <source>Traverso - Important</source>
-        <translation type="unfinished">Traverso - Belangrijk</translation>
+        <translation>Traverso - Belangrijk</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1154"/>
+        <location filename="src/traverso/Interface.cpp" line="1194"/>
         <source>A Project directory changed outside of Traverso. 
 
 This is NOT supported! Please undo this change now!
 
 If you want to rename a Project, use the Project Manager instead!</source>
-        <translation type="unfinished">Een Project map is veranderd buiten Traverso omDit wordt NIET ondersteund, wilt u a.u.b. dit ongedaan maken!Als u de Project titel wilt veranderen kunt u daarvoor het Project Beheer Dialoog gebruiken!</translation>
+        <translation>Een Project map is veranderd buiten Traverso om.
+Dit wordt NIET ondersteund, wilt u a.u.b. dit ongedaan maken!
+
+Als u de Project titel wilt veranderen kunt u daarvoor het Project Beheer Dialoog gebruiken!</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1184"/>
+        <location filename="src/traverso/Interface.cpp" line="1224"/>
         <source>Traverso - Project load failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Traverso - Project laden mislukte</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1187"/>
+        <location filename="src/traverso/Interface.cpp" line="1227"/>
         <source>The requested Project `%1` 
 could not be loaded for the following reason:
 
@@ -2322,17 +2335,23 @@ could not be loaded for the following reason:
 
 You will now be given a list of available backups (if any) 
 to restore the Project from.</source>
-        <translation type="unfinished"></translation>
+        <translation>Het volgende Project &apos;%1&apos;
+kon niet geladen worden door volgende oorzaak:
+
+&apos;%2&apos;
+
+U krijgt nu een lijst met backups te zien 
+om het Project mee te herstellen.</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1218"/>
+        <location filename="src/traverso/Interface.cpp" line="1258"/>
         <source>Changed encoding for recording to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Opname encoding veranderd naar %1</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1242"/>
+        <location filename="src/traverso/Interface.cpp" line="1282"/>
         <source>Changed resample quality to: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Resample kwaliteit veranderd naar: %1</translation>
     </message>
 </context>
 <context>
@@ -2448,36 +2467,26 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/dialogs/settings/Pages.cpp" line="826"/>
         <source>KeyMap Export</source>
-        <translation type="unfinished"></translation>
+        <translation>KeyMap Export</translation>
     </message>
     <message>
         <location filename="src/traverso/dialogs/settings/Pages.cpp" line="827"/>
         <source>The exported keymap can be found here:
 
  %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/traverso/dialogs/settings/Pages.cpp" line="836"/>
-        <source>Printing KeyMap</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/traverso/dialogs/settings/Pages.cpp" line="837"/>
-        <source>The keymap export failed:
+        <translation>De ge-exporteerd keymap kan hier gevonden worden:
 
- %1</source>
-        <translation type="unfinished"></translation>
+%1</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/KeyboardConfigPage.ui" line="234"/>
         <source>Export Keymap</source>
-        <translation type="unfinished"></translation>
+        <translation>Export Keymap</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/KeyboardConfigPage.ui" line="241"/>
         <source>Print Keymap</source>
-        <translation type="unfinished"></translation>
+        <translation>Keymap afdrukken</translation>
     </message>
 </context>
 <context>
@@ -3014,7 +3023,15 @@ If you want to rename a Project, use the Project Manager instead!</source>
         <source>Please check permission for this directory or choose another one:
 
  %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Controleert u alstublieft de rechten voor deze map of kies een andere:
+
+%1</translation>
+    </message>
+    <message>
+        <location filename="src/traverso/dialogs/project/OpenProjectDialog.cpp" line="256"/>
+        <source>This directory is not writable by you! 
+</source>
+        <translation>In deze map kunt u geen wijzigingen aanbrengen (Geen schrijfrechten)!</translation>
     </message>
 </context>
 <context>
@@ -3149,7 +3166,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/PerformanceConfigPage.ui" line="25"/>
         <source>Audio file buffering</source>
-        <translation type="unfinished">Bufferen van Audio bestand</translation>
+        <translation>Bufferen van Audio bestand</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/PerformanceConfigPage.ui" line="45"/>
@@ -3171,7 +3188,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;it will take considerably more time to move (i.e. seeking) &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;the playhead to another positions, since all the buffers &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;(one for each audioclip * channel count) need to be refilled!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Read buffer size:&lt;/span&gt;&lt;/p&gt;
@@ -3189,18 +3206,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/PerformanceConfigPage.ui" line="65"/>
         <source>Read buffer size (seconds)</source>
-        <translation type="unfinished">Lees buffer groote</translation>
+        <translation>Lees buffer grootte</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/PerformanceConfigPage.ui" line="115"/>
         <source>info icon</source>
-        <translation type="unfinished">Informatie icoon</translation>
+        <translation>Informatie icoon</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/PerformanceConfigPage.ui" line="130"/>
         <source>Changing the buffer size only will take 
 into effect after (re)loading a project.</source>
-        <translation type="unfinished">Het veranderen van de buffer groote
+        <translation>Het veranderen van de buffer grootte
 wordt pas doorgevoerd na het opnieuw
 laden van het project.</translation>
     </message>
@@ -3444,17 +3461,17 @@ laden van het project.</translation>
     <message>
         <location filename="src/core/Project.cpp" line="168"/>
         <source>Project %1: Cannot open project.tpf file! (Reason: %2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Project %1: project.tpf bestand kan niet worden geopend! (Reden: %2)</translation>
     </message>
     <message>
         <location filename="src/core/Project.cpp" line="186"/>
         <source>Project %1: Failed to parse project.tpf file! (Reason: %2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Project %1: Interpreteren van bestand project.tpf is mislukt! (Reden: %2)</translation>
     </message>
     <message>
         <location filename="src/core/Project.cpp" line="264"/>
         <source>Couldn&apos;t open Project properties file for writing! (File %1. Reason: %2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Project gegevensbestand kon niet met schrijfrechten worden geopend! (Bestand: %1, Reden: %2)</translation>
     </message>
 </context>
 <context>
@@ -3462,57 +3479,57 @@ laden van het project.</translation>
     <message>
         <location filename="src/core/ProjectConverter.cpp" line="50"/>
         <source>Project file with version %1 cannot be converted, only files with version 2 can!</source>
-        <translation type="unfinished"></translation>
+        <translation>Project bestand met versie %1 kan niet worden omgezet, alleen mogelijk met versie 2 bestanden!</translation>
     </message>
     <message>
         <location filename="src/core/ProjectConverter.cpp" line="87"/>
         <source>Project %1: Failed to parse project.tpf file! (Reason: %2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Project %1: Interpreteren van bestand project.tpf is mislukt! (Reden: %2)</translation>
     </message>
     <message>
         <location filename="src/core/ProjectConverter.cpp" line="103"/>
         <source>Starting to convert Project from version 2 to version 3</source>
-        <translation type="unfinished"></translation>
+        <translation>Start met omzetten Project van versie 2 naar versie 3</translation>
     </message>
     <message>
         <location filename="src/core/ProjectConverter.cpp" line="268"/>
         <source>Converting project.tpf file..... Done!</source>
-        <translation type="unfinished"></translation>
+        <translation>Converteren project.tpf bestand..... Klaar!</translation>
     </message>
     <message>
         <location filename="src/core/ProjectConverter.cpp" line="273"/>
         <source>&lt;b&gt;Need to convert %1 files&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;%1 bestanden moeten omgezet worden&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/core/ProjectConverter.cpp" line="290"/>
         <source>Couldn&apos;t open Project properties file for writing! (File %1. Reason: %2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Project gegevensbestand kon niet met schrijfrechten worden geopend! (Bestand: %1, Reden: %2)</translation>
     </message>
     <message>
         <location filename="src/core/ProjectConverter.cpp" line="296"/>
         <source>Project %1 converted</source>
-        <translation type="unfinished"></translation>
+        <translation>Project %1 omgezet</translation>
     </message>
     <message>
         <location filename="src/core/ProjectConverter.cpp" line="297"/>
         <source>Saving converted project.tpf file.... Done!</source>
-        <translation type="unfinished"></translation>
+        <translation>Opslaan omgezette project.tpf bestand.... Klaar!</translation>
     </message>
     <message>
         <location filename="src/core/ProjectConverter.cpp" line="304"/>
         <source>Conversion finished succesfully</source>
-        <translation type="unfinished"></translation>
+        <translation>Omzetting met succes afgerond</translation>
     </message>
     <message>
         <location filename="src/core/ProjectConverter.cpp" line="316"/>
         <source>No conversion description available!</source>
-        <translation type="unfinished"></translation>
+        <translation>Omschrijving voor omzetting niet beschikbaar!</translation>
     </message>
     <message>
         <location filename="src/core/ProjectConverter.cpp" line="365"/>
         <source>Conversion stopped on user request, you can continue to use this Project with Traverso &lt;= 0.41.0, or reopen it with this version of Traverso and start the conversion again</source>
-        <translation type="unfinished"></translation>
+        <translation>Omzetting stopgezet op verzoek van de gebruiker. U kunt het Project blijven gebruiken met Traverso &lt;= 0.41.0, of het opnieuw openen met deze versie van Traverso om de omzetting opnieuw te starten</translation>
     </message>
 </context>
 <context>
@@ -3520,42 +3537,42 @@ laden van het project.</translation>
     <message>
         <location filename="src/traverso/ui/ProjectConverterDialog.ui" line="13"/>
         <source>Project Converter</source>
-        <translation type="unfinished"></translation>
+        <translation>Project Omzetter</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ProjectConverterDialog.ui" line="25"/>
         <source>Project XXX (no translation needed)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ProjectConverterDialog.ui" line="44"/>
         <source>Conversion information</source>
-        <translation type="unfinished"></translation>
+        <translation>Omzet informatie</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ProjectConverterDialog.ui" line="63"/>
         <source>Conversion progress</source>
-        <translation type="unfinished"></translation>
+        <translation>Omzet voortgang</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ProjectConverterDialog.ui" line="101"/>
         <source>Start conversion</source>
-        <translation type="unfinished"></translation>
+        <translation>Start omzetting</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ProjectConverterDialog.ui" line="108"/>
         <source>Stop conversion</source>
-        <translation type="unfinished"></translation>
+        <translation>Stop omzetting</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ProjectConverterDialog.ui" line="115"/>
         <source>Load Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Laad Project</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/ProjectConverterDialog.ui" line="122"/>
         <source>Close</source>
-        <translation type="unfinished">Sluiten</translation>
+        <translation>Sluiten</translation>
     </message>
 </context>
 <context>
@@ -3705,24 +3722,24 @@ laden van het project.</translation>
         <location filename="src/core/ProjectManager.cpp" line="316"/>
         <source>This directory is not writable by you! 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>In deze map kunt u geen wijzigingen aanbrengen (Geen schrijfrechten)!</translation>
     </message>
     <message>
         <location filename="src/core/ProjectManager.cpp" line="317"/>
         <source>Please check permission for this directory or choose another one:
 
  %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Controleert u alstublieft de rechten voor deze map of kies een andere:%1</translation>
     </message>
     <message>
         <location filename="src/core/ProjectManager.cpp" line="529"/>
         <source>Projectfile backup: The project file %1 could not be opened for reading (Reason: %2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Project bestand backup: Het Project bestand %1 kon niet voor lezen worden geopend (Reden: %2)</translation>
     </message>
     <message>
         <location filename="src/core/ProjectManager.cpp" line="683"/>
         <source>Cannot create dir %1</source>
-        <translation type="unfinished">Kan map %1 niet maken</translation>
+        <translation>Kan map %1 niet maken</translation>
     </message>
 </context>
 <context>
@@ -4338,82 +4355,82 @@ Wilt u het overschrijven?</translation>
     <message>
         <location filename="src/core/FileHelpers.cpp" line="194"/>
         <source>No error occurred</source>
-        <translation type="unfinished"></translation>
+        <translation>Er was geen fout</translation>
     </message>
     <message>
         <location filename="src/core/FileHelpers.cpp" line="195"/>
         <source>An error occurred when reading from the file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Er vond een fout plaats tijdens het lezen van het bestand.</translation>
     </message>
     <message>
         <location filename="src/core/FileHelpers.cpp" line="196"/>
         <source>An error occurred when writing to the file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Een fout vond plaats tijdens het schrijven van het bestand.</translation>
     </message>
     <message>
         <location filename="src/core/FileHelpers.cpp" line="197"/>
         <source>A fatal error occurred.</source>
-        <translation type="unfinished"></translation>
+        <translation>Een fatale fout vond plaats.</translation>
     </message>
     <message>
         <location filename="src/core/FileHelpers.cpp" line="198"/>
         <source>The file could not be opened.</source>
-        <translation type="unfinished"></translation>
+        <translation>Het bestand kon niet worden geopend.</translation>
     </message>
     <message>
         <location filename="src/core/FileHelpers.cpp" line="199"/>
         <source>Resourc error</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/core/FileHelpers.cpp" line="200"/>
         <source>The operation was aborted.</source>
-        <translation type="unfinished"></translation>
+        <translation>De bewerking is afgebroken.</translation>
     </message>
     <message>
         <location filename="src/core/FileHelpers.cpp" line="201"/>
         <source>A timeout occurred.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tijdsoverschrijding plaatsgevonden.</translation>
     </message>
     <message>
         <location filename="src/core/FileHelpers.cpp" line="202"/>
         <source>An unspecified error occurred.</source>
-        <translation type="unfinished"></translation>
+        <translation>Een niet nader omschreven fout is opgetreden.</translation>
     </message>
     <message>
         <location filename="src/core/FileHelpers.cpp" line="203"/>
         <source>The file could not be removed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Het bestand kon niet worden verwijderd.</translation>
     </message>
     <message>
         <location filename="src/core/FileHelpers.cpp" line="204"/>
         <source>The file could not be renamed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Het bestand kon geen andere naam worden gegeven.</translation>
     </message>
     <message>
         <location filename="src/core/FileHelpers.cpp" line="205"/>
         <source>The position in the file could not be changed.</source>
-        <translation type="unfinished"></translation>
+        <translation>De positie in het bestand kon niet worden veranderd.</translation>
     </message>
     <message>
         <location filename="src/core/FileHelpers.cpp" line="206"/>
         <source>The file could not be resized.</source>
-        <translation type="unfinished"></translation>
+        <translation>Grootte van het bestand kon niet worden veranderd.</translation>
     </message>
     <message>
         <location filename="src/core/FileHelpers.cpp" line="207"/>
         <source>The file could not be accessed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Geen toegang tot het bestand.</translation>
     </message>
     <message>
         <location filename="src/core/FileHelpers.cpp" line="208"/>
         <source>The file could not be copied.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bestand kon niet worden gedupliceerd.</translation>
     </message>
     <message>
         <location filename="src/core/FileHelpers.cpp" line="209"/>
         <source>Unknown error</source>
-        <translation type="unfinished"></translation>
+        <translation>Onbekende fout</translation>
     </message>
 </context>
 <context>
@@ -4577,12 +4594,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/RecordingConfigPage.ui" line="21"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/traverso/ui/RecordingConfigPage.ui" line="33"/>
         <source>Recording</source>
-        <translation type="unfinished"></translation>
+        <translation>Opnemen</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/RecordingConfigPage.ui" line="53"/>
@@ -4609,17 +4626,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/RecordingConfigPage.ui" line="73"/>
         <source>Encoding format</source>
-        <translation type="unfinished"></translation>
+        <translation>Encoding formaat</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/RecordingConfigPage.ui" line="98"/>
         <source>WavPack options</source>
-        <translation type="unfinished"></translation>
+        <translation>WavPack opties</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/RecordingConfigPage.ui" line="118"/>
         <source>Compression type</source>
-        <translation type="unfinished"></translation>
+        <translation>Compressie type</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/RecordingConfigPage.ui" line="130"/>
@@ -4631,12 +4648,12 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;While this does technically make the compression lossy, it retains all the advantages of floating point data (&amp;gt;600 dB of dynamic range, no clipping, and 25 bits of resolution). &lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This also affects large integer compression by limiting the resolution to 24 bits.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Deze optie reduceert de grote van het bestand bij sommige floating-point geluids-data tot wel 10%. Het heeft vrijwel geen effect op de kwaliteit van het geluid.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Technisch gesproken is de compressie niet langer lossless, maar behoud het wel al de voordelen van floating point audio (&amp;gt;600 dB dynamisch bereik, geen clipping en 25 bit resolutie). &lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Het heeft ook effect bij comprimeren van 32 bit integer audio data door te comprimeren naar 24 bit resolutie.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/RecordingConfigPage.ui" line="140"/>
         <source>Skip WVX for extra compression (semi-lossless)</source>
-        <translation type="unfinished"></translation>
+        <translation>Sla WVX over voor extra compressie (semi-lossless)</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/RecordingConfigPage.ui" line="153"/>
@@ -4740,37 +4757,37 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/ui/RestoreProjectBackupDialog.ui" line="13"/>
         <source>Restore from backup </source>
-        <translation type="unfinished"></translation>
+        <translation>Herstel vanaf een backup</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/RestoreProjectBackupDialog.ui" line="19"/>
         <source>Set the date to restore the selected backup.</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecteer de datum van de te herstellen backup.</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/RestoreProjectBackupDialog.ui" line="30"/>
         <source>Current date and time:</source>
-        <translation type="unfinished"></translation>
+        <translation>Huidige datum en tijd:</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/RestoreProjectBackupDialog.ui" line="37"/>
         <source>Last backup:</source>
-        <translation type="unfinished"></translation>
+        <translation>Laatste backup:</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/RestoreProjectBackupDialog.ui" line="55"/>
         <source>-</source>
-        <translation type="unfinished"></translation>
+        <translation>-</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/RestoreProjectBackupDialog.ui" line="67"/>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Datum</translation>
     </message>
     <message>
         <location filename="src/traverso/ui/RestoreProjectBackupDialog.ui" line="72"/>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Tijd</translation>
     </message>
 </context>
 <context>
@@ -4808,7 +4825,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/dialogs/settings/SettingsDialog.cpp" line="116"/>
         <source>Audio Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio Opties</translation>
     </message>
 </context>
 <context>
@@ -4934,12 +4951,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/core/Song.cpp" line="426"/>
         <source>No audio to export! (Is everything muted?)</source>
-        <translation type="unfinished"></translation>
+        <translation>Geen audio te exporteren! (Is alles gemuted?)</translation>
     </message>
     <message>
         <location filename="src/core/Song.cpp" line="1128"/>
         <source>No Tracks armed for recording!</source>
-        <translation type="unfinished"></translation>
+        <translation>Geen Tracks geactiveerd voor opname!</translation>
     </message>
 </context>
 <context>
@@ -5007,7 +5024,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/widgets/InfoWidgets.cpp" line="756"/>
         <source>Recording to %1 Tracks, encoding format: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Opnemen naar %1 Tracks, encoding formaat: %2</translation>
     </message>
 </context>
 <context>
@@ -5658,7 +5675,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/songcanvas/TimeLineView.cpp" line="382"/>
         <source>It&apos;s not possible to remove the endmarker!!</source>
-        <translation type="unfinished"></translation>
+        <translation>Het is niet mogelijk de eind markeerder weg te halen!!</translation>
     </message>
 </context>
 <context>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS><TS version="1.1" language="de">
-<defaultcodec></defaultcodec>
 <context>
     <name>AddRemoveClip</name>
     <message>
@@ -580,12 +579,12 @@ p, li { white-space: pre-wrap; }
         <translation>Kein Treiber geladen</translation>
     </message>
     <message>
-        <location filename="src/engine/AudioDevice.cpp" line="612"/>
+        <location filename="src/engine/AudioDevice.cpp" line="614"/>
         <source>No Device Configured</source>
         <translation>Kein Gerät konfiguriert</translation>
     </message>
     <message>
-        <location filename="src/engine/AudioDevice.cpp" line="742"/>
+        <location filename="src/engine/AudioDevice.cpp" line="744"/>
         <source>The Jack server has been shutdown!</source>
         <translation>Der Jack Server wurde beendet!</translation>
     </message>
@@ -605,27 +604,27 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Konnte PortAudio Treiber nicht erstellen</translation>
     </message>
     <message>
-        <location filename="src/engine/AudioDevice.cpp" line="755"/>
+        <location filename="src/engine/AudioDevice.cpp" line="757"/>
         <source>AudioDevice:: Buffer underrun &apos;Storm&apos; detected, switching to Null Driver</source>
         <translation>AudioDevice: Puffer-Leerlauf in kurzer Folge mehrfach erkannt, wechsele zum Null-Treiber</translation>
     </message>
     <message>
-        <location filename="src/engine/AudioDevice.cpp" line="756"/>
+        <location filename="src/engine/AudioDevice.cpp" line="758"/>
         <source>AudioDevice:: For trouble shooting this problem, please see Chapter 11 from the user manual!</source>
         <translation>AudioDevice: Um dieses Problem zu beheben, lesen Sie Kapitel 11 im Benutzerhandbuch!</translation>
     </message>
     <message>
-        <location filename="src/engine/AudioDevice.cpp" line="408"/>
+        <location filename="src/engine/AudioDevice.cpp" line="410"/>
         <source>Audiodevice: Failed to create the Jack Driver</source>
         <translation>Audiogerät: Jack-Treiber konnte nicht erstellt werden</translation>
     </message>
     <message>
-        <location filename="src/engine/AudioDevice.cpp" line="423"/>
+        <location filename="src/engine/AudioDevice.cpp" line="425"/>
         <source>Audiodevice: Failed to create the ALSA Driver</source>
         <translation>Audiogerät: ALSA-Treiber konnte nicht erstellt werden</translation>
     </message>
     <message>
-        <location filename="src/engine/AudioDevice.cpp" line="437"/>
+        <location filename="src/engine/AudioDevice.cpp" line="439"/>
         <source>Audiodevice: Failed to create the PortAudio Driver</source>
         <translation>Audiogerät: PortAudio-Treiber konnte nicht erstellt werden</translation>
     </message>
@@ -1339,7 +1338,7 @@ Soll das Abbild neu erstellt werden?</translation>
 <context>
     <name>DigitalClock</name>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1033"/>
+        <location filename="src/traverso/Interface.cpp" line="1073"/>
         <source>Digital Clock</source>
         <translation>Digitale Uhr</translation>
     </message>
@@ -2710,8 +2709,8 @@ Should I re-render the CD content?</source>
     </message>
     <message>
         <location filename="src/commands/Import.cpp" line="100"/>
-        <source>All files (*);;Audio files (*.wav *.flac)</source>
-        <translation>Alle Dateien (*);;Audiodateien (*.wav, *.flac)</translation>
+        <source>All files (*);;Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)</source>
+        <translation type="unfinished">Alle Dateien (*);;Audiodateien (*.wav, *.flac)</translation>
     </message>
     <message>
         <location filename="src/commands/Import.cpp" line="74"/>
@@ -2791,12 +2790,12 @@ Should I re-render the CD content?</source>
         <translation>Über Traverso</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="433"/>
+        <location filename="src/traverso/Interface.cpp" line="464"/>
         <source>&amp;Save</source>
         <translation>&amp;Speichern</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="471"/>
+        <location filename="src/traverso/Interface.cpp" line="502"/>
         <source>&amp;Quit</source>
         <translation>&amp;Beenden</translation>
     </message>
@@ -2806,7 +2805,7 @@ Should I re-render the CD content?</source>
         <translation type="obsolete">&amp;Handbuch</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="569"/>
+        <location filename="src/traverso/Interface.cpp" line="600"/>
         <source>&amp;About Traverso</source>
         <translation>&amp;Alles über Traverso</translation>
     </message>
@@ -2850,27 +2849,27 @@ freien Software, die Technologien geschaffen haben, auf denen Traverso basiert
         <translation>Materialsammlung</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="419"/>
+        <location filename="src/traverso/Interface.cpp" line="450"/>
         <source>&amp;Project</source>
         <translation>&amp;Projekt</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="421"/>
+        <location filename="src/traverso/Interface.cpp" line="452"/>
         <source>&amp;New...</source>
         <translation>&amp;Neu...</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="426"/>
+        <location filename="src/traverso/Interface.cpp" line="457"/>
         <source>&amp;Open...</source>
         <translation>&amp;Oeffnen...</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="439"/>
+        <location filename="src/traverso/Interface.cpp" line="470"/>
         <source>&amp;Manage Project...</source>
         <translation>Projekt&amp;manager...</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="447"/>
+        <location filename="src/traverso/Interface.cpp" line="478"/>
         <source>&amp;Export...</source>
         <translation>&amp;Export...</translation>
     </message>
@@ -2880,7 +2879,7 @@ freien Software, die Technologien geschaffen haben, auf denen Traverso basiert
         <translation type="obsolete">&amp;Song</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="482"/>
+        <location filename="src/traverso/Interface.cpp" line="513"/>
         <source>New &amp;Track(s)...</source>
         <translation>Neue &amp;Spur(en)...</translation>
     </message>
@@ -2890,17 +2889,17 @@ freien Software, die Technologien geschaffen haben, auf denen Traverso basiert
         <translation type="obsolete">Neue &amp;Songs...</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="494"/>
+        <location filename="src/traverso/Interface.cpp" line="525"/>
         <source>Import &amp;Audio...</source>
         <translation>&amp;Audio-Import...</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="496"/>
+        <location filename="src/traverso/Interface.cpp" line="527"/>
         <source>Insert Si&amp;lence...</source>
         <translation>Sti&amp;lle einfügen...</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="500"/>
+        <location filename="src/traverso/Interface.cpp" line="531"/>
         <source>&amp;View</source>
         <translation>&amp;Ansicht</translation>
     </message>
@@ -2920,27 +2919,27 @@ freien Software, die Technologien geschaffen haben, auf denen Traverso basiert
         <translation type="obsolete">Song Werkzeugleiste</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="516"/>
+        <location filename="src/traverso/Interface.cpp" line="547"/>
         <source>System Information</source>
         <translation>Systeminformationen</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="519"/>
+        <location filename="src/traverso/Interface.cpp" line="550"/>
         <source>Se&amp;ttings</source>
         <translation>Eins&amp;tellungen</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="557"/>
+        <location filename="src/traverso/Interface.cpp" line="588"/>
         <source>&amp;Preferences...</source>
         <translation>&amp;Einstellungen...</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="726"/>
+        <location filename="src/traverso/Interface.cpp" line="768"/>
         <source>&lt;b&gt;Description&lt;/b&gt;</source>
         <translation>&lt;b&gt;Beschreibung&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="726"/>
+        <location filename="src/traverso/Interface.cpp" line="768"/>
         <source>&lt;b&gt;Key Sequence&lt;/b&gt;</source>
         <translation>&lt;b&gt;Tastenfolge&lt;/b&gt;</translation>
     </message>
@@ -2970,22 +2969,22 @@ freien Software, die Technologien geschaffen haben, auf denen Traverso basiert
         <translation>Tastenbelegung exportieren</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="479"/>
+        <location filename="src/traverso/Interface.cpp" line="510"/>
         <source>&amp;Sheet</source>
         <translation>&amp;Arbeitsbereich</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="484"/>
+        <location filename="src/traverso/Interface.cpp" line="515"/>
         <source>New &amp;Sheet(s)...</source>
         <translation>Neuer &amp;Arbeitsbereich...</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="489"/>
+        <location filename="src/traverso/Interface.cpp" line="520"/>
         <source>Marker Editor...</source>
         <translation>Markierungseditor...</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="514"/>
+        <location filename="src/traverso/Interface.cpp" line="545"/>
         <source>Sheet Toolbar</source>
         <translation>Arbeitsbereiche Werkzeugleiste</translation>
     </message>
@@ -3013,42 +3012,42 @@ die zu den Technologien beigetragen haben, auf denen
 Traverso basiert. (Gcc, Qt, Xorg, Linux, und so weiter...)</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="562"/>
+        <location filename="src/traverso/Interface.cpp" line="593"/>
         <source>&amp;Getting Started</source>
         <translation>Der Einstie&amp;g</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="565"/>
+        <location filename="src/traverso/Interface.cpp" line="596"/>
         <source>&amp;User Manual</source>
         <translation>Ben&amp;utzerhandbuch</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1145"/>
+        <location filename="src/traverso/Interface.cpp" line="1185"/>
         <source>Opening User Manual in external browser!</source>
         <translation>Öffne Benutzerhandbuch in externem Browser!</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="455"/>
+        <location filename="src/traverso/Interface.cpp" line="486"/>
         <source>&amp;CD Writing...</source>
         <translation>&amp;CD schreiben...</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="462"/>
+        <location filename="src/traverso/Interface.cpp" line="493"/>
         <source>&amp;Restore Backup...</source>
         <translation>&amp;Backup wiederherstellen...</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="521"/>
+        <location filename="src/traverso/Interface.cpp" line="552"/>
         <source>&amp;Recording File Format</source>
         <translation>&amp;Format der Aufnahmedateien</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1151"/>
+        <location filename="src/traverso/Interface.cpp" line="1191"/>
         <source>Traverso - Important</source>
         <translation>Traverso - Wichtig</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1154"/>
+        <location filename="src/traverso/Interface.cpp" line="1194"/>
         <source>A Project directory changed outside of Traverso. 
 
 This is NOT supported! Please undo this change now!
@@ -3061,12 +3060,12 @@ Dies wird NICHT unterstützt! Bitte machen Sie diese Änderung schnell rückgän
 Verwenden Sie zum Ändern eines Projektnamens stattdessen bitte den Projekt-Manager!</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1184"/>
+        <location filename="src/traverso/Interface.cpp" line="1224"/>
         <source>Traverso - Project load failed</source>
         <translation>Traverso - Laden des Projektes fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1187"/>
+        <location filename="src/traverso/Interface.cpp" line="1227"/>
         <source>The requested Project `%1` 
 could not be loaded for the following reason:
 
@@ -3083,17 +3082,17 @@ Falls Backups bestehen, haben Sie nun die Möglichkeit,
 ein solches zu öffnen.</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1218"/>
+        <location filename="src/traverso/Interface.cpp" line="1258"/>
         <source>Changed encoding for recording to %1</source>
         <translation>Kodierung für Aufnahme in %1 wurde geändert</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="533"/>
+        <location filename="src/traverso/Interface.cpp" line="564"/>
         <source>&amp;Resample Quality</source>
         <translation>&amp;Qualität der Samplerate-Konvertierung</translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1242"/>
+        <location filename="src/traverso/Interface.cpp" line="1282"/>
         <source>Changed resample quality to: %1</source>
         <translation>Ändere Qualität der Samplerate-Konvertierung auf: %1</translation>
     </message>
@@ -3224,14 +3223,14 @@ gespeichert.</translation>
     <message>
         <location filename="src/traverso/dialogs/settings/Pages.cpp" line="836"/>
         <source>Printing KeyMap</source>
-        <translation>Tastaturbelegung drucken</translation>
+        <translation type="obsolete">Tastaturbelegung drucken</translation>
     </message>
     <message>
         <location filename="src/traverso/dialogs/settings/Pages.cpp" line="837"/>
         <source>The keymap export failed:
 
  %1</source>
-        <translation>Exportieren der Tastaturbelegung fehlgeschlagen:
+        <translation type="obsolete">Exportieren der Tastaturbelegung fehlgeschlagen:
 
 %1</translation>
     </message>

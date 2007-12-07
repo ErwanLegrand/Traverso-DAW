@@ -321,6 +321,11 @@ p, li { white-space: pre-wrap; }
         <source>Edit Properties</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="src/traverso/songcanvas/AudioClipView.h" line="46"/>
+        <source>Out: Range</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AudioDevice</name>
@@ -330,37 +335,37 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/engine/AudioDevice.cpp" line="612"/>
+        <location filename="src/engine/AudioDevice.cpp" line="614"/>
         <source>No Device Configured</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/engine/AudioDevice.cpp" line="742"/>
+        <location filename="src/engine/AudioDevice.cpp" line="744"/>
         <source>The Jack server has been shutdown!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/engine/AudioDevice.cpp" line="755"/>
+        <location filename="src/engine/AudioDevice.cpp" line="757"/>
         <source>AudioDevice:: Buffer underrun &apos;Storm&apos; detected, switching to Null Driver</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/engine/AudioDevice.cpp" line="756"/>
+        <location filename="src/engine/AudioDevice.cpp" line="758"/>
         <source>AudioDevice:: For trouble shooting this problem, please see Chapter 11 from the user manual!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/engine/AudioDevice.cpp" line="408"/>
+        <location filename="src/engine/AudioDevice.cpp" line="410"/>
         <source>Audiodevice: Failed to create the Jack Driver</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/engine/AudioDevice.cpp" line="423"/>
+        <location filename="src/engine/AudioDevice.cpp" line="425"/>
         <source>Audiodevice: Failed to create the ALSA Driver</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/engine/AudioDevice.cpp" line="437"/>
+        <location filename="src/engine/AudioDevice.cpp" line="439"/>
         <source>Audiodevice: Failed to create the PortAudio Driver</source>
         <translation type="unfinished"></translation>
     </message>
@@ -839,7 +844,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DigitalClock</name>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1033"/>
+        <location filename="src/traverso/Interface.cpp" line="1073"/>
         <source>Digital Clock</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1157,9 +1162,6 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>ExportWidget</name>
-</context>
-<context>
     <name>ExternalProcessingDialog</name>
     <message>
         <location filename="src/commands/AudioClipExternalProcessing.cpp" line="132"/>
@@ -1340,7 +1342,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="src/commands/Import.cpp" line="100"/>
-        <source>All files (*);;Audio files (*.wav *.flac)</source>
+        <source>All files (*);;Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1411,27 +1413,27 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="471"/>
+        <location filename="src/traverso/Interface.cpp" line="502"/>
         <source>&amp;Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="419"/>
+        <location filename="src/traverso/Interface.cpp" line="450"/>
         <source>&amp;Project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="433"/>
+        <location filename="src/traverso/Interface.cpp" line="464"/>
         <source>&amp;Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="516"/>
+        <location filename="src/traverso/Interface.cpp" line="547"/>
         <source>System Information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="569"/>
+        <location filename="src/traverso/Interface.cpp" line="600"/>
         <source>&amp;About Traverso</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1441,62 +1443,62 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="421"/>
+        <location filename="src/traverso/Interface.cpp" line="452"/>
         <source>&amp;New...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="426"/>
+        <location filename="src/traverso/Interface.cpp" line="457"/>
         <source>&amp;Open...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="439"/>
+        <location filename="src/traverso/Interface.cpp" line="470"/>
         <source>&amp;Manage Project...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="447"/>
+        <location filename="src/traverso/Interface.cpp" line="478"/>
         <source>&amp;Export...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="482"/>
+        <location filename="src/traverso/Interface.cpp" line="513"/>
         <source>New &amp;Track(s)...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="494"/>
+        <location filename="src/traverso/Interface.cpp" line="525"/>
         <source>Import &amp;Audio...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="496"/>
+        <location filename="src/traverso/Interface.cpp" line="527"/>
         <source>Insert Si&amp;lence...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="500"/>
+        <location filename="src/traverso/Interface.cpp" line="531"/>
         <source>&amp;View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="519"/>
+        <location filename="src/traverso/Interface.cpp" line="550"/>
         <source>Se&amp;ttings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="557"/>
+        <location filename="src/traverso/Interface.cpp" line="588"/>
         <source>&amp;Preferences...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="726"/>
+        <location filename="src/traverso/Interface.cpp" line="768"/>
         <source>&lt;b&gt;Description&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="726"/>
+        <location filename="src/traverso/Interface.cpp" line="768"/>
         <source>&lt;b&gt;Key Sequence&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1526,22 +1528,22 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="479"/>
+        <location filename="src/traverso/Interface.cpp" line="510"/>
         <source>&amp;Sheet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="484"/>
+        <location filename="src/traverso/Interface.cpp" line="515"/>
         <source>New &amp;Sheet(s)...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="489"/>
+        <location filename="src/traverso/Interface.cpp" line="520"/>
         <source>Marker Editor...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="514"/>
+        <location filename="src/traverso/Interface.cpp" line="545"/>
         <source>Sheet Toolbar</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1560,47 +1562,47 @@ Traverso is based (Gcc, Qt, Xorg, Linux, and so on)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="562"/>
+        <location filename="src/traverso/Interface.cpp" line="593"/>
         <source>&amp;Getting Started</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="565"/>
+        <location filename="src/traverso/Interface.cpp" line="596"/>
         <source>&amp;User Manual</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1145"/>
+        <location filename="src/traverso/Interface.cpp" line="1185"/>
         <source>Opening User Manual in external browser!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="455"/>
+        <location filename="src/traverso/Interface.cpp" line="486"/>
         <source>&amp;CD Writing...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="462"/>
+        <location filename="src/traverso/Interface.cpp" line="493"/>
         <source>&amp;Restore Backup...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="521"/>
+        <location filename="src/traverso/Interface.cpp" line="552"/>
         <source>&amp;Recording File Format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="533"/>
+        <location filename="src/traverso/Interface.cpp" line="564"/>
         <source>&amp;Resample Quality</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1151"/>
+        <location filename="src/traverso/Interface.cpp" line="1191"/>
         <source>Traverso - Important</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1154"/>
+        <location filename="src/traverso/Interface.cpp" line="1194"/>
         <source>A Project directory changed outside of Traverso. 
 
 This is NOT supported! Please undo this change now!
@@ -1609,12 +1611,12 @@ If you want to rename a Project, use the Project Manager instead!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1184"/>
+        <location filename="src/traverso/Interface.cpp" line="1224"/>
         <source>Traverso - Project load failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1187"/>
+        <location filename="src/traverso/Interface.cpp" line="1227"/>
         <source>The requested Project `%1` 
 could not be loaded for the following reason:
 
@@ -1625,12 +1627,12 @@ to restore the Project from.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1218"/>
+        <location filename="src/traverso/Interface.cpp" line="1258"/>
         <source>Changed encoding for recording to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/traverso/Interface.cpp" line="1242"/>
+        <location filename="src/traverso/Interface.cpp" line="1282"/>
         <source>Changed resample quality to: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1728,18 +1730,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/dialogs/settings/Pages.cpp" line="827"/>
         <source>The exported keymap can be found here:
-
- %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/traverso/dialogs/settings/Pages.cpp" line="836"/>
-        <source>Printing KeyMap</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/traverso/dialogs/settings/Pages.cpp" line="837"/>
-        <source>The keymap export failed:
 
  %1</source>
         <translation type="unfinished"></translation>
@@ -1877,9 +1867,6 @@ p, li { white-space: pre-wrap; }
         <source>&amp;Close</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>MemoryConfigPage</name>
 </context>
 <context>
     <name>MoveClip</name>
@@ -4424,8 +4411,5 @@ p, li { white-space: pre-wrap; }
         <source>Arm Tracks</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>Tsar</name>
 </context>
 </TS>
