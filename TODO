@@ -19,9 +19,6 @@ Less important:
 // Should get a proper fix ?
 // Maybe it has to do with the hold finish (release) event is propagated to the wrong viewport ?
 
-* when a menu is open, the viewport no longer tracks mouse move events. closing the menu and NOT
-  moving the mouse delegates actions to the wrong object under the mouse.
-
 * add docs for preparing pc for realtime use! (limits.conf stuff)
 
 * Curve copy should not use the same id!!!!!!

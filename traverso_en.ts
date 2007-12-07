@@ -209,6 +209,99 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>AudioClipEditDialog</name>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="13"/>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="29"/>
+        <source>Clip Parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="54"/>
+        <source>External Processing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="84"/>
+        <source>hh:mm:ss.sss</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="97"/>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="104"/>
+        <source>End</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="282"/>
+        <source>Length</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="118"/>
+        <source>Track start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="125"/>
+        <source>Gain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="132"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="140"/>
+        <source>Fades</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="152"/>
+        <source>Fade In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="272"/>
+        <source>Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="265"/>
+        <source>Bending</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="292"/>
+        <source>Strength</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="309"/>
+        <source>&amp;Linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="316"/>
+        <source>&amp;Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="243"/>
+        <source>Fade Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AudioClipExternalProcessing</name>
     <message>
         <location filename="src/commands/AudioClipExternalProcessing.cpp" line="46"/>

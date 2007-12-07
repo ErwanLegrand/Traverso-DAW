@@ -267,6 +267,99 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>AudioClipEditDialog</name>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="13"/>
+        <source>Dialog</source>
+        <translation type="unfinished">Dialoog</translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="29"/>
+        <source>Clip Parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="54"/>
+        <source>External Processing</source>
+        <translation>Externe bewerking</translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="84"/>
+        <source>hh:mm:ss.sss</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="97"/>
+        <source>TextLabel</source>
+        <translation>Text Label</translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="104"/>
+        <source>End</source>
+        <translation>Einde</translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="282"/>
+        <source>Length</source>
+        <translation>Lengte</translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="118"/>
+        <source>Track start</source>
+        <translation>Track start</translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="125"/>
+        <source>Gain</source>
+        <translation>Gain</translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="132"/>
+        <source>Name</source>
+        <translation>Naam</translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="140"/>
+        <source>Fades</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="152"/>
+        <source>Fade In</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="272"/>
+        <source>Mode</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="265"/>
+        <source>Bending</source>
+        <translation>Buigen</translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="292"/>
+        <source>Strength</source>
+        <translation>Sterkte</translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="309"/>
+        <source>&amp;Linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="316"/>
+        <source>&amp;Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/traverso/songcanvas/ui/AudioClipEditDialog.ui" line="243"/>
+        <source>Fade Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AudioClipEditWidget</name>
     <message>
         <location filename="src/traverso/ui/AudioClipEditWidget.ui" line="51"/>
@@ -2297,7 +2390,7 @@ door hun bijdragen aan de technologiën waarop Traverso gebaseerd is (Gcc, Qt, X
     <message>
         <location filename="src/traverso/Interface.cpp" line="552"/>
         <source>&amp;Recording File Format</source>
-        <translation>&amp;Opname Bestand Formaat</translation>
+        <translation type="unfinished">&amp;Opname Bestands Formaat</translation>
     </message>
     <message>
         <location filename="src/traverso/Interface.cpp" line="564"/>
@@ -5009,7 +5102,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/traverso/widgets/InfoWidgets.cpp" line="574"/>
         <source>&amp;Show Effects</source>
-        <translation>Toon Effectje&amp;s</translation>
+        <translation type="unfinished">&amp;Toon Effecten</translation>
     </message>
     <message>
         <location filename="src/traverso/widgets/InfoWidgets.cpp" line="548"/>
