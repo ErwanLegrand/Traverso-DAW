@@ -1,13 +1,24 @@
 TOBEDONE FOR 0.4x.x
 
+* Loading Project with 0 sheets crashes when spectrum/correlation meters are shown
 * http://traverso-daw.org/forum/index.php/topic,60.msg161.html#msg161
 	(random crashes on mac os x, unable to reproduce locally)
-
 * Bandpass filter wrong inited (or something like that) it crashes
-
+* DecodeBuffer::delete_destination: sometimes m_channels != 'real destination channel count'
 
 
 Less important:
+
+* DragClip: to next/previous snap pos is broken problem doesn't happen with copy-clip !!
+	Update: SnapList checks for wrong next/prev values now, but this needs
+	also to be fixed in MoveClip
+
+// ViewPort: m_holdCursorActive is a replacement for m_holdcursor->isVisible()
+// in mouseMoveEvents, which crashes when a hold action in one viewport
+// ends with the mouse upon a different viewport.
+// Should get a proper fix ?
+// Maybe it has to do with the hold finish (release) event is propagated to the wrong viewport ?
+
 * when a menu is open, the viewport no longer tracks mouse move events. closing the menu and NOT
   moving the mouse delegates actions to the wrong object under the mouse.
 
@@ -15,10 +26,7 @@ Less important:
 
 * Curve copy should not use the same id!!!!!!
 
-* libsndfile:
-	* Sector misalignment, how to handle.
-
-* moving a clip doesn't update the Track's cliplist (does it need to be updated ?)
+* libsndfile: * Sector misalignment, how to handle.
 
 * files with a very large DC offset are painted wrong in rectified view ? (see yo-vega.ogg as example)
 
