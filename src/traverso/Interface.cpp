@@ -374,6 +374,15 @@ bool Interface::eventFilter(QObject * obj, QEvent * event)
 			QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
 			ie().catch_key_release(keyEvent);
 			return true;
+		} else if (event->type() == QEvent::MouseMove) {
+			// Also send mouse move events to the current viewport
+			// so in case we close the Menu, and _do_not_move_the_mouse
+			// and perform an action, it could be delegated to the wrong ViewItem!
+			QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+			ViewPort* vp = cpointer().get_viewport();
+			if (vp) {
+				vp->mouseMoveEvent(mouseEvent);
+			}
 		} else {
 			return false;
 		}

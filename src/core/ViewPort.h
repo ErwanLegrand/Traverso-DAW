@@ -75,6 +75,9 @@ private:
 	HoldCursor*	m_holdcursor;
 	QPoint		m_oldMousePos;
 	QPointF lastMouseMoveScenePoint;
+	
+	// Interface wants to call mouseMoveEvent()
+	friend class Interface;
 };
 
 
