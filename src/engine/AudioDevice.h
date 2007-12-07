@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.26 2007/11/12 18:52:14 r_sijrier Exp $
+$Id: AudioDevice.h,v 1.27 2007/12/07 11:22:32 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -257,9 +257,7 @@ private slots:
 	void audiothread_finished();
 	void switch_to_null_driver();
 	void reset_xrun_counter() {m_xrunCount = 0;}
-#if defined (JACK_SUPPORT)
 	void check_jack_shutdown();
-#endif
 };
 
 
