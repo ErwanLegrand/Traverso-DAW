@@ -378,9 +378,11 @@ bool Interface::eventFilter(QObject * obj, QEvent * event)
 			// Also send mouse move events to the current viewport
 			// so in case we close the Menu, and _do_not_move_the_mouse
 			// and perform an action, it could be delegated to the wrong ViewItem!
+			// Obviously we don't want to send this event when the InputEngine is still
+			// in holding mode, to avoid jog() being called for the active HoldCommand!
 			QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
 			ViewPort* vp = cpointer().get_viewport();
-			if (vp) {
+			if (vp && !ie().is_holding()) {
 				vp->mouseMoveEvent(mouseEvent);
 			}
 		} else {
