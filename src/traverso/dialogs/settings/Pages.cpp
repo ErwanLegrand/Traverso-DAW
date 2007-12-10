@@ -368,6 +368,8 @@ void AudioDriverPage::driver_combobox_index_changed(QString driver)
 	} else {
 		m_driverConfigPage->jackGroupBox->hide();
 	}
+#else
+	m_driverConfigPage->jackGroupBox->hide();
 #endif
 }
 
