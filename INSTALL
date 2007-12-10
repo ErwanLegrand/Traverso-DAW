@@ -1,27 +1,67 @@
-Unpack the tarball, and change directory to traverso.
+1) cmake based compilation:
 
-If you like to change parameters for the build process, open the file:
-travers/src/base.pri
-in your favorite editor, there's information on the possible options in that very file.
+* Unpack the tarball, and change directory to traverso.
+* Make sure you have all dependencies installed, and cmake
+* run cmake as follows (including the dot!):
+	
+  $ cmake .
 
-Run the following commands:
+* If it complains a library was missing, make sure it is installed,
+  remove CMakeCache.txt and go back to the previous step.
+* If cmake . completed without error, you can either run:
+  
+  $ ccmake .
+  
+  to change compilation options or:
+  
+  $ make
+  
+  to start compilation.
+* After compilation finished, you can run traverso with:
+  
+  $ bin/traverso
 
-$ qmake traverso.pro
-$ make
+* Or install it systemwide (as root)
+  
+  $ make install
+
+* and run traverso directly by typing:
+
+  $ traverso
+
+
+
+2) qmake based compilation:
+
+* Unpack the tarball, and change directory to traverso.
+
+* If you like to change parameters for the build process, open the file:
+  traverso/src/base.pri
+  in your favorite editor, there's information on the possible options in that very file.
+
+* Run the following commands:
+
+  $ qmake traverso.pro
+  $ make
 
 After compilation is finished, you can run traverso:
 
-$ ./traverso
+  $ ./traverso
 
-Have funn!
+
+Have fun!
 
 
 NOTE for Packagers:
 
 The tarball as it is supplied should be suitable for creating a distribution
-package without major modification. 
+package without major modification.
 Traverso itself is build as a number of libraries, it's strongly adviced to 
 compile those statically, which is the default.
+
+
+QMake based compilation:
+
 To change compile options for all libs, edit src/base.pri
 
 Options that should be left alone:
@@ -37,6 +77,13 @@ unwanted side effects (you could build against another version then we did e.g.)
 
 DEFINES that could be changed or e.g. compiler flag options, if you don't want to 
 build with SSE support by default.
+
+
+CMake based compilation:
+From Traverso >= 0.42.0 we plan to switch over to cmake based compilation.
+You can change any of the compilation options like this:
+
+cmake . -DWANT_JACK=OFF -DWANT_ALSA=ON -DUSE_SYSTEM_SLV2_LIBRARY=ON
 
 
 Qt 4.3.0 issue:

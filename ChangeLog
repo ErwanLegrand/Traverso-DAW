@@ -1,3 +1,6 @@
+10-12-2007 Remon Sijrier <remon at traverso-daw dot org>
+	* Released Traverso 0.42.0
+
 03-12-2007 Remon Sijrier <remon at traverso-daw dot org>
 	* Reworked core and GUI code to work with Universal Sample Rate (TimeRef struct)
 	  instead of the samplerate dependend nframes_t
@@ -26,7 +29,7 @@
 	* Curve processing (e.g. Gain curve) is much faster now
 	* Shuttle tuning.
 	* Fixed bug in CD TOC export, sometimes resulting in no audio exported!
-	* Added WAV64 is recording format.
+	* Added WAV64 as recording format.
 	* Added 2 submenus to the Settings Menu:
 		- Select recording encoding format, after selection the new recording will be recorded with
 		  the selected encoding
