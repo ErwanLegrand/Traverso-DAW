@@ -105,7 +105,7 @@ void AudioClipEditDialog::external_processing()
 void AudioClipEditDialog::clip_state_changed()
 {
 	if (m_clip->get_name() != clipNameLineEdit->text()) {
-		parentWidget()->setWindowTitle(m_clip->get_name());
+		setWindowTitle(m_clip->get_name());
 		clipNameLineEdit->setText(m_clip->get_name());
 	}
 	
