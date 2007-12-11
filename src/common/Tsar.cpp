@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Tsar.cpp,v 1.2 2007/11/05 15:49:29 r_sijrier Exp $
+$Id: Tsar.cpp,v 1.3 2007/12/11 17:30:11 r_sijrier Exp $
 */
 
 #include "Tsar.h"
@@ -211,7 +211,7 @@ void Tsar::finish_processed_events( )
  * @param signalSignature The 'signature' of the calling objects signal (equals the name of the signal function) 
  * @return The newly created event.
  */
-TsarEvent Tsar::create_event( QObject* caller, void* argument, char* slotSignature, char* signalSignature )
+TsarEvent Tsar::create_event( QObject* caller, void* argument, const char* slotSignature, const char* signalSignature )
 {
 	PENTER3;
 	TsarEvent event;

@@ -139,7 +139,7 @@ public:
 	bool is_changed() const {return changed;}
 	bool is_snap_on() const	{return m_isSnapOn;}
 	bool is_recording() const {return m_recording;}
-	bool is_smaller_then(APILinkedListNode* node) {return false;}
+	bool is_smaller_then(APILinkedListNode* node) {Q_UNUSED(node); return false;}
 
 	void disconnect_from_audiodevice();
 	void connect_to_audiodevice();

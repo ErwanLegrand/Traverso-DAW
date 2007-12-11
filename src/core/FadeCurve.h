@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.h,v 1.15 2007/11/19 11:18:53 r_sijrier Exp $
+$Id: FadeCurve.h,v 1.16 2007/12/11 17:30:11 r_sijrier Exp $
 */
 
 #ifndef FADE_CURVE_H
@@ -71,7 +71,7 @@ public:
 	QList<QPointF> get_control_points();
 	
 	bool is_bypassed() const {return m_bypass;}
-	bool is_smaller_then(APILinkedListNode* node) {return false;}
+	bool is_smaller_then(APILinkedListNode* node) {Q_UNUSED(node); return false;}
 	
 	void set_range(double pos);
 	void set_mode(int m);

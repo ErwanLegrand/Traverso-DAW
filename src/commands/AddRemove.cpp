@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AddRemove.cpp,v 1.3 2007/06/21 14:31:10 r_sijrier Exp $
+$Id: AddRemove.cpp,v 1.4 2007/12/11 17:30:10 r_sijrier Exp $
 */
 
 #include "AddRemove.h"
@@ -158,10 +158,10 @@ AddRemove::AddRemove(
  	void* arg,
 	bool historable,
 	Song* song,
-	char * doActionSlot,
-	char * doSignal,
-	char * undoActionSlot,
-	char * undoSignal,
+	const char * doActionSlot,
+	const char * doSignal,
+	const char * undoActionSlot,
+	const char * undoSignal,
 	const QString& des)
   	: Command(parent, des),
 	  m_parentItem(parent),

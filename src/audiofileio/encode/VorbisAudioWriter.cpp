@@ -180,7 +180,7 @@ bool VorbisAudioWriter::open_private()
 	vorbis_comment_init(d->vorbisComment);
 	
 	// add the encoder tag (so everybody knows we did it! ;)
-	vorbis_comment_add_tag(d->vorbisComment, "ENCODER", "Traverso");
+	vorbis_comment_add_tag(d->vorbisComment, (char*)"ENCODER", (char*)"Traverso");
 	
 	// set up the analysis state and auxiliary encoding storage
 	d->vorbisDspState = new vorbis_dsp_state;

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AddRemove.h,v 1.1 2007/03/06 15:13:33 r_sijrier Exp $
+    $Id: AddRemove.h,v 1.2 2007/12/11 17:30:10 r_sijrier Exp $
 */
 
 #ifndef ADD_ITEM_COMMAND_H
@@ -34,14 +34,14 @@ class AddRemove : public Command
 public :
         AddRemove(ContextItem* parent, void* arg, const QString& des);
         AddRemove(ContextItem* parent,
-			     	 void*  arg,
-        			 bool historable,
-        			 Song* song,
-        			 char* doActionSlot,
-        			 char* doSignal,
-        			 char* undoActionSlot,
-        			 char* undoSignal,
-				 const QString& des);
+			void*  arg,
+			bool historable,
+			Song* song,
+			const char* doActionSlot,
+			const char* doSignal,
+			const char* undoActionSlot,
+			const char* undoSignal,
+			const QString& des);
         ~AddRemove();
 
         int prepare_actions();
@@ -58,10 +58,10 @@ private :
         TsarEvent	m_undoActionEvent;
         Song*		m_song;
 
-        char*		m_doActionSlot;
-        char*		m_undoActionSlot;
-        char*		m_doSignal;
-        char*		m_undoSignal;
+        const char*	m_doActionSlot;
+	const char*	m_undoActionSlot;
+	const char*	m_doSignal;
+	const char*	m_undoSignal;
         bool		m_instantanious;
 };
 
