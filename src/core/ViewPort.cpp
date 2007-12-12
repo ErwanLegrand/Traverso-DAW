@@ -95,7 +95,9 @@ ViewPort::ViewPort(QGraphicsScene* scene, QWidget* parent)
 	setAlignment(Qt::AlignLeft | Qt::AlignTop);
 	
 #if QT_VERSION >= 0x040300
+#if !defined (Q_WS_WIN)
 	setOptimizationFlag(DontAdjustForAntialiasing);
+#endif
 	setOptimizationFlag(DontSavePainterState);
 	setOptimizationFlag(DontClipPainter);
 #endif

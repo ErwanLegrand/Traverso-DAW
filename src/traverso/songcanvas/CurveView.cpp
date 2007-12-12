@@ -226,7 +226,7 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	
 	
 	int xstart = (int) option->exposedRect.x();
-	int pixelcount = (int) option->exposedRect.width();
+	int pixelcount = (int) option->exposedRect.width()+1;
 	int height = int(m_boundingRect.height());
 	int offset = int(m_startoffset / m_sv->timeref_scalefactor);
 	
