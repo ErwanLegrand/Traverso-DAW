@@ -60,3 +60,7 @@ DISTFILES += \
 	resources/skin/defaultcolors.xml \
 	traverso_nl.qm \
 	traverso_de.qm
+
+win32{
+    SUBDIRS -= src/3rdparty/slv2
+}
