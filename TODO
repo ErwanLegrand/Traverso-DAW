@@ -1,6 +1,5 @@
 TOBEDONE FOR 0.4x.x
 
-* fix compile warnings with g++ >= 4.2.1
 * Loading Project with 0 sheets crashes when spectrum/correlation meters are shown
 * http://traverso-daw.org/forum/index.php/topic,60.msg161.html#msg161
 	(random crashes on mac os x, unable to reproduce locally)

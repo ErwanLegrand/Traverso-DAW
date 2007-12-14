@@ -82,6 +82,14 @@ private:
 	PositionIndicator* m_posIndicator;
 	QPolygonF m_polygonbottom;
 	QPolygonF m_polygontop;
+	
+	struct PainterPathCache {
+		QPainterPath path;
+		int xstart;
+		int length;
+	};
+	
+	QList<PainterPathCache* > m_pathCache;
 
 	QTimer m_recordingTimer;
 

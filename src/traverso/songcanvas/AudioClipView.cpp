@@ -190,7 +190,9 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 			painter->drawText(r, Qt::AlignVCenter, buildProcess);
 		
 		} else if (m_clip->recording_state() == AudioClip::NO_RECORDING) {
+// 			PROFILE_START;
 			draw_peaks(painter, xstart, pixelcount);
+// 			PROFILE_END("draw peaks");
 		}
 	}
 	
@@ -263,115 +265,139 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 	
 	int channels = m_clip->get_channels();
 	int peakdatacount = microView ? pixelcount : pixelcount * 2;
-
-	float* pixeldata[channels];
 	
-	// Load peak data for all channels, if no peakdata is returned
-	// for a certain Peak object, schedule it for loading.
-	for (int chan=0; chan < channels; ++chan) {
-		
-		int availpeaks = peak->calculate_peaks( chan,
-				&pixeldata[chan],
-    				microView ? m_song->get_hzoom() : m_song->get_hzoom() + 1,
-				TimeRef(xstart * m_sv->timeref_scalefactor) + clipstartoffset,
-				microView ? peakdatacount : peakdatacount / 2 + 2);
-		
-		if (peakdatacount != availpeaks) {
-// 			PWARN("peakdatacount != availpeaks (%d, %d)", peakdatacount, availpeaks);
+	if (m_pathCache.size() != channels) {
+		m_pathCache.clear();
+		for(int i=0; i<channels; ++i) {
+			PainterPathCache* cache =  new PainterPathCache;
+			cache->length = -1;
+			cache->xstart = -1;
+			m_pathCache.append(cache);
 		}
-
-		if (availpeaks == Peak::NO_PEAK_FILE) {
-			connect(peak, SIGNAL(progress(int)), this, SLOT(update_progress_info(int)));
-			connect(peak, SIGNAL(finished()), this, SLOT (peak_creation_finished()));
-			m_waitingForPeaks = true;
-			peak->start_peak_loading();
-			return;
-		}
-		
-		if (availpeaks == Peak::PERMANENT_FAILURE || availpeaks == Peak::NO_PEAKDATA_FOUND) {
-			return;
-		}		
-		
-// 		pixelcount = std::min(pixelcount, availpeaks);
 	}
 	
-	
-	float curvemixdown[peakdatacount];
-	int mixcurvedata = 0;
-	float curveDefaultValue = 1.0;
-	int offset = (int)(m_clip->get_source_start_location() / m_sv->timeref_scalefactor);
-	mixcurvedata |= curveView->has_nodes();
-	
-	if (mixcurvedata) {
-		mixcurvedata |= curveView->get_vector(xstart + offset, pixelcount, curvemixdown);
+	bool validPathCache = false;
+	if (m_pathCache.first()->xstart == xstart && m_pathCache.first()->length == pixelcount) {
+		validPathCache = true;
 	} else {
+		m_pathCache.first()->xstart = xstart;
+		m_pathCache.first()->length = pixelcount;
+		m_pathCache.first()->path = QPainterPath();
+	}
+		
+	
+	float* pixeldata[channels];
+	float curveDefaultValue = 1.0;
+	int mixcurvedata = 0;
+	mixcurvedata |= curveView->has_nodes();
+	int offset = (int)(m_clip->get_source_start_location() / m_sv->timeref_scalefactor);
+		
+	if (!mixcurvedata) {
 		curveDefaultValue = curveView->get_default_value();
 	}
 	
-	for (int i = 0; i < m_fadeViews.size(); ++i) {
-		FadeView* view = m_fadeViews.at(i);
-		float fademixdown[pixelcount];
-		int fademix = 0;
+	if (!validPathCache) {
+		// Load peak data for all channels, if no peakdata is returned
+		// for a certain Peak object, schedule it for loading.
+		for (int chan=0; chan < channels; ++chan) {
+			
+			int availpeaks = peak->calculate_peaks( chan,
+					&pixeldata[chan],
+					microView ? m_song->get_hzoom() : m_song->get_hzoom() + 1,
+					TimeRef(xstart * m_sv->timeref_scalefactor) + clipstartoffset,
+					microView ? peakdatacount : peakdatacount / 2 + 2);
+			
+			if (peakdatacount != availpeaks) {
+	// 			PWARN("peakdatacount != availpeaks (%d, %d)", peakdatacount, availpeaks);
+			}
+	
+			if (availpeaks == Peak::NO_PEAK_FILE) {
+				connect(peak, SIGNAL(progress(int)), this, SLOT(update_progress_info(int)));
+				connect(peak, SIGNAL(finished()), this, SLOT (peak_creation_finished()));
+				m_waitingForPeaks = true;
+				peak->start_peak_loading();
+				return;
+			}
+			
+			if (availpeaks == Peak::PERMANENT_FAILURE || availpeaks == Peak::NO_PEAKDATA_FOUND) {
+				return;
+			}		
+			
+	// 		pixelcount = std::min(pixelcount, availpeaks);
+		}
+		
+		
+		float curvemixdown[peakdatacount];
+		if (mixcurvedata) {
+			mixcurvedata |= curveView->get_vector(xstart + offset, pixelcount, curvemixdown);
+		}
+		
+		for (int i = 0; i < m_fadeViews.size(); ++i) {
+			FadeView* view = m_fadeViews.at(i);
+			float fademixdown[pixelcount];
+			int fademix = 0;
+			
+			if (mixcurvedata) {
+				fademix = view->get_vector(xstart, pixelcount, fademixdown);
+			} else {
+				fademix = view->get_vector(xstart, pixelcount, curvemixdown);
+			}
+			
+			if (mixcurvedata && fademix) {
+				for (int j=0; j<pixelcount; ++j) {
+					curvemixdown[j] *= fademixdown[j];
+				}
+			}
+			
+			mixcurvedata |= fademix;
+		}
+		
+		// Load the Peak data into the pixeldata float buffers
+		// ClassicView uses both positive and negative values,
+		// rectified view: pick the highest value of both
+		// Merged view: calculate highest value for all channels, 
+		// and store it in the first channels pixeldata.
+		if (!microView) {
+			if (!m_classicView) {
+				for (int chan=0; chan < channels; chan++) {
+					for (int i=0, j=0; i < (pixelcount*2); i+=2, ++j) {
+						pixeldata[chan][j] = - fabs(f_max(pixeldata[chan][i], - pixeldata[chan][i+1]));
+					}
+				}
+			}
+			
+			if (m_mergedView) {
+				for (int chan=1; chan < channels; chan++) {
+					for (int i = 0; i < (pixelcount*2); ++i) {
+						pixeldata[0][i] = f_max(pixeldata[chan - 1][i], pixeldata[chan][i]);
+					}
+				}
+			}
+			
+		}
 		
 		if (mixcurvedata) {
-			fademix = view->get_vector(xstart, pixelcount, fademixdown);
-		} else {
-			fademix = view->get_vector(xstart, pixelcount, curvemixdown);
-		}
-		
-		if (mixcurvedata && fademix) {
-			for (int j=0; j<pixelcount; ++j) {
-				curvemixdown[j] *= fademixdown[j];
-			}
-		}
-		
-		mixcurvedata |= fademix;
-	}
-	
-	// Load the Peak data into the pixeldata float buffers
-	// ClassicView uses both positive and negative values,
-	// rectified view: pick the highest value of both
-	// Merged view: calculate highest value for all channels, 
-	// and store it in the first channels pixeldata.
-	if (!microView) {
-		if (!m_classicView) {
+			int curvemixdownpos;
 			for (int chan=0; chan < channels; chan++) {
-				for (int i=0, j=0; i < (pixelcount*2); i+=2, ++j) {
-					pixeldata[chan][j] = - fabs(f_max(pixeldata[chan][i], - pixeldata[chan][i+1]));
+				curvemixdownpos = 0;
+				if (m_classicView) {
+					for (int i = 0; i < (pixelcount*2); ++i) {
+						pixeldata[chan][i] *= curvemixdown[curvemixdownpos];
+						i++;
+						pixeldata[chan][i] *= curvemixdown[curvemixdownpos];
+						curvemixdownpos += 2;
+					}
+				} else {
+					for (int i = 0; i < pixelcount; i++) {
+						pixeldata[chan][i] *= curvemixdown[curvemixdownpos];
+						curvemixdownpos += 2;
+					}
 				}
 			}
 		}
-		
-		if (m_mergedView) {
-			for (int chan=1; chan < channels; chan++) {
-				for (int i = 0; i < (pixelcount*2); ++i) {
-					pixeldata[0][i] = f_max(pixeldata[chan - 1][i], pixeldata[chan][i]);
-				}
-			}
-		}
-		
-	}
 	
-	if (mixcurvedata) {
-		int curvemixdownpos;
-		for (int chan=0; chan < channels; chan++) {
-			curvemixdownpos = 0;
-			if (m_classicView) {
-				for (int i = 0; i < (pixelcount*2); ++i) {
-					pixeldata[chan][i] *= curvemixdown[curvemixdownpos];
-					i++;
-					pixeldata[chan][i] *= curvemixdown[curvemixdownpos];
-					curvemixdownpos += 2;
-				}
-			} else {
-				for (int i = 0; i < pixelcount; i++) {
-					pixeldata[chan][i] *= curvemixdown[curvemixdownpos];
-					curvemixdownpos += 2;
-				}
-			}
-		}
 	}
-	
+		
 	
 	for (int chan=0; chan < channels; chan++) {
 		p->save();
@@ -477,20 +503,6 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			int bufferpos = 0;
 
 			if (m_classicView) {
-				QPainterPath pathtop;
-				QPainterPath pathbottom;
-				
-				m_polygonbottom.clear();
-				m_polygonbottom.reserve(pixelcount + 3);
-				
-				for (int x = 0; x < pixelcount; x+=2) {
-					m_polygontop.append( QPointF(x, -scaleFactor * pixeldata[chan][bufferpos++]) );
-					m_polygonbottom.append( QPointF(x, scaleFactor * pixeldata[chan][bufferpos++]) );
-				}
-				
-				pathtop.addPolygon(m_polygontop);
-				pathbottom.addPolygon(m_polygonbottom);
-				pathtop.connectPath(pathbottom.toReversed());
 				
 				if (m_mergedView) {
 					ytrans = (height / 2) * channels;
@@ -498,9 +510,31 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 					ytrans = (height / 2) + (chan * height);
 				}
 			
-				p->setMatrix(matrix().translate(xstart + adjustforevenpixel, ytrans), true);
+				p->setMatrix(matrix().translate(xstart + adjustforevenpixel, ytrans).scale(1, scaleFactor), true);
 				
-				p->drawPath(pathtop);
+				QPainterPath pathtop;
+				QPainterPath pathbottom;
+				
+				if (!validPathCache) {
+					m_polygonbottom.clear();
+					m_polygonbottom.reserve(pixelcount + 3);
+					
+					for (int x = 0; x < pixelcount; x+=2) {
+						m_polygontop.append( QPointF(x, -1 * pixeldata[chan][bufferpos++]) );
+						m_polygonbottom.append( QPointF(x, 1 * pixeldata[chan][bufferpos++]) );
+					}
+					
+					pathtop.addPolygon(m_polygontop);
+					pathbottom.addPolygon(m_polygonbottom);
+					pathtop.connectPath(pathbottom.toReversed());
+					
+					m_pathCache.at(chan)->path = pathtop;
+				} else {
+// 					printf("using existing path for painting\n");
+				}
+				
+				p->drawPath(m_pathCache.at(chan)->path);
+				
 				// Draw 'the' -INF line
 				p->setPen(minINFLineColor);
 				p->drawLine(0, 0, pixelcount, 0);
@@ -760,6 +794,11 @@ void AudioClipView::calculate_bounding_rect()
 	m_boundingRect = QRectF(0, 0, (m_clip->get_length() / m_sv->timeref_scalefactor), m_height);
 	update_start_pos();
 	ViewItem::calculate_bounding_rect();
+	
+	foreach(PainterPathCache* cache, m_pathCache) {
+		cache->xstart = -1;
+		cache->length = -1;
+	}
 }
 
 
