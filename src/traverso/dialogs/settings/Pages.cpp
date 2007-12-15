@@ -859,7 +859,7 @@ PerformancePage::PerformancePage(QWidget * parent)
 
 void PerformancePage::load_config()
 {
-	int jogUpdateInterval = config().get_property("CCE", "JogUpdateInterval", 28).toInt();
+	int jogUpdateInterval = config().get_property("CCE", "jogupdateinterval", 28).toInt();
 	bool useOpenGL = config().get_property("Interface", "OpenGL", false).toBool();
 	
 	m_configpage->jogUpdateIntervalSpinBox->setValue(1000 / jogUpdateInterval);
@@ -873,14 +873,14 @@ void PerformancePage::load_config()
 void PerformancePage::save_config()
 {
 	config().set_property("Interface", "OpenGL", m_configpage->useOpenGLCheckBox->isChecked());
-	config().set_property("CCE", "JogUpdateInterval", 1000 / m_configpage->jogUpdateIntervalSpinBox->value());	
+	config().set_property("CCE", "jogupdateinterval", 1000 / m_configpage->jogUpdateIntervalSpinBox->value());	
 	double buffertime = m_configpage->bufferTimeSpinBox->value();
 	config().set_property("Hardware", "readbuffersize", buffertime);
 }
 
 void PerformancePage::reset_default_config()
 {
-	config().set_property("CCE", "JogUpdateInterval", 28);
+	config().set_property("CCE", "jogupdateinterval", 28);
 	config().set_property("Interface", "OpenGL", false);
 	config().set_property("Hardware", "readbuffersize", 1.0);
 	load_config();

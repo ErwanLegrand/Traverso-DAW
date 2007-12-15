@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ContextPointer.cpp,v 1.16 2007/11/05 15:49:30 r_sijrier Exp $
+$Id: ContextPointer.cpp,v 1.17 2007/12/15 16:50:18 r_sijrier Exp $
 */
 
 #include "ContextPointer.h"
@@ -149,7 +149,7 @@ void ContextPointer::jog_start()
 		currentViewPort->viewport()->grabMouse();
 	}
 	m_jogEvent = true;
-	int interval = config().get_property("CCE", "JogUpdateInterval", 28).toInt();
+	int interval = config().get_property("CCE", "jogupdateinterval", 33).toInt();
 	m_jogTimer.start(interval);
 }
 
