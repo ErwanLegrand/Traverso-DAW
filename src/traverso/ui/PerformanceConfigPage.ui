@@ -194,7 +194,7 @@ p, li { white-space: pre-wrap; }
            <number>50</number>
           </property>
           <property name="minimum" >
-           <number>20</number>
+           <number>10</number>
           </property>
           <property name="value" >
            <number>25</number>
