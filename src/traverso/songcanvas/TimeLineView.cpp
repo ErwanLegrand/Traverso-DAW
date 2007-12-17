@@ -129,7 +129,7 @@ int DragMarker::jog()
 {
 	if (d->bypassjog) {
 		int diff = d->jogBypassPos - cpointer().x();
-		if (std::abs(diff) > 15) {
+		if (abs(diff) > 15) {
 			d->bypassjog = false;
 		} else {
 			return 0;

@@ -328,7 +328,7 @@ void ReadSource::set_audio_clip(AudioClip* clip)
 	m_clip = clip;
 }
 
-const nframes_t ReadSource::get_nframes( ) const
+nframes_t ReadSource::get_nframes( ) const
 {
 	if (!m_audioReader) {
 		return 0;
