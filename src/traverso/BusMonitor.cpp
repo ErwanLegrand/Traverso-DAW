@@ -17,17 +17,20 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: BusMonitor.cpp,v 1.15 2007/12/18 18:08:59 r_sijrier Exp $
+$Id: BusMonitor.cpp,v 1.16 2007/12/18 18:13:36 r_sijrier Exp $
 */
 
-#include <libtraverso.h>
-
-#include "BusMonitor.h"
-#include "VUMeter.h"
-#include "ProjectManager.h"
-#include "Project.h"
+#include <BusMonitor.h>
+#include <VUMeter.h>
+#include <ProjectManager.h>
+#include <Project.h>
+#include <Themer.h>
+#include <AudioDevice.h>
+#include <AudioBus.h>
 #include <QHBoxLayout>
 #include <QMenu>
+#include <QKeyEvent>
+#include <QMouseEvent>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!

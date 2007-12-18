@@ -28,10 +28,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QRegExp>
 #include <QDebug>
 
-#include <libtraverso.h>
 #include <commands.h>
 
 #include "AbstractAudioReader.h"
+#include <AudioDevice.h>
+#include <AudioBus.h>
 #include <Client.h>
 #include "ProjectManager.h"
 #include "ContextPointer.h"
