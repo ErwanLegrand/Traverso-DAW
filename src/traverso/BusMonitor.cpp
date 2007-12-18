@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: BusMonitor.cpp,v 1.14 2007/10/29 09:00:11 r_sijrier Exp $
+$Id: BusMonitor.cpp,v 1.15 2007/12/18 18:08:59 r_sijrier Exp $
 */
 
 #include <libtraverso.h>
@@ -27,6 +27,7 @@ $Id: BusMonitor.cpp,v 1.14 2007/10/29 09:00:11 r_sijrier Exp $
 #include "ProjectManager.h"
 #include "Project.h"
 #include <QHBoxLayout>
+#include <QMenu>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -41,7 +42,9 @@ BusMonitor::BusMonitor(QWidget* parent)
 	setAutoFillBackground(false);
 	
 	create_vu_meters();
-
+	
+	m_menu = 0;
+	
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(create_vu_meters()));
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 }
@@ -129,5 +132,53 @@ void BusMonitor::set_project(Project * project)
 	}
 }
 
-//eof
+void BusMonitor::keyPressEvent(QKeyEvent * event)
+{
+	if (event->isAutoRepeat()) {
+		return;
+	} else if (event->key() == Qt::Key_R) {
+		reset_vu_meters();
+	} else {
+		QWidget::keyPressEvent(event);
+	}
+}
+
+void BusMonitor::mousePressEvent(QMouseEvent * event)
+{
+	if (event->button() == Qt::RightButton) {
+		show_menu();
+	}
+}
+
+void BusMonitor::reset_vu_meters()
+{
+	foreach(VUMeter* meter, inMeters) {
+		meter->reset();
+	}
+	foreach(VUMeter* meter, outMeters) {
+		meter->reset();
+	}
+}
+
+void BusMonitor::show_menu()
+{
+	if (!m_menu) {
+		m_menu = new QMenu(this);
+		QAction* action = m_menu->addAction("Bus Monitor");
+		QFont font(themer()->get_font("ContextMenu:fontscale:actions"));
+		font.setBold(true);
+		action->setFont(font);
+		action->setEnabled(false);
+		m_menu->addSeparator();
+		action = m_menu->addAction("Reset VU's  < R >");
+		connect(action, SIGNAL(triggered(bool)), this, SLOT(reset_vu_meters()));
+	}
+
+	m_menu->exec(QCursor::pos());
+}
+
+void BusMonitor::enterEvent(QEvent *)
+{
+	setFocus();
+}
 

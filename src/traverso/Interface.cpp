@@ -655,7 +655,7 @@ Command * Interface::show_context_menu( )
 			toplevelmenu = m_contextMenus.value(className);
 		
 			if ( ! toplevelmenu ) {
-				printf("No menu for %s, creating new one\n", QS_C(className));
+				printf("Interface: No menu for %s, creating new one\n", QS_C(className));
 				toplevelmenu = create_context_menu(item);
 				if (! toplevelmenu ) {
 					if (items.size() > 1) {

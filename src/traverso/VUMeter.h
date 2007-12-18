@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: VUMeter.h,v 1.13 2007/05/07 20:48:01 r_sijrier Exp $
+    $Id: VUMeter.h,v 1.14 2007/12/18 18:08:59 r_sijrier Exp $
 */
 
 #ifndef VUMETER_H
@@ -25,13 +25,13 @@
 
 #include <QWidget>
 #include <QString>
-#include <QGridLayout>
-#include <QLabel>
 #include <QVector>
 #include <QTimer>
 
 class AudioBus;
 class AudioChannel;
+class VUMeterLevel;
+class QLabel;
 
 class VUMeterRuler : public QWidget
 {
@@ -60,6 +60,8 @@ public:
         VUMeter(QWidget* parent, AudioBus* bus);
         ~VUMeter();
 
+	void reset();
+	
 	static QVector<float>* vumeter_lut();
 
 protected:
@@ -76,6 +78,7 @@ private:
 	QLabel*			channelNameLabel;
 	VUMeterRuler*		ruler;
 	static QVector<float>	lut;
+	QList<VUMeterLevel*>	m_levels;
 
 	static void calculate_lut_data();
 	
@@ -137,8 +140,9 @@ class VUMeterLevel : public QWidget
 	Q_OBJECT
 	
 public:
-
         VUMeterLevel(QWidget* parent, AudioChannel* chan);
+	
+	void reset();
 
 protected:
         void paintEvent( QPaintEvent* e);

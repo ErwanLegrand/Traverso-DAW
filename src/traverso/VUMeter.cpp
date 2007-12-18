@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: VUMeter.cpp,v 1.20 2007/05/07 20:48:01 r_sijrier Exp $
+    $Id: VUMeter.cpp,v 1.21 2007/12/18 18:08:59 r_sijrier Exp $
 */
 
 #include "VUMeter.h"
@@ -90,6 +90,7 @@ VUMeter::VUMeter(QWidget* parent, AudioBus* bus)
 			
 		VUMeterOverLed* led = new VUMeterOverLed(levelLedLayoutwidget);
 		VUMeterLevel* level = new VUMeterLevel(levelLedLayoutwidget, bus->get_channel(i));
+		m_levels.append(level);
 		connect(level, SIGNAL(activate_over_led(bool)), led, SLOT(set_active(bool)));
 		
 		levellayout->addWidget(led);
@@ -209,6 +210,14 @@ void VUMeter::peak_monitoring_started()
 {
 	show();
 }
+
+void VUMeter::reset()
+{
+	foreach(VUMeterLevel* level, m_levels) {
+		level->reset();
+	}
+}
+
 
 
 /**********************************************************************/
@@ -689,4 +698,13 @@ int VUMeterLevel::get_meter_position(float f)
 }
 
 
-//eof
+void VUMeterLevel::reset()
+{
+	tailDeltaY = -120.0;
+	peakHoldValue = -120.0;
+	overCount = 0;
+	emit activate_over_led(false);
+	peak = 0;
+	update();
+}
+

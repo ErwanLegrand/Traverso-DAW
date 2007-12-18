@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: BusMonitor.h,v 1.7 2007/05/08 16:44:31 r_sijrier Exp $
+$Id: BusMonitor.h,v 1.8 2007/12/18 18:08:59 r_sijrier Exp $
 */
 
 #ifndef BUSMONITOR_H
@@ -28,6 +28,7 @@ $Id: BusMonitor.h,v 1.7 2007/05/08 16:44:31 r_sijrier Exp $
 
 class VUMeter;
 class Project;
+class QMenu;
 
 class BusMonitor :  public QWidget
 {
@@ -38,16 +39,23 @@ public:
 	~BusMonitor();
 
 protected:
+	void enterEvent ( QEvent * );
+	void mousePressEvent ( QMouseEvent * e );
+	void keyPressEvent ( QKeyEvent* e);
 	QSize sizeHint () const;
 	QSize minimumSizeHint () const;
 	
 private:
 	QList<VUMeter* >	inMeters;
 	QList<VUMeter* >	outMeters;
+	QMenu* m_menu;
+	
+	void show_menu();
 
 private slots:
 	void create_vu_meters();
 	void set_project(Project* project);
+	void reset_vu_meters();
 };
 
 #endif
