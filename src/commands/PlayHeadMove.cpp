@@ -64,6 +64,7 @@ int PlayHeadMove::begin_hold()
 	m_cursor->set_active(false);
 	m_origXPos = m_newXPos = int(m_song->get_transport_location() / m_sv->timeref_scalefactor);
 	m_sv->start_shuttle(true, true);
+	jog();
 	return 1;
 }
 

@@ -371,6 +371,7 @@
 		<keyfact type="HKEY" key1="MouseButtonMiddle" >
 			<Objects>
 				<Object objectname="SongView" mousehint="LR" slotsignature="play_cursor_move" modes="All" sortorder="9" submenu="Playhead" />
+				<Object objectname="TimeLineView" slotsignature="playhead_to_marker" modes="All" sortorder="2" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="W" >
@@ -404,6 +405,7 @@
 		<keyfact type="HKEY" key1="SHIFT" >
 			<Objects>
 				<Object objectname="SongView" mousehint="LR" slotsignature="play_cursor_move" modes="All" sortorder="8" submenu="Playhead" />
+				<Object objectname="TimeLineView" slotsignature="playhead_to_marker" modes="All" sortorder="2" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="F" >

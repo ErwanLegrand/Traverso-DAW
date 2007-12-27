@@ -33,7 +33,9 @@
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-#define ANIME_DURATION 1000
+#define ANIME_DURATION		1000
+#define AUTO_SCROLL_MARGIN	0.05  // autoscroll when within 5% of the clip view port
+
 
 PlayHead::PlayHead(SongView* sv, Song* song, ClipsViewPort* vp)
 	: ViewItem(0, song)
@@ -163,14 +165,14 @@ void PlayHead::update_position()
 		// If the playhead is _not_ in the viewports range, center it in the middle!
 		m_sv->set_hscrollbar_value((int)scenePos().x() - (int)(0.5 * vpWidth));
 	
-	} else if (vppoint.x() > ( vpWidth * 0.85) ) {
+	} else if (vppoint.x() > ( vpWidth * (1.0 - AUTO_SCROLL_MARGIN) )) {
 		
 		// If the playhead is in the viewports range, and is nearing the end
 		// either start the animated flip page, or flip the page and place the 
 		// playhead cursor ~ 1/10 from the left viewport border
 		if (m_mode == ANIMATED_FLIP_PAGE) {
 			if (m_animation.state() != QTimeLine::Running) {
-				m_animFrameRange = (int)(vpWidth * 0.7);
+				m_animFrameRange = (int)(vpWidth * (1.0 - (AUTO_SCROLL_MARGIN * 2)));
 				m_totalAnimValue = 0;
 				m_animation.setFrameRange(0, m_animFrameRange);
 				calculate_total_anim_frames();
@@ -181,7 +183,7 @@ void PlayHead::update_position()
 				m_animation.start();
 			}
 		} else {
-			m_sv->set_hscrollbar_value((int) ((int)scenePos().x() - (0.1 * vpWidth)) );
+			m_sv->set_hscrollbar_value((int) ((int)scenePos().x() - (AUTO_SCROLL_MARGIN * vpWidth)) );
 		}
 	}
 }
