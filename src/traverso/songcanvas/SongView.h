@@ -52,6 +52,10 @@ class SongView : public ViewItem
 	Q_CLASSINFO("scroll_left", tr("Left"))
 	Q_CLASSINFO("scroll_up", tr("Up"))
 	Q_CLASSINFO("scroll_down", tr("Down"))
+	Q_CLASSINFO("scroll_right_hold", tr("Right"))
+	Q_CLASSINFO("scroll_left_hold", tr("Left"))
+	Q_CLASSINFO("scroll_up_hold", tr("Up"))
+	Q_CLASSINFO("scroll_down_hold", tr("Down"))
 	Q_CLASSINFO("shuttle", tr("Shuttle"))
 	Q_CLASSINFO("goto_begin", tr("To start"))
 	Q_CLASSINFO("goto_end", tr("To end"))
@@ -84,7 +88,7 @@ public :
 	void load_theme_data();
 	void start_shuttle(bool start, bool drag=false);
 	void update_shuttle_factor();
-	
+	void set_shuttle_factor_values(int x, int y);
 	int hscrollbar_value() const;
 	int vscrollbar_value() const;
 
@@ -143,6 +147,10 @@ public slots:
         Command* scroll_left();
         Command* scroll_up();
         Command* scroll_down();
+        Command* scroll_right_hold();
+        Command* scroll_left_hold();
+        Command* scroll_up_hold();
+        Command* scroll_down_hold();
         Command* shuttle();
         Command* goto_begin();
         Command* goto_end();

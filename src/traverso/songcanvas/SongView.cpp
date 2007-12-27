@@ -34,8 +34,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include "TrackPanelViewPort.h"
 #include "Themer.h"
 #include "AddRemove.h"
-		
+
 #include <Zoom.h>
+#include <Scroll.h>
 #include <PlayHeadMove.h>
 #include <WorkCursorMove.h>
 
@@ -426,6 +427,13 @@ void SongView::start_shuttle(bool start, bool drag)
 	}
 }
 
+void SongView::set_shuttle_factor_values(int x, int y)
+{
+	m_shuttleXfactor = x;
+	m_shuttleYfactor = y;
+}
+
+
 void SongView::update_shuttle_factor()
 {
 	float vec[2];
@@ -602,14 +610,16 @@ void SongView::set_snap_range(int start)
 
 Command* SongView::scroll_up( )
 {
+	PENTER3;
 	set_vscrollbar_value(m_clipsViewPort->verticalScrollBar()->value() - int(mean_track_height() * 0.75));
-	return 0;
+	return (Command*) 0;
 }
 
 Command* SongView::scroll_down( )
 {
+	PENTER3;
 	set_vscrollbar_value(m_clipsViewPort->verticalScrollBar()->value() + int(mean_track_height() * 0.75));
-	return 0;
+	return (Command*) 0;
 }
 
 Command* SongView::scroll_right()
@@ -627,6 +637,31 @@ Command* SongView::scroll_left()
 	stop_follow_play_head();
 	set_hscrollbar_value(m_clipsViewPort->horizontalScrollBar()->value() - 50);
 	return (Command*) 0;
+}
+
+Command* SongView::scroll_up_hold( )
+{
+	PENTER3;
+	return new Scroll(0, -20, this);
+}
+
+Command* SongView::scroll_down_hold( )
+{
+	PENTER3;
+	return new Scroll(0, 20, this);
+}
+
+Command* SongView::scroll_right_hold()
+{
+	PENTER3;
+	return new Scroll(20, 0, this);
+}
+
+
+Command* SongView::scroll_left_hold()
+{
+	PENTER3;
+	return new Scroll(-20, 0, this);
 }
 
 int SongView::hscrollbar_value() const

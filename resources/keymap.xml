@@ -174,11 +174,15 @@
 				<Object objectname="TrackView" slotsignature="select_bus" modes="All" sortorder="8" />
 			</Objects>
 		</keyfact>
+		<keyfact type="FKEY" key1="P" >
+			<Objects>
+				<Object objectname="FadeCurve" slotsignature="set_mode" modes="All" />
+			</Objects>
+		</keyfact>
 		<keyfact type="FKEY" key1="M" >
 			<Objects>
 				<Object objectname="CorrelationMeterView" slotsignature="set_mode" modes="All" />
 				<Object objectname="SpectralMeterView" slotsignature="set_mode" modes="All" />
-				<Object objectname="FadeCurve" slotsignature="set_mode" modes="All" />
 				<Object objectname="TimeLineView" slotsignature="add_marker" modes="All" />
 				<Object objectname="SongView" slotsignature="add_marker" modes="All" sortorder="23" />
 				<Object objectname="TimeLineView" slotsignature="add_marker_at_playhead" modes="All" modifierkeys="CTRL" />
@@ -423,6 +427,26 @@
 				<Object objectname="AudioClipView" modes="All" sortorder="15" pluginname="TraversoCommands" commandname="SplitClip" />
 			</Objects>
 		</keyfact>
+		<keyfact type="HKEY" key1="LARROW" >
+			<Objects>
+				<Object objectname="SongView" slotsignature="scroll_left_hold" modes="All" sortorder="1" submenu="Scroll" />
+			</Objects>
+		</keyfact>
+		<keyfact type="HKEY" key1="RARROW" >
+			<Objects>
+				<Object objectname="SongView" slotsignature="scroll_right_hold" modes="All" sortorder="2" submenu="Scroll" />
+			</Objects>
+		</keyfact>
+		<keyfact type="HKEY" key1="UARROW" >
+			<Objects>
+				<Object objectname="SongView" slotsignature="scroll_up_hold" modes="All" sortorder="4" submenu="Scroll" />
+			</Objects>
+		</keyfact>
+		<keyfact type="HKEY" key1="DARROW" >
+			<Objects>
+				<Object objectname="SongView" slotsignature="scroll_down_hold" modes="All" sortorder="4" submenu="Scroll" />
+			</Objects>
+		</keyfact>
 		
 		
 		
@@ -446,7 +470,7 @@
 		<Object objectname="CurveView" mousehint="UD" slotsignature="drag_node_vertical_only" modes="Effects" sortorder="4" />
 			</Objects>
 		</keyfact>
-
+		
 		
 		
 		<keyfact type="D_FKEY" key1="T" >
@@ -543,7 +567,7 @@
 				<Object objectname="SongView" slotsignature="play_to_begin" modes="All" sortorder="30" submenu="Playhead" />
 			</Objects>
 		</keyfact>
-
+		
 		
 		
 		<keyfact type="D_FKEY2" key1="DEL" key2="T" >
@@ -572,7 +596,7 @@
 			</Objects>
 		</keyfact>
 		
-	
+		
 		<keyfact type="S_FKEY_FKEY" key1="W" key2="E" >
 			<Objects>
 			</Objects>
