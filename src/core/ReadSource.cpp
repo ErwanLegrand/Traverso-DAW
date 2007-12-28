@@ -221,7 +221,7 @@ int ReadSource::init( )
 	}
 	
 	m_rbReady = 0;
-	m_needSync = 0;
+	m_needSync = 1;
 	m_syncInProgress = 0;
 	m_bufferUnderRunDetected = m_wasActivated = 0;
 	
