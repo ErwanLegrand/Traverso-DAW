@@ -25,6 +25,7 @@ PCommand.cpp
 SplitClip.cpp
 TrackPan.cpp
 Zoom.cpp
+Scroll.cpp
 AudioClipExternalProcessing.cpp
 ArmTracks.cpp
 PlayHeadMove.cpp
