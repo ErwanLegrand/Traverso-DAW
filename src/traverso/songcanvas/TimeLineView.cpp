@@ -378,8 +378,8 @@ Command* TimeLineView::remove_marker()
 {
 	if (m_blinkingMarker) {
 		Marker* marker = m_blinkingMarker->get_marker();
-		if (marker->get_type() == Marker::ENDMARKER) {
-			info().information(tr("It's not possible to remove the endmarker!!"));
+		if (marker->get_type() == Marker::ENDMARKER && m_markerViews.size() > 1) {
+			info().information(tr("You have to remove all other markers first."));
 			return ie().failure();
 		}
 		return m_timeline->remove_marker(marker);

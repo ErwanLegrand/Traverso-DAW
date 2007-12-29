@@ -166,5 +166,6 @@ void TimeLine::marker_position_changed(Snappable* snap)
 {
 	qSort(m_markers.begin(), m_markers.end(), smallerMarker);
 	emit markerPositionChanged((Marker*)snap);
+	emit m_song->lastFramePositionChanged();
 }
 

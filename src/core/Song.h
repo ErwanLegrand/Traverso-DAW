@@ -218,6 +218,7 @@ private:
 	Track* create_track();
 	
 	friend class AudioClipManager;
+	friend class TimeLine;
 
 public slots :
 	void seek_finished();
