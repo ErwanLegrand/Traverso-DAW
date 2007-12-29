@@ -60,7 +60,7 @@ FadeRange::FadeRange(AudioClip* clip, FadeCurve* curve, double newRange)
 	d->direction = (m_curve->get_fade_type() == FadeCurve::FadeIn) ? 1 : -1;
 	m_origRange = m_curve->get_range();
 	m_newRange = newRange;
-	setText( (d->direction == 1) ? tr("Fade In: delete") : tr("Fade Out: delete"));
+	setText( (d->direction == 1) ? tr("Fade In: remove") : tr("Fade Out: remove"));
 }
 
 
