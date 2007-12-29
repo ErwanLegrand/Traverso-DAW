@@ -1054,9 +1054,13 @@ void Song::audiodevice_started( )
 const TimeRef& Song::get_last_location() const
 {
 	TimeRef lastAudio = m_acmanager->get_last_location();
-	TimeRef lastMarker = m_timeline->get_markers().last()->get_when();
-
-	return (lastAudio > lastMarker) ? lastAudio : lastMarker;
+	
+	if (m_timeline->get_markers().size()) {
+		TimeRef lastMarker = m_timeline->get_markers().last()->get_when();
+		return (lastAudio > lastMarker) ? lastAudio : lastMarker;
+	}
+	
+	return lastAudio;
 }
 
 void Song::private_add_track(Track* track)
