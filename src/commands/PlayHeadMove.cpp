@@ -64,6 +64,9 @@ int PlayHeadMove::begin_hold()
 	m_cursor->set_active(false);
 	m_origXPos = m_newXPos = int(m_song->get_transport_location() / m_sv->timeref_scalefactor);
 	m_sv->start_shuttle(true, true);
+	
+	// Mabye a technically more proper fix is to check if 
+	// m_origXPos and the x pos in finish_hold() are equal or not ??
 	jog();
 	return 1;
 }
