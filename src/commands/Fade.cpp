@@ -48,7 +48,7 @@ FadeRange::FadeRange(AudioClip* clip, FadeCurve* curve, qint64 scalefactor)
 	m_curve = curve;
 	d->direction = (m_curve->get_fade_type() == FadeCurve::FadeIn) ? 1 : -1;
 	d->scalefactor = scalefactor;
-	setText( (d->direction == 1) ? tr("Fade In: range") : tr("Fade Out: range"));
+	setText( (d->direction == 1) ? tr("Fade In: length") : tr("Fade Out: length"));
 }
 
 
@@ -60,7 +60,7 @@ FadeRange::FadeRange(AudioClip* clip, FadeCurve* curve, double newRange)
 	d->direction = (m_curve->get_fade_type() == FadeCurve::FadeIn) ? 1 : -1;
 	m_origRange = m_curve->get_range();
 	m_newRange = newRange;
-	setText( (d->direction == 1) ? tr("Fade In: reset") : tr("Fade Out: reset"));
+	setText( (d->direction == 1) ? tr("Fade In: delete") : tr("Fade Out: delete"));
 }
 
 
@@ -336,7 +336,7 @@ FadeMode::FadeMode(FadeCurve* fade, int oldMode, int newMode)
 	: Command(fade)
 	, m_fade(fade)
 {
-	setText( (m_fade->get_fade_type() == FadeCurve::FadeIn) ? tr("Fade In: mode") : tr("Fade Out: mode"));
+	setText( (m_fade->get_fade_type() == FadeCurve::FadeIn) ? tr("Fade In: shape") : tr("Fade Out: shape"));
 
 	m_newMode = newMode;
 	m_oldMode = oldMode;

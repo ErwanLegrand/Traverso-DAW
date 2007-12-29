@@ -16,6 +16,7 @@
 		<keyfact type="FKEY" key1="H">
 			<Objects>
 				<Object objectname="Interface" slotsignature="open_help_browser" modes="All" />
+				<Object objectname="FadeCurve" slotsignature="set_mode" modes="All" sortorder="2" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="F1" >
@@ -168,7 +169,7 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="B" >
 			<Objects>
-				<Object objectname="FadeCurve" slotsignature="toggle_bypass" modes="All" />
+				<Object objectname="FadeCurve" slotsignature="toggle_bypass" modes="All" sortorder="10" />
 				<Object objectname="Plugin" slotsignature="toggle_bypass" modes="All" />
 				<Object objectname="LV2Plugin" slotsignature="toggle_bypass" modes="All" />
 				<Object objectname="TrackView" slotsignature="select_bus" modes="All" sortorder="8" />
@@ -176,7 +177,7 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="P" >
 			<Objects>
-				<Object objectname="FadeCurve" slotsignature="set_mode" modes="All" />
+				<Object objectname="FadeView" slotsignature="select_fade_shape" modes="All"  sortorder="1"/>
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="M" >
@@ -192,13 +193,12 @@
 		<keyfact type="FKEY" key1="L" >
 			<Objects>
 				<Object objectname="SpectralMeterView" slotsignature="reset" modes="All" />
-				<Object objectname="FadeCurve" slotsignature="reset" modes="All" />
 				<Object objectname="AudioClip" slotsignature="lock" modes="All" sortorder="80" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="R" >
 			<Objects>
-				<Object objectname="FadeCurve" slotsignature="toggle_raster" modes="All" />
+				<Object objectname="FadeCurve" slotsignature="toggle_raster" modes="All" sortorder="11" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="C" >
@@ -248,7 +248,6 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="F" >
 			<Objects>
-				<Object objectname="AudioClipView" slotsignature="select_fade_shape" modes="All" sortorder="32" submenu="Fade In/Out" />
 				<Object objectname="MoveClip" slotsignature="next_snap_pos" modes="All" sortorder="1" />
 				<Object objectname="DragMarker" slotsignature="move_right" modes="All" sortorder="1" />
 			</Objects>
@@ -397,12 +396,12 @@
 		</keyfact>
 		<keyfact type="HKEY" key1="B" >
 			<Objects>
-				<Object objectname="FadeView" mousehint="UD" slotsignature="bend" modes="All" />
+				<Object objectname="FadeView" mousehint="UD" slotsignature="bend" modes="All" sortorder="3" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="S" >
 			<Objects>
-				<Object objectname="FadeView" mousehint="LR" slotsignature="strength" modes="All" />
+				<Object objectname="FadeView" mousehint="LR" slotsignature="strength" modes="All" sortorder="4" />
 				<Object objectname="SongView" mousehint="LRUD" slotsignature="shuttle" modes="All" sortorder="6" />
 			</Objects>
 		</keyfact>
@@ -467,7 +466,7 @@
 		</keyfact>
 		<keyfact type="HKEY2" key1="D" key2="V" >
 			<Objects>
-		<Object objectname="CurveView" mousehint="UD" slotsignature="drag_node_vertical_only" modes="Effects" sortorder="4" />
+				<Object objectname="CurveView" mousehint="UD" slotsignature="drag_node_vertical_only" modes="Effects" sortorder="4" />
 			</Objects>
 		</keyfact>
 		
@@ -530,6 +529,7 @@
 				<Object objectname="CurveView" slotsignature="remove_node" modes="All" />
 				<Object objectname="PluginView" slotsignature="remove_plugin" modes="All" />
 				<Object objectname="TimeLineView" slotsignature="remove_marker" modes="All" />
+				<Object objectname="FadeCurve" slotsignature="reset" modes="All" sortorder="6" />
 			</Objects>
 		</keyfact>
 		<keyfact type="D_FKEY" key1="C" >

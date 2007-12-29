@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeView.cpp,v 1.21 2007/11/19 11:18:54 r_sijrier Exp $
+$Id: FadeView.cpp,v 1.22 2007/12/29 02:03:37 benjie Exp $
 */
 
 #include "FadeView.h"
@@ -28,6 +28,7 @@ $Id: FadeView.cpp,v 1.21 2007/11/19 11:18:54 r_sijrier Exp $
 #include "AudioClipView.h"
 #include "FadeContextDialog.h"
 #include "SongView.h"
+#include "Interface.h"
 #include <Themer.h>
 #include <Fade.h>
 #include <InputEngine.h>
@@ -269,6 +270,17 @@ Command* FadeView::bend()
 Command* FadeView::strength()
 {
 	return new FadeStrength(this);
+}
+
+Command* FadeView::select_fade_shape()
+{
+	if (m_fadeCurve->get_fade_type() == FadeCurve::FadeIn) {
+		Interface::instance()->select_fade_in_shape();
+	}
+	else {
+		Interface::instance()->select_fade_out_shape();
+	}
+	return 0;
 }
 
 void FadeView::set_holding(bool hold)

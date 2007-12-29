@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.h,v 1.16 2007/12/11 17:30:11 r_sijrier Exp $
+$Id: FadeCurve.h,v 1.17 2007/12/29 02:03:36 benjie Exp $
 */
 
 #ifndef FADE_CURVE_H
@@ -37,10 +37,10 @@ class FadeCurve : public Curve, public APILinkedListNode
 {
 	Q_OBJECT
 	
-	Q_CLASSINFO("toggle_bypass", tr("Toggle bypass"))
-	Q_CLASSINFO("set_mode", tr("Set Mode"))
-	Q_CLASSINFO("reset", tr("Reset"))
-	Q_CLASSINFO("toggle_raster", tr("Toggle raster"))
+	Q_CLASSINFO("toggle_bypass", tr("Toggle Bypass"))
+	Q_CLASSINFO("set_mode", tr("Cycle Shape"))
+	Q_CLASSINFO("reset", tr("Delete"))
+	Q_CLASSINFO("toggle_raster", tr("Toggle Raster"))
 	
 public:
 	static QStringList defaultShapes;

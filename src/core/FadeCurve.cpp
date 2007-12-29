@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.31 2007/11/19 11:18:53 r_sijrier Exp $
+$Id: FadeCurve.cpp,v 1.32 2007/12/29 02:03:36 benjie Exp $
 */
  
 #include "FadeCurve.h"
@@ -236,7 +236,7 @@ void FadeCurve::set_shape(QString shapeName)
 		return;
 	}
 	
-	CommandGroup* group = new CommandGroup(this, tr("Fade Shape"));
+	CommandGroup* group = new CommandGroup(this, tr("Fade Preset"));
 	
 	group->add_command(new FadeBend(this, fadeElement.attribute( "bendfactor", "0.5" ).toDouble()));
 	group->add_command(new FadeStrength(this, fadeElement.attribute( "strengthfactor", "0.5" ).toDouble()));
@@ -375,10 +375,7 @@ void FadeCurve::set_mode(int m)
 
 Command* FadeCurve::reset( )
 {
-	set_bend_factor(0.5);
-	set_strength_factor(0.5);
-	
-	return 0;
+	return (m_type == FadeIn) ? m_clip->reset_fade_in() : m_clip->reset_fade_out();
 }
 
 Command* FadeCurve::toggle_bypass( )

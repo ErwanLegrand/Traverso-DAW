@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeView.h,v 1.5 2007/06/27 19:32:43 benjie Exp $
+$Id: FadeView.h,v 1.6 2007/12/29 02:03:37 benjie Exp $
 */
 
 #ifndef FADE_VIEW_H
@@ -34,8 +34,9 @@ class FadeView : public ViewItem
 {
 	Q_OBJECT
 	
-	Q_CLASSINFO("bend", tr("Bend"))
-	Q_CLASSINFO("strength", tr("Strength"))
+	Q_CLASSINFO("bend", tr("Adjust Bend"))
+	Q_CLASSINFO("strength", tr("Adjust Strength"))
+	Q_CLASSINFO("select_fade_shape", tr("Select Preset"))
 	
 public:
 	FadeView(SongView* sv, AudioClipView* parent, FadeCurve* fadeCuve);
@@ -63,6 +64,7 @@ public slots:
 	
 	Command* bend();
 	Command* strength();
+	Command* select_fade_shape();
 // 	Command* edit_properties();
 
 signals :

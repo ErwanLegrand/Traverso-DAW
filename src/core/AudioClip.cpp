@@ -659,10 +659,19 @@ Command* AudioClip::reset_fade_out()
 
 Command* AudioClip::reset_fade_both()
 {
-	CommandGroup* group = new CommandGroup(this, tr("Reset Fades"));
-	group->add_command(reset_fade_in());
-	group->add_command(reset_fade_out());
-
+	if (!fadeOut && !fadeIn) {
+		return 0;
+	}
+	
+	CommandGroup* group = new CommandGroup(this, tr("Delete Fades"));
+	
+	if (fadeIn) {
+		group->add_command(reset_fade_in());
+	}
+	if (fadeOut) {
+		group->add_command(reset_fade_out());
+	}
+	
 	return group;
 }
 

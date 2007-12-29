@@ -47,11 +47,11 @@ class AudioClip : public ContextItem, public AudioProcessingItem, public Snappab
 {
 	Q_OBJECT
 	Q_CLASSINFO("mute", tr("Mute"))
-	Q_CLASSINFO("reset_fade_in", tr("In: Reset"))
-	Q_CLASSINFO("reset_fade_out", tr("Out: Reset"))
-	Q_CLASSINFO("reset_fade_both", tr("Reset both"))
+	Q_CLASSINFO("reset_fade_in", tr("In: Delete"))
+	Q_CLASSINFO("reset_fade_out", tr("Out: Delete"))
+	Q_CLASSINFO("reset_fade_both", tr("Both: Delete"))
 	Q_CLASSINFO("normalize", tr("Normalize"))
-	Q_CLASSINFO("denormalize", tr("Normalize: reset"))
+	Q_CLASSINFO("denormalize", tr("Normalize: Reset"))
 	Q_CLASSINFO("lock", tr("Lock"))
 
 public:
