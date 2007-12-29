@@ -166,6 +166,9 @@ void TimeLine::marker_position_changed(Snappable* snap)
 {
 	qSort(m_markers.begin(), m_markers.end(), smallerMarker);
 	emit markerPositionChanged((Marker*)snap);
+	
+	// FIXME This is not a fix to let the songview scrollbars 
+	// know that it's range possably has to be recalculated!!!!!!!!!!!!!!
 	emit m_song->lastFramePositionChanged();
 }
 
