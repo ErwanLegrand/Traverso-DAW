@@ -47,6 +47,8 @@ class TraversoCommands : public CommandPlugin
 	Q_CLASSINFO("MoveClipOrEdge", tr("Move Or Resize Clip"))
 	Q_CLASSINFO("SplitClip", tr("Split"))
 	Q_CLASSINFO("ArmTracks", tr("Arm Tracks"))
+	Q_CLASSINFO("MultiMove", tr("Fold Sheet"))
+	Q_CLASSINFO("MultiMoveSingle", tr("Fold Track"))
 
 public:
 	TraversoCommands();
@@ -67,7 +69,8 @@ private:
     		DragEdgeCommand,
     		MoveClipOrEdgeCommand,
       		SplitClipCommand,
-		ArmTracksCommand
+		ArmTracksCommand,
+		MultiMoveCommand
 	};
 };
 

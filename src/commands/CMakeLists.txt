@@ -20,6 +20,7 @@ Fade.cpp
 Gain.cpp
 Import.cpp
 MoveClip.cpp
+MultiMove.cpp
 MoveEdge.cpp
 PCommand.cpp
 SplitClip.cpp

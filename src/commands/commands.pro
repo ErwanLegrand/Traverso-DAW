@@ -5,6 +5,7 @@ Fade.cpp \
 Gain.cpp \
 Import.cpp \
 MoveClip.cpp \
+MultiMove.cpp \
 MoveEdge.cpp \
 PCommand.cpp \
 SplitClip.cpp \
@@ -24,6 +25,7 @@ Fade.h \
 Gain.h \
 Import.h \
 MoveClip.h \
+MultiMove.h \
 MoveEdge.h \
 PCommand.h \
 precompile.h \

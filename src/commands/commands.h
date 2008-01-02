@@ -13,3 +13,4 @@
 #include "AudioClipExternalProcessing.h"
 #include "ArmTracks.h"
 #include "RemoveClip.h"
+#include "MultiMove.h"

@@ -469,6 +469,12 @@
 				<Object objectname="CurveView" mousehint="UD" slotsignature="drag_node_vertical_only" modes="Effects" sortorder="4" />
 			</Objects>
 		</keyfact>
+		<keyfact type="HKEY2" key1="D" key2="F" >
+			<Objects>
+				<Object objectname="SongView" mousehint="RL" modes="All" pluginname="TraversoCommands" commandname="MultiMove" arguments="true" />
+				<Object objectname="SongView" mousehint="RL" modes="All" pluginname="TraversoCommands" modifierkeys="CTRL" commandname="MultiMoveSingle" arguments="false" />
+			</Objects>
+		</keyfact>
 		
 		
 		
