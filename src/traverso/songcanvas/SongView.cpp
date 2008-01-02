@@ -113,7 +113,7 @@ SongView::SongView(SongWidget* songwidget,
 	
 	song_mode_changed();
 	
-	apill_foreach(Track* track, Track, m_song->get_tracks()) {
+	foreach(Track* track, m_song->get_tracks()) {
 		add_new_trackview(track);
 	}
 	

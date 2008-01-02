@@ -330,7 +330,7 @@ void HDDSpaceInfo::update_status( )
 	if (recordingSongs.size()) {
 		int recChannelCount = 0;
 		foreach(Song* song, recordingSongs) {
-			apill_foreach(Track* track, Track, song->get_tracks()) {
+			foreach(Track* track, song->get_tracks()) {
 				if (track->armed()) {
 					recChannelCount += track->capture_left_channel() ? 1 : 0;
 					recChannelCount += track->capture_right_channel() ? 1 : 0;
@@ -748,7 +748,7 @@ void SongInfo::update_recording_state()
 		m_recAction->setIcon(find_pixmap(":/redled-16"));
 		QString recordFormat = config().get_property("Recording", "FileFormat", "wav").toString();
 		int count = 0;
-		apill_foreach(Track* track, Track, m_song->get_tracks()) {
+		foreach(Track* track, m_song->get_tracks()) {
 			if (track->armed()) {
 				count++;
 			}

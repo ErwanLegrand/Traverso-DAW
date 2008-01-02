@@ -53,13 +53,13 @@ void InsertSilenceDialog::focusInput()
 void InsertSilenceDialog::accept()
 {
 	Song* song = pm().get_project()->get_current_song();
-	APILinkedList tracks = song->get_tracks();
+	QList<Track*> tracks = song->get_tracks();
 
 	// Make sure track is still in the song
 	if (m_track){
 		Track*	foundTrack = 0;
 
-		apill_foreach(Track* track, Track, tracks) {
+		foreach(Track* track, tracks) {
 			if (track == m_track) {
 				foundTrack = track;
 			}
@@ -71,8 +71,8 @@ void InsertSilenceDialog::accept()
 		if (!m_track){
 			Track*	shortestTrack = (Track*)tracks.first();
 	
-			apill_foreach(Track* track, Track, tracks) {
-				if (track->get_cliplist().last() && ((AudioClip*)track->get_cliplist().last())->get_track_end_location() > ((AudioClip*)shortestTrack->get_cliplist().last())->get_track_end_location()) {
+			foreach(Track* track, tracks) {
+				if (track->get_cliplist().last() && (track->get_cliplist().last())->get_track_end_location() > (shortestTrack->get_cliplist().last())->get_track_end_location()) {
 					shortestTrack = track;
 				}
 			}

@@ -556,3 +556,13 @@ void Track::clip_position_changed(AudioClip * clip)
 {
 	m_clips.sort(clip);
 }
+
+
+QList< AudioClip * > Track::get_cliplist() const
+{
+	QList<AudioClip*> list;
+	apill_foreach(AudioClip* clip, AudioClip, m_clips) {
+		list.append(clip);
+	}
+	return list;
+}

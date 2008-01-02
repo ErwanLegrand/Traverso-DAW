@@ -44,7 +44,7 @@ MultiMove::MultiMove(SongView* sv, bool allTracks)
 	if (!allTracks) {
 		QList<QObject* >objs = cpointer().get_context_items();
 		foreach(QObject* obj, objs) {
-			Track* t = dynamic_cast<Track*>(obj);
+			Track* t = qobject_cast<Track*>(obj);
 			if (t) {
 				m_track = t;
 				break;
@@ -111,16 +111,16 @@ int MultiMove::begin_hold()
 		}
 	}
 	
-	APILinkedList tracks = m_song->get_tracks();
+	QList<Track*> tracks = m_song->get_tracks();
 	
 	if (m_track) {
 		tracks.clear();
 		tracks.append(m_track);
 	}
 	
-	apill_foreach(Track* track, Track, tracks) {
-		APILinkedList clips = track->get_cliplist();
-		apill_foreach(AudioClip* clip, AudioClip, clips) {
+	foreach(Track* track, tracks) {
+		QList<AudioClip*> clips = track->get_cliplist();
+		foreach(AudioClip* clip, clips) {
 			if (clip->get_track_end_location() > m_originalPos) {
 				m_clips.append(clip);
 				

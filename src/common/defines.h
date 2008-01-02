@@ -390,9 +390,14 @@ static inline trav_time_t get_microseconds()
 	extern int libjack_is_present;\
  	extern int libjack_symbol_is_present(char *s);
 
-#define RELAYTOOL_WAVPACK \
+// since wavpack is not commonly available yet, we link to it statically for now
+// and set it to available!
+/*#define RELAYTOOL_WAVPACK \
 	extern int libwavpack_is_present;\
-	extern int libwavpack_symbol_is_present(char *s);
+	extern int libwavpack_symbol_is_present(char *s); */
+#define RELAYTOOL_WAVPACK \
+	static const int libwavpack_is_present=1;\
+	static int __attribute__((unused)) libwavpack_symbol_is_present(char *) { return 1; }
 
 #define RELAYTOOL_FLAC \
 	extern int libFLAC_is_present;\
@@ -419,6 +424,9 @@ static inline trav_time_t get_microseconds()
 	extern int libvorbisenc_is_present;\
 	extern int libvorbisenc_symbol_is_present(char *s);
 
+#define RELAYTOOL_MP3LAME \
+	extern int libmp3lame_is_present;\
+	extern int libmp3lame_symbol_is_present(char *s);
 
 #else
 

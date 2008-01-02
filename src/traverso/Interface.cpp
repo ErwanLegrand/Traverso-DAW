@@ -1046,11 +1046,11 @@ void Interface::config_changed()
 void Interface::import_audio()
 {
 	if (currentSongWidget->get_song()->get_numtracks() > 0) {
-		APILinkedList tracks = currentSongWidget->get_song()->get_tracks();
-		Track*	shortestTrack = (Track*)tracks.first();
+		QList<Track*> tracks = currentSongWidget->get_song()->get_tracks();
+		Track*	shortestTrack = tracks.first();
 
-		apill_foreach(Track* track, Track, tracks) {
-			if (track->get_cliplist().last() && ((AudioClip*)track->get_cliplist().last())->get_track_end_location() > ((AudioClip*)shortestTrack->get_cliplist().last())->get_track_end_location()) {
+		foreach(Track* track, tracks) {
+			if (track->get_cliplist().last() && (track->get_cliplist().last())->get_track_end_location() > (shortestTrack->get_cliplist().last())->get_track_end_location()) {
 				shortestTrack = track;
 			}
 		}

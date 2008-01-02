@@ -1402,3 +1402,13 @@ void Song::config_changed()
 	}
 }
 
+
+
+QList< Track * > Song::get_tracks() const
+{
+	QList<Track*> list;
+	apill_foreach(Track* track, Track, m_tracks) {
+		list.append(track);
+	}
+	return list;	
+}

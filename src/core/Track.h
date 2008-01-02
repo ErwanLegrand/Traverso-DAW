@@ -79,7 +79,7 @@ public :
 	int get_total_clips();
 	QDomNode get_state(QDomDocument doc, bool istemplate=false);
 	PluginChain* get_plugin_chain() const {return m_pluginChain;}
-	APILinkedList& get_cliplist() {return m_clips;}
+	QList<AudioClip*> get_cliplist() const;
 	int get_sort_index() const;
 	bool is_smaller_then(APILinkedListNode* node) {return ((Track*)node)->get_sort_index() > get_sort_index();}
 

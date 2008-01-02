@@ -145,7 +145,7 @@ void Import::create_audioclip()
 	
 	TimeRef startLocation;
 	if (!m_hasPosition) {
-		if (AudioClip* lastClip = (AudioClip*)m_track->get_cliplist().last()) {
+		if (AudioClip* lastClip = m_track->get_cliplist().last()) {
 			startLocation = lastClip->get_track_end_location();
 		}
 	} else {

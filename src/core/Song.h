@@ -96,7 +96,7 @@ public:
 	QString get_title() const {return title;}
 	QString get_artists() const {return artists;}
 	QDomNode get_state(QDomDocument doc, bool istemplate=false);
-	APILinkedList& get_tracks() {return m_tracks;}
+	QList<Track*> get_tracks() const;
 	
 	DiskIO*	get_diskio() const;
 	AudioClipManager* get_audioclip_manager() const;
