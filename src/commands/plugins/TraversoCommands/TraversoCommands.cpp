@@ -215,8 +215,12 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 			}
 
 			int x = (int) (cpointer().on_first_input_event_scene_x() - view->scenePos().x());
-			bool anchorAudio = arguments[0].toBool();
-
+			
+			bool anchorAudio = false;
+			if (arguments.size()) {
+				anchorAudio = arguments[0].toBool();
+			}
+			
 			if (x < (view->boundingRect().width() / 2)) {
 				if (anchorAudio) {
 					return new MoveClip(view, "anchored_left_edge_move");
@@ -241,11 +245,16 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 					"MoveClipOrEdgeCommand needs an AudioClipView as argument");
 				return 0;
 			}
-
+			
 			int x = (int) (cpointer().on_first_input_event_scene_x() - view->scenePos().x());
-			int edge_width = arguments[0].toInt();
-			bool anchorAudio = arguments[1].toBool();
-
+			
+			int edge_width = 0;
+			bool anchorAudio = false;
+			if (arguments.size() == 2) {
+				edge_width = arguments[0].toInt();
+				anchorAudio = arguments[1].toBool();
+			}
+			
 			if (x < edge_width) {
 				if (anchorAudio) {
 					return new MoveClip(view, "anchored_left_edge_move");
