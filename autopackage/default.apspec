@@ -13,7 +13,7 @@ Packager: Taj Morton <tajmorton@gmail.com>
 Summary: Traverso Multitrack Audio Recorder and Editor
 URL: http://traverso-daw.org
 License: GNU General Public License, Version 2
-SoftwareVersion: 0.40.0
+SoftwareVersion: 0.42.0
 # SoftwareVersion: @VERSION@
 # Repository: http://www.mysite.org/downloads/myproject.xml
 
@@ -52,10 +52,11 @@ if ! compareVersions 3.4 $($CXX1 --version|head -n1|awk -F' ' '{print $3'}); the
 	out "Qt is compiled with something newer. Be very careful."
 fi
 
-$QTDIR/bin/qmake traverso.pro QMAKE_CXX=apg++ QMAKE_CC=apgcc
-make
+CC=apgcc CXX=apg++ cmake . -DAUTOPACKAGE_BUILD=YES
 
-if [ `objdump -x /usr/bin/traverso |grep NEEDED|grep Qt|wc -l` -ne 0 ]; then
+make -j2
+
+if [ `objdump -x bin/traverso |grep NEEDED|grep Qt|wc -l` -ne 0 ]; then
 	red; outn; "FAIL: "; normal;
 	out "This binary is linked dynamically against some Qt libs."
 	out "Make sure you're compiling against a static Qt."
@@ -67,7 +68,7 @@ mkdir -p $build_root/share/applications
 mkdir -p $build_root/share/icons/hicolor
 mkdir -p $build_root/share/mime/packages
 
-cp traverso $build_root/bin
+cp bin/traverso $build_root/bin
 cp resources/traverso.desktop $build_root/share/applications
 cp resources/x-traverso.xml $build_root/share/mime/packages
 cp -R resources/freedesktop/icons/* "$build_root/share/icons/hicolor"
@@ -90,7 +91,7 @@ require @libpng.org/libpng 3.0
 require @freetype.org/freetype 6.3
 require @zlib.org/zlib 1.2
 # require @gtk.org/glib # TODO: figure out how glib's versioning works
-require @opengl.org/opengl 1.4
+# require @opengl.org/opengl 1.4
 require @mega-nerd.com/libsndfile 1.0
 require @xmlsoft.org/libxslt 1.1
 require @xmlsoft.org/libxml2 2.4

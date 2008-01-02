@@ -32,6 +32,7 @@ OPTION(WANT_OPENGL	"Build Traverso with OpenGL support" OFF)
 OPTION(WANT_TRAVERSO_DEBUG "Provides 4 levels of debug ouput on the command line, always on for DEBUG builds" OFF)
 OPTION(WANT_THREAD_CHECK	"Checks at runtime if functions are called from the correct thread, used by developers for debugging" OFF)
 OPTION(WANT_VECLIB_OPTIMIZATIONS "Build with veclib optimizations (Only for PPC based Mac OS X)" OFF)
+OPTION(AUTOPACKAGE_BUILD "Build traverso with autopackage tools" OFF)
 
 
 SET(MAIN_DIR_NAME "src")
@@ -47,8 +48,6 @@ IF (WANT_VERSIONING AND NOT CACHED_VERSIONING)
     SET(TAG_VERSION ${CUSTOM_VERSIONTAG} CACHE TYPE STRING)
   ENDIF (NOT CUSTOM_VERSIONTAG)
 ENDIF (WANT_VERSIONING AND NOT CACHED_VERSIONING)
-
-
 
 # Static build is perfectly fine now, targets are properly relinked when needed!
 SET(TRAVERSO_DEFINES -DSTATIC_BUILD)
@@ -367,12 +366,6 @@ IF(UNIX)
 		SET(HAVE_ALSA FALSE)
 	ENDIF(WANT_ALSA)
 
-
-	find_program(RELAYTOOL_EXECUTABLE NAMES relaytool)
-	IF(RELAYTOOL_EXECUTABLE)
-		LIST(APPEND TRAVERSO_DEFINES -DRELAYTOOL_PRESENT)
-	ENDIF(RELAYTOOL_EXECUTABLE)
-
 # END LINUX section
 
 
@@ -434,7 +427,7 @@ IF(UNIX)
 		ENDIF(uname_invoke_result MATCHES i586)
 				
 		IF(uname_invoke_result MATCHES i686)
-			SET(uname_invoke_result  "${CMAKE_CXX_FLAGS_RELEASE} -march=i686")
+			SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -march=i686")
 			IF(HOST_SUPPORTS_SSE)
 				SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -msse -mfpmath=sse")
 				LIST(APPEND TRAVERSO_DEFINES -DUSE_XMMINTRIN)
@@ -568,6 +561,7 @@ QT_X11_m_LIBRARY
 QT_X11_Xext_LIBRARY
 LIBRARY_OUTPUT_PATH
 WANT_THREAD_CHECK
+AUTOPACKAGE_BUILD
 )
 
 

@@ -113,99 +113,115 @@ widgets/MessageWidget.h
 QT4_ADD_RESOURCES(TRAVERSO_RESOURCES
 traverso.qrc
 )
-
 QT4_WRAP_CPP(TRAVERSO_GUI_MOC_SOURCES ${TRAVERSO_GUI_MOC_CLASSES})
-
 QT4_WRAP_UI(TRAVERSO_GUI_UI_SOURCES ${TRAVERSO_UI_FILES})
+
+IF(AUTOPACKAGE_BUILD)
+	find_program(RELAYTOOL_EXECUTABLE NAMES relaytool)
+	
+	IF(RELAYTOOL_EXECUTABLE)
+		
+		execute_process(
+			COMMAND relaytool --multilink libjack.so.0 libjack-0.100.0.so.0 --relay jack -ljack
+			OUTPUT_VARIABLE relaytool_invoke_result
+			RESULT_VARIABLE relaytool_failed
+		)
+		string(REGEX REPLACE "\n" "" relaytool_invoke_result "${relaytool_invoke_result}")
+		string(REGEX REPLACE " +$" "" relaytool_invoke_result "${relaytool_invoke_result}")
+		SET(JACK_STUB ../../${relaytool_invoke_result})
+	
+		execute_process(
+			COMMAND relaytool --relay FLAC -lFLAC
+			OUTPUT_VARIABLE relaytool_invoke_result
+			RESULT_VARIABLE relaytool_failed
+		)
+		string(REGEX REPLACE "\n" "" relaytool_invoke_result "${relaytool_invoke_result}")
+		string(REGEX REPLACE " +$" "" relaytool_invoke_result "${relaytool_invoke_result}")
+		SET(FLAC_STUB ../../${relaytool_invoke_result})
+	
+		execute_process(
+			COMMAND relaytool --relay mad -lmad
+			OUTPUT_VARIABLE relaytool_invoke_result
+			RESULT_VARIABLE relaytool_failed
+		)
+		string(REGEX REPLACE "\n" "" relaytool_invoke_result "${relaytool_invoke_result}")
+		string(REGEX REPLACE " +$" "" relaytool_invoke_result "${relaytool_invoke_result}")
+		SET(MAD_STUB ../../${relaytool_invoke_result})
+	
+		execute_process(
+			COMMAND relaytool --relay mp3lame -lmp3lame
+			OUTPUT_VARIABLE relaytool_invoke_result
+			RESULT_VARIABLE relaytool_failed
+		)
+		string(REGEX REPLACE "\n" "" relaytool_invoke_result "${relaytool_invoke_result}")
+		string(REGEX REPLACE " +$" "" relaytool_invoke_result "${relaytool_invoke_result}")
+		SET(LAME_STUB ../../${relaytool_invoke_result})
+	
+		execute_process(
+			COMMAND relaytool --relay ogg -logg
+			OUTPUT_VARIABLE relaytool_invoke_result
+			RESULT_VARIABLE relaytool_failed
+		)
+		string(REGEX REPLACE "\n" "" relaytool_invoke_result "${relaytool_invoke_result}")
+		string(REGEX REPLACE " +$" "" relaytool_invoke_result "${relaytool_invoke_result}")
+		SET(OGG_STUB ../../${relaytool_invoke_result})
+	
+		execute_process(
+			COMMAND relaytool --relay vorbis -lvorbis
+			OUTPUT_VARIABLE relaytool_invoke_result
+			RESULT_VARIABLE relaytool_failed
+		)
+		string(REGEX REPLACE "\n" "" relaytool_invoke_result "${relaytool_invoke_result}")
+		string(REGEX REPLACE " +$" "" relaytool_invoke_result "${relaytool_invoke_result}")
+		SET(VORBIS_STUB ../../${relaytool_invoke_result})
+	
+		execute_process(
+			COMMAND relaytool --relay vorbisfile -lvorbisfile
+			OUTPUT_VARIABLE relaytool_invoke_result
+			RESULT_VARIABLE relaytool_failed
+		)
+		string(REGEX REPLACE "\n" "" relaytool_invoke_result "${relaytool_invoke_result}")
+		string(REGEX REPLACE " +$" "" relaytool_invoke_result "${relaytool_invoke_result}")
+		SET(VORBISFILE_STUB ../../${relaytool_invoke_result})
+		
+		execute_process(
+			COMMAND relaytool --relay vorbisenc -lvorbisenc
+			OUTPUT_VARIABLE relaytool_invoke_result
+			RESULT_VARIABLE relaytool_failed
+		)
+		string(REGEX REPLACE "\n" "" relaytool_invoke_result "${relaytool_invoke_result}")
+		string(REGEX REPLACE " +$" "" relaytool_invoke_result "${relaytool_invoke_result}")
+		SET(VORBIS_ENC_STUB ../../${relaytool_invoke_result})
+		
+		MESSAGE(${VORBIS_ENC_STUB})
+	
+	ENDIF(RELAYTOOL_EXECUTABLE)
+
+ELSE(AUTOPACKAGE_BUILD)
+	SET(JACK_LIB jack)
+	SET(FLAC_LIB FLAC)
+	SET(MAD_LIB mad)
+	SET(LAME_LIB mp3lame)
+	SET(OGG_LIB ogg)
+	SET(VORBIS_LIB vorbis)
+	SET(VORBIS_FILE_LIB vorbisfile)
+	SET(VORBIS_ENC_LIB vorbisenc)
+ENDIF(AUTOPACKAGE_BUILD)
 
 ADD_EXECUTABLE(traverso
     ${TRAVERSO_GUI_SOURCES}
     ${TRAVERSO_GUI_UI_SOURCES}
     ${TRAVERSO_GUI_MOC_SOURCES}
     ${TRAVERSO_RESOURCES}
+    ${JACK_STUB}
+    ${FLAC_STUB}
+    ${MAD_STUB}
+    ${LAME_STUB}
+    ${OGG_STUB}
+    ${VORBIS_STUB}
+    ${VORBISFILE_STUB}
+    ${VORBIS_ENC_STUB}
 )
-
-
-SET(JACK_LIB jack)
-SET(FLAC_LIB FLAC)
-SET(MAD_LIB mad)
-SET(LAME_LIB mp3lame)
-SET(OGG_LIB ogg)
-SET(VORBIS_LIB vorbis)
-SET(VORBIS_FILE_LIB vorbisfile)
-SET(VORBIS_ENC_LIB vorbisenc)
-SET(WAVPACK_LIB wavpack)
-
-IF(LINUX)
-find_program(RELAYTOOL_EXECUTABLE NAMES relaytool)
-IF(RELAYTOOL_EXECUTABLE)
-	
-	execute_process(
-		COMMAND relaytool --multilink libjack.so.0 libjack-0.100.0.so.0 --relay jack -ljack
-		OUTPUT_VARIABLE relaytool_invoke_result
-		RESULT_VARIABLE relaytool_failed
-	)
-	SET(JACK_LIB relaytool_invoke_result)
-
-	execute_process(
-		COMMAND relaytool --relay FLAC -lFLAC
-		OUTPUT_VARIABLE relaytool_invoke_result
-		RESULT_VARIABLE relaytool_failed
-	)
-	SET(FLAC_LIB relaytool_invoke_result)
-
-	execute_process(
-		COMMAND relaytool --relay mad -lmad
-		OUTPUT_VARIABLE relaytool_invoke_result
-		RESULT_VARIABLE relaytool_failed
-	)
-	SET(MAD_LIB relaytool_invoke_result)
-
-	execute_process(
-		COMMAND relaytool --relay mp3lame -lmp3lame
-		OUTPUT_VARIABLE relaytool_invoke_result
-		RESULT_VARIABLE relaytool_failed
-	)
-	SET(LAME_LIB relaytool_invoke_result)
-
-	execute_process(
-		COMMAND relaytool --relay ogg -logg
-		OUTPUT_VARIABLE relaytool_invoke_result
-		RESULT_VARIABLE relaytool_failed
-	)
-	SET(OGG_LIB relaytool_invoke_result)
-
-	execute_process(
-		COMMAND relaytool --relay vorbis -lvorbis
-		OUTPUT_VARIABLE relaytool_invoke_result
-		RESULT_VARIABLE relaytool_failed
-	)
-	SET(VORBIS_LIB relaytool_invoke_result)
-
-	execute_process(
-		COMMAND relaytool --relay vorbisfile -lvorbisfile
-		OUTPUT_VARIABLE relaytool_invoke_result
-		RESULT_VARIABLE relaytool_failed
-	)
-	SET(VORBIS_FILE_LIB relaytool_invoke_result)
-
-	execute_process(
-		COMMAND relaytool --relay vorbisenc -lvorbisenc
-		OUTPUT_VARIABLE relaytool_invoke_result
-		RESULT_VARIABLE relaytool_failed
-	)
-	SET(VORBIS_ENC_LIB relaytool_invoke_result)
-
-	execute_process(
-		COMMAND relaytool --relay wavpack -lwavpack
-		OUTPUT_VARIABLE relaytool_invoke_result
-		RESULT_VARIABLE relaytool_failed
-	)
-	SET(WAVPACK_LIB relaytool_invoke_result)
-
-ENDIF(RELAYTOOL_EXECUTABLE)
-ENDIF(LINUX)
-
 
 TARGET_LINK_LIBRARIES(traverso
 	${QT_LIBRARIES}
@@ -219,13 +235,14 @@ TARGET_LINK_LIBRARIES(traverso
 	traversocommands
 	samplerate
 	sndfile
-	${WAVPACK_LIB}
+	wavpack
 	${OGG_LIB}
 	${VORBIS_LIB}
 	${VORBIS_FILE_LIB}
 	${VORBIS_ENC_LIB}
 	${FLAC_LIB}
 	fftw3
+	rt
 )
 
 IF(HAVE_PORTAUDIO)
@@ -241,10 +258,10 @@ IF(HAVE_SLV2)
 		)
 	ELSE(USE_SYSTEM_SLV2_LIBRARY)
 		TARGET_LINK_LIBRARIES(traverso
+			traversoslv2
 			rdf
 			rasqal
 			raptor
-			traversoslv2
 		)
 	ENDIF(USE_SYSTEM_SLV2_LIBRARY)
 ENDIF(HAVE_SLV2)
@@ -278,7 +295,7 @@ IF(HAVE_JACK)
 TARGET_LINK_LIBRARIES(traverso
 	${JACK_LIB}
 )
-ENDIF(HAVE_ALSA)
+ENDIF(HAVE_JACK)
 
 IF(USE_PCH)
     ADD_DEPENDENCIES(traverso precompiled_headers)
