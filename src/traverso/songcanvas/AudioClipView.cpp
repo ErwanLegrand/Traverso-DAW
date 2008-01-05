@@ -296,7 +296,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		curveDefaultValue = curveView->get_default_value();
 	}
 	
-	if (!validPathCache) {
+	if (!validPathCache || microView) {
 		// Load peak data for all channels, if no peakdata is returned
 		// for a certain Peak object, schedule it for loading.
 		for (int chan=0; chan < channels; ++chan) {
