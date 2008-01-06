@@ -512,10 +512,10 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			
 				p->setMatrix(matrix().translate(xstart + adjustforevenpixel, ytrans).scale(1, scaleFactor), true);
 				
-				QPainterPath pathtop;
-				QPainterPath pathbottom;
-				
 				if (!validPathCache) {
+					QPainterPath pathtop;
+					QPainterPath pathbottom;
+					
 					m_polygonbottom.clear();
 					m_polygonbottom.reserve(pixelcount + 3);
 					
@@ -540,8 +540,6 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				p->drawLine(0, 0, pixelcount, 0);
 			
 			} else {
-				QPainterPath path;
-				
 				scaleFactor =  (float) height * 0.95 * m_clip->get_gain() / Peak::MAX_DB_VALUE * curveDefaultValue;
 				ytrans = height + (chan * height);
 		
@@ -550,23 +548,31 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 					scaleFactor *= channels;
 				}
 
-				for (int x=0; x<pixelcount; x+=2) {
-					m_polygontop.append( QPointF(x, scaleFactor * pixeldata[chan][bufferpos]) );
-					bufferpos++;
+				if (!validPathCache) {
+					QPainterPath path;
+					
+					for (int x=0; x<pixelcount; x+=2) {
+						m_polygontop.append( QPointF(x, scaleFactor * pixeldata[chan][bufferpos]) );
+						bufferpos++;
+					}
+					
+					m_polygontop.append(QPointF(pixelcount, 0));
+					path.addPolygon(m_polygontop);
+					path.lineTo(0, 0);
+					
+					m_pathCache.at(chan)->path = path;
+				} else {
+// 					printf("using existing path for painting\n");
 				}
 				
-				m_polygontop.append(QPointF(pixelcount, 0));
-				path.addPolygon(m_polygontop);
-				path.lineTo(0, 0);
-				
 				p->setMatrix(matrix().translate(xstart + adjustforevenpixel, ytrans), true);
-				p->drawPath(path);
+				
+				p->drawPath(m_pathCache.at(chan)->path);
 			}
 			
 		}
 		
 		p->restore();
-		
 		
 		if (m_mergedView) {
 			break;
