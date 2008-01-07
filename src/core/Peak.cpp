@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ResourcesManager.h"
 #include "defines.h"
 #include "Mixer.h"
+#include "FileHelpers.h"
 #include <QFileInfo>
 #include <QDateTime>
 #include <QMutexLocker>
@@ -130,10 +131,15 @@ int Peak::read_header()
 	
 	foreach(ChannelData* data, m_channelData) {
 		
-		data->file.setFileName(data->fileName.toUtf8().data());
+		data->file.setFileName(data->fileName.toLatin1().data());
 		
 		if (! data->file.open(QIODevice::ReadOnly)) {
-			PERROR("Couldn't open peak file for reading! (%s)", data->fileName.toAscii().data());
+			if (QFile::exists(data->fileName)) {
+				m_permanentFailure = true;
+			}
+				
+			QString errorstring = FileHelper::fileerror_to_string(data->file.error());
+			PERROR("Couldn't open peak file for reading! (%s, Error: %s)", data->fileName.toUtf8().data(), QS_C(errorstring));
 			return -1;
 		}
 
@@ -656,7 +662,6 @@ int Peak::create_from_scratch()
 			emit progress(progression);
 			data->pd->progress = progression;
 		}
-		
 	} while (totalReadFrames < m_source->get_nframes());
 
 
