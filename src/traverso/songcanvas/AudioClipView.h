@@ -82,9 +82,11 @@ private:
 	PositionIndicator* m_posIndicator;
 	QPolygonF m_polygonbottom;
 	QPolygonF m_polygontop;
+	QPixmap	m_background;
 	
 	struct PainterPathCache {
-		QPainterPath path;
+		QPainterPath pathtop;
+		QPainterPath pathbottom;
 		int xstart;
 		int length;
 	};
@@ -100,6 +102,7 @@ private:
 	bool m_mergedView;
 	bool m_classicView;
 	bool m_dragging;
+	bool m_paintWithOutline;
 	int m_height;
 	int m_infoAreaHeight;
 	int m_mimimumheightforinfoarea;

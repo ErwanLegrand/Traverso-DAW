@@ -172,9 +172,9 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 
 void ViewPort::tabletEvent(QTabletEvent * event)
 {
-	printf("ViewPort tablet event:: x, y: %d, %d\n", (int)event->x(), (int)event->y());
-	printf("ViewPort tablet event:: high resolution x, y: %d, %d\n\n", 
-	       			(int)event->hiResGlobalX(), (int)event->hiResGlobalY());
+	PMESG("ViewPort tablet event:: x, y: %d, %d", (int)event->x(), (int)event->y());
+	PMESG("ViewPort tablet event:: high resolution x, y: %d, %d", 
+	      (int)event->hiResGlobalX(), (int)event->hiResGlobalY());
 	cpointer().set_point((int)event->x(), (int)event->y());
 	
 	QGraphicsView::tabletEvent(event);

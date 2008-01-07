@@ -570,6 +570,7 @@ void AppearancePage::save_config()
 	config().set_property("Themer", "usestylepallet", m_themepage->useStylePalletCheckBox->isChecked());
 	config().set_property("Themer", "paintaudiorectified", m_themepage->rectifiedCheckBox->isChecked());
 	config().set_property("Themer", "paintstereoaudioasmono", m_themepage->mergedCheckBox->isChecked());
+	config().set_property("Themer", "paintwavewithoutline", m_themepage->paintAudioWithOutlineCheckBox->isChecked());
 }
 
 void AppearancePage::load_config()
@@ -599,6 +600,8 @@ void AppearancePage::load_config()
 	bool usestylepallete = config().get_property("Themer", "usestylepallet", "").toBool();
 	bool paintRectified = config().get_property("Themer", "paintaudiorectified", false).toBool();
 	bool paintStereoAsMono = config().get_property("Themer", "paintstereoaudioasmono", false).toBool();
+	bool paintWaveWithLines = config().get_property("Themer", "paintwavewithoutline", true).toBool();
+
 
 	int index = m_themepage->styleCombo->findText(style);
 	m_themepage->styleCombo->setCurrentIndex(index);
@@ -609,6 +612,8 @@ void AppearancePage::load_config()
 	m_themepage->themePathLineEdit->setText(themepath);
 	m_themepage->rectifiedCheckBox->setChecked(paintRectified);
 	m_themepage->mergedCheckBox->setChecked(paintStereoAsMono);
+	m_themepage->paintAudioWithOutlineCheckBox->setChecked(paintWaveWithLines);
+
 }
 
 void AppearancePage::reset_default_config()
@@ -644,6 +649,7 @@ void ThemeConfigPage::create_connections()
 	connect(pathSelectButton, SIGNAL(clicked()), this, SLOT(dirselect_button_clicked()));
 	connect(rectifiedCheckBox, SIGNAL(toggled(bool)), this, SLOT(theme_option_changed()));
 	connect(mergedCheckBox, SIGNAL(toggled(bool)), this, SLOT(theme_option_changed()));
+	connect(paintAudioWithOutlineCheckBox, SIGNAL(toggled(bool)), this, SLOT(theme_option_changed()));
 }
 
 void ThemeConfigPage::style_index_changed(const QString& text)
@@ -715,6 +721,7 @@ void ThemeConfigPage::theme_option_changed()
 {
 	config().set_property("Themer", "paintaudiorectified", rectifiedCheckBox->isChecked());
 	config().set_property("Themer", "paintstereoaudioasmono", mergedCheckBox->isChecked());
+	config().set_property("Themer", "paintwavewithoutline", paintAudioWithOutlineCheckBox->isChecked());
 	themer()->load();
 }
 
