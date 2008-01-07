@@ -34,7 +34,7 @@
 #include "Debugger.h"
 
 #define ANIME_DURATION		1000
-#define AUTO_SCROLL_MARGIN	0.10  // autoscroll when within 10% of the clip view port
+#define AUTO_SCROLL_MARGIN	0.05  // autoscroll when within 5% of the clip view port
 
 
 PlayHead::PlayHead(SongView* sv, Song* song, ClipsViewPort* vp)
@@ -209,12 +209,11 @@ void PlayHead::set_animation_value(int value)
 
 void PlayHead::calculate_total_anim_frames()
 {
-	int count = (ANIME_DURATION / 40) / 2;
+	int count = (ANIME_DURATION / 40);
 	m_totalAnimFrames = 0;
 	for (int i=0; i<count; ++i) {
 		m_totalAnimFrames += m_animation.frameForTime(i*40);
 	}
-	m_totalAnimFrames *= 2;
 }
 
 
