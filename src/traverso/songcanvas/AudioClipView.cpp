@@ -395,8 +395,8 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 		// Microview, paint waveform as polyline
 		if (microView) {
 		
-			m_polygontop.clear();
-			m_polygontop.reserve(pixelcount);
+			m_polygon.clear();
+			m_polygon.reserve(pixelcount);
 			
 			int bufferPos = 0;
 			
@@ -417,7 +417,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			p->drawLine(xstart, 0, xstart + pixelcount, 0);
 			
 			for (int x = xstart; x < (pixelcount+xstart); x++) {
-				m_polygontop.append( QPointF(x, -scaleFactor * pixeldata[chan][bufferPos++]) );
+				m_polygon.append( QPointF(x, -scaleFactor * pixeldata[chan][bufferPos++]) );
 			}
 			
 			if (themer()->get_property("AudioClip:wavemicroview:antialiased", 0).toInt()) {
@@ -425,7 +425,7 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 			}
 			
 			p->setPen(themer()->get_color("AudioClip:wavemicroview"));
-			p->drawPolyline(m_polygontop);
+			p->drawPolyline(m_polygon);
 		
 		// Macroview, paint waveform with painterpath
 		} else {
@@ -468,40 +468,23 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				p->setMatrix(matrix().translate(xstart, ytrans).scale(1, scaleFactor), true);
 				
 				if (m_paintWithOutline) {
-					QPainterPath pathtop;
-					QPainterPath pathbottom;
+					QPainterPath path;
 					
-					m_polygonbottom.clear();
-					m_polygontop.clear();
-					m_polygonbottom.reserve(pixelcount+2);
-					m_polygontop.reserve(pixelcount+2);
+					m_polygon.clear();
+					m_polygon.reserve(pixelcount*2);
 					
-					m_polygontop.append(QPointF(0,0));
 					for (int x = 0; x < pixelcount; x++) {
-						m_polygontop.append( QPointF(x, - pixeldata[chan][bufferpos+=2]) );
+						m_polygon.append( QPointF(x, - pixeldata[chan][bufferpos+=2]) );
 					}
-					m_polygontop.append(QPointF(pixelcount-1, 0));
 					
 					bufferpos += 1;
 					
-					m_polygonbottom.append(QPointF(pixelcount-1, 0));
 					for (int x = pixelcount - 1; x >= 0; x--) {
-						m_polygonbottom.append( QPointF(x, pixeldata[chan][bufferpos-=2]) );
+						m_polygon.append( QPointF(x, pixeldata[chan][bufferpos-=2]) );
 					}
-					m_polygonbottom.append(QPointF(0, 0));
 					
-					pathtop.addPolygon(m_polygontop);
-					pathbottom.addPolygon(m_polygonbottom);
-						
-							
-					// Using a pen means the polygon is drawn twice:
-					// one for the outline (pen) and one for the brush (fill)
-/*					if (m_dragging) {
-						p->setPen(Qt::NoPen);
-					}*/
-					
-					p->drawPath(pathtop);
-					p->drawPath(pathbottom);
+					path.addPolygon(m_polygon);
+					p->drawPath(path);
 
 				} else {
 					for (int x = 0; x < pixelcount; x++) {
@@ -529,15 +512,15 @@ void AudioClipView::draw_peaks(QPainter* p, int xstart, int pixelcount)
 				if (m_paintWithOutline) {
 					
 					QPainterPath path;
-					m_polygontop.clear();
-					m_polygontop.reserve(pixelcount + 2);
+					m_polygon.clear();
+					m_polygon.reserve(pixelcount + 2);
 					
 					for (int x=0; x<pixelcount; x++) {
-						m_polygontop.append( QPointF(x, pixeldata[chan][bufferpos++]) );
+						m_polygon.append( QPointF(x, pixeldata[chan][bufferpos++]) );
 					}
 					
-					m_polygontop.append(QPointF(pixelcount, 0));
-					path.addPolygon(m_polygontop);
+					m_polygon.append(QPointF(pixelcount, 0));
+					path.addPolygon(m_polygon);
 					path.lineTo(0, 0);
 					
 					p->drawPath(path);

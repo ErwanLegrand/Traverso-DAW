@@ -80,8 +80,7 @@ private:
 	Song*		m_song;
 	CurveView* 	curveView;
 	PositionIndicator* m_posIndicator;
-	QPolygonF m_polygonbottom;
-	QPolygonF m_polygontop;
+	QPolygonF m_polygon;
 	QPixmap	m_background;
 	
 	struct PainterPathCache {
