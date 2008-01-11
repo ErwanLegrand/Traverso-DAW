@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TrackPanelViewPort.cpp,v 1.11 2007/10/17 14:46:18 r_sijrier Exp $
+    $Id: TrackPanelViewPort.cpp,v 1.12 2008/01/11 15:37:52 r_sijrier Exp $
 */
 
 #include "TrackPanelViewPort.h"
@@ -45,7 +45,9 @@ void TrackPanelViewPort::get_pointed_context_items(QList<ContextItem* > &list)
 {
 	QList<QGraphicsItem *> itemlist = items(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
 	foreach(QGraphicsItem* item, itemlist) {
-		list.append((ViewItem*)item);
+		if (item->type() == ViewItem::Type) {
+			list.append((ViewItem*)item);
+		}
 	}
 	list.append(m_sw->get_songview());
 }

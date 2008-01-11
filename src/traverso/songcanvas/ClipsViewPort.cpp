@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "SongWidget.h"
 #include "SongView.h"
 #include "TrackView.h"
+#include "ViewItem.h"
 #include <libtraversocore.h>
 #include <Import.h>
 #include <CommandGroup.h>
@@ -56,7 +57,9 @@ void ClipsViewPort::get_pointed_context_items(QList<ContextItem* > &list)
 {
 	QList<QGraphicsItem *> itemlist = items(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
 	foreach(QGraphicsItem* item, itemlist) {
-		list.append((ViewItem*)item);
+		if (item->type() == ViewItem::Type) {
+			list.append((ViewItem*)item);
+		}
 	}
 	list.append(m_sw->get_songview());
 }

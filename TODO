@@ -1,6 +1,24 @@
 TOBEDONE FOR 0.4x.x
 
-
+* Found out if locale encodings work for special chars (like ë) when importing an 
+  audio (wav) file and creating peak files on all platforms.
+* Track (Vynil) plugin also applied to other tracks ??
+* jack in/output ports numbers are calculated in reversed order! so inputcount ports is output count and vise versa
+* art-deco bug with polygon based painting still there!
+* unable to select hidden dir for theme path.
+* crash when clicking on button next to theme path (Appearance page)
+* ubuntu-theme: no audoclip outline color set?
+* Unable to lock memory, Traverso runs unstable due that. Detect (parse limits.conf file) first before trying to memlock ?
+* ubuntu and system-pallete theme don't have transparent clip backgrounds.
+* xvidcap -> for creating video demos
+* when you right-click on an area with multiple clips overlapping, you get a menu with multiple clips.  Maybe each clip needs to have a "bring to front" function
+* new Song::get_last_location() semantics might not work well e.g. in MoveClip, TimeLineView.
+* Why does the User Manual say I need libflac++?
+* 2tracks project, seeking to start when beyond first clip: mp3 output garbled!
+* solution for project dir renamed outside of traverso: disabling write bit ?
+* On first start, Traverso no longer asks to select project dir.
+* Oh, one usability thing... You might want to make the import audio dialog automatically select the "Support Audio File" filter instead of "All Files"
+* Add cmake flags to disable autodetect of platform, and compile platform specific (x86 (i686), vs x86_64)
 * http://traverso-daw.org/forum/index.php/topic,77.msg264.html#msg264
 
 * check if permissions in /etc/security/limits.conf are set, and if not, notify the user!

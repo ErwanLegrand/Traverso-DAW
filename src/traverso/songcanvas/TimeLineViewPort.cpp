@@ -60,7 +60,9 @@ void TimeLineViewPort::get_pointed_context_items(QList<ContextItem* > &list)
 {
 	QList<QGraphicsItem *> itemlist = items(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
 	foreach(QGraphicsItem* item, itemlist) {
-		list.append((ViewItem*)item);
+		if (item->type() == ViewItem::Type) {
+			list.append((ViewItem*)item);
+		}
 	}
 	list.append(m_sv);
 }

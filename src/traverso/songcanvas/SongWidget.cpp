@@ -141,7 +141,9 @@ public:
 	{
 		QList<QGraphicsItem *> itemlist = items(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
 		foreach(QGraphicsItem* item, itemlist) {
-			list.append((ViewItem*)item);
+			if (item->type() == ViewItem::Type) {
+				list.append((ViewItem*)item);
+			}
 		}
 		list.removeAll(m_spv);
 		list.append(m_sv);

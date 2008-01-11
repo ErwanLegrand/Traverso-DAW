@@ -12,5 +12,5 @@ if [ "$1" != "-m" ] ; then
 	find ./ -name Makefile -type f -print0 | xargs -0 /bin/rm -f
 fi
 
-qmake -nocache
+qmake -nocache  QMAKE_CXX=apg++ QMAKE_CC=apgcc
 time make -j2

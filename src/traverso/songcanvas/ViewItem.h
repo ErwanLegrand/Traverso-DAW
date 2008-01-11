@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewItem.h,v 1.17 2007/11/05 15:49:32 r_sijrier Exp $
+$Id: ViewItem.h,v 1.18 2008/01/11 15:37:52 r_sijrier Exp $
 */
 
 #ifndef VIEW_ITEM_H
@@ -61,7 +61,10 @@ public:
 	QRectF boundingRect() const;
 	virtual void calculate_bounding_rect() {
 		for (int i=0; i< QGraphicsItem::children().size(); ++i) {
-		((ViewItem*)QGraphicsItem::children().at(i))->calculate_bounding_rect();
+			QGraphicsItem* item = QGraphicsItem::children().at(i);
+			if (item->type() == Type) {
+				((ViewItem*)item)->calculate_bounding_rect();
+			}
 		}
 	}
 	void prepare_geometry_change() {prepareGeometryChange();}
