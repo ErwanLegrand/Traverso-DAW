@@ -69,7 +69,7 @@ bool SFAudioReader::can_decode(QString filename)
 	*/
 	memset (&infos, 0, sizeof(infos));
 
-	SNDFILE* sndfile = sf_open(QFile::encodeName(filename), SFM_READ, &infos);
+	SNDFILE* sndfile = sf_open(filename.toUtf8().constData(), SFM_READ, &infos);
 	
 	//is it supported by libsndfile?
 	if (!sndfile) {
