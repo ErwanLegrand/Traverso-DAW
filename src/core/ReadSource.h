@@ -63,6 +63,7 @@ public :
 
 	int init();
 	int get_error() const {return m_error;}
+	QString get_error_string() const;
 	int set_file(const QString& filename);
 	void set_active(bool active);
 	

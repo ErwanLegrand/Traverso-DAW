@@ -688,3 +688,15 @@ void ReadSource::set_diskio(DiskIO * diskio)
 	prepare_rt_buffers();
 }
 
+QString ReadSource::get_error_string() const
+{
+	switch(m_error) {
+		case COULD_NOT_OPEN_FILE: return tr("Could not open file");
+		case INVALID_CHANNEL_COUNT: return tr("Invalid channel count");
+		case ZERO_CHANNELS: return tr("File has zero channels");
+		case FILE_DOES_NOT_EXIST: return tr("The file does not exist!");
+		default: return tr("No ReadSource error set");
+	}
+	return tr("No ReadSource error set");
+}
+
