@@ -137,6 +137,7 @@ void AudioDriverPage::save_config()
 	config().set_property("Hardware", "numberofperiods", periods);
 	int index = m_alsadevices->devicesCombo->currentIndex();
 	config().set_property("Hardware", "carddevice", m_alsadevices->devicesCombo->itemData(index));
+	config().set_property("Hardware", "DitherShape", m_alsadevices->ditherShapeComboBox->currentText());
 	
 #endif
 
@@ -157,6 +158,7 @@ void AudioDriverPage::reset_default_config()
 	config().set_property("Hardware", "drivertype", "ALSA");
 	config().set_property("Hardware", "carddevice", "hw:0");
 	config().set_property("Hardware", "numberofperiods", 3);
+	config().set_property("Hardware", "DitherShape", "None");
 #elif defined (JACK_SUPPORT)
 	if (libjack_is_present)
 		config().set_property("Hardware", "drivertype", "Jack");
@@ -224,7 +226,13 @@ void AudioDriverPage::load_config( )
 #if defined (ALSA_SUPPORT)
 	m_alsadevices->devicesCombo->clear();
 	int periodsIndex = config().get_property("Hardware", "numberofperiods", 3).toInt();
+	QString ditherShape = config().get_property("Hardware", "DitherShape", "None").toString();
 	m_alsadevices->periodsCombo->setCurrentIndex(periodsIndex - 2);
+	
+	int shapeIndex = m_alsadevices->ditherShapeComboBox->findText(ditherShape);
+	if (shapeIndex >=0) {
+		m_alsadevices->ditherShapeComboBox->setCurrentIndex(shapeIndex);
+	}
 	
 	QString name;
 	for (int i=0; i<6; ++i) {
@@ -299,11 +307,12 @@ void AudioDriverPage::restart_driver_button_clicked()
 	
 
 	QString cardDevice = "";
+	QString dithershape = "None";
 
 
 #if defined (ALSA_SUPPORT)
 	int periods = m_alsadevices->periodsCombo->currentText().toInt();
-	
+	dithershape = m_alsadevices->ditherShapeComboBox->currentText();
 	// The AlsaDriver retrieves it's periods number directly from config()
 	// So there is no way to use the current selected one, other then
 	// setting it now, and restoring it afterwards...
@@ -323,7 +332,7 @@ void AudioDriverPage::restart_driver_button_clicked()
 	}
 #endif
 			
-	audiodevice().set_parameters(rate, buffersize, driver, capture, playback, cardDevice);
+	audiodevice().set_parameters(rate, buffersize, driver, capture, playback, cardDevice, dithershape);
 	
 #if defined (ALSA_SUPPORT)
 	config().set_property("Hardware", "numberofperiods", currentperiods);

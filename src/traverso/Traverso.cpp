@@ -314,6 +314,7 @@ void Traverso::prepare_audio_device( )
 	QString driverType = config().get_property("Hardware", "drivertype", "PortAudio").toString();
 #endif
 	QString cardDevice = config().get_property("Hardware", "carddevice", "hw:0").toString();
+	QString ditherShape = config().get_property("Hardware", "DitherShape", "None").toString();
 	bool capture = config().get_property("Hardware", "capture", 1).toInt();
 	bool playback = config().get_property("Hardware", "playback", 1).toInt();
 
@@ -348,7 +349,7 @@ void Traverso::prepare_audio_device( )
 	}
 #endif // end PORTAUDIO_SUPPORT
 	
-	audiodevice().set_parameters(rate, bufferSize, driverType, capture, playback, cardDevice);
+	audiodevice().set_parameters(rate, bufferSize, driverType, capture, playback, cardDevice, ditherShape);
 }
 
 void Traverso::saveState( QSessionManager &  manager)

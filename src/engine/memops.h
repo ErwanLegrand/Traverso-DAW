@@ -15,7 +15,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: memops.h,v 1.1 2006/04/20 14:50:44 r_sijrier Exp $
+    $Id: memops.h,v 1.2 2008/01/15 19:51:49 r_sijrier Exp $
 */
 
 #ifndef __jack_memops_h__
@@ -42,23 +42,38 @@ typedef struct {
 } dither_state_t;
 
 
+void sample_move_d32u24_sSs          (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
 void sample_move_d32u24_sS           (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
 void sample_move_d24_sS              (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
+void sample_move_d24_sSs             (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
 void sample_move_d16_sS              (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
+void sample_move_d16_sSs             (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
 
+void sample_move_dither_rect_d32u24_sSs   (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
 void sample_move_dither_rect_d32u24_sS   (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
+void sample_move_dither_tri_d32u24_sSs    (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
 void sample_move_dither_tri_d32u24_sS    (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
+void sample_move_dither_shaped_d32u24_sSs (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
 void sample_move_dither_shaped_d32u24_sS (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
 void sample_move_dither_rect_d24_sS      (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
+void sample_move_dither_rect_d24_sSs     (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
 void sample_move_dither_tri_d24_sS       (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
+void sample_move_dither_tri_d24_sSs      (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
+void sample_move_dither_shaped_d24_sSs   (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
 void sample_move_dither_shaped_d24_sS    (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
 void sample_move_dither_rect_d16_sS      (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
+void sample_move_dither_rect_d16_sSs     (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
 void sample_move_dither_tri_d16_sS       (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
+void sample_move_dither_tri_d16_sSs      (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
 void sample_move_dither_shaped_d16_sS    (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
+void sample_move_dither_shaped_d16_sSs   (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
 
+void sample_move_dS_s32u24s          (audio_sample_t *dst, char *src, unsigned long nsamples, unsigned long src_skip);
 void sample_move_dS_s32u24           (audio_sample_t *dst, char *src, unsigned long nsamples, unsigned long src_skip);
 void sample_move_dS_s24              (audio_sample_t *dst, char *src, unsigned long nsamples, unsigned long src_skip);
+void sample_move_dS_s24s             (audio_sample_t *dst, char *src, unsigned long nsamples, unsigned long src_skip);
 void sample_move_dS_s16              (audio_sample_t *dst, char *src, unsigned long nsamples, unsigned long src_skip);
+void sample_move_dS_s16s             (audio_sample_t *dst, char *src, unsigned long nsamples, unsigned long src_skip);
 
 void sample_merge_d16_sS             (char *dst,  audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);
 void sample_merge_d32u24_sS          (char *dst, audio_sample_t *src, unsigned long nsamples, unsigned long dst_skip, dither_state_t *state);

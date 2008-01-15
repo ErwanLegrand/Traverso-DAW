@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.49 2007/12/07 11:22:32 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.50 2008/01/15 19:51:48 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -41,7 +41,6 @@ RELAYTOOL_JACK
 #include "AudioChannel.h"
 #include "AudioBus.h"
 #include "Tsar.h"
-
 //#include <sys/mman.h>
 
 // Always put me below _all_ includes, this is needed
@@ -320,13 +319,15 @@ void AudioDevice::set_parameters( int rate,
 				const QString& driverType,
 				bool capture,
 				bool playback,
-				const QString& cardDevice)
+				const QString& cardDevice,
+				const QString& ditherShape)
 {
 	PENTER;
 
 	m_rate = rate;
 	m_bufferSize = bufferSize;
 	m_xrunCount = 0;
+	m_ditherShape = ditherShape;
 
 	shutdown();
 
@@ -421,7 +422,7 @@ int AudioDevice::create_driver(QString driverType, bool capture, bool playback, 
 #if defined (ALSA_SUPPORT)
 	if (driverType == "ALSA") {
 		driver =  new AlsaDriver(this, m_rate, m_bufferSize);
-		if (driver->setup(capture,playback, cardDevice) < 0) {
+		if (((AlsaDriver*)driver)->setup(capture,playback, cardDevice, m_ditherShape) < 0) {
 			message(tr("Audiodevice: Failed to create the ALSA Driver"), WARNING);
 			delete driver;
 			driver = 0;

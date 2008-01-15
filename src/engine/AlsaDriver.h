@@ -20,7 +20,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AlsaDriver.h,v 1.6 2007/02/27 19:48:34 r_sijrier Exp $
 */
 
 #ifndef ALSADRIVER_H
@@ -36,9 +35,11 @@ $Id: AlsaDriver.h,v 1.6 2007/02/27 19:48:34 r_sijrier Exp $
 #include "defines.h"
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-	#define	SND_PCM_FORMAT_S24_3 SND_PCM_FORMAT_S24_3LE
+#define IS_LE 0
+#define IS_BE 1
 #elif __BYTE_ORDER == __BIG_ENDIAN
-	#define	SND_PCM_FORMAT_S24_3 SND_PCM_FORMAT_S24_3BE
+#define IS_LE 1
+#define IS_BE 0
 #endif
 
 
@@ -58,7 +59,7 @@ public:
 	int detach();
 	int bufsize(nframes_t nframes);
 	int restart();
-	int setup(bool capture=true, bool playback=true, const QString& pcmName="hw:0");
+	int setup(bool capture=true, bool playback=true, const QString& pcmName="hw:0", const QString& dither="None");
 
 	QString get_device_name();
 	QString get_device_longname();
@@ -102,7 +103,7 @@ private:
 			(playback_addr[chn],
 			0, nframes * playback_sample_bytes,
 			interleave_unit,
-			playback_interleave_skip);
+			playback_interleave_skip[chn]);
 		} else {
 			memset (playback_addr[chn], 0,	nframes * playback_sample_bytes);
 		}
@@ -116,7 +117,7 @@ private:
 			(playback_addr[chn],
 			0, nframes * playback_sample_bytes,
 			interleave_unit,
-			playback_interleave_skip);
+			playback_interleave_skip[chn]);
 		} else {
 			memset (playback_addr[chn], 0, nframes * playback_sample_bytes);
 		}
@@ -124,12 +125,12 @@ private:
 
 	inline void read_from_channel (channel_t channel, audio_sample_t *buf, nframes_t nsamples)
 	{
-		read_via_copy (buf, capture_addr[channel], nsamples, capture_interleave_skip);
+		read_via_copy (buf, capture_addr[channel], nsamples, capture_interleave_skip[channel]);
 	}
 
 	inline void write_to_channel (channel_t channel, audio_sample_t *buf, nframes_t nsamples)
 	{
-		write_via_copy (playback_addr[channel], buf, nsamples, playback_interleave_skip, dither_state + channel);
+		write_via_copy (playback_addr[channel], buf, nsamples, playback_interleave_skip[channel], dither_state + channel);
 		mark_channel_done (channel);
 	}
 
@@ -138,8 +139,8 @@ private:
 		channel_copy (	playback_addr[output_channel],
 			capture_addr[input_channel],
 			nsamples * playback_sample_bytes,
-			playback_interleave_skip,
-			capture_interleave_skip);
+			playback_interleave_skip[output_channel],
+			capture_interleave_skip[input_channel]);
 		mark_channel_done (output_channel);
 	}
 
@@ -174,8 +175,8 @@ private:
 	unsigned int                  playback_nfds;
 	unsigned int                  capture_nfds;
 	unsigned long                 interleave_unit;
-	unsigned long                 capture_interleave_skip;
-	unsigned long                 playback_interleave_skip;
+	unsigned long                *capture_interleave_skip;
+	unsigned long                *playback_interleave_skip;
 	channel_t                     max_nchannels;
 	channel_t                     user_nchannels;
 	channel_t                     playback_nchannels;
@@ -205,10 +206,11 @@ private:
 	snd_pcm_hw_params_t          *capture_hw_params;
 	snd_pcm_sw_params_t          *capture_sw_params;
 
-	bool soft_mode;
-	bool capture_and_playback_not_synced;
-	bool playback_interleaved;
-	bool capture_interleaved;
+	char soft_mode;
+	char capture_and_playback_not_synced;
+	char playback_interleaved;
+	char capture_interleaved;
+	char quirk_bswap;
 
 	ReadCopyFunction read_via_copy;
 	WriteCopyFunction write_via_copy;

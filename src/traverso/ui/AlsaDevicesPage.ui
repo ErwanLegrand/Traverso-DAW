@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>356</width>
-    <height>93</height>
+    <height>123</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -29,7 +29,7 @@
        <number>9</number>
       </property>
       <property name="spacing" >
-       <number>9</number>
+       <number>6</number>
       </property>
       <item>
        <layout class="QHBoxLayout" >
@@ -110,6 +110,55 @@ p, li { white-space: pre-wrap; }
           <item>
            <property name="text" >
             <string>3</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_3" >
+          <property name="toolTip" >
+           <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Dither is used to make the audio cleaner. &lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">The best way to describe it is to imagine a painting with many dots. If you view it up close you can see each dot and the image is not very clear. If you view it from far away the image becomes clearer because your eyes/brain dither the dots to smooth out the image. It is a murky subject and obviously a very personal choice as to what dither is the best. For most people it is just plain magic. Anyone running at 16bit who cares about quality or has CPU cycles to spare should run with dither. Triangular is probably the best compromise of quality vs cpu cost (its very fast), but shaped is the best&lt;/p>&lt;/body>&lt;/html></string>
+          </property>
+          <property name="text" >
+           <string>Dither</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="ditherShapeComboBox" >
+          <item>
+           <property name="text" >
+            <string>None</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Shaped</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Rectangular</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Triangular</string>
            </property>
           </item>
          </widget>

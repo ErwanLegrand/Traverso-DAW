@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.27 2007/12/07 11:22:32 r_sijrier Exp $
+$Id: AudioDevice.h,v 1.28 2008/01/15 19:51:49 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -56,7 +56,8 @@ public:
 				const QString& driverType, 
 				bool capture=true,
 				bool playback=true,
-				const QString& device="hw:0" );
+				const QString& device="hw:0",
+			   	const QString& ditherShape="None");
 
 	void add_client(Client* client);
 	void remove_client(Client* client);
@@ -167,6 +168,7 @@ private:
 	uint			m_bitdepth;
 	uint			m_xrunCount;
 	QString			m_driverType;
+	QString			m_ditherShape;
 	QHash<QString, QVariant> m_driverProperties;
 
 	int run_one_cycle(nframes_t nframes, float delayed_usecs);

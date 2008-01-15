@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: QuickDriverConfigWidget.cpp,v 1.11 2007/11/05 15:49:31 r_sijrier Exp $
+$Id: QuickDriverConfigWidget.cpp,v 1.12 2008/01/15 19:51:49 r_sijrier Exp $
 */
 
 #include "QuickDriverConfigWidget.h"
@@ -69,7 +69,8 @@ void QuickDriverConfigWidget::on_okButton_clicked( )
 	bool capture = config().get_property("Hardware", "capture", 1).toInt();
 	bool playback = config().get_property("Hardware", "playback", 1).toInt();
 	QString cardDevice = "";
-	
+	QString ditherShape = config().get_property("Hardware", "DitherShape", "None").toString();
+
 #if defined (ALSA_SUPPORT)
 	if (driver == "ALSA") {
 		cardDevice = config().get_property("Hardware", "carddevice", "hw:0").toString();
@@ -89,7 +90,7 @@ void QuickDriverConfigWidget::on_okButton_clicked( )
 #endif // end PORTAUDIO_SUPPORT
 	
 	
-	audiodevice().set_parameters(rate, bufSize, driver, capture, playback, cardDevice);
+	audiodevice().set_parameters(rate, bufSize, driver, capture, playback, cardDevice, ditherShape);
 
 	config().set_property("Hardware", "samplerate", rateComboBox->currentText().toInt());
 	config().set_property("Hardware", "buffersize", periodBufferSizesList.at(latencyComboBox->currentIndex()));

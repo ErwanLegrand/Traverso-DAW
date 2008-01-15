@@ -20,8 +20,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AlsaDriver.cpp,v 1.19 2007/12/03 16:24:20 r_sijrier Exp $
 */
+
+/* ALSA driver based on jack-audio-connection-kit-0.109.0 alsa_driver.c */
 
 
 #include "AlsaDriver.h"
@@ -98,7 +99,7 @@ AlsaDriver::~AlsaDriver()
 }
 
 
-int AlsaDriver::setup(bool capture, bool playback, const QString& pcmName)
+int AlsaDriver::setup(bool capture, bool playback, const QString& pcmName, const QString& ditherShape)
 {
 	unsigned long user_nperiods = device->get_driver_property("numberofperiods", 3).toInt();
 	char *playback_pcm_name = pcmName.toAscii().data();
@@ -129,9 +130,13 @@ int AlsaDriver::setup(bool capture, bool playback, const QString& pcmName)
 	playback_frame_latency = 0;
 	channels_done = 0;
 	channels_not_done = 0;
+	dither_state = 0;
 
 	playback_addr = 0;
 	capture_addr = 0;
+	playback_interleave_skip = NULL;
+	capture_interleave_skip = NULL;
+
 
 	playback_hw_params = 0;
 	capture_hw_params = 0;
@@ -145,8 +150,19 @@ int AlsaDriver::setup(bool capture, bool playback, const QString& pcmName)
 	playback_nfds = 0;
 	capture_nfds = 0;
 
-	dither = None;
+	if (ditherShape == "Rectangular") {
+		dither = Rectangular;
+	} else if (ditherShape == "Shaped") {
+		dither = Shaped;
+	} else if (ditherShape == "Triangular") {
+		dither = Triangular;
+	} else {
+		dither = None;
+	}
+	
 	soft_mode = false;
+
+	quirk_bswap = 0;
 
 	process_count = 0;
 
@@ -277,7 +293,7 @@ int AlsaDriver::setup(bool capture, bool playback, const QString& pcmName)
 	capture_and_playback_not_synced = false;
 
 	if (capture_handle && playback_handle) {
-		if (snd_pcm_link (capture_handle, playback_handle) != 0) {
+		if (snd_pcm_link (playback_handle, capture_handle) != 0) {
 			capture_and_playback_not_synced = true;
 		}
 	}
@@ -302,16 +318,27 @@ void AlsaDriver::release_channel_dependent_memory ()
 		free(capture_addr);
 		capture_addr = 0;
 	}
+	
+	if (playback_interleave_skip) {
+		free (playback_interleave_skip);
+		playback_interleave_skip = NULL;
+	}
+
+	if (capture_interleave_skip) {
+		free (capture_interleave_skip);
+		capture_interleave_skip = NULL;
+	}
+
 
 	if (silent) {
 		free(silent);
 		silent = 0;
 	}
 
-	/*	if (dither_state) {
-			delete dither_state;
-			dither_state = 0;
-		}*/
+	if (dither_state) {
+		free(dither_state);
+		dither_state = 0;
+	}
 }
 
 
@@ -328,21 +355,28 @@ void AlsaDriver::setup_io_function_pointers()
 		switch (dither) {
 		case Rectangular:
 			fprintf (stderr,"Rectangular dithering at 16 bits\n");
-			write_via_copy = sample_move_dither_rect_d16_sS;
+			write_via_copy = quirk_bswap?
+				sample_move_dither_rect_d16_sSs:
+				sample_move_dither_rect_d16_sS;
 			break;
 
 		case Triangular:
 			printf("Triangular dithering at 16 bits\n");
-			write_via_copy = sample_move_dither_tri_d16_sS;
+			write_via_copy = quirk_bswap?
+				sample_move_dither_tri_d16_sSs:
+				sample_move_dither_tri_d16_sS;
 			break;
 
 		case Shaped:
 			printf("Noise-shaped dithering at 16 bits\n");
-			write_via_copy = sample_move_dither_shaped_d16_sS;
+			write_via_copy = quirk_bswap?
+				sample_move_dither_shaped_d16_sSs:
+				sample_move_dither_shaped_d16_sS;
 			break;
 
 		default:
-			write_via_copy = sample_move_d16_sS;
+			write_via_copy = quirk_bswap?
+				sample_move_d16_sSs : sample_move_d16_sS;
 			break;
 		}
 		break;
@@ -357,22 +391,29 @@ void AlsaDriver::setup_io_function_pointers()
 		switch (dither) {
 		case Rectangular:
 			printf("Rectangular dithering at 24 bits\n");
-			write_via_copy = sample_move_dither_rect_d24_sS;
+			write_via_copy = quirk_bswap?
+				sample_move_dither_rect_d24_sSs:
+				sample_move_dither_rect_d24_sS;
 			break;
 
 		case Triangular:
 			printf("Triangular dithering at 24 bits\n");
-			write_via_copy = sample_move_dither_tri_d24_sS;
+			write_via_copy = quirk_bswap?
+				sample_move_dither_tri_d24_sSs:
+				sample_move_dither_tri_d24_sS;
 			break;
 
 		case Shaped:
 			printf("Noise-shaped dithering at 24 bits\n");
-			write_via_copy = sample_move_dither_shaped_d24_sS;
+			write_via_copy = quirk_bswap?
+				sample_move_dither_shaped_d24_sSs:
+				sample_move_dither_shaped_d24_sS;
 			break;
 
-		default:
-			write_via_copy = sample_move_d24_sS;
-			break;
+			default:
+			write_via_copy = quirk_bswap?
+				sample_move_d24_sSs : sample_move_d24_sS;
+				break;
 		}
 		break;
 
@@ -386,21 +427,28 @@ void AlsaDriver::setup_io_function_pointers()
 		switch (dither) {
 		case Rectangular:
 			printf("Rectangular dithering at 32 bits\n");
-			write_via_copy = sample_move_dither_rect_d32u24_sS;
+			write_via_copy = quirk_bswap?
+				sample_move_dither_rect_d32u24_sSs:
+				sample_move_dither_rect_d32u24_sS;
 			break;
 
 		case Triangular:
-			printf("Triangular dithering at 32 bits\n");
-			write_via_copy = sample_move_dither_tri_d32u24_sS;
+			printf("Triangular dithering at 16 bits\n");
+			write_via_copy = quirk_bswap?
+				sample_move_dither_tri_d32u24_sSs:
+				sample_move_dither_tri_d32u24_sS;
 			break;
 
 		case Shaped:
 			printf("Noise-shaped dithering at 32 bits\n");
-			write_via_copy = sample_move_dither_shaped_d32u24_sS;
+			write_via_copy = quirk_bswap?
+				sample_move_dither_shaped_d32u24_sSs:
+				sample_move_dither_shaped_d32u24_sS;
 			break;
 
 		default:
-			write_via_copy = sample_move_d32u24_sS;
+			write_via_copy = quirk_bswap?
+				sample_move_d32u24_sSs : sample_move_d32u24_sS;
 			break;
 		}
 		break;
@@ -408,13 +456,16 @@ void AlsaDriver::setup_io_function_pointers()
 
 	switch (capture_sample_bytes) {
 	case 2:
-		read_via_copy = sample_move_dS_s16;
+		read_via_copy = quirk_bswap?
+			sample_move_dS_s16s : sample_move_dS_s16;
 		break;
 	case 3:
-		read_via_copy = sample_move_dS_s24;
+		read_via_copy = quirk_bswap?
+			sample_move_dS_s24s : sample_move_dS_s24;
 		break;
 	case 4:
-		read_via_copy = sample_move_dS_s32u24;
+		read_via_copy = quirk_bswap?
+			sample_move_dS_s32u24s : sample_move_dS_s32u24;
 		break;
 	}
 }
@@ -431,16 +482,20 @@ int AlsaDriver::configure_stream(char *device_name,
 	int err, format;
 	snd_pcm_uframes_t stop_th;
 	static struct {
-		char Name[16];
+		char Name[32];
 		snd_pcm_format_t format;
 		int bitdepth;
-	}
-	formats[] = {
-			{"32bit", SND_PCM_FORMAT_S32, 32},
-			{"24bit", SND_PCM_FORMAT_S24_3, 24},
-			{"16bit", SND_PCM_FORMAT_S16, 16},
-		};
-#define NOFORMATS (sizeof(formats)/sizeof(formats[0]))
+		int swapped;
+	} formats[] = {
+		{"32bit little-endian", SND_PCM_FORMAT_S32_LE, IS_LE},
+		{"32bit big-endian", SND_PCM_FORMAT_S32_BE, IS_BE},
+		{"24bit little-endian", SND_PCM_FORMAT_S24_3LE, IS_LE},
+		{"24bit big-endian", SND_PCM_FORMAT_S24_3BE, IS_BE},
+		{"16bit little-endian", SND_PCM_FORMAT_S16_LE, IS_LE},
+		{"16bit big-endian", SND_PCM_FORMAT_S16_BE, IS_BE},
+	};
+#define NUMFORMATS (sizeof(formats)/sizeof(formats[0]))
+#define FIRST_16BIT_FORMAT 4
 
 	if ((err = snd_pcm_hw_params_any (handle, hw_params)) < 0)  {
 		PERROR ("ALSA: no playback configurations available (%s)", snd_strerror (err));
@@ -453,28 +508,31 @@ int AlsaDriver::configure_stream(char *device_name,
 	}
 
 	if ((err = snd_pcm_hw_params_set_access (handle, hw_params, SND_PCM_ACCESS_MMAP_NONINTERLEAVED)) < 0) {
-		if ((err = snd_pcm_hw_params_set_access ( handle, hw_params, SND_PCM_ACCESS_MMAP_INTERLEAVED)) < 0) {
-			qDebug ("ALSA: mmap-based access is not possible for the %s "
-				"stream of this audio interface", stream_name);
+		if ((err = snd_pcm_hw_params_set_access (handle, hw_params, SND_PCM_ACCESS_MMAP_INTERLEAVED)) < 0) {
+			if ((err = snd_pcm_hw_params_set_access (handle, hw_params, SND_PCM_ACCESS_MMAP_COMPLEX)) < 0) {
+				qDebug ("ALSA: mmap-based access is not possible for the %s "
+					"stream of this audio interface", stream_name);
 			return -1;
+			}
 		}
 	}
 
-	format = (sample_width == 4) ? 0 : (NOFORMATS - 1);
+	format = (sample_width == 4) ? 0 : (NUMFORMATS - 1);
 	while (1) {
 		if ((err = snd_pcm_hw_params_set_format ( handle, hw_params, formats[format].format)) < 0) {
-			int failed_format = format;
-			if (( (sample_width == 4) ? (format++ < (int)NOFORMATS - 1) : (format-- > 0))) {
-				fprintf (stderr,"Note: audio device %s doesn't support a %s sample format"
-					" so Traverso will try a %s format instead\n", device_name,
-					formats[failed_format].Name,
-					formats[format].Name);
-			} else {
-				PERROR ("ALSA Driver: Sorry. The audio interface \"%s\" doesn't support any of the"
-					" hardware sample formats that Traverso's alsa-driver can use.", device_name);
+			
+			if (( (sample_width == 4) ? (format++ >= int(NUMFORMATS) - 1) : (format-- <= 0))) {
+				printf("ALSA Driver: Sorry. The audio interface \"%s\" doesn't support any of the"
+					" hardware sample formats that Traverso's alsa-driver can use.\n", device_name);
 				return -1;
 			}
 		} else {
+			if (formats[format].swapped) {
+				quirk_bswap = 1;
+			} else {
+				quirk_bswap = 0;
+			}
+			printf("ALSA: final selected sample format for %s: %s\n", stream_name, formats[format].Name);
 			device->set_bit_depth(formats[format].bitdepth);
 			break;
 		}
@@ -533,9 +591,7 @@ int AlsaDriver::configure_stream(char *device_name,
 	}
 
 	if (*nperiodsp < user_nperiods) {
-		PERROR ("ALSA: got smaller periods %u than %u for %s",
-			*nperiodsp, (unsigned int) user_nperiods,
-			stream_name);
+		qWarning("ALSA: use %d periods for %s", *nperiodsp, stream_name);
 		return -1;
 	}
 
@@ -626,8 +682,8 @@ int  AlsaDriver::set_parameters (nframes_t frames_per_interupt,
 	frames_per_cycle = frames_per_interupt;
 	user_nperiods = nperiods;
 
-	fprintf (stderr, "configuring for %d Hz, period = %ld frames, buffer = %ld periods\n", rate, (long)frames_per_cycle, user_nperiods);
-
+	fprintf (stderr, "configuring for %d Hz, period=%ld frames (%.1f ms), buffer=%ld periods\n", 
+		 rate, (long)frames_per_cycle,(((float)frames_per_cycle / (float) rate) * 1000.0f), user_nperiods);
 	if (capture_handle) {
 		if (configure_stream (
 					alsa_name_capture,
@@ -700,7 +756,8 @@ int  AlsaDriver::set_parameters (nframes_t frames_per_interupt,
 		err = snd_pcm_hw_params_get_period_size (playback_hw_params, &p_period_size, &dir);
 		err = snd_pcm_hw_params_get_format (playback_hw_params,	&playback_sample_format);
 		err = snd_pcm_hw_params_get_access (playback_hw_params, &access);
-		playback_interleaved = (access == SND_PCM_ACCESS_MMAP_INTERLEAVED);
+		playback_interleaved = (access == SND_PCM_ACCESS_MMAP_INTERLEAVED) 
+					|| (access == SND_PCM_ACCESS_MMAP_COMPLEX);
 
 		if (p_period_size != frames_per_cycle) {
 			PERROR ("alsa_pcm: requested an interrupt every %ld frames but got %ld frames for playback", (long)frames_per_cycle, p_period_size);
@@ -714,7 +771,8 @@ int  AlsaDriver::set_parameters (nframes_t frames_per_interupt,
 		err = snd_pcm_hw_params_get_period_size (capture_hw_params, &c_period_size, &dir);
 		err = snd_pcm_hw_params_get_format (capture_hw_params, &(capture_sample_format));
 		err = snd_pcm_hw_params_get_access (capture_hw_params, &access);
-		capture_interleaved = (access == SND_PCM_ACCESS_MMAP_INTERLEAVED);
+		capture_interleaved = (access == SND_PCM_ACCESS_MMAP_INTERLEAVED) 
+					|| (access == SND_PCM_ACCESS_MMAP_COMPLEX);
 
 
 		if (c_period_size != frames_per_cycle) {
@@ -729,7 +787,8 @@ int  AlsaDriver::set_parameters (nframes_t frames_per_interupt,
 	if (playback_handle) {
 		switch (playback_sample_format) {
 		case SND_PCM_FORMAT_S32_LE:
-		case SND_PCM_FORMAT_S24_3:
+		case SND_PCM_FORMAT_S24_3LE:
+		case SND_PCM_FORMAT_S24_3BE:
 		case SND_PCM_FORMAT_S16_LE:
 		case SND_PCM_FORMAT_S32_BE:
 		case SND_PCM_FORMAT_S16_BE:
@@ -744,7 +803,8 @@ int  AlsaDriver::set_parameters (nframes_t frames_per_interupt,
 	if (capture_handle) {
 		switch (capture_sample_format) {
 		case SND_PCM_FORMAT_S32_LE:
-		case SND_PCM_FORMAT_S24_3:
+		case SND_PCM_FORMAT_S24_3LE:
+		case SND_PCM_FORMAT_S24_3BE:
 		case SND_PCM_FORMAT_S16_LE:
 		case SND_PCM_FORMAT_S32_BE:
 		case SND_PCM_FORMAT_S16_BE:
@@ -763,11 +823,10 @@ int  AlsaDriver::set_parameters (nframes_t frames_per_interupt,
 			PERROR ("ALSA: %s: mmap areas info error", alsa_name_playback);
 			return -1;
 		}
-		playback_interleave_skip = my_areas[0].step / 8;
+		
 		interleave_unit = snd_pcm_format_physical_width(playback_sample_format) / 8;
 	} else {
 		interleave_unit = 0;  /* NOT USED */
-		playback_interleave_skip = snd_pcm_format_physical_width(playback_sample_format) / 8;
 	}
 
 	if (capture_interleaved) {
@@ -777,9 +836,6 @@ int  AlsaDriver::set_parameters (nframes_t frames_per_interupt,
 			PERROR ("ALSA: %s: mmap areas info error", alsa_name_capture);
 			return -1;
 		}
-		capture_interleave_skip = my_areas[0].step / 8;
-	} else {
-		capture_interleave_skip = snd_pcm_format_physical_width(capture_sample_format) / 8;
 	}
 
 	if (playback_nchannels > capture_nchannels) {
@@ -807,6 +863,8 @@ int  AlsaDriver::set_parameters (nframes_t frames_per_interupt,
 	if (playback_handle) {
 		playback_addr =  (char**) malloc (sizeof (char *) * playback_nchannels);
 		memset (playback_addr, 0, sizeof (char *) * playback_nchannels);
+		playback_interleave_skip = (unsigned long *) malloc (sizeof (unsigned long *) * playback_nchannels);
+		memset (playback_interleave_skip, 0, sizeof (unsigned long *) * playback_nchannels);
 		silent = (unsigned long *) malloc (sizeof (unsigned long) * playback_nchannels);
 
 		for (chn = 0; chn < playback_nchannels; chn++) {
@@ -823,6 +881,8 @@ int  AlsaDriver::set_parameters (nframes_t frames_per_interupt,
 	if (capture_handle) {
 		capture_addr = (char **) malloc (sizeof (char *) * capture_nchannels);
 		memset (capture_addr, 0, sizeof (char *) * capture_nchannels);
+		capture_interleave_skip = (unsigned long *) malloc (sizeof (unsigned long *) * capture_nchannels);
+		memset (capture_interleave_skip, 0, sizeof (unsigned long *) * capture_nchannels);
 	}
 
 	period_usecs = (trav_time_t) floor ((((float) frames_per_cycle) / frame_rate) * 1000000.0f);
@@ -859,6 +919,7 @@ int AlsaDriver::get_channel_addresses (snd_pcm_uframes_t *capture_avail,
 		for (chn = 0; chn < capture_nchannels; chn++) {
 			const snd_pcm_channel_area_t *a = &capture_areas[chn];
 			capture_addr[chn] = (char *) a->addr + ((a->first + a->step * *capture_offset) / 8);
+			capture_interleave_skip[chn] = (unsigned long ) (a->step / 8);
 		}
 	}
 
@@ -871,6 +932,7 @@ int AlsaDriver::get_channel_addresses (snd_pcm_uframes_t *capture_avail,
 		for (chn = 0; chn < playback_nchannels; chn++) {
 			const snd_pcm_channel_area_t *a = &playback_areas[chn];
 			playback_addr[chn] = (char *) a->addr + ((a->first + a->step * *playback_offset) / 8);
+			playback_interleave_skip[chn] = (unsigned long ) (a->step / 8);
 		}
 	}
 
@@ -1087,9 +1149,10 @@ again:
 
 	while (need_playback || need_capture) {
 
-		unsigned int p_timed_out, c_timed_out;
+		int poll_result;
 		unsigned int ci = 0;
 		unsigned int nfds;
+		unsigned short revents;
 
 		nfds = 0;
 
@@ -1130,7 +1193,8 @@ again:
 
 		device->transport_cycle_end(poll_enter);
 
-		if (poll (pfd, nfds, poll_timeout) < 0) {
+		poll_result = poll (pfd, nfds, poll_timeout);
+		if (poll_result < 0) {
 
 			if (errno == EINTR) {
 				printf ("poll interrupt\n");
@@ -1185,29 +1249,20 @@ again:
 			return (pfd[nfds-1].revents == POLLIN) ? 0 : -1;
 		}
 
-		p_timed_out = 0;
-
 		if (need_playback) {
-			for (i = 0; i < playback_nfds; i++) {
-				if (pfd[i].revents & POLLERR) {
-					PWARN("playback pollerror, xrun_detected is true");
-					xrun_detected = true;
-				}
-
-				if (pfd[i].revents == 0) {
-					p_timed_out++;
-#ifdef DEBUG_WAKEUP
-
-					fprintf (stderr, "%" PRIu64
-						" playback stream timed out\n",
-						poll_ret);
-#endif
-
-				}
+			if (snd_pcm_poll_descriptors_revents(playback_handle, &pfd[0], playback_nfds, &revents) < 0) {
+				qWarning("ALSA: playback revents failed");
+				*status = -6;
+				return 0;
 			}
 
-			if (p_timed_out == 0) {
+			if (revents & POLLERR) {
+				xrun_detected = TRUE;
+			}
+
+			if (revents & POLLOUT) {
 				need_playback = 0;
+
 #ifdef DEBUG_WAKEUP
 
 				fprintf (stderr, "%" PRIu64
@@ -1218,28 +1273,18 @@ again:
 			}
 		}
 
-		c_timed_out = 0;
-
 		if (need_capture) {
-			for (i = ci; i < nfds; i++) {
-				if (pfd[i].revents & POLLERR) {
-					PWARN("capture pollerror, xrun_detected is true");
-					xrun_detected = true;
-				}
-
-				if (pfd[i].revents == 0) {
-					c_timed_out++;
-#ifdef DEBUG_WAKEUP
-
-					fprintf (stderr, "%" PRIu64
-						" capture stream timed out\n",
-						poll_ret);
-#endif
-
-				}
+			if (snd_pcm_poll_descriptors_revents(capture_handle, &pfd[ci], capture_nfds, &revents) < 0) {
+				qWarning ("ALSA: capture revents failed");
+				*status = -6;
+				return 0;
 			}
 
-			if (c_timed_out == 0) {
+			if (revents & POLLERR) {
+				xrun_detected = TRUE;
+			}
+
+			if (revents & POLLIN) {
 				need_capture = 0;
 #ifdef DEBUG_WAKEUP
 
@@ -1251,9 +1296,8 @@ again:
 			}
 		}
 
-		if ((p_timed_out && (p_timed_out == playback_nfds)) &&
-				(c_timed_out && (c_timed_out == capture_nfds))) {
-			PERROR ("ALSA: poll time out, polled for %ld usecs", (long)(poll_ret - poll_enter));
+		if (poll_result == 0) {
+			qWarning ("ALSA: poll time out, polled for %ld usecs", (long)(poll_ret - poll_enter));
 			*status = -5;
 			return 0;
 		}
@@ -1390,12 +1434,12 @@ int AlsaDriver::_read(nframes_t nframes)
 	audio_sample_t* buf;
 	int err;
 
-	if (!capture_handle) {
-		return 0;
-	}
-
 	if (nframes > frames_per_cycle) {
 		return -1;
+	}
+	
+	if (!capture_handle) {
+		return 0;
 	}
 
 	nread = 0;
