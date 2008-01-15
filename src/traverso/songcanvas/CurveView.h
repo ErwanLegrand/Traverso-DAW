@@ -97,13 +97,10 @@ public:
 	CurveView(SongView* sv, ViewItem* parentViewItem, Curve* curve);
 	~CurveView();
 	
-	enum {Type = UserType + 8};
-	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	int get_vector(int xstart, int pixelcount, float *arg);
 	bool has_nodes() const;
 	float get_default_value();
-	int type() const;
 	void calculate_bounding_rect();
 	void load_theme_data();
 	
@@ -147,9 +144,6 @@ signals :
 	// when the user manually edits, not on undo/redo
 	void curveModified();
 };
-
-
-inline int CurveView::type() const {return Type;}
 
 #endif
 

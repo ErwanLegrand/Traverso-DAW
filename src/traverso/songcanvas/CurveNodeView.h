@@ -36,10 +36,7 @@ public:
 	CurveNodeView(SongView* sv, CurveView* curveview, CurveNode* node, Curve* guicurve);
 	~CurveNodeView();
 	
-	enum {Type = UserType + 9};
-	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-	int type() const;
 	void calculate_bounding_rect();
 	void set_selected();
 	void reset_size();
@@ -56,9 +53,6 @@ private:
 public slots:
 	void update_pos();
 };
-
-
-inline int CurveNodeView::type() const {return Type;}
 
 #endif
 

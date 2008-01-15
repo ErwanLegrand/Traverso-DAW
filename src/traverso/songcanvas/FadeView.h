@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeView.h,v 1.6 2007/12/29 02:03:37 benjie Exp $
+$Id: FadeView.h,v 1.7 2008/01/15 19:56:07 r_sijrier Exp $
 */
 
 #ifndef FADE_VIEW_H
@@ -42,8 +42,6 @@ public:
 	FadeView(SongView* sv, AudioClipView* parent, FadeCurve* fadeCuve);
 	~FadeView();
 	
-	enum {Type = UserType + 4};
-	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	int get_vector(int xstart, int pixelcount, float * arg);
 	void calculate_bounding_rect();
@@ -51,7 +49,6 @@ public:
 	
 	FadeCurve* get_fade() const {return m_fadeCurve;}
 	
-	int type() const;
 	void load_theme_data();
 
 private:
@@ -73,7 +70,6 @@ signals :
 	void fadeModified();
 };
 
-inline int FadeView::type() const {return Type;}
 
 #endif
 

@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ViewItem.h,v 1.18 2008/01/11 15:37:52 r_sijrier Exp $
 */
 
 #ifndef VIEW_ITEM_H
@@ -62,7 +61,7 @@ public:
 	virtual void calculate_bounding_rect() {
 		for (int i=0; i< QGraphicsItem::children().size(); ++i) {
 			QGraphicsItem* item = QGraphicsItem::children().at(i);
-			if (item->type() == Type) {
+			if (is_viewitem(item)) {
 				((ViewItem*)item)->calculate_bounding_rect();
 			}
 		}
@@ -79,6 +78,11 @@ public:
 	virtual void load_theme_data() {};
 	
 	SongView* get_songview() const {return m_sv;}
+	
+	static bool is_viewitem(QGraphicsItem* item) {
+		return item->type() == Type;
+	}
+		
 
 protected:
 

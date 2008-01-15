@@ -91,6 +91,7 @@ public :
 	void set_shuttle_factor_values(int x, int y);
 	int hscrollbar_value() const;
 	int vscrollbar_value() const;
+	int get_peak_cache_zoom_factor() const {return m_peakCacheZoomFactor;}
 
 	qint64		timeref_scalefactor;
 
@@ -106,7 +107,8 @@ private:
 	WorkCursor*		m_workCursor;
 	int			m_shuttleXfactor;
 	int			m_shuttleYfactor;
-	int	m_sceneHeight;
+	int			m_sceneHeight;
+	int			m_peakCacheZoomFactor;
 	bool			m_dragShuttle;
 	QTimer			m_shuttletimer;
 	QScrollBar*		m_vScrollBar;
