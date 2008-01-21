@@ -46,7 +46,7 @@ NewProjectDialog::NewProjectDialog( QWidget * parent )
 	: QDialog(parent)
 {
 	setupUi(this);
-	trackCountSpinBox->setValue(config().get_property("Song", "trackCreationCount", 4).toInt());
+	trackCountSpinBox->setValue(config().get_property("Sheet", "trackCreationCount", 4).toInt());
 	
 	use_template_checkbox_state_changed(Qt::Unchecked);
 	update_template_combobox();
@@ -88,7 +88,7 @@ void NewProjectDialog::accept( )
 		}
 	}
 	
-	int numSongs = songCountSpinBox->value();
+	int numSheets = sheetCountSpinBox->value();
 	int numTracks = trackCountSpinBox->value();
 	
 	int index = templateComboBox->currentIndex();
@@ -104,7 +104,7 @@ void NewProjectDialog::accept( )
 				templateComboBox->itemText(index) + ".tpt", title);
 		
 	} else {
-		project = pm().create_new_project(numSongs, numTracks, title);
+		project = pm().create_new_project(numSheets, numTracks, title);
 	}
 	
 	if (! project) {

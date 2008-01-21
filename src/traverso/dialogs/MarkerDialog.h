@@ -27,7 +27,7 @@
 
 class Project;
 class Marker;
-class Song;
+class Sheet;
 
 class MarkerDialog : public QDialog, protected Ui::MarkerDialog
 {
@@ -37,13 +37,13 @@ public:
 	MarkerDialog(QWidget* parent = 0);
 	~MarkerDialog() {};
 	
-	void song_to_be_showed(Song* song);
+	void sheet_to_be_showed(Sheet* sheet);
 	
 	
 private:
 	Project* m_project;
 	Marker* m_marker;
-	QList<Song*> m_songlist;
+	QList<Sheet*> m_sheetlist;
 
 	Marker* get_marker(qint64);
 	void next_item(QLineEdit *);
@@ -54,7 +54,7 @@ private slots:
 	void item_changed(QTreeWidgetItem *, QTreeWidgetItem *);
 	void description_changed(const QString &);
 	void position_changed(const QString &);
-	void update_songs();
+	void update_sheets();
 	void remove_marker();
 	void export_toc();
 
@@ -63,7 +63,7 @@ private slots:
 	void performer_enter();
 	void composer_enter();
 	void arranger_enter();
-	void songwriter_enter();
+	void sheetwriter_enter();
 	void message_enter();
 	void isrc_enter();
 
@@ -71,7 +71,7 @@ private slots:
 	void performer_all();
 	void composer_all();
 	void arranger_all();
-	void songwriter_all();
+	void sheetwriter_all();
 	void message_all();
 	void copy_all();
 	void pemph_all();

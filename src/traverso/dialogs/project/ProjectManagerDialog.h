@@ -26,7 +26,7 @@
 #include <QDialog>
 
 class Project;
-class Song;
+class Sheet;
 
 class ProjectManagerDialog : public QDialog, protected Ui::ProjectManagerDialog
 {
@@ -40,19 +40,19 @@ private:
 	Project* m_project;
 
 private slots:
-	void update_song_list();
+	void update_sheet_list();
 	void set_project(Project* project);
-	void songitem_clicked( QTreeWidgetItem* item, int);
-	void on_renameSongButton_clicked();
-        void on_deleteSongButton_clicked();
-        void on_createSongButton_clicked();
+	void sheetitem_clicked( QTreeWidgetItem* item, int);
+	void on_renameSheetButton_clicked();
+        void on_deleteSheetButton_clicked();
+        void on_createSheetButton_clicked();
 	
 	void redo_text_changed(const QString& text);
 	void undo_text_changed(const QString& text);
 	
 	void on_undoButton_clicked();
 	void on_redoButton_clicked();
-	void on_songsExportButton_clicked();
+	void on_sheetsExportButton_clicked();
 	void on_exportTemplateButton_clicked();
 	
 	void accept();

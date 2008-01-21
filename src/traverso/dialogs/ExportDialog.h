@@ -27,7 +27,7 @@
 #include <QDialog>
 
 class Project;
-class Song;
+class Sheet;
 struct ExportSpecification;
 
 class ExportDialog : public QDialog, protected Ui::ExportDialog
@@ -55,10 +55,10 @@ private:
 
 private slots:
 	void set_project(Project* project);
-	void update_song_progress(int progress);
+	void update_sheet_progress(int progress);
 	void update_overall_progress(int progress);
 	void render_finished();
-	void set_exporting_song(Song* song);
+	void set_exporting_sheet(Sheet* sheet);
 
 	void on_fileSelectButton_clicked();
 	void on_startButton_clicked();

@@ -280,11 +280,11 @@ void CDWritingDialog::cd_render()
 	}
 	
 	// FIXME: We should instead check export wav file timestamps/revision numbers as a dirty test
-	if (! cdAllSongsButton->isChecked() && m_lastSheetExported != m_project->get_current_song_id()) {
+	if (! cdAllSheetsButton->isChecked() && m_lastSheetExported != m_project->get_current_sheet_id()) {
 		m_exportSpec->renderfinished = false;
 	}
 	
-	if (m_wasClosed && m_exportSpec->renderfinished && (m_exportSpec->allSongs == cdAllSongsButton->isChecked()) ) {
+	if (m_wasClosed && m_exportSpec->renderfinished && (m_exportSpec->allSheets == cdAllSheetsButton->isChecked()) ) {
 		
 		if (QMessageBox::question(this, tr("Rerender CD content"), 
 		    		tr("There is already a CD render available.\nShould I re-render the CD content?"), 
@@ -298,7 +298,7 @@ void CDWritingDialog::cd_render()
 	m_wasClosed = false;
 	
 	if ( !	(m_exportSpec->renderfinished && 
-		(m_exportSpec->allSongs == cdAllSongsButton->isChecked()) &&
+		(m_exportSpec->allSheets == cdAllSheetsButton->isChecked()) &&
 		(m_exportSpec->normalize == cdNormalizeCheckBox->isChecked())) ) {
 		
 		m_exportSpec->data_width = 16;
@@ -309,10 +309,10 @@ void CDWritingDialog::cd_render()
 		m_exportSpec->writeToc = true;
 		m_exportSpec->dither_type = GDitherTri;
 		m_exportSpec->src_quality = SRC_SINC_MEDIUM_QUALITY; // SRC_SINC_BEST_QUALITY  SRC_SINC_FASTEST  SRC_ZERO_ORDER_HOLD  SRC_LINEAR
-		if (cdAllSongsButton->isChecked()) {
-			m_exportSpec->allSongs = true;
+		if (cdAllSheetsButton->isChecked()) {
+			m_exportSpec->allSheets = true;
 		} else {
-			m_exportSpec->allSongs = false;
+			m_exportSpec->allSheets = false;
 		}
 		m_exportSpec->normalize = cdNormalizeCheckBox->isChecked();
 		m_exportSpec->isRecording = false;
@@ -334,7 +334,7 @@ void CDWritingDialog::cd_render()
 		
 		disable_ui_interaction();
 		m_project->export_project(m_exportSpec);
-		m_lastSheetExported = m_project->get_current_song_id();
+		m_lastSheetExported = m_project->get_current_sheet_id();
 	} else {
 		if (cdDiskExportOnlyCheckBox->isChecked()) {
 			return;

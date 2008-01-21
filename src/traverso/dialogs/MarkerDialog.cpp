@@ -28,7 +28,7 @@
 #include <QString>
 #include <ProjectManager.h>
 #include <Project.h>
-#include <Song.h>
+#include <Sheet.h>
 #include <TimeLine.h>
 #include <Marker.h>
 #include <Utils.h>
@@ -45,7 +45,7 @@ MarkerDialog::MarkerDialog(QWidget * parent)
 {
 	setupUi(this);
 	
-	checkBoxAllSongs->hide();
+	checkBoxAllSheets->hide();
 
 	set_project(pm().get_project());
 
@@ -61,11 +61,11 @@ MarkerDialog::MarkerDialog(QWidget * parent)
 	pushButtonClose->setAutoDefault(false);
 
 
-	// connect signals which require an update of the song list
+	// connect signals which require an update of the sheet list
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 
 	// connect signals which require an update of the treeWidget's items
-	connect(comboBoxDisplaySong, SIGNAL(currentIndexChanged(int)), this, SLOT(update_marker_treeview()));
+	connect(comboBoxDisplaySheet, SIGNAL(currentIndexChanged(int)), this, SLOT(update_marker_treeview()));
 
 	// connect other stuff related to the treeWidget
 	connect(lineEditTitle, SIGNAL(textEdited(const QString &)), this, SLOT(description_changed(const QString &)));
@@ -81,7 +81,7 @@ MarkerDialog::MarkerDialog(QWidget * parent)
 	connect(lineEditPerformer, SIGNAL(returnPressed()), this, SLOT(performer_enter()));
 	connect(lineEditArranger, SIGNAL(returnPressed()), this, SLOT(arranger_enter()));
 	connect(lineEditMessage, SIGNAL(returnPressed()), this, SLOT(message_enter()));
-	connect(lineEditSongwriter, SIGNAL(returnPressed()), this, SLOT(songwriter_enter()));
+	connect(lineEditSheetwriter, SIGNAL(returnPressed()), this, SLOT(sheetwriter_enter()));
 	connect(lineEditIsrc, SIGNAL(returnPressed()), this, SLOT(isrc_enter()));
 
 	connect(toolButtonTitleAll, SIGNAL(clicked()), this, SLOT(title_all()));
@@ -89,7 +89,7 @@ MarkerDialog::MarkerDialog(QWidget * parent)
 	connect(toolButtonPerformerAll, SIGNAL(clicked()), this, SLOT(performer_all()));
 	connect(toolButtonArrangerAll, SIGNAL(clicked()), this, SLOT(arranger_all()));
 	connect(toolButtonMessageAll, SIGNAL(clicked()), this, SLOT(message_all()));
-	connect(toolButtonSongwriterAll, SIGNAL(clicked()), this, SLOT(songwriter_all()));
+	connect(toolButtonSheetwriterAll, SIGNAL(clicked()), this, SLOT(sheetwriter_all()));
 	connect(toolButtonCopyAll, SIGNAL(clicked()), this, SLOT(copy_all()));
 	connect(toolButtonPEmphAll, SIGNAL(clicked()), this, SLOT(pemph_all()));
 
@@ -99,7 +99,7 @@ MarkerDialog::MarkerDialog(QWidget * parent)
 void MarkerDialog::set_project(Project * project)
 {
 	m_project = project;
-	comboBoxDisplaySong->clear();
+	comboBoxDisplaySheet->clear();
 	
 	if (! m_project) {
 		return;
@@ -107,16 +107,16 @@ void MarkerDialog::set_project(Project * project)
 	
 	setWindowTitle("Marker Editor - Project " + m_project->get_title());
 	
-	connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(update_songs()));
-	connect(m_project, SIGNAL(songRemoved(Song*)), this, SLOT(update_songs()));
+	connect(m_project, SIGNAL(sheetAdded(Sheet*)), this, SLOT(update_sheets()));
+	connect(m_project, SIGNAL(sheetRemoved(Sheet*)), this, SLOT(update_sheets()));
 	
-	// fill the combo box with the names of the songs
-	m_songlist = m_project->get_songs();
-	for (int i = 0; i < m_songlist.size(); ++i) {
-		comboBoxDisplaySong->addItem("Sheet " + QString::number(i+1) + ": " + m_songlist.at(i)->get_title());
-		connect(m_songlist.at(i)->get_timeline(), SIGNAL(markerAdded(Marker*)), this, SLOT(update_marker_treeview()));
-		connect(m_songlist.at(i)->get_timeline(), SIGNAL(markerRemoved(Marker*)), this, SLOT(update_marker_treeview()));
-		connect(m_songlist.at(i)->get_timeline(), SIGNAL(markerPositionChanged(Marker*)), this, SLOT(update_marker_treeview()));
+	// fill the combo box with the names of the sheets
+	m_sheetlist = m_project->get_sheets();
+	for (int i = 0; i < m_sheetlist.size(); ++i) {
+		comboBoxDisplaySheet->addItem("Sheet " + QString::number(i+1) + ": " + m_sheetlist.at(i)->get_title());
+		connect(m_sheetlist.at(i)->get_timeline(), SIGNAL(markerAdded(Marker*)), this, SLOT(update_marker_treeview()));
+		connect(m_sheetlist.at(i)->get_timeline(), SIGNAL(markerRemoved(Marker*)), this, SLOT(update_marker_treeview()));
+		connect(m_sheetlist.at(i)->get_timeline(), SIGNAL(markerPositionChanged(Marker*)), this, SLOT(update_marker_treeview()));
 	}
 
 	// Fill dialog with marker stuff....
@@ -124,18 +124,18 @@ void MarkerDialog::set_project(Project * project)
 }
 
 
-void MarkerDialog::song_to_be_showed(Song * song)
+void MarkerDialog::sheet_to_be_showed(Sheet * sheet)
 {
 	int index = -1;
-	for (int i=0; i<m_songlist.size(); ++i) {
-		if (song == m_songlist.at(i)) {
+	for (int i=0; i<m_sheetlist.size(); ++i) {
+		if (sheet == m_sheetlist.at(i)) {
 			index = i;
 			break;
 		}
 	}
 	
-	if (index != -1 && index < m_songlist.size()) {
-		comboBoxDisplaySong->setCurrentIndex(index);
+	if (index != -1 && index < m_sheetlist.size()) {
+		comboBoxDisplaySheet->setCurrentIndex(index);
 	}
 		
 }
@@ -148,33 +148,33 @@ void MarkerDialog::update_marker_treeview()
 	m_marker = (Marker*)0;
 	markersTreeWidget->clear();
 
-	if (!m_songlist.size() || !m_project) {
+	if (!m_sheetlist.size() || !m_project) {
 		return;
 	}
 
-	if (comboBoxDisplaySong->currentIndex() >= m_songlist.size()) {
+	if (comboBoxDisplaySheet->currentIndex() >= m_sheetlist.size()) {
 		return;
 	}
 
-	int index = comboBoxDisplaySong->currentIndex();
+	int index = comboBoxDisplaySheet->currentIndex();
 	if (index < 0) {
 		index = 0;
 	}
 	
-	if (index >= m_songlist.size()) {
-		index = m_songlist.size() - 1;
+	if (index >= m_sheetlist.size()) {
+		index = m_sheetlist.size() - 1;
 	}
 	
-	Song* song = m_songlist.at(index);
+	Sheet* sheet = m_sheetlist.at(index);
 
-	TimeLine* tl = song->get_timeline();
+	TimeLine* tl = sheet->get_timeline();
 		
 	foreach(Marker* marker, tl->get_markers()) {
 		QString name = marker->get_description();
 		QString pos = timeref_to_cd_including_hours(marker->get_when());
 
 		QTreeWidgetItem* item = new QTreeWidgetItem(markersTreeWidget);
-		item->setText(0, QString("%1 %2").arg(index, 2, 10, QLatin1Char('0')).arg(song->get_title()));
+		item->setText(0, QString("%1 %2").arg(index, 2, 10, QLatin1Char('0')).arg(sheet->get_title()));
 		item->setText(1, pos.simplified());
 		item->setText(2, name);
 		item->setData(0, Qt::UserRole, marker->get_id());
@@ -206,7 +206,7 @@ void MarkerDialog::item_changed(QTreeWidgetItem * current, QTreeWidgetItem * pre
 		marker->set_description(lineEditTitle->text());
 		marker->set_performer(lineEditPerformer->text());
 		marker->set_composer(lineEditComposer->text());
-		marker->set_songwriter(lineEditSongwriter->text());
+		marker->set_sheetwriter(lineEditSheetwriter->text());
 		marker->set_arranger(lineEditArranger->text());
 		marker->set_message(lineEditMessage->text());
 		marker->set_isrc(lineEditIsrc->text());
@@ -218,7 +218,7 @@ void MarkerDialog::item_changed(QTreeWidgetItem * current, QTreeWidgetItem * pre
 	lineEditTitle->setText(m_marker->get_description());
 	lineEditPerformer->setText(m_marker->get_performer());
 	lineEditComposer->setText(m_marker->get_composer());
-	lineEditSongwriter->setText(m_marker->get_songwriter());
+	lineEditSheetwriter->setText(m_marker->get_sheetwriter());
 	lineEditArranger->setText(m_marker->get_arranger());
 	lineEditMessage->setText(m_marker->get_message());
 	lineEditIsrc->setText(m_marker->get_isrc());
@@ -268,13 +268,13 @@ void MarkerDialog::position_changed(const QString &s)
 	markersTreeWidget->sortItems(1, Qt::AscendingOrder);
 }
 
-// find the marker based on it's id. Since each song has it's own timeline,
-// we need to iterate over all songs
+// find the marker based on it's id. Since each sheet has it's own timeline,
+// we need to iterate over all sheets
 Marker * MarkerDialog::get_marker(qint64 id)
 {
-	foreach(Song* song, m_project->get_songs()) {
+	foreach(Sheet* sheet, m_project->get_sheets()) {
 
-		TimeLine* tl = song->get_timeline();
+		TimeLine* tl = sheet->get_timeline();
 		
 		foreach(Marker* marker, tl->get_markers()) {
 			if (marker->get_id() == id) {
@@ -311,9 +311,9 @@ void MarkerDialog::arranger_enter()
 	next_item(lineEditArranger);
 }
 
-void MarkerDialog::songwriter_enter()
+void MarkerDialog::sheetwriter_enter()
 {
-	next_item(lineEditSongwriter);
+	next_item(lineEditSheetwriter);
 }
 
 void MarkerDialog::message_enter()
@@ -417,11 +417,11 @@ void MarkerDialog::arranger_all()
 	}
 }
 
-void MarkerDialog::songwriter_all()
+void MarkerDialog::sheetwriter_all()
 {
-	QString str = lineEditSongwriter->text();
-	if (QMessageBox::question(this, tr("Set all Songwriters"), 
-					tr("Do you really want to set all songwriters to\n\"")
+	QString str = lineEditSheetwriter->text();
+	if (QMessageBox::question(this, tr("Set all Sheetwriters"), 
+					tr("Do you really want to set all sheetwriters to\n\"")
 					+str+"\"?", QMessageBox::Yes | QMessageBox::No, 
 					QMessageBox::Yes) == QMessageBox::No)
 	{
@@ -431,7 +431,7 @@ void MarkerDialog::songwriter_all()
 	for (int i = 0; i < markersTreeWidget->topLevelItemCount(); ++i) {
 		QTreeWidgetItem *it = markersTreeWidget->topLevelItem(i);
 		Marker *m = get_marker(it->data(0, Qt::UserRole).toLongLong());
-		m->set_songwriter(str);
+		m->set_sheetwriter(str);
 	}
 }
 
@@ -499,7 +499,7 @@ void MarkerDialog::pemph_all()
 	}
 }
 
-void MarkerDialog::update_songs()
+void MarkerDialog::update_sheets()
 {
 	// this one does all we need
 	set_project(m_project);
@@ -516,8 +516,8 @@ void MarkerDialog::remove_marker()
 		return;
 	}
 
-	Song *song = m_songlist.at(comboBoxDisplaySong->currentIndex());
-	TimeLine* tl = song->get_timeline();
+	Sheet *sheet = m_sheetlist.at(comboBoxDisplaySheet->currentIndex());
+	TimeLine* tl = sheet->get_timeline();
 		
 	AddRemove *ar = (AddRemove*) tl->remove_marker(m_marker);
 	Command::process_command(ar);
@@ -551,14 +551,14 @@ void MarkerDialog::export_toc()
 	out << "    <hr>\n";
 	out << "    <table>\n      <tr><th>Position (mm:ss:frames)</th><th>Title</th>\n";
 
-	if (comboBoxDisplaySong->currentIndex() >= m_songlist.size()) {
+	if (comboBoxDisplaySheet->currentIndex() >= m_sheetlist.size()) {
 		return;
 	}
 
-	int i = comboBoxDisplaySong->currentIndex();
-	Song *song = m_songlist.at(i);
+	int i = comboBoxDisplaySheet->currentIndex();
+	Sheet *sheet = m_sheetlist.at(i);
 
-	TimeLine* tl = song->get_timeline();
+	TimeLine* tl = sheet->get_timeline();
 	foreach(Marker* marker, tl->get_markers()) {
 		QString name = marker->get_description();
 		QString pos = timeref_to_cd(marker->get_when());

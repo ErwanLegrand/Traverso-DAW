@@ -29,7 +29,7 @@
 #include <QProcess>
 
 class Project;
-class Song;
+class Sheet;
 struct ExportSpecification;
 class QProcess;
 

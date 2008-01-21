@@ -20,18 +20,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 */
 
 
-#include "NewSongDialog.h"
+#include "NewSheetDialog.h"
 
 #include <libtraversocore.h>
 #include <CommandGroup.h>
 #include <QPushButton>
 
-NewSongDialog::NewSongDialog(QWidget * parent)
+NewSheetDialog::NewSheetDialog(QWidget * parent)
 	: QDialog(parent)
 {
 	setupUi(this);
 	
-	trackCountSpinBox->setValue(config().get_property("Song", "trackCreationCount", 4).toInt());
+	trackCountSpinBox->setValue(config().get_property("Sheet", "trackCreationCount", 4).toInt());
 	
 	set_project(pm().get_project());
 	
@@ -43,7 +43,7 @@ NewSongDialog::NewSongDialog(QWidget * parent)
 	connect(useTemplateCheckBox, SIGNAL(stateChanged (int)), this, SLOT(use_template_checkbox_state_changed(int)));
 }
 
-void NewSongDialog::accept()
+void NewSheetDialog::accept()
 {
 	if (! m_project) {
 		info().information(tr("I can't create a new Sheet if there is no Project loaded!!"));
@@ -63,42 +63,42 @@ void NewSongDialog::accept()
 	QDomNode node;
 	if (useTemplateCheckBox->isChecked() && index >= 0) {
 		usetemplate = true;
-		Song* templatesong = m_project->get_song(templateComboBox->itemData(index).toLongLong());
-		Q_ASSERT(templatesong);
+		Sheet* templatesheet = m_project->get_sheet(templateComboBox->itemData(index).toLongLong());
+		Q_ASSERT(templatesheet);
 		QDomDocument doc("Sheet");
-		node = templatesong->get_state(doc, usetemplate);
+		node = templatesheet->get_state(doc, usetemplate);
 	}
 	
 	CommandGroup* group = new CommandGroup(m_project, "");
 	
-	Song* firstNewSong = 0;
+	Sheet* firstNewSheet = 0;
 	
 	for (int i=0; i<count; ++i) {
-		Song* song;
+		Sheet* sheet;
 		if (usetemplate) {
-			song = new Song(m_project);
-			song->set_state(node);
+			sheet = new Sheet(m_project);
+			sheet->set_state(node);
 		} else {
-			song = new Song(m_project, trackcount);
+			sheet = new Sheet(m_project, trackcount);
 		}
-		song->set_title(title);
-		group->add_command(m_project->add_song(song));
+		sheet->set_title(title);
+		group->add_command(m_project->add_sheet(sheet));
 		if (i == 0) {
-			firstNewSong = song;
+			firstNewSheet = sheet;
 		}
 	}
 	
 	group->setText(tr("Added %n Sheet(s)", "", count));
 	Command::process_command(group);
 	
-	if (firstNewSong) {
-		m_project->set_current_song(firstNewSong->get_id());
+	if (firstNewSheet) {
+		m_project->set_current_sheet(firstNewSheet->get_id());
 	}
 	
 	hide();
 }
 
-void NewSongDialog::set_project(Project * project)
+void NewSheetDialog::set_project(Project * project)
 {
 	m_project = project;
 	
@@ -107,31 +107,31 @@ void NewSongDialog::set_project(Project * project)
 		return;
 	}
 	
-	connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(update_template_combo()));
-	connect(m_project, SIGNAL(songRemoved(Song*)), this, SLOT(update_template_combo()));
+	connect(m_project, SIGNAL(sheetAdded(Sheet*)), this, SLOT(update_template_combo()));
+	connect(m_project, SIGNAL(sheetRemoved(Sheet*)), this, SLOT(update_template_combo()));
 	
 	update_template_combo();
 }
 
-void NewSongDialog::reject()
+void NewSheetDialog::reject()
 {
 	hide();
 }
 
-void NewSongDialog::update_template_combo()
+void NewSheetDialog::update_template_combo()
 {
 	templateComboBox->clear();
 	
-	foreach(Song* song, m_project->get_songs()) {
-		QString text = "Sheet " + QString::number(m_project->get_song_index(song->get_id())) +
-				" " + song->get_title();
+	foreach(Sheet* sheet, m_project->get_sheets()) {
+		QString text = "Sheet " + QString::number(m_project->get_sheet_index(sheet->get_id())) +
+				" " + sheet->get_title();
 		
-		templateComboBox->addItem(text, song->get_id());
-		connect(song, SIGNAL(propertyChanged()), this, SLOT(update_template_combo()));
+		templateComboBox->addItem(text, sheet->get_id());
+		connect(sheet, SIGNAL(propertyChanged()), this, SLOT(update_template_combo()));
 	}
 }
 
-void NewSongDialog::use_template_checkbox_state_changed(int state)
+void NewSheetDialog::use_template_checkbox_state_changed(int state)
 {
 	if (state == Qt::Checked) {
 		templateComboBox->setEnabled(true);

@@ -48,7 +48,7 @@ class DecodeBuffer;
 
 struct ExportSpecification;
 
-class Song : public ContextItem, public AudioProcessingItem
+class Sheet : public ContextItem, public AudioProcessingItem
 {
 	Q_OBJECT
 	Q_CLASSINFO("start_transport", tr("Play"))
@@ -66,10 +66,10 @@ class Song : public ContextItem, public AudioProcessingItem
 
 public:
 
-	Song(Project* project);
-	Song(Project* project, int numtracks);
-	Song(Project* project, const QDomNode node);
-	~Song();
+	Sheet(Project* project);
+	Sheet(Project* project, int numtracks);
+	Sheet(Project* project, const QDomNode node);
+	~Sheet();
 	
 	enum Mode {
 		EDIT = 1,
@@ -77,7 +77,7 @@ public:
 	};
 
 	// Get functions
-	int get_hzoom() const {	return m_hzoom;}
+	qreal get_hzoom() const {return m_hzoom;}
 	int get_rate();
 	int get_bitdepth();
 	int get_numtracks() const {return m_tracks.size();}
@@ -114,7 +114,7 @@ public:
 	void set_first_visible_frame(nframes_t pos);
 	void set_title(const QString& sTitle);
 	void set_work_at(const TimeRef& location);
-	void set_hzoom(int hzoom);
+	void set_hzoom(qreal hzoom);
 	void set_snapping(bool snap);
 	void set_scrollbar_xy(int x, int y) {m_sbx = x; m_sby = y;}
 	int set_state( const QDomNode & node );
@@ -189,7 +189,7 @@ private:
 	QString 	artists;
 	QString 	title;
 	int		m_mode;
-	int 		m_hzoom;
+	qreal		m_hzoom;
 	int		m_sbx;
 	int		m_sby;
 	uint		m_currentSampleRate;
@@ -274,7 +274,7 @@ private slots:
 	void config_changed();
 };
 
-inline float Song::get_gain() const
+inline float Sheet::get_gain() const
 {
 	return m_fader->get_gain();
 }

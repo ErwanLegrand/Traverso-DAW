@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>NewSongDialog</class>
- <widget class="QDialog" name="NewSongDialog" >
+ <class>NewSheetDialog</class>
+ <widget class="QDialog" name="NewSheetDialog" >
   <property name="windowModality" >
    <enum>Qt::NonModal</enum>
   </property>
@@ -13,7 +13,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>New Song(s)</string>
+   <string>New Sheet(s)</string>
   </property>
   <layout class="QVBoxLayout" >
    <property name="margin" >
@@ -182,7 +182,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>NewSongDialog</receiver>
+   <receiver>NewSheetDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
@@ -198,7 +198,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>NewSongDialog</receiver>
+   <receiver>NewSheetDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >

@@ -23,7 +23,7 @@
 
 #include <AudioDevice.h>
 #include <ProjectManager.h>
-#include <Song.h>
+#include <Sheet.h>
 #include <Track.h>
 #include <Project.h>
 #include <QPushButton>
@@ -82,8 +82,8 @@ void BusSelectorDialog::current_track_changed(int index)
 	}
 	
 	qint64 id = trackComboBox->itemData(index).toLongLong();
-	Song* song = pm().get_project()->get_current_song();
-	m_currentTrack = song->get_track(id);
+	Sheet* sheet = pm().get_project()->get_current_sheet();
+	m_currentTrack = sheet->get_track(id);
 	
 	QList<QListWidgetItem *> list = busesListWidget->findItems(m_currentTrack->get_bus_in(), Qt::MatchExactly);
 	
@@ -174,9 +174,9 @@ void BusSelectorDialog::set_current_track(Track * track)
 {
 	trackComboBox->clear();
 	
-	Song* song = pm().get_project()->get_current_song();
+	Sheet* sheet = pm().get_project()->get_current_sheet();
 	
-	foreach(Track* track, song->get_tracks()) {
+	foreach(Track* track, sheet->get_tracks()) {
 		QString fulltitle = QString::number(track->get_sort_index() + 1) + " " + track->get_name();
 		trackComboBox->addItem(fulltitle, track->get_id());
 	}

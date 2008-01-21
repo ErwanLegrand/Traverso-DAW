@@ -335,10 +335,10 @@ void ExportDialog::on_startButton_clicked( )
 		return;
 	}
 	
-	connect(m_project, SIGNAL(songExportProgressChanged(int)), this, SLOT(update_song_progress(int)));
+	connect(m_project, SIGNAL(sheetExportProgressChanged(int)), this, SLOT(update_sheet_progress(int)));
 	connect(m_project, SIGNAL(overallExportProgressChanged(int)), this, SLOT(update_overall_progress(int)));
 	connect(m_project, SIGNAL(exportFinished()), this, SLOT(render_finished()));
-	connect(m_project, SIGNAL(exportStartedForSong(Song*)), this, SLOT (set_exporting_song(Song*)));
+	connect(m_project, SIGNAL(exportStartedForSheet(Sheet*)), this, SLOT (set_exporting_sheet(Sheet*)));
 	
 	// clear extraformats, it might be different now from previous runs!
 	m_exportSpec->extraFormat.clear();
@@ -389,10 +389,10 @@ void ExportDialog::on_startButton_clicked( )
 	m_exportSpec->dither_type = GDitherTri;
 	
 	
-	if (allSongsButton->isChecked()) {
-                m_exportSpec->allSongs = true;
+	if (allSheetsButton->isChecked()) {
+                m_exportSpec->allSheets = true;
 	} else {
-                m_exportSpec->allSongs = false;
+                m_exportSpec->allSheets = false;
 	}
 	
 	m_exportSpec->exportdir = exportDirName->text();
@@ -442,7 +442,7 @@ void ExportDialog::on_fileSelectButton_clicked( )
 }
 
 
-void ExportDialog::update_song_progress( int progress )
+void ExportDialog::update_sheet_progress( int progress )
 {
 }
 
@@ -453,10 +453,10 @@ void ExportDialog::update_overall_progress( int progress )
 
 void ExportDialog::render_finished( )
 {
-	disconnect(m_project, SIGNAL(songExportProgressChanged(int)), this, SLOT(update_song_progress(int)));
+	disconnect(m_project, SIGNAL(sheetExportProgressChanged(int)), this, SLOT(update_sheet_progress(int)));
 	disconnect(m_project, SIGNAL(overallExportProgressChanged(int)), this, SLOT(update_overall_progress(int)));
 	disconnect(m_project, SIGNAL(exportFinished()), this, SLOT(render_finished()));
-	disconnect(m_project, SIGNAL(exportStartedForSong(Song*)), this, SLOT (set_exporting_song(Song*)));
+	disconnect(m_project, SIGNAL(exportStartedForSheet(Sheet*)), this, SLOT (set_exporting_sheet(Sheet*)));
 	
 	startButton->show();
 	closeButton->show();
@@ -464,13 +464,13 @@ void ExportDialog::render_finished( )
 	progressBar->setValue(0);
 }
 
-void ExportDialog::set_exporting_song( Song * song )
+void ExportDialog::set_exporting_sheet( Sheet * sheet )
 {
 	QString name = tr("Progress of Sheet ") + 
-		QString::number(m_project->get_song_index(song->get_id())) + ": " +
-		song->get_title();
+		QString::number(m_project->get_sheet_index(sheet->get_id())) + ": " +
+		sheet->get_title();
 	
-	currentProcessingSongName->setText(name);
+	currentProcessingSheetName->setText(name);
 }
 
 void ExportDialog::set_project(Project * project)

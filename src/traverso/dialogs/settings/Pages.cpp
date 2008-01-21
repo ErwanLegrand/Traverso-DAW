@@ -460,7 +460,7 @@ void BehaviorPage::save_config()
 {
 	config().set_property("Project", "DefaultDirectory", m_configpage->projectDirLineEdit->text());
 	config().set_property("Project", "loadLastUsed", m_configpage->loadLastProjectCheckBox->isChecked());
-	config().set_property("Song", "trackCreationCount", m_configpage->numberOfTrackSpinBox->value());
+	config().set_property("Sheet", "trackCreationCount", m_configpage->numberOfTrackSpinBox->value());
 	config().set_property("PlayHead", "Follow", m_configpage->keepCursorVisibleCheckBox->isChecked());
 	config().set_property("PlayHead", "Scrollmode", m_configpage->scrollModeComboBox->currentIndex());
 	config().set_property("AudioClip", "SyncDuringDrag", m_configpage->resyncAudioCheckBox->isChecked());
@@ -481,7 +481,7 @@ void BehaviorPage::load_config()
 	QString dir = config().get_property("Project", "DefaultDirectory", getenv("HOME")).toString();
 	bool loadLastUsedProject = config().get_property("Project", "loadLastUsed", 1).toBool();
 	QString oncloseaction = config().get_property("Project", "onclose", "save").toString();
-	int defaultNumTracks = config().get_property("Song", "trackCreationCount", 6).toInt();
+	int defaultNumTracks = config().get_property("Sheet", "trackCreationCount", 6).toInt();
 	int scrollMode = config().get_property("PlayHead", "Scrollmode", 2).toInt();
 	bool resyncAudio = config().get_property("AudioClip", "SyncDuringDrag", false).toBool();
 	bool lockClips = config().get_property("AudioClip", "LockByDefault", false).toBool();
@@ -518,7 +518,7 @@ void BehaviorPage::reset_default_config()
 	config().set_property("Project", "DefaultDirectory", getenv("HOME"));
 	config().set_property("Project", "loadLastUsed", true);
 	config().set_property("Project", "onclose", "save");
-	config().set_property("Song", "trackCreationCount", 6);
+	config().set_property("Sheet", "trackCreationCount", 6);
 	config().set_property("PlayHead", "Follow", 0);
 	config().set_property("PlayHead", "Scrollmode", 2);
 	config().set_property("AudioClip", "SyncDuringDrag", false);

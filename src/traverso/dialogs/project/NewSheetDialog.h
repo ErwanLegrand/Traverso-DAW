@@ -22,19 +22,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #ifndef NEW_SONG_DIALOG_H
 #define NEW_SONG_DIALOG_H
 
-#include "ui_NewSongDialog.h"
+#include "ui_NewSheetDialog.h"
 
 #include <QDialog>
 
 class Project;
 
-class NewSongDialog : public QDialog, protected Ui::NewSongDialog
+class NewSheetDialog : public QDialog, protected Ui::NewSheetDialog
 {
 	Q_OBJECT
 
 public:
-	NewSongDialog(QWidget* parent = 0);
-	~NewSongDialog() {};
+	NewSheetDialog(QWidget* parent = 0);
+	~NewSheetDialog() {};
 	
 	
 private:

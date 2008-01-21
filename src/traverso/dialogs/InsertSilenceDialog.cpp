@@ -22,7 +22,7 @@
 #include "InsertSilenceDialog.h"
 #include "ProjectManager.h"
 #include "Project.h"
-#include "Song.h"
+#include "Sheet.h"
 #include "Import.h"
 #include "Track.h"
 #include "AudioClip.h"
@@ -52,10 +52,10 @@ void InsertSilenceDialog::focusInput()
 
 void InsertSilenceDialog::accept()
 {
-	Song* song = pm().get_project()->get_current_song();
-	QList<Track*> tracks = song->get_tracks();
+	Sheet* sheet = pm().get_project()->get_current_sheet();
+	QList<Track*> tracks = sheet->get_tracks();
 
-	// Make sure track is still in the song
+	// Make sure track is still in the sheet
 	if (m_track){
 		Track*	foundTrack = 0;
 
@@ -67,7 +67,7 @@ void InsertSilenceDialog::accept()
 		m_track = foundTrack;
 	}
 
-	if (song->get_numtracks() > 0) {
+	if (sheet->get_numtracks() > 0) {
 		if (!m_track){
 			Track*	shortestTrack = (Track*)tracks.first();
 	

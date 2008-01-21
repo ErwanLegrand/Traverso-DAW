@@ -103,17 +103,17 @@ void OpenProjectDialog::update_projects_list()
 		qint64 id = e.attribute( "id", "" ).toLongLong();
 		
 
-		QDomNode songsNode = docElem.firstChildElement("Sheets");
-		QDomNode songNode = songsNode.firstChild();
-		int songCounter = 0;
+		QDomNode sheetsNode = docElem.firstChildElement("Sheets");
+		QDomNode sheetNode = sheetsNode.firstChild();
+		int sheetCounter = 0;
 		
-		// count to get Songs number....
-		while(!songNode.isNull()) {
-			songCounter++;
-			songNode = songNode.nextSibling();
+		// count to get Sheets number....
+		while(!sheetNode.isNull()) {
+			sheetCounter++;
+			sheetNode = sheetNode.nextSibling();
 		}
 
-		QString sNumSongs = QString::number(songCounter);
+		QString sNumSheets = QString::number(sheetCounter);
 
 		/*********** TO HERE THIS CODE IS DUPLICATE FROM THAT IN PROJECT.CC :-( 
 		Don't know if this is avoidable at all *********/
@@ -147,7 +147,7 @@ void OpenProjectDialog::update_projects_list()
 		}
 		
 		item->setText(0, title);
-		item->setText(1, sNumSongs);
+		item->setText(1, sNumSheets);
 	}
 }
 

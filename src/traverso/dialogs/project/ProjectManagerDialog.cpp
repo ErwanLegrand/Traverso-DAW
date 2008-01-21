@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QFile>
 #include <QDir>
 #include <QMessageBox>
-#include <dialogs/project/NewSongDialog.h>
+#include <dialogs/project/NewSheetDialog.h>
 #include <Interface.h>
 
 // Always put me below _all_ includes, this is needed
@@ -41,13 +41,13 @@ ProjectManagerDialog::ProjectManagerDialog( QWidget * parent )
 {
 	setupUi(this);
 
-	treeSongWidget->setColumnCount(3);
-	treeSongWidget->header()->resizeSection(0, 160);
-	treeSongWidget->header()->resizeSection(1, 55);
-	treeSongWidget->header()->resizeSection(2, 70);
+	treeSheetWidget->setColumnCount(3);
+	treeSheetWidget->header()->resizeSection(0, 160);
+	treeSheetWidget->header()->resizeSection(1, 55);
+	treeSheetWidget->header()->resizeSection(2, 70);
 	QStringList stringList;
 	stringList << "Sheet Name" << "Tracks" << "Length";
-	treeSongWidget->setHeaderLabels(stringList);
+	treeSheetWidget->setHeaderLabels(stringList);
 	
 	set_project(pm().get_project());
 	
@@ -56,7 +56,7 @@ ProjectManagerDialog::ProjectManagerDialog( QWidget * parent )
 	
 	buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
 
-	connect(treeSongWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(songitem_clicked(QTreeWidgetItem*,int)));
+	connect(treeSheetWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(sheetitem_clicked(QTreeWidgetItem*,int)));
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 }
 
@@ -68,8 +68,8 @@ void ProjectManagerDialog::set_project(Project* project)
 	m_project = project;
 	
 	if (m_project) {
-		connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(update_song_list()));
-		connect(m_project, SIGNAL(songRemoved(Song*)), this, SLOT(update_song_list()));
+		connect(m_project, SIGNAL(sheetAdded(Sheet*)), this, SLOT(update_sheet_list()));
+		connect(m_project, SIGNAL(sheetRemoved(Sheet*)), this, SLOT(update_sheet_list()));
 		connect(m_project->get_history_stack(), SIGNAL(redoTextChanged ( const QString &)),
 			this, SLOT(redo_text_changed(const QString&)));
 		connect(m_project->get_history_stack(), SIGNAL(undoTextChanged ( const QString &)),
@@ -81,107 +81,107 @@ void ProjectManagerDialog::set_project(Project* project)
 		lineEditUPC->setText(m_project->get_upc_ean());
 		lineEditPerformer->setText(m_project->get_performer());
 		lineEditArranger->setText(m_project->get_arranger());
-		lineEditSongwriter->setText(m_project->get_songwriter());
+		lineEditSheetwriter->setText(m_project->get_sheetwriter());
 		lineEditMessage->setText(m_project->get_message());
 		comboBoxGenre->setCurrentIndex(m_project->get_genre());
 		redoButton->setText(m_project->get_history_stack()->redoText());
 		undoButton->setText(m_project->get_history_stack()->undoText());
 	} else {
 		setWindowTitle("Manage Project - No Project loaded!");
-		treeSongWidget->clear();
+		treeSheetWidget->clear();
 		descriptionTextEdit->clear();
 		lineEditTitle->clear();
 		lineEditId->clear();
 		lineEditUPC->clear();
 		lineEditPerformer->clear();
 		lineEditArranger->clear();
-		lineEditSongwriter->clear();
+		lineEditSheetwriter->clear();
 		lineEditMessage->clear();
 		comboBoxGenre->setCurrentIndex(0);
 	}
 	
-	update_song_list();
+	update_sheet_list();
 }
 
 
-void ProjectManagerDialog::update_song_list( )
+void ProjectManagerDialog::update_sheet_list( )
 {
 	if ( ! m_project) {
 		printf("ProjectManagerDialog:: no project ?\n");
 		return;
 	}
 	
-	treeSongWidget->clear();
-	foreach(Song* song, m_project->get_songs()) {
+	treeSheetWidget->clear();
+	foreach(Sheet* sheet, m_project->get_sheets()) {
 
-		QString songNr = QString::number(m_project->get_song_index(song->get_id()));
-		QString songName = "Sheet " + songNr + " - " + song->get_title();
-		QString numberOfTracks = QString::number(song->get_numtracks());
-		QString songLength = timeref_to_ms_2(song->get_last_location());
-		QString songStatus = song->is_changed()?"UnSaved":"Saved";
-		QString songSpaceAllocated = "Unknown";
+		QString sheetNr = QString::number(m_project->get_sheet_index(sheet->get_id()));
+		QString sheetName = "Sheet " + sheetNr + " - " + sheet->get_title();
+		QString numberOfTracks = QString::number(sheet->get_numtracks());
+		QString sheetLength = timeref_to_ms_2(sheet->get_last_location());
+		QString sheetStatus = sheet->is_changed()?"UnSaved":"Saved";
+		QString sheetSpaceAllocated = "Unknown";
 
-		QTreeWidgetItem* item = new QTreeWidgetItem(treeSongWidget);
+		QTreeWidgetItem* item = new QTreeWidgetItem(treeSheetWidget);
 		item->setTextAlignment(1, Qt::AlignHCenter);
 		item->setTextAlignment(2, Qt::AlignHCenter);
-		item->setText(0, songName);
+		item->setText(0, sheetName);
 		item->setText(1, numberOfTracks);
-		item->setText(2, songLength);
+		item->setText(2, sheetLength);
 		
-		item->setData(0, Qt::UserRole, song->get_id());
+		item->setData(0, Qt::UserRole, sheet->get_id());
 	}
 }
 
-void ProjectManagerDialog::songitem_clicked( QTreeWidgetItem* item, int)
+void ProjectManagerDialog::sheetitem_clicked( QTreeWidgetItem* item, int)
 {
 	if (!item) {
 		return;
 	}
 
-	Song* song;
+	Sheet* sheet;
 
 	qint64 id = item->data(0, Qt::UserRole).toLongLong();
-	song = m_project->get_song(id);
+	sheet = m_project->get_sheet(id);
 
-	Q_ASSERT(song);
+	Q_ASSERT(sheet);
 		
-	selectedSongName->setText(song->get_title());
+	selectedSheetName->setText(sheet->get_title());
 	
-	m_project->set_current_song(song->get_id());
+	m_project->set_current_sheet(sheet->get_id());
 }
 
-void ProjectManagerDialog::on_renameSongButton_clicked( )
+void ProjectManagerDialog::on_renameSheetButton_clicked( )
 {
 	if( ! m_project) {
 		return;
 	}
 	
-	QTreeWidgetItem* item = treeSongWidget->currentItem();
+	QTreeWidgetItem* item = treeSheetWidget->currentItem();
 	
 	if ( ! item) {
 		return;
 	}
 	
 	qint64 id = item->data(0, Qt::UserRole).toLongLong();
-	Song* song = m_project->get_song(id);
+	Sheet* sheet = m_project->get_sheet(id);
 	
-	Q_ASSERT(song);
+	Q_ASSERT(sheet);
 	
-	QString newtitle = selectedSongName->text();
+	QString newtitle = selectedSheetName->text();
 	
 	if (newtitle.isEmpty()) {
 		info().information(tr("No new Sheet name was supplied!"));
 		return;
 	}
 	
-	song->set_title(newtitle);
+	sheet->set_title(newtitle);
 
-	update_song_list();
+	update_sheet_list();
 }
 
-void ProjectManagerDialog::on_deleteSongButton_clicked( )
+void ProjectManagerDialog::on_deleteSheetButton_clicked( )
 {
-	QTreeWidgetItem* item = treeSongWidget->currentItem();
+	QTreeWidgetItem* item = treeSheetWidget->currentItem();
 	
 	if ( ! item ) {
 		return;
@@ -189,12 +189,12 @@ void ProjectManagerDialog::on_deleteSongButton_clicked( )
 	
 	qint64 id = item->data(0, Qt::UserRole).toLongLong();
 	
-	Command::process_command(m_project->remove_song(m_project->get_song(id)));
+	Command::process_command(m_project->remove_sheet(m_project->get_sheet(id)));
 }
 
-void ProjectManagerDialog::on_createSongButton_clicked( )
+void ProjectManagerDialog::on_createSheetButton_clicked( )
 {
-	Interface::instance()->show_newsong_dialog();
+	Interface::instance()->show_newsheet_dialog();
 }
 
 void ProjectManagerDialog::redo_text_changed(const QString & text)
@@ -225,7 +225,7 @@ void ProjectManagerDialog::on_redoButton_clicked()
 	m_project->get_history_stack()->redo();
 }
 
-void ProjectManagerDialog::on_songsExportButton_clicked()
+void ProjectManagerDialog::on_sheetsExportButton_clicked()
 {
 	Interface::instance()->show_export_widget();
 }
@@ -306,7 +306,7 @@ void ProjectManagerDialog::accept()
 	m_project->set_upc_ean(lineEditUPC->text());
 	m_project->set_performer(lineEditPerformer->text());
 	m_project->set_arranger(lineEditArranger->text());
-	m_project->set_songwriter(lineEditSongwriter->text());
+	m_project->set_sheetwriter(lineEditSheetwriter->text());
 	m_project->set_message(lineEditMessage->text());
 	m_project->set_genre(comboBoxGenre->currentIndex());
 	
@@ -326,7 +326,7 @@ void ProjectManagerDialog::reject()
 	lineEditUPC->setText(m_project->get_upc_ean());
 	lineEditPerformer->setText(m_project->get_performer());
 	lineEditArranger->setText(m_project->get_arranger());
-	lineEditSongwriter->setText(m_project->get_songwriter());
+	lineEditSheetwriter->setText(m_project->get_sheetwriter());
 	lineEditMessage->setText(m_project->get_message());
 	comboBoxGenre->setCurrentIndex(m_project->get_genre());
 
@@ -353,7 +353,7 @@ void ProjectManagerDialog::reject()
 
 #define tc_title        textcodes[0x00]
 #define tc_performer    textcodes[0x01]
-#define tc_songwriter   textcodes[0x02]
+#define tc_sheetwriter   textcodes[0x02]
 #define tc_composer     textcodes[0x03]
 #define tc_arranger     textcodes[0x04]
 #define tc_message      textcodes[0x05]

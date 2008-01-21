@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ProjectManager.h"
 #include "ContextPointer.h"
 #include "Information.h"
-#include "Song.h"
+#include "Sheet.h"
 #include "Project.h"
 #include "Track.h"
 #include "Mixer.h"
@@ -65,7 +65,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Debugger.h"
 
 
-Song::Song(Project* project)
+Sheet::Sheet(Project* project)
 	: ContextItem()
 	, m_project(project)
 {
@@ -73,12 +73,12 @@ Song::Song(Project* project)
 	title = tr("Untitled");
 	m_id = create_id();
 	artists = tr("No artists name set");
-	m_hzoom = config().get_property("Song", "hzoomLevel", 14).toInt();
+	m_hzoom = config().get_property("Sheet", "hzoomLevel", 8192).toInt();
 
 	init();
 }
 
-Song::Song(Project* project, int numtracks)
+Sheet::Sheet(Project* project, int numtracks)
 	: ContextItem()
 	, m_project(project)
 {
@@ -86,7 +86,7 @@ Song::Song(Project* project, int numtracks)
 	title = tr("Untitled");
 	m_id = create_id();
 	artists = tr("No artists name set");
-	m_hzoom = config().get_property("Song", "hzoomLevel", 14).toInt();
+	m_hzoom = config().get_property("Sheet", "hzoomLevel", 8192).toInt();
 
 	init();
 
@@ -96,7 +96,7 @@ Song::Song(Project* project, int numtracks)
 	}
 }
 
-Song::Song(Project* project, const QDomNode node)
+Sheet::Sheet(Project* project, const QDomNode node)
 		: ContextItem(), m_project(project)
 {
 	PENTERCONS;
@@ -104,7 +104,7 @@ Song::Song(Project* project, const QDomNode node)
 	set_state( node );
 }
 
-Song::~Song()
+Sheet::~Sheet()
 {
 	PENTERDES;
 
@@ -121,7 +121,7 @@ Song::~Song()
 	delete workSnap;
 }
 
-void Song::init()
+void Sheet::init()
 {
 	PENTER2;
 #if defined (THREAD_CHECK)
@@ -180,12 +180,12 @@ void Song::init()
 	m_fader->set_gain(0.5);
 	m_timeline = new TimeLine(this);
 	
-	m_audiodeviceClient = new Client("song_" + QByteArray::number(get_id()));
-	m_audiodeviceClient->set_process_callback( MakeDelegate(this, &Song::process) );
-	m_audiodeviceClient->set_transport_control_callback( MakeDelegate(this, &Song::transport_control) );
+	m_audiodeviceClient = new Client("sheet_" + QByteArray::number(get_id()));
+	m_audiodeviceClient->set_process_callback( MakeDelegate(this, &Sheet::process) );
+	m_audiodeviceClient->set_transport_control_callback( MakeDelegate(this, &Sheet::transport_control) );
 }
 
-int Song::set_state( const QDomNode & node )
+int Sheet::set_state( const QDomNode & node )
 {
 	PENTER;
 	QDomNode propertiesNode = node.firstChildElement("Properties");
@@ -199,7 +199,8 @@ int Song::set_state( const QDomNode & node )
 	title = e.attribute( "title", "" );
 	artists = e.attribute( "artists", "" );
 	set_gain(e.attribute( "mastergain", "1.0").toFloat() );
-	set_hzoom(e.attribute("hzoom", "" ).toInt());
+	qreal zoom = e.attribute("hzoom", "4096").toDouble();
+	set_hzoom(zoom);
 	m_sbx = e.attribute("sbx", "0").toInt();
 	m_sby = e.attribute("sby", "0").toInt();
 	set_first_visible_frame(e.attribute( "firstVisibleFrame", "0" ).toUInt());
@@ -233,12 +234,12 @@ int Song::set_state( const QDomNode & node )
 	return 1;
 }
 
-QDomNode Song::get_state(QDomDocument doc, bool istemplate)
+QDomNode Sheet::get_state(QDomDocument doc, bool istemplate)
 {
-	QDomElement songNode = doc.createElement("Sheet");
+	QDomElement sheetNode = doc.createElement("Sheet");
 	
 	if (! istemplate) {
-		songNode.setAttribute("id", m_id);
+		sheetNode.setAttribute("id", m_id);
 	}
 	
 	QDomElement properties = doc.createElement("Properties");
@@ -252,11 +253,11 @@ QDomNode Song::get_state(QDomDocument doc, bool istemplate)
 	properties.setAttribute("sby", m_sby);
 	properties.setAttribute("snapping", m_isSnapOn);
 	properties.setAttribute("mode", m_mode);
-	songNode.appendChild(properties);
+	sheetNode.appendChild(properties);
 
-	doc.appendChild(songNode);
+	doc.appendChild(sheetNode);
 
-	songNode.appendChild(m_timeline->get_state(doc));
+	sheetNode.appendChild(m_timeline->get_state(doc));
 	
 	QDomNode tracksNode = doc.createElement("Tracks");
 
@@ -264,23 +265,23 @@ QDomNode Song::get_state(QDomDocument doc, bool istemplate)
 		tracksNode.appendChild(track->get_state(doc, istemplate));
 	}
 
-	songNode.appendChild(tracksNode);
+	sheetNode.appendChild(tracksNode);
 
 	QDomNode pluginChainNode = doc.createElement("PluginChain");
 	pluginChainNode.appendChild(m_pluginChain->get_state(doc));
-	songNode.appendChild(pluginChainNode);
+	sheetNode.appendChild(pluginChainNode);
 
 
-	return songNode;
+	return sheetNode;
 }
 
-void Song::connect_to_audiodevice( )
+void Sheet::connect_to_audiodevice( )
 {
 	PENTER;
 	audiodevice().add_client(m_audiodeviceClient);
 }
 
-void Song::disconnect_from_audiodevice()
+void Sheet::disconnect_from_audiodevice()
 {
 	PENTER;
 	if (is_transport_rolling()) {
@@ -289,23 +290,23 @@ void Song::disconnect_from_audiodevice()
 	audiodevice().remove_client(m_audiodeviceClient);
 }
 
-void Song::schedule_for_deletion()
+void Sheet::schedule_for_deletion()
 {
 	m_scheduledForDeletion = true;
 	pm().scheduled_for_deletion(this);
 }
 
-void Song::audiodevice_client_removed(Client* client )
+void Sheet::audiodevice_client_removed(Client* client )
 {
 	PENTER;
 	if (m_audiodeviceClient == client) {
 		if (m_scheduledForDeletion) {
-			pm().delete_song(this);
+			pm().delete_sheet(this);
 		}
 	}
 }
 
-Command* Song::add_track(Track* track, bool historable)
+Command* Sheet::add_track(Track* track, bool historable)
 {
 	apill_foreach(Track* existing, Track, m_tracks) {
 		if (existing->is_solo()) {
@@ -321,7 +322,7 @@ Command* Song::add_track(Track* track, bool historable)
 }
 
 
-Command* Song::remove_track(Track* track, bool historable)
+Command* Sheet::remove_track(Track* track, bool historable)
 {
 	return new AddRemove(this, track, historable, this,
 		"private_remove_track(Track*)", "trackRemoved(Track*)",
@@ -329,7 +330,7 @@ Command* Song::remove_track(Track* track, bool historable)
    		tr("Remove Track"));
 }
 
-bool Song::any_track_armed()
+bool Sheet::any_track_armed()
 {
 	apill_foreach(Track* track, Track, m_tracks) {
 		if (track->armed()) {
@@ -340,7 +341,7 @@ bool Song::any_track_armed()
 }
 
 
-int Song::prepare_export(ExportSpecification* spec)
+int Sheet::prepare_export(ExportSpecification* spec)
 {
 	PENTER;
 	
@@ -351,7 +352,7 @@ int Song::prepare_export(ExportSpecification* spec)
 			// prepare_export() is called from another thread, so use a queued connection
 			// to call the function in the correct thread!
 			if (!QMetaObject::invokeMethod(this, "start_transport",  Qt::QueuedConnection)) {
-				printf("Invoking Song::start_transport() failed\n");
+				printf("Invoking Sheet::start_transport() failed\n");
 				return -1;
 			}
 			int count = 0;
@@ -364,7 +365,7 @@ int Song::prepare_export(ExportSpecification* spec)
 					break;
 				}
 			}
-			printf("Song::prepare_export: had to wait %d process cycles before the transport was stopped\n", count);
+			printf("Sheet::prepare_export: had to wait %d process cycles before the transport was stopped\n", count);
 		}
 		
 		m_rendering = true;
@@ -420,7 +421,7 @@ int Song::prepare_export(ExportSpecification* spec)
 	spec->pos = spec->startLocation;
 	spec->progress = 0;
 
-	spec->basename = "Sheet_" + QString::number(m_project->get_song_index(m_id)) +"-" + title;
+	spec->basename = "Sheet_" + QString::number(m_project->get_sheet_index(m_id)) +"-" + title;
 	spec->name = spec->basename;
 
 	if (spec->startLocation == spec->endLocation) {
@@ -459,7 +460,7 @@ int Song::prepare_export(ExportSpecification* spec)
 	return 1;
 }
 
-int Song::finish_audio_export()
+int Sheet::finish_audio_export()
 {
 	m_exportSource->finish_export();
 	delete m_exportSource;
@@ -468,7 +469,7 @@ int Song::finish_audio_export()
 	return 0;
 }
 
-int Song::render(ExportSpecification* spec)
+int Sheet::render(ExportSpecification* spec)
 {
 	int chn;
 	uint32_t x;
@@ -481,7 +482,7 @@ int Song::render(ExportSpecification* spec)
 
 	if (!spec->running || spec->stop || this_nframes == 0) {
 		process_export (nframes);
-		/*		PWARN("Finished Rendering for this song");
+		/*		PWARN("Finished Rendering for this sheet");
 				PWARN("running is %d", spec->running);
 				PWARN("stop is %d", spec->stop);
 				PWARN("this_nframes is %d", this_nframes);*/
@@ -551,7 +552,7 @@ int Song::render(ExportSpecification* spec)
 	
 	if (progress > spec->progress) {
 		spec->progress = progress;
-		m_project->set_song_export_progress(progress);
+		m_project->set_sheet_export_progress(progress);
 	}
 
 
@@ -570,18 +571,18 @@ out:
 }
 
 
-SnapList* Song::get_snap_list() const
+SnapList* Sheet::get_snap_list() const
 {
 	return snaplist;
 }
 
 
-void Song::set_artists(const QString& pArtists)
+void Sheet::set_artists(const QString& pArtists)
 {
 	artists = pArtists;
 }
 
-void Song::set_gain(float gain)
+void Sheet::set_gain(float gain)
 {
 	if (gain < 0.0)
 		gain = 0.0;
@@ -593,34 +594,34 @@ void Song::set_gain(float gain)
 	emit masterGainChanged();
 }
 
-void Song::set_title(const QString& sTitle)
+void Sheet::set_title(const QString& sTitle)
 {
 	title=sTitle;
 	emit propertyChanged();
 }
 
-void Song::set_first_visible_frame(nframes_t pos)
+void Sheet::set_first_visible_frame(nframes_t pos)
 {
 	PENTER;
 	firstVisibleFrame = pos;
 	emit firstVisibleFrameChanged();
 }
 
-void Song::set_work_at(const TimeRef& location)
+void Sheet::set_work_at(const TimeRef& location)
 {
 	m_workLocation = location;
 	snaplist->mark_dirty(workSnap);
 	emit workingPosChanged();
 }
 
-Command* Song::toggle_snap()
+Command* Sheet::toggle_snap()
 {
 	set_snapping( ! m_isSnapOn );
 	return 0;
 }
 
 
-void Song::set_snapping(bool snapping)
+void Sheet::set_snapping(bool snapping)
 {
 	m_isSnapOn = snapping;
 	emit snapChanged();
@@ -628,7 +629,7 @@ void Song::set_snapping(bool snapping)
 
 /******************************** SLOTS *****************************/
 
-Track* Song::create_track()
+Track* Sheet::create_track()
 {
 	int height = Track::INITIAL_HEIGHT;
 
@@ -637,7 +638,7 @@ Track* Song::create_track()
 	return track;
 }
 
-void Song::solo_track(Track* t)
+void Sheet::solo_track(Track* t)
 {
 	bool wasSolo = t->is_solo();
 
@@ -657,7 +658,7 @@ void Song::solo_track(Track* t)
 	}
 }
 
-Command* Song::toggle_solo()
+Command* Sheet::toggle_solo()
 {
 	bool hasSolo = false;
 	apill_foreach(Track* track, Track, m_tracks) {
@@ -672,7 +673,7 @@ Command* Song::toggle_solo()
 	return (Command*) 0;
 }
 
-Command *Song::toggle_mute()
+Command *Sheet::toggle_mute()
 {
 	bool hasMute = false;
 	apill_foreach(Track* track, Track, m_tracks) {
@@ -686,7 +687,7 @@ Command *Song::toggle_mute()
 	return (Command*) 0;
 }
 
-Command *Song::toggle_arm()
+Command *Sheet::toggle_arm()
 {
 	bool hasArmed = false;
 	apill_foreach(Track* track, Track, m_tracks) {
@@ -704,7 +705,7 @@ Command *Song::toggle_arm()
 	return (Command*) 0;
 }
 
-Command* Song::work_next_edge()
+Command* Sheet::work_next_edge()
 {
 /*	nframes_t w = m_acmanager->get_last_frame();
 
@@ -722,7 +723,7 @@ Command* Song::work_next_edge()
 	return (Command*) 0;
 }
 
-Command* Song::work_previous_edge()
+Command* Sheet::work_previous_edge()
 {
 /*	TimeRef w(0);
 	foreach(Track* track, m_tracks) {
@@ -738,20 +739,29 @@ Command* Song::work_previous_edge()
 	return (Command*) 0;
 }
 
-void Song::set_hzoom( int hzoom )
+void Sheet::set_hzoom( qreal hzoom )
 {
-	if (hzoom > (Peak::ZOOM_LEVELS - 1))
-		hzoom = (Peak::ZOOM_LEVELS - 1);
-	if (hzoom  < 0)
-		hzoom = 0;
+	if (hzoom > Peak::max_zoom_value()) {
+		hzoom = Peak::max_zoom_value();
+	}
+	
+	if (hzoom < 0.1) {
+		hzoom = 0.1;
+	}
+	
+	if (m_hzoom == hzoom) {
+		return;
+	}
+	
 	m_hzoom = hzoom;
+	
 	emit hzoomChanged();
 }
 
 //
 //  Function called in RealTime AudioThread processing path
 //
-int Song::process( nframes_t nframes )
+int Sheet::process( nframes_t nframes )
 {
 	if (m_startSeek) {
 		start_seek();
@@ -802,7 +812,7 @@ int Song::process( nframes_t nframes )
 	return 1;
 }
 
-int Song::process_export( nframes_t nframes )
+int Sheet::process_export( nframes_t nframes )
 {
 	// Get the masterout buffers, and fill with zero's
 	m_masterOut->silence_buffers(nframes);
@@ -823,7 +833,7 @@ int Song::process_export( nframes_t nframes )
 	return 1;
 }
 
-QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
+QString Sheet::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 {
 	QString output;
 
@@ -905,7 +915,7 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 		output += "      PERFORMER \"" + startmarker->get_performer() + "\"\n";
 		output += "      ISRC \"" + startmarker->get_isrc() + "\"\n";
 		output += "      ARRANGER \"" + startmarker->get_arranger() + "\"\n";
-		output += "      SONGWRITER \"" + startmarker->get_songwriter() + "\"\n";
+		output += "      SONGWRITER \"" + startmarker->get_sheetwriter() + "\"\n";
 		output += "      MESSAGE \"" + startmarker->get_message() + "\"\n    }\n  }\n";
 
 		// add some stuff only required for the first track (e.g. pre-gap)
@@ -943,7 +953,7 @@ QString Song::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 	return output;
 }
 
-void Song::resize_buffer(bool updateArmStatus, nframes_t size)
+void Sheet::resize_buffer(bool updateArmStatus, nframes_t size)
 {
 	if (mixdown)
 		delete [] mixdown;
@@ -965,7 +975,7 @@ void Song::resize_buffer(bool updateArmStatus, nframes_t size)
 	}
 }
 
-void Song::audiodevice_params_changed()
+void Sheet::audiodevice_params_changed()
 {
 	resize_buffer(true, audiodevice().get_buffer_size());
 	
@@ -986,37 +996,37 @@ void Song::audiodevice_params_changed()
 	}
 }
 
-int Song::get_bitdepth( )
+int Sheet::get_bitdepth( )
 {
 	return m_project->get_bitdepth();
 }
 
-int Song::get_rate( )
+int Sheet::get_rate( )
 {
 	return m_project->get_rate();
 }
 
-nframes_t Song::get_first_visible_frame( ) const
+nframes_t Sheet::get_first_visible_frame( ) const
 {
 	return firstVisibleFrame;
 }
 
-DiskIO * Song::get_diskio( ) const
+DiskIO * Sheet::get_diskio( ) const
 {
 	return m_diskio;
 }
 
-AudioClipManager * Song::get_audioclip_manager( ) const
+AudioClipManager * Sheet::get_audioclip_manager( ) const
 {
 	return m_acmanager;
 }
 
-PluginChain* Song::get_plugin_chain() const
+PluginChain* Sheet::get_plugin_chain() const
 {
 	return m_pluginChain;
 }
 
-int Song::get_track_index(qint64 id)
+int Sheet::get_track_index(qint64 id)
 {
 	int i=0;
 	apill_foreach(Track* track, Track, m_tracks) {
@@ -1028,30 +1038,30 @@ int Song::get_track_index(qint64 id)
 	return 0;
 }
 
-void Song::handle_diskio_readbuffer_underrun( )
+void Sheet::handle_diskio_readbuffer_underrun( )
 {
 	if (is_transport_rolling()) {
-		printf("Song:: DiskIO ReadBuffer UnderRun signal received!\n");
+		printf("Sheet:: DiskIO ReadBuffer UnderRun signal received!\n");
 		info().critical(tr("Hard Disk overload detected!"));
 		info().critical(tr("Failed to fill ReadBuffer in time"));
 	}
 }
 
-void Song::handle_diskio_writebuffer_overrun( )
+void Sheet::handle_diskio_writebuffer_overrun( )
 {
 	if (is_transport_rolling()) {
-		printf("Song:: DiskIO WriteBuffer OverRun signal received!\n");
+		printf("Sheet:: DiskIO WriteBuffer OverRun signal received!\n");
 		info().critical(tr("Hard Disk overload detected!"));
 		info().critical(tr("Failed to empty WriteBuffer in time"));
 	}
 }
 
-void Song::audiodevice_started( )
+void Sheet::audiodevice_started( )
 {
 	m_playBackBus = audiodevice().get_playback_bus("Playback 1");
 }
 
-const TimeRef& Song::get_last_location() const
+const TimeRef& Sheet::get_last_location() const
 {
 	TimeRef lastAudio = m_acmanager->get_last_location();
 	
@@ -1063,17 +1073,17 @@ const TimeRef& Song::get_last_location() const
 	return lastAudio;
 }
 
-void Song::private_add_track(Track* track)
+void Sheet::private_add_track(Track* track)
 {
 	m_tracks.append(track);
 }
 
-void Song::private_remove_track(Track* track)
+void Sheet::private_remove_track(Track* track)
 {
 	m_tracks.remove(track);
 }
 
-Track* Song::get_track(qint64 id)
+Track* Sheet::get_track(qint64 id)
 {
 	apill_foreach(Track* track, Track, m_tracks) {
 		if (track->get_id() == id) {
@@ -1083,7 +1093,7 @@ Track* Song::get_track(qint64 id)
 	return 0;
 }
 
-void Song::move_clip(Track * from, Track * too, AudioClip * clip, TimeRef location)
+void Sheet::move_clip(Track * from, Track * too, AudioClip * clip, TimeRef location)
 {
 	if (from == too) {
 		clip->set_track_start_location(location);
@@ -1096,27 +1106,27 @@ void Song::move_clip(Track * from, Track * too, AudioClip * clip, TimeRef locati
 	clip->set_track_start_location(location);
 }
 
-Command* Song::set_editing_mode( )
+Command* Sheet::set_editing_mode( )
 {
 	m_mode = EDIT;
 	emit modeChanged();
 	return 0;
 }
 
-Command* Song::set_effects_mode( )
+Command* Sheet::set_effects_mode( )
 {
 	m_mode = EFFECTS;
 	emit modeChanged();
 	return 0;
 }
 
-void Song::set_temp_follow_state(bool state)
+void Sheet::set_temp_follow_state(bool state)
 {
 	emit tempFollowChanged(state);
 }
 
 // Function is only to be called from GUI thread.
-Command * Song::set_recordable()
+Command * Sheet::set_recordable()
 {
 #if defined (THREAD_CHECK)
 	Q_ASSERT(QThread::currentThreadId() == threadId);
@@ -1144,7 +1154,7 @@ Command * Song::set_recordable()
 }
 
 // Function is only to be called from GUI thread.
-Command* Song::set_recordable_and_start_transport()
+Command* Sheet::set_recordable_and_start_transport()
 {
 	if (!is_recording()) {
 		set_recordable();
@@ -1156,7 +1166,7 @@ Command* Song::set_recordable_and_start_transport()
 }
 
 // Function is only to be called from GUI thread.
-Command* Song::start_transport()
+Command* Sheet::start_transport()
 {
 #if defined (THREAD_CHECK)
 	Q_ASSERT(QThread::currentThreadId() == threadId);
@@ -1176,7 +1186,7 @@ Command* Song::start_transport()
 
 // Function can be called either from the GUI or RT thread.
 // So ALL functions called here need to be RT thread save!!
-int Song::transport_control(transport_state_t state)
+int Sheet::transport_control(transport_state_t state)
 {
 	if (m_scheduledForDeletion) {
 		return true;
@@ -1248,7 +1258,7 @@ int Song::transport_control(transport_state_t state)
 }
 
 // RT thread save function
-void Song::start_transport_rolling(bool realtime)
+void Sheet::start_transport_rolling(bool realtime)
 {
 	m_realtimepath = true;
 	m_transport = 1;
@@ -1263,14 +1273,14 @@ void Song::start_transport_rolling(bool realtime)
 }
 
 // RT thread save function
-void Song::stop_transport_rolling()
+void Sheet::stop_transport_rolling()
 {
 	m_stopTransport = 1;
 	PMESG("tranport stopped");
 }
 
 // RT thread save function
-void Song::set_recording(bool recording, bool realtime)
+void Sheet::set_recording(bool recording, bool realtime)
 {
 	m_recording = recording;
 	
@@ -1288,7 +1298,7 @@ void Song::set_recording(bool recording, bool realtime)
 
 
 // NON RT thread save function, should only be called from GUI thread!!
-void Song::prepare_recording()
+void Sheet::prepare_recording()
 {
 #if defined (THREAD_CHECK)
 	Q_ASSERT(QThread::currentThreadId() == threadId);
@@ -1322,7 +1332,7 @@ void Song::prepare_recording()
 	m_readyToRecord = true;
 }
 
-void Song::clip_finished_recording(AudioClip * clip)
+void Sheet::clip_finished_recording(AudioClip * clip)
 {
 	if (!m_recordingClips.removeAll(clip)) {
 		PERROR("clip %s was not in recording clip list, cannot remove it!", QS_C(clip->get_name()));
@@ -1337,7 +1347,7 @@ void Song::clip_finished_recording(AudioClip * clip)
 }
 
 
-void Song::set_transport_pos(TimeRef location)
+void Sheet::set_transport_pos(TimeRef location)
 {
 #if defined (THREAD_CHECK)
 	Q_ASSERT(QThread::currentThreadId() ==  threadId);
@@ -1350,7 +1360,7 @@ void Song::set_transport_pos(TimeRef location)
 //  Function is ALWAYS called in RealTime AudioThread processing path
 //  Be EXTREMELY carefull to not call functions() that have blocking behavior!!
 //
-void Song::start_seek()
+void Sheet::start_seek()
 {
 #if defined (THREAD_CHECK)
 	Q_ASSERT(threadId != QThread::currentThreadId ());
@@ -1371,12 +1381,12 @@ void Song::start_seek()
 	RT_THREAD_EMIT(this, NULL, seekStart());
 }
 
-void Song::seek_finished()
+void Sheet::seek_finished()
 {
 #if defined (THREAD_CHECK)
-	Q_ASSERT_X(threadId == QThread::currentThreadId (), "Song::seek_finished", "Called from other Thread!");
+	Q_ASSERT_X(threadId == QThread::currentThreadId (), "Sheet::seek_finished", "Called from other Thread!");
 #endif
-	PMESG2("Song :: entering seek_finished");
+	PMESG2("Sheet :: entering seek_finished");
 	m_transportLocation  = m_newTransportLocation;
 	m_seeking = 0;
 
@@ -1386,10 +1396,10 @@ void Song::seek_finished()
 	}
 
 	emit transportPosSet();
-	PMESG2("Song :: leaving seek_finished");
+	PMESG2("Sheet :: leaving seek_finished");
 }
 
-void Song::config_changed()
+void Sheet::config_changed()
 {
 	PENTER;
 	
@@ -1404,7 +1414,7 @@ void Song::config_changed()
 
 
 
-QList< Track * > Song::get_tracks() const
+QList< Track * > Sheet::get_tracks() const
 {
 	QList<Track*> list;
 	apill_foreach(Track* track, Track, m_tracks) {

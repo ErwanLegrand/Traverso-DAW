@@ -91,7 +91,7 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 void SettingsDialog::createIcons()
 {
 	QListWidgetItem* behaviorButton = new QListWidgetItem(contentsWidget);
-	behaviorButton->setIcon(QIcon(":/songmanagement"));
+	behaviorButton->setIcon(QIcon(":/sheetmanagement"));
 	behaviorButton->setTextAlignment(Qt::AlignHCenter);
 	behaviorButton->setText(tr("Behavior"));
 	behaviorButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
