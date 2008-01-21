@@ -205,16 +205,14 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 		}
 	}
 	
-	// Draw the contour
-	painter->setPen(themer()->get_color("AudioClip:contour"));
-	QRectF rect(0, 0, m_boundingRect.width() - 1, m_height - 0.5);
-// 	painter->drawRect(rect);
-	painter->drawLine(0, 0, 0, m_height);
-	QLineF line(m_boundingRect.width()-0.5, 0, m_boundingRect.width()-0.5, m_height);
-	painter->drawLine(line);
 	if (m_height > m_mimimumheightforinfoarea) {
 		draw_clipinfo_area(painter, xstart, pixelcount);
 	}
+	
+	// Draw the contour
+	painter->setPen(themer()->get_color("AudioClip:contour"));
+	QRectF rect(0.5, 0.5, m_boundingRect.width() - 1, m_height - 1);
+	painter->drawRect(rect);
 	
 	// Paint a pixmap if the clip is locked
 	if (m_clip->is_locked()) {
@@ -559,7 +557,7 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 void AudioClipView::draw_clipinfo_area(QPainter* p, int xstart, int pixelcount)
 {
 	// fill info area bg
-	p->fillRect(xstart + 1, 1, pixelcount, m_infoAreaHeight, themer()->get_color("AudioClip:clipinfobackground:inactive"));
+	p->fillRect(xstart, 1, pixelcount, m_infoAreaHeight, themer()->get_color("AudioClip:clipinfobackground:inactive"));
 }
 
 void AudioClipView::create_brushes()
