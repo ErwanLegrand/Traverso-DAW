@@ -49,6 +49,13 @@ class TraversoCommands : public CommandPlugin
 	Q_CLASSINFO("ArmTracks", tr("Arm Tracks"))
 	Q_CLASSINFO("MultiMove", tr("Fold Sheet"))
 	Q_CLASSINFO("MultiMoveSingle", tr("Fold Track"))
+	Q_CLASSINFO("VZoomIn", tr("Vertical In"))
+	Q_CLASSINFO("HZoomOut", tr("Horizontal Out"))
+	Q_CLASSINFO("HZoomIn", tr("Horizontal In"))
+	Q_CLASSINFO("VZoomOut", tr("Vertical Out"))
+	Q_CLASSINFO("Zoom", tr("Omnidirectional"))
+	Q_CLASSINFO("HJogZoom", tr("Horizontal"))
+	Q_CLASSINFO("VJogZoom", tr("Vertical"))
 
 public:
 	TraversoCommands();
@@ -70,7 +77,8 @@ private:
     		MoveClipOrEdgeCommand,
       		SplitClipCommand,
 		ArmTracksCommand,
-		MultiMoveCommand
+		MultiMoveCommand,
+  		ZoomCommand,
 	};
 };
 

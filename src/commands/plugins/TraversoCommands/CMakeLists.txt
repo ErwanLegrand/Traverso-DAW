@@ -1,7 +1,7 @@
 INCLUDE_DIRECTORIES(
 ${CMAKE_SOURCE_DIR}/src/common
 ${CMAKE_SOURCE_DIR}/src/core
-${CMAKE_SOURCE_DIR}/src/traverso/songcanvas
+${CMAKE_SOURCE_DIR}/src/sheetcanvas
 ${CMAKE_SOURCE_DIR}/src/commands
 ${CMAKE_SOURCE_DIR}/src/plugins
 ${CMAKE_SOURCE_DIR}/src/plugins/native

@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TraversoCommands.h"
 
 #include <libtraversocore.h>
-#include <libtraversosongcanvas.h>
+#include <libtraversosheetcanvas.h>
 #include <commands.h>
 
 
@@ -53,6 +53,13 @@ TraversoCommands::TraversoCommands()
 	m_dict.insert("ArmTracks", ArmTracksCommand);
 	m_dict.insert("MultiMove", MultiMoveCommand);
 	m_dict.insert("MultiMoveSingle", MultiMoveCommand);
+	m_dict.insert("VZoomIn", ZoomCommand);
+	m_dict.insert("VZoomOut", ZoomCommand);
+	m_dict.insert("HZoomIn", ZoomCommand);
+	m_dict.insert("HZoomOut", ZoomCommand);
+	m_dict.insert("HJogZoom", ZoomCommand);
+	m_dict.insert("VJogZoom", ZoomCommand);
+	m_dict.insert("JogZoom", ZoomCommand);
 }
 
 Command* TraversoCommands::create(QObject* obj, const QString& command, QVariantList arguments)
@@ -61,27 +68,27 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 		case GainCommand:
 		{
 			ContextItem* item = qobject_cast<ContextItem*>(obj);
-			SongView* songview = 0;
+			SheetView* sheetview = 0;
 			
 			if (item->metaObject()->className() == QString("TrackPanelGain")) {
 				item = item->get_context();
-			} else if (item->metaObject()->className() == QString("SongPanelGain")) {
+			} else if (item->metaObject()->className() == QString("SheetPanelGain")) {
 				item = item->get_context();
 			} else if (AudioClipView* view = qobject_cast<AudioClipView*>(item)) {
-				songview = view->get_songview();
+				sheetview = view->get_sheetview();
 				item = view->get_context();
 			} else if (TrackView* view = qobject_cast<TrackView*>(item)) {
-				songview = view->get_songview();
+				sheetview = view->get_sheetview();
 				item = view->get_context();
-			} else if (SongView* view = qobject_cast<SongView*>(item)) {
-				songview = view;
+			} else if (SheetView* view = qobject_cast<SheetView*>(item)) {
+				sheetview = view;
 				item = view->get_context();
 			}
 			
-			// ugly hack to avoid assigning a songview when the 
+			// ugly hack to avoid assigning a sheetview when the 
 			// mouse cursor is above the trackpanel....
 			if (cpointer().scene_x() < 0) {
-				songview = 0;
+				sheetview = 0;
 			}
 			
 			if (!item) {
@@ -89,7 +96,7 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 					"GainCommand only works with ContextItem objects!!");
 				return 0;
 			}
-			return new Gain(item, songview, arguments);
+			return new Gain(item, sheetview, arguments);
 		}
 		
 		case TrackPanCommand:
@@ -132,13 +139,13 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 		
 		case AddNewTrackCommand:
 		{
-			Song* song = qobject_cast<Song*>(obj);
-			if (!song) {
-				PERROR("TraversoCommands: Supplied QObject was not a Song! "
-					"AddNewTrackCommand needs a Song as argument");
+			Sheet* sheet = qobject_cast<Sheet*>(obj);
+			if (!sheet) {
+				PERROR("TraversoCommands: Supplied QObject was not a Sheet! "
+					"AddNewTrackCommand needs a Sheet as argument");
 				return 0;
 			}
-			return song->add_track(new Track(song, "Unnamed", Track::INITIAL_HEIGHT));
+			return sheet->add_track(new Track(sheet, "Unnamed", Track::INITIAL_HEIGHT));
 		}
 		
 		case RemoveClipCommand:
@@ -160,7 +167,7 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 					"RemoveTrackCommand needs a Track as argument");
 				return 0;
 			}
-			return track->get_song()->remove_track(track);
+			return track->get_sheet()->remove_track(track);
 		}
 		
 		case AudioClipExternalProcessingCommand:
@@ -227,13 +234,13 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 				if (anchorAudio) {
 					return new MoveClip(view, "anchored_left_edge_move");
 				} else {
-					return new MoveEdge(view, view->get_songview(), "set_left_edge");
+					return new MoveEdge(view, view->get_sheetview(), "set_left_edge");
 				}
 			} else {
 				if (anchorAudio) {
 					return new MoveClip(view, "anchored_right_edge_move");
 				} else {
-					return new MoveEdge(view, view->get_songview(), "set_right_edge");
+					return new MoveEdge(view, view->get_sheetview(), "set_right_edge");
 				}
 			}
 		}
@@ -261,13 +268,13 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 				if (anchorAudio) {
 					return new MoveClip(view, "anchored_left_edge_move");
 				} else {
-					return new MoveEdge(view, view->get_songview(), "set_left_edge");
+					return new MoveEdge(view, view->get_sheetview(), "set_left_edge");
 				}
 			} else if (x > (view->boundingRect().width() - edge_width)) {
 				if (anchorAudio) {
 					return new MoveClip(view, "anchored_right_edge_move");
 				} else {
-					return new MoveEdge(view, view->get_songview(), "set_right_edge");
+					return new MoveEdge(view, view->get_sheetview(), "set_right_edge");
 				}
 			}
 			return new MoveClip(view, "move");
@@ -286,10 +293,10 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 		
 		case ArmTracksCommand:
 		{
-			SongView* view = qobject_cast<SongView*>(obj);
+			SheetView* view = qobject_cast<SheetView*>(obj);
 			if (!view) {
-				PERROR("TraversoCommands: Supplied QObject was not an SongView! "
-						"ArmTracksCommand needs an SongView as argument");
+				PERROR("TraversoCommands: Supplied QObject was not an SheetView! "
+						"ArmTracksCommand needs an SheetView as argument");
 				return 0;
 			}
 			return new ArmTracks(view);
@@ -297,7 +304,7 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 		
 		case MultiMoveCommand:
 		{
-			SongView* view = qobject_cast<SongView*>(obj);
+			SheetView* view = qobject_cast<SheetView*>(obj);
 			
 			bool allTracks = true;
 			if (arguments.size()) {
@@ -305,11 +312,21 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 			}
 			
 			if (!view) {
-				PERROR("TraversoCommands: Supplied QObject was not a SongView! "
-					"MultiMoveCommand needs a SongView as argument");
+				PERROR("TraversoCommands: Supplied QObject was not a SheetView! "
+					"MultiMoveCommand needs a SheetView as argument");
 				return 0;
 			}
 			return new MultiMove(view, allTracks);
+		}
+		case ZoomCommand:
+		{
+			SheetView* view = qobject_cast<SheetView*>(obj);
+			if (!view) {
+				PERROR("TraversoCommands: Supplied QObject was not an SheetView! "
+						"ArmTracksCommand needs an SheetView as argument");
+				return 0;
+			}
+			return new Zoom(view, arguments);
 		}
 	}
 	
