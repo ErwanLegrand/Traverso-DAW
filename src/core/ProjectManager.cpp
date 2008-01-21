@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 #include "Project.h"
-#include "Song.h"
+#include "Sheet.h"
 #include "ContextPointer.h"
 #include "ResourcesManager.h"
 #include "Information.h"
@@ -140,7 +140,7 @@ void ProjectManager::set_current_project(Project* project)
 
 }
 
-Project* ProjectManager::create_new_project(int numSongs, int numTracks, const QString& projectName)
+Project* ProjectManager::create_new_project(int numSheets, int numTracks, const QString& projectName)
 {
 	PENTER;
 
@@ -154,7 +154,7 @@ Project* ProjectManager::create_new_project(int numSongs, int numTracks, const Q
 	
 	Project* newProject = new Project(projectName);
 
-	if (newProject->create(numSongs, numTracks) < 0) {
+	if (newProject->create(numSheets, numTracks) < 0) {
 		delete newProject;
 		info().critical(tr("Unable to create new Project %1").arg(projectName));
 		return 0;
@@ -384,7 +384,7 @@ Command* ProjectManager::exit()
 	PENTER;
 	
 	if (currentProject) {
-		if (currentProject->get_songs().size() == 0) {
+		if (currentProject->get_sheets().size() == 0) {
 			// No sheets to unregister from the audiodevice,
 			// just save and quit:
 			set_current_project(0);
@@ -404,20 +404,20 @@ Command* ProjectManager::exit()
 	return (Command*) 0;
 }
 
-void ProjectManager::scheduled_for_deletion( Song * song )
+void ProjectManager::scheduled_for_deletion( Sheet * sheet )
 {
 	PENTER;
-	m_deletionSongList.append(song);
+	m_deletionSheetList.append(sheet);
 }
 
-void ProjectManager::delete_song( Song * song )
+void ProjectManager::delete_sheet( Sheet * sheet )
 {
 	PENTER;
-	m_deletionSongList.removeAll(song);
-	emit aboutToDelete(song);
-	delete song;
+	m_deletionSheetList.removeAll(sheet);
+	emit aboutToDelete(sheet);
+	delete sheet;
 	
-	if (m_deletionSongList.isEmpty() && m_exitInProgress) {
+	if (m_deletionSheetList.isEmpty() && m_exitInProgress) {
 		QApplication::exit();
 	}
 		

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveClip.h,v 1.21 2007/09/10 18:42:13 r_sijrier Exp $
+    $Id: MoveClip.h,v 1.22 2008/01/21 16:22:11 r_sijrier Exp $
 */
 
 #ifndef MOVECLIPACTION_H
@@ -29,9 +29,9 @@
 #include <defines.h>
 
 class AudioClip;
-class Song;
+class Sheet;
 class Track;
-class SongView;
+class SheetView;
 class TrackView;
 class AudioClipView;
 
@@ -54,7 +54,7 @@ public :
         int jog();
 	
 private :
-	Song* 		m_song;
+	Sheet* 		m_sheet;
 	AudioClip* 	m_clip;
         TimeRef 	m_originalTrackStartLocation;
         TimeRef 	m_posDiff;
@@ -68,7 +68,7 @@ private :
 		int 		hScrollbarValue;
 		TimeRef		xoffset;
 		AudioClip* 	newclip;
-		SongView* 	sv;
+		SheetView* 	sv;
 		AudioClipView*	view;
 		TrackView*	origTrackView;
 		QPoint		origPos;

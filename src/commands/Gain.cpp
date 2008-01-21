@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Gain.cpp,v 1.23 2007/11/27 20:20:42 r_sijrier Exp $
+$Id: Gain.cpp,v 1.24 2008/01/21 16:22:11 r_sijrier Exp $
 */
 
 #include "Gain.h"
@@ -27,15 +27,15 @@ $Id: Gain.cpp,v 1.23 2007/11/27 20:20:42 r_sijrier Exp $
 #include "Mixer.h"
 #include <ViewPort.h>
 #include <Track.h>
-#include "Song.h"
-#include "SongView.h"
+#include "Sheet.h"
+#include "SheetView.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
 
-Gain::Gain(ContextItem* context, SongView* sv, QVariantList args)
+Gain::Gain(ContextItem* context, SheetView* sv, QVariantList args)
 	: Command(context, "")
 	, m_sv(sv)
 {
@@ -67,8 +67,8 @@ Gain::Gain(ContextItem* context, SongView* sv, QVariantList args)
 	if (track && origGain == 0.5) {
 		newGain = 1.0;
 	} else {
-		Song* song = qobject_cast<Song*>(context);
-		if (song && origGain == 0.5) {
+		Sheet* sheet = qobject_cast<Sheet*>(context);
+		if (sheet && origGain == 0.5) {
 			newGain = 1.0;
 		}
 	}

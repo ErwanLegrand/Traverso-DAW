@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QList>
 #include "defines.h"
 
-class Song;
+class Sheet;
 class Marker;
 class Snappable;
 class Command;
@@ -36,14 +36,14 @@ class TimeLine : public ContextItem
 {
 	Q_OBJECT
 public:
-	TimeLine(Song* song);
+	TimeLine(Sheet* sheet);
 	~TimeLine() {};
 	
 	QDomNode get_state(QDomDocument doc);
 	int set_state(const QDomNode& node);
 	
 	QList<Marker*> get_markers() const {return m_markers;}
-	Song *get_song() const {return m_song;}
+	Sheet *get_sheet() const {return m_sheet;}
 	
 	Marker* get_marker(qint64 id);
 	bool get_end_location(TimeRef& location);
@@ -54,7 +54,7 @@ public:
 	Command* remove_marker(Marker* marker, bool historable=true);
 
 private:
-	Song* m_song;
+	Sheet* m_sheet;
 	QList<Marker*> m_markers;
 
 private slots:

@@ -8,7 +8,7 @@ ${CMAKE_SOURCE_DIR}/src/engine
 ${CMAKE_SOURCE_DIR}/src/plugins
 ${CMAKE_SOURCE_DIR}/src/plugins/LV2
 ${CMAKE_SOURCE_DIR}/src/plugins/native
-${CMAKE_SOURCE_DIR}/src/traverso/songcanvas
+${CMAKE_SOURCE_DIR}/src/sheetcanvas
 ${QT_QTGUI_INCLUDE_DIR}
 ${QT_QTXML_INCLUDE_DIR}
 )
@@ -25,7 +25,6 @@ ${CMAKE_SOURCE_DIR}/src/common/fpu.cc
 Traverso.cpp
 BusMonitor.cpp
 ContextDialog.cpp
-FadeContextDialog.cpp
 Main.cpp
 PluginSelectorDialog.cpp
 Interface.cpp
@@ -39,7 +38,7 @@ dialogs/project/ProjectManagerDialog.cpp
 dialogs/InsertSilenceDialog.cpp
 dialogs/MarkerDialog.cpp
 dialogs/BusSelectorDialog.cpp
-dialogs/project/NewSongDialog.cpp
+dialogs/project/NewSheetDialog.cpp
 dialogs/project/NewProjectDialog.cpp
 dialogs/project/OpenProjectDialog.cpp
 dialogs/project/NewTrackDialog.cpp
@@ -64,13 +63,13 @@ ui/BehaviorConfigPage.ui
 ui/RecordingConfigPage.ui
 ui/ThemeConfigPage.ui
 ui/PerformanceConfigPage.ui
-ui/SongManagerDialog.ui
+ui/SheetManagerDialog.ui
 ui/ProjectManagerDialog.ui
 ui/MarkerDialog.ui
 ui/BusSelectorDialog.ui
 ui/OpenProjectDialog.ui
 ui/NewProjectDialog.ui
-ui/NewSongDialog.ui
+ui/NewSheetDialog.ui
 ui/NewTrackDialog.ui
 ui/ResourcesWidget.ui
 ui/QuickStart.ui
@@ -84,7 +83,6 @@ ui/CDWritingDialog.ui
 SET(TRAVERSO_GUI_MOC_CLASSES
 BusMonitor.h
 CorrelationMeterWidget.h
-FadeContextDialog.h
 Interface.h
 PluginSelectorDialog.h
 QuickDriverConfigWidget.h
@@ -98,7 +96,7 @@ dialogs/InsertSilenceDialog.h
 dialogs/MarkerDialog.h
 dialogs/ProjectConverterDialog.h
 dialogs/RestoreProjectBackupDialog.h
-dialogs/project/NewSongDialog.h
+dialogs/project/NewSheetDialog.h
 dialogs/project/NewTrackDialog.h
 dialogs/project/NewProjectDialog.h
 dialogs/project/OpenProjectDialog.h
@@ -226,7 +224,7 @@ ADD_EXECUTABLE(traverso
 TARGET_LINK_LIBRARIES(traverso
 	${QT_LIBRARIES}
 	${QT_QTXML_LIBRARY}
-	traversosongcanvas
+	traversosheetcanvas
 	traversocore
 	traversoaudiofileio
 	traversoaudiobackend

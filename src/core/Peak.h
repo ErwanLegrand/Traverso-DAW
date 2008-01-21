@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QFile>
 #include <QHash>
 #include <QPair>
+#include <samplerate.h>
 
 #include "defines.h"
 
@@ -114,19 +115,27 @@ public:
 	void process(uint channel, audio_sample_t* buffer, nframes_t frames);
 	int prepare_processing(int rate);
 	int finish_processing();
-	int calculate_peaks(int chan, float** buffer, int zoomLevel, TimeRef startlocation, int count);
+	int calculate_peaks(int chan, float** buffer, qreal zoomLevel, TimeRef startlocation, int count);
 
 	void close();
 	
 	void start_peak_loading();
 
 	audio_sample_t get_max_amplitude(TimeRef startlocation, TimeRef endlocation);
+	
+	static QHash<int, int>* cache_index_lut();
+	static int max_zoom_value();
 
 private:
 	ReadSource* 	m_source;
 	bool 		m_peaksAvailable;
 	bool		m_permanentFailure;
 	bool		m_interuptPeakBuild;
+	static QHash<int, int> chacheIndexLut;
+	
+	SRC_STATE*	m_srcState;
+	SRC_DATA	m_srcData;
+	audio_sample_t* m_peakBuffer;
 	
 	struct ProcessData {
 		ProcessData() {
@@ -182,6 +191,7 @@ private:
 	int create_from_scratch();
 	int read_header();
 	int write_header(ChannelData* data);
+	static void calculate_lut_data();
 
 	friend class PeakProcessor;
 	friend class PeakDataReader;
@@ -207,6 +217,14 @@ private:
 	bool seek(nframes_t start);
 	nframes_t read(DecodeBuffer* buffer, nframes_t frameCount);
 };
+
+inline QHash< int, int > * Peak::cache_index_lut()
+{
+	if(chacheIndexLut.isEmpty()) {
+		calculate_lut_data();
+	}
+	return &chacheIndexLut;
+}
 
 
 #endif

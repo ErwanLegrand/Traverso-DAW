@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveEdge.h,v 1.9 2007/08/31 09:19:51 r_sijrier Exp $
+    $Id: MoveEdge.h,v 1.10 2008/01/21 16:22:11 r_sijrier Exp $
 */
 
 #ifndef MOVEEDGE_H
@@ -28,14 +28,14 @@
 #include <QByteArray>
 
 class AudioClip;
-class Song;
-class SongView;
+class Sheet;
+class SheetView;
 class AudioClipView;
 
 class MoveEdge : public Command
 {
 public :
-        MoveEdge(AudioClipView* cv, SongView* sv, QByteArray whichEdge);
+        MoveEdge(AudioClipView* cv, SheetView* sv, QByteArray whichEdge);
         ~MoveEdge();
 
         int begin_hold();
@@ -49,9 +49,9 @@ public :
 
 private :
         AudioClip* 	m_clip;
-        Song*		m_song;
+        Sheet*		m_sheet;
 	AudioClipView*	m_cv;
-	SongView*	m_sv;
+	SheetView*	m_sv;
         QByteArray	m_edge;
         TimeRef		m_originalPos;
 	TimeRef		m_newPos;

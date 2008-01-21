@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "GainEnvelope.h"
 
 
-class Song;
+class Sheet;
 class ReadSource;
 class WriteSource;
 class Track;
@@ -75,14 +75,14 @@ public:
 	void set_fade_in(double range);
 	void set_fade_out(double range);
 	void set_track(Track* track);
-	void set_song(Song* song);
+	void set_sheet(Sheet* sheet);
 
 	void set_selected(bool selected);
 	int set_state( const QDomNode& node );
 
 	AudioClip* create_copy();
 	Track* get_track() const;
-	Song* get_song() const;
+	Sheet* get_sheet() const;
 	Peak* get_peak() const {return m_peak;}
 	QDomNode get_state(QDomDocument doc);
 	FadeCurve* get_fade_in() const;
@@ -100,7 +100,7 @@ public:
 	int get_rate() const;
 	int get_bitdepth() const;
 	qint64 get_readsource_id() const;
-	qint64 get_song_id() const {return m_songId;}
+	qint64 get_sheet_id() const {return m_sheetId;}
 	ReadSource* get_readsource() const;
 	
 	QString get_name() const;
@@ -109,7 +109,7 @@ public:
 	bool is_take() const;
 	bool is_selected() const;
 	bool is_locked() const {return m_isLocked;}
-	bool has_song() const;
+	bool has_sheet() const;
 	bool is_readsource_invalid() const {return !m_isReadSourceValid;}
 	bool is_smaller_then(APILinkedListNode* node) {return ((AudioClip*)node)->get_track_start_location() > get_track_start_location();}
 
@@ -117,7 +117,7 @@ public:
 
 private:
 	Track* 			m_track;
-	Song* 			m_song;
+	Sheet* 			m_sheet;
 	ReadSource*		m_readSource;
 	WriteSource*		m_recorder;
 	APILinkedList		m_fades;
@@ -144,7 +144,7 @@ private:
 	RecordingStatus		m_recordingStatus;
 	
 	qint64			m_readSourceId;
-	qint64			m_songId;
+	qint64			m_sheetId;
 
 	void create_fade_in();
 	void create_fade_out();

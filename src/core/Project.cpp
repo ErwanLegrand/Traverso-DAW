@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <cfloat>
 
 #include "Project.h"
-#include "Song.h"
+#include "Sheet.h"
 #include "ProjectManager.h"
 #include "Information.h"
 #include "InputEngine.h"
@@ -52,7 +52,7 @@ Project::Project(const QString& title)
 	: ContextItem(), m_title(title)
 {
 	PENTERCONS;
-	m_currentSongId = 0;
+	m_currentSheetId = 0;
 	m_exportThread = 0;
 	engineer = "";
 
@@ -74,19 +74,19 @@ Project::~Project()
 	PENTERDES;
 	cpointer().remove_contextitem(this);
 
-	foreach(Song* song, m_songs) {
-		song->schedule_for_deletion();
-		song->disconnect_from_audiodevice();
+	foreach(Sheet* sheet, m_sheets) {
+		sheet->schedule_for_deletion();
+		sheet->disconnect_from_audiodevice();
 	}
 
 	delete m_hs;
 }
 
 
-int Project::create(int songcount, int numtracks)
+int Project::create(int sheetcount, int numtracks)
 {
 	PENTER;
-	PMESG("Creating new project %s  NumSongs=%d", QS_C(m_title), songcount);
+	PMESG("Creating new project %s  NumSheets=%d", QS_C(m_title), sheetcount);
 
 	QDir dir;
 	if (dir.mkdir(m_rootDir) < 0) {
@@ -106,14 +106,14 @@ int Project::create(int songcount, int numtracks)
 		return -1;
 	}
 	
-	for (int i=0; i< songcount; i++) {
-		Song* song = new Song(this, numtracks);
-		m_songs.append(song);
-		song->connect_to_audiodevice();
+	for (int i=0; i< sheetcount; i++) {
+		Sheet* sheet = new Sheet(this, numtracks);
+		m_sheets.append(sheet);
+		sheet->connect_to_audiodevice();
 	}
 
-	if (m_songs.size()) {
-		set_current_song(m_songs.first()->get_id());
+	if (m_sheets.size()) {
+		set_current_sheet(m_sheets.first()->get_id());
 	}
 	
 	m_id = create_id();
@@ -206,7 +206,7 @@ int Project::load(QString projectfile)
 	m_genre = e.attribute( "genre", "" ).toInt();
 	m_performer = e.attribute( "performer", "" );
 	m_arranger = e.attribute( "arranger", "" );
-	m_songwriter = e.attribute( "songwriter", "" );
+	m_sheetwriter = e.attribute( "sheetwriter", "" );
 	m_message = e.attribute( "message", "" );
 	m_rate = e.attribute( "rate", "" ).toInt();
 	m_bitDepth = e.attribute( "bitdepth", "" ).toInt();
@@ -222,26 +222,26 @@ int Project::load(QString projectfile)
 	m_resourcesManager->set_state(asmNode);
 
 
-	QDomNode songsNode = docElem.firstChildElement("Sheets");
-	QDomNode songNode = songsNode.firstChild();
+	QDomNode sheetsNode = docElem.firstChildElement("Sheets");
+	QDomNode sheetNode = sheetsNode.firstChild();
 
-	// Load all the Songs
-	while(!songNode.isNull())
+	// Load all the Sheets
+	while(!sheetNode.isNull())
 	{
-		Song* song = new Song(this, songNode);
-		Command::process_command(add_song(song, false));
-		songNode = songNode.nextSibling();
+		Sheet* sheet = new Sheet(this, sheetNode);
+		Command::process_command(add_sheet(sheet, false));
+		sheetNode = sheetNode.nextSibling();
 	}
 
 	qint64 id = e.attribute("currentsheetid", "0" ).toLongLong();
 	
 	if ( id == 0) {
-		if (m_songs.size()) {
-			id = m_songs.first()->get_id();
+		if (m_sheets.size()) {
+			id = m_sheets.first()->get_id();
 		}
 	}
 			
-	set_current_song(id);
+	set_current_sheet(id);
 
 	info().information( tr("Project %1 loaded").arg(m_title) );
 	
@@ -295,9 +295,9 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
 	properties.setAttribute("genre", QString::number(m_genre));
 	properties.setAttribute("performer", m_performer);
 	properties.setAttribute("arranger", m_arranger);
-	properties.setAttribute("songwriter", m_songwriter);
+	properties.setAttribute("sheetwriter", m_sheetwriter);
 	properties.setAttribute("message", m_message);
-	properties.setAttribute("currentsheetid", m_currentSongId);
+	properties.setAttribute("currentsheetid", m_currentSheetId);
 	properties.setAttribute("rate", m_rate);
 	properties.setAttribute("bitdepth", m_bitDepth);
 	properties.setAttribute("projectfileversion", PROJECT_FILE_VERSION);
@@ -318,14 +318,14 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
 		projectNode.appendChild(m_resourcesManager->get_state(doc));
 	}
 
-	// Get all the Songs
-	QDomNode songsNode = doc.createElement("Sheets");
+	// Get all the Sheets
+	QDomNode sheetsNode = doc.createElement("Sheets");
 
-	foreach(Song* song, m_songs) {
-		songsNode.appendChild(song->get_state(doc, istemplate));
+	foreach(Sheet* sheet, m_sheets) {
+		sheetsNode.appendChild(sheet->get_state(doc, istemplate));
 	}
 
-	projectNode.appendChild(songsNode);
+	projectNode.appendChild(sheetsNode);
 	
 	return projectNode;
 }
@@ -395,9 +395,9 @@ void Project::set_arranger(const QString& pArranger)
 	m_arranger = pArranger;
 }
 
-void Project::set_songwriter(const QString& pSongwriter)
+void Project::set_sheetwriter(const QString& pSheetwriter)
 {
-	m_songwriter = pSongwriter;
+	m_sheetwriter = pSheetwriter;
 }
 
 void Project::set_message(const QString& pMessage)
@@ -417,23 +417,23 @@ void Project::set_genre(int pGenre)
 
 bool Project::has_changed()
 {
-	foreach(Song* song, m_songs) {
-		if(song->is_changed())
+	foreach(Sheet* sheet, m_sheets) {
+		if(sheet->is_changed())
 			return true;
 	}
 	return false;
 }
 
 
-Command* Project::add_song(Song* song, bool historable)
+Command* Project::add_sheet(Sheet* sheet, bool historable)
 {
 	PENTER;
 	
 	AddRemove* cmd;
-	cmd = new AddRemove(this, song, historable, 0,
-		"private_add_song(Song*)", "songAdded(Song*)",
-       		"private_remove_song(Song*)", "songRemoved(Song*)",
-       		tr("Sheet %1 added").arg(song->get_title()));
+	cmd = new AddRemove(this, sheet, historable, 0,
+		"private_add_sheet(Sheet*)", "sheetAdded(Sheet*)",
+       		"private_remove_sheet(Sheet*)", "sheetRemoved(Sheet*)",
+       		tr("Sheet %1 added").arg(sheet->get_title()));
 	
 	cmd->set_instantanious(true);
 	
@@ -441,42 +441,42 @@ Command* Project::add_song(Song* song, bool historable)
 }
 
 
-void Project::set_current_song(qint64 id)
+void Project::set_current_sheet(qint64 id)
 {
 	PENTER;
 	
-	if (m_currentSongId == id) {
+	if (m_currentSheetId == id) {
 		return;
 	}
 	
-	Song* newcurrent = 0;
+	Sheet* newcurrent = 0;
 	
-	foreach(Song* song, m_songs) {
-		if (song->get_id() == id) {
-			newcurrent = song;
+	foreach(Sheet* sheet, m_sheets) {
+		if (sheet->get_id() == id) {
+			newcurrent = sheet;
 			break;
 		}
 	}
 	
 	if (!newcurrent) {
 		info().information( tr("Sheet '%1' doesn't exist!").arg(id) );
-		emit currentSongChanged(0);
+		emit currentSheetChanged(0);
 		return;
 	}
 
-	m_currentSongId=id;
+	m_currentSheetId=id;
 	
-	emit currentSongChanged(newcurrent);
+	emit currentSheetChanged(newcurrent);
 }
 
 
-Song* Project::get_current_song() const
+Sheet* Project::get_current_sheet() const
 {
-	Song* current = 0;
+	Sheet* current = 0;
 	
-	foreach(Song* song, m_songs) {
-		if (song->get_id() == m_currentSongId) {
-			current = song;
+	foreach(Sheet* sheet, m_sheets) {
+		if (sheet->get_id() == m_currentSheetId) {
+			current = sheet;
 			break;
 		}
 	}
@@ -485,13 +485,13 @@ Song* Project::get_current_song() const
 }
 
 
-Song* Project::get_song(qint64 id) const
+Sheet* Project::get_sheet(qint64 id) const
 {
-	Song* current = 0;
+	Sheet* current = 0;
 	
-	foreach(Song* song, m_songs) {
-		if (song->get_id() == id) {
-			current = song;
+	foreach(Sheet* sheet, m_sheets) {
+		if (sheet->get_id() == id) {
+			current = sheet;
 			break;
 		}
 	}
@@ -500,13 +500,13 @@ Song* Project::get_song(qint64 id) const
 }
 
 
-Command* Project::remove_song(Song* song, bool historable)
+Command* Project::remove_sheet(Sheet* sheet, bool historable)
 {
 	AddRemove* cmd;
-	cmd = new AddRemove(this, song, historable, 0,
-		"private_remove_song(Song*)", "songRemoved(Song*)",
-		"private_add_song(Song*)", "songAdded(Song*)",
-		tr("Remove Sheet %1").arg(song->get_title()));
+	cmd = new AddRemove(this, sheet, historable, 0,
+		"private_remove_sheet(Sheet*)", "sheetRemoved(Sheet*)",
+		"private_add_sheet(Sheet*)", "sheetAdded(Sheet*)",
+		tr("Remove Sheet %1").arg(sheet->get_title()));
 	
 	cmd->set_instantanious(true);
 	
@@ -547,38 +547,38 @@ int Project::start_export(ExportSpecification* spec)
 	spec->dataF = new audio_sample_t[spec->blocksize * spec->channels];
 	audio_sample_t* readbuffer = new audio_sample_t[spec->blocksize * spec->channels];
 
-	overallExportProgress = renderedSongs = 0;
-	songsToRender.clear();
+	overallExportProgress = renderedSheets = 0;
+	sheetsToRender.clear();
 
-	if (spec->allSongs) {
-		foreach(Song* song, m_songs) {
-			songsToRender.append(song);
+	if (spec->allSheets) {
+		foreach(Sheet* sheet, m_sheets) {
+			sheetsToRender.append(sheet);
 		}
 	} else {
-		Song* song = get_current_song();
-		if (song) {
-			songsToRender.append(song);
+		Sheet* sheet = get_current_sheet();
+		if (sheet) {
+			sheetsToRender.append(sheet);
 		}
 	}
 
-	foreach(Song* song, songsToRender) {
-		PMESG("Starting export for song %lld", song->get_id());
-		emit exportStartedForSong(song);
+	foreach(Sheet* sheet, sheetsToRender) {
+		PMESG("Starting export for sheet %lld", sheet->get_id());
+		emit exportStartedForSheet(sheet);
 		spec->resumeTransport = false;
-		spec->resumeTransportLocation = song->get_transport_location();
-		song->readbuffer = readbuffer;
+		spec->resumeTransportLocation = sheet->get_transport_location();
+		sheet->readbuffer = readbuffer;
 		
 		if (spec->normalize) {
 			spec->peakvalue = 0.0;
 			spec->renderpass = ExportSpecification::CALC_NORM_FACTOR;
 			
 			
-			if (song->prepare_export(spec) < 0) {
-				PERROR("Failed to prepare song for export");
+			if (sheet->prepare_export(spec) < 0) {
+				PERROR("Failed to prepare sheet for export");
 				continue;
 			}
 			
-			while(song->render(spec) > 0) {}
+			while(sheet->render(spec) > 0) {}
 			
 			spec->normvalue = (1.0 - FLT_EPSILON) / spec->peakvalue;
 			
@@ -594,25 +594,25 @@ int Project::start_export(ExportSpecification* spec)
 
 		spec->renderpass = ExportSpecification::WRITE_TO_HARDDISK;
 		
-		if (song->prepare_export(spec) < 0) {
+		if (sheet->prepare_export(spec) < 0) {
 			PERROR("Failed to prepare sheet for export");
 			break;
 		}
 		
-		while(song->render(spec) > 0) {}
+		while(sheet->render(spec) > 0) {}
 		
-		if (!QMetaObject::invokeMethod(song, "set_transport_pos",  Qt::QueuedConnection, Q_ARG(TimeRef, spec->resumeTransportLocation))) {
-			printf("Invoking Song::set_transport_pos() failed\n");
+		if (!QMetaObject::invokeMethod(sheet, "set_transport_pos",  Qt::QueuedConnection, Q_ARG(TimeRef, spec->resumeTransportLocation))) {
+			printf("Invoking Sheet::set_transport_pos() failed\n");
 		}
 		if (spec->resumeTransport) {
-			if (!QMetaObject::invokeMethod(song, "start_transport",  Qt::QueuedConnection)) {
-				printf("Invoking Song::start_transport() failed\n");
+			if (!QMetaObject::invokeMethod(sheet, "start_transport",  Qt::QueuedConnection)) {
+				printf("Invoking Sheet::start_transport() failed\n");
 			}
 		}
 		if (spec->breakout) {
 			break;
 		}
-		renderedSongs++;
+		renderedSheets++;
 	}
 
 	PMESG("Export Finished");
@@ -631,21 +631,21 @@ int Project::start_export(ExportSpecification* spec)
 
 int Project::create_cdrdao_toc(ExportSpecification* spec)
 {
-	QList<Song* > songs;
+	QList<Sheet* > sheets;
 	QString filename = spec->exportdir;
 	
-	if (spec->allSongs) {
-		foreach(Song* song, m_songs) {
-			songs.append(song);
+	if (spec->allSheets) {
+		foreach(Sheet* sheet, m_sheets) {
+			sheets.append(sheet);
 		}
 		// filename of the toc file is "project-name.toc"
 		filename += get_title() + ".toc";
 	} else {
-		Song* song = get_current_song();
-		if (!song) {
+		Sheet* sheet = get_current_sheet();
+		if (!sheet) {
 			return -1;
 		}
-		songs.append(song);
+		sheets.append(sheet);
 	}
 	
 	QString output;
@@ -662,7 +662,7 @@ int Project::create_cdrdao_toc(ExportSpecification* spec)
 	output += "    UPC_EAN \"" + get_upc_ean() + "\"\n\n";
 
 	output += "    ARRANGER \"" + get_arranger() + "\"\n";
-	output += "    SONGWRITER \"" + get_songwriter() + "\"\n";
+	output += "    SONGWRITER \"" + get_sheetwriter() + "\"\n";
 	output += "    MESSAGE \"" + get_message() + "\"\n";
 	output += "    GENRE \"" + QString::number(get_genre()) + "\"\n  }\n}\n\n";
 
@@ -670,18 +670,18 @@ int Project::create_cdrdao_toc(ExportSpecification* spec)
 	bool pregap = true;
 	spec->renderpass = ExportSpecification::CREATE_CDRDAO_TOC;
 	
-	foreach(Song* song, songs) {
-		if (song->prepare_export(spec) < 0) {
+	foreach(Sheet* sheet, sheets) {
+		if (sheet->prepare_export(spec) < 0) {
 			return -1;
 		}
-		output += song->get_cdrdao_tracklist(spec, pregap);
-		pregap = false; // only add the pregap at the first song
+		output += sheet->get_cdrdao_tracklist(spec, pregap);
+		pregap = false; // only add the pregap at the first sheet
 	}
 	
 
 	if (spec->writeToc) {
-		if (!spec->allSongs) {
-			// filename of the toc file is "song-name.toc"
+		if (!spec->allSheets) {
+			// filename of the toc file is "sheet-name.toc"
 			filename += spec->basename + ".toc";
 		}
 		
@@ -705,8 +705,8 @@ int Project::create_cdrdao_toc(ExportSpecification* spec)
 Command* Project::select()
 {
 	int index = ie().collected_number();
-	if (index <= m_songs.size() && index > 0) {
-		set_current_song(m_songs.at(index - 1)->get_id());
+	if (index <= m_sheets.size() && index > 0) {
+		set_current_sheet(m_sheets.at(index - 1)->get_id());
 	}
 	return (Command*) 0;
 }
@@ -726,24 +726,24 @@ int Project::get_bitdepth( ) const
 	return m_bitDepth;
 }
 
-void Project::set_song_export_progress(int progress)
+void Project::set_sheet_export_progress(int progress)
 {
-	overallExportProgress = (progress / songsToRender.count()) + 
-			(renderedSongs * (100 / songsToRender.count()) );
+	overallExportProgress = (progress / sheetsToRender.count()) + 
+			(renderedSheets * (100 / sheetsToRender.count()) );
 
-	emit songExportProgressChanged(progress);
+	emit sheetExportProgressChanged(progress);
 	emit overallExportProgressChanged(overallExportProgress);
 }
 
-QList<Song* > Project::get_songs( ) const
+QList<Sheet* > Project::get_sheets( ) const
 {
-	return m_songs;
+	return m_sheets;
 }
 
-int Project::get_song_index(qint64 id) const
+int Project::get_sheet_index(qint64 id) const
 {
-	for (int i=0; i<m_songs.size(); ++i) {
-		if (m_songs.at(i)->get_id() == id) {
+	for (int i=0; i<m_sheets.size(); ++i) {
+		if (m_sheets.at(i)->get_id() == id) {
 			return i + 1;
 		}
 	}
@@ -752,14 +752,14 @@ int Project::get_song_index(qint64 id) const
 }
 
 
-int Project::get_current_song_id( ) const
+int Project::get_current_sheet_id( ) const
 {
-	return m_currentSongId;
+	return m_currentSheetId;
 }
 
-int Project::get_num_songs( ) const
+int Project::get_num_sheets( ) const
 {
-	return m_songs.size();
+	return m_sheets.size();
 }
 
 QString Project::get_title( ) const
@@ -792,9 +792,9 @@ QString Project::get_arranger() const
 	return m_arranger;
 }
 
-QString Project::get_songwriter() const
+QString Project::get_sheetwriter() const
 {
-	return m_songwriter;
+	return m_sheetwriter;
 }
 
 QString Project::get_message() const
@@ -828,33 +828,33 @@ ResourcesManager * Project::get_audiosource_manager( ) const
 }
 
 
-void Project::private_add_song(Song * song)
+void Project::private_add_sheet(Sheet * sheet)
 {
 	PENTER;
-	m_songs.append(song);
-	song->connect_to_audiodevice();
+	m_sheets.append(sheet);
+	sheet->connect_to_audiodevice();
 	
-	set_current_song(song->get_id());
+	set_current_sheet(sheet->get_id());
 }
 
-void Project::private_remove_song(Song * song)
+void Project::private_remove_sheet(Sheet * sheet)
 {
 	PENTER;
-	m_songs.removeAll(song);
+	m_sheets.removeAll(sheet);
 	
-	if (m_songs.isEmpty()) {
-		m_currentSongId = -1;
+	if (m_sheets.isEmpty()) {
+		m_currentSheetId = -1;
 	}
 		
 	qint64 newcurrent = 0;
 		
-	if (m_songs.size() > 0) {
-		newcurrent = m_songs.last()->get_id();
+	if (m_sheets.size() > 0) {
+		newcurrent = m_sheets.last()->get_id();
 	}
 		
-	set_current_song(newcurrent);
+	set_current_sheet(newcurrent);
 
-	song->disconnect_from_audiodevice();
+	sheet->disconnect_from_audiodevice();
 }
 
 QString Project::get_import_dir() const
@@ -881,8 +881,8 @@ bool Project::is_save_to_close() const
 
 bool Project::is_recording() const
 {
-	foreach(Song* song, m_songs) {
-		if (song->is_recording() && song->is_transport_rolling()) {
+	foreach(Sheet* sheet, m_sheets) {
+		if (sheet->is_recording() && sheet->is_transport_rolling()) {
 			return true;
 		}
 	}

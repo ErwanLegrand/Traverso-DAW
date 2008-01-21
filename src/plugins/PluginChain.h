@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Plugin.h"
 #include "GainEnvelope.h"
 
-class Song;
+class Sheet;
 class AudioBus;
 
 class PluginChain : public ContextItem
@@ -38,7 +38,7 @@ class PluginChain : public ContextItem
 	
 public:
 	PluginChain(ContextItem* parent);
-	PluginChain(ContextItem* parent, Song* song);
+	PluginChain(ContextItem* parent, Sheet* sheet);
 	~PluginChain();
 	
 	QDomNode get_state(QDomDocument doc);
@@ -50,7 +50,7 @@ public:
 	int process_post_fader(AudioBus* bus, unsigned long nframes);
 // 	void process_fader(audio_sample_t* buffer, nframes_t pos, nframes_t nframes) {m_fader->process_gain(buffer, pos, nframes);}
 	
-	void set_song(Song* song);
+	void set_sheet(Sheet* sheet);
 	
 	QList<Plugin* > get_plugin_list() {return m_pluginList;}
 	GainEnvelope* get_fader() const {return m_fader;}
@@ -58,7 +58,7 @@ public:
 private:
 	QList<Plugin* >	m_pluginList;
 	GainEnvelope*	m_fader;
-	Song*		m_song;
+	Sheet*		m_sheet;
 	
 signals:
 	void pluginAdded(Plugin* plugin);

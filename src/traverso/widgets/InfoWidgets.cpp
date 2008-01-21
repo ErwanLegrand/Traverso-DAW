@@ -119,10 +119,10 @@ void SystemResources::update_status( )
 	int bufWriteStatus = 100;
 	
 	if (m_project) {
-		foreach(Song* song, m_project->get_songs() ) {
-			bufReadStatus = std::min(song->get_diskio()->get_read_buffers_fill_status(), bufReadStatus);
-			bufWriteStatus = std::min(song->get_diskio()->get_write_buffers_fill_status(), bufWriteStatus);
-			time += song->get_diskio()->get_cpu_time();
+		foreach(Sheet* sheet, m_project->get_sheets() ) {
+			bufReadStatus = std::min(sheet->get_diskio()->get_read_buffers_fill_status(), bufReadStatus);
+			bufWriteStatus = std::min(sheet->get_diskio()->get_write_buffers_fill_status(), bufWriteStatus);
+			time += sheet->get_diskio()->get_cpu_time();
 		}
 	}
 
@@ -252,29 +252,29 @@ HDDSpaceInfo::HDDSpaceInfo(QWidget* parent )
 }
 
 
-void HDDSpaceInfo::set_song(Song* song)
+void HDDSpaceInfo::set_sheet(Sheet* sheet)
 {
-	m_song = song;
+	m_sheet = sheet;
 	
-	if (! m_song) {
+	if (! m_sheet) {
 		updateTimer.start(20000);
 		return;
 	}
 	
 	update_status();
 	
-	connect(m_song, SIGNAL(transferStopped()), this, SLOT(song_stopped()));
-	connect(m_song, SIGNAL(transferStarted()), this, SLOT(song_started()));
+	connect(m_sheet, SIGNAL(transferStopped()), this, SLOT(sheet_stopped()));
+	connect(m_sheet, SIGNAL(transferStarted()), this, SLOT(sheet_started()));
 }
 
-void HDDSpaceInfo::song_started()
+void HDDSpaceInfo::sheet_started()
 {
 	updateTimer.start(5000);
 	m_button->setEnabled(true);
 	update_status();
 }
 
-void HDDSpaceInfo::song_stopped()
+void HDDSpaceInfo::sheet_stopped()
 {
 	updateTimer.start(60000);
 	m_button->setEnabled(false);
@@ -318,19 +318,19 @@ void HDDSpaceInfo::update_status( )
 #endif
 #endif
 
-	QList<Song*> recordingSongs;
-	foreach(Song* song, m_project->get_songs()) {
-		if (song->is_recording() && song->any_track_armed()) {
-			recordingSongs.append(song);
+	QList<Sheet*> recordingSheets;
+	foreach(Sheet* sheet, m_project->get_sheets()) {
+		if (sheet->is_recording() && sheet->any_track_armed()) {
+			recordingSheets.append(sheet);
 		}
 	}
 	
 	QString text;
 	
-	if (recordingSongs.size()) {
+	if (recordingSheets.size()) {
 		int recChannelCount = 0;
-		foreach(Song* song, recordingSongs) {
-			foreach(Track* track, song->get_tracks()) {
+		foreach(Sheet* sheet, recordingSheets) {
+			foreach(Track* track, sheet->get_tracks()) {
 				if (track->armed()) {
 					recChannelCount += track->capture_left_channel() ? 1 : 0;
 					recChannelCount += track->capture_right_channel() ? 1 : 0;
@@ -396,28 +396,28 @@ PlayHeadInfo::PlayHeadInfo(QWidget* parent)
 void PlayHeadInfo::set_project(Project* project )
 {
 	if (! project) {
-		stop_song_update_timer();
+		stop_sheet_update_timer();
 	}
 	
 	InfoWidget::set_project(project);
 }
 
-void PlayHeadInfo::set_song(Song* song)
+void PlayHeadInfo::set_sheet(Sheet* sheet)
 {
-	m_song = song;
+	m_sheet = sheet;
 	
-	if (!m_song) {
-		stop_song_update_timer();
+	if (!m_sheet) {
+		stop_sheet_update_timer();
 		m_playpixmap = find_pixmap(":/playstart");
 		return;
 	}
 	
-	connect(m_song, SIGNAL(transferStopped()), this, SLOT(stop_song_update_timer()));
-	connect(m_song, SIGNAL(transferStarted()), this, SLOT(start_song_update_timer()));
-	connect(m_song, SIGNAL(transportPosSet()), this, SLOT(update()));
+	connect(m_sheet, SIGNAL(transferStopped()), this, SLOT(stop_sheet_update_timer()));
+	connect(m_sheet, SIGNAL(transferStarted()), this, SLOT(start_sheet_update_timer()));
+	connect(m_sheet, SIGNAL(transportPosSet()), this, SLOT(update()));
 	
 	
-	if (m_song->is_transport_rolling()) {
+	if (m_sheet->is_transport_rolling()) {
 		m_playpixmap = find_pixmap(":/playstop");
 	} else {
 		m_playpixmap = find_pixmap(":/playstart");
@@ -431,16 +431,16 @@ void PlayHeadInfo::paintEvent(QPaintEvent* )
 	QPainter painter(this);
 	QString currentTime;
 	
-	if (!m_song) {
+	if (!m_sheet) {
 		currentTime = "0:00.0";
 	} else {
-		currentTime = timeref_to_ms_2(m_song->get_transport_location());
+		currentTime = timeref_to_ms_2(m_sheet->get_transport_location());
 	}
 	
 	int fc = 170;
 	QColor fontcolor = QColor(fc, fc, fc);
 	
-	if (m_song && m_song->is_transport_rolling()) {
+	if (m_sheet && m_sheet->is_transport_rolling()) {
 		fc = 60;
 		fontcolor = QColor(fc, fc, fc);
 	}
@@ -453,13 +453,13 @@ void PlayHeadInfo::paintEvent(QPaintEvent* )
 	painter.drawText(QRect(12, 4, width() - 6, height() - 6), Qt::AlignCenter, currentTime);
 }
 
-void PlayHeadInfo::start_song_update_timer( )
+void PlayHeadInfo::start_sheet_update_timer( )
 {
 	m_playpixmap = find_pixmap(":/playstop");
 	m_updateTimer.start(150);
 }
 
-void PlayHeadInfo::stop_song_update_timer( )
+void PlayHeadInfo::stop_sheet_update_timer( )
 {
 	m_updateTimer.stop();
 	m_playpixmap = find_pixmap(":/playstart");
@@ -492,12 +492,12 @@ void PlayHeadInfo::create_background()
 
 void PlayHeadInfo::mousePressEvent(QMouseEvent * event)
 {
-	if (! m_song) {
+	if (! m_sheet) {
 		return;
 	}
 	
 	if (event->button() == Qt::LeftButton) {
-		m_song->start_transport();
+		m_sheet->start_transport();
 	}
 }
 
@@ -511,16 +511,16 @@ InfoToolBar::InfoToolBar(QWidget * parent)
 	
 	setMovable(false);
 	
-	m_songinfo = new SongInfo(this);
+	m_sheetinfo = new SheetInfo(this);
 	
-	QAction* action = addWidget(m_songinfo);
+	QAction* action = addWidget(m_sheetinfo);
 	action->setVisible(true);
 }
 
 
 InfoWidget::InfoWidget(QWidget* parent)
 	: QFrame(parent)
-	, m_song(0)
+	, m_sheet(0)
 	, m_project(0)
 {
 	setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
@@ -534,25 +534,25 @@ void InfoWidget::set_project(Project* project )
 {
 	m_project = project;
 	if (m_project) {
-		connect(m_project, SIGNAL(currentSongChanged(Song*)), this, SLOT(set_song(Song*)));
+		connect(m_project, SIGNAL(currentSheetChanged(Sheet*)), this, SLOT(set_sheet(Sheet*)));
 	} else {
-		set_song(0);
+		set_sheet(0);
 	}
 }
 
-void InfoWidget::set_song(Song* song)
+void InfoWidget::set_sheet(Sheet* sheet)
 {
-	m_song = song;
+	m_sheet = sheet;
 }
 
 
-SongInfo::SongInfo(QWidget * parent)
+SheetInfo::SheetInfo(QWidget * parent)
 	: InfoWidget(parent)
 {
-	m_songselectbox = new QComboBox(this);
-	m_songselectbox->setMinimumWidth(140);
-	m_songselectbox->setToolTip(tr("Select Sheet to be displayed"));
-	connect(m_songselectbox, SIGNAL(activated(int)), this, SLOT(song_selector_index_changed(int)));
+	m_sheetselectbox = new QComboBox(this);
+	m_sheetselectbox->setMinimumWidth(140);
+	m_sheetselectbox->setToolTip(tr("Select Sheet to be displayed"));
+	connect(m_sheetselectbox, SIGNAL(activated(int)), this, SLOT(sheet_selector_index_changed(int)));
 	
 	m_playhead = new PlayHeadInfo(this);
 
@@ -611,7 +611,7 @@ SongInfo::SongInfo(QWidget * parent)
 	lay->addWidget(m_playhead);
 	lay->addStretch(5);
 	lay->addWidget(m_effectButton);
-	lay->addWidget(m_songselectbox);
+	lay->addWidget(m_sheetselectbox);
 		
 	setLayout(lay);
 	lay->setMargin(0);
@@ -628,34 +628,34 @@ SongInfo::SongInfo(QWidget * parent)
 	update_follow_state();
 }
 
-void SongInfo::set_project(Project * project)
+void SheetInfo::set_project(Project * project)
 {
 	m_project = project;
 	
 	if (!project) {
-		m_songselectbox->clear();
-		set_song(0);
+		m_sheetselectbox->clear();
+		set_sheet(0);
 		return;
 	}
 	
-	connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(song_selector_song_added(Song*)));
-	connect(m_project, SIGNAL(songRemoved(Song*)), this, SLOT(song_selector_song_removed(Song*)));
-	connect(m_project, SIGNAL(currentSongChanged(Song*)), this, SLOT(song_selector_change_index_to(Song*)));
-	connect(m_project, SIGNAL(currentSongChanged(Song*)), this, SLOT(set_song(Song*)));
+	connect(m_project, SIGNAL(sheetAdded(Sheet*)), this, SLOT(sheet_selector_sheet_added(Sheet*)));
+	connect(m_project, SIGNAL(sheetRemoved(Sheet*)), this, SLOT(sheet_selector_sheet_removed(Sheet*)));
+	connect(m_project, SIGNAL(currentSheetChanged(Sheet*)), this, SLOT(sheet_selector_change_index_to(Sheet*)));
+	connect(m_project, SIGNAL(currentSheetChanged(Sheet*)), this, SLOT(set_sheet(Sheet*)));
 	
-	song_selector_update_songs();
+	sheet_selector_update_sheets();
 }
 
-void SongInfo::set_song(Song* song)
+void SheetInfo::set_sheet(Sheet* sheet)
 {
-	m_song = song;
+	m_sheet = sheet;
 	
-	if (m_song) {
-		connect(m_song, SIGNAL(snapChanged()), this, SLOT(update_snap_state()));
-		connect(m_song, SIGNAL(modeChanged()), this, SLOT(update_effects_state()));
-		connect(m_song, SIGNAL(tempFollowChanged(bool)), this, SLOT(update_temp_follow_state(bool)));
-		connect(m_song, SIGNAL(recordingStateChanged()), this, SLOT(update_recording_state()));
-		connect(m_song, SIGNAL(transferStopped()), this, SLOT(update_follow_state()));
+	if (m_sheet) {
+		connect(m_sheet, SIGNAL(snapChanged()), this, SLOT(update_snap_state()));
+		connect(m_sheet, SIGNAL(modeChanged()), this, SLOT(update_effects_state()));
+		connect(m_sheet, SIGNAL(tempFollowChanged(bool)), this, SLOT(update_temp_follow_state(bool)));
+		connect(m_sheet, SIGNAL(recordingStateChanged()), this, SLOT(update_recording_state()));
+		connect(m_sheet, SIGNAL(transferStopped()), this, SLOT(update_follow_state()));
 		update_snap_state();
 		update_effects_state();
 		update_recording_state();
@@ -671,84 +671,84 @@ void SongInfo::set_song(Song* song)
 	}
 }
 
-void SongInfo::update_snap_state()
+void SheetInfo::update_snap_state()
 {
-	m_snapAct->setChecked(m_song->is_snap_on());
+	m_snapAct->setChecked(m_sheet->is_snap_on());
 }
 
-void SongInfo::update_effects_state()
+void SheetInfo::update_effects_state()
 {
-	if (!m_song) {
+	if (!m_sheet) {
 		return;
 	}
 	
-	if (m_song->get_mode() == Song::EDIT) {
+	if (m_sheet->get_mode() == Sheet::EDIT) {
 		m_effectButton->setChecked(false);
 	} else {
 		m_effectButton->setChecked(true);
 	}
 }
 
-void SongInfo::snap_state_changed(bool state)
+void SheetInfo::snap_state_changed(bool state)
 {
-	if (! m_song) {
+	if (! m_sheet) {
 		return;
 	}
-	m_song->set_snapping(state);
+	m_sheet->set_snapping(state);
 }
 
-void SongInfo::update_follow_state()
+void SheetInfo::update_follow_state()
 {
 	m_isFollowing = config().get_property("PlayHead", "Follow", true).toBool();
 	m_followAct->setChecked(m_isFollowing);
 }
 
-void SongInfo::update_temp_follow_state(bool state)
+void SheetInfo::update_temp_follow_state(bool state)
 {
-	if (m_song->is_transport_rolling() && m_isFollowing) {
+	if (m_sheet->is_transport_rolling() && m_isFollowing) {
 		m_followAct->setChecked(state);
 	}
 }
 
-void SongInfo::follow_state_changed(bool state)
+void SheetInfo::follow_state_changed(bool state)
 {
-	if (!m_song) {
+	if (!m_sheet) {
 		return;
 	}
 	
-	if (!m_song->is_transport_rolling() || !m_isFollowing) {
+	if (!m_sheet->is_transport_rolling() || !m_isFollowing) {
 		m_isFollowing = state;
 		config().set_property("PlayHead", "Follow", state);
 		config().save();
-		if (m_song->is_transport_rolling()) {
-			m_song->set_temp_follow_state(state);
+		if (m_sheet->is_transport_rolling()) {
+			m_sheet->set_temp_follow_state(state);
 		}
 	} else {
-		m_song->set_temp_follow_state(state);
+		m_sheet->set_temp_follow_state(state);
 	}
 }
 
-void SongInfo::effect_button_clicked()
+void SheetInfo::effect_button_clicked()
 {
-	if (m_song->get_mode() == Song::EDIT) {
-		m_song->set_effects_mode();
+	if (m_sheet->get_mode() == Sheet::EDIT) {
+		m_sheet->set_effects_mode();
 	} else {
-		m_song->set_editing_mode();
+		m_sheet->set_editing_mode();
 	}
 }
 
-void SongInfo::recording_button_clicked()
+void SheetInfo::recording_button_clicked()
 {
-	m_song->set_recordable();
+	m_sheet->set_recordable();
 }
 
-void SongInfo::update_recording_state()
+void SheetInfo::update_recording_state()
 {
-	if (m_song->is_recording()) {
+	if (m_sheet->is_recording()) {
 		m_recAction->setIcon(find_pixmap(":/redled-16"));
 		QString recordFormat = config().get_property("Recording", "FileFormat", "wav").toString();
 		int count = 0;
-		foreach(Track* track, m_song->get_tracks()) {
+		foreach(Track* track, m_sheet->get_tracks()) {
 			if (track->armed()) {
 				count++;
 			}
@@ -760,49 +760,49 @@ void SongInfo::update_recording_state()
 }
 
 
-QSize SongInfo::sizeHint() const
+QSize SheetInfo::sizeHint() const
 {
 	return QSize(400, SONG_TOOLBAR_HEIGHT);
 }
 
-void SongInfo::song_selector_update_songs()
+void SheetInfo::sheet_selector_update_sheets()
 {
-	m_songselectbox->clear();
-	foreach(Song* song, m_project->get_songs()) {
-		m_songselectbox->addItem("Sheet " +
-				QString::number(m_project->get_song_index(song->get_id())) +
-				": " + song->get_title(),
-				song->get_id());
+	m_sheetselectbox->clear();
+	foreach(Sheet* sheet, m_project->get_sheets()) {
+		m_sheetselectbox->addItem("Sheet " +
+				QString::number(m_project->get_sheet_index(sheet->get_id())) +
+				": " + sheet->get_title(),
+				sheet->get_id());
 	}
 }
 
-void SongInfo::song_selector_song_added(Song * song)
+void SheetInfo::sheet_selector_sheet_added(Sheet * sheet)
 {
-	connect(song, SIGNAL(propertyChanged()), this, SLOT(song_selector_update_songs()));
-	song_selector_update_songs();
+	connect(sheet, SIGNAL(propertyChanged()), this, SLOT(sheet_selector_update_sheets()));
+	sheet_selector_update_sheets();
 }
 
-void SongInfo::song_selector_song_removed(Song * song)
+void SheetInfo::sheet_selector_sheet_removed(Sheet * sheet)
 {
-	disconnect(song, SIGNAL(propertyChanged()), this, SLOT(song_selector_update_songs()));
-	song_selector_update_songs();
+	disconnect(sheet, SIGNAL(propertyChanged()), this, SLOT(sheet_selector_update_sheets()));
+	sheet_selector_update_sheets();
 }
 
-void SongInfo::song_selector_index_changed(int index)
+void SheetInfo::sheet_selector_index_changed(int index)
 {
-	qint64 id = m_songselectbox->itemData(index).toLongLong();
+	qint64 id = m_sheetselectbox->itemData(index).toLongLong();
 	
-	m_project->set_current_song(id);
+	m_project->set_current_sheet(id);
 }
 
-void SongInfo::song_selector_change_index_to(Song* song)
+void SheetInfo::sheet_selector_change_index_to(Sheet* sheet)
 {
-	if (!song) {
+	if (!sheet) {
 		return;
 	}
 	
-	int index = m_songselectbox->findData(song->get_id());
-	m_songselectbox->setCurrentIndex(index);
+	int index = m_sheetselectbox->findData(sheet->get_id());
+	m_sheetselectbox->setCurrentIndex(index);
 }
 
 

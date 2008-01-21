@@ -33,8 +33,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 
-LV2Plugin::LV2Plugin(Song* song, bool slave)
-	: Plugin(song)
+LV2Plugin::LV2Plugin(Sheet* sheet, bool slave)
+	: Plugin(sheet)
 	, m_instance(0)
 	, m_slv2plugin(0)
 {
@@ -42,8 +42,8 @@ LV2Plugin::LV2Plugin(Song* song, bool slave)
 }
 
 
-LV2Plugin::LV2Plugin(Song* song, char* pluginUri)
-	: Plugin(song)
+LV2Plugin::LV2Plugin(Sheet* sheet, char* pluginUri)
+	: Plugin(sheet)
 	, m_pluginUri((char*) pluginUri)
 	, m_instance(0)
 	, m_slv2plugin(0)
@@ -386,7 +386,7 @@ LV2Plugin * LV2Plugin::create_copy()
 {
 	QDomDocument doc("LV2Plugin");
 	QDomNode pluginState = get_state(doc);
-	LV2Plugin* plug = new LV2Plugin(m_song, true);
+	LV2Plugin* plug = new LV2Plugin(m_sheet, true);
 	plug->set_state(pluginState);
 	return plug;
 }

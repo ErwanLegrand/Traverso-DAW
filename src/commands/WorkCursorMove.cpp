@@ -22,14 +22,14 @@
 #include "WorkCursorMove.h"
 
 #include <libtraversocore.h>
-#include <SongView.h>
+#include <SheetView.h>
 #include <Cursors.h>
 
 #include <Debugger.h>
 
-WorkCursorMove::WorkCursorMove(PlayHead* cursor, SongView* sv)
+WorkCursorMove::WorkCursorMove(PlayHead* cursor, SheetView* sv)
 	: Command("Play Cursor Move")
-	, m_song(sv->get_song())
+	, m_sheet(sv->get_sheet())
 	, m_sv(sv)
 	, m_playCursor(cursor)
 {
@@ -43,7 +43,7 @@ int WorkCursorMove::finish_hold()
 		x = 0;
 	}
 
-	m_song->get_work_snap()->set_snappable(true);
+	m_sheet->get_work_snap()->set_snappable(true);
 
 	m_sv->start_shuttle(false);
 	return -1;
@@ -51,19 +51,19 @@ int WorkCursorMove::finish_hold()
 
 int WorkCursorMove::begin_hold()
 {
-	if (m_song->is_transport_rolling()) {
+	if (m_sheet->is_transport_rolling()) {
 		m_playCursor->disable_follow();
 	}
-	m_song->get_work_snap()->set_snappable(false);
+	m_sheet->get_work_snap()->set_snappable(false);
 	m_sv->start_shuttle(true, true);
-	m_origPos = m_song->get_work_location();
+	m_origPos = m_sheet->get_work_location();
 	return 1;
 }
 
 void WorkCursorMove::cancel_action()
 {
 	m_sv->start_shuttle(false);
-	m_song->set_work_at(m_origPos);
+	m_sheet->set_work_at(m_origPos);
 }
 
 void WorkCursorMove::set_cursor_shape(int useX, int useY)
@@ -84,12 +84,12 @@ int WorkCursorMove::jog()
 
 	TimeRef newLocation(x * m_sv->timeref_scalefactor);
 
-	if (m_song->is_snap_on()) {
-		SnapList* slist = m_song->get_snap_list();
+	if (m_sheet->is_snap_on()) {
+		SnapList* slist = m_sheet->get_snap_list();
 		newLocation = slist->get_snap_value(newLocation);
 	}
 
-	m_song->set_work_at(newLocation);
+	m_sheet->set_work_at(newLocation);
 
 	m_sv->update_shuttle_factor();
 	cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(newLocation, m_sv->timeref_scalefactor));

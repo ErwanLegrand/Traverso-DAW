@@ -19,7 +19,7 @@
 #include "ProjectManager.h"
 #include "ReadSource.h"
 #include "SnapList.h"
-#include "Song.h"
+#include "Sheet.h"
 #include "TimeLine.h"
 #include "Track.h"
 #include "Utils.h"

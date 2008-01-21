@@ -30,7 +30,7 @@
 
 class CorrelationMeter;
 class CorrelationMeterView;
-class Song;
+class Sheet;
 class Project;
 class Command;
 class QLinearGradient;
@@ -79,7 +79,7 @@ private:
 	float		coeff;
 	float		direction;
 	CorrelationMeter*	m_meter;
-	Song*		m_song;
+	Sheet*		m_sheet;
 	QLinearGradient	gradPhase;
 	int		range;
 
@@ -88,7 +88,7 @@ private:
 
 private slots:
 	void		set_project( Project* );
-	void		set_song( Song* );
+	void		set_sheet( Sheet* );
 	void		update_data();
 
 public slots:

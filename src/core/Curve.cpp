@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <cmath>
 
 
-#include "Song.h"
+#include "Sheet.h"
 #include "Track.h"
 #include "InputEngine.h"
 #include "Utils.h"
@@ -128,7 +128,7 @@ void Curve::init( )
 	m_changed = true;
 	m_lookup_cache.left = -1;
 	m_defaultValue = 1.0f;
-	m_song = 0;
+	m_sheet = 0;
 	
 	connect(this, SIGNAL(nodePositionChanged()), this, SLOT(set_changed()));
 }
@@ -210,11 +210,11 @@ int Curve::process(
 	}
 	
 	// Calculate the vector, an apply to the buffer including the makeup gain.
-	get_vector(startlocation.universal_frame(), endlocation.universal_frame(), m_song->mixdown, nframes);
+	get_vector(startlocation.universal_frame(), endlocation.universal_frame(), m_sheet->mixdown, nframes);
 	
 	for (uint chan=0; chan<channels; ++chan) {
 		for (nframes_t n = 0; n < nframes; ++n) {
-			buffer[chan][n] *= (m_song->mixdown[n] * makeupgain);
+			buffer[chan][n] *= (m_sheet->mixdown[n] * makeupgain);
 		}
 	}
 	
@@ -700,7 +700,7 @@ Command* Curve::add_node(CurveNode* node, bool historable)
 
 	
 	AddRemove* cmd;
-	cmd = new AddRemove(this, node, historable, m_song,
+	cmd = new AddRemove(this, node, historable, m_sheet,
 			"private_add_node(CurveNode*)", "nodeAdded(CurveNode*)",
 			"private_remove_node(CurveNode*)", "nodeRemoved(CurveNode*)", 
 			tr("Add CurveNode"));
@@ -739,7 +739,7 @@ Command* Curve::remove_node(CurveNode* node, bool historable)
 	
 	AddRemove* cmd;
 	
-	cmd = new AddRemove(this, node, historable, m_song,
+	cmd = new AddRemove(this, node, historable, m_sheet,
 			"private_remove_node(CurveNode*)", "nodeRemoved(CurveNode*)", 
 			"private_add_node(CurveNode*)", "nodeAdded(CurveNode*)", 
    			tr("Remove CurveNode"));
@@ -759,9 +759,9 @@ void Curve::private_remove_node( CurveNode * node )
 	set_changed();
 }
 
-void Curve::set_song(Song * song)
+void Curve::set_sheet(Sheet * sheet)
 {
-	m_song = song; 
-	set_history_stack(m_song->get_history_stack());
+	m_sheet = sheet; 
+	set_history_stack(m_sheet->get_history_stack());
 }
 

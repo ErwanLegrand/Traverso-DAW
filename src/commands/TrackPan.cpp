@@ -32,7 +32,7 @@ TrackPan::TrackPan(Track* track, QVariantList args)
 	: Command(track, "")
 {
         m_track = track;
-        m_song = track->get_song();
+        m_sheet = track->get_sheet();
 	
 	QString des;
 	

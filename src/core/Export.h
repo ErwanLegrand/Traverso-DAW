@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Export.h,v 1.17 2007/11/22 15:07:01 r_sijrier Exp $
+$Id: Export.h,v 1.18 2008/01/21 16:22:13 r_sijrier Exp $
 */
 
 #ifndef EXPORT_H
@@ -73,7 +73,7 @@ struct ExportSpecification
 	bool  		running;   /* audio thread sets to false when export is done */
 
 	int   		status;
-	bool		allSongs;
+	bool		allSheets;
 	int		isRecording;
 	QString		exportdir;
 	QString		basename;

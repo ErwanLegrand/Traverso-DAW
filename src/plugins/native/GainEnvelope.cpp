@@ -20,19 +20,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "GainEnvelope.h"
 
-#include "Song.h"
+#include "Sheet.h"
 #include "Curve.h"
 #include "Mixer.h"
 #include "AudioBus.h"
 
-GainEnvelope::GainEnvelope(Song* song)
-	: Plugin(song)
+GainEnvelope::GainEnvelope(Sheet* sheet)
+	: Plugin(sheet)
 {
 	PluginControlPort* port = new PluginControlPort(this, 0, 1.0);
 	port->set_index(0);
 	m_controlPorts.append(port);
-	if (song) {
-		set_song(song);
+	if (sheet) {
+		set_sheet(sheet);
 	}
 }
 
@@ -78,12 +78,12 @@ QString GainEnvelope::get_name()
 	return "Gain Envelope";
 }
 
-void GainEnvelope::set_song(Song * song)
+void GainEnvelope::set_sheet(Sheet * sheet)
 {
-	m_song = song;
-	set_history_stack(m_song->get_history_stack());
+	m_sheet = sheet;
+	set_history_stack(m_sheet->get_history_stack());
 	if (get_curve()) {
-		get_curve()->set_song(song);
+		get_curve()->set_sheet(sheet);
 	}
 }
 

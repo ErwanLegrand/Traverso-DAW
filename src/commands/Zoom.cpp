@@ -17,41 +17,61 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Zoom.cpp,v 1.15 2007/05/22 20:54:22 benjie Exp $
 */
-
-#include <libtraversocore.h>
 
 #include "Zoom.h"
 
-#include "SongView.h"
-#include "TrackView.h"
+#include "SheetView.h"
+#include "Sheet.h"
+#include "ClipsViewPort.h"
+#include "ContextPointer.h"
 #include <QPoint>
-#include <ViewPort.h>
-#include <ClipsViewPort.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-Zoom::Zoom(SongView* sv)
+Zoom::Zoom(SheetView* sv, QVariantList args)
 	: Command("Zoom")
 {
+	m_jogHorizontal = m_jogVertical = false;
+	
+	if (args.size() > 0) {
+		QString type = args.at(0).toString();
+		if (type == "JogZoom") {
+			m_jogHorizontal = m_jogVertical = true;
+		} else if (type == "HJogZoom") {
+			m_jogHorizontal = true;
+		} else if (type == "VJogZoom") {
+			m_jogVertical = true;
+		}
+	}
+	if (args.size() > 1) {
+		m_xScalefactor = args.at(1).toDouble();
+	} else {
+		m_xScalefactor = 1;
+	}
+	if (args.size() > 2) {
+		m_yScalefactor = args.at(2).toDouble();
+	} else {
+		m_yScalefactor = 0;
+	}
+	
         m_sv = sv;
 }
 
 
 int Zoom::prepare_actions()
 {
-        return -1;
+	return 1;
 }
 
 
 int Zoom::begin_hold()
 {
-        jogZoomTotalX = cpointer().get_viewport()->viewport()->width();
-        verticalJogZoomLastY = cpointer().on_first_input_event_y();
-        baseJogZoomXFactor = m_sv->get_song()->get_hzoom() - ((int) ( (float) (jogZoomTotalX - cpointer().on_first_input_event_x()) / jogZoomTotalX * 50 ) + 1 );
+	verticalJogZoomLastY = cpointer().y();
+	horizontalJogZoomLastX = cpointer().x();
+	origPos = cpointer().pos();
 	
 	return 1;
 }
@@ -59,7 +79,8 @@ int Zoom::begin_hold()
 
 int Zoom::finish_hold()
 {
-	return 1;
+	QCursor::setPos(mousePos);
+	return -1;
 }
 
 
@@ -68,45 +89,66 @@ void Zoom::set_cursor_shape( int useX, int useY )
 	Q_UNUSED(useX);
 	Q_UNUSED(useY);
 	
-	ViewPort* view = cpointer().get_viewport();
-	view->viewport()->setCursor(themer()->get_cursor("Zoom"));
+	if (useX && useY) {
+		cpointer().get_viewport()->set_holdcursor(":/cursorZoom");
+	} else if(useX) {
+		cpointer().get_viewport()->set_holdcursor(":/cursorZoomHorizontal");
+	} else if (useY) {
+		cpointer().get_viewport()->set_holdcursor(":/cursorZoomVertical");
+	}
+	
 	mousePos = QCursor::pos();	
 }
 
 int Zoom::jog()
 {
         PENTER;
-        int x = cpointer().x();
-        int y = cpointer().y();
-        int jzxfactor = (int) ( (float) (jogZoomTotalX - x) / jogZoomTotalX * 50 ) + 1;
-        if (jzxfactor==0)
-                jzxfactor=1;
-
-        if (jzxfactor != lastJogZoomXFactor) {
-                lastJogZoomXFactor = jzxfactor;
-                int newHZoom = jzxfactor + baseJogZoomXFactor;
-                if ( newHZoom < 0 )
-                        m_sv->get_song()->set_hzoom(0);
-                else if ( newHZoom > Peak::ZOOM_LEVELS -1 )
-                        m_sv->get_song()->set_hzoom(Peak::ZOOM_LEVELS - 1);
-                else
-                        m_sv->get_song()->set_hzoom(newHZoom);
-                m_sv->center();
-        }
-
-        int vzy = y - verticalJogZoomLastY;
-        if (vzy>10) {
-                m_sv->vzoom_in();
-                verticalJogZoomLastY = verticalJogZoomLastY + 10;
-        } else if (vzy<-10) {
-                m_sv->vzoom_out();
-                verticalJogZoomLastY = verticalJogZoomLastY - 10;
-        }
+	
+	if (m_jogVertical) {
+		int y = cpointer().y();
+		int dy = y - verticalJogZoomLastY;
+		
+		if (abs(dy) > 8) {
+			verticalJogZoomLastY = y;
+			if (dy > 0) {
+				m_sv->vzoom(1 + m_yScalefactor);
+			} else {
+				m_sv->vzoom(1 - m_yScalefactor);
+			}
+		}
+	} 
+	
+	if (m_jogHorizontal) {
+		int x = cpointer().x();
+		int dx = x - horizontalJogZoomLastX;
+		
+		if (abs(dx) > 1) {
+			horizontalJogZoomLastX = x;
+			Sheet* sheet = m_sv->get_sheet();
+			if (dx > 0) {
+				sheet->set_hzoom(sheet->get_hzoom() / (m_xScalefactor + dx/18));
+			} else {
+				sheet->set_hzoom(sheet->get_hzoom() * (m_xScalefactor + abs(dx)/18));
+			}
+			m_sv->center();
+		}
+	}
+	
+	cpointer().get_viewport()->set_holdcursor_pos(m_sv->get_clips_viewport()->mapToScene(origPos).toPoint());
+	
         return 1;
 }
 
 int Zoom::do_action( )
 {
+	if (m_yScalefactor != 0) {
+		m_sv->vzoom(1 + m_yScalefactor);
+	}
+	if (m_xScalefactor != 1) {
+		m_sv->hzoom(m_xScalefactor);
+// 		m_sv->center();
+	}
+	
 	return -1;
 }
 
@@ -115,5 +157,30 @@ int Zoom::undo_action( )
 	return -1;
 }
 
+void Zoom::vzoom_in(bool autorepeat)
+{
+	m_sv->vzoom(1.3);
+}
 
-// eof
+void Zoom::vzoom_out(bool autorepeat)
+{
+	m_sv->vzoom(0.7);
+}
+
+void Zoom::toggle_vertical_horizontal_jog_zoom(bool autorepeat)
+{
+	if (autorepeat) return;
+	
+	if (m_jogVertical) {
+		cpointer().get_viewport()->set_holdcursor(":/cursorZoomHorizontal");
+		cpointer().get_viewport()->set_holdcursor_pos(m_sv->get_clips_viewport()->mapToScene(origPos).toPoint());
+		m_jogVertical = false;
+		m_jogHorizontal = true;
+	} else {
+		cpointer().get_viewport()->set_holdcursor(":/cursorZoomVertical");
+		cpointer().get_viewport()->set_holdcursor_pos(m_sv->get_clips_viewport()->mapToScene(origPos).toPoint());
+		m_jogVertical = true;
+		m_jogHorizontal = false;
+	}
+}
+

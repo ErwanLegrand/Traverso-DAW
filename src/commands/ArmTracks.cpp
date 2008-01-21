@@ -17,14 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ArmTracks.cpp,v 1.3 2007/03/22 12:23:59 r_sijrier Exp $
+$Id: ArmTracks.cpp,v 1.4 2008/01/21 16:22:11 r_sijrier Exp $
 */
 
 #include "ArmTracks.h"
 
 #include <Track.h>
-#include <Song.h>
-#include <SongView.h>
+#include <Sheet.h>
+#include <SheetView.h>
 #include <TrackView.h>
 
 #include <ContextPointer.h>
@@ -35,8 +35,8 @@ $Id: ArmTracks.cpp,v 1.3 2007/03/22 12:23:59 r_sijrier Exp $
 #include "Debugger.h"
 
 
-ArmTracks::ArmTracks(SongView* view)
-	: Command(view->get_song(), tr("Arm Tracks"))
+ArmTracks::ArmTracks(SheetView* view)
+	: Command(view->get_sheet(), tr("Arm Tracks"))
 	, m_sv(view)
 {
 }

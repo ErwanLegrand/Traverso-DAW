@@ -25,14 +25,14 @@
 
 #include <QList>
 
-class SongView;
+class SheetView;
 class Track;
 
 class ArmTracks : public Command
 {
 
 public :
-	ArmTracks(SongView* view);
+	ArmTracks(SheetView* view);
 	~ArmTracks();
 
 	int begin_hold();
@@ -44,7 +44,7 @@ public :
 	int jog();
 	
 private:
-	SongView* m_sv;
+	SheetView* m_sv;
 	QList<Track* > m_tracks;
 };
 

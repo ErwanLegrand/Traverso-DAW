@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "TimeLine.h"
 
-#include "Song.h"
+#include "Sheet.h"
 #include "Marker.h"
 #include <AddRemove.h>
 #include "AudioDevice.h"
@@ -31,11 +31,11 @@ static bool smallerMarker(const Marker* left, const Marker* right )
 	return left->get_when() < right->get_when();
 }
 
-TimeLine::TimeLine(Song * song)
-	: ContextItem(song)
-	, m_song(song)
+TimeLine::TimeLine(Sheet * sheet)
+	: ContextItem(sheet)
+	, m_sheet(sheet)
 {
-	set_history_stack(m_song->get_history_stack());
+	set_history_stack(m_sheet->get_history_stack());
 }
 
 QDomNode TimeLine::get_state(QDomDocument doc)
@@ -75,7 +75,7 @@ Command * TimeLine::add_marker(Marker* marker, bool historable)
 	connect(marker, SIGNAL(positionChanged(Snappable*)), this, SLOT(marker_position_changed(Snappable*)));
 	
 	AddRemove* cmd;
-	cmd = new AddRemove(this, marker, historable, m_song,
+	cmd = new AddRemove(this, marker, historable, m_sheet,
 		"private_add_marker(Marker*)", "markerAdded(Marker*)",
 		"private_remove_marker(Marker*)", "markerRemoved(Marker*)",
   		tr("Add Marker"));
@@ -92,7 +92,7 @@ Command * TimeLine::add_marker(Marker* marker, bool historable)
 Command* TimeLine::remove_marker(Marker* marker, bool historable)
 {
 	AddRemove* cmd;
-	cmd = new AddRemove(this, marker, historable, m_song,
+	cmd = new AddRemove(this, marker, historable, m_sheet,
 		"private_remove_marker(Marker*)", "markerRemoved(Marker*)",
 		"private_add_marker(Marker*)", "markerAdded(Marker*)",
   		tr("Remove Marker"));
@@ -167,8 +167,8 @@ void TimeLine::marker_position_changed(Snappable* snap)
 	qSort(m_markers.begin(), m_markers.end(), smallerMarker);
 	emit markerPositionChanged((Marker*)snap);
 	
-	// FIXME This is not a fix to let the songview scrollbars 
+	// FIXME This is not a fix to let the sheetview scrollbars 
 	// know that it's range possably has to be recalculated!!!!!!!!!!!!!!
-	emit m_song->lastFramePositionChanged();
+	emit m_sheet->lastFramePositionChanged();
 }
 

@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Information.h"
 #include "AudioClip.h"
 #include "Project.h"
-#include "Song.h"
+#include "Sheet.h"
 #include "Utils.h"
 #include "AudioDevice.h"
 
@@ -153,7 +153,7 @@ ReadSource* ResourcesManager::import_source(const QString& dir, const QString& n
 	ReadSource* source = new ReadSource(dir, name);
 	SourceData* data = new SourceData();
 	data->source = source;
-	source->set_created_by_song(m_project->get_current_song()->get_id());
+	source->set_created_by_sheet(m_project->get_current_sheet()->get_id());
 	
 	m_sources.insert(source->get_id(), data);
 	
@@ -175,7 +175,7 @@ ReadSource* ResourcesManager::create_recording_source(
 	const QString& dir,
 	const QString& name,
 	int channelCount,
- 	qint64 songId)
+ 	qint64 sheetId)
 {
 	PENTER;
 	
@@ -184,7 +184,7 @@ ReadSource* ResourcesManager::create_recording_source(
 	data->source = source;
 	
 	source->set_original_bit_depth(audiodevice().get_bit_depth());
-	source->set_created_by_song(songId);
+	source->set_created_by_sheet(sheetId);
 	source->ref();
 	
 	m_sources.insert(source->get_id(), data);
@@ -202,7 +202,7 @@ ReadSource* ResourcesManager::get_silent_readsource()
 		SourceData* data = new SourceData();
 		data->source = m_silentReadSource;
 		m_sources.insert(m_silentReadSource->get_id(), data);
-		m_silentReadSource->set_created_by_song( -1 );
+		m_silentReadSource->set_created_by_sheet( -1 );
 	}
 	
 	m_silentReadSource = get_readsource(m_silentReadSource->get_id());

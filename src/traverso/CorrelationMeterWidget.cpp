@@ -27,7 +27,7 @@
 #include <ProjectManager.h>
 #include <Project.h>
 #include <InputEngine.h>
-#include <Song.h>
+#include <Sheet.h>
 #include <Themer.h>
 #include <ContextPointer.h>
 #include <Config.h>
@@ -111,7 +111,7 @@ CorrelationMeterView::CorrelationMeterView(CorrelationMeterWidget* widget)
 	: ViewItem(0, 0)
 	, m_widget(widget)
 	, m_meter(0)
-	, m_song(0)
+	, m_sheet(0)
 {
 	gradPhase.setColorAt(0.0,  themer()->get_color("CorrelationMeter:foreground:side"));
 	gradPhase.setColorAt(0.5,  themer()->get_color("CorrelationMeter:foreground:center"));
@@ -223,36 +223,36 @@ void CorrelationMeterView::update_data()
 void CorrelationMeterView::set_project(Project *project)
 {
 	if (project) {
-		connect(project, SIGNAL(currentSongChanged(Song *)), this, SLOT(set_song(Song*)));
+		connect(project, SIGNAL(currentSheetChanged(Sheet *)), this, SLOT(set_sheet(Sheet*)));
 	} else {
-		set_song(0);
+		set_sheet(0);
 		timer.stop();
 	}
 }
 
-void CorrelationMeterView::set_song(Song *song)
+void CorrelationMeterView::set_sheet(Sheet *sheet)
 {
 	if (m_widget->parentWidget()->isHidden()) {
-		m_song = song;
+		m_sheet = sheet;
 		return;
 	}
 	
 
-	if (m_song) {
+	if (m_sheet) {
 		if (m_meter) {
 			// FIXME The removed plugin still needs to be deleted!!!!!!
-			Command::process_command(m_song->get_plugin_chain()->remove_plugin(m_meter, false));
+			Command::process_command(m_sheet->get_plugin_chain()->remove_plugin(m_meter, false));
 			timer.stop();
 		}
 	}
 	
-	m_song = song;
+	m_sheet = sheet;
 	
-	if ( ! m_song ) {
+	if ( ! m_sheet ) {
 		return;
 	}
 	
-	PluginChain* chain = m_song->get_plugin_chain();
+	PluginChain* chain = m_sheet->get_plugin_chain();
 	
 	foreach(Plugin* plugin, chain->get_plugin_list()) {
 		m_meter = dynamic_cast<CorrelationMeter*>(plugin);
@@ -271,9 +271,9 @@ void CorrelationMeterView::set_song(Song *song)
 
 void CorrelationMeterView::hide_event()
 {
-	if (m_song) {
+	if (m_sheet) {
 		if (m_meter) {
-			Command::process_command(m_song->get_plugin_chain()->remove_plugin(m_meter, false));
+			Command::process_command(m_sheet->get_plugin_chain()->remove_plugin(m_meter, false));
 			timer.stop();
 		}
 	}
@@ -281,12 +281,12 @@ void CorrelationMeterView::hide_event()
 
 void CorrelationMeterView::show_event()
 {
-	if (m_song) {
+	if (m_sheet) {
 		if (m_meter) {
-			Command::process_command(m_song->get_plugin_chain()->add_plugin(m_meter, false));
+			Command::process_command(m_sheet->get_plugin_chain()->add_plugin(m_meter, false));
 			timer.start(40);
 		} else {
-			set_song(m_song);
+			set_sheet(m_sheet);
 		}
 	}
 }

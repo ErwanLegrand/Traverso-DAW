@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <ProjectManager.h>
 #include <Project.h>
-#include <Song.h>
+#include <Sheet.h>
 #include <ResourcesManager.h>
 #include <AudioSource.h>
 #include <ReadSource.h>
@@ -204,13 +204,13 @@ void ResourcesWidget::showEvent( QShowEvent * event )
 	layout()->addWidget(m_filewidget);
 	m_filewidget->hide();
 	
-	m_currentSong = 0;
+	m_currentSheet = 0;
 	m_project = 0;
 	
 	
 	connect(viewComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(view_combo_box_index_changed(int)));
-	connect(songComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(song_combo_box_index_changed(int)));
-	connect(songComboBox, SIGNAL(activated(int)), this, SLOT(song_combo_box_index_changed(int)));
+	connect(sheetComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(sheet_combo_box_index_changed(int)));
+	connect(sheetComboBox, SIGNAL(activated(int)), this, SLOT(sheet_combo_box_index_changed(int)));
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 	
 	set_project(pm().get_project());
@@ -224,17 +224,17 @@ void ResourcesWidget::set_project(Project * project)
 	sourcesTreeWidget->clear();
 	m_sourceindices.clear();
 	m_clipindices.clear();
-	songComboBox->clear();
+	sheetComboBox->clear();
 	
 	m_project = project;
 	
 	if (!m_project) {
-		songComboBox->setEnabled(false);
-		m_currentSong = 0;
+		sheetComboBox->setEnabled(false);
+		m_currentSheet = 0;
 		return;
 	}
 	
-	songComboBox->setEnabled(true);
+	sheetComboBox->setEnabled(true);
 	
 	connect(m_project, SIGNAL(projectLoadFinished()), this, SLOT(project_load_finished()));
 }
@@ -247,9 +247,9 @@ void ResourcesWidget::project_load_finished()
 	
 	ResourcesManager* rsmanager = m_project->get_audiosource_manager();
 	
-	connect(m_project, SIGNAL(songAdded(Song*)), this, SLOT(song_added(Song*)));
-	connect(m_project, SIGNAL(songRemoved(Song*)), this, SLOT(song_removed(Song*)));
-	connect(m_project, SIGNAL(currentSongChanged(Song*)), this, SLOT(set_current_song(Song*)));
+	connect(m_project, SIGNAL(sheetAdded(Sheet*)), this, SLOT(sheet_added(Sheet*)));
+	connect(m_project, SIGNAL(sheetRemoved(Sheet*)), this, SLOT(sheet_removed(Sheet*)));
+	connect(m_project, SIGNAL(currentSheetChanged(Sheet*)), this, SLOT(set_current_sheet(Sheet*)));
 	
 	connect(rsmanager, SIGNAL(clipAdded(AudioClip*)), this, SLOT(add_clip(AudioClip*)));
 	connect(rsmanager, SIGNAL(clipRemoved(AudioClip*)), this, SLOT(remove_clip(AudioClip*)));
@@ -264,11 +264,11 @@ void ResourcesWidget::project_load_finished()
 		add_clip(clip);
 	}
 	
-	foreach(Song* song, m_project->get_songs()) {
-		song_added(song);
+	foreach(Sheet* sheet, m_project->get_sheets()) {
+		sheet_added(sheet);
 	}
 	
-	set_current_song(m_project->get_current_song());
+	set_current_sheet(m_project->get_current_sheet());
 
 	sourcesTreeWidget->sortItems(0, Qt::AscendingOrder);
 }
@@ -277,66 +277,66 @@ void ResourcesWidget::view_combo_box_index_changed(int index)
 {
 	if (index == 0) {
 		sourcesTreeWidget->show();
-		songComboBox->show();
+		sheetComboBox->show();
 		m_filewidget->hide();
 	} else if (index == 1) {
 		sourcesTreeWidget->hide();
-		songComboBox->hide();
+		sheetComboBox->hide();
 		m_filewidget->show();
 		m_filewidget->set_current_path(m_project->get_import_dir());
 	}
 }
 
-void ResourcesWidget::song_combo_box_index_changed(int index)
+void ResourcesWidget::sheet_combo_box_index_changed(int index)
 {
-	qint64 id = songComboBox->itemData(index).toLongLong();
-	Song* song = m_project->get_song(id);
-	set_current_song(song);
+	qint64 id = sheetComboBox->itemData(index).toLongLong();
+	Sheet* sheet = m_project->get_sheet(id);
+	set_current_sheet(sheet);
 }
 
-void ResourcesWidget::song_added(Song * song)
+void ResourcesWidget::sheet_added(Sheet * sheet)
 {
-	songComboBox->addItem("Sheet " + QString::number(m_project->get_song_index(song->get_id())), song->get_id());
+	sheetComboBox->addItem("Sheet " + QString::number(m_project->get_sheet_index(sheet->get_id())), sheet->get_id());
 }
 
-void ResourcesWidget::song_removed(Song * song)
+void ResourcesWidget::sheet_removed(Sheet * sheet)
 {
-	int index = songComboBox->findData(song->get_id());
-	songComboBox->removeItem(index);
+	int index = sheetComboBox->findData(sheet->get_id());
+	sheetComboBox->removeItem(index);
 }
 
-void ResourcesWidget::set_current_song(Song * song)
+void ResourcesWidget::set_current_sheet(Sheet * sheet)
 {
-	if (m_currentSong == song) {
+	if (m_currentSheet == sheet) {
 		return;
 	}
 	
-	if (song) {
-		int index = songComboBox->findData(song->get_id());
+	if (sheet) {
+		int index = sheetComboBox->findData(sheet->get_id());
 		if (index != -1) {
-			songComboBox->setCurrentIndex(index);
+			sheetComboBox->setCurrentIndex(index);
 		}
 	}
 	
-	m_currentSong = song;
+	m_currentSheet = sheet;
 	
-	filter_on_current_song();
+	filter_on_current_sheet();
 }
 
 
-void ResourcesWidget::filter_on_current_song()
+void ResourcesWidget::filter_on_current_sheet()
 {
-	if (!m_currentSong) {
+	if (!m_currentSheet) {
 		return;
 	}
 	
 	foreach(ClipTreeItem* item, m_clipindices.values()) {
-		item->apply_filter(m_currentSong);
+		item->apply_filter(m_currentSheet);
 	}
 
 	
 	foreach(SourceTreeItem* item, m_sourceindices.values()) {
-		item->apply_filter(m_currentSong);
+		item->apply_filter(m_currentSheet);
 	}
 }
 
@@ -442,9 +442,9 @@ void ClipTreeItem::clip_state_changed()
 	setToolTip(0, m_clip->get_name() + "   " + start + " - " + end);
 }
 
-void ClipTreeItem::apply_filter(Song * song)
+void ClipTreeItem::apply_filter(Sheet * sheet)
 {
-	if (m_clip->get_song_id() == song->get_id()) {
+	if (m_clip->get_sheet_id() == sheet->get_id()) {
 		if (isHidden()) {
 			setHidden(false);
 		}
@@ -464,9 +464,9 @@ SourceTreeItem::SourceTreeItem(QTreeWidget* parent, ReadSource * source)
 	connect(m_source, SIGNAL(stateChanged()), this, SLOT(source_state_changed()));
 }
 
-void SourceTreeItem::apply_filter(Song * song)
+void SourceTreeItem::apply_filter(Sheet * sheet)
 {
-	if (m_source->get_orig_song_id() == song->get_id()) {
+	if (m_source->get_orig_sheet_id() == sheet->get_id()) {
 		setHidden(false);
 		return;
 	}

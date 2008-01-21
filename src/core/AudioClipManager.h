@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipManager.h,v 1.7 2007/09/10 18:42:48 r_sijrier Exp $
+$Id: AudioClipManager.h,v 1.8 2008/01/21 16:22:13 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIPMANAGER_H
@@ -29,7 +29,7 @@ $Id: AudioClipManager.h,v 1.7 2007/09/10 18:42:48 r_sijrier Exp $
 #include <QList>
 
 class AudioClip;
-class Song;
+class Sheet;
 
 class AudioClipManager : public ContextItem
 {
@@ -40,7 +40,7 @@ class AudioClipManager : public ContextItem
 	Q_CLASSINFO("delete_selected_clips", tr("Delete selected"))
 
 public:
-	AudioClipManager(Song* song);
+	AudioClipManager(Sheet* sheet);
 	~AudioClipManager();
 
 	void get_selected_clips_state(QList<AudioClip*> & list);
@@ -53,7 +53,7 @@ public:
 private:
 	QList<AudioClip* >		m_clips;
 	QList<AudioClip* >		clipselection;
-	Song*				m_song;
+	Sheet*				m_sheet;
 	
 	TimeRef 			lastLocation;
 

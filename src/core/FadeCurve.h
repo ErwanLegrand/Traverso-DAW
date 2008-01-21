@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.h,v 1.18 2007/12/29 03:54:00 benjie Exp $
+$Id: FadeCurve.h,v 1.19 2008/01/21 16:22:14 r_sijrier Exp $
 */
 
 #ifndef FADE_CURVE_H
@@ -30,7 +30,7 @@ $Id: FadeCurve.h,v 1.18 2007/12/29 03:54:00 benjie Exp $
 #include <QList>
 #include <QPointF>
 
-class Song;
+class Sheet;
 class AudioClip;
 
 class FadeCurve : public Curve, public APILinkedListNode
@@ -45,7 +45,7 @@ class FadeCurve : public Curve, public APILinkedListNode
 public:
 	static QStringList defaultShapes;
 	
-	FadeCurve(AudioClip* clip, Song* song, QString type);
+	FadeCurve(AudioClip* clip, Sheet* sheet, QString type);
 	~FadeCurve();
 	
 	enum FadeType {

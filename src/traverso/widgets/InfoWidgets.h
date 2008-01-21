@@ -34,7 +34,7 @@
 #include <QMenu>
 
 class Project;
-class Song;
+class Sheet;
 class QuickDriverConfigWidget;
 class MessageWidget;
 class SystemValueBar;
@@ -48,7 +48,7 @@ public:
 	InfoWidget(QWidget* parent = 0);
 
 protected:
-	Song*		m_song;
+	Sheet*		m_sheet;
 	Project*	m_project;
 	
 	virtual QSize sizeHint() const {return QSize(size());}
@@ -57,7 +57,7 @@ private:
 	friend class InfoToolBar;
 
 protected slots:
-	virtual void set_song(Song* );
+	virtual void set_sheet(Sheet* );
 	virtual void set_project(Project* );
 };
 
@@ -129,12 +129,12 @@ private:
 	QPushButton* m_button;
 
 private slots:
-	void set_song(Song* );
+	void set_sheet(Sheet* );
 
 private slots:
 	void update_status();
-	void song_started();
-	void song_stopped();
+	void sheet_started();
+	void sheet_stopped();
 };
 
 
@@ -161,20 +161,20 @@ private:
 
 protected slots:
 	void set_project(Project* );
-	void set_song(Song* );
+	void set_sheet(Sheet* );
 	
 private slots:
-	void start_song_update_timer();
-	void stop_song_update_timer();
+	void start_sheet_update_timer();
+	void stop_sheet_update_timer();
 };
 
 
 
-class SongInfo : public InfoWidget
+class SheetInfo : public InfoWidget
 {
 	Q_OBJECT
 public:
-	SongInfo(QWidget* parent);
+	SheetInfo(QWidget* parent);
 	QAction *get_snap_action() {return m_snapAct;};
 	QAction *get_follow_action() {return m_followAct;};
 	
@@ -183,7 +183,7 @@ protected:
 	
 protected slots:
 	void set_project(Project* project);
-	void set_song(Song* );
+	void set_sheet(Sheet* );
 	
 private slots:
 	void update_snap_state();
@@ -195,17 +195,17 @@ private slots:
 	void effect_button_clicked();
 	void recording_button_clicked();
 	void update_recording_state();
-	void song_selector_song_added(Song* song);
-	void song_selector_song_removed(Song* song);
-	void song_selector_update_songs();
-	void song_selector_change_index_to(Song* song);
-	void song_selector_index_changed(int index);
+	void sheet_selector_sheet_added(Sheet* sheet);
+	void sheet_selector_sheet_removed(Sheet* sheet);
+	void sheet_selector_update_sheets();
+	void sheet_selector_change_index_to(Sheet* sheet);
+	void sheet_selector_index_changed(int index);
 	
 private:
 	PlayHeadInfo* 	m_playhead;
 	QToolButton*	m_snap;
 	QToolButton*	m_effectButton;
-	QComboBox* 	m_songselectbox;
+	QComboBox* 	m_sheetselectbox;
 	QAction*	m_snapAct;
 	QToolButton*	m_follow;
 	QAction*	m_followAct;
@@ -219,11 +219,11 @@ class InfoToolBar : public QToolBar
 {
 public:
 	InfoToolBar(QWidget* parent);
-	QAction *get_snap_action() {return m_songinfo->get_snap_action();};
-	QAction *get_follow_action() {return m_songinfo->get_follow_action();};
+	QAction *get_snap_action() {return m_sheetinfo->get_snap_action();};
+	QAction *get_follow_action() {return m_sheetinfo->get_follow_action();};
 
 private:
-	SongInfo*	m_songinfo;
+	SheetInfo*	m_sheetinfo;
 };
 
 

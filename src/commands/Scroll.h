@@ -23,13 +23,13 @@
 
 #include "Command.h"
 
-class SongView;
+class SheetView;
 class QPoint;
 
 class Scroll : public Command
 {
 public :
-        Scroll(int x, int y, SongView* sv);
+        Scroll(int x, int y, SheetView* sv);
         ~Scroll() {};
 
         int begin_hold();
@@ -39,7 +39,7 @@ public :
 	int undo_action();
 
 private :
-        SongView* m_sv;
+        SheetView* m_sv;
 	int m_dx;
 	int m_dy;
 };

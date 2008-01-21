@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "SnapList.h"
 #include "Peak.h"
-#include "Song.h"
+#include "Sheet.h"
 #include "AudioClip.h"
 #include "AudioClipManager.h"
 #include "ContextPointer.h"
@@ -42,9 +42,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 static const int SNAP_WIDTH = 10;
 
-SnapList::SnapList(Song* song) 
-	: QObject(song)
-	, m_song(song)
+SnapList::SnapList(Sheet* sheet) 
+	: QObject(sheet)
+	, m_sheet(sheet)
 {
 	m_isDirty = true;
 	m_rangeStart = TimeRef();
@@ -66,7 +66,7 @@ void SnapList::update_snaplist()
 	m_xposBool.clear();
 	
 	// collects all clip boundaries and adds them to the snap list
-	QList<AudioClip* >* acList = m_song->get_audioclip_manager()->get_clip_list();
+	QList<AudioClip* >* acList = m_sheet->get_audioclip_manager()->get_clip_list();
 	
 	SLPRINT("acList size is %d\n", acList->size());
 
@@ -98,7 +98,7 @@ void SnapList::update_snaplist()
 	}
 
 	// add all on-screen markers
-	QList<Marker*> markerList = m_song->get_timeline()->get_markers();
+	QList<Marker*> markerList = m_sheet->get_timeline()->get_markers();
 	for (int i = 0; i < markerList.size(); ++i) {
 		if (markerList.at(i)->is_snappable() && markerList.at(i)->get_when() >= m_rangeStart && markerList.at(i)->get_when() <= m_rangeEnd) {
 			m_xposList.append(markerList.at(i)->get_when());
@@ -106,10 +106,10 @@ void SnapList::update_snaplist()
 	}
 
 	// add the working cursor's position
-	TimeRef worklocation = m_song->get_work_location();
+	TimeRef worklocation = m_sheet->get_work_location();
 	//printf("worklocation xpos is %d\n",  worklocation / m_scalefactor);
-	if (m_song->get_work_snap()->is_snappable() && worklocation >= m_rangeStart && worklocation <= m_rangeEnd) {
-		m_xposList.append(m_song->get_work_location());
+	if (m_sheet->get_work_snap()->is_snappable() && worklocation >= m_rangeStart && worklocation <= m_rangeEnd) {
+		m_xposList.append(m_sheet->get_work_location());
 	}
 	
 

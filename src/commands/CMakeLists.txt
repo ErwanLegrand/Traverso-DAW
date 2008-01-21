@@ -5,7 +5,7 @@ ${CMAKE_SOURCE_DIR}/src/commands
 ${CMAKE_SOURCE_DIR}/src/common
 ${CMAKE_SOURCE_DIR}/src/core
 ${CMAKE_SOURCE_DIR}/src/traverso
-${CMAKE_SOURCE_DIR}/src/traverso/songcanvas
+${CMAKE_SOURCE_DIR}/src/sheetcanvas
 ${CMAKE_SOURCE_DIR}/src/plugins
 ${CMAKE_SOURCE_DIR}/src/plugins/native
 ${QT_QTGUI_INCLUDE_DIR}
@@ -38,6 +38,7 @@ SET(TRAVERSO_COMMANDS_MOC_CLASSES
 Gain.h
 MoveClip.h
 AudioClipExternalProcessing.h
+Zoom.h
 )
 
 SET(TRAVERSO_COMMANDS_UI_FILES

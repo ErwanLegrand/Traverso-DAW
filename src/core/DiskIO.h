@@ -34,7 +34,7 @@ class WriteSource;
 class AudioSource;
 class RingBuffer;
 class DiskIOThread;
-class Song;
+class Sheet;
 class DecodeBuffer;
 
 struct BufferStatus {
@@ -49,7 +49,7 @@ class DiskIO : public QObject
 	Q_OBJECT
 
 public:
-	DiskIO(Song* song);
+	DiskIO(Sheet* sheet);
 	~DiskIO();
 	
 	static const int writebuffertime = 5;
@@ -72,7 +72,7 @@ public:
 	DecodeBuffer* get_resample_decode_buffer() {return m_resampleDecodeBuffer;}
 
 private:
-	Song* 			m_song;
+	Sheet* 			m_sheet;
 	volatile size_t		m_stopWork;
 	QList<ReadSource*>	m_readSources;
 	QList<WriteSource*>	m_writeSources;

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Zoom.h,v 1.5 2007/01/16 20:21:08 r_sijrier Exp $
+    $Id: Zoom.h,v 1.6 2008/01/21 16:22:12 r_sijrier Exp $
 */
 
 #ifndef ZOOM_H
@@ -25,13 +25,20 @@
 
 #include "Command.h"
 
-class SongView;
+#include <QTimer>
+
+class SheetView;
 class QPoint;
 
 class Zoom : public Command
 {
+	Q_OBJECT
+	Q_CLASSINFO("vzoom_in", tr("Zoom Vertical In"));
+	Q_CLASSINFO("vzoom_out", tr("Zoom Vertical Out"));
+	Q_CLASSINFO("toggle_vertical_horizontal_jog_zoom", tr("Toggle Vertical / Horizontal"));
+
 public :
-        Zoom(SongView* sv);
+	Zoom(SheetView* sv, QVariantList args);
         ~Zoom() {};
 
         int begin_hold();
@@ -45,14 +52,22 @@ public :
         void set_cursor_shape(int useX, int useY);
 
 private :
-        int origZoomLevel;
-        int jogZoomTotalX;
-        int lastJogZoomXFactor;
-        int baseJogZoomXFactor;
+	int horizontalJogZoomLastX;
         int verticalJogZoomLastY;
-	QPoint		mousePos;
+	bool m_jogVertical;
+	bool m_jogHorizontal;
+	qreal m_xScalefactor;
+	qreal m_yScalefactor;
+	QPoint	mousePos;
+	QPoint	origPos;
+	QTimer	m_jogVerticalResetTimer;
 	
-        SongView* m_sv;
+        SheetView* m_sv;
+	
+public slots:
+	void vzoom_in(bool autorepeat);
+	void vzoom_out(bool autorepeat);
+	void toggle_vertical_horizontal_jog_zoom(bool autorepeat);
 };
 
 #endif

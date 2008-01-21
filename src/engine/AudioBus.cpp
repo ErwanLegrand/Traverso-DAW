@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioBus.cpp,v 1.10 2007/06/04 20:47:16 r_sijrier Exp $
+$Id: AudioBus.cpp,v 1.11 2008/01/21 16:22:15 r_sijrier Exp $
 */
 
 #include "AudioBus.h"
@@ -95,6 +95,7 @@ AudioBus::~ AudioBus( )
  */
 void AudioBus::add_channel(AudioChannel* chan)
 {
+	Q_ASSERT(chan);
 	channels.append(chan);
 	channelCount++;
 }

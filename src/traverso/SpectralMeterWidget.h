@@ -29,7 +29,7 @@
 #include "ui_SpectralMeterConfigWidget.h"
 #include <QDialog>
 
-class Song;
+class Sheet;
 class Project;
 class QRect;
 class QPixmap;
@@ -104,7 +104,7 @@ private:
 	SpectralMeterWidget* m_widget;
 	SpectralMeter*	m_meter;
 	Project*	m_project;
-	Song*		m_song;
+	Sheet*		m_sheet;
 	QTimer		timer;
 	QVector<float>	specl;
 	QVector<float>	specr;
@@ -157,7 +157,7 @@ private slots:
 public slots:
 	void		set_project( Project* );
 	void		load_configuration();
-	void		set_song( Song* );
+	void		set_sheet( Sheet* );
 	void 		show_event();
 
 	Command*	edit_properties();

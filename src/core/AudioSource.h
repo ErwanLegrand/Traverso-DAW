@@ -42,13 +42,13 @@ public :
 	void set_name(const QString& name);
 	void set_dir(const QString& name);
 	void set_original_bit_depth(uint bitDepth);
-	void set_created_by_song(qint64 id);
+	void set_created_by_sheet(qint64 id);
 	QString get_filename() const;
 	QString get_dir() const;
 	QString get_name() const;
 	QString get_short_name() const;
 	qint64 get_id() const;
-	qint64 get_orig_song_id() const {return m_origSongId;}
+	qint64 get_orig_sheet_id() const {return m_origSheetId;}
 	int get_rate() const;
 	uint get_channel_count() const;
 	int get_bit_depth() const;
@@ -60,7 +60,7 @@ protected:
 	uint		m_chunkSize;
 	
 	int		m_channelCount;
-	qint64		m_origSongId;
+	qint64		m_origSheetId;
 	QString 	m_dir;
 	qint64		m_id;
 	QString 	m_name;

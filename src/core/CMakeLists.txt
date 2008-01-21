@@ -36,7 +36,7 @@ Project.cpp
 ProjectManager.cpp
 ReadSource.cpp
 ResourcesManager.cpp
-Song.cpp
+Sheet.cpp
 Track.cpp
 ViewPort.cpp
 WriteSource.cpp
@@ -70,7 +70,7 @@ ProjectManager.h
 ReadSource.h
 ResourcesManager.h
 SnapList.h
-Song.h
+Sheet.h
 Themer.h
 TimeLine.h
 Track.h

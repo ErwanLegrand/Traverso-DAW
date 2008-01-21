@@ -35,7 +35,7 @@ class PluginControlPort;
 class AudioInputPort;
 class AudioOutputPort;
 class Curve;
-class Song;
+class Sheet;
 
 struct PluginInfo {
 	PluginInfo() {
@@ -55,7 +55,7 @@ class Plugin : public ContextItem
 	Q_CLASSINFO("toggle_bypass", tr("Bypass: On/Off"))
 	
 public:
-	Plugin(Song* song = 0);
+	Plugin(Sheet* sheet = 0);
 	virtual ~Plugin(){};
 
 	virtual int init() {return 1;}
@@ -68,14 +68,14 @@ public:
 	QList<PluginControlPort* > get_control_ports() const { return m_controlPorts; }
 	
 	Plugin* get_slave() const {return m_slave;}
-	Song* get_song() const {return m_song;}
+	Sheet* get_sheet() const {return m_sheet;}
 	bool is_bypassed() const {return m_bypass;}
 	
 	void automate_port(int index, bool automate);
 	
 protected:
 	Plugin* m_slave;
-	Song* m_song;
+	Sheet* m_sheet;
 	QList<PluginControlPort* > 	m_controlPorts;
 	QList<AudioInputPort* >		m_audioInputPorts;
 	QList<AudioOutputPort* >	m_audioOutputPorts;

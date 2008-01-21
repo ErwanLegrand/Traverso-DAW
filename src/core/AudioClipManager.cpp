@@ -17,12 +17,12 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioClipManager.cpp,v 1.20 2007/11/05 15:49:29 r_sijrier Exp $
+    $Id: AudioClipManager.cpp,v 1.21 2008/01/21 16:22:13 r_sijrier Exp $
 */
  
 #include "AudioClipManager.h"
 
-#include "Song.h"
+#include "Sheet.h"
 #include "AudioClip.h"
 #include "ResourcesManager.h"
 #include "ProjectManager.h"
@@ -32,12 +32,12 @@
 #include "Utils.h"
 #include "Debugger.h"
 
-AudioClipManager::AudioClipManager( Song* song )
-	: ContextItem(song)
+AudioClipManager::AudioClipManager( Sheet* sheet )
+	: ContextItem(sheet)
 {
 	PENTERCONS;
-	m_song = song;
-	set_history_stack( m_song->get_history_stack() );
+	m_sheet = sheet;
+	set_history_stack( m_sheet->get_history_stack() );
 	lastLocation = TimeRef();
 }
 
@@ -57,9 +57,9 @@ void AudioClipManager::add_clip( AudioClip * clip )
 	m_clips.append( clip );
 	
 	connect(clip, SIGNAL(trackEndLocationChanged()), this, SLOT(update_last_frame()));
-	connect(clip, SIGNAL(positionChanged(Snappable*)), m_song->get_snap_list(), SLOT(mark_dirty(Snappable*)));
+	connect(clip, SIGNAL(positionChanged(Snappable*)), m_sheet->get_snap_list(), SLOT(mark_dirty(Snappable*)));
 	
-	m_song->get_snap_list()->mark_dirty(clip);
+	m_sheet->get_snap_list()->mark_dirty(clip);
 	update_last_frame();
 	resources_manager()->mark_clip_added(clip);
 }
@@ -67,13 +67,13 @@ void AudioClipManager::add_clip( AudioClip * clip )
 void AudioClipManager::remove_clip( AudioClip * clip )
 {
 	PENTER;
-	disconnect(clip, SIGNAL(positionChanged(Snappable*)), m_song->get_snap_list(), SLOT(mark_dirty(Snappable*)));
+	disconnect(clip, SIGNAL(positionChanged(Snappable*)), m_sheet->get_snap_list(), SLOT(mark_dirty(Snappable*)));
 	if (m_clips.removeAll(clip) == 0) {
 		PERROR("Clip %s was not in my list, couldn't remove it!!", QS_C(clip->get_name()));
 		return;
 	}
 	
-	m_song->get_snap_list()->mark_dirty(clip);
+	m_sheet->get_snap_list()->mark_dirty(clip);
 	update_last_frame();
 	resources_manager()->mark_clip_removed(clip);
 }
@@ -90,7 +90,7 @@ void AudioClipManager::update_last_frame( )
 			lastLocation = clip->get_track_end_location();
 	}
 	
-	emit m_song->lastFramePositionChanged();
+	emit m_sheet->lastFramePositionChanged();
 }
 
 const TimeRef& AudioClipManager::get_last_location() const

@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "defines.h"
 
 class AudioClip;
-class Song;
+class Sheet;
 class PluginChain;
 class Plugin;
 
@@ -48,8 +48,8 @@ class Track : public ContextItem, public AudioProcessingItem
 	Q_CLASSINFO("silence_others", tr("Silence other tracks"))
 
 public :
-	Track(Song* song, const QString& name, int height);
-	Track(Song* song, const QDomNode node);
+	Track(Sheet* sheet, const QString& name, int height);
+	Track(Sheet* sheet, const QDomNode node);
 	~Track();
 
 	static const int INITIAL_HEIGHT = 100;
@@ -73,7 +73,7 @@ public :
 	QString get_bus_out() const{return busOut;}
 	int get_height() const {return m_height;}
 	float get_pan() const {return m_pan;}
-	Song* get_song() const {return m_song;}
+	Sheet* get_sheet() const {return m_sheet;}
 	QString get_name() const {return m_name;}
 	
 	int get_total_clips();
@@ -118,7 +118,7 @@ public :
 	int process(nframes_t nframes);
 
 private :
-	Song*		m_song;
+	Sheet*		m_sheet;
 	APILinkedList 	m_clips;
 
 	float 	m_pan;

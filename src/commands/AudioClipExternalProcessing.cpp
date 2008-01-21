@@ -264,8 +264,8 @@ void ExternalProcessingDialog::process_finished(int exitcode, QProcess::ExitStat
 		
 	m_acep->m_resultingclip = resources_manager()->new_audio_clip(m_newClipName);
 	resources_manager()->set_source_for_clip(m_acep->m_resultingclip, source);
-	// Clips live at project level, we have to set its Song, Track and ReadSource explicitely!!
-	m_acep->m_resultingclip->set_song(m_acep->m_clip->get_song());
+	// Clips live at project level, we have to set its Sheet, Track and ReadSource explicitely!!
+	m_acep->m_resultingclip->set_sheet(m_acep->m_clip->get_sheet());
 	m_acep->m_resultingclip->set_track(m_acep->m_clip->get_track());
 	m_acep->m_resultingclip->set_track_start_location(m_acep->m_clip->get_track_start_location());
 	

@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "../config.h"
 
 #include <libtraversocore.h>
-#include "libtraversosongcanvas.h"
+#include "libtraversosheetcanvas.h"
 #include <AudioDevice.h> 
 
 #include <QDockWidget>
@@ -47,7 +47,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 		
 #include "Import.h"
 
-#include "songcanvas/SongWidget.h"
+#include "../sheetcanvas/SheetWidget.h"
 
 #include "ui_QuickStart.h"
 
@@ -58,7 +58,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "dialogs/project/ProjectManagerDialog.h"
 #include "dialogs/project/OpenProjectDialog.h"
 #include "dialogs/project/NewProjectDialog.h"
-#include "dialogs/project/NewSongDialog.h"
+#include "dialogs/project/NewSheetDialog.h"
 #include "dialogs/project/NewTrackDialog.h"
 #include "dialogs/MarkerDialog.h"
 #include "dialogs/BusSelectorDialog.h"
@@ -167,7 +167,7 @@ Interface::Interface()
 	
 	
 	// Some default values.
-	currentSongWidget = 0;
+	currentSheetWidget = 0;
 	m_exportDialog = 0;
 	m_cdWritingDialog = 0;
 	m_settingsdialog = 0;
@@ -177,7 +177,7 @@ Interface::Interface()
 	m_insertSilenceDialog = 0;
 	m_markerDialog = 0;
 	m_busSelector = 0;
-	m_newSongDialog = 0;
+	m_newSheetDialog = 0;
 	m_newTrackDialog = 0;
 	m_quickStart = 0;
 	m_restoreProjectBackupDialog = 0;
@@ -192,7 +192,7 @@ Interface::Interface()
 
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
-	connect(&pm(), SIGNAL(aboutToDelete(Song*)), this, SLOT(delete_songwidget(Song*)));
+	connect(&pm(), SIGNAL(aboutToDelete(Sheet*)), this, SLOT(delete_sheetwidget(Sheet*)));
 	connect(&pm(), SIGNAL(unsupportedProjectDirChangeDetected()), this, SLOT(project_dir_change_detected()));	
 	connect(&pm(), SIGNAL(projectLoadFailed(QString,QString)), this, SLOT(project_load_failed(QString,QString)));
 	connect(&pm(), SIGNAL(projectFileVersionMismatch(QString,QString)), this, SLOT(project_file_mismatch(QString,QString)), Qt::QueuedConnection);
@@ -222,24 +222,24 @@ void Interface::set_project(Project* project)
 	PENTER;
 	
 	if ( project ) {
-		connect(project, SIGNAL(currentSongChanged(Song*)), this, SLOT(show_song(Song*)));
+		connect(project, SIGNAL(currentSheetChanged(Sheet*)), this, SLOT(show_sheet(Sheet*)));
 		setWindowTitle(project->get_title() + " - Traverso");
 		m_projectSaveAction->setEnabled(true);
-		m_projectSongManagerAction->setEnabled(true);
+		m_projectSheetManagerAction->setEnabled(true);
 		m_projectExportAction->setEnabled(true);
-		m_songMenuAction->setEnabled(true);
+		m_sheetMenuAction->setEnabled(true);
 
-		// the project's songs will be deleted _after_
+		// the project's sheets will be deleted _after_
 		// the project has been deleted, which will happen after this
-		// function returns. When the songs have been disconnected from the
-		// audiodevice, delete_songwidget(Song* song) is called for all the songs
-		// in the project. Meanwhile, disable updates of the SongWidgets (and implicitily
+		// function returns. When the sheets have been disconnected from the
+		// audiodevice, delete_sheetwidget(Sheet* sheet) is called for all the sheets
+		// in the project. Meanwhile, disable updates of the SheetWidgets (and implicitily
 		// all their childrens) to avoid the (unlikely) situation of a paint event that 
 		// refers to data that was part of the then deleted project!
-		// The reason to not delete the SongWidgets right now is that the newly loaded project
-		// now will be able to create and show it's songcanvas first, which improves the 
+		// The reason to not delete the SheetWidgets right now is that the newly loaded project
+		// now will be able to create and show it's sheetcanvas first, which improves the 
 		// users experience a lot!
-		foreach(SongWidget* sw, m_songWidgets) {
+		foreach(SheetWidget* sw, m_sheetWidgets) {
 			sw->setUpdatesEnabled(false);
 		}
 	} else {
@@ -247,66 +247,66 @@ void Interface::set_project(Project* project)
 			hide();
 		}
 		m_projectSaveAction->setEnabled(false);
-		m_projectSongManagerAction->setEnabled(false);
+		m_projectSheetManagerAction->setEnabled(false);
 		m_projectExportAction->setEnabled(false);
-		m_songMenuAction->setEnabled(false);
+		m_sheetMenuAction->setEnabled(false);
 		setWindowTitle("Traverso");
 		// No project loaded, the currently  loaded project will be deleted after this
-		// function returns, if the songcanvas is still painting (due playback e.g.) we
+		// function returns, if the sheetcanvas is still painting (due playback e.g.) we
 		// could get a crash due canvas items refering to data that was managed by the project.
-		// so let's delete the SongWidgets before the project is deleted!
-		if (m_songWidgets.contains(0)) {
-			delete m_songWidgets.take(0);
+		// so let's delete the SheetWidgets before the project is deleted!
+		if (m_sheetWidgets.contains(0)) {
+			delete m_sheetWidgets.take(0);
 		}
-		foreach(SongWidget* sw, m_songWidgets) {
-			delete_songwidget(sw->get_song());
+		foreach(SheetWidget* sw, m_sheetWidgets) {
+			delete_sheetwidget(sw->get_sheet());
 		}
 	}
 }
 
-void Interface::delete_songwidget(Song* song)
+void Interface::delete_sheetwidget(Sheet* sheet)
 {
-	SongWidget* sw = m_songWidgets.value(song);
+	SheetWidget* sw = m_sheetWidgets.value(sheet);
 	if (sw) {
-		m_songWidgets.remove(song);
+		m_sheetWidgets.remove(sheet);
 		centerAreaWidget->removeWidget(sw);
 		delete sw;
 	}
 }
 
 
-void Interface::show_song(Song* song)
+void Interface::show_sheet(Sheet* sheet)
 {
 	PENTER;
 	
-	SongWidget* songWidget = 0;
+	SheetWidget* sheetWidget = 0;
 	
-	if (!song) {
+	if (!sheet) {
 		Project* project = pm().get_project();
-		if (project && project->get_songs().size() == 0) {
-			songWidget = m_songWidgets.value(0);
+		if (project && project->get_sheets().size() == 0) {
+			sheetWidget = m_sheetWidgets.value(0);
 			
-			if (!songWidget) {
-				songWidget = new SongWidget(0, centerAreaWidget);
-				centerAreaWidget->addWidget(songWidget);
-				m_songWidgets.insert(0, songWidget);
+			if (!sheetWidget) {
+				sheetWidget = new SheetWidget(0, centerAreaWidget);
+				centerAreaWidget->addWidget(sheetWidget);
+				m_sheetWidgets.insert(0, sheetWidget);
 			}
 		}
 	} else {
-		songWidget = m_songWidgets.value(song);
+		sheetWidget = m_sheetWidgets.value(sheet);
 	}
 	
-	if (!songWidget) {
-		songWidget = new SongWidget(song, centerAreaWidget);
-		centerAreaWidget->addWidget(songWidget);
-		m_songWidgets.insert(song, songWidget);
+	if (!sheetWidget) {
+		sheetWidget = new SheetWidget(sheet, centerAreaWidget);
+		centerAreaWidget->addWidget(sheetWidget);
+		m_sheetWidgets.insert(sheet, sheetWidget);
 	}
-	currentSongWidget = songWidget;
-	centerAreaWidget->setCurrentIndex(centerAreaWidget->indexOf(songWidget));
-	songWidget->setFocus();
+	currentSheetWidget = sheetWidget;
+	centerAreaWidget->setCurrentIndex(centerAreaWidget->indexOf(sheetWidget));
+	sheetWidget->setFocus();
 	
-	if (song) {
-		pm().get_undogroup()->setActiveStack(song->get_history_stack());
+	if (sheet) {
+		pm().get_undogroup()->setActiveStack(sheet->get_history_stack());
 	}
 }
 
@@ -473,8 +473,8 @@ void Interface::create_menus( )
 	QList<QKeySequence> list;
 	list.append(QKeySequence("F4"));
 	action->setShortcuts(list);
-	action->setIcon(QIcon(find_pixmap(":/songmanager-16")));
-	m_projectSongManagerAction = action;
+	action->setIcon(QIcon(find_pixmap(":/sheetmanager-16")));
+	m_projectSheetManagerAction = action;
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_project_manager_dialog()));
 	
 	action = menu->addAction(tr("&Export..."));
@@ -510,12 +510,12 @@ void Interface::create_menus( )
 	
 	
 	menu = menuBar()->addMenu(tr("&Sheet"));
-	m_songMenuAction = menu->menuAction();
+	m_sheetMenuAction = menu->menuAction();
 	
 	action = menu->addAction(tr("New &Track(s)..."));
 	connect(action, SIGNAL(triggered()), this, SLOT(show_newtrack_dialog()));
 	action = menu->addAction(tr("New &Sheet(s)..."));
-	connect(action, SIGNAL(triggered()), this, SLOT(show_newsong_dialog()));
+	connect(action, SIGNAL(triggered()), this, SLOT(show_newsheet_dialog()));
 
 	menu->addSeparator();
 	
@@ -680,8 +680,6 @@ Command * Interface::show_context_menu( )
 			action = toplevelmenu->insertMenu(action, menu);
 			QString name = className.remove("View");
 
-			if (name == "Song") name = "Sheet"; // FIXME!!!
-
 			action->setText(name);
 		}
 	}
@@ -738,7 +736,7 @@ Command * Interface::get_keymap(QString &str)
 	
 	QMap<QString, QList<const QMetaObject*> > objects;
 	
-	QList<const QMetaObject*> songlist; songlist << &Song::staticMetaObject; songlist << &SongView::staticMetaObject;
+	QList<const QMetaObject*> sheetlist; sheetlist << &Sheet::staticMetaObject; sheetlist << &SheetView::staticMetaObject;
 	QList<const QMetaObject*> tracklist; tracklist << &Track::staticMetaObject; tracklist << &TrackView::staticMetaObject;
 	QList<const QMetaObject*> cliplist; cliplist << &AudioClip::staticMetaObject; cliplist << &AudioClipView::staticMetaObject;
 	QList<const QMetaObject*> curvelist; curvelist << &Curve::staticMetaObject; curvelist << &CurveView::staticMetaObject;
@@ -749,7 +747,7 @@ Command * Interface::get_keymap(QString &str)
 	QList<const QMetaObject*> interfacelist; interfacelist << &Interface::staticMetaObject;
 	QList<const QMetaObject*> pmlist; pmlist << &ProjectManager::staticMetaObject;
 		
-	objects.insert("Sheet", songlist);
+	objects.insert("Sheet", sheetlist);
 	objects.insert("Track", tracklist);
 	objects.insert("AudioClip", cliplist);
 	objects.insert("Curve", curvelist);
@@ -837,8 +835,6 @@ QMenu* Interface::create_context_menu(QObject* item, QList<MenuData >* menulist)
 	} else {
 		name = "noname";
 	}
-
-	if (name == "Song") name = "Sheet"; // FIXME!!!
 
 	QMenu* menu = new QMenu(this);
 	menu->installEventFilter(this);
@@ -1016,7 +1012,7 @@ void Interface::config_changed()
 {
 	bool toggled = config().get_property("Interface", "OpenGL", false).toBool();
 
-	foreach(SongWidget* widget, m_songWidgets) {
+	foreach(SheetWidget* widget, m_sheetWidgets) {
 		widget->set_use_opengl(toggled);
 	}
 	
@@ -1045,8 +1041,8 @@ void Interface::config_changed()
 
 void Interface::import_audio()
 {
-	if (currentSongWidget->get_song()->get_numtracks() > 0) {
-		QList<Track*> tracks = currentSongWidget->get_song()->get_tracks();
+	if (currentSheetWidget->get_sheet()->get_numtracks() > 0) {
+		QList<Track*> tracks = currentSheetWidget->get_sheet()->get_tracks();
 		Track*	shortestTrack = tracks.first();
 
 		foreach(Track* track, tracks) {
@@ -1148,7 +1144,7 @@ Command * Interface::show_marker_dialog()
 	if (! m_markerDialog ) {
 		m_markerDialog = new MarkerDialog(this);
 	}
-	m_markerDialog->song_to_be_showed(pm().get_project()->get_current_song());
+	m_markerDialog->sheet_to_be_showed(pm().get_project()->get_current_sheet());
 	m_markerDialog->show();
 	
 	return 0;
@@ -1159,13 +1155,13 @@ QSize Interface::sizeHint() const
 	return QSize(800, 600);
 }
 
-Command* Interface::show_newsong_dialog()
+Command* Interface::show_newsheet_dialog()
 {
-	if (! m_newSongDialog) {
-		m_newSongDialog = new NewSongDialog(this);
+	if (! m_newSheetDialog) {
+		m_newSheetDialog = new NewSheetDialog(this);
 	}
 	
-	m_newSongDialog->show();
+	m_newSheetDialog->show();
 	
 	return 0;
 }

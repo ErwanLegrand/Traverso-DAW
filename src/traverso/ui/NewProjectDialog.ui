@@ -166,7 +166,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="songCountSpinBox" >
+         <widget class="QSpinBox" name="sheetCountSpinBox" >
           <property name="sizePolicy" >
            <sizepolicy>
             <hsizetype>1</hsizetype>

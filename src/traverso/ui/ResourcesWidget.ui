@@ -50,7 +50,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="songComboBox" />
+      <widget class="QComboBox" name="sheetComboBox" />
      </item>
      <item>
       <spacer>

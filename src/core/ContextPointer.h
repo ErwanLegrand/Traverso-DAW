@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ContextPointer.h,v 1.14 2007/04/16 09:08:31 r_sijrier Exp $
+    $Id: ContextPointer.h,v 1.15 2008/01/21 16:22:13 r_sijrier Exp $
 */
 
 #ifndef CONTEXTPOINTER_H
@@ -88,6 +88,7 @@ public:
 		return currentViewPort->mapToScene(m_x, m_y);
 	}
 	
+	
 	/**
 	 *     	Used by ViewPort to update the internal state of ContextPointer
 		Not intended to be used somewhere else.
@@ -151,8 +152,7 @@ public:
  
         ViewPort* get_viewport();
 
-        void set_current_viewport(ViewPort* vp)
-        {
+        void set_current_viewport(ViewPort* vp) {
                 currentViewPort = vp;
         }
         QList<QObject* > get_context_items();

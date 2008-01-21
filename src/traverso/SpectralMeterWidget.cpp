@@ -29,7 +29,7 @@
 #include <Project.h>
 #include <AudioDevice.h>
 #include <InputEngine.h>
-#include <Song.h>
+#include <Sheet.h>
 #include <ContextPointer.h>
 #include <Themer.h>
 
@@ -121,7 +121,7 @@ SpectralMeterView * SpectralMeterWidget::get_item()
 		Project* project = pm().get_project(); 
 		m_item->set_project(project);
 		if (project) {
-			m_item->set_song(project->get_current_song());
+			m_item->set_sheet(project->get_current_sheet());
 		}
 	
 		setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -138,7 +138,7 @@ SpectralMeterView::SpectralMeterView(SpectralMeterWidget* widget)
 	: ViewItem(0, 0)
 	, m_widget(widget)
 	, m_meter(0)
-	, m_song(0)
+	, m_sheet(0)
 {
 
 	m_config = new SpectralMeterConfigWidget(m_widget);
@@ -340,41 +340,41 @@ void SpectralMeterView::update_data()
 void SpectralMeterView::set_project(Project *project)
 {
 	if (project) {
-		connect(project, SIGNAL(currentSongChanged(Song *)), this, SLOT(set_song(Song*)));
+		connect(project, SIGNAL(currentSheetChanged(Sheet *)), this, SLOT(set_sheet(Sheet*)));
 		m_project = project;
 	} else {
-		set_song(0);
+		set_sheet(0);
 		timer.stop();
 	}
 }
 
-void SpectralMeterView::set_song(Song *song)
+void SpectralMeterView::set_sheet(Sheet *sheet)
 {
 	if (m_widget->parentWidget()->isHidden()) {
-		m_song = song;
+		m_sheet = sheet;
 		return;
 	}
 	
 	
-	if (m_song) {
+	if (m_sheet) {
 		if (m_meter) {
 			// FIXME The removed plugin still needs to be deleted!!!!!!
-			Command::process_command(m_song->get_plugin_chain()->remove_plugin(m_meter, false));
+			Command::process_command(m_sheet->get_plugin_chain()->remove_plugin(m_meter, false));
 			timer.stop();
 		}
 	}
 	
-	m_song = song;
+	m_sheet = sheet;
 	
-	if ( ! m_song ) {
+	if ( ! m_sheet ) {
 		return;
 	}
 	
-	PluginChain* chain = m_song->get_plugin_chain();
+	PluginChain* chain = m_sheet->get_plugin_chain();
 	sample_rate = audiodevice().get_sample_rate();
 	
-	connect(m_song, SIGNAL(transferStarted()), this, SLOT(transfer_started()));
-	connect(m_song, SIGNAL(transferStopped()), this, SLOT(transfer_stopped()));
+	connect(m_sheet, SIGNAL(transferStarted()), this, SLOT(transfer_started()));
+	connect(m_sheet, SIGNAL(transferStopped()), this, SLOT(transfer_stopped()));
 
 	foreach(Plugin* plugin, chain->get_plugin_list()) {
 		m_meter = qobject_cast<SpectralMeter*>(plugin);
@@ -395,9 +395,9 @@ void SpectralMeterView::set_song(Song *song)
 
 void SpectralMeterView::hide_event()
 {
-	if (m_song) {
+	if (m_sheet) {
 		if (m_meter) {
-			Command::process_command(m_song->get_plugin_chain()->remove_plugin(m_meter, false));
+			Command::process_command(m_sheet->get_plugin_chain()->remove_plugin(m_meter, false));
 			timer.stop();
 		}
 	}
@@ -405,12 +405,12 @@ void SpectralMeterView::hide_event()
 
 void SpectralMeterView::show_event()
 {
-	if (m_song) {
+	if (m_sheet) {
 		if (m_meter) {
-			Command::process_command(m_song->get_plugin_chain()->add_plugin(m_meter, false));
+			Command::process_command(m_sheet->get_plugin_chain()->add_plugin(m_meter, false));
 			timer.start(UPDATE_INTERVAL);
 		} else {
-			set_song(m_song);
+			set_sheet(m_sheet);
 		}
 	}
 }

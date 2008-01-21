@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 */
 
 #include "Marker.h"
-#include "Song.h"
+#include "Sheet.h"
 
 #include "TimeLine.h"
 #include "Utils.h"
@@ -35,7 +35,7 @@ Marker::Marker(TimeLine* tl, const TimeRef when, Type type)
 	set_history_stack(m_timeline->get_history_stack());
 	m_id = create_id();
 
-	set_snap_list(m_timeline->get_song()->get_snap_list());
+	set_snap_list(m_timeline->get_sheet()->get_snap_list());
 
 	m_description = "";
 	m_performer = "";
@@ -52,7 +52,7 @@ Marker::Marker(TimeLine * tl, const QDomNode node)
 	, Snappable()
 	, m_timeline(tl)
 {
-	set_snap_list(m_timeline->get_song()->get_snap_list());
+	set_snap_list(m_timeline->get_sheet()->get_snap_list());
 	set_history_stack(m_timeline->get_history_stack());
 	set_state(node);
 }
@@ -66,7 +66,7 @@ QDomNode Marker::get_state(QDomDocument doc)
 	domNode.setAttribute("id",  m_id);
 	domNode.setAttribute("performer", m_performer);
 	domNode.setAttribute("composer", m_composer);
-	domNode.setAttribute("songwriter", m_songwriter);
+	domNode.setAttribute("sheetwriter", m_sheetwriter);
 	domNode.setAttribute("arranger", m_arranger);
 	domNode.setAttribute("message", m_message);
 	domNode.setAttribute("isrc", m_isrc);
@@ -95,7 +95,7 @@ int Marker::set_state(const QDomNode & node)
 	m_id = e.attribute("id", "0").toLongLong();
 	m_performer = e.attribute("performer", "");
 	m_composer = e.attribute("composer", "");
-	m_songwriter = e.attribute("songwriter", "");
+	m_sheetwriter = e.attribute("sheetwriter", "");
 	m_arranger = e.attribute("arranger", "");
 	m_message = e.attribute("message", "");
 	m_isrc = e.attribute("isrc", "");
@@ -132,9 +132,9 @@ void Marker::set_composer(const QString &s)
 	m_composer = s;
 }
 
-void Marker::set_songwriter(const QString &s)
+void Marker::set_sheetwriter(const QString &s)
 {
-	m_songwriter = s;
+	m_sheetwriter = s;
 }
 
 void Marker::set_arranger(const QString &s)

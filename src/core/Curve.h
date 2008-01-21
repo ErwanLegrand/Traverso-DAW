@@ -39,7 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "defines.h"
 
 
-class Song;
+class Sheet;
 
 class Curve : public ContextItem
 {
@@ -61,11 +61,11 @@ public:
 	double get_range() const;
 	void get_vector (double x0, double x1, float *arg, int32_t veclen);
 	APILinkedList& get_nodes() {return m_nodes;}
-	Song* get_song() const {return m_song;}
+	Sheet* get_sheet() const {return m_sheet;}
 
 	// Set functions
 	virtual void set_range(double when);
-	void set_song(Song* song);
+	void set_sheet(Sheet* sheet);
 	
 	static bool smallerNode(const CurveNode* left, const CurveNode* right ) {
 		return left->get_when() < right->get_when();
@@ -74,7 +74,7 @@ public:
 	void clear_curve() {m_nodes.clear();}
 
 protected:
-	Song* m_song;
+	Sheet* m_sheet;
 
 private :
 	APILinkedList m_nodes;

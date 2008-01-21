@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 */
 
 #include "DiskIO.h"
-#include "Song.h"
+#include "Sheet.h"
 #include <QThread>
 
 #if defined (Q_WS_X11)
@@ -135,12 +135,12 @@ protected:
 /** 	\class DiskIO 
  *	\brief handles all the read's and write's of AudioSources in it's private thread.
  *	
- *	Each Song class has it's own DiskIO instance. 
- * 	The DiskIO manages all the AudioSources related to a Song, and makes sure the RingBuffers
+ *	Each Sheet class has it's own DiskIO instance. 
+ * 	The DiskIO manages all the AudioSources related to a Sheet, and makes sure the RingBuffers
  * 	from the AudioSources are processed in time. (It at least tries very hard)
  */
-DiskIO::DiskIO(Song* song)
-	: m_song(song)
+DiskIO::DiskIO(Sheet* sheet)
+	: m_sheet(sheet)
 {
 	m_diskThread = new DiskIOThread(this);
 	cpuTimeBuffer = new RingBuffer(128);
@@ -186,7 +186,7 @@ void DiskIO::seek()
 	PENTER;
 	
 #if defined (THREAD_CHECK)
-	Q_ASSERT_X(m_song->threadId != QThread::currentThreadId (), "DiskIO::seek", "Error, running in gui thread!!!!!");
+	Q_ASSERT_X(m_sheet->threadId != QThread::currentThreadId (), "DiskIO::seek", "Error, running in gui thread!!!!!");
 #endif
 
 	mutex.lock();
@@ -194,7 +194,7 @@ void DiskIO::seek()
 	m_stopWork = 0;
 	m_seeking = true;
 	
-	TimeRef location = m_song->get_new_transport_location();
+	TimeRef location = m_sheet->get_new_transport_location();
 	bool resampleQualityChanged = false;
 	int quality = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
 	if (quality != m_resampleQuality) {
@@ -234,7 +234,7 @@ void DiskIO::output_rate_changed(int rate)
 void DiskIO::do_work( )
 {
 #if defined (THREAD_CHECK)
-	Q_ASSERT_X(m_song->threadId != QThread::currentThreadId (), "DiskIO::do_work", "Error, running in gui thread!!!!!");
+	Q_ASSERT_X(m_sheet->threadId != QThread::currentThreadId (), "DiskIO::do_work", "Error, running in gui thread!!!!!");
 #endif
 
 	QMutexLocker locker(&mutex);
@@ -523,13 +523,13 @@ int DiskIO::get_read_buffers_fill_status( )
 
 void DiskIO::start_io( )
 {
-//	Q_ASSERT_X(m_song->threadId != QThread::currentThreadId (), "DiskIO::start_io", "Error, running in gui thread!!!!!");
+//	Q_ASSERT_X(m_sheet->threadId != QThread::currentThreadId (), "DiskIO::start_io", "Error, running in gui thread!!!!!");
 	m_workTimer.start(UPDATE_INTERVAL);
 }
 
 void DiskIO::stop_io( )
 {
-//	Q_ASSERT_X(m_song->threadId != QThread::currentThreadId (), "DiskIO::stop_io", "Error, running in gui thread!!!!!");
+//	Q_ASSERT_X(m_sheet->threadId != QThread::currentThreadId (), "DiskIO::stop_io", "Error, running in gui thread!!!!!");
 // 	m_workTimer.stop();
 }
 

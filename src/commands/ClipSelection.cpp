@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ClipSelection.h"
 #include "AudioClipManager.h"
 #include <AudioClip.h>
-#include <Song.h>
+#include <Sheet.h>
 #include <Utils.h>
 
 #include "Debugger.h"
@@ -43,7 +43,7 @@ ClipSelection::ClipSelection(AudioClip* clip, QVariantList args)
 	
 	m_clips.append( clip );
 	m_slot = qstrdup(QS_C(slot));
-	m_acmanager = clip->get_song()->get_audioclip_manager();
+	m_acmanager = clip->get_sheet()->get_audioclip_manager();
 }
 
 ClipSelection::ClipSelection( QList< AudioClip * > clips, AudioClipManager * manager, const char * slot, const QString& des )

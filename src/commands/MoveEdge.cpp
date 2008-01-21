@@ -23,14 +23,14 @@
 
 #include "MoveEdge.h"
 #include <ViewPort.h>
-#include <SongView.h>
+#include <SheetView.h>
 #include <AudioClipView.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-MoveEdge::MoveEdge(AudioClipView* cv, SongView* sv, QByteArray whichEdge)
+MoveEdge::MoveEdge(AudioClipView* cv, SheetView* sv, QByteArray whichEdge)
 	: Command(cv->get_clip(), tr("Move Clip Edge"))
 {
         m_cv = cv;
@@ -113,8 +113,8 @@ int MoveEdge::jog()
 {
 	m_newPos = TimeRef(cpointer().scene_x() * m_sv->timeref_scalefactor);
 
-	if (m_sv->get_song()->is_snap_on()) {
-		SnapList* slist = m_sv->get_song()->get_snap_list();
+	if (m_sv->get_sheet()->is_snap_on()) {
+		SnapList* slist = m_sv->get_sheet()->get_snap_list();
 		m_newPos = slist->get_snap_value(m_newPos);
 	}
 

@@ -248,13 +248,13 @@ int ProjectConverter::start_conversion_from_version_2_to_3()
 		clipsNode = clipsNode.nextSibling();
 	}
 		
-	QDomNode songsNode = docElem.firstChildElement("Sheets");
-	QDomNode songNode = songsNode.firstChild();
+	QDomNode sheetsNode = docElem.firstChildElement("Sheets");
+	QDomNode sheetNode = sheetsNode.firstChild();
 
-		// Load all the Songs
-	while(!songNode.isNull())
+		// Load all the Sheets
+	while(!sheetNode.isNull())
 	{
-		QDomNode tracksNode = songNode.firstChildElement("Tracks");
+		QDomNode tracksNode = sheetNode.firstChildElement("Tracks");
 		QDomNode trackNode = tracksNode.firstChild();
 
 		while(!trackNode.isNull()) {
@@ -262,7 +262,7 @@ int ProjectConverter::start_conversion_from_version_2_to_3()
 			trackelement.setAttribute("OutBus", "Master Out");
 			trackNode = trackNode.nextSibling();
 		}
-		songNode = songNode.nextSibling();
+		sheetNode = sheetNode.nextSibling();
 	}
 	
 	emit message(tr("Converting project.tpf file..... Done!"));

@@ -27,14 +27,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Curve.h"
 #include "Mixer.h"
 
-class Song;
+class Sheet;
 
 class GainEnvelope : public Plugin
 {
 	Q_OBJECT
 	
 public:
-	GainEnvelope(Song* song);
+	GainEnvelope(Sheet* sheet);
 	~GainEnvelope(){};
 
 	QDomNode get_state(QDomDocument doc);
@@ -42,7 +42,7 @@ public:
 	void process(AudioBus* bus, unsigned long nframes);
 	void process_gain(audio_sample_t** buffer, const TimeRef& startlocation, const TimeRef& endlocation, nframes_t nframes, uint channels);
 	
-	void set_song(Song* song);
+	void set_sheet(Sheet* sheet);
 	void set_gain(float gain) {m_gain = gain;}
 	
 	float get_gain() const {return m_gain;}

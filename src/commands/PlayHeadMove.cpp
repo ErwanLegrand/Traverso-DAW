@@ -22,15 +22,15 @@
 #include "PlayHeadMove.h"
 
 #include <libtraversocore.h>
-#include <SongView.h>
+#include <SheetView.h>
 #include <Cursors.h>
 
 #include <Debugger.h>
 
-PlayHeadMove::PlayHeadMove(PlayHead* cursor, SongView* sv)
+PlayHeadMove::PlayHeadMove(PlayHead* cursor, SheetView* sv)
 	: Command("Play Cursor Move")
 	, m_cursor(cursor)
-	, m_song(sv->get_song())
+	, m_sheet(sv->get_sheet())
 	, m_sv(sv)
 {
 	m_resync = config().get_property("AudioClip", "SyncDuringDrag", false).toBool();
@@ -45,15 +45,15 @@ int PlayHeadMove::finish_hold()
 	
 	// When SyncDuringDrag is true, don't seek in finish_hold()
 	// since that causes another audio glitch.
-	if (!(m_resync && m_song->is_transport_rolling())) {
-		// if the song is transporting, the seek action will cause 
+	if (!(m_resync && m_sheet->is_transport_rolling())) {
+		// if the sheet is transporting, the seek action will cause 
 		// the playcursor to be moved to the correct location.
 		// Until then hide it, it will be shown again when the seek is finished!
-		if (m_song->is_transport_rolling()) {
+		if (m_sheet->is_transport_rolling()) {
 			m_cursor->hide();
 		}
 		TimeRef location(x * m_sv->timeref_scalefactor);
-		m_song->set_transport_pos(location);
+		m_sheet->set_transport_pos(location);
 	}
 	m_sv->start_shuttle(false);
 	return -1;
@@ -62,7 +62,7 @@ int PlayHeadMove::finish_hold()
 int PlayHeadMove::begin_hold()
 {
 	m_cursor->set_active(false);
-	m_origXPos = m_newXPos = int(m_song->get_transport_location() / m_sv->timeref_scalefactor);
+	m_origXPos = m_newXPos = int(m_sheet->get_transport_location() / m_sv->timeref_scalefactor);
 	m_sv->start_shuttle(true, true);
 	
 	// Mabye a technically more proper fix is to check if 
@@ -74,7 +74,7 @@ int PlayHeadMove::begin_hold()
 void PlayHeadMove::cancel_action()
 {
 	m_sv->start_shuttle(false);
-	m_cursor->set_active(m_song->is_transport_rolling());
+	m_cursor->set_active(m_sheet->is_transport_rolling());
 	if (!m_resync) {
 		m_cursor->setPos(m_origXPos, 0);
 	}
@@ -103,8 +103,8 @@ int PlayHeadMove::jog()
 	if (x != m_newXPos) {
 		m_cursor->setPos(x, 0);
 		TimeRef newpos(x * m_sv->timeref_scalefactor);
-		if (m_resync && m_song->is_transport_rolling()) {
-			m_song->set_transport_pos(newpos);
+		if (m_resync && m_sheet->is_transport_rolling()) {
+			m_sheet->set_transport_pos(newpos);
 		}
 		
 		m_sv->update_shuttle_factor();

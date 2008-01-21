@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CorrelationMeter.cpp,v 1.2 2007/11/05 15:49:31 r_sijrier Exp $
+$Id: CorrelationMeter.cpp,v 1.3 2008/01/21 16:22:16 r_sijrier Exp $
 
 */
 
@@ -155,7 +155,7 @@ void CorrelationMeter::process(AudioBus* bus, unsigned long nframes)
 
 /**
  * Compute the correlation coefficient of the stereo master output data
- * of the active song, and the direction. When there is new data, the new
+ * of the active sheet, and the direction. When there is new data, the new
  * data will be assigned to the \a r and \a direction variables, else no 
  * data will be assigned to those variables
  * 

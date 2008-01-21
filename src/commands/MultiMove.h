@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MultiMove.h,v 1.1 2008/01/02 03:03:38 benjie Exp $
+    $Id: MultiMove.h,v 1.2 2008/01/21 16:22:11 r_sijrier Exp $
 */
 
 #ifndef MULTIMOVE_H
@@ -29,15 +29,15 @@
 
 class AudioClip;
 class Marker;
-class Song;
+class Sheet;
 class Track;
-class SongView;
+class SheetView;
 
 
 class MultiMove : public Command
 {
 public :
-        MultiMove(SongView* sv, bool allTracks);
+        MultiMove(SheetView* sv, bool allTracks);
         ~MultiMove();
 
         int begin_hold();
@@ -52,8 +52,8 @@ public :
 private :
 	QList<AudioClip* >	m_clips;
 	QList<Marker* >		m_markers;
-	SongView*		m_sv;
-	Song*			m_song;
+	SheetView*		m_sv;
+	Sheet*			m_sheet;
 	Track*			m_track;
 	bool			m_allTracks;
 	TimeRef			m_originalPos;

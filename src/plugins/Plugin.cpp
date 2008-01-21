@@ -26,9 +26,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "Debugger.h"
 
-Plugin::Plugin(Song* song)
+Plugin::Plugin(Sheet* sheet)
 	: m_slave(0)
-	, m_song(song)
+	, m_sheet(sheet)
 {
 	m_bypass = false;
 }
@@ -201,7 +201,7 @@ int PluginControlPort::set_state(const QDomNode & node)
 	QDomElement curveNode = node.firstChildElement("PortAutomation");
 	if (!curveNode.isNull()) {
 		m_curve = new Curve(m_plugin, curveNode);
-		m_curve->set_song(m_plugin->get_song());
+		m_curve->set_sheet(m_plugin->get_sheet());
 	}
 		
 	return 1;
@@ -232,8 +232,8 @@ void PluginControlPort::set_use_automation(bool automation)
 		AddRemove* cmd = (AddRemove*)m_curve->add_node(node, false);
 		cmd->set_instantanious(true);
 		Command::process_command(cmd);
-		if (m_plugin->get_song()) {
-			m_curve->set_song(m_plugin->get_song());
+		if (m_plugin->get_sheet()) {
+			m_curve->set_sheet(m_plugin->get_sheet());
 		}
 	}
 }

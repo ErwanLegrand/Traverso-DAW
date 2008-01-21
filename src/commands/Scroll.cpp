@@ -22,7 +22,7 @@
 
 #include "Scroll.h"
 
-#include "SongView.h"
+#include "SheetView.h"
 #include <ClipsViewPort.h>
 
 // Always put me below _all_ includes, this is needed
@@ -30,7 +30,7 @@
 #include "Debugger.h"
 
 
-Scroll::Scroll(int x, int y, SongView* sv)
+Scroll::Scroll(int x, int y, SheetView* sv)
 	: Command("Scroll")
 {
 	m_dx = x;

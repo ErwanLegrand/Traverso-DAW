@@ -35,12 +35,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "Debugger.h"
 
-/* Store for each zoomStep the upper and lower sample to hard disk as a
-* peak_data_t. The top-top resolution is then 512 pixels, which should do
-* Painting the waveform will be as simple as painting a line starting from the
-* lower value to the upper value.
-*/
-
 #define NORMALIZE_CHUNK_SIZE	10000
 #define PEAKFILE_MAJOR_VERSION	1
 #define PEAKFILE_MINOR_VERSION	4
@@ -51,6 +45,8 @@ int Peak::zoomStep[] = {
  	// Cached zoomlevels
  	64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576 
 };
+
+QHash<int, int> Peak::chacheIndexLut;
 
 Peak::Peak(AudioSource* source)
 {
@@ -89,6 +85,10 @@ Peak::Peak(AudioSource* source)
 		// peak data creation, no m_source needed!
 		m_source = 0;
 	}
+	
+	int error;
+	int converter_type = 4;
+	m_srcState = src_new(converter_type, 2, &error);
 }
 
 Peak::~Peak()
@@ -131,7 +131,7 @@ int Peak::read_header()
 	
 	foreach(ChannelData* data, m_channelData) {
 		
-		data->file.setFileName(data->fileName.toLatin1().data());
+		data->file.setFileName(data->fileName);
 		
 		if (! data->file.open(QIODevice::ReadOnly)) {
 			if (QFile::exists(data->fileName)) {
@@ -242,32 +242,7 @@ void Peak::start_peak_loading()
 }
 
 
-// static int
-// cnt_bits(unsigned long val, int & highbit)
-// {
-// 	int cnt = 0;
-// 	highbit = 0;
-// 	while (val) {
-// 		if (val & 1) cnt++;
-// 		val>>=1;
-// 		highbit++;
-// 	}
-// 	return cnt;
-// }
-// 
-// // returns the next power of two greater or equal to val
-// static unsigned long
-// nearest_power_of_two(unsigned long val)
-// {
-// 	int highbit;
-// 	if (cnt_bits(val, highbit) > 1) {
-// 		return 1<<highbit;
-// 	}
-// 	return val;
-// }
-
-
-int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, TimeRef startlocation, int pixelcount)
+int Peak::calculate_peaks(int chan, float** buffer, qreal zoomLevel, TimeRef startlocation, int pixelcount)
 {
 	PENTER3;
 	
@@ -287,46 +262,59 @@ int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, TimeRef start
 	
 	ChannelData* data = m_channelData.at(chan);
 	
+	int highbit;
+	unsigned long nearestpow2 = nearest_power_of_two(qRound(zoomLevel), highbit);
+	if (nearestpow2 == 0) {
+		return NO_PEAKDATA_FOUND;
+	}
+	
+	int produced = 0;
+	float* inputData;
+	
 // 	PROFILE_START;
 	
 	// Macro view mode
-	if ( zoomLevel > MAX_ZOOM_USING_SOURCEFILE) {
+	if ( nearestpow2 > 32) {
 		nframes_t startPos = startlocation.to_frame(44100);
 		
-		int offset = (startPos / zoomStep[zoomLevel]) * 2;
+		int index = cache_index_lut()->value(nearestpow2, -1);
+		if(index >= 0) {
+// 			printf("index %d\n", index);
+		}
+		
+		int offset = qRound(startPos / nearestpow2) * 2;
 		int truncate = 0;
 		
 		// Check if this zoom level has as many data as requested.
-		if ( (pixelcount + offset) > data->headerdata.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR]) {
-			truncate = pixelcount - (data->headerdata.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR] - offset);
-// 			pixelcount = data->headerdata.peakDataSizeForLevel[zoomLevel - SAVING_ZOOM_FACTOR] - offset;
+		if ( (pixelcount + offset) > data->headerdata.peakDataSizeForLevel[index]) {
+			truncate = pixelcount - (data->headerdata.peakDataSizeForLevel[index] - offset);
+// 			pixelcount = data->headerdata.peakDataSizeForLevel[index] - offset;
 		}
 		
-		nframes_t readposition = data->headerdata.headerSize + (data->headerdata.peakDataOffsets[zoomLevel - SAVING_ZOOM_FACTOR] + offset) * sizeof(peak_data_t);
-		int read = data->peakreader->read_from(data->peakdataDecodeBuffer, readposition, pixelcount);
+		nframes_t readposition = data->headerdata.headerSize + (data->headerdata.peakDataOffsets[index] + offset) * sizeof(peak_data_t);
+		produced = data->peakreader->read_from(data->peakdataDecodeBuffer, readposition, pixelcount);
 		
-		if (read != pixelcount) {
-			PERROR("Could not read in all peak data, pixelcount is %d, read count is %d", pixelcount, read);
+		if (produced != pixelcount) {
+			PERROR("Could not read in all peak data, pixelcount is %d, read count is %d", pixelcount, produced);
 		}
 		
 // 		PROFILE_END("Peak calculate_peaks");
 		
-		if (read == 0) {
+		if (produced == 0) {
 			return NO_PEAKDATA_FOUND;
 		}
 		
-		for (int i=(pixelcount-truncate); i<(pixelcount); ++i) {
-			data->peakdataDecodeBuffer->destination[0][i] = 0;
-		}
+		inputData = data->peakdataDecodeBuffer->destination[0];
+		
+// 		for (int i=(pixelcount-truncate); i<(pixelcount); ++i) {
+// 			data->peakdataDecodeBuffer->destination[0][i] = 0;
+// 		}
+// 		
 
-		*buffer = data->peakdataDecodeBuffer->destination[0];
-		
-		return read;
-		
 	// Micro view mode
 	} else {
 		// Calculate the amount of frames to be read
-		nframes_t toRead = pixelcount * zoomStep[zoomLevel];
+		nframes_t toRead = pixelcount * nearestpow2;
 		
 		nframes_t readFrames = m_source->file_read(data->peakdataDecodeBuffer, startlocation, toRead);
 
@@ -336,7 +324,7 @@ int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, TimeRef start
 		
 		if ( readFrames != toRead) {
 			PWARN("Unable to read nframes %d (only %d available)", toRead, readFrames);
-			pixelcount = readFrames / zoomStep[zoomLevel];
+			pixelcount = qRound(readFrames / nearestpow2);
 		}
 
 		int count = 0;
@@ -351,7 +339,7 @@ int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, TimeRef start
 		do {
 			valueMax = valueMin = 0;
 
-			for(int i=0; i < zoomStep[zoomLevel]; i++) {
+			for(int i=0; i < nearestpow2; i++) {
 				Q_ASSERT(pos <= readFrames);
 				sample = data->peakdataDecodeBuffer->destination[chan][pos];
 				if (sample > valueMax)
@@ -375,13 +363,32 @@ int Peak::calculate_peaks(int chan, float** buffer, int zoomLevel, TimeRef start
 // 		PROFILE_END("Peak calculate_peaks");		
 		
 		// Assign the supplied buffer to the 'real' peakdata buffer.
-		*buffer = peakdata;
+		inputData = peakdata;
 		
-		return count;
+		produced = count;
 	}
 
-	
-	return 1;
+	src_reset(m_srcState);
+	qreal ratio = qreal(nearestpow2) / zoomLevel;
+	m_srcData.data_in = inputData;
+	m_srcData.input_frames = qRound(pixelcount / ratio);
+	m_srcData.data_out = data->peakdataDecodeBuffer->destination[1];
+	m_srcData.output_frames = pixelcount;
+	m_srcData.src_ratio = ratio;
+	src_set_ratio(m_srcState, m_srcData.src_ratio);
+		
+// 		printf("scale factor %f, pixels generated %ld, wanted %d\n", ratio,  m_srcData.output_frames_gen, pixelcount);
+		
+	if (src_process(m_srcState, &m_srcData)) {
+		PERROR("Resampler: src_process() error!");
+		return NO_PEAKDATA_FOUND;
+	}
+		
+	produced = m_srcData.output_frames_gen;
+
+	*buffer = data->peakdataDecodeBuffer->destination[1];
+		
+	return produced;
 }
 
 
@@ -929,7 +936,7 @@ nframes_t PeakDataReader::read(DecodeBuffer* buffer, nframes_t count)
 	}
 		
 	// Make sure the read buffer is big enough for this read
-	buffer->check_buffers_capacity(count*2, 1);
+	buffer->check_buffers_capacity(count*3, 2);
 	
 	Q_ASSERT(m_d->file.isOpen());
 	
@@ -955,5 +962,29 @@ nframes_t PeakDataReader::read(DecodeBuffer* buffer, nframes_t count)
 	m_readPos += framesRead;
 	
 	return framesRead;
+}
+
+void Peak::calculate_lut_data()
+{
+	chacheIndexLut.insert(64     , 0);
+	chacheIndexLut.insert(128    , 1);
+	chacheIndexLut.insert(256    , 2);
+	chacheIndexLut.insert(512    , 3);
+	chacheIndexLut.insert(1024   , 4);
+	chacheIndexLut.insert(2048   , 5);
+	chacheIndexLut.insert(4096   , 6);
+	chacheIndexLut.insert(8192   , 7);
+	chacheIndexLut.insert(16384  , 8);
+	chacheIndexLut.insert(32768  , 9);
+	chacheIndexLut.insert(65536  , 10);
+	chacheIndexLut.insert(131072 , 11);
+	chacheIndexLut.insert(262144 , 12);
+	chacheIndexLut.insert(524288 , 13);
+	chacheIndexLut.insert(1048576, 14);
+}
+
+int Peak::max_zoom_value()
+{
+	return 1048576;
 }
 

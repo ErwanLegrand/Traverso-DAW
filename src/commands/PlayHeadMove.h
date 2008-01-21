@@ -24,14 +24,14 @@
 
 #include <Command.h>
 
-class Song;
-class SongView;
+class Sheet;
+class SheetView;
 class PlayHead;
 
 class PlayHeadMove : public Command
 {
 public :
-	PlayHeadMove(PlayHead* cursor, SongView* sv);
+	PlayHeadMove(PlayHead* cursor, SheetView* sv);
 	~PlayHeadMove(){};
 
 	int finish_hold();
@@ -43,8 +43,8 @@ public :
 
 private :
 	PlayHead*	m_cursor;
-	Song*		m_song;
-	SongView*	m_sv;
+	Sheet*		m_sheet;
+	SheetView*	m_sv;
 	bool		m_resync;
 	int		m_origXPos;
 	int		m_newXPos;

@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ui_ResourcesWidget.h"
 
 class Project;
-class Song;
+class Sheet;
 class AudioClip;
 class ReadSource;
 class SourceTreeItem;
@@ -68,7 +68,7 @@ class ClipTreeItem : public QObject, public QTreeWidgetItem
 public:
 	ClipTreeItem(SourceTreeItem* parent, AudioClip* clip);
 	
-	void apply_filter(Song* song);
+	void apply_filter(Sheet* sheet);
 
 
 public slots:
@@ -85,7 +85,7 @@ class SourceTreeItem : public QObject, public QTreeWidgetItem
 public:
 	SourceTreeItem(QTreeWidget* parent, ReadSource* source);
 
-	void apply_filter(Song* song);
+	void apply_filter(Sheet* sheet);
 
 private:
 	ReadSource* m_source;
@@ -108,7 +108,7 @@ protected:
 
 private:
 	Project* m_project;
-	Song* m_currentSong;
+	Sheet* m_currentSheet;
 	FileWidget* m_filewidget;
 	QHash<qint64, ClipTreeItem*> m_clipindices;
 	QHash<qint64, SourceTreeItem*> m_sourceindices;
@@ -116,18 +116,18 @@ private:
 	void update_clip_state(AudioClip* clip);
 	void update_source_state(qint64 id);
 	
-	void filter_on_current_song();
+	void filter_on_current_sheet();
 	
 private slots:
 	void set_project(Project* project);
 	void project_load_finished();
 	
 	void view_combo_box_index_changed(int index);
-	void song_combo_box_index_changed(int index);
+	void sheet_combo_box_index_changed(int index);
 	
-	void song_added(Song* song);
-	void song_removed(Song* song);
-	void set_current_song(Song* song);
+	void sheet_added(Sheet* sheet);
+	void sheet_removed(Sheet* sheet);
+	void set_current_sheet(Sheet* sheet);
 	
 	void add_clip(AudioClip* clip);
 	void remove_clip(AudioClip* clip);

@@ -51,6 +51,27 @@ static inline unsigned int is_power_of_two (unsigned int n)
 	return !(n & (n - 1));
 }
 
+static inline int cnt_bits(unsigned long val, int & highbit)
+{
+	int cnt = 0;
+	highbit = 0;
+	while (val) {
+		if (val & 1) cnt++;
+		val>>=1;
+		highbit++;
+	}
+	return cnt;
+}
+
+// returns the next power of two greater or equal to val
+static inline long nearest_power_of_two(unsigned long val, int& highbit)
+{
+	if (cnt_bits(val, highbit) > 1) {
+		return 1<<highbit;
+	}
+	return val;
+}
+
 QPixmap find_pixmap(const QString& pixname);
 
 #endif

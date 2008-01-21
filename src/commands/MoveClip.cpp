@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "MoveClip.h"
 #include "SnapList.h"
-#include <SongView.h>
+#include <SheetView.h>
 #include <TrackView.h>
 #include <AudioClipView.h>
 #include <ViewPort.h>
@@ -68,7 +68,7 @@ MoveClip::MoveClip(AudioClipView* cv, QString type)
 	QString des;
 	if (m_actionType == "copy") {
 		des = tr("Copy Clip");
-		d->xoffset = TimeRef(cv->get_songview()->timeref_scalefactor * 3);
+		d->xoffset = TimeRef(cv->get_sheetview()->timeref_scalefactor * 3);
 	} else if (m_actionType == "move") {
 		des = tr("Move Clip");
 	} else if (m_actionType == "anchored_left_edge_move" ||
@@ -83,8 +83,8 @@ MoveClip::MoveClip(AudioClipView* cv, QString type)
 	setText(des);
 	
 	d->view = cv;
-	d->sv = d->view->get_songview();
-	m_song = d->sv->get_song();
+	d->sv = d->view->get_sheetview();
+	m_sheet = d->sv->get_sheet();
 	m_targetTrack = 0;
 
 	if (m_actionType == "move_to_start" ||
@@ -167,7 +167,7 @@ int MoveClip::begin_hold()
 	d->sv->stop_follow_play_head();
 	if (m_actionType == "copy") {
 		d->newclip = resources_manager()->get_clip(d->view->get_clip()->get_id());
-		d->newclip->set_song(m_song);
+		d->newclip->set_sheet(m_sheet);
 		d->newclip->set_track(d->view->get_clip()->get_track());
 		d->newclip->set_track_start_location(d->view->get_clip()->get_track_start_location() + d->xoffset);
 		
@@ -236,7 +236,7 @@ int MoveClip::do_action()
 		Command::process_command(m_targetTrack->add_clip(m_clip, false));
 		m_clip->set_track_start_location(m_originalTrackStartLocation + m_posDiff);
 	} else {
-		m_song->move_clip(m_originTrack, m_targetTrack, m_clip, m_originalTrackStartLocation + m_posDiff);
+		m_sheet->move_clip(m_originTrack, m_targetTrack, m_clip, m_originalTrackStartLocation + m_posDiff);
 	}
 	
 	if (m_actionType == "anchored_left_edge_move") {
@@ -257,7 +257,7 @@ int MoveClip::undo_action()
 	if (m_actionType == "copy") {
 		Command::process_command(m_targetTrack->remove_clip(m_clip, false));
 	} else {
-		m_song->move_clip(m_targetTrack, m_originTrack, m_clip, m_originalTrackStartLocation);
+		m_sheet->move_clip(m_targetTrack, m_originTrack, m_clip, m_originalTrackStartLocation);
 	}
 
 	if (m_actionType == "anchored_left_edge_move") {
@@ -323,7 +323,6 @@ int MoveClip::jog()
 
 	int newXPos = cpointer().x() - scrollbardif;
 
-	// must be signed int because it can be negative
 	TimeRef diff_f = TimeRef((cpointer().x() - d->origXPos - scrollbardif) * d->sv->timeref_scalefactor);
 	TimeRef newTrackStartLocation;
 	TimeRef newTrackEndLocation = d->origTrackEndLocation + diff_f;
@@ -334,7 +333,7 @@ int MoveClip::jog()
 		newTrackStartLocation = d->origTrackStartLocation + diff_f;
 	}
 
-	if (m_song->is_snap_on()) {
+	if (m_sheet->is_snap_on()) {
 		calculate_snap_diff(newTrackStartLocation, newTrackEndLocation);
 	}
 	
@@ -379,8 +378,8 @@ void MoveClip::next_snap_pos(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
 	d->bypassjog = true;
-	TimeRef trackStartLocation = m_song->get_snap_list()->next_snap_pos(m_clip->get_track_start_location());
-	TimeRef trackEndLocation = m_song->get_snap_list()->next_snap_pos(m_clip->get_track_end_location());
+	TimeRef trackStartLocation = m_sheet->get_snap_list()->next_snap_pos(m_clip->get_track_start_location());
+	TimeRef trackEndLocation = m_sheet->get_snap_list()->next_snap_pos(m_clip->get_track_end_location());
 	qint64 startdiff = (trackStartLocation - m_clip->get_track_start_location()).universal_frame();
 	qint64 enddiff = (trackEndLocation - m_clip->get_track_end_location()).universal_frame();
 	qint64 diff = (abs(startdiff) < abs(enddiff)) ? startdiff : enddiff;
@@ -393,8 +392,8 @@ void MoveClip::prev_snap_pos(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
 	d->bypassjog = true;
-	TimeRef trackStartLocation = m_song->get_snap_list()->prev_snap_pos(m_clip->get_track_start_location());
-	TimeRef trackEndLocation = m_song->get_snap_list()->prev_snap_pos(m_clip->get_track_end_location());
+	TimeRef trackStartLocation = m_sheet->get_snap_list()->prev_snap_pos(m_clip->get_track_start_location());
+	TimeRef trackEndLocation = m_sheet->get_snap_list()->prev_snap_pos(m_clip->get_track_end_location());
 	qint64 startdiff = (trackStartLocation - m_clip->get_track_start_location()).universal_frame();
 	qint64 enddiff = (trackEndLocation - m_clip->get_track_end_location()).universal_frame();
 	qint64 diff = (abs(startdiff) < abs(enddiff)) ? startdiff : enddiff;
@@ -416,7 +415,7 @@ void MoveClip::move_to_end(bool autorepeat)
 	Track *track = m_clip->get_track();
 	
 	Command::process_command(track->remove_clip(m_clip, false));
-	m_clip->set_track_start_location(m_clip->get_song()->get_last_location());
+	m_clip->set_track_start_location(m_clip->get_sheet()->get_last_location());
 	Command::process_command(track->add_clip(m_clip, false));
 }
 
@@ -427,7 +426,7 @@ void MoveClip::calculate_snap_diff(TimeRef& leftlocation, TimeRef rightlocation)
 	qint64 snapEndDiff = 0;
 	qint64 snapDiff = 0;
 	
-	SnapList* slist = m_song->get_snap_list();
+	SnapList* slist = m_sheet->get_snap_list();
 
 	// check if there is anything to snap
 	bool start_snapped = false;

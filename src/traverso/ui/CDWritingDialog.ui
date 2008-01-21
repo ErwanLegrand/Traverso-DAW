@@ -40,7 +40,7 @@
          <number>6</number>
         </property>
         <item>
-         <widget class="QRadioButton" name="cdCurrentSongButton" >
+         <widget class="QRadioButton" name="cdCurrentSheetButton" >
           <property name="text" >
            <string>Write current Sheet</string>
           </property>
@@ -50,7 +50,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="cdAllSongsButton" >
+         <widget class="QRadioButton" name="cdAllSheetsButton" >
           <property name="text" >
            <string>Write all Sheets</string>
           </property>

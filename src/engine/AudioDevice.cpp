@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.50 2008/01/15 19:51:48 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.51 2008/01/21 16:22:15 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -553,6 +553,7 @@ void AudioDevice::setup_buses( )
 	int number = 1;
 	QByteArray name;
 
+	// FIXME check if value() return an AudioChannel!!!!!!!!!!!!!
 	for (int i=1; i <= captureChannels.size();) {
 		name = "Capture " + QByteArray::number(number++);
 		AudioBus* bus = new AudioBus(name);

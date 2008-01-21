@@ -82,7 +82,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 	The AddRemove Command class has to be used for adding/removing items
 	to/from ContextItem objects. <br />This class detects if the add/remove function
 	can be called directly, or in a thread save way, and uses therefore the
-	Tsar class, and the Song object in case it was given as a parameter.<br />
+	Tsar class, and the Sheet object in case it was given as a parameter.<br />
 	See for more information the AddRemove, AudioDevice and Tsar class
 	documentation.
  */

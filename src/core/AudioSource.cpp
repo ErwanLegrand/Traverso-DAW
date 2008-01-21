@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 #include "AudioSource.h"
-#include "Song.h"
+#include "Sheet.h"
 #include "Peak.h"
 #include "Export.h"
 #include "Utils.h"
@@ -90,9 +90,9 @@ void AudioSource::set_original_bit_depth( uint bitDepth )
 	m_origBitDepth = bitDepth;
 }
 
-void AudioSource::set_created_by_song(qint64 id)
+void AudioSource::set_created_by_sheet(qint64 id)
 {
-	m_origSongId = id;
+	m_origSheetId = id;
 }
 
 QString AudioSource::get_filename( ) const

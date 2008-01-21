@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 class Project;
-class Song;
+class Sheet;
 class Command;
 class ResourcesManager;
 class QFileSystemWatcher;
@@ -43,7 +43,7 @@ class ProjectManager : public ContextItem
 	Q_CLASSINFO("exit", tr("Exit application"))
 	
 public:
-	Project* create_new_project(int numSong, int numTracks, const QString& projectName);
+	Project* create_new_project(int numSheet, int numTracks, const QString& projectName);
 	Project* create_new_project(const QString& templatefile, const QString& projectName);
 	
 	int load_project(const QString& projectName);
@@ -55,8 +55,8 @@ public:
 	int create_projectfilebackup_dir(const QString& rootDir);
 	int remove_project(const QString& title);
 	
-	void scheduled_for_deletion(Song* song);
-	void delete_song(Song* song);
+	void scheduled_for_deletion(Sheet* sheet);
+	void delete_sheet(Sheet* sheet);
 	void set_current_project_dir(const QString& path);
 	void add_valid_project_path(const QString& path);
 	void remove_wrong_project_path(const QString& path);
@@ -85,7 +85,7 @@ private:
 	ProjectManager(const ProjectManager&);
 
 	Project* currentProject;
-	QList<Song*>	m_deletionSongList;
+	QList<Sheet*>	m_deletionSheetList;
 	bool		m_exitInProgress;
 	QStringList	m_projectDirs;
 	QFileSystemWatcher*	m_watcher;
@@ -102,7 +102,7 @@ private:
 
 signals:
 	void projectLoaded(Project* );
-	void aboutToDelete(Song* );
+	void aboutToDelete(Sheet* );
 	void currentProjectDirChanged();
 	void unsupportedProjectDirChangeDetected();
 	void projectDirChangeDetected();

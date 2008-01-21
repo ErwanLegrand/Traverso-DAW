@@ -17,14 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.32 2007/12/29 02:03:36 benjie Exp $
+$Id: FadeCurve.cpp,v 1.33 2008/01/21 16:22:13 r_sijrier Exp $
 */
  
 #include "FadeCurve.h"
 
 #include <QFile>
 #include <cmath>
-#include "Song.h"
+#include "Sheet.h"
 #include "Fade.h"
 #include "AudioClip.h"
 #include "Command.h"
@@ -39,12 +39,12 @@ $Id: FadeCurve.cpp,v 1.32 2007/12/29 02:03:36 benjie Exp $
 
 QStringList FadeCurve::defaultShapes = QStringList() << "Fastest" << "Fast" << "Linear"  << "Slow" << "Slowest";
 
-FadeCurve::FadeCurve(AudioClip* clip, Song* song, QString type )
+FadeCurve::FadeCurve(AudioClip* clip, Sheet* sheet, QString type )
 	: Curve(clip)
 	, m_clip(clip)
 	, m_sType(type)
 {
-	Q_UNUSED(song);
+	Q_UNUSED(sheet);
 	
 	if (type == "FadeIn") {
 		m_type = FadeIn;
@@ -53,7 +53,7 @@ FadeCurve::FadeCurve(AudioClip* clip, Song* song, QString type )
 		m_type = FadeOut;
 	}
 	
-	m_song = m_clip->get_song();
+	m_sheet = m_clip->get_sheet();
 		
 	m_controlPoints.append(QPointF(0.0, 0.0));
 	m_controlPoints.append(QPointF(0.25, 0.25));
@@ -176,17 +176,17 @@ void FadeCurve::process(audio_sample_t** mixdown, nframes_t nframes, uint channe
 	TimeRef fadepos;
 	
 	if (m_type == FadeIn) {
-		if( !( m_song->get_transport_location() < (m_clip->get_track_start_location() + faderange) ) ) {
+		if( !( m_sheet->get_transport_location() < (m_clip->get_track_start_location() + faderange) ) ) {
 			return;
 		}
 		
-		fadepos = m_song->get_transport_location() - m_clip->get_track_start_location();
+		fadepos = m_sheet->get_transport_location() - m_clip->get_track_start_location();
 	} else {
-		if( !(m_song->get_transport_location() > (m_clip->get_track_end_location() - faderange)) ) {
+		if( !(m_sheet->get_transport_location() > (m_clip->get_track_end_location() - faderange)) ) {
 			return;
 		}
 		
-		fadepos = m_song->get_transport_location() - (m_clip->get_track_end_location() - faderange);
+		fadepos = m_sheet->get_transport_location() - (m_clip->get_track_end_location() - faderange);
 	}
 
 	TimeRef range(nframes, audiodevice().get_sample_rate());
@@ -194,11 +194,11 @@ void FadeCurve::process(audio_sample_t** mixdown, nframes_t nframes, uint channe
 	
 	nframes_t framerange = limit.to_frame(audiodevice().get_sample_rate());
 	
-	get_vector(fadepos.universal_frame(), (fadepos + limit).universal_frame(), m_song->gainbuffer, framerange);
+	get_vector(fadepos.universal_frame(), (fadepos + limit).universal_frame(), m_sheet->gainbuffer, framerange);
 
 	for (uint chan=0; chan<channels; ++chan) {
 		for (nframes_t frame = 0; frame < framerange; ++frame) {
-			mixdown[chan][frame] *= m_song->gainbuffer[frame];
+			mixdown[chan][frame] *= m_sheet->gainbuffer[frame];
 		}
 	}
 }

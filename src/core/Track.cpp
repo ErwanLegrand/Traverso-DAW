@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 */
 
 #include "Track.h"
-#include "Song.h"
+#include "Sheet.h"
 #include "AudioClip.h"
 #include "AudioClipManager.h"
 #include <AudioBus.h>
@@ -41,9 +41,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Debugger.h"
 
 
-Track::Track(Song* song, const QString& name, int height )
-	: ContextItem(song), 
-	  m_song(song), 
+Track::Track(Sheet* sheet, const QString& name, int height )
+	: ContextItem(sheet), 
+	  m_sheet(sheet), 
 	  m_name(name),
 	  m_height(height)
 {
@@ -58,9 +58,9 @@ Track::Track(Song* song, const QString& name, int height )
 	init();
 }
 
-Track::Track( Song * song, const QDomNode node)
-	: ContextItem(song), 
-	  m_song(song)
+Track::Track( Sheet * sheet, const QDomNode node)
+	: ContextItem(sheet), 
+	  m_sheet(sheet)
 {
 	PENTERCONS;
 	Q_UNUSED(node);
@@ -76,8 +76,8 @@ Track::~Track()
 void Track::init()
 {
 	isSolo = mutedBySolo = m_isMuted = isArmed = false;
-	set_history_stack(m_song->get_history_stack());
-	m_pluginChain = new PluginChain(this, m_song);
+	set_history_stack(m_sheet->get_history_stack());
+	m_pluginChain = new PluginChain(this, m_sheet);
 	m_fader = m_pluginChain->get_fader();
 	m_fader->set_gain(1.0);
 	m_captureRightChannel = m_captureLeftChannel = true;
@@ -168,10 +168,10 @@ int Track::set_state( const QDomNode & node )
 				break;
 			}
 			
-			clip->set_song(m_song);
+			clip->set_sheet(m_sheet);
 			clip->set_track(this);
 			clip->set_state(clip->get_dom_node());
-			m_song->get_audioclip_manager()->add_clip(clip);
+			m_sheet->get_audioclip_manager()->add_clip(clip);
 			private_add_clip(clip);
 			
 			clipNode = clipNode.nextSibling();
@@ -213,9 +213,9 @@ Command* Track::remove_clip(AudioClip* clip, bool historable, bool ismove)
 {
 	PENTER;
 	if (! ismove) {
-		m_song->get_audioclip_manager()->remove_clip(clip);
+		m_sheet->get_audioclip_manager()->remove_clip(clip);
 	}
-	return new AddRemove(this, clip, historable, m_song,
+	return new AddRemove(this, clip, historable, m_sheet,
 		"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)",
 		"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)", 
    		tr("Remove Clip"));
@@ -227,9 +227,9 @@ Command* Track::add_clip(AudioClip* clip, bool historable, bool ismove)
 	PENTER;
 	clip->set_track(this);
 	if (! ismove) {
-		m_song->get_audioclip_manager()->add_clip(clip);
+		m_sheet->get_audioclip_manager()->add_clip(clip);
 	}
-	return new AddRemove(this, clip, historable, m_song,
+	return new AddRemove(this, clip, historable, m_sheet,
 		"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)",
 		"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)", 
    		tr("Add Clip"));
@@ -309,7 +309,7 @@ AudioClip* Track::init_recording()
 	if ( ! isArmed) {
 		return 0;
 	}
-	int number = m_song->get_track_index(m_id);
+	int number = m_sheet->get_track_index(m_id);
 	QString snumber = QString::number(number);
 	if (number < 10) {
 		snumber.prepend("0");
@@ -318,9 +318,9 @@ AudioClip* Track::init_recording()
 			"_take-" + QString::number(++numtakes);
 	
 	AudioClip* clip = resources_manager()->new_audio_clip(name);
-	clip->set_song(m_song);
+	clip->set_sheet(m_sheet);
 	clip->set_track(this);
-	clip->set_track_start_location(m_song->get_transport_location());
+	clip->set_track_start_location(m_sheet->get_transport_location());
 	
 	if (clip->init_recording(busIn) < 0) {
 		PERROR("Could not create AudioClip to record to!");
@@ -411,10 +411,10 @@ int Track::process( nframes_t nframes )
 		return 0;
 	}
 	
-	// Get the 'render bus' from song, a bit hackish solution, but
+	// Get the 'render bus' from sheet, a bit hackish solution, but
 	// it avoids to have a dedicated render bus for each Track,
 	// or buffers located on the heap...
-	AudioBus* bus = m_song->get_render_bus();
+	AudioBus* bus = m_sheet->get_render_bus();
 	bus->silence_buffers(nframes);
 	
 	int result;
@@ -458,7 +458,7 @@ int Track::process( nframes_t nframes )
 	processResult |= m_pluginChain->process_post_fader(bus, nframes);
 		
 	for (int i=0; i<bus->get_channel_count(); ++i) {
-		Mixer::mix_buffers_no_gain(m_song->get_master_out()->get_buffer(i, nframes), bus->get_buffer(i, nframes), nframes);
+		Mixer::mix_buffers_no_gain(m_sheet->get_master_out()->get_buffer(i, nframes), bus->get_buffer(i, nframes), nframes);
 	}
 	
 	return processResult;
@@ -483,7 +483,7 @@ Command* Track::toggle_arm()
 
 Command* Track::solo(  )
 {
-	m_song->solo_track(this);
+	m_sheet->solo_track(this);
 	return (Command*) 0;
 }
 

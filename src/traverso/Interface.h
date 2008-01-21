@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QMainWindow>
 #include <QHash>
 
-class Song;
+class Sheet;
 class Track;
 class Project;
 class BusMonitor;
@@ -49,7 +49,7 @@ class ResourcesWidget;
 class ResourcesInfoWidget;
 class DriverInfoWidget;
 class HDDSpaceInfoWidget;
-class SongWidget;
+class SheetWidget;
 class CorrelationMeterWidget;
 class SpectralMeterWidget;
 class SettingsDialog;
@@ -60,7 +60,7 @@ class SysInfoToolBar;
 class InsertSilenceDialog;
 class MarkerDialog;
 class BusSelectorDialog;
-class NewSongDialog;
+class NewSheetDialog;
 class NewTrackDialog;
 class NewProjectDialog;
 class Ui_QuickStartDialog;
@@ -98,8 +98,8 @@ protected:
 
 private:
 	QStackedWidget* 	centerAreaWidget;
-	QHash<Song*, SongWidget* > m_songWidgets;
-	SongWidget*		currentSongWidget;
+	QHash<Sheet*, SheetWidget* > m_sheetWidgets;
+	SheetWidget*		currentSheetWidget;
 	QList<ViewPort* > 	currentProjectViewPortList;
 	QHash<QString, QMenu*>	m_contextMenus;
 	ExportDialog*		m_exportDialog;
@@ -121,7 +121,7 @@ private:
 	InfoToolBar* 		m_infoBar;
 	SysInfoToolBar* 	m_sysinfo;
 	BusSelectorDialog*	m_busSelector;
-	NewSongDialog*		m_newSongDialog;
+	NewSheetDialog*		m_newSheetDialog;
 	NewTrackDialog*		m_newTrackDialog;
 	NewProjectDialog*	m_newProjectDialog;
 	QDialog*		m_quickStart;
@@ -132,9 +132,9 @@ private:
 	QToolBar* 		mainToolBar;
 	QToolButton*		openGlButton;
 	QAction*		m_projectSaveAction;
-	QAction*		m_projectSongManagerAction;
+	QAction*		m_projectSheetManagerAction;
 	QAction*		m_projectExportAction;
-	QAction*		m_songMenuAction;
+	QAction*		m_sheetMenuAction;
 	QMenu*			m_encodingMenu;
 	QMenu*			m_resampleQualityMenu;
 	
@@ -152,7 +152,7 @@ private:
 
 public slots :
 	void set_project(Project* project);
-	void show_song(Song* song);
+	void show_sheet(Sheet* sheet);
 	void show_settings_dialog();
 	void open_help_browser();
 	void process_context_menu_action(QAction* action);
@@ -182,12 +182,12 @@ public slots :
 	Command* show_restore_project_backup_dialog(QString projectdir);
 	Command* show_insertsilence_dialog();
 	Command* show_marker_dialog();
-	Command* show_newsong_dialog();
+	Command* show_newsheet_dialog();
 	Command* show_newtrack_dialog();
 	Command* show_newproject_dialog();
 	
 private slots:
-	void delete_songwidget(Song*);
+	void delete_sheetwidget(Sheet*);
 	void project_dir_change_detected();
 	void project_load_failed(QString project, QString reason);
 	void project_file_mismatch(QString rootdir, QString projectname);

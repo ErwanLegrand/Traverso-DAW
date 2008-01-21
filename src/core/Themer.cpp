@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Themer.cpp,v 1.9 2007/11/27 13:11:56 r_sijrier Exp $
+$Id: Themer.cpp,v 1.10 2008/01/21 16:22:15 r_sijrier Exp $
 */
 
 #include "Themer.h"
@@ -249,6 +249,8 @@ void Themer::load( )
 	m_cursors.insert("Fade", QCursor(find_pixmap(":/cursorFloatOverFade")));
 	m_cursors.insert("Default", QCursor(find_pixmap(":/cursorFloat")));
 	m_cursors.insert("Zoom", QCursor(find_pixmap(":/cursorZoom")));
+	m_cursors.insert("ZoomVertical", QCursor(find_pixmap(":/cursorZoomVertical")));
+	m_cursors.insert("ZoomHorizontal", QCursor(find_pixmap(":/cursorZoomHorizontal")));
 	m_cursors.insert("CurveNode", QCursor(find_pixmap(":/cursorDragNode")));
 	
 	m_cursors.insert("LRUD", QCursor(find_pixmap(":/cursorHoldLrud")));
@@ -424,8 +426,8 @@ QColor Themer::get_default_color(const QString & name)
 		
 		if (name == "ResourcesBin:alternaterowcolor") c = p.color(QPalette::AlternateBase);
 
-		if (name == "Song:background") c = p.color(QPalette::Base);
-		if (name == "SongPanel:background") c = p.color(QPalette::Window);
+		if (name == "Sheet:background") c = p.color(QPalette::Base);
+		if (name == "SheetPanel:background") c = p.color(QPalette::Window);
 		
 		if (name == "Timeline:background") c = p.color(QPalette::Window);
 		if (name == "Timeline:text") c = p.color(QPalette::WindowText);

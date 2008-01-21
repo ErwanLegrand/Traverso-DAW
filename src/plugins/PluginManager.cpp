@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "ProjectManager.h"
 #include "Project.h"
-#include "Song.h"
+#include "Sheet.h"
 #include "PluginManager.h"
 #include "Plugin.h"
 #include "CorrelationMeter.h"
@@ -79,11 +79,11 @@ Plugin* PluginManager::get_plugin(const  QDomNode node )
 	QString type = e.attribute( "type", "");
 
 	Plugin* plugin = 0;
-	Song* song = pm().get_project()->get_current_song();
+	Sheet* sheet = pm().get_project()->get_current_sheet();
 
 #if defined (LV2_SUPPORT)
 	if (type == "LV2Plugin") {
-		plugin = new LV2Plugin(song);
+		plugin = new LV2Plugin(sheet);
 	}
 #endif
 	
@@ -123,8 +123,8 @@ SLV2Plugins PluginManager::get_slv2_plugin_list()
 
 Plugin* PluginManager::create_lv2_plugin(const QString& uri)
 {
-	Song* song = pm().get_project()->get_current_song();
-	LV2Plugin* plugin = new LV2Plugin(song, QS_C(uri));
+	Sheet* sheet = pm().get_project()->get_current_sheet();
+	LV2Plugin* plugin = new LV2Plugin(sheet, QS_C(uri));
 	
 	if (plugin->init() < 0) {
 		info().warning(QObject::tr("Plugin %1 initialization failed!").arg(uri));

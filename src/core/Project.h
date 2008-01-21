@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ContextItem.h"
 
 
-class Song;
+class Sheet;
 class ResourcesManager;
 struct ExportSpecification;
 class ExportThread;
@@ -42,8 +42,8 @@ public :
 
 
 	// Get functions
-	int get_current_song_id() const;
-	int get_num_songs() const;
+	int get_current_sheet_id() const;
+	int get_num_sheets() const;
 	int get_rate() const;
 	int get_bitdepth() const;
 	
@@ -54,7 +54,7 @@ public :
 	QString get_discid() const;
 	QString get_performer() const;
 	QString get_arranger() const;
-	QString get_songwriter() const;
+	QString get_sheetwriter() const;
 	QString get_message() const;
 	QString get_upc_ean() const;
 	int get_genre();
@@ -62,10 +62,10 @@ public :
 	QString get_audiosources_dir() const;
 	QString get_import_dir() const;
 	QString get_error_string() const {return m_errorString;}
-	QList<Song* > get_songs() const;
-	Song* get_current_song() const ;
-	Song* get_song(qint64 id) const;
-	int get_song_index(qint64 id) const;
+	QList<Sheet* > get_sheets() const;
+	Sheet* get_current_sheet() const ;
+	Sheet* get_sheet(qint64 id) const;
+	int get_sheet_index(qint64 id) const;
 	QDomNode get_state(QDomDocument doc, bool istemplate=false);
 
 
@@ -76,17 +76,17 @@ public :
 	void set_discid(const QString& pId);
 	void set_performer(const QString& pPerformer);
 	void set_arranger(const QString& pArranger);
-	void set_songwriter(const QString& pSongwriter);
+	void set_sheetwriter(const QString& pSheetwriter);
 	void set_message(const QString& pMessage);
 	void set_upc_ean(const QString& pUPC);
 	void set_genre(int pGenre);
-	void set_song_export_progress(int pogress);
-	void set_current_song(qint64 id);
+	void set_sheet_export_progress(int pogress);
+	void set_current_sheet(qint64 id);
 	void set_import_dir(const QString& dir);
 
 	
-	Command* add_song(Song* song, bool historable=true);
-	Command* remove_song(Song* song, bool historable=true);
+	Command* add_sheet(Sheet* sheet, bool historable=true);
+	Command* remove_sheet(Sheet* sheet, bool historable=true);
 	
 	bool has_changed();
 	bool is_save_to_close() const;
@@ -111,7 +111,7 @@ public slots:
 private:
 	Project(const QString& title);
 	
-	QList<Song* >	m_songs;
+	QList<Sheet* >	m_sheets;
 	ResourcesManager* 	m_resourcesManager;
 	ExportThread* 	m_exportThread;
 
@@ -126,7 +126,7 @@ private:
 	QString		m_upcEan;
 	QString		m_performer;
 	QString		m_arranger;
-	QString		m_songwriter;
+	QString		m_sheetwriter;
 	QString		m_message;
 	QString		m_errorString;
 
@@ -135,29 +135,29 @@ private:
 	bool		m_useResampling;
 
 	int		overallExportProgress;
-	int 		renderedSongs;
-	QList<Song* > 	songsToRender;
+	int 		renderedSheets;
+	QList<Sheet* > 	sheetsToRender;
 
-	qint64 		m_currentSongId;
+	qint64 		m_currentSheetId;
 	
-	int create(int songcount, int numtracks);
+	int create(int sheetcount, int numtracks);
 	int create_audiosources_dir();
 	int create_peakfiles_dir();
 	
 	friend class ProjectManager;
 
 private slots:
-	void private_add_song(Song* song);
-	void private_remove_song(Song* song);
+	void private_add_sheet(Sheet* sheet);
+	void private_remove_sheet(Sheet* sheet);
 
 signals:
-	void currentSongChanged(Song* );
-	void songAdded(Song*);
-	void songRemoved(Song*);
-	void songExportProgressChanged(int );
+	void currentSheetChanged(Sheet* );
+	void sheetAdded(Sheet*);
+	void sheetRemoved(Sheet*);
+	void sheetExportProgressChanged(int );
 	void overallExportProgressChanged(int );
 	void exportFinished();
-	void exportStartedForSong(Song* );
+	void exportStartedForSheet(Sheet* );
 	void projectLoadFinished();
 };
 

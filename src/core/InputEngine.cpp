@@ -954,7 +954,7 @@ int InputEngine::identify_first_fact()
 		} else {
 			PMESG3("Detected [KK]");
 			fact1Type = HKEY2;
-			holdEventCode = fact1_k1;
+			holdEventCode = fact1_k2;
 		}
 	}
 
@@ -1229,19 +1229,26 @@ void InputEngine::finish_hold()
 		}
 		cpointer().reset_cursor();
 	} else if (holdingCommand) {
-
-		holdingCommand->finish_hold();
+		
 		cpointer().reset_cursor();
-
-		int holdprepare = holdingCommand->prepare_actions();
-		if (holdprepare > 0) {
-			PMESG("holdingCommand->prepare_actions() returned succes!");
-			holdingCommand->set_valid(true);
+		
+		int holdFinish = holdingCommand->finish_hold();
+		int holdprepare = -1;
+		
+		if (holdFinish > 0) {
+			holdprepare = holdingCommand->prepare_actions();
+			if (holdprepare > 0) {
+				PMESG("holdingCommand->prepare_actions() returned succes!");
+				holdingCommand->set_valid(true);
+			} else {
+				PMESG("holdingCommand->prepare_actions() returned <= 0, so either it failed, or nothing happened!");
+				holdingCommand->set_valid( false );
+			}
 		} else {
-			PMESG("holdingCommand->prepare_actions() returned <= 0, so either it failed, or nothing happened!");
+			PMESG("holdingCommand->finish_hold() returned <= 0, so either it failed, or nothing happened!");
 			holdingCommand->set_valid( false );
 		}
-
+		
 		if (holdingCommand->push_to_history_stack() < 0) {
 			if (holdprepare == 1) {
 				holdingCommand->do_action();

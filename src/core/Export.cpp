@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Export.cpp,v 1.15 2007/11/22 15:07:01 r_sijrier Exp $
+    $Id: Export.cpp,v 1.16 2008/01/21 16:22:13 r_sijrier Exp $
 */
 
 #include "Export.h"
@@ -62,7 +62,7 @@ ExportSpecification::ExportSpecification()
 	totalTime = qint64(-1);
 	pos = qint64(-1);
 	
-	allSongs = false;
+	allSheets = false;
 	stop = false;
 	breakout = false;
 	isRecording = -1;

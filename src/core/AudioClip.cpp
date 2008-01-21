@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AudioClip.h"
 #include "AudioSource.h"
 #include "WriteSource.h"
-#include "Song.h"
+#include "Sheet.h"
 #include "SnapList.h"
 #include "Track.h"
 #include "AudioChannel.h"
@@ -68,7 +68,7 @@ AudioClip::AudioClip(const QString& name)
 	PENTERCONS;
 	m_isMuted=false;
 	m_id = create_id();
-	m_readSourceId = m_songId = 0;
+	m_readSourceId = m_sheetId = 0;
 	init();
 }
 
@@ -87,7 +87,7 @@ AudioClip::AudioClip(const QDomNode& node)
 	QDomElement e = node.toElement();
 	m_id = e.attribute("id", "").toLongLong();
 	m_readSourceId = e.attribute("source", "").toLongLong();
-	m_songId = e.attribute("sheet", "0").toLongLong();
+	m_sheetId = e.attribute("sheet", "0").toLongLong();
 	m_name = e.attribute( "clipname", "" ) ;
 	m_isMuted =  e.attribute( "mute", "" ).toInt();
 	// FIXME!!!!!!!
@@ -106,7 +106,7 @@ AudioClip::~AudioClip()
 {
 	PENTERDES;
 	if (m_readSource) {
-		m_song->get_diskio()->unregister_read_source(m_readSource);
+		m_sheet->get_diskio()->unregister_read_source(m_readSource);
 		delete m_readSource;
 	}
 	if (m_peak) {
@@ -116,7 +116,7 @@ AudioClip::~AudioClip()
 
 void AudioClip::init()
 {
-	m_song = 0;
+	m_sheet = 0;
 	m_track = 0;
 	m_readSource = 0;
 	m_peak = 0;
@@ -135,7 +135,7 @@ int AudioClip::set_state(const QDomNode& node)
 {
 	PENTER;
 	
-	Q_ASSERT(m_song);
+	Q_ASSERT(m_sheet);
 	
 	QDomElement e = node.toElement();
 
@@ -144,11 +144,11 @@ int AudioClip::set_state(const QDomNode& node)
 	m_isLocked = e.attribute( "locked", "0" ).toInt();
 
 	if (e.attribute("selected", "0").toInt() == 1) {
-		m_song->get_audioclip_manager()->select_clip(this);
+		m_sheet->get_audioclip_manager()->select_clip(this);
 	}
 
 	m_readSourceId = e.attribute("source", "").toLongLong();
-	m_songId = e.attribute("sheet", "0").toLongLong();
+	m_sheetId = e.attribute("sheet", "0").toLongLong();
 	m_isMuted =  e.attribute( "mute", "" ).toInt();
 
 	bool ok;
@@ -163,7 +163,7 @@ int AudioClip::set_state(const QDomNode& node)
 	QDomElement fadeInNode = node.firstChildElement("FadeIn");
 	if (!fadeInNode.isNull()) {
 		if (!fadeIn) {
-			fadeIn = new FadeCurve(this, m_song, "FadeIn");
+			fadeIn = new FadeCurve(this, m_sheet, "FadeIn");
 			fadeIn->set_history_stack(get_history_stack());
 			private_add_fade(fadeIn);
 		}
@@ -173,7 +173,7 @@ int AudioClip::set_state(const QDomNode& node)
 	QDomElement fadeOutNode = node.firstChildElement("FadeOut");
 	if (!fadeOutNode.isNull()) {
 		if (!fadeOut) {
-			fadeOut = new FadeCurve(this, m_song, "FadeOut");
+			fadeOut = new FadeCurve(this, m_sheet, "FadeOut");
 			fadeOut->set_history_stack(get_history_stack());
 			private_add_fade(fadeOut);
 		}
@@ -199,7 +199,7 @@ QDomNode AudioClip::get_state( QDomDocument doc )
 	node.setAttribute("clipname", m_name );
 	node.setAttribute("selected", m_isSelected );
 	node.setAttribute("id", m_id );
-	node.setAttribute("sheet", m_songId );
+	node.setAttribute("sheet", m_sheetId );
 	node.setAttribute("locked", m_isLocked);
 
 	node.setAttribute("source", m_readSourceId);
@@ -401,7 +401,7 @@ void AudioClip::set_selected(bool selected)
 //
 int AudioClip::process(nframes_t nframes)
 {
-	Q_ASSERT(m_song);
+	Q_ASSERT(m_sheet);
 	
 	if (m_recordingStatus == RECORDING) {
 		process_capture(nframes);
@@ -418,7 +418,7 @@ int AudioClip::process(nframes_t nframes)
 	
 	Q_ASSERT(m_readSource);
 	
-	AudioBus* bus = m_song->get_clip_render_bus();
+	AudioBus* bus = m_sheet->get_clip_render_bus();
 	bus->silence_buffers(nframes);
 	
 	TimeRef mix_pos;
@@ -428,7 +428,7 @@ int AudioClip::process(nframes_t nframes)
 
 
 	int outputRate = m_readSource->get_output_rate();
-	TimeRef transportLocation = m_song->get_transport_location();
+	TimeRef transportLocation = m_sheet->get_transport_location();
 	TimeRef upperRange = transportLocation + TimeRef(framesToProcess, outputRate);
 	
 	
@@ -467,13 +467,13 @@ int AudioClip::process(nframes_t nframes)
 
 	uint read_frames = 0;
 
-	if (m_song->realtime_path()) {
+	if (m_sheet->realtime_path()) {
 		read_frames = m_readSource->rb_read(mixdown, mix_pos, framesToProcess);
 	} else {
-		read_frames = m_readSource->file_read(m_song->renderDecodeBuffer, mix_pos, framesToProcess);
+		read_frames = m_readSource->file_read(m_sheet->renderDecodeBuffer, mix_pos, framesToProcess);
 		if (read_frames > 0) {
 			for (int chan=0; chan<channelcount; ++chan) {
-				memcpy(mixdown[chan], m_song->renderDecodeBuffer->destination[chan], read_frames * sizeof(audio_sample_t));
+				memcpy(mixdown[chan], m_sheet->renderDecodeBuffer->destination[chan], read_frames * sizeof(audio_sample_t));
 			}
 		}
 	}
@@ -495,7 +495,7 @@ int AudioClip::process(nframes_t nframes)
 	TimeRef endlocation = mix_pos + TimeRef(read_frames, get_rate());
 	m_fader->process_gain(mixdown, mix_pos, endlocation, read_frames, channelcount);
 	
-	AudioBus* sendbus = m_song->get_render_bus();
+	AudioBus* sendbus = m_sheet->get_render_bus();
 	
 	// NEVER EVER FORGET that the mixing should be done on the WHOLE buffer, not just part of it
 	// so use an unmodified nframes variable!!!!!!!!!!!!!!!!!!!!!!!!!!!1
@@ -544,7 +544,7 @@ void AudioClip::process_capture(nframes_t nframes)
 
 int AudioClip::init_recording( QByteArray name )
 {
-	Q_ASSERT(m_song);
+	Q_ASSERT(m_sheet);
 	Q_ASSERT(m_track);
 	
 	m_captureBusName = name;
@@ -570,7 +570,7 @@ int AudioClip::init_recording( QByteArray name )
 	
 	ReadSource* rs = resources_manager()->create_recording_source(
 				pm().get_project()->get_root_dir() + "/audiosources/",
-				m_name, channelcount, m_song->get_id());
+				m_name, channelcount, m_sheet->get_id());
 	
 	resources_manager()->set_source_for_clip(this, rs);
 	
@@ -618,10 +618,10 @@ int AudioClip::init_recording( QByteArray name )
 	m_recorder->set_process_peaks( true );
 	m_recorder->set_recording( true );
 	
-	m_song->get_diskio()->register_write_source(m_recorder);
+	m_sheet->get_diskio()->register_write_source(m_recorder);
 	
 	connect(m_recorder, SIGNAL(exportFinished()), this, SLOT(finish_write_source()));
-	connect(m_song, SIGNAL(transferStopped()), this, SLOT(finish_recording()));
+	connect(m_sheet, SIGNAL(transferStopped()), this, SLOT(finish_recording()));
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(get_capture_bus()));
 
 	return 1;
@@ -678,12 +678,12 @@ Command* AudioClip::reset_fade_both()
 AudioClip* AudioClip::create_copy( )
 {
 	PENTER;
-	Q_ASSERT(m_song);
+	Q_ASSERT(m_sheet);
 	Q_ASSERT(m_track);
 	QDomDocument doc("AudioClip");
 	QDomNode clipState = get_state(doc);
 	AudioClip* clip = new AudioClip(m_name);
-	clip->set_song(m_song);
+	clip->set_sheet(m_sheet);
 	clip->set_track(m_track);
 	clip->set_state(clipState);
 	return clip;
@@ -745,7 +745,7 @@ void AudioClip::finish_write_source()
 	if (m_readSource->set_file(m_recorder->get_filename()) < 0) {
 		PERROR("Setting file for ReadSource failed after finishing recording");
 	} else {
-		m_song->get_diskio()->register_read_source(m_readSource);
+		m_sheet->get_diskio()->register_read_source(m_readSource);
 		// re-inits the lenght from the audiofile due calling rsm->set_source_for_clip()
 		m_length = TimeRef();
 	}
@@ -767,7 +767,7 @@ void AudioClip::finish_recording()
 	m_recordingStatus = FINISHING_RECORDING;
 	m_recorder->set_recording(false);
 
-	disconnect(m_song, SIGNAL(transferStopped()), this, SLOT(finish_recording()));
+	disconnect(m_sheet, SIGNAL(transferStopped()), this, SLOT(finish_recording()));
 	disconnect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(get_capture_bus()));
 }
 
@@ -784,10 +784,10 @@ int AudioClip::get_channels( ) const
 	return 0;
 }
 
-Song* AudioClip::get_song( ) const
+Sheet* AudioClip::get_sheet( ) const
 {
-	Q_ASSERT(m_song);
-	return m_song;
+	Q_ASSERT(m_sheet);
+	return m_sheet;
 }
 
 Track* AudioClip::get_track( ) const
@@ -796,20 +796,20 @@ Track* AudioClip::get_track( ) const
 	return m_track;
 }
 
-void AudioClip::set_song( Song * song )
+void AudioClip::set_sheet( Sheet * sheet )
 {
-	m_song = song;
+	m_sheet = sheet;
 	if (m_readSource && m_isReadSourceValid) {
-		m_song->get_diskio()->register_read_source( m_readSource );
+		m_sheet->get_diskio()->register_read_source( m_readSource );
 	} else {
-		PWARN("AudioClip::set_song() : Setting Song, but no ReadSource available!!");
+		PWARN("AudioClip::set_sheet() : Setting Sheet, but no ReadSource available!!");
 	}
 	
-	m_songId = song->get_id();
+	m_sheetId = sheet->get_id();
 	
-	set_history_stack(m_song->get_history_stack());
-	m_pluginChain->set_song(m_song);
-	set_snap_list(m_song->get_snap_list());
+	set_history_stack(m_sheet->get_history_stack());
+	m_pluginChain->set_sheet(m_sheet);
+	set_snap_list(m_sheet->get_snap_list());
 }
 
 
@@ -961,7 +961,7 @@ void AudioClip::private_remove_fade( FadeCurve * fade )
 
 void AudioClip::create_fade_in( )
 {
-	fadeIn = new FadeCurve(this, m_song, "FadeIn");
+	fadeIn = new FadeCurve(this, m_sheet, "FadeIn");
 	fadeIn->set_shape("Fast");
 	fadeIn->set_history_stack(get_history_stack());
 	THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, fadeIn, private_add_fade(FadeCurve*), fadeAdded(FadeCurve*));
@@ -969,7 +969,7 @@ void AudioClip::create_fade_in( )
 
 void AudioClip::create_fade_out( )
 {
-	fadeOut = new FadeCurve(this, m_song, "FadeOut");
+	fadeOut = new FadeCurve(this, m_sheet, "FadeOut");
 	fadeOut->set_shape("Fast");
 	fadeOut->set_history_stack(get_history_stack());
 	THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, fadeOut, private_add_fade(FadeCurve*), fadeAdded(FadeCurve*));
@@ -980,9 +980,9 @@ QDomNode AudioClip::get_dom_node() const
 	return m_domNode;
 }
 
-bool AudioClip::has_song() const
+bool AudioClip::has_sheet() const
 {
-	if (m_song) {
+	if (m_sheet) {
 		return true;
 	}
 	return false;

@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "PluginManager.h"
 #include <Tsar.h>
 #include <InputEngine.h>
-#include <Song.h>
+#include <Sheet.h>
 #include <AddRemove.h>
 #include "AudioBus.h"
 
@@ -39,11 +39,11 @@ PluginChain::PluginChain(ContextItem * parent)
 	m_fader = new GainEnvelope(0);
 }
 
-PluginChain::PluginChain(ContextItem* parent, Song* song)
+PluginChain::PluginChain(ContextItem* parent, Sheet* sheet)
 	: ContextItem(parent)
 {
-	m_fader = new GainEnvelope(song);
-	set_song(song);
+	m_fader = new GainEnvelope(sheet);
+	set_sheet(sheet);
 }
 
 PluginChain::~ PluginChain()
@@ -99,7 +99,7 @@ Command* PluginChain::add_plugin(Plugin * plugin, bool historable)
 {
 	plugin->set_history_stack(get_history_stack());
 	
-	return new AddRemove( this, plugin, historable, m_song,
+	return new AddRemove( this, plugin, historable, m_sheet,
 		"private_add_plugin(Plugin*)", "pluginAdded(Plugin*)",
 		"private_remove_plugin(Plugin*)", "pluginRemoved(Plugin*)",
 		tr("Add Plugin (%1)").arg(plugin->get_name()));
@@ -108,7 +108,7 @@ Command* PluginChain::add_plugin(Plugin * plugin, bool historable)
 
 Command* PluginChain::remove_plugin(Plugin* plugin, bool historable)
 {
-	return new AddRemove( this, plugin, historable, m_song,
+	return new AddRemove( this, plugin, historable, m_sheet,
 		"private_remove_plugin(Plugin*)", "pluginRemoved(Plugin*)",
 		"private_add_plugin(Plugin*)", "pluginAdded(Plugin*)",
 		tr("Remove Plugin (%1)").arg(plugin->get_name()));
@@ -132,10 +132,10 @@ void PluginChain::private_remove_plugin( Plugin * plugin )
 	}
 }
 
-void PluginChain::set_song(Song * song)
+void PluginChain::set_sheet(Sheet * sheet)
 {
-	m_song = song;
-	set_history_stack(m_song->get_history_stack());
-	m_fader->set_song(song);
+	m_sheet = sheet;
+	set_history_stack(m_sheet->get_history_stack());
+	m_fader->set_sheet(sheet);
 }
 

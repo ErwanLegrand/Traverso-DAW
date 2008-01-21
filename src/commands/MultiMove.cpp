@@ -23,7 +23,7 @@
 
 #include "MultiMove.h"
 #include <ViewPort.h>
-#include <SongView.h>
+#include <SheetView.h>
 #include <AudioClip.h>
 #include <Marker.h>
 #include "APILinkedList.h"
@@ -33,11 +33,11 @@
 #include "Debugger.h"
 
 
-MultiMove::MultiMove(SongView* sv, bool allTracks)
-	: Command(sv->get_song(), (allTracks) ? tr("Fold Sheet") : tr("Fold Track"))
+MultiMove::MultiMove(SheetView* sv, bool allTracks)
+	: Command(sv->get_sheet(), (allTracks) ? tr("Fold Sheet") : tr("Fold Track"))
 {
 	m_sv = sv;
-	m_song = sv->get_song();
+	m_sheet = sv->get_sheet();
 	m_allTracks = allTracks;
 	m_track = 0;
 	
@@ -96,10 +96,10 @@ int MultiMove::begin_hold()
 		return 1;
 	}
 	
-	m_selectionStartPos = m_song->get_last_location();
+	m_selectionStartPos = m_sheet->get_last_location();
 	
 	if (!m_track) {
-		QList<Marker*>markers = m_song->get_timeline()->get_markers();
+		QList<Marker*>markers = m_sheet->get_timeline()->get_markers();
 		for (int i = 0; i < markers.size(); i++) {
 			if (markers[i]->get_when() > m_originalPos) {
 				m_markers.append(markers[i]);
@@ -111,7 +111,7 @@ int MultiMove::begin_hold()
 		}
 	}
 	
-	QList<Track*> tracks = m_song->get_tracks();
+	QList<Track*> tracks = m_sheet->get_tracks();
 	
 	if (m_track) {
 		tracks.clear();

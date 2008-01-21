@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "defines.h"
 
-class Song;
+class Sheet;
 class AudioClip;
 class Snappable;
 
@@ -36,7 +36,7 @@ class SnapList : public QObject
 	Q_OBJECT
 
 public:
-	SnapList(Song* song);
+	SnapList(Sheet* sheet);
 	~SnapList() {};
 
 	TimeRef get_snap_value(const TimeRef& location);
@@ -48,7 +48,7 @@ public:
 	void set_range(const TimeRef& start, const TimeRef& end, int scalefactor);
 
 private:
-	Song* 		m_song;
+	Sheet* 		m_sheet;
 	QList<TimeRef> 	m_xposList;
 	QList<TimeRef> 	m_xposLut;
 	QList<bool> 	m_xposBool;

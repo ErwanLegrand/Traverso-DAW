@@ -25,14 +25,14 @@
 #include <Command.h>
 #include <defines.h>
 
-class Song;
-class SongView;
+class Sheet;
+class SheetView;
 class PlayHead;
 
 class WorkCursorMove : public Command
 {
 public :
-	WorkCursorMove (PlayHead* cursor, SongView* sv);
+	WorkCursorMove (PlayHead* cursor, SheetView* sv);
 	~WorkCursorMove (){};
 
 	int finish_hold();
@@ -43,8 +43,8 @@ public :
 	void set_cursor_shape(int useX, int useY);
 
 private :
-	Song*		m_song;
-	SongView*	m_sv;
+	Sheet*		m_sheet;
+	SheetView*	m_sv;
 	PlayHead*	m_playCursor;
 	TimeRef		m_origPos;
 };

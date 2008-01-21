@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AddRemove.h,v 1.2 2007/12/11 17:30:10 r_sijrier Exp $
+    $Id: AddRemove.h,v 1.3 2008/01/21 16:22:11 r_sijrier Exp $
 */
 
 #ifndef ADD_ITEM_COMMAND_H
@@ -27,7 +27,7 @@
 #include <Tsar.h>
 
 class ContextItem;
-class Song;
+class Sheet;
 
 class AddRemove : public Command
 {
@@ -36,7 +36,7 @@ public :
         AddRemove(ContextItem* parent,
 			void*  arg,
 			bool historable,
-			Song* song,
+			Sheet* sheet,
 			const char* doActionSlot,
 			const char* doSignal,
 			const char* undoActionSlot,
@@ -56,7 +56,7 @@ private :
 	void* 		m_arg;
         TsarEvent	m_doActionEvent;
         TsarEvent	m_undoActionEvent;
-        Song*		m_song;
+        Sheet*		m_sheet;
 
         const char*	m_doActionSlot;
 	const char*	m_undoActionSlot;

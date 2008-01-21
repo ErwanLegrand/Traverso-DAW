@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Gain.h,v 1.13 2007/11/27 20:20:42 r_sijrier Exp $
+    $Id: Gain.h,v 1.14 2008/01/21 16:22:11 r_sijrier Exp $
 */
 
 #ifndef GAIN_H
@@ -27,7 +27,7 @@
 #include <QPoint>
 
 class ContextItem;
-class SongView;
+class SheetView;
 
 
 class Gain : public Command
@@ -37,7 +37,7 @@ class Gain : public Command
 	Q_CLASSINFO("decrease_gain", tr("Decrease"));
 	
 public :
-        Gain(ContextItem* context, SongView* sv, QVariantList args);
+        Gain(ContextItem* context, SheetView* sv, QVariantList args);
         ~Gain();
 
         int begin_hold();
@@ -54,7 +54,7 @@ public :
 
 private :
 	ContextItem*	gainObject;
-	SongView*	m_sv;
+	SheetView*	m_sv;
         float 		origGain;
         float 		newGain;
         QPoint 		origPos;

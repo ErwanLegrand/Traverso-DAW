@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TrackPan.h,v 1.7 2007/04/25 05:43:36 benjie Exp $
+    $Id: TrackPan.h,v 1.8 2008/01/21 16:22:12 r_sijrier Exp $
 */
 
 #ifndef TRACKPAN_H
@@ -25,7 +25,7 @@
 
 #include "Command.h"
 
-class Song;
+class Sheet;
 class Track;
 
 class TrackPan : public Command
@@ -50,7 +50,7 @@ private :
         float newPan;
         int origX;
 
-        Song* m_song;
+        Sheet* m_sheet;
         Track* m_track;
 };
 

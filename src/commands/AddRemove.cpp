@@ -17,12 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AddRemove.cpp,v 1.4 2007/12/11 17:30:10 r_sijrier Exp $
+$Id: AddRemove.cpp,v 1.5 2008/01/21 16:22:10 r_sijrier Exp $
 */
 
 #include "AddRemove.h"
 #include "ContextItem.h"
-#include <Song.h>
+#include <Sheet.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -39,23 +39,23 @@ $Id: AddRemove.cpp,v 1.4 2007/12/11 17:30:10 r_sijrier Exp $
 
 	The example below is typical how this Command class should be used.
 	
-	One for example creates the function (slot) Command* add_track() in SongView. and add <br />
+	One for example creates the function (slot) Command* add_track() in SheetView. and add <br />
 	an entry in the keymap file to define which keyfact will be used to call this function.<br />
 	One also can create a CommandPlugin, and point the keyfact in the keymap file to the <br />
-	plugin name, this way you don't need to add a function (slot) to the SongView class.
+	plugin name, this way you don't need to add a function (slot) to the SheetView class.
 
-	When using the first approach, you create a new Track object in the GUI object SongView<br />
-	and return the Command object returned by m_song->add_track(track);, see example code below.
+	When using the first approach, you create a new Track object in the GUI object SheetView<br />
+	and return the Command object returned by m_sheet->add_track(track);, see example code below.
 
 	Using a CommandPlugin for this kind of action doesn't make much sense, you most likely <br />
 	want to use plugins to manipulate existing objects.
 
 	\code 
-	class Song : public ContextItem
+	class Sheet : public ContextItem
 	{
 		Q_OBJECT
-		Song() {};
-		~Song() {};
+		Sheet() {};
+		~Sheet() {};
 
 	private:
 		list<Track*> m_tracks;
@@ -70,12 +70,12 @@ $Id: AddRemove.cpp,v 1.4 2007/12/11 17:30:10 r_sijrier Exp $
 	}
 
 	
-	Command* Song::add_track(Track* track)
+	Command* Sheet::add_track(Track* track)
 	{
 		// first this: 	The object to which the track has to be added/removed too
 		// track: 	the argument that will be used by the signal/slots as specified in the second and third line.
 		// true: 	this command should be considered historable
-		// this: 	A pointer to Song, which in this case is this, which will be used in the AddRemove 
+		// this: 	A pointer to Sheet, which in this case is this, which will be used in the AddRemove 
 		// 		Command logic to detect if the private_add/remove slots can be called directly or 
 		//		thread save via Tsar's thread save logic.
 		// tr("Add Track")	The (tranlated) description of this action as it will show up in the HistoryView
@@ -85,7 +85,7 @@ $Id: AddRemove.cpp,v 1.4 2007/12/11 17:30:10 r_sijrier Exp $
 			tr("Add Track"));
 	}
 
-	Command* Song::remove_track(Track* track)
+	Command* Sheet::remove_track(Track* track)
 	{
 		// Same applies as in add_track(), however, the second and third line are switched :-)
 		return new AddRemove(this, track, true, this,
@@ -94,22 +94,22 @@ $Id: AddRemove.cpp,v 1.4 2007/12/11 17:30:10 r_sijrier Exp $
 			tr("Remove Track"));
 	}
 
-	void Song::private_add_track(Track* track)
+	void Sheet::private_add_track(Track* track)
 	{
 		m_tracks.append(track);
 	}
 	
-	void Song::private_remove_track(Track* track)
+	void Sheet::private_remove_track(Track* track)
 	{
 		m_tracks.removeAll(track);
 	}
 
 
 	// Example usage in a GUI object.
-	Command* SongView::add_track()
+	Command* SheetView::add_track()
 	{
-		Track* track = new Track(m_song);
-		return m_song->add_track(track);
+		Track* track = new Track(m_sheet);
+		return m_sheet->add_track(track);
 	}
 
 	\endcode
@@ -120,7 +120,7 @@ $Id: AddRemove.cpp,v 1.4 2007/12/11 17:30:10 r_sijrier Exp $
 
 AddRemove::AddRemove(ContextItem* parent, void* arg, const QString& des)
 	: Command(parent, des),
-	m_song(0),
+	m_sheet(0),
 	m_doActionSlot(""),
 	m_undoActionSlot(""),
 	m_doSignal(""),
@@ -144,7 +144,7 @@ AddRemove::AddRemove(ContextItem* parent, void* arg, const QString& des)
  			after the do_action call. Only works when the command was requested 
  			from the InputEngine. If not, you are responsible yourself to call the 
  			do_action, and pushing it to the correct history stack.
- * @param song 		If a related Song object is available you can use it, else supply a 0
+ * @param sheet 		If a related Sheet object is available you can use it, else supply a 0
  * @param doActionSlot 	(private) slot signature which will be called on do_action()
  * @param doSignal 	If supplied, the signal with this signature will be emited in the GUI thread
  			AFTER the actuall  adding/removing action in do_action() has happened!
@@ -157,7 +157,7 @@ AddRemove::AddRemove(
 	ContextItem* parent,
  	void* arg,
 	bool historable,
-	Song* song,
+	Sheet* sheet,
 	const char * doActionSlot,
 	const char * doSignal,
 	const char * undoActionSlot,
@@ -166,7 +166,7 @@ AddRemove::AddRemove(
   	: Command(parent, des),
 	  m_parentItem(parent),
 	  m_arg(arg),
-	  m_song(song),
+	  m_sheet(sheet),
 	  m_doActionSlot(doActionSlot),
 	  m_undoActionSlot(undoActionSlot),
 	  m_doSignal(doSignal),
@@ -207,8 +207,8 @@ int AddRemove::do_action()
 		return 1;
 	}
 	
-	if (m_song) {
-		if (m_song->is_transport_rolling()) {
+	if (m_sheet) {
+		if (m_sheet->is_transport_rolling()) {
 			PMESG("Using Thread Save add/remove");
 			tsar().add_event(m_doActionEvent);
 		} else {
@@ -235,8 +235,8 @@ int AddRemove::undo_action()
 		return 1;
 	}
 	
-	if (m_song) {
-		if (m_song->is_transport_rolling()) {
+	if (m_sheet) {
+		if (m_sheet->is_transport_rolling()) {
 			PMESG("Using Thread Save add/remove");
 			tsar().add_event(m_undoActionEvent);
 		} else {

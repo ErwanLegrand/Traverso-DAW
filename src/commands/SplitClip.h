@@ -27,7 +27,7 @@
 
 class AudioClip;
 class Track;
-class SongView;
+class SheetView;
 class AudioClipView;
 class LineView;
 
@@ -49,7 +49,7 @@ public :
 	int jog();
 	
 private :
-	SongView* m_sv;
+	SheetView* m_sv;
 	AudioClipView* m_cv;
         Track* m_track;
         AudioClip* m_clip;

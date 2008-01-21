@@ -280,6 +280,7 @@ void ViewPort::set_current_mode(int mode)
 
 HoldCursor::HoldCursor()
 {
+	setFlag(QGraphicsItem::ItemIgnoresTransformations);
 	setZValue(200);
 }
 

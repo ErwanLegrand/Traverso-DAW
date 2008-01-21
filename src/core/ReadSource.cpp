@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AudioClip.h"
 #include "DiskIO.h"
 #include "Utils.h"
-#include "Song.h"
+#include "Sheet.h"
 #include "AudioDevice.h"
 #include <QFile>
 #include "Config.h"
@@ -142,7 +142,7 @@ QDomNode ReadSource::get_state( QDomDocument doc )
 {
 	QDomElement node = doc.createElement("Source");
 	node.setAttribute("channelcount", m_channelCount);
-	node.setAttribute("origsheetid", m_origSongId);
+	node.setAttribute("origsheetid", m_origSheetId);
 	node.setAttribute("dir", m_dir);
 	node.setAttribute("id", m_id);
 	node.setAttribute("name", m_name);
@@ -162,7 +162,7 @@ int ReadSource::set_state( const QDomNode & node )
 	
 	QDomElement e = node.toElement();
 	m_channelCount = e.attribute("channelcount", "0").toInt();
-	m_origSongId = e.attribute("origsheetid", "0").toLongLong();
+	m_origSheetId = e.attribute("origsheetid", "0").toLongLong();
 	set_dir( e.attribute("dir", "" ));
 	m_id = e.attribute("id", "").toLongLong();
 	m_rate = m_outputRate = e.attribute("rate", "0").toUInt();
@@ -175,7 +175,7 @@ int ReadSource::set_state( const QDomNode & node )
 	// For older project files, this should properly detect if the 
 	// audio source was a recording or not., in fact this should suffice
 	// and the flag wasrecording would be unneeded, but oh well....
-	if (m_origSongId != 0) {
+	if (m_origSheetId != 0) {
 		m_wasRecording = true;
 	}
 	
@@ -619,7 +619,7 @@ void ReadSource::prepare_rt_buffers( )
 		m_buffers.append(new RingBufferNPT<float>(m_bufferSize));
 	}
 
-	TimeRef synclocation = m_clip->get_song()->get_work_location();
+	TimeRef synclocation = m_clip->get_sheet()->get_work_location();
 	start_resync(synclocation);
 }
 
@@ -632,7 +632,7 @@ BufferStatus* ReadSource::get_buffer_status()
 	int freespace = m_buffers.at(0)->write_space();
 	
 // 	printf("m_rbFileReadPos, m_length %lld, %lld\n", m_rbFileReadPos.universal_frame(), m_length.universal_frame());
-	TimeRef transport = m_clip->get_song()->get_transport_location();
+	TimeRef transport = m_clip->get_sheet()->get_transport_location();
 	TimeRef syncstartlocation = m_clip->get_track_start_location();
 	bool transportBeforeSyncStartLocation = transport < (syncstartlocation - (3 * UNIVERSAL_SAMPLE_RATE));
 	bool transportAfterClipEndLocation = transport > (m_clip->get_track_end_location() + (3 * UNIVERSAL_SAMPLE_RATE));
