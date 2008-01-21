@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.51 2008/01/21 16:22:15 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.52 2008/01/21 17:20:41 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -553,12 +553,19 @@ void AudioDevice::setup_buses( )
 	int number = 1;
 	QByteArray name;
 
-	// FIXME check if value() return an AudioChannel!!!!!!!!!!!!!
+	AudioChannel* channel;
+	
 	for (int i=1; i <= captureChannels.size();) {
 		name = "Capture " + QByteArray::number(number++);
 		AudioBus* bus = new AudioBus(name);
-		bus->add_channel(captureChannels.value("capture_"+QByteArray::number(i++)));
-		bus->add_channel(captureChannels.value("capture_"+QByteArray::number(i++)));
+		channel = captureChannels.value("capture_"+QByteArray::number(i++), 0);
+		if (channel) {
+			bus->add_channel(channel);
+		}
+		channel = captureChannels.value("capture_"+QByteArray::number(i++), 0);
+		if (channel) {
+			bus->add_channel(channel);
+		}
 		captureBuses.insert(name, bus);
 	}
 // 	PWARN("Capture buses count is: %d", captureBuses.size());
@@ -568,8 +575,14 @@ void AudioDevice::setup_buses( )
 	for (int i=1; i <= playbackChannels.size();) {
 		name = "Playback " + QByteArray::number(number++);
 		AudioBus* bus = new AudioBus(name);
-		bus->add_channel(playbackChannels.value("playback_"+QByteArray::number(i++)));
-		bus->add_channel(playbackChannels.value("playback_"+QByteArray::number(i++)));
+		channel = playbackChannels.value("playback_"+QByteArray::number(i++), 0);
+		if (channel) {
+			bus->add_channel(channel);
+		}
+		channel = playbackChannels.value("playback_"+QByteArray::number(i++), 0);
+		if (channel) {
+			bus->add_channel(channel);
+		}
 		playbackBuses.insert(name, bus);
 	}
 // 	PWARN("Playback buses count is: %d", playbackBuses.size());
