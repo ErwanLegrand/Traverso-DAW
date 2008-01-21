@@ -1,0 +1,341 @@
+<ui version="4.0" >
+ <class>AudioClipEditDialog</class>
+ <widget class="QDialog" name="AudioClipEditDialog" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>285</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Dialog</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <widget class="QTabWidget" name="tabWidget" >
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>Clip Parameters</string>
+      </attribute>
+      <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item row="5" column="0" colspan="2" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>261</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="5" column="2" >
+        <widget class="QPushButton" name="externalProcessingButton" >
+         <property name="text" >
+          <string>External Processing</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" colspan="2" >
+        <widget class="QLineEdit" name="clipNameLineEdit" />
+       </item>
+       <item row="1" column="1" colspan="2" >
+        <widget class="QDoubleSpinBox" name="clipGainSpinBox" >
+         <property name="maximum" >
+          <double>30.000000000000000</double>
+         </property>
+         <property name="minimum" >
+          <double>-120.000000000000000</double>
+         </property>
+         <property name="singleStep" >
+          <double>0.200000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1" colspan="2" >
+        <widget class="QTimeEdit" name="clipStartEdit" >
+         <property name="toolTip" >
+          <string>hh:mm:ss.sss</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" colspan="2" >
+        <widget class="QTimeEdit" name="clipLengthEdit" >
+         <property name="toolTip" >
+          <string>hh:mm:ss.sss</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1" colspan="2" >
+        <widget class="QLabel" name="clipEndLineEdit" >
+         <property name="frameShape" >
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow" >
+          <enum>QFrame::Sunken</enum>
+         </property>
+         <property name="text" >
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" >
+        <widget class="QLabel" name="label_6" >
+         <property name="text" >
+          <string>End</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0" >
+        <widget class="QLabel" name="label_2" >
+         <property name="text" >
+          <string>Length</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" >
+        <widget class="QLabel" name="label_3" >
+         <property name="text" >
+          <string>Track start</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" >
+        <widget class="QLabel" name="label_4" >
+         <property name="text" >
+          <string>Gain</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" >
+        <widget class="QLabel" name="label" >
+         <property name="text" >
+          <string>Name</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2" >
+      <attribute name="title" >
+       <string>Fades</string>
+      </attribute>
+      <layout class="QHBoxLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBox" >
+         <property name="title" >
+          <string>Fade In</string>
+         </property>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item row="0" column="1" >
+           <widget class="QTimeEdit" name="fadeInEdit" >
+            <property name="maximumTime" >
+             <time>
+              <hour>22</hour>
+              <minute>0</minute>
+              <second>0</second>
+             </time>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1" >
+           <widget class="QDoubleSpinBox" name="fadeInStrengthBox" >
+            <property name="maximum" >
+             <double>1.000000000000000</double>
+            </property>
+            <property name="singleStep" >
+             <double>0.050000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" >
+           <widget class="QDoubleSpinBox" name="fadeInBendingBox" >
+            <property name="maximum" >
+             <double>1.000000000000000</double>
+            </property>
+            <property name="singleStep" >
+             <double>0.050000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QLabel" name="label_7" >
+            <property name="text" >
+             <string>Mode</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" >
+           <widget class="QLabel" name="label_10" >
+            <property name="text" >
+             <string>Bending</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" >
+           <widget class="QLabel" name="label_5" >
+            <property name="text" >
+             <string>Length</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <widget class="QComboBox" name="fadeInModeBox" />
+          </item>
+          <item row="3" column="0" >
+           <widget class="QLabel" name="label_11" >
+            <property name="text" >
+             <string>Strength</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0" >
+           <widget class="QPushButton" name="fadeInLinearButton" >
+            <property name="text" >
+             <string>&amp;Linear</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1" >
+           <widget class="QPushButton" name="fadeInDefaultButton" >
+            <property name="text" >
+             <string>&amp;Default</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_2" >
+         <property name="title" >
+          <string>Fade Out</string>
+         </property>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item row="3" column="1" >
+           <widget class="QDoubleSpinBox" name="fadeOutStrengthBox" >
+            <property name="maximum" >
+             <double>1.000000000000000</double>
+            </property>
+            <property name="singleStep" >
+             <double>0.050000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" >
+           <widget class="QLabel" name="label_12" >
+            <property name="text" >
+             <string>Bending</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QLabel" name="label_8" >
+            <property name="text" >
+             <string>Mode</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <widget class="QComboBox" name="fadeOutModeBox" />
+          </item>
+          <item row="0" column="0" >
+           <widget class="QLabel" name="label_9" >
+            <property name="text" >
+             <string>Length</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" >
+           <widget class="QTimeEdit" name="fadeOutEdit" />
+          </item>
+          <item row="3" column="0" >
+           <widget class="QLabel" name="label_13" >
+            <property name="text" >
+             <string>Strength</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" >
+           <widget class="QDoubleSpinBox" name="fadeOutBendingBox" >
+            <property name="maximum" >
+             <double>1.000000000000000</double>
+            </property>
+            <property name="singleStep" >
+             <double>0.050000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0" >
+           <widget class="QPushButton" name="fadeOutLinearButton" >
+            <property name="text" >
+             <string>&amp;Linear</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1" >
+           <widget class="QPushButton" name="fadeOutDefaultButton" >
+            <property name="text" >
+             <string>&amp;Default</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
