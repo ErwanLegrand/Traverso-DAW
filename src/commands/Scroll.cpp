@@ -30,12 +30,18 @@
 #include "Debugger.h"
 
 
-Scroll::Scroll(int x, int y, SheetView* sv)
+Scroll::Scroll(SheetView* sv, QVariantList args)
 	: Command("Scroll")
 {
-	m_dx = x;
-	m_dy = y;
 	m_sv = sv;
+	m_dx = m_dy = 0;
+	
+	if (args.size() > 0) {
+		m_dx = args.at(0).toInt();
+	}
+	if (args.size() > 1) {
+		m_dy = args.at(1).toInt();
+	}
 }
 
 
@@ -49,6 +55,11 @@ int Scroll::begin_hold()
 {
 	m_sv->start_shuttle(true);
 	m_sv->set_shuttle_factor_values(m_dx, m_dy);
+	if (m_dx) {
+		cpointer().get_viewport()->setCursor(themer()->get_cursor("LR"));
+	} else {
+		cpointer().get_viewport()->setCursor(themer()->get_cursor("UD"));
+	}
 	
 	return 1;
 }

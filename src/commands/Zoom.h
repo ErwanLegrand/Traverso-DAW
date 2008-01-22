@@ -17,15 +17,13 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Zoom.h,v 1.6 2008/01/21 16:22:12 r_sijrier Exp $
+    $Id: Zoom.h,v 1.7 2008/01/22 20:47:16 r_sijrier Exp $
 */
 
 #ifndef ZOOM_H
 #define ZOOM_H
 
 #include "Command.h"
-
-#include <QTimer>
 
 class SheetView;
 class QPoint;
@@ -60,7 +58,6 @@ private :
 	qreal m_yScalefactor;
 	QPoint	mousePos;
 	QPoint	origPos;
-	QTimer	m_jogVerticalResetTimer;
 	
         SheetView* m_sv;
 	

@@ -241,7 +241,7 @@
 		<keyfact type="FKEY" key1="MouseScrollVerticalDown" >
 			<Objects>
 				<Object objectname="DragNode" slotsignature="move_down" modes="Effects" />
-				<Object objectname="SheetView" slotsignature="scroll_down" modes="All" sortorder="2" submenu="Scroll" />
+				<Object objectname="SheetView" slotsignature="scroll_down" modes="All" sortorder="4" submenu="Scroll" />
 				<Object objectname="Gain" slotsignature="decrease_gain" modes="All" />
 				<Object objectname="TrackPanelPan" slotsignature="pan_left" modes="All" sortorder="2" />
 				<Object objectname="TrackPanelGain" slotsignature="gain_decrement" modes="All" sortorder="2" />
@@ -431,22 +431,22 @@
 		</keyfact>
 		<keyfact type="HKEY" key1="LARROW" >
 			<Objects>
-				<Object objectname="SheetView" slotsignature="scroll_left_hold" modes="All" sortorder="1" submenu="Scroll" />
+				<Object objectname="SheetView" modes="All" sortorder="1" submenu="Scroll" pluginname="TraversoCommands" commandname="ScrollLeftHold" arguments="-20;0" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="RARROW" >
 			<Objects>
-				<Object objectname="SheetView" slotsignature="scroll_right_hold" modes="All" sortorder="2" submenu="Scroll" />
+				<Object objectname="SheetView" modes="All" sortorder="2" submenu="Scroll"  pluginname="TraversoCommands" commandname="ScrollRightHold" arguments="20;0" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="UARROW" >
 			<Objects>
-				<Object objectname="SheetView" slotsignature="scroll_up_hold" modes="All" sortorder="4" submenu="Scroll" />
+				<Object objectname="SheetView" modes="All" sortorder="3" submenu="Scroll"  pluginname="TraversoCommands" commandname="ScrollUpHold" arguments="0;-20" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="DARROW" >
 			<Objects>
-				<Object objectname="SheetView" slotsignature="scroll_down_hold" modes="All" sortorder="4" submenu="Scroll" />
+				<Object objectname="SheetView" modes="All" sortorder="4" submenu="Scroll"  pluginname="TraversoCommands" commandname="ScrollDownHold" arguments="0;20" />
 			</Objects>
 		</keyfact>
 		

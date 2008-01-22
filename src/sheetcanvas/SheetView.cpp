@@ -21,7 +21,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 
 
 #include <QScrollBar>
-#include <libtraversocore.h>
+
+#include "InputEngine.h"
+#include "Sheet.h"
+#include "SnapList.h"
+#include "Track.h"
+#include "ContextPointer.h"
+#include "Themer.h"
 
 #include "SheetView.h"
 #include "SheetWidget.h"
@@ -32,13 +38,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include "TimeLineViewPort.h"
 #include "TimeLineView.h"
 #include "TrackPanelViewPort.h"
-#include "Themer.h"
-#include "AddRemove.h"
 
-#include <Zoom.h>
-#include <Scroll.h>
-#include <PlayHeadMove.h>
-#include <WorkCursorMove.h>
+#include "AddRemove.h"
+#include "Zoom.h"
+#include "PlayHeadMove.h"
+#include "WorkCursorMove.h"
 
 #include "AudioDevice.h"
 		
@@ -624,31 +628,6 @@ Command* SheetView::scroll_left()
 	stop_follow_play_head();
 	set_hscrollbar_value(m_clipsViewPort->horizontalScrollBar()->value() - 50);
 	return (Command*) 0;
-}
-
-Command* SheetView::scroll_up_hold( )
-{
-	PENTER3;
-	return new Scroll(0, -20, this);
-}
-
-Command* SheetView::scroll_down_hold( )
-{
-	PENTER3;
-	return new Scroll(0, 20, this);
-}
-
-Command* SheetView::scroll_right_hold()
-{
-	PENTER3;
-	return new Scroll(20, 0, this);
-}
-
-
-Command* SheetView::scroll_left_hold()
-{
-	PENTER3;
-	return new Scroll(-20, 0, this);
 }
 
 int SheetView::hscrollbar_value() const

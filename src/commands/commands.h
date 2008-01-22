@@ -14,3 +14,4 @@
 #include "ArmTracks.h"
 #include "RemoveClip.h"
 #include "MultiMove.h"
+#include "Scroll.h"

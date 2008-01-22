@@ -56,7 +56,11 @@ class TraversoCommands : public CommandPlugin
 	Q_CLASSINFO("Zoom", tr("Omnidirectional"))
 	Q_CLASSINFO("HJogZoom", tr("Horizontal"))
 	Q_CLASSINFO("VJogZoom", tr("Vertical"))
-
+	Q_CLASSINFO("ScrollRightHold", tr("Right"))
+	Q_CLASSINFO("ScrollLeftHold", tr("Left"))
+	Q_CLASSINFO("ScrollUpHold", tr("Up"))
+	Q_CLASSINFO("ScrollDownHold", tr("Down"))
+	
 public:
 	TraversoCommands();
 	Command* create(QObject* obj, const QString& command, QVariantList arguments);
@@ -79,6 +83,7 @@ private:
 		ArmTracksCommand,
 		MultiMoveCommand,
   		ZoomCommand,
+    		ScrollCommand
 	};
 };
 

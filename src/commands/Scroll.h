@@ -29,7 +29,7 @@ class QPoint;
 class Scroll : public Command
 {
 public :
-        Scroll(int x, int y, SheetView* sv);
+	Scroll(SheetView* sv, QVariantList args);
         ~Scroll() {};
 
         int begin_hold();
