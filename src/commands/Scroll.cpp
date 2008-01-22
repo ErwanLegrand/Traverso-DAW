@@ -1,4 +1,5 @@
 /*
+    Copyright (C) 2008 Remon Sijrier
     Copyright (C) 2007 Ben Levitt 
  
     This file is part of Traverso
@@ -18,17 +19,11 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 */
 
-#include <libtraversocore.h>
-
 #include "Scroll.h"
 
 #include "SheetView.h"
-#include <ClipsViewPort.h>
-
-// Always put me below _all_ includes, this is needed
-// in case we run with memory leak detection enabled!
-#include "Debugger.h"
-
+#include "ContextPointer.h"
+#include "ClipsViewPort.h"
 
 Scroll::Scroll(SheetView* sv, QVariantList args)
 	: Command("Scroll")

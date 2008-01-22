@@ -1,4 +1,5 @@
 /*
+    Copyright (C) 2008 Remon Sijrier
     Copyright (C) 2007 Ben Levitt 
  
     This file is part of Traverso
