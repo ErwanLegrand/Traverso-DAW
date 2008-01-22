@@ -43,7 +43,7 @@ MACRO(ADD_PRECOMPILED_HEADER _targetName _input)
 	   -I${QT_QTXML_INCLUDE_DIR}
 	   -I${CMAKE_SOURCE_DIR}/src/core
 	   -I${CMAKE_SOURCE_DIR}/src/common
-	   -I${CMAKE_SOURCE_DIR}/src/traverso/sheetcanvas
+	   -I${CMAKE_SOURCE_DIR}/src/sheetcanvas
            ${QT_DEFINITIONS}
            ${TRAVERSO_DEFINES}
            -x c++-header
