@@ -94,10 +94,13 @@ int Import::prepare_actions()
 		m_fileName = tr("Silence");
 		create_audioclip();
 	} else if (m_fileName.isEmpty()) {
+		QString allFiles = tr("All files (*)");
+		QString activeFilter = tr("Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)");
 		m_fileName = QFileDialog::getOpenFileName(0,
 				tr("Import audio source"),
 				pm().get_project()->get_import_dir(),
-				tr("All files (*);;Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)"));
+				allFiles + ";;" + activeFilter,
+				&activeFilter);
 		
 		int splitpoint = m_fileName.lastIndexOf("/") + 1;
 		QString dir = m_fileName.left(splitpoint - 1);
