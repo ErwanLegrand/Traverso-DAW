@@ -240,7 +240,7 @@ TARGET_LINK_LIBRARIES(traverso
 	${VORBIS_ENC_LIB}
 	${FLAC_LIB}
 	fftw3
-	rt
+# 	rt
 )
 
 IF(HAVE_PORTAUDIO)
