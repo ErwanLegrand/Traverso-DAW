@@ -458,7 +458,6 @@ BehaviorPage::BehaviorPage(QWidget *parent)
 
 void BehaviorPage::save_config()
 {
-	config().set_property("Project", "DefaultDirectory", m_configpage->projectDirLineEdit->text());
 	config().set_property("Project", "loadLastUsed", m_configpage->loadLastProjectCheckBox->isChecked());
 	config().set_property("Sheet", "trackCreationCount", m_configpage->numberOfTrackSpinBox->value());
 	config().set_property("PlayHead", "Follow", m_configpage->keepCursorVisibleCheckBox->isChecked());
@@ -478,7 +477,6 @@ void BehaviorPage::save_config()
 
 void BehaviorPage::load_config()
 {
-	QString dir = config().get_property("Project", "DefaultDirectory", getenv("HOME")).toString();
 	bool loadLastUsedProject = config().get_property("Project", "loadLastUsed", 1).toBool();
 	QString oncloseaction = config().get_property("Project", "onclose", "save").toString();
 	int defaultNumTracks = config().get_property("Sheet", "trackCreationCount", 6).toInt();
@@ -486,7 +484,6 @@ void BehaviorPage::load_config()
 	bool resyncAudio = config().get_property("AudioClip", "SyncDuringDrag", false).toBool();
 	bool lockClips = config().get_property("AudioClip", "LockByDefault", false).toBool();
 	
-	m_configpage->projectDirLineEdit->setText(dir);
 	m_configpage->loadLastProjectCheckBox->setChecked(loadLastUsedProject);
 	m_configpage->numberOfTrackSpinBox->setValue(defaultNumTracks);
 	m_configpage->scrollModeComboBox->setCurrentIndex(scrollMode);
@@ -515,7 +512,6 @@ void BehaviorPage::update_follow()
 
 void BehaviorPage::reset_default_config()
 {
-	config().set_property("Project", "DefaultDirectory", getenv("HOME"));
 	config().set_property("Project", "loadLastUsed", true);
 	config().set_property("Project", "onclose", "save");
 	config().set_property("Sheet", "trackCreationCount", 6);
@@ -532,24 +528,7 @@ BehaviorConfigPage::BehaviorConfigPage(QWidget * parent)
 	: QWidget(parent)
 {
 	setupUi(this);
-	QIcon icon = QApplication::style()->standardIcon(QStyle::SP_DirClosedIcon);
-	selectButton->setIcon(icon);
-	
-	connect(selectButton, SIGNAL(clicked()), this, SLOT(dirselect_button_clicked()));
 }
-
-void BehaviorConfigPage::dirselect_button_clicked()
-{
-	QString dirName = QFileDialog::getExistingDirectory(this, 
-				tr("Select default project dir"), 
-				projectDirLineEdit->text());
-	
-	if (!dirName.isEmpty()) {
-		projectDirLineEdit->setText(dirName);
-	}
-}
-
-
 
 
 
@@ -655,7 +634,6 @@ void ThemeConfigPage::create_connections()
 	connect(themeSelecterCombo, SIGNAL(currentIndexChanged(const QString)), this, SLOT(theme_index_changed(const QString)));
 	connect(useStylePalletCheckBox, SIGNAL(toggled(bool)), this, SLOT(use_selected_styles_pallet_checkbox_toggled(bool)));
 	connect(colorAdjustBox, SIGNAL(valueChanged(int)), this, SLOT(color_adjustbox_changed(int)));
-	connect(pathSelectButton, SIGNAL(clicked()), this, SLOT(dirselect_button_clicked()));
 	connect(rectifiedCheckBox, SIGNAL(toggled(bool)), this, SLOT(theme_option_changed()));
 	connect(mergedCheckBox, SIGNAL(toggled(bool)), this, SLOT(theme_option_changed()));
 	connect(paintAudioWithOutlineCheckBox, SIGNAL(toggled(bool)), this, SLOT(theme_option_changed()));
@@ -694,18 +672,6 @@ void ThemeConfigPage::use_selected_styles_pallet_checkbox_toggled(bool checked)
 void ThemeConfigPage::color_adjustbox_changed(int value)
 {
 	themer()->set_color_adjust_value(value);
-}
-
-void ThemeConfigPage::dirselect_button_clicked()
-{
-	QString dirName = QFileDialog::getExistingDirectory(this, 
-			tr("Select default project dir"), 
-			   themePathLineEdit->text());
-	
-	if (!dirName.isEmpty()) {
-		themePathLineEdit->setText(dirName);
-		update_theme_combobox(dirName);
-	}
 }
 
 void ThemeConfigPage::update_theme_combobox(const QString& path)

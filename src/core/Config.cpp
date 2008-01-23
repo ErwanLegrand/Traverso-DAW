@@ -117,11 +117,12 @@ void Config::save( )
 QVariant Config::get_property( const QString & type, const QString & property, QVariant defaultValue )
 {
 	QVariant var = defaultValue;
+	QString key = type + ("/") + property;
 	
-	if (m_configs.contains(type + ("/") + property)) {
-		var = m_configs.value(type + ("/") + property);
+	if (m_configs.contains(key)) {
+		var = m_configs.value(key);
 	} else {
-		m_configs.insert(type + "/" + property, defaultValue);
+		m_configs.insert(key, defaultValue);
 	}
 	
 	return var;

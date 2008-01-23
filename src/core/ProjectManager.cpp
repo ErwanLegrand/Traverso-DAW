@@ -62,7 +62,7 @@ ProjectManager::ProjectManager()
 	
 	m_watcher = new QFileSystemWatcher(0);
 
-	QString path = config().get_property("Project", "directory", getenv("HOME")).toString();
+	QString path = config().get_property("Project", "directory", "").toString();
 	set_current_project_dir(path);
 	
 	cpointer().add_contextitem(this);
@@ -296,18 +296,24 @@ Project * ProjectManager::get_project( )
 
 void ProjectManager::start()
 {
-	QString defaultpath = config().get_property("Project", "DefaultDirectory", "").toString();
-	QString projects_path = config().get_property("Project", "directory", defaultpath).toString();
+	QString projectsPath = config().get_property("Project", "directory", "/unknown/directory/").toString();
 
 	QDir dir;
-	if ( (projects_path.isEmpty()) || (!dir.exists(projects_path)) ) {
-		if (projects_path.isEmpty()) {
-			projects_path = QDir::homePath();
+	if ( (projectsPath.isEmpty()) || (!dir.exists(projectsPath)) ) {
+		if (projectsPath.isEmpty()) {
+			projectsPath = QDir::homePath();
 		}
 
 		QString newPath = QFileDialog::getExistingDirectory(0,
-				tr("Choose an existing or create a new Project Directory"),
-				   projects_path );
+				tr("Choose a directory to store your Projects in"),
+				   projectsPath );
+		
+		if (newPath.isEmpty()) {
+			QMessageBox::warning( 0, tr("Traverso - Warning"), 
+					      tr("No directory was selected, to retry open the 'Open Project Dialog' and "
+						 "click 'Select Project Directory' button\n"));
+			return;
+		} 
 		
 		QFileInfo fi(newPath);
 		if (dir.exists(newPath) && !fi.isWritable()) {
@@ -453,6 +459,10 @@ int ProjectManager::rename_project_dir(const QString & olddir, const QString & n
 
 void ProjectManager::set_current_project_dir(const QString & path)
 {
+	if (path.isEmpty()) {
+		return;
+	}
+	
 	QDir newdir(path);
 	
 	config().set_property("Project", "directory", newdir.canonicalPath());
