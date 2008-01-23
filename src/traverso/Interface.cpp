@@ -1016,7 +1016,7 @@ void Interface::config_changed()
 		widget->set_use_opengl(toggled);
 	}
 	
-	QString encoding = config().get_property("Recording", "FileFormat", "").toString();
+	QString encoding = config().get_property("Recording", "FileFormat", "wav").toString();
 	QList<QAction* > actions = m_encodingMenu->actions();
 	
 	foreach(QAction* action, actions) {
@@ -1027,7 +1027,7 @@ void Interface::config_changed()
 		}
 	}
 	
-	int quality = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
+	int quality = config().get_property("Conversion", "RTResamplingConverterType", DEFAULT_RESAMPLE_QUALITY).toInt();
 	actions = m_resampleQualityMenu->actions();
 	
 	foreach(QAction* action, actions) {

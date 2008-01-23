@@ -958,7 +958,7 @@ void RecordingPage::load_config()
 		m_config->wavpackCompressionComboBox->setCurrentIndex(2);
 	}		
 	
-	int index = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
+	int index = config().get_property("Conversion", "RTResamplingConverterType", DEFAULT_RESAMPLE_QUALITY).toInt();
 	m_config->ontheflyResampleComboBox->setCurrentIndex(index);
 	
 	index = config().get_property("Conversion", "ExportResamplingConverterType", 1).toInt();
@@ -979,7 +979,7 @@ void RecordingPage::save_config()
 void RecordingPage::reset_default_config()
 {
 	config().set_property("Conversion", "DynamicResampling", true);
-	config().set_property("Conversion", "RTResamplingConverterType", 2);
+	config().set_property("Conversion", "RTResamplingConverterType", DEFAULT_RESAMPLE_QUALITY);
 	config().set_property("Conversion", "ExportResamplingConverterType", 1);
 	config().set_property("Recording", "FileFormat", "wav");
 	config().set_property("Recording", "WavpackCompressionType", "fast");

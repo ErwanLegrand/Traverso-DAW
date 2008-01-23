@@ -55,7 +55,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ContextItem.h"
 #include "TimeLine.h"
 #include "Marker.h"
-#include "InputEngine.h"
+#include "InputEngine.h"                       
 
 #include <Plugin.h>
 #include <PluginChain.h>
@@ -1403,7 +1403,7 @@ void Sheet::config_changed()
 {
 	PENTER;
 	
-	int quality = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
+	int quality = config().get_property("Conversion", "RTResamplingConverterType", DEFAULT_RESAMPLE_QUALITY).toInt();
 	if (m_diskio->get_resample_quality() != quality) {
 		TimeRef location = m_transportLocation;
 		location.add_frames(1, audiodevice().get_sample_rate());

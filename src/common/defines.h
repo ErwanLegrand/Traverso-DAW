@@ -473,6 +473,8 @@ static inline trav_time_t get_microseconds()
 #define PROFILE_START trav_time_t starttime = get_microseconds();
 #define PROFILE_END(args...) int processtime = (int) (get_microseconds() - starttime);printf("Process time for %s: %d useconds\n\n", args, processtime);
 
+#define DEFAULT_RESAMPLE_QUALITY 2
+
 #endif // endif TRAVERSO_TYPES_H
 
 //eof

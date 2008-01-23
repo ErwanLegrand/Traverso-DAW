@@ -236,7 +236,7 @@ int ReadSource::init( )
 		return (m_error = COULD_NOT_OPEN_FILE);
 	}
 	
-	int converter_type = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
+	int converter_type = config().get_property("Conversion", "RTResamplingConverterType", DEFAULT_RESAMPLE_QUALITY).toInt();
 	m_audioReader->set_converter_type(converter_type);
 	
 	set_output_rate(m_audioReader->get_file_rate());

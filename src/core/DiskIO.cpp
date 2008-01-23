@@ -146,7 +146,7 @@ DiskIO::DiskIO(Sheet* sheet)
 	cpuTimeBuffer = new RingBuffer(128);
 	lastCpuReadTime = get_microseconds();
 	m_stopWork = m_seeking = m_sampleRateChanged = 0;
-	m_resampleQuality = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
+	m_resampleQuality = config().get_property("Conversion", "RTResamplingConverterType", DEFAULT_RESAMPLE_QUALITY).toInt();
 	m_readBufferFillStatus = 0;
 	m_hardDiskOverLoadCounter = 0;
 	
@@ -196,7 +196,7 @@ void DiskIO::seek()
 	
 	TimeRef location = m_sheet->get_new_transport_location();
 	bool resampleQualityChanged = false;
-	int quality = config().get_property("Conversion", "RTResamplingConverterType", 2).toInt();
+	int quality = config().get_property("Conversion", "RTResamplingConverterType", DEFAULT_RESAMPLE_QUALITY).toInt();
 	if (quality != m_resampleQuality) {
 		resampleQualityChanged = true;
 		m_resampleQuality = quality;
