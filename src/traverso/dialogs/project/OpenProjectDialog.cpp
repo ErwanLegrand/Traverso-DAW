@@ -235,7 +235,11 @@ void OpenProjectDialog::on_deleteProjectbutton_clicked( )
 
 void OpenProjectDialog::on_projectDirSelectButton_clicked( )
 {
-	QString path = config().get_property("Project", "directory", "none").toString();
+	QString path = config().get_property("Project", "directory", "").toString();
+	
+	if (path.isEmpty()) {
+		path = getenv("HOME");
+	}
 	
 	QDir rootDir(path);
 	rootDir.cdUp();
