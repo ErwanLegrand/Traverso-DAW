@@ -238,7 +238,7 @@ void OpenProjectDialog::on_projectDirSelectButton_clicked( )
 	QString path = config().get_property("Project", "directory", "").toString();
 	
 	if (path.isEmpty()) {
-		path = getenv("HOME");
+		path = QDir::homePath();
 	}
 	
 	QDir rootDir(path);
