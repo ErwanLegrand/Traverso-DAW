@@ -51,6 +51,7 @@ ResampleAudioReader::ResampleAudioReader(QString filename, const QString& decode
 	m_overflowUsed = 0;
 	m_resampleDecodeBufferIsMine = false;
 	m_resampleDecodeBuffer = 0;
+	m_convertorType = -1;
 }
 
 
@@ -114,10 +115,15 @@ void ResampleAudioReader::set_converter_type(int converter_type)
 	PENTER;
 	
 	int error;
-	
+
 	if ( (float(m_outputRate) / get_file_rate()) > 2.0 && converter_type == 3 ) {
+		if (m_convertorType == 2) {
+			return;
+		}
 		printf("ResampleAudioReader::set_converter_type: src does not support a resample ratio > 2 with converter type Fast, using quality Medium\n");
-		converter_type = 2;
+		m_convertorType = 2; 
+	} else {
+		m_convertorType = converter_type;
 	}
 	
 	while (m_srcStates.size()) {
@@ -129,7 +135,7 @@ void ResampleAudioReader::set_converter_type(int converter_type)
 	
 	for (int c = 0; c < m_reader->get_num_channels(); c++) {
 		
-		m_srcStates.append(src_new(converter_type, 1, &error));
+		m_srcStates.append(src_new(m_convertorType, 1, &error));
 		
 		if (!m_srcStates[c]) {
 			PERROR("ResampleAudioReader: couldn't create libSampleRate SRC_STATE");
@@ -141,7 +147,7 @@ void ResampleAudioReader::set_converter_type(int converter_type)
 	}
 	
 	// seek_private will reset the src states!
-	seek_private(0);
+	seek_private(pos());
 }
 
 int ResampleAudioReader::get_output_rate()

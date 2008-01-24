@@ -131,6 +131,9 @@ void Sheet::init()
 	m_diskio = new DiskIO(this);
 	m_currentSampleRate = audiodevice().get_sample_rate();
 	m_diskio->output_rate_changed(m_currentSampleRate);
+	int converter_type = config().get_property("Conversion", "RTResamplingConverterType", DEFAULT_RESAMPLE_QUALITY).toInt();
+	m_diskio->set_resample_quality(converter_type);
+
 	
 	connect(this, SIGNAL(seekStart()), m_diskio, SLOT(seek()), Qt::QueuedConnection);
 	connect(this, SIGNAL(prepareRecording()), this, SLOT(prepare_recording()));
@@ -1401,14 +1404,9 @@ void Sheet::seek_finished()
 
 void Sheet::config_changed()
 {
-	PENTER;
-	
 	int quality = config().get_property("Conversion", "RTResamplingConverterType", DEFAULT_RESAMPLE_QUALITY).toInt();
 	if (m_diskio->get_resample_quality() != quality) {
-		TimeRef location = m_transportLocation;
-		location.add_frames(1, audiodevice().get_sample_rate());
-	
-		set_transport_pos(location);
+		m_diskio->set_resample_quality(quality);
 	}
 }
 

@@ -61,6 +61,8 @@ public:
 	void register_read_source(ReadSource* source);
 	void register_write_source(WriteSource* source);
 	
+	void set_resample_quality(int quality);
+	
 	void unregister_read_source(ReadSource* source);
 	void unregister_write_source(WriteSource* source);
 

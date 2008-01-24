@@ -195,16 +195,9 @@ void DiskIO::seek()
 	m_seeking = true;
 	
 	TimeRef location = m_sheet->get_new_transport_location();
-	bool resampleQualityChanged = false;
-	int quality = config().get_property("Conversion", "RTResamplingConverterType", DEFAULT_RESAMPLE_QUALITY).toInt();
-	if (quality != m_resampleQuality) {
-		resampleQualityChanged = true;
-		m_resampleQuality = quality;
-	}
-		
 
 	foreach(ReadSource* source, m_readSources) {
-		if (m_sampleRateChanged || resampleQualityChanged) {
+		if (m_sampleRateChanged) {
 			source->set_diskio(this);
 		}
 		source->rb_seek_to_file_position(location);
@@ -531,5 +524,10 @@ void DiskIO::stop_io( )
 {
 //	Q_ASSERT_X(m_sheet->threadId != QThread::currentThreadId (), "DiskIO::stop_io", "Error, running in gui thread!!!!!");
 // 	m_workTimer.stop();
+}
+
+void DiskIO::set_resample_quality(int quality)
+{
+	m_resampleQuality = quality;
 }
 

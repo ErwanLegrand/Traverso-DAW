@@ -236,8 +236,8 @@ int ReadSource::init( )
 		return (m_error = COULD_NOT_OPEN_FILE);
 	}
 	
-	int converter_type = config().get_property("Conversion", "RTResamplingConverterType", DEFAULT_RESAMPLE_QUALITY).toInt();
-	m_audioReader->set_converter_type(converter_type);
+/*	int converter_type = config().get_property("Conversion", "RTResamplingConverterType", DEFAULT_RESAMPLE_QUALITY).toInt();
+	m_audioReader->set_converter_type(converter_type);*/
 	
 	set_output_rate(m_audioReader->get_file_rate());
 	
@@ -529,6 +529,13 @@ void ReadSource::process_ringbuffer(DecodeBuffer* buffer, bool seeking)
 			printf("ReadSource:: chunkCount == 0, but not at end of file, this shouldn't happen!!\n");
 			return;
 		}
+	}
+	
+	// Check if the resample quality has changed, it's a safe place here
+	// to reconfigure the audioreaders resample quality.
+	// This allows on the fly changing of the resample quality :)
+	if (m_diskio->get_resample_quality() != m_audioReader->get_convertor_type()) {
+		m_audioReader->set_converter_type(m_diskio->get_resample_quality());
 	}
 	
 	// Read in the samples from source

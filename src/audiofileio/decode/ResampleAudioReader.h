@@ -46,6 +46,7 @@ public:
 	
 	int get_output_rate();
 	int get_file_rate();
+	int get_convertor_type() const {return m_convertorType;}
 	void set_output_rate(int rate);
 	void set_converter_type(int converter_type);
 	void set_resample_decode_buffer(DecodeBuffer* buffer);
@@ -65,6 +66,7 @@ protected:
 	audio_sample_t**	m_overflowBuffers;
 	long			m_overflowUsed;
 	int			m_outputRate;
+	int			m_convertorType;
 	bool			m_isResampleAvailable;
 	nframes_t		m_readExtraFrames;
 	
