@@ -1030,6 +1030,14 @@ void Interface::config_changed()
 	int quality = config().get_property("Conversion", "RTResamplingConverterType", DEFAULT_RESAMPLE_QUALITY).toInt();
 	actions = m_resampleQualityMenu->actions();
 	
+	bool useResampling = config().get_property("Conversion", "DynamicResampling", true).toBool();
+	if (useResampling) {
+		m_resampleQualityMenu->setEnabled(true);
+	} else {
+		m_resampleQualityMenu->setEnabled(false);
+	}
+
+	
 	foreach(QAction* action, actions) {
 		if (action->data().toInt() == quality) {
 			action->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));

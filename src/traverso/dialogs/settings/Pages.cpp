@@ -114,8 +114,12 @@ AudioDriverPage::AudioDriverPage(QWidget *parent)
 void AudioDriverPage::save_config()
 {
 	config().set_property("Hardware", "samplerate", m_driverConfigPage->rateComboBox->currentText());
-	config().set_property("Hardware", "buffersize", 
-	       m_driverConfigPage->periodBufferSizesList.at(m_driverConfigPage->latencyComboBox->currentIndex()));
+	int bufferindex = m_driverConfigPage->latencyComboBox->currentIndex();
+	int buffersize = 1024;
+	if (bufferindex >= 0) {
+		buffersize = m_driverConfigPage->periodBufferSizesList.at(bufferindex);
+	}
+	config().set_property("Hardware", "buffersize", buffersize);
 	
 	config().set_property("Hardware", "drivertype", m_driverCombo->currentText());
 	
