@@ -1,12 +1,16 @@
 TOBEDONE FOR 0.4x.x
 
-* Found out if locale encodings work for special chars (like ë) when importing an 
+* QFileDialog::getExistingDirectory crashes when it shows a hidden directory the first time.
+* http://traverso-daw.org/forum/index.php/topic,93.0.html (selecting second burn device not possible)
+* current zoom-cursors get messed up at times (specially after using context menu of Zoom)
+* PPC build : no jack, crashes on PPC 10.5.1 (both portaudio with jack/coreaudio), which portaudio was used?
+* http://forums.frugalware.org/index.php?t=msg&goto=7949&rid=0&S=fc3e4bbb15813272bc2658068081e9d7#msg_7949
+* accessability: LAC discussion:  e.g. from 25.12.07, thread "Studio reverb (impulse)"
+* Find out if locale encodings work for special chars (like ë) when importing an 
   audio (wav) file and creating peak files on all platforms.
 * Track (Vynil) plugin also applied to other tracks ??
 * jack in/output ports numbers are calculated in reversed order! so inputcount ports is output count and vise versa
-* art-deco bug with polygon based painting still there!
-* unable to select hidden dir for theme path.
-* crash when clicking on button next to theme path (Appearance page)
+* crash when clicking on button next to theme path (Appearance page) (Filed bug at trolltech)
 * ubuntu-theme: no audoclip outline color set?
 * Unable to lock memory, Traverso runs unstable due that. Detect (parse limits.conf file) first before trying to memlock ?
 * ubuntu and system-pallete theme don't have transparent clip backgrounds.
@@ -16,8 +20,6 @@ TOBEDONE FOR 0.4x.x
 * Why does the User Manual say I need libflac++?
 * 2tracks project, seeking to start when beyond first clip: mp3 output garbled!
 * solution for project dir renamed outside of traverso: disabling write bit ?
-* On first start, Traverso no longer asks to select project dir.
-* Oh, one usability thing... You might want to make the import audio dialog automatically select the "Support Audio File" filter instead of "All Files"
 * Add cmake flags to disable autodetect of platform, and compile platform specific (x86 (i686), vs x86_64)
 * http://traverso-daw.org/forum/index.php/topic,77.msg264.html#msg264
 
