@@ -162,7 +162,7 @@ p, li { white-space: pre-wrap; }
       <item>
        <widget class="QCheckBox" name="useResamplingCheckBox" >
         <property name="text" >
-         <string>Enable on the fly resampling</string>
+         <string>Enable on the fly resampling (Playback only)</string>
         </property>
        </widget>
       </item>
