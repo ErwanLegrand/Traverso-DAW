@@ -11,7 +11,7 @@ SUBDIRS += src/engine \
            src/core \
            src/audiofileio \
            src/plugins \
-           src/traverso/songcanvas \
+           src/sheetcanvas \
 	   src/commands/plugins/TraversoCommands \
            src/3rdparty/slv2 \
            src/traverso
