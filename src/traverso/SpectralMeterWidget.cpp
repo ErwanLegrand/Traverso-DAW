@@ -629,7 +629,7 @@ Command* SpectralMeterView::screen_capture( )
         QPainter painter(&image);
         m_widget->render(&painter);
 	
-	QString fn = QFileDialog::getSaveFileName (0, tr("Screen Capture file name"), getenv("HOME"));
+	QString fn = QFileDialog::getSaveFileName (0, tr("Screen Capture file name"), QDir::homePath());
 	
 	// if aborted exit here
 	if (fn.isEmpty()) {

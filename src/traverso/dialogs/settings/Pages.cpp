@@ -549,9 +549,7 @@ AppearancePage::AppearancePage(QWidget *parent)
 
 void AppearancePage::save_config()
 {
-	QString path = m_themepage->themePathLineEdit->text();
-	
-	config().set_property("Themer", "themepath", path);
+	config().set_property("Themer", "themepath", m_themepage->themePathLineEdit->text());
 	config().set_property("Themer", "currenttheme", m_themepage->themeSelecterCombo->currentText());
 	config().set_property("Themer", "coloradjust", m_themepage->colorAdjustBox->value());
 	config().set_property("Themer", "style", m_themepage->styleCombo->currentText());
@@ -566,7 +564,7 @@ void AppearancePage::load_config()
 	QIcon icon = QApplication::style()->standardIcon(QStyle::SP_DirClosedIcon);
 	m_themepage->pathSelectButton->setIcon(icon);
 	QString themepath = config().get_property("Themer", "themepath",
-				   QString(getenv("HOME")).append(".traverso/themes")).toString();
+				   QString(QDir::homePath()).append(".traverso/themes")).toString();
 	
 	
 	QStringList keys = QStyleFactory::keys();
@@ -608,7 +606,7 @@ void AppearancePage::reset_default_config()
 {
 	m_themepage->styleCombo->clear();
 	
-	config().set_property("Themer", "themepath", QString(getenv("HOME")).append("/.traverso/themes"));
+	config().set_property("Themer", "themepath", QString(QDir::homePath()).append("/.traverso/themes"));
 	config().set_property("Themer", "currenttheme", "TraversoLight");
 	config().set_property("Themer", "coloradjust", 100);
 	QString systemstyle = QString(QApplication::style()->metaObject()->className()).remove("Q").remove("Style");
@@ -633,6 +631,7 @@ void ThemeConfigPage::create_connections()
 	connect(styleCombo, SIGNAL(currentIndexChanged(const QString)), this, SLOT(style_index_changed(const QString)));
 	connect(themeSelecterCombo, SIGNAL(currentIndexChanged(const QString)), this, SLOT(theme_index_changed(const QString)));
 	connect(useStylePalletCheckBox, SIGNAL(toggled(bool)), this, SLOT(use_selected_styles_pallet_checkbox_toggled(bool)));
+	connect(pathSelectButton, SIGNAL(clicked()), this, SLOT(dirselect_button_clicked()));
 	connect(colorAdjustBox, SIGNAL(valueChanged(int)), this, SLOT(color_adjustbox_changed(int)));
 	connect(rectifiedCheckBox, SIGNAL(toggled(bool)), this, SLOT(theme_option_changed()));
 	connect(mergedCheckBox, SIGNAL(toggled(bool)), this, SLOT(theme_option_changed()));
@@ -672,6 +671,21 @@ void ThemeConfigPage::use_selected_styles_pallet_checkbox_toggled(bool checked)
 void ThemeConfigPage::color_adjustbox_changed(int value)
 {
 	themer()->set_color_adjust_value(value);
+}
+
+void ThemeConfigPage::dirselect_button_clicked()
+{
+	QString path = themePathLineEdit->text();
+	if (path.isEmpty()) {
+		path = QDir::homePath();
+	}
+	QString dirName = QFileDialog::getExistingDirectory(this,
+			tr("Select default project dir"), path);
+
+	if (!dirName.isEmpty()) {
+		themePathLineEdit->setText(dirName);
+		update_theme_combobox(dirName);
+	}
 }
 
 void ThemeConfigPage::update_theme_combobox(const QString& path)

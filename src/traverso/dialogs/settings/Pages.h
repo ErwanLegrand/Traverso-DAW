@@ -137,6 +137,7 @@ private:
 	friend class AppearancePage;
 
 private slots:
+	void dirselect_button_clicked();
 	void style_index_changed(const QString& text);
 	void theme_index_changed(const QString& theme);
 	void use_selected_styles_pallet_checkbox_toggled(bool);
