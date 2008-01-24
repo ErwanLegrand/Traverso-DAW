@@ -484,15 +484,15 @@ int AlsaDriver::configure_stream(char *device_name,
 	static struct {
 		char Name[32];
 		snd_pcm_format_t format;
-		int bitdepth;
 		int swapped;
+		int bitdepth;
 	} formats[] = {
-		{"32bit little-endian", SND_PCM_FORMAT_S32_LE, IS_LE},
-		{"32bit big-endian", SND_PCM_FORMAT_S32_BE, IS_BE},
-		{"24bit little-endian", SND_PCM_FORMAT_S24_3LE, IS_LE},
-		{"24bit big-endian", SND_PCM_FORMAT_S24_3BE, IS_BE},
-		{"16bit little-endian", SND_PCM_FORMAT_S16_LE, IS_LE},
-		{"16bit big-endian", SND_PCM_FORMAT_S16_BE, IS_BE},
+		{"32bit little-endian", SND_PCM_FORMAT_S32_LE, IS_LE, 32},
+		{"32bit big-endian", SND_PCM_FORMAT_S32_BE, IS_BE, 32},
+		{"24bit little-endian", SND_PCM_FORMAT_S24_3LE, IS_LE, 24},
+		{"24bit big-endian", SND_PCM_FORMAT_S24_3BE, IS_BE, 24},
+		{"16bit little-endian", SND_PCM_FORMAT_S16_LE, IS_LE, 16},
+		{"16bit big-endian", SND_PCM_FORMAT_S16_BE, IS_BE, 16},
 	};
 #define NUMFORMATS (sizeof(formats)/sizeof(formats[0]))
 #define FIRST_16BIT_FORMAT 4
@@ -1627,7 +1627,7 @@ QString AlsaDriver::alsa_device_name(bool longname, int devicenumber)
 	snd_ctl_card_info_alloca(&info);
 
 	if ((err = snd_ctl_open(&handle, name, devicenumber)) < 0) {
-		PMESG("Control open (%i): %s", devicenumber, snd_strerror(err));
+		PMESG("AlsaDriver::alsa_device_name: Control open (device %i): %s", devicenumber, snd_strerror(err));
 		return "";
 	}
 
