@@ -49,9 +49,9 @@
 		<file alias="redledinactive-16">../../resources/images/icons/16x16/redledinactive.png</file>
 		<file alias="sheetmanager-16">../../resources/images/icons/16x16/contents.png</file>
 		<file alias="new-16">../../resources/images/icons/16x16/new.png</file>
-		<file alias="traverso_nl">../../traverso_nl.qm</file>
-		<file alias="traverso_de">../../traverso_de.qm</file>
-		<file alias="traverso_en">../../traverso_en.qm</file>
+		<file alias="traverso_nl">../../resources/translations/traverso_nl.qm</file>
+		<file alias="traverso_de">../../resources/translations/traverso_de.qm</file>
+		<file alias="traverso_fr">../../resources/translations/traverso_fr.qm</file>
 		<file alias="project_conversion_description_2_3">../../resources/projectconversion/2_to_3.html</file>
 	</qresource>
 </RCC>
