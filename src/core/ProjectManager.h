@@ -50,7 +50,6 @@ public:
 	int load_renamed_project(const QString& name);
 
 	bool project_exists(const QString& title);
-	bool exit_in_progress() const {return m_exitInProgress;}
 
 	int create_projectfilebackup_dir(const QString& rootDir);
 	int remove_project(const QString& title);

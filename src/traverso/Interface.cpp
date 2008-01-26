@@ -243,9 +243,6 @@ void Interface::set_project(Project* project)
 			sw->setUpdatesEnabled(false);
 		}
 	} else {
-		if (pm().exit_in_progress()) {
-			hide();
-		}
 		m_projectSaveAction->setEnabled(false);
 		m_projectSheetManagerAction->setEnabled(false);
 		m_projectExportAction->setEnabled(false);
