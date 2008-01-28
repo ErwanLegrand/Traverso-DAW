@@ -85,10 +85,6 @@ Peak::Peak(AudioSource* source)
 		// peak data creation, no m_source needed!
 		m_source = 0;
 	}
-	
-	int error;
-	int converter_type = 4;
-	m_srcState = src_new(converter_type, 2, &error);
 }
 
 Peak::~Peak()
@@ -261,20 +257,18 @@ int Peak::calculate_peaks(int chan, float** buffer, qreal zoomLevel, TimeRef sta
 	}
 	
 	ChannelData* data = m_channelData.at(chan);
-	
-	int highbit;
-	unsigned long nearestpow2 = nearest_power_of_two(qRound(zoomLevel), highbit);
-	if (nearestpow2 == 0) {
-		return NO_PEAKDATA_FOUND;
-	}
-	
 	int produced = 0;
-	float* inputData;
 	
 // 	PROFILE_START;
 	
 	// Macro view mode
-	if ( nearestpow2 > 32) {
+	if (zoomLevel >= 64) {
+		int highbit;
+		unsigned long nearestpow2 = nearest_power_of_two(qRound(zoomLevel), highbit);
+		if (nearestpow2 == 0) {
+			return NO_PEAKDATA_FOUND;
+		}
+		
 		nframes_t startPos = startlocation.to_frame(44100);
 		
 		int index = cache_index_lut()->value(nearestpow2, -1);
@@ -304,15 +298,24 @@ int Peak::calculate_peaks(int chan, float** buffer, qreal zoomLevel, TimeRef sta
 			return NO_PEAKDATA_FOUND;
 		}
 		
-		inputData = data->peakdataDecodeBuffer->destination[0];
-		
 // 		for (int i=(pixelcount-truncate); i<(pixelcount); ++i) {
 // 			data->peakdataDecodeBuffer->destination[0][i] = 0;
 // 		}
 // 		
+		*buffer = data->peakdataDecodeBuffer->destination[0];
+		
+		return pixelcount;
 
 	// Micro view mode
 	} else {
+		
+		int highbit;
+		unsigned long nearestpow2 = nearest_power_of_two(qRound(zoomLevel), highbit);
+		
+		if (nearestpow2 == 0) {
+			nearestpow2 = 1;
+		}
+		
 		// Calculate the amount of frames to be read
 		nframes_t toRead = pixelcount * nearestpow2;
 		
@@ -363,32 +366,12 @@ int Peak::calculate_peaks(int chan, float** buffer, qreal zoomLevel, TimeRef sta
 // 		PROFILE_END("Peak calculate_peaks");		
 		
 		// Assign the supplied buffer to the 'real' peakdata buffer.
-		inputData = peakdata;
+		*buffer = peakdata;
 		
-		produced = count;
+		return count;
 	}
 
-	src_reset(m_srcState);
-	qreal ratio = qreal(nearestpow2) / zoomLevel;
-	m_srcData.data_in = inputData;
-	m_srcData.input_frames = qRound(pixelcount / ratio);
-	m_srcData.data_out = data->peakdataDecodeBuffer->destination[1];
-	m_srcData.output_frames = pixelcount;
-	m_srcData.src_ratio = ratio;
-	src_set_ratio(m_srcState, m_srcData.src_ratio);
-		
-// 		printf("scale factor %f, pixels generated %ld, wanted %d\n", ratio,  m_srcData.output_frames_gen, pixelcount);
-		
-	if (src_process(m_srcState, &m_srcData)) {
-		PERROR("Resampler: src_process() error!");
-		return NO_PEAKDATA_FOUND;
-	}
-		
-	produced = m_srcData.output_frames_gen;
-
-	*buffer = data->peakdataDecodeBuffer->destination[1];
-		
-	return produced;
+	return 0;
 }
 
 

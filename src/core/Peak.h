@@ -30,7 +30,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QFile>
 #include <QHash>
 #include <QPair>
-#include <samplerate.h>
 
 #include "defines.h"
 
@@ -132,10 +131,6 @@ private:
 	bool		m_permanentFailure;
 	bool		m_interuptPeakBuild;
 	static QHash<int, int> chacheIndexLut;
-	
-	SRC_STATE*	m_srcState;
-	SRC_DATA	m_srcData;
-	audio_sample_t* m_peakBuffer;
 	
 	struct ProcessData {
 		ProcessData() {

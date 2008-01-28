@@ -236,6 +236,10 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 	// Painting 2 more pixels makes it getting clipped away.....
 	pixelcount += 2;
 	
+/*	xstart -= 2;
+	pixelcount += 2;
+	if (xstart < 0) xstart = 0;*/
+	
 	// boundary checking, important for microview only, macroview needs the additional
 	// pixels to paint the waveform correctly
 	if ((xstart + pixelcount) > m_boundingRect.width()) {
@@ -248,7 +252,7 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 		return;
 	}
 	
-	bool microView = m_sheet->get_hzoom() > 32 ? 0 : 1;
+	bool microView = m_sheet->get_hzoom() < 64 ? 1 : 0;
 	TimeRef clipstartoffset = m_clip->get_source_start_location();
 	int channels = m_clip->get_channels();
 	int peakdatacount = microView ? pixelcount : pixelcount * 2;
@@ -267,6 +271,11 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 	if (nearestpow2 == 0) {
 		nearestpow2 = 1;
 	}
+	
+	qreal xscale = qreal(nearestpow2) / m_sheet->get_hzoom();
+	pixelcount = qRound(pixelcount / xscale);
+// 	printf("xscale %f, microview %d, zoomlevel %f\n", xscale, microView, m_sheet->get_hzoom());
+
 	// Load peak data for all channels, if no peakdata is returned
 	// for a certain Peak object, schedule it for loading.
 	for (int chan=0; chan < channels; ++chan) {
@@ -397,8 +406,8 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 			}
 		
 			ytrans = height * chan;
-			p->setMatrix(matrix().translate(0, ytrans), true);
-			p->drawLine(qRound(xstart), 0, qRound(xstart) + pixelcount, 0);
+			p->setMatrix(matrix().translate(xstart, ytrans).scale(xscale, 1), true);
+			p->drawLine(0, 0, pixelcount, 0);
 			p->restore();
 		}
 		
@@ -416,7 +425,7 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 				ytrans = (height / 2) + (chan * height);
 			}
 			
-			p->setMatrix(matrix().translate(0, ytrans), true);
+			p->setMatrix(matrix().translate(xstart, ytrans).scale(xscale, -scaleFactor), true);
 			
 			if (m_clip->is_selected()) {
 				p->setPen(themer()->get_color("AudioClip:channelseperator:selected"));
@@ -424,10 +433,10 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 				p->setPen(themer()->get_color("AudioClip:channelseperator"));
 			}
 			
-			p->drawLine(qRound(xstart), 0, qRound(xstart) + pixelcount, 0);
+			p->drawLine(0, 0, pixelcount, 0);
 			
-			for (int x = qRound(xstart); x < (pixelcount+qRound(xstart)); x++) {
-				m_polygon.append( QPointF(x, -scaleFactor * pixeldata[chan][bufferPos++]) );
+			for (int x = 0; x < pixelcount; x++) {
+				m_polygon.append( QPointF(x, pixeldata[chan][bufferPos++]) );
 			}
 			
 			if (themer()->get_property("AudioClip:wavemicroview:antialiased", 0).toInt()) {
@@ -443,13 +452,17 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 				p->setBrush(m_waveBrush);
 			}
 
-			if (m_sheet->get_mode() == Sheet::EDIT) {
-				p->setPen(themer()->get_color("AudioClip:wavemacroview:outline"));
-			} else  {
-				p->setPen(themer()->get_color("AudioClip:wavemacroview:outline:curvemode"));
-			}
-			if (m_clip->is_muted()) {
-				p->setPen(themer()->get_color("AudioClip:wavemacroview:outline:muted"));
+			if (m_paintWithOutline) {
+				if (m_sheet->get_mode() == Sheet::EDIT) {
+					p->setPen(themer()->get_color("AudioClip:wavemacroview:outline"));
+				} else  {
+					p->setPen(themer()->get_color("AudioClip:wavemacroview:outline:curvemode"));
+				}
+				if (m_clip->is_muted()) {
+					p->setPen(themer()->get_color("AudioClip:wavemacroview:outline:muted"));
+				}
+			} else {
+				p->setPen(Qt::NoPen);
 			}
 				
 			scaleFactor = ( (float) height * 0.90 / (Peak::MAX_DB_VALUE * 2)) * m_clip->get_gain() * curveDefaultValue;
@@ -464,7 +477,6 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 				}
 			}
 			
-			// we add one start/stop point so reserve some more...
 			int bufferpos = 0;
 
 			if (m_classicView) {
@@ -475,11 +487,7 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 					ytrans = (height / 2) + (chan * height);
 				}
 			
-				p->setMatrix(matrix().translate(xstart, ytrans).scale(1, scaleFactor), true);
-				
-				if (!m_paintWithOutline) {
-					p->setPen(Qt::NoPen);
-				}
+				p->setMatrix(matrix().translate(xstart, ytrans).scale(xscale, scaleFactor), true);
 				
 				m_polygon.clear();
 				m_polygon.reserve(pixelcount*2);
@@ -501,14 +509,6 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 				
 				p->drawPath(path);
 
-/*				} else {
-					for (int x = 0; x < pixelcount; x++) {
-						int ytop = -1 * (int)(pixeldata[chan][bufferpos++]);
-						int ymin = (int)(pixeldata[chan][bufferpos++]);
-						p->drawLine(x, ytop, x, ymin);
-					}
-				}*/
-			
 				// Draw 'the' -INF line
 				p->setPen(minINFLineColor);
 				p->drawLine(0, 0, pixelcount, 0);
@@ -522,12 +522,8 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 					scaleFactor *= channels;
 				}
 
-				p->setMatrix(matrix().translate(xstart, ytrans).scale(1, scaleFactor), true);
+				p->setMatrix(matrix().translate(xstart, ytrans).scale(xscale, scaleFactor), true);
 				
-				if (!m_paintWithOutline) {
-					p->setPen(Qt::NoPen);
-				}
-					
 				m_polygon.clear();
 				m_polygon.reserve(pixelcount + 2);
 				
