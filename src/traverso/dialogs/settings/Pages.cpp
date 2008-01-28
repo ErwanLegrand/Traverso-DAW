@@ -618,6 +618,7 @@ void AppearancePage::reset_default_config()
 	config().set_property("Themer", "usestylepallet", false);
 	config().set_property("Themer", "paintaudiorectified", false);
 	config().set_property("Themer", "paintstereoaudioasmono", false);
+	config().set_property("Themer", "paintwavewithoutline", true);
 	
 	load_config();
 }
