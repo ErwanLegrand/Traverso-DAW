@@ -76,6 +76,14 @@ CDWritingDialog::CDWritingDialog( QWidget * parent )
 	connect(refreshButton, SIGNAL(clicked()), this, SLOT(query_devices()));
 	connect(cdDiskExportOnlyCheckBox, SIGNAL(stateChanged(int)), this, SLOT(export_only_changed(int)));
 	
+	
+	m_wodimAvailable = false;
+	
+	// A bit lame way to 'detect' if wodim is installed
+	if (QProcess::execute("wodim") != QProcess::FailedToStart) {
+		m_wodimAvailable = true;
+	}
+	
 	query_devices();
 }
 
@@ -150,7 +158,13 @@ void CDWritingDialog::query_devices()
 	cdDeviceComboBox->addItem("IOCompactDiscServices");
 	cdDeviceComboBox->addItem("IOCompactDiscServices/2");
 #else
-	m_burnprocess->start(CDRDAO_BIN, QStringList() << "drive-info");
+	// Detect the available devices with wodim if available,
+	// since it seems to work better then cdrdao
+	if (m_wodimAvailable) {
+		m_burnprocess->start("wodim", QStringList() << "--devices");
+	} else {
+		m_burnprocess->start(CDRDAO_BIN, QStringList() << "drive-info");
+	}
 #endif
 }
 
@@ -369,21 +383,45 @@ void CDWritingDialog::write_to_cd()
 		
 	QString device = get_device(index);
 	QStringList arguments;
-	arguments << "write" << "--device" << device << "-n" << "--eject" << "--driver" << "generic-mmc";
+	QString burnprogram;
 	
-	if (speedComboBox->currentIndex() != 0) {
-		arguments << "--speed" << speedComboBox->currentText().remove("x");
-	}
 	
-	if (simulateCheckBox->isChecked()) {
-		arguments << "--simulate";
-	}
+	// wodim vs cdrecord vs cdrdao?? a lot of fuzz about these, 
+	// but so far cdrdao works for me just fine, so let's continue
+	// using it for the actual burning for now.
+	
+/*	if (m_wodimAvailable) {
+		burnprogram = "wodim";
+		arguments << "-vv";
+		if (simulateCheckBox->isChecked()) {
+			arguments << "-dummy";
+		}
+		arguments << QString("dev=").append(device);
+		arguments << "driveropts=burnfree";
+		arguments << "-dao";
+		arguments << "-eject";
+		if (speedComboBox->currentIndex() != 0) {
+			arguments << "speed=" << speedComboBox->currentText().remove("x");
+		}
+	} else {*/
+		burnprogram = CDRDAO_BIN;
+		arguments << "write" << "--device" << device << "-n" << "--eject" << "--driver" << "generic-mmc";
+		if (speedComboBox->currentIndex() != 0) {
+			arguments << "--speed" << speedComboBox->currentText().remove("x");
+		}
+		if (simulateCheckBox->isChecked()) {
+			arguments << "--simulate";
+		}
+// 	}
 	
 	arguments << m_exportSpec->tocFileName;
+	
+	printf("%s arguments: %s\n", QS_C(burnprogram), QS_C(arguments.join(" ")));
+
 #if defined (Q_WS_MAC)
 	m_burnprocess->start(qApp->applicationDirPath() + "/cdrdao", arguments);
 #else
-	m_burnprocess->start(CDRDAO_BIN, arguments);
+	m_burnprocess->start(burnprogram, arguments);
 #endif
 }
 
@@ -441,6 +479,11 @@ void CDWritingDialog::read_standard_output()
 		
 		while(m_burnprocess->readLine(buf, sizeof(buf)) != -1) {
 			QString data = QString(buf);
+			
+			if (data.isEmpty()) {
+				continue;
+			}
+			
 			//printf("%s\n", QS_C(data));
 			if (data.contains("trying to open")) {
 				update_cdburn_status(tr("Trying to access CD Writer ..."), NORMAL_MESSAGE);
@@ -453,31 +496,47 @@ void CDWritingDialog::read_standard_output()
 #if defined (Q_WS_WIN)
 			if (data.contains(QRegExp("[0-9],[0-9],[0-9]"))) {
 #else
-			if (data.contains("/dev/")) {
+			if (data.contains("/dev/") || data.contains("dev=")) {
 #endif
-				QString deviceName;
 				QStringList strlist = QString(data).split(QRegExp("\\s+"));
-				for (int i=1; i<strlist.size(); ++i) {
-					QString token = strlist.at(i);
-					if (token.contains("Rev:")) {
-						break;
-					} else if (token != ":") {
-						deviceName += token + " ";
+				QString deviceName = "No Device Available";
+				QString device = "/no/device/detected";
+				
+				if (m_wodimAvailable) {
+					if (strlist.size() > 5) {
+						deviceName = strlist.at(5) + " ";
+						deviceName = deviceName.remove("'");
+					}
+					if (strlist.size() > 7) {
+						deviceName += strlist.at(7) + "  ";
+						deviceName = deviceName.remove("'");
+					}
+					if (strlist.size() > 2) {
+						device = strlist.at(2);
+						device = device.remove("dev=").remove("'");
+						deviceName += "(" + device + ")";
+					}
+				} else {
+					if (strlist.size() > 1) {
+						deviceName = strlist.at(1) + " ";
+					}
+					if (strlist.size() > 3) {
+						deviceName += strlist.at(3) + "  ";
+					}
+					if (strlist.size() > 0) {
+						device = strlist.at(0);
+						device = device.remove(":");
+						deviceName += "(" + device + ")";
 					}
 				}
-				QString device = strlist.at(0);
-				device = device.remove(":");
-				deviceName += "(" + device + ")";
 				cdDeviceComboBox->addItem(deviceName, device);
 			}
 		}
 		
 		QString cdrdaoDrive = config().get_property("Cdrdao", "drive", "").toString();
-		if (cdrdaoDrive != "") {
-			int index = cdDeviceComboBox->findData(cdrdaoDrive);
-			if (index != -1) {
-				cdDeviceComboBox->setCurrentIndex(index);
-			}
+		int index = cdDeviceComboBox->findData(cdrdaoDrive);
+		if (index >= 0) {
+			cdDeviceComboBox->setCurrentIndex(index);
 		}
 		
 		update_cdburn_status(tr("Information"), NORMAL_MESSAGE);
@@ -611,10 +670,10 @@ void CDWritingDialog::set_was_closed()
 
 QString CDWritingDialog::get_device(int index)
 {
-	#if defined (Q_WS_MAC)
-		return cdDeviceComboBox->currentText();
-	#else
-		return cdDeviceComboBox->itemData(index).toString();
-	#endif
+#if defined (Q_WS_MAC)
+	return cdDeviceComboBox->currentText();
+#else
+	return cdDeviceComboBox->itemData(index).toString();
+#endif
 }
 

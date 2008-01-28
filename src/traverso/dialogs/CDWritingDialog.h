@@ -76,6 +76,7 @@ private:
 	int m_writingState;
 	int m_lastSheetExported;
 	bool m_wasClosed;
+	bool m_wodimAvailable;
 	int m_copyNumber;
 	QString get_device(int index);
 
