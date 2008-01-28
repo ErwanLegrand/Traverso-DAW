@@ -188,7 +188,7 @@ DecodeBuffer::DecodeBuffer()
 
 void DecodeBuffer::check_buffers_capacity(uint size, uint channels)
 {
-/*	m_bufferSizeCheckCounter++;
+	m_bufferSizeCheckCounter++;
 	m_totalCheckSize += size;
 	
 	float meanvalue = (m_totalCheckSize / (float)m_bufferSizeCheckCounter);
@@ -196,12 +196,12 @@ void DecodeBuffer::check_buffers_capacity(uint size, uint channels)
 	if (meanvalue < destinationBufferSize && ((meanvalue + 256) < destinationBufferSize) && !(destinationBufferSize == size)) {
 		m_smallerReadCounter++;
 		if (m_smallerReadCounter > 8) {
-// 			Force recreation of the buffers;
-			destinationBufferSize = readBufferSize = 0;
+			delete_destination_buffers();
+			delete_readbuffer();
 			m_bufferSizeCheckCounter = m_smallerReadCounter = 0;
 			m_totalCheckSize = 0;
 		}
-	}*/
+	}
 	
 		
 	if (destinationBufferSize < size || m_channels < channels) {
@@ -217,7 +217,7 @@ void DecodeBuffer::check_buffers_capacity(uint size, uint channels)
 		}
 			
 		destinationBufferSize = size;
-// 		printf("id %lld :: resizing destination to %.3f KB\n", id, (float)size*4/1024);
+// 		printf("resizing destination to %.3f KB\n", (float)size*4/1024);
 	}
 		
 	if (readBufferSize < (size*m_channels)) {
@@ -232,12 +232,6 @@ void DecodeBuffer::check_buffers_capacity(uint size, uint channels)
 void DecodeBuffer::delete_destination_buffers()
 {
 	if (destination) {
-		uint destChannelcount = (sizeof(destination) / sizeof(destination[0]));
-		if (destChannelcount != m_channels) {
-			PERROR("destination channel count != m_channels: dest channel %d, m_channels %d", destChannelcount, m_channels);
-			m_channels = destChannelcount;
-		}
-		
 		for (uint chan = 0; chan < m_channels; chan++) {
 			delete [] destination[chan];
 		}
@@ -246,6 +240,7 @@ void DecodeBuffer::delete_destination_buffers()
 		
 		destination = 0;
 		destinationBufferSize = 0;
+		m_channels = 0;
 	}
 }
 
