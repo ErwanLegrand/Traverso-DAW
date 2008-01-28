@@ -273,8 +273,12 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 	}
 	
 	qreal xscale = qreal(nearestpow2) / m_sheet->get_hzoom();
-	pixelcount = qRound(pixelcount / xscale);
-// 	printf("xscale %f, microview %d, zoomlevel %f\n", xscale, microView, m_sheet->get_hzoom());
+	// xscale becomes smaller then 1.0 at times, which is not supported!
+	// only if it is > 1.0 we are allowed to adjust the pixelcount. (needs proper fix)
+	if (xscale > 1) {
+		pixelcount = qRound(pixelcount / xscale);
+	}
+// 	printf("xscale %f, nearestpow2 %d, zoomlevel %f\n", qreal(nearestpow2) / m_sheet->get_hzoom(), nearestpow2, m_sheet->get_hzoom());
 
 	// Load peak data for all channels, if no peakdata is returned
 	// for a certain Peak object, schedule it for loading.
