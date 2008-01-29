@@ -100,8 +100,7 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="Z" >
 			<Objects>
-				<Object objectname="SheetView" modes="All" sortorder="3" pluginname="TraversoCommands" commandname="HZoomIn" arguments="HZoom;0.8" />
-				<Object objectname="SheetView" modes="All" sortorder="3" modifierkeys="ALT" pluginname="TraversoCommands" commandname="HZoomOut" arguments="HZoom;1.2" />
+				<Object objectname="SheetView" modes="All" sortorder="3" submenu="Zoom" pluginname="TraversoCommands" commandname="HZoomIn" arguments="HZoom;0.8" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="S" >
@@ -273,19 +272,14 @@
 				<Object objectname="Sheet" slotsignature="toggle_snap" modes="All" sortorder="36" />
 			</Objects>
 		</keyfact>
-		<keyfact type="FKEY2" key1="Z" key2="X" >
+		<keyfact type="FKEY2" key1="Z" key2="V" >
 			<Objects>
-				<Object objectname="SheetView" slotsignature="hzoom_out" modes="All" sortorder="4" submenu="Zoom" />
-			</Objects>
-		</keyfact>
-		<keyfact type="FKEY2" key1="Z" key2="ALT" >
-			<Objects>
-				<Object objectname="SheetView" slotsignature="vzoom_out" modes="All" sortorder="6" submenu="Zoom" />
+				<Object objectname="SheetView" modes="All" sortorder="45" submenu="Zoom" pluginname="TraversoCommands" commandname="VZoomOut" arguments="VZoom;1;0.2" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY2" key1="Z" key2="A" >
 			<Objects>
-				<Object objectname="SheetView" mousehint="UD" modes="All" sortorder="5" pluginname="TraversoCommands" commandname="VZoomIn" arguments="1.2" />
+				<Object objectname="SheetView" modes="All" sortorder="5" submenu="Zoom" pluginname="TraversoCommands" commandname="VZoomIn" arguments="VZoom;1;-0.2" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY2" key1="J" key2="L" >
@@ -333,11 +327,16 @@
 				<Object objectname="AudioClip" modes="All" sortorder="18" pluginname="TraversoCommands" commandname="AudioClipExternalProcessing" />
 			</Objects>
 		</keyfact>
+		<keyfact type="FKEY2" key1="Z" key2="X" >
+			<Objects>
+				<Object objectname="SheetView" modes="All" sortorder="3" submenu="Zoom" pluginname="TraversoCommands" commandname="HZoomOut" arguments="HZoom;1.2" />
+			</Objects>
+		</keyfact>
 		
 		
 		<keyfact type="HKEY" key1="Z" sortorder="35" >
 			<Objects>
-				<Object objectname="SheetView" mousehint="LR" modes="All" sortorder="1" pluginname="TraversoCommands" commandname="HJogZoom" arguments="HJogZoom;1.2;0.2" />
+				<Object objectname="SheetView" mousehint="LR" modes="All" sortorder="1" submenu="Zoom" pluginname="TraversoCommands" commandname="HJogZoom" arguments="HJogZoom;1.2;0.2" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="E" >
@@ -474,13 +473,13 @@
 		</keyfact>
 		<keyfact type="HKEY2" key1="D" key2="F" >
 			<Objects>
-				<Object objectname="SheetView" mousehint="RL" modes="All" pluginname="TraversoCommands" commandname="MultiMove" arguments="true" />
-				<Object objectname="SheetView" mousehint="RL" modes="All" pluginname="TraversoCommands" modifierkeys="CTRL" commandname="MultiMoveSingle" arguments="false" />
+				<Object objectname="SheetView" mousehint="RL" modes="All" sortorder="20" pluginname="TraversoCommands" commandname="MultiMove" arguments="true" />
+				<Object objectname="SheetView" mousehint="RL" modes="All" sortorder="21" pluginname="TraversoCommands" modifierkeys="CTRL" commandname="MultiMoveSingle" arguments="false" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY2" key1="Z" key2="V" >
 			<Objects>
-				<Object objectname="SheetView" mousehint="UD" modes="All" sortorder="2" pluginname="TraversoCommands" commandname="VJogZoom" arguments="VJogZoom;1.2;0.2" />
+				<Object objectname="SheetView" mousehint="UD" modes="All" sortorder="2" submenu="Zoom" pluginname="TraversoCommands" commandname="VJogZoom" arguments="VJogZoom;1.2;0.2" />
 			</Objects>
 		</keyfact>
 		
