@@ -71,6 +71,7 @@ void PlayHead::check_config( )
 {
 	m_mode = (PlayHeadMode) config().get_property("PlayHead", "Scrollmode", ANIMATED_FLIP_PAGE).toInt();
 	m_follow = config().get_property("PlayHead", "Follow", true).toBool();
+	m_followDisabled = false;
 }
 
 void PlayHead::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget )

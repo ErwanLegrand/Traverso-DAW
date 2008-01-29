@@ -310,7 +310,7 @@ int Peak::calculate_peaks(int chan, float** buffer, qreal zoomLevel, TimeRef sta
 	} else {
 		
 		int highbit;
-		unsigned long nearestpow2 = nearest_power_of_two(qRound(zoomLevel), highbit);
+		unsigned long nearestpow2 = nearest_power_of_two(zoomLevel, highbit);
 		
 		if (nearestpow2 == 0) {
 			nearestpow2 = 1;
@@ -872,6 +872,7 @@ PeakDataReader::PeakDataReader(Peak::ChannelData* data)
 {
 	m_d = data;
 	m_nframes = m_d->file.size();
+	m_readPos = 0;
 }
 
 
@@ -914,12 +915,13 @@ bool PeakDataReader::seek(nframes_t start)
 
 nframes_t PeakDataReader::read(DecodeBuffer* buffer, nframes_t count)
 {
+	PENTER;
 	if ( ! (count && (m_readPos < m_nframes)) ) {
 		return 0;
 	}
 		
 	// Make sure the read buffer is big enough for this read
-	buffer->check_buffers_capacity(count*3, 2);
+	buffer->check_buffers_capacity(count*3, 1);
 	
 	Q_ASSERT(m_d->file.isOpen());
 	

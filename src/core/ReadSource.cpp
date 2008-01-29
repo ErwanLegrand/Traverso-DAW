@@ -224,6 +224,7 @@ int ReadSource::init( )
 	m_needSync = 1;
 	m_syncInProgress = 0;
 	m_bufferUnderRunDetected = m_wasActivated = 0;
+	m_active = 0;
 	
 	// There should be another config option for ConverterType to use for export (higher quality)
 	//converter_type = config().get_property("Conversion", "ExportResamplingConverterType", 0).toInt();

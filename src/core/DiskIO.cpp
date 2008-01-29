@@ -147,7 +147,7 @@ DiskIO::DiskIO(Sheet* sheet)
 	lastCpuReadTime = get_microseconds();
 	m_stopWork = m_seeking = m_sampleRateChanged = 0;
 	m_resampleQuality = config().get_property("Conversion", "RTResamplingConverterType", DEFAULT_RESAMPLE_QUALITY).toInt();
-	m_readBufferFillStatus = 0;
+	m_readBufferFillStatus = m_writeBufferFillStatus = 0;
 	m_hardDiskOverLoadCounter = 0;
 	
 	// TODO This is a LARGE buffer, any ideas how to make it smaller ??

@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Utils.h"
 
 Marker::Marker(TimeLine* tl, const TimeRef when, Type type)
-	: ContextItem()
+	: ContextItem(tl)
 	, Snappable()
 	, m_timeline(tl)
 	, m_when(when)
@@ -48,7 +48,7 @@ Marker::Marker(TimeLine* tl, const TimeRef when, Type type)
 }
 
 Marker::Marker(TimeLine * tl, const QDomNode node)
-	: ContextItem()
+	: ContextItem(tl)
 	, Snappable()
 	, m_timeline(tl)
 {

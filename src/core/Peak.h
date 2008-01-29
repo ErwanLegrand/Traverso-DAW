@@ -168,6 +168,12 @@ private:
 	struct ChannelData {
 		ChannelData() {
 			memory = 0;
+			peakdataDecodeBuffer = 0;
+		}
+		~ChannelData() {
+			if (peakdataDecodeBuffer) {
+				delete peakdataDecodeBuffer;
+			}
 		}
 		QString		fileName;
 		QString		normFileName;
