@@ -844,7 +844,7 @@ QMenu* Interface::create_context_menu(QObject* item, QList<MenuData >* menulist)
 	menu->addSeparator();
 	menu->setFont(themer()->get_font("ContextMenu:fontscale:actions"));
 	
-	QHash<QString, QList<MenuData>* > submenus;
+	QMap<QString, QList<MenuData>* > submenus;
 	
 	for (int i=0; i<list.size(); ++i) {
 		MenuData data = list.at(i);
