@@ -64,6 +64,8 @@ SystemResources::SystemResources(QWidget * parent)
 	
 	m_writeBufferStatus = new SystemValueBar(this);
 	m_readBufferStatus = new SystemValueBar(this);
+	m_readBufferStatus->setToolTip(tr("Read Buffer Status"));
+	m_writeBufferStatus->setToolTip(tr("Write Buffer Status"));
 	m_cpuUsage = new SystemValueBar(this);
 	m_icon = new QPushButton();
 	m_icon->setIcon(find_pixmap(":/memorysmall"));
