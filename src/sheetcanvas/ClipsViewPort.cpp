@@ -67,7 +67,7 @@ void ClipsViewPort::get_pointed_context_items(QList<ContextItem* > &list)
 void ClipsViewPort::resizeEvent( QResizeEvent * e )
 {
 	ViewPort::resizeEvent(e);
-	m_sw->get_sheetview()->update_scrollbars();
+	m_sw->get_sheetview()->clipviewport_resize_event();
 }
 
 

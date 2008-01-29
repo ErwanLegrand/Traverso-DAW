@@ -95,11 +95,13 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 	m_vScrollBar = sheetwidget->m_vScrollBar;
 	m_hScrollBar = sheetwidget->m_hScrollBar;
 	m_actOnPlayHead = true;
+	m_viewportReady = false;
 	
 	m_clipsViewPort->scene()->addItem(this);
 	
 	m_playCursor = new PlayHead(this, m_sheet, m_clipsViewPort);
 	m_workCursor = new WorkCursor(this, m_sheet);
+	
 	connect(m_sheet, SIGNAL(workingPosChanged()), m_workCursor, SLOT(update_position()));
 	connect(m_sheet, SIGNAL(transferStarted()), this, SLOT(follow_play_head()));
 	connect(m_sheet, SIGNAL(transportPosSet()), this, SLOT(follow_play_head()));
@@ -112,15 +114,7 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 	m_tlvp->setSceneRect(0, -TIMELINE_HEIGHT, MAX_CANVAS_WIDTH, 0);
 	m_tpvp->setSceneRect(-200, 0, 0, MAX_CANVAS_HEIGHT);
 	
-	// Set up the viewports scale factor, and our timeref_scalefactor / m_peakCacheZoomFactor
-	// Needed for our childs TrackView, AudioClipView etc which are created below.
-	scale_factor_changed();
-	
 	sheet_mode_changed();
-	
-	foreach(Track* track, m_sheet->get_tracks()) {
-		add_new_trackview(track);
-	}
 	
 	connect(m_sheet, SIGNAL(hzoomChanged()), this, SLOT(scale_factor_changed()));
 	connect(m_sheet, SIGNAL(tempFollowChanged(bool)), this, SLOT(set_follow_state(bool)));
@@ -133,13 +127,6 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 	connect(m_hScrollBar, SIGNAL(actionTriggered(int)), this, SLOT(hscrollbar_action(int)));
 	connect(m_hScrollBar, SIGNAL(valueChanged(int)), this, SLOT(hscrollbar_value_changed(int)));
 	connect(m_vScrollBar, SIGNAL(valueChanged(int)), m_clipsViewPort->verticalScrollBar(), SLOT(setValue(int)));
-	
-	load_theme_data();
-	
-	int x, y;
-	m_sheet->get_scrollbar_xy(x, y);
-	set_hscrollbar_value(x);
-	set_vscrollbar_value(y);
 	
 	m_shuttleCurve = new Curve(0);
 	m_shuttleCurve->set_sheet(m_sheet);
@@ -163,7 +150,6 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 		cmd->set_instantanious(true);
 		Command::process_command(cmd);
 	}
-	
 }
 
 SheetView::~SheetView()
@@ -177,23 +163,7 @@ void SheetView::scale_factor_changed( )
 	timeref_scalefactor = qint64(m_sheet->get_hzoom() * (UNIVERSAL_SAMPLE_RATE / 44100));
 	m_tlvp->scale_factor_changed();
 	
-// 	int highbit;
-// 	unsigned long nearestpow2 = nearest_power_of_two(long(m_sheet->get_hzoom()), highbit);
-// 	if (nearestpow2 == 0) {
-// 		nearestpow2 = 1;
-// 	}
-// 	qreal xscale = nearestpow2 / m_sheet->get_hzoom();
-// 	QMatrix matrix;
-// 	matrix.scale(xscale, 1);
-// 	m_clipsViewPort->setScene(0);
-// 	m_clipsViewPort->setMatrix(matrix);
-// 	m_clipsViewPort->setScene(scene());
-
 	layout_tracks();
-	
-/*	printf("nearestpow2 %ld, highbit %d \n", nearestpow2, highbit);
-	printf("sheet hzoom %f\n", m_sheet->get_hzoom());
-	printf("xscale %f\n", xscale);*/
 }
 
 void SheetView::sheet_mode_changed()
@@ -277,6 +247,9 @@ void SheetView::remove_trackview(Track* track)
 void SheetView::update_scrollbars()
 {
 	int width = (int)(m_sheet->get_last_location() / timeref_scalefactor) - (m_clipsViewPort->width() / 4);
+	if (width < m_clipsViewPort->width() / 4) {
+		width = m_clipsViewPort->width() / 4;
+	}
 	
 	m_hScrollBar->setRange(0, width);
 	m_hScrollBar->setSingleStep(m_clipsViewPort->width() / 10);
@@ -346,6 +319,8 @@ void SheetView::hzoom(qreal factor)
 
 void SheetView::layout_tracks()
 {
+	if (m_trackViews.isEmpty() || !m_viewportReady) return;
+	
 	int verticalposition = m_trackTopIndent;
 	for (int i=0; i<m_trackViews.size(); ++i) {
 		TrackView* view = m_trackViews.at(i);
@@ -709,5 +684,43 @@ void SheetView::set_vscrollbar_value(int value)
 	m_clipsViewPort->verticalScrollBar()->setValue(value);
 	m_vScrollBar->setValue(value);
 	m_sheet->set_scrollbar_xy(m_hScrollBar->value(), m_vScrollBar->value());
+}
+
+void SheetView::clipviewport_resize_event()
+{
+	// Once the ClipViewPort has been initialed, and _resized_
+	// only _then_ we know _our_ size, at which time it makes 
+	// sense to populate the view with tracks.
+	static int wasCalledBefore;
+	if (!wasCalledBefore) {
+		// Set up the viewports scale factor, and our timeref_scalefactor / m_peakCacheZoomFactor
+		// Needed for our childs TrackView, AudioClipView etc which are created below.
+		scale_factor_changed();
+		
+		// fill the view with trackviews, add_new_trackview()
+		// doesn't yet layout the new tracks.
+		foreach(Track* track, m_sheet->get_tracks()) {
+			add_new_trackview(track);
+		}
+	
+		// layout_track() now will do it's work when it is called
+		m_viewportReady = true;
+		
+		// this will call layout_tracks() for us too
+		// which will continue now, due m_viewportReady is true now
+		load_theme_data();
+		
+		// Everything is in place to scroll to the last position
+		// we were at, at closing this view.
+		int x, y;
+		m_sheet->get_scrollbar_xy(x, y);
+		set_hscrollbar_value(x);
+		set_vscrollbar_value(y);
+	} else {
+		// if the viewport was resized, and everything was setup allready
+		// it suffices to recalculate the scrollbar values.
+		update_scrollbars();
+	}
+	
 }
 

@@ -82,6 +82,7 @@ public :
 	void set_shuttle_factor_values(int x, int y);
 	void vzoom(qreal scale);
 	void hzoom(qreal scale);
+	void clipviewport_resize_event();
 	int hscrollbar_value() const;
 	int vscrollbar_value() const;
 	int get_peak_cache_zoom_factor() const {return m_peakCacheZoomFactor;}
@@ -107,6 +108,7 @@ private:
 	QScrollBar*		m_vScrollBar;
 	QScrollBar*		m_hScrollBar;
 	bool			m_actOnPlayHead;
+	bool			m_viewportReady;
 	
 	// Themeing data
 	int	m_trackSeperatingHeight;
