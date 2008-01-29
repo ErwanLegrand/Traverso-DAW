@@ -98,6 +98,8 @@ public:
 
 protected:
 	QSize sizeHint () const;
+	void enterEvent ( QEvent * event );
+	void leaveEvent ( QEvent * event );
 
 private:
         QTimer		updateTimer;
@@ -200,6 +202,7 @@ private slots:
 	void sheet_selector_update_sheets();
 	void sheet_selector_change_index_to(Sheet* sheet);
 	void sheet_selector_index_changed(int index);
+	void project_load_finished();
 	
 private:
 	PlayHeadInfo* 	m_playhead;

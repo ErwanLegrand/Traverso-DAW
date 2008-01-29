@@ -96,8 +96,8 @@ SystemResources::SystemResources(QWidget * parent)
 	
 	QHBoxLayout* lay = new QHBoxLayout(this);
 	lay->addSpacing(6);
-	lay->addWidget(m_icon);
 	lay->addWidget(m_readBufferStatus);
+	lay->addWidget(m_icon);
 	lay->addWidget(m_writeBufferStatus);
 	lay->addWidget(m_cpuUsage);
 	lay->setMargin(0);
@@ -145,7 +145,7 @@ DriverInfo::DriverInfo( QWidget * parent )
 {
 	m_driver = new QPushButton();
 	m_driver->setIcon(find_pixmap(":/driver"));
-	m_driver->setToolTip(tr("Click to configure audiodevice"));
+	m_driver->setToolTip(tr("Change Audio Device settings"));
 	m_driver->setFlat(true);
 	m_driver->setFocusPolicy(Qt::NoFocus);
 	
@@ -189,6 +189,7 @@ void DriverInfo::draw_information( )
 			xruns;
 	
 	m_driver->setText(text);
+	updateGeometry();
 }
 
 void DriverInfo::update_xrun_info( )
@@ -199,11 +200,19 @@ void DriverInfo::update_xrun_info( )
 
 QSize DriverInfo::sizeHint() const
 {
-	if (xrunCount > 0) {
-		return QSize(240, SONG_TOOLBAR_HEIGHT);
-	}
-	return QSize(200, SONG_TOOLBAR_HEIGHT);
+	return QSize(m_driver->width(), SONG_TOOLBAR_HEIGHT);
 }
+
+void DriverInfo::enterEvent(QEvent * event)
+{
+	m_driver->setFlat(false);
+}
+
+void DriverInfo::leaveEvent(QEvent * event)
+{
+	m_driver->setFlat(true);
+}
+
 
 void DriverInfo::show_driver_config_widget( )
 {
@@ -642,8 +651,14 @@ void SheetInfo::set_project(Project * project)
 	connect(m_project, SIGNAL(sheetRemoved(Sheet*)), this, SLOT(sheet_selector_sheet_removed(Sheet*)));
 	connect(m_project, SIGNAL(currentSheetChanged(Sheet*)), this, SLOT(sheet_selector_change_index_to(Sheet*)));
 	connect(m_project, SIGNAL(currentSheetChanged(Sheet*)), this, SLOT(set_sheet(Sheet*)));
+	connect(m_project, SIGNAL(projectLoadFinished()), this, SLOT(project_load_finished()));
 	
 	sheet_selector_update_sheets();
+}
+
+void SheetInfo::project_load_finished()
+{
+	sheet_selector_change_index_to(m_project->get_current_sheet());
 }
 
 void SheetInfo::set_sheet(Sheet* sheet)
@@ -770,9 +785,9 @@ void SheetInfo::sheet_selector_update_sheets()
 	m_sheetselectbox->clear();
 	foreach(Sheet* sheet, m_project->get_sheets()) {
 		m_sheetselectbox->addItem("Sheet " +
-				QString::number(m_project->get_sheet_index(sheet->get_id())) +
-				": " + sheet->get_title(),
-				sheet->get_id());
+		QString::number(m_project->get_sheet_index(sheet->get_id())) +
+		": " + sheet->get_title(),
+		sheet->get_id());
 	}
 }
 
@@ -802,7 +817,9 @@ void SheetInfo::sheet_selector_change_index_to(Sheet* sheet)
 	}
 	
 	int index = m_sheetselectbox->findData(sheet->get_id());
-	m_sheetselectbox->setCurrentIndex(index);
+	if (index >= 0) {
+		m_sheetselectbox->setCurrentIndex(index);
+	}
 }
 
 
@@ -928,4 +945,3 @@ void SystemValueBar::add_range_color(float x0, float x1, QColor color)
 }
 
 //eof
-
