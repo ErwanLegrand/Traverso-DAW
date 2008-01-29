@@ -102,8 +102,8 @@ AlsaDriver::~AlsaDriver()
 int AlsaDriver::setup(bool capture, bool playback, const QString& pcmName, const QString& ditherShape)
 {
 	unsigned long user_nperiods = device->get_driver_property("numberofperiods", 3).toInt();
-	char *playback_pcm_name = pcmName.toAscii().data();
-	char *capture_pcm_name = pcmName.toAscii().data();
+	char *playback_pcm_name = strdup(pcmName.toAscii().data());
+	char *capture_pcm_name = strdup(pcmName.toAscii().data());
 	int shorts_first = false;
 
 	/* duplex is the default */
