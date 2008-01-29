@@ -114,6 +114,10 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 	m_tlvp->setSceneRect(0, -TIMELINE_HEIGHT, MAX_CANVAS_WIDTH, 0);
 	m_tpvp->setSceneRect(-200, 0, 0, MAX_CANVAS_HEIGHT);
 	
+	// Set up the viewports scale factor, and our timeref_scalefactor / m_peakCacheZoomFactor
+	// Needed for our childs TrackView, AudioClipView, TimeLines MarkerViews etc which are created below.
+	scale_factor_changed();
+	
 	sheet_mode_changed();
 	
 	connect(m_sheet, SIGNAL(hzoomChanged()), this, SLOT(scale_factor_changed()));
@@ -693,10 +697,6 @@ void SheetView::clipviewport_resize_event()
 	// sense to populate the view with tracks.
 	static int wasCalledBefore;
 	if (!wasCalledBefore) {
-		// Set up the viewports scale factor, and our timeref_scalefactor / m_peakCacheZoomFactor
-		// Needed for our childs TrackView, AudioClipView etc which are created below.
-		scale_factor_changed();
-		
 		// fill the view with trackviews, add_new_trackview()
 		// doesn't yet layout the new tracks.
 		foreach(Track* track, m_sheet->get_tracks()) {

@@ -34,10 +34,13 @@
 #include <Utils.h>
 #include <QDebug>
 
+#include "Debugger.h"
+
 MarkerView::MarkerView(Marker* marker, SheetView* sv, ViewItem* parentView)
 	: ViewItem(parentView, marker)
 	, m_dragging(false)
 {
+	PENTERCONS2;
 	m_sv = sv;
 	m_marker = marker;
 	m_line = new LineView(this);
