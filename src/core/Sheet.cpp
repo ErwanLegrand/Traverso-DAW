@@ -73,7 +73,6 @@ Sheet::Sheet(Project* project)
 	title = tr("Untitled");
 	m_id = create_id();
 	artists = tr("No artists name set");
-	m_hzoom = config().get_property("Sheet", "hzoomLevel", 8192).toInt();
 
 	init();
 }
@@ -100,6 +99,14 @@ Sheet::Sheet(Project* project, const QDomNode node)
 		: ContextItem(), m_project(project)
 {
 	PENTERCONS;
+	
+	QDomNode propertiesNode = node.firstChildElement("Properties");
+	m_id = node.toElement().attribute("id", "0").toLongLong();
+	
+	if (m_id == 0) {
+		m_id = create_id();
+	}
+
 	init();
 	set_state( node );
 }
@@ -177,6 +184,7 @@ void Sheet::init()
 	m_transportLocation = TimeRef();
 	m_mode = EDIT;
 	m_sbx = m_sby = 0;
+	m_hzoom = config().get_property("Sheet", "hzoomLevel", 8192).toInt();
 	
 	m_pluginChain = new PluginChain(this, this);
 	m_fader = m_pluginChain->get_fader();
@@ -191,12 +199,8 @@ void Sheet::init()
 int Sheet::set_state( const QDomNode & node )
 {
 	PENTER;
+	
 	QDomNode propertiesNode = node.firstChildElement("Properties");
-	m_id = node.toElement().attribute("id", "0").toLongLong();
-	if (m_id == 0) {
-		m_id = create_id();
-	}
-
 	QDomElement e = propertiesNode.toElement();
 
 	title = e.attribute( "title", "" );
@@ -1064,7 +1068,7 @@ void Sheet::audiodevice_started( )
 	m_playBackBus = audiodevice().get_playback_bus("Playback 1");
 }
 
-const TimeRef& Sheet::get_last_location() const
+TimeRef Sheet::get_last_location() const
 {
 	TimeRef lastAudio = m_acmanager->get_last_location();
 	
