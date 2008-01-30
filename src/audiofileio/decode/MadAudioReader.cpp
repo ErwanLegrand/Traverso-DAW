@@ -26,6 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QString>
 #include <QVector>
 
+#include "Utils.h"
+
 RELAYTOOL_MAD;
 
 // Always put me below _all_ includes, this is needed

@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "WPAudioReader.h"
 #include <QString>
+#include "Utils.h"
 
 RELAYTOOL_WAVPACK;
 
