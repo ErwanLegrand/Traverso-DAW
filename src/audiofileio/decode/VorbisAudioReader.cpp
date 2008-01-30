@@ -40,7 +40,7 @@ VorbisAudioReader::VorbisAudioReader(QString filename)
 {
 	m_file = fopen(filename.toUtf8().data(), "rb");
 	if (!m_file) {
-		PERROR("Couldn't open file %s.", filename.toUtf8().data());
+		PERROR("Couldn't open file %s.", QS_C(filename));
 		return;
 	}
 	
@@ -76,7 +76,7 @@ bool VorbisAudioReader::can_decode(QString filename)
 	
 	FILE* file = fopen(filename.toUtf8().data(), "rb");
 	if (!file) {
-		PERROR("Could not open file: %s", filename.toUtf8().data());
+		PERROR("Could not open file: %s", QS_C(filename));
 		return false;
 	}
 	
@@ -102,7 +102,7 @@ bool VorbisAudioReader::seek_private(nframes_t start)
 	}
 	
 	if (int result = ov_pcm_seek(&m_vf, start) < 0) {
-		PERROR("VorbisAudioReader: could not seek to frame %d within %s (%d)", start, m_fileName.toUtf8().data(), result);
+		PERROR("VorbisAudioReader: could not seek to frame %d within %s (%d)", start, QS_C(m_fileName), result);
 		Q_UNUSED(result);
 		return false;
 	}

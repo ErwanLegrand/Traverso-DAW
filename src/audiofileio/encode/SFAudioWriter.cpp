@@ -97,10 +97,18 @@ bool SFAudioWriter::open_private()
 	m_sfinfo.channels = m_channels;
 	//m_sfinfo.frames = m_spec->endLocation - m_spec->startLocation + 1;
 	
-	m_sf = sf_open(m_fileName.toUtf8().data(), SFM_WRITE, &m_sfinfo);
+	m_file.setFileName(m_fileName);
+	
+	if (!m_file.open(QIODevice::WriteOnly)) {
+		qWarning("SFAudioReader::open_private: Could not create file (%s)", QS_C(m_fileName));
+		return false;
+	}
+	
+	m_sf = sf_open_fd(m_file.handle(), SFM_WRITE, &m_sfinfo, false);
+	
 	if (m_sf == 0) {
 		sf_error_str (0, errbuf, sizeof (errbuf) - 1);
-		PWARN("Export: cannot open output file \"%s\" (%s)", m_fileName.toUtf8().data(), errbuf);
+		PWARN("Export: cannot open output file \"%s\" (%s)", QS_C(m_fileName), errbuf);
 		return false;
 	}
 	

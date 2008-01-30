@@ -427,7 +427,7 @@ bool FlacAudioReader::can_decode(QString filename)
 	QFile f(filename);
 
 	if (!f.open(QIODevice::ReadOnly)) {
-		PERROR("Could not open file %s", filename.toUtf8().data());
+		PERROR("Could not open file %s", QS_C(filename));
 		return false;
 	}
 
@@ -479,7 +479,7 @@ bool FlacAudioReader::seek_private(nframes_t start)
 	Q_ASSERT(m_flac);
 	
 	if (start >= m_nframes) {
-		PERROR("FlacAudioReader: could not seek to frame %d within %s, it's past the end.", start, m_fileName.toUtf8().data());
+		PERROR("FlacAudioReader: could not seek to frame %d within %s, it's past the end.", start, QS_C(m_fileName));
 		return false;
 	}
 	
@@ -489,7 +489,7 @@ bool FlacAudioReader::seek_private(nframes_t start)
 	m_flac->flush();
 	
 	if (!m_flac->seek(start)) {
-		PERROR("FlacAudioReader: could not seek to frame %d within %s", start, m_fileName.toUtf8().data());
+		PERROR("FlacAudioReader: could not seek to frame %d within %s", start, QS_C(m_fileName));
 		return false;
 	}
 	

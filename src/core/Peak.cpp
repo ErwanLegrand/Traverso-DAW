@@ -134,7 +134,7 @@ int Peak::read_header()
 			}
 				
 			QString errorstring = FileHelper::fileerror_to_string(data->file.error());
-			PERROR("Couldn't open peak file for reading! (%s, Error: %s)", data->fileName.toUtf8().data(), QS_C(errorstring));
+			qWarning("Couldn't open peak file for reading! (%s, Error: %s)", QS_C(data->fileName), QS_C(errorstring));
 			return -1;
 		}
 
@@ -918,7 +918,7 @@ bool PeakDataReader::seek(nframes_t start)
 		// only seek if we didn't mmap 
 		if (!m_d->memory) {
 			if (!m_d->file.seek(start)) {
-				PERROR("PeakDataReader: could not seek to data point %d within %s", start, m_d->fileName.toUtf8().data());
+				qWarning("PeakDataReader: could not seek to data point %d within %s", start, QS_C(m_d->fileName));
 				return false;
 			}
 		}

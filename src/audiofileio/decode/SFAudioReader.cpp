@@ -20,7 +20,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 */
 
 #include "SFAudioReader.h"
-#include <QFile>
 #include <QString>
 
 // Always put me below _all_ includes, this is needed
@@ -37,8 +36,15 @@ SFAudioReader::SFAudioReader(QString filename)
 	*/
 	memset (&m_sfinfo, 0, sizeof(m_sfinfo));
 
-	if ((m_sf = sf_open (m_fileName.toUtf8().data(), SFM_READ, &m_sfinfo)) == 0) {
-		PERROR("Couldn't open soundfile (%s)", m_fileName.toUtf8().data());
+	m_file.setFileName(m_fileName);
+	
+	if (!m_file.open(QIODevice::ReadOnly)) {
+		qWarning("SFAudioReader::Could not open soundfile (%s)", QS_C(m_fileName));
+		return;
+	}
+	
+	if ((m_sf = sf_open_fd (m_file.handle(), SFM_READ, &m_sfinfo, false)) == 0) {
+		qWarning("SFAudioReader::Could not open soundfile (%s)", QS_C(m_fileName));
 		return;
 	}
  
@@ -69,7 +75,14 @@ bool SFAudioReader::can_decode(QString filename)
 	*/
 	memset (&infos, 0, sizeof(infos));
 
-	SNDFILE* sndfile = sf_open(filename.toUtf8().constData(), SFM_READ, &infos);
+	QFile file(filename);
+	
+	if (!file.open(QIODevice::ReadOnly)) {
+		qWarning("SFAudioReader::can_decode: Couldn't open soundfile (%s)", QS_C(filename));
+		return false;
+	}
+	
+	SNDFILE* sndfile = sf_open_fd(file.handle(), SFM_READ, &infos, false);
 	
 	//is it supported by libsndfile?
 	if (!sndfile) {
@@ -94,7 +107,7 @@ bool SFAudioReader::seek_private(nframes_t start)
 	if (sf_seek (m_sf, (off_t) start, SEEK_SET) < 0) {
 		char errbuf[256];
 		sf_error_str (0, errbuf, sizeof (errbuf) - 1);
-		PERROR("ReadAudioSource: could not seek to frame %d within %s (%s)", start, m_fileName.toUtf8().data(), errbuf);
+		PERROR("ReadAudioSource: could not seek to frame %d within %s (%s)", start, QS_C(m_fileName), errbuf);
 		return false;
 	}
 	

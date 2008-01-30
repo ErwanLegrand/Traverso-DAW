@@ -26,7 +26,7 @@
 #include <QPixmap>
 #include <QDateTime>
 
-#define QS_C(x) x.toAscii().data()
+#define QS_C(x) x.toUtf8().data()
 
 class QString;
 

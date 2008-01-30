@@ -120,7 +120,7 @@ bool FlacAudioWriter::open_private()
 	ok &= FLAC__file_encoder_set_bits_per_sample(d->encoder, m_sampleWidth);
 	ok &= FLAC__file_encoder_set_sample_rate(d->encoder, m_rate);
 	ok &= FLAC__file_encoder_set_total_samples_estimate(d->encoder, 0);  // Set when done
-	ok &= FLAC__file_encoder_set_filename(d->encoder, m_fileName.toUtf8().data());
+	ok &= FLAC__file_encoder_set_filename(d->encoder, QS_C(m_fileName));
 #else
 	ok &= FLAC__stream_encoder_set_compression_level(d->encoder, d->quality);
 	ok &= FLAC__stream_encoder_set_channels(d->encoder, m_channels);
@@ -140,7 +140,7 @@ bool FlacAudioWriter::open_private()
 		}
 #else
 		FLAC__StreamEncoderInitStatus init_status;
-		init_status = FLAC__stream_encoder_init_file(d->encoder, m_fileName.toUtf8().data(), NULL, /*client_data=*/NULL);
+		init_status = FLAC__stream_encoder_init_file(d->encoder, QS_C(m_fileName), NULL, /*client_data=*/NULL);
 		if (init_status != FLAC__STREAM_ENCODER_INIT_STATUS_OK) {
 			PERROR("ERROR: initializing encoder: %s", FLAC__StreamEncoderInitStatusString[init_status]);
 			ok = false;

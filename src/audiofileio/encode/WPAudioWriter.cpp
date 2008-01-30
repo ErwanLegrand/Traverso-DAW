@@ -102,7 +102,7 @@ bool WPAudioWriter::open_private()
 {
 	m_file = fopen(m_fileName.toUtf8().data(), "wb");
 	if (!m_file) {
-		PERROR("Couldn't open file %s.", m_fileName.toUtf8().data());
+		qWarning("Couldn't open file %s.", QS_C(m_fileName));
 		return false;
 	}
 	

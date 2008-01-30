@@ -305,7 +305,7 @@ void HDDSpaceInfo::update_status( )
 	
 #if defined (Q_WS_WIN)
 	__int64 freebytestocaller, totalbytes, freebytes; 
-	if (! GetDiskFreeSpaceEx ((const WCHAR*)(m_project->get_root_dir().toUtf8().data()),
+	if (! GetDiskFreeSpaceEx ((const WCHAR*)(QS_C(m_project->get_root_dir())),
 					(PULARGE_INTEGER)&freebytestocaller,
 					(PULARGE_INTEGER)&totalbytes,
 					(PULARGE_INTEGER)&freebytes)) 
@@ -324,7 +324,7 @@ void HDDSpaceInfo::update_status( )
 #else
 	
 	struct statfs fs;
-	statfs(m_project->get_root_dir().toUtf8().data(), &fs);
+	statfs(QS_C(m_project->get_root_dir()), &fs);
 	space = floor (fs.f_bavail * (fs.f_bsize / 1048576.0));
 #endif
 #endif

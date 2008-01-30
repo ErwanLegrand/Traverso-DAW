@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <AbstractAudioReader.h>
 #include "sndfile.h"
 
+#include <QFile>
 
 class SFAudioReader : public AbstractAudioReader
 {
@@ -42,6 +43,9 @@ protected:
 	
 	SNDFILE*	m_sf;
 	SF_INFO		m_sfinfo;
+	
+private:
+	QFile m_file;
 };
 
 #endif

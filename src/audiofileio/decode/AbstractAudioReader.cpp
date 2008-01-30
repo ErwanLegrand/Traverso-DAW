@@ -141,7 +141,7 @@ AbstractAudioReader* AbstractAudioReader::create_audio_reader(const QString& fil
 #endif
 		
 		if (newReader && !newReader->is_valid()) {
-			PERROR("new %s reader is invalid! (channels: %d, frames: %d)", (const char *)(newReader->decoder_type().toUtf8()), newReader->get_num_channels(), newReader->get_nframes());
+			PERROR("new %s reader is invalid! (channels: %d, frames: %d)", QS_C(newReader->decoder_type()), newReader->get_num_channels(), newReader->get_nframes());
 			delete newReader;
 			newReader = 0;
 		}
@@ -169,7 +169,7 @@ AbstractAudioReader* AbstractAudioReader::create_audio_reader(const QString& fil
 	}
 	
 	if (newReader && !newReader->is_valid()) {
-		PERROR("new %s reader is invalid! (channels: %d, frames: %d)", (const char *)(newReader->decoder_type().toUtf8()), newReader->get_num_channels(), newReader->get_nframes());
+		PERROR("new %s reader is invalid! (channels: %d, frames: %d)", QS_C(newReader->decoder_type()), newReader->get_num_channels(), newReader->get_nframes());
 		delete newReader;
 		newReader = 0;
 	}
