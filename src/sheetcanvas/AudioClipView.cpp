@@ -266,50 +266,9 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 		curveDefaultValue = curveView->get_default_value();
 	}
 	
-	int highbit;
-	unsigned long nearestpow2 = nearest_power_of_two(long(m_sheet->get_hzoom()), highbit);
-	if (nearestpow2 == 0) {
-		nearestpow2 = 1;
-	}
-	
-	qreal xscale = qreal(nearestpow2) / m_sheet->get_hzoom();
-	// xscale becomes smaller then 1.0 at times, which is not supported!
-	// only if it is > 1.0 we are allowed to adjust the pixelcount. (needs proper fix)
-	if (xscale > 1) {
-		pixelcount = qRound(pixelcount / xscale);
-	}
-// 	printf("xscale %f, nearestpow2 %d, zoomlevel %f\n", qreal(nearestpow2) / m_sheet->get_hzoom(), nearestpow2, m_sheet->get_hzoom());
+	qreal xscale;
+// 	printf("xscale %f, zoomlevel %f\n", xscale, m_sheet->get_hzoom());
 
-	// Load peak data for all channels, if no peakdata is returned
-	// for a certain Peak object, schedule it for loading.
-	for (int chan=0; chan < channels; ++chan) {
-		
-		int availpeaks = peak->calculate_peaks( chan,
-				&pixeldata[chan],
-    				m_sheet->get_hzoom(),
-				TimeRef(xstart * m_sv->timeref_scalefactor) + clipstartoffset,
-				peakdatacount);
-		
-		if (peakdatacount != availpeaks) {
-// 			PWARN("peakdatacount != availpeaks (%d, %d)", peakdatacount, availpeaks);
-		}
-
-		if (availpeaks == Peak::NO_PEAK_FILE) {
-			connect(peak, SIGNAL(progress(int)), this, SLOT(update_progress_info(int)));
-			connect(peak, SIGNAL(finished()), this, SLOT (peak_creation_finished()));
-			m_waitingForPeaks = true;
-			peak->start_peak_loading();
-			return;
-		}
-		
-		if (availpeaks == Peak::PERMANENT_FAILURE || availpeaks == Peak::NO_PEAKDATA_FOUND) {
-			return;
-		}		
-		
-// 		pixelcount = std::min(pixelcount, availpeaks);
-	}
-	
-	
 	float curvemixdown[peakdatacount];
 	if (mixcurvedata) {
 		mixcurvedata |= curveView->get_vector(qRound(xstart) + offset, peakdatacount, curvemixdown);
@@ -335,34 +294,60 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 		mixcurvedata |= fademix;
 	}
 	
-	// Load the Peak data into the pixeldata float buffers
-	// ClassicView uses both positive and negative values,
-	// rectified view: pick the highest value of both
-	// Merged view: calculate highest value for all channels, 
-	// and store it in the first channels pixeldata.
-	if (!microView) {
-		if (!m_classicView) {
-			for (int chan=0; chan < channels; chan++) {
+	// Load peak data, mix curvedata and start painting it
+	// if no peakdata is returned for a certain Peak object, schedule it for loading.
+	for (int chan=0; chan < channels; ++chan) {
+		
+		int availpeaks = peak->calculate_peaks(
+				chan,
+				&pixeldata[chan],
+				TimeRef(xstart * m_sv->timeref_scalefactor) + clipstartoffset,
+				peakdatacount,
+				m_sheet->get_hzoom(),
+				xscale);
+		
+		if (peakdatacount != availpeaks) {
+// 			PWARN("peakdatacount != availpeaks (%d, %d)", peakdatacount, availpeaks);
+		}
+
+		if (availpeaks == Peak::NO_PEAK_FILE) {
+			connect(peak, SIGNAL(progress(int)), this, SLOT(update_progress_info(int)));
+			connect(peak, SIGNAL(finished()), this, SLOT (peak_creation_finished()));
+			m_waitingForPeaks = true;
+			peak->start_peak_loading();
+			return;
+		}
+		
+		if (availpeaks == Peak::PERMANENT_FAILURE || availpeaks == Peak::NO_PEAKDATA_FOUND) {
+			return;
+		}
+		
+		if (m_mergedView && channels == 2 && chan == 0) continue;
+
+		
+// 		pixelcount = std::min(pixelcount, availpeaks);
+	
+		// ClassicView uses both positive and negative values,
+		// rectified view: pick the highest value of both
+		// Merged view: calculate highest value for all channels, 
+		// and store it in the first channels pixeldata.
+		if (!microView) {
+			// if Rectified View, calculate max of the minimum and maximum value.
+			if (!m_classicView) {
 				for (int i=0, j=0; i < (pixelcount*2); i+=2, ++j) {
 					pixeldata[chan][j] = - fabs(f_max(pixeldata[chan][i], - pixeldata[chan][i+1]));
 				}
 			}
-		}
 		
-		if (m_mergedView) {
-			for (int chan=1; chan < channels; chan++) {
+			if (m_mergedView && channels == 2) {
 				for (int i = 0; i < (pixelcount*2); ++i) {
 					pixeldata[0][i] = f_max(pixeldata[chan - 1][i], pixeldata[chan][i]);
 				}
 			}
 		}
-		
-	}
 	
-	if (mixcurvedata) {
-		int curvemixdownpos;
-		for (int chan=0; chan < channels; chan++) {
-			curvemixdownpos = 0;
+		if (mixcurvedata) {
+			int curvemixdownpos = 0;
 			if (m_classicView) {
 				for (int i = 0; i < (pixelcount*2); ++i) {
 					pixeldata[chan][i++] *= curvemixdown[curvemixdownpos];
@@ -376,10 +361,7 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 				}
 			}
 		}
-	}
-	
-
-	for (int chan=0; chan < channels; chan++) {
+		
 		p->save();
 		
 		// calculate the height of the area available for peak drawing 
@@ -414,6 +396,7 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 			p->drawLine(0, 0, pixelcount, 0);
 			p->restore();
 		}
+		
 		
 		// Microview, paint waveform as polyline
 		if (microView) {
@@ -543,14 +526,9 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 				
 				p->drawPath(path);
 			}
-			
 		}
 		
 		p->restore();
-		
-		if (m_mergedView) {
-			break;
-		}
 	}
 }
 

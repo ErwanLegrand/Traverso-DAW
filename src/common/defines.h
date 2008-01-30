@@ -66,6 +66,10 @@ struct TimeRef {
 		m_position = (UNIVERSAL_SAMPLE_RATE / rate) * frame;
 	}
 	
+	TimeRef(qreal frame, int rate) {
+		m_position = qint64((qreal(UNIVERSAL_SAMPLE_RATE) / rate) * frame);
+	}
+	
 	void add_frames(nframes_t frames, int rate) {
 		m_position += ((UNIVERSAL_SAMPLE_RATE / rate) * frames);
 	}

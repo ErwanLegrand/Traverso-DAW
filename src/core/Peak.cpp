@@ -79,7 +79,6 @@ Peak::Peak(AudioSource* source)
 	if (rs) {
 		// This Peak object was created by AudioClip, meant for reading peak data
 		m_source = resources_manager()->get_readsource(rs->get_id());
-		m_source->set_output_rate(44100, true);
 	} else {
 		// No ReadSource object? Then it's created by WriteSource for on the fly
 		// peak data creation, no m_source needed!
@@ -238,7 +237,14 @@ void Peak::start_peak_loading()
 }
 
 
-int Peak::calculate_peaks(int chan, float** buffer, qreal zoomLevel, TimeRef startlocation, int pixelcount)
+int Peak::calculate_peaks(
+	int chan,
+	float ** buffer,
+	TimeRef startlocation,
+	int peakDataCount,
+	qreal framesPerPeak,
+	qreal & scaleFactor
+	)
 {
 	PENTER3;
 	
@@ -252,7 +258,7 @@ int Peak::calculate_peaks(int chan, float** buffer, qreal zoomLevel, TimeRef sta
 		}
 	}
 	
-	if (pixelcount <= 0) {
+	if (peakDataCount <= 0) {
 		return NO_PEAKDATA_FOUND;
 	}
 	
@@ -262,12 +268,15 @@ int Peak::calculate_peaks(int chan, float** buffer, qreal zoomLevel, TimeRef sta
 // 	PROFILE_START;
 	
 	// Macro view mode
-	if (zoomLevel >= 64) {
+	if (framesPerPeak >= 64) {
 		int highbit;
-		unsigned long nearestpow2 = nearest_power_of_two(qRound(zoomLevel), highbit);
+		unsigned long nearestpow2 = nearest_power_of_two(qRound(framesPerPeak), highbit);
 		if (nearestpow2 == 0) {
 			return NO_PEAKDATA_FOUND;
 		}
+		
+		scaleFactor = qreal(nearestpow2) / framesPerPeak;
+
 		
 		nframes_t startPos = startlocation.to_frame(44100);
 		
@@ -280,16 +289,16 @@ int Peak::calculate_peaks(int chan, float** buffer, qreal zoomLevel, TimeRef sta
 		int truncate = 0;
 		
 		// Check if this zoom level has as many data as requested.
-		if ( (pixelcount + offset) > data->headerdata.peakDataSizeForLevel[index]) {
-			truncate = pixelcount - (data->headerdata.peakDataSizeForLevel[index] - offset);
+		if ( (peakDataCount + offset) > data->headerdata.peakDataSizeForLevel[index]) {
+			truncate = peakDataCount - (data->headerdata.peakDataSizeForLevel[index] - offset);
 // 			pixelcount = data->headerdata.peakDataSizeForLevel[index] - offset;
 		}
 		
 		nframes_t readposition = data->headerdata.headerSize + (data->headerdata.peakDataOffsets[index] + offset) * sizeof(peak_data_t);
-		produced = data->peakreader->read_from(data->peakdataDecodeBuffer, readposition, pixelcount);
+		produced = data->peakreader->read_from(data->peakdataDecodeBuffer, readposition, peakDataCount);
 		
-		if (produced != pixelcount) {
-			PERROR("Could not read in all peak data, pixelcount is %d, read count is %d", pixelcount, produced);
+		if (produced != peakDataCount) {
+			PERROR("Could not read in all peak data, peakDataCount is %d, read count is %d", peakDataCount, produced);
 		}
 		
 // 		PROFILE_END("Peak calculate_peaks");
@@ -304,20 +313,19 @@ int Peak::calculate_peaks(int chan, float** buffer, qreal zoomLevel, TimeRef sta
 // 		
 		*buffer = data->peakdataDecodeBuffer->destination[0];
 		
-		return pixelcount;
+		return produced;
 
 	// Micro view mode
 	} else {
-		
-		int highbit;
-		unsigned long nearestpow2 = nearest_power_of_two(zoomLevel, highbit);
-		
-		if (nearestpow2 == 0) {
-			nearestpow2 = 1;
+		if (framesPerPeak < 1.0) {
+			scaleFactor = 1.0 / framesPerPeak;
+			framesPerPeak = 1.0;
+		} else {
+			scaleFactor = 1.0;
 		}
 		
 		// Calculate the amount of frames to be read
-		nframes_t toRead = pixelcount * nearestpow2;
+		nframes_t toRead = qRound(peakDataCount * framesPerPeak);
 		
 		nframes_t readFrames = m_source->file_read(data->peakdataDecodeBuffer, startlocation, toRead);
 
@@ -327,42 +335,54 @@ int Peak::calculate_peaks(int chan, float** buffer, qreal zoomLevel, TimeRef sta
 		
 		if ( readFrames != toRead) {
 			PWARN("Unable to read nframes %d (only %d available)", toRead, readFrames);
-			pixelcount = qRound(readFrames / nearestpow2);
 		}
 
 		int count = 0;
-		nframes_t pos = 0;
-		audio_sample_t valueMax, valueMin, sample;
+		audio_sample_t sample;
 		
 		// MicroView needs a buffer to store the calculated peakdata
 		// our decodebuffer's readbuffer is large enough for this purpose
 		// and it's no problem to use it at this point in the process chain.
 		float* peakdata = data->peakdataDecodeBuffer->readBuffer;
 
-		do {
-			valueMax = valueMin = 0;
+		ProcessData pd;
+		pd.stepSize = TimeRef(nframes_t(1), m_source->get_file_rate());
+		pd.processRange = TimeRef(framesPerPeak, m_source->get_file_rate());
 
-			for(int i=0; i < nearestpow2; i++) {
-				Q_ASSERT(pos <= readFrames);
-				sample = data->peakdataDecodeBuffer->destination[chan][pos];
-				if (sample > valueMax)
-					valueMax = sample;
-				if (sample < valueMin)
-					valueMin = sample;
-				pos++;
-			}
-
-			if (valueMax > fabs(valueMin)) {
-				peakdata[count] = valueMax;
-			} else {
-				peakdata[count] = valueMin;
-			}
-			
-			count++;
+		for (uint i=0; i < readFrames; i++) {
 		
-		} while(count < pixelcount);
-
-
+			pd.processLocation += pd.stepSize;
+		
+			sample = data->peakdataDecodeBuffer->destination[chan][i];
+		
+			pd.normValue = f_max(pd.normValue, fabsf(sample));
+		
+			if (sample > pd.peakUpperValue) {
+				pd.peakUpperValue = sample;
+			}
+		
+			if (sample < pd.peakLowerValue) {
+				pd.peakLowerValue = sample;
+			}
+		
+			if (pd.processLocation >= pd.nextDataPointLocation) {
+		
+				if (pd.peakUpperValue > fabs(pd.peakLowerValue)) {
+					peakdata[count] = pd.peakUpperValue;
+				} else {
+					peakdata[count] = pd.peakLowerValue;
+				}
+				
+				pd.peakUpperValue = -10.0;
+				pd.peakLowerValue = 10.0;
+			
+				pd.nextDataPointLocation += pd.processRange;
+				count++;
+			}
+		}
+		
+// 		printf("framesPerPeak, peakDataCount, generated, readFrames %f, %d, %d, %d\n", framesPerPeak, peakDataCount, count, readFrames);
+		
 // 		PROFILE_END("Peak calculate_peaks");		
 		
 		// Assign the supplied buffer to the 'real' peakdata buffer.
@@ -415,7 +435,8 @@ int Peak::prepare_processing(int rate)
 		data->file.seek(data->headerdata.headerSize);
 		
 		data->pd = new Peak::ProcessData;
-		data->pd->stepSize = TimeRef(1, rate);
+		data->pd->stepSize = TimeRef(nframes_t(1), rate);
+		data->pd->processRange = TimeRef(nframes_t(64), 44100);
 	}
 	
 	
@@ -666,8 +687,6 @@ out:
 	 
 // 	PROFILE_END("Peak create from scratch");
 	
-	m_source->set_output_rate(44100, true);
-
 	return ret;
 }
 
@@ -736,8 +755,6 @@ audio_sample_t Peak::get_max_amplitude(TimeRef startlocation, TimeRef endlocatio
 	}
 	
 	delete [] readbuffer;
-	
-	m_source->set_output_rate(44100, true);
 	
 	return maxamp;
 }
@@ -973,3 +990,9 @@ int Peak::max_zoom_value()
 	return 1048576;
 }
 
+Peak::ChannelData::~ ChannelData()
+{
+	if (peakdataDecodeBuffer) {
+		delete peakdataDecodeBuffer;
+	}
+}

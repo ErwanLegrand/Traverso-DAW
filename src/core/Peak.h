@@ -114,7 +114,7 @@ public:
 	void process(uint channel, audio_sample_t* buffer, nframes_t frames);
 	int prepare_processing(int rate);
 	int finish_processing();
-	int calculate_peaks(int chan, float** buffer, qreal zoomLevel, TimeRef startlocation, int count);
+	int calculate_peaks(int chan, float** buffer, TimeRef startlocation, int peakDataCount, qreal framesPerPeak, qreal& scaleFactor);
 
 	void close();
 	
@@ -136,7 +136,6 @@ private:
 		ProcessData() {
 			normValue = peakUpperValue = peakLowerValue = 0;
 			processBufferSize = progress = normProcessedFrames = normDataCount = 0;
-			processRange = TimeRef(64, 44100);
 			nextDataPointLocation = processRange;
 		}
 		
@@ -170,11 +169,7 @@ private:
 			memory = 0;
 			peakdataDecodeBuffer = 0;
 		}
-		~ChannelData() {
-			if (peakdataDecodeBuffer) {
-				delete peakdataDecodeBuffer;
-			}
-		}
+		~ChannelData();
 		QString		fileName;
 		QString		normFileName;
 		QFile 		file;
