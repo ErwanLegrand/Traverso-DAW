@@ -154,9 +154,8 @@ void MoveClip::init_data(bool isCopy)
 	m_originTrack = m_targetTrack = m_clip->get_track();
 	m_originalTrackStartLocation = m_clip->get_track_start_location();
 	m_posDiff = TimeRef();
-	d->origXPos = cpointer().on_first_input_event_x();
-	d->origPos = QPoint(d->origXPos, cpointer().on_first_input_event_y());
-	d->hScrollbarValue = d->sv->hscrollbar_value();
+	d->origXPos = cpointer().scene_x();
+	d->origPos = QPointF(d->origXPos, cpointer().scene_y());
 	d->sv->start_shuttle(true, true);
 	d->origTrackStartLocation = m_clip->get_track_start_location();
 	d->origTrackEndLocation = m_clip->get_track_end_location();
@@ -311,16 +310,14 @@ int MoveClip::jog()
 		d->zoom->jog();
 		return 0;
 	}
-
+	
 	
 	d->jogBypassPos = cpointer().pos();
 	
-	int scrollbardif = d->hScrollbarValue - d->sv->hscrollbar_value();
-	
-	QPointF diffPoint(cpointer().pos() - d->origPos);
+	QPointF diffPoint(cpointer().scene_pos() - d->origPos);
 	QPointF newPos(d->view->pos() + diffPoint);
 	
-	d->origPos = cpointer().pos();
+	d->origPos = cpointer().scene_pos();
 	
 	if (m_actionType != "anchored_left_edge_move" && m_actionType != "anchored_right_edge_move") {
 		TrackView* trackView = d->sv->get_trackview_under(cpointer().scene_pos());
@@ -332,9 +329,9 @@ int MoveClip::jog()
 		}
 	}
 
-	int newXPos = cpointer().x() - scrollbardif;
+	int newXPos = cpointer().scene_x();
 
-	TimeRef diff_f = TimeRef((cpointer().x() - d->origXPos - scrollbardif) * d->sv->timeref_scalefactor);
+	TimeRef diff_f = TimeRef((cpointer().scene_x() - d->origXPos) * d->sv->timeref_scalefactor);
 	TimeRef newTrackStartLocation;
 	TimeRef newTrackEndLocation = d->origTrackEndLocation + diff_f;
 
@@ -380,6 +377,8 @@ int MoveClip::jog()
 	}
 	
 	d->sv->update_shuttle_factor();
+	
+	cpointer().get_viewport()->set_holdcursor_pos(d->sv->get_clips_viewport()->mapToScene(cpointer().pos()).toPoint());
 
 	return 1;
 }
@@ -476,17 +475,26 @@ void MoveClip::calculate_snap_diff(TimeRef& leftlocation, TimeRef rightlocation)
 
 void MoveClip::start_zoom(bool autorepeat)
 {
+	if (autorepeat) return;
+	
 	if (!d->zoom) {
 		d->zoom = new Zoom(d->sv, QList<QVariant>() << "HJogZoom" << "1.2" << "0.2");
 		d->zoom->begin_hold();
 		cpointer().get_viewport()->set_holdcursor(":/cursorZoomHorizontal");
 		d->sv->start_shuttle(false);
 	} else {
-		d->zoom->finish_hold();
 		delete d->zoom;
 		d->zoom = 0;
 		cpointer().get_viewport()->set_holdcursor(":/cursorHoldLrud");
+		d->origPos = cpointer().scene_pos();
 		d->sv->start_shuttle(true, true);
 	}
+}
+
+void MoveClip::set_cursor_shape(int useX, int useY)
+{
+	Q_UNUSED(useX);
+	Q_UNUSED(useY);
+	cpointer().get_viewport()->set_holdcursor(":/cursorHoldLrud");
 }
 

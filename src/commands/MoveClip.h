@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveClip.h,v 1.23 2008/02/07 15:35:07 r_sijrier Exp $
+    $Id: MoveClip.h,v 1.24 2008/02/07 18:04:00 r_sijrier Exp $
 */
 
 #ifndef MOVECLIPACTION_H
@@ -55,6 +55,8 @@ public :
 	void cancel_action();
         int jog();
 	
+	void set_cursor_shape(int useX, int useY);
+	
 private :
 	Sheet* 		m_sheet;
 	AudioClip* 	m_clip;
@@ -67,13 +69,12 @@ private :
 	
 	struct Data {
 		int 		origXPos;
-		int 		hScrollbarValue;
 		TimeRef		xoffset;
 		AudioClip* 	newclip;
 		SheetView* 	sv;
 		AudioClipView*	view;
 		TrackView*	origTrackView;
-		QPoint		origPos;
+		QPointF		origPos;
 		TimeRef 	origTrackStartLocation;
 		TimeRef 	origTrackEndLocation;
 		bool 		resync;
