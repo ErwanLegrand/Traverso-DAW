@@ -695,9 +695,7 @@ void SheetView::clipviewport_resize_event()
 	// Once the ClipViewPort has been initialed, and _resized_
 	// only _then_ we know _our_ size, at which time it makes 
 	// sense to populate the view with tracks.
-	static int wasCalledBefore;
-	if (!wasCalledBefore) {
-		wasCalledBefore = 1;
+	if (!m_viewportReady) {
 		
 		// fill the view with trackviews, add_new_trackview()
 		// doesn't yet layout the new tracks.
