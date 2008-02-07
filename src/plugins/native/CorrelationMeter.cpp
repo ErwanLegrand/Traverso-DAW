@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CorrelationMeter.cpp,v 1.4 2008/02/07 11:46:09 n_doebelin Exp $
+$Id: CorrelationMeter.cpp,v 1.5 2008/02/07 15:33:17 n_doebelin Exp $
 
 */
 
@@ -25,23 +25,23 @@ $Id: CorrelationMeter.cpp,v 1.4 2008/02/07 11:46:09 n_doebelin Exp $
 #include <AudioBus.h>
 #include <AudioDevice.h>
 #include <Debugger.h>
-#include <QDebug>
 #include <math.h>
+#include <limits.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 		
-#define SMOOTH_FACTOR	1
 #define BUFFER_READOUT_TOLERANCE 2  // recommended: 1-10
-#define METER_COLLAPSE_SPEED 4       // recommended: 1-10
+#define RINGBUFFER_SIZE 150
+#define METER_COLLAPSE_SPEED 0.05
 
 
 CorrelationMeter::CorrelationMeter()
 	: Plugin()
 {
 	// constructs a ringbuffer that can hold 150 CorrelationMeterData structs
-	m_databuffer = new RingBufferNPT<CorrelationMeterData>(150);
+	m_databuffer = new RingBufferNPT<CorrelationMeterData>(RINGBUFFER_SIZE);
 	
 	// Initialize member variables, that need to be initialized
 	calculate_fract();
@@ -193,7 +193,7 @@ int CorrelationMeter::get_data(float& r, float& direction)
 
  	if (readcount == 0) {
 		// add another 'if' to avoid unlimited growth of the variable
-		if (m_bufferreadouts <= BUFFER_READOUT_TOLERANCE) {
+		if (m_bufferreadouts < RINGBUFFER_SIZE) {
 			m_bufferreadouts++;
 		}
 
@@ -204,7 +204,7 @@ int CorrelationMeter::get_data(float& r, float& direction)
 			dummydata.r = 1.0;
 			dummydata.levelLeft = 0.0;
 			dummydata.levelRight = 0.0;
-			for (int i = 0; i < METER_COLLAPSE_SPEED; ++i) {
+			for (int i = 0; i < int(METER_COLLAPSE_SPEED / m_fract); ++i) {
 				m_databuffer->write(&dummydata, 1);
 			}
  		} else {
@@ -262,7 +262,7 @@ int CorrelationMeter::get_data(float& r, float& direction)
 
 void CorrelationMeter::calculate_fract( )
 {
-	m_fract = ((float) audiodevice().get_buffer_size()) / (audiodevice().get_sample_rate() * SMOOTH_FACTOR);
+	m_fract = ((float) audiodevice().get_buffer_size()) / (audiodevice().get_sample_rate());
 }
 
 
