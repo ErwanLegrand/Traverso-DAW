@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SpectralMeter.h,v 1.4 2007/02/05 17:10:09 r_sijrier Exp $
+$Id: SpectralMeter.h,v 1.5 2008/02/07 12:52:57 n_doebelin Exp $
 */
 
 
@@ -62,6 +62,7 @@ public:
 private:
 	int	m_frlen;
 	int	m_windowingFunction;
+	int	m_bufferreadouts;
 
 	// FFTW globals
 	fftw_plan pfegl, pfegr;

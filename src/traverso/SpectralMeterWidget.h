@@ -137,6 +137,7 @@ private:
 	float		freq_step;
 	int		bar_offset;
 	bool		show_average;
+	bool		update_average;
 
 	void		reduce_bands();
 	void		update_layout();

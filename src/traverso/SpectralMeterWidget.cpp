@@ -149,6 +149,7 @@ SpectralMeterView::SpectralMeterView(SpectralMeterWidget* widget)
 	lower_freq_log = log10(lower_freq);
 	sample_rate = audiodevice().get_sample_rate();
 	show_average = false;
+	update_average = true;
 	sample_weight = 1;
 
 	QFontMetrics fm(themer()->get_font("FFTMeter:fontscale:label"));
@@ -326,7 +327,18 @@ void SpectralMeterView::update_data()
 
 	// if no data was available, return, so we _only_ update the widget when
 	// it needs to be!
- 	if (m_meter->get_data(specl, specr) == 0) {
+
+	int ret = m_meter->get_data(specl, specr);
+
+	// switch off the update of the average curve if silence is played back.
+	if (ret == -1) {
+		update_average = false;
+	} else {
+		update_average = true;
+	}
+
+	// do nothing if the buffer is not ready.
+ 	if (ret == 0) {
  		return;
  	}
 
@@ -437,17 +449,17 @@ void SpectralMeterView::reduce_bands()
 	}
 
 	// fill the average sample curve
-	if (show_average) {
+	if (show_average && update_average) {
 		for (int i = 0; i < m_avg_db.size(); ++i) {
 			float val = 5.0 * (log10(specl.at(i) * specr.at(i)) + xfactor);
 			float v = val * sweight + m_avg_db.at(i) * oweight;
 			m_avg_db[i] = v;
 		}
-	}
 
-	// progress the sample weighting for the average curve
-	if ((show_average) && (sample_weight < (MAX_SAMPLES - 1))) {
-		++sample_weight;
+		// progress the sample weighting for the average curve
+		if (sample_weight < (MAX_SAMPLES - 1)) {
+			++sample_weight;
+		}
 	}
 }
 

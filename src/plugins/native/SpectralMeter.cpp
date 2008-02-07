@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SpectralMeter.cpp,v 1.6 2007/11/05 15:49:31 r_sijrier Exp $
+$Id: SpectralMeter.cpp,v 1.7 2008/02/07 12:52:57 n_doebelin Exp $
 
 */
 
@@ -34,12 +34,14 @@ $Id: SpectralMeter.cpp,v 1.6 2007/11/05 15:49:31 r_sijrier Exp $
 #include "Debugger.h"
 
 #define PI 3.141592653589
+#define BUFFER_READOUT_TOLERANCE 2 // recommended: 1-10
 
 SpectralMeter::SpectralMeter()
 	: Plugin()
 {
 	m_frlen = 2048;
 	m_windowingFunction = 1;
+	m_bufferreadouts = 0;
 
 	(int) init();
 
@@ -165,9 +167,29 @@ int SpectralMeter::get_data(QVector<float> &specl, QVector<float> &specr)
 	int readcount = m_databufferL->read_space();
 	
 	// If there is not enough new data for an FFT window in the ringbuffer,
-	// leave it alone and return zero
+	// decide if the cycle should be ignored or if the fft spectrum should
+	// be filled with 0. Ignore it as long as the number of readouts is 
+	// below the BUFFER_READOUT_TOLERANCE.
 	if (readcount < m_frlen) {
-		return 0;
+		// add another 'if' to avoid unlimited growth of the variable
+		if (m_bufferreadouts <= BUFFER_READOUT_TOLERANCE) {
+			m_bufferreadouts++;
+		}
+
+		if (m_bufferreadouts >= BUFFER_READOUT_TOLERANCE) {
+			// return spectra filled with 0	
+			specl.clear();
+			specr.clear();
+			for (int i = 1; i < m_frlen/2 + 1; ++i) {
+				specl.push_back(0.0);
+				specr.push_back(0.0);
+			}
+			return -1; // return -1 to inform the receiver about silence
+		} else {
+			return 0;
+		}
+	} else {
+		m_bufferreadouts = 0;
 	}
 
 	specl.clear();
