@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SpectralMeter.cpp,v 1.7 2008/02/07 12:52:57 n_doebelin Exp $
+$Id: SpectralMeter.cpp,v 1.8 2008/02/07 15:32:48 n_doebelin Exp $
 
 */
 
@@ -25,7 +25,6 @@ $Id: SpectralMeter.cpp,v 1.7 2008/02/07 12:52:57 n_doebelin Exp $
 #include <AudioBus.h>
 #include <QVector>
 #include <math.h>
-#include <QDebug>
 
 #include <Debugger.h>
 
