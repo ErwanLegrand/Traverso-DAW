@@ -486,6 +486,7 @@ void MoveClip::start_zoom(bool autorepeat)
 		delete d->zoom;
 		d->zoom = 0;
 		cpointer().get_viewport()->set_holdcursor(":/cursorHoldLrud");
+		d->origXPos -= (d->origPos - cpointer().scene_pos()).x();
 		d->origPos = cpointer().scene_pos();
 		d->sv->start_shuttle(true, true);
 	}
