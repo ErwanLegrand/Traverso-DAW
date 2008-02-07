@@ -101,6 +101,7 @@
 		<keyfact type="FKEY" key1="Z" >
 			<Objects>
 				<Object objectname="SheetView" modes="All" sortorder="3" submenu="Zoom" pluginname="TraversoCommands" commandname="HZoomIn" arguments="HZoom;0.8" />
+				<Object objectname="MoveClip" slotsignature="start_zoom" modes="All" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="S" >

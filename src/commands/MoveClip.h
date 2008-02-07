@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveClip.h,v 1.22 2008/01/21 16:22:11 r_sijrier Exp $
+    $Id: MoveClip.h,v 1.23 2008/02/07 15:35:07 r_sijrier Exp $
 */
 
 #ifndef MOVECLIPACTION_H
@@ -34,12 +34,14 @@ class Track;
 class SheetView;
 class TrackView;
 class AudioClipView;
+class Zoom;
 
 class MoveClip : public Command
 {
 	Q_OBJECT
 	Q_CLASSINFO("next_snap_pos", tr("To next snap position"));
 	Q_CLASSINFO("prev_snap_pos", tr("To previous snap position"));
+	Q_CLASSINFO("start_zoom", tr("Jog Zoom"));
 	
 public :
 	MoveClip(AudioClipView* clipView, QString type);
@@ -77,6 +79,7 @@ private :
 		bool 		resync;
 		bool		bypassjog;
 		QPoint		jogBypassPos;
+		Zoom*		zoom;
 	};
 			
 
@@ -84,13 +87,13 @@ private :
 
 	void init_data(bool isCopy=false);
 	void calculate_snap_diff(TimeRef& leftlocation, TimeRef rightlocation);
-
 	
 public slots:
 	void next_snap_pos(bool autorepeat);
 	void prev_snap_pos(bool autorepeat);
         void move_to_start(bool autorepeat);
         void move_to_end(bool autorepeat);
+	void start_zoom(bool autorepeat);
 	
 private slots:
 	void audioclip_added(AudioClip* clip);

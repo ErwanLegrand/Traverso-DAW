@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <ViewPort.h>
 #include <ClipsViewPort.h>
 #include <QScrollBar>
+#include "Zoom.h"
 
 
 // Always put me below _all_ includes, this is needed
@@ -84,6 +85,7 @@ MoveClip::MoveClip(AudioClipView* cv, QString type)
 	
 	d->view = cv;
 	d->sv = d->view->get_sheetview();
+	d->zoom = 0;
 	m_sheet = d->sv->get_sheet();
 	m_targetTrack = 0;
 
@@ -99,6 +101,9 @@ MoveClip::MoveClip(AudioClipView* cv, QString type)
 MoveClip::~MoveClip()
 {
 	if (d) {
+		if (d->zoom) {
+			delete d->zoom;
+		}
 		delete d;
 	}
 }
@@ -302,6 +307,12 @@ int MoveClip::jog()
 		}
 	}
 	
+	if (d->zoom) {
+		d->zoom->jog();
+		return 0;
+	}
+
+	
 	d->jogBypassPos = cpointer().pos();
 	
 	int scrollbardif = d->hScrollbarValue - d->sv->hscrollbar_value();
@@ -463,5 +474,19 @@ void MoveClip::calculate_snap_diff(TimeRef& leftlocation, TimeRef rightlocation)
 }
 
 
-// eof
+void MoveClip::start_zoom(bool autorepeat)
+{
+	if (!d->zoom) {
+		d->zoom = new Zoom(d->sv, QList<QVariant>() << "HJogZoom" << "1.2" << "0.2");
+		d->zoom->begin_hold();
+		cpointer().get_viewport()->set_holdcursor(":/cursorZoomHorizontal");
+		d->sv->start_shuttle(false);
+	} else {
+		d->zoom->finish_hold();
+		delete d->zoom;
+		d->zoom = 0;
+		cpointer().get_viewport()->set_holdcursor(":/cursorHoldLrud");
+		d->sv->start_shuttle(true, true);
+	}
+}
 
