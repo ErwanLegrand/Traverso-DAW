@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CorrelationMeter.h,v 1.1 2006/11/27 21:53:42 r_sijrier Exp $
+$Id: CorrelationMeter.h,v 1.2 2008/02/07 11:46:09 n_doebelin Exp $
 */
 
 
@@ -57,7 +57,8 @@ public:
 private:
 	RingBufferNPT<CorrelationMeterData>*	m_databuffer;
 	CorrelationMeterData			m_history;
-	float				m_fract;
+	float					m_fract;
+	int					m_bufferreadouts;
 	
 private slots:
 	void calculate_fract();

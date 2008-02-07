@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CorrelationMeter.cpp,v 1.3 2008/01/21 16:22:16 r_sijrier Exp $
+$Id: CorrelationMeter.cpp,v 1.4 2008/02/07 11:46:09 n_doebelin Exp $
 
 */
 
@@ -25,7 +25,7 @@ $Id: CorrelationMeter.cpp,v 1.3 2008/01/21 16:22:16 r_sijrier Exp $
 #include <AudioBus.h>
 #include <AudioDevice.h>
 #include <Debugger.h>
-
+#include <QDebug>
 #include <math.h>
 
 // Always put me below _all_ includes, this is needed
@@ -33,6 +33,8 @@ $Id: CorrelationMeter.cpp,v 1.3 2008/01/21 16:22:16 r_sijrier Exp $
 #include "Debugger.h"
 		
 #define SMOOTH_FACTOR	1
+#define BUFFER_READOUT_TOLERANCE 2  // recommended: 1-10
+#define METER_COLLAPSE_SPEED 4       // recommended: 1-10
 
 
 CorrelationMeter::CorrelationMeter()
@@ -43,10 +45,13 @@ CorrelationMeter::CorrelationMeter()
 	
 	// Initialize member variables, that need to be initialized
 	calculate_fract();
-	// With memset, we're able to very efficiently set all bytes of an array
+	// With memset, we're able to very efficIf there is no new data in the ringbuffer, fill it with default values,
+	// otherwise the meter will stop working between clipsiently set all bytes of an array
 	// or struct to zero
 	memset(&m_history, 0, sizeof(CorrelationMeterData));
 	
+	m_bufferreadouts = 0;
+
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(calculate_fract()));
 }
 
@@ -98,7 +103,7 @@ void CorrelationMeter::process(AudioBus* bus, unsigned long nframes)
 	audio_sample_t* bufferLeft = bus->get_buffer(0, nframes);
 	audio_sample_t* bufferRight = bus->get_buffer(1, nframes);
 
-	
+
 	// Variables we need to calculate the correlation and avarages/levels
 	float a1, a2, a1a2 = 0, a1sq = 0, a2sq = 0, r, levelLeft = 0, levelRight = 0;
 	
@@ -171,11 +176,45 @@ int CorrelationMeter::get_data(float& r, float& direction)
 	// of type T (CorrelationMeterData in this case) has been written 
 	// to the buffer since last time we checked.
 	int readcount = m_databuffer->read_space();
-	
-	// If there is no new data in the ringbuffer, leave it alone and return zero
-	if (readcount == 0) {
-		return 0;
+
+	// If there is no new data in the buffer, this may have 2 reasons:
+	// 
+	// 1) too fast readout, buffer is not ready again
+	// 2) no data available because no data is played back (e.g. between clips)
+	// 
+	// We want to distinguish the two cases, because the behavour of the meter
+	// should be different. In case 1) we just ignore the update and do nothing, 
+	// the next cycle will probably have data available again. In case 2) we
+	// want to use dummy values instead, because that's what the meter should
+	// display if silence is played. The trick to achieve this is to ignore a 
+	// certain number of buffer readouts (defined in BUFFER_READOUT_TOLERANCE).
+	// If more readouts occur in a row, we assume that silence is played back,
+	// and start collapsing the meter to r = 1.0 in the center.
+
+ 	if (readcount == 0) {
+		// add another 'if' to avoid unlimited growth of the variable
+		if (m_bufferreadouts <= BUFFER_READOUT_TOLERANCE) {
+			m_bufferreadouts++;
+		}
+
+		// check if dummy values should be stored in the buffer, or
+		// if the readout should be ignored
+		if (m_bufferreadouts >= BUFFER_READOUT_TOLERANCE) {
+			CorrelationMeterData dummydata;
+			dummydata.r = 1.0;
+			dummydata.levelLeft = 0.0;
+			dummydata.levelRight = 0.0;
+			for (int i = 0; i < METER_COLLAPSE_SPEED; ++i) {
+				m_databuffer->write(&dummydata, 1);
+			}
+ 		} else {
+			return 0;
+		}
+
+	} else {
+		m_bufferreadouts = 0;
 	}
+
 	
 	// We need to know the 'history' of these variables to get a smooth
 	// and consistent (independend of buffersizes) stereometer behaviour.
