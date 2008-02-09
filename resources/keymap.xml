@@ -15,7 +15,6 @@
 	<Keyfacts>
 		<keyfact type="FKEY" key1="H">
 			<Objects>
-				<Object objectname="Interface" slotsignature="open_help_browser" modes="All" />
 				<Object objectname="FadeCurve" slotsignature="set_mode" modes="All" sortorder="2" />
 			</Objects>
 		</keyfact>
@@ -113,6 +112,8 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="SPACE" >
 			<Objects>
+				<Object objectname="Interface" slotsignature="start_transport" modes="All" sortorder="1" />
+				<Object objectname="Interface" slotsignature="set_recordable_and_start_transport" modes="All" modifierkeys="CTRL" sortorder="2" />
 				<Object objectname="Sheet" slotsignature="start_transport" modes="All" sortorder="1" />
 				<Object objectname="Sheet" slotsignature="set_recordable_and_start_transport" modes="All" modifierkeys="CTRL" sortorder="2" />
 			</Objects>

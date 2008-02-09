@@ -1291,3 +1291,30 @@ void Interface::save_config_and_emit_message(const QString & message)
 	config().save();
 }
 
+
+
+Command * Interface::start_transport()
+{
+	Project* project = pm().get_project();
+	if (project) {
+		Sheet* sheet = project->get_current_sheet();
+		if (sheet) {
+			return sheet->start_transport();
+		}
+	}
+	
+	return 0;
+}
+
+Command * Interface::set_recordable_and_start_transport()
+{
+	Project* project = pm().get_project();
+	if (project) {
+		Sheet* sheet = project->get_current_sheet();
+		if (sheet) {
+			return sheet->set_recordable_and_start_transport();
+		}
+	}
+	
+	return 0;
+}

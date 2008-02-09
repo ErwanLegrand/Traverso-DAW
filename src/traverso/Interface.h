@@ -76,6 +76,9 @@ class Interface : public QMainWindow
 	Q_CLASSINFO("show_project_manager_dialog", tr("Show Project Management Dialog"))
 	Q_CLASSINFO("full_screen", tr("Full Screen"))
 	Q_CLASSINFO("export_keymap", tr("Export keymap"))
+	Q_CLASSINFO("start_transport", tr("Play"))
+	Q_CLASSINFO("set_recordable_and_start_transport", tr("Record"));
+
 
 public :
 	Interface();
@@ -185,6 +188,9 @@ public slots :
 	Command* show_newsheet_dialog();
 	Command* show_newtrack_dialog();
 	Command* show_newproject_dialog();
+	Command* start_transport();
+	Command* set_recordable_and_start_transport();
+
 	
 private slots:
 	void delete_sheetwidget(Sheet*);
