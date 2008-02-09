@@ -405,6 +405,10 @@
 		<keyfact type="HKEY" key1="S" >
 			<Objects>
 				<Object objectname="FadeView" mousehint="LR" slotsignature="strength" modes="All" sortorder="4" />
+			</Objects>
+		</keyfact>
+		<keyfact type="HKEY" key1="TAB" >
+			<Objects>
 				<Object objectname="SheetView" mousehint="LRUD" slotsignature="shuttle" modes="All" sortorder="6" />
 			</Objects>
 		</keyfact>

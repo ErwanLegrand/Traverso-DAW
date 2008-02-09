@@ -119,6 +119,26 @@ ViewPort::~ViewPort()
 	cpointer().set_current_viewport((ViewPort*) 0);
 }
 
+bool ViewPort::event(QEvent * event)
+{
+	// We want Tab events also send to the InputEngine
+	// so treat them as 'normal' key events.
+	if (event->type() == QEvent::KeyPress) {
+		QKeyEvent *ke = static_cast<QKeyEvent *>(event);
+		if (ke->key() == Qt::Key_Tab) {
+			keyPressEvent(ke);
+			return true;
+		}
+	}
+	if (event->type() == QEvent::KeyRelease) {
+		QKeyEvent *ke = static_cast<QKeyEvent *>(event);
+		if (ke->key() == Qt::Key_Tab) {
+			keyReleaseEvent(ke);
+			return true;
+		}
+	}
+	return QGraphicsView::event(event);
+}
 
 void ViewPort::mouseMoveEvent(QMouseEvent* event)
 {
@@ -250,9 +270,11 @@ void ViewPort::set_holdcursor( const QString & cursorName )
 {
 	viewport()->setCursor(Qt::BlankCursor);
 	
-	m_holdcursor->setPos(cpointer().scene_pos());
+	if (!m_holdCursorActive) {
+		m_holdcursor->setPos(cpointer().scene_pos());
+		m_holdcursor->show();
+	}
 	m_holdcursor->set_type(cursorName);
-	m_holdcursor->show();
 	m_holdCursorActive = true;
 }
 
@@ -331,6 +353,5 @@ void HoldCursor::reset()
 {
 	m_text = "";
 }
-
 
 
