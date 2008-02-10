@@ -392,7 +392,7 @@ int ReadSource::rb_read(audio_sample_t** dst, TimeRef& start, nframes_t count)
 	
 	if (start != m_rbRelativeFileReadPos) {
 		
-		TimeRef availabletime(m_buffers.at(0)->read_space(), m_outputRate);
+		TimeRef availabletime(nframes_t(m_buffers.at(0)->read_space()), m_outputRate);
 /*		printf("rb_read:: m_rbRelativeFileReadPos, start: %lld, %lld\n", m_rbRelativeFileReadPos.universal_frame(), start.universal_frame());
 		printf("rb_read:: availabletime %d\n", availabletime.to_frame(m_outputRate));*/
 		
