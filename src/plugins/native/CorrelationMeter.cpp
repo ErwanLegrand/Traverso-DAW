@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: CorrelationMeter.cpp,v 1.5 2008/02/07 15:33:17 n_doebelin Exp $
+$Id: CorrelationMeter.cpp,v 1.6 2008/02/10 23:47:06 n_doebelin Exp $
 
 */
 
@@ -177,6 +177,16 @@ int CorrelationMeter::get_data(float& r, float& direction)
 	// to the buffer since last time we checked.
 	int readcount = m_databuffer->read_space();
 
+	// Create an empty CorrelationMeterData struct data,
+	CorrelationMeterData data;
+
+	// We need to know the 'history' of these variables to get a smooth
+	// and consistent (independend of buffersizes) stereometer behaviour.
+	// So we get it from our history struct.
+	r = m_history.r;
+	float levelLeft = m_history.levelLeft;
+	float levelRight = m_history.levelRight;
+	
 	// If there is no new data in the buffer, this may have 2 reasons:
 	// 
 	// 1) too fast readout, buffer is not ready again
@@ -191,7 +201,7 @@ int CorrelationMeter::get_data(float& r, float& direction)
 	// If more readouts occur in a row, we assume that silence is played back,
 	// and start collapsing the meter to r = 1.0 in the center.
 
- 	if (readcount == 0) {
+ 	if (readcount <= 0) {
 		// add another 'if' to avoid unlimited growth of the variable
 		if (m_bufferreadouts < RINGBUFFER_SIZE) {
 			m_bufferreadouts++;
@@ -200,55 +210,53 @@ int CorrelationMeter::get_data(float& r, float& direction)
 		// check if dummy values should be stored in the buffer, or
 		// if the readout should be ignored
 		if (m_bufferreadouts >= BUFFER_READOUT_TOLERANCE) {
-			CorrelationMeterData dummydata;
-			dummydata.r = 1.0;
-			dummydata.levelLeft = 0.0;
-			dummydata.levelRight = 0.0;
-			for (int i = 0; i < int(METER_COLLAPSE_SPEED / m_fract); ++i) {
-				m_databuffer->write(&dummydata, 1);
+			// set the return value to > 0 to trigger widget update
+			readcount = 1;
+
+			data.r = 1.0;
+
+			// must be != 0, otherwise the direction does not drift to the center
+			data.levelLeft = METER_COLLAPSE_SPEED;
+			data.levelRight = METER_COLLAPSE_SPEED;
+
+			// This is ugly, there shouldn't be a loop here. Maybe it is possible without.
+			// The loop makes sure that the collapse speed is independent of the buffer size
+			for (int i = 0; i < METER_COLLAPSE_SPEED / m_fract; ++i) {
+				r = data.r * m_fract + r * (1.0 - m_fract);
+				levelLeft = data.levelLeft * m_fract + levelLeft * (1.0 - m_fract);
+				levelRight = data.levelRight * m_fract + levelRight * (1.0 - m_fract);
 			}
- 		} else {
+		} else {
+			// no new data, return 0 to suppress widget update
 			return 0;
 		}
 
 	} else {
 		m_bufferreadouts = 0;
+
+		for (int i=0; i<readcount; ++i) {
+			// which we fill by reading from the databuffer.
+			m_databuffer->read(&data, 1);
+		
+			// Calculate the new correlation variable, and merge the old one.
+			// Assign it to r itself, this spares a temp. variable for r ;-)
+			r = data.r * m_fract + r * (1.0 - m_fract);
+	
+			// Same for levelLeft/Right
+			levelLeft = data.levelLeft * m_fract + levelLeft * (1.0 - m_fract);
+			levelRight = data.levelRight * m_fract + levelRight * (1.0 - m_fract);
+		}
 	}
 
-	
-	// We need to know the 'history' of these variables to get a smooth
-	// and consistent (independend of buffersizes) stereometer behaviour.
-	// So we get it from our history struct.
-	r = m_history.r;
-	float levelLeft = m_history.levelLeft;
-	float levelRight = m_history.levelRight;
-	
-	// Create an empty CorrelationMeterData struct data,
-	CorrelationMeterData data;
-	
-	for (int i=0; i<readcount; ++i) {
-		// which we fill by reading from the databuffer.
-		m_databuffer->read(&data, 1);
-		
-		// Calculate the new correlation variable, and merge the old one.
-		// Assign it to r itself, this spares a temp. variable for r ;-)
-		r = data.r * m_fract + r * (1.0 - m_fract);
-	
-		// Same for levelLeft/Right
-		levelLeft = data.levelLeft * m_fract + levelLeft * (1.0 - m_fract);
-		levelRight = data.levelRight * m_fract + levelRight * (1.0 - m_fract);
-	}
-	
 	// Now that we truely have taken into account all the levelLeft/Right data
 	// for all buffers that have been processed since last call to get_data()
 	// we now can calculate the direction variable.
-	if ( ! ((levelLeft + levelRight) == 0.0) ) {
+	if (levelLeft + levelRight == 0.0) {
+		direction = 0.0;
+	} else {
 		float vl = levelLeft / (levelLeft + levelRight);
 		float vr = levelRight / (levelLeft + levelRight);
-	
 		direction = vr - vl;
-	} else {
-		direction = 0;
 	}
 
 	// Store the calculated variables in the history struct, to be used on
