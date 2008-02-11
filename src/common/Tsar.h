@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Tsar.h,v 1.3 2007/12/11 17:30:11 r_sijrier Exp $
+$Id: Tsar.h,v 1.4 2008/02/11 10:11:52 r_sijrier Exp $
 */
 
 #ifndef TSAR_H
@@ -30,7 +30,7 @@ $Id: Tsar.h,v 1.3 2007/12/11 17:30:11 r_sijrier Exp $
 
 #define THREAD_SAVE_INVOKE(caller, argument, slotSignature)  { \
 		TsarEvent event = tsar().create_event(caller, argument, #slotSignature, ""); \
-		tsar().add_event(event);\
+		while (!tsar().add_event(event)) { printf("THREAD_SAVE_INVOKE: failed to add event, trying again\n");} \
 	}
 
 #define RT_THREAD_EMIT(cal, arg, signalSignature) {\
@@ -78,7 +78,7 @@ class Tsar : public QObject
 public:
 	TsarEvent create_event(QObject* caller, void* argument, const char* slotSignature, const char* signalSignature);
 	
-	void add_event(TsarEvent& event);
+	bool add_event(TsarEvent& event);
 	void add_rt_event(TsarEvent& event);
 	void process_event_slot(const TsarEvent& event);
 	void process_event_signal(const TsarEvent& event);
@@ -97,8 +97,10 @@ private:
 
 	QList<RingBufferNPT<TsarEvent>*>	m_events;
 	RingBufferNPT<TsarEvent>*		oldEvents;
-	QTimer			finishOldEventsTimer;
-	int 			m_eventCounter;
+	QTimer	finishOldEventsTimer;
+	int 	m_eventCounter;
+	int 	m_retryCount;
+
 #if defined (THREAD_CHECK)
 	unsigned long	m_threadId;
 #endif

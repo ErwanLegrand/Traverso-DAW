@@ -17,12 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Tsar.cpp,v 1.3 2007/12/11 17:30:11 r_sijrier Exp $
+$Id: Tsar.cpp,v 1.4 2008/02/11 10:11:52 r_sijrier Exp $
 */
 
 #include "Tsar.h"
 
 #include "AudioDevice.h"
+#include "InputEngine.h"
 #include <QMetaMethod>
 #include <QMessageBox>
 #include <QCoreApplication>
@@ -59,6 +60,7 @@ Tsar::Tsar()
 	m_events.append(new RingBufferNPT<TsarEvent>(1000));
 	m_events.append(new RingBufferNPT<TsarEvent>(100));
 	oldEvents = new RingBufferNPT<TsarEvent>(1000);
+	m_retryCount = 0;
 	
 #if defined (THREAD_CHECK)
 	m_threadId = QThread::currentThreadId ();
@@ -84,13 +86,17 @@ Tsar::~ Tsar( )
  *	Note: This function should be called ONLY from the GUI thread! 
  * @param event  The event to add to the event queue
  */
-void Tsar::add_event(TsarEvent& event )
+bool Tsar::add_event(TsarEvent& event )
 {
 #if defined (THREAD_CHECK)
 	Q_ASSERT_X(m_threadId == QThread::currentThreadId (), "Tsar::add_event", "Adding event from other then GUI thread!!");
 #endif
-	m_events.at(0)->write(&event, 1);
-	m_eventCounter++;
+	if (m_events.at(0)->write(&event, 1) == 1) {
+		m_eventCounter++;
+		return true;
+	}
+	m_retryCount = 0;
+	return false;
 }
 
 /**
@@ -123,7 +129,7 @@ void Tsar::process_events( )
 		int processedCount = 0;
 		int newEventCount = newEvents->read_space();
 	
-		while((newEventCount > 0) && (processedCount < 10)) {
+		while((newEventCount > 0) && (processedCount < 50)) {
 #if defined (profile)
 			trav_time_t starttime = get_microseconds();
 #endif
@@ -163,11 +169,13 @@ void Tsar::finish_processed_events( )
 // 		printf("finish_processed_objects:: Count is %d\n", m_eventCounter);
 	}
 	
-	static int retryCount;
+	m_retryCount++;
 	
-	retryCount++;
-	
-	if (retryCount > 100) {
+	if (m_retryCount > 200) {
+		if (ie().is_holding()) {
+			ie().suspend();
+		}
+		
 		if (audiodevice().get_driver_type() != "Null Driver") {
 			QMessageBox::critical( 0, 
 				tr("Traverso - Malfunction!"), 
@@ -181,7 +189,7 @@ void Tsar::finish_processed_events( )
 				"OK", 
 				0 );
 			audiodevice().set_parameters(44100, 1024, "Null Driver", true, true);
-			retryCount = 0;
+			m_retryCount = 0;
 		} else {
 			QMessageBox::critical( 0, 
 				tr("Traverso - Fatal!"), 
@@ -193,7 +201,7 @@ void Tsar::finish_processed_events( )
 	}
 	
 	if (m_eventCounter <= 0) {
-		retryCount = 0;
+		m_retryCount = 0;
 	}
 }
 

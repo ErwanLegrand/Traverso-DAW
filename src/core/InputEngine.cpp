@@ -227,6 +227,7 @@ void InputEngine::suspend()
 {
 	PENTER3;
 	active=false;
+	set_jogging(false);
 }
 
 int InputEngine::broadcast_action_from_contextmenu(const QString& keySequence)
