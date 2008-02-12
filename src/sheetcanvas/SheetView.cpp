@@ -276,7 +276,18 @@ void SheetView::hscrollbar_value_changed(int value)
 	// This slot is called when the hscrollbar value changes,
 	// which can be due shuttling or playhead scrolling the page.
 	// In that very case, we do NOT set the hscrollbar value AGAIN
-	if (!ie().is_holding()) {
+	// but in case of a non-shuttle command, we call ie().jog to give the 
+	// command the opportunity to update (Gain-cursor position for example) 
+	// itself for the changed viewport / mouse coordinates.
+	// FIXME This is NOT a solution to set hold-cursors at the correct
+	// position in the viewport when it's scrolled programatically !!!!!
+	if (ie().is_holding()) {
+		Shuttle* s = dynamic_cast<Shuttle*>(ie().get_holding_command());
+		Zoom* z = dynamic_cast<Zoom*>(ie().get_holding_command());
+		if (!(s || z)) {
+			ie().jog();
+		}
+	} else {
 		m_clipsViewPort->horizontalScrollBar()->setValue(value);
 	}
 	
