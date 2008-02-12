@@ -1102,15 +1102,21 @@ Track* Sheet::get_track(qint64 id)
 
 void Sheet::move_clip(Track * from, Track * too, AudioClip * clip, TimeRef location)
 {
+	PENTER2;
+	
 	if (from == too) {
 		clip->set_track_start_location(location);
 		return;
 	}
 	
+	// Remove has to be done BEFORE adding, else the APILinkedList logic 
+	// gets messed up for the Tracks AudioClipList, which is an APILinkedList :(
 	Command::process_command(from->remove_clip(clip, false, true));
 	Command::process_command(too->add_clip(clip, false, true));
 
-	clip->set_track_start_location(location);
+	if (clip->get_track_start_location() != location) {
+		clip->set_track_start_location(location);
+	}
 }
 
 Command* Sheet::set_editing_mode( )
