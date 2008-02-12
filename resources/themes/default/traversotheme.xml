@@ -45,7 +45,7 @@
 		<font name="InfoWidget:fontscale:values" value="0.9" />
 		<font name="Playhead:fontscale:info" value="1.50" />
 		<font name="CurveView:fontscale:label" value="0.75" />
-		<font name="ViewPort:fontscale:infocursor" value="0.95" />
+		<font name="ViewPort:fontscale:infocursor" value="1.0" />
 		<font name="MessageWidget:fontscale:log" value="1.0" />
 	</fonts>
 	<colors>
