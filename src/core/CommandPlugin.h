@@ -52,6 +52,14 @@ class CommandPlugin : public QObject, public CommandInterface
 
 public:
 	virtual ~CommandPlugin() {}
+/**
+	 * 	Create a Command object, based on the command string. 
+
+	 * @param obj The Context Item object for which the Command has to be made
+	 * @param command The name of the Command to be created
+	 * @param arguments List of arguments which can be parsed by the to be created Command object.
+	 * @return On success a Command object, the caller takes authorship, or 0 on failure.
+ */
 	virtual Command* create(QObject* obj, const QString& command, QVariantList arguments) = 0;
 	
 	virtual QStringList commands() const {

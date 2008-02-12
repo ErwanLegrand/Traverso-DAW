@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Gain.cpp,v 1.24 2008/01/21 16:22:11 r_sijrier Exp $
+$Id: Gain.cpp,v 1.25 2008/02/12 11:01:08 r_sijrier Exp $
 */
 
 #include "Gain.h"
@@ -33,6 +33,13 @@ $Id: Gain.cpp,v 1.24 2008/01/21 16:22:11 r_sijrier Exp $
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
+
+/**
+ *	\class Gain
+	\brief Change (jog) the Gain of a Sheet, Track or AudioClip, or set to a pre-defined value
+	
+	\sa TraversoCommands
+ */
 
 
 Gain::Gain(ContextItem* context, SheetView* sv, QVariantList args)

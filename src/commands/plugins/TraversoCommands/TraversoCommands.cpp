@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2007 Remon Sijrier 
+Copyright (C) 2007-2008 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -29,6 +29,69 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
+
+/**
+ *	\class TraversoCommands
+	\brief The Traverso CommandPlugin class which 'implements' many of the default Commands
+	
+	With this plugin, the InputEngine is able to dispatch key actions by directly 
+	asking this Plugin for the needed Command object.
+
+	Dispatching key events to a specific object to create a Command object is accomplished by creating 
+	entries in the keymap.xml file, which has the following syntax:
+
+	\code 
+	<Object objectname="" mousehint="" modes="" sortorder="" pluginname="" commandname="" arguments="" />
+	\endcode 
+	
+	\code 
+	objectname: 	The class name of the object that we want to dispatch the key action on
+	mousehint 	Used to set the mouse cursor. Use "LR" for horizontal suggestion, "UD" for vertical suggestion, or "RLUD" for omnidirectional suggestion.
+	modes:		Modes for which this command can be used, like All, Edit or Effects. Modes are to be defined in the keymap itself!
+	sortorder:	The order of where the key action should show up in the ContextMenu of 'objectname'
+	plugniname:	The plugin to ask the Command for, the only one available right now is TraversoCommands
+	commandname:	The Command to be created, which by convention tries to be the same name as the actuall class implementing the Command
+	arguements:	One, or more values (seperated by semicolons), each Command explains which (list of) values it can understand
+	\endcode 
+
+
+	Available Command classes, their required Object (to operate on) and arguments are:
+
+
+	\code 
+	MoveClip: Move or Copy-move an AudioClip.
+	
+	objectname:	AudioClipView
+	arguments:	Either one of the following: "move", "copy", "move_to_end", "move_to_start"
+	commandname:	Moveclip
+	\endcode 
+
+
+	\code 
+	Gain: Change (jog), or reset the Gain of audio processing items
+	objectname:	SheetView, TrackView, AudioClipView
+	arguments:	No argument: Move Mouse vertically. Argument "horizontal": Move Mouse horizontally
+	commandname:	Gain
+	\endcode 
+	
+	\code 
+	ResetGain: Set Gain value to a pre-defined value (by means of the supplied argument).
+	
+	objectname:	SheetView, TrackView, AudioClipView
+	arguments:	a floating point value, eg: "0.5"
+	commandname:	ResetGain
+	\endcode 
+	
+	\code 
+	?: ?
+	
+	Objects(s):	
+	arguments:	
+	commandname:	
+	\endcode 
+
+ */
+
 
 TraversoCommands::TraversoCommands()
 {
