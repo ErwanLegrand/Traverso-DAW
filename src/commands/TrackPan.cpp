@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2007 Remon Sijrier 
+    Copyright (C) 2005-2008 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -19,27 +19,38 @@
  
 */
 
-#include <libtraversocore.h>
-
 #include "TrackPan.h"
-#include <ViewPort.h>
-		
+
+#include "ViewPort.h"
+
+#include "ContextPointer.h"
+#include "Track.h"
+
+
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
+/**
+ *	\class TrackPan
+	\brief Change (jog) the Panorama of a Track, or set to a pre-defined value
+	
+	\sa TraversoCommands
+ */
+
+
 TrackPan::TrackPan(Track* track, QVariantList args)
 	: Command(track, "")
+	, d(new Data)
 {
         m_track = track;
-        m_sheet = track->get_sheet();
 	
 	QString des;
 	
 	if (args.size() > 0) {
-		newPan = args.at(0).toDouble();
+		m_newPan = args.at(0).toDouble();
 		des = tr("Track Pan: %1").arg("Reset");
-		origPan = m_track->get_pan();
+		m_origPan = m_track->get_pan();
 	} else {
 		des = tr("Track Pan");
 	}
@@ -50,14 +61,15 @@ TrackPan::TrackPan(Track* track, QVariantList args)
 
 int TrackPan::prepare_actions()
 {
+	delete d;
         return 1;
 }
 
 
 int TrackPan::begin_hold()
 {
-        origX = cpointer().x();
-        origPan = newPan = m_track->get_pan();
+        d->origX = cpointer().x();
+        m_origPan = m_newPan = m_track->get_pan();
 
         return 1;
 }
@@ -65,21 +77,21 @@ int TrackPan::begin_hold()
 
 int TrackPan::finish_hold()
 {
-	QCursor::setPos(mousePos);
+	QCursor::setPos(d->mousePos);
 	return 1;
 }
 
 
 int TrackPan::do_action()
 {
-        m_track->set_pan(newPan);
+        m_track->set_pan(m_newPan);
         return 1;
 }
 
 
 int TrackPan::undo_action()
 {
-        m_track->set_pan(origPan);
+        m_track->set_pan(m_origPan);
         return 1;
 }
 
@@ -94,23 +106,52 @@ void TrackPan::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useX);
 	Q_UNUSED(useY);
 	
-	mousePos = QCursor::pos();
+	d->mousePos = QCursor::pos();
 	cpointer().get_viewport()->set_holdcursor(":/cursorHoldLr");
 }
 
 int TrackPan::jog()
 {
         float w = 600.0;
-        float ofx = (float) origX - cpointer().x();
+        float ofx = (float) d->origX - cpointer().x();
         float p = -2.0f *  (ofx) / w ;
-	newPan = p + newPan;
-        m_track->set_pan( newPan );
+	m_newPan = p + m_newPan;
 	
-// 	origX = cpointer().x();
-	QCursor::setPos(mousePos);
+	if (m_newPan < -1.0) 
+		m_newPan = -1.0;
+	if (m_newPan > 1.0) 
+		m_newPan = 1.0;
 	
-        return 1;
+	m_track->set_pan(m_newPan);
+	
+	QCursor::setPos(d->mousePos);
+	
+	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(m_newPan, 'f', 2));
+	
+	return 1;
 }
 
-// eof
+void TrackPan::pan_left(bool autorepeat)
+{
+	Q_UNUSED(autorepeat);
+	
+	m_newPan -= 0.05;
+	if (m_newPan < -1.0) 
+		m_newPan = -1.0;
+	m_track->set_pan(m_newPan);
+	
+	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(m_newPan, 'f', 2));
+}
+
+void TrackPan::pan_right(bool autorepeat)
+{
+	Q_UNUSED(autorepeat);
+	
+	m_newPan += 0.05;
+	if (m_newPan > 1.0) 
+		m_newPan = 1.0;
+	m_track->set_pan(m_newPan);
+
+	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(m_newPan, 'f', 2));
+}
 

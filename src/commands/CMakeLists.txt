@@ -35,9 +35,10 @@ RemoveClip.cpp
 )
 
 SET(TRAVERSO_COMMANDS_MOC_CLASSES
+AudioClipExternalProcessing.h
 Gain.h
 MoveClip.h
-AudioClipExternalProcessing.h
+TrackPan.h
 Zoom.h
 )
 

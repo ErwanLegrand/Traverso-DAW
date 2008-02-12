@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
+    Copyright (C) 2005-2008 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -17,7 +17,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TrackPan.h,v 1.8 2008/01/21 16:22:12 r_sijrier Exp $
 */
 
 #ifndef TRACKPAN_H
@@ -30,6 +29,10 @@ class Track;
 
 class TrackPan : public Command
 {
+	Q_OBJECT
+	Q_CLASSINFO("pan_left", tr("To Left"));
+	Q_CLASSINFO("pan_right", tr("To Right"));
+
 public :
 	TrackPan(Track* track, QVariantList args);
 
@@ -45,13 +48,20 @@ public :
 	void set_cursor_shape(int useX, int useY);
 	
 private :
-	QPoint	mousePos;
-	float origPan;
-        float newPan;
-        int origX;
+	struct Data {
+		QPoint	mousePos;
+		int origX;
+	};
+	Data* d;
+	
+	float m_origPan;
+	float m_newPan;
+	Track* m_track;
+	
+public slots:
+	void pan_left(bool autorepeat);
+	void pan_right(bool autorepeat);
 
-        Sheet* m_sheet;
-        Track* m_track;
 };
 
 #endif
