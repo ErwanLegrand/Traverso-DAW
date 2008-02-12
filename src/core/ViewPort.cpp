@@ -281,6 +281,11 @@ void ViewPort::set_holdcursor( const QString & cursorName )
 void ViewPort::set_holdcursor_text( const QString & text )
 {
 	m_holdcursor->set_text(text);
+	// TODO Find out why we have to call set_holdcursor_pos() here 
+	// AGAIN when it allready has been called in for example MoveClip::jog()
+	// to AVOID jitter of the hold cursor text item when the cursor is 
+	// out of the viewports range
+	set_holdcursor_pos(mapToScene(cpointer().pos()).toPoint());
 }
 
 void ViewPort::set_holdcursor_pos(QPoint pos)
@@ -333,8 +338,6 @@ void HoldCursor::set_text( const QString & text )
 	}
 	QString html = "<html><body bgcolor=ghostwhite>" + m_text + "</body></html>";
 	m_textItem->setHtml(html);
-	
-	update();
 }
 
 void HoldCursor::set_type( const QString & type )
