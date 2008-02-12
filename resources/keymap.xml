@@ -47,12 +47,14 @@
 			<Objects>
 				<Object objectname="SheetView" slotsignature="scroll_left" modes="All" sortorder="1" submenu="Scroll" />
 				<Object objectname="MoveClip" slotsignature="prev_snap_pos" modes="All" sortorder="1" />
+				<Object objectname="TrackPan" slotsignature="pan_left" modes="All" sortorder="1" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="RARROW" >
 			<Objects>
 				<Object objectname="SheetView" slotsignature="scroll_right" modes="All" sortorder="2" submenu="Scroll" />
 				<Object objectname="MoveClip" slotsignature="next_snap_pos" modes="All" sortorder="1" />
+				<Object objectname="TrackPan" slotsignature="pan_right" modes="All" sortorder="2" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="UARROW" >
@@ -237,6 +239,7 @@
 				<Object objectname="TrackPanelGain" slotsignature="gain_increment" modes="All" sortorder="1" />
 				<Object objectname="SheetPanelGain" slotsignature="gain_increment" modes="All" sortorder="1" />
 				<Object objectname="Zoom" slotsignature="vzoom_out" modes="All" />
+				<Object objectname="TrackPan" slotsignature="pan_right" modes="All" sortorder="2" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="MouseScrollVerticalDown" >
@@ -248,6 +251,7 @@
 				<Object objectname="TrackPanelGain" slotsignature="gain_decrement" modes="All" sortorder="2" />
 				<Object objectname="SheetPanelGain" slotsignature="gain_decrement" modes="All" sortorder="2" />
 				<Object objectname="Zoom" slotsignature="vzoom_in" modes="All" />
+				<Object objectname="TrackPan" slotsignature="pan_left" modes="All" sortorder="1" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="F" >
