@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Gain.h,v 1.14 2008/01/21 16:22:11 r_sijrier Exp $
+    $Id: Gain.h,v 1.15 2008/02/12 20:39:08 r_sijrier Exp $
 */
 
 #ifndef GAIN_H
@@ -46,7 +46,7 @@ public :
         int do_action();
         int undo_action();
         void cancel_action();
-
+	void set_collected_number(const QString & collected);
         
         int jog();
         

@@ -384,4 +384,3 @@ void HoldCursor::set_pos(QPoint p)
 	setPos(p);
 }
 
-

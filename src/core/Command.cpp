@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Command.cpp,v 1.20 2007/05/17 22:50:22 r_sijrier Exp $
+$Id: Command.cpp,v 1.21 2008/02/12 20:39:08 r_sijrier Exp $
 */
 
 #include "Command.h"
@@ -246,6 +246,21 @@ void Command::cancel_action()
 }
 
 /**
+ *  	Reimplement this function to receive the so called 'collected number' of the InputEngine
+	
+	The number collection is active during Hold Actions. A Hold type of command can use it 
+	to let the user type in a numerical value, which is then parsed by the (derived) Command class
+	to set the variable it controls, like the position of an AudioClip, or the gain value of a Track
+ * @param collected The QString of the collected number so far. Note that it can include a . (period) and
+			a , (comma), hence the number is supplied as a string, and not a numerical value.
+ */
+void Command::set_collected_number(const QString & collected)
+{
+	Q_UNUSED(collected);
+	// reimplement me
+}
+
+/**
  * 	Uses the mouse hints specified in the keymap.xml file to set a cursor
 	to hint the user which movement has to be made on hold type of commands
 
@@ -289,6 +304,4 @@ void Command::set_historable(bool historible)
 {
 	m_isHistorable = historible;
 }
-
-//eof
 

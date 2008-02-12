@@ -193,7 +193,6 @@ private:
         bool 			isFirstFact;
         bool 			isDoubleKey;
         bool 			isJogging;
-        bool 			isCollecting;
 	bool			m_cancelHold;
 
         int 			fact1_k1;
@@ -230,7 +229,7 @@ private:
         void 			conclusion();
         void 			hold_output();
         void 			stop_collecting();
-        void 			check_number_collection();
+        bool 			check_number_collection(int eventcode);
 
         //! call the slot that handler a given action
         int broadcast_action(IEAction* action, bool autorepeat=false, bool fromContextMenu=false);
@@ -250,8 +249,6 @@ private:
 
         // allow this function to create one instance
         friend InputEngine& ie();
-
-
 };
 
 // use this function to get the InputEngine object

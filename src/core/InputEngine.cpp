@@ -652,6 +652,12 @@ void InputEngine::process_press_event(int eventcode, bool isAutoRepeat)
 		return;
 	}
 	
+	// first check if this fact is just a collected number
+	if (check_number_collection(eventcode)) {
+		// another digit was collected.
+		return;
+	}
+	
 	if (is_modifier_keyfact(eventcode)) {
 		if ( (! isAutoRepeat) && (! m_activeModifierKeys.contains(eventcode)) ) {
 			m_activeModifierKeys.append(eventcode);
@@ -878,13 +884,6 @@ void InputEngine::push_fact(int k1,int k2)
 		fact1_k1 = k1;
 		fact1_k2 = k2;
 
-		// first check if this fact is just a collected number
-		check_number_collection();
-		if (isCollecting) {
-			// another digit was collected.
-			reset();
-			return;
-		}
 		int mapIndex = identify_first_fact();
 		if (mapIndex < 0) {
 			PMESG3("First fact alone does not match anything in the map. Waiting for a second fact...");
@@ -1599,29 +1598,46 @@ void InputEngine::set_double_fact_interval(int time)
 
 
 // Number colector
-void InputEngine::check_number_collection()
+bool InputEngine::check_number_collection(int eventcode)
 {
-	PENTER3;
-	if ((fact1_k1 >= 0x30) && (fact1_k1 <= 0x39)) {
-		if (!isCollecting) {
-			PMESG3("Starting number collection...");
-			sCollectedNumber="";
-		}
-		isCollecting = true;
-		sCollectedNumber.append( QChar(fact1_k1) ); // it had a ",1" complement after fact1_k1... why?
-		PMESG3("Collected %s so far...", QS_C(sCollectedNumber) ) ;
+	if ((eventcode >= Qt::Key_0) && (eventcode <= Qt::Key_9) || 
+	     eventcode == Qt::Key_Comma || eventcode == Qt::Key_Period) {
+		sCollectedNumber.append( QChar(eventcode) ); // it had a ",1" complement after fact1_k1... why?
+		PMESG("Collected %s so far...", QS_C(sCollectedNumber) ) ;
 		QString sn = "NUMBER " + sCollectedNumber;
 		collectedNumber = sCollectedNumber.toInt();
-	} else
-		stop_collecting();
+		if (holdingCommand) {
+			holdingCommand->set_collected_number(sCollectedNumber);
+		}
+		return true;
+	}
+	if (eventcode == Qt::Key_Backspace) {
+		if (sCollectedNumber.size() > 0) {
+			sCollectedNumber = sCollectedNumber.left(sCollectedNumber.size() - 1);
+			if (holdingCommand) {
+				holdingCommand->set_collected_number(sCollectedNumber);
+			}
+		}
+		return true;
+	}
+	if (eventcode == Qt::Key_Minus) {
+		if (sCollectedNumber.contains("-")) {
+			sCollectedNumber = sCollectedNumber.remove("-");
+		} else {
+			sCollectedNumber.prepend("-");
+		}
+		if (holdingCommand) {
+			holdingCommand->set_collected_number(sCollectedNumber);
+		}
+	}
+	return false;
 }
 
 void InputEngine::stop_collecting()
 {
 	PENTER3;
-	isCollecting=false;
 	collectedNumber = sCollectedNumber.toInt();
-	sCollectedNumber ="-1";
+	sCollectedNumber = "";
 }
 
 int InputEngine::collected_number( )

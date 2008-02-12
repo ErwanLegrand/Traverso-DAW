@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Command.h,v 1.12 2007/05/17 22:50:22 r_sijrier Exp $
+    $Id: Command.h,v 1.13 2008/02/12 20:39:08 r_sijrier Exp $
 */
 
 #ifndef COMMAND_H
@@ -47,6 +47,7 @@ public :
         virtual int jog();
         virtual void set_cursor_shape(int useX, int useY);
 	virtual void cancel_action();
+	virtual void set_collected_number(const QString& collected);
         
 	void undo() {undo_action();}
 	void redo() {do_action();}

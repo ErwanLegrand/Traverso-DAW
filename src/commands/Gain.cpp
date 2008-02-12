@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Gain.cpp,v 1.25 2008/02/12 11:01:08 r_sijrier Exp $
+$Id: Gain.cpp,v 1.26 2008/02/12 20:39:07 r_sijrier Exp $
 */
 
 #include "Gain.h"
@@ -139,6 +139,32 @@ void Gain::cancel_action()
 	undo_action();
 }
 
+void Gain::set_collected_number(const QString & collected)
+{
+	if (collected.size() == 0) {
+		cpointer().get_viewport()->set_holdcursor_text(" dB");
+		return;
+	}
+	
+	bool ok;
+	float dbFactor = collected.toDouble(&ok);
+	if (!ok) {
+		PWARN("collected is not a valid float number");
+		return;
+	}
+	
+	newGain = dB_to_scale_factor(dbFactor);
+	QMetaObject::invokeMethod(gainObject, "set_gain", Q_ARG(float, newGain));
+	
+	// now we get the new gain value from gainObject, since we don't know if 
+	// gainobject accepted the change or not!
+	get_gain_from_object(newGain);
+	
+	// Update the vieport's hold cursor with the _actuall_ gain value!
+	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', collected.size()).append(" dB"));
+
+}
+
 
 void Gain::set_cursor_shape(int useX, int useY)
 {
@@ -255,7 +281,4 @@ int Gain::get_gain_from_object(float& gain)
 	
 	return 1;
 }
-
-
-// eof
 
