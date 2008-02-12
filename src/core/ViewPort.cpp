@@ -332,12 +332,12 @@ void HoldCursor::set_text( const QString & text )
 	m_text = text;
 	
 	if (!m_text.isEmpty()) {
+		QString html = "<html><body bgcolor=ghostwhite>" + m_text + "</body></html>";
+		m_textItem->setHtml(html);
 		m_textItem->show();
 	} else {
 		m_textItem->hide();
 	}
-	QString html = "<html><body bgcolor=ghostwhite>" + m_text + "</body></html>";
-	m_textItem->setHtml(html);
 }
 
 void HoldCursor::set_type( const QString & type )
@@ -356,6 +356,7 @@ QRectF HoldCursor::boundingRect( ) const
 void HoldCursor::reset()
 {
 	m_text = "";
+	m_textItem->hide();
 }
 
 void HoldCursor::set_pos(QPoint p)
