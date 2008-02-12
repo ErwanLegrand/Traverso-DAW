@@ -137,6 +137,10 @@ bool ViewPort::event(QEvent * event)
 			return true;
 		}
 	}
+	if (event->type() == QEvent::MouseButtonPress) {
+		printf("eating mouse press\n");
+		return true;
+	}
 	return QGraphicsView::event(event);
 }
 
@@ -320,12 +324,12 @@ void HoldCursor::paint( QPainter * painter, const QStyleOptionGraphicsItem * opt
 	
 	if (!m_text.isEmpty()) {
 		QFontMetrics fm(themer()->get_font("ViewPort:fontscale:infocursor"));
-		int width = fm.width(m_text) + 4;
+		int width = fm.width(m_text) + 8;
 		int height = fm.height();
 		QRect textArea = QRect(m_pixmap.width() + 10, m_pixmap.height() / 4, width, height);
 		painter->setFont(themer()->get_font("ViewPort:fontscale:infocursor"));
 		painter->fillRect(textArea, QBrush(Qt::white));
-		painter->drawText(textArea, m_text);
+		painter->drawText(textArea, Qt::AlignCenter, m_text);
 	}
 }
 
