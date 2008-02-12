@@ -42,8 +42,6 @@ public:
 	TrackView(SheetView* sv, Track* track);
 	~TrackView();
 	
-	enum {Type = UserType + 2};
-	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	
 	Track* get_track() const;

@@ -36,7 +36,6 @@ class SheetView;
 class TrackView;
 class FadeView;
 class Peak;
-class PositionIndicator;
 class QGraphicsSimpleTextItem;
 
 class AudioClipView : public ViewItem
@@ -55,23 +54,15 @@ public:
 	AudioClipView(SheetView* view, TrackView* parent, AudioClip* clip);
 	~AudioClipView();
 
-	enum {Type = UserType + 1};
-	int type() const;
-
-	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	
 	void set_height(int height);
 	
-	AudioClip* get_clip();
+	AudioClip* get_clip() const {return m_clip;}
 	int get_height() const;
 	int get_childview_y_offset() const;
 	
 	void calculate_bounding_rect();
-	
-	TrackView* get_trackview() const {return m_tv;}
-	void set_trackview(TrackView* view);
-	
 	void load_theme_data();
 	
 protected:
@@ -83,7 +74,6 @@ private:
 	AudioClip* 	m_clip;
 	Sheet*		m_sheet;
 	CurveView* 	curveView;
-	PositionIndicator* m_posIndicator;
 	QPolygonF m_polygon;
 	QGraphicsSimpleTextItem* m_clipInfo;
 	
@@ -174,10 +164,6 @@ inline int AudioClipView::get_height() const {
 	(m_height > m_mimimumheightforinfoarea) ? height = m_height - m_infoAreaHeight : height = m_height;
 	return height;
 }
-
-inline int AudioClipView::type() const {return Type;}
-
-
 
 #endif
 

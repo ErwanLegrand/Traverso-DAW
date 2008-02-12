@@ -102,7 +102,7 @@ ViewPort::ViewPort(QGraphicsScene* scene, QWidget* parent)
 	setOptimizationFlag(DontClipPainter);
 #endif
 
-	m_holdcursor = new HoldCursor();
+	m_holdcursor = new HoldCursor(this);
 	scene->addItem(m_holdcursor);
 	m_holdcursor->hide();
 	// m_holdCursorActive is a replacement for m_holdcursor->isVisible()
@@ -285,7 +285,7 @@ void ViewPort::set_holdcursor_text( const QString & text )
 
 void ViewPort::set_holdcursor_pos(QPoint pos)
 {
-	m_holdcursor->setPos(pos);
+	m_holdcursor->set_pos(pos);
 }
 
 void ViewPort::set_current_mode(int mode)
@@ -300,9 +300,12 @@ void ViewPort::set_current_mode(int mode)
 /**********************************************************************/
 
 
-HoldCursor::HoldCursor()
+HoldCursor::HoldCursor(ViewPort* vp)
+	: m_vp(vp)
 {
-	setFlag(QGraphicsItem::ItemIgnoresTransformations);
+	m_textItem = new QGraphicsTextItem(this);
+	m_textItem->setFont(themer()->get_font("ViewPort:fontscale:infocursor"));
+
 	setZValue(200);
 }
 
@@ -315,24 +318,22 @@ void HoldCursor::paint( QPainter * painter, const QStyleOptionGraphicsItem * opt
 	Q_UNUSED(widget);
 	Q_UNUSED(option);
 
-	
 	painter->drawPixmap(0, 0, m_pixmap);
-	
-	if (!m_text.isEmpty()) {
-		QFontMetrics fm(themer()->get_font("ViewPort:fontscale:infocursor"));
-		int width = fm.width(m_text) + 8;
-		int height = fm.height();
-		QRect textArea = QRect(m_pixmap.width() + 10, m_pixmap.height() / 4, width, height);
-		painter->setFont(themer()->get_font("ViewPort:fontscale:infocursor"));
-		painter->fillRect(textArea, QBrush(Qt::white));
-		painter->drawText(textArea, Qt::AlignCenter, m_text);
-	}
 }
 
 
 void HoldCursor::set_text( const QString & text )
 {
 	m_text = text;
+	
+	if (!m_text.isEmpty()) {
+		m_textItem->show();
+	} else {
+		m_textItem->hide();
+	}
+	QString html = "<html><body bgcolor=ghostwhite>" + m_text + "</body></html>";
+	m_textItem->setHtml(html);
+	
 	update();
 }
 
@@ -352,6 +353,31 @@ QRectF HoldCursor::boundingRect( ) const
 void HoldCursor::reset()
 {
 	m_text = "";
+}
+
+void HoldCursor::set_pos(QPoint p)
+{
+	int x = m_vp->mapFromScene(pos()).x();
+	int y = m_vp->mapFromScene(pos()).y();
+	int yoffset = 0;
+	
+	if (y < 0) {
+		yoffset = - y;
+	} else if (y > m_vp->height() - m_pixmap.height()) {
+		yoffset = m_vp->height() - y - m_pixmap.height();
+	}
+	
+	int diff = m_vp->width() - (x + m_pixmap.width() + 8);
+	
+	if (diff < m_textItem->boundingRect().width()) {
+		m_textItem->setPos(diff - m_pixmap.width(), yoffset);
+	} else if (x < -m_pixmap.width()) {
+		m_textItem->setPos(8 - x, yoffset);
+	} else {
+		m_textItem->setPos(m_pixmap.width() + 8, yoffset);
+	}
+	
+	setPos(p);
 }
 
 

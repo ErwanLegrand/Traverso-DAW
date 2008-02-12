@@ -31,7 +31,6 @@ class AudioClip;
 class Sheet;
 class Track;
 class SheetView;
-class TrackView;
 class AudioClipView;
 class Zoom;
 
@@ -70,7 +69,6 @@ private :
 		TimeRef		xoffset;
 		SheetView* 	sv;
 		AudioClipView*	view;
-		TrackView*	origTrackView;
 		QPointF		origPos;
 		TimeRef 	origTrackEndLocation;
 		bool 		resync;

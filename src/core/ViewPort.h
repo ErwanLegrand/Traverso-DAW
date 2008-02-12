@@ -31,6 +31,7 @@ class ContextItem;
 class Import;
 class Track;
 class HoldCursor;
+class QGraphicsTextItem;
 
 class ViewPort : public QGraphicsView
 {
@@ -86,18 +87,21 @@ class HoldCursor : public ContextItem, public QGraphicsItem
 {
 	Q_OBJECT
 public:
-	HoldCursor();
+	HoldCursor(ViewPort* vp);
 	~HoldCursor();
 
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 	void set_text(const QString& text);
 	void set_type(const QString& type);
+	void set_pos(QPoint pos);
 	void reset();
 
 	QRectF boundingRect() const;
 
 private:
+	ViewPort* 	m_vp;
+	QGraphicsTextItem* m_textItem;
 	QPoint          m_pos;
 	QPixmap		m_pixmap;
 	QString         m_text;

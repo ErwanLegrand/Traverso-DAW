@@ -116,7 +116,6 @@ void MoveClip::init_data()
 	d->origPos = QPointF(d->origXPos, cpointer().on_first_input_event_scene_y());
 	d->sv->start_shuttle(true, true);
 	d->bypassjog = false;
-	d->origTrackView = d->view->get_trackview();
 }
 
 
@@ -267,6 +266,8 @@ int MoveClip::jog()
 	d->sv->update_shuttle_factor();
 	
 	cpointer().get_viewport()->set_holdcursor_pos(d->sv->get_clips_viewport()->mapToScene(cpointer().pos()).toPoint());
+	cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(newTrackStartLocation, d->sv->timeref_scalefactor));
+
 
 	return 1;
 }

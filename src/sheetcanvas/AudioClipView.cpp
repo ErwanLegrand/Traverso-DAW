@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TrackView.h"
 #include "FadeView.h"
 #include "CurveView.h"
-#include "PositionIndicator.h"
 
 #include "AudioClip.h"
 #include "ReadSource.h"
@@ -79,7 +78,6 @@ AudioClipView::AudioClipView(SheetView* sv, TrackView* parent, AudioClip* clip )
 
 	m_waitingForPeaks = false;
 	m_progress = 0;
-	m_posIndicator = 0;
 	
 	if (FadeCurve* curve = m_clip->get_fade_in()) {
 		add_new_fadeview(curve);
@@ -219,22 +217,6 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 		painter->drawPixmap(center - 8, m_height - 20, find_pixmap(":/lock"));
 	}
 
-	if (m_clip->is_moving()) {
-		if (! m_posIndicator) {
-			m_posIndicator = new PositionIndicator(this);
-			m_posIndicator->set_position(2, get_childview_y_offset() + 1);
-		}
-		m_posIndicator->show();
-		m_posIndicator->set_value(timeref_to_text(TimeRef(x() * m_sv->timeref_scalefactor), m_sv->timeref_scalefactor));
-	} else {
-		if (m_posIndicator && m_posIndicator->isVisible()) {
-			m_posIndicator->hide();
-/*			scene()->removeItem(m_posIndicator);
-			delete m_posIndicator;
-			m_posIndicator = 0;*/
-		}
-	}
-	
 	painter->restore();
 }
 
@@ -722,11 +704,6 @@ void AudioClipView::peak_creation_finished()
 	update();
 }
 
-AudioClip * AudioClipView::get_clip( )
-{
-	return m_clip;
-}
-
 void AudioClipView::add_new_fadeview( FadeCurve * fade )
 {
 	PENTER;
@@ -954,15 +931,6 @@ Command * AudioClipView::set_audio_file()
 	}
 	
 	return ie().did_not_implement();
-}
-
-void AudioClipView::set_trackview(TrackView * view)
-{
-	if (m_posIndicator) {
-		m_posIndicator->update();
-	}
-	m_tv = view;
-	setParentItem(m_tv);
 }
 
 Command * AudioClipView::edit_properties()
