@@ -71,7 +71,6 @@ public:
 	
 	TrackView* get_trackview() const {return m_tv;}
 	void set_trackview(TrackView* view);
-	void set_dragging(bool dragging);
 	
 	void load_theme_data();
 	
@@ -105,7 +104,6 @@ private:
 	bool m_waitingForPeaks;
 	bool m_mergedView;
 	bool m_classicView;
-	bool m_dragging;
 	bool m_paintWithOutline;
 	int m_height;
 	int m_infoAreaHeight;

@@ -60,7 +60,6 @@ AudioClipView::AudioClipView(SheetView* sv, TrackView* parent, AudioClip* clip )
 	: ViewItem(parent, clip)
 	, m_tv(parent)
 	, m_clip(clip)
-	, m_dragging(false)
 {
 	PENTERCONS;
 	
@@ -151,7 +150,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 		return;
 	}
 	
-	bool mousehover = (option->state & QStyle::State_MouseOver) || m_dragging;
+	bool mousehover = (option->state & QStyle::State_MouseOver) || m_clip->is_moving();
 	
 	if (m_drawbackground) {
 		if (m_clip->recording_state() == AudioClip::RECORDING) {
@@ -220,8 +219,20 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 		painter->drawPixmap(center - 8, m_height - 20, find_pixmap(":/lock"));
 	}
 
-	if (m_dragging) {
+	if (m_clip->is_moving()) {
+		if (! m_posIndicator) {
+			m_posIndicator = new PositionIndicator(this);
+			m_posIndicator->set_position(2, get_childview_y_offset() + 1);
+		}
+		m_posIndicator->show();
 		m_posIndicator->set_value(timeref_to_text(TimeRef(x() * m_sv->timeref_scalefactor), m_sv->timeref_scalefactor));
+	} else {
+		if (m_posIndicator && m_posIndicator->isVisible()) {
+			m_posIndicator->hide();
+/*			scene()->removeItem(m_posIndicator);
+			delete m_posIndicator;
+			m_posIndicator = 0;*/
+		}
 	}
 	
 	painter->restore();
@@ -911,25 +922,6 @@ void AudioClipView::update_recording()
 	QRect updaterect = QRect(int(m_oldRecordingPos / m_sv->timeref_scalefactor) - 1, 0, updatewidth, m_height);
 	update(updaterect);
 	m_oldRecordingPos = newPos;
-}
-
-void AudioClipView::set_dragging(bool dragging)
-{
-	if (dragging) {
-		if (! m_posIndicator) {
-			m_posIndicator = new PositionIndicator(this);
-			m_posIndicator->set_position(2, get_childview_y_offset() + 1);
-		}
-	} else {
-		if (m_posIndicator) {
-			scene()->removeItem(m_posIndicator);
-			delete m_posIndicator;
-			m_posIndicator = 0;
-		}
-	}
-	
-	m_dragging = dragging;
-	update();
 }
 
 Command * AudioClipView::set_audio_file()

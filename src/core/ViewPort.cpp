@@ -137,10 +137,6 @@ bool ViewPort::event(QEvent * event)
 			return true;
 		}
 	}
-	if (event->type() == QEvent::MouseButtonPress) {
-		printf("eating mouse press\n");
-		return true;
-	}
 	return QGraphicsView::event(event);
 }
 

@@ -59,6 +59,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
+/**
+ *	\class AudioClip
+	\brief Represents (part of) an audiofile.
+ */
 
 AudioClip::AudioClip(const QString& name)
 	: ContextItem()
@@ -121,7 +125,7 @@ void AudioClip::init()
 	m_readSource = 0;
 	m_peak = 0;
 	m_recordingStatus = NO_RECORDING;
-	m_isSelected = m_isReadSourceValid = false;
+	m_isSelected = m_isReadSourceValid = m_isMoving = false;
 	m_isLocked = config().get_property("AudioClip", "LockByDefault", false).toBool();
 	fadeIn = 0;
 	fadeOut = 0;
@@ -247,7 +251,17 @@ void AudioClip::set_sources_active_state()
 		return;
 	}
 	
-	if ( m_track->is_muted() || m_track->is_muted_by_solo() || is_muted() ) {
+	bool syncDuringDrag = config().get_property("AudioClip", "SyncDuringDrag", false).toBool();
+	bool stopSyncDueMove;
+	if (m_isMoving && syncDuringDrag) {
+		stopSyncDueMove = false;
+	} else if (m_isMoving && !syncDuringDrag){
+		stopSyncDueMove = true;
+	} else {
+		stopSyncDueMove = false;
+	}
+		
+	if ( m_track->is_muted() || m_track->is_muted_by_solo() || is_muted() || stopSyncDueMove) {
 		m_readSource->set_active(false);
 	} else {
 		m_readSource->set_active(true);
@@ -347,6 +361,7 @@ void AudioClip::set_source_end_location(const TimeRef& location)
 
 void AudioClip::set_track_start_location(const TimeRef& location)
 {
+	PENTER2;
 	m_trackStartLocation = location;
 	set_track_end_location(m_trackStartLocation + m_length);
 	if (m_track) {
@@ -996,5 +1011,11 @@ ReadSource * AudioClip::get_readsource() const
 void AudioClip::get_capture_bus()
 {
 	m_captureBus = audiodevice().get_capture_bus(m_captureBusName);
+}
+
+void AudioClip::set_as_moving(bool moving)
+{
+	m_isMoving = moving;
+	set_sources_active_state();
 }
 

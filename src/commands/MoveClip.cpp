@@ -115,7 +115,6 @@ void MoveClip::init_data()
 	d->origXPos = cpointer().on_first_input_event_scene_x();
 	d->origPos = QPointF(d->origXPos, cpointer().on_first_input_event_scene_y());
 	d->sv->start_shuttle(true, true);
-	d->view->set_dragging(true);
 	d->bypassjog = false;
 	d->origTrackView = d->view->get_trackview();
 }
@@ -126,6 +125,8 @@ int MoveClip::begin_hold()
 	d->sv->stop_follow_play_head();
 
 	init_data();
+	
+	m_clip->set_as_moving(true);
 
 	return 1;
 }
@@ -134,6 +135,8 @@ int MoveClip::begin_hold()
 int MoveClip::finish_hold()
 {
 	m_clip->set_snappable(true);
+	m_clip->set_as_moving(false);
+	
 	d->sv->start_shuttle(false);
 
 	return 1;

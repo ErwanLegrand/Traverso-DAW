@@ -78,6 +78,7 @@ public:
 	void set_sheet(Sheet* sheet);
 
 	void set_selected(bool selected);
+	void set_as_moving(bool moving);
 	int set_state( const QDomNode& node );
 
 	AudioClip* create_copy();
@@ -112,6 +113,7 @@ public:
 	bool has_sheet() const;
 	bool is_readsource_invalid() const {return !m_isReadSourceValid;}
 	bool is_smaller_then(APILinkedListNode* node) {return ((AudioClip*)node)->get_track_start_location() > get_track_start_location();}
+	bool is_moving() const {return m_isMoving;}
 
 	int recording_state() const;
 
@@ -141,6 +143,7 @@ private:
 	bool 			m_isTake;
 	bool			m_isLocked;
 	bool			m_isReadSourceValid;
+	bool			m_isMoving;
 	RecordingStatus		m_recordingStatus;
 	
 	qint64			m_readSourceId;
