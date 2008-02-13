@@ -264,7 +264,7 @@ int MoveClip::jog()
 		newTrackStartLocation = m_originalTrackStartLocation + diff_f;
 	}
 
-	if (m_sheet->is_snap_on()) {
+	if (m_sheet->is_snap_on() && !d->verticalOnly) {
 		calculate_snap_diff(newTrackStartLocation, newTrackEndLocation);
 	}
 	
