@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2007 Remon Sijrier
+Copyright (C) 2005-2008 Remon Sijrier
 
 This file is part of Traverso
 
@@ -538,14 +538,20 @@ void InputEngine::jog()
 				} else {
 					return;
 				}
+				m_jogBypassPos = cpointer().pos();
 			}
-			m_jogBypassPos = cpointer().pos();
 			
 			holdingCommand->jog();
 		}
 	}
 }
 
+void InputEngine::bypass_jog_until_mouse_movements_exceeded_manhattenlength(int length)
+{
+	m_unbypassJogDistance = length;
+	m_bypassJog = true;
+	m_jogBypassPos = cpointer().pos();
+}
 
 void InputEngine::set_jogging(bool jog)
 {
@@ -1856,8 +1862,3 @@ IEAction::~ IEAction()
 	}
 }
 
-void InputEngine::bypass_jog_until_mouse_movements_exceeded_manhattenlength(int length)
-{
-	m_unbypassJogDistance = length;
-	m_bypassJog = true;
-}
