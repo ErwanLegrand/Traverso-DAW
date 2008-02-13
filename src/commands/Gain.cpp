@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Gain.cpp,v 1.26 2008/02/12 20:39:07 r_sijrier Exp $
+$Id: Gain.cpp,v 1.27 2008/02/13 10:25:25 r_sijrier Exp $
 */
 
 #include "Gain.h"
@@ -149,8 +149,17 @@ void Gain::set_collected_number(const QString & collected)
 	bool ok;
 	float dbFactor = collected.toDouble(&ok);
 	if (!ok) {
-		PWARN("collected is not a valid float number");
+		if (collected.contains(".") || collected.contains("-")) {
+			QString s = collected;
+			s.append(" dB");
+			cpointer().get_viewport()->set_holdcursor_text(s);
+		}
 		return;
+	}
+	
+	int rightfromdot = 0;
+	if (collected.contains(".")) {
+		rightfromdot = collected.size() - collected.lastIndexOf(".") - 1;
 	}
 	
 	newGain = dB_to_scale_factor(dbFactor);
@@ -161,7 +170,11 @@ void Gain::set_collected_number(const QString & collected)
 	get_gain_from_object(newGain);
 	
 	// Update the vieport's hold cursor with the _actuall_ gain value!
-	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', collected.size()).append(" dB"));
+	if(rightfromdot) {
+		cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', rightfromdot).append(" dB"));
+	} else {
+		cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor).append(" dB"));
+	}
 
 }
 
