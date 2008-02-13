@@ -55,11 +55,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  * @param cv The AudioClipView that is to be dragged/copied.
  * @param arguments Can be either one of the following: move, copy, move_to_end, move_to_start
  */
-MoveClip::MoveClip(AudioClipView* cv, QString type)
+MoveClip::MoveClip(AudioClipView* cv, QVariantList args)
 	: Command(cv->get_clip(), "")
 	, d(new Data)
 {
-	m_actionType = type;
+	m_actionType = "move"; // default action!
+	
+	if (args.size() > 0) {
+		m_actionType = args.at(0).toString();
+	}
+	if (args.size() > 1) {
+		d->verticalOnly = args.at(1).toBool();
+	} else {
+		d->verticalOnly = false;
+	}
+	
 	d->view = cv;
 	d->sv = d->view->get_sheetview();
 	d->zoom = 0;
@@ -241,6 +251,10 @@ int MoveClip::jog()
 	int newXPos = cpointer().scene_x();
 
 	TimeRef diff_f = TimeRef((cpointer().scene_x() - d->origXPos) * d->sv->timeref_scalefactor);
+	if (d->verticalOnly) {
+		diff_f = TimeRef();
+	}
+	
 	TimeRef newTrackStartLocation;
 	TimeRef newTrackEndLocation = d->origTrackEndLocation + diff_f;
 
@@ -383,8 +397,10 @@ void MoveClip::start_zoom(bool autorepeat)
 
 void MoveClip::set_cursor_shape(int useX, int useY)
 {
-	Q_UNUSED(useX);
-	Q_UNUSED(useY);
-	cpointer().get_viewport()->set_holdcursor(":/cursorHoldLrud");
+	if (useX && useY) {
+		cpointer().get_viewport()->set_holdcursor(":/cursorHoldLrud");
+	} else {
+		cpointer().get_viewport()->set_holdcursor(":/cursorHoldUd");
+	}
 }
 

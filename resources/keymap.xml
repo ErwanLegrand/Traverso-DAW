@@ -479,6 +479,7 @@
 		<keyfact type="HKEY2" key1="D" key2="V" >
 			<Objects>
 				<Object objectname="CurveView" mousehint="UD" slotsignature="drag_node_vertical_only" modes="Effects" sortorder="4" />
+				<Object objectname="AudioClipView" mousehint="UD" modes="All" pluginname="TraversoCommands" commandname="MoveClip" arguments="move;true" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY2" key1="D" key2="F" >

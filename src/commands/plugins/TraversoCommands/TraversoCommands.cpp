@@ -272,13 +272,7 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 				return 0;
 			}
 
-			QString type;
-			if (arguments.size()) {
-				type = arguments.at(0).toString();
-			} else {
-				type = "move";  // Default Action
-			}
-			return new MoveClip(view, type);
+			return new MoveClip(view, arguments);
 		}
 		
 		case DragEdgeCommand:
@@ -289,8 +283,11 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 					"DragEdgeCommand needs an AudioClipView as argument");
 				return 0;
 			}
+			
+			return 0;
 
-			int x = (int) (cpointer().on_first_input_event_scene_x() - view->scenePos().x());
+			// No longer needed?
+/*			int x = (int) (cpointer().on_first_input_event_scene_x() - view->scenePos().x());
 			
 			bool anchorAudio = false;
 			if (arguments.size()) {
@@ -309,7 +306,7 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 				} else {
 					return new MoveEdge(view, view->get_sheetview(), "set_right_edge");
 				}
-			}
+			}*/
 		}
 
 		case MoveClipOrEdgeCommand:
@@ -322,7 +319,10 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 				return 0;
 			}
 			
-			int x = (int) (cpointer().on_first_input_event_scene_x() - view->scenePos().x());
+			return 0;
+			
+			// no longer needed?
+/*			int x = (int) (cpointer().on_first_input_event_scene_x() - view->scenePos().x());
 			
 			int edge_width = 0;
 			bool anchorAudio = false;
@@ -344,7 +344,7 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 					return new MoveEdge(view, view->get_sheetview(), "set_right_edge");
 				}
 			}
-			return new MoveClip(view, "move");
+			return new MoveClip(view, "move");*/
 		}
 
 		case SplitClipCommand:

@@ -42,7 +42,7 @@ class MoveClip : public Command
 	Q_CLASSINFO("start_zoom", tr("Jog Zoom"));
 	
 public :
-	MoveClip(AudioClipView* clipView, QString type);
+	MoveClip(AudioClipView* clipView, QVariantList args);
         ~MoveClip();
 
         int begin_hold();
@@ -73,6 +73,7 @@ private :
 		TimeRef 	origTrackEndLocation;
 		bool 		resync;
 		bool		bypassjog;
+		bool		verticalOnly;
 		QPoint		jogBypassPos;
 		Zoom*		zoom;
 	};
