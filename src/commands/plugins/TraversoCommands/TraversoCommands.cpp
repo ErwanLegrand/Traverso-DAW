@@ -51,7 +51,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 	sortorder:	The order of where the key action should show up in the ContextMenu of 'objectname'
 	plugniname:	The plugin to ask the Command for, the only one available right now is TraversoCommands
 	commandname:	The Command to be created, which by convention tries to be the same name as the actuall class implementing the Command
-	arguements:	One, or more values (seperated by semicolons), each Command explains which (list of) values it can understand
+	arguments:	One, or more values (seperated by semicolons), each Command explains which (list of) values it can understand
 	\endcode 
 
 
@@ -62,7 +62,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 	MoveClip: Move or Copy-move an AudioClip.
 	
 	objectname:	AudioClipView
-	arguments:	Either one of the following: "move", "copy", "move_to_end", "move_to_start"
+	arguments:	First entry, either one of the following: "move", "copy", "move_to_end", "move_to_start"
+			Second (optional) entry: Move vertical only: "true" for vertical moving only, "false" for omnidirectional moving (the default)
 	commandname:	Moveclip
 	\endcode 
 
@@ -82,6 +83,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 	commandname:	ResetGain
 	\endcode 
 	
+	TODO document all remaining Commands
 	\code 
 	?: ?
 	
@@ -284,31 +286,17 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 				return 0;
 			}
 			
-			return 0;
-
-			// No longer needed?
-/*			int x = (int) (cpointer().on_first_input_event_scene_x() - view->scenePos().x());
-			
-			bool anchorAudio = false;
-			if (arguments.size()) {
-				anchorAudio = arguments[0].toBool();
-			}
+			int x = (int) (cpointer().on_first_input_event_scene_x() - view->scenePos().x());
 			
 			if (x < (view->boundingRect().width() / 2)) {
-				if (anchorAudio) {
-					return new MoveClip(view, "anchored_left_edge_move");
-				} else {
-					return new MoveEdge(view, view->get_sheetview(), "set_left_edge");
-				}
+				return new MoveEdge(view, view->get_sheetview(), "set_left_edge");
 			} else {
-				if (anchorAudio) {
-					return new MoveClip(view, "anchored_right_edge_move");
-				} else {
-					return new MoveEdge(view, view->get_sheetview(), "set_right_edge");
-				}
-			}*/
+				return new MoveEdge(view, view->get_sheetview(), "set_right_edge");
+			}
 		}
 
+		// The existence of this is doubtfull. Using [ E ] is so much easier
+		// then trying to mimic 'if near to edge, drag edge' features.
 		case MoveClipOrEdgeCommand:
 		{
 			AudioClipView* view = qobject_cast<AudioClipView*>(obj);
@@ -319,32 +307,20 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 				return 0;
 			}
 			
-			return 0;
-			
-			// no longer needed?
-/*			int x = (int) (cpointer().on_first_input_event_scene_x() - view->scenePos().x());
+			int x = (int) (cpointer().on_first_input_event_scene_x() - view->scenePos().x());
 			
 			int edge_width = 0;
-			bool anchorAudio = false;
 			if (arguments.size() == 2) {
 				edge_width = arguments[0].toInt();
-				anchorAudio = arguments[1].toBool();
 			}
 			
 			if (x < edge_width) {
-				if (anchorAudio) {
-					return new MoveClip(view, "anchored_left_edge_move");
-				} else {
-					return new MoveEdge(view, view->get_sheetview(), "set_left_edge");
-				}
+				return new MoveEdge(view, view->get_sheetview(), "set_left_edge");
 			} else if (x > (view->boundingRect().width() - edge_width)) {
-				if (anchorAudio) {
-					return new MoveClip(view, "anchored_right_edge_move");
-				} else {
-					return new MoveEdge(view, view->get_sheetview(), "set_right_edge");
-				}
+				return new MoveEdge(view, view->get_sheetview(), "set_right_edge");
 			}
-			return new MoveClip(view, "move");*/
+			
+			return new MoveClip(view, QVariantList() << "move");
 		}
 
 		case SplitClipCommand:
