@@ -111,13 +111,13 @@ TraversoCommands::TraversoCommands()
 	m_dict.insert("ClipSelectionAdd", ClipSelectionCommand);
 	m_dict.insert("ClipSelectionRemove", ClipSelectionCommand);
 	m_dict.insert("MoveClip", MoveClipCommand);
+	m_dict.insert("FoldSheet", MoveClipCommand);
+	m_dict.insert("FoldTrack", MoveClipCommand);
 	m_dict.insert("DragEdge", DragEdgeCommand);
 	m_dict.insert("MoveClipOrEdge", MoveClipOrEdgeCommand);
 	m_dict.insert("CopyClip", MoveClipCommand);
 	m_dict.insert("SplitClip", SplitClipCommand);
 	m_dict.insert("ArmTracks", ArmTracksCommand);
-	m_dict.insert("MultiMove", MultiMoveCommand);
-	m_dict.insert("MultiMoveSingle", MultiMoveCommand);
 	m_dict.insert("VZoomIn", ZoomCommand);
 	m_dict.insert("VZoomOut", ZoomCommand);
 	m_dict.insert("HZoomIn", ZoomCommand);
@@ -345,22 +345,6 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 			return new ArmTracks(view);
 		}
 		
-		case MultiMoveCommand:
-		{
-			SheetView* view = qobject_cast<SheetView*>(obj);
-			
-			bool allTracks = true;
-			if (arguments.size()) {
-				allTracks = arguments[0].toBool();
-			}
-			
-			if (!view) {
-				PERROR("TraversoCommands: Supplied QObject was not a SheetView! "
-					"MultiMoveCommand needs a SheetView as argument");
-				return 0;
-			}
-			return new MultiMove(view, allTracks);
-		}
 		case ZoomCommand:
 		{
 			SheetView* view = qobject_cast<SheetView*>(obj);
