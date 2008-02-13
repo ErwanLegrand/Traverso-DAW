@@ -45,7 +45,7 @@ public:
 	TimeRef next_snap_pos(const TimeRef& location);
 	TimeRef prev_snap_pos(const TimeRef& location);
 	
-	TimeRef calculate_snap_diff(TimeRef& leftlocation, TimeRef rightlocation);
+	TimeRef calculate_snap_diff(TimeRef leftlocation, TimeRef rightlocation);
 
 	void set_range(const TimeRef& start, const TimeRef& end, int scalefactor);
 

@@ -20,10 +20,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 */
 
 #include "SnapList.h"
+
 #include "Peak.h"
 #include "Sheet.h"
 #include "AudioClip.h"
 #include "AudioClipManager.h"
+#include "Config.h"
 #include "ContextPointer.h"
 #include "TimeLine.h"
 #include "Marker.h"
@@ -39,8 +41,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #else
 #define SLPRINT(args...)
 #endif
-
-static const int SNAP_WIDTH = 10;
 
 SnapList::SnapList(Sheet* sheet) 
 	: QObject(sheet)
@@ -133,16 +133,17 @@ void SnapList::update_snaplist()
 		}
 
 		// check if neighbouring snap regions overlap.
-		// if yes, reduce SNAP_WIDTH to keep the border in the middle
-		int ls = -SNAP_WIDTH;
+		// if yes, reduce snap-range to keep the border in the middle
+		int snaprange = config().get_property("Snap", "range", 10).toInt();
+		int ls = - snaprange;
 
 		if (lastIndex > -1) {
-			if ( (m_xposList.at(i) - lastVal) < (2 * SNAP_WIDTH * m_scalefactor) ) {
+			if ( (m_xposList.at(i) - lastVal) < (2 * snaprange * m_scalefactor) ) {
 				ls = - (int) ((m_xposList.at(i) / m_scalefactor - lastVal / m_scalefactor) / 2);
 			}
 		}
 
-		for (int j = ls; j <= SNAP_WIDTH; j++) {
+		for (int j = ls; j <= snaprange; j++) {
 			int pos = (int)((m_xposList.at(i) - m_rangeStart) / m_scalefactor + j); // index in the LUT
 
 			if (pos < 0) {
@@ -166,7 +167,7 @@ void SnapList::update_snaplist()
 
 
 // public function that checks if there is a snap position
-// within +-SNAP_WIDTH of the supplied value i
+// within +- snap-range of the supplied value i
 TimeRef SnapList::get_snap_value(const TimeRef& pos)
 {
 	if (m_isDirty) {
@@ -337,7 +338,7 @@ TimeRef SnapList::prev_snap_pos(const TimeRef& pos)
 }
 
 
-TimeRef SnapList::calculate_snap_diff(TimeRef & leftlocation, TimeRef rightlocation)
+TimeRef SnapList::calculate_snap_diff(TimeRef leftlocation, TimeRef rightlocation)
 {
 	// "nframe_t" domain, but must be signed ints because they can become negative
 	qint64 snapStartDiff = 0;
@@ -375,6 +376,5 @@ TimeRef SnapList::calculate_snap_diff(TimeRef & leftlocation, TimeRef rightlocat
 			snapDiff = snapEndDiff;
 	}
 	
-// 	leftlocation -= snapDiff;
 	return TimeRef(snapDiff);
 }
