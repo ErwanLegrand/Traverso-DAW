@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
+    Copyright (C) 2005-2008 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -72,9 +72,7 @@ private :
 		QPointF		origPos;
 		TimeRef 	origTrackEndLocation;
 		bool 		resync;
-		bool		bypassjog;
 		bool		verticalOnly;
-		QPoint		jogBypassPos;
 		Zoom*		zoom;
 	};
 			
@@ -82,7 +80,6 @@ private :
 	Data* d;
 
 	void init_data();
-	void calculate_snap_diff(TimeRef& leftlocation, TimeRef rightlocation);
 	
 public slots:
 	void next_snap_pos(bool autorepeat);

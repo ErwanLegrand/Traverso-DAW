@@ -528,8 +528,19 @@ Command* InputEngine::did_not_implement()
 void InputEngine::jog()
 {
 	PENTER3;
+
 	if (isJogging) {
 		if (holdingCommand) {
+			if (m_bypassJog) {
+				QPoint diff = m_jogBypassPos - cpointer().pos();
+				if (diff.manhattanLength() > m_unbypassJogDistance) {
+					m_bypassJog = false;
+				} else {
+					return;
+				}
+			}
+			m_jogBypassPos = cpointer().pos();
+			
 			holdingCommand->jog();
 		}
 	}
@@ -572,6 +583,7 @@ void InputEngine::reset()
 	fact2_k1 = 0;
 	fact2_k2 = 0;
 	wholeMapIndex = -1;
+	m_bypassJog = false;
 	
 	for (int i=0; i < STACK_SIZE; i++) {
 		eventType[i] = 0;
@@ -1844,6 +1856,8 @@ IEAction::~ IEAction()
 	}
 }
 
-//eof
-
-
+void InputEngine::bypass_jog_until_mouse_movements_exceeded_manhattenlength(int length)
+{
+	m_unbypassJogDistance = length;
+	m_bypassJog = true;
+}

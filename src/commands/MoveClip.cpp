@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2007 Remon Sijrier 
+Copyright (C) 2005-2008 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "AudioClip.h"
 #include "ContextPointer.h"
+#include "InputEngine.h"
 #include "ProjectManager.h"
 #include "ResourcesManager.h"
 #include "SnapList.h"
@@ -51,9 +52,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 /**
  *	Creates  a Move Clip or Copy Clip Command object.
- *	
- * @param cv The AudioClipView that is to be dragged/copied.
- * @param arguments Can be either one of the following: move, copy, move_to_end, move_to_start
  */
 MoveClip::MoveClip(AudioClipView* cv, QVariantList args)
 	: Command(cv->get_clip(), "")
@@ -70,6 +68,7 @@ MoveClip::MoveClip(AudioClipView* cv, QVariantList args)
 		d->verticalOnly = false;
 	}
 	
+	m_clip = cv->get_clip();
 	d->view = cv;
 	d->sv = d->view->get_sheetview();
 	d->zoom = 0;
@@ -91,8 +90,6 @@ MoveClip::MoveClip(AudioClipView* cv, QVariantList args)
 	
 	if (m_actionType == "move_to_start" || m_actionType == "move_to_end") {
 		init_data();
-	} else {
-		m_clip = d->view->get_clip();
 	}
 }
 
@@ -125,7 +122,6 @@ void MoveClip::init_data()
 	d->origXPos = cpointer().on_first_input_event_scene_x();
 	d->origPos = QPointF(d->origXPos, cpointer().on_first_input_event_scene_y());
 	d->sv->start_shuttle(true, true);
-	d->bypassjog = false;
 }
 
 
@@ -222,22 +218,12 @@ int MoveClip::jog()
 		return 0;
 	}
 	
-	if (d->bypassjog) {
-		QPoint diff = d->jogBypassPos - cpointer().pos();
-		if (diff.manhattanLength() > 35) {
-			d->bypassjog = false;
-		} else {
-			return 0;
-		}
-	}
 	
 	if (d->zoom) {
 		d->zoom->jog();
 		return 0;
 	}
 	
-	
-	d->jogBypassPos = cpointer().pos();
 	
 	QPointF diffPoint(cpointer().scene_pos() - d->origPos);
 	
@@ -265,7 +251,7 @@ int MoveClip::jog()
 	}
 
 	if (m_sheet->is_snap_on() && !d->verticalOnly) {
-		calculate_snap_diff(newTrackStartLocation, newTrackEndLocation);
+		newTrackStartLocation -= m_sheet->get_snap_list()->calculate_snap_diff(newTrackStartLocation, newTrackEndLocation);
 	}
 	
 	m_posDiff = newTrackStartLocation - m_originalTrackStartLocation;
@@ -290,7 +276,8 @@ int MoveClip::jog()
 void MoveClip::next_snap_pos(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
-	d->bypassjog = true;
+	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	
 	TimeRef trackStartLocation = m_sheet->get_snap_list()->next_snap_pos(m_clip->get_track_start_location());
 	TimeRef trackEndLocation = m_sheet->get_snap_list()->next_snap_pos(m_clip->get_track_end_location());
 	qint64 startdiff = (trackStartLocation - m_clip->get_track_start_location()).universal_frame();
@@ -304,7 +291,8 @@ void MoveClip::next_snap_pos(bool autorepeat)
 void MoveClip::prev_snap_pos(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
-	d->bypassjog = true;
+	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	
 	TimeRef trackStartLocation = m_sheet->get_snap_list()->prev_snap_pos(m_clip->get_track_start_location());
 	TimeRef trackEndLocation = m_sheet->get_snap_list()->prev_snap_pos(m_clip->get_track_end_location());
 	qint64 startdiff = (trackStartLocation - m_clip->get_track_start_location()).universal_frame();
@@ -325,56 +313,8 @@ void MoveClip::move_to_start(bool autorepeat)
 void MoveClip::move_to_end(bool autorepeat)
 {
 	Q_UNUSED(autorepeat)
-	Track *track = m_clip->get_track();
-	
-	Command::process_command(track->remove_clip(m_clip, false));
 	m_clip->set_track_start_location(m_clip->get_sheet()->get_last_location());
-	Command::process_command(track->add_clip(m_clip, false));
 }
-
-void MoveClip::calculate_snap_diff(TimeRef& leftlocation, TimeRef rightlocation)
-{
-	// "nframe_t" domain, but must be signed ints because they can become negative
-	qint64 snapStartDiff = 0;
-	qint64 snapEndDiff = 0;
-	qint64 snapDiff = 0;
-	
-	SnapList* slist = m_sheet->get_snap_list();
-
-	// check if there is anything to snap
-	bool start_snapped = false;
-	bool end_snapped = false;
-	if (slist->is_snap_value(leftlocation)) {
-		start_snapped = true;
-	}
-	
-	if (slist->is_snap_value(rightlocation)) {
-		end_snapped = true;
-	}
-
-	if (start_snapped) {
-		snapStartDiff = slist->get_snap_diff(leftlocation);
-		snapDiff = snapStartDiff; // in case both ends snapped, change this value later, else leave it
-	}
-
-	if (end_snapped) {
-		snapEndDiff = slist->get_snap_diff(rightlocation); 
-		snapDiff = snapEndDiff; // in case both ends snapped, change this value later, else leave it
-	}
-
-	// If both snapped, check which one is closer. Do not apply this check if one of the
-	// ends hasn't snapped, because it's diff value will be 0 by default and will always
-	// be smaller than the actually snapped value.
-	if (start_snapped && end_snapped) {
-		if (abs(snapEndDiff) > abs(snapStartDiff))
-			snapDiff = snapStartDiff;
-		else
-			snapDiff = snapEndDiff;
-	}
-	
-	leftlocation -= snapDiff;
-}
-
 
 void MoveClip::start_zoom(bool autorepeat)
 {

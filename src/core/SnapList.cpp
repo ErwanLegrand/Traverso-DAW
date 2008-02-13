@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006-2007 Nicola Doebelin, Remon Sijrier
+Copyright (C) 2006-2008 Nicola Doebelin, Remon Sijrier
 
 This file is part of Traverso
 
@@ -336,3 +336,45 @@ TimeRef SnapList::prev_snap_pos(const TimeRef& pos)
 	return newpos;
 }
 
+
+TimeRef SnapList::calculate_snap_diff(TimeRef & leftlocation, TimeRef rightlocation)
+{
+	// "nframe_t" domain, but must be signed ints because they can become negative
+	qint64 snapStartDiff = 0;
+	qint64 snapEndDiff = 0;
+	qint64 snapDiff = 0;
+	
+	// check if there is anything to snap
+	bool start_snapped = false;
+	bool end_snapped = false;
+	if (is_snap_value(leftlocation)) {
+		start_snapped = true;
+	}
+	
+	if (is_snap_value(rightlocation)) {
+		end_snapped = true;
+	}
+
+	if (start_snapped) {
+		snapStartDiff = get_snap_diff(leftlocation);
+		snapDiff = snapStartDiff; // in case both ends snapped, change this value later, else leave it
+	}
+
+	if (end_snapped) {
+		snapEndDiff = get_snap_diff(rightlocation); 
+		snapDiff = snapEndDiff; // in case both ends snapped, change this value later, else leave it
+	}
+
+	// If both snapped, check which one is closer. Do not apply this check if one of the
+	// ends hasn't snapped, because it's diff value will be 0 by default and will always
+	// be smaller than the actually snapped value.
+	if (start_snapped && end_snapped) {
+		if (abs(snapEndDiff) > abs(snapStartDiff))
+			snapDiff = snapStartDiff;
+		else
+			snapDiff = snapEndDiff;
+	}
+	
+// 	leftlocation -= snapDiff;
+	return TimeRef(snapDiff);
+}

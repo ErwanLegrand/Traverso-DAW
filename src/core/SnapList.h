@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006-2007 Nicola Doebelin, Remon Sijrier
+Copyright (C) 2006-2008 Nicola Doebelin, Remon Sijrier
 
 This file is part of Traverso
 
@@ -45,6 +45,8 @@ public:
 	TimeRef next_snap_pos(const TimeRef& location);
 	TimeRef prev_snap_pos(const TimeRef& location);
 	
+	TimeRef calculate_snap_diff(TimeRef& leftlocation, TimeRef rightlocation);
+
 	void set_range(const TimeRef& start, const TimeRef& end, int scalefactor);
 
 private:

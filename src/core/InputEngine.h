@@ -143,6 +143,7 @@ public:
         int broadcast_action_from_contextmenu(const QString& name);
 
         void jog();
+	void bypass_jog_until_mouse_movements_exceeded_manhattenlength(int length=35);
 
         void activate();
         void suspend();
@@ -185,6 +186,8 @@ private:
         EventCatcher 		catcher;
         Command* 		holdingCommand;
         QString			sCollectedNumber;
+	QPoint			m_jogBypassPos;
+
 
         bool 			active;
         bool 			isHolding;
@@ -194,6 +197,7 @@ private:
         bool 			isDoubleKey;
         bool 			isJogging;
 	bool			m_cancelHold;
+	bool			m_bypassJog;
 
         int 			fact1_k1;
         int 			fact1_k2;
@@ -214,6 +218,7 @@ private:
         int 			doubleFactWaitTime;
         long 			eventTime[STACK_SIZE];
 	int			m_broadcastResult;
+	int			m_unbypassJogDistance;
 
         bool 			is_fake( int keyval);
         int 			identify_first_fact();

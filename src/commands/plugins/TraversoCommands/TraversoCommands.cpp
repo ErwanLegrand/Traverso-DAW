@@ -63,8 +63,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 	
 	objectname:	AudioClipView
 	arguments:	First entry, either one of the following: "move", "copy", "move_to_end", "move_to_start"
-			Second (optional) entry: Move vertical only: "true" for vertical moving only, "false" for omnidirectional moving (the default)
-	commandname:	Moveclip
+			Second (optional) entry: Move vertical only: "true" for vertical moving only, "false" for omnidirectional moving (the default if none is given)
+	commandname:	MoveClip
 	\endcode 
 
 
