@@ -22,6 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AudioClipGroup.h"
 
 #include "AudioClip.h"
+#include "Command.h"
+#include "ProjectManager.h"
+#include "ResourcesManager.h"
+#include "Track.h"
 
 #include "Debugger.h"
 
@@ -43,6 +47,12 @@ AudioClipGroup::AudioClipGroup(QList< AudioClip * > clips)
 void AudioClipGroup::add_clip(AudioClip * clip)
 {
 	m_clips.append(clip);
+	update_track_start_and_end_locations();
+}
+
+void AudioClipGroup::set_clips(QList< AudioClip * > clips)
+{
+	m_clips = clips;
 	update_track_start_and_end_locations();
 }
 
@@ -82,3 +92,33 @@ void AudioClipGroup::set_as_moving(bool move)
 		clip->set_as_moving(move);
 	}
 }
+
+QList<AudioClip*> AudioClipGroup::copy_clips()
+{
+	QList<AudioClip*> newclips;
+	
+	foreach(AudioClip* clip, m_clips) {
+		AudioClip* newclip = resources_manager()->get_clip(clip->get_id());
+		newclip->set_sheet(clip->get_sheet());
+		newclip->set_track(clip->get_track());
+		newclip->set_track_start_location(clip->get_track_start_location());
+		newclips.append(newclip);
+	}
+	
+	return newclips;
+}
+
+void AudioClipGroup::add_all_clips_to_tracks()
+{
+	foreach(AudioClip* clip, m_clips) {
+		Command::process_command(clip->get_track()->add_clip(clip, false));
+	}
+}
+
+void AudioClipGroup::remove_all_clips_from_tracks()
+{
+	foreach(AudioClip* clip, m_clips) {
+		Command::process_command(clip->get_track()->remove_clip(clip, false));
+	}
+}
+

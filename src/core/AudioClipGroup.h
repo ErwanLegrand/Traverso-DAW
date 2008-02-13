@@ -33,10 +33,15 @@ public:
 	AudioClipGroup(QList<AudioClip*> clips);
 	
 	void add_clip(AudioClip* clip);
+	void set_clips(QList<AudioClip*> clips);
 	void move_to(TimeRef location);
 	
 	void set_snappable(bool snap);
 	void set_as_moving(bool move);
+	
+	QList<AudioClip*> copy_clips();
+	void add_all_clips_to_tracks();
+	void remove_all_clips_from_tracks();
 	
 	TimeRef get_track_start_location() const {return m_trackStartLocation;}
 	TimeRef get_track_end_location() const {return m_trackEndLocation;}

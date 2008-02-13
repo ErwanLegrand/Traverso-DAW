@@ -263,16 +263,16 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 		
 		case MoveClipCommand:
 		{
-			AudioClipView* view = qobject_cast<AudioClipView*>(obj);
+			ViewItem* view = qobject_cast<ViewItem*>(obj);
 			if (!view) {
 				PERROR("TraversoCommands: Supplied QObject was not an AudioClipView! "
 					"MoveClipCommand needs an AudioClipView as argument");
 				return 0;
 			}
 
-			if (view->get_clip()->is_locked()) {
-				return 0;
-			}
+// 			if (view->get_clip()->is_locked()) {
+// 				return 0;
+// 			}
 
 			return new MoveClip(view, arguments);
 		}

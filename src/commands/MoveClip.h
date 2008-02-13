@@ -26,12 +26,13 @@
 
 #include <QPoint>
 #include <defines.h>
+#include "AudioClipGroup.h"
 
 class AudioClip;
 class Sheet;
 class Track;
 class SheetView;
-class AudioClipView;
+class ViewItem;
 class Zoom;
 
 class MoveClip : public Command
@@ -42,7 +43,7 @@ class MoveClip : public Command
 	Q_CLASSINFO("start_zoom", tr("Jog Zoom"));
 	
 public :
-	MoveClip(AudioClipView* clipView, QVariantList args);
+	MoveClip(ViewItem* view, QVariantList args);
         ~MoveClip();
 
         int begin_hold();
@@ -56,27 +57,30 @@ public :
 	void set_cursor_shape(int useX, int useY);
 	
 private :
+	enum ActionType {
+		MOVE,
+		COPY,
+		FOLD_TRACK,
+		FOLD_SHEET,
+		MOVE_TO_START,
+		MOVE_TO_END
+	};
+	
 	Sheet* 		m_sheet;
+	AudioClipGroup  m_group;
 	AudioClip* 	m_clip;
-        TimeRef 	m_originalTrackStartLocation;
+        TimeRef 	m_trackStartLocation;
         TimeRef 	m_posDiff;
-        Track* 		m_originTrack;
-        Track* 		m_targetTrack;
-	QString		m_actionType;
+	ActionType	m_actionType;
 	
 	struct Data {
-		int 		origXPos;
-		TimeRef		xoffset;
+		int 		sceneXStartPos;
 		SheetView* 	sv;
-		AudioClipView*	view;
 		QPointF		origPos;
-		TimeRef 	origTrackEndLocation;
-		bool 		resync;
 		bool		verticalOnly;
 		Zoom*		zoom;
 	};
-			
-
+	
 	Data* d;
 
 	void init_data();
