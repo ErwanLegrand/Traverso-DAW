@@ -197,10 +197,10 @@ int MoveClip::prepare_actions()
 		m_group.remove_all_clips_from_tracks();
 	}
 	
-/*	if (m_originTrack == m_targetTrack &&  m_posDiff == qint64(0) && 
-		   ! (m_actionType == COPY || m_actionType == MOVE_TO_START || m_actionType == MOVE_TO_END) ) {
+	if (m_origTrackIndex == m_newTrackIndex &&  m_posDiff == TimeRef() && 
+	    ! (m_actionType == COPY || m_actionType == MOVE_TO_START || m_actionType == MOVE_TO_END) ) {
 		return -1;
-	}*/
+	}
 	
 	return 1;
 }
@@ -254,7 +254,7 @@ int MoveClip::jog()
 	}
 	
 	TrackView* trackView = d->sv->get_trackview_under(cpointer().scene_pos());
-	if (trackView) {
+	if (trackView && !(m_actionType == FOLD_SHEET)) {
 		m_newTrackIndex = trackView->get_track()->get_sort_index();
 	}
 

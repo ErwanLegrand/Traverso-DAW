@@ -62,7 +62,6 @@ void AudioClipGroup::move_to(int trackIndex, TimeRef location)
 	foreach(AudioClip* clip, m_clips) {
 		
 		if (clip->get_track()->get_sort_index() != trackIndex) {
-			Sheet* s = clip->get_sheet();
 			Track* track = clip->get_sheet()->get_track_for_index(trackIndex);
 			if (track) {
 				Command::process_command(clip->get_track()->remove_clip(clip, false, true));
