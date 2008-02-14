@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.33 2008/01/21 16:22:13 r_sijrier Exp $
+$Id: FadeCurve.cpp,v 1.34 2008/02/14 19:58:42 n_doebelin Exp $
 */
  
 #include "FadeCurve.h"
@@ -60,18 +60,18 @@ FadeCurve::FadeCurve(AudioClip* clip, Sheet* sheet, QString type )
 	m_controlPoints.append(QPointF(0.75, 0.75));
 	m_controlPoints.append(QPointF(1.0, 1.0));
 	
-	m_bendFactor = 0.5;
-	m_strenghtFactor = 1;
+	m_bendFactor = 0.0;
+	m_strenghtFactor = 0.5;
 	m_mode = 2;
 	m_raster = 0;
 	m_bypass = false;
-	
-	init();
 	
 	connect(this, SIGNAL(stateChanged()), this, SLOT(solve_node_positions()));
 	connect(this, SIGNAL(bendValueChanged()), this, SIGNAL(stateChanged()));
 	connect(this, SIGNAL(strengthValueChanged()), this, SIGNAL(stateChanged()));
 	connect(this, SIGNAL(modeChanged()), this, SIGNAL(stateChanged()));
+
+	init();
 }
 
 FadeCurve::~ FadeCurve( )
@@ -126,10 +126,10 @@ QDomNode FadeCurve::get_state( QDomDocument doc )
 int FadeCurve::set_state( const QDomNode & node )
 {
 	QDomElement e = node.toElement();
-	m_bendFactor = e.attribute( "bendfactor", "0.5" ).toDouble();
+	m_bendFactor = e.attribute( "bendfactor", "0.0" ).toDouble();
 	m_strenghtFactor = e.attribute( "strengthfactor", "0.5" ).toDouble();
 	m_bypass = e.attribute( "bypassed", "0" ).toInt();
-	m_mode = e.attribute( "mode", "0" ).toInt();
+	m_mode = e.attribute( "mode", "2" ).toInt();
 	m_raster = e.attribute( "raster", "0" ).toInt();
 	
 	QStringList controlPointsList = e.attribute( "controlpoints", "0.0,0.0;0.25,0.25;0.75,0.75;1.0,1.0" ).split(";");
@@ -159,7 +159,7 @@ int FadeCurve::set_state( const QDomNode & node )
 	solve_node_positions();	
 	
 	emit stateChanged();
-	
+
 	return 1;
 }
 
@@ -205,7 +205,7 @@ void FadeCurve::process(audio_sample_t** mixdown, nframes_t nframes, uint channe
 
 
 void FadeCurve::set_shape(QString shapeName)
-{
+{/*
 	QDomDocument doc("FadeShapes");
 	
 	if (defaultShapes.contains(shapeName)) {
@@ -253,7 +253,7 @@ void FadeCurve::set_shape(QString shapeName)
 	}
 	
 	emit stateChanged();
-}
+*/}
 
 void FadeCurve::solve_node_positions( )
 {
