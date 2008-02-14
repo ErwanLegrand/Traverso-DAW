@@ -1430,3 +1430,14 @@ QList< Track * > Sheet::get_tracks() const
 	}
 	return list;	
 }
+
+Track * Sheet::get_track_for_index(int index)
+{
+	apill_foreach(Track* track, Track, m_tracks) {
+		if (track->get_sort_index() == index) {
+			return track;
+		}
+	}
+	
+	return 0;
+}

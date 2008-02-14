@@ -108,10 +108,14 @@ MoveClip::MoveClip(ViewItem* view, QVariantList args)
 		}
 		
 		TimeRef currentLocation = TimeRef(cpointer().on_first_input_event_scene_x() * d->sv->timeref_scalefactor);
+		m_origTrackIndex = -1;
 		
 		foreach(Track* track, tracks) {
 			QList<AudioClip*> clips = track->get_cliplist();
 			foreach(AudioClip* clip, clips) {
+				if (m_origTrackIndex == -1) {
+					m_origTrackIndex = m_newTrackIndex = track->get_sort_index();
+				}
 				if (clip->get_track_end_location() > currentLocation) {
 					movingClips.append(clip);
 				}
@@ -125,6 +129,7 @@ MoveClip::MoveClip(ViewItem* view, QVariantList args)
 		Q_ASSERT(cv);
 		d->sv = cv->get_sheetview();
 		m_group.add_clip(cv->get_clip());
+		m_origTrackIndex = m_newTrackIndex = cv->get_clip()->get_track()->get_sort_index();
 	}
 	
 	d->zoom = 0;
@@ -151,7 +156,7 @@ int MoveClip::begin_hold()
 		QList<AudioClip*> newclips = m_group.copy_clips();
 		m_group.set_clips(newclips);
 		m_group.add_all_clips_to_tracks();
-		m_group.move_to(m_trackStartLocation + TimeRef(d->sv->timeref_scalefactor * 3));
+		m_group.move_to(m_origTrackIndex, m_trackStartLocation + TimeRef(d->sv->timeref_scalefactor * 3));
 	}
 	
 	m_group.set_snappable(false);
@@ -201,11 +206,11 @@ int MoveClip::do_action()
 {
 	PENTER;
 	if (m_actionType == MOVE || m_actionType == FOLD_SHEET || m_actionType == FOLD_TRACK) {
-		m_group.move_to(m_trackStartLocation + m_posDiff);
+		m_group.move_to(m_newTrackIndex, m_trackStartLocation + m_posDiff);
 	}
 	else if (m_actionType == COPY) {
 		m_group.add_all_clips_to_tracks();
-		m_group.move_to(m_trackStartLocation + m_posDiff);
+		m_group.move_to(m_newTrackIndex, m_trackStartLocation + m_posDiff);
 	}
 	else if (m_actionType == MOVE_TO_START) {
 		move_to_start(false);
@@ -225,7 +230,7 @@ int MoveClip::undo_action()
 	if (m_actionType == COPY) {
 		m_group.remove_all_clips_from_tracks();
 	} else {
-		m_group.move_to(m_trackStartLocation);
+		m_group.move_to(m_origTrackIndex, m_trackStartLocation);
 	}
 
 	return 1;
@@ -244,10 +249,9 @@ int MoveClip::jog()
 		return 0;
 	}
 	
-	// Detect if we moved up/down tracks. 
-	// FIXME!
 	TrackView* trackView = d->sv->get_trackview_under(cpointer().scene_pos());
 	if (trackView) {
+		m_newTrackIndex = trackView->get_track()->get_sort_index();
 	}
 
 	// Calculate the distance moved based on the current scene x pos and the initial one.
@@ -276,7 +280,7 @@ int MoveClip::jog()
 	m_posDiff = newTrackStartLocation - m_trackStartLocation;
 	
 	// and used to move the group to it's new location.
-	m_group.move_to(m_trackStartLocation + m_posDiff);
+	m_group.move_to(m_newTrackIndex, m_trackStartLocation + m_posDiff);
 	
 	d->sv->update_shuttle_factor();
 	
@@ -320,15 +324,15 @@ void MoveClip::prev_snap_pos(bool autorepeat)
 
 void MoveClip::move_to_start(bool autorepeat)
 {
-	Q_UNUSED(autorepeat)
+	Q_UNUSED(autorepeat);
 	TimeRef location; // location == 0
-	m_group.move_to(location);
+	m_group.move_to(m_origTrackIndex, location);
 }
 
 void MoveClip::move_to_end(bool autorepeat)
 {
-	Q_UNUSED(autorepeat)
-	m_group.move_to(m_sheet->get_last_location());
+	Q_UNUSED(autorepeat);
+	m_group.move_to(m_origTrackIndex, m_sheet->get_last_location());
 }
 
 void MoveClip::start_zoom(bool autorepeat)
@@ -344,8 +348,6 @@ void MoveClip::start_zoom(bool autorepeat)
 		delete d->zoom;
 		d->zoom = 0;
 		cpointer().get_viewport()->set_holdcursor(":/cursorHoldLrud");
-		d->sceneXStartPos -= int((d->origPos - cpointer().scene_pos()).x());
-		d->origPos = cpointer().scene_pos();
 		d->sv->start_shuttle(true, true);
 	}
 }

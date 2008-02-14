@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Command.h"
 #include "ProjectManager.h"
 #include "ResourcesManager.h"
+#include "Sheet.h"
 #include "Track.h"
 
 #include "Debugger.h"
@@ -56,9 +57,19 @@ void AudioClipGroup::set_clips(QList< AudioClip * > clips)
 	update_track_start_and_end_locations();
 }
 
-void AudioClipGroup::move_to(TimeRef location)
+void AudioClipGroup::move_to(int trackIndex, TimeRef location)
 {
 	foreach(AudioClip* clip, m_clips) {
+		
+		if (clip->get_track()->get_sort_index() != trackIndex) {
+			Sheet* s = clip->get_sheet();
+			Track* track = clip->get_sheet()->get_track_for_index(trackIndex);
+			if (track) {
+				Command::process_command(clip->get_track()->remove_clip(clip, false, true));
+				Command::process_command(track->add_clip(clip, false, true));
+			}
+		}
+		
 		TimeRef offset = clip->get_track_start_location() - m_trackStartLocation;
 		clip->set_track_start_location(location + offset);
 	}

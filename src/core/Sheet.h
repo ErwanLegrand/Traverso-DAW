@@ -108,6 +108,7 @@ public:
 	TimeLine* get_timeline() const {return m_timeline;}
 	Snappable* get_work_snap() {return workSnap;}
 	Track* get_track(qint64 id);
+	Track* get_track_for_index(int index);
 
 	// Set functions
 	void set_artists(const QString& pArtistis);

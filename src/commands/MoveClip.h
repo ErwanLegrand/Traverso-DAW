@@ -68,15 +68,15 @@ private :
 	
 	Sheet* 		m_sheet;
 	AudioClipGroup  m_group;
-	AudioClip* 	m_clip;
         TimeRef 	m_trackStartLocation;
         TimeRef 	m_posDiff;
 	ActionType	m_actionType;
+	int		m_origTrackIndex;
+	int		m_newTrackIndex;
 	
 	struct Data {
-		int 		sceneXStartPos;
 		SheetView* 	sv;
-		QPointF		origPos;
+		int 		sceneXStartPos;
 		bool		verticalOnly;
 		Zoom*		zoom;
 	};
