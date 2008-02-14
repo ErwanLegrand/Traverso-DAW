@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.34 2008/02/14 19:58:42 n_doebelin Exp $
+$Id: FadeCurve.cpp,v 1.35 2008/02/14 20:40:42 n_doebelin Exp $
 */
  
 #include "FadeCurve.h"
@@ -205,7 +205,7 @@ void FadeCurve::process(audio_sample_t** mixdown, nframes_t nframes, uint channe
 
 
 void FadeCurve::set_shape(QString shapeName)
-{/*
+{
 	QDomDocument doc("FadeShapes");
 	
 	if (defaultShapes.contains(shapeName)) {
@@ -238,22 +238,13 @@ void FadeCurve::set_shape(QString shapeName)
 	
 	CommandGroup* group = new CommandGroup(this, tr("Fade Preset"));
 	
-	group->add_command(new FadeBend(this, fadeElement.attribute( "bendfactor", "0.5" ).toDouble()));
+	group->add_command(new FadeBend(this, fadeElement.attribute( "bendfactor", "0.0" ).toDouble()));
 	group->add_command(new FadeStrength(this, fadeElement.attribute( "strengthfactor", "0.5" ).toDouble()));
 	
 	Command::process_command(group);
 	
-	QStringList controlPointsList = fadeElement.attribute( "controlpoints", "" ).split(";");
-	
-	for (int i=0; i<controlPointsList.size(); ++i) {
-		QStringList xyList = controlPointsList.at(i).split(",");
-		float x = xyList.at(0).toFloat();
-		float y = xyList.at(1).toFloat();
-		m_controlPoints[i] = QPointF(x,y);
-	}
-	
 	emit stateChanged();
-*/}
+}
 
 void FadeCurve::solve_node_positions( )
 {
