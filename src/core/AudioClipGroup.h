@@ -43,6 +43,8 @@ public:
 	void add_all_clips_to_tracks();
 	void remove_all_clips_from_tracks();
 	
+	int get_size() {return m_clips.size();}
+	
 	TimeRef get_track_start_location() const {return m_trackStartLocation;}
 	TimeRef get_track_end_location() const {return m_trackEndLocation;}
 	TimeRef get_length() const {return m_trackEndLocation - m_trackStartLocation;}

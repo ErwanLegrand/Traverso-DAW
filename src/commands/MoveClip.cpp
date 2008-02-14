@@ -149,6 +149,10 @@ MoveClip::~MoveClip()
 
 int MoveClip::begin_hold()
 {
+	if (!m_group.get_size()) {
+		return -1;
+	}
+	
 	m_trackStartLocation = m_group.get_track_start_location();
 	
 	if (m_actionType == COPY) {
