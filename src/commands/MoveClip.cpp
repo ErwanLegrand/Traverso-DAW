@@ -93,8 +93,6 @@ MoveClip::MoveClip(ViewItem* view, QVariantList args)
 	
 	if (m_actionType == FOLD_SHEET || m_actionType == FOLD_TRACK) {
 		
-		TimeRef currentLocation = TimeRef(cpointer().on_first_input_event_scene_x() * d->sv->timeref_scalefactor);
-		
 		QList<AudioClip*> movingClips;
 		QList<Track*> tracks;
 		
@@ -108,6 +106,8 @@ MoveClip::MoveClip(ViewItem* view, QVariantList args)
 			Q_ASSERT(d->sv);
 			tracks = d->sv->get_sheet()->get_tracks();
 		}
+		
+		TimeRef currentLocation = TimeRef(cpointer().on_first_input_event_scene_x() * d->sv->timeref_scalefactor);
 		
 		foreach(Track* track, tracks) {
 			QList<AudioClip*> clips = track->get_cliplist();
