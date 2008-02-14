@@ -498,20 +498,20 @@ int AlsaDriver::configure_stream(char *device_name,
 #define FIRST_16BIT_FORMAT 4
 
 	if ((err = snd_pcm_hw_params_any (handle, hw_params)) < 0)  {
-		PERROR ("ALSA: no playback configurations available (%s)", snd_strerror (err));
+		printf("ALSA: no playback configurations available (%s)\n", snd_strerror (err));
 		return -1;
 	}
 
 	if ((err = snd_pcm_hw_params_set_periods_integer (handle, hw_params))  < 0) {
-		qDebug ("ALSA: cannot restrict period size to integral value.");
+		printf("ALSA: cannot restrict period size to integral value.\n");
 		return -1;
 	}
 
 	if ((err = snd_pcm_hw_params_set_access (handle, hw_params, SND_PCM_ACCESS_MMAP_NONINTERLEAVED)) < 0) {
 		if ((err = snd_pcm_hw_params_set_access (handle, hw_params, SND_PCM_ACCESS_MMAP_INTERLEAVED)) < 0) {
 			if ((err = snd_pcm_hw_params_set_access (handle, hw_params, SND_PCM_ACCESS_MMAP_COMPLEX)) < 0) {
-				qDebug ("ALSA: mmap-based access is not possible for the %s "
-					"stream of this audio interface", stream_name);
+				printf("ALSA: mmap-based access is not possible for the %s "
+					"stream of this audio interface\n", stream_name);
 			return -1;
 			}
 		}
@@ -539,7 +539,7 @@ int AlsaDriver::configure_stream(char *device_name,
 	}
 
 	if ( (err = snd_pcm_hw_params_set_rate_near (handle, hw_params, &frame_rate, NULL)) < 0) {
-		PERROR ("ALSA: cannot set sample/frame rate to % for %s", (double)frame_rate, stream_name);
+		printf("ALSA: cannot set sample/frame rate to % for %s\n", (double)frame_rate, stream_name);
 		return -1;
 	}
 
@@ -571,12 +571,12 @@ int AlsaDriver::configure_stream(char *device_name,
 	}
 
 	if ((err = snd_pcm_hw_params_set_channels (handle, hw_params, *nchns)) < 0) {
-		qWarning ("ALSA: cannot set channel count to %lu for %s", *nchns, stream_name);
+		printf("ALSA: cannot set channel count to %lu for %s\n", *nchns, stream_name);
 		return -1;
 	}
 	int frperscycle = frames_per_cycle;
 	if ((err = snd_pcm_hw_params_set_period_size (handle, hw_params, frames_per_cycle, 0)) < 0) {
-		qWarning ("ALSA: cannot set period size to %d frames for %s", frperscycle, stream_name);
+		printf("ALSA: cannot set period size to %d frames for %s\n", frperscycle, stream_name);
 		return -1;
 	}
 
@@ -586,27 +586,27 @@ int AlsaDriver::configure_stream(char *device_name,
 		*nperiodsp = user_nperiods;
 
 	if (snd_pcm_hw_params_set_periods_near (handle, hw_params, nperiodsp, NULL) < 0) {
-		PERROR ("ALSA: cannot set number of periods to %u for %s", *nperiodsp, stream_name);
+		printf("ALSA: cannot set number of periods to %u for %s\n", *nperiodsp, stream_name);
 		return -1;
 	}
 
 	if (*nperiodsp < user_nperiods) {
-		qWarning("ALSA: use %d periods for %s", *nperiodsp, stream_name);
+		printf("ALSA: use %d periods for %s\n", *nperiodsp, stream_name);
 		return -1;
 	}
 
 	if (!is_power_of_two(frames_per_cycle)) {
-		PERROR("Traverso: frames must be a power of two (64, 512, 1024, ...)");
+		printf("Traverso: frames must be a power of two (64, 512, 1024, ...)\n");
 		return -1;
 	}
 
 	if ((err = snd_pcm_hw_params_set_buffer_size (handle, hw_params,  *nperiodsp * frames_per_cycle)) < 0) {
-		PERROR ("ALSA: cannot set buffer length to %d for %s", *nperiodsp * frames_per_cycle, stream_name);
+		printf("ALSA: cannot set buffer length to %d for %s\n", *nperiodsp * frames_per_cycle, stream_name);
 		return -1;
 	}
 
 	if ((err = snd_pcm_hw_params (handle, hw_params)) < 0) {
-		PERROR ("ALSA: cannot set hardware parameters for %s", stream_name);
+		printf("ALSA: cannot set hardware parameters for %s\n", stream_name);
 		device->message(tr("ALSA Driver: Unable to configure hardware, is it in use by another application?"), AudioDevice::WARNING);
 		return -1;
 	}
@@ -614,7 +614,7 @@ int AlsaDriver::configure_stream(char *device_name,
 	snd_pcm_sw_params_current (handle, sw_params);
 
 	if ((err = snd_pcm_sw_params_set_start_threshold (handle, sw_params, 0U)) < 0) {
-		PERROR ("ALSA: cannot set start mode for %s", stream_name);
+		printf("ALSA: cannot set start mode for %s\n", stream_name);
 		return -1;
 	}
 
@@ -624,12 +624,12 @@ int AlsaDriver::configure_stream(char *device_name,
 	}
 
 	if ((err = snd_pcm_sw_params_set_stop_threshold (handle, sw_params, stop_th)) < 0) {
-		PERROR ("ALSA: cannot set stop mode for %s", stream_name);
+		printf("ALSA: cannot set stop mode for %s\n", stream_name);
 		return -1;
 	}
 
 	if ((err = snd_pcm_sw_params_set_silence_threshold (handle, sw_params, 0)) < 0) {
-		PERROR ("ALSA: cannot set silence threshold for %s", stream_name);
+		printf("ALSA: cannot set silence threshold for %s\n", stream_name);
 		return -1;
 	}
 
@@ -653,13 +653,12 @@ int AlsaDriver::configure_stream(char *device_name,
 		err = snd_pcm_sw_params_set_avail_min (handle, sw_params, frames_per_cycle);
 
 	if (err < 0) {
-		PERROR ("ALSA: cannot set avail min for %s", stream_name);
+		printf("ALSA: cannot set avail min for %s\n", stream_name);
 		return -1;
 	}
 
 	if ((err = snd_pcm_sw_params (handle, sw_params)) < 0) {
-		PERROR ("ALSA: cannot set software parameters for %s\n",
-			stream_name);
+		printf("ALSA: cannot set software parameters for %s\n",	stream_name);
 		return -1;
 	}
 
