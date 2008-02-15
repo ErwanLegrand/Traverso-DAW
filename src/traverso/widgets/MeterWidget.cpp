@@ -24,14 +24,10 @@
 
 #include "Command.h"
 #include "ContextPointer.h"
-#include "InputEngine.h"
 #include "PluginChain.h"
 #include "ProjectManager.h"
 #include "Project.h"
 #include "Sheet.h"
-#include "Themer.h"
-
-#include <QDebug>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!

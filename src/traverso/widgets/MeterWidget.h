@@ -22,7 +22,6 @@
 #ifndef METER_WIDGET_H
 #define METER_WIDGET_H
 
-#include <QWidget>
 #include <QTimer>
 
 #include <ViewPort.h>
@@ -64,7 +63,6 @@ public:
 	void hide_event();
 	void show_event();
 
-	void		set_sheet( Sheet* );
 	
 protected:
 	MeterWidget* 	m_widget;
@@ -74,10 +72,10 @@ protected:
 	Project*	m_project;
 	Sheet*		m_sheet;
 
-public slots:
-	void		set_project( Project* );
+	void		set_sheet( Sheet* );
 	
 private slots:
+	void		set_project( Project* );
 	virtual void	update_data() {};
 	void		transport_started();
 	void		transport_stopped();

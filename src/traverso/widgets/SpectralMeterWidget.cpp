@@ -20,6 +20,7 @@
 */
 
 #include "SpectralMeterWidget.h"
+
 #include <Config.h>
 #include <Information.h>
 #include <PluginChain.h>
@@ -53,42 +54,17 @@ static const uint MAX_SAMPLES = UINT_MAX;
 
 
 SpectralMeterWidget::SpectralMeterWidget(QWidget* parent)
-	: MeterWidget(parent, 0)
+	: MeterWidget(parent, new SpectralMeterView(this))
 {
 	PENTERCONS;
 }
-
-
-SpectralMeterView * SpectralMeterWidget::get_item()
-{
-	if (!m_item) {
-		m_item = new SpectralMeterView(this);
-		
-		scene()->addItem(m_item);
-		m_item->setPos(0,0);
-		m_item->resize();
-		
-		Project* project = pm().get_project(); 
-		m_item->set_project(project);
-		if (project) {
-			m_item->set_sheet(project->get_current_sheet());
-		}
-	
-		setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-		setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	}
-	
-	return (SpectralMeterView*)m_item;
-}
-
-
 
 
 SpectralMeterView::SpectralMeterView(SpectralMeterWidget* widget)
 	: MeterView(widget)
 {
 
-	m_config = new SpectralMeterConfigWidget(m_widget);
+	m_config = 0;
 	load_configuration();
 	
 	upper_freq_log = log10(upper_freq);
@@ -116,9 +92,6 @@ SpectralMeterView::SpectralMeterView(SpectralMeterWidget* widget)
 		m_freq_labels.push_back(80.0f * pow(10.0,i));
 		m_freq_labels.push_back(90.0f * pow(10.0,i));
 	}
-
-	connect(m_config, SIGNAL(configChanged()), this, SLOT(load_configuration()));
-
 }
 
 void SpectralMeterView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -461,6 +434,11 @@ Command* SpectralMeterView::edit_properties()
 {
 	if (!m_meter) {
 		return 0;
+	}
+
+	if (!m_config) {
+		m_config = new SpectralMeterConfigWidget(m_widget);
+		connect(m_config, SIGNAL(configChanged()), this, SLOT(load_configuration()));
 	}
 
 	m_config->show();
