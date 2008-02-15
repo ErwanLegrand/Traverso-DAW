@@ -39,7 +39,7 @@
 #include "Debugger.h"
 
 static const float SMOOTH_SHIFT = 0.05;
-static const int STOP_DELAY = 3000; // in ms
+static const int STOP_DELAY = 6000; // in ms
 
 CorrelationMeterWidget::CorrelationMeterWidget(QWidget* parent)
 	: ViewPort(parent)
