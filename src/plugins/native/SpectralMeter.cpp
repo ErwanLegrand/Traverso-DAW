@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: SpectralMeter.cpp,v 1.8 2008/02/07 15:32:48 n_doebelin Exp $
+$Id: SpectralMeter.cpp,v 1.9 2008/02/15 15:58:57 n_doebelin Exp $
 
 */
 
@@ -214,13 +214,34 @@ int SpectralMeter::get_data(QVector<float> &specl, QVector<float> &specr)
 	fftw_execute(pfegr);
 
 	float tmp;
+	bool isNullL = true,
+	     isNullR = true;
 
 	// send the fft spectrum to the caller
 	for (int i = 1; i < m_frlen/2 + 1; ++i) {
 		tmp = pow((float)fftspecl[i][0],2.0f) + pow((float)fftspecl[i][1],2.0f);
 		specl.push_back(tmp);
+		if (tmp != 0.0) {
+			isNullL = false;
+		}
 		tmp = pow((float)fftspecr[i][0],2.0f) + pow((float)fftspecr[i][1],2.0f);
 		specr.push_back(tmp);
+		if (tmp != 0.0) {
+			isNullR = false;
+		}
+	}
+
+	if (isNullL && isNullR) {
+		return 1;
+	}
+
+
+	// if one of the spectra only contains 0.0, we switch to mono by copying the other one
+	if (isNullL) {
+		specl = specr;
+	}
+	if (isNullR) {
+		specr = specl;
 	}
 
 	return 1;

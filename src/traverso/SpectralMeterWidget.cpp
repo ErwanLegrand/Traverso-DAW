@@ -50,7 +50,7 @@
 static const float DEFAULT_VAL = -999.0f;
 static const int UPDATE_INTERVAL = 40;
 static const uint MAX_SAMPLES = UINT_MAX;
-static const int STOP_DELAY = 3000; // in ms
+static const int STOP_DELAY = 10000; // in ms
 
 
 SpectralMeterWidget::SpectralMeterWidget(QWidget* parent)
