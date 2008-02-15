@@ -320,7 +320,9 @@ void CorrelationMeterView::transport_stopped()
 
 void CorrelationMeterView::delay_timeout()
 {
-	timer.stop();
+	if (!m_sheet->is_transport_rolling()) {
+		timer.stop();
+	}
 }
 
 void CorrelationMeterView::save_configuration()

@@ -625,7 +625,9 @@ void SpectralMeterView::transfer_stopped()
 
 void SpectralMeterView::delay_timeout()
 {
-	timer.stop();
+	if (!m_sheet->is_transport_rolling()) {
+		timer.stop();
+	}
 }
 
 Command* SpectralMeterView::set_mode()
