@@ -42,9 +42,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "FadeCurve.h"
 #include "Config.h"
 #include "Plugin.h"
-#include "CorrelationMeterWidget.h"
-#include "SpectralMeterWidget.h"
-		
 #include "Import.h"
 
 #include "../sheetcanvas/SheetWidget.h"
@@ -53,6 +50,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "widgets/InfoWidgets.h"
 #include "widgets/ResourcesWidget.h"
+#include "widgets/CorrelationMeterWidget.h"
+#include "widgets/SpectralMeterWidget.h"
 
 #include "dialogs/settings/SettingsDialog.h"
 #include "dialogs/project/ProjectManagerDialog.h"

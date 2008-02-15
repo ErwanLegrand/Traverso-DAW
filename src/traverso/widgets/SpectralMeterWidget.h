@@ -22,9 +22,8 @@
 #ifndef SPECTRALMETERWIDGET_H
 #define SPECTRALMETERWIDGET_H
 
-#include <ViewPort.h>
-#include <ViewItem.h>
-#include <QTimer>
+#include "MeterWidget.h"
+
 #include <QVector>
 #include "ui_SpectralMeterConfigWidget.h"
 #include <QDialog>
@@ -33,7 +32,6 @@ class Sheet;
 class Project;
 class QRect;
 class QPixmap;
-class SpectralMeter;
 class Command;
 class SpectralMeterView;
 
@@ -59,28 +57,17 @@ signals:
 
 };
 
-class SpectralMeterWidget : public ViewPort
+class SpectralMeterWidget : public MeterWidget
 {
 public:
         SpectralMeterWidget(QWidget* parent);
-	~SpectralMeterWidget();
 
-	void get_pointed_context_items(QList<ContextItem* > &list);
-
-protected:
-        void resizeEvent( QResizeEvent* e);
-	void hideEvent ( QHideEvent * event );
-	void showEvent ( QShowEvent * event );
-	QSize minimumSizeHint () const;
-	QSize sizeHint () const;
-	
 private:
-	SpectralMeterView* m_item;
 	SpectralMeterView* get_item();
 };
 
 
-class SpectralMeterView : public ViewItem
+class SpectralMeterView : public MeterView
 {
 	Q_OBJECT
 	
@@ -93,20 +80,11 @@ class SpectralMeterView : public ViewItem
 
 public:
         SpectralMeterView(SpectralMeterWidget* widget);
-	~SpectralMeterView();
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-	
-	void resize();
-	void hide_event();
+	virtual void resize();
 
 private:
-	SpectralMeterWidget* m_widget;
-	SpectralMeter*	m_meter;
-	Project*	m_project;
-	Sheet*		m_sheet;
-	QTimer		timer;
-	QTimer		m_delayTimer;
 	QVector<float>	specl;
 	QVector<float>	specr;
 	QVector<float>	m_spectrum;
@@ -149,19 +127,12 @@ private:
 	float		freq2db(float, float);
 	QString		get_xmgr_string();
 
-
 private slots:
 	void		update_data();
-	void		transfer_started();
-	void		transfer_stopped();
-	void		delay_timeout();
-
 
 public slots:
-	void		set_project( Project* );
 	void		load_configuration();
-	void		set_sheet( Sheet* );
-	void 		show_event();
+	void		set_sheet(Sheet* sheet);
 
 	Command*	edit_properties();
 	Command*	set_mode();

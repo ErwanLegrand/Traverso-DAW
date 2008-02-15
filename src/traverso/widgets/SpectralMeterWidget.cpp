@@ -50,72 +50,21 @@
 static const float DEFAULT_VAL = -999.0f;
 static const int UPDATE_INTERVAL = 40;
 static const uint MAX_SAMPLES = UINT_MAX;
-static const int STOP_DELAY = 10000; // in ms
 
 
 SpectralMeterWidget::SpectralMeterWidget(QWidget* parent)
-	: ViewPort(parent)
+	: MeterWidget(parent, 0)
 {
 	PENTERCONS;
-	m_item = 0;
 }
 
-SpectralMeterWidget::~SpectralMeterWidget()
-{
-}
-
-void SpectralMeterWidget::resizeEvent( QResizeEvent *  )
-{
-	PENTER;
-	get_item()->resize();
-}
-
-void SpectralMeterWidget::hideEvent(QHideEvent * event)
-{
-	PENTER;
-	QWidget::hideEvent(event);
-	get_item()->hide_event();
-}
-
-
-void SpectralMeterWidget::showEvent(QShowEvent * event)
-{
-	PENTER;
-	QWidget::showEvent(event);
-	get_item()->show_event();
-}
-
-QSize SpectralMeterWidget::minimumSizeHint() const
-{
-	return QSize(150, 50);
-}
-
-QSize SpectralMeterWidget::sizeHint() const
-{
-	return QSize(300, 50);
-}
-
-void SpectralMeterWidget::get_pointed_context_items(QList<ContextItem* > &list)
-{
-	QList<QGraphicsItem *> itemlist = items(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
-	foreach(QGraphicsItem* item, itemlist) {
-		if (ViewItem::is_viewitem(item)) {
-			list.append((ViewItem*)item);
-		}
-	}
-}
 
 SpectralMeterView * SpectralMeterWidget::get_item()
 {
 	if (!m_item) {
-		setMinimumWidth(40);
-		setMinimumHeight(10);
-		
 		m_item = new SpectralMeterView(this);
 		
-		QGraphicsScene* scene = new QGraphicsScene(this);
-		setScene(scene);
-		scene->addItem(m_item);
+		scene()->addItem(m_item);
 		m_item->setPos(0,0);
 		m_item->resize();
 		
@@ -129,21 +78,17 @@ SpectralMeterView * SpectralMeterWidget::get_item()
 		setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	}
 	
-	return m_item;
+	return (SpectralMeterView*)m_item;
 }
 
 
 
 
 SpectralMeterView::SpectralMeterView(SpectralMeterWidget* widget)
-	: ViewItem(0, 0)
-	, m_widget(widget)
-	, m_meter(0)
-	, m_sheet(0)
+	: MeterView(widget)
 {
 
 	m_config = new SpectralMeterConfigWidget(m_widget);
-	m_boundingRect = QRectF(0, 0, m_widget->width(), m_widget->height());
 	load_configuration();
 	
 	upper_freq_log = log10(upper_freq);
@@ -174,18 +119,6 @@ SpectralMeterView::SpectralMeterView(SpectralMeterWidget* widget)
 
 	connect(m_config, SIGNAL(configChanged()), this, SLOT(load_configuration()));
 
-	// Connections to core:
-	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
-	connect(&timer, SIGNAL(timeout()), this, SLOT(update_data()));
-	m_delayTimer.setSingleShot(true);
-	connect(&m_delayTimer, SIGNAL(timeout()), this, SLOT(delay_timeout()));
-}
-
-SpectralMeterView::~SpectralMeterView()
-{
-	if (m_meter) {
-		delete m_meter;
-	}
 }
 
 void SpectralMeterView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -331,7 +264,7 @@ void SpectralMeterView::update_data()
 	// if no data was available, return, so we _only_ update the widget when
 	// it needs to be!
 
-	int ret = m_meter->get_data(specl, specr);
+	int ret = ((SpectralMeter*)m_meter)->get_data(specl, specr);
 
 	// switch off the update of the average curve if silence is played back.
 	if (ret == -1) {
@@ -352,43 +285,9 @@ void SpectralMeterView::update_data()
 	update();
 }
 
-void SpectralMeterView::set_project(Project *project)
-{
-	if (project) {
-		connect(project, SIGNAL(currentSheetChanged(Sheet *)), this, SLOT(set_sheet(Sheet*)));
-		m_project = project;
-	} else {
-		set_sheet(0);
-		timer.stop();
-	}
-}
-
 void SpectralMeterView::set_sheet(Sheet *sheet)
 {
-	if (m_widget->parentWidget()->isHidden()) {
-		m_sheet = sheet;
-		return;
-	}
-	
-	
-	if (m_sheet) {
-		if (m_meter) {
-			// FIXME The removed plugin still needs to be deleted!!!!!!
-			Command::process_command(m_sheet->get_plugin_chain()->remove_plugin(m_meter, false));
-			timer.stop();
-			disconnect(m_sheet, SIGNAL(transferStarted()), this, SLOT(transfer_started()));
-			disconnect(m_sheet, SIGNAL(transferStopped()), this, SLOT(transfer_stopped()));
-		}
-	}
-	
-	m_sheet = sheet;
-	
-	if ( ! m_sheet ) {
-		return;
-	}
-	
-	connect(m_sheet, SIGNAL(transferStarted()), this, SLOT(transfer_started()));
-	connect(m_sheet, SIGNAL(transferStopped()), this, SLOT(transfer_stopped()));
+	MeterView::set_sheet(sheet);
 
 	PluginChain* chain = m_sheet->get_plugin_chain();
 	sample_rate = audiodevice().get_sample_rate();
@@ -403,32 +302,8 @@ void SpectralMeterView::set_sheet(Sheet *sheet)
 	
 	m_meter = new SpectralMeter();
 	m_meter->init();
-	Command::process_command( chain->add_plugin(m_meter, false) );
+	Command::process_command(chain->add_plugin(m_meter, false));
 }
-
-
-void SpectralMeterView::hide_event()
-{
-	if (m_sheet) {
-		if (m_meter) {
-			Command::process_command(m_sheet->get_plugin_chain()->remove_plugin(m_meter, false));
-			timer.stop();
-		}
-	}
-}
-
-void SpectralMeterView::show_event()
-{
-	if (m_sheet) {
-		if (m_meter) {
-			Command::process_command(m_sheet->get_plugin_chain()->add_plugin(m_meter, false));
-			timer.start(UPDATE_INTERVAL);
-		} else {
-			set_sheet(m_sheet);
-		}
-	}
-}
-
 
 void SpectralMeterView::reduce_bands()
 {
@@ -604,31 +479,13 @@ void SpectralMeterView::load_configuration()
 	show_average = config().get_property("SpectralMeter", "ShowAvarage", 0).toInt();
 	
 	if (m_meter) {
-		m_meter->set_fr_size(config().get_property("SpectralMeter", "FFTSize", 2048).toInt());
-		m_meter->set_windowing_function(config().get_property("SpectralMeter", "WindowingFunction", 1).toInt());
-		m_meter->init();
+		((SpectralMeter*)m_meter)->set_fr_size(config().get_property("SpectralMeter", "FFTSize", 2048).toInt());
+		((SpectralMeter*)m_meter)->set_windowing_function(config().get_property("SpectralMeter", "WindowingFunction", 1).toInt());
+		((SpectralMeter*)m_meter)->init();
 	}
 
 	update_layout();
 	update_background();
-}
-
-void SpectralMeterView::transfer_started()
-{
-	// restarts the average curve
-	sample_weight = 1;
-	timer.start(UPDATE_INTERVAL);
-	m_delayTimer.stop();
-}
-
-void SpectralMeterView::transfer_stopped()
-{
-	m_delayTimer.start(STOP_DELAY);
-}
-
-void SpectralMeterView::delay_timeout()
-{
-	timer.stop();
 }
 
 Command* SpectralMeterView::set_mode()

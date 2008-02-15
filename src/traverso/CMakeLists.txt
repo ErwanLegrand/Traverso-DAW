@@ -29,8 +29,6 @@ Main.cpp
 PluginSelectorDialog.cpp
 Interface.cpp
 VUMeter.cpp
-CorrelationMeterWidget.cpp
-SpectralMeterWidget.cpp
 QuickDriverConfigWidget.cpp
 dialogs/settings/Pages.cpp
 dialogs/settings/SettingsDialog.cpp
@@ -48,7 +46,10 @@ dialogs/ExportDialog.cpp
 dialogs/CDWritingDialog.cpp
 widgets/InfoWidgets.cpp
 widgets/MessageWidget.cpp
+widgets/MeterWidget.cpp
 widgets/ResourcesWidget.cpp
+widgets/CorrelationMeterWidget.cpp
+widgets/SpectralMeterWidget.cpp
 )
 
 SET(TRAVERSO_UI_FILES
@@ -82,13 +83,11 @@ ui/CDWritingDialog.ui
 
 SET(TRAVERSO_GUI_MOC_CLASSES
 BusMonitor.h
-CorrelationMeterWidget.h
 Interface.h
 PluginSelectorDialog.h
 QuickDriverConfigWidget.h
 Traverso.h
 VUMeter.h
-SpectralMeterWidget.h
 dialogs/BusSelectorDialog.h
 dialogs/CDWritingDialog.h
 dialogs/ExportDialog.h
@@ -106,6 +105,9 @@ dialogs/settings/Pages.h
 widgets/InfoWidgets.h
 widgets/ResourcesWidget.h
 widgets/MessageWidget.h
+widgets/MeterWidget.h
+widgets/SpectralMeterWidget.h
+widgets/CorrelationMeterWidget.h
 )
 
 QT4_ADD_RESOURCES(TRAVERSO_RESOURCES
@@ -248,6 +250,12 @@ IF(HAVE_PORTAUDIO)
 		portaudio
 	)
 ENDIF(HAVE_PORTAUDIO)
+
+IF(HAVE_PULSEAUDIO)
+	TARGET_LINK_LIBRARIES(traverso
+		pulse-simple
+	)
+ENDIF(HAVE_PULSEAUDIO)
 
 IF(HAVE_SLV2)
 	IF(USE_SYSTEM_SLV2_LIBRARY)

@@ -39,103 +39,22 @@
 #include "Debugger.h"
 
 static const float SMOOTH_SHIFT = 0.05;
-static const int STOP_DELAY = 6000; // in ms
 
 CorrelationMeterWidget::CorrelationMeterWidget(QWidget* parent)
-	: ViewPort(parent)
+	: MeterWidget(parent, new CorrelationMeterView(this))
 {
 	PENTERCONS;
-	setMinimumWidth(40);
-	setMinimumHeight(10);
-
-	m_item = new CorrelationMeterView(this);
-	
-	QGraphicsScene* scene = new QGraphicsScene(this);
-	setScene(scene);
-	scene->addItem(m_item);
-	m_item->setPos(0,0);
-
-	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
-
-CorrelationMeterWidget::~CorrelationMeterWidget()
-{
-}
-
-void CorrelationMeterWidget::resizeEvent( QResizeEvent *  )
-{
-	m_item->resize();
-}
-
-void CorrelationMeterWidget::hideEvent(QHideEvent * event)
-{
-	QWidget::hideEvent(event);
-	m_item->hide_event();
-}
-
-
-void CorrelationMeterWidget::showEvent(QShowEvent * event)
-{
-	QWidget::showEvent(event);
-	m_item->show_event();
-}
-
-QSize CorrelationMeterWidget::minimumSizeHint() const
-{
-	return QSize(150, 50);
-}
-
-QSize CorrelationMeterWidget::sizeHint() const
-{
-	return QSize(220, 50);
-}
-
-void CorrelationMeterWidget::get_pointed_context_items(QList<ContextItem* > &list)
-{
-	printf("CorrelationMeterWidget::get_pointed_view_items\n");
-	QList<QGraphicsItem *> itemlist = items(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
-	foreach(QGraphicsItem* item, itemlist) {
-		if (ViewItem::is_viewitem(item)) {
-			list.append((ViewItem*)item);
-		}
-	}
-	
-	printf("itemlist size is %d\n", itemlist.size());
-}
-
-
-
 
 
 CorrelationMeterView::CorrelationMeterView(CorrelationMeterWidget* widget)
-	: ViewItem(0, 0)
-	, m_widget(widget)
-	, m_meter(0)
-	, m_sheet(0)
+	: MeterView(widget)
 {
 	gradPhase.setColorAt(0.0,  themer()->get_color("CorrelationMeter:foreground:side"));
 	gradPhase.setColorAt(0.5,  themer()->get_color("CorrelationMeter:foreground:center"));
 	gradPhase.setColorAt(1.0,  themer()->get_color("CorrelationMeter:foreground:side"));
 
 	load_configuration();
-
-	// Nicola: Not sure if we need to initialize here, perhaps a 
-	// call to resize would suffice ?
-	m_boundingRect = QRectF();
-
-	// Connections to core:
-	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
-	connect(&timer, SIGNAL(timeout()), this, SLOT(update_data()));
-	m_delayTimer.setSingleShot(true);
-	connect(&m_delayTimer, SIGNAL(timeout()), this, SLOT(delay_timeout()));
-}
-
-CorrelationMeterView::~CorrelationMeterView()
-{
-	if (m_meter) {
-		delete m_meter;
-	}
 }
 
 void CorrelationMeterView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -196,16 +115,6 @@ void CorrelationMeterView::paint(QPainter *painter, const QStyleOptionGraphicsIt
 	}
 }
 
-void CorrelationMeterView::resize()
-{
-	PENTER;
-	
-	prepareGeometryChange();
-	// Nicola: Make this as large as the CorrelationMeterWidget
-	// by setting the boundingrect.
-	m_boundingRect = QRectF(0, 0, m_widget->width(), m_widget->height());
-}
-
 void CorrelationMeterView::update_data()
 {
 	if (!m_meter) {
@@ -215,49 +124,16 @@ void CorrelationMeterView::update_data()
 	// MultiMeter::get_data() will assign it's data to coef and direction
 	// if no data was available, return, so we _only_ update the widget when
 	// it needs to be!
-	if (m_meter->get_data(coeff, direction) == 0) {
+	if (((CorrelationMeter*)m_meter)->get_data(coeff, direction) == 0) {
 		return;
 	}
 
 	update();
 }
 
-void CorrelationMeterView::set_project(Project *project)
-{
-	if (project) {
-		connect(project, SIGNAL(currentSheetChanged(Sheet *)), this, SLOT(set_sheet(Sheet*)));
-	} else {
-		set_sheet(0);
-		timer.stop();
-	}
-}
-
 void CorrelationMeterView::set_sheet(Sheet *sheet)
 {
-	if (m_widget->parentWidget()->isHidden()) {
-		m_sheet = sheet;
-		return;
-	}
-	
-
-	if (m_sheet) {
-		if (m_meter) {
-			// FIXME The removed plugin still needs to be deleted!!!!!!
-			Command::process_command(m_sheet->get_plugin_chain()->remove_plugin(m_meter, false));
-			timer.stop();
-			disconnect(m_sheet, SIGNAL(transferStopped()), this, SLOT(transport_stopped()));
-			disconnect(m_sheet, SIGNAL(transferStarted()), this, SLOT(transport_started()));
-		}
-	}
-	
-	m_sheet = sheet;
-	
-	if ( ! m_sheet ) {
-		return;
-	}
-
-	connect(m_sheet, SIGNAL(transferStopped()), this, SLOT(transport_stopped()));
-	connect(m_sheet, SIGNAL(transferStarted()), this, SLOT(transport_started()));
+	MeterView::set_sheet(sheet);
 	
 	PluginChain* chain = m_sheet->get_plugin_chain();
 	
@@ -274,29 +150,6 @@ void CorrelationMeterView::set_sheet(Sheet *sheet)
 	Command::process_command( chain->add_plugin(m_meter, false) );
 }
 
-void CorrelationMeterView::hide_event()
-{
-	if (m_sheet) {
-		if (m_meter) {
-			Command::process_command(m_sheet->get_plugin_chain()->remove_plugin(m_meter, false));
-			timer.stop();
-		}
-	}
-}
-
-void CorrelationMeterView::show_event()
-{
-	if (m_sheet) {
-		if (m_meter) {
-			Command::process_command(m_sheet->get_plugin_chain()->add_plugin(m_meter, false));
-			timer.start(40);
-		} else {
-			set_sheet(m_sheet);
-		}
-	}
-}
-
-
 
 Command* CorrelationMeterView::set_mode()
 {
@@ -308,22 +161,6 @@ Command* CorrelationMeterView::set_mode()
 	update();
 	save_configuration();
 	return 0;
-}
-
-void CorrelationMeterView::transport_started()
-{
-	timer.start(40);
-	m_delayTimer.stop();
-}
-
-void CorrelationMeterView::transport_stopped()
-{
-	m_delayTimer.start(STOP_DELAY);
-}
-
-void CorrelationMeterView::delay_timeout()
-{
-	timer.stop();
 }
 
 void CorrelationMeterView::save_configuration()

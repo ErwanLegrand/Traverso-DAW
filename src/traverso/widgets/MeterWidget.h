@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Nicola Doebelin
+    Copyright (C) 2008 Remon Sijrier
  
     This file is part of Traverso
  
@@ -19,8 +19,8 @@
  
 */
 
-#ifndef CORRELATIONMETERWIDGET_H
-#define CORRELATIONMETERWIDGET_H
+#ifndef METER_WIDGET_H
+#define METER_WIDGET_H
 
 #include <QWidget>
 #include <QTimer>
@@ -28,77 +28,62 @@
 #include <ViewPort.h>
 #include <ViewItem.h>
 
-class CorrelationMeter;
-class CorrelationMeterView;
+class MeterView;
 class Sheet;
 class Project;
-class Command;
-class QLinearGradient;
-class QColor;
+class Plugin;
 
-
-class CorrelationMeterWidget : public ViewPort
+class MeterWidget : public ViewPort
 {
 
 public:
-	CorrelationMeterWidget(QWidget* parent);
-	~CorrelationMeterWidget();
+	MeterWidget(QWidget* parent, MeterView* item);
+	~MeterWidget();
 
 	void get_pointed_context_items(QList<ContextItem* > &list);
 
 protected:
-        void resizeEvent( QResizeEvent* e);
+	void resizeEvent( QResizeEvent* e);
 	void hideEvent ( QHideEvent * event );
 	void showEvent ( QShowEvent * event );
 	QSize minimumSizeHint () const;
 	QSize sizeHint () const;
-
-private:
-	CorrelationMeterView* m_item;
-
+	MeterView* m_item;
 };
 
-class CorrelationMeterView : public ViewItem
+class MeterView : public ViewItem
 {
 	Q_OBJECT
 
-	Q_CLASSINFO("set_mode", tr("Toggle display range"))
-
 public:
-        CorrelationMeterView(CorrelationMeterWidget* widget);
-	~CorrelationMeterView();
+	MeterView(MeterWidget* widget);
+	~MeterView();
 
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-	void resize();
+	virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {};
+	virtual void resize();
 	void hide_event();
 	void show_event();
 
-private:
-	CorrelationMeterWidget* m_widget;
+	void		set_sheet( Sheet* );
+	
+protected:
+	MeterWidget* 	m_widget;
+	Plugin*		m_meter;
 	QTimer		timer;
 	QTimer		m_delayTimer;
-	float		coeff;
-	float		direction;
-	CorrelationMeter*	m_meter;
+	Project*	m_project;
 	Sheet*		m_sheet;
-	QLinearGradient	gradPhase;
-	int		range;
 
-	void save_configuration();
-	void load_configuration();
-
-private slots:
+public slots:
 	void		set_project( Project* );
-	void		set_sheet( Sheet* );
-	void		update_data();
+	
+private slots:
+	virtual void	update_data() {};
 	void		transport_started();
 	void		transport_stopped();
 	void		delay_timeout();
-
-public slots:
-	Command*	set_mode();
-
 };
 
 #endif
 
+ 
