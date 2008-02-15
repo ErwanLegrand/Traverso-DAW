@@ -39,6 +39,7 @@
 #include "Debugger.h"
 
 static const float SMOOTH_SHIFT = 0.05;
+static const int STOP_DELAY = 3000; // in ms
 
 CorrelationMeterWidget::CorrelationMeterWidget(QWidget* parent)
 	: ViewPort(parent)
@@ -125,7 +126,6 @@ CorrelationMeterView::CorrelationMeterView(CorrelationMeterWidget* widget)
 
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
-
 	connect(&timer, SIGNAL(timeout()), this, SLOT(update_data()));
 }
 
@@ -243,6 +243,8 @@ void CorrelationMeterView::set_sheet(Sheet *sheet)
 			// FIXME The removed plugin still needs to be deleted!!!!!!
 			Command::process_command(m_sheet->get_plugin_chain()->remove_plugin(m_meter, false));
 			timer.stop();
+			disconnect(m_sheet, SIGNAL(transferStopped()), this, SLOT(transport_stopped()));
+			disconnect(m_sheet, SIGNAL(transferStarted()), this, SLOT(transport_started()));
 		}
 	}
 	
@@ -251,6 +253,9 @@ void CorrelationMeterView::set_sheet(Sheet *sheet)
 	if ( ! m_sheet ) {
 		return;
 	}
+
+	connect(m_sheet, SIGNAL(transferStopped()), this, SLOT(transport_stopped()));
+	connect(m_sheet, SIGNAL(transferStarted()), this, SLOT(transport_started()));
 	
 	PluginChain* chain = m_sheet->get_plugin_chain();
 	
@@ -258,7 +263,6 @@ void CorrelationMeterView::set_sheet(Sheet *sheet)
 		m_meter = dynamic_cast<CorrelationMeter*>(plugin);
 		
 		if (m_meter) {
-			timer.start(40);
 			return;
 		}
 	}
@@ -266,7 +270,6 @@ void CorrelationMeterView::set_sheet(Sheet *sheet)
 	m_meter = new CorrelationMeter();
 	m_meter->init();
 	Command::process_command( chain->add_plugin(m_meter, false) );
-	timer.start(40);
 }
 
 void CorrelationMeterView::hide_event()
@@ -303,6 +306,21 @@ Command* CorrelationMeterView::set_mode()
 	update();
 	save_configuration();
 	return 0;
+}
+
+void CorrelationMeterView::transport_started()
+{
+	timer.start(40);
+}
+
+void CorrelationMeterView::transport_stopped()
+{
+	QTimer::singleShot(STOP_DELAY, this, SLOT(delay_timeout()));
+}
+
+void CorrelationMeterView::delay_timeout()
+{
+	timer.stop();
 }
 
 void CorrelationMeterView::save_configuration()

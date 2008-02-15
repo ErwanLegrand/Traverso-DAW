@@ -90,6 +90,9 @@ private slots:
 	void		set_project( Project* );
 	void		set_sheet( Sheet* );
 	void		update_data();
+	void		transport_started();
+	void		transport_stopped();
+	void		delay_timeout();
 
 public slots:
 	Command*	set_mode();
