@@ -127,6 +127,7 @@ CorrelationMeterView::CorrelationMeterView(CorrelationMeterWidget* widget)
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 	connect(&timer, SIGNAL(timeout()), this, SLOT(update_data()));
+	m_delayTimer.setSingleShot(true);
 	connect(&m_delayTimer, SIGNAL(timeout()), this, SLOT(delay_timeout()));
 }
 
