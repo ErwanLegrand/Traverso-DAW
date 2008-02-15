@@ -177,6 +177,7 @@ SpectralMeterView::SpectralMeterView(SpectralMeterWidget* widget)
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 	connect(&timer, SIGNAL(timeout()), this, SLOT(update_data()));
+	connect(&m_delayTimer, SIGNAL(timeout()), this, SLOT(delay_timeout()));
 }
 
 SpectralMeterView::~SpectralMeterView()
@@ -616,18 +617,17 @@ void SpectralMeterView::transfer_started()
 	// restarts the average curve
 	sample_weight = 1;
 	timer.start(UPDATE_INTERVAL);
+	m_delayTimer.stop();
 }
 
 void SpectralMeterView::transfer_stopped()
 {
-	QTimer::singleShot(STOP_DELAY, this, SLOT(delay_timeout()));
+	m_delayTimer.start(STOP_DELAY);
 }
 
 void SpectralMeterView::delay_timeout()
 {
-	if (!m_sheet->is_transport_rolling()) {
-		timer.stop();
-	}
+	timer.stop();
 }
 
 Command* SpectralMeterView::set_mode()

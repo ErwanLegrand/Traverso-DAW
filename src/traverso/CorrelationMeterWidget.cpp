@@ -127,6 +127,7 @@ CorrelationMeterView::CorrelationMeterView(CorrelationMeterWidget* widget)
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 	connect(&timer, SIGNAL(timeout()), this, SLOT(update_data()));
+	connect(&m_delayTimer, SIGNAL(timeout()), this, SLOT(delay_timeout()));
 }
 
 CorrelationMeterView::~CorrelationMeterView()
@@ -311,18 +312,17 @@ Command* CorrelationMeterView::set_mode()
 void CorrelationMeterView::transport_started()
 {
 	timer.start(40);
+	m_delayTimer.stop();
 }
 
 void CorrelationMeterView::transport_stopped()
 {
-	QTimer::singleShot(STOP_DELAY, this, SLOT(delay_timeout()));
+	m_delayTimer.start(STOP_DELAY);
 }
 
 void CorrelationMeterView::delay_timeout()
 {
-	if (!m_sheet->is_transport_rolling()) {
-		timer.stop();
-	}
+	timer.stop();
 }
 
 void CorrelationMeterView::save_configuration()

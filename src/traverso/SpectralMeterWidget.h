@@ -106,6 +106,7 @@ private:
 	Project*	m_project;
 	Sheet*		m_sheet;
 	QTimer		timer;
+	QTimer		m_delayTimer;
 	QVector<float>	specl;
 	QVector<float>	specr;
 	QVector<float>	m_spectrum;

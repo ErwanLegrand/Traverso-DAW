@@ -76,6 +76,7 @@ public:
 private:
 	CorrelationMeterWidget* m_widget;
 	QTimer		timer;
+	QTimer		m_delayTimer;
 	float		coeff;
 	float		direction;
 	CorrelationMeter*	m_meter;
