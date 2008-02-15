@@ -1,4 +1,5 @@
 /*
+    Copyright (C) 2008 Remon Sijrier
     Copyright (C) 2006 Nicola Doebelin
 
     This file is part of Traverso
@@ -26,12 +27,9 @@
 #include <PluginChain.h>
 #include <SpectralMeter.h>
 #include <Command.h>
-#include <ProjectManager.h>
 #include <Project.h>
 #include <AudioDevice.h>
-#include <InputEngine.h>
 #include <Sheet.h>
-#include <ContextPointer.h>
 #include <Themer.h>
 
 #include <QFileDialog>

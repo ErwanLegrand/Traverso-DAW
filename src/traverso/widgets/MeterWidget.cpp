@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Nicola Doebelin
+    Copyright (C) 2008 Remon Sijrier
 
     This file is part of Traverso
 
@@ -127,8 +127,7 @@ MeterView::MeterView(MeterWidget* widget)
 MeterView::~MeterView()
 {
 	if (m_meter) {
-		// FIXME!
-// 		delete m_meter;
+		delete m_meter;
 	}
 }
 

@@ -1,4 +1,5 @@
 /*
+    Copyright (C) 2008 Remon Sijrier
     Copyright (C) 2006 Nicola Doebelin
  
     This file is part of Traverso

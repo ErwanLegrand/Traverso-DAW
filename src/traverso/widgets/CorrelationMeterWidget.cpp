@@ -1,4 +1,5 @@
 /*
+    Copyright (C) 2008 Remon Sijrier
     Copyright (C) 2005-2006 Nicola Doebelin
 
     This file is part of Traverso
@@ -21,18 +22,14 @@
 
 
 #include "CorrelationMeterWidget.h"
+
 #include <PluginChain.h>
 #include <CorrelationMeter.h>
 #include <Command.h>
-#include <ProjectManager.h>
-#include <Project.h>
-#include <InputEngine.h>
 #include <Sheet.h>
 #include <Themer.h>
-#include <ContextPointer.h>
 #include <Config.h>
 #include <cmath> // used for fabs
-#include <QDebug>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
