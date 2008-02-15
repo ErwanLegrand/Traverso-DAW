@@ -50,6 +50,7 @@
 static const float DEFAULT_VAL = -999.0f;
 static const int UPDATE_INTERVAL = 40;
 static const uint MAX_SAMPLES = UINT_MAX;
+static const int STOP_DELAY = 3000; // in ms
 
 
 SpectralMeterWidget::SpectralMeterWidget(QWidget* parent)
@@ -373,6 +374,8 @@ void SpectralMeterView::set_sheet(Sheet *sheet)
 			// FIXME The removed plugin still needs to be deleted!!!!!!
 			Command::process_command(m_sheet->get_plugin_chain()->remove_plugin(m_meter, false));
 			timer.stop();
+			disconnect(m_sheet, SIGNAL(transferStarted()), this, SLOT(transfer_started()));
+			disconnect(m_sheet, SIGNAL(transferStopped()), this, SLOT(transfer_stopped()));
 		}
 	}
 	
@@ -382,17 +385,16 @@ void SpectralMeterView::set_sheet(Sheet *sheet)
 		return;
 	}
 	
-	PluginChain* chain = m_sheet->get_plugin_chain();
-	sample_rate = audiodevice().get_sample_rate();
-	
 	connect(m_sheet, SIGNAL(transferStarted()), this, SLOT(transfer_started()));
 	connect(m_sheet, SIGNAL(transferStopped()), this, SLOT(transfer_stopped()));
 
+	PluginChain* chain = m_sheet->get_plugin_chain();
+	sample_rate = audiodevice().get_sample_rate();
+	
 	foreach(Plugin* plugin, chain->get_plugin_list()) {
 		m_meter = qobject_cast<SpectralMeter*>(plugin);
 		
 		if (m_meter) {
-			timer.start(UPDATE_INTERVAL);
 			return;
 		}
 	}
@@ -400,8 +402,6 @@ void SpectralMeterView::set_sheet(Sheet *sheet)
 	m_meter = new SpectralMeter();
 	m_meter->init();
 	Command::process_command( chain->add_plugin(m_meter, false) );
-
-	timer.start(UPDATE_INTERVAL);
 }
 
 
@@ -615,11 +615,17 @@ void SpectralMeterView::transfer_started()
 {
 	// restarts the average curve
 	sample_weight = 1;
+	timer.start(UPDATE_INTERVAL);
 }
 
 void SpectralMeterView::transfer_stopped()
 {
+	QTimer::singleShot(STOP_DELAY, this, SLOT(delay_timeout()));
+}
 
+void SpectralMeterView::delay_timeout()
+{
+	timer.stop();
 }
 
 Command* SpectralMeterView::set_mode()

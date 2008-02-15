@@ -153,6 +153,7 @@ private slots:
 	void		update_data();
 	void		transfer_started();
 	void		transfer_stopped();
+	void		delay_timeout();
 
 
 public slots:
