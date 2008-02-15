@@ -259,6 +259,10 @@ void SpectralMeterView::update_data()
 void SpectralMeterView::set_sheet(Sheet *sheet)
 {
 	MeterView::set_sheet(sheet);
+	
+	if ( ! m_sheet ) {
+		return;
+	}
 
 	PluginChain* chain = m_sheet->get_plugin_chain();
 	sample_rate = audiodevice().get_sample_rate();

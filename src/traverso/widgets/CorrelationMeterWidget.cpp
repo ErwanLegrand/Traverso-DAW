@@ -132,6 +132,10 @@ void CorrelationMeterView::set_sheet(Sheet *sheet)
 {
 	MeterView::set_sheet(sheet);
 	
+	if ( ! m_sheet ) {
+		return;
+	}
+	
 	PluginChain* chain = m_sheet->get_plugin_chain();
 	
 	foreach(Plugin* plugin, chain->get_plugin_list()) {
