@@ -127,7 +127,8 @@ MeterView::MeterView(MeterWidget* widget)
 MeterView::~MeterView()
 {
 	if (m_meter) {
-		delete m_meter;
+		// FIXME crashes here when deleting and not shown!
+// 		delete m_meter;
 	}
 }
 
