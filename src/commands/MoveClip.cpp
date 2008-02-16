@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "MoveClip.h"
 
 #include "AudioClip.h"
+#include "AudioClipManager.h"
 #include "ContextPointer.h"
 #include "InputEngine.h"
 #include "SnapList.h"
@@ -126,8 +127,15 @@ MoveClip::MoveClip(ViewItem* view, QVariantList args)
 		AudioClipView* cv = qobject_cast<AudioClipView*>(view);
 		Q_ASSERT(cv);
 		d->sv = cv->get_sheetview();
-		m_group.add_clip(cv->get_clip());
-		d->pointedTrackIndex = cv->get_clip()->get_track()->get_sort_index();
+		AudioClip* clip  = cv->get_clip();
+		if (clip->is_selected()) {
+			QList<AudioClip*> selected;
+			clip->get_sheet()->get_audioclip_manager()->get_selected_clips_state(selected);
+			m_group.set_clips(selected);
+		} else {
+			m_group.add_clip(clip);
+		}
+		d->pointedTrackIndex = clip->get_track()->get_sort_index();
 	}
 	
 	m_origTrackIndex = m_newTrackIndex = m_group.get_track_index();

@@ -66,18 +66,18 @@ void SnapList::update_snaplist()
 	m_xposBool.clear();
 	
 	// collects all clip boundaries and adds them to the snap list
-	QList<AudioClip* >* acList = m_sheet->get_audioclip_manager()->get_clip_list();
+	QList<AudioClip* > acList = m_sheet->get_audioclip_manager()->get_clip_list();
 	
-	SLPRINT("acList size is %d\n", acList->size());
+	SLPRINT("acList size is %d\n", acList.size());
 
 	// Be able to snap to trackstart
 	if (m_rangeStart == qint64(0)) {
 		m_xposList.append(TimeRef());
 	}
 
-	for( int i = 0; i < acList->size(); i++ ) {
+	for( int i = 0; i < acList.size(); i++ ) {
 
-		AudioClip* clip = acList->at(i);
+		AudioClip* clip = acList.at(i);
 		if ( ! clip->is_snappable()) {
 			continue;
 		}

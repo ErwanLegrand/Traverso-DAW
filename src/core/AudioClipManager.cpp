@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioClipManager.cpp,v 1.21 2008/01/21 16:22:13 r_sijrier Exp $
+    $Id: AudioClipManager.cpp,v 1.22 2008/02/16 21:54:44 r_sijrier Exp $
 */
  
 #include "AudioClipManager.h"
@@ -167,9 +167,9 @@ void AudioClipManager::select_clip(AudioClip* clip)
 	
 }
 
-QList<AudioClip* >* AudioClipManager::get_clip_list()
+QList<AudioClip* > AudioClipManager::get_clip_list() const
 {
-	return &m_clips;
+	return m_clips;
 }
 
 /****************************** SLOTS ***************************/

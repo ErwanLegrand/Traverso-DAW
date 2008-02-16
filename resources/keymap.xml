@@ -107,6 +107,7 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="S" >
 			<Objects>
+				<Object objectname="AudioClip" modes="All" sortorder="1" submenu="Selection" pluginname="TraversoCommands" commandname="ClipSelectionSelect" arguments="select_clip" />
 				<Object objectname="Project" slotsignature="select" modes="All" />
 				<Object objectname="MoveClip" slotsignature="prev_snap_pos" modes="All" sortorder="1" />
 				<Object objectname="DragMarker" slotsignature="move_left" modes="All" sortorder="1" />
@@ -262,15 +263,19 @@
 		</keyfact>
 		
 		
-		
+		<keyfact type="FKEY2" key1="A" key2="S" >
+			<Objects>
+				<Object objectname="AudioClip" modes="All" sortorder="2" submenu="Selection" pluginname="TraversoCommands" commandname="ClipSelectionAdd" arguments="add_to_selection" />
+			</Objects>
+		</keyfact>
+		<keyfact type="FKEY2" key1="D" key2="S" >
+			<Objects>
+				<Object objectname="AudioClip" modes="All" sortorder="3" submenu="Selection" pluginname="TraversoCommands" commandname="ClipSelectionRemove" arguments="remove_from_selection" />
+			</Objects>
+		</keyfact>
 		<keyfact type="FKEY2" key1="A" key2="B" >
 			<Objects>
 				<Object objectname="Interface" slotsignature="about_traverso" modes="All" />
-			</Objects>
-		</keyfact>
-		<keyfact type="FKEY2" key1="CTRL" key2="S" >
-			<Objects>
-				<Object objectname="ProjectManager" slotsignature="save_project" modes="All" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY2" key1="S" key2="N" >

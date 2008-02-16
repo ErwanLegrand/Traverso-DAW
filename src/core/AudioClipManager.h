@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioClipManager.h,v 1.8 2008/01/21 16:22:13 r_sijrier Exp $
+$Id: AudioClipManager.h,v 1.9 2008/02/16 21:54:44 r_sijrier Exp $
 */
 
 #ifndef AUDIOCLIPMANAGER_H
@@ -46,7 +46,7 @@ public:
 	void get_selected_clips_state(QList<AudioClip*> & list);
 	void set_selected_clips_state(QList<AudioClip*> & list);
 
-	QList<AudioClip* >* get_clip_list();
+	QList<AudioClip* > get_clip_list() const;
 
 	const TimeRef& get_last_location() const;
 
