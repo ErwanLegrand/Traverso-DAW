@@ -108,14 +108,12 @@ MoveClip::MoveClip(ViewItem* view, QVariantList args)
 		}
 		
 		TimeRef currentLocation = TimeRef(cpointer().on_first_input_event_scene_x() * d->sv->timeref_scalefactor);
-		m_origTrackIndex = -1;
+		
+		d->pointedTrackIndex = d->sv->get_trackview_under(cpointer().scene_pos())->get_track()->get_sort_index();
 		
 		foreach(Track* track, tracks) {
 			QList<AudioClip*> clips = track->get_cliplist();
 			foreach(AudioClip* clip, clips) {
-				if (m_origTrackIndex == -1) {
-					m_origTrackIndex = m_newTrackIndex = track->get_sort_index();
-				}
 				if (clip->get_track_end_location() > currentLocation) {
 					movingClips.append(clip);
 				}
@@ -129,8 +127,10 @@ MoveClip::MoveClip(ViewItem* view, QVariantList args)
 		Q_ASSERT(cv);
 		d->sv = cv->get_sheetview();
 		m_group.add_clip(cv->get_clip());
-		m_origTrackIndex = m_newTrackIndex = cv->get_clip()->get_track()->get_sort_index();
+		d->pointedTrackIndex = cv->get_clip()->get_track()->get_sort_index();
 	}
+	
+	m_origTrackIndex = m_newTrackIndex = m_group.get_track_index();
 	
 	d->zoom = 0;
 	m_sheet = d->sv->get_sheet();
@@ -254,8 +254,12 @@ int MoveClip::jog()
 	}
 	
 	TrackView* trackView = d->sv->get_trackview_under(cpointer().scene_pos());
-	if (trackView && !(m_actionType == FOLD_SHEET)) {
-		m_newTrackIndex = trackView->get_track()->get_sort_index();
+	int deltaTrackIndex = 0;
+	if (trackView/* && !(m_actionType == FOLD_SHEET)*/) {
+		deltaTrackIndex = trackView->get_track()->get_sort_index() - d->pointedTrackIndex;
+		m_group.check_valid_track_index_delta(deltaTrackIndex);
+		m_newTrackIndex = m_newTrackIndex + deltaTrackIndex;
+		d->pointedTrackIndex = trackView->get_track()->get_sort_index();
 	}
 
 	// Calculate the distance moved based on the current scene x pos and the initial one.
@@ -349,8 +353,6 @@ void MoveClip::start_zoom(bool autorepeat)
 		cpointer().get_viewport()->set_holdcursor(":/cursorZoomHorizontal");
 		d->sv->start_shuttle(false);
 	} else {
-		delete d->zoom;
-		d->zoom = 0;
 		cpointer().get_viewport()->set_holdcursor(":/cursorHoldLrud");
 		d->sv->start_shuttle(true, true);
 	}

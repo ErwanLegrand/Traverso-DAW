@@ -29,21 +29,23 @@ class AudioClip;
 class AudioClipGroup
 {
 public:
-	AudioClipGroup();
+	AudioClipGroup(){};
 	AudioClipGroup(QList<AudioClip*> clips);
 	
 	void add_clip(AudioClip* clip);
 	void set_clips(QList<AudioClip*> clips);
-	void move_to(int trackIndex, TimeRef location);
+	void move_to(int trackIndexDelta, TimeRef location);
 	
 	void set_snappable(bool snap);
 	void set_as_moving(bool move);
+	void check_valid_track_index_delta(int& delta);
 	
 	QList<AudioClip*> copy_clips();
 	void add_all_clips_to_tracks();
 	void remove_all_clips_from_tracks();
 	
-	int get_size() {return m_clips.size();}
+	int get_size() const {return m_clips.size();}
+	int get_track_index() const {return m_topTrackIndex;}
 	
 	TimeRef get_track_start_location() const {return m_trackStartLocation;}
 	TimeRef get_track_end_location() const {return m_trackEndLocation;}
@@ -53,8 +55,10 @@ private:
 	QList<AudioClip*> m_clips;
 	TimeRef m_trackEndLocation;
 	TimeRef m_trackStartLocation;
+	int	m_topTrackIndex;
+	int	m_bottomTrackIndex;
 	
-	void update_track_start_and_end_locations();
+	void update_state();
 };
 
 #endif

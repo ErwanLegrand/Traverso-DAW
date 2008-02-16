@@ -30,39 +30,31 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "Debugger.h"
 
-static bool smallerClip(const AudioClip* left, const AudioClip* right )
-{
-	return left->get_track_start_location() < right->get_track_start_location();
-}
-
-AudioClipGroup::AudioClipGroup()
-{
-}
-
 AudioClipGroup::AudioClipGroup(QList< AudioClip * > clips)
 {
 	m_clips = clips;
-	update_track_start_and_end_locations();
+	update_state();
 }
 
 void AudioClipGroup::add_clip(AudioClip * clip)
 {
 	m_clips.append(clip);
-	update_track_start_and_end_locations();
+	update_state();
 }
 
 void AudioClipGroup::set_clips(QList< AudioClip * > clips)
 {
 	m_clips = clips;
-	update_track_start_and_end_locations();
+	update_state();
 }
 
 void AudioClipGroup::move_to(int trackIndex, TimeRef location)
 {
+	int trackIndexDelta = trackIndex - m_topTrackIndex;
+	
 	foreach(AudioClip* clip, m_clips) {
-		
-		if (clip->get_track()->get_sort_index() != trackIndex) {
-			Track* track = clip->get_sheet()->get_track_for_index(trackIndex);
+		if (trackIndexDelta != 0) {
+			Track* track = clip->get_sheet()->get_track_for_index(clip->get_track()->get_sort_index() + trackIndexDelta);
 			if (track) {
 				Command::process_command(clip->get_track()->remove_clip(clip, false, true));
 				Command::process_command(track->add_clip(clip, false, true));
@@ -73,19 +65,35 @@ void AudioClipGroup::move_to(int trackIndex, TimeRef location)
 		clip->set_track_start_location(location + offset);
 	}
 	
-	if (m_clips.size()) {
-		m_trackStartLocation = m_clips.first()->get_track_start_location();
-		m_trackEndLocation = m_clips.last()->get_track_end_location();
-	}
+	update_state();
 }
 
-void AudioClipGroup::update_track_start_and_end_locations()
+void AudioClipGroup::update_state()
 {
-	qSort(m_clips.begin(), m_clips.end(), smallerClip);
-
-	if (m_clips.size()) {
-		m_trackStartLocation = m_clips.first()->get_track_start_location();
-		m_trackEndLocation = m_clips.last()->get_track_end_location();
+	if (m_clips.isEmpty()) {
+		return;
+	}
+		
+	m_trackStartLocation = LONG_LONG_MAX;
+	m_trackEndLocation = TimeRef();
+	
+	m_topTrackIndex = INT_MAX;
+	m_bottomTrackIndex = 0;
+	
+	foreach(AudioClip* clip, m_clips) {
+		int index = clip->get_track()->get_sort_index();
+		if (index < m_topTrackIndex) {
+			m_topTrackIndex = index;
+		}
+		if (index > m_bottomTrackIndex) {
+			m_bottomTrackIndex = index;
+		}
+		if (m_trackStartLocation > clip->get_track_start_location()) {
+			m_trackStartLocation = clip->get_track_start_location();
+		}
+		if (m_trackEndLocation < clip->get_track_end_location()) {
+			m_trackEndLocation = clip->get_track_end_location();
+		}
 	}
 }
 
@@ -129,6 +137,24 @@ void AudioClipGroup::remove_all_clips_from_tracks()
 {
 	foreach(AudioClip* clip, m_clips) {
 		Command::process_command(clip->get_track()->remove_clip(clip, false));
+	}
+}
+
+void AudioClipGroup::check_valid_track_index_delta(int & delta)
+{
+	if (m_clips.isEmpty()) {
+		return;
+	}
+	
+	int allowedDeltaPlus = (m_clips.first()->get_sheet()->get_numtracks() - 1) - m_bottomTrackIndex;
+	int allowedDeltaMin  = -m_topTrackIndex;
+	
+	if (delta > allowedDeltaPlus) {
+		delta = allowedDeltaPlus;
+	}
+	
+	if (delta < allowedDeltaMin) {
+		delta = allowedDeltaMin;
 	}
 }
 
