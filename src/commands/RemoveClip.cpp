@@ -21,10 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "RemoveClip.h"
 
-#include <AudioClip.h>
-#include <Track.h>
-#include "ResourcesManager.h"
-#include "ProjectManager.h"
+#include "AudioClip.h"
+#include "AudioClipManager.h"
+#include "Sheet.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -34,10 +33,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 AddRemoveClip::AddRemoveClip(AudioClip* clip, int type)
 	: Command(clip, tr("Remove Clip"))
 {
-	m_clip = clip;
-	m_track = m_clip->get_track();
+	if (clip->is_selected()) {
+		QList<AudioClip*> selected;
+		clip->get_sheet()->get_audioclip_manager()->get_selected_clips_state(selected);
+		m_group.set_clips(selected);
+		setText(tr("Remove ClipGroup"));
+	} else {
+		m_group.add_clip(clip);
+	}
 	m_type = type;
-	m_removeFromDataBase = false;
 }
 
 
@@ -51,11 +55,11 @@ int AddRemoveClip::do_action()
 {
 	PENTER;
 	if (m_type == REMOVE) {
-		Command::process_command(m_track->remove_clip(m_clip, false));
+		m_group.remove_all_clips_from_tracks();
 	}
 	
 	if (m_type == ADD) {
-		Command::process_command(m_track->add_clip(m_clip, false));
+		m_group.add_all_clips_to_tracks();
 	}
 	
 	return 1;
@@ -66,11 +70,11 @@ int AddRemoveClip::undo_action()
 	PENTER;
 
 	if (m_type == REMOVE) {
-		Command::process_command(m_track->add_clip(m_clip, false));
+		m_group.add_all_clips_to_tracks();
 	}
 	
 	if (m_type == ADD) {
-		Command::process_command(m_track->remove_clip(m_clip, false));
+		m_group.remove_all_clips_from_tracks();
 	}
 	
 	return 1;

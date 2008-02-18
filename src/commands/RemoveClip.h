@@ -23,6 +23,7 @@
 #define REMOVE_CLIP_HS
 
 #include "Command.h"
+#include "AudioClipGroup.h"
 
 class AudioClip;
 class Track;
@@ -43,10 +44,8 @@ public :
 	int undo_action();
 	
 private :
+	AudioClipGroup  m_group;
 	int m_type;
-	bool m_removeFromDataBase;
-	AudioClip* m_clip;
-	Track* m_track;
 };
 
 #endif
