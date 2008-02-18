@@ -46,14 +46,14 @@
 		<keyfact type="FKEY" key1="LARROW" >
 			<Objects>
 				<Object objectname="SheetView" slotsignature="scroll_left" modes="All" sortorder="1" submenu="Scroll" />
-				<Object objectname="MoveClip" slotsignature="prev_snap_pos" modes="All" sortorder="1" />
+				<Object objectname="MoveClip" slotsignature="move_left" modes="All" sortorder="3" />
 				<Object objectname="TrackPan" slotsignature="pan_left" modes="All" sortorder="1" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="RARROW" >
 			<Objects>
 				<Object objectname="SheetView" slotsignature="scroll_right" modes="All" sortorder="2" submenu="Scroll" />
-				<Object objectname="MoveClip" slotsignature="next_snap_pos" modes="All" sortorder="1" />
+				<Object objectname="MoveClip" slotsignature="move_right" modes="All" sortorder="4" />
 				<Object objectname="TrackPan" slotsignature="pan_right" modes="All" sortorder="2" />
 			</Objects>
 		</keyfact>
@@ -62,6 +62,7 @@
 				<Object objectname="Gain" slotsignature="increase_gain" modes="All" />
 				<Object objectname="DragNode" slotsignature="move_up" modes="Effects" />
 				<Object objectname="SheetView" slotsignature="scroll_up" modes="All" sortorder="4" submenu="Scroll" />
+				<Object objectname="MoveClip" slotsignature="move_up" modes="All" sortorder="1" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="DARROW" >
@@ -69,6 +70,7 @@
 				<Object objectname="Gain" slotsignature="decrease_gain" modes="All" />
 				<Object objectname="DragNode" slotsignature="move_down" modes="Effects" />
 				<Object objectname="SheetView" slotsignature="scroll_down" modes="All" sortorder="4" submenu="Scroll" />
+				<Object objectname="MoveClip" slotsignature="move_down" modes="All" sortorder="2" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="SHIFT" >
@@ -82,6 +84,7 @@
 				<Object objectname="SheetView" slotsignature="playhead_to_workcursor" modes="All" sortorder="12" submenu="Playhead" />
 				<Object objectname="SheetView" slotsignature="center_playhead" modes="All" sortorder="15" modifierkeys="CTRL" submenu="Playhead" />
 				<Object objectname="Zoom" slotsignature="toggle_vertical_horizontal_jog_zoom" modes="All" />
+				<Object objectname="MoveClip" slotsignature="toggle_vertical_only" modes="All" sortorder="10" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="W" >
@@ -102,14 +105,14 @@
 		<keyfact type="FKEY" key1="Z" >
 			<Objects>
 				<Object objectname="SheetView" modes="All" sortorder="3" submenu="Zoom" pluginname="TraversoCommands" commandname="HZoomIn" arguments="HZoom;0.8" />
-				<Object objectname="MoveClip" slotsignature="start_zoom" modes="All" />
+				<Object objectname="MoveClip" slotsignature="start_zoom" modes="All" sortorder="11"/>
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="S" >
 			<Objects>
 				<Object objectname="AudioClip" modes="All" sortorder="1" submenu="Selection" pluginname="TraversoCommands" commandname="ClipSelectionSelect" arguments="select_clip" />
 				<Object objectname="Project" slotsignature="select" modes="All" />
-				<Object objectname="MoveClip" slotsignature="prev_snap_pos" modes="All" sortorder="1" />
+				<Object objectname="MoveClip" slotsignature="prev_snap_pos" modes="All" sortorder="5" />
 				<Object objectname="DragMarker" slotsignature="move_left" modes="All" sortorder="1" />
 			</Objects>
 		</keyfact>
@@ -257,7 +260,7 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="F" >
 			<Objects>
-				<Object objectname="MoveClip" slotsignature="next_snap_pos" modes="All" sortorder="1" />
+				<Object objectname="MoveClip" slotsignature="next_snap_pos" modes="All" sortorder="6" />
 				<Object objectname="DragMarker" slotsignature="move_right" modes="All" sortorder="1" />
 			</Objects>
 		</keyfact>

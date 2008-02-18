@@ -139,11 +139,10 @@ MoveClip::MoveClip(ViewItem* view, QVariantList args)
 	}
 	
 	m_origTrackIndex = m_newTrackIndex = m_group.get_track_index();
-	
-	d->zoom = 0;
+	m_trackStartLocation = m_group.get_track_start_location();
 	m_sheet = d->sv->get_sheet();
+	d->zoom = 0;
 }
-
 
 MoveClip::~MoveClip()
 {
@@ -160,8 +159,6 @@ int MoveClip::begin_hold()
 	if (!m_group.get_size()) {
 		return -1;
 	}
-	
-	m_trackStartLocation = m_group.get_track_start_location();
 	
 	if (m_actionType == COPY) {
 		// FIXME Memory leak here!
@@ -324,23 +321,61 @@ void MoveClip::prev_snap_pos(bool autorepeat)
 
 void MoveClip::do_prev_next_snap(TimeRef trackStartLocation, TimeRef trackEndLocation)
 {
+	if (d->verticalOnly) return;
 	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 	trackStartLocation -= m_sheet->get_snap_list()->calculate_snap_diff(trackStartLocation, trackEndLocation);
 	m_posDiff = trackStartLocation - m_trackStartLocation;
-	m_group.move_to(m_group.get_track_index(), m_trackStartLocation + m_posDiff);
+	do_move();
 }
 
 void MoveClip::move_to_start(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
-	TimeRef location; // location == 0
-	m_group.move_to(m_origTrackIndex, location);
+	m_group.move_to(m_group.get_track_index(), TimeRef());
 }
 
 void MoveClip::move_to_end(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
-	m_group.move_to(m_origTrackIndex, m_sheet->get_last_location());
+	m_group.move_to(m_group.get_track_index(), m_sheet->get_last_location());
+}
+
+void MoveClip::move_up(bool autorepeat)
+{
+	Q_UNUSED(autorepeat);
+	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	int deltaTrackIndex = -1;
+	m_group.check_valid_track_index_delta(deltaTrackIndex);
+	m_newTrackIndex = m_newTrackIndex + deltaTrackIndex;
+	do_move();
+}
+
+void MoveClip::move_down(bool autorepeat)
+{
+	Q_UNUSED(autorepeat);
+	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	int deltaTrackIndex = 1;
+	m_group.check_valid_track_index_delta(deltaTrackIndex);
+	m_newTrackIndex = m_newTrackIndex + deltaTrackIndex;
+	do_move();
+}
+
+void MoveClip::move_left(bool autorepeat)
+{
+	Q_UNUSED(autorepeat);
+	if (d->verticalOnly) return;
+	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	m_posDiff -= d->sv->timeref_scalefactor;
+	do_move();
+}
+
+void MoveClip::move_right(bool autorepeat)
+{
+	Q_UNUSED(autorepeat);
+	if (d->verticalOnly) return;
+	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	m_posDiff += d->sv->timeref_scalefactor;
+	do_move();
 }
 
 void MoveClip::start_zoom(bool autorepeat)
@@ -367,3 +402,20 @@ void MoveClip::set_cursor_shape(int useX, int useY)
 	}
 }
 
+void MoveClip::toggle_vertical_only(bool autorepeat)
+{
+	d->verticalOnly = !d->verticalOnly;
+	if (d->verticalOnly) {
+		set_cursor_shape(0, 1);
+	} else {
+		set_cursor_shape(1, 1);
+	}
+}
+
+void MoveClip::do_move()
+{
+	m_group.move_to(m_newTrackIndex, m_trackStartLocation + m_posDiff);
+	if (d) {
+		cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(m_trackStartLocation + m_posDiff, d->sv->timeref_scalefactor));
+	}
+}

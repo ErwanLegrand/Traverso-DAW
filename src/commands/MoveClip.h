@@ -41,6 +41,11 @@ class MoveClip : public Command
 	Q_CLASSINFO("next_snap_pos", tr("To next snap position"));
 	Q_CLASSINFO("prev_snap_pos", tr("To previous snap position"));
 	Q_CLASSINFO("start_zoom", tr("Jog Zoom"));
+	Q_CLASSINFO("move_up", tr("Move Up"));
+	Q_CLASSINFO("move_down", tr("Move Down"));
+	Q_CLASSINFO("move_left", tr("Move Left"));
+	Q_CLASSINFO("move_right", tr("Move Right"));
+	Q_CLASSINFO("toggle_vertical_only", tr("Toggle Vertical Only"));
 	
 public :
 	MoveClip(ViewItem* view, QVariantList args);
@@ -85,13 +90,19 @@ private :
 	Data* d;
 
 	void do_prev_next_snap(TimeRef trackStartLocation, TimeRef trackEndLocation);
+	void do_move();
 	
 public slots:
 	void next_snap_pos(bool autorepeat);
 	void prev_snap_pos(bool autorepeat);
         void move_to_start(bool autorepeat);
         void move_to_end(bool autorepeat);
+	void move_up(bool autorepeat);;
+	void move_down(bool autorepeat);
+	void move_left(bool autorepeat);
+	void move_right(bool autorepeat);
 	void start_zoom(bool autorepeat);
+	void toggle_vertical_only(bool autorepeat);
 };
 
 #endif
