@@ -599,7 +599,12 @@
 				<Object objectname="SheetView" slotsignature="play_to_begin" modes="All" sortorder="30" submenu="Playhead" />
 			</Objects>
 		</keyfact>
-		
+		<keyfact type="D_FKEY" key1="S">
+			<Objects>
+				<Object objectname="Sheet" modes="All" sortorder="1" submenu="Selection" pluginname="TraversoCommands" commandname="ClipSelectionSelectAll" arguments="select_all_clips" />
+			</Objects>
+		</keyfact>
+
 		
 		
 		<keyfact type="D_FKEY2" key1="DEL" key2="T" >

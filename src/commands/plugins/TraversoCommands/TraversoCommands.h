@@ -40,6 +40,7 @@ class TraversoCommands : public CommandPlugin
 	Q_CLASSINFO("RemoveTrack", tr("Remove Track"))
 	Q_CLASSINFO("AudioClipExternalProcessing", tr("External Processing"))
 	Q_CLASSINFO("ClipSelectionSelect", tr("Select"))
+	Q_CLASSINFO("ClipSelectionSelectAll", tr("(De)Select All"))
 	Q_CLASSINFO("ClipSelectionRemove", tr("Remove from Selection"))
 	Q_CLASSINFO("ClipSelectionAdd", tr("Add to Selection"))
 	Q_CLASSINFO("MoveClip", tr("Move Clip"))

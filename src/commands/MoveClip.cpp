@@ -156,7 +156,7 @@ MoveClip::~MoveClip()
 
 int MoveClip::begin_hold()
 {
-	if (!m_group.get_size()) {
+	if (!m_group.get_size() || m_group.is_locked()) {
 		return -1;
 	}
 	

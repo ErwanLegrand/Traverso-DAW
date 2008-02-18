@@ -47,6 +47,8 @@ public:
 	int get_size() const {return m_clips.size();}
 	int get_track_index() const {return m_topTrackIndex;}
 	
+	bool is_locked() const;
+	
 	TimeRef get_track_start_location() const {return m_trackStartLocation;}
 	TimeRef get_track_end_location() const {return m_trackEndLocation;}
 	TimeRef get_length() const {return m_trackEndLocation - m_trackStartLocation;}

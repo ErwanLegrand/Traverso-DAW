@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2007 Remon Sijrier 
+Copyright (C) 2005-2008 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ClipSelection.h"
 #include "AudioClipManager.h"
 #include <AudioClip.h>
+#include "ContextPointer.h"
 #include <Sheet.h>
 #include <Utils.h>
 
@@ -57,6 +58,15 @@ ClipSelection::ClipSelection( QList< AudioClip * > clips, AudioClipManager * man
 ClipSelection::~ClipSelection()
 {}
 
+int ClipSelection::begin_hold()
+{
+	m_selectionArea = QRect(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y(), 1, 1);
+}
+
+int ClipSelection::finish_hold()
+{
+}
+
 int ClipSelection::prepare_actions()
 {
 	m_acmanager->get_selected_clips_state( selectedClips );
@@ -82,5 +92,11 @@ int ClipSelection::undo_action()
 	return 1;
 }
 
-// eof
+void ClipSelection::cancel_action()
+{
+	undo_action();
+}
 
+int ClipSelection::jog()
+{
+}

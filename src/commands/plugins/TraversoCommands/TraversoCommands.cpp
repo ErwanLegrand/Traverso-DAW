@@ -108,6 +108,7 @@ TraversoCommands::TraversoCommands()
 	m_dict.insert("RemoveTrack", RemoveTrackCommand);
 	m_dict.insert("AudioClipExternalProcessing", AudioClipExternalProcessingCommand);
 	m_dict.insert("ClipSelectionSelect", ClipSelectionCommand);
+	m_dict.insert("ClipSelectionSelectAll", ClipSelectionCommand);
 	m_dict.insert("ClipSelectionAdd", ClipSelectionCommand);
 	m_dict.insert("ClipSelectionRemove", ClipSelectionCommand);
 	m_dict.insert("MoveClip", MoveClipCommand);
@@ -252,6 +253,16 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 		
 		case ClipSelectionCommand:
 		{
+			Sheet* sheet = qobject_cast<Sheet*>(obj);
+			if (sheet) {
+				QString action;
+				if (arguments.size()) {
+					action = arguments.at(0).toString();
+					if (action == "select_all_clips") {
+						return sheet->get_audioclip_manager()->select_all_clips();
+					}
+				}
+			}
 			AudioClip* clip = qobject_cast<AudioClip*>(obj);
 			if (!clip) {
 				PERROR("TraversoCommands: Supplied QObject was not an AudioClip! "
@@ -269,10 +280,6 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 					"MoveClipCommand needs an AudioClipView as argument");
 				return 0;
 			}
-
-// 			if (view->get_clip()->is_locked()) {
-// 				return 0;
-// 			}
 
 			return new MoveClip(view, arguments);
 		}

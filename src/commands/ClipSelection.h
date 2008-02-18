@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2007 Remon Sijrier 
+Copyright (C) 2005-2008 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "Command.h"
 #include <QList>
+#include <QRect>
 
 class AudioClip;
 class AudioClipManager;
@@ -35,14 +36,20 @@ public :
 	ClipSelection(QList<AudioClip*> clips, AudioClipManager* manager, const char* slot, const QString& des);
 	~ClipSelection();
 
+	int begin_hold();
+	int finish_hold();
 	int prepare_actions();
 	int do_action();
 	int undo_action();
+	void cancel_action();
+
+	int jog();
 
 private :
 	QList<AudioClip* >	m_clips;
 	const char*		m_slot;
-	AudioClipManager* m_acmanager;
+	AudioClipManager* 	m_acmanager;
+	QRect			m_selectionArea;
 	
 	QList<AudioClip* >	selectedClips;
 };

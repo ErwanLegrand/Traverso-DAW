@@ -158,3 +158,12 @@ void AudioClipGroup::check_valid_track_index_delta(int & delta)
 	}
 }
 
+bool AudioClipGroup::is_locked() const
+{
+	foreach(AudioClip* clip, m_clips) {
+		if (clip->is_locked()) {
+			return true;
+		}
+	}
+	return false;
+}
