@@ -47,7 +47,6 @@
 #define DB_FLOOR -140.0
 
 static const float DEFAULT_VAL = -999.0f;
-static const int UPDATE_INTERVAL = 40;
 static const uint MAX_SAMPLES = UINT_MAX;
 
 
