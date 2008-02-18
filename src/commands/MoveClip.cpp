@@ -311,31 +311,23 @@ int MoveClip::jog()
 void MoveClip::next_snap_pos(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
-	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
-	
-/*	TimeRef trackStartLocation = m_sheet->get_snap_list()->next_snap_pos(m_clip->get_track_start_location());
-	TimeRef trackEndLocation = m_sheet->get_snap_list()->next_snap_pos(m_clip->get_track_end_location());
-	qint64 startdiff = (trackStartLocation - m_clip->get_track_start_location()).universal_frame();
-	qint64 enddiff = (trackEndLocation - m_clip->get_track_end_location()).universal_frame();
-	qint64 diff = (abs(startdiff) < abs(enddiff)) ? startdiff : enddiff;
-	trackStartLocation = m_clip->get_track_start_location() + diff;
-	m_posDiff = trackStartLocation - m_trackStartLocation;
-	m_clip->set_track_start_location(trackStartLocation);*/
+	do_prev_next_snap(m_sheet->get_snap_list()->next_snap_pos(m_group.get_track_start_location()),
+			  m_sheet->get_snap_list()->next_snap_pos(m_group.get_track_end_location()));
 }
 
 void MoveClip::prev_snap_pos(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
+	do_prev_next_snap(m_sheet->get_snap_list()->prev_snap_pos(m_group.get_track_start_location()),
+			m_sheet->get_snap_list()->prev_snap_pos(m_group.get_track_end_location()));
+}
+
+void MoveClip::do_prev_next_snap(TimeRef trackStartLocation, TimeRef trackEndLocation)
+{
 	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
-	
-/*	TimeRef trackStartLocation = m_sheet->get_snap_list()->prev_snap_pos(m_clip->get_track_start_location());
-	TimeRef trackEndLocation = m_sheet->get_snap_list()->prev_snap_pos(m_clip->get_track_end_location());
-	qint64 startdiff = (trackStartLocation - m_clip->get_track_start_location()).universal_frame();
-	qint64 enddiff = (trackEndLocation - m_clip->get_track_end_location()).universal_frame();
-	qint64 diff = (abs(startdiff) < abs(enddiff)) ? startdiff : enddiff;
-	trackStartLocation = m_clip->get_track_start_location() + diff;
+	trackStartLocation -= m_sheet->get_snap_list()->calculate_snap_diff(trackStartLocation, trackEndLocation);
 	m_posDiff = trackStartLocation - m_trackStartLocation;
-	m_clip->set_track_start_location(trackStartLocation);*/
+	m_group.move_to(m_group.get_track_index(), m_trackStartLocation + m_posDiff);
 }
 
 void MoveClip::move_to_start(bool autorepeat)

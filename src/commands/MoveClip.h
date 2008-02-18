@@ -84,7 +84,7 @@ private :
 	
 	Data* d;
 
-	void init_data();
+	void do_prev_next_snap(TimeRef trackStartLocation, TimeRef trackEndLocation);
 	
 public slots:
 	void next_snap_pos(bool autorepeat);
