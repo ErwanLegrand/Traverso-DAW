@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier
+Copyright (C) 2005-2008 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.h,v 1.28 2008/01/15 19:51:49 r_sijrier Exp $
 */
 
 #ifndef AUDIODEVICE_H
@@ -141,6 +140,7 @@ private:
 	friend class AlsaDriver;
 	friend class PADriver;
 	friend class Driver;
+	friend class PulseAudioDriver;
 	friend class AudioDeviceThread;
 
 

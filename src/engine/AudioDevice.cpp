@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.52 2008/01/21 17:20:41 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.53 2008/02/18 08:17:30 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -35,6 +35,11 @@ RELAYTOOL_JACK
 #if defined (PORTAUDIO_SUPPORT)
 #include "PADriver.h"
 #endif
+
+#if defined (PULSEAUDIO_SUPPORT)
+#include "PulseAudioDriver.h"
+#endif
+
 
 #include "Driver.h"
 #include "Client.h"
@@ -161,6 +166,10 @@ AudioDevice::AudioDevice()
 	availableDrivers << "PortAudio";
 #endif
 
+#if defined (PULSEAUDIO_SUPPORT)
+	availableDrivers << "PulseAudio";
+#endif
+	
 	availableDrivers << "Null Driver";
 	
 	// tsar is a singleton, so initialization is done on first tsar() call
@@ -389,7 +398,7 @@ void AudioDevice::set_parameters( int rate,
 	}
 #endif
 		
-	if (driverType == "PortAudio") {
+	if (driverType == "PortAudio"|| (driverType == "PulseAudio") ) {
 		if (driver->start() == -1) {
 			// PortAudio driver failed to start, fallback to Null Driver:
 			set_parameters(rate, bufferSize, "Null Driver");
@@ -438,6 +447,20 @@ int AudioDevice::create_driver(QString driverType, bool capture, bool playback, 
 		driver = new PADriver(this, m_rate, m_bufferSize);
 		if (driver->setup(capture, playback, cardDevice) < 0) {
 			message(tr("Audiodevice: Failed to create the PortAudio Driver"), WARNING);
+			delete driver;
+			driver = 0;
+			return -1;
+		}
+		m_driverType = driverType;
+		return 1;
+	}
+#endif
+	
+#if defined (PULSEAUDIO_SUPPORT)
+	if (driverType == "PulseAudio") {
+		driver = new PulseAudioDriver(this, m_rate, m_bufferSize);
+		if (driver->setup(capture, playback, cardDevice) < 0) {
+			message(tr("Audiodevice: Failed to create the PulseAudio Driver"), WARNING);
 			delete driver;
 			driver = 0;
 			return -1;
