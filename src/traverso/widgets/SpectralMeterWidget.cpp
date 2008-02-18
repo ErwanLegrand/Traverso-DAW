@@ -319,8 +319,6 @@ void SpectralMeterView::reduce_bands()
 // it re-calculates some variables
 void SpectralMeterView::update_layout()
 {
-	timer.stop();
-
 	// recalculate a couple of variables
 	fft_size = qMin(specl.size(), specr.size());		// number of frequencies (size of the FFT)
 	xfactor = 4.0f * log10(2.0f / float(fft_size));	// a constant factor for conversion to dB
@@ -341,8 +339,6 @@ void SpectralMeterView::update_layout()
 
 	// update related stuff
 	update_freq_map();
-
-	timer.start(UPDATE_INTERVAL);
 }
 
 // converts db-values into widget y-coordinates
@@ -465,7 +461,6 @@ void SpectralMeterView::load_configuration()
 	}
 
 	update_layout();
-	update_background();
 }
 
 Command* SpectralMeterView::set_mode()
