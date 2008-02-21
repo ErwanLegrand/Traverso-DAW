@@ -70,7 +70,6 @@ ProjectConverter.h
 ProjectManager.h
 ReadSource.h
 ResourcesManager.h
-SnapList.h
 Sheet.h
 Themer.h
 TimeLine.h

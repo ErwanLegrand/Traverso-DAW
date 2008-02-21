@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
+    Copyright (C) 2005-2008 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -17,7 +17,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: AudioClipManager.cpp,v 1.22 2008/02/16 21:54:44 r_sijrier Exp $
 */
  
 #include "AudioClipManager.h"
@@ -56,10 +55,9 @@ void AudioClipManager::add_clip( AudioClip * clip )
 	
 	m_clips.append( clip );
 	
-	connect(clip, SIGNAL(trackEndLocationChanged()), this, SLOT(update_last_frame()));
-	connect(clip, SIGNAL(positionChanged(Snappable*)), m_sheet->get_snap_list(), SLOT(mark_dirty(Snappable*)));
+	connect(clip, SIGNAL(positionChanged()), this, SLOT(update_last_frame()));
 	
-	m_sheet->get_snap_list()->mark_dirty(clip);
+	m_sheet->get_snap_list()->mark_dirty();
 	update_last_frame();
 	resources_manager()->mark_clip_added(clip);
 }
@@ -67,13 +65,12 @@ void AudioClipManager::add_clip( AudioClip * clip )
 void AudioClipManager::remove_clip( AudioClip * clip )
 {
 	PENTER;
-	disconnect(clip, SIGNAL(positionChanged(Snappable*)), m_sheet->get_snap_list(), SLOT(mark_dirty(Snappable*)));
 	if (m_clips.removeAll(clip) == 0) {
 		PERROR("Clip %s was not in my list, couldn't remove it!!", QS_C(clip->get_name()));
 		return;
 	}
 	
-	m_sheet->get_snap_list()->mark_dirty(clip);
+	m_sheet->get_snap_list()->mark_dirty();
 	update_last_frame();
 	resources_manager()->mark_clip_removed(clip);
 }

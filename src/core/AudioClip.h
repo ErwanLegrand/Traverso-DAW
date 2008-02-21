@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2008 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -28,7 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "ContextItem.h"
 #include "AudioProcessingItem.h"
-#include "SnapList.h"
 #include "Snappable.h"
 #include "defines.h"
 #include "GainEnvelope.h"
@@ -90,12 +89,12 @@ public:
 	FadeCurve* get_fade_out() const;
 	PluginChain* get_plugin_chain() const {return m_pluginChain;}
 	
-	TimeRef& get_length() const;
-	TimeRef& get_source_length() const;
-	TimeRef& get_track_start_location() const {return m_trackStartLocation;}
-	TimeRef& get_track_end_location() const {return m_trackEndLocation;}
-	TimeRef& get_source_start_location() const {return m_sourceStartLocation;}
-	TimeRef& get_source_end_location() const {return m_sourceEndLocation;}
+	TimeRef get_source_length() const;
+	TimeRef get_length() const {return m_length;}
+	TimeRef get_track_start_location() const {return m_trackStartLocation;}
+	TimeRef get_track_end_location() const {return m_trackEndLocation;}
+	TimeRef get_source_start_location() const {return m_sourceStartLocation;}
+	TimeRef get_source_end_location() const {return m_sourceEndLocation;}
 	
 	int get_channels() const;
 	int get_rate() const;
@@ -132,12 +131,12 @@ private:
 	QString 		m_name;
 	QByteArray		m_captureBusName;
 	
-	mutable TimeRef 	m_trackStartLocation;
-	mutable TimeRef 	m_trackEndLocation;
-	mutable TimeRef 	m_sourceEndLocation;
-	mutable TimeRef 	m_sourceStartLocation;
-	mutable TimeRef		m_sourceLength;
-	mutable TimeRef 	m_length;
+	TimeRef 		m_trackStartLocation;
+	TimeRef 		m_trackEndLocation;
+	TimeRef 		m_sourceEndLocation;
+	TimeRef 		m_sourceStartLocation;
+	TimeRef			m_sourceLength;
+	TimeRef 		m_length;
 
 	int 			m_isSelected;
 	bool 			m_isTake;
@@ -167,8 +166,7 @@ signals:
 	void stateChanged();
 	void muteChanged();
 	void lockChanged();
-	void positionChanged(Snappable*);
-	void trackEndLocationChanged();
+	void positionChanged();
 	void fadeAdded(FadeCurve*);
 	void fadeRemoved(FadeCurve*);
 	void recordingFinished(AudioClip*);

@@ -60,7 +60,7 @@ int TimeLine::set_state(const QDomNode & node)
 
 	while (!markerNode.isNull()) {
 		Marker* marker = new Marker(this, markerNode);
-		connect(marker, SIGNAL(positionChanged(Snappable*)), this, SLOT(marker_position_changed(Snappable*)));
+		connect(marker, SIGNAL(positionChanged()), this, SLOT(marker_position_changed()));
 		m_markers.append(marker);
 		markerNode = markerNode.nextSibling();
 	}
@@ -72,7 +72,7 @@ int TimeLine::set_state(const QDomNode & node)
 
 Command * TimeLine::add_marker(Marker* marker, bool historable)
 {
-	connect(marker, SIGNAL(positionChanged(Snappable*)), this, SLOT(marker_position_changed(Snappable*)));
+	connect(marker, SIGNAL(positionChanged()), this, SLOT(marker_position_changed()));
 	
 	AddRemove* cmd;
 	cmd = new AddRemove(this, marker, historable, m_sheet,
@@ -162,10 +162,10 @@ bool TimeLine::has_end_marker()
 	return false;
 }
 
-void TimeLine::marker_position_changed(Snappable* snap)
+void TimeLine::marker_position_changed()
 {
 	qSort(m_markers.begin(), m_markers.end(), smallerMarker);
-	emit markerPositionChanged((Marker*)snap);
+	emit markerPositionChanged();
 	
 	// FIXME This is not a fix to let the sheetview scrollbars 
 	// know that it's range possably has to be recalculated!!!!!!!!!!!!!!

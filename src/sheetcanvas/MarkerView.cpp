@@ -57,7 +57,7 @@ MarkerView::MarkerView(Marker* marker, SheetView* sv, ViewItem* parentView)
 	load_theme_data();
 	
 	
-	connect(m_marker, SIGNAL(positionChanged(Snappable*)), this, SLOT(update_position()));
+	connect(m_marker, SIGNAL(positionChanged()), this, SLOT(update_position()));
 	connect(m_marker, SIGNAL(descriptionChanged()), this, SLOT(update_drawing()));
 }
 
@@ -169,7 +169,6 @@ void MarkerView::set_dragging(bool dragging)
 	if (dragging) {
 		if (! m_posIndicator) {
 			m_posIndicator = new PositionIndicator(this);
-			scene()->addItem(m_posIndicator);
 			m_posIndicator->set_position(15, 0);
 		}
 	} else {

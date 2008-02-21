@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Snappable.cpp,v 1.1 2007/03/29 22:18:38 benjie Exp $
+$Id: Snappable.cpp,v 1.2 2008/02/21 20:00:48 r_sijrier Exp $
 */
 
 #include "Snappable.h"
@@ -34,11 +34,8 @@ Snappable::Snappable()
 
 void Snappable::set_snappable(bool snap)
 {
-	// Temporarily set to true so the snapList will rebuild on mark_dirty()
-	m_isSnappable = true;
-
 	if (snapList) {
-		snapList->mark_dirty(this);
+		snapList->mark_dirty();
 	}
 	m_isSnappable = snap;
 }

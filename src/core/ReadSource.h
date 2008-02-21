@@ -79,7 +79,7 @@ public :
 	void prepare_rt_buffers();
 	BufferStatus* get_buffer_status();
 	
-	void set_output_rate(int rate, bool forceRate=false);
+	void set_output_rate(int rate);
 	
 	
 private:

@@ -99,7 +99,7 @@ AudioClipView::AudioClipView(SheetView* sv, TrackView* parent, AudioClip* clip )
 	connect(m_clip, SIGNAL(lockChanged()), this, SLOT(repaint()));
 	connect(m_clip, SIGNAL(fadeAdded(FadeCurve*)), this, SLOT(add_new_fadeview( FadeCurve*)));
 	connect(m_clip, SIGNAL(fadeRemoved(FadeCurve*)), this, SLOT(remove_fadeview( FadeCurve*)));
-	connect(m_clip, SIGNAL(positionChanged(Snappable*)), this, SLOT(position_changed()));
+	connect(m_clip, SIGNAL(positionChanged()), this, SLOT(position_changed()));
 	
 	connect(m_sheet, SIGNAL(modeChanged()), this, SLOT(repaint()));
 	

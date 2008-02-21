@@ -30,6 +30,8 @@
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
+// FIXME: MoveEdge::jog() continuously calls Snaplist::mark_dirty()
+
 MoveEdge::MoveEdge(AudioClipView* cv, SheetView* sv, QByteArray whichEdge)
 	: Command(cv->get_clip(), tr("Move Clip Edge"))
 {

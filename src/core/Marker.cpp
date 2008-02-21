@@ -112,7 +112,7 @@ void Marker::set_when(const TimeRef& when)
 {
 	if (m_when == when) return;
 	m_when = when;
-	emit positionChanged(this);
+	emit positionChanged();
 }
 
 void Marker::set_description(const QString &s)

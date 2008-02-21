@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2007 Remon Sijrier
+Copyright (C) 2005-2008 Remon Sijrier
 
 This file is part of Traverso
 
@@ -65,8 +65,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  */
 
 AudioClip::AudioClip(const QString& name)
-	: ContextItem()
-	, Snappable()
+	: Snappable()
 	, m_name(name)
 {
 	PENTERCONS;
@@ -78,9 +77,9 @@ AudioClip::AudioClip(const QString& name)
 
 
 AudioClip::AudioClip(const QDomNode& node)
-	: ContextItem()
-	, Snappable()
+	: Snappable()
 	, m_track(0)
+	, m_sheet(0)
 	, m_readSource(0)
 {
 	PENTERCONS;
@@ -285,9 +284,8 @@ void AudioClip::set_left_edge(TimeRef newLeftLocation)
 			movingToLeft = availableTimeLeft;
 		}
 
-		m_trackStartLocation -= movingToLeft;
 		set_source_start_location( m_sourceStartLocation - movingToLeft );
-
+		set_track_start_location(m_trackStartLocation - movingToLeft);
 	} else if (newLeftLocation > m_trackStartLocation) {
 
 		TimeRef availableTimeRight = m_length;
@@ -298,14 +296,9 @@ void AudioClip::set_left_edge(TimeRef newLeftLocation)
 			movingToRight = (availableTimeRight - TimeRef(nframes_t(4), get_rate()));
 		}
 
-		m_trackStartLocation += movingToRight;
 		set_source_start_location( m_sourceStartLocation + movingToRight );
-
-	} else {
-		return;
+		set_track_start_location(m_trackStartLocation + movingToRight);
 	}
-
-	emit positionChanged(this);
 }
 
 void AudioClip::set_right_edge(TimeRef newRightLocation)
@@ -339,12 +332,7 @@ void AudioClip::set_right_edge(TimeRef newRightLocation)
 
 		set_track_end_location( m_trackEndLocation - movingToLeft );
 		set_source_end_location( m_sourceEndLocation - movingToLeft);
-
-	} else {
-		return;
 	}
-
-	emit positionChanged(this);
 }
 
 void AudioClip::set_source_start_location(const TimeRef& location)
@@ -363,18 +351,35 @@ void AudioClip::set_track_start_location(const TimeRef& location)
 {
 	PENTER2;
 	m_trackStartLocation = location;
+	
+	// set_track_end_location will emit positionChanged(), so we 
+	// don't emit it in this function to avoid emitting it twice
+	// (although it seems more logical to emit it here, there are
+	// accasions where only set_track_end_location() is called, and 
+	// then we also want to emit positionChanged())
 	set_track_end_location(m_trackStartLocation + m_length);
-	if (m_track) {
-		THREAD_SAVE_INVOKE(m_track, this, clip_position_changed(AudioClip*));
-	}
-	emit positionChanged(this);
 }
 
 void AudioClip::set_track_end_location(const TimeRef& location)
 {
 // 	PWARN("m_trackEndLocation is %d", endFrame);
 	m_trackEndLocation = location;
-	emit trackEndLocationChanged();
+	
+	if (!is_moving()) {
+		// TODO find out if we also have to call this even during moving?
+		// And somehow Track itself should manage this, and not from here!
+		// The purpose of this call is to keep the AudioClip list in track 
+		// sorted on the clips track start location.
+		if (m_track) {
+			THREAD_SAVE_INVOKE(m_track, this, clip_position_changed(AudioClip*));
+		}
+		
+		if (m_sheet) {
+			m_sheet->get_snap_list()->mark_dirty();
+		}
+	}
+
+	emit positionChanged();
 }
 
 void AudioClip::set_fade_in(double range)
@@ -732,8 +737,6 @@ void AudioClip::set_audio_source(ReadSource* rs)
 		m_length = m_sourceEndLocation;
 	}
 
-	set_track_end_location(m_trackStartLocation + m_sourceLength - m_sourceStartLocation);
-
 	set_sources_active_state();
 
 	rs->set_audio_clip(this);
@@ -748,7 +751,8 @@ void AudioClip::set_audio_source(ReadSource* rs)
 		}
 	}
 
-	emit stateChanged();
+	// This will also emit positionChanged() which is more or less what we want.
+	set_track_end_location(m_trackStartLocation + m_sourceLength - m_sourceStartLocation);
 }
 
 void AudioClip::finish_write_source()
@@ -880,14 +884,9 @@ int AudioClip::get_rate( ) const
 	return audiodevice().get_sample_rate();
 }
 
-TimeRef& AudioClip::get_source_length( ) const
+TimeRef AudioClip::get_source_length( ) const
 {
 	return m_sourceLength;
-}
-
-TimeRef& AudioClip::get_length() const
-{
-	return m_length;
 }
 
 int AudioClip::recording_state( ) const
@@ -1016,6 +1015,7 @@ void AudioClip::get_capture_bus()
 void AudioClip::set_as_moving(bool moving)
 {
 	m_isMoving = moving;
+	set_snappable(!m_isMoving);
 	set_sources_active_state();
 }
 

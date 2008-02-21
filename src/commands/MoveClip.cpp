@@ -168,7 +168,6 @@ int MoveClip::begin_hold()
 		m_group.move_to(m_origTrackIndex, m_trackStartLocation + TimeRef(d->sv->timeref_scalefactor * 3));
 	}
 	
-	m_group.set_snappable(false);
 	m_group.set_as_moving(true);
 	
 	d->sv->stop_follow_play_head();
@@ -181,7 +180,6 @@ int MoveClip::begin_hold()
 
 int MoveClip::finish_hold()
 {
-	m_group.set_snappable(true);
 	m_group.set_as_moving(false);
 	
 	d->sv->start_shuttle(false);

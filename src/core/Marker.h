@@ -90,7 +90,7 @@ private:
 	Type	m_type;
 	
 signals:
-	void positionChanged(Snappable*);
+	void positionChanged();
 	void descriptionChanged();
 };
 

@@ -60,12 +60,12 @@ private:
 private slots:
 	void private_add_marker(Marker* marker);
 	void private_remove_marker(Marker* marker);
-	void marker_position_changed(Snappable* snap);
+	void marker_position_changed();
 
 signals:
 	void markerAdded(Marker*);
 	void markerRemoved(Marker*);
-	void markerPositionChanged(Marker*);
+	void markerPositionChanged();
 };
 
 #endif

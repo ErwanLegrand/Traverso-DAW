@@ -45,7 +45,7 @@ private:
 	QDomNode m_origState;
 
 	TimeRef qtime_to_timeref(const QTime& time);
-	QTime timeref_to_qtime(TimeRef& ref);
+	QTime timeref_to_qtime(const TimeRef& ref);
 	bool locked;
 
 private slots:

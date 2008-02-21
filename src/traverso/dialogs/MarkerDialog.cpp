@@ -116,7 +116,7 @@ void MarkerDialog::set_project(Project * project)
 		comboBoxDisplaySheet->addItem("Sheet " + QString::number(i+1) + ": " + m_sheetlist.at(i)->get_title());
 		connect(m_sheetlist.at(i)->get_timeline(), SIGNAL(markerAdded(Marker*)), this, SLOT(update_marker_treeview()));
 		connect(m_sheetlist.at(i)->get_timeline(), SIGNAL(markerRemoved(Marker*)), this, SLOT(update_marker_treeview()));
-		connect(m_sheetlist.at(i)->get_timeline(), SIGNAL(markerPositionChanged(Marker*)), this, SLOT(update_marker_treeview()));
+		connect(m_sheetlist.at(i)->get_timeline(), SIGNAL(markerPositionChanged()), this, SLOT(update_marker_treeview()));
 	}
 
 	// Fill dialog with marker stuff....

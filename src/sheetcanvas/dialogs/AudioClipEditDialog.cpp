@@ -69,7 +69,7 @@ AudioClipEditDialog::AudioClipEditDialog(AudioClip* clip, QWidget* parent)
 	fade_curve_added();
 	
 	connect(clip, SIGNAL(stateChanged()), this, SLOT(clip_state_changed()));
-	connect(clip, SIGNAL(positionChanged(Snappable*)), this, SLOT(clip_position_changed()));
+	connect(clip, SIGNAL(positionChanged()), this, SLOT(clip_position_changed()));
 	connect(clip, SIGNAL(fadeAdded(FadeCurve*)), this, SLOT(fade_curve_added()));
 	
 	connect(clipGainSpinBox, SIGNAL(valueChanged(double)), this, SLOT(gain_spinbox_value_changed(double)));
@@ -350,7 +350,7 @@ TimeRef AudioClipEditDialog::qtime_to_timeref(const QTime & time)
 	return ref;
 }
 
-QTime AudioClipEditDialog::timeref_to_qtime(TimeRef& ref)
+QTime AudioClipEditDialog::timeref_to_qtime(const TimeRef& ref)
 {
 	qint64 remainder;
 	int hours, mins, secs, msec;

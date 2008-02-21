@@ -79,7 +79,6 @@ int DragMarker::begin_hold()
 
 int DragMarker::finish_hold()
 {
-	m_marker->set_snappable(true);
 	d->view->get_sheetview()->start_shuttle(false);
 	d->view->set_dragging(false);
 	delete d;
@@ -90,12 +89,14 @@ int DragMarker::finish_hold()
 int DragMarker::do_action()
 {
 	m_marker->set_when(m_newWhen);
+	m_marker->set_snappable(true);
 	return 1;
 }
 
 int DragMarker::undo_action()
 {
 	m_marker->set_when(m_origWhen);
+	m_marker->set_snappable(true);
 	return 1;
 }
 
@@ -171,9 +172,6 @@ TimeLineView::TimeLineView(SheetView* view)
 	m_boundingRect = QRectF(0, 0, MAX_CANVAS_WIDTH, TIMELINE_HEIGHT);
 	m_timeline = m_sv->get_sheet()->get_timeline();
 	
-#if QT_VERSION < 0x040300
-	view->scene()->addItem(this);
-#endif
 	load_theme_data();
 	
 	// Create MarkerViews for existing markers

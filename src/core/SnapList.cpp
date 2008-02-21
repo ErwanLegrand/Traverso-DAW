@@ -39,12 +39,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #if defined(debugsnaplist)
 #define SLPRINT(args...) printf(args)
 #else
-#define SLPRINT(args...)
+#define SLPRINT(args...);
 #endif
 
 SnapList::SnapList(Sheet* sheet) 
-	: QObject(sheet)
-	, m_sheet(sheet)
+	: m_sheet(sheet)
 {
 	m_isDirty = true;
 	m_rangeStart = TimeRef();
@@ -52,11 +51,10 @@ SnapList::SnapList(Sheet* sheet)
 	m_scalefactor = 1;
 }
 
-void SnapList::mark_dirty(Snappable *item)
+void SnapList::mark_dirty()
 {
-	if (item->is_snappable()) {
-		m_isDirty = true;
-	}
+	printf("mark_dirty()\n");
+	m_isDirty = true;
 }
 
 void SnapList::update_snaplist()

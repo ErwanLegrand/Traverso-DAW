@@ -269,7 +269,7 @@ int ReadSource::init( )
 }
 
 
-void ReadSource::set_output_rate(int rate, bool forceRate)
+void ReadSource::set_output_rate(int rate)
 {
 	Q_ASSERT(rate > 0);
 	
@@ -279,7 +279,7 @@ void ReadSource::set_output_rate(int rate, bool forceRate)
 	}
 	
 	bool useResampling = config().get_property("Conversion", "DynamicResampling", true).toBool();
-	if (useResampling || forceRate) {
+	if (useResampling) {
 		m_audioReader->set_output_rate(rate);
 	} else {
 		m_audioReader->set_output_rate(m_audioReader->get_file_rate());

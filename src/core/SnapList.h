@@ -22,18 +22,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #ifndef SNAPLIST_H
 #define SNAPLIST_H
 
-#include <QObject>
 #include <QList>
 
 #include "defines.h"
 
 class Sheet;
-class AudioClip;
 class Snappable;
 
-class SnapList : public QObject
+class SnapList
 {
-	Q_OBJECT
 
 public:
 	SnapList(Sheet* sheet);
@@ -48,6 +45,7 @@ public:
 	TimeRef calculate_snap_diff(TimeRef leftlocation, TimeRef rightlocation);
 
 	void set_range(const TimeRef& start, const TimeRef& end, int scalefactor);
+	void mark_dirty();
 
 private:
 	Sheet* 		m_sheet;
@@ -60,9 +58,6 @@ private:
 	qint64		m_scalefactor;
 
 	void update_snaplist();
-
-public slots:
-	void mark_dirty(Snappable *item);
 };
 
 #endif

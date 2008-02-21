@@ -24,7 +24,7 @@
 
 #include "defines.h"
 
-class AudioClip;
+#include "AudioClip.h"
 
 class AudioClipGroup
 {

@@ -617,7 +617,7 @@ void Sheet::set_first_visible_frame(nframes_t pos)
 void Sheet::set_work_at(const TimeRef& location)
 {
 	m_workLocation = location;
-	snaplist->mark_dirty(workSnap);
+	snaplist->mark_dirty();
 	emit workingPosChanged();
 }
 
