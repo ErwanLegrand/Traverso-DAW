@@ -643,8 +643,6 @@ int Peak::create_from_scratch()
 		}
 	}
 
-	m_source->set_output_rate(m_source->get_file_rate(), true);
-	
 	DecodeBuffer decodebuffer;
 	
 	do {
@@ -700,7 +698,6 @@ audio_sample_t Peak::get_max_amplitude(TimeRef startlocation, TimeRef endlocatio
 		}
 	}
 	int rate = m_source->get_file_rate();
-	m_source->set_output_rate(rate, true);
 	nframes_t startframe = startlocation.to_frame(rate);
 	nframes_t endframe = endlocation.to_frame(rate);
 	int startpos = startframe / NORMALIZE_CHUNK_SIZE;
@@ -932,7 +929,6 @@ bool PeakDataReader::seek(nframes_t start)
 
 nframes_t PeakDataReader::read(DecodeBuffer* buffer, nframes_t count)
 {
-	PENTER;
 	if ( ! (count && (m_readPos < m_nframes)) ) {
 		return 0;
 	}
