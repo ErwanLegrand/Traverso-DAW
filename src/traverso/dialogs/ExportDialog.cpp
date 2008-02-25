@@ -74,10 +74,10 @@ ExportDialog::ExportDialog( QWidget * parent )
 	sampleRateComboBox->addItem("88.200 Hz", 88200);
 	sampleRateComboBox->addItem("96.000 Hz", 96000);
 	
-	resampleQualityComboBox->addItem("Best", 0); // Best
-	resampleQualityComboBox->addItem("High", 1); // Medium
-	resampleQualityComboBox->addItem("Medium", 2); // Fastest
-	resampleQualityComboBox->addItem("Fast", 4); // Linear (Should we use ZERO_HOLD(3) instead?)
+	resampleQualityComboBox->addItem(tr("Best"), 0); // Best
+	resampleQualityComboBox->addItem(tr("High"), 1); // Medium
+	resampleQualityComboBox->addItem(tr("Medium"), 2); // Fastest
+	resampleQualityComboBox->addItem(tr("Fast"), 4); // Linear (Should we use ZERO_HOLD(3) instead?)
 	
 	audioTypeComboBox->addItem("WAV", "wav");
 	audioTypeComboBox->addItem("AIFF", "aiff");

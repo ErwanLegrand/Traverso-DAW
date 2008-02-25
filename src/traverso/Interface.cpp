@@ -560,16 +560,16 @@ void Interface::create_menus( )
 	connect(action, SIGNAL(triggered( bool )), this, SLOT(change_recording_format_to_wav64()));
 	
 	m_resampleQualityMenu = menu->addMenu(tr("&Resample Quality"));
-	action = m_resampleQualityMenu->addAction("Best");
+	action = m_resampleQualityMenu->addAction(tr("Best"));
 	action->setData(0);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_best()));
-	action = m_resampleQualityMenu->addAction("High");
+	action = m_resampleQualityMenu->addAction(tr("High"));
 	action->setData(1);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_high()));
-	action = m_resampleQualityMenu->addAction("Medium");
+	action = m_resampleQualityMenu->addAction(tr("Medium"));
 	action->setData(2);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_medium()));
-	action = m_resampleQualityMenu->addAction("Fast");
+	action = m_resampleQualityMenu->addAction(tr("Fast"));
 	action->setData(3);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_fast()));
 
