@@ -587,7 +587,7 @@ void Interface::create_menus( )
 	connect(action, SIGNAL(triggered( bool )), this, SLOT(show_settings_dialog()));
 	
 	
-	menu = menuBar()->addMenu("&Help");
+	menu = menuBar()->addMenu(tr("&Help"));
 	action = menu->addAction(tr("&Getting Started"));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(quick_start()));
 	
