@@ -515,20 +515,6 @@ void PlayHeadInfo::mousePressEvent(QMouseEvent * event)
 
 
 
-InfoToolBar::InfoToolBar(QWidget * parent)
-	: QToolBar(parent)
-{
-	setObjectName(tr("Main Toolbar"));
-	
-	setMovable(false);
-	
-	m_sheetinfo = new SheetInfo(this);
-	
-	QAction* action = addWidget(m_sheetinfo);
-	action->setVisible(true);
-}
-
-
 InfoWidget::InfoWidget(QWidget* parent)
 	: QFrame(parent)
 	, m_sheet(0)
@@ -557,89 +543,67 @@ void InfoWidget::set_sheet(Sheet* sheet)
 }
 
 
-SheetInfo::SheetInfo(QWidget * parent)
-	: InfoWidget(parent)
+
+InfoToolBar::InfoToolBar(QWidget * parent)
+	: QToolBar(parent)
 {
+	setObjectName(tr("Main Toolbar"));
+	
+	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
+	connect(&config(), SIGNAL(configChanged()), this, SLOT(update_follow_state()));
+
 	m_sheetselectbox = new QComboBox(this);
 	m_sheetselectbox->setMinimumWidth(140);
 	m_sheetselectbox->setToolTip(tr("Select Sheet to be displayed"));
 	connect(m_sheetselectbox, SIGNAL(activated(int)), this, SLOT(sheet_selector_index_changed(int)));
-	
+
 	m_playhead = new PlayHeadInfo(this);
 
-	m_snap = new QToolButton(this);
 	m_snapAct = new QAction(tr("&Snap"), this);
 	m_snapAct->setCheckable(true);
 	m_snapAct->setToolTip(tr("Snap items to edges of other items while dragging."));
-	m_snap->setDefaultAction(m_snapAct);
+	connect(m_snapAct, SIGNAL(triggered(bool)), this, SLOT(snap_state_changed(bool)));
 
-	m_follow = new QToolButton(this);
 	m_followAct = new QAction(tr("S&croll Playback"), this);
 	m_followAct->setCheckable(true);
 	m_followAct->setToolTip(tr("Keep play cursor in view while playing or recording."));
-	m_follow->setDefaultAction(m_followAct);
-	
-	m_effectButton = new QToolButton(this);
-	m_effectButton->setMinimumWidth(110);
-	m_effectButton->setCheckable(true);
-	m_effectButton->setText(tr("&Show Effects"));
-	
-	m_record = new QToolButton(this);
-	m_recAction = new QAction(tr("Record"), this);
-	m_recAction->setToolTip(tr("Set Sheet Recordable. <br /><br />Hit Spacebar afterwards to start recording!"));
-	m_record->setDefaultAction(m_recAction);
-	m_record->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-	
-	
-	QToolButton* undobutton = new QToolButton(this);
-	QAction* action = new QAction(tr("Undo"), this);
-	action->setIcon(QIcon(find_pixmap(":/undo-16")));
-	action->setShortcuts(QKeySequence::Undo);
-	undobutton->setDefaultAction(action);
-	undobutton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-	undobutton->setText(tr("Undo"));
-	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(undo()));
-	
-	QToolButton* redobutton = new QToolButton(this);
-	action = new QAction(tr("Redo"), this);
-	action->setIcon(QIcon(find_pixmap(":/redo-16")));
-	action->setShortcuts(QKeySequence::Redo);
-	redobutton->setDefaultAction(action);
-	redobutton->setFocusPolicy(Qt::NoFocus);
-	redobutton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-	redobutton->setText(tr("Redo"));
-	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(redo()));
-
-	QHBoxLayout* lay = new QHBoxLayout(this);
-		
-	lay->addWidget(undobutton);
-	lay->addWidget(redobutton);
-	lay->addStretch(1);
-	lay->addWidget(m_snap);
-	lay->addWidget(m_follow);
-	lay->addWidget(m_record);
-	lay->addStretch(1);
-	lay->addWidget(m_playhead);
-	lay->addStretch(5);
-	lay->addWidget(m_effectButton);
-	lay->addWidget(m_sheetselectbox);
-		
-	setLayout(lay);
-	lay->setMargin(0);
-		
-	setFrameStyle(QFrame::NoFrame);
-	setMaximumHeight(SONG_TOOLBAR_HEIGHT);
-	
-	connect(m_snapAct, SIGNAL(triggered(bool)), this, SLOT(snap_state_changed(bool)));
 	connect(m_followAct, SIGNAL(triggered(bool)), this, SLOT(follow_state_changed(bool)));
-	connect(&config(), SIGNAL(configChanged()), this, SLOT(update_follow_state()));
-	connect(m_effectButton, SIGNAL(clicked()), this, SLOT(effect_button_clicked()));
-	connect(m_record, SIGNAL(clicked()), this, SLOT(recording_button_clicked()));
+
+	m_effectAct = new QAction(tr("&Show Effects"), this);
+	m_effectAct->setCheckable(true);
+	m_effectAct->setToolTip(tr("Show effect plugins and automation curves on tracks"));
+	connect(m_effectAct, SIGNAL(triggered(bool)), this, SLOT(effect_state_changed(bool)));
+
+	m_recAct = new QAction(tr("Record"), this);
+	m_recAct->setToolTip(tr("Set Sheet Recordable. <br /><br />Hit Spacebar afterwards to start recording!"));
+	connect(m_recAct, SIGNAL(triggered(bool)), this, SLOT(recording_action_clicked()));
+	
+	QAction* undoAction = new QAction(tr("Undo"), this);
+	undoAction->setIcon(QIcon(find_pixmap(":/undo-16")));
+	undoAction->setShortcuts(QKeySequence::Undo);
+	connect(undoAction, SIGNAL(triggered( bool )), &pm(), SLOT(undo()));
+	
+	QAction* redoAction = new QAction(tr("Redo"), this);
+	redoAction->setIcon(QIcon(find_pixmap(":/redo-16")));
+	redoAction->setShortcuts(QKeySequence::Redo);
+	connect(redoAction, SIGNAL(triggered( bool )), &pm(), SLOT(redo()));
+
+	// the order in which the actions are added determines the order of appearance in the toolbar
+	addAction(redoAction);
+	addAction(undoAction);
+	addSeparator();
+	addAction(m_snapAct);
+	addAction(m_followAct);
+	addAction(m_recAct);
+	addWidget(m_playhead);
+	addAction(m_effectAct);
+	addWidget(m_sheetselectbox);
 	
 	update_follow_state();
 }
 
-void SheetInfo::set_project(Project * project)
+
+void InfoToolBar::set_project(Project * project)
 {
 	m_project = project;
 	
@@ -658,12 +622,12 @@ void SheetInfo::set_project(Project * project)
 	sheet_selector_update_sheets();
 }
 
-void SheetInfo::project_load_finished()
+void InfoToolBar::project_load_finished()
 {
 	sheet_selector_change_index_to(m_project->get_current_sheet());
 }
 
-void SheetInfo::set_sheet(Sheet* sheet)
+void InfoToolBar::set_sheet(Sheet* sheet)
 {
 	m_sheet = sheet;
 	
@@ -677,36 +641,36 @@ void SheetInfo::set_sheet(Sheet* sheet)
 		update_effects_state();
 		update_recording_state();
 		m_snapAct->setEnabled(true);
-		m_effectButton->setEnabled(true);
-		m_record->setEnabled(true);
-		m_follow->setEnabled(true);
+		m_effectAct->setEnabled(true);
+		m_recAct->setEnabled(true);
+		m_followAct->setEnabled(true);
 	} else {
 		m_snapAct->setEnabled(false);
-		m_effectButton->setEnabled(false);
-		m_record->setEnabled(false);
-		m_follow->setEnabled(false);
+		m_effectAct->setEnabled(false);
+		m_recAct->setEnabled(false);
+		m_followAct->setEnabled(false);
 	}
 }
 
-void SheetInfo::update_snap_state()
+void InfoToolBar::update_snap_state()
 {
 	m_snapAct->setChecked(m_sheet->is_snap_on());
 }
 
-void SheetInfo::update_effects_state()
+void InfoToolBar::update_effects_state()
 {
 	if (!m_sheet) {
 		return;
 	}
 	
 	if (m_sheet->get_mode() == Sheet::EDIT) {
-		m_effectButton->setChecked(false);
+		m_effectAct->setChecked(false);
 	} else {
-		m_effectButton->setChecked(true);
+		m_effectAct->setChecked(true);
 	}
 }
 
-void SheetInfo::snap_state_changed(bool state)
+void InfoToolBar::snap_state_changed(bool state)
 {
 	if (! m_sheet) {
 		return;
@@ -714,20 +678,20 @@ void SheetInfo::snap_state_changed(bool state)
 	m_sheet->set_snapping(state);
 }
 
-void SheetInfo::update_follow_state()
+void InfoToolBar::update_follow_state()
 {
 	m_isFollowing = config().get_property("PlayHead", "Follow", true).toBool();
 	m_followAct->setChecked(m_isFollowing);
 }
 
-void SheetInfo::update_temp_follow_state(bool state)
+void InfoToolBar::update_temp_follow_state(bool state)
 {
 	if (m_sheet->is_transport_rolling() && m_isFollowing) {
 		m_followAct->setChecked(state);
 	}
 }
 
-void SheetInfo::follow_state_changed(bool state)
+void InfoToolBar::follow_state_changed(bool state)
 {
 	if (!m_sheet) {
 		return;
@@ -745,24 +709,24 @@ void SheetInfo::follow_state_changed(bool state)
 	}
 }
 
-void SheetInfo::effect_button_clicked()
+void InfoToolBar::effect_state_changed(bool state)
 {
-	if (m_sheet->get_mode() == Sheet::EDIT) {
+	if (state) {
 		m_sheet->set_effects_mode();
 	} else {
 		m_sheet->set_editing_mode();
 	}
 }
 
-void SheetInfo::recording_button_clicked()
+void InfoToolBar::recording_action_clicked()
 {
 	m_sheet->set_recordable();
 }
 
-void SheetInfo::update_recording_state()
+void InfoToolBar::update_recording_state()
 {
 	if (m_sheet->is_recording()) {
-		m_recAction->setIcon(find_pixmap(":/redled-16"));
+		m_recAct->setIcon(find_pixmap(":/redled-16"));
 		QString recordFormat = config().get_property("Recording", "FileFormat", "wav").toString();
 		int count = 0;
 		foreach(Track* track, m_sheet->get_tracks()) {
@@ -772,17 +736,12 @@ void SheetInfo::update_recording_state()
 		}
 		info().information(tr("Recording to %1 Tracks, encoding format: %2").arg(count).arg(recordFormat));
 	} else {
-		m_recAction->setIcon(find_pixmap(":/redledinactive-16"));
+		m_recAct->setIcon(find_pixmap(":/redledinactive-16"));
 	}
 }
 
 
-QSize SheetInfo::sizeHint() const
-{
-	return QSize(400, SONG_TOOLBAR_HEIGHT);
-}
-
-void SheetInfo::sheet_selector_update_sheets()
+void InfoToolBar::sheet_selector_update_sheets()
 {
 	m_sheetselectbox->clear();
 	foreach(Sheet* sheet, m_project->get_sheets()) {
@@ -791,28 +750,33 @@ void SheetInfo::sheet_selector_update_sheets()
 		": " + sheet->get_title(),
 		sheet->get_id());
 	}
+
+	if (m_project->get_current_sheet()) {
+		int i = m_project->get_sheet_index((m_project->get_current_sheet())->get_id()) - 1;
+		m_sheetselectbox->setCurrentIndex(i);
+	}
 }
 
-void SheetInfo::sheet_selector_sheet_added(Sheet * sheet)
+void InfoToolBar::sheet_selector_sheet_added(Sheet * sheet)
 {
 	connect(sheet, SIGNAL(propertyChanged()), this, SLOT(sheet_selector_update_sheets()));
 	sheet_selector_update_sheets();
 }
 
-void SheetInfo::sheet_selector_sheet_removed(Sheet * sheet)
+void InfoToolBar::sheet_selector_sheet_removed(Sheet * sheet)
 {
 	disconnect(sheet, SIGNAL(propertyChanged()), this, SLOT(sheet_selector_update_sheets()));
 	sheet_selector_update_sheets();
 }
 
-void SheetInfo::sheet_selector_index_changed(int index)
+void InfoToolBar::sheet_selector_index_changed(int index)
 {
 	qint64 id = m_sheetselectbox->itemData(index).toLongLong();
 	
 	m_project->set_current_sheet(id);
 }
 
-void SheetInfo::sheet_selector_change_index_to(Sheet* sheet)
+void InfoToolBar::sheet_selector_change_index_to(Sheet* sheet)
 {
 	if (!sheet) {
 		return;

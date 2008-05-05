@@ -112,6 +112,8 @@ Interface::Interface()
 	//         setMaximumWidth(1024);
 	//         setMaximumHeight(768);
 
+	setUnifiedTitleAndToolBarOnMac(true);
+
 	// CenterAreaWidget
 	centerAreaWidget = new QStackedWidget(this);
 	setCentralWidget(centerAreaWidget);
