@@ -550,12 +550,6 @@ InfoToolBar::InfoToolBar(QWidget * parent)
 	setObjectName(tr("Main Toolbar"));
 	
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
-	connect(&config(), SIGNAL(configChanged()), this, SLOT(update_follow_state()));
-
-	m_sheetselectbox = new QComboBox(this);
-	m_sheetselectbox->setMinimumWidth(140);
-	m_sheetselectbox->setToolTip(tr("Select Sheet to be displayed"));
-	connect(m_sheetselectbox, SIGNAL(activated(int)), this, SLOT(sheet_selector_index_changed(int)));
 
 	m_playhead = new PlayHeadInfo(this);
 
@@ -566,32 +560,12 @@ InfoToolBar::InfoToolBar(QWidget * parent)
 	// the order in which the actions are added determines the order of appearance in the toolbar
 	addAction(m_recAct);
 	addWidget(m_playhead);
-	addWidget(m_sheetselectbox);
 }
 
 
 void InfoToolBar::set_project(Project * project)
 {
 	m_project = project;
-	
-	if (!project) {
-		m_sheetselectbox->clear();
-		set_sheet(0);
-		return;
-	}
-	
-	connect(m_project, SIGNAL(sheetAdded(Sheet*)), this, SLOT(sheet_selector_sheet_added(Sheet*)));
-	connect(m_project, SIGNAL(sheetRemoved(Sheet*)), this, SLOT(sheet_selector_sheet_removed(Sheet*)));
-	connect(m_project, SIGNAL(currentSheetChanged(Sheet*)), this, SLOT(sheet_selector_change_index_to(Sheet*)));
-	connect(m_project, SIGNAL(currentSheetChanged(Sheet*)), this, SLOT(set_sheet(Sheet*)));
-	connect(m_project, SIGNAL(projectLoadFinished()), this, SLOT(project_load_finished()));
-	
-	sheet_selector_update_sheets();
-}
-
-void InfoToolBar::project_load_finished()
-{
-	sheet_selector_change_index_to(m_project->get_current_sheet());
 }
 
 void InfoToolBar::set_sheet(Sheet* sheet)
@@ -627,54 +601,6 @@ void InfoToolBar::update_recording_state()
 		info().information(tr("Recording to %1 Tracks, encoding format: %2").arg(count).arg(recordFormat));
 	} else {
 		m_recAct->setIcon(find_pixmap(":/redledinactive-16"));
-	}
-}
-
-
-void InfoToolBar::sheet_selector_update_sheets()
-{
-	m_sheetselectbox->clear();
-	foreach(Sheet* sheet, m_project->get_sheets()) {
-		m_sheetselectbox->addItem("Sheet " +
-		QString::number(m_project->get_sheet_index(sheet->get_id())) +
-		": " + sheet->get_title(),
-		sheet->get_id());
-	}
-
-	if (m_project->get_current_sheet()) {
-		int i = m_project->get_sheet_index((m_project->get_current_sheet())->get_id()) - 1;
-		m_sheetselectbox->setCurrentIndex(i);
-	}
-}
-
-void InfoToolBar::sheet_selector_sheet_added(Sheet * sheet)
-{
-	connect(sheet, SIGNAL(propertyChanged()), this, SLOT(sheet_selector_update_sheets()));
-	sheet_selector_update_sheets();
-}
-
-void InfoToolBar::sheet_selector_sheet_removed(Sheet * sheet)
-{
-	disconnect(sheet, SIGNAL(propertyChanged()), this, SLOT(sheet_selector_update_sheets()));
-	sheet_selector_update_sheets();
-}
-
-void InfoToolBar::sheet_selector_index_changed(int index)
-{
-	qint64 id = m_sheetselectbox->itemData(index).toLongLong();
-	
-	m_project->set_current_sheet(id);
-}
-
-void InfoToolBar::sheet_selector_change_index_to(Sheet* sheet)
-{
-	if (!sheet) {
-		return;
-	}
-	
-	int index = m_sheetselectbox->findData(sheet->get_id());
-	if (index >= 0) {
-		m_sheetselectbox->setCurrentIndex(index);
 	}
 }
 

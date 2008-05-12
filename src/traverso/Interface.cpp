@@ -201,6 +201,7 @@ Interface::Interface()
 	cpointer().add_contextitem(this);
 
 	connect(&config(), SIGNAL(configChanged()), this, SLOT(config_changed()));
+	connect(&config(), SIGNAL(configChanged()), this, SLOT(update_follow_state()));
 	update_follow_state();
 }
 
@@ -227,6 +228,9 @@ void Interface::set_project(Project* project)
 
 	if ( project ) {
 		connect(project, SIGNAL(currentSheetChanged(Sheet*)), this, SLOT(show_sheet(Sheet*)));
+		connect(project, SIGNAL(projectLoadFinished()), this, SLOT(sheet_selector_update_sheets()));
+		connect(m_project, SIGNAL(sheetAdded(Sheet*)), this, SLOT(sheet_selector_sheet_added(Sheet*)));
+		connect(m_project, SIGNAL(sheetRemoved(Sheet*)), this, SLOT(sheet_selector_sheet_removed(Sheet*)));
 		setWindowTitle(project->get_title() + " - Traverso");
 		m_projectSaveAction->setEnabled(true);
 		m_projectSheetManagerAction->setEnabled(true);
@@ -1442,4 +1446,87 @@ void Interface::update_effects_state()
 		m_effectAction->setChecked(true);
 	}
 }
+
+void Interface::sheet_selector_update_sheets()
+{
+	// empty the list, make sure everything is deleted
+	while(!m_currentSheetActions.isEmpty())
+	{
+		QAction *action = m_currentSheetActions.takeFirst();
+		delete action;
+	}
+
+	if (!m_project)
+	{
+		return;
+	}
+
+	if (!m_project->get_current_sheet())
+	{
+		return;
+	}
+
+	qint64 id = m_project->get_current_sheet()->get_id();
+
+	QActionGroup* actiongroup = new QActionGroup(this);
+	actiongroup->setExclusive(true);
+
+	// create the new actions
+	foreach(Sheet* sheet, m_project->get_sheets())
+	{
+		QString string = QString::number(m_project->get_sheet_index(sheet->get_id())) +
+		": " + sheet->get_title();
+		QAction* action = m_sheetMenu->addAction(string);
+		actiongroup->addAction(action);
+		action->setData(sheet->get_id());
+		action->setCheckable(true);
+
+		if (sheet->get_id() == id)
+		{
+			action->setChecked(true);
+		} else {
+			action->setChecked(false);
+		}
+
+		connect(action, SIGNAL(triggered()), this, SLOT(sheet_selected()));
+		m_currentSheetActions.append(action);
+	}
+}
+
+void Interface::sheet_selected()
+{
+	// identify the action that was activated
+	QAction *orig = qobject_cast<QAction *>(sender());
+
+	if (!orig)
+	{
+		return;
+	}
+
+	qint64 id = orig->data().toLongLong();
+
+	// uncheck all other actions
+	foreach(QAction* action, m_currentSheetActions)
+	{
+		if (action->data().toLongLong() != id)
+		{
+			action->setChecked(false);
+		}
+	}
+
+	m_project->set_current_sheet(id);
+}
+
+void Interface::sheet_selector_sheet_added(Sheet* sheet)
+{
+	connect(sheet, SIGNAL(propertyChanged()), this, SLOT(sheet_selector_update_sheets()));
+	sheet_selector_update_sheets();
+}
+
+void Interface::sheet_selector_sheet_removed(Sheet* sheet)
+{
+	disconnect(sheet, SIGNAL(propertyChanged()), this, SLOT(sheet_selector_update_sheets()));
+	sheet_selector_update_sheets();
+}
+
 

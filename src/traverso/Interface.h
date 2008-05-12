@@ -151,6 +151,7 @@ private:
 	QMenu*			m_viewMenu;
 	QMenu*			m_settingsMenu;
 	QMenu*			m_helpMenu;
+	QList<QAction*>		m_currentSheetActions;
 	
 	ResourcesInfoWidget*	resourcesInfo;
 	DriverInfoWidget*	driverInfo;
@@ -215,6 +216,10 @@ private slots:
 	void follow_state_changed(bool state);
 	void update_follow_state();
 	void update_temp_follow_state(bool state);
+	void sheet_selector_update_sheets();
+	void sheet_selected();
+	void sheet_selector_sheet_added(Sheet*);
+	void sheet_selector_sheet_removed(Sheet*);
 };
 
 

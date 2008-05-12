@@ -182,7 +182,6 @@ protected:
 	Project*	m_project;
 
 private:
-	QComboBox* 	m_sheetselectbox;
 	PlayHeadInfo* 	m_playhead;
 	QAction*	m_recAct;
 
@@ -191,14 +190,8 @@ protected slots:
 	void set_sheet(Sheet* );
 
 private slots:
-	void sheet_selector_index_changed(int index);
-	void sheet_selector_change_index_to(Sheet* sheet);
-	void sheet_selector_sheet_added(Sheet* sheet);
-	void sheet_selector_sheet_removed(Sheet* sheet);
-	void sheet_selector_update_sheets();
 	void recording_action_clicked();
 	void update_recording_state();
-	void project_load_finished();
 };
 
 
