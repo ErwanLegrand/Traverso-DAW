@@ -398,7 +398,7 @@ PlayHeadInfo::PlayHeadInfo(QWidget* parent)
 {
 	setAutoFillBackground(false);
 	setToolTip(tr("Start/stop playback. You should use the SpaceBar! ;-)"));
-	setMinimumWidth(110);
+	setMinimumWidth(160);
 	create_background();
 	connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update()));
 }
@@ -461,7 +461,7 @@ void PlayHeadInfo::paintEvent(QPaintEvent* )
 	
 	painter.drawPixmap(0, 0, m_background);
 	painter.drawPixmap(8, (height() - m_playpixmap.height()) / 2, m_playpixmap);
-	painter.drawText(QRect(12, 4, width() - 6, height() - 6), Qt::AlignCenter, currentTime);
+	painter.drawText(QRect(30, 4, width(), height() - 6), Qt::AlignCenter, currentTime);
 }
 
 void PlayHeadInfo::start_sheet_update_timer( )
