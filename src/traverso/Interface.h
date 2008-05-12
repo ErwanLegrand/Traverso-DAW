@@ -140,6 +140,11 @@ private:
 	QAction*		m_sheetMenuAction;
 	QMenu*			m_encodingMenu;
 	QMenu*			m_resampleQualityMenu;
+	QMenu*			m_projectMenu;
+	QMenu*			m_sheetMenu;
+	QMenu*			m_viewMenu;
+	QMenu*			m_settingsMenu;
+	QMenu*			m_helpMenu;
 	
 	ResourcesInfoWidget*	resourcesInfo;
 	DriverInfoWidget*	driverInfo;

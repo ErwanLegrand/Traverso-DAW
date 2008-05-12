@@ -444,30 +444,29 @@ Command * Interface::show_cd_writing_dialog( )
 
 void Interface::create_menus( )
 {
-	QMenu* menu;
 	QAction* action;
 	 
-	menu = menuBar()->addMenu(tr("&Project"));
+	m_projectMenu = menuBar()->addMenu(tr("&Project"));
 	
-	action = menu->addAction(tr("&New..."));
+	action = m_projectMenu->addAction(tr("&New..."));
 	action->setIcon(find_pixmap(":/new-16"));
 	action->setShortcuts(QKeySequence::New);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_newproject_dialog()));
 	
-	action = menu->addAction(tr("&Open..."));
+	action = m_projectMenu->addAction(tr("&Open..."));
 	action->setIcon(style()->standardIcon(QStyle::SP_FileDialogContentsView));
 	action->setShortcuts(QKeySequence::Open);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_open_project_dialog()));
 	
-	menu->addSeparator();
+	m_projectMenu->addSeparator();
 	
-	action = menu->addAction(tr("&Save"));
+	action = m_projectMenu->addAction(tr("&Save"));
 	action->setShortcuts(QKeySequence::Save);
 	m_projectSaveAction = action;
 	action->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
 	connect(action, SIGNAL(triggered(bool)), &pm(), SLOT(save_project()));
 	
-	action = menu->addAction(tr("&Manage Project..."));
+	action = m_projectMenu->addAction(tr("&Manage Project..."));
 	QList<QKeySequence> list;
 	list.append(QKeySequence("F4"));
 	action->setShortcuts(list);
@@ -475,7 +474,7 @@ void Interface::create_menus( )
 	m_projectSheetManagerAction = action;
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_project_manager_dialog()));
 	
-	action = menu->addAction(tr("&Export..."));
+	action = m_projectMenu->addAction(tr("&Export..."));
 	list.clear();
 	list.append(QKeySequence("F9"));
 	action->setShortcuts(list);
@@ -483,23 +482,23 @@ void Interface::create_menus( )
 	m_projectExportAction = action;
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_export_widget()));
 	
-	action = menu->addAction(tr("&CD Writing..."));
+	action = m_projectMenu->addAction(tr("&CD Writing..."));
 	list.clear();
 	list.append(QKeySequence("F8"));
 	action->setShortcuts(list);
 	action->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_cd_writing_dialog()));
 	
-	action = menu->addAction(tr("&Restore Backup..."));
+	action = m_projectMenu->addAction(tr("&Restore Backup..."));
 	list.clear();
 	list.append(QKeySequence("F10"));
 	action->setShortcuts(list);
 	action->setIcon(style()->standardIcon(QStyle::SP_FileDialogBack));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_restore_project_backup_dialog()));
 	
-	menu->addSeparator();
+	m_projectMenu->addSeparator();
 	
-	action = menu->addAction(tr("&Quit"));
+	action = m_projectMenu->addAction(tr("&Quit"));
 	list.clear();
 	list.append(QKeySequence("CTRL+Q"));
 	action->setShortcuts(list);
@@ -507,49 +506,49 @@ void Interface::create_menus( )
 	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(exit()));
 	
 	
-	menu = menuBar()->addMenu(tr("&Sheet"));
-	m_sheetMenuAction = menu->menuAction();
+	m_sheetMenu = menuBar()->addMenu(tr("&Sheet"));
+	m_sheetMenuAction = m_sheetMenu->menuAction();
 	
-	action = menu->addAction(tr("New &Track(s)..."));
+	action = m_sheetMenu->addAction(tr("New &Track(s)..."));
 	connect(action, SIGNAL(triggered()), this, SLOT(show_newtrack_dialog()));
-	action = menu->addAction(tr("New &Sheet(s)..."));
+	action = m_sheetMenu->addAction(tr("New &Sheet(s)..."));
 	connect(action, SIGNAL(triggered()), this, SLOT(show_newsheet_dialog()));
 
-	menu->addSeparator();
+	m_sheetMenu->addSeparator();
 	
-	action = menu->addAction(tr("Marker Editor..."));
+	action = m_sheetMenu->addAction(tr("Marker Editor..."));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_marker_dialog()));
 	
-	menu->addSeparator();
+	m_sheetMenu->addSeparator();
 
-	action = menu->addAction(tr("Import &Audio..."));
+	action = m_sheetMenu->addAction(tr("Import &Audio..."));
 	connect(action, SIGNAL(triggered()), this, SLOT(import_audio()));
-	action = menu->addAction(tr("Insert Si&lence..."));
+	action = m_sheetMenu->addAction(tr("Insert Si&lence..."));
 	connect(action, SIGNAL(triggered()), this, SLOT(show_insertsilence_dialog()));
 	
 	
-	menu = menuBar()->addMenu(tr("&View"));
+	m_viewMenu = menuBar()->addMenu(tr("&View"));
 
-	menu->addAction(historyDW->toggleViewAction());
-	menu->addAction(busMonitorDW->toggleViewAction());
-	menu->addAction(AudioSourcesDW->toggleViewAction());
+	m_viewMenu->addAction(historyDW->toggleViewAction());
+	m_viewMenu->addAction(busMonitorDW->toggleViewAction());
+	m_viewMenu->addAction(AudioSourcesDW->toggleViewAction());
 	
-	menu->addSeparator();
+	m_viewMenu->addSeparator();
 	
-	menu->addAction(correlationMeterDW->toggleViewAction());
-	menu->addAction(spectralMeterDW->toggleViewAction());
+	m_viewMenu->addAction(correlationMeterDW->toggleViewAction());
+	m_viewMenu->addAction(spectralMeterDW->toggleViewAction());
 	
-	menu->addSeparator();
+	m_viewMenu->addSeparator();
 	
-	menu->addAction(m_infoBar->toggleViewAction());
+	m_viewMenu->addAction(m_infoBar->toggleViewAction());
 	m_infoBar->toggleViewAction()->setText(tr("Sheet Toolbar"));
-	menu->addAction(m_sysinfo->toggleViewAction());
+	m_viewMenu->addAction(m_sysinfo->toggleViewAction());
 	m_sysinfo->toggleViewAction()->setText(tr("System Information"));
 	
 	
-	menu = menuBar()->addMenu(tr("Se&ttings"));
+	m_settingsMenu = menuBar()->addMenu(tr("Se&ttings"));
 	
-	m_encodingMenu = menu->addMenu(tr("&Recording File Format"));
+	m_encodingMenu = m_settingsMenu->addMenu(tr("&Recording File Format"));
 	
 	action = m_encodingMenu->addAction("WAVE");
 	action->setData("wav");
@@ -561,7 +560,7 @@ void Interface::create_menus( )
 	action->setData("w64");
 	connect(action, SIGNAL(triggered( bool )), this, SLOT(change_recording_format_to_wav64()));
 	
-	m_resampleQualityMenu = menu->addMenu(tr("&Resample Quality"));
+	m_resampleQualityMenu = m_settingsMenu->addMenu(tr("&Resample Quality"));
 	action = m_resampleQualityMenu->addAction(tr("Best"));
 	action->setData(0);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_best()));
@@ -578,26 +577,26 @@ void Interface::create_menus( )
 	// fake a config changed 'signal-slot' action, to set the encoding menu icons
 	config_changed();
 	
-	menu->addSeparator();
+	m_settingsMenu->addSeparator();
 	
-	menu->addAction(m_infoBar->get_snap_action());
-	menu->addAction(m_infoBar->get_follow_action());
+	m_settingsMenu->addAction(m_infoBar->get_snap_action());
+	m_settingsMenu->addAction(m_infoBar->get_follow_action());
 	
-	menu->addSeparator();
+	m_settingsMenu->addSeparator();
 	
-	action = menu->addAction(tr("&Preferences..."));
+	action = m_settingsMenu->addAction(tr("&Preferences..."));
 	connect(action, SIGNAL(triggered( bool )), this, SLOT(show_settings_dialog()));
 	
 	
-	menu = menuBar()->addMenu(tr("&Help"));
-	action = menu->addAction(tr("&Getting Started"));
+	m_helpMenu = menuBar()->addMenu(tr("&Help"));
+	action = m_helpMenu->addAction(tr("&Getting Started"));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(quick_start()));
 	
-	action = menu->addAction(tr("&User Manual"));
+	action = m_helpMenu->addAction(tr("&User Manual"));
 	action->setIcon(style()->standardIcon(QStyle::SP_DialogHelpButton));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(open_help_browser()));
 	
-	action = menu->addAction(tr("&About Traverso"));
+	action = m_helpMenu->addAction(tr("&About Traverso"));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(about_traverso()));
 }
 
