@@ -129,6 +129,8 @@ private:
 	NewProjectDialog*	m_newProjectDialog;
 	QDialog*		m_quickStart;
 	RestoreProjectBackupDialog* m_restoreProjectBackupDialog;
+	Project*		m_project;
+	bool			m_isFollowing;
 
 
 	BusMonitor* 		busMonitor;
@@ -138,10 +140,14 @@ private:
 	QAction*		m_projectSheetManagerAction;
 	QAction*		m_projectExportAction;
 	QAction*		m_sheetMenuAction;
+	QAction*		m_snapAction;
+	QAction*		m_followAction;
+	QAction*		m_effectAction;
 	QMenu*			m_encodingMenu;
 	QMenu*			m_resampleQualityMenu;
 	QMenu*			m_projectMenu;
 	QMenu*			m_sheetMenu;
+	QMenu*			m_editMenu;
 	QMenu*			m_viewMenu;
 	QMenu*			m_settingsMenu;
 	QMenu*			m_helpMenu;
@@ -202,6 +208,13 @@ private slots:
 	void project_dir_change_detected();
 	void project_load_failed(QString project, QString reason);
 	void project_file_mismatch(QString rootdir, QString projectname);
+	void snap_state_changed(bool state);
+	void update_snap_state();
+	void effect_state_changed(bool state);
+	void update_effects_state();
+	void follow_state_changed(bool state);
+	void update_follow_state();
+	void update_temp_follow_state(bool state);
 };
 
 

@@ -201,6 +201,7 @@ Interface::Interface()
 	cpointer().add_contextitem(this);
 
 	connect(&config(), SIGNAL(configChanged()), this, SLOT(config_changed()));
+	update_follow_state();
 }
 
 Interface::~Interface()
@@ -222,6 +223,8 @@ void Interface::set_project(Project* project)
 {
 	PENTER;
 	
+	m_project = project;
+
 	if ( project ) {
 		connect(project, SIGNAL(currentSheetChanged(Sheet*)), this, SLOT(show_sheet(Sheet*)));
 		setWindowTitle(project->get_title() + " - Traverso");
@@ -290,8 +293,20 @@ void Interface::show_sheet(Sheet* sheet)
 				m_sheetWidgets.insert(0, sheetWidget);
 			}
 		}
+		m_snapAction->setEnabled(false);
+		m_effectAction->setEnabled(false);
+		m_followAction->setEnabled(false);
 	} else {
 		sheetWidget = m_sheetWidgets.value(sheet);
+		connect(sheet, SIGNAL(snapChanged()), this, SLOT(update_snap_state()));
+		connect(sheet, SIGNAL(modeChanged()), this, SLOT(update_effects_state()));
+		connect(sheet, SIGNAL(tempFollowChanged(bool)), this, SLOT(update_temp_follow_state(bool)));
+		connect(sheet, SIGNAL(transferStopped()), this, SLOT(update_follow_state()));
+		update_snap_state();
+		update_effects_state();
+		m_snapAction->setEnabled(true);
+		m_effectAction->setEnabled(true);
+		m_followAction->setEnabled(true);
 	}
 	
 	if (!sheetWidget) {
@@ -449,23 +464,34 @@ void Interface::create_menus( )
 	m_projectMenu = menuBar()->addMenu(tr("&Project"));
 	
 	action = m_projectMenu->addAction(tr("&New..."));
-	action->setIcon(find_pixmap(":/new-16"));
+	action->setIcon(find_pixmap(":/new"));
 	action->setShortcuts(QKeySequence::New);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_newproject_dialog()));
 	
 	action = m_projectMenu->addAction(tr("&Open..."));
-	action->setIcon(style()->standardIcon(QStyle::SP_FileDialogContentsView));
+// 	action->setIcon(style()->standardIcon(QStyle::SP_FileDialogContentsView));
+	action->setIcon(QIcon(":/open"));
 	action->setShortcuts(QKeySequence::Open);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_open_project_dialog()));
 	
+	action = m_projectMenu->addAction(tr("&Save"));
+	m_projectSaveAction = action;
+	action->setShortcuts(QKeySequence::Save);
+// 	action->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
+	action->setIcon(QIcon(":/save"));
+	connect(action, SIGNAL(triggered(bool)), &pm(), SLOT(save_project()));
+
 	m_projectMenu->addSeparator();
 	
-	action = m_projectMenu->addAction(tr("&Save"));
-	action->setShortcuts(QKeySequence::Save);
-	m_projectSaveAction = action;
-	action->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
-	connect(action, SIGNAL(triggered(bool)), &pm(), SLOT(save_project()));
+	action = m_projectMenu->addAction(tr("Import &Audio..."));
+	action->setIcon(QIcon(":/import-audio"));
+	connect(action, SIGNAL(triggered()), this, SLOT(import_audio()));
+	action = m_projectMenu->addAction(tr("Insert Si&lence..."));
+	action->setIcon(QIcon(":/import-silence"));
+	connect(action, SIGNAL(triggered()), this, SLOT(show_insertsilence_dialog()));
 	
+	m_projectMenu->addSeparator();
+
 	action = m_projectMenu->addAction(tr("&Manage Project..."));
 	QList<QKeySequence> list;
 	list.append(QKeySequence("F4"));
@@ -478,7 +504,8 @@ void Interface::create_menus( )
 	list.clear();
 	list.append(QKeySequence("F9"));
 	action->setShortcuts(list);
-	action->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
+// 	action->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
+	action->setIcon(QIcon(":/export"));
 	m_projectExportAction = action;
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_export_widget()));
 	
@@ -486,14 +513,16 @@ void Interface::create_menus( )
 	list.clear();
 	list.append(QKeySequence("F8"));
 	action->setShortcuts(list);
-	action->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
+// 	action->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
+	action->setIcon(QIcon(":/write-cd"));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_cd_writing_dialog()));
 	
 	action = m_projectMenu->addAction(tr("&Restore Backup..."));
 	list.clear();
 	list.append(QKeySequence("F10"));
 	action->setShortcuts(list);
-	action->setIcon(style()->standardIcon(QStyle::SP_FileDialogBack));
+// 	action->setIcon(style()->standardIcon(QStyle::SP_FileDialogBack));
+	action->setIcon(QIcon(":/restore"));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_restore_project_backup_dialog()));
 	
 	m_projectMenu->addSeparator();
@@ -502,37 +531,45 @@ void Interface::create_menus( )
 	list.clear();
 	list.append(QKeySequence("CTRL+Q"));
 	action->setShortcuts(list);
-	action->setIcon(QIcon(find_pixmap(":/exit-16")));
+	action->setIcon(QIcon(":/exit"));
 	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(exit()));
 	
-	
-	m_sheetMenu = menuBar()->addMenu(tr("&Sheet"));
-	m_sheetMenuAction = m_sheetMenu->menuAction();
-	
-	action = m_sheetMenu->addAction(tr("New &Track(s)..."));
-	connect(action, SIGNAL(triggered()), this, SLOT(show_newtrack_dialog()));
-	action = m_sheetMenu->addAction(tr("New &Sheet(s)..."));
-	connect(action, SIGNAL(triggered()), this, SLOT(show_newsheet_dialog()));
+	m_editMenu = menuBar()->addMenu(tr("&Edit"));
 
-	m_sheetMenu->addSeparator();
-	
-	action = m_sheetMenu->addAction(tr("Marker Editor..."));
-	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_marker_dialog()));
-	
-	m_sheetMenu->addSeparator();
+	action = m_editMenu->addAction(tr("Undo"));
+	action->setIcon(QIcon(":/undo"));
+	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(undo()));
+	action = m_editMenu->addAction(tr("Redo"));
+	action->setIcon(QIcon(":/redo"));
+	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(redo()));	
 
-	action = m_sheetMenu->addAction(tr("Import &Audio..."));
-	connect(action, SIGNAL(triggered()), this, SLOT(import_audio()));
-	action = m_sheetMenu->addAction(tr("Insert Si&lence..."));
-	connect(action, SIGNAL(triggered()), this, SLOT(show_insertsilence_dialog()));
-	
-	
+
+	m_snapAction = m_editMenu->addAction(tr("&Snap"));
+	m_snapAction->setCheckable(true);
+	m_snapAction->setToolTip(tr("Snap items to edges of other items while dragging."));
+	connect(m_snapAction, SIGNAL(triggered(bool)), this, SLOT(snap_state_changed(bool)));
+
+	m_followAction = m_editMenu->addAction(tr("S&croll Playback"));
+	m_followAction->setCheckable(true);
+	m_followAction->setToolTip(tr("Keep play cursor in view while playing or recording."));
+	connect(m_followAction, SIGNAL(triggered(bool)), this, SLOT(follow_state_changed(bool)));
+
+	m_effectAction = m_editMenu->addAction(tr("&Show Effects"));
+	m_effectAction->setCheckable(true);
+	m_effectAction->setToolTip(tr("Show effect plugins and automation curves on tracks"));
+	connect(m_effectAction, SIGNAL(triggered(bool)), this, SLOT(effect_state_changed(bool)));
+
+
+
 	m_viewMenu = menuBar()->addMenu(tr("&View"));
 
 	m_viewMenu->addAction(historyDW->toggleViewAction());
 	m_viewMenu->addAction(busMonitorDW->toggleViewAction());
 	m_viewMenu->addAction(AudioSourcesDW->toggleViewAction());
-	
+
+	action = m_viewMenu->addAction(tr("Marker Editor..."));
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_marker_dialog()));
+		
 	m_viewMenu->addSeparator();
 	
 	m_viewMenu->addAction(correlationMeterDW->toggleViewAction());
@@ -545,6 +582,19 @@ void Interface::create_menus( )
 	m_viewMenu->addAction(m_sysinfo->toggleViewAction());
 	m_sysinfo->toggleViewAction()->setText(tr("System Information"));
 	
+
+	m_sheetMenu = menuBar()->addMenu(tr("&Sheet"));
+	m_sheetMenuAction = m_sheetMenu->menuAction();
+
+	action = m_sheetMenu->addAction(tr("New &Sheet(s)..."));
+	action->setIcon(QIcon(":/new-sheet"));
+	connect(action, SIGNAL(triggered()), this, SLOT(show_newsheet_dialog()));
+		
+	action = m_sheetMenu->addAction(tr("New &Track(s)..."));
+	connect(action, SIGNAL(triggered()), this, SLOT(show_newtrack_dialog()));
+
+	m_sheetMenu->addSeparator();
+
 	
 	m_settingsMenu = menuBar()->addMenu(tr("Se&ttings"));
 	
@@ -576,11 +626,6 @@ void Interface::create_menus( )
 
 	// fake a config changed 'signal-slot' action, to set the encoding menu icons
 	config_changed();
-	
-	m_settingsMenu->addSeparator();
-	
-	m_settingsMenu->addAction(m_infoBar->get_snap_action());
-	m_settingsMenu->addAction(m_infoBar->get_follow_action());
 	
 	m_settingsMenu->addSeparator();
 	
@@ -680,7 +725,7 @@ Command * Interface::show_context_menu( )
 			action->setText(name);
 		}
 	}
-	
+
 	// It's impossible there is NO toplevelmenu, but oh well...
 	if (toplevelmenu) {
 		toplevelmenu->exec(QCursor::pos());
@@ -1308,9 +1353,8 @@ Command * Interface::start_transport()
 
 Command * Interface::set_recordable_and_start_transport()
 {
-	Project* project = pm().get_project();
-	if (project) {
-		Sheet* sheet = project->get_current_sheet();
+	if (m_project) {
+		Sheet* sheet = m_project->get_current_sheet();
 		if (sheet) {
 			return sheet->set_recordable_and_start_transport();
 		}
@@ -1318,3 +1362,84 @@ Command * Interface::set_recordable_and_start_transport()
 	
 	return 0;
 }
+
+// snapping is a global property and should be stored in each sheet
+void Interface::snap_state_changed(bool state)
+{
+	if (m_project) {
+		QList<Sheet* > sheetlist = m_project->get_sheets();
+		foreach( Sheet* sheet, sheetlist) {
+			sheet->set_snapping(state);
+		}
+	}
+}
+
+void Interface::update_snap_state()
+{
+	if (m_project) {
+		bool snapping = m_project->get_current_sheet()->is_snap_on();
+		m_snapAction->setChecked(snapping);
+	}
+}
+
+// scrolling is a global property but should not be stored in the sheets
+void Interface::update_follow_state()
+{
+	m_isFollowing = config().get_property("PlayHead", "Follow", true).toBool();
+	m_followAction->setChecked(m_isFollowing);
+}
+
+void Interface::update_temp_follow_state(bool state)
+{
+	if (m_project->get_current_sheet()->is_transport_rolling() && m_isFollowing) {
+		m_followAction->setChecked(state);
+	}
+}
+
+void Interface::follow_state_changed(bool state)
+{
+	Sheet* sheet = m_project->get_current_sheet();
+
+	if (!sheet) {
+		return;
+	}
+	
+	if (!sheet->is_transport_rolling() || !m_isFollowing) {
+		m_isFollowing = state;
+		config().set_property("PlayHead", "Follow", state);
+		config().save();
+		if (sheet->is_transport_rolling()) {
+			sheet->set_temp_follow_state(state);
+		}
+	} else {
+		sheet->set_temp_follow_state(state);
+	}
+}
+
+// the view mode is a sheet property and should be stored in the sheet
+void Interface::effect_state_changed(bool state)
+{
+	Sheet* sheet = m_project->get_current_sheet();
+
+	if (state) {
+		sheet->set_effects_mode();
+	} else {
+		sheet->set_editing_mode();
+	}
+}
+
+void Interface::update_effects_state()
+{
+	Sheet* sheet = m_project->get_current_sheet();
+
+	if (!sheet) {
+		return;
+	}
+	
+	if (sheet->get_mode() == Sheet::EDIT) {
+		m_effectAction->setChecked(false);
+	} else {
+		m_effectAction->setChecked(true);
+	}
+}
+

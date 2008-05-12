@@ -176,8 +176,6 @@ class InfoToolBar : public QToolBar
 Q_OBJECT
 public:
 	InfoToolBar(QWidget* parent);
-	QAction *get_snap_action() {return m_snapAct;};
-	QAction *get_follow_action() {return m_followAct;};
 
 protected:
 	Sheet*		m_sheet;
@@ -186,11 +184,7 @@ protected:
 private:
 	QComboBox* 	m_sheetselectbox;
 	PlayHeadInfo* 	m_playhead;
-	QAction*	m_snapAct;
-	QAction*	m_followAct;
 	QAction*	m_recAct;
-	QAction*	m_effectAct;
-	bool		m_isFollowing;
 
 protected slots:
 	void set_project(Project* project);
@@ -202,13 +196,6 @@ private slots:
 	void sheet_selector_sheet_added(Sheet* sheet);
 	void sheet_selector_sheet_removed(Sheet* sheet);
 	void sheet_selector_update_sheets();
-	void update_snap_state();
-	void snap_state_changed(bool state);
-	void update_follow_state();
-	void update_temp_follow_state(bool state);
-	void update_effects_state();
-	void follow_state_changed(bool state);
-	void effect_state_changed(bool state);
 	void recording_action_clicked();
 	void update_recording_state();
 	void project_load_finished();

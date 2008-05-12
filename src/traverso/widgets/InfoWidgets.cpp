@@ -559,47 +559,14 @@ InfoToolBar::InfoToolBar(QWidget * parent)
 
 	m_playhead = new PlayHeadInfo(this);
 
-	m_snapAct = new QAction(tr("&Snap"), this);
-	m_snapAct->setCheckable(true);
-	m_snapAct->setToolTip(tr("Snap items to edges of other items while dragging."));
-	connect(m_snapAct, SIGNAL(triggered(bool)), this, SLOT(snap_state_changed(bool)));
-
-	m_followAct = new QAction(tr("S&croll Playback"), this);
-	m_followAct->setCheckable(true);
-	m_followAct->setToolTip(tr("Keep play cursor in view while playing or recording."));
-	connect(m_followAct, SIGNAL(triggered(bool)), this, SLOT(follow_state_changed(bool)));
-
-	m_effectAct = new QAction(tr("&Show Effects"), this);
-	m_effectAct->setCheckable(true);
-	m_effectAct->setToolTip(tr("Show effect plugins and automation curves on tracks"));
-	connect(m_effectAct, SIGNAL(triggered(bool)), this, SLOT(effect_state_changed(bool)));
-
 	m_recAct = new QAction(tr("Record"), this);
 	m_recAct->setToolTip(tr("Set Sheet Recordable. <br /><br />Hit Spacebar afterwards to start recording!"));
 	connect(m_recAct, SIGNAL(triggered(bool)), this, SLOT(recording_action_clicked()));
 	
-	QAction* undoAction = new QAction(tr("Undo"), this);
-	undoAction->setIcon(QIcon(find_pixmap(":/undo-16")));
-	undoAction->setShortcuts(QKeySequence::Undo);
-	connect(undoAction, SIGNAL(triggered( bool )), &pm(), SLOT(undo()));
-	
-	QAction* redoAction = new QAction(tr("Redo"), this);
-	redoAction->setIcon(QIcon(find_pixmap(":/redo-16")));
-	redoAction->setShortcuts(QKeySequence::Redo);
-	connect(redoAction, SIGNAL(triggered( bool )), &pm(), SLOT(redo()));
-
 	// the order in which the actions are added determines the order of appearance in the toolbar
-	addAction(redoAction);
-	addAction(undoAction);
-	addSeparator();
-	addAction(m_snapAct);
-	addAction(m_followAct);
 	addAction(m_recAct);
 	addWidget(m_playhead);
-	addAction(m_effectAct);
 	addWidget(m_sheetselectbox);
-	
-	update_follow_state();
 }
 
 
@@ -632,91 +599,14 @@ void InfoToolBar::set_sheet(Sheet* sheet)
 	m_sheet = sheet;
 	
 	if (m_sheet) {
-		connect(m_sheet, SIGNAL(snapChanged()), this, SLOT(update_snap_state()));
-		connect(m_sheet, SIGNAL(modeChanged()), this, SLOT(update_effects_state()));
-		connect(m_sheet, SIGNAL(tempFollowChanged(bool)), this, SLOT(update_temp_follow_state(bool)));
 		connect(m_sheet, SIGNAL(recordingStateChanged()), this, SLOT(update_recording_state()));
-		connect(m_sheet, SIGNAL(transferStopped()), this, SLOT(update_follow_state()));
-		update_snap_state();
-		update_effects_state();
-		update_recording_state();
-		m_snapAct->setEnabled(true);
-		m_effectAct->setEnabled(true);
 		m_recAct->setEnabled(true);
-		m_followAct->setEnabled(true);
 	} else {
-		m_snapAct->setEnabled(false);
-		m_effectAct->setEnabled(false);
 		m_recAct->setEnabled(false);
-		m_followAct->setEnabled(false);
 	}
 }
 
-void InfoToolBar::update_snap_state()
-{
-	m_snapAct->setChecked(m_sheet->is_snap_on());
-}
 
-void InfoToolBar::update_effects_state()
-{
-	if (!m_sheet) {
-		return;
-	}
-	
-	if (m_sheet->get_mode() == Sheet::EDIT) {
-		m_effectAct->setChecked(false);
-	} else {
-		m_effectAct->setChecked(true);
-	}
-}
-
-void InfoToolBar::snap_state_changed(bool state)
-{
-	if (! m_sheet) {
-		return;
-	}
-	m_sheet->set_snapping(state);
-}
-
-void InfoToolBar::update_follow_state()
-{
-	m_isFollowing = config().get_property("PlayHead", "Follow", true).toBool();
-	m_followAct->setChecked(m_isFollowing);
-}
-
-void InfoToolBar::update_temp_follow_state(bool state)
-{
-	if (m_sheet->is_transport_rolling() && m_isFollowing) {
-		m_followAct->setChecked(state);
-	}
-}
-
-void InfoToolBar::follow_state_changed(bool state)
-{
-	if (!m_sheet) {
-		return;
-	}
-	
-	if (!m_sheet->is_transport_rolling() || !m_isFollowing) {
-		m_isFollowing = state;
-		config().set_property("PlayHead", "Follow", state);
-		config().save();
-		if (m_sheet->is_transport_rolling()) {
-			m_sheet->set_temp_follow_state(state);
-		}
-	} else {
-		m_sheet->set_temp_follow_state(state);
-	}
-}
-
-void InfoToolBar::effect_state_changed(bool state)
-{
-	if (state) {
-		m_sheet->set_effects_mode();
-	} else {
-		m_sheet->set_editing_mode();
-	}
-}
 
 void InfoToolBar::recording_action_clicked()
 {
