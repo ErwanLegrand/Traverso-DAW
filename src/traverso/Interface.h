@@ -52,6 +52,7 @@ class HDDSpaceInfoWidget;
 class SheetWidget;
 class CorrelationMeterWidget;
 class SpectralMeterWidget;
+class TransportConsoleWidget;
 class SettingsDialog;
 class ProjectManagerDialog;
 class OpenProjectDialog;
@@ -113,7 +114,9 @@ private:
 	QDockWidget*		AudioSourcesDW;
 	ResourcesWidget* 	audiosourcesview;
 	QDockWidget*		correlationMeterDW;
+	QDockWidget*		transportDW;
 	CorrelationMeterWidget*	correlationMeter;
+	TransportConsoleWidget*	transportConsole;
 	QDockWidget*		spectralMeterDW;
 	SpectralMeterWidget*	spectralMeter;
 	SettingsDialog*		m_settingsdialog;
@@ -121,7 +124,7 @@ private:
 	OpenProjectDialog*	m_openProjectDialog;
 	InsertSilenceDialog*	m_insertSilenceDialog;
 	MarkerDialog*		m_markerDialog;
-	InfoToolBar* 		m_infoBar;
+// 	InfoToolBar* 		m_infoBar;
 	SysInfoToolBar* 	m_sysinfo;
 	BusSelectorDialog*	m_busSelector;
 	NewSheetDialog*		m_newSheetDialog;
@@ -131,7 +134,6 @@ private:
 	RestoreProjectBackupDialog* m_restoreProjectBackupDialog;
 	Project*		m_project;
 	bool			m_isFollowing;
-
 
 	BusMonitor* 		busMonitor;
 	QToolBar* 		mainToolBar;

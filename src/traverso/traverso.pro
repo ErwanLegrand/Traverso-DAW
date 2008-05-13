@@ -37,6 +37,7 @@ HEADERS += \
 	CorrelationMeterWidget.h \
 	SpectralMeterWidget.h \
 	QuickDriverConfigWidget.h \
+	widgets/TransportConsoleWidget.h \
 	precompile.h \
 	dialogs/settings/Pages.h \
 	dialogs/settings/SettingsDialog.h \
@@ -70,6 +71,7 @@ SOURCES += \
 	CorrelationMeterWidget.cpp \
 	SpectralMeterWidget.cpp \
 	QuickDriverConfigWidget.cpp \
+	widgets/TransportConsoleWidget.cpp \
 	dialogs/settings/Pages.cpp \
 	dialogs/settings/SettingsDialog.cpp \
 	dialogs/project/ProjectManagerDialog.cpp \

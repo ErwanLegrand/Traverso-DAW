@@ -50,6 +50,7 @@ widgets/MeterWidget.cpp
 widgets/ResourcesWidget.cpp
 widgets/CorrelationMeterWidget.cpp
 widgets/SpectralMeterWidget.cpp
+widgets/TransportConsoleWidget.cpp
 )
 
 SET(TRAVERSO_UI_FILES
@@ -108,6 +109,7 @@ widgets/MessageWidget.h
 widgets/MeterWidget.h
 widgets/SpectralMeterWidget.h
 widgets/CorrelationMeterWidget.h
+widgets/TransportConsoleWidget.h
 )
 
 QT4_ADD_RESOURCES(TRAVERSO_RESOURCES

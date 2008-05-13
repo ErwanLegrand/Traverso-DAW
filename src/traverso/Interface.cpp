@@ -52,6 +52,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "widgets/ResourcesWidget.h"
 #include "widgets/CorrelationMeterWidget.h"
 #include "widgets/SpectralMeterWidget.h"
+#include "widgets/TransportConsoleWidget.h"
 
 #include "dialogs/settings/SettingsDialog.h"
 #include "dialogs/project/ProjectManagerDialog.h"
@@ -160,8 +161,12 @@ Interface::Interface()
 	busMonitorDW->setWidget(busMonitor);
 	addDockWidget(Qt::RightDockWidgetArea, busMonitorDW);
 	
-	m_infoBar = new InfoToolBar(this);
-	addToolBar(m_infoBar);
+	transportDW = new QDockWidget(tr("Transport Console"), this);
+	transportDW->setObjectName("TransportConsoleDockWidget");
+	transportConsole = new TransportConsoleWidget(transportDW);
+	transportDW->setWidget(transportConsole);
+	addDockWidget(Qt::RightDockWidgetArea, transportDW);
+	transportDW->hide();
 	
 	m_sysinfo = new SysInfoToolBar(this);
 	addToolBar(Qt::BottomToolBarArea, m_sysinfo);
@@ -570,6 +575,7 @@ void Interface::create_menus( )
 	m_viewMenu->addAction(historyDW->toggleViewAction());
 	m_viewMenu->addAction(busMonitorDW->toggleViewAction());
 	m_viewMenu->addAction(AudioSourcesDW->toggleViewAction());
+	m_viewMenu->addAction(transportDW->toggleViewAction());
 
 	action = m_viewMenu->addAction(tr("Marker Editor..."));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_marker_dialog()));
@@ -581,8 +587,6 @@ void Interface::create_menus( )
 	
 	m_viewMenu->addSeparator();
 	
-	m_viewMenu->addAction(m_infoBar->toggleViewAction());
-	m_infoBar->toggleViewAction()->setText(tr("Sheet Toolbar"));
 	m_viewMenu->addAction(m_sysinfo->toggleViewAction());
 	m_sysinfo->toggleViewAction()->setText(tr("System Information"));
 	

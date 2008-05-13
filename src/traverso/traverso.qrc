@@ -38,6 +38,11 @@
 		<file alias="performance">../../resources/images/performance.png</file>
 		<file alias="playstart">../../resources/images/icons/media-playback-start.png</file>
 		<file alias="playstop">../../resources/images/icons/media-playback-stop.png</file>
+		<file alias="skipleft">../../resources/images/icons/media-skip-backward.png</file>
+		<file alias="skipright">../../resources/images/icons/media-skip-forward.png</file>
+		<file alias="seekleft">../../resources/images/icons/media-seek-backward.png</file>
+		<file alias="seekright">../../resources/images/icons/media-seek-forward.png</file>
+		<file alias="record">../../resources/images/icons/media-record.png</file>
 		<file alias="projectmanagement">../../resources/images/icons/32X32/projects.png</file>
 		<file alias="sheetmanagement">../../resources/images/icons/32X32/sheets.png</file>
 		<file alias="audiosourcesmanagement">../../resources/images/icons/32X32/audiosources.png</file>

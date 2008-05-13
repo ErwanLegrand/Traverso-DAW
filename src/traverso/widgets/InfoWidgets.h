@@ -140,61 +140,6 @@ private slots:
 };
 
 
-class PlayHeadInfo : public InfoWidget
-{
-	Q_OBJECT
-
-public:
-	PlayHeadInfo(QWidget* parent = 0);
-	~PlayHeadInfo() {};
-
-protected:
-	void mousePressEvent ( QMouseEvent * event );
-	void paintEvent( QPaintEvent* e);
-	void resizeEvent( QResizeEvent * e );
-	QSize sizeHint() const;	
-	
-private:
-	QTimer m_updateTimer;
-	QPixmap m_playpixmap;
-	QPixmap m_background;
-	
-	void create_background();
-
-protected slots:
-	void set_project(Project* );
-	void set_sheet(Sheet* );
-	
-private slots:
-	void start_sheet_update_timer();
-	void stop_sheet_update_timer();
-};
-
-
-class InfoToolBar : public QToolBar
-{
-Q_OBJECT
-public:
-	InfoToolBar(QWidget* parent);
-
-protected:
-	Sheet*		m_sheet;
-	Project*	m_project;
-
-private:
-	PlayHeadInfo* 	m_playhead;
-	QAction*	m_recAct;
-
-protected slots:
-	void set_project(Project* project);
-	void set_sheet(Sheet* );
-
-private slots:
-	void recording_action_clicked();
-	void update_recording_state();
-};
-
-
 class SysInfoToolBar : public QToolBar
 {
 public:
