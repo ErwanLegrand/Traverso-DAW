@@ -61,7 +61,7 @@
 		<file alias="restore">../../resources/images/icons/archive-extract.png</file>
 		<file alias="write-cd">../../resources/images/icons/tools-media-optical-burn.png</file>
 		<file alias="new-sheet">../../resources/images/icons/tab-new-background.png</file>
-		<file alias="import-audio">../../resources/images/icons/document-open.png</file>
+		<file alias="import-audio">../../resources/images/icons/traverso-import-audio.png</file>
 		<file alias="import-silence">../../resources/images/icons/document-import.png</file>
 		<file alias="snap">../../resources/images/icons/traverso-snap.png</file>
 		<file alias="effects">../../resources/images/icons/view-media-equalizer.png</file>
