@@ -137,6 +137,8 @@ private:
 
 	BusMonitor* 		busMonitor;
 	QToolBar* 		mainToolBar;
+	QToolBar*		m_projectToolBar;
+	QToolBar*		m_editToolBar;
 	QToolButton*		openGlButton;
 	QAction*		m_projectSaveAction;
 	QAction*		m_projectSheetManagerAction;

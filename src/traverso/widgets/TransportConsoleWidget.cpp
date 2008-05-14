@@ -40,6 +40,8 @@ static const int HEIGHT_THRESHOLD = 90;
 TransportConsoleWidget::TransportConsoleWidget(QWidget* parent)
 	: QWidget(parent)
 {
+	setEnabled(false);
+
 	m_layout = new QGridLayout(this);
 	m_label = new QLabel(this);
 	m_label->setAlignment(Qt::AlignCenter);
@@ -125,8 +127,11 @@ void TransportConsoleWidget::set_sheet(Sheet* sheet)
 	if (!m_sheet)
 	{
 		m_updateTimer.stop();
+		setEnabled(false);
 		return;
 	}
+
+	setEnabled(true);
 
 	connect(m_sheet, SIGNAL(recordingStateChanged()), this, SLOT(update_recording_state()));
 	connect(m_sheet, SIGNAL(transferStarted()), this, SLOT(transfer_started()));
@@ -138,22 +143,12 @@ void TransportConsoleWidget::set_sheet(Sheet* sheet)
 
 void TransportConsoleWidget::to_start()
 {
-	if (!m_sheet)
-	{
-		return;
-	}
-
 	m_sheet->set_transport_pos((TimeRef)0.0);
 	m_sheet->set_work_at((TimeRef)0.0);
 }
 
 void TransportConsoleWidget::to_left()
 {
-	if (!m_sheet)
-	{
-		return;
-	}
-
 	SnapList* slist = m_sheet->get_snap_list();
 	TimeRef p = m_sheet->get_transport_location();
 	TimeRef newpos = slist->prev_snap_pos(p);
@@ -162,31 +157,16 @@ void TransportConsoleWidget::to_left()
 
 void TransportConsoleWidget::rec_toggled()
 {
-	if (!m_sheet)
-	{
-		return;
-	}
-
 	m_sheet->set_recordable();
 }
 
 void TransportConsoleWidget::play_toggled()
 {
-	if (!m_sheet)
-	{
-		return;
-	}
-
 	m_sheet->start_transport();
 }
 
 void TransportConsoleWidget::to_end()
 {
-	if (!m_sheet)
-	{
-		return;
-	}
-
 	// stop the transport, no need to play any further than the end of the sheet
 	if (m_sheet->is_transport_rolling())
 	{
@@ -197,11 +177,6 @@ void TransportConsoleWidget::to_end()
 
 void TransportConsoleWidget::to_right()
 {
-	if (!m_sheet)
-	{
-		return;
-	}
-
 	SnapList* slist = m_sheet->get_snap_list();
 	TimeRef p = m_sheet->get_transport_location();
 	TimeRef newpos = slist->next_snap_pos(p);

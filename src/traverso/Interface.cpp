@@ -171,7 +171,12 @@ Interface::Interface()
 	m_sysinfo = new SysInfoToolBar(this);
 	addToolBar(Qt::BottomToolBarArea, m_sysinfo);
 	
+	m_projectToolBar = new QToolBar(this);
+	addToolBar(m_projectToolBar);
 	
+	m_editToolBar = new QToolBar(this);
+	addToolBar(m_editToolBar);
+
 	// Some default values.
 	currentSheetWidget = 0;
 	m_exportDialog = 0;
@@ -475,63 +480,54 @@ void Interface::create_menus( )
 	action = m_projectMenu->addAction(tr("&New..."));
 	action->setIcon(find_pixmap(":/new"));
 	action->setShortcuts(QKeySequence::New);
+	m_projectToolBar->addAction(action);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_newproject_dialog()));
 	
 	action = m_projectMenu->addAction(tr("&Open..."));
-// 	action->setIcon(style()->standardIcon(QStyle::SP_FileDialogContentsView));
 	action->setIcon(QIcon(":/open"));
 	action->setShortcuts(QKeySequence::Open);
+	m_projectToolBar->addAction(action);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_open_project_dialog()));
 	
 	action = m_projectMenu->addAction(tr("&Save"));
 	m_projectSaveAction = action;
 	action->setShortcuts(QKeySequence::Save);
-// 	action->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
 	action->setIcon(QIcon(":/save"));
+	m_projectToolBar->addAction(action);
 	connect(action, SIGNAL(triggered(bool)), &pm(), SLOT(save_project()));
 
 	m_projectMenu->addSeparator();
-	
-	action = m_projectMenu->addAction(tr("Import &Audio..."));
-	action->setIcon(QIcon(":/import-audio"));
-	connect(action, SIGNAL(triggered()), this, SLOT(import_audio()));
-	action = m_projectMenu->addAction(tr("Insert Si&lence..."));
-	action->setIcon(QIcon(":/import-silence"));
-	connect(action, SIGNAL(triggered()), this, SLOT(show_insertsilence_dialog()));
-	
-	m_projectMenu->addSeparator();
 
-	action = m_projectMenu->addAction(tr("&Manage Project..."));
+	m_projectSheetManagerAction = m_projectMenu->addAction(tr("&Manage Project..."));
 	QList<QKeySequence> list;
 	list.append(QKeySequence("F4"));
-	action->setShortcuts(list);
-	action->setIcon(QIcon(find_pixmap(":/sheetmanager-16")));
-	m_projectSheetManagerAction = action;
+	m_projectSheetManagerAction->setShortcuts(list);
+	m_projectSheetManagerAction->setIcon(QIcon(":/projectmanager"));
+	m_projectToolBar->addAction(m_projectSheetManagerAction);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_project_manager_dialog()));
 	
-	action = m_projectMenu->addAction(tr("&Export..."));
+	m_projectExportAction = m_projectMenu->addAction(tr("&Export..."));
 	list.clear();
 	list.append(QKeySequence("F9"));
-	action->setShortcuts(list);
-// 	action->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
-	action->setIcon(QIcon(":/export"));
-	m_projectExportAction = action;
+	m_projectExportAction->setShortcuts(list);
+	m_projectExportAction->setIcon(QIcon(":/export"));
+	m_projectToolBar->addAction(m_projectExportAction);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_export_widget()));
 	
 	action = m_projectMenu->addAction(tr("&CD Writing..."));
 	list.clear();
 	list.append(QKeySequence("F8"));
 	action->setShortcuts(list);
-// 	action->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
 	action->setIcon(QIcon(":/write-cd"));
+	m_projectToolBar->addAction(action);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_cd_writing_dialog()));
 	
 	action = m_projectMenu->addAction(tr("&Restore Backup..."));
 	list.clear();
 	list.append(QKeySequence("F10"));
 	action->setShortcuts(list);
-// 	action->setIcon(style()->standardIcon(QStyle::SP_FileDialogBack));
 	action->setIcon(QIcon(":/restore"));
+	m_projectToolBar->addAction(action);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_restore_project_backup_dialog()));
 	
 	m_projectMenu->addSeparator();
@@ -547,28 +543,50 @@ void Interface::create_menus( )
 
 	action = m_editMenu->addAction(tr("Undo"));
 	action->setIcon(QIcon(":/undo"));
+	m_editToolBar->addAction(action);
 	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(undo()));
+
 	action = m_editMenu->addAction(tr("Redo"));
 	action->setIcon(QIcon(":/redo"));
+	m_editToolBar->addAction(action);
 	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(redo()));	
 
+	m_editMenu->addSeparator();
+	m_editToolBar->addSeparator();
+
+	action = m_editMenu->addAction(tr("Import &Audio..."));
+	action->setIcon(QIcon(":/import-audio"));
+	m_editToolBar->addAction(action);
+	connect(action, SIGNAL(triggered()), this, SLOT(import_audio()));
+
+	action = m_editMenu->addAction(tr("Insert Si&lence..."));
+	action->setIcon(QIcon(":/import-silence"));
+	m_editToolBar->addAction(action);
+	connect(action, SIGNAL(triggered()), this, SLOT(show_insertsilence_dialog()));
+
+	m_editMenu->addSeparator();
+	m_editToolBar->addSeparator();
 
 	m_snapAction = m_editMenu->addAction(tr("&Snap"));
+	m_snapAction->setIcon(QIcon(":/snap"));
 	m_snapAction->setCheckable(true);
 	m_snapAction->setToolTip(tr("Snap items to edges of other items while dragging."));
+	m_editToolBar->addAction(m_snapAction);
 	connect(m_snapAction, SIGNAL(triggered(bool)), this, SLOT(snap_state_changed(bool)));
 
 	m_followAction = m_editMenu->addAction(tr("S&croll Playback"));
+	m_followAction->setIcon(QIcon(":/follow"));
 	m_followAction->setCheckable(true);
 	m_followAction->setToolTip(tr("Keep play cursor in view while playing or recording."));
+	m_editToolBar->addAction(m_followAction);
 	connect(m_followAction, SIGNAL(triggered(bool)), this, SLOT(follow_state_changed(bool)));
 
 	m_effectAction = m_editMenu->addAction(tr("&Show Effects"));
+	m_effectAction->setIcon(QIcon(":/effects"));
 	m_effectAction->setCheckable(true);
 	m_effectAction->setToolTip(tr("Show effect plugins and automation curves on tracks"));
+	m_editToolBar->addAction(m_effectAction);
 	connect(m_effectAction, SIGNAL(triggered(bool)), this, SLOT(effect_state_changed(bool)));
-
-
 
 	m_viewMenu = menuBar()->addMenu(tr("&View"));
 
@@ -589,7 +607,16 @@ void Interface::create_menus( )
 	
 	m_viewMenu->addAction(m_sysinfo->toggleViewAction());
 	m_sysinfo->toggleViewAction()->setText(tr("System Information"));
-	
+
+	// if unifiedTitleAndToolBarOnMac == true we don't want the main toolbars
+	// to be hidden. thus only add the menu entries on systems != OS X
+	#if !defined (Q_WS_MAC)
+		m_viewMenu->addAction(m_projectToolBar->toggleViewAction());
+		m_projectToolBar->toggleViewAction()->setText(tr("Project tool bar"));
+
+		m_viewMenu->addAction(m_editToolBar->toggleViewAction());
+		m_editToolBar->toggleViewAction()->setText(tr("Edit tool bar"));
+	#endif
 
 	m_sheetMenu = menuBar()->addMenu(tr("&Sheet"));
 	m_sheetMenuAction = m_sheetMenu->menuAction();
