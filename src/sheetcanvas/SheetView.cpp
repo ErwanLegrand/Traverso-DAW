@@ -546,7 +546,6 @@ Command * SheetView::touch( )
 Command * SheetView::touch_play_cursor( )
 {
 	QPointF point = m_clipsViewPort->mapToScene(QPoint(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y()));
-	m_playCursor->setPos(point.x(), 0);
 	m_sheet->set_transport_pos(TimeRef(point.x() * timeref_scalefactor));
 
 	return 0;
@@ -554,7 +553,6 @@ Command * SheetView::touch_play_cursor( )
 
 Command * SheetView::play_to_begin( )
 {
-	m_playCursor->setPos(0, 0);
 	m_sheet->set_transport_pos(TimeRef());
 
 	return 0;
@@ -654,7 +652,6 @@ Command * SheetView::playhead_to_workcursor( )
 	TimeRef worklocation = m_sheet->get_work_location();
 
 	m_sheet->set_transport_pos(worklocation);
-	m_playCursor->setPos(worklocation / timeref_scalefactor, 0);
 	
 	if (!m_sheet->is_transport_rolling()) {
 		center();
