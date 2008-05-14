@@ -169,12 +169,15 @@ Interface::Interface()
 	transportDW->hide();
 	
 	m_sysinfo = new SysInfoToolBar(this);
+	m_sysinfo->setObjectName("System Info Toolbar");
 	addToolBar(Qt::BottomToolBarArea, m_sysinfo);
 	
 	m_projectToolBar = new QToolBar(this);
+	m_projectToolBar->setObjectName("Project Toolbar");
 	addToolBar(m_projectToolBar);
 	
 	m_editToolBar = new QToolBar(this);
+	m_editToolBar->setObjectName("Edit Toolbar");
 	addToolBar(m_editToolBar);
 
 	// Some default values.

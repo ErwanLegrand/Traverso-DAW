@@ -22,7 +22,6 @@
 #include "TransportConsoleWidget.h"
 #include "libtraversocore.h"
 #include "Themer.h"
-#include "defines.h"
 
 #include <QPixmap>
 #include <QGridLayout>
@@ -103,6 +102,9 @@ TransportConsoleWidget::TransportConsoleWidget(QWidget* parent)
 	m_layout->addWidget(buttonToRight, 1, 4, 1, 1);
 	m_layout->addWidget(buttonToEnd,   1, 5, 1, 1);
 
+	m_lastSnapPosition = TimeRef(0.0);
+	m_skipTimer.setSingleShot(true);
+
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 	connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update_label()));
 	place_label();
@@ -147,12 +149,23 @@ void TransportConsoleWidget::to_start()
 	m_sheet->set_work_at((TimeRef)0.0);
 }
 
+// the timer is used to allow 'hopping' to the left from snap position to snap position
+// even during playback.
 void TransportConsoleWidget::to_left()
 {
-	SnapList* slist = m_sheet->get_snap_list();
 	TimeRef p = m_sheet->get_transport_location();
+
+	if (m_skipTimer.isActive()) 
+	{
+		p = m_lastSnapPosition;
+	}
+
+	SnapList* slist = m_sheet->get_snap_list();
 	TimeRef newpos = slist->prev_snap_pos(p);
 	m_sheet->set_transport_pos(newpos);
+
+	m_lastSnapPosition = newpos;
+	m_skipTimer.start(500);
 }
 
 void TransportConsoleWidget::rec_toggled()

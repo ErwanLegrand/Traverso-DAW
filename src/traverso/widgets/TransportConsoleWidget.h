@@ -25,8 +25,9 @@
 #include <QWidget>
 #include <QGridLayout>
 #include <QLabel>
+#include <QTimer>
 
-#include "InfoWidgets.h"
+#include "defines.h"
 
 class Project;
 class Sheet;
@@ -54,6 +55,8 @@ private:
 	QAction*	m_toRightAction;
 	QLabel*		m_label;
 	QTimer		m_updateTimer;
+	QTimer		m_skipTimer;
+	TimeRef		m_lastSnapPosition;
 
 	void place_label();
 
