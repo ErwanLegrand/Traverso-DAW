@@ -501,7 +501,8 @@ void Interface::create_menus( )
 
 	m_projectMenu->addSeparator();
 
-	m_projectSheetManagerAction = m_projectMenu->addAction(tr("&Manage Project..."));
+	action = m_projectMenu->addAction(tr("&Manage Project..."));
+	m_projectSheetManagerAction = action;
 	QList<QKeySequence> list;
 	list.append(QKeySequence("F4"));
 	m_projectSheetManagerAction->setShortcuts(list);
@@ -509,7 +510,8 @@ void Interface::create_menus( )
 	m_projectToolBar->addAction(m_projectSheetManagerAction);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_project_manager_dialog()));
 	
-	m_projectExportAction = m_projectMenu->addAction(tr("&Export..."));
+	action = m_projectMenu->addAction(tr("&Export..."));
+	m_projectExportAction = action;
 	list.clear();
 	list.append(QKeySequence("F9"));
 	m_projectExportAction->setShortcuts(list);
