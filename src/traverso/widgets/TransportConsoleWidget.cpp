@@ -107,7 +107,7 @@ TransportConsoleWidget::TransportConsoleWidget(QWidget* parent)
 
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 	connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update_label()));
-	place_label();
+	resize(width(), height());
 }
 
 
@@ -198,7 +198,10 @@ void TransportConsoleWidget::to_right()
 
 void TransportConsoleWidget::transfer_started()
 {
-	m_updateTimer.start(100);
+	// use an odd number for the update interval.
+	// with round numbers the last digit stays the same
+	// most of the time, but not always, which looks jerky
+	m_updateTimer.start(123);
 	m_playAction->setChecked(true);
 	m_playAction->setIcon(QIcon(":/playstop"));
 	m_recAction->setEnabled(false);
@@ -244,7 +247,7 @@ void TransportConsoleWidget::resizeEvent(QResizeEvent * e)
 {
 	// scale the font in the text label
 	QFont font = m_label->font();
-	int fs = 0.6 * m_label->height();
+	int fs = 0.5 * m_label->height();
 	font.setPixelSize(fs);
 	m_label->setFont(font);
 
