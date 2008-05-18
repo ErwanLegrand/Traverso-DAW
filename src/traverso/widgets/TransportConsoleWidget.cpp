@@ -29,12 +29,57 @@
 #include <QAction>
 #include <QSize>
 #include <QFrame>
+#include <QApplication>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
 static const int HEIGHT_THRESHOLD = 90;
+static const float FONT_HEIGHT = 0.8;
+
+TimeLabel::TimeLabel(QWidget* parent)
+	: QFrame(parent)
+{
+	font = QApplication::font();
+	setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+	setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+	calc_font_size();
+}
+
+void TimeLabel::set_time(QString s)
+{
+	time = s;
+	update();
+}
+
+void TimeLabel::paintEvent(QPaintEvent *)
+{
+	QPainter p(this);
+		p.setFont(font);
+		p.drawText(0, 0, width(), height(), Qt::AlignCenter, time);
+	p.end();
+}
+
+void TimeLabel::resizeEvent(QResizeEvent *)
+{
+	calc_font_size();
+	update();
+}
+
+void TimeLabel::calc_font_size()
+{
+	font.setPixelSize(int(FONT_HEIGHT * height()));
+
+	QFontMetrics fm(font);
+	int w = fm.width(time);
+
+	if (w >= width())
+	{
+		font.setPixelSize(int((FONT_HEIGHT * height() * width()) / w));
+	}
+}
+
 
 TransportConsoleWidget::TransportConsoleWidget(QWidget* parent)
 	: QWidget(parent)
@@ -42,12 +87,8 @@ TransportConsoleWidget::TransportConsoleWidget(QWidget* parent)
 	setEnabled(false);
 
 	m_layout = new QGridLayout(this);
-	m_label = new QLabel(this);
-	m_label->setAlignment(Qt::AlignCenter);
-	m_label->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+	m_label = new TimeLabel(this);
 	m_label->setMinimumWidth(80);
-	m_label->setScaledContents(true);
-	m_label->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 
 	QToolButton* buttonToStart = new QToolButton(this);
 	QToolButton* buttonToLeft = new QToolButton(this);
@@ -94,7 +135,12 @@ TransportConsoleWidget::TransportConsoleWidget(QWidget* parent)
 	buttonToEnd->setDefaultAction(m_toEndAction);
 	buttonToRight->setDefaultAction(m_toRightAction);
 
-	m_layout->addWidget(m_label,    0, 0, 1, 6);
+	if (height() < HEIGHT_THRESHOLD)
+	{
+		m_layout->addWidget(m_label, 1, 6, 1, 1);
+	} else {
+		m_layout->addWidget(m_label, 0, 0, 1, 6);
+	}
 	m_layout->addWidget(buttonToStart, 1, 0, 1, 1);
 	m_layout->addWidget(buttonToLeft,  1, 1, 1, 1);
 	m_layout->addWidget(buttonRec,     1, 2, 1, 1);
@@ -107,7 +153,6 @@ TransportConsoleWidget::TransportConsoleWidget(QWidget* parent)
 
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 	connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update_label()));
-	resize(width(), height());
 }
 
 
@@ -198,9 +243,10 @@ void TransportConsoleWidget::to_right()
 
 void TransportConsoleWidget::transfer_started()
 {
-	// use an odd number for the update interval.
-	// with round numbers the last digit stays the same
-	// most of the time, but not always, which looks jerky
+    // use an odd number for the update interval, because
+	// a round number (e.g. 100) lets the last digit stay
+	// the same most of the time, but not always, which 
+	// looks jerky
 	m_updateTimer.start(123);
 	m_playAction->setChecked(true);
 	m_playAction->setIcon(QIcon(":/playstop"));
@@ -245,12 +291,6 @@ void TransportConsoleWidget::update_recording_state()
 
 void TransportConsoleWidget::resizeEvent(QResizeEvent * e)
 {
-	// scale the font in the text label
-	QFont font = m_label->font();
-	int fs = 0.5 * m_label->height();
-	font.setPixelSize(fs);
-	m_label->setFont(font);
-
 	// position the text label depending on the widget size
 	if ((e->oldSize().height() >= HEIGHT_THRESHOLD) && (e->size().height() < HEIGHT_THRESHOLD))
 	{
@@ -284,7 +324,7 @@ void TransportConsoleWidget::update_label()
 	} else {
 		currentTime = timeref_to_ms_2(m_sheet->get_transport_location());
 	}
-	m_label->setText(currentTime);
+	m_label->set_time(currentTime);
 }
 
 //eof

@@ -113,7 +113,7 @@ Interface::Interface()
 	//         setMaximumWidth(1024);
 	//         setMaximumHeight(768);
 
-	setUnifiedTitleAndToolBarOnMac(false);
+	setUnifiedTitleAndToolBarOnMac(true);
 
 	// CenterAreaWidget
 	centerAreaWidget = new QStackedWidget(this);
@@ -179,6 +179,14 @@ Interface::Interface()
 	m_editToolBar = new QToolBar(this);
 	m_editToolBar->setObjectName("Edit Toolbar");
 	addToolBar(m_editToolBar);
+
+	#if defined Q_WS_MAC
+		m_projectToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+		m_projectToolBar->setIconSize(QSize(20, 20));
+	
+		m_editToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+		m_editToolBar->setIconSize(QSize(20, 20));
+	#endif
 
 	// Some default values.
 	currentSheetWidget = 0;

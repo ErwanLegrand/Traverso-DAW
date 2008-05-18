@@ -24,8 +24,11 @@
 
 #include <QWidget>
 #include <QGridLayout>
-#include <QLabel>
+#include <QFrame>
 #include <QTimer>
+#include <QEvent>
+#include <QFont>
+#include <QString>
 
 #include "defines.h"
 
@@ -33,12 +36,35 @@ class Project;
 class Sheet;
 
 
+class TimeLabel : public QFrame
+{
+Q_OBJECT
+
+public:
+		TimeLabel(QWidget* parent = 0);
+		~TimeLabel() {};
+
+public slots:
+		void set_time(QString);
+
+protected:
+		void paintEvent(QPaintEvent *);
+		void resizeEvent(QResizeEvent *);
+		
+private:
+		QFont	font;
+		QString	time;
+		
+		void calc_font_size();
+};
+
+
 class TransportConsoleWidget : public QWidget
 {
 Q_OBJECT
 
 public:
-        TransportConsoleWidget(QWidget* parent);
+	TransportConsoleWidget(QWidget* parent);
 
 protected:
 	void resizeEvent(QResizeEvent*);
@@ -53,7 +79,7 @@ private:
 	QAction*	m_playAction;
 	QAction*	m_toEndAction;
 	QAction*	m_toRightAction;
-	QLabel*		m_label;
+	TimeLabel*	m_label;
 	QTimer		m_updateTimer;
 	QTimer		m_skipTimer;
 	TimeRef		m_lastSnapPosition;
