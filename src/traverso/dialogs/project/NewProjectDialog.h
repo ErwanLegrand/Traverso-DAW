@@ -37,6 +37,9 @@ private slots:
 	void accept();
 	void use_template_checkbox_state_changed(int state);
 	void update_template_combobox();
+	void add_files();
+	void remove_files();
+	void load_files();
 };
 
 #endif
