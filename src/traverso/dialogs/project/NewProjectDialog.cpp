@@ -42,6 +42,7 @@
 #include <Sheet.h>
 #include <Track.h>
 #include <Utils.h>
+#include <CommandGroup.h>
 #include "Import.h"
 
 
@@ -208,6 +209,11 @@ void NewProjectDialog::load_files()
 		Sheet* sheet = pm().get_project()->get_current_sheet();
 
 		int i = 0;
+
+		CommandGroup* group = new CommandGroup(sheet, tr("Import %n audiofile(s)", "",
+			treeWidgetFiles->topLevelItemCount()), false);
+
+
 		while(treeWidgetFiles->topLevelItemCount()) {
 			QTreeWidgetItem* item = treeWidgetFiles->takeTopLevelItem(0);
 			QString f = item->data(0, Qt::ToolTipRole).toString();
@@ -215,13 +221,18 @@ void NewProjectDialog::load_files()
 
 			if (i < sheet->get_numtracks())
 			{
-printf(QS_C(QString("****** %1\n").arg(f)));
-				Track* track = sheet->get_track_for_index(i);
-				Import* cmd = new Import(track, f, (TimeRef)0.0);
-				Command::process_command(cmd);
+				Import* import = new Import(f);
+				import->set_track(sheet->get_track_for_index(i));
+				import->set_position((TimeRef)0.0);
+				if (import->create_readsource() != -1)
+				{
+					group->add_command(import);
+				}
 			}
 			++i;
 		}
+
+		Command::process_command(group);
 }
 
 //eof
