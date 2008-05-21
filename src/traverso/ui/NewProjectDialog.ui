@@ -226,13 +226,6 @@
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QRadioButton" name="radioButtonMove" >
-         <property name="text" >
-          <string>move files to project directory</string>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab" >
