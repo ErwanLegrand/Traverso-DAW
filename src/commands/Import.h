@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Import.h,v 1.8 2007/09/28 18:33:43 r_sijrier Exp $
+    $Id: Import.h,v 1.9 2008/05/21 11:11:33 r_sijrier Exp $
 */
 
 #ifndef IMPORT_H
@@ -57,6 +57,8 @@ private :
 	TimeRef		m_initialLength;
 	bool		m_hasPosition;
 	TimeRef		m_position;
+
+	void init(Track* track, const QString& filename);
 };
 
 #endif

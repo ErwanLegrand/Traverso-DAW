@@ -33,22 +33,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 Import::Import(const QString& fileName)
 	: Command("")
 {
-	m_fileName = fileName;
-	m_clip = 0;
-	m_track = 0;
-	m_silent = false;
-	m_hasPosition = false;
-	m_initialLength = TimeRef();
+	init(0, fileName);
 }
 
 
 Import::Import(Track* track, const TimeRef& length, bool silent)
 	: Command(track, "")
 {
-	m_track = track;
-	m_clip = 0;
+	init(track, "");
 	m_silent = silent;
-	m_hasPosition = false;
 	m_initialLength = length;
 	
 	if (!m_silent) {
@@ -62,25 +55,31 @@ Import::Import(Track* track, const TimeRef& length, bool silent)
 Import::Import(Track* track, const QString& fileName)
 	: Command(track, tr("Import Audio File"))
 {
-	m_track = track;
-	m_clip = 0;
-	m_fileName = fileName;
-	m_silent = false;
-	m_hasPosition = false;
-	m_initialLength = TimeRef();
+	init(track, fileName);
 }
 
 Import::Import(Track* track, const QString& fileName, const TimeRef& position)
 	: Command(track, tr("Import Audio File"))
 {
-	m_track = track;
-	m_clip = 0;
-	m_fileName = fileName;
-	m_silent = false;
-	m_initialLength = TimeRef();
+	init(track, fileName);
 	m_hasPosition = true;
 	m_position = position;
 }
+
+void Import::init(Track* track, const QString& fileName)
+{
+	m_clip = 0;
+	m_source = 0;
+	m_position = TimeRef();
+	m_silent = false;
+	m_hasPosition = false;
+	m_fileName = fileName;
+	m_track = track;
+	m_initialLength = TimeRef();
+
+}
+
+
 
 Import::~Import()
 {}
@@ -198,5 +197,3 @@ int Import::undo_action()
 
 
 // eof
-
-
