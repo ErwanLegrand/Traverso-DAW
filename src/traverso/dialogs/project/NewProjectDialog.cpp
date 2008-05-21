@@ -34,6 +34,8 @@
 #include <QTreeWidgetItem>
 #include <QList>
 #include <QFileInfo>
+#include <QFile>
+#include <QRadioButton>
 
 #include <Config.h>
 #include <Information.h>
@@ -146,6 +148,18 @@ void NewProjectDialog::accept( )
 
 	if (loadFiles)
 	{
+		int mode = 0;
+		if (radioButtonCopy->isChecked())
+		{
+			mode = 1;
+		}
+
+		if (radioButtonMove->isChecked())
+		{
+			mode = 2;
+		}
+
+		move_files(mode);
 		load_files();
 	}
 
@@ -204,9 +218,58 @@ void NewProjectDialog::remove_files()
 	}
 }
 
+void NewProjectDialog::move_files(int mode)
+{
+	// load from original location
+	if (mode == 0)
+	{
+		return;
+	}
+
+	QList<QFileInfo> list;
+	for(int n = 0; n < treeWidgetFiles->topLevelItemCount(); ++n) {
+		QTreeWidgetItem* item = treeWidgetFiles->topLevelItem(n);
+		list.append(QFileInfo(item->data(0, Qt::ToolTipRole).toString()));
+	}
+
+	QString destination = pm().get_project()->get_root_dir() + "/audiosources/";
+
+	// copy to project dir
+	for (int n = 0; n < list.size(); ++n)
+	{
+		QString fn = destination + list.at(n).fileName();
+
+		// TODO: check for free disk space
+		// TODO: progress dialog for copying files
+		// TODO: find the proper way for moving files. copy/delete should not be necessare if the source and destination are on the same partition.
+
+		QFile f(list.at(n).absoluteFilePath());
+		if (f.copy(fn))
+		{
+			// copy was successful, thus update the file path
+			QTreeWidgetItem* item = treeWidgetFiles->topLevelItem(n);
+			item->setData(0, Qt::ToolTipRole, fn);
+
+			// mode was "move", thus delete the source file
+			if (mode == 2)
+			{
+				if (!f.remove())
+				{
+					printf("could not delete file\n");
+				}
+			}
+		}
+	}
+}
+
 void NewProjectDialog::load_files()
 {
 		Sheet* sheet = pm().get_project()->get_current_sheet();
+
+		if (!sheet)
+		{
+			return;
+		}
 
 		int i = 0;
 

@@ -33,13 +33,16 @@ public:
 	NewProjectDialog(QWidget* parent = 0);
 	~NewProjectDialog();
 
+private:
+	void load_files();
+	void move_files(int);
+
 private slots:
 	void accept();
 	void use_template_checkbox_state_changed(int state);
 	void update_template_combobox();
 	void add_files();
 	void remove_files();
-	void load_files();
 };
 
 #endif
