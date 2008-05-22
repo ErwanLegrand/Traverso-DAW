@@ -28,6 +28,7 @@
 class AudioFileCopyConvert;
 class ExportFormatOptionsWidget;
 class QProgressDialog;
+class QButtonGroup;
 struct ExportSpecification;
 
 
@@ -44,6 +45,7 @@ private:
 	QProgressDialog* m_progressDialog;
 	ExportSpecification* m_exportSpec;
 	ExportFormatOptionsWidget* m_formatOptionsWidget;
+	QButtonGroup* m_buttonGroup;
 
 	void load_all_files();
 	void copy_files();

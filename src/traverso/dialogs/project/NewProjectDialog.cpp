@@ -37,6 +37,9 @@
 #include <QFile>
 #include <QCheckBox>
 #include <QProgressDialog>
+#include <QRadioButton>
+#include <QStackedWidget>
+#include <QButtonGroup>
 
 #include <Config.h>
 #include "Export.h"
@@ -72,6 +75,9 @@ NewProjectDialog::NewProjectDialog( QWidget * parent )
 	m_converter = new AudioFileCopyConvert();
 	m_progressDialog = new QProgressDialog(this);
 	m_exportSpec = new ExportSpecification;
+	m_buttonGroup = new QButtonGroup(this);
+	m_buttonGroup->addButton(radioButtonImport, 0);
+	m_buttonGroup->addButton(radioButtonEmpty, 1);
 
 	connect(useTemplateCheckBox, SIGNAL(stateChanged (int)), this, SLOT(use_template_checkbox_state_changed(int)));
 	connect(pushButtonAddFiles, SIGNAL(clicked()), this, SLOT(add_files()));
@@ -79,6 +85,7 @@ NewProjectDialog::NewProjectDialog( QWidget * parent )
 	connect(m_converter, SIGNAL(taskFinished(QString, int)), this, SLOT(load_file(QString, int)));
 	connect(m_converter, SIGNAL(taskStarted(QString)), this, SLOT(show_progress(QString)));
 	connect(m_converter, SIGNAL(progress(int)), m_progressDialog, SLOT(setValue(int)));
+	connect(m_buttonGroup, SIGNAL(buttonClicked(int)), stackedWidget, SLOT(setCurrentIndex(int)));
 }
 
 NewProjectDialog::~ NewProjectDialog( )
