@@ -35,7 +35,8 @@
 #include <QList>
 #include <QFileInfo>
 #include <QFile>
-#include <QRadioButton>
+#include <QCheckBox>
+#include <QProgressDialog>
 
 #include <Config.h>
 #include <Information.h>
@@ -46,6 +47,8 @@
 #include <Utils.h>
 #include <CommandGroup.h>
 #include "Import.h"
+#include "AudioFileCopyConvert.h"
+#include "ReadSource.h"
 
 
 // Always put me below _all_ includes, this is needed
@@ -63,9 +66,15 @@ NewProjectDialog::NewProjectDialog( QWidget * parent )
 
 	buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
 
+	m_converter = new AudioFileCopyConvert();
+	m_progressDialog = new QProgressDialog(this);
+
 	connect(useTemplateCheckBox, SIGNAL(stateChanged (int)), this, SLOT(use_template_checkbox_state_changed(int)));
 	connect(pushButtonAddFiles, SIGNAL(clicked()), this, SLOT(add_files()));
 	connect(pushButtonRemoveFiles, SIGNAL(clicked()), this, SLOT(remove_files()));
+	connect(m_converter, SIGNAL(taskFinished(QString, int)), this, SLOT(load_file(QString, int)));
+	connect(m_converter, SIGNAL(taskStarted(QString)), this, SLOT(show_progress(QString)));
+	connect(m_converter, SIGNAL(progress(int)), m_progressDialog, SLOT(setValue(int)));
 }
 
 NewProjectDialog::~ NewProjectDialog( )
@@ -146,10 +155,12 @@ void NewProjectDialog::accept( )
 	
 	pm().load_project(title);
 
-	if (loadFiles)
-	{
-		move_files(radioButtonCopy->isChecked() ? 1 : 0);
-		load_files();
+	if (loadFiles) {
+		if (checkBoxCopy->isChecked()) {
+			copy_files();
+		} else {
+			load_all_files();
+		}
 	}
 
 	hide();
@@ -207,13 +218,9 @@ void NewProjectDialog::remove_files()
 	}
 }
 
-void NewProjectDialog::move_files(int mode)
+void NewProjectDialog::copy_files()
 {
-	// load from original location
-	if (mode == 0)
-	{
-		return;
-	}
+	m_progressDialog->show();
 
 	QList<QFileInfo> list;
 	for(int n = 0; n < treeWidgetFiles->topLevelItemCount(); ++n) {
@@ -232,50 +239,54 @@ void NewProjectDialog::move_files(int mode)
 		// TODO: progress dialog for copying files
 		// TODO: offer file format conversion while copying
 
-		QFile f(list.at(n).absoluteFilePath());
-		if (f.copy(fn))
-		{
-			// copy was successful, thus update the file path
-			QTreeWidgetItem* item = treeWidgetFiles->topLevelItem(n);
-			item->setData(0, Qt::ToolTipRole, fn);
-		}
+		ReadSource* readsource = new ReadSource(list.at(n).absolutePath() + "/", list.at(n).fileName());
+		readsource->init();
+		m_converter->enqueue_task(readsource, destination, list.at(n).fileName(), n);
+
+		// copy was successful, thus update the file path
+		QTreeWidgetItem* item = treeWidgetFiles->topLevelItem(n);
+		item->setData(0, Qt::ToolTipRole, fn);
 	}
 }
 
-void NewProjectDialog::load_files()
+void NewProjectDialog::load_all_files()
 {
-		Sheet* sheet = pm().get_project()->get_current_sheet();
-
-		if (!sheet)
-		{
-			return;
-		}
-
 		int i = 0;
-
-		CommandGroup* group = new CommandGroup(sheet, tr("Import %n audiofile(s)", "",
-			treeWidgetFiles->topLevelItemCount()), false);
-
 
 		while(treeWidgetFiles->topLevelItemCount()) {
 			QTreeWidgetItem* item = treeWidgetFiles->takeTopLevelItem(0);
 			QString f = item->data(0, Qt::ToolTipRole).toString();
 			delete item;
 
-			if (i < sheet->get_numtracks())
-			{
-				Import* import = new Import(f);
-				import->set_track(sheet->get_track_for_index(i));
-				import->set_position((TimeRef)0.0);
-				if (import->create_readsource() != -1)
-				{
-					group->add_command(import);
-				}
-			}
+			load_file(f, i);
 			++i;
 		}
+}
 
-		Command::process_command(group);
+void NewProjectDialog::load_file(QString name, int i)
+{
+	Sheet* sheet = pm().get_project()->get_current_sheet();
+
+	if (!sheet) {
+		return;
+	}
+
+	if (i >= sheet->get_numtracks()) {
+		return;
+	}
+
+	Import* import = new Import(name);
+	import->set_track(sheet->get_track_for_index(i));
+	import->set_position((TimeRef)0.0);
+	if (import->create_readsource() != -1) {
+		Command::process_command(import);
+	}
+}
+
+void NewProjectDialog::show_progress(QString name)
+{
+	m_progressDialog->setLabelText(name);
+	m_progressDialog->show();
 }
 
 //eof

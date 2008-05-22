@@ -48,6 +48,7 @@ TimeLine.cpp
 Marker.cpp
 Themer.cpp
 AudioFileMerger.cpp
+AudioFileCopyConvert.cpp
 ProjectConverter.cpp
 )
 
@@ -56,6 +57,7 @@ ${CMAKE_SOURCE_DIR}/src/common/Tsar.h
 AudioClip.h
 AudioClipManager.h
 AudioFileMerger.h
+AudioFileCopyConvert.h
 Config.h
 ContextPointer.h
 Curve.h

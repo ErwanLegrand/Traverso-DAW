@@ -25,6 +25,9 @@
 #include "ui_NewProjectDialog.h"
 #include <QDialog>
 
+class AudioFileCopyConvert;
+class QProgressDialog;
+
 class NewProjectDialog : public QDialog, protected Ui::NewProjectDialog
 {
 	Q_OBJECT
@@ -34,8 +37,11 @@ public:
 	~NewProjectDialog();
 
 private:
-	void load_files();
-	void move_files(int);
+	AudioFileCopyConvert* m_converter;
+	QProgressDialog* m_progressDialog;
+
+	void load_all_files();
+	void copy_files();
 
 private slots:
 	void accept();
@@ -43,6 +49,11 @@ private slots:
 	void update_template_combobox();
 	void add_files();
 	void remove_files();
+	void load_file(QString, int);
+	void show_progress(QString);
+
+signals:
+	void loadFile(QString, int);
 };
 
 #endif

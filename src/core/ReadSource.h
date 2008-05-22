@@ -72,6 +72,7 @@ public :
 	nframes_t get_nframes() const;
 	int get_file_rate() const;
 	int get_output_rate() const {return m_outputRate;}
+	int get_channel_cound() const {return m_channelCount;}
 	const TimeRef& get_length() const {return m_length;}
 	
 	void sync(DecodeBuffer* buffer);
@@ -114,7 +115,7 @@ private:
 
 	friend class ResourcesManager;
 	friend class ProjectConverter;
-	
+
 signals:
 	void stateChanged();
 };

@@ -210,19 +210,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="radioButtonLeave" >
+        <widget class="QCheckBox" name="checkBoxCopy" >
          <property name="text" >
-          <string>load files from original location</string>
-         </property>
-         <property name="checked" >
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="radioButtonCopy" >
-         <property name="text" >
-          <string>copy files to project directory</string>
+          <string>Copy files to project directory</string>
          </property>
         </widget>
        </item>
