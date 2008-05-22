@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QMutex>
 
 class ReadSource;
+struct ExportSpecification;
 
 class AudioFileCopyConvert : public QThread
 {
@@ -37,7 +38,7 @@ public:
 		exec();
 	}
 	
-	void enqueue_task(ReadSource* source, const QString& dir, const QString& outfilename, int tracknumber);
+	void enqueue_task(ReadSource* source, ExportSpecification* spec, const QString& dir, const QString& outfilename, int tracknumber);
 	void stop_merging();
 
 		
@@ -51,6 +52,7 @@ private:
 		QString extension;
 		int tracknumber;
 		ReadSource* readsource;
+		ExportSpecification* spec;
 	};
 	
 	QQueue<CopyTask> m_tasks;

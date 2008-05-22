@@ -26,7 +26,10 @@
 #include <QDialog>
 
 class AudioFileCopyConvert;
+class ExportFormatOptionsWidget;
 class QProgressDialog;
+struct ExportSpecification;
+
 
 class NewProjectDialog : public QDialog, protected Ui::NewProjectDialog
 {
@@ -39,6 +42,8 @@ public:
 private:
 	AudioFileCopyConvert* m_converter;
 	QProgressDialog* m_progressDialog;
+	ExportSpecification* m_exportSpec;
+	ExportFormatOptionsWidget* m_formatOptionsWidget;
 
 	void load_all_files();
 	void copy_files();

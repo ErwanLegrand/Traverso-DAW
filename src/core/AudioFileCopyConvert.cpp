@@ -50,7 +50,11 @@ AudioFileCopyConvert::AudioFileCopyConvert()
  * @param outfilename 
  * @param tracknumber 
  */
-void AudioFileCopyConvert::enqueue_task(ReadSource * source, const QString& dir, const QString & outfilename, int tracknumber)
+void AudioFileCopyConvert::enqueue_task(ReadSource * source,
+	ExportSpecification* spec,
+	const QString& dir,
+	const QString& outfilename,
+	int tracknumber)
 {
 	QFileInfo fi(outfilename);
 
@@ -60,6 +64,7 @@ void AudioFileCopyConvert::enqueue_task(ReadSource * source, const QString& dir,
 	task.extension = fi.suffix();
 	task.tracknumber = tracknumber;
 	task.dir = dir;
+	task.spec = spec;
 	
 	m_mutex.lock();
 	m_tasks.enqueue(task);
@@ -87,24 +92,23 @@ void AudioFileCopyConvert::process_task(CopyTask task)
 	uint buffersize = 16384;
 	DecodeBuffer decodebuffer;
 	
-	ExportSpecification* spec = new ExportSpecification();
-	spec->startLocation = TimeRef();
-	spec->endLocation = task.readsource->get_length();
-	spec->totalTime = spec->endLocation;
-	spec->pos = TimeRef();
-	spec->isRecording = false;
+	task.spec->startLocation = TimeRef();
+	task.spec->endLocation = task.readsource->get_length();
+	task.spec->totalTime = task.spec->endLocation;
+	task.spec->pos = TimeRef();
+	task.spec->isRecording = false;
 	
-	spec->exportdir = task.dir;
-	spec->writerType = "sndfile";
-	spec->extraFormat["filetype"] = "wav";
-	spec->data_width = 1;	// 1 means float
-	spec->channels = task.readsource->get_channel_count();
-	spec->sample_rate = task.readsource->get_rate();
-	spec->blocksize = buffersize;
-	spec->name = task.outFileName;
-	spec->dataF = new audio_sample_t[buffersize * 2];
+	task.spec->exportdir = task.dir;
+	task.spec->writerType = "sndfile";
+	task.spec->extraFormat["filetype"] = "wav";
+	task.spec->data_width = 1;	// 1 means float
+	task.spec->channels = task.readsource->get_channel_count();
+	task.spec->sample_rate = task.readsource->get_rate();
+	task.spec->blocksize = buffersize;
+	task.spec->name = task.outFileName;
+	task.spec->dataF = new audio_sample_t[buffersize * 2];
 	
-	WriteSource* writesource = new WriteSource(spec);
+	WriteSource* writesource = new WriteSource(task.spec);
 	bool failedToPrepareWritesource = false;
 	int oldprogress = 0;
 
@@ -123,39 +127,39 @@ void AudioFileCopyConvert::process_task(CopyTask task)
 			goto out;
 		}
 			
-		nframes_t diff = (spec->endLocation - spec->pos).to_frame(task.readsource->get_rate());
+		nframes_t diff = (task.spec->endLocation - task.spec->pos).to_frame(task.readsource->get_rate());
 		nframes_t this_nframes = std::min(diff, buffersize);
 		nframes_t nframes = this_nframes;
 		
-		memset (spec->dataF, 0, sizeof (spec->dataF[0]) * nframes * spec->channels);
+		memset (task.spec->dataF, 0, sizeof (task.spec->dataF[0]) * nframes * task.spec->channels);
 		
-		task.readsource->file_read(&decodebuffer, spec->pos, nframes);
+		task.readsource->file_read(&decodebuffer, task.spec->pos, nframes);
 			
 		for (uint x = 0; x < nframes; ++x) {
-			for (int y = 0; y < spec->channels; ++y) {
-				spec->dataF[y + x*spec->channels] = decodebuffer.destination[y][x];
+			for (int y = 0; y < task.spec->channels; ++y) {
+				task.spec->dataF[y + x*task.spec->channels] = decodebuffer.destination[y][x];
 			}
 		}
 		
 		// due the fact peak generating does _not_ happen in writesource->process
 		// but in a function used by DiskIO, we have to hack the peak processing 
 		// in here.
-		for (int y = 0; y < spec->channels; ++y) {
+		for (int y = 0; y < task.spec->channels; ++y) {
 			writesource->get_peak()->process(y, decodebuffer.destination[y], nframes);
 		}
 		
 		// Process the data, and write to disk
 		writesource->process(buffersize);
 		
-		spec->pos.add_frames(nframes, task.readsource->get_rate());
+		task.spec->pos.add_frames(nframes, task.readsource->get_rate());
 		
-		int currentprogress = int(double(spec->pos.universal_frame()) / double(spec->totalTime.universal_frame()) * 100);
+		int currentprogress = int(double(task.spec->pos.universal_frame()) / double(task.spec->totalTime.universal_frame()) * 100);
 		if (currentprogress > oldprogress) {
 			oldprogress = currentprogress;
 			emit progress(currentprogress);
 		}
 			
-	} while (spec->pos != spec->totalTime);
+	} while (task.spec->pos != task.spec->totalTime);
 		
 	
 	out:
@@ -163,8 +167,8 @@ void AudioFileCopyConvert::process_task(CopyTask task)
 		writesource->finish_export();
 	}
 	delete writesource;
-	delete [] spec->dataF;
-	delete spec;
+	delete [] task.spec->dataF;
+	delete task.spec;
 	resources_manager()->remove_source(task.readsource);
 	
 	//  The user asked to stop processing, exit the event loop

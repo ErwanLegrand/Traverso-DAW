@@ -39,6 +39,7 @@
 #include <QProgressDialog>
 
 #include <Config.h>
+#include "Export.h"
 #include "Information.h"
 #include "ProjectManager.h"
 #include "ResourcesManager.h"
@@ -51,6 +52,7 @@
 #include "AudioFileCopyConvert.h"
 #include "ReadSource.h"
 
+#include "widgets/ExportFormatOptionsWidget.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -69,6 +71,7 @@ NewProjectDialog::NewProjectDialog( QWidget * parent )
 
 	m_converter = new AudioFileCopyConvert();
 	m_progressDialog = new QProgressDialog(this);
+	m_exportSpec = new ExportSpecification;
 
 	connect(useTemplateCheckBox, SIGNAL(stateChanged (int)), this, SLOT(use_template_checkbox_state_changed(int)));
 	connect(pushButtonAddFiles, SIGNAL(clicked()), this, SLOT(add_files()));
@@ -232,7 +235,7 @@ void NewProjectDialog::copy_files()
 	}
 
 	QString destination = pm().get_project()->get_root_dir() + "/audiosources/";
-
+	
 	// copy to project dir
 	for (int n = 0; n < list.size(); ++n)
 	{
@@ -240,12 +243,14 @@ void NewProjectDialog::copy_files()
 
 		// TODO: check for free disk space
 		// TODO: progress dialog for copying files
-		// TODO: offer file format conversion while copying
+		
+		// TODO: offer file format conversion while copying: format options widget not there yet.
+//		m_formatOptionsWidget->get_format_options(m_exportSpec);
 
 		ReadSource* readsource = resources_manager()->import_source(list.at(n).absolutePath() + "/", list.at(n).fileName());
 
 		if (readsource) {
-			m_converter->enqueue_task(readsource, destination, list.at(n).fileName(), n);
+			m_converter->enqueue_task(readsource, m_exportSpec, destination, list.at(n).fileName(), n);
 	
 			// copy was successful, thus update the file path
 			QTreeWidgetItem* item = treeWidgetFiles->topLevelItem(n);
