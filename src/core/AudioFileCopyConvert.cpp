@@ -168,7 +168,6 @@ void AudioFileCopyConvert::process_task(CopyTask task)
 	}
 	delete writesource;
 	delete [] task.spec->dataF;
-	delete task.spec;
 	resources_manager()->remove_source(task.readsource);
 	
 	//  The user asked to stop processing, exit the event loop
