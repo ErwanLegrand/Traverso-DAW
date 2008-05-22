@@ -26,6 +26,7 @@
 
 #include <QDialog>
 
+class ExportFormatOptionsWidget;
 class Project;
 class Sheet;
 struct ExportSpecification;
@@ -46,6 +47,7 @@ protected:
 private:
 	Project* m_project;
 	ExportSpecification* 	m_exportSpec;
+	ExportFormatOptionsWidget* m_formatOptionsWidget;
 
 	bool is_safe_to_export();
 
@@ -65,9 +67,6 @@ private slots:
 	void on_abortButton_clicked();
 	void on_closeButton_clicked();
 
-	void audio_type_changed(int index);
-	void mp3_method_changed(int index);
-	void ogg_method_changed(int index);
 	void reject();
 };
 

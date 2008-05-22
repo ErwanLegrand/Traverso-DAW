@@ -44,6 +44,7 @@ dialogs/RestoreProjectBackupDialog.cpp
 dialogs/ProjectConverterDialog.cpp
 dialogs/ExportDialog.cpp
 dialogs/CDWritingDialog.cpp
+widgets/ExportFormatOptionsWidget.cpp
 widgets/InfoWidgets.cpp
 widgets/MessageWidget.cpp
 widgets/MeterWidget.cpp
@@ -55,6 +56,7 @@ widgets/TransportConsoleWidget.cpp
 
 SET(TRAVERSO_UI_FILES
 ui/AudioSourcesManagerWidget.ui
+ui/ExportFormatOptionsWidget.ui
 ui/SpectralMeterConfigWidget.ui
 ui/QuickDriverConfigWidget.ui
 ui/DriverConfigPage.ui
@@ -103,6 +105,7 @@ dialogs/project/OpenProjectDialog.h
 dialogs/project/ProjectManagerDialog.h
 dialogs/settings/SettingsDialog.h
 dialogs/settings/Pages.h
+widgets/ExportFormatOptionsWidget.h
 widgets/InfoWidgets.h
 widgets/ResourcesWidget.h
 widgets/MessageWidget.h
