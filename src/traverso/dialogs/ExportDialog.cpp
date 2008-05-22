@@ -22,17 +22,15 @@
 #include "ExportDialog.h"
 #include "ui_ExportDialog.h"
 
-#include "libtraversocore.h"
-
 #include <QFileDialog>
-#include <QByteArray>
-#include <QMessageBox>
-#include <QDebug>
 
 #include "Export.h"
+#include "Information.h"
+#include "Project.h"
+#include "ProjectManager.h"
+#include "Sheet.h"
+
 #include "widgets/ExportFormatOptionsWidget.h"
-#include "Config.h"
-#include <AudioDevice.h>
 
 
 // Always put me below _all_ includes, this is needed

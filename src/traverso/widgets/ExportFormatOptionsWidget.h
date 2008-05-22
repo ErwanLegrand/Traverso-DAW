@@ -26,8 +26,6 @@
 
 #include <QWidget>
 
-class Project;
-class Sheet;
 struct ExportSpecification;
 
 class ExportFormatOptionsWidget : public QWidget, protected Ui::ExportFormatOptionsWidget

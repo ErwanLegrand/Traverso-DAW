@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2005-2007 Remon Sijrier 
+    Copyright (C) 2008 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -191,7 +191,6 @@ ExportFormatOptionsWidget::ExportFormatOptionsWidget( QWidget * parent )
 	option = config().get_property("ExportFormatOptionsWidget", "bitdepthComboBox", "16").toString();
 	index = bitdepthComboBox->findData(option);
 	bitdepthComboBox->setCurrentIndex(index >= 0 ? index : 0);
-	setMaximumSize(400, 250);
 }
 
 
