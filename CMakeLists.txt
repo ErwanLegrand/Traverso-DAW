@@ -434,10 +434,6 @@ IF(UNIX)
 			LIST(APPEND TRAVERSO_DEFINES -DSSE_OPTIMIZATIONS)
 		ENDIF(cat_invoke_result MATCHES sse)
 		
-		IF(cat_invoke_result MATCHES mmx)
-			SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -mmmx")
-		ENDIF(cat_invoke_result MATCHES mmx)
-				
 		IF(cat_invoke_result MATCHES 3dnow)
 			SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -m3dnow")
 		ENDIF(cat_invoke_result MATCHES 3dnow)

@@ -20,6 +20,8 @@ ${CMAKE_SOURCE_DIR}/src/common/Resampler.cpp
 AudioClip.cpp
 AudioClipGroup.cpp
 AudioClipManager.cpp
+AudioFileCopyConvert.cpp
+AudioFileMerger.cpp
 AudioSource.cpp
 Command.cpp
 Config.cpp
@@ -47,8 +49,6 @@ Snappable.cpp
 TimeLine.cpp
 Marker.cpp
 Themer.cpp
-AudioFileMerger.cpp
-AudioFileCopyConvert.cpp
 ProjectConverter.cpp
 )
 

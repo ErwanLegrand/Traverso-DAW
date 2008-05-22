@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2007 Remon Sijrier 
+    Copyright (C) 2007-2008 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -39,8 +39,9 @@
 #include <QProgressDialog>
 
 #include <Config.h>
-#include <Information.h>
-#include <ProjectManager.h>
+#include "Information.h"
+#include "ProjectManager.h"
+#include "ResourcesManager.h"
 #include <Project.h>
 #include <Sheet.h>
 #include <Track.h>
@@ -188,7 +189,9 @@ void NewProjectDialog::update_template_combobox()
 
 void NewProjectDialog::add_files()
 {
-	QStringList list = QFileDialog::getOpenFileNames(this, tr("Open Audio Files"), config().get_property("Project", "directory", "/directory/unknown").toString(), tr("Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)"));
+	QStringList list = QFileDialog::getOpenFileNames(this, tr("Open Audio Files"),
+			config().get_property("Project", "directory", "/directory/unknown").toString(),
+			tr("Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)"));
 
 	for(int i = 0; i < list.size(); ++i)
 	{
@@ -239,28 +242,30 @@ void NewProjectDialog::copy_files()
 		// TODO: progress dialog for copying files
 		// TODO: offer file format conversion while copying
 
-		ReadSource* readsource = new ReadSource(list.at(n).absolutePath() + "/", list.at(n).fileName());
-		readsource->init();
-		m_converter->enqueue_task(readsource, destination, list.at(n).fileName(), n);
+		ReadSource* readsource = resources_manager()->import_source(list.at(n).absolutePath() + "/", list.at(n).fileName());
 
-		// copy was successful, thus update the file path
-		QTreeWidgetItem* item = treeWidgetFiles->topLevelItem(n);
-		item->setData(0, Qt::ToolTipRole, fn);
+		if (readsource) {
+			m_converter->enqueue_task(readsource, destination, list.at(n).fileName(), n);
+	
+			// copy was successful, thus update the file path
+			QTreeWidgetItem* item = treeWidgetFiles->topLevelItem(n);
+			item->setData(0, Qt::ToolTipRole, fn);
+		}
 	}
 }
 
 void NewProjectDialog::load_all_files()
 {
-		int i = 0;
+	int i = 0;
 
-		while(treeWidgetFiles->topLevelItemCount()) {
-			QTreeWidgetItem* item = treeWidgetFiles->takeTopLevelItem(0);
-			QString f = item->data(0, Qt::ToolTipRole).toString();
-			delete item;
+	while(treeWidgetFiles->topLevelItemCount()) {
+		QTreeWidgetItem* item = treeWidgetFiles->takeTopLevelItem(0);
+		QString f = item->data(0, Qt::ToolTipRole).toString();
+		delete item;
 
-			load_file(f, i);
-			++i;
-		}
+		load_file(f, i);
+		++i;
+	}
 }
 
 void NewProjectDialog::load_file(QString name, int i)

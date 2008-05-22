@@ -416,3 +416,24 @@ void ResourcesManager::destroy_clip(AudioClip * clip)
 	
 }
 
+void ResourcesManager::remove_source(ReadSource * source)
+{
+	SourceData* data = m_sources.value(source->get_id());
+	if (!data) {
+	} else {
+		if (data->clipCount > 0) {
+			info().critical(tr("ResourcesManager: Received request to remove Audio Source %1"
+				"but it is still in use by %2 AudioClips!!. NOT removing it!").
+				arg(source->get_name()).arg(data->clipCount));
+			return;
+		}
+		
+		m_sources.remove(source->get_id());
+
+		emit sourceRemoved(source);
+
+		delete data;
+		delete source;
+	}
+}
+

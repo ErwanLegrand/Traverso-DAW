@@ -26,6 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "Export.h"
 #include "AbstractAudioReader.h"
+#include "ProjectManager.h"
+#include "ResourcesManager.h"
 #include "ReadSource.h"
 #include "WriteSource.h"
 #include "Peak.h"
@@ -39,6 +41,15 @@ AudioFileCopyConvert::AudioFileCopyConvert()
 	connect(this, SIGNAL(dequeueTask()), this, SLOT(dequeue_tasks()), Qt::QueuedConnection);
 }
 
+/**
+ *	Queues the ReadSource source to be copied. This function will take ownership of the ReadSource
+	and takes care of 'deleting' it once the copy is finished!!
+
+ * @param source 
+ * @param dir 
+ * @param outfilename 
+ * @param tracknumber 
+ */
 void AudioFileCopyConvert::enqueue_task(ReadSource * source, const QString& dir, const QString & outfilename, int tracknumber)
 {
 	QFileInfo fi(outfilename);
@@ -71,9 +82,8 @@ void AudioFileCopyConvert::dequeue_tasks()
 
 void AudioFileCopyConvert::process_task(CopyTask task)
 {
-	QString name = task.readsource->get_name();
-	int length = name.length();
-	emit taskStarted(name.left(length-28));
+	emit taskStarted(task.readsource->get_name());
+
 	uint buffersize = 16384;
 	DecodeBuffer decodebuffer;
 	
@@ -95,17 +105,17 @@ void AudioFileCopyConvert::process_task(CopyTask task)
 	spec->dataF = new audio_sample_t[buffersize * 2];
 	
 	WriteSource* writesource = new WriteSource(spec);
+	bool failedToPrepareWritesource = false;
+	int oldprogress = 0;
+
 	if (writesource->prepare_export() == -1) {
-		delete writesource;
-		delete [] spec->dataF;
-		delete spec;
-		return;
+		failedToPrepareWritesource = true;
+		goto out;
 	}
 	// Enable on the fly generation of peak data to speedup conversion 
 	// (no need to re-read all the audio files to generate peaks)
 	writesource->set_process_peaks(true);
 	
-	int oldprogress = 0;
 	do {
 		// if the user asked to stop processing, jump out of this 
 		// loop, and cleanup any resources in use.
@@ -149,10 +159,13 @@ void AudioFileCopyConvert::process_task(CopyTask task)
 		
 	
 	out:
-	writesource->finish_export();
+	if (!failedToPrepareWritesource) {
+		writesource->finish_export();
+	}
 	delete writesource;
 	delete [] spec->dataF;
 	delete spec;
+	resources_manager()->remove_source(task.readsource);
 	
 	//  The user asked to stop processing, exit the event loop
 	// and signal we're done.
