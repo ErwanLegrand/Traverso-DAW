@@ -56,11 +56,11 @@ private slots:
 	void update_template_combobox();
 	void add_files();
 	void remove_files();
-	void load_file(QString, int);
+	void load_file(QString, int, QString);
 	void show_progress(QString);
 
 signals:
-	void loadFile(QString, int);
+	void loadFile(QString, int, QString);
 };
 
 #endif

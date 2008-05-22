@@ -82,7 +82,7 @@ NewProjectDialog::NewProjectDialog( QWidget * parent )
 	connect(useTemplateCheckBox, SIGNAL(stateChanged (int)), this, SLOT(use_template_checkbox_state_changed(int)));
 	connect(pushButtonAddFiles, SIGNAL(clicked()), this, SLOT(add_files()));
 	connect(pushButtonRemoveFiles, SIGNAL(clicked()), this, SLOT(remove_files()));
-	connect(m_converter, SIGNAL(taskFinished(QString, int)), this, SLOT(load_file(QString, int)));
+	connect(m_converter, SIGNAL(taskFinished(QString, int, QString)), this, SLOT(load_file(QString, int, QString)));
 	connect(m_converter, SIGNAL(taskStarted(QString)), this, SLOT(show_progress(QString)));
 	connect(m_converter, SIGNAL(progress(int)), m_progressDialog, SLOT(setValue(int)));
 	connect(m_buttonGroup, SIGNAL(buttonClicked(int)), stackedWidget, SLOT(setCurrentIndex(int)));
@@ -210,6 +210,7 @@ void NewProjectDialog::add_files()
 		labels << "Unnamed" << finfo.fileName();
 
 		QTreeWidgetItem* item = new QTreeWidgetItem(treeWidgetFiles, labels, 0);
+		item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled);
 		item->setData(0, Qt::ToolTipRole, finfo.absoluteFilePath());
 		treeWidgetFiles->addTopLevelItem(item);
 	}
@@ -236,9 +237,12 @@ void NewProjectDialog::copy_files()
 	m_progressDialog->show();
 
 	QList<QFileInfo> list;
-	for(int n = 0; n < treeWidgetFiles->topLevelItemCount(); ++n) {
-		QTreeWidgetItem* item = treeWidgetFiles->topLevelItem(n);
+	QStringList trackNameList;
+	while(treeWidgetFiles->topLevelItemCount()) {
+		QTreeWidgetItem* item = treeWidgetFiles->takeTopLevelItem(0);
 		list.append(QFileInfo(item->data(0, Qt::ToolTipRole).toString()));
+		trackNameList.append(item->text(0));
+		delete item;
 	}
 
 	QString destination = pm().get_project()->get_root_dir() + "/audiosources/";
@@ -249,7 +253,6 @@ void NewProjectDialog::copy_files()
 		QString fn = destination + list.at(n).fileName();
 
 		// TODO: check for free disk space
-		// TODO: progress dialog for copying files
 		
 		// TODO: offer file format conversion while copying: format options widget not there yet.
 //		m_formatOptionsWidget->get_format_options(m_exportSpec);
@@ -257,11 +260,7 @@ void NewProjectDialog::copy_files()
 		ReadSource* readsource = resources_manager()->import_source(list.at(n).absolutePath() + "/", list.at(n).fileName());
 
 		if (readsource) {
-			m_converter->enqueue_task(readsource, m_exportSpec, destination, list.at(n).fileName(), n);
-	
-			// copy was successful, thus update the file path
-			QTreeWidgetItem* item = treeWidgetFiles->topLevelItem(n);
-			item->setData(0, Qt::ToolTipRole, fn);
+			m_converter->enqueue_task(readsource, m_exportSpec, destination, list.at(n).fileName(), n, trackNameList.at(n));
 		}
 	}
 }
@@ -273,14 +272,15 @@ void NewProjectDialog::load_all_files()
 	while(treeWidgetFiles->topLevelItemCount()) {
 		QTreeWidgetItem* item = treeWidgetFiles->takeTopLevelItem(0);
 		QString f = item->data(0, Qt::ToolTipRole).toString();
+		QString n = item->text(0);
 		delete item;
 
-		load_file(f, i);
+		load_file(f, i, n);
 		++i;
 	}
 }
 
-void NewProjectDialog::load_file(QString name, int i)
+void NewProjectDialog::load_file(QString name, int i, QString trackname)
 {
 	Sheet* sheet = pm().get_project()->get_current_sheet();
 
@@ -292,8 +292,11 @@ void NewProjectDialog::load_file(QString name, int i)
 		return;
 	}
 
+	Track* track = sheet->get_track_for_index(i);
+
 	Import* import = new Import(name);
-	import->set_track(sheet->get_track_for_index(i));
+	track->set_name(trackname);
+	import->set_track(track);
 	import->set_position((TimeRef)0.0);
 	if (import->create_readsource() != -1) {
 		Command::process_command(import);

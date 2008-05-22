@@ -49,12 +49,14 @@ AudioFileCopyConvert::AudioFileCopyConvert()
  * @param dir 
  * @param outfilename 
  * @param tracknumber 
+ * @param trackname
  */
 void AudioFileCopyConvert::enqueue_task(ReadSource * source,
 	ExportSpecification* spec,
 	const QString& dir,
 	const QString& outfilename,
-	int tracknumber)
+	int tracknumber,
+	const QString& trackname)
 {
 	QFileInfo fi(outfilename);
 
@@ -63,6 +65,7 @@ void AudioFileCopyConvert::enqueue_task(ReadSource * source,
 	task.outFileName = fi.completeBaseName();
 	task.extension = fi.suffix();
 	task.tracknumber = tracknumber;
+	task.trackname = trackname;
 	task.dir = dir;
 	task.spec = spec;
 	
@@ -180,7 +183,7 @@ void AudioFileCopyConvert::process_task(CopyTask task)
 		return;
 	}
 	
-	emit taskFinished(task.dir + "/" + task.outFileName + ".wav", task.tracknumber);
+	emit taskFinished(task.dir + "/" + task.outFileName + ".wav", task.tracknumber, task.trackname);
 }
 
 void AudioFileCopyConvert::stop_merging()

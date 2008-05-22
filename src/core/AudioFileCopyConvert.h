@@ -38,7 +38,7 @@ public:
 		exec();
 	}
 	
-	void enqueue_task(ReadSource* source, ExportSpecification* spec, const QString& dir, const QString& outfilename, int tracknumber);
+	void enqueue_task(ReadSource* source, ExportSpecification* spec, const QString& dir, const QString& outfilename, int tracknumber, const QString& trackname);
 	void stop_merging();
 
 		
@@ -51,6 +51,7 @@ private:
 		QString dir;
 		QString extension;
 		int tracknumber;
+		QString trackname;
 		ReadSource* readsource;
 		ExportSpecification* spec;
 	};
@@ -65,7 +66,7 @@ signals:
 	void dequeueTask();
 	void progress(int);
 	void taskStarted(QString);
-	void taskFinished(QString, int);
+	void taskFinished(QString, int, QString);
 	void processingStopped();
 };
 
