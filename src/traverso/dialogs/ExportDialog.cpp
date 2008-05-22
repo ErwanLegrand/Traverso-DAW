@@ -23,6 +23,7 @@
 #include "ui_ExportDialog.h"
 
 #include <QFileDialog>
+#include <QCloseEvent>
 
 #include "Export.h"
 #include "Information.h"
