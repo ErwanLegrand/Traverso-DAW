@@ -391,7 +391,15 @@ void ResourcesWidget::add_source(ReadSource * source)
 
 void ResourcesWidget::remove_source(ReadSource * source)
 {
-	Q_UNUSED(source);
+	SourceTreeItem* item = m_sourceindices.value(source->get_id());
+
+	if (!item) {
+		return;
+	}
+
+	m_sourceindices.remove(source->get_id());
+	sourcesTreeWidget->takeTopLevelItem(sourcesTreeWidget->indexOfTopLevelItem(item));
+	delete item;
 }
 
 void ResourcesWidget::update_clip_state(AudioClip* clip)
