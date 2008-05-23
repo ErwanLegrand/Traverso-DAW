@@ -38,117 +38,30 @@
 static const int HEIGHT_THRESHOLD = 90;
 static const float FONT_HEIGHT = 0.8;
 
-TimeLabel::TimeLabel(QWidget* parent)
-	: QFrame(parent)
-{
-	font = QApplication::font();
-	setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-	setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
-	calc_font_size();
-}
-
-void TimeLabel::set_time(QString s)
-{
-	time = s;
-	update();
-}
-
-void TimeLabel::paintEvent(QPaintEvent *)
-{
-	QPainter p(this);
-		p.setFont(font);
-		p.drawText(0, 0, width(), height(), Qt::AlignCenter, time);
-	p.end();
-}
-
-void TimeLabel::resizeEvent(QResizeEvent *)
-{
-	calc_font_size();
-	update();
-}
-
-void TimeLabel::calc_font_size()
-{
-	font.setPixelSize(int(FONT_HEIGHT * height()));
-
-	QFontMetrics fm(font);
-	int w = fm.width(time);
-
-	if (w >= width())
-	{
-		font.setPixelSize(int((FONT_HEIGHT * height() * width()) / w));
-	}
-}
-
-
 TransportConsoleWidget::TransportConsoleWidget(QWidget* parent)
-	: QWidget(parent)
+	: QToolBar(parent)
 {
 	setEnabled(false);
 
-	m_layout = new QGridLayout(this);
-	m_label = new TimeLabel(this);
-	m_label->setMinimumWidth(80);
+	m_timeLabel = new QLineEdit(this);
+	m_timeLabel->setReadOnly(true);
+	m_timeLabel->setAlignment(Qt::AlignCenter);
+	m_timeLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	m_timeLabel->setFont(themer()->get_font("Playhead:fontscale:info"));
 
-	QToolButton* buttonToStart = new QToolButton(this);
-	QToolButton* buttonToLeft = new QToolButton(this);
-	QToolButton* buttonRec = new QToolButton(this);
-	QToolButton* buttonPlay = new QToolButton(this);
-	QToolButton* buttonToRight = new QToolButton(this);
-	QToolButton* buttonToEnd = new QToolButton(this);
+	m_toStartAction = addAction(QIcon(":/skipleft"), tr("Skip to Start"), this, SLOT(to_start()));
+	m_toLeftAction = addAction(QIcon(":/seekleft"), tr("Previous Snap Position"), this, SLOT(to_left()));
+	m_recAction = addAction(QIcon(":/record"), tr("Record"), this, SLOT(rec_toggled()));
+	m_playAction = addAction(QIcon(":/playstart"), tr("Play / Stop"), this, SLOT(play_toggled()));
+	m_toRightAction = addAction(QIcon(":/seekright"), tr("Skip to End"), this, SLOT(to_right()));
+	m_toEndAction = addAction(QIcon(":/skipright"), tr("Next Snap Position"), this, SLOT(to_end()));
 
-	buttonToStart->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred));
-	buttonToLeft->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred));
-	buttonRec->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred));
-	buttonPlay->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred));
-	buttonToRight->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred));
-	buttonToEnd->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred));
-
-	m_toStartAction = new QAction(this);
-	m_toLeftAction = new QAction(this);
-	m_recAction = new QAction(this);
-	m_playAction = new QAction(this);
-	m_toEndAction = new QAction(this);
-	m_toRightAction = new QAction(this);
+	addWidget(m_timeLabel);
 
 	m_recAction->setCheckable(true);
 	m_playAction->setCheckable(true);
 
-	m_toStartAction->setIcon(QIcon(":/skipleft"));
-	m_toLeftAction->setIcon(QIcon(":/seekleft"));
-	m_recAction->setIcon(QIcon(":/record"));
-	m_playAction->setIcon(QIcon(":/playstart"));
-	m_toEndAction->setIcon(QIcon(":/skipright"));
-	m_toRightAction->setIcon(QIcon(":/seekright"));
-
-	connect(m_toStartAction, SIGNAL(triggered()), this, SLOT(to_start()));
-	connect(m_toLeftAction, SIGNAL(triggered()), this, SLOT(to_left()));
-	connect(m_recAction, SIGNAL(triggered()), this, SLOT(rec_toggled()));
-	connect(m_playAction, SIGNAL(triggered()), this, SLOT(play_toggled()));
-	connect(m_toEndAction, SIGNAL(triggered()), this, SLOT(to_end()));
-	connect(m_toRightAction, SIGNAL(triggered()), this, SLOT(to_right()));
-
-	buttonToStart->setDefaultAction(m_toStartAction);
-	buttonToLeft->setDefaultAction(m_toLeftAction);
-	buttonRec->setDefaultAction(m_recAction);
-	buttonPlay->setDefaultAction(m_playAction);
-	buttonToEnd->setDefaultAction(m_toEndAction);
-	buttonToRight->setDefaultAction(m_toRightAction);
-
-	if (height() < HEIGHT_THRESHOLD)
-	{
-		m_layout->addWidget(m_label, 1, 6, 1, 1);
-	} else {
-		m_layout->addWidget(m_label, 0, 0, 1, 6);
-	}
-	m_layout->addWidget(buttonToStart, 1, 0, 1, 1);
-	m_layout->addWidget(buttonToLeft,  1, 1, 1, 1);
-	m_layout->addWidget(buttonRec,     1, 2, 1, 1);
-	m_layout->addWidget(buttonPlay,    1, 3, 1, 1);
-	m_layout->addWidget(buttonToRight, 1, 4, 1, 1);
-	m_layout->addWidget(buttonToEnd,   1, 5, 1, 1);
-
-	m_lastSnapPosition = TimeRef(0.0);
+	m_lastSnapPosition = TimeRef();
 	m_skipTimer.setSingleShot(true);
 
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
@@ -289,32 +202,6 @@ void TransportConsoleWidget::update_recording_state()
 	}
 }
 
-void TransportConsoleWidget::resizeEvent(QResizeEvent * e)
-{
-	// position the text label depending on the widget size
-	if ((e->oldSize().height() >= HEIGHT_THRESHOLD) && (e->size().height() < HEIGHT_THRESHOLD))
-	{
-		place_label();
-	}
-
-	if ((e->oldSize().height() < HEIGHT_THRESHOLD) && (e->size().height() >= HEIGHT_THRESHOLD))
-	{
-		place_label();
-	}
-}
-
-void TransportConsoleWidget::place_label()
-{
-	if (height() < HEIGHT_THRESHOLD)
-	{
-		m_layout->removeWidget(m_label);
-		m_layout->addWidget(m_label, 1, 6, 1, 1);
-	} else {
-		m_layout->removeWidget(m_label);
-		m_layout->addWidget(m_label, 0, 0, 1, 6);
-	}
-}
-
 void TransportConsoleWidget::update_label()
 {
 	QString currentTime;
@@ -324,7 +211,7 @@ void TransportConsoleWidget::update_label()
 	} else {
 		currentTime = timeref_to_ms_2(m_sheet->get_transport_location());
 	}
-	m_label->set_time(currentTime);
+	m_timeLabel->setText(currentTime);
 }
 
 //eof

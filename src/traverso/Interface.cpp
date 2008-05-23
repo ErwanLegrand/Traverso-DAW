@@ -161,12 +161,9 @@ Interface::Interface()
 	busMonitorDW->setWidget(busMonitor);
 	addDockWidget(Qt::RightDockWidgetArea, busMonitorDW);
 	
-	transportDW = new QDockWidget(tr("Transport Console"), this);
-	transportDW->setObjectName("TransportConsoleDockWidget");
-	transportConsole = new TransportConsoleWidget(transportDW);
-	transportDW->setWidget(transportConsole);
-	addDockWidget(Qt::RightDockWidgetArea, transportDW);
-	transportDW->hide();
+	transportConsole = new TransportConsoleWidget(this);
+	transportConsole->setObjectName("Transport Console");
+	addToolBar(Qt::BottomToolBarArea, transportConsole);
 	
 	m_sysinfo = new SysInfoToolBar(this);
 	m_sysinfo->setObjectName("System Info Toolbar");
@@ -485,7 +482,7 @@ Command * Interface::show_cd_writing_dialog( )
 void Interface::create_menus( )
 {
 	QAction* action;
-	 
+
 	m_projectMenu = menuBar()->addMenu(tr("&Project"));
 	
 	action = m_projectMenu->addAction(tr("&New..."));
@@ -606,20 +603,22 @@ void Interface::create_menus( )
 	m_viewMenu->addAction(historyDW->toggleViewAction());
 	m_viewMenu->addAction(busMonitorDW->toggleViewAction());
 	m_viewMenu->addAction(AudioSourcesDW->toggleViewAction());
-	m_viewMenu->addAction(transportDW->toggleViewAction());
 
 	action = m_viewMenu->addAction(tr("Marker Editor..."));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_marker_dialog()));
-		
+
 	m_viewMenu->addSeparator();
 	
 	m_viewMenu->addAction(correlationMeterDW->toggleViewAction());
 	m_viewMenu->addAction(spectralMeterDW->toggleViewAction());
-	
+
 	m_viewMenu->addSeparator();
 	
 	m_viewMenu->addAction(m_sysinfo->toggleViewAction());
 	m_sysinfo->toggleViewAction()->setText(tr("System Information"));
+
+	m_viewMenu->addAction(transportConsole->toggleViewAction());
+	transportConsole->toggleViewAction()->setText(tr("Transport Console"));
 
 	// if unifiedTitleAndToolBarOnMac == true we don't want the main toolbars
 	// to be hidden. thus only add the menu entries on systems != OS X
@@ -642,7 +641,6 @@ void Interface::create_menus( )
 	connect(action, SIGNAL(triggered()), this, SLOT(show_newtrack_dialog()));
 
 	m_sheetMenu->addSeparator();
-
 	
 	m_settingsMenu = menuBar()->addMenu(tr("Se&ttings"));
 	

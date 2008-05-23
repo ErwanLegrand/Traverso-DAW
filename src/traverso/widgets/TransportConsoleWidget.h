@@ -23,8 +23,8 @@
 #define TRANSPORTCONSOLEWIDGET_H
 
 #include <QWidget>
-#include <QGridLayout>
-#include <QFrame>
+#include <QToolBar>
+#include <QLineEdit>
 #include <QTimer>
 #include <QEvent>
 #include <QFont>
@@ -35,42 +35,15 @@
 class Project;
 class Sheet;
 
-
-class TimeLabel : public QFrame
-{
-Q_OBJECT
-
-public:
-		TimeLabel(QWidget* parent = 0);
-		~TimeLabel() {};
-
-public slots:
-		void set_time(QString);
-
-protected:
-		void paintEvent(QPaintEvent *);
-		void resizeEvent(QResizeEvent *);
-		
-private:
-		QFont	font;
-		QString	time;
-		
-		void calc_font_size();
-};
-
-
-class TransportConsoleWidget : public QWidget
+class TransportConsoleWidget : public QToolBar
 {
 Q_OBJECT
 
 public:
 	TransportConsoleWidget(QWidget* parent);
 
-protected:
-	void resizeEvent(QResizeEvent*);
-
 private:
-	QGridLayout*	m_layout;
+	QLineEdit*	m_timeLabel;
 	Project*	m_project;
 	Sheet*		m_sheet;
 	QAction*	m_toStartAction;
@@ -79,12 +52,9 @@ private:
 	QAction*	m_playAction;
 	QAction*	m_toEndAction;
 	QAction*	m_toRightAction;
-	TimeLabel*	m_label;
 	QTimer		m_updateTimer;
 	QTimer		m_skipTimer;
 	TimeRef		m_lastSnapPosition;
-
-	void place_label();
 
 protected slots:
 	void set_project(Project*);
