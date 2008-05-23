@@ -58,6 +58,8 @@ private slots:
 	void remove_files();
 	void load_file(QString, int, QString);
 	void show_progress(QString);
+	void move_up();
+	void move_down();
 
 signals:
 	void loadFile(QString, int, QString);

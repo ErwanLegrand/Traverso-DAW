@@ -29,6 +29,7 @@
 #include <QDomDocument>
 #include <QFileDialog>
 #include <QHeaderView>
+#include <QToolButton>
 #include <QPushButton>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
@@ -40,6 +41,7 @@
 #include <QRadioButton>
 #include <QStackedWidget>
 #include <QButtonGroup>
+#include <QIcon>
 
 #include <Config.h>
 #include "Export.h"
@@ -70,6 +72,15 @@ NewProjectDialog::NewProjectDialog( QWidget * parent )
 	use_template_checkbox_state_changed(Qt::Unchecked);
 	update_template_combobox();
 
+	buttonAdd->setIcon(QIcon(":/add"));
+	buttonRemove->setIcon(QIcon(":/remove"));
+	buttonUp->setIcon(QIcon(":/up"));
+	buttonDown->setIcon(QIcon(":/down"));
+
+	buttonRemove->setEnabled(false);
+	buttonUp->setEnabled(false);
+	buttonDown->setEnabled(false);
+
 	buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
 
 	m_converter = new AudioFileCopyConvert();
@@ -80,8 +91,11 @@ NewProjectDialog::NewProjectDialog( QWidget * parent )
 	m_buttonGroup->addButton(radioButtonEmpty, 1);
 
 	connect(useTemplateCheckBox, SIGNAL(stateChanged (int)), this, SLOT(use_template_checkbox_state_changed(int)));
-	connect(pushButtonAddFiles, SIGNAL(clicked()), this, SLOT(add_files()));
-	connect(pushButtonRemoveFiles, SIGNAL(clicked()), this, SLOT(remove_files()));
+	connect(buttonAdd, SIGNAL(clicked()), this, SLOT(add_files()));
+	connect(buttonRemove, SIGNAL(clicked()), this, SLOT(remove_files()));
+	connect(buttonUp, SIGNAL(clicked()), this, SLOT(move_up()));
+	connect(buttonDown, SIGNAL(clicked()), this, SLOT(move_down()));
+
 	connect(m_converter, SIGNAL(taskFinished(QString, int, QString)), this, SLOT(load_file(QString, int, QString)));
 	connect(m_converter, SIGNAL(taskStarted(QString)), this, SLOT(show_progress(QString)));
 	connect(m_converter, SIGNAL(progress(int)), m_progressDialog, SLOT(setValue(int)));
@@ -210,9 +224,15 @@ void NewProjectDialog::add_files()
 		labels << "Unnamed" << finfo.fileName();
 
 		QTreeWidgetItem* item = new QTreeWidgetItem(treeWidgetFiles, labels, 0);
-		item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled);
+		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
 		item->setData(0, Qt::ToolTipRole, finfo.absoluteFilePath());
 		treeWidgetFiles->addTopLevelItem(item);
+	}
+
+	if (treeWidgetFiles->topLevelItemCount()) {
+		buttonRemove->setEnabled(true);
+		buttonUp->setEnabled(true);
+		buttonDown->setEnabled(true);
 	}
 }
 
@@ -229,6 +249,12 @@ void NewProjectDialog::remove_files()
 	{
 		QTreeWidgetItem *it = selection.takeLast();
 		delete it;
+	}
+
+	if (!treeWidgetFiles->topLevelItemCount()) {
+		buttonRemove->setEnabled(false);
+		buttonUp->setEnabled(false);
+		buttonDown->setEnabled(false);
 	}
 }
 
@@ -308,5 +334,65 @@ void NewProjectDialog::show_progress(QString name)
 	m_progressDialog->setLabelText(name);
 	m_progressDialog->show();
 }
+
+void NewProjectDialog::move_up()
+{
+	QList<QTreeWidgetItem*> selection = treeWidgetFiles->selectedItems();
+
+	if (selection.isEmpty())
+	{
+		return;
+	}
+
+	qSort(selection);
+	int firstIndex = treeWidgetFiles->topLevelItemCount();
+	QList<int> indexList;
+
+	foreach(QTreeWidgetItem *it, selection) {
+	    int idx = treeWidgetFiles->indexOfTopLevelItem(it);
+	    firstIndex = qMin(idx, firstIndex);
+	}
+
+	firstIndex = firstIndex > 0 ? firstIndex - 1 : firstIndex;
+
+	QList<QTreeWidgetItem*> tempList;
+	while (selection.size())
+	{
+		QTreeWidgetItem *it = treeWidgetFiles->takeTopLevelItem(treeWidgetFiles->indexOfTopLevelItem(selection.takeFirst()));
+		treeWidgetFiles->insertTopLevelItem(firstIndex, it);
+		it->setSelected(true);
+		++firstIndex;
+	}
+}
+
+
+void NewProjectDialog::move_down()
+{
+	QList<QTreeWidgetItem*> selection = treeWidgetFiles->selectedItems();
+
+	if (selection.isEmpty())
+	{
+		return;
+	}
+
+	qSort(selection);
+	int firstIndex = 0;
+	QList<int> indexList;
+
+	foreach(QTreeWidgetItem *it, selection) {
+	    int idx = treeWidgetFiles->indexOfTopLevelItem(it);
+	    firstIndex = qMax(idx, firstIndex);
+	}
+
+	firstIndex = firstIndex < treeWidgetFiles->topLevelItemCount() - 1 ? firstIndex + 1 : firstIndex;
+
+	while (selection.size()) {
+		int idx = treeWidgetFiles->indexOfTopLevelItem(selection.takeFirst());
+		QTreeWidgetItem *it = treeWidgetFiles->takeTopLevelItem(idx);
+		treeWidgetFiles->insertTopLevelItem(firstIndex, it);
+		it->setSelected(true);
+	}
+}
+
 
 //eof

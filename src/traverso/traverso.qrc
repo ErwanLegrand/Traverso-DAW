@@ -66,6 +66,12 @@
 		<file alias="snap">../../resources/images/icons/traverso-snap.png</file>
 		<file alias="effects">../../resources/images/icons/view-media-equalizer.png</file>
 		<file alias="follow">../../resources/images/icons/system-switch-user.png</file>
+
+		<file alias="up">../../resources/images/icons/arrow-up.png</file>
+		<file alias="down">../../resources/images/icons/arrow-down.png</file>
+		<file alias="add">../../resources/images/icons/list-add.png</file>
+		<file alias="remove">../../resources/images/icons/list-remove.png</file>
+
 		<file alias="traverso_nl">../../resources/translations/traverso_nl.qm</file>
 		<file alias="traverso_de">../../resources/translations/traverso_de.qm</file>
 		<file alias="traverso_fr">../../resources/translations/traverso_fr.qm</file>

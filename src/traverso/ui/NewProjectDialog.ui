@@ -115,6 +115,12 @@
    </item>
    <item>
     <widget class="QStackedWidget" name="stackedWidget" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="currentIndex" >
       <number>0</number>
      </property>
@@ -129,16 +135,16 @@
           <item>
            <layout class="QHBoxLayout" >
             <item>
-             <widget class="QPushButton" name="pushButtonAddFiles" >
+             <widget class="QToolButton" name="buttonAdd" >
               <property name="text" >
-               <string>Add Files</string>
+               <string>...</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButtonRemoveFiles" >
+             <widget class="QToolButton" name="buttonRemove" >
               <property name="text" >
-               <string>Remove Files</string>
+               <string>...</string>
               </property>
              </widget>
             </item>
@@ -154,6 +160,20 @@
                </size>
               </property>
              </spacer>
+            </item>
+            <item>
+             <widget class="QToolButton" name="buttonUp" >
+              <property name="text" >
+               <string>...</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="buttonDown" >
+              <property name="text" >
+               <string>...</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
