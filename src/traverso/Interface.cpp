@@ -613,22 +613,26 @@ void Interface::create_menus( )
 	m_viewMenu->addAction(spectralMeterDW->toggleViewAction());
 
 	m_viewMenu->addSeparator();
+	QAction* toolbars = m_viewMenu->addAction("ToolBars");
+	toolbars->setEnabled(false);
+	m_viewMenu->addSeparator();
 	
-	m_viewMenu->addAction(m_sysinfo->toggleViewAction());
-	m_sysinfo->toggleViewAction()->setText(tr("System Information"));
-
 	m_viewMenu->addAction(transportConsole->toggleViewAction());
 	transportConsole->toggleViewAction()->setText(tr("Transport Console"));
 
 	// if unifiedTitleAndToolBarOnMac == true we don't want the main toolbars
 	// to be hidden. thus only add the menu entries on systems != OS X
-	#if !defined (Q_WS_MAC)
-		m_viewMenu->addAction(m_projectToolBar->toggleViewAction());
-		m_projectToolBar->toggleViewAction()->setText(tr("Project tool bar"));
+#if !defined (Q_WS_MAC)
+	m_viewMenu->addAction(m_projectToolBar->toggleViewAction());
+	m_projectToolBar->toggleViewAction()->setText(tr("Project"));
 
-		m_viewMenu->addAction(m_editToolBar->toggleViewAction());
-		m_editToolBar->toggleViewAction()->setText(tr("Edit tool bar"));
-	#endif
+	m_viewMenu->addAction(m_editToolBar->toggleViewAction());
+	m_editToolBar->toggleViewAction()->setText(tr("Edit"));
+#endif
+
+	m_viewMenu->addAction(m_sysinfo->toggleViewAction());
+	m_sysinfo->toggleViewAction()->setText(tr("System Information"));
+
 
 	m_sheetMenu = menuBar()->addMenu(tr("&Sheet"));
 	m_sheetMenuAction = m_sheetMenu->menuAction();
