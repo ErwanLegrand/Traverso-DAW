@@ -66,6 +66,7 @@ ui/ThemeConfigPage.ui
 ui/PerformanceConfigPage.ui
 ui/SheetManagerDialog.ui
 ui/ProjectManagerDialog.ui
+ui/QuickStart.ui
 ui/MarkerDialog.ui
 ui/BusSelectorDialog.ui
 ui/OpenProjectDialog.ui
