@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier
+Copyright (C) 2005-2008 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,11 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: BusMonitor.cpp,v 1.16 2007/12/18 18:13:36 r_sijrier Exp $
 */
 
-#include <BusMonitor.h>
-#include <VUMeter.h>
+#include "BusMonitor.h"
+
+#include "VUMeter.h"
+
 #include <ProjectManager.h>
 #include <Project.h>
 #include <Themer.h>

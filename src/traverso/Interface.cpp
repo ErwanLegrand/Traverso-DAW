@@ -36,7 +36,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QStackedWidget>
 
 #include "Interface.h"
-#include "BusMonitor.h"
 #include "ProjectManager.h"
 #include "ViewPort.h"
 #include "FadeCurve.h"
@@ -48,6 +47,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "ui_QuickStart.h"
 
+#include "widgets/BusMonitor.h"
 #include "widgets/InfoWidgets.h"
 #include "widgets/ResourcesWidget.h"
 #include "widgets/CorrelationMeterWidget.h"

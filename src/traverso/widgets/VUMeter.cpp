@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: VUMeter.cpp,v 1.22 2007/12/18 18:15:01 r_sijrier Exp $
+    $Id: VUMeter.cpp,v 1.1 2008/05/24 17:41:03 r_sijrier Exp $
 */
 
 #include "VUMeter.h"

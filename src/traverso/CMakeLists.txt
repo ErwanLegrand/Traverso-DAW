@@ -22,12 +22,9 @@ ENDIF(USE_INTERNAL_SLV2_LIB)
 
 SET(TRAVERSO_GUI_SOURCES
 ${CMAKE_SOURCE_DIR}/src/common/fpu.cc
-Traverso.cpp
-BusMonitor.cpp
 Main.cpp
-PluginSelectorDialog.cpp
 Interface.cpp
-VUMeter.cpp
+Traverso.cpp
 dialogs/settings/Pages.cpp
 dialogs/settings/SettingsDialog.cpp
 dialogs/project/ProjectManagerDialog.cpp
@@ -39,17 +36,20 @@ dialogs/project/NewProjectDialog.cpp
 dialogs/project/OpenProjectDialog.cpp
 dialogs/project/NewTrackDialog.cpp
 dialogs/RestoreProjectBackupDialog.cpp
+dialogs/PluginSelectorDialog.cpp
 dialogs/ProjectConverterDialog.cpp
 dialogs/ExportDialog.cpp
 dialogs/CDWritingDialog.cpp
+widgets/BusMonitor.cpp
+widgets/CorrelationMeterWidget.cpp
 widgets/ExportFormatOptionsWidget.cpp
 widgets/InfoWidgets.cpp
 widgets/MessageWidget.cpp
 widgets/MeterWidget.cpp
 widgets/ResourcesWidget.cpp
-widgets/CorrelationMeterWidget.cpp
 widgets/SpectralMeterWidget.cpp
 widgets/TransportConsoleWidget.cpp
+widgets/VUMeter.cpp
 )
 
 SET(TRAVERSO_UI_FILES
@@ -81,16 +81,14 @@ ui/CDWritingDialog.ui
 )
 
 SET(TRAVERSO_GUI_MOC_CLASSES
-BusMonitor.h
 Interface.h
-PluginSelectorDialog.h
 Traverso.h
-VUMeter.h
 dialogs/BusSelectorDialog.h
 dialogs/CDWritingDialog.h
 dialogs/ExportDialog.h
 dialogs/InsertSilenceDialog.h
 dialogs/MarkerDialog.h
+dialogs/PluginSelectorDialog.h
 dialogs/ProjectConverterDialog.h
 dialogs/RestoreProjectBackupDialog.h
 dialogs/project/NewSheetDialog.h
@@ -100,14 +98,16 @@ dialogs/project/OpenProjectDialog.h
 dialogs/project/ProjectManagerDialog.h
 dialogs/settings/SettingsDialog.h
 dialogs/settings/Pages.h
+widgets/BusMonitor.h
+widgets/CorrelationMeterWidget.h
 widgets/ExportFormatOptionsWidget.h
 widgets/InfoWidgets.h
 widgets/ResourcesWidget.h
 widgets/MessageWidget.h
 widgets/MeterWidget.h
 widgets/SpectralMeterWidget.h
-widgets/CorrelationMeterWidget.h
 widgets/TransportConsoleWidget.h
+widgets/VUMeter.h
 )
 
 QT4_ADD_RESOURCES(TRAVERSO_RESOURCES
