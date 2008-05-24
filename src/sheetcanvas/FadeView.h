@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeView.h,v 1.1 2008/01/21 16:17:28 r_sijrier Exp $
+$Id: FadeView.h,v 1.2 2008/05/24 17:27:49 r_sijrier Exp $
 */
 
 #ifndef FADE_VIEW_H
@@ -27,7 +27,6 @@ $Id: FadeView.h,v 1.1 2008/01/21 16:17:28 r_sijrier Exp $
 
 class Curve;
 class FadeCurve;
-class FadeContextDialog;
 class AudioClipView;
 
 class FadeView : public ViewItem
