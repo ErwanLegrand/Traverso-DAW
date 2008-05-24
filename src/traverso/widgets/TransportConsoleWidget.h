@@ -24,7 +24,7 @@
 
 #include <QWidget>
 #include <QToolBar>
-#include <QLineEdit>
+#include <QToolButton>
 #include <QTimer>
 #include <QEvent>
 #include <QFont>
@@ -43,7 +43,7 @@ public:
 	TransportConsoleWidget(QWidget* parent);
 
 private:
-	QLineEdit*	m_timeLabel;
+	QToolButton*	m_timeLabel;
 	Project*	m_project;
 	Sheet*		m_sheet;
 	QAction*	m_toStartAction;

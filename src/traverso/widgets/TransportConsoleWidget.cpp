@@ -43,11 +43,16 @@ TransportConsoleWidget::TransportConsoleWidget(QWidget* parent)
 {
 	setEnabled(false);
 
-	m_timeLabel = new QLineEdit(this);
-	m_timeLabel->setReadOnly(true);
-	m_timeLabel->setAlignment(Qt::AlignCenter);
-	m_timeLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	m_timeLabel->setFont(themer()->get_font("Playhead:fontscale:info"));
+	m_timeLabel = new QToolButton(this);
+	m_timeLabel->setStyleSheet(
+			"color: lime;"
+			"background-color: black;"
+			"selection-color: yellow;"
+			"font: 20px;"
+			"border: 2px solid gray;"
+			"border-radius: 10px;"
+			"padding: 0 10 0 10;"); 
+// 	m_timeLabel->setFont(themer()->get_font("Playhead:fontscale:info"));
 
 	m_toStartAction = addAction(QIcon(":/skipleft"), tr("Skip to Start"), this, SLOT(to_start()));
 	m_toLeftAction = addAction(QIcon(":/seekleft"), tr("Previous Snap Position"), this, SLOT(to_left()));
