@@ -88,6 +88,14 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 	resize(500, 400);
 }
 
+void SettingsDialog::show_page(const QString & page)
+{
+	if (page == "Sound System") {
+		contentsWidget->setCurrentRow(2);
+	}
+}
+
+
 void SettingsDialog::createIcons()
 {
 	QListWidgetItem* behaviorButton = new QListWidgetItem(contentsWidget);

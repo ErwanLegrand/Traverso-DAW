@@ -1187,6 +1187,12 @@ void Interface::show_settings_dialog()
 	m_settingsdialog->show();
 }
 
+void Interface::show_settings_dialog_sound_system_page()
+{
+	show_settings_dialog();
+	m_settingsdialog->show_page("Sound System");
+}
+
 
 void Interface::closeEvent(QCloseEvent * event)
 {
@@ -1570,5 +1576,4 @@ void Interface::sheet_selector_sheet_removed(Sheet* sheet)
 	disconnect(sheet, SIGNAL(propertyChanged()), this, SLOT(sheet_selector_update_sheets()));
 	sheet_selector_update_sheets();
 }
-
 

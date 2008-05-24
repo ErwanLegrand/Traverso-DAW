@@ -47,8 +47,6 @@ class QToolBar;
 class QToolButton;
 class ResourcesWidget;
 class ResourcesInfoWidget;
-class DriverInfoWidget;
-class HDDSpaceInfoWidget;
 class SheetWidget;
 class CorrelationMeterWidget;
 class SpectralMeterWidget;
@@ -156,10 +154,6 @@ private:
 	QMenu*			m_helpMenu;
 	QList<QAction*>		m_currentSheetActions;
 	
-	ResourcesInfoWidget*	resourcesInfo;
-	DriverInfoWidget*	driverInfo;
-	HDDSpaceInfoWidget*	hddInfo;
-	
 	void create_menus();
 	void save_config_and_emit_message(const QString& message);
 	
@@ -172,6 +166,7 @@ public slots :
 	void set_project(Project* project);
 	void show_sheet(Sheet* sheet);
 	void show_settings_dialog();
+	void show_settings_dialog_sound_system_page();
 	void open_help_browser();
 	void process_context_menu_action(QAction* action);
 	void set_fade_in_shape(QAction* action);

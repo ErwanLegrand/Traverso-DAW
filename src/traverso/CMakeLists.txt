@@ -29,7 +29,6 @@ Main.cpp
 PluginSelectorDialog.cpp
 Interface.cpp
 VUMeter.cpp
-QuickDriverConfigWidget.cpp
 dialogs/settings/Pages.cpp
 dialogs/settings/SettingsDialog.cpp
 dialogs/project/ProjectManagerDialog.cpp
@@ -58,7 +57,6 @@ SET(TRAVERSO_UI_FILES
 ui/AudioSourcesManagerWidget.ui
 ui/ExportFormatOptionsWidget.ui
 ui/SpectralMeterConfigWidget.ui
-ui/QuickDriverConfigWidget.ui
 ui/DriverConfigPage.ui
 ui/AlsaDevicesPage.ui
 ui/PaDriverPage.ui
@@ -76,7 +74,6 @@ ui/NewProjectDialog.ui
 ui/NewSheetDialog.ui
 ui/NewTrackDialog.ui
 ui/ResourcesWidget.ui
-ui/QuickStart.ui
 ui/InsertSilenceDialog.ui
 ui/RestoreProjectBackupDialog.ui
 ui/ProjectConverterDialog.ui
@@ -88,7 +85,6 @@ SET(TRAVERSO_GUI_MOC_CLASSES
 BusMonitor.h
 Interface.h
 PluginSelectorDialog.h
-QuickDriverConfigWidget.h
 Traverso.h
 VUMeter.h
 dialogs/BusSelectorDialog.h

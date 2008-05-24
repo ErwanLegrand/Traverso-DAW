@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2007 Remon Sijrier 
+Copyright (C) 2005-2008 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -21,19 +21,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "InfoWidgets.h"
 
-#include "libtraversocore.h"
-#include "Themer.h"
+#include "AudioDevice.h"
+#include "Config.h"
 #include "DiskIO.h"
-#include <AudioDevice.h>
-#include <Utils.h>
-#include "QuickDriverConfigWidget.h"
+#include "Interface.h"
 #include "MessageWidget.h" 
-#include <Interface.h>
+#include "Project.h"
+#include "ProjectManager.h"
+#include "Sheet.h"
+#include "Themer.h"
+#include "Track.h"
+#include "Utils.h"
 
-#include <QPixmap>
+#include <QPainter>
 #include <QByteArray>
-#include <QDesktopWidget>
 #include <QPalette>
+#include <QPushButton>
+#include <QHBoxLayout>
+#include <QAction>
+
 
 #if defined (Q_WS_WIN)
 #include <Windows.h>
@@ -151,8 +157,6 @@ DriverInfo::DriverInfo( QWidget * parent )
 	m_driver->setFlat(true);
 	m_driver->setFocusPolicy(Qt::NoFocus);
 	
-	driverConfigWidget = 0;
-	
 	QHBoxLayout* lay = new QHBoxLayout(this);
 	lay->addWidget(m_driver);
 	lay->setMargin(0);
@@ -162,7 +166,7 @@ DriverInfo::DriverInfo( QWidget * parent )
 	
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(update_driver_info()));
 	connect(&audiodevice(), SIGNAL(bufferUnderRun()), this, SLOT(update_xrun_info()));
-	connect(m_driver, SIGNAL(clicked( bool )), this, SLOT(show_driver_config_widget()));
+	connect(m_driver, SIGNAL(clicked( bool )), this, SLOT(show_driver_config_dialog()));
 	
 	update_driver_info();
 }
@@ -216,26 +220,9 @@ void DriverInfo::leaveEvent(QEvent * event)
 }
 
 
-void DriverInfo::show_driver_config_widget( )
+void DriverInfo::show_driver_config_dialog( )
 {
-	if (! driverConfigWidget) {
-		driverConfigWidget = new QuickDriverConfigWidget(m_driver);
-	}
-	
-	
-	QRect rect = QApplication::desktop()->screenGeometry();
-	QPoint pos = QCursor::pos();
-	
-	if ( (pos.y() + driverConfigWidget->height() + 30) > rect.height()) {
-		pos.setY(pos.y() - driverConfigWidget->height());
-	}
-	
-	if ( (pos.x() + driverConfigWidget->width() + 20) > rect.width()) {
-		pos.setX(pos.x() - driverConfigWidget->width());
-	}
-	
-	driverConfigWidget->move(pos);
-	driverConfigWidget->show();
+	Interface::instance()->show_settings_dialog_sound_system_page();
 }
 
 

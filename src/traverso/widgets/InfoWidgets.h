@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2007 Remon Sijrier 
+    Copyright (C) 2005-2008 Remon Sijrier 
  
     This file is part of Traverso
  
@@ -22,22 +22,16 @@
 #ifndef RESOURCES_INFO_WIDGET_H
 #define RESOURCES_INFO_WIDGET_H
 
-#include <QPushButton>
-#include <QComboBox>
-#include <QAction>
 #include <QToolBar>
-#include <QToolButton>
 #include <QTimer>
-#include <QLabel>
 #include <QFrame>
-#include <QProgressBar>
-#include <QMenu>
 
 class Project;
 class Sheet;
-class QuickDriverConfigWidget;
 class MessageWidget;
 class SystemValueBar;
+
+class QPushButton;
 
 
 class InfoWidget : public QFrame
@@ -105,14 +99,13 @@ private:
         QTimer		updateTimer;
 	QPushButton*	m_driver;
         int		xrunCount;
-	QuickDriverConfigWidget* driverConfigWidget;
 	
 	void draw_information();
 
 private slots:
         void update_driver_info();
         void update_xrun_info();
-	void show_driver_config_widget();
+	void show_driver_config_dialog();
 };
 
 

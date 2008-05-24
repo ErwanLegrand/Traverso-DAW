@@ -35,6 +35,8 @@ class SettingsDialog : public QDialog
 public:
 	SettingsDialog(QWidget* parent=0);
 	
+	void show_page(const QString& page);
+	
 public slots:
 	void changePage(QListWidgetItem *current, QListWidgetItem *previous);
 	
