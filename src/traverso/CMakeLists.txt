@@ -24,7 +24,6 @@ SET(TRAVERSO_GUI_SOURCES
 ${CMAKE_SOURCE_DIR}/src/common/fpu.cc
 Traverso.cpp
 BusMonitor.cpp
-ContextDialog.cpp
 Main.cpp
 PluginSelectorDialog.cpp
 Interface.cpp

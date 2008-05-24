@@ -25,7 +25,6 @@ ClipsViewPort.cpp
 Cursors.cpp
 CurveNodeView.cpp
 CurveView.cpp
-FadeContextDialogView.cpp
 FadeView.cpp
 MarkerView.cpp
 PluginChainView.cpp
