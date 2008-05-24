@@ -106,7 +106,7 @@ void SettingsDialog::createIcons()
 	
 	QListWidgetItem* driverButton = new QListWidgetItem(contentsWidget);
 	driverButton->setIcon(QIcon(":/audiocard"));
-	driverButton->setText(tr("Audio Driver"));
+	driverButton->setText(tr("Sound System"));
 	driverButton->setTextAlignment(Qt::AlignHCenter);
 	driverButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	driverButton->setSizeHint(QSize(100, 50));
