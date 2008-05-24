@@ -238,6 +238,11 @@ void AudioDriverPage::load_config( )
 		m_alsadevices->ditherShapeComboBox->setCurrentIndex(shapeIndex);
 	}
 	
+	// Always add the 'default' device
+	m_alsadevices->devicesCombo->addItem(tr("System default"), "default");
+	
+	// Iterate over the maximum number of devices that can be in a system
+	// according to alsa, and add them to the devices list.
 	QString name;
 	for (int i=0; i<6; ++i) {
 		name = AlsaDriver::alsa_device_name(false, i);
