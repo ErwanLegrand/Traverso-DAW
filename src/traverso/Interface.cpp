@@ -1178,7 +1178,10 @@ void Interface::import_audio()
 	}
 
 	TimeLine* tl = currentSheetWidget->get_sheet()->get_timeline();
-	int n = 1;
+	int n = tl->get_markers().size() + 1;
+	if (tl->has_end_marker()) {
+		n -= 1;
+	}
 
 	while(!files.isEmpty()) {
 		QString file = files.takeFirst();
@@ -1198,8 +1201,13 @@ void Interface::import_audio()
 		++n;
 	}
 
-	Marker* m = new Marker(tl, position, Marker::ENDMARKER);
-	Command::process_command(tl->add_marker(m, true));
+	if (tl->has_end_marker()) {
+		Marker* m = tl->get_end_marker();
+		m->set_when(position);
+	} else {
+		Marker* m = new Marker(tl, position, Marker::ENDMARKER);
+		Command::process_command(tl->add_marker(m, true));
+	}
 
 	delete importClips;
 }

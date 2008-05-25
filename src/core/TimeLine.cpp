@@ -162,6 +162,18 @@ bool TimeLine::has_end_marker()
 	return false;
 }
 
+
+Marker* TimeLine::get_end_marker()
+{
+	foreach(Marker* marker, m_markers) {
+		if (marker->get_type() == Marker::ENDMARKER) {
+			return marker;
+		}
+	}
+
+	return (Marker*)0;
+}
+
 void TimeLine::marker_position_changed()
 {
 	qSort(m_markers.begin(), m_markers.end(), smallerMarker);

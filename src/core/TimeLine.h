@@ -46,6 +46,7 @@ public:
 	Sheet *get_sheet() const {return m_sheet;}
 	
 	Marker* get_marker(qint64 id);
+	Marker* get_end_marker();
 	bool get_end_location(TimeRef& location);
 	bool get_start_location(TimeRef& location);
 	bool has_end_marker();
