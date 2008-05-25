@@ -530,4 +530,46 @@ void SystemValueBar::add_range_color(float x0, float x1, QColor color)
 	m_rangecolors.append(range);
 }
 
+ProgressToolBar::ProgressToolBar(QWidget* parent)
+	: QToolBar(parent)
+{
+	m_progressBar = new QProgressBar(this);
+	m_label = new QLabel(this);
+	addWidget(m_label);
+	addWidget(m_progressBar);
+	m_progressBar->setEnabled(false);
+	m_label->setEnabled(false);
+}
+
+ProgressToolBar::~ProgressToolBar()
+{
+}
+
+QSize ProgressToolBar::sizeHint() const
+{
+	return QSize(100, SONG_TOOLBAR_HEIGHT);
+}
+
+void ProgressToolBar::set_progress(int i)
+{
+	if (i == m_progressBar->maximum()) {
+		m_progressBar->reset();
+		m_progressBar->setEnabled(false);
+		m_label->setEnabled(false);
+		return;
+	}
+
+	if (!m_progressBar->isEnabled()) {
+		m_progressBar->setEnabled(true);
+		m_label->setEnabled(true);
+	}
+
+	m_progressBar->setValue(i);
+}
+
+void ProgressToolBar::set_label(QString s)
+{
+	m_label->setText(tr("Copying file ") + s);
+}
+
 //eof

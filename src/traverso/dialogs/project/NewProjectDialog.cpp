@@ -37,7 +37,6 @@
 #include <QFileInfo>
 #include <QFile>
 #include <QCheckBox>
-#include <QProgressDialog>
 #include <QRadioButton>
 #include <QStackedWidget>
 #include <QButtonGroup>
@@ -84,7 +83,6 @@ NewProjectDialog::NewProjectDialog( QWidget * parent )
 	buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
 
 	m_converter = new AudioFileCopyConvert();
-	m_progressDialog = new QProgressDialog(this);
 	m_exportSpec = new ExportSpecification;
 	m_buttonGroup = new QButtonGroup(this);
 	m_buttonGroup->addButton(radioButtonImport, 0);
@@ -97,8 +95,6 @@ NewProjectDialog::NewProjectDialog( QWidget * parent )
 	connect(buttonDown, SIGNAL(clicked()), this, SLOT(move_down()));
 
 	connect(m_converter, SIGNAL(taskFinished(QString, int, QString)), this, SLOT(load_file(QString, int, QString)));
-	connect(m_converter, SIGNAL(taskStarted(QString)), this, SLOT(show_progress(QString)));
-	connect(m_converter, SIGNAL(progress(int)), m_progressDialog, SLOT(setValue(int)));
 	connect(m_buttonGroup, SIGNAL(buttonClicked(int)), stackedWidget, SLOT(setCurrentIndex(int)));
 }
 
@@ -260,8 +256,6 @@ void NewProjectDialog::remove_files()
 
 void NewProjectDialog::copy_files()
 {
-	m_progressDialog->show();
-
 	QList<QFileInfo> list;
 	QStringList trackNameList;
 	while(treeWidgetFiles->topLevelItemCount()) {
@@ -329,12 +323,6 @@ void NewProjectDialog::load_file(QString name, int i, QString trackname)
 	}
 }
 
-void NewProjectDialog::show_progress(QString name)
-{
-	m_progressDialog->setLabelText(name);
-	m_progressDialog->show();
-}
-
 void NewProjectDialog::move_up()
 {
 	QList<QTreeWidgetItem*> selection = treeWidgetFiles->selectedItems();
@@ -365,7 +353,6 @@ void NewProjectDialog::move_up()
 	}
 }
 
-
 void NewProjectDialog::move_down()
 {
 	QList<QTreeWidgetItem*> selection = treeWidgetFiles->selectedItems();
@@ -394,5 +381,8 @@ void NewProjectDialog::move_down()
 	}
 }
 
-
+AudioFileCopyConvert* NewProjectDialog::get_converter()
+{
+	return m_converter;
+}
 //eof

@@ -25,6 +25,8 @@
 #include <QToolBar>
 #include <QTimer>
 #include <QFrame>
+#include <QProgressBar>
+#include <QLabel>
 
 class Project;
 class Sheet;
@@ -177,6 +179,26 @@ private:
 	float m_max;
 	float m_current;
 	bool m_introunding;
+};
+
+class ProgressToolBar : public QToolBar
+{
+	Q_OBJECT
+
+public:
+	ProgressToolBar(QWidget* parent);
+	~ProgressToolBar();
+
+public slots:
+	void set_progress(int);
+	void set_label(QString);
+
+protected:
+	QSize sizeHint () const;
+
+private:
+	QProgressBar*	m_progressBar;
+	QLabel*		m_label;
 };
 
 #endif

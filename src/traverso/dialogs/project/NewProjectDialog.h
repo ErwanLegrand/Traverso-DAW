@@ -27,7 +27,6 @@
 
 class AudioFileCopyConvert;
 class ExportFormatOptionsWidget;
-class QProgressDialog;
 class QButtonGroup;
 struct ExportSpecification;
 
@@ -40,9 +39,10 @@ public:
 	NewProjectDialog(QWidget* parent = 0);
 	~NewProjectDialog();
 
+	AudioFileCopyConvert* get_converter();
+
 private:
 	AudioFileCopyConvert* m_converter;
-	QProgressDialog* m_progressDialog;
 	ExportSpecification* m_exportSpec;
 	ExportFormatOptionsWidget* m_formatOptionsWidget;
 	QButtonGroup* m_buttonGroup;
@@ -57,7 +57,6 @@ private slots:
 	void add_files();
 	void remove_files();
 	void load_file(QString, int, QString);
-	void show_progress(QString);
 	void move_up();
 	void move_down();
 

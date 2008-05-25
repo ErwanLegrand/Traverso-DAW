@@ -64,6 +64,7 @@ class NewTrackDialog;
 class NewProjectDialog;
 class Ui_QuickStartDialog;
 class RestoreProjectBackupDialog;
+class ProgressToolBar;
 struct MenuData;
 
 class Interface : public QMainWindow
@@ -112,7 +113,6 @@ private:
 	QDockWidget*		AudioSourcesDW;
 	ResourcesWidget* 	audiosourcesview;
 	QDockWidget*		correlationMeterDW;
-	QDockWidget*		transportDW;
 	CorrelationMeterWidget*	correlationMeter;
 	TransportConsoleWidget*	transportConsole;
 	QDockWidget*		spectralMeterDW;
@@ -123,6 +123,7 @@ private:
 	InsertSilenceDialog*	m_insertSilenceDialog;
 	MarkerDialog*		m_markerDialog;
 	SysInfoToolBar* 	m_sysinfo;
+	ProgressToolBar*	m_progressBar;
 	BusSelectorDialog*	m_busSelector;
 	NewSheetDialog*		m_newSheetDialog;
 	NewTrackDialog*		m_newTrackDialog;
