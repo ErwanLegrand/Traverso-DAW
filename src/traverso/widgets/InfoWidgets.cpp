@@ -534,34 +534,38 @@ ProgressToolBar::ProgressToolBar(QWidget* parent)
 	: QToolBar(parent)
 {
 	m_progressBar = new QProgressBar(this);
-	m_label = new QLabel(this);
-	addWidget(m_label);
+	m_progressBar->setMinimumWidth(800);
 	addWidget(m_progressBar);
 	m_progressBar->setEnabled(false);
-	m_label->setEnabled(false);
+	filecount = 1;
+	filenum = 1;
+
+	QString style = "QProgressBar {border: 2px solid grey;border-radius: 5px; height: 10px; width 300px; text-align: center;}" 
+"QProgressBar::chunk {background-color: qlineargradient(x1: 0, y1: 0, x2: 1.0, y2: 1.0,stop: 0 white, stop: 1 navy);}";
+
+        m_progressBar->setStyleSheet(style);
 }
 
 ProgressToolBar::~ProgressToolBar()
 {
 }
 
-QSize ProgressToolBar::sizeHint() const
-{
-	return QSize(100, SONG_TOOLBAR_HEIGHT);
-}
-
 void ProgressToolBar::set_progress(int i)
 {
 	if (i == m_progressBar->maximum()) {
-		m_progressBar->reset();
-		m_progressBar->setEnabled(false);
-		m_label->setEnabled(false);
-		return;
+		if (filenum == filecount) {
+			hide();
+			m_progressBar->reset();
+			m_progressBar->setEnabled(false);
+			return;
+		} else {
+			++filenum;
+		}
 	}
 
 	if (!m_progressBar->isEnabled()) {
 		m_progressBar->setEnabled(true);
-		m_label->setEnabled(true);
+		show();
 	}
 
 	m_progressBar->setValue(i);
@@ -569,7 +573,14 @@ void ProgressToolBar::set_progress(int i)
 
 void ProgressToolBar::set_label(QString s)
 {
-	m_label->setText(tr("Copying file ") + s);
+	Q_UNUSED(s);
+	m_progressBar->setFormat(tr("Importing file %1 of %2: %p%").arg(filenum).arg(filecount));
+}
+
+void ProgressToolBar::set_num_files(int i)
+{
+	filecount = i;
+	filenum = 1;
 }
 
 //eof

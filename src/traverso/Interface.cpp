@@ -177,6 +177,7 @@ Interface::Interface()
 	m_progressBar = new ProgressToolBar(this);
 	m_progressBar->setObjectName("Progress Toolbar");
 	addToolBar(Qt::BottomToolBarArea, m_progressBar);
+	m_progressBar->hide();
 
 	m_projectToolBar = new QToolBar(this);
 	m_projectToolBar->setObjectName("Project Toolbar");
@@ -641,9 +642,6 @@ void Interface::create_menus( )
 
 	m_viewMenu->addAction(m_sysinfo->toggleViewAction());
 	m_sysinfo->toggleViewAction()->setText(tr("System Information"));
-
-	m_viewMenu->addAction(m_progressBar->toggleViewAction());
-	m_progressBar->toggleViewAction()->setText(tr("Progress Bar"));
 
 	m_sheetMenu = menuBar()->addMenu(tr("&Sheet"));
 	m_sheetMenuAction = m_sheetMenu->menuAction();
@@ -1292,6 +1290,7 @@ Command * Interface::show_newproject_dialog()
 		AudioFileCopyConvert* m_converter = m_newProjectDialog->get_converter();
 		connect(m_converter, SIGNAL(taskStarted(QString)), m_progressBar, SLOT(set_label(QString)));
 		connect(m_converter, SIGNAL(progress(int)), m_progressBar, SLOT(set_progress(int)));
+		connect(m_newProjectDialog, SIGNAL(number_of_files(int)), m_progressBar, SLOT(set_num_files(int)));
 	}
 	m_newProjectDialog->show();
 	return 0;

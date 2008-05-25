@@ -26,7 +26,6 @@
 #include <QTimer>
 #include <QFrame>
 #include <QProgressBar>
-#include <QLabel>
 
 class Project;
 class Sheet;
@@ -192,13 +191,12 @@ public:
 public slots:
 	void set_progress(int);
 	void set_label(QString);
-
-protected:
-	QSize sizeHint () const;
+	void set_num_files(int);
 
 private:
 	QProgressBar*	m_progressBar;
-	QLabel*		m_label;
+	int		filecount;
+	int		filenum;
 };
 
 #endif
