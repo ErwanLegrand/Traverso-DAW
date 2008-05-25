@@ -35,6 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QTextStream>
 #include <QStackedWidget>
 #include <QFileDialog>
+#include <QFileInfo>
 
 #include "Interface.h"
 #include "ProjectManager.h"
@@ -43,6 +44,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Config.h"
 #include "Plugin.h"
 #include "Import.h"
+#include "TimeLine.h"
 
 #include "../sheetcanvas/SheetWidget.h"
 
@@ -1175,15 +1177,29 @@ void Interface::import_audio()
 		position = (track->get_cliplist().last())->get_track_end_location();
 	}
 
+	TimeLine* tl = currentSheetWidget->get_sheet()->get_timeline();
+	int n = 1;
+
 	while(!files.isEmpty()) {
-		Import* import = new Import(files.takeFirst());
+		QString file = files.takeFirst();
+		Import* import = new Import(file);
 		import->set_track(track);
 		import->set_position(position);
+
+		QFileInfo fi(file);
+		Marker* m = new Marker(tl, position);
+		m->set_description(QString(tr("%1: %2")).arg(n).arg(fi.baseName()));
+
 		if (import->create_readsource() != -1) {
 			position += import->readsource()->get_length();
 			Command::process_command(import);
+			Command::process_command(tl->add_marker(m, true));
 		}
+		++n;
 	}
+
+	Marker* m = new Marker(tl, position, Marker::ENDMARKER);
+	Command::process_command(tl->add_marker(m, true));
 
 	delete importClips;
 }
