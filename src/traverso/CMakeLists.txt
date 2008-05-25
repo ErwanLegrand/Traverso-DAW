@@ -35,6 +35,7 @@ dialogs/project/NewSheetDialog.cpp
 dialogs/project/NewProjectDialog.cpp
 dialogs/project/OpenProjectDialog.cpp
 dialogs/project/NewTrackDialog.cpp
+dialogs/project/ImportClipsDialog.cpp
 dialogs/RestoreProjectBackupDialog.cpp
 dialogs/PluginSelectorDialog.cpp
 dialogs/ProjectConverterDialog.cpp
@@ -79,6 +80,7 @@ ui/RestoreProjectBackupDialog.ui
 ui/ProjectConverterDialog.ui
 ui/ExportDialog.ui
 ui/CDWritingDialog.ui
+ui/ImportClipsDialog.ui
 )
 
 SET(TRAVERSO_GUI_MOC_CLASSES
@@ -95,6 +97,7 @@ dialogs/RestoreProjectBackupDialog.h
 dialogs/project/NewSheetDialog.h
 dialogs/project/NewTrackDialog.h
 dialogs/project/NewProjectDialog.h
+dialogs/project/ImportClipsDialog.h
 dialogs/project/OpenProjectDialog.h
 dialogs/project/ProjectManagerDialog.h
 dialogs/settings/SettingsDialog.h

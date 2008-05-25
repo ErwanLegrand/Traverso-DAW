@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QDesktopServices>
 #include <QTextStream>
 #include <QStackedWidget>
+#include <QFileDialog>
 
 #include "Interface.h"
 #include "ProjectManager.h"
@@ -67,6 +68,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "dialogs/ProjectConverterDialog.h"
 #include "dialogs/ExportDialog.h"
 #include "dialogs/CDWritingDialog.h"
+#include "dialogs/project/ImportClipsDialog.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -1141,19 +1143,49 @@ void Interface::config_changed()
 
 void Interface::import_audio()
 {
-	if (currentSheetWidget->get_sheet()->get_numtracks() > 0) {
-		QList<Track*> tracks = currentSheetWidget->get_sheet()->get_tracks();
-		Track*	shortestTrack = tracks.first();
+	if (!currentSheetWidget->get_sheet()->get_numtracks()) {
+		return;
+	}
 
-		foreach(Track* track, tracks) {
-			if (!track->get_cliplist().isEmpty() && (track->get_cliplist().last())->get_track_end_location() > (shortestTrack->get_cliplist().last())->get_track_end_location()) {
-				shortestTrack = track;
-			}
+	QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Audio Files"),
+			config().get_property("Project", "directory", "/directory/unknown").toString(),
+			tr("Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)"));
+
+	QList<Track*> tracks = currentSheetWidget->get_sheet()->get_tracks();
+	Track*	track = tracks.first();
+	bool markers = false;
+
+	ImportClipsDialog *importClips = new ImportClipsDialog(this);
+
+	importClips->set_tracks(tracks);
+
+	if (importClips->exec() == QDialog::Accepted) {
+		if (!importClips->has_tracks()) {
+			delete importClips;
+			return;
 		}
 
-		Import* cmd = new Import(shortestTrack, TimeRef());
-		Command::process_command(cmd);
+		track = importClips->get_selected_track();
+		markers = importClips->get_add_markers();
 	}
+
+	// append the clips to the selected track
+	TimeRef position = TimeRef();
+	if (!track->get_cliplist().isEmpty()) {
+		position = (track->get_cliplist().last())->get_track_end_location();
+	}
+
+	while(!files.isEmpty()) {
+		Import* import = new Import(files.takeFirst());
+		import->set_track(track);
+		import->set_position(position);
+		if (import->create_readsource() != -1) {
+			position += import->readsource()->get_length();
+			Command::process_command(import);
+		}
+	}
+
+	delete importClips;
 }
 
 DigitalClock::DigitalClock(QWidget *parent)

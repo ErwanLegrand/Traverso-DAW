@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Import.h,v 1.9 2008/05/21 11:11:33 r_sijrier Exp $
+    $Id: Import.h,v 1.10 2008/05/25 13:59:10 n_doebelin Exp $
 */
 
 #ifndef IMPORT_H
@@ -46,6 +46,7 @@ public :
 	void create_audioclip();
 	void set_track(Track* track);
 	void set_position(const TimeRef& position);
+	ReadSource* readsource() {return m_source;};
 
 private :
         Track* 		m_track;
