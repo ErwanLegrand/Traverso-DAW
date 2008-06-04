@@ -23,20 +23,13 @@
 #include "libtraversocore.h"
 #include "Themer.h"
 
-#include <QPixmap>
-#include <QGridLayout>
-#include <QToolButton>
 #include <QAction>
-#include <QSize>
-#include <QFrame>
-#include <QApplication>
+#include <QToolButton>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-static const int HEIGHT_THRESHOLD = 90;
-static const float FONT_HEIGHT = 0.8;
 
 TransportConsoleWidget::TransportConsoleWidget(QWidget* parent)
 	: QToolBar(parent)
@@ -47,11 +40,11 @@ TransportConsoleWidget::TransportConsoleWidget(QWidget* parent)
 	m_timeLabel->setStyleSheet(
 			"color: lime;"
 			"background-color: black;"
-			"font: 20px;"
+			"font: 19px;"
 			"border: 2px solid gray;"
 			"border-radius: 10px;"
-			"padding: 0 10 0 10;"); 
-// 	m_timeLabel->setFont(themer()->get_font("Playhead:fontscale:info"));
+			"padding: 0 8 0 8;"); 
+	m_timeLabel->setMaximumHeight(m_timeLabel->height() - 2);
 
 	m_toStartAction = addAction(QIcon(":/skipleft"), tr("Skip to Start"), this, SLOT(to_start()));
 	m_toLeftAction = addAction(QIcon(":/seekleft"), tr("Previous Snap Position"), this, SLOT(to_left()));
@@ -107,8 +100,8 @@ void TransportConsoleWidget::set_sheet(Sheet* sheet)
 
 void TransportConsoleWidget::to_start()
 {
-	m_sheet->set_transport_pos((TimeRef)0.0);
-	m_sheet->set_work_at((TimeRef)0.0);
+	m_sheet->set_transport_pos((TimeRef()));
+	m_sheet->set_work_at((TimeRef()));
 }
 
 // the timer is used to allow 'hopping' to the left from snap position to snap position
