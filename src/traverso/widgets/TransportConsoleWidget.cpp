@@ -50,8 +50,8 @@ TransportConsoleWidget::TransportConsoleWidget(QWidget* parent)
 	m_toLeftAction = addAction(QIcon(":/seekleft"), tr("Previous Snap Position"), this, SLOT(to_left()));
 	m_recAction = addAction(QIcon(":/record"), tr("Record"), this, SLOT(rec_toggled()));
 	m_playAction = addAction(QIcon(":/playstart"), tr("Play / Stop"), this, SLOT(play_toggled()));
-	m_toRightAction = addAction(QIcon(":/seekright"), tr("Skip to End"), this, SLOT(to_right()));
-	m_toEndAction = addAction(QIcon(":/skipright"), tr("Next Snap Position"), this, SLOT(to_end()));
+	m_toRightAction = addAction(QIcon(":/seekright"), tr("Next Snap Position"), this, SLOT(to_right()));
+	m_toEndAction = addAction(QIcon(":/skipright"), tr("Skip to End"), this, SLOT(to_end()));
 
 	addWidget(m_timeLabel);
 
