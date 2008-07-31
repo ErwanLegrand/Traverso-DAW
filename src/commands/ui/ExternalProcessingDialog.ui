@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>ExternalProcessing</class>
- <widget class="QDialog" name="ExternalProcessing" >
+ <class>ExternalProcessingDialog</class>
+ <widget class="QDialog" name="ExternalProcessingDialog" >
   <property name="geometry" >
    <rect>
     <x>0</x>

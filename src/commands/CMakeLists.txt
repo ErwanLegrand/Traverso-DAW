@@ -13,9 +13,11 @@ ${QT_QTXML_INCLUDE_DIR}
 )
 
 SET(TRAVERSO_COMMANDS_SOURCES
+AudioClipExternalProcessing.cpp
 AddRemove.cpp
 ClipSelection.cpp
 CommandGroup.cpp
+ExternalProcessingDialog.cpp
 Fade.cpp
 Gain.cpp
 Import.cpp
@@ -26,7 +28,6 @@ SplitClip.cpp
 TrackPan.cpp
 Zoom.cpp
 Scroll.cpp
-AudioClipExternalProcessing.cpp
 ArmTracks.cpp
 PlayHeadMove.cpp
 WorkCursorMove.cpp
@@ -34,7 +35,7 @@ RemoveClip.cpp
 )
 
 SET(TRAVERSO_COMMANDS_MOC_CLASSES
-AudioClipExternalProcessing.h
+ExternalProcessingDialog.h
 Gain.h
 MoveClip.h
 TrackPan.h
@@ -42,7 +43,7 @@ Zoom.h
 )
 
 SET(TRAVERSO_COMMANDS_UI_FILES
-ui/ExternalProcessing.ui
+ui/ExternalProcessingDialog.ui
 )
 
 QT4_WRAP_CPP(TRAVERSO_COMMANDS_MOC_SOURCES ${TRAVERSO_COMMANDS_MOC_CLASSES})
