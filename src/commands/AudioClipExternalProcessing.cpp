@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "AudioClipExternalProcessing.h"
 
-#include "ExternalProcessingDialog.cpp"
+#include "ExternalProcessingDialog.h"
 
 #include <AudioClip.h>
 #include <AudioClipView.h>
