@@ -142,7 +142,7 @@ bool ViewPort::event(QEvent * event)
 
 void ViewPort::mouseMoveEvent(QMouseEvent* event)
 {
-	PENTER3;
+	PENTER4;
 	// Qt generates mouse move events when the scrollbars move
 	// since a mouse move event generates a jog() call for the 
 	// active holding command, this has a number of nasty side effects :-(

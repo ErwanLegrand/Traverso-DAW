@@ -611,7 +611,7 @@ void InputEngine::catch_key_press(QKeyEvent * e )
 	if (e->isAutoRepeat() && !isHolding) {
 		return;
 	}
-	PENTER3;
+	PENTER4;
 	process_press_event(e->key(), e->isAutoRepeat());
 }
 
@@ -620,7 +620,7 @@ void InputEngine::catch_key_release( QKeyEvent * e)
 	if (e->isAutoRepeat()) {
 		return;
 	}
-	PENTER3;
+	PENTER4;
 	process_release_event(e->key());
 }
 
