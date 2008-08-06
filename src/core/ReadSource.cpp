@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AudioDevice.h"
 #include <QFile>
 #include "Config.h"
+#include <limits.h>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -203,7 +204,7 @@ int ReadSource::init( )
 	}
 	
 	if (m_silent) {
-		m_length = TimeRef(LONG_LONG_MAX);
+		m_length = TimeRef(LLONG_MAX);
 		m_channelCount = 0;
 		m_origBitDepth = 16;
 		m_bufferstatus->fillStatus =  100;

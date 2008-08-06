@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ResourcesManager.h"
 #include "Project.h"
 #include "Utils.h"
-
+#include <limits.h>
 #include <commands.h>
 
 // Always put me below _all_ includes, this is needed
@@ -504,7 +504,7 @@ void Track::get_render_range(TimeRef& startlocation, TimeRef& endlocation )
 		return;
 		
 	endlocation = TimeRef();
-	startlocation = LONG_LONG_MAX;
+	startlocation = LLONG_MAX;
 	
 	apill_foreach(AudioClip* clip, AudioClip, m_clips) {
 		if (! clip->is_muted() ) {

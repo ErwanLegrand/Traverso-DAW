@@ -20,6 +20,7 @@
 */
 
 #include <signal.h>
+#include <stdlib.h>
 
 #include <QLocale>
 #include <QTranslator>
