@@ -554,6 +554,11 @@ AppearancePage::AppearancePage(QWidget *parent)
 	
 	load_config();
 	m_themepage->create_connections();
+
+	#if defined Q_WS_MAC
+		m_themepage->iconSizeCombo->hide();
+		m_themepage->toolbarStyleCombo->hide();
+	#endif
 }
 
 void AppearancePage::save_config()
@@ -566,6 +571,10 @@ void AppearancePage::save_config()
 	config().set_property("Themer", "paintaudiorectified", m_themepage->rectifiedCheckBox->isChecked());
 	config().set_property("Themer", "paintstereoaudioasmono", m_themepage->mergedCheckBox->isChecked());
 	config().set_property("Themer", "paintwavewithoutline", m_themepage->paintAudioWithOutlineCheckBox->isChecked());
+	config().set_property("Themer", "iconsize", m_themepage->iconSizeCombo->currentText());
+	config().set_property("Themer", "toolbuttonstyle", m_themepage->toolbarStyleCombo->currentIndex());
+	config().set_property("Themer", "supportediconsizes", supportedIconSizes);
+	config().set_property("Themer", "transportconsolesize", m_themepage->transportConsoleCombo->currentText());
 }
 
 void AppearancePage::load_config()
@@ -596,8 +605,7 @@ void AppearancePage::load_config()
 	bool paintRectified = config().get_property("Themer", "paintaudiorectified", false).toBool();
 	bool paintStereoAsMono = config().get_property("Themer", "paintstereoaudioasmono", false).toBool();
 	bool paintWaveWithLines = config().get_property("Themer", "paintwavewithoutline", true).toBool();
-
-
+	
 	int index = m_themepage->styleCombo->findText(style);
 	m_themepage->styleCombo->setCurrentIndex(index);
 	index = m_themepage->themeSelecterCombo->findText(theme);
@@ -609,6 +617,50 @@ void AppearancePage::load_config()
 	m_themepage->mergedCheckBox->setChecked(paintStereoAsMono);
 	m_themepage->paintAudioWithOutlineCheckBox->setChecked(paintWaveWithLines);
 
+	m_themepage->toolbarStyleCombo->clear();
+	m_themepage->toolbarStyleCombo->addItem(tr("Icons only"));
+	m_themepage->toolbarStyleCombo->addItem(tr("Text only"));
+	m_themepage->toolbarStyleCombo->addItem(tr("Text beside Icons"));
+	m_themepage->toolbarStyleCombo->addItem(tr("Text below Icons"));
+	int tbstyle = config().get_property("Themer", "toolbuttonstyle", 0).toInt();
+	m_themepage->toolbarStyleCombo->setCurrentIndex(tbstyle);
+
+	// icon sizes of the toolbars
+	QString iconsize = config().get_property("Themer", "iconsize", "16").toString();
+	supportedIconSizes = config().get_property("Themer", "supportediconsizes", "16;22;32;48").toString();
+
+	// if the list is empty, we should offer some default values. (The list can only be 
+	// empty if someone deleted the values, but not the whole entry, in the config file.)
+	if (supportedIconSizes.isEmpty()) {
+		supportedIconSizes = "16;22;32;48";
+	}
+
+	QStringList iconSizesList = supportedIconSizes.split(";", QString::SkipEmptyParts);
+
+	// check if the current icon size occurs in the list, if not, add it
+	if (iconSizesList.lastIndexOf(iconsize) == -1) {
+		iconSizesList << iconsize;
+		iconSizesList.sort();
+	}
+
+	m_themepage->iconSizeCombo->clear();
+	m_themepage->iconSizeCombo->addItems(iconSizesList);
+	int iconsizeindex = m_themepage->iconSizeCombo->findText(iconsize);
+	m_themepage->iconSizeCombo->setCurrentIndex(iconsizeindex);
+
+	// and the same again for the icons size of the transport console
+	QString trspsize = config().get_property("Themer", "transportconsolesize", "16").toString();
+	iconSizesList = supportedIconSizes.split(";", QString::SkipEmptyParts);
+
+	if (iconSizesList.lastIndexOf(iconsize) == -1) {
+		iconSizesList << trspsize;
+		iconSizesList.sort();
+	}
+
+	m_themepage->transportConsoleCombo->clear();
+	m_themepage->transportConsoleCombo->addItems(iconSizesList);
+	int trspsizeindex = m_themepage->iconSizeCombo->findText(trspsize);
+	m_themepage->transportConsoleCombo->setCurrentIndex(trspsizeindex);
 }
 
 void AppearancePage::reset_default_config()
@@ -624,7 +676,10 @@ void AppearancePage::reset_default_config()
 	config().set_property("Themer", "paintaudiorectified", false);
 	config().set_property("Themer", "paintstereoaudioasmono", false);
 	config().set_property("Themer", "paintwavewithoutline", true);
-	
+	config().set_property("Themer", "supportediconsizes", "16;22;32;48");
+	config().set_property("Themer", "iconsize", "16");
+	config().set_property("Themer", "toolbuttonstyle", 0);
+
 	load_config();
 }
 

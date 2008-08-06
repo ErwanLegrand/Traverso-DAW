@@ -72,6 +72,7 @@ private slots:
 	void transfer_stopped();
 	void update_recording_state();
 	void update_label();
+	void update_layout();
 };
 
 #endif

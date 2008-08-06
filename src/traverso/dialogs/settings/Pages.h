@@ -223,6 +223,7 @@ public:
 	void reset_default_config();
 
 private:
+	QString supportedIconSizes;
 	ThemeConfigPage* m_themepage;
 };
 

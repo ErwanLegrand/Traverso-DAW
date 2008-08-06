@@ -193,6 +193,15 @@ Interface::Interface()
 	
 		m_editToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 		m_editToolBar->setIconSize(QSize(20, 20));
+	#else
+		if (config().get_property("Themer", "textundericons", false).toBool()) {
+			m_projectToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+			m_editToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+		}
+
+		int iconsize = config().get_property("Themer", "iconsize", "16").toInt();
+		m_projectToolBar->setIconSize(QSize(iconsize, iconsize));
+		m_editToolBar->setIconSize(QSize(iconsize, iconsize));
 	#endif
 
 	// Some default values.
@@ -1146,6 +1155,36 @@ void Interface::config_changed()
 			action->setIcon(QIcon());
 		}
 	}
+
+	switch (config().get_property("Themer", "toolbuttonstyle", 0).toInt()) {
+		case 0:
+			m_projectToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
+			m_editToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
+			break;
+
+		case 1:
+			m_projectToolBar->setToolButtonStyle(Qt::ToolButtonTextOnly);
+			m_editToolBar->setToolButtonStyle(Qt::ToolButtonTextOnly);
+			break;
+
+		case 2:
+			m_projectToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+			m_editToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+			break;
+
+		case 3:
+			m_projectToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+			m_editToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+			break;
+	}
+
+	int iconsize = config().get_property("Themer", "iconsize", "16").toInt();
+	m_projectToolBar->setIconSize(QSize(iconsize, iconsize));
+	m_editToolBar->setIconSize(QSize(iconsize, iconsize));
+
+	int transportconsolesize = config().get_property("Themer", "transportconsolesize", "16").toInt();
+	transportConsole->setIconSize(QSize(transportconsolesize, transportconsolesize));
+	transportConsole->resize(transportConsole->sizeHint());
 }
 
 void Interface::import_audio()

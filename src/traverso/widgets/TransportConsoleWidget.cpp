@@ -44,7 +44,6 @@ TransportConsoleWidget::TransportConsoleWidget(QWidget* parent)
 			"border: 2px solid gray;"
 			"border-radius: 10px;"
 			"padding: 0 8 0 8;"); 
-	m_timeLabel->setMaximumHeight(m_timeLabel->height() - 2);
 
 	m_toStartAction = addAction(QIcon(":/skipleft"), tr("Skip to Start"), this, SLOT(to_start()));
 	m_toLeftAction = addAction(QIcon(":/seekleft"), tr("Previous Snap Position"), this, SLOT(to_left()));
@@ -63,6 +62,8 @@ TransportConsoleWidget::TransportConsoleWidget(QWidget* parent)
 
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 	connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update_label()));
+
+	update_layout();
 }
 
 
@@ -209,6 +210,12 @@ void TransportConsoleWidget::update_label()
 		currentTime = timeref_to_ms_2(m_sheet->get_transport_location());
 	}
 	m_timeLabel->setText(currentTime);
+}
+
+void TransportConsoleWidget::update_layout()
+{
+	int iconsize = config().get_property("Themer", "transportconsolesize", "16").toInt();
+	setIconSize(QSize(iconsize, iconsize));
 }
 
 //eof
