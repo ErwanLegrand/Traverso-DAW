@@ -252,7 +252,7 @@ int InputEngine::broadcast_action_from_contextmenu(const QString& keySequence)
 		return -1;
 	}
 	
-	if ( action && (action->type == HOLDKEY) || (action->type == HKEY2)) {
+	if ( action && ((action->type == HOLDKEY) || (action->type == HKEY2))) {
 		info().information(tr("Hold actions are not supported from Context Menu"));
 		return -1;
 	}
@@ -1618,8 +1618,8 @@ void InputEngine::set_double_fact_interval(int time)
 // Number colector
 bool InputEngine::check_number_collection(int eventcode)
 {
-	if ((eventcode >= Qt::Key_0) && (eventcode <= Qt::Key_9) || 
-	     eventcode == Qt::Key_Comma || eventcode == Qt::Key_Period) {
+	if (((eventcode >= Qt::Key_0) && (eventcode <= Qt::Key_9)) || 
+	     (eventcode == Qt::Key_Comma) || (eventcode == Qt::Key_Period)) {
 		sCollectedNumber.append( QChar(eventcode) ); // it had a ",1" complement after fact1_k1... why?
 		PMESG("Collected %s so far...", QS_C(sCollectedNumber) ) ;
 		QString sn = "NUMBER " + sCollectedNumber;
