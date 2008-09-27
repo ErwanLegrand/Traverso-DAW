@@ -23,10 +23,12 @@
 #include "SheetView.h"
 #include "ClipsViewPort.h"
 #include "AudioDevice.h"
-#include <QPen>
 #include <Sheet.h>
 #include <Config.h>
 #include <Themer.h>
+
+#include <QCoreApplication>
+#include <QPen>
 #include <QScrollBar>
 		
 // Always put me below _all_ includes, this is needed
@@ -190,7 +192,6 @@ void PlayHead::update_position()
 	}
 }
 
-
 void PlayHead::set_animation_value(int value)
 {
 	QPointF newPos(m_sheet->get_transport_location() / m_sv->timeref_scalefactor, 0);
@@ -202,11 +203,20 @@ void PlayHead::set_animation_value(int value)
 	m_totalAnimValue += (int)(diff + deltaX);
 	int newXPos = (int)(m_animationScrollStartPos + m_totalAnimValue);
 	
+	// When moving the PlayHead and scrollbar at the same time, QGV may update a very large
+	// portion of the canvas. By forcing the playhead to be painted first by calling
+	// qApp->processEvents();(needs to be called twice to take effect, weird!)
+	// the canvas gets 2 paint events, one for the playhead move, and one for the scrollbar
+	// move, reducing the cpu load. Some sort of ugly hack that is ;-)
 	if (newPos != pos()) {
 		setPos(newPos);
+		qApp->processEvents();
+		qApp->processEvents();
 	}
 	
-	m_sv->set_hscrollbar_value(newXPos);
+	if (m_sv->hscrollbar_value() != newXPos) {
+		m_sv->set_hscrollbar_value(newXPos);
+	}
 }
 
 void PlayHead::calculate_total_anim_frames()
