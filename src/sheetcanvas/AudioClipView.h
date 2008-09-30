@@ -95,6 +95,7 @@ private:
 	bool m_mergedView;
 	bool m_classicView;
 	bool m_paintWithOutline;
+	bool m_drawDbGrid;
 	int m_height;
 	int m_infoAreaHeight;
 	int m_mimimumheightforinfoarea;

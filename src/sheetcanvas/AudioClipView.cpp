@@ -359,7 +359,7 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 		
 		// calculate the height of the area available for peak drawing 
 		// and if the infoarea is displayed, translate the painter
-		// drawing by dy = m_infoAreaheight
+		// drawing by dy = m_infoAreaHeight
 		int height;
 		
 		if (m_height >= m_mimimumheightforinfoarea) {
@@ -398,9 +398,10 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 			m_polygon.reserve(pixelcount);
 			
 			int bufferPos = 0;
-			
+
 			if (m_mergedView) {
 				ytrans = (height / 2) * channels;
+				scaleFactor *= channels;
 			} else {
 				ytrans = (height / 2) + (chan * height);
 			}
@@ -426,6 +427,39 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 			p->setPen(themer()->get_color("AudioClip:wavemicroview"));
 			p->drawPolyline(m_polygon);
 		
+			p->restore();
+			p->save();
+
+			// draw lines at 0 and -6 db
+			if (m_drawDbGrid) {
+					if (m_height >= m_mimimumheightforinfoarea) {
+						p->setMatrix(matrix().translate(0, m_infoAreaHeight), true);
+					}
+					p->setMatrix(matrix().translate(0, ytrans), true);
+
+					int scale = 1;
+					if (!m_mergedView) {
+						scale = channels;
+					}
+
+					p->setPen(themer()->get_color("AudioClip:db-grid"));
+					p->setFont( themer()->get_font("AudioClip:fontscale:dblines") );
+					QFontMetrics fm(p->font());
+					int toffset = fm.width(" -6 dB ");
+
+					p->drawLine(toffset, -0.9 * height/scale, xstart+pixelcount, -0.9 * height/scale);
+					p->drawText(0.0, -0.9 * height/scale - 1 + fm.ascent()/2, "  0 dB");
+
+					p->drawLine(toffset, 0.9 * height/scale + 1, xstart+pixelcount, 0.9 * height/scale + 1);
+					p->drawText(0.0, 0.9 * height/scale + fm.ascent()/2, "  0 dB");
+
+					p->drawLine(toffset, -0.45 * height/scale, xstart+pixelcount, -0.45 * height/scale);
+					p->drawText(0.0, -0.45 * height/scale - 1 + fm.ascent()/2, " -6 dB");
+
+					p->drawLine(toffset, 0.45 * height/scale + 1, xstart+pixelcount, 0.45 * height/scale + 1);
+					p->drawText(0.0, 0.45 * height/scale + fm.ascent()/2, " -6 dB");
+			}
+
 		// Macroview, paint waveform with painterpath
 		} else {
 			if (m_fillwave) {
@@ -492,7 +526,40 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 				// Draw 'the' -INF line
 				p->setPen(minINFLineColor);
 				p->drawLine(0, 0, pixelcount, 0);
-			
+
+				p->restore();
+				p->save();
+
+				// draw lines at 0 and -6 db
+				if (m_drawDbGrid) {
+					if (m_height >= m_mimimumheightforinfoarea) {
+						p->setMatrix(matrix().translate(0, m_infoAreaHeight), true);
+					}
+					p->setMatrix(matrix().translate(0, ytrans), true);
+
+					int scale = 1;
+					if (!m_mergedView) {
+						scale = channels;
+					}
+
+					p->setPen(themer()->get_color("AudioClip:db-grid"));
+					p->setFont( themer()->get_font("AudioClip:fontscale:dblines") );
+
+					QFontMetrics fm(p->font());
+					int toffset = fm.width(" -6 dB ");
+
+					p->drawLine(toffset, -0.9 * height/scale, xstart+pixelcount, -0.9 * height/scale);
+					p->drawText(0.0, -0.9 * height/scale - 1 + fm.ascent()/2, "  0 dB");
+
+					p->drawLine(toffset, 0.9 * height/scale + 1, xstart+pixelcount, 0.9 * height/scale + 1);
+					p->drawText(0.0, 0.9 * height/scale + fm.ascent()/2, "  0 dB");
+
+					p->drawLine(toffset, -0.45 * height/scale, xstart+pixelcount, -0.45 * height/scale);
+					p->drawText(0.0, -0.45 * height/scale - 1 + fm.ascent()/2, " -6 dB");
+
+					p->drawLine(toffset, 0.45 * height/scale + 1, xstart+pixelcount, 0.45 * height/scale + 1);
+					p->drawText(0.0, 0.45 * height/scale + fm.ascent()/2, " -6 dB");
+				}
 			} else {
 				scaleFactor =  (float) height * 0.95 * m_clip->get_gain() / Peak::MAX_DB_VALUE * curveDefaultValue;
 				ytrans = height + (chan * height);
@@ -518,6 +585,34 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 				path.lineTo(0, 0);
 				
 				p->drawPath(path);
+
+				p->restore();
+				p->save();
+
+				// draw lines at 0 and -6 db
+				if (m_drawDbGrid) {
+					if (m_height >= m_mimimumheightforinfoarea) {
+						p->setMatrix(matrix().translate(0, m_infoAreaHeight), true);
+					}
+					p->setMatrix(matrix().translate(0, ytrans), true);
+
+					int scale = 1;
+					if (!m_mergedView) {
+						scale = channels;
+					}
+
+					p->setPen(themer()->get_color("AudioClip:db-grid"));
+					p->setFont( themer()->get_font("AudioClip:fontscale:dblines") );
+					QFontMetrics fm(p->font());
+					int toffset = fm.width(" -6 dB ");
+
+					p->drawLine(toffset, -1.9 * height/scale, xstart+pixelcount, -1.9 * height/scale);
+					p->drawText(0.0, -1.9 * height/scale - 1 + fm.ascent()/2, "  0 dB");
+
+					p->drawLine(toffset, -0.95 * height/scale, xstart+pixelcount, -0.95 * height/scale);
+					p->drawText(0.0, -0.95 * height/scale - 1 + fm.ascent()/2, " -6 dB");
+				}
+
 			}
 		}
 		
@@ -840,6 +935,7 @@ void AudioClipView::load_theme_data()
 	m_fillwave = themer()->get_property("AudioClip:fillwave", 1).toInt();
 	minINFLineColor = themer()->get_color("AudioClip:channelseperator");
 	m_paintWithOutline = config().get_property("Themer", "paintwavewithoutline", true).toBool();
+	m_drawDbGrid = config().get_property("Themer", "drawdbgrid", false).toBool();
 	m_clipInfo->setFont(themer()->get_font("AudioClip:fontscale:title"));
 	calculate_bounding_rect();
 }

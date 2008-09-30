@@ -32,6 +32,7 @@
 		<font name="ContextMenu:fontscale:actions" value="0.95" />
 		<font name="Plugin:fontscale:name" value="0.9" />
 		<font name="AudioClip:fontscale:title" value="0.9" />
+		<font name="AudioClip:fontscale:dblines" value="0.75" />
 		<font name="VUMeter:fontscale:label" value="0.75" />
 		<font name="FFTMeter:fontscale:label" value="0.75" />
 		<font name="CorrelationMeter:fontscale:label" value="0.75" />

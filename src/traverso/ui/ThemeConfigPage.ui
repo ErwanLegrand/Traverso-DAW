@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>346</width>
-    <height>585</height>
+    <height>634</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -217,6 +217,13 @@ p, li { white-space: pre-wrap; }
        <widget class="QCheckBox" name="mergedCheckBox" >
         <property name="text" >
          <string>Paint stereo audio as mono audio</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="dbGridCheckBox" >
+        <property name="text" >
+         <string>Draw lines at 0 and -6 dB</string>
         </property>
        </widget>
       </item>

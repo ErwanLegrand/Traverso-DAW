@@ -570,6 +570,7 @@ void AppearancePage::save_config()
 	config().set_property("Themer", "usestylepallet", m_themepage->useStylePalletCheckBox->isChecked());
 	config().set_property("Themer", "paintaudiorectified", m_themepage->rectifiedCheckBox->isChecked());
 	config().set_property("Themer", "paintstereoaudioasmono", m_themepage->mergedCheckBox->isChecked());
+	config().set_property("Themer", "drawdbgrid", m_themepage->dbGridCheckBox->isChecked());
 	config().set_property("Themer", "paintwavewithoutline", m_themepage->paintAudioWithOutlineCheckBox->isChecked());
 	config().set_property("Themer", "iconsize", m_themepage->iconSizeCombo->currentText());
 	config().set_property("Themer", "toolbuttonstyle", m_themepage->toolbarStyleCombo->currentIndex());
@@ -605,6 +606,7 @@ void AppearancePage::load_config()
 	bool paintRectified = config().get_property("Themer", "paintaudiorectified", false).toBool();
 	bool paintStereoAsMono = config().get_property("Themer", "paintstereoaudioasmono", false).toBool();
 	bool paintWaveWithLines = config().get_property("Themer", "paintwavewithoutline", true).toBool();
+	bool dbGrid = config().get_property("Themer", "drawdbgrid", false).toBool();
 	
 	int index = m_themepage->styleCombo->findText(style);
 	m_themepage->styleCombo->setCurrentIndex(index);
@@ -615,6 +617,7 @@ void AppearancePage::load_config()
 	m_themepage->themePathLineEdit->setText(themepath);
 	m_themepage->rectifiedCheckBox->setChecked(paintRectified);
 	m_themepage->mergedCheckBox->setChecked(paintStereoAsMono);
+	m_themepage->dbGridCheckBox->setChecked(dbGrid);
 	m_themepage->paintAudioWithOutlineCheckBox->setChecked(paintWaveWithLines);
 
 	m_themepage->toolbarStyleCombo->clear();
@@ -675,6 +678,7 @@ void AppearancePage::reset_default_config()
 	config().set_property("Themer", "usestylepallet", false);
 	config().set_property("Themer", "paintaudiorectified", false);
 	config().set_property("Themer", "paintstereoaudioasmono", false);
+	config().set_property("Themer", "drawdbgrid", false);
 	config().set_property("Themer", "paintwavewithoutline", true);
 	config().set_property("Themer", "supportediconsizes", "16;22;32;48");
 	config().set_property("Themer", "iconsize", "16");
@@ -700,6 +704,7 @@ void ThemeConfigPage::create_connections()
 	connect(colorAdjustBox, SIGNAL(valueChanged(int)), this, SLOT(color_adjustbox_changed(int)));
 	connect(rectifiedCheckBox, SIGNAL(toggled(bool)), this, SLOT(theme_option_changed()));
 	connect(mergedCheckBox, SIGNAL(toggled(bool)), this, SLOT(theme_option_changed()));
+	connect(dbGridCheckBox, SIGNAL(toggled(bool)), this, SLOT(theme_option_changed()));
 	connect(paintAudioWithOutlineCheckBox, SIGNAL(toggled(bool)), this, SLOT(theme_option_changed()));
 }
 
@@ -775,6 +780,7 @@ void ThemeConfigPage::theme_option_changed()
 {
 	config().set_property("Themer", "paintaudiorectified", rectifiedCheckBox->isChecked());
 	config().set_property("Themer", "paintstereoaudioasmono", mergedCheckBox->isChecked());
+	config().set_property("Themer", "drawdbgrid", dbGridCheckBox->isChecked());
 	config().set_property("Themer", "paintwavewithoutline", paintAudioWithOutlineCheckBox->isChecked());
 	themer()->load();
 }
