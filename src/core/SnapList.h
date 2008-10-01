@@ -45,6 +45,7 @@ public:
 
 	void set_range(const TimeRef& start, const TimeRef& end, int scalefactor);
 	void mark_dirty();
+	bool is_dirty() {return m_isDirty;};
 
 private:
 	Sheet* 		m_sheet;

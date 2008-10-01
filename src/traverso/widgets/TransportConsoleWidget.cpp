@@ -109,6 +109,10 @@ void TransportConsoleWidget::to_start()
 // even during playback.
 void TransportConsoleWidget::to_left()
 {
+	if (m_sheet->get_snap_list()->is_dirty()) {
+		update_snappositions();
+	}
+
 	TimeRef p = m_sheet->get_transport_location();
 
 	if (m_skipTimer.isActive()) 
@@ -116,8 +120,7 @@ void TransportConsoleWidget::to_left()
 		p = m_lastSnapPosition;
 	}
 
-	SnapList* slist = m_sheet->get_snap_list();
-	TimeRef newpos = slist->prev_snap_pos(p);
+	TimeRef newpos = prev_snap_pos(p);
 	m_sheet->set_transport_pos(newpos);
 
 	m_lastSnapPosition = newpos;
@@ -146,10 +149,11 @@ void TransportConsoleWidget::to_end()
 
 void TransportConsoleWidget::to_right()
 {
-	SnapList* slist = m_sheet->get_snap_list();
-	TimeRef p = m_sheet->get_transport_location();
-	TimeRef newpos = slist->next_snap_pos(p);
-	m_sheet->set_transport_pos(newpos);
+	if (m_sheet->get_snap_list()->is_dirty()) {
+		update_snappositions();
+	}
+
+	m_sheet->set_transport_pos(next_snap_pos(m_sheet->get_transport_location()));
 }
 
 void TransportConsoleWidget::transfer_started()
@@ -216,6 +220,78 @@ void TransportConsoleWidget::update_layout()
 {
 	int iconsize = config().get_property("Themer", "transportconsolesize", "16").toInt();
 	setIconSize(QSize(iconsize, iconsize));
+}
+
+void TransportConsoleWidget::update_snappositions()
+{
+	m_xposList.clear();
+
+	// store the beginning of the sheet and the work cursor
+	m_xposList << TimeRef();
+	m_xposList << m_sheet->get_work_location();
+
+	// store all clip borders
+	QList<AudioClip* > acList = m_sheet->get_audioclip_manager()->get_clip_list();
+	for (int i = 0; i < acList.size(); ++i) {
+		m_xposList << acList.at(i)->get_track_start_location();
+		m_xposList << acList.at(i)->get_track_end_location();
+	}
+
+	// store all marker positions
+	QList<Marker*> markerList = m_sheet->get_timeline()->get_markers();
+	for (int i = 0; i < markerList.size(); ++i) {
+		m_xposList << markerList.at(i)->get_when();
+	}
+
+	qSort(m_xposList);
+
+	// remove duplicates
+	QMutableListIterator<TimeRef> it(m_xposList);
+	while (it.hasNext()) {
+		TimeRef val = it.next();
+		if (m_xposList.count(val) > 1) {
+			it.remove();
+		}
+	}
+}
+
+TimeRef TransportConsoleWidget::prev_snap_pos(const TimeRef& p)
+{
+	if (p < TimeRef()) {
+		PERROR("pos < 0");
+		return TimeRef();
+	}
+
+	QListIterator<TimeRef> it(m_xposList);
+
+	it.toBack();
+	while (it.hasPrevious()) {
+		TimeRef pos = it.previous();
+		if (pos < p) {
+			return pos;
+		}
+	}
+
+	return p;
+}
+
+TimeRef TransportConsoleWidget::next_snap_pos(const TimeRef& p)
+{
+	if (p > m_xposList.last()) {
+		PERROR("pos > last snap position");
+		return p;
+	}
+
+	QListIterator<TimeRef> it(m_xposList);
+
+	while (it.hasNext()) {
+		TimeRef pos = it.next();
+		if (pos > p) {
+			return pos;
+		}
+	}
+
+	return p;
 }
 
 //eof

@@ -53,7 +53,7 @@ SnapList::SnapList(Sheet* sheet)
 
 void SnapList::mark_dirty()
 {
-	printf("mark_dirty()\n");
+// 	printf("mark_dirty()\n");
 	m_isDirty = true;
 }
 
