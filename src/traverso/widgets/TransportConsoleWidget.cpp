@@ -101,29 +101,21 @@ void TransportConsoleWidget::set_sheet(Sheet* sheet)
 
 void TransportConsoleWidget::to_start()
 {
-	m_sheet->set_transport_pos((TimeRef()));
-	m_sheet->set_work_at((TimeRef()));
+	m_sheet->to_start();
 }
 
 // the timer is used to allow 'hopping' to the left from snap position to snap position
 // even during playback.
 void TransportConsoleWidget::to_left()
 {
-	if (m_sheet->get_snap_list()->was_dirty()) {
-		update_snappositions();
-	}
-
-	TimeRef p = m_sheet->get_transport_location();
+	int steps = 1;
 
 	if (m_skipTimer.isActive()) 
 	{
-		p = m_lastSnapPosition;
+		++steps;
 	}
 
-	TimeRef newpos = prev_snap_pos(p);
-	m_sheet->set_transport_pos(newpos);
-
-	m_lastSnapPosition = newpos;
+	m_sheet->prev_snap_pos(steps);
 	m_skipTimer.start(500);
 }
 
@@ -139,21 +131,12 @@ void TransportConsoleWidget::play_toggled()
 
 void TransportConsoleWidget::to_end()
 {
-	// stop the transport, no need to play any further than the end of the sheet
-	if (m_sheet->is_transport_rolling())
-	{
-		m_sheet->start_transport();
-	}
-	m_sheet->set_transport_pos(m_sheet->get_last_location());
+	m_sheet->to_end();
 }
 
 void TransportConsoleWidget::to_right()
 {
-	if (m_sheet->get_snap_list()->was_dirty()) {
-		update_snappositions();
-	}
-
-	m_sheet->set_transport_pos(next_snap_pos(m_sheet->get_transport_location()));
+	m_sheet->next_snap_pos();
 }
 
 void TransportConsoleWidget::transfer_started()
@@ -222,77 +205,7 @@ void TransportConsoleWidget::update_layout()
 	setIconSize(QSize(iconsize, iconsize));
 }
 
-void TransportConsoleWidget::update_snappositions()
-{
-	m_xposList.clear();
 
-	// store the beginning of the sheet and the work cursor
-	m_xposList << TimeRef();
-	m_xposList << m_sheet->get_work_location();
-
-	// store all clip borders
-	QList<AudioClip* > acList = m_sheet->get_audioclip_manager()->get_clip_list();
-	for (int i = 0; i < acList.size(); ++i) {
-		m_xposList << acList.at(i)->get_track_start_location();
-		m_xposList << acList.at(i)->get_track_end_location();
-	}
-
-	// store all marker positions
-	QList<Marker*> markerList = m_sheet->get_timeline()->get_markers();
-	for (int i = 0; i < markerList.size(); ++i) {
-		m_xposList << markerList.at(i)->get_when();
-	}
-
-	qSort(m_xposList);
-
-	// remove duplicates
-	QMutableListIterator<TimeRef> it(m_xposList);
-	while (it.hasNext()) {
-		TimeRef val = it.next();
-		if (m_xposList.count(val) > 1) {
-			it.remove();
-		}
-	}
-}
-
-TimeRef TransportConsoleWidget::prev_snap_pos(const TimeRef& p)
-{
-	if (p < TimeRef()) {
-		PERROR("pos < 0");
-		return TimeRef();
-	}
-
-	QListIterator<TimeRef> it(m_xposList);
-
-	it.toBack();
-	while (it.hasPrevious()) {
-		TimeRef pos = it.previous();
-		if (pos < p) {
-			return pos;
-		}
-	}
-
-	return p;
-}
-
-TimeRef TransportConsoleWidget::next_snap_pos(const TimeRef& p)
-{
-	if (p > m_xposList.last()) {
-		PERROR("pos > last snap position");
-		return p;
-	}
-
-	QListIterator<TimeRef> it(m_xposList);
-
-	while (it.hasNext()) {
-		TimeRef pos = it.next();
-		if (pos > p) {
-			return pos;
-		}
-	}
-
-	return p;
-}
 
 //eof
 

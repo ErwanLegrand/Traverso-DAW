@@ -1443,3 +1443,117 @@ Track * Sheet::get_track_for_index(int index)
 	
 	return 0;
 }
+
+void Sheet::prev_snap_pos(int steps)
+{
+	if (snaplist->was_dirty()) {
+		update_skip_positions();
+	}
+
+	TimeRef p = get_transport_location();
+
+	if (p < TimeRef()) {
+		PERROR("pos < 0");
+		set_transport_pos(TimeRef());
+		return;
+	}
+
+	QListIterator<TimeRef> it(m_xposList);
+
+	it.toBack();
+
+	int i = 0;
+	while (it.hasPrevious()) {
+		TimeRef pos = it.previous();
+		if (pos < p) {
+			p = pos;
+			++i;
+		}
+		if (i >= steps) {
+			break;
+		}
+	}
+
+	set_transport_pos(p);
+}
+
+void Sheet::next_snap_pos(int steps)
+{
+	if (snaplist->was_dirty()) {
+		update_skip_positions();
+	}
+
+	TimeRef p = get_transport_location();
+
+	if (p > m_xposList.last()) {
+		PERROR("pos > last snap position");
+		return;
+	}
+
+	QListIterator<TimeRef> it(m_xposList);
+
+	int i = 0;
+	while (it.hasNext()) {
+		TimeRef pos = it.next();
+		if (pos > p) {
+			p = pos;
+			++i;
+		}
+		if (i >= steps) {
+			break;
+		}
+	}
+
+	set_transport_pos(p);
+}
+
+void Sheet::update_skip_positions()
+{
+	m_xposList.clear();
+
+	// store the beginning of the sheet and the work cursor
+	m_xposList << TimeRef();
+	m_xposList << get_work_location();
+
+	// store all clip borders
+	QList<AudioClip* > acList = get_audioclip_manager()->get_clip_list();
+	for (int i = 0; i < acList.size(); ++i) {
+		m_xposList << acList.at(i)->get_track_start_location();
+		m_xposList << acList.at(i)->get_track_end_location();
+	}
+
+	// store all marker positions
+	QList<Marker*> markerList = get_timeline()->get_markers();
+	for (int i = 0; i < markerList.size(); ++i) {
+		m_xposList << markerList.at(i)->get_when();
+	}
+
+	qSort(m_xposList);
+
+	// remove duplicates
+	QMutableListIterator<TimeRef> it(m_xposList);
+	while (it.hasNext()) {
+		TimeRef val = it.next();
+		if (m_xposList.count(val) > 1) {
+			it.remove();
+		}
+	}
+}
+
+void Sheet::to_start()
+{
+	set_transport_pos((TimeRef()));
+	set_work_at((TimeRef()));
+}
+
+void Sheet::to_end()
+{
+	// stop the transport, no need to play any further than the end of the sheet
+	if (is_transport_rolling())
+	{
+		start_transport();
+	}
+	set_transport_pos(get_last_location());
+}
+
+//eof

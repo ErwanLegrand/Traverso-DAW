@@ -120,6 +120,11 @@ public:
 	void set_scrollbar_xy(int x, int y) {m_sbx = x; m_sby = y;}
 	int set_state( const QDomNode & node );
 	void set_recording(bool recording, bool realtime);
+
+	void next_snap_pos(int steps = 1);
+	void prev_snap_pos(int steps = 1);
+	void to_start();
+	void to_end();
 	
 
 	int process(nframes_t nframes);
@@ -169,6 +174,7 @@ private:
 	DiskIO*			m_diskio;
 	AudioClipManager*	m_acmanager;
 	TimeLine*		m_timeline;
+	QList<TimeRef>		m_xposList;
 
 	// The following data could be read/written by multiple threads
 	// (gui, audio and m_diskio thread). Therefore they should have 
@@ -213,6 +219,7 @@ private:
 	void start_seek();
 	void start_transport_rolling(bool realtime);
 	void stop_transport_rolling();
+	void update_skip_positions();
 	
 	void resize_buffer(bool updateArmStatus, nframes_t size);
 

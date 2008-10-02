@@ -55,9 +55,6 @@ private:
 	QTimer		m_updateTimer;
 	QTimer		m_skipTimer;
 	TimeRef		m_lastSnapPosition;
-	QList<TimeRef> 	m_xposList;
-	TimeRef		prev_snap_pos(const TimeRef&);
-	TimeRef		next_snap_pos(const TimeRef&);
 
 protected slots:
 	void set_project(Project*);
@@ -76,7 +73,6 @@ private slots:
 	void update_recording_state();
 	void update_label();
 	void update_layout();
-	void update_snappositions();
 };
 
 #endif
