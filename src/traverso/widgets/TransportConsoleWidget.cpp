@@ -101,7 +101,7 @@ void TransportConsoleWidget::set_sheet(Sheet* sheet)
 
 void TransportConsoleWidget::to_start()
 {
-	m_sheet->to_start();
+	m_sheet->skip_to_start();
 }
 
 // the timer is used to allow 'hopping' to the left from snap position to snap position
@@ -115,7 +115,7 @@ void TransportConsoleWidget::to_left()
 		++steps;
 	}
 
-	m_sheet->prev_snap_pos(steps);
+	m_sheet->prev_skip_pos(steps);
 	m_skipTimer.start(500);
 }
 
@@ -131,12 +131,12 @@ void TransportConsoleWidget::play_toggled()
 
 void TransportConsoleWidget::to_end()
 {
-	m_sheet->to_end();
+	m_sheet->skip_to_end();
 }
 
 void TransportConsoleWidget::to_right()
 {
-	m_sheet->next_snap_pos();
+	m_sheet->next_skip_pos();
 }
 
 void TransportConsoleWidget::transfer_started()

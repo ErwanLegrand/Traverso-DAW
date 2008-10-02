@@ -121,10 +121,10 @@ public:
 	int set_state( const QDomNode & node );
 	void set_recording(bool recording, bool realtime);
 
-	void next_snap_pos(int steps = 1);
-	void prev_snap_pos(int steps = 1);
-	void to_start();
-	void to_end();
+	void next_skip_pos(int steps = 1);
+	void prev_skip_pos(int steps = 1);
+	void skip_to_start();
+	void skip_to_end();
 	
 
 	int process(nframes_t nframes);

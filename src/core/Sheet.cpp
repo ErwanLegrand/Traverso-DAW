@@ -1444,7 +1444,7 @@ Track * Sheet::get_track_for_index(int index)
 	return 0;
 }
 
-void Sheet::prev_snap_pos(int steps)
+void Sheet::prev_skip_pos(int steps)
 {
 	if (snaplist->was_dirty()) {
 		update_skip_positions();
@@ -1477,7 +1477,7 @@ void Sheet::prev_snap_pos(int steps)
 	set_transport_pos(p);
 }
 
-void Sheet::next_snap_pos(int steps)
+void Sheet::next_skip_pos(int steps)
 {
 	if (snaplist->was_dirty()) {
 		update_skip_positions();
@@ -1540,13 +1540,13 @@ void Sheet::update_skip_positions()
 	}
 }
 
-void Sheet::to_start()
+void Sheet::skip_to_start()
 {
 	set_transport_pos((TimeRef()));
 	set_work_at((TimeRef()));
 }
 
-void Sheet::to_end()
+void Sheet::skip_to_end()
 {
 	// stop the transport, no need to play any further than the end of the sheet
 	if (is_transport_rolling())
