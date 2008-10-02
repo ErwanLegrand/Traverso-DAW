@@ -109,7 +109,7 @@ void TransportConsoleWidget::to_start()
 // even during playback.
 void TransportConsoleWidget::to_left()
 {
-	if (m_sheet->get_snap_list()->is_dirty()) {
+	if (m_sheet->get_snap_list()->was_dirty()) {
 		update_snappositions();
 	}
 
@@ -149,7 +149,7 @@ void TransportConsoleWidget::to_end()
 
 void TransportConsoleWidget::to_right()
 {
-	if (m_sheet->get_snap_list()->is_dirty()) {
+	if (m_sheet->get_snap_list()->was_dirty()) {
 		update_snappositions();
 	}
 

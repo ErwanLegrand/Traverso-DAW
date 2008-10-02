@@ -45,7 +45,7 @@ public:
 
 	void set_range(const TimeRef& start, const TimeRef& end, int scalefactor);
 	void mark_dirty();
-	bool is_dirty() {return m_isDirty;};
+	bool was_dirty();
 
 private:
 	Sheet* 		m_sheet;
@@ -53,6 +53,7 @@ private:
 	QList<TimeRef> 	m_xposLut;
 	QList<bool> 	m_xposBool;
 	bool		m_isDirty;
+        bool		m_wasDirty;
 	TimeRef		m_rangeStart;
 	TimeRef		m_rangeEnd;
 	qint64		m_scalefactor;

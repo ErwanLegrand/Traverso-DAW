@@ -55,6 +55,7 @@ void SnapList::mark_dirty()
 {
 // 	printf("mark_dirty()\n");
 	m_isDirty = true;
+	m_wasDirty = true;
 }
 
 void SnapList::update_snaplist()
@@ -375,4 +376,11 @@ TimeRef SnapList::calculate_snap_diff(TimeRef leftlocation, TimeRef rightlocatio
 	}
 	
 	return TimeRef(snapDiff);
+}
+
+bool SnapList::was_dirty()
+{
+	bool ret = m_wasDirty;
+	m_wasDirty = false;
+	return ret;
 }
