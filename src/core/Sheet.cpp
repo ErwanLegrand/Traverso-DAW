@@ -1528,8 +1528,6 @@ void Sheet::update_skip_positions()
 		m_xposList << markerList.at(i)->get_when();
 	}
 
-	qSort(m_xposList);
-
 	// remove duplicates
 	QMutableListIterator<TimeRef> it(m_xposList);
 	while (it.hasNext()) {
@@ -1538,6 +1536,8 @@ void Sheet::update_skip_positions()
 			it.remove();
 		}
 	}
+
+	qSort(m_xposList);
 }
 
 void Sheet::skip_to_start()
