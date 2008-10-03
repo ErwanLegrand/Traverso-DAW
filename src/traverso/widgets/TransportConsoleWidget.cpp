@@ -58,7 +58,6 @@ TransportConsoleWidget::TransportConsoleWidget(QWidget* parent)
 	m_playAction->setCheckable(true);
 
 	m_lastSnapPosition = TimeRef();
-	m_skipTimer.setSingleShot(true);
 
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 	connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update_label()));
@@ -104,19 +103,9 @@ void TransportConsoleWidget::to_start()
 	m_sheet->skip_to_start();
 }
 
-// the timer is used to allow 'hopping' to the left from snap position to snap position
-// even during playback.
 void TransportConsoleWidget::to_left()
 {
-	int steps = 1;
-
-	if (m_skipTimer.isActive()) 
-	{
-		++steps;
-	}
-
-	m_sheet->prev_skip_pos(steps);
-	m_skipTimer.start(500);
+	m_sheet->prev_skip_pos();
 }
 
 void TransportConsoleWidget::rec_toggled()

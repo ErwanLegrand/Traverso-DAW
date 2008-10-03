@@ -48,6 +48,7 @@
 				<Object objectname="SheetView" slotsignature="scroll_left" modes="All" sortorder="1" submenu="Scroll" />
 				<Object objectname="MoveClip" slotsignature="move_left" modes="All" sortorder="3" />
 				<Object objectname="TrackPan" slotsignature="pan_left" modes="All" sortorder="1" />
+				<Object objectname="Sheet" slotsignature="prev_skip_pos" modes="All" sortorder="5" modifierkeys="CTRL" submenu="Playhead" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="RARROW" >
@@ -55,6 +56,7 @@
 				<Object objectname="SheetView" slotsignature="scroll_right" modes="All" sortorder="2" submenu="Scroll" />
 				<Object objectname="MoveClip" slotsignature="move_right" modes="All" sortorder="4" />
 				<Object objectname="TrackPan" slotsignature="pan_right" modes="All" sortorder="2" />
+				<Object objectname="Sheet" slotsignature="next_skip_pos" modes="All" sortorder="5" modifierkeys="CTRL" submenu="Playhead" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="UARROW" >

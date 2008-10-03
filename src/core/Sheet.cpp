@@ -191,6 +191,8 @@ void Sheet::init()
 	m_fader->set_gain(0.5);
 	m_timeline = new TimeLine(this);
 	
+	m_skipTimer.setSingleShot(true);
+	
 	m_audiodeviceClient = new Client("sheet_" + QByteArray::number(get_id()));
 	m_audiodeviceClient->set_process_callback( MakeDelegate(this, &Sheet::process) );
 	m_audiodeviceClient->set_transport_control_callback( MakeDelegate(this, &Sheet::transport_control) );
@@ -1444,7 +1446,10 @@ Track * Sheet::get_track_for_index(int index)
 	return 0;
 }
 
-void Sheet::prev_skip_pos(int steps)
+
+// the timer is used to allow 'hopping' to the left from snap position to snap position
+// even during playback.
+Command* Sheet::prev_skip_pos()
 {
 	if (snaplist->was_dirty()) {
 		update_skip_positions();
@@ -1455,12 +1460,19 @@ void Sheet::prev_skip_pos(int steps)
 	if (p < TimeRef()) {
 		PERROR("pos < 0");
 		set_transport_pos(TimeRef());
-		return;
+		return ie().failure();
 	}
 
 	QListIterator<TimeRef> it(m_xposList);
 
 	it.toBack();
+
+	int steps = 1;
+
+	if (m_skipTimer.isActive()) 
+	{
+		++steps;
+	}
 
 	int i = 0;
 	while (it.hasPrevious()) {
@@ -1475,9 +1487,13 @@ void Sheet::prev_skip_pos(int steps)
 	}
 
 	set_transport_pos(p);
+	
+	m_skipTimer.start(500);
+	
+	return ie().succes();
 }
 
-void Sheet::next_skip_pos(int steps)
+Command* Sheet::next_skip_pos()
 {
 	if (snaplist->was_dirty()) {
 		update_skip_positions();
@@ -1487,12 +1503,14 @@ void Sheet::next_skip_pos(int steps)
 
 	if (p > m_xposList.last()) {
 		PERROR("pos > last snap position");
-		return;
+		return ie().failure();
 	}
 
 	QListIterator<TimeRef> it(m_xposList);
 
 	int i = 0;
+	int steps = 1;
+	
 	while (it.hasNext()) {
 		TimeRef pos = it.next();
 		if (pos > p) {
@@ -1505,6 +1523,8 @@ void Sheet::next_skip_pos(int steps)
 	}
 
 	set_transport_pos(p);
+	
+	return ie().succes();
 }
 
 void Sheet::update_skip_positions()

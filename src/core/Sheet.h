@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ContextItem.h"
 #include "AudioProcessingItem.h"
 #include <QDomNode>
+#include <QTimer>
 #include "defines.h"
 #include "APILinkedList.h"
 #include "GainEnvelope.h"
@@ -63,6 +64,7 @@ class Sheet : public ContextItem, public AudioProcessingItem
 	Q_CLASSINFO("toggle_arm", tr("Arm: On/Off"))
 	Q_CLASSINFO("set_editing_mode", tr("Mode: Edit"))
 	Q_CLASSINFO("set_effects_mode", tr("Mode: Curve"))
+	Q_CLASSINFO("prev_skip_pos", tr("Skip to Left"))
 
 public:
 
@@ -121,8 +123,6 @@ public:
 	int set_state( const QDomNode & node );
 	void set_recording(bool recording, bool realtime);
 
-	void next_skip_pos(int steps = 1);
-	void prev_skip_pos(int steps = 1);
 	void skip_to_start();
 	void skip_to_end();
 	
@@ -164,6 +164,7 @@ public:
 private:
 	APILinkedList		m_tracks;
 	QList<AudioClip*>	m_recordingClips;
+	QTimer			m_skipTimer;
 	Project*		m_project;
 	WriteSource*		m_exportSource;
 	AudioBus*		m_playBackBus;
@@ -240,6 +241,8 @@ public slots :
 
 	void set_temp_follow_state(bool state);
 
+	Command* next_skip_pos();
+	Command* prev_skip_pos();
 	Command* start_transport();
 	Command* set_recordable();
 	Command* set_recordable_and_start_transport();

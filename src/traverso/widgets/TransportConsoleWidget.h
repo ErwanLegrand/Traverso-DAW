@@ -23,9 +23,9 @@
 #define TRANSPORTCONSOLEWIDGET_H
 
 #include <QWidget>
+#include <QTimer>
 #include <QToolBar>
 #include <QToolButton>
-#include <QTimer>
 #include <QEvent>
 #include <QFont>
 #include <QString>
@@ -53,7 +53,6 @@ private:
 	QAction*	m_toEndAction;
 	QAction*	m_toRightAction;
 	QTimer		m_updateTimer;
-	QTimer		m_skipTimer;
 	TimeRef		m_lastSnapPosition;
 
 protected slots:

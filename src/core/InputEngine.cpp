@@ -399,7 +399,12 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 				delegatedobject = "HoldCommand";
 			} else {
 				delegatedobject = item->metaObject()->className();
-				delegatingdata = action->objects.value(delegatedobject);
+				if (m_activeModifierKeys.size() > 0) {
+					delegatingdata = action->objectUsingModifierKeys.value(delegatedobject);
+				} else {
+					delegatingdata = action->objects.value(delegatedobject);
+				}
+				PMESG("delegatedobject is %s", QS_C(delegatedobject));
 			}
 				
 			if ( ! delegatingdata) {
@@ -1376,7 +1381,7 @@ int InputEngine::init_map(const QString& keymap)
 	QDomNode keyfactNode = keyfactsNode.firstChild();
 	
 	QString keyFactType;
-	QString key1, key2, key3, key4, mouseHint, slot, modifierKeys;
+	QString key1, key2, key3, key4, mouseHint, modifierKeys;
 	IEAction::Data* data;
 	
 	while( !keyfactNode.isNull() ) {
@@ -1396,7 +1401,6 @@ int InputEngine::init_map(const QString& keymap)
 		keyFactType = e.attribute( "type", "" );
 		key1 = e.attribute( "key1", "");
 		key2 = e.attribute( "key2", "" );
-		slot = e.attribute( "slotname", "" );
 
 		if (keyFactType == "FKEY")
 			action->type = FKEY;
@@ -1524,7 +1528,7 @@ int InputEngine::init_map(const QString& keymap)
 		
 		if (!exists) {
 			m_ieActions.append(action);
-			PMESG2("ADDED action: type=%d keys=%d,%d,%d,%d useX=%d useY=%d, slot=%s", action->type, action->fact1_key1,action->fact1_key2,action->fact2_key1,action->fact2_key2,data->useX,data->useY, QS_C(slot));
+			PMESG2("ADDED action: type=%d keys=%d,%d,%d,%d useX=%d useY=%d, slot=%s", action->type, action->fact1_key1,action->fact1_key2,action->fact2_key1,action->fact2_key2,data->useX,data->useY, QS_C(data->slotsignature));
 		}
 		
 		keyfactNode = keyfactNode.nextSibling();
