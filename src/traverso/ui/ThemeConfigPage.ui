@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>346</width>
-    <height>634</height>
+    <height>640</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -149,21 +149,6 @@
         </item>
        </layout>
       </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox_2" >
-     <property name="title" >
-      <string>Theme Options</string>
-     </property>
-     <layout class="QVBoxLayout" >
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <property name="margin" >
-       <number>9</number>
-      </property>
       <item>
        <layout class="QHBoxLayout" >
         <property name="spacing" >
@@ -191,6 +176,21 @@
         </item>
        </layout>
       </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2" >
+     <property name="title" >
+      <string>Theme Options</string>
+     </property>
+     <layout class="QVBoxLayout" >
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <property name="margin" >
+       <number>9</number>
+      </property>
       <item>
        <widget class="QCheckBox" name="rectifiedCheckBox" >
         <property name="text" >
@@ -272,7 +272,7 @@ p, li { white-space: pre-wrap; }
       <item>
        <widget class="QCheckBox" name="useStylePalletCheckBox" >
         <property name="text" >
-         <string>Use selected style's pallet</string>
+         <string>Use selected style's palette</string>
         </property>
        </widget>
       </item>
