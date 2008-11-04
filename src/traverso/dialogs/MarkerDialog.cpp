@@ -194,7 +194,7 @@ void MarkerDialog::position_changed(const QString &s)
 // 	PCommand* command = new PCommand(m_marker, "set_when", oldv, newv, tr("Move Marker (from Marker Editor)"));
 // 	Command::process_command(command);
 
-	TimeRef location = cd_to_timeref(s);
+	TimeRef location = cd_to_timeref_including_hours(s);
 	m_marker->set_when(location);
 	markersTreeWidget->sortItems(0, Qt::AscendingOrder);
 }
