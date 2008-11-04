@@ -213,7 +213,6 @@ Interface::Interface()
 	m_openProjectDialog = 0;
 	m_newProjectDialog = 0;
 	m_insertSilenceDialog = 0;
-	m_markerDialog = 0;
 	m_busSelector = 0;
 	m_newSheetDialog = 0;
 	m_newTrackDialog = 0;
@@ -1351,12 +1350,11 @@ Command * Interface::show_insertsilence_dialog()
 
 Command * Interface::show_marker_dialog()
 {
-	if (! m_markerDialog ) {
-		m_markerDialog = new MarkerDialog(this);
-	}
-	m_markerDialog->sheet_to_be_showed(pm().get_project()->get_current_sheet());
-	m_markerDialog->show();
-	
+	MarkerDialog* markerDialog = new MarkerDialog(this);
+
+	markerDialog->exec();
+	delete markerDialog;
+
 	return 0;
 }
 

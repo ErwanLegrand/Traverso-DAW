@@ -45,27 +45,18 @@ MarkerDialog::MarkerDialog(QWidget * parent)
 {
 	setupUi(this);
 	
-	checkBoxAllSheets->hide();
-
-	set_project(pm().get_project());
+	m_project = pm().get_project();
+	m_sheet = m_project->get_current_sheet();
+	setWindowTitle("Marker Editor - Project " + m_project->get_title());
 
 	QString mask = "99:99:99,99";
 	lineEditPosition->setInputMask(mask);
-	
-	// hide the first column if necessary
-	markersTreeWidget->header()->setSectionHidden(0, true);
+
 	markersTreeWidget->header()->resizeSection(1, 100);
 
 	pushButtonRemove->setAutoDefault(false);
 	pushButtonExport->setAutoDefault(false);
-	pushButtonClose->setAutoDefault(false);
-
-
-	// connect signals which require an update of the sheet list
-	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
-
-	// connect signals which require an update of the treeWidget's items
-	connect(comboBoxDisplaySheet, SIGNAL(currentIndexChanged(int)), this, SLOT(update_marker_treeview()));
+	pushButtonOk->setAutoDefault(false);
 
 	// connect other stuff related to the treeWidget
 	connect(lineEditTitle, SIGNAL(textEdited(const QString &)), this, SLOT(description_changed(const QString &)));
@@ -94,50 +85,10 @@ MarkerDialog::MarkerDialog(QWidget * parent)
 	connect(toolButtonPEmphAll, SIGNAL(clicked()), this, SLOT(pemph_all()));
 
 	connect(pushButtonExport, SIGNAL(clicked()), this, SLOT(export_toc()));
-}
+	connect(pushButtonOk, SIGNAL(clicked()), this, SLOT(apply()));
+	connect(pushButtonCancel, SIGNAL(clicked()), this, SLOT(cancel()));
 
-void MarkerDialog::set_project(Project * project)
-{
-	m_project = project;
-	comboBoxDisplaySheet->clear();
-	
-	if (! m_project) {
-		return;
-	}
-	
-	setWindowTitle("Marker Editor - Project " + m_project->get_title());
-	
-	connect(m_project, SIGNAL(sheetAdded(Sheet*)), this, SLOT(update_sheets()));
-	connect(m_project, SIGNAL(sheetRemoved(Sheet*)), this, SLOT(update_sheets()));
-	
-	// fill the combo box with the names of the sheets
-	m_sheetlist = m_project->get_sheets();
-	for (int i = 0; i < m_sheetlist.size(); ++i) {
-		comboBoxDisplaySheet->addItem("Sheet " + QString::number(i+1) + ": " + m_sheetlist.at(i)->get_title());
-		connect(m_sheetlist.at(i)->get_timeline(), SIGNAL(markerAdded(Marker*)), this, SLOT(update_marker_treeview()));
-		connect(m_sheetlist.at(i)->get_timeline(), SIGNAL(markerRemoved(Marker*)), this, SLOT(update_marker_treeview()));
-		connect(m_sheetlist.at(i)->get_timeline(), SIGNAL(markerPositionChanged()), this, SLOT(update_marker_treeview()));
-	}
-
-	// Fill dialog with marker stuff....
 	update_marker_treeview();
-}
-
-
-void MarkerDialog::sheet_to_be_showed(Sheet * sheet)
-{
-	int index = -1;
-	for (int i=0; i<m_sheetlist.size(); ++i) {
-		if (sheet == m_sheetlist.at(i)) {
-			index = i;
-			break;
-		}
-	}
-	
-	if (index != -1 && index < m_sheetlist.size()) {
-		comboBoxDisplaySheet->setCurrentIndex(index);
-	}
-		
 }
 
 void MarkerDialog::update_marker_treeview()
@@ -148,35 +99,15 @@ void MarkerDialog::update_marker_treeview()
 	m_marker = (Marker*)0;
 	markersTreeWidget->clear();
 
-	if (!m_sheetlist.size() || !m_project) {
-		return;
-	}
-
-	if (comboBoxDisplaySheet->currentIndex() >= m_sheetlist.size()) {
-		return;
-	}
-
-	int index = comboBoxDisplaySheet->currentIndex();
-	if (index < 0) {
-		index = 0;
-	}
-	
-	if (index >= m_sheetlist.size()) {
-		index = m_sheetlist.size() - 1;
-	}
-	
-	Sheet* sheet = m_sheetlist.at(index);
-
-	TimeLine* tl = sheet->get_timeline();
+	TimeLine* tl = m_sheet->get_timeline();
 		
 	foreach(Marker* marker, tl->get_markers()) {
 		QString name = marker->get_description();
 		QString pos = timeref_to_cd_including_hours(marker->get_when());
 
 		QTreeWidgetItem* item = new QTreeWidgetItem(markersTreeWidget);
-		item->setText(0, QString("%1 %2").arg(index, 2, 10, QLatin1Char('0')).arg(sheet->get_title()));
-		item->setText(1, pos.simplified());
-		item->setText(2, name);
+		item->setText(0, pos.simplified());
+		item->setText(1, name);
 		item->setData(0, Qt::UserRole, marker->get_id());
 	}
 
@@ -235,7 +166,7 @@ void MarkerDialog::description_changed(const QString &s)
 		return;
 	}
 
-	item->setText(2, s);
+	item->setText(1, s);
 	m_marker->set_description(s);
 }
 
@@ -248,7 +179,7 @@ void MarkerDialog::position_changed(const QString &s)
 		return;
 	}
 
-	item->setText(1, s);
+	item->setText(0, s);
 	
 // 	AAAH, wouldn't it be sooo fun to have un/redo when 
 // 	editing the Markers from here ?
@@ -265,24 +196,30 @@ void MarkerDialog::position_changed(const QString &s)
 
 	TimeRef location = cd_to_timeref(s);
 	m_marker->set_when(location);
-	markersTreeWidget->sortItems(1, Qt::AscendingOrder);
+	markersTreeWidget->sortItems(0, Qt::AscendingOrder);
 }
 
-// find the marker based on it's id. Since each sheet has it's own timeline,
-// we need to iterate over all sheets
+// find the marker based on it's id.
 Marker * MarkerDialog::get_marker(qint64 id)
 {
-	foreach(Sheet* sheet, m_project->get_sheets()) {
+	TimeLine* tl = m_sheet->get_timeline();
 
-		TimeLine* tl = sheet->get_timeline();
-		
-		foreach(Marker* marker, tl->get_markers()) {
-			if (marker->get_id() == id) {
-				return marker;
-			}
+	foreach(Marker* marker, tl->get_markers()) {
+		if (marker->get_id() == id) {
+			return marker;
 		}
 	}
 	return 0;
+}
+
+void MarkerDialog::apply()
+{
+	accept();
+}
+
+void MarkerDialog::cancel()
+{
+	reject();
 }
 
 // One slot per widget, to avoid using QObject::sender() to determine the sender
@@ -359,7 +296,7 @@ void MarkerDialog::title_all()
 		QTreeWidgetItem *it = markersTreeWidget->topLevelItem(i);
 		Marker *m = get_marker(it->data(0, Qt::UserRole).toLongLong());
 		m->set_description(str);
-		it->setText(2, str);
+		it->setText(1, str);
 	}
 }
 
@@ -499,12 +436,6 @@ void MarkerDialog::pemph_all()
 	}
 }
 
-void MarkerDialog::update_sheets()
-{
-	// this one does all we need
-	set_project(m_project);
-}
-
 void MarkerDialog::remove_marker()
 {
 	if (!m_marker) {
@@ -516,8 +447,7 @@ void MarkerDialog::remove_marker()
 		return;
 	}
 
-	Sheet *sheet = m_sheetlist.at(comboBoxDisplaySheet->currentIndex());
-	TimeLine* tl = sheet->get_timeline();
+	TimeLine* tl = m_sheet->get_timeline();
 		
 	AddRemove *ar = (AddRemove*) tl->remove_marker(m_marker);
 	Command::process_command(ar);
@@ -551,14 +481,7 @@ void MarkerDialog::export_toc()
 	out << "    <hr>\n";
 	out << "    <table>\n      <tr><th>Position (mm:ss:frames)</th><th>Title</th>\n";
 
-	if (comboBoxDisplaySheet->currentIndex() >= m_sheetlist.size()) {
-		return;
-	}
-
-	int i = comboBoxDisplaySheet->currentIndex();
-	Sheet *sheet = m_sheetlist.at(i);
-
-	TimeLine* tl = sheet->get_timeline();
+	TimeLine* tl = m_sheet->get_timeline();
 	foreach(Marker* marker, tl->get_markers()) {
 		QString name = marker->get_description();
 		QString pos = timeref_to_cd(marker->get_when());

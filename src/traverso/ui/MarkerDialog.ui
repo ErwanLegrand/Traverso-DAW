@@ -13,52 +13,20 @@
    <string>Markers</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
    <property name="spacing" >
     <number>6</number>
    </property>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
-      <number>6</number>
-     </property>
-     <item>
-      <widget class="QLabel" name="label_8" >
-       <property name="text" >
-        <string>Show Markers of:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="comboBoxDisplaySheet" />
-     </item>
-     <item>
-      <widget class="QCheckBox" name="checkBoxAllSheets" >
-       <property name="text" >
-        <string>all Sheets</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
+   <property name="margin" >
+    <number>9</number>
+   </property>
    <item>
     <widget class="QTreeWidget" name="markersTreeWidget" >
      <property name="editTriggers" >
-      <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::NoEditTriggers</set>
+      <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
      </property>
      <property name="rootIsDecorated" >
       <bool>false</bool>
      </property>
-     <column>
-      <property name="text" >
-       <string>Sheet</string>
-      </property>
-     </column>
      <column>
       <property name="text" >
        <string>Position</string>
@@ -102,7 +70,8 @@
          <string>...</string>
         </property>
         <property name="icon" >
-         <iconset>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
+         <iconset>
+          <normaloff>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</normaloff>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
         </property>
        </widget>
       </item>
@@ -115,7 +84,8 @@
          <string>...</string>
         </property>
         <property name="icon" >
-         <iconset>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
+         <iconset>
+          <normaloff>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</normaloff>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
         </property>
        </widget>
       </item>
@@ -184,7 +154,8 @@
           <string>...</string>
          </property>
          <property name="icon" >
-          <iconset>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
+          <iconset>
+           <normaloff>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</normaloff>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
          </property>
         </widget>
        </item>
@@ -207,7 +178,8 @@
           <string>...</string>
          </property>
          <property name="icon" >
-          <iconset>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
+          <iconset>
+           <normaloff>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</normaloff>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
          </property>
         </widget>
        </item>
@@ -230,7 +202,8 @@
           <string>...</string>
          </property>
          <property name="icon" >
-          <iconset>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
+          <iconset>
+           <normaloff>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</normaloff>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
          </property>
         </widget>
        </item>
@@ -266,7 +239,8 @@
           <string>...</string>
          </property>
          <property name="icon" >
-          <iconset>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
+          <iconset>
+           <normaloff>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</normaloff>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
          </property>
         </widget>
        </item>
@@ -289,7 +263,8 @@
           <string>...</string>
          </property>
          <property name="icon" >
-          <iconset>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
+          <iconset>
+           <normaloff>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</normaloff>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
          </property>
         </widget>
        </item>
@@ -312,7 +287,8 @@
           <string>...</string>
          </property>
          <property name="icon" >
-          <iconset>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
+          <iconset>
+           <normaloff>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</normaloff>../../../../../../../usr/share/icons/crystalsvg/16x16/actions/tab_duplicate.png</iconset>
          </property>
         </widget>
        </item>
@@ -322,11 +298,11 @@
    </item>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>6</number>
+     </property>
+     <property name="margin" >
+      <number>0</number>
      </property>
      <item>
       <widget class="QPushButton" name="pushButtonRemove" >
@@ -347,7 +323,7 @@
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>281</width>
          <height>20</height>
@@ -356,12 +332,19 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButtonClose" >
+      <widget class="QPushButton" name="pushButtonOk" >
        <property name="text" >
-        <string>&amp;Close</string>
+        <string>&amp;Ok</string>
        </property>
        <property name="autoDefault" >
         <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonCancel" >
+       <property name="text" >
+        <string>&amp;Cancel</string>
        </property>
       </widget>
      </item>
@@ -389,41 +372,8 @@
   <tabstop>toolButtonArrangerAll</tabstop>
   <tabstop>lineEditMessage</tabstop>
   <tabstop>toolButtonMessageAll</tabstop>
-  <tabstop>pushButtonClose</tabstop>
+  <tabstop>pushButtonOk</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>pushButtonClose</sender>
-   <signal>clicked()</signal>
-   <receiver>MarkerDialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>389</x>
-     <y>488</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>332</x>
-     <y>523</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxAllSheets</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>comboBoxDisplaySheet</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>276</x>
-     <y>18</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>241</x>
-     <y>15</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

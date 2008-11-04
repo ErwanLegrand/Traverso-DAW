@@ -121,7 +121,6 @@ private:
 	ProjectManagerDialog*	m_projectManagerDialog;
 	OpenProjectDialog*	m_openProjectDialog;
 	InsertSilenceDialog*	m_insertSilenceDialog;
-	MarkerDialog*		m_markerDialog;
 	SysInfoToolBar* 	m_sysinfo;
 	ProgressToolBar*	m_progressBar;
 	BusSelectorDialog*	m_busSelector;

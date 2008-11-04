@@ -37,26 +37,23 @@ public:
 	MarkerDialog(QWidget* parent = 0);
 	~MarkerDialog() {};
 	
-	void sheet_to_be_showed(Sheet* sheet);
-	
-	
 private:
 	Project* m_project;
 	Marker* m_marker;
-	QList<Sheet*> m_sheetlist;
+	Sheet* m_sheet;
 
 	Marker* get_marker(qint64);
 	void next_item(QLineEdit *);
 
 private slots:
-	void set_project(Project* project);
 	void update_marker_treeview();
 	void item_changed(QTreeWidgetItem *, QTreeWidgetItem *);
 	void description_changed(const QString &);
 	void position_changed(const QString &);
-	void update_sheets();
 	void remove_marker();
 	void export_toc();
+	void apply();
+	void cancel();
 
 	void title_enter();
 	void position_enter();
