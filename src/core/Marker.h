@@ -56,6 +56,7 @@ public:
 	void set_isrc(const QString &);
 	void set_preemphasis(bool);
 	void set_copyprotect(bool);
+	void set_index(int);
 
 	TimeLine * get_timeline() const {return m_timeline;}
 	TimeRef get_when() const {return m_when;}
@@ -69,6 +70,7 @@ public:
 	bool get_preemphasis();
 	bool get_copyprotect();
 	Type get_type() {return m_type;};
+	int get_index() {return m_index;};
 	
 
 public slots:
@@ -88,10 +90,12 @@ private:
 	bool	m_preemph,
 		m_copyprotect;
 	Type	m_type;
+	int	m_index;
 	
 signals:
 	void positionChanged();
 	void descriptionChanged();
+	void indexChanged();
 };
 
 #endif

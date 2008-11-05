@@ -59,6 +59,7 @@ MarkerView::MarkerView(Marker* marker, SheetView* sv, ViewItem* parentView)
 	
 	connect(m_marker, SIGNAL(positionChanged()), this, SLOT(update_position()));
 	connect(m_marker, SIGNAL(descriptionChanged()), this, SLOT(update_drawing()));
+	connect(m_marker, SIGNAL(indexChanged()), this, SLOT(update_drawing()));
 }
 
 void MarkerView::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
@@ -86,7 +87,11 @@ void MarkerView::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
 			QPointF((m_width+ 0.5)/2, m_ascent) };
 
 	painter->drawPolygon(pts, 3);
-	painter->drawText(m_width + 1, m_ascent, m_marker->get_description());
+	if (m_marker->get_type() == Marker::ENDMARKER) {
+		painter->drawText(m_width + 1, m_ascent, m_marker->get_description());
+	} else {
+		painter->drawText(m_width + 1, m_ascent, QString("%1: %2").arg(m_marker->get_index()).arg(m_marker->get_description()));
+	}
 
 	if (m_dragging) {
 		m_posIndicator->set_value(timeref_to_text(TimeRef((x() + m_width / 2) * m_sv->timeref_scalefactor), m_sv->timeref_scalefactor));
@@ -99,9 +104,17 @@ void MarkerView::calculate_bounding_rect()
 {
 	prepareGeometryChange();
 	update_position();
-	
+
+	QString desc;
+	if (m_marker->get_type() == Marker::ENDMARKER) {
+		desc = m_marker->get_description();
+	} else {
+		desc = QString("%1: %2").arg(m_marker->get_index()).arg(m_marker->get_description());
+	}
+
+
 	QFontMetrics fm(themer()->get_font("Timeline:fontscale:marker"));
-	int descriptionwidth = fm.width(m_marker->get_description()) + 1;
+	int descriptionwidth = fm.width(desc) + 1;
 
 	m_line->set_bounding_rect(QRectF(0, 0, 1, m_sv->get_clips_viewport()->sceneRect().height()));
 	m_line->setPos(m_width / 2, m_ascent);

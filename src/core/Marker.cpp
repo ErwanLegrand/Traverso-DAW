@@ -45,6 +45,7 @@ Marker::Marker(TimeLine* tl, const TimeRef when, Type type)
 	m_isrc = "";
 	m_preemph = 0;
 	m_copyprotect = 0;
+	m_index = -1;
 }
 
 Marker::Marker(TimeLine * tl, const QDomNode node)
@@ -172,3 +173,8 @@ bool Marker::get_copyprotect()
 	return m_copyprotect;
 }
 
+void Marker::set_index(int i)
+{
+	m_index = i;
+	emit indexChanged();
+}

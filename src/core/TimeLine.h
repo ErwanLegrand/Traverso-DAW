@@ -57,6 +57,7 @@ public:
 private:
 	Sheet* m_sheet;
 	QList<Marker*> m_markers;
+	void index_markers();
 
 private slots:
 	void private_add_marker(Marker* marker);

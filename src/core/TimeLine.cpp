@@ -65,8 +65,8 @@ int TimeLine::set_state(const QDomNode & node)
 		markerNode = markerNode.nextSibling();
 	}
 
-	qSort(m_markers.begin(), m_markers.end(), smallerMarker);
-	
+	index_markers();
+
 	return 1;
 }
 
@@ -109,12 +109,13 @@ Command* TimeLine::remove_marker(Marker* marker, bool historable)
 void TimeLine::private_add_marker(Marker * marker)
 {
 	m_markers.append(marker);
-	qSort(m_markers.begin(), m_markers.end(), smallerMarker);
+	index_markers();
 }
 
 void TimeLine::private_remove_marker(Marker * marker)
 {
 	m_markers.removeAll(marker);
+	index_markers();
 }
 
 Marker * TimeLine::get_marker(qint64 id)
@@ -176,11 +177,21 @@ Marker* TimeLine::get_end_marker()
 
 void TimeLine::marker_position_changed()
 {
-	qSort(m_markers.begin(), m_markers.end(), smallerMarker);
+	index_markers();
+
 	emit markerPositionChanged();
 	
 	// FIXME This is not a fix to let the sheetview scrollbars 
 	// know that it's range possably has to be recalculated!!!!!!!!!!!!!!
 	emit m_sheet->lastFramePositionChanged();
+}
+
+void TimeLine::index_markers()
+{
+	qSort(m_markers.begin(), m_markers.end(), smallerMarker);
+	// let the markers know about their position (index)
+	for (int i = 0; i < m_markers.size(); i++) {
+		m_markers.at(i)->set_index(i+1);
+	}	
 }
 
