@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: FadeCurve.cpp,v 1.35 2008/02/14 20:40:42 n_doebelin Exp $
+$Id: FadeCurve.cpp,v 1.36 2008/11/07 10:43:08 r_sijrier Exp $
 */
  
 #include "FadeCurve.h"
@@ -81,6 +81,8 @@ FadeCurve::~ FadeCurve( )
 
 void FadeCurve::init()
 {
+	QObject::tr("FadeCurve");
+	
 	// Populate the curve with 12 CurveNodes
 	float f = 0.0;
 	int nodecount = 11;

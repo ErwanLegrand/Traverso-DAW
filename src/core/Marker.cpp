@@ -32,6 +32,7 @@ Marker::Marker(TimeLine* tl, const TimeRef when, Type type)
 	, m_when(when)
 	, m_type(type)
 {
+	QObject::tr("Marker");
 	set_history_stack(m_timeline->get_history_stack());
 	m_id = create_id();
 

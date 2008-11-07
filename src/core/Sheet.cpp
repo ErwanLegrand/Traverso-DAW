@@ -135,6 +135,8 @@ void Sheet::init()
 	threadId = QThread::currentThreadId ();
 #endif
 
+	QObject::tr("Sheet");
+
 	m_diskio = new DiskIO(this);
 	m_currentSampleRate = audiodevice().get_sample_rate();
 	m_diskio->output_rate_changed(m_currentSampleRate);

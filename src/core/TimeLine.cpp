@@ -36,6 +36,7 @@ TimeLine::TimeLine(Sheet * sheet)
 	, m_sheet(sheet)
 {
 	set_history_stack(m_sheet->get_history_stack());
+	QObject::tr("TimeLine");
 }
 
 QDomNode TimeLine::get_state(QDomDocument doc)

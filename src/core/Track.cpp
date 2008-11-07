@@ -75,6 +75,7 @@ Track::~Track()
 
 void Track::init()
 {
+	QObject::tr("Track");
 	isSolo = mutedBySolo = m_isMuted = isArmed = false;
 	set_history_stack(m_sheet->get_history_stack());
 	m_pluginChain = new PluginChain(this, m_sheet);

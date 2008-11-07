@@ -125,6 +125,8 @@ Curve::~Curve()
 
 void Curve::init( )
 {
+	QObject::tr("Curve");
+	QObject::tr("CurveNode");
 	m_changed = true;
 	m_lookup_cache.left = -1;
 	m_defaultValue = 1.0f;

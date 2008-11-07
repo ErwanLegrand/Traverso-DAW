@@ -65,7 +65,7 @@ class Sheet : public ContextItem, public AudioProcessingItem
 	Q_CLASSINFO("set_editing_mode", tr("Mode: Edit"))
 	Q_CLASSINFO("set_effects_mode", tr("Mode: Curve"))
 	Q_CLASSINFO("prev_skip_pos", tr("To previous snap position"))
-	Q_CLASSINFO("prev_skip_pos", tr("To next snap position"))
+	Q_CLASSINFO("next_skip_pos", tr("To next snap position"))
 
 public:
 
