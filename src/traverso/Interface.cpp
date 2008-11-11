@@ -789,7 +789,7 @@ Command * Interface::show_context_menu( )
 			action = toplevelmenu->insertMenu(action, menu);
 			QString name = className.remove("View");
 
-			action->setText(name);
+			action->setText(QObject::tr(QS_C(name)));
 		}
 	}
 
@@ -948,7 +948,7 @@ QMenu* Interface::create_context_menu(QObject* item, QList<MenuData >* menulist)
 	QMenu* menu = new QMenu(this);
 	menu->installEventFilter(this);
 	
-	QAction* menuAction = menu->addAction(name);
+	QAction* menuAction = menu->addAction(QObject::tr(QS_C(name)));
 	QFont font(themer()->get_font("ContextMenu:fontscale:actions"));
 	font.setBold(true);
 	menuAction->setFont(font);
@@ -1011,7 +1011,7 @@ QMenu* Interface::create_context_menu(QObject* item, QList<MenuData >* menulist)
 		sub->menuAction()->setFont(font);
 		
 		QAction* action = menu->insertMenu(0, sub);
-		action->setText(key);
+		action->setText(QObject::tr(QS_C(key)));
 		foreach(MenuData data, *list) {
 			QAction* action = new QAction(sub);
 			QString keyfact = create_keyfact_string(data.keysequence, data.modifierkeys);
