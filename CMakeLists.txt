@@ -23,6 +23,7 @@ OPTION(WANT_JACK    	"Include Jack (Jack Audio Connection Kit) support" ON)
 OPTION(WANT_ALSA    	"Include ALSA (Advanced Linux Sound Architecture) support" ON)
 OPTION(WANT_PORTAUDIO	"Include PortAudio support (Driver support for Mac OS X and Windows" OFF)
 OPTION(WANT_PULSEAUDIO	"Include PulseAudio support (Driver support for Linux and Windows" OFF)
+OPTION(WANT_COREAUDIO	"Include CoreAudio support (Driver support for Mac OS X" ON)
 OPTION(WANT_LV2		"Include LV2 Plugin support" ON)
 OPTION(USE_SYSTEM_SLV2_LIBRARY "Use system installed slv2 library. If not found, the internal one is compiled and used which needs the rdf development headers" OFF)
 OPTION(WANT_MP3_DECODE	"Include mp3 decoding support, for playing mp3 files" ON)
@@ -166,6 +167,8 @@ IF(WANT_PULSEAUDIO)
 ELSE(WANT_PULSEAUDIO)
 	SET(HAVE_PULSEAUDIO FALSE)
 ENDIF(WANT_PULSEAUDIO)
+
+
 
 IF(WANT_LV2)
 	IF(USE_SYSTEM_SLV2_LIBRARY)
@@ -340,10 +343,22 @@ IF(HAVE_MLOCK)
 ENDIF(HAVE_MLOCK)
 
 
+# Detect if we want native Mac OS X support (CoreAudio)
+# and if we can build with it.
+IF(WANT_COREAUDIO)
+	SET(HAVE_COREAUDIO TRUE)
+	LIST(APPEND TRAVERSO_DEFINES -DCOREAUDIO_SUPPORT)
+ELSE(WANT_COREAUDIO)
+	SET(HAVE_COREAUDIO FALSE)
+ENDIF(WANT_COREAUDIO)
+
+
 IF(UNIX)
 	
 #BEGIN Mac OS X section
 	IF(APPLE)
+	
+
 # @ MAC OS X builders, I've NO IDEA what this should be, please have a look at it
 # It should be possible to create a working bundle with CPack using stuff
 # defined here ....???
@@ -588,6 +603,7 @@ MESSAGE("Building in mode	:	${CMAKE_BUILD_TYPE}")
 MESSAGE("ALSA support		:	${HAVE_ALSA}")
 MESSAGE("Jack support		:	${HAVE_JACK}")
 MESSAGE("PortAudio support	:	${HAVE_PORTAUDIO}")
+MESSAGE("CoreAudio support	:	${HAVE_COREAUDIO}")
 MESSAGE("SLV2 support		:	${SLV2OPTIONS}")
 MESSAGE("MP3 read support	:	${HAVE_MP3_DECODING}")
 MESSAGE("MP3 writing support	:	${HAVE_MP3_ENCODING}")
