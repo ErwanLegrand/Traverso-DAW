@@ -1,5 +1,8 @@
 TOBEDONE FOR 0.4x.x
 
+* Ubuntu Intrepid package does not depend on libfftw3 ?
+* sheetwriter should be songwriter (MarkerDialog?)
+* resetting audioclip file: audioclip doesn't play sound
 * QFileDialog::getExistingDirectory crashes when it shows a hidden directory the first time.
 * http://traverso-daw.org/forum/index.php/topic,93.0.html (selecting second burn device not possible)
 * current zoom-cursors get messed up at times (specially after using context menu of Zoom)
@@ -7,7 +10,7 @@ TOBEDONE FOR 0.4x.x
 * http://forums.frugalware.org/index.php?t=msg&goto=7949&rid=0&S=fc3e4bbb15813272bc2658068081e9d7#msg_7949
 * accessability: LAC discussion:  e.g. from 25.12.07, thread "Studio reverb (impulse)"
 * Find out if locale encodings work for special chars (like ë) when importing an 
-  audio (wav) file and creating peak files on all platforms.
+  audio (wav) file and creating peak files on all platforms. (should by now?)
 * Track (Vynil) plugin also applied to other tracks ??
 * jack in/output ports numbers are calculated in reversed order! so inputcount ports is output count and vise versa
 * crash when clicking on button next to theme path (Appearance page) (Filed bug at trolltech)
