@@ -1,8 +1,9 @@
 /*
 Copyright (C) 2008 Remon Sijrier 
+Copyright (C) Grame, 2003.
+Copyright (C) Johnny Petrantoni, 2003.
 
 (November 2008) Ported to C++ for Traverso by Remon Sijrier
-Copyright (C) 2001 Paul Davis 
 
 This file is part of Traverso
 
@@ -20,12 +21,25 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
+Grame Research Laboratory, 9, rue du Garet 69001 Lyon - France
+grame@rd.grame.fr
+	
+Johnny Petrantoni, johnny@lato-b.com - Italy, Rome.
+
+30-01-04, Johnny Petrantoni: first code of the coreaudio driver.
+
 */
 
 #ifndef CORE_AUDIO_DRIVER_H
 #define CORE_AUDIO_DRIVER_H
 
 #include "Driver.h"
+
+#include <CoreAudio/CoreAudio.h>
+#include <AudioToolbox/AudioConverter.h>
+#include <AudioUnit/AudioUnit.h>
+
+#include "defines.h"
 
 
 class CoreAudioDriver : public Driver
@@ -45,6 +59,13 @@ public:
 // 	int bufsize(nframes_t nframes);
 // 	int restart();
 	int setup(bool capture=true, bool playback=true, const QString& cardDevice="none");
+
+
+private:
+	AudioUnit au_hal;
+	AudioBufferList* input_list;
+	AudioDeviceID device_id;
+	int state;
 
 };
  
