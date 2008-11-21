@@ -36,6 +36,11 @@ class SheetView;
 class ViewItem;
 class Zoom;
 
+typedef struct {
+	Marker*	marker;
+	TimeRef origin;
+} MarkerAndOrigin;
+
 class MoveClip : public Command
 {
 	Q_OBJECT
@@ -74,7 +79,7 @@ private :
 	
 	Sheet* 		m_sheet;
 	AudioClipGroup  m_group;
-	QList<Marker*>	m_markers;
+	QList<MarkerAndOrigin>	m_markers;
         TimeRef 	m_trackStartLocation;
         TimeRef 	m_posDiff;
 	ActionType	m_actionType;

@@ -111,7 +111,23 @@ MoveClip::MoveClip(ViewItem* view, QVariantList args)
 		
 		TimeRef currentLocation = TimeRef(cpointer().on_first_input_event_scene_x() * d->sv->timeref_scalefactor);
 		
-		d->pointedTrackIndex = d->sv->get_trackview_under(cpointer().scene_pos())->get_track()->get_sort_index();
+		if (d->sv->get_trackview_under(cpointer().scene_pos())) {
+			d->pointedTrackIndex = d->sv->get_trackview_under(cpointer().scene_pos())->get_track()->get_sort_index();
+		} else {
+			d->pointedTrackIndex = 0;
+		}
+		
+		if (m_actionType == FOLD_SHEET) {
+			QList<Marker*> movingMarkers = d->sv->get_sheet()->get_timeline()->get_markers();
+			foreach(Marker* marker, movingMarkers) {
+				if (marker->get_when() > currentLocation) {
+					MarkerAndOrigin markerAndOrigin;
+					markerAndOrigin.marker = marker;
+					markerAndOrigin.origin = marker->get_when();
+					m_markers.append(markerAndOrigin);
+				}
+			}
+		}
 		
 		if (m_actionType == FOLD_SHEET) {
 			QList<Marker*> movingMarkers = d->sv->get_sheet()->get_timeline()->get_markers();
@@ -237,8 +253,8 @@ int MoveClip::do_action()
 	}
 	
 	if (m_actionType == FOLD_SHEET) {
-		foreach(Marker* marker, m_markers) {
-			marker->set_when(marker->get_when() + m_posDiff);
+		foreach(MarkerAndOrigin markerAndOrigin, m_markers) {
+			markerAndOrigin.marker->set_when(markerAndOrigin.origin + m_posDiff);
 		}
 	}
 	
@@ -257,8 +273,8 @@ int MoveClip::undo_action()
 	}
 
 	if (m_actionType == FOLD_SHEET) {
-		foreach(Marker* marker, m_markers) {
-			marker->set_when(marker->get_when() - m_posDiff);
+		foreach(MarkerAndOrigin markerAndOrigin, m_markers) {
+			markerAndOrigin.marker->set_when(markerAndOrigin.origin);
 		}
 	}
 	
@@ -314,6 +330,13 @@ int MoveClip::jog()
 	
 	// and used to move the group to it's new location.
 	m_group.move_to(m_newTrackIndex, m_trackStartLocation + m_posDiff);
+	
+	// and used to move the markers
+	if (m_actionType == FOLD_SHEET) {
+		foreach(MarkerAndOrigin markerAndOrigin, m_markers) {
+			markerAndOrigin.marker->set_when(markerAndOrigin.origin + m_posDiff);
+		}
+	}
 	
 	d->sv->update_shuttle_factor();
 	
