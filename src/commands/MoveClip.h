@@ -27,6 +27,7 @@
 #include <QPoint>
 #include <defines.h>
 #include "AudioClipGroup.h"
+#include "Marker.h"
 
 class AudioClip;
 class Sheet;
@@ -73,6 +74,7 @@ private :
 	
 	Sheet* 		m_sheet;
 	AudioClipGroup  m_group;
+	QList<Marker*>	m_markers;
         TimeRef 	m_trackStartLocation;
         TimeRef 	m_posDiff;
 	ActionType	m_actionType;

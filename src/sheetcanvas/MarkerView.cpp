@@ -88,9 +88,13 @@ void MarkerView::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
 
 	painter->drawPolygon(pts, 3);
 	if (m_marker->get_type() == Marker::ENDMARKER) {
-		painter->drawText(m_width + 1, m_ascent, m_marker->get_description());
+		painter->drawText(m_width + 1, m_ascent-2, m_marker->get_description());
 	} else {
-		painter->drawText(m_width + 1, m_ascent, QString("%1: %2").arg(m_marker->get_index()).arg(m_marker->get_description()));
+		if (m_marker->get_description().length() > 0) {
+			painter->drawText(m_width + 1, m_ascent-2, QString("%1: %2").arg(m_marker->get_index()).arg(m_marker->get_description()));
+		} else {
+			painter->drawText(m_width + 1, m_ascent-2, QString("%1").arg(m_marker->get_index()));
+		}
 	}
 
 	if (m_dragging) {

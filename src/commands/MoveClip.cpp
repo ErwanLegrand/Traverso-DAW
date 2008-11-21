@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "SnapList.h"
 #include "Sheet.h"
 #include "Track.h"
+#include "Timeline.h"
 
 #include "ClipsViewPort.h"
 #include "SheetView.h"
@@ -112,6 +113,15 @@ MoveClip::MoveClip(ViewItem* view, QVariantList args)
 		
 		d->pointedTrackIndex = d->sv->get_trackview_under(cpointer().scene_pos())->get_track()->get_sort_index();
 		
+		if (m_actionType == FOLD_SHEET) {
+			QList<Marker*> movingMarkers = d->sv->get_sheet()->get_timeline()->get_markers();
+			foreach(Marker* marker, movingMarkers) {
+				if (marker->get_when() > currentLocation) {
+					m_markers.append(marker);
+				}
+			}
+		}
+		
 		foreach(Track* track, tracks) {
 			QList<AudioClip*> clips = track->get_cliplist();
 			foreach(AudioClip* clip, clips) {
@@ -122,7 +132,7 @@ MoveClip::MoveClip(ViewItem* view, QVariantList args)
 		}
 		
 		m_group.set_clips(movingClips);
-	
+		
 	} else {
 		AudioClipView* cv = qobject_cast<AudioClipView*>(view);
 		Q_ASSERT(cv);
@@ -226,6 +236,12 @@ int MoveClip::do_action()
 		move_to_end(false);
 	}
 	
+	if (m_actionType == FOLD_SHEET) {
+		foreach(Marker* marker, m_markers) {
+			marker->set_when(marker->get_when() + m_posDiff);
+		}
+	}
+	
 	return 1;
 }
 
@@ -240,6 +256,12 @@ int MoveClip::undo_action()
 		m_group.move_to(m_origTrackIndex, m_trackStartLocation);
 	}
 
+	if (m_actionType == FOLD_SHEET) {
+		foreach(Marker* marker, m_markers) {
+			marker->set_when(marker->get_when() - m_posDiff);
+		}
+	}
+	
 	return 1;
 }
 
