@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "SnapList.h"
 #include "Sheet.h"
 #include "Track.h"
-#include "Timeline.h"
+#include "TimeLine.h"
 
 #include "ClipsViewPort.h"
 #include "SheetView.h"
