@@ -73,6 +73,7 @@ private :
 		COPY,
 		FOLD_TRACK,
 		FOLD_SHEET,
+		FOLD_MARKERS,
 		MOVE_TO_START,
 		MOVE_TO_END
 	};

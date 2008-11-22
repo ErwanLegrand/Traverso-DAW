@@ -114,6 +114,7 @@ TraversoCommands::TraversoCommands()
 	m_dict.insert("MoveClip", MoveClipCommand);
 	m_dict.insert("FoldSheet", MoveClipCommand);
 	m_dict.insert("FoldTrack", MoveClipCommand);
+	m_dict.insert("FoldMarkers", MoveClipCommand);
 	m_dict.insert("DragEdge", DragEdgeCommand);
 	m_dict.insert("MoveClipOrEdge", MoveClipOrEdgeCommand);
 	m_dict.insert("CopyClip", MoveClipCommand);

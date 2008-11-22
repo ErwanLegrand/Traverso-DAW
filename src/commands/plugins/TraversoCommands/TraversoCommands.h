@@ -50,6 +50,7 @@ class TraversoCommands : public CommandPlugin
 	Q_CLASSINFO("ArmTracks", tr("Arm Tracks"))
 	Q_CLASSINFO("FoldSheet", tr("Fold Sheet"))
 	Q_CLASSINFO("FoldTrack", tr("Fold Track"))
+	Q_CLASSINFO("FoldMarkers", tr("Fold Markers"))
 	Q_CLASSINFO("VZoomIn", tr("Vertical In"))
 	Q_CLASSINFO("HZoomOut", tr("Horizontal Out"))
 	Q_CLASSINFO("HZoomIn", tr("Horizontal In"))

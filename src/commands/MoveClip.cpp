@@ -87,13 +87,16 @@ MoveClip::MoveClip(ViewItem* view, QVariantList args)
 	} else if (action == "fold_track") {
 		des = tr("Fold Track");
 		m_actionType = FOLD_TRACK;
+	} else if (action == "fold_markers") {
+		des = tr("Fold Markers");
+		m_actionType = FOLD_MARKERS;
 	} else {
 		PERROR("MoveClip: Unknown action type: %s", QS_C(action));
 	}
 	
 	setText(des);
 	
-	if (m_actionType == FOLD_SHEET || m_actionType == FOLD_TRACK) {
+	if (m_actionType == FOLD_SHEET || m_actionType == FOLD_TRACK || m_actionType == FOLD_MARKERS) {
 		
 		QList<AudioClip*> movingClips;
 		QList<Track*> tracks;
@@ -103,10 +106,13 @@ MoveClip::MoveClip(ViewItem* view, QVariantList args)
 			Q_ASSERT(tv);
 			d->sv= tv->get_sheetview();
 			tracks.append(tv->get_track());
-		} else {
+		} else if (m_actionType == FOLD_SHEET) {
 			d->sv = qobject_cast<SheetView*>(view);
 			Q_ASSERT(d->sv);
 			tracks = d->sv->get_sheet()->get_tracks();
+		} else {
+			d->sv = qobject_cast<SheetView*>(view->get_sheetview());
+			Q_ASSERT(d->sv);
 		}
 		
 		TimeRef currentLocation = TimeRef(cpointer().on_first_input_event_scene_x() * d->sv->timeref_scalefactor);
@@ -117,7 +123,7 @@ MoveClip::MoveClip(ViewItem* view, QVariantList args)
 			d->pointedTrackIndex = 0;
 		}
 		
-		if (m_actionType == FOLD_SHEET) {
+		if (m_actionType == FOLD_SHEET || m_actionType == FOLD_MARKERS) {
 			QList<Marker*> movingMarkers = d->sv->get_sheet()->get_timeline()->get_markers();
 			foreach(Marker* marker, movingMarkers) {
 				if (marker->get_when() > currentLocation) {
@@ -129,20 +135,13 @@ MoveClip::MoveClip(ViewItem* view, QVariantList args)
 			}
 		}
 		
-		if (m_actionType == FOLD_SHEET) {
-			QList<Marker*> movingMarkers = d->sv->get_sheet()->get_timeline()->get_markers();
-			foreach(Marker* marker, movingMarkers) {
-				if (marker->get_when() > currentLocation) {
-					m_markers.append(marker);
-				}
-			}
-		}
-		
-		foreach(Track* track, tracks) {
-			QList<AudioClip*> clips = track->get_cliplist();
-			foreach(AudioClip* clip, clips) {
-				if (clip->get_track_end_location() > currentLocation) {
-					movingClips.append(clip);
+		if (m_actionType == FOLD_SHEET || m_actionType == FOLD_TRACK) {
+			foreach(Track* track, tracks) {
+				QList<AudioClip*> clips = track->get_cliplist();
+				foreach(AudioClip* clip, clips) {
+					if (clip->get_track_end_location() > currentLocation) {
+						movingClips.append(clip);
+					}
 				}
 			}
 		}
@@ -182,7 +181,7 @@ MoveClip::~MoveClip()
 
 int MoveClip::begin_hold()
 {
-	if (!m_group.get_size() || m_group.is_locked()) {
+	if ((!m_group.get_size() || m_group.is_locked()) && !m_markers.count()) {
 		return -1;
 	}
 	
@@ -227,7 +226,7 @@ int MoveClip::prepare_actions()
 	}
 	
 	if (m_origTrackIndex == m_newTrackIndex &&  m_posDiff == TimeRef() && 
-	    ! (m_actionType == COPY || m_actionType == MOVE_TO_START || m_actionType == MOVE_TO_END) ) {
+	    ! (m_actionType == COPY || m_actionType == MOVE_TO_START || m_actionType == MOVE_TO_END || m_actionType == FOLD_MARKERS) ) {
 		return -1;
 	}
 	
@@ -252,10 +251,8 @@ int MoveClip::do_action()
 		move_to_end(false);
 	}
 	
-	if (m_actionType == FOLD_SHEET) {
-		foreach(MarkerAndOrigin markerAndOrigin, m_markers) {
-			markerAndOrigin.marker->set_when(markerAndOrigin.origin + m_posDiff);
-		}
+	foreach(MarkerAndOrigin markerAndOrigin, m_markers) {
+		markerAndOrigin.marker->set_when(markerAndOrigin.origin + m_posDiff);
 	}
 	
 	return 1;
@@ -272,10 +269,8 @@ int MoveClip::undo_action()
 		m_group.move_to(m_origTrackIndex, m_trackStartLocation);
 	}
 
-	if (m_actionType == FOLD_SHEET) {
-		foreach(MarkerAndOrigin markerAndOrigin, m_markers) {
-			markerAndOrigin.marker->set_when(markerAndOrigin.origin);
-		}
+	foreach(MarkerAndOrigin markerAndOrigin, m_markers) {
+		markerAndOrigin.marker->set_when(markerAndOrigin.origin);
 	}
 	
 	return 1;
@@ -332,10 +327,8 @@ int MoveClip::jog()
 	m_group.move_to(m_newTrackIndex, m_trackStartLocation + m_posDiff);
 	
 	// and used to move the markers
-	if (m_actionType == FOLD_SHEET) {
-		foreach(MarkerAndOrigin markerAndOrigin, m_markers) {
-			markerAndOrigin.marker->set_when(markerAndOrigin.origin + m_posDiff);
-		}
+	foreach(MarkerAndOrigin markerAndOrigin, m_markers) {
+		markerAndOrigin.marker->set_when(markerAndOrigin.origin + m_posDiff);
 	}
 	
 	d->sv->update_shuttle_factor();

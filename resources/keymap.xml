@@ -494,8 +494,9 @@
 		</keyfact>
 		<keyfact type="HKEY2" key1="D" key2="F" >
 			<Objects>
-				<Object objectname="TrackView" mousehint="LRUD" modes="All" sortorder="6" pluginname="TraversoCommands" commandname="FoldTrack" arguments="fold_track" />
-				<Object objectname="SheetView" mousehint="LRUD" modes="All" sortorder="20" pluginname="TraversoCommands" modifierkeys="CTRL" commandname="FoldSheet" arguments="fold_sheet" />
+				<Object objectname="SheetView" mousehint="LR" modes="All" sortorder="20" pluginname="TraversoCommands" commandname="FoldSheet" arguments="fold_sheet" />
+				<Object objectname="TimeLineView" mousehint="LR" modes="All" sortorder="7" pluginname="TraversoCommands" modifierkeys="CTRL" commandname="FoldMarkers" arguments="fold_markers" />
+				<Object objectname="TrackView" mousehint="LR" modes="All" sortorder="6" pluginname="TraversoCommands" modifierkeys="CTRL" commandname="FoldTrack" arguments="fold_track" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY2" key1="Z" key2="V" >

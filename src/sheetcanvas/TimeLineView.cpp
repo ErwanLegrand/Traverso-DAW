@@ -163,7 +163,7 @@ int DragMarker::jog()
 
 
 TimeLineView::TimeLineView(SheetView* view)
-	: ViewItem(0, 0)
+	: ViewItem(0, view->get_sheet()->get_timeline())
 	, m_blinkingMarker(0)
 {
 	PENTERCONS2;
