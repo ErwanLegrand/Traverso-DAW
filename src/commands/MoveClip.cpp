@@ -164,7 +164,11 @@ MoveClip::MoveClip(ViewItem* view, QVariantList args)
 	}
 	
 	m_origTrackIndex = m_newTrackIndex = m_group.get_track_index();
-	m_trackStartLocation = m_group.get_track_start_location();
+	if (m_group.get_size() == 0 && m_markers.count() > 0) {
+		m_trackStartLocation = m_markers[0].origin;
+	} else {
+		m_trackStartLocation = m_group.get_track_start_location();
+	}
 	m_sheet = d->sv->get_sheet();
 	d->zoom = 0;
 }
@@ -433,6 +437,8 @@ void MoveClip::set_cursor_shape(int useX, int useY)
 {
 	if (useX && useY) {
 		cpointer().get_viewport()->set_holdcursor(":/cursorHoldLrud");
+	} else if (useX) {
+		cpointer().get_viewport()->set_holdcursor(":/cursorHoldLr");
 	} else {
 		cpointer().get_viewport()->set_holdcursor(":/cursorHoldUd");
 	}

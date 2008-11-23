@@ -27,7 +27,7 @@
 #include <Config.h>
 #include <Themer.h>
 
-#include <QCoreApplication>
+#include <QApplication>
 #include <QPen>
 #include <QScrollBar>
 		
