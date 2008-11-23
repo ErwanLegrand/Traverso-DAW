@@ -230,7 +230,7 @@ int MoveClip::prepare_actions()
 	}
 	
 	if (m_origTrackIndex == m_newTrackIndex &&  m_posDiff == TimeRef() && 
-	    ! (m_actionType == COPY || m_actionType == MOVE_TO_START || m_actionType == MOVE_TO_END || m_actionType == FOLD_MARKERS) ) {
+	    ! (m_actionType == COPY || m_actionType == MOVE_TO_START || m_actionType == MOVE_TO_END) ) {
 		return -1;
 	}
 	
