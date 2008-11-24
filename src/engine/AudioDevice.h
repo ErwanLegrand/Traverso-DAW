@@ -45,6 +45,11 @@ class AudioBus;
 class JackDriver;
 #endif
 
+#if defined (COREAUDIO_SUPPORT)
+class CoreAudioDriver;
+#endif
+
+
 class AudioDevice : public QObject
 {
 	Q_OBJECT
@@ -142,7 +147,9 @@ private:
 	friend class Driver;
 	friend class PulseAudioDriver;
 	friend class AudioDeviceThread;
-
+#if defined (COREAUDIO_SUPPORT)
+	friend class CoreAudioDriver;
+#endif
 
 	Driver* 				driver;
 	AudioDeviceThread* 			audioThread;

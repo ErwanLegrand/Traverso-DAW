@@ -61,11 +61,53 @@ public:
 	int setup(bool capture=true, bool playback=true, const QString& cardDevice="none");
 
 
-private:
 	AudioUnit au_hal;
 	AudioBufferList* input_list;
 	AudioDeviceID device_id;
 	int state;
+	
+	channel_t playback_nchannels;
+	channel_t capture_nchannels;
+
+	int xrun_detected;
+	int null_cycle_occured;
+
+	
+	void JCALog(char *fmt, ...);
+	void printError(OSStatus err);
+	OSStatus get_device_name_from_id(AudioDeviceID id, char name[256]);
+	OSStatus get_device_id_from_uid(char* UID, AudioDeviceID* id);
+	OSStatus get_default_device(AudioDeviceID * id);
+	OSStatus get_default_input_device(AudioDeviceID* id);
+	OSStatus get_default_output_device(AudioDeviceID* id);
+	OSStatus get_total_channels(AudioDeviceID device, int* channelCount, bool isInput);
+	OSStatus display_device_names();
+	
+	static OSStatus render(void 				*inRefCon,
+			AudioUnitRenderActionFlags 	*ioActionFlags,
+			const AudioTimeStamp 		*inTimeStamp,
+			UInt32 				inBusNumber,
+			UInt32 				inNumberFrames,
+			AudioBufferList 		*ioData);
+	static OSStatus render_input(
+			void 				*inRefCon,
+			AudioUnitRenderActionFlags 	*ioActionFlags,
+			const AudioTimeStamp 		*inTimeStamp,
+			UInt32 				inBusNumber,
+			UInt32 				inNumberFrames,
+			AudioBufferList 		*ioData);
+	static OSStatus sr_notification(
+			AudioDeviceID 		inDevice,
+			UInt32 			inChannel,
+			Boolean			isInput,
+			AudioDevicePropertyID 	inPropertyID,
+			void* 			inClientData);
+	static OSStatus notification(
+			AudioDeviceID 		inDevice,
+			UInt32 			inChannel,
+			Boolean			isInput,
+			AudioDevicePropertyID 	inPropertyID,
+			void* 			inClientData);
 
 };
  
