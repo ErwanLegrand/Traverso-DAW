@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AddRemove.cpp,v 1.5 2008/01/21 16:22:10 r_sijrier Exp $
+$Id: AddRemove.cpp,v 1.6 2008/11/24 10:12:19 r_sijrier Exp $
 */
 
 #include "AddRemove.h"
@@ -183,8 +183,8 @@ int AddRemove::prepare_actions()
 {
 	Q_ASSERT(m_parentItem);
 	Q_ASSERT(m_arg);
-	Q_ASSERT(m_doActionSlot != "");
-	Q_ASSERT(m_undoActionSlot != "");
+	Q_ASSERT(m_doActionSlot != QString(""));
+	Q_ASSERT(m_undoActionSlot != QString(""));
 	
 	m_doActionEvent = tsar().create_event(m_parentItem, m_arg, m_doActionSlot, m_doSignal);
 	
