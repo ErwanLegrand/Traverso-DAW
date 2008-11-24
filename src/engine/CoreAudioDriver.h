@@ -83,32 +83,53 @@ public:
 	OSStatus get_total_channels(AudioDeviceID device, int* channelCount, bool isInput);
 	OSStatus display_device_names();
 	
-	static OSStatus render(void 				*inRefCon,
+	OSStatus render(AudioUnitRenderActionFlags 	*ioActionFlags,
+			const AudioTimeStamp 		*inTimeStamp,
+			UInt32 				inBusNumber,
+			UInt32 				inNumberFrames,
+			AudioBufferList 		*ioData);
+	OSStatus render_input(AudioUnitRenderActionFlags *ioActionFlags,
+			const AudioTimeStamp 		*inTimeStamp,
+			UInt32 				inBusNumber,
+			UInt32 				inNumberFrames,
+			AudioBufferList 		*ioData);
+	OSStatus sr_notification(
+			AudioDeviceID 		inDevice,
+			UInt32 			inChannel,
+			Boolean			isInput,
+			AudioDevicePropertyID 	inPropertyID);
+	OSStatus notification(
+			AudioDeviceID 		inDevice,
+			UInt32 			inChannel,
+			Boolean			isInput,
+			AudioDevicePropertyID 	inPropertyID);
+
+	
+	static OSStatus _render(void 				*inRefCon,
 			AudioUnitRenderActionFlags 	*ioActionFlags,
 			const AudioTimeStamp 		*inTimeStamp,
 			UInt32 				inBusNumber,
 			UInt32 				inNumberFrames,
 			AudioBufferList 		*ioData);
-	static OSStatus render_input(
+	static OSStatus _render_input(
 			void 				*inRefCon,
 			AudioUnitRenderActionFlags 	*ioActionFlags,
 			const AudioTimeStamp 		*inTimeStamp,
 			UInt32 				inBusNumber,
 			UInt32 				inNumberFrames,
 			AudioBufferList 		*ioData);
-	static OSStatus sr_notification(
+	static OSStatus _sr_notification(
 			AudioDeviceID 		inDevice,
 			UInt32 			inChannel,
 			Boolean			isInput,
 			AudioDevicePropertyID 	inPropertyID,
 			void* 			inClientData);
-	static OSStatus notification(
+	static OSStatus _notification(
 			AudioDeviceID 		inDevice,
 			UInt32 			inChannel,
 			Boolean			isInput,
 			AudioDevicePropertyID 	inPropertyID,
 			void* 			inClientData);
-
 };
  
 #endif
