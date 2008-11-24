@@ -310,7 +310,7 @@ error:
 	return err;
 }
 
-OSStatus render(AudioUnitRenderActionFlags 	*ioActionFlags,
+OSStatus CoreAudioDriver::render(AudioUnitRenderActionFlags 	*ioActionFlags,
 		const AudioTimeStamp 		*inTimeStamp,
 		UInt32 				inBusNumber,
 		UInt32 				inNumberFrames,
@@ -356,7 +356,7 @@ OSStatus render(AudioUnitRenderActionFlags 	*ioActionFlags,
 	return res;
 }
 
-OSStatus render_input(  AudioUnitRenderActionFlags 	*ioActionFlags,
+OSStatus CoreAudioDriver::render_input(  AudioUnitRenderActionFlags 	*ioActionFlags,
 			const AudioTimeStamp 		*inTimeStamp,
 			UInt32 				inBusNumber,
 			UInt32 				inNumberFrames,
@@ -377,7 +377,7 @@ OSStatus render_input(  AudioUnitRenderActionFlags 	*ioActionFlags,
 }
 
 
-OSStatus sr_notification(AudioDeviceID inDevice,
+OSStatus CoreAudioDriver::sr_notification(AudioDeviceID inDevice,
         UInt32 inChannel,
         Boolean	isInput,
         AudioDevicePropertyID inPropertyID)
@@ -395,7 +395,7 @@ OSStatus sr_notification(AudioDeviceID inDevice,
 	return noErr;
 }
 
-OSStatus notification(AudioDeviceID inDevice,
+OSStatus CoreAudioDriver::notification(AudioDeviceID inDevice,
 	UInt32 inChannel,
 	Boolean	isInput,
 	AudioDevicePropertyID inPropertyID)
