@@ -339,6 +339,7 @@ OSStatus CoreAudioDriver::render(AudioUnitRenderActionFlags 	*ioActionFlags,
 		}
 	} else {
 		// TODO find out if ioData->mBuffers[i] correspond with the playbackChannels indices
+		audio_sample_t* buf;
 		for (int i=0; i<playbackChannels.size(); ++i) {
 			AudioChannel* channel = playbackChannels.at(i);
 			if (!channel->has_data()) {
@@ -410,11 +411,14 @@ OSStatus CoreAudioDriver::notification(AudioDeviceID inDevice,
 			UInt32 outSize =  sizeof(Float64);
 			Float64 sampleRate;
 			AudioStreamBasicDescription srcFormat, dstFormat;
-			OSStatus err = AudioDeviceGetProperty(device_id, 0, kAudioDeviceSectionGlobal, kAudioDevicePropertyNominalSampleRate, &outSize, &sampleRate);
+			
+			// FIXME kAudioDeviceSectionGlobal not declared  compile error ?
+			OSStatus err;
+/*			OSStatus err = AudioDeviceGetProperty(device_id, 0, kAudioDeviceSectionGlobal, kAudioDevicePropertyNominalSampleRate, &outSize, &sampleRate);
 			if (err != noErr) {
 				PERROR("Cannot get current sample rate");
 				return kAudioHardwareUnsupportedOperationError;
-			}
+			}*/
 			JCALog("JackCoreAudioDriver::NotificationCallback kAudioDevicePropertyNominalSampleRate %ld\n", (long)sampleRate);
 			outSize = sizeof(AudioStreamBasicDescription);
 			
@@ -454,25 +458,25 @@ int CoreAudioDriver::setup(bool capture, bool playback, const QString & cardDevi
 
 
 
-static OSStatus CoreAudioDriver::_render(void * inRefCon, AudioUnitRenderActionFlags * ioActionFlags, const AudioTimeStamp * inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList * ioData)
+static OSStatus _render(void * inRefCon, AudioUnitRenderActionFlags * ioActionFlags, const AudioTimeStamp * inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList * ioData)
 {
 	CoreAudioDriver* driver = (CoreAudioDriver*)inRefCon;
 	return driver->render(ioActionFlags, inTimeStamp, inBusNumber, inNumberFrames, ioData);
 }
 
-static OSStatus CoreAudioDriver::_render_input(void * inRefCon, AudioUnitRenderActionFlags * ioActionFlags, const AudioTimeStamp * inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList * ioData)
+static OSStatus _render_input(void * inRefCon, AudioUnitRenderActionFlags * ioActionFlags, const AudioTimeStamp * inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList * ioData)
 {
 	CoreAudioDriver* driver = (CoreAudioDriver*)inRefCon;
 	return driver->render_input(ioActionFlags, inTimeStamp, inBusNumber, inNumberFrames, ioData);
 }
 
-static OSStatus CoreAudioDriver::_sr_notification(AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput, AudioDevicePropertyID inPropertyID, void * inClientData)
+static OSStatus _sr_notification(AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput, AudioDevicePropertyID inPropertyID, void * inClientData)
 {
 	CoreAudioDriver* driver = (CoreAudioDriver*)inClientData;
 	return driver->sr_notification(inDevice, inChannel, isInput, inPropertyID);
 }
 
-static OSStatus CoreAudioDriver::_notification(AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput, AudioDevicePropertyID inPropertyID, void * inClientData)
+static OSStatus _notification(AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput, AudioDevicePropertyID inPropertyID, void * inClientData)
 {
 	CoreAudioDriver* driver = (CoreAudioDriver*)inClientData;
 	return driver->notification(inDevice, inChannel, isInput, inPropertyID);

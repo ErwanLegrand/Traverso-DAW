@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioChannel.h,v 1.7 2008/02/18 08:17:30 r_sijrier Exp $
+$Id: AudioChannel.h,v 1.8 2008/11/24 21:11:04 r_sijrier Exp $
 */
 
 #ifndef AUDIOCHANNEL_H
@@ -97,6 +97,7 @@ private:
 	friend class PADriver;
 	friend class PulseAudioDriver;
 	friend class Driver;
+	friend class CoreAudioDriver;
 	
 	int has_data()
 	{
