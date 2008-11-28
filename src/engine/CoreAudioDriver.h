@@ -54,7 +54,7 @@ public:
 // 	int _write(nframes_t nframes);
 // 	int _null_cycle(nframes_t nframes);
 // 	int _run_cycle();
-// 	int attach();
+	int attach();
 // 	int detach();
 // 	int bufsize(nframes_t nframes);
 // 	int restart();
@@ -68,6 +68,9 @@ public:
 	
 	channel_t playback_nchannels;
 	channel_t capture_nchannels;
+
+	char capture_driver_name[256];
+	char playback_driver_name[256];
 
 	int xrun_detected;
 	int null_cycle_occured;

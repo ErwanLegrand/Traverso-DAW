@@ -451,6 +451,86 @@ OSStatus CoreAudioDriver::notification(AudioDeviceID inDevice,
 
 
 
+int CoreAudioDriver::attach()
+{
+	int port_flags;
+	channel_t chn;
+	AudioChannel* chan;
+	char buf[32];
+	char channel_name[64];
+	OSStatus err;
+	UInt32 size;
+	UInt32 value1,value2;
+	Boolean isWritable;
+		
+	device->set_buffer_size (frames_per_cycle);
+	device->set_sample_rate (frame_rate);
+
+	port_flags = PortIsOutput|PortIsPhysical|PortIsTerminal;
+	
+	for (chn = 0; chn < capture_nchannels; chn++) {
+		err = AudioDeviceGetPropertyInfo(device_id, chn + 1, true, kAudioDevicePropertyChannelName, &size, &isWritable);
+		if (err == noErr && size > 0)  {
+			err = AudioDeviceGetProperty(device_id, chn + 1, true, kAudioDevicePropertyChannelName, &size, channel_name);	
+			if (err != noErr) 
+				JCALog("AudioDeviceGetProperty kAudioDevicePropertyChannelName error \n");
+			snprintf(buf, sizeof(buf) - 1, "%s:out_%s%lu", capture_driver_name, channel_name, chn + 1);
+		} else {
+			snprintf(buf, sizeof(buf) - 1, "%s:out%lu", capture_driver_name, chn + 1);
+		}
+	
+		chan = device->register_capture_channel(buf, "32 bit float audio", port_flags, frames_per_cycle, chn);
+		chan->set_latency( frames_per_cycle + capture_frame_latency );
+		captureChannels.append(chan);
+		
+		size = sizeof(UInt32);
+		value1 = value2 = 0;
+		err = AudioDeviceGetProperty(device_id, 0, true, kAudioDevicePropertyLatency, &size, &value1);	
+		if (err != noErr) 
+			JCALog("AudioDeviceGetProperty kAudioDevicePropertyLatency error \n");
+		err = AudioDeviceGetProperty(device_id, 0, true, kAudioDevicePropertySafetyOffset, &size, &value2);	
+		if (err != noErr) 
+			JCALog("AudioDeviceGetProperty kAudioDevicePropertySafetyOffset error \n");
+		
+	}
+	
+	port_flags = PortIsInput|PortIsPhysical|PortIsTerminal;
+
+	for (chn = 0; chn < playback_nchannels; chn++) {
+		err = AudioDeviceGetPropertyInfo(device_id, chn + 1, false, kAudioDevicePropertyChannelName, &size, &isWritable);
+		if (err == noErr && size > 0)  {
+			err = AudioDeviceGetProperty(device_id, chn + 1, false, kAudioDevicePropertyChannelName, &size, channel_name);	
+			if (err != noErr) 
+				JCALog("AudioDeviceGetProperty kAudioDevicePropertyChannelName error \n");
+			snprintf(buf, sizeof(buf) - 1, "%s:in_%s%lu", playback_driver_name, channel_name, chn + 1);
+		} else {
+			snprintf(buf, sizeof(buf) - 1, "%s:in%lu", playback_driver_name, chn + 1);
+		}
+
+		chan = device->register_playback_channel(buf, "32 bit float audio", port_flags, frames_per_cycle, chn);
+		chan->set_latency( frames_per_cycle + capture_frame_latency );
+		playbackChannels.append(chan);
+
+		size = sizeof(UInt32);
+		value1 = value2 = 0;
+		err = AudioDeviceGetProperty(device_id, 0, false, kAudioDevicePropertyLatency, &size, &value1);	
+		if (err != noErr) 
+			JCALog("AudioDeviceGetProperty kAudioDevicePropertyLatency error \n");
+		err = AudioDeviceGetProperty(device_id, 0, false, kAudioDevicePropertySafetyOffset, &size, &value2);	
+		if (err != noErr) 
+			JCALog("AudioDeviceGetProperty kAudioDevicePropertySafetyOffset error \n");
+	}
+	
+
+	// Input buffers do no change : prepare them only once
+	for (chn = 0; chn < capture_nchannels; chn++) {
+		input_list->mBuffers[chn].mData = (audio_sample_t*)(captureChannels.at(chn)->get_buffer(frames_per_cycle));
+	}
+	
+	return 1;
+}
+
+
 int CoreAudioDriver::setup(bool capture, bool playback, const QString & cardDevice)
 {
 	return -1;
@@ -481,3 +561,4 @@ static OSStatus _notification(AudioDeviceID inDevice, UInt32 inChannel, Boolean 
 	CoreAudioDriver* driver = (CoreAudioDriver*)inClientData;
 	return driver->notification(inDevice, inChannel, isInput, inPropertyID);
 }
+
