@@ -122,13 +122,16 @@ int Zoom::jog()
 		int x = cpointer().x();
 		int dx = x - horizontalJogZoomLastX;
 		
-		if (abs(dx) > 1) {
+		// TODO
+		// values between /* */ are for use when using non power of 2 zoom levels!
+		
+		if (abs(dx) > 10  /*1*/) {
 			horizontalJogZoomLastX = x;
 			Sheet* sheet = m_sv->get_sheet();
 			if (dx > 0) {
-				sheet->set_hzoom(sheet->get_hzoom() / (m_xScalefactor + dx/18));
+				sheet->set_hzoom(sheet->get_hzoom() / 2 /*(m_xScalefactor + dx/18)*/);
 			} else {
-				sheet->set_hzoom(sheet->get_hzoom() * (m_xScalefactor + abs(dx)/18));
+				sheet->set_hzoom(sheet->get_hzoom() * 2 /*(m_xScalefactor + abs(dx)/18)*/);
 			}
 			m_sv->center();
 		}
@@ -145,7 +148,9 @@ int Zoom::do_action( )
 		m_sv->vzoom(1 + m_yScalefactor);
 	}
 	if (m_xScalefactor != 1) {
-		m_sv->hzoom(m_xScalefactor);
+		// TODO
+		// values between /* */ are for use when using non power of 2 zoom levels!
+		m_sv->hzoom(0.5 /*m_xScalefactor*/);
 // 		m_sv->center();
 	}
 	
