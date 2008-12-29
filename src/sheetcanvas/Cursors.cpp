@@ -203,15 +203,8 @@ void PlayHead::set_animation_value(int value)
 	m_totalAnimValue += (int)(diff + deltaX);
 	int newXPos = (int)(m_animationScrollStartPos + m_totalAnimValue);
 	
-	// When moving the PlayHead and scrollbar at the same time, QGV may update a very large
-	// portion of the canvas. By forcing the playhead to be painted first by calling
-	// qApp->processEvents();(needs to be called twice to take effect, weird!)
-	// the canvas gets 2 paint events, one for the playhead move, and one for the scrollbar
-	// move, reducing the cpu load. Some sort of ugly hack that is ;-)
 	if (newPos != pos()) {
 		setPos(newPos);
-		qApp->processEvents();
-		qApp->processEvents();
 	}
 	
 	if (m_sv->hscrollbar_value() != newXPos) {
