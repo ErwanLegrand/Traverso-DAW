@@ -38,6 +38,7 @@ class FadeView;
 class Peak;
 class QGraphicsSimpleTextItem;
 
+
 class AudioClipView : public ViewItem
 {
 	Q_OBJECT
@@ -76,6 +77,7 @@ private:
 	CurveView* 	curveView;
 	QPolygonF m_polygon;
 	QGraphicsSimpleTextItem* m_clipInfo;
+	
 	
 	struct PainterPathCache {
 		QPainterPath pathtop;

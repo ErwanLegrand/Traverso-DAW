@@ -55,6 +55,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
+
 AudioClipView::AudioClipView(SheetView* sv, TrackView* parent, AudioClip* clip )
 	: ViewItem(parent, clip)
 	, m_tv(parent)
@@ -260,7 +261,6 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 	}
 	
 	qreal xscale;
-// 	printf("xscale %f, zoomlevel %f\n", xscale, m_sheet->get_hzoom());
 
 	float curvemixdown[peakdatacount];
 	if (mixcurvedata) {
@@ -298,6 +298,9 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 				peakdatacount,
 				m_sheet->get_hzoom(),
 				xscale);
+				
+		xscale = 1.0;
+// 		printf("xscale %f, zoomlevel %f\n", xscale, m_sheet->get_hzoom());
 		
 		if (peakdatacount != availpeaks) {
 // 			PWARN("peakdatacount != availpeaks (%d, %d)", peakdatacount, availpeaks);
@@ -521,7 +524,9 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 				QPainterPath path;
 				path.addPolygon(m_polygon);
 				
+// 				PROFILE_START;
 				p->drawPath(path);
+// 				PROFILE_END("draw path");
 
 				// Draw 'the' -INF line
 				p->setPen(minINFLineColor);
