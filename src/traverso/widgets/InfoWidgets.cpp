@@ -42,7 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 #if defined (Q_WS_WIN)
-#include <Windows.h>
+#include <windows.h>
 #elif defined (Q_WS_MAC)
 #include <sys/param.h>
 #include <sys/mount.h>
@@ -292,7 +292,7 @@ void HDDSpaceInfo::update_status( )
 	
 #if defined (Q_WS_WIN)
 	__int64 freebytestocaller, totalbytes, freebytes; 
-	if (! GetDiskFreeSpaceEx ((const WCHAR*)(QS_C(m_project->get_root_dir())),
+	if (! GetDiskFreeSpaceEx ((const CHAR*)(QS_C(m_project->get_root_dir())),
 					(PULARGE_INTEGER)&freebytestocaller,
 					(PULARGE_INTEGER)&totalbytes,
 					(PULARGE_INTEGER)&freebytes)) 

@@ -365,7 +365,11 @@ struct timeval {
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
 
-#include <Windows.h>
+#include <windows.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 static inline int gettimeofday(struct timeval* tp, void* tzp) {
 	DWORD t;
@@ -378,7 +382,12 @@ static inline int gettimeofday(struct timeval* tp, void* tzp) {
 	
 typedef uint8_t            u_int8_t;
 
+#ifdef __cplusplus
+}
 #endif
+
+#endif
+
 
 static inline trav_time_t get_microseconds()
 {
