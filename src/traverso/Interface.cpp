@@ -571,11 +571,13 @@ void Interface::create_menus( )
 
 	action = m_editMenu->addAction(tr("Undo"));
 	action->setIcon(QIcon(":/undo"));
+	action->setShortcuts(QKeySequence::Undo);
 	m_editToolBar->addAction(action);
 	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(undo()));
 
 	action = m_editMenu->addAction(tr("Redo"));
 	action->setIcon(QIcon(":/redo"));
+	action->setShortcuts(QKeySequence::Redo);
 	m_editToolBar->addAction(action);
 	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(redo()));	
 
