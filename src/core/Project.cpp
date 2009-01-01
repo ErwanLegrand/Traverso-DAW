@@ -206,7 +206,7 @@ int Project::load(QString projectfile)
 	m_genre = e.attribute( "genre", "" ).toInt();
 	m_performer = e.attribute( "performer", "" );
 	m_arranger = e.attribute( "arranger", "" );
-	m_sheetwriter = e.attribute( "sheetwriter", "" );
+	m_songwriter = e.attribute( "songwriter", "" );
 	m_message = e.attribute( "message", "" );
 	m_rate = e.attribute( "rate", "" ).toInt();
 	m_bitDepth = e.attribute( "bitdepth", "" ).toInt();
@@ -295,7 +295,7 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
 	properties.setAttribute("genre", QString::number(m_genre));
 	properties.setAttribute("performer", m_performer);
 	properties.setAttribute("arranger", m_arranger);
-	properties.setAttribute("sheetwriter", m_sheetwriter);
+	properties.setAttribute("songwriter", m_songwriter);
 	properties.setAttribute("message", m_message);
 	properties.setAttribute("currentsheetid", m_currentSheetId);
 	properties.setAttribute("rate", m_rate);
@@ -395,9 +395,9 @@ void Project::set_arranger(const QString& pArranger)
 	m_arranger = pArranger;
 }
 
-void Project::set_sheetwriter(const QString& pSheetwriter)
+void Project::set_songwriter(const QString& sw)
 {
-	m_sheetwriter = pSheetwriter;
+	m_songwriter = sw;
 }
 
 void Project::set_message(const QString& pMessage)
@@ -662,7 +662,7 @@ int Project::create_cdrdao_toc(ExportSpecification* spec)
 	output += "    UPC_EAN \"" + get_upc_ean() + "\"\n\n";
 
 	output += "    ARRANGER \"" + get_arranger() + "\"\n";
-	output += "    SONGWRITER \"" + get_sheetwriter() + "\"\n";
+	output += "    SONGWRITER \"" + get_songwriter() + "\"\n";
 	output += "    MESSAGE \"" + get_message() + "\"\n";
 	output += "    GENRE \"" + QString::number(get_genre()) + "\"\n  }\n}\n\n";
 
@@ -792,9 +792,9 @@ QString Project::get_arranger() const
 	return m_arranger;
 }
 
-QString Project::get_sheetwriter() const
+QString Project::get_songwriter() const
 {
-	return m_sheetwriter;
+	return m_songwriter;
 }
 
 QString Project::get_message() const

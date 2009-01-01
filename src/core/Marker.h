@@ -50,7 +50,7 @@ public:
 	void set_description(const QString &);
 	void set_performer(const QString &);
 	void set_composer(const QString &);
-	void set_sheetwriter(const QString &);
+	void set_songwriter(const QString &);
 	void set_arranger(const QString &);
 	void set_message(const QString &);
 	void set_isrc(const QString &);
@@ -63,7 +63,7 @@ public:
 	QString get_description() const {return m_description;}
 	QString get_performer() const {return m_performer;}
 	QString get_composer() const {return m_composer;}
-	QString get_sheetwriter() const {return m_sheetwriter;}
+	QString get_songwriter() const {return m_songwriter;}
 	QString get_arranger() const {return m_arranger;}
 	QString get_message() const {return m_message;}
 	QString get_isrc() const {return m_isrc;}
@@ -83,7 +83,7 @@ private:
 	QString	m_description,
 		m_performer,
 		m_composer,
-		m_sheetwriter,
+		m_songwriter,
 		m_arranger,
 		m_message,
 		m_isrc;

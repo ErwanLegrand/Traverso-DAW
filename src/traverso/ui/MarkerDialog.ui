@@ -223,15 +223,15 @@
        <item row="0" column="0" >
         <widget class="QLabel" name="label_4" >
          <property name="text" >
-          <string>Sheetwriter</string>
+          <string>Songwriter</string>
          </property>
         </widget>
        </item>
        <item row="0" column="1" >
-        <widget class="QLineEdit" name="lineEditSheetwriter" />
+        <widget class="QLineEdit" name="lineEditSongwriter" />
        </item>
        <item row="0" column="2" >
-        <widget class="QToolButton" name="toolButtonSheetwriterAll" >
+        <widget class="QToolButton" name="toolButtonSongWriterAll" >
          <property name="toolTip" >
           <string>Apply to all</string>
          </property>
@@ -366,8 +366,8 @@
   <tabstop>toolButtonPerformerAll</tabstop>
   <tabstop>lineEditComposer</tabstop>
   <tabstop>toolButtonComposerAll</tabstop>
-  <tabstop>lineEditSheetwriter</tabstop>
-  <tabstop>toolButtonSheetwriterAll</tabstop>
+  <tabstop>lineEditSongwriter</tabstop>
+  <tabstop>toolButtonSongwriterAll</tabstop>
   <tabstop>lineEditArranger</tabstop>
   <tabstop>toolButtonArrangerAll</tabstop>
   <tabstop>lineEditMessage</tabstop>

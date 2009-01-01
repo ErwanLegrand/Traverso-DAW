@@ -68,7 +68,7 @@ QDomNode Marker::get_state(QDomDocument doc)
 	domNode.setAttribute("id",  m_id);
 	domNode.setAttribute("performer", m_performer);
 	domNode.setAttribute("composer", m_composer);
-	domNode.setAttribute("sheetwriter", m_sheetwriter);
+	domNode.setAttribute("songwriter", m_songwriter);
 	domNode.setAttribute("arranger", m_arranger);
 	domNode.setAttribute("message", m_message);
 	domNode.setAttribute("isrc", m_isrc);
@@ -97,7 +97,7 @@ int Marker::set_state(const QDomNode & node)
 	m_id = e.attribute("id", "0").toLongLong();
 	m_performer = e.attribute("performer", "");
 	m_composer = e.attribute("composer", "");
-	m_sheetwriter = e.attribute("sheetwriter", "");
+	m_songwriter = e.attribute("songwriter", "");
 	m_arranger = e.attribute("arranger", "");
 	m_message = e.attribute("message", "");
 	m_isrc = e.attribute("isrc", "");
@@ -134,9 +134,9 @@ void Marker::set_composer(const QString &s)
 	m_composer = s;
 }
 
-void Marker::set_sheetwriter(const QString &s)
+void Marker::set_songwriter(const QString &s)
 {
-	m_sheetwriter = s;
+	m_songwriter = s;
 }
 
 void Marker::set_arranger(const QString &s)

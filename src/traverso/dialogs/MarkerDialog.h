@@ -68,7 +68,7 @@ private slots:
 	void performer_all();
 	void composer_all();
 	void arranger_all();
-	void sheetwriter_all();
+	void songwriter_all();
 	void message_all();
 	void copy_all();
 	void pemph_all();

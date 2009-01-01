@@ -72,7 +72,7 @@ MarkerDialog::MarkerDialog(QWidget * parent)
 	connect(lineEditPerformer, SIGNAL(returnPressed()), this, SLOT(performer_enter()));
 	connect(lineEditArranger, SIGNAL(returnPressed()), this, SLOT(arranger_enter()));
 	connect(lineEditMessage, SIGNAL(returnPressed()), this, SLOT(message_enter()));
-	connect(lineEditSheetwriter, SIGNAL(returnPressed()), this, SLOT(sheetwriter_enter()));
+	connect(lineEditSongwriter, SIGNAL(returnPressed()), this, SLOT(sheetwriter_enter()));
 	connect(lineEditIsrc, SIGNAL(returnPressed()), this, SLOT(isrc_enter()));
 
 	connect(toolButtonTitleAll, SIGNAL(clicked()), this, SLOT(title_all()));
@@ -80,7 +80,7 @@ MarkerDialog::MarkerDialog(QWidget * parent)
 	connect(toolButtonPerformerAll, SIGNAL(clicked()), this, SLOT(performer_all()));
 	connect(toolButtonArrangerAll, SIGNAL(clicked()), this, SLOT(arranger_all()));
 	connect(toolButtonMessageAll, SIGNAL(clicked()), this, SLOT(message_all()));
-	connect(toolButtonSheetwriterAll, SIGNAL(clicked()), this, SLOT(sheetwriter_all()));
+	connect(toolButtonSongWriterAll, SIGNAL(clicked()), this, SLOT(songwriter_all()));
 	connect(toolButtonCopyAll, SIGNAL(clicked()), this, SLOT(copy_all()));
 	connect(toolButtonPEmphAll, SIGNAL(clicked()), this, SLOT(pemph_all()));
 
@@ -137,7 +137,7 @@ void MarkerDialog::item_changed(QTreeWidgetItem * current, QTreeWidgetItem * pre
 		marker->set_description(lineEditTitle->text());
 		marker->set_performer(lineEditPerformer->text());
 		marker->set_composer(lineEditComposer->text());
-		marker->set_sheetwriter(lineEditSheetwriter->text());
+		marker->set_songwriter(lineEditSongwriter->text());
 		marker->set_arranger(lineEditArranger->text());
 		marker->set_message(lineEditMessage->text());
 		marker->set_isrc(lineEditIsrc->text());
@@ -149,7 +149,7 @@ void MarkerDialog::item_changed(QTreeWidgetItem * current, QTreeWidgetItem * pre
 	lineEditTitle->setText(m_marker->get_description());
 	lineEditPerformer->setText(m_marker->get_performer());
 	lineEditComposer->setText(m_marker->get_composer());
-	lineEditSheetwriter->setText(m_marker->get_sheetwriter());
+	lineEditSongwriter->setText(m_marker->get_songwriter());
 	lineEditArranger->setText(m_marker->get_arranger());
 	lineEditMessage->setText(m_marker->get_message());
 	lineEditIsrc->setText(m_marker->get_isrc());
@@ -250,7 +250,7 @@ void MarkerDialog::arranger_enter()
 
 void MarkerDialog::sheetwriter_enter()
 {
-	next_item(lineEditSheetwriter);
+	next_item(lineEditSongwriter);
 }
 
 void MarkerDialog::message_enter()
@@ -354,11 +354,11 @@ void MarkerDialog::arranger_all()
 	}
 }
 
-void MarkerDialog::sheetwriter_all()
+void MarkerDialog::songwriter_all()
 {
-	QString str = lineEditSheetwriter->text();
-	if (QMessageBox::question(this, tr("Set all Sheetwriters"), 
-					tr("Do you really want to set all sheetwriters to\n\"")
+	QString str = lineEditSongwriter->text();
+	if (QMessageBox::question(this, tr("Set all Songwriters"), 
+					tr("Do you really want to set all songwriters to\n\"")
 					+str+"\"?", QMessageBox::Yes | QMessageBox::No, 
 					QMessageBox::Yes) == QMessageBox::No)
 	{
@@ -368,7 +368,7 @@ void MarkerDialog::sheetwriter_all()
 	for (int i = 0; i < markersTreeWidget->topLevelItemCount(); ++i) {
 		QTreeWidgetItem *it = markersTreeWidget->topLevelItem(i);
 		Marker *m = get_marker(it->data(0, Qt::UserRole).toLongLong());
-		m->set_sheetwriter(str);
+		m->set_songwriter(str);
 	}
 }
 

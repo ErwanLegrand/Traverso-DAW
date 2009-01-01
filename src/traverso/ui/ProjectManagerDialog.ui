@@ -625,12 +625,12 @@
        <item row="5" column="0" >
         <widget class="QLabel" name="label_9" >
          <property name="text" >
-          <string>Sheetwriter</string>
+          <string>Songwriter</string>
          </property>
         </widget>
        </item>
        <item row="5" column="1" colspan="2" >
-        <widget class="QLineEdit" name="lineEditSheetwriter" />
+        <widget class="QLineEdit" name="lineEditSongwriter" />
        </item>
        <item row="6" column="0" >
         <widget class="QLabel" name="label_10" >

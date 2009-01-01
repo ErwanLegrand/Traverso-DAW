@@ -54,7 +54,7 @@ public :
 	QString get_discid() const;
 	QString get_performer() const;
 	QString get_arranger() const;
-	QString get_sheetwriter() const;
+	QString get_songwriter() const;
 	QString get_message() const;
 	QString get_upc_ean() const;
 	int get_genre();
@@ -76,7 +76,7 @@ public :
 	void set_discid(const QString& pId);
 	void set_performer(const QString& pPerformer);
 	void set_arranger(const QString& pArranger);
-	void set_sheetwriter(const QString& pSheetwriter);
+	void set_songwriter(const QString& sw);
 	void set_message(const QString& pMessage);
 	void set_upc_ean(const QString& pUPC);
 	void set_genre(int pGenre);
@@ -126,7 +126,7 @@ private:
 	QString		m_upcEan;
 	QString		m_performer;
 	QString		m_arranger;
-	QString		m_sheetwriter;
+	QString		m_songwriter;
 	QString		m_message;
 	QString		m_errorString;
 

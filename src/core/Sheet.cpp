@@ -928,7 +928,7 @@ QString Sheet::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 		output += "      PERFORMER \"" + startmarker->get_performer() + "\"\n";
 		output += "      ISRC \"" + startmarker->get_isrc() + "\"\n";
 		output += "      ARRANGER \"" + startmarker->get_arranger() + "\"\n";
-		output += "      SONGWRITER \"" + startmarker->get_sheetwriter() + "\"\n";
+		output += "      SONGWRITER \"" + startmarker->get_songwriter() + "\"\n";
 		output += "      MESSAGE \"" + startmarker->get_message() + "\"\n    }\n  }\n";
 
 		// add some stuff only required for the first track (e.g. pre-gap)

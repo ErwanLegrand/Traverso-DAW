@@ -81,7 +81,7 @@ void ProjectManagerDialog::set_project(Project* project)
 		lineEditUPC->setText(m_project->get_upc_ean());
 		lineEditPerformer->setText(m_project->get_performer());
 		lineEditArranger->setText(m_project->get_arranger());
-		lineEditSheetwriter->setText(m_project->get_sheetwriter());
+		lineEditSongwriter->setText(m_project->get_songwriter());
 		lineEditMessage->setText(m_project->get_message());
 		comboBoxGenre->setCurrentIndex(m_project->get_genre());
 		redoButton->setText(m_project->get_history_stack()->redoText());
@@ -95,7 +95,7 @@ void ProjectManagerDialog::set_project(Project* project)
 		lineEditUPC->clear();
 		lineEditPerformer->clear();
 		lineEditArranger->clear();
-		lineEditSheetwriter->clear();
+		lineEditSongwriter->clear();
 		lineEditMessage->clear();
 		comboBoxGenre->setCurrentIndex(0);
 	}
@@ -306,7 +306,7 @@ void ProjectManagerDialog::accept()
 	m_project->set_upc_ean(lineEditUPC->text());
 	m_project->set_performer(lineEditPerformer->text());
 	m_project->set_arranger(lineEditArranger->text());
-	m_project->set_sheetwriter(lineEditSheetwriter->text());
+	m_project->set_songwriter(lineEditSongwriter->text());
 	m_project->set_message(lineEditMessage->text());
 	m_project->set_genre(comboBoxGenre->currentIndex());
 	
@@ -326,7 +326,7 @@ void ProjectManagerDialog::reject()
 	lineEditUPC->setText(m_project->get_upc_ean());
 	lineEditPerformer->setText(m_project->get_performer());
 	lineEditArranger->setText(m_project->get_arranger());
-	lineEditSheetwriter->setText(m_project->get_sheetwriter());
+	lineEditSongwriter->setText(m_project->get_songwriter());
 	lineEditMessage->setText(m_project->get_message());
 	comboBoxGenre->setCurrentIndex(m_project->get_genre());
 
