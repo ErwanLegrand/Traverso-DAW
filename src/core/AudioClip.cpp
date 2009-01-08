@@ -424,6 +424,11 @@ int AudioClip::process(nframes_t nframes)
 {
 	Q_ASSERT(m_sheet);
 	
+	// Handle silence clips
+	if (get_channels() == 0) {
+		return 0;
+	}
+	
 	if (m_recordingStatus == RECORDING) {
 		process_capture(nframes);
 		return 0;

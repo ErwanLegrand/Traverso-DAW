@@ -108,7 +108,7 @@ QDomNode Track::get_state( QDomDocument doc, bool istemplate)
 	
 		apill_foreach(AudioClip* clip, AudioClip, m_clips) {
 			if (clip->get_length() == qint64(0)) {
-				PERROR("Clip lenght is 0! This shouldn't happen!!!!");
+				PERROR("Clip length is 0! This shouldn't happen!!!!");
 				continue;
 			}
 			
