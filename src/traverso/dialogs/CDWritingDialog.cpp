@@ -141,6 +141,7 @@ void CDWritingDialog::set_project(Project * project)
 
 void CDWritingDialog::query_devices()
 {
+	PENTER;
 	if ( ! (m_burnprocess->state() == QProcess::NotRunning) ) {
 		printf("query_devices: burnprocess still running!\n");
 		return;
@@ -472,23 +473,29 @@ void CDWritingDialog::update_cdburn_status(const QString& message, int type)
 
 void CDWritingDialog::read_standard_output()
 {
+	PENTER;
+	
 	Q_ASSERT(m_burnprocess);
 	
 	if (m_writingState == QUERY_DEVICE) {
 		char buf[1024];
 		
-		while(m_burnprocess->readLine(buf, sizeof(buf)) != -1) {
-			QString data = QString(buf);
+		QByteArray output = m_burnprocess->readAllStandardOutput();
+		QList<QByteArray> lines = output.split('\n');
+		
+		foreach(QByteArray data, lines) {
 			
 			if (data.isEmpty()) {
 				continue;
 			}
 			
-			//printf("%s\n", QS_C(data));
+			printf("%s\n", data.data());
+			
 			if (data.contains("trying to open")) {
 				update_cdburn_status(tr("Trying to access CD Writer ..."), NORMAL_MESSAGE);
 				return;
 			}
+			
 			if (data.contains("Cannot open") || data.contains("Cannot setup")) {
 				update_cdburn_status(tr("Cannot access CD Writer, is it in use ?"), ERROR_MESSAGE);
 				return;
