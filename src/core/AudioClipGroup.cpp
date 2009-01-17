@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AudioClipGroup.h"
 
 #include "AudioClip.h"
+#include "AudioClipManager.h"
 #include "Command.h"
 #include "ProjectManager.h"
 #include "ResourcesManager.h"
@@ -167,4 +168,15 @@ bool AudioClipGroup::is_locked() const
 		}
 	}
 	return false;
+}
+
+void AudioClipGroup::select_clips(bool select)
+{
+	foreach(AudioClip* clip, m_clips) {
+		if (select) {
+			clip->get_sheet()->get_audioclip_manager()->add_to_selection(clip);
+		} else {
+			clip->get_sheet()->get_audioclip_manager()->remove_from_selection(clip);
+		}
+	}
 }

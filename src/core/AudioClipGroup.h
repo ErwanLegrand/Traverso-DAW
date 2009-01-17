@@ -38,6 +38,7 @@ public:
 	
 	void set_snappable(bool snap);
 	void set_as_moving(bool move);
+	void select_clips(bool select);
 	void check_valid_track_index_delta(int& delta);
 	
 	QList<AudioClip*> copy_clips();

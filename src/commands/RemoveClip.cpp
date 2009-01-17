@@ -37,6 +37,9 @@ AddRemoveClip::AddRemoveClip(AudioClip* clip, int type)
 		QList<AudioClip*> selected;
 		clip->get_sheet()->get_audioclip_manager()->get_selected_clips(selected);
 		m_group.set_clips(selected);
+		// De-select the clips when they are removed, I wonder though if they 
+		// should be selected again when un-doing the remove action ?
+		m_group.select_clips(false);
 		setText(tr("Remove Selected Clips"));
 	} else {
 		m_group.add_clip(clip);
