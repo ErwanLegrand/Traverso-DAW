@@ -239,6 +239,8 @@ int Sheet::set_state( const QDomNode & node )
 		trackNode = trackNode.nextSibling();
 	}
 
+	m_acmanager->set_state(node.firstChildElement("ClipManager"));
+	
 	QDomNode pluginChainNode = node.firstChildElement("PluginChain");
 	m_pluginChain->set_state(pluginChainNode);
 	
@@ -268,6 +270,8 @@ QDomNode Sheet::get_state(QDomDocument doc, bool istemplate)
 
 	doc.appendChild(sheetNode);
 
+	sheetNode.appendChild(m_acmanager->get_state(doc));
+	
 	sheetNode.appendChild(m_timeline->get_state(doc));
 	
 	QDomNode tracksNode = doc.createElement("Tracks");

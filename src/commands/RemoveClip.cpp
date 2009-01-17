@@ -35,9 +35,9 @@ AddRemoveClip::AddRemoveClip(AudioClip* clip, int type)
 {
 	if (clip->is_selected()) {
 		QList<AudioClip*> selected;
-		clip->get_sheet()->get_audioclip_manager()->get_selected_clips_state(selected);
+		clip->get_sheet()->get_audioclip_manager()->get_selected_clips(selected);
 		m_group.set_clips(selected);
-		setText(tr("Remove ClipGroup"));
+		setText(tr("Remove Selected Clips"));
 	} else {
 		m_group.add_clip(clip);
 	}

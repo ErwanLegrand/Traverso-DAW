@@ -37,13 +37,51 @@ AudioClipManager::AudioClipManager( Sheet* sheet )
 	PENTERCONS;
 	m_sheet = sheet;
 	set_history_stack( m_sheet->get_history_stack() );
-	lastLocation = TimeRef();
+	m_lastLocation = TimeRef();
 }
 
 AudioClipManager::~ AudioClipManager( )
 {
 	PENTERDES;
 }
+
+
+QDomNode AudioClipManager::get_state(QDomDocument doc, bool istemplate)
+{
+	QDomElement managerNode = doc.createElement("ClipManager");
+	QDomElement globalSelection = doc.createElement("GlobalSelection");
+	
+	QStringList selectedClips;
+	foreach(AudioClip* clip, m_clipselection) {
+		selectedClips << QString::number(clip->get_id());
+	}
+	
+	globalSelection.setAttribute("clips",  selectedClips.join(";"));
+	
+	managerNode.appendChild(globalSelection);
+	
+	return managerNode;
+}
+
+int AudioClipManager::set_state(const QDomNode & node)
+{
+	QDomElement e = node.firstChildElement("GlobalSelection");
+	
+	QStringList selectionList = e.attribute("clips", "").split(";");
+	
+	for (int i=0; i<selectionList.size(); ++i) {
+		qint64 id = selectionList.at(i).toLongLong();
+		foreach(AudioClip* clip, m_clips) {
+			if (clip->get_id() == id) {
+				add_to_selection(clip);
+			}
+		}
+	}
+	
+	return 1;
+
+}
+
 
 void AudioClipManager::add_clip( AudioClip * clip )
 {
@@ -80,55 +118,40 @@ void AudioClipManager::update_last_frame( )
 {
 	PENTER;
 	
-	lastLocation = TimeRef();
+	m_lastLocation = TimeRef();
 	
 	foreach(AudioClip* clip, m_clips) {
-		if (clip->get_track_end_location() >= lastLocation)
-			lastLocation = clip->get_track_end_location();
+		if (clip->get_track_end_location() >= m_lastLocation)
+			m_lastLocation = clip->get_track_end_location();
 	}
 	
 	emit m_sheet->lastFramePositionChanged();
 }
 
-const TimeRef& AudioClipManager::get_last_location() const
+TimeRef AudioClipManager::get_last_location() const
 {
-	return lastLocation;
+	return m_lastLocation;
 }
 
-void AudioClipManager::get_selected_clips_state( QList< AudioClip * > & list )
+void AudioClipManager::get_selected_clips( QList< AudioClip * > & list )
 {
-	foreach(AudioClip* clip, clipselection) {
+	foreach(AudioClip* clip, m_clipselection) {
 		list.append(clip);
-	}
-}
-
-void AudioClipManager::set_selected_clips_state( QList< AudioClip * > & list )
-{
-	clipselection.clear();
-	
-	foreach(AudioClip* clip, m_clips) {
-		clip->set_selected(false);
-	}
-	
-	foreach(AudioClip* clip, list) {
-		add_to_selection( clip );
 	}
 }
 
 void AudioClipManager::remove_from_selection( AudioClip * clip )
 {
-	int index = clipselection.indexOf( clip );
-	
-	if (index >= 0) {
-		clipselection.takeAt( index );
+	if (m_clipselection.contains(clip)) {
+		m_clipselection.removeAll(clip);
 		clip->set_selected( false );
 	}
 }
 
 void AudioClipManager::add_to_selection( AudioClip * clip )
 {
-	if ( ! clipselection.contains( clip ) ) {
-		clipselection.append( clip );
+	if ( ! m_clipselection.contains( clip ) ) {
+		m_clipselection.append( clip );
 		clip->set_selected( true );
 	}
 }
@@ -149,25 +172,22 @@ void AudioClipManager::select_clip(AudioClip* clip)
 	PENTER;
 	
 	foreach(AudioClip* c, m_clips) {
-		if (c == clip) {
-			continue;
-		}
-		remove_from_selection( c );
+		remove_from_selection(c);
 	}
 	
-
-	if (clip->is_selected()) {
-		remove_from_selection(clip);
-	} else {
-		add_to_selection(clip);
-	}
-	
+	add_to_selection(clip);
 }
 
 QList<AudioClip* > AudioClipManager::get_clip_list() const
 {
 	return m_clips;
 }
+
+bool AudioClipManager::is_clip_in_selection(AudioClip* clip)
+{
+	return m_clipselection.contains(clip);
+}
+
 
 /****************************** SLOTS ***************************/
 /****************************************************************/
@@ -177,14 +197,11 @@ Command* AudioClipManager::select_all_clips()
 {
 	PENTER;
 	
+	if (m_clipselection.size() == m_clips.size()) {
+		return new ClipSelection(m_clips, this, "remove_from_selection", tr("Selection: Remove Clip"));
+	}
+		
 	return new ClipSelection(m_clips, this, "add_to_selection", tr("Selection: Add Clip"));
-}
-
-Command* AudioClipManager::deselect_all_clips()
-{
-	PENTER;
-	
-	return new ClipSelection(m_clips, this, "remove_from_selection", tr("Selection: Remove Clip"));
 }
 
 Command* AudioClipManager::invert_clip_selection()
@@ -194,14 +211,3 @@ Command* AudioClipManager::invert_clip_selection()
 	return new ClipSelection(m_clips, this, "toggle_selected", tr("Selection: Invert"));
 }
 
-Command* AudioClipManager::delete_selected_clips()
-{
-	PENTER;
-	CommandGroup* group = new CommandGroup(this, tr("Remove Clip(s)"));
-	foreach(AudioClip* clip, clipselection) {
-		group->add_command(clip->get_track()->remove_clip(clip));
-	}
-	return group;
-}
-
-//eof

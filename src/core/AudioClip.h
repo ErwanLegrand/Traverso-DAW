@@ -107,7 +107,7 @@ public:
 	QDomNode get_dom_node() const;
 	
 	bool is_take() const;
-	bool is_selected() const;
+	bool is_selected();
 	bool is_locked() const {return m_isLocked;}
 	bool has_sheet() const;
 	bool is_readsource_invalid() const {return !m_isReadSourceValid;}
@@ -138,7 +138,6 @@ private:
 	TimeRef			m_sourceLength;
 	TimeRef 		m_length;
 
-	int 			m_isSelected;
 	bool 			m_isTake;
 	bool			m_isLocked;
 	bool			m_isReadSourceValid;

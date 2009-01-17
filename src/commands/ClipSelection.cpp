@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Debugger.h"
 
 ClipSelection::ClipSelection(AudioClip* clip, QVariantList args)
-	: Command(clip, "")
+	: Command("")
 {
 	QString slot = args.at(0).toString();
 	
@@ -48,7 +48,7 @@ ClipSelection::ClipSelection(AudioClip* clip, QVariantList args)
 }
 
 ClipSelection::ClipSelection( QList< AudioClip * > clips, AudioClipManager * manager, const char * slot, const QString& des )
-		: Command(manager, des)
+	: Command("")
 {
 	m_clips = clips;
 	m_slot = slot;
@@ -60,17 +60,16 @@ ClipSelection::~ClipSelection()
 
 int ClipSelection::begin_hold()
 {
-	m_selectionArea = QRect(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y(), 1, 1);
+	return -1;
 }
 
 int ClipSelection::finish_hold()
 {
+	return -1;
 }
 
 int ClipSelection::prepare_actions()
 {
-	m_acmanager->get_selected_clips_state( selectedClips );
-	
 	return 1;
 }
 
@@ -87,8 +86,6 @@ int ClipSelection::do_action()
 
 int ClipSelection::undo_action()
 {
-	m_acmanager->set_selected_clips_state( selectedClips );
-	
 	return 1;
 }
 
@@ -99,4 +96,5 @@ void ClipSelection::cancel_action()
 
 int ClipSelection::jog()
 {
+	return -1;
 }

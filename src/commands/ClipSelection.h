@@ -49,9 +49,6 @@ private :
 	QList<AudioClip* >	m_clips;
 	const char*		m_slot;
 	AudioClipManager* 	m_acmanager;
-	QRect			m_selectionArea;
-	
-	QList<AudioClip* >	selectedClips;
 };
 
 #endif

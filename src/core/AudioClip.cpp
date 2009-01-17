@@ -125,7 +125,7 @@ void AudioClip::init()
 	m_readSource = 0;
 	m_peak = 0;
 	m_recordingStatus = NO_RECORDING;
-	m_isSelected = m_isReadSourceValid = m_isMoving = false;
+	m_isReadSourceValid = m_isMoving = false;
 	m_isLocked = config().get_property("AudioClip", "LockByDefault", false).toBool();
 	fadeIn = 0;
 	fadeOut = 0;
@@ -146,11 +146,6 @@ int AudioClip::set_state(const QDomNode& node)
 	m_isTake = e.attribute( "take", "").toInt();
 	set_gain( e.attribute( "gain", "" ).toFloat() );
 	m_isLocked = e.attribute( "locked", "0" ).toInt();
-
-	if (e.attribute("selected", "0").toInt() == 1) {
-		m_sheet->get_audioclip_manager()->select_clip(this);
-	}
-
 	m_readSourceId = e.attribute("source", "").toLongLong();
 	m_sheetId = e.attribute("sheet", "0").toLongLong();
 	m_isMuted =  e.attribute( "mute", "" ).toInt();
@@ -201,7 +196,6 @@ QDomNode AudioClip::get_state( QDomDocument doc )
 	node.setAttribute("mute", m_isMuted);
 	node.setAttribute("take", m_isTake);
 	node.setAttribute("clipname", m_name );
-	node.setAttribute("selected", m_isSelected );
 	node.setAttribute("id", m_id );
 	node.setAttribute("sheet", m_sheetId );
 	node.setAttribute("locked", m_isLocked);
@@ -413,7 +407,6 @@ void AudioClip::set_gain(float gain)
 
 void AudioClip::set_selected(bool selected)
 {
-	m_isSelected = selected;
 	emit stateChanged();
 }
 
@@ -856,9 +849,10 @@ void AudioClip::set_name( const QString& name )
 	emit stateChanged();
 }
 
-bool AudioClip::is_selected( ) const
+bool AudioClip::is_selected( )
 {
-	return m_isSelected;
+	Q_ASSERT(m_sheet);
+	return m_sheet->get_audioclip_manager()->is_clip_in_selection(this);
 }
 
 bool AudioClip::is_take( ) const
