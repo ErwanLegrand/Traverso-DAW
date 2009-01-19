@@ -478,7 +478,6 @@ void CDWritingDialog::read_standard_output()
 	Q_ASSERT(m_burnprocess);
 	
 	if (m_writingState == QUERY_DEVICE) {
-		char buf[1024];
 		
 		QByteArray output = m_burnprocess->readAllStandardOutput();
 		QList<QByteArray> lines = output.split('\n');
