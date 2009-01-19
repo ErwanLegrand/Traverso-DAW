@@ -187,22 +187,22 @@ Interface::Interface()
 	m_editToolBar->setObjectName("Edit Toolbar");
 	addToolBar(m_editToolBar);
 
-	#if defined Q_WS_MAC
-		m_projectToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-		m_projectToolBar->setIconSize(QSize(20, 20));
-	
-		m_editToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-		m_editToolBar->setIconSize(QSize(20, 20));
-	#else
-		if (config().get_property("Themer", "textundericons", false).toBool()) {
-			m_projectToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-			m_editToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-		}
+#if defined Q_WS_MAC
+	m_projectToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+	m_projectToolBar->setIconSize(QSize(20, 20));
 
-		int iconsize = config().get_property("Themer", "iconsize", "16").toInt();
-		m_projectToolBar->setIconSize(QSize(iconsize, iconsize));
-		m_editToolBar->setIconSize(QSize(iconsize, iconsize));
-	#endif
+	m_editToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+	m_editToolBar->setIconSize(QSize(20, 20));
+#else
+	if (config().get_property("Themer", "textundericons", false).toBool()) {
+		m_projectToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+		m_editToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+	}
+
+	int iconsize = config().get_property("Themer", "iconsize", "16").toInt();
+	m_projectToolBar->setIconSize(QSize(iconsize, iconsize));
+	m_editToolBar->setIconSize(QSize(iconsize, iconsize));
+#endif
 
 	// Some default values.
 	currentSheetWidget = 0;
@@ -562,6 +562,7 @@ void Interface::create_menus( )
 	
 	action = m_projectMenu->addAction(tr("&Quit"));
 	list.clear();
+	// FIXME using CTRL + Q gives a warning about deleting an object in it's event handler!!!!!!
 	list.append(QKeySequence("CTRL+Q"));
 	action->setShortcuts(list);
 	action->setIcon(QIcon(":/exit"));
