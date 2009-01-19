@@ -11,10 +11,12 @@ lupdate -verbose src/traverso/*.cpp src/traverso/*.h \
 		resources/translations/traverso_nl.ts \
 		resources/translations/traverso_de.ts \
 		resources/translations/traverso_pt.ts \
-		resources/translations/traverso_fr.ts
+		resources/translations/traverso_fr.ts \
+		resources/translations/traverso_cs.ts
 
 lrelease  -verbose \
 		resources/translations/traverso_nl.ts \
 		resources/translations/traverso_de.ts \
 		resources/translations/traverso_pt.ts \
-		resources/translations/traverso_fr.ts
+		resources/translations/traverso_fr.ts \
+		resources/translations/traverso_cs.ts
