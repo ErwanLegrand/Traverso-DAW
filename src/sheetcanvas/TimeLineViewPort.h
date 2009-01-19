@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: TimeLineViewPort.h,v 1.1 2008/01/21 16:17:30 r_sijrier Exp $
+    $Id: TimeLineViewPort.h,v 1.2 2009/01/19 21:07:19 r_sijrier Exp $
 */
 
 #ifndef TIME_LINE_VIEW_PORT_H
@@ -35,7 +35,7 @@ class TimeLineViewPort : public ViewPort
 {
 public:
 	TimeLineViewPort(QGraphicsScene* scene, SheetWidget* sw);
-	~TimeLineViewPort() {};
+	~TimeLineViewPort();
 	
 	void set_sheetview(SheetView* view);
 	void scale_factor_changed();

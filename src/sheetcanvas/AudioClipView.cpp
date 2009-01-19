@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2007 Remon Sijrier 
+Copyright (C) 2005-2009 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -68,11 +68,6 @@ AudioClipView::AudioClipView(SheetView* sv, TrackView* parent, AudioClip* clip )
 	m_sv = sv;
 	m_sheet = m_clip->get_sheet();
 	
-	m_clipInfo = new QGraphicsSimpleTextItem(this);
-	m_clipInfo->setFlag(QGraphicsItem::ItemIgnoresTransformations);
-	m_clipInfo->setPos(1, 0);
-	m_clipInfo->setCursor(themer()->get_cursor("AudioClip"));
-
 	load_theme_data();
 	create_brushes();
 	create_clipinfo_string();
@@ -110,7 +105,6 @@ AudioClipView::AudioClipView(SheetView* sv, TrackView* parent, AudioClip* clip )
 	}
 	
 // 	setFlags(ItemIsSelectable | ItemIsMovable);
-	setFlag(QGraphicsItem::ItemClipsChildrenToShape);
 	setAcceptsHoverEvents(true);
 	setCursor(themer()->get_cursor("AudioClip"));
 }
@@ -209,7 +203,12 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	
 	// Draw the contour
 	painter->setPen(themer()->get_color("AudioClip:contour"));
-	QRectF rect(0.5, 0.5, m_boundingRect.width() - 1, m_height - 1);
+	int adjust = 0;
+	float round = (m_boundingRect.width() - int(m_boundingRect.width()));
+	if (round < 0.5) {
+		adjust = 1;
+	}
+	QRect rect(0, 0, m_boundingRect.width() - adjust, m_height - 1);
 	painter->drawRect(rect);
 	
 	// Paint a pixmap if the clip is locked
@@ -629,6 +628,9 @@ void AudioClipView::draw_clipinfo_area(QPainter* p, int xstart, int pixelcount)
 {
 	// fill info area bg
 	p->fillRect(xstart, 1, pixelcount, m_infoAreaHeight, themer()->get_color("AudioClip:clipinfobackground:inactive"));
+	if (m_height >= m_mimimumheightforinfoarea) {
+		p->drawPixmap(7, 1, m_clipInfo);
+	}
 }
 
 void AudioClipView::create_brushes()
@@ -786,14 +788,25 @@ void AudioClipView::create_clipinfo_string()
 {
 	PENTER;
 	QString sclipGain = "Gain: "+ coefficient_to_dbstring(m_clip->get_gain());
-	m_clipinfoString = m_clip->get_name()  + "    " + sclipGain + "   " + QString::number(m_clip->get_rate()) +  " Hz";
-	m_clipInfo->setText(m_clipinfoString);
+	
+	QFont font = themer()->get_font("AudioClip:fontscale:title");
+	QFontMetrics fm(font);
+	
+	m_clipinfoString = fm.elidedText(m_clip->get_name(), Qt::ElideMiddle, 150) 
+			   + "    " + sclipGain + "   " + QString::number(m_clip->get_rate()) +  " Hz";
+	
+	int clipInfoWidth = fm.boundingRect(m_clipinfoString).width();
+	
+	m_clipInfo = QPixmap(clipInfoWidth, m_infoAreaHeight);
+	m_clipInfo.fill(Qt::transparent);
+	
+	QPainter painter(&m_clipInfo);
+	painter.setFont(font);
+	painter.drawText(m_clipInfo.rect(), m_clipinfoString);
 }
 
 void AudioClipView::update_progress_info( int progress )
 {
-// 	if (progress > m_progress) {
-// 	}
 	m_progress = progress;
 	update(10, 0, 150, m_height);
 }
@@ -810,9 +823,6 @@ void AudioClipView::add_new_fadeview( FadeCurve * fade )
 	FadeView* view = new FadeView(m_sv, this, fade);
 	m_fadeViews.append(view);
 	connect(view, SIGNAL(fadeModified()), m_sv, SLOT(stop_follow_play_head()));
-#if QT_VERSION < 0x040300
-	scene()->addItem(view);
-#endif
 }
 
 void AudioClipView::remove_fadeview( FadeCurve * fade )
@@ -837,11 +847,6 @@ void AudioClipView::calculate_bounding_rect()
 	m_boundingRect = QRectF(0, 0, (m_clip->get_length() / m_sv->timeref_scalefactor), m_height);
 	update_start_pos();
 	ViewItem::calculate_bounding_rect();
-	
-	foreach(PainterPathCache* cache, m_pathCache) {
-		cache->xstart = -1;
-		cache->length = -1;
-	}
 }
 
 
@@ -854,11 +859,6 @@ void AudioClipView::set_height( int height )
 {
 	m_height = height;
 	create_brushes();
-	if (m_height < m_mimimumheightforinfoarea) {
-		m_clipInfo->hide();
-	} else {
-		m_clipInfo->show();
-	}
 }
 
 int AudioClipView::get_childview_y_offset() const
@@ -869,7 +869,7 @@ int AudioClipView::get_childview_y_offset() const
 void AudioClipView::update_start_pos()
 {
 // 	printf("AudioClipView::update_start_pos()\n");
-	setPos(m_clip->get_track_start_location() / m_sv->timeref_scalefactor, m_tv->get_childview_y_offset());
+	setPos(qRound(m_clip->get_track_start_location() / m_sv->timeref_scalefactor), m_tv->get_childview_y_offset());
 }
 
 Command * AudioClipView::fade_range()
@@ -941,7 +941,6 @@ void AudioClipView::load_theme_data()
 	minINFLineColor = themer()->get_color("AudioClip:channelseperator");
 	m_paintWithOutline = config().get_property("Themer", "paintwavewithoutline", true).toBool();
 	m_drawDbGrid = config().get_property("Themer", "drawdbgrid", false).toBool();
-	m_clipInfo->setFont(themer()->get_font("AudioClip:fontscale:title"));
 	calculate_bounding_rect();
 }
 
@@ -949,11 +948,10 @@ void AudioClipView::load_theme_data()
 void AudioClipView::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {
 	Q_UNUSED(event)
-			if (ie().is_holding()) {
+	if (ie().is_holding()) {
 		return;
-			}
-	
-			update(m_boundingRect);
+	}
+	update(m_boundingRect);
 }
 
 

@@ -54,9 +54,6 @@ PluginChainView::PluginChainView(SheetView* sv, ViewItem* parent, PluginChain* c
 	m_sv = sv;
 	calculate_bounding_rect();
 	
-#if QT_VERSION < 0x040300
-	parent->scene()->addItem(this);
-#endif
 	
 	foreach(Plugin* plugin, chain->get_plugin_list()) {
 		add_new_pluginview(plugin);
@@ -79,9 +76,6 @@ PluginChainView::~PluginChainView( )
 void PluginChainView::add_new_pluginview( Plugin * plugin )
 {
 	PluginView* view = new PluginView(this, m_pluginchain, plugin, m_pluginViews.size());
-#if QT_VERSION < 0x040300
-	scene()->addItem(view);
-#endif
 	
 	int x = 6;
 	foreach(PluginView* view, m_pluginViews) {

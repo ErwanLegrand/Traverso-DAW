@@ -44,7 +44,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 ClipsViewPort::ClipsViewPort(QGraphicsScene* scene, SheetWidget* sw)
 	: ViewPort(scene, sw)
 {
-
 	m_sw = sw;
 	viewport()->setAttribute(Qt::WA_OpaquePaintEvent);
 	

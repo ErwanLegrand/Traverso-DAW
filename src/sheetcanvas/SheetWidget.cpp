@@ -110,9 +110,6 @@ SheetPanelView::SheetPanelView(QGraphicsScene* scene, Sheet* sheet)
 	scene->addItem(this);
 	m_gainview = new SheetPanelGain(this, m_sheet);
 	m_gainview->setPos(10, 16);
-#if QT_VERSION < 0x040300
-	scene->addItem(m_gainview);
-#endif
 	m_boundingRect = QRectF(0, 0, 200, TIMELINE_HEIGHT);
 }
 
@@ -247,14 +244,7 @@ SheetWidget::SheetWidget(Sheet* sheet, QWidget* parent)
 
 SheetWidget::~ SheetWidget()
 {
-	if (!m_sheet) {
-		return;
-	}
-	delete m_trackPanel;
-	delete m_clipsViewPort;
-	delete m_timeLine;
-	delete m_sheetPanelVP;
-	delete m_scene;
+PENTERDES;
 }
 
 

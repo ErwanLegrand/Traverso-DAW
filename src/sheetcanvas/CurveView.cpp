@@ -346,9 +346,6 @@ int CurveView::get_vector(int xstart, int pixelcount, float* arg)
 void CurveView::add_curvenode_view(CurveNode* node)
 {
 	CurveNodeView* nodeview = new CurveNodeView(m_sv, this, node, m_guicurve);
-#if QT_VERSION < 0x040300
-	m_sv->scene()->addItem(nodeview);
-#endif
 	m_nodeViews.append(nodeview);
 	
 	AddRemove* cmd = (AddRemove*) m_guicurve->add_node(nodeview, false);

@@ -40,6 +40,11 @@ TimeLineViewPort::TimeLineViewPort(QGraphicsScene* scene, SheetWidget* sw)
 	m_timeLineView = 0;
 }
 
+TimeLineViewPort::~ TimeLineViewPort()
+{
+PENTERDES;
+}
+
 
 void TimeLineViewPort::wheelEvent ( QWheelEvent * e )
 {
@@ -78,4 +83,3 @@ void TimeLineViewPort::scale_factor_changed()
 
 
 //eof
-

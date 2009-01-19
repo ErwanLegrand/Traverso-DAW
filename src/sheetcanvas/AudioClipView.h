@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2007 Remon Sijrier 
+Copyright (C) 2005-2009 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QList>
 #include <QTimer>
 #include <QPolygonF>
+#include <QPixmap>
 
 class AudioClip;
 class Sheet;
@@ -36,7 +37,6 @@ class SheetView;
 class TrackView;
 class FadeView;
 class Peak;
-class QGraphicsSimpleTextItem;
 
 
 class AudioClipView : public ViewItem
@@ -75,20 +75,9 @@ private:
 	AudioClip* 	m_clip;
 	Sheet*		m_sheet;
 	CurveView* 	curveView;
-	QPolygonF m_polygon;
-	QGraphicsSimpleTextItem* m_clipInfo;
-	
-	
-	struct PainterPathCache {
-		QPainterPath pathtop;
-		QPainterPath pathbottom;
-		int xstart;
-		int length;
-	};
-	
-	QList<PainterPathCache* > m_pathCache;
-
-	QTimer m_recordingTimer;
+	QPolygonF 	m_polygon;
+	QPixmap 	m_clipInfo;
+	QTimer 		m_recordingTimer;
 
 	float m_progress;
 	int m_peakloadingcount;
