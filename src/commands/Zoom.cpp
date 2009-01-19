@@ -148,9 +148,7 @@ int Zoom::do_action( )
 		m_sv->vzoom(1 + m_yScalefactor);
 	}
 	if (m_xScalefactor != 1) {
-		// TODO
-		// values between /* */ are for use when using non power of 2 zoom levels!
-		m_sv->hzoom(0.5 /*m_xScalefactor*/);
+		m_sv->hzoom(m_xScalefactor);
 // 		m_sv->center();
 	}
 	

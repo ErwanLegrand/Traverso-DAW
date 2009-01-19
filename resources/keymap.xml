@@ -106,13 +106,13 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="Z" >
 			<Objects>
-				<Object objectname="SheetView" modes="All" sortorder="3" submenu="Zoom" pluginname="TraversoCommands" commandname="HZoomIn" arguments="HZoom;0.8" />
+				<Object objectname="SheetView" modes="All" sortorder="3" submenu="Zoom" pluginname="TraversoCommands" commandname="HZoomIn" arguments="HZoom;0.5" />
 				<Object objectname="MoveClip" slotsignature="start_zoom" modes="All" sortorder="11"/>
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="S" >
 			<Objects>
-				<Object objectname="AudioClip" modes="All" sortorder="2" submenu="Selection" pluginname="TraversoCommands" commandname="ClipSelectionAdd" arguments="add_to_selection" />
+				<Object objectname="AudioClip" modes="All" sortorder="1" submenu="Selection" pluginname="TraversoCommands" commandname="ClipSelectionAdd" arguments="add_to_selection" />
 				<Object objectname="Project" slotsignature="select" modes="All" />
 				<Object objectname="MoveClip" slotsignature="prev_snap_pos" modes="All" sortorder="5" />
 				<Object objectname="DragMarker" slotsignature="move_left" modes="All" sortorder="1" />
@@ -270,7 +270,7 @@
 		
 		<keyfact type="FKEY2" key1="A" key2="S" >
 			<Objects>
-				<Object objectname="AudioClip" modes="All" sortorder="1" submenu="Selection" pluginname="TraversoCommands" commandname="ClipSelectionSelect" arguments="select_clip" />
+				<Object objectname="AudioClip" modes="All" sortorder="2" submenu="Selection" pluginname="TraversoCommands" commandname="ClipSelectionSelect" arguments="select_clip" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY2" key1="D" key2="S" >
@@ -345,7 +345,7 @@
 		</keyfact>
 		<keyfact type="FKEY2" key1="Z" key2="X" >
 			<Objects>
-				<Object objectname="SheetView" modes="All" sortorder="3" submenu="Zoom" pluginname="TraversoCommands" commandname="HZoomOut" arguments="HZoom;1.2" />
+				<Object objectname="SheetView" modes="All" sortorder="3" submenu="Zoom" pluginname="TraversoCommands" commandname="HZoomOut" arguments="HZoom;2" />
 			</Objects>
 		</keyfact>
 		
