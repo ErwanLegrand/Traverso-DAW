@@ -244,7 +244,8 @@ SheetWidget::SheetWidget(Sheet* sheet, QWidget* parent)
 
 SheetWidget::~ SheetWidget()
 {
-PENTERDES;
+	PENTERDES;
+	delete m_scene;
 }
 
 
