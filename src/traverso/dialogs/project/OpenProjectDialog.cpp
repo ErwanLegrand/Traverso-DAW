@@ -73,7 +73,7 @@ void OpenProjectDialog::update_projects_list()
 
 	QStringList list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
 	
-	foreach(QString dirname, list) {
+	foreach(const QString &dirname, list) {
 	
 		/************ FROM HERE ****************/
 		QDomDocument doc("Project");

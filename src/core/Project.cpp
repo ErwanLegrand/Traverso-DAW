@@ -47,6 +47,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
+/**	\class Project
+	\brief Project restores and saves the state of a Traverso Project
+	
+	A Project can have as much Sheet's as one likes. A Project with one Sheet acts like a 'Session'
+	where the Sheet can be turned into a CD with various Tracks using Marker 's
+	When a Project has multiple Sheet's, each Sheet will be a CD Track, this can be usefull if each
+	Track on a CD is independend of the other CD Tracks.
+ 
+ */
+
 
 Project::Project(const QString& title)
 	: ContextItem(), m_title(title)
@@ -525,6 +535,14 @@ int Project::export_project(ExportSpecification* spec)
 	if (m_exportThread->isRunning()) {
 		info().warning(tr("Export already in progress, cannot start it twice!"));
 		return -1;
+	}
+	
+	QDir dir(spec->exportdir);
+	if (!spec->exportdir.isEmpty() && !dir.exists()) {
+		if (!dir.mkdir(spec->exportdir)) {
+			info().warning(tr("Unable to create export directory! Please check permissions for this directory: %1").arg(spec->exportdir));
+			return -1;
+		}
 	}
 	
 	spec->progress = 0;

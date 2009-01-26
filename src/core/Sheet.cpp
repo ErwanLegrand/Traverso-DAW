@@ -65,6 +65,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Debugger.h"
 
 
+/**	\class Sheet
+	\brief The 'work space' (as in WorkSheet) holding the Track 's and the Master Out AudioBus
+	
+	A Sheet processes each Track, and mixes the result into it's Master Out AudioBus.
+	Sheet connects it's Client to the AudioDevice, to become part of audio processing
+	chain. The connection is instantiated by Project, who owns the Sheet objects.
+ 
+ 
+ */
+
 Sheet::Sheet(Project* project)
 	: ContextItem()
 	, m_project(project)
@@ -470,7 +480,6 @@ int Sheet::prepare_export(ExportSpecification* spec)
 	resize_buffer(false, spec->blocksize);
 	
 	renderDecodeBuffer = new DecodeBuffer;
-// 	renderDecodeBuffer->use_custom_destination_buffer(true);
 
 	return 1;
 }
@@ -758,6 +767,14 @@ Command* Sheet::work_previous_edge()
 
 void Sheet::set_hzoom( qreal hzoom )
 {
+	// Traverso <= 0.42.0 doesn't store the real zoom factor, but an 
+	// index. This currently causes problems as there is no real support
+	// (yet) for zoomlevels other then powers of 2, so we force that for now.
+	// NOTE: Remove those 2 lines when floating point zoomlevel is implemented!
+	int highbit;
+	hzoom = nearest_power_of_two(hzoom, highbit);
+
+
 	if (hzoom > Peak::max_zoom_value()) {
 		hzoom = Peak::max_zoom_value();
 	}

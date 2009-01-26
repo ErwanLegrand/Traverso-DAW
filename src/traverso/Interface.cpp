@@ -1001,7 +1001,7 @@ QMenu* Interface::create_context_menu(QObject* item, QList<MenuData >* menulist)
 	// actions, a little code duplication here, adding action to the 
 	// menu is also done ~10 lines up ...
 	QList<QString> keys = submenus.keys();
-	foreach(QString key, keys) {
+	foreach(const QString &key, keys) {
 		QList<MenuData>* list = submenus.value(key);
 		
 		qSort(list->begin(), list->end(), MenuData::smaller);

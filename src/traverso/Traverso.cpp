@@ -79,7 +79,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 	and adding of audio processing objects in the audio processing chain.
 
 	<br />
-	The AddRemove Command class has to be used for adding/removing items
+	The AddRemove Command class is to be used for adding/removing items
 	to/from ContextItem objects. <br />This class detects if the add/remove function
 	can be called directly, or in a thread save way, and uses therefore the
 	Tsar class, and the Sheet object in case it was given as a parameter.<br />

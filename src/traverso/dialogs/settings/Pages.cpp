@@ -68,7 +68,7 @@ AudioDriverPage::AudioDriverPage(QWidget *parent)
 	m_driverCombo = new QComboBox;
 	
 	QStringList drivers = audiodevice().get_available_drivers();
-	foreach(QString name, drivers) {
+	foreach(const QString &name, drivers) {
 		m_driverCombo->addItem(name);
 	}
 	
@@ -492,6 +492,7 @@ void BehaviorPage::load_config()
 	int scrollMode = config().get_property("PlayHead", "Scrollmode", 2).toInt();
 	bool resyncAudio = config().get_property("AudioClip", "SyncDuringDrag", false).toBool();
 	bool lockClips = config().get_property("AudioClip", "LockByDefault", false).toBool();
+	QString interfaceLanguage = config().get_property("Interface", "language", "System Locale").toString();
 	
 	m_configpage->loadLastProjectCheckBox->setChecked(loadLastUsedProject);
 	m_configpage->numberOfTrackSpinBox->setValue(defaultNumTracks);
@@ -528,6 +529,7 @@ void BehaviorPage::reset_default_config()
 	config().set_property("PlayHead", "Scrollmode", 2);
 	config().set_property("AudioClip", "SyncDuringDrag", false);
 	config().set_property("AudioClip", "LockByDefault", false);
+	config().set_property("Interface", "language", "System Locale");
 	
 	load_config();
 }
@@ -588,10 +590,9 @@ void AppearancePage::load_config()
 	
 	QStringList keys = QStyleFactory::keys();
 	keys.sort();
-	foreach(QString key, keys) {
+	foreach(const QString &key, keys) {
 		m_themepage->styleCombo->addItem(key);
 	}
-	
 	
 	m_themepage->update_theme_combobox(themepath);
 	

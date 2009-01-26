@@ -1,7 +1,12 @@
 TOBEDONE FOR 0.4x.x
 
+### NEEDS TESTING ###
+- Fold Sheet/Track with Markers 
+- Select clips
+- Copy/move (including un/redo) selected clips
+
+### BUGS / WISHES ###
 * Ubuntu Intrepid package does not depend on libfftw3 ?
-* sheetwriter should be songwriter (MarkerDialog?)
 * resetting audioclip file: audioclip doesn't play sound
 * QFileDialog::getExistingDirectory crashes when it shows a hidden directory the first time.
 * http://traverso-daw.org/forum/index.php/topic,93.0.html (selecting second burn device not possible)

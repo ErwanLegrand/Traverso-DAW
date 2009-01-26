@@ -189,7 +189,7 @@ InputEngine::InputEngine()
 	
 #if !defined (STATIC_BUILD)
 	QDir pluginsDir("lib/commandplugins");
-	foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
+	foreach (const QString &fileName, pluginsDir.entryList(QDir::Files)) {
 		QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
 		CommandPlugin* plug = qobject_cast<CommandPlugin*>(loader.instance());
 		if (plug) {

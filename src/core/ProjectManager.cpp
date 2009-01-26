@@ -470,7 +470,7 @@ void ProjectManager::set_current_project_dir(const QString & path)
 	QStringList list = newdir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
 	m_projectDirs.clear();
 	
-	foreach(QString string, list) {
+	foreach(const QString &string, list) {
 		m_projectDirs += path + "/" + string;
 	}
 	
@@ -491,7 +491,7 @@ void ProjectManager::project_dir_rename_detected(const QString & dirname)
 	QStringList list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
 	
 	bool startwhining = false;
-	foreach(QString string, list) {
+	foreach(const QString &string, list) {
 		if (!m_projectDirs.contains(path + "/" + string)) {
 			startwhining = true;
 			break;

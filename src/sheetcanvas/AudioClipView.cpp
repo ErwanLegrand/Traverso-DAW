@@ -196,7 +196,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 // 			PROFILE_END("draw peaks");
 		}
 	}
-	
+
 	if (m_height > m_mimimumheightforinfoarea) {
 		draw_clipinfo_area(painter, xstart, pixelcount);
 	}

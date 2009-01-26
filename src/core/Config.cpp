@@ -51,7 +51,7 @@ void Config::load_configuration()
 	
 	QStringList keys = settings.allKeys();
 	
-	foreach(QString key, keys) {
+	foreach(const QString &key, keys) {
 		m_configs.insert(key, settings.value(key));
 	}
 	

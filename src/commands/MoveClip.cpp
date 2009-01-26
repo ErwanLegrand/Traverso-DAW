@@ -446,6 +446,8 @@ void MoveClip::set_cursor_shape(int useX, int useY)
 
 void MoveClip::toggle_vertical_only(bool autorepeat)
 {
+	if (autorepeat) return;
+	
 	d->verticalOnly = !d->verticalOnly;
 	if (d->verticalOnly) {
 		set_cursor_shape(0, 1);

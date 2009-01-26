@@ -75,16 +75,6 @@ bool ExportDialog::is_safe_to_export()
 		return false;
 	}
 	
-	QDir exportDir;
-	QString dirName = exportDirName->text();
-	
-	if (!dirName.isEmpty() && !exportDir.exists(dirName)) {
-		if (!exportDir.mkpath(dirName)) {
-			info().warning(tr("Unable to create export directory! Please check permissions for this directory: %1").arg(dirName));
-			return false;
-		}
-	}
-	
 	return true;
 }
 
@@ -92,6 +82,11 @@ bool ExportDialog::is_safe_to_export()
 void ExportDialog::on_startButton_clicked( )
 {
 	if (!is_safe_to_export()) {
+		return;
+	}
+	
+	if (exportDirName->text().isEmpty()) {
+		info().warning(tr("No Export Direcoty was given, please supply one first!"));
 		return;
 	}
 	
@@ -121,7 +116,10 @@ void ExportDialog::on_startButton_clicked( )
 	m_exportSpec->tocFileName = name;
 
 	m_exportSpec->isRecording = false;
-	m_project->export_project(m_exportSpec);
+	
+	if (m_project->export_project(m_exportSpec) == -1) {
+		return;
+	}
 	
 	startButton->hide();
 	closeButton->hide();
