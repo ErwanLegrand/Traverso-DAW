@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS><TS version="1.1" language="cs_CZ">
-<defaultcodec></defaultcodec>
 <context>
     <name>AddRemoveClip</name>
     <message>
@@ -203,22 +202,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AppearancePage</name>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="624"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="625"/>
         <source>Icons only</source>
         <translation>Pouze ikony</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="625"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="626"/>
         <source>Text only</source>
         <translation>Pouze text</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="626"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="627"/>
         <source>Text beside Icons</source>
         <translation>Text vedle ikon</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="627"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="628"/>
         <source>Text below Icons</source>
         <translation>Text pod ikonami</translation>
     </message>
@@ -2024,17 +2023,17 @@ abyste z nich mohl projekt obnovit.</translation>
 <context>
     <name>KeyboardConfigPage</name>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="872"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="873"/>
         <source>No description set for this keymap</source>
         <translation>Pro tuto mapu kláves není nastaven žádný popis</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="895"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="896"/>
         <source>KeyMap Export</source>
         <translation>Export mapy kláves</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="896"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="897"/>
         <source>The exported keymap can be found here:
 
  %1</source>
@@ -2864,99 +2863,104 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Project</name>
     <message>
-        <location filename="../../src/core/Project.cpp" line="144"/>
+        <location filename="../../src/core/Project.cpp" line="154"/>
         <source>Cannot create dir %1</source>
         <translation>Nelze vytvořit adresář (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="122"/>
+        <location filename="../../src/core/Project.cpp" line="132"/>
         <source>Created new Project %1</source>
         <translation>Vytvořen nový projekt %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="168"/>
+        <location filename="../../src/core/Project.cpp" line="178"/>
         <source>Project %1: Cannot open project.tpf file! (Reason: %2)</source>
         <translation>Projektt %1: Nelze otevřít soubor project.tpf! (Důvod: %2)</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="186"/>
+        <location filename="../../src/core/Project.cpp" line="196"/>
         <source>Project %1: Failed to parse project.tpf file! (Reason: %2)</source>
         <translation>Projektt %1: Selhalo  provedení rozboru souboru project.tpf! (Důvod: %2)</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="196"/>
+        <location filename="../../src/core/Project.cpp" line="206"/>
         <source>Project File Version does not match, unable to load Project!</source>
         <translation>Neodpovídá verze souboru projektu. Neschopen načíst projekt!</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="246"/>
+        <location filename="../../src/core/Project.cpp" line="256"/>
         <source>Project %1 loaded</source>
         <translation>Projekt %1 načten</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="264"/>
+        <location filename="../../src/core/Project.cpp" line="274"/>
         <source>Couldn&apos;t open Project properties file for writing! (File %1. Reason: %2)</source>
         <translation>Nebylo možné otevřít soubor Vlastnosti projektu pro zápis (Soubor %1. Důvod: %2)</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="274"/>
+        <location filename="../../src/core/Project.cpp" line="284"/>
         <source>Project %1 saved </source>
         <translation>Projekt %1 uložen</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="342"/>
+        <location filename="../../src/core/Project.cpp" line="352"/>
         <source>Project with title &apos;%1&apos; allready exists, not setting new title!</source>
         <translation>Projekt s názvem &apos;%1&apos; již existuje. Nenastavuje nový název!</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="352"/>
+        <location filename="../../src/core/Project.cpp" line="362"/>
         <source>Project directory %1 no longer exists, did you rename it? Shame on you! Please undo that, and come back later to rename your Project...</source>
         <translation>Adresář projektu %1 nadále neexistuje. Přejmenoval jste jej? Vaše škoda! Prosím, vraťte tento krok zpět, a vraťte se později přejmenovat Váš projekt...</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="874"/>
+        <location filename="../../src/core/Project.cpp" line="892"/>
         <source>Traverso - Information</source>
         <translation>Traverso - informace</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="366"/>
+        <location filename="../../src/core/Project.cpp" line="376"/>
         <source>Project title changed, Project will to be reloaded to ensure proper operation</source>
         <translation>Název projektu byl změněn. Projekt bude načten znovu, aby byly zajištěna jeho správná činnost (fungování)</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="436"/>
+        <location filename="../../src/core/Project.cpp" line="446"/>
         <source>Sheet %1 added</source>
         <translation>List %1 přidán</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="462"/>
+        <location filename="../../src/core/Project.cpp" line="472"/>
         <source>Sheet &apos;%1&apos; doesn&apos;t exist!</source>
         <translation>List &apos;%1&apos; neexistuje!</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="509"/>
+        <location filename="../../src/core/Project.cpp" line="519"/>
         <source>Remove Sheet %1</source>
         <translation>Odstranit list %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="526"/>
+        <location filename="../../src/core/Project.cpp" line="536"/>
         <source>Export already in progress, cannot start it twice!</source>
         <translation>Export již probíhá. Nelze jej začít dvakrát!</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="587"/>
+        <location filename="../../src/core/Project.cpp" line="605"/>
         <source>Detected clipping in exported audio! (%1)</source>
         <translation>Detekováno stříhání v exportovaném zvuku! (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="591"/>
+        <location filename="../../src/core/Project.cpp" line="609"/>
         <source>calculated norm factor: %1</source>
         <translation>vypočítaný průměrný faktor: %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="875"/>
+        <location filename="../../src/core/Project.cpp" line="893"/>
         <source>You&apos;re still recording, please stop recording first to be able to exit the application!</source>
         <translation>Ještě nahráváte. Prosím, nejprve zastavte nahrávání, abyste mohl opustit aplikaci!</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/Project.cpp" line="543"/>
+        <source>Unable to create export directory! Please check permissions for this directory: %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3675,7 +3679,7 @@ p, li { white-space: pre-wrap; }
         <translation>Značka</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="138"/>
+        <location filename="../../src/core/Sheet.cpp" line="148"/>
         <source>Sheet</source>
         <translation>List</translation>
     </message>
@@ -4062,62 +4066,62 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Sheet</name>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="85"/>
+        <location filename="../../src/core/Sheet.cpp" line="95"/>
         <source>Untitled</source>
         <translation>Bez názvu</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="87"/>
+        <location filename="../../src/core/Sheet.cpp" line="97"/>
         <source>No artists name set</source>
         <translation>Nebylo stanoveno jméno umělce</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="336"/>
+        <location filename="../../src/core/Sheet.cpp" line="346"/>
         <source>Add Track</source>
         <translation>Přidat stopu</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="345"/>
+        <location filename="../../src/core/Sheet.cpp" line="355"/>
         <source>Remove Track</source>
         <translation>Odstranit stopu</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="443"/>
+        <location filename="../../src/core/Sheet.cpp" line="453"/>
         <source>No audio to export! (Is everything muted?)</source>
         <translation>Žádný zvuk, který by mohl být exportován (Všechno je ztlumeno?)</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="447"/>
+        <location filename="../../src/core/Sheet.cpp" line="457"/>
         <source>Export start frame starts beyond export end frame!!</source>
         <translation>Počáteční snímek exportu začíná za koncovým snímkem exportu!</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="452"/>
+        <location filename="../../src/core/Sheet.cpp" line="462"/>
         <source>Export tries to render to 0 channels wav file??</source>
         <translation>Export se pokouší převádět do souboru wav s 0 kanály?</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="1071"/>
+        <location filename="../../src/core/Sheet.cpp" line="1088"/>
         <source>Hard Disk overload detected!</source>
         <translation>Bylo odhaleno přetížení pevného disku!</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="1063"/>
+        <location filename="../../src/core/Sheet.cpp" line="1080"/>
         <source>Failed to fill ReadBuffer in time</source>
         <translation>Došlo k selhání při pokusu naplnit vyrovnávací paměť určenou pro čtení včas</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="1072"/>
+        <location filename="../../src/core/Sheet.cpp" line="1089"/>
         <source>Failed to empty WriteBuffer in time</source>
         <translation>Došlo k selhání při pokusu vyprázdnit vyrovnávací paměť určenou pro zapisování včas</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="1169"/>
+        <location filename="../../src/core/Sheet.cpp" line="1186"/>
         <source>No Tracks armed for recording!</source>
         <translation>Pro nahrávání nebyly aktivovány žádné stopy!</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/core/Sheet.cpp" line="1351"/>
+        <location filename="../../src/core/Sheet.cpp" line="1368"/>
         <source>Recording to %n Clip(s)</source>
         <translation>
             <numerusform>Nahrává do %n ukázky</numerusform>
@@ -4573,7 +4577,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ThemeConfigPage</name>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="753"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="754"/>
         <source>Select default project dir</source>
         <translation>Vybrat výchozí adresář projektu</translation>
     </message>
