@@ -283,8 +283,7 @@ void SheetView::hscrollbar_value_changed(int value)
 	// position in the viewport when it's scrolled programatically !!!!!
 	if (ie().is_holding()) {
 		Shuttle* s = dynamic_cast<Shuttle*>(ie().get_holding_command());
-		Zoom* z = dynamic_cast<Zoom*>(ie().get_holding_command());
-		if (!(s || z)) {
+		if (!s) {
 			ie().jog();
 		}
 	} else {
