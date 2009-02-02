@@ -27,7 +27,6 @@
 #include <Config.h>
 #include <Themer.h>
 
-#include <QApplication>
 #include <QPen>
 #include <QScrollBar>
 		
@@ -50,7 +49,7 @@ PlayHead::PlayHead(SheetView* sv, Sheet* sheet, ClipsViewPort* vp)
 	
 	// TODO: Make duration scale with scalefactor? (nonlinerly?)
 	m_animation.setDuration(ANIME_DURATION);
-	m_animation.setCurveShape(QTimeLine::SineCurve);
+	m_animation.setCurveShape(QTimeLine::EaseInOutCurve);
 	
 	connect(m_sheet, SIGNAL(transferStarted()), this, SLOT(play_start()));
 	connect(m_sheet, SIGNAL(transferStopped()), this, SLOT(play_stop()));
@@ -60,7 +59,6 @@ PlayHead::PlayHead(SheetView* sv, Sheet* sheet, ClipsViewPort* vp)
 	connect(&m_animation, SIGNAL(frameChanged(int)), this, SLOT(set_animation_value(int)));
 	connect(&m_animation, SIGNAL(finished()), this, SLOT(animation_finished()));
 	
-	setFlag(QGraphicsItem::ItemIgnoresTransformations);
 	setZValue(99);
 }
 
@@ -145,6 +143,7 @@ void PlayHead::update_position()
 	}
 	newPos.setX(newXPos);
 	
+	
 	if (int(newPos.x()) != int(pos().x()) && (m_animation.state() != QTimeLine::Running)) {
 		setPos(newPos);
 	} else {
@@ -157,7 +156,9 @@ void PlayHead::update_position()
 	
 	int vpWidth = m_vp->viewport()->width();
 	
-	if (m_mode == CENTERED) {
+	// When timeref_scalefactor is below 5120, the playhead moves faster then teh view scrolls
+	// so it's better to keep the view centered around the playhead.
+	if (m_mode == CENTERED || (m_sv->timeref_scalefactor <= 10280) ) {
 		m_sv->set_hscrollbar_value(int(scenePos().x()) - (int)(0.5 * vpWidth));
 		return;
 	}
@@ -177,10 +178,9 @@ void PlayHead::update_position()
 		if (m_mode == ANIMATED_FLIP_PAGE) {
 			if (m_animation.state() != QTimeLine::Running) {
 				m_animFrameRange = (int)(vpWidth * (1.0 - (AUTO_SCROLL_MARGIN * 2)));
-				m_totalAnimValue = 0;
 				m_animation.setFrameRange(0, m_animFrameRange);
-				calculate_total_anim_frames();
 				m_animationScrollStartPos = m_sv->hscrollbar_value();
+				m_animScaleFactor = m_sv->timeref_scalefactor;
 				//during the animation, we stop the play update timer
 				// to avoid unnecessary update/paint events
 				play_stop();
@@ -194,14 +194,24 @@ void PlayHead::update_position()
 
 void PlayHead::set_animation_value(int value)
 {
+	// When the scalefactor changed, stop the animation here as it's no longer valid to run
+	// and reset the animation timeline time back to 0.
+	if (m_animScaleFactor != m_sv->timeref_scalefactor) {
+		m_animation.stop();
+		m_animation.setCurrentTime(0);
+		animation_finished();
+		return;
+	}
+
 	QPointF newPos(m_sheet->get_transport_location() / m_sv->timeref_scalefactor, 0);
-	// calculate the motion distance of the playhead.
-	qreal deltaX = newPos.x() - pos().x();
 	
 	// calculate the animation x diff.
-	int diff = (int)(0.5 + ((float)(value) / m_totalAnimFrames) * m_animFrameRange);
-	m_totalAnimValue += (int)(diff + deltaX);
-	int newXPos = (int)(m_animationScrollStartPos + m_totalAnimValue);
+	int diff = m_animation.currentValue() * m_animFrameRange;
+	
+	// compensate for the playhead movement.
+	m_animationScrollStartPos += newPos.x() - pos().x();
+	
+	int newXPos = (int)(m_animationScrollStartPos + diff);
 	
 	if (newPos != pos()) {
 		setPos(newPos);
@@ -211,16 +221,6 @@ void PlayHead::set_animation_value(int value)
 		m_sv->set_hscrollbar_value(newXPos);
 	}
 }
-
-void PlayHead::calculate_total_anim_frames()
-{
-	int count = (ANIME_DURATION / 40);
-	m_totalAnimFrames = 0;
-	for (int i=0; i<count; ++i) {
-		m_totalAnimFrames += m_animation.frameForTime(i*40);
-	}
-}
-
 
 void PlayHead::animation_finished()
 {
@@ -271,7 +271,6 @@ WorkCursor::WorkCursor(SheetView* sv, Sheet* sheet)
 	, m_sheet(sheet)
 	, m_sv(sv)
 {
-	setFlag(QGraphicsItem::ItemIgnoresTransformations);
 	setZValue(100);
 }
 

@@ -63,11 +63,8 @@ private:
         PlayHeadMode	m_mode;
         int 		m_animationScrollStartPos;
 	int		m_animFrameRange;
-	int		m_totalAnimFrames;
-	int		m_totalAnimValue;
+	qreal		m_animScaleFactor;
 	
-	void calculate_total_anim_frames();
-
 private slots:
 	void check_config();
         void play_start();

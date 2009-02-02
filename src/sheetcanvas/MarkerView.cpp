@@ -52,8 +52,6 @@ MarkerView::MarkerView(Marker* marker, SheetView* sv, ViewItem* parentView)
 	m_width = fm.width("NI"); // use any two letters to set the width of the marker indicator
 	m_line->setPos(m_width / 2, m_ascent);
 	
-	setFlag(QGraphicsItem::ItemIgnoresTransformations);
-
 	load_theme_data();
 	
 	

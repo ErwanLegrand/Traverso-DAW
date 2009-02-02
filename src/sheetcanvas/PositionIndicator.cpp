@@ -30,7 +30,6 @@ PositionIndicator::PositionIndicator(ViewItem* parentView)
 	: ViewItem(parentView, 0)
 {
 	calculate_bounding_rect();
-	setFlag(QGraphicsItem::ItemIgnoresTransformations);
 	setZValue(100);
 }
 
