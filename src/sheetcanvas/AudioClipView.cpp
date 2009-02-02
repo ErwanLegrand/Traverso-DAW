@@ -434,32 +434,32 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 
 			// draw lines at 0 and -6 db
 			if (m_drawDbGrid) {
-					if (m_height >= m_mimimumheightforinfoarea) {
-						p->setMatrix(matrix().translate(0, m_infoAreaHeight), true);
-					}
-					p->setMatrix(matrix().translate(0, ytrans), true);
+				if (m_height >= m_mimimumheightforinfoarea) {
+					p->setMatrix(matrix().translate(0, m_infoAreaHeight), true);
+				}
+				p->setMatrix(matrix().translate(0, ytrans), true);
 
-					int scale = 1;
-					if (!m_mergedView) {
-						scale = channels;
-					}
+				int scale = 1;
+				if (!m_mergedView) {
+					scale = channels;
+				}
 
-					p->setPen(themer()->get_color("AudioClip:db-grid"));
-					p->setFont( themer()->get_font("AudioClip:fontscale:dblines") );
-					QFontMetrics fm(p->font());
-					int toffset = fm.width(" -6 dB ");
+				p->setPen(themer()->get_color("AudioClip:db-grid"));
+				p->setFont( themer()->get_font("AudioClip:fontscale:dblines") );
+				QFontMetrics fm(p->font());
+				int toffset = fm.width(" -6 dB ");
 
-					p->drawLine(toffset, -0.9 * height/scale, xstart+pixelcount, -0.9 * height/scale);
-					p->drawText(0.0, -0.9 * height/scale - 1 + fm.ascent()/2, "  0 dB");
+				p->drawLine(toffset, -0.9 * height/scale, xstart+pixelcount, -0.9 * height/scale);
+				p->drawText(0.0, -0.9 * height/scale - 1 + fm.ascent()/2, "  0 dB");
 
-					p->drawLine(toffset, 0.9 * height/scale + 1, xstart+pixelcount, 0.9 * height/scale + 1);
-					p->drawText(0.0, 0.9 * height/scale + fm.ascent()/2, "  0 dB");
+				p->drawLine(toffset, 0.9 * height/scale + 1, xstart+pixelcount, 0.9 * height/scale + 1);
+				p->drawText(0.0, 0.9 * height/scale + fm.ascent()/2, "  0 dB");
 
-					p->drawLine(toffset, -0.45 * height/scale, xstart+pixelcount, -0.45 * height/scale);
-					p->drawText(0.0, -0.45 * height/scale - 1 + fm.ascent()/2, " -6 dB");
+				p->drawLine(toffset, -0.45 * height/scale, xstart+pixelcount, -0.45 * height/scale);
+				p->drawText(0.0, -0.45 * height/scale - 1 + fm.ascent()/2, " -6 dB");
 
-					p->drawLine(toffset, 0.45 * height/scale + 1, xstart+pixelcount, 0.45 * height/scale + 1);
-					p->drawText(0.0, 0.45 * height/scale + fm.ascent()/2, " -6 dB");
+				p->drawLine(toffset, 0.45 * height/scale + 1, xstart+pixelcount, 0.45 * height/scale + 1);
+				p->drawText(0.0, 0.45 * height/scale + fm.ascent()/2, " -6 dB");
 			}
 
 		// Macroview, paint waveform with painterpath
