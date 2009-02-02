@@ -531,7 +531,7 @@ void SystemValueBar::add_range_color(float x0, float x1, QColor color)
 }
 
 ProgressToolBar::ProgressToolBar(QWidget* parent)
-	: QToolBar(parent)
+	: QToolBar(tr("Progress Toolbar"), parent)
 {
 	m_progressBar = new QProgressBar(this);
 	m_progressBar->setMinimumWidth(800);
