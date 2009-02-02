@@ -25,6 +25,8 @@
 #include <QLocale>
 #include <QTranslator>
 #include <QtPlugin>
+
+#include "Config.h"
 #include "Traverso.h"
 #include "Main.h"
 #include "../config.h"
@@ -114,10 +116,17 @@ int main( int argc, char **argv )
 	traverso = new Traverso(argc, argv);
 	
 	QTranslator traversoTranslator;
-	QString language = QLocale::system().name();
-	traversoTranslator.load(":/traverso_" + language );
+	QString systemLanguage = QLocale::system().name();
+	QString userLanguage = config().get_property("Interface", "Language", "").toString();
+	if (userLanguage.isEmpty() || userLanguage.isNull()) {
+		traversoTranslator.load(":/traverso_" + systemLanguage );
+	} else {
+		traversoTranslator.load(":/traverso_" + userLanguage );
+	}
 	traverso->installTranslator(&traversoTranslator);
+	
 	traverso->exec();
+	
 	delete traverso;
 
 	MEM_OFF();
