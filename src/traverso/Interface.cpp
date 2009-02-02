@@ -166,10 +166,6 @@ Interface::Interface()
 	busMonitorDW->setWidget(busMonitor);
 	addDockWidget(Qt::RightDockWidgetArea, busMonitorDW);
 	
-	transportConsole = new TransportConsoleWidget(this);
-	transportConsole->setObjectName("Transport Console");
-	addToolBar(Qt::BottomToolBarArea, transportConsole);
-	
 	m_sysinfo = new SysInfoToolBar(this);
 	m_sysinfo->setObjectName("System Info Toolbar");
 	addToolBar(Qt::BottomToolBarArea, m_sysinfo);
@@ -186,6 +182,11 @@ Interface::Interface()
 	m_editToolBar = new QToolBar(this);
 	m_editToolBar->setObjectName("Edit Toolbar");
 	addToolBar(m_editToolBar);
+	
+	transportConsole = new TransportConsoleWidget(this);
+	transportConsole->setObjectName("Transport Console");
+	addToolBar(Qt::TopToolBarArea, transportConsole);
+
 
 #if defined Q_WS_MAC
 	m_projectToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
