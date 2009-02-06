@@ -630,7 +630,7 @@ void AppearancePage::load_config()
 	m_themepage->toolbarStyleCombo->setCurrentIndex(tbstyle);
 
 	// icon sizes of the toolbars
-	QString iconsize = config().get_property("Themer", "iconsize", "16").toString();
+	QString iconsize = config().get_property("Themer", "iconsize", "22").toString();
 	supportedIconSizes = config().get_property("Themer", "supportediconsizes", "16;22;32;48").toString();
 
 	// if the list is empty, we should offer some default values. (The list can only be 
@@ -653,7 +653,7 @@ void AppearancePage::load_config()
 	m_themepage->iconSizeCombo->setCurrentIndex(iconsizeindex);
 
 	// and the same again for the icons size of the transport console
-	QString trspsize = config().get_property("Themer", "transportconsolesize", "16").toString();
+	QString trspsize = config().get_property("Themer", "transportconsolesize", "22").toString();
 	iconSizesList = supportedIconSizes.split(";", QString::SkipEmptyParts);
 
 	if (iconSizesList.lastIndexOf(iconsize) == -1) {
@@ -682,7 +682,7 @@ void AppearancePage::reset_default_config()
 	config().set_property("Themer", "drawdbgrid", false);
 	config().set_property("Themer", "paintwavewithoutline", true);
 	config().set_property("Themer", "supportediconsizes", "16;22;32;48");
-	config().set_property("Themer", "iconsize", "16");
+	config().set_property("Themer", "iconsize", "22");
 	config().set_property("Themer", "toolbuttonstyle", 0);
 
 	load_config();

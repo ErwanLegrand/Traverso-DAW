@@ -200,7 +200,7 @@ Interface::Interface()
 		m_editToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 	}
 
-	int iconsize = config().get_property("Themer", "iconsize", "16").toInt();
+	int iconsize = config().get_property("Themer", "iconsize", "22").toInt();
 	m_projectToolBar->setIconSize(QSize(iconsize, iconsize));
 	m_editToolBar->setIconSize(QSize(iconsize, iconsize));
 #endif
@@ -1181,11 +1181,11 @@ void Interface::config_changed()
 			break;
 	}
 
-	int iconsize = config().get_property("Themer", "iconsize", "16").toInt();
+	int iconsize = config().get_property("Themer", "iconsize", "22").toInt();
 	m_projectToolBar->setIconSize(QSize(iconsize, iconsize));
 	m_editToolBar->setIconSize(QSize(iconsize, iconsize));
 
-	int transportconsolesize = config().get_property("Themer", "transportconsolesize", "16").toInt();
+	int transportconsolesize = config().get_property("Themer", "transportconsolesize", "22").toInt();
 	transportConsole->setIconSize(QSize(transportconsolesize, transportconsolesize));
 	transportConsole->resize(transportConsole->sizeHint());
 }

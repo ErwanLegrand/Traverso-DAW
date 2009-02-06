@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Themer.cpp,v 1.10 2008/01/21 16:22:15 r_sijrier Exp $
+$Id: Themer.cpp,v 1.11 2009/02/06 14:39:21 r_sijrier Exp $
 */
 
 #include "Themer.h"
@@ -100,7 +100,7 @@ Themer::Themer()
 	m_themefile =  themepath + "/" + m_currentTheme + "/traversotheme.xml";
 	m_coloradjust = -1;
 	
-	bool usestylepallete = config().get_property("Themer", "usestylepallet", "").toBool();
+	bool usestylepallete = config().get_property("Themer", "usestylepallet", "false").toBool();
 	
 	if (usestylepallete) {
 		QApplication::setPalette(QApplication::style()->standardPalette());

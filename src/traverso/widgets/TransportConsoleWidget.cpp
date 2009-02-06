@@ -190,7 +190,7 @@ void TransportConsoleWidget::update_label()
 
 void TransportConsoleWidget::update_layout()
 {
-	int iconsize = config().get_property("Themer", "transportconsolesize", "16").toInt();
+	int iconsize = config().get_property("Themer", "transportconsolesize", "22").toInt();
 	setIconSize(QSize(iconsize, iconsize));
 }
 
