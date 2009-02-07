@@ -1,4 +1,5 @@
-lupdate -verbose src/traverso/*.cpp src/traverso/*.h \
+lupdate -verbose -noobsolete \
+	src/traverso/*.cpp src/traverso/*.h \
 	src/sheetcanvas/*.cpp src/sheetcanvas/*.h \
 	src/sheetcanvas/dialogs/*.cpp src/sheetcanvas/dialogs/*.h \
 	src/sheetcanvas/ui/*.ui \
@@ -7,6 +8,7 @@ lupdate -verbose src/traverso/*.cpp src/traverso/*.h \
 	src/core/*.cpp src/core/*.h src/engine/*.cpp src/commands/*.cpp \
 	src/traverso/ui/*.ui src/commands/plugins/TraversoCommands/*.h \
 	src/commands/plugins/TraversoCommands/*.cpp \
+	src/common/Utils.cpp\
  	-ts \
 		resources/translations/traverso_nl.ts \
 		resources/translations/traverso_de.ts \
