@@ -163,7 +163,7 @@ void Sheet::init()
 	connect (m_diskio, SIGNAL(readSourceBufferUnderRun()), this, SLOT(handle_diskio_readbuffer_underrun()));
 	connect (m_diskio, SIGNAL(writeSourceBufferOverRun()), this, SLOT(handle_diskio_writebuffer_overrun()));
 	connect(&config(), SIGNAL(configChanged()), this, SLOT(config_changed()));
-	connect(this, SIGNAL(transferStarted()), m_diskio, SLOT(start_io()));
+	connect(this, SIGNAL(transportStarted()), m_diskio, SLOT(start_io()));
 	connect(this, SIGNAL(transportStopped()), m_diskio, SLOT(stop_io()));
 
 	mixdown = gainbuffer = 0;
