@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "../config.h"
 #include "InputEngine.h"
 #include "AudioDevice.h"
+#include "Utils.h"
 
 #include <QSettings>
 #include <QString>
@@ -57,7 +58,6 @@ void Config::load_configuration()
 	
 	set_audiodevice_driver_properties();
 }
-
 
 void Config::reset_settings( )
 {

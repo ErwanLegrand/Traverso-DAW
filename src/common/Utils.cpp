@@ -29,7 +29,8 @@
 #include <QRegExp>
 #include <QLocale>
 #include <QChar>
-
+#include <QTranslator>
+#include <QDir>
 
 TimeRef msms_to_timeref(QString str)
 {
@@ -230,3 +231,24 @@ QString timeref_to_text(const TimeRef & ref, int scalefactor)
 		return timeref_to_ms_3(ref);
 	}
 }
+
+
+QStringList find_qm_files()
+{
+	QDir dir(":/translations");
+	QStringList fileNames = dir.entryList(QStringList("*.qm"), QDir::Files, QDir::Name);
+	QMutableStringListIterator i(fileNames);
+	while (i.hasNext()) {
+		i.next();
+		i.setValue(dir.filePath(i.value()));
+	}
+	return fileNames;
+}
+
+QString language_name_from_qm_file(const QString& lang)
+{
+	QTranslator translator;
+	translator.load(lang);
+	return translator.translate("LanguageName", "English", "The name of this Language, e.g. German would be Deutch");
+}
+

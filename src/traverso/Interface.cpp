@@ -113,6 +113,7 @@ Interface::Interface()
 {
 	PENTERCONS;
 	setWindowTitle("Traverso");
+	tr("English");
 	setMinimumSize(400, 300);
 	setWindowIcon(QPixmap (":/windowicon") );
 	//         setMaximumWidth(1024);

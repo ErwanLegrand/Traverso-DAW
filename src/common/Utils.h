@@ -46,6 +46,10 @@ QDateTime extract_date_time(qint64 id);
 
 qint64 create_id();
 
+QStringList find_qm_files();
+QString language_name_from_qm_file(const QString& lang);
+
+
 static inline unsigned int is_power_of_two (unsigned int n)
 {
 	return !(n & (n - 1));
