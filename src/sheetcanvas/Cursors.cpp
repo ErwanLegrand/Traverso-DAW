@@ -51,8 +51,8 @@ PlayHead::PlayHead(SheetView* sv, Sheet* sheet, ClipsViewPort* vp)
 	m_animation.setDuration(ANIME_DURATION);
 	m_animation.setCurveShape(QTimeLine::EaseInOutCurve);
 	
-	connect(m_sheet, SIGNAL(transferStarted()), this, SLOT(play_start()));
-	connect(m_sheet, SIGNAL(transferStopped()), this, SLOT(play_stop()));
+	connect(m_sheet, SIGNAL(transportStarted()), this, SLOT(play_start()));
+	connect(m_sheet, SIGNAL(transportStopped()), this, SLOT(play_stop()));
 	
 	connect(&m_playTimer, SIGNAL(timeout()), this, SLOT(update_position()));
 	

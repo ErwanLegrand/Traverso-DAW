@@ -103,7 +103,7 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 	m_workCursor = new WorkCursor(this, m_sheet);
 	
 	connect(m_sheet, SIGNAL(workingPosChanged()), m_workCursor, SLOT(update_position()));
-	connect(m_sheet, SIGNAL(transferStarted()), this, SLOT(follow_play_head()));
+	connect(m_sheet, SIGNAL(transportStarted()), this, SLOT(follow_play_head()));
 	connect(m_sheet, SIGNAL(transportPosSet()), this, SLOT(follow_play_head()));
 	connect(m_sheet, SIGNAL(workingPosChanged()), this, SLOT(stop_follow_play_head()));
 	

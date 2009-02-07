@@ -167,8 +167,8 @@ void MeterView::set_sheet(Sheet *sheet)
 			// FIXME The removed plugin still needs to be deleted!!!!!!
 			Command::process_command(m_sheet->get_plugin_chain()->remove_plugin(m_meter, false));
 			timer.stop();
-			disconnect(m_sheet, SIGNAL(transferStopped()), this, SLOT(transport_stopped()));
-			disconnect(m_sheet, SIGNAL(transferStarted()), this, SLOT(transport_started()));
+			disconnect(m_sheet, SIGNAL(transportStopped()), this, SLOT(transport_stopped()));
+			disconnect(m_sheet, SIGNAL(transportStarted()), this, SLOT(transport_started()));
 		}
 	}
 	
@@ -178,8 +178,8 @@ void MeterView::set_sheet(Sheet *sheet)
 		return;
 	}
 
-	connect(m_sheet, SIGNAL(transferStopped()), this, SLOT(transport_stopped()));
-	connect(m_sheet, SIGNAL(transferStarted()), this, SLOT(transport_started()));
+	connect(m_sheet, SIGNAL(transportStopped()), this, SLOT(transport_stopped()));
+	connect(m_sheet, SIGNAL(transportStarted()), this, SLOT(transport_started()));
 }
 
 void MeterView::hide_event()

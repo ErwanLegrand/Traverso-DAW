@@ -260,8 +260,8 @@ signals:
 	void trackRemoved(Track* );
 	void trackAdded(Track* );
 	void hzoomChanged();
-	void transferStarted();
-	void transferStopped();
+	void transportStarted();
+	void transportStopped();
 	void workingPosChanged();
 	void transportPosSet();
 	void firstVisibleFrameChanged();

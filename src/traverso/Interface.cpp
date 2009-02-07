@@ -342,7 +342,7 @@ void Interface::show_sheet(Sheet* sheet)
 		connect(sheet, SIGNAL(snapChanged()), this, SLOT(update_snap_state()));
 		connect(sheet, SIGNAL(modeChanged()), this, SLOT(update_effects_state()));
 		connect(sheet, SIGNAL(tempFollowChanged(bool)), this, SLOT(update_temp_follow_state(bool)));
-		connect(sheet, SIGNAL(transferStopped()), this, SLOT(update_follow_state()));
+		connect(sheet, SIGNAL(transportStarted()), this, SLOT(update_follow_state()));
 		update_snap_state();
 		update_effects_state();
 		m_snapAction->setEnabled(true);

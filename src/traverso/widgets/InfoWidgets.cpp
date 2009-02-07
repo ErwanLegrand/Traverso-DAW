@@ -261,8 +261,8 @@ void HDDSpaceInfo::set_sheet(Sheet* sheet)
 	
 	update_status();
 	
-	connect(m_sheet, SIGNAL(transferStopped()), this, SLOT(sheet_stopped()));
-	connect(m_sheet, SIGNAL(transferStarted()), this, SLOT(sheet_started()));
+	connect(m_sheet, SIGNAL(transportStopped()), this, SLOT(sheet_stopped()));
+	connect(m_sheet, SIGNAL(transportStarted()), this, SLOT(sheet_started()));
 }
 
 void HDDSpaceInfo::sheet_started()

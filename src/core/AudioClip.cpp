@@ -640,7 +640,7 @@ int AudioClip::init_recording( QByteArray name )
 	m_sheet->get_diskio()->register_write_source(m_recorder);
 	
 	connect(m_recorder, SIGNAL(exportFinished()), this, SLOT(finish_write_source()));
-	connect(m_sheet, SIGNAL(transferStopped()), this, SLOT(finish_recording()));
+	connect(m_sheet, SIGNAL(transportStopped()), this, SLOT(finish_recording()));
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(get_capture_bus()));
 
 	return 1;
@@ -785,7 +785,7 @@ void AudioClip::finish_recording()
 	m_recordingStatus = FINISHING_RECORDING;
 	m_recorder->set_recording(false);
 
-	disconnect(m_sheet, SIGNAL(transferStopped()), this, SLOT(finish_recording()));
+	disconnect(m_sheet, SIGNAL(transportStopped()), this, SLOT(finish_recording()));
 	disconnect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(get_capture_bus()));
 }
 

@@ -164,7 +164,7 @@ void Sheet::init()
 	connect (m_diskio, SIGNAL(writeSourceBufferOverRun()), this, SLOT(handle_diskio_writebuffer_overrun()));
 	connect(&config(), SIGNAL(configChanged()), this, SLOT(config_changed()));
 	connect(this, SIGNAL(transferStarted()), m_diskio, SLOT(start_io()));
-	connect(this, SIGNAL(transferStopped()), m_diskio, SLOT(stop_io()));
+	connect(this, SIGNAL(transportStopped()), m_diskio, SLOT(stop_io()));
 
 	mixdown = gainbuffer = 0;
 	m_masterOut = new AudioBus("Master Out", 2);
@@ -311,6 +311,7 @@ void Sheet::disconnect_from_audiodevice()
 	PENTER;
 	if (is_transport_rolling()) {
 		m_transport = false;
+		emit transportStopped();
 	}
 	audiodevice().remove_client(m_audiodeviceClient);
 }
@@ -808,7 +809,7 @@ int Sheet::process( nframes_t nframes )
 	}
 
 	if (m_stopTransport) {
-		RT_THREAD_EMIT(this, 0, transferStopped());
+		RT_THREAD_EMIT(this, 0, transportStopped());
 		m_transport = false;
 		m_realtimepath = false;
 		m_stopTransport = false;
@@ -1304,19 +1305,19 @@ void Sheet::start_transport_rolling(bool realtime)
 	m_transport = 1;
 	
 	if (realtime) {
-		RT_THREAD_EMIT(this, 0, transferStarted());
+		RT_THREAD_EMIT(this, 0, transportStarted());
 	} else {
-		emit transferStarted();
+		emit transportStarted();
 	}
 	
-	PMESG("tranport rolling");
+	PMESG("transport rolling");
 }
 
 // RT thread save function
 void Sheet::stop_transport_rolling()
 {
 	m_stopTransport = 1;
-	PMESG("tranport stopped");
+	PMESG("transport stopped");
 }
 
 // RT thread save function
