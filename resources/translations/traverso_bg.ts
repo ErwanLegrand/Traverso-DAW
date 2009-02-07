@@ -408,22 +408,22 @@ p, li { white-space: pre-wrap; }
         <translation>Кликнете за да възстановите АудиоФайл !</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1012"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1013"/>
         <source>Reset Audio File for Clip: %1</source>
         <translation>Възстанови Аудио Файла за Клип: %1</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1014"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1015"/>
         <source>All files (*);;Audio files (*.wav *.flac)</source>
         <translation>Всички файлове (*);;Аудио файлове (*.wav *.flac)</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1017"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1018"/>
         <source>No file selected!</source>
         <translation>Няма избран файл!</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1027"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1028"/>
         <source>Succesfully set AudioClip file to %1</source>
         <translation>Успешно бе зададен АудиоКлип файл за %1</translation>
     </message>
