@@ -91,8 +91,8 @@ void TransportConsoleWidget::set_sheet(Sheet* sheet)
 	setEnabled(true);
 
 	connect(m_sheet, SIGNAL(recordingStateChanged()), this, SLOT(update_recording_state()));
-	connect(m_sheet, SIGNAL(transportStarted()), this, SLOT(transfer_started()));
-	connect(m_sheet, SIGNAL(transportStopped()), this, SLOT(transfer_stopped()));
+	connect(m_sheet, SIGNAL(transportStarted()), this, SLOT(transport_started()));
+	connect(m_sheet, SIGNAL(transportStopped()), this, SLOT(transport_stopped()));
 	connect(m_sheet, SIGNAL(transportPosSet()), this, SLOT(update_label()));
 
 	update_label();
@@ -128,7 +128,7 @@ void TransportConsoleWidget::to_right()
 	m_sheet->next_skip_pos();
 }
 
-void TransportConsoleWidget::transfer_started()
+void TransportConsoleWidget::transport_started()
 {
     // use an odd number for the update interval, because
 	// a round number (e.g. 100) lets the last digit stay
@@ -146,7 +146,7 @@ void TransportConsoleWidget::transfer_started()
 	}
 }
 
-void TransportConsoleWidget::transfer_stopped()
+void TransportConsoleWidget::transport_stopped()
 {
 	m_updateTimer.stop();
 	m_playAction->setChecked(false);

@@ -67,8 +67,8 @@ private slots:
 	void to_end();
 	void to_right();
 
-	void transfer_started();
-	void transfer_stopped();
+	void transport_started();
+	void transport_stopped();
 	void update_recording_state();
 	void update_label();
 	void update_layout();
