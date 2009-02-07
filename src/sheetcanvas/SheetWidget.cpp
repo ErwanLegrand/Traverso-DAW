@@ -245,6 +245,10 @@ SheetWidget::SheetWidget(Sheet* sheet, QWidget* parent)
 SheetWidget::~ SheetWidget()
 {
 	PENTERDES;
+	if (!m_sheet) {
+		return;
+	}
+
 	delete m_scene;
 }
 
