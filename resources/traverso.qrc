@@ -73,10 +73,10 @@
 		<file alias="remove">images/icons/list-remove.png</file>
 
 		<file>translations/traverso_nl.qm</file>
-		<file alias="traverso_de">translations/traverso_de.qm</file>
-		<file alias="traverso_fr">translations/traverso_fr.qm</file>
-		<file alias="traverso_bg">translations/traverso_bg.qm</file>
-		<file alias="traverso_cs">translations/traverso_cs.qm</file>
+		<file>translations/traverso_de.qm</file>
+		<file>translations/traverso_fr.qm</file>
+		<file>translations/traverso_bg.qm</file>
+		<file>translations/traverso_cs.qm</file>
 		
 		<file alias="project_conversion_description_2_3">projectconversion/2_to_3.html</file>
 	</qresource>
