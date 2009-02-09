@@ -117,11 +117,11 @@ int main( int argc, char **argv )
 	
 	QTranslator traversoTranslator;
 	QString systemLanguage = QLocale::system().name();
-	QString userLanguage = config().get_property("Interface", "Language", "").toString();
+	QString userLanguage = config().get_property("Interface", "LanguageFile", "").toString();
 	if (userLanguage.isEmpty() || userLanguage.isNull()) {
 		traversoTranslator.load(":/translations/traverso_" + systemLanguage );
 	} else {
-		traversoTranslator.load(":/translations/traverso_" + userLanguage );
+		traversoTranslator.load(userLanguage);
 	}
 	traverso->installTranslator(&traversoTranslator);
 	
