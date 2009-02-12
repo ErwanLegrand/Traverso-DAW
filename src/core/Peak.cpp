@@ -346,7 +346,10 @@ int Peak::calculate_peaks(
 		float* peakdata = data->peakdataDecodeBuffer->readBuffer;
 
 		ProcessData pd;
-		pd.stepSize = TimeRef(nframes_t(1), m_source->get_file_rate());
+		// the stepSize depends on the real file sample rate, Peak assumes 44100 Hz
+		// so if the file sample rate differs, the stepSize becomes the ratio of 
+		// the file sample rate and 44100
+		pd.stepSize = TimeRef(qreal(44100) / m_source->get_file_rate(), m_source->get_file_rate());
 		pd.processRange = TimeRef(framesPerPeak, m_source->get_file_rate());
 
 		for (uint i=0; i < readFrames; i++) {

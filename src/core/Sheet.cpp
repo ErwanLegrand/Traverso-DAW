@@ -780,8 +780,8 @@ void Sheet::set_hzoom( qreal hzoom )
 		hzoom = Peak::max_zoom_value();
 	}
 	
-	if (hzoom < 0.5) {
-		hzoom = 0.5;
+	if (hzoom < 1.0) {
+		hzoom = 1.0;
 	}
 	
 	if (m_hzoom == hzoom) {
