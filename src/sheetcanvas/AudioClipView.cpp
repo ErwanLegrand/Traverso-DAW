@@ -223,23 +223,9 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 {
 	PENTER2;
-	// when painting with a path, I _have_ to use path.lineTo()
-	// which looks ugly when only parts of the clip is repainted
-	// when using a different color for the brush then the outline.
-	// Painting 2 more pixels makes it getting clipped away.....
-	pixelcount += 2;
-	
-/*	xstart -= 2;
-	pixelcount += 2;
-	if (xstart < 0) xstart = 0;*/
-	
-	// boundary checking, important for microview only, macroview needs the additional
-	// pixels to paint the waveform correctly
-	if ((xstart + pixelcount) > m_boundingRect.width()) {
-		pixelcount = qRound(m_boundingRect.width() - xstart);
-	}
 	
 	Peak* peak = m_clip->get_peak();
+	
 	if (!peak) {
 		PERROR("No Peak object available for clip %s", QS_C(m_clip->get_name()));
 		return;
