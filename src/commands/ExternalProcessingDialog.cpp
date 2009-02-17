@@ -161,7 +161,7 @@ void ExternalProcessingDialog::read_standard_output()
 		QStringList tokens = result.split(QRegExp("\\s+"));
 		foreach(QString token, tokens) {
 			if (token.contains("%")) {
-				token = token.remove("%)");
+				token = token.remove("%").remove("(").remove(")");
 				bool ok;
 				int number = (int)token.toDouble(&ok);
 				if (ok && number > progressBar->value()) {
