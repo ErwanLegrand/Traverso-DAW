@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS><TS version="1.1" language="fr">
+<defaultcodec></defaultcodec>
 <context>
     <name>AddRemoveClip</name>
     <message>
         <location filename="../../src/commands/RemoveClip.cpp" line="34"/>
         <source>Remove Clip</source>
-        <translation>Supprimer le clip</translation>
+        <translation>Supprimer la région</translation>
     </message>
     <message>
         <location filename="../../src/commands/RemoveClip.cpp" line="43"/>
         <source>Remove Selected Clips</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer la région sélectionnée</translation>
     </message>
 </context>
 <context>
@@ -44,7 +45,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;else the driver won&apos;t be able to initialize!&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For more info see chapter 3.1: &quot;The Driver Backend&quot; of the User Manual&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Périphérique :&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Le périphérique ALSA matériel ou virtuel à être utilisé.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Le périphérique matériel est la carte son installée sur votre ordinateur.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Un périphérique virtuel est celui créé dans le fichier .asoundrc, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Souvent situé dans votre dossier personnel.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Si vous n&apos;êtes pas sûr, utilisez soit le périphérique par défaut, qui va utiliser le périphérique son &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;configuré par votre distribution, ou le périphérique portant le nom de votre carte son.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Dans le dernier cas, vérifiez qu&apos;aucun programme n&apos;utilise votre carte son, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;sinon le pilote ne pourra pas s&apos;initialiser!&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Pour plus d&apos;informations, consultez le chapitre 3.1: &quot;The Driver Backend&quot; du manuel d&apos;utilisateur&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="64"/>
@@ -66,7 +67,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;However, some (buggy) alsa drivers don&apos;t work correctly &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;with the default of 2, if you experience very choppy audio, &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;please try to use 3 periods.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Nombre de Périodes :&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Audio is managed in small chunks called periods. &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This value determines how many of these chunks are &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;to be used by the driver of the audiocard.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The default should work just fine, and gives optimal latency behavior.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;However, some (buggy) alsa drivers don&apos;t work correctly &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;with the default of 2, if you experience very choppy audio, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;please try to use 3 periods.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="99"/>
@@ -172,22 +173,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="625"/>
         <source>Icons only</source>
-        <translation type="unfinished"></translation>
+        <translation>Icones seulement</translation>
     </message>
     <message>
         <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="626"/>
         <source>Text only</source>
-        <translation type="unfinished"></translation>
+        <translation>Texte seulement</translation>
     </message>
     <message>
         <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="627"/>
         <source>Text beside Icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Texte à c^oté des icones</translation>
     </message>
     <message>
         <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="628"/>
         <source>Text below Icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Texte sous les icones</translation>
     </message>
 </context>
 <context>
@@ -213,7 +214,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/AudioClip.cpp" line="651"/>
         <source>Toggle Mute</source>
-        <translation type="unfinished"></translation>
+        <translation>Muet</translation>
     </message>
     <message>
         <location filename="../../src/core/AudioClip.cpp" line="658"/>
@@ -268,7 +269,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/AudioClip.h" line="54"/>
         <source>Lock</source>
-        <translation type="unfinished"></translation>
+        <translation>Vérouiller</translation>
     </message>
 </context>
 <context>
@@ -286,7 +287,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/sheetcanvas/ui/AudioClipEditDialog.ui" line="54"/>
         <source>External Processing</source>
-        <translation type="unfinished"></translation>
+        <translation>Traitement externe</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/AudioClipEditDialog.ui" line="84"/>
@@ -296,7 +297,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/sheetcanvas/ui/AudioClipEditDialog.ui" line="97"/>
         <source>TextLabel</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiquette de texte</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/AudioClipEditDialog.ui" line="104"/>
@@ -369,7 +370,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/commands/AudioClipExternalProcessing.cpp" line="46"/>
         <source>Clip: External Processing</source>
-        <translation type="unfinished"></translation>
+        <translation>Clip : traitement externe</translation>
     </message>
 </context>
 <context>
@@ -390,29 +391,14 @@ p, li { white-space: pre-wrap; }
         <translation>Sélection : inverser</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioClipManager.cpp" line="200"/>
-        <source>Remove Clip(s)</source>
-        <translation type="obsolete">Supprimer le(s) clip(s)</translation>
-    </message>
-    <message>
         <location filename="../../src/core/AudioClipManager.h" line="37"/>
         <source>Select all</source>
         <translation>Tout sélectionner</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioClipManager.h" line="37"/>
-        <source>Deselect all</source>
-        <translation type="obsolete">Tout désélectionner</translation>
-    </message>
-    <message>
         <location filename="../../src/core/AudioClipManager.h" line="38"/>
         <source>Invert</source>
         <translation>Inverser</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/AudioClipManager.h" line="39"/>
-        <source>Delete selected</source>
-        <translation type="obsolete">Supprimer la partie sélectionnée</translation>
     </message>
 </context>
 <context>
@@ -420,25 +406,25 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="141"/>
         <source>Click to reset AudioFile !</source>
-        <translation type="unfinished"></translation>
+        <translation>Cliquez pour réinitialiser le fichier audio !</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1013"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="999"/>
         <source>Reset Audio File for Clip: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Réinitialiser le fichier audio pour le clip : %1</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1015"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1001"/>
         <source>All files (*);;Audio files (*.wav *.flac)</source>
         <translation>Tous les fichiers (*);;Fichiers audio (*.wav *.flac)</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1018"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1004"/>
         <source>No file selected!</source>
         <translation>Aucun fichier sélectionné !</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1028"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1014"/>
         <source>Succesfully set AudioClip file to %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -564,7 +550,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="242"/>
         <source>System default</source>
-        <translation type="unfinished"></translation>
+        <translation>Par défaut du système</translation>
     </message>
 </context>
 <context>
@@ -640,12 +626,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="101"/>
         <source>New Sheet Settings</source>
-        <translation>Préférences de la nouvelle feuille</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="121"/>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Number of tracks&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Nombre de pistes&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>Préférences du nouvel espace de travail</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="146"/>
@@ -655,7 +636,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="158"/>
         <source>Lock Audio Clips by default</source>
-        <translation type="unfinished"></translation>
+        <translation>Vérouiller les clips audio par défaut</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="168"/>
@@ -668,7 +649,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Keep the play cursor in view while playing or recording.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Garde le curseur de lecture en vue lors de la lecture ou de l&apos;enregistrement .&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="194"/>
@@ -698,7 +679,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="121"/>
         <source>Number of tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de pistes</translation>
     </message>
 </context>
 <context>
@@ -759,12 +740,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/CDWritingDialog.ui" line="45"/>
         <source>Write current Sheet</source>
-        <translation>Ecrire la feuille</translation>
+        <translation>Ecrire l&apos;espace de travail</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/CDWritingDialog.ui" line="55"/>
         <source>Write all Sheets</source>
-        <translation>Ecrire toutes les feuilles</translation>
+        <translation>Ecrire tous les espaces de travail</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/CDWritingDialog.ui" line="64"/>
@@ -949,12 +930,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/sheetcanvas/CurveView.cpp" line="556"/>
         <source>Drag Node</source>
-        <translation type="unfinished"></translation>
+        <translation>Déplacer le noeud</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/CurveView.cpp" line="654"/>
         <source>Clear Nodes</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer tous les noeuds</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/CurveView.h" line="90"/>
@@ -1055,7 +1036,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Defines if both the Playback and Capture buses &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;of your soundcard are to be used, &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;or only the Playback or Capture bus(es).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Mode duplex:&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Defini si les bus de lecture et d&apos;enregistrement &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;de votre carte son doivent être utilisés en même temps, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;ou seulement le bus de lecture ou d&apos;enregistrement.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="54"/>
@@ -1087,7 +1068,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;New projects will use this samplerate as &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;the project&apos;s sample rate on creation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Sample rate:&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;La fréquence d&apos;échantillonage utilisée par votre carte son.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Les nouveaux projets utiliseront celle-ci &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;en temps que fréquence d&apos;échantillonage du projet à la création.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="100"/>
@@ -1155,11 +1136,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DriverInfo</name>
     <message>
-        <location filename="src/traverso/widgets/InfoWidgets.cpp" line="148"/>
-        <source>Click to configure audiodevice</source>
-        <translation type="obsolete">Cliquer pour configurer le périphérique audio</translation>
-    </message>
-    <message>
         <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="156"/>
         <source>Change Audio Device settings</source>
         <translation>Modifie la configuration du périphérique audio</translation>
@@ -1180,7 +1156,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/ExportDialog.ui" line="90"/>
         <source>Export current Sheet</source>
-        <translation>Exporter la feuille</translation>
+        <translation>Exporter l&apos;espace de travail</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ExportDialog.ui" line="100"/>
@@ -1191,91 +1167,6 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/traverso/ui/ExportDialog.ui" line="139"/>
         <source>Export directory</source>
         <translation>Exporter le dossier</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/ExportDialog.ui" line="149"/>
-        <source>Format Options</source>
-        <translation type="obsolete">Options de format</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/ExportDialog.ui" line="161"/>
-        <source>Encoding</source>
-        <translation type="obsolete">Encodage</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/ExportDialog.ui" line="189"/>
-        <source>File Type</source>
-        <translation type="obsolete">Type de fichier</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/ExportDialog.ui" line="199"/>
-        <source>Channels</source>
-        <translation type="obsolete">Canaux</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/ExportDialog.ui" line="252"/>
-        <source>Normalize Audio</source>
-        <translation type="obsolete">Normaliser l&apos;audio</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/ExportDialog.ui" line="323"/>
-        <source>WavPack options (lossless compression)</source>
-        <translation type="obsolete">Options WavPack (compression sans perte)</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/ExportDialog.ui" line="343"/>
-        <source>Compression type</source>
-        <translation type="obsolete">Type de compression</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/ExportDialog.ui" line="383"/>
-        <source>Ogg Options</source>
-        <translation type="obsolete">Options ogg</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/ExportDialog.ui" line="403"/>
-        <source>Bitrate</source>
-        <translation type="obsolete">Fréquence d&apos;échantillonage</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/ExportDialog.ui" line="485"/>
-        <source>Quality (Smallest &lt;-&gt; Best)</source>
-        <translation type="obsolete">Qualité (faible &lt;-&gt; meilleure)</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/ExportDialog.ui" line="544"/>
-        <source>Encoding Method</source>
-        <translation type="obsolete">Méthode d&apos;encodage</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/ExportDialog.ui" line="524"/>
-        <source>MP3 Options</source>
-        <translation type="obsolete">Options MP3</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/ExportDialog.ui" line="562"/>
-        <source>Maximum Bitrate</source>
-        <translation type="obsolete">Fréquence d&apos;échantillonage maximum</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/ExportDialog.ui" line="580"/>
-        <source>Minimum Bitrate</source>
-        <translation type="obsolete">Fréquence d&apos;échantillonage minimum</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/ExportDialog.ui" line="598"/>
-        <source>Quality (Fastest &lt;-&gt; Best)</source>
-        <translation type="obsolete">Qualité (rapide &lt;-&gt; meilleure)</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/ExportDialog.ui" line="728"/>
-        <source>Sample Rate</source>
-        <translation type="obsolete">Fréquence d&apos;échantillonage</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/ExportDialog.ui" line="758"/>
-        <source>Conversion quality</source>
-        <translation type="obsolete">Qualité de la conversion</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ExportDialog.ui" line="177"/>
@@ -1308,82 +1199,82 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/widgets/ExportFormatOptionsWidget.cpp" line="61"/>
         <source>Best</source>
-        <translation type="unfinished">Meilleur</translation>
+        <translation>Meilleur</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/ExportFormatOptionsWidget.cpp" line="62"/>
         <source>High</source>
-        <translation type="unfinished">Haut</translation>
+        <translation>Haut</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/ExportFormatOptionsWidget.cpp" line="63"/>
         <source>Medium</source>
-        <translation type="unfinished">Moyen</translation>
+        <translation>Moyen</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/ExportFormatOptionsWidget.cpp" line="64"/>
         <source>Fast</source>
-        <translation type="unfinished">Rapide</translation>
+        <translation>Rapide</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ExportFormatOptionsWidget.ui" line="381"/>
         <source>Bitrate</source>
-        <translation type="unfinished">Fréquence d&apos;échantillonage</translation>
+        <translation>Fréquence d&apos;échantillonage</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/ExportFormatOptionsWidget.cpp" line="260"/>
         <source>Average Bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Fréquence d&apos;échantillonage moyenne</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ExportFormatOptionsWidget.ui" line="538"/>
         <source>Maximum Bitrate</source>
-        <translation type="unfinished">Fréquence d&apos;échantillonage maximum</translation>
+        <translation>Fréquence d&apos;échantillonage maximum</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ExportFormatOptionsWidget.ui" line="13"/>
         <source>Export Format Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Options du format d&apos;exportation</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ExportFormatOptionsWidget.ui" line="37"/>
         <source>Format Options</source>
-        <translation type="unfinished">Options de format</translation>
+        <translation>Options du format</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ExportFormatOptionsWidget.ui" line="58"/>
         <source>Encoding</source>
-        <translation type="unfinished">Encodage</translation>
+        <translation>Encodage</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ExportFormatOptionsWidget.ui" line="113"/>
         <source>File Type</source>
-        <translation type="unfinished">Type de fichier</translation>
+        <translation>Type de fichier</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ExportFormatOptionsWidget.ui" line="123"/>
         <source>Channels</source>
-        <translation type="unfinished">Canaux</translation>
+        <translation>Canaux</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ExportFormatOptionsWidget.ui" line="190"/>
         <source>Normalize Audio</source>
-        <translation type="unfinished">Normaliser l&apos;audio</translation>
+        <translation>Normaliser l&apos;audio</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ExportFormatOptionsWidget.ui" line="220"/>
         <source>Bitdepth</source>
-        <translation type="unfinished"></translation>
+        <translation>Profondeur d&apos;échantillonage</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ExportFormatOptionsWidget.ui" line="275"/>
         <source>WavPack options (lossless compression)</source>
-        <translation type="unfinished">Options WavPack (compression sans perte)</translation>
+        <translation>Options WavPack (compression sans perte)</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ExportFormatOptionsWidget.ui" line="313"/>
         <source>Compression type</source>
-        <translation type="unfinished">Type de compression</translation>
+        <translation>Type de compression</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ExportFormatOptionsWidget.ui" line="325"/>
@@ -1395,52 +1286,52 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;While this does technically make the compression lossy, it retains all the advantages of floating point data (&amp;gt;600 dB of dynamic range, no clipping, and 25 bits of resolution). &lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This also affects large integer compression by limiting the resolution to 24 bits.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Cette option réduit la taille de certains fichiers de données à virgule flottante jusqu&apos;à 10% en éliminant certaines informations qui n&apos;ont virtuellement aucun effet sur les données audio. &lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Bien que cela soit techniquement une compression avec perte, cela garde l&apos;avantage des données à virgule flottante (&amp;gt;600 dB of dynamic range, no clipping, et une resolution de 25 bits). &lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This also affects large integer compression by limiting the resolution to 24 bits.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ExportFormatOptionsWidget.ui" line="335"/>
         <source>Skip WVX for extra compression (semi-lossless)</source>
-        <translation type="unfinished"></translation>
+        <translation>Sauter WVX pour une compression supplémentaire (semi-lossless)</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ExportFormatOptionsWidget.ui" line="351"/>
         <source>Ogg Options</source>
-        <translation type="unfinished">Options ogg</translation>
+        <translation>Options ogg</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ExportFormatOptionsWidget.ui" line="457"/>
         <source>Quality (Smallest &lt;-&gt; Best)</source>
-        <translation type="unfinished">Qualité (faible &lt;-&gt; meilleure)</translation>
+        <translation>Qualité (faible &lt;-&gt; meilleure)</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ExportFormatOptionsWidget.ui" line="522"/>
         <source>Encoding Method</source>
-        <translation type="unfinished">Méthode d&apos;encodage</translation>
+        <translation>Méthode d&apos;encodage</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ExportFormatOptionsWidget.ui" line="492"/>
         <source>MP3 Options</source>
-        <translation type="unfinished">Options MP3</translation>
+        <translation>Options MP3</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ExportFormatOptionsWidget.ui" line="554"/>
         <source>Minimum Bitrate</source>
-        <translation type="unfinished">Fréquence d&apos;échantillonage minimum</translation>
+        <translation>Fréquence d&apos;échantillonage minimum</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ExportFormatOptionsWidget.ui" line="570"/>
         <source>Quality (Fastest &lt;-&gt; Best)</source>
-        <translation type="unfinished">Qualité (rapide &lt;-&gt; meilleure)</translation>
+        <translation>Qualité (rapide &lt;-&gt; meilleure)</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ExportFormatOptionsWidget.ui" line="708"/>
         <source>Sample Rate</source>
-        <translation type="unfinished">Fréquence d&apos;échantillonage</translation>
+        <translation>Fréquence d&apos;échantillonage</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ExportFormatOptionsWidget.ui" line="734"/>
         <source>Conversion quality</source>
-        <translation type="unfinished">Qualité de la conversion</translation>
+        <translation>Qualité de la conversion</translation>
     </message>
 </context>
 <context>
@@ -1480,14 +1371,6 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>FadeContextDialog</name>
-    <message>
-        <location filename="../../src/traverso/FadeContextDialog.cpp" line="39"/>
-        <source>Fade Editor</source>
-        <translation type="obsolete">Editeur de fondu</translation>
-    </message>
-</context>
-<context>
     <name>FadeCurve</name>
     <message>
         <location filename="../../src/core/FadeCurve.cpp" line="241"/>
@@ -1497,7 +1380,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/FadeCurve.h" line="40"/>
         <source>Toggle Bypass</source>
-        <translation type="unfinished"></translation>
+        <translation>Désactiver</translation>
     </message>
     <message>
         <location filename="../../src/core/FadeCurve.h" line="41"/>
@@ -1579,7 +1462,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/sheetcanvas/FadeView.h" line="38"/>
         <source>Select Preset</source>
-        <translation type="unfinished">Sélection d&apos;un</translation>
+        <translation>Sélection d&apos;un préréglage</translation>
     </message>
 </context>
 <context>
@@ -1643,25 +1526,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/ImportClipsDialog.ui" line="13"/>
         <source>Import Audio Clips</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer des régions audio</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ImportClipsDialog.ui" line="21"/>
         <source>Import to Track:</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer vers la piste :</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ImportClipsDialog.ui" line="33"/>
         <source>Add Markers</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>InfoToolBar</name>
-    <message>
-        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="521"/>
-        <source>Main Toolbar</source>
-        <translation type="obsolete">Barre d&apos;outils principale</translation>
+        <translation>Ajouter un repère</translation>
     </message>
 </context>
 <context>
@@ -1674,12 +1549,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/InputEngine.cpp" line="256"/>
         <source>Hold actions are not supported from Context Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Les actions &quot;maintenir&quot; ne sont pas supportées depuis le menu contextuel</translation>
     </message>
     <message>
         <location filename="../../src/core/InputEngine.cpp" line="377"/>
         <source>Command Plugin %1 not found!</source>
-        <translation type="unfinished"></translation>
+        <translation>Greffon de commande %1 introuvable !</translation>
     </message>
     <message>
         <location filename="../../src/core/InputEngine.cpp" line="381"/>
@@ -1710,12 +1585,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="136"/>
         <source>Resources Bin</source>
-        <translation type="unfinished"></translation>
+        <translation>Ressources</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="145"/>
         <source>Correlation Meter</source>
-        <translation type="unfinished"></translation>
+        <translation>Phase-metre</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="153"/>
@@ -1798,7 +1673,7 @@ sur lesquelles Traverso est basé (Gcc, Qt, Xorg, Linux, etc...)</translation>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="658"/>
         <source>&amp;Sheet</source>
-        <translation>&amp;Feuille</translation>
+        <translation>&amp;Espace de travail</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="665"/>
@@ -1808,7 +1683,7 @@ sur lesquelles Traverso est basé (Gcc, Qt, Xorg, Linux, etc...)</translation>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="661"/>
         <source>New &amp;Sheet(s)...</source>
-        <translation>Nouvelle(s) &amp;feuille(s)...</translation>
+        <translation>Nouvel(eaux) &amp;espace(s) de travail...</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="629"/>
@@ -1829,11 +1704,6 @@ sur lesquelles Traverso est basé (Gcc, Qt, Xorg, Linux, etc...)</translation>
         <location filename="../../src/traverso/Interface.cpp" line="623"/>
         <source>&amp;View</source>
         <translation>&amp;Affichage</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="544"/>
-        <source>Sheet Toolbar</source>
-        <translation type="obsolete">Barre d&apos;outils des feuilles</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="656"/>
@@ -1978,27 +1848,27 @@ afin de restaurer le projet.</translation>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="572"/>
         <source>&amp;Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Edition</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="574"/>
         <source>Undo</source>
-        <translation type="unfinished">Annuler</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="580"/>
         <source>Redo</source>
-        <translation type="unfinished">Refaire</translation>
+        <translation>Refaire</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="602"/>
         <source>&amp;Snap</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Adhérer</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="605"/>
         <source>Snap items to edges of other items while dragging.</source>
-        <translation type="unfinished"></translation>
+        <translation>Faire adhérer les bords des autres objets lors des déplacements.</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="609"/>
@@ -2008,77 +1878,72 @@ afin de restaurer le projet.</translation>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="612"/>
         <source>Keep play cursor in view while playing or recording.</source>
-        <translation type="unfinished"></translation>
+        <translation>Garder la tête de lecture visible lors de la lecture ou de l&apos;enregistrement.</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="616"/>
         <source>&amp;Show Effects</source>
-        <translation type="unfinished">&amp;Montre les effets</translation>
+        <translation>&amp;Montrer les effets</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="619"/>
         <source>Show effect plugins and automation curves on tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer les effets et les courbes d&apos;automation sur les pistes</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="643"/>
         <source>Transport Console</source>
-        <translation type="unfinished"></translation>
+        <translation>Console de transport</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="649"/>
         <source>Project</source>
-        <translation type="unfinished">Projet</translation>
+        <translation>Projet</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="652"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Edition</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="685"/>
         <source>Best</source>
-        <translation type="unfinished">Meilleur</translation>
+        <translation>Meilleur</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="688"/>
         <source>High</source>
-        <translation type="unfinished">Haut</translation>
+        <translation>Haut</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="691"/>
         <source>Medium</source>
-        <translation type="unfinished">Moyen</translation>
+        <translation>Moyen</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="694"/>
         <source>Fast</source>
-        <translation type="unfinished">Rapide</translation>
+        <translation>Rapide</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="707"/>
         <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Aide</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="1199"/>
         <source>Open Audio Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir des fichiers audio</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="1201"/>
         <source>Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)</source>
-        <translation type="unfinished">Fichiers audio (*.wav *.flac *.ogg *.mp3 *.wv *.w64)</translation>
+        <translation>Fichiers audio (*.wav *.flac *.ogg *.mp3 *.wv *.w64)</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="1241"/>
         <source>%1: %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="952"/>
-        <source>Sheet</source>
-        <translation type="obsolete">Feuille</translation>
+        <translation>%1 : %2</translation>
     </message>
 </context>
 <context>
@@ -2140,12 +2005,12 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;if you don&apos;t have much experience yet, please leave the default of 180 ms.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For more information, see chapter 7: Key Actions. of the User Manual&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Délai d&apos;action simultanée :&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Le temps maximum en millisecondes entre 2 actions au clavier. &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Pour déterminer si, lorsqu&apos;on appui sur deux touches, il &apos;agit d&apos;une action simultanée ( &amp;lt;&amp;lt; K &amp;gt;&amp;gt; ou &amp;lt;&amp;lt; KK &amp;gt;&amp;gt;)&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; ou bien de deux actions différentes ( a &amp;lt; K &amp;gt; et &amp;lt; K &amp;gt; action, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;ou &amp;lt; KK &amp;gt; et &amp;lt; KK &amp;gt; action par exemple).&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Les utilisateurs expérimentés peuvent régler cette valeur à 150 ms, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;si vous n&apos;avez pas encore beaucoup d&apos;expérience, laissez la valeur par défaut de 180 ms.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Pour plus d&apos;information, voir le chapitre 7 : Key Actions. du manuel d&apos;utilisateur&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="76"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Double fact timeout (ms)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Délai de la double action (ms)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="112"/>
@@ -2163,12 +2028,12 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;if you don&apos;t have much experience yet, please leave the default of 150 ms.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For more information, see chapter 7: &quot;Key Actions&quot; of the User Manual.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Délai pour l&apos;action &quot;maintenir&quot;:&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Le délai maximum pour qu&apos;une touche appuyée soit considérée comme maintenue, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;comme [ K ] ou [ KK ].&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Le plus court le délai, le plus rapidement la touche appuyée &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;sera détectée comme une action &quot;maintenir&quot;. &lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Les utilisateurs expérimentés peuvent régler cette valeur à 110 ms, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;si vous n&apos;avez pas encore beaucoup d&apos;expérience, laissez la valeur par défaut de 150 ms.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Pour plus d&apos;information, voir le chapitre 7 : Key Actions. du manuel d&apos;utilisateur.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="128"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Hold timeout (ms)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Délai pour l&apos;action maintenir (ms)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="159"/>
@@ -2192,26 +2057,20 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>LanguageName</name>
+    <message>
+        <location filename="../../src/common/Utils.cpp" line="252"/>
+        <source>English</source>
+        <comment>The name of this Language, e.g. German would be Deutch</comment>
+        <translation>English</translation>
+    </message>
+</context>
+<context>
     <name>MarkerDialog</name>
     <message>
         <location filename="../../src/traverso/ui/MarkerDialog.ui" line="13"/>
         <source>Markers</source>
         <translation>Repères</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/MarkerDialog.ui" line="33"/>
-        <source>Show Markers of:</source>
-        <translation type="obsolete">Montrer les repères de :</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/MarkerDialog.ui" line="43"/>
-        <source>all Sheets</source>
-        <translation type="obsolete">Toutes les feuilles</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/MarkerDialog.ui" line="59"/>
-        <source>Sheet</source>
-        <translation type="obsolete">Feuille</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/MarkerDialog.ui" line="32"/>
@@ -2246,7 +2105,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/MarkerDialog.ui" line="95"/>
         <source>Pre-Emphasis</source>
-        <translation type="unfinished"></translation>
+        <translation>Pré-accentuation</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/MarkerDialog.ui" line="102"/>
@@ -2256,7 +2115,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/MarkerDialog.ui" line="109"/>
         <source>Position: (MM:SS:75ths)</source>
-        <translation type="unfinished">Position : </translation>
+        <translation>Position : (MM:SS:75ths)</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/MarkerDialog.ui" line="129"/>
@@ -2304,24 +2163,19 @@ p, li { white-space: pre-wrap; }
         <translation>&amp;Exporter</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/MarkerDialog.ui" line="361"/>
-        <source>&amp;Close</source>
-        <translation type="obsolete">&amp;Fermer</translation>
-    </message>
-    <message>
         <location filename="../../src/traverso/ui/MarkerDialog.ui" line="226"/>
         <source>Songwriter</source>
-        <translation type="unfinished"></translation>
+        <translation>Parolier</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/MarkerDialog.ui" line="337"/>
         <source>&amp;Ok</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ok</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/MarkerDialog.ui" line="347"/>
         <source>&amp;Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Annuler</translation>
     </message>
 </context>
 <context>
@@ -2423,11 +2277,6 @@ p, li { white-space: pre-wrap; }
         <translation>Ingénieur</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/NewProjectDialog.ui" line="164"/>
-        <source>Sheet count</source>
-        <translation type="obsolete">Nombre de feuilles</translation>
-    </message>
-    <message>
         <location filename="../../src/traverso/ui/NewProjectDialog.ui" line="307"/>
         <source>Tracks per Sheet</source>
         <translation>Pistes par feuille</translation>
@@ -2440,47 +2289,47 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/dialogs/project/NewProjectDialog.cpp" line="212"/>
         <source>Open Audio Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir des fichiers audio</translation>
     </message>
     <message>
         <location filename="../../src/traverso/dialogs/project/NewProjectDialog.cpp" line="214"/>
         <source>Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)</source>
-        <translation type="unfinished">Fichiers audio (*.wav *.flac *.ogg *.mp3 *.wv *.w64)</translation>
+        <translation>Fichiers audio (*.wav *.flac *.ogg *.mp3 *.wv *.w64)</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/NewProjectDialog.ui" line="132"/>
         <source>Import Audio Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer des fichiers audio</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/NewProjectDialog.ui" line="224"/>
         <source>Empty Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Projet vide</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/NewProjectDialog.ui" line="174"/>
         <source>...</source>
-        <translation type="unfinished">...</translation>
+        <translation>...</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/NewProjectDialog.ui" line="195"/>
         <source>Track Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom de la piste</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/NewProjectDialog.ui" line="200"/>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation>Fichier</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/NewProjectDialog.ui" line="210"/>
         <source>Copy files to project directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Copier les fichiers dans le répertoire du projet</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/NewProjectDialog.ui" line="253"/>
         <source>Number of Sheets</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre d&apos;espaces de travail</translation>
     </message>
 </context>
 <context>
@@ -2560,7 +2409,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/dialogs/project/OpenProjectDialog.cpp" line="138"/>
         <source>&lt;p&gt;Project directory name &lt;b&gt;%1&lt;/b&gt; is different from the Project title &lt;b&gt;%2&lt;/b&gt;!&lt;/p&gt;&lt;p&gt;Did you rename the Project directory ? &lt;/p&gt;&lt;p&gt;Please rename the directory back to the Project title &lt;b&gt;%1&lt;/b&gt;, and change the Project title with the Project Manager Dialog!&lt;/p&gt;</source>
-        <translation type="unfinished">&lt;p&gt;Le nom du répertoire du projet &lt;b&gt;%1&lt;/b&gt; est différent de celui du titre du projet &lt;b&gt;%2&lt;/b&gt;!&lt;/p&gt;&lt;p&gt;Avez-vous renommé le répertoire du projet ? &lt;/p&gt;&lt;p&gt;Renommez ce répertoire comme le titre du projet &lt;b&gt;%1&lt;/b&gt;, et changez le titre du projet  the Project Manager Dialog!&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;Le nom du répertoire du projet &lt;b&gt;%1&lt;/b&gt; est différent de celui du titre du projet &lt;b&gt;%2&lt;/b&gt;!&lt;/p&gt;&lt;p&gt;Avez-vous renommé le répertoire du projet ? &lt;/p&gt;&lt;p&gt;Renommez ce répertoire comme le titre du projet &lt;b&gt;%1&lt;/b&gt;, et changez le titre du projet dans le Gestionnaire de projet !&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/dialogs/project/OpenProjectDialog.cpp" line="142"/>
@@ -2654,7 +2503,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/traverso/dialogs/project/OpenProjectDialog.cpp" line="273"/>
         <source>Created new Project directory for you here: %1
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Nouveau répertoire de projet créé ici : %1</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/OpenProjectDialog.ui" line="13"/>
@@ -2719,7 +2568,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;It is recommended to use Traverso&apos;s native drivers instead of using PortAudio&apos;s, however, if the native drivers give problems, you might try the ones supplied by PortAudio instead!&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;PortAudio provides transparent driver support for multiple platforms, including Windows (see the wmme, direct x and asio options), and Mac OS X (see the CoreAudio and jack options)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Pilote PortAudio :&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Le pilote qui utilise PortAudio&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;PortAudio supporte beaucoup de types de pilotes dont certains disposent aussi d&apos;un support natif dans Traverso. &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Il est recommandé d&apos;utiliser les pilotes natifs de Traverso plutot que ceux de PortAudio, toutefois si les pilotes natifs posent problème, vous pouvez essayer à la place ceux founis par PortAudio !&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;PortAudio offre un support de pilotes transparent pour de multiple plateformes, notamment Windows (voir les options wmme, direct x et asio), et Mac OS X (voir les options CoreAudio et jack)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/PaDriverPage.ui" line="57"/>
@@ -2818,20 +2667,12 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Depending on your graphics card and driver support, this &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;can speed up painting considerably!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Accélère l&apos;affichage des régions et des pistes en utilisant&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;le moteur 3D de votre carte graphique.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;En fonction de votre carte graphique et de son pilote, cela &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;peut considérablement accélérer l&apos;affichage !&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="219"/>
         <source>Use hardware acceleration</source>
         <translation>Utiliser l&apos;accélération matérielle</translation>
-    </message>
-</context>
-<context>
-    <name>PlayHeadInfo</name>
-    <message>
-        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="400"/>
-        <source>Start/stop playback. You should use the SpaceBar! ;-)</source>
-        <translation type="obsolete">Démarrer/arréter la lecture. Utilisez la barre d&apos;espace ! ;-)</translation>
     </message>
 </context>
 <context>
@@ -2888,13 +2729,13 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ProgressToolBar</name>
     <message>
-        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="577"/>
-        <source>Importing file %1 of %2: %p%</source>
+        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="534"/>
+        <source>Progress Toolbar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="534"/>
-        <source>Progress Toolbar</source>
+        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="577"/>
+        <source>Importing file %1 of %2: %p%</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2908,7 +2749,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/Project.cpp" line="132"/>
         <source>Created new Project %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouveau projet créé : %1</translation>
     </message>
     <message>
         <location filename="../../src/core/Project.cpp" line="178"/>
@@ -2948,7 +2789,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/Project.cpp" line="362"/>
         <source>Project directory %1 no longer exists, did you rename it? Shame on you! Please undo that, and come back later to rename your Project...</source>
-        <translation type="unfinished">Le répertoire de projet %1 n&apos;existe plus, l&apos;avez-vous renommé ? Honte sur vous ! </translation>
+        <translation>Le répertoire du projet %1 n&apos;existe plus, l&apos;avez-vous renommé ? Honte sur vous ! Changez cela et revenez ici pour le renommer...</translation>
     </message>
     <message>
         <location filename="../../src/core/Project.cpp" line="892"/>
@@ -2958,12 +2799,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/Project.cpp" line="376"/>
         <source>Project title changed, Project will to be reloaded to ensure proper operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Titre du projet changé. Le projet va être rechargé pour s&apos;assurer une opération correcte</translation>
     </message>
     <message>
         <location filename="../../src/core/Project.cpp" line="446"/>
         <source>Sheet %1 added</source>
-        <translation>Feuille %1 ajoutée</translation>
+        <translation>Espace de travail %1 ajouté</translation>
     </message>
     <message>
         <location filename="../../src/core/Project.cpp" line="472"/>
@@ -2998,7 +2839,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/Project.cpp" line="543"/>
         <source>Unable to create export directory! Please check permissions for this directory: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible de créer un répertoire d&apos;exportation ! Vérifiez que vous avez les droits nécessaires pour ce répertoire : %1</translation>
     </message>
 </context>
 <context>
@@ -3069,7 +2910,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/ProjectConverterDialog.ui" line="25"/>
         <source>Project XXX (no translation needed)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectConverterDialog.ui" line="44"/>
@@ -3107,12 +2948,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/ProjectInfoWidget.ui" line="16"/>
         <source>Project Information Widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Widget d&apos;information du projet</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectInfoWidget.ui" line="60"/>
         <source>Bitdepth</source>
-        <translation type="unfinished"></translation>
+        <translation>Profondeur d&apos;échantillonage</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectInfoWidget.ui" line="183"/>
@@ -3123,11 +2964,6 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/traverso/ui/ProjectInfoWidget.ui" line="135"/>
         <source>Rate</source>
         <translation>Taux</translation>
-    </message>
-    <message>
-        <location filename="src/traverso/ui/ProjectInfoWidget.ui" line="201"/>
-        <source>Sheets</source>
-        <translation type="obsolete">Morceaux</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectInfoWidget.ui" line="231"/>
@@ -3186,7 +3022,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/core/ProjectManager.cpp" line="314"/>
         <source>No directory was selected, to retry open the &apos;Open Project Dialog&apos; and click &apos;Select Project Directory&apos; button
 </source>
-        <translation type="unfinished">Aucun répertoire sélectionné.</translation>
+        <translation type="unfinished">Aucun répertoire sélectionné, pour réessayer </translation>
     </message>
     <message>
         <location filename="../../src/core/ProjectManager.cpp" line="322"/>
@@ -3223,7 +3059,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/core/ProjectManager.cpp" line="335"/>
         <source>Created new Project directory for you here: %1
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Nouveau répertoire de projet créé ici : %1</translation>
     </message>
     <message>
         <location filename="../../src/core/ProjectManager.cpp" line="355"/>
@@ -3233,7 +3069,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/ProjectManager.cpp" line="359"/>
         <source>Default Project created by Traverso</source>
-        <translation type="unfinished">Projet par défaut créé</translation>
+        <translation>Projet par défaut créé avec Traverso</translation>
     </message>
     <message>
         <location filename="../../src/core/ProjectManager.cpp" line="453"/>
@@ -3261,7 +3097,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="173"/>
         <source>No new Sheet name was supplied!</source>
-        <translation>Aucun nom n&apos;a été fourni pour la nouvelle fiche !</translation>
+        <translation>Aucun nom n&apos;a été fourni pour le nouvel espace de travail !</translation>
     </message>
     <message>
         <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="236"/>
@@ -3298,7 +3134,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="278"/>
         <source>Couldn&apos;t open file %1 for writing!</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d&apos;ouvrir le fichier %1 en écriture !</translation>
     </message>
     <message>
         <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="296"/>
@@ -3343,7 +3179,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="172"/>
         <source>Sheet(s)</source>
-        <translation>Feuille(s)</translation>
+        <translation>Espace(s) de travail</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="179"/>
@@ -3368,7 +3204,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="256"/>
         <source>Length</source>
-        <translation>longueur</translation>
+        <translation>Longueur</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/SheetManagerDialog.ui" line="78"/>
@@ -3398,7 +3234,7 @@ p, li { white-space: pre-wrap; }
     <message encoding="UTF-8">
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="388"/>
         <source>CD Text</source>
-        <translation type="unfinished">Texte du CD</translation>
+        <translation>Texte du CD</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="406"/>
@@ -3413,7 +3249,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="438"/>
         <source>UPC EAN:</source>
-        <translation type="unfinished"></translation>
+        <translation>UPC EAN :</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="454"/>
@@ -3423,152 +3259,152 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="462"/>
         <source>Unused</source>
-        <translation type="unfinished"></translation>
+        <translation>Inutilisé</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="467"/>
         <source>Undefined</source>
-        <translation type="unfinished"></translation>
+        <translation>Non défini</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="472"/>
         <source>Adult Contemporary</source>
-        <translation type="unfinished"></translation>
+        <translation>Contemporain adult</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="477"/>
         <source>Alternative Rock</source>
-        <translation type="unfinished"></translation>
+        <translation>Rock alternatif</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="482"/>
         <source>Childrens</source>
-        <translation type="unfinished"></translation>
+        <translation>Enfants</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="487"/>
         <source>Classical</source>
-        <translation type="unfinished"></translation>
+        <translation>Classique</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="492"/>
         <source>Contemporary Christian</source>
-        <translation type="unfinished"></translation>
+        <translation>Contemporain chrétien</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="497"/>
         <source>Country</source>
-        <translation type="unfinished"></translation>
+        <translation>Country</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="502"/>
         <source>Dance</source>
-        <translation type="unfinished"></translation>
+        <translation>Dance</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="507"/>
         <source>Easy Listening</source>
-        <translation type="unfinished"></translation>
+        <translation>Easy Listening</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="512"/>
         <source>Erotic</source>
-        <translation type="unfinished"></translation>
+        <translation>Erotique</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="517"/>
         <source>Folk</source>
-        <translation type="unfinished"></translation>
+        <translation>Folk</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="522"/>
         <source>Gospel</source>
-        <translation type="unfinished"></translation>
+        <translation>Gospel</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="527"/>
         <source>Hip Hop</source>
-        <translation type="unfinished"></translation>
+        <translation>Hip Hop</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="532"/>
         <source>Jazz</source>
-        <translation type="unfinished"></translation>
+        <translation>Jazz</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="537"/>
         <source>Latin</source>
-        <translation type="unfinished"></translation>
+        <translation>Latino</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="542"/>
         <source>Musical</source>
-        <translation type="unfinished"></translation>
+        <translation>Musical</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="547"/>
         <source>New Age</source>
-        <translation type="unfinished"></translation>
+        <translation>New Age</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="552"/>
         <source>Opera</source>
-        <translation type="unfinished"></translation>
+        <translation>Opera</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="557"/>
         <source>Operette</source>
-        <translation type="unfinished"></translation>
+        <translation>Operette</translation>
     </message>
     <message encoding="UTF-8">
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="562"/>
         <source>Pop Music</source>
-        <translation type="unfinished"></translation>
+        <translation>Musique pop</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="567"/>
         <source>Rap</source>
-        <translation type="unfinished"></translation>
+        <translation>Rap</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="572"/>
         <source>Reggae</source>
-        <translation type="unfinished"></translation>
+        <translation>Reggae</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="577"/>
         <source>Rock Music</source>
-        <translation type="unfinished"></translation>
+        <translation>Rock</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="582"/>
         <source>Rhythm and Blues</source>
-        <translation type="unfinished"></translation>
+        <translation>Rhythm and Blues</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="587"/>
         <source>Sound Effects</source>
-        <translation type="unfinished"></translation>
+        <translation>Effets sonores</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="592"/>
         <source>Spoken Word</source>
-        <translation type="unfinished"></translation>
+        <translation>Texte parlé</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="597"/>
         <source>World Music</source>
-        <translation type="unfinished"></translation>
+        <translation>Musique world</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="618"/>
         <source>Arranger</source>
-        <translation type="unfinished"></translation>
+        <translation>Arrangeur</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="638"/>
         <source>Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Message</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="674"/>
@@ -3576,7 +3412,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Undo last change&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Annuler le dernier changement&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="693"/>
@@ -3584,7 +3420,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Redo last change&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Refaire le dernier changement&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/SheetManagerDialog.ui" line="219"/>
@@ -3599,7 +3435,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="628"/>
         <source>Songwriter</source>
-        <translation type="unfinished"></translation>
+        <translation>Parolier</translation>
     </message>
 </context>
 <context>
@@ -3607,27 +3443,27 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/FileHelpers.cpp" line="194"/>
         <source>No error occurred</source>
-        <translation type="unfinished"></translation>
+        <translation>Acune erreur ne s&apos;est produite</translation>
     </message>
     <message>
         <location filename="../../src/core/FileHelpers.cpp" line="195"/>
         <source>An error occurred when reading from the file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Une erreur est apparue lors de la lecture du fichier.</translation>
     </message>
     <message>
         <location filename="../../src/core/FileHelpers.cpp" line="196"/>
         <source>An error occurred when writing to the file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Une erreur est apparue lors de l&apos;écriture du fichier.</translation>
     </message>
     <message>
         <location filename="../../src/core/FileHelpers.cpp" line="197"/>
         <source>A fatal error occurred.</source>
-        <translation type="unfinished"></translation>
+        <translation>Une erreur grave est apparue.</translation>
     </message>
     <message>
         <location filename="../../src/core/FileHelpers.cpp" line="198"/>
         <source>The file could not be opened.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le fichier n&apos;a pas pu être ouvert.</translation>
     </message>
     <message>
         <location filename="../../src/core/FileHelpers.cpp" line="199"/>
@@ -3637,7 +3473,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/FileHelpers.cpp" line="200"/>
         <source>The operation was aborted.</source>
-        <translation type="unfinished"></translation>
+        <translation>Opération annulée.</translation>
     </message>
     <message>
         <location filename="../../src/core/FileHelpers.cpp" line="201"/>
@@ -3647,52 +3483,52 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/FileHelpers.cpp" line="202"/>
         <source>An unspecified error occurred.</source>
-        <translation type="unfinished"></translation>
+        <translation>Une erreur inconnue est apparue.</translation>
     </message>
     <message>
         <location filename="../../src/core/FileHelpers.cpp" line="203"/>
         <source>The file could not be removed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le fichier n&apos;a pas pu être supprimé.</translation>
     </message>
     <message>
         <location filename="../../src/core/FileHelpers.cpp" line="204"/>
         <source>The file could not be renamed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le fichier n&apos;a pas pu être renommé.</translation>
     </message>
     <message>
         <location filename="../../src/core/FileHelpers.cpp" line="205"/>
         <source>The position in the file could not be changed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible de changer la position dans le fichier.</translation>
     </message>
     <message>
         <location filename="../../src/core/FileHelpers.cpp" line="206"/>
         <source>The file could not be resized.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible de redimensionner le fichier.</translation>
     </message>
     <message>
         <location filename="../../src/core/FileHelpers.cpp" line="207"/>
         <source>The file could not be accessed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d&apos;accéder au fichier.</translation>
     </message>
     <message>
         <location filename="../../src/core/FileHelpers.cpp" line="208"/>
         <source>The file could not be copied.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible de copier le fichier.</translation>
     </message>
     <message>
         <location filename="../../src/core/FileHelpers.cpp" line="209"/>
         <source>Unknown error</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur inconnue</translation>
     </message>
     <message>
         <location filename="../../src/core/AudioClip.cpp" line="122"/>
         <source>AudioClip</source>
-        <translation type="unfinished"></translation>
+        <translation>Région audio</translation>
     </message>
     <message>
         <location filename="../../src/core/Curve.cpp" line="128"/>
         <source>Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Courbe</translation>
     </message>
     <message>
         <location filename="../../src/core/Curve.cpp" line="129"/>
@@ -3707,12 +3543,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/Marker.cpp" line="35"/>
         <source>Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>Repère</translation>
     </message>
     <message>
         <location filename="../../src/core/Sheet.cpp" line="148"/>
         <source>Sheet</source>
-        <translation type="unfinished">Feuille</translation>
+        <translation>Espace de travail</translation>
     </message>
     <message>
         <location filename="../../src/core/TimeLine.cpp" line="39"/>
@@ -3722,70 +3558,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/Track.cpp" line="78"/>
         <source>Track</source>
-        <translation type="unfinished">Piste</translation>
-    </message>
-</context>
-<context>
-    <name>QuickDriverConfigWidget</name>
-    <message>
-        <location filename="../../src/traverso/ui/QuickDriverConfigWidget.ui" line="482"/>
-        <source>Form</source>
-        <translation type="obsolete">Formulaire</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/QuickDriverConfigWidget.ui" line="507"/>
-        <source>OK</source>
-        <translation type="obsolete">OK</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/QuickDriverConfigWidget.ui" line="539"/>
-        <source>Cancel</source>
-        <translation type="obsolete">Annuler</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/QuickDriverConfigWidget.ui" line="573"/>
-        <source>22050</source>
-        <translation type="obsolete">22050</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/QuickDriverConfigWidget.ui" line="578"/>
-        <source>32000</source>
-        <translation type="obsolete">32000</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/QuickDriverConfigWidget.ui" line="583"/>
-        <source>44100</source>
-        <translation type="obsolete">44100</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/QuickDriverConfigWidget.ui" line="588"/>
-        <source>48000</source>
-        <translation type="obsolete">48000</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/QuickDriverConfigWidget.ui" line="593"/>
-        <source>88200</source>
-        <translation type="obsolete">88200</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/QuickDriverConfigWidget.ui" line="598"/>
-        <source>96000</source>
-        <translation type="obsolete">96000</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/QuickDriverConfigWidget.ui" line="638"/>
-        <source>Latency (ms)</source>
-        <translation type="obsolete">Latence (ms)</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/QuickDriverConfigWidget.ui" line="665"/>
-        <source>Rate (Hz)</source>
-        <translation type="obsolete">Fréquence (Hz)</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/QuickDriverConfigWidget.ui" line="686"/>
-        <source>Driver</source>
-        <translation type="obsolete">Pilote</translation>
+        <translation>Piste</translation>
     </message>
 </context>
 <context>
@@ -3831,7 +3604,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-size:18pt; font-weight:600;&quot;&gt;Traverso : Premiers pas&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Lorsque vous enregistrez ou importez un fichier audio dans Traverso, il apparait en temps que région audio dans l&apos;une des pistes horizontales de l&apos;espace de travail actuel.  Vous pouvez éditer de nombreux paramètres de ces régions en plaçant le curseur de la souris sur la région et en appuyant ou en maintenant appuyées différentes touches de votre clavier ou de votre souris.  You can also change settings of a Track, the Sheet as a whole, and other objects in the Sheet.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;To see a list of what commands are available for any given object in the Sheet, move the mouse over that object, and Right-Click (or press Q).  The keyboard shortcuts for each command are shown in the menu.  The notation used is shown below.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;   &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt; K &amp;gt;  &lt;/span&gt; means press and release the K key. (Like a click.)&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt;&amp;lt; K &amp;gt;&amp;gt;&lt;/span&gt; means press the K key two times fast. (Like a double click.)&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;    &lt;span style=&quot; font-weight:600;&quot;&gt;[ K ]&lt;/span&gt;    means drag the mouse while holding down the K key.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;  &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt; KL &amp;gt; &lt;/span&gt; means press the K and L keys at the same time.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;   &lt;span style=&quot; font-weight:600;&quot;&gt;[ KL ]  &lt;/span&gt; means drag the mouse while holding down the K and L keys at the same time.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Here are some basic commands:&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;   &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt; SPACE &amp;gt;&lt;/span&gt; is Play/Stop.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;   &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt; SHIFT &amp;gt;&lt;/span&gt;  sets the Playhead. (Blue vertical line where playing starts.)&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;       &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt; W &amp;gt;&lt;/span&gt;    sets the Work Cursor. (Red vertical line.)&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;       &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt; V &amp;gt;    &lt;/span&gt; moves the Playhead back to the Work Cursor.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;        &lt;span style=&quot; font-weight:600;&quot;&gt;[ D ] &lt;/span&gt;     move objects around (Audio Clip, Curve Nodes, etc)&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;        &lt;span style=&quot; font-weight:600;&quot;&gt;[ Z ]&lt;/span&gt;       zooms in and out.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;        &lt;span style=&quot; font-weight:600;&quot;&gt;[ TAB ]&lt;/span&gt;<byte value="x9"/> scroll omnidirectional (aka Shuttle) &lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;And some Audio Clip Commands:&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;   &lt;span style=&quot; font-weight:600;&quot;&gt;[ E ] &lt;/span&gt;  drags a Clip&apos;s left or right edge.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;   &lt;span style=&quot; font-weight:600;&quot;&gt;[ F ]&lt;/span&gt;   adjusts the length of a Clip&apos;s Fade In / Fade Out.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;   &lt;span style=&quot; font-weight:600;&quot;&gt;[ G ]   &lt;/span&gt;addust the Gain of a clip (also works on Tracks, Sheet)&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;  &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt; X &amp;gt;&lt;/span&gt;  splits the Clip at the cursor&apos;s position.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;For more information, right-click on everything, or check out the Traverso manual.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -3951,7 +3724,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="195"/>
         <source>Default export resample quality</source>
-        <translation type="unfinished"></translation>
+        <translation>Qualité par défaut du rééchantillonage pour l&apos;exportation</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="237"/>
@@ -4081,11 +3854,6 @@ p, li { white-space: pre-wrap; }
         <translation>Apparence</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="109"/>
-        <source>Audio Driver</source>
-        <translation type="obsolete">Pilote audio</translation>
-    </message>
-    <message>
         <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="124"/>
         <source>Audio Options</source>
         <translation>Options audio</translation>
@@ -4119,52 +3887,52 @@ p, li { white-space: pre-wrap; }
         <translation>Aucun nom d&apos;artiste donné</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="346"/>
+        <location filename="../../src/core/Sheet.cpp" line="347"/>
         <source>Add Track</source>
         <translation>Ajouter une piste</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="355"/>
+        <location filename="../../src/core/Sheet.cpp" line="356"/>
         <source>Remove Track</source>
         <translation>Supprimer la piste</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="453"/>
+        <location filename="../../src/core/Sheet.cpp" line="454"/>
         <source>No audio to export! (Is everything muted?)</source>
         <translation>Pas d&apos;audio à exporter ! (est ce que tout est muet ?)</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="457"/>
+        <location filename="../../src/core/Sheet.cpp" line="458"/>
         <source>Export start frame starts beyond export end frame!!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="462"/>
+        <location filename="../../src/core/Sheet.cpp" line="463"/>
         <source>Export tries to render to 0 channels wav file??</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="1088"/>
+        <location filename="../../src/core/Sheet.cpp" line="1089"/>
         <source>Hard Disk overload detected!</source>
         <translation>Surcharge du disque dur détectée !</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="1080"/>
+        <location filename="../../src/core/Sheet.cpp" line="1081"/>
         <source>Failed to fill ReadBuffer in time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="1089"/>
+        <location filename="../../src/core/Sheet.cpp" line="1090"/>
         <source>Failed to empty WriteBuffer in time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="1186"/>
+        <location filename="../../src/core/Sheet.cpp" line="1187"/>
         <source>No Tracks armed for recording!</source>
         <translation>Aucune piste armée pour l&apos;enregistrement !</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/core/Sheet.cpp" line="1368"/>
+        <location filename="../../src/core/Sheet.cpp" line="1369"/>
         <source>Recording to %n Clip(s)</source>
         <translation>
             <numerusform></numerusform>
@@ -4209,17 +3977,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/Sheet.h" line="62"/>
         <source>Solo: On/Off</source>
-        <translation type="unfinished">Solo: On/Off</translation>
+        <translation>Solo: On/Off</translation>
     </message>
     <message>
         <location filename="../../src/core/Sheet.h" line="63"/>
         <source>Mute: On/Off</source>
-        <translation type="unfinished"></translation>
+        <translation>Muet : On/Off</translation>
     </message>
     <message>
         <location filename="../../src/core/Sheet.h" line="64"/>
         <source>Arm: On/Off</source>
-        <translation type="unfinished"></translation>
+        <translation>Armer : On/Off</translation>
     </message>
     <message>
         <location filename="../../src/core/Sheet.h" line="65"/>
@@ -4240,44 +4008,6 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/core/Sheet.h" line="68"/>
         <source>To next snap position</source>
         <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>SheetInfo</name>
-    <message>
-        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="565"/>
-        <source>Select Sheet to be displayed</source>
-        <translation type="obsolete">Sélectionner la feuille à afficher</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="585"/>
-        <source>&amp;Show Effects</source>
-        <translation type="obsolete">&amp;Montre les effets</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="588"/>
-        <source>Record</source>
-        <translation type="obsolete">Enregistrer</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="589"/>
-        <source>Set Sheet Recordable. &lt;br /&gt;&lt;br /&gt;Hit Spacebar afterwards to start recording!</source>
-        <translation type="obsolete">Rend la feuille enregistrable. &lt;br /&gt;&lt;br /&gt; Appuyez sur espace pour démarrer l&apos;enregistrement !</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="600"/>
-        <source>Undo</source>
-        <translation type="obsolete">Annuler</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="610"/>
-        <source>Redo</source>
-        <translation type="obsolete">Refaire</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="773"/>
-        <source>Recording to %1 Tracks, encoding format: %2</source>
-        <translation type="obsolete">Enregistrement vers %1 pistes ; format d&apos;encodage : %2</translation>
     </message>
 </context>
 <context>
@@ -4363,7 +4093,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/SheetInfoWidget.ui" line="16"/>
         <source>SongInfoWidget</source>
-        <translation type="unfinished"></translation>
+        <translation>Widget d&apos;information sur le morceau</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/SheetInfoWidget.ui" line="58"/>
@@ -4406,12 +4136,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/SpectralMeterConfigWidget.ui" line="25"/>
         <source>Frequency Range</source>
-        <translation type="unfinished"></translation>
+        <translation>Plage de fréquences</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/SpectralMeterConfigWidget.ui" line="37"/>
         <source>Show average spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer le spectre moyen</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/SpectralMeterConfigWidget.ui" line="57"/>
@@ -4491,22 +4221,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/SpectralMeterConfigWidget.ui" line="212"/>
         <source>Hanning</source>
-        <translation type="unfinished"></translation>
+        <translation>Hanning</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/SpectralMeterConfigWidget.ui" line="217"/>
         <source>Hamming</source>
-        <translation type="unfinished"></translation>
+        <translation>Hamming</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/SpectralMeterConfigWidget.ui" line="222"/>
         <source>Blackman</source>
-        <translation type="unfinished"></translation>
+        <translation>Blackman</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/SpectralMeterConfigWidget.ui" line="230"/>
         <source>Windowing function:</source>
-        <translation type="unfinished"></translation>
+        <translation>Fonction de fenêtrage :</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/SpectralMeterConfigWidget.ui" line="248"/>
@@ -4539,17 +4269,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="503"/>
         <source>FFT: No avarage curve used, not data to export!</source>
-        <translation type="unfinished"></translation>
+        <translation>FFT : courbe moyenne non-activée, pas de donnée à exporter !</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="504"/>
         <source>FFT: Enable avarage curve with &lt; M &gt; to generate data</source>
-        <translation type="unfinished"></translation>
+        <translation>FFT : activez la courbe moyenne avec &lt; M &gt; pour générer des données</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="512"/>
         <source>FFT: No avarage data to export!</source>
-        <translation type="unfinished"></translation>
+        <translation>FFT : pas de donnée moyenne à exporter !</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="525"/>
@@ -4564,17 +4294,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="533"/>
         <source>Export average dB curve</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/SpectralMeterWidget.h" line="87"/>
-        <source>Settings...</source>
-        <translation type="obsolete">Options...</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/SpectralMeterWidget.h" line="91"/>
-        <source>Capture Screen</source>
-        <translation type="obsolete">Capture d&apos;écran</translation>
+        <translation>Exporter la courbe moyenne dB</translation>
     </message>
 </context>
 <context>
@@ -4582,7 +4302,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/commands/SplitClip.cpp" line="37"/>
         <source>Split Clip</source>
-        <translation type="unfinished"></translation>
+        <translation>Scinder la région</translation>
     </message>
 </context>
 <context>
@@ -4598,12 +4318,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/SystemInfoWidget.ui" line="16"/>
         <source>SystemInfoWidget</source>
-        <translation type="unfinished"></translation>
+        <translation>Widget d&apos;information système</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/SystemInfoWidget.ui" line="54"/>
         <source>Card Name (na)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom de la carte (na)</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/SystemInfoWidget.ui" line="228"/>
@@ -4613,12 +4333,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/SystemInfoWidget.ui" line="130"/>
         <source>buffer size (na)</source>
-        <translation type="unfinished"></translation>
+        <translation>Taille du tampon (na)</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/SystemInfoWidget.ui" line="137"/>
         <source>rate</source>
-        <translation type="unfinished"></translation>
+        <translation>taux</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/SystemInfoWidget.ui" line="161"/>
@@ -4628,7 +4348,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/SystemInfoWidget.ui" line="168"/>
         <source>drivertype (na)</source>
-        <translation type="unfinished"></translation>
+        <translation>Type de pilote (na)</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/SystemInfoWidget.ui" line="201"/>
@@ -4648,7 +4368,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/SystemInfoWidget.ui" line="235"/>
         <source>bitdepth</source>
-        <translation type="unfinished"></translation>
+        <translation>Profondeur d&apos;échantillonage</translation>
     </message>
 </context>
 <context>
@@ -4656,12 +4376,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="73"/>
         <source>Read Buffer Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Statut du tampon de lecture</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="74"/>
         <source>Write Buffer Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Statut du tampon d&apos;écriture</translation>
     </message>
 </context>
 <context>
@@ -4684,7 +4404,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="59"/>
         <source>Path to theme files</source>
-        <translation>Chemin jusqu&apos;au fichiers de thème</translation>
+        <translation>Chemin jusqu&apos;aux fichiers de thème</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="136"/>
@@ -4719,12 +4439,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="212"/>
         <source>Paint audio with outline</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher l&apos;audio avec un contour</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="219"/>
         <source>Paint stereo audio as mono audio</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher l&apos;audio stéréo comme de l&apos;audio mono</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="236"/>
@@ -4739,32 +4459,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="226"/>
         <source>Draw lines at 0 and -6 dB</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="285"/>
-        <source>Toolbars</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="293"/>
-        <source>Icon size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="307"/>
-        <source>Button style</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="321"/>
-        <source>Size of transport console</source>
-        <translation type="unfinished"></translation>
+        <translation>Tracer des lignes à 0 et -6 dB</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="275"/>
         <source>Use selected style&apos;s palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilise la palette du style sélectionné</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="285"/>
+        <source>Toolbars</source>
+        <translation>Barres d&apos;outils</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="293"/>
+        <source>Icon size</source>
+        <translation>Taille des icones</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="307"/>
+        <source>Button style</source>
+        <translation>Style des boutons</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="321"/>
+        <source>Size of transport console</source>
+        <translation>Taille de la console de transport</translation>
     </message>
 </context>
 <context>
@@ -4800,12 +4520,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/sheetcanvas/TimeLineView.h" line="75"/>
         <source>Drag Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>Déplacer le repère</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/TimeLineView.cpp" line="474"/>
         <source>Clear Markers</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer les repères</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/TimeLineView.h" line="73"/>
@@ -4820,7 +4540,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/sheetcanvas/TimeLineView.h" line="76"/>
         <source>Clear all Markers</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer tous les repères</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/TimeLineView.h" line="77"/>
@@ -4833,7 +4553,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/Track.cpp" line="168"/>
         <source>Track: AudioClip with id %1 not <byte value="x9"/><byte value="x9"/><byte value="x9"/><byte value="x9"/><byte value="x9"/><byte value="x9"/>found in Resources database!</source>
-        <translation type="unfinished">Piste : Le clip audio avec l&apos;id %1</translation>
+        <translation>Piste : Le clip audio avec l&apos;id %1 n&apos;est pas <byte value="x9"/>trouvé dans la base de données des ressources !</translation>
     </message>
     <message>
         <location filename="../../src/core/Track.cpp" line="222"/>
@@ -4876,12 +4596,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/commands/TrackPan.cpp" line="52"/>
         <source>Track Pan: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Panoramique : %1</translation>
     </message>
     <message>
         <location filename="../../src/commands/TrackPan.cpp" line="55"/>
         <source>Track Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>Panoramique</translation>
     </message>
 </context>
 <context>
@@ -4904,7 +4624,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/sheetcanvas/TrackView.h" line="36"/>
         <source>Edit properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Editer les propriétés</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/TrackView.h" line="37"/>
@@ -4927,7 +4647,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="48"/>
         <source>Skip to Start</source>
-        <translation type="unfinished"></translation>
+        <translation>Aller au début</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="49"/>
@@ -4937,12 +4657,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="50"/>
         <source>Record</source>
-        <translation type="unfinished">Enregistrer</translation>
+        <translation>Enregistrer</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="51"/>
         <source>Play / Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Lecture/arrêt</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="52"/>
@@ -4952,12 +4672,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="53"/>
         <source>Skip to End</source>
-        <translation type="unfinished"></translation>
+        <translation>Aller à la fin</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="172"/>
         <source>Recording to %1 Tracks, encoding format: %2</source>
-        <translation type="unfinished">Enregistrement vers %1 pistes ; format d&apos;encodage : %2</translation>
+        <translation>Enregistrement vers %1 pistes ; format d&apos;encodage : %2</translation>
     </message>
 </context>
 <context>
@@ -5015,7 +4735,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="41"/>
         <source>External Processing</source>
-        <translation type="unfinished"></translation>
+        <translation>Processus externe</translation>
     </message>
     <message>
         <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="42"/>
@@ -5045,12 +4765,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="48"/>
         <source>Move Or Resize Clip</source>
-        <translation type="unfinished">Déplacer ou</translation>
+        <translation>Déplacer ou redimensionner la région</translation>
     </message>
     <message>
         <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="49"/>
         <source>Split</source>
-        <translation type="unfinished"></translation>
+        <translation>Scinder</translation>
     </message>
     <message>
         <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="50"/>
@@ -5125,7 +4845,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="43"/>
         <source>(De)Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>(De)sélectionner tout</translation>
     </message>
     <message>
         <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="53"/>
