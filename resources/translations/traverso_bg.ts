@@ -21,12 +21,12 @@
         <translation>Форма</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="25"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="19"/>
         <source>ALSA Device</source>
         <translation>ALSA устройство</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="45"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="57"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -47,12 +47,12 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Устройство:&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Истинското или виртуално ALSA аудио устройство за използване.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Реално устройство е аудио картата, инсталирана в системата ви.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Виртуално устройство е такова, което е създадено в  .asoundrc файла, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;който често се намира във вашата home папка.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ако не сте сигурни, използвайте устройстов по подразбиране, това ще използва аудио устройството &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;конфигурирано от вашата дистрибуция, или устройството, което носи името на вашата аудио карта.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;После, моля, убедете се, че няма програми, които използват устройството, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;иначе драйвера няма да може да се инициализира!&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;За повече информация вижте глава 3.1: &quot;The Driver Backend&quot; в ръководство на потребителя&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="64"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="76"/>
         <source>Device</source>
         <translation>Устройстов</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="84"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="105"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -69,22 +69,22 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Брой Периоди:&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Аудиото се обработва на малки части, наречени периоди.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Тази стойност определя колко от тези части &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;ще се използват от драйвера на аудио картата.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Стойноста по подразбиране трябва да е ОК, и дава оптимална функционалност на системата.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Понякога обаче, някой (лоши) alsa драйвери не работят коректо &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;със тази стойност 2, ако имате прекъсвания в аудиото, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;моля опитайте да използвате 3 периода.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="99"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="120"/>
         <source>Nr. of periods</source>
         <translation>Брой Периоди</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="107"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="128"/>
         <source>2</source>
         <translation>2</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="112"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="133"/>
         <source>3</source>
         <translation>3</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="130"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="160"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -94,27 +94,27 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Dither се използва, за да се направи аудиото по-чисто. &lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Най-добрия начин да си го представим, е да си представим рисунка с много точки. Ако гледате отблизо виждате всяка точка, но картината не е ясна. Ако гледате обаче отдалече, картината става по-чиста, защото очите и мозъка ви размиват точките и смекчават изображението. Това е много субективно и очевидно е въпрос на личен избор къде е най-добре да се използва dither. За повечето хора това си е само теория. Всичко е на 16 бита, кой го е грижа за качеството или има свободно процесорно време да използва dither. Triangular е вероятно най-добрия компромис между качестов и натоварване на процесора (много е бърз), но shaped е най-качествен&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="138"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="168"/>
         <source>Dither</source>
         <translation>Dither (букв. трептене)</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="146"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="176"/>
         <source>None</source>
         <translation>Няма</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="151"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="181"/>
         <source>Shaped</source>
         <translation>Shaped</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="156"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="186"/>
         <source>Rectangular</source>
         <translation>Rectangular</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="161"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="191"/>
         <source>Triangular</source>
         <translation>Triangular</translation>
     </message>
@@ -170,22 +170,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AppearancePage</name>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="625"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="585"/>
         <source>Icons only</source>
         <translation>Само икони</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="626"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="586"/>
         <source>Text only</source>
         <translation>Само текст</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="627"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="587"/>
         <source>Text beside Icons</source>
         <translation>Текст до иконите</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="628"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="588"/>
         <source>Text below Icons</source>
         <translation>Текст под иконите</translation>
     </message>
@@ -408,22 +408,22 @@ p, li { white-space: pre-wrap; }
         <translation>Кликнете за да възстановите АудиоФайл !</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1013"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="999"/>
         <source>Reset Audio File for Clip: %1</source>
         <translation>Възстанови Аудио Файла за Клип: %1</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1015"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1001"/>
         <source>All files (*);;Audio files (*.wav *.flac)</source>
         <translation>Всички файлове (*);;Аудио файлове (*.wav *.flac)</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1018"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1004"/>
         <source>No file selected!</source>
         <translation>Няма избран файл!</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1028"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1014"/>
         <source>Succesfully set AudioClip file to %1</source>
         <translation>Успешно бе зададен АудиоКлип файл за %1</translation>
     </message>
@@ -532,22 +532,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AudioDriverPage</name>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="64"/>
-        <source>Driver Selection</source>
-        <translation>Избор на Драйвер:</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="67"/>
-        <source>Driver:</source>
-        <translation>Драйвер:</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="83"/>
-        <source>Restart Driver</source>
-        <translation>Рестартиране на Драйвер</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="242"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="209"/>
         <source>System default</source>
         <translation>Системен Драйвер</translation>
     </message>
@@ -593,62 +578,62 @@ p, li { white-space: pre-wrap; }
         <translation>Форма</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="25"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="19"/>
         <source>Project Settings</source>
         <translation>Настройки на проекта</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="45"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="57"/>
         <source>On close:</source>
         <translation>При затваряне:</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="65"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="77"/>
         <source>Save</source>
         <translation>Запази</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="75"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="87"/>
         <source>Ask</source>
         <translation>Питай</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="82"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="94"/>
         <source>Don&apos;t save</source>
         <translation>Не запазвай</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="91"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="103"/>
         <source>Load last used project at startup</source>
         <translation>Зареди последно използвам проект при стартиране</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="101"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="113"/>
         <source>New Sheet Settings</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="121"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="151"/>
         <source>Number of tracks</source>
         <translation>Брой тракове</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="146"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="176"/>
         <source>Audio Clip Settings</source>
         <translation>Настройки на аудио клип</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="158"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="197"/>
         <source>Lock Audio Clips by default</source>
         <translation>Заключвай аудио клиповете по подразбиране</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="168"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="207"/>
         <source>Playback Settings</source>
         <translation>Настройки за просвирване</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="188"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="245"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -656,27 +641,27 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Пази курсора в полезрението при запис и просвирване.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="194"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="251"/>
         <source>Scroll playback</source>
         <translation>Превърти просвирване</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="205"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="262"/>
         <source>Jump</source>
         <translation>Скок</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="210"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="267"/>
         <source>Stay Centered</source>
         <translation>Остани в центъра</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="215"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="272"/>
         <source>Animated</source>
         <translation>Анимирано</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="225"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="282"/>
         <source>Continuously adjust audio while dragging</source>
         <translation>Настройвай аудиото по време на влачене</translation>
     </message>
@@ -1022,12 +1007,12 @@ p, li { white-space: pre-wrap; }
         <translation>Форма</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="25"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="38"/>
         <source>Configure driver</source>
         <translation>Конфигурирай Драйвера</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="45"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="61"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -1038,27 +1023,27 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Дуплкс режим:&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Определя дали и двата буса - за Запис и ВЪзпроизвеждане &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;на вашата карта ще се използват, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;или само единия от тях.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="54"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="70"/>
         <source>Duplex mode</source>
         <translation>Дуплекс режим</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="62"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="78"/>
         <source>Full</source>
         <translation>Пълен</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="67"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="83"/>
         <source>Playback</source>
         <translation>Просвирване</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="72"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="88"/>
         <source>Capture</source>
         <translation>Запис</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="90"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="115"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -1070,42 +1055,42 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Семплираща честота:&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Семплиращата честота, която картата използва.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Новите проекти ще използват тази семплираща честота &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;като семплираща честота на проекта при създаването му.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="100"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="125"/>
         <source>Sample rate</source>
         <translation>Семплираща честота</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="108"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="133"/>
         <source>22050</source>
         <translation>22050</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="113"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="138"/>
         <source>32000</source>
         <translation>32000</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="118"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="143"/>
         <source>44100</source>
         <translation>44100</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="123"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="148"/>
         <source>48000</source>
         <translation>48000</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="128"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="153"/>
         <source>88200</source>
         <translation>88200</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="133"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="158"/>
         <source>96000</source>
         <translation>96000</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="151"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="185"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -1117,19 +1102,34 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Закъснение на Буфера:&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Закъснението представено от размера на аудио буфера.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Някои хора имат нужда от малко закъснение, ако вие нямате нужда, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;или не знаете какво означава това, моля оставете стойноста по подразбиране!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="161"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="195"/>
         <source>Buffer latency (ms)</source>
         <translation>Закъснение на Буфера</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="176"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="234"/>
         <source>Jack</source>
         <translation>Jack</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="188"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="255"/>
         <source>Enable Jack transport control</source>
         <translation>Разреши Jack transport control</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="19"/>
+        <source>Driver Selection</source>
+        <translation type="unfinished">Избор на Драйвер:</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="25"/>
+        <source>Driver:</source>
+        <translation type="unfinished">Драйвер:</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="222"/>
+        <source>Restart Driver</source>
+        <translation type="unfinished">Рестартиране на Драйвер</translation>
     </message>
 </context>
 <context>
@@ -1952,17 +1952,17 @@ to restore the Project from.</source>
 <context>
     <name>KeyboardConfigPage</name>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="873"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="832"/>
         <source>No description set for this keymap</source>
         <translation>Не е дадено описание за този киймап</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="896"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="855"/>
         <source>KeyMap Export</source>
         <translation>Експортиране на киймап</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="897"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="856"/>
         <source>The exported keymap can be found here:
 
  %1</source>
@@ -1974,12 +1974,12 @@ to restore the Project from.</source>
         <translation>Форма</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="41"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="19"/>
         <source>Configure Keyboard</source>
         <translation>Конфигурация на клавиатурата</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="61"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="42"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -1996,12 +1996,12 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Прекъсване за двойно събитие:&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Максималното време в милисекунди между две натискания на клавиш &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;за да се определи дали имаме двойно натискане ( &amp;lt;&amp;lt; K &amp;gt;&amp;gt; or &amp;lt;&amp;lt; KK &amp;gt;&amp;gt;)&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; или просто две отделни натискания на клавиш ( a &amp;lt; K &amp;gt; and &amp;lt; K &amp;gt; action, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;или &amp;lt; KK &amp;gt; и &amp;lt; KK &amp;gt; събития например).&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Опитните потребители биха моглли да използват стойност до 150 мс, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;ако все още сте неопитни, моля оставете стойноста на 180 мс.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;За повече информация,вижте глава 7: Клавишни действия. в Ръководство на Потербителя&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="76"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="57"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Double fact timeout (ms)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Прекъсване за двойно събитие: (мс)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="112"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="102"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -2019,29 +2019,38 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Прекъсване за задържане на клавиш:&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Максималното време, за да се отчете задържане на клавиш, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;като [ K ] или [ KK ].&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Колкото по-малко е времето, толкова по-бързо едно натискане &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;може да се определи като задържане. &lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Опитните потребители биха моглли да използват стойност до 110 мс, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;ако все още сте неопитни, моля оставете стойноста на 150 мс.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;За повече информация,вижте глава 7: Клавишни действия. в Ръководство на Потербителя.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="128"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="118"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Hold timeout (ms)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Прекъсване за задържане на клавиш (мс)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="159"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="149"/>
         <source>Keymap</source>
         <translation>Киймап</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="179"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="172"/>
         <source>Select keymap</source>
         <translation>Избери Киймап</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="234"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="236"/>
         <source>Export Keymap</source>
         <translation>Експортирай Киймап</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="241"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="243"/>
         <source>Print Keymap</source>
         <translation>Принтирай Киймап</translation>
+    </message>
+</context>
+<context>
+    <name>LanguageName</name>
+    <message>
+        <location filename="../../src/common/Utils.cpp" line="252"/>
+        <source>English</source>
+        <comment>The name of this Language, e.g. German would be Deutch</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2562,12 +2571,12 @@ p, li { white-space: pre-wrap; }
         <translation>Форма</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="25"/>
+        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="19"/>
         <source>Audio file buffering</source>
         <translation>Буфер на Аудио Файл</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="45"/>
+        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="57"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -2589,29 +2598,29 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Размер на буфера за четене:&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Количеството аудио информация, която може да се съхрани в &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;в буфера за четене в секунди.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Стойноста по подразбиране от 1 секунда би трябвало да работи добре.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Все пак, ако не ви достига памет, може да намалите тази стойност.&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ако има прекъсвания на буфера, когато трансфера на хард диска е &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;(почти) претоварен, или ако това се случва редовно, защото &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;хард диска не се справя по някаква причина, можете да опитате по голяма&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;стойност, като 1.5 или 2.0 секунди.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Имайте впредвид, че по-голям буфер &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;ще предизвика чувствително забавяне (търсене) &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;при преместване на курсора на нова позиция за просвирване, тъй като всички буфери &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;(един за всеки аудио клип * броя канали) трябва да се запълни отново!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="65"/>
+        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="77"/>
         <source>Read buffer size (seconds)</source>
         <translation> Буфер за четене (секунди)</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="115"/>
+        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="134"/>
         <source>info icon</source>
         <translation>икона информация</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="130"/>
+        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="147"/>
         <source>Changing the buffer size only will take 
 into effect after (re)loading a project.</source>
         <translation>Промяната на размера на буфера ще име ефект
 след следващото зареждане на проект.</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="143"/>
+        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="160"/>
         <source>Painting</source>
         <translation>Рисуване</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="163"/>
+        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="198"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -2631,12 +2640,12 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Колко пъти в секунда Графичните&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Обекти се опресняват по време на операция като преместване на&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Аудо Клип, или промяна на Усилване.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Стойноста по подразбиране от 35 е перфектен компромис &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;между гладка картина и малко натоварване на процесора.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Все пак, ако искате по-бързо опресняване,&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;задайте по-висока стойност, но имайте вредвид, че&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;това ще отнеме допълнително процесорно време!&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ако преместването на Аудио Клип все още товари много процесора,&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;би трябвало да намалите тази стойност.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="181"/>
+        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="216"/>
         <source>Jog repaint speed (fps)</source>
         <translation>Опресняване при опрации (fps)</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="209"/>
+        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="244"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -2648,7 +2657,7 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Оптимизира визуализирането на Аудио клипвете и Траковете като използва&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; 3D машината на вашата графична карта.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;В зависимост от вашата графична карта и драйвер, това &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;може чувствително да ускори визуалните операции!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="219"/>
+        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="254"/>
         <source>Use hardware acceleration</source>
         <translation>Използвай Хардуерно оптимизиране</translation>
     </message>
@@ -3622,17 +3631,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RecordingConfigPage</name>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="21"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="19"/>
         <source>Form</source>
         <translation>Форма</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="33"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="25"/>
         <source>Recording</source>
         <translation>Записване</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="53"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="63"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -3654,22 +3663,22 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;WAV&lt;/span&gt; :Формат без компресиране. Използва повече място от копресираните формати, но не товари процесора.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ограничения : ~ 1.7 часа записно време @ Stereo - 44.1 KHz&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;WavPack&lt;/span&gt; : Формта с компресия, до 2 пъти по-малък в сравнение с WAV, без загуба на качество. Използва чувствително повече процесорно време от WAV, но с модерните (след 2005 година) процесори това не би трябвало да е проблем.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Използването на този формат товари много по-малко твърдия диск, увеличава живота му, и намаалява рисковете от претоварване.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ограничения : ~ 5 часа записно време @ Stereo - 44.1 KHz&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;WAV64&lt;/span&gt; : WAV формат с 64 bit хедър, поддръжката от други програми в момента е ограничена.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ограничения : Няма, хиляди часове записно време, ако диска може да ги поеме.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="73"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="83"/>
         <source>Encoding format</source>
         <translation>Формат на Кодиране</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="98"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="108"/>
         <source>WavPack options</source>
         <translation>WavPack настройки</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="118"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="146"/>
         <source>Compression type</source>
         <translation>Тип Копресия</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="130"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="158"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -3681,47 +3690,47 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Тази опция намалява размера на някои файлове с плаваща запетая до 10% чрез елиминиране на определена информация която на практика няма отношение към качеството на звука.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Макар че технически това вече излиза от рамките на компресията без загуба, остават всички предимства на плаващата запетая, (&amp;gt;600 dB динамика, без клипиране , 25 битова резолюция). &lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Това също оказва влияние на голямата компресия с цели числа, като ограничава резолюцията до 24 бита.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="140"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="168"/>
         <source>Skip WVX for extra compression (semi-lossless)</source>
         <translation>Пропусни WVX за допълнителна компресия</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="153"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="181"/>
         <source>Resampling</source>
         <translation>Ресемплиране</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="165"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="202"/>
         <source>Enable on the fly resampling (Playback only)</source>
         <translation>Разреши ресемплирането в реално време</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="188"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="243"/>
         <source>On the fly resample quality</source>
         <translation>Качество на ресемлирането в реално време</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="195"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="250"/>
         <source>Default export resample quality</source>
         <translation>Стойност по подразбиране на качеството на ресемплиране</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="237"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="301"/>
         <source>Best</source>
         <translation>Най-добро</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="242"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="306"/>
         <source>High</source>
         <translation>Високо</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="247"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="311"/>
         <source>Medium</source>
         <translation>Средно</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="252"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="316"/>
         <source>Fast</source>
         <translation>Бързо</translation>
     </message>
@@ -3866,52 +3875,52 @@ p, li { white-space: pre-wrap; }
         <translation>Не е зададено име на артист</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="346"/>
+        <location filename="../../src/core/Sheet.cpp" line="347"/>
         <source>Add Track</source>
         <translation>Добави Трак</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="355"/>
+        <location filename="../../src/core/Sheet.cpp" line="356"/>
         <source>Remove Track</source>
         <translation>Премахни Трак</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="453"/>
+        <location filename="../../src/core/Sheet.cpp" line="454"/>
         <source>No audio to export! (Is everything muted?)</source>
         <translation>Няма аудо за експорт! (Може би всичко е заглушено?)</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="457"/>
+        <location filename="../../src/core/Sheet.cpp" line="458"/>
         <source>Export start frame starts beyond export end frame!!</source>
         <translation>Началното време за експорт е след неговто крайно време!!</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="462"/>
+        <location filename="../../src/core/Sheet.cpp" line="463"/>
         <source>Export tries to render to 0 channels wav file??</source>
         <translation>Експортирането ще доведе до файл с 0 канала??</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="1088"/>
+        <location filename="../../src/core/Sheet.cpp" line="1089"/>
         <source>Hard Disk overload detected!</source>
         <translation>Претоварване на твърдия диск!</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="1080"/>
+        <location filename="../../src/core/Sheet.cpp" line="1081"/>
         <source>Failed to fill ReadBuffer in time</source>
         <translation>Буфера за Четене не се запълни навреме!</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="1089"/>
+        <location filename="../../src/core/Sheet.cpp" line="1090"/>
         <source>Failed to empty WriteBuffer in time</source>
         <translation>Буфер за Писане не се изпразни навреме!</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="1186"/>
+        <location filename="../../src/core/Sheet.cpp" line="1187"/>
         <source>No Tracks armed for recording!</source>
         <translation>Няма заредени за запис тракове!</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/core/Sheet.cpp" line="1368"/>
+        <location filename="../../src/core/Sheet.cpp" line="1369"/>
         <source>Recording to %n Clip(s)</source>
         <translation>
             <numerusform>Записва в %n Клип(а)</numerusform>
@@ -4366,7 +4375,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ThemeConfigPage</name>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="754"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="714"/>
         <source>Select default project dir</source>
         <translation>Изберете директория на проекта по подразбиране</translation>
     </message>
@@ -4376,37 +4385,37 @@ p, li { white-space: pre-wrap; }
         <translation>Форма</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="31"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="35"/>
         <source>Theme selector</source>
         <translation>Избор на Изглед</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="59"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="90"/>
         <source>Path to theme files</source>
         <translation>Път към файловете с изгледи</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="136"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="185"/>
         <source>Available themes</source>
         <translation>Налични Изгледи</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="163"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="221"/>
         <source>Adjust theme color</source>
         <translation>Нагласи цвят на Изгледа</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="185"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="243"/>
         <source>Theme Options</source>
         <translation>Настройки на Изгледа</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="197"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="264"/>
         <source>Paint audio rectified</source>
         <translation>Рисувай аудиото ректифицирано</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="204"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="271"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -4416,54 +4425,69 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Рисуването на вълната с контур е по-детайлно, но изисква процесорно време.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ако имате забавяне при много клипове, или по време на анимирано превъртане, размракирайте тази опция!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="212"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="279"/>
         <source>Paint audio with outline</source>
         <translation>Рисуивай аудиото с контур</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="219"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="286"/>
         <source>Paint stereo audio as mono audio</source>
         <translation>Рисувай стереото като моно аудио</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="226"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="293"/>
         <source>Draw lines at 0 and -6 dB</source>
         <translation>Чертай линии на 0 и -6 децибела</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="236"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="303"/>
         <source>Style Options</source>
         <translation>Настройки на Стила</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="256"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="332"/>
         <source>Select style</source>
         <translation>Избери Стил</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="275"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="351"/>
         <source>Use selected style&apos;s palette</source>
         <translation>Използвай палета на избрания стил</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="285"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="381"/>
         <source>Toolbars</source>
         <translation>Ленти с инструменти</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="293"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="389"/>
         <source>Icon size</source>
         <translation>Размер на Икона</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="307"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="403"/>
         <source>Button style</source>
         <translation>Стил на Бутон</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="321"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="417"/>
         <source>Size of transport console</source>
         <translation>Размер на конзола за управление</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="23"/>
+        <source>Theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="446"/>
+        <source>Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="452"/>
+        <source>Interface Language</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4624,37 +4648,37 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TransportConsoleWidget</name>
     <message>
-        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="48"/>
+        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="59"/>
         <source>Skip to Start</source>
         <translation>Скочи в Началото</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="49"/>
+        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="60"/>
         <source>Previous Snap Position</source>
         <translation>Предна Точка на Прилепване</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="50"/>
+        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="61"/>
         <source>Record</source>
         <translation>Запис</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="51"/>
+        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="62"/>
         <source>Play / Stop</source>
         <translation>Свири/Спри</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="52"/>
+        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="63"/>
         <source>Next Snap Position</source>
         <translation>Следваща точка на прилепване</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="53"/>
+        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="64"/>
         <source>Skip to End</source>
         <translation>Скочи в Края</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="172"/>
+        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="183"/>
         <source>Recording to %1 Tracks, encoding format: %2</source>
         <translation>Записва в %1 Трака, формат на кодиране:%2</translation>
     </message>

@@ -21,12 +21,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="25"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="19"/>
         <source>ALSA Device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="45"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="57"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -47,12 +47,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="64"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="76"/>
         <source>Device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="84"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="105"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -69,22 +69,22 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="99"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="120"/>
         <source>Nr. of periods</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="107"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="128"/>
         <source>2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="112"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="133"/>
         <source>3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="130"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="160"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -94,27 +94,27 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="138"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="168"/>
         <source>Dither</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="146"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="176"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="151"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="181"/>
         <source>Shaped</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="156"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="186"/>
         <source>Rectangular</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="161"/>
+        <location filename="../../src/traverso/ui/AlsaDevicesPage.ui" line="191"/>
         <source>Triangular</source>
         <translation type="unfinished"></translation>
     </message>
@@ -170,22 +170,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AppearancePage</name>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="625"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="585"/>
         <source>Icons only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="626"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="586"/>
         <source>Text only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="627"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="587"/>
         <source>Text beside Icons</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="628"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="588"/>
         <source>Text below Icons</source>
         <translation type="unfinished"></translation>
     </message>
@@ -408,22 +408,22 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1013"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="999"/>
         <source>Reset Audio File for Clip: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1015"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1001"/>
         <source>All files (*);;Audio files (*.wav *.flac)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1018"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1004"/>
         <source>No file selected!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1028"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="1014"/>
         <source>Succesfully set AudioClip file to %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -532,22 +532,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AudioDriverPage</name>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="64"/>
-        <source>Driver Selection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="67"/>
-        <source>Driver:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="83"/>
-        <source>Restart Driver</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="242"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="209"/>
         <source>System default</source>
         <translation type="unfinished"></translation>
     </message>
@@ -593,57 +578,57 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="25"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="19"/>
         <source>Project Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="45"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="57"/>
         <source>On close:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="65"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="77"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="75"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="87"/>
         <source>Ask</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="82"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="94"/>
         <source>Don&apos;t save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="91"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="103"/>
         <source>Load last used project at startup</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="101"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="113"/>
         <source>New Sheet Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="146"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="176"/>
         <source>Audio Clip Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="158"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="197"/>
         <source>Lock Audio Clips by default</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="168"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="207"/>
         <source>Playback Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="188"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="245"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -651,32 +636,32 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="194"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="251"/>
         <source>Scroll playback</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="205"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="262"/>
         <source>Jump</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="210"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="267"/>
         <source>Stay Centered</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="215"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="272"/>
         <source>Animated</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="225"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="282"/>
         <source>Continuously adjust audio while dragging</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="121"/>
+        <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="151"/>
         <source>Number of tracks</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1021,12 +1006,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="25"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="38"/>
         <source>Configure driver</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="45"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="61"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -1037,27 +1022,27 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="54"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="70"/>
         <source>Duplex mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="62"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="78"/>
         <source>Full</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="67"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="83"/>
         <source>Playback</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="72"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="88"/>
         <source>Capture</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="90"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="115"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -1069,42 +1054,42 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="100"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="125"/>
         <source>Sample rate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="108"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="133"/>
         <source>22050</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="113"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="138"/>
         <source>32000</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="118"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="143"/>
         <source>44100</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="123"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="148"/>
         <source>48000</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="128"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="153"/>
         <source>88200</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="133"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="158"/>
         <source>96000</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="151"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="185"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -1116,18 +1101,33 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="161"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="195"/>
         <source>Buffer latency (ms)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="176"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="234"/>
         <source>Jack</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="188"/>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="255"/>
         <source>Enable Jack transport control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="19"/>
+        <source>Driver Selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="25"/>
+        <source>Driver:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/DriverConfigPage.ui" line="222"/>
+        <source>Restart Driver</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1941,17 +1941,17 @@ to restore the Project from.</source>
 <context>
     <name>KeyboardConfigPage</name>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="873"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="832"/>
         <source>No description set for this keymap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="896"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="855"/>
         <source>KeyMap Export</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="897"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="856"/>
         <source>The exported keymap can be found here:
 
  %1</source>
@@ -1963,12 +1963,12 @@ to restore the Project from.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="41"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="19"/>
         <source>Configure Keyboard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="61"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="42"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -1985,12 +1985,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="76"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="57"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Double fact timeout (ms)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="112"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="102"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -2008,28 +2008,37 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="128"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="118"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Hold timeout (ms)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="159"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="149"/>
         <source>Keymap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="179"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="172"/>
         <source>Select keymap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="234"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="236"/>
         <source>Export Keymap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="241"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="243"/>
         <source>Print Keymap</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>LanguageName</name>
+    <message>
+        <location filename="../../src/common/Utils.cpp" line="252"/>
+        <source>English</source>
+        <comment>The name of this Language, e.g. German would be Deutch</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2546,12 +2555,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="25"/>
+        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="19"/>
         <source>Audio file buffering</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="45"/>
+        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="57"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -2573,28 +2582,28 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="65"/>
+        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="77"/>
         <source>Read buffer size (seconds)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="115"/>
+        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="134"/>
         <source>info icon</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="130"/>
+        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="147"/>
         <source>Changing the buffer size only will take 
 into effect after (re)loading a project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="143"/>
+        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="160"/>
         <source>Painting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="163"/>
+        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="198"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -2614,12 +2623,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="181"/>
+        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="216"/>
         <source>Jog repaint speed (fps)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="209"/>
+        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="244"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -2631,7 +2640,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="219"/>
+        <location filename="../../src/traverso/ui/PerformanceConfigPage.ui" line="254"/>
         <source>Use hardware acceleration</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3602,17 +3611,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RecordingConfigPage</name>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="21"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="19"/>
         <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="33"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="25"/>
         <source>Recording</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="53"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="63"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -3634,22 +3643,22 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="73"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="83"/>
         <source>Encoding format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="98"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="108"/>
         <source>WavPack options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="118"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="146"/>
         <source>Compression type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="130"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="158"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -3661,47 +3670,47 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="140"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="168"/>
         <source>Skip WVX for extra compression (semi-lossless)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="153"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="181"/>
         <source>Resampling</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="165"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="202"/>
         <source>Enable on the fly resampling (Playback only)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="188"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="243"/>
         <source>On the fly resample quality</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="195"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="250"/>
         <source>Default export resample quality</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="237"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="301"/>
         <source>Best</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="242"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="306"/>
         <source>High</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="247"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="311"/>
         <source>Medium</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="252"/>
+        <location filename="../../src/traverso/ui/RecordingConfigPage.ui" line="316"/>
         <source>Fast</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3846,52 +3855,52 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="346"/>
+        <location filename="../../src/core/Sheet.cpp" line="347"/>
         <source>Add Track</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="355"/>
+        <location filename="../../src/core/Sheet.cpp" line="356"/>
         <source>Remove Track</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="453"/>
+        <location filename="../../src/core/Sheet.cpp" line="454"/>
         <source>No audio to export! (Is everything muted?)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="457"/>
+        <location filename="../../src/core/Sheet.cpp" line="458"/>
         <source>Export start frame starts beyond export end frame!!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="462"/>
+        <location filename="../../src/core/Sheet.cpp" line="463"/>
         <source>Export tries to render to 0 channels wav file??</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="1088"/>
+        <location filename="../../src/core/Sheet.cpp" line="1089"/>
         <source>Hard Disk overload detected!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="1080"/>
+        <location filename="../../src/core/Sheet.cpp" line="1081"/>
         <source>Failed to fill ReadBuffer in time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="1089"/>
+        <location filename="../../src/core/Sheet.cpp" line="1090"/>
         <source>Failed to empty WriteBuffer in time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="1186"/>
+        <location filename="../../src/core/Sheet.cpp" line="1187"/>
         <source>No Tracks armed for recording!</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/core/Sheet.cpp" line="1368"/>
+        <location filename="../../src/core/Sheet.cpp" line="1369"/>
         <source>Recording to %n Clip(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -4345,7 +4354,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ThemeConfigPage</name>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="754"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="714"/>
         <source>Select default project dir</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4355,37 +4364,37 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="31"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="35"/>
         <source>Theme selector</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="59"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="90"/>
         <source>Path to theme files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="136"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="185"/>
         <source>Available themes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="185"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="243"/>
         <source>Theme Options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="163"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="221"/>
         <source>Adjust theme color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="197"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="264"/>
         <source>Paint audio rectified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="204"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="271"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -4395,53 +4404,68 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="212"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="279"/>
         <source>Paint audio with outline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="219"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="286"/>
         <source>Paint stereo audio as mono audio</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="236"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="303"/>
         <source>Style Options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="256"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="332"/>
         <source>Select style</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="226"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="293"/>
         <source>Draw lines at 0 and -6 dB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="285"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="381"/>
         <source>Toolbars</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="293"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="389"/>
         <source>Icon size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="307"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="403"/>
         <source>Button style</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="321"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="417"/>
         <source>Size of transport console</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="275"/>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="351"/>
         <source>Use selected style&apos;s palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="23"/>
+        <source>Theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="446"/>
+        <source>Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/ThemeConfigPage.ui" line="452"/>
+        <source>Interface Language</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4603,37 +4627,37 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TransportConsoleWidget</name>
     <message>
-        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="48"/>
+        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="59"/>
         <source>Skip to Start</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="49"/>
+        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="60"/>
         <source>Previous Snap Position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="50"/>
+        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="61"/>
         <source>Record</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="51"/>
+        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="62"/>
         <source>Play / Stop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="52"/>
+        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="63"/>
         <source>Next Snap Position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="53"/>
+        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="64"/>
         <source>Skip to End</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="172"/>
+        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="183"/>
         <source>Recording to %1 Tracks, encoding format: %2</source>
         <translation type="unfinished"></translation>
     </message>
