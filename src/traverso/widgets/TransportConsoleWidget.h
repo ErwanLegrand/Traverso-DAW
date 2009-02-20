@@ -22,18 +22,15 @@
 #ifndef TRANSPORTCONSOLEWIDGET_H
 #define TRANSPORTCONSOLEWIDGET_H
 
-#include <QWidget>
+
 #include <QTimer>
 #include <QToolBar>
-#include <QToolButton>
-#include <QEvent>
-#include <QFont>
-#include <QString>
 
 #include "defines.h"
 
 class Project;
 class Sheet;
+class QLabel;
 
 class TransportConsoleWidget : public QToolBar
 {
@@ -43,7 +40,7 @@ public:
 	TransportConsoleWidget(QWidget* parent);
 
 private:
-	QToolButton*	m_timeLabel;
+	QLabel*		m_timeLabel;
 	Project*	m_project;
 	Sheet*		m_sheet;
 	QAction*	m_toStartAction;

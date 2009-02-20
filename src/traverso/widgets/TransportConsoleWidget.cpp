@@ -20,11 +20,22 @@
 */
 
 #include "TransportConsoleWidget.h"
-#include "libtraversocore.h"
+
 #include "Themer.h"
+#include "Sheet.h"
+#include "Utils.h"
+#include "Track.h"
+#include "ProjectManager.h"
+#include "Project.h"
+#include "Config.h"
+#include "Information.h"
 
 #include <QAction>
-#include <QToolButton>
+#include <QWidget>
+#include <QLabel>
+#include <QEvent>
+#include <QFont>
+#include <QString>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -36,7 +47,7 @@ TransportConsoleWidget::TransportConsoleWidget(QWidget* parent)
 {
 	setEnabled(false);
 
-	m_timeLabel = new QToolButton(this);
+	m_timeLabel = new QLabel(this);
 	m_timeLabel->setStyleSheet(
 			"color: lime;"
 			"background-color: black;"
