@@ -85,7 +85,7 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 	
 	connect(&config(), SIGNAL(configChanged()), this, SLOT(external_change_to_settings()));
 	
-	resize(500, 400);
+	resize(500, 300);
 }
 
 void SettingsDialog::show_page(const QString & page)

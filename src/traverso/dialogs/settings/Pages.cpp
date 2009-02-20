@@ -54,59 +54,26 @@ RELAYTOOL_JACK
 AudioDriverPage::AudioDriverPage(QWidget *parent)
     : ConfigPage(parent)
 {
-	// AudioDriverPage manages it's own layout
-	// perhaps, should be done like the other pages as well
-	// anyhow, the created layout should be deleted before
-	// the new one is set.
-	delete layout();
-	
-	
-	QGroupBox* selectionGroup = new QGroupBox(tr("Driver Selection"));
 	m_driverConfigPage = new DriverConfigPage(this);
-	
-	QLabel* driverLabel = new QLabel(tr("Driver:"));
-	m_driverCombo = new QComboBox;
+	mainLayout->addWidget(m_driverConfigPage);
+
+	m_mainLayout = qobject_cast<QVBoxLayout*>(m_driverConfigPage->layout());
 	
 	QStringList drivers = audiodevice().get_available_drivers();
 	foreach(const QString &name, drivers) {
-		m_driverCombo->addItem(name);
+		m_driverConfigPage->driverCombo->addItem(name);
 	}
 	
-	QHBoxLayout* driverLayout = new QHBoxLayout;
-	driverLayout->addWidget(driverLabel);
-	driverLayout->addWidget(m_driverCombo);
-	
-	QVBoxLayout* selectionLayout = new QVBoxLayout;
-	selectionLayout->addLayout(driverLayout);
-	selectionGroup->setLayout(selectionLayout);
 
-	QPushButton* restartDriverButton = new QPushButton(tr("Restart Driver"));
-	QHBoxLayout* restartDriverButtonLayout = new QHBoxLayout;
-	restartDriverButtonLayout->addStretch(1);
-	restartDriverButtonLayout->addWidget(restartDriverButton);
-	
-	
-	m_mainLayout = new QVBoxLayout;
-	m_mainLayout->addWidget(selectionGroup);
-
-#if defined (PORTAUDIO_SUPPORT)
 	m_portaudiodrivers = new PaDriverPage(this);
 	m_mainLayout->addWidget(m_portaudiodrivers);
-#endif
-	
-	m_mainLayout->addWidget(m_driverConfigPage);
-#if defined (ALSA_SUPPORT)
+
 	m_alsadevices = new AlsaDevicesPage(this);
+	m_alsadevices->layout()->setMargin(0);
 	m_mainLayout->addWidget(m_alsadevices);
-#endif
 	
-	m_mainLayout->addLayout(restartDriverButtonLayout);
-	m_mainLayout->addStretch(1);
-	m_mainLayout->setSpacing(12);
-	setLayout(m_mainLayout);
-	
-	connect(m_driverCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(driver_combobox_index_changed(QString)));
-	connect(restartDriverButton, SIGNAL(clicked()), this, SLOT(restart_driver_button_clicked()));
+	connect(m_driverConfigPage->driverCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(driver_combobox_index_changed(QString)));
+	connect(m_driverConfigPage->restartDriverButton, SIGNAL(clicked()), this, SLOT(restart_driver_button_clicked()));
 	
 	load_config();
 }
@@ -121,7 +88,7 @@ void AudioDriverPage::save_config()
 	}
 	config().set_property("Hardware", "buffersize", buffersize);
 	
-	config().set_property("Hardware", "drivertype", m_driverCombo->currentText());
+	config().set_property("Hardware", "drivertype", m_driverConfigPage->driverCombo->currentText());
 	
 	int playback=1, capture=1;
 	if(m_driverConfigPage->duplexComboBox->currentIndex() == 1) {
@@ -203,9 +170,9 @@ void AudioDriverPage::load_config( )
 	bool playback = config().get_property("Hardware", "playback", 1).toInt();
 
 
-	int driverTypeIndex = m_driverCombo->findText(driverType);
+	int driverTypeIndex = m_driverConfigPage->driverCombo->findText(driverType);
 	if (driverTypeIndex >= 0) {
-		m_driverCombo->setCurrentIndex(driverTypeIndex);
+		m_driverConfigPage->driverCombo->setCurrentIndex(driverTypeIndex);
 	}
 	
 	driver_combobox_index_changed(driverType);
@@ -301,7 +268,7 @@ void AudioDriverPage::load_config( )
 
 void AudioDriverPage::restart_driver_button_clicked()
 {
-	QString driver = m_driverCombo->currentText();
+	QString driver = m_driverConfigPage->driverCombo->currentText();
 	int rate = m_driverConfigPage->rateComboBox->currentText().toInt();
 	int buffersize =  m_driverConfigPage->periodBufferSizesList.at(m_driverConfigPage->latencyComboBox->currentIndex());
 	
@@ -354,41 +321,33 @@ void AudioDriverPage::restart_driver_button_clicked()
 
 void AudioDriverPage::driver_combobox_index_changed(QString driver)
 {
-	if (driver == "ALSA" || driver == "PortAudio" || driver == "Null Driver") {
-		m_driverConfigPage->driverConfigGroupBox->show();
-	} else {
-		m_driverConfigPage->driverConfigGroupBox->hide();
-	}
-	
-#if defined (ALSA_SUPPORT)
+	m_mainLayout->removeWidget(m_alsadevices);
+	m_mainLayout->removeWidget(m_portaudiodrivers);
+	m_mainLayout->removeWidget(m_driverConfigPage->jackGroupBox);
+
 	if (driver == "ALSA") {
 		m_alsadevices->show();
-		m_mainLayout->insertWidget(m_mainLayout->indexOf(m_driverConfigPage) + 1, m_alsadevices);
+		m_mainLayout->insertWidget(m_mainLayout->indexOf(m_driverConfigPage->driverConfigGroupBox) + 1, m_alsadevices);
 	} else {
 		m_alsadevices->hide();
 		m_mainLayout->removeWidget(m_alsadevices);
 	}
-#endif
 
-#if defined (PORTAUDIO_SUPPORT)
 	if (driver == "PortAudio") {
 		m_portaudiodrivers->show();
-		m_mainLayout->insertWidget(m_mainLayout->indexOf(m_driverConfigPage), m_portaudiodrivers);
+		m_mainLayout->insertWidget(m_mainLayout->indexOf(m_driverConfigPage->driverConfigGroupBox), m_portaudiodrivers);
 	} else {
 		m_portaudiodrivers->hide();
 		m_mainLayout->removeWidget(m_portaudiodrivers);
 	}
-#endif
 	
-#if defined(JACK_SUPPORT)
-	if (libjack_is_present && driver == "Jack") {
+	if (driver == "Jack") {
 		m_driverConfigPage->jackGroupBox->show();
+		m_mainLayout->insertWidget(m_mainLayout->indexOf(m_driverConfigPage->driverConfigGroupBox) + 1, m_driverConfigPage->jackGroupBox);
 	} else {
 		m_driverConfigPage->jackGroupBox->hide();
+		m_mainLayout->removeWidget(m_driverConfigPage->jackGroupBox);
 	}
-#else
-	m_driverConfigPage->jackGroupBox->hide();
-#endif
 }
 
 
@@ -422,22 +381,18 @@ void DriverConfigPage::rate_combobox_index_changed(QString )
 	update_latency_combobox();
 }
 
-#if defined (ALSA_SUPPORT)
 AlsaDevicesPage::AlsaDevicesPage(QWidget * parent)
 	: QWidget(parent)
 {
 	setupUi(this);
 }
-#endif
 
 
-#if defined (PORTAUDIO_SUPPORT)
 PaDriverPage::PaDriverPage(QWidget * parent)
 	: QWidget(parent)
 {
 	setupUi(this);
 }
-#endif
 
 
 ConfigPage::ConfigPage(QWidget * parent)
@@ -445,6 +400,7 @@ ConfigPage::ConfigPage(QWidget * parent)
 {
 	mainLayout = new QVBoxLayout;
 	setLayout(mainLayout);
+	mainLayout->setMargin(0);
 }
 
 
@@ -552,7 +508,11 @@ AppearancePage::AppearancePage(QWidget *parent)
 {
 	m_themepage = new ThemeConfigPage(this);
 	mainLayout->addWidget(m_themepage);
-	mainLayout->addStretch(1);
+	
+
+	foreach(const QString &lang, find_qm_files()) {
+		m_themepage->languageComboBox->addItem(language_name_from_qm_file(lang), lang);
+	}
 	
 	load_config();
 	m_themepage->create_connections();
@@ -796,7 +756,6 @@ KeyboardPage::KeyboardPage(QWidget * parent)
 {
 	m_configpage = new KeyboardConfigPage(this);
 	mainLayout->addWidget(m_configpage);
-	mainLayout->addStretch(5);
 	
 	load_config();
 }
@@ -920,7 +879,6 @@ PerformancePage::PerformancePage(QWidget * parent)
 {
 	m_configpage = new PerformanceConfigPage(this);
 	mainLayout->addWidget(m_configpage);
-	mainLayout->addStretch(5);
 	
 	load_config();
 }
@@ -959,6 +917,8 @@ PerformanceConfigPage::PerformanceConfigPage(QWidget* parent)
 {
 	setupUi(this);
 
+	// don't show it for now, it's not making sense with current opengl support
+	useOpenGLCheckBox->hide();
 #if defined (QT_OPENGL_SUPPORT)
 	useOpenGLCheckBox->setEnabled(true);
 #else
@@ -978,7 +938,6 @@ RecordingPage::RecordingPage(QWidget * parent)
 {
 	m_config = new RecordingConfigPage(this);
 	mainLayout->addWidget(m_config);
-	mainLayout->addStretch(5);
 	
 	load_config();
 }

@@ -30,14 +30,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ui_RecordingConfigPage.h"
 #include "ui_ThemeConfigPage.h"
 #include "ui_PerformanceConfigPage.h"
-
-#if defined (ALSA_SUPPORT)
 #include "ui_AlsaDevicesPage.h"
-#endif
-
-#if defined (PORTAUDIO_SUPPORT)
 #include "ui_PaDriverPage.h"
-#endif
 
 class PerformanceConfigPage : public QWidget, private Ui::PerformanceConfigPage
 {
@@ -65,7 +59,6 @@ private slots:
 };
 
 
-#if defined (ALSA_SUPPORT)
 class AlsaDevicesPage : public QWidget, private Ui::AlsaDevicesPage
 {
 public:
@@ -73,10 +66,8 @@ public:
 private:
 	friend class AudioDriverPage;
 };
-#endif
 
 
-#if defined (PORTAUDIO_SUPPORT)
 class PaDriverPage : public QWidget, private Ui::PaDriverPage
 {
 public:
@@ -84,7 +75,6 @@ public:
 private:
 	friend class AudioDriverPage;
 };
-#endif
 
 
 class KeyboardConfigPage : public QWidget, private Ui::KeyboardConfigPage
@@ -171,15 +161,9 @@ public:
 
 private:
 	QVBoxLayout* m_mainLayout;
-	QComboBox* m_driverCombo;
 	DriverConfigPage* m_driverConfigPage;
-#if defined (ALSA_SUPPORT)
 	AlsaDevicesPage* m_alsadevices;
-#endif
-	
-#if defined (PORTAUDIO_SUPPORT)
 	PaDriverPage* m_portaudiodrivers;
-#endif
 	
 	void load_config();
 	
