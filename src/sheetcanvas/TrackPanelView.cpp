@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.1 2008/01/21 16:17:30 r_sijrier Exp $
+$Id: TrackPanelView.cpp,v 1.2 2009/02/21 22:38:27 r_sijrier Exp $
 */
 
 #include <QGraphicsScene>
@@ -159,9 +159,11 @@ void TrackPanelView::draw_panel_track_name(QPainter* painter)
 		title = fm.elidedText(title, Qt::ElideMiddle, 90);
 	}
 	
+	painter->save();
 	painter->setPen(themer()->get_color("TrackPanel:text"));
 	painter->setFont(themer()->get_font("TrackPanel:fontscale:name"));
 	painter->drawText(4, 12, title);
+	painter->restore();
 }
 
 
@@ -260,6 +262,8 @@ void TrackPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem *
 	int cr = (gain >= 1 ? 30 + (int)(100 * gain) : (int)(50 * gain));
 	int cb = ( gain < 1 ? 150 + (int)(50 * gain) : abs((int)(10 * gain)) );
 	
+	painter->save();
+	
 	painter->setPen(themer()->get_color("TrackPanel:text"));
 	painter->setFont(themer()->get_font("TrackPanel:fontscale:gain"));
 	painter->drawText(0, height + 1, "GAIN");
@@ -272,6 +276,8 @@ void TrackPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem *
 	}
 	painter->fillRect(31, 1, sliderdbx, height-1, color);
 	painter->drawText(sliderWidth + 35, height, sgain);
+	
+	painter->restore();
 }
 
 void TrackPanelGain::set_width(int width)
@@ -372,6 +378,8 @@ void TrackPanelLed::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 	bool mousehover = (option->state & QStyle::State_MouseOver);
 	int roundfactor = 20;
 	
+	painter->save();
+	
 	painter->setRenderHint(QPainter::Antialiasing);
 	
 	if (m_isOn) {
@@ -403,6 +411,8 @@ void TrackPanelLed::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 		
 		painter->drawText(m_boundingRect, Qt::AlignCenter, m_name);
 	}
+	
+	painter->restore();
 	
 }
 
@@ -445,6 +455,8 @@ void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 	QColor color = themer()->get_color("TrackPanel:bus:background");
 	int roundfactor = 15;
 	
+	painter->save();
+	
 	painter->setRenderHint(QPainter::Antialiasing);
 	
 	if (option->state & QStyle::State_MouseOver) {
@@ -471,6 +483,8 @@ void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 	painter->drawText(m_boundingRect.adjusted(15, 0, 0, 0), Qt::AlignCenter, m_busName + leftright);
 			
 	painter->drawPixmap(3, 3, m_pix);
+	
+	painter->restore();
 }
 
 void TrackPanelBus::bus_changed()
