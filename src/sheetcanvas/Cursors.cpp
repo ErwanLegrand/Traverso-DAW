@@ -109,10 +109,8 @@ void PlayHead::play_stop()
 
 	if (m_animation.state() == QTimeLine::Running) {
 		m_animation.stop();
-		m_animation.setCurrentTime(0);
 	}
 
-	update();
 }
 
 void PlayHead::disable_follow()
@@ -184,6 +182,7 @@ void PlayHead::update_position()
 				//during the animation, we stop the play update timer
 				// to avoid unnecessary update/paint events
 				play_stop();
+				m_animation.setCurrentTime(0);
 				m_animation.start();
 			}
 		} else {
