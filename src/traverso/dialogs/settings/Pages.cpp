@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2007 Remon Sijrier 
+Copyright (C) 2007-2009 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -336,7 +336,7 @@ void AudioDriverConfigPage::driver_combobox_index_changed(QString driver)
 
 	if (driver == "PortAudio") {
 		m_portaudiodrivers->show();
-		m_mainLayout->insertWidget(m_mainLayout->indexOf(driverConfigGroupBox), m_portaudiodrivers);
+		m_mainLayout->insertWidget(m_mainLayout->indexOf(driverConfigGroupBox) + 1, m_portaudiodrivers);
 	} else {
 		m_portaudiodrivers->hide();
 		m_mainLayout->removeWidget(m_portaudiodrivers);
