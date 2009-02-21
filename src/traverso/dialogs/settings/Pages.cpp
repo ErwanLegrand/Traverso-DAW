@@ -448,7 +448,6 @@ void BehaviorPage::load_config()
 	int scrollMode = config().get_property("PlayHead", "Scrollmode", 2).toInt();
 	bool resyncAudio = config().get_property("AudioClip", "SyncDuringDrag", false).toBool();
 	bool lockClips = config().get_property("AudioClip", "LockByDefault", false).toBool();
-	QString interfaceLanguage = config().get_property("Interface", "LanguageFile", "").toString();
 	
 	m_configpage->loadLastProjectCheckBox->setChecked(loadLastUsedProject);
 	m_configpage->numberOfTrackSpinBox->setValue(defaultNumTracks);
@@ -485,7 +484,6 @@ void BehaviorPage::reset_default_config()
 	config().set_property("PlayHead", "Scrollmode", 2);
 	config().set_property("AudioClip", "SyncDuringDrag", false);
 	config().set_property("AudioClip", "LockByDefault", false);
-	config().set_property("Interface", "LanguageFile", "");
 	
 	load_config();
 }
@@ -509,7 +507,7 @@ AppearancePage::AppearancePage(QWidget *parent)
 	m_themepage = new ThemeConfigPage(this);
 	mainLayout->addWidget(m_themepage);
 	
-
+	m_themepage->languageComboBox->addItem(tr("Default Language"), "");
 	foreach(const QString &lang, find_qm_files()) {
 		m_themepage->languageComboBox->addItem(language_name_from_qm_file(lang), lang);
 	}
@@ -538,6 +536,7 @@ void AppearancePage::save_config()
 	config().set_property("Themer", "toolbuttonstyle", m_themepage->toolbarStyleCombo->currentIndex());
 	config().set_property("Themer", "supportediconsizes", supportedIconSizes);
 	config().set_property("Themer", "transportconsolesize", m_themepage->transportConsoleCombo->currentText());
+	config().set_property("Interface", "LanguageFile", m_themepage->languageComboBox->itemData(m_themepage->languageComboBox->currentIndex()));
 }
 
 void AppearancePage::load_config()
@@ -568,6 +567,8 @@ void AppearancePage::load_config()
 	bool paintStereoAsMono = config().get_property("Themer", "paintstereoaudioasmono", false).toBool();
 	bool paintWaveWithLines = config().get_property("Themer", "paintwavewithoutline", true).toBool();
 	bool dbGrid = config().get_property("Themer", "drawdbgrid", false).toBool();
+	
+	QString interfaceLanguage = config().get_property("Interface", "LanguageFile", "").toString();
 	
 	int index = m_themepage->styleCombo->findText(style);
 	m_themepage->styleCombo->setCurrentIndex(index);
@@ -625,6 +626,12 @@ void AppearancePage::load_config()
 	m_themepage->transportConsoleCombo->addItems(iconSizesList);
 	int trspsizeindex = m_themepage->iconSizeCombo->findText(trspsize);
 	m_themepage->transportConsoleCombo->setCurrentIndex(trspsizeindex);
+	
+	
+	int langIndex = m_themepage->languageComboBox->findData(interfaceLanguage);
+	if (langIndex >= 0) {
+		m_themepage->languageComboBox->setCurrentIndex(langIndex);
+	}
 }
 
 void AppearancePage::reset_default_config()
@@ -644,6 +651,7 @@ void AppearancePage::reset_default_config()
 	config().set_property("Themer", "supportediconsizes", "16;22;32;48");
 	config().set_property("Themer", "iconsize", "22");
 	config().set_property("Themer", "toolbuttonstyle", 0);
+	config().set_property("Interface", "LanguageFile", "");
 
 	load_config();
 }
