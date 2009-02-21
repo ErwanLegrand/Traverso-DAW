@@ -51,17 +51,17 @@ RELAYTOOL_JACK
 /****************************************/
 
 
-AudioDriverPage::AudioDriverPage(QWidget *parent)
+AudioDriverConfigPage::AudioDriverConfigPage(QWidget *parent)
     : ConfigPage(parent)
 {
-	m_driverConfigPage = new DriverConfigPage(this);
-	mainLayout->addWidget(m_driverConfigPage);
-
-	m_mainLayout = qobject_cast<QVBoxLayout*>(m_driverConfigPage->layout());
+	setupUi(this);
+	periodBufferSizesList << 16 << 32 << 64 << 128 << 256 << 512 << 1024 << 2048 << 4096;
+	
+	m_mainLayout = qobject_cast<QVBoxLayout*>(layout());
 	
 	QStringList drivers = audiodevice().get_available_drivers();
 	foreach(const QString &name, drivers) {
-		m_driverConfigPage->driverCombo->addItem(name);
+		driverCombo->addItem(name);
 	}
 	
 
@@ -72,30 +72,31 @@ AudioDriverPage::AudioDriverPage(QWidget *parent)
 	m_alsadevices->layout()->setMargin(0);
 	m_mainLayout->addWidget(m_alsadevices);
 	
-	connect(m_driverConfigPage->driverCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(driver_combobox_index_changed(QString)));
-	connect(m_driverConfigPage->restartDriverButton, SIGNAL(clicked()), this, SLOT(restart_driver_button_clicked()));
+	connect(driverCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(driver_combobox_index_changed(QString)));
+	connect(restartDriverButton, SIGNAL(clicked()), this, SLOT(restart_driver_button_clicked()));
+	connect(rateComboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(rate_combobox_index_changed(QString)));
 	
 	load_config();
 }
 
-void AudioDriverPage::save_config()
+void AudioDriverConfigPage::save_config()
 {
-	config().set_property("Hardware", "samplerate", m_driverConfigPage->rateComboBox->currentText());
-	int bufferindex = m_driverConfigPage->latencyComboBox->currentIndex();
+	config().set_property("Hardware", "samplerate", rateComboBox->currentText());
+	int bufferindex = latencyComboBox->currentIndex();
 	int buffersize = 1024;
 	if (bufferindex >= 0) {
-		buffersize = m_driverConfigPage->periodBufferSizesList.at(bufferindex);
+		buffersize = periodBufferSizesList.at(bufferindex);
 	}
 	config().set_property("Hardware", "buffersize", buffersize);
 	
-	config().set_property("Hardware", "drivertype", m_driverConfigPage->driverCombo->currentText());
+	config().set_property("Hardware", "drivertype", driverCombo->currentText());
 	
 	int playback=1, capture=1;
-	if(m_driverConfigPage->duplexComboBox->currentIndex() == 1) {
+	if(duplexComboBox->currentIndex() == 1) {
 		capture = 0;
 	}
 	
-	if(m_driverConfigPage->duplexComboBox->currentIndex() == 2) {
+	if(duplexComboBox->currentIndex() == 2) {
 		playback = 0;
 	}
 	
@@ -118,10 +119,10 @@ void AudioDriverPage::save_config()
 	config().set_property("Hardware", "pahostapi", m_portaudiodrivers->driverCombo->itemData(paindex));
 #endif
 	
-	config().set_property("Hardware", "jackslave", m_driverConfigPage->jackTransportCheckBox->isChecked());
+	config().set_property("Hardware", "jackslave", jackTransportCheckBox->isChecked());
 }
 
-void AudioDriverPage::reset_default_config()
+void AudioDriverConfigPage::reset_default_config()
 {
 	config().set_property("Hardware", "samplerate", 44100);
 	config().set_property("Hardware", "buffersize", 512);
@@ -157,7 +158,7 @@ void AudioDriverPage::reset_default_config()
 	load_config();
 }
 
-void AudioDriverPage::load_config( )
+void AudioDriverConfigPage::load_config( )
 {
 	int samplerate = config().get_property("Hardware", "samplerate", 44100).toInt();
 	int buffersize = config().get_property("Hardware", "buffersize", 512).toInt();
@@ -170,26 +171,26 @@ void AudioDriverPage::load_config( )
 	bool playback = config().get_property("Hardware", "playback", 1).toInt();
 
 
-	int driverTypeIndex = m_driverConfigPage->driverCombo->findText(driverType);
+	int driverTypeIndex = driverCombo->findText(driverType);
 	if (driverTypeIndex >= 0) {
-		m_driverConfigPage->driverCombo->setCurrentIndex(driverTypeIndex);
+		driverCombo->setCurrentIndex(driverTypeIndex);
 	}
 	
 	driver_combobox_index_changed(driverType);
 	
-	int buffersizeIndex = m_driverConfigPage->periodBufferSizesList.indexOf(buffersize);
-	int samplerateIndex = m_driverConfigPage->rateComboBox->findText(QString::number(samplerate));
+	int buffersizeIndex = periodBufferSizesList.indexOf(buffersize);
+	int samplerateIndex = rateComboBox->findText(QString::number(samplerate));
 	
-	m_driverConfigPage->rateComboBox->setCurrentIndex(samplerateIndex);
-	m_driverConfigPage->latencyComboBox->setCurrentIndex(buffersizeIndex);
+	rateComboBox->setCurrentIndex(samplerateIndex);
+	latencyComboBox->setCurrentIndex(buffersizeIndex);
 	
 	
 	if (capture && playback) {
-		m_driverConfigPage->duplexComboBox->setCurrentIndex(0);
+		duplexComboBox->setCurrentIndex(0);
 	} else if (playback) {
-		m_driverConfigPage->duplexComboBox->setCurrentIndex(1);
+		duplexComboBox->setCurrentIndex(1);
 	} else {
-		m_driverConfigPage->duplexComboBox->setCurrentIndex(2);
+		duplexComboBox->setCurrentIndex(2);
 	}
 	
 	int index;
@@ -257,27 +258,27 @@ void AudioDriverPage::load_config( )
 		m_portaudiodrivers->driverCombo->setCurrentIndex(index);
 	}
 	
-	m_driverConfigPage->update_latency_combobox();
+	update_latency_combobox();
 
 #endif //end PORTAUDIO_SUPPORT
 
 	bool usetransport = config().get_property("Hardware", "jackslave", false).toBool();
-	m_driverConfigPage->jackTransportCheckBox->setChecked(usetransport);
+	jackTransportCheckBox->setChecked(usetransport);
 }
 
 
-void AudioDriverPage::restart_driver_button_clicked()
+void AudioDriverConfigPage::restart_driver_button_clicked()
 {
-	QString driver = m_driverConfigPage->driverCombo->currentText();
-	int rate = m_driverConfigPage->rateComboBox->currentText().toInt();
-	int buffersize =  m_driverConfigPage->periodBufferSizesList.at(m_driverConfigPage->latencyComboBox->currentIndex());
+	QString driver = driverCombo->currentText();
+	int rate = rateComboBox->currentText().toInt();
+	int buffersize =  periodBufferSizesList.at(latencyComboBox->currentIndex());
 	
 	int playback=1, capture=1;
-	if(m_driverConfigPage->duplexComboBox->currentIndex() == 1) {
+	if(duplexComboBox->currentIndex() == 1) {
 		capture = 0;
 	}
 	
-	if(m_driverConfigPage->duplexComboBox->currentIndex() == 2) {
+	if(duplexComboBox->currentIndex() == 2) {
 		playback = 0;
 	}
 	
@@ -314,20 +315,20 @@ void AudioDriverPage::restart_driver_button_clicked()
 	config().set_property("Hardware", "numberofperiods", currentperiods);
 #endif
 	
-	config().set_property("Hardware", "jackslave", m_driverConfigPage->jackTransportCheckBox->isChecked());
+	config().set_property("Hardware", "jackslave", jackTransportCheckBox->isChecked());
 }
 
 
 
-void AudioDriverPage::driver_combobox_index_changed(QString driver)
+void AudioDriverConfigPage::driver_combobox_index_changed(QString driver)
 {
 	m_mainLayout->removeWidget(m_alsadevices);
 	m_mainLayout->removeWidget(m_portaudiodrivers);
-	m_mainLayout->removeWidget(m_driverConfigPage->jackGroupBox);
+	m_mainLayout->removeWidget(jackGroupBox);
 
 	if (driver == "ALSA") {
 		m_alsadevices->show();
-		m_mainLayout->insertWidget(m_mainLayout->indexOf(m_driverConfigPage->driverConfigGroupBox) + 1, m_alsadevices);
+		m_mainLayout->insertWidget(m_mainLayout->indexOf(driverConfigGroupBox) + 1, m_alsadevices);
 	} else {
 		m_alsadevices->hide();
 		m_mainLayout->removeWidget(m_alsadevices);
@@ -335,33 +336,23 @@ void AudioDriverPage::driver_combobox_index_changed(QString driver)
 
 	if (driver == "PortAudio") {
 		m_portaudiodrivers->show();
-		m_mainLayout->insertWidget(m_mainLayout->indexOf(m_driverConfigPage->driverConfigGroupBox), m_portaudiodrivers);
+		m_mainLayout->insertWidget(m_mainLayout->indexOf(driverConfigGroupBox), m_portaudiodrivers);
 	} else {
 		m_portaudiodrivers->hide();
 		m_mainLayout->removeWidget(m_portaudiodrivers);
 	}
 	
 	if (driver == "Jack") {
-		m_driverConfigPage->jackGroupBox->show();
-		m_mainLayout->insertWidget(m_mainLayout->indexOf(m_driverConfigPage->driverConfigGroupBox) + 1, m_driverConfigPage->jackGroupBox);
+		jackGroupBox->show();
+		m_mainLayout->insertWidget(m_mainLayout->indexOf(driverConfigGroupBox) + 1, jackGroupBox);
 	} else {
-		m_driverConfigPage->jackGroupBox->hide();
-		m_mainLayout->removeWidget(m_driverConfigPage->jackGroupBox);
+		jackGroupBox->hide();
+		m_mainLayout->removeWidget(jackGroupBox);
 	}
 }
 
 
-DriverConfigPage::DriverConfigPage( QWidget * parent )
-	: QWidget(parent)
-{
-	setupUi(this);
-	periodBufferSizesList << 16 << 32 << 64 << 128 << 256 << 512 << 1024 << 2048 << 4096;
-	
-	connect(rateComboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(rate_combobox_index_changed(QString)));
-}
-
-
-void DriverConfigPage::update_latency_combobox( )
+void AudioDriverConfigPage::update_latency_combobox( )
 {
 	latencyComboBox->clear();
 	int rate = rateComboBox->currentText().toInt();
@@ -376,123 +367,9 @@ void DriverConfigPage::update_latency_combobox( )
 	latencyComboBox->setCurrentIndex(index);
 }
 
-void DriverConfigPage::rate_combobox_index_changed(QString )
+void AudioDriverConfigPage::rate_combobox_index_changed(QString )
 {
 	update_latency_combobox();
-}
-
-AlsaDevicesPage::AlsaDevicesPage(QWidget * parent)
-	: QWidget(parent)
-{
-	setupUi(this);
-}
-
-
-PaDriverPage::PaDriverPage(QWidget * parent)
-	: QWidget(parent)
-{
-	setupUi(this);
-}
-
-
-ConfigPage::ConfigPage(QWidget * parent)
-	: QWidget(parent)
-{
-	mainLayout = new QVBoxLayout;
-	setLayout(mainLayout);
-	mainLayout->setMargin(0);
-}
-
-
-
-/****************************************/
-/*            Behavior                  */
-/****************************************/
-
-
-BehaviorPage::BehaviorPage(QWidget *parent)
-	: ConfigPage(parent)
-{
-	m_configpage = new BehaviorConfigPage(this);
-	mainLayout->addWidget(m_configpage);
-	mainLayout->addStretch(1);
-	connect(&config(), SIGNAL(configChanged()), this, SLOT(update_follow()));
-	load_config();
-}
-
-
-void BehaviorPage::save_config()
-{
-	config().set_property("Project", "loadLastUsed", m_configpage->loadLastProjectCheckBox->isChecked());
-	config().set_property("Sheet", "trackCreationCount", m_configpage->numberOfTrackSpinBox->value());
-	config().set_property("PlayHead", "Follow", m_configpage->keepCursorVisibleCheckBox->isChecked());
-	config().set_property("PlayHead", "Scrollmode", m_configpage->scrollModeComboBox->currentIndex());
-	config().set_property("AudioClip", "SyncDuringDrag", m_configpage->resyncAudioCheckBox->isChecked());
-	config().set_property("AudioClip", "LockByDefault", m_configpage->lockClipsCheckBox->isChecked());
-
-	QString oncloseaction;
-	if (m_configpage->saveRadioButton->isChecked()) {
-		config().set_property("Project", "onclose", "save");
-	} else if (m_configpage->askRadioButton->isChecked()) {
-		config().set_property("Project", "onclose", "ask");
-	} else {
-		config().set_property("Project", "onclose", "dontsave");
-	}
-}
-
-void BehaviorPage::load_config()
-{
-	bool loadLastUsedProject = config().get_property("Project", "loadLastUsed", 1).toBool();
-	QString oncloseaction = config().get_property("Project", "onclose", "save").toString();
-	int defaultNumTracks = config().get_property("Sheet", "trackCreationCount", 6).toInt();
-	int scrollMode = config().get_property("PlayHead", "Scrollmode", 2).toInt();
-	bool resyncAudio = config().get_property("AudioClip", "SyncDuringDrag", false).toBool();
-	bool lockClips = config().get_property("AudioClip", "LockByDefault", false).toBool();
-	
-	m_configpage->loadLastProjectCheckBox->setChecked(loadLastUsedProject);
-	m_configpage->numberOfTrackSpinBox->setValue(defaultNumTracks);
-	m_configpage->scrollModeComboBox->setCurrentIndex(scrollMode);
-	m_configpage->resyncAudioCheckBox->setChecked(resyncAudio);
-	m_configpage->lockClipsCheckBox->setChecked(lockClips);
-	
-	if (oncloseaction == "save") {
-		m_configpage->saveRadioButton->setChecked(true);
-	} else if (oncloseaction == "ask") {
-		m_configpage->askRadioButton->setChecked(true);
-	} else {
-		m_configpage->neverRadioButton->setChecked(true);
-	}
-	
-	update_follow();
-
-}
-
-
-void BehaviorPage::update_follow()
-{
-	bool keepCursorVisible = config().get_property("PlayHead", "Follow", true).toBool();
-	m_configpage->keepCursorVisibleCheckBox->setChecked(keepCursorVisible);
-	m_configpage->scrollModeComboBox->setEnabled(keepCursorVisible);
-}
-
-void BehaviorPage::reset_default_config()
-{
-	config().set_property("Project", "loadLastUsed", true);
-	config().set_property("Project", "onclose", "save");
-	config().set_property("Sheet", "trackCreationCount", 6);
-	config().set_property("PlayHead", "Follow", 0);
-	config().set_property("PlayHead", "Scrollmode", 2);
-	config().set_property("AudioClip", "SyncDuringDrag", false);
-	config().set_property("AudioClip", "LockByDefault", false);
-	
-	load_config();
-}
-
-
-BehaviorConfigPage::BehaviorConfigPage(QWidget * parent)
-	: QWidget(parent)
-{
-	setupUi(this);
 }
 
 
@@ -501,48 +378,29 @@ BehaviorConfigPage::BehaviorConfigPage(QWidget * parent)
 /*            Appearance                */
 /****************************************/
 
-AppearancePage::AppearancePage(QWidget *parent)
-	: ConfigPage(parent)
-{
-	m_themepage = new ThemeConfigPage(this);
-	mainLayout->addWidget(m_themepage);
-	
-	m_themepage->languageComboBox->addItem(tr("Default Language"), "");
-	foreach(const QString &lang, find_qm_files()) {
-		m_themepage->languageComboBox->addItem(language_name_from_qm_file(lang), lang);
-	}
-	
-	load_config();
-	m_themepage->create_connections();
 
-	#if defined Q_WS_MAC
-		m_themepage->iconSizeCombo->hide();
-		m_themepage->toolbarStyleCombo->hide();
-	#endif
-}
-
-void AppearancePage::save_config()
+void AppearenceConfigPage::save_config()
 {
-	config().set_property("Themer", "themepath", m_themepage->themePathLineEdit->text());
-	config().set_property("Themer", "currenttheme", m_themepage->themeSelecterCombo->currentText());
-	config().set_property("Themer", "coloradjust", m_themepage->colorAdjustBox->value());
-	config().set_property("Themer", "style", m_themepage->styleCombo->currentText());
-	config().set_property("Themer", "usestylepallet", m_themepage->useStylePalletCheckBox->isChecked());
-	config().set_property("Themer", "paintaudiorectified", m_themepage->rectifiedCheckBox->isChecked());
-	config().set_property("Themer", "paintstereoaudioasmono", m_themepage->mergedCheckBox->isChecked());
-	config().set_property("Themer", "drawdbgrid", m_themepage->dbGridCheckBox->isChecked());
-	config().set_property("Themer", "paintwavewithoutline", m_themepage->paintAudioWithOutlineCheckBox->isChecked());
-	config().set_property("Themer", "iconsize", m_themepage->iconSizeCombo->currentText());
-	config().set_property("Themer", "toolbuttonstyle", m_themepage->toolbarStyleCombo->currentIndex());
+	config().set_property("Themer", "themepath", themePathLineEdit->text());
+	config().set_property("Themer", "currenttheme", themeSelecterCombo->currentText());
+	config().set_property("Themer", "coloradjust", colorAdjustBox->value());
+	config().set_property("Themer", "style", styleCombo->currentText());
+	config().set_property("Themer", "usestylepallet", useStylePalletCheckBox->isChecked());
+	config().set_property("Themer", "paintaudiorectified", rectifiedCheckBox->isChecked());
+	config().set_property("Themer", "paintstereoaudioasmono", mergedCheckBox->isChecked());
+	config().set_property("Themer", "drawdbgrid", dbGridCheckBox->isChecked());
+	config().set_property("Themer", "paintwavewithoutline", paintAudioWithOutlineCheckBox->isChecked());
+	config().set_property("Themer", "iconsize", iconSizeCombo->currentText());
+	config().set_property("Themer", "toolbuttonstyle", toolbarStyleCombo->currentIndex());
 	config().set_property("Themer", "supportediconsizes", supportedIconSizes);
-	config().set_property("Themer", "transportconsolesize", m_themepage->transportConsoleCombo->currentText());
-	config().set_property("Interface", "LanguageFile", m_themepage->languageComboBox->itemData(m_themepage->languageComboBox->currentIndex()));
+	config().set_property("Themer", "transportconsolesize", transportConsoleCombo->currentText());
+	config().set_property("Interface", "LanguageFile", languageComboBox->itemData(languageComboBox->currentIndex()));
 }
 
-void AppearancePage::load_config()
+void AppearenceConfigPage::load_config()
 {
 	QIcon icon = QApplication::style()->standardIcon(QStyle::SP_DirClosedIcon);
-	m_themepage->pathSelectButton->setIcon(icon);
+	pathSelectButton->setIcon(icon);
 	QString themepath = config().get_property("Themer", "themepath",
 				   QString(QDir::homePath()).append(".traverso/themes")).toString();
 	
@@ -550,10 +408,10 @@ void AppearancePage::load_config()
 	QStringList keys = QStyleFactory::keys();
 	keys.sort();
 	foreach(const QString &key, keys) {
-		m_themepage->styleCombo->addItem(key);
+		styleCombo->addItem(key);
 	}
 	
-	m_themepage->update_theme_combobox(themepath);
+	update_theme_combobox(themepath);
 	
 	
 	// Hmm, there seems no way to get the name of the current
@@ -570,25 +428,25 @@ void AppearancePage::load_config()
 	
 	QString interfaceLanguage = config().get_property("Interface", "LanguageFile", "").toString();
 	
-	int index = m_themepage->styleCombo->findText(style);
-	m_themepage->styleCombo->setCurrentIndex(index);
-	index = m_themepage->themeSelecterCombo->findText(theme);
-	m_themepage->themeSelecterCombo->setCurrentIndex(index);
-	m_themepage->colorAdjustBox->setValue(coloradjust);
-	m_themepage->useStylePalletCheckBox->setChecked(usestylepallete);
-	m_themepage->themePathLineEdit->setText(themepath);
-	m_themepage->rectifiedCheckBox->setChecked(paintRectified);
-	m_themepage->mergedCheckBox->setChecked(paintStereoAsMono);
-	m_themepage->dbGridCheckBox->setChecked(dbGrid);
-	m_themepage->paintAudioWithOutlineCheckBox->setChecked(paintWaveWithLines);
+	int index = styleCombo->findText(style);
+	styleCombo->setCurrentIndex(index);
+	index = themeSelecterCombo->findText(theme);
+	themeSelecterCombo->setCurrentIndex(index);
+	colorAdjustBox->setValue(coloradjust);
+	useStylePalletCheckBox->setChecked(usestylepallete);
+	themePathLineEdit->setText(themepath);
+	rectifiedCheckBox->setChecked(paintRectified);
+	mergedCheckBox->setChecked(paintStereoAsMono);
+	dbGridCheckBox->setChecked(dbGrid);
+	paintAudioWithOutlineCheckBox->setChecked(paintWaveWithLines);
 
-	m_themepage->toolbarStyleCombo->clear();
-	m_themepage->toolbarStyleCombo->addItem(tr("Icons only"));
-	m_themepage->toolbarStyleCombo->addItem(tr("Text only"));
-	m_themepage->toolbarStyleCombo->addItem(tr("Text beside Icons"));
-	m_themepage->toolbarStyleCombo->addItem(tr("Text below Icons"));
+	toolbarStyleCombo->clear();
+	toolbarStyleCombo->addItem(tr("Icons only"));
+	toolbarStyleCombo->addItem(tr("Text only"));
+	toolbarStyleCombo->addItem(tr("Text beside Icons"));
+	toolbarStyleCombo->addItem(tr("Text below Icons"));
 	int tbstyle = config().get_property("Themer", "toolbuttonstyle", 0).toInt();
-	m_themepage->toolbarStyleCombo->setCurrentIndex(tbstyle);
+	toolbarStyleCombo->setCurrentIndex(tbstyle);
 
 	// icon sizes of the toolbars
 	QString iconsize = config().get_property("Themer", "iconsize", "22").toString();
@@ -608,10 +466,10 @@ void AppearancePage::load_config()
 		iconSizesList.sort();
 	}
 
-	m_themepage->iconSizeCombo->clear();
-	m_themepage->iconSizeCombo->addItems(iconSizesList);
-	int iconsizeindex = m_themepage->iconSizeCombo->findText(iconsize);
-	m_themepage->iconSizeCombo->setCurrentIndex(iconsizeindex);
+	iconSizeCombo->clear();
+	iconSizeCombo->addItems(iconSizesList);
+	int iconsizeindex = iconSizeCombo->findText(iconsize);
+	iconSizeCombo->setCurrentIndex(iconsizeindex);
 
 	// and the same again for the icons size of the transport console
 	QString trspsize = config().get_property("Themer", "transportconsolesize", "22").toString();
@@ -622,21 +480,21 @@ void AppearancePage::load_config()
 		iconSizesList.sort();
 	}
 
-	m_themepage->transportConsoleCombo->clear();
-	m_themepage->transportConsoleCombo->addItems(iconSizesList);
-	int trspsizeindex = m_themepage->iconSizeCombo->findText(trspsize);
-	m_themepage->transportConsoleCombo->setCurrentIndex(trspsizeindex);
+	transportConsoleCombo->clear();
+	transportConsoleCombo->addItems(iconSizesList);
+	int trspsizeindex = iconSizeCombo->findText(trspsize);
+	transportConsoleCombo->setCurrentIndex(trspsizeindex);
 	
 	
-	int langIndex = m_themepage->languageComboBox->findData(interfaceLanguage);
+	int langIndex = languageComboBox->findData(interfaceLanguage);
 	if (langIndex >= 0) {
-		m_themepage->languageComboBox->setCurrentIndex(langIndex);
+		languageComboBox->setCurrentIndex(langIndex);
 	}
 }
 
-void AppearancePage::reset_default_config()
+void AppearenceConfigPage::reset_default_config()
 {
-	m_themepage->styleCombo->clear();
+	styleCombo->clear();
 	
 	config().set_property("Themer", "themepath", QString(QDir::homePath()).append("/.traverso/themes"));
 	config().set_property("Themer", "currenttheme", "TraversoLight");
@@ -657,14 +515,28 @@ void AppearancePage::reset_default_config()
 }
 
 
-ThemeConfigPage::ThemeConfigPage(QWidget * parent)
-	: QWidget(parent)
+AppearenceConfigPage::AppearenceConfigPage(QWidget * parent)
+	: ConfigPage(parent)
 {
 	setupUi(this);
+	
 	themeSelecterCombo->setInsertPolicy(QComboBox::InsertAlphabetically);
+	
+	languageComboBox->addItem(tr("Default Language"), "");
+	foreach(const QString &lang, find_qm_files()) {
+		languageComboBox->addItem(language_name_from_qm_file(lang), lang);
+	}
+	
+	load_config();
+	create_connections();
+
+#if defined Q_WS_MAC
+	iconSizeCombo->hide();
+	toolbarStyleCombo->hide();
+#endif
 }
 
-void ThemeConfigPage::create_connections()
+void AppearenceConfigPage::create_connections()
 {
 	connect(styleCombo, SIGNAL(currentIndexChanged(const QString)), this, SLOT(style_index_changed(const QString)));
 	connect(themeSelecterCombo, SIGNAL(currentIndexChanged(const QString)), this, SLOT(theme_index_changed(const QString)));
@@ -677,7 +549,7 @@ void ThemeConfigPage::create_connections()
 	connect(paintAudioWithOutlineCheckBox, SIGNAL(toggled(bool)), this, SLOT(theme_option_changed()));
 }
 
-void ThemeConfigPage::style_index_changed(const QString& text)
+void AppearenceConfigPage::style_index_changed(const QString& text)
 {
 	QApplication::setStyle(text);
 	QIcon icon = QApplication::style()->standardIcon(QStyle::SP_DirClosedIcon);
@@ -685,7 +557,7 @@ void ThemeConfigPage::style_index_changed(const QString& text)
 	use_selected_styles_pallet_checkbox_toggled(useStylePalletCheckBox->isChecked());
 }
 
-void ThemeConfigPage::theme_index_changed(const QString & theme)
+void AppearenceConfigPage::theme_index_changed(const QString & theme)
 {
 	int index = themeSelecterCombo->findText(theme);
 	QString data = themeSelecterCombo->itemData(index).toString();
@@ -698,7 +570,7 @@ void ThemeConfigPage::theme_index_changed(const QString & theme)
 	}
 }
 
-void ThemeConfigPage::use_selected_styles_pallet_checkbox_toggled(bool checked)
+void AppearenceConfigPage::use_selected_styles_pallet_checkbox_toggled(bool checked)
 {
 	if (checked) {
 		QApplication::setPalette(QApplication::style()->standardPalette());
@@ -707,12 +579,12 @@ void ThemeConfigPage::use_selected_styles_pallet_checkbox_toggled(bool checked)
 	}
 }
 
-void ThemeConfigPage::color_adjustbox_changed(int value)
+void AppearenceConfigPage::color_adjustbox_changed(int value)
 {
 	themer()->set_color_adjust_value(value);
 }
 
-void ThemeConfigPage::dirselect_button_clicked()
+void AppearenceConfigPage::dirselect_button_clicked()
 {
 	QString path = themePathLineEdit->text();
 	if (path.isEmpty()) {
@@ -727,7 +599,7 @@ void ThemeConfigPage::dirselect_button_clicked()
 	}
 }
 
-void ThemeConfigPage::update_theme_combobox(const QString& path)
+void AppearenceConfigPage::update_theme_combobox(const QString& path)
 {
 	themeSelecterCombo->clear();
 	
@@ -745,7 +617,7 @@ void ThemeConfigPage::update_theme_combobox(const QString& path)
 	
 }
 
-void ThemeConfigPage::theme_option_changed()
+void AppearenceConfigPage::theme_option_changed()
 {
 	config().set_property("Themer", "paintaudiorectified", rectifiedCheckBox->isChecked());
 	config().set_property("Themer", "paintstereoaudioasmono", mergedCheckBox->isChecked());
@@ -755,51 +627,143 @@ void ThemeConfigPage::theme_option_changed()
 }
 
 
+
+
+
 /****************************************/
-/*            Keyboard                  */
+/*            Behavior                  */
 /****************************************/
 
-KeyboardPage::KeyboardPage(QWidget * parent)
+BehaviorConfigPage::BehaviorConfigPage(QWidget * parent)
 	: ConfigPage(parent)
 {
-	m_configpage = new KeyboardConfigPage(this);
-	mainLayout->addWidget(m_configpage);
+	setupUi(this);
+	
+	connect(&config(), SIGNAL(configChanged()), this, SLOT(update_follow()));
 	
 	load_config();
 }
 
-void KeyboardPage::load_config()
+
+void BehaviorConfigPage::save_config()
+{
+	config().set_property("Project", "loadLastUsed", loadLastProjectCheckBox->isChecked());
+	config().set_property("Sheet", "trackCreationCount", numberOfTrackSpinBox->value());
+	config().set_property("PlayHead", "Follow", keepCursorVisibleCheckBox->isChecked());
+	config().set_property("PlayHead", "Scrollmode", scrollModeComboBox->currentIndex());
+	config().set_property("AudioClip", "SyncDuringDrag", resyncAudioCheckBox->isChecked());
+	config().set_property("AudioClip", "LockByDefault", lockClipsCheckBox->isChecked());
+
+	QString oncloseaction;
+	if (saveRadioButton->isChecked()) {
+		config().set_property("Project", "onclose", "save");
+	} else if (askRadioButton->isChecked()) {
+		config().set_property("Project", "onclose", "ask");
+	} else {
+		config().set_property("Project", "onclose", "dontsave");
+	}
+}
+
+void BehaviorConfigPage::load_config()
+{
+	bool loadLastUsedProject = config().get_property("Project", "loadLastUsed", 1).toBool();
+	QString oncloseaction = config().get_property("Project", "onclose", "save").toString();
+	int defaultNumTracks = config().get_property("Sheet", "trackCreationCount", 6).toInt();
+	int scrollMode = config().get_property("PlayHead", "Scrollmode", 2).toInt();
+	bool resyncAudio = config().get_property("AudioClip", "SyncDuringDrag", false).toBool();
+	bool lockClips = config().get_property("AudioClip", "LockByDefault", false).toBool();
+	
+	loadLastProjectCheckBox->setChecked(loadLastUsedProject);
+	numberOfTrackSpinBox->setValue(defaultNumTracks);
+	scrollModeComboBox->setCurrentIndex(scrollMode);
+	resyncAudioCheckBox->setChecked(resyncAudio);
+	lockClipsCheckBox->setChecked(lockClips);
+	
+	if (oncloseaction == "save") {
+		saveRadioButton->setChecked(true);
+	} else if (oncloseaction == "ask") {
+		askRadioButton->setChecked(true);
+	} else {
+		neverRadioButton->setChecked(true);
+	}
+	
+	update_follow();
+
+}
+
+
+void BehaviorConfigPage::update_follow()
+{
+	bool keepCursorVisible = config().get_property("PlayHead", "Follow", true).toBool();
+	keepCursorVisibleCheckBox->setChecked(keepCursorVisible);
+	scrollModeComboBox->setEnabled(keepCursorVisible);
+}
+
+void BehaviorConfigPage::reset_default_config()
+{
+	config().set_property("Project", "loadLastUsed", true);
+	config().set_property("Project", "onclose", "save");
+	config().set_property("Sheet", "trackCreationCount", 6);
+	config().set_property("PlayHead", "Follow", 0);
+	config().set_property("PlayHead", "Scrollmode", 2);
+	config().set_property("AudioClip", "SyncDuringDrag", false);
+	config().set_property("AudioClip", "LockByDefault", false);
+	
+	load_config();
+}
+
+
+
+
+/****************************************/
+/*            Keyboard                  */
+/****************************************/
+
+
+KeyboardConfigPage::KeyboardConfigPage(QWidget * parent)
+	: ConfigPage(parent)
+{
+	setupUi(this);
+	connect(keymapComboBox, SIGNAL(currentIndexChanged(const QString)),
+		this, SLOT(keymap_index_changed(const QString)));
+	
+	load_config();
+	
+	update_keymap_combo();
+}
+
+void KeyboardConfigPage::load_config()
 {
 	int doubleFactTimeout = config().get_property("CCE", "doublefactTimeout", 180).toInt();
 	int holdTimeout = config().get_property("CCE", "holdTimeout", 150).toInt();
 	
-	m_configpage->doubleFactTimeoutSpinBox->setValue(doubleFactTimeout);
-	m_configpage->holdTimeoutSpinBox->setValue(holdTimeout);
+	doubleFactTimeoutSpinBox->setValue(doubleFactTimeout);
+	holdTimeoutSpinBox->setValue(holdTimeout);
 	
 	QString defaultkeymap = config().get_property("CCE", "keymap", "default").toString();
-	int index = m_configpage->keymapComboBox->findText(defaultkeymap);
+	int index = keymapComboBox->findText(defaultkeymap);
 	if (index >= 0) {
-		m_configpage->keymapComboBox->setCurrentIndex(index);
+		keymapComboBox->setCurrentIndex(index);
 	}
 }
 
-void KeyboardPage::save_config()
+void KeyboardConfigPage::save_config()
 {
 	QString currentkeymap = config().get_property("CCE", "keymap", "default").toString();
-	QString newkeymap = m_configpage->keymapComboBox->currentText();
+	QString newkeymap = keymapComboBox->currentText();
 	
-	config().set_property("CCE", "doublefactTimeout", m_configpage->doubleFactTimeoutSpinBox->value());
-	config().set_property("CCE", "holdTimeout", m_configpage->holdTimeoutSpinBox->value());
+	config().set_property("CCE", "doublefactTimeout", doubleFactTimeoutSpinBox->value());
+	config().set_property("CCE", "holdTimeout", holdTimeoutSpinBox->value());
 	config().set_property("CCE", "keymap", newkeymap);
 	
-	ie().set_double_fact_interval(m_configpage->doubleFactTimeoutSpinBox->value());
-	ie().set_hold_sensitiveness(m_configpage->holdTimeoutSpinBox->value());
+	ie().set_double_fact_interval(doubleFactTimeoutSpinBox->value());
+	ie().set_hold_sensitiveness(holdTimeoutSpinBox->value());
 	if (currentkeymap != newkeymap) {
 		ie().init_map(newkeymap);
 	}
 }
 
-void KeyboardPage::reset_default_config()
+void KeyboardConfigPage::reset_default_config()
 {
 	config().set_property("CCE", "doublefactTimeout", 180);
 	config().set_property("CCE", "holdTimeout", 150);
@@ -807,15 +771,6 @@ void KeyboardPage::reset_default_config()
 	load_config();
 }
 
-KeyboardConfigPage::KeyboardConfigPage(QWidget * parent)
-	: QWidget(parent)
-{
-	setupUi(this);
-	connect(keymapComboBox, SIGNAL(currentIndexChanged(const QString)),
-		this, SLOT(keymap_index_changed(const QString)));
-	
-	update_keymap_combo();
-}
 
 void KeyboardConfigPage::keymap_index_changed(const QString& keymap)
 {
@@ -882,48 +837,14 @@ void KeyboardConfigPage::on_printButton_clicked()
 
 
 
-PerformancePage::PerformancePage(QWidget * parent)
+PerformanceConfigPage::PerformanceConfigPage(QWidget* parent)
 	: ConfigPage(parent)
 {
-	m_configpage = new PerformanceConfigPage(this);
-	mainLayout->addWidget(m_configpage);
-	
-	load_config();
-}
-
-void PerformancePage::load_config()
-{
-	int jogUpdateInterval = config().get_property("CCE", "jogupdateinterval", 28).toInt();
-	bool useOpenGL = config().get_property("Interface", "OpenGL", false).toBool();
-	
-	m_configpage->jogUpdateIntervalSpinBox->setValue(1000 / jogUpdateInterval);
-	m_configpage->useOpenGLCheckBox->setChecked(useOpenGL);	
-
-
-	double buffertime = config().get_property("Hardware", "readbuffersize", 1.0).toDouble();
-	m_configpage->bufferTimeSpinBox->setValue(buffertime);
-}
-
-void PerformancePage::save_config()
-{
-	config().set_property("Interface", "OpenGL", m_configpage->useOpenGLCheckBox->isChecked());
-	config().set_property("CCE", "jogupdateinterval", 1000 / m_configpage->jogUpdateIntervalSpinBox->value());	
-	double buffertime = m_configpage->bufferTimeSpinBox->value();
-	config().set_property("Hardware", "readbuffersize", buffertime);
-}
-
-void PerformancePage::reset_default_config()
-{
-	config().set_property("CCE", "jogupdateinterval", 28);
-	config().set_property("Interface", "OpenGL", false);
-	config().set_property("Hardware", "readbuffersize", 1.0);
-	load_config();
-}
-
-PerformanceConfigPage::PerformanceConfigPage(QWidget* parent)
-	: QWidget(parent)
-{
+	delete layout();
 	setupUi(this);
+	
+	load_config();
+
 
 	// don't show it for now, it's not making sense with current opengl support
 	useOpenGLCheckBox->hide();
@@ -936,79 +857,43 @@ PerformanceConfigPage::PerformanceConfigPage(QWidget* parent)
 	reloadWarningLabel->setPixmap(icon.pixmap(22, 22));
 }
 
+
+void PerformanceConfigPage::load_config()
+{
+	int jogUpdateInterval = config().get_property("CCE", "jogupdateinterval", 28).toInt();
+	bool useOpenGL = config().get_property("Interface", "OpenGL", false).toBool();
+	
+	jogUpdateIntervalSpinBox->setValue(1000 / jogUpdateInterval);
+	useOpenGLCheckBox->setChecked(useOpenGL);	
+
+
+	double buffertime = config().get_property("Hardware", "readbuffersize", 1.0).toDouble();
+	bufferTimeSpinBox->setValue(buffertime);
+}
+
+void PerformanceConfigPage::save_config()
+{
+	config().set_property("Interface", "OpenGL", useOpenGLCheckBox->isChecked());
+	config().set_property("CCE", "jogupdateinterval", 1000 / jogUpdateIntervalSpinBox->value());	
+	double buffertime = bufferTimeSpinBox->value();
+	config().set_property("Hardware", "readbuffersize", buffertime);
+}
+
+void PerformanceConfigPage::reset_default_config()
+{
+	config().set_property("CCE", "jogupdateinterval", 28);
+	config().set_property("Interface", "OpenGL", false);
+	config().set_property("Hardware", "readbuffersize", 1.0);
+	load_config();
+}
+
+
 /****************************************/
 /*            Recording                 */
 /****************************************/
 
-
-RecordingPage::RecordingPage(QWidget * parent)
-	: ConfigPage(parent)
-{
-	m_config = new RecordingConfigPage(this);
-	mainLayout->addWidget(m_config);
-	
-	load_config();
-}
-
-void RecordingPage::load_config()
-{
-	bool useResampling = config().get_property("Conversion", "DynamicResampling", true).toBool();
-	if (useResampling) {
-		m_config->use_onthefly_resampling_checkbox_changed(Qt::Checked);
-	} else {
-		m_config->use_onthefly_resampling_checkbox_changed(Qt::Unchecked);
-	}
-	
-	QString recordFormat = config().get_property("Recording", "FileFormat", "wav").toString();
-	if (recordFormat == "wavpack") {
-		m_config->encoding_index_changed(1);
-	} else if (recordFormat == "w64") {
-		m_config->encoding_index_changed(2);
-	} else {
-		m_config->encoding_index_changed(0);
-	}
-	
-	QString wavpackcompression = config().get_property("Recording", "WavpackCompressionType", "fast").toString();
-	if (wavpackcompression == "very_high") {
-		m_config->wavpackCompressionComboBox->setCurrentIndex(0);
-	} else if (wavpackcompression == "high") {
-		m_config->wavpackCompressionComboBox->setCurrentIndex(1);
-	} else {
-		m_config->wavpackCompressionComboBox->setCurrentIndex(2);
-	}		
-	
-	int index = config().get_property("Conversion", "RTResamplingConverterType", DEFAULT_RESAMPLE_QUALITY).toInt();
-	m_config->ontheflyResampleComboBox->setCurrentIndex(index);
-	
-	index = config().get_property("Conversion", "ExportResamplingConverterType", 1).toInt();
-	m_config->exportDefaultResampleQualityComboBox->setCurrentIndex(index);
-}
-
-void RecordingPage::save_config()
-{
-	config().set_property("Conversion", "DynamicResampling", m_config->useResamplingCheckBox->isChecked());
-	config().set_property("Conversion", "RTResamplingConverterType", m_config->ontheflyResampleComboBox->currentIndex());
-	config().set_property("Conversion", "ExportResamplingConverterType", m_config->exportDefaultResampleQualityComboBox->currentIndex());
-	config().set_property("Recording", "FileFormat", m_config->encodingComboBox->itemData(m_config->encodingComboBox->currentIndex()).toString());
-	config().set_property("Recording", "WavpackCompressionType", m_config->wavpackCompressionComboBox->itemData(m_config->wavpackCompressionComboBox->currentIndex()).toString());
-	QString skipwvx = m_config->wavpackUseAlmostLosslessCheckBox->isChecked() ? "true" : "false";
-	config().set_property("Recording", "WavpackSkipWVX", skipwvx);
-}
-
-void RecordingPage::reset_default_config()
-{
-	config().set_property("Conversion", "DynamicResampling", true);
-	config().set_property("Conversion", "RTResamplingConverterType", DEFAULT_RESAMPLE_QUALITY);
-	config().set_property("Conversion", "ExportResamplingConverterType", 1);
-	config().set_property("Recording", "FileFormat", "wav");
-	config().set_property("Recording", "WavpackCompressionType", "fast");
-	config().set_property("Recording", "WavpackSkipWVX", "false");
-	
-	load_config();
-}
-
 RecordingConfigPage::RecordingConfigPage(QWidget * parent)
-	: QWidget(parent)
+	: ConfigPage(parent)
 {
 	setupUi(this);
 	
@@ -1022,7 +907,67 @@ RecordingConfigPage::RecordingConfigPage(QWidget * parent)
 	connect(encodingComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(encoding_index_changed(int)));
 	connect(useResamplingCheckBox, SIGNAL(stateChanged(int)), 
 		this, SLOT(use_onthefly_resampling_checkbox_changed(int)));
+	
+	load_config();
 }
+
+void RecordingConfigPage::load_config()
+{
+	bool useResampling = config().get_property("Conversion", "DynamicResampling", true).toBool();
+	if (useResampling) {
+		use_onthefly_resampling_checkbox_changed(Qt::Checked);
+	} else {
+		use_onthefly_resampling_checkbox_changed(Qt::Unchecked);
+	}
+	
+	QString recordFormat = config().get_property("Recording", "FileFormat", "wav").toString();
+	if (recordFormat == "wavpack") {
+		encoding_index_changed(1);
+	} else if (recordFormat == "w64") {
+		encoding_index_changed(2);
+	} else {
+		encoding_index_changed(0);
+	}
+	
+	QString wavpackcompression = config().get_property("Recording", "WavpackCompressionType", "fast").toString();
+	if (wavpackcompression == "very_high") {
+		wavpackCompressionComboBox->setCurrentIndex(0);
+	} else if (wavpackcompression == "high") {
+		wavpackCompressionComboBox->setCurrentIndex(1);
+	} else {
+		wavpackCompressionComboBox->setCurrentIndex(2);
+	}		
+	
+	int index = config().get_property("Conversion", "RTResamplingConverterType", DEFAULT_RESAMPLE_QUALITY).toInt();
+	ontheflyResampleComboBox->setCurrentIndex(index);
+	
+	index = config().get_property("Conversion", "ExportResamplingConverterType", 1).toInt();
+	exportDefaultResampleQualityComboBox->setCurrentIndex(index);
+}
+
+void RecordingConfigPage::save_config()
+{
+	config().set_property("Conversion", "DynamicResampling", useResamplingCheckBox->isChecked());
+	config().set_property("Conversion", "RTResamplingConverterType", ontheflyResampleComboBox->currentIndex());
+	config().set_property("Conversion", "ExportResamplingConverterType", exportDefaultResampleQualityComboBox->currentIndex());
+	config().set_property("Recording", "FileFormat", encodingComboBox->itemData(encodingComboBox->currentIndex()).toString());
+	config().set_property("Recording", "WavpackCompressionType", wavpackCompressionComboBox->itemData(wavpackCompressionComboBox->currentIndex()).toString());
+	QString skipwvx = wavpackUseAlmostLosslessCheckBox->isChecked() ? "true" : "false";
+	config().set_property("Recording", "WavpackSkipWVX", skipwvx);
+}
+
+void RecordingConfigPage::reset_default_config()
+{
+	config().set_property("Conversion", "DynamicResampling", true);
+	config().set_property("Conversion", "RTResamplingConverterType", DEFAULT_RESAMPLE_QUALITY);
+	config().set_property("Conversion", "ExportResamplingConverterType", 1);
+	config().set_property("Recording", "FileFormat", "wav");
+	config().set_property("Recording", "WavpackCompressionType", "fast");
+	config().set_property("Recording", "WavpackSkipWVX", "false");
+	
+	load_config();
+}
+
 
 void RecordingConfigPage::encoding_index_changed(int index)
 {

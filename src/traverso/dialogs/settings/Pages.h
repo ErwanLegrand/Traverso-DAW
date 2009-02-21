@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2007 Remon Sijrier 
+Copyright (C) 2007-2009 Remon Sijrier 
 
 This file is part of Traverso
 
@@ -19,112 +19,98 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 */
 
-#ifndef PAGES_H
-#define PAGES_H
+#ifndef CONFIG_PAGES_H
+#define CONFIG_PAGES_H
 
 #include <QWidget>
 
-#include "ui_DriverConfigPage.h"
+#include "ui_AudioDriverConfigPage.h"
 #include "ui_KeyboardConfigPage.h"
 #include "ui_BehaviorConfigPage.h"
 #include "ui_RecordingConfigPage.h"
-#include "ui_ThemeConfigPage.h"
+#include "ui_AppearenceConfigPage.h"
 #include "ui_PerformanceConfigPage.h"
 #include "ui_AlsaDevicesPage.h"
 #include "ui_PaDriverPage.h"
 
-class PerformanceConfigPage : public QWidget, private Ui::PerformanceConfigPage
-{
-public:
-	PerformanceConfigPage(QWidget* parent = 0);
-
-private:
-	friend class PerformancePage;
-};
-
-class DriverConfigPage : public QWidget, private Ui::DriverConfigPage
-{
-	Q_OBJECT
-
-public:
-	DriverConfigPage(QWidget* parent = 0);
-
-private:
-	QList<int>	periodBufferSizesList;
-	friend class AudioDriverPage;
-
-private slots:
-	void update_latency_combobox();
-	void rate_combobox_index_changed(QString);
-};
 
 
 class AlsaDevicesPage : public QWidget, private Ui::AlsaDevicesPage
 {
 public:
-	AlsaDevicesPage(QWidget* parent = 0);
+	AlsaDevicesPage(QWidget* parent) : QWidget(parent) {
+		setupUi(this);
+	}
 private:
-	friend class AudioDriverPage;
+	friend class AudioDriverConfigPage;
 };
 
 
 class PaDriverPage : public QWidget, private Ui::PaDriverPage
 {
 public:
-	PaDriverPage(QWidget* parent = 0);
+	PaDriverPage(QWidget* parent) : QWidget(parent)	{
+		setupUi(this);
+	}
+
 private:
-	friend class AudioDriverPage;
+	friend class AudioDriverConfigPage;
 };
 
 
-class KeyboardConfigPage : public QWidget, private Ui::KeyboardConfigPage
+
+class ConfigPage : public QWidget
 {
 	Q_OBJECT
 public:
-	KeyboardConfigPage(QWidget* parent = 0);
+	ConfigPage(QWidget* parent) : QWidget(parent) {};
+	virtual void save_config() = 0;
+	virtual void load_config() = 0;
+	virtual void reset_default_config() = 0;
+};
+
+
+
+class AudioDriverConfigPage : public ConfigPage, private Ui::AudioDriverConfigPage
+{
+	Q_OBJECT
+public:
+	AudioDriverConfigPage(QWidget *parent = 0);
+	
+	void load_config();
+    	void save_config();
+	void reset_default_config();
+
 private:
-	friend class KeyboardPage;
+	QVBoxLayout* m_mainLayout;
+	AudioDriverConfigPage* m_driverConfigPage;
+	AlsaDevicesPage* m_alsadevices;
+	PaDriverPage* m_portaudiodrivers;
+	QList<int>	periodBufferSizesList;
 	
 private slots:
-	void keymap_index_changed(const QString& keymap);
-	void update_keymap_combo();
-	void on_exportButton_clicked();
-	void on_printButton_clicked();
-};
-
-class BehaviorConfigPage : public QWidget, private Ui::BehaviorConfigPage
-{
-	Q_OBJECT
-public:
-	BehaviorConfigPage(QWidget* parent = 0);
-private:
-	friend class BehaviorPage;
+	void update_latency_combobox();
+	void rate_combobox_index_changed(QString);
+	void driver_combobox_index_changed(QString);
+	void restart_driver_button_clicked();
 };
 
 
-class RecordingConfigPage : public QWidget, private Ui::RecordingConfigPage
+class AppearenceConfigPage : public ConfigPage, private Ui::AppearenceConfigPage
 {
 	Q_OBJECT
 public:
-	RecordingConfigPage(QWidget* parent = 0);
-private:
-	friend class RecordingPage;
-private slots:
-	void encoding_index_changed(int index);
-	void use_onthefly_resampling_checkbox_changed(int state);
-};
+	AppearenceConfigPage(QWidget* parent = 0);
+	
+	void load_config();
+	void save_config();
+	void reset_default_config();
 
-
-class ThemeConfigPage : public QWidget, private Ui::ThemeConfigPage
-{
-	Q_OBJECT
-public:
-	ThemeConfigPage(QWidget* parent = 0);
 	
 private:
 	void update_theme_combobox(const QString& path);
 	void create_connections();
-	friend class AppearancePage;
+	QString supportedIconSizes;
 
 private slots:
 	void dirselect_button_clicked();
@@ -136,108 +122,64 @@ private slots:
 };
 
 
-
-
-class ConfigPage : public QWidget
+class BehaviorConfigPage : public ConfigPage, private Ui::BehaviorConfigPage
 {
 	Q_OBJECT
 public:
-	ConfigPage(QWidget* parent);
-	virtual void save_config() = 0;
-	virtual void load_config() = 0;
-	virtual void reset_default_config() = 0;
-protected:
-	QVBoxLayout* mainLayout;
-};
-
-
-class AudioDriverPage : public ConfigPage
-{
-	Q_OBJECT
-public:
-	AudioDriverPage(QWidget *parent = 0);
-    	void save_config();
-	void reset_default_config();
-
-private:
-	QVBoxLayout* m_mainLayout;
-	DriverConfigPage* m_driverConfigPage;
-	AlsaDevicesPage* m_alsadevices;
-	PaDriverPage* m_portaudiodrivers;
+	BehaviorConfigPage(QWidget* parent = 0);
 	
-	void load_config();
-	
-private slots:
-	void driver_combobox_index_changed(QString);
-	void restart_driver_button_clicked();
-};
-
-
-class RecordingPage : public ConfigPage
-{
-public:
-	RecordingPage(QWidget *parent = 0);
-	void load_config();
-	void save_config();
-	void reset_default_config();
-private:
-	RecordingConfigPage* m_config;
-};
-
-
-class KeyboardPage : public ConfigPage
-{
-public:
-	KeyboardPage(QWidget* parent=0);
-	void load_config();
-	void save_config();
-	void reset_default_config();
-
-private:
-	KeyboardConfigPage* m_configpage;
-};
-
-
-class AppearancePage : public ConfigPage
-{
-public:
-	AppearancePage(QWidget *parent = 0);
-	void load_config();
-	void save_config();
-	void reset_default_config();
-
-private:
-	QString supportedIconSizes;
-	ThemeConfigPage* m_themepage;
-};
-
-
-class BehaviorPage : public ConfigPage
-{
-	Q_OBJECT
-public:
-	BehaviorPage(QWidget *parent = 0);
 	void load_config();
 	void save_config();
 	void reset_default_config();
 	
 private slots:
 	void update_follow();
-
-private:
-	BehaviorConfigPage* m_configpage;
 };
 
-class PerformancePage : public ConfigPage
+
+class KeyboardConfigPage : public ConfigPage, private Ui::KeyboardConfigPage
 {
+	Q_OBJECT
 public:
-	PerformancePage(QWidget *parent = 0);
+	KeyboardConfigPage(QWidget* parent = 0);
+
 	void load_config();
 	void save_config();
 	void reset_default_config();
-	
-private:
-	PerformanceConfigPage* m_configpage;
+
+private slots:
+	void keymap_index_changed(const QString& keymap);
+	void update_keymap_combo();
+	void on_exportButton_clicked();
+	void on_printButton_clicked();
 };
+
+
+class PerformanceConfigPage : public ConfigPage, private Ui::PerformanceConfigPage
+{
+public:
+	PerformanceConfigPage(QWidget* parent = 0);
+	
+	void load_config();
+	void save_config();
+	void reset_default_config();
+};
+
+
+class RecordingConfigPage : public ConfigPage, private Ui::RecordingConfigPage
+{
+	Q_OBJECT
+public:
+	RecordingConfigPage(QWidget* parent = 0);
+	
+	void load_config();
+	void save_config();
+	void reset_default_config();
+
+private slots:
+	void encoding_index_changed(int index);
+	void use_onthefly_resampling_checkbox_changed(int state);
+};
+
 
 #endif

@@ -46,12 +46,12 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 	contentsWidget->setSpacing(12);
 	
 	pagesWidget = new QStackedWidget;
-	pagesWidget->addWidget(new BehaviorPage(this));
-	pagesWidget->addWidget(new AppearancePage(this));
-	pagesWidget->addWidget(new AudioDriverPage(this));
-	pagesWidget->addWidget(new RecordingPage(this));
-	pagesWidget->addWidget(new KeyboardPage(this));
-	pagesWidget->addWidget(new PerformancePage(this));
+	pagesWidget->addWidget(new BehaviorConfigPage(this));
+	pagesWidget->addWidget(new AppearenceConfigPage(this));
+	pagesWidget->addWidget(new AudioDriverConfigPage(this));
+	pagesWidget->addWidget(new RecordingConfigPage(this));
+	pagesWidget->addWidget(new KeyboardConfigPage(this));
+	pagesWidget->addWidget(new PerformanceConfigPage(this));
 	
 	createIcons();
 	contentsWidget->setCurrentRow(0);
@@ -76,16 +76,15 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 	
 	QVBoxLayout *mainLayout = new QVBoxLayout;
 	mainLayout->addLayout(horizontalLayout);
-	mainLayout->addStretch(1);
-	mainLayout->addSpacing(12);
 	mainLayout->addLayout(buttonsLayout);
+	
 	setLayout(mainLayout);
 	
-	setWindowTitle(tr("Configure - Traverso"));
+	setWindowTitle(tr("Preferences - Traverso"));
 	
 	connect(&config(), SIGNAL(configChanged()), this, SLOT(external_change_to_settings()));
 	
-	resize(500, 300);
+	resize(400, 300);
 }
 
 void SettingsDialog::show_page(const QString & page)
