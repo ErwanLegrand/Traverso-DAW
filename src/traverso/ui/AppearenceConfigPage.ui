@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>ThemeConfigPage</class>
- <widget class="QWidget" name="ThemeConfigPage" >
+ <class>AppearenceConfigPage</class>
+ <widget class="QWidget" name="AppearenceConfigPage" >
   <property name="geometry" >
    <rect>
     <x>0</x>

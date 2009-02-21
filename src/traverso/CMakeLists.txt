@@ -57,13 +57,13 @@ SET(TRAVERSO_UI_FILES
 ui/AudioSourcesManagerWidget.ui
 ui/ExportFormatOptionsWidget.ui
 ui/SpectralMeterConfigWidget.ui
-ui/DriverConfigPage.ui
+ui/AudioDriverConfigPage.ui
 ui/AlsaDevicesPage.ui
 ui/PaDriverPage.ui
 ui/KeyboardConfigPage.ui
 ui/BehaviorConfigPage.ui
 ui/RecordingConfigPage.ui
-ui/ThemeConfigPage.ui
+ui/AppearenceConfigPage.ui
 ui/PerformanceConfigPage.ui
 ui/SheetManagerDialog.ui
 ui/ProjectManagerDialog.ui
