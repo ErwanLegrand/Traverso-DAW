@@ -19,15 +19,15 @@
 #ifndef __SLV2_WORLD_H__
 #define __SLV2_WORLD_H__
 
-#include <slv2/plugins.h>
-#include <slv2/pluginclasses.h>
-#include <librdf.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/** \defgroup world Global library state
+#include <librdf.h>
+#include "slv2/plugins.h"
+#include "slv2/pluginclasses.h"
+
+/** \defgroup slv2_world Global library state
  * 
  * The "world" represents all library state, and the data found in bundles'
  * manifest.ttl (ie it is an in-memory index of all things LV2 found).
@@ -107,8 +107,8 @@ slv2_world_load_all(SLV2World world);
  * Time = Query
  */
 void
-slv2_world_load_bundle(SLV2World   world,
-                       const char* bundle_uri);
+slv2_world_load_bundle(SLV2World world,
+                       SLV2Value bundle_uri);
 
 
 /** Get the parent of all other plugin classes, lv2:Plugin.
@@ -204,7 +204,7 @@ slv2_world_get_plugins_by_query(SLV2World   world,
 /** @} */
 
 #ifdef __cplusplus
-}
+} /* extern "C" */
 #endif
 
 #endif /* __SLV2_WORLD_H__ */

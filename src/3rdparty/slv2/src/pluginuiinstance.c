@@ -24,11 +24,11 @@
 #include <string.h>
 #include <assert.h>
 #include <dlfcn.h>
-#include <slv2/types.h>
-#include <slv2/plugin.h>
-#include <slv2/pluginui.h>
-#include <slv2/pluginuiinstance.h>
-#include <slv2/util.h>
+#include "slv2/types.h"
+#include "slv2/plugin.h"
+#include "slv2/pluginui.h"
+#include "slv2/pluginuiinstance.h"
+#include "slv2/util.h"
 #include "slv2_internal.h"
 
 
@@ -36,9 +36,6 @@ SLV2UIInstance
 slv2_ui_instantiate(SLV2Plugin                     plugin,
                     SLV2UI                         ui,
                     LV2UI_Write_Function           write_function,
-                    LV2UI_Command_Function         command_function,
-                    LV2UI_Program_Change_Function  program_function,
-                    LV2UI_Program_Save_Function    save_function,
                     LV2UI_Controller               controller,
                     const LV2_Feature* const*      features)
 {
@@ -50,7 +47,7 @@ slv2_ui_instantiate(SLV2Plugin                     plugin,
 		((LV2_Feature**)features)[0] = NULL;
 	}
 	
-	const char* const lib_uri = slv2_ui_get_binary_uri(ui);
+	const char* const lib_uri = slv2_value_as_string(slv2_ui_get_binary_uri(ui));
 	const char* const lib_path = slv2_uri_to_path(lib_uri);
 	
 	if (!lib_path)
@@ -72,7 +69,7 @@ slv2_ui_instantiate(SLV2Plugin                     plugin,
 		return NULL;
 	} else {
 		
-		const char* bundle_path = slv2_uri_to_path(slv2_ui_get_bundle_uri(ui));
+		const char* bundle_path = slv2_uri_to_path(slv2_value_as_uri(slv2_ui_get_bundle_uri(ui)));
 		
 		for (uint32_t i=0; 1; ++i) {
 			
@@ -80,16 +77,15 @@ slv2_ui_instantiate(SLV2Plugin                     plugin,
 				
 			if (!ld) {
 				fprintf(stderr, "Did not find UI %s in %s\n",
-						slv2_ui_get_uri(ui), lib_path);
+						slv2_value_as_uri(slv2_ui_get_uri(ui)), lib_path);
 				dlclose(lib);
 				break; // return NULL
-			} else if (!strcmp(ld->URI, slv2_ui_get_uri(ui))) {
-
+			} else if (!strcmp(ld->URI, slv2_value_as_uri(slv2_ui_get_uri(ui)))) {
 	
 				assert(plugin->plugin_uri);
 
 				printf("Found UI %s at index %u in:\n\t%s\n\n",
-				       librdf_uri_as_string(plugin->plugin_uri), i, lib_path);
+				       slv2_value_as_uri(plugin->plugin_uri), i, lib_path);
 
 				assert(ld->instantiate);
 
@@ -98,12 +94,9 @@ slv2_ui_instantiate(SLV2Plugin                     plugin,
 				struct _SLV2UIInstanceImpl* impl = malloc(sizeof(struct _SLV2UIInstanceImpl));
 				impl->lv2ui_descriptor = ld;
 				impl->lv2ui_handle = ld->instantiate(ld, 
-						slv2_plugin_get_uri(plugin),
+						slv2_value_as_uri(slv2_plugin_get_uri(plugin)),
 						(char*)bundle_path, 
 						write_function,
-						command_function,
-						program_function,
-						save_function,
 						controller,
 						&impl->widget,
 						features);
@@ -114,11 +107,9 @@ slv2_ui_instantiate(SLV2Plugin                     plugin,
 		}
 	}
 
-	assert(result);
-	assert(slv2_plugin_get_num_ports(plugin) > 0);
 
 	// Failed to instantiate
-	if (result->pimpl->lv2ui_handle == NULL) {
+	if (result == NULL || result->pimpl->lv2ui_handle == NULL) {
 		//printf("Failed to instantiate %s\n", plugin->plugin_uri);
 		free(result);
 		return NULL;
@@ -141,6 +132,9 @@ slv2_ui_instantiate(SLV2Plugin                     plugin,
 void
 slv2_ui_instance_free(SLV2UIInstance instance)
 {
+	if (instance == NULL)
+		return;
+
 	struct _SLV2UIInstance* i = (struct _SLV2UIInstance*)instance;
 	i->pimpl->lv2ui_descriptor->cleanup(i->pimpl->lv2ui_handle);
 	i->pimpl->lv2ui_descriptor = NULL;

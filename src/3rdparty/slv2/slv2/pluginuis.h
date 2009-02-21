@@ -19,14 +19,14 @@
 #ifndef __SLV2_PLUGIN_UIS_H__
 #define __SLV2_PLUGIN_UIS_H__
 
-#include <slv2/types.h>
-#include <slv2/plugin.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/** \addtogroup collections
+#include "slv2/types.h"
+#include "slv2/plugin.h"
+
+/** \addtogroup slv2_collections
  *
  * @{
  */
@@ -57,8 +57,8 @@ slv2_uis_size(SLV2UIs list);
  * \return NULL if plugin with \a url not found in \a list.
  */
 SLV2UI
-slv2_uis_get_by_uri(SLV2UIs     list,
-                    const char* uri);
+slv2_uis_get_by_uri(SLV2UIs   list,
+                    SLV2Value uri);
 
 
 /** Get a plugin from the list by index.
@@ -80,7 +80,7 @@ slv2_uis_get_at(SLV2UIs  list,
 /** @} */
 
 #ifdef __cplusplus
-}
+} /* extern "C" */
 #endif
 
 #endif /* __SLV2_PLUGIN_UIS_H__ */

@@ -21,7 +21,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
-#include <slv2/values.h>
+#include "slv2/values.h"
 #include "slv2_internal.h"
 
 
@@ -37,21 +37,21 @@ slv2_ui_new(SLV2World   world,
 	assert(binary_uri);
 
 	struct _SLV2UI* ui = malloc(sizeof(struct _SLV2UI));
-	ui->uri = librdf_new_uri_from_uri(uri);
-	ui->binary_uri = librdf_new_uri_from_uri(binary_uri);
+	ui->world = world;
+	ui->uri = slv2_value_new_librdf_uri(world, uri);
+	ui->binary_uri = slv2_value_new_librdf_uri(world, binary_uri);
 	
 	assert(ui->binary_uri);
 	
 	// FIXME: kludge
-	char* bundle = strdup((const char*)librdf_uri_as_string(ui->binary_uri));
+	char* bundle = strdup(slv2_value_as_string(ui->binary_uri));
 	char* last_slash = strrchr(bundle, '/') + 1;
 	*last_slash = '\0';
-	ui->bundle_uri = librdf_new_uri(world->world, (const unsigned char*)bundle);
+	ui->bundle_uri = slv2_value_new_uri(world, bundle);
 	free(bundle);
 
-	ui->types = slv2_values_new();
-	raptor_sequence_push(ui->types, slv2_value_new(SLV2_VALUE_URI,
-				(const char*)librdf_uri_as_string(type_uri)));
+	ui->classes = slv2_values_new();
+	raptor_sequence_push(ui->classes, slv2_value_new_librdf_uri(world, type_uri));
 
 	return ui;
 }
@@ -61,61 +61,58 @@ slv2_ui_new(SLV2World   world,
 void
 slv2_ui_free(SLV2UI ui)
 {
-	librdf_free_uri(ui->uri);
+	slv2_value_free(ui->uri);
 	ui->uri = NULL;
 	
-	librdf_free_uri(ui->bundle_uri);
+	slv2_value_free(ui->bundle_uri);
 	ui->bundle_uri = NULL;
 	
-	librdf_free_uri(ui->binary_uri);
+	slv2_value_free(ui->binary_uri);
 	ui->binary_uri = NULL;
 
-	slv2_values_free(ui->types);
+	slv2_values_free(ui->classes);
 	
 	free(ui);
 }
 
 
-const char*
+SLV2Value
 slv2_ui_get_uri(SLV2UI ui)
 {
 	assert(ui);
 	assert(ui->uri);
-	return (const char*)librdf_uri_as_string(ui->uri);
+	return ui->uri;
 }
 
 
 SLV2Values
-slv2_ui_get_types(SLV2UI ui)
+slv2_ui_get_classes(SLV2UI ui)
 {
-	return ui->types;
+	return ui->classes;
 }
 
 
 bool
-slv2_ui_is_type(SLV2UI ui, const char* type_uri)
+slv2_ui_is_a(SLV2UI ui, SLV2Value ui_class_uri)
 {
-	SLV2Value type = slv2_value_new(SLV2_VALUE_URI, type_uri);
-	bool ret = slv2_values_contains(ui->types, type);
-	slv2_value_free(type);
-	return ret;
+	return slv2_values_contains(ui->classes, ui_class_uri);
 }
 
 
-const char*
+SLV2Value
 slv2_ui_get_bundle_uri(SLV2UI ui)
 {
 	assert(ui);
 	assert(ui->bundle_uri);
-	return (const char*)librdf_uri_as_string(ui->bundle_uri);
+	return ui->bundle_uri;
 }
 
 
-const char*
+SLV2Value
 slv2_ui_get_binary_uri(SLV2UI ui)
 {
 	assert(ui);
 	assert(ui->binary_uri);
-	return (const char*)librdf_uri_as_string(ui->binary_uri);
+	return ui->binary_uri;
 }
 

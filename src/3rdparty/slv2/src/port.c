@@ -22,20 +22,22 @@
 #include <stdio.h>
 #include <string.h>
 #include <limits.h>
-#include <slv2/port.h>
-#include <slv2/types.h>
-#include <slv2/util.h>
-#include <slv2/values.h>
+#include "slv2/port.h"
+#include "slv2/types.h"
+#include "slv2/util.h"
+#include "slv2/values.h"
+#include "slv2/scalepoints.h"
 #include "slv2_internal.h"
 
 
 /* private */
 SLV2Port
-slv2_port_new(uint32_t index, const char* symbol/*, const char* node_id*/)
+slv2_port_new(SLV2World world, uint32_t index, const char* symbol)
 {
 	struct _SLV2Port* port = malloc(sizeof(struct _SLV2Port));
 	port->index = index;
-	port->symbol = strdup(symbol);
+	port->symbol = slv2_value_new(world, SLV2_VALUE_STRING, symbol);
+	port->classes = slv2_values_new();
 	//port->node_id = strdup(node_id);
 	return port;
 }
@@ -45,8 +47,8 @@ slv2_port_new(uint32_t index, const char* symbol/*, const char* node_id*/)
 void
 slv2_port_free(SLV2Port port)
 {
-	free(port->symbol);
-	//free(port->node_id);
+	slv2_values_free(port->classes);
+	slv2_value_free(port->symbol);
 	free(port);
 }
 
@@ -55,219 +57,295 @@ slv2_port_free(SLV2Port port)
 SLV2Port
 slv2_port_duplicate(SLV2Port port)
 {
-	SLV2Port result = malloc(sizeof(struct _SLV2Port));
-	result->index = port->index;
-	result->symbol = strdup(port->symbol);
-	//result->node_id = strdup(port->node_id);
-	return result;
-}
-
-
-SLV2PortDirection
-slv2_port_get_direction(SLV2Plugin p,
-                        SLV2Port   port)
-{
-	SLV2Values direction = slv2_port_get_value(p, port, "rdf:type");
-
-	SLV2PortDirection ret = SLV2_PORT_DIRECTION_UNKNOWN;
-
-	if (!direction)
-		return ret;
-
-	for (unsigned i=0; i < slv2_values_size(direction); ++i) {
-		SLV2Value val = slv2_values_get_at(direction, i);
-		if (slv2_value_is_uri(val)) {
-			const char* uri = slv2_value_as_uri(val);
-			if (!strcmp(uri, "http://lv2plug.in/ns/lv2core#InputPort"))
-				ret = SLV2_PORT_DIRECTION_INPUT;
-			else if (!strcmp(uri, "http://lv2plug.in/ns/lv2core#OutputPort"))
-				ret = SLV2_PORT_DIRECTION_OUTPUT;
-		}
-	}
-	
-	slv2_values_free(direction);
-
+	SLV2Port ret = malloc(sizeof(struct _SLV2Port));
+	ret->index = port->index;
+	ret->symbol = slv2_value_duplicate(port->symbol);
 	return ret;
 }
 
 
-SLV2PortDataType
-slv2_port_get_data_type(SLV2Plugin p,
-                        SLV2Port   port)
+bool
+slv2_port_is_a(SLV2Plugin plugin,
+               SLV2Port   port,
+               SLV2Value  port_class)
 {
-	SLV2Values type = slv2_port_get_value(p, port, "rdf:type");
+	for (unsigned i=0; i < slv2_values_size(port->classes); ++i)
+		if (slv2_value_equals(slv2_values_get_at(port->classes, i), port_class))
+			return true;
 
-	SLV2PortDataType ret = SLV2_PORT_DATA_TYPE_UNKNOWN;
-
-	if (!type)
-		return ret;
-	
-	for (unsigned i=0; i < slv2_values_size(type); ++i) {
-		SLV2Value val = slv2_values_get_at(type, i);
-		if (slv2_value_is_uri(val)) {
-			const char* uri = slv2_value_as_uri(val);
-			if (!strcmp(uri, "http://lv2plug.in/ns/lv2core#ControlPort"))
-				ret = SLV2_PORT_DATA_TYPE_CONTROL;
-			else if (!strcmp(uri, "http://lv2plug.in/ns/lv2core#AudioPort"))
-				ret = SLV2_PORT_DATA_TYPE_AUDIO;
-			else if (!strcmp(uri, "http://ll-plugins.nongnu.org/lv2/ext/MidiPort"))
-				ret = SLV2_PORT_DATA_TYPE_MIDI;
-			else if (!strcmp(uri, "http://drobilla.net/ns/lv2ext/osc/0#OSCPort"))
-				ret = SLV2_PORT_DATA_TYPE_OSC;
-		}
-	}
-
-	slv2_values_free(type);
-
-	return ret;
+	return false;
 }
 
-#if 0
+
 bool
 slv2_port_has_property(SLV2Plugin p,
                        SLV2Port   port,
-                       SLV2Value  hint)
-{
-	/* FIXME: Add SLV2Value QName stuff to make this not suck to use */
-
-	SLV2Values hints = slv2_port_get_value(p, port, "lv2:portHint");
-
-	if (!hints)
-		return false;
-	
-	for (unsigned i=0; i < slv2_values_size(type); ++i) {
-		const SLV2Value val = slv2_values_get_at(type, i);
-		if (slv2_value_is_uri(val)) {
-			const char* uri = slv2_value_as_uri(val);
-			if (!strcmp(uri, "http://lv2plug.in/ns/lv2core#connectionOptional"))
-				return true;
-				ret = SLV2_PORT_DATA_TYPE_CONTROL;
-			else if (!strcmp(uri, "http://lv2plug.in/ns/lv2core#AudioPort"))
-				ret = SLV2_PORT_DATA_TYPE_AUDIO;
-			else if (!strcmp(uri, "http://ll-plugins.nongnu.org/lv2/ext/MidiPort"))
-				ret = SLV2_PORT_DATA_TYPE_MIDI;
-			else if (!strcmp(uri, "http://drobilla.net/ns/lv2ext/osc/0#OSCPort"))
-				ret = SLV2_PORT_DATA_TYPE_OSC;
-		}
-	}
-
-	slv2_values_free(type);
-
-	return ret;
-}
-#endif
-
-SLV2Values
-slv2_port_get_value(SLV2Plugin  p,
-                    SLV2Port    port,
-                    const char* property)
+                       SLV2Value  property)
 {
 	assert(property);
 
-	SLV2Values result = NULL;
+	SLV2Values results = NULL;
+
+	char* query = slv2_strjoin(
+			"SELECT DISTINCT ?port WHERE {\n"
+			"<", slv2_value_as_uri(p->plugin_uri), "> lv2:port ?port ."
+			"?port lv2:symbol \"", slv2_value_as_string(port->symbol), "\";\n",
+			"      lv2:portProperty <", slv2_value_as_uri(property), "> .\n}", NULL);
+			
+	results = slv2_plugin_query_variable(p, query, 0);
+
+	const bool ret = (slv2_values_size(results) > 0);
+
+	free(query);
+	free(results);
+	
+	return ret;
+}
+
+
+bool
+slv2_port_supports_event(SLV2Plugin p,
+                         SLV2Port   port,
+                         SLV2Value  event)
+{
+	assert(event);
+
+	char* query = slv2_strjoin(
+			"ASK WHERE {\n"
+			"<", slv2_value_as_uri(p->plugin_uri), "> lv2:port ?port ."
+			"?port lv2:symbol \"", slv2_value_as_string(port->symbol), "\";\n",
+			"      lv2ev:supportsEvent <", slv2_value_as_uri(event), "> .\n"
+			"}", NULL);
+			
+	librdf_query_results* results = slv2_plugin_query(p, query);
+	assert(librdf_query_results_is_boolean(results));
+
+	const bool ret = librdf_query_results_get_boolean(results);
+
+	free(query);
+	librdf_free_query_results(results);
+	
+	return ret;
+}
+
+
+SLV2Values
+slv2_port_get_value_by_qname(SLV2Plugin  p,
+                             SLV2Port    port,
+                             const char* property)
+{
+	assert(property);
+	SLV2Values results = NULL;
 
 	char* query = slv2_strjoin(
 			"SELECT DISTINCT ?value WHERE {\n"
-			"?port lv2:symbol \"", port->symbol, "\";\n\t",
-			       property, " ?value .\n}", 0);
+			"<", slv2_value_as_uri(p->plugin_uri), "> lv2:port ?port .\n"
+			"?port lv2:symbol \"", slv2_value_as_string(port->symbol), "\";\n\t",
+			property, " ?value .\n"
+			"FILTER(lang(?value) = \"\") }", NULL);
 			
-	result = slv2_plugin_simple_query(p, query, 0);
+	results = slv2_plugin_query_variable(p, query, 0);
 
 	free(query);
+	return results;
+}
+
+
+SLV2Values
+slv2_port_get_value(SLV2Plugin p,
+                    SLV2Port   port,
+                    SLV2Value  predicate)
+{
+	char* query = NULL;
 	
+	/* Hack around broken RASQAL, full URI predicates don't work :/ */
+
+	if (predicate->type == SLV2_VALUE_URI) {
+		query = slv2_strjoin(
+			"PREFIX slv2predicate: <", slv2_value_as_string(predicate), ">",
+			"SELECT DISTINCT ?value WHERE { \n"
+			"<", slv2_value_as_uri(p->plugin_uri), "> lv2:port ?port .\n"
+			"?port lv2:symbol \"", slv2_value_as_string(port->symbol), "\";\n\t",
+				" slv2predicate: ?value .\n"
+			"}\n", NULL);
+	} else if (predicate->type == SLV2_VALUE_QNAME) {
+    	query = slv2_strjoin(
+			"SELECT DISTINCT ?value WHERE { \n"
+			"<", slv2_value_as_uri(p->plugin_uri), "> lv2:port ?port .\n"
+			"?port lv2:symbol \"", slv2_value_as_string(port->symbol), "\";\n\t",
+				slv2_value_as_string(predicate), " ?value .\n"
+			"}\n", NULL);
+	} else {
+		fprintf(stderr, "slv2_port_get_value error: "
+				"predicate is not a URI or QNAME\n");
+		return NULL;
+	}
+
+	SLV2Values result = slv2_plugin_query_variable(p, query, 0);
+	
+	free(query);
+
 	return result;
 }
 
 
-char*
+SLV2Values
+slv2_port_get_value_by_qname_i18n(SLV2Plugin  p,
+                                  SLV2Port    port,
+                                  const char* property)
+{
+	assert(property);
+	SLV2Values results = NULL;
+
+	char* query = slv2_strjoin(
+			"SELECT DISTINCT ?value WHERE {\n"
+			"<", slv2_value_as_uri(p->plugin_uri), "> lv2:port ?port .\n"
+			"?port lv2:symbol \"", slv2_value_as_string(port->symbol), "\";\n\t",
+			property, " ?value .\n"
+			"FILTER(lang(?value) = \"", slv2_get_lang(), 
+			"\") }", NULL);
+	
+	results = slv2_plugin_query_variable(p, query, 0);
+
+	free(query);
+	return results;
+}
+
+
+SLV2Value
 slv2_port_get_symbol(SLV2Plugin p,
                      SLV2Port   port)
 {
-	char* symbol = NULL;
-	
-	SLV2Values result = slv2_port_get_value(p, port, "lv2:symbol");
-
-	if (result && slv2_values_size(result) == 1)
-		symbol = strdup(slv2_value_as_string(slv2_values_get_at(result, 0)));
-	
-	slv2_values_free(result);
-
-	return symbol;
+	return port->symbol;
 }
 
 	
-char*
+SLV2Value
 slv2_port_get_name(SLV2Plugin p,
                    SLV2Port   port)
 {
-	char* name = NULL;
-	
-	SLV2Values result = slv2_port_get_value(p, port, "lv2:name");
+	SLV2Value  ret     = NULL;
+	SLV2Values results = slv2_port_get_value_by_qname_i18n(p, port, "lv2:name");
 
-	if (result && slv2_values_size(result) == 1)
-		name = strdup(slv2_value_as_string(slv2_values_get_at(result, 0)));
-	
-	slv2_values_free(result);
+	if (results && slv2_values_size(results) > 0) {
+		ret = slv2_value_duplicate(slv2_values_get_at(results, 0));
+	} else {
+		results = slv2_port_get_value_by_qname(p, port, "lv2:name");
+		if (results && slv2_values_size(results) > 0)
+			ret = slv2_value_duplicate(slv2_values_get_at(results, 0));
+	}
+		
+	slv2_values_free(results);
 
-	return name;
+	return ret;
 }
 
-
-float
-slv2_port_get_default_value(SLV2Plugin p, 
-                            SLV2Port   port)
+	
+SLV2Values
+slv2_port_get_classes(SLV2Plugin p,
+                      SLV2Port   port)
 {
-	float value = 0.0f;
-	
-	SLV2Values result = slv2_port_get_value(p, port, "lv2:default");
-
-	if (result && slv2_values_size(result) == 1)
-		value = slv2_value_as_float(slv2_values_get_at(result, 0));
-	
-	slv2_values_free(result);
-
-	return value;
+	return port->classes;
 }
 
 
-float
-slv2_port_get_minimum_value(SLV2Plugin p, 
-                            SLV2Port   port)
+void
+slv2_port_get_range(SLV2Plugin p, 
+                    SLV2Port   port,
+                    SLV2Value* def,
+                    SLV2Value* min,
+                    SLV2Value* max)
 {
-	float value = 0.0f;
-	
-	SLV2Values result = slv2_port_get_value(p, port, "lv2:minimum");
+	if (def)
+		*def = NULL;
+	if (min)
+		*min = NULL;
+	if (max)
+		*max = NULL;
 
-	if (result && slv2_values_size(result) == 1)
-		value = slv2_value_as_float(slv2_values_get_at(result, 0));
+	char* query = slv2_strjoin(
+			"SELECT DISTINCT ?def ?min ?max WHERE {\n"
+			"<", slv2_value_as_uri(p->plugin_uri), "> lv2:port ?port .\n"
+			"?port lv2:symbol \"", slv2_value_as_string(port->symbol), "\".\n",
+			"OPTIONAL { ?port lv2:default ?def }\n",
+			"OPTIONAL { ?port lv2:minimum ?min }\n",
+			"OPTIONAL { ?port lv2:maximum ?max }\n",
+			"\n}", NULL);
 	
-	slv2_values_free(result);
+	librdf_query_results* results = slv2_plugin_query(p, query);
 
-	return value;
+    while (!librdf_query_results_finished(results)) {
+		librdf_node* def_node = librdf_query_results_get_binding_value(results, 0);
+		librdf_node* min_node = librdf_query_results_get_binding_value(results, 1);
+		librdf_node* max_node = librdf_query_results_get_binding_value(results, 2);
+
+		if (def && def_node && !*def)
+			*def = slv2_value_new_librdf_node(p->world, def_node);
+		if (min && min_node && !*min)
+			*min = slv2_value_new_librdf_node(p->world, min_node);
+		if (max && max_node && !*max)
+			*max = slv2_value_new_librdf_node(p->world, max_node);
+
+		if ((!def || *def) && (!min || *min) && (!max || *max))
+			break;
+
+		librdf_query_results_next(results);
+	}
+			
+	librdf_free_query_results(results);
+
+	free(query);
 }
 
 
-float
-slv2_port_get_maximum_value(SLV2Plugin p, 
-                            SLV2Port   port)
+SLV2ScalePoints
+slv2_port_get_scale_points(SLV2Plugin p,
+                           SLV2Port port)
 {
-	float value = 0.0f;
+	char* query = slv2_strjoin(
+			"SELECT DISTINCT ?value ?label WHERE {\n"
+			"<", slv2_value_as_uri(p->plugin_uri), "> lv2:port ?port .\n"
+			"?port  lv2:symbol \"", slv2_value_as_string(port->symbol), "\" ;\n",
+			"       lv2:scalePoint ?point .\n"
+			"?point rdf:value ?value ;\n"
+			"       rdfs:label ?label .\n"
+			"\n} ORDER BY ?value", NULL);
 	
-	SLV2Values result = slv2_port_get_value(p, port, "lv2:maximum");
-
-	if (result && slv2_values_size(result) == 1)
-		value = slv2_value_as_float(slv2_values_get_at(result, 0));
+	librdf_query_results* results = slv2_plugin_query(p, query);
 	
-	slv2_values_free(result);
+	SLV2ScalePoints ret = NULL;
 
-	return value;
+    if (!librdf_query_results_finished(results))
+		ret = slv2_scale_points_new();
+
+    while (!librdf_query_results_finished(results)) {
+	
+		librdf_node* value_node = librdf_query_results_get_binding_value(results, 0);
+		librdf_node* label_node = librdf_query_results_get_binding_value(results, 1);
+
+		SLV2Value value = slv2_value_new_librdf_node(p->world, value_node);
+		SLV2Value label = slv2_value_new_librdf_node(p->world, label_node);
+
+		raptor_sequence_push(ret, slv2_scale_point_new(value, label));
+		
+		librdf_query_results_next(results);
+	}
+			
+	librdf_free_query_results(results);
+
+	free(query);
+
+	assert(!ret || slv2_values_size(ret) > 0);
+
+	return ret;
 }
+
 
 
 SLV2Values
 slv2_port_get_properties(SLV2Plugin p,
                          SLV2Port   port)
 {
-	return slv2_port_get_value(p, port, "lv2:portProperty");
+	return slv2_port_get_value_by_qname(p, port, "lv2:portProperty");
 }
 

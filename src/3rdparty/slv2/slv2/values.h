@@ -19,14 +19,14 @@
 #ifndef __SLV2_VALUES_H__
 #define __SLV2_VALUES_H__
 
-#include <stdbool.h>
-#include <slv2/value.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/** \defgroup collections Collections of values/objects
+#include <stdbool.h>
+#include "slv2/value.h"
+
+/** \defgroup slv2_collections Collections of values/objects
  *
  * Ordered collections of typed values which are fast for random
  * access by index (i.e. a fancy array).
@@ -41,40 +41,40 @@ SLV2Values
 slv2_values_new();
 
 
-/** Get the number of elements in a string list.
+/** Free an SLV2Values.
+ */
+void
+slv2_values_free(SLV2Values values);
+
+
+/** Get the number of elements in a value collection.
  */
 unsigned
-slv2_values_size(SLV2Values list);
+slv2_values_size(SLV2Values values);
 
 
-/** Get a string from a string list at the given index.
+/** Get the value at a given index in the collection.
  *
  * @return the element at \a index, or NULL if index is out of range.
  *
  * Time = O(1)
  */
 SLV2Value
-slv2_values_get_at(SLV2Values list, unsigned index);
+slv2_values_get_at(SLV2Values values, unsigned index);
 
 
-/** Return whether \a list contains \a string.
+/** Return whether \a values contains \a value.
  *
  * Time = O(n)
  */
 bool
-slv2_values_contains(SLV2Values list, SLV2Value value);
-
-
-/** Free a string list.
- */
-void
-slv2_values_free(SLV2Values);
+slv2_values_contains(SLV2Values values, SLV2Value value);
 
 
 /** @} */
 
 #ifdef __cplusplus
-}
+} /* extern "C" */
 #endif
 
 #endif /* __SLV2_VALUES_H__ */

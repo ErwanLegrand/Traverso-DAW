@@ -22,26 +22,14 @@
 #include <string.h>
 #include <assert.h>
 #include <stdarg.h>
-#include <slv2/util.h>
-
-
-void
-slv2_strappend(char** dst, const char* suffix)
-{
-	assert(dst);
-	assert(*dst);
-	assert(suffix);
-
-	const size_t new_length = strlen((char*)*dst) + strlen((char*)suffix) + 1;
-	*dst = realloc(*dst, (new_length * sizeof(char)));
-	assert(dst);
-	strcat((char*)*dst, (char*)suffix);
-}
+#include "slv2/util.h"
 
 
 char*
 slv2_strjoin(const char* first, ...)
 {
+	/* FIXME: This is, in fact, as stupid as it looks */
+
 	size_t  len    = strlen(first);
 	char*   result = NULL;
 	va_list args;
@@ -83,4 +71,27 @@ slv2_uri_to_path(const char* uri)
 }
 
 
+char* 
+slv2_get_lang()
+{
+	static char lang[32];
+	lang[31] = '\0';
+	char* tmp = getenv("LANG");
+	if (!tmp) {
+		lang[0] = '\0';
+	} else {
+		strncpy(lang, tmp, 31);
+		for (int i = 0; i < 31 && lang[i]; ++i) {
+			if (lang[i] == '_') {
+				lang[i] = '-';
+			} else if (   !(lang[i] >= 'a' && lang[i] <= 'z')
+			           && !(lang[i] >= 'A' && lang[i] <= 'Z')) {
+				lang[i] = '\0';
+				break;
+			}
+		}
+	}
+
+	return lang;
+}
 

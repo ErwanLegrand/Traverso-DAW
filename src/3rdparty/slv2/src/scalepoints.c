@@ -20,58 +20,38 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <raptor.h>
-#include "slv2/values.h"
+#include "slv2/scalepoints.h"
 #include "slv2_internal.h"
 
 
-SLV2Values
-slv2_values_new()
+SLV2ScalePoints
+slv2_scale_points_new()
 {
-	return raptor_new_sequence((void (*)(void*))&slv2_value_free, NULL);
+	return raptor_new_sequence((void (*)(void*))&slv2_scale_point_free, NULL);
 }
 
 
 void
-slv2_values_free(SLV2Values list)
+slv2_scale_points_free(SLV2ScalePoints points)
 {
-	if (list)
-		raptor_free_sequence(list);
+	if (points)
+		raptor_free_sequence(points);
 }
 
 
 unsigned
-slv2_values_size(SLV2Values list)
+slv2_scale_points_size(SLV2ScalePoints points)
 {
-	return (list ? raptor_sequence_size(list) : 0);
+	return (points ? raptor_sequence_size(points) : 0);
 }
 
 
-SLV2Value
-slv2_values_get_at(SLV2Values list, unsigned index)
+SLV2ScalePoint
+slv2_scale_points_get_at(SLV2ScalePoints points, unsigned index)
 {
 	if (index > INT_MAX)
 		return NULL;
 	else
-		return (SLV2Value)raptor_sequence_get_at(list, (int)index);
-}
-
-
-/* private */
-void
-slv2_values_set_at(SLV2Values list, unsigned index, void* value)
-{
-	if (index <= INT_MAX)
-		raptor_sequence_set_at(list, index, value);
-}
-
-
-bool
-slv2_values_contains(SLV2Values list, SLV2Value value)
-{
-	for (unsigned i=0; i < slv2_values_size(list); ++i)
-		if (slv2_value_equals(slv2_values_get_at(list, i), value))
-			return true;
-	
-	return false;
+		return (SLV2ScalePoint)raptor_sequence_get_at(points, (int)index);
 }
 

@@ -24,15 +24,19 @@ extern "C" {
 #endif
 
 #include <stdbool.h>
-#include <slv2/types.h>
+#include "slv2/types.h"
 
-/** \addtogroup data
+/** \addtogroup slv2_data
  * @{
  */
 
 
-/*SLV2Value
-slv2_value_new_uri(const char* uri);*/
+/** Create a new URI value.
+ *
+ * Returned value must be freed by called with slv2_value_free.
+ */
+SLV2Value
+slv2_value_new_uri(SLV2World world, const char* uri);
 
 
 /** Free an SLV2Value.
@@ -178,7 +182,7 @@ slv2_value_as_int(SLV2Value value);
 /** @} */
 
 #ifdef __cplusplus
-}
+} /* extern "C" */
 #endif
 
 #endif /* __SLV2_VALUE_H__ */

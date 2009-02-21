@@ -23,11 +23,11 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <librdf.h>
-#include <slv2/types.h>
-#include <slv2/plugin.h>
-#include <slv2/plugins.h>
-#include <slv2/values.h>
-#include <slv2/util.h>
+#include "slv2/types.h"
+#include "slv2/plugin.h"
+#include "slv2/plugins.h"
+#include "slv2/values.h"
+#include "slv2/util.h"
 #include "slv2_internal.h"
 
 	
@@ -69,7 +69,7 @@ slv2_plugins_size(SLV2Plugins list)
 
 
 SLV2Plugin
-slv2_plugins_get_by_uri(SLV2Plugins list, const char* uri)
+slv2_plugins_get_by_uri(SLV2Plugins list, SLV2Value uri)
 {
 	// good old fashioned binary search
 	
@@ -82,7 +82,8 @@ slv2_plugins_get_by_uri(SLV2Plugins list, const char* uri)
 
 		SLV2Plugin p = raptor_sequence_get_at(list, i);
 
-		const int cmp = strcmp(slv2_plugin_get_uri(p), uri);
+		const int cmp = strcmp(slv2_value_as_uri(slv2_plugin_get_uri(p)),
+		                       slv2_value_as_uri(uri));
 
 		if (cmp == 0)
 			return p;

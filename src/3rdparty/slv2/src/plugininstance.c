@@ -23,27 +23,27 @@
 #include <string.h>
 #include <assert.h>
 #include <dlfcn.h>
-#include <slv2/types.h>
-#include <slv2/plugin.h>
-#include <slv2/plugininstance.h>
-#include <slv2/util.h>
+#include "slv2/types.h"
+#include "slv2/plugin.h"
+#include "slv2/plugininstance.h"
+#include "slv2/util.h"
 #include "slv2_internal.h"
 
 
 SLV2Instance
-slv2_plugin_instantiate(SLV2Plugin          plugin,
-                        double              sample_rate,
-                        const LV2_Feature** features)
+slv2_plugin_instantiate(SLV2Plugin               plugin,
+                        double                   sample_rate,
+                        const LV2_Feature*const* features)
 {
 	struct _Instance* result = NULL;
 	
-	bool local_features = (features == NULL);
-	if (local_features) {
-		features = malloc(sizeof(LV2_Feature));
-		features[0] = NULL;
+	const LV2_Feature** local_features = NULL;
+	if (features == NULL) {
+		local_features = malloc(sizeof(LV2_Feature));
+		local_features[0] = NULL;
 	}
 	
-	const char* const lib_uri = slv2_plugin_get_library_uri(plugin);
+	const char* const lib_uri = slv2_value_as_uri(slv2_plugin_get_library_uri(plugin));
 	const char* const lib_path = slv2_uri_to_path(lib_uri);
 	
 	if (!lib_path)
@@ -67,8 +67,10 @@ slv2_plugin_instantiate(SLV2Plugin          plugin,
 		// Search for plugin by URI
 		
 		// FIXME: Kluge to get bundle path (containing directory of binary)
-		const char* bundle_path = slv2_uri_to_path(slv2_plugin_get_bundle_uri(plugin));
-		printf("Bundle path: %s\n", bundle_path);
+		const char* bundle_path = slv2_uri_to_path(slv2_value_as_uri(
+					slv2_plugin_get_bundle_uri(plugin)));
+
+		//printf("Bundle path: %s\n", bundle_path);
 		
 		for (uint32_t i=0; 1; ++i) {
 			
@@ -76,23 +78,24 @@ slv2_plugin_instantiate(SLV2Plugin          plugin,
 				
 			if (!ld) {
 				fprintf(stderr, "Did not find plugin %s in %s\n",
-						slv2_plugin_get_uri(plugin), lib_path);
+						slv2_value_as_uri(slv2_plugin_get_uri(plugin)), lib_path);
 				dlclose(lib);
 				break; // return NULL
-			} else if (!strcmp(ld->URI, slv2_plugin_get_uri(plugin))) {
+			} else if (!strcmp(ld->URI, slv2_value_as_uri(slv2_plugin_get_uri(plugin)))) {
 					
 				assert(plugin->plugin_uri);
 
-				printf("Found %s at index %u in:\n\t%s\n\n",
-						librdf_uri_as_string(plugin->plugin_uri), i, lib_path);
+				//printf("Found %s at index %u in:\n\t%s\n\n",
+				//		librdf_uri_as_string(plugin->plugin_uri), i, lib_path);
 
 				assert(ld->instantiate);
 
 				// Create SLV2Instance to return
 				result = malloc(sizeof(struct _Instance));
 				result->lv2_descriptor = ld;
-				result->lv2_handle = ld->instantiate(ld, sample_rate, (char*)bundle_path, features);
-				struct _InstanceImpl* impl = malloc(sizeof(struct _InstanceImpl));
+                result->lv2_handle = ld->instantiate(ld, sample_rate, (char*)bundle_path,
+						(features) ? features : local_features);
+                struct _InstanceImpl* impl = malloc(sizeof(struct _InstanceImpl));
 				impl->lib_handle = lib;
 				result->pimpl = impl;
 
@@ -116,8 +119,7 @@ slv2_plugin_instantiate(SLV2Plugin          plugin,
 			result->lv2_descriptor->connect_port(result->lv2_handle, i, NULL);
 	}
 
-	if (local_features)
-		free(features);
+	free(local_features);
 
 	return result;
 }

@@ -24,29 +24,21 @@ extern "C" {
 #endif
 
 #include <assert.h>
-#include <slv2/lv2.h>
-#include <slv2/plugin.h>
-#include <slv2/port.h>
-
-/** \defgroup lib Plugin library access
- *
- * An SLV2Instance is an instantiated SLV2Plugin (ie a loaded dynamic
- * library).  These functions interact with the binary library code only,
- * they do not read data files in any way.
- * 
- * @{
- */
-
+#include "lv2.h"
+#include "slv2/plugin.h"
+#include "slv2/port.h"
 
 typedef struct _InstanceImpl* SLV2InstanceImpl;
 
+/** \cond IGNORE */
 
-/** Instance of a plugin.
+/* Instance of a plugin.
  *
  * The LV2 descriptor and handle of this are exposed to allow inlining of
  * performance critical functions like slv2_instance_run (which are exposed
- * in lv2.h anyway).  The remaining implementation details are
- * in the opaque pimpl member.
+ * in lv2.h anyway).  This is for performance only, this struct is not
+ * documented and should not be used directly.  The remaining implementation
+ * details are in the opaque pimpl member.
  */
 typedef struct _Instance {
 	const LV2_Descriptor* lv2_descriptor;
@@ -54,7 +46,17 @@ typedef struct _Instance {
 	SLV2InstanceImpl      pimpl; ///< Private implementation
 }* SLV2Instance;
 
+/** \endcond */
 
+
+/** \defgroup slv2_library Plugin library access
+ *
+ * An SLV2Instance is an instantiated SLV2Plugin (ie a loaded dynamic
+ * library).  These functions interact with the binary library code only,
+ * they do not read data files in any way.
+ * 
+ * @{
+ */
 
 /** Instantiate a plugin.
  *
@@ -72,9 +74,9 @@ typedef struct _Instance {
  * \return NULL if instantiation failed.
  */
 SLV2Instance
-slv2_plugin_instantiate(SLV2Plugin          plugin,
-                        double              sample_rate,
-                        const LV2_Feature** features);
+slv2_plugin_instantiate(SLV2Plugin               plugin,
+                        double                   sample_rate,
+                        const LV2_Feature*const* features);
 
 
 /** Free a plugin instance.
@@ -149,7 +151,7 @@ slv2_instance_run(SLV2Instance instance,
 	assert(instance->lv2_descriptor);
 	assert(instance->lv2_handle);
 
-	if (instance->lv2_descriptor->run)
+	/*if (instance->lv2_descriptor->run)*/
 		instance->lv2_descriptor->run(instance->lv2_handle, sample_count);
 }
 
@@ -168,6 +170,25 @@ slv2_instance_deactivate(SLV2Instance instance)
 	
 	if (instance->lv2_descriptor->deactivate)
 		instance->lv2_descriptor->deactivate(instance->lv2_handle);
+}
+
+
+/** Get extension data from the plugin instance.
+ *
+ * The type and semantics of the data returned is specific to the particular
+ * extension, though in all cases it is shared and must not be deleted.
+ */
+static inline const void*
+slv2_instance_get_extension_data(SLV2Instance instance,
+                                 const char*  uri)
+{
+	assert(instance);
+	assert(instance->lv2_descriptor);
+	
+	if (instance->lv2_descriptor->extension_data)
+		return instance->lv2_descriptor->extension_data(uri);
+	else
+		return 0;
 }
 
 
@@ -209,7 +230,7 @@ slv2_instance_get_handle(SLV2Instance instance)
 /** @} */
 
 #ifdef __cplusplus
-}
+} /* extern "C" */
 #endif
 
 

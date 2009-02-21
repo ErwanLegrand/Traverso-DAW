@@ -19,54 +19,20 @@
 #ifndef __SLV2_TYPES_H__
 #define __SLV2_TYPES_H__
 
-#include <stdbool.h>
-#include <stdint.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#include <stdint.h>
 
-/** (Data) Type of a port
- *
- * SLV2_UNKNOWN_PORT_TYPE means the Port is not of any type SLV2 understands
- * (currently Control, Audio, MIDI, and OSC).
- *
- * Further class information can be using slv2_port_get_value(p, "rdf:type")
- * or a custom query.
- */
-typedef enum _SLV2PortDataType {
-	SLV2_PORT_DATA_TYPE_UNKNOWN,
-	SLV2_PORT_DATA_TYPE_CONTROL, /**< One float per block */
-	SLV2_PORT_DATA_TYPE_AUDIO,   /**< One float per frame */
-	SLV2_PORT_DATA_TYPE_MIDI,    /**< A buffer of MIDI data (LL extension) */
-	SLV2_PORT_DATA_TYPE_OSC,     /**< A buffer of OSC data (DR extension) */
-} SLV2PortDataType;
-
-/** Direction (input or output) of a port
- *
- * SLV2_UNKNOWN_PORT_DIRECTION means the Port is only of type lv2:Port
- * (neither lv2:Input or lv2:Output) as far as SLV2 understands.
- *
- * Further class information can be using slv2_port_get_value(p, "rdf:type")
- * or a custom query.
- */
-typedef enum _SLV2PortDirection {
-	SLV2_PORT_DIRECTION_UNKNOWN, /**< Neither input or output */
-	SLV2_PORT_DIRECTION_INPUT,   /**< Plugin reads from port when run */
-	SLV2_PORT_DIRECTION_OUTPUT,  /**< Plugin writes to port when run */
-} SLV2PortDirection;
-
-
-/** The format of a URI string.
- *
- * Full URI: http://example.org/foo
- * QName: lv2:Plugin
- */
-typedef enum _SLV2URIType {
-	SLV2_URI,
-	SLV2_QNAME
-} SLV2URIType;
+#define SLV2_NAMESPACE_LV2      "http://lv2plug.in/ns/lv2core#"
+#define SLV2_PORT_CLASS_PORT    "http://lv2plug.in/ns/lv2core#Port"
+#define SLV2_PORT_CLASS_INPUT   "http://lv2plug.in/ns/lv2core#InputPort"
+#define SLV2_PORT_CLASS_OUTPUT  "http://lv2plug.in/ns/lv2core#OutputPort"
+#define SLV2_PORT_CLASS_CONTROL "http://lv2plug.in/ns/lv2core#ControlPort"
+#define SLV2_PORT_CLASS_AUDIO   "http://lv2plug.in/ns/lv2core#AudioPort"
+#define SLV2_PORT_CLASS_EVENT   "http://lv2plug.in/ns/ext/event#EventPort"
+#define SLV2_EVENT_CLASS_MIDI   "http://lv2plug.in/ns/ext/midi#MidiEvent"
 
 
 /** A port on a plugin.  Opaque, but valid to compare to NULL. */
@@ -101,6 +67,14 @@ typedef struct _SLV2Value* SLV2Value;
 typedef void* SLV2Values;
 
 
+/** A scale point */
+typedef struct _SLV2ScalePoint* SLV2ScalePoint;
+
+
+/** A collection of scale points. */
+typedef void* SLV2ScalePoints;
+
+
 /** A plugin UI */
 typedef struct _SLV2UI* SLV2UI;
 
@@ -110,7 +84,7 @@ typedef void* SLV2UIs;
 
 
 #ifdef __cplusplus
-}
+} /* extern "C" */
 #endif
 
 

@@ -16,62 +16,48 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <string.h>
+#define _XOPEN_SOURCE 500
+
 #include <stdlib.h>
-#include <limits.h>
+#include <string.h>
+#include <assert.h>
+#include <locale.h>
 #include <raptor.h>
-#include "slv2/values.h"
+#include "slv2/value.h"
 #include "slv2_internal.h"
 
 
-SLV2Values
-slv2_values_new()
+/* private - ownership of value and label is taken */
+SLV2ScalePoint
+slv2_scale_point_new(SLV2Value value, SLV2Value label)
 {
-	return raptor_new_sequence((void (*)(void*))&slv2_value_free, NULL);
-}
-
-
-void
-slv2_values_free(SLV2Values list)
-{
-	if (list)
-		raptor_free_sequence(list);
-}
-
-
-unsigned
-slv2_values_size(SLV2Values list)
-{
-	return (list ? raptor_sequence_size(list) : 0);
-}
-
-
-SLV2Value
-slv2_values_get_at(SLV2Values list, unsigned index)
-{
-	if (index > INT_MAX)
-		return NULL;
-	else
-		return (SLV2Value)raptor_sequence_get_at(list, (int)index);
+	SLV2ScalePoint point = (SLV2ScalePoint)malloc(sizeof(struct _SLV2ScalePoint));
+	point->value = value;
+	point->label= label;
+	return point;
 }
 
 
 /* private */
 void
-slv2_values_set_at(SLV2Values list, unsigned index, void* value)
+slv2_scale_point_free(SLV2ScalePoint point)
 {
-	if (index <= INT_MAX)
-		raptor_sequence_set_at(list, index, value);
+	slv2_value_free(point->value);
+	slv2_value_free(point->label);
+	free(point);
 }
 
 
-bool
-slv2_values_contains(SLV2Values list, SLV2Value value)
+SLV2Value
+slv2_scale_point_get_value(SLV2ScalePoint p)
 {
-	for (unsigned i=0; i < slv2_values_size(list); ++i)
-		if (slv2_value_equals(slv2_values_get_at(list, i), value))
-			return true;
-	
-	return false;
+	return p->value;
+}
+
+
+SLV2Value
+slv2_scale_point_get_label(SLV2ScalePoint p)
+{
+	return p->label;
 }
 

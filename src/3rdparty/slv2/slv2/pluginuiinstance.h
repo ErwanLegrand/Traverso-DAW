@@ -1,6 +1,5 @@
 /* SLV2
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * Author: Lars Luthman
  *  
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -25,19 +24,12 @@ extern "C" {
 #endif
 
 #include <assert.h>
-#include <slv2/lv2_gui.h>
-#include <slv2/plugin.h>
-
-/** \addtogroup lib
- * @{
- */
-
+#include "slv2/lv2_ui.h"
+#include "slv2/plugin.h"
 
 typedef struct _SLV2UIInstanceImpl* SLV2UIInstanceImpl;
 
-  
-
-/** Instance of a plugin UI.
+/* Instance of a plugin UI.
  *
  * All details are in hidden in the pimpl member to avoid making the
  * implementation a part of the ABI.
@@ -46,6 +38,10 @@ typedef struct _SLV2UIInstance {
 	SLV2UIInstanceImpl pimpl; ///< Private implementation
 }* SLV2UIInstance;
 
+
+/** \addtogroup slv2_library
+ * @{
+ */
 
 
 /** Instantiate a plugin UI.
@@ -64,17 +60,18 @@ typedef struct _SLV2UIInstance {
  * \return NULL if instantiation failed.
  */
 SLV2UIInstance
-slv2_ui_instantiate(SLV2Plugin                     plugin,
-                    SLV2UI                         ui,
-                    LV2UI_Write_Function           write_function,
-                    LV2UI_Command_Function         command_function,
-                    LV2UI_Program_Change_Function  program_function,
-                    LV2UI_Program_Save_Function    save_function,
-                    LV2UI_Controller               controller,
-                    const LV2_Feature* const*      features);
+slv2_ui_instantiate(SLV2Plugin                plugin,
+                    SLV2UI                    ui,
+                    LV2UI_Write_Function      write_function,
+                    LV2UI_Controller          controller,
+                    const LV2_Feature* const* features);
 
 
 /** Free a plugin UI instance.
+ *
+ * It is the caller's responsibility to ensure all references to the UI
+ * instance (including any returned widgets) are cut before calling
+ * this function.
  *
  * \a instance is invalid after this call.
  */
@@ -113,7 +110,7 @@ slv2_ui_instance_get_handle(SLV2UIInstance instance);
 /** @} */
 
 #ifdef __cplusplus
-}
+} /* extern "C" */
 #endif
 
 

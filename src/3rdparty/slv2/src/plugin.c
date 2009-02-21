@@ -18,29 +18,32 @@
 
 #define _XOPEN_SOURCE 500
 
+#include <math.h>
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <librdf.h>
 #include "slv2_internal.h"
-#include <slv2/plugin.h>
-#include <slv2/types.h>
-#include <slv2/util.h>
-#include <slv2/values.h>
-#include <slv2/pluginclass.h>
-#include <slv2/pluginclasses.h>
-#include <slv2/pluginuis.h>
+#include "slv2/plugin.h"
+#include "slv2/types.h"
+#include "slv2/util.h"
+#include "slv2/values.h"
+#include "slv2/pluginclass.h"
+#include "slv2/pluginclasses.h"
+#include "slv2/pluginuis.h"
 
 
-/* private */
+/* private
+ * ownership of uri is taken */
 SLV2Plugin
-slv2_plugin_new(SLV2World world, librdf_uri* uri, librdf_uri* bundle_uri, librdf_uri* binary_uri)
+slv2_plugin_new(SLV2World world, SLV2Value uri, librdf_uri* bundle_uri)
 {
+	assert(bundle_uri);
 	struct _SLV2Plugin* plugin = malloc(sizeof(struct _SLV2Plugin));
 	plugin->world = world;
-	plugin->plugin_uri = librdf_new_uri_from_uri(uri);
-	plugin->bundle_uri = librdf_new_uri_from_uri(bundle_uri);
-	plugin->binary_uri = librdf_new_uri_from_uri(binary_uri);
+	plugin->plugin_uri = uri;
+	plugin->bundle_uri = slv2_value_new_librdf_uri(world, bundle_uri);
+	plugin->binary_uri = NULL;
 	plugin->plugin_class = NULL;
 	plugin->data_uris = slv2_values_new();
 	plugin->ports = raptor_new_sequence((void (*)(void*))&slv2_port_free, NULL);
@@ -55,13 +58,13 @@ slv2_plugin_new(SLV2World world, librdf_uri* uri, librdf_uri* bundle_uri, librdf
 void
 slv2_plugin_free(SLV2Plugin p)
 {
-	librdf_free_uri(p->plugin_uri);
+	slv2_value_free(p->plugin_uri);
 	p->plugin_uri = NULL;
 	
-	librdf_free_uri(p->bundle_uri);
+	slv2_value_free(p->bundle_uri);
 	p->bundle_uri = NULL;
 	
-	librdf_free_uri(p->binary_uri);
+	slv2_value_free(p->binary_uri);
 	p->binary_uri = NULL;
 	
 	raptor_free_sequence(p->ports);
@@ -82,40 +85,6 @@ slv2_plugin_free(SLV2Plugin p)
 
 	free(p);
 }
-
-
-// FIXME: ew
-librdf_query_results*
-slv2_plugin_query(SLV2Plugin plugin,
-                  const char* sparql_str);
-
-
-/*
-SLV2Plugin
-slv2_plugin_duplicate(SLV2Plugin p)
-{
-	assert(p);
-	struct _Plugin* result = malloc(sizeof(struct _Plugin));
-	result->world = p->world;
-	result->plugin_uri = librdf_new_uri_from_uri(p->plugin_uri);
-
-	//result->bundle_url = strdup(p->bundle_url);
-	result->binary_uri = strdup(p->binary_uri);
-	
-	result->data_uris = slv2_values_new();
-	for (unsigned i=0; i < slv2_values_size(p->data_uris); ++i)
-		raptor_sequence_push(result->data_uris, strdup(slv2_values_get_at(p->data_uris, i)));
-	
-	result->ports = raptor_new_sequence((void (*)(void*))&slv2_port_free, NULL);
-	for (int i=0; i < raptor_sequence_size(p->ports); ++i)
-		raptor_sequence_push(result->ports, slv2_port_duplicate(raptor_sequence_get_at(p->ports, i)));
-
-	result->storage = NULL;
-	result->rdf = NULL;
-
-	return result;
-}
-*/
 
 
 /** comparator for sorting */
@@ -141,8 +110,11 @@ slv2_plugin_load(SLV2Plugin p)
 
 	if (!p->storage) {
 		assert(!p->rdf);
-		p->storage = librdf_new_storage(p->world->world, "hashes", NULL,
-				"hash-type='memory'");
+		//p->storage = librdf_new_storage(p->world->world, "hashes", NULL,
+		//		"hash-type='memory'");
+		p->storage = librdf_new_storage(p->world->world, "trees", NULL, NULL);
+		if (!p->storage)
+			p->storage = librdf_new_storage(p->world->world, "memory", NULL, NULL);
 		p->rdf = librdf_new_model(p->world->world, p->storage, NULL);
 	}
 
@@ -160,29 +132,32 @@ slv2_plugin_load(SLV2Plugin p)
 		"SELECT DISTINCT ?class WHERE { <> a ?class }";
 	
 	librdf_query* q = librdf_new_query(p->world->world, "sparql",
-		NULL, query, p->plugin_uri);
+		NULL, query, slv2_value_as_librdf_uri(p->plugin_uri));
 	
 	librdf_query_results* results = librdf_query_execute(q, p->rdf);
 		
 	while (!librdf_query_results_finished(results)) {
-		librdf_node* class_node    = librdf_query_results_get_binding_value(results, 0);
-		librdf_uri*  class_uri     = librdf_node_get_uri(class_node);
-		assert(class_uri);
-		const char*  class_uri_str = (const char*)librdf_uri_as_string(class_uri);
+		librdf_node* class_node = librdf_query_results_get_binding_value(results, 0);
+		librdf_uri*  class_uri  = librdf_node_get_uri(class_node);
+
+		SLV2Value class = slv2_value_new_librdf_uri(p->world, class_uri);
 		
-		if ( ! librdf_uri_equals(class_uri, p->world->lv2_plugin_class->uri) ) {
+		if ( ! slv2_value_equals(class, p->world->lv2_plugin_class->uri)) {
 
 			SLV2PluginClass plugin_class = slv2_plugin_classes_get_by_uri(
-					p->world->plugin_classes, class_uri_str);
+					p->world->plugin_classes, class);
 			
+
 			librdf_free_node(class_node);
 
 			if (plugin_class) {
 				p->plugin_class = plugin_class;
+				slv2_value_free(class);
 				break;
 			}
 		}
 
+		slv2_value_free(class);
 		librdf_query_results_next(results);
 	}
 	
@@ -195,76 +170,127 @@ slv2_plugin_load(SLV2Plugin p)
 	// Load ports
 	query = (const unsigned char*)
 		"PREFIX : <http://lv2plug.in/ns/lv2core#>\n"
-		"SELECT DISTINCT ?port ?symbol ?index WHERE {\n"
-		"<>    :port   ?port .\n"
-		"?port :symbol ?symbol ;\n"
-		"      :index  ?index .\n"
-		"}";
+		"SELECT DISTINCT ?type ?symbol ?index WHERE {\n"
+		"<>    :port    ?port .\n"
+		"?port a        ?type ;\n"
+		"      :symbol  ?symbol ;\n"
+		"      :index   ?index .\n"
+		"} ORDER BY (?index)";
 	
 	q = librdf_new_query(p->world->world, "sparql",
-		NULL, query, p->plugin_uri);
+		NULL, query, slv2_value_as_librdf_uri(p->plugin_uri));
 	
 	results = librdf_query_execute(q, p->rdf);
 
+	int num_ports = 0;
+	int last_index = -1;
+
 	while (!librdf_query_results_finished(results)) {
 	
-		//librdf_node* port_node = librdf_query_results_get_binding_value(results, 0);
+		librdf_node* type_node = librdf_query_results_get_binding_value(results, 0);
 		librdf_node* symbol_node = librdf_query_results_get_binding_value(results, 1);
 		librdf_node* index_node = librdf_query_results_get_binding_value(results, 2);
 
-		//assert(librdf_node_is_blank(port_node));
 		assert(librdf_node_is_literal(symbol_node));
 		assert(librdf_node_is_literal(index_node));
 
-		//const char* id = (const char*)librdf_node_get_blank_identifier(port_node);
 		const char* symbol = (const char*)librdf_node_get_literal_value(symbol_node);
 		const char* index = (const char*)librdf_node_get_literal_value(index_node);
 
-		//printf("%s: PORT: %s %s\n", p->plugin_uri, index, symbol);
+		//printf("PORT: %s %s %s\n", type, index, symbol);
+
+		const int this_index = atoi(index);
+		SLV2Port  this_port  = NULL;
 		
-		// Create a new SLV2Port
-		SLV2Port port = slv2_port_new((unsigned)atoi(index), symbol);
-		raptor_sequence_push(p->ports, port);
+		// Create a new SLV2Port, and add to template
+		if (this_index == num_ports) {
+			assert(this_index == last_index + 1);
+			this_port = slv2_port_new(p->world, (unsigned)atoi(index), symbol);
+			raptor_sequence_push(p->ports, this_port);
+			++num_ports;
+			++last_index;
+
+		// More information about a port we already created
+		} else if (this_index < num_ports) {
+			this_port = slv2_plugin_get_port_by_index(p, this_index);
 		
+		// Got a port index out of whack, plugin or rasqal is broken
+		} else {
+			fprintf(stderr, "ERROR: Found port %d immediately after port %d\n",
+					this_index, num_ports-1);
+			fprintf(stderr, "Either the plugin %s or your version of rasqal is broken.\n",
+					slv2_value_as_uri(p->plugin_uri));
+			fprintf(stderr, "Please report (with rasqal version): http://dev.drobilla.net/newticket?component=SLV2\n");
+		}
+			
+		if (this_port) {
+			raptor_sequence_push(this_port->classes,
+					slv2_value_new_librdf_uri(p->world, librdf_node_get_uri(type_node)));
+		}
+
+		librdf_free_node(type_node);
 		librdf_free_node(symbol_node);
 		librdf_free_node(index_node);
 		
 		librdf_query_results_next(results);
 	}
 	
-	raptor_sequence_sort(p->ports, slv2_port_compare_by_index);
+	// Not necessary due to ORDER BY clause
+	//raptor_sequence_sort(p->ports, slv2_port_compare_by_index);
 	
 	librdf_free_query_results(results);
 	librdf_free_query(q);
 
-	//printf("%p %s: NUM PORTS: %d\n", (void*)p, p->plugin_uri, slv2_plugin_get_num_ports(p));
+	// Load binary URI
+	query = (const unsigned char*)
+		"PREFIX : <http://lv2plug.in/ns/lv2core#>\n"
+		"SELECT ?binary WHERE { <> :binary ?binary . }";
+	
+	q = librdf_new_query(p->world->world, "sparql",
+		NULL, query, slv2_value_as_librdf_uri(p->plugin_uri));
+	
+	results = librdf_query_execute(q, p->rdf);
+
+	if (!librdf_query_results_finished(results)) {
+		librdf_node* binary_node = librdf_query_results_get_binding_value(results, 0);
+		librdf_uri* binary_uri = librdf_node_get_uri(binary_node);
+
+		SLV2Value binary = slv2_value_new_librdf_uri(p->world, binary_uri);
+		p->binary_uri = binary;
+
+		librdf_free_node(binary_node);
+	}
+	
+	librdf_free_query_results(results);
+	librdf_free_query(q);
 }
 
 
-const char*
+SLV2Value
 slv2_plugin_get_uri(SLV2Plugin p)
 {
 	assert(p);
 	assert(p->plugin_uri);
-	return (const char*)librdf_uri_as_string(p->plugin_uri);
+	return p->plugin_uri;
 }
 
 
-const char*
+SLV2Value
 slv2_plugin_get_bundle_uri(SLV2Plugin p)
 {
 	assert(p);
 	assert(p->bundle_uri);
-	return (const char*)librdf_uri_as_string(p->bundle_uri);
+	return p->bundle_uri;
 }
 
 
-const char*
+SLV2Value
 slv2_plugin_get_library_uri(SLV2Plugin p)
 {
 	assert(p);
-	assert(p->binary_uri);
-	return (const char*)librdf_uri_as_string(p->binary_uri);
+	if (!p->binary_uri && !p->rdf)
+		slv2_plugin_load(p);
+	return p->binary_uri;
 }
 
 
@@ -309,7 +335,6 @@ slv2_plugin_verify(SLV2Plugin plugin)
 		librdf_node* type_node = librdf_query_results_get_binding_value(results, 0);
 		const char* const type_str = (const char*)librdf_node_get_literal_value(type_node);
 		librdf_node* name_node = librdf_query_results_get_binding_value(results, 1);
-		//const char* const name = (const char*)librdf_node_get_literal_value(name_node);
 		librdf_node* license_node = librdf_query_results_get_binding_value(results, 2);
 		librdf_node* port_node = librdf_query_results_get_binding_value(results, 3);
 
@@ -336,7 +361,8 @@ slv2_plugin_verify(SLV2Plugin plugin)
 	librdf_free_query_results(results);
 
 	if ( ! (has_type && has_name && has_license && has_port) ) {
-		fprintf(stderr, "Invalid LV2 Plugin %s\n", slv2_plugin_get_uri(plugin));
+		fprintf(stderr, "Invalid LV2 Plugin %s\n",
+				slv2_value_as_uri(slv2_plugin_get_uri(plugin)));
 		return false;
 	} else {
 		return true;
@@ -344,49 +370,92 @@ slv2_plugin_verify(SLV2Plugin plugin)
 }
 
 
-char*
+SLV2Value
 slv2_plugin_get_name(SLV2Plugin plugin)
 {
-	char* result     = NULL;
-	SLV2Values prop = slv2_plugin_get_value(plugin, SLV2_QNAME, "doap:name");
+	SLV2Values results = slv2_plugin_get_value_by_qname_i18n(plugin, "doap:name");
+	SLV2Value  ret     = NULL;
 	
-	// FIXME: lang? guaranteed to be the untagged one?
-	if (prop && slv2_values_size(prop) > 0) {
-		SLV2Value val = slv2_values_get_at(prop, 0);
+	if (results) {
+		SLV2Value val = slv2_values_get_at(results, 0);
 		if (slv2_value_is_string(val))
-			result = strdup(slv2_value_as_string(val));
+			ret = slv2_value_duplicate(val);
+		slv2_values_free(results);
+	} else {
+		results = slv2_plugin_get_value_by_qname(plugin, "doap:name");
+		SLV2Value val = slv2_values_get_at(results, 0);
+		if (slv2_value_is_string(val))
+			ret = slv2_value_duplicate(val);
+		slv2_values_free(results);
 	}
 
-	if (prop)
-		slv2_values_free(prop);
-
-	return result;
+	return ret;
 }
 
 
 SLV2Values
-slv2_plugin_get_value(SLV2Plugin  p,
-                      SLV2URIType predicate_type,
-                      const char* predicate)
+slv2_plugin_get_value(SLV2Plugin p,
+                      SLV2Value  predicate)
 {
 	char* query = NULL;
 	
 	/* Hack around broken RASQAL, full URI predicates don't work :/ */
 
-	if (predicate_type == SLV2_URI) {
+	if (predicate->type == SLV2_VALUE_URI) {
 		query = slv2_strjoin(
-			"PREFIX slv2predicate: <", predicate, ">",
+			"PREFIX slv2predicate: <", slv2_value_as_string(predicate), ">",
 			"SELECT DISTINCT ?value WHERE { \n"
 			"<> slv2predicate: ?value \n"
 			"}\n", NULL);
-	} else {
+	} else if (predicate->type == SLV2_VALUE_QNAME) {
     	query = slv2_strjoin(
 			"SELECT DISTINCT ?value WHERE { \n"
-			"<> ", predicate, " ?value \n"
+			"<> ", slv2_value_as_string(predicate), " ?value \n"
 			"}\n", NULL);
+	} else {
+		fprintf(stderr, "slv2_plugin_get_value error: "
+				"predicate is not a URI or QNAME\n");
+		return NULL;
 	}
 
-	SLV2Values result = slv2_plugin_simple_query(p, query, 0);
+	SLV2Values result = slv2_plugin_query_variable(p, query, 0);
+	
+	free(query);
+
+	return result;
+}
+
+
+/* internal */
+SLV2Values
+slv2_plugin_get_value_by_qname(SLV2Plugin  p,
+                               const char* predicate)
+{
+	char* query = slv2_strjoin(
+			"SELECT DISTINCT ?value WHERE { \n"
+			"<> ", predicate, " ?value . \n"
+			"}\n", NULL);
+
+	SLV2Values result = slv2_plugin_query_variable(p, query, 0);
+	
+	free(query);
+
+	return result;
+}
+
+	
+/* internal: get i18n value if possible */
+SLV2Values
+slv2_plugin_get_value_by_qname_i18n(SLV2Plugin  p,
+                                    const char* predicate)
+{
+	char* query = slv2_strjoin(
+			"SELECT DISTINCT ?value WHERE { \n"
+			"<> ", predicate, " ?value . \n"
+			"FILTER(lang(?value) = \"", slv2_get_lang(), "\") \n"
+			"}\n", NULL);
+
+	SLV2Values result = slv2_plugin_query_variable(p, query, 0);
 	
 	free(query);
 
@@ -397,12 +466,11 @@ slv2_plugin_get_value(SLV2Plugin  p,
 SLV2Values
 slv2_plugin_get_value_for_subject(SLV2Plugin  p,
                                   SLV2Value   subject,
-                                  SLV2URIType predicate_type,
-                                  const char* predicate)
+                                  SLV2Value   predicate)
 {
 	if ( ! slv2_value_is_uri(subject)) {
 		fprintf(stderr, "slv2_plugin_get_value_for_subject error: "
-				"passed non-URI subject\n");
+				"subject is not a URI\n");
 		return NULL;
 	}
 
@@ -412,20 +480,25 @@ slv2_plugin_get_value_for_subject(SLV2Plugin  p,
 
 	char* subject_token = slv2_value_get_turtle_token(subject);
 
-	if (predicate_type == SLV2_URI) {
+	if (predicate->type == SLV2_VALUE_URI) {
 		query = slv2_strjoin(
 			"PREFIX slv2predicate: <", predicate, ">",
 			"SELECT DISTINCT ?value WHERE { \n",
 			subject_token, " slv2predicate: ?value \n"
 			"}\n", NULL);
-	} else {
+	} else if (predicate->type == SLV2_VALUE_URI) {
     	query = slv2_strjoin(
 			"SELECT DISTINCT ?value WHERE { \n",
 			subject_token, " ", predicate, " ?value \n"
 			"}\n", NULL);
+	} else {
+		fprintf(stderr, "slv2_plugin_get_value error: "
+				"predicate is not a URI or QNAME\n");
+		free(subject_token);
+		return NULL;
 	}
 
-	SLV2Values result = slv2_plugin_simple_query(p, query, 0);
+	SLV2Values result = slv2_plugin_query_variable(p, query, 0);
 	
 	free(query);
 	free(subject_token);
@@ -437,14 +510,14 @@ slv2_plugin_get_value_for_subject(SLV2Plugin  p,
 SLV2Values
 slv2_plugin_get_properties(SLV2Plugin p)
 {
-	return slv2_plugin_get_value(p, SLV2_QNAME, "lv2:pluginProperty");
+	return slv2_plugin_get_value_by_qname(p, "lv2:pluginProperty");
 }
 
 
 SLV2Values
 slv2_plugin_get_hints(SLV2Plugin p)
 {
-	return slv2_plugin_get_value(p, SLV2_QNAME, "lv2:pluginHint");
+	return slv2_plugin_get_value_by_qname(p, "lv2:pluginHint");
 }
 
 
@@ -458,17 +531,114 @@ slv2_plugin_get_num_ports(SLV2Plugin p)
 }
 
 
+void
+slv2_plugin_get_port_float_values(SLV2Plugin  p,
+                                  const char* qname,
+                                  float*      values)
+{
+	if (!p->rdf)
+		slv2_plugin_load(p);
+
+	const unsigned char* query;
+	librdf_query* q;
+	librdf_query_results* results;
+
+	for (int i = 0; i < raptor_sequence_size(p->ports); ++i)
+		values[i] = NAN;
+
+	query = (const unsigned char*)slv2_strjoin(
+			"PREFIX : <http://lv2plug.in/ns/lv2core#>\n"
+			"SELECT DISTINCT ?index ?value WHERE {\n"
+			"<>    :port    ?port .\n"
+			"?port :index   ?index .\n"
+			"?port ", qname, " ?value .\n"
+			"} ", NULL);
+
+	q = librdf_new_query(p->world->world, "sparql",
+			NULL, query, slv2_value_as_librdf_uri(p->plugin_uri));
+
+	results = librdf_query_execute(q, p->rdf);
+
+	while (!librdf_query_results_finished(results)) {
+		librdf_node* idx_node = librdf_query_results_get_binding_value(results, 0);
+		librdf_node* val_node = librdf_query_results_get_binding_value(results, 1);
+		if (idx_node && val_node && librdf_node_is_literal(idx_node)
+				&& librdf_node_is_literal(val_node)) {
+			const int idx = atoi((const char*)librdf_node_get_literal_value(idx_node));
+			const float val = atof((const char*)librdf_node_get_literal_value(val_node));
+			values[idx] = val;
+			librdf_free_node(idx_node);
+			librdf_free_node(val_node);
+		}
+		librdf_query_results_next(results);
+	}
+
+	librdf_free_query_results(results);
+	librdf_free_query(q);
+}
+
+
+void
+slv2_plugin_get_port_ranges_float(SLV2Plugin p, 
+                                  float*     min_values, 
+                                  float*     max_values,
+                                  float*     def_values)
+{
+	if (min_values)
+		slv2_plugin_get_port_float_values(p, ":minimum", min_values);
+
+	if (max_values)
+		slv2_plugin_get_port_float_values(p, ":maximum", max_values);
+
+	if (def_values)
+		slv2_plugin_get_port_float_values(p, ":default", def_values);
+}
+
+
+uint32_t
+slv2_plugin_get_num_ports_of_class(SLV2Plugin p,
+                                   SLV2Value  class_1, ...)
+{
+	uint32_t ret = 0;
+	va_list  args;
+
+	for (unsigned i=0; i < slv2_plugin_get_num_ports(p); ++i) {
+		SLV2Port port = raptor_sequence_get_at(p->ports, i);
+		if (!slv2_port_is_a(p, port, class_1))
+			continue;
+
+		va_start(args, class_1);
+		
+		bool matches = true;
+		for (SLV2Value class_i = NULL; (class_i = va_arg(args, SLV2Value)) != NULL ; ) {
+			if (!slv2_port_is_a(p, port, class_i)) {
+				va_end(args);
+				matches = false;
+				break;
+			}
+		}
+
+		if (matches)
+			++ret;
+
+		va_end(args);
+	}
+
+	return ret;
+}
+
+
 bool
 slv2_plugin_has_latency(SLV2Plugin p)
 {
     const char* const query = 
-		"SELECT DISTINCT ?index WHERE {\n"
+		"SELECT ?index WHERE {\n"
 		"	<>      lv2:port         ?port .\n"
 		"	?port   lv2:portProperty lv2:reportsLatency ;\n"
 		"           lv2:index        ?index .\n"
 		"}\n";
 
-	SLV2Values results = slv2_plugin_simple_query(p, query, 0);
+	SLV2Values results = slv2_plugin_query_variable(p, query, 0);
 	const bool latent = (slv2_values_size(results) > 0);
 	slv2_values_free(results);
 	
@@ -477,16 +647,16 @@ slv2_plugin_has_latency(SLV2Plugin p)
 
 
 uint32_t
-slv2_plugin_get_latency_port(SLV2Plugin p)
+slv2_plugin_get_latency_port_index(SLV2Plugin p)
 {
     const char* const query = 
-		"SELECT DISTINCT ?index WHERE {\n"
+		"SELECT ?index WHERE {\n"
 		"	<>      lv2:port         ?port .\n"
 		"	?port   lv2:portProperty lv2:reportsLatency ;\n"
 		"           lv2:index        ?index .\n"
 		"}\n";
 
-	SLV2Values result = slv2_plugin_simple_query(p, query, 0);
+	SLV2Values result = slv2_plugin_query_variable(p, query, 0);
 	
 	// FIXME: need a sane error handling strategy
 	assert(slv2_values_size(result) > 0);
@@ -496,18 +666,43 @@ slv2_plugin_get_latency_port(SLV2Plugin p)
 	return slv2_value_as_int(val);
 }
 
+	
+bool
+slv2_plugin_has_feature(SLV2Plugin p,
+                        SLV2Value  feature)
+{
+	SLV2Values features = slv2_plugin_get_supported_features(p);
+	
+	const bool ret = features && feature && slv2_values_contains(features, feature);
+
+	slv2_values_free(features);
+	return ret;
+}
+
 
 SLV2Values
 slv2_plugin_get_supported_features(SLV2Plugin p)
 {
-    const char* const query = 
+	/* Work around broken UNION in Redland :( */
+    /*const char* const query = 
 		"SELECT DISTINCT ?feature WHERE {\n"
 		"	{ <>  lv2:optionalFeature ?feature }\n"
 		"	UNION\n"
 		"	{ <>  lv2:requiredFeature ?feature }\n"
 		"}\n";
+	
+	SLV2Values result = slv2_plugin_query_variable(p, query, 0);*/
 
-	SLV2Values result = slv2_plugin_simple_query(p, query, 0);
+	SLV2Values optional = slv2_plugin_get_optional_features(p);
+	SLV2Values required = slv2_plugin_get_required_features(p);
+	
+	SLV2Values result = slv2_values_new();
+	unsigned n_optional = slv2_values_size(optional);
+	unsigned i = 0;
+	for ( ; i < n_optional; ++i)
+		slv2_values_set_at(result, i, slv2_values_get_at(optional, i));
+	for ( ; i < n_optional + slv2_values_size(required); ++i)
+		slv2_values_set_at(result, i, slv2_values_get_at(required, i - n_optional));
 	
 	return result;
 }
@@ -516,14 +711,14 @@ slv2_plugin_get_supported_features(SLV2Plugin p)
 SLV2Values
 slv2_plugin_get_optional_features(SLV2Plugin p)
 {
-	return slv2_plugin_get_value(p, SLV2_QNAME, "lv2:optionalFeature");
+	return slv2_plugin_get_value_by_qname(p, "lv2:optionalFeature");
 }
 
 
 SLV2Values
 slv2_plugin_get_required_features(SLV2Plugin p)
 {
-	return slv2_plugin_get_value(p, SLV2_QNAME, "lv2:requiredFeature");
+	return slv2_plugin_get_value_by_qname(p, "lv2:requiredFeature");
 }
 
 
@@ -539,16 +734,15 @@ slv2_plugin_get_port_by_index(SLV2Plugin p,
 
 
 SLV2Port
-slv2_plugin_get_port_by_symbol(SLV2Plugin  p,
-                               const char* symbol)
+slv2_plugin_get_port_by_symbol(SLV2Plugin p,
+                               SLV2Value  symbol)
 {
 	if (!p->rdf)
 		slv2_plugin_load(p);
 	
-	// FIXME: sort plugins and do a binary search
 	for (int i=0; i < raptor_sequence_size(p->ports); ++i) {
 		SLV2Port port = raptor_sequence_get_at(p->ports, i);
-		if (!strcmp(port->symbol, symbol))
+		if (slv2_value_equals(port->symbol, symbol))
 			return port;
 	}
 
@@ -556,15 +750,93 @@ slv2_plugin_get_port_by_symbol(SLV2Plugin  p,
 }
 
 
+SLV2Value
+slv2_plugin_get_author_name(SLV2Plugin plugin)
+{
+	SLV2Value ret = NULL;
+
+    const char* const query = 
+		"SELECT ?name WHERE {\n"
+		"	<>      doap:maintainer ?maint . \n"
+		"	?maint  foaf:name ?name . \n"
+		"}\n";
+
+	SLV2Values results = slv2_plugin_query_variable(plugin, query, 0);
+	
+	if (results && slv2_values_size(results) > 0) {
+		SLV2Value val = slv2_values_get_at(results, 0);
+		if (slv2_value_is_string(val))
+			ret = slv2_value_duplicate(val);
+	}
+
+	if (results)
+		slv2_values_free(results);
+
+	return ret;
+}
+
+
+SLV2Value
+slv2_plugin_get_author_email(SLV2Plugin plugin)
+{
+	SLV2Value ret = NULL;
+
+    const char* const query = 
+		"SELECT ?email WHERE {\n"
+		"	<>      doap:maintainer ?maint . \n"
+		"	?maint  foaf:mbox ?email . \n"
+		"}\n";
+	
+	SLV2Values results = slv2_plugin_query_variable(plugin, query, 0);
+	
+	if (results && slv2_values_size(results) > 0) {
+		SLV2Value val = slv2_values_get_at(results, 0);
+		if (slv2_value_is_uri(val))
+			ret = slv2_value_duplicate(val);
+	}
+
+	if (results)
+		slv2_values_free(results);
+
+	return ret;
+}
+
+	
+SLV2Value
+slv2_plugin_get_author_homepage(SLV2Plugin plugin)
+{
+	SLV2Value ret = NULL;
+
+    const char* const query = 
+		"SELECT ?page WHERE {\n"
+		"	<>      doap:maintainer ?maint . \n"
+		"	?maint  foaf:homepage ?page . \n"
+		"}\n";
+	
+	SLV2Values results = slv2_plugin_query_variable(plugin, query, 0);
+	
+	if (results && slv2_values_size(results) > 0) {
+		SLV2Value val = slv2_values_get_at(results, 0);
+		if (slv2_value_is_uri(val))
+			ret = slv2_value_duplicate(val);
+	}
+
+	if (results)
+		slv2_values_free(results);
+
+	return ret;
+}
+
+
 SLV2UIs
 slv2_plugin_get_uis(SLV2Plugin plugin)
 {
     const char* const query_str =
-		"PREFIX guiext: <http://ll-plugins.nongnu.org/lv2/ext/gui/dev/1#>\n"
+		"PREFIX uiext: <http://lv2plug.in/ns/extensions/ui#>\n"
 		"SELECT DISTINCT ?uri ?type ?binary WHERE {\n"
-		"<>   guiext:gui    ?uri .\n"
-		"?uri a             ?type ;\n"
-		"     guiext:binary ?binary .\n"
+		"<>   uiext:ui     ?uri .\n"
+		"?uri a            ?type ;\n"
+		"     uiext:binary ?binary .\n"
 		"}\n";
 
 	librdf_query_results* results = slv2_plugin_query(plugin, query_str);
@@ -598,53 +870,5 @@ slv2_plugin_get_uis(SLV2Plugin plugin)
 		slv2_uis_free(result);
 		return NULL;
 	}
-}
-
-#if 0
-SLV2Value
-slv2_plugin_get_ui_library_uri(SLV2Plugin plugin, 
-                               SLV2Value  ui)
-{
-	assert(ui->type == SLV2_VALUE_UI);
-	
-	if (!plugin->rdf)
-		slv2_plugin_load(plugin);
-
-	SLV2Values values =  slv2_plugin_get_value_for_subject(plugin, ui, SLV2_URI,
-			"http://ll-plugins.nongnu.org/lv2/ext/gui/dev/1#binary");
-
-	if (!values || slv2_values_size(values) == 0) {
-		slv2_values_free(values);
-		return NULL;
-	}
-
-	SLV2Value value = slv2_values_get_at(values, 0);
-	if (!slv2_value_is_uri(value)) {
-		slv2_values_free(values);
-		return NULL;
-	}
-
-	value = slv2_value_duplicate(value);
-	slv2_values_free(values);
-
-	return value;
-}
-#endif
-
-
-void*
-slv2_plugin_load_ui(SLV2Plugin plugin,
-                    SLV2Value  ui)
-{
-#if 0
-	SLV2Value lib_uri = slv2_plugin_get_ui_library_uri(plugin, ui);
-
-	if (!lib_uri)
-		return NULL;
-
-	//LV2UI_Handle handle =
-	//
-#endif
-	return NULL;
 }
 

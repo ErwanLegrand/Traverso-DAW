@@ -21,10 +21,11 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <librdf.h>
+#include <locale.h>
 #include <limits.h>
-#include <slv2/plugin.h>
-#include <slv2/util.h>
-#include <slv2/values.h>
+#include "slv2/plugin.h"
+#include "slv2/util.h"
+#include "slv2/values.h"
 #include "slv2_internal.h"
 
 
@@ -32,50 +33,43 @@ static const char* slv2_query_prefixes =
 	"PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 	"PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#>\n"
 	"PREFIX doap:   <http://usefulinc.com/ns/doap#>\n"
-	"PREFIX lv2:    <http://lv2plug.in/ns/lv2core#>\n";
+	"PREFIX foaf:   <http://xmlns.com/foaf/0.1/>\n"
+	"PREFIX lv2:    <http://lv2plug.in/ns/lv2core#>\n"
+	"PREFIX lv2ev:  <http://lv2plug.in/ns/ext/event#>\n";
 
-#if 0
-char*
-slv2_query_lang_filter(const char* variable)
-{
-	char* result = NULL;
-	char* const lang = (char*)getenv("LANG");
-	if (lang) {
-		// FILTER( LANG(?value) = "en" || LANG(?value) = "" )
-		result = slv2_strjoin(
-			//"FILTER (lang(?value) = \"", lang, "\"\n"), 0);
-			"FILTER( lang(?", variable, ") = \"", lang, 
-			"\" || lang(?", variable, ") = \"\" )\n", NULL);
-	}
-
-	return result;
-}
-#endif
 
 SLV2Values
-slv2_query_get_variable_bindings(librdf_query_results* results,
+slv2_query_get_variable_bindings(SLV2World             world,
+                                 librdf_query_results* results,
                                  int                   variable)
 {
 	SLV2Values result = NULL;
 
-    if (librdf_query_results_get_bindings_count(results) > 0)
+    if (!librdf_query_results_finished(results))
 		result = slv2_values_new();
 
     while (!librdf_query_results_finished(results)) {
 
         librdf_node* node =
             librdf_query_results_get_binding_value(results, variable);
+
+		if (!node) {
+			fprintf(stderr, "SLV2 ERROR: Variable %d bound to NULL.\n", variable);
+        	librdf_query_results_next(results);
+			continue;
+		}
 		
 		librdf_uri* datatype_uri = NULL;
 		SLV2ValueType type = SLV2_VALUE_STRING;
 		
+		librdf_uri* uri_val = NULL;
 		const char* str_val = NULL;
 
 		switch (librdf_node_get_type(node)) {
 		case LIBRDF_NODE_TYPE_RESOURCE:
 			type = SLV2_VALUE_URI;
-			assert(librdf_node_get_uri(node));
-			str_val = (const char*)librdf_uri_as_string(librdf_node_get_uri(node));
+			uri_val = librdf_node_get_uri(node);
+			assert(uri_val);
 			break;
 		case LIBRDF_NODE_TYPE_LITERAL:
 			datatype_uri = librdf_node_get_literal_value_datatype_uri(node);
@@ -100,8 +94,10 @@ slv2_query_get_variable_bindings(librdf_query_results* results,
 			break;
 		}
 			
-		if (str_val)
-			raptor_sequence_push(result, slv2_value_new(type, str_val));
+		if (uri_val)
+			raptor_sequence_push(result, slv2_value_new_librdf_uri(world, uri_val));
+		else if (str_val)
+			raptor_sequence_push(result, slv2_value_new(world, type, str_val));
 
 		librdf_free_node(node);
 
@@ -133,7 +129,7 @@ slv2_plugin_query(SLV2Plugin  plugin,
 	if (!plugin->rdf)
 		slv2_plugin_load(plugin);
 
-	librdf_uri* base_uri = plugin->plugin_uri;
+	librdf_uri* base_uri = slv2_value_as_librdf_uri(plugin->plugin_uri);
 
 	char* query_str = slv2_strjoin(slv2_query_prefixes, sparql_str, NULL);
 
@@ -147,7 +143,14 @@ slv2_plugin_query(SLV2Plugin  plugin,
 		return NULL;
 	}
 	
+	// FIXME: locale kludges to work around librdf bug
+	char* locale = strdup(setlocale(LC_NUMERIC, NULL));
+
+	setlocale(LC_NUMERIC, "POSIX");
 	librdf_query_results* results = librdf_query_execute(query, plugin->rdf);
+	setlocale(LC_NUMERIC, locale);
+	
+	free(locale);
 	
 	librdf_free_query(query);
 	free(query_str);
@@ -158,15 +161,15 @@ slv2_plugin_query(SLV2Plugin  plugin,
 
 /** Query a single variable */
 SLV2Values
-slv2_plugin_simple_query(SLV2Plugin  plugin,
-                         const char* sparql_str,
-                         unsigned    variable)
+slv2_plugin_query_variable(SLV2Plugin  plugin,
+                           const char* sparql_str,
+                           unsigned    variable)
 {
 	assert(variable < INT_MAX);
 
 	librdf_query_results* results = slv2_plugin_query(plugin, sparql_str);
 
-	SLV2Values ret = slv2_query_get_variable_bindings(results, (int)variable);
+	SLV2Values ret = slv2_query_get_variable_bindings(plugin->world, results, (int)variable);
 	
 	librdf_free_query_results(results);
 
@@ -178,6 +181,9 @@ slv2_plugin_simple_query(SLV2Plugin  plugin,
  *
  * More efficient than slv2_plugin_simple_query if you're only interested
  * in the number of results (ie slv2_plugin_num_ports).
+ * 
+ * Note the result of this function is probably meaningless unless the query
+ * is a SELECT DISTINCT.
  */
 unsigned
 slv2_plugin_query_count(SLV2Plugin  plugin,
@@ -195,31 +201,3 @@ slv2_plugin_query_count(SLV2Plugin  plugin,
 	return ret;
 }
 
-/*
-size_t
-slv2_query_count_results(SLV2Plugin  p,
-                         const char* query)
-{
-	char* query_str = slv2_strjoin(slv2_query_prefixes, query, NULL);
-
-	assert(p);
-	assert(query_str);
-
-	librdf_query *rq = librdf_new_query(p->world->world, "sparql", NULL,
-			(unsigned char*)query_str, NULL);
-
-	//printf("Query: \n%s\n\n", query_str);
-
-	librdf_query_results* results = librdf_query_execute(rq, p->world->model);
-	assert(results);
-	
-	size_t count = slv2_query_count_bindings(results);
-	
-	librdf_free_query_results(results);
-	librdf_free_query(rq);
-	
-	free(query_str);
-
-	return count;
-}
-*/
