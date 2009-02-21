@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2006-2007 Remon Sijrier
+Copyright (C) 2006-2009 Remon Sijrier
 
 This file is part of Traverso
 
@@ -49,7 +49,7 @@ public:
 	void process(AudioBus* bus, unsigned long nframes);
 
 	SLV2Instance  get_instance() const {return m_instance; }
-	SLV2Plugin get_slv2_plugin() const {return m_slv2plugin; }
+	SLV2Plugin get_slv2_plugin() const {return m_plugin; }
 	LV2Plugin* create_copy();
 
 	QDomNode get_state(QDomDocument doc);
@@ -59,15 +59,22 @@ public:
 	int set_state(const QDomNode & node );
 	
 	static PluginInfo get_plugin_info(SLV2Plugin plugin);
-	static QString plugin_type(const QString& uri);
 
 private:
 	QString		m_pluginUri;
-	SLV2Instance  	m_instance;
-	SLV2Plugin    	m_slv2plugin;
+	SLV2Plugin     m_plugin;   /**< Plugin "class" (actually just a few strings) */
+	SLV2Instance   m_instance;      /**< Plugin "instance" (loaded shared lib) */
+	uint32_t       m_num_ports;     /**< Size of the two following arrays: */
+	struct Port*   m_ports;         /**< Port array of size num_ports */
+	SLV2Value      m_input_class;   /**< Input port class (URI) */
+	SLV2Value      m_output_class;  /**< Output port class (URI) */
+	SLV2Value      m_control_class; /**< Control port class (URI) */
+	SLV2Value      m_audio_class;   /**< Audio port class (URI) */
+	SLV2Value      m_event_class;   /**< Event port class (URI) */
+	SLV2Value      optional;        /**< lv2:connectionOptional port property */
 	bool 		m_isSlave;
 	
-	LV2ControlPort* create_port(int portIndex);
+	LV2ControlPort* create_port(int portIndex, float defaultValue);
 
 	int create_instance();
 

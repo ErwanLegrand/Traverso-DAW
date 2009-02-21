@@ -43,6 +43,7 @@ public:
 
 #if defined (LV2_SUPPORT)
 	SLV2Plugins get_slv2_plugin_list();
+	SLV2World get_slv2_world() {return m_slv2World;}
 	Plugin* create_lv2_plugin(const QString& uri);
 #endif
 

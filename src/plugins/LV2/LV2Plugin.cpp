@@ -1,4 +1,4 @@
-/*Copyright (C) 2006-2007 Remon Sijrier
+/*Copyright (C) 2006-2009 Remon Sijrier
 
 This file is part of Traverso
 
@@ -31,12 +31,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #define UC_(x) (const unsigned char* ) x.toAscii().data()
 
+enum PortDirection {
+	INPUT,
+	OUTPUT
+};
+
+enum PortType {
+	CONTROL,
+	AUDIO,
+	EVENT
+};
 
 
 LV2Plugin::LV2Plugin(Sheet* sheet, bool slave)
 	: Plugin(sheet)
+	, m_plugin(0)
 	, m_instance(0)
-	, m_slv2plugin(0)
 {
 	m_isSlave = slave;
 }
@@ -45,8 +55,8 @@ LV2Plugin::LV2Plugin(Sheet* sheet, bool slave)
 LV2Plugin::LV2Plugin(Sheet* sheet, char* pluginUri)
 	: Plugin(sheet)
 	, m_pluginUri((char*) pluginUri)
+	, m_plugin(0)
 	, m_instance(0)
-	, m_slv2plugin(0)
 	, m_isSlave(false)
 {
 }
@@ -142,21 +152,43 @@ int LV2Plugin::set_state(const QDomNode & node )
 
 int LV2Plugin::init()
 {
+	m_num_ports = 0;
+	m_ports = NULL;
+	
+	SLV2World world = PluginManager::instance()->get_slv2_world();
+	
+	/* Set up the port classes this app supports */
+	m_input_class = slv2_value_new_uri(world, SLV2_PORT_CLASS_INPUT);
+	m_output_class = slv2_value_new_uri(world, SLV2_PORT_CLASS_OUTPUT);
+	m_control_class = slv2_value_new_uri(world, SLV2_PORT_CLASS_CONTROL);
+	m_audio_class = slv2_value_new_uri(world, SLV2_PORT_CLASS_AUDIO);
+	m_event_class = slv2_value_new_uri(world, SLV2_PORT_CLASS_EVENT);
+// 	m_optional = slv2_value_new_uri(world, SLV2_NAMESPACE_LV2 "connectionOptional");
+
+
 	if (create_instance() < 0) {
 		return -1;
 	}
 
-	/* Create ports */
-	int portcount  = slv2_plugin_get_num_ports(m_slv2plugin);
 
-	for (int i=0; i < portcount; ++i) {
-		LV2ControlPort* port = create_port(i);
+	/* Create ports */
+	m_num_ports  = slv2_plugin_get_num_ports(m_plugin);
+// 	float* default_values  = new float(slv2_plugin_get_num_ports(m_plugin) * sizeof(float));
+	float* default_values  = (float*)calloc(slv2_plugin_get_num_ports(m_plugin), 
+					sizeof(float));
+	slv2_plugin_get_port_ranges_float(m_plugin, NULL, NULL, default_values);
+
+
+	for (uint i=0; i < m_num_ports; ++i) {
+		LV2ControlPort* port = create_port(i, default_values[i]);
 		if (port) {
 			m_controlPorts.append(port);
 		} else {
 			// Not an audio port, or unrecognized port type
 		}
 	}
+	
+	free(default_values);
 
 	/* Activate the plugin instance */
 	slv2_instance_activate(m_instance);
@@ -185,17 +217,19 @@ int LV2Plugin::create_instance()
 {
 // 	printf("URI:\t%s\n", QS_C(m_pluginUri));
 
-	m_slv2plugin = slv2_plugins_get_by_uri(PluginManager::instance()->get_slv2_plugin_list(), QS_C(m_pluginUri));
+	SLV2Value plugin_uri = slv2_value_new_uri(PluginManager::instance()->get_slv2_world(), QS_C(m_pluginUri));
+	m_plugin = slv2_plugins_get_by_uri(PluginManager::instance()->get_slv2_plugin_list(), plugin_uri);
+	slv2_value_free(plugin_uri);
 
 	
-	if (! m_slv2plugin) {
+	if (! m_plugin) {
 		fprintf(stderr, "Failed to find plugin %s.\n", QS_C(m_pluginUri));
 		return -1;
 	}
-
+	
 	/* Instantiate the plugin */
 	int samplerate = audiodevice().get_sample_rate();
-	m_instance = slv2_plugin_instantiate(m_slv2plugin, samplerate, NULL);
+	m_instance = slv2_plugin_instantiate(m_plugin, samplerate, NULL);
 
 	if (! m_instance) {
 		printf("Failed to instantiate plugin.\n");
@@ -241,61 +275,72 @@ void LV2Plugin::process(AudioBus* bus, unsigned long nframes)
 }
 
 
-LV2ControlPort* LV2Plugin::create_port(int portIndex)
+LV2ControlPort* LV2Plugin::create_port(int portIndex, float defaultValue)
 {
 	LV2ControlPort* ctrlport = (LV2ControlPort*) 0;
 
 	
-	SLV2Port slvport = slv2_plugin_get_port_by_index(m_slv2plugin, portIndex);
+	SLV2Port slv2_port = slv2_plugin_get_port_by_index(m_plugin, portIndex);
 	
-	/* Get the port symbol (label) for console printing */
-	char* symbol = slv2_port_get_symbol(m_slv2plugin, slvport);
+	PortDirection direction;
+	PortType type;
 
-	/* Get the 'direction' of the port (input, output) */
-	SLV2PortDirection portDirection = slv2_port_get_direction(m_slv2plugin, slvport);
+	if (slv2_port_is_a(m_plugin, slv2_port, m_input_class)) {
+		direction = INPUT;
+	} else if (slv2_port_is_a(m_plugin, slv2_port, m_output_class)) {
+		direction = OUTPUT;
+/*	} else if (slv2_port_has_property(m_plugin, slv2_port, m_optional)) {
+		slv2_instance_connect_port(m_instance, port_index, NULL);*/
+	} else {
+		PERROR("Mandatory port has unknown type (neither input or output)");
+		return ctrlport;
+	}
 
-	/* Get the 'data type' of the port (control, audio) */
-	SLV2PortDataType portDataType = slv2_port_get_data_type(m_slv2plugin, slvport);	
+
+	/* Set control values */
+	if (slv2_port_is_a(m_plugin, slv2_port, m_control_class)) {
+		type = CONTROL;
+	} else if (slv2_port_is_a(m_plugin, slv2_port, m_audio_class)) {
+		type = AUDIO;
+	}/* else if (slv2_port_is_a(m_plugin, slv2_port, m_event_class)) {
+		port->type = EVENT;
+	}*/
+
 	
-	/* Create the port based on it's 'direction' and 'data type' */
-	switch (portDataType) {
-		case SLV2_PORT_DATA_TYPE_CONTROL:
-			switch (portDirection) {
-			case SLV2_PORT_DIRECTION_INPUT:
-					ctrlport = new LV2ControlPort(this, portIndex, slv2_port_get_default_value(m_slv2plugin, slvport));
-					break;
-			case SLV2_PORT_DIRECTION_OUTPUT:
-					ctrlport = new LV2ControlPort(this, portIndex, 0);
-					break;
-			case SLV2_PORT_DIRECTION_UNKNOWN: break;
+	/* Create the port based on it's direction and type */
+	switch (type) {
+		case CONTROL:
+			switch (direction) {
+			case INPUT:
+				defaultValue = isnan(defaultValue) ? 0.0 : defaultValue;
+				ctrlport = new LV2ControlPort(this, portIndex, defaultValue);
+				break;
+			case OUTPUT:
+				ctrlport = new LV2ControlPort(this, portIndex, 0);
+				break;
 			}
 			break;
-		case SLV2_PORT_DATA_TYPE_AUDIO:
-			switch (portDirection) {
-			case SLV2_PORT_DIRECTION_INPUT:
-					m_audioInputPorts.append(new AudioInputPort(this, portIndex));
-					break;
-			case SLV2_PORT_DIRECTION_OUTPUT:
-					m_audioOutputPorts.append(new AudioOutputPort(this, portIndex));
-					break;
-			case SLV2_PORT_DIRECTION_UNKNOWN: break;
+		case AUDIO:
+			switch (direction) {
+			case INPUT:
+				m_audioInputPorts.append(new AudioInputPort(this, portIndex));
+				break;
+			case OUTPUT:
+				m_audioOutputPorts.append(new AudioOutputPort(this, portIndex));
+				break;
 			}
 			break;
-		case SLV2_PORT_DATA_TYPE_MIDI: break;
-		case SLV2_PORT_DATA_TYPE_OSC: break;
-		case SLV2_PORT_DATA_TYPE_UNKNOWN: break;
 		default:
 			PERROR("ERROR: Unknown port data type!");
 	}
-	
-	free(symbol);
+
 
 	return ctrlport;
 }
 
 QString LV2Plugin::get_name( )
 {
-	return QString(slv2_plugin_get_name(m_slv2plugin));
+	return QString(slv2_value_as_string(slv2_plugin_get_name(m_plugin)));
 }
 
 
@@ -324,7 +369,7 @@ LV2ControlPort::LV2ControlPort( LV2Plugin * plugin, const QDomNode node )
 
 void LV2ControlPort::init()
 {
-	foreach(QString string, get_hints()) {
+	foreach(const QString &string, get_hints()) {
 		if (string == "http://lv2plug.in/ns/lv2core#logarithmic") {
 			m_hint = LOG_CONTROL;
 		} else  if (string == "http://lv2plug.in/ns/lv2core#integer") {
@@ -342,33 +387,44 @@ QDomNode LV2ControlPort::get_state( QDomDocument doc )
 float LV2ControlPort::get_min_control_value()
 {
 	SLV2Port port = slv2_plugin_get_port_by_index(m_lv2plugin->get_slv2_plugin(), m_index);
-	return slv2_port_get_minimum_value (m_lv2plugin->get_slv2_plugin(), port);
+	SLV2Value minval;
+	slv2_port_get_range(m_lv2plugin->get_slv2_plugin(), port, NULL, &minval, NULL);
+	float val = slv2_value_as_float(minval);
+	slv2_value_free(minval);
+	return val;
 }
 
 float LV2ControlPort::get_max_control_value()
 {
 	SLV2Port port = slv2_plugin_get_port_by_index(m_lv2plugin->get_slv2_plugin(), m_index);
-	return slv2_port_get_maximum_value (m_lv2plugin->get_slv2_plugin(), port);
-
+	SLV2Value maxval;
+	slv2_port_get_range(m_lv2plugin->get_slv2_plugin(), port, NULL, NULL, &maxval);
+	float val = slv2_value_as_float(maxval);
+	slv2_value_free(maxval);
+	return val;
 }
 
 float LV2ControlPort::get_default_value()
 {
 	SLV2Port port = slv2_plugin_get_port_by_index(m_lv2plugin->get_slv2_plugin(), m_index);
-	return slv2_port_get_default_value (m_lv2plugin->get_slv2_plugin(), port);
+	SLV2Value defval;
+	slv2_port_get_range(m_lv2plugin->get_slv2_plugin(), port, &defval, NULL, NULL);
+	float val = slv2_value_as_float(defval);
+	slv2_value_free(defval);
+	return val;
 }
 
 
 QString LV2ControlPort::get_description()
 {
 	SLV2Port port = slv2_plugin_get_port_by_index(m_lv2plugin->get_slv2_plugin(), m_index);
-	return QString(slv2_port_get_name(m_lv2plugin->get_slv2_plugin(), port));
+	return QString(slv2_value_as_string(slv2_port_get_name(m_lv2plugin->get_slv2_plugin(), port)));
 }
 
 QString LV2ControlPort::get_symbol()
 {
 	SLV2Port port = slv2_plugin_get_port_by_index(m_lv2plugin->get_slv2_plugin(), m_index);
-	return QString(slv2_port_get_symbol(m_lv2plugin->get_slv2_plugin(), port));
+	return QString(slv2_value_as_string(slv2_port_get_symbol(m_lv2plugin->get_slv2_plugin(), port)));
 }
 
 QStringList LV2ControlPort::get_hints()
@@ -403,63 +459,24 @@ Command * LV2Plugin::toggle_bypass()
 PluginInfo LV2Plugin::get_plugin_info(SLV2Plugin plugin)
 {
 	PluginInfo info;
-	info.name = slv2_plugin_get_name(plugin);
-	info.uri = slv2_plugin_get_uri(plugin);
+	info.name = slv2_value_as_string(slv2_plugin_get_name(plugin));
+	info.uri = slv2_value_as_string(slv2_plugin_get_uri(plugin));
 	
 	
-	int portcount  = slv2_plugin_get_num_ports(plugin);
-
-	for (int i=0; i < portcount; ++i) {
-		SLV2Port slvport = slv2_plugin_get_port_by_index(plugin, i);
-		SLV2PortDirection portDirection = slv2_port_get_direction(plugin, slvport);
-		SLV2PortDataType portDataType = slv2_port_get_data_type(plugin, slvport);
-		switch (portDataType) {
-		case SLV2_PORT_DATA_TYPE_AUDIO:
-			switch (portDirection) {
-			case SLV2_PORT_DIRECTION_INPUT:
-					info.audioPortInCount++;
-					continue;
-			case SLV2_PORT_DIRECTION_OUTPUT:
-					info.audioPortOutCount++;
-					continue;
-			case SLV2_PORT_DIRECTION_UNKNOWN: break;
-			}
-			break;
-		case SLV2_PORT_DATA_TYPE_CONTROL: break;
-		case SLV2_PORT_DATA_TYPE_MIDI: break;
-		case SLV2_PORT_DATA_TYPE_OSC: break;
-		case SLV2_PORT_DATA_TYPE_UNKNOWN: break;
-		}
-	}
+	SLV2World world = PluginManager::instance()->get_slv2_world();
+	SLV2Value input = slv2_value_new_uri(world, SLV2_PORT_CLASS_INPUT);
+	SLV2Value output = slv2_value_new_uri(world, SLV2_PORT_CLASS_OUTPUT);
+	SLV2Value audio = slv2_value_new_uri(world, SLV2_PORT_CLASS_AUDIO);
 	
-	SLV2Values values =  slv2_plugin_get_value(plugin, SLV2_QNAME, "a");
-	for (unsigned i=0; i < slv2_values_size(values); ++i) {
-		QString type =  slv2_value_as_string(slv2_values_get_at(values, i));
-		if (type.contains("http://lv2plug.in/ns/lv2core#")) {
-			info.type = type.remove("http://lv2plug.in/ns/lv2core#");
-			break;
-		}
-	}
+	info.audioPortInCount = slv2_plugin_get_num_ports_of_class(plugin, input, audio, NULL);
+	info.audioPortOutCount = slv2_plugin_get_num_ports_of_class(plugin, output, audio, NULL);
+	info.type = slv2_value_as_string(slv2_plugin_class_get_label(slv2_plugin_get_class(plugin)));
+	
+	slv2_value_free(input);
+	slv2_value_free(output);
+	slv2_value_free(audio);
 	
 	return info;
-}
-
-QString LV2Plugin::plugin_type(const QString & uri)
-{
-	SLV2Plugin plugin = slv2_plugins_get_by_uri(PluginManager::instance()->get_slv2_plugin_list(), QS_C(uri));
-	
-	// TODO WHY THE HACK DO I NEED TO CALL THIS TO BE ABLE TO QUERY PLUGIN RDF DATA ????
-	char* name = slv2_plugin_get_name(plugin);
-	Q_UNUSED(name);
-	SLV2Values values =  slv2_plugin_get_value(plugin, SLV2_QNAME, "a");
-	for (unsigned i=0; i < slv2_values_size(values); ++i) {
-		QString type =  slv2_value_as_string(slv2_values_get_at(values, i));
-		if (type.contains("http://lv2plug.in/ns/lv2core#")) {
-			return type.remove("http://lv2plug.in/ns/lv2core#");
-		}
-	}
-	
-	return "";
 }
 
 //eof
