@@ -232,7 +232,7 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 	}
 	
 	bool microView = m_sheet->get_hzoom() < 64 ? 1 : 0;
-	TimeRef clipstarm_lineOffset = m_clip->get_source_start_location();
+	TimeRef clipstartoffset = m_clip->get_source_start_location();
 	int channels = m_clip->get_channels();
 	int peakdatacount = microView ? pixelcount : pixelcount * 2;
 	float* pixeldata[channels];
@@ -279,7 +279,7 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 		int availpeaks = peak->calculate_peaks(
 				chan,
 				&pixeldata[chan],
-				TimeRef(xstart * m_sv->timeref_scalefactor) + clipstarm_lineOffset,
+				TimeRef(xstart * m_sv->timeref_scalefactor) + clipstartoffset,
 				peakdatacount,
 				m_sheet->get_hzoom(),
 				xscale);
