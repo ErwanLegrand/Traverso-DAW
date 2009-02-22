@@ -232,7 +232,7 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 	}
 	
 	bool microView = m_sheet->get_hzoom() < 64 ? 1 : 0;
-	TimeRef clipstartoffset = m_clip->get_source_start_location();
+	TimeRef clipstarm_lineOffset = m_clip->get_source_start_location();
 	int channels = m_clip->get_channels();
 	int peakdatacount = microView ? pixelcount : pixelcount * 2;
 	float* pixeldata[channels];
@@ -279,7 +279,7 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 		int availpeaks = peak->calculate_peaks(
 				chan,
 				&pixeldata[chan],
-				TimeRef(xstart * m_sv->timeref_scalefactor) + clipstartoffset,
+				TimeRef(xstart * m_sv->timeref_scalefactor) + clipstarm_lineOffset,
 				peakdatacount,
 				m_sheet->get_hzoom(),
 				xscale);
@@ -433,20 +433,17 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 				p->setPen(themer()->get_color("AudioClip:db-grid"));
 				p->setFont( themer()->get_font("AudioClip:fontscale:dblines") );
 
-				QFontMetrics fm(p->font());
-				int toffset = fm.width(" -6 dB ");
+				p->drawLine(m_lineOffset, -0.45 * scale * height, xstart+pixelcount, -0.45 * scale * height);
+				p->drawText(0.0, -0.45 * scale * height - 1 + m_lineVOffset, "  0 dB");
 
-				p->drawLine(toffset, -0.45 * scale * height, xstart+pixelcount, -0.45 * scale * height);
-				p->drawText(0.0, -0.45 * scale * height - 1 + fm.ascent()/2, "  0 dB");
+				p->drawLine(m_lineOffset, 0.45 * scale * height + 1, xstart+pixelcount, 0.45 * scale * height + 1);
+				p->drawText(0.0, 0.45 * scale * height + m_lineVOffset, "  0 dB");
 
-				p->drawLine(toffset, 0.45 * scale * height + 1, xstart+pixelcount, 0.45 * scale * height + 1);
-				p->drawText(0.0, 0.45 * scale * height + fm.ascent()/2, "  0 dB");
+				p->drawLine(m_lineOffset, -0.225 * scale * height, xstart+pixelcount, -0.225 * scale * height);
+				p->drawText(0.0, -0.225 * scale * height - 1 + m_lineVOffset, " -6 dB");
 
-				p->drawLine(toffset, -0.225 * scale * height, xstart+pixelcount, -0.225 * scale * height);
-				p->drawText(0.0, -0.225 * scale * height - 1 + fm.ascent()/2, " -6 dB");
-
-				p->drawLine(toffset, 0.225 * scale * height + 1, xstart+pixelcount, 0.225 * scale * height + 1);
-				p->drawText(0.0, 0.225 * scale * height + fm.ascent()/2, " -6 dB");
+				p->drawLine(m_lineOffset, 0.225 * scale * height + 1, xstart+pixelcount, 0.225 * scale * height + 1);
+				p->drawText(0.0, 0.225 * scale * height + m_lineVOffset, " -6 dB");
 			}
 
 		// Macroview, paint waveform with painterpath
@@ -536,20 +533,17 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 					p->setPen(themer()->get_color("AudioClip:db-grid"));
 					p->setFont( themer()->get_font("AudioClip:fontscale:dblines") );
 
-					QFontMetrics fm(p->font());
-					int toffset = fm.width(" -6 dB ");
+					p->drawLine(m_lineOffset, -0.45 * scale * height, xstart+pixelcount, -0.45 * scale * height);
+					p->drawText(0.0, -0.45 * scale * height - 1 + m_lineVOffset, "  0 dB");
 
-					p->drawLine(toffset, -0.45 * scale * height, xstart+pixelcount, -0.45 * scale * height);
-					p->drawText(0.0, -0.45 * scale * height - 1 + fm.ascent()/2, "  0 dB");
+					p->drawLine(m_lineOffset, 0.45 * scale * height + 1, xstart+pixelcount, 0.45 * scale * height + 1);
+					p->drawText(0.0, 0.45 * scale * height + m_lineVOffset, "  0 dB");
 
-					p->drawLine(toffset, 0.45 * scale * height + 1, xstart+pixelcount, 0.45 * scale * height + 1);
-					p->drawText(0.0, 0.45 * scale * height + fm.ascent()/2, "  0 dB");
+					p->drawLine(m_lineOffset, -0.225 * scale * height, xstart+pixelcount, -0.225 * scale * height);
+					p->drawText(0.0, -0.225 * scale * height - 1 + m_lineVOffset, " -6 dB");
 
-					p->drawLine(toffset, -0.225 * scale * height, xstart+pixelcount, -0.225 * scale * height);
-					p->drawText(0.0, -0.225 * scale * height - 1 + fm.ascent()/2, " -6 dB");
-
-					p->drawLine(toffset, 0.225 * scale * height + 1, xstart+pixelcount, 0.225 * scale * height + 1);
-					p->drawText(0.0, 0.225 * scale * height + fm.ascent()/2, " -6 dB");
+					p->drawLine(m_lineOffset, 0.225 * scale * height + 1, xstart+pixelcount, 0.225 * scale * height + 1);
+					p->drawText(0.0, 0.225 * scale * height + m_lineVOffset, " -6 dB");
 				}
 			} else {
 				scaleFactor =  (float) height * 0.95 * m_clip->get_gain() / Peak::MAX_DB_VALUE * curveDefaultValue;
@@ -594,14 +588,12 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 
 					p->setPen(themer()->get_color("AudioClip:db-grid"));
 					p->setFont( themer()->get_font("AudioClip:fontscale:dblines") );
-					QFontMetrics fm(p->font());
-					int toffset = fm.width(" -6 dB ");
 
-					p->drawLine(toffset, -0.95 * scale * height, xstart+pixelcount, -0.95 * scale *  height);
-					p->drawText(0.0, -0.95 * scale * height - 1 + fm.ascent()/2, "  0 dB");
+					p->drawLine(m_lineOffset, -0.95 * scale * height, xstart+pixelcount, -0.95 * scale *  height);
+					p->drawText(0.0, -0.95 * scale * height - 1 + m_lineVOffset, "  0 dB");
 
-					p->drawLine(toffset, -0.475 * scale * height, xstart+pixelcount, -0.475 * scale * height);
-					p->drawText(0.0, -0.475 * scale * height - 1 + fm.ascent()/2, " -6 dB");
+					p->drawLine(m_lineOffset, -0.475 * scale * height, xstart+pixelcount, -0.475 * scale * height);
+					p->drawText(0.0, -0.475 * scale * height - 1 + m_lineVOffset, " -6 dB");
 				}
 
 			}
@@ -929,6 +921,11 @@ void AudioClipView::load_theme_data()
 	m_paintWithOutline = config().get_property("Themer", "paintwavewithoutline", true).toBool();
 	m_drawDbGrid = config().get_property("Themer", "drawdbgrid", false).toBool();
 	calculate_bounding_rect();
+
+	QFont dblfont = themer()->get_font("AudioClip:fontscale:dblines");
+	QFontMetrics fm(dblfont);
+	m_lineOffset = fm.width(" -6 dB ");
+	m_lineVOffset = fm.ascent()/2;
 }
 
 

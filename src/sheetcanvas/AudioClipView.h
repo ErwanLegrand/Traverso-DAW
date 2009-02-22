@@ -91,6 +91,8 @@ private:
 	int m_infoAreaHeight;
 	int m_mimimumheightforinfoarea;
 	int m_usePolygonPeakDrawing;
+	int m_lineOffset;
+	int m_lineVOffset;
 	TimeRef m_oldRecordingPos;
 	
 	// theme data
