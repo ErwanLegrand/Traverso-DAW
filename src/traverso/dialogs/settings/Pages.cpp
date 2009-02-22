@@ -529,11 +529,6 @@ AppearenceConfigPage::AppearenceConfigPage(QWidget * parent)
 	
 	load_config();
 	create_connections();
-
-#if defined Q_WS_MAC
-	iconSizeCombo->hide();
-	toolbarStyleCombo->hide();
-#endif
 }
 
 void AppearenceConfigPage::create_connections()

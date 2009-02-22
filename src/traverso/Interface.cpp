@@ -185,16 +185,8 @@ Interface::Interface()
 	
 	transportConsole = new TransportConsoleWidget(this);
 	transportConsole->setObjectName("Transport Console");
-	addToolBar(Qt::TopToolBarArea, transportConsole);
+	addToolBar(Qt::BottomToolBarArea, transportConsole);
 
-
-#if defined Q_WS_MAC
-	m_projectToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-	m_projectToolBar->setIconSize(QSize(20, 20));
-
-	m_editToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-	m_editToolBar->setIconSize(QSize(20, 20));
-#else
 	if (config().get_property("Themer", "textundericons", false).toBool()) {
 		m_projectToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 		m_editToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
@@ -203,7 +195,6 @@ Interface::Interface()
 	int iconsize = config().get_property("Themer", "iconsize", "22").toInt();
 	m_projectToolBar->setIconSize(QSize(iconsize, iconsize));
 	m_editToolBar->setIconSize(QSize(iconsize, iconsize));
-#endif
 
 	// Some default values.
 	currentSheetWidget = 0;
