@@ -27,6 +27,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <AudioDevice.h>
 #include <Utils.h>
 
+#if defined Q_WS_MAC
+	#include <cmath>
+	extern "C" int isnan(double);
+#endif
+
 #include <Debugger.h>
 
 #define UC_(x) (const unsigned char* ) x.toAscii().data()
