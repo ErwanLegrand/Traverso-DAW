@@ -1114,11 +1114,11 @@ QMenu* Interface::create_fade_selector_menu(const QString& fadeTypeName)
 
 void Interface::config_changed()
 {
-	bool toggled = config().get_property("Interface", "OpenGL", false).toBool();
+/*	bool toggled = config().get_property("Interface", "OpenGL", false).toBool();
 
 	foreach(SheetWidget* widget, m_sheetWidgets) {
 		widget->set_use_opengl(toggled);
-	}
+	}*/
 	
 	QString encoding = config().get_property("Recording", "FileFormat", "wav").toString();
 	QList<QAction* > actions = m_encodingMenu->actions();

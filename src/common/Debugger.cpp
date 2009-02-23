@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Debugger.cpp,v 1.2 2007/10/29 08:59:14 r_sijrier Exp $
+    $Id: Debugger.cpp,v 1.3 2009/02/23 20:12:09 r_sijrier Exp $
 */
 
 #include <stdlib.h>
@@ -266,10 +266,9 @@ DestructorEnter::~ DestructorEnter( )
 // (c) 1995-2004 MindView, Inc. All Rights Reserved.
 // See source code use permissions stated in the file 'License.txt',
 // distributed with the code package available at www.MindView.net.
-#include <cstdio>
-	#include <cstdlib>
-	#include <cassert>
-	#include <cstddef>
+#include <cstdlib>
+#include <cassert>
+#include <cstddef>
 using namespace std;
 #undef new
 

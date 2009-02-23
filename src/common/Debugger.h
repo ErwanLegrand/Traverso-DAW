@@ -17,13 +17,14 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: Debugger.h,v 1.2 2007/10/29 08:59:14 r_sijrier Exp $
+    $Id: Debugger.h,v 1.3 2009/02/23 20:12:09 r_sijrier Exp $
 */
 
 #ifndef TRAVERSO_DEBUGGER_H
 #define TRAVERSO_DEBUGGER_H
 
 #include <QString>
+#include <cstdio>
 
 
 //Debugging Macros
