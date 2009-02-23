@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: SheetWidget.h,v 1.1 2008/01/21 16:17:30 r_sijrier Exp $
+    $Id: SheetWidget.h,v 1.2 2009/02/23 20:12:58 r_sijrier Exp $
 */
 
 #ifndef SONG_WIDGET_H
@@ -81,7 +81,7 @@ public:
 	SheetWidget(Sheet* sheet, QWidget* parent=0);
 	~SheetWidget();
 	
-	void set_use_opengl(bool useOpenGL);
+// 	void set_use_opengl(bool useOpenGL);
 	Sheet* get_sheet() const;
 	SheetView* get_sheetview() const;
 	
@@ -100,7 +100,7 @@ private:
 	QGraphicsScene* 	m_scene;
 	QScrollBar*		m_vScrollBar;
 	QScrollBar*		m_hScrollBar;
-	bool			m_usingOpenGL;
+// 	bool			m_usingOpenGL;
 	
 	friend class SheetView;
 

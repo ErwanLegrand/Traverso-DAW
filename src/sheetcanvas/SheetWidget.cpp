@@ -33,9 +33,9 @@
 #include "ContextPointer.h"
 #include "Mixer.h"
 
-#if defined (QT_OPENGL_SUPPORT)
-#include <QtOpenGL>
-#endif
+// #if defined (QT_OPENGL_SUPPORT)
+// #include <QtOpenGL>
+// #endif
 
 #include <QGridLayout>
 #include <QScrollBar>
@@ -232,8 +232,8 @@ SheetWidget::SheetWidget(Sheet* sheet, QWidget* parent)
 	
 	connect(themer(), SIGNAL(themeLoaded()), this, SLOT(load_theme_data()), Qt::QueuedConnection);
 	
-	m_usingOpenGL  = false;
-	set_use_opengl(config().get_property("Interface", "OpenGL", false).toBool());
+// 	m_usingOpenGL  = false;
+// 	set_use_opengl(config().get_property("Interface", "OpenGL", false).toBool());
 
 	setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 
@@ -263,20 +263,20 @@ QSize SheetWidget::sizeHint() const
 	return QSize(700, 600);
 }
 
-void SheetWidget::set_use_opengl( bool useOpenGL )
-{
-	if (!m_sheet) {
-		return;
-	}
-	
-	if (useOpenGL != m_usingOpenGL) {
-#if defined (QT_OPENGL_SUPPORT)
-		m_clipsViewPort->setViewport(useOpenGL ? new QGLWidget(QGLFormat(QGL::SampleBuffers)) : new QWidget);
-		m_trackPanel->setViewport(useOpenGL ? new QGLWidget(QGLFormat(QGL::SampleBuffers)) : new QWidget);
-#endif
-	}
-	m_usingOpenGL = useOpenGL;
-}
+// void SheetWidget::set_use_opengl( bool useOpenGL )
+// {
+// 	if (!m_sheet) {
+// 		return;
+// 	}
+// 	
+// 	if (useOpenGL != m_usingOpenGL) {
+// #if defined (QT_OPENGL_SUPPORT)
+// 		m_clipsViewPort->setViewport(useOpenGL ? new QGLWidget(QGLFormat(QGL::SampleBuffers)) : new QWidget);
+// 		m_trackPanel->setViewport(useOpenGL ? new QGLWidget(QGLFormat(QGL::SampleBuffers)) : new QWidget);
+// #endif
+// 	}
+// 	m_usingOpenGL = useOpenGL;
+// }
 
 
 void SheetWidget::load_theme_data()

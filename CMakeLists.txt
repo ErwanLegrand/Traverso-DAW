@@ -36,11 +36,12 @@ OPTION(WANT_MP3_DECODE	"Include mp3 decoding support, for playing mp3 files" ON)
 OPTION(WANT_MP3_ENCODE	"Include mp3 encoding support, for creating mp3 files" OFF)
 OPTION(WANT_PCH     	"Use precompiled headers" OFF)
 OPTION(WANT_DEBUG   	"Debug build" OFF)
-OPTION(WANT_OPENGL	"Build Traverso with OpenGL support" OFF)
+# OPTION(WANT_OPENGL	"Build Traverso with OpenGL support" OFF)
 OPTION(WANT_TRAVERSO_DEBUG "Provides 4 levels of debug ouput on the command line, always on for DEBUG builds" OFF)
 OPTION(WANT_THREAD_CHECK	"Checks at runtime if functions are called from the correct thread, used by developers for debugging" OFF)
 OPTION(WANT_VECLIB_OPTIMIZATIONS "Build with veclib optimizations (Only for PPC based Mac OS X)" OFF)
 OPTION(AUTOPACKAGE_BUILD "Build traverso with autopackage tools" OFF)
+OPTION(DETECT_HOST_CPU_FEATURES "Detect the feature set of the host cpu, and compile with an optimal set of compiler flags" ON)
 
 
 SET(MAIN_DIR_NAME "src")
@@ -130,7 +131,7 @@ ENDIF(PKG_CONFIG_FOUND)
 
 
 #FIND DEPENDENCIES
-SET (QT_MIN_VERSION "4.2.0")
+SET (QT_MIN_VERSION "4.3.1")
 FIND_PACKAGE(Qt4 REQUIRED)
 
 
@@ -139,14 +140,14 @@ include(${QT_USE_FILE})
 
 INCLUDE (ConfigureChecks.cmake)
 
-IF(WANT_OPENGL)
-	IF(QT_QTOPENGL_FOUND)
-		LIST(APPEND TRAVERSO_DEFINES -DQT_OPENGL_SUPPORT) 
-		SET(HAVE_OPENGL TRUE)
-	ENDIF(QT_QTOPENGL_FOUND)
-ELSE(WANT_OPENGL)
-	SET(HAVE_OPENGL FALSE)
-ENDIF(WANT_OPENGL)
+# IF(WANT_OPENGL)
+# 	IF(QT_QTOPENGL_FOUND)
+# 		LIST(APPEND TRAVERSO_DEFINES -DQT_OPENGL_SUPPORT) 
+# 		SET(HAVE_OPENGL TRUE)
+# 	ENDIF(QT_QTOPENGL_FOUND)
+# ELSE(WANT_OPENGL)
+# 	SET(HAVE_OPENGL FALSE)
+# ENDIF(WANT_OPENGL)
 
 
 
@@ -437,7 +438,7 @@ IF(UNIX)
 	ENDIF(WANT_JACK)
 
 	
-	IF(NOT WANT_DEBUG)
+	IF(NOT WANT_DEBUG AND DETECT_HOST_CPU_FEATURES)
 #		Detect the architecture we are compiling on
 		execute_process(
 			COMMAND uname -m
@@ -487,7 +488,7 @@ IF(UNIX)
 			LIST(APPEND TRAVERSO_DEFINES -DARCH_X86)
 			SET(IS_ARCH_X86 TRUE)
 		ENDIF(uname_invoke_result MATCHES i[456]86)
-	ENDIF(NOT WANT_DEBUG)
+	ENDIF(NOT WANT_DEBUG AND DETECT_HOST_CPU_FEATURES)
 
 
 ELSE(UNIX)
@@ -622,5 +623,4 @@ CoreAudio support	:	${HAVE_COREAUDIO}
 SLV2 support		:	${SLV2OPTIONS}
 MP3 read support	:	${HAVE_MP3_DECODING}
 MP3 writing support	:	${HAVE_MP3_ENCODING}
-OpenGL support		:	${HAVE_OPENGL}
 ")
