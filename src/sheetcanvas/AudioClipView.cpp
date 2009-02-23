@@ -245,8 +245,6 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 		curveDefaultValue = curveView->get_default_value();
 	}
 	
-	qreal xscale;
-
 	float curvemixdown[peakdatacount];
 	if (mixcurvedata) {
 		mixcurvedata |= curveView->get_vector(qRound(xstart) + offset, peakdatacount, curvemixdown);
@@ -281,11 +279,8 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 				&pixeldata[chan],
 				TimeRef(xstart * m_sv->timeref_scalefactor) + clipstartoffset,
 				peakdatacount,
-				m_sheet->get_hzoom(),
-				xscale);
+				m_sheet->get_hzoom());
 				
-		xscale = 1.0;
-// 		printf("xscale %f, zoomlevel %f\n", xscale, m_sheet->get_hzoom());
 		
 		if (peakdatacount != availpeaks) {
 // 			PWARN("peakdatacount != availpeaks (%d, %d)", peakdatacount, availpeaks);
@@ -373,7 +368,7 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 			}
 		
 			ytrans = height * chan;
-			p->setMatrix(matrix().translate(xstart, ytrans).scale(xscale, 1), true);
+			p->setMatrix(matrix().translate(xstart, ytrans), true);
 			p->drawLine(0, 0, pixelcount, 0);
 			p->restore();
 		}
@@ -394,7 +389,7 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 				ytrans = (height / 2) + (chan * height);
 			}
 			
-			p->setMatrix(matrix().translate(xstart, ytrans).scale(xscale, -scaleFactor), true);
+			p->setMatrix(matrix().translate(xstart, ytrans), true);
 			
 			if (m_clip->is_selected()) {
 				p->setPen(themer()->get_color("AudioClip:channelseperator:selected"));
@@ -405,7 +400,7 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 			p->drawLine(0, 0, pixelcount, 0);
 			
 			for (int x = 0; x < pixelcount; x++) {
-				m_polygon.append( QPointF(x, pixeldata[chan][bufferPos++]) );
+				m_polygon.append( QPointF(x, -scaleFactor * pixeldata[chan][bufferPos++]) );
 			}
 			
 			if (themer()->get_property("AudioClip:wavemicroview:antialiased", 0).toInt()) {
@@ -415,9 +410,6 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 			p->setPen(themer()->get_color("AudioClip:wavemicroview"));
 			p->drawPolyline(m_polygon);
 		
-			p->restore();
-			p->save();
-
 			// draw lines at 0 and -6 db
 			if (m_drawDbGrid) {
 				if (m_height >= m_mimimumheightforinfoarea) {
@@ -425,7 +417,7 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 				}
 				p->setMatrix(matrix().translate(0, ytrans), true);
 
-				int scale = 1;
+				float scale = scaleFactor;
 				if (m_mergedView) {
 					scale = channels;
 				}
@@ -487,20 +479,20 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 					ytrans = (height / 2) + (chan * height);
 				}
 			
-				p->setMatrix(matrix().translate(xstart, ytrans).scale(xscale, scaleFactor), true);
+				p->setMatrix(matrix().translate(xstart, ytrans), true);
 				
 				m_polygon.clear();
 				m_polygon.reserve(pixelcount*2);
 				
 				for (int x = 0; x < pixelcount; x++) {
-					m_polygon.append( QPointF(x, - pixeldata[chan][bufferpos]) );
+					m_polygon.append( QPointF(x, -scaleFactor * pixeldata[chan][bufferpos]) );
 					bufferpos+=2;
 				}
 				
 				bufferpos -= 1;
 				
 				for (int x = pixelcount - 1; x >= 0; x--) {
-					m_polygon.append( QPointF(x, pixeldata[chan][bufferpos]) );
+					m_polygon.append( QPointF(x, scaleFactor * pixeldata[chan][bufferpos]) );
 					bufferpos-=2;
 				}
 				
@@ -514,9 +506,6 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 				// Draw 'the' -INF line
 				p->setPen(minINFLineColor);
 				p->drawLine(0, 0, pixelcount, 0);
-
-				p->restore();
-				p->save();
 
 				// draw lines at 0 and -6 db
 				if (m_drawDbGrid) {
@@ -554,13 +543,13 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 					scaleFactor *= channels;
 				}
 
-				p->setMatrix(matrix().translate(xstart, ytrans).scale(xscale, scaleFactor), true);
+				p->setMatrix(matrix().translate(xstart, ytrans), true);
 				
 				m_polygon.clear();
 				m_polygon.reserve(pixelcount + 2);
 				
 				for (int x=0; x<pixelcount; x++) {
-					m_polygon.append( QPointF(x, pixeldata[chan][bufferpos++]) );
+					m_polygon.append( QPointF(x, scaleFactor * pixeldata[chan][bufferpos++]) );
 				}
 				
 				m_polygon.append(QPointF(pixelcount, 0));
@@ -570,9 +559,6 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 				path.lineTo(0, 0);
 				
 				p->drawPath(path);
-
-				p->restore();
-				p->save();
 
 				// draw lines at 0 and -6 db
 				if (m_drawDbGrid) {

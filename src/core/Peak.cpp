@@ -242,9 +242,7 @@ int Peak::calculate_peaks(
 	float ** buffer,
 	TimeRef startlocation,
 	int peakDataCount,
-	qreal framesPerPeak,
-	qreal & scaleFactor
-	)
+	qreal framesPerPeak)
 {
 	PENTER3;
 	
@@ -275,8 +273,6 @@ int Peak::calculate_peaks(
 			return NO_PEAKDATA_FOUND;
 		}
 		
-		scaleFactor = qreal(nearestpow2) / framesPerPeak;
-
 		
 		nframes_t startPos = startlocation.to_frame(44100);
 		
@@ -317,13 +313,6 @@ int Peak::calculate_peaks(
 
 	// Micro view mode
 	} else {
-		if (framesPerPeak < 1.0) {
-			scaleFactor = 1.0 / framesPerPeak;
-			framesPerPeak = 1.0;
-		} else {
-			scaleFactor = 1.0;
-		}
-		
 		// Calculate the amount of frames to be read
 		nframes_t toRead = qRound(peakDataCount * framesPerPeak);
 		
