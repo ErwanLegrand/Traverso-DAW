@@ -1,3 +1,48 @@
+xx-xx-2009 Remon Sijrier <remon at traverso-daw dot org>
+	* Released Traverso 0.49.0
+	
+	** Dependency changes:
+	* Removed dependency and compile time option of QtOpenGL (libqt4-opengl-*)
+	* Depends on Qt >= 4.3.1, slv2 >= 0.6.1 (unless the internal library is used)
+	
+	** New Features:
+	Nicola:
+	* Added Tranport Console, Toolbars for commonly used tools.
+	* New Project Dialog improved, option to create an Empty project, or import 
+	  a number of audiofiles in the to be created project.
+	* Import Audio improved, multiple audio files can be imported at once.
+	* Added option to paint 0 and -6dB lines on AudioClips
+	* auto-numbering of markers. Closes bug #19734
+	* Fixes for bug:  #21952, #22302, #19734
+	* Updated the User Manual
+	
+	Remon:
+	* AudioClip Selection - Add/remove clips to the selection. The Selection currently 
+	  supports the following options: Move, Remove, Copy.
+	* Add the 'default' alsa device to choose from in the Driver Preferences Page
+	* Changed build system to cmake only
+	* Zooming with [Z] only zooms horizontally now, use [Z] + mouse scroll wheel
+	  to also scroll vertically, or change zoom direction with [Z] + < V >
+	* Use proper encoding for special chars like ë. Closes bug #25358
+	* Shuttle moved back to original key. [Tab]
+	* Implemented bug/wish: #19825
+	* Implemented [DV] to move an AudioClip only vertically
+	* Add language selection to the preferences dialog
+	* bulgarian translation: 100% done, thanks a lot to Svetlin Staikov!
+	* added czech translation, many thanks to Pavel Fric
+	* French translation, thanks to Samuel Aubert
+	* Debian Bugs: the following bugs are fixed: #505390, #480272, #495980
+	  merged all debian patches for 0.42.0-3
+
+	Ben:
+	* Added Fold Sheet/Track feature
+	
+	All:
+	* Fixes and improvements all over the place, as well as new and shiny bugs added :)
+
+
+
+
 10-12-2007 Remon Sijrier <remon at traverso-daw dot org>
 	* Released Traverso 0.42.0
 
