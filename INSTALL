@@ -52,41 +52,44 @@ After compilation is finished, you can run traverso:
 Have fun!
 
 
-NOTE for Packagers:
+NOTE FOR PACKAGERS:
 
 The tarball as it is supplied should be suitable for creating a distribution
 package without major modification.
-Traverso itself is build as a number of libraries, it's strongly adviced to 
-compile those statically, which is the default.
+
+You can disable host cpu feature detection with:
+
+-DDETECT_HOST_CPU_FEATURES=OFF
+
+To enable runtime detected SSE support, add:
+
+-DCMAKE_CXX_FLAGS:STRING="-DSSE_OPTIMIZATIONS -DARCH_X86"
 
 
-QMake based compilation:
+To enable runtime detected cpu fpu denormals are zero support, add:
 
-To change compile options for all libs, edit src/base.pri
-
-Options that should be left alone:
-DEFINES += STATIC_BUILD   
-build Traverso libs statically, you really shouldn't change it
-
-#DEFINES += PORTAUDIO_SUPPORT  
-PortAudio support is only to be used for Windows and Mac OS X, Traverso has 
-excelent support for ALSA and Jack, so portaudio doesn't add anything for Linux
-except confusion for the users...
-It also depends on the 1.9 release, which is still unreleased which might introcude
-unwanted side effects (you could build against another version then we did e.g.)
-
-DEFINES that could be changed or e.g. compiler flag options, if you don't want to 
-build with SSE support by default.
+-DCMAKE_CXX_FLAGS:STRING="-DUSE_XMMINTRIN -DARCH_X86"
 
 
-CMake based compilation:
-From Traverso >= 0.42.0 we plan to switch over to cmake based compilation.
-You can change any of the compilation options like this:
+If your distribution has slv2 >= 0.6.1 you can compile with:
 
-cmake . -DWANT_JACK=OFF -DWANT_ALSA=ON -DUSE_SYSTEM_SLV2_LIBRARY=ON
+-DUSE_SYSTEM_SLV2_LIBRARY=ON
+
+to let Traverso use the system installed one.
 
 
-Qt 4.3.0 issue:
-See the website for an explanation!
+E.g. compiling a package for an i686 compatible Linux system with runtime detected SSE support:
 
-http://traverso-daw.org/requirements.html
+cmake . -DDETECT_HOST_CPU_FEATURES=OFF -DWANT_JACK=ON -DWANT_ALSA=ON -DUSE_SYSTEM_SLV2_LIBRARY=OFF \
+	-DCMAKE_CXX_FLAGS:STRING="-march=i686 -DSSE_OPTIMIZATIONS -DUSE_XMMINTRIN -DARCH_X86"
+
+
+Compiling for a cpu architecture that doesn't support sse:
+
+cmake . -DDETECT_HOST_CPU_FEATURES=OFF -DWANT_JACK=ON -DWANT_ALSA=ON -DUSE_SYSTEM_SLV2_LIBRARY=OFF
+
+
+Adding additional compiler flags, like compiling with -msse -mfpmath=sse (in case the targetted host supports it):
+
+cmake . -DDETECT_HOST_CPU_FEATURES=OFF -DWANT_JACK=ON -DWANT_ALSA=ON -DUSE_SYSTEM_SLV2_LIBRARY=OFF \
+	-DCMAKE_CXX_FLAGS:STRING="-march=i686 -msse -mfpmath=sse  -DSSE_OPTIMIZATIONS -DUSE_XMMINTRIN -DARCH_X86"
