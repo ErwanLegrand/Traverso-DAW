@@ -563,16 +563,16 @@ void AudioClipView::draw_db_lines(QPainter* p, qreal xstart, int pixelcount)
 		// the painter to the next channel
 		for (int i = 0; i < channels; ++i) {
 			p->drawLine(m_lineOffset, zeroDb, xstart+pixelcount, zeroDb);
-			p->drawText(0.0, zeroDb - 1 + m_lineVOffset, "  0 dB");
-
 			p->drawLine(m_lineOffset, -zeroDb, xstart+pixelcount, -zeroDb);
-			p->drawText(0.0, -zeroDb + m_lineVOffset, "  0 dB");
-
 			p->drawLine(m_lineOffset, msixDb, xstart+pixelcount, msixDb);
-			p->drawText(0.0, msixDb + m_lineVOffset, " -6 dB");
-
 			p->drawLine(m_lineOffset, -msixDb + 1, xstart+pixelcount, -msixDb + 1);
-			p->drawText(0.0, -msixDb + m_lineVOffset, " -6 dB");
+
+			if (xstart < m_lineOffset) {
+				p->drawText(0.0, zeroDb - 1 + m_lineVOffset, "  0 dB");
+				p->drawText(0.0, -zeroDb + m_lineVOffset, "  0 dB");
+				p->drawText(0.0, msixDb + m_lineVOffset, " -6 dB");
+				p->drawText(0.0, -msixDb + m_lineVOffset, " -6 dB");
+			}
 
 			p->setMatrix(matrix().translate(0, height), true);
 		}
@@ -589,10 +589,12 @@ void AudioClipView::draw_db_lines(QPainter* p, qreal xstart, int pixelcount)
 		// the painter to the next channel
 		for (int i = 0; i < channels; ++i) {
 			p->drawLine(m_lineOffset, -zeroDb, xstart+pixelcount, -zeroDb);
-			p->drawText(0.0, -zeroDb + m_lineVOffset, "  0 dB");
-
 			p->drawLine(m_lineOffset, -msixDb + 1, xstart+pixelcount, -msixDb + 1);
-			p->drawText(0.0, -msixDb + m_lineVOffset, " -6 dB");
+
+			if (xstart < m_lineOffset) {
+				p->drawText(0.0, -zeroDb + m_lineVOffset, "  0 dB");
+				p->drawText(0.0, -msixDb + m_lineVOffset, " -6 dB");
+			}
 
 			p->setMatrix(matrix().translate(0, height), true);
 		}
