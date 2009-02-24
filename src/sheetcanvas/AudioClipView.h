@@ -122,6 +122,7 @@ private:
 	void create_clipinfo_string();
 
 	void draw_clipinfo_area(QPainter* painter, int xstart, int pixelcount);
+	void draw_db_lines(QPainter* painter, qreal xstart, int pixelcount);
 	void draw_peaks(QPainter* painter, qreal xstart, int pixelcount);
 	void create_brushes();
 

@@ -200,7 +200,12 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 	if (m_height > m_mimimumheightforinfoarea) {
 		draw_clipinfo_area(painter, xstart, pixelcount);
 	}
-	
+
+	// Draw the db lines at 0 and -6 db
+	if (m_drawDbGrid) {
+		draw_db_lines(painter, xstart, pixelcount);
+	}
+
 	// Draw the contour
 	painter->setPen(themer()->get_color("AudioClip:contour"));
 	int adjust = 0;
@@ -409,34 +414,6 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 			
 			p->setPen(themer()->get_color("AudioClip:wavemicroview"));
 			p->drawPolyline(m_polygon);
-		
-			// draw lines at 0 and -6 db
-			if (m_drawDbGrid) {
-				if (m_height >= m_mimimumheightforinfoarea) {
-					p->setMatrix(matrix().translate(0, m_infoAreaHeight), true);
-				}
-				p->setMatrix(matrix().translate(0, ytrans), true);
-
-				float scale = scaleFactor;
-				if (m_mergedView) {
-					scale = channels;
-				}
-
-				p->setPen(themer()->get_color("AudioClip:db-grid"));
-				p->setFont( themer()->get_font("AudioClip:fontscale:dblines") );
-
-				p->drawLine(m_lineOffset, -0.45 * scale * height, xstart+pixelcount, -0.45 * scale * height);
-				p->drawText(0.0, -0.45 * scale * height - 1 + m_lineVOffset, "  0 dB");
-
-				p->drawLine(m_lineOffset, 0.45 * scale * height + 1, xstart+pixelcount, 0.45 * scale * height + 1);
-				p->drawText(0.0, 0.45 * scale * height + m_lineVOffset, "  0 dB");
-
-				p->drawLine(m_lineOffset, -0.225 * scale * height, xstart+pixelcount, -0.225 * scale * height);
-				p->drawText(0.0, -0.225 * scale * height - 1 + m_lineVOffset, " -6 dB");
-
-				p->drawLine(m_lineOffset, 0.225 * scale * height + 1, xstart+pixelcount, 0.225 * scale * height + 1);
-				p->drawText(0.0, 0.225 * scale * height + m_lineVOffset, " -6 dB");
-			}
 
 		// Macroview, paint waveform with painterpath
 		} else {
@@ -507,33 +484,6 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 				p->setPen(minINFLineColor);
 				p->drawLine(0, 0, pixelcount, 0);
 
-				// draw lines at 0 and -6 db
-				if (m_drawDbGrid) {
-					if (m_height >= m_mimimumheightforinfoarea) {
-						p->setMatrix(matrix().translate(0, m_infoAreaHeight), true);
-					}
-					p->setMatrix(matrix().translate(0, ytrans), true);
-
-					int scale = 1;
-					if (m_mergedView) {
-						scale = channels;
-					}
-
-					p->setPen(themer()->get_color("AudioClip:db-grid"));
-					p->setFont( themer()->get_font("AudioClip:fontscale:dblines") );
-
-					p->drawLine(m_lineOffset, -0.45 * scale * height, xstart+pixelcount, -0.45 * scale * height);
-					p->drawText(0.0, -0.45 * scale * height - 1 + m_lineVOffset, "  0 dB");
-
-					p->drawLine(m_lineOffset, 0.45 * scale * height + 1, xstart+pixelcount, 0.45 * scale * height + 1);
-					p->drawText(0.0, 0.45 * scale * height + m_lineVOffset, "  0 dB");
-
-					p->drawLine(m_lineOffset, -0.225 * scale * height, xstart+pixelcount, -0.225 * scale * height);
-					p->drawText(0.0, -0.225 * scale * height - 1 + m_lineVOffset, " -6 dB");
-
-					p->drawLine(m_lineOffset, 0.225 * scale * height + 1, xstart+pixelcount, 0.225 * scale * height + 1);
-					p->drawText(0.0, 0.225 * scale * height + m_lineVOffset, " -6 dB");
-				}
 			} else {
 				scaleFactor =  (float) height * 0.95 * m_clip->get_gain() / Peak::MAX_DB_VALUE * curveDefaultValue;
 				ytrans = height + (chan * height);
@@ -560,28 +510,6 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 				
 				p->drawPath(path);
 
-				// draw lines at 0 and -6 db
-				if (m_drawDbGrid) {
-					if (m_height >= m_mimimumheightforinfoarea) {
-						p->setMatrix(matrix().translate(0, m_infoAreaHeight), true);
-					}
-					p->setMatrix(matrix().translate(0, ytrans), true);
-
-					int scale = 1;
-					if (m_mergedView) {
-						scale = channels;
-					}
-
-					p->setPen(themer()->get_color("AudioClip:db-grid"));
-					p->setFont( themer()->get_font("AudioClip:fontscale:dblines") );
-
-					p->drawLine(m_lineOffset, -0.95 * scale * height, xstart+pixelcount, -0.95 * scale *  height);
-					p->drawText(0.0, -0.95 * scale * height - 1 + m_lineVOffset, "  0 dB");
-
-					p->drawLine(m_lineOffset, -0.475 * scale * height, xstart+pixelcount, -0.475 * scale * height);
-					p->drawText(0.0, -0.475 * scale * height - 1 + m_lineVOffset, " -6 dB");
-				}
-
 			}
 		}
 		
@@ -596,6 +524,81 @@ void AudioClipView::draw_clipinfo_area(QPainter* p, int xstart, int pixelcount)
 	if (m_height >= m_mimimumheightforinfoarea) {
 		p->drawPixmap(7, 1, m_clipInfo);
 	}
+}
+
+
+void AudioClipView::draw_db_lines(QPainter* p, qreal xstart, int pixelcount)
+{
+	p->save();
+
+	int height;
+	int channels = m_clip->get_channels();
+	bool microView = m_sheet->get_hzoom() < 64 ? 1 : 0;
+
+	if (m_mergedView) {
+		channels = 1;
+	}
+
+	// calculate the height of one channel
+	if (m_height >= m_mimimumheightforinfoarea) {
+		p->setMatrix(matrix().translate(0, m_infoAreaHeight), true);
+		height = (m_height - m_infoAreaHeight) / channels;
+	} else {
+		height = m_height / channels;
+	}
+
+	p->setPen(themer()->get_color("AudioClip:db-grid"));
+	p->setFont( themer()->get_font("AudioClip:fontscale:dblines") );
+
+	if (m_classicView || microView) { // classicView = non-rectified
+
+		// translate the painter to set the first channel center line to 0
+		p->setMatrix(matrix().translate(0, height / 2), true);
+
+		// determine the distance of the db line from the center line
+		int zeroDb = 0.9 * height / 2;
+		int msixDb = 0.9 * height / 4;
+
+		// draw the lines above and below the center line, then translate
+		// the painter to the next channel
+		for (int i = 0; i < channels; ++i) {
+			p->drawLine(m_lineOffset, zeroDb, xstart+pixelcount, zeroDb);
+			p->drawText(0.0, zeroDb - 1 + m_lineVOffset, "  0 dB");
+
+			p->drawLine(m_lineOffset, -zeroDb, xstart+pixelcount, -zeroDb);
+			p->drawText(0.0, -zeroDb + m_lineVOffset, "  0 dB");
+
+			p->drawLine(m_lineOffset, msixDb, xstart+pixelcount, msixDb);
+			p->drawText(0.0, msixDb + m_lineVOffset, " -6 dB");
+
+			p->drawLine(m_lineOffset, -msixDb + 1, xstart+pixelcount, -msixDb + 1);
+			p->drawText(0.0, -msixDb + m_lineVOffset, " -6 dB");
+
+			p->setMatrix(matrix().translate(0, height), true);
+		}
+	} else {  // rectified
+
+		// translate the painter to set the first channel base line to 0
+		p->setMatrix(matrix().translate(0, height), true);		
+
+		// determine the distance of the db line from the center line
+		int zeroDb = 0.95 * height;
+		int msixDb = 0.95 * height / 2;
+
+		// draw the lines above the center line, then translate
+		// the painter to the next channel
+		for (int i = 0; i < channels; ++i) {
+			p->drawLine(m_lineOffset, -zeroDb, xstart+pixelcount, -zeroDb);
+			p->drawText(0.0, -zeroDb + m_lineVOffset, "  0 dB");
+
+			p->drawLine(m_lineOffset, -msixDb + 1, xstart+pixelcount, -msixDb + 1);
+			p->drawText(0.0, -msixDb + m_lineVOffset, " -6 dB");
+
+			p->setMatrix(matrix().translate(0, height), true);
+		}
+	}
+
+	p->restore();
 }
 
 void AudioClipView::create_brushes()
