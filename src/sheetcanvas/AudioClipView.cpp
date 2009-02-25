@@ -534,6 +534,8 @@ void AudioClipView::draw_db_lines(QPainter* p, qreal xstart, int pixelcount)
 	int height;
 	int channels = m_clip->get_channels();
 	bool microView = m_sheet->get_hzoom() < 64 ? 1 : 0;
+	int linestartpos = xstart;
+	if (xstart < m_lineOffset) linestartpos = m_lineOffset;
 
 	if (m_mergedView) {
 		channels = 1;
@@ -562,10 +564,10 @@ void AudioClipView::draw_db_lines(QPainter* p, qreal xstart, int pixelcount)
 		// draw the lines above and below the center line, then translate
 		// the painter to the next channel
 		for (int i = 0; i < channels; ++i) {
-			p->drawLine(m_lineOffset, zeroDb, xstart+pixelcount, zeroDb);
-			p->drawLine(m_lineOffset, -zeroDb, xstart+pixelcount, -zeroDb);
-			p->drawLine(m_lineOffset, msixDb, xstart+pixelcount, msixDb);
-			p->drawLine(m_lineOffset, -msixDb + 1, xstart+pixelcount, -msixDb + 1);
+			p->drawLine(linestartpos, zeroDb, xstart+pixelcount, zeroDb);
+			p->drawLine(linestartpos, -zeroDb, xstart+pixelcount, -zeroDb);
+			p->drawLine(linestartpos, msixDb, xstart+pixelcount, msixDb);
+			p->drawLine(linestartpos, -msixDb + 1, xstart+pixelcount, -msixDb + 1);
 
 			if (xstart < m_lineOffset) {
 				p->drawText(0.0, zeroDb - 1 + m_lineVOffset, "  0 dB");
@@ -573,6 +575,7 @@ void AudioClipView::draw_db_lines(QPainter* p, qreal xstart, int pixelcount)
 				p->drawText(0.0, msixDb + m_lineVOffset, " -6 dB");
 				p->drawText(0.0, -msixDb + m_lineVOffset, " -6 dB");
 			}
+
 
 			p->setMatrix(matrix().translate(0, height), true);
 		}
@@ -588,8 +591,8 @@ void AudioClipView::draw_db_lines(QPainter* p, qreal xstart, int pixelcount)
 		// draw the lines above the center line, then translate
 		// the painter to the next channel
 		for (int i = 0; i < channels; ++i) {
-			p->drawLine(m_lineOffset, -zeroDb, xstart+pixelcount, -zeroDb);
-			p->drawLine(m_lineOffset, -msixDb + 1, xstart+pixelcount, -msixDb + 1);
+			p->drawLine(linestartpos, -zeroDb, xstart+pixelcount, -zeroDb);
+			p->drawLine(linestartpos, -msixDb + 1, xstart+pixelcount, -msixDb + 1);
 
 			if (xstart < m_lineOffset) {
 				p->drawText(0.0, -zeroDb + m_lineVOffset, "  0 dB");
