@@ -973,7 +973,7 @@ void AudioClipView::update_recording()
 	m_boundingRect = QRectF(0, 0, (newPos / m_sv->timeref_scalefactor), m_height);
 	
 	int updatewidth = int((newPos - m_oldRecordingPos) / m_sv->timeref_scalefactor);
-	QRect updaterect = QRect(int(m_oldRecordingPos / m_sv->timeref_scalefactor) - 1, 0, updatewidth, m_height);
+	QRect updaterect = QRect(int(m_oldRecordingPos / m_sv->timeref_scalefactor) - 1, 0, updatewidth + 1, m_height);
 	update(updaterect);
 	m_oldRecordingPos = newPos;
 }
