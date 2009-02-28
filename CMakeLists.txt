@@ -569,7 +569,6 @@ IF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
 	"Makefile$"
 	"\\\\.cvsignore$" 
 	"^${PROJECT_SOURCE_DIR}.*/*tar.*"
-	"^${PROJECT_SOURCE_DIR}/cmake_uninstall.cmake"
 	"^${PROJECT_SOURCE_DIR}.*/precompile.h.gch"
 	"^${PROJECT_SOURCE_DIR}.*/cmake_install.cmake"
 	"^${PROJECT_SOURCE_DIR}/CPackConfig.cmake"
