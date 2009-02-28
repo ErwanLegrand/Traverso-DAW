@@ -1,22 +1,24 @@
 1) cmake based compilation:
 
-* Unpack the tarball, and change directory to traverso.
+* Unpack the tarball, and change directory to traverso-xx-xx-xx
 * Make sure you have all dependencies installed, and cmake
 * run cmake as follows (including the dot!):
-	
+
   $ cmake .
 
 * If it complains a library was missing, make sure it is installed,
   remove CMakeCache.txt and go back to the previous step.
+
 * If cmake . completed without error, you can either run:
-  
+
   $ ccmake .
-  
+
   to change compilation options or:
-  
+
   $ make
-  
+
   to start compilation.
+
 * After compilation finished, you can run traverso with:
   
   $ bin/traverso
@@ -28,25 +30,6 @@
 * and run traverso directly by typing:
 
   $ traverso
-
-
-
-2) qmake based compilation:
-
-* Unpack the tarball, and change directory to traverso.
-
-* If you like to change parameters for the build process, open the file:
-  traverso/src/base.pri
-  in your favorite editor, there's information on the possible options in that very file.
-
-* Run the following commands:
-
-  $ qmake traverso.pro
-  $ make
-
-After compilation is finished, you can run traverso:
-
-  $ ./traverso
 
 
 Have fun!
