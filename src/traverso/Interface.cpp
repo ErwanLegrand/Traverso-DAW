@@ -118,8 +118,6 @@ Interface::Interface()
 	//         setMaximumWidth(1024);
 	//         setMaximumHeight(768);
 
-	setUnifiedTitleAndToolBarOnMac(true);
-
 	// CenterAreaWidget
 	centerAreaWidget = new QStackedWidget(this);
 	setCentralWidget(centerAreaWidget);
@@ -231,6 +229,8 @@ Interface::Interface()
 	connect(&config(), SIGNAL(configChanged()), this, SLOT(config_changed()));
 	connect(&config(), SIGNAL(configChanged()), this, SLOT(update_follow_state()));
 	update_follow_state();
+
+	setUnifiedTitleAndToolBarOnMac(true);
 }
 
 Interface::~Interface()
