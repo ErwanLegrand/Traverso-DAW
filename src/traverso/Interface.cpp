@@ -183,7 +183,7 @@ Interface::Interface()
 	
 	transportConsole = new TransportConsoleWidget(this);
 	transportConsole->setObjectName("Transport Console");
-	addToolBar(Qt::BottomToolBarArea, transportConsole);
+	addToolBar(Qt::TopToolBarArea, transportConsole);
 
 	if (config().get_property("Themer", "textundericons", false).toBool()) {
 		m_projectToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);

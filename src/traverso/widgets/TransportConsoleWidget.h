@@ -30,7 +30,7 @@
 
 class Project;
 class Sheet;
-class QLabel;
+class QPushButton;
 
 class TransportConsoleWidget : public QToolBar
 {
@@ -40,7 +40,7 @@ public:
 	TransportConsoleWidget(QWidget* parent);
 
 private:
-	QLabel*		m_timeLabel;
+	QPushButton*	m_timeLabel;
 	Project*	m_project;
 	Sheet*		m_sheet;
 	QAction*	m_toStartAction;

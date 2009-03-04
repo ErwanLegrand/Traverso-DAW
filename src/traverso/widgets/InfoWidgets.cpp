@@ -426,13 +426,13 @@ SysInfoToolBar::SysInfoToolBar(QWidget * parent)
 	action = addWidget(driverInfo);
 	action->setVisible(true);
 	addSeparator();
-	action = addWidget(message);
-	action->setVisible(true);
-	addSeparator();
 	action = addWidget(resourcesInfo);
 	action->setVisible(true);
 	addSeparator();
 	action = addWidget(hddInfo);
+	action->setVisible(true);
+	addSeparator();
+	action = addWidget(message);
 	action->setVisible(true);
 }
 

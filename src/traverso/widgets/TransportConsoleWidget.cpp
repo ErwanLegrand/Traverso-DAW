@@ -32,7 +32,7 @@
 
 #include <QAction>
 #include <QWidget>
-#include <QLabel>
+#include <QPushButton>
 #include <QEvent>
 #include <QFont>
 #include <QString>
@@ -47,7 +47,7 @@ TransportConsoleWidget::TransportConsoleWidget(QWidget* parent)
 {
 	setEnabled(false);
 
-	m_timeLabel = new QLabel(this);
+	m_timeLabel = new QPushButton(this);
 	m_timeLabel->setStyleSheet(
 			"color: lime;"
 			"background-color: black;"
