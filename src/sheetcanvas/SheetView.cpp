@@ -104,7 +104,7 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 	
 	connect(m_sheet, SIGNAL(workingPosChanged()), m_workCursor, SLOT(update_position()));
 	connect(m_sheet, SIGNAL(transportStarted()), this, SLOT(follow_play_head()));
-	connect(m_sheet, SIGNAL(transportPosSet()), this, SLOT(follow_play_head()));
+	connect(m_sheet, SIGNAL(transportPosSet()), this, SLOT(transport_position_set()));
 	connect(m_sheet, SIGNAL(workingPosChanged()), this, SLOT(stop_follow_play_head()));
 	
 	m_clipsViewPort->scene()->addItem(m_playCursor);
@@ -350,6 +350,13 @@ Command* SheetView::center()
 	int x = qRound(centerX / timeref_scalefactor);
 	set_hscrollbar_value(x - m_clipsViewPort->width() / 2);
 	return (Command*) 0;
+}
+
+
+void SheetView::transport_position_set()
+{
+	if (!m_sheet->is_transport_rolling())
+		center_playhead();
 }
 
 
@@ -719,4 +726,3 @@ void SheetView::clipviewport_resize_event()
 	}
 	
 }
-

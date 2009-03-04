@@ -131,6 +131,7 @@ public slots:
 	void stop_follow_play_head();
 	void follow_play_head();
 	void set_follow_state(bool state);
+	void transport_position_set();
 
 	Command* touch();
 	Command* touch_play_cursor();
