@@ -197,7 +197,7 @@ Command* AudioClipManager::select_all_clips()
 {
 	PENTER;
 	
-	if (m_clipselection.size() == m_clips.size()) {
+	if (m_clipselection.size()) {
 		return new ClipSelection(m_clips, this, "remove_from_selection", tr("Selection: Remove Clip"));
 	}
 		
