@@ -48,6 +48,7 @@ TransportConsoleWidget::TransportConsoleWidget(QWidget* parent)
 	setEnabled(false);
 
 	m_timeLabel = new QPushButton(this);
+	m_timeLabel->setFocusPolicy(Qt::NoFocus);
 	m_timeLabel->setStyleSheet(
 			"color: lime;"
 			"background-color: black;"
