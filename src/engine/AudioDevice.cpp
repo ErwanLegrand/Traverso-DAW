@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: AudioDevice.cpp,v 1.54 2008/11/11 13:42:37 r_sijrier Exp $
+$Id: AudioDevice.cpp,v 1.55 2009/03/04 20:35:56 r_sijrier Exp $
 */
 
 #include "AudioDevice.h"
@@ -887,7 +887,10 @@ int AudioDevice::transport_seek_to(Client* client, TimeRef location)
 	if (jackdriver) {
 		PMESG("using jack_transport_locate");
 		nframes_t frames = location.to_frame(get_sample_rate());
-		return  jack_transport_locate(jackdriver->get_client(), frames);
+		// TODO is it actually needed to let jackd have to call us back
+		// to let the client seek? why not let the client seek now, so 
+		// when jack calls us back the client doesn't have to anymore...
+		/*return*/  jack_transport_locate(jackdriver->get_client(), frames);
 	}
 #endif
 	
