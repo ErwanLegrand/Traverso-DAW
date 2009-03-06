@@ -99,8 +99,8 @@
 		<color name="CurveNode:default" red="255" green="0" blue="0" alpha="255" />
 		<color name="CurveNode:blink" red="255" green="100" blue="100" alpha="255" />
 		
-		<color name="Fade:default" red="253" green="212" blue="148" alpha="255" />
-		<color name="Fade:bypassed" red="253" green="212" blue="148" alpha="155" />
+		<color name="Fade:default" red="253" green="212" blue="148" alpha="180" />
+		<color name="Fade:bypassed" red="253" green="212" blue="148" alpha="110" />
 		
 		<color name="CorrelationMeter:margin" red="239" green="236" blue="231" alpha="255" />
 		<color name="CorrelationMeter:background" red="250" green="249" blue="247" alpha="255" />
