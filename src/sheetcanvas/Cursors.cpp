@@ -87,7 +87,7 @@ void PlayHead::paint( QPainter * painter, const QStyleOptionGraphicsItem * optio
 		color = themer()->get_color("Playhead:inactive");
 	}
 	
-	painter->fillRect(0, 0, (int)m_boundingRect.width(), (int)m_boundingRect.height(), color);
+	painter->fillRect(1, 0, (int)m_boundingRect.width() - 2, (int)m_boundingRect.height(), color);
 }
 
 void PlayHead::play_start()
