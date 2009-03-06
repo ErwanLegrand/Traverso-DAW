@@ -215,3 +215,12 @@ Command* TrackView::insert_silence()
 	return 0; 
 }
 
+void TrackView::to_front(AudioClipView * view)
+{
+	foreach(AudioClipView* clipview, m_clipViews) {
+		clipview->setZValue(zValue() + 1);
+	}
+	
+	view->setZValue(zValue() + 2);
+}
+

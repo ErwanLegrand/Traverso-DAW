@@ -929,6 +929,7 @@ void AudioClipView::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 		return;
 	}
 	update(m_boundingRect);
+	m_tv->to_front(this);
 }
 
 
@@ -1000,6 +1001,12 @@ Command * AudioClipView::set_audio_file()
 		}
 			
 		resources_manager()->set_source_for_clip(m_clip, rs);
+		
+		
+		// FIXME This is a hack. When a ReadSource didn't have a valid file it wasn't added
+		// to DiskIO in AudioClip::set_sheet(). So when resetting the audiofile this solves it,
+		// but it's not the proper place to do so!!
+		m_clip->set_sheet(m_sheet);
 		
 		info().information(tr("Succesfully set AudioClip file to %1").arg(filename));
 		

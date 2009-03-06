@@ -56,6 +56,8 @@ public:
 	void calculate_bounding_rect();
 	void load_theme_data();
 	
+	void to_front(AudioClipView* view);
+	
 private:
 	Track*			m_track;
 	QList<AudioClipView* >	m_clipViews;
