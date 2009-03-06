@@ -6,10 +6,10 @@ TOBEDONE FOR 0.4x.x
 - Copy/move (including un/redo) selected clips
 
 ### BUGS / WISHES ###
+* Fade: cursor jumps back to old pos after releasing [F]
+* Curve top-left node is hardly visible
 * CD Burning doesn't work when traverso was started from clicking on the binary (sometimes, when no empty disk was inserted)
 * Ubuntu Intrepid package does not depend on libfftw3 ?
-* resetting audioclip file: audioclip doesn't play sound
-* QFileDialog::getExistingDirectory crashes when it shows a hidden directory the first time.
 * http://traverso-daw.org/forum/index.php/topic,93.0.html (selecting second burn device not possible)
 * current zoom-cursors get messed up at times (specially after using context menu of Zoom)
 * PPC build : no jack, crashes on PPC 10.5.1 (both portaudio with jack/coreaudio), which portaudio was used?
@@ -17,17 +17,12 @@ TOBEDONE FOR 0.4x.x
 * accessability: LAC discussion:  e.g. from 25.12.07, thread "Studio reverb (impulse)"
 * Track (Vynil) plugin also applied to other tracks ??
 * jack in/output ports numbers are calculated in reversed order! so inputcount ports is output count and vise versa
-* crash when clicking on button next to theme path (Appearance page) (Filed bug at trolltech)
-* ubuntu-theme: no audoclip outline color set?
 * Unable to lock memory, Traverso runs unstable due that. Detect (parse limits.conf file) first before trying to memlock ?
-* ubuntu and system-pallete theme don't have transparent clip backgrounds.
 * xvidcap -> for creating video demos
-* when you right-click on an area with multiple clips overlapping, you get a menu with multiple clips.  Maybe each clip needs to have a "bring to front" function
 * new Song::get_last_location() semantics might not work well e.g. in MoveClip, TimeLineView.
 * Why does the User Manual say I need libflac++?
 * 2tracks project, seeking to start when beyond first clip: mp3 output garbled!
 * solution for project dir renamed outside of traverso: disabling write bit ?
-* Add cmake flags to disable autodetect of platform, and compile platform specific (x86 (i686), vs x86_64)
 * http://traverso-daw.org/forum/index.php/topic,77.msg264.html#msg264
 
 * check if permissions in /etc/security/limits.conf are set, and if not, notify the user!
