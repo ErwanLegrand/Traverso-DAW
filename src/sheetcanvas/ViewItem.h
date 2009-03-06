@@ -66,7 +66,6 @@ public:
 			}
 		}
 	}
-	void prepare_geometry_change() {prepareGeometryChange();}
 	virtual int get_childview_y_offset() const {return 0;}
 	virtual int type() const;
 	virtual int get_height() const {return (int)m_boundingRect.height();}

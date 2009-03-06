@@ -765,17 +765,17 @@ void AudioClipView::create_clipinfo_string()
 	QFont font = themer()->get_font("AudioClip:fontscale:title");
 	QFontMetrics fm(font);
 	
-	m_clipinfoString = fm.elidedText(m_clip->get_name(), Qt::ElideMiddle, 150) 
+	QString clipinfoString = fm.elidedText(m_clip->get_name(), Qt::ElideMiddle, 150) 
 			   + "    " + sclipGain + "   " + QString::number(m_clip->get_rate()) +  " Hz";
 	
-	int clipInfoWidth = fm.boundingRect(m_clipinfoString).width();
+	int clipInfoWidth = fm.boundingRect(clipinfoString).width();
 	
 	m_clipInfo = QPixmap(clipInfoWidth, m_infoAreaHeight);
 	m_clipInfo.fill(Qt::transparent);
 	
 	QPainter painter(&m_clipInfo);
 	painter.setFont(font);
-	painter.drawText(m_clipInfo.rect(), m_clipinfoString);
+	painter.drawText(m_clipInfo.rect(), clipinfoString);
 }
 
 void AudioClipView::update_progress_info( int progress )
@@ -906,7 +906,6 @@ void AudioClipView::load_theme_data()
 {
 	m_drawbackground = themer()->get_property("AudioClip:drawbackground", 1).toInt();
 	m_infoAreaHeight = themer()->get_property("AudioClip:infoareaheight", 16).toInt();
-	m_usePolygonPeakDrawing = themer()->get_property("AudioClip:polygonpeakdrawing", 0).toInt();
 	m_mimimumheightforinfoarea = themer()->get_property("AudioClip:mimimumheightforinfoarea", 45).toInt();
 	m_classicView = ! config().get_property("Themer", "paintaudiorectified", false).toBool();
 	m_mergedView = config().get_property("Themer", "paintstereoaudioasmono", false).toBool();

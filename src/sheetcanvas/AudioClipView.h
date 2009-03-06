@@ -90,7 +90,6 @@ private:
 	int m_height;
 	int m_infoAreaHeight;
 	int m_mimimumheightforinfoarea;
-	int m_usePolygonPeakDrawing;
 	int m_lineOffset;
 	int m_lineVOffset;
 	TimeRef m_oldRecordingPos;
@@ -116,8 +115,6 @@ private:
 	QBrush m_brushFgMuted;
 	QBrush m_brushFgEdit;
 	QBrush m_brushFgEditHover;
-
-	QString m_clipinfoString;
 
 	void create_clipinfo_string();
 
