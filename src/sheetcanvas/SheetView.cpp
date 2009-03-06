@@ -377,7 +377,7 @@ void SheetView::set_follow_state(bool state)
 	if (state) {
 		m_actOnPlayHead = true;
 		m_playCursor->enable_follow();
-		m_playCursor->setPos(m_sheet->get_transport_location() / timeref_scalefactor, 0);
+		m_playCursor->update_position();
 	} else {
 		m_actOnPlayHead = false;
 		m_playCursor->disable_follow();
