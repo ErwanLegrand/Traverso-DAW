@@ -158,7 +158,9 @@ void PlayHead::update_position()
 	// When timeref_scalefactor is below 5120, the playhead moves faster then teh view scrolls
 	// so it's better to keep the view centered around the playhead.
 	if (m_mode == CENTERED || (m_sv->timeref_scalefactor <= 10280) ) {
-		qApp->processEvents();
+		#if defined (Q_WS_MAC)
+			qApp->processEvents();
+		#endif
 		m_sv->set_hscrollbar_value(int(scenePos().x()) - (int)(0.5 * vpWidth));
 		return;
 	}
@@ -219,7 +221,9 @@ void PlayHead::set_animation_value(int value)
 	}
 	
 	if (m_sv->hscrollbar_value() != newXPos) {
-		qApp->processEvents();
+		#if defined (Q_WS_MAC)
+			qApp->processEvents();
+		#endif
 		m_sv->set_hscrollbar_value(newXPos);
 	}
 }
