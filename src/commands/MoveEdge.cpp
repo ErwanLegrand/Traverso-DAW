@@ -37,7 +37,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 MoveEdge::MoveEdge(AudioClipView* cv, SheetView* sv, QByteArray whichEdge)
 	: Command(cv->get_clip(), tr("Move Clip Edge"))
 {
-	m_cv = cv;
 	m_sv = sv;
 	m_clip = cv->get_clip();
 	m_edge = whichEdge;
@@ -95,21 +94,29 @@ void MoveEdge::cancel_action()
 
 int MoveEdge::do_action()
 {
-	int r = QMetaObject::invokeMethod(m_clip, m_edge.data(), Q_ARG(TimeRef, m_newPos));
-	if (!r) {
-		PERROR("MoveEdge::do_action: invokeMethod failed!");
+	if (m_edge == "set_right_edge") {
+		m_clip->set_right_edge(m_newPos);
 	}
-	return r;
+
+	if (m_edge == "set_left_edge") {
+		m_clip->set_left_edge(m_newPos);
+	}
+	
+	return 1;
 }
 
 
 int MoveEdge::undo_action()
 {
-	int r = QMetaObject::invokeMethod(m_clip, m_edge.data(), Q_ARG(TimeRef, m_originalPos));
-	if (!r) {
-		PERROR("MoveEdge::undo_action: invokeMethod failed!");
+	if (m_edge == "set_right_edge") {
+		m_clip->set_right_edge(m_originalPos);
 	}
-	return r;
+
+	if (m_edge == "set_left_edge") {
+		m_clip->set_left_edge(m_originalPos);
+	}
+	
+	return 1;
 }
 
 
@@ -130,12 +137,7 @@ int MoveEdge::jog()
 		m_newPos = m_otherEdgePos - (2 * m_sv->timeref_scalefactor);
 	}
 
-	// use this function to actually set the clip edge
-	do_action();
-	
-	// AudioClip does the calculation and corrects is we wanted to move the 
-	// edge to far. So set m_newPos to the _real_ track end location.
-	m_newPos = m_clip->get_track_end_location();
+	return do_action();
 }
 
 // eof

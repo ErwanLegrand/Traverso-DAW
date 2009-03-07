@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: MoveEdge.h,v 1.10 2008/01/21 16:22:11 r_sijrier Exp $
+    $Id: MoveEdge.h,v 1.11 2009/03/07 17:33:12 r_sijrier Exp $
 */
 
 #ifndef MOVEEDGE_H
@@ -28,7 +28,6 @@
 #include <QByteArray>
 
 class AudioClip;
-class Sheet;
 class SheetView;
 class AudioClipView;
 
@@ -49,8 +48,6 @@ public :
 
 private :
         AudioClip* 	m_clip;
-        Sheet*		m_sheet;
-	AudioClipView*	m_cv;
 	SheetView*	m_sv;
         QByteArray	m_edge;
         TimeRef		m_originalPos;
