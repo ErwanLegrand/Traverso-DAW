@@ -809,10 +809,11 @@ int Sheet::process( nframes_t nframes )
 	}
 
 	if (m_stopTransport) {
-		RT_THREAD_EMIT(this, 0, transportStopped());
 		m_transport = false;
 		m_realtimepath = false;
 		m_stopTransport = false;
+		
+		RT_THREAD_EMIT(this, 0, transportStopped());
 
 		return 0;
 	}
