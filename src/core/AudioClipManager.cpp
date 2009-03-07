@@ -108,6 +108,8 @@ void AudioClipManager::remove_clip( AudioClip * clip )
 		return;
 	}
 	
+	remove_from_selection(clip);
+	
 	m_sheet->get_snap_list()->mark_dirty();
 	update_last_frame();
 	resources_manager()->mark_clip_removed(clip);

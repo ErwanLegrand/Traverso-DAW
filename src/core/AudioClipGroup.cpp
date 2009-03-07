@@ -170,13 +170,3 @@ bool AudioClipGroup::is_locked() const
 	return false;
 }
 
-void AudioClipGroup::select_clips(bool select)
-{
-	foreach(AudioClip* clip, m_clips) {
-		if (select) {
-			clip->get_sheet()->get_audioclip_manager()->add_to_selection(clip);
-		} else {
-			clip->get_sheet()->get_audioclip_manager()->remove_from_selection(clip);
-		}
-	}
-}
