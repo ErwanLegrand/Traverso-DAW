@@ -298,12 +298,13 @@ void AudioClip::set_left_edge(TimeRef newLeftLocation)
 
 void AudioClip::set_right_edge(TimeRef newRightLocation)
 {
+	
 	if (newRightLocation < TimeRef()) {
 		newRightLocation = TimeRef();
 	}
 	
 	if (newRightLocation > m_trackEndLocation) {
-
+		
 		TimeRef availableTimeRight = m_sourceLength - m_sourceEndLocation;
 
 		TimeRef movingToRight = newRightLocation - m_trackEndLocation;
@@ -312,8 +313,8 @@ void AudioClip::set_right_edge(TimeRef newRightLocation)
 			movingToRight = availableTimeRight;
 		}
 
-		set_track_end_location( m_trackEndLocation + movingToRight );
 		set_source_end_location( m_sourceEndLocation + movingToRight );
+		set_track_end_location( m_trackEndLocation + movingToRight );
 
 	} else if (newRightLocation < m_trackEndLocation) {
 
@@ -325,8 +326,8 @@ void AudioClip::set_right_edge(TimeRef newRightLocation)
 			movingToLeft = availableTimeLeft - TimeRef(nframes_t(4), get_rate());
 		}
 
-		set_track_end_location( m_trackEndLocation - movingToLeft );
 		set_source_end_location( m_sourceEndLocation - movingToLeft);
+		set_track_end_location( m_trackEndLocation - movingToLeft );
 	}
 }
 
