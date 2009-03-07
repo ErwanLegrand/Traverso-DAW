@@ -111,6 +111,11 @@ void PlayHead::play_stop()
 	if (m_animation.state() == QTimeLine::Running) {
 		m_animation.stop();
 	}
+	
+	// just one more update so the playhead can paint itself
+	// in the correct color.
+	update();
+
 }
 
 void PlayHead::disable_follow()
