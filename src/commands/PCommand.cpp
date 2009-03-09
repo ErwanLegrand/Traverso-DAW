@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2009 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: PCommand.cpp,v 1.7 2007/12/11 17:30:10 r_sijrier Exp $
 */
 
 #include "PCommand.h"
@@ -27,6 +26,27 @@ $Id: PCommand.cpp,v 1.7 2007/12/11 17:30:10 r_sijrier Exp $
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
+
+/** 	\class PCommand
+ *	\brief A Command class that can be used to create historable actions
+
+        Use this class to create actions that basically involve calling one
+        function to set and restore a value.
+
+        E.g. setting and resetting the gain of an object can be done like this:
+
+        \code
+        PCommand(SomeObject, "do_something", newvalue, oldvalue, tr("MyObject: Did something"));
+        \endcode
+
+        where SomeObject is a pointer to a QObject derived class, and "do_something" is a function
+        that accepts a value of the type of newvalue/oldvalue. "do_something" needs to be declared
+        as a public slot!
+
+        \n
+        Supported types are: TimeRef, double and float.
+ *
+ */
 
 
 PCommand::PCommand(ContextItem* item, const char* slot, const QString& des)
@@ -57,18 +77,28 @@ int PCommand::prepare_actions()
 
 int PCommand::do_action()
 {
-	PENTER;
-	if (!m_doValue.isNull()) {
-		if (m_doValue.typeName() == QString("TimeRef")) {
-			if (QMetaObject::invokeMethod(m_contextitem, m_slot, Qt::DirectConnection, Q_ARG(TimeRef, m_doValue.value<TimeRef>()))) {
-				return 1;
-			}
-		}
-		
-		return -1;
-	}
-	 
-	return QMetaObject::invokeMethod(m_contextitem, m_slot);
+        PENTER;
+        if (!m_doValue.isNull()) {
+                if (m_doValue.typeName() == QString("TimeRef")) {
+                        if (QMetaObject::invokeMethod(m_contextitem, m_slot, Qt::DirectConnection, Q_ARG(TimeRef, m_doValue.value<TimeRef>()))) {
+                                return 1;
+                        }
+                }
+
+                // covers both the float and double types!
+                if (m_doValue.type() == QVariant::Double) {
+                            bool ok;
+                            if (QMetaObject::invokeMethod(m_contextitem, m_slot, Qt::DirectConnection, Q_ARG(float, m_doValue.toDouble(&ok)))) {
+                                    return 1;
+                            } else if (QMetaObject::invokeMethod(m_contextitem, m_slot, Qt::DirectConnection, Q_ARG(double, m_doValue.toDouble(&ok)))) {
+                                    return 1;
+                            }
+                }
+
+                return -1;
+        }
+
+        return QMetaObject::invokeMethod(m_contextitem, m_slot);
 }
 
 int PCommand::undo_action()
@@ -81,9 +111,20 @@ int PCommand::undo_action()
 			}
 		}
 		
-		return -1;
+                // covers both the float and double types!
+                if (m_undoValue.type() == QVariant::Double) {
+                            bool ok;
+                            if (QMetaObject::invokeMethod(m_contextitem, m_slot, Qt::DirectConnection, Q_ARG(float, m_undoValue.toDouble(&ok)))) {
+                                    return 1;
+                            } else if (QMetaObject::invokeMethod(m_contextitem, m_slot, Qt::DirectConnection, Q_ARG(double, m_undoValue.toDouble(&ok)))) {
+                                    return 1;
+                            }
+                }
+
+                return -1;
 	}
-	
+
+
 	return QMetaObject::invokeMethod(m_contextitem, m_slot);
 }
 

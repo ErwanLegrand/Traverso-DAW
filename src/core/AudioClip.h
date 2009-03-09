@@ -50,7 +50,6 @@ class AudioClip : public ContextItem, public AudioProcessingItem, public Snappab
 	Q_CLASSINFO("reset_fade_out", tr("Out: Remove"))
 	Q_CLASSINFO("reset_fade_both", tr("Both: Remove"))
 	Q_CLASSINFO("normalize", tr("Normalize"))
-	Q_CLASSINFO("denormalize", tr("Normalize: Reset"))
 	Q_CLASSINFO("lock", tr("Lock"))
 
 public:
@@ -157,7 +156,7 @@ private:
 	void process_capture(nframes_t nframes);
 	
 	
-	void calculate_normalization_factor(float targetdB = 0.0);
+        float calculate_normalization_factor(float targetdB = 0.0);
 	
 	friend class ResourcesManager;
 
@@ -187,7 +186,6 @@ public slots:
 	Command* reset_fade_out();
 	Command* reset_fade_both();
         Command* normalize();
-        Command* denormalize();
 	Command* lock();
 
 private slots:

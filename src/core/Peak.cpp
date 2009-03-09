@@ -737,7 +737,7 @@ audio_sample_t Peak::get_max_amplitude(TimeRef startlocation, TimeRef endlocatio
 		int read = data->file.read((char*)readbuffer, sizeof(audio_sample_t) * count) / sizeof(audio_sample_t);
 	
 		if (read != (int)count) {
-			printf("could only read %d, %d requested\n", read, count);
+                        printf("Peak::get_max_amplitude: could only read %d, %d requested\n", read, count);
 		}
 	
 		maxamp = Mixer::compute_peak(readbuffer, read, maxamp);

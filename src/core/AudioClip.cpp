@@ -50,6 +50,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Config.h>
 #include "PluginChain.h"
 #include "GainEnvelope.h"
+#include "InputEngine.h"
 
 #include "AbstractAudioReader.h"
 
@@ -898,22 +899,22 @@ int AudioClip::recording_state( ) const
 Command * AudioClip::normalize( )
 {
         bool ok;
+        float normfactor;
         double d = QInputDialog::getDouble(0, tr("Normalization"),
                                            tr("Set Normalization level:"), 0.0, -120, 0, 1, &ok);
         if (ok) {
-		calculate_normalization_factor(d);
-	}
+                normfactor = calculate_normalization_factor(d);
+        }
 
-	return (Command*) 0;
+        if (!ok || (normfactor == get_gain())) {
+            return ie().failure();
+        }
+
+        return new PCommand(this, "set_gain", normfactor, get_gain(), tr("AudioClip: Normalize"));
 }
 
-Command * AudioClip::denormalize( )
-{
-	set_gain(1.0);
-	return (Command*) 0;
-}
 
-void AudioClip::calculate_normalization_factor(float targetdB)
+float AudioClip::calculate_normalization_factor(float targetdB)
 {
 	float target = dB_to_scale_factor (targetdB);
 
@@ -929,17 +930,17 @@ void AudioClip::calculate_normalization_factor(float targetdB)
 	if (maxamp == 0.0f) {
 		printf("AudioClip::normalization: max amplitude == 0\n");
 		/* don't even try */
-		return;
+                return get_gain();
 	}
 	
 	if (maxamp == target) {
 		printf("AudioClip::normalization: max amplitude == target amplitude\n");
 		/* we can't do anything useful */
-		return;
+                return get_gain();
 	}
 
 	/* compute scale factor */
-	set_gain(target/maxamp);
+        return float(target/maxamp);
 }
 
 FadeCurve * AudioClip::get_fade_in( ) const

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
+    Copyright (C) 2005-2009 Remon Sijrier
  
     This file is part of Traverso
  
@@ -17,7 +17,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: PCommand.h,v 1.4 2007/12/11 17:30:10 r_sijrier Exp $
 */
 
 #ifndef PCOMMAND_H
