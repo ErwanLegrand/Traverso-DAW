@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "AudioClipView.h"
 #include "ContextPointer.h"
+#include "Command.h"
+#include "Fade.h"
 #include "SheetView.h"
 #include "LineView.h"
 #include "AudioClip.h"
@@ -54,6 +56,9 @@ Crop::Crop(AudioClipView* view)
 
         m_selection = new QGraphicsRectItem(m_cv);
         m_selection->setBrush(QColor(0, 0, 255, 100));
+        // Set the selection Z value to something sufficiently high
+        // to be _always_ on top of all the child views of m_cv
+        m_selection->setZValue(m_cv->zValue() + 20);
         x2 = -1;
         x1 = 32768;
 }
@@ -69,21 +74,21 @@ int Crop::prepare_actions()
 
         leftClip->set_sheet(m_clip->get_sheet());
         leftClip->set_track_start_location(m_clip->get_track_start_location());
-        leftClip->set_right_edge(TimeRef(x1 * m_cv->get_sheetview()->timeref_scalefactor));
-//        if (leftClip->get_fade_out()) {
-//                FadeRange* cmd = (FadeRange*)leftClip->reset_fade_out();
-//                cmd->set_historable(false);
-//                Command::process_command(cmd);
-//        }
+        leftClip->set_right_edge(TimeRef(x1 * m_cv->get_sheetview()->timeref_scalefactor) + m_clip->get_track_start_location());
+        if (leftClip->get_fade_out()) {
+                FadeRange* cmd = (FadeRange*)leftClip->reset_fade_out();
+                cmd->set_historable(false);
+                Command::process_command(cmd);
+        }
 
         rightClip->set_sheet(m_clip->get_sheet());
-        rightClip->set_left_edge(TimeRef(x2 * m_cv->get_sheetview()->timeref_scalefactor));
-        rightClip->set_track_start_location(TimeRef(x1 * m_cv->get_sheetview()->timeref_scalefactor));
-//        if (rightClip->get_fade_in()) {
-//                FadeRange* cmd = (FadeRange*)rightClip->reset_fade_in();
-//                cmd->set_historable(false);
-//                Command::process_command(cmd);
-//        }
+        rightClip->set_left_edge(TimeRef(x2 * m_cv->get_sheetview()->timeref_scalefactor) + m_clip->get_track_start_location());
+        rightClip->set_track_start_location(leftClip->get_track_end_location());
+        if (rightClip->get_fade_in()) {
+                FadeRange* cmd = (FadeRange*)rightClip->reset_fade_in();
+                cmd->set_historable(false);
+                Command::process_command(cmd);
+        }
 
         return 1;
 }
@@ -95,6 +100,7 @@ int Crop::begin_hold()
 
 int Crop::finish_hold()
 {
+        delete m_selection;
         return 1;
 }
 
@@ -125,6 +131,7 @@ int Crop::undo_action()
 
 void Crop::cancel_action()
 {
+        finish_hold();
 }
 
 
