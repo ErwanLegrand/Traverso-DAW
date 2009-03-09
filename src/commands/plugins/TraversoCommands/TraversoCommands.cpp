@@ -118,8 +118,9 @@ TraversoCommands::TraversoCommands()
 	m_dict.insert("DragEdge", DragEdgeCommand);
 	m_dict.insert("MoveClipOrEdge", MoveClipOrEdgeCommand);
 	m_dict.insert("CopyClip", MoveClipCommand);
-	m_dict.insert("SplitClip", SplitClipCommand);
-	m_dict.insert("ArmTracks", ArmTracksCommand);
+        m_dict.insert("SplitClip", SplitClipCommand);
+        m_dict.insert("CropClip", CropClipCommand);
+        m_dict.insert("ArmTracks", ArmTracksCommand);
 	m_dict.insert("VZoomIn", ZoomCommand);
 	m_dict.insert("VZoomOut", ZoomCommand);
 	m_dict.insert("HZoomIn", ZoomCommand);
@@ -342,7 +343,18 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 			return new SplitClip(view);
 		}
 		
-		case ArmTracksCommand:
+                case CropClipCommand:
+                {
+                        AudioClipView* view = qobject_cast<AudioClipView*>(obj);
+                        if (!view) {
+                                PERROR("TraversoCommands: Supplied QObject was not an AudioClipView! "
+                                        "CropClipCommand needs an AudioClipView as argument");
+                                return 0;
+                        }
+                        return new Crop(view);
+                }
+
+                case ArmTracksCommand:
 		{
 			SheetView* view = qobject_cast<SheetView*>(obj);
 			if (!view) {

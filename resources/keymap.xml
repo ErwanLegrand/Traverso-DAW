@@ -494,7 +494,12 @@
 				<Object objectname="SheetView" mousehint="UD" modes="All" sortorder="2" submenu="Zoom" pluginname="TraversoCommands" commandname="VJogZoom" arguments="VJogZoom;1.2;0.2" />
 			</Objects>
 		</keyfact>
-		
+                <keyfact type="HKEY2" key1="X" key2="C">
+                        <Objects>
+                                <Object objectname="AudioClipView" modes="All" sortorder="20" pluginname="TraversoCommands" commandname="CropClip" />
+                        </Objects>
+                </keyfact>
+
 		
 		
 		<keyfact type="D_FKEY" key1="T" >
@@ -535,11 +540,6 @@
 				<Object objectname="Track" modes="All" sortorder="30" pluginname="TraversoCommands" commandname="ResetGain" arguments="0.5" />
 				<Object objectname="TrackPanelGain" modes="All" sortorder="30" pluginname="TraversoCommands" commandname="ResetGain" arguments="0.5" />
 				<Object objectname="Sheet" modes="All" sortorder="30" pluginname="TraversoCommands" commandname="ResetGain" arguments="0.5" />
-			</Objects>
-		</keyfact>
-		<keyfact type="D_FKEY" key1="N" >
-			<Objects>
-				<Object objectname="AudioClip" slotsignature="denormalize" modes="All" sortorder="24" />
 			</Objects>
 		</keyfact>
 		<keyfact type="D_FKEY" key1="P" >

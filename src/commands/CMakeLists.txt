@@ -17,6 +17,7 @@ AudioClipExternalProcessing.cpp
 AddRemove.cpp
 ClipSelection.cpp
 CommandGroup.cpp
+Crop.cpp
 ExternalProcessingDialog.cpp
 Fade.cpp
 Gain.cpp
@@ -35,6 +36,7 @@ RemoveClip.cpp
 )
 
 SET(TRAVERSO_COMMANDS_MOC_CLASSES
+Crop.h
 ExternalProcessingDialog.h
 Gain.h
 MoveClip.h

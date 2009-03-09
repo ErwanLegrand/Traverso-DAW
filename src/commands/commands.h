@@ -14,3 +14,4 @@
 #include "ArmTracks.h"
 #include "RemoveClip.h"
 #include "Scroll.h"
+#include "Crop.h"
