@@ -498,7 +498,7 @@
 		</keyfact>
                 <keyfact type="HKEY2" key1="X" key2="C">
                         <Objects>
-                                <Object objectname="AudioClipView" modes="All" sortorder="20" pluginname="TraversoCommands" commandname="CropClip" />
+                                <Object objectname="AudioClipView" mousehint="LR" modes="All" sortorder="20" pluginname="TraversoCommands" commandname="CropClip" />
                         </Objects>
                 </keyfact>
 
