@@ -178,7 +178,7 @@ void Crop::adjust_left(bool autorepeat)
                 x1 -= 1;
                 if (x1 < 0) x1 = 0;
         } else {
-                if (x2 > x1) {
+                if (x2 > (x1 + 1)) {
                         x2 -= 1;
                 }
         }
@@ -195,7 +195,7 @@ void Crop::adjust_right(bool autorepeat)
         int x = (int) m_selection->mapFromScene(cpointer().scene_x(), cpointer().y()).x();
 
         if (x < (m_selection->boundingRect().width() / 2)) {
-                if (x2 > x1) {
+                if (x2 > (x1 + 1)) {
                         x1 += 1;
                 }
         } else {
