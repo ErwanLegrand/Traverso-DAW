@@ -246,7 +246,8 @@
 				<Object objectname="SheetPanelGain" slotsignature="gain_increment" modes="All" sortorder="1" />
 				<Object objectname="Zoom" slotsignature="vzoom_out" modes="All" />
 				<Object objectname="TrackPan" slotsignature="pan_right" modes="All" sortorder="2" />
-			</Objects>
+                                <Object objectname="Crop" slotsignature="adjust_left" modes="All" />
+                        </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="MouseScrollVerticalDown" >
 			<Objects>
@@ -258,7 +259,8 @@
 				<Object objectname="SheetPanelGain" slotsignature="gain_decrement" modes="All" sortorder="2" />
 				<Object objectname="Zoom" slotsignature="vzoom_in" modes="All" />
 				<Object objectname="TrackPan" slotsignature="pan_left" modes="All" sortorder="1" />
-			</Objects>
+                                <Object objectname="Crop" slotsignature="adjust_right" modes="All" />
+                        </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="F" >
 			<Objects>

@@ -55,6 +55,10 @@ private:
         QGraphicsRectItem* m_selection;
         int x1;
         int x2;
+
+public slots:
+        void adjust_left(bool autorepeat);
+        void adjust_right(bool autorepeat);
 };
 
 #endif

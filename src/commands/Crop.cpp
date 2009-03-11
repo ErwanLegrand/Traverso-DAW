@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ProjectManager.h"
 #include "Sheet.h"
 #include "Track.h"
+#include "InputEngine.h"
 
  #include <QGraphicsRectItem>
 
@@ -56,6 +57,7 @@ Crop::Crop(AudioClipView* view)
 
         m_selection = new QGraphicsRectItem(m_cv);
         m_selection->setBrush(QColor(0, 0, 255, 100));
+        m_selection->setPen(QPen(Qt::NoPen));
         // Set the selection Z value to something sufficiently high
         // to be _always_ on top of all the child views of m_cv
         m_selection->setZValue(m_cv->zValue() + 20);
@@ -164,5 +166,48 @@ int Crop::jog()
         m_selection->setPos(x1, 0);
 
         return 1;
+}
+
+void Crop::adjust_left(bool autorepeat)
+{
+        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+
+        int x = (int) m_selection->mapFromScene(cpointer().scene_x(), cpointer().y()).x();
+
+        if (x < (m_selection->boundingRect().width() / 2)) {
+                x1 -= 1;
+                if (x1 < 0) x1 = 0;
+        } else {
+                if (x2 > x1) {
+                        x2 -= 1;
+                }
+        }
+
+        QRectF rect(0, 0, x2 - x1, m_cv->boundingRect().height());
+        m_selection->setRect(rect);
+        m_selection->setPos(x1, 0);
+}
+
+void Crop::adjust_right(bool autorepeat)
+{
+        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+
+        int x = (int) m_selection->mapFromScene(cpointer().scene_x(), cpointer().y()).x();
+
+        if (x < (m_selection->boundingRect().width() / 2)) {
+                if (x2 > x1) {
+                        x1 += 1;
+                }
+        } else {
+                x2 += 1;
+                if (x2 > m_cv->boundingRect().width()) {
+                        x2 = (int)m_cv->boundingRect().width();
+                }
+        }
+
+        QRectF rect(0, 0, x2 - x1, m_cv->boundingRect().height());
+        m_selection->setRect(rect);
+        m_selection->setPos(x1, 0);
+
 }
 
