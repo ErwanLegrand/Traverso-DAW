@@ -86,6 +86,15 @@ SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/bin)
 SET(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/lib)
 
 
+# Add Mac build paths for DarwinPorts / MacPorts
+# These need to be defined up here, above the include checks
+IF(APPLE)
+	INCLUDE_DIRECTORIES("/opt/local/include")
+	SET (CMAKE_REQUIRED_INCLUDES "/opt/local/include")
+	LINK_DIRECTORIES("/opt/local/lib")
+ENDIF(APPLE)
+
+
 SET(MINIMAL_ALSA_VERSION 1.0.0)
 SET(MINIMAL_JACK_VERSION 0.100)
 SET(MINIMAL_PORTAUDIO_VERSION 19)
@@ -360,15 +369,14 @@ IF(UNIX)
 	
 #BEGIN Mac OS X section
 	IF(APPLE)
-	
-	# Detect if we want native Mac OS X support (CoreAudio)
-	# and if we can build with it.
-	IF(WANT_COREAUDIO)
-		SET(HAVE_COREAUDIO TRUE)
-		LIST(APPEND TRAVERSO_DEFINES -DCOREAUDIO_SUPPORT)
-	ELSE(WANT_COREAUDIO)
-		SET(HAVE_COREAUDIO FALSE)
-	ENDIF(WANT_COREAUDIO)
+		# Detect if we want native Mac OS X support (CoreAudio)
+		# and if we can build with it.
+		IF(WANT_COREAUDIO)
+			SET(HAVE_COREAUDIO TRUE)
+			LIST(APPEND TRAVERSO_DEFINES -DCOREAUDIO_SUPPORT)
+		ELSE(WANT_COREAUDIO)
+			SET(HAVE_COREAUDIO FALSE)
+		ENDIF(WANT_COREAUDIO)
 
 # @ MAC OS X builders, I've NO IDEA what this should be, please have a look at it
 # It should be possible to create a working bundle with CPack using stuff
