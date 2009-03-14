@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #ifndef LV2_PLUGIN_H
 #define LV2_PLUGIN_H
 
+#include <cstdlib>
 #include <slv2/slv2.h>
 #include <QList>
 #include <QString>
