@@ -876,8 +876,8 @@ QString Sheet::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 	QList<Marker*> mlist = m_timeline->get_markers();
 	QList<Marker*> tempmarkers;
 
-	// Here we make the marker-stuff idiot-proof ;-). Traverso doesn't insist on having any
-	// marker at all, so we need to handle cases like:
+	// Here we make the marker-stuff idiot-proof ;-). Traverso doesn't insist on having any
+	// marker at all, so we need to handle cases like:
 	// - no markers at all
 	// - one marker (doesn't make sense)
 	// - enough markers, but no end marker
@@ -903,7 +903,7 @@ QString Sheet::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 				// it will now be overwritten, so we will never end up with
 				// two markers at the same position.
 
-				// deactivate the next if-condition (only the first one) if you want the
+				// deactivate the next if-condition (only the first one) if you want the
 				// stuff before the first marker to go into the pre-gap
 				if (mlist.at(0)->get_when() != (spec->startLocation)) {
 					temp = new Marker(m_timeline, spec->startLocation, Marker::CDTRACK);
@@ -954,14 +954,14 @@ QString Sheet::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 		output += "      SONGWRITER \"" + startmarker->get_songwriter() + "\"\n";
 		output += "      MESSAGE \"" + startmarker->get_message() + "\"\n    }\n  }\n";
 
-		// add some stuff only required for the first track (e.g. pre-gap)
+		// add some stuff only required for the first track (e.g. pre-gap)
 		if ((i == 0) && pregap) {
 			//if (start == 0) {
 				// standard pregap, because we have a track marker at the beginning
 				output += "  PREGAP 00:02:00\n";
 			//} else {
 			//	// no track marker at the beginning, thus use the part from 0 to the first
-			//	// track marker for the pregap
+			//	// track marker for the pregap
 			//	output += "  START " + frame_to_cd(start, m_project->get_rate()) + "\n";
 			//	start = 0;
 			//}
@@ -981,7 +981,7 @@ QString Sheet::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 		}
 	}
 
-	// delete all temporary markers
+	// delete all temporary markers
 	foreach(Marker* marker, tempmarkers) {
 		delete marker;
 	}

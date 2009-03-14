@@ -541,7 +541,7 @@ void AudioClipView::draw_db_lines(QPainter* p, qreal xstart, int pixelcount)
 		channels = 1;
 	}
 
-	// calculate the height of one channel
+	// calculate the height of one channel
 	if (m_height >= m_mimimumheightforinfoarea) {
 		p->setMatrix(matrix().translate(0, m_infoAreaHeight), true);
 		height = (m_height - m_infoAreaHeight) / channels;
@@ -561,7 +561,7 @@ void AudioClipView::draw_db_lines(QPainter* p, qreal xstart, int pixelcount)
 		int zeroDb = 0.9 * height / 2;
 		int msixDb = 0.9 * height / 4;
 
-		// draw the lines above and below the center line, then translate
+		// draw the lines above and below the center line, then translate
 		// the painter to the next channel
 		for (int i = 0; i < channels; ++i) {
 			p->drawLine(linestartpos, zeroDb, xstart+pixelcount, zeroDb);
@@ -588,7 +588,7 @@ void AudioClipView::draw_db_lines(QPainter* p, qreal xstart, int pixelcount)
 		int zeroDb = 0.95 * height;
 		int msixDb = 0.95 * height / 2;
 
-		// draw the lines above the center line, then translate
+		// draw the lines above the center line, then translate
 		// the painter to the next channel
 		for (int i = 0; i < channels; ++i) {
 			p->drawLine(linestartpos, -zeroDb, xstart+pixelcount, -zeroDb);
