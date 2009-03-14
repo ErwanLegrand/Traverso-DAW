@@ -50,7 +50,7 @@ PluginChainView::PluginChainView(SheetView* sv, ViewItem* parent, PluginChain* c
 {
 	PENTERCONS;
 	
-	setZValue(parent->zValue() + 2);
+        setZValue(parent->zValue() + 10);
 	m_sv = sv;
 	calculate_bounding_rect();
 	

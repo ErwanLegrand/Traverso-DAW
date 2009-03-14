@@ -49,7 +49,7 @@ PluginView::PluginView(PluginChainView* parent, PluginChain* chain, Plugin* plug
 	
 	m_propertiesDialog = 0;
 
-        setZValue(parent->zValue() + 10);
+        setZValue(parent->zValue() + 2);
 	
 	m_name = plugin->get_name();
 	
