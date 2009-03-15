@@ -460,6 +460,11 @@
 				<Object objectname="SheetView" modes="All" sortorder="4" submenu="Scroll"  pluginname="TraversoCommands" commandname="ScrollDownHold" arguments="0;20" />
 			</Objects>
 		</keyfact>
+                <keyfact type="HKEY" key1="R">
+                        <Objects>
+                                <Object objectname="AudioClipView" mousehint="LR" modes="All" sortorder="20" pluginname="TraversoCommands" commandname="CropClip" />
+                        </Objects>
+                </keyfact>
 		
 		
 		
@@ -496,11 +501,6 @@
 				<Object objectname="SheetView" mousehint="UD" modes="All" sortorder="2" submenu="Zoom" pluginname="TraversoCommands" commandname="VJogZoom" arguments="VJogZoom;1.2;0.2" />
 			</Objects>
 		</keyfact>
-                <keyfact type="HKEY2" key1="X" key2="C">
-                        <Objects>
-                                <Object objectname="AudioClipView" mousehint="LR" modes="All" sortorder="20" pluginname="TraversoCommands" commandname="CropClip" />
-                        </Objects>
-                </keyfact>
 
 		
 		
