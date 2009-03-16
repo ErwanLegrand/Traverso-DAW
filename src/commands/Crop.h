@@ -57,8 +57,8 @@ private:
         AudioClip* leftClip;
         AudioClip* rightClip;
         QGraphicsRectItem* m_selection;
-        int x1;
-        int x2;
+        qint64 x1;
+        qint64 x2;
 
 public slots:
         void adjust_left(bool autorepeat);

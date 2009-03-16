@@ -62,7 +62,7 @@ Crop::Crop(AudioClipView* view)
         // to be _always_ on top of all the child views of m_cv
         m_selection->setZValue(m_cv->zValue() + 20);
         x2 = -1;
-        x1 = 32768;
+        x1 = LLONG_MAX;
 }
 
 
