@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "FadeCurve.h"
 #include "ProjectManager.h"
 #include "Project.h"
+#include "ReadSource.h"
 #include "Utils.h"
 #include "Mixer.h"
 #include "Command.h"
@@ -110,6 +111,8 @@ void AudioClipEditDialog::clip_state_changed()
 	}
 	
 	clipGainSpinBox->setValue(coefficient_to_dB(m_clip->get_gain()));
+        sourceLineEdit->setText(m_clip->get_readsource()->get_filename());
+        sourceLineEdit->setToolTip(m_clip->get_readsource()->get_filename());
 }
 
 void AudioClipEditDialog::save_changes()
