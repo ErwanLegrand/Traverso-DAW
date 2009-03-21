@@ -462,7 +462,7 @@
 		</keyfact>
                 <keyfact type="HKEY" key1="R">
                         <Objects>
-                                <Object objectname="AudioClipView" mousehint="LR" modes="All" sortorder="20" pluginname="TraversoCommands" commandname="CropClip" />
+                                <Object objectname="AudioClipView" mousehint="LR" modes="All" sortorder="16" pluginname="TraversoCommands" commandname="CropClip" />
                         </Objects>
                 </keyfact>
 		
