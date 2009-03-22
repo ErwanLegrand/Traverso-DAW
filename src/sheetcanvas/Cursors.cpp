@@ -162,14 +162,15 @@ void PlayHead::update_position()
 	// When timeref_scalefactor is below 5120, the playhead moves faster then teh view scrolls
 	// so it's better to keep the view centered around the playhead.
 	if (m_mode == CENTERED || (m_sv->timeref_scalefactor <= 10280) ) {
-                m_sv->set_hscrollbar_value(int(scenePos().x()) - (int)(0.5 * vpWidth));
-                 // For some reason on some systems the event of
+                // For some reason on some systems the event of
                 // setting the new position doesn't result in
                 // updating the area of the old cursor position
                 // when directly updating the scrollbars afterwards.
                 // processing the event stack manually solves this.
                 qApp->processEvents();
-                return;
+
+                m_sv->set_hscrollbar_value(int(scenePos().x()) - (int)(0.5 * vpWidth));
+		return;
 	}
 	 
 	QPoint vppoint = m_vp->mapFromScene(pos());
@@ -223,19 +224,19 @@ void PlayHead::set_animation_value(int value)
 	
 	int newXPos = (int)(m_animationScrollStartPos + diff);
 	
-        if (newPos != pos()) {
-                setPos(newPos);
+	if (newPos != pos()) {
+		setPos(newPos);
 	}
-
+	
 	if (m_sv->hscrollbar_value() != newXPos) {
-		m_sv->set_hscrollbar_value(newXPos);
                 // For some reason on some systems the event of
                 // setting the new position doesn't result in
                 // updating the area of the old cursor position
                 // when directly updating the scrollbars afterwards.
                 // processing the event stack manually solves this.
                 qApp->processEvents();
-        }
+		m_sv->set_hscrollbar_value(newXPos);
+	}
 }
 
 void PlayHead::animation_finished()
