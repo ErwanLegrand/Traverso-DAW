@@ -522,7 +522,9 @@ void AudioClipView::draw_clipinfo_area(QPainter* p, int xstart, int pixelcount)
 	// fill info area bg
 	p->fillRect(xstart, 1, pixelcount, m_infoAreaHeight, themer()->get_color("AudioClip:clipinfobackground:inactive"));
 	if (m_height >= m_mimimumheightforinfoarea) {
-		p->drawPixmap(7, 1, m_clipInfo);
+                if (xstart < (7 + m_clipInfo.width())) {
+                        p->drawPixmap(7, 1, m_clipInfo);
+                }
 	}
 }
 
