@@ -128,7 +128,7 @@ void AudioDriverConfigPage::reset_default_config()
 	config().set_property("Hardware", "buffersize", 512);
 #if defined (ALSA_SUPPORT)
 	config().set_property("Hardware", "drivertype", "ALSA");
-	config().set_property("Hardware", "carddevice", "hw:0");
+        config().set_property("Hardware", "carddevice", "default");
 	config().set_property("Hardware", "numberofperiods", 3);
 	config().set_property("Hardware", "DitherShape", "None");
 #elif defined (JACK_SUPPORT)
@@ -221,7 +221,7 @@ void AudioDriverConfigPage::load_config( )
 		}
 	}
 	
-	QString defaultdevice =  config().get_property("Hardware", "carddevice", "hw:0").toString();
+        QString defaultdevice =  config().get_property("Hardware", "carddevice", "default").toString();
 	index = m_alsadevices->devicesCombo->findData(defaultdevice);
 	if (index >= 0) {
 		m_alsadevices->devicesCombo->setCurrentIndex(index);

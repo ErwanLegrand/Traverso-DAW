@@ -313,7 +313,7 @@ void Traverso::prepare_audio_device( )
 #else
 	QString driverType = config().get_property("Hardware", "drivertype", "PortAudio").toString();
 #endif
-	QString cardDevice = config().get_property("Hardware", "carddevice", "hw:0").toString();
+        QString cardDevice = config().get_property("Hardware", "carddevice", "default").toString();
 	QString ditherShape = config().get_property("Hardware", "DitherShape", "None").toString();
 	bool capture = config().get_property("Hardware", "capture", 1).toInt();
 	bool playback = config().get_property("Hardware", "playback", 1).toInt();
@@ -333,7 +333,7 @@ void Traverso::prepare_audio_device( )
 
 #if defined (ALSA_SUPPORT)
 	if (driverType == "ALSA") {
-		cardDevice = config().get_property("Hardware", "carddevice", "hw:0").toString();
+                cardDevice = config().get_property("Hardware", "carddevice", "default").toString();
 	}
 #endif
 	
