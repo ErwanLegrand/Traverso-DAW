@@ -1,19 +1,15 @@
 [Desktop Entry]
-Name=Traverso
-Comment=Digital Audio Workstation
-#Comment[nl]=
-
 Encoding=UTF-8
-Version=1.0
-
+MimeType=text/plain
+GenericName=Multitrack Recorder
+GenericName[de]=Multitrack Recorder
+GenericName[ru]=Многодорожечная запись и сведение
+Exec=traverso
+Icon=traverso
+Path=
 Type=Application
-Categories=Application;Qt;AudioVideo;Audio;Music;Recorder;
-
-MimeType=application/x-traverso
-
-Exec=traverso %f
-TryExec=traverso
 Terminal=false
-StartupNotify=true
-
-Icon=traverso.png
+Name=Traverso
+X-KDE-StartupNotify=true
+X-DCOP-ServiceType=Multi
+Categories=Qt;AudioVideo;Audio;Recorder;
