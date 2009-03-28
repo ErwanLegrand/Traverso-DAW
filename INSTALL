@@ -37,42 +37,4 @@ Have fun!
 
 NOTE FOR PACKAGERS:
 
-The tarball as it is supplied should be suitable for creating a distribution
-package without major modification.
-
-You can disable host cpu feature detection with:
-
--DDETECT_HOST_CPU_FEATURES=OFF
-
-To enable runtime detected SSE support, add:
-
--DCMAKE_CXX_FLAGS:STRING="-DSSE_OPTIMIZATIONS -DARCH_X86"
-
-
-To enable runtime detected cpu fpu denormals are zero support, add:
-
--DCMAKE_CXX_FLAGS:STRING="-DUSE_XMMINTRIN -DARCH_X86"
-
-
-If your distribution has slv2 >= 0.6.1 you can compile with:
-
--DUSE_SYSTEM_SLV2_LIBRARY=ON
-
-to let Traverso use the system installed one.
-
-
-E.g. compiling a package for an i686 compatible Linux system with runtime detected SSE support:
-
-cmake . -DDETECT_HOST_CPU_FEATURES=OFF -DWANT_JACK=ON -DWANT_ALSA=ON -DUSE_SYSTEM_SLV2_LIBRARY=OFF \
-	-DCMAKE_CXX_FLAGS:STRING="-march=i686 -DSSE_OPTIMIZATIONS -DUSE_XMMINTRIN -DARCH_X86"
-
-
-Compiling for a cpu architecture that doesn't support sse:
-
-cmake . -DDETECT_HOST_CPU_FEATURES=OFF -DWANT_JACK=ON -DWANT_ALSA=ON -DUSE_SYSTEM_SLV2_LIBRARY=OFF
-
-
-Adding additional compiler flags, like compiling with -msse -mfpmath=sse (in case the targetted host supports it):
-
-cmake . -DDETECT_HOST_CPU_FEATURES=OFF -DWANT_JACK=ON -DWANT_ALSA=ON -DUSE_SYSTEM_SLV2_LIBRARY=OFF \
-	-DCMAKE_CXX_FLAGS:STRING="-march=i686 -msse -mfpmath=sse  -DSSE_OPTIMIZATIONS -DUSE_XMMINTRIN -DARCH_X86"
+See the PACKAGERS file!
