@@ -1,3 +1,12 @@
+28-03-2009 Remon Sijrier <remon at traverso-daw dot org>
+        * Released Traverso 0.49.1
+
+        * Changed ALSA device from "hw:0" to "default" (so the system configured one will be used!)
+        * Move Magnetic Cut to [ R ] instead of [ XC ], fix integer overflow as well
+        * Compile fixes when using system installed SLV2 lib
+        * Various small fixes.
+
+
 13-03-2009 Remon Sijrier <remon at traverso-daw dot org>
 	* Released Traverso 0.49.0
 	
