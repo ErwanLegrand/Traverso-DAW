@@ -1,31 +1,32 @@
 [Setup]
 AppName=Traverso
-AppVerName=Traverso 0.42.0-rc1
+AppVerName=Traverso 0.49.1
 DefaultDirName={pf}\Traverso
 DefaultGroupName=Traverso
 PrivilegesRequired=none
 UninstallDisplayIcon={app}\traverso.exe
 
 [Files]
-Source: "traverso.exe"; DestDir: "{app}"
-Source: "3thparty\bin\cdrdao.exe"; DestDir: "{app}"
-Source: "3thparty\bin\wget.exe"; DestDir: "{tmp}"
-Source: "3thparty\lib\cygwin1.dll"; DestDir: "{app}"
-Source: "3thparty\lib\libfftw3-3.dll"; DestDir: "{app}"
-Source: "3thparty\lib\libsndfile-1.dll"; DestDir: "{app}"
-Source: "3thparty\lib\libFLAC.dll"; DestDir: "{app}"
-Source: "3thparty\lib\libMAD.dll"; DestDir: "{app}"
-Source: "3thparty\lib\ogg.dll"; DestDir: "{app}"
-Source: "3thparty\lib\vorbis.dll"; DestDir: "{app}"
-Source: "3thparty\lib\vorbisfile.dll"; DestDir: "{app}"
-Source: "3thparty\lib\vorbisenc.dll"; DestDir: "{app}"
-Source: "3thparty\lib\wavpackdll.dll"; DestDir: "{app}"
-Source: "3thparty\lib\libsamplerate.dll"; DestDir: "{app}"
-Source: "mingwm10.dll"; DestDir: "{app}"
-Source: "QtCore4.dll"; DestDir: "{app}"
-Source: "QtGui4.dll"; DestDir: "{app}"
-Source: "QtOpenGL4.dll"; DestDir: "{app}"
-Source: "QtXml4.dll"; DestDir: "{app}"
+Source: "bin\traverso.exe"; DestDir: "{app}"
+Source: "bin\cdrdao.exe"; DestDir: "{app}"
+Source: "bin\wget.exe"; DestDir: "{tmp}"
+Source: "bin\mingwm10.dll"; DestDir: "{app}"
+Source: "bin\cygwin1.dll"; DestDir: "{app}"
+Source: "bin\portaudio.dll"; DestDir: "{app}"
+Source: "bin\libfftw3-3.dll"; DestDir: "{app}"
+Source: "bin\libsndfile-1.dll"; DestDir: "{app}"
+Source: "bin\libFLAC.dll"; DestDir: "{app}"
+Source: "bin\libMAD.dll"; DestDir: "{app}"
+Source: "bin\ogg.dll"; DestDir: "{app}"
+Source: "bin\vorbis.dll"; DestDir: "{app}"
+Source: "bin\vorbisfile.dll"; DestDir: "{app}"
+Source: "bin\vorbisenc.dll"; DestDir: "{app}"
+Source: "bin\wavpackdll.dll"; DestDir: "{app}"
+Source: "bin\libsamplerate.dll"; DestDir: "{app}"
+Source: "bin\QtCore4.dll"; DestDir: "{app}"
+Source: "bin\QtGui4.dll"; DestDir: "{app}"
+Source: "bin\QtOpenGL4.dll"; DestDir: "{app}"
+Source: "bin\QtXml4.dll"; DestDir: "{app}"
 
 
 [Tasks]
