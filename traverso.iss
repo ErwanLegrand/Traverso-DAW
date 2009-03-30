@@ -25,7 +25,6 @@ Source: "bin\wavpackdll.dll"; DestDir: "{app}"
 Source: "bin\libsamplerate.dll"; DestDir: "{app}"
 Source: "bin\QtCore4.dll"; DestDir: "{app}"
 Source: "bin\QtGui4.dll"; DestDir: "{app}"
-Source: "bin\QtOpenGL4.dll"; DestDir: "{app}"
 Source: "bin\QtXml4.dll"; DestDir: "{app}"
 
 
