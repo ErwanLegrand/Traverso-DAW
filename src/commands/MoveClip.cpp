@@ -406,6 +406,9 @@ void MoveClip::move_left(bool autorepeat)
 	if (d->verticalOnly) return;
 	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 	m_posDiff -= d->sv->timeref_scalefactor;
+        if (m_posDiff + m_trackStartLocation < TimeRef()) {
+                m_posDiff = -1 * m_trackStartLocation;
+        }
 	do_move();
 }
 
