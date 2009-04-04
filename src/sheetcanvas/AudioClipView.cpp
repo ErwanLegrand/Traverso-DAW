@@ -149,12 +149,12 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 		if (m_clip->recording_state() == AudioClip::RECORDING) {
 			painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBgRecording);
 		} else {
-			if (m_clip->is_muted()) {
+                        if (m_clip->is_selected()) {
+                                if (mousehover) painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBgSelectedHover);
+                                else            painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBgSelected);
+                        } else if (m_clip->is_muted()) {
 				if (mousehover) painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBgMutedHover);
 				else            painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBgMuted);
-			} else if (m_clip->is_selected()) {
-				if (mousehover) painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBgSelectedHover);
-				else            painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBgSelected);
 			} else {
 				if (mousehover) painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBgHover);
 				else            painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBg);
