@@ -814,6 +814,8 @@ void AudioClipView::load_theme_data()
 	QFontMetrics fm(dblfont);
 	m_lineOffset = fm.width(" -6 dB ");
 	m_lineVOffset = fm.ascent()/2;
+
+	create_brushes();
 }
 
 
