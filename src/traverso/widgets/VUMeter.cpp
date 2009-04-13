@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: VUMeter.cpp,v 1.1 2008/05/24 17:41:03 r_sijrier Exp $
+    $Id: VUMeter.cpp,v 1.2 2009/04/13 21:33:59 n_doebelin Exp $
 */
 
 #include "VUMeter.h"
@@ -68,18 +68,16 @@ VUMeter::VUMeter(QWidget* parent, AudioBus* bus)
 {
 	setMaximumWidth(MAXIMUM_WIDTH);
 	m_minSpace = 0;
-	
-	int vulevelspacing = themer()->get_property("VUMeter:layout:vuspacing", 3).toInt();
-	int vulayoutspacing = themer()->get_property("VUMeter:layout:vulayoutspacing", 5).toInt();
-	int mainlayoutmargin = themer()->get_property("VUMeter:layout:mainlayoutmargin", 1).toInt();
-	int mainlayoutspacing = themer()->get_property("VUMeter:layout:mainlayoutspacing", 2).toInt();
+
+	mainlayout = new QVBoxLayout;
+	load_theme_data();
 	
 	QWidget* levelLedLayoutwidget = new QWidget(this);
-	QHBoxLayout* levelLedLayout = new QHBoxLayout(levelLedLayoutwidget);
+	levelLedLayout = new QHBoxLayout(levelLedLayoutwidget);
 	
 	levelLedLayout->setSpacing(0);
 	levelLedLayout->setMargin(0);
-	levelLedLayout->addSpacing(vulayoutspacing);
+	levelLedLayout->addSpacing(m_vulayoutspacing);
 	
 	levelLedLayoutwidget->setLayout(levelLedLayout);
 	
@@ -104,8 +102,8 @@ VUMeter::VUMeter(QWidget* parent, AudioBus* bus)
 		levelLedLayout->addWidget(widget);
 		
 		if (i < bus->get_channel_count() - 1)  {
-			levelLedLayout->addSpacing(vulevelspacing);
-			m_minSpace += vulevelspacing;
+			levelLedLayout->addSpacing(m_vulevelspacing);
+			m_minSpace += m_vulevelspacing;
 		}
 	}
 		
@@ -114,8 +112,8 @@ VUMeter::VUMeter(QWidget* parent, AudioBus* bus)
 	levelLedLayout->addWidget(ruler);
 	m_minSpace += ruler->maximumWidth();
 		
-	levelLedLayout->addSpacing(vulayoutspacing);
-	m_minSpace += vulayoutspacing;
+	levelLedLayout->addSpacing(m_vulayoutspacing);
+	m_minSpace += m_vulayoutspacing;
 	
 	// add a tooltip showing the channel name
 	m_name = bus->get_name();
@@ -129,18 +127,19 @@ VUMeter::VUMeter(QWidget* parent, AudioBus* bus)
 	setAttribute(Qt::WA_OpaquePaintEvent);
 	
 	channelNameLabel = new QLabel(this);
-	channelNameLabel->setFont(themer()->get_font("VUMeter:fontscale:label"));
+	channelNameLabel->setFont(m_chanNameFont);
 	channelNameLabel->setAlignment(Qt::AlignHCenter);
 	
-	QVBoxLayout* mainlayout = new QVBoxLayout;
 	mainlayout->addSpacing(5);
 	mainlayout->addWidget(levelLedLayoutwidget, 5);
 	mainlayout->addWidget(channelNameLabel);
-	mainlayout->setMargin(mainlayoutmargin);
-	mainlayout->setSpacing(mainlayoutspacing);
+	mainlayout->setMargin(m_mainlayoutmargin);
+	mainlayout->setSpacing(m_mainlayoutspacing);
 	m_minSpace += mainlayout->spacing();
 	
 	setLayout(mainlayout);
+
+	connect(themer(), SIGNAL(themeLoaded()), this, SLOT(load_theme_data()), Qt::QueuedConnection);
 }
 
 VUMeter::~ VUMeter( )
@@ -152,14 +151,14 @@ void VUMeter::paintEvent( QPaintEvent *  )
 	PENTER3;
 
 	QPainter painter(this);
-	painter.fillRect( 0 , 0 , width(), height() , themer()->get_color("VUMeter:background:widget") );
+	painter.fillRect( 0 , 0 , width(), height() , m_widgetBgBrush );
 }
 
 void VUMeter::resizeEvent( QResizeEvent *  )
 {
 	PENTER3;
 
-	QFontMetrics fm(themer()->get_font("VUMeter:fontscale:label"));
+	QFontMetrics fm(m_labelFont);
 	
 	// Comment by Remon: Why the -1 here???? Without the -1 it seems to work correctly too?
 	// Reply by Nic: It doesn't here (PPC). The label can't become smaller than the text width,
@@ -221,7 +220,20 @@ void VUMeter::reset()
 	}
 }
 
+void VUMeter::load_theme_data()
+{
+	m_vulevelspacing = themer()->get_property("VUMeter:layout:vuspacing", 3).toInt();
+	m_vulayoutspacing = themer()->get_property("VUMeter:layout:vulayoutspacing", 5).toInt();
+	m_mainlayoutmargin = themer()->get_property("VUMeter:layout:mainlayoutmargin", 1).toInt();
+	m_mainlayoutspacing = themer()->get_property("VUMeter:layout:mainlayoutspacing", 2).toInt();
 
+	mainlayout->setMargin(m_mainlayoutmargin);
+	mainlayout->setSpacing(m_mainlayoutspacing);
+	
+	m_chanNameFont = themer()->get_font("VUMeter:fontscale:label");
+	m_widgetBgBrush = themer()->get_brush("VUMeter:background:widget");
+	m_labelFont = themer()->get_font("VUMeter:fontscale:label");
+}
 
 /**********************************************************************/
 /*                      VUMeterRuler                                  */
@@ -243,6 +255,7 @@ VUMeterRuler::VUMeterRuler(QWidget* parent)
                 : QWidget(parent)
 {
 	setAutoFillBackground(false);
+
 	QFontMetrics fm(themer()->get_font("VUMeter:fontscale:label"));
 	setMinimumWidth(fm.width("-XX")+TICK_LINE_LENGTH + 3);
 	setMaximumWidth(fm.width("-XX")+TICK_LINE_LENGTH + 4);
@@ -272,24 +285,26 @@ VUMeterRuler::VUMeterRuler(QWidget* parent)
 	lineMark.push_back(-45);
 	lineMark.push_back(-50);
 	lineMark.push_back(-60);
+
+	load_theme_data();
+	connect(themer(), SIGNAL(themeLoaded()), this, SLOT(load_theme_data()), Qt::QueuedConnection);
 }
 
 void VUMeterRuler::paintEvent( QPaintEvent*  )
 {
 	PENTER4;
 
-	QFontMetrics fm(themer()->get_font("VUMeter:fontscale:label"));
 	QString spm;
 	int deltaY;
 
 	QPainter painter(this);
-	painter.setFont(themer()->get_font("VUMeter:fontscale:label"));
+	painter.setFont(m_font);
 
 	// offset is the space occupied by the 'over' LED
 	float levelRange = float(height() - VULED_HEIGHT);
 
 	// draw line marks
-	painter.setPen(themer()->get_color("VUMeter:font:inactive"));
+	painter.setPen(m_colorInactive);
 	for (uint j = 0; j < lineMark.size(); ++j) {
 		int idx = int(LUT_MULTIPLY * float((-lineMark[j] + 6)));
 
@@ -301,8 +316,8 @@ void VUMeterRuler::paintEvent( QPaintEvent*  )
 		painter.drawLine(0, height() - deltaY, TICK_LINE_LENGTH, height() - deltaY);
 	}
 
-	painter.setPen(themer()->get_color("VUMeter:font:active"));
-	QRect markRect(0, 0, width(), fm.ascent());
+	painter.setPen(m_colorActive);
+	QRect markRect(0, 0, width(), m_fontLabelAscent);
 
 	// draw the labels
 	for (uint j = 0; j < presetMark.size(); ++j) {
@@ -328,8 +343,8 @@ void VUMeterRuler::paintEvent( QPaintEvent*  )
 		deltaY = (int) ( VUMeter::vumeter_lut()->at(idx)/115.0  * levelRange );
 		spm.sprintf("%2i", presetMark[j]);
 
-		markRect.setY(height() - deltaY - fm.ascent()/2 - 1);
-		markRect.setHeight(fm.ascent());
+		markRect.setY(height() - deltaY - m_fontLabelAscent/2 - 1);
+		markRect.setHeight(m_fontLabelAscent);
 		if (markRect.bottom() >= height()) {
 			markRect.translate(0, height() - markRect.bottom() - 1);
 		}
@@ -338,6 +353,17 @@ void VUMeterRuler::paintEvent( QPaintEvent*  )
 	}
 }
 
+void VUMeterRuler::load_theme_data()
+{
+	m_font = themer()->get_font("VUMeter:fontscale:label");
+	QFontMetrics fm(m_font);
+	setMinimumWidth(fm.width("-XX")+TICK_LINE_LENGTH + 3);
+	setMaximumWidth(fm.width("-XX")+TICK_LINE_LENGTH + 4);
+	m_fontLabelAscent = fm.ascent();
+
+	m_colorActive = themer()->get_color("VUMeter:font:active");
+	m_colorInactive = themer()->get_color("VUMeter:font:inactive");
+}
 
 /**********************************************************************/
 /*                      VUMeterOverLed                                */
@@ -361,12 +387,13 @@ static const int THREE_D_LIMIT		= 8;
 VUMeterOverLed::VUMeterOverLed(QWidget* parent)
                 : QWidget(parent)
 {
-	int minimumwidth = themer()->get_property("VUMeter:layout:minimumlevelwidth", 6).toInt();
 	setAutoFillBackground(false);
-	setMinimumWidth(minimumwidth);
         setMinimumHeight(VULED_HEIGHT);
 
 	isActive = false;
+
+	load_theme_data();
+	connect(themer(), SIGNAL(themeLoaded()), this, SLOT(load_theme_data()), Qt::QueuedConnection);
 }
 
 void VUMeterOverLed::paintEvent( QPaintEvent*  )
@@ -375,20 +402,20 @@ void VUMeterOverLed::paintEvent( QPaintEvent*  )
         QPainter painter(this);
 
 	if (!isActive) {
-		painter.fillRect(0, 0, width(), height(), themer()->get_color("VUMeter:overled:inactive"));
+		painter.fillRect(0, 0, width(), height(), m_colInactive);
 		return;
 	}
 
 	if (width() < THREE_D_LIMIT) {
-		painter.fillRect(0, 0, width(), height(), themer()->get_color("VUMeter:overled:active"));
+		painter.fillRect(0, 0, width(), height(), m_colActive);
 		return;
 	}
 
 	// draw in 3d mode
-	QColor col = themer()->get_color("VUMeter:overled:active");
-	painter.fillRect(0, 0, width(), height(), themer()->get_color("VUMeter:background:bar"));
-	painter.fillRect(2, 2, width()-4, height()-4, col);
+	painter.fillRect(0, 0, width(), height(), m_colBg);
+	painter.fillRect(2, 2, width()-4, height()-4, m_colActive);
 
+	QColor col;
 	col.setRgb(255, 255, 255);
 	col.setAlpha(200);
 	painter.setPen(col);
@@ -413,7 +440,12 @@ void VUMeterOverLed::set_active(bool b)
 	update();
 }
 
-
+void VUMeterOverLed::load_theme_data()
+{
+	m_colActive = themer()->get_color("VUMeter:overled:active");
+	m_colInactive = themer()->get_color("VUMeter:overled:inactive");
+	m_colBg = themer()->get_color("VUMeter:background:bar");
+}
 
 /**********************************************************************/
 /*                      VUMeterLevel                                    */
@@ -445,9 +477,6 @@ VUMeterLevel::VUMeterLevel(QWidget* parent, AudioChannel* chan)
 	: QWidget(parent)
 	, m_channel(chan)
 {
-        levelClearColor  = themer()->get_color("VUMeter:background:bar");
-	int minimumwidth = themer()->get_property("VUMeter:layout:minimumlevelwidth", 6).toInt();
-	
 	tailDeltaY = peakHoldValue = rms = -120.0;
 	overCount = rmsIndex = 0;
 	peakHoldFalling = false;
@@ -460,16 +489,15 @@ VUMeterLevel::VUMeterLevel(QWidget* parent, AudioChannel* chan)
 		peakHistory[i] = 0.0;
 	}
 
-	create_gradients();
-	
 	setAttribute(Qt::WA_OpaquePaintEvent);
         setAttribute(Qt::WA_PaintOnScreen);
 	setAutoFillBackground(false);
-	setMinimumWidth(minimumwidth);
 
 	connect(&audiodevice(), SIGNAL(stopped()), this, SLOT(stop()));
 	connect(&timer, SIGNAL(timeout()), this, SLOT(update_peak()));
 	connect(&phTimer, SIGNAL(timeout()), this, SLOT(reset_peak_hold_value()));
+	connect(themer(), SIGNAL(themeLoaded()), this, SLOT(load_theme_data()), Qt::QueuedConnection);
+	load_theme_data();
 
 	timer.start(UPDATE_FREQ);
 	
@@ -545,7 +573,7 @@ void VUMeterLevel::paintEvent( QPaintEvent*  )
 
 	// draw Peak hold lines
 	if (PEAK_HOLD_MODE) {
-		painter.setPen(themer()->get_color("VUMeter:overled:active"));
+		painter.setPen(m_colOverLed);
 		// Comment by Remon: Same here
 		painter.drawLine(2, peakHoldLevel, width() - 3, peakHoldLevel);
 	}
@@ -574,13 +602,17 @@ void VUMeterLevel::resize_level_pixmap( )
 		painter.setPen(rcol);
 		painter.drawLine(width()-2, 0, width()-2, height());
 
-		painter.setPen(QPen(themer()->get_color("VUMeter:background:bar")));
+		painter.setPen(QPen(m_colBg));
 		painter.drawLine(0, 0, 0, height());
 		painter.drawLine(width()-1, 0, width()-1, height());
 	}
 
+	painter.end();
+
         clearPixmap = QPixmap(width(), height());
-        clearPixmap.fill(levelClearColor);
+        levelClearColor  = themer()->get_brush("VUMeter:background:bar", QPoint(0, 0), QPoint(0, height()));
+	painter.begin(&clearPixmap);
+	painter.fillRect(0, 0, width(), height(), levelClearColor);
 }
 
 void VUMeterLevel::update_peak( )
@@ -657,7 +689,7 @@ void VUMeterLevel::reset_peak_hold_value()
 	peakHoldFalling = true;
 }
 
-void VUMeterLevel::create_gradients()
+void VUMeterLevel::load_theme_data()
 {
 	float zeroDB = 1.0 - 100.0/115.0;  // 0 dB position
 	float msixDB = 1.0 -  80.0/115.0;  // -6 dB position
@@ -665,12 +697,20 @@ void VUMeterLevel::create_gradients()
 
 	gradient2D.setStart(0,0);
 	
-	gradient2D.setColorAt(0.0 , themer()->get_color("VUMeter:foreground:6db"));
+	gradient2D.setColorAt(0.0,           themer()->get_color("VUMeter:foreground:6db"));
 	gradient2D.setColorAt(zeroDB-smooth, themer()->get_color("VUMeter:foreground:6db"));
 	gradient2D.setColorAt(zeroDB+smooth, themer()->get_color("VUMeter:foreground:0db"));
 	gradient2D.setColorAt(msixDB-smooth, themer()->get_color("VUMeter:foreground:0db"));
 	gradient2D.setColorAt(msixDB+smooth, themer()->get_color("VUMeter:foreground:-6db"));
-	gradient2D.setColorAt(1.0 , themer()->get_color("VUMeter:foreground:-60db"));
+	gradient2D.setColorAt(1.0,           themer()->get_color("VUMeter:foreground:-60db"));
+
+        levelClearColor  = themer()->get_brush("VUMeter:background:bar", QPoint(0, 0), QPoint(0, height()));
+	setMinimumWidth(themer()->get_property("VUMeter:layout:minimumlevelwidth", 6).toInt());
+
+	m_colOverLed = themer()->get_color("VUMeter:overled:active");
+	m_colBg = themer()->get_color("VUMeter:background:bar");
+
+	resize_level_pixmap(); // applies the new theme to the buffer pixmaps
 }
 
 // accepts dB-values and returns the position in the widget from top

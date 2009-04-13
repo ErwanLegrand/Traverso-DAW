@@ -95,11 +95,10 @@
 		<color name="FFTMeter:text" red="0" green="0" blue="0" alpha="255" />
 		
 		<color name="VUMeter:background:widget" red="255" green="255" blue="255" alpha="255" />
-		<color name="VUMeter:background:bar" red="0" green="0" blue="0" alpha="255" />
 		<color name="VUMeter:foreground:6db" red="255" green="0" blue="0" alpha="255" />
 		<color name="VUMeter:foreground:0db" red="255" green="255" blue="0" alpha="255" />
 		<color name="VUMeter:foreground:-6db" red="0" green="255" blue="0" alpha="255" />
-		<color name="VUMeter:foreground:-60db" red="0" green="255" blue="255" alpha="255" />
+		<color name="VUMeter:foreground:-60db" red="0" green="0" blue="255" alpha="255" />
 		<color name="VUMeter:font:active" red="0" green="0" blue="0" alpha="255" />
 		<color name="VUMeter:font:inactive" red="100" green="100" blue="100" alpha="255" />
 		<color name="VUMeter:overled:active" red="255" green="0" blue="0" alpha="255" />
@@ -204,6 +203,11 @@
 		<gradient name="TrackPanel:background">
 			<stop value="0.0" red="248" green="248" blue="248" alpha="255" />
 			<stop value="1.0" red="150" green="150" blue="150" alpha="255" />
+		</gradient>
+
+		<gradient name="VUMeter:background:bar">
+			<stop value="0.0" red="0" green="0" blue="0" alpha="255" />
+			<stop value="1.0" red="50" green="50" blue="50" alpha="255" />
 		</gradient>
 	</gradients>
 </Themer> 

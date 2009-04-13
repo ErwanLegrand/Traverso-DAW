@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: VUMeter.h,v 1.1 2008/05/24 17:41:03 r_sijrier Exp $
+    $Id: VUMeter.h,v 1.2 2009/04/13 21:33:59 n_doebelin Exp $
 */
 
 #ifndef VUMETER_H
@@ -32,6 +32,8 @@ class AudioBus;
 class AudioChannel;
 class VUMeterLevel;
 class QLabel;
+class QHBoxLayout;
+class QVBoxLayout;
 
 class VUMeterRuler : public QWidget
 {
@@ -48,6 +50,12 @@ private:
 	std::vector<int>	presetMark;
 	std::vector<int>	lineMark;
 	QFont			m_font;
+	int			m_fontLabelAscent;
+	QColor			m_colorActive;
+	QColor			m_colorInactive;
+
+private slots:
+	void load_theme_data();
 };
 
 
@@ -79,12 +87,22 @@ private:
 	VUMeterRuler*		ruler;
 	static QVector<float>	lut;
 	QList<VUMeterLevel*>	m_levels;
+	int			m_vulevelspacing;
+	int			m_vulayoutspacing;
+	int			m_mainlayoutmargin;
+	int			m_mainlayoutspacing;
+	QFont			m_chanNameFont;
+	QFont			m_labelFont;
+	QBrush			m_widgetBgBrush;
+	QVBoxLayout*		mainlayout;
+	QHBoxLayout*		levelLedLayout;
 
 	static void calculate_lut_data();
 	
 private slots:
 	void peak_monitoring_stopped();
 	void peak_monitoring_started();
+	void load_theme_data();
 };
 
 /**
@@ -132,6 +150,12 @@ protected:
 
 private:
         bool isActive;
+	QColor m_colActive;
+	QColor m_colInactive;
+	QBrush m_colBg;
+
+private slots:
+	void load_theme_data();
 };
 
 
@@ -155,12 +179,14 @@ private:
         bool 		activeTail;
 	bool		peakHoldFalling;
         AudioChannel*	m_channel;
-        QColor		levelClearColor;
+        QBrush		levelClearColor;
         QPixmap		levelPixmap;
         QPixmap		clearPixmap;
         QTimer 		timer,
 			phTimer;
 	QLinearGradient	gradient2D;
+	QColor		m_colOverLed,
+			m_colBg;
 
         float 			presetMark[7];
         float			tailDeltaY;
@@ -174,7 +200,6 @@ private:
 	short unsigned int	overCount;
 
         void resize_level_pixmap();
-	void create_gradients();
 	int get_meter_position(float);
 
 private slots:
@@ -182,6 +207,7 @@ private slots:
 	void start();
         void update_peak();
 	void reset_peak_hold_value();
+	void load_theme_data();
 
 signals:
 
