@@ -1,0 +1,209 @@
+<!DOCTYPE TraversoTheming>
+<Themer>
+	<general version="1.0" />
+	<properties>
+		<property name="AudioClip:drawbackground" value="1" />
+		<property name="AudioClip:infoareaheight" value="13" />
+		<property name="AudioClip:mimimumheightforinfoarea" value="40" />
+		<property name="AudioClip:wavemicroview:antialiased" value="0" />
+		<property name="AudioClip:fillwave" value="1" />
+		
+		<property name="CurveNode:diameter" value="6" />
+		
+		<property name="Song:track:seperatingheight" value="0" />
+		<property name="Song:track:minimumheight" value="16" />
+		<property name="Song:track:maximumheight" value="300" />
+		<property name="Song:track:topindent" value="0" />
+		
+		
+		<property name="Track:topborderwidth" value="0" />
+		<property name="Track:bottomborderwidth" value="1" />
+		<property name="Track:cliptopmargin" value="3" />
+		<property name="Track:clipbottommargin" value="0" />
+		<property name="Track:paintbackground" value="0" />
+		
+		<property name="VUMeter:layout:vuspacing" value="3" />
+		<property name="VUMeter:layout:vulayoutspacing" value="5" />
+		<property name="VUMeter:layout:mainlayoutmargin" value="1" />
+		<property name="VUMeter:layout:mainlayoutspacing" value="2" />
+		<property name="VUMeter:layout:minimumlevelwidth" value="6" />
+	</properties>
+	<fonts>
+		<font name="ContextMenu:fontscale:actions" value="0.95" />
+		<font name="Plugin:fontscale:name" value="0.9" />
+		<font name="AudioClip:fontscale:title" value="0.9" />
+		<font name="AudioClip:fontscale:dblines" value="0.75" />
+		<font name="VUMeter:fontscale:label" value="0.75" />
+		<font name="FFTMeter:fontscale:label" value="0.75" />
+		<font name="CorrelationMeter:fontscale:label" value="0.75" />
+		<font name="Timeline:fontscale:label" value="0.9" />
+		<font name="Timeline:fontscale:marker" value="0.95" />
+		<font name="TrackPanel:fontscale:name" value="0.9" />
+		<font name="TrackPanel:fontscale:gain" value="0.8" />
+		<font name="TrackPanel:fontscale:pan" value="0.8" />
+		<font name="TrackPanel:fontscale:led" value="0.9" />
+		<font name="TrackPanel:fontscale:bus" value="0.85" />
+		<font name="InfoWidget:fontscale:values" value="0.9" />
+		<font name="Playhead:fontscale:info" value="1.50" />
+		<font name="CurveView:fontscale:label" value="0.75" />
+		<font name="ViewPort:fontscale:infocursor" value="1.0" />
+		<font name="MessageWidget:fontscale:log" value="1.0" />
+	</fonts>
+	<colors>
+		<color name="Text:light" red="200" green="200" blue="200"  alpha="255" />
+		<color name="Text:dark" red="0" green="0" blue="0" alpha="255" />
+		
+		<color name="AudioClip:wavemacroview:outline" red="80" green="80" blue="120" alpha="255" />
+		<color name="AudioClip:wavemacroview:outline:curvemode" red="135" green="130" blue="255" alpha="255" />
+		<color name="AudioClip:wavemacroview:outline:muted" red="90" green="90" blue="90" alpha="255" />
+		<color name="AudioClip:wavemicroview"  red="150" green="150" blue="205"  alpha="255" />
+		<color name="AudioClip:wavemicroview:curvemode"  red="210" green="210" blue="255"  alpha="255" />
+		<color name="AudioClip:channelseperator"  red="178" green="191" blue="182"  alpha="255" />
+		<color name="AudioClip:channelseperator:selected"  red="24" green="137" blue="210"  alpha="255" />
+		<color name="AudioClip:contour"  red="80" green="80" blue="80"  alpha="255" />
+		<color name="AudioClip:clipinfobackground"  red="240" green="190" blue="218"  alpha="200" />
+		<color name="AudioClip:clipinfobackground:inactive"  red="199" green="190" blue="218"  alpha="200" />
+		<color name="AudioClip:sampleoverload" red="255" green="0" blue="0" alpha="255" />
+		<color name="AudioClip:invalidreadsource"  red="255" green="0" blue="0"  alpha="100" />
+		<color name="AudioClip:db-grid"  red="150" green="150" blue="150"  alpha="180" />
+
+		<color name="Curve:active" red="255" green="0" blue="255" alpha="255" />
+		<color name="Curve:inactive" red="255" green="0" blue="255" alpha="150" />
+
+		<color name="CurveNode:default" red="255" green="0" blue="255" alpha="140" />
+		<color name="CurveNode:blink" red="120" green="120" blue="220" alpha="220" />
+
+		<color name="Fade:default" red="255" green="0" blue="255" alpha="85" />
+		<color name="Fade:bypassed" red="255" green="0" blue="255" alpha="40" />
+
+		<color name="CorrelationMeter:margin" red="246" green="246" blue="255" alpha="255" />
+		<color name="CorrelationMeter:background" red="241" green="250" blue="255" alpha="255" />
+		<color name="CorrelationMeter:grid" red="205" green="223" blue="255" alpha="255" />
+		<color name="CorrelationMeter:foreground:center" red="82" green="80" blue="123" alpha="255"/>
+		<color name="CorrelationMeter:foreground:side" red="241" green="250" blue="255" alpha="255"/>
+		<color name="CorrelationMeter:centerline" red="82" green="80" blue="123" alpha="255"/>
+		<color name="CorrelationMeter:text" red="0" green="0" blue="0" alpha="255" />
+
+		<color name="FFTMeter:margin" red="246" green="246" blue="255" alpha="255" />
+		<color name="FFTMeter:background" red="241" green="250" blue="255" alpha="255" />
+		<color name="FFTMeter:grid" red="205" green="223" blue="255" alpha="255" />
+		<color name="FFTMeter:foreground" red="82" green="80" blue="123" alpha="255"/>
+		<color name="FFTMeter:foreground:light" red="241" green="250" blue="255" alpha="255"/>
+		<color name="FFTMeter:curve:average" red="255" green="0" blue="0" alpha="255" />
+		<color name="FFTMeter:tickmarks:main" red="0" green="0" blue="0" alpha="255" />
+		<color name="FFTMeter:tickmarks:sub" red="100" green="100" blue="100" alpha="255" />
+		<color name="FFTMeter:text" red="0" green="0" blue="0" alpha="255" />
+		
+		<color name="VUMeter:background:widget" red="255" green="255" blue="255" alpha="255" />
+		<color name="VUMeter:background:bar" red="0" green="0" blue="0" alpha="255" />
+		<color name="VUMeter:foreground:6db" red="255" green="0" blue="0" alpha="255" />
+		<color name="VUMeter:foreground:0db" red="255" green="255" blue="0" alpha="255" />
+		<color name="VUMeter:foreground:-6db" red="0" green="255" blue="0" alpha="255" />
+		<color name="VUMeter:foreground:-60db" red="0" green="255" blue="255" alpha="255" />
+		<color name="VUMeter:font:active" red="0" green="0" blue="0" alpha="255" />
+		<color name="VUMeter:font:inactive" red="100" green="100" blue="100" alpha="255" />
+		<color name="VUMeter:overled:active" red="255" green="0" blue="0" alpha="255" />
+		<color name="VUMeter:overled:inactive" red="128" green="0" blue="0" alpha="255" />
+		
+		<color name="InfoWidget:background" red="160" green="170" blue="150" alpha="255" />
+		
+		<color name="Plugin:background" red="230" green="0" blue="230" alpha="170" />
+		<color name="Plugin:background:bypassed" red="230" green="0" blue="230" alpha="80" />
+		<color name="Plugin:text" red="255" green="255" blue="255" alpha="255" />
+		<color name="PluginSlider:background" red="199" green="228" blue="211" alpha="255" />
+		<color name="PluginSlider:value"  red="240" green="190" blue="218"  alpha="255" />
+		
+		<color name="ResourcesBin:alternaterowcolor" red="243" green="248" blue="255" alpha="255" />
+		
+		<color name="Song:background" red="243" green="243" blue="244" alpha="255" />
+		<color name="SongPanel:background" red="240" green="240" blue="248" alpha="255" />
+		
+		<color name="Timeline:background" red="180" green="189" blue="189" alpha="255" />
+		<color name="Timeline:text" red="0" green="0" blue="0" alpha="255" />
+		
+		<color name="Track:cliptopoffset" red="220" green="220" blue="240" alpha="255" />
+		<color name="Track:clipbottomoffset" red="100" green="100" blue="120" alpha="255" />
+		<color name="Track:background" red="250" green="250" blue="251" alpha="100" />
+		
+		<color name="TrackPanel:text" red="0" green="0" blue="25" alpha="255" />
+		<color name="TrackPanel:slider:background" red="200" green="200" blue="240" alpha="255" />
+		<color name="TrackPanel:head:active" red="240" green="140" blue="150" alpha="255" />
+		<color name="TrackPanel:head:inactive" red="255" green="180" blue="190" alpha="255" />
+		<color name="TrackPanel:muteled" red="255" green="255" blue="90" alpha="255" />
+		<color name="TrackPanel:sololed" red="135" green="254" blue="135" alpha="255" />
+		<color name="TrackPanel:recled" red="255" green="58" blue="58" alpha="255" />
+		<color name="TrackPanel:led:inactive" red="237" green="237" blue="250" alpha="255" />
+		<color name="TrackPanel:trackseparation" red="180" green="180" blue="180" alpha="255" />
+		<color name="TrackPanel:led:margin:active" red="100" green="100" blue="100" alpha="0" />
+		<color name="TrackPanel:led:margin:inactive" red="200" green="200" blue="200" alpha="255" />
+		<color name="TrackPanel:led:font:active" red="0" green="0" blue="0" alpha="255" />
+		<color name="TrackPanel:led:font:inactive" red="150" green="150" blue="150" alpha="255" />
+		
+		<color name="TrackPanel:bus:font" red="0" green="0" blue="0" alpha="255" />
+		<color name="TrackPanel:bus:background" red="237" green="237" blue="250" alpha="255" />
+		<color name="TrackPanel:bus:margin" red="200" green="200" blue="200" alpha="255" />
+		
+		<color name="Marker:default" red="128" green="0" blue="128" alpha="255" />
+		<color name="Marker:end" red="50" green="0" blue="255" alpha="255" />
+		<color name="Marker:blinkend" red="128" green="0" blue="255" alpha="255" />
+		<color name="Marker:blink" red="255" green="0" blue="128" alpha="255" />
+	</colors>
+	<gradients>
+		<gradient name="AudioClip:wavemacroview:brush">
+			<stop value="0.0"  red="100" green="100" blue="200" alpha="200" />
+			<stop value="1.0"  red="200" green="200" blue="255" alpha="200" />
+		</gradient>
+		<gradient name="AudioClip:wavemacroview:brush:hover">
+			<stop value="0.0"  red="140" green="140" blue="220" alpha="200" />
+			<stop value="1.0"  red="200" green="200" blue="255" alpha="200" />
+		</gradient>
+		<gradient name="AudioClip:wavemacroview:brush:muted">
+			<stop value="0.0"  red="240" green="240" blue="255" alpha="200" />
+			<stop value="1.0"  red="255" green="255" blue="255" alpha="200" />
+		</gradient>
+		<gradient name="AudioClip:wavemacroview:brush:curvemode">
+			<stop value="0.0"  red="100" green="100" blue="200" alpha="200" />
+			<stop value="0.5"  red="150" green="255" blue="150" alpha="200" />
+			<stop value="0.9"  red="255" green="255" blue="150" alpha="200" />
+			<stop value="1.0"  red="255" green="150" blue="150" alpha="200" />
+		</gradient>
+		<gradient name="AudioClip:wavemacroview:brush:curvemode:hover">
+			<stop value="0.0"  red="100" green="100" blue="200" alpha="150" />
+			<stop value="0.5"  red="150" green="255" blue="150" alpha="150" />
+			<stop value="0.9"  red="255" green="255" blue="150" alpha="150" />
+			<stop value="1.0"  red="255" green="150" blue="150" alpha="150" />
+		</gradient>
+		<gradient name="AudioClip:background">
+			<stop value="0.0"   red="255" green="255" blue="255"  alpha="150" />
+			<stop value="1.0"   red="150" green="150" blue="150"  alpha="150" />
+		</gradient>
+		<gradient name="AudioClip:background:mousehover">
+			<stop value="0.0"   red="255" green="255" blue="255"  alpha="100" />
+			<stop value="1.0"   red="150" green="150" blue="150"  alpha="100" />
+		</gradient>
+		<gradient name="AudioClip:background:muted">
+			<stop value="0.0"   red="255" green="255" blue="255"  alpha="150" />
+			<stop value="1.0"   red="150" green="150" blue="150"  alpha="150" />
+		</gradient>
+		<gradient name="AudioClip:background:muted:mousehover">
+			<stop value="0.0"   red="255" green="255" blue="255"  alpha="100" />
+			<stop value="1.0"   red="150" green="150" blue="150"  alpha="100" />
+		</gradient>
+		<gradient name="AudioClip:background:selected">
+			<stop value="0.0"   red="255" green="255" blue="255"  alpha="150" />
+			<stop value="1.0"   red="150" green="150" blue="150"  alpha="150" />
+		</gradient>
+		<gradient name="AudioClip:background:selected:mousehover">
+			<stop value="0.0"   red="255" green="255" blue="255"  alpha="100" />
+			<stop value="1.0"   red="150" green="150" blue="150"  alpha="100" />
+		</gradient>
+		<gradient name="AudioClip:background:recording">
+			<stop value="0.0"   red="255" green="100" blue="100"  alpha="150" />
+			<stop value="1.0"   red="150" green="150" blue="150"  alpha="150" />
+		</gradient>
+		<gradient name="TrackPanel:background">
+			<stop value="0.0" red="248" green="248" blue="248" alpha="255" />
+			<stop value="1.0" red="150" green="150" blue="150" alpha="255" />
+		</gradient>
+	</gradients>
+</Themer> 
