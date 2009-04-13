@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Themer.h,v 1.3 2007/08/15 16:08:07 n_doebelin Exp $
+    $Id: Themer.h,v 1.4 2009/04/13 15:27:51 n_doebelin Exp $
 */
 
 #ifndef COLORMANAGER_H
@@ -25,6 +25,7 @@
 
 #include <QObject>
 #include <QColor>
+#include <QLinearGradient>
 #include <QFont>
 #include <QHash>
 #include <QCursor>
@@ -46,18 +47,20 @@ public:
 	void set_color_adjust_value(int value);
         
 	QColor get_color(const QString& name) const;
-        QFont get_font(const QString& fontname) const;
-        QVariant get_property(const QString& propertyname, const QVariant& defaultValue=0) const;
+	QFont get_font(const QString& fontname) const;
+	QVariant get_property(const QString& propertyname, const QVariant& defaultValue=0) const;
 	QPalette system_palette() const {return m_systempallete;}
 	QStringList get_builtin_themes();
 	QCursor get_cursor(const QString& name) const;
-
+	QBrush get_brush(const QString& name, QPoint start = QPoint(0,0), QPoint stop = QPoint(0,0)) const;
+	
 	static Themer* instance();
 	
 private:
         Themer();
 
-        QHash<QString, QColor>	 m_colors;
+	QHash<QString, QColor>	 m_colors;
+	QHash<QString, QLinearGradient> m_gradients;
 	QHash<QString, QVariant> m_properties;
 	QHash<QString, QFont>	m_fonts;
 	QHash<QString, QCursor>	m_cursors;

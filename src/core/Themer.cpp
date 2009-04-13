@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Themer.cpp,v 1.11 2009/02/06 14:39:21 r_sijrier Exp $
+$Id: Themer.cpp,v 1.12 2009/04/13 15:27:51 n_doebelin Exp $
 */
 
 #include "Themer.h"
@@ -30,6 +30,7 @@ $Id: Themer.cpp,v 1.11 2009/02/06 14:39:21 r_sijrier Exp $
 #include <QApplication>
 #include <QStyle>
 #include <QFileSystemWatcher>
+#include <QDebug>
 
 
 // Always put me below _all_ includes, this is needed
@@ -196,7 +197,7 @@ void Themer::load( )
 			e.attribute("alpha").toInt()
 			);
 		QString name = e.attribute("name", "");
-		
+	
 		if (coloradjust != 100) {
 			int adjust = coloradjust - 100;
 			if (adjust < 0) {
@@ -209,6 +210,44 @@ void Themer::load( )
 		colorNode = colorNode.nextSibling();
 	}
 		
+	QDomNode gradientsNode = docElem.firstChildElement("gradients");
+	QDomNode gradientNode = gradientsNode.firstChild();
+	
+	while(!gradientNode.isNull()) {
+		QLinearGradient gradient;
+	
+		QDomElement e = gradientNode.toElement();	
+		QString name = e.attribute("name", "");
+
+		QDomNode gradientStopNode = gradientNode.firstChild();
+
+		while(!gradientStopNode.isNull()) {
+			QDomElement ee = gradientStopNode.toElement();	
+			QColor color(
+				ee.attribute("red").toUInt(),
+				ee.attribute("green").toUInt(), 
+				ee.attribute("blue").toUInt(), 
+				ee.attribute("alpha").toInt()				
+			);
+			
+			if (coloradjust != 100) {
+				int adjust = coloradjust - 100;	
+				if (adjust < 0) {
+					color = color.dark(-1 * adjust + 100);
+				} else {
+					color = color.light(adjust + 100);
+				}
+			}
+
+			float value = ee.attribute("value", "0.0").toFloat();
+			
+			gradient.setColorAt(value, color);
+			gradientStopNode = gradientStopNode.nextSibling();
+		}
+		
+		m_gradients.insert(name, gradient);
+		gradientNode = gradientNode.nextSibling();
+	}
 		
 	QDomNode fontsNode = docElem.firstChildElement("fonts");
 	QDomNode fontNode = fontsNode.firstChild();
@@ -268,6 +307,41 @@ QColor Themer::get_color(const QString& name) const
 	}
 }
 
+// Returns the brush with the name "name". QPoints "start" and "end" are the
+// start and finalStop positions of linear gradients. If a solid colour is 
+// returned, both points are ignored.
+// If a gradient and a colour with the same name exists, colour brush will be
+// returned.
+QBrush Themer::get_brush(const QString& name, QPoint start, QPoint stop) const
+{
+	// check if there is a solid colour with the requested name.
+	if (m_colors.contains(name))
+	{
+		return QBrush(m_colors.value(name));
+	}
+
+	// no solid colour? Maybe it's a gradient.
+	if (m_gradients.contains(name))
+	{
+		QLinearGradient gradient = m_gradients.value(name);
+
+		// use a solid colour if the gradient only contains one stop point.
+		// saves a huge amount of resources in the painting routines.
+		if (gradient.stops().size() == 1) {
+			return QBrush(gradient.stops().at(0).second);
+		}
+
+		gradient.setStart(start);
+		gradient.setFinalStop(stop);
+		gradient.setSpread(QGradient::ReflectSpread);
+	
+		return QBrush(gradient);
+	}
+	
+	// not a gradient either? return a fallback colour.
+	return QBrush(themer()->get_default_color(name));
+}
+
 QFont Themer::get_font(const QString& fontname) const
 {
 	return m_fonts.value(fontname);
@@ -310,7 +384,7 @@ void Themer::set_color_adjust_value(int value)
 QStringList Themer::get_builtin_themes()
 {
 	QStringList list;
-	list << "system-palette" << "medium-contrast" << "ubuntu" << "TraversoLight";
+	list << "system-palette" << "medium-contrast" << "gradients" << "ubuntu" << "TraversoLight";
 	return list;
 }
 
@@ -336,32 +410,20 @@ QColor Themer::get_default_color(const QString & name)
 		if (name == "AudioClip:wavemacroview:outline") c = p.color(QPalette::WindowText);
 		if (name == "AudioClip:wavemacroview:outline:curvemode") c = p.color(QPalette::WindowText);
 		if (name == "AudioClip:wavemacroview:outline:muted") c = p.color(QPalette::WindowText);
-		if (name == "AudioClip:wavemacroview:brush:top") c = p.color(QPalette::Highlight);
-		if (name == "AudioClip:wavemacroview:brush:bottom") c = p.color(QPalette::Highlight);
-		if (name == "AudioClip:wavemacroview:brush:hover:top") c = p.color(QPalette::Highlight);
-		if (name == "AudioClip:wavemacroview:brush:hover:bottom") c = p.color(QPalette::Highlight);
-		if (name == "AudioClip:wavemacroview:brush:muted:top") c = p.color(QPalette::Base);
-		if (name == "AudioClip:wavemacroview:brush:muted:bottom") c = p.color(QPalette::Base);
-		if (name == "AudioClip:wavemacroview:brush:curvemode:top") c = p.color(QPalette::Highlight);
-		if (name == "AudioClip:wavemacroview:brush:curvemode:bottom") c = p.color(QPalette::Highlight);
-		if (name == "AudioClip:wavemacroview:brush:curvemode:hover:top") c = p.color(QPalette::Highlight);
-		if (name == "AudioClip:wavemacroview:brush:curvemode:hover:bottom") c = p.color(QPalette::Highlight);
+		if (name == "AudioClip:wavemacroview:brush") c = p.color(QPalette::Highlight);
+		if (name == "AudioClip:wavemacroview:brush:hover") c = p.color(QPalette::Highlight);
+		if (name == "AudioClip:wavemacroview:brush:muted") c = p.color(QPalette::Base);
+		if (name == "AudioClip:wavemacroview:brush:curvemode") c = p.color(QPalette::Highlight);
+		if (name == "AudioClip:wavemacroview:brush:curvemode:hover") c = p.color(QPalette::Highlight);
 		if (name == "AudioClip:wavemicroview") c = p.color(QPalette::Highlight);
 		if (name == "AudioClip:wavemicroview:curvemode") c = p.color(QPalette::Highlight);
-		if (name == "AudioClip:background:muted:top") c = p.color(QPalette::Base);
-		if (name == "AudioClip:background:muted:bottom") c = p.color(QPalette::Base);
-		if (name == "AudioClip:background:recording:top") c = p.color(QPalette::Base);
-		if (name == "AudioClip:background:recording:bottom") c = p.color(QPalette::Base);
-		if (name == "AudioClip:background:muted:mousehover:top") c = p.color(QPalette::Base);
-		if (name == "AudioClip:background:muted:mousehover:bottom") c = p.color(QPalette::Base);
-		if (name == "AudioClip:background:selected:top") c = p.color(QPalette::Highlight);
-		if (name == "AudioClip:background:selected:bottom") c = p.color(QPalette::Highlight);
-		if (name == "AudioClip:background:selected:mousehover:top") c = p.color(QPalette::Highlight);
-		if (name == "AudioClip:background:selected:mousehover:bottom") c = p.color(QPalette::Highlight);
-		if (name == "AudioClip:background:top") c = p.color(QPalette::Base);
-		if (name == "AudioClip:background:bottom") c = p.color(QPalette::Base);
-		if (name == "AudioClip:background:mousehover:top") c = p.color(QPalette::Base);
-		if (name == "AudioClip:background:mousehover:bottom") c = p.color(QPalette::Base);
+		if (name == "AudioClip:background:muted") c = p.color(QPalette::Base);
+		if (name == "AudioClip:background:recording") c = p.color(QPalette::Base);
+		if (name == "AudioClip:background:muted:mousehover") c = p.color(QPalette::Base);
+		if (name == "AudioClip:background:selected") c = p.color(QPalette::Highlight);
+		if (name == "AudioClip:background:selected:mousehover") c = p.color(QPalette::Highlight);
+		if (name == "AudioClip:background") c = p.color(QPalette::Base);
+		if (name == "AudioClip:background:mousehover") c = p.color(QPalette::Base);
 		if (name == "AudioClip:channelseperator") c = p.color(QPalette::WindowText);
 		if (name == "AudioClip:channelseperator:selected") c = p.color(QPalette::WindowText);
 		if (name == "AudioClip:contour") c = p.color(QPalette::WindowText);

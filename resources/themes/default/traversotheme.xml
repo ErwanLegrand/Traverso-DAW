@@ -57,32 +57,20 @@
 		<color name="AudioClip:wavemacroview:outline" red="80" green="80" blue="120" alpha="255" />
 		<color name="AudioClip:wavemacroview:outline:curvemode" red="135" green="130" blue="255" alpha="255" />
 		<color name="AudioClip:wavemacroview:outline:muted" red="90" green="90" blue="90" alpha="255" />
-		<color name="AudioClip:wavemacroview:brush:top" red="145" green="145" blue="195" alpha="255" />
-		<color name="AudioClip:wavemacroview:brush:bottom" red="145" green="145" blue="195" alpha="255" />
-		<color name="AudioClip:wavemacroview:brush:hover:top" red="160" green="160" blue="215" alpha="255" />
-		<color name="AudioClip:wavemacroview:brush:hover:bottom" red="160" green="160" blue="215" alpha="255" />
-		<color name="AudioClip:wavemacroview:brush:muted:top" red="200" green="200" blue="200" alpha="255" />
-		<color name="AudioClip:wavemacroview:brush:muted:bottom" red="200" green="200" blue="200" alpha="255" />
-		<color name="AudioClip:wavemacroview:brush:curvemode:top" red="232" green="230" blue="255" alpha="255" />
-		<color name="AudioClip:wavemacroview:brush:curvemode:bottom" red="232" green="230" blue="255" alpha="255" />
-		<color name="AudioClip:wavemacroview:brush:curvemode:hover:top" red="232" green="230" blue="240" alpha="255" />
-		<color name="AudioClip:wavemacroview:brush:curvemode:hover:bottom" red="232" green="230" blue="240" alpha="255" />
+		<color name="AudioClip:wavemacroview:brush" red="145" green="145" blue="195" alpha="255" />
+		<color name="AudioClip:wavemacroview:brush:hover" red="160" green="160" blue="215" alpha="255" />
+		<color name="AudioClip:wavemacroview:brush:muted" red="200" green="200" blue="200" alpha="255" />
+		<color name="AudioClip:wavemacroview:brush:curvemode" red="232" green="230" blue="255" alpha="255" />
+		<color name="AudioClip:wavemacroview:brush:curvemode:hover" red="232" green="230" blue="240" alpha="255" />
 		<color name="AudioClip:wavemicroview"  red="150" green="150" blue="205"  alpha="255" />
 		<color name="AudioClip:wavemicroview:curvemode"  red="210" green="210" blue="255"  alpha="255" />
-		<color name="AudioClip:background:muted:top"  red="245" green="245" blue="245"  alpha="170" />
-		<color name="AudioClip:background:muted:bottom"  red="245" green="245" blue="245"  alpha="170" />
-		<color name="AudioClip:background:recording:top"  red="255" green="255" blue="255"  alpha="170" />
-		<color name="AudioClip:background:recording:bottom"  red="255" green="255" blue="255"  alpha="170" />
-		<color name="AudioClip:background:muted:mousehover:top"  red="255" green="255" blue="255"  alpha="170" />
-		<color name="AudioClip:background:muted:mousehover:bottom"  red="255" green="255" blue="255"  alpha="170" />
-		<color name="AudioClip:background:selected:top"  red="101" green="111" blue="171"  alpha="170" />
-		<color name="AudioClip:background:selected:bottom"  red="101" green="111" blue="171"  alpha="170" />
-		<color name="AudioClip:background:selected:mousehover:top"  red="111" green="121" blue="182"  alpha="170" />
-		<color name="AudioClip:background:selected:mousehover:bottom"  red="111" green="121" blue="182"  alpha="170" />
-		<color name="AudioClip:background:top"  red="251" green="255" blue="251"  alpha="150" />
-		<color name="AudioClip:background:bottom"  red="251" green="255" blue="251"  alpha="150" />
-		<color name="AudioClip:background:mousehover:top"  red="255" green="253" blue="255"  alpha="200" />
-		<color name="AudioClip:background:mousehover:bottom"  red="255" green="253" blue="255"  alpha="200" />
+		<color name="AudioClip:background:muted"  red="245" green="245" blue="245"  alpha="170" />
+		<color name="AudioClip:background:recording"  red="255" green="255" blue="255"  alpha="170" />
+		<color name="AudioClip:background:muted:mousehover"  red="255" green="255" blue="255"  alpha="170" />
+		<color name="AudioClip:background:selected"  red="101" green="111" blue="171"  alpha="170" />
+		<color name="AudioClip:background:selected:mousehover"  red="111" green="121" blue="182"  alpha="170" />
+		<color name="AudioClip:background"  red="251" green="255" blue="251"  alpha="150" />
+		<color name="AudioClip:background:mousehover"  red="255" green="253" blue="255"  alpha="200" />
 		<color name="AudioClip:channelseperator"  red="178" green="191" blue="182"  alpha="255" />
 		<color name="AudioClip:channelseperator:selected"  red="24" green="137" blue="210"  alpha="255" />
 		<color name="AudioClip:contour"  red="80" green="80" blue="80"  alpha="255" />

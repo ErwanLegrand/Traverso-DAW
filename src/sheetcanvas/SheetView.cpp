@@ -638,7 +638,7 @@ void SheetView::load_theme_data()
 	m_trackTopIndent = themer()->get_property("Sheet:track:topindent", 6).toInt();
 	
 	m_clipsViewPort->setBackgroundBrush(themer()->get_color("Sheet:background"));
-	m_tpvp->setBackgroundBrush(themer()->get_color("TrackPanel:background"));
+	m_tpvp->setBackgroundBrush(themer()->get_brush("TrackPanel:background", QPoint(0, 0), QPoint(0, m_tpvp->height())));
 
 	layout_tracks();
 }
