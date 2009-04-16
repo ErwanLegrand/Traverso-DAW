@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: VUMeter.cpp,v 1.2 2009/04/13 21:33:59 n_doebelin Exp $
+    $Id: VUMeter.cpp,v 1.3 2009/04/16 19:38:19 n_doebelin Exp $
 */
 
 #include "VUMeter.h"
@@ -444,7 +444,7 @@ void VUMeterOverLed::load_theme_data()
 {
 	m_colActive = themer()->get_color("VUMeter:overled:active");
 	m_colInactive = themer()->get_color("VUMeter:overled:inactive");
-	m_colBg = themer()->get_color("VUMeter:background:bar");
+	m_colBg = themer()->get_brush("VUMeter:background:bar");
 }
 
 /**********************************************************************/
@@ -601,10 +601,6 @@ void VUMeterLevel::resize_level_pixmap( )
 		painter.drawLine(1, 0, 1, height());
 		painter.setPen(rcol);
 		painter.drawLine(width()-2, 0, width()-2, height());
-
-		painter.setPen(QPen(m_colBg));
-		painter.drawLine(0, 0, 0, height());
-		painter.drawLine(width()-1, 0, width()-1, height());
 	}
 
 	painter.end();
@@ -708,7 +704,7 @@ void VUMeterLevel::load_theme_data()
 	setMinimumWidth(themer()->get_property("VUMeter:layout:minimumlevelwidth", 6).toInt());
 
 	m_colOverLed = themer()->get_color("VUMeter:overled:active");
-	m_colBg = themer()->get_color("VUMeter:background:bar");
+	m_colBg = themer()->get_brush("VUMeter:background:bar");
 
 	resize_level_pixmap(); // applies the new theme to the buffer pixmaps
 }

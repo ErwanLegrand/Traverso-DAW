@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Themer.cpp,v 1.13 2009/04/16 18:05:34 n_doebelin Exp $
+$Id: Themer.cpp,v 1.14 2009/04/16 19:38:18 n_doebelin Exp $
 */
 
 #include "Themer.h"
@@ -303,6 +303,7 @@ QColor Themer::get_color(const QString& name) const
 	if (m_colors.contains(name)) {
 		return m_colors.value(name);
 	} else {
+		printf("Colour %s was requested, but no such element was found in the theme file\n", QS_C(name));
 		return themer()->get_default_color(name);
 	}
 }
@@ -339,6 +340,7 @@ QBrush Themer::get_brush(const QString& name, QPoint start, QPoint stop) const
 	}
 	
 	// not a gradient either? return a fallback colour.
+	printf("Brush %s was requested, but no such element was found in the theme file\n", QS_C(name));
 	return QBrush(themer()->get_default_color(name));
 }
 
@@ -348,10 +350,9 @@ QLinearGradient Themer::get_gradient(const QString& name) const
 {
 	if (m_gradients.contains(name))
 	{
-qDebug() << QString("**** gradient found");
 		return m_gradients.value(name);
 	} else {
-qDebug() << QString("**** gradient NOT found");
+		printf("Gradient %s was requested, but no such element was found in the theme file\n", QS_C(name));
 		return QLinearGradient();
 	}
 }

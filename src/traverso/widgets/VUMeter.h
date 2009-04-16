@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: VUMeter.h,v 1.2 2009/04/13 21:33:59 n_doebelin Exp $
+    $Id: VUMeter.h,v 1.3 2009/04/16 19:38:19 n_doebelin Exp $
 */
 
 #ifndef VUMETER_H
@@ -179,14 +179,14 @@ private:
         bool 		activeTail;
 	bool		peakHoldFalling;
         AudioChannel*	m_channel;
-        QBrush		levelClearColor;
+        QBrush		levelClearColor,
+			m_colBg;
         QPixmap		levelPixmap;
         QPixmap		clearPixmap;
         QTimer 		timer,
 			phTimer;
 	QLinearGradient	gradient2D;
-	QColor		m_colOverLed,
-			m_colBg;
+	QColor		m_colOverLed;
 
         float 			presetMark[7];
         float			tailDeltaY;
