@@ -47,11 +47,9 @@ CorrelationMeterWidget::CorrelationMeterWidget(QWidget* parent)
 CorrelationMeterView::CorrelationMeterView(CorrelationMeterWidget* widget)
 	: MeterView(widget)
 {
-	gradPhase.setColorAt(0.0,  themer()->get_color("CorrelationMeter:foreground:side"));
-	gradPhase.setColorAt(0.5,  themer()->get_color("CorrelationMeter:foreground:center"));
-	gradPhase.setColorAt(1.0,  themer()->get_color("CorrelationMeter:foreground:side"));
-
+	load_theme_data();
 	load_configuration();
+	connect(themer(), SIGNAL(themeLoaded()), this, SLOT(load_theme_data()), Qt::QueuedConnection);
 }
 
 void CorrelationMeterView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -63,7 +61,7 @@ void CorrelationMeterView::paint(QPainter *painter, const QStyleOptionGraphicsIt
 
 	float r = 90.0f / range;
 
-	painter->fillRect(0, 0, m_widget->width(), m_widget->height(), themer()->get_color("CorrelationMeter:background"));
+	painter->fillRect(0, 0, m_widget->width(), m_widget->height(), m_bgBrush);
 
 	int lend = int(0.5*m_widget->width() - (-coeff + 1.0) * r * m_widget->width() * (1.0 - fabs(direction)));
 	int rend = int(0.5*m_widget->width() + (-coeff + 1.0) * r * m_widget->width() * (1.0 - fabs(direction)));
@@ -174,5 +172,12 @@ void CorrelationMeterView::load_configuration()
 	range = config().get_property("CorrelationMeter", "Range", 360).toInt();
 }
 
+void CorrelationMeterView::load_theme_data()
+{
+	gradPhase = themer()->get_gradient("CorrelationMeter:foreground");
+
+/** TODO: When I replace QPoint(0, 100) with QPoint(0, m_widget->height()) I get a segmentation fault. WHY??? **/
+	m_bgBrush = themer()->get_brush("CorrelationMeter:background", QPoint(0, 0), QPoint(0, 100));
+}
 
 //eof

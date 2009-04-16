@@ -51,8 +51,9 @@ public:
 private:
 	float		coeff;
 	float		direction;
-	QLinearGradient	gradPhase;
 	int		range;
+	QBrush		m_bgBrush;
+	QLinearGradient	gradPhase;
 
 	void save_configuration();
 	void load_configuration();
@@ -60,6 +61,7 @@ private:
 private slots:
 	void		update_data();
 	void		set_sheet(Sheet* sheet);
+	void		load_theme_data();
 
 public slots:
 	Command*	set_mode();

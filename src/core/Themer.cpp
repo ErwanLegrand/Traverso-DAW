@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Themer.cpp,v 1.12 2009/04/13 15:27:51 n_doebelin Exp $
+$Id: Themer.cpp,v 1.13 2009/04/16 18:05:34 n_doebelin Exp $
 */
 
 #include "Themer.h"
@@ -340,6 +340,20 @@ QBrush Themer::get_brush(const QString& name, QPoint start, QPoint stop) const
 	
 	// not a gradient either? return a fallback colour.
 	return QBrush(themer()->get_default_color(name));
+}
+
+// sometimes we need access to the gradient (e.g. if the start and finalStops have to be
+// modified
+QLinearGradient Themer::get_gradient(const QString& name) const
+{
+	if (m_gradients.contains(name))
+	{
+qDebug() << QString("**** gradient found");
+		return m_gradients.value(name);
+	} else {
+qDebug() << QString("**** gradient NOT found");
+		return QLinearGradient();
+	}
 }
 
 QFont Themer::get_font(const QString& fontname) const

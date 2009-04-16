@@ -93,8 +93,6 @@
 		<color name="CorrelationMeter:margin" red="200" green="200" blue="200"  alpha="255" />
 		<color name="CorrelationMeter:background" red="0" green="0" blue="0" alpha="255" />
 		<color name="CorrelationMeter:grid" red="255" green="255" blue="255" alpha="100" />
-		<color name="CorrelationMeter:foreground:center" red="50" green="255" blue="50" alpha="200"/>
-		<color name="CorrelationMeter:foreground:side" red="0" green="80" blue="0" alpha="200"/>
 		<color name="CorrelationMeter:centerline" red="100" green="255" blue="100" alpha="230"/>
 		<color name="CorrelationMeter:text" red="0" green="0" blue="0" alpha="255"/>
 		
@@ -162,4 +160,11 @@
 		<color name="Marker:end" red="255" green="0" blue="0" alpha="255" />
 		<color name="Marker:blinkend" red="255" green="150" blue="150" alpha="255" />
 	</colors>
+	<gradients>
+		<gradient name="CorrelationMeter:foreground">
+			<stop value="0.0" red="0" green="80" blue="0" alpha="200"/>
+			<stop value="0.5" red="50" green="255" blue="50" alpha="200"/>
+			<stop value="1.0" red="0" green="80" blue="0" alpha="200"/>
+		</gradient>
+	</gradients>
 </Themer> 

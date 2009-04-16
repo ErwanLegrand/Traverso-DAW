@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Themer.h,v 1.4 2009/04/13 15:27:51 n_doebelin Exp $
+    $Id: Themer.h,v 1.5 2009/04/16 18:05:34 n_doebelin Exp $
 */
 
 #ifndef COLORMANAGER_H
@@ -53,6 +53,7 @@ public:
 	QStringList get_builtin_themes();
 	QCursor get_cursor(const QString& name) const;
 	QBrush get_brush(const QString& name, QPoint start = QPoint(0,0), QPoint stop = QPoint(0,0)) const;
+	QLinearGradient get_gradient(const QString& name) const;
 	
 	static Themer* instance();
 	
