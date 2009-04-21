@@ -89,6 +89,9 @@ SpectralMeterView::SpectralMeterView(SpectralMeterWidget* widget)
 		m_freq_labels.push_back(80.0f * pow(10.0,i));
 		m_freq_labels.push_back(90.0f * pow(10.0,i));
 	}
+
+	load_theme_data();
+	connect(themer(), SIGNAL(themeLoaded()), this, SLOT(load_theme_data()), Qt::QueuedConnection);
 }
 
 void SpectralMeterView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -101,9 +104,8 @@ void SpectralMeterView::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 	// draw the bars
 	if (m_spectrum.size()) {
 		QRect rect;
-		QBrush brush(themer()->get_color("FFTMeter:foreground"), Qt::SolidPattern);
 		painter->setClipRegion(m_rect);
-		painter->setBrush(brush);
+		painter->setBrush(m_brushFg);
 		painter->setPen(Qt::NoPen);
 
 		int spc = 0;
@@ -122,7 +124,7 @@ void SpectralMeterView::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 
 		// draw the average line if requested
 		if (show_average) {
-			painter->setPen(themer()->get_color("FFTMeter:curve:average"));
+			painter->setPen(m_penAvgCurve);
 			QPoint pt;
 			QPoint po((int)m_map_idx2xpos.at(0), (int)db2ypos(m_avg_db.at(0)));
 			for (uint i = 0; i < (uint)m_avg_db.size(); ++i) {
@@ -162,18 +164,18 @@ void SpectralMeterView::resize()
 	// update the vectors mapping indices and frequencies to widget coordinates
 	update_freq_map();
 
-	// re-draw the background pixmap
-	update_background();
+	// reload theme data to fit gradients to the new widget size
+	load_theme_data();
 }
 
 void SpectralMeterView::update_background()
 {
 	// draw the background image
 	bgPixmap = QPixmap((int)m_boundingRect.width(), (int)m_boundingRect.height());
-	bgPixmap.fill(themer()->get_color("FFTMeter:margin"));
 
 	QPainter painter(&bgPixmap);
-	painter.fillRect(m_rect, themer()->get_color("FFTMeter:background"));
+	painter.fillRect(m_boundingRect, m_brushMargin);
+	painter.fillRect(m_rect, m_brushBg);
 	painter.setFont(themer()->get_font("FFTMeter:fontscale:label"));
 	QFontMetrics fm(themer()->get_font("FFTMeter:fontscale:label"));
 
@@ -183,10 +185,10 @@ void SpectralMeterView::update_background()
 	for (float i = upper_db; i >= lower_db; i -= 10.0f) {
 		float f = db2ypos(i);
 
-		painter.setPen(themer()->get_color("FFTMeter:grid"));
+		painter.setPen(m_penGrid);
 		painter.drawLine(QPointF(m_rect.x(), f), QPointF(m_rect.right(), f));
 
-		painter.setPen(themer()->get_color("FFTMeter:text"));
+		painter.setPen(m_penFont);
 		spm.sprintf("%2.0f", i);
 		painter.drawText(m_rect.right() + 1, (int)f + fm.ascent()/2, spm);
 	}
@@ -213,16 +215,31 @@ void SpectralMeterView::update_background()
 
 		// draw text only if there is enough space for it
 		if (((f - s) > last_pos) && ((f + s) < float(m_boundingRect.width()-1))) {
-			painter.setPen(themer()->get_color("FFTMeter:text"));
+			painter.setPen(m_penFont);
 			painter.drawText(QPointF(f - s, m_boundingRect.height() - fm.descent() - 3), spm);
 			last_pos = f + s + 1.0;
-			painter.setPen(themer()->get_color("FFTMeter:tickmarks:main"));
+			painter.setPen(m_penTickMain);
 		} else {
-			painter.setPen(themer()->get_color("FFTMeter:tickmarks:sub"));
+			painter.setPen(m_penTickSub);
 		}
 
 		painter.drawLine(QPointF(f, m_rect.bottom()), QPointF(f, m_rect.bottom() + 3));
 	}
+}
+
+void SpectralMeterView::load_theme_data()
+{
+	m_brushFg = themer()->get_brush("FFTMeter:foreground", QPoint(0, 0), QPoint(0, m_boundingRect.height()));
+	m_brushBg = themer()->get_brush("FFTMeter:background", QPoint(0, 0), QPoint(0, m_boundingRect.height()));
+	m_brushMargin = themer()->get_brush("FFTMeter:margin", QPoint(0, 0), QPoint(0, m_rect.height()));
+	m_penAvgCurve.setColor(themer()->get_color("FFTMeter:curve:average"));
+	m_penTickMain.setColor(themer()->get_color("FFTMeter:tickmarks:main"));
+	m_penTickSub.setColor(themer()->get_color("FFTMeter:tickmarks:sub"));
+	m_penFont.setColor(themer()->get_color("FFTMeter:text"));
+	m_penGrid.setColor(themer()->get_color("FFTMeter:grid"));
+
+	// re-draw the background pixmap
+	update_background();
 }
 
 void SpectralMeterView::update_data()

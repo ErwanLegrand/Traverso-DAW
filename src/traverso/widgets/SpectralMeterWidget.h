@@ -127,9 +127,18 @@ private:
 	void		update_background();
 	float		freq2db(float, float);
 	QString		get_xmgr_string();
+	QBrush		m_brushBg;
+	QBrush		m_brushFg;
+	QBrush		m_brushMargin;
+	QPen		m_penAvgCurve;
+	QPen		m_penTickMain;
+	QPen		m_penTickSub;
+	QPen		m_penFont;
+	QPen		m_penGrid;
 
 private slots:
 	void		update_data();
+	void		load_theme_data();
 
 public slots:
 	void		load_configuration();

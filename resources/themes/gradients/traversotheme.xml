@@ -82,11 +82,7 @@
 		<color name="CorrelationMeter:centerline" red="82" green="80" blue="123" alpha="255"/>
 		<color name="CorrelationMeter:text" red="0" green="0" blue="0" alpha="255" />
 
-		<color name="FFTMeter:margin" red="246" green="246" blue="255" alpha="255" />
-		<color name="FFTMeter:background" red="241" green="250" blue="255" alpha="255" />
 		<color name="FFTMeter:grid" red="205" green="223" blue="255" alpha="255" />
-		<color name="FFTMeter:foreground" red="82" green="80" blue="123" alpha="255"/>
-		<color name="FFTMeter:foreground:light" red="241" green="250" blue="255" alpha="255"/>
 		<color name="FFTMeter:curve:average" red="255" green="0" blue="0" alpha="255" />
 		<color name="FFTMeter:tickmarks:main" red="0" green="0" blue="0" alpha="255" />
 		<color name="FFTMeter:tickmarks:sub" red="100" green="100" blue="100" alpha="255" />
@@ -202,7 +198,6 @@
 			<stop value="0.0" red="248" green="248" blue="248" alpha="255" />
 			<stop value="1.0" red="150" green="150" blue="150" alpha="255" />
 		</gradient>
-
 		<gradient name="VUMeter:background:bar">
 			<stop value="0.0" red="0" green="0" blue="0" alpha="255" />
 			<stop value="1.0" red="50" green="50" blue="50" alpha="255" />
@@ -211,6 +206,18 @@
 			<stop value="0.0" red="241" green="250" blue="255" alpha="255"/>
 			<stop value="0.5" red="82" green="80" blue="123" alpha="255"/>
 			<stop value="1.0" red="241" green="250" blue="255" alpha="255"/>
+		</gradient>
+		<gradient name="FFTMeter:margin">
+			<stop value="0.0" red="246" green="246" blue="255" alpha="255"/>
+			<stop value="1.0" red="200" green="200" blue="200" alpha="255"/>
+		</gradient>
+		<gradient name="FFTMeter:background">
+			<stop value="0.0" red="241" green="250" blue="255" alpha="255" />
+			<stop value="1.0" red="150" green="150" blue="150" alpha="255"/>
+		</gradient>
+		<gradient name="FFTMeter:foreground">
+			<stop value="0.0" red="82" green="80" blue="123" alpha="255"/>
+			<stop value="1.0" red="160" green="150" blue="255" alpha="255"/>
 		</gradient>
 	</gradients>
 </Themer> 
