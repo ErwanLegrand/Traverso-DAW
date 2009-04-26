@@ -523,7 +523,7 @@ Command* Project::remove_sheet(Sheet* sheet, bool historable)
 	return cmd;
 }
 
-
+// this is called from the export and CD-writing dialog
 int Project::export_project(ExportSpecification* spec)
 {
 	PENTER;
@@ -551,11 +551,15 @@ int Project::export_project(ExportSpecification* spec)
 	spec->breakout = false;
 
 	m_exportThread->set_specification(spec);
+
+        // this will start the thread by executing ExportThread::run(),
+        // which calls Project::start_export()
 	m_exportThread->start();
 
 	return 0;
 }
 
+// this is called from the ExportThread::run() function
 int Project::start_export(ExportSpecification* spec)
 {
 	PMESG("Starting export, rate is %d bitdepth is %d", spec->sample_rate, spec->data_width );
@@ -568,6 +572,7 @@ int Project::start_export(ExportSpecification* spec)
 	overallExportProgress = renderedSheets = 0;
 	sheetsToRender.clear();
 
+        // determine which sheets to export, store them in sheetsToRender
 	if (spec->allSheets) {
 		foreach(Sheet* sheet, m_sheets) {
 			sheetsToRender.append(sheet);
@@ -579,6 +584,9 @@ int Project::start_export(ExportSpecification* spec)
 		}
 	}
 
+        // process each sheet in the list sheetsToRender. here we set the renderpass mode,
+        // and then call Sheet::repare_export() and Sheet::render(), which do the actual
+        // processing.
 	foreach(Sheet* sheet, sheetsToRender) {
 		PMESG("Starting export for sheet %lld", sheet->get_id());
 		emit exportStartedForSheet(sheet);
@@ -587,6 +595,7 @@ int Project::start_export(ExportSpecification* spec)
 		sheet->readbuffer = readbuffer;
 		
 		if (spec->normalize) {
+                        // start one render pass in mode "CALC_NORM_FACTOR"
 			spec->peakvalue = 0.0;
 			spec->renderpass = ExportSpecification::CALC_NORM_FACTOR;
 			
@@ -610,13 +619,16 @@ int Project::start_export(ExportSpecification* spec)
 			}
 		}
 
+                // start the real render pass in mode "WRITE_TO_HARDDISK"
 		spec->renderpass = ExportSpecification::WRITE_TO_HARDDISK;
 		
+                // first call Sheet::prepare_export()...
 		if (sheet->prepare_export(spec) < 0) {
 			PERROR("Failed to prepare sheet for export");
 			break;
 		}
 		
+                // ... then start the render process and wait until it's finished
 		while(sheet->render(spec) > 0) {}
 		
 		if (!QMetaObject::invokeMethod(sheet, "set_transport_pos",  Qt::QueuedConnection, Q_ARG(TimeRef, spec->resumeTransportLocation))) {
@@ -693,7 +705,7 @@ int Project::create_cdrdao_toc(ExportSpecification* spec)
 			return -1;
 		}
 		output += sheet->get_cdrdao_tracklist(spec, pregap);
-		pregap = false; // only add the pregap at the first sheet
+		pregap = false; // only add the pregap at the first sheet
 	}
 	
 

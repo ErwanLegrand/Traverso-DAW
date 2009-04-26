@@ -366,7 +366,10 @@ bool Sheet::any_track_armed()
 	return false;
 }
 
-
+// this function is called from the parent project before it calls Sheet::render().
+// depending on the renderpass mode, additional information is gathered here for
+// the ExportSpecification (e.g. the start and end location, the marker list,
+// transport is stopped, a new writeSource is created etc.)
 int Sheet::prepare_export(ExportSpecification* spec)
 {
 	PENTER;
@@ -494,6 +497,9 @@ int Sheet::finish_audio_export()
 	return 0;
 }
 
+// this function is called from the parent project. It sends the audio data
+// to Sheet::export_process(), which does the acutal processing, but normalisation
+// and writing to disk is done here.
 int Sheet::render(ExportSpecification* spec)
 {
 	int chn;
