@@ -59,7 +59,9 @@ PlayHead::PlayHead(SheetView* sv, Sheet* sheet, ClipsViewPort* vp)
 	
 	connect(&m_animation, SIGNAL(frameChanged(int)), this, SLOT(set_animation_value(int)));
 	connect(&m_animation, SIGNAL(finished()), this, SLOT(animation_finished()));
-	
+        connect(themer(), SIGNAL(themeLoaded()), this, SLOT(load_theme_data()), Qt::QueuedConnection);
+        load_theme_data();
+
 	setZValue(99);
 }
 
@@ -79,15 +81,15 @@ void PlayHead::paint( QPainter * painter, const QStyleOptionGraphicsItem * optio
 {
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
-	QColor color;
+        QBrush brush;
 	
 	if (m_sheet->is_transport_rolling()) {
-	 	color = themer()->get_color("Playhead:active");
+                brush = m_brushActive;
 	} else {
-		color = themer()->get_color("Playhead:inactive");
+                brush = m_brushInactive;
 	}
 	
-	painter->fillRect(1, 0, (int)m_boundingRect.width() - 2, (int)m_boundingRect.height(), color);
+        painter->fillRect(1, 0, (int)m_boundingRect.width() - 2, (int)m_boundingRect.height(), brush);
 }
 
 void PlayHead::play_start()
@@ -276,7 +278,11 @@ void PlayHead::toggle_follow( )
 	m_follow = ! m_follow;
 }
 
-
+void PlayHead::load_theme_data()
+{
+    m_brushActive = themer()->get_brush("Playhead:active");
+    m_brushInactive = themer()->get_brush("Playhead:inactive");
+}
 
 /**************************************************************/
 /*                    WorkCursor                              */

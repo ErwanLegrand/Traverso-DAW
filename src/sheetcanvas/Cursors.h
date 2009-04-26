@@ -25,6 +25,7 @@
 #include "ViewItem.h"
 #include <QTimer>
 #include <QTimeLine>
+#include <QBrush>
 
 class Sheet;
 class SheetView;
@@ -64,6 +65,8 @@ private:
         int 		m_animationScrollStartPos;
 	int		m_animFrameRange;
 	qreal		m_animScaleFactor;
+        QBrush          m_brushActive;
+        QBrush          m_brushInactive;
 	
 private slots:
 	void check_config();
@@ -71,6 +74,7 @@ private slots:
         void play_stop();
         void set_animation_value(int);
         void animation_finished();
+        void load_theme_data();
         
 public slots:
         void update_position();
