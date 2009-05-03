@@ -81,6 +81,7 @@ public :
 	void set_upc_ean(const QString& pUPC);
 	void set_genre(int pGenre);
 	void set_sheet_export_progress(int pogress);
+        void set_export_message(QString message);
 	void set_current_sheet(qint64 id);
 	void set_import_dir(const QString& dir);
 
@@ -159,6 +160,7 @@ signals:
 	void exportFinished();
 	void exportStartedForSheet(Sheet* );
 	void projectLoadFinished();
+        void exportMessage(QString);
 };
 
 #endif

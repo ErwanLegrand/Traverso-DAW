@@ -196,3 +196,23 @@ void TimeLine::index_markers()
 	}	
 }
 
+// returns all markers of type CDTRACK
+// sets 'endmarker' to true if an endmarker is present, else to false.
+QList<Marker*> TimeLine::get_cd_layout(bool & endmarker)
+{
+        QList<Marker*> list;
+        endmarker = false;
+
+        foreach(Marker* marker, m_markers) {
+                if (marker->get_type() == Marker::CDTRACK) {
+                        list.push_back(marker);
+                }
+
+                if (marker->get_type() == Marker::ENDMARKER) {
+                        list.push_back(marker);
+                        endmarker = true;
+                }
+        }
+
+        return list;
+}

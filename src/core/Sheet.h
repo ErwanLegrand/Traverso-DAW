@@ -46,6 +46,7 @@ class Plugin;
 class TimeLine;
 class Snappable;
 class DecodeBuffer;
+class Marker;
 
 struct ExportSpecification;
 
@@ -134,6 +135,7 @@ public:
 	int process_export(nframes_t nframes);
 	int prepare_export(ExportSpecification* spec);
 	int render(ExportSpecification* spec);
+        int start_export(ExportSpecification* spec);
 
 	void solo_track(Track* track);
 	void create(int tracksToCreate);
@@ -222,6 +224,8 @@ private:
 	void start_transport_rolling(bool realtime);
 	void stop_transport_rolling();
 	void update_skip_positions();
+        QString format_track_name(QString, int);
+        QList<Marker *> get_cdtrack_list(ExportSpecification*);
 	
 	void resize_buffer(bool updateArmStatus, nframes_t size);
 

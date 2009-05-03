@@ -94,7 +94,8 @@ void ExportDialog::on_startButton_clicked( )
 	connect(m_project, SIGNAL(overallExportProgressChanged(int)), this, SLOT(update_overall_progress(int)));
 	connect(m_project, SIGNAL(exportFinished()), this, SLOT(render_finished()));
 	connect(m_project, SIGNAL(exportStartedForSheet(Sheet*)), this, SLOT (set_exporting_sheet(Sheet*)));
-	
+        connect(m_project, SIGNAL(exportMessage(QString)), this, SLOT(set_export_message(QString)));
+
 	// clear extraformats, it might be different now from previous runs!
 	m_exportSpec->extraFormat.clear();
 	
@@ -162,6 +163,11 @@ void ExportDialog::update_sheet_progress( int progress )
 void ExportDialog::update_overall_progress( int progress )
 {
 	progressBar->setValue(progress);
+}
+
+void ExportDialog::set_export_message(QString message)
+{
+        currentProcessingSheetName->setText(message);
 }
 
 void ExportDialog::render_finished( )

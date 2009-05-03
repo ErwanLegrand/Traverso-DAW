@@ -43,6 +43,7 @@ public:
 	int set_state(const QDomNode& node);
 	
 	QList<Marker*> get_markers() const {return m_markers;}
+        QList<Marker*> get_cd_layout(bool & endmarker);
 	Sheet *get_sheet() const {return m_sheet;}
 	
 	Marker* get_marker(qint64 id);

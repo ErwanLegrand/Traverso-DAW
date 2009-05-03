@@ -404,7 +404,7 @@ int Sheet::prepare_export(ExportSpecification* spec)
 	spec->endLocation = TimeRef();
 
 	TimeRef endlocation, startlocation;
-	
+
 	apill_foreach(Track* track, Track, m_tracks) {
 		track->get_render_range(startlocation, endlocation);
 
@@ -424,8 +424,6 @@ int Sheet::prepare_export(ExportSpecification* spec)
 	}
 	
 	if (spec->isCdExport) {
-		QList<Marker*> markers = m_timeline->get_markers();
-		
 		if (m_timeline->get_start_location(startlocation)) {
 			PMESG2("  Start marker found at %s", QS_C(timeref_to_ms(startlocation)));
 			// round down to the start of the CD frame (75th of a sec)
@@ -443,6 +441,7 @@ int Sheet::prepare_export(ExportSpecification* spec)
 		}
 	}
 
+        // compute some default values
 	spec->totalTime = spec->endLocation - spec->startLocation;
 
 // 	PWARN("Render length is: %s",timeref_to_ms_3(spec->totalTime).toAscii().data() );
@@ -471,14 +470,6 @@ int Sheet::prepare_export(ExportSpecification* spec)
 		return 1;
 	}
 	
-	if (spec->renderpass == ExportSpecification::WRITE_TO_HARDDISK) {
-		m_exportSource = new WriteSource(spec);
-		if (m_exportSource->prepare_export() == -1) {
-			delete m_exportSource;
-			return -1;
-		}
-	}
-
 	m_transportLocation = spec->startLocation;
 	
 	resize_buffer(false, spec->blocksize);
@@ -490,24 +481,67 @@ int Sheet::prepare_export(ExportSpecification* spec)
 
 int Sheet::finish_audio_export()
 {
-	m_exportSource->finish_export();
-	delete m_exportSource;
-	delete renderDecodeBuffer;
-	resize_buffer(false, audiodevice().get_buffer_size());
-	return 0;
+        qDebug("export: done, tidying up and exiting");
+        delete renderDecodeBuffer;
+        resize_buffer(false, audiodevice().get_buffer_size());
+        m_rendering = false;
+        return 0;
 }
 
-// this function is called from the parent project. It sends the audio data
-// to Sheet::export_process(), which does the acutal processing, but normalisation
-// and writing to disk is done here.
+// this function is called from the parent project. if several cd-tracks should be exported
+// to separate files, we will call the render() process for each file.
+int Sheet::start_export(ExportSpecification* spec)
+{
+        QString message;
+        spec->markers = get_cdtrack_list(spec);
+
+        for (int i = 0; i < spec->markers.size()-1; ++i) {
+                spec->trackStart    = spec->markers.at(i)->get_when();
+                spec->trackEnd      = spec->markers.at(i+1)->get_when();
+                spec->name          = format_track_name(spec->markers.at(i)->get_description(), i+1);
+                spec->totalTime     = spec->trackEnd - spec->trackStart;
+                spec->pos           = spec->trackStart;
+                m_transportLocation = spec->trackStart;
+
+                if (spec->renderpass == ExportSpecification::WRITE_TO_HARDDISK) {
+                        m_exportSource = new WriteSource(spec);
+
+                        if (m_exportSource->prepare_export() == -1) {
+                                delete m_exportSource;
+                                return -1;
+                        }
+
+                        message = QString(tr("Rendering Sheet %1 - Track %2 of %3")).arg(title).arg(i+1).arg(spec->markers.size()-1);
+
+                } else if (spec->renderpass == ExportSpecification::CALC_NORM_FACTOR) {
+                        message = QString(tr("Normalising Sheet %1 - Track %2 of %3")).arg(title).arg(i+1).arg(spec->markers.size()-1);
+                }
+
+                m_project->set_export_message(message);
+
+                qDebug("export: starting render process");
+                while(render(spec) > 0) {}
+
+                if (spec->renderpass == ExportSpecification::WRITE_TO_HARDDISK) {
+                        qDebug("export: deleting writesource");
+                        m_exportSource->finish_export();
+                        delete m_exportSource;
+                }
+                qDebug("restarting loop");
+        }
+
+        finish_audio_export();
+        return 1;
+}
+
 int Sheet::render(ExportSpecification* spec)
 {
 	int chn;
 	uint32_t x;
 	int ret = -1;
-	int progress;
-	
-	nframes_t diff = (spec->endLocation - spec->pos).to_frame(audiodevice().get_sample_rate());
+        int progress = 0;
+
+        nframes_t diff = (spec->trackEnd - spec->pos).to_frame(audiodevice().get_sample_rate());
 	nframes_t nframes = spec->blocksize;
 	nframes_t this_nframes = std::min(diff, nframes);
 
@@ -516,12 +550,8 @@ int Sheet::render(ExportSpecification* spec)
 		/*		PWARN("Finished Rendering for this sheet");
 				PWARN("running is %d", spec->running);
 				PWARN("stop is %d", spec->stop);
-				PWARN("this_nframes is %d", this_nframes);*/
-		if (spec->renderpass == ExportSpecification::WRITE_TO_HARDDISK) {
-			return finish_audio_export();
-		} else {
-			return 0;
-		}
+                                PWARN("this_nframes is %d", this_nframes);*/
+                return 0;
 	}
 
 	/* do the usual stuff */
@@ -572,19 +602,9 @@ int Sheet::render(ExportSpecification* spec)
 
 	spec->pos.add_frames(nframes, audiodevice().get_sample_rate());
 
-	if (! spec->normalize ) {
-		progress =  int((double((spec->pos - spec->startLocation).universal_frame()) / spec->totalTime.universal_frame()) * 100);
-	} else {
-		progress = (int) (double( 100 * (spec->pos - spec->startLocation).universal_frame()) / (spec->totalTime.universal_frame() * 2));
-		if (spec->renderpass == ExportSpecification::WRITE_TO_HARDDISK) {
-			progress += 50;
-		}
-	}
-	
-	if (progress > spec->progress) {
-		spec->progress = progress;
-		m_project->set_sheet_export_progress(progress);
-	}
+        progress = (int) (double( 100 * (spec->pos - spec->trackStart).universal_frame()) / (spec->totalTime.universal_frame()));
+        spec->progress = progress;
+        m_project->set_sheet_export_progress(progress);
 
 
 	/* and we're good to go */
@@ -593,12 +613,45 @@ int Sheet::render(ExportSpecification* spec)
 
 out:
 	if (!ret) {
-		spec->running = false;
 		spec->status = ret;
-		m_rendering = false;
 	}
 
 	return ret;
+}
+
+// formatting the track names in a separate function to guarantee that
+// the file names of exported tracks and the entry in the TOC file always
+// match
+QString Sheet::format_track_name(QString n, int i)
+{
+        QString name;
+        if (n.isEmpty()) {
+                name = QString("%1").arg(i, 2, 10, QChar('0'));
+        } else {
+                name = QString("%1-%2").arg(i, 2, 10, QChar('0')).arg(n);
+        }
+
+        name.replace(QRegExp("\\s"), "_");
+        return name;
+}
+
+// creates a valid list of markers for CD export. Takes care of special cases
+// such as if no markers are present, or if an end marker is missing.
+QList<Marker*> Sheet::get_cdtrack_list(ExportSpecification *spec)
+{
+        bool endmarker;
+        QList<Marker*> lst = m_timeline->get_cd_layout(endmarker);
+
+        // make sure there are at least a start- and end-marker in the list
+        if (lst.size() == 0) {
+                lst.push_back(new Marker(m_timeline, spec->startLocation, Marker::CDTRACK));
+        }
+
+        if (!endmarker) {
+                lst.push_back(new Marker(m_timeline, spec->endLocation, Marker::ENDMARKER));
+        }
+
+        return lst;
 }
 
 
@@ -879,62 +932,10 @@ QString Sheet::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 {
 	QString output;
 
-	QList<Marker*> mlist = m_timeline->get_markers();
-	QList<Marker*> tempmarkers;
+        QList<Marker*> mlist = get_cdtrack_list(spec);
 
-	// Here we make the marker-stuff idiot-proof ;-). Traverso doesn't insist on having any
-	// marker at all, so we need to handle cases like:
-	// - no markers at all
-	// - one marker (doesn't make sense)
-	// - enough markers, but no end marker
+//	TimeRef start;
 
-	Marker* temp;
-	
-	if (mlist.size() < 2) {
-		switch (mlist.size()) {
-			case 0:
-				// no markers present. We add one at the beginning and one at the
-				// end of the render area.
-				temp = new Marker(m_timeline, spec->startLocation, Marker::CDTRACK);
-				tempmarkers.append(temp);
-				mlist.prepend(temp);
-				temp = new Marker(m_timeline, spec->endLocation, Marker::ENDMARKER);
-				tempmarkers.append(temp);
-				mlist.append(temp);
-				break;
-			case 1:
-				// one marker is present. We add two more, one at the beginning
-				// and one at the end of the render area. If the present marker
-				// happened to be at either the start or the end position,
-				// it will now be overwritten, so we will never end up with
-				// two markers at the same position.
-
-				// deactivate the next if-condition (only the first one) if you want the
-				// stuff before the first marker to go into the pre-gap
-				if (mlist.at(0)->get_when() != (spec->startLocation)) {
-					temp = new Marker(m_timeline, spec->startLocation, Marker::CDTRACK);
-					tempmarkers.append(temp);
-					mlist.prepend(temp);
-				}
-				if (mlist.at(0)->get_when() != (spec->startLocation)) {
-					temp = new Marker(m_timeline, spec->endLocation, Marker::ENDMARKER);
-					tempmarkers.append(temp);
-					mlist.append(temp);
-				}
-				break;
-		}
-	} else {
-		 // would be ok, but let's check if there is an end marker present. If not,
-		// add one to spec->end_frame
-		if (!m_timeline->has_end_marker()) {
-			temp = new Marker(m_timeline, spec->endLocation, Marker::ENDMARKER);
-			tempmarkers.append(temp);
-			mlist.append(temp);
-		}
-	}
-
-	TimeRef start;
-	
 	for(int i = 0; i < mlist.size()-1; ++i) {
 		
 		Marker* startmarker = mlist.at(i);
@@ -973,23 +974,19 @@ QString Sheet::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 			//}
 		}
 		
-		TimeRef length = cd_to_timeref(timeref_to_cd(endmarker->get_when())) - cd_to_timeref(timeref_to_cd(startmarker->get_when()));
+//		TimeRef length = cd_to_timeref(timeref_to_cd(endmarker->get_when())) - cd_to_timeref(timeref_to_cd(startmarker->get_when()));
 		
-		QString s_start = timeref_to_cd(start);
-		QString s_length = timeref_to_cd(length);
+//		QString s_start = timeref_to_cd(start);
+//		QString s_length = timeref_to_cd(length);
 
-		output += "  FILE \"" + spec->name + "." + spec->extraFormat["filetype"] + "\" " + s_start + " " + s_length + "\n\n";
-		start += length;
+//		output += "  FILE \"" + spec->name + "." + spec->extraFormat["filetype"] + "\" " + s_start + " " + s_length + "\n\n";
+                output += "  FILE \"" + format_track_name(startmarker->get_description(), i+1) + "." + spec->extraFormat["filetype"] + "\"\n\n";
+//		start += length;
 
 		// check if the second marker is of type "Endmarker"
 		if (endmarker->get_type() == Marker::ENDMARKER) {
 			break;
 		}
-	}
-
-	// delete all temporary markers
-	foreach(Marker* marker, tempmarkers) {
-		delete marker;
 	}
 
 	return output;

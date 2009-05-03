@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Export.h,v 1.18 2008/01/21 16:22:13 r_sijrier Exp $
+$Id: Export.h,v 1.19 2009/05/03 21:47:32 n_doebelin Exp $
 */
 
 #ifndef EXPORT_H
@@ -34,6 +34,7 @@ $Id: Export.h,v 1.18 2008/01/21 16:22:13 r_sijrier Exp $
 
 class Project;
 class ExportThread;
+class Marker;
 
 struct ExportSpecification
 {
@@ -52,7 +53,9 @@ struct ExportSpecification
 	int       	channels;
 	TimeRef		startLocation;
 	TimeRef		endLocation;
-	GDitherType     dither_type;
+        TimeRef		trackStart;
+        TimeRef		trackEnd;
+        GDitherType     dither_type;
 
 	/* used exclusively during export */
 
@@ -89,6 +92,7 @@ struct ExportSpecification
 	TimeRef		resumeTransportLocation;
 	bool		renderfinished;
 	bool		isCdExport;
+        QList<Marker*>  markers;
 	
 	ExportThread* 	thread;
 };

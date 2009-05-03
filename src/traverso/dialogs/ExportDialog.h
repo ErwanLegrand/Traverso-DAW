@@ -61,6 +61,7 @@ private slots:
 	void update_overall_progress(int progress);
 	void render_finished();
 	void set_exporting_sheet(Sheet* sheet);
+        void set_export_message(QString message);
 
 	void on_fileSelectButton_clicked();
 	void on_startButton_clicked();

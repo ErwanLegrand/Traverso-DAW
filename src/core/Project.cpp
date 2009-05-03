@@ -605,7 +605,7 @@ int Project::start_export(ExportSpecification* spec)
 				continue;
 			}
 			
-			while(sheet->render(spec) > 0) {}
+                        sheet->start_export(spec);
 			
 			spec->normvalue = (1.0 - FLT_EPSILON) / spec->peakvalue;
 			
@@ -629,7 +629,7 @@ int Project::start_export(ExportSpecification* spec)
 		}
 		
                 // ... then start the render process and wait until it's finished
-		while(sheet->render(spec) > 0) {}
+                sheet->start_export(spec);
 		
 		if (!QMetaObject::invokeMethod(sheet, "set_transport_pos",  Qt::QueuedConnection, Q_ARG(TimeRef, spec->resumeTransportLocation))) {
 			printf("Invoking Sheet::set_transport_pos() failed\n");
@@ -659,6 +659,7 @@ int Project::start_export(ExportSpecification* spec)
 	return 1;
 }
 
+// this method is called by the CDWritingDialog
 int Project::create_cdrdao_toc(ExportSpecification* spec)
 {
 	QList<Sheet* > sheets;
@@ -764,6 +765,12 @@ void Project::set_sheet_export_progress(int progress)
 	emit sheetExportProgressChanged(progress);
 	emit overallExportProgressChanged(overallExportProgress);
 }
+
+void Project::set_export_message(QString message)
+{
+        emit exportMessage(message);
+}
+
 
 QList<Sheet* > Project::get_sheets( ) const
 {
