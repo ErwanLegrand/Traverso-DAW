@@ -75,7 +75,8 @@ CDWritingDialog::CDWritingDialog( QWidget * parent )
 	connect(stopButton, SIGNAL(clicked()), this, SLOT(stop_burn_process()));
 	connect(refreshButton, SIGNAL(clicked()), this, SLOT(query_devices()));
 	connect(cdDiskExportOnlyCheckBox, SIGNAL(stateChanged(int)), this, SLOT(export_only_changed(int)));
-	
+        connect(m_project, SIGNAL(exportMessage(QString)), this, SLOT(set_export_message(QString)));
+
 	
 	m_wodimAvailable = false;
 	
@@ -107,6 +108,11 @@ void CDWritingDialog::on_stopButton_clicked( )
 {
 	m_exportSpec->stop = true;
 	m_exportSpec->breakout = true;
+}
+
+void CDWritingDialog::set_export_message(QString message)
+{
+        cdExportInformationLabel->setText(message);
 }
 
 

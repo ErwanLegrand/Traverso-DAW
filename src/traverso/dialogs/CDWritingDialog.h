@@ -91,6 +91,7 @@ private slots:
 	void cdrdao_process_finished(int exitcode, QProcess::ExitStatus exitstatus);
 	void cd_export_finished();
 	void cd_export_progress(int progress);
+        void set_export_message(QString message);
 	void query_devices();
 	
 	void reject();
