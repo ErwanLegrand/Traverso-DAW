@@ -493,15 +493,18 @@ int Sheet::finish_audio_export()
 int Sheet::start_export(ExportSpecification* spec)
 {
         QString message;
+        float peakvalue = 0.0;
+
         spec->markers = get_cdtrack_list(spec);
 
         for (int i = 0; i < spec->markers.size()-1; ++i) {
-                spec->progress = 0;
+                spec->progress      = 0;
                 spec->trackStart    = spec->markers.at(i)->get_when();
                 spec->trackEnd      = spec->markers.at(i+1)->get_when();
                 spec->name          = format_track_name(spec->markers.at(i)->get_description(), i+1);
                 spec->totalTime     = spec->trackEnd - spec->trackStart;
                 spec->pos           = spec->trackStart;
+                spec->peakvalue     = peakvalue;
                 m_transportLocation = spec->trackStart;
 
 
@@ -521,15 +524,14 @@ int Sheet::start_export(ExportSpecification* spec)
 
                 m_project->set_export_message(message);
 
-                qDebug("export: starting render process");
                 while(render(spec) > 0) {}
 
+                peakvalue = qMax(peakvalue, spec->peakvalue);
+
                 if (spec->renderpass == ExportSpecification::WRITE_TO_HARDDISK) {
-                        qDebug("export: deleting writesource");
                         m_exportSource->finish_export();
                         delete m_exportSource;
                 }
-                qDebug("restarting loop");
         }
 
         finish_audio_export();
