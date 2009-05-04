@@ -762,7 +762,6 @@ void Project::set_sheet_export_progress(int progress)
 	overallExportProgress = (progress / sheetsToRender.count()) + 
 			(renderedSheets * (100 / sheetsToRender.count()) );
 
-        printf("progress %d\n", progress);
 	emit sheetExportProgressChanged(progress);
 	emit overallExportProgressChanged(overallExportProgress);
 }
