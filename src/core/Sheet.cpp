@@ -496,12 +496,14 @@ int Sheet::start_export(ExportSpecification* spec)
         spec->markers = get_cdtrack_list(spec);
 
         for (int i = 0; i < spec->markers.size()-1; ++i) {
+                spec->progress = 0;
                 spec->trackStart    = spec->markers.at(i)->get_when();
                 spec->trackEnd      = spec->markers.at(i+1)->get_when();
                 spec->name          = format_track_name(spec->markers.at(i)->get_description(), i+1);
                 spec->totalTime     = spec->trackEnd - spec->trackStart;
                 spec->pos           = spec->trackStart;
                 m_transportLocation = spec->trackStart;
+
 
                 if (spec->renderpass == ExportSpecification::WRITE_TO_HARDDISK) {
                         m_exportSource = new WriteSource(spec);
@@ -603,8 +605,13 @@ int Sheet::render(ExportSpecification* spec)
 	spec->pos.add_frames(nframes, audiodevice().get_sample_rate());
 
         progress = (int) (double( 100 * (spec->pos - spec->trackStart).universal_frame()) / (spec->totalTime.universal_frame()));
-        spec->progress = progress;
-        m_project->set_sheet_export_progress(progress);
+
+        // only update the progress info if progress is higher then the
+        // old progress value, to avoid a flood of progress changed signals!
+        if (progress > spec->progress) {
+                spec->progress = progress;
+                m_project->set_sheet_export_progress(progress);
+        }
 
 
 	/* and we're good to go */

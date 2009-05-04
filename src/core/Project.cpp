@@ -591,7 +591,7 @@ int Project::start_export(ExportSpecification* spec)
 		PMESG("Starting export for sheet %lld", sheet->get_id());
 		emit exportStartedForSheet(sheet);
 		spec->resumeTransport = false;
-		spec->resumeTransportLocation = sheet->get_transport_location();
+                spec->resumeTransportLocation = sheet->get_transport_location();
 		sheet->readbuffer = readbuffer;
 		
 		if (spec->normalize) {
@@ -762,6 +762,7 @@ void Project::set_sheet_export_progress(int progress)
 	overallExportProgress = (progress / sheetsToRender.count()) + 
 			(renderedSheets * (100 / sheetsToRender.count()) );
 
+        printf("progress %d\n", progress);
 	emit sheetExportProgressChanged(progress);
 	emit overallExportProgressChanged(overallExportProgress);
 }
