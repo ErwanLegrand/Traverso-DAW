@@ -205,11 +205,11 @@ QList<Marker*> TimeLine::get_cd_layout(bool & endmarker)
 
         foreach(Marker* marker, m_markers) {
                 if (marker->get_type() == Marker::CDTRACK) {
-                        list.push_back(marker);
+                        list.append(marker);
                 }
 
                 if (marker->get_type() == Marker::ENDMARKER) {
-                        list.push_back(marker);
+                        list.append(marker);
                         endmarker = true;
                 }
         }

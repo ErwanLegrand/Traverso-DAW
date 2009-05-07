@@ -224,7 +224,7 @@ private:
 	void start_transport_rolling(bool realtime);
 	void stop_transport_rolling();
 	void update_skip_positions();
-        QString format_track_name(QString, int);
+        QString format_cdtrack_name(QString, int);
         QList<Marker *> get_cdtrack_list(ExportSpecification*);
 	
 	void resize_buffer(bool updateArmStatus, nframes_t size);

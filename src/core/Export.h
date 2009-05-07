@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Export.h,v 1.19 2009/05/03 21:47:32 n_doebelin Exp $
+$Id: Export.h,v 1.20 2009/05/07 19:59:03 n_doebelin Exp $
 */
 
 #ifndef EXPORT_H
@@ -53,8 +53,8 @@ struct ExportSpecification
 	int       	channels;
 	TimeRef		startLocation;
 	TimeRef		endLocation;
-        TimeRef		trackStart;
-        TimeRef		trackEnd;
+        TimeRef		cdTrackStart;
+        TimeRef		cdTrackEnd;
         GDitherType     dither_type;
 
 	/* used exclusively during export */

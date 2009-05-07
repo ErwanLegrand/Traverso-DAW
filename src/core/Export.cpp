@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: Export.cpp,v 1.17 2009/05/03 21:47:32 n_doebelin Exp $
+    $Id: Export.cpp,v 1.18 2009/05/07 19:59:03 n_doebelin Exp $
 */
 
 #include "Export.h"
@@ -53,8 +53,8 @@ ExportSpecification::ExportSpecification()
 	channels = -1;
 	startLocation = qint64(-1);
 	endLocation = qint64(-1);
-        trackStart = qint64(-1);
-        trackEnd = qint64(-1);
+        cdTrackStart = qint64(-1);
+        cdTrackEnd = qint64(-1);
         dither_type = GDitherTri;
 	
 	dataF = 0;

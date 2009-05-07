@@ -481,7 +481,6 @@ int Sheet::prepare_export(ExportSpecification* spec)
 
 int Sheet::finish_audio_export()
 {
-        qDebug("export: done, tidying up and exiting");
         delete renderDecodeBuffer;
         resize_buffer(false, audiodevice().get_buffer_size());
         m_rendering = false;
@@ -499,13 +498,13 @@ int Sheet::start_export(ExportSpecification* spec)
 
         for (int i = 0; i < spec->markers.size()-1; ++i) {
                 spec->progress      = 0;
-                spec->trackStart    = spec->markers.at(i)->get_when();
-                spec->trackEnd      = spec->markers.at(i+1)->get_when();
-                spec->name          = format_track_name(spec->markers.at(i)->get_description(), i+1);
-                spec->totalTime     = spec->trackEnd - spec->trackStart;
-                spec->pos           = spec->trackStart;
+                spec->cdTrackStart    = spec->markers.at(i)->get_when();
+                spec->cdTrackEnd      = spec->markers.at(i+1)->get_when();
+                spec->name          = format_cdtrack_name(spec->markers.at(i)->get_description(), i+1);
+                spec->totalTime     = spec->cdTrackEnd - spec->cdTrackStart;
+                spec->pos           = spec->cdTrackStart;
                 spec->peakvalue     = peakvalue;
-                m_transportLocation = spec->trackStart;
+                m_transportLocation = spec->cdTrackStart;
 
 
                 if (spec->renderpass == ExportSpecification::WRITE_TO_HARDDISK) {
@@ -545,7 +544,7 @@ int Sheet::render(ExportSpecification* spec)
 	int ret = -1;
         int progress = 0;
 
-        nframes_t diff = (spec->trackEnd - spec->pos).to_frame(audiodevice().get_sample_rate());
+        nframes_t diff = (spec->cdTrackEnd - spec->pos).to_frame(audiodevice().get_sample_rate());
 	nframes_t nframes = spec->blocksize;
 	nframes_t this_nframes = std::min(diff, nframes);
 
@@ -606,7 +605,7 @@ int Sheet::render(ExportSpecification* spec)
 
 	spec->pos.add_frames(nframes, audiodevice().get_sample_rate());
 
-        progress = (int) (double( 100 * (spec->pos - spec->trackStart).universal_frame()) / (spec->totalTime.universal_frame()));
+        progress = (int) (double( 100 * (spec->pos - spec->cdTrackStart).universal_frame()) / (spec->totalTime.universal_frame()));
 
         // only update the progress info if progress is higher then the
         // old progress value, to avoid a flood of progress changed signals!
@@ -631,7 +630,7 @@ out:
 // formatting the track names in a separate function to guarantee that
 // the file names of exported tracks and the entry in the TOC file always
 // match
-QString Sheet::format_track_name(QString n, int i)
+QString Sheet::format_cdtrack_name(QString n, int i)
 {
         QString name;
         if (n.isEmpty()) {
@@ -983,13 +982,13 @@ QString Sheet::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
 			//}
 		}
 		
-//		TimeRef length = cd_to_timeref(timeref_to_cd(endmarker->get_when())) - cd_to_timeref(timeref_to_cd(startmarker->get_when()));
+                TimeRef length = cd_to_timeref(timeref_to_cd(endmarker->get_when())) - cd_to_timeref(timeref_to_cd(startmarker->get_when()));
 		
 //		QString s_start = timeref_to_cd(start);
-//		QString s_length = timeref_to_cd(length);
+                QString s_length = timeref_to_cd(length);
 
 //		output += "  FILE \"" + spec->name + "." + spec->extraFormat["filetype"] + "\" " + s_start + " " + s_length + "\n\n";
-                output += "  FILE \"" + format_track_name(startmarker->get_description(), i+1) + "." + spec->extraFormat["filetype"] + "\"\n\n";
+                output += "  FILE \"" + format_cdtrack_name(startmarker->get_description(), i+1) + "." + spec->extraFormat["filetype"] + "\" 0 " + s_length + "\n\n";
 //		start += length;
 
 		// check if the second marker is of type "Endmarker"
