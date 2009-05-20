@@ -523,7 +523,7 @@ Command* Project::remove_sheet(Sheet* sheet, bool historable)
 	return cmd;
 }
 
-// this is called from the export and CD-writing dialog
+/* call this function to initiate the export or cd-writing */
 int Project::export_project(ExportSpecification* spec)
 {
 	PENTER;
@@ -559,7 +559,6 @@ int Project::export_project(ExportSpecification* spec)
 	return 0;
 }
 
-// this is called from the ExportThread::run() function
 int Project::start_export(ExportSpecification* spec)
 {
 	PMESG("Starting export, rate is %d bitdepth is %d", spec->sample_rate, spec->data_width );
@@ -659,7 +658,6 @@ int Project::start_export(ExportSpecification* spec)
 	return 1;
 }
 
-// this method is called by the CDWritingDialog
 int Project::create_cdrdao_toc(ExportSpecification* spec)
 {
 	QList<Sheet* > sheets;
