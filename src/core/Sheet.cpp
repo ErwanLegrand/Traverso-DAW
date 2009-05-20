@@ -500,7 +500,7 @@ int Sheet::start_export(ExportSpecification* spec)
                 spec->progress      = 0;
                 spec->cdTrackStart    = spec->markers.at(i)->get_when();
                 spec->cdTrackEnd      = spec->markers.at(i+1)->get_when();
-                spec->name          = format_cdtrack_name(spec->markers.at(i)->get_description(), i+1);
+                spec->name          = format_cdtrack_name(spec->markers.at(i), i+1);
                 spec->totalTime     = spec->cdTrackEnd - spec->cdTrackStart;
                 spec->pos           = spec->cdTrackStart;
                 spec->peakvalue     = peakvalue;
@@ -630,13 +630,20 @@ out:
 // formatting the track names in a separate function to guarantee that
 // the file names of exported tracks and the entry in the TOC file always
 // match
-QString Sheet::format_cdtrack_name(QString n, int i)
+QString Sheet::format_cdtrack_name(Marker *marker, int i)
 {
         QString name;
-        if (n.isEmpty()) {
-                name = QString("%1").arg(i, 2, 10, QChar('0'));
-        } else {
-                name = QString("%1-%2").arg(i, 2, 10, QChar('0')).arg(n);
+        QString song = marker->get_description();
+        QString performer = marker->get_performer();
+
+        name = QString("%1").arg(i, 2, 10, QChar('0'));
+
+        if (!performer.isEmpty()) {
+                name += "-" + performer;
+        }
+
+        if (!song.isEmpty()) {
+                name += "-" + song;
         }
 
         name.replace(QRegExp("\\s"), "_");
@@ -988,7 +995,7 @@ QString Sheet::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
                 QString s_length = timeref_to_cd(length);
 
 //		output += "  FILE \"" + spec->name + "." + spec->extraFormat["filetype"] + "\" " + s_start + " " + s_length + "\n\n";
-                output += "  FILE \"" + format_cdtrack_name(startmarker->get_description(), i+1) + "." + spec->extraFormat["filetype"] + "\" 0 " + s_length + "\n\n";
+                output += "  FILE \"" + format_cdtrack_name(startmarker, i+1) + "." + spec->extraFormat["filetype"] + "\" 0 " + s_length + "\n\n";
 //		start += length;
 
 		// check if the second marker is of type "Endmarker"
