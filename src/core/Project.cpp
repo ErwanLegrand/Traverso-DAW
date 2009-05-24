@@ -667,15 +667,19 @@ int Project::create_cdrdao_toc(ExportSpecification* spec)
 		foreach(Sheet* sheet, m_sheets) {
 			sheets.append(sheet);
 		}
-		// filename of the toc file is "project-name.toc"
+
+                // filename of the toc file is "project-name.toc"
 		filename += get_title() + ".toc";
 	} else {
 		Sheet* sheet = get_current_sheet();
-		if (!sheet) {
+                if (!sheet) {
 			return -1;
 		}
 		sheets.append(sheet);
-	}
+
+                // filename of the toc file is "sheet-name.toc"
+                filename += spec->basename + ".toc";
+        }
 	
 	QString output;
 
@@ -709,11 +713,6 @@ int Project::create_cdrdao_toc(ExportSpecification* spec)
 	
 
 	if (spec->writeToc) {
-		if (!spec->allSheets) {
-			// filename of the toc file is "sheet-name.toc"
-			filename += spec->basename + ".toc";
-		}
-		
 		spec->tocFileName = filename;
 
 		QFile file(filename);
