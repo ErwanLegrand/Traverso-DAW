@@ -93,6 +93,7 @@ private slots:
 	void cd_export_progress(int progress);
         void set_export_message(QString message);
 	void query_devices();
+        void sheet_mode_changed(bool);
 	
 	void reject();
 };

@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QList>
 #include <QDomNode>
 #include "ContextItem.h"
-
+#include "defines.h"
 
 class Sheet;
 class ResourcesManager;
@@ -98,7 +98,8 @@ public :
 	int export_project(ExportSpecification* spec);
 	int start_export(ExportSpecification* spec);
 	int create_cdrdao_toc(ExportSpecification* spec);
-	
+        TimeRef get_cd_totaltime(ExportSpecification*);
+
 	enum {
 		SETTING_XML_CONTENT_FAILED = -1,
   		PROJECT_FILE_COULD_NOT_BE_OPENED = -2,

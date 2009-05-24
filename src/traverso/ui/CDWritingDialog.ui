@@ -1,57 +1,58 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>CDWritingDialog</class>
- <widget class="QDialog" name="CDWritingDialog" >
-  <property name="geometry" >
+ <widget class="QDialog" name="CDWritingDialog">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>357</width>
-    <height>403</height>
+    <width>366</width>
+    <height>417</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>CD Writing</string>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
+  <layout class="QVBoxLayout">
+   <property name="spacing">
     <number>6</number>
    </property>
+   <property name="margin">
+    <number>9</number>
+   </property>
    <item>
-    <widget class="QGroupBox" name="optionsGroupBox" >
-     <property name="title" >
+    <widget class="QGroupBox" name="optionsGroupBox">
+     <property name="title">
       <string>General Options</string>
      </property>
-     <layout class="QVBoxLayout" >
-      <property name="margin" >
-       <number>9</number>
-      </property>
-      <property name="spacing" >
+     <layout class="QVBoxLayout">
+      <property name="spacing">
        <number>6</number>
       </property>
+      <property name="margin">
+       <number>9</number>
+      </property>
       <item>
-       <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <property name="spacing" >
+       <layout class="QHBoxLayout">
+        <property name="spacing">
          <number>6</number>
         </property>
+        <property name="margin">
+         <number>0</number>
+        </property>
         <item>
-         <widget class="QRadioButton" name="cdCurrentSheetButton" >
-          <property name="text" >
+         <widget class="QRadioButton" name="cdCurrentSheetButton">
+          <property name="text">
            <string>Write current Sheet</string>
           </property>
-          <property name="checked" >
+          <property name="checked">
            <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="cdAllSheetsButton" >
-          <property name="text" >
+         <widget class="QRadioButton" name="cdAllSheetsButton">
+          <property name="text">
            <string>Write all Sheets</string>
           </property>
          </widget>
@@ -59,15 +60,15 @@
        </layout>
       </item>
       <item>
-       <widget class="QCheckBox" name="cdNormalizeCheckBox" >
-        <property name="text" >
+       <widget class="QCheckBox" name="cdNormalizeCheckBox">
+        <property name="text">
          <string>Calculate and apply normalization</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="cdDiskExportOnlyCheckBox" >
-        <property name="text" >
+       <widget class="QCheckBox" name="cdDiskExportOnlyCheckBox">
+        <property name="text">
          <string>Export wav and toc files only (don't write CD)</string>
         </property>
        </widget>
@@ -76,31 +77,29 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="burnGroupBox" >
-     <property name="title" >
+    <widget class="QGroupBox" name="burnGroupBox">
+     <property name="title">
       <string>Burning Device</string>
      </property>
-     <layout class="QVBoxLayout" >
-      <property name="margin" >
-       <number>9</number>
-      </property>
-      <property name="spacing" >
+     <layout class="QVBoxLayout">
+      <property name="spacing">
        <number>6</number>
       </property>
+      <property name="margin">
+       <number>9</number>
+      </property>
       <item>
-       <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <property name="spacing" >
+       <layout class="QHBoxLayout">
+        <property name="spacing">
          <number>6</number>
         </property>
+        <property name="margin">
+         <number>0</number>
+        </property>
         <item>
-         <widget class="QComboBox" name="cdDeviceComboBox" >
-          <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>5</hsizetype>
-            <vsizetype>0</vsizetype>
+         <widget class="QComboBox" name="cdDeviceComboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
             <horstretch>5</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -108,8 +107,8 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="refreshButton" >
-          <property name="text" >
+         <widget class="QPushButton" name="refreshButton">
+          <property name="text">
            <string/>
           </property>
          </widget>
@@ -117,26 +116,26 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <property name="spacing" >
+       <layout class="QHBoxLayout">
+        <property name="spacing">
          <number>6</number>
         </property>
+        <property name="margin">
+         <number>0</number>
+        </property>
         <item>
-         <widget class="QLabel" name="label_10" >
-          <property name="text" >
+         <widget class="QLabel" name="label_10">
+          <property name="text">
            <string>Number of copies</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBoxNumCopies" >
-          <property name="minimum" >
+         <widget class="QSpinBox" name="spinBoxNumCopies">
+          <property name="minimum">
            <number>1</number>
           </property>
-          <property name="value" >
+          <property name="value">
            <number>1</number>
           </property>
          </widget>
@@ -144,104 +143,104 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <property name="spacing" >
+       <layout class="QHBoxLayout">
+        <property name="spacing">
          <number>6</number>
         </property>
+        <property name="margin">
+         <number>0</number>
+        </property>
         <item>
-         <widget class="QCheckBox" name="simulateCheckBox" >
-          <property name="text" >
+         <widget class="QCheckBox" name="simulateCheckBox">
+          <property name="text">
            <string>Simulate</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_9" >
-          <property name="text" >
+         <widget class="QLabel" name="label_9">
+          <property name="text">
            <string>Speed</string>
           </property>
-          <property name="alignment" >
+          <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="speedComboBox" >
+         <widget class="QComboBox" name="speedComboBox">
           <item>
-           <property name="text" >
+           <property name="text">
             <string>auto</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>1x</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>2x</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>4x</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>8x</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>12x</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>16x</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>20x</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>24x</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>28x</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>32x</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>36x</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>40x</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>44x</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>48x</string>
            </property>
           </item>
@@ -253,30 +252,45 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_3" >
-     <property name="title" >
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="title">
       <string>Status</string>
      </property>
-     <layout class="QVBoxLayout" >
-      <property name="margin" >
-       <number>9</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QLabel" name="cdExportInformationLabel" >
-        <property name="text" >
-         <string>Information</string>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Total Length [mm:ss:frames]:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="cdTotalTimeLabel">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLabel" name="cdExportInformationLabel">
+        <property name="text">
+         <string>Progress</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QProgressBar" name="progressBar" >
-        <property name="value" >
+       <widget class="QProgressBar" name="progressBar">
+        <property name="value">
          <number>0</number>
         </property>
-        <property name="orientation" >
+        <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
        </widget>
@@ -285,19 +299,19 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
+    <layout class="QHBoxLayout">
+     <property name="spacing">
       <number>6</number>
+     </property>
+     <property name="margin">
+      <number>0</number>
      </property>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>40</width>
          <height>20</height>
@@ -306,30 +320,28 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="startButton" >
-       <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>7</hsizetype>
-         <vsizetype>0</vsizetype>
+      <widget class="QPushButton" name="startButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>Start Writing</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="stopButton" >
-       <property name="text" >
+      <widget class="QPushButton" name="stopButton">
+       <property name="text">
         <string>Abort</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="closeButton" >
-       <property name="text" >
+      <widget class="QPushButton" name="closeButton">
+       <property name="text">
         <string>Close</string>
        </property>
       </widget>
@@ -339,5 +351,25 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>cdCurrentSheetButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>CDWritingDialog</receiver>
+   <slot>sheet_mode_changed(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>46</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>46</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>sheet_mode_changed(bool)</slot>
+ </slots>
 </ui>

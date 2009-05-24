@@ -658,6 +658,27 @@ int Project::start_export(ExportSpecification* spec)
 	return 1;
 }
 
+/* returns the total time of the data that will be written to CD */
+TimeRef Project::get_cd_totaltime(ExportSpecification* spec)
+{
+        TimeRef totalTime = TimeRef();
+
+        spec->renderpass = ExportSpecification::CREATE_CDRDAO_TOC;
+
+        if (spec->allSheets) {
+                foreach(Sheet* sheet, m_sheets) {
+                        sheet->prepare_export(spec);
+                        totalTime += spec->totalTime;
+                }
+        } else {
+                Sheet* sheet = get_current_sheet();
+                sheet->prepare_export(spec);
+                totalTime += spec->totalTime;
+        }
+
+        return totalTime;
+}
+
 int Project::create_cdrdao_toc(ExportSpecification* spec)
 {
 	QList<Sheet* > sheets;
