@@ -1,1 +1,1 @@
-ADD_SUBDIRECTORY(TraversoCommands ${TRAVERSO_BUILD_DIR})
+ADD_SUBDIRECTORY(TraversoCommands)
