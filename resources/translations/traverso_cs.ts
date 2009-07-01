@@ -496,7 +496,7 @@ projeví až po novém spuštění Traversa!</translation>
     <message>
         <location filename="../../src/sheetcanvas/ui/AudioClipEditDialog.ui" line="152"/>
         <source>Fade In</source>
-        <translation>Zesílení signálu</translation>
+        <translation>Postupné zesílení signálu</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/AudioClipEditDialog.ui" line="272"/>
@@ -1013,12 +1013,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/BusSelectorDialog.ui" line="187"/>
         <source>Left</source>
-        <translation>Vlevo</translation>
+        <translation>Levý</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/BusSelectorDialog.ui" line="194"/>
         <source>Right</source>
-        <translation>Vpravo</translation>
+        <translation>Pravý</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/BusSelectorDialog.ui" line="147"/>
@@ -1553,12 +1553,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/commands/Fade.cpp" line="161"/>
         <source>Fade In: bend</source>
-        <translation>Zesílení signálu: Ohýbání</translation>
+        <translation>Postupné zesílení signálu: Ohýbání</translation>
     </message>
     <message>
         <location filename="../../src/commands/Fade.cpp" line="161"/>
         <source>Fade Out: bend</source>
-        <translation>Zeslabení signálu: Ohýbání</translation>
+        <translation>Postupné zeslabení signálu: Ohýbání</translation>
     </message>
 </context>
 <context>
@@ -1594,12 +1594,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/commands/Fade.cpp" line="339"/>
         <source>Fade In: shape</source>
-        <translation>Zesílení signálu: Tvar</translation>
+        <translation>Postupné zesílení signálu: Tvar</translation>
     </message>
     <message>
         <location filename="../../src/commands/Fade.cpp" line="339"/>
         <source>Fade Out: shape</source>
-        <translation>Zeslabení signálu: Tvar</translation>
+        <translation>Postupné zeslabení signálu: Tvar</translation>
     </message>
 </context>
 <context>
@@ -1607,22 +1607,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/commands/Fade.cpp" line="51"/>
         <source>Fade In: length</source>
-        <translation>Zesílení signálu: Délka</translation>
+        <translation>Postupné zesílení signálu: Délka</translation>
     </message>
     <message>
         <location filename="../../src/commands/Fade.cpp" line="51"/>
         <source>Fade Out: length</source>
-        <translation>Zeslabení signálu: Délka</translation>
+        <translation>Postupné zeslabení signálu: Délka</translation>
     </message>
     <message>
         <location filename="../../src/commands/Fade.cpp" line="63"/>
         <source>Fade In: remove</source>
-        <translation>Zesílení signálu: Odstranit</translation>
+        <translation>Postupné zesílení signálu: Odstranit</translation>
     </message>
     <message>
         <location filename="../../src/commands/Fade.cpp" line="63"/>
         <source>Fade Out: remove</source>
-        <translation>Zeslabení signálu: Odstranit</translation>
+        <translation>Postupné zeslabení signálu: Odstranit</translation>
     </message>
 </context>
 <context>
@@ -1630,12 +1630,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/commands/Fade.cpp" line="253"/>
         <source>Fade In: strength</source>
-        <translation>Zesílení signálu: Síla</translation>
+        <translation>Postupné zesílení signálu: Síla</translation>
     </message>
     <message>
         <location filename="../../src/commands/Fade.cpp" line="253"/>
         <source>Fade Out: strength</source>
-        <translation>Zeslabení signálu: Síla</translation>
+        <translation>Postupné zeslabení signálu: Síla</translation>
     </message>
 </context>
 <context>
@@ -1781,7 +1781,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="145"/>
         <source>Correlation Meter</source>
-        <translation>Ukazatel stupně vzájemných vztahů</translation>
+        <translation>Ukazatel míry vzájemných vztahů</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="153"/>
@@ -1994,7 +1994,7 @@ na nichž je Traverso založeno (Gcc, Qt, Xorg, Linux, atd.)</translation>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="685"/>
         <source>Fast</source>
-        <translation>Rychlý</translation>
+        <translation>Rychlé</translation>
     </message>
     <message>
         <location filename="../../src/traverso/Interface.cpp" line="694"/>
@@ -4827,12 +4827,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/commands/TrackPan.cpp" line="52"/>
         <source>Track Pan: %1</source>
-        <translation>Přehled stopy: %1</translation>
+        <translation>Vyrovnanost stopy: %1</translation>
     </message>
     <message>
         <location filename="../../src/commands/TrackPan.cpp" line="55"/>
         <source>Track Pan</source>
-        <translation>Přehled stopy</translation>
+        <translation>Vyrovnanost stopy</translation>
     </message>
 </context>
 <context>
@@ -4926,12 +4926,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="33"/>
         <source>Panorama</source>
-        <translation>Přehled</translation>
+        <translation>Vyrovnanost (Pan)</translation>
     </message>
     <message>
         <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="34"/>
         <source>Panorama: Reset</source>
-        <translation>Panoráma: znovu nastartovat</translation>
+        <translation>Vyrovnanost: Znovu nastavit</translation>
     </message>
     <message>
         <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="35"/>
@@ -5031,37 +5031,37 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="54"/>
         <source>Vertical In</source>
-        <translation>Svislý dovnitř</translation>
+        <translation>Svislé dovnitř</translation>
     </message>
     <message>
         <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="55"/>
         <source>Horizontal Out</source>
-        <translation>Vodorovný ven</translation>
+        <translation>Vodorovné ven</translation>
     </message>
     <message>
         <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="56"/>
         <source>Horizontal In</source>
-        <translation>Vodorovný dovnitř</translation>
+        <translation>Vodorovné dovnitř</translation>
     </message>
     <message>
         <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="57"/>
         <source>Vertical Out</source>
-        <translation>Svislý ven</translation>
+        <translation>Svislé ven</translation>
     </message>
     <message>
         <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="58"/>
         <source>Omnidirectional</source>
-        <translation>Všesměrový</translation>
+        <translation>Všesměrové</translation>
     </message>
     <message>
         <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="59"/>
         <source>Horizontal</source>
-        <translation>Vodorovný</translation>
+        <translation>Vodorovné</translation>
     </message>
     <message>
         <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="60"/>
         <source>Vertical</source>
-        <translation>Svislý</translation>
+        <translation>Svislé</translation>
     </message>
     <message>
         <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="61"/>
