@@ -36,7 +36,6 @@ OPTION(WANT_MP3_DECODE	"Include mp3 decoding support, for playing mp3 files" ON)
 OPTION(WANT_MP3_ENCODE	"Include mp3 encoding support, for creating mp3 files" OFF)
 OPTION(WANT_PCH     	"Use precompiled headers" OFF)
 OPTION(WANT_DEBUG   	"Debug build" OFF)
-# OPTION(WANT_OPENGL	"Build Traverso with OpenGL support" OFF)
 OPTION(WANT_TRAVERSO_DEBUG "Provides 4 levels of debug ouput on the command line, always on for DEBUG builds" OFF)
 OPTION(WANT_THREAD_CHECK	"Checks at runtime if functions are called from the correct thread, used by developers for debugging" OFF)
 OPTION(WANT_VECLIB_OPTIMIZATIONS "Build with veclib optimizations (Only for PPC based Mac OS X)" OFF)
@@ -132,12 +131,6 @@ TEST_BIG_ENDIAN(WORDS_BIGENDIAN)
 
 # Check for PKG-CONFIG
 FIND_PACKAGE(PkgConfig REQUIRED)
-IF(PKG_CONFIG_FOUND)
-    MESSAGE(STATUS "Program pkg-config found (${PKG_CONFIG_EXECUTABLE})")
-ELSE(PKG_CONFIG_FOUND)
-    MESSAGE(FATAL_ERROR "Program pkg-config not found")
-ENDIF(PKG_CONFIG_FOUND)
-
 
 #FIND DEPENDENCIES
 SET (QT_MIN_VERSION "4.3.1")
@@ -148,16 +141,6 @@ include(${QT_USE_FILE})
 
 
 INCLUDE (ConfigureChecks.cmake)
-
-# IF(WANT_OPENGL)
-# 	IF(QT_QTOPENGL_FOUND)
-# 		LIST(APPEND TRAVERSO_DEFINES -DQT_OPENGL_SUPPORT) 
-# 		SET(HAVE_OPENGL TRUE)
-# 	ENDIF(QT_QTOPENGL_FOUND)
-# ELSE(WANT_OPENGL)
-# 	SET(HAVE_OPENGL FALSE)
-# ENDIF(WANT_OPENGL)
-
 
 
 IF(WANT_PORTAUDIO)

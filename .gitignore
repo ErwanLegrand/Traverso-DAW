@@ -1,0 +1,28 @@
+# common editor temporary files
+*~
+.*~
+.*swp
+#*#
+.project
+
+# cmake products
+CMakeCache.txt
+CMakeFiles
+CPackConfig.cmake
+CPackSourceConfig.cmake
+cmake_install.cmake
+cmake_uninstall.cmake
+Makefile
+/src/config.h
+
+# build products
+/bin
+/lib
+/build
+
+*.[oa]
+
+/src/traverso/qrc_traverso.cxx
+moc_*.cxx
+ui_*.h
+
