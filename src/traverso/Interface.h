@@ -218,6 +218,7 @@ private slots:
 	void sheet_selected();
 	void sheet_selector_sheet_added(Sheet*);
 	void sheet_selector_sheet_removed(Sheet*);
+	void sheet_audio_io_dialog();
 };
 
 

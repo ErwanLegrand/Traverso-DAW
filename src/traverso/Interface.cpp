@@ -72,6 +72,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "dialogs/ExportDialog.h"
 #include "dialogs/CDWritingDialog.h"
 #include "dialogs/project/ImportClipsDialog.h"
+#include "dialogs/AudioIODialog.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -660,6 +661,9 @@ void Interface::create_menus( )
 	action = m_sheetMenu->addAction(tr("New &Track(s)..."));
 	connect(action, SIGNAL(triggered()), this, SLOT(show_newtrack_dialog()));
 
+	action = m_sheetMenu->addAction(tr("Audio I/O..."));
+	connect(action, SIGNAL(triggered()), this, SLOT(sheet_audio_io_dialog()));
+	
 	m_sheetMenu->addSeparator();
 	
 	m_settingsMenu = menuBar()->addMenu(tr("Se&ttings"));
@@ -1680,5 +1684,12 @@ void Interface::sheet_selector_sheet_removed(Sheet* sheet)
 {
 	disconnect(sheet, SIGNAL(propertyChanged()), this, SLOT(sheet_selector_update_sheets()));
 	sheet_selector_update_sheets();
+}
+
+void Interface::sheet_audio_io_dialog()
+{
+	AudioIODialog *aiodlg = new AudioIODialog(this);
+	aiodlg->exec();
+	delete aiodlg;
 }
 

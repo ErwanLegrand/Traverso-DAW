@@ -41,6 +41,7 @@ dialogs/PluginSelectorDialog.cpp
 dialogs/ProjectConverterDialog.cpp
 dialogs/ExportDialog.cpp
 dialogs/CDWritingDialog.cpp
+dialogs/AudioIODialog.cpp
 widgets/BusMonitor.cpp
 widgets/CorrelationMeterWidget.cpp
 widgets/ExportFormatOptionsWidget.cpp
@@ -81,6 +82,7 @@ ui/ProjectConverterDialog.ui
 ui/ExportDialog.ui
 ui/CDWritingDialog.ui
 ui/ImportClipsDialog.ui
+ui/AudioIODialog.ui
 )
 
 SET(TRAVERSO_GUI_MOC_CLASSES
@@ -102,6 +104,7 @@ dialogs/project/OpenProjectDialog.h
 dialogs/project/ProjectManagerDialog.h
 dialogs/settings/SettingsDialog.h
 dialogs/settings/Pages.h
+dialogs/AudioIODialog.h
 widgets/BusMonitor.h
 widgets/CorrelationMeterWidget.h
 widgets/ExportFormatOptionsWidget.h
@@ -288,6 +291,12 @@ IF(HAVE_MP3_ENCODING)
 	)
 ENDIF(HAVE_MP3_ENCODING)
 
+
+# IF(HAVE_OPENGL)
+# 	TARGET_LINK_LIBRARIES(traverso
+# 		${QT_QTOPENGL_LIBRARY}
+# 	)
+# ENDIF(HAVE_OPENGL)
 
 IF(HAVE_ALSA)
 TARGET_LINK_LIBRARIES(traverso

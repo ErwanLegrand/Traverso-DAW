@@ -100,9 +100,17 @@ public:
 		return captureBuses.value(name);
 	}
 
+	void set_bus_config(QHash<QString, QStringList> c_capture, QHash<QString, QStringList> c_playback);
+
 	QStringList get_capture_buses_names() const;
 	QStringList get_playback_buses_names() const;
-
+	
+	QStringList get_capture_channel_names() const;
+	QStringList get_playback_channel_names() const;
+	
+	QHash<QString, QStringList> get_capture_bus_configuration();
+	QHash<QString, QStringList> get_playback_bus_configuration();
+	
 	QString get_device_name() const;
 	QString get_device_longname() const;
 	QString get_driver_type() const;
@@ -158,6 +166,8 @@ private:
 	QHash<QByteArray, AudioChannel* >	captureChannels;
 	QHash<QByteArray, AudioBus* >		playbackBuses;
 	QHash<QByteArray, AudioBus* >		captureBuses;
+	QHash<QString, QStringList>		captureBusConfig;
+	QHash<QString, QStringList>		playbackBusConfig;
 	QStringList				availableDrivers;
 	QTimer					m_xrunResetTimer;
 #if defined (JACK_SUPPORT)
@@ -182,9 +192,12 @@ private:
 	int create_driver(QString driverType, bool capture, bool playback, const QString& cardDevice);
 	int transport_control(transport_state_t state);
 
-	void setup_buses();
+	void setup_default_capture_buses();
+	void setup_default_playback_buses();
 	void post_process();
 	void free_memory();
+	void setup_capture_buses();
+	void setup_playback_buses();
 
 	// These are reserved for Driver Objects only!!
 	AudioChannel* register_capture_channel(const QByteArray& busName, const QString& audioType, int flags, uint bufferSize, uint channel );

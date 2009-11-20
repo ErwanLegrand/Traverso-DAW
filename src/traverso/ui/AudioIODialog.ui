@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AudioIODialog</class>
+ <widget class="QDialog" name="AudioIODialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>525</width>
+    <height>420</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Audio I/O</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="labelDeviceName">
+     <property name="text">
+      <string>Audio Device</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tabInput">
+      <attribute name="title">
+       <string>Input</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QTableWidget" name="tableWidgetInput">
+         <attribute name="horizontalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="buttonAddMonoInput">
+           <property name="text">
+            <string>Add &amp;Mono Bus</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="buttonAddStereoInput">
+           <property name="text">
+            <string>Add &amp;Stereo Bus</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="buttonRemoveInput">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>&amp;Remove Bus</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabOutput">
+      <attribute name="title">
+       <string>Output</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QTableWidget" name="tableWidgetOutput">
+         <attribute name="horizontalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="horizontalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QPushButton" name="buttonAddMonoOutput">
+           <property name="text">
+            <string>Add &amp;Mono Bus</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="buttonAddStereoOutput">
+           <property name="text">
+            <string>Add &amp;Stereo Bus</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="buttonRemoveOutput">
+           <property name="text">
+            <string>&amp;Remove Bus</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>AudioIODialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>257</x>
+     <y>410</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>AudioIODialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>325</x>
+     <y>410</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonRemoveOutput</sender>
+   <signal>clicked()</signal>
+   <receiver>AudioIODialog</receiver>
+   <slot>removeOutput()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>455</x>
+     <y>350</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>262</x>
+     <y>209</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonAddStereoInput</sender>
+   <signal>clicked()</signal>
+   <receiver>AudioIODialog</receiver>
+   <slot>addStereoInput()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>262</x>
+     <y>350</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>262</x>
+     <y>209</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonAddMonoInput</sender>
+   <signal>clicked()</signal>
+   <receiver>AudioIODialog</receiver>
+   <slot>addMonoInput()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>99</x>
+     <y>350</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>262</x>
+     <y>209</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonRemoveInput</sender>
+   <signal>clicked()</signal>
+   <receiver>AudioIODialog</receiver>
+   <slot>removeInput()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>425</x>
+     <y>350</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>262</x>
+     <y>209</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tableWidgetInput</sender>
+   <signal>cellClicked(int,int)</signal>
+   <receiver>AudioIODialog</receiver>
+   <slot>inputSelectionChanged(int,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>181</x>
+     <y>127</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>230</x>
+     <y>6</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonAddStereoOutput</sender>
+   <signal>clicked()</signal>
+   <receiver>AudioIODialog</receiver>
+   <slot>addStereoOutput()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>196</x>
+     <y>350</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>262</x>
+     <y>209</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonAddMonoOutput</sender>
+   <signal>clicked()</signal>
+   <receiver>AudioIODialog</receiver>
+   <slot>addMonoOutput()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>350</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>262</x>
+     <y>209</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tableWidgetOutput</sender>
+   <signal>cellClicked(int,int)</signal>
+   <receiver>AudioIODialog</receiver>
+   <slot>outputSelectionChanged(int,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>262</x>
+     <y>199</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>262</x>
+     <y>209</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>addMonoInput()</slot>
+  <slot>addStereoInput()</slot>
+  <slot>removeInput()</slot>
+  <slot>inputSelectionChanged(int,int)</slot>
+  <slot>addMonoOutput()</slot>
+  <slot>addStereoOutput()</slot>
+  <slot>removeOutput()</slot>
+  <slot>outputSelectionChanged(int,int)</slot>
+ </slots>
+</ui>
