@@ -213,18 +213,18 @@ AudioDevice::~AudioDevice()
 
 void AudioDevice::free_memory()
 {
-	foreach(AudioBus* bus, captureBuses) {
+        foreach(AudioBus* bus, m_captureBuses) {
 		delete bus;
 	}
 
-	foreach(AudioBus* bus, playbackBuses) {
+        foreach(AudioBus* bus, m_playbackBuses) {
 		delete bus;
 	}
 
-	captureChannels.clear();
-	playbackChannels.clear();
-	captureBuses.clear();
-	playbackBuses.clear();
+        m_captureChannels.clear();
+        m_playbackChannels.clear();
+        m_captureBuses.clear();
+        m_playbackBuses.clear();
 }
 
 /**
@@ -310,7 +310,7 @@ void AudioDevice::delay( float  )
  */
 uint AudioDevice::capture_buses_count( ) const
 {
-	return captureChannels.size();
+        return m_captureChannels.size();
 }
 
 /**
@@ -319,7 +319,7 @@ uint AudioDevice::capture_buses_count( ) const
  */
 uint AudioDevice::playback_buses_count( ) const
 {
-	return playbackChannels.size();
+        return m_playbackChannels.size();
 }
 
 /**
@@ -357,13 +357,13 @@ void AudioDevice::set_parameters( int rate,
 	
 	driver->attach();
 	
-	if (!captureBusConfig.count()) {
+        if (!m_captureBusConfig.count()) {
 		setup_default_capture_buses();
 	} else {
 		setup_capture_buses();
 	}
 
-	if (!playbackBusConfig.count()) {
+        if (!m_playbackBusConfig.count()) {
 		setup_default_playback_buses();
 	} else {
 		setup_playback_buses();
@@ -520,14 +520,14 @@ int AudioDevice::create_driver(QString driverType, bool capture, bool playback, 
 AudioChannel* AudioDevice::register_capture_channel(const QByteArray& chanName, const QString& audioType, int flags, uint , uint channel )
 {
 	AudioChannel* chan = new AudioChannel(chanName, audioType, flags, channel);
-	captureChannels.insert(chanName, chan);
+        m_captureChannels.insert(chanName, chan);
 	return chan;
 }
 
 AudioChannel* AudioDevice::register_playback_channel(const QByteArray& chanName, const QString& audioType, int flags, uint , uint channel )
 {
 	AudioChannel* chan = new AudioChannel(chanName, audioType, flags, channel);
-	playbackChannels.insert(chanName, chan);
+        m_playbackChannels.insert(chanName, chan);
 	return chan;
 }
 
@@ -585,7 +585,7 @@ int AudioDevice::shutdown( )
 QStringList AudioDevice::get_capture_buses_names( ) const
 {
 	QStringList names;
-	foreach(AudioBus* bus, captureBuses) {
+        foreach(AudioBus* bus, m_captureBuses) {
 		names.append(bus->get_name());
 	}
 	return names;
@@ -601,7 +601,7 @@ QStringList AudioDevice::get_capture_buses_names( ) const
 QStringList AudioDevice::get_playback_buses_names( ) const
 {
 	QStringList names;
-	foreach(AudioBus* bus, playbackBuses) {
+        foreach(AudioBus* bus, m_playbackBuses) {
 		names.append(bus->get_name());
 	}
 	return names;
@@ -610,7 +610,7 @@ QStringList AudioDevice::get_playback_buses_names( ) const
 QStringList AudioDevice::get_capture_channel_names() const
 {
 	QStringList names;
-	foreach(AudioChannel* chan, captureChannels) {
+        foreach(AudioChannel* chan, m_captureChannels) {
 		names.append(chan->get_name());
 	}
 	return names;
@@ -619,7 +619,7 @@ QStringList AudioDevice::get_capture_channel_names() const
 QStringList AudioDevice::get_playback_channel_names() const
 {
 	QStringList names;
-	foreach(AudioChannel* chan, playbackChannels) {
+        foreach(AudioChannel* chan, m_playbackChannels) {
 		names.append(chan->get_name());
 	}
 	return names;
@@ -627,9 +627,9 @@ QStringList AudioDevice::get_playback_channel_names() const
 
 QHash<QString, QStringList> AudioDevice::get_capture_bus_configuration()
 {
-	captureBusConfig.clear();
+        m_captureBusConfig.clear();
 	
-	foreach(AudioBus* bus, captureBuses) {
+        foreach(AudioBus* bus, m_captureBuses) {
 		QString name = bus->get_name();
 		QStringList lst;
 		
@@ -637,17 +637,17 @@ QHash<QString, QStringList> AudioDevice::get_capture_bus_configuration()
 			lst.append(bus->get_channel(i)->get_name());
 		}
 		
-		captureBusConfig.insert(name, lst);
+                m_captureBusConfig.insert(name, lst);
 	}
 	
-	return captureBusConfig;
+        return m_captureBusConfig;
 }
 
 QHash<QString, QStringList> AudioDevice::get_playback_bus_configuration()
 {
-	playbackBusConfig.clear();
+        m_playbackBusConfig.clear();
 	
-	foreach(AudioBus* bus, playbackBuses) {
+        foreach(AudioBus* bus, m_playbackBuses) {
 		QString name = bus->get_name();
 		QStringList lst;
 		
@@ -655,16 +655,16 @@ QHash<QString, QStringList> AudioDevice::get_playback_bus_configuration()
 			lst.append(bus->get_channel(i)->get_name());
 		}
 		
-		playbackBusConfig.insert(name, lst);
+                m_playbackBusConfig.insert(name, lst);
 	}
 	
-	return playbackBusConfig;
+        return m_playbackBusConfig;
 }
 
 void AudioDevice::set_bus_config(QHash<QString, QStringList> c_capture, QHash<QString, QStringList> c_playback)
 {
-	captureBusConfig = c_capture;
-	playbackBusConfig = c_playback;
+        m_captureBusConfig = c_capture;
+        m_playbackBusConfig = c_playback;
 
 	setup_capture_buses();
 	setup_playback_buses();
@@ -677,18 +677,18 @@ void AudioDevice::setup_default_capture_buses( )
 
 	AudioChannel* channel;
 	
-	for (int i=1; i <= captureChannels.size();) {
+        for (int i=1; i <= m_captureChannels.size();) {
 		name = "Capture " + QByteArray::number(number++);
 		AudioBus* bus = new AudioBus(name);
-		channel = captureChannels.value("capture_"+QByteArray::number(i++), 0);
+                channel = m_captureChannels.value("capture_"+QByteArray::number(i++), 0);
 		if (channel) {
 			bus->add_channel(channel);
 		}
-		channel = captureChannels.value("capture_"+QByteArray::number(i++), 0);
+                channel = m_captureChannels.value("capture_"+QByteArray::number(i++), 0);
 		if (channel) {
 			bus->add_channel(channel);
 		}
-		captureBuses.insert(name, bus);
+                m_captureBuses.insert(name, bus);
 	}
 // 	PWARN("Capture buses count is: %d", captureBuses.size());
 }
@@ -700,18 +700,18 @@ void AudioDevice::setup_default_playback_buses( )
 
 	AudioChannel* channel;
 	
-	for (int i=1; i <= playbackChannels.size();) {
+        for (int i=1; i <= m_playbackChannels.size();) {
 		name = "Playback " + QByteArray::number(number++);
 		AudioBus* bus = new AudioBus(name);
-		channel = playbackChannels.value("playback_"+QByteArray::number(i++), 0);
+                channel = m_playbackChannels.value("playback_"+QByteArray::number(i++), 0);
 		if (channel) {
 			bus->add_channel(channel);
 		}
-		channel = playbackChannels.value("playback_"+QByteArray::number(i++), 0);
+                channel = m_playbackChannels.value("playback_"+QByteArray::number(i++), 0);
 		if (channel) {
 			bus->add_channel(channel);
 		}
-		playbackBuses.insert(name, bus);
+                m_playbackBuses.insert(name, bus);
 	}
 // 	PWARN("Playback buses count is: %d", playbackBuses.size());
 }
@@ -722,21 +722,21 @@ void AudioDevice::setup_capture_buses()
 	QStringList list;
 	AudioChannel* channel;
 	
-	QHash<QString, QStringList>::const_iterator it = captureBusConfig.constBegin();
-	while (it != captureBusConfig.constEnd()) {
+        QHash<QString, QStringList>::const_iterator it = m_captureBusConfig.constBegin();
+        while (it != m_captureBusConfig.constEnd()) {
 		name = it.key().toUtf8();
 		list = it.value();
 		
 		AudioBus* bus = new AudioBus(name);
 		
 		for (int i = 0; i < list.count(); ++i) {
-			channel = captureChannels.value(list.at(i).toUtf8(), 0);
+                        channel = m_captureChannels.value(list.at(i).toUtf8(), 0);
 			if (channel) {
 				bus->add_channel(channel);
 			}
 		}
 
-		captureBuses.insert(name, bus);
+                m_captureBuses.insert(name, bus);
 		++it;
 	}
 }
@@ -747,21 +747,21 @@ void AudioDevice::setup_playback_buses()
 	QStringList list;
 	AudioChannel* channel;
 	
-	QHash<QString, QStringList>::const_iterator it = playbackBusConfig.constBegin();
-	while (it != playbackBusConfig.constEnd()) {
+        QHash<QString, QStringList>::const_iterator it = m_playbackBusConfig.constBegin();
+        while (it != m_playbackBusConfig.constEnd()) {
 		name = it.key().toUtf8();
 		list = it.value();
 		
 		AudioBus* bus = new AudioBus(name);
 		
 		for (int i = 0; i < list.count(); ++i) {
-			channel = playbackChannels.value(list.at(i).toUtf8(), 0);
+                        channel = m_playbackChannels.value(list.at(i).toUtf8(), 0);
 			if (channel) {
 				bus->add_channel(channel);
 			}
 		}
 		
-		playbackBuses.insert(name, bus);
+                m_playbackBuses.insert(name, bus);
 		++it;
 	}
 }

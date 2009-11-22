@@ -82,7 +82,7 @@ public:
 	 */
 	AudioBus* get_playback_bus(QByteArray name) const
 	{
-		return playbackBuses.value(name);
+                return m_playbackBuses.value(name);
 	}
 	
 	/**
@@ -97,7 +97,7 @@ public:
 	 */
 	AudioBus* get_capture_bus(QByteArray name) const
 	{
-		return captureBuses.value(name);
+                return m_captureBuses.value(name);
 	}
 
 	void set_bus_config(QHash<QString, QStringList> c_capture, QHash<QString, QStringList> c_playback);
@@ -162,12 +162,12 @@ private:
 	Driver* 				driver;
 	AudioDeviceThread* 			audioThread;
 	APILinkedList				m_clients;
-	QHash<QByteArray, AudioChannel* >	playbackChannels;
-	QHash<QByteArray, AudioChannel* >	captureChannels;
-	QHash<QByteArray, AudioBus* >		playbackBuses;
-	QHash<QByteArray, AudioBus* >		captureBuses;
-	QHash<QString, QStringList>		captureBusConfig;
-	QHash<QString, QStringList>		playbackBusConfig;
+        QHash<QByteArray, AudioChannel* >	m_playbackChannels;
+        QHash<QByteArray, AudioChannel* >	m_captureChannels;
+        QHash<QByteArray, AudioBus* >		m_playbackBuses;
+        QHash<QByteArray, AudioBus* >		m_captureBuses;
+        QHash<QString, QStringList>		m_captureBusConfig;
+        QHash<QString, QStringList>		m_playbackBusConfig;
 	QStringList				availableDrivers;
 	QTimer					m_xrunResetTimer;
 #if defined (JACK_SUPPORT)
