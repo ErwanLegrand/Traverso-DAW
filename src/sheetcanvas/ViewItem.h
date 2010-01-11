@@ -49,10 +49,22 @@ class SheetView;
 class ViewItem : public ContextItem, public QGraphicsItem
 {
 	Q_OBJECT
+#if QT_VERSION >= 0x040600
+        Q_INTERFACES(QGraphicsItem)
+#endif
 	
 public:
 
-	ViewItem(ViewItem* parentViewItem=0, ContextItem* parentContext=0);
+        ViewItem(ViewItem* parentViewItem=0, ContextItem* parentContext=0) :
+        ContextItem(parentViewItem)
+        , QGraphicsItem(parentViewItem)
+        {
+                set_context_item(parentContext);
+                m_parentViewItem = parentViewItem;
+                setCursor(themer()->get_cursor("Default"));
+                setFlag(ItemUsesExtendedStyleOption);
+        }
+
 	~ViewItem() {};
 	
 	enum {Type = UserType + 1};
@@ -62,7 +74,7 @@ public:
 		for (int i=0; i< QGraphicsItem::children().size(); ++i) {
 			QGraphicsItem* item = QGraphicsItem::children().at(i);
 			if (is_viewitem(item)) {
-				((ViewItem*)item)->calculate_bounding_rect();
+                                (qgraphicsitem_cast<ViewItem*>(item))->calculate_bounding_rect();
 			}
 		}
 	}
