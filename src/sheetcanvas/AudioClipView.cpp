@@ -194,9 +194,9 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
                         painter->drawText(r, Qt::AlignVCenter, buildProcess);
 
                 } else if (m_clip->recording_state() == AudioClip::NO_RECORDING) {
-                        PROFILE_START;
+//                        PROFILE_START;
                         draw_peaks(painter, option->exposedRect.x(), pixelcount);
-                        PROFILE_END("draw peaks");
+//                        PROFILE_END("draw peaks");
                 }
         }
 
