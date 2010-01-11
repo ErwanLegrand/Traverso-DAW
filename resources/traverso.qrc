@@ -1,84 +1,82 @@
-<!DOCTYPE RCC><RCC version="1.0">
-	<qresource>
-		<file alias="cursorDrag">images/cursorDrag.xpm</file>
-		<file alias="cursorDragNode">images/cursorDragNode.xpm</file>
-		<file alias="cursorFloatOverClip">images/cursorFloatOverClip.xpm</file>
-		<file alias="cursorFloatOverPlugin">images/cursorFloatOverPlugin.xpm</file>
-		<file alias="cursorFloatOverFade">images/cursorFloatOverFade.xpm</file>
-		<file alias="cursorFloatOverTrack">images/cursorFloatOverTrack.xpm</file>
-		<file alias="cursorFloat">images/cursorFloat.xpm</file>
-		<file alias="cursorZoom">images/cursorZoom.xpm</file>
-		<file alias="cursorZoomHorizontal">images/cursorZoomHorizontal.xpm</file>
-		<file alias="cursorZoomVertical">images/cursorZoomVertical.xpm</file>
-		<file alias="cursorHoldLrud">images/cursorHoldLrud.xpm</file>
-		<file alias="cursorHoldLr">images/cursorHoldLr.xpm</file>
-		<file alias="cursorHoldUd">images/cursorHoldUd.xpm</file>
-		<file alias="cursorGain">images/cursorGain.xpm</file>
-		<file alias="lock">images/lock.png</file>
-		<file alias="traverso">images/traverso.xpm</file>
-		<file alias="windowicon">images/windowicon.xpm</file>
-		<file alias="keymaps/default.xml">keymap.xml</file>
-		<file alias="fadeshapes">fadeshapes.xml</file>
-		<file alias="themes/TraversoLight/traversotheme.xml">themes/default/traversotheme.xml</file> 
-		<file alias="themes/ubuntu/traversotheme.xml">themes/ubuntu/traversotheme.xml</file> 
-		<file alias="themes/medium-contrast/traversotheme.xml">themes/medium-contrast/traversotheme.xml</file> 
-		<file alias="themes/system-palette/traversotheme.xml">themes/system-palette/traversotheme.xml</file> 
-		<file alias="themes/gradients/traversotheme.xml">themes/gradients/traversotheme.xml</file> 
-		<file alias="bus_in">images/bus-in.xpm</file>
-		<file alias="bus_out">images/bus-out.xpm</file>
-		<file alias="audiocard">images/soundcard.png</file>
-		<file alias="keyboard">images/keyboard.png</file>
-		<file alias="cpu">images/cpu.png</file>
-		<file alias="audiocardsmall">images/soundcardsmall.png</file>
-		<file alias="harddrivesmall">images/harddrivesmall.png</file>
-		<file alias="diskdrive">images/harddrive.png</file>
-		<file alias="audiosettings">images/audiosettings.png</file>
-		<file alias="driver">images/driver.png</file>
-		<file alias="memorysmall">images/memory.png</file>
-		<file alias="appearance">images/appearance.png</file>
-		<file alias="performance">images/performance.png</file>
-		<file alias="playstart">images/icons/media-playback-start.png</file>
-		<file alias="playstop">images/icons/media-playback-stop.png</file>
-		<file alias="skipleft">images/icons/media-skip-backward.png</file>
-		<file alias="skipright">images/icons/media-skip-forward.png</file>
-		<file alias="seekleft">images/icons/media-seek-backward.png</file>
-		<file alias="seekright">images/icons/media-seek-forward.png</file>
-		<file alias="record">images/icons/media-record.png</file>
-		<file alias="projectmanagement">images/icons/32X32/projects.png</file>
-		<file alias="sheetmanagement">images/icons/32X32/sheets.png</file>
-		<file alias="audiosourcesmanagement">images/icons/32X32/audiosources.png</file>
-		<file alias="exit">images/icons/application-exit.png</file>
-		<file alias="undo">images/icons/edit-undo.png</file>
-		<file alias="redo">images/icons/edit-redo.png</file>
-		<file alias="redled-16">images/icons/16x16/redled.png</file>
-		<file alias="refresh-16">images/icons/16x16/reload.png</file>
-		<file alias="redledinactive-16">images/icons/16x16/redledinactive.png</file>
-		<file alias="projectmanager">images/icons/project-open.png</file>
-		<file alias="new">images/icons/document-new.png</file>
-		<file alias="open">images/icons/document-open.png</file>
-		<file alias="save">images/icons/document-save.png</file>
-		<file alias="export">images/icons/document-export.png</file>
-		<file alias="import">images/icons/document-import.png</file>
-		<file alias="restore">images/icons/archive-extract.png</file>
-		<file alias="write-cd">images/icons/tools-media-optical-burn.png</file>
-		<file alias="new-sheet">images/icons/tab-new-background.png</file>
-		<file alias="import-audio">images/icons/traverso-import-audio.png</file>
-		<file alias="import-silence">images/icons/document-import.png</file>
-		<file alias="snap">images/icons/traverso-snap.png</file>
-		<file alias="effects">images/icons/view-media-equalizer.png</file>
-		<file alias="follow">images/icons/system-switch-user.png</file>
-
-		<file alias="up">images/icons/arrow-up.png</file>
-		<file alias="down">images/icons/arrow-down.png</file>
-		<file alias="add">images/icons/list-add.png</file>
-		<file alias="remove">images/icons/list-remove.png</file>
-
-		<file>translations/traverso_nl.qm</file>
-		<file>translations/traverso_de.qm</file>
-		<file>translations/traverso_fr.qm</file>
-		<file>translations/traverso_bg.qm</file>
-		<file>translations/traverso_cs.qm</file>
-		
-		<file alias="project_conversion_description_2_3">projectconversion/2_to_3.html</file>
-	</qresource>
+<RCC>
+    <qresource prefix="/">
+        <file alias="cursorDrag">images/cursorDrag.xpm</file>
+        <file alias="cursorDragNode">images/cursorDragNode.xpm</file>
+        <file alias="cursorFloatOverClip">images/cursorFloatOverClip.xpm</file>
+        <file alias="cursorFloatOverPlugin">images/cursorFloatOverPlugin.xpm</file>
+        <file alias="cursorFloatOverFade">images/cursorFloatOverFade.xpm</file>
+        <file alias="cursorFloatOverTrack">images/cursorFloatOverTrack.xpm</file>
+        <file alias="cursorFloat">images/cursorFloat.xpm</file>
+        <file alias="cursorZoom">images/cursorZoom.xpm</file>
+        <file alias="cursorZoomHorizontal">images/cursorZoomHorizontal.xpm</file>
+        <file alias="cursorZoomVertical">images/cursorZoomVertical.xpm</file>
+        <file alias="cursorHoldLrud">images/cursorHoldLrud.xpm</file>
+        <file alias="cursorHoldLr">images/cursorHoldLr.xpm</file>
+        <file alias="cursorHoldUd">images/cursorHoldUd.xpm</file>
+        <file alias="cursorGain">images/cursorGain.xpm</file>
+        <file alias="lock">images/lock.png</file>
+        <file alias="traverso">images/traverso.xpm</file>
+        <file alias="windowicon">images/windowicon.xpm</file>
+        <file alias="keymaps/default.xml">keymap.xml</file>
+        <file alias="fadeshapes">fadeshapes.xml</file>
+        <file alias="themes/TraversoLight/traversotheme.xml">themes/default/traversotheme.xml</file>
+        <file alias="themes/ubuntu/traversotheme.xml">themes/ubuntu/traversotheme.xml</file>
+        <file alias="themes/medium-contrast/traversotheme.xml">themes/medium-contrast/traversotheme.xml</file>
+        <file alias="themes/system-palette/traversotheme.xml">themes/system-palette/traversotheme.xml</file>
+        <file alias="themes/gradients/traversotheme.xml">themes/gradients/traversotheme.xml</file>
+        <file alias="bus_in">images/bus-in.xpm</file>
+        <file alias="bus_out">images/bus-out.xpm</file>
+        <file alias="audiocard">images/soundcard.png</file>
+        <file alias="keyboard">images/keyboard.png</file>
+        <file alias="cpu">images/cpu.png</file>
+        <file alias="audiocardsmall">images/soundcardsmall.png</file>
+        <file alias="harddrivesmall">images/harddrivesmall.png</file>
+        <file alias="diskdrive">images/harddrive.png</file>
+        <file alias="audiosettings">images/audiosettings.png</file>
+        <file alias="driver">images/driver.png</file>
+        <file alias="memorysmall">images/memory.png</file>
+        <file alias="appearance">images/appearance.png</file>
+        <file alias="performance">images/performance.png</file>
+        <file alias="playstart">images/icons/media-playback-start.png</file>
+        <file alias="playstop">images/icons/media-playback-stop.png</file>
+        <file alias="skipleft">images/icons/media-skip-backward.png</file>
+        <file alias="skipright">images/icons/media-skip-forward.png</file>
+        <file alias="seekleft">images/icons/media-seek-backward.png</file>
+        <file alias="seekright">images/icons/media-seek-forward.png</file>
+        <file alias="record">images/icons/media-record.png</file>
+        <file alias="projectmanagement">images/icons/32X32/projects.png</file>
+        <file alias="sheetmanagement">images/icons/32X32/sheets.png</file>
+        <file alias="audiosourcesmanagement">images/icons/32X32/audiosources.png</file>
+        <file alias="exit">images/icons/application-exit.png</file>
+        <file alias="undo">images/icons/edit-undo.png</file>
+        <file alias="redo">images/icons/edit-redo.png</file>
+        <file alias="redled-16">images/icons/16x16/redled.png</file>
+        <file alias="refresh-16">images/icons/16x16/reload.png</file>
+        <file alias="redledinactive-16">images/icons/16x16/redledinactive.png</file>
+        <file alias="projectmanager">images/icons/project-open.png</file>
+        <file alias="new">images/icons/document-new.png</file>
+        <file alias="open">images/icons/document-open.png</file>
+        <file alias="save">images/icons/document-save.png</file>
+        <file alias="export">images/icons/document-export.png</file>
+        <file alias="import">images/icons/document-import.png</file>
+        <file alias="restore">images/icons/archive-extract.png</file>
+        <file alias="write-cd">images/icons/tools-media-optical-burn.png</file>
+        <file alias="new-sheet">images/icons/tab-new-background.png</file>
+        <file alias="import-audio">images/icons/traverso-import-audio.png</file>
+        <file alias="import-silence">images/icons/document-import.png</file>
+        <file alias="snap">images/icons/traverso-snap.png</file>
+        <file alias="effects">images/icons/view-media-equalizer.png</file>
+        <file alias="follow">images/icons/system-switch-user.png</file>
+        <file alias="up">images/icons/arrow-up.png</file>
+        <file alias="down">images/icons/arrow-down.png</file>
+        <file alias="add">images/icons/list-add.png</file>
+        <file alias="remove">images/icons/list-remove.png</file>
+        <file>translations/traverso_nl.qm</file>
+        <file>translations/traverso_de.qm</file>
+        <file>translations/traverso_fr.qm</file>
+        <file>translations/traverso_bg.qm</file>
+        <file>translations/traverso_cs.qm</file>
+        <file alias="project_conversion_description_2_3">projectconversion/2_to_3.html</file>
+        <file>translations/traverso_es.qm</file>
+    </qresource>
 </RCC>
