@@ -94,8 +94,10 @@ ViewPort::ViewPort(QGraphicsScene* scene, QWidget* parent)
 	setFrameStyle(QFrame::NoFrame);
 	setAlignment(Qt::AlignLeft | Qt::AlignTop);
 	
+        // FIXME This flag causes clips to disappear after mouse leave event,
+        // at least when using Qt < 4.6.0 ??
 	setOptimizationFlag(DontAdjustForAntialiasing);
-	setOptimizationFlag(DontSavePainterState);
+        setOptimizationFlag(DontSavePainterState);
 	setOptimizationFlag(DontClipPainter);
 
 	m_holdcursor = new HoldCursor(this);
