@@ -153,6 +153,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="buttonRemoveOutput">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
             <string>&amp;Remove Bus</string>
            </property>
