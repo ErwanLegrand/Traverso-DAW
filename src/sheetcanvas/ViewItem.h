@@ -62,7 +62,9 @@ public:
                 set_context_item(parentContext);
                 m_parentViewItem = parentViewItem;
                 setCursor(themer()->get_cursor("Default"));
-                setFlag(ItemUsesExtendedStyleOption);
+#if QT_VERSION >= 0x040600
+                setFlags(QGraphicsItem::ItemUsesExtendedStyleOption);
+#endif
         }
 
 	~ViewItem() {};

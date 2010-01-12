@@ -105,9 +105,6 @@ AudioClipView::AudioClipView(SheetView* sv, TrackView* parent, AudioClip* clip )
         }
 
 // 	setFlags(ItemIsSelectable | ItemIsMovable);
-#if QT_VERSION >= 0x040600
-        setFlags(QGraphicsItem::ItemUsesExtendedStyleOption);
-#endif
         setAcceptsHoverEvents(true);
         setCursor(themer()->get_cursor("AudioClip"));
 }
