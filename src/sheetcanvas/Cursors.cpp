@@ -137,7 +137,6 @@ void PlayHead::enable_follow()
 
 void PlayHead::update_position()
 {
-        PENTER;
 	QPointF newPos(m_sheet->get_transport_location() / m_sv->timeref_scalefactor, 1);
 	qreal playBufferTimePositionCompensation = 0;
 	if (m_sheet->is_transport_rolling()) {
