@@ -355,7 +355,7 @@ Command* SheetView::center()
 
 void SheetView::transport_position_set()
 {
-	if (!m_sheet->is_transport_rolling())
+        if (!m_sheet->is_transport_rolling() && m_actOnPlayHead)
 		center_playhead();
 }
 
