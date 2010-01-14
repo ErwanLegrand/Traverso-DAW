@@ -211,7 +211,7 @@ void ViewPort::leaveEvent ( QEvent * event )
 	// There can be many reasons for a leave event, sometimes
 	// this leaves the engine in a non-cleared state, e.g. modifier
 	// keys still can be active!! So we reset those manually here.
-	ie().clear_modifier_keys();
+        ie().mouse_left_viewport_unexpectedly();
 }
 
 void ViewPort::keyPressEvent( QKeyEvent * e)

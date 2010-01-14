@@ -147,7 +147,7 @@ public:
 
         void activate();
         void suspend();
-	void clear_modifier_keys();
+	void mouse_left_viewport_unexpectedly();
 	
 	Command* succes();
 	Command* failure();
