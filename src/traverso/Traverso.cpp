@@ -192,7 +192,7 @@ void Traverso::init_sse( )
 	
 	FPU fpu;
 
-#if defined (ARCH_X86) && defined (SSE_OPTIMIZATIONS)
+#if (defined (ARCH_X86) || defined (ARCH_X86_64)) && defined (SSE_OPTIMIZATIONS)
 
 	if (fpu.has_sse()) {
 
@@ -254,8 +254,8 @@ void Traverso::setup_fpu()
 		return;
 	}
 
-#if defined(ARCH_X86) && defined(USE_XMMINTRIN)
-
+#if (defined(ARCH_X86) || defined(ARCH_X86_64)) && defined(USE_XMMINTRIN)
+        
 	int MXCSR;
 	FPU fpu;
 

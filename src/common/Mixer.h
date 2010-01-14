@@ -66,7 +66,7 @@ void  default_mix_buffers_with_gain		(audio_sample_t*  dst, const audio_sample_t
 void  default_mix_buffers_no_gain		(audio_sample_t*  dst, const audio_sample_t*  src, nframes_t nframes);
 
 
-#if defined (ARCH_X86) && defined (SSE_OPTIMIZATIONS)
+#if (defined (ARCH_X86) || defined (ARCH_X86_64)) && defined (SSE_OPTIMIZATIONS)
 
 extern "C"
 {
