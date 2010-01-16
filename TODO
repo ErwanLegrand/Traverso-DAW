@@ -6,6 +6,7 @@ TOBEDONE FOR 0.4x.x
 - Copy/move (including un/redo) selected clips
 
 ### BUGS / WISHES ###
+* Transport console: to_start end to_end don't center the playhead!
 * Fade: cursor jumps back to old pos after releasing [F]
 * Curve top-left node is hardly visible
 * CD Burning doesn't work when traverso was started from clicking on the binary (sometimes, when no empty disk was inserted)

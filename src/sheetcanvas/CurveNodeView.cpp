@@ -54,6 +54,7 @@ CurveNodeView::~ CurveNodeView( )
 
 void CurveNodeView::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
 {
+        // TODO: Render to a pixmap, and just paint that, it should be much faster
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 	
