@@ -259,7 +259,7 @@ private:
 Q_DECLARE_METATYPE(TimeRef);
 		
 typedef struct {
-	int tranport;
+	int transport;
 	bool isSlave;
 	bool realtime;
 	TimeRef location;

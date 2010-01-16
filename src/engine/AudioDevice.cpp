@@ -65,7 +65,7 @@ RELAYTOOL_JACK
 	This will initialize the real audiodevice in case of the Alsa driver, or connect to the jack deamon. 
 	In the latter case, the rate and bufferSize don't do anything, since they are provided by the jack itself
 	
-	This class and/or related classes depend on RingBuffer, Tsar and FastDelegate which are found in libtraversocore.
+        This class and/or related classes depend on RingBuffer, Tsar and FastDelegate which are found in 'src/common' directory.
 	The signal/slot feature as supplied by Qt is also used, which makes the Qt dependency a bit deeper, though
 	it shouldn't be to hard to get rid of it if you like to use the libtraversoaudiobackend in an application not 
 	using Qt, or if you don't want a dependency to Qt.
@@ -981,7 +981,7 @@ void AudioDevice::transport_start(Client * client)
 #endif
 	
 	transport_state_t state;
-	state.tranport = TransportRolling;
+        state.transport = TransportRolling;
 	state.isSlave = false;
 	state.realtime = false;
 	state.location = TimeRef(); // get from client!!
@@ -1001,7 +1001,7 @@ void AudioDevice::transport_stop(Client * client)
 #endif
 	
 	transport_state_t state;
-	state.tranport = TransportStopped;
+        state.transport = TransportStopped;
 	state.isSlave = false;
 	state.realtime = false;
 	state.location = TimeRef(); // get from client!!
@@ -1022,7 +1022,7 @@ int AudioDevice::transport_seek_to(Client* client, TimeRef location)
 #endif
 	
 	transport_state_t state;
-	state.tranport = TransportStarting;
+        state.transport = TransportStarting;
 	state.isSlave = false;
 	state.realtime = false; 
 	state.location = location;

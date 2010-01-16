@@ -1252,7 +1252,7 @@ int Sheet::transport_control(transport_state_t state)
 		return true;
 	}
 	
-	switch(state.tranport) {
+	switch(state.transport) {
 	case TransportStopped:
 		if (is_transport_rolling()) {
 			stop_transport_rolling();

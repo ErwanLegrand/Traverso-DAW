@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2007 Remon Sijrier 
+    Copyright (C) 2005-2010 Remon Sijrier
  
     This file is part of Traverso
  
@@ -27,6 +27,7 @@
 #include "defines.h"
 #include <jack/jack.h>
 #include <QObject>
+#include <QVector>
 
 class JackDriver : public Driver
 {
@@ -50,16 +51,16 @@ public:
         float get_cpu_load();
 	
 	size_t is_jack_running() const {return m_running == 1;}
-	jack_client_t* get_client() const {return client;}
+        jack_client_t* get_client() const {return m_jack_client;}
 	bool is_slave() const {return m_isSlave;}
 	void update_config();
 
 private:
-	volatile size_t	m_running;
-        jack_client_t*	client;
-        jack_port_t**	inputPorts;
-        jack_port_t**	outputPorts;
-	bool		m_isSlave;
+        volatile size_t         m_running;
+        jack_client_t*          m_jack_client;
+        QVector<jack_port_t* >	m_inputPorts;
+        QVector<jack_port_t* >	m_outputPorts;
+        bool                    m_isSlave;
 	
 	int  jack_sync_callback (jack_transport_state_t, jack_position_t*);
 
