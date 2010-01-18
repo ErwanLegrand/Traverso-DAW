@@ -86,13 +86,13 @@ int PADriver::_write(nframes_t nframes)
 	// least, turn the volume of your speakers down, if you want them and your ears
 	// to last a little longer :D
 	
-	if (!playbackChannels.size()) {
+        if (!m_playbackChannels.size()) {
 		return 0;
 	}
 	
 	float* out = (float*) paOutputBuffer;
-	float* datachan0 = playbackChannels.at(0)->get_data();
-	float* datachan1 = playbackChannels.at(1)->get_data();
+        float* datachan0 = m_playbackChannels.at(0)->get_data();
+        float* datachan1 = m_playbackChannels.at(1)->get_data();
 	
 	int j=0;
 	
@@ -102,8 +102,8 @@ int PADriver::_write(nframes_t nframes)
 		j++;
 	}
 	
-	playbackChannels.at(0)->silence_buffer(nframes);
-	playbackChannels.at(1)->silence_buffer(nframes);
+        m_playbackChannels.at(0)->silence_buffer(nframes);
+        m_playbackChannels.at(1)->silence_buffer(nframes);
 	
 	return 1;
 }
@@ -230,9 +230,8 @@ int PADriver::setup(bool capture, bool playback, const QString& hostapi)
 
 		snprintf (buf, sizeof(buf) - 1, "playback_%d", chn+1);
 
-		audiochannel = device->register_playback_channel(buf, "32 bit float audio", port_flags, frames_per_cycle, chn);
+                audiochannel = register_playback_channel(buf, "32 bit float audio", port_flags, frames_per_cycle, chn);
 		audiochannel->set_latency( frames_per_cycle + capture_frame_latency );
-		playbackChannels.append(audiochannel);
 	}
 
 	// TODO use the found maxchannel count for the capture stream, instead of assuming 0 !!
@@ -240,9 +239,8 @@ int PADriver::setup(bool capture, bool playback, const QString& hostapi)
 
 		snprintf (buf, sizeof(buf) - 1, "capture_%d", chn+1);
 
-		audiochannel = device->register_capture_channel(buf, "32 bit float audio", port_flags, frames_per_cycle, chn);
+                audiochannel = register_capture_channel(buf, "32 bit float audio", port_flags, frames_per_cycle, chn);
 		audiochannel->set_latency( frames_per_cycle + capture_frame_latency );
-		captureChannels.append(audiochannel);
 	}
 	
 	return 1;

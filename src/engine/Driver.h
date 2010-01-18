@@ -54,6 +54,15 @@ public:
         virtual QString get_device_name();
         virtual QString get_device_longname();
 
+        QList<AudioChannel* > get_capture_channels() const {return m_captureChannels;}
+        QList<AudioChannel* > get_playback_channels() const {return m_playbackChannels;}
+
+        AudioChannel* get_capture_channel_by_name(const QString& name);
+        AudioChannel* get_playback_channel_by_name(const QString& name);
+
+        AudioChannel* register_playback_channel(const QByteArray& chanName, const QString& audioType, int flags, uint , uint channel );
+        AudioChannel* register_capture_channel(const QByteArray& chanName, const QString& audioType, int flags, uint , uint channel );
+
         ProcessCallback read;
         ProcessCallback write;
         RunCycleCallback run_cycle;
@@ -61,8 +70,8 @@ public:
 
 protected:
         AudioDevice* device;
-        QList<AudioChannel* >		captureChannels;
-        QList<AudioChannel* >		playbackChannels;
+        QList<AudioChannel* >		m_captureChannels;
+        QList<AudioChannel* >		m_playbackChannels;
         int             		dither;
         dither_state_t*			dither_state;
         trav_time_t 			period_usecs;

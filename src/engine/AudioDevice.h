@@ -136,9 +136,6 @@ public:
 
 	int shutdown();
 	
-	uint capture_buses_count() const;
-	uint playback_buses_count() const;
-
 	trav_time_t get_cpu_time();
 
 
@@ -159,16 +156,14 @@ private:
 	friend class CoreAudioDriver;
 #endif
 
-	Driver* 				driver;
-	AudioDeviceThread* 			audioThread;
+        Driver* 				m_driver;
+        AudioDeviceThread* 			m_audioThread;
 	APILinkedList				m_clients;
-        QHash<QByteArray, AudioChannel* >	m_playbackChannels;
-        QHash<QByteArray, AudioChannel* >	m_captureChannels;
         QHash<QByteArray, AudioBus* >		m_playbackBuses;
         QHash<QByteArray, AudioBus* >		m_captureBuses;
         QHash<QString, QStringList>		m_captureBusConfig;
         QHash<QString, QStringList>		m_playbackBusConfig;
-	QStringList				availableDrivers;
+        QStringList				m_availableDrivers;
 	QTimer					m_xrunResetTimer;
 #if defined (JACK_SUPPORT)
 	QTimer					jackShutDownChecker;
@@ -221,7 +216,7 @@ private:
 		m_cpuTime->write(&runcycleTime, 1);
 	}
 
-	Driver* get_driver() const {return driver;}
+        Driver* get_driver() const {return m_driver;}
 
 	void mili_sleep(int msec);
 	void xrun();

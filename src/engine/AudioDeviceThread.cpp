@@ -100,7 +100,7 @@ void AudioDeviceThread::run()
 
 	become_realtime(m_realTime);
 	
-	if (m_device->driver->start() < 0) {
+	if (m_device->m_driver->start() < 0) {
 		watchdog.terminate();
 		watchdog.wait();
 		return;

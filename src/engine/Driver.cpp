@@ -43,6 +43,11 @@ Driver::Driver( AudioDevice* dev , int rate, nframes_t bufferSize)
 Driver::~ Driver( )
 {
 	PENTERDES;
+        while( ! m_captureChannels.isEmpty())
+                delete m_captureChannels.takeFirst();
+
+        while( ! m_playbackChannels.isEmpty())
+                delete m_playbackChannels.takeFirst();
 }
 
 int Driver::_run_cycle( )
@@ -65,7 +70,7 @@ int Driver::_read( nframes_t  )
 
 int Driver::_write( nframes_t nframes )
 {
-	foreach(AudioChannel* chan, playbackChannels) {
+	foreach(AudioChannel* chan, m_playbackChannels) {
 		chan->get_data();
 		chan->silence_buffer(nframes);
 	}
@@ -101,22 +106,57 @@ int Driver::attach( )
 	for (uint chn=0; chn<2; chn++) {
 		snprintf (buf, sizeof(buf) - 1, "capture_%d", chn+1);
 
-		chan = device->register_capture_channel(buf, JACK_DEFAULT_AUDIO_TYPE, port_flags, frames_per_cycle, chn);
+                chan = register_capture_channel(buf, JACK_DEFAULT_AUDIO_TYPE, port_flags, frames_per_cycle, chn);
 		chan->set_latency( frames_per_cycle + capture_frame_latency );
-		captureChannels.append(chan);
 	}
 
 	// Create 2 fake playback channels
 	for (uint chn=0; chn<2; chn++) {
 		snprintf (buf, sizeof(buf) - 1, "playback_%d", chn+1);
 
-		chan = device->register_playback_channel(buf, JACK_DEFAULT_AUDIO_TYPE, port_flags, frames_per_cycle, chn);
+                chan = register_playback_channel(buf, JACK_DEFAULT_AUDIO_TYPE, port_flags, frames_per_cycle, chn);
 		chan->set_latency( frames_per_cycle + capture_frame_latency );
-		playbackChannels.append(chan);
 	}
 
 	return 1;
 }
+
+AudioChannel* Driver::register_capture_channel(const QByteArray& chanName, const QString& audioType, int flags, uint , uint channel )
+{
+        AudioChannel* chan = new AudioChannel(chanName, audioType, flags, channel);
+        m_captureChannels.append(chan);
+        return chan;
+}
+
+AudioChannel* Driver::register_playback_channel(const QByteArray& chanName, const QString& audioType, int flags, uint , uint channel )
+{
+        AudioChannel* chan = new AudioChannel(chanName, audioType, flags, channel);
+        m_playbackChannels.append(chan);
+        return chan;
+}
+
+AudioChannel* Driver::get_capture_channel_by_name(const QString& name)
+{
+        foreach(AudioChannel* chan, m_captureChannels) {
+                if (chan->get_name() == name) {
+                        return chan;
+                }
+        }
+        return 0;
+}
+
+
+AudioChannel* Driver::get_playback_channel_by_name(const QString& name)
+{
+        foreach(AudioChannel* chan, m_playbackChannels) {
+                if (chan->get_name() == name) {
+                        return chan;
+                }
+        }
+        return 0;
+}
+
+
 
 int Driver::detach( )
 {

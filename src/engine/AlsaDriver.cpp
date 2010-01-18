@@ -1036,8 +1036,8 @@ int AlsaDriver::stop()
 	be entering offline mode.
 	*/
 
-	for (int i=0; i<captureChannels.size(); ++i) {
-		AudioChannel* chan = captureChannels.at(i);
+        for (int i=0; i<m_captureChannels.size(); ++i) {
+                AudioChannel* chan = m_captureChannels.at(i);
 		buf = chan->get_buffer(frames_per_cycle);
 		memset (buf, 0, sizeof (audio_sample_t) * frames_per_cycle);
 	}
@@ -1453,8 +1453,8 @@ int AlsaDriver::_read(nframes_t nframes)
 			return -1;
 		}
 
-		for (int i=0; i<captureChannels.size(); ++i) {
-			AudioChannel* channel = captureChannels.at(i);
+                for (int i=0; i<m_captureChannels.size(); ++i) {
+                        AudioChannel* channel = m_captureChannels.at(i);
 			
 			if (!channel->has_data()) {
 				//no-copy optimization
@@ -1507,8 +1507,8 @@ int AlsaDriver::_write(nframes_t nframes)
 			return -1;
 		}
 
-		for (int i=0; i<playbackChannels.size(); ++i) {
-			AudioChannel* channel = playbackChannels.at(i);
+                for (int i=0; i<m_playbackChannels.size(); ++i) {
+                        AudioChannel* channel = m_playbackChannels.at(i);
 			if (!channel->has_data()) {
 				continue;
 			}
@@ -1579,9 +1579,8 @@ int AlsaDriver::attach()
 
 		snprintf (buf, sizeof(buf) - 1, "capture_%lu", chn+1);
 
-		chan = device->register_capture_channel(buf, "32 bit float audio", port_flags, frames_per_cycle, chn);
+                chan = register_capture_channel(buf, "32 bit float audio", port_flags, frames_per_cycle, chn);
 		chan->set_latency( frames_per_cycle + capture_frame_latency );
-		captureChannels.append(chan);
 
 	}
 
@@ -1591,9 +1590,8 @@ int AlsaDriver::attach()
 
 		snprintf (buf, sizeof(buf) - 1, "playback_%lu", chn+1);
 
-		chan = device->register_playback_channel(buf, "32 bit float audio", port_flags, frames_per_cycle, chn);
+                chan = register_playback_channel(buf, "32 bit float audio", port_flags, frames_per_cycle, chn);
 		chan->set_latency( frames_per_cycle + capture_frame_latency );
-		playbackChannels.append(chan);
 	}
 
 

@@ -55,8 +55,8 @@ JackDriver::~JackDriver( )
 int JackDriver::_read( nframes_t nframes )
 {
         int portNumber = 0;
-	for (int i=0; i<captureChannels.size(); ++i) {
-		AudioChannel* chan = captureChannels.at(i);
+        for (int i=0; i<m_captureChannels.size(); ++i) {
+                AudioChannel* chan = m_captureChannels.at(i);
                 if (!chan->has_data()) {
                         portNumber++;
                         continue;
@@ -70,8 +70,8 @@ int JackDriver::_read( nframes_t nframes )
 int JackDriver::_write( nframes_t nframes )
 {
         int portNumber = 0;
-	for (int i=0; i<playbackChannels.size(); ++i) {
-		AudioChannel* chan = playbackChannels.at(i);
+        for (int i=0; i<m_playbackChannels.size(); ++i) {
+                AudioChannel* chan = m_playbackChannels.at(i);
 		
 /*		if (!chan->has_data()) {
 			portNumber++;
@@ -168,9 +168,8 @@ int JackDriver::setup(bool capture, bool playback, const QString& )
 
                 snprintf (buf, sizeof(buf) - 1, "playback_%d", chn+1);
 
-                channel = device->register_playback_channel(buf, JACK_DEFAULT_AUDIO_TYPE, port_flags, frames_per_cycle, chn);
+                channel = register_playback_channel(buf, JACK_DEFAULT_AUDIO_TYPE, port_flags, frames_per_cycle, chn);
                 channel->set_latency( frames_per_cycle + capture_frame_latency );
-                playbackChannels.append(channel);
         }
 
 
@@ -179,9 +178,8 @@ int JackDriver::setup(bool capture, bool playback, const QString& )
 
                 snprintf (buf, sizeof(buf) - 1, "capture_%d", chn+1);
 
-                channel = device->register_capture_channel(buf, JACK_DEFAULT_AUDIO_TYPE, port_flags, frames_per_cycle, chn);
+                channel = register_capture_channel(buf, JACK_DEFAULT_AUDIO_TYPE, port_flags, frames_per_cycle, chn);
                 channel->set_latency( frames_per_cycle + capture_frame_latency );
-                captureChannels.append(channel);
         }
 
 	device->message(tr("Jack Driver: Connected successfully to the jack server!"), AudioDevice::INFO);

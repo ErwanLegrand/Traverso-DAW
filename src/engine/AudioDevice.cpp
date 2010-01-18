@@ -149,8 +149,8 @@ AudioDevice& audiodevice()
 AudioDevice::AudioDevice()
 {
 	m_runAudioThread = false;
-	driver = 0;
-	audioThread = 0;
+        m_driver = 0;
+        m_audioThread = 0;
 	m_bufferSize = 1024;
 	m_xrunCount = 0;
 	m_cpuTime = new RingBufferNPT<trav_time_t>(4096);
@@ -159,28 +159,28 @@ AudioDevice::AudioDevice()
 
 #if defined (JACK_SUPPORT)
 	if (libjack_is_present) {
-		availableDrivers << "Jack";
+                m_availableDrivers << "Jack";
 	}
 #endif
 
 #if defined (ALSA_SUPPORT)
-	availableDrivers << "ALSA";
+        m_availableDrivers << "ALSA";
 #endif
 	
 #if defined (PORTAUDIO_SUPPORT)
-	availableDrivers << "PortAudio";
+        m_availableDrivers << "PortAudio";
 #endif
 
 #if defined (PULSEAUDIO_SUPPORT)
-	availableDrivers << "PulseAudio";
+        m_availableDrivers << "PulseAudio";
 #endif
 
 #if defined (COREAUDIO_SUPPORT)
-	availableDrivers << "CoreAudio";
+        m_availableDrivers << "CoreAudio";
 #endif
 
 	
-	availableDrivers << "Null Driver";
+        m_availableDrivers << "Null Driver";
 	
 	// tsar is a singleton, so initialization is done on first tsar() call
 	// Tsar makes use of a QTimer to cleanup the processed events.
@@ -202,8 +202,8 @@ AudioDevice::~AudioDevice()
 
 	shutdown();
 	
-	if (audioThread) {
-		delete audioThread;
+        if (m_audioThread) {
+                delete m_audioThread;
 	}
 	
 	delete m_cpuTime;
@@ -221,8 +221,6 @@ void AudioDevice::free_memory()
 		delete bus;
 	}
 
-        m_captureChannels.clear();
-        m_playbackChannels.clear();
         m_captureBuses.clear();
         m_playbackBuses.clear();
 }
@@ -277,7 +275,7 @@ int AudioDevice::run_cycle( nframes_t nframes, float delayed_usecs )
 int AudioDevice::run_one_cycle( nframes_t nframes, float  )
 {
 
-	if (driver->read(nframes) < 0) {
+        if (m_driver->read(nframes) < 0) {
 		qDebug("driver read failed!");
 		return -1;
 	}
@@ -291,7 +289,7 @@ int AudioDevice::run_one_cycle( nframes_t nframes, float  )
 		}
 	}*/
 	
-	if (driver->write(nframes) < 0) {
+        if (m_driver->write(nframes) < 0) {
 		qDebug("driver write failed!");
 		return -1;
 	}
@@ -304,23 +302,6 @@ void AudioDevice::delay( float  )
 {
 }
 
-/**
- * 
- * @return The amount of Capture Buses, 0 if no Capture Buses are available 
- */
-uint AudioDevice::capture_buses_count( ) const
-{
-        return m_captureChannels.size();
-}
-
-/**
- * 
- * @return The amount of PlayBack Buses, 0 if no PlayBack Buses are available 
- */
-uint AudioDevice::playback_buses_count( ) const
-{
-        return m_playbackChannels.size();
-}
 
 /**
  * This function is used to initialize the AudioDevice's audioThread with the supplied
@@ -355,7 +336,7 @@ void AudioDevice::set_parameters( int rate,
 		return;
 	}
 	
-	driver->attach();
+        m_driver->attach();
 	
         if (!m_captureBusConfig.count()) {
 		setup_default_capture_buses();
@@ -378,8 +359,8 @@ void AudioDevice::set_parameters( int rate,
 		printf("Starting AudioDeviceThread..... ");
 		
 		
-		if (!audioThread) {
-			audioThread = new AudioDeviceThread(this);
+                if (!m_audioThread) {
+                        m_audioThread = new AudioDeviceThread(this);
 		}
 
 		// m_cycleStartTime/EndTime are set before/after the first cycle.
@@ -389,14 +370,14 @@ void AudioDevice::set_parameters( int rate,
 
 		// When the audiothread fails for some reason we catch it in audiothread_finished()
 		// by connecting the finished signal of the audio thread!
-		connect(audioThread, SIGNAL(finished()), this, SLOT(audiothread_finished()));
+                connect(m_audioThread, SIGNAL(finished()), this, SLOT(audiothread_finished()));
 		
 		// Start the audio thread, the driver->start() will be called from there!!
-		audioThread->start();
+                m_audioThread->start();
 		
 		// It appears this check is a little silly because it always returns true
 		// this close after calling the QThread::start() function :-(
-		if (audioThread->isRunning()) {
+                if (m_audioThread->isRunning()) {
 			printf("Running!\n");
 		}
 	}
@@ -406,7 +387,7 @@ void AudioDevice::set_parameters( int rate,
 	if (libjack_is_present) {
 		if (driverType == "Jack") {
 			
-			if (driver->start() == -1) {
+                        if (m_driver->start() == -1) {
 				// jack driver failed to start, fallback to Null Driver:
 				set_parameters(rate, bufferSize, "Null Driver");
 				return;
@@ -419,7 +400,7 @@ void AudioDevice::set_parameters( int rate,
 #endif
 		
 	if (driverType == "PortAudio"|| (driverType == "PulseAudio") || (driverType == "CoreAudio")) {
-		if (driver->start() == -1) {
+                if (m_driver->start() == -1) {
 			// PortAudio driver failed to start, fallback to Null Driver:
 			set_parameters(rate, bufferSize, "Null Driver");
 			return;
@@ -435,11 +416,11 @@ int AudioDevice::create_driver(QString driverType, bool capture, bool playback, 
 #if defined (JACK_SUPPORT)
 	if (libjack_is_present) {
 		if (driverType == "Jack") {
-			driver = new JackDriver(this, m_rate, m_bufferSize);
-			if (driver->setup(capture, playback) < 0) {
+                        m_driver = new JackDriver(this, m_rate, m_bufferSize);
+                        if (m_driver->setup(capture, playback) < 0) {
 				message(tr("Audiodevice: Failed to create the Jack Driver"), WARNING);
-				delete driver;
-				driver = 0;
+                                delete m_driver;
+                                m_driver = 0;
 				return -1;
 			}
 			m_driverType = driverType;
@@ -450,11 +431,11 @@ int AudioDevice::create_driver(QString driverType, bool capture, bool playback, 
 
 #if defined (ALSA_SUPPORT)
 	if (driverType == "ALSA") {
-		driver =  new AlsaDriver(this, m_rate, m_bufferSize);
-		if (((AlsaDriver*)driver)->setup(capture,playback, cardDevice, m_ditherShape) < 0) {
+                m_driver =  new AlsaDriver(this, m_rate, m_bufferSize);
+                if (((AlsaDriver*)m_driver)->setup(capture,playback, cardDevice, m_ditherShape) < 0) {
 			message(tr("Audiodevice: Failed to create the ALSA Driver"), WARNING);
-			delete driver;
-			driver = 0;
+                        delete m_driver;
+                        m_driver = 0;
 			return -1;
 		}
 		m_driverType = driverType;
@@ -508,27 +489,12 @@ int AudioDevice::create_driver(QString driverType, bool capture, bool playback, 
 	
 	if (driverType == "Null Driver") {
 		printf("Creating Null Driver...\n");
-		driver = new Driver(this, m_rate, m_bufferSize);
+                m_driver = new Driver(this, m_rate, m_bufferSize);
 		m_driverType = driverType;
 		return 1;
 	}
 
 	return -1;
-}
-
-
-AudioChannel* AudioDevice::register_capture_channel(const QByteArray& chanName, const QString& audioType, int flags, uint , uint channel )
-{
-	AudioChannel* chan = new AudioChannel(chanName, audioType, flags, channel);
-        m_captureChannels.insert(chanName, chan);
-	return chan;
-}
-
-AudioChannel* AudioDevice::register_playback_channel(const QByteArray& chanName, const QString& audioType, int flags, uint , uint channel )
-{
-	AudioChannel* chan = new AudioChannel(chanName, audioType, flags, channel);
-        m_playbackChannels.insert(chanName, chan);
-	return chan;
 }
 
 
@@ -551,23 +517,23 @@ int AudioDevice::shutdown( )
 
 	m_runAudioThread = 0;
 	
-	if (audioThread) {
-		disconnect(audioThread, SIGNAL(finished()), this, SLOT(audiothread_finished()));
+        if (m_audioThread) {
+                disconnect(m_audioThread, SIGNAL(finished()), this, SLOT(audiothread_finished()));
 		
 		// Wait until the audioThread has finished execution. One second
 		// should do, if it's still running then, the thread must have gone wild or something....
-		if (audioThread->isRunning()) {
+                if (m_audioThread->isRunning()) {
 			printf("Starting to shutdown AudioThread..\n");
-			r = audioThread->wait(1000);
+                        r = m_audioThread->wait(1000);
 			printf("AudioDeviceThread finished, stopping driver\n");
 		}
 	}
 	
 	
-	if (driver) {
-		driver->stop();
-		delete driver;
-		driver = 0;
+        if (m_driver) {
+                m_driver->stop();
+                delete m_driver;
+                m_driver = 0;
 	}
 	
 	free_memory();
@@ -610,7 +576,7 @@ QStringList AudioDevice::get_playback_buses_names( ) const
 QStringList AudioDevice::get_capture_channel_names() const
 {
 	QStringList names;
-        foreach(AudioChannel* chan, m_captureChannels) {
+        foreach(AudioChannel* chan, m_driver->get_capture_channels()) {
 		names.append(chan->get_name());
 	}
 	return names;
@@ -619,7 +585,7 @@ QStringList AudioDevice::get_capture_channel_names() const
 QStringList AudioDevice::get_playback_channel_names() const
 {
 	QStringList names;
-        foreach(AudioChannel* chan, m_playbackChannels) {
+        foreach(AudioChannel* chan, m_driver->get_playback_channels()) {
 		names.append(chan->get_name());
 	}
 	return names;
@@ -677,15 +643,15 @@ void AudioDevice::setup_default_capture_buses( )
 
 	AudioChannel* channel;
 	
-        for (int i=1; i <= m_captureChannels.size();) {
+        for (int i=1; i <= m_driver->get_capture_channels().size();) {
 		name = "Capture " + QByteArray::number(number++);
 		AudioBus* bus = new AudioBus(name);
-                channel = m_captureChannels.value("capture_"+QByteArray::number(i++), 0);
+                channel = m_driver->get_capture_channel_by_name("capture_"+QByteArray::number(i++));
 		if (channel) {
 			bus->add_channel(channel);
 		}
-                channel = m_captureChannels.value("capture_"+QByteArray::number(i++), 0);
-		if (channel) {
+                channel = m_driver->get_capture_channel_by_name("capture_"+QByteArray::number(i++));
+                if (channel) {
 			bus->add_channel(channel);
 		}
                 m_captureBuses.insert(name, bus);
@@ -699,16 +665,17 @@ void AudioDevice::setup_default_playback_buses( )
 	QByteArray name;
 
 	AudioChannel* channel;
+        printf("number of playback channels %d\n", m_driver->get_playback_channels().size());
 	
-        for (int i=1; i <= m_playbackChannels.size();) {
+        for (int i=1; i <= m_driver->get_playback_channels().size();) {
 		name = "Playback " + QByteArray::number(number++);
 		AudioBus* bus = new AudioBus(name);
-                channel = m_playbackChannels.value("playback_"+QByteArray::number(i++), 0);
-		if (channel) {
+                channel = m_driver->get_playback_channel_by_name("playback_"+QByteArray::number(i++));
+                if (channel) {
 			bus->add_channel(channel);
 		}
-                channel = m_playbackChannels.value("playback_"+QByteArray::number(i++), 0);
-		if (channel) {
+                channel = m_driver->get_playback_channel_by_name("playback_"+QByteArray::number(i++));
+                if (channel) {
 			bus->add_channel(channel);
 		}
                 m_playbackBuses.insert(name, bus);
@@ -730,7 +697,7 @@ void AudioDevice::setup_capture_buses()
 		AudioBus* bus = new AudioBus(name);
 		
 		for (int i = 0; i < list.count(); ++i) {
-                        channel = m_captureChannels.value(list.at(i).toUtf8(), 0);
+                        channel = m_driver->get_capture_channel_by_name(list.at(i).toUtf8());
 			if (channel) {
 				bus->add_channel(channel);
 			}
@@ -755,7 +722,7 @@ void AudioDevice::setup_playback_buses()
 		AudioBus* bus = new AudioBus(name);
 		
 		for (int i = 0; i < list.count(); ++i) {
-                        channel = m_playbackChannels.value(list.at(i).toUtf8(), 0);
+                        channel = m_driver->get_playback_channel_by_name(list.at(i).toUtf8());
 			if (channel) {
 				bus->add_channel(channel);
 			}
@@ -791,8 +758,8 @@ uint AudioDevice::get_bit_depth( ) const
  */
 QString AudioDevice::get_device_name( ) const
 {
-	if (driver)
-		return driver->get_device_name();
+        if (m_driver)
+                return m_driver->get_device_name();
 	return tr("No Device Configured");
 }
 
@@ -802,8 +769,8 @@ QString AudioDevice::get_device_name( ) const
  */
 QString AudioDevice::get_device_longname( ) const
 {
-	if (driver)
-		return driver->get_device_longname();
+        if (m_driver)
+                return m_driver->get_device_longname();
 	return tr("No Device Configured");
 }
 
@@ -813,7 +780,7 @@ QString AudioDevice::get_device_longname( ) const
  */
 QStringList AudioDevice::get_available_drivers( ) const
 {
-	return availableDrivers;
+        return m_availableDrivers;
 }
 
 /**
@@ -833,13 +800,13 @@ trav_time_t AudioDevice::get_cpu_time( )
 {
 #if defined (JACK_SUPPORT)
 	if (libjack_is_present)
-		if (driver && m_driverType == "Jack")
-			return ((JackDriver*)driver)->get_cpu_load();
+                if (m_driver && m_driverType == "Jack")
+                        return ((JackDriver*)m_driver)->get_cpu_load();
 #endif
 	
 #if defined (PORTAUDIO_SUPPORT)
-	if (driver && m_driverType == "PortAudio")
-		return ((PADriver*)driver)->get_cpu_load();
+        if (m_driver && m_driverType == "PortAudio")
+                return ((PADriver*)m_driver)->get_cpu_load();
 #endif
 	
 	
@@ -900,7 +867,7 @@ void AudioDevice::remove_client( Client * client )
 
 void AudioDevice::mili_sleep(int msec)
 {
-	audioThread->mili_sleep(msec);
+        m_audioThread->mili_sleep(msec);
 }
 
 
@@ -929,14 +896,14 @@ void AudioDevice::check_jack_shutdown()
 {
 #if defined (JACK_SUPPORT)
 	if (libjack_is_present) {
-		JackDriver* jackdriver = qobject_cast<JackDriver*>(driver);
+                JackDriver* jackdriver = qobject_cast<JackDriver*>(m_driver);
 		if (jackdriver) {
 			if ( ! jackdriver->is_jack_running()) {
 				jackShutDownChecker.stop();
 				printf("jack shutdown detected\n");
 				message(tr("The Jack server has been shutdown!"), CRITICAL);
-				delete driver;
-				driver = 0;
+                                delete m_driver;
+                                m_driver = 0;
 				set_parameters(44100, m_bufferSize, "Null Driver");
 			}
 		}
@@ -1036,7 +1003,7 @@ int AudioDevice::transport_seek_to(Client* client, TimeRef location)
 JackDriver* AudioDevice::slaved_jack_driver()
 {
 	if (libjack_is_present) {
-		JackDriver* jackdriver = qobject_cast<JackDriver*>(driver);
+                JackDriver* jackdriver = qobject_cast<JackDriver*>(m_driver);
 		if (jackdriver && jackdriver->is_slave()) {
 			return jackdriver;
 		}
@@ -1056,7 +1023,7 @@ void AudioDevice::set_driver_properties(QHash< QString, QVariant > & properties)
 	m_driverProperties = properties;
 #if defined (JACK_SUPPORT)
 	if (libjack_is_present) {
-		JackDriver* jackdriver = qobject_cast<JackDriver*>(driver);
+                JackDriver* jackdriver = qobject_cast<JackDriver*>(m_driver);
 		if (jackdriver) {
 			jackdriver->update_config();
 		}

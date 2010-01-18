@@ -81,8 +81,6 @@ void AudioBus::init(const QString& name )
 
 AudioBus::~ AudioBus( )
 {
-	while( ! channels.isEmpty())
-		delete channels.takeFirst();
 }
 
 
