@@ -645,48 +645,48 @@ effect after restarting Traverso!</source>
         <translation>Geen Driver geladen</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="796"/>
-        <location filename="../../src/engine/AudioDevice.cpp" line="807"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="762"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="773"/>
         <source>No Device Configured</source>
         <translation>Geen Apparaat geconfigureerd</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="937"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="903"/>
         <source>The Jack server has been shutdown!</source>
         <translation>De Jack server is afgesloten!</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="950"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="916"/>
         <source>AudioDevice:: Buffer underrun &apos;Storm&apos; detected, switching to Null Driver</source>
         <translation>AudioApparaat:: Lange serie &apos;buffer underruns&apos; ervaren, schakelt over op de Null Driver</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="951"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="917"/>
         <source>AudioDevice:: For trouble shooting this problem, please see Chapter 11 from the user manual!</source>
         <translation>AudioApparaat:: Om dit probleem op te lossen, zie Hoofdstuk 11 van de gebuikershandleiding!</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="440"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="421"/>
         <source>Audiodevice: Failed to create the Jack Driver</source>
         <translation>Audio apparaat: Maken van de Jack Driver mislukte</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="455"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="436"/>
         <source>Audiodevice: Failed to create the ALSA Driver</source>
         <translation>Audio apparaat: Maken van de ALSA Driver mislukte</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="469"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="450"/>
         <source>Audiodevice: Failed to create the PortAudio Driver</source>
         <translation>Audio apparaat: Maken van de PortAudio Driver mislukte</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="483"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="464"/>
         <source>Audiodevice: Failed to create the PulseAudio Driver</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="498"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="479"/>
         <source>Audiodevice: Failed to create the CoreAudio Driver</source>
         <translation></translation>
     </message>

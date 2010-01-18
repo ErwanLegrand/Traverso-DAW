@@ -654,48 +654,48 @@ projeví až po novém spuštění Traversa!</translation>
         <translation>Nebyl nahrán žádný ovladač</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="440"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="421"/>
         <source>Audiodevice: Failed to create the Jack Driver</source>
         <translation>Zvukové zařízení: Došlo k selhání při vytváření ovladače Jack</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="455"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="436"/>
         <source>Audiodevice: Failed to create the ALSA Driver</source>
         <translation>Zvukové zařízení: Došlo k selhání při vytváření ovladače ALSA</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="469"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="450"/>
         <source>Audiodevice: Failed to create the PortAudio Driver</source>
         <translation>Zvukové zařízení: Došlo k selhání při vytváření ovladače PortAudio</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="483"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="464"/>
         <source>Audiodevice: Failed to create the PulseAudio Driver</source>
         <translation>Zvukové zařízení: Došlo k selhání při vytváření ovladače PulseAudio</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="498"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="479"/>
         <source>Audiodevice: Failed to create the CoreAudio Driver</source>
         <translation>Zvukové zařízení: Došlo k selhání při vytváření ovladače CoreAudio</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="796"/>
-        <location filename="../../src/engine/AudioDevice.cpp" line="807"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="762"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="773"/>
         <source>No Device Configured</source>
         <translation>Nebylo nastaveno žádné zařízení</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="937"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="903"/>
         <source>The Jack server has been shutdown!</source>
         <translation>Jack server byl zastaven!</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="950"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="916"/>
         <source>AudioDevice:: Buffer underrun &apos;Storm&apos; detected, switching to Null Driver</source>
         <translation>Zvukové zařízení:: Bylo zjištěno několikrát krátce po sobě podtečení vyrovnávací paměťi. Přepíná se na nulový ovladač </translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="951"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="917"/>
         <source>AudioDevice:: For trouble shooting this problem, please see Chapter 11 from the user manual!</source>
         <translation>Zvukové zařízení:: Kvůli závadě způsobující tento problém, si, prosím, prohlédněte kapitolu 11 uživatelské příručky!</translation>
     </message>

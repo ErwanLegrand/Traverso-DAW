@@ -618,48 +618,48 @@ effect after restarting Traverso!</source>
         <translation>Не е зареден драйвер</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="440"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="421"/>
         <source>Audiodevice: Failed to create the Jack Driver</source>
         <translation>АудиоУстройство: не може да се създаде Jack драйвер</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="455"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="436"/>
         <source>Audiodevice: Failed to create the ALSA Driver</source>
         <translation>АудиоУстройство: не може да се създаде ALSA драйвер</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="469"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="450"/>
         <source>Audiodevice: Failed to create the PortAudio Driver</source>
         <translation>АудиоУстройство: не може да се създаде PortAudio драйвер</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="483"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="464"/>
         <source>Audiodevice: Failed to create the PulseAudio Driver</source>
         <translation>АудиоУстройство: не може да се създаде PulseAudio драйвер</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="498"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="479"/>
         <source>Audiodevice: Failed to create the CoreAudio Driver</source>
         <translation>АудиоУстройство: не може да се създаде CoreAudio драйвер</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="796"/>
-        <location filename="../../src/engine/AudioDevice.cpp" line="807"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="762"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="773"/>
         <source>No Device Configured</source>
         <translation>Няма конфигурирано устройство</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="937"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="903"/>
         <source>The Jack server has been shutdown!</source>
         <translation>Jack сървъра беше спрян!</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="950"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="916"/>
         <source>AudioDevice:: Buffer underrun &apos;Storm&apos; detected, switching to Null Driver</source>
         <translation>АудиоУстройство: Засечено е прекъсване на буфер &quot;Storm&quot;, превключвам на Нулев Драйвер</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="951"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="917"/>
         <source>AudioDevice:: For trouble shooting this problem, please see Chapter 11 from the user manual!</source>
         <translation>АудиоУстройство: За решаване на този проблем, моля вижте Глава 11 от ръководството на потребителя</translation>
     </message>
