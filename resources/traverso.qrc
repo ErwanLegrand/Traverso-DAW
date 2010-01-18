@@ -76,7 +76,8 @@
         <file>translations/traverso_fr.qm</file>
         <file>translations/traverso_bg.qm</file>
         <file>translations/traverso_cs.qm</file>
-        <file alias="project_conversion_description_2_3">projectconversion/2_to_3.html</file>
         <file>translations/traverso_es.qm</file>
+        <file>translations/traverso_ru.qm</file>
+        <file alias="project_conversion_description_2_3">projectconversion/2_to_3.html</file>
     </qresource>
 </RCC>

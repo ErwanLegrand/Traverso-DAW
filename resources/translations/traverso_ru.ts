@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="es_ES" sourcelanguage="en_US">
+<TS version="2.0">
 <context>
     <name>AddRemoveClip</name>
     <message>
@@ -1226,7 +1226,6 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/sheetcanvas/ClipsViewPort.cpp" line="142"/>
         <source>Import %n audiofile(s)</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
@@ -2580,7 +2579,6 @@ p, li { white-space: pre-wrap; }
         <source>Added %n Sheet(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
-            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -2620,7 +2618,6 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/traverso/dialogs/project/NewTrackDialog.cpp" line="68"/>
         <source>Added %n Track(s)</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
@@ -4207,7 +4204,6 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/core/Sheet.cpp" line="1388"/>
         <source>Recording to %n Clip(s)</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
