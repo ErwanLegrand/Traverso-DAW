@@ -1522,7 +1522,7 @@ int InputEngine::init_map(const QString& keymap)
 				exists = true;
 				QString errorstring = QString("InputEngine:: keyfact with: type=%1, key1='%2', key2='%3' already exists!\n"
 						"You should only define keyfact types one time!!\n").arg(keyFactType).arg(key1).arg(key2); 
-				printf(QS_C(errorstring));
+                                printf("%s", QS_C(errorstring));
 				info().warning(errorstring);
 				break;
 			}
