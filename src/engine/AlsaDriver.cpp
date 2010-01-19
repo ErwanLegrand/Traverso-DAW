@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2010 Remon Sijrier
 
 (December 2005) Ported to C++ for Traverso by Remon Sijrier
 Copyright (C) 2001 Paul Davis 
@@ -1579,7 +1579,7 @@ int AlsaDriver::attach()
 
 		snprintf (buf, sizeof(buf) - 1, "capture_%lu", chn+1);
 
-                chan = register_capture_channel(buf, "32 bit float audio", port_flags, frames_per_cycle, chn);
+                chan = register_capture_channel(buf);
 		chan->set_latency( frames_per_cycle + capture_frame_latency );
 
 	}
@@ -1590,7 +1590,7 @@ int AlsaDriver::attach()
 
 		snprintf (buf, sizeof(buf) - 1, "playback_%lu", chn+1);
 
-                chan = register_playback_channel(buf, "32 bit float audio", port_flags, frames_per_cycle, chn);
+                chan = register_playback_channel(buf);
 		chan->set_latency( frames_per_cycle + capture_frame_latency );
 	}
 

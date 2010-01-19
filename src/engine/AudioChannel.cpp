@@ -41,11 +41,9 @@
  */
 
 
-AudioChannel::AudioChannel( const QString& busName, const QString& audioType, int flags, uint channelNumber )
+AudioChannel::AudioChannel(const QString& name, uint channelNumber)
 {
-        m_name = busName;
-        m_audioType = audioType;
-        m_flags = flags;
+        m_name = name;
         m_number = channelNumber;
         hasData = false;
         monitoring = false;

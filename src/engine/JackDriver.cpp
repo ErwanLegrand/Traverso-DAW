@@ -54,32 +54,26 @@ JackDriver::~JackDriver( )
 
 int JackDriver::_read( nframes_t nframes )
 {
-        int portNumber = 0;
         for (int i=0; i<m_captureChannels.size(); ++i) {
                 AudioChannel* chan = m_captureChannels.at(i);
                 if (!chan->has_data()) {
-                        portNumber++;
                         continue;
                 }
-                memcpy (chan->get_data(), jack_port_get_buffer (m_inputPorts[portNumber], nframes), sizeof (jack_default_audio_sample_t) * nframes);
-                portNumber++;
+                memcpy (chan->get_data(), jack_port_get_buffer (m_inputPorts[i], nframes), sizeof (jack_default_audio_sample_t) * nframes);
         }
         return 1;
 }
 
 int JackDriver::_write( nframes_t nframes )
 {
-        int portNumber = 0;
         for (int i=0; i<m_playbackChannels.size(); ++i) {
                 AudioChannel* chan = m_playbackChannels.at(i);
 		
 /*		if (!chan->has_data()) {
-			portNumber++;
 			continue;
 		}*/
-                memcpy ( jack_port_get_buffer (m_outputPorts[portNumber], nframes), chan->get_data(), sizeof (jack_default_audio_sample_t) * nframes);
+                memcpy ( jack_port_get_buffer (m_outputPorts[i], nframes), chan->get_data(), sizeof (jack_default_audio_sample_t) * nframes);
                 chan->silence_buffer(nframes);
-                portNumber++;
         }
         return 1;
 }
@@ -94,11 +88,7 @@ int JackDriver::setup(bool capture, bool playback, const QString& )
         const char **inputports;
         const char **outputports;
         const char *client_name = "Traverso";
-        // 	const char *server_name = NULL;
         m_jack_client = 0;
-        AudioChannel* channel;
-        char buf[32];
-        int port_flags;
         capture_frame_latency = playback_frame_latency =0;
 
 
@@ -110,34 +100,19 @@ int JackDriver::setup(bool capture, bool playback, const QString& )
         }
 
 
-        /*********** INPUT PORTS STUFF *************/
-        /******************************************/
-
         //Get all the input ports of Jack
         inputports = jack_get_ports (m_jack_client, NULL, NULL, JackPortIsPhysical|JackPortIsInput);
 
         if (inputports) {
                 for (int i = 0; inputports[i]; i++) {
                         char name[64];
-
                         sprintf (name, "input_%d", i+1);
-
-                        jack_port_t* port = jack_port_register (m_jack_client, name, JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
-
-                        if (port == 0) {
-                                fprintf (stderr, "cannot register input port \"%s\"!\n", name);
-                                jack_client_close (m_jack_client);
-                                return -1;
-                        }
-
-                        m_inputPorts.append(port);
+                        register_capture_channel(name);
                 }
+
                 free (inputports);
         }
 
-
-        /*********** OUTPUT PORTS STUFF *************/
-        /******************************************/
 
         //Get all the output ports of Jack
         outputports = jack_get_ports (m_jack_client, NULL, NULL, JackPortIsPhysical|JackPortIsOutput);
@@ -145,51 +120,73 @@ int JackDriver::setup(bool capture, bool playback, const QString& )
         if (outputports) {
                 for (int i = 0; outputports[i]; i++) {
                         char name[64];
-
                         sprintf (name, "output_%d", i+1);
-
-                        jack_port_t* port = jack_port_register (m_jack_client, name, JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
-
-                        if (port == 0) {
-                                printf ("JackDriver:: cannot register output port \"%s\"!\n", name);
-                                jack_client_close (m_jack_client);
-                                return -1;
-                        }
-
-                        m_outputPorts.append(port);
+                        register_playback_channel(name);
                 }
+
                 free (outputports);
         }
 
-
-
-        port_flags = PortIsInput|PortIsPhysical|PortIsTerminal;
-        for (int chn = 0; chn < m_inputPorts.size(); chn++) {
-
-                snprintf (buf, sizeof(buf) - 1, "playback_%d", chn+1);
-
-                channel = register_playback_channel(buf, JACK_DEFAULT_AUDIO_TYPE, port_flags, frames_per_cycle, chn);
-                channel->set_latency( frames_per_cycle + capture_frame_latency );
-        }
-
-
-        port_flags = PortIsOutput|PortIsPhysical|PortIsTerminal;
-        for (int chn = 0; chn < m_outputPorts.size(); chn++) {
-
-                snprintf (buf, sizeof(buf) - 1, "capture_%d", chn+1);
-
-                channel = register_capture_channel(buf, JACK_DEFAULT_AUDIO_TYPE, port_flags, frames_per_cycle, chn);
-                channel->set_latency( frames_per_cycle + capture_frame_latency );
-        }
 
 	device->message(tr("Jack Driver: Connected successfully to the jack server!"), AudioDevice::INFO);
         
 	return 1;
 }
 
+
+AudioChannel* JackDriver::register_capture_channel(const QByteArray& chanName)
+{
+        char buf[32];
+
+        int channelNumber = m_captureChannels.size();
+        snprintf (buf, sizeof(buf) - 1, "capture_%d", channelNumber+1);
+
+        AudioChannel* chan = new AudioChannel(buf, channelNumber);
+        chan->set_latency( frames_per_cycle + capture_frame_latency );
+
+
+        jack_port_t* port = jack_port_register (m_jack_client, chanName, JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
+
+        if (port == 0) {
+                fprintf (stderr, "cannot register input port \"%s\"!\n", chanName.data());
+                return 0;
+        }
+
+
+        m_captureChannels.append(chan);
+        m_inputPorts.append(port);
+
+        return chan;
+}
+
+AudioChannel* JackDriver::register_playback_channel(const QByteArray& chanName)
+{
+        char buf[32];
+
+        int channelNumber = m_playbackChannels.size();
+        snprintf (buf, sizeof(buf) - 1, "playback_%d", channelNumber+1);
+        AudioChannel* chan = new AudioChannel(buf, channelNumber);
+        chan->set_latency( frames_per_cycle + capture_frame_latency );
+
+        jack_port_t* port = jack_port_register (m_jack_client, chanName, JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+
+        if (port == 0) {
+                fprintf (stderr, "cannot register output port \"%s\"!\n", chanName.data());
+                delete chan;
+                return 0;
+        }
+
+        m_playbackChannels.append(chan);
+        m_outputPorts.append(port);
+
+        return chan;
+}
+
+
 int JackDriver::attach( )
 {
 	PENTER;
+
         device->set_buffer_size( jack_get_buffer_size(m_jack_client) );
         device->set_sample_rate (jack_get_sample_rate(m_jack_client));
 

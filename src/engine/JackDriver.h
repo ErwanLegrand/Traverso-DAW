@@ -48,6 +48,10 @@ public:
         QString get_device_name();
         QString get_device_longname();
 
+        virtual AudioChannel* register_playback_channel(const QByteArray& name);
+        virtual AudioChannel* register_capture_channel(const QByteArray& name);
+
+
         float get_cpu_load();
 	
 	size_t is_jack_running() const {return m_running == 1;}

@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier
+Copyright (C) 2005-2010 Remon Sijrier
 
 This file is part of Traverso
 
@@ -632,8 +632,12 @@ void AudioDevice::set_bus_config(QHash<QString, QStringList> c_capture, QHash<QS
         m_captureBusConfig = c_capture;
         m_playbackBusConfig = c_playback;
 
+        free_memory();
+
 	setup_capture_buses();
 	setup_playback_buses();
+
+        emit driverParamsChanged();
 }
 
 void AudioDevice::setup_default_capture_buses( )
@@ -656,7 +660,6 @@ void AudioDevice::setup_default_capture_buses( )
 		}
                 m_captureBuses.insert(name, bus);
 	}
-// 	PWARN("Capture buses count is: %d", captureBuses.size());
 }
 
 void AudioDevice::setup_default_playback_buses( )
@@ -665,8 +668,7 @@ void AudioDevice::setup_default_playback_buses( )
 	QByteArray name;
 
 	AudioChannel* channel;
-        printf("number of playback channels %d\n", m_driver->get_playback_channels().size());
-	
+
         for (int i=1; i <= m_driver->get_playback_channels().size();) {
 		name = "Playback " + QByteArray::number(number++);
 		AudioBus* bus = new AudioBus(name);
@@ -680,7 +682,6 @@ void AudioDevice::setup_default_playback_buses( )
 		}
                 m_playbackBuses.insert(name, bus);
 	}
-// 	PWARN("Playback buses count is: %d", playbackBuses.size());
 }
 
 void AudioDevice::setup_capture_buses()
@@ -697,7 +698,7 @@ void AudioDevice::setup_capture_buses()
 		AudioBus* bus = new AudioBus(name);
 		
 		for (int i = 0; i < list.count(); ++i) {
-                        channel = m_driver->get_capture_channel_by_name(list.at(i).toUtf8());
+                        channel = m_driver->get_capture_channel_by_name(list.at(i));
 			if (channel) {
 				bus->add_channel(channel);
 			}
@@ -722,7 +723,7 @@ void AudioDevice::setup_playback_buses()
 		AudioBus* bus = new AudioBus(name);
 		
 		for (int i = 0; i < list.count(); ++i) {
-                        channel = m_driver->get_playback_channel_by_name(list.at(i).toUtf8());
+                        channel = m_driver->get_playback_channel_by_name(list.at(i));
 			if (channel) {
 				bus->add_channel(channel);
 			}

@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2010 Remon Sijrier
 
 (December 2005) Ported to C++ for Traverso by Remon Sijrier
 Copyright (C) 2001 Paul Davis 

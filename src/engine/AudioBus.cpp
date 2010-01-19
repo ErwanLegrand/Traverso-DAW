@@ -65,7 +65,7 @@ AudioBus::AudioBus( const QString& name, int channels )
 	init(name);
 
 	for(int channelNumber=0; channelNumber<channels; ++channelNumber) {
-		AudioChannel* chan = new AudioChannel(name, "", 0,  channelNumber);
+                AudioChannel* chan = new AudioChannel(name, channelNumber);
 		chan->set_buffer_size(audiodevice().get_buffer_size());
 		add_channel(chan);
 	}

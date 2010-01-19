@@ -34,7 +34,7 @@ class AudioChannel
 {
 
 public:
-	AudioChannel(const QString& busName, const QString& audioType, int flags, uint channelNumber );
+        AudioChannel(const QString& name, uint channelNumber);
 	~AudioChannel();
 
 	audio_sample_t* get_buffer(nframes_t )
@@ -85,12 +85,10 @@ private:
 	uint 			bufSize;
 	uint 			m_latency;
 	uint 			m_number;
-	int 			m_flags;
 	bool 			hasData;
 	bool			mlocked;
 	bool			monitoring;
 	QString 		m_name;
-	QString 		m_audioType;
 
 	friend class JackDriver;
 	friend class AlsaDriver;
