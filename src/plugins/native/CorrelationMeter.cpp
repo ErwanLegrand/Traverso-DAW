@@ -104,7 +104,7 @@ void CorrelationMeter::process(AudioBus* bus, unsigned long nframes)
 	audio_sample_t* bufferRight = bus->get_buffer(1, nframes);
 
 
-	// Variables we need to calculate the correlation and avarages/levels
+        // Variables we need to calculate the correlation and averages/levels
 	float a1, a2, a1a2 = 0, a1sq = 0, a2sq = 0, r, levelLeft = 0, levelRight = 0;
 	
 	// calculate coefficient

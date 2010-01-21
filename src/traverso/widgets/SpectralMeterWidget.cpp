@@ -512,13 +512,13 @@ Command* SpectralMeterView::screen_capture( )
         return 0;
 }
 
-Command* SpectralMeterView::export_avarage_curve()
+Command* SpectralMeterView::export_average_curve()
 {
 	// check if all requirements are met
 	if ((!show_average) || (!m_project)) {
 		printf("No average data available.\n");
-		info().warning(tr("FFT: No avarage curve used, not data to export!"));
-		info().information(tr("FFT: Enable avarage curve with < M > to generate data"));
+                info().warning(tr("FFT: No average curve used, not data to export!"));
+                info().information(tr("FFT: Enable average curve with < M > to generate data"));
 		return 0;
 	}
 
@@ -526,7 +526,7 @@ Command* SpectralMeterView::export_avarage_curve()
 	int s = qMin(m_map_idx2freq.size(), m_avg_db.size());
 	if (!s) {
 		printf("No average data available.\n");
-		info().warning(tr("FFT: No avarage data to export!"));
+                info().warning(tr("FFT: No average data to export!"));
 		return 0;
 	}
 
