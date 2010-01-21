@@ -355,8 +355,9 @@ Command* SheetView::center()
 
 void SheetView::transport_position_set()
 {
-        if (!m_sheet->is_transport_rolling() && m_actOnPlayHead)
-		center_playhead();
+        if (!m_sheet->is_transport_rolling() && m_actOnPlayHead) {
+                m_playCursor->update_position();
+        }
 }
 
 
@@ -543,16 +544,14 @@ ClipsViewPort * SheetView::get_clips_viewport() const
 
 Command * SheetView::touch( )
 {
-	QPointF point = m_clipsViewPort->mapToScene(QPoint(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y()));
-	m_sheet->set_work_at(TimeRef(point.x() * timeref_scalefactor));
+        m_sheet->set_work_at(TimeRef(cpointer().on_first_input_event_scene_x() * timeref_scalefactor));
 
 	return 0;
 }
 
 Command * SheetView::touch_play_cursor( )
 {
-	QPointF point = m_clipsViewPort->mapToScene(QPoint(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y()));
-	m_sheet->set_transport_pos(TimeRef(point.x() * timeref_scalefactor));
+        m_sheet->set_transport_pos(TimeRef(cpointer().on_first_input_event_scene_x() * timeref_scalefactor));
 
 	return 0;
 }
