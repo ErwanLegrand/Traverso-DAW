@@ -25,8 +25,9 @@
 #include <AudioBus.h>
 #include <AudioChannel.h>
 
-#include <QTableWidget>
-#include <QTableWidgetItem>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+#include <QInputDialog>
 #include <QHash>
 #include <QString>
 #include <QPushButton>
@@ -51,108 +52,129 @@ AudioIODialog::AudioIODialog(QWidget* parent)
 
 	initInput();
 	initOutput();
+
+        connect(inputTreeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
+                this, SLOT(inputSelectionChanged(QTreeWidgetItem *, QTreeWidgetItem *)));
+        connect(outputTreeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
+                this, SLOT(outputSelectionChanged(QTreeWidgetItem *, QTreeWidgetItem *)));
+        connect(inputTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem *, int)),
+                this, SLOT(itemChanged(QTreeWidgetItem *, int)));
+        connect(outputTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem *, int)),
+                this, SLOT(itemChanged(QTreeWidgetItem *, int)));
+        connect(inputTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)),
+                this, SLOT(itemDoubleClicked(QTreeWidgetItem *, int)));
+        connect(outputTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)),
+                this, SLOT(itemDoubleClicked(QTreeWidgetItem *, int)));
 }
 
 void AudioIODialog::initInput()
 {
 	m_inputChannelList = audiodevice().get_capture_channel_names();
-	const QHash<QString, QStringList> busList = audiodevice().get_capture_bus_configuration();
-	
-	tableWidgetInput->setColumnCount(m_inputChannelList.count() + 2);
-	tableWidgetInput->setRowCount(1);
-	
-	for (int i = 0; i < m_inputChannelList.count(); ++i) {
-		tableWidgetInput->setItem(0, i + 2, new QTableWidgetItem(m_inputChannelList.at(i)));
-	}
+        QStringList headers = m_inputChannelList;
+        headers.prepend(tr("Bus"));
 
-	QHash<QString, QStringList>::const_iterator it = busList.constBegin();
+        // add all hardware channels (columns)
+        inputTreeWidget->setHeaderLabels(headers);
 
+        const QHash<QString, QStringList> busList = audiodevice().get_capture_bus_configuration();
+        QHash<QString, QStringList>::const_iterator it = busList.constBegin();
+
+        // loop over all audio busses
 	while (it != busList.constEnd()) {
-
-		int span_start = tableWidgetInput->rowCount();
-		int span_end = 0;
-		QString side = "L";
 		QStringList busChannels = it.value();
-		for (int k = 0; k < busChannels.count(); ++k) {
-			if (busChannels.count() <= 1) {
-				side = "M";
-			}
-		  
-			int j = tableWidgetInput->rowCount();
-			tableWidgetInput->setRowCount(j + 1);
-			tableWidgetInput->setItem(j, 0, new QTableWidgetItem(it.key()));
-			
-			for (int i = 0; i < m_inputChannelList.count(); ++i) {
-				tableWidgetInput->setItem(j, 1, new QTableWidgetItem(side));
-				
-				QTableWidgetItem *itm = new QTableWidgetItem();
-				itm->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+                QString busName = it.key();
 
-				if (busChannels.at(k) ==  m_inputChannelList.at(i)) {
-					itm->setCheckState(Qt::Checked);
-				} else {
-					itm->setCheckState(Qt::Unchecked);
-				}
-			
-				tableWidgetInput->setItem(j, i+2, itm);
-			}
-			side = "R";
-			++span_end;
-		}
-		tableWidgetInput->setSpan(span_start, 0, span_end, 1);
+                QTreeWidgetItem *itm = new QTreeWidgetItem();
+                itm->setText(0, busName);
+                inputTreeWidget->addTopLevelItem(itm);
+
+                // Add all channels to the current bus. Name them either "Mono" or "Left/Right",
+                // depending on the number of channels.
+                QString lbl = tr("Mono");
+                if (busChannels.count() > 1) {
+                        lbl = tr("Left");
+                }
+
+                for (int i = 0; i < busChannels.count(); ++i) {
+                        QTreeWidgetItem *bitm = new QTreeWidgetItem(itm);
+                        bitm->setText(0, lbl);
+                        lbl = tr("Right");
+
+                        // set all columns to unchecked first
+                        for (int j = 1; j < inputTreeWidget->columnCount(); ++j) {
+                                bitm->setCheckState(j, Qt::Unchecked);
+                        }
+
+                        // now find the one to be checked by searching its name in the
+                        // list of input channels. Add +1 because column no 0 contains
+                        // the names, not check boxes
+                        int idx = m_inputChannelList.indexOf(busChannels.at(i), 0) + 1;
+
+                        // if a valid index was found, check it (not found returns -1, which
+                        // is 0 after adding +1)
+                        if (idx) {
+                                bitm->setCheckState(idx, Qt::Checked);
+                        }
+                }
+
+                itm->setExpanded(true);
 		++it;
 	}
 }
 
 void AudioIODialog::initOutput()
 {
-	m_outputChannelList = audiodevice().get_playback_channel_names();
-	const QHash<QString, QStringList> busList = audiodevice().get_playback_bus_configuration();
-	
-	tableWidgetOutput->setColumnCount(m_outputChannelList.count() + 2);
-	tableWidgetOutput->setRowCount(1);
-	
-	for (int i = 0; i < m_outputChannelList.count(); ++i) {
-		tableWidgetOutput->setItem(0, i + 2, new QTableWidgetItem(m_outputChannelList.at(i)));
-	}
+        m_outputChannelList = audiodevice().get_playback_channel_names();
+        QStringList headers = m_outputChannelList;
+        headers.prepend(tr("Bus"));
 
-	QHash<QString, QStringList>::const_iterator it = busList.constBegin();
+        // add all hardware channels (columns)
+        outputTreeWidget->setHeaderLabels(headers);
 
-	while (it != busList.constEnd()) {
+        const QHash<QString, QStringList> busList = audiodevice().get_playback_bus_configuration();
+        QHash<QString, QStringList>::const_iterator it = busList.constBegin();
 
-		int span_start = tableWidgetOutput->rowCount();
-		int span_end = 0;
-		QString side = "L";
-		QStringList busChannels = it.value();
-		for (int k = 0; k < busChannels.count(); ++k) {
-			if (busChannels.count() <= 1) {
-				side = "M";
-			}
-		  
-			int j = tableWidgetOutput->rowCount();
-			tableWidgetOutput->setRowCount(j + 1);
-			tableWidgetOutput->setItem(j, 0, new QTableWidgetItem(it.key()));
-			
-			for (int i = 0; i < m_outputChannelList.count(); ++i) {
-				tableWidgetOutput->setItem(j, 1, new QTableWidgetItem(side));
-				
-				QTableWidgetItem *itm = new QTableWidgetItem();
-				itm->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+        // loop over all audio busses
+        while (it != busList.constEnd()) {
+                QStringList busChannels = it.value();
+                QString busName = it.key();
 
-				if (busChannels.at(k) ==  m_outputChannelList.at(i)) {
-					itm->setCheckState(Qt::Checked);
-				} else {
-					itm->setCheckState(Qt::Unchecked);
-				}
-			
-				tableWidgetOutput->setItem(j, i+2, itm);
-			}
-			side = "R";
-			++span_end;
-		}
-		tableWidgetOutput->setSpan(span_start, 0, span_end, 1);
-		++it;
-	}
+                QTreeWidgetItem *itm = new QTreeWidgetItem();
+                itm->setText(0, busName);
+                outputTreeWidget->addTopLevelItem(itm);
+
+                // Add all channels to the current bus. Name them either "Mono" or "Left/Right",
+                // depending on the number of channels.
+                QString lbl = tr("Mono");
+                if (busChannels.count() > 1) {
+                        lbl = tr("Left");
+                }
+
+                for (int i = 0; i < busChannels.count(); ++i) {
+                        QTreeWidgetItem *bitm = new QTreeWidgetItem(itm);
+                        bitm->setText(0, lbl);
+                        lbl = tr("Right");
+
+                        // set all columns to unchecked first
+                        for (int j = 1; j < outputTreeWidget->columnCount(); ++j) {
+                                bitm->setCheckState(j, Qt::Unchecked);
+                        }
+
+                        // now find the one to be checked by searching its name in the
+                        // list of input channels. Add +1 because column no 0 contains
+                        // the names, not check boxes
+                        int idx = m_outputChannelList.indexOf(busChannels.at(i), 0) + 1;
+
+                        // if a valid index was found, check it (not found returns -1, which
+                        // is 0 after adding +1)
+                        if (idx) {
+                                bitm->setCheckState(idx, Qt::Checked);
+                        }
+                }
+
+                itm->setExpanded(true);
+                ++it;
+        }
 }
 
 void AudioIODialog::accept()
@@ -168,219 +190,228 @@ void AudioIODialog::accept()
 
 void AudioIODialog::addMonoInput()
 {
-	int rc = tableWidgetInput->rowCount();
-	tableWidgetInput->setRowCount(rc + 1);
-	
-	tableWidgetInput->setItem(rc, 0, new QTableWidgetItem(QString(tr("Input %1")).arg(rc)));
-	tableWidgetInput->setItem(rc, 1, new QTableWidgetItem("M"));
-	
-	for (int i = 2; i < tableWidgetInput->columnCount(); ++i) {
-		QTableWidgetItem *itm = new QTableWidgetItem();
-		itm->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-		itm->setCheckState(Qt::Unchecked);
-		tableWidgetInput->setItem(rc, i, itm);		  
-	}
+        QString name = QString(tr("Capture %1")).arg(inputTreeWidget->topLevelItemCount() + 1);
+
+        QTreeWidgetItem *itm = new QTreeWidgetItem();
+        itm->setText(0, name);
+        inputTreeWidget->addTopLevelItem(itm);
+
+        QString lbm = tr("Mono");
+
+        QTreeWidgetItem *bitm = new QTreeWidgetItem(itm);
+        bitm->setText(0, lbm);
+
+        for (int j = 1; j < inputTreeWidget->columnCount(); ++j) {
+                bitm->setCheckState(j, Qt::Unchecked);
+        }
+
+        itm->setExpanded(true);
 }
 
 
 void AudioIODialog::addMonoOutput()
 {
-	int rc = tableWidgetOutput->rowCount();
-	tableWidgetOutput->setRowCount(rc + 1);
-	
-	tableWidgetOutput->setItem(rc, 0, new QTableWidgetItem(QString(tr("Output %1")).arg(rc)));
-	tableWidgetOutput->setItem(rc, 1, new QTableWidgetItem("M"));
-	
-	for (int i = 2; i < tableWidgetOutput->columnCount(); ++i) {
-		QTableWidgetItem *itm = new QTableWidgetItem();
-		itm->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-		itm->setCheckState(Qt::Unchecked);
-		tableWidgetOutput->setItem(rc, i, itm);		  
-	}
+        QString name = QString(tr("Playback %1")).arg(inputTreeWidget->topLevelItemCount() + 1);
+
+        QTreeWidgetItem *itm = new QTreeWidgetItem();
+        itm->setText(0, name);
+        outputTreeWidget->addTopLevelItem(itm);
+
+        QString lbm = tr("Mono");
+
+        QTreeWidgetItem *bitm = new QTreeWidgetItem(itm);
+        bitm->setText(0, lbm);
+
+        for (int j = 1; j < outputTreeWidget->columnCount(); ++j) {
+                bitm->setCheckState(j, Qt::Unchecked);
+        }
+
+        itm->setExpanded(true);
 }
 
 void AudioIODialog::addStereoInput()
 {
-	int rc = tableWidgetInput->rowCount();
-	tableWidgetInput->setRowCount(rc + 2);
-	
-	tableWidgetInput->setItem(rc, 0, new QTableWidgetItem(QString(tr("Input %1")).arg(rc)));
-	tableWidgetInput->setSpan(rc, 0, 2, 1);
-	tableWidgetInput->setItem(rc, 1, new QTableWidgetItem("L"));
-	tableWidgetInput->setItem(rc+1, 1, new QTableWidgetItem("R"));
-	
-	for (int i = 2; i < tableWidgetInput->columnCount(); ++i) {
-		QTableWidgetItem *litm = new QTableWidgetItem();
-		QTableWidgetItem *ritm = new QTableWidgetItem();
-		litm->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-		ritm->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-		litm->setCheckState(Qt::Unchecked);
-		ritm->setCheckState(Qt::Unchecked);
-		tableWidgetInput->setItem(rc, i, litm);
-		tableWidgetInput->setItem(rc+1, i, ritm);
-	}
+        QString name = QString(tr("Capture %1")).arg(inputTreeWidget->topLevelItemCount() + 1);
+
+        QTreeWidgetItem *itm = new QTreeWidgetItem();
+        itm->setText(0, name);
+        inputTreeWidget->addTopLevelItem(itm);
+
+        QString lbl = tr("Left");
+        QString lbr = tr("Right");
+
+        QTreeWidgetItem *bitl = new QTreeWidgetItem(itm);
+        QTreeWidgetItem *bitr = new QTreeWidgetItem(itm);
+        bitl->setText(0, lbl);
+        bitr->setText(0, lbr);
+
+        for (int j = 1; j < inputTreeWidget->columnCount(); ++j) {
+                bitl->setCheckState(j, Qt::Unchecked);
+                bitr->setCheckState(j, Qt::Unchecked);
+        }
+
+        itm->setExpanded(true);
 }
 
 void AudioIODialog::addStereoOutput()
 {
-	int rc = tableWidgetOutput->rowCount();
-	tableWidgetOutput->setRowCount(rc + 2);
-	
-	tableWidgetOutput->setItem(rc, 0, new QTableWidgetItem(QString(tr("Output %1")).arg(rc)));
-	tableWidgetOutput->setSpan(rc, 0, 2, 1);
-	tableWidgetOutput->setItem(rc, 1, new QTableWidgetItem("L"));
-	tableWidgetOutput->setItem(rc+1, 1, new QTableWidgetItem("R"));
-	
-	for (int i = 2; i < tableWidgetOutput->columnCount(); ++i) {
-		QTableWidgetItem *litm = new QTableWidgetItem();
-		QTableWidgetItem *ritm = new QTableWidgetItem();
-		litm->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-		ritm->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-		litm->setCheckState(Qt::Unchecked);
-		ritm->setCheckState(Qt::Unchecked);
-		tableWidgetOutput->setItem(rc, i, litm);
-		tableWidgetOutput->setItem(rc+1, i, ritm);
-	}
+        QString name = QString(tr("Playback %1")).arg(inputTreeWidget->topLevelItemCount() + 1);
+
+        QTreeWidgetItem *itm = new QTreeWidgetItem();
+        itm->setText(0, name);
+        outputTreeWidget->addTopLevelItem(itm);
+
+        QString lbl = tr("Left");
+        QString lbr = tr("Right");
+
+        QTreeWidgetItem *bitl = new QTreeWidgetItem(itm);
+        QTreeWidgetItem *bitr = new QTreeWidgetItem(itm);
+        bitl->setText(0, lbl);
+        bitr->setText(0, lbr);
+
+        for (int j = 1; j < outputTreeWidget->columnCount(); ++j) {
+                bitl->setCheckState(j, Qt::Unchecked);
+                bitr->setCheckState(j, Qt::Unchecked);
+        }
+
+        itm->setExpanded(true);
 }
 
 void AudioIODialog::removeInput()
 {
-	int row = tableWidgetInput->currentItem()->row();
-	int col = tableWidgetInput->currentItem()->column();
-	int rowspan = tableWidgetInput->rowSpan(row, col) - 1;
+        int idx = inputTreeWidget->indexOfTopLevelItem(inputTreeWidget->currentItem());
 
-	// this is a workaround. Shifting spans should be fixed in Qt 4.6
-	if (rowspan) {
-		tableWidgetInput->setSpan(row, col, 1, 1);
-	}
- 
-	// remove all rows spanned by the first cell
-	while (rowspan >= 0) {
-		if (row + rowspan < tableWidgetInput->rowCount()) {
-			tableWidgetInput->removeRow(row + rowspan);
-		}		
-		--rowspan;
-	}
+        if (idx == -1) {
+                return;
+        }
+
+        QTreeWidgetItem *itm = inputTreeWidget->takeTopLevelItem(idx);
+        delete itm;
 }
 
 void AudioIODialog::removeOutput()
 {
-	int row = tableWidgetOutput->currentItem()->row();
-	int col = tableWidgetOutput->currentItem()->column();
-	int rowspan = tableWidgetOutput->rowSpan(row, col) - 1;
+        int idx = outputTreeWidget->indexOfTopLevelItem(outputTreeWidget->currentItem());
 
-	// this is a workaround. Shifting spans should be fixed in Qt 4.6
-	if (rowspan) {
-		tableWidgetOutput->setSpan(row, col, 1, 1);
-	}
- 
-	// remove all rows spanned by the first cell
-	while (rowspan >= 0) {
-		if (row + rowspan < tableWidgetOutput->rowCount()) {
-			tableWidgetOutput->removeRow(row + rowspan);
-		}		
-		--rowspan;
-	}
+        if (idx == -1) {
+                return;
+        }
+
+        QTreeWidgetItem *itm = outputTreeWidget->takeTopLevelItem(idx);
+        delete itm;
 }
 
-void AudioIODialog::inputSelectionChanged(int x, int y)
+void AudioIODialog::inputSelectionChanged(QTreeWidgetItem *current, QTreeWidgetItem *)
 {
-	if (y > 0 || x == 0) {
-		buttonRemoveInput->setEnabled(false);
-	} else {
-		buttonRemoveInput->setEnabled(true);
-	}
+        if (current) {
+                buttonRemoveInput->setEnabled(true);
+        } else {
+                buttonRemoveInput->setEnabled(false);
+        }
 }
 
-void AudioIODialog::outputSelectionChanged(int x, int y)
+void AudioIODialog::outputSelectionChanged(QTreeWidgetItem *current, QTreeWidgetItem *)
 {
-	if (y > 0 || x == 0) {
-		buttonRemoveOutput->setEnabled(false);
-	} else {
-		buttonRemoveOutput->setEnabled(true);
-	}
+        if (current) {
+                buttonRemoveOutput->setEnabled(true);
+        } else {
+                buttonRemoveOutput->setEnabled(false);
+        }
+}
+
+// we will uncheck all checkboxes but the one that was changed. We don't care if the
+// changed one was checked or unchecked, as having none checked is valid, but having
+// more than one checked is not.
+void AudioIODialog::itemChanged(QTreeWidgetItem *itm, int col)
+{
+    // this is necessary because unchecking also emits the signal, so do
+    // nothing if the state changed from checked to unchecked
+    if (itm->checkState(col) == Qt::Unchecked) {
+        return;
+    }
+
+    // now uncheck all boxes but the one checked by the user
+    for (int i = 1; i < itm->columnCount(); ++i) {
+        if (i != col) {
+            itm->setCheckState(i, Qt::Unchecked);
+        }
+    }
+}
+
+void AudioIODialog::itemDoubleClicked(QTreeWidgetItem *itm, int)
+{
+    // if it has a parent, it's not a toplevel item, so do nothing
+    if (itm->parent()) {
+        return;
+    }
+
+    QString str = itm->text(0);
+    bool ok = false;
+
+    str = QInputDialog::getText(this, tr("Change Bus Name"), tr("Bus Name"), QLineEdit::Normal, str, &ok);
+
+    if (ok) {
+        itm->setText(0, str);
+        itm->setExpanded(true);
+    }
 }
 
 QHash<QString, QStringList> AudioIODialog::outputBusConfig()
 {
-	QHash<QString, QStringList> hash;
-	QString bus;
-	QStringList channels;
-	QTableWidgetItem *b_item;
-	QTableWidgetItem *c_item;
-	
-	if (tableWidgetOutput->rowCount() <= 1) {
-		return hash;
-	}
-	
-	int i = 1;
-	while (i < tableWidgetOutput->rowCount()) {
-		channels.clear();
-		b_item = tableWidgetOutput->item(i, 0);
-		
-		if (!b_item) {
-			break;
-		}
+        QHash<QString, QStringList> hash;
 
-		bus = b_item->text();
-		
-		for (int j = 0; j < tableWidgetOutput->rowSpan(b_item->row(), 0); ++j) {
-			if (j) {
-				++i;
-			}
+        while (outputTreeWidget->topLevelItemCount()) {
+                QString bus;
+                QStringList channels;
 
-			for (int k = 2; k < tableWidgetOutput->columnCount(); ++k) {
-				c_item = tableWidgetOutput->item(i, k);
-				if (c_item->checkState() == Qt::Checked) {
-					channels.append(tableWidgetOutput->item(0, k)->text());
-				}
-			}
-		}
-		hash.insert(bus, channels);
-		++i;
-	}
-	
-	return hash;
+                QTreeWidgetItem *parent = outputTreeWidget->takeTopLevelItem(0);
+                bus = parent->text(0);
+
+                while (parent->childCount()) {
+                        QTreeWidgetItem *child = parent->takeChild(0);
+
+                        for (int i = 1; i < child->columnCount(); ++i) {
+                            if (child->checkState(i) == Qt::Checked) {
+                                channels.append(m_outputChannelList.at(i - 1));
+                            }
+                        }
+
+                        delete child;
+                }
+
+                delete parent;
+                hash.insert(bus, channels);
+        }
+
+        return hash;
 }
 
 QHash<QString, QStringList> AudioIODialog::inputBusConfig()
 {
 	QHash<QString, QStringList> hash;
-	QString bus;
-	QStringList channels;
-	QTableWidgetItem *b_item;
-	QTableWidgetItem *c_item;
-	
-	if (tableWidgetInput->rowCount() <= 1) {
-		return hash;
-	}
-	
-	int i = 1;
-	while (i < tableWidgetInput->rowCount()) {
-		channels.clear();
-		b_item = tableWidgetInput->item(i, 0);
 
-		if (!b_item) {
-			break;
-		}
-		
-		bus = b_item->text();
-		
-		for (int j = 0; j < tableWidgetInput->rowSpan(b_item->row(), 0); ++j) {
-			if (j) {
-				++i;
-			}
+        while (inputTreeWidget->topLevelItemCount()) {
+                QString bus;
+                QStringList channels;
 
-			for (int k = 2; k < tableWidgetInput->columnCount(); ++k) {
-				c_item = tableWidgetInput->item(i, k);
-				if (c_item->checkState() == Qt::Checked) {
-					channels.append(tableWidgetInput->item(0, k)->text());
-				}
-			}
-		}
-		hash.insert(bus, channels);
-		++i;
-	}
+                QTreeWidgetItem *parent = inputTreeWidget->takeTopLevelItem(0);
+                bus = parent->text(0);
+
+                while (parent->childCount()) {
+                        QTreeWidgetItem *child = parent->takeChild(0);
+
+                        for (int i = 1; i < child->columnCount(); ++i) {
+                            if (child->checkState(i) == Qt::Checked) {
+                                channels.append(m_inputChannelList.at(i - 1));
+                            }
+                        }
+
+                        delete child;
+                }
+
+                delete parent;
+                hash.insert(bus, channels);
+        }
 
 	return hash;
 }

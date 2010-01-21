@@ -38,7 +38,7 @@ public:
 private:
 	QStringList m_inputChannelList;
 	QStringList m_outputChannelList;
-	
+
 	void initInput();
 	void initOutput();
 	void accept();
@@ -49,14 +49,16 @@ private slots:
 	void addMonoInput();
 	void addStereoInput();
 	void removeInput();
-	void inputSelectionChanged(int, int);
+        void inputSelectionChanged(QTreeWidgetItem *, QTreeWidgetItem *);
 
 	void addMonoOutput();
 	void addStereoOutput();
 	void removeOutput();
-	void outputSelectionChanged(int, int);
-};
+        void outputSelectionChanged(QTreeWidgetItem *, QTreeWidgetItem *);
 
+        void itemChanged(QTreeWidgetItem *, int);
+        void itemDoubleClicked(QTreeWidgetItem *, int);
+};
 
 
 #endif

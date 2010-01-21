@@ -32,13 +32,12 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QTableWidget" name="tableWidgetInput">
-         <attribute name="horizontalHeaderVisible">
-          <bool>false</bool>
-         </attribute>
-         <attribute name="verticalHeaderVisible">
-          <bool>false</bool>
-         </attribute>
+        <widget class="QTreeWidget" name="inputTreeWidget">
+         <column>
+          <property name="text">
+           <string>Bus</string>
+          </property>
+         </column>
         </widget>
        </item>
        <item>
@@ -113,13 +112,12 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QTableWidget" name="tableWidgetOutput">
-         <attribute name="horizontalHeaderVisible">
-          <bool>false</bool>
-         </attribute>
-         <attribute name="verticalHeaderVisible">
-          <bool>false</bool>
-         </attribute>
+        <widget class="QTreeWidget" name="outputTreeWidget">
+         <column>
+          <property name="text">
+           <string>Bus</string>
+          </property>
+         </column>
         </widget>
        </item>
        <item>
@@ -301,22 +299,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>tableWidgetInput</sender>
-   <signal>cellClicked(int,int)</signal>
-   <receiver>AudioIODialog</receiver>
-   <slot>inputSelectionChanged(int,int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>181</x>
-     <y>127</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>230</x>
-     <y>6</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>buttonAddStereoOutput</sender>
    <signal>clicked()</signal>
    <receiver>AudioIODialog</receiver>
@@ -341,22 +323,6 @@
     <hint type="sourcelabel">
      <x>76</x>
      <y>350</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>262</x>
-     <y>209</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>tableWidgetOutput</sender>
-   <signal>cellClicked(int,int)</signal>
-   <receiver>AudioIODialog</receiver>
-   <slot>outputSelectionChanged(int,int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>262</x>
-     <y>199</y>
     </hint>
     <hint type="destinationlabel">
      <x>262</x>
