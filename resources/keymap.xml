@@ -511,13 +511,13 @@
 		</keyfact>
 		<keyfact type="D_FKEY" key1="ENTER" >
 			<Objects>
-				<Object objectname="SpectralMeterView" slotsignature="export_avarage_curve" modes="All" />
+                                <Object objectname="SpectralMeterView" slotsignature="export_average_curve" modes="All" />
 				<Object objectname="Interface" slotsignature="show_export_widget" modes="All" />
 			</Objects>
 		</keyfact>
 		<keyfact type="D_FKEY" key1="RETURN" >
 			<Objects>
-				<Object objectname="SpectralMeterView" slotsignature="export_avarage_curve" modes="All" />
+                                <Object objectname="SpectralMeterView" slotsignature="export_average_curve" modes="All" />
 				<Object objectname="Interface" slotsignature="show_export_widget" modes="All" />
 			</Objects>
 		</keyfact>
