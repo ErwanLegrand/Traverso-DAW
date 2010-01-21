@@ -82,7 +82,6 @@ int FadeRange::begin_hold()
 
 int FadeRange::finish_hold()
 {
-	QCursor::setPos(d->mousePos);
 	delete d;
 	return 1;
 }
