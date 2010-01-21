@@ -40,7 +40,7 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 	contentsWidget->setViewMode(QListView::IconMode);
 	contentsWidget->setIconSize(QSize(32, 32));
 	contentsWidget->setMovement(QListView::Static);
-	contentsWidget->setMaximumWidth(140);
+//	contentsWidget->setMaximumWidth(140);
 	contentsWidget->setMinimumWidth(135);
 	contentsWidget->setMinimumHeight(390);
 	contentsWidget->setSpacing(12);
