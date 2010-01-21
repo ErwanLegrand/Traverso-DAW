@@ -338,6 +338,7 @@ void AudioIODialog::itemChanged(QTreeWidgetItem *itm, int col)
     }
 }
 
+// double click on a toplevel item opens a rename dialog
 void AudioIODialog::itemDoubleClicked(QTreeWidgetItem *itm, int)
 {
     // if it has a parent, it's not a toplevel item, so do nothing
@@ -345,15 +346,44 @@ void AudioIODialog::itemDoubleClicked(QTreeWidgetItem *itm, int)
         return;
     }
 
-    QString str = itm->text(0);
+    // first find out in which TreeWidget the item lives
+    QTreeWidget *tw = itm->treeWidget();
+    QStringList names;
+
+    // then load all toplevel item labels but the current one into the names stringlist
+    for (int i = 0; i < tw->topLevelItemCount(); ++i) {
+        if (tw->topLevelItem(i) != itm) {
+            names.append(tw->topLevelItem(i)->text(0));
+        }
+    }
+
+    QString oldstr = itm->text(0);
+    QString newstr = itm->text(0);
+
     bool ok = false;
 
-    str = QInputDialog::getText(this, tr("Change Bus Name"), tr("Bus Name"), QLineEdit::Normal, str, &ok);
+    // open a dialog and store the new string
+    newstr = QInputDialog::getText(this, tr("Change Bus Name"),
+                                           tr("Bus Name"), QLineEdit::Normal, oldstr, &ok);
 
-    if (ok) {
-        itm->setText(0, str);
-        itm->setExpanded(true);
+
+    if (!ok) {  // dialog aborted
+        return;
     }
+
+    // if the new string already exists, open the dialog again until either a non-existing
+    // name was entered, or the dialog is aborted
+    while (names.contains(newstr, Qt::CaseSensitive)) {
+        newstr = QInputDialog::getText(this, tr("Change Bus Name"),
+                                               tr("Bus Name"), QLineEdit::Normal, newstr, &ok);
+
+        if (!ok) {  // dialog aborted
+            return;
+        }
+    }
+
+    // if we made it down hear, we can accept the new string
+    itm->setText(0, newstr);
 }
 
 QHash<QString, QStringList> AudioIODialog::outputBusConfig()
