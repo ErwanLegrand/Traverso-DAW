@@ -631,7 +631,7 @@ void Interface::create_menus( )
 	m_viewMenu->addAction(spectralMeterDW->toggleViewAction());
 
 	m_viewMenu->addSeparator();
-	QAction* toolbars = m_viewMenu->addAction("ToolBars");
+        QAction* toolbars = m_viewMenu->addAction(tr("ToolBars"));
 	toolbars->setEnabled(false);
 	m_viewMenu->addSeparator();
 	
