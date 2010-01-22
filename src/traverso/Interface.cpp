@@ -158,8 +158,8 @@ Interface::Interface()
 	spectralMeterDW->hide();
 
 	// BusMonitor
-	busMonitorDW = new QDockWidget("VU Meters", this);
-	busMonitorDW->setObjectName("VU Meters");
+        busMonitorDW = new QDockWidget(tr("VU Meters"), this);
+        busMonitorDW->setObjectName(tr("VU Meters"));
 
 	busMonitor = new BusMonitor(busMonitorDW);
 	busMonitorDW->setWidget(busMonitor);
