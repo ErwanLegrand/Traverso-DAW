@@ -25,6 +25,7 @@
 #include "ui_AudioIODialog.h"
 
 #include <QDialog>
+#include "defines.h"
 
 class AudioIODialog : public QDialog, protected Ui::AudioIODialog
 {
@@ -42,8 +43,8 @@ private:
 	void initInput();
 	void initOutput();
 	void accept();
-	QHash<QString, QStringList> outputBusConfig();
-	QHash<QString, QStringList> inputBusConfig();
+        QList<bus_config> outputBusConfig();
+        QList<bus_config> inputBusConfig();
 	
 private slots:
 	void addMonoInput();

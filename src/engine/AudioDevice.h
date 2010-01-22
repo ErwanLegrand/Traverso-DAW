@@ -100,7 +100,7 @@ public:
                 return m_captureBuses.value(name);
 	}
 
-	void set_bus_config(QHash<QString, QStringList> c_capture, QHash<QString, QStringList> c_playback);
+        void set_bus_config(QList<bus_config> c_capture, QList<bus_config> c_playback);
 
 	QStringList get_capture_buses_names() const;
 	QStringList get_playback_buses_names() const;
@@ -108,8 +108,8 @@ public:
 	QStringList get_capture_channel_names() const;
 	QStringList get_playback_channel_names() const;
 	
-	QHash<QString, QStringList> get_capture_bus_configuration();
-	QHash<QString, QStringList> get_playback_bus_configuration();
+        QList<bus_config> get_capture_bus_configuration();
+        QList<bus_config> get_playback_bus_configuration();
 	
 	QString get_device_name() const;
 	QString get_device_longname() const;
@@ -161,8 +161,8 @@ private:
 	APILinkedList				m_clients;
         QHash<QByteArray, AudioBus* >		m_playbackBuses;
         QHash<QByteArray, AudioBus* >		m_captureBuses;
-        QHash<QString, QStringList>		m_captureBusConfig;
-        QHash<QString, QStringList>		m_playbackBusConfig;
+        QList<bus_config>       		m_captureBusConfig;
+        QList<bus_config>       		m_playbackBusConfig;
         QStringList				m_availableDrivers;
 	QTimer					m_xrunResetTimer;
 #if defined (JACK_SUPPORT)

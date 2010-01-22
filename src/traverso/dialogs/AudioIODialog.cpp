@@ -76,39 +76,37 @@ void AudioIODialog::initInput()
         // add all hardware channels (columns)
         inputTreeWidget->setHeaderLabels(headers);
 
-        const QHash<QString, QStringList> busList = audiodevice().get_capture_bus_configuration();
-        QHash<QString, QStringList>::const_iterator it = busList.constBegin();
+        const QList<bus_config> busList = audiodevice().get_capture_bus_configuration();
 
         // loop over all audio busses
-	while (it != busList.constEnd()) {
-		QStringList busChannels = it.value();
-                QString busName = it.key();
+        for (int j = 0; j < busList.count(); ++j) {
+                bus_config conf = busList.at(j);
 
                 QTreeWidgetItem *itm = new QTreeWidgetItem();
-                itm->setText(0, busName);
+                itm->setText(0, conf.name);
                 inputTreeWidget->addTopLevelItem(itm);
 
                 // Add all channels to the current bus. Name them either "Mono" or "Left/Right",
                 // depending on the number of channels.
                 QString lbl = tr("Mono");
-                if (busChannels.count() > 1) {
+                if (conf.channels.count() > 1) {
                         lbl = tr("Left");
                 }
 
-                for (int i = 0; i < busChannels.count(); ++i) {
+                for (int i = 0; i < conf.channels.count(); ++i) {
                         QTreeWidgetItem *bitm = new QTreeWidgetItem(itm);
                         bitm->setText(0, lbl);
                         lbl = tr("Right");
 
                         // set all columns to unchecked first
-                        for (int j = 1; j < inputTreeWidget->columnCount(); ++j) {
-                                bitm->setCheckState(j, Qt::Unchecked);
+                        for (int k = 1; k < inputTreeWidget->columnCount(); ++k) {
+                                bitm->setCheckState(k, Qt::Unchecked);
                         }
 
                         // now find the one to be checked by searching its name in the
                         // list of input channels. Add +1 because column no 0 contains
                         // the names, not check boxes
-                        int idx = m_inputChannelList.indexOf(busChannels.at(i), 0) + 1;
+                        int idx = m_inputChannelList.indexOf(conf.channels.at(i), 0) + 1;
 
                         // if a valid index was found, check it (not found returns -1, which
                         // is 0 after adding +1)
@@ -118,7 +116,6 @@ void AudioIODialog::initInput()
                 }
 
                 itm->setExpanded(true);
-		++it;
 	}
 }
 
@@ -131,39 +128,37 @@ void AudioIODialog::initOutput()
         // add all hardware channels (columns)
         outputTreeWidget->setHeaderLabels(headers);
 
-        const QHash<QString, QStringList> busList = audiodevice().get_playback_bus_configuration();
-        QHash<QString, QStringList>::const_iterator it = busList.constBegin();
+        const QList<bus_config> busList = audiodevice().get_playback_bus_configuration();
 
         // loop over all audio busses
-        while (it != busList.constEnd()) {
-                QStringList busChannels = it.value();
-                QString busName = it.key();
+        for (int j = 0; j < busList.count(); ++j) {
+                bus_config conf = busList.at(j);
 
                 QTreeWidgetItem *itm = new QTreeWidgetItem();
-                itm->setText(0, busName);
+                itm->setText(0, conf.name);
                 outputTreeWidget->addTopLevelItem(itm);
 
                 // Add all channels to the current bus. Name them either "Mono" or "Left/Right",
                 // depending on the number of channels.
                 QString lbl = tr("Mono");
-                if (busChannels.count() > 1) {
+                if (conf.channels.count() > 1) {
                         lbl = tr("Left");
                 }
 
-                for (int i = 0; i < busChannels.count(); ++i) {
+                for (int i = 0; i < conf.channels.count(); ++i) {
                         QTreeWidgetItem *bitm = new QTreeWidgetItem(itm);
                         bitm->setText(0, lbl);
                         lbl = tr("Right");
 
                         // set all columns to unchecked first
-                        for (int j = 1; j < outputTreeWidget->columnCount(); ++j) {
-                                bitm->setCheckState(j, Qt::Unchecked);
+                        for (int k = 1; k < outputTreeWidget->columnCount(); ++k) {
+                                bitm->setCheckState(k, Qt::Unchecked);
                         }
 
                         // now find the one to be checked by searching its name in the
                         // list of input channels. Add +1 because column no 0 contains
                         // the names, not check boxes
-                        int idx = m_outputChannelList.indexOf(busChannels.at(i), 0) + 1;
+                        int idx = m_outputChannelList.indexOf(conf.channels.at(i), 0) + 1;
 
                         // if a valid index was found, check it (not found returns -1, which
                         // is 0 after adding +1)
@@ -173,16 +168,15 @@ void AudioIODialog::initOutput()
                 }
 
                 itm->setExpanded(true);
-                ++it;
         }
 }
 
 void AudioIODialog::accept()
 {
-	QHash<QString, QStringList> ohash = outputBusConfig();
-	QHash<QString, QStringList> ihash = inputBusConfig();
+        QList<bus_config> iconf = inputBusConfig();
+        QList<bus_config> oconf = outputBusConfig();
 
-	audiodevice().set_bus_config(ihash, ohash);
+        audiodevice().set_bus_config(iconf, oconf);
 	
 	close();
 }
@@ -386,23 +380,22 @@ void AudioIODialog::itemDoubleClicked(QTreeWidgetItem *itm, int)
     itm->setText(0, newstr);
 }
 
-QHash<QString, QStringList> AudioIODialog::outputBusConfig()
+QList<bus_config> AudioIODialog::outputBusConfig()
 {
-        QHash<QString, QStringList> hash;
+        QList<bus_config> list;
 
         while (outputTreeWidget->topLevelItemCount()) {
-                QString bus;
-                QStringList channels;
+                bus_config conf;
 
                 QTreeWidgetItem *parent = outputTreeWidget->takeTopLevelItem(0);
-                bus = parent->text(0);
+                conf.name = parent->text(0);
 
                 while (parent->childCount()) {
                         QTreeWidgetItem *child = parent->takeChild(0);
 
                         for (int i = 1; i < child->columnCount(); ++i) {
                             if (child->checkState(i) == Qt::Checked) {
-                                channels.append(m_outputChannelList.at(i - 1));
+                                conf.channels.append(m_outputChannelList.at(i - 1));
                             }
                         }
 
@@ -410,29 +403,28 @@ QHash<QString, QStringList> AudioIODialog::outputBusConfig()
                 }
 
                 delete parent;
-                hash.insert(bus, channels);
+                list.append(conf);
         }
 
-        return hash;
+        return list;
 }
 
-QHash<QString, QStringList> AudioIODialog::inputBusConfig()
+QList<bus_config> AudioIODialog::inputBusConfig()
 {
-	QHash<QString, QStringList> hash;
+        QList<bus_config> list;
 
         while (inputTreeWidget->topLevelItemCount()) {
-                QString bus;
-                QStringList channels;
+                bus_config conf;
 
                 QTreeWidgetItem *parent = inputTreeWidget->takeTopLevelItem(0);
-                bus = parent->text(0);
+                conf.name = parent->text(0);
 
                 while (parent->childCount()) {
                         QTreeWidgetItem *child = parent->takeChild(0);
 
                         for (int i = 1; i < child->columnCount(); ++i) {
                             if (child->checkState(i) == Qt::Checked) {
-                                channels.append(m_inputChannelList.at(i - 1));
+                                conf.channels.append(m_inputChannelList.at(i - 1));
                             }
                         }
 
@@ -440,10 +432,10 @@ QHash<QString, QStringList> AudioIODialog::inputBusConfig()
                 }
 
                 delete parent;
-                hash.insert(bus, channels);
+                list.append(conf);
         }
 
-	return hash;
+        return list;
 }
 
 //eof

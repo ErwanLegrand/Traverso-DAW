@@ -591,43 +591,43 @@ QStringList AudioDevice::get_playback_channel_names() const
 	return names;
 }
 
-QHash<QString, QStringList> AudioDevice::get_capture_bus_configuration()
+QList<bus_config> AudioDevice::get_capture_bus_configuration()
 {
         m_captureBusConfig.clear();
 	
         foreach(AudioBus* bus, m_captureBuses) {
-		QString name = bus->get_name();
-		QStringList lst;
+                bus_config conf;
+                conf.name = bus->get_name();
 		
 		for (int i = 0; i < bus->get_channel_count(); ++i) {
-			lst.append(bus->get_channel(i)->get_name());
+                        conf.channels.append(bus->get_channel(i)->get_name());
 		}
 		
-                m_captureBusConfig.insert(name, lst);
+                m_captureBusConfig.append(conf);
 	}
 	
         return m_captureBusConfig;
 }
 
-QHash<QString, QStringList> AudioDevice::get_playback_bus_configuration()
+QList<bus_config> AudioDevice::get_playback_bus_configuration()
 {
         m_playbackBusConfig.clear();
 	
         foreach(AudioBus* bus, m_playbackBuses) {
-		QString name = bus->get_name();
-		QStringList lst;
+                bus_config conf;
+                conf.name = bus->get_name();
 		
 		for (int i = 0; i < bus->get_channel_count(); ++i) {
-			lst.append(bus->get_channel(i)->get_name());
+                        conf.channels.append(bus->get_channel(i)->get_name());
 		}
 		
-                m_playbackBusConfig.insert(name, lst);
+                m_playbackBusConfig.append(conf);
 	}
 	
         return m_playbackBusConfig;
 }
 
-void AudioDevice::set_bus_config(QHash<QString, QStringList> c_capture, QHash<QString, QStringList> c_playback)
+void AudioDevice::set_bus_config(QList<bus_config> c_capture, QList<bus_config> c_playback)
 {
         m_captureBusConfig = c_capture;
         m_playbackBusConfig = c_playback;
@@ -686,51 +686,43 @@ void AudioDevice::setup_default_playback_buses( )
 
 void AudioDevice::setup_capture_buses()
 {
-	QByteArray name;
-	QStringList list;
 	AudioChannel* channel;
+        bus_config conf;
 	
-        QHash<QString, QStringList>::const_iterator it = m_captureBusConfig.constBegin();
-        while (it != m_captureBusConfig.constEnd()) {
-		name = it.key().toUtf8();
-		list = it.value();
-		
-		AudioBus* bus = new AudioBus(name);
-		
-		for (int i = 0; i < list.count(); ++i) {
-                        channel = m_driver->get_capture_channel_by_name(list.at(i));
+        for (int j = 0; j < m_captureBusConfig.count(); ++j) {
+		conf = m_captureBusConfig.at(j);
+                
+		AudioBus* bus = new AudioBus(conf.name.toUtf8());
+
+		for (int i = 0; i < conf.channels.count(); ++i) {
+                        channel = m_driver->get_capture_channel_by_name(conf.channels.at(i));
 			if (channel) {
-				bus->add_channel(channel);
+                                bus->add_channel(channel);
 			}
 		}
 
-                m_captureBuses.insert(name, bus);
-		++it;
+                m_captureBuses.insert(conf.name.toUtf8(), bus);
 	}
 }
 
 void AudioDevice::setup_playback_buses()
 {
-	QByteArray name;
-	QStringList list;
 	AudioChannel* channel;
+        bus_config conf;
 	
-        QHash<QString, QStringList>::const_iterator it = m_playbackBusConfig.constBegin();
-        while (it != m_playbackBusConfig.constEnd()) {
-		name = it.key().toUtf8();
-		list = it.value();
+        for (int j = 0; j < m_playbackBusConfig.count(); ++j) {
+                conf = m_playbackBusConfig.at(j);
 		
-		AudioBus* bus = new AudioBus(name);
+		AudioBus* bus = new AudioBus(conf.name.toUtf8());
 		
-		for (int i = 0; i < list.count(); ++i) {
-                        channel = m_driver->get_playback_channel_by_name(list.at(i));
+		for (int i = 0; i < conf.channels.count(); ++i) {
+                        channel = m_driver->get_playback_channel_by_name(conf.channels.at(i));
 			if (channel) {
 				bus->add_channel(channel);
 			}
 		}
 		
-                m_playbackBuses.insert(name, bus);
-		++it;
+                m_playbackBuses.insert(conf.name.toUtf8(), bus);
 	}
 }
 

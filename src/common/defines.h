@@ -4,6 +4,8 @@
 #include <inttypes.h>
 #include <QtGlobal>
 #include <QMetaType>
+#include <QString>
+#include <QStringList>
 #include "FastDelegate.h"
 
 // Implementation for atomic int get/set from glibc's atomic.h/c
@@ -265,6 +267,13 @@ typedef struct {
 	TimeRef location;
 } transport_state_t;
 
+
+typedef struct {
+    QString name;
+    QStringList channels;
+} bus_config;
+
+
 /**
  * Type used to represent the value of free running
  * monotonic clock with units of microseconds.
@@ -288,6 +297,7 @@ typedef FastDelegate1<transport_state_t, int> TransportControlCallback;
  * audio ports.
  */
 #define JACK_DEFAULT_AUDIO_TYPE "32 bit float mono audio"
+
 
 
 /**

@@ -33,6 +33,15 @@
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QTreeWidget" name="inputTreeWidget">
+         <property name="showDropIndicator" stdset="0">
+          <bool>false</bool>
+         </property>
+         <property name="rootIsDecorated">
+          <bool>false</bool>
+         </property>
+         <property name="itemsExpandable">
+          <bool>false</bool>
+         </property>
          <column>
           <property name="text">
            <string>Bus</string>
@@ -88,16 +97,16 @@
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
-           <widget class="QPushButton" name="buttonJackAddInputChannel">
+           <widget class="QPushButton" name="buttonAddInputPort">
             <property name="text">
-             <string>&amp;Add Channel</string>
+             <string>&amp;Add Port</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="buttonJackRemoveInputChannel">
+           <widget class="QPushButton" name="buttonRemoveInputPort">
             <property name="text">
-             <string>&amp;Remove Channel</string>
+             <string>&amp;Remove Port</string>
             </property>
            </widget>
           </item>
@@ -113,6 +122,15 @@
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
         <widget class="QTreeWidget" name="outputTreeWidget">
+         <property name="showDropIndicator" stdset="0">
+          <bool>false</bool>
+         </property>
+         <property name="rootIsDecorated">
+          <bool>false</bool>
+         </property>
+         <property name="itemsExpandable">
+          <bool>false</bool>
+         </property>
          <column>
           <property name="text">
            <string>Bus</string>
@@ -168,16 +186,16 @@
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>
-           <widget class="QPushButton" name="buttonJackOutputChannel">
+           <widget class="QPushButton" name="buttonOutputPort">
             <property name="text">
-             <string>&amp;Add Channel</string>
+             <string>&amp;Add Port</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="buttonJackRemoveOutputChannel">
+           <widget class="QPushButton" name="buttonRemoveOutputPort">
             <property name="text">
-             <string>&amp;Remove Channel</string>
+             <string>&amp;Remove Port</string>
             </property>
            </widget>
           </item>
