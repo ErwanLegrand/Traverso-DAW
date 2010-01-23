@@ -43,11 +43,11 @@ AudioIODialog::AudioIODialog(QWidget* parent)
 	labelDeviceName->setText(str);
 
         if (audiodevice().get_driver_type() == "Jack") {
-                groupBoxJackInput->setEnabled(true);
-                groupBoxJackOutput->setEnabled(true);
+                groupBoxJackInput->setVisible(true);
+                groupBoxJackOutput->setVisible(true);
         } else {
-                groupBoxJackInput->setEnabled(false);
-                groupBoxJackOutput->setEnabled(false);
+                groupBoxJackInput->setVisible(false);
+                groupBoxJackOutput->setVisible(false);
         }
 
 	initInput();
