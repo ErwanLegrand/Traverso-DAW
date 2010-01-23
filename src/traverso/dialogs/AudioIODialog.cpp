@@ -156,7 +156,7 @@ void AudioIODialog::initOutput()
                         }
 
                         // now find the one to be checked by searching its name in the
-                        // list of input channels. Add +1 because column no 0 contains
+                        // list of output channels. Add +1 because column no 0 contains
                         // the names, not check boxes
                         int idx = m_outputChannelList.indexOf(conf.channels.at(i), 0) + 1;
 
