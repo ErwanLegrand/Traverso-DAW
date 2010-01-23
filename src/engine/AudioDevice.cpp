@@ -638,6 +638,7 @@ void AudioDevice::set_bus_config(QList<bus_config> c_capture, QList<bus_config> 
 	setup_playback_buses();
 
         emit driverParamsChanged();
+        emit busConfigChanged();
 }
 
 void AudioDevice::setup_default_capture_buses( )

@@ -169,6 +169,7 @@ public slots:
 private slots:
 	void private_add_clip(AudioClip* clip);
 	void private_remove_clip(AudioClip* clip);
+        void rescan_busses();
 
 };
 

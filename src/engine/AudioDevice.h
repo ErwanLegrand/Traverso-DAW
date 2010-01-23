@@ -268,6 +268,8 @@ signals:
 	
 	void message(QString, int);
 
+        void busConfigChanged();
+
 private slots:
 	void private_add_client(Client* client);
 	void private_remove_client(Client* client);

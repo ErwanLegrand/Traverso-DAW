@@ -82,6 +82,8 @@ void Track::init()
 	m_fader = m_pluginChain->get_fader();
 	m_fader->set_gain(1.0);
 	m_captureRightChannel = m_captureLeftChannel = true;
+
+        connect(&audiodevice(), SIGNAL(busConfigChanged()), this, SLOT(rescan_busses()));
 }
 
 QDomNode Track::get_state( QDomDocument doc, bool istemplate)
@@ -567,3 +569,37 @@ QList< AudioClip * > Track::get_cliplist() const
 	}
 	return list;
 }
+
+void Track::rescan_busses()
+{
+    QStringList ibus = audiodevice().get_capture_buses_names();
+    QStringList obus = audiodevice().get_playback_buses_names();
+
+    // in the worst case, i.e. if no busses are available at all,
+    // use the default ones also used in the track's constructor.
+    QByteArray fallbackCapture = "Capture 1";
+    QByteArray fallbackPlayback = "MasterOut";
+
+    // in the less worse case, if at least one bus is available,
+    // use it as a fallback
+    if (ibus.size()) {
+        fallbackCapture = ibus.at(0).toAscii();
+    }
+
+    if (obus.size()) {
+        fallbackPlayback = obus.at(0).toAscii();
+    }
+
+    // now let's look for the bus we actually want to connect to
+    if (!ibus.contains(busIn)) {
+        busIn = fallbackCapture;
+    }
+
+    if (!obus.contains(busOut)) {
+        busOut = fallbackPlayback;
+    }
+
+    set_bus_in(busIn);
+    set_bus_out(busOut);
+}
+
