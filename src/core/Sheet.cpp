@@ -157,7 +157,7 @@ void Sheet::init()
 	connect(this, SIGNAL(seekStart()), m_diskio, SLOT(seek()), Qt::QueuedConnection);
 	connect(this, SIGNAL(prepareRecording()), this, SLOT(prepare_recording()));
 	connect(&audiodevice(), SIGNAL(clientRemoved(Client*)), this, SLOT (audiodevice_client_removed(Client*)));
-	connect(&audiodevice(), SIGNAL(started()), this, SLOT(audiodevice_started()));
+        connect(&audiodevice(), SIGNAL(busConfigChanged()), this, SLOT(rescan_busses()));
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(audiodevice_params_changed()), Qt::DirectConnection);
 	connect(m_diskio, SIGNAL(seekFinished()), this, SLOT(seek_finished()), Qt::QueuedConnection);
 	connect (m_diskio, SIGNAL(readSourceBufferUnderRun()), this, SLOT(handle_diskio_readbuffer_underrun()));
@@ -1031,6 +1031,7 @@ void Sheet::resize_buffer(bool updateArmStatus, nframes_t size)
 
 void Sheet::audiodevice_params_changed()
 {
+        m_playBackBus = audiodevice().get_playback_bus("Playback 1");
 	resize_buffer(true, audiodevice().get_buffer_size());
 	
 	// The samplerate possibly has been changed, this initiates
@@ -1110,10 +1111,12 @@ void Sheet::handle_diskio_writebuffer_overrun( )
 	}
 }
 
-void Sheet::audiodevice_started( )
+
+void Sheet::rescan_busses()
 {
-	m_playBackBus = audiodevice().get_playback_bus("Playback 1");
+        m_playBackBus = audiodevice().get_playback_bus("Playback 1");
 }
+
 
 TimeRef Sheet::get_last_location() const
 {

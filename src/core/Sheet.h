@@ -237,9 +237,9 @@ private:
 public slots :
 	void seek_finished();
 	void audiodevice_client_removed(Client* );
-	void audiodevice_started();
 	void audiodevice_params_changed();
-	void set_gain(float gain);
+        void rescan_busses();
+        void set_gain(float gain);
 	void set_transport_pos(TimeRef location);
 	
 	float get_gain() const;
