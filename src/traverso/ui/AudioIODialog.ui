@@ -42,6 +42,12 @@
          <property name="itemsExpandable">
           <bool>false</bool>
          </property>
+         <attribute name="headerStretchLastSection">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="headerStretchLastSection">
+          <bool>false</bool>
+         </attribute>
          <column>
           <property name="text">
            <string>Bus</string>
@@ -125,12 +131,21 @@
          <property name="showDropIndicator" stdset="0">
           <bool>false</bool>
          </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectItems</enum>
+         </property>
          <property name="rootIsDecorated">
           <bool>false</bool>
          </property>
          <property name="itemsExpandable">
           <bool>false</bool>
          </property>
+         <attribute name="headerStretchLastSection">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="headerStretchLastSection">
+          <bool>false</bool>
+         </attribute>
          <column>
           <property name="text">
            <string>Bus</string>
@@ -259,8 +274,8 @@
    <slot>removeOutput()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>455</x>
-     <y>350</y>
+     <x>503</x>
+     <y>292</y>
     </hint>
     <hint type="destinationlabel">
      <x>262</x>
@@ -275,8 +290,8 @@
    <slot>addStereoInput()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>262</x>
-     <y>350</y>
+     <x>255</x>
+     <y>292</y>
     </hint>
     <hint type="destinationlabel">
      <x>262</x>
@@ -291,8 +306,8 @@
    <slot>addMonoInput()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>99</x>
-     <y>350</y>
+     <x>111</x>
+     <y>292</y>
     </hint>
     <hint type="destinationlabel">
      <x>262</x>
@@ -307,8 +322,8 @@
    <slot>removeInput()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>425</x>
-     <y>350</y>
+     <x>503</x>
+     <y>292</y>
     </hint>
     <hint type="destinationlabel">
      <x>262</x>
@@ -323,8 +338,8 @@
    <slot>addStereoOutput()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>196</x>
-     <y>350</y>
+     <x>237</x>
+     <y>292</y>
     </hint>
     <hint type="destinationlabel">
      <x>262</x>
@@ -339,12 +354,76 @@
    <slot>addMonoOutput()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>76</x>
-     <y>350</y>
+     <x>88</x>
+     <y>292</y>
     </hint>
     <hint type="destinationlabel">
      <x>262</x>
      <y>209</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonAddInputPort</sender>
+   <signal>clicked()</signal>
+   <receiver>AudioIODialog</receiver>
+   <slot>addJackInput()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>71</x>
+     <y>333</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>5</x>
+     <y>333</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonRemoveInputPort</sender>
+   <signal>clicked()</signal>
+   <receiver>AudioIODialog</receiver>
+   <slot>removeJackInput()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>439</x>
+     <y>345</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>521</x>
+     <y>321</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonOutputPort</sender>
+   <signal>clicked()</signal>
+   <receiver>AudioIODialog</receiver>
+   <slot>addJackOutput()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>83</x>
+     <y>335</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>7</x>
+     <y>369</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonRemoveOutputPort</sender>
+   <signal>clicked()</signal>
+   <receiver>AudioIODialog</receiver>
+   <slot>removeJackOutput()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>479</x>
+     <y>348</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>520</x>
+     <y>370</y>
     </hint>
    </hints>
   </connection>
@@ -358,5 +437,9 @@
   <slot>addStereoOutput()</slot>
   <slot>removeOutput()</slot>
   <slot>outputSelectionChanged(int,int)</slot>
+  <slot>addJackInput()</slot>
+  <slot>removeJackInput()</slot>
+  <slot>addJackOutput()</slot>
+  <slot>removeJackOutput()</slot>
  </slots>
 </ui>

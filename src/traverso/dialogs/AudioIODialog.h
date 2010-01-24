@@ -57,6 +57,11 @@ private slots:
 	void removeOutput();
         void outputSelectionChanged(QTreeWidgetItem *, QTreeWidgetItem *);
 
+        void addJackInput();
+        void addJackOutput();
+        void removeJackInput();
+        void removeJackOutput();
+
         void itemChanged(QTreeWidgetItem *, int);
         void itemDoubleClicked(QTreeWidgetItem *, int);
 };

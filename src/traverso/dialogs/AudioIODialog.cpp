@@ -383,6 +383,7 @@ void AudioIODialog::itemDoubleClicked(QTreeWidgetItem *itm, int)
 QList<bus_config> AudioIODialog::outputBusConfig()
 {
         QList<bus_config> list;
+        QTreeWidgetItem *header = outputTreeWidget->headerItem();
 
         while (outputTreeWidget->topLevelItemCount()) {
                 bus_config conf;
@@ -395,7 +396,7 @@ QList<bus_config> AudioIODialog::outputBusConfig()
 
                         for (int i = 1; i < child->columnCount(); ++i) {
                             if (child->checkState(i) == Qt::Checked) {
-                                conf.channels.append(m_outputChannelList.at(i - 1));
+                                conf.channels.append(header->text(i));
                             }
                         }
 
@@ -412,6 +413,7 @@ QList<bus_config> AudioIODialog::outputBusConfig()
 QList<bus_config> AudioIODialog::inputBusConfig()
 {
         QList<bus_config> list;
+        QTreeWidgetItem *header = inputTreeWidget->headerItem();
 
         while (inputTreeWidget->topLevelItemCount()) {
                 bus_config conf;
@@ -424,7 +426,7 @@ QList<bus_config> AudioIODialog::inputBusConfig()
 
                         for (int i = 1; i < child->columnCount(); ++i) {
                             if (child->checkState(i) == Qt::Checked) {
-                                conf.channels.append(m_inputChannelList.at(i - 1));
+                                conf.channels.append(header->text(i));
                             }
                         }
 
@@ -437,6 +439,53 @@ QList<bus_config> AudioIODialog::inputBusConfig()
 
         return list;
 }
+
+
+void AudioIODialog::addJackInput()
+{
+    int cols = inputTreeWidget->columnCount();
+    inputTreeWidget->setColumnCount(cols + 1);
+    QTreeWidgetItem *hitem = inputTreeWidget->headerItem();
+    hitem->setText(cols, QString(tr("capture_%1")).arg(cols));
+
+    for (int i = 0; i < inputTreeWidget->topLevelItemCount(); ++i) {
+        QTreeWidgetItem *titem = inputTreeWidget->topLevelItem(i);
+
+        for (int j = 0; j < titem->childCount(); ++j) {
+            QTreeWidgetItem *citem = titem->child(j);
+            citem->setCheckState(cols, Qt::Unchecked);
+        }
+    }
+}
+
+void AudioIODialog::addJackOutput()
+{
+    int cols = outputTreeWidget->columnCount();
+    outputTreeWidget->setColumnCount(cols + 1);
+    QTreeWidgetItem *hitem = outputTreeWidget->headerItem();
+    hitem->setText(cols, QString(tr("playback_%1")).arg(cols));
+
+    for (int i = 0; i < outputTreeWidget->topLevelItemCount(); ++i) {
+        QTreeWidgetItem *titem = outputTreeWidget->topLevelItem(i);
+
+        for (int j = 0; j < titem->childCount(); ++j) {
+            QTreeWidgetItem *citem = titem->child(j);
+            citem->setCheckState(cols, Qt::Unchecked);
+        }
+    }
+}
+
+void AudioIODialog::removeJackInput()
+{
+    inputTreeWidget->setColumnCount(inputTreeWidget->columnCount() - 1);
+}
+
+void AudioIODialog::removeJackOutput()
+{
+    outputTreeWidget->setColumnCount(outputTreeWidget->columnCount() - 1);
+}
+
+
 
 //eof
 
