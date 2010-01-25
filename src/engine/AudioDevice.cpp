@@ -627,6 +627,41 @@ QList<bus_config> AudioDevice::get_playback_bus_configuration()
         return m_playbackBusConfig;
 }
 
+void AudioDevice::set_channel_config(QStringList c_capture, QStringList c_playback)
+{
+    // create new capture channels if necessary
+    QStringList c_capture_existing = get_capture_channel_names();
+    for (int i = 0; i < c_capture.count(); ++i) {
+        if (!c_capture_existing.contains(c_capture.at(i), Qt::CaseSensitive)) {
+            m_driver->add_capture_channel(c_capture.at(i).toAscii());
+        }
+    }
+
+    // create new playback channels if necessary
+    QStringList c_playback_existing = get_playback_channel_names();
+    for (int i = 0; i < c_playback.count(); ++i) {
+        if (!c_playback_existing.contains(c_playback.at(i), Qt::CaseSensitive)) {
+            m_driver->add_playback_channel(c_playback.at(i).toAscii());
+        }
+    }
+
+    // remove obsolete capture channels if necessary
+    c_capture_existing = get_capture_channel_names();
+    for (int i = 0; i < c_capture_existing.count(); ++i) {
+        if (!c_capture.contains(c_capture_existing.at(i), Qt::CaseSensitive)) {
+            m_driver->delete_capture_channel(c_capture_existing.at(i));
+        }
+    }
+
+    // remove obsolete playback channels if necessary
+    c_playback_existing = get_playback_channel_names();
+    for (int i = 0; i < c_playback_existing.count(); ++i) {
+        if (!c_playback.contains(c_playback_existing.at(i), Qt::CaseSensitive)) {
+            m_driver->delete_playback_channel(c_playback_existing.at(i));
+        }
+    }
+}
+
 void AudioDevice::set_bus_config(QList<bus_config> c_capture, QList<bus_config> c_playback)
 {
         m_captureBusConfig = c_capture;

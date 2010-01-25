@@ -101,6 +101,7 @@ public:
 	}
 
         void set_bus_config(QList<bus_config> c_capture, QList<bus_config> c_playback);
+        void set_channel_config(QStringList c_capture, QStringList c_playback);
 
 	QStringList get_capture_buses_names() const;
 	QStringList get_playback_buses_names() const;
