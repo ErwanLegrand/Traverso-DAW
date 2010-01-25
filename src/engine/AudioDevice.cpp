@@ -686,16 +686,13 @@ void AudioDevice::setup_default_capture_buses( )
         for (int i=1; i <= m_driver->get_capture_channels().size();) {
 		name = "Capture " + QByteArray::number(number++);
 		AudioBus* bus = new AudioBus(name);
-                qDebug() << QString("setup_default_capture_buses: adding bus %1").arg(bus->get_name());
                 channel = m_driver->get_capture_channel_by_name("capture_"+QByteArray::number(i++));
 		if (channel) {
-                        qDebug() << QString("setup_default_capture_buses: adding channel %1").arg(channel->get_name());
                         bus->add_channel(channel);
 		}
                 channel = m_driver->get_capture_channel_by_name("capture_"+QByteArray::number(i++));
                 if (channel) {
 			bus->add_channel(channel);
-                        qDebug() << QString("setup_default_capture_buses: adding channel %1").arg(channel->get_name());
                 }
                 m_captureBuses.insert(name, bus);
 	}
@@ -711,15 +708,12 @@ void AudioDevice::setup_default_playback_buses( )
         for (int i=1; i <= m_driver->get_playback_channels().size();) {
 		name = "Playback " + QByteArray::number(number++);
 		AudioBus* bus = new AudioBus(name);
-                qDebug() << QString("setup_default_playback_buses: adding bus %1").arg(bus->get_name());
                 channel = m_driver->get_playback_channel_by_name("playback_"+QByteArray::number(i++));
                 if (channel) {
-                        qDebug() << QString("setup_default_playback_buses: adding channel %1").arg(channel->get_name());
                         bus->add_channel(channel);
 		}
                 channel = m_driver->get_playback_channel_by_name("playback_"+QByteArray::number(i++));
                 if (channel) {
-                        qDebug() << QString("setup_default_playback_buses: adding channel %1").arg(channel->get_name());
                         bus->add_channel(channel);
 		}
                 m_playbackBuses.insert(name, bus);
@@ -735,12 +729,10 @@ void AudioDevice::setup_capture_buses()
 		conf = m_captureBusConfig.at(j);
                 
 		AudioBus* bus = new AudioBus(conf.name.toUtf8());
-                qDebug() << QString("setup_capture_buses: adding bus %1").arg(conf.name);
 
 		for (int i = 0; i < conf.channels.count(); ++i) {
                         channel = m_driver->get_capture_channel_by_name(conf.channels.at(i));
 			if (channel) {
-                                qDebug() << QString("setup_capture_buses: adding channel %1").arg(conf.channels.at(i));
                                 bus->add_channel(channel);
 			}
 		}
@@ -758,12 +750,10 @@ void AudioDevice::setup_playback_buses()
                 conf = m_playbackBusConfig.at(j);
 		
 		AudioBus* bus = new AudioBus(conf.name.toUtf8());
-                qDebug() << QString("setup_playback_buses: adding bus %1").arg(conf.name);
 
 		for (int i = 0; i < conf.channels.count(); ++i) {
                         channel = m_driver->get_playback_channel_by_name(conf.channels.at(i));
 			if (channel) {
-                                qDebug() << QString("setup_playback_buses: adding channel %1").arg(conf.channels.at(i));
                                 bus->add_channel(channel);
                         }
 		}
