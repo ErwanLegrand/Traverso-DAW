@@ -63,6 +63,10 @@ public:
         virtual AudioChannel* add_playback_channel(const QByteArray& chanName);
         virtual AudioChannel* add_capture_channel(const QByteArray& chanName);
 
+        virtual int delete_capture_channel(QString ) {return -1;}
+        virtual int delete_playback_channel(QString ) {return -1;}
+
+
         ProcessCallback read;
         ProcessCallback write;
         RunCycleCallback run_cycle;
