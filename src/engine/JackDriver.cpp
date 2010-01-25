@@ -196,7 +196,7 @@ int JackDriver::delete_capture_channel(QString name)
         m_captureChannels.removeAt(index);
 
         jack_port_t* port = m_outputPorts.at(index);
-        jack_port_disconnect(m_jack_client, port);
+        jack_port_unregister(m_jack_client, port);
 
         m_outputPorts.remove(index);
 
@@ -217,7 +217,7 @@ int JackDriver::delete_playback_channel(QString name)
         m_playbackChannels.removeAt(index);
 
         jack_port_t* port = m_inputPorts.at(index);
-        jack_port_disconnect(m_jack_client, port);
+        jack_port_unregister(m_jack_client, port);
 
         m_inputPorts.remove(index);
 
