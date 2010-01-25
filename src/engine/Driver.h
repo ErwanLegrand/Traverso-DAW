@@ -60,8 +60,8 @@ public:
         AudioChannel* get_capture_channel_by_name(const QString& name);
         AudioChannel* get_playback_channel_by_name(const QString& name);
 
-        virtual AudioChannel* register_playback_channel(const QByteArray& chanName);
-        virtual AudioChannel* register_capture_channel(const QByteArray& chanName);
+        virtual AudioChannel* add_playback_channel(const QByteArray& chanName);
+        virtual AudioChannel* add_capture_channel(const QByteArray& chanName);
 
         ProcessCallback read;
         ProcessCallback write;

@@ -106,7 +106,7 @@ int Driver::attach( )
 	for (uint chn=0; chn<2; chn++) {
 		snprintf (buf, sizeof(buf) - 1, "capture_%d", chn+1);
 
-                chan = register_capture_channel(buf);
+                chan = add_capture_channel(buf);
 		chan->set_latency( frames_per_cycle + capture_frame_latency );
 	}
 
@@ -114,21 +114,21 @@ int Driver::attach( )
 	for (uint chn=0; chn<2; chn++) {
 		snprintf (buf, sizeof(buf) - 1, "playback_%d", chn+1);
 
-                chan = register_playback_channel(buf);
+                chan = add_playback_channel(buf);
 		chan->set_latency( frames_per_cycle + capture_frame_latency );
 	}
 
 	return 1;
 }
 
-AudioChannel* Driver::register_capture_channel(const QByteArray& chanName)
+AudioChannel* Driver::add_capture_channel(const QByteArray& chanName)
 {
         AudioChannel* chan = new AudioChannel(chanName, m_captureChannels.size());
         m_captureChannels.append(chan);
         return chan;
 }
 
-AudioChannel* Driver::register_playback_channel(const QByteArray& chanName)
+AudioChannel* Driver::add_playback_channel(const QByteArray& chanName)
 {
         AudioChannel* chan = new AudioChannel(chanName, m_playbackChannels.size());
         m_playbackChannels.append(chan);

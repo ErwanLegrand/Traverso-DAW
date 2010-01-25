@@ -107,7 +107,7 @@ int JackDriver::setup(bool capture, bool playback, const QString& )
                 for (int i = 0; inputports[i]; i++) {
                         char name[64];
                         sprintf (name, "input_%d", i+1);
-                        register_capture_channel(name);
+                        add_capture_channel(name);
                 }
 
                 free (inputports);
@@ -121,7 +121,7 @@ int JackDriver::setup(bool capture, bool playback, const QString& )
                 for (int i = 0; outputports[i]; i++) {
                         char name[64];
                         sprintf (name, "output_%d", i+1);
-                        register_playback_channel(name);
+                        add_playback_channel(name);
                 }
 
                 free (outputports);
@@ -134,7 +134,7 @@ int JackDriver::setup(bool capture, bool playback, const QString& )
 }
 
 
-AudioChannel* JackDriver::register_capture_channel(const QByteArray& chanName)
+AudioChannel* JackDriver::add_capture_channel(const QByteArray& chanName)
 {
         char buf[32];
 
@@ -159,7 +159,7 @@ AudioChannel* JackDriver::register_capture_channel(const QByteArray& chanName)
         return chan;
 }
 
-AudioChannel* JackDriver::register_playback_channel(const QByteArray& chanName)
+AudioChannel* JackDriver::add_playback_channel(const QByteArray& chanName)
 {
         char buf[32];
 
@@ -180,6 +180,48 @@ AudioChannel* JackDriver::register_playback_channel(const QByteArray& chanName)
         m_outputPorts.append(port);
 
         return chan;
+}
+
+
+int JackDriver::delete_capture_channel(QString name)
+{
+        AudioChannel* chan = get_capture_channel_by_name(name);
+
+        if (!chan) {
+                // No capture channel by this name is known, do nothing
+                return 0;
+        }
+
+        int index = m_captureChannels.indexOf(chan);
+        m_captureChannels.removeAt(index);
+
+        jack_port_t* port = m_outputPorts.at(index);
+        jack_port_disconnect(m_jack_client, port);
+
+        m_outputPorts.remove(index);
+
+        return 1;
+}
+
+
+int JackDriver::delete_playback_channel(QString name)
+{
+        AudioChannel* chan = get_playback_channel_by_name(name);
+
+        if (!chan) {
+                // No playback channel by this name is known, do nothing
+                return 0;
+        }
+
+        int index = m_playbackChannels.indexOf(chan);
+        m_playbackChannels.removeAt(index);
+
+        jack_port_t* port = m_inputPorts.at(index);
+        jack_port_disconnect(m_jack_client, port);
+
+        m_inputPorts.remove(index);
+
+        return 1;
 }
 
 

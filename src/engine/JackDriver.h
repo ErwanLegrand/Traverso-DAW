@@ -48,8 +48,12 @@ public:
         QString get_device_name();
         QString get_device_longname();
 
-        virtual AudioChannel* register_playback_channel(const QByteArray& name);
-        virtual AudioChannel* register_capture_channel(const QByteArray& name);
+        AudioChannel* add_playback_channel(const QByteArray& name);
+        AudioChannel* add_capture_channel(const QByteArray& name);
+
+        int delete_capture_channel(QString name);
+        int delete_playback_channel(QString name);
+
 
 
         float get_cpu_load();

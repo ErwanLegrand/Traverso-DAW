@@ -1579,7 +1579,7 @@ int AlsaDriver::attach()
 
 		snprintf (buf, sizeof(buf) - 1, "capture_%lu", chn+1);
 
-                chan = register_capture_channel(buf);
+                chan = add_capture_channel(buf);
 		chan->set_latency( frames_per_cycle + capture_frame_latency );
 
 	}
@@ -1590,7 +1590,7 @@ int AlsaDriver::attach()
 
 		snprintf (buf, sizeof(buf) - 1, "playback_%lu", chn+1);
 
-                chan = register_playback_channel(buf);
+                chan = add_playback_channel(buf);
 		chan->set_latency( frames_per_cycle + capture_frame_latency );
 	}
 
