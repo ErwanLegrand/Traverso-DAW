@@ -173,10 +173,26 @@ void AudioIODialog::initOutput()
 
 void AudioIODialog::accept()
 {
-        QList<bus_config> iconf = inputBusConfig();
-        QList<bus_config> oconf = outputBusConfig();
+        QTreeWidgetItem *chitem = inputTreeWidget->headerItem();
+        QTreeWidgetItem *phitem = outputTreeWidget->headerItem();
 
-        audiodevice().set_bus_config(iconf, oconf);
+        QStringList c_chan_conf;
+        QStringList p_chan_conf;
+
+        for (int i = 1; i < inputTreeWidget->columnCount(); ++i) {
+            c_chan_conf.append(chitem->text(i));
+        }
+
+        for (int i = 1; i < outputTreeWidget->columnCount(); ++i) {
+            p_chan_conf.append(phitem->text(i));
+        }
+
+        audiodevice().set_channel_config(c_chan_conf, p_chan_conf);
+
+        QList<bus_config> c_bus_conf = inputBusConfig();
+        QList<bus_config> p_bus_conf = outputBusConfig();
+
+        audiodevice().set_bus_config(c_bus_conf, p_bus_conf);
 	
 	close();
 }
