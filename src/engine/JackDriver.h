@@ -48,8 +48,8 @@ public:
         QString get_device_name();
         QString get_device_longname();
 
-        AudioChannel* add_playback_channel(const QByteArray& name);
-        AudioChannel* add_capture_channel(const QByteArray& name);
+        AudioChannel* add_playback_channel(const QString& name);
+        AudioChannel* add_capture_channel(const QString& name);
 
         int delete_capture_channel(QString name);
         int delete_playback_channel(QString name);
@@ -64,12 +64,28 @@ public:
 	void update_config();
 
 private:
+        struct PortChannelPair {
+                PortChannelPair() {
+                        jackport = 0;
+                        channel = 0;
+                        unregister = false;
+                }
+
+                jack_port_t*    jackport;
+                AudioChannel*   channel;
+                QString         name;
+                bool            unregister;
+        };
+
         volatile size_t         m_running;
         jack_client_t*          m_jack_client;
+        QList<PortChannelPair*> m_inputs;
+        QList<PortChannelPair*> m_outputs;
+
         QVector<jack_port_t* >	m_inputPorts;
         QVector<jack_port_t* >	m_outputPorts;
         bool                    m_isSlave;
-	
+
 	int  jack_sync_callback (jack_transport_state_t, jack_position_t*);
 
         static int _xrun_callback(void *arg);
