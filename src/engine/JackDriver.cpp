@@ -64,7 +64,6 @@ int JackDriver::_read( nframes_t nframes )
                 if (pcpair->unregister) {
                         m_inputs.removeAll(pcpair);
                         RT_THREAD_EMIT(this, pcpair, pcpairRemoved(PortChannelPair*));
-                        printf("deleting channel %s\n", pcpair->name.toUtf8().data());
                         continue;
                 }
 
@@ -84,7 +83,6 @@ int JackDriver::_write( nframes_t nframes )
                 if (pcpair->unregister) {
                         m_outputs.removeAll(pcpair);
                         RT_THREAD_EMIT(this, pcpair, pcpairRemoved(PortChannelPair*));
-                        printf("deleting channel %s\n", pcpair->name.toUtf8().data());
                         continue;
                 }
 
@@ -147,15 +145,13 @@ int JackDriver::setup(bool capture, bool playback, const QString& )
                 free (outputports);
         }
 
-
-	device->message(tr("Jack Driver: Connected successfully to the jack server!"), AudioDevice::INFO);
-        
 	return 1;
 }
 
 
 AudioChannel* JackDriver::add_capture_channel(const QString& chanName)
 {
+        PENTER;
         PortChannelPair* pcpair = new PortChannelPair();
         char buf[32];
 
@@ -182,6 +178,7 @@ AudioChannel* JackDriver::add_capture_channel(const QString& chanName)
 
 AudioChannel* JackDriver::add_playback_channel(const QString& chanName)
 {
+        PENTER;
         PortChannelPair* pcpair = new PortChannelPair();
         char buf[32];
 
@@ -207,8 +204,9 @@ AudioChannel* JackDriver::add_playback_channel(const QString& chanName)
 }
 
 
-int JackDriver::remove_capture_channel(QString name)
+int JackDriver::remove_capture_channel(const QString& name)
 {
+        PENTER;
         foreach(PortChannelPair* pcpair, m_inputs) {
 
                 if (pcpair->name == name) {
@@ -222,8 +220,9 @@ int JackDriver::remove_capture_channel(QString name)
 }
 
 
-int JackDriver::remove_playback_channel(QString name)
+int JackDriver::remove_playback_channel(const QString& name)
 {
+        PENTER;
         foreach(PortChannelPair* pcpair, m_outputs) {
 
                 if (pcpair->name == name) {
@@ -262,7 +261,9 @@ int JackDriver::start( )
 		return -1;
 	}
 	
-	m_running = 1;
+        device->message(tr("Jack Driver: Connected successfully to the jack server!"), AudioDevice::INFO);
+
+        m_running = 1;
 	return 1;
 }
 
@@ -376,7 +377,6 @@ void JackDriver::update_config()
 
 void JackDriver::cleanup_removed_port_channel_pair(PortChannelPair* pcpair)
 {
-        printf("unregistering port %s\n", pcpair->name.toUtf8().data());
         jack_port_unregister(m_jack_client, pcpair->jackport);
 
         delete pcpair->channel;

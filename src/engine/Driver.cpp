@@ -121,15 +121,17 @@ int Driver::attach( )
 	return 1;
 }
 
-AudioChannel* Driver::add_capture_channel(const QByteArray& chanName)
+AudioChannel* Driver::add_capture_channel(const QString& chanName)
 {
+        PENTER;
         AudioChannel* chan = new AudioChannel(chanName, m_captureChannels.size());
         m_captureChannels.append(chan);
         return chan;
 }
 
-AudioChannel* Driver::add_playback_channel(const QByteArray& chanName)
+AudioChannel* Driver::add_playback_channel(const QString& chanName)
 {
+        PENTER;
         AudioChannel* chan = new AudioChannel(chanName, m_playbackChannels.size());
         m_playbackChannels.append(chan);
         return chan;

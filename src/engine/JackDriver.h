@@ -51,8 +51,8 @@ public:
         AudioChannel* add_playback_channel(const QString& name);
         AudioChannel* add_capture_channel(const QString& name);
 
-        int remove_capture_channel(QString name);
-        int remove_playback_channel(QString name);
+        int remove_capture_channel(const QString& name);
+        int remove_playback_channel(const QString& name);
 
 
 

@@ -60,11 +60,11 @@ public:
         AudioChannel* get_capture_channel_by_name(const QString& name);
         AudioChannel* get_playback_channel_by_name(const QString& name);
 
-        virtual AudioChannel* add_playback_channel(const QByteArray& chanName);
-        virtual AudioChannel* add_capture_channel(const QByteArray& chanName);
+        virtual AudioChannel* add_playback_channel(const QString& chanName);
+        virtual AudioChannel* add_capture_channel(const QString& chanName);
 
-        virtual int remove_capture_channel(QString ) {return -1;}
-        virtual int remove_playback_channel(QString ) {return -1;}
+        virtual int remove_capture_channel(const QString& ) {return -1;}
+        virtual int remove_playback_channel(const QString& ) {return -1;}
 
 
         ProcessCallback read;
