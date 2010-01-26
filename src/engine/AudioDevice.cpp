@@ -649,7 +649,7 @@ void AudioDevice::set_channel_config(QStringList c_capture, QStringList c_playba
     c_capture_existing = get_capture_channel_names();
     for (int i = 0; i < c_capture_existing.count(); ++i) {
         if (!c_capture.contains(c_capture_existing.at(i), Qt::CaseSensitive)) {
-            m_driver->delete_capture_channel(c_capture_existing.at(i));
+            m_driver->remove_capture_channel(c_capture_existing.at(i));
         }
     }
 
@@ -657,7 +657,7 @@ void AudioDevice::set_channel_config(QStringList c_capture, QStringList c_playba
     c_playback_existing = get_playback_channel_names();
     for (int i = 0; i < c_playback_existing.count(); ++i) {
         if (!c_playback.contains(c_playback_existing.at(i), Qt::CaseSensitive)) {
-            m_driver->delete_playback_channel(c_playback_existing.at(i));
+            m_driver->remove_playback_channel(c_playback_existing.at(i));
         }
     }
 }

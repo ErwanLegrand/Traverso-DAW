@@ -51,8 +51,8 @@ public:
         AudioChannel* add_playback_channel(const QString& name);
         AudioChannel* add_capture_channel(const QString& name);
 
-        int delete_capture_channel(QString name);
-        int delete_playback_channel(QString name);
+        int remove_capture_channel(QString name);
+        int remove_playback_channel(QString name);
 
 
 
@@ -93,8 +93,13 @@ private:
         static int _bufsize_callback(jack_nframes_t nframes, void *arg);
 	static void _on_jack_shutdown_callback(void* arg);
 	static int  _jack_sync_callback (jack_transport_state_t, jack_position_t*, void *arg);	
+
+private slots:
+        void cleanup_removed_port_channel_pair(PortChannelPair* pair);
+
 signals:
 	void jackShutDown();
+        void pcpairRemoved(PortChannelPair*);
 	
 };
 

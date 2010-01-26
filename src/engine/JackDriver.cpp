@@ -42,6 +42,8 @@ JackDriver::JackDriver( AudioDevice * dev , int rate, nframes_t bufferSize)
         write = MakeDelegate(this, &JackDriver::_write);
         run_cycle = RunCycleCallback(this, &JackDriver::_run_cycle);
 	m_running = false;
+
+        connect(this, SIGNAL(pcpairRemoved(PortChannelPair*)), this, SLOT(cleanup_removed_port_channel_pair(PortChannelPair*)));
 }
 
 JackDriver::~JackDriver( )
@@ -52,6 +54,8 @@ JackDriver::~JackDriver( )
 	}
 }
 
+#include <Tsar.h>
+
 int JackDriver::_read( nframes_t nframes )
 {
         for (int i=0; i<m_inputs.size(); i++) {
@@ -59,6 +63,8 @@ int JackDriver::_read( nframes_t nframes )
 
                 if (pcpair->unregister) {
                         m_inputs.removeAll(pcpair);
+                        RT_THREAD_EMIT(this, pcpair, pcpairRemoved(PortChannelPair*));
+                        printf("deleting channel %s\n", pcpair->name.toUtf8().data());
                         continue;
                 }
 
@@ -77,6 +83,8 @@ int JackDriver::_write( nframes_t nframes )
 
                 if (pcpair->unregister) {
                         m_outputs.removeAll(pcpair);
+                        RT_THREAD_EMIT(this, pcpair, pcpairRemoved(PortChannelPair*));
+                        printf("deleting channel %s\n", pcpair->name.toUtf8().data());
                         continue;
                 }
 
@@ -199,48 +207,33 @@ AudioChannel* JackDriver::add_playback_channel(const QString& chanName)
 }
 
 
-int JackDriver::delete_capture_channel(QString name)
+int JackDriver::remove_capture_channel(QString name)
 {
-        AudioChannel* chan = get_capture_channel_by_name(name);
+        foreach(PortChannelPair* pcpair, m_inputs) {
 
-        if (!chan) {
-                // No capture channel by this name is known, do nothing
-                return 0;
+                if (pcpair->name == name) {
+                        pcpair->unregister = true;
+                        m_captureChannels.removeAll(pcpair->channel);
+                        return 1;
+                }
         }
 
-        // TODO: delete chan at an appropriate time!
-        int index = m_captureChannels.indexOf(chan);
-        m_captureChannels.removeAt(index);
-
-        jack_port_t* port = m_outputPorts.at(index);
-        jack_port_unregister(m_jack_client, port);
-
-        m_outputPorts.remove(index);
-
-        return 1;
+        return -1;
 }
 
 
-int JackDriver::delete_playback_channel(QString name)
+int JackDriver::remove_playback_channel(QString name)
 {
-        AudioChannel* chan = get_playback_channel_by_name(name);
+        foreach(PortChannelPair* pcpair, m_outputs) {
 
-        if (!chan) {
-                // No playback channel by this name is known, do nothing
-                return 0;
+                if (pcpair->name == name) {
+                        pcpair->unregister = true;
+                        m_playbackChannels.removeAll(pcpair->channel);
+                        return 1;
+                }
         }
 
-
-        // TODO: delete chan at an appropriate time!
-        int index = m_playbackChannels.indexOf(chan);
-        m_playbackChannels.removeAt(index);
-
-        jack_port_t* port = m_inputPorts.at(index);
-        jack_port_unregister(m_jack_client, port);
-
-        m_inputPorts.remove(index);
-
-        return 1;
+        return -1;
 }
 
 
@@ -380,6 +373,16 @@ void JackDriver::update_config()
                 jack_set_sync_callback(m_jack_client, NULL, this);
 	}
 }
+
+void JackDriver::cleanup_removed_port_channel_pair(PortChannelPair* pcpair)
+{
+        printf("unregistering port %s\n", pcpair->name.toUtf8().data());
+        jack_port_unregister(m_jack_client, pcpair->jackport);
+
+        delete pcpair->channel;
+        delete pcpair;
+}
+
 
 //eof
 
