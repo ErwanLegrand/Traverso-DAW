@@ -243,7 +243,10 @@ int Project::load(QString projectfile)
                 bus = bus.nextSibling();
         }
 
-        audiodevice().set_bus_config(busConfig);
+        if (!busConfig.isEmpty()) {
+                audiodevice().set_bus_config(busConfig);
+        }
+
 	
 	
 	// Load all the AudioSources for this project

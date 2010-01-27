@@ -336,6 +336,8 @@ void AudioDevice::set_parameters( int rate,
         if (!m_busConfig.count()) {
 		setup_default_capture_buses();
                 setup_default_playback_buses();
+        } else {
+                set_bus_config(m_busConfig);
         }
 
 	emit driverParamsChanged();
