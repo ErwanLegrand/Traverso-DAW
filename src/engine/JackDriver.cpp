@@ -30,6 +30,8 @@
 
 #include "AudioDevice.h"
 #include "AudioChannel.h"
+#include "Tsar.h"
+
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -53,8 +55,6 @@ JackDriver::~JackDriver( )
                 jack_client_close (m_jack_client);
 	}
 }
-
-#include <Tsar.h>
 
 int JackDriver::_read( nframes_t nframes )
 {

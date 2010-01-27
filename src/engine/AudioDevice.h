@@ -160,8 +160,8 @@ private:
         Driver* 				m_driver;
         AudioDeviceThread* 			m_audioThread;
 	APILinkedList				m_clients;
-        QHash<QByteArray, AudioBus* >		m_playbackBuses;
-        QHash<QByteArray, AudioBus* >		m_captureBuses;
+        QHash<QString, AudioBus* >		m_playbackBuses;
+        QHash<QString, AudioBus* >		m_captureBuses;
         QList<bus_config>       		m_captureBusConfig;
         QList<bus_config>       		m_playbackBusConfig;
         QStringList				m_availableDrivers;

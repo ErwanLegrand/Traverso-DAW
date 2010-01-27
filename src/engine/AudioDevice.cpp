@@ -737,7 +737,7 @@ void AudioDevice::setup_capture_buses()
 			}
 		}
 
-                m_captureBuses.insert(conf.name.toUtf8(), bus);
+                m_captureBuses.insert(conf.name, bus);
 	}
 }
 
