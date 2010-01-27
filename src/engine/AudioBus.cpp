@@ -41,12 +41,12 @@ $Id: AudioBus.cpp,v 1.11 2008/01/21 16:22:15 r_sijrier Exp $
  * @param name The name of the AudioBus
  * @return a new AudioBus instance
  */
-AudioBus::AudioBus(const QString& name)
+AudioBus::AudioBus(const QString& name, int type)
 		: QObject()
 {
 	PENTERCONS;
 	
-	init(name);
+        init(name, type);
 }
 
 /**
@@ -58,11 +58,11 @@ AudioBus::AudioBus(const QString& name)
  * @param channels The number of AudioChannels to add to this AudioBus
  * @return a new AudioBus instance
  */
-AudioBus::AudioBus( const QString& name, int channels )
+AudioBus::AudioBus( const QString& name, int channels, int type)
 {
 	PENTERCONS;
 	
-	init(name);
+        init(name, type);
 
 	for(int channelNumber=0; channelNumber<channels; ++channelNumber) {
                 AudioChannel* chan = new AudioChannel(name, channelNumber);
@@ -71,10 +71,11 @@ AudioBus::AudioBus( const QString& name, int channels )
 	}
 }
 
-void AudioBus::init(const QString& name )
+void AudioBus::init(const QString& name, int type)
 {
 	channelCount = m_monitors = 0;
 	m_name = name;
+        m_type = type;
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(resize_buffer()), Qt::DirectConnection);
 }
 

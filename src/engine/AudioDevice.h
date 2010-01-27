@@ -70,35 +70,10 @@ public:
 	void transport_stop(Client* client);
 	int transport_seek_to(Client* client, TimeRef location);
 
-	/**
-	 * Get the Playback AudioBus instance with name \a name.
-	 
-	 * You can use this for example in your callback function to get a Playback Bus,
-	 * and mix audiodata into the Buses' buffers. 
-	 * \sa get_playback_buses_names(), AudioBus::get_buffer()
-	 *
-	 * @param name The name of the Playback Bus 
-	 * @return An AudioBus if one exists with name \a name, 0 on failure
-	 */
-	AudioBus* get_playback_bus(QByteArray name) const
-	{
-                return m_playbackBuses.value(name);
-	}
-	
-	/**
-	 * Get the Capture AudioBus instance with name \a name.
-	 
-	 * You can use this for example in your callback function to get a Capture Bus,
-	 * and read the audiodata from the Buses' buffers. 
-	 * \sa AudioBus::get_buffer(),  get_capture_buses_names()
-	 *
-	 * @param name The name of the Capture Bus
-	 * @return An AudioBus if one exists with name \a name, 0 on failure
-	 */
-	AudioBus* get_capture_bus(QByteArray name) const
-	{
-                return m_captureBuses.value(name);
-	}
+        AudioBus* get_playback_bus(QByteArray name) const;
+        AudioBus* get_capture_bus(QByteArray name) const;
+
+        void set_bus_config(QList<bus_config> config);
 
         void set_bus_config(QList<bus_config> c_capture, QList<bus_config> c_playback);
         void set_channel_config(QStringList c_capture, QStringList c_playback);
@@ -109,8 +84,7 @@ public:
 	QStringList get_capture_channel_names() const;
 	QStringList get_playback_channel_names() const;
 	
-        QList<bus_config> get_capture_bus_configuration();
-        QList<bus_config> get_playback_bus_configuration();
+        QList<bus_config> get_bus_configuration();
 	
 	QString get_device_name() const;
 	QString get_device_longname() const;
@@ -160,10 +134,8 @@ private:
         Driver* 				m_driver;
         AudioDeviceThread* 			m_audioThread;
 	APILinkedList				m_clients;
-        QHash<QString, AudioBus* >		m_playbackBuses;
-        QHash<QString, AudioBus* >		m_captureBuses;
-        QList<bus_config>       		m_captureBusConfig;
-        QList<bus_config>       		m_playbackBusConfig;
+        QList<AudioBus* >       		m_buses;
+        QList<bus_config>       		m_busConfig;
         QStringList				m_availableDrivers;
 	QTimer					m_xrunResetTimer;
 #if defined (JACK_SUPPORT)
@@ -192,8 +164,6 @@ private:
 	void setup_default_playback_buses();
 	void post_process();
 	void free_memory();
-	void setup_capture_buses();
-	void setup_playback_buses();
 
 	// These are reserved for Driver Objects only!!
 	AudioChannel* register_capture_channel(const QByteArray& busName, const QString& audioType, int flags, uint bufferSize, uint channel );

@@ -35,9 +35,15 @@ class AudioBus : public QObject
 	Q_OBJECT
 
 public:
-	AudioBus(const QString& name);
-	AudioBus(const QString& name, int channelCount);
+        AudioBus(const QString& name, int type);
+        AudioBus(const QString& name, int channelCount, int type);
 	~AudioBus();
+
+
+        enum BusType {
+                Capture = 1,
+                Playback = 2
+        };
 
 	void add_channel(AudioChannel* chan);
 	int get_channel_count()
@@ -67,7 +73,10 @@ public:
 	void set_monitor_peaks(bool monitor);
 	void reset_monitor_peaks();
 	bool is_monitoring_peaks() const {return m_monitors;}
-	
+        bool is_capture() {return m_type == Capture;}
+        bool is_playback() {return m_type == Playback;}
+        int get_type() const {return m_type;}
+
 	void monitor_peaks()
 	{
 		for (int i=0; i<channels.size(); ++i) {
@@ -94,8 +103,9 @@ private:
 	
 	int 			channelCount;
 	int			m_monitors;
+        int                     m_type;
 
-	void init(const QString& name);
+        void init(const QString& name, int type);
 
 public slots:
 	void resize_buffer();

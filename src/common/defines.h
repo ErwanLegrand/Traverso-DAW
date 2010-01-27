@@ -271,6 +271,7 @@ typedef struct {
 typedef struct {
     QString name;
     QStringList channels;
+    QString type;
 } bus_config;
 
 

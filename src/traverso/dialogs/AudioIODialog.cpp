@@ -76,11 +76,12 @@ void AudioIODialog::initInput()
         // add all hardware channels (columns)
         inputTreeWidget->setHeaderLabels(headers);
 
-        const QList<bus_config> busList = audiodevice().get_capture_bus_configuration();
+        const QList<bus_config> busList = audiodevice().get_bus_configuration();
 
         // loop over all audio busses
         for (int j = 0; j < busList.count(); ++j) {
                 bus_config conf = busList.at(j);
+                if (! (conf.type == "capture")) continue;
 
                 QTreeWidgetItem *itm = new QTreeWidgetItem();
                 itm->setText(0, conf.name);
@@ -128,11 +129,12 @@ void AudioIODialog::initOutput()
         // add all hardware channels (columns)
         outputTreeWidget->setHeaderLabels(headers);
 
-        const QList<bus_config> busList = audiodevice().get_playback_bus_configuration();
+        const QList<bus_config> busList = audiodevice().get_bus_configuration();
 
         // loop over all audio busses
         for (int j = 0; j < busList.count(); ++j) {
                 bus_config conf = busList.at(j);
+                if (! (conf.type == "playback")) continue;
 
                 QTreeWidgetItem *itm = new QTreeWidgetItem();
                 itm->setText(0, conf.name);
@@ -191,8 +193,8 @@ void AudioIODialog::accept()
 
         QList<bus_config> c_bus_conf = inputBusConfig();
         QList<bus_config> p_bus_conf = outputBusConfig();
-
-        audiodevice().set_bus_config(c_bus_conf, p_bus_conf);
+        c_bus_conf.append(p_bus_conf);
+        audiodevice().set_bus_config(c_bus_conf);
 	
 	close();
 }
@@ -406,6 +408,7 @@ QList<bus_config> AudioIODialog::outputBusConfig()
 
                 QTreeWidgetItem *parent = outputTreeWidget->takeTopLevelItem(0);
                 conf.name = parent->text(0);
+                conf.type = "playback";
 
                 while (parent->childCount()) {
                         QTreeWidgetItem *child = parent->takeChild(0);
@@ -436,6 +439,7 @@ QList<bus_config> AudioIODialog::inputBusConfig()
 
                 QTreeWidgetItem *parent = inputTreeWidget->takeTopLevelItem(0);
                 conf.name = parent->text(0);
+                conf.type = "capture";
 
                 while (parent->childCount()) {
                         QTreeWidgetItem *child = parent->takeChild(0);

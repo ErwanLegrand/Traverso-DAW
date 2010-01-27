@@ -238,12 +238,12 @@ int Project::load(QString projectfile)
                 QDomElement e = bus.toElement();
                 conf.name = e.attribute("name", "");
                 conf.channels = e.attribute("channels", "").split(";");
+                conf.type = e.attribute("type", "");
                 busConfig.append(conf);
                 bus = bus.nextSibling();
         }
 
-        QList<bus_config> playbackConf;
-        audiodevice().set_bus_config(busConfig, playbackConf);
+        audiodevice().set_bus_config(busConfig);
 	
 	
 	// Load all the AudioSources for this project
@@ -347,12 +347,12 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
         deviceAndDriver.setAttribute("driver", audiodevice().get_driver_type());
         audioIO.appendChild(deviceAndDriver);
 
-        QList<bus_config> busConfig = audiodevice().get_capture_bus_configuration();
+        QList<bus_config> busConfig = audiodevice().get_bus_configuration();
         foreach(bus_config conf, busConfig) {
                 QDomElement bus = doc.createElement("Bus");
                 bus.setAttribute("name", conf.name);
                 bus.setAttribute("channels", conf.channels.join(";"));
-                bus.setAttribute("type", "capture");
+                bus.setAttribute("type", conf.type);
                 deviceAndDriver.appendChild(bus);
         }
 

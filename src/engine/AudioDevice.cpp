@@ -213,16 +213,11 @@ AudioDevice::~AudioDevice()
 
 void AudioDevice::free_memory()
 {
-        foreach(AudioBus* bus, m_captureBuses) {
+        foreach(AudioBus* bus, m_buses) {
 		delete bus;
 	}
 
-        foreach(AudioBus* bus, m_playbackBuses) {
-		delete bus;
-	}
-
-        m_captureBuses.clear();
-        m_playbackBuses.clear();
+        m_buses.clear();
 }
 
 /**
@@ -338,17 +333,10 @@ void AudioDevice::set_parameters( int rate,
 	
         m_driver->attach();
 	
-        if (!m_captureBusConfig.count()) {
+        if (!m_busConfig.count()) {
 		setup_default_capture_buses();
-	} else {
-		setup_capture_buses();
-	}
-
-        if (!m_playbackBusConfig.count()) {
-		setup_default_playback_buses();
-	} else {
-		setup_playback_buses();
-	}
+                setup_default_playback_buses();
+        }
 
 	emit driverParamsChanged();
 
@@ -551,8 +539,10 @@ int AudioDevice::shutdown( )
 QStringList AudioDevice::get_capture_buses_names( ) const
 {
 	QStringList names;
-        foreach(AudioBus* bus, m_captureBuses) {
-		names.append(bus->get_name());
+        foreach(AudioBus* bus, m_buses) {
+                if (bus->get_type() == AudioBus::Capture) {
+                        names.append(bus->get_name());
+                }
 	}
 	return names;
 }
@@ -567,8 +557,10 @@ QStringList AudioDevice::get_capture_buses_names( ) const
 QStringList AudioDevice::get_playback_buses_names( ) const
 {
 	QStringList names;
-        foreach(AudioBus* bus, m_playbackBuses) {
-		names.append(bus->get_name());
+        foreach(AudioBus* bus, m_buses) {
+                if (bus->get_type() == AudioBus::Playback) {
+                        names.append(bus->get_name());
+                }
 	}
 	return names;
 }
@@ -591,40 +583,25 @@ QStringList AudioDevice::get_playback_channel_names() const
 	return names;
 }
 
-QList<bus_config> AudioDevice::get_capture_bus_configuration()
+QList<bus_config> AudioDevice::get_bus_configuration()
 {
-        m_captureBusConfig.clear();
+        m_busConfig.clear();
 	
-        foreach(AudioBus* bus, m_captureBuses) {
+        foreach(AudioBus* bus, m_buses) {
                 bus_config conf;
                 conf.name = bus->get_name();
 		
-		for (int i = 0; i < bus->get_channel_count(); ++i) {
-                        conf.channels.append(bus->get_channel(i)->get_name());
-		}
-		
-                m_captureBusConfig.append(conf);
-	}
-	
-        return m_captureBusConfig;
-}
+                if (bus->is_playback()) conf.type = "playback";
+                else conf.type = "capture";
 
-QList<bus_config> AudioDevice::get_playback_bus_configuration()
-{
-        m_playbackBusConfig.clear();
-	
-        foreach(AudioBus* bus, m_playbackBuses) {
-                bus_config conf;
-                conf.name = bus->get_name();
-		
-		for (int i = 0; i < bus->get_channel_count(); ++i) {
+                for (int i = 0; i < bus->get_channel_count(); ++i) {
                         conf.channels.append(bus->get_channel(i)->get_name());
 		}
 		
-                m_playbackBusConfig.append(conf);
+                m_busConfig.append(conf);
 	}
 	
-        return m_playbackBusConfig;
+        return m_busConfig;
 }
 
 void AudioDevice::set_channel_config(QStringList c_capture, QStringList c_playback)
@@ -662,15 +639,39 @@ void AudioDevice::set_channel_config(QStringList c_capture, QStringList c_playba
     }
 }
 
-void AudioDevice::set_bus_config(QList<bus_config> c_capture, QList<bus_config> c_playback)
+void AudioDevice::set_bus_config(QList<bus_config> config)
 {
-        m_captureBusConfig = c_capture;
-        m_playbackBusConfig = c_playback;
+        m_busConfig = config;
 
         free_memory();
 
-	setup_capture_buses();
-	setup_playback_buses();
+        AudioChannel* channel;
+        bus_config conf;
+
+        for (int j = 0; j < m_busConfig.count(); ++j) {
+                conf = m_busConfig.at(j);
+
+                AudioBus* bus;
+                if (conf.type == "capture") {
+                        bus = new AudioBus(conf.name, AudioBus::Capture);
+                } else  {
+                        bus = new AudioBus(conf.name, AudioBus::Playback);
+                }
+
+                for (int i = 0; i < conf.channels.count(); ++i) {
+                        if (bus->is_capture()) {
+                                channel = m_driver->get_capture_channel_by_name(conf.channels.at(i));
+                        } else {
+                                channel = m_driver->get_playback_channel_by_name(conf.channels.at(i));
+                        }
+
+                        if (channel) {
+                                bus->add_channel(channel);
+                        }
+                }
+
+                m_buses.append(bus);
+        }
 
         emit driverParamsChanged();
         emit busConfigChanged();
@@ -685,7 +686,7 @@ void AudioDevice::setup_default_capture_buses( )
 	
         for (int i=1; i <= m_driver->get_capture_channels().size();) {
 		name = "Capture " + QByteArray::number(number++);
-		AudioBus* bus = new AudioBus(name);
+                AudioBus* bus = new AudioBus(name, AudioBus::Capture);
                 channel = m_driver->get_capture_channel_by_name("capture_"+QByteArray::number(i++));
 		if (channel) {
                         bus->add_channel(channel);
@@ -694,7 +695,7 @@ void AudioDevice::setup_default_capture_buses( )
                 if (channel) {
 			bus->add_channel(channel);
                 }
-                m_captureBuses.insert(name, bus);
+                m_buses.append(bus);
 	}
 }
 
@@ -707,7 +708,7 @@ void AudioDevice::setup_default_playback_buses( )
 
         for (int i=1; i <= m_driver->get_playback_channels().size();) {
 		name = "Playback " + QByteArray::number(number++);
-		AudioBus* bus = new AudioBus(name);
+                AudioBus* bus = new AudioBus(name, AudioBus::Playback);
                 channel = m_driver->get_playback_channel_by_name("playback_"+QByteArray::number(i++));
                 if (channel) {
                         bus->add_channel(channel);
@@ -716,50 +717,55 @@ void AudioDevice::setup_default_playback_buses( )
                 if (channel) {
                         bus->add_channel(channel);
 		}
-                m_playbackBuses.insert(name, bus);
+                m_buses.append(bus);
 	}
 }
 
-void AudioDevice::setup_capture_buses()
+
+/**
+ * Get the Playback AudioBus instance with name \a name.
+
+ * You can use this for example in your callback function to get a Playback Bus,
+ * and mix audiodata into the Buses' buffers.
+ * \sa get_playback_buses_names(), AudioBus::get_buffer()
+ *
+ * @param name The name of the Playback Bus
+ * @return An AudioBus if one exists with name \a name, 0 on failure
+ */
+AudioBus* AudioDevice::get_playback_bus(QByteArray name) const
 {
-	AudioChannel* channel;
-        bus_config conf;
-
-        for (int j = 0; j < m_captureBusConfig.count(); ++j) {
-		conf = m_captureBusConfig.at(j);
-                
-		AudioBus* bus = new AudioBus(conf.name.toUtf8());
-
-		for (int i = 0; i < conf.channels.count(); ++i) {
-                        channel = m_driver->get_capture_channel_by_name(conf.channels.at(i));
-			if (channel) {
-                                bus->add_channel(channel);
-			}
-		}
-
-                m_captureBuses.insert(conf.name, bus);
-	}
-}
-
-void AudioDevice::setup_playback_buses()
-{
-	AudioChannel* channel;
-        bus_config conf;
-
-        for (int j = 0; j < m_playbackBusConfig.count(); ++j) {
-                conf = m_playbackBusConfig.at(j);
-		
-		AudioBus* bus = new AudioBus(conf.name.toUtf8());
-
-		for (int i = 0; i < conf.channels.count(); ++i) {
-                        channel = m_driver->get_playback_channel_by_name(conf.channels.at(i));
-			if (channel) {
-                                bus->add_channel(channel);
+        foreach(AudioBus* bus, m_buses) {
+                if (bus->get_type() == AudioBus::Playback) {
+                        if (bus->get_name() == name) {
+                                return bus;
                         }
-		}
-		
-                m_playbackBuses.insert(conf.name.toUtf8(), bus);
-	}
+                }
+        }
+
+        return 0;
+}
+
+/**
+ * Get the Capture AudioBus instance with name \a name.
+
+ * You can use this for example in your callback function to get a Capture Bus,
+ * and read the audiodata from the Buses' buffers.
+ * \sa AudioBus::get_buffer(),  get_capture_buses_names()
+ *
+ * @param name The name of the Capture Bus
+ * @return An AudioBus if one exists with name \a name, 0 on failure
+ */
+AudioBus* AudioDevice::get_capture_bus(QByteArray name) const
+{
+        foreach(AudioBus* bus, m_buses) {
+                if (bus->get_type() == AudioBus::Capture) {
+                        if (bus->get_name() == name) {
+                                return bus;
+                        }
+                }
+        }
+
+        return 0;
 }
 
 /**

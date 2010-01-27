@@ -167,9 +167,9 @@ void Sheet::init()
 	connect(this, SIGNAL(transportStopped()), m_diskio, SLOT(stop_io()));
 
 	mixdown = gainbuffer = 0;
-	m_masterOut = new AudioBus("Master Out", 2);
-	m_renderBus = new AudioBus("Render Bus", 2);
-	m_clipRenderBus = new AudioBus("Clip Render Bus", 2);
+        m_masterOut = new AudioBus("Master Out", 2, AudioBus::Playback);
+        m_renderBus = new AudioBus("Render Bus", 2, AudioBus::Playback);
+        m_clipRenderBus = new AudioBus("Clip Render Bus", 2, AudioBus::Playback);
 	
 	resize_buffer(false, audiodevice().get_buffer_size());
 	m_hs = new QUndoStack(pm().get_undogroup());
