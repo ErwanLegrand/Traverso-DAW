@@ -33,18 +33,18 @@
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QTreeWidget" name="inputTreeWidget">
+         <property name="tabKeyNavigation">
+          <bool>true</bool>
+         </property>
          <property name="showDropIndicator" stdset="0">
           <bool>false</bool>
          </property>
-         <property name="rootIsDecorated">
+         <property name="textElideMode">
+          <enum>Qt::ElideMiddle</enum>
+         </property>
+         <property name="expandsOnDoubleClick">
           <bool>false</bool>
          </property>
-         <property name="itemsExpandable">
-          <bool>false</bool>
-         </property>
-         <attribute name="headerStretchLastSection">
-          <bool>false</bool>
-         </attribute>
          <attribute name="headerStretchLastSection">
           <bool>false</bool>
          </attribute>
@@ -128,21 +128,21 @@
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
         <widget class="QTreeWidget" name="outputTreeWidget">
+         <property name="tabKeyNavigation">
+          <bool>true</bool>
+         </property>
          <property name="showDropIndicator" stdset="0">
           <bool>false</bool>
          </property>
          <property name="selectionBehavior">
           <enum>QAbstractItemView::SelectItems</enum>
          </property>
-         <property name="rootIsDecorated">
+         <property name="textElideMode">
+          <enum>Qt::ElideNone</enum>
+         </property>
+         <property name="expandsOnDoubleClick">
           <bool>false</bool>
          </property>
-         <property name="itemsExpandable">
-          <bool>false</bool>
-         </property>
-         <attribute name="headerStretchLastSection">
-          <bool>false</bool>
-         </attribute>
          <attribute name="headerStretchLastSection">
           <bool>false</bool>
          </attribute>

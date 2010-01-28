@@ -87,6 +87,10 @@ void AudioIODialog::initInput()
                 itm->setText(0, conf.name);
                 inputTreeWidget->addTopLevelItem(itm);
 
+                for (int k = 0; k < inputTreeWidget->columnCount(); ++k) {
+                    itm->setBackground(k, QApplication::palette().alternateBase());
+                }
+
                 // Add all channels to the current bus. Name them either "Mono" or "Left/Right",
                 // depending on the number of channels.
                 QString lbl = tr("Mono");
@@ -118,6 +122,10 @@ void AudioIODialog::initInput()
 
                 itm->setExpanded(true);
 	}
+
+        for (int k = 1; k < inputTreeWidget->columnCount(); ++k) {
+            inputTreeWidget->resizeColumnToContents(k);
+        }
 }
 
 void AudioIODialog::initOutput()
@@ -139,6 +147,10 @@ void AudioIODialog::initOutput()
                 QTreeWidgetItem *itm = new QTreeWidgetItem();
                 itm->setText(0, conf.name);
                 outputTreeWidget->addTopLevelItem(itm);
+
+                for (int k = 0; k < outputTreeWidget->columnCount(); ++k) {
+                    itm->setBackground(k, QApplication::palette().alternateBase());
+                }
 
                 // Add all channels to the current bus. Name them either "Mono" or "Left/Right",
                 // depending on the number of channels.
@@ -170,6 +182,10 @@ void AudioIODialog::initOutput()
                 }
 
                 itm->setExpanded(true);
+        }
+
+        for (int k = 1; k < outputTreeWidget->columnCount(); ++k) {
+            outputTreeWidget->resizeColumnToContents(k);
         }
 }
 
@@ -470,12 +486,15 @@ void AudioIODialog::addJackInput()
 
     for (int i = 0; i < inputTreeWidget->topLevelItemCount(); ++i) {
         QTreeWidgetItem *titem = inputTreeWidget->topLevelItem(i);
+        titem->setBackground(i, QApplication::palette().alternateBase());
 
         for (int j = 0; j < titem->childCount(); ++j) {
             QTreeWidgetItem *citem = titem->child(j);
             citem->setCheckState(cols, Qt::Unchecked);
         }
     }
+
+    inputTreeWidget->resizeColumnToContents(cols);
 }
 
 void AudioIODialog::addJackOutput()
@@ -487,12 +506,15 @@ void AudioIODialog::addJackOutput()
 
     for (int i = 0; i < outputTreeWidget->topLevelItemCount(); ++i) {
         QTreeWidgetItem *titem = outputTreeWidget->topLevelItem(i);
+        titem->setBackground(i, QApplication::palette().alternateBase());
 
         for (int j = 0; j < titem->childCount(); ++j) {
             QTreeWidgetItem *citem = titem->child(j);
             citem->setCheckState(cols, Qt::Unchecked);
         }
     }
+
+    outputTreeWidget->resizeColumnToContents(cols);
 }
 
 void AudioIODialog::removeJackInput()
