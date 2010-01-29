@@ -109,6 +109,20 @@ void AudioIOPage::init(const QString &t, const QStringList &c_names)
 
 }
 
+QStringList AudioIOPage::getChannelConfig()
+{
+    QTreeWidgetItem *chitem = treeWidget->headerItem();
+
+    QStringList chan_conf;
+
+    for (int i = 1; i < treeWidget->columnCount(); ++i) {
+        chan_conf.append(chitem->text(i));
+    }
+
+    return chan_conf;
+}
+
+
 QList<bus_config> AudioIOPage::getBusConfig()
 {
     QList<bus_config> list;

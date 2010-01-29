@@ -23,6 +23,7 @@
 #define AUDIO_IO_DIALOG_H
 
 #include "ui_AudioIODialog.h"
+#include "widgets/AudioIOPage.h"
 
 #include <QDialog>
 #include "defines.h"
@@ -37,33 +38,13 @@ public:
 
 
 private:
-	QStringList m_inputChannelList;
-	QStringList m_outputChannelList;
+        AudioIOPage *m_inputPage;
+        AudioIOPage *m_outputPage;
 
-	void initInput();
-	void initOutput();
 	void accept();
-        QList<bus_config> outputBusConfig();
-        QList<bus_config> inputBusConfig();
 	
 private slots:
-	void addMonoInput();
-	void addStereoInput();
-	void removeInput();
-        void inputSelectionChanged(QTreeWidgetItem *, QTreeWidgetItem *);
 
-	void addMonoOutput();
-	void addStereoOutput();
-	void removeOutput();
-        void outputSelectionChanged(QTreeWidgetItem *, QTreeWidgetItem *);
-
-        void addJackInput();
-        void addJackOutput();
-        void removeJackInput();
-        void removeJackOutput();
-
-        void itemChanged(QTreeWidgetItem *, int);
-        void itemDoubleClicked(QTreeWidgetItem *, int);
 };
 
 

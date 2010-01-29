@@ -35,12 +35,13 @@ class AudioIOPage : public QWidget, protected Ui::AudioIOPageWidget
         AudioIOPage(QWidget *parent = 0, Qt::WindowFlags f = 0);
         ~AudioIOPage() {};
 
+        void init(const QString &, const QStringList &);
+        QList<bus_config> getBusConfig();
+        QStringList getChannelConfig();
+
     private:
         QString m_type;
         QStringList m_channels;
-
-        void init(const QString &, const QStringList &);
-        QList<bus_config> getBusConfig();
 
     private slots:
         void addMonoBus();
