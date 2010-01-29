@@ -31,12 +31,21 @@ AudioIOPage::AudioIOPage(QWidget *parent, Qt::WindowFlags f) : QWidget(parent, f
 {
     setupUi(this);
 
+    m_bus_collapsed = false;
+    m_chan_collapsed = false;
+
+    treeWidget->header()->setClickable(true);
+
     connect(treeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
             this, SLOT(selectionChanged(QTreeWidgetItem *, QTreeWidgetItem *)));
     connect(treeWidget, SIGNAL(itemChanged(QTreeWidgetItem *, int)),
             this, SLOT(itemChanged(QTreeWidgetItem *, int)));
     connect(treeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)),
             this, SLOT(itemDoubleClicked(QTreeWidgetItem *, int)));
+//    connect(treeWidget->header(), SIGNAL(sectionClicked(int)),
+//            this, SLOT(headerClicked(int)));
+    connect(treeWidget->header(), SIGNAL(sectionDoubleClicked(int)),
+            this, SLOT(headerDoubleClicked(int)));
 }
 
 void AudioIOPage::init(const QString &t, const QStringList &c_names)
@@ -102,11 +111,6 @@ void AudioIOPage::init(const QString &t, const QStringList &c_names)
 
                 itm->setExpanded(true);
         }
-
-        for (int k = 1; k < treeWidget->columnCount(); ++k) {
-            treeWidget->resizeColumnToContents(k);
-        }
-
 }
 
 QStringList AudioIOPage::getChannelConfig()
@@ -238,8 +242,6 @@ void AudioIOPage::addPort()
             citem->setCheckState(cols, Qt::Unchecked);
         }
     }
-
-    treeWidget->resizeColumnToContents(cols);
 }
 
 void AudioIOPage::removePort()
@@ -323,5 +325,46 @@ void AudioIOPage::selectionChanged(QTreeWidgetItem *current, QTreeWidgetItem *)
     }
 }
 
+void AudioIOPage::headerClicked(int col)
+{
+    if (!col) {
+        return;
+    }
+
+    QHeaderView *header = treeWidget->header();
+    if (header->sectionSize(col) == header->minimumSectionSize()) {
+        header->resizeSection(col, header->defaultSectionSize());
+    } else {
+        header->resizeSection(col, header->minimumSectionSize());
+    }
+}
+
+void AudioIOPage::headerDoubleClicked(int col)
+{
+    // double click on first column expands/collapses all busses
+    if (!col) {
+        for (int i = 0; i < treeWidget->topLevelItemCount(); ++i) {
+            treeWidget->topLevelItem(i)->setExpanded(m_bus_collapsed);
+        }
+        m_bus_collapsed = !m_bus_collapsed;
+        return;
+    }
+
+    // double click on any other column expands/collapses all channels
+    QHeaderView *header = treeWidget->header();
+    int size;
+
+    if (m_chan_collapsed) {
+        size = header->defaultSectionSize();
+    } else {
+        size = header->minimumSectionSize();
+    }
+
+    m_chan_collapsed = !m_chan_collapsed;
+
+    for (int i = 1; i < header->count(); ++i) {
+        header->resizeSection(i, size);
+    }
+}
 
 //eof

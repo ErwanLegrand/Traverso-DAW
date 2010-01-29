@@ -42,6 +42,8 @@ class AudioIOPage : public QWidget, protected Ui::AudioIOPageWidget
     private:
         QString m_type;
         QStringList m_channels;
+        bool m_bus_collapsed;
+        bool m_chan_collapsed;
 
     private slots:
         void addMonoBus();
@@ -53,7 +55,8 @@ class AudioIOPage : public QWidget, protected Ui::AudioIOPageWidget
         void itemChanged(QTreeWidgetItem *, int);
         void itemDoubleClicked(QTreeWidgetItem *, int);
         void selectionChanged(QTreeWidgetItem *, QTreeWidgetItem *);
-
+        void headerClicked(int);
+        void headerDoubleClicked(int);
 };
 
 #endif
