@@ -52,6 +52,7 @@ widgets/ResourcesWidget.cpp
 widgets/SpectralMeterWidget.cpp
 widgets/TransportConsoleWidget.cpp
 widgets/VUMeter.cpp
+widgets/AudioIOPage.cpp
 )
 
 SET(TRAVERSO_UI_FILES
@@ -83,6 +84,7 @@ ui/ExportDialog.ui
 ui/CDWritingDialog.ui
 ui/ImportClipsDialog.ui
 ui/AudioIODialog.ui
+ui/AudioIOPage.ui
 )
 
 SET(TRAVERSO_GUI_MOC_CLASSES
@@ -115,6 +117,7 @@ widgets/MeterWidget.h
 widgets/SpectralMeterWidget.h
 widgets/TransportConsoleWidget.h
 widgets/VUMeter.h
+widgets/AudioIOPage.h
 )
 
 QT4_ADD_RESOURCES(TRAVERSO_RESOURCES

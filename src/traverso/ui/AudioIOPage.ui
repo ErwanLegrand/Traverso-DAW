@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AudioIOPageWidget</class>
+ <widget class="QWidget" name="AudioIOPageWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>485</width>
+    <height>359</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QTreeWidget" name="treeWidget">
+     <property name="tabKeyNavigation">
+      <bool>true</bool>
+     </property>
+     <property name="showDropIndicator" stdset="0">
+      <bool>false</bool>
+     </property>
+     <property name="textElideMode">
+      <enum>Qt::ElideMiddle</enum>
+     </property>
+     <property name="expandsOnDoubleClick">
+      <bool>false</bool>
+     </property>
+     <attribute name="headerStretchLastSection">
+      <bool>false</bool>
+     </attribute>
+     <column>
+      <property name="text">
+       <string>Bus</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="buttonAddMonoBus">
+       <property name="text">
+        <string>Add &amp;Mono Bus</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonAddStereoBus">
+       <property name="text">
+        <string>Add &amp;Stereo Bus</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonRemoveBus">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>&amp;Remove Bus</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBoxJack">
+     <property name="title">
+      <string>Jack Options</string>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QPushButton" name="buttonAddPort">
+        <property name="text">
+         <string>&amp;Add Port</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="buttonRemovePort">
+        <property name="text">
+         <string>&amp;Remove Port</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonAddMonoBus</sender>
+   <signal>clicked()</signal>
+   <receiver>AudioIOPageWidget</receiver>
+   <slot>addMonoBus()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>85</x>
+     <y>273</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>292</x>
+     <y>291</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonAddStereoBus</sender>
+   <signal>clicked()</signal>
+   <receiver>AudioIOPageWidget</receiver>
+   <slot>addStereoBus()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>189</x>
+     <y>280</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>316</x>
+     <y>256</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonRemoveBus</sender>
+   <signal>clicked()</signal>
+   <receiver>AudioIOPageWidget</receiver>
+   <slot>removeBus()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>454</x>
+     <y>284</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>445</x>
+     <y>291</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonAddPort</sender>
+   <signal>clicked()</signal>
+   <receiver>AudioIOPageWidget</receiver>
+   <slot>addPort()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>124</x>
+     <y>335</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>242</x>
+     <y>179</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonRemovePort</sender>
+   <signal>clicked()</signal>
+   <receiver>AudioIOPageWidget</receiver>
+   <slot>removePort()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>360</x>
+     <y>335</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>242</x>
+     <y>179</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>addMonoBus()</slot>
+  <slot>addStereoBus()</slot>
+  <slot>removeBus()</slot>
+  <slot>addPort()</slot>
+  <slot>removePort()</slot>
+ </slots>
+</ui>
