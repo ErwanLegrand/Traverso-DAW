@@ -533,7 +533,7 @@ void AudioClipView::draw_db_lines(QPainter* p, qreal xstart, int pixelcount)
         int linestartpos = xstart;
         if (xstart < m_lineOffset) linestartpos = m_lineOffset;
 
-        if (m_mergedView) {
+        if ((m_mergedView) || (channels == 0)) {
                 channels = 1;
         }
 
@@ -609,7 +609,7 @@ void AudioClipView::create_brushes()
         int height;
         int channels = m_clip->get_channels();
 
-        if (m_mergedView) {
+        if ((m_mergedView) || (channels == 0)) {
                 channels = 1;
         }
 
