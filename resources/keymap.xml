@@ -320,9 +320,9 @@
 				<Object objectname="SpectralMeterWidget" slotsignature="screen_capture" modes="All" />
 			</Objects>
 		</keyfact>
-		<keyfact type="FKEY2" key1="I" key2="O" >
+                <keyfact type="FKEY2" key1="I" key2="S" >
 			<Objects>
-				<Object objectname="TrackView" modes="All" sortorder="13"  slotsignature="insert_silence" />
+                                <Object objectname="TrackView" modes="All" sortorder="13"  slotsignature="insert_silence" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY2" key1="V" key2="B" >
@@ -340,7 +340,12 @@
 				<Object objectname="SheetView" modes="All" sortorder="3" submenu="Zoom" pluginname="TraversoCommands" commandname="HZoomOut" arguments="HZoom;2" />
 			</Objects>
 		</keyfact>
-		
+                  <keyfact type="FKEY2" key1="I" key2="O" >
+                          <Objects>
+                                  <Object objectname="Interface" modes="All" sortorder="13"  slotsignature="sheet_audio_io_dialog" />
+                          </Objects>
+                  </keyfact>
+
 		
 		<keyfact type="HKEY" key1="Z" sortorder="35" >
 			<Objects>

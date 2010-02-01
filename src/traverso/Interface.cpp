@@ -1686,10 +1686,12 @@ void Interface::sheet_selector_sheet_removed(Sheet* sheet)
 	sheet_selector_update_sheets();
 }
 
-void Interface::sheet_audio_io_dialog()
+Command* Interface::sheet_audio_io_dialog()
 {
 	AudioIODialog *aiodlg = new AudioIODialog(this);
 	aiodlg->exec();
 	delete aiodlg;
+
+        return 0;
 }
 

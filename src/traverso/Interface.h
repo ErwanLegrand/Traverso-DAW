@@ -77,7 +77,9 @@ class Interface : public QMainWindow
 	Q_CLASSINFO("full_screen", tr("Full Screen"))
 	Q_CLASSINFO("export_keymap", tr("Export keymap"))
 	Q_CLASSINFO("start_transport", tr("Play"))
-	Q_CLASSINFO("set_recordable_and_start_transport", tr("Record"));
+        Q_CLASSINFO("set_recordable_and_start_transport", tr("Record"));
+        Q_CLASSINFO("sheet_audio_io_dialog", tr("Show Audio I/O dialog"));
+
 
 
 public :
@@ -198,7 +200,8 @@ public slots :
 	Command* show_newsheet_dialog();
 	Command* show_newtrack_dialog();
 	Command* show_newproject_dialog();
-	Command* start_transport();
+        Command* sheet_audio_io_dialog();
+        Command* start_transport();
 	Command* set_recordable_and_start_transport();
 
 	
@@ -218,7 +221,6 @@ private slots:
 	void sheet_selected();
 	void sheet_selector_sheet_added(Sheet*);
 	void sheet_selector_sheet_removed(Sheet*);
-	void sheet_audio_io_dialog();
 };
 
 
