@@ -384,7 +384,7 @@ void Project::prepare_audio_device(QDomDocument doc)
         QDomNode audioIO = doc.documentElement().firstChildElement("AudioIO");
         QDomNode systemConfigNode = audioIO.firstChildElement("SystemConfig");
         QDomElement e = systemConfigNode.toElement();
-        ads.driverType = e.attribute("driver", "Null Driver");
+        ads.driverType = e.attribute("driver", "");
 
         QDomNode channelsConfigNode = systemConfigNode.firstChildElement("Channels");
         QDomNode channelNode = channelsConfigNode.firstChild();
@@ -420,11 +420,13 @@ void Project::prepare_audio_device(QDomDocument doc)
 
         ads.rate = config().get_property("Hardware", "samplerate", 44100).toInt();
         ads.bufferSize = config().get_property("Hardware", "buffersize", 512).toInt();
+        if (ads.driverType.isEmpty()) {
 #if defined (Q_WS_X11)
-        ads.driverType = config().get_property("Hardware", "drivertype", "ALSA").toString();
+                ads.driverType = config().get_property("Hardware", "drivertype", "ALSA").toString();
 #else
-        ads.driverType = config().get_property("Hardware", "drivertype", "PortAudio").toString();
+                ads.driverType = config().get_property("Hardware", "drivertype", "PortAudio").toString();
 #endif
+        }
         ads.cardDevice = config().get_property("Hardware", "carddevice", "default").toString();
         ads.ditherShape = config().get_property("Hardware", "DitherShape", "None").toString();
         ads.capture = config().get_property("Hardware", "capture", 1).toInt();
