@@ -414,7 +414,7 @@ int AudioDevice::create_driver(QString driverType, bool capture, bool playback, 
 	if (libjack_is_present) {
 		if (driverType == "Jack") {
                         m_driver = new JackDriver(this, m_rate, m_bufferSize);
-                        if (m_driver->setup(capture, playback) < 0) {
+                        if (((JackDriver*)m_driver)->setup(m_setup.channelConfigs) < 0) {
 				message(tr("Audiodevice: Failed to create the Jack Driver"), WARNING);
                                 delete m_driver;
                                 m_driver = 0;
@@ -639,24 +639,7 @@ QList<BusConfig> AudioDevice::get_bus_configuration()
 
 void AudioDevice::set_channel_config(QList<ChannelConfig> channelConfigs)
 {
-        if (!m_driver->supports_software_channels()) {
-                return;
-        }
-        
-        foreach (QString channel, get_capture_channel_names()) {
-                m_driver->remove_capture_channel(channel);
-        }
-        foreach(QString channel, get_playback_buses_names()) {
-                m_driver->remove_playback_channel(channel);
-        }
-        
-        foreach(ChannelConfig conf, channelConfigs) {
-                if(conf.type == "input") {
-                        m_driver->add_capture_channel(conf.name);
-                } else {
-                        m_driver->add_playback_channel(conf.name);
-                }
-        }
+        return;
 
 //        // create new capture channels if necessary
 //        QStringList c_capture_existing = get_capture_channel_names();

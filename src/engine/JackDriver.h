@@ -40,7 +40,7 @@ public:
         int _read(nframes_t nframes);
         int _write(nframes_t nframes);
         int _run_cycle() {return 1;}
-        int setup(bool capture=true, bool playback=true, const QString& cardDevice="hw:0");
+        int setup(QList<ChannelConfig> channelConfigs);
         int attach();
         int start();
         int stop();

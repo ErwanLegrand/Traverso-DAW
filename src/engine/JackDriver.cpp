@@ -92,13 +92,10 @@ int JackDriver::_write( nframes_t nframes )
         return 1;
 }
 
-int JackDriver::setup(bool capture, bool playback, const QString& )
+int JackDriver::setup(QList<ChannelConfig> channelConfigs)
 {
 	PENTER;
 	
-	Q_UNUSED(capture);
-	Q_UNUSED(playback);
-
         const char **inputports;
         const char **outputports;
         const char *client_name = "Traverso";
@@ -114,31 +111,45 @@ int JackDriver::setup(bool capture, bool playback, const QString& )
         }
 
 
-        //Get all the input ports of Jack
-        inputports = jack_get_ports (m_jack_client, NULL, NULL, JackPortIsPhysical|JackPortIsInput);
 
-        if (inputports) {
-                for (int i = 0; inputports[i]; i++) {
-                        char name[64];
-                        sprintf (name, "capture_%d", i+1);
-                        add_capture_channel(name);
+        if (channelConfigs.size()) {
+                foreach(ChannelConfig conf, channelConfigs) {
+                        if (conf.type == "input") {
+                                add_capture_channel(conf.name);
+                        } else {
+                                add_playback_channel(conf.name);
+                        }
                 }
 
-                free (inputports);
-        }
+        } else {
 
 
-        //Get all the output ports of Jack
-        outputports = jack_get_ports (m_jack_client, NULL, NULL, JackPortIsPhysical|JackPortIsOutput);
+                //Get all the input ports of Jack
+                inputports = jack_get_ports (m_jack_client, NULL, NULL, JackPortIsPhysical|JackPortIsInput);
 
-        if (outputports) {
-                for (int i = 0; outputports[i]; i++) {
-                        char name[64];
-                        sprintf (name, "playback_%d", i+1);
-                        add_playback_channel(name);
+                if (inputports) {
+                        for (int i = 0; inputports[i]; i++) {
+                                char name[64];
+                                sprintf (name, "capture_%d", i+1);
+                                add_capture_channel(name);
+                        }
+
+                        free (inputports);
                 }
 
-                free (outputports);
+
+                //Get all the output ports of Jack
+                outputports = jack_get_ports (m_jack_client, NULL, NULL, JackPortIsPhysical|JackPortIsOutput);
+
+                if (outputports) {
+                        for (int i = 0; outputports[i]; i++) {
+                                char name[64];
+                                sprintf (name, "playback_%d", i+1);
+                                add_playback_channel(name);
+                        }
+
+                        free (outputports);
+                }
         }
 
 	return 1;
