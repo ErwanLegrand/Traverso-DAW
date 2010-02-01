@@ -218,7 +218,7 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="MouseButtonLeft" >
 			<Objects>
-				<Object objectname="SheetView" slotsignature="touch" modes="All" sortorder="2" submenu="Work Cursor" />
+                                <Object objectname="SheetView" slotsignature="touch_play_cursor" modes="All" sortorder="2" submenu="Playhead" />
 				<Object objectname="TrackPanelLed" slotsignature="toggle" modes="All" sortorder="1" />
 				<Object objectname="TrackPanelBus" slotsignature="TrackView::select_bus" modes="All" />
 				<Object objectname="AudioClipView" slotsignature="set_audio_file" modes="All" sortorder="80" />
@@ -226,7 +226,7 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="MouseButtonMiddle" >
 			<Objects>
-				<Object objectname="SheetView" slotsignature="touch_play_cursor" modes="All" sortorder="8" submenu="Playhead" />
+                                <Object objectname="SheetView" slotsignature="touch" modes="All" sortorder="8" submenu="Work Cursor" />
 				<Object objectname="TimeLineView" slotsignature="playhead_to_marker" modes="All" sortorder="2" />
 			</Objects>
 		</keyfact>
