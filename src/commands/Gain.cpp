@@ -163,12 +163,12 @@ void Gain::set_collected_number(const QString & collected)
 	}
 	
 	newGain = dB_to_scale_factor(dbFactor);
-	QMetaObject::invokeMethod(gainObject, "set_gain", Q_ARG(float, newGain));
-	
-	// now we get the new gain value from gainObject, since we don't know if 
-	// gainobject accepted the change or not!
-	get_gain_from_object(newGain);
-	
+
+        if (newGain < 0.0)
+                newGain = 0.0;
+        if (newGain > 2.0)
+                newGain = 2.0;
+
 	// Update the vieport's hold cursor with the _actuall_ gain value!
 	if(rightfromdot) {
 		cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', rightfromdot).append(" dB"));
