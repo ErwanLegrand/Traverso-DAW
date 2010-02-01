@@ -59,7 +59,6 @@ public :
 
 protected:
 	virtual bool event(QEvent *event);
-	virtual void leaveEvent ( QEvent * event );
 	virtual void enterEvent ( QEvent * );
         virtual void paintEvent( QPaintEvent* e);
         virtual void mouseMoveEvent(QMouseEvent* e);

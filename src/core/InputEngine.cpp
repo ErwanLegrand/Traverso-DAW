@@ -608,7 +608,9 @@ void InputEngine::mouse_left_viewport_unexpectedly()
 	m_activeModifierKeys.clear();
         // Fake an escape key fact, so if a hold action was
         // running it will be canceled!
-        process_press_event(Qt::Key_Escape, false);
+        if (is_holding()) {
+                process_press_event(Qt::Key_Escape, false);
+        }
 }
 
 

@@ -205,15 +205,6 @@ void ViewPort::enterEvent(QEvent* e)
 	setFocus();
 }
 
-void ViewPort::leaveEvent ( QEvent * event )
-{
-	QGraphicsView::leaveEvent(event);
-	// There can be many reasons for a leave event, sometimes
-	// this leaves the engine in a non-cleared state, e.g. modifier
-	// keys still can be active!! So we reset those manually here.
-        ie().mouse_left_viewport_unexpectedly();
-}
-
 void ViewPort::keyPressEvent( QKeyEvent * e)
 {
 	ie().catch_key_press(e);
