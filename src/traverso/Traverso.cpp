@@ -126,8 +126,7 @@ Traverso::~Traverso()
 void Traverso::create_interface( )
 {
 	themer()->load();
-	Interface* iface = Interface::instance();
-	prepare_audio_device();
+        Interface* iface = Interface::instance();
 	iface->show();
 	
 	QString projectToLoad = "";
@@ -303,54 +302,6 @@ void Traverso::setup_fpu()
 #endif
 }
 
-
-void Traverso::prepare_audio_device( )
-{
-	int rate = config().get_property("Hardware", "samplerate", 44100).toInt();
-	int bufferSize = config().get_property("Hardware", "buffersize", 512).toInt();
-#if defined (Q_WS_X11)
-	QString driverType = config().get_property("Hardware", "drivertype", "ALSA").toString();
-#else
-	QString driverType = config().get_property("Hardware", "drivertype", "PortAudio").toString();
-#endif
-        QString cardDevice = config().get_property("Hardware", "carddevice", "default").toString();
-	QString ditherShape = config().get_property("Hardware", "DitherShape", "None").toString();
-	bool capture = config().get_property("Hardware", "capture", 1).toInt();
-	bool playback = config().get_property("Hardware", "playback", 1).toInt();
-
-	if (bufferSize == 0) {
-		qWarning("BufferSize read from Settings is 0 !!!");
-		bufferSize = 1024;
-	}
-	if (rate == 0) {
-		qWarning("Samplerate read from Settings is 0 !!!");
-		rate = 44100;
-	}
-	if (driverType.isEmpty()) {
-		qWarning("Driver type read from Settings is an empty String !!!");
-		driverType = "ALSA";
-	}
-
-#if defined (ALSA_SUPPORT)
-	if (driverType == "ALSA") {
-                cardDevice = config().get_property("Hardware", "carddevice", "default").toString();
-	}
-#endif
-	
-#if defined (PORTAUDIO_SUPPORT)
-	if (driverType == "PortAudio") {
-#if defined (Q_WS_X11)
-		cardDevice = config().get_property("Hardware", "pahostapi", "alsa").toString();
-#elif defined (Q_WS_MAC)
-		cardDevice = config().get_property("Hardware", "pahostapi", "coreaudio").toString();
-#elif defined (Q_WS_WIN)
-		cardDevice = config().get_property("Hardware", "pahostapi", "wmme").toString();
-#endif
-	}
-#endif // end PORTAUDIO_SUPPORT
-	
-	audiodevice().set_parameters(rate, bufferSize, driverType, capture, playback, cardDevice, ditherShape);
-}
 
 void Traverso::saveState( QSessionManager &  manager)
 {

@@ -157,7 +157,7 @@ void Sheet::init()
 	connect(this, SIGNAL(seekStart()), m_diskio, SLOT(seek()), Qt::QueuedConnection);
 	connect(this, SIGNAL(prepareRecording()), this, SLOT(prepare_recording()));
 	connect(&audiodevice(), SIGNAL(clientRemoved(Client*)), this, SLOT (audiodevice_client_removed(Client*)));
-        connect(&audiodevice(), SIGNAL(busConfigChanged()), this, SLOT(rescan_busses()));
+        connect(&audiodevice(), SIGNAL(busConfigChanged()), this, SLOT(rescan_busses()), Qt::DirectConnection);
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(audiodevice_params_changed()), Qt::DirectConnection);
 	connect(m_diskio, SIGNAL(seekFinished()), this, SLOT(seek_finished()), Qt::QueuedConnection);
 	connect (m_diskio, SIGNAL(readSourceBufferUnderRun()), this, SLOT(handle_diskio_readbuffer_underrun()));
@@ -167,9 +167,9 @@ void Sheet::init()
 	connect(this, SIGNAL(transportStopped()), m_diskio, SLOT(stop_io()));
 
 	mixdown = gainbuffer = 0;
-        m_masterOut = new AudioBus("Master Out", 2, AudioBus::Playback);
-        m_renderBus = new AudioBus("Render Bus", 2, AudioBus::Playback);
-        m_clipRenderBus = new AudioBus("Clip Render Bus", 2, AudioBus::Playback);
+        m_masterOut = new AudioBus("Master Out", 2, ChannelIsOutput);
+        m_renderBus = new AudioBus("Render Bus", 2, ChannelIsOutput);
+        m_clipRenderBus = new AudioBus("Clip Render Bus", 2, ChannelIsOutput);
 	
 	resize_buffer(false, audiodevice().get_buffer_size());
 	m_hs = new QUndoStack(pm().get_undogroup());
@@ -708,6 +708,10 @@ void Sheet::set_first_visible_frame(nframes_t pos)
 
 void Sheet::set_work_at(const TimeRef& location)
 {
+        if (location < TimeRef()) {
+                // do nothing
+                return;
+        }
 	m_workLocation = location;
 	if (workSnap->is_snappable()) {
 		snaplist->mark_dirty();
@@ -1015,9 +1019,6 @@ void Sheet::resize_buffer(bool updateArmStatus, nframes_t size)
 		delete [] gainbuffer;
 	mixdown = new audio_sample_t[size];
 	gainbuffer = new audio_sample_t[size];
-	m_masterOut->set_buffer_size(size);
-	m_renderBus->set_buffer_size(size);
-	m_clipRenderBus->set_buffer_size(size);
 	
 	if (updateArmStatus) {
 		apill_foreach(Track* track, Track, m_tracks) {
@@ -1412,6 +1413,11 @@ void Sheet::clip_finished_recording(AudioClip * clip)
 
 void Sheet::set_transport_pos(TimeRef location)
 {
+        if (location < TimeRef()) {
+                // do nothing
+                return;
+        }
+
 #if defined (THREAD_CHECK)
 	Q_ASSERT(QThread::currentThreadId() ==  threadId);
 #endif

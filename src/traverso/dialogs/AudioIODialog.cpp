@@ -39,8 +39,8 @@ AudioIODialog::AudioIODialog(QWidget* parent)
         m_inputPage = new AudioIOPage(this);
         m_outputPage = new AudioIOPage(this);
 
-        m_inputPage->init("capture", audiodevice().get_capture_channel_names());
-        m_outputPage->init("playback", audiodevice().get_playback_channel_names());
+        m_inputPage->init("input", audiodevice().get_capture_channel_names());
+        m_outputPage->init("output", audiodevice().get_playback_channel_names());
 
         while (tabWidget->count()) {
             tabWidget->removeTab(0);
@@ -52,17 +52,22 @@ AudioIODialog::AudioIODialog(QWidget* parent)
 
 void AudioIODialog::accept()
 {
-        QStringList c_chan_conf = m_inputPage->getChannelConfig();
-        QStringList p_chan_conf = m_outputPage->getChannelConfig();
+        QList<ChannelConfig> channelConfigs  = m_inputPage->getChannelConfig();
+        channelConfigs.append(m_outputPage->getChannelConfig());
 
-        audiodevice().set_channel_config(c_chan_conf, p_chan_conf);
+        audiodevice().set_channel_config(channelConfigs);
 
-        QList<bus_config> c_bus_conf = m_inputPage->getBusConfig();
-        QList<bus_config> p_bus_conf = m_outputPage->getBusConfig();
+        QList<BusConfig> busConfigs = m_inputPage->getBusConfig();
+        busConfigs.append(m_outputPage->getBusConfig());
 
-        c_bus_conf.append(p_bus_conf);
+        AudioDeviceSetup ads = audiodevice().get_device_setup();
+        ads.channelConfigs.clear();
+        ads.busConfigs.clear();
 
-        audiodevice().set_bus_config(c_bus_conf);
+        ads.channelConfigs = channelConfigs;
+        ads.busConfigs = busConfigs;
+
+        audiodevice().set_parameters(ads);
 	
 	close();
 }

@@ -55,13 +55,7 @@ class AudioDevice : public QObject
 	Q_OBJECT
 
 public:
-	void set_parameters(	int rate, 
-				nframes_t bufferSize, 
-				const QString& driverType, 
-				bool capture=true,
-				bool playback=true,
-				const QString& device="hw:0",
-			   	const QString& ditherShape="None");
+        void set_parameters(AudioDeviceSetup ads);
 
 	void add_client(Client* client);
 	void remove_client(Client* client);
@@ -70,13 +64,15 @@ public:
 	void transport_stop(Client* client);
 	int transport_seek_to(Client* client, TimeRef location);
 
+        AudioDeviceSetup get_device_setup() {return m_setup;}
         AudioBus* get_playback_bus(QByteArray name) const;
         AudioBus* get_capture_bus(QByteArray name) const;
 
-        void set_bus_config(QList<bus_config> config);
+        AudioChannel* create_channel(const QString& name, int channelNumber, int type);
+        void delete_channel(AudioChannel* channel);
 
-        void set_bus_config(QList<bus_config> c_capture, QList<bus_config> c_playback);
-        void set_channel_config(QStringList c_capture, QStringList c_playback);
+        void set_bus_config(QList<BusConfig> configs);
+        void set_channel_config(QList<ChannelConfig> configs);
 
 	QStringList get_capture_buses_names() const;
 	QStringList get_playback_buses_names() const;
@@ -84,7 +80,8 @@ public:
 	QStringList get_capture_channel_names() const;
 	QStringList get_playback_channel_names() const;
 	
-        QList<bus_config> get_bus_configuration();
+        QList<BusConfig> get_bus_configuration();
+        QList<ChannelConfig> get_channel_configuration();
 	
 	QString get_device_name() const;
 	QString get_device_longname() const;
@@ -131,15 +128,18 @@ private:
 	friend class CoreAudioDriver;
 #endif
 
-        Driver* 				m_driver;
-        AudioDeviceThread* 			m_audioThread;
-	APILinkedList				m_clients;
-        QList<AudioBus* >       		m_buses;
-        QList<bus_config>       		m_busConfig;
-        QStringList				m_availableDrivers;
-	QTimer					m_xrunResetTimer;
+        AudioDeviceSetup        m_setup;
+        Driver* 		m_driver;
+        AudioDeviceThread* 	m_audioThread;
+        APILinkedList		m_clients;
+        QList<AudioBus* >       m_buses;
+        QList<AudioChannel* >   m_channels;
+        QList<BusConfig>        m_busConfigs;
+        QList<ChannelConfig>    m_channelConfigs;
+        QStringList		m_availableDrivers;
+        QTimer			m_xrunResetTimer;
 #if defined (JACK_SUPPORT)
-	QTimer					jackShutDownChecker;
+        QTimer			jackShutDownChecker;
 	JackDriver* slaved_jack_driver();
 	friend class JackDriver;
 #endif
@@ -244,6 +244,7 @@ signals:
 private slots:
 	void private_add_client(Client* client);
 	void private_remove_client(Client* client);
+        void private_set_bus_config(QList<BusConfig> config);
 	void audiothread_finished();
 	void switch_to_null_driver();
 	void reset_xrun_counter() {m_xrunCount = 0;}

@@ -51,9 +51,9 @@ JackDriver::JackDriver( AudioDevice * dev , int rate, nframes_t bufferSize)
 JackDriver::~JackDriver( )
 {
 	PENTER;
-	if (m_running == 0) {
+        if (m_running == 0) {
                 jack_client_close (m_jack_client);
-	}
+        }
 }
 
 int JackDriver::_read( nframes_t nframes )
@@ -85,10 +85,6 @@ int JackDriver::_write( nframes_t nframes )
                         RT_THREAD_EMIT(this, pcpair, pcpairRemoved(PortChannelPair*));
                         continue;
                 }
-
-/*		if (!pcpair->channel->has_data()) {
-			continue;
-		}*/
 
                 memcpy (jack_port_get_buffer (pcpair->jackport, nframes), pcpair->channel->get_data(), sizeof (jack_default_audio_sample_t) * nframes);
                 pcpair->channel->silence_buffer(nframes);
@@ -124,7 +120,7 @@ int JackDriver::setup(bool capture, bool playback, const QString& )
         if (inputports) {
                 for (int i = 0; inputports[i]; i++) {
                         char name[64];
-                        sprintf (name, "input_%d", i+1);
+                        sprintf (name, "capture_%d", i+1);
                         add_capture_channel(name);
                 }
 
@@ -138,7 +134,7 @@ int JackDriver::setup(bool capture, bool playback, const QString& )
         if (outputports) {
                 for (int i = 0; outputports[i]; i++) {
                         char name[64];
-                        sprintf (name, "output_%d", i+1);
+                        sprintf (name, "playback_%d", i+1);
                         add_playback_channel(name);
                 }
 
@@ -165,7 +161,7 @@ AudioChannel* JackDriver::add_capture_channel(const QString& chanName)
                 return 0;
         }
 
-        pcpair->channel = new AudioChannel(buf, channelNumber);
+        pcpair->channel = audiodevice().create_channel(buf, channelNumber, ChannelIsInput);
         pcpair->channel->set_latency( frames_per_cycle + capture_frame_latency );
 
         pcpair->name = chanName;
@@ -192,8 +188,9 @@ AudioChannel* JackDriver::add_playback_channel(const QString& chanName)
                 return 0;
         }
 
-        pcpair->channel = new AudioChannel(buf, channelNumber);
+        pcpair->channel = audiodevice().create_channel(buf, channelNumber, ChannelIsOutput);
         pcpair->channel->set_latency( frames_per_cycle + capture_frame_latency );
+        pcpair->channel->set_buffer_size(2048);
 
         pcpair->name = chanName;
 
@@ -379,7 +376,7 @@ void JackDriver::cleanup_removed_port_channel_pair(PortChannelPair* pcpair)
 {
         jack_port_unregister(m_jack_client, pcpair->jackport);
 
-        delete pcpair->channel;
+        device->delete_channel(pcpair->channel);
         delete pcpair;
 }
 

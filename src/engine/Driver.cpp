@@ -44,10 +44,10 @@ Driver::~ Driver( )
 {
 	PENTERDES;
         while( ! m_captureChannels.isEmpty())
-                delete m_captureChannels.takeFirst();
+                device->delete_channel(m_captureChannels.takeFirst());
 
         while( ! m_playbackChannels.isEmpty())
-                delete m_playbackChannels.takeFirst();
+                device->delete_channel(m_playbackChannels.takeFirst());
 }
 
 int Driver::_run_cycle( )
@@ -124,7 +124,7 @@ int Driver::attach( )
 AudioChannel* Driver::add_capture_channel(const QString& chanName)
 {
         PENTER;
-        AudioChannel* chan = new AudioChannel(chanName, m_captureChannels.size());
+        AudioChannel* chan = audiodevice().create_channel(chanName, m_captureChannels.size(), ChannelIsInput);
         m_captureChannels.append(chan);
         return chan;
 }
@@ -132,7 +132,7 @@ AudioChannel* Driver::add_capture_channel(const QString& chanName)
 AudioChannel* Driver::add_playback_channel(const QString& chanName)
 {
         PENTER;
-        AudioChannel* chan = new AudioChannel(chanName, m_playbackChannels.size());
+        AudioChannel* chan = audiodevice().create_channel(chanName, m_playbackChannels.size(), ChannelIsOutput);
         m_playbackChannels.append(chan);
         return chan;
 }

@@ -65,8 +65,7 @@ AudioBus::AudioBus( const QString& name, int channels, int type)
         init(name, type);
 
 	for(int channelNumber=0; channelNumber<channels; ++channelNumber) {
-                AudioChannel* chan = new AudioChannel(name, channelNumber);
-		chan->set_buffer_size(audiodevice().get_buffer_size());
+                AudioChannel* chan = audiodevice().create_channel(name, channelNumber, type);
 		add_channel(chan);
 	}
 }
@@ -76,7 +75,6 @@ void AudioBus::init(const QString& name, int type)
 	channelCount = m_monitors = 0;
 	m_name = name;
         m_type = type;
-	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(resize_buffer()), Qt::DirectConnection);
 }
 
 
@@ -97,27 +95,6 @@ void AudioBus::add_channel(AudioChannel* chan)
 	Q_ASSERT(chan);
 	channels.append(chan);
 	channelCount++;
-}
-
-
-/**
- * Resizes all the AudioChannel buffers to the new size.
- *
- * WARNING: This is not thread save! 
- *
- * @param size The new buffer size 
- */
-void AudioBus::set_buffer_size( nframes_t size )
-{
-	for (int i=0; i<channels.size(); ++i) {
-		channels.at(i)->set_buffer_size(size);
-	}
-}
-
-
-void AudioBus::resize_buffer( )
-{
-	set_buffer_size(audiodevice().get_buffer_size());
 }
 
 

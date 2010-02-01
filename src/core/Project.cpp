@@ -227,27 +227,10 @@ int Project::load(QString projectfile)
 	m_importDir = e.attribute("importdir", QDir::homePath()); 
 
 
-        QDomNode audioIO = docElem.firstChildElement("AudioIO");
-        QDomNode deviceAndDriver = audioIO.firstChildElement("DeviceAndDriver");
-        QDomNode bus = deviceAndDriver.firstChild();
 
-        QList<bus_config> busConfig;
 
-        while (!bus.isNull()) {
-                bus_config conf;
-                QDomElement e = bus.toElement();
-                conf.name = e.attribute("name", "");
-                conf.channels = e.attribute("channels", "").split(";");
-                conf.type = e.attribute("type", "");
-                busConfig.append(conf);
-                bus = bus.nextSibling();
-        }
+        prepare_audio_device(doc);
 
-        if (!busConfig.isEmpty()) {
-                audiodevice().set_bus_config(busConfig);
-        }
-
-	
 	
 	// Load all the AudioSources for this project
 	QDomNode asmNode = docElem.firstChildElement("ResourcesManager");
@@ -344,20 +327,33 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
 
 
         QDomElement audioIO = doc.createElement("AudioIO");
-        QDomElement deviceAndDriver = doc.createElement("DeviceAndDriver");
+        QDomElement systemConfig = doc.createElement("SystemConfig");
 
-        deviceAndDriver.setAttribute("device", audiodevice().get_device_longname());
-        deviceAndDriver.setAttribute("driver", audiodevice().get_driver_type());
-        audioIO.appendChild(deviceAndDriver);
+        systemConfig.setAttribute("device", audiodevice().get_device_longname());
+        systemConfig.setAttribute("driver", audiodevice().get_driver_type());
+        audioIO.appendChild(systemConfig);
 
-        QList<bus_config> busConfig = audiodevice().get_bus_configuration();
-        foreach(bus_config conf, busConfig) {
+        QDomElement channelsElement = doc.createElement("Channels");
+        QList<ChannelConfig> channelConfigs = audiodevice().get_channel_configuration();
+        foreach(ChannelConfig conf, channelConfigs) {
+                QDomElement chanElement = doc.createElement("Channel");
+                chanElement.setAttribute("name", conf.name);
+                chanElement.setAttribute("type", conf.type);
+                channelsElement.appendChild(chanElement);
+        }
+        systemConfig.appendChild(channelsElement);
+
+        QDomElement busesElement = doc.createElement("Buses");
+        QList<BusConfig> busConfig = audiodevice().get_bus_configuration();
+        foreach(BusConfig conf, busConfig) {
                 QDomElement bus = doc.createElement("Bus");
                 bus.setAttribute("name", conf.name);
-                bus.setAttribute("channels", conf.channels.join(";"));
+                bus.setAttribute("channels", conf.channelNames.join(";"));
                 bus.setAttribute("type", conf.type);
-                deviceAndDriver.appendChild(bus);
+                bus.setAttribute("channelcount", conf.channelcount);
+                busesElement.appendChild(bus);
         }
+        systemConfig.appendChild(busesElement);
 
         projectNode.appendChild(audioIO);
 
@@ -379,6 +375,96 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
 	projectNode.appendChild(sheetsNode);
 	
 	return projectNode;
+}
+
+void Project::prepare_audio_device(QDomDocument doc)
+{
+        AudioDeviceSetup ads;
+
+        QDomNode audioIO = doc.documentElement().firstChildElement("AudioIO");
+        QDomNode systemConfigNode = audioIO.firstChildElement("SystemConfig");
+        QDomElement e = systemConfigNode.toElement();
+        ads.driverType = e.attribute("driver", "Null Driver");
+
+        QDomNode channelsConfigNode = systemConfigNode.firstChildElement("Channels");
+        QDomNode channelNode = channelsConfigNode.firstChild();
+
+        QList<ChannelConfig> channelConfigs;
+
+        while (!channelNode.isNull()) {
+                ChannelConfig conf;
+                QDomElement e = channelNode.toElement();
+                conf.name = e.attribute("name", "");
+                conf.type = e.attribute("type", "");
+                channelConfigs.append(conf);
+                channelNode = channelNode.nextSibling();
+        }
+
+
+        QDomNode busesConfigNode = systemConfigNode.firstChildElement("Buses");
+        QDomNode busNode = busesConfigNode.firstChild();
+
+        QList<BusConfig> busConfigs;
+
+        while (!busNode.isNull()) {
+                BusConfig conf;
+                QDomElement e = busNode.toElement();
+                conf.name = e.attribute("name", "");
+                conf.channelNames = e.attribute("channels", "").split(";");
+                conf.type = e.attribute("type", "");
+                conf.channelcount = e.attribute("channelcount", "2").toInt();
+                busConfigs.append(conf);
+                busNode = busNode.nextSibling();
+        }
+
+
+        ads.rate = config().get_property("Hardware", "samplerate", 44100).toInt();
+        ads.bufferSize = config().get_property("Hardware", "buffersize", 512).toInt();
+#if defined (Q_WS_X11)
+        ads.driverType = config().get_property("Hardware", "drivertype", "ALSA").toString();
+#else
+        ads.driverType = config().get_property("Hardware", "drivertype", "PortAudio").toString();
+#endif
+        ads.cardDevice = config().get_property("Hardware", "carddevice", "default").toString();
+        ads.ditherShape = config().get_property("Hardware", "DitherShape", "None").toString();
+        ads.capture = config().get_property("Hardware", "capture", 1).toInt();
+        ads.playback = config().get_property("Hardware", "playback", 1).toInt();
+
+        if (ads.bufferSize == 0) {
+                qWarning("BufferSize read from Settings is 0 !!!");
+                ads.bufferSize = 1024;
+        }
+        if (ads.rate == 0) {
+                qWarning("Samplerate read from Settings is 0 !!!");
+                ads.rate = 44100;
+        }
+        if (ads.driverType.isEmpty()) {
+                qWarning("Driver type read from Settings is an empty String !!!");
+                ads.driverType = "ALSA";
+        }
+
+#if defined (ALSA_SUPPORT)
+        if (ads.driverType == "ALSA") {
+                ads.cardDevice = config().get_property("Hardware", "carddevice", "default").toString();
+        }
+#endif
+
+#if defined (PORTAUDIO_SUPPORT)
+        if (ads.driverType == "PortAudio") {
+#if defined (Q_WS_X11)
+                ads.cardDevice = config().get_property("Hardware", "pahostapi", "alsa").toString();
+#elif defined (Q_WS_MAC)
+                ads.cardDevice = config().get_property("Hardware", "pahostapi", "coreaudio").toString();
+#elif defined (Q_WS_WIN)
+                ads.cardDevice = config().get_property("Hardware", "pahostapi", "wmme").toString();
+#endif
+        }
+#endif // end PORTAUDIO_SUPPORT
+
+        ads.busConfigs = busConfigs;
+        ads.channelConfigs = channelConfigs;
+
+        audiodevice().set_parameters(ads);
 }
 
 

@@ -40,11 +40,6 @@ public:
 	~AudioBus();
 
 
-        enum BusType {
-                Capture = 1,
-                Playback = 2
-        };
-
 	void add_channel(AudioChannel* chan);
 	int get_channel_count()
 	{
@@ -69,12 +64,11 @@ public:
 		return channels.at(channel)->get_buffer(nframes);
 	}
 
-	void set_buffer_size(nframes_t size);
 	void set_monitor_peaks(bool monitor);
 	void reset_monitor_peaks();
 	bool is_monitoring_peaks() const {return m_monitors;}
-        bool is_capture() {return m_type == Capture;}
-        bool is_playback() {return m_type == Playback;}
+        bool is_input() {return m_type == ChannelIsInput;}
+        bool is_output() {return m_type == ChannelIsOutput;}
         int get_type() const {return m_type;}
 
 	void monitor_peaks()
@@ -107,8 +101,6 @@ private:
 
         void init(const QString& name, int type);
 
-public slots:
-	void resize_buffer();
 	
 signals:
 	void monitoringPeaksStarted();

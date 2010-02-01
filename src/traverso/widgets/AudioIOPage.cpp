@@ -65,11 +65,11 @@ void AudioIOPage::init(const QString &t, const QStringList &c_names)
     // add all hardware channels (columns)
     treeWidget->setHeaderLabels(headers);
 
-    const QList<bus_config> busList = audiodevice().get_bus_configuration();
+    const QList<BusConfig> busList = audiodevice().get_bus_configuration();
 
         // loop over all audio busses
         for (int j = 0; j < busList.count(); ++j) {
-                bus_config conf = busList.at(j);
+                BusConfig conf = busList.at(j);
                 if (! (conf.type == m_type)) continue;
 
                 QTreeWidgetItem *itm = new QTreeWidgetItem();
@@ -83,11 +83,11 @@ void AudioIOPage::init(const QString &t, const QStringList &c_names)
                 // Add all channels to the current bus. Name them either "Mono" or "Left/Right",
                 // depending on the number of channels.
                 QString lbl = tr("Mono");
-                if (conf.channels.count() > 1) {
+                if (conf.channelcount > 1) {
                         lbl = tr("Left");
                 }
 
-                for (int i = 0; i < conf.channels.count(); ++i) {
+                for (int i = 0; i < conf.channelcount; ++i) {
                         QTreeWidgetItem *bitm = new QTreeWidgetItem(itm);
                         bitm->setText(0, lbl);
                         lbl = tr("Right");
@@ -100,7 +100,10 @@ void AudioIOPage::init(const QString &t, const QStringList &c_names)
                         // now find the one to be checked by searching its name in the
                         // list of input channels. Add +1 because column no 0 contains
                         // the names, not check boxes
-                        int idx = m_channels.indexOf(conf.channels.at(i), 0) + 1;
+                        int idx = 0;
+                        if (conf.channelNames.size() > i) {
+                                idx = m_channels.indexOf(conf.channelNames.at(i), 0) + 1;
+                        }
 
                         // if a valid index was found, check it (not found returns -1, which
                         // is 0 after adding +1)
@@ -113,38 +116,42 @@ void AudioIOPage::init(const QString &t, const QStringList &c_names)
         }
 }
 
-QStringList AudioIOPage::getChannelConfig()
+QList<ChannelConfig> AudioIOPage::getChannelConfig()
 {
-    QTreeWidgetItem *chitem = treeWidget->headerItem();
+        QList<ChannelConfig> configs;
+        QTreeWidgetItem *chitem = treeWidget->headerItem();
 
-    QStringList chan_conf;
+        for (int i = 1; i < treeWidget->columnCount(); ++i) {
+                ChannelConfig conf;
+                conf.name = chitem->text(i);
+                conf.type = m_type;
+                configs.append(conf);
+        }
 
-    for (int i = 1; i < treeWidget->columnCount(); ++i) {
-        chan_conf.append(chitem->text(i));
-    }
-
-    return chan_conf;
+        return configs;
 }
 
 
-QList<bus_config> AudioIOPage::getBusConfig()
+QList<BusConfig> AudioIOPage::getBusConfig()
 {
-    QList<bus_config> list;
+    QList<BusConfig> list;
     QTreeWidgetItem *header = treeWidget->headerItem();
 
     while (treeWidget->topLevelItemCount()) {
-        bus_config conf;
+        BusConfig conf;
+        conf.channelcount = 0;
 
         QTreeWidgetItem *parent = treeWidget->takeTopLevelItem(0);
             conf.name = parent->text(0);
             conf.type = m_type;
+            conf.channelcount = parent->childCount();
 
             while (parent->childCount()) {
                 QTreeWidgetItem *child = parent->takeChild(0);
 
                 for (int i = 1; i < child->columnCount(); ++i) {
                    if (child->checkState(i) == Qt::Checked) {
-                        conf.channels.append(header->text(i));
+                        conf.channelNames.append(header->text(i));
                      }
                 }
 
@@ -162,7 +169,7 @@ void AudioIOPage::addMonoBus()
 {
     QString prefix = tr("Capture");
 
-    if (m_type == "playback") {
+    if (m_type == "output") {
         prefix = tr("Playback");
     }
 
@@ -188,7 +195,7 @@ void AudioIOPage::addStereoBus()
 {
     QString prefix = tr("Capture");
 
-    if (m_type == "playback") {
+    if (m_type == "output") {
         prefix = tr("Playback");
     }
 

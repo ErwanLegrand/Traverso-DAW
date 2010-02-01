@@ -188,7 +188,9 @@ void Tsar::finish_processed_events( )
 				"\nFor more information, see the Help file, section: \n\n AudioDriver: 'Thread stalled error'\n\n"),
 				"OK", 
 				0 );
-			audiodevice().set_parameters(44100, 1024, "Null Driver", true, true);
+                        AudioDeviceSetup ads;
+                        ads.driverType = "Null Driver";
+                        audiodevice().set_parameters(ads);
 			m_retryCount = 0;
 		} else {
 			QMessageBox::critical( 0, 

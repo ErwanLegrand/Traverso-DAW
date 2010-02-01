@@ -145,6 +145,8 @@ private:
 	int create(int sheetcount, int numtracks);
 	int create_audiosources_dir();
 	int create_peakfiles_dir();
+
+        void prepare_audio_device(QDomDocument doc);
 	
 	friend class ProjectManager;
 

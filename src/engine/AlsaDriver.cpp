@@ -887,8 +887,6 @@ int  AlsaDriver::set_parameters (nframes_t frames_per_interupt,
 	period_usecs = (trav_time_t) floor ((((float) frames_per_cycle) / frame_rate) * 1000000.0f);
 	poll_timeout = (int) floor (1.5f * period_usecs);
 
-	device->set_buffer_size(frames_per_cycle);
-
 	return 0;
 }
 

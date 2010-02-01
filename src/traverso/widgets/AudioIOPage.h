@@ -36,8 +36,8 @@ class AudioIOPage : public QWidget, protected Ui::AudioIOPageWidget
         ~AudioIOPage() {};
 
         void init(const QString &, const QStringList &);
-        QList<bus_config> getBusConfig();
-        QStringList getChannelConfig();
+        QList<BusConfig> getBusConfig();
+        QList<ChannelConfig>  getChannelConfig();
 
     private:
         QString m_type;

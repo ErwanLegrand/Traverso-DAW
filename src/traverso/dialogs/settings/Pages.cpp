@@ -269,27 +269,29 @@ void AudioDriverConfigPage::load_config( )
 
 void AudioDriverConfigPage::restart_driver_button_clicked()
 {
+        AudioDeviceSetup ads;
 	QString driver = driverCombo->currentText();
-	int rate = rateComboBox->currentText().toInt();
-	int buffersize =  periodBufferSizesList.at(latencyComboBox->currentIndex());
+        ads.rate = rateComboBox->currentText().toInt();
+        ads.bufferSize =  periodBufferSizesList.at(latencyComboBox->currentIndex());
 	
-	int playback=1, capture=1;
+        ads.playback = true;
+        ads.capture = true;
 	if(duplexComboBox->currentIndex() == 1) {
-		capture = 0;
+                ads.capture = false;
 	}
 	
 	if(duplexComboBox->currentIndex() == 2) {
-		playback = 0;
+                ads.playback = false;
 	}
 	
 
-	QString cardDevice = "";
-	QString dithershape = "None";
+        ads.cardDevice = "";
+        ads.ditherShape = "None";
 
 
 #if defined (ALSA_SUPPORT)
 	int periods = m_alsadevices->periodsCombo->currentText().toInt();
-	dithershape = m_alsadevices->ditherShapeComboBox->currentText();
+        ads.ditherShape = m_alsadevices->ditherShapeComboBox->currentText();
 	// The AlsaDriver retrieves it's periods number directly from config()
 	// So there is no way to use the current selected one, other then
 	// setting it now, and restoring it afterwards...
@@ -298,18 +300,19 @@ void AudioDriverConfigPage::restart_driver_button_clicked()
 	
 	if (driver == "ALSA") {
 		int index = m_alsadevices->devicesCombo->currentIndex();
-		cardDevice = m_alsadevices->devicesCombo->itemData(index).toString();
+                ads.cardDevice = m_alsadevices->devicesCombo->itemData(index).toString();
 	}
 #endif
 	
 #if defined (PORTAUDIO_SUPPORT)
 	if (driver == "PortAudio") {
 		int index = m_portaudiodrivers->driverCombo->currentIndex();
-		cardDevice = m_portaudiodrivers->driverCombo->itemData(index).toString();
+                ads.cardDevice = m_portaudiodrivers->driverCombo->itemData(index).toString();
 	}
 #endif
 			
-	audiodevice().set_parameters(rate, buffersize, driver, capture, playback, cardDevice, dithershape);
+        ads.driverType = driver;
+        audiodevice().set_parameters(ads);
 	
 #if defined (ALSA_SUPPORT)
 	config().set_property("Hardware", "numberofperiods", currentperiods);

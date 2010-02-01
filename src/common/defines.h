@@ -268,11 +268,44 @@ typedef struct {
 } transport_state_t;
 
 
+enum ChannelFlags {
+        ChannelIsInput = 1,
+        ChannelIsOutput = 2
+};
+
 typedef struct {
-    QString name;
-    QStringList channels;
-    QString type;
-} bus_config;
+        QString name;
+        QString type;
+        QString destination;
+} ChannelConfig;
+
+typedef struct {
+        QString name;
+        QStringList channelNames;
+        QString type;
+        int channelcount;
+} BusConfig;
+
+struct AudioDeviceSetup {
+        AudioDeviceSetup() {
+                rate = 44100;
+                bufferSize = 1024;
+                driverType = "default";
+                playback = capture = true;
+                cardDevice = "";
+                ditherShape = "None";
+        }
+
+        QList<BusConfig>        busConfigs;
+        QList<ChannelConfig>    channelConfigs;
+        int             rate;
+        nframes_t       bufferSize;
+        QString         driverType;
+        bool            capture;
+        bool            playback;
+        QString         cardDevice;
+        QString         ditherShape;
+};
 
 
 /**

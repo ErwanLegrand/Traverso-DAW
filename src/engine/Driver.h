@@ -51,6 +51,7 @@ public:
         virtual int detach();
         virtual int start();
         virtual int stop();
+        virtual bool supports_software_channels() {return true;}
         virtual QString get_device_name();
         virtual QString get_device_longname();
 

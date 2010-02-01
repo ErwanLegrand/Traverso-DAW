@@ -41,10 +41,11 @@
  */
 
 
-AudioChannel::AudioChannel(const QString& name, uint channelNumber)
+AudioChannel::AudioChannel(const QString& name, uint channelNumber, int type)
 {
         m_name = name;
         m_number = channelNumber;
+        m_type = type;
         hasData = false;
         monitoring = false;
         buf = 0;

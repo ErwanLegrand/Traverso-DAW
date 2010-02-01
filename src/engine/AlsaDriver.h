@@ -60,6 +60,7 @@ public:
 	int bufsize(nframes_t nframes);
 	int restart();
 	int setup(bool capture=true, bool playback=true, const QString& pcmName="hw:0", const QString& dither="None");
+        bool supports_software_channels() {return false;}
 
 	QString get_device_name();
 	QString get_device_longname();
