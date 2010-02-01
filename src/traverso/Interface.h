@@ -200,7 +200,7 @@ public slots :
 	Command* show_newsheet_dialog();
 	Command* show_newtrack_dialog();
 	Command* show_newproject_dialog();
-        Command* sheet_audio_io_dialog();
+        Command* audio_io_dialog();
         Command* start_transport();
 	Command* set_recordable_and_start_transport();
 

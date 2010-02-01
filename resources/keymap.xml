@@ -342,7 +342,7 @@
 		</keyfact>
                   <keyfact type="FKEY2" key1="I" key2="O" >
                           <Objects>
-                                  <Object objectname="Interface" modes="All" sortorder="13"  slotsignature="sheet_audio_io_dialog" />
+                                  <Object objectname="Interface" modes="All" sortorder="13"  slotsignature="audio_io_dialog" />
                           </Objects>
                   </keyfact>
 

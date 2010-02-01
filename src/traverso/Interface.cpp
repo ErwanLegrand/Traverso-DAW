@@ -529,7 +529,13 @@ void Interface::create_menus( )
 	m_projectSheetManagerAction->setIcon(QIcon(":/projectmanager"));
 	m_projectToolBar->addAction(m_projectSheetManagerAction);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_project_manager_dialog()));
-	
+
+        action = m_projectMenu->addAction(tr("Audio I/O..."));
+        connect(action, SIGNAL(triggered()), this, SLOT(audio_io_dialog()));
+        list.clear();
+        list.append(QKeySequence("F5"));
+        action->setShortcuts(list);
+
 	action = m_projectMenu->addAction(tr("&Export..."));
 	m_projectExportAction = action;
 	list.clear();
@@ -660,9 +666,6 @@ void Interface::create_menus( )
 		
 	action = m_sheetMenu->addAction(tr("New &Track(s)..."));
 	connect(action, SIGNAL(triggered()), this, SLOT(show_newtrack_dialog()));
-
-	action = m_sheetMenu->addAction(tr("Audio I/O..."));
-	connect(action, SIGNAL(triggered()), this, SLOT(sheet_audio_io_dialog()));
 	
 	m_sheetMenu->addSeparator();
 	
@@ -1686,7 +1689,7 @@ void Interface::sheet_selector_sheet_removed(Sheet* sheet)
 	sheet_selector_update_sheets();
 }
 
-Command* Interface::sheet_audio_io_dialog()
+Command* Interface::audio_io_dialog()
 {
 	AudioIODialog *aiodlg = new AudioIODialog(this);
 	aiodlg->exec();
