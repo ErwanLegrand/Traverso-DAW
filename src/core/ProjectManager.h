@@ -74,7 +74,8 @@ public:
 
 public slots:
 	Command* save_project();
-	Command* exit();
+        Command* close_current_project();
+        Command* exit();
 	Command* undo();
 	Command* redo();
 

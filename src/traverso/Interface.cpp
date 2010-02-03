@@ -57,6 +57,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "widgets/CorrelationMeterWidget.h"
 #include "widgets/SpectralMeterWidget.h"
 #include "widgets/TransportConsoleWidget.h"
+#include "widgets/WelcomeWidget.h"
 
 #include "dialogs/settings/SettingsDialog.h"
 #include "dialogs/project/ProjectManagerDialog.h"
@@ -199,6 +200,10 @@ Interface::Interface()
 	m_projectToolBar->setIconSize(QSize(iconsize, iconsize));
 	m_editToolBar->setIconSize(QSize(iconsize, iconsize));
 
+        m_welcomeWidget = new WelcomeWidget(this);
+        m_welcomeWidget->show();
+        centerAreaWidget->addWidget(m_welcomeWidget);
+
 	// Some default values.
 	currentSheetWidget = 0;
 	m_exportDialog = 0;
@@ -299,6 +304,7 @@ void Interface::set_project(Project* project)
 		foreach(SheetWidget* sw, m_sheetWidgets) {
 			delete_sheetwidget(sw->get_sheet());
 		}
+                centerAreaWidget->setCurrentIndex(0);
 	}
 }
 
@@ -518,6 +524,13 @@ void Interface::create_menus( )
 	action->setIcon(QIcon(":/save"));
 	m_projectToolBar->addAction(action);
 	connect(action, SIGNAL(triggered(bool)), &pm(), SLOT(save_project()));
+
+        action = m_projectMenu->addAction(tr("&Close"));
+        action->setShortcuts(QKeySequence::Close);
+        action->setIcon(QIcon(":/close"));
+        m_projectToolBar->addAction(action);
+        connect(action, SIGNAL(triggered(bool)), &pm(), SLOT(close_current_project()));
+
 
 	m_projectMenu->addSeparator();
 
@@ -1697,4 +1710,3 @@ Command* Interface::audio_io_dialog()
 
         return 0;
 }
-

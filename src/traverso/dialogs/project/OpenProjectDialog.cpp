@@ -198,7 +198,7 @@ void OpenProjectDialog::on_loadProjectButton_clicked( )
 		PERROR("Could not load project %s", title.toAscii().data());
 	}
 	
-	hide();
+//	hide();
 }
 
 void OpenProjectDialog::on_deleteProjectbutton_clicked( )

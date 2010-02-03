@@ -697,3 +697,8 @@ int ProjectManager::create_projectfilebackup_dir(const QString& rootDir)
 	return 1;
 }
 
+Command* ProjectManager::close_current_project()
+{
+        set_current_project(0);
+        return 0;
+}

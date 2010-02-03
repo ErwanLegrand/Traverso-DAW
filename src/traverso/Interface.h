@@ -65,6 +65,7 @@ class NewProjectDialog;
 class Ui_QuickStartDialog;
 class RestoreProjectBackupDialog;
 class ProgressToolBar;
+class WelcomeWidget;
 struct MenuData;
 
 class Interface : public QMainWindow
@@ -129,6 +130,7 @@ private:
 	NewSheetDialog*		m_newSheetDialog;
 	NewTrackDialog*		m_newTrackDialog;
 	NewProjectDialog*	m_newProjectDialog;
+        WelcomeWidget*          m_welcomeWidget;
 	QDialog*		m_quickStart;
 	RestoreProjectBackupDialog* m_restoreProjectBackupDialog;
 	Project*		m_project;
