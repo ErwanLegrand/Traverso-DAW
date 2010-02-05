@@ -34,6 +34,12 @@ AudioIOPage::AudioIOPage(QWidget *parent, Qt::WindowFlags f) : QWidget(parent, f
     m_bus_collapsed = false;
     m_chan_collapsed = false;
 
+    // define these strings globally. It's safer when comparing
+    // translated strings.
+    m_str_left = tr("Left");
+    m_str_center = tr("Center");
+    m_str_right = tr("Right");
+
     treeWidget->header()->setClickable(true);
 
     connect(treeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
@@ -82,15 +88,15 @@ void AudioIOPage::init(const QString &t, const QStringList &c_names)
 
                 // Add all channels to the current bus. Name them either "Mono" or "Left/Right",
                 // depending on the number of channels.
-                QString lbl = tr("Mono");
+                QString lbl = m_str_center;
                 if (conf.channelcount > 1) {
-                        lbl = tr("Left");
+                        lbl = m_str_left;
                 }
 
                 for (int i = 0; i < conf.channelcount; ++i) {
                         QTreeWidgetItem *bitm = new QTreeWidgetItem(itm);
                         bitm->setText(0, lbl);
-                        lbl = tr("Right");
+                        lbl = m_str_right;
 
                         // set all columns to unchecked first
                         for (int k = 1; k < treeWidget->columnCount(); ++k) {
@@ -132,11 +138,14 @@ QList<ChannelConfig> AudioIOPage::getChannelConfig()
 }
 
 
+// this function uses QMaps internally instead of QLists, because
+// it's easier to keep the order of the items under control with QMaps.
 QList<BusConfig> AudioIOPage::getBusConfig()
 {
-    QList<BusConfig> list;
+    QMap<int, BusConfig> list;
     QTreeWidgetItem *header = treeWidget->headerItem();
 
+    int n = 0;
     while (treeWidget->topLevelItemCount()) {
         BusConfig conf;
         conf.channelcount = 0;
@@ -146,23 +155,37 @@ QList<BusConfig> AudioIOPage::getBusConfig()
             conf.type = m_type;
             conf.channelcount = parent->childCount();
 
+            QMap<int, QString> channels;
+            int k = 0;
             while (parent->childCount()) {
                 QTreeWidgetItem *child = parent->takeChild(0);
 
+                if (child->text(0) == m_str_left) {
+                    k = 0;
+                }
+                if (child->text(0) == m_str_center) {
+                    k = 1;
+                }
+                if (child->text(0) == m_str_right) {
+                    k = 2;
+                }
+
                 for (int i = 1; i < child->columnCount(); ++i) {
                    if (child->checkState(i) == Qt::Checked) {
-                        conf.channelNames.append(header->text(i));
+                        channels.insert(k, header->text(i));
                      }
                 }
 
+                conf.channelNames = channels.values();
                 delete child;
         }
 
         delete parent;
-        list.append(conf);
+        list.insert(n, conf);
+        ++n;
     }
 
-    return list;
+    return list.values();
 }
 
 void AudioIOPage::addMonoBus()

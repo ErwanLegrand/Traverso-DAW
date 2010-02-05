@@ -41,6 +41,9 @@ class AudioIOPage : public QWidget, protected Ui::AudioIOPageWidget
 
     private:
         QString m_type;
+        QString m_str_left,
+                m_str_center,
+                m_str_right;
         QStringList m_channels;
         bool m_bus_collapsed;
         bool m_chan_collapsed;
