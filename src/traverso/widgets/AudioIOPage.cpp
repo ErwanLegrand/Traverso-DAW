@@ -122,19 +122,21 @@ void AudioIOPage::init(const QString &t, const QStringList &c_names)
         }
 }
 
+// this function uses QMaps internally instead of QLists, because
+// it's easier to keep the order of the items under control with QMaps.
 QList<ChannelConfig> AudioIOPage::getChannelConfig()
 {
-        QList<ChannelConfig> configs;
+        QMap<int, ChannelConfig> configs;
         QTreeWidgetItem *chitem = treeWidget->headerItem();
 
         for (int i = 1; i < treeWidget->columnCount(); ++i) {
                 ChannelConfig conf;
                 conf.name = chitem->text(i);
                 conf.type = m_type;
-                configs.append(conf);
+                configs.insert(i, conf);
         }
 
-        return configs;
+        return configs.values();
 }
 
 
