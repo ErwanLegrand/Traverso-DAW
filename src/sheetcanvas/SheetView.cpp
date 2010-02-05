@@ -43,35 +43,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include "Zoom.h"
 #include "PlayHeadMove.h"
 #include "WorkCursorMove.h"
+#include "Shuttle.h"
 
 #include "AudioDevice.h"
 		
 #include <Debugger.h>
-
-class Shuttle : public Command
-{
-public :
-	Shuttle(SheetView* sv) : Command("Shuttle"), m_sv(sv) {}
-
-	int begin_hold() {
-		m_sv->update_shuttle_factor();
-		m_sv->start_shuttle(true);
-		return 1;
-	}
-
-	int finish_hold() {
-		m_sv->start_shuttle(false);
-		return 1;
-	}
-	
-	int jog() {
-		m_sv->update_shuttle_factor();
-		return 1;
-	}
-
-private :
-	SheetView*	m_sv;
-};
 
 
 static bool smallerTrackView(const TrackView* left, const TrackView* right )
@@ -386,12 +362,6 @@ void SheetView::set_follow_state(bool state)
 }
 
 
-Command* SheetView::shuttle()
-{
- 	return new Shuttle(this);
-}
-
-
 void SheetView::start_shuttle(bool start, bool drag)
 {
 	if (start) {
@@ -503,10 +473,12 @@ void SheetView::update_shuttle()
 	int x = m_clipsViewPort->horizontalScrollBar()->value() + m_shuttleXfactor;
 	set_hscrollbar_value(x);
 	
-	int y = m_clipsViewPort->verticalScrollBar()->value() + m_shuttleYfactor;
-	set_vscrollbar_value(y);
+        int y = m_clipsViewPort->verticalScrollBar()->value() + m_shuttleYfactor;
+        if (m_dragShuttle) {
+               set_vscrollbar_value(y);
+        }
 	
-	if (m_shuttleXfactor != 0 || m_shuttleYfactor != 0) {
+        if (m_shuttleXfactor != 0 || m_shuttleYfactor != 0) {
 		ie().jog();
 	}
 }

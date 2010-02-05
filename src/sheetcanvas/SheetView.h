@@ -47,7 +47,6 @@ class SheetView : public ViewItem
 	Q_CLASSINFO("scroll_left", tr("Left"))
 	Q_CLASSINFO("scroll_up", tr("Up"))
 	Q_CLASSINFO("scroll_down", tr("Down"))
-	Q_CLASSINFO("shuttle", tr("Shuttle"))
 	Q_CLASSINFO("goto_begin", tr("To start"))
 	Q_CLASSINFO("goto_end", tr("To end"))
 	Q_CLASSINFO("play_to_begin", tr("To Start"))
@@ -140,7 +139,6 @@ public slots:
         Command* scroll_left();
         Command* scroll_up();
         Command* scroll_down();
-        Command* shuttle();
         Command* goto_begin();
         Command* goto_end();
 	Command* play_to_begin();

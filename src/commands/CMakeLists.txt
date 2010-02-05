@@ -29,6 +29,7 @@ SplitClip.cpp
 TrackPan.cpp
 Zoom.cpp
 Scroll.cpp
+Shuttle.cpp
 ArmTracks.cpp
 PlayHeadMove.cpp
 WorkCursorMove.cpp

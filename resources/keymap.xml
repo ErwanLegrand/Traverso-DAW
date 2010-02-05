@@ -421,8 +421,8 @@
 		</keyfact>
 		<keyfact type="HKEY" key1="TAB" >
 			<Objects>
-				<Object objectname="SheetView" mousehint="LRUD" slotsignature="shuttle" modes="All" sortorder="6" />
-			</Objects>
+                                <Object objectname="SheetView" mousehint="LR" modes="All" sortorder="6" pluginname="TraversoCommands" commandname="Shuttle" />
+                        </Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="SHIFT" >
 			<Objects>

@@ -132,6 +132,7 @@ TraversoCommands::TraversoCommands()
 	m_dict.insert("ScrollLeftHold", ScrollCommand);
 	m_dict.insert("ScrollUpHold", ScrollCommand);
 	m_dict.insert("ScrollDownHold", ScrollCommand);
+        m_dict.insert("Shuttle", ShuttleCommand);
 }
 
 Command* TraversoCommands::create(QObject* obj, const QString& command, QVariantList arguments)
@@ -375,7 +376,8 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 			}
 			return new Zoom(view, arguments);
 		}
-		case ScrollCommand:
+
+                case ScrollCommand:
 		{
 			SheetView* view = qobject_cast<SheetView*>(obj);
 			if (!view) {
@@ -385,6 +387,18 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 			}
 			return new Scroll(view, arguments);
 		}
+
+                case ShuttleCommand:
+                {
+                        SheetView* view = qobject_cast<SheetView*>(obj);
+                        if (!view) {
+                                PERROR("TraversoCommands: Supplied QObject was not an SheetView! "
+                                                "ArmTracksCommand needs an SheetView as argument");
+                                return 0;
+                        }
+                        return new Shuttle(view);
+                }
+
 	}
 	
 	return 0;
