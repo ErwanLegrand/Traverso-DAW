@@ -281,7 +281,7 @@ p, li { white-space: pre-wrap; }
           </property>
           <property name="maximumSize">
            <size>
-            <width>8</width>
+            <width>3</width>
             <height>16777215</height>
            </size>
           </property>
