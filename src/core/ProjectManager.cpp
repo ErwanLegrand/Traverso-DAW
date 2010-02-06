@@ -159,6 +159,8 @@ Project* ProjectManager::create_new_project(int numSheets, int numTracks, const 
 		info().critical(tr("Unable to create new Project %1").arg(projectName));
 		return 0;
 	}
+
+        emit projectsListChanged();
 	
 	return newProject;
 }
@@ -187,6 +189,8 @@ Project* ProjectManager::create_new_project(const QString& templatefile, const Q
 	
 	// title gets overwritten in newProject->load()
 	newProject->set_title(projectName);
+
+        emit projectsListChanged();
 	
 	return newProject;
 }
@@ -250,7 +254,13 @@ int ProjectManager::remove_project( const QString& name )
 	QString oldrootdir = config().get_property("Project", "directory", "/directory/unknown/").toString() + "/" + name;
 	m_projectDirs.removeAll(oldrootdir);
 
-	return FileHelper::remove_recursively( name );
+        int r = FileHelper::remove_recursively( name );
+        if (r == 1) {
+                emit projectsListChanged();
+
+        }
+
+        return r;
 }
 
 bool ProjectManager::project_is_current(const QString& title)

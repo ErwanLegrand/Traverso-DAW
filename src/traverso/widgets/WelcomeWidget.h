@@ -39,6 +39,8 @@ private slots:
         void load_existing_project_button_clicked();
         void load_previous_project_button_clicked();
         void create_new_project_button_clicked();
+        void update_projects_combo_box();
+        void update_previous_project_line_edit();
 };
 
 #endif // WELCOMEWIDGET_H

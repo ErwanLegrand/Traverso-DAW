@@ -32,17 +32,15 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
 {
         setupUi(this);
 
-        QString projectToLoad = config().get_property("Project", "current", "").toString();
-        previousProjectLineEdit->setText(projectToLoad);
-
-        foreach(QString project, pm().get_projects_list()) {
-                projectsComboBox->addItem(project);
-        }
-
+        update_previous_project_line_edit();
+        update_projects_combo_box();
 
         connect(loadPreviousProjectButton, SIGNAL(clicked()), this, SLOT(load_previous_project_button_clicked()));
         connect(loadExistingProjectButton, SIGNAL(clicked()), this, SLOT(load_existing_project_button_clicked()));
         connect(createProjectPushbutton, SIGNAL(clicked()), this, SLOT(create_new_project_button_clicked()));
+        connect(&pm(), SIGNAL(currentProjectDirChanged()), this, SLOT(update_projects_combo_box()));
+        connect(&pm(), SIGNAL(projectsListChanged()), this, SLOT(update_projects_combo_box()));
+        connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(update_previous_project_line_edit()));
 }
 
 
@@ -65,6 +63,23 @@ void WelcomeWidget::load_previous_project_button_clicked()
 void WelcomeWidget::create_new_project_button_clicked()
 {
         Interface::instance()->show_newproject_dialog();
+}
+
+void WelcomeWidget::update_projects_combo_box()
+{
+        projectsComboBox->clear();
+
+        foreach(QString project, pm().get_projects_list()) {
+                projectsComboBox->addItem(project);
+        }
+
+}
+
+void WelcomeWidget::update_previous_project_line_edit()
+{
+        QString current = config().get_property("Project", "current", "").toString();
+        previousProjectLineEdit->setText(current);
+
 }
 
 //eof

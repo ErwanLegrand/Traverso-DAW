@@ -105,6 +105,7 @@ signals:
 	void projectLoaded(Project* );
 	void aboutToDelete(Sheet* );
 	void currentProjectDirChanged();
+        void projectsListChanged();
 	void unsupportedProjectDirChangeDetected();
 	void projectDirChangeDetected();
 	void projectLoadFailed(QString,QString);
