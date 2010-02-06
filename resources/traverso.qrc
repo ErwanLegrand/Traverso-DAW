@@ -71,6 +71,8 @@
         <file alias="down">images/icons/arrow-down.png</file>
         <file alias="add">images/icons/list-add.png</file>
         <file alias="remove">images/icons/list-remove.png</file>
+        <file alias="welcomebackground">images/background_center_frame.png</file>
+        <file alias="welcomeheaderlogo">images/traverso.png</file>
         <file>translations/traverso_nl.qm</file>
         <file>translations/traverso_de.qm</file>
         <file>translations/traverso_fr.qm</file>

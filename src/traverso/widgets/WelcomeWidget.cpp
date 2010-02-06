@@ -28,12 +28,6 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
         : QWidget(parent)
 {
         setupUi(this);
-
-        OpenProjectDialog* dialog = new OpenProjectDialog(this);
-        dialog->setWindowFlags(Qt::Widget);
-        verticalLayout1->addWidget(dialog);
-        dialog->resize(350, 500);
-
 }
 
 
