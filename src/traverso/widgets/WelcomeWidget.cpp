@@ -57,7 +57,11 @@ void WelcomeWidget::load_existing_project_button_clicked()
 
 void WelcomeWidget::load_previous_project_button_clicked()
 {
-        pm().load_project(previousProjectLineEdit->text());
+        QString previous = previousProjectLineEdit->text();
+        if (previous.isEmpty() || previous.isNull()) {
+                return;
+        }
+        pm().load_project(previous);
 }
 
 void WelcomeWidget::create_new_project_button_clicked()
@@ -73,12 +77,18 @@ void WelcomeWidget::update_projects_combo_box()
                 projectsComboBox->addItem(project);
         }
 
+        update_previous_project_line_edit();
+
 }
 
 void WelcomeWidget::update_previous_project_line_edit()
 {
         QString current = config().get_property("Project", "current", "").toString();
-        previousProjectLineEdit->setText(current);
+        if (pm().project_exists(current)) {
+                previousProjectLineEdit->setText(current);
+        } else {
+                previousProjectLineEdit->setText("");
+        }
 
 }
 
