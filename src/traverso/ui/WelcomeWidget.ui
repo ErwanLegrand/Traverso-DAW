@@ -385,21 +385,8 @@ p, li { white-space: pre-wrap; }
                  </property>
                 </spacer>
                </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="previousProjectLabel">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                   <horstretch>2</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>No previous Project</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1" colspan="2">
-                <widget class="QPushButton" name="pushButton">
+               <item row="3" column="1" colspan="2">
+                <widget class="QPushButton" name="loadPreviousProjectButton">
                  <property name="maximumSize">
                   <size>
                    <width>100</width>
@@ -408,6 +395,16 @@ p, li { white-space: pre-wrap; }
                  </property>
                  <property name="text">
                   <string>Load</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLineEdit" name="previousProjectLineEdit">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>2</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
                  </property>
                 </widget>
                </item>
@@ -472,7 +469,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item row="1" column="1" colspan="2">
-                <widget class="QPushButton" name="pushButton_2">
+                <widget class="QPushButton" name="loadExistingProjectButton">
                  <property name="maximumSize">
                   <size>
                    <width>100</width>

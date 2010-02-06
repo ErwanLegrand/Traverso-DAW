@@ -22,18 +22,49 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "WelcomeWidget.h"
 
-#include "dialogs/project/OpenProjectDialog.h"
+#include "Config.h"
+#include "ProjectManager.h"
+#include "Interface.h"
+
 
 WelcomeWidget::WelcomeWidget(QWidget *parent)
         : QWidget(parent)
 {
         setupUi(this);
+
+        QString projectToLoad = config().get_property("Project", "current", "").toString();
+        previousProjectLineEdit->setText(projectToLoad);
+
+        foreach(QString project, pm().get_projects_list()) {
+                projectsComboBox->addItem(project);
+        }
+
+
+        connect(loadPreviousProjectButton, SIGNAL(clicked()), this, SLOT(load_previous_project_button_clicked()));
+        connect(loadExistingProjectButton, SIGNAL(clicked()), this, SLOT(load_existing_project_button_clicked()));
+        connect(createProjectPushbutton, SIGNAL(clicked()), this, SLOT(create_new_project_button_clicked()));
 }
 
 
 WelcomeWidget::~WelcomeWidget()
 {
 
+}
+
+void WelcomeWidget::load_existing_project_button_clicked()
+{
+        pm().load_project(projectsComboBox->currentText());
+}
+
+
+void WelcomeWidget::load_previous_project_button_clicked()
+{
+        pm().load_project(previousProjectLineEdit->text());
+}
+
+void WelcomeWidget::create_new_project_button_clicked()
+{
+        Interface::instance()->show_newproject_dialog();
 }
 
 //eof

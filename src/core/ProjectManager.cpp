@@ -702,3 +702,11 @@ Command* ProjectManager::close_current_project()
         set_current_project(0);
         return 0;
 }
+
+QStringList ProjectManager::get_projects_list()
+{
+        QString path = config().get_property("Project", "directory", "none").toString();
+        QDir dir(path);
+        QStringList list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+        return list;
+}

@@ -34,6 +34,11 @@ public:
 
         WelcomeWidget(QWidget* parent);
         ~WelcomeWidget();
+
+private slots:
+        void load_existing_project_button_clicked();
+        void load_previous_project_button_clicked();
+        void create_new_project_button_clicked();
 };
 
 #endif // WELCOMEWIDGET_H
