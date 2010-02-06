@@ -602,6 +602,11 @@ QStringList AudioDevice::get_playback_channel_names() const
 QList<ChannelConfig> AudioDevice::get_channel_configuration()
 {
         QList<ChannelConfig> configs;
+
+        if (!m_driver) {
+                return configs;
+        }
+
         QList<AudioChannel*> channels = m_driver->get_capture_channels();
         channels.append(m_driver->get_playback_channels());
         foreach(AudioChannel* channel, channels) {
