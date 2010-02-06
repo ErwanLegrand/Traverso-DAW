@@ -371,7 +371,7 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 			SheetView* view = qobject_cast<SheetView*>(obj);
 			if (!view) {
 				PERROR("TraversoCommands: Supplied QObject was not an SheetView! "
-						"ArmTracksCommand needs an SheetView as argument");
+                                                "ZoomCommand needs an SheetView as argument");
 				return 0;
 			}
 			return new Zoom(view, arguments);
@@ -382,7 +382,7 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 			SheetView* view = qobject_cast<SheetView*>(obj);
 			if (!view) {
 				PERROR("TraversoCommands: Supplied QObject was not an SheetView! "
-						"ArmTracksCommand needs an SheetView as argument");
+                                                "ScrollCommand needs an SheetView as argument");
 				return 0;
 			}
 			return new Scroll(view, arguments);
@@ -393,7 +393,7 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
                         SheetView* view = qobject_cast<SheetView*>(obj);
                         if (!view) {
                                 PERROR("TraversoCommands: Supplied QObject was not an SheetView! "
-                                                "ArmTracksCommand needs an SheetView as argument");
+                                                "ShuttleCommand needs an SheetView as argument");
                                 return 0;
                         }
                         return new Shuttle(view);
