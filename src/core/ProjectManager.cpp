@@ -98,27 +98,24 @@ void ProjectManager::set_current_project(Project* project)
 {
 	PENTER;
 
-	emit projectLoaded(project);
-	
 	QString oldprojectname = "";
 	
 	if (currentProject) {
-		if (m_exitInProgress) {
-			QString oncloseaction = config().get_property("Project", "onclose", "save").toString();
-			if (oncloseaction == "save") {
-				currentProject->save();
-			} else if (oncloseaction == "ask") {
-				if (QMessageBox::question(0, tr("Save Project"), 
-				    tr("Do you want to save the Project before quiting?"),
-						QMessageBox::Yes | QMessageBox::No,
-	  					QMessageBox::Yes) == QMessageBox::Yes)
-				{
-					currentProject->save();
-				}
-			}
-		} else {
-			currentProject->save();
-		}
+                printf("exit in progress");
+                QString oncloseaction = config().get_property("Project", "onclose", "save").toString();
+                if (oncloseaction == "save") {
+                        currentProject->save();
+                } else if (oncloseaction == "ask") {
+                        QMessageBox::StandardButton button =
+                                QMessageBox::question(0,
+                                tr("Save Project"),
+                                tr("Do you want to save the Project before quiting?"),
+                                QMessageBox::Yes | QMessageBox::No,
+                                QMessageBox::Yes);
+                        if (button  == QMessageBox::Yes) {
+                                currentProject->save();
+                        }
+                }
 		
 		oldprojectname = currentProject->get_title();
 		delete currentProject;
@@ -126,6 +123,7 @@ void ProjectManager::set_current_project(Project* project)
 
 	currentProject = project;
 
+        emit projectLoaded(currentProject);
 
 	QString title = "";
 

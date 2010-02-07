@@ -55,7 +55,7 @@ WelcomeWidget::~WelcomeWidget()
 void WelcomeWidget::set_project(Project* project)
 {
         if (project) {
-                previousProjectLabel->setText(tr("Resume running Project (%1)").arg(project->get_title()));
+                previousProjectLabel->setText(tr("Resume loaded Project (%1)").arg(project->get_title()));
                 loadPreviousProjectButton->setText(tr("Resume"));
                 previousProjectLineEdit->setText(project->get_title());
         } else {
