@@ -143,8 +143,8 @@ int Track::set_state( const QDomNode & node )
 	}
 	set_muted_by_solo(e.attribute( "mutedbysolo", "0").toInt());
 	set_pan( e.attribute( "pan", "" ).toFloat() );
-	set_bus_in( e.attribute( "InBus", "" ).toAscii() );
-	set_bus_out( e.attribute( "OutBus", "" ).toAscii() );
+        set_bus_in( e.attribute( "InBus", "" ).toUtf8() );
+        set_bus_out( e.attribute( "OutBus", "" ).toUtf8() );
 	m_id = e.attribute("id", "0").toLongLong();
 	if (m_id == 0) {
 		m_id = create_id();
@@ -583,11 +583,11 @@ void Track::rescan_busses()
     // in the less worse case, if at least one bus is available,
     // use it as a fallback
     if (ibus.size()) {
-        fallbackCapture = ibus.at(0).toAscii();
+        fallbackCapture = ibus.at(0).toUtf8();
     }
 
     if (obus.size()) {
-        fallbackPlayback = obus.at(0).toAscii();
+        fallbackPlayback = obus.at(0).toUtf8();
     }
 
     // now let's look for the bus we actually want to connect to

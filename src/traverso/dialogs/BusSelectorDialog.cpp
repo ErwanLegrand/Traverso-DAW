@@ -35,9 +35,6 @@ BusSelectorDialog::BusSelectorDialog(QWidget* parent)
 {
 	setupUi(this);
 	
-	playbackBusesGroupBox->hide();
-	resize(300, 200);
-	
 	update_buses_list_widget();
 	
 	buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
@@ -50,21 +47,19 @@ BusSelectorDialog::BusSelectorDialog(QWidget* parent)
 
 void BusSelectorDialog::update_buses_list_widget()
 {
-	busesListWidget->clear();
-	
-	QStringList names = audiodevice().get_capture_buses_names();
-	
-	foreach(QString name, names) {
-		QListWidgetItem* item = new QListWidgetItem(busesListWidget);
+        captureBusesListWidget->clear();
+        playbackBusesListWidget->clear();
+
+        QStringList c_names = audiodevice().get_capture_buses_names();
+        QStringList p_names = audiodevice().get_playback_buses_names();
+
+        foreach(QString name, c_names) {
+                QListWidgetItem* item = new QListWidgetItem(captureBusesListWidget);
 		item->setText(name);
 	}
 	
-	busesListWidgetPlayback->clear();
-	names.clear();
-	names << audiodevice().get_playback_buses_names();
-	
-	foreach(QString name, names) {
-		QListWidgetItem* item = new QListWidgetItem(busesListWidgetPlayback);
+        foreach(QString name, p_names) {
+                QListWidgetItem* item = new QListWidgetItem(playbackBusesListWidget);
 		item->setText(name);
 	}
 }
@@ -74,52 +69,35 @@ void BusSelectorDialog::current_track_changed(int index)
 	if (index == -1) {
 		return;
 	}
-	
-	QList<QListWidgetItem *>  selectedlist = busesListWidget->selectedItems();
-	
-	if (selectedlist.size()) {
-		selectedlist.at(0)->setSelected(false);
+
+        QList<QListWidgetItem *>  c_selectedlist = captureBusesListWidget->selectedItems();
+        QList<QListWidgetItem *>  p_selectedlist = playbackBusesListWidget->selectedItems();
+
+        // first unselect selected items
+        for (int i = 0; i < c_selectedlist.size(); ++i) {
+                c_selectedlist.at(i)->setSelected(false);
 	}
-	
+
+        for (int i = 0; i < p_selectedlist.size(); ++i) {
+                p_selectedlist.at(i)->setSelected(false);
+        }
+
 	qint64 id = trackComboBox->itemData(index).toLongLong();
 	Sheet* sheet = pm().get_project()->get_current_sheet();
 	m_currentTrack = sheet->get_track(id);
 	
-	QList<QListWidgetItem *> list = busesListWidget->findItems(m_currentTrack->get_bus_in(), Qt::MatchExactly);
-	
-	if (list.size()) {
-		QListWidgetItem* item = list.at(0);
+        QList<QListWidgetItem *> c_list = captureBusesListWidget->findItems(m_currentTrack->get_bus_in(), Qt::MatchExactly);
+        QList<QListWidgetItem *> p_list = playbackBusesListWidget->findItems(m_currentTrack->get_bus_out(), Qt::MatchExactly);
+
+        if (c_list.size()) {
+                QListWidgetItem* item = c_list.at(0);
 		item->setSelected(true);
-		
-		if (m_currentTrack->capture_left_channel() && m_currentTrack->capture_right_channel()) {
-			radioBoth->setChecked(true);
-		} else if (m_currentTrack->capture_left_channel()) {
-			radioLeftOnly->setChecked(true);
-		} else {
-			radioRightOnly->setChecked(true);
-		}	
 	}
 
-
-	selectedlist = busesListWidgetPlayback->selectedItems();
-	
-	if (selectedlist.size()) {
-		selectedlist.at(0)->setSelected(false);
-	}
-	
-	list = busesListWidgetPlayback->findItems(m_currentTrack->get_bus_out(), Qt::MatchExactly);
-	
-	if (list.size()) {
-		QListWidgetItem* item = list.at(0);
-		item->setSelected(true);
-/*		if (m_currentTrack->playback_left_channel() && m_currentTrack->playback_right_channel()) {
-			radioBothPlayback->setChecked(true);
-		} else if (m_currentTrack->playback_left_channel()) {
-			radioLeftOnlyPlayback->setChecked(true);
-		} else {
-			radioRightOnlyPlayback->setChecked(true);
-		}	*/
-	}
+        if (p_list.size()) {
+                QListWidgetItem* item = p_list.at(0);
+                item->setSelected(true);
+        }
 }
 
 
@@ -128,38 +106,15 @@ void BusSelectorDialog::accept()
 {
 	Q_ASSERT(m_currentTrack);
 	
-	QList<QListWidgetItem *>  list = busesListWidget->selectedItems();
-	
-	if (list.size()) {
-		m_currentTrack->set_bus_in(list.at(0)->text().toAscii());
-		
-		if (radioBoth->isChecked()) {
-			m_currentTrack->set_capture_left_channel(true);
-			m_currentTrack->set_capture_right_channel(true);
-		} else if (radioLeftOnly->isChecked()) {
-			m_currentTrack->set_capture_left_channel(true);
-			m_currentTrack->set_capture_right_channel(false);
-		} else {
-			m_currentTrack->set_capture_left_channel(false);
-			m_currentTrack->set_capture_right_channel(true);
-		}
-	}
+        QList<QListWidgetItem *>  c_list = captureBusesListWidget->selectedItems();
+        QList<QListWidgetItem *>  p_list = playbackBusesListWidget->selectedItems();
 
-	list = busesListWidgetPlayback->selectedItems();
-	
-	if (list.size()) {
-		m_currentTrack->set_bus_out(list.at(0)->text().toAscii());
-		
-/*		if (radioBothPlayback->isChecked()) {
-			m_currentTrack->set_playback_left_channel(true);
-			m_currentTrack->set_playback_right_channel(true);
-		} else if (radioLeftOnlyPlayback->isChecked()) {
-			m_currentTrack->set_playback_left_channel(true);
-			m_currentTrack->set_playback_right_channel(false);
-		} else {
-			m_currentTrack->set_playback_left_channel(false);
-			m_currentTrack->set_playback_right_channel(true);
-		}*/
+        if (c_list.size()) {
+                m_currentTrack->set_bus_in(c_list.at(0)->text().toUtf8());
+        }
+
+        if (p_list.size()) {
+                m_currentTrack->set_bus_out(p_list.at(0)->text().toUtf8());
 	}
 	
 	hide();
