@@ -109,7 +109,7 @@ void ProjectManager::set_current_project(Project* project)
                         QMessageBox::StandardButton button =
                                 QMessageBox::question(0,
                                 tr("Save Project"),
-                                tr("Do you want to save the Project before quiting?"),
+                                tr("Should Project '%1' be safed before closing it?").arg(currentProject->get_title()),
                                 QMessageBox::Yes | QMessageBox::No,
                                 QMessageBox::Yes);
                         if (button  == QMessageBox::Yes) {
