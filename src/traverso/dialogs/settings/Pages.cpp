@@ -645,7 +645,6 @@ BehaviorConfigPage::BehaviorConfigPage(QWidget * parent)
 
 void BehaviorConfigPage::save_config()
 {
-	config().set_property("Project", "loadLastUsed", loadLastProjectCheckBox->isChecked());
 	config().set_property("Sheet", "trackCreationCount", numberOfTrackSpinBox->value());
 	config().set_property("PlayHead", "Follow", keepCursorVisibleCheckBox->isChecked());
 	config().set_property("PlayHead", "Scrollmode", scrollModeComboBox->currentIndex());
@@ -664,14 +663,12 @@ void BehaviorConfigPage::save_config()
 
 void BehaviorConfigPage::load_config()
 {
-	bool loadLastUsedProject = config().get_property("Project", "loadLastUsed", 1).toBool();
 	QString oncloseaction = config().get_property("Project", "onclose", "save").toString();
 	int defaultNumTracks = config().get_property("Sheet", "trackCreationCount", 6).toInt();
 	int scrollMode = config().get_property("PlayHead", "Scrollmode", 2).toInt();
 	bool resyncAudio = config().get_property("AudioClip", "SyncDuringDrag", false).toBool();
 	bool lockClips = config().get_property("AudioClip", "LockByDefault", false).toBool();
 	
-	loadLastProjectCheckBox->setChecked(loadLastUsedProject);
 	numberOfTrackSpinBox->setValue(defaultNumTracks);
 	scrollModeComboBox->setCurrentIndex(scrollMode);
 	resyncAudioCheckBox->setChecked(resyncAudio);
@@ -699,7 +696,6 @@ void BehaviorConfigPage::update_follow()
 
 void BehaviorConfigPage::reset_default_config()
 {
-	config().set_property("Project", "loadLastUsed", true);
 	config().set_property("Project", "onclose", "save");
 	config().set_property("Sheet", "trackCreationCount", 6);
 	config().set_property("PlayHead", "Follow", 0);

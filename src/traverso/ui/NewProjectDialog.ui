@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>NewProjectDialog</class>
- <widget class="QDialog" name="NewProjectDialog" >
-  <property name="geometry" >
+ <widget class="QDialog" name="NewProjectDialog">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,57 +10,57 @@
     <height>454</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>New Project</string>
   </property>
-  <layout class="QVBoxLayout" >
+  <layout class="QVBoxLayout">
    <item>
-    <layout class="QGridLayout" >
-     <item row="0" column="0" >
-      <widget class="QLabel" name="label_2_2" >
-       <property name="minimumSize" >
+    <layout class="QGridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_2_2">
+       <property name="minimumSize">
         <size>
          <width>70</width>
          <height>0</height>
         </size>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>Name</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="1" >
-      <widget class="QLineEdit" name="newProjectName" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="newProjectName">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>2</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
       </widget>
      </item>
-     <item row="1" column="0" >
-      <widget class="QLabel" name="label" >
-       <property name="minimumSize" >
+     <item row="1" column="0">
+      <widget class="QLabel" name="label">
+       <property name="minimumSize">
         <size>
          <width>0</width>
          <height>0</height>
         </size>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>Description</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="1" >
-      <widget class="QTextEdit" name="descriptionTextEdit" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+     <item row="1" column="1">
+      <widget class="QTextEdit" name="descriptionTextEdit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="maximumSize" >
+       <property name="maximumSize">
         <size>
          <width>16777215</width>
          <height>50</height>
@@ -67,23 +68,23 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="0" >
-      <widget class="QLabel" name="label_3_2" >
-       <property name="minimumSize" >
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_3_2">
+       <property name="minimumSize">
         <size>
          <width>70</width>
          <height>0</height>
         </size>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>Engineer</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1" >
-      <widget class="QLineEdit" name="newProjectEngineer" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="newProjectEngineer">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
          <horstretch>2</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -93,67 +94,70 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
+    <layout class="QHBoxLayout">
      <item>
-      <widget class="QRadioButton" name="radioButtonImport" >
-       <property name="text" >
-        <string>Import Audio Files</string>
+      <widget class="QRadioButton" name="radioButtonEmpty">
+       <property name="text">
+        <string>Empty Project</string>
        </property>
-       <property name="checked" >
+       <property name="checked">
         <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QRadioButton" name="radioButtonEmpty" >
-       <property name="text" >
-        <string>Empty Project</string>
+      <widget class="QRadioButton" name="radioButtonImport">
+       <property name="text">
+        <string>Import Audio Files</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
     </layout>
    </item>
    <item>
-    <widget class="QStackedWidget" name="stackedWidget" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+    <widget class="QStackedWidget" name="stackedWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="currentIndex" >
-      <number>0</number>
+     <property name="currentIndex">
+      <number>1</number>
      </property>
-     <widget class="QWidget" name="page" >
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <widget class="QGroupBox" name="groupBox" >
-         <property name="title" >
+     <widget class="QWidget" name="page">
+      <layout class="QGridLayout">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
           <string>Import Audio Files</string>
          </property>
-         <layout class="QVBoxLayout" >
+         <layout class="QVBoxLayout">
           <item>
-           <layout class="QHBoxLayout" >
+           <layout class="QHBoxLayout">
             <item>
-             <widget class="QToolButton" name="buttonAdd" >
-              <property name="text" >
+             <widget class="QToolButton" name="buttonAdd">
+              <property name="text">
                <string>...</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QToolButton" name="buttonRemove" >
-              <property name="text" >
+             <widget class="QToolButton" name="buttonRemove">
+              <property name="text">
                <string>...</string>
               </property>
              </widget>
             </item>
             <item>
              <spacer>
-              <property name="orientation" >
+              <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
-              <property name="sizeHint" >
+              <property name="sizeHint" stdset="0">
                <size>
                 <width>40</width>
                 <height>20</height>
@@ -162,15 +166,15 @@
              </spacer>
             </item>
             <item>
-             <widget class="QToolButton" name="buttonUp" >
-              <property name="text" >
+             <widget class="QToolButton" name="buttonUp">
+              <property name="text">
                <string>...</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QToolButton" name="buttonDown" >
-              <property name="text" >
+             <widget class="QToolButton" name="buttonDown">
+              <property name="text">
                <string>...</string>
               </property>
              </widget>
@@ -178,25 +182,25 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" >
+           <layout class="QHBoxLayout">
             <item>
-             <widget class="QTreeWidget" name="treeWidgetFiles" >
-              <property name="selectionMode" >
+             <widget class="QTreeWidget" name="treeWidgetFiles">
+              <property name="selectionMode">
                <enum>QAbstractItemView::ExtendedSelection</enum>
               </property>
-              <property name="rootIsDecorated" >
+              <property name="rootIsDecorated">
                <bool>false</bool>
               </property>
-              <property name="columnCount" >
+              <property name="columnCount">
                <number>2</number>
               </property>
               <column>
-               <property name="text" >
+               <property name="text">
                 <string>Track Name</string>
                </property>
               </column>
               <column>
-               <property name="text" >
+               <property name="text">
                 <string>File</string>
                </property>
               </column>
@@ -205,8 +209,8 @@
            </layout>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBoxCopy" >
-            <property name="text" >
+           <widget class="QCheckBox" name="checkBoxCopy">
+            <property name="text">
              <string>Copy files to project directory</string>
             </property>
            </widget>
@@ -216,62 +220,53 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="page_2" >
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <widget class="QGroupBox" name="groupBox_2" >
-         <property name="title" >
+     <widget class="QWidget" name="page_2">
+      <layout class="QGridLayout">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
           <string>Empty Project</string>
          </property>
-         <layout class="QVBoxLayout" >
+         <layout class="QVBoxLayout">
           <item>
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
+           <layout class="QHBoxLayout">
+            <property name="spacing">
              <number>6</number>
             </property>
-            <property name="leftMargin" >
-             <number>0</number>
-            </property>
-            <property name="topMargin" >
-             <number>0</number>
-            </property>
-            <property name="rightMargin" >
-             <number>0</number>
-            </property>
-            <property name="bottomMargin" >
+            <property name="margin">
              <number>0</number>
             </property>
             <item>
-             <widget class="QLabel" name="label_2_2_2" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+             <widget class="QLabel" name="label_2_2_2">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                 <horstretch>2</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="text" >
+              <property name="text">
                <string>Number of Sheets</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="sheetCountSpinBox" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+             <widget class="QSpinBox" name="sheetCountSpinBox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                 <horstretch>1</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize" >
+              <property name="minimumSize">
                <size>
                 <width>40</width>
                 <height>0</height>
                </size>
               </property>
-              <property name="minimum" >
+              <property name="minimum">
                <number>1</number>
               </property>
-              <property name="value" >
+              <property name="value">
                <number>1</number>
               </property>
              </widget>
@@ -279,39 +274,30 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
+           <layout class="QHBoxLayout">
+            <property name="spacing">
              <number>6</number>
             </property>
-            <property name="leftMargin" >
-             <number>0</number>
-            </property>
-            <property name="topMargin" >
-             <number>0</number>
-            </property>
-            <property name="rightMargin" >
-             <number>0</number>
-            </property>
-            <property name="bottomMargin" >
+            <property name="margin">
              <number>0</number>
             </property>
             <item>
-             <widget class="QLabel" name="label_2" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+             <widget class="QLabel" name="label_2">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                 <horstretch>2</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="text" >
+              <property name="text">
                <string>Tracks per Sheet</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="trackCountSpinBox" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+             <widget class="QSpinBox" name="trackCountSpinBox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                 <horstretch>1</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -321,33 +307,24 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
+           <layout class="QHBoxLayout">
+            <property name="spacing">
              <number>6</number>
             </property>
-            <property name="leftMargin" >
-             <number>0</number>
-            </property>
-            <property name="topMargin" >
-             <number>0</number>
-            </property>
-            <property name="rightMargin" >
-             <number>0</number>
-            </property>
-            <property name="bottomMargin" >
+            <property name="margin">
              <number>0</number>
             </property>
             <item>
-             <widget class="QCheckBox" name="useTemplateCheckBox" >
-              <property name="text" >
+             <widget class="QCheckBox" name="useTemplateCheckBox">
+              <property name="text">
                <string>Use Template</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="templateComboBox" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+             <widget class="QComboBox" name="templateComboBox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>2</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -358,10 +335,10 @@
           </item>
           <item>
            <spacer>
-            <property name="orientation" >
+            <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
-            <property name="sizeHint" >
+            <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
               <height>40</height>
@@ -377,12 +354,12 @@
     </widget>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox" >
-     <property name="orientation" >
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="standardButtons" >
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
@@ -396,11 +373,11 @@
    <receiver>NewProjectDialog</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>252</x>
      <y>591</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>157</x>
      <y>274</y>
     </hint>
@@ -412,11 +389,11 @@
    <receiver>NewProjectDialog</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>268</x>
      <y>591</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
     </hint>

@@ -154,8 +154,6 @@ void Traverso::create_interface( )
 			return;
 		}
 	}
-	
-//	pm().start();
 }
 
 void Traverso::shutdown( int signal )

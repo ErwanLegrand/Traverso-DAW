@@ -542,7 +542,8 @@ void Interface::create_menus( )
 	action->setShortcuts(list);
 	action->setIcon(QIcon(":/projectmanager"));
 	menu->addAction(action);
-	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_project_manager_dialog()));
+        m_projectToolBar->addAction(action);
+        connect(action, SIGNAL(triggered(bool)), this, SLOT(show_project_manager_dialog()));
 
         action = menu->addAction(tr("Audio I/O..."));
         m_projectMenuToolbarActions.append(action);

@@ -110,7 +110,6 @@ Sheet::Sheet(Project* project, const QDomNode node)
 {
 	PENTERCONS;
 	
-	QDomNode propertiesNode = node.firstChildElement("Properties");
 	m_id = node.toElement().attribute("id", "0").toLongLong();
 	
 	if (m_id == 0) {

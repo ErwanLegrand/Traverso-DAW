@@ -6,6 +6,7 @@ TOBEDONE FOR 0.4x.x
 - Copy/move (including un/redo) selected clips
 
 ### BUGS / WISHES ###
+* creating project from template crashes!
 * Transport console: to_start end to_end don't center the playhead!
 * Fade: cursor jumps back to old pos after releasing [F]
 * Curve top-left node is hardly visible
