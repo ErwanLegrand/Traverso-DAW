@@ -26,6 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QWidget>
 #include "ui_WelcomeWidget.h"
 
+class Project;
+
 class WelcomeWidget : public QWidget, protected Ui::WelcomeWidget
 {
         Q_OBJECT;
@@ -35,7 +37,12 @@ public:
         WelcomeWidget(QWidget* parent);
         ~WelcomeWidget();
 
+private:
+        Project* m_project;
+
+
 private slots:
+        void set_project(Project* project);
         void load_existing_project_button_clicked();
         void load_previous_project_button_clicked();
         void create_new_project_button_clicked();

@@ -103,7 +103,8 @@ protected:
 	bool eventFilter(QObject *obj, QEvent *ev);
 
 private:
-	QStackedWidget* 	centerAreaWidget;
+        QStackedWidget* 	m_centerAreaWidget;
+        int                     m_previousCenterAreaWidgetIndex;
 	QHash<Sheet*, SheetWidget* > m_sheetWidgets;
 	SheetWidget*		currentSheetWidget;
 	QList<ViewPort* > 	currentProjectViewPortList;
@@ -141,24 +142,17 @@ private:
 	QToolBar*		m_projectToolBar;
 	QToolBar*		m_editToolBar;
 	QToolButton*		openGlButton;
-	QAction*		m_projectSaveAction;
-	QAction*		m_projectSheetManagerAction;
-	QAction*		m_projectExportAction;
-	QAction*		m_sheetMenuAction;
 	QAction*		m_snapAction;
 	QAction*		m_followAction;
 	QAction*		m_effectAction;
 	QMenu*			m_encodingMenu;
 	QMenu*			m_resampleQualityMenu;
-	QMenu*			m_projectMenu;
-	QMenu*			m_sheetMenu;
-	QMenu*			m_editMenu;
-	QMenu*			m_viewMenu;
-	QMenu*			m_settingsMenu;
-	QMenu*			m_helpMenu;
+        QMenu*                  m_sheetMenu;
 	QList<QAction*>		m_currentSheetActions;
+        QList<QAction*>         m_projectMenuToolbarActions;
 	
 	void create_menus();
+        void set_project_actions_enabled(bool enable);
 	void save_config_and_emit_message(const QString& message);
 	
 	static Interface* m_instance;
@@ -202,6 +196,8 @@ public slots :
 	Command* show_newsheet_dialog();
 	Command* show_newtrack_dialog();
 	Command* show_newproject_dialog();
+        Command* show_welcome_page();
+        Command* show_current_sheet();
         Command* audio_io_dialog();
         Command* start_transport();
 	Command* set_recordable_and_start_transport();

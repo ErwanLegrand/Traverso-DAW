@@ -121,8 +121,8 @@ Interface::Interface()
 	//         setMaximumHeight(768);
 
 	// CenterAreaWidget
-	centerAreaWidget = new QStackedWidget(this);
-	setCentralWidget(centerAreaWidget);
+        m_centerAreaWidget = new QStackedWidget(this);
+        setCentralWidget(m_centerAreaWidget);
 	
 	// HistoryView 
 	historyDW = new QDockWidget(tr("History"), this);
@@ -202,9 +202,11 @@ Interface::Interface()
 
         m_welcomeWidget = new WelcomeWidget(this);
         m_welcomeWidget->show();
-        centerAreaWidget->addWidget(m_welcomeWidget);
+        m_centerAreaWidget->addWidget(m_welcomeWidget);
 
 	// Some default values.
+        m_project = 0;
+        m_previousCenterAreaWidgetIndex = 0;
 	currentSheetWidget = 0;
 	m_exportDialog = 0;
 	m_cdWritingDialog = 0;
@@ -270,10 +272,8 @@ void Interface::set_project(Project* project)
 		connect(m_project, SIGNAL(sheetAdded(Sheet*)), this, SLOT(sheet_selector_sheet_added(Sheet*)));
 		connect(m_project, SIGNAL(sheetRemoved(Sheet*)), this, SLOT(sheet_selector_sheet_removed(Sheet*)));
 		setWindowTitle(project->get_title() + " - Traverso");
-		m_projectSaveAction->setEnabled(true);
-		m_projectSheetManagerAction->setEnabled(true);
-		m_projectExportAction->setEnabled(true);
-		m_sheetMenuAction->setEnabled(true);
+
+                set_project_actions_enabled(true);
 
 		// the project's sheets will be deleted _after_
 		// the project has been deleted, which will happen after this
@@ -289,10 +289,6 @@ void Interface::set_project(Project* project)
 			sw->setUpdatesEnabled(false);
 		}
 	} else {
-		m_projectSaveAction->setEnabled(false);
-		m_projectSheetManagerAction->setEnabled(false);
-		m_projectExportAction->setEnabled(false);
-		m_sheetMenuAction->setEnabled(false);
 		setWindowTitle("Traverso");
 		// No project loaded, the currently  loaded project will be deleted after this
 		// function returns, if the sheetcanvas is still painting (due playback e.g.) we
@@ -304,7 +300,11 @@ void Interface::set_project(Project* project)
 		foreach(SheetWidget* sw, m_sheetWidgets) {
 			delete_sheetwidget(sw->get_sheet());
 		}
-                centerAreaWidget->setCurrentIndex(0);
+
+                set_project_actions_enabled(false);
+                sheet_selector_update_sheets();
+
+                show_welcome_page();
 	}
 }
 
@@ -313,7 +313,7 @@ void Interface::delete_sheetwidget(Sheet* sheet)
 	SheetWidget* sw = m_sheetWidgets.value(sheet);
 	if (sw) {
 		m_sheetWidgets.remove(sheet);
-		centerAreaWidget->removeWidget(sw);
+                m_centerAreaWidget->removeWidget(sw);
 		delete sw;
 	}
 }
@@ -331,8 +331,8 @@ void Interface::show_sheet(Sheet* sheet)
 			sheetWidget = m_sheetWidgets.value(0);
 			
 			if (!sheetWidget) {
-				sheetWidget = new SheetWidget(0, centerAreaWidget);
-				centerAreaWidget->addWidget(sheetWidget);
+                                sheetWidget = new SheetWidget(0, m_centerAreaWidget);
+                                m_centerAreaWidget->addWidget(sheetWidget);
 				m_sheetWidgets.insert(0, sheetWidget);
 			}
 		}
@@ -353,12 +353,12 @@ void Interface::show_sheet(Sheet* sheet)
 	}
 	
 	if (!sheetWidget) {
-		sheetWidget = new SheetWidget(sheet, centerAreaWidget);
-		centerAreaWidget->addWidget(sheetWidget);
+                sheetWidget = new SheetWidget(sheet, m_centerAreaWidget);
+                m_centerAreaWidget->addWidget(sheetWidget);
 		m_sheetWidgets.insert(sheet, sheetWidget);
 	}
 	currentSheetWidget = sheetWidget;
-	centerAreaWidget->setCurrentIndex(centerAreaWidget->indexOf(sheetWidget));
+        m_centerAreaWidget->setCurrentIndex(m_centerAreaWidget->indexOf(sheetWidget));
 	sheetWidget->setFocus();
 	
 	if (sheet) {
@@ -503,233 +503,253 @@ Command * Interface::show_cd_writing_dialog( )
 void Interface::create_menus( )
 {
 	QAction* action;
+        QList<QKeySequence> list;
 
-	m_projectMenu = menuBar()->addMenu(tr("&Project"));
+        QMenu* menu = menuBar()->addMenu(tr("&File"));
+
+        action = menu->addAction(tr("&New..."));
+        action->setIcon(find_pixmap(":/new"));
+        action->setShortcuts(QKeySequence::New);
+        connect(action, SIGNAL(triggered(bool)), this, SLOT(show_newproject_dialog()));
+
+        action = menu->addAction(tr("&Open..."));
+        action->setIcon(QIcon(":/open"));
+        action->setShortcuts(QKeySequence::Open);
+        connect(action, SIGNAL(triggered(bool)), this, SLOT(show_welcome_page()));
+
+        action = menu->addAction(tr("&Save"));
+        m_projectMenuToolbarActions.append(action);
+        action->setShortcuts(QKeySequence::Save);
+        action->setIcon(QIcon(":/save"));
+        connect(action, SIGNAL(triggered(bool)), &pm(), SLOT(save_project()));
+
+        menu->addSeparator();
+
+        action = menu->addAction(tr("&Quit"));
+        list.clear();
+        list.append(QKeySequence("CTRL+Q"));
+        action->setShortcuts(list);
+        action->setIcon(QIcon(":/exit"));
+        connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(exit()));
+
+
+        menu = menuBar()->addMenu(tr("&Project"));
 	
-	action = m_projectMenu->addAction(tr("&New..."));
-	action->setIcon(find_pixmap(":/new"));
-	action->setShortcuts(QKeySequence::New);
-	m_projectToolBar->addAction(action);
-	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_newproject_dialog()));
-	
-	action = m_projectMenu->addAction(tr("&Open..."));
-	action->setIcon(QIcon(":/open"));
-	action->setShortcuts(QKeySequence::Open);
-	m_projectToolBar->addAction(action);
-	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_open_project_dialog()));
-	
-	action = m_projectMenu->addAction(tr("&Save"));
-	m_projectSaveAction = action;
-	action->setShortcuts(QKeySequence::Save);
-	action->setIcon(QIcon(":/save"));
-	m_projectToolBar->addAction(action);
-	connect(action, SIGNAL(triggered(bool)), &pm(), SLOT(save_project()));
-
-        action = m_projectMenu->addAction(tr("&Close"));
-        action->setShortcuts(QKeySequence::Close);
-        action->setIcon(QIcon(":/close"));
-        m_projectToolBar->addAction(action);
-        connect(action, SIGNAL(triggered(bool)), &pm(), SLOT(close_current_project()));
-
-
-	m_projectMenu->addSeparator();
-
-	action = m_projectMenu->addAction(tr("&Manage Project..."));
-	m_projectSheetManagerAction = action;
-	QList<QKeySequence> list;
+	action = menu->addAction(tr("&Manage Project..."));
+        m_projectMenuToolbarActions.append(action);
+        list.clear();
 	list.append(QKeySequence("F4"));
-	m_projectSheetManagerAction->setShortcuts(list);
-	m_projectSheetManagerAction->setIcon(QIcon(":/projectmanager"));
-	m_projectToolBar->addAction(m_projectSheetManagerAction);
+	action->setShortcuts(list);
+	action->setIcon(QIcon(":/projectmanager"));
+	menu->addAction(action);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_project_manager_dialog()));
 
-        action = m_projectMenu->addAction(tr("Audio I/O..."));
+        action = menu->addAction(tr("Audio I/O..."));
+        m_projectMenuToolbarActions.append(action);
         connect(action, SIGNAL(triggered()), this, SLOT(audio_io_dialog()));
         list.clear();
         list.append(QKeySequence("F5"));
         action->setShortcuts(list);
 
-	action = m_projectMenu->addAction(tr("&Export..."));
-	m_projectExportAction = action;
-	list.clear();
+	action = menu->addAction(tr("&Export..."));
+        m_projectMenuToolbarActions.append(action);
+        list.clear();
 	list.append(QKeySequence("F9"));
-	m_projectExportAction->setShortcuts(list);
-	m_projectExportAction->setIcon(QIcon(":/export"));
-	m_projectToolBar->addAction(m_projectExportAction);
+	action->setShortcuts(list);
+	action->setIcon(QIcon(":/export"));
+	m_projectToolBar->addAction(action);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_export_widget()));
 	
-	action = m_projectMenu->addAction(tr("&CD Writing..."));
-	list.clear();
+	action = menu->addAction(tr("&CD Writing..."));
+        m_projectMenuToolbarActions.append(action);
+        list.clear();
 	list.append(QKeySequence("F8"));
 	action->setShortcuts(list);
 	action->setIcon(QIcon(":/write-cd"));
 	m_projectToolBar->addAction(action);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_cd_writing_dialog()));
 	
-	action = m_projectMenu->addAction(tr("&Restore Backup..."));
-	list.clear();
+	action = menu->addAction(tr("&Restore Backup..."));
+        m_projectMenuToolbarActions.append(action);
+        list.clear();
 	list.append(QKeySequence("F10"));
 	action->setShortcuts(list);
 	action->setIcon(QIcon(":/restore"));
 	m_projectToolBar->addAction(action);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_restore_project_backup_dialog()));
 	
-	m_projectMenu->addSeparator();
-	
-	action = m_projectMenu->addAction(tr("&Quit"));
-	list.clear();
-	// FIXME using CTRL + Q gives a warning about deleting an object in it's event handler!!!!!!
-	list.append(QKeySequence("CTRL+Q"));
-	action->setShortcuts(list);
-	action->setIcon(QIcon(":/exit"));
-	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(exit()));
-	
-	m_editMenu = menuBar()->addMenu(tr("&Edit"));
+        action = menu->addAction(tr("&Close Project"));
+        m_projectMenuToolbarActions.append(action);
+        action->setShortcuts(QKeySequence::Close);
+        action->setIcon(QIcon(":/exit"));
+        connect(action, SIGNAL(triggered(bool)), &pm(), SLOT(close_current_project()));
 
-	action = m_editMenu->addAction(tr("Undo"));
-	action->setIcon(QIcon(":/undo"));
+	
+	menu = menuBar()->addMenu(tr("&Edit"));
+
+	action = menu->addAction(tr("Undo"));
+        m_projectMenuToolbarActions.append(action);
+        action->setIcon(QIcon(":/undo"));
 	action->setShortcuts(QKeySequence::Undo);
 	m_editToolBar->addAction(action);
 	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(undo()));
 
-	action = m_editMenu->addAction(tr("Redo"));
-	action->setIcon(QIcon(":/redo"));
+	action = menu->addAction(tr("Redo"));
+        m_projectMenuToolbarActions.append(action);
+        action->setIcon(QIcon(":/redo"));
 	action->setShortcuts(QKeySequence::Redo);
 	m_editToolBar->addAction(action);
 	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(redo()));	
 
-	m_editMenu->addSeparator();
+	menu->addSeparator();
 	m_editToolBar->addSeparator();
 
-	action = m_editMenu->addAction(tr("Import &Audio..."));
-	action->setIcon(QIcon(":/import-audio"));
+	action = menu->addAction(tr("Import &Audio..."));
+        m_projectMenuToolbarActions.append(action);
+        action->setIcon(QIcon(":/import-audio"));
 	m_editToolBar->addAction(action);
 	connect(action, SIGNAL(triggered()), this, SLOT(import_audio()));
 
-	action = m_editMenu->addAction(tr("Insert Si&lence..."));
-	action->setIcon(QIcon(":/import-silence"));
+	action = menu->addAction(tr("Insert Si&lence..."));
+        m_projectMenuToolbarActions.append(action);
+        action->setIcon(QIcon(":/import-silence"));
 	m_editToolBar->addAction(action);
 	connect(action, SIGNAL(triggered()), this, SLOT(show_insertsilence_dialog()));
 
-	m_editMenu->addSeparator();
+	menu->addSeparator();
 	m_editToolBar->addSeparator();
 
-	m_snapAction = m_editMenu->addAction(tr("&Snap"));
-	m_snapAction->setIcon(QIcon(":/snap"));
+	m_snapAction = menu->addAction(tr("&Snap"));
+        m_projectMenuToolbarActions.append(m_snapAction);
+        m_snapAction->setIcon(QIcon(":/snap"));
 	m_snapAction->setCheckable(true);
 	m_snapAction->setToolTip(tr("Snap items to edges of other items while dragging."));
 	m_editToolBar->addAction(m_snapAction);
 	connect(m_snapAction, SIGNAL(triggered(bool)), this, SLOT(snap_state_changed(bool)));
 
-	m_followAction = m_editMenu->addAction(tr("S&croll Playback"));
+        m_followAction = menu->addAction(tr("S&croll Playback"));
+        m_projectMenuToolbarActions.append(m_followAction);
 	m_followAction->setIcon(QIcon(":/follow"));
 	m_followAction->setCheckable(true);
 	m_followAction->setToolTip(tr("Keep play cursor in view while playing or recording."));
 	m_editToolBar->addAction(m_followAction);
 	connect(m_followAction, SIGNAL(triggered(bool)), this, SLOT(follow_state_changed(bool)));
 
-	m_effectAction = m_editMenu->addAction(tr("&Show Effects"));
-	m_effectAction->setIcon(QIcon(":/effects"));
+        m_effectAction = menu->addAction(tr("&Show Effects"));
+        m_projectMenuToolbarActions.append(m_effectAction);
+        m_effectAction->setIcon(QIcon(":/effects"));
 	m_effectAction->setCheckable(true);
 	m_effectAction->setToolTip(tr("Show effect plugins and automation curves on tracks"));
 	m_editToolBar->addAction(m_effectAction);
 	connect(m_effectAction, SIGNAL(triggered(bool)), this, SLOT(effect_state_changed(bool)));
 
-	m_viewMenu = menuBar()->addMenu(tr("&View"));
+	menu = menuBar()->addMenu(tr("&View"));
 
-	m_viewMenu->addAction(historyDW->toggleViewAction());
-	m_viewMenu->addAction(busMonitorDW->toggleViewAction());
-	m_viewMenu->addAction(AudioSourcesDW->toggleViewAction());
+	menu->addAction(historyDW->toggleViewAction());
+	menu->addAction(busMonitorDW->toggleViewAction());
+	menu->addAction(AudioSourcesDW->toggleViewAction());
 
-	action = m_viewMenu->addAction(tr("Marker Editor..."));
-	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_marker_dialog()));
+        action = menu->addAction(tr("Marker Editor..."));
+        m_projectMenuToolbarActions.append(action);
+        connect(action, SIGNAL(triggered(bool)), this, SLOT(show_marker_dialog()));
 
-	m_viewMenu->addSeparator();
+	menu->addSeparator();
 	
-	m_viewMenu->addAction(correlationMeterDW->toggleViewAction());
-	m_viewMenu->addAction(spectralMeterDW->toggleViewAction());
+	menu->addAction(correlationMeterDW->toggleViewAction());
+	menu->addAction(spectralMeterDW->toggleViewAction());
 
-	m_viewMenu->addSeparator();
-        QAction* toolbars = m_viewMenu->addAction(tr("ToolBars"));
-	toolbars->setEnabled(false);
-	m_viewMenu->addSeparator();
+	menu->addSeparator();
+        menu->addAction(tr("ToolBars"));
+	menu->addSeparator();
 	
-	m_viewMenu->addAction(transportConsole->toggleViewAction());
+	menu->addAction(transportConsole->toggleViewAction());
 	transportConsole->toggleViewAction()->setText(tr("Transport Console"));
 
 	// if unifiedTitleAndToolBarOnMac == true we don't want the main toolbars
 	// to be hidden. thus only add the menu entries on systems != OS X
 #if !defined (Q_WS_MAC)
-	m_viewMenu->addAction(m_projectToolBar->toggleViewAction());
+	menu->addAction(m_projectToolBar->toggleViewAction());
 	m_projectToolBar->toggleViewAction()->setText(tr("Project"));
 
-	m_viewMenu->addAction(m_editToolBar->toggleViewAction());
+	menu->addAction(m_editToolBar->toggleViewAction());
 	m_editToolBar->toggleViewAction()->setText(tr("Edit"));
 #endif
 
-	m_viewMenu->addAction(m_sysinfo->toggleViewAction());
+	menu->addAction(m_sysinfo->toggleViewAction());
 	m_sysinfo->toggleViewAction()->setText(tr("System Information"));
 
-	m_sheetMenu = menuBar()->addMenu(tr("&Sheet"));
-	m_sheetMenuAction = m_sheetMenu->menuAction();
+        m_sheetMenu = menuBar()->addMenu(tr("&Sheet"));
 
-	action = m_sheetMenu->addAction(tr("New &Sheet(s)..."));
-	action->setIcon(QIcon(":/new-sheet"));
+        action = m_sheetMenu->addAction(tr("New &Sheet(s)..."));
+        m_projectMenuToolbarActions.append(action);
+        action->setIcon(QIcon(":/new-sheet"));
 	connect(action, SIGNAL(triggered()), this, SLOT(show_newsheet_dialog()));
 		
-	action = m_sheetMenu->addAction(tr("New &Track(s)..."));
-	connect(action, SIGNAL(triggered()), this, SLOT(show_newtrack_dialog()));
+        action = m_sheetMenu->addAction(tr("New &Track(s)..."));
+        m_projectMenuToolbarActions.append(action);
+        connect(action, SIGNAL(triggered()), this, SLOT(show_newtrack_dialog()));
 	
-	m_sheetMenu->addSeparator();
+	menu->addSeparator();
 	
-	m_settingsMenu = menuBar()->addMenu(tr("Se&ttings"));
+	menu = menuBar()->addMenu(tr("Se&ttings"));
 	
-	m_encodingMenu = m_settingsMenu->addMenu(tr("&Recording File Format"));
+        m_encodingMenu = menu->addMenu(tr("&Recording File Format"));
 	
-	action = m_encodingMenu->addAction("WAVE");
+        action = m_encodingMenu->addAction("WAVE");
 	action->setData("wav");
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_recording_format_to_wav()));
-	action = m_encodingMenu->addAction("WavPack");
+        action = m_encodingMenu->addAction("WavPack");
 	action->setData("wavpack");
 	connect(action, SIGNAL(triggered( bool )), this, SLOT(change_recording_format_to_wavpack()));
-	action = m_encodingMenu->addAction("WAVE-64");
+        action = m_encodingMenu->addAction("WAVE-64");
 	action->setData("w64");
 	connect(action, SIGNAL(triggered( bool )), this, SLOT(change_recording_format_to_wav64()));
 	
-	m_resampleQualityMenu = m_settingsMenu->addMenu(tr("&Resample Quality"));
-	action = m_resampleQualityMenu->addAction(tr("Best"));
+        m_resampleQualityMenu = menu->addMenu(tr("&Resample Quality"));
+        action = m_resampleQualityMenu->addAction(tr("Best"));
 	action->setData(0);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_best()));
-	action = m_resampleQualityMenu->addAction(tr("High"));
+        action = m_resampleQualityMenu->addAction(tr("High"));
 	action->setData(1);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_high()));
-	action = m_resampleQualityMenu->addAction(tr("Medium"));
+        action = m_resampleQualityMenu->addAction(tr("Medium"));
 	action->setData(2);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_medium()));
-	action = m_resampleQualityMenu->addAction(tr("Fast"));
+        action = m_resampleQualityMenu->addAction(tr("Fast"));
 	action->setData(3);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_fast()));
 
 	// fake a config changed 'signal-slot' action, to set the encoding menu icons
 	config_changed();
 	
-	m_settingsMenu->addSeparator();
+	menu->addSeparator();
 	
-	action = m_settingsMenu->addAction(tr("&Preferences..."));
+	action = menu->addAction(tr("&Preferences..."));
 	connect(action, SIGNAL(triggered( bool )), this, SLOT(show_settings_dialog()));
 	
 	
-	m_helpMenu = menuBar()->addMenu(tr("&Help"));
-	action = m_helpMenu->addAction(tr("&Getting Started"));
+	menu = menuBar()->addMenu(tr("&Help"));
+	action = menu->addAction(tr("&Getting Started"));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(quick_start()));
 	
-	action = m_helpMenu->addAction(tr("&User Manual"));
+	action = menu->addAction(tr("&User Manual"));
 	action->setIcon(style()->standardIcon(QStyle::SP_DialogHelpButton));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(open_help_browser()));
 	
-	action = m_helpMenu->addAction(tr("&About Traverso"));
+	action = menu->addAction(tr("&About Traverso"));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(about_traverso()));
+
+        set_project_actions_enabled(false);
 }
+
+void Interface::set_project_actions_enabled(bool enable)
+{
+        foreach(QAction* action, m_projectMenuToolbarActions) {
+                action->setEnabled(enable);
+        }
+
+}
+
 
 void Interface::process_context_menu_action( QAction * action )
 {
@@ -1704,9 +1724,26 @@ void Interface::sheet_selector_sheet_removed(Sheet* sheet)
 
 Command* Interface::audio_io_dialog()
 {
-	AudioIODialog *aiodlg = new AudioIODialog(this);
-	aiodlg->exec();
-	delete aiodlg;
+        if (!m_project) {
+                return 0;
+        }
 
+        AudioIODialog aiodlg(this);
+        aiodlg.exec();
+
+        return 0;
+}
+
+Command* Interface::show_welcome_page()
+{
+        m_previousCenterAreaWidgetIndex = m_centerAreaWidget->currentIndex();
+        m_centerAreaWidget->setCurrentIndex(0);
+
+        return 0;
+}
+
+Command* Interface::show_current_sheet()
+{
+        m_centerAreaWidget->setCurrentIndex(m_previousCenterAreaWidgetIndex);
         return 0;
 }
