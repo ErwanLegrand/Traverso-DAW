@@ -61,7 +61,7 @@ class TraversoCommands : public CommandPlugin
 	Q_CLASSINFO("ScrollLeftHold", tr("Left"))
 	Q_CLASSINFO("ScrollUpHold", tr("Up"))
 	Q_CLASSINFO("ScrollDownHold", tr("Down"))
-        Q_CLASSINFO("shuttle", tr("Shuttle"))
+        Q_CLASSINFO("Shuttle", tr("Shuttle"))
 
 public:
 	TraversoCommands();
