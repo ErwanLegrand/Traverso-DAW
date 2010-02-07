@@ -30,6 +30,7 @@ class TrackView;
 class TrackPanelViewPort;
 class PanelLed;
 class TrackPanelView;
+class QGraphicsProxyWidget;
 
 class TrackPanelGain : public ViewItem
 {
@@ -141,6 +142,9 @@ private:
 	
 	TrackPanelBus*	inBus;
 	TrackPanelBus*	outBus;
+
+        QGraphicsProxyWidget* inBusSelector;
+        QGraphicsProxyWidget* outBusSelector;
 
 	void draw_panel_track_name(QPainter* painter);
 	void layout_panel_items();

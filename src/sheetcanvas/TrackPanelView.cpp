@@ -22,6 +22,8 @@ $Id: TrackPanelView.cpp,v 1.2 2009/02/21 22:38:27 r_sijrier Exp $
 
 #include <QGraphicsScene>
 #include <QFont>
+#include <QPushButton>
+#include <QGraphicsProxyWidget>
 #include "TrackPanelView.h"
 #include "TrackView.h"
 #include "SheetView.h"
@@ -72,6 +74,13 @@ TrackPanelView::TrackPanelView(TrackView* trackView)
 	outBus = new TrackPanelBus(this, m_track, TrackPanelBus::BUSOUT);
 	
 	m_viewPort->scene()->addItem(this);
+
+        QPushButton* playbackButton = new QPushButton("Playback");
+        outBusSelector = m_viewPort->scene()->addWidget(playbackButton);
+        outBusSelector->setParentItem(this);
+        QPushButton* captureButton = new QPushButton("Capture");
+        inBusSelector = m_viewPort->scene()->addWidget(captureButton);
+        inBusSelector->setParentItem(this);
 
 	
 	m_boundingRect = QRectF(0, 0, 200, m_track->get_height());
@@ -177,13 +186,15 @@ void TrackPanelView::calculate_bounding_rect()
 void TrackPanelView::layout_panel_items()
 {
 	int height =  m_track->get_height();
-	
+
 	m_gainView->setPos(10, 39);
 	m_panView->setPos(10, 54);
 	
 	inBus->setPos(10, 73);
 	outBus->setPos(100, 73);
-	
+        inBusSelector->setPos(10, 73);
+        outBusSelector->setPos(100, 73);
+
 	if (height < SMALL_HEIGHT) {
 		m_gainView->setPos(10, 20);
 		m_panView->setPos(10, 36);
