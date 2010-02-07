@@ -221,12 +221,12 @@ void ResourcesWidget::showEvent( QShowEvent * event )
 
 void ResourcesWidget::set_project(Project * project)
 {
-	sourcesTreeWidget->clear();
+        m_project = project;
+
+        sourcesTreeWidget->clear();
 	m_sourceindices.clear();
 	m_clipindices.clear();
 	sheetComboBox->clear();
-	
-	m_project = project;
 	
 	if (!m_project) {
 		sheetComboBox->setEnabled(false);
@@ -283,12 +283,19 @@ void ResourcesWidget::view_combo_box_index_changed(int index)
 		sourcesTreeWidget->hide();
 		sheetComboBox->hide();
 		m_filewidget->show();
-		m_filewidget->set_current_path(m_project->get_import_dir());
+                if (m_project) {
+                        m_filewidget->set_current_path(m_project->get_import_dir());
+                } else {
+                        m_filewidget->set_current_path(QDir::homePath());
+                }
 	}
 }
 
 void ResourcesWidget::sheet_combo_box_index_changed(int index)
 {
+        if (!m_project) {
+                return;
+        }
 	qint64 id = sheetComboBox->itemData(index).toLongLong();
 	Sheet* sheet = m_project->get_sheet(id);
 	set_current_sheet(sheet);
