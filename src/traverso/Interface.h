@@ -45,6 +45,7 @@ class QUndoView;
 class QDockWidget;
 class QToolBar;
 class QToolButton;
+class QActionGroup;
 class ResourcesWidget;
 class ResourcesInfoWidget;
 class SheetWidget;
@@ -148,7 +149,7 @@ private:
 	QMenu*			m_encodingMenu;
 	QMenu*			m_resampleQualityMenu;
         QMenu*                  m_sheetMenu;
-	QList<QAction*>		m_currentSheetActions;
+        QActionGroup*		m_currentSheetActions;
         QList<QAction*>         m_projectMenuToolbarActions;
 	
 	void create_menus();

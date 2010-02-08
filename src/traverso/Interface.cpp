@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QStackedWidget>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QActionGroup>
 
 #include "Interface.h"
 #include "ProjectManager.h"
@@ -220,6 +221,7 @@ Interface::Interface()
 	m_newTrackDialog = 0;
 	m_quickStart = 0;
 	m_restoreProjectBackupDialog = 0;
+        m_currentSheetActions = new QActionGroup(this);
 	
 	create_menus();
 	
@@ -1647,9 +1649,7 @@ void Interface::update_effects_state()
 void Interface::sheet_selector_update_sheets()
 {
 	// empty the list, make sure everything is deleted
-	while(!m_currentSheetActions.isEmpty())
-	{
-		QAction *action = m_currentSheetActions.takeFirst();
+        foreach(QAction* action, m_currentSheetActions->actions()) {
 		delete action;
 	}
 
@@ -1665,16 +1665,13 @@ void Interface::sheet_selector_update_sheets()
 
 	qint64 id = m_project->get_current_sheet()->get_id();
 
-	QActionGroup* actiongroup = new QActionGroup(this);
-	actiongroup->setExclusive(true);
-
 	// create the new actions
 	foreach(Sheet* sheet, m_project->get_sheets())
 	{
 		QString string = QString::number(m_project->get_sheet_index(sheet->get_id())) +
 		": " + sheet->get_title();
 		QAction* action = m_sheetMenu->addAction(string);
-		actiongroup->addAction(action);
+                m_currentSheetActions->addAction(action);
 		action->setData(sheet->get_id());
 		action->setCheckable(true);
 
@@ -1686,7 +1683,6 @@ void Interface::sheet_selector_update_sheets()
 		}
 
 		connect(action, SIGNAL(triggered()), this, SLOT(sheet_selected()));
-		m_currentSheetActions.append(action);
 	}
 }
 
@@ -1703,7 +1699,7 @@ void Interface::sheet_selected()
 	qint64 id = orig->data().toLongLong();
 
 	// uncheck all other actions
-	foreach(QAction* action, m_currentSheetActions)
+        foreach(QAction* action, m_currentSheetActions->actions())
 	{
 		if (action->data().toLongLong() != id)
 		{
