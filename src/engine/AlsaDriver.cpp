@@ -99,9 +99,14 @@ AlsaDriver::~AlsaDriver()
 }
 
 
-int AlsaDriver::setup(bool capture, bool playback, const QString& pcmName, const QString& ditherShape)
+int AlsaDriver::setup(bool capture, bool playback, const QString& devicename, const QString& ditherShape)
 {
 	unsigned long user_nperiods = device->get_driver_property("numberofperiods", 3).toInt();
+
+        QString pcmName = "default";
+        if (devicename != "default") {
+                pcmName = QString("hw:%1").arg(get_device_id_by_name(devicename));
+        }
 	char *playback_pcm_name = strdup(pcmName.toAscii().data());
 	char *capture_pcm_name = strdup(pcmName.toAscii().data());
 	int shorts_first = false;
@@ -1642,6 +1647,17 @@ QString AlsaDriver::alsa_device_name(bool longname, int devicenumber)
 	}
 
 	return snd_ctl_card_info_get_id(info);
+}
+
+int AlsaDriver::get_device_id_by_name(const QString& name)
+{
+        for (int i=0; i<6; i++) {
+                if (alsa_device_name(false, i) == name) {
+                        return i;
+                }
+        }
+
+        return -1;
 }
 
 //eof

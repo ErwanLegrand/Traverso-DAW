@@ -329,7 +329,7 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
         QDomElement audioIO = doc.createElement("AudioIO");
         QDomElement systemConfig = doc.createElement("SystemConfig");
 
-        systemConfig.setAttribute("device", audiodevice().get_device_longname());
+        systemConfig.setAttribute("device", audiodevice().get_device_setup().cardDevice);
         systemConfig.setAttribute("driver", audiodevice().get_driver_type());
         audioIO.appendChild(systemConfig);
 
@@ -385,6 +385,7 @@ void Project::prepare_audio_device(QDomDocument doc)
         QDomNode systemConfigNode = audioIO.firstChildElement("SystemConfig");
         QDomElement e = systemConfigNode.toElement();
         ads.driverType = e.attribute("driver", "");
+        ads.cardDevice = e.attribute("device", "");
 
         QDomNode channelsConfigNode = systemConfigNode.firstChildElement("Channels");
         QDomNode channelNode = channelsConfigNode.firstChild();
@@ -427,7 +428,6 @@ void Project::prepare_audio_device(QDomDocument doc)
                 ads.driverType = config().get_property("Hardware", "drivertype", "PortAudio").toString();
 #endif
         }
-        ads.cardDevice = config().get_property("Hardware", "carddevice", "default").toString();
         ads.ditherShape = config().get_property("Hardware", "DitherShape", "None").toString();
         ads.capture = config().get_property("Hardware", "capture", 1).toInt();
         ads.playback = config().get_property("Hardware", "playback", 1).toInt();
@@ -447,7 +447,9 @@ void Project::prepare_audio_device(QDomDocument doc)
 
 #if defined (ALSA_SUPPORT)
         if (ads.driverType == "ALSA") {
-                ads.cardDevice = config().get_property("Hardware", "carddevice", "default").toString();
+                if (ads.cardDevice.isEmpty()) {
+                        ads.cardDevice = config().get_property("Hardware", "carddevice", "default").toString();
+                }
         }
 #endif
 

@@ -216,8 +216,7 @@ void AudioDriverConfigPage::load_config( )
 		name = AlsaDriver::alsa_device_name(false, i);
 		if (name != "") {
 			QString card = "Card " + QString::number(i+1) + ":  ";
-			QString device = "hw:" + QString::number(i);
-			m_alsadevices->devicesCombo->addItem(card + name, device);
+                        m_alsadevices->devicesCombo->addItem(card + name, name);
 		}
 	}
 	

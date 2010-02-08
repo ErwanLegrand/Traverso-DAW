@@ -87,6 +87,7 @@ private:
 				snd_pcm_uframes_t *capture_offset,
 				snd_pcm_uframes_t *playback_offset
 				);
+        int get_device_id_by_name(const QString& name);
 
 	int wait(int extra_fd, int *status, float *delayed_usecs);
 
