@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "../config.h"
 
 #include <QMessageBox>
+#include <QFileInfo>
+#include <QDir>
 
 #include "Traverso.h"
 #include "Mixer.h"
@@ -107,8 +109,7 @@ Traverso::Traverso(int &argc, char **argv )
 	
 	init_sse();
 	
- 	QMetaObject::invokeMethod(this, "create_interface", Qt::QueuedConnection);
-// 	create_interface();
+ 	create_interface();
 	
 	connect(this, SIGNAL(lastWindowClosed()), &pm(), SLOT(exit()));
 }
@@ -121,8 +122,6 @@ Traverso::~Traverso()
 	config().save();
 }
 
-#include <QFileInfo>
-#include <QDir>
 void Traverso::create_interface( )
 {
 	themer()->load();

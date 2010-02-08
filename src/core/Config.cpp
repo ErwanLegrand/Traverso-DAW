@@ -65,6 +65,10 @@ void Config::reset_settings( )
 	
 	settings.clear();
 
+        QString projectspath = QDir::homePath() + "/" + tr("TraversoProjects");
+        QDir dir;
+        dir.mkpath(projectspath);
+        settings.setValue("Project/directory", projectspath);
 	settings.setValue("ProgramVersion", VERSION);
 	settings.setValue("ConfigFileVersion", CONFIG_FILE_VERSION);
 	
@@ -75,11 +79,11 @@ void Config::reset_settings( )
 
 void Config::check_and_load_configuration( )
 {
-	QSettings::setPath (QSettings::IniFormat, QSettings::UserScope, QDir::homePath () + "/.traverso");
-	
-	load_configuration();
-	
-	init_input_engine();
+        QSettings::setPath (QSettings::IniFormat, QSettings::UserScope, QDir::homePath () + "/.traverso");
+
+        load_configuration();
+
+        init_input_engine();
 
 	// Detect if the config file versions match, if not, there has been most likely 
 	// a change, overwrite with the newest version...

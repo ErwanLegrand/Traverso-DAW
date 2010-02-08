@@ -649,7 +649,7 @@ QStringList ProjectManager::get_projects_list()
                 QFile file(fileToOpen);
 
                 if (!file.open(QIODevice::ReadOnly)) {
-                        PWARN("OpenProjectDialog:: Cannot open project properties file (%s)", fileToOpen.toUtf8().data());
+                        PWARN("ProjectManager:: Cannot open project properties file (%s)", fileToOpen.toUtf8().data());
                         continue;
                 }
 

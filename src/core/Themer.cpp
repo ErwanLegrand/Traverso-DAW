@@ -344,7 +344,7 @@ QBrush Themer::get_brush(const QString& name, QPoint start, QPoint stop) const
 	return QBrush(themer()->get_default_color(name));
 }
 
-// sometimes we need access to the gradient (e.g. if the start and finalStops have to be
+// sometimes we need access to the gradient (e.g. if the start and finalStops have to be
 // modified
 QLinearGradient Themer::get_gradient(const QString& name) const
 {
