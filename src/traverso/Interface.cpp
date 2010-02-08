@@ -517,6 +517,8 @@ void Interface::create_menus( )
         action->setShortcuts(QKeySequence::Open);
         connect(action, SIGNAL(triggered(bool)), this, SLOT(show_welcome_page()));
 
+        menu->addSeparator();
+
         action = menu->addAction(tr("&Save"));
         m_projectMenuToolbarActions.append(action);
         action->setShortcuts(QKeySequence::Save);
@@ -525,17 +527,15 @@ void Interface::create_menus( )
 
         menu->addSeparator();
 
-        action = menu->addAction(tr("&Quit"));
-        list.clear();
-        list.append(QKeySequence("CTRL+Q"));
-        action->setShortcuts(list);
+        action = menu->addAction(tr("&Close Project"));
+        m_projectMenuToolbarActions.append(action);
+        action->setShortcuts(QKeySequence::Close);
         action->setIcon(QIcon(":/exit"));
-        connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(exit()));
+        connect(action, SIGNAL(triggered(bool)), &pm(), SLOT(close_current_project()));
 
+        menu->addSeparator();
 
-        menu = menuBar()->addMenu(tr("&Project"));
-	
-	action = menu->addAction(tr("&Manage Project..."));
+        action = menu->addAction(tr("&Manage Project..."));
         m_projectMenuToolbarActions.append(action);
         list.clear();
 	list.append(QKeySequence("F4"));
@@ -579,14 +579,17 @@ void Interface::create_menus( )
 	m_projectToolBar->addAction(action);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_restore_project_backup_dialog()));
 	
-        action = menu->addAction(tr("&Close Project"));
-        m_projectMenuToolbarActions.append(action);
-        action->setShortcuts(QKeySequence::Close);
-        action->setIcon(QIcon(":/exit"));
-        connect(action, SIGNAL(triggered(bool)), &pm(), SLOT(close_current_project()));
+        menu->addSeparator();
 
-	
-	menu = menuBar()->addMenu(tr("&Edit"));
+        action = menu->addAction(tr("&Quit"));
+        list.clear();
+        list.append(QKeySequence("CTRL+Q"));
+        action->setShortcuts(list);
+        action->setIcon(QIcon(":/exit"));
+        connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(exit()));
+
+
+        menu = menuBar()->addMenu(tr("&Edit"));
 
 	action = menu->addAction(tr("Undo"));
         m_projectMenuToolbarActions.append(action);
