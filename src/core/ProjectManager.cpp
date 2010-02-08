@@ -641,5 +641,22 @@ QStringList ProjectManager::get_projects_list()
         QString path = config().get_property("Project", "directory", "none").toString();
         QDir dir(path);
         QStringList list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
-        return list;
+        QStringList projects;
+
+        foreach(const QString &dirname, list) {
+                QString fileToOpen = path + "/" + dirname + "/project.tpf";
+
+                QFile file(fileToOpen);
+
+                if (!file.open(QIODevice::ReadOnly)) {
+                        PWARN("OpenProjectDialog:: Cannot open project properties file (%s)", fileToOpen.toUtf8().data());
+                        continue;
+                }
+
+                file.close();
+
+                projects.append(dirname);
+        }
+
+        return projects;
 }

@@ -39,6 +39,7 @@ public:
 
 private:
         Project* m_project;
+        void update_projects_directory_line_edit();
 
 
 private slots:
@@ -48,6 +49,7 @@ private slots:
         void create_new_project_button_clicked();
         void update_projects_combo_box();
         void update_previous_project_line_edit();
+        void on_changeProjectsDirButton_clicked();
 };
 
 #endif // WELCOMEWIDGET_H

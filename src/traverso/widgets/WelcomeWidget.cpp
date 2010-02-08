@@ -28,6 +28,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Interface.h"
 
 #include <QMessageBox>
+#include <QDir>
+#include <QFileDialog>
 
 
 WelcomeWidget::WelcomeWidget(QWidget *parent)
@@ -36,12 +38,14 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
         setupUi(this);
 
         update_previous_project_line_edit();
+        update_projects_directory_line_edit();
         update_projects_combo_box();
 
         connect(loadPreviousProjectButton, SIGNAL(clicked()), this, SLOT(load_previous_project_button_clicked()));
         connect(loadExistingProjectButton, SIGNAL(clicked()), this, SLOT(load_existing_project_button_clicked()));
         connect(createProjectPushbutton, SIGNAL(clicked()), this, SLOT(create_new_project_button_clicked()));
         connect(&pm(), SIGNAL(currentProjectDirChanged()), this, SLOT(update_projects_combo_box()));
+        connect(&pm(), SIGNAL(projectDirChangeDetected()), this, SLOT(update_projects_combo_box()));
         connect(&pm(), SIGNAL(projectsListChanged()), this, SLOT(update_projects_combo_box()));
         connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 }
@@ -130,6 +134,57 @@ void WelcomeWidget::update_previous_project_line_edit()
                 previousProjectLineEdit->setText("");
         }
 
+}
+
+void WelcomeWidget::update_projects_directory_line_edit()
+{
+        QString path = config().get_property("Project", "directory", "").toString();
+        projectsDirLineEdit->setText(path);
+}
+
+void WelcomeWidget::on_changeProjectsDirButton_clicked()
+{
+        QString path = config().get_property("Project", "directory", "").toString();
+
+        if (path.isEmpty()) {
+                path = QDir::homePath();
+        }
+
+        QDir rootDir(path);
+        rootDir.cdUp();
+
+        QString newPath = QFileDialog::getExistingDirectory(this,
+                        tr("Choose an existing or create a new Project Directory"), rootDir.canonicalPath());
+
+        if (newPath.isEmpty() || newPath.isNull()) {
+                return;
+        }
+
+        QDir dir;
+
+        QFileInfo fi(newPath);
+        if (dir.exists(newPath) && !fi.isWritable()) {
+                QMessageBox::warning( 0, tr("Traverso - Warning"),
+                                      tr("This directory is not writable by you! \n") +
+                                        tr("Please check permission for this directory or "
+                                        "choose another one:\n\n %1").arg(newPath) );
+                return;
+        }
+
+
+        if (dir.exists(newPath)) {
+// 		QMessageBox::information( interface, tr("Traverso - Information"), tr("Using existing Project directory: %1\n").arg(newPath), "OK", 0 );
+        } else if (!dir.mkpath(newPath)) {
+                QMessageBox::warning( this, tr("Traverso - Warning"), tr("Unable to create Project directory! \n") +
+                                tr("Please check permission for this directory: %1").arg(newPath) );
+                return;
+        } else {
+                QMessageBox::information( this, tr("Traverso - Information"), tr("Created new Project directory for you here: %1\n").arg(newPath), "OK", 0 );
+        }
+
+        pm().set_current_project_dir(newPath);
+
+        update_projects_directory_line_edit();
 }
 
 //eof
