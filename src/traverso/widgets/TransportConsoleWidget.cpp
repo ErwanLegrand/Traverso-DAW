@@ -97,6 +97,7 @@ void TransportConsoleWidget::set_sheet(Sheet* sheet)
 	{
 		m_updateTimer.stop();
 		setEnabled(false);
+                update_label();
 		return;
 	}
 
@@ -193,7 +194,7 @@ void TransportConsoleWidget::update_label()
 	QString currentTime;
 	
 	if (!m_sheet) {
-		currentTime = "0:00.0";
+                currentTime = "";
 	} else {
 		currentTime = timeref_to_ms_2(m_sheet->get_transport_location());
 	}
