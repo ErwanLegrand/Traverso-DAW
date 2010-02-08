@@ -1650,8 +1650,10 @@ void Interface::sheet_selector_update_sheets()
 {
 	// empty the list, make sure everything is deleted
         foreach(QAction* action, m_currentSheetActions->actions()) {
-		delete action;
+                m_currentSheetActions->removeAction(action);
+                delete action;
 	}
+
 
 	if (!m_project)
 	{
