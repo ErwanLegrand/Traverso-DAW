@@ -159,6 +159,8 @@ AudioDevice::AudioDevice()
 
 	m_driverType = tr("No Driver Loaded");
 
+        m_fallBackSetup.driverType = "Null Driver";
+
 #if defined (JACK_SUPPORT)
 	if (libjack_is_present) {
                 m_availableDrivers << "Jack";
@@ -324,13 +326,14 @@ void AudioDevice::set_parameters(AudioDeviceSetup ads)
         m_ditherShape = ads.ditherShape;
         m_busConfigs = ads.busConfigs;
         m_channelConfigs = ads.channelConfigs;
-        m_setup = ads;
+        if (!(ads.driverType == "Null Driver")) {
+                m_setup = ads;
+        }
 
 	shutdown();
 
         if (create_driver(ads.driverType, ads.capture, ads.playback, ads.cardDevice) < 0) {
-                m_setup.driverType = "Null Driver";
-                set_parameters(m_setup);
+                set_parameters(m_fallBackSetup);
 		return;
 	}
 	
@@ -384,8 +387,7 @@ void AudioDevice::set_parameters(AudioDeviceSetup ads)
 			
                         if (m_driver->start() == -1) {
 				// jack driver failed to start, fallback to Null Driver:
-                                m_setup.driverType = "Null Driver";
-                                set_parameters(m_setup);
+                                set_parameters(m_fallBackSetup);
 				return;
 			}
 			
@@ -398,8 +400,7 @@ void AudioDevice::set_parameters(AudioDeviceSetup ads)
         if (ads.driverType == "PortAudio"|| (ads.driverType == "PulseAudio") || (ads.driverType == "CoreAudio")) {
                 if (m_driver->start() == -1) {
 			// PortAudio driver failed to start, fallback to Null Driver:
-                        m_setup.driverType = "Null Driver";
-                        set_parameters(m_setup);
+                        set_parameters(m_fallBackSetup);
 			return;
 		}
 	}
@@ -974,8 +975,7 @@ void AudioDevice::audiothread_finished()
 		// so something certainly did go wrong when starting the beast
 		// Start the Null Driver to avoid problems with Tsar
 		PERROR("Alsa/Jack AudioThread stopped, but we didn't ask for it! Something apparently did go wrong :-(");
-                m_setup.driverType = "Null Driver";
-                set_parameters(m_setup);
+                set_parameters(m_fallBackSetup);
 	}
 }
 
@@ -1001,8 +1001,7 @@ void AudioDevice::check_jack_shutdown()
 				message(tr("The Jack server has been shutdown!"), CRITICAL);
                                 delete m_driver;
                                 m_driver = 0;
-                                m_setup.driverType = "Null Driver";
-                                set_parameters(m_setup);
+                                set_parameters(m_fallBackSetup);
 			}
 		}
 	}
@@ -1014,8 +1013,7 @@ void AudioDevice::switch_to_null_driver()
 {
 	message(tr("AudioDevice:: Buffer underrun 'Storm' detected, switching to Null Driver"), CRITICAL);
 	message(tr("AudioDevice:: For trouble shooting this problem, please see Chapter 11 from the user manual!"), INFO);
-        m_setup.driverType = "Null Driver";
-        set_parameters(m_setup);
+        set_parameters(m_fallBackSetup);
 }
 
 int AudioDevice::transport_control(transport_state_t state)

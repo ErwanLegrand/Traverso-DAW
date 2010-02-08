@@ -129,6 +129,7 @@ private:
 #endif
 
         AudioDeviceSetup        m_setup;
+        AudioDeviceSetup        m_fallBackSetup;
         Driver* 		m_driver;
         AudioDeviceThread* 	m_audioThread;
         APILinkedList		m_clients;

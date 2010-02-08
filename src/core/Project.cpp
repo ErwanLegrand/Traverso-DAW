@@ -330,7 +330,7 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
         QDomElement systemConfig = doc.createElement("SystemConfig");
 
         systemConfig.setAttribute("device", audiodevice().get_device_setup().cardDevice);
-        systemConfig.setAttribute("driver", audiodevice().get_driver_type());
+        systemConfig.setAttribute("driver", audiodevice().get_device_setup().driverType);
         audioIO.appendChild(systemConfig);
 
         QDomElement channelsElement = doc.createElement("Channels");
