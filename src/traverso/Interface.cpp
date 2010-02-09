@@ -551,7 +551,7 @@ void Interface::create_menus( )
         m_projectMenuToolbarActions.append(action);
         connect(action, SIGNAL(triggered()), this, SLOT(audio_io_dialog()));
         list.clear();
-        list.append(QKeySequence("F5"));
+        list.append(QKeySequence("F6"));
         action->setShortcuts(list);
 
 	action = menu->addAction(tr("&Export..."));
