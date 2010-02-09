@@ -216,13 +216,14 @@
 				<Object objectname="CurveView" slotsignature="add_node" modes="All" />
 			</Objects>
 		</keyfact>
-		<keyfact type="FKEY" key1="MouseButtonLeft" >
+                <keyfact type="FKEY" key1="MouseButtonLeft" >
 			<Objects>
                                 <Object objectname="SheetView" slotsignature="touch_play_cursor" modes="All" sortorder="2" submenu="Playhead" />
 				<Object objectname="TrackPanelLed" slotsignature="toggle" modes="All" sortorder="1" />
 				<Object objectname="TrackPanelBus" slotsignature="TrackView::select_bus" modes="All" />
 				<Object objectname="AudioClipView" slotsignature="set_audio_file" modes="All" sortorder="80" />
-			</Objects>
+                                 <Object objectname="CurveView" modifierkeys="CTRL" slotsignature="add_node" modes="All" />
+                        </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="MouseButtonMiddle" >
 			<Objects>
@@ -567,11 +568,6 @@
 		<keyfact type="D_FKEY" key1="C" >
 			<Objects>
 				<Object objectname="TimeLineView" slotsignature="clear_markers" modes="All" />
-			</Objects>
-		</keyfact>
-		<keyfact type="D_FKEY" key1="MouseButtonLeft" >
-			<Objects>
-				<Object objectname="CurveView" slotsignature="add_node" modes="All" />
 			</Objects>
 		</keyfact>
 		<keyfact type="D_FKEY" key1="END" >
