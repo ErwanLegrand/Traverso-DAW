@@ -152,8 +152,6 @@ signals:
 	void panChanged();
 	void stateChanged();
 	void audibleStateChanged();
-	void inBusChanged();
-	void outBusChanged();
 
 public slots:
 	void set_gain(float gain);

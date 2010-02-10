@@ -101,7 +101,7 @@ void ProjectManager::set_current_project(Project* project)
 	QString oldprojectname = "";
 	
 	if (currentProject) {
-                printf("exit in progress");
+//                printf("exit in progress");
                 QString oncloseaction = config().get_property("Project", "onclose", "save").toString();
                 if (oncloseaction == "save") {
                         currentProject->save();

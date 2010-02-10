@@ -553,13 +553,11 @@ int Track::get_sort_index( ) const
 void Track::set_capture_left_channel(bool capture)
 {
 	m_captureLeftChannel = capture;
-	emit inBusChanged();
 }
 
 void Track::set_capture_right_channel(bool capture)
 {
 	m_captureRightChannel = capture;
-	emit inBusChanged();
 }
 
 void Track::clip_position_changed(AudioClip * clip)
