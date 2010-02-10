@@ -148,7 +148,7 @@ void Tsar::process_events( )
 			int processtime = (int) (get_microseconds() - starttime);
 			printf("called %s::%s, (signal: %s) \n", event.caller->metaObject()->className(), 
 			(event.slotindex >= 0) ? event.caller->metaObject()->method(event.slotindex).signature() : "", 
-			(event.signalindex >= 0) ? event.caller->metaObject()->method(event.signalindex + 4).signature() : "");
+                        (event.signalindex >= 0) ? event.caller->metaObject()->method(event.signalindex + event.caller->metaObject()->methodOffset()).signature() : "");
 			printf("Process time: %d useconds\n\n", processtime);
 #endif
 		}
@@ -245,13 +245,11 @@ TsarEvent Tsar::create_event( QObject* caller, void* argument, const char* slotS
 	}
 	
 	if (qstrlen(signalSignature) > 0) {
-		/* the signal index seems to have an offset of 4, so we have to substract 4 from */
-		/* the value returned by caller->metaObject()->indexOfMethod*/ 
-		index = caller->metaObject()->indexOfMethod(signalSignature) - 4;
+                index = caller->metaObject()->indexOfMethod(signalSignature) - caller->metaObject()->methodOffset();
 		if (index < 0) {
 			PWARN("Signal signature contains whitespaces, please remove to avoid unneeded processing (%s::%s)", caller->metaObject()->className(), signalSignature);
 			QByteArray norm = QMetaObject::normalizedSignature(signalSignature);
-			index = caller->metaObject()->indexOfMethod(norm.constData()) - 4;
+                        index = caller->metaObject()->indexOfMethod(norm.constData()) - caller->metaObject()->methodOffset();
 		}
 		event.signalindex = index; 
 	} else {
