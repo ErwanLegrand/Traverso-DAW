@@ -50,7 +50,7 @@ class Marker;
 
 struct ExportSpecification;
 
-class Sheet : public ContextItem, public AudioProcessingItem
+class Sheet : public AudioProcessingItem
 {
 	Q_OBJECT
 	Q_CLASSINFO("start_transport", tr("Play"))
@@ -241,9 +241,6 @@ public slots :
         void rescan_busses();
         void set_gain(float gain);
 	void set_transport_pos(TimeRef location);
-	
-	float get_gain() const;
-
 	void set_temp_follow_state(bool state);
 
 	Command* next_skip_pos();
@@ -289,11 +286,6 @@ private slots:
 	void clip_finished_recording(AudioClip* clip);
 	void config_changed();
 };
-
-inline float Sheet::get_gain() const
-{
-	return m_fader->get_gain();
-}
 
 
 #endif

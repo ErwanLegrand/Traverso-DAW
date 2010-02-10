@@ -42,7 +42,7 @@ class AudioBus;
 class FadeCurve;
 class PluginChain;
 
-class AudioClip : public ContextItem, public AudioProcessingItem, public Snappable
+class AudioClip : public AudioProcessingItem, public Snappable
 {
 	Q_OBJECT
 	Q_CLASSINFO("mute", tr("Mute"))
@@ -178,8 +178,6 @@ public slots:
 	void toggle_mute();
 	void toggle_lock();
 	void set_gain(float g);
-
-	float get_gain() const;
 	
 	Command* mute();
 	Command* reset_fade_in();
@@ -197,11 +195,5 @@ private slots:
 
 
 inline qint64 AudioClip::get_readsource_id( ) const {return m_readSourceId;}
-
-inline float AudioClip::get_gain( ) const
-{
-	return m_fader->get_gain();
-}
-
 
 #endif

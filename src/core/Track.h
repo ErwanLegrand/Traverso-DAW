@@ -39,7 +39,7 @@ class Sheet;
 class PluginChain;
 class Plugin;
 
-class Track : public ContextItem, public AudioProcessingItem
+class Track : public AudioProcessingItem
 {
 	Q_OBJECT
 	Q_CLASSINFO("mute", tr("Mute"))
@@ -159,8 +159,6 @@ public slots:
 	void set_gain(float gain);
 	void clip_position_changed(AudioClip* clip);
 	
-	float get_gain() const;
-
 	Command* mute();
 	Command* toggle_arm();
 	Command* solo();
@@ -172,12 +170,6 @@ private slots:
         void rescan_busses();
 
 };
-
-
-inline float Track::get_gain( ) const
-{
-	return m_fader->get_gain();
-}
 
 #endif
 

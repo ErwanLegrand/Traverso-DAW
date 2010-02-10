@@ -22,13 +22,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #ifndef AUDIO_PROCESSING_ITEM_H
 #define AUDIO_PROCESSING_ITEM_H
 
+#include "ContextItem.h"
 #include "APILinkedList.h"
+#include "GainEnvelope.h"
 
-class GainEnvelope;
 class PluginChain;
 
-class AudioProcessingItem : public APILinkedListNode
+class AudioProcessingItem : public ContextItem, public APILinkedListNode
 {
+        Q_OBJECT
 public:
 	AudioProcessingItem () {}
 	~AudioProcessingItem () {}
@@ -40,6 +42,16 @@ protected:
 	GainEnvelope* m_fader;
 	PluginChain* m_pluginChain;
 	bool m_isMuted;
+        
+public slots:
+	float get_gain() const;
+
 };
+
+inline float AudioProcessingItem::get_gain( ) const
+{
+	return m_fader->get_gain();
+}
+
 
 #endif

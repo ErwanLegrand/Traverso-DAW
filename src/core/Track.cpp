@@ -42,7 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 Track::Track(Sheet* sheet, const QString& name, int height )
-	: ContextItem(sheet), 
+        : /*ContextItem(sheet), */
 	  m_sheet(sheet), 
 	  m_name(name),
 	  m_height(height)
@@ -59,7 +59,7 @@ Track::Track(Sheet* sheet, const QString& name, int height )
 }
 
 Track::Track( Sheet * sheet, const QDomNode node)
-	: ContextItem(sheet), 
+        : /*ContextItem(sheet), */
 	  m_sheet(sheet)
 {
 	PENTERCONS;

@@ -76,8 +76,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  */
 
 Sheet::Sheet(Project* project)
-	: ContextItem()
-	, m_project(project)
+        :/* ContextItem()
+        ,*/ m_project(project)
 {
 	PENTERCONS;
 	title = tr("Untitled");
@@ -88,8 +88,8 @@ Sheet::Sheet(Project* project)
 }
 
 Sheet::Sheet(Project* project, int numtracks)
-	: ContextItem()
-	, m_project(project)
+        :/* ContextItem()
+        ,*/ m_project(project)
 {
 	PENTERCONS;
 	title = tr("Untitled");
@@ -106,7 +106,7 @@ Sheet::Sheet(Project* project, int numtracks)
 }
 
 Sheet::Sheet(Project* project, const QDomNode node)
-		: ContextItem(), m_project(project)
+                : /*ContextItem(), */m_project(project)
 {
 	PENTERCONS;
 	
