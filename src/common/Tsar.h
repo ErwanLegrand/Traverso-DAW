@@ -42,7 +42,7 @@ $Id: Tsar.h,v 1.4 2008/02/11 10:11:52 r_sijrier Exp $
 	\
 	if ( ! retrievedsignalindex ) { \
                 /* the signal index seems to have an offset, substract it! */ \
-                retrievedsignalindex = cal->metaObject()->indexOfMethod(#signalSignature) - cal->metaObject()->methodOffset(); \
+                retrievedsignalindex = cal->metaObject()->indexOfSignal(#signalSignature); \
 		Q_ASSERT(retrievedsignalindex >= 0); \
 	} \
 	event.signalindex = retrievedsignalindex; \

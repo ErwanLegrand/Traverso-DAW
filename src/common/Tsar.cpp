@@ -121,7 +121,7 @@ void Tsar::add_rt_event( TsarEvent& event )
 //
 void Tsar::process_events( )
 {
-// #define profile
+//#define profile
 
 	for (int i=0; i<m_events.size(); ++i) {
 		RingBufferNPT<TsarEvent>* newEvents = m_events.at(i);
@@ -148,7 +148,7 @@ void Tsar::process_events( )
 			int processtime = (int) (get_microseconds() - starttime);
 			printf("called %s::%s, (signal: %s) \n", event.caller->metaObject()->className(), 
 			(event.slotindex >= 0) ? event.caller->metaObject()->method(event.slotindex).signature() : "", 
-                        (event.signalindex >= 0) ? event.caller->metaObject()->method(event.signalindex + event.caller->metaObject()->methodOffset()).signature() : "");
+                        (event.signalindex >= 0) ? event.caller->metaObject()->method(event.signalindex).signature() : "");
 			printf("Process time: %d useconds\n\n", processtime);
 #endif
 		}
@@ -245,11 +245,11 @@ TsarEvent Tsar::create_event( QObject* caller, void* argument, const char* slotS
 	}
 	
 	if (qstrlen(signalSignature) > 0) {
-                index = caller->metaObject()->indexOfMethod(signalSignature) - caller->metaObject()->methodOffset();
+                index = caller->metaObject()->indexOfMethod(signalSignature);
 		if (index < 0) {
 			PWARN("Signal signature contains whitespaces, please remove to avoid unneeded processing (%s::%s)", caller->metaObject()->className(), signalSignature);
 			QByteArray norm = QMetaObject::normalizedSignature(signalSignature);
-                        index = caller->metaObject()->indexOfMethod(norm.constData()) - caller->metaObject()->methodOffset();
+                        index = caller->metaObject()->indexOfMethod(norm.constData());
 		}
 		event.signalindex = index; 
 	} else {
@@ -300,10 +300,15 @@ void Tsar::process_event_signal(const TsarEvent & event )
 {
 	// In case the signalindex > -1, emit the signal!
 	if (event.signalindex > -1) {
-		// This equals emit someSignal() :-)
-		void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&event.argument)) };
-		QMetaObject::activate(event.caller, event.caller->metaObject(), event.signalindex, _a);
-	}
+
+                void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&event.argument)) };
+
+                // This equals QMetaObject::invokeMethod(), without type checking. But we know that the types
+                // are the correct ones, and will be casted just fine!
+                if ( ! (event.caller->qt_metacall(QMetaObject::InvokeMetaMethod, event.signalindex, _a) < 0) ) {
+                        qDebug("Tsar::process_event_signal failed (%s::%s)", event.caller->metaObject()->className(), event.caller->metaObject()->method(event.signalindex).signature());
+                }
+        }
 }
 
 /**

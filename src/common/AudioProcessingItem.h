@@ -49,15 +49,16 @@ protected:
 	PluginChain* m_pluginChain;
 	bool m_isMuted;
         
-signals:
-        void busConfigurationChanged();
-
 public slots:
 	float get_gain() const;
 
 private slots:
         void private_set_input_bus(AudioBus*);
         void private_set_output_bus(AudioBus*);
+
+signals:
+        void busConfigurationChanged();
+
 };
 
 inline float AudioProcessingItem::get_gain( ) const

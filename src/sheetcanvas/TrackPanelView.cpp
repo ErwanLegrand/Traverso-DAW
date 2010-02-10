@@ -85,8 +85,8 @@ TrackPanelView::TrackPanelView(TrackView* trackView)
 	connect(m_track, SIGNAL(gainChanged()), this, SLOT(update_gain()));
 	connect(m_track, SIGNAL(panChanged()), this, SLOT(update_pan()));
 	
-	connect(m_track, SIGNAL(inBusChanged()), inBus, SLOT(bus_changed()));
-	connect(m_track, SIGNAL(outBusChanged()), outBus, SLOT(bus_changed()));
+        connect(m_track, SIGNAL(busConfigurationChanged()), inBus, SLOT(bus_changed()));
+	connect(m_track, SIGNAL(busConfigurationChanged()), outBus, SLOT(bus_changed()));
 	
 	connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_track_name()));
 	
