@@ -117,7 +117,6 @@ public:
 
 private:
 	Track* 			m_track;
-	Sheet* 			m_sheet;
 	ReadSource*		m_readSource;
 	WriteSource*		m_recorder;
 	APILinkedList		m_fades;

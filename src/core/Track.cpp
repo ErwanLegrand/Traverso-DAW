@@ -42,10 +42,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 Track::Track(Sheet* sheet, const QString& name, int height )
-        : /*ContextItem(sheet), */
-	  m_sheet(sheet), 
-	  m_name(name),
-	  m_height(height)
+        : AudioProcessingItem(sheet)
+        , m_name(name)
+        , m_height(height)
 {
 	PENTERCONS;
 	m_pan = numtakes = 0;
@@ -59,8 +58,7 @@ Track::Track(Sheet* sheet, const QString& name, int height )
 }
 
 Track::Track( Sheet * sheet, const QDomNode node)
-        : /*ContextItem(sheet), */
-	  m_sheet(sheet)
+        : AudioProcessingItem(sheet)
 {
 	PENTERCONS;
 	Q_UNUSED(node);
@@ -84,6 +82,7 @@ void Track::init()
 	m_captureRightChannel = m_captureLeftChannel = true;
 
         connect(&audiodevice(), SIGNAL(busConfigChanged()), this, SLOT(rescan_busses()), Qt::DirectConnection);
+        connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(rescan_busses()), Qt::DirectConnection);
 }
 
 QDomNode Track::get_state( QDomDocument doc, bool istemplate)

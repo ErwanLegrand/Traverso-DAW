@@ -28,12 +28,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 class PluginChain;
 class AudioBus;
+class Sheet;
 
 class AudioProcessingItem : public ContextItem, public APILinkedListNode
 {
         Q_OBJECT
 public:
-	AudioProcessingItem () {}
+        AudioProcessingItem (Sheet* sheet=0) : m_sheet(sheet) {}
 	~AudioProcessingItem () {}
 	
         void set_input_bus(AudioBus* bus);
@@ -45,9 +46,10 @@ public:
 protected:
         AudioBus*       m_inputBus;
         AudioBus*       m_outputBus;
-	GainEnvelope* m_fader;
-	PluginChain* m_pluginChain;
-	bool m_isMuted;
+        Sheet*          m_sheet;
+        GainEnvelope*   m_fader;
+        PluginChain*    m_pluginChain;
+        bool            m_isMuted;
         
 public slots:
 	float get_gain() const;

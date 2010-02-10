@@ -80,7 +80,6 @@ AudioClip::AudioClip(const QString& name)
 AudioClip::AudioClip(const QDomNode& node)
 	: Snappable()
 	, m_track(0)
-	, m_sheet(0)
 	, m_readSource(0)
 {
 	PENTERCONS;

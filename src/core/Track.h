@@ -118,7 +118,6 @@ public :
 	int process(nframes_t nframes);
 
 private :
-	Sheet*		m_sheet;
 	APILinkedList 	m_clips;
 
 	float 	m_pan;
