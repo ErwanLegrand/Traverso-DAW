@@ -41,9 +41,8 @@ $Id: Tsar.h,v 1.4 2008/02/11 10:11:52 r_sijrier Exp $
 	static int retrievedsignalindex; \
 	\
 	if ( ! retrievedsignalindex ) { \
-		/* the signal index seems to have an offset of 4, so we have to substract 4 from */ \
-		/* the value returned by caller->metaObject()->indexOfMethod*/  \
-		retrievedsignalindex = cal->metaObject()->indexOfMethod(#signalSignature) - 4; \
+                /* the signal index seems to have an offset, substract it! */ \
+                retrievedsignalindex = cal->metaObject()->indexOfMethod(#signalSignature) - cal->metaObject()->methodOffset(); \
 		Q_ASSERT(retrievedsignalindex >= 0); \
 	} \
 	event.signalindex = retrievedsignalindex; \
