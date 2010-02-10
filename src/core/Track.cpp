@@ -280,14 +280,21 @@ void Track::set_bus_in(QByteArray bus)
 	if (wasArmed) {
 		arm();
 	}
-	
-	emit inBusChanged();
+
+        AudioBus* inBus = audiodevice().get_capture_bus(busIn);
+        if (inBus) {
+                set_input_bus(inBus);
+        }
 }
 
 void Track::set_bus_out(QByteArray bus)
 {
 	busOut=bus;
-	emit outBusChanged();
+
+        AudioBus* outBus = audiodevice().get_playback_bus(busOut);
+        if (outBus) {
+                set_output_bus(outBus);
+        }
 }
 
 bool Track::is_solo()
@@ -461,7 +468,7 @@ int Track::process( nframes_t nframes )
 	processResult |= m_pluginChain->process_post_fader(bus, nframes);
 		
 	for (int i=0; i<bus->get_channel_count(); ++i) {
-		Mixer::mix_buffers_no_gain(m_sheet->get_master_out()->get_buffer(i, nframes), bus->get_buffer(i, nframes), nframes);
+                Mixer::mix_buffers_no_gain(m_outputBus->get_buffer(i, nframes), bus->get_buffer(i, nframes), nframes);
 	}
 	
 	return processResult;

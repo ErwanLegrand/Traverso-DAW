@@ -24,11 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QDebug>
 
-#define apill_foreach(variable, upcasttype, apillist) \
-	for(APILinkedListNode* apillnode = apillist.first(); apillnode!=0; apillnode = apillnode->next) \
-		if (variable = (upcasttype*)apillnode) \
-
-
 class APILinkedListNode
 {
 public:
@@ -37,6 +32,10 @@ public:
 	APILinkedListNode* next;
 	virtual bool is_smaller_then(APILinkedListNode* node) = 0;
 };
+
+#define apill_foreach(variable, upcasttype, apillist) \
+        for(APILinkedListNode* apillnode = apillist.first(); apillnode!=0; apillnode = apillnode->next) \
+                if (variable = (upcasttype*)apillnode) \
 
 class APILinkedList
 {

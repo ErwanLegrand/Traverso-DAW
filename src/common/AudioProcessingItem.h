@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "GainEnvelope.h"
 
 class PluginChain;
+class AudioBus;
 
 class AudioProcessingItem : public ContextItem, public APILinkedListNode
 {
@@ -35,17 +36,28 @@ public:
 	AudioProcessingItem () {}
 	~AudioProcessingItem () {}
 	
+        void set_input_bus(AudioBus* bus);
+        void set_output_bus(AudioBus* bus);
+
 	bool is_muted() const {return m_isMuted;}
 	virtual bool is_smaller_then(APILinkedListNode* node) = 0;
 
 protected:
+        AudioBus*       m_inputBus;
+        AudioBus*       m_outputBus;
 	GainEnvelope* m_fader;
 	PluginChain* m_pluginChain;
 	bool m_isMuted;
         
+signals:
+        void busConfigurationChanged();
+
 public slots:
 	float get_gain() const;
 
+private slots:
+        void private_set_input_bus(AudioBus*);
+        void private_set_output_bus(AudioBus*);
 };
 
 inline float AudioProcessingItem::get_gain( ) const
