@@ -353,7 +353,7 @@ void Track::set_gain(float gain)
 	if (gain > 2.0)
 		gain = 2.0;
 	m_fader->set_gain(gain);
-	emit gainChanged();
+        emit stateChanged();
 }
 
 

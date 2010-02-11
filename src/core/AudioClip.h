@@ -118,12 +118,9 @@ private:
 	WriteSource*		m_recorder;
 	APILinkedList		m_fades;
 	Peak* 			m_peak;
-	AudioBus*		m_captureBus;
 	FadeCurve*		fadeIn;
 	FadeCurve*		fadeOut;
 	QDomNode		m_domNode;
-	
-        QString 		m_captureBusName;
 	
 	TimeRef 		m_trackStartLocation;
 	TimeRef 		m_trackEndLocation;

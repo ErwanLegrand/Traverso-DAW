@@ -533,7 +533,7 @@ int AudioClip::process(nframes_t nframes)
 //
 void AudioClip::process_capture(nframes_t nframes)
 {
-	if (!m_captureBus) {
+        if (!m_inputBus) {
 		return;
 	}
 	
@@ -542,16 +542,16 @@ void AudioClip::process_capture(nframes_t nframes)
 	
 	if (m_track->capture_left_channel() && m_track->capture_right_channel()) {
 		audio_sample_t* buffer[2];
-		buffer[0] = m_captureBus->get_buffer(0, nframes);
-		buffer[1] = m_captureBus->get_buffer(1, nframes);
+                buffer[0] = m_inputBus->get_buffer(0, nframes);
+                buffer[1] = m_inputBus->get_buffer(1, nframes);
 		written = m_recorder->rb_write(buffer, nframes);
 	} else if (m_track->capture_left_channel()) {
 		audio_sample_t* buffer[1];
-		buffer[0] = m_captureBus->get_buffer(0, nframes);
+                buffer[0] = m_inputBus->get_buffer(0, nframes);
 		written = m_recorder->rb_write(buffer, nframes);
 	} else if (m_track->capture_right_channel()) {
 		audio_sample_t* buffer[1];
-		buffer[0] = m_captureBus->get_buffer(1, nframes);
+                buffer[0] = m_inputBus->get_buffer(1, nframes);
 		written = m_recorder->rb_write(buffer, nframes);
 	}
 	
@@ -565,10 +565,10 @@ int AudioClip::init_recording(const QString& name )
 	Q_ASSERT(m_sheet);
 	Q_ASSERT(m_track);
 	
-	m_captureBusName = name;
+        m_busInName = name;
 	get_capture_bus();
 
-	if (!m_captureBus) {
+        if (!m_inputBus) {
 		info().critical(tr("Unable to Record to Track"));
 		info().warning(tr("AudioDevice doesn't have this Capture Bus: %1 (Track %2)").
                                 arg(name).arg(m_track->get_id()) );
@@ -624,7 +624,7 @@ int AudioClip::init_recording(const QString& name )
 	spec->totalTime = TimeRef();
 	spec->blocksize = audiodevice().get_buffer_size();
 	spec->name = m_name + "-" + sourceid;
-	spec->dataF = m_captureBus->get_buffer(0, audiodevice().get_buffer_size());
+        spec->dataF = m_inputBus->get_buffer(0, audiodevice().get_buffer_size());
 
 	m_recorder = new WriteSource(spec);
 	if (m_recorder->prepare_export() == -1) {
@@ -997,7 +997,7 @@ ReadSource * AudioClip::get_readsource() const
 
 void AudioClip::get_capture_bus()
 {
-	m_captureBus = audiodevice().get_capture_bus(m_captureBusName);
+        m_inputBus = audiodevice().get_capture_bus(m_busInName);
 }
 
 void AudioClip::set_as_moving(bool moving)

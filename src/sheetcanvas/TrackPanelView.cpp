@@ -82,7 +82,7 @@ TrackPanelView::TrackPanelView(TrackView* trackView)
 	connect(m_track, SIGNAL(soloChanged(bool)), soloLed, SLOT(ison_changed(bool)));
 	connect(m_track, SIGNAL(muteChanged(bool)), muteLed, SLOT(ison_changed(bool)));
 	
-	connect(m_track, SIGNAL(gainChanged()), this, SLOT(update_gain()));
+        connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_gain()));
 	connect(m_track, SIGNAL(panChanged()), this, SLOT(update_pan()));
 	
         connect(m_track, SIGNAL(busConfigurationChanged()), inBus, SLOT(bus_changed()));

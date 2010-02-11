@@ -139,7 +139,6 @@ signals:
 	void soloChanged(bool isSolo);
 	void armedChanged(bool isArmed);
 	void lockChanged(bool isLocked);
-	void gainChanged();
 	void panChanged();
 	void audibleStateChanged();
 
