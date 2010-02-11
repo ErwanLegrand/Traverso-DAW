@@ -98,7 +98,7 @@ public:
 	
 	const TimeRef& get_new_transport_location() const {return m_newTransportLocation;}
 	
-	QString get_artists() const {return artists;}
+        QString get_artists() const {return m_artists;}
 	QDomNode get_state(QDomDocument doc, bool istemplate=false);
 	QList<Track*> get_tracks() const;
 	
@@ -109,7 +109,7 @@ public:
 	SnapList* get_snap_list() const;
 	PluginChain* get_plugin_chain() const;
 	TimeLine* get_timeline() const {return m_timeline;}
-	Snappable* get_work_snap() {return workSnap;}
+        Snappable* get_work_snap() {return m_workSnap;}
 	Track* get_track(qint64 id);
 	Track* get_track_for_index(int index);
 
@@ -143,7 +143,7 @@ public:
 	
 	bool any_track_armed();
 	bool realtime_path() const {return m_realtimepath;}
-	bool is_changed() const {return changed;}
+        bool is_changed() const {return m_changed;}
 	bool is_snap_on() const	{return m_isSnapOn;}
 	bool is_recording() const {return m_recording;}
 	bool is_smaller_then(APILinkedListNode* node) {Q_UNUSED(node); return false;}
@@ -194,15 +194,15 @@ private:
 	TimeRef		m_newTransportLocation;
 
 	
-	nframes_t 	firstVisibleFrame;
-	QString 	artists;
+        nframes_t 	m_firstVisibleFrame;
+        QString 	m_artists;
 	int		m_mode;
 	qreal		m_hzoom;
 	int		m_sbx;
 	int		m_sby;
 	uint		m_currentSampleRate;
 	bool 		m_rendering;
-	bool 		changed;
+        bool 		m_changed;
 	bool 		m_isSnapOn;
 	bool		m_resumeTransport;
 	bool 		m_stopTransport;
@@ -211,8 +211,8 @@ private:
 	bool		m_recording;
 	bool		m_prepareRecording;
 	bool		m_readyToRecord;
-	SnapList*	snaplist;
-	Snappable*	workSnap;
+        SnapList*	m_snaplist;
+        Snappable*	m_workSnap;
 	
 	void init();
 
@@ -270,7 +270,6 @@ signals:
 	void snapChanged();
 	void tempFollowChanged(bool state);
 	void setCursorAtEdge();
-	void masterGainChanged();
 	void modeChanged();
 	void recordingStateChanged();
 	void prepareRecording();

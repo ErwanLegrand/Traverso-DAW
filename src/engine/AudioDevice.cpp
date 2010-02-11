@@ -287,11 +287,6 @@ int AudioDevice::run_one_cycle( nframes_t nframes, float  )
 	apill_foreach(Client* client, Client, m_clients) {
 		client->process(nframes);
 	}
-/*	for (int i=0; i<m_clients.size(); ++i) {
-		if (m_clients.at(i)->process(nframes) < 0) {
-			// ?
-		}
-	}*/
 	
         if (m_driver->write(nframes) < 0) {
 		qDebug("driver write failed!");

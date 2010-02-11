@@ -48,7 +48,7 @@ SheetPanelGain::SheetPanelGain(ViewItem* parent, Sheet* sheet)
 	, m_sheet(sheet)
 {
 	m_boundingRect = QRectF(0, 0, 180, 9);
-	connect(sheet, SIGNAL(masterGainChanged()), this, SLOT(update_gain()));
+        connect(sheet, SIGNAL(stateChanged()), this, SLOT(update_gain()));
 	setAcceptsHoverEvents(true);
 }
 

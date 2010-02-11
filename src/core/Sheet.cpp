@@ -83,7 +83,7 @@ Sheet::Sheet(Project* project)
 	PENTERCONS;
         m_name = tr("Untitled");
 	m_id = create_id();
-	artists = tr("No artists name set");
+        m_artists = tr("No artists name set");
 
 	init();
 }
@@ -95,7 +95,7 @@ Sheet::Sheet(Project* project, int numtracks)
 	PENTERCONS;
         m_name = tr("Untitled");
 	m_id = create_id();
-	artists = tr("No artists name set");
+        m_artists = tr("No artists name set");
 	m_hzoom = config().get_property("Sheet", "hzoomLevel", 8192).toInt();
 
 	init();
@@ -134,8 +134,8 @@ Sheet::~Sheet()
 	delete m_clipRenderBus;
 	delete m_hs;
 	delete m_audiodeviceClient;
-	delete snaplist;
-	delete workSnap;
+        delete m_snaplist;
+        delete m_workSnap;
 }
 
 void Sheet::init()
@@ -183,15 +183,15 @@ void Sheet::init()
         m_masterSubGroup->set_output_bus(m_playBackBus);
 
 	m_transport = m_stopTransport = m_resumeTransport = m_readyToRecord = false;
-	snaplist = new SnapList(this);
-	workSnap = new Snappable();
-	workSnap->set_snap_list(snaplist);
+        m_snaplist = new SnapList(this);
+        m_workSnap = new Snappable();
+        m_workSnap->set_snap_list(m_snaplist);
 
 	m_realtimepath = false;
 	m_scheduledForDeletion = false;
 	m_isSnapOn=true;
-	changed = m_rendering = m_recording = m_prepareRecording = false;
-	firstVisibleFrame=0;
+	m_changed = m_rendering = m_recording = m_prepareRecording = false;
+        m_firstVisibleFrame=0;
 	m_workLocation = TimeRef();
 	m_seeking = m_startSeek = 0;
 	// TODO seek to old position on project exit ?
@@ -217,7 +217,7 @@ int Sheet::set_state( const QDomNode & node )
 	QDomElement e = propertiesNode.toElement();
 
         m_name = e.attribute( "title", "" );
-	artists = e.attribute( "artists", "" );
+        m_artists = e.attribute( "artists", "" );
 	set_gain(e.attribute( "mastergain", "1.0").toFloat() );
 	qreal zoom = e.attribute("hzoom", "4096").toDouble();
 	set_hzoom(zoom);
@@ -266,8 +266,8 @@ QDomNode Sheet::get_state(QDomDocument doc, bool istemplate)
 	
 	QDomElement properties = doc.createElement("Properties");
         properties.setAttribute("title", m_name);
-	properties.setAttribute("artists", artists);
-	properties.setAttribute("firstVisibleFrame", firstVisibleFrame);
+        properties.setAttribute("artists", m_artists);
+        properties.setAttribute("firstVisibleFrame", m_firstVisibleFrame);
 	properties.setAttribute("m_workLocation", m_workLocation.universal_frame());
 	properties.setAttribute("transportlocation", m_transportLocation.universal_frame());
 	properties.setAttribute("hzoom", m_hzoom);
@@ -671,13 +671,13 @@ QList<Marker*> Sheet::get_cdtrack_list(ExportSpecification *spec)
 
 SnapList* Sheet::get_snap_list() const
 {
-	return snaplist;
+        return m_snaplist;
 }
 
 
 void Sheet::set_artists(const QString& pArtists)
 {
-	artists = pArtists;
+        m_artists = pArtists;
 }
 
 void Sheet::set_gain(float gain)
@@ -689,7 +689,7 @@ void Sheet::set_gain(float gain)
 
         m_masterSubGroup->get_plugin_chain()->get_fader()->set_gain(gain);
 
-	emit masterGainChanged();
+        emit stateChanged();
 }
 
 float Sheet::get_gain( ) const
@@ -700,7 +700,7 @@ float Sheet::get_gain( ) const
 void Sheet::set_first_visible_frame(nframes_t pos)
 {
 	PENTER;
-	firstVisibleFrame = pos;
+        m_firstVisibleFrame = pos;
 	emit firstVisibleFrameChanged();
 }
 
@@ -711,8 +711,8 @@ void Sheet::set_work_at(const TimeRef& location)
                 return;
         }
 	m_workLocation = location;
-	if (workSnap->is_snappable()) {
-		snaplist->mark_dirty();
+        if (m_workSnap->is_snappable()) {
+                m_snaplist->mark_dirty();
 	}
 	emit workingPosChanged();
 }
@@ -1057,7 +1057,7 @@ int Sheet::get_rate( )
 
 nframes_t Sheet::get_first_visible_frame( ) const
 {
-	return firstVisibleFrame;
+        return m_firstVisibleFrame;
 }
 
 DiskIO * Sheet::get_diskio( ) const
@@ -1497,7 +1497,7 @@ Track * Sheet::get_track_for_index(int index)
 // even during playback.
 Command* Sheet::prev_skip_pos()
 {
-	if (snaplist->was_dirty()) {
+        if (m_snaplist->was_dirty()) {
 		update_skip_positions();
 	}
 
@@ -1541,7 +1541,7 @@ Command* Sheet::prev_skip_pos()
 
 Command* Sheet::next_skip_pos()
 {
-	if (snaplist->was_dirty()) {
+        if (m_snaplist->was_dirty()) {
 		update_skip_positions();
 	}
 
