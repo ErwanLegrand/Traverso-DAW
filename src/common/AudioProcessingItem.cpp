@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AddRemove.h"
 #include "AudioBus.h"
 #include "AudioChannel.h"
+#include "AudioDevice.h"
 #include "Mixer.h"
 #include "PluginChain.h"
 
@@ -38,6 +39,7 @@ AudioProcessingItem::AudioProcessingItem(Sheet *sheet)
         }
         m_fader = m_pluginChain->get_fader();
 
+        connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(audiodevice_params_changed()), Qt::DirectConnection);
 }
 
 void AudioProcessingItem::set_input_bus(AudioBus *bus)
@@ -53,6 +55,11 @@ void AudioProcessingItem::set_output_bus(AudioBus *bus)
 void AudioProcessingItem::private_set_input_bus(AudioBus* bus)
 {
         m_inputBus = bus;
+}
+
+void AudioProcessingItem::set_output_bus_name(const QString &name)
+{
+        m_busOutName = name;
 }
 
 void AudioProcessingItem::private_set_output_bus(AudioBus* bus)
@@ -86,7 +93,10 @@ void AudioProcessingItem::send_to_output_buses(nframes_t nframes, bool applyFade
 
 void AudioProcessingItem::audiodevice_params_changed()
 {
-
+        AudioBus* bus = audiodevice().get_playback_bus(m_busOutName);
+        if (bus) {
+                m_outputBus = bus;
+        }
 }
 
 void AudioProcessingItem::set_name( const QString & name )

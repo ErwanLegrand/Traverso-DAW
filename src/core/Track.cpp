@@ -81,7 +81,6 @@ void Track::init()
 	m_captureRightChannel = m_captureLeftChannel = true;
 
         connect(&audiodevice(), SIGNAL(busConfigChanged()), this, SLOT(rescan_busses()), Qt::DirectConnection);
-        connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(rescan_busses()), Qt::DirectConnection);
 }
 
 QDomNode Track::get_state( QDomDocument doc, bool istemplate)

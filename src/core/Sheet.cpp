@@ -178,7 +178,8 @@ void Sheet::init()
 	
 	set_context_item( m_acmanager );
 
-	m_playBackBus = audiodevice().get_playback_bus("Playback 1");
+        m_masterSubGroup->set_output_bus_name("Playback 1");
+        m_playBackBus = audiodevice().get_playback_bus("Playback 1");
         m_masterSubGroup->set_output_bus(m_playBackBus);
 
 	m_transport = m_stopTransport = m_resumeTransport = m_readyToRecord = false;
@@ -1025,8 +1026,6 @@ void Sheet::resize_buffer(bool updateArmStatus, nframes_t size)
 
 void Sheet::audiodevice_params_changed()
 {
-        m_playBackBus = audiodevice().get_playback_bus("Playback 1");
-        m_masterSubGroup->set_output_bus(m_playBackBus);
 	resize_buffer(true, audiodevice().get_buffer_size());
 	
 	// The samplerate possibly has been changed, this initiates

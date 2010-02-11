@@ -41,6 +41,8 @@ public:
         void set_input_bus(AudioBus* bus);
         void set_output_bus(AudioBus* bus);
 
+        void set_output_bus_name(const QString& name);
+
         void send_to_output_buses(nframes_t nframes, bool applyFaderGain=true);
 
         AudioBus* get_process_bus() {return m_processBus;}
