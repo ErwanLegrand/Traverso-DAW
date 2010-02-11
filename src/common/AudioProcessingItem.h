@@ -45,6 +45,9 @@ public:
 
         AudioBus* get_process_bus() {return m_processBus;}
         PluginChain* get_plugin_chain() const {return m_pluginChain;}
+        QString get_name() const {return m_name;}
+        void set_name(const QString& name);
+
 
 	bool is_muted() const {return m_isMuted;}
 	virtual bool is_smaller_then(APILinkedListNode* node) = 0;
@@ -56,18 +59,24 @@ protected:
         Sheet*          m_sheet;
         GainEnvelope*   m_fader;
         PluginChain*    m_pluginChain;
+        QString         m_busInName;
+        QString         m_busOutName;
+        QString		m_name;
+
+
         bool            m_isMuted;
 
 public slots:
 	float get_gain() const;
 
 private slots:
+        void audiodevice_params_changed();
         void private_set_input_bus(AudioBus*);
         void private_set_output_bus(AudioBus*);
 
 signals:
         void busConfigurationChanged();
-
+        void stateChanged();
 };
 
 inline float AudioProcessingItem::get_gain( ) const

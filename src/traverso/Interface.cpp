@@ -1671,7 +1671,7 @@ void Interface::sheet_selector_update_sheets()
 	foreach(Sheet* sheet, m_project->get_sheets())
 	{
 		QString string = QString::number(m_project->get_sheet_index(sheet->get_id())) +
-		": " + sheet->get_title();
+                ": " + sheet->get_name();
 		QAction* action = m_sheetMenu->addAction(string);
                 m_currentSheetActions->addAction(action);
 		action->setData(sheet->get_id());
@@ -1714,13 +1714,13 @@ void Interface::sheet_selected()
 
 void Interface::sheet_selector_sheet_added(Sheet* sheet)
 {
-	connect(sheet, SIGNAL(propertyChanged()), this, SLOT(sheet_selector_update_sheets()));
+        connect(sheet, SIGNAL(stateChanged()), this, SLOT(sheet_selector_update_sheets()));
 	sheet_selector_update_sheets();
 }
 
 void Interface::sheet_selector_sheet_removed(Sheet* sheet)
 {
-	disconnect(sheet, SIGNAL(propertyChanged()), this, SLOT(sheet_selector_update_sheets()));
+        disconnect(sheet, SIGNAL(stateChanged()), this, SLOT(sheet_selector_update_sheets()));
 	sheet_selector_update_sheets();
 }
 

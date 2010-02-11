@@ -69,7 +69,6 @@ public:
 	int process(nframes_t nframes);
 	
 	void set_track_start_location(const TimeRef& location);
-	void set_name(const QString& name);
 	void set_fade_in(double range);
 	void set_fade_out(double range);
 	void set_track(Track* track);
@@ -101,7 +100,6 @@ public:
 	qint64 get_sheet_id() const {return m_sheetId;}
 	ReadSource* get_readsource() const;
 	
-	QString get_name() const;
 	QDomNode get_dom_node() const;
 	
 	bool is_take() const;
@@ -125,7 +123,6 @@ private:
 	FadeCurve*		fadeOut;
 	QDomNode		m_domNode;
 	
-	QString 		m_name;
         QString 		m_captureBusName;
 	
 	TimeRef 		m_trackStartLocation;
@@ -159,7 +156,6 @@ private:
 	friend class ResourcesManager;
 
 signals:
-	void stateChanged();
 	void muteChanged();
 	void lockChanged();
 	void positionChanged();

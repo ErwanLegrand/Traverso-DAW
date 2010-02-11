@@ -44,10 +44,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 Track::Track(Sheet* sheet, const QString& name, int height )
         : AudioProcessingItem(sheet)
-        , m_name(name)
         , m_height(height)
 {
 	PENTERCONS;
+        m_name = name;
 	m_pan = numtakes = 0;
 	m_sortIndex = -1;
 	m_id = create_id();
@@ -502,12 +502,6 @@ Command* Track::solo(  )
 Command* Track::silence_others( )
 {
 	return new PCommand(this, "solo", tr("Silence Others"));
-}
-
-void Track::set_name( const QString & name )
-{
-	m_name = name;
-	emit stateChanged();
 }
 
 void Track::get_render_range(TimeRef& startlocation, TimeRef& endlocation )

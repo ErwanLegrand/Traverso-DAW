@@ -115,7 +115,7 @@ void ProjectManagerDialog::update_sheet_list( )
 	foreach(Sheet* sheet, m_project->get_sheets()) {
 
 		QString sheetNr = QString::number(m_project->get_sheet_index(sheet->get_id()));
-		QString sheetName = "Sheet " + sheetNr + " - " + sheet->get_title();
+                QString sheetName = "Sheet " + sheetNr + " - " + sheet->get_name();
 		QString numberOfTracks = QString::number(sheet->get_numtracks());
 		QString sheetLength = timeref_to_ms_2(sheet->get_last_location());
 		QString sheetStatus = sheet->is_changed()?"UnSaved":"Saved";
@@ -145,7 +145,7 @@ void ProjectManagerDialog::sheetitem_clicked( QTreeWidgetItem* item, int)
 
 	Q_ASSERT(sheet);
 		
-	selectedSheetName->setText(sheet->get_title());
+        selectedSheetName->setText(sheet->get_name());
 	
 	m_project->set_current_sheet(sheet->get_id());
 }
@@ -174,7 +174,7 @@ void ProjectManagerDialog::on_renameSheetButton_clicked( )
 		return;
 	}
 	
-	sheet->set_title(newtitle);
+        sheet->set_name(newtitle);
 
 	update_sheet_list();
 }
@@ -335,7 +335,7 @@ void ProjectManagerDialog::reject()
 
 
 /* ---------------------------------------------------------------------------------------------- */
-/* Here is some stuff about CD-Text. It is difficult to find in the web, so let's archive it here */
+/* Here is some stuff about CD-Text. It is difficult to find in the web, so let's archive it here */
 /* ---------------------------------------------------------------------------------------------- */
 
 /* @(#)cdtext.h 1.1 02/02/23 Copyright 1999-2002 J. Schilling */

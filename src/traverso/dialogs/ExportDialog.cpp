@@ -187,7 +187,7 @@ void ExportDialog::set_exporting_sheet( Sheet * sheet )
 {
 	QString name = tr("Progress of Sheet ") + 
 		QString::number(m_project->get_sheet_index(sheet->get_id())) + ": " +
-		sheet->get_title();
+                sheet->get_name();
 	
 	currentProcessingSheetName->setText(name);
 }

@@ -84,5 +84,13 @@ void AudioProcessingItem::send_to_output_buses(nframes_t nframes, bool applyFade
 
 }
 
+void AudioProcessingItem::audiodevice_params_changed()
+{
 
+}
 
+void AudioProcessingItem::set_name( const QString & name )
+{
+        m_name = name;
+        emit stateChanged();
+}

@@ -72,6 +72,9 @@ public:
 private:
 	SheetPanelGain* m_gainview;
 	Sheet* m_sheet;
+
+private slots:
+        void sheet_changed();
 };
 
 class SheetWidget : public QFrame

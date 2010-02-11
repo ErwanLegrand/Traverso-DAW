@@ -67,9 +67,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 AudioClip::AudioClip(const QString& name)
 	: Snappable()
-	, m_name(name)
 {
 	PENTERCONS;
+        m_name = name;
 	m_isMuted=false;
 	m_id = create_id();
 	m_readSourceId = m_sheetId = 0;
@@ -842,12 +842,6 @@ void AudioClip::set_track( Track * track )
 	set_sources_active_state();
 }
 
-void AudioClip::set_name( const QString& name )
-{
-	m_name = name;
-	emit stateChanged();
-}
-
 bool AudioClip::is_selected( )
 {
 	Q_ASSERT(m_sheet);
@@ -857,11 +851,6 @@ bool AudioClip::is_selected( )
 bool AudioClip::is_take( ) const
 {
 	return m_isTake;
-}
-
-QString AudioClip::get_name( ) const
-{
-	return m_name;
 }
 
 int AudioClip::get_bitdepth( ) const

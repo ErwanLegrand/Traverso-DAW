@@ -98,7 +98,6 @@ public:
 	
 	const TimeRef& get_new_transport_location() const {return m_newTransportLocation;}
 	
-	QString get_title() const {return title;}
 	QString get_artists() const {return artists;}
 	QDomNode get_state(QDomDocument doc, bool istemplate=false);
 	QList<Track*> get_tracks() const;
@@ -117,7 +116,6 @@ public:
 	// Set functions
 	void set_artists(const QString& pArtistis);
 	void set_first_visible_frame(nframes_t pos);
-	void set_title(const QString& sTitle);
 	void set_work_at(const TimeRef& location);
 	void set_hzoom(qreal hzoom);
 	void set_snapping(bool snap);
@@ -198,7 +196,6 @@ private:
 	
 	nframes_t 	firstVisibleFrame;
 	QString 	artists;
-	QString 	title;
 	int		m_mode;
 	qreal		m_hzoom;
 	int		m_sbx;
@@ -272,7 +269,6 @@ signals:
 	void seekStart();
 	void snapChanged();
 	void tempFollowChanged(bool state);
-	void propertyChanged();
 	void setCursorAtEdge();
 	void masterGainChanged();
 	void modeChanged();

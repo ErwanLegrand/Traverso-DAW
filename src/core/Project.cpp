@@ -574,7 +574,7 @@ Command* Project::add_sheet(Sheet* sheet, bool historable)
 	cmd = new AddRemove(this, sheet, historable, 0,
 		"private_add_sheet(Sheet*)", "sheetAdded(Sheet*)",
        		"private_remove_sheet(Sheet*)", "sheetRemoved(Sheet*)",
-       		tr("Sheet %1 added").arg(sheet->get_title()));
+                tr("Sheet %1 added").arg(sheet->get_name()));
 	
 	cmd->set_instantanious(true);
 	
@@ -647,7 +647,7 @@ Command* Project::remove_sheet(Sheet* sheet, bool historable)
 	cmd = new AddRemove(this, sheet, historable, 0,
 		"private_remove_sheet(Sheet*)", "sheetRemoved(Sheet*)",
 		"private_add_sheet(Sheet*)", "sheetAdded(Sheet*)",
-		tr("Remove Sheet %1").arg(sheet->get_title()));
+                tr("Remove Sheet %1").arg(sheet->get_name()));
 	
 	cmd->set_instantanious(true);
 	

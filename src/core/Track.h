@@ -73,7 +73,6 @@ public :
 	int get_height() const {return m_height;}
 	float get_pan() const {return m_pan;}
 	Sheet* get_sheet() const {return m_sheet;}
-	QString get_name() const {return m_name;}
 	
 	int get_total_clips();
 	QDomNode get_state(QDomDocument doc, bool istemplate=false);
@@ -87,7 +86,6 @@ public :
         void set_bus_out(const QString& bus);
         void set_bus_in(const QString& bus);
 	void set_muted_by_solo(bool muted);
-	void set_name(const QString& name);
 	void set_solo(bool solo);
 	void set_muted(bool muted);
 	void set_pan(float pan);
@@ -120,10 +118,6 @@ private :
 
 	float 	m_pan;
 	int numtakes;
-        QString m_busInName;
-        QString m_busOutName;
-
-	QString m_name;
 
 	int m_sortIndex;
 	int m_height;
@@ -147,7 +141,6 @@ signals:
 	void lockChanged(bool isLocked);
 	void gainChanged();
 	void panChanged();
-	void stateChanged();
 	void audibleStateChanged();
 
 public slots:

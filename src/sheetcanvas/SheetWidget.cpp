@@ -111,6 +111,12 @@ SheetPanelView::SheetPanelView(QGraphicsScene* scene, Sheet* sheet)
 	m_gainview = new SheetPanelGain(this, m_sheet);
 	m_gainview->setPos(10, 16);
 	m_boundingRect = QRectF(0, 0, 200, TIMELINE_HEIGHT);
+        connect(m_sheet, SIGNAL(stateChanged()), this, SLOT(sheet_changed()));
+}
+
+void SheetPanelView::sheet_changed()
+{
+        update();
 }
 
 void SheetPanelView::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
@@ -120,7 +126,7 @@ void SheetPanelView::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 	
 	painter->setPen(themer()->get_color("TrackPanel:text"));
 	painter->setFont(themer()->get_font("TrackPanel:fontscale:led"));
-	painter->drawText(10, 11, "Sheet: " + m_sheet->get_title());
+        painter->drawText(10, 11, "Sheet: " + m_sheet->get_name());
 	
 	QColor color = QColor(Qt::darkGray);//themer()->get_color("Track:cliptopoffset");
 	painter->setPen(color);

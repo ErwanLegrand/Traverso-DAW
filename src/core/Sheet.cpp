@@ -81,7 +81,7 @@ Sheet::Sheet(Project* project)
         ,*/ m_project(project)
 {
 	PENTERCONS;
-	title = tr("Untitled");
+        m_name = tr("Untitled");
 	m_id = create_id();
 	artists = tr("No artists name set");
 
@@ -93,7 +93,7 @@ Sheet::Sheet(Project* project, int numtracks)
         ,*/ m_project(project)
 {
 	PENTERCONS;
-	title = tr("Untitled");
+        m_name = tr("Untitled");
 	m_id = create_id();
 	artists = tr("No artists name set");
 	m_hzoom = config().get_property("Sheet", "hzoomLevel", 8192).toInt();
@@ -215,7 +215,7 @@ int Sheet::set_state( const QDomNode & node )
 	QDomNode propertiesNode = node.firstChildElement("Properties");
 	QDomElement e = propertiesNode.toElement();
 
-	title = e.attribute( "title", "" );
+        m_name = e.attribute( "title", "" );
 	artists = e.attribute( "artists", "" );
 	set_gain(e.attribute( "mastergain", "1.0").toFloat() );
 	qreal zoom = e.attribute("hzoom", "4096").toDouble();
@@ -264,7 +264,7 @@ QDomNode Sheet::get_state(QDomDocument doc, bool istemplate)
 	}
 	
 	QDomElement properties = doc.createElement("Properties");
-	properties.setAttribute("title", title);
+        properties.setAttribute("title", m_name);
 	properties.setAttribute("artists", artists);
 	properties.setAttribute("firstVisibleFrame", firstVisibleFrame);
 	properties.setAttribute("m_workLocation", m_workLocation.universal_frame());
@@ -447,7 +447,7 @@ int Sheet::prepare_export(ExportSpecification* spec)
 	spec->pos = spec->startLocation;
 	spec->progress = 0;
 
-	spec->basename = "Sheet_" + QString::number(m_project->get_sheet_index(m_id)) +"-" + title;
+        spec->basename = "Sheet_" + QString::number(m_project->get_sheet_index(m_id)) +"-" + m_name;
 	spec->name = spec->basename;
 
 	if (spec->startLocation == spec->endLocation) {
@@ -513,10 +513,10 @@ int Sheet::start_export(ExportSpecification* spec)
                                 return -1;
                         }
 
-                        message = QString(tr("Rendering Sheet %1 - Track %2 of %3")).arg(title).arg(i+1).arg(spec->markers.size()-1);
+                        message = QString(tr("Rendering Sheet %1 - Track %2 of %3")).arg(m_name).arg(i+1).arg(spec->markers.size()-1);
 
                 } else if (spec->renderpass == ExportSpecification::CALC_NORM_FACTOR) {
-                        message = QString(tr("Normalising Sheet %1 - Track %2 of %3")).arg(title).arg(i+1).arg(spec->markers.size()-1);
+                        message = QString(tr("Normalising Sheet %1 - Track %2 of %3")).arg(m_name).arg(i+1).arg(spec->markers.size()-1);
                 }
 
                 m_project->set_export_message(message);
@@ -694,13 +694,6 @@ void Sheet::set_gain(float gain)
 float Sheet::get_gain( ) const
 {
         return m_masterSubGroup->get_plugin_chain()->get_fader()->get_gain();
-}
-
-
-void Sheet::set_title(const QString& sTitle)
-{
-	title=sTitle;
-	emit propertyChanged();
 }
 
 void Sheet::set_first_visible_frame(nframes_t pos)

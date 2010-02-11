@@ -81,7 +81,7 @@ void NewSheetDialog::accept()
 		} else {
 			sheet = new Sheet(m_project, trackcount);
 		}
-		sheet->set_title(title);
+                sheet->set_name(title);
 		group->add_command(m_project->add_sheet(sheet));
 		if (i == 0) {
 			firstNewSheet = sheet;
@@ -124,7 +124,7 @@ void NewSheetDialog::update_template_combo()
 	
 	foreach(Sheet* sheet, m_project->get_sheets()) {
 		QString text = "Sheet " + QString::number(m_project->get_sheet_index(sheet->get_id())) +
-				" " + sheet->get_title();
+                                " " + sheet->get_name();
 		
 		templateComboBox->addItem(text, sheet->get_id());
 		connect(sheet, SIGNAL(propertyChanged()), this, SLOT(update_template_combo()));
