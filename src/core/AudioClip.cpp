@@ -513,16 +513,16 @@ int AudioClip::process(nframes_t nframes)
 	TimeRef endlocation = mix_pos + TimeRef(read_frames, get_rate());
 	m_fader->process_gain(mixdown, mix_pos, endlocation, read_frames, channelcount);
 	
-	AudioBus* sendbus = m_sheet->get_render_bus();
+        AudioBus* processBus = m_track->get_process_bus();
 	
 	// NEVER EVER FORGET that the mixing should be done on the WHOLE buffer, not just part of it
 	// so use an unmodified nframes variable!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 	if (channelcount == 1) {
-		Mixer::mix_buffers_no_gain(sendbus->get_buffer(0, nframes), bus->get_buffer(0, nframes), nframes);
-		Mixer::mix_buffers_no_gain(sendbus->get_buffer(1, nframes), bus->get_buffer(0, nframes), nframes);
+                Mixer::mix_buffers_no_gain(processBus->get_buffer(0, nframes), bus->get_buffer(0, nframes), nframes);
+                Mixer::mix_buffers_no_gain(processBus->get_buffer(1, nframes), bus->get_buffer(0, nframes), nframes);
 	} else if (channelcount == 2) {
-		Mixer::mix_buffers_no_gain(sendbus->get_buffer(0, nframes), bus->get_buffer(0, nframes), nframes);
-		Mixer::mix_buffers_no_gain(sendbus->get_buffer(1, nframes), bus->get_buffer(1, nframes), nframes);
+                Mixer::mix_buffers_no_gain(processBus->get_buffer(0, nframes), bus->get_buffer(0, nframes), nframes);
+                Mixer::mix_buffers_no_gain(processBus->get_buffer(1, nframes), bus->get_buffer(1, nframes), nframes);
 	}
 	
 	return 1;

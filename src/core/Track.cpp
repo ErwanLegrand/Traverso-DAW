@@ -427,13 +427,13 @@ int Track::process( nframes_t nframes )
 	// Get the 'render bus' from sheet, a bit hackish solution, but
 	// it avoids to have a dedicated render bus for each Track,
 	// or buffers located on the heap...
-	AudioBus* bus = m_sheet->get_render_bus();
-	bus->silence_buffers(nframes);
+        m_processBus = m_sheet->get_render_bus();
+        m_processBus->silence_buffers(nframes);
 	
 	int result;
 	float gainFactor, panFactor;
 
-	m_pluginChain->process_pre_fader(bus, nframes);
+        m_pluginChain->process_pre_fader(m_processBus, nframes);
 	
 	apill_foreach(AudioClip* clip, AudioClip, m_clips) {
 		if (isArmed && clip->recording_state() == AudioClip::NO_RECORDING) {
@@ -452,7 +452,7 @@ int Track::process( nframes_t nframes )
 		processResult |= result;
 	}
 	
-	for (int chan=0; chan<bus->get_channel_count(); ++chan) {
+        for (int chan=0; chan<m_processBus->get_channel_count(); ++chan) {
 		gainFactor = get_gain();
 			
 		if ( (chan == 0) && (m_pan > 0)) {
@@ -465,14 +465,13 @@ int Track::process( nframes_t nframes )
 			gainFactor *= panFactor;
 		}
 		
-		Mixer::apply_gain_to_buffer(bus->get_buffer(chan, nframes), nframes, gainFactor);
+                Mixer::apply_gain_to_buffer(m_processBus->get_buffer(chan, nframes), nframes, gainFactor);
 	}
 	
-	processResult |= m_pluginChain->process_post_fader(bus, nframes);
+        processResult |= m_pluginChain->process_post_fader(m_processBus, nframes);
 		
-	for (int i=0; i<bus->get_channel_count(); ++i) {
-                Mixer::mix_buffers_no_gain(m_outputBus->get_buffer(i, nframes), bus->get_buffer(i, nframes), nframes);
-	}
+        bool applyFaderGain = false;
+        send_to_output_buses(nframes, applyFaderGain);
 	
 	return processResult;
 }
