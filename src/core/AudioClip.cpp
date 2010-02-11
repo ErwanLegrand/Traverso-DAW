@@ -129,8 +129,6 @@ void AudioClip::init()
 	m_isLocked = config().get_property("AudioClip", "LockByDefault", false).toBool();
 	fadeIn = 0;
 	fadeOut = 0;
-	m_pluginChain = new PluginChain(this);
-	m_fader = m_pluginChain->get_fader();
 	m_fader->automate_port(0, true);
 	m_fader->set_gain(1.0);
 }
@@ -562,7 +560,7 @@ void AudioClip::process_capture(nframes_t nframes)
 	}
 }
 
-int AudioClip::init_recording( QByteArray name )
+int AudioClip::init_recording(const QString& name )
 {
 	Q_ASSERT(m_sheet);
 	Q_ASSERT(m_track);
@@ -573,7 +571,7 @@ int AudioClip::init_recording( QByteArray name )
 	if (!m_captureBus) {
 		info().critical(tr("Unable to Record to Track"));
 		info().warning(tr("AudioDevice doesn't have this Capture Bus: %1 (Track %2)").
-				arg(name.data()).arg(m_track->get_id()) );
+                                arg(name).arg(m_track->get_id()) );
 		return -1;
 	}
 

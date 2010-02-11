@@ -779,7 +779,7 @@ void AudioDevice::setup_default_playback_buses( )
  * @param name The name of the Playback Bus
  * @return An AudioBus if one exists with name \a name, 0 on failure
  */
-AudioBus* AudioDevice::get_playback_bus(QByteArray name) const
+AudioBus* AudioDevice::get_playback_bus(const QString& name) const
 {
         foreach(AudioBus* bus, m_buses) {
                 if (bus->get_type() == ChannelIsOutput) {
@@ -802,7 +802,7 @@ AudioBus* AudioDevice::get_playback_bus(QByteArray name) const
  * @param name The name of the Capture Bus
  * @return An AudioBus if one exists with name \a name, 0 on failure
  */
-AudioBus* AudioDevice::get_capture_bus(QByteArray name) const
+AudioBus* AudioDevice::get_capture_bus(const QString& name) const
 {
         foreach(AudioBus* bus, m_buses) {
                 if (bus->get_type() == ChannelIsInput) {

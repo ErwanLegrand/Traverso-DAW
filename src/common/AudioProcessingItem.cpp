@@ -24,6 +24,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "AddRemove.h"
 #include "AudioBus.h"
+#include "AudioChannel.h"
+#include "Mixer.h"
+#include "PluginChain.h"
+
+AudioProcessingItem::AudioProcessingItem(Sheet *sheet)
+        : m_sheet(sheet)
+{
+        if (m_sheet) {
+                m_pluginChain = new PluginChain(this, m_sheet);
+        } else {
+                m_pluginChain = new PluginChain(this);
+        }
+        m_fader = m_pluginChain->get_fader();
+
+}
 
 void AudioProcessingItem::set_input_bus(AudioBus *bus)
 {
@@ -37,12 +52,34 @@ void AudioProcessingItem::set_output_bus(AudioBus *bus)
 
 void AudioProcessingItem::private_set_input_bus(AudioBus* bus)
 {
-        Q_ASSERT(bus);
         m_inputBus = bus;
 }
 
 void AudioProcessingItem::private_set_output_bus(AudioBus* bus)
 {
-        Q_ASSERT(bus);
         m_outputBus = bus;
 }
+
+void AudioProcessingItem::send_to_output_buses(nframes_t nframes)
+{
+        if (!m_outputBus) {
+                return;
+        }
+
+        AudioChannel* sender;
+        AudioChannel* receiver;
+
+        for (int i=0; i<m_processBus->get_channel_count(); i++) {
+                sender = m_processBus->get_channel(i);
+                receiver = m_outputBus->get_channel(i);
+                if (sender && receiver) {
+                        Mixer::mix_buffers_with_gain(receiver->get_buffer(nframes), sender->get_buffer(nframes), nframes, get_gain());
+                        Mixer::mix_buffers_with_gain(receiver->get_buffer(nframes), sender->get_buffer(nframes), nframes, get_gain());
+                }
+
+        }
+
+}
+
+
+

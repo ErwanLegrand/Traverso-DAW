@@ -26,7 +26,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QString>
 #include <QDomDocument>
 #include <QList>
-#include <QByteArray>
 
 #include "ContextItem.h"
 #include "GainEnvelope.h"
@@ -69,8 +68,8 @@ public :
 	AudioClip* get_clip_after(const TimeRef& pos);
 	AudioClip* get_clip_before(const TimeRef& pos);
 	void get_render_range(TimeRef& startlocation, TimeRef& endlocation);
-	QString get_bus_in() const {return busIn;}
-	QString get_bus_out() const{return busOut;}
+        QString get_bus_in() const {return m_busInName;}
+        QString get_bus_out() const{return m_busOutName;}
 	int get_height() const {return m_height;}
 	float get_pan() const {return m_pan;}
 	Sheet* get_sheet() const {return m_sheet;}
@@ -78,7 +77,6 @@ public :
 	
 	int get_total_clips();
 	QDomNode get_state(QDomDocument doc, bool istemplate=false);
-	PluginChain* get_plugin_chain() const {return m_pluginChain;}
 	QList<AudioClip*> get_cliplist() const;
 	int get_sort_index() const;
 	bool is_smaller_then(APILinkedListNode* node) {return ((Track*)node)->get_sort_index() > get_sort_index();}
@@ -86,8 +84,8 @@ public :
 	
 
 	// Set functions:
-	void set_bus_out(QByteArray bus);
-	void set_bus_in(QByteArray bus);
+        void set_bus_out(const QString& bus);
+        void set_bus_in(const QString& bus);
 	void set_muted_by_solo(bool muted);
 	void set_name(const QString& name);
 	void set_solo(bool solo);
@@ -122,8 +120,8 @@ private :
 
 	float 	m_pan;
 	int numtakes;
-	QByteArray busIn;
-	QByteArray busOut;
+        QString m_busInName;
+        QString m_busOutName;
 
 	QString m_name;
 

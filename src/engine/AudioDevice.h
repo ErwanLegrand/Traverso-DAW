@@ -65,8 +65,8 @@ public:
 	int transport_seek_to(Client* client, TimeRef location);
 
         AudioDeviceSetup get_device_setup() {return m_setup;}
-        AudioBus* get_playback_bus(QByteArray name) const;
-        AudioBus* get_capture_bus(QByteArray name) const;
+        AudioBus* get_playback_bus(const QString& name) const;
+        AudioBus* get_capture_bus(const QString& name) const;
 
         AudioChannel* create_channel(const QString& name, int channelNumber, int type);
         void delete_channel(AudioChannel* channel);

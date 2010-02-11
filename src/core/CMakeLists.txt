@@ -41,6 +41,7 @@ ProjectManager.cpp
 ReadSource.cpp
 ResourcesManager.cpp
 Sheet.cpp
+SubGroup.cpp
 Track.cpp
 ViewPort.cpp
 WriteSource.cpp

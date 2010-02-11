@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ContextItem.h"
 #include "APILinkedList.h"
 #include "GainEnvelope.h"
+#include "defines.h"
 
 class PluginChain;
 class AudioBus;
@@ -34,11 +35,16 @@ class AudioProcessingItem : public ContextItem, public APILinkedListNode
 {
         Q_OBJECT
 public:
-        AudioProcessingItem (Sheet* sheet=0) : m_sheet(sheet) {}
+        AudioProcessingItem (Sheet* sheet=0);
 	~AudioProcessingItem () {}
 	
         void set_input_bus(AudioBus* bus);
         void set_output_bus(AudioBus* bus);
+
+        void send_to_output_buses(nframes_t nframes);
+
+        AudioBus* get_process_bus() {return m_processBus;}
+        PluginChain* get_plugin_chain() const {return m_pluginChain;}
 
 	bool is_muted() const {return m_isMuted;}
 	virtual bool is_smaller_then(APILinkedListNode* node) = 0;
@@ -46,11 +52,12 @@ public:
 protected:
         AudioBus*       m_inputBus;
         AudioBus*       m_outputBus;
+        AudioBus*       m_processBus;
         Sheet*          m_sheet;
         GainEnvelope*   m_fader;
         PluginChain*    m_pluginChain;
         bool            m_isMuted;
-        
+
 public slots:
 	float get_gain() const;
 

@@ -47,6 +47,7 @@ class TimeLine;
 class Snappable;
 class DecodeBuffer;
 class Marker;
+class SubGroup;
 
 struct ExportSpecification;
 
@@ -104,7 +105,6 @@ public:
 	
 	DiskIO*	get_diskio() const;
 	AudioClipManager* get_audioclip_manager() const;
-	AudioBus* get_master_out() const {return m_masterOut;}
 	AudioBus* get_render_bus() const {return m_renderBus;}
 	AudioBus* get_clip_render_bus() const {return m_clipRenderBus;}
 	SnapList* get_snap_list() const;
@@ -159,7 +159,8 @@ public:
 	audio_sample_t*		readbuffer;
 	audio_sample_t*		gainbuffer;
 	DecodeBuffer*		renderDecodeBuffer;
-	
+        SubGroup*               m_masterSubGroup;
+
 #if defined (THREAD_CHECK)
 	unsigned long	threadId;
 #endif
@@ -172,7 +173,6 @@ private:
 	WriteSource*		m_exportSource;
 	AudioBus*		m_playBackBus;
 	Client* 		m_audiodeviceClient;
-	AudioBus*		m_masterOut;
 	AudioBus*		m_renderBus;
 	AudioBus*		m_clipRenderBus;
 	DiskIO*			m_diskio;
@@ -242,6 +242,8 @@ public slots :
         void set_gain(float gain);
 	void set_transport_pos(TimeRef location);
 	void set_temp_follow_state(bool state);
+        float get_gain() const;
+
 
 	Command* next_skip_pos();
 	Command* prev_skip_pos();
@@ -287,10 +289,6 @@ private slots:
 	void config_changed();
 };
 
-
 #endif
-
-
-
 
 //eof

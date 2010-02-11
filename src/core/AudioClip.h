@@ -65,7 +65,7 @@ public:
 	};
 	
 	void set_audio_source(ReadSource* source);
-	int init_recording(QByteArray bus);
+        int init_recording(const QString& bus);
 	int process(nframes_t nframes);
 	
 	void set_track_start_location(const TimeRef& location);
@@ -86,7 +86,6 @@ public:
 	QDomNode get_state(QDomDocument doc);
 	FadeCurve* get_fade_in() const;
 	FadeCurve* get_fade_out() const;
-	PluginChain* get_plugin_chain() const {return m_pluginChain;}
 	
 	TimeRef get_source_length() const;
 	TimeRef get_length() const {return m_length;}
@@ -127,7 +126,7 @@ private:
 	QDomNode		m_domNode;
 	
 	QString 		m_name;
-	QByteArray		m_captureBusName;
+        QString 		m_captureBusName;
 	
 	TimeRef 		m_trackStartLocation;
 	TimeRef 		m_trackEndLocation;

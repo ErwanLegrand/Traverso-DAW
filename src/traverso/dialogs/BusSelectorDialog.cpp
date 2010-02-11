@@ -52,6 +52,7 @@ void BusSelectorDialog::update_buses_list_widget()
 
         QStringList c_names = audiodevice().get_capture_buses_names();
         QStringList p_names = audiodevice().get_playback_buses_names();
+        p_names.prepend("Master Out");
 
         foreach(QString name, c_names) {
                 QListWidgetItem* item = new QListWidgetItem(captureBusesListWidget);
@@ -110,11 +111,11 @@ void BusSelectorDialog::accept()
         QList<QListWidgetItem *>  p_list = playbackBusesListWidget->selectedItems();
 
         if (c_list.size()) {
-                m_currentTrack->set_bus_in(c_list.at(0)->text().toUtf8());
+                m_currentTrack->set_bus_in(c_list.at(0)->text());
         }
 
         if (p_list.size()) {
-                m_currentTrack->set_bus_out(p_list.at(0)->text().toUtf8());
+                m_currentTrack->set_bus_out(p_list.at(0)->text());
 	}
 	
 	hide();

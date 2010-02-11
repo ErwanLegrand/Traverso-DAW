@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ProjectManager.h"
 #include "ResourcesManager.h"
 #include "Project.h"
+#include "SubGroup.h"
 #include "Utils.h"
 #include <limits.h>
 #include <commands.h>
@@ -51,8 +52,8 @@ Track::Track(Sheet* sheet, const QString& name, int height )
 	m_sortIndex = -1;
 	m_id = create_id();
 	
-	busIn = "Capture 1";
-	busOut = "MasterOut";
+        m_busInName = "Capture 1";
+        m_busOutName = "MasterOut";
 	
 	init();
 }
@@ -76,8 +77,6 @@ void Track::init()
 	QObject::tr("Track");
 	isSolo = mutedBySolo = m_isMuted = isArmed = false;
 	set_history_stack(m_sheet->get_history_stack());
-	m_pluginChain = new PluginChain(this, m_sheet);
-	m_fader = m_pluginChain->get_fader();
 	m_fader->set_gain(1.0);
 	m_captureRightChannel = m_captureLeftChannel = true;
 
@@ -99,8 +98,8 @@ QDomNode Track::get_state( QDomDocument doc, bool istemplate)
 	node.setAttribute("height", m_height);
 	node.setAttribute("sortindex", m_sortIndex);
 	node.setAttribute("numtakes", numtakes);
-	node.setAttribute("InBus", busIn.data());
-	node.setAttribute("OutBus", busOut.data());
+        node.setAttribute("InBus", m_busInName);
+        node.setAttribute("OutBus", m_busOutName);
 	node.setAttribute("CaptureLeftChannel", m_captureLeftChannel);
 	node.setAttribute("CaptureRightChannel", m_captureRightChannel);
 
@@ -142,8 +141,8 @@ int Track::set_state( const QDomNode & node )
 	}
 	set_muted_by_solo(e.attribute( "mutedbysolo", "0").toInt());
 	set_pan( e.attribute( "pan", "" ).toFloat() );
-        set_bus_in( e.attribute( "InBus", "" ).toUtf8() );
-        set_bus_out( e.attribute( "OutBus", "" ).toUtf8() );
+        set_bus_in( e.attribute( "InBus", "" ));
+        set_bus_out( e.attribute( "OutBus", "" ));
 	m_id = e.attribute("id", "0").toLongLong();
 	if (m_id == 0) {
 		m_id = create_id();
@@ -251,7 +250,7 @@ int Track::arm()
 {
 	PENTER;
 	set_armed(true);
-	AudioBus* bus = audiodevice().get_capture_bus(busIn);
+        AudioBus* bus = audiodevice().get_capture_bus(m_busInName);
 	if (bus) {
 		bus->set_monitor_peaks(true);
 	}
@@ -263,37 +262,42 @@ int Track::disarm()
 {
 	PENTER;
 	set_armed(false);
-	AudioBus* bus = audiodevice().get_capture_bus(busIn);
+        AudioBus* bus = audiodevice().get_capture_bus(m_busInName);
 	if (bus) {
 		bus->set_monitor_peaks(false);
 	}
 	return 1;
 }
 
-void Track::set_bus_in(QByteArray bus)
+void Track::set_bus_in(const QString& bus)
 {
 	bool wasArmed=isArmed;
 	if (isArmed)
 		disarm();
-	busIn=bus;
+        m_busInName = bus;
 	if (wasArmed) {
 		arm();
 	}
 
-        AudioBus* inBus = audiodevice().get_capture_bus(busIn);
+        AudioBus* inBus = audiodevice().get_capture_bus(m_busInName);
         if (inBus) {
                 set_input_bus(inBus);
         }
 }
 
-void Track::set_bus_out(QByteArray bus)
+void Track::set_bus_out(const QString& bus)
 {
-	busOut=bus;
-
-        AudioBus* outBus = audiodevice().get_playback_bus(busOut);
-        if (outBus) {
-                set_output_bus(outBus);
+        m_busOutName = bus;
+        
+        AudioBus* outBus = 0;
+        if (m_busOutName == "Master Out") {
+                outBus = m_sheet->m_masterSubGroup->get_process_bus();
+                
+        } else {
+                outBus = audiodevice().get_playback_bus(m_busOutName);
         }
+
+        set_output_bus(outBus);
 }
 
 bool Track::is_solo()
@@ -331,7 +335,7 @@ AudioClip* Track::init_recording()
 	clip->set_track(this);
 	clip->set_track_start_location(m_sheet->get_transport_location());
 	
-	if (clip->init_recording(busIn) < 0) {
+        if (clip->init_recording(m_busInName) < 0) {
 		PERROR("Could not create AudioClip to record to!");
 		resources_manager()->destroy_clip(clip);
 		return 0;
@@ -581,29 +585,29 @@ void Track::rescan_busses()
 
     // in the worst case, i.e. if no busses are available at all,
     // use the default ones also used in the track's constructor.
-    QByteArray fallbackCapture = "Capture 1";
-    QByteArray fallbackPlayback = "MasterOut";
+    QString fallbackCapture = "Capture 1";
+    QString fallbackPlayback = "MasterOut";
 
     // in the less worse case, if at least one bus is available,
     // use it as a fallback
     if (ibus.size()) {
-        fallbackCapture = ibus.at(0).toUtf8();
+        fallbackCapture = ibus.at(0);
     }
 
     if (obus.size()) {
-        fallbackPlayback = obus.at(0).toUtf8();
+        fallbackPlayback = obus.at(0);
     }
 
     // now let's look for the bus we actually want to connect to
-    if (!ibus.contains(busIn)) {
-        busIn = fallbackCapture;
+    if (!ibus.contains(m_busInName)) {
+        m_busInName = fallbackCapture;
     }
 
-    if (!obus.contains(busOut)) {
-        busOut = fallbackPlayback;
+    if (!obus.contains(m_busOutName)) {
+        m_busOutName = fallbackPlayback;
     }
 
-    set_bus_in(busIn);
-    set_bus_out(busOut);
+    set_bus_in(m_busInName);
+    set_bus_out(m_busOutName);
 }
 
