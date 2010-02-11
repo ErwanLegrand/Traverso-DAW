@@ -28,3 +28,8 @@ SubGroup::SubGroup(const QString& name, int channelCount)
         m_processBus = new AudioBus(name, channelCount, ChannelIsOutput);
 }
 
+
+SubGroup::~SubGroup()
+{
+        delete m_processBus;
+}

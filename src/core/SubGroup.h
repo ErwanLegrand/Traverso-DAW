@@ -30,7 +30,7 @@ class SubGroup : public AudioProcessingItem
 
 public:
         SubGroup(const QString& name, int channelCount);
-        ~SubGroup() {};
+        ~SubGroup();
 
         bool is_smaller_then(APILinkedListNode* node) {return true;}
 

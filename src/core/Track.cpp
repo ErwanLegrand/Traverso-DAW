@@ -53,8 +53,8 @@ Track::Track(Sheet* sheet, const QString& name, int height )
 	m_id = create_id();
 	
         m_busInName = "Capture 1";
-        m_busOutName = "MasterOut";
-	
+        m_busOutName = "Master Out";
+
 	init();
 }
 
@@ -586,7 +586,7 @@ void Track::rescan_busses()
     // in the worst case, i.e. if no busses are available at all,
     // use the default ones also used in the track's constructor.
     QString fallbackCapture = "Capture 1";
-    QString fallbackPlayback = "MasterOut";
+    QString fallbackPlayback = "Master Out";
 
     // in the less worse case, if at least one bus is available,
     // use it as a fallback
