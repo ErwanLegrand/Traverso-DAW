@@ -319,9 +319,9 @@ void AudioDevice::set_parameters(AudioDeviceSetup ads)
         m_bufferSize = ads.bufferSize;
 	m_xrunCount = 0;
         m_ditherShape = ads.ditherShape;
-        m_busConfigs = ads.busConfigs;
-        m_channelConfigs = ads.channelConfigs;
         if (!(ads.driverType == "Null Driver")) {
+                m_busConfigs = ads.busConfigs;
+                m_channelConfigs = ads.channelConfigs;
                 m_setup = ads;
         }
 
@@ -337,6 +337,7 @@ void AudioDevice::set_parameters(AudioDeviceSetup ads)
         set_channel_config(m_channelConfigs);
 	
         if (!m_busConfigs.count()) {
+                printf("setting up defaults\n");
 		setup_default_capture_buses();
                 setup_default_playback_buses();
         } else {
