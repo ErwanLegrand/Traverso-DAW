@@ -1013,7 +1013,18 @@ void Sheet::resize_buffer(bool updateArmStatus, nframes_t size)
 		delete [] gainbuffer;
 	mixdown = new audio_sample_t[size];
 	gainbuffer = new audio_sample_t[size];
-	
+        QList<AudioBus*> buses;
+        buses.append(m_masterSubGroup->get_process_bus());
+        buses.append(m_renderBus);
+        buses.append(m_clipRenderBus);
+        foreach(AudioBus* bus, buses) {
+                for(int i=0; i<bus->get_channel_count(); i++) {
+                        if (AudioChannel* chan = bus->get_channel(i)) {
+                                chan->set_buffer_size(size);
+                        }
+                }
+        }
+
 	if (updateArmStatus) {
 		apill_foreach(Track* track, Track, m_tracks) {
 			AudioBus* bus = audiodevice().get_capture_bus(track->get_bus_in().toAscii());
