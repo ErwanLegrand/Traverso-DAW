@@ -22,6 +22,11 @@ $Id: TrackPanelView.cpp,v 1.2 2009/02/21 22:38:27 r_sijrier Exp $
 
 #include <QGraphicsScene>
 #include <QFont>
+#include <QMenu>
+#include <QAction>
+#include <QStringList>
+
+#include "AudioDevice.h"
 #include "TrackPanelView.h"
 #include "TrackView.h"
 #include "SheetView.h"
@@ -509,3 +514,32 @@ void TrackPanelBus::bus_changed()
 	update();
 }
 
+
+Command* TrackPanelBus::select_bus()
+{
+        QMenu menu;
+
+        QStringList busNames;
+        if (m_type == BUSIN) {
+                busNames = audiodevice().get_capture_buses_names();
+        } else {
+                busNames.append("Master Out");
+                busNames = audiodevice().get_playback_buses_names();
+        }
+
+        foreach(QString busName, busNames) {
+                menu.addAction(busName);
+        }
+
+        QAction* action = menu.exec(QCursor::pos());
+
+        if (action) {
+                if (m_type == BUSIN) {
+                        m_track->set_bus_in(action->text());
+                } else {
+                        m_track->set_bus_out(action->text());
+                }
+        }
+
+        return 0;
+}
