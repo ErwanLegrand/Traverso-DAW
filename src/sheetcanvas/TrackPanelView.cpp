@@ -524,7 +524,7 @@ Command* TrackPanelBus::select_bus()
                 busNames = audiodevice().get_capture_buses_names();
         } else {
                 busNames.append("Master Out");
-                busNames = audiodevice().get_playback_buses_names();
+                busNames.append(audiodevice().get_playback_buses_names());
         }
 
         foreach(QString busName, busNames) {
