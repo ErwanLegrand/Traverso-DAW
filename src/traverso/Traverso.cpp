@@ -109,7 +109,8 @@ Traverso::Traverso(int &argc, char **argv )
 	
 	init_sse();
 	
- 	create_interface();
+        QMetaObject::invokeMethod(this, "create_interface", Qt::QueuedConnection);
+//        create_interface();
 	
 	connect(this, SIGNAL(lastWindowClosed()), &pm(), SLOT(exit()));
 }
