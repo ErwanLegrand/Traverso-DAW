@@ -500,7 +500,9 @@ Command* Track::solo(  )
 
 Command* Track::silence_others( )
 {
-	return new PCommand(this, "solo", tr("Silence Others"));
+        PCommand* command = new PCommand(this, "solo", tr("Silence Others"));
+        command->set_historable(false);
+        return command;
 }
 
 void Track::get_render_range(TimeRef& startlocation, TimeRef& endlocation )

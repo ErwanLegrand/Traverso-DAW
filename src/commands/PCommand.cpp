@@ -85,12 +85,16 @@ int PCommand::do_action()
                         }
                 }
 
-                // covers both the float and double types!
-                if (m_doValue.type() == QVariant::Double) {
-                            bool ok;
+                bool ok;
+
+                if (m_doValue.typeName() == QString("float")) {
                             if (QMetaObject::invokeMethod(m_contextitem, m_slot, Qt::DirectConnection, Q_ARG(float, m_doValue.toDouble(&ok)))) {
                                     return 1;
-                            } else if (QMetaObject::invokeMethod(m_contextitem, m_slot, Qt::DirectConnection, Q_ARG(double, m_doValue.toDouble(&ok)))) {
+                            }
+                }
+
+                if (m_doValue.typeName() == QString("double")) {
+                            if (QMetaObject::invokeMethod(m_contextitem, m_slot, Qt::DirectConnection, Q_ARG(double, m_doValue.toDouble(&ok)))) {
                                     return 1;
                             }
                 }
@@ -111,12 +115,16 @@ int PCommand::undo_action()
 			}
 		}
 		
-                // covers both the float and double types!
-                if (m_undoValue.type() == QVariant::Double) {
-                            bool ok;
+                bool ok;
+
+                if (m_undoValue.typeName() == QString("float")) {
                             if (QMetaObject::invokeMethod(m_contextitem, m_slot, Qt::DirectConnection, Q_ARG(float, m_undoValue.toDouble(&ok)))) {
                                     return 1;
-                            } else if (QMetaObject::invokeMethod(m_contextitem, m_slot, Qt::DirectConnection, Q_ARG(double, m_undoValue.toDouble(&ok)))) {
+                            }
+                }
+
+                if (m_undoValue.typeName() == QString("double")) {
+                            if (QMetaObject::invokeMethod(m_contextitem, m_slot, Qt::DirectConnection, Q_ARG(double, m_undoValue.toDouble(&ok)))) {
                                     return 1;
                             }
                 }
