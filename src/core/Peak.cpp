@@ -314,7 +314,7 @@ int Peak::calculate_peaks(
 	// Micro view mode
 	} else {
 		// Calculate the amount of frames to be read
-		nframes_t toRead = qRound(peakDataCount * framesPerPeak);
+                nframes_t toRead = qRound(peakDataCount * framesPerPeak * qreal(m_source->get_file_rate()) / qreal(44100));
 		
 		nframes_t readFrames = m_source->file_read(data->peakdataDecodeBuffer, startlocation, toRead);
 
