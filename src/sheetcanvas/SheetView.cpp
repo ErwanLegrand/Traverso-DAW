@@ -26,12 +26,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include "Sheet.h"
 #include "SnapList.h"
 #include "Track.h"
+#include "SubGroup.h"
 #include "ContextPointer.h"
 #include "Themer.h"
 
 #include "SheetView.h"
 #include "SheetWidget.h"
 #include "TrackView.h"
+#include "SubGroupView.h"
 #include "TrackPanelView.h"
 #include "Cursors.h"
 #include "ClipsViewPort.h"
@@ -50,9 +52,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include <Debugger.h>
 
 
-static bool smallerTrackView(const TrackView* left, const TrackView* right )
+static bool smallerProcessingDataView(const ProcessingDataView* left, const ProcessingDataView* right )
 {
-	return left->get_track()->get_sort_index() < right->get_track()->get_sort_index();
+        return left->get_processing_data()->get_sort_index() < right->get_processing_data()->get_sort_index();
 }
 
 SheetView::SheetView(SheetWidget* sheetwidget, 
@@ -171,33 +173,42 @@ TrackView* SheetView::get_trackview_under( QPointF point )
 
 void SheetView::add_new_trackview(Track* track)
 {
-	TrackView* view = new TrackView(this, track);
-	m_trackViews.append(view);
+        ProcessingDataView* view;
+
+        ProcessingData* data = qobject_cast<ProcessingData*>(track);
+        SubGroup* group = qobject_cast<SubGroup*>(data);
+        if (group) {
+                view = new SubGroupView(this, group);
+        } else {
+                view = new TrackView(this, track);
+        }
+
+        m_pdViews.append(view);
 	
 	int sortIndex = track->get_sort_index();
 	
 	if (sortIndex < 0) {
-		sortIndex = m_trackViews.size();
+                sortIndex = m_pdViews.size();
 		track->set_sort_index(sortIndex);
 	} else {
-		foreach(TrackView* view, m_trackViews) {
-			if (view->get_track()->get_sort_index() == sortIndex) {
-				sortIndex = m_trackViews.size();
+                foreach(ProcessingDataView* view, m_pdViews) {
+                        if (view->get_processing_data()->get_sort_index() == sortIndex) {
+                                sortIndex = m_pdViews.size();
 				track->set_sort_index(sortIndex);
 				break;
 			}
 		}
 	}
 	
-	qSort(m_trackViews.begin(), m_trackViews.end(), smallerTrackView);
+        qSort(m_pdViews.begin(), m_pdViews.end(), smallerProcessingDataView);
 	
-	for(int i=0; i<m_trackViews.size(); ++i) {
-		m_trackViews.at(i)->get_track()->set_sort_index(i);
+        for(int i=0; i<m_pdViews.size(); ++i) {
+                m_pdViews.at(i)->get_processing_data()->set_sort_index(i);
 	}
 	
-	if (m_trackViews.size() > 1) {
-		int height = m_trackViews.at(m_trackViews.size()-2)->get_track()->get_height();
-		m_trackViews.at(m_trackViews.size()-1)->get_track()->set_height(height);
+        if (m_pdViews.size() > 1) {
+                int height = m_pdViews.at(m_pdViews.size()-2)->get_processing_data()->get_height();
+                m_pdViews.at(m_pdViews.size()-1)->get_processing_data()->set_height(height);
 	}
 	
 	layout_tracks();
@@ -205,20 +216,20 @@ void SheetView::add_new_trackview(Track* track)
 
 void SheetView::remove_trackview(Track* track)
 {
-	foreach(TrackView* view, m_trackViews) {
-		if (view->get_track() == track) {
-			TrackPanelView* tpv = view->get_trackpanel_view();
-			scene()->removeItem(tpv);
+        foreach(ProcessingDataView* view, m_pdViews) {
+                if (view->get_processing_data() == track) {
+                        PDPanelView* panel = view->get_panel_view();
+                        scene()->removeItem(panel);
 			scene()->removeItem(view);
-			m_trackViews.removeAll(view);
+                        m_pdViews.removeAll(view);
 			delete view;
-			delete tpv;
+                        delete panel;
 			break;
 		}
 	}
 	
-	for(int i=0; i<m_trackViews.size(); ++i) {
-		m_trackViews.at(i)->get_track()->set_sort_index(i);
+        for(int i=0; i<m_pdViews.size(); ++i) {
+                m_pdViews.at(i)->get_processing_data()->set_sort_index(i);
 	}
 	
 	layout_tracks();
@@ -272,17 +283,17 @@ void SheetView::hscrollbar_value_changed(int value)
 void SheetView::vzoom(qreal factor)
 {
 	PENTER;
-	for (int i=0; i<m_trackViews.size(); ++i) {
-		TrackView* view = m_trackViews.at(i);
-		Track* track = view->get_track();
-		int height = track->get_height();
+        for (int i=0; i<m_pdViews.size(); ++i) {
+                ProcessingDataView* view = m_pdViews.at(i);
+                ProcessingData* pd = view->get_processing_data();
+                int height = pd->get_height();
 		height = (int) (height * factor);
 		if (height > m_trackMaximumHeight) {
 			height = m_trackMaximumHeight;
 		} else if (height < m_trackMinimumHeight) {
 			height = m_trackMinimumHeight;
 		}
-		track->set_height(height);
+                pd->set_height(height);
 	}
 	
 	layout_tracks();
@@ -298,14 +309,14 @@ void SheetView::hzoom(qreal factor)
 
 void SheetView::layout_tracks()
 {
-	if (m_trackViews.isEmpty() || !m_viewportReady) return;
+        if (m_pdViews.isEmpty() || !m_viewportReady) return;
 	
 	int verticalposition = m_trackTopIndent;
-	for (int i=0; i<m_trackViews.size(); ++i) {
-		TrackView* view = m_trackViews.at(i);
+        for (int i=0; i<m_pdViews.size(); ++i) {
+                ProcessingDataView* view = m_pdViews.at(i);
 		view->calculate_bounding_rect();
 		view->move_to(0, verticalposition);
-		verticalposition += (view->get_track()->get_height() + m_trackSeperatingHeight);
+                verticalposition += (view->get_processing_data()->get_height() + m_trackSeperatingHeight);
 	}
 	
 	m_sceneHeight = verticalposition;
@@ -437,7 +448,7 @@ void SheetView::update_shuttle_factor()
 	
 	int yscale;
 	
-	if (m_trackViews.size()) {
+        if (m_pdViews.size()) {
 		yscale = int(mean_track_height() / 10);
 	} else {
 		yscale = int(m_clipsViewPort->viewport()->height() / 10);
@@ -459,11 +470,11 @@ int SheetView::mean_track_height()
 	int total =0;
 	int mean = 0;
 	
-	foreach(TrackView* view, m_trackViews) {
+        foreach(ProcessingDataView* view, m_pdViews) {
 		total += view->get_height();
 	}
 	
-	mean = total / m_trackViews.size();
+        mean = total / m_pdViews.size();
 	
 	return mean;
 }

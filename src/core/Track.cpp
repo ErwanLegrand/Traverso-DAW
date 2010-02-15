@@ -43,11 +43,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 Track::Track(Sheet* sheet, const QString& name, int height )
-        : AudioProcessingItem(sheet)
-        , m_height(height)
+        : ProcessingData(sheet)
 {
 	PENTERCONS;
         m_name = name;
+        m_height = height;
 	m_pan = numtakes = 0;
 	m_sortIndex = -1;
 	m_id = create_id();
@@ -59,7 +59,7 @@ Track::Track(Sheet* sheet, const QString& name, int height )
 }
 
 Track::Track( Sheet * sheet, const QDomNode node)
-        : AudioProcessingItem(sheet)
+        : ProcessingData(sheet)
 {
 	PENTERCONS;
 	Q_UNUSED(node);
@@ -78,7 +78,6 @@ void Track::init()
 	isSolo = mutedBySolo = m_isMuted = isArmed = false;
 	set_history_stack(m_sheet->get_history_stack());
 	m_fader->set_gain(1.0);
-	m_captureRightChannel = m_captureLeftChannel = true;
 
         connect(&audiodevice(), SIGNAL(busConfigChanged()), this, SLOT(rescan_busses()), Qt::DirectConnection);
 }
@@ -99,8 +98,6 @@ QDomNode Track::get_state( QDomDocument doc, bool istemplate)
 	node.setAttribute("numtakes", numtakes);
         node.setAttribute("InBus", m_busInName);
         node.setAttribute("OutBus", m_busOutName);
-	node.setAttribute("CaptureLeftChannel", m_captureLeftChannel);
-	node.setAttribute("CaptureRightChannel", m_captureRightChannel);
 
 	if (! istemplate ) {
 		QDomNode clips = doc.createElement("Clips");
@@ -140,19 +137,13 @@ int Track::set_state( const QDomNode & node )
 	}
 	set_muted_by_solo(e.attribute( "mutedbysolo", "0").toInt());
 	set_pan( e.attribute( "pan", "" ).toFloat() );
-        set_bus_in( e.attribute( "InBus", "" ));
-        set_bus_out( e.attribute( "OutBus", "" ));
+        set_input_bus(e.attribute( "InBus", "Capture 1"));
+        set_output_bus(e.attribute( "OutBus", "Master Out"));
 	m_id = e.attribute("id", "0").toLongLong();
 	if (m_id == 0) {
 		m_id = create_id();
 	}
 	numtakes = e.attribute( "numtakes", "").toInt();
-	m_captureRightChannel = e.attribute("CaptureRightChannel", "1").toInt();
-	m_captureLeftChannel =  e.attribute("CaptureLeftChannel", "1").toInt();
-	// never ever allow both to be 0 at the same time!
-	if ( ! (m_captureRightChannel || m_captureLeftChannel) ) {
-		m_captureRightChannel = m_captureLeftChannel = 1;
-	}
 
 	QDomElement ClipsNode = node.firstChildElement("Clips");
 	if (!ClipsNode.isNull()) {
@@ -187,63 +178,6 @@ int Track::set_state( const QDomNode & node )
 }
 
 
-AudioClip* Track::get_clip_after(const TimeRef& pos)
-{
-	apill_foreach(AudioClip* clip, AudioClip, m_clips) {
-		if (clip->get_track_start_location() > pos) {
-			return clip;
-		}
-	}
-	return (AudioClip*) 0;
-}
-
-
-AudioClip* Track::get_clip_before(const TimeRef& pos)
-{
-	apill_foreach(AudioClip* clip, AudioClip, m_clips) {
-		if (clip->get_track_start_location() < pos) {
-			return clip;
-		}
-	}
-	return (AudioClip*) 0;
-}
-
-
-Command* Track::remove_clip(AudioClip* clip, bool historable, bool ismove)
-{
-	PENTER;
-	if (! ismove) {
-		m_sheet->get_audioclip_manager()->remove_clip(clip);
-	}
-	return new AddRemove(this, clip, historable, m_sheet,
-		"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)",
-		"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)", 
-   		tr("Remove Clip"));
-}
-
-
-Command* Track::add_clip(AudioClip* clip, bool historable, bool ismove)
-{
-	PENTER;
-	clip->set_track(this);
-	if (! ismove) {
-		m_sheet->get_audioclip_manager()->add_clip(clip);
-	}
-	return new AddRemove(this, clip, historable, m_sheet,
-		"private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)",
-		"private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)", 
-   		tr("Add Clip"));
-}
-
-void Track::private_add_clip(AudioClip* clip)
-{
-	m_clips.add_and_sort(clip);
-}
-
-void Track::private_remove_clip(AudioClip* clip)
-{
-	m_clips.remove(clip);
-}
 
 int Track::arm()
 {
@@ -267,48 +201,6 @@ int Track::disarm()
 	}
 	return 1;
 }
-
-void Track::set_bus_in(const QString& bus)
-{
-	bool wasArmed=isArmed;
-	if (isArmed)
-		disarm();
-        m_busInName = bus;
-	if (wasArmed) {
-		arm();
-	}
-
-        AudioBus* inBus = audiodevice().get_capture_bus(m_busInName);
-        if (inBus) {
-                set_input_bus(inBus);
-        }
-}
-
-void Track::set_bus_out(const QString& bus)
-{
-        m_busOutName = bus;
-        
-        AudioBus* outBus = 0;
-        if (m_busOutName == "Master Out") {
-                outBus = m_sheet->m_masterSubGroup->get_process_bus();
-                
-        } else {
-                outBus = audiodevice().get_playback_bus(m_busOutName);
-        }
-
-        set_output_bus(outBus);
-}
-
-bool Track::is_solo()
-{
-	return isSolo;
-}
-
-bool Track::is_muted_by_solo()
-{
-	return mutedBySolo;
-}
-
 
 bool Track::armed()
 {
@@ -356,54 +248,6 @@ void Track::set_gain(float gain)
         emit stateChanged();
 }
 
-
-void Track::set_pan(float pan)
-{
-	if ( pan < -1.0 )
-		m_pan=-1.0;
-	else
-		if ( pan > 1.0 )
-			m_pan=1.0;
-		else
-			m_pan=pan;
-	emit panChanged();
-}
-
-
-void Track::set_height(int h)
-{
-	m_height = h;
-	emit heightChanged();
-}
-
-
-int Track::get_total_clips()
-{
-	return m_clips.size();
-}
-
-void Track::set_muted_by_solo(bool muted)
-{
-	PENTER;
-	mutedBySolo = muted;
-	emit audibleStateChanged();
-}
-
-void Track::set_solo(bool solo)
-{
-	isSolo = solo;
-	if (solo)
-		mutedBySolo = false;
-	emit soloChanged(isSolo);
-	emit audibleStateChanged();
-}
-
-void Track::set_muted( bool muted )
-{
-	m_isMuted = muted;
-	emit muteChanged(m_isMuted);
-	emit audibleStateChanged();
-}
 
 void Track::set_armed( bool armed )
 {
@@ -475,13 +319,6 @@ int Track::process( nframes_t nframes )
 	return processResult;
 }
 
-Command* Track::mute()
-{
-	PENTER;
-	set_muted(!m_isMuted);
-	
-	return (Command*) 0;
-}
 
 Command* Track::toggle_arm()
 {
@@ -492,11 +329,6 @@ Command* Track::toggle_arm()
 	return (Command*) 0;
 }
 
-Command* Track::solo(  )
-{
-	m_sheet->solo_track(this);
-	return (Command*) 0;
-}
 
 Command* Track::silence_others( )
 {
@@ -527,81 +359,82 @@ void Track::get_render_range(TimeRef& startlocation, TimeRef& endlocation )
 	
 }
 
-Command* Track::add_plugin( Plugin * plugin )
-{
-	return m_pluginChain->add_plugin(plugin);
-}
-
-Command* Track::remove_plugin( Plugin * plugin )
-{
-	return m_pluginChain->remove_plugin(plugin);
-}
-
-void Track::set_sort_index( int index )
-{
-	m_sortIndex = index;
-}
-
-int Track::get_sort_index( ) const
-{
-	return m_sortIndex;
-}
-
-void Track::set_capture_left_channel(bool capture)
-{
-	m_captureLeftChannel = capture;
-}
-
-void Track::set_capture_right_channel(bool capture)
-{
-	m_captureRightChannel = capture;
-}
 
 void Track::clip_position_changed(AudioClip * clip)
 {
-	m_clips.sort(clip);
+        m_clips.sort(clip);
 }
 
 
 QList< AudioClip * > Track::get_cliplist() const
 {
-	QList<AudioClip*> list;
-	apill_foreach(AudioClip* clip, AudioClip, m_clips) {
-		list.append(clip);
-	}
-	return list;
+        QList<AudioClip*> list;
+        apill_foreach(AudioClip* clip, AudioClip, m_clips) {
+                list.append(clip);
+        }
+        return list;
 }
 
-void Track::rescan_busses()
+
+AudioClip* Track::get_clip_after(const TimeRef& pos)
 {
-    QStringList ibus = audiodevice().get_capture_buses_names();
-    QStringList obus = audiodevice().get_playback_buses_names();
-
-    // in the worst case, i.e. if no busses are available at all,
-    // use the default ones also used in the track's constructor.
-    QString fallbackCapture = "Capture 1";
-    QString fallbackPlayback = "Master Out";
-
-    // in the less worse case, if at least one bus is available,
-    // use it as a fallback
-    if (ibus.size()) {
-        fallbackCapture = ibus.at(0);
-    }
-
-    if (obus.size()) {
-        fallbackPlayback = obus.at(0);
-    }
-
-    // now let's look for the bus we actually want to connect to
-    if (!ibus.contains(m_busInName)) {
-        m_busInName = fallbackCapture;
-    }
-
-    if (!obus.contains(m_busOutName)) {
-        m_busOutName = fallbackPlayback;
-    }
-
-    set_bus_in(m_busInName);
-    set_bus_out(m_busOutName);
+        apill_foreach(AudioClip* clip, AudioClip, m_clips) {
+                if (clip->get_track_start_location() > pos) {
+                        return clip;
+                }
+        }
+        return (AudioClip*) 0;
 }
 
+
+AudioClip* Track::get_clip_before(const TimeRef& pos)
+{
+        apill_foreach(AudioClip* clip, AudioClip, m_clips) {
+                if (clip->get_track_start_location() < pos) {
+                        return clip;
+                }
+        }
+        return (AudioClip*) 0;
+}
+
+
+Command* Track::remove_clip(AudioClip* clip, bool historable, bool ismove)
+{
+        PENTER;
+        if (! ismove) {
+                m_sheet->get_audioclip_manager()->remove_clip(clip);
+        }
+        return new AddRemove(this, clip, historable, m_sheet,
+                "private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)",
+                "private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)",
+                tr("Remove Clip"));
+}
+
+
+Command* Track::add_clip(AudioClip* clip, bool historable, bool ismove)
+{
+        PENTER;
+        clip->set_track(this);
+        if (! ismove) {
+                m_sheet->get_audioclip_manager()->add_clip(clip);
+        }
+        return new AddRemove(this, clip, historable, m_sheet,
+                "private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)",
+                "private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)",
+                tr("Add Clip"));
+}
+
+void Track::private_add_clip(AudioClip* clip)
+{
+        m_clips.add_and_sort(clip);
+}
+
+void Track::private_remove_clip(AudioClip* clip)
+{
+        m_clips.remove(clip);
+}
+
+int Track::get_total_clips()
+{
+        return m_clips.size();
+}

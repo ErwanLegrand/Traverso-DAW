@@ -29,16 +29,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "ContextItem.h"
 #include "GainEnvelope.h"
-#include "AudioProcessingItem.h"
+#include "ProcessingData.h"
 
 #include "defines.h"
 
-class AudioClip;
-class Sheet;
-class PluginChain;
-class Plugin;
 
-class Track : public AudioProcessingItem
+class Track : public ProcessingData
 {
 	Q_OBJECT
 	Q_CLASSINFO("mute", tr("Mute"))
@@ -53,108 +49,59 @@ public :
 
 	static const int INITIAL_HEIGHT = 100;
 
-	Command* add_clip(AudioClip* clip, bool historable=true, bool ismove=false);
-	Command* add_plugin(Plugin* plugin);
-
-	Command* remove_clip(AudioClip* clip, bool historable=true, bool ismove=false);
-	Command* remove_plugin(Plugin* plugin);
 	
 	AudioClip* init_recording();
-	
+        Command* add_clip(AudioClip* clip, bool historable=true, bool ismove=false);
+        Command* remove_clip(AudioClip* clip, bool historable=true, bool ismove=false);
+        AudioClip* get_clip_after(const TimeRef& pos);
+        AudioClip* get_clip_before(const TimeRef& pos);
+
 	int arm();
 	int disarm();
 
 	// Get functions:
-	AudioClip* get_clip_after(const TimeRef& pos);
-	AudioClip* get_clip_before(const TimeRef& pos);
 	void get_render_range(TimeRef& startlocation, TimeRef& endlocation);
-        QString get_bus_in() const {return m_busInName;}
-        QString get_bus_out() const{return m_busOutName;}
-	int get_height() const {return m_height;}
-	float get_pan() const {return m_pan;}
-	Sheet* get_sheet() const {return m_sheet;}
 	
 	int get_total_clips();
 	QDomNode get_state(QDomDocument doc, bool istemplate=false);
 	QList<AudioClip*> get_cliplist() const;
-	int get_sort_index() const;
-	bool is_smaller_then(APILinkedListNode* node) {return ((Track*)node)->get_sort_index() > get_sort_index();}
 
 	
 
 	// Set functions:
-        void set_bus_out(const QString& bus);
-        void set_bus_in(const QString& bus);
-	void set_muted_by_solo(bool muted);
-	void set_solo(bool solo);
-	void set_muted(bool muted);
-	void set_pan(float pan);
-	void set_sort_index(int index);
-	void set_height(int h);
-	void set_capture_left_channel(bool capture);
-	void set_capture_right_channel(bool capture);
-	int set_state( const QDomNode& node );
+        int set_state( const QDomNode& node );
 
 
-	//Bool functions:
-	bool is_muted_by_solo();
-	bool is_solo();
 	bool armed();
-	bool capture_left_channel()
-	{
-		return m_captureLeftChannel;
-	}
-	bool capture_right_channel()
-	{
-		return m_captureRightChannel;
-	}
-	// End bool functions
 
 
 	int process(nframes_t nframes);
 
 private :
-	APILinkedList 	m_clips;
+        APILinkedList 	m_clips;
+        int numtakes;
 
-	float 	m_pan;
-	int numtakes;
-
-	int m_sortIndex;
-	int m_height;
-
-	bool isSolo;
 	bool isArmed;
-	bool mutedBySolo;
-	bool m_captureLeftChannel;
-	bool m_captureRightChannel;
 
 	void set_armed(bool armed);
 	void init();
 
 signals:
-	void audioClipAdded(AudioClip* clip);
-	void audioClipRemoved(AudioClip* clip);
-	void heightChanged();
-	void muteChanged(bool isMuted);
-	void soloChanged(bool isSolo);
-	void armedChanged(bool isArmed);
-	void lockChanged(bool isLocked);
-	void panChanged();
-	void audibleStateChanged();
+        void audioClipAdded(AudioClip* clip);
+        void audioClipRemoved(AudioClip* clip);
+        
+        void armedChanged(bool isArmed);
 
 public slots:
 	void set_gain(float gain);
 	void clip_position_changed(AudioClip* clip);
 	
-	Command* mute();
 	Command* toggle_arm();
-	Command* solo();
-	Command* silence_others();
+        Command* silence_others();
 
 private slots:
-	void private_add_clip(AudioClip* clip);
-	void private_remove_clip(AudioClip* clip);
-        void rescan_busses();
+        void private_add_clip(AudioClip* clip);
+        void private_remove_clip(AudioClip* clip);
 
 };
 

@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QDomNode>
 
 #include "ContextItem.h"
-#include "AudioProcessingItem.h"
+#include "ProcessingData.h"
 #include "Snappable.h"
 #include "defines.h"
 #include "GainEnvelope.h"
@@ -42,7 +42,7 @@ class AudioBus;
 class FadeCurve;
 class PluginChain;
 
-class AudioClip : public AudioProcessingItem, public Snappable
+class AudioClip : public ProcessingData, public Snappable
 {
 	Q_OBJECT
 	Q_CLASSINFO("mute", tr("Mute"))

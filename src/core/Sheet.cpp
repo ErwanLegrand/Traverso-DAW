@@ -170,6 +170,7 @@ void Sheet::init()
 
 	mixdown = gainbuffer = 0;
         m_masterSubGroup = new SubGroup("Master Out", 2);
+        m_masterSubGroup->set_name("Master Out");
         m_renderBus = new AudioBus("Render Bus", 2, ChannelIsOutput);
         m_clipRenderBus = new AudioBus("Clip Render Bus", 2, ChannelIsOutput);
 	
@@ -180,8 +181,8 @@ void Sheet::init()
 	
 	set_context_item( m_acmanager );
 
-        m_masterSubGroup->set_output_bus_name("Playback 1");
-        m_playBackBus = audiodevice().get_playback_bus("Playback 1");
+        m_masterSubGroup->set_output_bus("Playback 2");
+        m_playBackBus = audiodevice().get_playback_bus("Playback 2");
         m_masterSubGroup->set_output_bus(m_playBackBus);
 
 	m_transport = m_stopTransport = m_resumeTransport = m_readyToRecord = false;
@@ -249,11 +250,12 @@ int Sheet::set_state( const QDomNode & node )
 
 		trackNode = trackNode.nextSibling();
 	}
+        private_add_track(m_masterSubGroup);
 
 	m_acmanager->set_state(node.firstChildElement("ClipManager"));
 	
 	QDomNode pluginChainNode = node.firstChildElement("PluginChain");
-	m_pluginChain->set_state(pluginChainNode);
+        m_masterSubGroup->get_plugin_chain()->set_state(pluginChainNode);
 	
 	return 1;
 }
@@ -294,7 +296,7 @@ QDomNode Sheet::get_state(QDomDocument doc, bool istemplate)
 	sheetNode.appendChild(tracksNode);
 
 	QDomNode pluginChainNode = doc.createElement("PluginChain");
-	pluginChainNode.appendChild(m_pluginChain->get_state(doc));
+        pluginChainNode.appendChild(m_masterSubGroup->get_plugin_chain()->get_state(doc));
 	sheetNode.appendChild(pluginChainNode);
 
 
@@ -333,7 +335,7 @@ void Sheet::audiodevice_client_removed(Client* client )
 	}
 }
 
-Command* Sheet::add_track(Track* track, bool historable)
+Command* Sheet::add_track(ProcessingData* track, bool historable)
 {
 	apill_foreach(Track* existing, Track, m_tracks) {
 		if (existing->is_solo()) {
@@ -349,7 +351,7 @@ Command* Sheet::add_track(Track* track, bool historable)
 }
 
 
-Command* Sheet::remove_track(Track* track, bool historable)
+Command* Sheet::remove_track(ProcessingData* track, bool historable)
 {
 	return new AddRemove(this, track, historable, this,
 		"private_remove_track(Track*)", "trackRemoved(Track*)",
@@ -743,22 +745,22 @@ Track* Sheet::create_track()
 	return track;
 }
 
-void Sheet::solo_track(Track* t)
+void Sheet::solo_processing_data(ProcessingData *pd)
 {
-	bool wasSolo = t->is_solo();
+        bool wasSolo = pd->is_solo();
 
-	t->set_muted_by_solo(!wasSolo);
-	t->set_solo(!wasSolo);
+        pd->set_muted_by_solo(!wasSolo);
+        pd->set_solo(!wasSolo);
 
 	bool hasSolo = false;
-	apill_foreach(Track* track, Track, m_tracks) {
-		track->set_muted_by_solo(!track->is_solo());
-		if (track->is_solo()) hasSolo = true;
+        apill_foreach(ProcessingData* data, ProcessingData, m_tracks) {
+                data->set_muted_by_solo(!data->is_solo());
+                if (data->is_solo()) hasSolo = true;
 	}
 
 	if (!hasSolo) {
-		apill_foreach(Track* track, Track, m_tracks) {
-			track->set_muted_by_solo(false);
+                apill_foreach(ProcessingData* data, ProcessingData, m_tracks) {
+                        data->set_muted_by_solo(false);
 		}
 	}
 }
@@ -904,6 +906,7 @@ int Sheet::process( nframes_t nframes )
 
 	// Process all Tracks.
 	apill_foreach(Track* track, Track, m_tracks) {
+                if (track = qobject_cast<Track*>(track))
 		processResult |= track->process(nframes);
 	}
 
@@ -915,7 +918,7 @@ int Sheet::process( nframes_t nframes )
 	}
 
 	// Mix the result into the AudioDevice "physical" buffers
-        m_pluginChain->process_post_fader(m_masterSubGroup->get_process_bus(), nframes);
+        m_masterSubGroup->get_plugin_chain()->process_post_fader(m_masterSubGroup->get_process_bus(), nframes);
         m_masterSubGroup->send_to_output_buses(nframes);
 
 	
@@ -1029,7 +1032,7 @@ void Sheet::resize_buffer(bool updateArmStatus, nframes_t size)
 
 	if (updateArmStatus) {
 		apill_foreach(Track* track, Track, m_tracks) {
-			AudioBus* bus = audiodevice().get_capture_bus(track->get_bus_in().toAscii());
+                        AudioBus* bus = audiodevice().get_capture_bus(track->get_bus_in_name());
 			if (bus && track->armed()) {
 				bus->set_monitor_peaks(true);
 			}
@@ -1085,7 +1088,7 @@ AudioClipManager * Sheet::get_audioclip_manager( ) const
 
 PluginChain* Sheet::get_plugin_chain() const
 {
-	return m_pluginChain;
+        return m_masterSubGroup->get_plugin_chain();
 }
 
 int Sheet::get_track_index(qint64 id)
@@ -1138,12 +1141,12 @@ TimeRef Sheet::get_last_location() const
 	return lastAudio;
 }
 
-void Sheet::private_add_track(Track* track)
+void Sheet::private_add_track(ProcessingData* track)
 {
 	m_tracks.append(track);
 }
 
-void Sheet::private_remove_track(Track* track)
+void Sheet::private_remove_track(ProcessingData* track)
 {
 	m_tracks.remove(track);
 }

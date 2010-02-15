@@ -13,7 +13,6 @@ ${QT_QTXML_INCLUDE_DIR}
 SET(TRAVERSO_CORE_SOURCES
 ${CMAKE_SOURCE_DIR}/src/common/Utils.cpp
 ${CMAKE_SOURCE_DIR}/src/common/Tsar.cpp
-${CMAKE_SOURCE_DIR}/src/common/AudioProcessingItem.cpp
 ${CMAKE_SOURCE_DIR}/src/common/Debugger.cpp
 ${CMAKE_SOURCE_DIR}/src/common/Mixer.cpp
 ${CMAKE_SOURCE_DIR}/src/common/RingBuffer.cpp
@@ -23,6 +22,7 @@ AudioClipGroup.cpp
 AudioClipManager.cpp
 AudioFileCopyConvert.cpp
 AudioFileMerger.cpp
+ProcessingData.cpp
 AudioSource.cpp
 Command.cpp
 Config.cpp
@@ -56,11 +56,11 @@ ProjectConverter.cpp
 
 SET(TRAVERSO_CORE_MOC_CLASSES
 ${CMAKE_SOURCE_DIR}/src/common/Tsar.h
-${CMAKE_SOURCE_DIR}/src/common/AudioProcessingItem.h
 AudioClip.h
 AudioClipManager.h
 AudioFileMerger.h
 AudioFileCopyConvert.h
+ProcessingData.h
 Config.h
 ContextPointer.h
 Curve.h
@@ -76,6 +76,7 @@ ProjectManager.h
 ReadSource.h
 ResourcesManager.h
 Sheet.h
+SubGroup.h
 Themer.h
 TimeLine.h
 Track.h

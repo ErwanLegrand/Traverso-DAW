@@ -87,8 +87,8 @@ void BusSelectorDialog::current_track_changed(int index)
 	Sheet* sheet = pm().get_project()->get_current_sheet();
 	m_currentTrack = sheet->get_track(id);
 	
-        QList<QListWidgetItem *> c_list = captureBusesListWidget->findItems(m_currentTrack->get_bus_in(), Qt::MatchExactly);
-        QList<QListWidgetItem *> p_list = playbackBusesListWidget->findItems(m_currentTrack->get_bus_out(), Qt::MatchExactly);
+        QList<QListWidgetItem *> c_list = captureBusesListWidget->findItems(m_currentTrack->get_bus_in_name(), Qt::MatchExactly);
+        QList<QListWidgetItem *> p_list = playbackBusesListWidget->findItems(m_currentTrack->get_bus_out_name(), Qt::MatchExactly);
 
         if (c_list.size()) {
                 QListWidgetItem* item = c_list.at(0);
@@ -111,11 +111,11 @@ void BusSelectorDialog::accept()
         QList<QListWidgetItem *>  p_list = playbackBusesListWidget->selectedItems();
 
         if (c_list.size()) {
-                m_currentTrack->set_bus_in(c_list.at(0)->text());
+                m_currentTrack->set_input_bus(c_list.at(0)->text());
         }
 
         if (p_list.size()) {
-                m_currentTrack->set_bus_out(p_list.at(0)->text());
+                m_currentTrack->set_output_bus(p_list.at(0)->text());
 	}
 	
 	hide();

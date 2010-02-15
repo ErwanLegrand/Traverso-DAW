@@ -25,18 +25,22 @@ $Id: TrackPanelView.h,v 1.1 2008/01/21 16:17:30 r_sijrier Exp $
 
 #include "ViewItem.h"
 
+class ProcessingData;
 class Track;
+class ProcessingDataView;
+class PDPanelView;
 class TrackView;
 class TrackPanelViewPort;
 class PanelLed;
 class TrackPanelView;
+class SubGroupView;
 
 class TrackPanelGain : public ViewItem
 {
 	Q_OBJECT
 
 public:
-	TrackPanelGain(TrackPanelView* parent, Track* track);
+        TrackPanelGain(PDPanelView* parent, ProcessingData* track);
 	TrackPanelGain(){}
 
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -47,7 +51,7 @@ public slots:
 	Command* gain_decrement();
 	
 private:
-	Track* m_track;
+        ProcessingData* m_pd;
 };
 
 class TrackPanelPan : public ViewItem
@@ -55,7 +59,7 @@ class TrackPanelPan : public ViewItem
 	Q_OBJECT
 	
 public:
-	TrackPanelPan(TrackPanelView* parent, Track* track);
+        TrackPanelPan(PDPanelView* parent, ProcessingData* track);
 	TrackPanelPan(){}
 	
 
@@ -67,7 +71,7 @@ public slots:
 	Command* pan_right();
 
 private:
-	Track* m_track;
+        ProcessingData* m_pd;
 };
 
 
@@ -76,13 +80,13 @@ class TrackPanelLed : public ViewItem
 {
 	Q_OBJECT
 public:
-	TrackPanelLed(TrackPanelView* view, const QString& name, const QString& toggleslot);
+        TrackPanelLed(PDPanelView* view, ProcessingData* pd, const QString& name, const QString& toggleslot);
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void set_bounding_rect(QRectF rect);
 
 private:
-	Track* m_track;
+        ProcessingData* m_pd;
         QString m_name;
 	QString m_toggleslot;
 	bool m_isOn;
@@ -97,7 +101,7 @@ class TrackPanelBus : public ViewItem
 {
 	Q_OBJECT
 public:
-	TrackPanelBus(TrackPanelView* view, Track* track, int busType);
+        TrackPanelBus(PDPanelView* view, ProcessingData* track, int busType);
 	TrackPanelBus(){}
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -105,7 +109,7 @@ public:
 	enum { BUSIN, BUSOUT };
 
 private:
-	Track*	m_track;
+        ProcessingData*	m_pd;
         int	m_type;
 	QString m_busName;
 	QPixmap m_pix;
@@ -117,40 +121,80 @@ public slots:
 };
 
 
-class TrackPanelView : public ViewItem
+class PDPanelView : public ViewItem
 {
 	Q_OBJECT
 
 public:
-	TrackPanelView(TrackView* trackView);
-	~TrackPanelView();
+        PDPanelView(ProcessingDataView* trackView);
+        ~PDPanelView();
 
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void calculate_bounding_rect();
 	
-	Track* get_track() const {return m_track;}
 	
-private:
-	Track*			m_track;
-	TrackView*		m_tv;
+protected:
+        ProcessingData*		m_pd;
+        ProcessingDataView*	m_processingDataView;
 	TrackPanelViewPort*	m_viewPort;
 	TrackPanelGain*		m_gainView;
 	TrackPanelPan*		m_panView;
 	
-	TrackPanelLed* muteLed;
-	TrackPanelLed* soloLed;
-	TrackPanelLed* recLed;
+        TrackPanelLed*          m_muteLed;
+        TrackPanelLed*          m_soloLed;
 	
-	TrackPanelBus*	inBus;
-	TrackPanelBus*	outBus;
+        TrackPanelBus*          m_inBus;
+        TrackPanelBus*  	m_outBus;
 
-	void draw_panel_track_name(QPainter* painter);
-	void layout_panel_items();
+	void draw_panel_name(QPainter* painter);
+        virtual void layout_panel_items() = 0;
 
 private slots:
 	void update_gain();
 	void update_pan();
-	void update_track_name();
+        void update_name();
+};
+
+
+
+class TrackPanelView : public PDPanelView
+{
+        Q_OBJECT
+
+public:
+        TrackPanelView(TrackView* trackView);
+        ~TrackPanelView();
+
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+
+        Track* get_track() const {return (Track*)m_pd;}
+
+protected:
+        void layout_panel_items();
+
+
+private:
+        TrackView*	m_tv;
+        TrackPanelLed*  m_recLed;
+};
+
+
+class SubGroupPanelView : public PDPanelView
+{
+        Q_OBJECT
+
+public:
+        SubGroupPanelView(SubGroupView* trackView);
+        ~SubGroupPanelView();
+
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+
+
+protected:
+        void layout_panel_items();
+
+
+private:
 };
 
 

@@ -151,7 +151,11 @@
 		<color name="TrackPanel:led:margin:inactive" red="200" green="200" blue="200" alpha="255" />
 		<color name="TrackPanel:led:font:active" red="0" green="0" blue="0" alpha="255" />
 		<color name="TrackPanel:led:font:inactive" red="150" green="150" blue="150" alpha="255" />
-		
+
+
+                <color name="SubGroup:background" red="150" green="150" blue="251" alpha="100" />
+                <color name="SubGroupPanel:background" red="0" green="0" blue="248" alpha="255" />
+
 		<color name="TrackPanel:bus:font" red="0" green="0" blue="0" alpha="255" />
 		<color name="TrackPanel:bus:background" red="237" green="237" blue="250" alpha="255" />
 		<color name="TrackPanel:bus:margin" red="200" green="200" blue="200" alpha="255" />

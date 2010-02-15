@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define SONG_H
 
 #include "ContextItem.h"
-#include "AudioProcessingItem.h"
 #include <QDomNode>
 #include <QTimer>
 #include "defines.h"
@@ -48,10 +47,11 @@ class Snappable;
 class DecodeBuffer;
 class Marker;
 class SubGroup;
+class ProcessingData;
 
 struct ExportSpecification;
 
-class Sheet : public AudioProcessingItem
+class Sheet : public ContextItem, public APILinkedListNode
 {
 	Q_OBJECT
 	Q_CLASSINFO("start_transport", tr("Play"))
@@ -99,6 +99,7 @@ public:
 	const TimeRef& get_new_transport_location() const {return m_newTransportLocation;}
 	
         QString get_artists() const {return m_artists;}
+        QString get_name() const {return m_name;}
 	QDomNode get_state(QDomDocument doc, bool istemplate=false);
 	QList<Track*> get_tracks() const;
 	
@@ -115,6 +116,7 @@ public:
 
 	// Set functions
 	void set_artists(const QString& pArtistis);
+        void set_name(const QString& name) {m_name = name;}
 	void set_first_visible_frame(nframes_t pos);
 	void set_work_at(const TimeRef& location);
 	void set_hzoom(qreal hzoom);
@@ -135,11 +137,11 @@ public:
 	int render(ExportSpecification* spec);
         int start_export(ExportSpecification* spec);
 
-	void solo_track(Track* track);
+        void solo_processing_data(ProcessingData* pd);
 	void create(int tracksToCreate);
 	void move_clip(Track* from, Track* too, AudioClip* clip, TimeRef location);
-	Command* add_track(Track* track, bool historable=true);
-	Command* remove_track(Track* track, bool historable=true);
+        Command* add_track(ProcessingData* api, bool historable=true);
+        Command* remove_track(ProcessingData* api, bool historable=true);
 	
 	bool any_track_armed();
 	bool realtime_path() const {return m_realtimepath;}
@@ -196,6 +198,7 @@ private:
 	
         nframes_t 	m_firstVisibleFrame;
         QString 	m_artists;
+        QString         m_name;
 	int		m_mode;
 	qreal		m_hzoom;
 	int		m_sbx;
@@ -273,10 +276,11 @@ signals:
 	void modeChanged();
 	void recordingStateChanged();
 	void prepareRecording();
+        void stateChanged();
 	
 private slots:
-	void private_add_track(Track* track);
-	void private_remove_track(Track* track);
+        void private_add_track(ProcessingData* track);
+        void private_remove_track(ProcessingData* track);
 	void handle_diskio_writebuffer_overrun();
 	void handle_diskio_readbuffer_underrun();
 	void prepare_recording();

@@ -330,8 +330,10 @@ void HDDSpaceInfo::update_status( )
 		foreach(Sheet* sheet, recordingSheets) {
 			foreach(Track* track, sheet->get_tracks()) {
 				if (track->armed()) {
-					recChannelCount += track->capture_left_channel() ? 1 : 0;
-					recChannelCount += track->capture_right_channel() ? 1 : 0;
+                                        // FIXME !!!!!!!
+                                        recChannelCount = 2;
+//					recChannelCount += track->capture_left_channel() ? 1 : 0;
+//					recChannelCount += track->capture_right_channel() ? 1 : 0;
 				}
 			}
 		}

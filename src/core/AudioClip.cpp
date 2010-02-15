@@ -539,21 +539,22 @@ void AudioClip::process_capture(nframes_t nframes)
 	
 	m_length.add_frames(nframes, get_rate());
 	nframes_t written = 0;
-	
-	if (m_track->capture_left_channel() && m_track->capture_right_channel()) {
-		audio_sample_t* buffer[2];
-                buffer[0] = m_inputBus->get_buffer(0, nframes);
-                buffer[1] = m_inputBus->get_buffer(1, nframes);
-		written = m_recorder->rb_write(buffer, nframes);
-	} else if (m_track->capture_left_channel()) {
-		audio_sample_t* buffer[1];
-                buffer[0] = m_inputBus->get_buffer(0, nframes);
-		written = m_recorder->rb_write(buffer, nframes);
-	} else if (m_track->capture_right_channel()) {
-		audio_sample_t* buffer[1];
-                buffer[0] = m_inputBus->get_buffer(1, nframes);
-		written = m_recorder->rb_write(buffer, nframes);
-	}
+
+// FIXME !!!!
+//	if (m_track->capture_left_channel() && m_track->capture_right_channel()) {
+//		audio_sample_t* buffer[2];
+//                buffer[0] = m_inputBus->get_buffer(0, nframes);
+//                buffer[1] = m_inputBus->get_buffer(1, nframes);
+//		written = m_recorder->rb_write(buffer, nframes);
+//	} else if (m_track->capture_left_channel()) {
+//		audio_sample_t* buffer[1];
+//                buffer[0] = m_inputBus->get_buffer(0, nframes);
+//		written = m_recorder->rb_write(buffer, nframes);
+//	} else if (m_track->capture_right_channel()) {
+//		audio_sample_t* buffer[1];
+//                buffer[0] = m_inputBus->get_buffer(1, nframes);
+//		written = m_recorder->rb_write(buffer, nframes);
+//	}
 	
 	if (written != nframes) {
 		printf("couldn't write nframes %d to recording buffer for channel 0, only %d\n", nframes, written);
@@ -578,13 +579,7 @@ int AudioClip::init_recording(const QString& name )
 	m_sourceStartLocation = TimeRef();
 	m_isTake = 1;
 	m_recordingStatus = RECORDING;
-	int channelcount;
-	
-	if (m_track->capture_left_channel() && m_track->capture_right_channel()) {
-		channelcount = 2;
-	} else {
-		channelcount = 1;
-	}
+        int channelcount = m_inputBus->get_channel_count();
 	
 	ReadSource* rs = resources_manager()->create_recording_source(
 				pm().get_project()->get_root_dir() + "/audiosources/",

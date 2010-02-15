@@ -24,8 +24,10 @@ MarkerView.cpp
 PluginChainView.cpp
 PluginView.cpp
 PositionIndicator.cpp
+ProcessingDataView.cpp
 SheetView.cpp
 SheetWidget.cpp
+SubGroupView.cpp
 TimeLineView.cpp
 TimeLineViewPort.cpp
 TrackPanelView.cpp
@@ -44,7 +46,9 @@ FadeView.h
 MarkerView.h
 PluginChainView.h
 PluginView.h
+ProcessingDataView.h
 PositionIndicator.h
+SubGroupView.h
 TrackView.h
 ViewItem.h
 dialogs/AudioClipEditDialog.h
