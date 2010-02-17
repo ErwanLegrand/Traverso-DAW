@@ -918,11 +918,8 @@ int Sheet::process( nframes_t nframes )
 		return 0;
 	}
 
-        m_masterSubGroup->get_plugin_chain()->process_post_fader(m_masterSubGroup->get_process_bus(), nframes);
-
-	// Mix the result into the AudioDevice "physical" buffers
-        m_masterSubGroup->send_to_output_buses(nframes);
-
+        // Mix the result into the AudioDevice "physical" buffers
+        m_masterSubGroup->process(nframes);
 	
 	return 1;
 }
