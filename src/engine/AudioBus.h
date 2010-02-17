@@ -43,7 +43,7 @@ public:
 	void add_channel(AudioChannel* chan);
 	int get_channel_count()
 	{
-		return channelCount;
+                return m_channelCount;
 	}
 	
 	QString get_name()
@@ -95,7 +95,7 @@ private:
 	QString			deviceName;
 	QString			m_name;
 	
-	int 			channelCount;
+        int 			m_channelCount;
 	int			m_monitors;
         int                     m_type;
 
@@ -116,7 +116,7 @@ signals:
  */
 inline AudioChannel * AudioBus::get_channel( int channelNumber )
 {
-        if (channelNumber < channels.size()) {
+        if (channelNumber < m_channelCount) {
                 return channels.at(channelNumber);
         }
         return 0;

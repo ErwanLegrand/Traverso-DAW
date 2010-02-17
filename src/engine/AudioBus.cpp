@@ -72,7 +72,7 @@ AudioBus::AudioBus( const QString& name, int channels, int type)
 
 void AudioBus::init(const QString& name, int type)
 {
-	channelCount = m_monitors = 0;
+        m_channelCount = m_monitors = 0;
 	m_name = name;
         m_type = type;
 }
@@ -94,7 +94,7 @@ void AudioBus::add_channel(AudioChannel* chan)
 {
 	Q_ASSERT(chan);
 	channels.append(chan);
-	channelCount++;
+        m_channelCount++;
 }
 
 
