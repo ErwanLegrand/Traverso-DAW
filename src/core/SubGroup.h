@@ -30,8 +30,10 @@ class SubGroup : public ProcessingData
         Q_OBJECT
 
 public:
-        SubGroup(const QString& name, int channelCount);
+        SubGroup(Sheet* sheet, const QString& name, int channelCount);
         ~SubGroup();
+
+        int process(nframes_t nframes);
 };
 
 #endif // SUBGROUP_H

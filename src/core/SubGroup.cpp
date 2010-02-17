@@ -22,8 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "SubGroup.h"
 
 #include "AudioBus.h"
+#include "PluginChain.h"
 
-SubGroup::SubGroup(const QString& name, int channelCount)
+SubGroup::SubGroup(Sheet* sheet, const QString& name, int channelCount)
+        : ProcessingData(sheet)
 {
         m_processBus = new AudioBus(name, channelCount, ChannelIsOutput);
 }
@@ -32,4 +34,12 @@ SubGroup::SubGroup(const QString& name, int channelCount)
 SubGroup::~SubGroup()
 {
         delete m_processBus;
+}
+
+int SubGroup::process(nframes_t nframes)
+{
+        m_pluginChain->process_post_fader(m_processBus, nframes);
+        send_to_output_buses(nframes);
+
+        return 1;
 }
