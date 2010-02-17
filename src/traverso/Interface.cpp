@@ -891,8 +891,9 @@ Command * Interface::get_keymap(QString &str)
 	QMap<QString, QList<const QMetaObject*> > objects;
 	
 	QList<const QMetaObject*> sheetlist; sheetlist << &Sheet::staticMetaObject; sheetlist << &SheetView::staticMetaObject;
-	QList<const QMetaObject*> tracklist; tracklist << &Track::staticMetaObject; tracklist << &TrackView::staticMetaObject;
-	QList<const QMetaObject*> cliplist; cliplist << &AudioClip::staticMetaObject; cliplist << &AudioClipView::staticMetaObject;
+        QList<const QMetaObject*> tracklist; tracklist << &Track::staticMetaObject; tracklist << &TrackView::staticMetaObject;
+        QList<const QMetaObject*> subgrouplist; subgrouplist << &SubGroup::staticMetaObject; subgrouplist << &SubGroupView::staticMetaObject;
+        QList<const QMetaObject*> cliplist; cliplist << &AudioClip::staticMetaObject; cliplist << &AudioClipView::staticMetaObject;
 	QList<const QMetaObject*> curvelist; curvelist << &Curve::staticMetaObject; curvelist << &CurveView::staticMetaObject;
 	QList<const QMetaObject*> timelinelist; timelinelist << &TimeLine::staticMetaObject; timelinelist << &TimeLineView::staticMetaObject;
 	QList<const QMetaObject*> markerlist; markerlist << &Marker::staticMetaObject; markerlist << &MarkerView::staticMetaObject;
@@ -902,8 +903,9 @@ Command * Interface::get_keymap(QString &str)
 	QList<const QMetaObject*> pmlist; pmlist << &ProjectManager::staticMetaObject;
 		
 	objects.insert("Sheet", sheetlist);
-	objects.insert("Track", tracklist);
-	objects.insert("AudioClip", cliplist);
+        objects.insert("Track", tracklist);
+        objects.insert("SubGroup", subgrouplist);
+        objects.insert("AudioClip", cliplist);
 	objects.insert("Curve", curvelist);
 	objects.insert("TimeLine", timelinelist);
 	objects.insert("Marker", markerlist);

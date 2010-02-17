@@ -37,6 +37,10 @@ class Sheet;
 class ProcessingData : public ContextItem, public APILinkedListNode
 {
         Q_OBJECT
+
+        Q_CLASSINFO("mute", tr("Mute"))
+        Q_CLASSINFO("solo", tr("Solo"))
+
 public:
         ProcessingData (Sheet* sheet=0);
         ~ProcessingData () {}

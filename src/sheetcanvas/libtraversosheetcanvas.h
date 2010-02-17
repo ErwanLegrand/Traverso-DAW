@@ -13,4 +13,5 @@
 #include "TrackView.h"
 #include "TrackPanelView.h"
 #include "TrackPanelViewPort.h"
+#include "SubGroupView.h"
 #include "ViewItem.h"

@@ -40,7 +40,7 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="F5" >
 			<Objects>
-				<Object objectname="TrackView" slotsignature="add_new_plugin" modes="All" sortorder="13" />
+                                <Object objectname="ProcessingDataView" slotsignature="add_new_plugin" modes="All" sortorder="13" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="LARROW" >
@@ -133,12 +133,12 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="O" >
 			<Objects>
-				<Object objectname="Track" slotsignature="solo" modes="All" sortorder="3" />
+                                <Object objectname="ProcessingData" slotsignature="solo" modes="All" sortorder="3" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="U" >
 			<Objects>
-				<Object objectname="Track" slotsignature="mute" modes="All" sortorder="4" />
+                                <Object objectname="ProcessingData" slotsignature="mute" modes="All" sortorder="4" />
 				<Object objectname="AudioClip" slotsignature="mute" modes="All" sortorder="12" />
 			</Objects>
 		</keyfact>
@@ -165,8 +165,8 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="E" >
 			<Objects>
-				<Object objectname="TrackView" slotsignature="edit_properties" modes="All" sortorder="11" />
-				<Object objectname="PluginView" slotsignature="edit_properties" modes="All" />
+                                <Object objectname="ProcessingDataView" slotsignature="edit_properties" modes="All" sortorder="11" />
+                                <Object objectname="PluginView" slotsignature="edit_properties" modes="All" />
 				<Object objectname="SpectralMeterView" slotsignature="edit_properties" modes="All" />
 				<Object objectname="AudioClipView" slotsignature="edit_properties" modes="All" sortorder="11" />
 				<Object objectname="TimeLineView" slotsignature="Interface::show_marker_dialog" modes="All" />
@@ -182,7 +182,7 @@
 				<Object objectname="FadeCurve" slotsignature="toggle_bypass" modes="All" sortorder="10" />
 				<Object objectname="Plugin" slotsignature="toggle_bypass" modes="All" />
 				<Object objectname="LV2Plugin" slotsignature="toggle_bypass" modes="All" />
-				<Object objectname="TrackView" slotsignature="select_bus" modes="All" sortorder="8" />
+                                <Object objectname="ProcessingDataView" slotsignature="select_bus" modes="All" sortorder="8" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="P" >
@@ -291,21 +291,6 @@
 				<Object objectname="SheetView" modes="All" sortorder="5" submenu="Zoom" pluginname="TraversoCommands" commandname="VZoomIn" arguments="VZoom;1;-0.2" />
 			</Objects>
 		</keyfact>
-		<keyfact type="FKEY2" key1="J" key2="L" >
-			<Objects>
-				<Object objectname="Track" slotsignature="capture_from_channel_both" modes="All" />
-			</Objects>
-		</keyfact>
-		<keyfact type="FKEY2" key1="J" key2="K" >
-			<Objects>
-				<Object objectname="Track" slotsignature="capture_from_channel_left" modes="All" />
-			</Objects>
-		</keyfact>
-		<keyfact type="FKEY2" key1="K" key2="L" >
-			<Objects>
-				<Object objectname="Track" slotsignature="capture_from_channel_right" modes="All" />
-			</Objects>
-		</keyfact>
 		<keyfact type="FKEY2" key1="F" key2="G" >
 			<Objects>
 				<Object objectname="AudioClipView" slotsignature="select_fade_in_shape" modes="All" sortorder="14" submenu="Fade In/Out" />
@@ -361,8 +346,8 @@
 		<keyfact type="HKEY" key1="G" >
 			<Objects>
 				<Object objectname="AudioClipView" modes="All" sortorder="5" pluginname="TraversoCommands" commandname="Gain" />
-				<Object objectname="TrackView" modes="All" sortorder="7" pluginname="TraversoCommands" commandname="Gain" />
-				<Object objectname="Sheet" modes="All" sortorder="7" pluginname="TraversoCommands" commandname="Gain" />
+                                <Object objectname="ProcessingDataView" modes="All" sortorder="7" pluginname="TraversoCommands" commandname="Gain" />
+                                <Object objectname="Sheet" modes="All" sortorder="7" pluginname="TraversoCommands" commandname="Gain" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="P" sortorder="16" >
@@ -545,8 +530,7 @@
 		<keyfact type="D_FKEY" key1="G" >
 			<Objects>
 				<Object objectname="AudioClip" modes="All" sortorder="22" pluginname="TraversoCommands" commandname="ResetGain" arguments="1.0" />
-				<Object objectname="Track" modes="All" sortorder="30" pluginname="TraversoCommands" commandname="ResetGain" arguments="0.5" />
-				<Object objectname="TrackPanelGain" modes="All" sortorder="30" pluginname="TraversoCommands" commandname="ResetGain" arguments="0.5" />
+                                <Object objectname="ProcessingDataView" modes="All" sortorder="30" pluginname="TraversoCommands" commandname="ResetGain" arguments="0.5" />
 				<Object objectname="Sheet" modes="All" sortorder="30" pluginname="TraversoCommands" commandname="ResetGain" arguments="0.5" />
 			</Objects>
 		</keyfact>
@@ -558,7 +542,7 @@
 		<keyfact type="D_FKEY" key1="R" >
 			<Objects>
 				<Object objectname="AudioClip" modes="All" sortorder="50" pluginname="TraversoCommands" commandname="RemoveClip" />
-				<Object objectname="Track" modes="All" sortorder="50" pluginname="TraversoCommands" commandname="RemoveTrack" />
+                                <Object objectname="ProcessingDataView" modes="All" sortorder="50" pluginname="TraversoCommands" commandname="RemoveProcessingData" />
 				<Object objectname="CurveView" slotsignature="remove_node" modes="All" />
 				<Object objectname="PluginView" slotsignature="remove_plugin" modes="All" />
 				<Object objectname="TimeLineView" slotsignature="remove_marker" modes="All" />
