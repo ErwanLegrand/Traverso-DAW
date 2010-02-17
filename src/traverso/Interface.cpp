@@ -926,6 +926,7 @@ Command * Interface::get_keymap(QString &str)
 		QStringList result;
 		
 		foreach(const QMetaObject* mo, objectlist) {
+                        while (mo) {
 			QList<MenuData > list;
 			
 			ie().create_menudata_for_metaobject(mo, list);
@@ -957,8 +958,11 @@ Command * Interface::get_keymap(QString &str)
 				}
 				delete menu;
 			}
+                        mo = mo->superClass();
+                }
 		}
 		result.sort();
+                result.removeDuplicates();
 		str += result.join("");
 		str += "</table></br></br>";
 	}
