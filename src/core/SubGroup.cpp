@@ -38,6 +38,10 @@ SubGroup::~SubGroup()
 
 int SubGroup::process(nframes_t nframes)
 {
+        if (m_isMuted || (get_gain() == 0.0f) ) {
+                return 0;
+        }
+
         m_pluginChain->process_post_fader(m_processBus, nframes);
         send_to_output_buses(nframes);
 
