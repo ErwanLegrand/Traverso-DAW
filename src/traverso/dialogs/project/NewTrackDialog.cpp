@@ -62,7 +62,7 @@ void NewTrackDialog::accept()
 	for (int i=0; i<count; ++i) {
 		Track* track = new Track(sheet, "Unnamed", Track::INITIAL_HEIGHT);
 		track->set_name(title);
-		group->add_command(sheet->add_track(track));
+                group->add_command(sheet->add_processing_data(track));
 	}
 		
 	group->setText(tr("Added %n Track(s)", "", count));

@@ -37,9 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 class Track : public ProcessingData
 {
 	Q_OBJECT
-	Q_CLASSINFO("mute", tr("Mute"))
-	Q_CLASSINFO("toggle_arm", tr("Record: On/Off"))
-	Q_CLASSINFO("solo", tr("Solo"))
+        Q_CLASSINFO("toggle_arm", tr("Record: On/Off"))
 	Q_CLASSINFO("silence_others", tr("Silence other tracks"))
 
 public :

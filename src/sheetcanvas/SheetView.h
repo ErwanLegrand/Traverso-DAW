@@ -33,7 +33,7 @@ class TimeLineViewPort;
 class ProcessingDataView;
 class SheetWidget;
 class TrackView;
-class Track;
+class ProcessingData;
 class PlayHead;
 class WorkCursor;
 class Curve;
@@ -152,8 +152,8 @@ public slots:
 	
 private slots:
 	void scale_factor_changed();
-	void add_new_trackview(Track*);
-	void remove_trackview(Track*);
+        void add_new_pd_view(ProcessingData*);
+        void remove_pd_view(ProcessingData*);
 	void update_shuttle();
 	void sheet_mode_changed();
 	void hscrollbar_value_changed(int);

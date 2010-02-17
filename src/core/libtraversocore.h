@@ -20,6 +20,7 @@
 #include "ReadSource.h"
 #include "SnapList.h"
 #include "Sheet.h"
+#include "SubGroup.h"
 #include "TimeLine.h"
 #include "Track.h"
 #include "Utils.h"

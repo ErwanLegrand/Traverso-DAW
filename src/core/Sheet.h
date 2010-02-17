@@ -85,7 +85,7 @@ public:
 	qreal get_hzoom() const {return m_hzoom;}
 	int get_rate();
 	int get_bitdepth();
-	int get_numtracks() const {return m_tracks.size();}
+        int get_numtracks() const {return m_pds.size();}
 	int get_track_index(qint64 id);
 	int get_mode() const {return m_mode;}
 	int is_transport_rolling() const {return m_transport;}
@@ -140,8 +140,8 @@ public:
         void solo_processing_data(ProcessingData* pd);
 	void create(int tracksToCreate);
 	void move_clip(Track* from, Track* too, AudioClip* clip, TimeRef location);
-        Command* add_track(ProcessingData* api, bool historable=true);
-        Command* remove_track(ProcessingData* api, bool historable=true);
+        Command* add_processing_data(ProcessingData* api, bool historable=true);
+        Command* remove_processing_data(ProcessingData* api, bool historable=true);
 	
 	bool any_track_armed();
 	bool realtime_path() const {return m_realtimepath;}
@@ -166,7 +166,7 @@ public:
 #endif
 
 private:
-	APILinkedList		m_tracks;
+        APILinkedList		m_pds;
 	QList<AudioClip*>	m_recordingClips;
 	QTimer			m_skipTimer;
 	Project*		m_project;
@@ -260,8 +260,8 @@ public slots :
 	Command* set_effects_mode();
 
 signals:
-	void trackRemoved(Track* );
-	void trackAdded(Track* );
+        void processingDataRemoved(ProcessingData* );
+        void processingDataAdded(ProcessingData* );
 	void hzoomChanged();
 	void transportStarted();
 	void transportStopped();
@@ -279,8 +279,8 @@ signals:
         void stateChanged();
 	
 private slots:
-        void private_add_track(ProcessingData* track);
-        void private_remove_track(ProcessingData* track);
+        void private_add_processing_data(ProcessingData* pd);
+        void private_remove_processing_data(ProcessingData* pd);
 	void handle_diskio_writebuffer_overrun();
 	void handle_diskio_readbuffer_underrun();
 	void prepare_recording();

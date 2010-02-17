@@ -107,8 +107,8 @@ int ProcessingDataView::get_height( )
 Command* ProcessingDataView::edit_properties( )
 {
         bool ok;
-        QString text = QInputDialog::getText(m_sv->get_trackpanel_view_port()->viewport(), tr("Set Track name"),
-                                        tr("Enter new Track name"),
+        QString text = QInputDialog::getText(m_sv->get_trackpanel_view_port()->viewport(), tr("Edit name"),
+                                        tr("Enter new name"),
                                         QLineEdit::Normal, m_pd->get_name(), &ok);
         if (ok && !text.isEmpty()) {
                 m_pd->set_name(text);

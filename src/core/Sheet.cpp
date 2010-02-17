@@ -102,7 +102,7 @@ Sheet::Sheet(Project* project, int numtracks)
 
 	for (int i=1; i <= numtracks; i++) {
 		Track* track = create_track();
-		private_add_track(track);
+                private_add_processing_data(track);
 	}
 }
 
@@ -169,7 +169,7 @@ void Sheet::init()
 	connect(this, SIGNAL(transportStopped()), m_diskio, SLOT(stop_io()));
 
 	mixdown = gainbuffer = 0;
-        m_masterSubGroup = new SubGroup("Master Out", 2);
+        m_masterSubGroup = new SubGroup(this, "Master Out", 2);
         m_masterSubGroup->set_name("Master Out");
         m_renderBus = new AudioBus("Render Bus", 2, ChannelIsOutput);
         m_clipRenderBus = new AudioBus("Clip Render Bus", 2, ChannelIsOutput);
@@ -245,12 +245,12 @@ int Sheet::set_state( const QDomNode & node )
 
 	while(!trackNode.isNull()) {
 		Track* track = new Track(this, trackNode);
-		private_add_track(track);
+                private_add_processing_data(track);
 		track->set_state(trackNode);
 
 		trackNode = trackNode.nextSibling();
 	}
-        private_add_track(m_masterSubGroup);
+        private_add_processing_data(m_masterSubGroup);
 
 	m_acmanager->set_state(node.firstChildElement("ClipManager"));
 	
@@ -289,7 +289,8 @@ QDomNode Sheet::get_state(QDomDocument doc, bool istemplate)
 	
 	QDomNode tracksNode = doc.createElement("Tracks");
 
-	apill_foreach(Track* track, Track, m_tracks) {
+        m_pds.remove(m_masterSubGroup);
+        apill_foreach(Track* track, Track, m_pds) {
 		tracksNode.appendChild(track->get_state(doc, istemplate));
 	}
 
@@ -335,33 +336,33 @@ void Sheet::audiodevice_client_removed(Client* client )
 	}
 }
 
-Command* Sheet::add_track(ProcessingData* track, bool historable)
+Command* Sheet::add_processing_data(ProcessingData* pd, bool historable)
 {
-	apill_foreach(Track* existing, Track, m_tracks) {
+        apill_foreach(ProcessingData* existing, ProcessingData, m_pds) {
 		if (existing->is_solo()) {
-			track->set_muted_by_solo( true );
+                        pd->set_muted_by_solo( true );
 			break;
 		}
 	}
 
-	return new AddRemove(this, track, historable, this,
-		"private_add_track(Track*)", "trackAdded(Track*)",
-		"private_remove_track(Track*)", "trackRemoved(Track*)",
+        return new AddRemove(this, pd, historable, this,
+                "private_add_processing_data(ProcessingData*)", "processingDataAdded(ProcessingData*)",
+                "private_remove_processing_data(ProcessingData*)", "processingDataRemoved(ProcessingData*)",
    		tr("Add Track"));
 }
 
 
-Command* Sheet::remove_track(ProcessingData* track, bool historable)
+Command* Sheet::remove_processing_data(ProcessingData* pd, bool historable)
 {
-	return new AddRemove(this, track, historable, this,
-		"private_remove_track(Track*)", "trackRemoved(Track*)",
-		"private_add_track(Track*)", "trackAdded(Track*)",
-   		tr("Remove Track"));
+        return new AddRemove(this, pd, historable, this,
+                "private_remove_processing_data(ProcessingData*)", "processingDataRemoved(ProcessingData*)",
+                "private_add_processing_data(ProcessingData*)", "processingDataAdded(ProcessingData*)",
+                tr("Remove %1").arg(pd->metaObject()->className()));
 }
 
 bool Sheet::any_track_armed()
 {
-	apill_foreach(Track* track, Track, m_tracks) {
+        apill_foreach(Track* track, Track, m_pds) {
 		if (track->armed()) {
 			return true;
 		}
@@ -408,7 +409,7 @@ int Sheet::prepare_export(ExportSpecification* spec)
 
 	TimeRef endlocation, startlocation;
 
-	apill_foreach(Track* track, Track, m_tracks) {
+        apill_foreach(Track* track, Track, m_pds) {
 		track->get_render_range(startlocation, endlocation);
 
 		if (track->is_solo()) {
@@ -753,13 +754,13 @@ void Sheet::solo_processing_data(ProcessingData *pd)
         pd->set_solo(!wasSolo);
 
 	bool hasSolo = false;
-        apill_foreach(ProcessingData* data, ProcessingData, m_tracks) {
+        apill_foreach(ProcessingData* data, ProcessingData, m_pds) {
                 data->set_muted_by_solo(!data->is_solo());
                 if (data->is_solo()) hasSolo = true;
 	}
 
 	if (!hasSolo) {
-                apill_foreach(ProcessingData* data, ProcessingData, m_tracks) {
+                apill_foreach(ProcessingData* data, ProcessingData, m_pds) {
                         data->set_muted_by_solo(false);
 		}
 	}
@@ -768,11 +769,11 @@ void Sheet::solo_processing_data(ProcessingData *pd)
 Command* Sheet::toggle_solo()
 {
 	bool hasSolo = false;
-	apill_foreach(Track* track, Track, m_tracks) {
+        apill_foreach(Track* track, Track, m_pds) {
 		if (track->is_solo()) hasSolo = true;
 	}
 
-	apill_foreach(Track* track, Track, m_tracks) {
+        apill_foreach(Track* track, Track, m_pds) {
 		track->set_solo(!hasSolo);
 		track->set_muted_by_solo(false);
 	}
@@ -783,11 +784,11 @@ Command* Sheet::toggle_solo()
 Command *Sheet::toggle_mute()
 {
 	bool hasMute = false;
-	apill_foreach(Track* track, Track, m_tracks) {
+        apill_foreach(Track* track, Track, m_pds) {
 		if (track->is_muted()) hasMute = true;
 	}
 	
-	apill_foreach(Track* track, Track, m_tracks) {
+        apill_foreach(Track* track, Track, m_pds) {
 		track->set_muted(!hasMute);
 	}
 
@@ -797,11 +798,11 @@ Command *Sheet::toggle_mute()
 Command *Sheet::toggle_arm()
 {
 	bool hasArmed = false;
-	apill_foreach(Track* track, Track, m_tracks) {
+        apill_foreach(Track* track, Track, m_pds) {
 		if (track->armed()) hasArmed = true;
 	}
 
-	apill_foreach(Track* track, Track, m_tracks) {
+        apill_foreach(Track* track, Track, m_pds) {
 		if (hasArmed) {
 			track->disarm();
 		} else {
@@ -905,7 +906,7 @@ int Sheet::process( nframes_t nframes )
 
 
 	// Process all Tracks.
-	apill_foreach(Track* track, Track, m_tracks) {
+        apill_foreach(Track* track, Track, m_pds) {
                 if (track = qobject_cast<Track*>(track))
 		processResult |= track->process(nframes);
 	}
@@ -917,8 +918,9 @@ int Sheet::process( nframes_t nframes )
 		return 0;
 	}
 
-	// Mix the result into the AudioDevice "physical" buffers
         m_masterSubGroup->get_plugin_chain()->process_post_fader(m_masterSubGroup->get_process_bus(), nframes);
+
+	// Mix the result into the AudioDevice "physical" buffers
         m_masterSubGroup->send_to_output_buses(nframes);
 
 	
@@ -932,7 +934,7 @@ int Sheet::process_export( nframes_t nframes )
 	memset (mixdown, 0, sizeof (audio_sample_t) * nframes);
 
 	// Process all Tracks.
-	apill_foreach(Track* track, Track, m_tracks) {
+        apill_foreach(Track* track, Track, m_pds) {
 		track->process(nframes);
 	}
 
@@ -1031,7 +1033,7 @@ void Sheet::resize_buffer(bool updateArmStatus, nframes_t size)
         }
 
 	if (updateArmStatus) {
-		apill_foreach(Track* track, Track, m_tracks) {
+                apill_foreach(Track* track, Track, m_pds) {
                         AudioBus* bus = audiodevice().get_capture_bus(track->get_bus_in_name());
 			if (bus && track->armed()) {
 				bus->set_monitor_peaks(true);
@@ -1094,7 +1096,7 @@ PluginChain* Sheet::get_plugin_chain() const
 int Sheet::get_track_index(qint64 id)
 {
 	int i=0;
-	apill_foreach(Track* track, Track, m_tracks) {
+        apill_foreach(Track* track, Track, m_pds) {
 		if (track->get_id() == id) {
 			return i + 1;
 		}
@@ -1141,19 +1143,19 @@ TimeRef Sheet::get_last_location() const
 	return lastAudio;
 }
 
-void Sheet::private_add_track(ProcessingData* track)
+void Sheet::private_add_processing_data(ProcessingData* track)
 {
-	m_tracks.append(track);
+        m_pds.append(track);
 }
 
-void Sheet::private_remove_track(ProcessingData* track)
+void Sheet::private_remove_processing_data(ProcessingData* track)
 {
-	m_tracks.remove(track);
+        m_pds.remove(track);
 }
 
 Track* Sheet::get_track(qint64 id)
 {
-	apill_foreach(Track* track, Track, m_tracks) {
+        apill_foreach(Track* track, Track, m_pds) {
 		if (track->get_id() == id) {
 			return track;
 		}
@@ -1381,7 +1383,7 @@ void Sheet::prepare_recording()
 	if (m_recording && any_track_armed()) {
 		CommandGroup* group = new CommandGroup(this, "");
 		int clipcount = 0;
-		apill_foreach(Track* track, Track, m_tracks) {
+                apill_foreach(Track* track, Track, m_pds) {
 			if (track->armed()) {
 				AudioClip* clip = track->init_recording();
 				if (clip) {
@@ -1491,7 +1493,7 @@ void Sheet::config_changed()
 QList< Track * > Sheet::get_tracks() const
 {
 	QList<Track*> list;
-	apill_foreach(Track* track, Track, m_tracks) {
+        apill_foreach(Track* track, Track, m_pds) {
 		list.append(track);
 	}
 	return list;	
@@ -1499,7 +1501,7 @@ QList< Track * > Sheet::get_tracks() const
 
 Track * Sheet::get_track_for_index(int index)
 {
-	apill_foreach(Track* track, Track, m_tracks) {
+        apill_foreach(Track* track, Track, m_pds) {
 		if (track->get_sort_index() == index) {
 			return track;
 		}

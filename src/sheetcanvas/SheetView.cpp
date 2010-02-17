@@ -100,8 +100,8 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 	
 	connect(m_sheet, SIGNAL(hzoomChanged()), this, SLOT(scale_factor_changed()));
 	connect(m_sheet, SIGNAL(tempFollowChanged(bool)), this, SLOT(set_follow_state(bool)));
-	connect(m_sheet, SIGNAL(trackAdded(Track*)), this, SLOT(add_new_trackview(Track*)));
-	connect(m_sheet, SIGNAL(trackRemoved(Track*)), this, SLOT(remove_trackview(Track*)));
+        connect(m_sheet, SIGNAL(processingDataAdded(ProcessingData*)), this, SLOT(add_new_pd_view(ProcessingData*)));
+        connect(m_sheet, SIGNAL(processingDataRemoved(ProcessingData*)), this, SLOT(remove_pd_view(ProcessingData*)));
 	connect(m_sheet, SIGNAL(lastFramePositionChanged()), this, SLOT(update_scrollbars()));
 	connect(m_sheet, SIGNAL(modeChanged()), this, SLOT(sheet_mode_changed()));
 	connect(&m_shuttletimer, SIGNAL(timeout()), this, SLOT (update_shuttle()));
@@ -171,12 +171,12 @@ TrackView* SheetView::get_trackview_under( QPointF point )
 	
 }
 
-void SheetView::add_new_trackview(Track* track)
+void SheetView::add_new_pd_view(ProcessingData* pd)
 {
         ProcessingDataView* view;
 
-        ProcessingData* data = qobject_cast<ProcessingData*>(track);
-        SubGroup* group = qobject_cast<SubGroup*>(data);
+        Track* track = qobject_cast<Track*>(pd);
+        SubGroup* group = qobject_cast<SubGroup*>(pd);
         if (group) {
                 view = new SubGroupView(this, group);
         } else {
@@ -185,16 +185,16 @@ void SheetView::add_new_trackview(Track* track)
 
         m_pdViews.append(view);
 	
-	int sortIndex = track->get_sort_index();
+        int sortIndex = pd->get_sort_index();
 	
 	if (sortIndex < 0) {
                 sortIndex = m_pdViews.size();
-		track->set_sort_index(sortIndex);
+                pd->set_sort_index(sortIndex);
 	} else {
                 foreach(ProcessingDataView* view, m_pdViews) {
                         if (view->get_processing_data()->get_sort_index() == sortIndex) {
                                 sortIndex = m_pdViews.size();
-				track->set_sort_index(sortIndex);
+                                pd->set_sort_index(sortIndex);
 				break;
 			}
 		}
@@ -214,10 +214,10 @@ void SheetView::add_new_trackview(Track* track)
 	layout_tracks();
 }
 
-void SheetView::remove_trackview(Track* track)
+void SheetView::remove_pd_view(ProcessingData* pd)
 {
         foreach(ProcessingDataView* view, m_pdViews) {
-                if (view->get_processing_data() == track) {
+                if (view->get_processing_data() == pd) {
                         PDPanelView* panel = view->get_panel_view();
                         scene()->removeItem(panel);
 			scene()->removeItem(view);
@@ -685,7 +685,7 @@ void SheetView::clipviewport_resize_event()
 		// fill the view with trackviews, add_new_trackview()
 		// doesn't yet layout the new tracks.
 		foreach(Track* track, m_sheet->get_tracks()) {
-			add_new_trackview(track);
+                        add_new_pd_view(track);
 		}
 	
 		// layout_track() now will do it's work when it is called
