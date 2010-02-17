@@ -490,7 +490,6 @@ VUMeterLevel::VUMeterLevel(QWidget* parent, AudioChannel* chan)
 	}
 
 	setAttribute(Qt::WA_OpaquePaintEvent);
-        setAttribute(Qt::WA_PaintOnScreen);
 	setAutoFillBackground(false);
 
 	connect(&audiodevice(), SIGNAL(stopped()), this, SLOT(stop()));
@@ -706,7 +705,7 @@ void VUMeterLevel::load_theme_data()
 	m_colOverLed = themer()->get_color("VUMeter:overled:active");
 	m_colBg = themer()->get_brush("VUMeter:background:bar");
 
-	resize_level_pixmap(); // applies the new theme to the buffer pixmaps
+	resize_level_pixmap(); // applies the new theme to the buffer pixmaps
 }
 
 // accepts dB-values and returns the position in the widget from top
