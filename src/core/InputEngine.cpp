@@ -322,7 +322,10 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 			}
 		}
 		
-		// No match found for actions using a modifier key, let's see if there
+
+                const QMetaObject* metaobject = item->metaObject();
+
+                // No match found for actions using a modifier key, let's see if there
 		// is one in the 'normal' actions list.
 		if (! data ) {
 			// This test makes sure that we don't select an unmodified command
@@ -330,7 +333,17 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 			if (m_activeModifierKeys.size() > 0) {
 				continue;
 			}
-			data = action->objects.value(QString(item->metaObject()->className()));
+
+                        // traverse upwards till no more superclasses are found
+                        // this supports inheritance on contextitems.
+                        while (metaobject) {
+                                data = action->objects.value(QString(metaobject->className()));
+                                if (data) {
+                                        break;
+                                }
+                                metaobject = metaobject->superClass();
+                        }
+
 				
 			if (! data ) {
 				PMESG("No data found for object %s", item->metaObject()->className());
@@ -398,7 +411,7 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 				delegatingdata = action->objects.value("HoldCommand");
 				delegatedobject = "HoldCommand";
 			} else {
-				delegatedobject = item->metaObject()->className();
+                                delegatedobject = metaobject->className();
 				if (m_activeModifierKeys.size() > 0) {
 					delegatingdata = action->objectUsingModifierKeys.value(delegatedobject);
 				} else {
@@ -1778,7 +1791,12 @@ QList< MenuData > InputEngine::create_menudata_for(QObject* item)
 	do {
 		const QMetaObject* mo = item->metaObject(); 
 		
-		create_menudata_for_metaobject(mo, list);
+                // traverse upwards till no more superclasses are found
+                // this supports inheritance on contextitems.
+                while (mo) {
+                        create_menudata_for_metaobject(mo, list);
+                        mo = mo->superClass();
+                }
 		
 		contextitem = qobject_cast<ContextItem*>(item);
 	} 
