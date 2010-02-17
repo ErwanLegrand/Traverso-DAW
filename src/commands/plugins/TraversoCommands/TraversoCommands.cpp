@@ -105,7 +105,7 @@ TraversoCommands::TraversoCommands()
 	m_dict.insert("InsertSilence", InsertSilenceCommand);
 	m_dict.insert("AddNewTrack", AddNewTrackCommand);
 	m_dict.insert("RemoveClip", RemoveClipCommand);
-	m_dict.insert("RemoveTrack", RemoveTrackCommand);
+        m_dict.insert("RemoveProcessingData", RemoveProcessingDataCommand);
 	m_dict.insert("AudioClipExternalProcessing", AudioClipExternalProcessingCommand);
 	m_dict.insert("ClipSelectionSelect", ClipSelectionCommand);
 	m_dict.insert("ClipSelectionSelectAll", ClipSelectionCommand);
@@ -142,6 +142,7 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 		{
 			ContextItem* item = qobject_cast<ContextItem*>(obj);
 			SheetView* sheetview = 0;
+                        printf("context item classname is %s\n", item->metaObject()->className());
 			
 			if (item->metaObject()->className() == QString("TrackPanelGain")) {
 				item = item->get_context();
@@ -153,7 +154,10 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 			} else if (TrackView* view = qobject_cast<TrackView*>(item)) {
 				sheetview = view->get_sheetview();
 				item = view->get_context();
-			} else if (SheetView* view = qobject_cast<SheetView*>(item)) {
+                        } else if (SubGroupView* view = qobject_cast<SubGroupView*>(item)) {
+                                sheetview = view->get_sheetview();
+                                item = view->get_context();
+                        } else if (SheetView* view = qobject_cast<SheetView*>(item)) {
 				sheetview = view;
 				item = view->get_context();
 			}
@@ -161,7 +165,7 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 			// ugly hack to avoid assigning a sheetview when the 
 			// mouse cursor is above the trackpanel....
 			if (cpointer().scene_x() < 0) {
-				sheetview = 0;
+                                sheetview = 0;
 			}
 			
 			if (!item) {
@@ -218,7 +222,7 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 					"AddNewTrackCommand needs a Sheet as argument");
 				return 0;
 			}
-			return sheet->add_track(new Track(sheet, "Unnamed", Track::INITIAL_HEIGHT));
+                        return sheet->add_processing_data(new Track(sheet, "Unnamed", Track::INITIAL_HEIGHT));
 		}
 		
 		case RemoveClipCommand:
@@ -232,15 +236,15 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 			return new AddRemoveClip(clip, AddRemoveClip::REMOVE);
 		}
 		
-		case RemoveTrackCommand:
+                case RemoveProcessingDataCommand:
 		{
-			Track* track = qobject_cast<Track*>(obj);
-			if (!track) {
-				PERROR("TraversoCommands: Supplied QObject was not a Track! "
-					"RemoveTrackCommand needs a Track as argument");
+                        ProcessingData* pd = qobject_cast<ProcessingData*>(obj);
+                        if (!pd) {
+                                PERROR("TraversoCommands: Supplied QObject was not a ProcessingData! "
+                                        "RemoveProcessingDataCommand needs a ProcessingData as argument");
 				return 0;
 			}
-			return track->get_sheet()->remove_track(track);
+                        return pd->get_sheet()->remove_processing_data(pd);
 		}
 		
 		case AudioClipExternalProcessingCommand:
