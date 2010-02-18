@@ -26,7 +26,7 @@
 #include <QList>
 
 class SheetView;
-class Track;
+class AudioTrack;
 
 class ArmTracks : public Command
 {
@@ -45,7 +45,7 @@ public :
 	
 private:
 	SheetView* m_sv;
-	QList<Track* > m_tracks;
+	QList<AudioTrack* > m_tracks;
 };
 
 #endif

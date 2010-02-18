@@ -15,6 +15,7 @@ ${QT_QTXML_INCLUDE_DIR}
 
 SET(TRAVERSO_SONGCANVAS_SOURCES
 AudioClipView.cpp
+AudioTrackView.cpp
 ClipsViewPort.cpp
 Cursors.cpp
 CurveNodeView.cpp
@@ -24,7 +25,7 @@ MarkerView.cpp
 PluginChainView.cpp
 PluginView.cpp
 PositionIndicator.cpp
-ProcessingDataView.cpp
+TrackView.cpp
 SheetView.cpp
 SheetWidget.cpp
 SubGroupView.cpp
@@ -32,13 +33,13 @@ TimeLineView.cpp
 TimeLineViewPort.cpp
 TrackPanelView.cpp
 TrackPanelViewPort.cpp
-TrackView.cpp
 ViewItem.cpp
 dialogs/AudioClipEditDialog.cpp
 )
 
 SET(TRAVERSO_SONGCANVAS_MOC_CLASSES
 AudioClipView.h
+AudioTrackView.h
 ClipsViewPort.h
 Cursors.h
 CurveNodeView.h
@@ -46,10 +47,9 @@ FadeView.h
 MarkerView.h
 PluginChainView.h
 PluginView.h
-ProcessingDataView.h
+TrackView.h
 PositionIndicator.h
 SubGroupView.h
-TrackView.h
 ViewItem.h
 dialogs/AudioClipEditDialog.h
 CurveView.h

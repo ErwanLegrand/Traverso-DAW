@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2007-2008 Remon Sijrier 
+Copyright (C) 2007-2010 Remon Sijrier
 
 This file is part of Traverso
 
@@ -35,9 +35,9 @@ class TraversoCommands : public CommandPlugin
 	Q_CLASSINFO("ImportAudio", tr("Import Audio"))
 	Q_CLASSINFO("InsertSilence", tr("Insert Silence"))
 	Q_CLASSINFO("CopyClip", tr("Copy Clip"))
-	Q_CLASSINFO("AddNewTrack", tr("New Track"))
+        Q_CLASSINFO("AddNewAudioTrack", tr("New Track"))
 	Q_CLASSINFO("RemoveClip", tr("Remove Clip"))
-        Q_CLASSINFO("RemoveProcessingData", tr("Remove"))
+        Q_CLASSINFO("RemoveTrack", tr("Remove"))
 	Q_CLASSINFO("AudioClipExternalProcessing", tr("External Processing"))
 	Q_CLASSINFO("ClipSelectionSelect", tr("(De)Select"))
 	Q_CLASSINFO("ClipSelectionSelectAll", tr("(De)Select All"))
@@ -73,9 +73,9 @@ private:
   		TrackPanCommand,
     		ImportAudioCommand,
     		InsertSilenceCommand,
-		AddNewTrackCommand,
+                AddNewAudioTrackCommand,
   		RemoveClipCommand,
-                RemoveProcessingDataCommand,
+                RemoveTrackCommand,
 		AudioClipExternalProcessingCommand,
   		ClipSelectionCommand,
     		MoveClipCommand,

@@ -24,7 +24,7 @@
 #include "ViewPort.h"
 
 #include "ContextPointer.h"
-#include "Track.h"
+#include "AudioTrack.h"
 
 
 // Always put me below _all_ includes, this is needed
@@ -39,7 +39,7 @@
  */
 
 
-TrackPan::TrackPan(Track* track, QVariantList args)
+TrackPan::TrackPan(AudioTrack* track, QVariantList args)
 	: Command(track, "")
 	, d(new Data)
 {

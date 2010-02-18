@@ -22,7 +22,7 @@ AudioClipGroup.cpp
 AudioClipManager.cpp
 AudioFileCopyConvert.cpp
 AudioFileMerger.cpp
-ProcessingData.cpp
+AudioTrack.cpp
 AudioSource.cpp
 Command.cpp
 Config.cpp
@@ -38,6 +38,7 @@ InputEngine.cpp
 Peak.cpp
 Project.cpp
 ProjectManager.cpp
+ProcessingData.cpp
 ReadSource.cpp
 ResourcesManager.cpp
 Sheet.cpp
@@ -60,6 +61,7 @@ AudioClip.h
 AudioClipManager.h
 AudioFileMerger.h
 AudioFileCopyConvert.h
+AudioTrack.h
 ProcessingData.h
 Config.h
 ContextPointer.h

@@ -29,7 +29,7 @@
 class ViewItem;
 class ContextItem;
 class Import;
-class Track;
+class AudioTrack;
 class HoldCursor;
 class QGraphicsTextItem;
 

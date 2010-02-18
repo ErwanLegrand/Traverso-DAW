@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Command.h>
 
 class AudioClip;
-class Track;
+class AudioTrack;
 
 class AudioClipExternalProcessing : public Command
 {
@@ -38,7 +38,7 @@ public :
 	int undo_action();
 
 // private :
-	Track* m_track;
+	AudioTrack* m_track;
 	AudioClip* m_clip;
 	AudioClip* m_resultingclip;
 	

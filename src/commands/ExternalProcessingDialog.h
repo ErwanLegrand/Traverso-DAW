@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QDialog>
 
 class AudioClip;
-class Track;
+class AudioTrack;
 class AudioClipExternalProcessing;
 class QCompleter;
 

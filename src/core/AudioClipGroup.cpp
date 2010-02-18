@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ProjectManager.h"
 #include "ResourcesManager.h"
 #include "Sheet.h"
-#include "Track.h"
+#include "AudioTrack.h"
 #include <limits.h>
 
 #include "Debugger.h"
@@ -56,7 +56,7 @@ void AudioClipGroup::move_to(int trackIndex, TimeRef location)
 	
 	foreach(AudioClip* clip, m_clips) {
 		if (trackIndexDelta != 0) {
-			Track* track = clip->get_sheet()->get_track_for_index(clip->get_track()->get_sort_index() + trackIndexDelta);
+			AudioTrack* track = clip->get_sheet()->get_track_for_index(clip->get_track()->get_sort_index() + trackIndexDelta);
 			if (track) {
 				Command::process_command(clip->get_track()->remove_clip(clip, false, true));
 				Command::process_command(track->add_clip(clip, false, true));

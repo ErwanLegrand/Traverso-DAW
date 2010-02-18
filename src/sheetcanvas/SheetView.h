@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2007 Remon Sijrier 
+    Copyright (C) 2005-2010 Remon Sijrier
  
     This file is part of Traverso
  
@@ -26,14 +26,14 @@
 #include <QTimer>
 
 class Sheet;
-class TrackView;
+class AudioTrackView;
 class ClipsViewPort;
 class TrackPanelViewPort;
 class TimeLineViewPort;
-class ProcessingDataView;
-class SheetWidget;
 class TrackView;
-class ProcessingData;
+class SheetWidget;
+class AudioTrackView;
+class Track;
 class PlayHead;
 class WorkCursor;
 class Curve;
@@ -74,7 +74,7 @@ public :
 	TrackPanelViewPort* get_trackpanel_view_port() const;
 	ClipsViewPort* get_clips_viewport() const;
 	
-	TrackView* get_trackview_under(QPointF point);
+	AudioTrackView* get_trackview_under(QPointF point);
 	
 	void load_theme_data();
 	void start_shuttle(bool start, bool drag=false);
@@ -85,7 +85,6 @@ public :
 	void clipviewport_resize_event();
 	int hscrollbar_value() const;
 	int vscrollbar_value() const;
-	int get_peak_cache_zoom_factor() const {return m_peakCacheZoomFactor;}
 
 	qint64		timeref_scalefactor;
 
@@ -97,12 +96,11 @@ private:
 	ClipsViewPort* 		m_clipsViewPort;
 	TrackPanelViewPort*	m_tpvp;
 	TimeLineViewPort*	m_tlvp;
-        QList<ProcessingDataView*>	m_pdViews;
+        QList<TrackView*>	m_trackViews;
 	WorkCursor*		m_workCursor;
 	int			m_shuttleXfactor;
 	int			m_shuttleYfactor;
 	int			m_sceneHeight;
-	int			m_peakCacheZoomFactor;
 	bool			m_dragShuttle;
 	QTimer			m_shuttletimer;
 	QScrollBar*		m_vScrollBar;
@@ -152,8 +150,8 @@ public slots:
 	
 private slots:
 	void scale_factor_changed();
-        void add_new_pd_view(ProcessingData*);
-        void remove_pd_view(ProcessingData*);
+        void add_new_track_view(Track*);
+        void remove_track_view(Track*);
 	void update_shuttle();
 	void sheet_mode_changed();
 	void hscrollbar_value_changed(int);

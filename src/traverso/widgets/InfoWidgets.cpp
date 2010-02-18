@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ProjectManager.h"
 #include "Sheet.h"
 #include "Themer.h"
-#include "Track.h"
+#include "AudioTrack.h"
 #include "Utils.h"
 
 #include <QPainter>
@@ -318,7 +318,7 @@ void HDDSpaceInfo::update_status( )
 
 	QList<Sheet*> recordingSheets;
 	foreach(Sheet* sheet, m_project->get_sheets()) {
-		if (sheet->is_recording() && sheet->any_track_armed()) {
+		if (sheet->is_recording() && sheet->any_audio_track_armed()) {
 			recordingSheets.append(sheet);
 		}
 	}
@@ -328,7 +328,7 @@ void HDDSpaceInfo::update_status( )
 	if (recordingSheets.size()) {
 		int recChannelCount = 0;
 		foreach(Sheet* sheet, recordingSheets) {
-			foreach(Track* track, sheet->get_tracks()) {
+			foreach(AudioTrack* track, sheet->get_tracks()) {
 				if (track->armed()) {
                                         // FIXME !!!!!!!
                                         recChannelCount = 2;

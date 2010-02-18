@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2007 Remon Sijrier 
+Copyright (C) 2005-2010 Remon Sijrier
 
 This file is part of Traverso
 
@@ -25,14 +25,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include "InputEngine.h"
 #include "Sheet.h"
 #include "SnapList.h"
-#include "Track.h"
+#include "AudioTrack.h"
 #include "SubGroup.h"
 #include "ContextPointer.h"
 #include "Themer.h"
 
 #include "SheetView.h"
 #include "SheetWidget.h"
-#include "TrackView.h"
+#include "AudioTrackView.h"
 #include "SubGroupView.h"
 #include "TrackPanelView.h"
 #include "Cursors.h"
@@ -52,9 +52,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include <Debugger.h>
 
 
-static bool smallerProcessingDataView(const ProcessingDataView* left, const ProcessingDataView* right )
+static bool smallerTrackView(const TrackView* left, const TrackView* right )
 {
-        return left->get_processing_data()->get_sort_index() < right->get_processing_data()->get_sort_index();
+        return left->get_track()->get_sort_index() < right->get_track()->get_sort_index();
 }
 
 SheetView::SheetView(SheetWidget* sheetwidget, 
@@ -100,8 +100,8 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 	
 	connect(m_sheet, SIGNAL(hzoomChanged()), this, SLOT(scale_factor_changed()));
 	connect(m_sheet, SIGNAL(tempFollowChanged(bool)), this, SLOT(set_follow_state(bool)));
-        connect(m_sheet, SIGNAL(processingDataAdded(ProcessingData*)), this, SLOT(add_new_pd_view(ProcessingData*)));
-        connect(m_sheet, SIGNAL(processingDataRemoved(ProcessingData*)), this, SLOT(remove_pd_view(ProcessingData*)));
+        connect(m_sheet, SIGNAL(trackAdded(Track*)), this, SLOT(add_new_track_view(Track*)));
+        connect(m_sheet, SIGNAL(trackRemoved(Track*)), this, SLOT(remove_track_view(Track*)));
 	connect(m_sheet, SIGNAL(lastFramePositionChanged()), this, SLOT(update_scrollbars()));
 	connect(m_sheet, SIGNAL(modeChanged()), this, SLOT(sheet_mode_changed()));
 	connect(&m_shuttletimer, SIGNAL(timeout()), this, SLOT (update_shuttle()));
@@ -156,13 +156,13 @@ void SheetView::sheet_mode_changed()
 	m_tpvp->set_current_mode(mode);
 }
 
-TrackView* SheetView::get_trackview_under( QPointF point )
+AudioTrackView* SheetView::get_trackview_under( QPointF point )
 {
-	TrackView* view = 0;
+	AudioTrackView* view = 0;
 	QList<QGraphicsItem*> views = m_clipsViewPort->items(m_clipsViewPort->mapFromScene(point));
 	
 	for (int i=0; i<views.size(); ++i) {
-		view = dynamic_cast<TrackView*>(views.at(i));
+                view = dynamic_cast<AudioTrackView*>(views.at(i));
 		if (view) {
 			return view;
 		}
@@ -171,65 +171,65 @@ TrackView* SheetView::get_trackview_under( QPointF point )
 	
 }
 
-void SheetView::add_new_pd_view(ProcessingData* pd)
+void SheetView::add_new_track_view(Track* track)
 {
-        ProcessingDataView* view;
+        TrackView* view;
 
-        Track* track = qobject_cast<Track*>(pd);
-        SubGroup* group = qobject_cast<SubGroup*>(pd);
+        AudioTrack* audiotrack = qobject_cast<AudioTrack*>(track);
+        SubGroup* group = qobject_cast<SubGroup*>(track);
         if (group) {
                 view = new SubGroupView(this, group);
         } else {
-                view = new TrackView(this, track);
+                view = new AudioTrackView(this, audiotrack);
         }
 
-        m_pdViews.append(view);
+        m_trackViews.append(view);
 	
-        int sortIndex = pd->get_sort_index();
+        int sortIndex = track->get_sort_index();
 	
 	if (sortIndex < 0) {
-                sortIndex = m_pdViews.size();
-                pd->set_sort_index(sortIndex);
+                sortIndex = m_trackViews.size();
+                track->set_sort_index(sortIndex);
 	} else {
-                foreach(ProcessingDataView* view, m_pdViews) {
-                        if (view->get_processing_data()->get_sort_index() == sortIndex) {
-                                sortIndex = m_pdViews.size();
-                                pd->set_sort_index(sortIndex);
+                foreach(TrackView* view, m_trackViews) {
+                        if (view->get_track()->get_sort_index() == sortIndex) {
+                                sortIndex = m_trackViews.size();
+                                track->set_sort_index(sortIndex);
 				break;
 			}
 		}
 	}
 	
-        qSort(m_pdViews.begin(), m_pdViews.end(), smallerProcessingDataView);
+        qSort(m_trackViews.begin(), m_trackViews.end(), smallerTrackView);
 	
-        for(int i=0; i<m_pdViews.size(); ++i) {
-                m_pdViews.at(i)->get_processing_data()->set_sort_index(i);
+        for(int i=0; i<m_trackViews.size(); ++i) {
+                m_trackViews.at(i)->get_track()->set_sort_index(i);
 	}
 	
-        if (m_pdViews.size() > 1) {
-                int height = m_pdViews.at(m_pdViews.size()-2)->get_processing_data()->get_height();
-                m_pdViews.at(m_pdViews.size()-1)->get_processing_data()->set_height(height);
+        if (m_trackViews.size() > 1) {
+                int height = m_trackViews.at(m_trackViews.size()-2)->get_track()->get_height();
+                m_trackViews.at(m_trackViews.size()-1)->get_track()->set_height(height);
 	}
 	
 	layout_tracks();
 }
 
-void SheetView::remove_pd_view(ProcessingData* pd)
+void SheetView::remove_track_view(Track* track)
 {
-        foreach(ProcessingDataView* view, m_pdViews) {
-                if (view->get_processing_data() == pd) {
-                        PDPanelView* panel = view->get_panel_view();
+        foreach(TrackView* view, m_trackViews) {
+                if (view->get_track() == track) {
+                        TrackPanelView* panel = view->get_panel_view();
                         scene()->removeItem(panel);
 			scene()->removeItem(view);
-                        m_pdViews.removeAll(view);
+                        m_trackViews.removeAll(view);
 			delete view;
                         delete panel;
 			break;
 		}
 	}
 	
-        for(int i=0; i<m_pdViews.size(); ++i) {
-                m_pdViews.at(i)->get_processing_data()->set_sort_index(i);
+        for(int i=0; i<m_trackViews.size(); ++i) {
+                m_trackViews.at(i)->get_track()->set_sort_index(i);
 	}
 	
 	layout_tracks();
@@ -283,17 +283,17 @@ void SheetView::hscrollbar_value_changed(int value)
 void SheetView::vzoom(qreal factor)
 {
 	PENTER;
-        for (int i=0; i<m_pdViews.size(); ++i) {
-                ProcessingDataView* view = m_pdViews.at(i);
-                ProcessingData* pd = view->get_processing_data();
-                int height = pd->get_height();
+        for (int i=0; i<m_trackViews.size(); ++i) {
+                TrackView* view = m_trackViews.at(i);
+                Track* track = view->get_track();
+                int height = track->get_height();
 		height = (int) (height * factor);
 		if (height > m_trackMaximumHeight) {
 			height = m_trackMaximumHeight;
 		} else if (height < m_trackMinimumHeight) {
 			height = m_trackMinimumHeight;
 		}
-                pd->set_height(height);
+                track->set_height(height);
 	}
 	
 	layout_tracks();
@@ -309,14 +309,14 @@ void SheetView::hzoom(qreal factor)
 
 void SheetView::layout_tracks()
 {
-        if (m_pdViews.isEmpty() || !m_viewportReady) return;
+        if (m_trackViews.isEmpty() || !m_viewportReady) return;
 	
 	int verticalposition = m_trackTopIndent;
-        for (int i=0; i<m_pdViews.size(); ++i) {
-                ProcessingDataView* view = m_pdViews.at(i);
+        for (int i=0; i<m_trackViews.size(); ++i) {
+                TrackView* view = m_trackViews.at(i);
 		view->calculate_bounding_rect();
 		view->move_to(0, verticalposition);
-                verticalposition += (view->get_processing_data()->get_height() + m_trackSeperatingHeight);
+                verticalposition += (view->get_track()->get_height() + m_trackSeperatingHeight);
 	}
 	
 	m_sceneHeight = verticalposition;
@@ -448,7 +448,7 @@ void SheetView::update_shuttle_factor()
 	
 	int yscale;
 	
-        if (m_pdViews.size()) {
+        if (m_trackViews.size()) {
 		yscale = int(mean_track_height() / 10);
 	} else {
 		yscale = int(m_clipsViewPort->viewport()->height() / 10);
@@ -470,11 +470,11 @@ int SheetView::mean_track_height()
 	int total =0;
 	int mean = 0;
 	
-        foreach(ProcessingDataView* view, m_pdViews) {
+        foreach(TrackView* view, m_trackViews) {
 		total += view->get_height();
 	}
 	
-        mean = total / m_pdViews.size();
+        mean = total / m_trackViews.size();
 	
 	return mean;
 }
@@ -684,8 +684,8 @@ void SheetView::clipviewport_resize_event()
 		
 		// fill the view with trackviews, add_new_trackview()
 		// doesn't yet layout the new tracks.
-		foreach(Track* track, m_sheet->get_tracks()) {
-                        add_new_pd_view(track);
+		foreach(AudioTrack* track, m_sheet->get_tracks()) {
+                        add_new_track_view(track);
 		}
 	
 		// layout_track() now will do it's work when it is called

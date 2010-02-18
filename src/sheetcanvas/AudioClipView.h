@@ -34,7 +34,7 @@ class Sheet;
 class FadeCurve;
 class CurveView;
 class SheetView;
-class TrackView;
+class AudioTrackView;
 class FadeView;
 class Peak;
 
@@ -52,7 +52,7 @@ class AudioClipView : public ViewItem
 	Q_CLASSINFO("edit_properties", tr("Edit Properties"));
 
 public:
-	AudioClipView(SheetView* view, TrackView* parent, AudioClip* clip);
+	AudioClipView(SheetView* view, AudioTrackView* parent, AudioClip* clip);
 	~AudioClipView();
 
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -70,7 +70,7 @@ protected:
 	void hoverEnterEvent ( QGraphicsSceneHoverEvent * event );
 
 private:
-	TrackView* 	m_tv;
+	AudioTrackView* 	m_tv;
 	QList<FadeView*> m_fadeViews;
 	AudioClip* 	m_clip;
 	Sheet*		m_sheet;

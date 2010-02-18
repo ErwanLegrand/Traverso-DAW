@@ -26,7 +26,7 @@ $Id: Gain.cpp,v 1.27 2008/02/13 10:25:25 r_sijrier Exp $
 #include "ContextPointer.h"
 #include "Mixer.h"
 #include <ViewPort.h>
-#include <Track.h>
+#include <AudioTrack.h>
 #include "Sheet.h"
 #include "SheetView.h"
 
@@ -36,7 +36,7 @@ $Id: Gain.cpp,v 1.27 2008/02/13 10:25:25 r_sijrier Exp $
 
 /**
  *	\class Gain
-	\brief Change (jog) the Gain of a Sheet, Track or AudioClip, or set to a pre-defined value
+        \brief Change (jog) the Gain of a Sheet, <Audio<AudioTrack.h>.h> or AudioClip, or set to a pre-defined value
 	
 	\sa TraversoCommands
  */
@@ -70,8 +70,8 @@ Gain::Gain(ContextItem* context, SheetView* sv, QVariantList args)
 		get_gain_from_object(origGain);
 	}
 	
-	Track* track = qobject_cast<Track*>(context);
-	if (track && origGain == 0.5) {
+        AudioTrack* track = qobject_cast<AudioTrack*>(context);
+        if (track && origGain == 0.5) {
 		newGain = 1.0;
 	} else {
 		Sheet* sheet = qobject_cast<Sheet*>(context);

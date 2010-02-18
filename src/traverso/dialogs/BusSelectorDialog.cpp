@@ -25,6 +25,7 @@
 #include <ProjectManager.h>
 #include <Sheet.h>
 #include <Track.h>
+#include <AudioTrack.h>
 #include <Project.h>
 #include <QPushButton>
 
@@ -132,7 +133,7 @@ void BusSelectorDialog::set_current_track(Track * track)
 	
 	Sheet* sheet = pm().get_project()->get_current_sheet();
 	
-	foreach(Track* track, sheet->get_tracks()) {
+	foreach(AudioTrack* track, sheet->get_tracks()) {
 		QString fulltitle = QString::number(track->get_sort_index() + 1) + " " + track->get_name();
 		trackComboBox->addItem(fulltitle, track->get_id());
 	}

@@ -24,7 +24,7 @@
 #include "Themer.h"
 #include "Sheet.h"
 #include "Utils.h"
-#include "Track.h"
+#include "AudioTrack.h"
 #include "ProjectManager.h"
 #include "Project.h"
 #include "Config.h"
@@ -177,7 +177,7 @@ void TransportConsoleWidget::update_recording_state()
 	if (m_sheet->is_recording()) {
 		QString recordFormat = config().get_property("Recording", "FileFormat", "wav").toString();
 		int count = 0;
-		foreach(Track* track, m_sheet->get_tracks()) {
+		foreach(AudioTrack* track, m_sheet->get_tracks()) {
 			if (track->armed()) {
 				count++;
 			}

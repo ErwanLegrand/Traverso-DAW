@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2010 Remon Sijrier
 
 This file is part of Traverso
 
@@ -22,51 +22,61 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #ifndef TRACK_VIEW_H
 #define TRACK_VIEW_H
 
-#include "ProcessingDataView.h"
+#include "ViewItem.h"
 
-class ProcessingData;
 class AudioClip;
-class AudioClipView;
+class AudioTrack;
 class Track;
 class TrackPanelView;
 class PluginChainView;
 
-class TrackView : public ProcessingDataView
+class TrackView : public ViewItem
 {
-	Q_OBJECT
-	Q_CLASSINFO("insert_silence", tr("Insert Silence")) 
+        Q_OBJECT
+        Q_CLASSINFO("edit_properties", tr("Edit properties"))
+        Q_CLASSINFO("add_new_plugin", tr("Add new Plugin"))
+        Q_CLASSINFO("select_bus", tr("Select Bus"))
 
 public:
-	TrackView(SheetView* sv, Track* track);
-        ~TrackView() {};
-	
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-	
+        TrackView(SheetView* sv, Track* track);
+        ~TrackView();
+
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+
         Track* get_track() const {return m_track;}
-	QList<AudioClipView* >* get_clipviews() {return &m_clipViews;}
-	
-        int get_childview_y_offset() const;
+        TrackPanelView* get_panel_view() const {return m_panel;}
+
+        virtual int get_childview_y_offset() const;
+        void move_to(int x, int y);
         int get_height();
-	void set_height(int height);
-	
-	void load_theme_data();
-	
-	void to_front(AudioClipView* view);
-	
-private:
-        Track*			m_track;
-	QList<AudioClipView* >	m_clipViews;
-	
+        void set_height(int height);
+
+        void calculate_bounding_rect();
+        void load_theme_data();
+
+protected:
+        Track*                  m_track;
+        TrackPanelView*		m_panel;
+        PluginChainView*	m_pluginChainView;
+        int			m_height;
+        int			m_paintBackground;
+        int			m_cliptopmargin;
+        int			m_clipbottommargin;
+        int			m_topborderwidth;
+        int			m_bottomborderwidth;
+
+        friend class AudioTrackPanelView;
+        friend class SubGroupPanelView;
 
 public slots:
-	Command* insert_silence();
+        Command* edit_properties();
+        Command* add_new_plugin();
+        Command* select_bus();
 
 private slots:
-	void add_new_audioclipview(AudioClip* clip);
-	void remove_audioclipview(AudioClip* clip);
 };
 
 
-#endif
+#endif // TRACK_VIEW_H
 
 //eof

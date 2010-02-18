@@ -28,7 +28,7 @@
 
 class PluginPropertiesDialog;
 
-class TrackView;
+class AudioTrackView;
 class PluginChainView;
 class Plugin;
 class PluginChain;

@@ -22,7 +22,7 @@
 #include "Sheet.h"
 #include "SubGroup.h"
 #include "TimeLine.h"
-#include "Track.h"
+#include "AudioTrack.h"
 #include "Utils.h"
 #include "ViewPort.h"
 #include "WriteSource.h"

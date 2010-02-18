@@ -26,7 +26,7 @@
 #include "defines.h"
 
 class AudioClip;
-class Track;
+class AudioTrack;
 class SheetView;
 class AudioClipView;
 class LineView;
@@ -51,7 +51,7 @@ public :
 private :
 	SheetView* m_sv;
 	AudioClipView* m_cv;
-        Track* m_track;
+        AudioTrack* m_track;
         AudioClip* m_clip;
         AudioClip* leftClip;
         AudioClip* rightClip;

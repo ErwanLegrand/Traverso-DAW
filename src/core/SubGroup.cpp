@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "PluginChain.h"
 
 SubGroup::SubGroup(Sheet* sheet, const QString& name, int channelCount)
-        : ProcessingData(sheet)
+        : Track(sheet)
 {
         m_processBus = new AudioBus(name, channelCount, ChannelIsOutput);
 }

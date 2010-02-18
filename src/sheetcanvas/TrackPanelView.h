@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2007 Remon Sijrier 
+Copyright (C) 2005-2010 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.h,v 1.1 2008/01/21 16:17:30 r_sijrier Exp $
 */
 
 #ifndef TRACK_PANEL_VIEW_H
@@ -25,14 +24,14 @@ $Id: TrackPanelView.h,v 1.1 2008/01/21 16:17:30 r_sijrier Exp $
 
 #include "ViewItem.h"
 
-class ProcessingData;
 class Track;
-class ProcessingDataView;
-class PDPanelView;
+class AudioTrack;
 class TrackView;
+class TrackPanelView;
+class AudioTrackView;
 class TrackPanelViewPort;
 class PanelLed;
-class TrackPanelView;
+class AudioTrackPanelView;
 class SubGroupView;
 
 class TrackPanelGain : public ViewItem
@@ -40,7 +39,7 @@ class TrackPanelGain : public ViewItem
 	Q_OBJECT
 
 public:
-        TrackPanelGain(PDPanelView* parent, ProcessingData* track);
+        TrackPanelGain(TrackPanelView* parent, Track* track);
 	TrackPanelGain(){}
 
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -51,7 +50,7 @@ public slots:
 	Command* gain_decrement();
 	
 private:
-        ProcessingData* m_pd;
+        Track* m_track;
 };
 
 class TrackPanelPan : public ViewItem
@@ -59,7 +58,7 @@ class TrackPanelPan : public ViewItem
 	Q_OBJECT
 	
 public:
-        TrackPanelPan(PDPanelView* parent, ProcessingData* track);
+        TrackPanelPan(TrackPanelView* parent, Track* track);
 	TrackPanelPan(){}
 	
 
@@ -71,7 +70,7 @@ public slots:
 	Command* pan_right();
 
 private:
-        ProcessingData* m_pd;
+        Track* m_track;
 };
 
 
@@ -80,16 +79,16 @@ class TrackPanelLed : public ViewItem
 {
 	Q_OBJECT
 public:
-        TrackPanelLed(PDPanelView* view, ProcessingData* pd, const QString& name, const QString& toggleslot);
+        TrackPanelLed(TrackPanelView* view, Track* track, const QString& name, const QString& toggleslot);
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void set_bounding_rect(QRectF rect);
 
 private:
-        ProcessingData* m_pd;
+        Track*  m_track;
         QString m_name;
 	QString m_toggleslot;
-	bool m_isOn;
+        bool    m_isOn;
 
 public slots:
         void ison_changed(bool isOn);
@@ -101,7 +100,7 @@ class TrackPanelBus : public ViewItem
 {
 	Q_OBJECT
 public:
-        TrackPanelBus(PDPanelView* view, ProcessingData* track, int busType);
+        TrackPanelBus(TrackPanelView* view, Track* track, int busType);
 	TrackPanelBus(){}
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -109,7 +108,7 @@ public:
 	enum { BUSIN, BUSOUT };
 
 private:
-        ProcessingData*	m_pd;
+        Track*	m_track;
         int	m_type;
 	QString m_busName;
 	QPixmap m_pix;
@@ -121,21 +120,21 @@ public slots:
 };
 
 
-class PDPanelView : public ViewItem
+class TrackPanelView : public ViewItem
 {
 	Q_OBJECT
 
 public:
-        PDPanelView(ProcessingDataView* trackView);
-        ~PDPanelView();
+        TrackPanelView(TrackView* trackView);
+        ~TrackPanelView();
 
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void calculate_bounding_rect();
 	
 	
 protected:
-        ProcessingData*		m_pd;
-        ProcessingDataView*	m_processingDataView;
+        Track*                  m_track;
+        TrackView*              m_trackView;
 	TrackPanelViewPort*	m_viewPort;
 	TrackPanelGain*		m_gainView;
 	TrackPanelPan*		m_panView;
@@ -157,29 +156,29 @@ private slots:
 
 
 
-class TrackPanelView : public PDPanelView
+class AudioTrackPanelView : public TrackPanelView
 {
         Q_OBJECT
 
 public:
-        TrackPanelView(TrackView* trackView);
-        ~TrackPanelView();
+        AudioTrackPanelView(AudioTrackView* trackView);
+        ~AudioTrackPanelView();
 
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-        Track* get_track() const {return (Track*)m_pd;}
+        AudioTrack* get_track() const {return (AudioTrack*)m_track;}
 
 protected:
         void layout_panel_items();
 
 
 private:
-        TrackView*	m_tv;
+        AudioTrackView*	m_tv;
         TrackPanelLed*  m_recLed;
 };
 
 
-class SubGroupPanelView : public PDPanelView
+class SubGroupPanelView : public TrackPanelView
 {
         Q_OBJECT
 

@@ -25,7 +25,7 @@
 #include "Command.h"
 
 class AudioClipView;
-class Track;
+class AudioTrack;
 class AudioClip;
 class QGraphicsRectItem;
 
@@ -52,7 +52,7 @@ public :
 
 private:
         AudioClipView* m_cv;
-        Track* m_track;
+        AudioTrack* m_track;
         AudioClip* m_clip;
         AudioClip* leftClip;
         AudioClip* rightClip;

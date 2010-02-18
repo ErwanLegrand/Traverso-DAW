@@ -22,10 +22,10 @@ $Id: ArmTracks.cpp,v 1.4 2008/01/21 16:22:11 r_sijrier Exp $
 
 #include "ArmTracks.h"
 
-#include <Track.h>
+#include <AudioTrack.h>
 #include <Sheet.h>
 #include <SheetView.h>
-#include <TrackView.h>
+#include <AudioTrackView.h>
 
 #include <ContextPointer.h>
 
@@ -74,13 +74,13 @@ int ArmTracks::undo_action()
 
 int ArmTracks::jog()
 {
-	TrackView* view = m_sv->get_trackview_under(cpointer().scene_pos());
+	AudioTrackView* view = m_sv->get_trackview_under(cpointer().scene_pos());
 	
 	if ( ! view ) {
 		return 0;
 	}
 	
-	Track* track = view->get_track();
+	AudioTrack* track = view->get_track();
 	
 	if (! m_tracks.contains(track) ) {
 		m_tracks.append(track);

@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QHash>
 
 class Sheet;
-class Track;
+class AudioTrack;
 class Project;
 class BusMonitor;
 class InfoBox;
@@ -92,8 +92,8 @@ public :
 	
 	void select_fade_in_shape();
 	void select_fade_out_shape();
-	void show_busselector(Track* track);
-	void set_insertsilence_track(Track* track);
+	void show_busselector(AudioTrack* track);
+	void set_insertsilence_track(AudioTrack* track);
 	
 protected:
 	void keyPressEvent ( QKeyEvent* e);

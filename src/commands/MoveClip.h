@@ -31,7 +31,7 @@
 
 class AudioClip;
 class Sheet;
-class Track;
+class AudioTrack;
 class SheetView;
 class ViewItem;
 class Zoom;

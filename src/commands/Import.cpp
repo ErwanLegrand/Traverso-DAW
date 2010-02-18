@@ -37,7 +37,7 @@ Import::Import(const QString& fileName)
 }
 
 
-Import::Import(Track* track, const TimeRef& length, bool silent)
+Import::Import(AudioTrack* track, const TimeRef& length, bool silent)
 	: Command(track, "")
 {
 	init(track, "");
@@ -52,13 +52,13 @@ Import::Import(Track* track, const TimeRef& length, bool silent)
 }
 
 
-Import::Import(Track* track, const QString& fileName)
+Import::Import(AudioTrack* track, const QString& fileName)
 	: Command(track, tr("Import Audio File"))
 {
 	init(track, fileName);
 }
 
-Import::Import(Track* track, const QString& fileName, const TimeRef& position)
+Import::Import(AudioTrack* track, const QString& fileName, const TimeRef& position)
 	: Command(track, tr("Import Audio File"))
 {
 	init(track, fileName);
@@ -66,7 +66,7 @@ Import::Import(Track* track, const QString& fileName, const TimeRef& position)
 	m_position = position;
 }
 
-void Import::init(Track* track, const QString& fileName)
+void Import::init(AudioTrack* track, const QString& fileName)
 {
 	m_clip = 0;
 	m_source = 0;
@@ -161,7 +161,7 @@ void Import::create_audioclip()
 	}
 }
 
-void Import::set_track(Track * track)
+void Import::set_track(AudioTrack * track)
 {
 	m_track = track;
 }

@@ -24,7 +24,7 @@
 #include "Project.h"
 #include "Sheet.h"
 #include "Import.h"
-#include "Track.h"
+#include "AudioTrack.h"
 #include "AudioClip.h"
 
 #include <QDialogButtonBox>
@@ -39,7 +39,7 @@ InsertSilenceDialog::InsertSilenceDialog(QWidget * parent)
 }
 
 
-void InsertSilenceDialog::setTrack(Track* track)
+void InsertSilenceDialog::setTrack(AudioTrack* track)
 {
 	m_track = track;
 }
@@ -53,13 +53,13 @@ void InsertSilenceDialog::focusInput()
 void InsertSilenceDialog::accept()
 {
 	Sheet* sheet = pm().get_project()->get_current_sheet();
-	QList<Track*> tracks = sheet->get_tracks();
+	QList<AudioTrack*> tracks = sheet->get_tracks();
 
 	// Make sure track is still in the sheet
 	if (m_track){
-		Track*	foundTrack = 0;
+		AudioTrack*	foundTrack = 0;
 
-		foreach(Track* track, tracks) {
+		foreach(AudioTrack* track, tracks) {
 			if (track == m_track) {
 				foundTrack = track;
 			}
@@ -69,9 +69,9 @@ void InsertSilenceDialog::accept()
 
 	if (sheet->get_numtracks() > 0) {
 		if (!m_track){
-			Track*	shortestTrack = (Track*)tracks.first();
+			AudioTrack*	shortestTrack = (AudioTrack*)tracks.first();
 	
-			foreach(Track* track, tracks) {
+			foreach(AudioTrack* track, tracks) {
 				if (!track->get_cliplist().isEmpty() && (track->get_cliplist().last())->get_track_end_location() > (shortestTrack->get_cliplist().last())->get_track_end_location()) {
 					shortestTrack = track;
 				}

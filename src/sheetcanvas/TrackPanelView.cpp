@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2007 Remon Sijrier
+Copyright (C) 2005-2010 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: TrackPanelView.cpp,v 1.2 2009/02/21 22:38:27 r_sijrier Exp $
 */
 
 #include <QGraphicsScene>
@@ -28,12 +27,12 @@ $Id: TrackPanelView.cpp,v 1.2 2009/02/21 22:38:27 r_sijrier Exp $
 
 #include "AudioDevice.h"
 #include "TrackPanelView.h"
-#include "TrackView.h"
+#include "AudioTrackView.h"
 #include "SubGroupView.h"
 #include "SheetView.h"
 #include <Themer.h>
 #include "TrackPanelViewPort.h"
-#include <Track.h>
+#include <AudioTrack.h>
 #include "TrackPanelView.h"
 #include <Utils.h>
 #include <Mixer.h>
@@ -47,51 +46,51 @@ $Id: TrackPanelView.cpp,v 1.2 2009/02/21 22:38:27 r_sijrier Exp $
 
 
 
-PDPanelView::PDPanelView(ProcessingDataView* view)
+TrackPanelView::TrackPanelView(TrackView* view)
         : ViewItem(0, view)
 {
         PENTERCONS;
 
-        m_processingDataView = view;
-        m_viewPort = m_processingDataView->get_sheetview()->get_trackpanel_view_port();
-        m_pd = m_processingDataView->get_processing_data();
+        m_trackView = view;
+        m_viewPort = m_trackView->get_sheetview()->get_trackpanel_view_port();
+        m_track = m_trackView->get_track();
 
-        m_gainView = new TrackPanelGain(this, m_pd);
+        m_gainView = new TrackPanelGain(this, m_track);
         m_gainView->set_width(m_viewPort->width() - 20);
 
-        m_panView = new TrackPanelPan(this, m_pd);
+        m_panView = new TrackPanelPan(this, m_track);
         m_panView->set_width(m_viewPort->width() - 20);
 
-        m_soloLed = new TrackPanelLed(this, m_pd, "solo", "solo");
-        m_muteLed = new TrackPanelLed(this, m_pd, "mute", "mute");
+        m_soloLed = new TrackPanelLed(this, m_track, "solo", "solo");
+        m_muteLed = new TrackPanelLed(this, m_track, "mute", "mute");
 
-        if (m_pd->is_solo()) {
+        if (m_track->is_solo()) {
                 m_soloLed->ison_changed(true);
         }
-        if (m_pd->is_muted()) {
+        if (m_track->is_muted()) {
                 m_muteLed->ison_changed(true);
         }
 
-        m_inBus = new TrackPanelBus(this, m_pd, TrackPanelBus::BUSIN);
-        m_outBus = new TrackPanelBus(this, m_pd, TrackPanelBus::BUSOUT);
+        m_inBus = new TrackPanelBus(this, m_track, TrackPanelBus::BUSIN);
+        m_outBus = new TrackPanelBus(this, m_track, TrackPanelBus::BUSOUT);
 
         m_viewPort->scene()->addItem(this);
 
 
-        m_boundingRect = QRectF(0, 0, 200, m_pd->get_height());
+        m_boundingRect = QRectF(0, 0, 200, m_track->get_height());
 
 //        layout_panel_items();
 
-        connect(m_pd, SIGNAL(soloChanged(bool)), m_soloLed, SLOT(ison_changed(bool)));
-        connect(m_pd, SIGNAL(muteChanged(bool)), m_muteLed, SLOT(ison_changed(bool)));
+        connect(m_track, SIGNAL(soloChanged(bool)), m_soloLed, SLOT(ison_changed(bool)));
+        connect(m_track, SIGNAL(muteChanged(bool)), m_muteLed, SLOT(ison_changed(bool)));
 
-        connect(m_pd, SIGNAL(stateChanged()), this, SLOT(update_gain()));
-        connect(m_pd, SIGNAL(panChanged()), this, SLOT(update_pan()));
+        connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_gain()));
+        connect(m_track, SIGNAL(panChanged()), this, SLOT(update_pan()));
 
-        connect(m_pd, SIGNAL(busConfigurationChanged()), m_inBus, SLOT(bus_changed()));
-        connect(m_pd, SIGNAL(busConfigurationChanged()), m_outBus, SLOT(bus_changed()));
+        connect(m_track, SIGNAL(busConfigurationChanged()), m_inBus, SLOT(bus_changed()));
+        connect(m_track, SIGNAL(busConfigurationChanged()), m_outBus, SLOT(bus_changed()));
 
-        connect(m_pd, SIGNAL(stateChanged()), this, SLOT(update_name()));
+        connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_name()));
 
 
 // 	setFlags(ItemIsSelectable | ItemIsMovable);
@@ -99,13 +98,13 @@ PDPanelView::PDPanelView(ProcessingDataView* view)
         setCursor(themer()->get_cursor("Track"));
 }
 
-PDPanelView::~PDPanelView( )
+TrackPanelView::~TrackPanelView( )
 {
         PENTERDES;
 }
 
 
-void PDPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+void TrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
         Q_UNUSED(widget);
         Q_UNUSED(option);
@@ -120,44 +119,44 @@ void PDPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* optio
 //
 //	if (m_tv->m_paintBackground) {
 //		QColor color = themer()->get_color("Track:background");
-//		painter->fillRect(xstart, m_tv->m_topborderwidth, pixelcount, m_pd->get_height() - m_tv->m_bottomborderwidth, color);
+//		painter->fillRect(xstart, m_tv->m_topborderwidth, pixelcount, m_track->get_height() - m_tv->m_bottomborderwidth, color);
 //	}
 //
 //	if (m_tv->m_bottomborderwidth > 0) {
 //		QColor color = themer()->get_color("Track:clipbottomoffset");
-//		painter->fillRect(xstart, m_pd->get_height() - m_tv->m_bottomborderwidth, pixelcount, m_tv->m_bottomborderwidth, color);
+//		painter->fillRect(xstart, m_track->get_height() - m_tv->m_bottomborderwidth, pixelcount, m_tv->m_bottomborderwidth, color);
 //	}
 //
 //	// Track / track panel seperator is painted in TrackPanelViewPort... not the best place perhaps ?
-//	painter->fillRect(m_viewPort->width() - 3, 0, 3, m_pd->get_height() - 1, themer()->get_color("TrackPanel:trackseparation"));
+//	painter->fillRect(m_viewPort->width() - 3, 0, 3, m_track->get_height() - 1, themer()->get_color("TrackPanel:trackseparation"));
 //
 //	if (xstart < 180) {
 //		draw_panel_track_name(painter);
 //	}
 }
 
-void PDPanelView::update_name()
+void TrackPanelView::update_name()
 {
         update();
 }
 
-void PDPanelView::update_gain()
+void TrackPanelView::update_gain()
 {
         m_gainView->update();
 }
 
 
-void PDPanelView::update_pan()
+void TrackPanelView::update_pan()
 {
         m_panView->update();
 }
 
 
-void PDPanelView::draw_panel_name(QPainter* painter)
+void TrackPanelView::draw_panel_name(QPainter* painter)
 {
-        QString title = QString::number(m_pd->get_sort_index() + 1) + "  " + m_pd->get_name();
+        QString title = QString::number(m_track->get_sort_index() + 1) + "  " + m_track->get_name();
 
-        if (m_pd->get_height() < SMALL_HEIGHT) {
+        if (m_track->get_height() < SMALL_HEIGHT) {
                 QFontMetrics fm(themer()->get_font("TrackPanel:fontscale:name"));
                 title = fm.elidedText(title, Qt::ElideMiddle, 90);
         }
@@ -170,10 +169,10 @@ void PDPanelView::draw_panel_name(QPainter* painter)
 }
 
 
-void PDPanelView::calculate_bounding_rect()
+void TrackPanelView::calculate_bounding_rect()
 {
         prepareGeometryChange();
-        m_boundingRect = QRectF(0, 0, 200, m_pd->get_height());
+        m_boundingRect = QRectF(0, 0, 200, m_track->get_height());
         layout_panel_items();
 }
 
@@ -181,13 +180,13 @@ void PDPanelView::calculate_bounding_rect()
 
 
 
-TrackPanelView::TrackPanelView(TrackView* trackView)
-        : PDPanelView(trackView)
+AudioTrackPanelView::AudioTrackPanelView(AudioTrackView* trackView)
+        : TrackPanelView(trackView)
 {
 	PENTERCONS;
 
         m_tv = trackView;
-        m_recLed = new TrackPanelLed(this, m_pd, "rec", "toggle_arm");
+        m_recLed = new TrackPanelLed(this, m_track, "rec", "toggle_arm");
 
         if (m_tv->get_track()->armed()) {
                 m_recLed->ison_changed(true);
@@ -196,13 +195,13 @@ TrackPanelView::TrackPanelView(TrackView* trackView)
         connect(m_tv->get_track(), SIGNAL(armedChanged(bool)), m_recLed, SLOT(ison_changed(bool)));
 }
 
-TrackPanelView::~TrackPanelView( )
+AudioTrackPanelView::~AudioTrackPanelView( )
 {
 	PENTERDES;
 }
 
 
-void TrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+void AudioTrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
 	Q_UNUSED(widget);
 	Q_UNUSED(option);
@@ -217,25 +216,25 @@ void TrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
 	
 	if (m_tv->m_paintBackground) {
 		QColor color = themer()->get_color("Track:background");
-                painter->fillRect(xstart, m_tv->m_topborderwidth, pixelcount, m_pd->get_height() - m_tv->m_bottomborderwidth, color);
+                painter->fillRect(xstart, m_tv->m_topborderwidth, pixelcount, m_track->get_height() - m_tv->m_bottomborderwidth, color);
 	}
 	
 	if (m_tv->m_bottomborderwidth > 0) {
 		QColor color = themer()->get_color("Track:clipbottomoffset");
-                painter->fillRect(xstart, m_pd->get_height() - m_tv->m_bottomborderwidth, pixelcount, m_tv->m_bottomborderwidth, color);
+                painter->fillRect(xstart, m_track->get_height() - m_tv->m_bottomborderwidth, pixelcount, m_tv->m_bottomborderwidth, color);
 	}
 
 	// Track / track panel seperator is painted in TrackPanelViewPort... not the best place perhaps ?
-        painter->fillRect(m_viewPort->width() - 3, 0, 3, m_pd->get_height() - 1, themer()->get_color("TrackPanel:trackseparation"));
+        painter->fillRect(m_viewPort->width() - 3, 0, 3, m_track->get_height() - 1, themer()->get_color("TrackPanel:trackseparation"));
 	
 	if (xstart < 180) {
                 draw_panel_name(painter);
 	}
 }
 
-void TrackPanelView::layout_panel_items()
+void AudioTrackPanelView::layout_panel_items()
 {
-        int height =  m_pd->get_height();
+        int height =  m_track->get_height();
 	
 	m_gainView->setPos(10, 39);
 	m_panView->setPos(10, 54);
@@ -293,7 +292,7 @@ void TrackPanelView::layout_panel_items()
 
 
 SubGroupPanelView::SubGroupPanelView(SubGroupView* view)
-        : PDPanelView(view)
+        : TrackPanelView(view)
 {
         PENTERCONS;
 
@@ -314,23 +313,23 @@ void SubGroupPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem*
         int xstart = (int)option->exposedRect.x();
         int pixelcount = (int)option->exposedRect.width();
 
-        if (m_processingDataView->m_topborderwidth > 0) {
+        if (m_trackView->m_topborderwidth > 0) {
                 QColor color = themer()->get_color("Track:cliptopoffset");
-                painter->fillRect(xstart, 0, pixelcount, m_processingDataView->m_topborderwidth, color);
+                painter->fillRect(xstart, 0, pixelcount, m_trackView->m_topborderwidth, color);
         }
 
-//        if (m_processingDataView->m_paintBackground) {
+//        if (m_trackView->m_paintBackground) {
                 QColor color = themer()->get_color("SubGroup:background");
-                painter->fillRect(xstart, m_processingDataView->m_topborderwidth, pixelcount, m_pd->get_height() - m_processingDataView->m_bottomborderwidth, color);
+                painter->fillRect(xstart, m_trackView->m_topborderwidth, pixelcount, m_track->get_height() - m_trackView->m_bottomborderwidth, color);
 //        }
 
-        if (m_processingDataView->m_bottomborderwidth > 0) {
+        if (m_trackView->m_bottomborderwidth > 0) {
                 QColor color = themer()->get_color("Track:clipbottomoffset");
-                painter->fillRect(xstart, m_pd->get_height() - m_processingDataView->m_bottomborderwidth, pixelcount, m_processingDataView->m_bottomborderwidth, color);
+                painter->fillRect(xstart, m_track->get_height() - m_trackView->m_bottomborderwidth, pixelcount, m_trackView->m_bottomborderwidth, color);
         }
 
         // Track / track panel seperator is painted in TrackPanelViewPort... not the best place perhaps ?
-        painter->fillRect(m_viewPort->width() - 3, 0, 3, m_pd->get_height() - 1, themer()->get_color("TrackPanel:trackseparation"));
+        painter->fillRect(m_viewPort->width() - 3, 0, 3, m_track->get_height() - 1, themer()->get_color("TrackPanel:trackseparation"));
 
         if (xstart < 180) {
                 draw_panel_name(painter);
@@ -339,7 +338,7 @@ void SubGroupPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem*
 
 void SubGroupPanelView::layout_panel_items()
 {
-        int height =  m_pd->get_height();
+        int height =  m_track->get_height();
 
         m_gainView->setPos(10, 39);
         m_panView->setPos(10, 54);
@@ -393,9 +392,9 @@ void SubGroupPanelView::layout_panel_items()
 
 
 
-TrackPanelGain::TrackPanelGain(PDPanelView* parent, ProcessingData * track)
+TrackPanelGain::TrackPanelGain(TrackPanelView *parent, Track *track)
 	: ViewItem(parent, track)
-        , m_pd(track)
+        , m_track(track)
 {
 	setAcceptsHoverEvents(true);
 
@@ -407,7 +406,7 @@ void TrackPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem *
 	const int height = 9;
 
 	int sliderWidth = (int)m_boundingRect.width() - 75;
-        float gain = m_pd->get_gain();
+        float gain = m_track->get_gain();
 	QString sgain = coefficient_to_dbstring(gain);
 	float db = coefficient_to_dB(gain);
 
@@ -450,19 +449,19 @@ void TrackPanelGain::set_width(int width)
 
 Command* TrackPanelGain::gain_increment()
 {
-        m_pd->set_gain(m_pd->get_gain() + 0.05);
+        m_track->set_gain(m_track->get_gain() + 0.05);
 	return 0;
 }
 
 Command* TrackPanelGain::gain_decrement()
 {
-        m_pd->set_gain(m_pd->get_gain() - 0.05);
+        m_track->set_gain(m_track->get_gain() - 0.05);
 	return 0;
 }
 
-TrackPanelPan::TrackPanelPan(PDPanelView* parent, ProcessingData * track)
+TrackPanelPan::TrackPanelPan(TrackPanelView *parent, Track *track)
 	: ViewItem(parent, track)
-        , m_pd(track)
+        , m_track(track)
 {
 	setAcceptsHoverEvents(true);
 }
@@ -489,7 +488,7 @@ void TrackPanelPan::paint( QPainter * painter, const QStyleOptionGraphicsItem * 
 
 	painter->drawText(0, PAN_H + 1, "PAN");
 
-        v = m_pd->get_pan();
+        v = m_track->get_pan();
 	span = QByteArray::number(v,'f',1);
 	s = ( v > 0 ? QString("+") + span :  span );
 	painter->fillRect(30, 0, sliderWidth, PAN_H, color);
@@ -512,25 +511,25 @@ void TrackPanelPan::set_width(int width)
 
 Command* TrackPanelPan::pan_left()
 {
-        m_pd->set_pan(m_pd->get_pan() - 0.05);
+        m_track->set_pan(m_track->get_pan() - 0.05);
 	return 0;
 }
 
 Command* TrackPanelPan::pan_right()
 {
-        m_pd->set_pan(m_pd->get_pan() + 0.05);
+        m_track->set_pan(m_track->get_pan() + 0.05);
 	return 0;
 }
 
 
 
-TrackPanelLed::TrackPanelLed(PDPanelView* parent, ProcessingData* pd, const QString& name, const QString& toggleslot)
-	: ViewItem(parent, 0)
+TrackPanelLed::TrackPanelLed(TrackPanelView* view, Track *track, const QString& name, const QString& toggleslot)
+        : ViewItem(view, 0)
 	, m_name(name)
 	, m_toggleslot(toggleslot)
 	, m_isOn(false)
 {
-        m_pd = pd;
+        m_track = track;
 	setAcceptsHoverEvents(true);
 }
 
@@ -595,16 +594,16 @@ void TrackPanelLed::ison_changed(bool isOn)
 Command * TrackPanelLed::toggle()
 {
 	Command* com;
-        QMetaObject::invokeMethod(m_pd, QS_C(m_toggleslot), Qt::DirectConnection, Q_RETURN_ARG(Command*, com));
+        QMetaObject::invokeMethod(m_track, QS_C(m_toggleslot), Qt::DirectConnection, Q_RETURN_ARG(Command*, com));
 	return 0;
 }
 
 
 
-TrackPanelBus::TrackPanelBus(PDPanelView* parent, ProcessingData* track, int type)
-	: ViewItem(parent, 0)
-        , m_pd(track)
-	, m_type(type)
+TrackPanelBus::TrackPanelBus(TrackPanelView *view, Track *track, int busType)
+        : ViewItem(view, 0)
+        , m_track(track)
+        , m_type(busType)
 {
 	bus_changed();
 	setAcceptsHoverEvents(true);
@@ -633,17 +632,7 @@ void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 	painter->setFont(themer()->get_font("TrackPanel:fontscale:led"));
 	painter->setPen(themer()->get_color("TrackPanel:bus:font"));
 	
-	QString leftright = "";
-	
-//	if ((m_type == BUSIN) && ! (m_pd->capture_left_channel() && m_pd->capture_right_channel()) ) {
-//		if (m_pd->capture_left_channel()) {
-//			leftright = " L";
-//		} else {
-//			leftright = " R";
-//		}
-//	}
-	
-	painter->drawText(m_boundingRect.adjusted(15, 0, 0, 0), Qt::AlignCenter, m_busName + leftright);
+        painter->drawText(m_boundingRect.adjusted(15, 0, 0, 0), Qt::AlignCenter, m_busName);
 			
 	painter->drawPixmap(3, 3, m_pix);
 	
@@ -656,12 +645,12 @@ void TrackPanelBus::bus_changed()
 	prepareGeometryChange();
 	
 	if (m_type == BUSIN) {
-                m_busName =  m_pd-> get_bus_in_name();
+                m_busName =  m_track-> get_bus_in_name();
 		m_pix = find_pixmap(":/bus_in");
 		m_boundingRect = m_pix.rect();
 		m_boundingRect.setWidth(m_pix.rect().width() + fm.width(m_busName) + 10);
 	} else {
-                m_busName = m_pd->get_bus_out_name();
+                m_busName = m_track->get_bus_out_name();
 		m_pix = find_pixmap(":/bus_out");
 		m_boundingRect = m_pix.rect();
 		m_boundingRect.setWidth(m_pix.rect().width() + fm.width(m_busName) + 10);
@@ -693,9 +682,9 @@ Command* TrackPanelBus::select_bus()
 
         if (action) {
                 if (m_type == BUSIN) {
-                        m_pd->set_input_bus(action->text());
+                        m_track->set_input_bus(action->text());
                 } else {
-                        m_pd->set_output_bus(action->text());
+                        m_track->set_output_bus(action->text());
                 }
         }
 

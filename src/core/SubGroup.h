@@ -23,9 +23,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #ifndef SUBGROUP_H
 #define SUBGROUP_H
 
-#include "ProcessingData.h"
+#include "Track.h"
 
-class SubGroup : public ProcessingData
+class SubGroup : public Track
 {
         Q_OBJECT
 

@@ -891,7 +891,7 @@ Command * Interface::get_keymap(QString &str)
 	QMap<QString, QList<const QMetaObject*> > objects;
 	
 	QList<const QMetaObject*> sheetlist; sheetlist << &Sheet::staticMetaObject; sheetlist << &SheetView::staticMetaObject;
-        QList<const QMetaObject*> tracklist; tracklist << &Track::staticMetaObject; tracklist << &TrackView::staticMetaObject;
+        QList<const QMetaObject*> tracklist; tracklist << &AudioTrack::staticMetaObject; tracklist << &AudioTrackView::staticMetaObject;
         QList<const QMetaObject*> subgrouplist; subgrouplist << &SubGroup::staticMetaObject; subgrouplist << &SubGroupView::staticMetaObject;
         QList<const QMetaObject*> cliplist; cliplist << &AudioClip::staticMetaObject; cliplist << &AudioClipView::staticMetaObject;
 	QList<const QMetaObject*> curvelist; curvelist << &Curve::staticMetaObject; curvelist << &CurveView::staticMetaObject;
@@ -1080,7 +1080,7 @@ QMenu* Interface::create_context_menu(QObject* item, QList<MenuData >* menulist)
 	return menu;
 }
 
-void Interface::show_busselector(Track* track)
+void Interface::show_busselector(AudioTrack* track)
 {
 	if (! m_busSelector) {
 		m_busSelector = new BusSelectorDialog(this);
@@ -1089,7 +1089,7 @@ void Interface::show_busselector(Track* track)
 	m_busSelector->show();
 }
 
-void Interface::set_insertsilence_track(Track* track)
+void Interface::set_insertsilence_track(AudioTrack* track)
 {
 	if (m_insertSilenceDialog) {
 		m_insertSilenceDialog->setTrack(track);
@@ -1247,8 +1247,8 @@ void Interface::import_audio()
 			config().get_property("Project", "directory", "/directory/unknown").toString(),
 			tr("Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)"));
 
-	QList<Track*> tracks = currentSheetWidget->get_sheet()->get_tracks();
-	Track*	track = tracks.first();
+	QList<AudioTrack*> tracks = currentSheetWidget->get_sheet()->get_tracks();
+	AudioTrack*	track = tracks.first();
 	bool markers = false;
 
 	ImportClipsDialog *importClips = new ImportClipsDialog(this);

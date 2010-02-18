@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Debugger.h>
 
 SubGroupView::SubGroupView(SheetView* sv, SubGroup* group)
-        : ProcessingDataView(sv, group)
+        : TrackView(sv, group)
 {
         PENTERCONS;
 
@@ -55,12 +55,12 @@ void SubGroupView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 
 //        if (m_paintBackground) {
                 QColor color = themer()->get_color("SubGroup:background");
-                painter->fillRect(xstart, m_topborderwidth, pixelcount+1, m_pd->get_height() - m_bottomborderwidth, color);
+                painter->fillRect(xstart, m_topborderwidth, pixelcount+1, m_track->get_height() - m_bottomborderwidth, color);
 //        }
 
         if (m_bottomborderwidth > 0) {
                 QColor color = themer()->get_color("Track:clipbottomoffset");
-                painter->fillRect(xstart, m_pd->get_height() - m_bottomborderwidth, pixelcount+1, m_bottomborderwidth, color);
+                painter->fillRect(xstart, m_track->get_height() - m_bottomborderwidth, pixelcount+1, m_bottomborderwidth, color);
         }
 }
 

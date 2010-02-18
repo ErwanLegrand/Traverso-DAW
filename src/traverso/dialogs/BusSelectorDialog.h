@@ -36,10 +36,10 @@ public:
 	BusSelectorDialog(QWidget* parent = 0);
 	~BusSelectorDialog() {};
 
-	void set_current_track(Track* track);
+        void set_current_track(Track* track);
 
 private:
-	Track* m_currentTrack;
+        Track* m_currentTrack;
 	void accept();
 	void reject();
 	

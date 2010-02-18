@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2007 Remon Sijrier
+Copyright (C) 2010 Remon Sijrier
 
 This file is part of Traverso
 
@@ -39,7 +39,6 @@ class ProcessingData : public ContextItem, public APILinkedListNode
         Q_OBJECT
 
         Q_CLASSINFO("mute", tr("Mute"))
-        Q_CLASSINFO("solo", tr("Solo"))
 
 public:
         ProcessingData (Sheet* sheet=0);
@@ -63,23 +62,15 @@ public:
         QString get_name() const {return m_name;}
         QString get_bus_in_name() const {return m_busInName;}
         QString get_bus_out_name() const{return m_busOutName;}
-        int get_height() const {return m_height;}
-        int get_sort_index() const;
         float get_pan() const {return m_pan;}
 
-        void set_height(int h);
-        void set_muted_by_solo(bool muted);
         void set_muted(bool muted);
         void set_name(const QString& name);
         void set_pan(float pan);
-        void set_solo(bool solo);
-        void set_sort_index(int index);
 
 	bool is_muted() const {return m_isMuted;}
-        bool is_smaller_then(APILinkedListNode* node) {return ((ProcessingData*)node)->get_sort_index() > get_sort_index();}
+        virtual bool is_smaller_then(APILinkedListNode* node) = 0;
 
-        bool is_muted_by_solo();
-        bool is_solo();
 
 
 protected:
@@ -92,21 +83,13 @@ protected:
         QString         m_busInName;
         QString         m_busOutName;
         QString		m_name;
-
-
         bool            m_isMuted;
-        int m_sortIndex;
-        int m_height;
-        bool isSolo;
-        bool mutedBySolo;
-
-        float 	m_pan;
+        float           m_pan;
 
 
 public slots:
 	float get_gain() const;
         void set_gain(float gain);
-        Command* solo();
         Command* mute();
 
 private slots:
@@ -124,7 +107,6 @@ signals:
 
         void heightChanged();
         void muteChanged(bool isMuted);
-        void soloChanged(bool isSolo);
 
 };
 

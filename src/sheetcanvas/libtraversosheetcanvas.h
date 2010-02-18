@@ -10,7 +10,7 @@
 #include "SheetView.h"
 #include "TimeLineView.h"
 #include "TimeLineViewPort.h"
-#include "TrackView.h"
+#include "AudioTrackView.h"
 #include "TrackPanelView.h"
 #include "TrackPanelViewPort.h"
 #include "SubGroupView.h"

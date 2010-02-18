@@ -49,7 +49,7 @@
 #include "ResourcesManager.h"
 #include <Project.h>
 #include <Sheet.h>
-#include <Track.h>
+#include <AudioTrack.h>
 #include <Utils.h>
 #include <CommandGroup.h>
 #include "Import.h"
@@ -314,7 +314,7 @@ void NewProjectDialog::load_file(QString name, int i, QString trackname)
 		return;
 	}
 
-	Track* track = sheet->get_track_for_index(i);
+	AudioTrack* track = sheet->get_track_for_index(i);
 
 	Import* import = new Import(name);
 	track->set_name(trackname);

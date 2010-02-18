@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "AudioClipView.h"
 #include "SheetView.h"
-#include "TrackView.h"
+#include "AudioTrackView.h"
 #include "FadeView.h"
 #include "CurveView.h"
 
@@ -56,7 +56,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Debugger.h"
 
 
-AudioClipView::AudioClipView(SheetView* sv, TrackView* parent, AudioClip* clip )
+AudioClipView::AudioClipView(SheetView* sv, AudioTrackView* parent, AudioClip* clip )
         : ViewItem(parent, clip)
         , m_tv(parent)
         , m_clip(clip)

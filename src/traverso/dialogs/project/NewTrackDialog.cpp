@@ -60,9 +60,9 @@ void NewTrackDialog::accept()
 	CommandGroup* group = new CommandGroup(sheet, "");
 	
 	for (int i=0; i<count; ++i) {
-		Track* track = new Track(sheet, "Unnamed", Track::INITIAL_HEIGHT);
+		AudioTrack* track = new AudioTrack(sheet, "Unnamed", AudioTrack::INITIAL_HEIGHT);
 		track->set_name(title);
-                group->add_command(sheet->add_processing_data(track));
+                group->add_command(sheet->add_track(track));
 	}
 		
 	group->setText(tr("Added %n Track(s)", "", count));

@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2007 Remon Sijrier 
+Copyright (C) 2005-2010 Remon Sijrier
 
 This file is part of Traverso
 
@@ -23,85 +23,44 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #ifndef TRACK_H
 #define TRACK_H
 
-#include <QString>
-#include <QDomDocument>
-#include <QList>
-
-#include "ContextItem.h"
-#include "GainEnvelope.h"
 #include "ProcessingData.h"
-
-#include "defines.h"
-
 
 class Track : public ProcessingData
 {
-	Q_OBJECT
-        Q_CLASSINFO("toggle_arm", tr("Record: On/Off"))
-	Q_CLASSINFO("silence_others", tr("Silence other tracks"))
+        Q_OBJECT
+        Q_CLASSINFO("solo", tr("Solo"))
 
-public :
-	Track(Sheet* sheet, const QString& name, int height);
-	Track(Sheet* sheet, const QDomNode node);
-	~Track();
+public:
+        Track (Sheet* sheet=0);
+        ~Track () {}
 
-	static const int INITIAL_HEIGHT = 100;
+        int get_height() const {return m_height;}
+        int get_sort_index() const;
 
-	
-	AudioClip* init_recording();
-        Command* add_clip(AudioClip* clip, bool historable=true, bool ismove=false);
-        Command* remove_clip(AudioClip* clip, bool historable=true, bool ismove=false);
-        AudioClip* get_clip_after(const TimeRef& pos);
-        AudioClip* get_clip_before(const TimeRef& pos);
+        void set_height(int h);
+        void set_muted_by_solo(bool muted);
+        void set_solo(bool solo);
+        void set_sort_index(int index);
 
-	int arm();
-	int disarm();
+        bool is_muted_by_solo();
+        bool is_solo();
 
-	// Get functions:
-	void get_render_range(TimeRef& startlocation, TimeRef& endlocation);
-	
-	int get_total_clips();
-	QDomNode get_state(QDomDocument doc, bool istemplate=false);
-	QList<AudioClip*> get_cliplist() const;
-
-	
-
-	// Set functions:
-        int set_state( const QDomNode& node );
+        bool is_smaller_then(APILinkedListNode* node) {return ((Track*)node)->get_sort_index() > get_sort_index();}
 
 
-	bool armed();
+protected:
+        int     m_sortIndex;
+        int     m_height;
+        bool    mutedBySolo;
+        bool    m_isSolo;
 
-
-	int process(nframes_t nframes);
-
-private :
-        APILinkedList 	m_clips;
-        int numtakes;
-
-	bool isArmed;
-
-	void set_armed(bool armed);
-	void init();
-
-signals:
-        void audioClipAdded(AudioClip* clip);
-        void audioClipRemoved(AudioClip* clip);
-        
-        void armedChanged(bool isArmed);
 
 public slots:
-	void set_gain(float gain);
-	void clip_position_changed(AudioClip* clip);
-	
-	Command* toggle_arm();
-        Command* silence_others();
+        Command* solo();
 
-private slots:
-        void private_add_clip(AudioClip* clip);
-        void private_remove_clip(AudioClip* clip);
 
+signals:
+        void soloChanged(bool isSolo);
 };
 
-#endif
-
+#endif // TRACK_H

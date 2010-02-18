@@ -26,7 +26,7 @@
 #include "AudioClipGroup.h"
 
 class AudioClip;
-class Track;
+class AudioTrack;
 
 class AddRemoveClip : public Command
 {

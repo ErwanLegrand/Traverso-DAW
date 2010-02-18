@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "WriteSource.h"
 #include "Sheet.h"
 #include "SnapList.h"
-#include "Track.h"
+#include "AudioTrack.h"
 #include "AudioChannel.h"
 #include <AudioBus.h>
 #include <AudioDevice.h>
@@ -802,7 +802,7 @@ Sheet* AudioClip::get_sheet( ) const
 	return m_sheet;
 }
 
-Track* AudioClip::get_track( ) const
+AudioTrack* AudioClip::get_track( ) const
 {
 	Q_ASSERT(m_track);
 	return m_track;
@@ -825,7 +825,7 @@ void AudioClip::set_sheet( Sheet * sheet )
 }
 
 
-void AudioClip::set_track( Track * track )
+void AudioClip::set_track( AudioTrack * track )
 {
 	if (m_track) {
 		disconnect(m_track, SIGNAL(audibleStateChanged()), this, SLOT(track_audible_state_changed()));

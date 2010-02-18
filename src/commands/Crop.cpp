@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ResourcesManager.h"
 #include "ProjectManager.h"
 #include "Sheet.h"
-#include "Track.h"
+#include "AudioTrack.h"
 #include "InputEngine.h"
 #include <limits.h>
 

@@ -23,7 +23,7 @@
 
 #include <QScrollBar>
 
-#include "TrackView.h"
+#include "AudioTrackView.h"
 #include "SheetView.h"
 #include "ClipsViewPort.h"
 #include "PluginView.h"

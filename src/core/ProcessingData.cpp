@@ -40,6 +40,7 @@ ProcessingData::ProcessingData(Sheet *sheet)
 {
         if (m_sheet) {
                 m_pluginChain = new PluginChain(this, m_sheet);
+                set_history_stack(m_sheet->get_history_stack());
         } else {
                 m_pluginChain = new PluginChain(this);
         }
@@ -153,39 +154,6 @@ void ProcessingData::set_pan(float pan)
 }
 
 
-bool ProcessingData::is_solo()
-{
-        return isSolo;
-}
-
-bool ProcessingData::is_muted_by_solo()
-{
-        return mutedBySolo;
-}
-
-
-void ProcessingData::set_height(int h)
-{
-        m_height = h;
-        emit heightChanged();
-}
-
-
-void ProcessingData::set_muted_by_solo(bool muted)
-{
-        PENTER;
-        mutedBySolo = muted;
-        emit audibleStateChanged();
-}
-
-void ProcessingData::set_solo(bool solo)
-{
-        isSolo = solo;
-        if (solo)
-                mutedBySolo = false;
-        emit soloChanged(isSolo);
-        emit audibleStateChanged();
-}
 
 void ProcessingData::set_muted( bool muted )
 {
@@ -202,12 +170,6 @@ Command* ProcessingData::mute()
         return (Command*) 0;
 }
 
-Command* ProcessingData::solo(  )
-{
-        m_sheet->solo_processing_data(this);
-        return (Command*) 0;
-}
-
 Command* ProcessingData::add_plugin( Plugin * plugin )
 {
         return m_pluginChain->add_plugin(plugin);
@@ -217,17 +179,6 @@ Command* ProcessingData::remove_plugin( Plugin * plugin )
 {
         return m_pluginChain->remove_plugin(plugin);
 }
-
-void ProcessingData::set_sort_index( int index )
-{
-        m_sortIndex = index;
-}
-
-int ProcessingData::get_sort_index( ) const
-{
-        return m_sortIndex;
-}
-
 
 void ProcessingData::rescan_busses()
 {

@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 class Sheet;
 class ReadSource;
 class WriteSource;
-class Track;
+class AudioTrack;
 class Peak;
 class AudioBus;
 class FadeCurve;
@@ -71,7 +71,7 @@ public:
 	void set_track_start_location(const TimeRef& location);
 	void set_fade_in(double range);
 	void set_fade_out(double range);
-	void set_track(Track* track);
+	void set_track(AudioTrack* track);
 	void set_sheet(Sheet* sheet);
 
 	void set_selected(bool selected);
@@ -79,7 +79,7 @@ public:
 	int set_state( const QDomNode& node );
 
 	AudioClip* create_copy();
-	Track* get_track() const;
+	AudioTrack* get_track() const;
 	Sheet* get_sheet() const;
 	Peak* get_peak() const {return m_peak;}
 	QDomNode get_state(QDomDocument doc);
@@ -113,7 +113,7 @@ public:
 	int recording_state() const;
 
 private:
-	Track* 			m_track;
+	AudioTrack* 			m_track;
 	ReadSource*		m_readSource;
 	WriteSource*		m_recorder;
 	APILinkedList		m_fades;

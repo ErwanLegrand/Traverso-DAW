@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "SheetWidget.h"
 #include "SheetView.h"
-#include "TrackView.h"
+#include "AudioTrackView.h"
 #include "ViewItem.h"
 #include <libtraversocore.h>
 #include <Import.h>
@@ -210,7 +210,7 @@ void ClipsViewPort::dragMoveEvent( QDragMoveEvent * event )
 	
 	QList<QGraphicsItem *> itemlist = items((int)mouseposTosScene.x(), (int)mouseposTosScene.y());
 	foreach(QGraphicsItem* obj, itemlist) {
-		TrackView* tv = dynamic_cast<TrackView*>(obj);
+		AudioTrackView* tv = dynamic_cast<AudioTrackView*>(obj);
 		if (tv) {
 			importTrack = tv->get_track();
 			return;

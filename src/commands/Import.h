@@ -27,15 +27,17 @@
 
 class QString;
 class AudioClip;
+class AudioTrack;
 class ReadSource;
+struct TimeRef;
 
 class Import : public Command
 {
 public :
 	Import(const QString& fileName);
-	Import(Track* track, const TimeRef& length, bool silent = false);
-        Import(Track* track, const QString& fileName);
-        Import(Track* track, const QString& fileName, const TimeRef& position);
+        Import(AudioTrack* track, const TimeRef& length, bool silent = false);
+        Import(AudioTrack* track, const QString& fileName);
+        Import(AudioTrack* track, const QString& fileName, const TimeRef& position);
         ~Import();
 
         int prepare_actions();
@@ -44,12 +46,12 @@ public :
 	
 	int create_readsource();
 	void create_audioclip();
-	void set_track(Track* track);
+        void set_track(AudioTrack* track);
 	void set_position(const TimeRef& position);
 	ReadSource* readsource() {return m_source;};
 
 private :
-        Track* 		m_track;
+        AudioTrack*	m_track;
         AudioClip*	m_clip;
 	ReadSource* 	m_source;
         QString 	m_fileName;
@@ -59,7 +61,7 @@ private :
 	bool		m_hasPosition;
 	TimeRef		m_position;
 
-	void init(Track* track, const QString& filename);
+        void init(AudioTrack* track, const QString& filename);
 };
 
 #endif

@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2007 Remon Sijrier 
+Copyright (C) 2005-2010 Remon Sijrier
 
 This file is part of Traverso
 
@@ -30,10 +30,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "GainEnvelope.h"
 
 class Project;
-class Track;
+class AudioTrack;
 class AudioSource;
 class WriteSource;
-class Track;
+class AudioTrack;
 class AudioClip;
 class DiskIO;
 class AudioClipManager;
@@ -47,7 +47,7 @@ class Snappable;
 class DecodeBuffer;
 class Marker;
 class SubGroup;
-class ProcessingData;
+class Track;
 
 struct ExportSpecification;
 
@@ -85,7 +85,7 @@ public:
 	qreal get_hzoom() const {return m_hzoom;}
 	int get_rate();
 	int get_bitdepth();
-        int get_numtracks() const {return m_pds.size();}
+        int get_numtracks() const {return m_tracks.size();}
 	int get_track_index(qint64 id);
 	int get_mode() const {return m_mode;}
 	int is_transport_rolling() const {return m_transport;}
@@ -101,7 +101,7 @@ public:
         QString get_artists() const {return m_artists;}
         QString get_name() const {return m_name;}
 	QDomNode get_state(QDomDocument doc, bool istemplate=false);
-	QList<Track*> get_tracks() const;
+	QList<AudioTrack*> get_tracks() const;
 	
 	DiskIO*	get_diskio() const;
 	AudioClipManager* get_audioclip_manager() const;
@@ -111,8 +111,8 @@ public:
 	PluginChain* get_plugin_chain() const;
 	TimeLine* get_timeline() const {return m_timeline;}
         Snappable* get_work_snap() {return m_workSnap;}
-	Track* get_track(qint64 id);
-	Track* get_track_for_index(int index);
+	AudioTrack* get_track(qint64 id);
+	AudioTrack* get_track_for_index(int index);
 
 	// Set functions
 	void set_artists(const QString& pArtistis);
@@ -137,13 +137,13 @@ public:
 	int render(ExportSpecification* spec);
         int start_export(ExportSpecification* spec);
 
-        void solo_processing_data(ProcessingData* pd);
+        void solo_processing_data(Track* track);
 	void create(int tracksToCreate);
-	void move_clip(Track* from, Track* too, AudioClip* clip, TimeRef location);
-        Command* add_processing_data(ProcessingData* api, bool historable=true);
-        Command* remove_processing_data(ProcessingData* api, bool historable=true);
+	void move_clip(AudioTrack* from, AudioTrack* too, AudioClip* clip, TimeRef location);
+        Command* add_track(Track* api, bool historable=true);
+        Command* remove_track(Track* api, bool historable=true);
 	
-	bool any_track_armed();
+        bool any_audio_track_armed();
 	bool realtime_path() const {return m_realtimepath;}
         bool is_changed() const {return m_changed;}
 	bool is_snap_on() const	{return m_isSnapOn;}
@@ -166,7 +166,7 @@ public:
 #endif
 
 private:
-        APILinkedList		m_pds;
+        APILinkedList		m_tracks;
 	QList<AudioClip*>	m_recordingClips;
 	QTimer			m_skipTimer;
 	Project*		m_project;
@@ -229,7 +229,7 @@ private:
 	
 	void resize_buffer(bool updateArmStatus, nframes_t size);
 
-	Track* create_track();
+        AudioTrack* create_audio_track();
 	
 	friend class AudioClipManager;
 	friend class TimeLine;
@@ -260,8 +260,8 @@ public slots :
 	Command* set_effects_mode();
 
 signals:
-        void processingDataRemoved(ProcessingData* );
-        void processingDataAdded(ProcessingData* );
+        void trackRemoved(Track* );
+        void trackAdded(Track* );
 	void hzoomChanged();
 	void transportStarted();
 	void transportStopped();
@@ -279,8 +279,8 @@ signals:
         void stateChanged();
 	
 private slots:
-        void private_add_processing_data(ProcessingData* pd);
-        void private_remove_processing_data(ProcessingData* pd);
+        void private_add_track(Track* track);
+        void private_remove_track(Track* track);
 	void handle_diskio_writebuffer_overrun();
 	void handle_diskio_readbuffer_underrun();
 	void prepare_recording();

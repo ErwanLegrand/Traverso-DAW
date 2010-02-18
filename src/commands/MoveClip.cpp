@@ -27,12 +27,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "InputEngine.h"
 #include "SnapList.h"
 #include "Sheet.h"
-#include "Track.h"
+#include "AudioTrack.h"
 #include "TimeLine.h"
 
 #include "ClipsViewPort.h"
 #include "SheetView.h"
-#include "TrackView.h"
+#include "AudioTrackView.h"
 #include "AudioClipView.h"
 
 #include "Zoom.h"
@@ -99,10 +99,10 @@ MoveClip::MoveClip(ViewItem* view, QVariantList args)
 	if (m_actionType == FOLD_SHEET || m_actionType == FOLD_TRACK || m_actionType == FOLD_MARKERS) {
 		
 		QList<AudioClip*> movingClips;
-		QList<Track*> tracks;
+		QList<AudioTrack*> tracks;
 		
 		if (m_actionType == FOLD_TRACK) {
-			TrackView* tv = qobject_cast<TrackView*>(view);
+			AudioTrackView* tv = qobject_cast<AudioTrackView*>(view);
 			Q_ASSERT(tv);
 			d->sv= tv->get_sheetview();
 			tracks.append(tv->get_track());
@@ -136,7 +136,7 @@ MoveClip::MoveClip(ViewItem* view, QVariantList args)
 		}
 		
 		if (m_actionType == FOLD_SHEET || m_actionType == FOLD_TRACK) {
-			foreach(Track* track, tracks) {
+			foreach(AudioTrack* track, tracks) {
 				QList<AudioClip*> clips = track->get_cliplist();
 				foreach(AudioClip* clip, clips) {
 					if (clip->get_track_end_location() > currentLocation) {
@@ -293,7 +293,7 @@ int MoveClip::jog()
 		return 0;
 	}
 	
-	TrackView* trackView = d->sv->get_trackview_under(cpointer().scene_pos());
+	AudioTrackView* trackView = d->sv->get_trackview_under(cpointer().scene_pos());
 	int deltaTrackIndex = 0;
 	if (trackView/* && !(m_actionType == FOLD_SHEET)*/) {
 		deltaTrackIndex = trackView->get_track()->get_sort_index() - d->pointedTrackIndex;
