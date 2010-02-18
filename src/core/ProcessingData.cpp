@@ -88,7 +88,7 @@ void ProcessingData::set_output_bus(const QString &name)
 
         AudioBus* outBus = 0;
         if (m_busOutName == "Master Out") {
-                outBus = m_sheet->m_masterSubGroup->get_process_bus();
+                outBus = m_sheet->get_master_out()->get_process_bus();
 
         } else {
                 outBus = audiodevice().get_playback_bus(m_busOutName);

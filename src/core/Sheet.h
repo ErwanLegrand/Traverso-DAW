@@ -107,6 +107,7 @@ public:
 	AudioClipManager* get_audioclip_manager() const;
 	AudioBus* get_render_bus() const {return m_renderBus;}
 	AudioBus* get_clip_render_bus() const {return m_clipRenderBus;}
+        SubGroup* get_master_out() const {return m_masterOut;}
 	SnapList* get_snap_list() const;
 	PluginChain* get_plugin_chain() const;
 	TimeLine* get_timeline() const {return m_timeline;}
@@ -159,7 +160,6 @@ public:
 	audio_sample_t*		readbuffer;
 	audio_sample_t*		gainbuffer;
 	DecodeBuffer*		renderDecodeBuffer;
-        SubGroup*               m_masterSubGroup;
 
 #if defined (THREAD_CHECK)
 	unsigned long	threadId;
@@ -167,7 +167,8 @@ public:
 
 private:
         APILinkedList		m_tracks;
-	QList<AudioClip*>	m_recordingClips;
+        SubGroup*               m_masterOut;
+        QList<AudioClip*>	m_recordingClips;
 	QTimer			m_skipTimer;
 	Project*		m_project;
 	WriteSource*		m_exportSource;

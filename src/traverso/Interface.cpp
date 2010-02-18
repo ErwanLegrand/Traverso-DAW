@@ -1080,7 +1080,7 @@ QMenu* Interface::create_context_menu(QObject* item, QList<MenuData >* menulist)
 	return menu;
 }
 
-void Interface::show_busselector(AudioTrack* track)
+void Interface::show_busselector(Track* track)
 {
 	if (! m_busSelector) {
 		m_busSelector = new BusSelectorDialog(this);

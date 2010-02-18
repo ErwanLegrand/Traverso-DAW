@@ -169,8 +169,8 @@ void Sheet::init()
 	connect(this, SIGNAL(transportStopped()), m_diskio, SLOT(stop_io()));
 
 	mixdown = gainbuffer = 0;
-        m_masterSubGroup = new SubGroup(this, "Master Out", 2);
-        m_masterSubGroup->set_name("Master Out");
+        m_masterOut = new SubGroup(this, "Master Out", 2);
+        m_masterOut->set_name("Master Out");
         m_renderBus = new AudioBus("Render Bus", 2, ChannelIsOutput);
         m_clipRenderBus = new AudioBus("Clip Render Bus", 2, ChannelIsOutput);
 	
@@ -181,9 +181,9 @@ void Sheet::init()
 	
 	set_context_item( m_acmanager );
 
-        m_masterSubGroup->set_output_bus("Playback 2");
+        m_masterOut->set_output_bus("Playback 2");
         m_playBackBus = audiodevice().get_playback_bus("Playback 2");
-        m_masterSubGroup->set_output_bus(m_playBackBus);
+        m_masterOut->set_output_bus(m_playBackBus);
 
 	m_transport = m_stopTransport = m_resumeTransport = m_readyToRecord = false;
         m_snaplist = new SnapList(this);
@@ -202,7 +202,7 @@ void Sheet::init()
 	m_mode = EDIT;
 	m_sbx = m_sby = 0;
 	m_hzoom = config().get_property("Sheet", "hzoomLevel", 8192).toInt();
-        m_masterSubGroup->get_plugin_chain()->get_fader()->set_gain(0.5);
+        m_masterOut->get_plugin_chain()->get_fader()->set_gain(0.5);
 	m_timeline = new TimeLine(this);
 	
 	m_skipTimer.setSingleShot(true);
@@ -251,12 +251,12 @@ int Sheet::set_state( const QDomNode & node )
 		trackNode = trackNode.nextSibling();
 	}
         //FIXME!!!!!
-        private_add_track(m_masterSubGroup);
+        private_add_track(m_masterOut);
 
         m_acmanager->set_state(node.firstChildElement("ClipManager"));
 	
 	QDomNode pluginChainNode = node.firstChildElement("PluginChain");
-        m_masterSubGroup->get_plugin_chain()->set_state(pluginChainNode);
+        m_masterOut->get_plugin_chain()->set_state(pluginChainNode);
 	
 	return 1;
 }
@@ -291,7 +291,7 @@ QDomNode Sheet::get_state(QDomDocument doc, bool istemplate)
 	QDomNode tracksNode = doc.createElement("Tracks");
 
         //FIXME!!!!!
-        m_tracks.remove(m_masterSubGroup);
+        m_tracks.remove(m_masterOut);
 
         apill_foreach(AudioTrack* track, AudioTrack, m_tracks) {
 		tracksNode.appendChild(track->get_state(doc, istemplate));
@@ -300,7 +300,7 @@ QDomNode Sheet::get_state(QDomDocument doc, bool istemplate)
 	sheetNode.appendChild(tracksNode);
 
 	QDomNode pluginChainNode = doc.createElement("PluginChain");
-        pluginChainNode.appendChild(m_masterSubGroup->get_plugin_chain()->get_state(doc));
+        pluginChainNode.appendChild(m_masterOut->get_plugin_chain()->get_state(doc));
 	sheetNode.appendChild(pluginChainNode);
 
 
@@ -579,12 +579,12 @@ int Sheet::render(ExportSpecification* spec)
 	float* buf;
 
 	for (chn = 0; chn < spec->channels; ++chn) {
-                buf = m_masterSubGroup->get_process_bus()->get_buffer(chn, nframes);
+                buf = m_masterOut->get_process_bus()->get_buffer(chn, nframes);
 
 		if (!buf) {
 			// Seem we are exporting at least to Stereo from an AudioBus with only one channel...
 			// Use the first channel..
-                        buf = m_masterSubGroup->get_process_bus()->get_buffer(0, nframes);
+                        buf = m_masterOut->get_process_bus()->get_buffer(0, nframes);
 		}
 
 		for (x = 0; x < nframes; ++x) {
@@ -695,14 +695,14 @@ void Sheet::set_gain(float gain)
 	if (gain > 2.0)
 		gain = 2.0;
 
-        m_masterSubGroup->get_plugin_chain()->get_fader()->set_gain(gain);
+        m_masterOut->get_plugin_chain()->get_fader()->set_gain(gain);
 
         emit stateChanged();
 }
 
 float Sheet::get_gain( ) const
 {
-        return m_masterSubGroup->get_plugin_chain()->get_fader()->get_gain();
+        return m_masterOut->get_plugin_chain()->get_fader()->get_gain();
 }
 
 void Sheet::set_first_visible_frame(nframes_t pos)
@@ -903,7 +903,7 @@ int Sheet::process( nframes_t nframes )
 	}
 
 	// zero the m_masterOut buffers
-        m_masterSubGroup->get_process_bus()->silence_buffers(nframes);
+        m_masterOut->get_process_bus()->silence_buffers(nframes);
 
 	int processResult = 0;
 
@@ -922,7 +922,7 @@ int Sheet::process( nframes_t nframes )
 	}
 
         // Mix the result into the AudioDevice "physical" buffers
-        m_masterSubGroup->process(nframes);
+        m_masterOut->process(nframes);
 	
 	return 1;
 }
@@ -930,7 +930,7 @@ int Sheet::process( nframes_t nframes )
 int Sheet::process_export( nframes_t nframes )
 {
 	// Get the masterout buffers, and fill with zero's
-        m_masterSubGroup->get_process_bus()->silence_buffers(nframes);
+        m_masterOut->get_process_bus()->silence_buffers(nframes);
 	memset (mixdown, 0, sizeof (audio_sample_t) * nframes);
 
 	// Process all Tracks.
@@ -938,8 +938,8 @@ int Sheet::process_export( nframes_t nframes )
 		track->process(nframes);
 	}
 
-        Mixer::apply_gain_to_buffer(m_masterSubGroup->get_process_bus()->get_buffer(0, nframes), nframes, get_gain());
-        Mixer::apply_gain_to_buffer(m_masterSubGroup->get_process_bus()->get_buffer(1, nframes), nframes, get_gain());
+        Mixer::apply_gain_to_buffer(m_masterOut->get_process_bus()->get_buffer(0, nframes), nframes, get_gain());
+        Mixer::apply_gain_to_buffer(m_masterOut->get_process_bus()->get_buffer(1, nframes), nframes, get_gain());
 
 	// update the m_transportFrame
 // 	m_transportFrame += nframes;
@@ -1021,7 +1021,7 @@ void Sheet::resize_buffer(bool updateArmStatus, nframes_t size)
 	mixdown = new audio_sample_t[size];
 	gainbuffer = new audio_sample_t[size];
         QList<AudioBus*> buses;
-        buses.append(m_masterSubGroup->get_process_bus());
+        buses.append(m_masterOut->get_process_bus());
         buses.append(m_renderBus);
         buses.append(m_clipRenderBus);
         foreach(AudioBus* bus, buses) {
@@ -1090,7 +1090,7 @@ AudioClipManager * Sheet::get_audioclip_manager( ) const
 
 PluginChain* Sheet::get_plugin_chain() const
 {
-        return m_masterSubGroup->get_plugin_chain();
+        return m_masterOut->get_plugin_chain();
 }
 
 int Sheet::get_track_index(qint64 id)
@@ -1127,7 +1127,7 @@ void Sheet::handle_diskio_writebuffer_overrun( )
 void Sheet::rescan_busses()
 {
         m_playBackBus = audiodevice().get_playback_bus("Playback 1");
-        m_masterSubGroup->set_output_bus(m_playBackBus);
+        m_masterOut->set_output_bus(m_playBackBus);
 }
 
 

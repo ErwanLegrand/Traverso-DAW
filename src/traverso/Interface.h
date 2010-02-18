@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 class Sheet;
 class AudioTrack;
+class Track;
 class Project;
 class BusMonitor;
 class InfoBox;
@@ -92,7 +93,7 @@ public :
 	
 	void select_fade_in_shape();
 	void select_fade_out_shape();
-	void show_busselector(AudioTrack* track);
+        void show_busselector(Track* track);
 	void set_insertsilence_track(AudioTrack* track);
 	
 protected:

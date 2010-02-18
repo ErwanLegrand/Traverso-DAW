@@ -38,6 +38,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Mixer.h>
 #include <Gain.h>
 #include <TrackPan.h>
+#include "Sheet.h"
+#include "SubGroup.h"
+#include "Track.h"
 		
 #include <Debugger.h>
 
@@ -667,10 +670,14 @@ Command* TrackPanelBus::select_bus()
         QMenu menu;
 
         QStringList busNames;
+        Sheet* sheet = m_track->get_sheet();
+        SubGroup* masterOut = sheet->get_master_out();
         if (m_type == BUSIN) {
                 busNames = audiodevice().get_capture_buses_names();
         } else {
-                busNames.append("Master Out");
+                if (!(m_track == masterOut)) {
+                        busNames.append(masterOut->get_name());
+                }
                 busNames.append(audiodevice().get_playback_buses_names());
         }
 

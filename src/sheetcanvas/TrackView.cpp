@@ -161,7 +161,7 @@ void TrackView::load_theme_data()
 
 Command* TrackView::select_bus()
 {
-        Interface::instance()->show_busselector((AudioTrack*)m_track);
+        Interface::instance()->show_busselector(m_track);
         return 0;
 }
 
