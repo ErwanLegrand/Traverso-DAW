@@ -84,7 +84,7 @@ int Track::set_state( const QDomNode & node )
 
 Command* Track::solo(  )
 {
-        m_sheet->solo_processing_data(this);
+        m_sheet->solo_track(this);
         return (Command*) 0;
 }
 

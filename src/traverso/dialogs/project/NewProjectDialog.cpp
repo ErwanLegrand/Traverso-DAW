@@ -314,7 +314,7 @@ void NewProjectDialog::load_file(QString name, int i, QString trackname)
 		return;
 	}
 
-	AudioTrack* track = sheet->get_track_for_index(i);
+        AudioTrack* track = sheet->get_audio_track_for_index(i);
 
 	Import* import = new Import(name);
 	track->set_name(trackname);

@@ -84,8 +84,7 @@ public:
 	qreal get_hzoom() const {return m_hzoom;}
 	int get_rate();
 	int get_bitdepth();
-        int get_numtracks() const {return m_tracks.size();}
-	int get_track_index(qint64 id);
+        int get_numtracks() const {return m_audioTracks.size();}
 	int get_mode() const {return m_mode;}
 	int is_transport_rolling() const {return m_transport;}
 	void get_scrollbar_xy(int& x, int& y) {x = m_sbx; y = m_sby;}
@@ -112,8 +111,8 @@ public:
 	PluginChain* get_plugin_chain() const;
 	TimeLine* get_timeline() const {return m_timeline;}
         Snappable* get_work_snap() {return m_workSnap;}
-	AudioTrack* get_track(qint64 id);
-	AudioTrack* get_track_for_index(int index);
+        Track* get_track(qint64 id);
+        AudioTrack* get_audio_track_for_index(int index);
 
 	// Set functions
 	void set_artists(const QString& pArtistis);
@@ -138,7 +137,7 @@ public:
 	int render(ExportSpecification* spec);
         int start_export(ExportSpecification* spec);
 
-        void solo_processing_data(Track* track);
+        void solo_track(Track* track);
 	void create(int tracksToCreate);
 	void move_clip(AudioTrack* from, AudioTrack* too, AudioClip* clip, TimeRef location);
         Command* add_track(Track* api, bool historable=true);
@@ -166,7 +165,7 @@ public:
 #endif
 
 private:
-        APILinkedList		m_tracks;
+        APILinkedList		m_audioTracks;
         APILinkedList           m_subGroups;
         SubGroup*               m_masterOut;
         QList<AudioClip*>	m_recordingClips;

@@ -79,6 +79,7 @@ int SubGroup::set_state( const QDomNode & node )
 
 void SubGroup::init()
 {
+        m_type = SUBGROUP;
         m_processBus = new AudioBus(m_name, m_channelCount, ChannelIsOutput);
 }
 

@@ -77,6 +77,7 @@ AudioTrack::~AudioTrack()
 void AudioTrack::init()
 {
         QObject::tr("Track");
+        m_type = AUDIOTRACK;
         m_isSolo = mutedBySolo = m_isMuted = isArmed = false;
         m_fader->set_gain(1.0);
 }
@@ -188,7 +189,7 @@ AudioClip* AudioTrack::init_recording()
         if(! isArmed) {
                 return 0;
         }
-        int number = m_sheet->get_track_index(m_id);
+        int number = m_sortIndex + 1;
         QString snumber = QString::number(number);
         if (number < 10) {
                 snumber.prepend("0");

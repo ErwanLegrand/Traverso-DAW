@@ -34,6 +34,11 @@ public:
         Track (Sheet* sheet=0);
         ~Track () {}
 
+        enum {
+                AUDIOTRACK = 0,
+                SUBGROUP = 1
+        };
+
         void get_state(QDomElement& element, bool istemplate=false);
         int get_height() const {return m_height;}
         int get_sort_index() const;
@@ -43,6 +48,7 @@ public:
         void set_solo(bool solo);
         void set_sort_index(int index);
         int set_state( const QDomNode& node );
+        int get_type() const {return m_type;}
 
         bool is_muted_by_solo();
         bool is_solo();
@@ -52,6 +58,7 @@ public:
 protected:
         int     m_sortIndex;
         int     m_height;
+        int     m_type;
         bool    mutedBySolo;
         bool    m_isSolo;
 
