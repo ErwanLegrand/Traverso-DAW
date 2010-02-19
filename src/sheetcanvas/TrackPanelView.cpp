@@ -41,6 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Sheet.h"
 #include "SubGroup.h"
 #include "Track.h"
+#include "Interface.h"
 		
 #include <Debugger.h>
 
@@ -670,7 +671,14 @@ Command* TrackPanelBus::select_bus()
                 menu.addAction(busName);
         }
 
+        menu.addAction(tr("More..."));
+
         QAction* action = menu.exec(QCursor::pos());
+
+        if (action->text() == tr("More...")) {
+                Interface::instance()->audio_io_dialog();
+                return 0;
+        }
 
         if (action) {
                 if (m_type == BUSIN) {
