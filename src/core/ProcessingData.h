@@ -96,7 +96,7 @@ private slots:
         void audiodevice_params_changed();
         void private_set_input_bus(AudioBus*);
         void private_set_output_bus(AudioBus*);    
-        void rescan_busses();
+        void rescan_buses();
 
 
 signals:

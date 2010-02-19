@@ -47,7 +47,7 @@ ProcessingData::ProcessingData(Sheet *sheet)
         m_fader = m_pluginChain->get_fader();
 
         connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(audiodevice_params_changed()), Qt::DirectConnection);
-        connect(&audiodevice(), SIGNAL(busConfigChanged()), this, SLOT(rescan_busses()), Qt::DirectConnection);
+        connect(&audiodevice(), SIGNAL(busConfigChanged()), this, SLOT(rescan_buses()), Qt::DirectConnection);
 }
 
 void ProcessingData::set_input_bus(AudioBus *bus)
@@ -181,7 +181,7 @@ Command* ProcessingData::remove_plugin( Plugin * plugin )
         return m_pluginChain->remove_plugin(plugin);
 }
 
-void ProcessingData::rescan_busses()
+void ProcessingData::rescan_buses()
 {
         // What if the bus no longer exists? What about
         // signalling something here so the GUI can mark

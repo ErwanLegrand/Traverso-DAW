@@ -79,8 +79,6 @@ void AudioTrack::init()
         QObject::tr("Track");
         m_isSolo = mutedBySolo = m_isMuted = isArmed = false;
         m_fader->set_gain(1.0);
-
-        connect(&audiodevice(), SIGNAL(busConfigChanged()), this, SLOT(rescan_busses()), Qt::DirectConnection);
 }
 
 QDomNode AudioTrack::get_state( QDomDocument doc, bool istemplate)
