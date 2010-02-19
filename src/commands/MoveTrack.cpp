@@ -107,6 +107,8 @@ int MoveTrack::jog()
                 move_up(false);
         }
 
+        m_sv->update_shuttle_factor();
+
         return 1;
 }
 
