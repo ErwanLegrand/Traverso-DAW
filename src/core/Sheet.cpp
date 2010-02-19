@@ -226,9 +226,7 @@ int Sheet::set_state( const QDomNode & node )
         QDomNode subgroupsNode = node.firstChildElement("SubGroups");
         
         QDomNode masterOutNode = node.firstChildElement("MasterOut");
-        if (masterOutNode.hasChildNodes()) {
-                m_masterOut->set_state(masterOutNode.firstChildElement());
-        }
+        m_masterOut->set_state(masterOutNode.firstChildElement());
         
         QDomNode subgroupNode = subgroupsNode.firstChild();
 
