@@ -149,7 +149,6 @@ void Sheet::init()
 	connect(this, SIGNAL(seekStart()), m_diskio, SLOT(seek()), Qt::QueuedConnection);
 	connect(this, SIGNAL(prepareRecording()), this, SLOT(prepare_recording()));
 	connect(&audiodevice(), SIGNAL(clientRemoved(Client*)), this, SLOT (audiodevice_client_removed(Client*)));
-        connect(&audiodevice(), SIGNAL(busConfigChanged()), this, SLOT(rescan_busses()), Qt::DirectConnection);
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(audiodevice_params_changed()), Qt::DirectConnection);
 	connect(m_diskio, SIGNAL(seekFinished()), this, SLOT(seek_finished()), Qt::QueuedConnection);
 	connect (m_diskio, SIGNAL(readSourceBufferUnderRun()), this, SLOT(handle_diskio_readbuffer_underrun()));
@@ -1121,13 +1120,6 @@ void Sheet::handle_diskio_writebuffer_overrun( )
 		info().critical(tr("Hard Disk overload detected!"));
 		info().critical(tr("Failed to empty WriteBuffer in time"));
 	}
-}
-
-
-void Sheet::rescan_busses()
-{
-        m_playBackBus = audiodevice().get_playback_bus("Playback 1");
-        m_masterOut->set_output_bus(m_playBackBus);
 }
 
 
