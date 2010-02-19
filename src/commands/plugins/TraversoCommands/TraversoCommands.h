@@ -42,7 +42,7 @@ class TraversoCommands : public CommandPlugin
 	Q_CLASSINFO("ClipSelectionSelect", tr("(De)Select"))
 	Q_CLASSINFO("ClipSelectionSelectAll", tr("(De)Select All"))
         Q_CLASSINFO("MoveClip", tr("Move Clip"))
-        Q_CLASSINFO("MoveTrack", tr("Move Track"))
+        Q_CLASSINFO("MoveTrack", tr("Move Up/Down"))
         Q_CLASSINFO("DragEdge", tr("Drag Edge"))
 	Q_CLASSINFO("MoveClipOrEdge", tr("Move Or Resize Clip"))
         Q_CLASSINFO("SplitClip", tr("Split"))

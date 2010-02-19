@@ -352,7 +352,7 @@
 		</keyfact>
 		<keyfact type="HKEY" key1="P" sortorder="16" >
 			<Objects>
-				<Object objectname="Track" mousehint="LR"  modes="All" sortorder="8" pluginname="TraversoCommands" commandname="TrackPan" />
+                                <Object objectname="AudioTrack" mousehint="LR"  modes="All" sortorder="8" pluginname="TraversoCommands" commandname="TrackPan" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="O" sortorder="18" >
@@ -391,7 +391,7 @@
 		<keyfact type="HKEY" key1="D" >
 			<Objects>
                                 <Object objectname="AudioClipView" mousehint="LRUD" modes="All" sortorder="3" pluginname="TraversoCommands" commandname="MoveClip"  arguments="move" />
-                                <Object objectname="TrackView" mousehint="UD" modes="All" sortorder="3" pluginname="TraversoCommands" commandname="MoveTrack"/>
+                                <Object objectname="TrackView" mousehint="UD" modes="All" sortorder="20" pluginname="TraversoCommands" commandname="MoveTrack"/>
                                 <Object objectname="CurveView" mousehint="LRUD" slotsignature="drag_node" modes="Effects" sortorder="3" />
 				<Object objectname="TimeLineView" mousehint="LR" slotsignature="drag_marker" modes="All" sortorder="3" />
 			</Objects>
@@ -537,7 +537,7 @@
 		</keyfact>
 		<keyfact type="D_FKEY" key1="P" >
 			<Objects>
-				<Object objectname="Track" modes="All" sortorder="22" pluginname="TraversoCommands" commandname="ResetTrackPan" arguments="0" />
+                                <Object objectname="AudioTrack" modes="All" sortorder="22" pluginname="TraversoCommands" commandname="ResetTrackPan" arguments="0" />
 			</Objects>
 		</keyfact>
 		<keyfact type="D_FKEY" key1="R" >
