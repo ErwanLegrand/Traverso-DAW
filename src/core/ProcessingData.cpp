@@ -47,6 +47,7 @@ ProcessingData::ProcessingData(Sheet *sheet)
         m_fader = m_pluginChain->get_fader();
 
         connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(audiodevice_params_changed()), Qt::DirectConnection);
+        connect(&audiodevice(), SIGNAL(busConfigChanged()), this, SLOT(rescan_busses()), Qt::DirectConnection);
 }
 
 void ProcessingData::set_input_bus(AudioBus *bus)
@@ -182,35 +183,11 @@ Command* ProcessingData::remove_plugin( Plugin * plugin )
 
 void ProcessingData::rescan_busses()
 {
-    QStringList ibus = audiodevice().get_capture_buses_names();
-    QStringList obus = audiodevice().get_playback_buses_names();
-
-    // in the worst case, i.e. if no busses are available at all,
-    // use the default ones also used in the track's constructor.
-    QString fallbackCapture = "Capture 1";
-    QString fallbackPlayback = "Master Out";
-
-    // in the less worse case, if at least one bus is available,
-    // use it as a fallback
-    if (ibus.size()) {
-        fallbackCapture = ibus.at(0);
-    }
-
-    if (obus.size()) {
-        fallbackPlayback = obus.at(0);
-    }
-
-    // now let's look for the bus we actually want to connect to
-    if (!ibus.contains(m_busInName)) {
-        m_busInName = fallbackCapture;
-    }
-
-    if (!obus.contains(m_busOutName)) {
-        m_busOutName = fallbackPlayback;
-    }
-
-    set_input_bus(m_busInName);
-    set_output_bus(m_busOutName);
+        // What if the bus no longer exists? What about
+        // signalling something here so the GUI can mark
+        // it's in/out bus indicators somehow?
+        set_input_bus(m_busInName);
+        set_output_bus(m_busOutName);
 }
 
 void ProcessingData::set_gain(float gain)

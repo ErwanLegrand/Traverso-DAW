@@ -240,7 +240,6 @@ public slots :
 	void seek_finished();
 	void audiodevice_client_removed(Client* );
 	void audiodevice_params_changed();
-        void rescan_busses();
         void set_gain(float gain);
 	void set_transport_pos(TimeRef location);
 	void set_temp_follow_state(bool state);
