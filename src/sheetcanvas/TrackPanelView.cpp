@@ -300,6 +300,10 @@ SubGroupPanelView::SubGroupPanelView(SubGroupView* view)
         PENTERCONS;
 
         m_inBus->hide();
+        m_panView->hide();
+        m_muteLed->set_bounding_rect(QRectF(0, 0, 41, 14));
+        m_soloLed->set_bounding_rect(QRectF(0, 0, 38, 14));
+
 }
 
 SubGroupPanelView::~SubGroupPanelView( )
@@ -346,39 +350,20 @@ void SubGroupPanelView::layout_panel_items()
         m_gainView->setPos(10, 39);
         m_panView->setPos(10, 54);
 
-        m_outBus->setPos(100, 73);
-
-        if (height < SMALL_HEIGHT) {
+        if (height < 50) {
+                m_outBus->setPos(100, 0);
                 m_gainView->setPos(10, 20);
-                m_panView->setPos(10, 36);
+                m_muteLed->hide();
+                m_soloLed->hide();
         } else {
-                m_muteLed->setPos(70, 19);
-                m_soloLed->setPos(118, 19);
-                m_muteLed->set_bounding_rect(QRectF(0, 0, 41, 14));
-                m_soloLed->set_bounding_rect(QRectF(0, 0, 38, 14));
-
-                m_gainView->setPos(10, 39);
-                m_panView->setPos(10, 54);
+                m_outBus->setPos(100, 2);
+                m_muteLed->setPos(100, 20);
+                m_soloLed->setPos(148, 20);
+                m_gainView->setPos(10, 40);
+                m_muteLed->show();
+                m_soloLed->show();
         }
 
-        if (height < SMALL_HEIGHT) {
-                m_muteLed->setPos(90, 1.5);
-                m_soloLed->setPos(132, 1.5);
-                m_muteLed->set_bounding_rect(QRectF(0, 0, 39, 12));
-                m_soloLed->set_bounding_rect(QRectF(0, 0, 31, 12));
-        }
-
-        if ((m_outBus->pos().y() + m_outBus->boundingRect().height()) >= height) {
-                m_outBus->hide();
-        } else {
-                m_outBus->show();
-        }
-
-        if ( (m_panView->pos().y() + m_panView->boundingRect().height()) >= height) {
-                m_panView->hide();
-        } else {
-                m_panView->show();
-        }
 
         if ( (m_gainView->pos().y() + m_panView->boundingRect().height()) >= height) {
                 m_gainView->hide();

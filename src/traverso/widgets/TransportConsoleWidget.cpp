@@ -177,7 +177,7 @@ void TransportConsoleWidget::update_recording_state()
 	if (m_sheet->is_recording()) {
 		QString recordFormat = config().get_property("Recording", "FileFormat", "wav").toString();
 		int count = 0;
-		foreach(AudioTrack* track, m_sheet->get_tracks()) {
+                foreach(AudioTrack* track, m_sheet->get_audio_tracks()) {
 			if (track->armed()) {
 				count++;
 			}

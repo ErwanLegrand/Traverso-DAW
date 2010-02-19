@@ -21,6 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "AudioTrack.h"
 
+#include <QDomElement>
+#include <QDomNode>
+
 #include "Sheet.h"
 #include "AudioClip.h"
 #include "AudioClipManager.h"
@@ -50,8 +53,6 @@ AudioTrack::AudioTrack(Sheet* sheet, const QString& name, int height )
         m_name = name;
         m_height = height;
         m_pan = numtakes = 0;
-        m_sortIndex = -1;
-        m_id = create_id();
 
         m_busInName = "Capture 1";
         m_busOutName = "Master Out";
@@ -85,19 +86,11 @@ void AudioTrack::init()
 QDomNode AudioTrack::get_state( QDomDocument doc, bool istemplate)
 {
         QDomElement node = doc.createElement("Track");
-        if (! istemplate ) {
-                node.setAttribute("id", m_id);
-        }
-        node.setAttribute("name", m_name);
-        node.setAttribute("pan", m_pan);
-        node.setAttribute("mute", m_isMuted);
-        node.setAttribute("solo", m_isSolo);
-        node.setAttribute("mutedbysolo", mutedBySolo);
-        node.setAttribute("height", m_height);
-        node.setAttribute("sortindex", m_sortIndex);
+        Track::get_state(node);
+
         node.setAttribute("numtakes", numtakes);
         node.setAttribute("InBus", m_busInName);
-        node.setAttribute("OutBus", m_busOutName);
+
 
         if (! istemplate ) {
                 QDomNode clips = doc.createElement("Clips");
@@ -128,21 +121,10 @@ int AudioTrack::set_state( const QDomNode & node )
 {
         QDomElement e = node.toElement();
 
-        set_height(e.attribute( "height", "160" ).toInt() );
-        m_sortIndex = e.attribute( "sortindex", "-1" ).toInt();
-        m_name = e.attribute( "name", "" );
-        set_muted(e.attribute( "mute", "" ).toInt());
-        if (e.attribute( "solo", "" ).toInt()) {
-                solo();
-        }
-        set_muted_by_solo(e.attribute( "mutedbysolo", "0").toInt());
-        set_pan( e.attribute( "pan", "" ).toFloat() );
+        Track::set_state(node);
+
         set_input_bus(e.attribute( "InBus", "Capture 1"));
         set_output_bus(e.attribute( "OutBus", "Master Out"));
-        m_id = e.attribute("id", "0").toLongLong();
-        if (m_id == 0) {
-                m_id = create_id();
-        }
         numtakes = e.attribute( "numtakes", "").toInt();
 
         QDomElement ClipsNode = node.firstChildElement("Clips");
@@ -167,11 +149,6 @@ int AudioTrack::set_state( const QDomNode & node )
 
                         clipNode = clipNode.nextSibling();
                 }
-        }
-
-        QDomNode m_pluginChainNode = node.firstChildElement("PluginChain");
-        if (!m_pluginChainNode.isNull()) {
-                m_pluginChain->set_state(m_pluginChainNode);
         }
 
         return 1;

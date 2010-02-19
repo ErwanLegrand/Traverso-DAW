@@ -127,19 +127,19 @@ void BusSelectorDialog::reject()
 	hide();
 }
 
-void BusSelectorDialog::set_current_track(Track * track)
+void BusSelectorDialog::set_current_track(Track * t)
 {
 	trackComboBox->clear();
 	
 	Sheet* sheet = pm().get_project()->get_current_sheet();
 	
-	foreach(AudioTrack* track, sheet->get_tracks()) {
+        foreach(Track* track, sheet->get_tracks()) {
 		QString fulltitle = QString::number(track->get_sort_index() + 1) + " " + track->get_name();
 		trackComboBox->addItem(fulltitle, track->get_id());
 	}
 	
 	
-	int index = trackComboBox->findData(track->get_id());
+        int index = trackComboBox->findData(t->get_id());
 	
 	trackComboBox->setCurrentIndex(index);
 }

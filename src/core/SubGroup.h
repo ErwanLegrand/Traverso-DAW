@@ -31,9 +31,18 @@ class SubGroup : public Track
 
 public:
         SubGroup(Sheet* sheet, const QString& name, int channelCount);
+        SubGroup(Sheet* sheet, const QDomNode node);
         ~SubGroup();
 
+        QDomNode get_state(QDomDocument doc, bool istemplate=false);
+        int set_state( const QDomNode & node );
+        void set_height(int h);
         int process(nframes_t nframes);
+
+private:
+        void init();
+
+        int m_channelCount;
 };
 
 #endif // SUBGROUP_H

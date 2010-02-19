@@ -76,21 +76,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
  */
 
-Sheet::Sheet(Project* project)
-        :/* ContextItem()
-        ,*/ m_project(project)
-{
-	PENTERCONS;
-        m_name = tr("Untitled");
-	m_id = create_id();
-        m_artists = tr("No artists name set");
-
-	init();
-}
 
 Sheet::Sheet(Project* project, int numtracks)
-        :/* ContextItem()
-        ,*/ m_project(project)
+        : m_project(project)
 {
 	PENTERCONS;
         m_name = tr("Untitled");
@@ -104,10 +92,12 @@ Sheet::Sheet(Project* project, int numtracks)
                 AudioTrack* track = create_audio_track();
                 private_add_track(track);
 	}
+
+        resize_buffer(false, audiodevice().get_buffer_size());
 }
 
 Sheet::Sheet(Project* project, const QDomNode node)
-                : /*ContextItem(), */m_project(project)
+        : m_project(project)
 {
 	PENTERCONS;
 	
@@ -117,8 +107,8 @@ Sheet::Sheet(Project* project, const QDomNode node)
 		m_id = create_id();
 	}
 
-	init();
-	set_state( node );
+        init();
+        set_state( node );
 }
 
 Sheet::~Sheet()
@@ -169,21 +159,17 @@ void Sheet::init()
 	connect(this, SIGNAL(transportStopped()), m_diskio, SLOT(stop_io()));
 
 	mixdown = gainbuffer = 0;
-        m_masterOut = new SubGroup(this, "Master Out", 2);
-        m_masterOut->set_name("Master Out");
         m_renderBus = new AudioBus("Render Bus", 2, ChannelIsOutput);
         m_clipRenderBus = new AudioBus("Clip Render Bus", 2, ChannelIsOutput);
+        m_masterOut = new SubGroup(this, "Master Out", 2);
+        resize_buffer(false, audiodevice().get_buffer_size());
+
 	
-	resize_buffer(false, audiodevice().get_buffer_size());
 	m_hs = new QUndoStack(pm().get_undogroup());
 	set_history_stack(m_hs);
 	m_acmanager = new AudioClipManager(this);
 	
 	set_context_item( m_acmanager );
-
-        m_masterOut->set_output_bus("Playback 2");
-        m_playBackBus = audiodevice().get_playback_bus("Playback 2");
-        m_masterOut->set_output_bus(m_playBackBus);
 
 	m_transport = m_stopTransport = m_resumeTransport = m_readyToRecord = false;
         m_snaplist = new SnapList(this);
@@ -202,7 +188,6 @@ void Sheet::init()
 	m_mode = EDIT;
 	m_sbx = m_sby = 0;
 	m_hzoom = config().get_property("Sheet", "hzoomLevel", 8192).toInt();
-        m_masterOut->get_plugin_chain()->get_fader()->set_gain(0.5);
 	m_timeline = new TimeLine(this);
 	
 	m_skipTimer.setSingleShot(true);
@@ -221,7 +206,6 @@ int Sheet::set_state( const QDomNode & node )
 
         m_name = e.attribute( "title", "" );
         m_artists = e.attribute( "artists", "" );
-	set_gain(e.attribute( "mastergain", "1.0").toFloat() );
 	qreal zoom = e.attribute("hzoom", "4096").toDouble();
 	set_hzoom(zoom);
 	m_sbx = e.attribute("sbx", "0").toInt();
@@ -240,6 +224,23 @@ int Sheet::set_state( const QDomNode & node )
 	
 	m_timeline->set_state(node.firstChildElement("TimeLine"));
 
+        QDomNode subgroupsNode = node.firstChildElement("SubGroups");
+        
+        QDomNode masterOutNode = node.firstChildElement("MasterOut");
+        if (masterOutNode.hasChildNodes()) {
+                m_masterOut->set_state(masterOutNode.firstChildElement());
+        }
+        
+        QDomNode subgroupNode = subgroupsNode.firstChild();
+
+        while(!subgroupNode.isNull()) {
+                SubGroup* subgroup = new SubGroup(this, subgroupNode);
+                subgroup->set_state(subgroupNode);
+                private_add_track(subgroup);
+
+                subgroupNode = subgroupNode.nextSibling();
+        }
+
         QDomNode tracksNode = node.firstChildElement("Tracks");
 	QDomNode trackNode = tracksNode.firstChild();
 
@@ -250,13 +251,8 @@ int Sheet::set_state( const QDomNode & node )
 
 		trackNode = trackNode.nextSibling();
 	}
-        //FIXME!!!!!
-        private_add_track(m_masterOut);
 
         m_acmanager->set_state(node.firstChildElement("ClipManager"));
-	
-	QDomNode pluginChainNode = node.firstChildElement("PluginChain");
-        m_masterOut->get_plugin_chain()->set_state(pluginChainNode);
 	
 	return 1;
 }
@@ -287,11 +283,12 @@ QDomNode Sheet::get_state(QDomDocument doc, bool istemplate)
 	sheetNode.appendChild(m_acmanager->get_state(doc));
 	
 	sheetNode.appendChild(m_timeline->get_state(doc));
-	
-	QDomNode tracksNode = doc.createElement("Tracks");
 
-        //FIXME!!!!!
-        m_tracks.remove(m_masterOut);
+        QDomNode masterOutNode = doc.createElement("MasterOut");
+        masterOutNode.appendChild(m_masterOut->get_state(doc, istemplate));
+        sheetNode.appendChild(masterOutNode);
+
+	QDomNode tracksNode = doc.createElement("Tracks");
 
         apill_foreach(AudioTrack* track, AudioTrack, m_tracks) {
 		tracksNode.appendChild(track->get_state(doc, istemplate));
@@ -299,10 +296,13 @@ QDomNode Sheet::get_state(QDomDocument doc, bool istemplate)
 
 	sheetNode.appendChild(tracksNode);
 
-	QDomNode pluginChainNode = doc.createElement("PluginChain");
-        pluginChainNode.appendChild(m_masterOut->get_plugin_chain()->get_state(doc));
-	sheetNode.appendChild(pluginChainNode);
 
+        QDomNode subgroupsNode = doc.createElement("SubGroups");
+        apill_foreach(SubGroup* group, SubGroup, m_subGroups) {
+                subgroupsNode.appendChild(group->get_state(doc, istemplate));
+        }
+
+        sheetNode.appendChild(subgroupsNode);
 
 	return sheetNode;
 }
@@ -1490,13 +1490,26 @@ void Sheet::config_changed()
 
 
 
-QList< AudioTrack * > Sheet::get_tracks() const
+QList< AudioTrack * > Sheet::get_audio_tracks() const
 {
 	QList<AudioTrack*> list;
         apill_foreach(AudioTrack* track, AudioTrack, m_tracks) {
 		list.append(track);
 	}
 	return list;	
+}
+
+QList<Track*> Sheet::get_tracks() const
+{
+        QList<Track*> list;
+        apill_foreach(AudioTrack* track, AudioTrack, m_tracks) {
+                list.append(track);
+        }
+        apill_foreach(SubGroup* group, SubGroup, m_subGroups) {
+                list.append(group);
+        }
+        return list;
+
 }
 
 AudioTrack * Sheet::get_track_for_index(int index)

@@ -47,33 +47,23 @@ public :
 
         static const int INITIAL_HEIGHT = 100;
 
-
         AudioClip* init_recording();
         Command* add_clip(AudioClip* clip, bool historable=true, bool ismove=false);
         Command* remove_clip(AudioClip* clip, bool historable=true, bool ismove=false);
         AudioClip* get_clip_after(const TimeRef& pos);
         AudioClip* get_clip_before(const TimeRef& pos);
-
-        int arm();
-        int disarm();
-
-        // Get functions:
-        void get_render_range(TimeRef& startlocation, TimeRef& endlocation);
-
-        int get_total_clips();
         QDomNode get_state(QDomDocument doc, bool istemplate=false);
         QList<AudioClip*> get_cliplist() const;
+        void get_render_range(TimeRef& startlocation, TimeRef& endlocation);
+        int get_total_clips();
 
-
-
-        // Set functions:
         int set_state( const QDomNode& node );
 
-
+        int arm();
         bool armed();
-
-
+        int disarm();
         int process(nframes_t nframes);
+
 
 private :
         APILinkedList 	m_clips;

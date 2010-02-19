@@ -23,17 +23,57 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "AudioBus.h"
 #include "PluginChain.h"
+#include "Utils.h"
 
 SubGroup::SubGroup(Sheet* sheet, const QString& name, int channelCount)
         : Track(sheet)
 {
-        m_processBus = new AudioBus(name, channelCount, ChannelIsOutput);
+        m_sortIndex = -1;
+        m_id = create_id();
+        m_name = name;
+        m_channelCount = channelCount;
+        init();
 }
 
+SubGroup::SubGroup(Sheet *sheet, QDomNode /*node*/)
+        : Track(sheet)
+{
+}
 
 SubGroup::~SubGroup()
 {
         delete m_processBus;
+}
+
+QDomNode SubGroup::get_state( QDomDocument doc, bool /*istemplate*/)
+{
+        QDomElement node = doc.createElement("SubGroup");
+        Track::get_state(node);
+
+        node.setAttribute("channelcount", m_channelCount);
+
+        return node;
+}
+
+int SubGroup::set_state( const QDomNode & node )
+{
+        QDomElement e = node.toElement();
+
+        Track::set_state(node);
+
+        set_output_bus(e.attribute("OutBus", "Playback 1"));
+
+        bool ok;
+        m_channelCount = e.attribute("channelcount", "2").toInt(&ok);
+
+        init();
+
+        return 1;
+}
+
+void SubGroup::init()
+{
+        m_processBus = new AudioBus(m_name, m_channelCount, ChannelIsOutput);
 }
 
 int SubGroup::process(nframes_t nframes)
@@ -46,4 +86,13 @@ int SubGroup::process(nframes_t nframes)
         send_to_output_buses(nframes);
 
         return 1;
+}
+
+void SubGroup::set_height(int h)
+{
+        m_height = h;
+        if (m_height > 60) {
+                m_height = 60;
+        }
+        emit heightChanged();
 }

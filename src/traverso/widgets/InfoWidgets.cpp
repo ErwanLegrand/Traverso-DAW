@@ -328,7 +328,7 @@ void HDDSpaceInfo::update_status( )
 	if (recordingSheets.size()) {
 		int recChannelCount = 0;
 		foreach(Sheet* sheet, recordingSheets) {
-			foreach(AudioTrack* track, sheet->get_tracks()) {
+                        foreach(AudioTrack* track, sheet->get_audio_tracks()) {
 				if (track->armed()) {
                                         // FIXME !!!!!!!
                                         recChannelCount = 2;

@@ -71,8 +71,7 @@ class Sheet : public ContextItem, public APILinkedListNode
 
 public:
 
-	Sheet(Project* project);
-	Sheet(Project* project, int numtracks);
+        Sheet(Project* project, int numtracks=0);
 	Sheet(Project* project, const QDomNode node);
 	~Sheet();
 	
@@ -101,7 +100,8 @@ public:
         QString get_artists() const {return m_artists;}
         QString get_name() const {return m_name;}
 	QDomNode get_state(QDomDocument doc, bool istemplate=false);
-	QList<AudioTrack*> get_tracks() const;
+        QList<AudioTrack*> get_audio_tracks() const;
+        QList<Track*> get_tracks() const;
 	
 	DiskIO*	get_diskio() const;
 	AudioClipManager* get_audioclip_manager() const;
@@ -167,6 +167,7 @@ public:
 
 private:
         APILinkedList		m_tracks;
+        APILinkedList           m_subGroups;
         SubGroup*               m_masterOut;
         QList<AudioClip*>	m_recordingClips;
 	QTimer			m_skipTimer;

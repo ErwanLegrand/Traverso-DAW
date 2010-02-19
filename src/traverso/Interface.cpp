@@ -1247,7 +1247,7 @@ void Interface::import_audio()
 			config().get_property("Project", "directory", "/directory/unknown").toString(),
 			tr("Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)"));
 
-	QList<AudioTrack*> tracks = currentSheetWidget->get_sheet()->get_tracks();
+	QList<AudioTrack*> tracks = currentSheetWidget->get_sheet()->get_audio_tracks();
 	AudioTrack*	track = tracks.first();
 	bool markers = false;
 

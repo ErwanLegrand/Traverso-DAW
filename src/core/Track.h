@@ -34,17 +34,18 @@ public:
         Track (Sheet* sheet=0);
         ~Track () {}
 
+        void get_state(QDomElement& element, bool istemplate=false);
         int get_height() const {return m_height;}
         int get_sort_index() const;
 
-        void set_height(int h);
+        virtual void set_height(int h);
         void set_muted_by_solo(bool muted);
         void set_solo(bool solo);
         void set_sort_index(int index);
+        int set_state( const QDomNode& node );
 
         bool is_muted_by_solo();
         bool is_solo();
-
         bool is_smaller_then(APILinkedListNode* node) {return ((Track*)node)->get_sort_index() > get_sort_index();}
 
 

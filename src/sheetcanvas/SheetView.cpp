@@ -682,9 +682,10 @@ void SheetView::clipviewport_resize_event()
 	// sense to populate the view with tracks.
 	if (!m_viewportReady) {
 		
+                add_new_track_view(m_sheet->get_master_out());
 		// fill the view with trackviews, add_new_trackview()
 		// doesn't yet layout the new tracks.
-		foreach(AudioTrack* track, m_sheet->get_tracks()) {
+                foreach(Track* track, m_sheet->get_tracks()) {
                         add_new_track_view(track);
 		}
 	
