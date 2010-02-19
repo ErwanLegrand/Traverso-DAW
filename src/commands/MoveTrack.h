@@ -25,9 +25,9 @@
 
 #include "Command.h"
 
-class Sheet;
+class SheetView;
 class Track;
-class ViewItem;
+class TrackView;
 
 class MoveTrack : public Command
 {
@@ -36,7 +36,7 @@ class MoveTrack : public Command
         Q_CLASSINFO("move_down", tr("Move Down"));
 
 public :
-        MoveTrack(ViewItem* view);
+        MoveTrack(TrackView* view);
         ~MoveTrack();
 
         int begin_hold();
@@ -49,6 +49,10 @@ public :
 
         void set_cursor_shape(int useX, int useY);
 
+private:
+        SheetView*      m_sv;
+        Track*          m_track;
+        TrackView*      m_trackView;
 
 public slots:
         void move_up(bool autorepeat);;

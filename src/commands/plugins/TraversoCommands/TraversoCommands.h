@@ -41,8 +41,9 @@ class TraversoCommands : public CommandPlugin
 	Q_CLASSINFO("AudioClipExternalProcessing", tr("External Processing"))
 	Q_CLASSINFO("ClipSelectionSelect", tr("(De)Select"))
 	Q_CLASSINFO("ClipSelectionSelectAll", tr("(De)Select All"))
-	Q_CLASSINFO("MoveClip", tr("Move Clip"))
-	Q_CLASSINFO("DragEdge", tr("Drag Edge"))
+        Q_CLASSINFO("MoveClip", tr("Move Clip"))
+        Q_CLASSINFO("MoveTrack", tr("Move Track"))
+        Q_CLASSINFO("DragEdge", tr("Drag Edge"))
 	Q_CLASSINFO("MoveClipOrEdge", tr("Move Or Resize Clip"))
         Q_CLASSINFO("SplitClip", tr("Split"))
         Q_CLASSINFO("CropClip", tr("Magnetic Cut"))
@@ -79,6 +80,7 @@ private:
 		AudioClipExternalProcessingCommand,
   		ClipSelectionCommand,
     		MoveClipCommand,
+                MoveTrackCommand,
     		DragEdgeCommand,
     		MoveClipOrEdgeCommand,
       		SplitClipCommand,

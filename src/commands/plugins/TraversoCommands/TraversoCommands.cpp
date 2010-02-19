@@ -111,8 +111,9 @@ TraversoCommands::TraversoCommands()
 	m_dict.insert("ClipSelectionSelectAll", ClipSelectionCommand);
 	m_dict.insert("ClipSelectionAdd", ClipSelectionCommand);
 	m_dict.insert("ClipSelectionRemove", ClipSelectionCommand);
-	m_dict.insert("MoveClip", MoveClipCommand);
-	m_dict.insert("FoldSheet", MoveClipCommand);
+        m_dict.insert("MoveClip", MoveClipCommand);
+        m_dict.insert("MoveTrack", MoveTrackCommand);
+        m_dict.insert("FoldSheet", MoveClipCommand);
 	m_dict.insert("FoldTrack", MoveClipCommand);
 	m_dict.insert("FoldMarkers", MoveClipCommand);
 	m_dict.insert("DragEdge", DragEdgeCommand);
@@ -288,7 +289,21 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 			return new MoveClip(view, arguments);
 		}
 		
-		case DragEdgeCommand:
+                case MoveTrackCommand:
+                {
+                        TrackView* view = qobject_cast<TrackView*>(obj);
+
+                        if (!view) {
+                                PERROR("TraversoCommands: Supplied QObject was not an TrackView! "
+                                        "MoveTrackCommand needs an TrackView as argument");
+                                return 0;
+                        }
+
+                        return new MoveTrack(view);
+                }
+
+
+                case DragEdgeCommand:
 		{
 			AudioClipView* view = qobject_cast<AudioClipView*>(obj);
 			if (!view) {

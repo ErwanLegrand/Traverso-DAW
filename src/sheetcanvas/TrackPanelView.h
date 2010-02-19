@@ -131,7 +131,8 @@ public:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void calculate_bounding_rect();
 	
-	
+        TrackView* get_track_view() const {return m_trackView;}
+
 protected:
         Track*                  m_track;
         TrackView*              m_trackView;
@@ -165,8 +166,6 @@ public:
         ~AudioTrackPanelView();
 
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-
-        AudioTrack* get_track() const {return (AudioTrack*)m_track;}
 
 protected:
         void layout_panel_items();

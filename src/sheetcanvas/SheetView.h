@@ -85,6 +85,8 @@ public :
 	void clipviewport_resize_event();
 	int hscrollbar_value() const;
 	int vscrollbar_value() const;
+        void move_trackview_up(TrackView* trackView);
+        void move_trackview_down(TrackView* trackView);
 
 	qint64		timeref_scalefactor;
 

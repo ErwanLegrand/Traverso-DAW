@@ -171,6 +171,50 @@ AudioTrackView* SheetView::get_trackview_under( QPointF point )
 	
 }
 
+void SheetView::move_trackview_up(TrackView *trackView)
+{
+        int index = trackView->get_track()->get_sort_index();
+        if (index == 0) {
+                // can't move any further up
+                return;
+        }
+
+        int newindex = index - 1;
+        for(int i=0; i<m_trackViews.size(); i++) {
+                if (i==newindex) {
+                        m_trackViews.at(i)->get_track()->set_sort_index(i+1);
+                }
+        }
+
+        trackView->get_track()->set_sort_index(newindex);
+
+        qSort(m_trackViews.begin(), m_trackViews.end(), smallerTrackView);
+
+        layout_tracks();
+}
+
+void SheetView::move_trackview_down(TrackView *trackView)
+{
+        int index = trackView->get_track()->get_sort_index();
+        if (index >= m_trackViews.size()) {
+                // can't move any further down
+                return;
+        }
+
+        int newindex = index + 1;
+        for(int i=0; i<m_trackViews.size(); i++) {
+                if (i==newindex) {
+                        m_trackViews.at(i)->get_track()->set_sort_index(i-1);
+                }
+        }
+
+        trackView->get_track()->set_sort_index(newindex);
+
+        qSort(m_trackViews.begin(), m_trackViews.end(), smallerTrackView);
+        layout_tracks();
+
+}
+
 void SheetView::add_new_track_view(Track* track)
 {
         TrackView* view;
