@@ -675,12 +675,12 @@ Command* TrackPanelBus::select_bus()
 
         QAction* action = menu.exec(QCursor::pos());
 
-        if (action->text() == tr("More...")) {
-                Interface::instance()->audio_io_dialog();
-                return 0;
-        }
-
         if (action) {
+                if (action->text() == tr("More...")) {
+                        Interface::instance()->audio_io_dialog();
+                        return 0;
+                }
+
                 if (m_type == BUSIN) {
                         m_track->set_input_bus(action->text());
                 } else {
