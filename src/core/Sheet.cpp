@@ -694,7 +694,7 @@ void Sheet::set_gain(float gain)
 	if (gain > 2.0)
 		gain = 2.0;
 
-        m_masterOut->get_plugin_chain()->get_fader()->set_gain(gain);
+        m_masterOut->set_gain(gain);
 
         emit stateChanged();
 }
