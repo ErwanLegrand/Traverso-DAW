@@ -28,10 +28,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 SubGroup::SubGroup(Sheet* sheet, const QString& name, int channelCount)
         : Track(sheet)
 {
+        QObject::tr("SubGroup");
         m_sortIndex = -1;
+        m_height = 60;
         m_id = create_id();
         m_name = name;
         m_channelCount = channelCount;
+        m_isSolo = mutedBySolo = m_isMuted = false;
+        m_busOutName = "Playback 1";
+        m_fader->set_gain(1.0);
+
         init();
 }
 
