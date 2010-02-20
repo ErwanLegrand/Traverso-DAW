@@ -92,6 +92,11 @@ int SubGroup::process(nframes_t nframes)
         m_pluginChain->process_post_fader(m_processBus, nframes);
         send_to_output_buses(nframes);
 
+        if (m_processBus->is_monitoring_peaks()) {
+                m_processBus->monitor_peaks();
+        }
+
+
         return 1;
 }
 

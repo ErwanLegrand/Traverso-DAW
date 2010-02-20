@@ -28,6 +28,7 @@ $Id: BusMonitor.h,v 1.1 2008/05/24 17:41:02 r_sijrier Exp $
 
 class VUMeter;
 class Project;
+class Sheet;
 class QMenu;
 
 class BusMonitor :  public QWidget
@@ -46,6 +47,7 @@ protected:
 	QSize minimumSizeHint () const;
 	
 private:
+        VUMeter*                m_masterOutMeter;
 	QList<VUMeter* >	inMeters;
 	QList<VUMeter* >	outMeters;
 	QMenu* m_menu;
@@ -55,6 +57,7 @@ private:
 private slots:
 	void create_vu_meters();
 	void set_project(Project* project);
+        void set_sheet(Sheet* sheet);
 	void reset_vu_meters();
 };
 

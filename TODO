@@ -6,6 +6,8 @@ TOBEDONE FOR 0.4x.x
 - Copy/move (including un/redo) selected clips
 
 ### BUGS / WISHES ###
+* changing subgroup name should be reflected in menus
+* loading a project after the previous one was closed sometimes crashes in ProcessingData::set_output_bus()
 * creating project from template crashes!
 * Transport console: to_start end to_end don't center the playhead!
 * Curve top-left node is hardly visible

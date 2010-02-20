@@ -51,6 +51,7 @@ public:
 	void set_buffer_size(nframes_t size);
 	void set_monitor_peaks(bool monitor);
         void monitor_peaks() {
+                Q_ASSERT(bufSize > 0);
 		float peakValue = 0;
 
 		peakValue = Mixer::compute_peak( buf, bufSize, peakValue );
@@ -62,7 +63,6 @@ public:
         uint get_number() const {return m_number;}
         uint get_buffer_size() const {return bufSize;}
         int get_type() const {return m_type;}
-
 
 private:
         AudioChannel(const QString& name, uint channelNumber, int type);
@@ -87,18 +87,18 @@ private:
 	friend class PulseAudioDriver;
 	friend class Driver;
 	friend class CoreAudioDriver;
-	
-	int has_data()
-	{
-		return hasData || monitoring;
-	}
-	
-	audio_sample_t* get_data()
-	{
-		hasData = false;
-		monitor_peaks();
-		return buf;
-	}
+
+        int has_data()
+        {
+                return hasData || monitoring;
+        }
+
+        audio_sample_t* get_data()
+        {
+                hasData = false;
+                monitor_peaks();
+                return buf;
+        }
 
 };
 

@@ -119,9 +119,7 @@ Sheet::~Sheet()
 	delete [] gainbuffer;
 
 	delete m_diskio;
-        //FIXME: m_masterSubGroup busConfigurationChanged() signal can be emitted after
-        // it was deleted, bad bad bad. (See: AudioProcessingItem::set_output_bus(AudioBus *bus) )
-//        delete m_masterSubGroup;
+        delete m_masterOut;
 	delete m_renderBus;
 	delete m_clipRenderBus;
 	delete m_hs;
