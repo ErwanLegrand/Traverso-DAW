@@ -113,30 +113,31 @@ void TrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
         Q_UNUSED(widget);
         Q_UNUSED(option);
 
-//	int xstart = (int)option->exposedRect.x();
-//	int pixelcount = (int)option->exposedRect.width();
-//
-//	if (m_tv->m_topborderwidth > 0) {
-//		QColor color = themer()->get_color("Track:cliptopoffset");
-//		painter->fillRect(xstart, 0, pixelcount, m_tv->m_topborderwidth, color);
-//	}
-//
-//	if (m_tv->m_paintBackground) {
-//		QColor color = themer()->get_color("Track:background");
-//		painter->fillRect(xstart, m_tv->m_topborderwidth, pixelcount, m_track->get_height() - m_tv->m_bottomborderwidth, color);
-//	}
-//
-//	if (m_tv->m_bottomborderwidth > 0) {
-//		QColor color = themer()->get_color("Track:clipbottomoffset");
-//		painter->fillRect(xstart, m_track->get_height() - m_tv->m_bottomborderwidth, pixelcount, m_tv->m_bottomborderwidth, color);
-//	}
-//
-//	// Track / track panel seperator is painted in TrackPanelViewPort... not the best place perhaps ?
-//	painter->fillRect(m_viewPort->width() - 3, 0, 3, m_track->get_height() - 1, themer()->get_color("TrackPanel:trackseparation"));
-//
-//	if (xstart < 180) {
-//		draw_panel_track_name(painter);
-//	}
+
+        if (m_trackView->is_moving()) {
+                painter->fillRect(boundingRect(), QColor(0, 0, 255, 100));
+        }
+
+
+        int xstart = (int)option->exposedRect.x();
+        int pixelcount = (int)option->exposedRect.width();
+
+        if (m_trackView->m_topborderwidth > 0) {
+                QColor color = themer()->get_color("Track:cliptopoffset");
+                painter->fillRect(xstart, 0, pixelcount, m_trackView->m_topborderwidth, color);
+        }
+
+        if (m_trackView->m_bottomborderwidth > 0) {
+                QColor color = themer()->get_color("Track:clipbottomoffset");
+                painter->fillRect(xstart, m_track->get_height() - m_trackView->m_bottomborderwidth, pixelcount, m_trackView->m_bottomborderwidth, color);
+        }
+
+        // Track / track panel seperator is painted in TrackPanelViewPort... not the best place perhaps ?
+        painter->fillRect(m_viewPort->width() - 3, 0, 3, m_track->get_height() - 1, themer()->get_color("TrackPanel:trackseparation"));
+
+        if (xstart < 180) {
+                draw_panel_name(painter);
+        }
 }
 
 void TrackPanelView::update_name()
@@ -209,31 +210,8 @@ void AudioTrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsIte
 {
 	Q_UNUSED(widget);
 	Q_UNUSED(option);
-	
-	int xstart = (int)option->exposedRect.x();
-	int pixelcount = (int)option->exposedRect.width();
-	
-	if (m_tv->m_topborderwidth > 0) {
-		QColor color = themer()->get_color("Track:cliptopoffset");
-		painter->fillRect(xstart, 0, pixelcount, m_tv->m_topborderwidth, color);
-	}
-	
-	if (m_tv->m_paintBackground) {
-		QColor color = themer()->get_color("Track:background");
-                painter->fillRect(xstart, m_tv->m_topborderwidth, pixelcount, m_track->get_height() - m_tv->m_bottomborderwidth, color);
-	}
-	
-	if (m_tv->m_bottomborderwidth > 0) {
-		QColor color = themer()->get_color("Track:clipbottomoffset");
-                painter->fillRect(xstart, m_track->get_height() - m_tv->m_bottomborderwidth, pixelcount, m_tv->m_bottomborderwidth, color);
-	}
 
-	// Track / track panel seperator is painted in TrackPanelViewPort... not the best place perhaps ?
-        painter->fillRect(m_viewPort->width() - 3, 0, 3, m_track->get_height() - 1, themer()->get_color("TrackPanel:trackseparation"));
-	
-	if (xstart < 180) {
-                draw_panel_name(painter);
-	}
+        TrackPanelView::paint(painter, option, widget);
 }
 
 void AudioTrackPanelView::layout_panel_items()
@@ -318,30 +296,13 @@ void SubGroupPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem*
         Q_UNUSED(widget);
         Q_UNUSED(option);
 
+        TrackPanelView::paint(painter, option, widget);
+
         int xstart = (int)option->exposedRect.x();
         int pixelcount = (int)option->exposedRect.width();
 
-        if (m_trackView->m_topborderwidth > 0) {
-                QColor color = themer()->get_color("Track:cliptopoffset");
-                painter->fillRect(xstart, 0, pixelcount, m_trackView->m_topborderwidth, color);
-        }
-
-//        if (m_trackView->m_paintBackground) {
-                QColor color = themer()->get_color("SubGroup:background");
-                painter->fillRect(xstart, m_trackView->m_topborderwidth, pixelcount, m_track->get_height() - m_trackView->m_bottomborderwidth, color);
-//        }
-
-        if (m_trackView->m_bottomborderwidth > 0) {
-                QColor color = themer()->get_color("Track:clipbottomoffset");
-                painter->fillRect(xstart, m_track->get_height() - m_trackView->m_bottomborderwidth, pixelcount, m_trackView->m_bottomborderwidth, color);
-        }
-
-        // Track / track panel seperator is painted in TrackPanelViewPort... not the best place perhaps ?
-        painter->fillRect(m_viewPort->width() - 3, 0, 3, m_track->get_height() - 1, themer()->get_color("TrackPanel:trackseparation"));
-
-        if (xstart < 180) {
-                draw_panel_name(painter);
-        }
+        QColor color = themer()->get_color("SubGroup:background");
+        painter->fillRect(xstart, m_trackView->m_topborderwidth, pixelcount, m_track->get_height() - m_trackView->m_bottomborderwidth, color);
 }
 
 void SubGroupPanelView::layout_panel_items()

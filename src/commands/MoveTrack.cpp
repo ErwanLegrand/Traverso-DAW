@@ -21,14 +21,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "MoveTrack.h"
 
-#include "AudioTrackView.h"
 #include "ClipsViewPort.h"
 #include "ContextPointer.h"
-#include "Sheet.h"
 #include "SheetView.h"
 #include "Track.h"
 #include "TrackView.h"
-#include "TrackPanelView.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -49,6 +46,7 @@ MoveTrack::~MoveTrack()
 int MoveTrack::begin_hold()
 {
         m_sv->start_shuttle(true, true);
+        m_trackView->set_moving(true);
 
         return 1;
 }
@@ -57,6 +55,7 @@ int MoveTrack::begin_hold()
 int MoveTrack::finish_hold()
 {
         m_sv->start_shuttle(false);
+        m_trackView->set_moving(false);
         return 1;
 }
 
@@ -93,17 +92,11 @@ int MoveTrack::jog()
 {
         cpointer().get_viewport()->set_holdcursor_pos(cpointer().get_viewport()->mapToScene(cpointer().pos()).toPoint());
 
-        TrackView* pointedView = m_sv->get_trackview_under(QPoint(0, cpointer().scene_y()));
-
-        if (!pointedView) {
-                return 1;
-        }
-
-        if (pointedView->get_track()->get_sort_index() > m_track->get_sort_index()) {
+        if (int(m_trackView->scenePos().y()) < cpointer().scene_y()) {
                 move_down(false);
         }
 
-        if (pointedView->get_track()->get_sort_index() < m_track->get_sort_index()) {
+        if (int(m_trackView->scenePos().y()) > (cpointer().scene_y() + 8)) {
                 move_up(false);
         }
 

@@ -43,25 +43,17 @@ void SubGroupView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 {
         Q_UNUSED(widget);
 
+        TrackView::paint(painter, option, widget);
+
 // 	printf("TrackView:: PAINT :: exposed rect is: x=%f, y=%f, w=%f, h=%f\n", option->exposedRect.x(), option->exposedRect.y(), option->exposedRect.width(), option->exposedRect.height());
 
         int xstart = (int)option->exposedRect.x();
         int pixelcount = (int)option->exposedRect.width();
 
-        if (m_topborderwidth > 0) {
-                QColor color = themer()->get_color("Track:cliptopoffset");
-                painter->fillRect(xstart, 0, pixelcount+1, m_topborderwidth, color);
-        }
-
 //        if (m_paintBackground) {
                 QColor color = themer()->get_color("SubGroup:background");
                 painter->fillRect(xstart, m_topborderwidth, pixelcount+1, m_track->get_height() - m_bottomborderwidth, color);
 //        }
-
-        if (m_bottomborderwidth > 0) {
-                QColor color = themer()->get_color("Track:clipbottomoffset");
-                painter->fillRect(xstart, m_track->get_height() - m_bottomborderwidth, pixelcount+1, m_bottomborderwidth, color);
-        }
 }
 
 void SubGroupView::load_theme_data()

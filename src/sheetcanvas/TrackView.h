@@ -48,6 +48,8 @@ public:
 
         virtual int get_childview_y_offset() const;
         void move_to(int x, int y);
+        void set_moving(bool move);
+        bool is_moving() const {return m_isMoving;}
         int get_height();
         void set_height(int height);
 
@@ -64,7 +66,9 @@ protected:
         int			m_clipbottommargin;
         int			m_topborderwidth;
         int			m_bottomborderwidth;
+        bool                    m_isMoving;
 
+        friend class TrackPanelView;
         friend class AudioTrackPanelView;
         friend class SubGroupPanelView;
 

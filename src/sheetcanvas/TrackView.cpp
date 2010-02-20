@@ -52,6 +52,7 @@ TrackView::TrackView(SheetView* sv, Track * track)
         load_theme_data();
 
         m_track = track;
+        m_isMoving = false;
         setFlags(ItemIsSelectable | ItemIsMovable);
         setCursor(themer()->get_cursor("Track"));
 
@@ -76,14 +77,13 @@ void TrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                 painter->fillRect(xstart, 0, pixelcount+1, m_topborderwidth, color);
         }
 
-        if (m_paintBackground) {
-                QColor color = themer()->get_color("Track:background");
-                painter->fillRect(xstart, m_topborderwidth, pixelcount+1, m_track->get_height() - m_bottomborderwidth, color);
-        }
-
         if (m_bottomborderwidth > 0) {
                 QColor color = themer()->get_color("Track:clipbottomoffset");
                 painter->fillRect(xstart, m_track->get_height() - m_bottomborderwidth, pixelcount+1, m_bottomborderwidth, color);
+        }
+
+        if (m_isMoving) {
+                painter->fillRect(m_boundingRect, QColor(0, 0, 255, 100));
         }
 }
 
@@ -138,6 +138,13 @@ Command* TrackView::add_new_plugin( )
 void TrackView::set_height( int height )
 {
         m_height = height;
+}
+
+void TrackView::set_moving(bool move)
+{
+        m_isMoving = move;
+        update();
+        m_panel->update();
 }
 
 void TrackView::calculate_bounding_rect()
