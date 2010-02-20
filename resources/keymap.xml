@@ -244,7 +244,6 @@
 				<Object objectname="Gain" slotsignature="increase_gain" modes="All" />
 				<Object objectname="TrackPanelPan" slotsignature="pan_right" modes="All" sortorder="1" />
 				<Object objectname="TrackPanelGain" slotsignature="gain_increment" modes="All" sortorder="1" />
-				<Object objectname="SheetPanelGain" slotsignature="gain_increment" modes="All" sortorder="1" />
 				<Object objectname="Zoom" slotsignature="vzoom_out" modes="All" />
 				<Object objectname="TrackPan" slotsignature="pan_right" modes="All" sortorder="2" />
                                 <Object objectname="Crop" slotsignature="adjust_left" modes="All" />
@@ -257,7 +256,6 @@
 				<Object objectname="Gain" slotsignature="decrease_gain" modes="All" />
 				<Object objectname="TrackPanelPan" slotsignature="pan_left" modes="All" sortorder="2" />
 				<Object objectname="TrackPanelGain" slotsignature="gain_decrement" modes="All" sortorder="2" />
-				<Object objectname="SheetPanelGain" slotsignature="gain_decrement" modes="All" sortorder="2" />
 				<Object objectname="Zoom" slotsignature="vzoom_in" modes="All" />
 				<Object objectname="TrackPan" slotsignature="pan_left" modes="All" sortorder="1" />
                                 <Object objectname="Crop" slotsignature="adjust_right" modes="All" />
@@ -368,7 +366,6 @@
 				<Object objectname="TimeLineView" mousehint="LR" slotsignature="drag_marker" modes="All" sortorder="3" />
 				<Object objectname="SheetView" mousehint="LR" slotsignature="work_cursor_move" modes="All" submenu="Work Cursor" sortorder="4" />
 				<Object objectname="TrackPanelGain" modes="All" sortorder="7" pluginname="TraversoCommands" commandname="Gain" arguments="horizontal" />
-				<Object objectname="SheetPanelGain" modes="All" sortorder="7" pluginname="TraversoCommands" commandname="Gain" arguments="horizontal" />
 				<Object objectname="TrackPanelPan" mousehint="LR"  modes="All" sortorder="8" pluginname="TraversoCommands" commandname="TrackPan" />
 			</Objects>
 		</keyfact> 

@@ -147,8 +147,6 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 			
 			if (item->metaObject()->className() == QString("TrackPanelGain")) {
 				item = item->get_context();
-			} else if (item->metaObject()->className() == QString("SheetPanelGain")) {
-				item = item->get_context();
 			} else if (AudioClipView* view = qobject_cast<AudioClipView*>(item)) {
 				sheetview = view->get_sheetview();
 				item = view->get_context();

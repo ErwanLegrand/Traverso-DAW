@@ -42,91 +42,19 @@
 
 #include <Debugger.h>
 
-
-SheetPanelGain::SheetPanelGain(ViewItem* parent, Sheet* sheet)
-	: ViewItem(parent, sheet)
-	, m_sheet(sheet)
-{
-	m_boundingRect = QRectF(0, 0, 180, 9);
-        connect(sheet, SIGNAL(stateChanged()), this, SLOT(update_gain()));
-	setAcceptsHoverEvents(true);
-}
-
-void SheetPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
-{
-	Q_UNUSED(widget);
-	const int height = 9;
-
-	int sliderWidth = (int)m_boundingRect.width() - 75;
-	float gain = m_sheet->get_gain();
-	QString sgain = coefficient_to_dbstring(gain);
-	float db = coefficient_to_dB(gain);
-
-	if (db < -60) {
-		db = -60;
-	}
-	int sliderdbx =  (int) (sliderWidth - (sliderWidth*0.3)) - (int) ( ( (-1 * db) / 60 ) * sliderWidth);
-	if (sliderdbx < 0) {
-		sliderdbx = 0;
-	}
-	if (db > 0) {
-		sliderdbx =  (int)(sliderWidth*0.7) + (int) ( ( db / 6 ) * (sliderWidth*0.3));
-	}
-
-	int cr = (gain >= 1 ? 30 + (int)(100 * gain) : (int)(50 * gain));
-	int cb = ( gain < 1 ? 150 + (int)(50 * gain) : abs((int)(10 * gain)) );
-	
-	painter->setPen(themer()->get_color("TrackPanel:text"));
-	painter->setFont(themer()->get_font("TrackPanel:fontscale:gain"));
-	painter->drawText(0, height + 1, "GAIN");
-	painter->drawRect(30, 1, sliderWidth, height);
-	
-	bool mousehover = (option->state & QStyle::State_MouseOver);
-	QColor color(cr,0,cb);
-	if (mousehover) {
-		color = color.light(140);
-	}
-	painter->fillRect(31, 2, sliderdbx, height-1, color);
-	painter->drawText(sliderWidth + 35, height, sgain);
-}
-
-Command* SheetPanelGain::gain_increment()
-{
-	m_sheet->set_gain(m_sheet->get_gain() + 0.05);
-	return 0;
-}
-
-Command* SheetPanelGain::gain_decrement()
-{
-	m_sheet->set_gain(m_sheet->get_gain() - 0.05);
-	return 0;
-}
-
-
 SheetPanelView::SheetPanelView(QGraphicsScene* scene, Sheet* sheet)
 	: ViewItem(0, 0)
 	, m_sheet(sheet)
 {
 	scene->addItem(this);
-	m_gainview = new SheetPanelGain(this, m_sheet);
-	m_gainview->setPos(10, 16);
 	m_boundingRect = QRectF(0, 0, 200, TIMELINE_HEIGHT);
-        connect(m_sheet, SIGNAL(stateChanged()), this, SLOT(sheet_changed()));
 }
 
-void SheetPanelView::sheet_changed()
-{
-        update();
-}
 
 void SheetPanelView::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
 	int xstart = (int)option->exposedRect.x();
 	int pixelcount = (int)option->exposedRect.width();
-	
-	painter->setPen(themer()->get_color("TrackPanel:text"));
-	painter->setFont(themer()->get_font("TrackPanel:fontscale:led"));
-        painter->drawText(10, 11, "Sheet: " + m_sheet->get_name());
 	
 	QColor color = QColor(Qt::darkGray);//themer()->get_color("Track:cliptopoffset");
 	painter->setPen(color);
@@ -151,17 +79,12 @@ public:
 		list.removeAll(m_spv);
 		list.append(m_sv);
 	}
-	
-	void set_sheet_view(SheetView* sv)
-	{
-		m_sv = sv;
-		m_spv = new SheetPanelView(scene(), m_sheet);
-		m_spv->setPos(-200, -TIMELINE_HEIGHT);
-	}
+
+        void set_sheet_view(SheetView* view) { m_sv = view;}
 
 private:
-	Sheet*	m_sheet;
-	SheetView* m_sv;
+        Sheet*          m_sheet;
+        SheetView*      m_sv;
 	SheetPanelView* m_spv;
 };
 
@@ -170,8 +93,6 @@ SheetPanelViewPort::SheetPanelViewPort(QGraphicsScene * scene, SheetWidget * sw)
 	: ViewPort(scene, sw)
 {
 	setSceneRect(-200, -TIMELINE_HEIGHT, 200, 0);
-	m_sheet = sw->get_sheet();
-	
 	setMaximumHeight(TIMELINE_HEIGHT);
 	setMinimumHeight(TIMELINE_HEIGHT);
 	setMinimumWidth(200);

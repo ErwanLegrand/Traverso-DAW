@@ -40,26 +40,6 @@ class Sheet;
 class Command;
 class SheetView;
 
-class SheetPanelGain : public ViewItem
-{
-	Q_OBJECT
-public:
-	SheetPanelGain(ViewItem* parent, Sheet* sheet);
-	SheetPanelGain(){}
-
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-
-public slots:
-	Command* gain_increment();
-	Command* gain_decrement();
-
-private slots:
-	void update_gain() {update();}
-
-private:
-	Sheet* m_sheet;
-};
-
 class SheetPanelView : public ViewItem
 {
 	Q_OBJECT
@@ -70,11 +50,7 @@ public:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 private:
-	SheetPanelGain* m_gainview;
 	Sheet* m_sheet;
-
-private slots:
-        void sheet_changed();
 };
 
 class SheetWidget : public QFrame

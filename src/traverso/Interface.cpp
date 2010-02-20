@@ -365,6 +365,7 @@ void Interface::show_sheet(Sheet* sheet)
 	
 	if (sheet) {
 		pm().get_undogroup()->setActiveStack(sheet->get_history_stack());
+                setWindowTitle(m_project->get_title() + ": Sheet " + sheet->get_name() + " - Traverso");
 	}
 }
 
