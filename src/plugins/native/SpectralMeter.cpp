@@ -157,7 +157,7 @@ void SpectralMeter::process(AudioBus* bus, unsigned long nframes)
 
 QString SpectralMeter::get_name( )
 {
-	return QString(tr("SpectralMeter Meter"));
+        return QString(tr("Spectral Meter"));
 }
 
 // writes the fft output into two qvector<float> (left and right channel).

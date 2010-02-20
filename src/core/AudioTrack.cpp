@@ -135,8 +135,8 @@ int AudioTrack::set_state( const QDomNode & node )
 
                         AudioClip* clip = resources_manager()->get_clip(id);
                         if (!clip) {
-                                info().critical(tr("Track: AudioClip with id %1 not \
-                                                found in Resources database!").arg(id));
+                                info().critical(tr("Track: AudioClip with id %1 not "
+                                                "found in Resources database!").arg(id));
                                 break;
                         }
 
