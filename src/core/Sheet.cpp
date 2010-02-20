@@ -145,7 +145,12 @@ void Sheet::init()
 	int converter_type = config().get_property("Conversion", "RTResamplingConverterType", DEFAULT_RESAMPLE_QUALITY).toInt();
 	m_diskio->set_resample_quality(converter_type);
 
-	
+        m_hs = new QUndoStack(pm().get_undogroup());
+        set_history_stack(m_hs);
+
+        m_acmanager = new AudioClipManager(this);
+        set_context_item( m_acmanager );
+
 	connect(this, SIGNAL(seekStart()), m_diskio, SLOT(seek()), Qt::QueuedConnection);
 	connect(this, SIGNAL(prepareRecording()), this, SLOT(prepare_recording()));
 	connect(&audiodevice(), SIGNAL(clientRemoved(Client*)), this, SLOT (audiodevice_client_removed(Client*)));
@@ -162,13 +167,6 @@ void Sheet::init()
         m_clipRenderBus = new AudioBus("Clip Render Bus", 2, ChannelIsOutput);
         m_masterOut = new SubGroup(this, "Master Out", 2);
         resize_buffer(false, audiodevice().get_buffer_size());
-
-	
-	m_hs = new QUndoStack(pm().get_undogroup());
-	set_history_stack(m_hs);
-	m_acmanager = new AudioClipManager(this);
-	
-	set_context_item( m_acmanager );
 
 	m_transport = m_stopTransport = m_resumeTransport = m_readyToRecord = false;
         m_snaplist = new SnapList(this);
