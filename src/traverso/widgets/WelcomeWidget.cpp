@@ -38,7 +38,6 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
         setupUi(this);
 
         welcomeTextBrowser->setOpenExternalLinks(true);
-        loadPreviousProjectButton->grabKeyboard();
 
         update_previous_project_line_edit();
         update_projects_directory_line_edit();
