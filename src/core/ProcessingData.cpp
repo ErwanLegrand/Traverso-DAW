@@ -36,7 +36,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Debugger.h"
 
 ProcessingData::ProcessingData(Sheet *sheet)
-        : m_sheet(sheet)
+        : ContextItem(sheet)
+        , m_sheet(sheet)
 {
         if (m_sheet) {
                 m_pluginChain = new PluginChain(this, m_sheet);
