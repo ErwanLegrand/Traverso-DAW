@@ -30,6 +30,7 @@ class VUMeter;
 class Project;
 class Sheet;
 class QMenu;
+class QHBoxLayout;
 
 class BusMonitor :  public QWidget
 {
@@ -47,10 +48,12 @@ protected:
 	QSize minimumSizeHint () const;
 	
 private:
+        Sheet*                  m_sheet;
         VUMeter*                m_masterOutMeter;
 	QList<VUMeter* >	inMeters;
 	QList<VUMeter* >	outMeters;
-	QMenu* m_menu;
+        QMenu*                  m_menu;
+        QHBoxLayout*            m_layout;
 	
 	void show_menu();
 

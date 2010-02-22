@@ -47,6 +47,8 @@ BusMonitor::BusMonitor(QWidget* parent)
 	
 	setAutoFillBackground(false);
         m_masterOutMeter = 0;
+        m_sheet = 0;
+        m_layout = 0;
 	
 	create_vu_meters();
 	
@@ -82,27 +84,25 @@ void BusMonitor::create_vu_meters( )
 {
 	PENTER;
 
-	QLayout* lay = layout();
-	
-	if (lay) delete lay;
+        if (m_layout) delete m_layout;
 
-	QHBoxLayout* layout = new QHBoxLayout(this);
-	layout->setMargin(0);
-	setLayout(layout);
-	
+        m_layout = new QHBoxLayout(this);
+        m_layout->setMargin(0);
+        setLayout(m_layout);
+
 	while( ! inMeters.isEmpty() ) {
 		VUMeter* meter = inMeters.takeFirst();
-		layout->removeWidget( meter );
+                m_layout->removeWidget( meter );
 		delete meter;
 	}
 
 	while ( ! outMeters.isEmpty() ) {
 		VUMeter* meter = outMeters.takeFirst();
-		layout->removeWidget( meter );
+                m_layout->removeWidget( meter );
 		delete meter;
 	}
 	
-	layout->addStretch(1);
+        m_layout->addStretch(1);
 
 	QStringList list = audiodevice().get_capture_buses_names();
         foreach(QString name, list) {
@@ -110,7 +110,7 @@ void BusMonitor::create_vu_meters( )
 		VUMeter* meter = new VUMeter( this, bus );
 		connect(bus, SIGNAL(monitoringPeaksStarted()), meter, SLOT(peak_monitoring_started()));
 		connect(bus, SIGNAL(monitoringPeaksStopped()), meter, SLOT(peak_monitoring_stopped()));
-		layout->addWidget(meter);
+                m_layout->addWidget(meter);
 		inMeters.append(meter);
 		meter->hide();
 	}
@@ -123,7 +123,26 @@ void BusMonitor::create_vu_meters( )
 //		outMeters.append(meter);
 	}
 	
-	layout->addSpacing(4);
+        m_layout->addSpacing(4);
+
+        if (m_masterOutMeter) {
+                m_layout->removeWidget(m_masterOutMeter);
+                delete m_masterOutMeter;
+                m_masterOutMeter = 0;
+        }
+
+        if (m_sheet) {
+                AudioBus* bus = m_sheet->get_master_out()->get_process_bus();
+                m_masterOutMeter = new VUMeter(this, bus);
+
+                connect(bus, SIGNAL(monitoringPeaksStarted()), m_masterOutMeter, SLOT(peak_monitoring_started()));
+                connect(bus, SIGNAL(monitoringPeaksStopped()), m_masterOutMeter, SLOT(peak_monitoring_stopped()));
+
+                bus->set_monitor_peaks(true);
+
+                m_layout->addWidget(m_masterOutMeter);
+        }
+
 }
 
 void BusMonitor::set_project(Project * project)
@@ -139,26 +158,15 @@ void BusMonitor::set_project(Project * project)
 
         if (project) {
                 connect(project, SIGNAL(currentSheetChanged(Sheet*)), this, SLOT(set_sheet(Sheet*)));
+        } else {
+                m_sheet = 0;
         }
 }
 
 void BusMonitor::set_sheet(Sheet *sheet)
 {
-        if (m_masterOutMeter) {
-                layout()->removeWidget(m_masterOutMeter);
-                delete m_masterOutMeter;
-        }
-
-        AudioBus* bus = sheet->get_master_out()->get_process_bus();
-        m_masterOutMeter = new VUMeter(this, bus);
-
-        connect(bus, SIGNAL(monitoringPeaksStarted()), m_masterOutMeter, SLOT(peak_monitoring_started()));
-        connect(bus, SIGNAL(monitoringPeaksStopped()), m_masterOutMeter, SLOT(peak_monitoring_stopped()));
-
-        bus->set_monitor_peaks(true);
-
-        layout()->addWidget(m_masterOutMeter);
-
+        m_sheet = sheet;
+        create_vu_meters();
 }
 
 void BusMonitor::keyPressEvent(QKeyEvent * event)
