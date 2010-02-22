@@ -313,6 +313,17 @@ void Sheet::disconnect_from_audiodevice()
 		m_transport = false;
 		emit transportStopped();
 	}
+
+        // Disconnect the busConfigChanged signal from audiodevice for all
+        // Track objects, we don't want them anymore since Sheet and all it's
+        // Track objects are deleted _after_ we are disconnected from AudioDevice.
+        // If AudioDevice is re-inited after a Project got deleted/loaded again then
+        // AudioDevice can signal to objects that are being deleted.
+        apill_foreach(Track* track, Track, m_audioTracks) {
+                audiodevice().disconnect(track);
+        }
+        audiodevice().disconnect(m_masterOut);
+
 	audiodevice().remove_client(m_audiodeviceClient);
 }
 
