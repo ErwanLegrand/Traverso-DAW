@@ -88,7 +88,7 @@ QDomNode AudioTrack::get_state( QDomDocument doc, bool istemplate)
         Track::get_state(node);
 
         node.setAttribute("numtakes", numtakes);
-        node.setAttribute("InBus", m_busInName);
+        node.setAttribute("InputBus", m_busInName);
 
 
         if (! istemplate ) {
@@ -122,8 +122,8 @@ int AudioTrack::set_state( const QDomNode & node )
 
         Track::set_state(node);
 
-        set_input_bus(e.attribute( "InBus", "Capture 1"));
-        set_output_bus(e.attribute( "OutBus", "Master Out"));
+        set_input_bus(e.attribute( "InputBus", "Capture 1"));
+        set_output_bus(e.attribute( "OutputBus", "Master Out"));
         numtakes = e.attribute( "numtakes", "").toInt();
 
         QDomElement ClipsNode = node.firstChildElement("Clips");

@@ -47,7 +47,7 @@ void Track::get_state( QDomElement& node, bool istemplate)
         node.setAttribute("mutedbysolo", mutedBySolo);
         node.setAttribute("height", m_height);
         node.setAttribute("sortindex", m_sortIndex);
-        node.setAttribute("OutBus", m_busOutName);
+        node.setAttribute("OutputBus", m_busOutName);
 
         QDomNode pluginChainNode = node.toDocument().createElement("PluginChain");
         pluginChainNode.appendChild(m_pluginChain->get_state(node.toDocument()));

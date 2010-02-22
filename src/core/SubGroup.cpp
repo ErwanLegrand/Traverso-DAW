@@ -67,7 +67,7 @@ int SubGroup::set_state( const QDomNode & node )
 
         Track::set_state(node);
 
-        set_output_bus(e.attribute("OutBus", "Playback 1"));
+        set_output_bus(e.attribute("OutputBus", "Playback 1"));
 
         bool ok;
         m_channelCount = e.attribute("channelcount", "2").toInt(&ok);
