@@ -331,6 +331,8 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
 
         systemConfig.setAttribute("device", audiodevice().get_device_setup().cardDevice);
         systemConfig.setAttribute("driver", audiodevice().get_device_setup().driverType);
+        systemConfig.setAttribute("samplerate", audiodevice().get_sample_rate());
+        systemConfig.setAttribute("buffersize", audiodevice().get_buffer_size());
         audioIO.appendChild(systemConfig);
 
         QDomElement channelsElement = doc.createElement("Channels");
@@ -386,6 +388,8 @@ void Project::prepare_audio_device(QDomDocument doc)
         QDomElement e = systemConfigNode.toElement();
         ads.driverType = e.attribute("driver", "");
         ads.cardDevice = e.attribute("device", "");
+        ads.rate = e.attribute("samplerate", "44100").toInt();
+        ads.bufferSize = e.attribute("buffersize", "512").toInt();
 
         QDomNode channelsConfigNode = systemConfigNode.firstChildElement("Channels");
         QDomNode channelNode = channelsConfigNode.firstChild();
@@ -419,8 +423,6 @@ void Project::prepare_audio_device(QDomDocument doc)
         }
 
 
-        ads.rate = config().get_property("Hardware", "samplerate", 44100).toInt();
-        ads.bufferSize = config().get_property("Hardware", "buffersize", 512).toInt();
         if (ads.driverType.isEmpty()) {
 #if defined (Q_WS_X11)
                 ads.driverType = config().get_property("Hardware", "drivertype", "ALSA").toString();
