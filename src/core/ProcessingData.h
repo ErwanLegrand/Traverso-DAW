@@ -50,7 +50,7 @@ public:
         void set_input_bus(const QString& name);
         void set_output_bus(const QString& name);
 
-        void send_to_output_buses(nframes_t nframes, bool applyFaderGain=true);
+        void send_to_output_buses(nframes_t nframes, bool applyFaderGain=false);
 
 
         Command* add_plugin(Plugin* plugin);

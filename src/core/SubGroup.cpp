@@ -89,13 +89,15 @@ int SubGroup::process(nframes_t nframes)
                 return 0;
         }
 
+        m_fader->process(m_processBus, nframes);
+
         m_pluginChain->process_post_fader(m_processBus, nframes);
-        send_to_output_buses(nframes);
 
         if (m_processBus->is_monitoring_peaks()) {
                 m_processBus->monitor_peaks();
         }
 
+        send_to_output_buses(nframes);
 
         return 1;
 }

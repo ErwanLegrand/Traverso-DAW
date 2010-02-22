@@ -89,8 +89,9 @@ void GainEnvelope::set_sheet(Sheet * sheet)
 
 void GainEnvelope::process(AudioBus * bus, unsigned long nframes)
 {
-	Q_UNUSED(bus)
-	Q_UNUSED(nframes)
+        for (int chan=0; chan<bus->get_channel_count(); ++chan) {
+                Mixer::apply_gain_to_buffer(bus->get_buffer(chan, nframes), nframes, get_gain());
+        }
 }
 
 Curve * GainEnvelope::get_curve() const
