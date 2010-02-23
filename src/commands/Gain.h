@@ -27,7 +27,6 @@
 #include <QPoint>
 
 class ContextItem;
-class SheetView;
 
 
 class Gain : public Command
@@ -37,7 +36,7 @@ class Gain : public Command
 	Q_CLASSINFO("decrease_gain", tr("Decrease"));
 	
 public :
-        Gain(ContextItem* context, SheetView* sv, QVariantList args);
+        Gain(ContextItem* context, QVariantList args);
         ~Gain();
 
         int begin_hold();
@@ -53,13 +52,12 @@ public :
         void set_cursor_shape(int useX, int useY);
 
 private :
-	ContextItem*	gainObject;
-	SheetView*	m_sv;
-        float 		origGain;
-        float 		newGain;
-        QPoint 		origPos;
-	QPoint		mousePos;
-	bool		horiz;
+        ContextItem*	m_gainObject;
+        float 		m_origGain;
+        float 		m_newGain;
+        QPointF		m_origPos;
+        QPoint		m_mousePos;
+        bool		m_horiz;
 	
 	int get_gain_from_object(float& gain);
 	

@@ -137,7 +137,7 @@ int Zoom::jog()
 		}
 	}
 	
-	cpointer().get_viewport()->set_holdcursor_pos(m_sv->get_clips_viewport()->mapToScene(origPos).toPoint());
+        cpointer().get_viewport()->set_holdcursor_pos(m_sv->get_clips_viewport()->mapToScene(origPos));
 	
         return 1;
 }
@@ -176,12 +176,12 @@ void Zoom::toggle_vertical_horizontal_jog_zoom(bool autorepeat)
 	
 	if (m_jogVertical) {
 		cpointer().get_viewport()->set_holdcursor(":/cursorZoomHorizontal");
-		cpointer().get_viewport()->set_holdcursor_pos(m_sv->get_clips_viewport()->mapToScene(origPos).toPoint());
+                cpointer().get_viewport()->set_holdcursor_pos(m_sv->get_clips_viewport()->mapToScene(origPos));
 		m_jogVertical = false;
 		m_jogHorizontal = true;
 	} else {
 		cpointer().get_viewport()->set_holdcursor(":/cursorZoomVertical");
-		cpointer().get_viewport()->set_holdcursor_pos(m_sv->get_clips_viewport()->mapToScene(origPos).toPoint());
+                cpointer().get_viewport()->set_holdcursor_pos(m_sv->get_clips_viewport()->mapToScene(origPos));
 		m_jogVertical = true;
 		m_jogHorizontal = false;
 	}

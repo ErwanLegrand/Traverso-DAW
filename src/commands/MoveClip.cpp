@@ -337,7 +337,7 @@ int MoveClip::jog()
 	
 	d->sv->update_shuttle_factor();
 	
-	cpointer().get_viewport()->set_holdcursor_pos(d->sv->get_clips_viewport()->mapToScene(cpointer().pos()).toPoint());
+        cpointer().get_viewport()->set_holdcursor_pos(cpointer().scene_pos());
 	cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(newTrackStartLocation, d->sv->timeref_scalefactor));
 
 

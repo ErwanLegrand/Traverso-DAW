@@ -90,13 +90,13 @@ void MoveTrack::cancel_action()
 
 int MoveTrack::jog()
 {
-        cpointer().get_viewport()->set_holdcursor_pos(cpointer().get_viewport()->mapToScene(cpointer().pos()).toPoint());
+        cpointer().get_viewport()->set_holdcursor_pos(cpointer().scene_pos());
 
         if (int(m_trackView->scenePos().y()) < cpointer().scene_y()) {
                 move_down(false);
         }
 
-        if (int(m_trackView->scenePos().y()) > (cpointer().scene_y() + 8)) {
+        if (int(m_trackView->scenePos().y()) > (cpointer().scene_y())) {
                 move_up(false);
         }
 

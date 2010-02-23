@@ -270,16 +270,11 @@ void ViewPort::set_holdcursor( const QString & cursorName )
 void ViewPort::set_holdcursor_text( const QString & text )
 {
 	m_holdcursor->set_text(text);
-	// TODO Find out why we have to call set_holdcursor_pos() here 
-	// AGAIN when it allready has been called in for example MoveClip::jog()
-	// to AVOID jitter of the hold cursor text item when the cursor is 
-	// out of the viewports range
-	set_holdcursor_pos(mapToScene(cpointer().pos()).toPoint());
 }
 
-void ViewPort::set_holdcursor_pos(QPoint pos)
+void ViewPort::set_holdcursor_pos(QPointF pos)
 {
-	m_holdcursor->set_pos(pos);
+        m_holdcursor->set_pos(pos);
 }
 
 void ViewPort::set_current_mode(int mode)
@@ -348,11 +343,11 @@ void HoldCursor::reset()
 	m_textItem->hide();
 }
 
-void HoldCursor::set_pos(QPoint p)
+void HoldCursor::set_pos(QPointF p)
 {
 	int x = m_vp->mapFromScene(pos()).x();
 	int y = m_vp->mapFromScene(pos()).y();
-	int yoffset = 0;
+        int yoffset = m_pixmap.height() - m_textItem->boundingRect().height();
 	
 	if (y < 0) {
 		yoffset = - y;
@@ -369,6 +364,10 @@ void HoldCursor::set_pos(QPoint p)
 	} else {
 		m_textItem->setPos(m_pixmap.width() + 8, yoffset);
 	}
+
+        p.setX(p.x() - m_pixmap.width() / 2);
+        p.setY(p.y() - m_pixmap.width() / 2);
+
 	
 	setPos(p);
 }

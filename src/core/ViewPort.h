@@ -48,7 +48,7 @@ public :
         // Set functions
 	void set_holdcursor(const QString& cursorName);
 	void set_holdcursor_text(const QString& text);
-	void set_holdcursor_pos(QPoint pos);
+        void set_holdcursor_pos(QPointF pos);
 	void set_current_mode(int mode);
         
 	void reset_cursor();
@@ -97,7 +97,7 @@ public:
 
 	void set_text(const QString& text);
 	void set_type(const QString& type);
-	void set_pos(QPoint pos);
+        void set_pos(QPointF pos);
 	void reset();
 
 	QRectF boundingRect() const;

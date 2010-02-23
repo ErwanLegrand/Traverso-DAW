@@ -142,34 +142,23 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 		case GainCommand:
 		{
 			ContextItem* item = qobject_cast<ContextItem*>(obj);
-			SheetView* sheetview = 0;
-                        printf("context item classname is %s\n", item->metaObject()->className());
 			
 			if (item->metaObject()->className() == QString("TrackPanelGain")) {
 				item = item->get_context();
 			} else if (AudioClipView* view = qobject_cast<AudioClipView*>(item)) {
-				sheetview = view->get_sheetview();
 				item = view->get_context();
                         } else if (TrackView* view = qobject_cast<TrackView*>(item)) {
-				sheetview = view->get_sheetview();
 				item = view->get_context();
                         } else if (SheetView* view = qobject_cast<SheetView*>(item)) {
-				sheetview = view;
 				item = view->get_context();
 			}
-			
-			// ugly hack to avoid assigning a sheetview when the 
-			// mouse cursor is above the trackpanel....
-			if (cpointer().scene_x() < 0) {
-                                sheetview = 0;
-			}
-			
+				
 			if (!item) {
 				PERROR("TraversoCommands: Supplied QObject was not a ContextItem, "
 					"GainCommand only works with ContextItem objects!!");
 				return 0;
 			}
-			return new Gain(item, sheetview, arguments);
+                        return new Gain(item, arguments);
 		}
 		
 		case TrackPanCommand:

@@ -95,7 +95,7 @@ int WorkCursorMove::jog()
 	cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(newLocation, m_sv->timeref_scalefactor));
 	// Hmm, the alignment of the holdcursor isn't in the center, so we have to 
 	// substract half the width of it to make it appear centered... :-(
-	cpointer().get_viewport()->set_holdcursor_pos(QPoint(cpointer().scene_x() - 16, cpointer().scene_y() - 16));
+        cpointer().get_viewport()->set_holdcursor_pos(cpointer().scene_pos());
 	
 	return 1;
 }
