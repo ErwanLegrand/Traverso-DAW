@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: Gain.cpp,v 1.27 2008/02/13 10:25:25 r_sijrier Exp $
 */
 
 #include "Gain.h"
@@ -26,9 +25,8 @@ $Id: Gain.cpp,v 1.27 2008/02/13 10:25:25 r_sijrier Exp $
 #include "ContextPointer.h"
 #include "Mixer.h"
 #include <ViewPort.h>
-#include <AudioTrack.h>
+#include <Track.h>
 #include "Sheet.h"
-#include "SheetView.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -36,7 +34,7 @@ $Id: Gain.cpp,v 1.27 2008/02/13 10:25:25 r_sijrier Exp $
 
 /**
  *	\class Gain
-        \brief Change (jog) the Gain of a Sheet, <Audio<AudioTrack.h>.h> or AudioClip, or set to a pre-defined value
+        \brief Change (jog) the Gain of an AudioTrack, SubGroup or AudioClip, or set to a pre-defined value
 	
 	\sa TraversoCommands
  */
