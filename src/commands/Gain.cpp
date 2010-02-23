@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2010 Remon Sijrier
 
 This file is part of Traverso
 
@@ -92,7 +92,7 @@ int Gain::begin_hold()
 		return -1;
 	}
         m_newGain = m_origGain;
-        m_origPos = cpointer().scene_pos().toPoint();
+        m_origPos = cpointer().scene_pos();
 	return 1;
 }
 
@@ -251,7 +251,6 @@ int Gain::jog()
         cpointer().get_viewport()->set_holdcursor_pos(m_origPos);
 
         QCursor::setPos(m_mousePos);
-// 	origPos = cpointer().pos();
 
 	return result;
 }
