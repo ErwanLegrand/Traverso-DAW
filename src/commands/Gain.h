@@ -57,7 +57,6 @@ private :
         float 		m_newGain;
         QPointF		m_origPos;
         QPoint		m_mousePos;
-        bool		m_horiz;
 	
 	int get_gain_from_object(float& gain);
 	

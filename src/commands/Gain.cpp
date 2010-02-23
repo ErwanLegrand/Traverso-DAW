@@ -46,20 +46,15 @@ Gain::Gain(ContextItem* context, QVariantList args)
 	: Command(context, "")
 {
         m_gainObject = context;
-        m_horiz = false;
 
 	float gain = -1;
 	QString des = "";
 	
-	if (args.size() > 0 && args[0].toString() != "horizontal") {
+        if (args.size() > 0) {
 		gain = args.at(0).toDouble();
 		des = QString(context->metaObject()->className()) + ": Reset gain";
 	} else {
 		des = QString(context->metaObject()->className()) + " Gain";
-	}
-
-	if (args.size() > 0 && args[0].toString() == "horizontal") {
-                m_horiz = true;
 	}
 	
 	setText(des);
@@ -184,11 +179,7 @@ void Gain::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useY);
 	
         m_mousePos = QCursor::pos();
-        if (m_horiz) {
-		cpointer().get_viewport()->set_holdcursor(":/cursorHoldLr");
-	} else {
-		cpointer().get_viewport()->set_holdcursor(":/cursorGain");
-	}
+        cpointer().get_viewport()->set_holdcursor(":/cursorGain");
 }
 
 
@@ -201,14 +192,12 @@ void Gain::increase_gain( bool autorepeat )
         m_newGain = dB_to_scale_factor(dbFactor);
         QMetaObject::invokeMethod(m_gainObject, "set_gain", Q_ARG(float, m_newGain));
 	
-        if (!m_horiz) {
-		// now we get the new gain value from gainObject, since we don't know if 
-		// gainobject accepted the change or not!
-                get_gain_from_object(m_newGain);
-	
-		// Update the vieport's hold cursor with the _actuall_ gain value!
-		cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
-	}
+        // now we get the new gain value from gainObject, since we don't know if
+        // gainobject accepted the change or not!
+        get_gain_from_object(m_newGain);
+
+        // Update the vieport's hold cursor with the _actuall_ gain value!
+        cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
 }
 
 void Gain::decrease_gain(bool autorepeat)
@@ -221,14 +210,12 @@ void Gain::decrease_gain(bool autorepeat)
 	
         QMetaObject::invokeMethod(m_gainObject, "set_gain", Q_ARG(float, m_newGain));
 	
-        if (!m_horiz) {
-		// now we get the new gain value from gainObject, since we don't know if 
-		// gainobject accepted the change or not!
-                get_gain_from_object(m_newGain);
+        // now we get the new gain value from gainObject, since we don't know if
+        // gainobject accepted the change or not!
+        get_gain_from_object(m_newGain);
 
-		// Update the vieport's hold cursor with the _actuall_ gain value!
-		cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
-	}
+        // Update the vieport's hold cursor with the _actuall_ gain value!
+        cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
 }
 
 
@@ -242,11 +229,7 @@ int Gain::jog()
 	
 	int diff;
 
-        if (m_horiz) {
-		diff = cpointer().x() - m_origPos.x();
-	} else {
-		diff = m_origPos.y() - cpointer().y();
-	}
+        diff = m_origPos.y() - cpointer().y();
 
 	if (dbFactor > -1) {
 		of = diff * 0.05;
@@ -266,10 +249,8 @@ int Gain::jog()
         int result = get_gain_from_object(m_newGain);
 	
 	// Update the vieport's hold cursor!
-        if (!m_horiz) {
-                cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
-                cpointer().get_viewport()->set_holdcursor_pos(m_origPos);
-	}
+        cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
+        cpointer().get_viewport()->set_holdcursor_pos(m_origPos);
 
         QCursor::setPos(m_mousePos);
 // 	origPos = cpointer().pos();
