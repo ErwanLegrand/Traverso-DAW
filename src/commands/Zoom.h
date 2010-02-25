@@ -50,14 +50,14 @@ public :
         void set_cursor_shape(int useX, int useY);
 
 private :
-	int horizontalJogZoomLastX;
-        int verticalJogZoomLastY;
+        int m_horizontalJogZoomLastX;
+        int m_verticalJogZoomLastY;
 	bool m_jogVertical;
 	bool m_jogHorizontal;
 	qreal m_xScalefactor;
 	qreal m_yScalefactor;
-	QPoint	mousePos;
-	QPoint	origPos;
+        QPoint	m_mousePos;
+        QPointF	m_origPos;
 	
         SheetView* m_sv;
 	

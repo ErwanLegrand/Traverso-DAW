@@ -69,9 +69,9 @@ int Zoom::prepare_actions()
 
 int Zoom::begin_hold()
 {
-	verticalJogZoomLastY = cpointer().y();
-	horizontalJogZoomLastX = cpointer().x();
-	origPos = cpointer().pos();
+        m_verticalJogZoomLastY = cpointer().y();
+        m_horizontalJogZoomLastX = cpointer().x();
+        m_origPos = cpointer().scene_pos();
 	
 	return 1;
 }
@@ -79,7 +79,7 @@ int Zoom::begin_hold()
 
 int Zoom::finish_hold()
 {
-	QCursor::setPos(mousePos);
+        QCursor::setPos(m_mousePos);
 	return -1;
 }
 
@@ -97,7 +97,7 @@ void Zoom::set_cursor_shape( int useX, int useY )
 		cpointer().get_viewport()->set_holdcursor(":/cursorZoomVertical");
 	}
 	
-	mousePos = QCursor::pos();	
+        m_mousePos = QCursor::pos();
 }
 
 int Zoom::jog()
@@ -106,10 +106,10 @@ int Zoom::jog()
 	
 	if (m_jogVertical) {
 		int y = cpointer().y();
-		int dy = y - verticalJogZoomLastY;
+                int dy = y - m_verticalJogZoomLastY;
 		
 		if (abs(dy) > 8) {
-			verticalJogZoomLastY = y;
+                        m_verticalJogZoomLastY = y;
 			if (dy > 0) {
 				m_sv->vzoom(1 + m_yScalefactor);
 			} else {
@@ -120,13 +120,13 @@ int Zoom::jog()
 	
 	if (m_jogHorizontal) {
 		int x = cpointer().x();
-		int dx = x - horizontalJogZoomLastX;
+                int dx = x - m_horizontalJogZoomLastX;
 		
 		// TODO
 		// values between /* */ are for use when using non power of 2 zoom levels!
 		
 		if (abs(dx) > 10  /*1*/) {
-			horizontalJogZoomLastX = x;
+                        m_horizontalJogZoomLastX = x;
 			Sheet* sheet = m_sv->get_sheet();
 			if (dx > 0) {
 				sheet->set_hzoom(sheet->get_hzoom() / 2 /*(m_xScalefactor + dx/18)*/);
@@ -137,7 +137,7 @@ int Zoom::jog()
 		}
 	}
 	
-        cpointer().get_viewport()->set_holdcursor_pos(m_sv->get_clips_viewport()->mapToScene(origPos));
+        cpointer().get_viewport()->set_holdcursor_pos(m_origPos);
 	
         return 1;
 }
@@ -176,12 +176,12 @@ void Zoom::toggle_vertical_horizontal_jog_zoom(bool autorepeat)
 	
 	if (m_jogVertical) {
 		cpointer().get_viewport()->set_holdcursor(":/cursorZoomHorizontal");
-                cpointer().get_viewport()->set_holdcursor_pos(m_sv->get_clips_viewport()->mapToScene(origPos));
-		m_jogVertical = false;
+                cpointer().get_viewport()->set_holdcursor_pos(m_origPos);
+                m_jogVertical = false;
 		m_jogHorizontal = true;
 	} else {
 		cpointer().get_viewport()->set_holdcursor(":/cursorZoomVertical");
-                cpointer().get_viewport()->set_holdcursor_pos(m_sv->get_clips_viewport()->mapToScene(origPos));
+                cpointer().get_viewport()->set_holdcursor_pos(m_origPos);
 		m_jogVertical = true;
 		m_jogHorizontal = false;
 	}
