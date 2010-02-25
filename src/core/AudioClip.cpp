@@ -83,7 +83,6 @@ AudioClip::AudioClip(const QDomNode& node)
 	, m_readSource(0)
 {
 	PENTERCONS;
-	QDomNode clipNode = node.firstChild();
 	
 	// It makes sense to set these values at this time allready
 	// they are for example used by the ResourcesManager!
@@ -93,13 +92,11 @@ AudioClip::AudioClip(const QDomNode& node)
 	m_sheetId = e.attribute("sheet", "0").toLongLong();
 	m_name = e.attribute( "clipname", "" ) ;
 	m_isMuted =  e.attribute( "mute", "" ).toInt();
-	// FIXME!!!!!!!
-	bool ok;
-	m_length = TimeRef(e.attribute( "length", "0" ).toLongLong(&ok));
-	m_sourceStartLocation = TimeRef(e.attribute( "sourcestart", "" ).toLongLong(&ok));
+        m_length = TimeRef(e.attribute( "length", "0" ).toLongLong());
+        m_sourceStartLocation = TimeRef(e.attribute( "sourcestart", "" ).toLongLong());
 	
 	m_sourceEndLocation = m_sourceStartLocation + m_length;
-	TimeRef location(e.attribute( "trackstart", "" ).toLongLong(&ok));
+        TimeRef location(e.attribute( "trackstart", "" ).toLongLong());
 	set_track_start_location(location);
 	m_domNode = node.cloneNode();
 	init();
@@ -537,25 +534,16 @@ void AudioClip::process_capture(nframes_t nframes)
 		return;
 	}
 	
-	m_length.add_frames(nframes, get_rate());
-	nframes_t written = 0;
+        audio_sample_t* buffer[m_inputBus->get_channel_count()];
 
-// FIXME !!!!
-//	if (m_track->capture_left_channel() && m_track->capture_right_channel()) {
-//		audio_sample_t* buffer[2];
-//                buffer[0] = m_inputBus->get_buffer(0, nframes);
-//                buffer[1] = m_inputBus->get_buffer(1, nframes);
-//		written = m_recorder->rb_write(buffer, nframes);
-//	} else if (m_track->capture_left_channel()) {
-//		audio_sample_t* buffer[1];
-//                buffer[0] = m_inputBus->get_buffer(0, nframes);
-//		written = m_recorder->rb_write(buffer, nframes);
-//	} else if (m_track->capture_right_channel()) {
-//		audio_sample_t* buffer[1];
-//                buffer[0] = m_inputBus->get_buffer(1, nframes);
-//		written = m_recorder->rb_write(buffer, nframes);
-//	}
-	
+        for (int i=0; i<m_inputBus->get_channel_count(); i++) {
+                buffer[i] = m_inputBus->get_buffer(i, nframes);
+        }
+
+        nframes_t written = m_recorder->rb_write(buffer, nframes);
+
+        m_length.add_frames(written, get_rate());
+
 	if (written != nframes) {
 		printf("couldn't write nframes %d to recording buffer for channel 0, only %d\n", nframes, written);
 	}
