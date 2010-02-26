@@ -267,6 +267,13 @@
 				<Object objectname="DragMarker" slotsignature="move_right" modes="All" sortorder="1" />
 			</Objects>
 		</keyfact>
+                <keyfact type="FKEY" key1="T" >
+                        <Objects>
+                                <Object objectname="Interface" modes="All" sortorder="22" modifierkeys="CTRL" slotsignature="show_newtrack_dialog" />
+                        </Objects>
+                </keyfact>
+
+
 		
 		
 		<keyfact type="FKEY2" key1="A" key2="B" >
@@ -493,11 +500,6 @@
 
 		
 		
-		<keyfact type="D_FKEY" key1="T" >
-			<Objects>
-                                <Object objectname="Sheet" modes="All" sortorder="22" pluginname="TraversoCommands" commandname="AddNewAudioTrack" />
-			</Objects>
-		</keyfact>
 		<keyfact type="D_FKEY" key1="ENTER" >
 			<Objects>
                                 <Object objectname="SpectralMeterView" slotsignature="export_average_curve" modes="All" />
@@ -585,11 +587,6 @@
 
 		
 		
-		<keyfact type="D_FKEY2" key1="DEL" key2="T" >
-			<Objects>
-				<Object objectname="Sheet" slotsignature="remove_track" modes="All" sortorder="33" />
-			</Objects>
-		</keyfact>
 		<keyfact type="D_FKEY2" key1="F" key2="G" >
 			<Objects>
 				<Object objectname="AudioClip" slotsignature="reset_fade_in" modes="All" sortorder="18" submenu="Fade In/Out" />
