@@ -127,7 +127,10 @@ void NewSheetDialog::update_template_combo()
                                 " " + sheet->get_name();
 		
 		templateComboBox->addItem(text, sheet->get_id());
-		connect(sheet, SIGNAL(propertyChanged()), this, SLOT(update_template_combo()));
+
+                // FIXME ? Maybe the dialog should be modal, and be recreated each time it is shown
+                // to avoid code complexity like this?
+//		connect(sheet, SIGNAL(propertyChanged()), this, SLOT(update_template_combo()));
 	}
 }
 
