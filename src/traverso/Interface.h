@@ -108,7 +108,7 @@ private:
         QStackedWidget* 	m_centerAreaWidget;
         int                     m_previousCenterAreaWidgetIndex;
 	QHash<Sheet*, SheetWidget* > m_sheetWidgets;
-	SheetWidget*		currentSheetWidget;
+        SheetWidget*		m_currentSheetWidget;
 	QList<ViewPort* > 	currentProjectViewPortList;
 	QHash<QString, QMenu*>	m_contextMenus;
 	ExportDialog*		m_exportDialog;

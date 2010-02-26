@@ -102,7 +102,6 @@ private:
 
 signals:
 	void projectLoaded(Project* );
-	void aboutToDelete(Sheet* );
 	void currentProjectDirChanged();
         void projectsListChanged();
 	void unsupportedProjectDirChangeDetected();

@@ -208,7 +208,7 @@ Interface::Interface()
 	// Some default values.
         m_project = 0;
         m_previousCenterAreaWidgetIndex = 0;
-	currentSheetWidget = 0;
+        m_currentSheetWidget = 0;
 	m_exportDialog = 0;
 	m_cdWritingDialog = 0;
 	m_settingsdialog = 0;
@@ -233,7 +233,6 @@ Interface::Interface()
 
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
-	connect(&pm(), SIGNAL(aboutToDelete(Sheet*)), this, SLOT(delete_sheetwidget(Sheet*)));
 	connect(&pm(), SIGNAL(unsupportedProjectDirChangeDetected()), this, SLOT(project_dir_change_detected()));	
 	connect(&pm(), SIGNAL(projectLoadFailed(QString,QString)), this, SLOT(project_load_failed(QString,QString)));
 	connect(&pm(), SIGNAL(projectFileVersionMismatch(QString,QString)), this, SLOT(project_file_mismatch(QString,QString)), Qt::QueuedConnection);
@@ -268,41 +267,21 @@ void Interface::set_project(Project* project)
 	
 	m_project = project;
 
+        foreach(SheetWidget* sw, m_sheetWidgets) {
+                delete_sheetwidget(sw->get_sheet());
+        }
+
 	if ( project ) {
 		connect(project, SIGNAL(currentSheetChanged(Sheet*)), this, SLOT(show_sheet(Sheet*)));
 		connect(project, SIGNAL(projectLoadFinished()), this, SLOT(sheet_selector_update_sheets()));
 		connect(m_project, SIGNAL(sheetAdded(Sheet*)), this, SLOT(sheet_selector_sheet_added(Sheet*)));
 		connect(m_project, SIGNAL(sheetRemoved(Sheet*)), this, SLOT(sheet_selector_sheet_removed(Sheet*)));
-		setWindowTitle(project->get_title() + " - Traverso");
 
+		setWindowTitle(project->get_title() + " - Traverso");
                 set_project_actions_enabled(true);
 
-		// the project's sheets will be deleted _after_
-		// the project has been deleted, which will happen after this
-		// function returns. When the sheets have been disconnected from the
-		// audiodevice, delete_sheetwidget(Sheet* sheet) is called for all the sheets
-		// in the project. Meanwhile, disable updates of the SheetWidgets (and implicitily
-		// all their childrens) to avoid the (unlikely) situation of a paint event that 
-		// refers to data that was part of the then deleted project!
-		// The reason to not delete the SheetWidgets right now is that the newly loaded project
-		// now will be able to create and show it's sheetcanvas first, which improves the 
-		// users experience a lot!
-		foreach(SheetWidget* sw, m_sheetWidgets) {
-			sw->setUpdatesEnabled(false);
-		}
 	} else {
 		setWindowTitle("Traverso");
-		// No project loaded, the currently  loaded project will be deleted after this
-		// function returns, if the sheetcanvas is still painting (due playback e.g.) we
-		// could get a crash due canvas items refering to data that was managed by the project.
-		// so let's delete the SheetWidgets before the project is deleted!
-		if (m_sheetWidgets.contains(0)) {
-			delete m_sheetWidgets.take(0);
-		}
-		foreach(SheetWidget* sw, m_sheetWidgets) {
-			delete_sheetwidget(sw->get_sheet());
-		}
-
                 set_project_actions_enabled(false);
                 sheet_selector_update_sheets();
 
@@ -359,10 +338,9 @@ void Interface::show_sheet(Sheet* sheet)
                 m_centerAreaWidget->addWidget(sheetWidget);
 		m_sheetWidgets.insert(sheet, sheetWidget);
 	}
-	currentSheetWidget = sheetWidget;
-        m_centerAreaWidget->setCurrentIndex(m_centerAreaWidget->indexOf(sheetWidget));
-	sheetWidget->setFocus();
-	
+        m_currentSheetWidget = sheetWidget;
+        m_centerAreaWidget->setCurrentWidget(m_currentSheetWidget);
+
 	if (sheet) {
 		pm().get_undogroup()->setActiveStack(sheet->get_history_stack());
                 setWindowTitle(m_project->get_title() + ": Sheet " + sheet->get_name() + " - Traverso");
@@ -1240,7 +1218,7 @@ void Interface::config_changed()
 
 void Interface::import_audio()
 {
-	if (!currentSheetWidget->get_sheet()->get_numtracks()) {
+        if (!m_currentSheetWidget->get_sheet()->get_numtracks()) {
 		return;
 	}
 
@@ -1248,7 +1226,7 @@ void Interface::import_audio()
 			config().get_property("Project", "directory", "/directory/unknown").toString(),
 			tr("Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)"));
 
-	QList<AudioTrack*> tracks = currentSheetWidget->get_sheet()->get_audio_tracks();
+        QList<AudioTrack*> tracks = m_currentSheetWidget->get_sheet()->get_audio_tracks();
 	AudioTrack*	track = tracks.first();
 	bool markers = false;
 
@@ -1272,7 +1250,7 @@ void Interface::import_audio()
 		position = (track->get_cliplist().last())->get_track_end_location();
 	}
 
-	TimeLine* tl = currentSheetWidget->get_sheet()->get_timeline();
+        TimeLine* tl = m_currentSheetWidget->get_sheet()->get_timeline();
 	int n = tl->get_markers().size() + 1;
 	if (tl->has_end_marker()) {
 		n -= 1;

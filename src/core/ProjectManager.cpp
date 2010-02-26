@@ -353,7 +353,6 @@ void ProjectManager::delete_sheet( Sheet * sheet )
 {
 	PENTER;
 	m_deletionSheetList.removeAll(sheet);
-	emit aboutToDelete(sheet);
 	delete sheet;
 	
 	if (m_deletionSheetList.isEmpty() && m_exitInProgress) {

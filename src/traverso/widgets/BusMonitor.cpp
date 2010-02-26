@@ -216,6 +216,6 @@ void BusMonitor::show_menu()
 
 void BusMonitor::enterEvent(QEvent *)
 {
-	setFocus();
+        setFocus();
 }
 
