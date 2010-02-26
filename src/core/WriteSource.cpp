@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Export.h"
 #include <math.h>
 
+#include "AudioBus.h"
 #include <AudioDevice.h>
 #include <AbstractAudioWriter.h>
 #include <SFAudioWriter.h>
@@ -361,12 +362,20 @@ int WriteSource::finish_export( )
 	return 1;
 }
 
-int WriteSource::rb_write(audio_sample_t** src, nframes_t cnt)
+int WriteSource::rb_write(AudioBus* bus, nframes_t nframes)
 {
+        if (bus->get_channel_count() != m_channelCount) {
+                // invalid bus configuration for this write source!
+                return 0;
+        }
+
 	int written = 0;
 	
-	for (int chan=m_channelCount-1; chan>=0; --chan) {
-		written = m_buffers.at(chan)->write(src[chan], cnt);
+        for (int i=m_channelCount-1; i>=0; --i) {
+                AudioChannel* chan = bus->get_channel(i);
+                if (chan) {
+                        written = m_buffers.at(i)->write(chan->get_buffer(nframes), nframes);
+                }
 	}
 	
 	return written;

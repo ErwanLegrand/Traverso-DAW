@@ -52,7 +52,7 @@ AudioTrack::AudioTrack(Sheet* sheet, const QString& name, int height )
         PENTERCONS;
         m_name = name;
         m_height = height;
-        m_pan = numtakes = 0;
+        m_pan = m_numtakes = 0;
 
         m_busInName = "Capture 1";
         m_busOutName = "Master Out";
@@ -78,7 +78,7 @@ void AudioTrack::init()
 {
         QObject::tr("Track");
         m_type = AUDIOTRACK;
-        m_isSolo = mutedBySolo = m_isMuted = isArmed = false;
+        m_isSolo = mutedBySolo = m_isMuted = m_isArmed = false;
         m_fader->set_gain(1.0);
 }
 
@@ -87,7 +87,7 @@ QDomNode AudioTrack::get_state( QDomDocument doc, bool istemplate)
         QDomElement node = doc.createElement("Track");
         Track::get_state(node);
 
-        node.setAttribute("numtakes", numtakes);
+        node.setAttribute("numtakes", m_numtakes);
         node.setAttribute("InputBus", m_busInName);
 
 
@@ -124,7 +124,7 @@ int AudioTrack::set_state( const QDomNode & node )
 
         set_input_bus(e.attribute( "InputBus", "Capture 1"));
         set_output_bus(e.attribute( "OutputBus", "Master Out"));
-        numtakes = e.attribute( "numtakes", "").toInt();
+        m_numtakes = e.attribute( "numtakes", "").toInt();
 
         QDomElement ClipsNode = node.firstChildElement("Clips");
         if (!ClipsNode.isNull()) {
@@ -180,37 +180,44 @@ int AudioTrack::disarm()
 
 bool AudioTrack::armed()
 {
-        return isArmed;
+        return m_isArmed;
 }
 
 AudioClip* AudioTrack::init_recording()
 {
         PENTER2;
-        if(! isArmed) {
+
+        if(!m_isArmed) {
                 return 0;
         }
+
+        if (!m_inputBus) {
+                info().critical(tr("Unable to Record to AudioTrack"));
+                info().warning(tr("AudioDevice doesn't have this Capture Bus: %1 (Track %2)").
+                                arg(m_busInName).arg(get_id()) );
+                return 0;
+        }
+
         int number = m_sortIndex + 1;
         QString snumber = QString::number(number);
         if (number < 10) {
                 snumber.prepend("0");
         }
         QString name = 	"track-" + snumber +
-                        "_take-" + QString::number(++numtakes);
+                        "_take-" + QString::number(++m_numtakes);
 
         AudioClip* clip = resources_manager()->new_audio_clip(name);
         clip->set_sheet(m_sheet);
         clip->set_track(this);
         clip->set_track_start_location(m_sheet->get_transport_location());
 
-        if (clip->init_recording(m_busInName) < 0) {
+        if (clip->init_recording() < 0) {
                 PERROR("Could not create AudioClip to record to!");
                 resources_manager()->destroy_clip(clip);
                 return 0;
-        } else {
-                return clip;
         }
 
-        return 0;
+        return clip;
 }
 
 
@@ -227,8 +234,8 @@ void AudioTrack::set_gain(float gain)
 
 void AudioTrack::set_armed( bool armed )
 {
-        isArmed = armed;
-        emit armedChanged(isArmed);
+        m_isArmed = armed;
+        emit armedChanged(m_isArmed);
 }
 
 
@@ -239,7 +246,7 @@ int AudioTrack::process( nframes_t nframes )
 {
         int processResult = 0;
 
-        if ( (m_isMuted || mutedBySolo) && ( ! isArmed) ) {
+        if ( (m_isMuted || mutedBySolo) && ( ! m_isArmed) ) {
                 return 0;
         }
 
@@ -255,7 +262,7 @@ int AudioTrack::process( nframes_t nframes )
         m_pluginChain->process_pre_fader(m_processBus, nframes);
 
         apill_foreach(AudioClip* clip, AudioClip, m_clips) {
-                if (isArmed && clip->recording_state() == AudioClip::NO_RECORDING) {
+                if (m_isArmed && clip->recording_state() == AudioClip::NO_RECORDING) {
                         if (m_isMuted || mutedBySolo) {
                                 continue;
                         }
@@ -297,7 +304,7 @@ int AudioTrack::process( nframes_t nframes )
 
 Command* AudioTrack::toggle_arm()
 {
-        if (isArmed)
+        if (m_isArmed)
                 disarm();
         else
                 arm();

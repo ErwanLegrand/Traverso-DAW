@@ -31,6 +31,7 @@ struct ExportSpecification;
 class Peak;
 class DiskIO;
 class AbstractAudioWriter;
+class AudioBus;
 
 /// WriteSource is an AudioSource used for writing (recording, rendering) purposes
 class WriteSource : public AudioSource
@@ -41,7 +42,7 @@ public :
 	WriteSource(ExportSpecification* spec);
 	~WriteSource();
 
-	int rb_write(audio_sample_t** src, nframes_t cnt);
+        int rb_write(AudioBus* bus, nframes_t nframes);
 	int rb_file_write(nframes_t cnt);
 	void process_ringbuffer(audio_sample_t* buffer);
 	int get_processable_buffer_space() const;

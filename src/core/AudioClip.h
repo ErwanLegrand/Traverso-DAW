@@ -65,7 +65,7 @@ public:
 	};
 	
 	void set_audio_source(ReadSource* source);
-        int init_recording(const QString& bus);
+        int init_recording();
 	int process(nframes_t nframes);
 	
 	void set_track_start_location(const TimeRef& location);
@@ -115,7 +115,7 @@ public:
 private:
 	AudioTrack* 			m_track;
 	ReadSource*		m_readSource;
-	WriteSource*		m_recorder;
+        WriteSource*		m_writer;
 	APILinkedList		m_fades;
 	Peak* 			m_peak;
 	FadeCurve*		fadeIn;
@@ -180,7 +180,6 @@ public slots:
 private slots:
 	void private_add_fade(FadeCurve* fade);
 	void private_remove_fade(FadeCurve* fade);
-	void get_capture_bus();
 
 };
 

@@ -67,9 +67,8 @@ public :
 
 private :
         APILinkedList 	m_clips;
-        int numtakes;
-
-        bool isArmed;
+        int             m_numtakes;
+        bool            m_isArmed;
 
         void set_armed(bool armed);
         void init();

@@ -530,17 +530,13 @@ int AudioClip::process(nframes_t nframes)
 //
 void AudioClip::process_capture(nframes_t nframes)
 {
-        if (!m_inputBus) {
+        AudioBus* bus = m_track->get_input_bus();
+
+        if (!bus) {
 		return;
 	}
 	
-        audio_sample_t* buffer[m_inputBus->get_channel_count()];
-
-        for (int i=0; i<m_inputBus->get_channel_count(); i++) {
-                buffer[i] = m_inputBus->get_buffer(i, nframes);
-        }
-
-        nframes_t written = m_recorder->rb_write(buffer, nframes);
+        nframes_t written = m_writer->rb_write(bus, nframes);
 
         m_length.add_frames(written, get_rate());
 
@@ -549,25 +545,22 @@ void AudioClip::process_capture(nframes_t nframes)
 	}
 }
 
-int AudioClip::init_recording(const QString& name )
+int AudioClip::init_recording()
 {
 	Q_ASSERT(m_sheet);
 	Q_ASSERT(m_track);
 	
-        m_busInName = name;
-	get_capture_bus();
+        AudioBus* bus = m_track->get_input_bus();
+        int channelcount = bus->get_channel_count();
 
-        if (!m_inputBus) {
-		info().critical(tr("Unable to Record to Track"));
-		info().warning(tr("AudioDevice doesn't have this Capture Bus: %1 (Track %2)").
-                                arg(name).arg(m_track->get_id()) );
-		return -1;
-	}
+        if (channelcount == 0) {
+                // Can't record from a Bus with no channels!
+                return -1;
+        }
 
 	m_sourceStartLocation = TimeRef();
 	m_isTake = 1;
 	m_recordingStatus = RECORDING;
-        int channelcount = m_inputBus->get_channel_count();
 	
 	ReadSource* rs = resources_manager()->create_recording_source(
 				pm().get_project()->get_root_dir() + "/audiosources/",
@@ -607,23 +600,22 @@ int AudioClip::init_recording(const QString& name )
 	spec->totalTime = TimeRef();
 	spec->blocksize = audiodevice().get_buffer_size();
 	spec->name = m_name + "-" + sourceid;
-        spec->dataF = m_inputBus->get_buffer(0, audiodevice().get_buffer_size());
+        spec->dataF = bus->get_buffer(0, audiodevice().get_buffer_size());
 
-	m_recorder = new WriteSource(spec);
-	if (m_recorder->prepare_export() == -1) {
-		delete m_recorder;
+        m_writer = new WriteSource(spec);
+        if (m_writer->prepare_export() == -1) {
+                delete m_writer;
 		delete spec;
 		spec = 0;
 		return -1;
 	}
-	m_recorder->set_process_peaks( true );
-	m_recorder->set_recording( true );
+        m_writer->set_process_peaks( true );
+        m_writer->set_recording( true );
 	
-	m_sheet->get_diskio()->register_write_source(m_recorder);
+        m_sheet->get_diskio()->register_write_source(m_writer);
 	
-	connect(m_recorder, SIGNAL(exportFinished()), this, SLOT(finish_write_source()));
+        connect(m_writer, SIGNAL(exportFinished()), this, SLOT(finish_write_source()));
 	connect(m_sheet, SIGNAL(transportStopped()), this, SLOT(finish_recording()));
-	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(get_capture_bus()));
 
 	return 1;
 }
@@ -742,7 +734,7 @@ void AudioClip::finish_write_source()
 	
 	Q_ASSERT(m_readSource);
 	
-	if (m_readSource->set_file(m_recorder->get_filename()) < 0) {
+        if (m_readSource->set_file(m_writer->get_filename()) < 0) {
 		PERROR("Setting file for ReadSource failed after finishing recording");
 	} else {
 		m_sheet->get_diskio()->register_read_source(m_readSource);
@@ -750,8 +742,8 @@ void AudioClip::finish_write_source()
 		m_length = TimeRef();
 	}
 	
-	delete m_recorder;
-	m_recorder = 0;
+        delete m_writer;
+        m_writer = 0;
 	
 	m_recordingStatus = NO_RECORDING;
 	
@@ -765,10 +757,9 @@ void AudioClip::finish_recording()
 	PENTER;
 	
 	m_recordingStatus = FINISHING_RECORDING;
-	m_recorder->set_recording(false);
+        m_writer->set_recording(false);
 
 	disconnect(m_sheet, SIGNAL(transportStopped()), this, SLOT(finish_recording()));
-	disconnect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(get_capture_bus()));
 }
 
 int AudioClip::get_channels( ) const
@@ -776,8 +767,8 @@ int AudioClip::get_channels( ) const
 	if (m_readSource) {
 		return m_readSource->get_channel_count();
 	} else {
-		if (m_recorder) {
-			return m_recorder->get_channel_count();
+                if (m_writer) {
+                        return m_writer->get_channel_count();
 		}
 	}
 	
@@ -976,11 +967,6 @@ bool AudioClip::has_sheet() const
 ReadSource * AudioClip::get_readsource() const
 {
 	return m_readSource;
-}
-
-void AudioClip::get_capture_bus()
-{
-        m_inputBus = audiodevice().get_capture_bus(m_busInName);
 }
 
 void AudioClip::set_as_moving(bool moving)
