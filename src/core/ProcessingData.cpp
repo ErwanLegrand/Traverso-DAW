@@ -45,6 +45,9 @@ ProcessingData::ProcessingData(Sheet *sheet)
         } else {
                 m_pluginChain = new PluginChain(this);
         }
+        m_inputBus = m_outputBus = m_processBus = 0;
+        m_isMuted = false;
+        m_pan = 1.0f;
         m_fader = m_pluginChain->get_fader();
 
         connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(audiodevice_params_changed()), Qt::DirectConnection);

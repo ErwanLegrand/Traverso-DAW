@@ -56,7 +56,8 @@ public:
         Command* add_plugin(Plugin* plugin);
         Command* remove_plugin(Plugin* plugin);
 
-        AudioBus* get_process_bus() {return m_processBus;}
+        AudioBus* get_process_bus() const {return m_processBus;}
+        AudioBus* get_input_bus() const {return m_inputBus;}
         PluginChain* get_plugin_chain() const {return m_pluginChain;}
         Sheet* get_sheet() const {return m_sheet;}
         QString get_name() const {return m_name;}
