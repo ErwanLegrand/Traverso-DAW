@@ -35,14 +35,53 @@ public:
         ~SubGroup();
 
         QDomNode get_state(QDomDocument doc, bool istemplate=false);
-        int set_state( const QDomNode & node );
+        virtual int set_state( const QDomNode & node );
         void set_height(int h);
         int process(nframes_t nframes);
 
+protected:
+        int m_channelCount;
+
 private:
         void init();
+};
 
-        int m_channelCount;
+class MasterOutSubGroup : public SubGroup
+{
+        Q_OBJECT
+
+public:
+        MasterOutSubGroup(Sheet* sheet) : SubGroup(sheet, tr("Master Out"), 2) {};
+        MasterOutSubGroup(Sheet* sheet, const QDomNode node) : SubGroup(sheet, node) {
+                m_name = tr("Master Out");
+        };
+        ~MasterOutSubGroup() {};
+
+        void set_name(const QString& /*name*/) {
+                // Master out can't and shouldn't be renamed!
+                m_name = tr("Master Out");
+        }
+
+        void set_output_bus(const QString& name) {
+                // this should not happen, but just in case...
+                if (!(name == tr("Master Out"))) {
+                        ProcessingData::set_output_bus(name);
+                } else {
+                        // try to be 'smart' and pick a sane default.
+                        ProcessingData::set_output_bus("Playback 1");
+                }
+        }
+
+        int set_state( const QDomNode& node ) {
+                SubGroup::set_state(node);
+
+                // force proper values for the following parameters that
+                // are fixed for master out:
+                m_name = tr("Master Out");
+                m_channelCount = 2;
+                return 1;
+        }
+
 };
 
 #endif // SUBGROUP_H

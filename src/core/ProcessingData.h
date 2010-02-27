@@ -44,14 +44,8 @@ public:
         ProcessingData (Sheet* sheet=0);
         ~ProcessingData () {}
 	
-        void set_input_bus(AudioBus* bus);
-        void set_output_bus(AudioBus* bus);
-
         void set_input_bus(const QString& name);
-        void set_output_bus(const QString& name);
-
-        void send_to_output_buses(nframes_t nframes, bool applyFaderGain=false);
-
+        virtual void set_output_bus(const QString& name);
 
         Command* add_plugin(Plugin* plugin);
         Command* remove_plugin(Plugin* plugin);
@@ -66,7 +60,7 @@ public:
         float get_pan() const {return m_pan;}
 
         void set_muted(bool muted);
-        void set_name(const QString& name);
+        virtual void set_name(const QString& name);
         void set_pan(float pan);
 
 	bool is_muted() const {return m_isMuted;}
@@ -86,6 +80,12 @@ protected:
         QString		m_name;
         bool            m_isMuted;
         float           m_pan;
+
+        void send_to_output_buses(nframes_t nframes, bool applyFaderGain=false);
+
+private:
+        void set_input_bus(AudioBus* bus);
+        void set_output_bus(AudioBus* bus);
 
 
 public slots:

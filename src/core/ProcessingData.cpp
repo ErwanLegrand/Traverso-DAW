@@ -92,7 +92,7 @@ void ProcessingData::set_output_bus(const QString &name)
         m_busOutName = name;
 
         AudioBus* outBus = 0;
-        if (m_busOutName == "Master Out") {
+        if (m_busOutName == tr("Master Out")) {
                 outBus = m_sheet->get_master_out()->get_process_bus();
 
         } else {
