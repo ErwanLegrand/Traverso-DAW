@@ -773,40 +773,6 @@ Command *Sheet::toggle_arm()
 	return (Command*) 0;
 }
 
-Command* Sheet::work_next_edge()
-{
-/*	nframes_t w = m_acmanager->get_last_frame();
-
-	foreach(Track* track, m_tracks) {
-		AudioClip* c=track->get_clip_after(m_workLocation);
-
-		if ((c) && (c->get_track_start_location() < w && c->get_track_start_location() > m_workLocation))
-			w = c->get_track_start_location();
-	}
-
-	set_work_at(w);
-
-	emit setCursorAtEdge();
-*/
-	return (Command*) 0;
-}
-
-Command* Sheet::work_previous_edge()
-{
-/*	TimeRef w(0);
-	foreach(Track* track, m_tracks) {
-		AudioClip* c = track->get_clip_before(m_workLocation);
-		if ((c) && (c->get_track_end_location() >= w && c->get_track_end_location() < m_workLocation) )
-			w=c->get_track_end_location();
-	}
-
-	set_work_at(w);
-
-	emit setCursorAtEdge();
-*/
-	return (Command*) 0;
-}
-
 void Sheet::set_hzoom( qreal hzoom )
 {
 	// Traverso <= 0.42.0 doesn't store the real zoom factor, but an 
@@ -1042,25 +1008,6 @@ Track* Sheet::get_track(qint64 id)
 		}
 	}
 	return 0;
-}
-
-void Sheet::move_clip(AudioTrack * from, AudioTrack * too, AudioClip * clip, TimeRef location)
-{
-	PENTER2;
-	
-	if (from == too) {
-		clip->set_track_start_location(location);
-		return;
-	}
-	
-	// Remove has to be done BEFORE adding, else the APILinkedList logic 
-	// gets messed up for the Tracks AudioClipList, which is an APILinkedList :(
-	Command::process_command(from->remove_clip(clip, false, true));
-	Command::process_command(too->add_clip(clip, false, true));
-
-	if (clip->get_track_start_location() != location) {
-		clip->set_track_start_location(location);
-	}
 }
 
 Command* Sheet::set_editing_mode( )

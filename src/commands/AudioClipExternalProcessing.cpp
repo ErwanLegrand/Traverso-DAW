@@ -73,6 +73,8 @@ int AudioClipExternalProcessing::prepare_actions()
 int AudioClipExternalProcessing::do_action()
 {
 	PENTER;
+        // Remove has to be done BEFORE adding, else the APILinkedList logic
+        // gets messed up for the Tracks AudioClipList, which is an APILinkedList :(
 	Command::process_command(m_track->remove_clip(m_clip, false));
 	Command::process_command(m_track->add_clip(m_resultingclip, false));
 	
@@ -82,6 +84,8 @@ int AudioClipExternalProcessing::do_action()
 int AudioClipExternalProcessing::undo_action()
 {
 	PENTER;
+        // Remove has to be done BEFORE adding, else the APILinkedList logic
+        // gets messed up for the Tracks AudioClipList, which is an APILinkedList :(
 	Command::process_command(m_track->remove_clip(m_resultingclip, false));
 	Command::process_command(m_track->add_clip(m_clip, false));
 	return 1;

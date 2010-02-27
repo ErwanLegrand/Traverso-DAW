@@ -134,7 +134,6 @@ public:
 
         void solo_track(Track* track);
 	void create(int tracksToCreate);
-	void move_clip(AudioTrack* from, AudioTrack* too, AudioClip* clip, TimeRef location);
         Command* add_track(Track* api, bool historable=true);
         Command* remove_track(Track* api, bool historable=true);
 	
@@ -241,8 +240,6 @@ public slots :
 	Command* start_transport();
 	Command* set_recordable();
 	Command* set_recordable_and_start_transport();
-	Command* work_next_edge();
-	Command* work_previous_edge();
 	Command* toggle_snap();
 	Command* toggle_solo();
 	Command* toggle_mute();
