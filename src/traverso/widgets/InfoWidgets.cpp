@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Themer.h"
 #include "AudioTrack.h"
 #include "Utils.h"
+#include "Mixer.h"
 
 #include <QPainter>
 #include <QByteArray>

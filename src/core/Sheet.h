@@ -27,7 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QTimer>
 #include "defines.h"
 #include "APILinkedList.h"
-#include "GainEnvelope.h"
 
 class Project;
 class AudioTrack;
@@ -39,13 +38,10 @@ class DiskIO;
 class AudioClipManager;
 class Client;
 class AudioBus;
-class PluginChain;
 class SnapList;
-class Plugin;
 class TimeLine;
 class Snappable;
 class DecodeBuffer;
-class Marker;
 class SubGroup;
 class Track;
 
@@ -108,7 +104,6 @@ public:
 	AudioBus* get_clip_render_bus() const {return m_clipRenderBus;}
         SubGroup* get_master_out() const {return m_masterOut;}
 	SnapList* get_snap_list() const;
-	PluginChain* get_plugin_chain() const;
 	TimeLine* get_timeline() const {return m_timeline;}
         Snappable* get_work_snap() {return m_workSnap;}
         Track* get_track(qint64 id);
@@ -153,7 +148,6 @@ public:
 	void disconnect_from_audiodevice();
 	void connect_to_audiodevice();
 	void schedule_for_deletion();
-	QString get_cdrdao_tracklist(ExportSpecification* spec, bool pregap = false);
 
 	audio_sample_t* 	mixdown;
 	audio_sample_t*		readbuffer;
@@ -225,8 +219,6 @@ private:
 	void start_transport_rolling(bool realtime);
 	void stop_transport_rolling();
 	void update_skip_positions();
-        QString format_cdtrack_name(Marker *, int);
-        QList<Marker *> get_cdtrack_list(ExportSpecification*);
 	
 	void resize_buffer(bool updateArmStatus, nframes_t size);
 
@@ -242,7 +234,6 @@ public slots :
         void set_gain(float gain);
 	void set_transport_pos(TimeRef location);
 	void set_temp_follow_state(bool state);
-        float get_gain() const;
 
 
 	Command* next_skip_pos();

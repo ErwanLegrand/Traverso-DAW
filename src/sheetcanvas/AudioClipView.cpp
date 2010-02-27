@@ -44,6 +44,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Curve.h>
 #include <Interface.h>
 #include "PluginChain.h"
+#include "Mixer.h"
 
 #include <QFileDialog>
 #include <QLinearGradient>

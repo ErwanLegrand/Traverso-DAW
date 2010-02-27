@@ -31,6 +31,7 @@ class Sheet;
 class Marker;
 class Snappable;
 class Command;
+struct ExportSpecification;
 
 class TimeLine : public ContextItem
 {
@@ -54,6 +55,11 @@ public:
 
 	Command* add_marker(Marker* marker, bool historable=true);
 	Command* remove_marker(Marker* marker, bool historable=true);
+
+        QString format_cdtrack_name(Marker *, int);
+        QList<Marker *> get_cdtrack_list(ExportSpecification*);
+        QString get_cdrdao_tracklist(ExportSpecification* spec, bool pregap = false);
+
 
 private:
 	Sheet* m_sheet;

@@ -40,6 +40,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Utils.h"
 #include <AddRemove.h>
 #include "FileHelpers.h"
+#include "TimeLine.h"
 
 #define PROJECT_FILE_VERSION 	3
 
@@ -861,7 +862,7 @@ int Project::create_cdrdao_toc(ExportSpecification* spec)
 		if (sheet->prepare_export(spec) < 0) {
 			return -1;
 		}
-		output += sheet->get_cdrdao_tracklist(spec, pregap);
+                output += sheet->get_timeline()->get_cdrdao_tracklist(spec, pregap);
 		pregap = false; // only add the pregap at the first sheet
 	}
 	

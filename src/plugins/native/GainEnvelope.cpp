@@ -99,3 +99,17 @@ Curve * GainEnvelope::get_curve() const
 	return m_controlPorts.at(0)->get_curve();
 }
 
+
+void GainEnvelope::process_gain(audio_sample_t** buffer, const TimeRef& startlocation, const TimeRef& endlocation, nframes_t nframes, uint channels)
+{
+        PluginControlPort* port = m_controlPorts.at(0);
+
+        if (port->use_automation()) {
+                port->get_curve()->process(buffer, startlocation, endlocation, nframes, channels, m_gain);
+        } else {
+                for (uint chan=0; chan<channels; ++chan) {
+                        Mixer::apply_gain_to_buffer(buffer[chan], nframes, m_gain);
+                }
+        }
+}
+

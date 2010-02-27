@@ -28,6 +28,7 @@
 #include "ProjectManager.h"
 #include "Project.h"
 #include "Sheet.h"
+#include "SubGroup.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -165,7 +166,7 @@ void MeterView::set_sheet(Sheet *sheet)
 	if (m_sheet) {
 		if (m_meter) {
 			// FIXME The removed plugin still needs to be deleted!!!!!!
-			Command::process_command(m_sheet->get_plugin_chain()->remove_plugin(m_meter, false));
+                        Command::process_command(m_sheet->get_master_out()->get_plugin_chain()->remove_plugin(m_meter, false));
 			timer.stop();
 			disconnect(m_sheet, SIGNAL(transportStopped()), this, SLOT(transport_stopped()));
 			disconnect(m_sheet, SIGNAL(transportStarted()), this, SLOT(transport_started()));
@@ -186,7 +187,7 @@ void MeterView::hide_event()
 {
 	if (m_sheet) {
 		if (m_meter) {
-			Command::process_command(m_sheet->get_plugin_chain()->remove_plugin(m_meter, false));
+                        Command::process_command(m_sheet->get_master_out()->get_plugin_chain()->remove_plugin(m_meter, false));
 			timer.stop();
 		}
 	}
@@ -196,7 +197,7 @@ void MeterView::show_event()
 {
 	if (m_sheet) {
 		if (m_meter) {
-			Command::process_command(m_sheet->get_plugin_chain()->add_plugin(m_meter, false));
+                        Command::process_command(m_sheet->get_master_out()->get_plugin_chain()->add_plugin(m_meter, false));
 			timer.start(40);
 		} else {
 			set_sheet(m_sheet);

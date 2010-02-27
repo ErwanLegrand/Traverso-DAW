@@ -163,7 +163,7 @@ void Sheet::init()
 	mixdown = gainbuffer = 0;
         m_renderBus = new AudioBus("Render Bus", 2, ChannelIsOutput);
         m_clipRenderBus = new AudioBus("Clip Render Bus", 2, ChannelIsOutput);
-        m_masterOut = new SubGroup(this, "Master Out", 2);
+        m_masterOut = new MasterOutSubGroup(this);
         resize_buffer(false, audiodevice().get_buffer_size());
 
 	m_transport = m_stopTransport = m_resumeTransport = m_readyToRecord = false;
@@ -505,13 +505,13 @@ int Sheet::start_export(ExportSpecification* spec)
         QString message;
         float peakvalue = 0.0;
 
-        spec->markers = get_cdtrack_list(spec);
+        spec->markers = m_timeline->get_cdtrack_list(spec);
 
         for (int i = 0; i < spec->markers.size()-1; ++i) {
                 spec->progress      = 0;
-                spec->cdTrackStart    = spec->markers.at(i)->get_when();
-                spec->cdTrackEnd      = spec->markers.at(i+1)->get_when();
-                spec->name          = format_cdtrack_name(spec->markers.at(i), i+1);
+                spec->cdTrackStart  = spec->markers.at(i)->get_when();
+                spec->cdTrackEnd    = spec->markers.at(i+1)->get_when();
+                spec->name          = m_timeline->format_cdtrack_name(spec->markers.at(i), i+1);
                 spec->totalTime     = spec->cdTrackEnd - spec->cdTrackStart;
                 spec->pos           = spec->cdTrackStart;
                 spec->peakvalue     = peakvalue;
@@ -638,48 +638,6 @@ out:
 	return ret;
 }
 
-// formatting the track names in a separate function to guarantee that
-// the file names of exported tracks and the entry in the TOC file always
-// match
-QString Sheet::format_cdtrack_name(Marker *marker, int i)
-{
-        QString name;
-        QString song = marker->get_description();
-        QString performer = marker->get_performer();
-
-        name = QString("%1").arg(i, 2, 10, QChar('0'));
-
-        if (!performer.isEmpty()) {
-                name += "-" + performer;
-        }
-
-        if (!song.isEmpty()) {
-                name += "-" + song;
-        }
-
-        name.replace(QRegExp("\\s"), "_");
-        return name;
-}
-
-// creates a valid list of markers for CD export. Takes care of special cases
-// such as if no markers are present, or if an end marker is missing.
-QList<Marker*> Sheet::get_cdtrack_list(ExportSpecification *spec)
-{
-        bool endmarker;
-        QList<Marker*> lst = m_timeline->get_cd_layout(endmarker);
-
-        // make sure there are at least a start- and end-marker in the list
-        if (lst.size() == 0) {
-                lst.push_back(new Marker(m_timeline, spec->startLocation, Marker::CDTRACK));
-        }
-
-        if (!endmarker) {
-                lst.push_back(new Marker(m_timeline, spec->endLocation, Marker::ENDMARKER));
-        }
-
-        return lst;
-}
-
 
 SnapList* Sheet::get_snap_list() const
 {
@@ -702,11 +660,6 @@ void Sheet::set_gain(float gain)
         m_masterOut->set_gain(gain);
 
         emit stateChanged();
-}
-
-float Sheet::get_gain( ) const
-{
-        return m_masterOut->get_gain();
 }
 
 void Sheet::set_first_visible_frame(nframes_t pos)
@@ -941,8 +894,8 @@ int Sheet::process_export( nframes_t nframes )
 		track->process(nframes);
 	}
 
-        Mixer::apply_gain_to_buffer(m_masterOut->get_process_bus()->get_buffer(0, nframes), nframes, get_gain());
-        Mixer::apply_gain_to_buffer(m_masterOut->get_process_bus()->get_buffer(1, nframes), nframes, get_gain());
+        Mixer::apply_gain_to_buffer(m_masterOut->get_process_bus()->get_buffer(0, nframes), nframes, m_masterOut->get_gain());
+        Mixer::apply_gain_to_buffer(m_masterOut->get_process_bus()->get_buffer(1, nframes), nframes, m_masterOut->get_gain());
 
 	// update the m_transportFrame
 // 	m_transportFrame += nframes;
@@ -951,69 +904,6 @@ int Sheet::process_export( nframes_t nframes )
 	return 1;
 }
 
-QString Sheet::get_cdrdao_tracklist(ExportSpecification* spec, bool pregap)
-{
-	QString output;
-
-        QList<Marker*> mlist = get_cdtrack_list(spec);
-
-//	TimeRef start;
-
-	for(int i = 0; i < mlist.size()-1; ++i) {
-		
-		Marker* startmarker = mlist.at(i);
-		Marker* endmarker = mlist.at(i+1);
-		
-		output += "TRACK AUDIO\n";
-
-		if (startmarker->get_copyprotect()) {
-			output += "  NO COPY\n";
-		} else {
-			output += "  COPY\n";
-		}
-
-		if (startmarker->get_preemphasis()) {
-			output += "  PRE_EMPHASIS\n";
-		}
-
-		output += "  CD_TEXT {\n    LANGUAGE 0 {\n";
-		output += "      TITLE \"" + startmarker->get_description() + "\"\n";
-		output += "      PERFORMER \"" + startmarker->get_performer() + "\"\n";
-		output += "      ISRC \"" + startmarker->get_isrc() + "\"\n";
-		output += "      ARRANGER \"" + startmarker->get_arranger() + "\"\n";
-		output += "      SONGWRITER \"" + startmarker->get_songwriter() + "\"\n";
-		output += "      MESSAGE \"" + startmarker->get_message() + "\"\n    }\n  }\n";
-
-		// add some stuff only required for the first track (e.g. pre-gap)
-		if ((i == 0) && pregap) {
-			//if (start == 0) {
-				// standard pregap, because we have a track marker at the beginning
-				output += "  PREGAP 00:02:00\n";
-			//} else {
-			//	// no track marker at the beginning, thus use the part from 0 to the first
-			//	// track marker for the pregap
-			//	output += "  START " + frame_to_cd(start, m_project->get_rate()) + "\n";
-			//	start = 0;
-			//}
-		}
-		
-                TimeRef length = cd_to_timeref(timeref_to_cd(endmarker->get_when())) - cd_to_timeref(timeref_to_cd(startmarker->get_when()));
-		
-//		QString s_start = timeref_to_cd(start);
-                QString s_length = timeref_to_cd(length);
-
-//		output += "  FILE \"" + spec->name + "." + spec->extraFormat["filetype"] + "\" " + s_start + " " + s_length + "\n\n";
-                output += "  FILE \"" + format_cdtrack_name(startmarker, i+1) + "." + spec->extraFormat["filetype"] + "\" 0 " + s_length + "\n\n";
-//		start += length;
-
-		// check if the second marker is of type "Endmarker"
-		if (endmarker->get_type() == Marker::ENDMARKER) {
-			break;
-		}
-	}
-
-	return output;
-}
 
 void Sheet::resize_buffer(bool updateArmStatus, nframes_t size)
 {
@@ -1089,11 +979,6 @@ DiskIO * Sheet::get_diskio( ) const
 AudioClipManager * Sheet::get_audioclip_manager( ) const
 {
 	return m_acmanager;
-}
-
-PluginChain* Sheet::get_plugin_chain() const
-{
-        return m_masterOut->get_plugin_chain();
 }
 
 void Sheet::handle_diskio_readbuffer_underrun( )

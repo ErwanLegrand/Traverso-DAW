@@ -30,6 +30,7 @@
 #include <Project.h>
 #include <AudioDevice.h>
 #include <Sheet.h>
+#include <SubGroup.h>
 #include <Themer.h>
 
 #include <QFileDialog>
@@ -280,7 +281,7 @@ void SpectralMeterView::set_sheet(Sheet *sheet)
 		return;
 	}
 
-	PluginChain* chain = m_sheet->get_plugin_chain();
+        PluginChain* chain = m_sheet->get_master_out()->get_plugin_chain();
 	sample_rate = audiodevice().get_sample_rate();
 	
 	foreach(Plugin* plugin, chain->get_plugin_list()) {

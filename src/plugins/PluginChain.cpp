@@ -28,6 +28,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Sheet.h>
 #include <AddRemove.h>
 #include "AudioBus.h"
+#include "GainEnvelope.h"
+#include "Curve.h"
+#include "Mixer.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!

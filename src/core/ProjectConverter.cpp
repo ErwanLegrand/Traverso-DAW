@@ -259,7 +259,7 @@ int ProjectConverter::start_conversion_from_version_2_to_3()
 
 		while(!trackNode.isNull()) {
 			QDomElement trackelement = trackNode.toElement();
-			trackelement.setAttribute("OutBus", "Master Out");
+                        trackelement.setAttribute("OutputBus", tr("Master Out"));
 			trackNode = trackNode.nextSibling();
 		}
 		sheetNode = sheetNode.nextSibling();

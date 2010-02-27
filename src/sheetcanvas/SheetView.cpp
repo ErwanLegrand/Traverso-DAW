@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 
 #include <QScrollBar>
 
+#include "Curve.h"
 #include "InputEngine.h"
 #include "Sheet.h"
 #include "SnapList.h"

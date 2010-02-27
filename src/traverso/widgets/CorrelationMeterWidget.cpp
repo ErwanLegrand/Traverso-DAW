@@ -27,6 +27,7 @@
 #include <CorrelationMeter.h>
 #include <Command.h>
 #include <Sheet.h>
+#include <SubGroup.h>
 #include <Themer.h>
 #include <Config.h>
 #include <cmath> // used for fabs
@@ -134,7 +135,7 @@ void CorrelationMeterView::set_sheet(Sheet *sheet)
 		return;
 	}
 	
-	PluginChain* chain = m_sheet->get_plugin_chain();
+        PluginChain* chain = m_sheet->get_master_out()->get_plugin_chain();
 	
 	foreach(Plugin* plugin, chain->get_plugin_list()) {
 		m_meter = dynamic_cast<CorrelationMeter*>(plugin);

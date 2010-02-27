@@ -36,7 +36,6 @@ MoveTrack::MoveTrack(TrackView* view)
         , m_trackView(view)
 {
         m_sv = m_trackView->get_sheetview();
-        m_track = m_trackView->get_track();
 }
 
 MoveTrack::~MoveTrack()

@@ -51,7 +51,6 @@ public :
 
 private:
         SheetView*      m_sv;
-        Track*          m_track;
         TrackView*      m_trackView;
 
 public slots:
