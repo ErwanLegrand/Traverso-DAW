@@ -50,7 +50,7 @@ void catch_signal(int sig_num)
 		traverso->shutdown(sig_num);
 		exit(0);
 	} else {
-		printf("Catched multiple signals, aborting !\n");
+                printf("Caught multiple signals, aborting !\n");
 		kill (-getpgrp(), SIGABRT);
 		exit(-1);
 	}
