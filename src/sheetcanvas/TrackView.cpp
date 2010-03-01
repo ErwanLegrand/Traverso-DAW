@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Interface.h>
 
 #include <Sheet.h>
+#include <SubGroup.h>
 #include <Track.h>
 #include <Utils.h>
 
@@ -106,6 +107,10 @@ int TrackView::get_height( )
 
 Command* TrackView::edit_properties( )
 {
+        if (m_track == m_track->get_sheet()->get_master_out()) {
+                return 0;
+        }
+
         bool ok;
         QString text = QInputDialog::getText(m_sv->get_trackpanel_view_port()->viewport(), tr("Edit name"),
                                         tr("Enter new name"),
