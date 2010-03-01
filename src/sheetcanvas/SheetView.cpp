@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include "SubGroup.h"
 #include "ContextPointer.h"
 #include "Themer.h"
+#include "Interface.h"
 
 #include "SheetView.h"
 #include "SheetWidget.h"
@@ -753,4 +754,10 @@ void SheetView::clipviewport_resize_event()
 		update_scrollbars();
 	}
 	
+}
+
+Command* SheetView::add_track()
+{
+        Interface::instance()->show_newtrack_dialog();
+        return 0;
 }

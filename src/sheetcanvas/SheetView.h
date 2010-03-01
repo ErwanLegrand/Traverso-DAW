@@ -57,6 +57,7 @@ class SheetView : public ViewItem
 	Q_CLASSINFO("add_marker_at_playhead", tr("Add Marker at Playhead"))
 	Q_CLASSINFO("playhead_to_workcursor", tr("To workcursor"))
 	Q_CLASSINFO("center_playhead", tr("Center"))
+        Q_CLASSINFO("add_track", tr("Add Track"))
 
 public :
 
@@ -149,6 +150,7 @@ public slots:
 	Command* add_marker_at_playhead();
 	Command* playhead_to_workcursor();
 	Command* center_playhead();
+        Command* add_track();
 	
 private slots:
 	void scale_factor_changed();

@@ -1,5 +1,5 @@
 <keymap>
-	<KeymapInfo version="1.0" author="R. Sijrier" 
+        <KeymapInfo version="1.1" author="R. Sijrier"
 	    		description="The default keymap supplied by Traverso. It provides both the 'point and click'
 	    		interface, which most users are used too, and the more powerfull contextual interface, 
 			where mouse and keyboard are used together." />
@@ -269,7 +269,7 @@
 		</keyfact>
                 <keyfact type="FKEY" key1="T" >
                         <Objects>
-                                <Object objectname="Interface" modes="All" sortorder="22" modifierkeys="CTRL" slotsignature="show_newtrack_dialog" />
+                                <Object objectname="SheetView" modes="All" sortorder="22" slotsignature="add_track" />
                         </Objects>
                 </keyfact>
 
