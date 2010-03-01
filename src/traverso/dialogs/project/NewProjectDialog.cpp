@@ -310,16 +310,22 @@ void NewProjectDialog::load_file(QString name, int i, QString trackname)
 		return;
 	}
 
-	if (i >= sheet->get_numtracks()) {
-		return;
-	}
+        QList<AudioTrack*> tracks = sheet->get_audio_tracks();
 
-        AudioTrack* track = sheet->get_audio_track_for_index(i);
+        if (i >= tracks.size()) {
+                return;
+        }
+
+        AudioTrack* track = tracks.at(i);
+
+        if (!track) {
+                return;
+        }
 
 	Import* import = new Import(name);
 	track->set_name(trackname);
 	import->set_track(track);
-	import->set_position((TimeRef)0.0);
+        import->set_position(TimeRef());
 	if (import->create_readsource() != -1) {
 		Command::process_command(import);
 	}
