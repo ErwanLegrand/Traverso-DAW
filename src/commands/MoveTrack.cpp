@@ -91,7 +91,7 @@ int MoveTrack::jog()
 {
         cpointer().get_viewport()->set_holdcursor_pos(cpointer().scene_pos());
 
-        if (int(m_trackView->scenePos().y()) < cpointer().scene_y()) {
+        if (int(m_trackView->scenePos().y() + m_trackView->boundingRect().height()) < cpointer().scene_y()) {
                 move_down(false);
         }
 
