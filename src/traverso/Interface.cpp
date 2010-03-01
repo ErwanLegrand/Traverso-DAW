@@ -638,13 +638,17 @@ void Interface::create_menus( )
         m_projectMenuToolbarActions.append(action);
         connect(action, SIGNAL(triggered(bool)), this, SLOT(show_marker_dialog()));
 
-	menu->addSeparator();
+        action = menu->addAction(tr("Toggle Full Screen"));
+        connect(action, SIGNAL(triggered()), this, SLOT(full_screen()));
+
+        menu->addSeparator();
 	
 	menu->addAction(correlationMeterDW->toggleViewAction());
 	menu->addAction(spectralMeterDW->toggleViewAction());
 
 	menu->addSeparator();
-        menu->addAction(tr("ToolBars"));
+        action = menu->addAction(tr("ToolBars"));
+        action->setEnabled(false);
 	menu->addSeparator();
 	
 	menu->addAction(transportConsole->toggleViewAction());
@@ -662,6 +666,7 @@ void Interface::create_menus( )
 
 	menu->addAction(m_sysinfo->toggleViewAction());
 	m_sysinfo->toggleViewAction()->setText(tr("System Information"));
+
 
         m_sheetMenu = menuBar()->addMenu(tr("&Sheet"));
 
