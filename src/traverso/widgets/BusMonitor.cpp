@@ -195,6 +195,9 @@ void BusMonitor::reset_vu_meters()
 	foreach(VUMeter* meter, outMeters) {
 		meter->reset();
 	}
+        if (m_masterOutMeter) {
+                m_masterOutMeter->reset();
+        }
 }
 
 void BusMonitor::show_menu()
