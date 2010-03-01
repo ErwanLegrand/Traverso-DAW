@@ -30,14 +30,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QMessageBox>
 #include <QDir>
 #include <QFileDialog>
+#include <QKeyEvent>
 
 
 WelcomeWidget::WelcomeWidget(QWidget *parent)
         : QWidget(parent)
 {
         setupUi(this);
+        setFocusPolicy(Qt::StrongFocus);
 
         welcomeTextBrowser->setOpenExternalLinks(true);
+        loadPreviousProjectButton->setDefault(true);
 
         update_previous_project_line_edit();
         update_projects_directory_line_edit();
@@ -187,6 +190,16 @@ void WelcomeWidget::on_changeProjectsDirButton_clicked()
         pm().set_current_project_dir(newPath);
 
         update_projects_directory_line_edit();
+}
+
+void WelcomeWidget::keyPressEvent(QKeyEvent *event)
+{
+        if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
+                loadPreviousProjectButton->animateClick();
+                return;
+        }
+
+        QWidget::keyPressEvent(event);
 }
 
 //eof

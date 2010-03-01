@@ -41,6 +41,8 @@ private:
         Project* m_project;
         void update_projects_directory_line_edit();
 
+protected:
+        void keyPressEvent ( QKeyEvent * event );
 
 private slots:
         void set_project(Project* project);
