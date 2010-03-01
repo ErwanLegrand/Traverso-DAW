@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 Track::Track(Sheet *sheet)
         : ProcessingData(sheet)
 {
+        m_sortIndex = -1;
 }
 
 

@@ -81,6 +81,7 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 	
 	m_playCursor = new PlayHead(this, m_sheet, m_clipsViewPort);
 	m_workCursor = new WorkCursor(this, m_sheet);
+        m_masterOutView = new SubGroupView(this, m_sheet->get_master_out());
 	
 	connect(m_sheet, SIGNAL(workingPosChanged()), m_workCursor, SLOT(update_position()));
 	connect(m_sheet, SIGNAL(transportStarted()), this, SLOT(follow_play_head()));
@@ -138,7 +139,7 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 
 SheetView::~SheetView()
 {
-	delete m_dragShuttleCurve;
+        delete m_dragShuttleCurve;
 	delete m_shuttleCurve;
 }
 		
@@ -176,21 +177,37 @@ AudioTrackView* SheetView::get_trackview_under( QPointF point )
 void SheetView::move_trackview_up(TrackView *trackView)
 {
         int index = trackView->get_track()->get_sort_index();
-        if (index == 0) {
+        if (index == 0 || trackView->get_track() == m_sheet->get_master_out()) {
                 // can't move any further up
                 return;
         }
 
+        AudioTrackView* atv = qobject_cast<AudioTrackView*>(trackView);
+        SubGroupView* sgv = qobject_cast<SubGroupView*>(trackView);
+
         int newindex = index - 1;
-        for(int i=0; i<m_trackViews.size(); i++) {
-                if (i==newindex) {
-                        m_trackViews.at(i)->get_track()->set_sort_index(i+1);
+
+        if (atv) {
+                for(int i=0; i<m_audioTrackViews.size(); i++) {
+                        if (i==newindex) {
+                                m_audioTrackViews.at(i)->get_track()->set_sort_index(i+1);
+                        }
                 }
         }
 
+        if (sgv) {
+                for(int i=0; i<m_subGroupViews.size(); i++) {
+                        if (i==newindex) {
+                                m_subGroupViews.at(i)->get_track()->set_sort_index(i+1);
+                        }
+                }
+        }
+
+
         trackView->get_track()->set_sort_index(newindex);
 
-        qSort(m_trackViews.begin(), m_trackViews.end(), smallerTrackView);
+        qSort(m_audioTrackViews.begin(), m_audioTrackViews.end(), smallerTrackView);
+        qSort(m_subGroupViews.begin(), m_subGroupViews.end(), smallerTrackView);
 
         layout_tracks();
 }
@@ -198,21 +215,44 @@ void SheetView::move_trackview_up(TrackView *trackView)
 void SheetView::move_trackview_down(TrackView *trackView)
 {
         int index = trackView->get_track()->get_sort_index();
-        if (index >= m_trackViews.size()) {
+        if (index >= m_audioTrackViews.size() || trackView->get_track() == m_sheet->get_master_out()) {
                 // can't move any further down
                 return;
         }
 
+        AudioTrackView* atv = qobject_cast<AudioTrackView*>(trackView);
+        SubGroupView* sgv = qobject_cast<SubGroupView*>(trackView);
+
         int newindex = index + 1;
-        for(int i=0; i<m_trackViews.size(); i++) {
-                if (i==newindex) {
-                        m_trackViews.at(i)->get_track()->set_sort_index(i-1);
+
+        if (atv) {
+                for(int i=0; i<m_audioTrackViews.size(); i++) {
+                        if (i==newindex) {
+                                m_audioTrackViews.at(i)->get_track()->set_sort_index(i-1);
+                        }
+                }
+                if (newindex >= m_audioTrackViews.size()) {
+                        newindex = m_audioTrackViews.size() - 1;
                 }
         }
 
+        if (sgv) {
+                for(int i=0; i<m_subGroupViews.size(); i++) {
+                        if (i==newindex) {
+                                m_subGroupViews.at(i)->get_track()->set_sort_index(i-1);
+                        }
+                }
+                if (newindex >= m_subGroupViews.size()) {
+                        newindex = m_subGroupViews.size() - 1;
+                }
+        }
+
+
         trackView->get_track()->set_sort_index(newindex);
 
-        qSort(m_trackViews.begin(), m_trackViews.end(), smallerTrackView);
+        qSort(m_audioTrackViews.begin(), m_audioTrackViews.end(), smallerTrackView);
+        qSort(m_subGroupViews.begin(), m_subGroupViews.end(), smallerTrackView);
+
         layout_tracks();
 
 }
@@ -223,59 +263,47 @@ void SheetView::add_new_track_view(Track* track)
 
         AudioTrack* audiotrack = qobject_cast<AudioTrack*>(track);
         SubGroup* group = qobject_cast<SubGroup*>(track);
-        if (group) {
-                view = new SubGroupView(this, group);
-        } else {
+
+        int sortIndex = track->get_sort_index();
+
+        if (audiotrack) {
                 view = new AudioTrackView(this, audiotrack);
+                if(sortIndex < 0) {
+                        track->set_sort_index(m_audioTrackViews.size());
+                }
+                m_audioTrackViews.append(view);
+        } else {
+                view = new SubGroupView(this, group);
+                if(sortIndex < 0) {
+                        track->set_sort_index(m_subGroupViews.size());
+                }
+                m_subGroupViews.append(view);
         }
 
-        m_trackViews.append(view);
-	
-        int sortIndex = track->get_sort_index();
-	
-	if (sortIndex < 0) {
-                sortIndex = m_trackViews.size();
-                track->set_sort_index(sortIndex);
-	} else {
-                foreach(TrackView* view, m_trackViews) {
-                        if (view->get_track()->get_sort_index() == sortIndex) {
-                                sortIndex = m_trackViews.size();
-                                track->set_sort_index(sortIndex);
-				break;
-			}
-		}
-	}
-	
-        qSort(m_trackViews.begin(), m_trackViews.end(), smallerTrackView);
-	
-        for(int i=0; i<m_trackViews.size(); ++i) {
-                m_trackViews.at(i)->get_track()->set_sort_index(i);
-	}
-	
-        if (m_trackViews.size() > 1) {
-                int height = m_trackViews.at(m_trackViews.size()-2)->get_track()->get_height();
-                m_trackViews.at(m_trackViews.size()-1)->get_track()->set_height(height);
-	}
-	
+
+        qSort(m_audioTrackViews.begin(), m_audioTrackViews.end(), smallerTrackView);
+        qSort(m_subGroupViews.begin(), m_subGroupViews.end(), smallerTrackView);
+
 	layout_tracks();
 }
 
 void SheetView::remove_track_view(Track* track)
 {
-        foreach(TrackView* view, m_trackViews) {
+        QList<TrackView*> views;
+        views.append(m_audioTrackViews);
+        views.append(m_subGroupViews);
+
+        foreach(TrackView* view, views) {
                 if (view->get_track() == track) {
                         TrackPanelView* panel = view->get_panel_view();
                         scene()->removeItem(panel);
 			scene()->removeItem(view);
-                        m_trackViews.removeAll(view);
+                        m_audioTrackViews.removeAll(view);
+                        m_subGroupViews.removeAll(view);
 			delete view;
                         delete panel;
 			break;
 		}
-	}
-	
-        for(int i=0; i<m_trackViews.size(); ++i) {
-                m_trackViews.at(i)->get_track()->set_sort_index(i);
 	}
 	
 	layout_tracks();
@@ -329,8 +357,8 @@ void SheetView::hscrollbar_value_changed(int value)
 void SheetView::vzoom(qreal factor)
 {
 	PENTER;
-        for (int i=0; i<m_trackViews.size(); ++i) {
-                TrackView* view = m_trackViews.at(i);
+        for (int i=0; i<m_audioTrackViews.size(); ++i) {
+                TrackView* view = m_audioTrackViews.at(i);
                 Track* track = view->get_track();
                 int height = track->get_height();
 		height = (int) (height * factor);
@@ -355,17 +383,34 @@ void SheetView::hzoom(qreal factor)
 
 void SheetView::layout_tracks()
 {
-        if (m_trackViews.isEmpty() || !m_viewportReady) return;
+        if ((m_audioTrackViews.isEmpty() && m_subGroupViews.isEmpty()) || !m_viewportReady) {
+                return;
+        }
 	
 	int verticalposition = m_trackTopIndent;
-        for (int i=0; i<m_trackViews.size(); ++i) {
-                TrackView* view = m_trackViews.at(i);
+
+        for (int i=0; i<m_audioTrackViews.size(); ++i) {
+                TrackView* view = m_audioTrackViews.at(i);
 		view->calculate_bounding_rect();
 		view->move_to(0, verticalposition);
                 verticalposition += (view->get_track()->get_height() + m_trackSeperatingHeight);
 	}
-	
+
+        for (int i=0; i<m_subGroupViews.size(); ++i) {
+                TrackView* view = m_subGroupViews.at(i);
+                view->calculate_bounding_rect();
+                view->move_to(0, verticalposition);
+                verticalposition += (view->get_track()->get_height() + m_trackSeperatingHeight);
+        }
+
+        m_masterOutView->calculate_bounding_rect();
+        m_masterOutView->move_to(0, verticalposition);
+        verticalposition += (m_masterOutView->get_track()->get_height() + m_trackSeperatingHeight);
+
 	m_sceneHeight = verticalposition;
+
+        m_meanTrackHeight = int(m_sceneHeight / (m_audioTrackViews.size() + m_subGroupViews.size() + 1));
+
 	update_scrollbars();
 }
 
@@ -494,8 +539,8 @@ void SheetView::update_shuttle_factor()
 	
 	int yscale;
 	
-        if (m_trackViews.size()) {
-		yscale = int(mean_track_height() / 10);
+        if (m_audioTrackViews.size()) {
+                yscale = int(m_meanTrackHeight / 10);
 	} else {
 		yscale = int(m_clipsViewPort->viewport()->height() / 10);
 	}
@@ -509,20 +554,6 @@ void SheetView::update_shuttle_factor()
 	if (m_dragShuttle) {
 		m_shuttleYfactor *= 4;
 	}
-}
-
-int SheetView::mean_track_height()
-{
-	int total =0;
-	int mean = 0;
-	
-        foreach(TrackView* view, m_trackViews) {
-		total += view->get_height();
-	}
-	
-        mean = total / m_trackViews.size();
-	
-	return mean;
 }
 
 void SheetView::update_shuttle()
@@ -613,14 +644,14 @@ void SheetView::set_snap_range(int start)
 Command* SheetView::scroll_up( )
 {
 	PENTER3;
-	set_vscrollbar_value(m_clipsViewPort->verticalScrollBar()->value() - int(mean_track_height() * 0.75));
+        set_vscrollbar_value(m_clipsViewPort->verticalScrollBar()->value() - int(m_meanTrackHeight * 0.75));
 	return (Command*) 0;
 }
 
 Command* SheetView::scroll_down( )
 {
 	PENTER3;
-	set_vscrollbar_value(m_clipsViewPort->verticalScrollBar()->value() + int(mean_track_height() * 0.75));
+        set_vscrollbar_value(m_clipsViewPort->verticalScrollBar()->value() + int(m_meanTrackHeight * 0.75));
 	return (Command*) 0;
 }
 
@@ -728,7 +759,6 @@ void SheetView::clipviewport_resize_event()
 	// sense to populate the view with tracks.
 	if (!m_viewportReady) {
 		
-                add_new_track_view(m_sheet->get_master_out());
 		// fill the view with trackviews, add_new_trackview()
 		// doesn't yet layout the new tracks.
                 foreach(Track* track, m_sheet->get_tracks()) {

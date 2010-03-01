@@ -322,6 +322,9 @@ void Sheet::disconnect_from_audiodevice()
         apill_foreach(Track* track, Track, m_audioTracks) {
                 audiodevice().disconnect(track);
         }
+        apill_foreach(Track* track, Track, m_subGroups) {
+                audiodevice().disconnect(track);
+        }
         audiodevice().disconnect(m_masterOut);
 
 	audiodevice().remove_client(m_audiodeviceClient);

@@ -99,12 +99,15 @@ private:
 	ClipsViewPort* 		m_clipsViewPort;
 	TrackPanelViewPort*	m_tpvp;
 	TimeLineViewPort*	m_tlvp;
-        QList<TrackView*>	m_trackViews;
-	WorkCursor*		m_workCursor;
+        QList<TrackView*>	m_audioTrackViews;
+        QList<TrackView*>	m_subGroupViews;
+        TrackView*              m_masterOutView;
+        WorkCursor*		m_workCursor;
 	int			m_shuttleXfactor;
 	int			m_shuttleYfactor;
 	int			m_sceneHeight;
-	bool			m_dragShuttle;
+        int                     m_meanTrackHeight;
+        bool			m_dragShuttle;
 	QTimer			m_shuttletimer;
 	QScrollBar*		m_vScrollBar;
 	QScrollBar*		m_hScrollBar;
@@ -121,7 +124,6 @@ private:
 	void set_hscrollbar_value(int value);
 	void set_vscrollbar_value(int value);
 	
-	int mean_track_height();
 	
 	friend class PlayHead;
 

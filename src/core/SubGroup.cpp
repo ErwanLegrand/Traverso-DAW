@@ -29,7 +29,6 @@ SubGroup::SubGroup(Sheet* sheet, const QString& name, int channelCount)
         : Track(sheet)
 {
         QObject::tr("SubGroup");
-        m_sortIndex = -1;
         m_height = 60;
         m_id = create_id();
         m_name = name;

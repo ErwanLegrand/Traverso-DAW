@@ -45,8 +45,6 @@ public :
         AudioTrack(Sheet* sheet, const QDomNode node);
         ~AudioTrack();
 
-        static const int INITIAL_HEIGHT = 100;
-
         AudioClip* init_recording();
         Command* add_clip(AudioClip* clip, bool historable=true, bool ismove=false);
         Command* remove_clip(AudioClip* clip, bool historable=true, bool ismove=false);

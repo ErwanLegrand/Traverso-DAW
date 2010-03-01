@@ -39,6 +39,8 @@ public:
                 SUBGROUP = 1
         };
 
+        static const int INITIAL_HEIGHT = 60;
+
         void get_state(QDomElement& element, bool istemplate=false);
         int get_height() const {return m_height;}
         int get_sort_index() const;
