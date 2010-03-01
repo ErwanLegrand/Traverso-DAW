@@ -266,7 +266,7 @@ TsarEvent Tsar::create_event( QObject* caller, void* argument, const char* slotS
 *	Usefull when you have a Tsar event, but don't want/need to use tsar
 *	to call the events slot in a thread save way
 *
-*	Note: This function doesn't provide the thread savetiness you get with 
+*	Note: This function doesn't provide the thread safetyness you get with
 *		the add_event() function!
 *
 * @param event The TsarEvent to be processed 
@@ -291,7 +291,7 @@ void Tsar::process_event_slot(const TsarEvent& event )
 *	Usefull when you have a Tsar event, but don't want/need to use tsar
 *	to call the events signal in a thread save way
 *
-*	Note: This function doesn't provide the thread savetiness you get with 
+*	Note: This function doesn't provide the thread safetyness you get with
 *		the add_event() function!
 *
 * @param event The TsarEvent to be processed 
@@ -316,7 +316,7 @@ void Tsar::process_event_signal(const TsarEvent & event )
 *
 *	\sa process_event_slot() \sa process_event_signal()
 *
-*	Note: This function doesn't provide the thread savetiness you get with 
+*	Note: This function doesn't provide the thread safetyness you get with
 *		the add_event() function!
 *
 * @param event The TsarEvent to be processed 
