@@ -22,8 +22,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "NewTrackDialog.h"
 #include <QPushButton>
+#include <QRadioButton>
+#include <QComboBox>
 
-#include <libtraversocore.h>
+#include "AudioDevice.h"
+#include "Information.h"
+#include "Project.h"
+#include "ProjectManager.h"
+#include "Sheet.h"
+#include "SubGroup.h"
+#include "AudioTrack.h"
+
 #include <CommandGroup.h>
 
 NewTrackDialog::NewTrackDialog(QWidget * parent)
@@ -33,12 +42,15 @@ NewTrackDialog::NewTrackDialog(QWidget * parent)
 	
 	set_project(pm().get_project());
 	
-	buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
+        buttonBox->button(QDialogButtonBox::Apply)->setDefault(true);
+        update_buses_comboboxes();
 	
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
+        connect(buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(clicked(QAbstractButton*)));
+        connect(isSubGroup, SIGNAL(toggled(bool)), this, SLOT(update_buses_comboboxes()));
 }
 
-void NewTrackDialog::accept()
+void NewTrackDialog::create_track()
 {
 	if (! m_project) {
 		info().information(tr("I can't create a new Track if there is no Project loaded!!"));
@@ -50,25 +62,44 @@ void NewTrackDialog::accept()
 		return ;
 	}
 	
-	int count = countSpinBox->value();
-	QString title = titleLineEdit->text();
+        QString title = trackName->text();
 	
 	if (title.isEmpty()) {
 		title = "Untitled";
 	}
 	
-	CommandGroup* group = new CommandGroup(sheet, "");
 	
-	for (int i=0; i<count; ++i) {
-		AudioTrack* track = new AudioTrack(sheet, "Unnamed", AudioTrack::INITIAL_HEIGHT);
-		track->set_name(title);
-                group->add_command(sheet->add_track(track));
-	}
+        Track* track;
+
+        if (isSubGroup->isChecked()) {
+                track = new SubGroup(sheet, title, 2);
+        } else {
+                track = new AudioTrack(sheet, "Unnamed", AudioTrack::INITIAL_HEIGHT);
+                track->set_input_bus(inputBuses->currentText());
+        }
+
+        track->set_name(title);
+        track->set_output_bus(outputBuses->currentText());
+
+        Command* command = sheet->add_track(track);
 		
-	group->setText(tr("Added %n Track(s)", "", count));
-	Command::process_command(group);
-	
-	hide();
+        command->setText(tr("Added %1: %2").arg(track->metaObject()->className()).arg(track->get_name()));
+        Command::process_command(command);
+
+}
+
+void NewTrackDialog::clicked(QAbstractButton *button)
+{
+        QDialogButtonBox::ButtonRole role = buttonBox->buttonRole(button);
+
+        if (role == QDialogButtonBox::RejectRole) {
+                hide();
+        }
+
+        if (role == QDialogButtonBox::ApplyRole) {
+                create_track();
+        }
+
 }
 
 void NewTrackDialog::set_project(Project * project)
@@ -76,8 +107,40 @@ void NewTrackDialog::set_project(Project * project)
 	m_project = project;
 }
 
-void NewTrackDialog::reject()
+void NewTrackDialog::update_buses_comboboxes()
 {
-	hide();
+        outputBuses->clear();
+
+        Sheet* sheet = m_project->get_current_sheet();
+
+        if ( ! sheet ) {
+                return ;
+        }
+
+        QStringList busNames;
+
+        if (isSubGroup->isChecked()) {
+                inputBusFrame->setEnabled(false);
+        } else {
+                inputBusFrame->setEnabled(true);
+        }
+
+        busNames.append(sheet->get_master_out()->get_name());
+        busNames.append(audiodevice().get_playback_buses_names());
+
+        foreach(QString busName, busNames) {
+                outputBuses->addItem(busName);
+        }
+
+
+        inputBuses->clear();
+
+        busNames.clear();
+        busNames.append(audiodevice().get_capture_buses_names());
+
+        foreach(QString busName, busNames) {
+                inputBuses->addItem(busName);
+        }
 }
+
 

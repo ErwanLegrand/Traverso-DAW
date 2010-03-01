@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QDialog>
 
 class Project;
+class QAbstractButton;
 
 class NewTrackDialog : public QDialog, protected Ui::NewTrackDialog
 {
@@ -40,11 +41,13 @@ public:
 private:
 	Project* m_project;
 
+        void create_track();
+
 
 private slots:
-	void accept();
-	void reject();
+        void clicked (QAbstractButton * button );
 	void set_project(Project* project);
+        void update_buses_comboboxes();
 
 };
 
