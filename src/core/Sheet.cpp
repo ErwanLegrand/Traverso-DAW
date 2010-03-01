@@ -355,7 +355,7 @@ Command* Sheet::add_track(Track* track, bool historable)
         return new AddRemove(this, track, historable, this,
                 "private_add_track(Track*)", "trackAdded(Track*)",
                 "private_remove_track(Track*)", "trackRemoved(Track*)",
-   		tr("Add Track"));
+                tr("Added %1: %2").arg(track->metaObject()->className()).arg(track->get_name()));
 }
 
 
@@ -364,7 +364,7 @@ Command* Sheet::remove_track(Track* track, bool historable)
         return new AddRemove(this, track, historable, this,
                 "private_remove_track(Track*)", "trackRemoved(Track*)",
                 "private_add_track(Track*)", "trackAdded(Track*)",
-                tr("Remove %1").arg(track->metaObject()->className()));
+                tr("Removed %1: %2").arg(track->metaObject()->className()).arg(track->get_name()));
 }
 
 bool Sheet::any_audio_track_armed()
