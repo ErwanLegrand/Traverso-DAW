@@ -105,7 +105,7 @@ int JackDriver::setup(QList<ChannelConfig> channelConfigs)
 
         printf("Connecting to the Jack server...\n");
 
-        if ( (m_jack_client = jack_client_new (client_name)) == NULL) {
+        if ( (m_jack_client = jack_client_open(client_name, JackNoStartServer, NULL)) == NULL) {
 		device->message(tr("Jack Driver: Couldn't connect to the jack server, is jack running?"), AudioDevice::WARNING);
                 return -1;
         }
