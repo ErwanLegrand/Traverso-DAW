@@ -296,7 +296,11 @@ int AudioTrack::process( nframes_t nframes )
 
         processResult |= m_pluginChain->process_post_fader(m_processBus, nframes);
 
-        send_to_output_buses(nframes);
+        // TODO: is there a situation where we still want to call send_to_output_buses
+        // even if processresult == 0?
+        if (processResult) {
+                send_to_output_buses(nframes);
+        }
 
         return processResult;
 }
