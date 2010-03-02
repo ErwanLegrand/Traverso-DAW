@@ -56,10 +56,15 @@ Tsar& tsar()
 Tsar::Tsar()
 {
 	m_eventCounter = 0;
+
+        int guiThreadEventsBufferSize = 10000;
+        int audioThreadEventsBufferSize = 1000;
 	
-	m_events.append(new RingBufferNPT<TsarEvent>(1000));
-	m_events.append(new RingBufferNPT<TsarEvent>(100));
-	oldEvents = new RingBufferNPT<TsarEvent>(1000);
+	m_events.append(new RingBufferNPT<TsarEvent>(guiThreadEventsBufferSize));
+	oldEvents = new RingBufferNPT<TsarEvent>(guiThreadEventsBufferSize);
+
+	m_events.append(new RingBufferNPT<TsarEvent>(audioThreadEventsBufferSize));
+
 	m_retryCount = 0;
 	
 #if defined (THREAD_CHECK)
