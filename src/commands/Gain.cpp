@@ -227,7 +227,7 @@ int Gain::jog()
 	
 	int diff;
 
-        diff = m_origPos.y() - cpointer().y();
+        diff = m_origPos.y() - cpointer().scene_y();
 
 	if (dbFactor > -1) {
 		of = diff * 0.05;
