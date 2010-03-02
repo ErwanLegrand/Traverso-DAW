@@ -118,7 +118,7 @@ SystemResources::SystemResources(QWidget * parent)
 	
 	update_status();
 	
-	m_updateTimer.start(1200);
+        m_updateTimer.start(700);
 }
 
 void SystemResources::update_status( )
