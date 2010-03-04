@@ -659,3 +659,17 @@ QStringList ProjectManager::get_projects_list()
 
         return projects;
 }
+
+
+QString ProjectManager::get_projects_directory()
+{
+        QString path = config().get_property("Project", "directory", "").toString();
+
+        printf("path is %s\n", path.toAscii().data());
+        if (path.isEmpty() || path.isNull()) {
+                path = QDir::homePath();
+        }
+
+        return path;
+}
+

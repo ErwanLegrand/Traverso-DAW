@@ -143,23 +143,15 @@ void WelcomeWidget::update_previous_project_line_edit()
 
 void WelcomeWidget::update_projects_directory_line_edit()
 {
-        QString path = config().get_property("Project", "directory", "").toString();
+        QString path = pm().get_projects_directory();
         projectsDirLineEdit->setText(path);
 }
 
 void WelcomeWidget::on_changeProjectsDirButton_clicked()
 {
-        QString path = config().get_property("Project", "directory", "").toString();
-
-        if (path.isEmpty()) {
-                path = QDir::homePath();
-        }
-
-        QDir rootDir(path);
-        rootDir.cdUp();
-
+        QString path = pm().get_projects_directory();
         QString newPath = QFileDialog::getExistingDirectory(this,
-                        tr("Choose an existing or create a new Project Directory"), rootDir.canonicalPath());
+                        tr("Choose an existing or create a new Project Directory"), path);
 
         if (newPath.isEmpty() || newPath.isNull()) {
                 return;

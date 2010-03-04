@@ -209,9 +209,20 @@ void NewProjectDialog::update_template_combobox()
 
 void NewProjectDialog::add_files()
 {
+        QString importdir = config().get_property("Project", "importdir", "").toString();
+        if (importdir.isEmpty() || importdir.isNull()) {
+                importdir = QDir::homePath();
+        }
+
 	QStringList list = QFileDialog::getOpenFileNames(this, tr("Open Audio Files"),
-			config().get_property("Project", "directory", "/directory/unknown").toString(),
-			tr("Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)"));
+                        importdir,
+                        tr("Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)"));
+        
+        if (list.size()) {
+                QFileInfo info(list.at(0));
+                QString importdir = info.absoluteDir().path();
+                config().set_property("Project", "importdir", importdir);
+        }
 
 	for(int i = 0; i < list.size(); ++i)
 	{

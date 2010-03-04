@@ -67,7 +67,7 @@ void OpenProjectDialog::update_projects_list()
 {
 	projectListView->clear();
 	
-	QString path = config().get_property("Project", "directory", "none").toString();
+        QString path = pm().get_projects_directory();
 
 	QDir dir(path);
 
@@ -235,7 +235,7 @@ void OpenProjectDialog::on_deleteProjectbutton_clicked( )
 
 void OpenProjectDialog::on_projectDirSelectButton_clicked( )
 {
-	QString path = config().get_property("Project", "directory", "").toString();
+        QString path = pm().get_projects_directory();
 	
 	if (path.isEmpty()) {
 		path = QDir::homePath();
