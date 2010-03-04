@@ -62,7 +62,7 @@ private slots:
 
 signals:
 	void loadFile(QString, int, QString);
-	void number_of_files(int);
+        void numberOfFiles(int);
 };
 
 #endif

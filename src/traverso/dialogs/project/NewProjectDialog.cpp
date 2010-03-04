@@ -267,7 +267,7 @@ void NewProjectDialog::remove_files()
 
 void NewProjectDialog::copy_files()
 {
-	emit number_of_files(treeWidgetFiles->topLevelItemCount());
+        emit numberOfFiles(treeWidgetFiles->topLevelItemCount());
 
 	QList<QFileInfo> list;
 	QStringList trackNameList;

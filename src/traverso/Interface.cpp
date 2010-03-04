@@ -1360,10 +1360,10 @@ Command * Interface::show_newproject_dialog()
 {
 	if (! m_newProjectDialog ) {
 		m_newProjectDialog = new NewProjectDialog(this);
-		AudioFileCopyConvert* m_converter = m_newProjectDialog->get_converter();
-		connect(m_converter, SIGNAL(taskStarted(QString)), m_progressBar, SLOT(set_label(QString)));
-		connect(m_converter, SIGNAL(progress(int)), m_progressBar, SLOT(set_progress(int)));
-		connect(m_newProjectDialog, SIGNAL(number_of_files(int)), m_progressBar, SLOT(set_num_files(int)));
+                AudioFileCopyConvert* converter = m_newProjectDialog->get_converter();
+                connect(converter, SIGNAL(taskStarted(QString)), m_progressBar, SLOT(set_label(QString)));
+                connect(converter, SIGNAL(progress(int)), m_progressBar, SLOT(set_progress(int)));
+                connect(m_newProjectDialog, SIGNAL(numberOfFiles(int)), m_progressBar, SLOT(set_num_files(int)));
 	}
 	m_newProjectDialog->show();
 	return 0;
