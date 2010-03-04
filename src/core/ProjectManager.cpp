@@ -130,7 +130,10 @@ void ProjectManager::set_current_project(Project* project)
 	if (currentProject) {
 		title = currentProject->get_title();
 		config().set_property("Project", "current", title);
-	}
+        } else {
+                // free the audiodevice
+                audiodevice().set_parameters(AudioDeviceSetup());
+        }
 	
 	if ( ! oldprojectname.isEmpty() ) {
 		cleanup_backupfiles_for_project(oldprojectname);
