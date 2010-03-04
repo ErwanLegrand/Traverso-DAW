@@ -130,6 +130,14 @@ int Project::create(int sheetcount, int numtracks)
 	m_id = create_id();
 	m_importDir = QDir::homePath();
 
+        // TODO: by calling prepare_audio_device() with an empty document
+        // all the defaults from the global config are applied to this projects
+        // audio device setup. It means audiodevice gets started/stopped twice
+        // once for creating the project, once for loading the project afterwards.
+        // should be handled more galantly?
+        QDomDocument doc;
+        prepare_audio_device(doc);
+
 	info().information(tr("Created new Project %1").arg(m_title));
 	return 1;
 }
@@ -424,7 +432,7 @@ void Project::prepare_audio_device(QDomDocument doc)
         }
 
 
-        if (ads.driverType.isEmpty()) {
+        if (ads.driverType.isEmpty() || ads.driverType.isNull()) {
 #if defined (Q_WS_X11)
                 ads.driverType = config().get_property("Hardware", "drivertype", "ALSA").toString();
 #else
