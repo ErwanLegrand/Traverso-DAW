@@ -45,7 +45,7 @@ public:
 	void set_gain(float gain) {m_gain = gain;}
 	
 	float get_gain() const {return m_gain;}
-	Curve* get_curve() const;
+        Curve* get_curve();
 	QString get_name();
 	
 private:

@@ -94,8 +94,12 @@ void GainEnvelope::process(AudioBus * bus, unsigned long nframes)
         }
 }
 
-Curve * GainEnvelope::get_curve() const
+Curve * GainEnvelope::get_curve()
 {
+        if (m_controlPorts.size() && !m_controlPorts.at(0)->get_curve()) {
+                // no automation was setup it seems, do it now!
+                automate_port(0, true);
+        }
 	return m_controlPorts.at(0)->get_curve();
 }
 
