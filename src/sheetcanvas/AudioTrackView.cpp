@@ -36,6 +36,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <AudioTrack.h>
 #include <AudioClip.h>
 #include <Utils.h>
+#include "CurveView.h"
+#include "PluginChain.h"
 
 #include <PluginSelectorDialog.h>
 
@@ -59,6 +61,10 @@ AudioTrackView::AudioTrackView(SheetView* sv, AudioTrack * track)
         foreach(AudioClip* clip, m_track->get_cliplist()) {
                 add_new_audioclipview(clip);
         }
+
+//        CurveView* curveView = new CurveView(m_sv, this, m_track->get_plugin_chain()->get_fader()->get_curve());
+//        curveView->calculate_bounding_rect();
+//        curveView->setZValue(200);
 }
 
 void AudioTrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
@@ -116,7 +122,7 @@ void AudioTrackView::load_theme_data()
 	m_bottomborderwidth = themer()->get_property("Track:bottomborderwidth").toInt();
 	
 	m_cliptopmargin = themer()->get_property("Track:cliptopmargin").toInt();
-	m_clipbottommargin = themer()->get_property("Track:clipbottommargin").toInt();
+        m_clipbottommargin = themer()->get_property("Track:clipbottommargin").toInt();
 }
 
 

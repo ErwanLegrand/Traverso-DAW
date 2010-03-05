@@ -54,7 +54,9 @@ PluginChainView::PluginChainView(SheetView* sv, ViewItem* parent, PluginChain* c
 	m_sv = sv;
 	calculate_bounding_rect();
 	
-	
+
+//        add_new_pluginview(chain->get_fader());
+
 	foreach(Plugin* plugin, chain->get_plugin_list()) {
 		add_new_pluginview(plugin);
 	}
@@ -64,7 +66,7 @@ PluginChainView::PluginChainView(SheetView* sv, ViewItem* parent, PluginChain* c
 	connect(m_sv->get_clips_viewport()->horizontalScrollBar(), SIGNAL(valueChanged(int)),
 		this, SLOT(scrollbar_value_changed(int)));
 	connect(m_sv->get_sheet(), SIGNAL(modeChanged()), this, SLOT(set_view_mode()));
-	
+
 	set_view_mode();
 }
 

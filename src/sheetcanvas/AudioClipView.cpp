@@ -120,7 +120,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
         PENTER2;
         Q_UNUSED(widget);
 
-// 	printf("AudioClipView:: %s PAINT :: exposed rect is: x=%f, y=%f,? w=%f, h=%f\n", QS_C(m_clip->get_name()), option->exposedRect.x(), option->exposedRect.y(), option->exposedRect.width(), option->exposedRect.height());
+//        printf("AudioClipView:: %s PAINT :: exposed rect is: x=%f, y=%f,? w=%f, h=%f\n", QS_C(m_clip->get_name()), option->exposedRect.x(), option->exposedRect.y(), option->exposedRect.width(), option->exposedRect.height());
 
         int xstart = qRound(option->exposedRect.x());
         int pixelcount = qRound(option->exposedRect.width());
