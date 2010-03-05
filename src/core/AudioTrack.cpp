@@ -108,10 +108,6 @@ QDomNode AudioTrack::get_state( QDomDocument doc, bool istemplate)
                 node.appendChild(clips);
         }
 
-        QDomNode pluginChainNode = doc.createElement("PluginChain");
-        pluginChainNode.appendChild(m_pluginChain->get_state(doc));
-        node.appendChild(pluginChainNode);
-
         return node;
 }
 
@@ -257,7 +253,7 @@ int AudioTrack::process( nframes_t nframes )
         m_processBus->silence_buffers(nframes);
 
         int result;
-        float gainFactor, panFactor;
+        float panFactor;
 
         m_pluginChain->process_pre_fader(m_processBus, nframes);
 
@@ -278,21 +274,26 @@ int AudioTrack::process( nframes_t nframes )
                 processResult |= result;
         }
 
-        for (int chan=0; chan<m_processBus->get_channel_count(); ++chan) {
-                gainFactor = get_gain();
-
-                if ( (chan == 0) && (m_pan > 0)) {
-                        panFactor = 1 - m_pan;
-                        gainFactor *= panFactor;
-                }
-
-                if ( (chan == 1) && (m_pan < 0)) {
-                        panFactor = 1 + m_pan;
-                        gainFactor *= panFactor;
-                }
-
-                Mixer::apply_gain_to_buffer(m_processBus->get_buffer(chan, nframes), nframes, gainFactor);
+        if ( (m_processBus->get_channel_count() >= 1) && (m_pan > 0) )  {
+                panFactor = 1 - m_pan;
+                Mixer::apply_gain_to_buffer(m_processBus->get_buffer(0, nframes), nframes, panFactor);
         }
+
+        if ( (m_processBus->get_channel_count() >= 2) && (m_pan < 0) )  {
+                panFactor = 1 + m_pan;
+                Mixer::apply_gain_to_buffer(m_processBus->get_buffer(1, nframes), nframes, panFactor);
+        }
+
+
+
+        audio_sample_t* mixdown[m_processBus->get_channel_count()];
+        for(int chan=0; chan<m_processBus->get_channel_count(); chan++) {
+                mixdown[chan] = m_processBus->get_buffer(chan, nframes);
+        }
+
+        TimeRef location = m_sheet->get_transport_location();
+        TimeRef endlocation = location + TimeRef(nframes, audiodevice().get_sample_rate());
+        m_fader->process_gain(mixdown, location, endlocation, nframes, m_processBus->get_channel_count());
 
         processResult |= m_pluginChain->process_post_fader(m_processBus, nframes);
 
