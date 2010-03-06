@@ -23,6 +23,7 @@ Makefile
 *.[oa]
 
 /src/traverso/qrc_traverso.cxx
+qrc_*
 moc_*.cxx
 ui_*.h
 
