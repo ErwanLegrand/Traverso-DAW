@@ -716,36 +716,44 @@ void Sheet::solo_track(Track *track)
         track->set_muted_by_solo(!wasSolo);
         track->set_solo(!wasSolo);
 
-        QList<Track*> tracks= get_tracks();
+        QList<AudioTrack*> tracks= get_audio_tracks();
 
-	bool hasSolo = false;
-        foreach(Track* t, tracks) {
-                t->set_muted_by_solo(!t->is_solo());
-                if (t->is_solo()) hasSolo = true;
-	}
 
-	if (!hasSolo) {
-                foreach(Track* t, tracks) {
-                        t->set_muted_by_solo(false);
-		}
-	}
-
-        if (track->get_type() == Track::SUBGROUP && !(track == m_masterOut)) {
-                QList<AudioTrack*> audiotracks;
-                foreach(AudioTrack* at, get_audio_tracks()) {
-                        if (at->get_bus_out_name() == track->get_name()) {
-                                audiotracks.append(at);
+        // If the Track was a SubGroup, then also (un) solo all the AudioTracks
+        // that have this SubGroup as the output bus.
+        if ((track->get_type() == Track::SUBGROUP) && !(track == m_masterOut)) {
+                QList<AudioTrack*> subgroupAudioTracks;
+                foreach(AudioTrack* sgTrack, tracks) {
+                        if (sgTrack->get_bus_out_name() == track->get_name()) {
+                                subgroupAudioTracks.append(sgTrack);
                         }
                 }
 
                 if (wasSolo) {
-                        foreach(AudioTrack* track, audiotracks) {
-                                track->set_solo(false);
+                        foreach(AudioTrack* sgTrack, subgroupAudioTracks) {
+                                sgTrack->set_solo(false);
+                                sgTrack->set_muted_by_solo(false);
                         }
                 } else {
-                        foreach(AudioTrack* track, audiotracks) {
-                                track->set_solo(true);
+                        foreach(AudioTrack* sgTrack, subgroupAudioTracks) {
+                                sgTrack->set_solo(true);
+                                sgTrack->set_muted_by_solo(true);
                         }
+                }
+        }
+
+        bool hasSolo = false;
+
+        foreach(Track* t, tracks) {
+                t->set_muted_by_solo(!t->is_solo());
+                if (t->is_solo()) {
+                        hasSolo = true;
+                }
+        }
+
+        if (!hasSolo) {
+                foreach(Track* t, tracks) {
+                        t->set_muted_by_solo(false);
                 }
         }
 

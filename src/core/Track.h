@@ -61,7 +61,7 @@ protected:
         int     m_sortIndex;
         int     m_height;
         int     m_type;
-        bool    mutedBySolo;
+        bool    m_mutedBySolo;
         bool    m_isSolo;
 
 

@@ -78,7 +78,7 @@ void AudioTrack::init()
 {
         QObject::tr("Track");
         m_type = AUDIOTRACK;
-        m_isSolo = mutedBySolo = m_isMuted = m_isArmed = false;
+        m_isArmed = false;
         m_fader->set_gain(1.0);
 }
 
@@ -242,7 +242,7 @@ int AudioTrack::process( nframes_t nframes )
 {
         int processResult = 0;
 
-        if ( (m_isMuted || mutedBySolo) && ( ! m_isArmed) ) {
+        if ( (m_isMuted || m_mutedBySolo) && ( ! m_isArmed) ) {
                 return 0;
         }
 
@@ -259,7 +259,7 @@ int AudioTrack::process( nframes_t nframes )
 
         apill_foreach(AudioClip* clip, AudioClip, m_clips) {
                 if (m_isArmed && clip->recording_state() == AudioClip::NO_RECORDING) {
-                        if (m_isMuted || mutedBySolo) {
+                        if (m_isMuted || m_mutedBySolo) {
                                 continue;
                         }
                 }

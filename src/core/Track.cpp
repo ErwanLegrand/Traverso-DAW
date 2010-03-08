@@ -31,6 +31,7 @@ Track::Track(Sheet *sheet)
         : ProcessingData(sheet)
 {
         m_sortIndex = -1;
+        m_isSolo = m_mutedBySolo = m_isMuted = false;
 }
 
 
@@ -45,7 +46,7 @@ void Track::get_state( QDomElement& node, bool istemplate)
         node.setAttribute("pan", m_pan);
         node.setAttribute("mute", m_isMuted);
         node.setAttribute("solo", m_isSolo);
-        node.setAttribute("mutedbysolo", mutedBySolo);
+        node.setAttribute("mutedbysolo", m_mutedBySolo);
         node.setAttribute("height", m_height);
         node.setAttribute("sortindex", m_sortIndex);
         node.setAttribute("OutputBus", m_busOutName);
@@ -98,7 +99,7 @@ bool Track::is_solo()
 
 bool Track::is_muted_by_solo()
 {
-        return mutedBySolo;
+        return m_mutedBySolo;
 }
 
 
@@ -112,7 +113,7 @@ void Track::set_height(int h)
 void Track::set_muted_by_solo(bool muted)
 {
         PENTER;
-        mutedBySolo = muted;
+        m_mutedBySolo = muted;
         emit audibleStateChanged();
 }
 
@@ -120,7 +121,7 @@ void Track::set_solo(bool solo)
 {
         m_isSolo = solo;
         if (solo)
-                mutedBySolo = false;
+                m_mutedBySolo = false;
         emit soloChanged(m_isSolo);
         emit audibleStateChanged();
 }
