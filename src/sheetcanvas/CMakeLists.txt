@@ -34,6 +34,7 @@ TimeLineViewPort.cpp
 TrackPanelView.cpp
 TrackPanelViewPort.cpp
 ViewItem.cpp
+ViewPort.cpp
 dialogs/AudioClipEditDialog.cpp
 )
 
@@ -58,6 +59,7 @@ SheetWidget.h
 TrackPanelView.h
 TimeLineView.h
 LineView.h
+ViewPort.h
 )
 
 SET(TRAVERSO_SONGCANVAS_UI_FILES

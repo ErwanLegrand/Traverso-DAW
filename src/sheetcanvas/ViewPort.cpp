@@ -255,6 +255,11 @@ void ViewPort::reset_cursor( )
 	m_holdCursorActive = false;
 }
 
+void ViewPort::set_cursor(const QString &cursor)
+{
+        viewport()->setCursor(themer()->get_cursor(cursor));
+}
+
 void ViewPort::set_holdcursor( const QString & cursorName )
 {
 	viewport()->setCursor(Qt::BlankCursor);
@@ -282,6 +287,16 @@ void ViewPort::set_current_mode(int mode)
 	m_mode = mode;
 }
 
+void ViewPort::grab_mouse()
+{
+        viewport()->grabMouse();
+}
+
+
+void ViewPort::release_mouse()
+{
+        viewport()->releaseMouse();
+}
 
 
 /**********************************************************************/

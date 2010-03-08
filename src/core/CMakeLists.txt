@@ -44,7 +44,6 @@ ResourcesManager.cpp
 Sheet.cpp
 SubGroup.cpp
 Track.cpp
-ViewPort.cpp
 WriteSource.cpp
 gdither.cpp
 SnapList.cpp
@@ -82,7 +81,6 @@ SubGroup.h
 Themer.h
 TimeLine.h
 Track.h
-ViewPort.h
 WriteSource.h
 ContextItem.h
 InputEngine.h

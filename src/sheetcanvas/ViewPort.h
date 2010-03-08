@@ -25,6 +25,7 @@
 #include <QGraphicsView>
 #include <QGraphicsItem>
 #include "ContextItem.h"
+#include "AbstractViewPort.h"
 
 class ViewItem;
 class ContextItem;
@@ -33,7 +34,7 @@ class AudioTrack;
 class HoldCursor;
 class QGraphicsTextItem;
 
-class ViewPort : public QGraphicsView
+class ViewPort : public QGraphicsView, public AbstractViewPort
 {
         Q_OBJECT
 			
@@ -43,18 +44,26 @@ public :
         ~ViewPort();
 
         // Get functions
-        virtual void get_pointed_context_items(QList<ContextItem* > &list) = 0;
+
 
         // Set functions
 	void set_holdcursor(const QString& cursorName);
 	void set_holdcursor_text(const QString& text);
         void set_holdcursor_pos(QPointF pos);
 	void set_current_mode(int mode);
-        
+        void set_cursor(const QString& cursor);
+
 	void reset_cursor();
-	void set_jogging(bool jog);
 	
 	int get_current_mode() const {return m_mode;}
+
+        void grab_mouse();
+        void release_mouse();
+        inline QPointF map_to_scene(int x, int y) const {
+                return mapToScene(x, y);
+        }
+
+
 
 
 protected:

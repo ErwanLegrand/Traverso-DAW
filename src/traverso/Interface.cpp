@@ -418,7 +418,7 @@ bool Interface::eventFilter(QObject * obj, QEvent * event)
 			// Obviously we don't want to send this event when the InputEngine is still
 			// in holding mode, to avoid jog() being called for the active HoldCommand!
 			QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
-			ViewPort* vp = cpointer().get_viewport();
+                        ViewPort* vp = static_cast<ViewPort*>(cpointer().get_viewport());
 			if (vp && !ie().is_holding()) {
 				vp->mouseMoveEvent(mouseEvent);
 			}

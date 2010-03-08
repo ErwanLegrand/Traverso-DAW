@@ -24,5 +24,4 @@
 #include "TimeLine.h"
 #include "AudioTrack.h"
 #include "Utils.h"
-#include "ViewPort.h"
 #include "WriteSource.h"

@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2006 Remon Sijrier 
+Copyright (C) 2005-2010 Remon Sijrier
 
 This file is part of Traverso
 
@@ -17,15 +17,15 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-$Id: ContextPointer.cpp,v 1.17 2007/12/15 16:50:18 r_sijrier Exp $
 */
 
 #include "ContextPointer.h"
+
+#include <QCursor>
+
 #include "ContextItem.h"
 #include "Config.h"
 #include "InputEngine.h"
-#include "Utils.h"
-#include "Themer.h"
 
 
 // Always put me below _all_ includes, this is needed
@@ -69,7 +69,7 @@ ContextPointer::ContextPointer()
 	m_x = 0;
 	m_y = 0;
 	m_jogEvent = false;
-	currentViewPort = 0;
+        m_port = 0;
 	
 	connect(&m_jogTimer, SIGNAL(timeout()), this, SLOT(update_jog()));
 }
@@ -88,8 +88,8 @@ QList< QObject * > ContextPointer::get_context_items( )
 	PENTER;
 	QList<ContextItem* > pointedViewItems;
 	
-	if (currentViewPort) {
-		currentViewPort->get_pointed_context_items(pointedViewItems);
+        if (m_port) {
+                m_port->get_pointed_context_items(pointedViewItems);
 	}
 
 	QList<QObject* > contextItems;
@@ -105,12 +105,8 @@ QList< QObject * > ContextPointer::get_context_items( )
 		}
 	}
 
-	if (currentViewPort) {
-		contextItems.append(currentViewPort);
-	}
-
-	for (int i=0; i < contextItemsList.size(); ++i) {
-		contextItems.append(contextItemsList.at(i));
+        for (int i=0; i < m_contextItemsList.size(); ++i) {
+                contextItems.append(m_contextItemsList.at(i));
 	}
 
 
@@ -130,14 +126,14 @@ QList< QObject * > ContextPointer::get_context_items( )
  */
 void ContextPointer::add_contextitem( QObject * item )
 {
-	if (! contextItemsList.contains(item))
-		contextItemsList.append(item);
+        if (! m_contextItemsList.contains(item))
+                m_contextItemsList.append(item);
 }
 
 void ContextPointer::remove_contextitem(QObject* item)
 {
-	int index = contextItemsList.indexOf(item);
-	contextItemsList.removeAt(index);
+        int index = m_contextItemsList.indexOf(item);
+        m_contextItemsList.removeAt(index);
 }
 
 /**
@@ -145,8 +141,8 @@ void ContextPointer::remove_contextitem(QObject* item)
  */
 void ContextPointer::jog_start()
 {
-	if (currentViewPort) {
-		currentViewPort->viewport()->grabMouse();
+        if (m_port) {
+                m_port->grab_mouse();
 	}
 	m_jogEvent = true;
 	int interval = config().get_property("CCE", "jogupdateinterval", 33).toInt();
@@ -158,8 +154,8 @@ void ContextPointer::jog_start()
  */
 void ContextPointer::jog_finished()
 {
-	if (currentViewPort) {
-		currentViewPort->viewport()->releaseMouse();
+        if (m_port) {
+                m_port->release_mouse();
 		// This issues a mouse move event, so the cursor
 		// will change to the item that's below it....
 		QCursor::setPos(QCursor::pos()-QPoint(1,1));
@@ -167,18 +163,6 @@ void ContextPointer::jog_finished()
 	m_jogTimer.stop();
 }
 
-/**
- * 	The current pointed ViewPort
- * @return The current pointed ViewPort, 0 if none is pointed
- */
-ViewPort * ContextPointer::get_viewport( )
-{
-	if (currentViewPort) {
-		return currentViewPort;
-	}
-	
-	return 0;
-}
 
 /**
  * 	Used by InputEngine to reset the current ViewPort's HoldCursor<br />
@@ -187,9 +171,9 @@ ViewPort * ContextPointer::get_viewport( )
  */
 void ContextPointer::reset_cursor( )
 {
-	Q_ASSERT(currentViewPort);
+        Q_ASSERT(m_port);
 		
-	currentViewPort->reset_cursor();
+        m_port->reset_cursor();
 }
 
 QList< QObject * > ContextPointer::get_contextmenu_items() const

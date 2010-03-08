@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier 
+    Copyright (C) 2005-2010 Remon Sijrier
  
     This file is part of Traverso
  
@@ -17,7 +17,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
-    $Id: ContextPointer.h,v 1.15 2008/01/21 16:22:13 r_sijrier Exp $
 */
 
 #ifndef CONTEXTPOINTER_H
@@ -26,9 +25,7 @@
 #include <QObject>
 #include <QTimer>
 
-#include "ViewPort.h"
-
-class ContextItem;
+#include "AbstractViewPort.h"
 
 class ContextPointer : public QObject
 {
@@ -64,8 +61,8 @@ public:
 	 * @return The current scene x coordinate, mapped from the ViewPort's mouse x coordinate
 	 */
 	inline int scene_x() const {
-		Q_ASSERT(currentViewPort);
-		return (int) currentViewPort->mapToScene(m_x, m_y).x();
+                Q_ASSERT(m_port);
+                return (int) m_port->map_to_scene(m_x, m_y).x();
 	}
 
 	/**
@@ -75,8 +72,8 @@ public:
 	 * @return The current ViewPort's scene y coordinate, mapped from the ViewPort's mouse y coordinate
 	 */
 	inline int scene_y() const {
-		Q_ASSERT(currentViewPort);
-		return (int) currentViewPort->mapToScene(m_x, m_y).y();
+                Q_ASSERT(m_port);
+                return (int) m_port->map_to_scene(m_x, m_y).y();
 	}
 	
 	/**
@@ -84,8 +81,8 @@ public:
 	 * @return The current's ViewPort's mouse position in the ViewPort's scene position.
 	 */
 	inline QPointF scene_pos() const {
-		Q_ASSERT(currentViewPort);
-		return currentViewPort->mapToScene(m_x, m_y);
+                Q_ASSERT(m_port);
+                return m_port->map_to_scene(m_x, m_y);
 	}
 	
 	
@@ -119,7 +116,7 @@ public:
 	 * @return The scene x coordinate on first input event.
 	 */
 	inline int on_first_input_event_scene_x() const {
-		return (int) currentViewPort->mapToScene(m_onFirstInputEventX, m_onFirstInputEventY).x(); 
+                return (int) m_port->map_to_scene(m_onFirstInputEventX, m_onFirstInputEventY).x();
 	}
 	
 	/**
@@ -127,7 +124,7 @@ public:
 	 * @return The scene y coordinate on first input event.
 	 */
 	inline int on_first_input_event_scene_y() const {
-		return (int) currentViewPort->mapToScene(m_onFirstInputEventX, m_onFirstInputEventY).y(); 
+                return (int) m_port->map_to_scene(m_onFirstInputEventX, m_onFirstInputEventY).y();
 	}
 	
 	/**
@@ -140,8 +137,8 @@ public:
 	}
 	
 	inline int get_current_mode() const {
-		if (currentViewPort) {
-			return currentViewPort->get_current_mode();
+                if (m_port) {
+                        return m_port->get_current_mode();
 		}
 		return -1;
 	}
@@ -150,11 +147,17 @@ public:
         void jog_finished();
 	void reset_cursor();
  
-        ViewPort* get_viewport();
-
-        void set_current_viewport(ViewPort* vp) {
-                currentViewPort = vp;
+        inline AbstractViewPort* get_viewport() const {
+                if (m_port) {
+                        return m_port;
+                }
+                return 0;
         }
+
+        void set_current_viewport(AbstractViewPort* vp) {
+                m_port = vp;
+        }
+
         QList<QObject* > get_context_items();
 
         void add_contextitem(QObject* item);
@@ -182,8 +185,8 @@ private:
 	int m_onFirstInputEventX;
 	int m_onFirstInputEventY;
 	
-	ViewPort* currentViewPort;
-	QList<QObject* > contextItemsList;
+        AbstractViewPort* m_port;
+        QList<QObject* > m_contextItemsList;
 	QList<QObject* > m_contextMenuItems;
 	
 	
@@ -191,10 +194,11 @@ private slots:
 	void update_jog();
 };
 
-#endif
-
 // use this function to access the context pointer
 ContextPointer& cpointer();
+
+#endif
+
 
 //eof
 

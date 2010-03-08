@@ -22,7 +22,7 @@ $Id: Command.cpp,v 1.21 2008/02/12 20:39:08 r_sijrier Exp $
 
 #include "Command.h"
 #include "ContextPointer.h"
-#include <ViewPort.h>
+#include <AbstractViewPort.h>
 #include <Utils.h>
 #include <Themer.h>
 #include "ContextItem.h"
@@ -271,16 +271,16 @@ void Command::set_collected_number(const QString & collected)
  */
 void Command::set_cursor_shape( int useX, int useY )
 {
-	ViewPort* view = cpointer().get_viewport();
+        AbstractViewPort* port = cpointer().get_viewport();
 	
 	if (useX && useY) {
-		 view->viewport()->setCursor(themer()->get_cursor("LRUD"));
+                 port->set_cursor("LRUD");
 	} else if (useX) {
-		view->viewport()->setCursor(themer()->get_cursor("LR"));
+                port->set_cursor("LR");
 	} else if (useY) {
-		view->viewport()->setCursor(themer()->get_cursor("UD"));
+                port->set_cursor("UD");
 	} else{
-		view->reset_cursor();
+                port->reset_cursor();
 	}
 	
 }
