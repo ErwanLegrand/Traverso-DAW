@@ -619,22 +619,45 @@ Command* TrackPanelBus::select_bus()
         QStringList busNames;
         Sheet* sheet = m_track->get_sheet();
         SubGroup* masterOut = sheet->get_master_out();
+        QAction* action;
+
+        if (m_track->get_type() != Track::SUBGROUP) {
+                action = menu.addAction(tr("Sub Groups"));
+                action->setEnabled(false);
+                menu.addSeparator();
+        }
+
+
+
+        if (!(m_track == masterOut)) {
+                menu.addAction(masterOut->get_name());
+        }
+
+        QList<SubGroup*> subgroups = sheet->get_subgroups();
+        if (!m_track->get_type() == Track::SUBGROUP && subgroups.size()) {
+                foreach(SubGroup* sub, subgroups) {
+                        menu.addAction(sub->get_name());
+                }
+        }
+
+        action = menu.addAction(tr("Hardware Buses"));
+        action->setEnabled(false);
+
+        menu.addSeparator();
+
         if (m_type == BUSIN) {
                 busNames = audiodevice().get_capture_buses_names();
         } else {
-                if (!(m_track == masterOut)) {
-                        busNames.append(masterOut->get_name());
-                }
-                busNames.append(audiodevice().get_playback_buses_names());
-        }
 
-        foreach(QString busName, busNames) {
-                menu.addAction(busName);
+                foreach(QString busName, audiodevice().get_playback_buses_names()) {
+                        menu.addAction(busName);
+                }
+
         }
 
         menu.addAction(tr("More..."));
 
-        QAction* action = menu.exec(QCursor::pos());
+        action = menu.exec(QCursor::pos());
 
         if (action) {
                 if (action->text() == tr("More...")) {

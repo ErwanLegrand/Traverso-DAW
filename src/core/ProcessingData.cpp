@@ -97,6 +97,12 @@ void ProcessingData::set_output_bus(const QString &name)
 
         } else {
                 outBus = audiodevice().get_playback_bus(m_busOutName);
+                if (!outBus && m_sheet) {
+                        SubGroup* group = m_sheet->get_subgroup(m_busOutName);
+                        if (group) {
+                                outBus = group->get_process_bus();
+                        }
+                }
         }
 
         set_output_bus(outBus);

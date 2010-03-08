@@ -716,28 +716,53 @@ void Sheet::solo_track(Track *track)
         track->set_muted_by_solo(!wasSolo);
         track->set_solo(!wasSolo);
 
+        QList<Track*> tracks= get_tracks();
+
 	bool hasSolo = false;
-        apill_foreach(Track* data, Track, m_audioTracks) {
-                data->set_muted_by_solo(!data->is_solo());
-                if (data->is_solo()) hasSolo = true;
+        foreach(Track* t, tracks) {
+                t->set_muted_by_solo(!t->is_solo());
+                if (t->is_solo()) hasSolo = true;
 	}
 
 	if (!hasSolo) {
-                apill_foreach(Track* data, Track, m_audioTracks) {
-                        data->set_muted_by_solo(false);
+                foreach(Track* t, tracks) {
+                        t->set_muted_by_solo(false);
 		}
 	}
+
+        if (track->get_type() == Track::SUBGROUP && !(track == m_masterOut)) {
+                QList<AudioTrack*> audiotracks;
+                foreach(AudioTrack* at, get_audio_tracks()) {
+                        if (at->get_bus_out_name() == track->get_name()) {
+                                audiotracks.append(at);
+                        }
+                }
+
+                if (wasSolo) {
+                        foreach(AudioTrack* track, audiotracks) {
+                                track->set_solo(false);
+                        }
+                } else {
+                        foreach(AudioTrack* track, audiotracks) {
+                                track->set_solo(true);
+                        }
+                }
+        }
+
 }
 
 Command* Sheet::toggle_solo()
 {
 	bool hasSolo = false;
-        apill_foreach(AudioTrack* track, AudioTrack, m_audioTracks) {
+
+        QList<Track*> tracks= get_tracks();
+
+        foreach(Track* track, tracks) {
 		if (track->is_solo()) hasSolo = true;
 	}
 
-        apill_foreach(AudioTrack* track, AudioTrack, m_audioTracks) {
-		track->set_solo(!hasSolo);
+        foreach(Track* track, tracks) {
+                track->set_solo(!hasSolo);
 		track->set_muted_by_solo(false);
 	}
 
@@ -830,6 +855,10 @@ int Sheet::process( nframes_t nframes )
 
 	// zero the m_masterOut buffers
         m_masterOut->get_process_bus()->silence_buffers(nframes);
+        apill_foreach(SubGroup* group, SubGroup, m_subGroups) {
+                group->get_process_bus()->silence_buffers(nframes);
+        }
+
 
 	int processResult = 0;
 
@@ -838,6 +867,10 @@ int Sheet::process( nframes_t nframes )
         apill_foreach(AudioTrack* track, AudioTrack, m_audioTracks) {
 		processResult |= track->process(nframes);
 	}
+
+        apill_foreach(SubGroup* group, SubGroup, m_subGroups) {
+                group->process(nframes);
+        }
 
 	// update the transport location
 	m_transportLocation.add_frames(nframes, audiodevice().get_sample_rate());
@@ -856,7 +889,10 @@ int Sheet::process_export( nframes_t nframes )
 {
 	// Get the masterout buffers, and fill with zero's
         m_masterOut->get_process_bus()->silence_buffers(nframes);
-	memset (mixdown, 0, sizeof (audio_sample_t) * nframes);
+        apill_foreach(SubGroup* group, SubGroup, m_subGroups) {
+                group->get_process_bus()->silence_buffers(nframes);
+        }
+        memset (mixdown, 0, sizeof (audio_sample_t) * nframes);
 
 	// Process all Tracks.
         apill_foreach(AudioTrack* track, AudioTrack, m_audioTracks) {
@@ -1328,6 +1364,26 @@ QList< AudioTrack * > Sheet::get_audio_tracks() const
 		list.append(track);
 	}
 	return list;	
+}
+
+QList<SubGroup*> Sheet::get_subgroups() const
+{
+        QList<SubGroup*> list;
+        apill_foreach(SubGroup* group, SubGroup, m_subGroups) {
+                list.append(group);
+        }
+
+        return list;
+}
+
+SubGroup* Sheet::get_subgroup(const QString &name)
+{
+        apill_foreach(SubGroup* group, SubGroup, m_subGroups) {
+                if (group->get_name() == name) {
+                        return group;
+                }
+        }
+        return 0;
 }
 
 QList<Track*> Sheet::get_tracks() const

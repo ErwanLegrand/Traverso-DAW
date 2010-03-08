@@ -96,6 +96,7 @@ public:
         QString get_name() const {return m_name;}
 	QDomNode get_state(QDomDocument doc, bool istemplate=false);
         QList<AudioTrack*> get_audio_tracks() const;
+        QList<SubGroup*> get_subgroups() const;
         QList<Track*> get_tracks() const;
 	
 	DiskIO*	get_diskio() const;
@@ -108,6 +109,7 @@ public:
         Snappable* get_work_snap() {return m_workSnap;}
         Track* get_track(qint64 id);
         AudioTrack* get_audio_track_for_index(int index);
+        SubGroup* get_subgroup(const QString& name);
 
 	// Set functions
 	void set_artists(const QString& pArtistis);

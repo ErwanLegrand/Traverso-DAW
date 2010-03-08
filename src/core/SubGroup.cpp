@@ -98,6 +98,8 @@ int SubGroup::process(nframes_t nframes)
 
         send_to_output_buses(nframes);
 
+        m_processBus->silence_buffers(nframes);
+
         return 1;
 }
 
