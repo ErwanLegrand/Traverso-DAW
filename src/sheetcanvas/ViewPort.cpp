@@ -255,7 +255,7 @@ void ViewPort::reset_cursor( )
 	m_holdCursorActive = false;
 }
 
-void ViewPort::set_cursor(const QString &cursor)
+void ViewPort::set_cursor_shape(const QString &cursor)
 {
         viewport()->setCursor(themer()->get_cursor(cursor));
 }
@@ -296,6 +296,9 @@ void ViewPort::grab_mouse()
 void ViewPort::release_mouse()
 {
         viewport()->releaseMouse();
+        // This issues a mouse move event, so the cursor
+        // will change to the item that's below it....
+        QCursor::setPos(QCursor::pos()-QPoint(1,1));
 }
 
 

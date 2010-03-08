@@ -274,11 +274,11 @@ void Command::set_cursor_shape( int useX, int useY )
         AbstractViewPort* port = cpointer().get_viewport();
 	
 	if (useX && useY) {
-                 port->set_cursor("LRUD");
+                 port->set_cursor_shape("LRUD");
 	} else if (useX) {
-                port->set_cursor("LR");
+                port->set_cursor_shape("LR");
 	} else if (useY) {
-                port->set_cursor("UD");
+                port->set_cursor_shape("UD");
 	} else{
                 port->reset_cursor();
 	}

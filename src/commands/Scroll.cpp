@@ -51,9 +51,9 @@ int Scroll::begin_hold()
 	m_sv->start_shuttle(true);
 	m_sv->set_shuttle_factor_values(m_dx, m_dy);
 	if (m_dx) {
-                cpointer().get_viewport()->set_cursor("LR");
+                cpointer().get_viewport()->set_cursor_shape("LR");
 	} else {
-                cpointer().get_viewport()->set_cursor("UD");
+                cpointer().get_viewport()->set_cursor_shape("UD");
 	}
 	
 	return 1;

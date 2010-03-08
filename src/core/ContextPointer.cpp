@@ -21,8 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "ContextPointer.h"
 
-#include <QCursor>
-
 #include "ContextItem.h"
 #include "Config.h"
 #include "InputEngine.h"
@@ -156,9 +154,6 @@ void ContextPointer::jog_finished()
 {
         if (m_port) {
                 m_port->release_mouse();
-		// This issues a mouse move event, so the cursor
-		// will change to the item that's below it....
-		QCursor::setPos(QCursor::pos()-QPoint(1,1));
 	}
 	m_jogTimer.stop();
 }
