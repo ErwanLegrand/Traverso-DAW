@@ -621,22 +621,24 @@ Command* TrackPanelBus::select_bus()
         SubGroup* masterOut = sheet->get_master_out();
         QAction* action;
 
-        if (m_track->get_type() != Track::SUBGROUP) {
-                action = menu.addAction(tr("Sub Groups"));
-                action->setEnabled(false);
-                menu.addSeparator();
-        }
+        if (m_type == BUSOUT) {
+                if (m_track->get_type() != Track::SUBGROUP) {
+                        action = menu.addAction(tr("Sub Groups"));
+                        action->setEnabled(false);
+                        menu.addSeparator();
+                }
 
 
 
-        if (!(m_track == masterOut)) {
-                menu.addAction(masterOut->get_name());
-        }
+                if (!(m_track == masterOut)) {
+                        menu.addAction(masterOut->get_name());
+                }
 
-        QList<SubGroup*> subgroups = sheet->get_subgroups();
-        if (!m_track->get_type() == Track::SUBGROUP && subgroups.size()) {
-                foreach(SubGroup* sub, subgroups) {
-                        menu.addAction(sub->get_name());
+                QList<SubGroup*> subgroups = sheet->get_subgroups();
+                if (!m_track->get_type() == Track::SUBGROUP && subgroups.size()) {
+                        foreach(SubGroup* sub, subgroups) {
+                                menu.addAction(sub->get_name());
+                        }
                 }
         }
 
@@ -646,7 +648,9 @@ Command* TrackPanelBus::select_bus()
         menu.addSeparator();
 
         if (m_type == BUSIN) {
-                busNames = audiodevice().get_capture_buses_names();
+                foreach(QString busName, audiodevice().get_capture_buses_names()) {
+                        menu.addAction(busName);
+                }
         } else {
 
                 foreach(QString busName, audiodevice().get_playback_buses_names()) {
