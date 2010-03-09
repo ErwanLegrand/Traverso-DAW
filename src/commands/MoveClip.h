@@ -64,7 +64,8 @@ public :
         int undo_action();
 	void cancel_action();
         int jog();
-	
+        void set_collected_number(const QString & collected);
+
 	void set_cursor_shape(int useX, int useY);
 	
 private :

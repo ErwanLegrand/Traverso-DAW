@@ -466,3 +466,12 @@ void MoveClip::do_move()
 		cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(m_trackStartLocation + m_posDiff, d->sv->timeref_scalefactor));
 	}
 }
+
+
+void MoveClip::set_collected_number(const QString & collected)
+{
+        qlonglong input = collected.toLongLong();
+        TimeRef pos(input);
+        m_group.move_to(m_newTrackIndex, pos);
+        cpointer().get_viewport()->set_holdcursor_text(QString("Sample: %1").arg(QString::number(input)));
+}
