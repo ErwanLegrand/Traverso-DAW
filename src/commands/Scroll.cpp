@@ -48,7 +48,7 @@ int Scroll::prepare_actions()
 
 int Scroll::begin_hold()
 {
-	m_sv->start_shuttle(true);
+        m_sv->start_shuttle(true, true);
 	m_sv->set_shuttle_factor_values(m_dx, m_dy);
 	if (m_dx) {
                 cpointer().get_viewport()->set_cursor_shape("LR");
