@@ -470,8 +470,7 @@ void MoveClip::do_move()
 
 void MoveClip::set_collected_number(const QString & collected)
 {
-        qlonglong input = collected.toLongLong();
-        TimeRef pos(input);
-        m_group.move_to(m_newTrackIndex, pos);
-        cpointer().get_viewport()->set_holdcursor_text(QString("Sample: %1").arg(QString::number(input)));
+        m_posDiff = TimeRef(collected.toLongLong());
+        m_group.move_to(m_newTrackIndex, m_posDiff);
+        cpointer().get_viewport()->set_holdcursor_text(QString("Sample: %1").arg(QString::number(m_posDiff.universal_frame())));
 }
