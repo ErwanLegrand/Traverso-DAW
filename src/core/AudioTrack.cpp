@@ -50,6 +50,7 @@ AudioTrack::AudioTrack(Sheet* sheet, const QString& name, int height )
         : Track(sheet)
 {
         PENTERCONS;
+        m_id = create_id();
         m_name = name;
         m_height = height;
         m_pan = m_numtakes = 0;
