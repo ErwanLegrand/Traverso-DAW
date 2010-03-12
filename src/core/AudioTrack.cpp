@@ -30,16 +30,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <AudioBus.h>
 #include <AudioDevice.h>
 #include "PluginChain.h"
-#include "Plugin.h"
-#include "InputEngine.h"
 #include "Information.h"
 #include "ProjectManager.h"
 #include "ResourcesManager.h"
-#include "Project.h"
-#include "SubGroup.h"
 #include "Utils.h"
 #include <limits.h>
-#include <commands.h>
+#include "AddRemove.h"
+#include "PCommand.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
