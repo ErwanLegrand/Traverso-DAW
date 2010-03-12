@@ -487,6 +487,7 @@ void Interface::create_menus( )
         QList<QKeySequence> list;
 
         QMenu* menu = menuBar()->addMenu(tr("&File"));
+        menu->installEventFilter(this);
 
         action = menu->addAction(tr("&New..."));
         action->setIcon(find_pixmap(":/new"));
@@ -571,6 +572,7 @@ void Interface::create_menus( )
 
 
         menu = menuBar()->addMenu(tr("&Edit"));
+        menu->installEventFilter(this);
 
 	action = menu->addAction(tr("Undo"));
         m_projectMenuToolbarActions.append(action);
@@ -629,6 +631,7 @@ void Interface::create_menus( )
 	connect(m_effectAction, SIGNAL(triggered(bool)), this, SLOT(effect_state_changed(bool)));
 
 	menu = menuBar()->addMenu(tr("&View"));
+        menu->installEventFilter(this);
 
 	menu->addAction(historyDW->toggleViewAction());
 	menu->addAction(busMonitorDW->toggleViewAction());
@@ -669,6 +672,7 @@ void Interface::create_menus( )
 
 
         m_sheetMenu = menuBar()->addMenu(tr("&Sheet"));
+        m_sheetMenu->installEventFilter(this);
 
         action = m_sheetMenu->addAction(tr("New &Sheet(s)..."));
         m_projectMenuToolbarActions.append(action);
@@ -682,6 +686,7 @@ void Interface::create_menus( )
 	menu->addSeparator();
 	
 	menu = menuBar()->addMenu(tr("Se&ttings"));
+        menu->installEventFilter(this);
 	
         m_encodingMenu = menu->addMenu(tr("&Recording File Format"));
 	
@@ -719,6 +724,8 @@ void Interface::create_menus( )
 	
 	
 	menu = menuBar()->addMenu(tr("&Help"));
+        menu->installEventFilter(this);
+
 	action = menu->addAction(tr("&Getting Started"));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(quick_start()));
 	
