@@ -395,6 +395,9 @@ float LV2ControlPort::get_min_control_value()
 	SLV2Value minval;
 	slv2_port_get_range(m_lv2plugin->get_slv2_plugin(), port, NULL, &minval, NULL);
 	float val = slv2_value_as_float(minval);
+        if (minval == NULL) {
+                return -1.0e6;
+        }
 	slv2_value_free(minval);
 	return val;
 }
@@ -404,6 +407,9 @@ float LV2ControlPort::get_max_control_value()
 	SLV2Port port = slv2_plugin_get_port_by_index(m_lv2plugin->get_slv2_plugin(), m_index);
 	SLV2Value maxval;
 	slv2_port_get_range(m_lv2plugin->get_slv2_plugin(), port, NULL, NULL, &maxval);
+        if (maxval == NULL) {
+                return 1.0e6;
+        }
 	float val = slv2_value_as_float(maxval);
 	slv2_value_free(maxval);
 	return val;
@@ -414,6 +420,9 @@ float LV2ControlPort::get_default_value()
 	SLV2Port port = slv2_plugin_get_port_by_index(m_lv2plugin->get_slv2_plugin(), m_index);
 	SLV2Value defval;
 	slv2_port_get_range(m_lv2plugin->get_slv2_plugin(), port, &defval, NULL, NULL);
+        if (defval == NULL) {
+                return this->get_min_control_value();
+        }
 	float val = slv2_value_as_float(defval);
 	slv2_value_free(defval);
 	return val;
