@@ -37,6 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QActionGroup>
+#include <QTabBar>
 
 #include "Interface.h"
 #include "ProjectManager.h"
@@ -122,7 +123,7 @@ Interface::Interface()
 	//         setMaximumHeight(768);
 
 	// CenterAreaWidget
-        m_centerAreaWidget = new QTabWidget(this);
+        m_centerAreaWidget = new TTabWidget(this);
         setCentralWidget(m_centerAreaWidget);
 
         connect(m_centerAreaWidget, SIGNAL(currentChanged(int)), this, SLOT(sheet_widget_tab_index_changed(int)));
@@ -341,6 +342,9 @@ void Interface::show_sheet(Sheet* sheet)
 	if (!sheetWidget) {
                 sheetWidget = new SheetWidget(sheet, m_centerAreaWidget);
                 connect(sheet, SIGNAL(propertyChanged()), this, SLOT(sheet_selector_update_sheets()));
+                connect(sheet, SIGNAL(transportStarted()), this, SLOT(sheet_state_changed()));
+                connect(sheet, SIGNAL(transportStopped()), this, SLOT(sheet_state_changed()));
+                connect(sheet, SIGNAL(recordingStateChanged()), this, SLOT(sheet_state_changed()));
                 sheet_selector_update_sheets();
                 m_centerAreaWidget->addTab(sheetWidget, "");
 		m_sheetWidgets.insert(sheet, sheetWidget);
@@ -1771,4 +1775,25 @@ void Interface::sheet_widget_tab_index_changed(int index)
         if (index) {
                 m_previousCenterAreaWidgetIndex = index;
         }
+}
+
+void Interface::sheet_state_changed()
+{
+        QTabBar* bar = m_centerAreaWidget->get_tab_bar();
+        for (int i=1; i<m_centerAreaWidget->count(); i++) {
+                SheetWidget* widget = qobject_cast<SheetWidget*>(m_centerAreaWidget->widget(i));
+                if (widget) {
+                        Sheet* sheet = widget->get_sheet();
+                        if (sheet) {
+                                if (sheet->is_transport_rolling() && sheet->is_recording()) {
+                                        bar->setTabTextColor(i, QColor(Qt::red));
+                                } else if (sheet->is_transport_rolling()) {
+                                                bar->setTabTextColor(i, QColor(Qt::blue));
+                                } else if (!sheet->is_transport_rolling()) {
+                                        bar->setTabTextColor(i, QColor(Qt::black));
+                                }
+                        }
+                }
+        }
+
 }

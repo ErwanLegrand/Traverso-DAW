@@ -70,6 +70,14 @@ class ProgressToolBar;
 class WelcomeWidget;
 struct MenuData;
 
+class TTabWidget : public QTabWidget
+{
+public:
+        TTabWidget(QWidget* parent) : QTabWidget(parent) {};
+
+        QTabBar* get_tab_bar() {return tabBar();}
+};
+
 class Interface : public QMainWindow
 {
 	Q_OBJECT
@@ -105,7 +113,7 @@ protected:
 	bool eventFilter(QObject *obj, QEvent *ev);
 
 private:
-        QTabWidget* 	m_centerAreaWidget;
+        TTabWidget*             m_centerAreaWidget;
         int                     m_previousCenterAreaWidgetIndex;
 	QHash<Sheet*, SheetWidget* > m_sheetWidgets;
         SheetWidget*		m_currentSheetWidget;
@@ -222,6 +230,7 @@ private slots:
 	void sheet_selector_sheet_added(Sheet*);
 	void sheet_selector_sheet_removed(Sheet*);
         void sheet_widget_tab_index_changed(int index);
+        void sheet_state_changed();
 };
 
 
