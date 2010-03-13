@@ -124,6 +124,8 @@ Interface::Interface()
 	// CenterAreaWidget
         m_centerAreaWidget = new QTabWidget(this);
         setCentralWidget(m_centerAreaWidget);
+
+        connect(m_centerAreaWidget, SIGNAL(currentChanged(int)), this, SLOT(sheet_widget_tab_index_changed(int)));
 	
 	// HistoryView 
 	historyDW = new QDockWidget(tr("History"), this);
@@ -1762,4 +1764,11 @@ Command* Interface::show_current_sheet()
 {
         m_centerAreaWidget->setCurrentIndex(m_previousCenterAreaWidgetIndex);
         return 0;
+}
+
+void Interface::sheet_widget_tab_index_changed(int index)
+{
+        if (index) {
+                m_previousCenterAreaWidgetIndex = index;
+        }
 }
