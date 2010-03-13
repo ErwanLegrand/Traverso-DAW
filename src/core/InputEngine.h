@@ -132,6 +132,7 @@ public:
         void catch_scroll(QWheelEvent * e );
 
         int collected_number();
+        QString get_collected_number() const {return sCollectedNumber;}
 
 	bool is_jogging();
 	bool is_holding();
@@ -206,7 +207,7 @@ private:
         int 			fact1Type;
         int 			wholeMapIndex;
         int 			wholeActionType;
-        int 			collectedNumber;
+        int 			m_collectedNumber;
         int 			stackIndex;
         int 			eventType[STACK_SIZE];
         int 			eventStack[STACK_SIZE];
@@ -240,6 +241,7 @@ private:
         int broadcast_action(IEAction* action, bool autorepeat=false, bool fromContextMenu=false);
 
         void set_jogging(bool jog);
+        void set_numerical_input(const QString& number);
 	void reset();
 	void process_press_event(int eventcode, bool isAutoRepeat=false);
         void process_release_event(int eventcode);
@@ -254,6 +256,9 @@ private:
 
         // allow this function to create one instance
         friend InputEngine& ie();
+
+signals:
+        void collectedNumberChanged();
 };
 
 // use this function to get the InputEngine object
