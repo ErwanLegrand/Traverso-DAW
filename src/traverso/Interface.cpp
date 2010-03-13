@@ -204,6 +204,7 @@ Interface::Interface()
         m_welcomeWidget = new WelcomeWidget(this);
         m_welcomeWidget->show();
         m_centerAreaWidget->addTab(m_welcomeWidget, tr("&Welcome"));
+        m_welcomeWidget->setFocus(Qt::MouseFocusReason);
 
 	// Some default values.
         m_project = 0;
@@ -281,6 +282,7 @@ void Interface::set_project(Project* project)
                 set_project_actions_enabled(true);
 
 	} else {
+                m_welcomeWidget->setFocus(Qt::MouseFocusReason);
 		setWindowTitle("Traverso");
                 set_project_actions_enabled(false);
                 sheet_selector_update_sheets();
