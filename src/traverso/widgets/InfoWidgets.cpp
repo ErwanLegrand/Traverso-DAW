@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Config.h"
 #include "DiskIO.h"
 #include "Interface.h"
+#include "InputEngine.h"
 #include "MessageWidget.h" 
 #include "Project.h"
 #include "ProjectManager.h"
@@ -38,6 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QByteArray>
 #include <QPalette>
 #include <QPushButton>
+#include <QLabel>
 #include <QHBoxLayout>
 #include <QAction>
 
@@ -79,6 +81,10 @@ SystemResources::SystemResources(QWidget * parent)
 	m_icon->setFlat(true);
 	m_icon->setMaximumWidth(20);
 	m_icon->setFocusPolicy(Qt::NoFocus);
+
+        m_collectedNumber = new QLabel(this);
+        m_collectedNumber->setFocusPolicy(Qt::NoFocus);
+        collected_number_changed();
 	
 	m_writeBufferStatus->set_range(0, 100);
 	m_writeBufferStatus->add_range_color(0, 40, QColor(255, 0, 0));
@@ -109,6 +115,7 @@ SystemResources::SystemResources(QWidget * parent)
 	lay->addWidget(m_icon);
 	lay->addWidget(m_writeBufferStatus);
 	lay->addWidget(m_cpuUsage);
+        lay->addWidget(m_collectedNumber);
 	lay->setMargin(0);
 	lay->addSpacing(6);
 	setLayout(lay);
@@ -119,6 +126,8 @@ SystemResources::SystemResources(QWidget * parent)
 	update_status();
 	
         m_updateTimer.start(700);
+
+        connect(&ie(), SIGNAL(collectedNumberChanged()), this, SLOT(collected_number_changed()));
 }
 
 void SystemResources::update_status( )
@@ -145,6 +154,14 @@ void SystemResources::update_status( )
 QSize SystemResources::sizeHint() const
 {
 	return QSize(250, SONG_TOOLBAR_HEIGHT);
+}
+
+void SystemResources::collected_number_changed()
+{
+        QString number = ie().get_collected_number();
+        if (!number.isEmpty() || !number.isNull()) {
+                m_collectedNumber->setText(tr("Num. Input: ") + number);
+        }
 }
 
 

@@ -172,8 +172,8 @@ InputEngine::InputEngine()
 	clearTime = 2000;
 	assumeHoldTime = 200; // it will wait a release for 200 ms. Otherwise it will assume a hold
 	doubleFactWaitTime = 200;
-	collectedNumber = -1;
-	sCollectedNumber = "-1";
+        m_collectedNumber = -1;
+        sCollectedNumber = "";
 	activate();
 	
 //#define profile
@@ -614,6 +614,8 @@ void InputEngine::reset()
 		eventStack[i] = 0;
 		eventTime[i] = 0;
 	}
+
+        set_numerical_input("");
 }
 
 void InputEngine::mouse_left_viewport_unexpectedly()
@@ -1642,32 +1644,22 @@ bool InputEngine::check_number_collection(int eventcode)
 {
 	if (((eventcode >= Qt::Key_0) && (eventcode <= Qt::Key_9)) || 
 	     (eventcode == Qt::Key_Comma) || (eventcode == Qt::Key_Period)) {
-		sCollectedNumber.append( QChar(eventcode) ); // it had a ",1" complement after fact1_k1... why?
+                // it had a ",1" complement after fact1_k1... why?
+                set_numerical_input(sCollectedNumber + QChar(eventcode));
 		PMESG("Collected %s so far...", QS_C(sCollectedNumber) ) ;
-		QString sn = "NUMBER " + sCollectedNumber;
-		collectedNumber = sCollectedNumber.toInt();
-		if (holdingCommand) {
-			holdingCommand->set_collected_number(sCollectedNumber);
-		}
 		return true;
 	}
 	if (eventcode == Qt::Key_Backspace) {
 		if (sCollectedNumber.size() > 0) {
-			sCollectedNumber = sCollectedNumber.left(sCollectedNumber.size() - 1);
-			if (holdingCommand) {
-				holdingCommand->set_collected_number(sCollectedNumber);
-			}
+                        set_numerical_input(sCollectedNumber.left(sCollectedNumber.size() - 1));
 		}
 		return true;
 	}
 	if (eventcode == Qt::Key_Minus) {
 		if (sCollectedNumber.contains("-")) {
-			sCollectedNumber = sCollectedNumber.remove("-");
+                        set_numerical_input(sCollectedNumber.remove("-"));
 		} else {
-			sCollectedNumber.prepend("-");
-		}
-		if (holdingCommand) {
-			holdingCommand->set_collected_number(sCollectedNumber);
+                        set_numerical_input(sCollectedNumber.prepend("-"));
 		}
 	}
 	return false;
@@ -1676,15 +1668,26 @@ bool InputEngine::check_number_collection(int eventcode)
 void InputEngine::stop_collecting()
 {
 	PENTER3;
-	collectedNumber = sCollectedNumber.toInt();
-	sCollectedNumber = "";
+        m_collectedNumber = sCollectedNumber.toInt();
+        set_numerical_input("");
 }
 
 int InputEngine::collected_number( )
 {
-	int n = collectedNumber;
-	sCollectedNumber = "-1"; // collectedNumber has a life of only one get.
-	return n;
+        int n = m_collectedNumber;
+        set_numerical_input("");
+        emit collectedNumberChanged();
+        return n;
+}
+
+void InputEngine::set_numerical_input(const QString &number)
+{
+        sCollectedNumber = number;
+        m_collectedNumber = sCollectedNumber.toInt();
+        if (holdingCommand) {
+                holdingCommand->set_collected_number(sCollectedNumber);
+        }
+        emit collectedNumberChanged();
 }
 
 bool InputEngine::is_holding( )

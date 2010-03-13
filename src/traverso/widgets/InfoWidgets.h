@@ -31,7 +31,7 @@ class Project;
 class Sheet;
 class MessageWidget;
 class SystemValueBar;
-
+class QLabel;
 class QPushButton;
 
 
@@ -69,16 +69,18 @@ protected:
 	QSize sizeHint () const;
 	
 private:
-	QTimer	m_updateTimer;
+        QTimer          m_updateTimer;
 	SystemValueBar*	m_readBufferStatus;
 	SystemValueBar*	m_writeBufferStatus;
 	SystemValueBar*	m_cpuUsage;
 	QPushButton*	m_icon;
+        QLabel*         m_collectedNumber;
 
 	friend class SysInfoToolBar;
 	
 private slots:
         void update_status();
+        void collected_number_changed();
 };
 
 
