@@ -651,7 +651,15 @@ SnapList* Sheet::get_snap_list() const
 void Sheet::set_artists(const QString& pArtists)
 {
         m_artists = pArtists;
+        emit propertyChanged();
 }
+
+void Sheet::set_name(const QString& name)
+ {
+        m_name = name;
+        emit propertyChanged();
+}
+
 
 void Sheet::set_gain(float gain)
 {

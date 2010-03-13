@@ -113,7 +113,7 @@ public:
 
 	// Set functions
 	void set_artists(const QString& pArtistis);
-        void set_name(const QString& name) {m_name = name;}
+        void set_name(const QString& name);
 	void set_first_visible_frame(nframes_t pos);
 	void set_work_at(const TimeRef& location);
 	void set_hzoom(qreal hzoom);
@@ -267,6 +267,7 @@ signals:
 	void recordingStateChanged();
 	void prepareRecording();
         void stateChanged();
+        void propertyChanged();
 	
 private slots:
         void private_add_track(Track* track);

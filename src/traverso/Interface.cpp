@@ -203,7 +203,7 @@ Interface::Interface()
 
         m_welcomeWidget = new WelcomeWidget(this);
         m_welcomeWidget->show();
-        m_centerAreaWidget->addTab(m_welcomeWidget, tr("Welcome"));
+        m_centerAreaWidget->addTab(m_welcomeWidget, tr("&Welcome"));
 
 	// Some default values.
         m_project = 0;
@@ -336,8 +336,9 @@ void Interface::show_sheet(Sheet* sheet)
 	
 	if (!sheetWidget) {
                 sheetWidget = new SheetWidget(sheet, m_centerAreaWidget);
-                QString string = "&" + QString::number(m_project->get_sheet_index(sheet->get_id())) + ": " + sheet->get_name();
-                m_centerAreaWidget->addTab(sheetWidget, string);
+                connect(sheet, SIGNAL(propertyChanged()), this, SLOT(sheet_selector_update_sheets()));
+                sheet_selector_update_sheets();
+                m_centerAreaWidget->addTab(sheetWidget, "");
 		m_sheetWidgets.insert(sheet, sheetWidget);
 	}
         m_currentSheetWidget = sheetWidget;
@@ -1685,6 +1686,18 @@ void Interface::sheet_selector_update_sheets()
 
 		connect(action, SIGNAL(triggered()), this, SLOT(sheet_selected()));
 	}
+
+
+        for (int i=1; i<m_centerAreaWidget->count(); i++) {
+                SheetWidget* widget = qobject_cast<SheetWidget*>(m_centerAreaWidget->widget(i));
+                if (widget) {
+                        Sheet* sheet = widget->get_sheet();
+                        if (sheet && m_project) {
+                                QString string = "&" + QString::number(m_project->get_sheet_index(sheet->get_id())) + ": " + sheet->get_name();
+                                m_centerAreaWidget->setTabText(i, string);
+                        }
+                }
+        }
 }
 
 void Interface::sheet_selected()
