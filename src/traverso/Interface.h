@@ -105,7 +105,7 @@ protected:
 	bool eventFilter(QObject *obj, QEvent *ev);
 
 private:
-        QStackedWidget* 	m_centerAreaWidget;
+        QTabWidget* 	m_centerAreaWidget;
         int                     m_previousCenterAreaWidgetIndex;
 	QHash<Sheet*, SheetWidget* > m_sheetWidgets;
         SheetWidget*		m_currentSheetWidget;

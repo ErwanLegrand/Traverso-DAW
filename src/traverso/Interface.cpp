@@ -122,7 +122,7 @@ Interface::Interface()
 	//         setMaximumHeight(768);
 
 	// CenterAreaWidget
-        m_centerAreaWidget = new QStackedWidget(this);
+        m_centerAreaWidget = new QTabWidget(this);
         setCentralWidget(m_centerAreaWidget);
 	
 	// HistoryView 
@@ -203,7 +203,7 @@ Interface::Interface()
 
         m_welcomeWidget = new WelcomeWidget(this);
         m_welcomeWidget->show();
-        m_centerAreaWidget->addWidget(m_welcomeWidget);
+        m_centerAreaWidget->addTab(m_welcomeWidget, tr("Welcome"));
 
 	// Some default values.
         m_project = 0;
@@ -294,7 +294,8 @@ void Interface::delete_sheetwidget(Sheet* sheet)
 	SheetWidget* sw = m_sheetWidgets.value(sheet);
 	if (sw) {
 		m_sheetWidgets.remove(sheet);
-                m_centerAreaWidget->removeWidget(sw);
+                int index =  m_centerAreaWidget->indexOf(sw);
+                m_centerAreaWidget->removeTab(index);
 		delete sw;
 	}
 }
@@ -313,7 +314,7 @@ void Interface::show_sheet(Sheet* sheet)
 			
 			if (!sheetWidget) {
                                 sheetWidget = new SheetWidget(0, m_centerAreaWidget);
-                                m_centerAreaWidget->addWidget(sheetWidget);
+                                m_centerAreaWidget->addTab(sheetWidget, sheetWidget->get_sheet()->get_name());
 				m_sheetWidgets.insert(0, sheetWidget);
 			}
 		}
@@ -335,7 +336,8 @@ void Interface::show_sheet(Sheet* sheet)
 	
 	if (!sheetWidget) {
                 sheetWidget = new SheetWidget(sheet, m_centerAreaWidget);
-                m_centerAreaWidget->addWidget(sheetWidget);
+                QString string = "&" + QString::number(m_project->get_sheet_index(sheet->get_id())) + ": " + sheet->get_name();
+                m_centerAreaWidget->addTab(sheetWidget, string);
 		m_sheetWidgets.insert(sheet, sheetWidget);
 	}
         m_currentSheetWidget = sheetWidget;
