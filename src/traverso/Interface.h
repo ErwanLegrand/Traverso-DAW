@@ -158,7 +158,6 @@ private:
 	QMenu*			m_encodingMenu;
 	QMenu*			m_resampleQualityMenu;
         QMenu*                  m_sheetMenu;
-        QActionGroup*		m_currentSheetActions;
         QList<QAction*>         m_projectMenuToolbarActions;
 	
 	void create_menus();
@@ -214,7 +213,7 @@ public slots :
 
 	
 private slots:
-	void delete_sheetwidget(Sheet*);
+        void remove_sheetwidget(Sheet*);
 	void project_dir_change_detected();
 	void project_load_failed(QString project, QString reason);
 	void project_file_mismatch(QString rootdir, QString projectname);
@@ -225,12 +224,9 @@ private slots:
 	void follow_state_changed(bool state);
 	void update_follow_state();
 	void update_temp_follow_state(bool state);
-	void sheet_selector_update_sheets();
-	void sheet_selected();
-	void sheet_selector_sheet_added(Sheet*);
-	void sheet_selector_sheet_removed(Sheet*);
-        void sheet_widget_tab_index_changed(int index);
-        void sheet_state_changed();
+        void update_sheet_tabs_appearance();
+        void sheet_tab_index_changed(int index);
+        void sheet_transport_state_changed();
 };
 
 

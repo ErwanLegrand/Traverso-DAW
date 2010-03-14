@@ -33,10 +33,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <QTextStream>
-#include <QStackedWidget>
 #include <QFileDialog>
 #include <QFileInfo>
-#include <QActionGroup>
 #include <QTabBar>
 
 #include "Interface.h"
@@ -126,7 +124,7 @@ Interface::Interface()
         m_centerAreaWidget = new TTabWidget(this);
         setCentralWidget(m_centerAreaWidget);
 
-        connect(m_centerAreaWidget, SIGNAL(currentChanged(int)), this, SLOT(sheet_widget_tab_index_changed(int)));
+        connect(m_centerAreaWidget, SIGNAL(currentChanged(int)), this, SLOT(sheet_tab_index_changed(int)));
 	
 	// HistoryView 
 	historyDW = new QDockWidget(tr("History"), this);
@@ -225,7 +223,6 @@ Interface::Interface()
 	m_newTrackDialog = 0;
 	m_quickStart = 0;
 	m_restoreProjectBackupDialog = 0;
-        m_currentSheetActions = new QActionGroup(this);
 	
 	create_menus();
 	
@@ -272,14 +269,13 @@ void Interface::set_project(Project* project)
 	m_project = project;
 
         foreach(SheetWidget* sw, m_sheetWidgets) {
-                delete_sheetwidget(sw->get_sheet());
+                remove_sheetwidget(sw->get_sheet());
         }
 
 	if ( project ) {
 		connect(project, SIGNAL(currentSheetChanged(Sheet*)), this, SLOT(show_sheet(Sheet*)));
-		connect(project, SIGNAL(projectLoadFinished()), this, SLOT(sheet_selector_update_sheets()));
-		connect(m_project, SIGNAL(sheetAdded(Sheet*)), this, SLOT(sheet_selector_sheet_added(Sheet*)));
-		connect(m_project, SIGNAL(sheetRemoved(Sheet*)), this, SLOT(sheet_selector_sheet_removed(Sheet*)));
+                connect(m_project, SIGNAL(sheetAdded(Sheet*)), this, SLOT(show_sheet(Sheet*)));
+                connect(m_project, SIGNAL(sheetRemoved(Sheet*)), this, SLOT(remove_sheetwidget(Sheet*)));
 
 		setWindowTitle(project->get_title() + " - Traverso");
                 set_project_actions_enabled(true);
@@ -288,13 +284,11 @@ void Interface::set_project(Project* project)
                 m_welcomeWidget->setFocus(Qt::MouseFocusReason);
 		setWindowTitle("Traverso");
                 set_project_actions_enabled(false);
-                sheet_selector_update_sheets();
-
                 show_welcome_page();
 	}
 }
 
-void Interface::delete_sheetwidget(Sheet* sheet)
+void Interface::remove_sheetwidget(Sheet* sheet)
 {
 	SheetWidget* sw = m_sheetWidgets.value(sheet);
 	if (sw) {
@@ -341,16 +335,18 @@ void Interface::show_sheet(Sheet* sheet)
 	
 	if (!sheetWidget) {
                 sheetWidget = new SheetWidget(sheet, m_centerAreaWidget);
-                connect(sheet, SIGNAL(propertyChanged()), this, SLOT(sheet_selector_update_sheets()));
-                connect(sheet, SIGNAL(transportStarted()), this, SLOT(sheet_state_changed()));
-                connect(sheet, SIGNAL(transportStopped()), this, SLOT(sheet_state_changed()));
-                connect(sheet, SIGNAL(recordingStateChanged()), this, SLOT(sheet_state_changed()));
-                sheet_selector_update_sheets();
-                m_centerAreaWidget->addTab(sheetWidget, "");
+                connect(sheet, SIGNAL(propertyChanged()), this, SLOT(update_sheet_tabs_appearance()));
+                connect(sheet, SIGNAL(transportStarted()), this, SLOT(sheet_transport_state_changed()));
+                connect(sheet, SIGNAL(transportStopped()), this, SLOT(sheet_transport_state_changed()));
+                connect(sheet, SIGNAL(recordingStateChanged()), this, SLOT(sheet_transport_state_changed()));
+                int index = m_centerAreaWidget->addTab(sheetWidget, "");
+                m_centerAreaWidget->get_tab_bar()->setTabData(index, sheet->get_id());
 		m_sheetWidgets.insert(sheet, sheetWidget);
 	}
+
         m_currentSheetWidget = sheetWidget;
         m_centerAreaWidget->setCurrentWidget(m_currentSheetWidget);
+        update_sheet_tabs_appearance();
 
 	if (sheet) {
 		pm().get_undogroup()->setActiveStack(sheet->get_history_stack());
@@ -1654,47 +1650,11 @@ void Interface::update_effects_state()
 	}
 }
 
-void Interface::sheet_selector_update_sheets()
+void Interface::update_sheet_tabs_appearance()
 {
-	// empty the list, make sure everything is deleted
-        foreach(QAction* action, m_currentSheetActions->actions()) {
-                m_currentSheetActions->removeAction(action);
-                delete action;
-	}
-
-
-	if (!m_project)
-	{
+        if (!m_project || !m_project->get_current_sheet()) {
 		return;
 	}
-
-	if (!m_project->get_current_sheet())
-	{
-		return;
-	}
-
-	qint64 id = m_project->get_current_sheet()->get_id();
-
-	// create the new actions
-	foreach(Sheet* sheet, m_project->get_sheets())
-	{
-		QString string = QString::number(m_project->get_sheet_index(sheet->get_id())) +
-                ": " + sheet->get_name();
-		QAction* action = m_sheetMenu->addAction(string);
-                m_currentSheetActions->addAction(action);
-		action->setData(sheet->get_id());
-		action->setCheckable(true);
-
-		if (sheet->get_id() == id)
-		{
-			action->setChecked(true);
-		} else {
-			action->setChecked(false);
-		}
-
-		connect(action, SIGNAL(triggered()), this, SLOT(sheet_selected()));
-	}
-
 
         for (int i=1; i<m_centerAreaWidget->count(); i++) {
                 SheetWidget* widget = qobject_cast<SheetWidget*>(m_centerAreaWidget->widget(i));
@@ -1706,42 +1666,6 @@ void Interface::sheet_selector_update_sheets()
                         }
                 }
         }
-}
-
-void Interface::sheet_selected()
-{
-	// identify the action that was activated
-	QAction *orig = qobject_cast<QAction *>(sender());
-
-	if (!orig)
-	{
-		return;
-	}
-
-	qint64 id = orig->data().toLongLong();
-
-	// uncheck all other actions
-        foreach(QAction* action, m_currentSheetActions->actions())
-	{
-		if (action->data().toLongLong() != id)
-		{
-			action->setChecked(false);
-		}
-	}
-
-	m_project->set_current_sheet(id);
-}
-
-void Interface::sheet_selector_sheet_added(Sheet* sheet)
-{
-        connect(sheet, SIGNAL(stateChanged()), this, SLOT(sheet_selector_update_sheets()));
-	sheet_selector_update_sheets();
-}
-
-void Interface::sheet_selector_sheet_removed(Sheet* sheet)
-{
-        disconnect(sheet, SIGNAL(stateChanged()), this, SLOT(sheet_selector_update_sheets()));
-	sheet_selector_update_sheets();
 }
 
 Command* Interface::audio_io_dialog()
@@ -1770,14 +1694,17 @@ Command* Interface::show_current_sheet()
         return 0;
 }
 
-void Interface::sheet_widget_tab_index_changed(int index)
+void Interface::sheet_tab_index_changed(int index)
 {
-        if (index) {
+        if (index && m_project) {
                 m_previousCenterAreaWidgetIndex = index;
+
+                qint64 id = m_centerAreaWidget->get_tab_bar()->tabData(index).toLongLong();
+                m_project->set_current_sheet(id);
         }
 }
 
-void Interface::sheet_state_changed()
+void Interface::sheet_transport_state_changed()
 {
         QTabBar* bar = m_centerAreaWidget->get_tab_bar();
         for (int i=1; i<m_centerAreaWidget->count(); i++) {
