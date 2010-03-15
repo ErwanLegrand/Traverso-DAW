@@ -121,6 +121,7 @@ private:
 	int	m_trackTopIndent;
 	
 	void layout_tracks();
+        void update_tracks_bounding_rect();
 	void set_hscrollbar_value(int value);
 	void set_vscrollbar_value(int value);
 	

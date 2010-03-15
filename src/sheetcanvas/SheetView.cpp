@@ -78,7 +78,7 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 	m_viewportReady = false;
 	
 	m_clipsViewPort->scene()->addItem(this);
-	
+
 	m_playCursor = new PlayHead(this, m_sheet, m_clipsViewPort);
 	m_workCursor = new WorkCursor(this, m_sheet);
         m_masterOutView = new SubGroupView(this, m_sheet->get_master_out());
@@ -135,6 +135,23 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 		cmd->set_instantanious(true);
 		Command::process_command(cmd);
 	}
+
+        // fill the view with trackviews, add_new_trackview()
+        // doesn't yet layout the new tracks.
+        foreach(Track* track, m_sheet->get_tracks()) {
+                add_new_track_view(track);
+        }
+
+        // this will call layout_tracks() for us too
+        // which will continue now, due m_viewportReady is true now
+        load_theme_data();
+
+        // Everything is in place to scroll to the last position
+        // we were at, at closing this view.
+        int x, y;
+        m_sheet->get_scrollbar_xy(x, y);
+        set_hscrollbar_value(x);
+        set_vscrollbar_value(y);
 }
 
 SheetView::~SheetView()
@@ -149,6 +166,7 @@ void SheetView::scale_factor_changed( )
 	m_tlvp->scale_factor_changed();
 	
 	layout_tracks();
+        update_tracks_bounding_rect();
 }
 
 void SheetView::sheet_mode_changed()
@@ -354,6 +372,11 @@ void SheetView::hscrollbar_value_changed(int value)
 	set_snap_range(m_hScrollBar->value());
 }
 
+void SheetView::clipviewport_resize_event()
+{
+        update_scrollbars();
+}
+
 void SheetView::vzoom(qreal factor)
 {
 	PENTER;
@@ -370,6 +393,7 @@ void SheetView::vzoom(qreal factor)
                 track->set_height(height);
 	}
 	
+        update_tracks_bounding_rect();
 	layout_tracks();
 }
 
@@ -383,7 +407,7 @@ void SheetView::hzoom(qreal factor)
 
 void SheetView::layout_tracks()
 {
-        if ((m_audioTrackViews.isEmpty() && m_subGroupViews.isEmpty()) || !m_viewportReady) {
+        if ((m_audioTrackViews.isEmpty() && m_subGroupViews.isEmpty())) {
                 return;
         }
 	
@@ -391,19 +415,16 @@ void SheetView::layout_tracks()
 
         for (int i=0; i<m_audioTrackViews.size(); ++i) {
                 TrackView* view = m_audioTrackViews.at(i);
-		view->calculate_bounding_rect();
 		view->move_to(0, verticalposition);
                 verticalposition += (view->get_track()->get_height() + m_trackSeperatingHeight);
 	}
 
         for (int i=0; i<m_subGroupViews.size(); ++i) {
                 TrackView* view = m_subGroupViews.at(i);
-                view->calculate_bounding_rect();
                 view->move_to(0, verticalposition);
                 verticalposition += (view->get_track()->get_height() + m_trackSeperatingHeight);
         }
 
-        m_masterOutView->calculate_bounding_rect();
         m_masterOutView->move_to(0, verticalposition);
         verticalposition += (m_masterOutView->get_track()->get_height() + m_trackSeperatingHeight);
 
@@ -414,6 +435,18 @@ void SheetView::layout_tracks()
 	update_scrollbars();
 }
 
+void SheetView::update_tracks_bounding_rect()
+{
+        for (int i=0; i<m_audioTrackViews.size(); ++i) {
+                TrackView* view = m_audioTrackViews.at(i);
+                view->calculate_bounding_rect();
+        }
+        for (int i=0; i<m_subGroupViews.size(); ++i) {
+                TrackView* view = m_subGroupViews.at(i);
+                view->calculate_bounding_rect();
+        }
+        m_masterOutView->calculate_bounding_rect();
+}
 
 Command* SheetView::center()
 {
@@ -699,6 +732,7 @@ void SheetView::load_theme_data()
 	m_clipsViewPort->setBackgroundBrush(themer()->get_color("Sheet:background"));
 	m_tpvp->setBackgroundBrush(themer()->get_brush("TrackPanel:background", QPoint(0, 0), QPoint(0, m_tpvp->height())));
 
+        update_tracks_bounding_rect();
 	layout_tracks();
 }
 
@@ -750,40 +784,6 @@ void SheetView::set_vscrollbar_value(int value)
 	m_clipsViewPort->verticalScrollBar()->setValue(value);
 	m_vScrollBar->setValue(value);
 	m_sheet->set_scrollbar_xy(m_hScrollBar->value(), m_vScrollBar->value());
-}
-
-void SheetView::clipviewport_resize_event()
-{
-	// Once the ClipViewPort has been initialed, and _resized_
-	// only _then_ we know _our_ size, at which time it makes 
-	// sense to populate the view with tracks.
-	if (!m_viewportReady) {
-		
-		// fill the view with trackviews, add_new_trackview()
-		// doesn't yet layout the new tracks.
-                foreach(Track* track, m_sheet->get_tracks()) {
-                        add_new_track_view(track);
-		}
-	
-		// layout_track() now will do it's work when it is called
-		m_viewportReady = true;
-		
-		// this will call layout_tracks() for us too
-		// which will continue now, due m_viewportReady is true now
-		load_theme_data();
-		
-		// Everything is in place to scroll to the last position
-		// we were at, at closing this view.
-		int x, y;
-		m_sheet->get_scrollbar_xy(x, y);
-		set_hscrollbar_value(x);
-		set_vscrollbar_value(y);
-	} else {
-		// if the viewport was resized, and everything was setup allready
-		// it suffices to recalculate the scrollbar values.
-		update_scrollbars();
-	}
-	
 }
 
 Command* SheetView::add_track()
