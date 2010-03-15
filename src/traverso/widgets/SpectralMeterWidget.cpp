@@ -91,7 +91,6 @@ SpectralMeterView::SpectralMeterView(SpectralMeterWidget* widget)
 		m_freq_labels.push_back(90.0f * pow(10.0,i));
 	}
 
-	load_theme_data();
 	connect(themer(), SIGNAL(themeLoaded()), this, SLOT(load_theme_data()), Qt::QueuedConnection);
 }
 
