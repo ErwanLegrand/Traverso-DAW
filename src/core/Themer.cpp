@@ -532,7 +532,10 @@ QColor Themer::get_default_color(const QString & name)
 		if (name == "TrackPanel:bus:background") c = p.color(QPalette::Button);
 		if (name == "TrackPanel:bus:margin") c = p.color(QPalette::Dark);
 
-		if (name == "Workcursor:default") c = QColor(100, 50, 100, 180);
+                if (name == "SubGroup:background") c = p.color(QPalette::Background);
+                if (name == "SubGroupPanel:background") c = p.color(QPalette::Background);
+
+                if (name == "Workcursor:default") c = QColor(100, 50, 100, 180);
 		
 		if (name == "Marker:default") c = Qt::red;
 		if (name == "Marker:blink") c = p.color(QPalette::Highlight);
