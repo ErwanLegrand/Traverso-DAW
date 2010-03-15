@@ -130,8 +130,8 @@ void ProjectManager::set_current_project(Project* project)
 	if (currentProject) {
 		title = currentProject->get_title();
 		config().set_property("Project", "current", title);
-        } else {
-                // free the audiodevice
+        } else if (!m_exitInProgress) {
+                // free the audiodevice, but only if we don't want to quit.
                 audiodevice().set_parameters(AudioDeviceSetup());
         }
 	
