@@ -118,7 +118,10 @@
 		
 		<color name="InfoWidget:background" red="239" green="236" blue="231" alpha="255" />
 		
-		<color name="Plugin:background" red="251" green="206" blue="138"  alpha="255" />
+                <color name="Playhead:active" red="255" green="0" blue="0" alpha="180" />
+                <color name="Playhead:inactive" red="255" green="0" blue="0" alpha="120" />
+
+                <color name="Plugin:background" red="251" green="206" blue="138"  alpha="255" />
 		<color name="Plugin:background:bypassed" red="251" green="206" blue="138"  alpha="50" />
 		<color name="Plugin:text" red="0" green="0" blue="0" alpha="255" />
 		<color name="PluginSlider:background" red="199" green="228" blue="211" alpha="255" />

@@ -118,6 +118,9 @@
 		<color name="VUMeter:overled:inactive" red="128" green="0" blue="0" alpha="255" />
 		
 		<color name="InfoWidget:background" red="160" green="170" blue="150" alpha="255" />
+
+                <color name="Playhead:active" red="255" green="0" blue="0" alpha="180" />
+                <color name="Playhead:inactive" red="255" green="0" blue="0" alpha="120" />
 		
 		<color name="Plugin:background" red="230" green="0" blue="230" alpha="170" />
 		<color name="Plugin:background:bypassed" red="230" green="0" blue="230" alpha="80" />
