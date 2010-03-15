@@ -103,6 +103,8 @@
                 <color name="Playhead:active" red="255" green="0" blue="0" alpha="180" />
                 <color name="Playhead:inactive" red="255" green="0" blue="0" alpha="120" />
 
+                <color name="Workcursor:default" red="100" green="50" blue="100" alpha="180" />
+
                 <color name="Plugin:background" red="230" green="0" blue="230" alpha="170" />
 		<color name="Plugin:background:bypassed" red="230" green="0" blue="230" alpha="80" />
 		<color name="Plugin:text" red="255" green="255" blue="255" alpha="255" />
