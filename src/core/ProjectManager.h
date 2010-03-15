@@ -66,7 +66,7 @@ public:
 	QList<uint> get_backup_date_times(const QString& projectdir);
         QStringList get_projects_list();
         QString get_projects_directory();
-	void start_incremental_backup(const QString& projectname);
+        void start_incremental_backup(Project* project);
 
 	Project* get_project();
 	QUndoGroup* get_undogroup() const;

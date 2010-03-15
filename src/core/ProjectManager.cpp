@@ -452,17 +452,16 @@ void ProjectManager::remove_wrong_project_path(const QString & path)
 }
 
 
-void ProjectManager::start_incremental_backup(const QString& projectname)
+void ProjectManager::start_incremental_backup(Project* project)
 {
-	if (! project_exists(projectname)) {
+        if (!project) {
 		return;
 	}
 	
-	QString project_dir = config().get_property("Project", "directory", "/directory/unknown").toString();
-	QString project_path = project_dir + "/" + projectname;
-	QString fileName = project_path + "/project.tpf";
+        QString project_path = project->get_root_dir();
+        QString fileName = project->get_root_dir() + "/project.tpf";
 	QString backupdir = project_path + "/projectfilebackup";
-	
+
 	// Check if the projectfilebackup directory still exist
 	QDir dir(backupdir);
 	if (!dir.exists(backupdir)) {
@@ -481,6 +480,7 @@ void ProjectManager::start_incremental_backup(const QString& projectname)
 	
 	if (!compressedWriter.open( QIODevice::WriteOnly ) ) {
 		compressedWriter.close();
+                info().warning(tr("Projectfile backup: The project file %1 could not be opened for writing (Reason: %2)").arg(fileName).arg(compressedWriter.errorString()));
 		return;
 	}
 	

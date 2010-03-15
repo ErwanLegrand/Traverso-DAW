@@ -298,7 +298,7 @@ int Project::save(bool autosave)
 		info().information( tr("Project %1 saved ").arg(m_title) );
 	}
 	
-	pm().start_incremental_backup(m_title);
+        pm().start_incremental_backup(this);
 
 	return 1;
 }
@@ -1030,8 +1030,6 @@ void Project::private_add_sheet(Sheet * sheet)
 	PENTER;
 	m_sheets.append(sheet);
 	sheet->connect_to_audiodevice();
-	
-	set_current_sheet(sheet->get_id());
 }
 
 void Project::private_remove_sheet(Sheet * sheet)
