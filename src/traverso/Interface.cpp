@@ -111,14 +111,12 @@ Interface* Interface::instance()
 }
 
 Interface::Interface()
-	: QMainWindow( 0 )
+        : QMainWindow()
 {
 	PENTERCONS;
 	setWindowTitle("Traverso");
 	setMinimumSize(400, 300);
 	setWindowIcon(QPixmap (":/windowicon") );
-	//         setMaximumWidth(1024);
-	//         setMaximumHeight(768);
 
 	// CenterAreaWidget
         m_centerAreaWidget = new TTabWidget(this);
@@ -274,7 +272,7 @@ void Interface::set_project(Project* project)
 
 	if ( project ) {
 		connect(project, SIGNAL(currentSheetChanged(Sheet*)), this, SLOT(show_sheet(Sheet*)));
-                connect(m_project, SIGNAL(sheetAdded(Sheet*)), this, SLOT(show_sheet(Sheet*)));
+                connect(m_project, SIGNAL(sheetAdded(Sheet*)), this, SLOT(add_sheetwidget(Sheet*)));
                 connect(m_project, SIGNAL(sheetRemoved(Sheet*)), this, SLOT(remove_sheetwidget(Sheet*)));
 
 		setWindowTitle(project->get_title() + " - Traverso");
@@ -299,6 +297,27 @@ void Interface::remove_sheetwidget(Sheet* sheet)
 	}
 }
 
+void Interface::add_sheetwidget(Sheet* sheet)
+{
+        SheetWidget* sheetWidget = new SheetWidget(sheet, m_centerAreaWidget);
+
+        int index = m_centerAreaWidget->addTab(sheetWidget, "");
+        m_centerAreaWidget->get_tab_bar()->setTabData(index, sheet->get_id());
+
+        m_sheetWidgets.insert(sheet, sheetWidget);
+
+        update_sheet_tabs_appearance();
+
+        connect(sheet, SIGNAL(propertyChanged()), this, SLOT(update_sheet_tabs_appearance()));
+        connect(sheet, SIGNAL(transportStarted()), this, SLOT(sheet_transport_state_changed()));
+        connect(sheet, SIGNAL(transportStopped()), this, SLOT(sheet_transport_state_changed()));
+        connect(sheet, SIGNAL(transportStopped()), this, SLOT(update_follow_state()));
+        connect(sheet, SIGNAL(recordingStateChanged()), this, SLOT(sheet_transport_state_changed()));
+        connect(sheet, SIGNAL(snapChanged()), this, SLOT(update_snap_state()));
+        connect(sheet, SIGNAL(modeChanged()), this, SLOT(update_effects_state()));
+        connect(sheet, SIGNAL(tempFollowChanged(bool)), this, SLOT(update_temp_follow_state(bool)));
+}
+
 
 void Interface::show_sheet(Sheet* sheet)
 {
@@ -307,46 +326,28 @@ void Interface::show_sheet(Sheet* sheet)
 	SheetWidget* sheetWidget = 0;
 	
 	if (!sheet) {
-		Project* project = pm().get_project();
-		if (project && project->get_sheets().size() == 0) {
-			sheetWidget = m_sheetWidgets.value(0);
-			
-			if (!sheetWidget) {
-                                sheetWidget = new SheetWidget(0, m_centerAreaWidget);
-                                m_centerAreaWidget->addTab(sheetWidget, sheetWidget->get_sheet()->get_name());
-				m_sheetWidgets.insert(0, sheetWidget);
-			}
-		}
 		m_snapAction->setEnabled(false);
 		m_effectAction->setEnabled(false);
 		m_followAction->setEnabled(false);
+
+                return;
+
 	} else {
 		sheetWidget = m_sheetWidgets.value(sheet);
-		connect(sheet, SIGNAL(snapChanged()), this, SLOT(update_snap_state()));
-		connect(sheet, SIGNAL(modeChanged()), this, SLOT(update_effects_state()));
-		connect(sheet, SIGNAL(tempFollowChanged(bool)), this, SLOT(update_temp_follow_state(bool)));
-		connect(sheet, SIGNAL(transportStopped()), this, SLOT(update_follow_state()));
+                if (!sheetWidget) {
+                        return;
+                }
+
 		update_snap_state();
 		update_effects_state();
 		m_snapAction->setEnabled(true);
 		m_effectAction->setEnabled(true);
 		m_followAction->setEnabled(true);
 	}
-	
-	if (!sheetWidget) {
-                sheetWidget = new SheetWidget(sheet, m_centerAreaWidget);
-                connect(sheet, SIGNAL(propertyChanged()), this, SLOT(update_sheet_tabs_appearance()));
-                connect(sheet, SIGNAL(transportStarted()), this, SLOT(sheet_transport_state_changed()));
-                connect(sheet, SIGNAL(transportStopped()), this, SLOT(sheet_transport_state_changed()));
-                connect(sheet, SIGNAL(recordingStateChanged()), this, SLOT(sheet_transport_state_changed()));
-                int index = m_centerAreaWidget->addTab(sheetWidget, "");
-                m_centerAreaWidget->get_tab_bar()->setTabData(index, sheet->get_id());
-		m_sheetWidgets.insert(sheet, sheetWidget);
-	}
 
         m_currentSheetWidget = sheetWidget;
+
         m_centerAreaWidget->setCurrentWidget(m_currentSheetWidget);
-        update_sheet_tabs_appearance();
 
 	if (sheet) {
 		pm().get_undogroup()->setActiveStack(sheet->get_history_stack());
@@ -1652,7 +1653,7 @@ void Interface::update_effects_state()
 
 void Interface::update_sheet_tabs_appearance()
 {
-        if (!m_project || !m_project->get_current_sheet()) {
+        if (!m_project) {
 		return;
 	}
 

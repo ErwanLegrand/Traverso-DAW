@@ -213,6 +213,7 @@ public slots :
 
 	
 private slots:
+        void add_sheetwidget(Sheet* sheet);
         void remove_sheetwidget(Sheet*);
 	void project_dir_change_detected();
 	void project_load_failed(QString project, QString reason);
