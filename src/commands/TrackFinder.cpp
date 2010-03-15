@@ -60,6 +60,11 @@ int TrackFinder::prepare_actions()
         }
 
         QAction* action = menu.exec(QCursor::pos());
+
+        if (!action) {
+                return -1;
+        }
+
         Track* selectedTrack = sheet->get_track(action->data().toLongLong());
 
         m_sv->browse_to_track(selectedTrack);
