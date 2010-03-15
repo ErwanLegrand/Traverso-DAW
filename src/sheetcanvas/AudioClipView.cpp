@@ -422,7 +422,7 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
                                 p->setBrush(m_waveBrush);
                         }
 
-                        if (m_paintWithOutline) {
+                        if (m_paintWithOutline && (m_height > m_mimimumheightforinfoarea)) {
                                 if (m_sheet->get_mode() == Sheet::EDIT) {
                                         p->setPen(themer()->get_color("AudioClip:wavemacroview:outline"));
                                 } else  {
