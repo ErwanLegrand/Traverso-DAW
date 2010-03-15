@@ -56,12 +56,22 @@ ProcessingData::ProcessingData(Sheet *sheet)
 
 void ProcessingData::set_input_bus(AudioBus *bus)
 {
-        THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, bus, private_set_input_bus(AudioBus*), busConfigurationChanged());
+        if (m_sheet && m_sheet->is_transport_rolling()) {
+                THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, bus, private_set_input_bus(AudioBus*), busConfigurationChanged());
+        } else {
+                private_set_input_bus(bus);
+                emit busConfigurationChanged();
+        }
 }
 
 void ProcessingData::set_output_bus(AudioBus *bus)
 {
-        THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, bus, private_set_output_bus(AudioBus*), busConfigurationChanged());
+        if (m_sheet && m_sheet->is_transport_rolling()) {
+                THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, bus, private_set_output_bus(AudioBus*), busConfigurationChanged());
+        } else {
+                private_set_output_bus(bus);
+                emit busConfigurationChanged();
+        }
 }
 
 void ProcessingData::private_set_input_bus(AudioBus* bus)

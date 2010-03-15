@@ -362,7 +362,11 @@ void AudioClip::set_track_end_location(const TimeRef& location)
 		// The purpose of this call is to keep the AudioClip list in track 
 		// sorted on the clips track start location.
 		if (m_track) {
-			THREAD_SAVE_INVOKE(m_track, this, clip_position_changed(AudioClip*));
+                        if (m_sheet && m_sheet->is_transport_rolling()) {
+                                THREAD_SAVE_INVOKE(m_track, this, clip_position_changed(AudioClip*));
+                        } else {
+                                m_track->clip_position_changed(this);
+                        }
 		}
 		
 		if (m_sheet) {
