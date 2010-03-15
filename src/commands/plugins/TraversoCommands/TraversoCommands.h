@@ -63,6 +63,7 @@ class TraversoCommands : public CommandPlugin
 	Q_CLASSINFO("ScrollUpHold", tr("Up"))
 	Q_CLASSINFO("ScrollDownHold", tr("Down"))
         Q_CLASSINFO("Shuttle", tr("Shuttle"))
+        Q_CLASSINFO("TrackFinder", tr("Track Finder"));
 
 public:
 	TraversoCommands();
@@ -88,7 +89,8 @@ private:
 		ArmTracksCommand,
   		ZoomCommand,
                 ScrollCommand,
-                ShuttleCommand
+                ShuttleCommand,
+                TrackFinderCommand
 	};
 };
 

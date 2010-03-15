@@ -89,6 +89,9 @@ public :
         void move_trackview_up(TrackView* trackView);
         void move_trackview_down(TrackView* trackView);
 
+        void browse_to_track(Track* track);
+        void center_in_view(ViewItem* item);
+
 	qint64		timeref_scalefactor;
 
 private:

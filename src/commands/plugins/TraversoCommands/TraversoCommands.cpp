@@ -134,6 +134,7 @@ TraversoCommands::TraversoCommands()
 	m_dict.insert("ScrollUpHold", ScrollCommand);
 	m_dict.insert("ScrollDownHold", ScrollCommand);
         m_dict.insert("Shuttle", ShuttleCommand);
+        m_dict.insert("TrackFinder", TrackFinderCommand);
 }
 
 Command* TraversoCommands::create(QObject* obj, const QString& command, QVariantList arguments)
@@ -406,7 +407,18 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
                         return new Shuttle(view);
                 }
 
-	}
+                case TrackFinderCommand:
+                {
+                        SheetView* view = qobject_cast<SheetView*>(obj);
+                        if (!view) {
+                                PERROR("TraversoCommands: Supplied QObject was not an SheetView! "
+                                                "ShuttleCommand needs an SheetView as argument");
+                                return 0;
+                        }
+                        return new TrackFinder(view);
+                }
+
+}
 	
 	return 0;
 }

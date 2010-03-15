@@ -272,6 +272,11 @@
                                 <Object objectname="SheetView" modes="All" sortorder="22" slotsignature="add_track" />
                         </Objects>
                 </keyfact>
+                <keyfact type="FKEY" key1="K" >
+                        <Objects>
+                                <Object objectname="SheetView" modes="All" sortorder="12" pluginname="TraversoCommands" commandname="TrackFinder" />
+                        </Objects>
+                </keyfact>
 
 
 		

@@ -791,3 +791,24 @@ Command* SheetView::add_track()
         Interface::instance()->show_newtrack_dialog();
         return 0;
 }
+
+void SheetView::browse_to_track(Track *track)
+{
+        foreach(TrackView* view, m_audioTrackViews) {
+                if (view->get_track() == track) {
+
+                        center_in_view(view);
+
+                        QCursor::setPos(m_tpvp->mapToGlobal(m_tpvp->mapFromScene(view->scenePos().x() - 100,
+                                                                                 view->scenePos().y() + view->boundingRect().height() / 2)));
+
+                        return;
+                }
+        }
+}
+
+
+void SheetView::center_in_view(ViewItem *item)
+{
+        set_vscrollbar_value(item->pos().y());
+}
