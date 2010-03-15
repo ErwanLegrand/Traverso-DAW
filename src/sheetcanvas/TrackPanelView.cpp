@@ -296,13 +296,13 @@ void SubGroupPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem*
         Q_UNUSED(widget);
         Q_UNUSED(option);
 
-        TrackPanelView::paint(painter, option, widget);
-
         int xstart = (int)option->exposedRect.x();
         int pixelcount = (int)option->exposedRect.width();
 
         QColor color = themer()->get_color("SubGroup:background");
         painter->fillRect(xstart, m_trackView->m_topborderwidth, pixelcount, m_track->get_height() - m_trackView->m_bottomborderwidth, color);
+
+        TrackPanelView::paint(painter, option, widget);
 }
 
 void SubGroupPanelView::layout_panel_items()
@@ -616,7 +616,6 @@ Command* TrackPanelBus::select_bus()
 {
         QMenu menu;
 
-        QStringList busNames;
         Sheet* sheet = m_track->get_sheet();
         SubGroup* masterOut = sheet->get_master_out();
         QAction* action;
