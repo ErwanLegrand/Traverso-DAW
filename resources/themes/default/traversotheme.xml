@@ -11,7 +11,7 @@
 		<property name="CurveNode:diameter" value="6" />
 		
                 <property name="Sheet:track:seperatingheight" value="0" />
-                <property name="Sheet:track:minimumheight" value="16" />
+                <property name="Sheet:track:minimumheight" value="20" />
                 <property name="Sheet:track:maximumheight" value="300" />
                 <property name="Sheet:track:topindent" value="0" />
 		

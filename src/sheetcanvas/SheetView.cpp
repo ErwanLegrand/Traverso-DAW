@@ -725,7 +725,7 @@ int SheetView::vscrollbar_value() const
 void SheetView::load_theme_data()
 {
 	m_trackSeperatingHeight = themer()->get_property("Sheet:track:seperatingheight", 0).toInt();
-	m_trackMinimumHeight = themer()->get_property("Sheet:track:minimumheight", 16).toInt();
+        m_trackMinimumHeight = themer()->get_property("Sheet:track:minimumheight", 20).toInt();
 	m_trackMaximumHeight = themer()->get_property("Sheet:track:maximumheight", 300).toInt();
 	m_trackTopIndent = themer()->get_property("Sheet:track:topindent", 6).toInt();
 	

@@ -11,7 +11,7 @@
 		<property name="CurveNode:diameter" value="6" />
 		
 		<property name="Song:track:seperatingheight" value="0" />
-		<property name="Song:track:minimumheight" value="16" />
+                <property name="Song:track:minimumheight" value="20" />
 		<property name="Song:track:maximumheight" value="300" />
 		<property name="Song:track:topindent" value="0" />
 		

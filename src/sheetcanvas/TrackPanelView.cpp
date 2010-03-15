@@ -67,6 +67,8 @@ TrackPanelView::TrackPanelView(TrackView* view)
 
         m_soloLed = new TrackPanelLed(this, m_track, "solo", "solo");
         m_muteLed = new TrackPanelLed(this, m_track, "mute", "mute");
+        m_muteLed->set_bounding_rect(QRectF(0, 0, 39, 12));
+        m_soloLed->set_bounding_rect(QRectF(0, 0, 31, 12));
 
         if (m_track->is_solo()) {
                 m_soloLed->ison_changed(true);
@@ -192,6 +194,7 @@ AudioTrackPanelView::AudioTrackPanelView(AudioTrackView* trackView)
 
         m_tv = trackView;
         m_recLed = new TrackPanelLed(this, m_track, "rec", "toggle_arm");
+        m_recLed->set_bounding_rect(QRectF(0, 0, 27, 12));
 
         if (m_tv->get_track()->armed()) {
                 m_recLed->ison_changed(true);
@@ -231,21 +234,15 @@ void AudioTrackPanelView::layout_panel_items()
                 m_muteLed->setPos(70, 19);
                 m_soloLed->setPos(118, 19);
                 m_recLed->setPos(162, 19);
-                m_muteLed->set_bounding_rect(QRectF(0, 0, 41, 14));
-                m_soloLed->set_bounding_rect(QRectF(0, 0, 38, 14));
-                m_recLed->set_bounding_rect(QRectF(0, 0, 30, 14));
 		
 		m_gainView->setPos(10, 39);
 		m_panView->setPos(10, 54);
 	}
 	
 	if (height < SMALL_HEIGHT) {
-                m_muteLed->setPos(90, 1.5);
-                m_soloLed->setPos(132, 1.5);
-                m_recLed->setPos(166, 1.5);
-                m_muteLed->set_bounding_rect(QRectF(0, 0, 39, 12));
-                m_soloLed->set_bounding_rect(QRectF(0, 0, 31, 12));
-                m_recLed->set_bounding_rect(QRectF(0, 0, 27, 12));
+                m_muteLed->setPos(90, 4);
+                m_soloLed->setPos(132, 4);
+                m_recLed->setPos(166, 4);
 	}
 	
         if ((m_inBus->pos().y() + m_inBus->boundingRect().height()) >= height) {
