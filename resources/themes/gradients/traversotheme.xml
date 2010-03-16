@@ -10,10 +10,10 @@
 		
 		<property name="CurveNode:diameter" value="6" />
 		
-		<property name="Song:track:seperatingheight" value="0" />
-                <property name="Song:track:minimumheight" value="20" />
-		<property name="Song:track:maximumheight" value="300" />
-		<property name="Song:track:topindent" value="0" />
+                <property name="Sheet:track:seperatingheight" value="0" />
+                <property name="Sheet:track:minimumheight" value="20" />
+                <property name="Sheet:track:maximumheight" value="300" />
+                <property name="Sheet:track:topindent" value="0" />
 		
 		
 		<property name="Track:topborderwidth" value="0" />
@@ -113,8 +113,8 @@
 		
 		<color name="ResourcesBin:alternaterowcolor" red="243" green="248" blue="255" alpha="255" />
 		
-		<color name="Song:background" red="243" green="243" blue="244" alpha="255" />
-		<color name="SongPanel:background" red="240" green="240" blue="248" alpha="255" />
+                <color name="Sheet:background" red="243" green="243" blue="244" alpha="255" />
+                <color name="SheetPanel:background" red="240" green="240" blue="248" alpha="255" />
 		
 		<color name="Timeline:background" red="180" green="189" blue="189" alpha="255" />
 		<color name="Timeline:text" red="0" green="0" blue="0" alpha="255" />
@@ -137,7 +137,10 @@
 		<color name="TrackPanel:led:font:active" red="0" green="0" blue="0" alpha="255" />
 		<color name="TrackPanel:led:font:inactive" red="150" green="150" blue="150" alpha="255" />
 		
-		<color name="TrackPanel:bus:font" red="0" green="0" blue="0" alpha="255" />
+                <color name="SubGroup:background" red="150" green="150" blue="251" alpha="100" />
+                <color name="SubGroupPanel:background" red="0" green="0" blue="248" alpha="255" />
+
+                <color name="TrackPanel:bus:font" red="0" green="0" blue="0" alpha="255" />
 		<color name="TrackPanel:bus:background" red="237" green="237" blue="250" alpha="255" />
 		<color name="TrackPanel:bus:margin" red="200" green="200" blue="200" alpha="255" />
 		
