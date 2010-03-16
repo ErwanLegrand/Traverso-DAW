@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QTabBar>
+#include <QCompleter>
 
 #include "Interface.h"
 #include "ProjectManager.h"
@@ -204,6 +205,11 @@ Interface::Interface()
         m_welcomeWidget->show();
         m_centerAreaWidget->addTab(m_welcomeWidget, tr("&Welcome"));
         m_welcomeWidget->setFocus(Qt::MouseFocusReason);
+
+        m_trackFinder = new QComboBox(m_projectToolBar);
+        m_trackFinderCompleter = new QCompleter;
+        m_trackFinder->setCompleter(m_trackFinderCompleter);
+        connect(m_trackFinder, SIGNAL(currentIndexChanged(int)), this, SLOT(track_finder_index_changed(int)));
 
 	// Some default values.
         m_project = 0;
@@ -568,6 +574,8 @@ void Interface::create_menus( )
 	action->setIcon(QIcon(":/restore"));
 	m_projectToolBar->addAction(action);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_restore_project_backup_dialog()));
+
+        m_projectToolBar->addWidget(m_trackFinder);
 	
         menu->addSeparator();
 
@@ -1725,3 +1733,45 @@ void Interface::sheet_transport_state_changed()
         }
 
 }
+
+Command* Interface::show_track_finder()
+{
+        if (!m_project) {
+                return 0;
+        }
+
+        m_trackFinder->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+        m_trackFinder->clear();
+        m_trackFinder->addItem("Find Track");
+
+        QList<Sheet*> sheets = m_project->get_sheets();
+        foreach(Sheet* sheet, sheets) {
+                QList<Track*> tracks = sheet->get_tracks();
+                tracks.append(sheet->get_master_out());
+                foreach(Track* track, tracks) {
+                        m_trackFinder->addItem(track->get_name(), track->get_id());
+                }
+
+        }
+
+        m_trackFinder->showPopup();
+
+        return 0;
+}
+
+
+void Interface::track_finder_index_changed(int index)
+{
+        qlonglong id = m_trackFinder->itemData(index).toLongLong();
+
+        foreach(SheetWidget* sw, m_sheetWidgets) {
+                Sheet* sheet = sw->get_sheet();
+                Track* track = sheet->get_track(id);
+                if (track) {
+                        show_sheet(sheet);
+                        sw->get_sheetview()->browse_to_track(track);
+                        return;
+                }
+        }
+}
+

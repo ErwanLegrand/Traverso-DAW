@@ -17,4 +17,3 @@
 #include "Scroll.h"
 #include "Crop.h"
 #include "Shuttle.h"
-#include "TrackFinder.h"

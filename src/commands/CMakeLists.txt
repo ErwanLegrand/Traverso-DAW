@@ -35,7 +35,6 @@ ArmTracks.cpp
 PlayHeadMove.cpp
 WorkCursorMove.cpp
 RemoveClip.cpp
-TrackFinder.cpp
 )
 
 SET(TRAVERSO_COMMANDS_MOC_CLASSES

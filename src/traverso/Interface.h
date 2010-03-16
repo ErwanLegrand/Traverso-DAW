@@ -46,7 +46,9 @@ class QUndoView;
 class QDockWidget;
 class QToolBar;
 class QToolButton;
-class QActionGroup;
+class QCompleter;
+class QComboBox;
+
 class ResourcesWidget;
 class ResourcesInfoWidget;
 class SheetWidget;
@@ -159,6 +161,8 @@ private:
 	QMenu*			m_resampleQualityMenu;
         QMenu*                  m_sheetMenu;
         QList<QAction*>         m_projectMenuToolbarActions;
+        QComboBox*              m_trackFinder;
+        QCompleter*             m_trackFinderCompleter;
 	
 	void create_menus();
         void set_project_actions_enabled(bool enable);
@@ -210,6 +214,7 @@ public slots :
         Command* audio_io_dialog();
         Command* start_transport();
 	Command* set_recordable_and_start_transport();
+        Command* show_track_finder();
 
 	
 private slots:
@@ -228,6 +233,7 @@ private slots:
         void update_sheet_tabs_appearance();
         void sheet_tab_index_changed(int index);
         void sheet_transport_state_changed();
+        void track_finder_index_changed(int index);
 };
 
 
