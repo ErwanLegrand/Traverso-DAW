@@ -1057,7 +1057,9 @@ void Sheet::private_remove_track(Track* track)
 
 Track* Sheet::get_track(qint64 id)
 {
-        apill_foreach(Track* track, Track, m_audioTracks) {
+        QList<Track*> tracks = get_tracks();
+        tracks.append(m_masterOut);
+        foreach(Track* track, tracks) {
 		if (track->get_id() == id) {
 			return track;
 		}
