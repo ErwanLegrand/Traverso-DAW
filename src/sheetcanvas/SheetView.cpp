@@ -413,20 +413,13 @@ void SheetView::layout_tracks()
 	
 	int verticalposition = m_trackTopIndent;
 
-        for (int i=0; i<m_audioTrackViews.size(); ++i) {
-                TrackView* view = m_audioTrackViews.at(i);
+        QList<TrackView*> views = get_track_views();
+
+        for (int i=0; i<views.size(); ++i) {
+                TrackView* view = views.at(i);
 		view->move_to(0, verticalposition);
                 verticalposition += (view->get_track()->get_height() + m_trackSeperatingHeight);
 	}
-
-        for (int i=0; i<m_subGroupViews.size(); ++i) {
-                TrackView* view = m_subGroupViews.at(i);
-                view->move_to(0, verticalposition);
-                verticalposition += (view->get_track()->get_height() + m_trackSeperatingHeight);
-        }
-
-        m_masterOutView->move_to(0, verticalposition);
-        verticalposition += (m_masterOutView->get_track()->get_height() + m_trackSeperatingHeight);
 
 	m_sceneHeight = verticalposition;
 
@@ -437,15 +430,11 @@ void SheetView::layout_tracks()
 
 void SheetView::update_tracks_bounding_rect()
 {
-        for (int i=0; i<m_audioTrackViews.size(); ++i) {
-                TrackView* view = m_audioTrackViews.at(i);
-                view->calculate_bounding_rect();
+        QList<TrackView*> views = get_track_views();
+
+        for (int i=0; i<views.size(); ++i) {
+                views.at(i)->calculate_bounding_rect();
         }
-        for (int i=0; i<m_subGroupViews.size(); ++i) {
-                TrackView* view = m_subGroupViews.at(i);
-                view->calculate_bounding_rect();
-        }
-        m_masterOutView->calculate_bounding_rect();
 }
 
 Command* SheetView::center()
@@ -794,7 +783,9 @@ Command* SheetView::add_track()
 
 void SheetView::browse_to_track(Track *track)
 {
-        foreach(TrackView* view, m_audioTrackViews) {
+        QList<TrackView*> views = get_track_views();
+
+        foreach(TrackView* view, views) {
                 if (view->get_track() == track) {
 
                         center_in_view(view);
@@ -810,5 +801,15 @@ void SheetView::browse_to_track(Track *track)
 
 void SheetView::center_in_view(ViewItem *item)
 {
-        set_vscrollbar_value(item->pos().y());
+        set_vscrollbar_value(item->pos().y() - (m_tpvp->height() / 2) + item->boundingRect().height());
+}
+
+
+QList<TrackView*> SheetView::get_track_views() const
+{
+        QList<TrackView*> views;
+        views.append(m_audioTrackViews);
+        views.append(m_subGroupViews);
+        views.append(m_masterOutView);
+        return views;
 }

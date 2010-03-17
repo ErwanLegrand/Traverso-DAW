@@ -212,11 +212,20 @@ Interface::Interface()
         m_trackFinder->setCompleter(m_trackFinderCompleter);
         m_trackFinderModel = new QStandardItemModel();
         m_trackFinderCompleter->setModel(m_trackFinderModel);
-        m_trackFinderCompleter->setCompletionMode(QCompleter::PopupCompletion);
         m_trackFinderCompleter->setCaseSensitivity(Qt::CaseInsensitive);
         m_trackFinder->setCompleter(m_trackFinderCompleter);
         connect(m_trackFinderCompleter, SIGNAL(activated(const QModelIndex&)),
                 this, SLOT(track_finder_model_index_changed(const QModelIndex&)));
+
+        QTreeView *treeView = new QTreeView;
+        treeView->setMinimumWidth(300);
+        m_trackFinderCompleter->setPopup(treeView);
+        treeView->setRootIsDecorated(false);
+        treeView->header()->hide();
+        treeView->header()->setStretchLastSection(false);
+        treeView->header()->setResizeMode(0, QHeaderView::Stretch);
+        treeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+
 
 	// Some default values.
         m_project = 0;
@@ -1760,7 +1769,11 @@ Command* Interface::show_track_finder()
                 foreach(Track* track, tracks) {
                         QStandardItem* sItem = new QStandardItem(track->get_name());
                         sItem->setData(track->get_id(), Qt::UserRole);
-                        m_trackFinderModel->appendRow(sItem);
+                        QList<QStandardItem*> items;
+                        items.append(sItem);
+                        sItem = new QStandardItem(sheet->get_name());
+                        items.append(sItem);
+                        m_trackFinderModel->appendRow(items);
                 }
         }
 

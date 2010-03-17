@@ -76,6 +76,7 @@ public :
 	ClipsViewPort* get_clips_viewport() const;
 	
 	AudioTrackView* get_trackview_under(QPointF point);
+        QList<TrackView*> get_track_views() const;
 	
 	void load_theme_data();
 	void start_shuttle(bool start, bool drag=false);
