@@ -1769,6 +1769,10 @@ Command* Interface::show_track_finder()
                 return 0;
         }
 
+        if (m_projectToolBar->isHidden()) {
+                m_projectToolBar->show();
+        }
+
         m_trackFinder->setText("Find Track");
         m_trackFinder->selectAll();
 
