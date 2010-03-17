@@ -83,7 +83,7 @@ void AudioTrack::init()
 QDomNode AudioTrack::get_state( QDomDocument doc, bool istemplate)
 {
         QDomElement node = doc.createElement("Track");
-        Track::get_state(node);
+        Track::get_state(node, istemplate);
 
         node.setAttribute("numtakes", m_numtakes);
         node.setAttribute("InputBus", m_busInName);

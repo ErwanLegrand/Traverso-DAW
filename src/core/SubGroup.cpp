@@ -49,10 +49,10 @@ SubGroup::~SubGroup()
         delete m_processBus;
 }
 
-QDomNode SubGroup::get_state( QDomDocument doc, bool /*istemplate*/)
+QDomNode SubGroup::get_state( QDomDocument doc, bool istemplate)
 {
         QDomElement node = doc.createElement("SubGroup");
-        Track::get_state(node);
+        Track::get_state(node, istemplate);
 
         node.setAttribute("channelcount", m_channelCount);
 

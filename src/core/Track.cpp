@@ -37,10 +37,10 @@ Track::Track(Sheet *sheet)
 
 void Track::get_state( QDomElement& node, bool istemplate)
 {
-//        QDomElement node = doc.toElement();
-        
         if (! istemplate ) {
                 node.setAttribute("id", m_id);
+        } else {
+                node.setAttribute("id", create_id());
         }
         node.setAttribute("name", m_name);
         node.setAttribute("pan", m_pan);
