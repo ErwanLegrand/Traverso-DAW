@@ -1780,6 +1780,7 @@ void Interface::track_finder_model_index_changed(const QModelIndex& index)
                 if (track) {
                         show_sheet(sheet);
                         sw->get_sheetview()->browse_to_track(track);
+                        sw->setFocus();
                         return;
                 }
         }
