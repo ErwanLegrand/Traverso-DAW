@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QMainWindow>
 #include <QHash>
+#include <QModelIndex>
 
 class Sheet;
 class AudioTrack;
@@ -47,7 +48,8 @@ class QDockWidget;
 class QToolBar;
 class QToolButton;
 class QCompleter;
-class QComboBox;
+class QLineEdit;
+class QStandardItemModel;
 
 class ResourcesWidget;
 class ResourcesInfoWidget;
@@ -161,8 +163,9 @@ private:
 	QMenu*			m_resampleQualityMenu;
         QMenu*                  m_sheetMenu;
         QList<QAction*>         m_projectMenuToolbarActions;
-        QComboBox*              m_trackFinder;
+        QLineEdit*              m_trackFinder;
         QCompleter*             m_trackFinderCompleter;
+        QStandardItemModel*     m_trackFinderModel;
 	
 	void create_menus();
         void set_project_actions_enabled(bool enable);
@@ -233,7 +236,7 @@ private slots:
         void update_sheet_tabs_appearance();
         void sheet_tab_index_changed(int index);
         void sheet_transport_state_changed();
-        void track_finder_index_changed(int index);
+        void track_finder_model_index_changed(const QModelIndex& index);
 };
 
 

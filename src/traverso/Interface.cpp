@@ -37,6 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QFileInfo>
 #include <QTabBar>
 #include <QCompleter>
+#include <QStandardItemModel>
 
 #include "Interface.h"
 #include "ProjectManager.h"
@@ -206,10 +207,16 @@ Interface::Interface()
         m_centerAreaWidget->addTab(m_welcomeWidget, tr("&Welcome"));
         m_welcomeWidget->setFocus(Qt::MouseFocusReason);
 
-        m_trackFinder = new QComboBox(m_projectToolBar);
+        m_trackFinder = new QLineEdit(m_projectToolBar);
         m_trackFinderCompleter = new QCompleter;
         m_trackFinder->setCompleter(m_trackFinderCompleter);
-        connect(m_trackFinder, SIGNAL(currentIndexChanged(int)), this, SLOT(track_finder_index_changed(int)));
+        m_trackFinderModel = new QStandardItemModel();
+        m_trackFinderCompleter->setModel(m_trackFinderModel);
+        m_trackFinderCompleter->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
+        m_trackFinderCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+        m_trackFinder->setCompleter(m_trackFinderCompleter);
+        connect(m_trackFinderCompleter, SIGNAL(activated(const QModelIndex&)),
+                this, SLOT(track_finder_model_index_changed(const QModelIndex&)));
 
 	// Some default values.
         m_project = 0;
@@ -1740,29 +1747,32 @@ Command* Interface::show_track_finder()
                 return 0;
         }
 
-        m_trackFinder->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-        m_trackFinder->clear();
-        m_trackFinder->addItem("Find Track");
+        m_trackFinder->setText("Find Track");
+        m_trackFinder->selectAll();
+
+        m_trackFinderModel->clear();
 
         QList<Sheet*> sheets = m_project->get_sheets();
+
         foreach(Sheet* sheet, sheets) {
                 QList<Track*> tracks = sheet->get_tracks();
                 tracks.append(sheet->get_master_out());
                 foreach(Track* track, tracks) {
-                        m_trackFinder->addItem(track->get_name(), track->get_id());
+                        QStandardItem* sItem = new QStandardItem(track->get_name());
+                        sItem->setData(track->get_id(), Qt::UserRole);
+                        m_trackFinderModel->appendRow(sItem);
                 }
-
         }
 
-        m_trackFinder->showPopup();
+        m_trackFinder->setFocus();
 
         return 0;
 }
 
 
-void Interface::track_finder_index_changed(int index)
+void Interface::track_finder_model_index_changed(const QModelIndex& index)
 {
-        qlonglong id = m_trackFinder->itemData(index).toLongLong();
+        qlonglong id = index.data(Qt::UserRole).toLongLong();
 
         foreach(SheetWidget* sw, m_sheetWidgets) {
                 Sheet* sheet = sw->get_sheet();
