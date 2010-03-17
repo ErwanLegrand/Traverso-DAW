@@ -212,7 +212,7 @@ Interface::Interface()
         m_trackFinder->setCompleter(m_trackFinderCompleter);
         m_trackFinderModel = new QStandardItemModel();
         m_trackFinderCompleter->setModel(m_trackFinderModel);
-        m_trackFinderCompleter->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
+        m_trackFinderCompleter->setCompletionMode(QCompleter::PopupCompletion);
         m_trackFinderCompleter->setCaseSensitivity(Qt::CaseInsensitive);
         m_trackFinder->setCompleter(m_trackFinderCompleter);
         connect(m_trackFinderCompleter, SIGNAL(activated(const QModelIndex&)),
