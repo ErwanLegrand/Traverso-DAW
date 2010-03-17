@@ -208,6 +208,7 @@ Interface::Interface()
         m_welcomeWidget->setFocus(Qt::MouseFocusReason);
 
         m_trackFinder = new QLineEdit(m_projectToolBar);
+        m_trackFinder->installEventFilter(this);
         m_trackFinderCompleter = new QCompleter;
         m_trackFinder->setCompleter(m_trackFinderCompleter);
         m_trackFinderModel = new QStandardItemModel();
@@ -292,6 +293,9 @@ void Interface::set_project(Project* project)
         foreach(SheetWidget* sw, m_sheetWidgets) {
                 remove_sheetwidget(sw->get_sheet());
         }
+
+        m_trackFinderModel->clear();
+        m_trackFinder->clear();
 
 	if ( project ) {
 		connect(project, SIGNAL(currentSheetChanged(Sheet*)), this, SLOT(show_sheet(Sheet*)));
@@ -419,6 +423,9 @@ Command* Interface::full_screen()
 
 void Interface::keyPressEvent( QKeyEvent * e)
 {
+        if (m_trackFinder->hasFocus()) {
+                return;
+        }
 	ie().catch_key_press(e);
 	e->ignore();
 }
@@ -431,6 +438,11 @@ void Interface::keyReleaseEvent( QKeyEvent * e)
 
 bool Interface::eventFilter(QObject * obj, QEvent * event)
 {
+        if (event->type() == QEvent::MouseButtonPress && obj == m_trackFinder) {
+                show_track_finder();
+                return true;
+        }
+
 	QMenu* menu = qobject_cast<QMenu*>(obj);
 	
 	// If the installed filter was for a QMenu, we need to
