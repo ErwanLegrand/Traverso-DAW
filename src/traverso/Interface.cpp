@@ -424,6 +424,12 @@ Command* Interface::full_screen()
 void Interface::keyPressEvent( QKeyEvent * e)
 {
         if (m_trackFinder->hasFocus()) {
+                if (e->key() == Qt::Key_Escape) {
+                        track_finder_show_initial_text();
+                        if (m_currentSheetWidget) {
+                                m_currentSheetWidget->setFocus();
+                        }
+                }
                 return;
         }
 	ie().catch_key_press(e);
