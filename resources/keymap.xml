@@ -61,8 +61,9 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="UARROW" >
 			<Objects>
-				<Object objectname="Gain" slotsignature="increase_gain" modes="All" />
-				<Object objectname="DragNode" slotsignature="move_up" modes="Effects" />
+                                <Object objectname="Gain" slotsignature="increase_gain" modes="All" />
+                                <Object objectname="MoveTrack" slotsignature="move_up" modes="All" />
+                                <Object objectname="DragNode" slotsignature="move_up" modes="Effects" />
 				<Object objectname="SheetView" slotsignature="scroll_up" modes="All" sortorder="4" submenu="Scroll" />
 				<Object objectname="MoveClip" slotsignature="move_up" modes="All" sortorder="1" />
 			</Objects>
@@ -70,7 +71,8 @@
 		<keyfact type="FKEY" key1="DARROW" >
 			<Objects>
 				<Object objectname="Gain" slotsignature="decrease_gain" modes="All" />
-				<Object objectname="DragNode" slotsignature="move_down" modes="Effects" />
+                                <Object objectname="MoveTrack" slotsignature="move_down" modes="All" />
+                                <Object objectname="DragNode" slotsignature="move_down" modes="Effects" />
 				<Object objectname="SheetView" slotsignature="scroll_down" modes="All" sortorder="4" submenu="Scroll" />
 				<Object objectname="MoveClip" slotsignature="move_down" modes="All" sortorder="2" />
 			</Objects>
