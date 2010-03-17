@@ -170,7 +170,8 @@ private:
 	void create_menus();
         void set_project_actions_enabled(bool enable);
 	void save_config_and_emit_message(const QString& message);
-	
+        void track_finder_show_initial_text();
+
 	static Interface* m_instance;
 	
 	QMenu* create_context_menu(QObject* item, QList<MenuData >* list = 0);

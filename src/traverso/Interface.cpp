@@ -295,7 +295,7 @@ void Interface::set_project(Project* project)
         }
 
         m_trackFinderModel->clear();
-        m_trackFinder->clear();
+        track_finder_show_initial_text();
 
 	if ( project ) {
 		connect(project, SIGNAL(currentSheetChanged(Sheet*)), this, SLOT(show_sheet(Sheet*)));
@@ -1773,7 +1773,12 @@ Command* Interface::show_track_finder()
                 m_projectToolBar->show();
         }
 
-        m_trackFinder->setText("Find Track");
+        m_trackFinder->setStyleSheet("color: blue;"
+                                 "background-color: yellow;"
+                                 "selection-color: yellow;"
+                                 "selection-background-color: blue;");
+
+        m_trackFinder->setText("Type to locate");
         m_trackFinder->selectAll();
 
         m_trackFinderModel->clear();
@@ -1811,9 +1816,10 @@ void Interface::track_finder_model_index_changed(const QModelIndex& index)
                         show_sheet(sheet);
                         sw->get_sheetview()->browse_to_track(track);
                         sw->setFocus();
-                        return;
+                        break;
                 }
         }
+        track_finder_show_initial_text();
 }
 
 void Interface::track_finder_return_pressed()
@@ -1832,8 +1838,15 @@ void Interface::track_finder_return_pressed()
                                 show_sheet(sheet);
                                 sw->get_sheetview()->browse_to_track(track);
                                 sw->setFocus();
+                                track_finder_show_initial_text();
                                 return;
                         }
                 }
         }
+}
+
+void Interface::track_finder_show_initial_text()
+{
+        m_trackFinder->setStyleSheet("color: gray; background-color: white");
+        m_trackFinder->setText(tr("Track Finder"));
 }
