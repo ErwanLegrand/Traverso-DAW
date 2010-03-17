@@ -1,85 +1,86 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>ProjectManagerDialog</class>
- <widget class="QDialog" name="ProjectManagerDialog" >
-  <property name="geometry" >
+ <widget class="QDialog" name="ProjectManagerDialog">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>581</width>
-    <height>308</height>
+    <height>305</height>
    </rect>
   </property>
-  <property name="maximumSize" >
+  <property name="maximumSize">
    <size>
     <width>600</width>
     <height>500</height>
    </size>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
+  <layout class="QVBoxLayout">
+   <property name="spacing">
     <number>6</number>
    </property>
+   <property name="margin">
+    <number>9</number>
+   </property>
    <item>
-    <widget class="QTabWidget" name="tabWidget" >
-     <property name="currentIndex" >
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab_4" >
-      <attribute name="title" >
+     <widget class="QWidget" name="tab_4">
+      <attribute name="title">
        <string>Project</string>
       </attribute>
-      <layout class="QGridLayout" >
-       <property name="margin" >
+      <layout class="QGridLayout">
+       <property name="margin">
         <number>9</number>
        </property>
-       <property name="spacing" >
+       <property name="spacing">
         <number>6</number>
        </property>
-       <item rowspan="2" row="0" column="0" >
-        <widget class="QGroupBox" name="groupBox_3" >
-         <property name="title" >
+       <item row="0" column="0" rowspan="2">
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
           <string>Informational</string>
          </property>
-         <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>9</number>
-          </property>
-          <property name="spacing" >
+         <layout class="QVBoxLayout">
+          <property name="spacing">
            <number>6</number>
           </property>
+          <property name="margin">
+           <number>9</number>
+          </property>
           <item>
-           <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
-            <property name="spacing" >
+           <layout class="QHBoxLayout">
+            <property name="spacing">
              <number>6</number>
             </property>
+            <property name="margin">
+             <number>0</number>
+            </property>
             <item>
-             <widget class="QLabel" name="label_3" >
-              <property name="minimumSize" >
+             <widget class="QLabel" name="label_3">
+              <property name="minimumSize">
                <size>
                 <width>100</width>
                 <height>0</height>
                </size>
               </property>
-              <property name="text" >
+              <property name="text">
                <string>Title</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="lineEditTitle" >
-              <property name="enabled" >
+             <widget class="QLineEdit" name="lineEditTitle">
+              <property name="enabled">
                <bool>true</bool>
               </property>
-              <property name="acceptDrops" >
+              <property name="acceptDrops">
                <bool>true</bool>
               </property>
              </widget>
@@ -87,29 +88,29 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
-            <property name="spacing" >
+           <layout class="QHBoxLayout">
+            <property name="spacing">
              <number>6</number>
             </property>
+            <property name="margin">
+             <number>0</number>
+            </property>
             <item>
-             <widget class="QLabel" name="label" >
-              <property name="minimumSize" >
+             <widget class="QLabel" name="label">
+              <property name="minimumSize">
                <size>
                 <width>100</width>
                 <height>0</height>
                </size>
               </property>
-              <property name="text" >
+              <property name="text">
                <string>Description</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QTextEdit" name="descriptionTextEdit" >
-              <property name="maximumSize" >
+             <widget class="QTextEdit" name="descriptionTextEdit">
+              <property name="maximumSize">
                <size>
                 <width>16777215</width>
                 <height>50</height>
@@ -120,62 +121,62 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
-            <property name="spacing" >
+           <layout class="QHBoxLayout">
+            <property name="spacing">
              <number>6</number>
             </property>
+            <property name="margin">
+             <number>0</number>
+            </property>
             <item>
-             <widget class="QLabel" name="label_2" >
-              <property name="minimumSize" >
+             <widget class="QLabel" name="label_2">
+              <property name="minimumSize">
                <size>
                 <width>100</width>
                 <height>0</height>
                </size>
               </property>
-              <property name="text" >
+              <property name="text">
                <string>Engineer</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="lineEdit" />
+             <widget class="QLineEdit" name="lineEdit"/>
             </item>
            </layout>
           </item>
          </layout>
         </widget>
        </item>
-       <item row="0" column="1" >
-        <widget class="QGroupBox" name="groupBox" >
-         <property name="minimumSize" >
+       <item row="0" column="1">
+        <widget class="QGroupBox" name="groupBox">
+         <property name="minimumSize">
           <size>
            <width>150</width>
            <height>0</height>
           </size>
          </property>
-         <property name="title" >
+         <property name="title">
           <string>Export</string>
          </property>
-         <layout class="QVBoxLayout" >
-          <property name="margin" >
+         <layout class="QVBoxLayout">
+          <property name="spacing">
            <number>9</number>
           </property>
-          <property name="spacing" >
+          <property name="margin">
            <number>9</number>
           </property>
           <item>
-           <widget class="QPushButton" name="sheetsExportButton" >
-            <property name="text" >
+           <widget class="QPushButton" name="sheetsExportButton">
+            <property name="text">
              <string>Sheet(s)</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="exportTemplateButton" >
-            <property name="text" >
+           <widget class="QPushButton" name="exportTemplateButton">
+            <property name="text">
              <string>Template</string>
             </property>
            </widget>
@@ -183,12 +184,12 @@
          </layout>
         </widget>
        </item>
-       <item rowspan="2" row="1" column="1" >
+       <item row="1" column="1" rowspan="2">
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
            <height>40</height>
@@ -196,15 +197,15 @@
          </property>
         </spacer>
        </item>
-       <item row="2" column="0" >
+       <item row="2" column="0">
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeType" >
+         <property name="sizeType">
           <enum>QSizePolicy::Maximum</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>385</width>
            <height>20</height>
@@ -214,73 +215,71 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab" >
-      <attribute name="title" >
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
        <string>Sheets</string>
       </attribute>
-      <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
-       <property name="spacing" >
+      <layout class="QHBoxLayout">
+       <property name="spacing">
         <number>6</number>
        </property>
+       <property name="margin">
+        <number>9</number>
+       </property>
        <item>
-        <widget class="QTreeWidget" name="treeSheetWidget" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>0</hsizetype>
-           <vsizetype>0</vsizetype>
+        <widget class="QTreeWidget" name="treeSheetWidget">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>10</horstretch>
            <verstretch>5</verstretch>
           </sizepolicy>
          </property>
-         <property name="minimumSize" >
+         <property name="minimumSize">
           <size>
            <width>330</width>
            <height>120</height>
           </size>
          </property>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Sheet Name</string>
           </property>
          </column>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Tracks</string>
           </property>
          </column>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Length</string>
           </property>
          </column>
         </widget>
        </item>
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
+        <layout class="QVBoxLayout">
+         <property name="spacing">
           <number>6</number>
          </property>
+         <property name="margin">
+          <number>0</number>
+         </property>
          <item>
-          <widget class="QGroupBox" name="groupBox_4" >
-           <property name="title" >
+          <widget class="QGroupBox" name="groupBox_4">
+           <property name="title">
             <string>Selected Sheet</string>
            </property>
-           <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>9</number>
-            </property>
-            <property name="spacing" >
+           <layout class="QVBoxLayout">
+            <property name="spacing">
              <number>6</number>
             </property>
+            <property name="margin">
+             <number>9</number>
+            </property>
             <item>
-             <widget class="QLineEdit" name="selectedSheetName" >
-              <property name="minimumSize" >
+             <widget class="QLineEdit" name="selectedSheetName">
+              <property name="minimumSize">
                <size>
                 <width>0</width>
                 <height>0</height>
@@ -289,32 +288,32 @@
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
-              <property name="spacing" >
+             <layout class="QHBoxLayout">
+              <property name="spacing">
                <number>6</number>
               </property>
+              <property name="margin">
+               <number>0</number>
+              </property>
               <item>
-               <widget class="QPushButton" name="deleteSheetButton" >
-                <property name="text" >
+               <widget class="QPushButton" name="deleteSheetButton">
+                <property name="text">
                  <string>Delete</string>
                 </property>
-                <property name="autoDefault" >
+                <property name="autoDefault">
                  <bool>false</bool>
                 </property>
                </widget>
               </item>
               <item>
                <spacer>
-                <property name="orientation" >
+                <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
-                <property name="sizeType" >
+                <property name="sizeType">
                  <enum>QSizePolicy::Minimum</enum>
                 </property>
-                <property name="sizeHint" >
+                <property name="sizeHint" stdset="0">
                  <size>
                   <width>1</width>
                   <height>20</height>
@@ -323,8 +322,8 @@
                </spacer>
               </item>
               <item>
-               <widget class="QPushButton" name="renameSheetButton" >
-                <property name="text" >
+               <widget class="QPushButton" name="renameSheetButton">
+                <property name="text">
                  <string>Rename</string>
                 </property>
                </widget>
@@ -335,28 +334,28 @@
           </widget>
          </item>
          <item>
-          <widget class="QGroupBox" name="groupBox_2" >
-           <property name="title" >
+          <widget class="QGroupBox" name="groupBox_2">
+           <property name="title">
             <string>New Sheet</string>
            </property>
-           <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>9</number>
-            </property>
-            <property name="spacing" >
+           <layout class="QHBoxLayout">
+            <property name="spacing">
              <number>6</number>
             </property>
+            <property name="margin">
+             <number>9</number>
+            </property>
             <item>
-             <layout class="QHBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
-              <property name="spacing" >
+             <layout class="QHBoxLayout">
+              <property name="spacing">
                <number>6</number>
               </property>
+              <property name="margin">
+               <number>0</number>
+              </property>
               <item>
-               <widget class="QPushButton" name="createSheetButton" >
-                <property name="text" >
+               <widget class="QPushButton" name="createSheetButton">
+                <property name="text">
                  <string>Create new Sheet</string>
                 </property>
                </widget>
@@ -368,10 +367,10 @@
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>40</height>
@@ -383,228 +382,228 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="cdtext" >
-      <attribute name="title" >
+     <widget class="QWidget" name="cdtext">
+      <attribute name="title">
        <string>CD Text</string>
       </attribute>
-      <layout class="QGridLayout" >
-       <property name="margin" >
+      <layout class="QGridLayout">
+       <property name="margin">
         <number>9</number>
        </property>
-       <property name="spacing" >
+       <property name="spacing">
         <number>6</number>
        </property>
-       <item row="0" column="0" >
-        <widget class="QLabel" name="label_7" >
-         <property name="minimumSize" >
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="minimumSize">
           <size>
            <width>100</width>
            <height>0</height>
           </size>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>Performer</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1" colspan="2" >
-        <widget class="QLineEdit" name="lineEditPerformer" />
+       <item row="0" column="1" colspan="2">
+        <widget class="QLineEdit" name="lineEditPerformer"/>
        </item>
-       <item row="1" column="0" >
-        <widget class="QLabel" name="label_4" >
-         <property name="minimumSize" >
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="minimumSize">
           <size>
            <width>100</width>
            <height>0</height>
           </size>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>Disc ID:</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="1" colspan="2" >
-        <widget class="QLineEdit" name="lineEditId" />
+       <item row="1" column="1" colspan="2">
+        <widget class="QLineEdit" name="lineEditId"/>
        </item>
-       <item row="2" column="0" >
-        <widget class="QLabel" name="label_6" >
-         <property name="minimumSize" >
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_6">
+         <property name="minimumSize">
           <size>
            <width>100</width>
            <height>0</height>
           </size>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>UPC EAN:</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="1" colspan="2" >
-        <widget class="QLineEdit" name="lineEditUPC" />
+       <item row="2" column="1" colspan="2">
+        <widget class="QLineEdit" name="lineEditUPC"/>
        </item>
-       <item row="3" column="0" >
-        <widget class="QLabel" name="label_5" >
-         <property name="minimumSize" >
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="minimumSize">
           <size>
            <width>100</width>
            <height>0</height>
           </size>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>Genre:</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="1" >
-        <widget class="QComboBox" name="comboBoxGenre" >
+       <item row="3" column="1">
+        <widget class="QComboBox" name="comboBoxGenre">
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Unused</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Undefined</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Adult Contemporary</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Alternative Rock</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Childrens</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Classical</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Contemporary Christian</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Country</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Dance</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Easy Listening</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Erotic</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Folk</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Gospel</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Hip Hop</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Jazz</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Latin</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Musical</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>New Age</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Opera</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Operette</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Pop Music</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Rap</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Reggae</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Rock Music</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Rhythm and Blues</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Sound Effects</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Spoken Word</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>World Music</string>
           </property>
          </item>
         </widget>
        </item>
-       <item row="3" column="2" >
+       <item row="3" column="2">
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>40</width>
            <height>20</height>
@@ -612,90 +611,90 @@
          </property>
         </spacer>
        </item>
-       <item row="4" column="0" >
-        <widget class="QLabel" name="label_8" >
-         <property name="text" >
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_8">
+         <property name="text">
           <string>Arranger</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="1" colspan="2" >
-        <widget class="QLineEdit" name="lineEditArranger" />
+       <item row="4" column="1" colspan="2">
+        <widget class="QLineEdit" name="lineEditArranger"/>
        </item>
-       <item row="5" column="0" >
-        <widget class="QLabel" name="label_9" >
-         <property name="text" >
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
           <string>Songwriter</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="1" colspan="2" >
-        <widget class="QLineEdit" name="lineEditSongwriter" />
+       <item row="5" column="1" colspan="2">
+        <widget class="QLineEdit" name="lineEditSongwriter"/>
        </item>
-       <item row="6" column="0" >
-        <widget class="QLabel" name="label_10" >
-         <property name="text" >
+       <item row="6" column="0">
+        <widget class="QLabel" name="label_10">
+         <property name="text">
           <string>Message</string>
          </property>
         </widget>
        </item>
-       <item row="6" column="1" colspan="2" >
-        <widget class="QLineEdit" name="lineEditMessage" />
+       <item row="6" column="1" colspan="2">
+        <widget class="QLineEdit" name="lineEditMessage"/>
        </item>
       </layout>
      </widget>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
+    <layout class="QHBoxLayout">
+     <property name="spacing">
       <number>6</number>
      </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
      <item>
-      <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
+      <layout class="QHBoxLayout" name="_2">
+       <property name="spacing">
         <number>6</number>
        </property>
+       <property name="margin">
+        <number>0</number>
+       </property>
        <item>
-        <widget class="QPushButton" name="undoButton" >
-         <property name="maximumSize" >
+        <widget class="QPushButton" name="undoButton">
+         <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>22</height>
+           <height>42</height>
           </size>
          </property>
-         <property name="toolTip" >
-          <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Undo last change&lt;/p>&lt;/body>&lt;/html></string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Undo last change&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
-         <property name="text" >
+         <property name="text">
           <string/>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="redoButton" >
-         <property name="maximumSize" >
+        <widget class="QPushButton" name="redoButton">
+         <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>22</height>
+           <height>42</height>
           </size>
          </property>
-         <property name="toolTip" >
-          <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Redo last change&lt;/p>&lt;/body>&lt;/html></string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Redo last change&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
-         <property name="text" >
+         <property name="text">
           <string/>
          </property>
         </widget>
@@ -703,12 +702,12 @@ p, li { white-space: pre-wrap; }
       </layout>
      </item>
      <item>
-      <widget class="QDialogButtonBox" name="buttonBox" >
-       <property name="orientation" >
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="standardButtons" >
-        <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
        </property>
       </widget>
      </item>
@@ -724,11 +723,11 @@ p, li { white-space: pre-wrap; }
    <receiver>ProjectManagerDialog</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>543</x>
      <y>250</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>576</x>
      <y>219</y>
     </hint>
@@ -740,11 +739,11 @@ p, li { white-space: pre-wrap; }
    <receiver>ProjectManagerDialog</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>477</x>
      <y>254</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>492</x>
      <y>240</y>
     </hint>
