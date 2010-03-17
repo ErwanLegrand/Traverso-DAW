@@ -216,6 +216,7 @@ Interface::Interface()
         m_trackFinder->setCompleter(m_trackFinderCompleter);
         connect(m_trackFinderCompleter, SIGNAL(activated(const QModelIndex&)),
                 this, SLOT(track_finder_model_index_changed(const QModelIndex&)));
+        connect(m_trackFinder, SIGNAL(returnPressed()), this, SLOT(track_finder_return_pressed()));
 
         QTreeView *treeView = new QTreeView;
         treeView->setMinimumWidth(300);
@@ -1799,3 +1800,24 @@ void Interface::track_finder_model_index_changed(const QModelIndex& index)
         }
 }
 
+void Interface::track_finder_return_pressed()
+{
+        if (!m_project) {
+                return;
+        }
+
+        QString name = m_trackFinder->text();
+        foreach(SheetWidget* sw, m_sheetWidgets) {
+                Sheet* sheet = sw->get_sheet();
+                QList<Track*> tracks = sheet->get_tracks();
+                tracks.append(sheet->get_master_out());
+                foreach(Track* track, tracks) {
+                        if (track->get_name() == name) {
+                                show_sheet(sheet);
+                                sw->get_sheetview()->browse_to_track(track);
+                                sw->setFocus();
+                                return;
+                        }
+                }
+        }
+}

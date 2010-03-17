@@ -237,6 +237,7 @@ private slots:
         void sheet_tab_index_changed(int index);
         void sheet_transport_state_changed();
         void track_finder_model_index_changed(const QModelIndex& index);
+        void track_finder_return_pressed();
 };
 
 
