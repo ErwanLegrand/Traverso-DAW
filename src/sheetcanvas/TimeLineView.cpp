@@ -319,7 +319,11 @@ Command* TimeLineView::add_marker()
 {
 	QPointF point = mapFromScene(cpointer().scene_pos());
 	
-	TimeRef when(point.x() * m_sv->timeref_scalefactor);
+        qreal x = point.x();
+        if (x < 0) {
+                return 0;
+        }
+        TimeRef when(x * m_sv->timeref_scalefactor);
 	
 	return add_marker_at(when);
 }
