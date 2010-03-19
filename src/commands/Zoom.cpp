@@ -253,3 +253,12 @@ void Zoom::toggle_vertical_horizontal_jog_zoom(bool autorepeat)
 	}
 }
 
+void Zoom::toggle_expand_all_tracks(bool autorepeat)
+{
+        if (autorepeat) {
+                return;
+        }
+
+        m_sv->toggle_expand_all_tracks();
+}
+

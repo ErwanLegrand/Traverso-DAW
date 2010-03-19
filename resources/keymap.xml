@@ -174,7 +174,8 @@
 				<Object objectname="SpectralMeterView" slotsignature="edit_properties" modes="All" />
 				<Object objectname="AudioClipView" slotsignature="edit_properties" modes="All" sortorder="11" />
 				<Object objectname="TimeLineView" slotsignature="Interface::show_marker_dialog" modes="All" />
-			</Objects>
+                                <Object objectname="Zoom" modes="All" sortorder="5" slotsignature="toggle_expand_all_tracks" />
+                        </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="N" >
 			<Objects>
@@ -596,6 +597,12 @@
 				<Object objectname="Sheet" modes="All" sortorder="1" submenu="Selection" pluginname="TraversoCommands" commandname="ClipSelectionSelectAll" arguments="select_all_clips" />
 			</Objects>
 		</keyfact>
+                <keyfact type="D_FKEY" key1="Z">
+                        <Objects>
+                                <Object objectname="SheetView" modes="All" sortorder="1" submenu="Zoom" slotsignature="toggle_expand_all_tracks" />
+                        </Objects>
+                </keyfact>
+
 
 		
 		

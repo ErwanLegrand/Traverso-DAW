@@ -159,6 +159,7 @@ public slots:
 	Command* playhead_to_workcursor();
 	Command* center_playhead();
         Command* add_track();
+        Command* toggle_expand_all_tracks();
 	
 private slots:
 	void scale_factor_changed();

@@ -73,6 +73,7 @@ public slots:
         void track_vzoom_in(bool autorepeat);
         void track_vzoom_out(bool autorepeat);
 	void toggle_vertical_horizontal_jog_zoom(bool autorepeat);
+        void toggle_expand_all_tracks(bool autorepeat);
 };
 
 #endif
