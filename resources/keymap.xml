@@ -66,7 +66,8 @@
                                 <Object objectname="DragNode" slotsignature="move_up" modes="Effects" />
 				<Object objectname="SheetView" slotsignature="scroll_up" modes="All" sortorder="4" submenu="Scroll" />
 				<Object objectname="MoveClip" slotsignature="move_up" modes="All" sortorder="1" />
-			</Objects>
+                                <Object objectname="Zoom" slotsignature="track_vzoom_out" modes="All" sortorder="1" />
+                        </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="DARROW" >
 			<Objects>
@@ -75,7 +76,8 @@
                                 <Object objectname="DragNode" slotsignature="move_down" modes="Effects" />
 				<Object objectname="SheetView" slotsignature="scroll_down" modes="All" sortorder="4" submenu="Scroll" />
 				<Object objectname="MoveClip" slotsignature="move_down" modes="All" sortorder="2" />
-			</Objects>
+                                <Object objectname="Zoom" slotsignature="track_vzoom_in" modes="All" sortorder="1" />
+                        </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="SHIFT" >
 			<Objects>
@@ -349,8 +351,9 @@
 		
 		<keyfact type="HKEY" key1="Z" sortorder="35" >
 			<Objects>
-				<Object objectname="SheetView" mousehint="LR" modes="All" sortorder="1" submenu="Zoom" pluginname="TraversoCommands" commandname="HJogZoom" arguments="HJogZoom;1.2;0.2" />
-			</Objects>
+                        <Object objectname="SheetView" mousehint="LR" modes="All" sortorder="1" submenu="Zoom" pluginname="TraversoCommands" commandname="HJogZoom" arguments="HJogZoom;1.2;0.2" />
+                        <Object objectname="TrackView" mousehint="LR" modes="All" sortorder="1" submenu="Zoom" pluginname="TraversoCommands" commandname="HJogZoom" arguments="HJogZoom;1.2;0.2" />
+                        </Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="E" >
 			<Objects>

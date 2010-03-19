@@ -397,6 +397,21 @@ void SheetView::vzoom(qreal factor)
 	layout_tracks();
 }
 
+void SheetView::set_track_height(TrackView *view, int newheight)
+{
+        if (newheight > m_trackMaximumHeight) {
+                newheight = m_trackMaximumHeight;
+        }
+
+        if (newheight < m_trackMinimumHeight) {
+                newheight = m_trackMinimumHeight;
+        }
+
+        view->get_track()->set_height(newheight);
+        view->calculate_bounding_rect();
+        layout_tracks();
+}
+
 void SheetView::hzoom(qreal factor)
 {
 	PENTER;

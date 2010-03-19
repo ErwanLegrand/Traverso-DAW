@@ -377,9 +377,15 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 		{
 			SheetView* view = qobject_cast<SheetView*>(obj);
 			if (!view) {
-				PERROR("TraversoCommands: Supplied QObject was not an SheetView! "
-                                                "ZoomCommand needs an SheetView as argument");
-				return 0;
+                                TrackView* tv = qobject_cast<TrackView*>(obj);
+                                if (!tv) {
+                                        PERROR("TraversoCommands: Supplied QObject was not an SheetView! "
+                                                        "ZoomCommand needs an SheetView as argument");
+                                        return 0;
+                                } else {
+                                        return new Zoom(tv, arguments);
+                                }
+
 			}
 			return new Zoom(view, arguments);
 		}

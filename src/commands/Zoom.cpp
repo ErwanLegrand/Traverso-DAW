@@ -22,7 +22,9 @@
 #include "Zoom.h"
 
 #include "SheetView.h"
+#include "TrackView.h"
 #include "Sheet.h"
+#include "Track.h"
 #include "ClipsViewPort.h"
 #include "ContextPointer.h"
 #include <QPoint>
@@ -31,35 +33,46 @@
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
+Zoom::Zoom(TrackView* view, QVariantList args)
+        : Command("Zoom")
+{
+        init(view->get_sheetview(), view, args);
+}
+
 Zoom::Zoom(SheetView* sv, QVariantList args)
 	: Command("Zoom")
 {
-	m_jogHorizontal = m_jogVertical = false;
-	
-	if (args.size() > 0) {
-		QString type = args.at(0).toString();
-		if (type == "JogZoom") {
-			m_jogHorizontal = m_jogVertical = true;
-		} else if (type == "HJogZoom") {
-			m_jogHorizontal = true;
-		} else if (type == "VJogZoom") {
-			m_jogVertical = true;
-		}
-	}
-	if (args.size() > 1) {
-		m_xScalefactor = args.at(1).toDouble();
-	} else {
-		m_xScalefactor = 1;
-	}
-	if (args.size() > 2) {
-		m_yScalefactor = args.at(2).toDouble();
-	} else {
-		m_yScalefactor = 0;
-	}
-	
-        m_sv = sv;
+        init(sv, 0, args);
 }
 
+void Zoom::init(SheetView *sv, TrackView *tv, QVariantList args)
+{
+        m_sv = sv;
+        m_tv = tv;
+
+        m_jogHorizontal = m_jogVertical = false;
+
+        if (args.size() > 0) {
+                QString type = args.at(0).toString();
+                if (type == "JogZoom") {
+                        m_jogHorizontal = m_jogVertical = true;
+                } else if (type == "HJogZoom") {
+                        m_jogHorizontal = true;
+                } else if (type == "VJogZoom") {
+                        m_jogVertical = true;
+                }
+        }
+        if (args.size() > 1) {
+                m_xScalefactor = args.at(1).toDouble();
+        } else {
+                m_xScalefactor = 1;
+        }
+        if (args.size() > 2) {
+                m_yScalefactor = args.at(2).toDouble();
+        } else {
+                m_yScalefactor = 0;
+        }
+}
 
 int Zoom::prepare_actions()
 {
@@ -169,6 +182,59 @@ void Zoom::vzoom_out(bool autorepeat)
 {
 	m_sv->vzoom(0.7);
 }
+
+void Zoom::track_vzoom_in(bool autorepeat)
+{
+        if (!m_tv) {
+                return;
+        }
+
+        int trackheight = m_tv->get_track()->get_height();
+        trackheight *= 1.3;
+
+        m_sv->set_track_height(m_tv, trackheight);
+}
+
+void Zoom::track_vzoom_out(bool autorepeat)
+{
+        if (!m_tv) {
+                return;
+        }
+
+        int trackheight = m_tv->get_track()->get_height();
+        trackheight *= 0.7;
+
+        m_sv->set_track_height(m_tv, trackheight);
+}
+
+void Zoom::set_collected_number(const QString &collected)
+{
+        int number = 0;
+        bool ok = false;
+        QString cleared = collected;
+        cleared = cleared.remove(".").remove("-").remove(",");
+
+        if (cleared.size() >= 1) {
+                number = QString(cleared.data()[cleared.size() -1]).toInt(&ok);
+        }
+
+        if (ok && m_tv) {
+                switch(number) {
+                case 0: m_sv->set_track_height(m_tv, 50); break;
+                case 1: m_sv->set_track_height(m_tv, 30); break;
+                case 2: m_sv->set_track_height(m_tv, 60); break;
+                case 3: m_sv->set_track_height(m_tv, 90); break;
+                case 4: m_sv->set_track_height(m_tv, 120); break;
+                case 5: m_sv->set_track_height(m_tv, 150); break;
+                case 6: m_sv->set_track_height(m_tv, 180); break;
+                case 7: m_sv->set_track_height(m_tv, 210); break;
+                case 8: m_sv->set_track_height(m_tv, 240); break;
+                case 9: m_sv->set_track_height(m_tv, 270); break;
+                default: m_sv->set_track_height(m_tv, 50);
+                }
+        }
+}
+
 
 void Zoom::toggle_vertical_horizontal_jog_zoom(bool autorepeat)
 {

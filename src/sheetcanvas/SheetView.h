@@ -89,6 +89,7 @@ public :
 	int vscrollbar_value() const;
         void move_trackview_up(TrackView* trackView);
         void move_trackview_down(TrackView* trackView);
+        void set_track_height(TrackView* view, int newheight);
 
         void browse_to_track(Track* track);
         void center_in_view(ViewItem* item);

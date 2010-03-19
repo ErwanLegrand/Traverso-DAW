@@ -26,6 +26,7 @@
 #include "Command.h"
 
 class SheetView;
+class TrackView;
 class QPoint;
 
 class Zoom : public Command
@@ -36,7 +37,8 @@ class Zoom : public Command
 	Q_CLASSINFO("toggle_vertical_horizontal_jog_zoom", tr("Toggle Vertical / Horizontal"));
 
 public :
-	Zoom(SheetView* sv, QVariantList args);
+        Zoom(SheetView* sv, QVariantList args);
+        Zoom(TrackView* view, QVariantList args);
         ~Zoom() {};
 
         int begin_hold();
@@ -48,6 +50,7 @@ public :
         int jog();
 
         void set_cursor_shape(int useX, int useY);
+        void set_collected_number(const QString & collected);
 
 private :
         int m_horizontalJogZoomLastX;
@@ -58,12 +61,17 @@ private :
 	qreal m_yScalefactor;
         QPoint	m_mousePos;
         QPointF	m_origPos;
+
+        void init(SheetView* sv, TrackView* tv, QVariantList args);
 	
         SheetView* m_sv;
+        TrackView* m_tv;
 	
 public slots:
 	void vzoom_in(bool autorepeat);
 	void vzoom_out(bool autorepeat);
+        void track_vzoom_in(bool autorepeat);
+        void track_vzoom_out(bool autorepeat);
 	void toggle_vertical_horizontal_jog_zoom(bool autorepeat);
 };
 
