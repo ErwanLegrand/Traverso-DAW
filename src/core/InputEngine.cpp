@@ -1676,7 +1676,6 @@ int InputEngine::collected_number( )
 {
         int n = m_collectedNumber;
         set_numerical_input("");
-        emit collectedNumberChanged();
         return n;
 }
 
