@@ -58,6 +58,7 @@ class SheetView : public ViewItem
 	Q_CLASSINFO("playhead_to_workcursor", tr("To workcursor"))
 	Q_CLASSINFO("center_playhead", tr("Center"))
         Q_CLASSINFO("add_track", tr("Add Track"))
+        Q_CLASSINFO("toggle_expand_all_tracks", tr("Expand/Collapse Tracks"));
 
 public :
 
