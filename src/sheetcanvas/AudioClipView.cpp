@@ -105,7 +105,6 @@ AudioClipView::AudioClipView(SheetView* sv, AudioTrackView* parent, AudioClip* c
                 connect(m_clip, SIGNAL(recordingFinished(AudioClip*)), this, SLOT(finish_recording()));
         }
 
-// 	setFlags(ItemIsSelectable | ItemIsMovable);
         setAcceptsHoverEvents(true);
         setCursor(themer()->get_cursor("AudioClip"));
 }

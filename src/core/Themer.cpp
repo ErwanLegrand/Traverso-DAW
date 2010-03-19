@@ -512,6 +512,7 @@ QColor Themer::get_default_color(const QString & name)
 		if (name == "Track:cliptopoffset") c = p.color(QPalette::Dark);
 		if (name == "Track:clipbottomoffset") c = p.color(QPalette::Dark);
 		if (name == "Track:background") c = p.color(QPalette::Base);
+                if (name == "Track:mousehover") c = p.color((QPalette::Highlight));
 		
 		if (name == "TrackPanel:background") c = p.color(QPalette::Window);
 		if (name == "TrackPanel:text") c = p.color(QPalette::WindowText);

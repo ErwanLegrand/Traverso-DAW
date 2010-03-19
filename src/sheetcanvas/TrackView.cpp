@@ -54,7 +54,9 @@ TrackView::TrackView(SheetView* sv, Track * track)
 
         m_track = track;
         m_isMoving = false;
-        setFlags(ItemIsSelectable | ItemIsMovable);
+
+        setAcceptsHoverEvents(true);
+
         setCursor(themer()->get_cursor("Track"));
 
         m_pluginChainView = new PluginChainView(m_sv, this, m_track->get_plugin_chain());
@@ -83,8 +85,16 @@ void TrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                 painter->fillRect(xstart, m_track->get_height() - m_bottomborderwidth, pixelcount+1, m_bottomborderwidth, color);
         }
 
-        if (m_isMoving) {
-                painter->fillRect(m_boundingRect, QColor(0, 0, 255, 100));
+        bool mousehover = (option->state & QStyle::State_MouseOver);
+
+        if (m_isMoving || mousehover) {
+                QPen pen;
+                int penwidth = 2;
+                pen.setWidth(penwidth);
+                pen.setColor(themer()->get_color("Track:mousehover"));
+                painter->setPen(pen);
+                painter->drawLine(xstart, m_topborderwidth + 1, xstart+pixelcount, m_topborderwidth + 1);
+                painter->drawLine(xstart, m_track->get_height() - penwidth, xstart+pixelcount, m_track->get_height() - penwidth);
         }
 }
 

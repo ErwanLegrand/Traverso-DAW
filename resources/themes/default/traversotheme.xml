@@ -141,6 +141,8 @@
 		<color name="Track:cliptopoffset" red="220" green="220" blue="240" alpha="255" />
 		<color name="Track:clipbottomoffset" red="100" green="100" blue="120" alpha="255" />
 		<color name="Track:background" red="250" green="250" blue="251" alpha="100" />
+                <color name="Track:mousehover" red="0" green="0" blue="255"  alpha="50" />
+
 		
 		<color name="TrackPanel:background" red="248" green="248" blue="248" alpha="255" />
 		<color name="TrackPanel:text" red="0" green="0" blue="25" alpha="255" />

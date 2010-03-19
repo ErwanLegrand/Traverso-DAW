@@ -99,8 +99,8 @@ TrackPanelView::TrackPanelView(TrackView* view)
         connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_name()));
 
 
-// 	setFlags(ItemIsSelectable | ItemIsMovable);
-// 	setAcceptsHoverEvents(true);
+        setAcceptsHoverEvents(true);
+
         setCursor(themer()->get_cursor("Track"));
 }
 
@@ -116,8 +116,12 @@ void TrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
         Q_UNUSED(option);
 
 
-        if (m_trackView->is_moving()) {
-                painter->fillRect(boundingRect(), QColor(0, 0, 255, 100));
+        bool mousehover = (option->state & QStyle::State_MouseOver);
+        
+        if (m_trackView->is_moving() || mousehover) {
+                QColor color = themer()->get_color("Track:mousehover");
+                color.setAlpha(25);
+                painter->fillRect(boundingRect(), color);
         }
 
 
@@ -211,9 +215,6 @@ AudioTrackPanelView::~AudioTrackPanelView( )
 
 void AudioTrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
-	Q_UNUSED(widget);
-	Q_UNUSED(option);
-
         TrackPanelView::paint(painter, option, widget);
 }
 
