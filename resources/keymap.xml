@@ -67,6 +67,7 @@
 				<Object objectname="SheetView" slotsignature="scroll_up" modes="All" sortorder="4" submenu="Scroll" />
 				<Object objectname="MoveClip" slotsignature="move_up" modes="All" sortorder="1" />
                                 <Object objectname="Zoom" slotsignature="track_vzoom_out" modes="All" sortorder="1" />
+                                <Object objectname="SheetView" slotsignature="activate_previous_track" modes="All" sortorder="5" />
                         </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="DARROW" >
@@ -77,6 +78,7 @@
 				<Object objectname="SheetView" slotsignature="scroll_down" modes="All" sortorder="4" submenu="Scroll" />
 				<Object objectname="MoveClip" slotsignature="move_down" modes="All" sortorder="2" />
                                 <Object objectname="Zoom" slotsignature="track_vzoom_in" modes="All" sortorder="1" />
+                                <Object objectname="SheetView" slotsignature="activate_next_track" modes="All" sortorder="5" />
                         </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="SHIFT" >

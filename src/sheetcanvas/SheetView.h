@@ -150,6 +150,8 @@ public slots:
         Command* scroll_left();
         Command* scroll_up();
         Command* scroll_down();
+        Command* activate_previous_track();
+        Command* activate_next_track();
         Command* goto_begin();
         Command* goto_end();
 	Command* play_to_begin();

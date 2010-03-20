@@ -697,10 +697,51 @@ void SheetView::set_snap_range(int start)
 					timeref_scalefactor);
 }
 
+Command* SheetView::activate_next_track()
+{
+        QPointF point;
+        point.setX(10);
+        point.setY(cpointer().scene_y());
+        TrackView* view = get_trackview_under(point);
+        QList<TrackView*> views = get_track_views();
+        if (view) {
+                int index = views.indexOf(view);
+                if (index < views.size()) {
+                        index += 1;
+                        if (index < views.size()) {
+                                view = views.at(index);
+                                browse_to_track(view->get_track());
+                                return 0;
+                        }
+                }
+        }
+
+        return 0;
+}
+
+Command* SheetView::activate_previous_track()
+{
+        QPointF point;
+        point.setX(10);
+        point.setY(cpointer().scene_y());
+        TrackView* view = get_trackview_under(point);
+        if (view) {
+                int index = get_track_views().indexOf(view);
+                if (index >= 1) {
+                        view = get_track_views().at(index -1);
+                        browse_to_track(view->get_track());
+                        return 0;
+                }
+        }
+
+        return 0;
+}
+
 Command* SheetView::scroll_up( )
 {
 	PENTER3;
         set_vscrollbar_value(m_clipsViewPort->verticalScrollBar()->value() - int(m_meanTrackHeight * 0.75));
+
 	return (Command*) 0;
 }
 
@@ -827,6 +868,8 @@ void SheetView::browse_to_track(Track *track)
 
                         QPoint point = m_tpvp->mapToGlobal(m_tpvp->mapFromScene(view->scenePos().x() - m_tpvp->width() / 2,
                                                              view->scenePos().y() + view->boundingRect().height() / 2));
+
+                        printf("moving mouse to: x, y : %d, %d\n", point.x(), point.y());
 
                         QCursor::setPos(point);
 
