@@ -824,12 +824,15 @@ void SheetView::browse_to_track(Track *track)
 
                         center_in_view(view);
 
-                        QCursor::setPos(m_tpvp->mapToGlobal(
-                                        m_tpvp->mapFromScene(view->scenePos().x() - m_tpvp->width() / 2,
-                                                             view->scenePos().y() + view->boundingRect().height() / 2)));
+
+                        QPoint point = m_tpvp->mapToGlobal(m_tpvp->mapFromScene(view->scenePos().x() - m_tpvp->width() / 2,
+                                                             view->scenePos().y() + view->boundingRect().height() / 2));
+
+                        QCursor::setPos(point);
 
                         QList<ContextItem*> list;
                         list.append(view);
+                        list.append(this);
                         cpointer().set_active_context_items_by_keyboard_input(list);
                         
                         return;
