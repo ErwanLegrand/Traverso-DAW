@@ -47,7 +47,6 @@ protected:
 	void wheelEvent ( QWheelEvent * e );
 
 private:
-	SheetView*	m_sv;
 	TimeLineView* 	m_timeLineView;
 };
 

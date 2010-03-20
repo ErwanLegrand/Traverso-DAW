@@ -9,7 +9,9 @@ class ContextItem;
 class AbstractViewPort
 {
 public:
-        AbstractViewPort() {};
+        AbstractViewPort() {
+                m_keyboardOnlyMode = false;
+        };
         ~AbstractViewPort() {};
 
         virtual void grab_mouse() = 0;
@@ -22,6 +24,15 @@ public:
         virtual void set_holdcursor_text(const QString& text) = 0;
         virtual void set_holdcursor_pos(QPointF pos) = 0;
         virtual void get_pointed_context_items(QList<ContextItem* > &list) = 0;
+
+protected:
+        bool            m_keyboardOnlyMode;
+
+private:
+        void set_keyboard_only_mode(bool only) {m_keyboardOnlyMode = only;}
+
+        friend class ContextPointer;
+
 };
 
 #endif // ABSTRACTVIEWPORT_H

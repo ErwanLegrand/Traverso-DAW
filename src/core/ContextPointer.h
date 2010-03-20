@@ -166,6 +166,8 @@ public:
 	
 	QList<QObject* > get_contextmenu_items() const;
 	void set_contextmenu_items(QList<QObject* > list);
+        void set_active_context_items_by_mouse_movement(const QList<ContextItem*>& items);
+        void set_active_context_items_by_keyboard_input(const QList<ContextItem*>& items);
 
 
 private:
@@ -188,7 +190,10 @@ private:
         AbstractViewPort* m_port;
         QList<QObject* > m_contextItemsList;
 	QList<QObject* > m_contextMenuItems;
-	
+        QList<ContextItem*> m_activeContextItems;
+
+        void set_active_context_items(const QList<ContextItem*>& items);
+
 	
 private slots:
 	void update_jog();

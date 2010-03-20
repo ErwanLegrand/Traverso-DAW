@@ -153,6 +153,7 @@ private slots:
 	void update_gain();
 	void update_pan();
         void update_name();
+        void active_context_changed() {update();}
 };
 
 

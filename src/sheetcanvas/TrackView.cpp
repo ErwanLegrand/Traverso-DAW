@@ -55,11 +55,11 @@ TrackView::TrackView(SheetView* sv, Track * track)
         m_track = track;
         m_isMoving = false;
 
-        setAcceptsHoverEvents(true);
-
         setCursor(themer()->get_cursor("Track"));
 
         m_pluginChainView = new PluginChainView(m_sv, this, m_track->get_plugin_chain());
+
+        connect(m_track, SIGNAL(activeContextChanged()), this, SLOT(active_context_changed()));
 }
 
 TrackView:: ~ TrackView( )
@@ -85,16 +85,14 @@ void TrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                 painter->fillRect(xstart, m_track->get_height() - m_bottomborderwidth, pixelcount+1, m_bottomborderwidth, color);
         }
 
-        bool mousehover = (option->state & QStyle::State_MouseOver);
-
-        if (m_isMoving || mousehover) {
+        if (m_isMoving || m_track->has_active_context()) {
                 QPen pen;
-                int penwidth = 2;
+                int penwidth = 1;
                 pen.setWidth(penwidth);
                 pen.setColor(themer()->get_color("Track:mousehover"));
                 painter->setPen(pen);
-                painter->drawLine(xstart, m_topborderwidth + 1, xstart+pixelcount, m_topborderwidth + 1);
-                painter->drawLine(xstart, m_track->get_height() - penwidth, xstart+pixelcount, m_track->get_height() - penwidth);
+                painter->drawLine(xstart, m_topborderwidth, xstart+pixelcount, m_topborderwidth);
+                painter->drawLine(xstart, m_track->get_height(), xstart+pixelcount, m_track->get_height());
         }
 }
 
@@ -186,4 +184,3 @@ Command* TrackView::select_bus()
         Interface::instance()->show_busselector(m_track);
         return 0;
 }
-

@@ -93,6 +93,7 @@ AudioClipView::AudioClipView(SheetView* sv, AudioTrackView* parent, AudioClip* c
 
         connect(m_clip, SIGNAL(muteChanged()), this, SLOT(repaint()));
         connect(m_clip, SIGNAL(stateChanged()), this, SLOT(clip_state_changed()));
+        connect(m_clip, SIGNAL(activeContextChanged()), this, SLOT(repaint()));
         connect(m_clip, SIGNAL(lockChanged()), this, SLOT(repaint()));
         connect(m_clip, SIGNAL(fadeAdded(FadeCurve*)), this, SLOT(add_new_fadeview( FadeCurve*)));
         connect(m_clip, SIGNAL(fadeRemoved(FadeCurve*)), this, SLOT(remove_fadeview( FadeCurve*)));
@@ -105,7 +106,6 @@ AudioClipView::AudioClipView(SheetView* sv, AudioTrackView* parent, AudioClip* c
                 connect(m_clip, SIGNAL(recordingFinished(AudioClip*)), this, SLOT(finish_recording()));
         }
 
-        setAcceptsHoverEvents(true);
         setCursor(themer()->get_cursor("AudioClip"));
 }
 
@@ -143,7 +143,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
                 return;
         }
 
-        bool mousehover = (option->state & QStyle::State_MouseOver) || m_clip->is_moving();
+        bool mousehover = m_clip->has_active_context() || m_clip->is_moving();
 
         if (m_drawbackground) {
                 if (m_clip->recording_state() == AudioClip::RECORDING) {

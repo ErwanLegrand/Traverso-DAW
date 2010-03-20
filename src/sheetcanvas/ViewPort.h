@@ -28,6 +28,7 @@
 #include "AbstractViewPort.h"
 
 class ViewItem;
+class SheetView;
 class ContextItem;
 class Import;
 class AudioTrack;
@@ -78,14 +79,15 @@ protected:
 	virtual void keyPressEvent ( QKeyEvent* e);
 	virtual void keyReleaseEvent ( QKeyEvent* e);
 	void tabletEvent ( QTabletEvent * event );
+
+        SheetView* m_sv;
 	
 private:
-	int m_mode;
-	bool	m_holdCursorActive;
-	HoldCursor*	m_holdcursor;
-	QPoint		m_oldMousePos;
-	QPointF lastMouseMoveScenePoint;
-	
+        int             m_mode;
+        bool            m_holdCursorActive;
+        HoldCursor*	m_holdcursor;
+        QPoint		m_oldMousePos;
+
 	// Interface wants to call mouseMoveEvent()
 	friend class Interface;
 };

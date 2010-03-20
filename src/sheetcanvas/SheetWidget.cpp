@@ -134,6 +134,8 @@ SheetWidget::SheetWidget(Sheet* sheet, QWidget* parent)
 	setLayout(m_mainLayout);
 	
 	m_sv = new SheetView(this, m_clipsViewPort, m_trackPanel, m_timeLine, sheet);
+        m_clipsViewPort->set_sheetview(m_sv);
+        m_trackPanel->set_sheetview(m_sv);
 	m_timeLine->set_sheetview(m_sv);
 	m_sheetPanelVP->set_sheet_view(m_sv);
 	

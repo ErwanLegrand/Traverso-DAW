@@ -45,13 +45,15 @@ public:
 	ContextItem(QObject* parent)
 		: QObject(parent)
 		, m_hs(0)
-		, m_contextItem(0) {}
+                , m_contextItem(0)
+                , m_hasActiveContext(false) {}
 	
 	ContextItem()
 		: QObject()
 		, m_hs(0)
-		, m_contextItem(0) {}
-	
+                , m_contextItem(0)
+                , m_hasActiveContext(false) {}
+
 	~ContextItem() {}
 
 	ContextItem* get_context() const {return m_contextItem;}
@@ -60,8 +62,15 @@ public:
 	qint64 get_id() const {return m_id;}
 
 	void set_history_stack(QUndoStack* hs) {m_hs = hs;}
-
 	void set_context_item(ContextItem* item) {m_contextItem = item;}
+        void set_has_active_context(bool context) {
+                m_hasActiveContext = context;
+                if (m_contextItem) {
+                        m_contextItem->set_has_active_context(context);
+                }
+                emit activeContextChanged();
+        }
+        bool has_active_context() const {return m_hasActiveContext;}
 
 	
 protected:
@@ -69,9 +78,13 @@ protected:
 	qint64 m_id;
 
 private:
-	ContextItem* m_contextItem;
+        ContextItem*    m_contextItem;
+        bool            m_hasActiveContext;
 
 	friend class Tsar;
+
+signals:
+        void activeContextChanged();
 };
 
 #endif

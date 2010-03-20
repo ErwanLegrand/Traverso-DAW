@@ -94,8 +94,8 @@ QList< QObject * > ContextPointer::get_context_items( )
 	ContextItem* item;
 	ContextItem*  nextItem;
 	
-	for (int i=0; i < pointedViewItems.size(); ++i) {
-		item = pointedViewItems.at(i);
+        for (int i=0; i < m_activeContextItems.size(); ++i) {
+                item = m_activeContextItems.at(i);
 		contextItems.append(item);
 		while ((nextItem = item->get_context())) {
 			contextItems.append(nextItem);
@@ -189,3 +189,30 @@ void ContextPointer::update_jog()
 	}
 }
 
+void ContextPointer::set_active_context_items_by_mouse_movement(const QList<ContextItem *> &items)
+{
+        set_active_context_items(items);
+}
+
+void ContextPointer::set_active_context_items_by_keyboard_input(const QList<ContextItem *> &items)
+{
+        if (m_port) {
+                m_port->set_keyboard_only_mode(true);
+        }
+
+        set_active_context_items(items);
+}
+
+void ContextPointer::set_active_context_items(const QList<ContextItem *> &items)
+{
+        foreach(ContextItem* oldItem, m_activeContextItems) {
+                oldItem->set_has_active_context(false);
+        }
+
+        m_activeContextItems.clear();
+
+        foreach(ContextItem* item, items) {
+                m_activeContextItems.append(item);
+                item->set_has_active_context(true);
+        }
+}

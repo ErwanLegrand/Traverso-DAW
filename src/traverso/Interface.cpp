@@ -461,16 +461,17 @@ bool Interface::eventFilter(QObject * obj, QEvent * event)
 			ie().catch_key_release(keyEvent);
 			return true;
 		} else if (event->type() == QEvent::MouseMove) {
+                        // FIXME: Seems no longer to be the case??
 			// Also send mouse move events to the current viewport
 			// so in case we close the Menu, and _do_not_move_the_mouse
 			// and perform an action, it could be delegated to the wrong ViewItem!
 			// Obviously we don't want to send this event when the InputEngine is still
 			// in holding mode, to avoid jog() being called for the active HoldCommand!
-			QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
-                        ViewPort* vp = static_cast<ViewPort*>(cpointer().get_viewport());
-			if (vp && !ie().is_holding()) {
-				vp->mouseMoveEvent(mouseEvent);
-			}
+//			QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+//                        ViewPort* vp = static_cast<ViewPort*>(cpointer().get_viewport());
+//			if (vp && !ie().is_holding()) {
+//				vp->mouseMoveEvent(mouseEvent);
+//			}
 		} else {
 			return false;
 		}
@@ -1820,8 +1821,8 @@ void Interface::track_finder_model_index_changed(const QModelIndex& index)
                 Track* track = sheet->get_track(id);
                 if (track) {
                         show_sheet(sheet);
-                        sw->get_sheetview()->browse_to_track(track);
                         sw->setFocus();
+                        sw->get_sheetview()->browse_to_track(track);
                         break;
                 }
         }

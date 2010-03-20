@@ -97,6 +97,7 @@ TrackPanelView::TrackPanelView(TrackView* view)
         connect(m_track, SIGNAL(busConfigurationChanged()), m_outBus, SLOT(bus_changed()));
 
         connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_name()));
+        connect(m_track, SIGNAL(activeContextChanged()), this, SLOT(active_context_changed()));
 
 
         setAcceptsHoverEvents(true);
@@ -116,11 +117,9 @@ void TrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
         Q_UNUSED(option);
 
 
-        bool mousehover = (option->state & QStyle::State_MouseOver);
-        
-        if (m_trackView->is_moving() || mousehover) {
+        if (m_trackView->is_moving() || m_track->has_active_context()) {
                 QColor color = themer()->get_color("Track:mousehover");
-                color.setAlpha(25);
+                color.setAlpha(30);
                 painter->fillRect(boundingRect(), color);
         }
 

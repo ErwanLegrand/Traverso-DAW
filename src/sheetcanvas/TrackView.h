@@ -78,6 +78,7 @@ public slots:
         Command* select_bus();
 
 private slots:
+        void active_context_changed() {update();}
 };
 
 

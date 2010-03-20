@@ -30,11 +30,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QEvent>
 #include <QStyleOptionGraphicsItem>
 #include <QApplication>
+
 #include <Utils.h>
 #include "InputEngine.h"
 #include "Themer.h"
 
+#include "SheetView.h"
+#include "Sheet.h"
 #include "ViewPort.h"
+#include "ViewItem.h"
 #include "ContextPointer.h"
 
 #include "Import.h"
@@ -79,7 +83,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 ViewPort::ViewPort(QWidget* parent)
 	: QGraphicsView(parent)
-	, m_mode(0)
+        , AbstractViewPort()
+        , m_sv(0)
+        , m_mode(0)
 {
 	PENTERCONS;
 	setFrameStyle(QFrame::NoFrame);
@@ -88,7 +94,9 @@ ViewPort::ViewPort(QWidget* parent)
 
 ViewPort::ViewPort(QGraphicsScene* scene, QWidget* parent)
 	: QGraphicsView(scene, parent)
-	, m_mode(0)
+        , AbstractViewPort()
+        , m_sv(0)
+        , m_mode(0)
 {
 	PENTERCONS;
 	setFrameStyle(QFrame::NoFrame);
@@ -140,7 +148,9 @@ bool ViewPort::event(QEvent * event)
 
 void ViewPort::mouseMoveEvent(QMouseEvent* event)
 {
-	PENTER4;
+//        printf("Sheet: %s mouse move event, m_keyboardOnlyMode %d \n", m_sv->get_sheet()->get_name().toAscii().data(), m_keyboardOnlyMode);
+
+        PENTER4;
 	// Qt generates mouse move events when the scrollbars move
 	// since a mouse move event generates a jog() call for the 
 	// active holding command, this has a number of nasty side effects :-(
@@ -148,32 +158,45 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 	if (event->pos() == m_oldMousePos) {
 		return;
 	}
-	
-	QGraphicsSceneMouseEvent mouseEvent(QEvent::GraphicsSceneMouseMove);
-	mouseEvent.setWidget(viewport());
-// 	mouseEvent.setButtonDownScenePos(d->mousePressButton, d->mousePressScenePoint);
-// 	mouseEvent.setButtonDownScreenPos(d->mousePressButton, d->mousePressScreenPoint);
-	mouseEvent.setScenePos(mapToScene(event->pos()));
-	mouseEvent.setScreenPos(event->globalPos());
-	mouseEvent.setLastScenePos(lastMouseMoveScenePoint);
-	mouseEvent.setLastScreenPos(mapFromScene(lastMouseMoveScenePoint));
-	mouseEvent.setButtons(event->buttons());
-	mouseEvent.setButton(event->button());
-	mouseEvent.setModifiers(event->modifiers());
-	lastMouseMoveScenePoint = mouseEvent.scenePos();
-	mouseEvent.setAccepted(false);
-	
+
+
+        if (m_keyboardOnlyMode) {
+                QPoint diff = m_oldMousePos - event->pos();
+                if (diff.manhattanLength() > 100) {
+                        m_keyboardOnlyMode = false;
+                } else {
+                        return;
+                }
+        }
+
 	m_oldMousePos = event->pos();
 	
 	if (!ie().is_holding()) {
 		QList<QGraphicsItem *> itemsUnderCursor = scene()->items(mapToScene(event->pos()));
+
 		if (itemsUnderCursor.size()) {
 			itemsUnderCursor.first()->setCursor(itemsUnderCursor.first()->cursor());
-		} else {
+
+                        QList<ContextItem*> activeContextItems;
+
+                        foreach(QGraphicsItem* item, itemsUnderCursor) {
+                                if (ViewItem::is_viewitem(item)) {
+                                        activeContextItems.append((ViewItem*)item);
+                                }
+                        }
+
+                        if (m_sv) {
+                                activeContextItems.append(m_sv);
+                        }
+
+                        cpointer().set_active_context_items_by_mouse_movement(activeContextItems);
+
+
+                } else {
 			// If no item is below the mouse, default to default cursor
 			viewport()->setCursor(themer()->get_cursor("Default"));
 		}
-		QApplication::sendEvent(scene(), &mouseEvent);
+
 	} else {
 		// It can happen that a cursor is set for a newly created viewitem
 		// but we don't want that when the holdcursor is set!
@@ -183,7 +206,6 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 		}
 	}
 
-// 	QGraphicsView::mouseMoveEvent(event);
 	cpointer().set_point(event->x(), event->y());
 	event->accept();
 }
@@ -200,6 +222,8 @@ void ViewPort::tabletEvent(QTabletEvent * event)
 
 void ViewPort::enterEvent(QEvent* e)
 {
+//        printf("Sheet: %s enter event, m_keyboardOnlyMode %d \n", m_sv->get_sheet()->get_name().toAscii().data(), m_keyboardOnlyMode);
+
 	QGraphicsView::enterEvent(e);
 	cpointer().set_current_viewport(this);
 	setFocus();
