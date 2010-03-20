@@ -179,6 +179,9 @@ private:
 
         int m_x;
         int m_y;
+
+        QPoint  m_globalMousePos;
+        bool    m_keyboardOnlyInput;
 	
 	bool m_jogEvent;
 	

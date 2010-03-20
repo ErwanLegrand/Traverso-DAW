@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ContextItem.h"
 #include "Config.h"
 #include "InputEngine.h"
+#include <QCursor>
 
 
 // Always put me below _all_ includes, this is needed
@@ -68,6 +69,7 @@ ContextPointer::ContextPointer()
 	m_y = 0;
 	m_jogEvent = false;
         m_port = 0;
+        m_keyboardOnlyInput = false;
 	
 	connect(&m_jogTimer, SIGNAL(timeout()), this, SLOT(update_jog()));
 }
@@ -191,14 +193,22 @@ void ContextPointer::update_jog()
 
 void ContextPointer::set_active_context_items_by_mouse_movement(const QList<ContextItem *> &items)
 {
+        if (m_keyboardOnlyInput) {
+                QPoint diff = m_globalMousePos - QCursor::pos();
+                if (diff.manhattanLength() > 250) {
+                        m_keyboardOnlyInput = false;
+                } else {
+                        return;
+                }
+        }
+
         set_active_context_items(items);
 }
 
 void ContextPointer::set_active_context_items_by_keyboard_input(const QList<ContextItem *> &items)
 {
-        if (m_port) {
-                m_port->set_keyboard_only_mode(true);
-        }
+        m_keyboardOnlyInput = true;
+        m_globalMousePos = QCursor::pos();
 
         set_active_context_items(items);
 }

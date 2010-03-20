@@ -149,6 +149,7 @@ bool ViewPort::event(QEvent * event)
 void ViewPort::mouseMoveEvent(QMouseEvent* event)
 {
 //        printf("Sheet: %s mouse move event, m_keyboardOnlyMode %d \n", m_sv->get_sheet()->get_name().toAscii().data(), m_keyboardOnlyMode);
+//        printf("mouse move event: x, y : %d, %d\n", QCursor::pos().x(), QCursor::pos().y());
 
         PENTER4;
 	// Qt generates mouse move events when the scrollbars move
@@ -158,16 +159,6 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 	if (event->pos() == m_oldMousePos) {
 		return;
 	}
-
-
-        if (m_keyboardOnlyMode) {
-                QPoint diff = m_oldMousePos - event->pos();
-                if (diff.manhattanLength() > 100) {
-                        m_keyboardOnlyMode = false;
-                } else {
-                        return;
-                }
-        }
 
 	m_oldMousePos = event->pos();
 	
