@@ -234,7 +234,9 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 		pen.setColor(themer()->get_color("Curve:inactive"));
 	}
 	
-        pen.setWidth(2);
+        if (m_boundingRect.height() > 40) {
+                pen.setWidth(2);
+        }
 	painter->save();
 	painter->setPen(pen);
 	painter->setClipRect(m_boundingRect);
@@ -408,7 +410,7 @@ void CurveView::active_context_changed()
 	
 void CurveView::mouse_hover_move_event()
 {
-        update_softselected_node(cpointer().pos());
+        update_softselected_node(cpointer().scene_pos().toPoint());
 
 	if (m_blinkingNode) {
 		setCursor(themer()->get_cursor("CurveNode"));
@@ -435,18 +437,18 @@ void CurveView::update_softselected_node( QPoint pos , bool force)
 	
 	foreach(CurveNodeView* nodeView, m_nodeViews) {
 		
-		QPoint nodePos((int)nodeView->pos().x(), (int)nodeView->pos().y());
+                QPoint nodePos((int)nodeView->scenePos().x(), (int)nodeView->scenePos().y());
 // 		printf("node x,y pos %d,%d\n", nodePos.x(), nodePos.y());
 		
 		int nodeDist = (pos - nodePos).manhattanLength();
-		int blinkNodeDist = (pos - QPoint((int)m_blinkingNode->x(), (int)m_blinkingNode->y())).manhattanLength();
+                int blinkNodeDist = (pos - QPoint((int)m_blinkingNode->scenePos().x(), (int)m_blinkingNode->scenePos().y())).manhattanLength();
 		
 		if (nodeDist < blinkNodeDist) {
 			m_blinkingNode = nodeView;
 		}
 	}
 
-	if ((pos - QPoint(4, 4) - QPoint((int)m_blinkingNode->x(), (int)m_blinkingNode->y())).manhattanLength() > NODE_SOFT_SELECTION_DISTANCE) {
+        if ((pos - QPoint(4, 4) - QPoint((int)m_blinkingNode->scenePos().x(), (int)m_blinkingNode->scenePos().y())).manhattanLength() > NODE_SOFT_SELECTION_DISTANCE) {
 		m_blinkingNode = 0;
 	}
 	
