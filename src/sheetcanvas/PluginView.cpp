@@ -58,7 +58,6 @@ PluginView::PluginView(PluginChainView* parent, PluginChain* chain, Plugin* plug
 	
 	calculate_bounding_rect();
 	
-	setAcceptsHoverEvents(true);
 	setCursor(themer()->get_cursor("Plugin"));
 	
 	connect(m_plugin, SIGNAL(bypassChanged()), this, SLOT(repaint()));
@@ -85,7 +84,7 @@ void PluginView::paint(QPainter* painter, const QStyleOptionGraphicsItem *option
 	}
 
 	int height, width;
-	if (option->state & QStyle::State_MouseOver) {
+        if (has_active_context()) {
 		height = (int)m_boundingRect.height() + 1;
 		width = (int)m_boundingRect.width() + 1;
 		color = color.light(120);

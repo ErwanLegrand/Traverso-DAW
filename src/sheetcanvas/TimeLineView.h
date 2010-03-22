@@ -83,11 +83,7 @@ public:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void calculate_bounding_rect();
 	void load_theme_data();
-
-protected:
-	void hoverEnterEvent ( QGraphicsSceneHoverEvent * event );
-	void hoverLeaveEvent ( QGraphicsSceneHoverEvent * event );
-	void hoverMoveEvent ( QGraphicsSceneHoverEvent * event );
+        void mouse_hover_move_event();
 
 private:
 	QList<MarkerView* > m_markerViews;
@@ -98,7 +94,7 @@ private:
 	QHash<nframes_t, QString>	m_zooms;	
 
 	Command* add_marker_at(const TimeRef when);
-	void update_softselected_marker(QPoint pos);
+        void update_softselected_marker(QPointF pos);
 	
 	
 public slots:
@@ -115,6 +111,8 @@ public slots:
 private slots:
 	void add_new_marker_view(Marker* marker);
 	void remove_marker_view(Marker* marker);
+        void active_context_changed();
+
 };
 
 #endif

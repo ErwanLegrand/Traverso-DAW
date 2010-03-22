@@ -177,7 +177,7 @@ void SheetView::sheet_mode_changed()
 	m_tpvp->set_current_mode(mode);
 }
 
-AudioTrackView* SheetView::get_trackview_under( QPointF point )
+AudioTrackView* SheetView::get_audio_trackview_under( QPointF point )
 {
 	AudioTrackView* view = 0;
 	QList<QGraphicsItem*> views = m_clipsViewPort->items(m_clipsViewPort->mapFromScene(point));
@@ -191,6 +191,22 @@ AudioTrackView* SheetView::get_trackview_under( QPointF point )
 	return  0;
 	
 }
+
+TrackView* SheetView::get_trackview_under( QPointF point )
+{
+        TrackView* view = 0;
+        QList<QGraphicsItem*> views = m_clipsViewPort->items(m_clipsViewPort->mapFromScene(point));
+
+        for (int i=0; i<views.size(); ++i) {
+                view = dynamic_cast<TrackView*>(views.at(i));
+                if (view) {
+                        return view;
+                }
+        }
+        return  0;
+
+}
+
 
 void SheetView::move_trackview_up(TrackView *trackView)
 {
@@ -406,7 +422,7 @@ Command* SheetView::toggle_expand_all_tracks()
                 }
         } else {
                 foreach(TrackView* view, get_track_views()) {
-                        view->get_track()->set_height(m_trackMaximumHeight);
+                        view->get_track()->set_height(100);
                 }
         }
 

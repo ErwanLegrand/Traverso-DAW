@@ -197,9 +197,10 @@ CurveView::CurveView(SheetView* sv, ViewItem* parentViewItem, Curve* curve)
 	connect(m_curve, SIGNAL(nodeAdded(CurveNode*)), this, SLOT(add_curvenode_view(CurveNode*)));
 	connect(m_curve, SIGNAL(nodeRemoved(CurveNode*)), this, SLOT(remove_curvenode_view(CurveNode*)));
 	connect(m_curve, SIGNAL(nodePositionChanged()), this, SLOT(node_moved()));
+        connect(m_curve, SIGNAL(activeContextChanged()), this, SLOT(active_context_changed()));
 	connect(m_sv->get_sheet(), SIGNAL(modeChanged()), this, SLOT(set_view_mode()));
 	
-	setAcceptsHoverEvents(true);
+        m_hasMouseTracking = true;
 	
 	set_view_mode();
 }
@@ -384,36 +385,29 @@ void CurveView::calculate_bounding_rect()
 	ViewItem::calculate_bounding_rect();
 }
 
-void CurveView::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
+void CurveView::active_context_changed()
 {
-	Q_UNUSED(event);
-	
-	m_blinkTimer.start(40);
+        if (has_active_context()) {
+                m_blinkTimer.start(40);
+        } else {
+                if (ie().is_holding()) {
+                        return;
+                }
+
+                m_blinkTimer.stop();
+                if (m_blinkingNode) {
+                        m_blinkingNode->set_color(themer()->get_color("CurveNode:default"));
+                        m_blinkingNode->reset_size();
+                        m_blinkingNode = 0;
+                }
+
+        }
 }
 
-void CurveView::hoverLeaveEvent ( QGraphicsSceneHoverEvent * event )
+	
+void CurveView::mouse_hover_move_event()
 {
-	Q_UNUSED(event);
-	
-	if (ie().is_holding()) {
-		event->ignore();
-		return;
-	}
-	
-	m_blinkTimer.stop();
-	if (m_blinkingNode) {
-		m_blinkingNode->set_color(themer()->get_color("CurveNode:default"));
-		m_blinkingNode->reset_size();
-		m_blinkingNode = 0;
-	}
-}
-	
-	
-void CurveView::hoverMoveEvent ( QGraphicsSceneHoverEvent * event )
-{
-	QPoint point((int)event->pos().x(), (int)event->pos().y());
-	
-	update_softselected_node(point);
+        update_softselected_node(cpointer().pos());
 
 	if (m_blinkingNode) {
 		setCursor(themer()->get_cursor("CurveNode"));

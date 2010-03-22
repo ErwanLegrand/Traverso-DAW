@@ -46,6 +46,7 @@ public:
 protected:
 	void wheelEvent ( QWheelEvent * e );
 
+
 private:
 	TimeLineView* 	m_timeLineView;
 };

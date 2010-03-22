@@ -183,8 +183,9 @@ TimeLineView::TimeLineView(SheetView* view)
 	// Make connections to the 'core'
 	connect(m_timeline, SIGNAL(markerAdded(Marker*)), this, SLOT(add_new_marker_view(Marker*)));
 	connect(m_timeline, SIGNAL(markerRemoved(Marker*)), this, SLOT(remove_marker_view(Marker*)));
+        connect(m_timeline, SIGNAL(activeContextChanged()), this, SLOT(active_context_changed()));
 
-	setAcceptsHoverEvents(true);
+        m_hasMouseTracking = true;
 
 	m_zooms[524288 * 640] = "20:00.000";
 	m_zooms[262144 * 640] = "10:00.000";
@@ -364,7 +365,7 @@ Command* TimeLineView::add_marker_at(const TimeRef when)
 
 Command* TimeLineView::playhead_to_marker()
 {
-	update_softselected_marker(QPoint(cpointer().on_first_input_event_scene_x(), cpointer().on_first_input_event_scene_y()));
+        update_softselected_marker(QPointF(cpointer().on_first_input_event_scene_x(), cpointer().on_first_input_event_scene_y()));
 
 	if (m_blinkingMarker) {
 		m_sv->get_sheet()->set_transport_pos(m_blinkingMarker->get_marker()->get_when());
@@ -388,7 +389,7 @@ Command* TimeLineView::remove_marker()
 	return 0;
 }
 
-void TimeLineView::update_softselected_marker(QPoint pos)
+void TimeLineView::update_softselected_marker(QPointF pos)
 {
 	MarkerView* prevMarker = m_blinkingMarker;
 	if (m_markerViews.size()) {
@@ -399,7 +400,7 @@ void TimeLineView::update_softselected_marker(QPoint pos)
 		return;
 	}
 	
-	int x = pos.x();
+        int x = int(pos.x());
 	int blinkMarkerDist = abs(x - m_blinkingMarker->position());
 	
 	foreach(MarkerView* markerView, m_markerViews) {
@@ -428,44 +429,38 @@ void TimeLineView::update_softselected_marker(QPoint pos)
 	}
 }
 
-void TimeLineView::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
-{
-	Q_UNUSED(event);
 
-	if (m_blinkingMarker) {
-		m_blinkingMarker->set_active(true);
-	}
-}
-
-void TimeLineView::hoverLeaveEvent ( QGraphicsSceneHoverEvent * event )
+void TimeLineView::active_context_changed()
 {
-	Q_UNUSED(event);
-	
-	if (ie().is_holding()) {
-		event->ignore();
-		return;
-	}
-	
-	if (m_blinkingMarker) {
-		// TODO add these functions, or something else to 
-		// let the user know which marker is to be moved!
-		m_blinkingMarker->set_active(false);
-		m_blinkingMarker = 0;
-	}
+        PENTER;
+        if (has_active_context()) {
+                if (m_blinkingMarker) {
+                        m_blinkingMarker->set_active(true);
+                }
+        } else {
+                if (ie().is_holding()) {
+                        return;
+                }
+
+                if (m_blinkingMarker) {
+                        // TODO add these functions, or something else to
+                        // let the user know which marker is to be moved!
+                        m_blinkingMarker->set_active(false);
+                        m_blinkingMarker = 0;
+                }
+
+        }
 }
 		
-		
-void TimeLineView::hoverMoveEvent ( QGraphicsSceneHoverEvent * event )
+
+void TimeLineView::mouse_hover_move_event()
 {
-	QPoint pos((int)event->pos().x(), (int)event->pos().y());
-
-	update_softselected_marker(pos);
+        update_softselected_marker(cpointer().scene_pos());
 }
-
 
 Command * TimeLineView::drag_marker()
 {
-	update_softselected_marker(QPoint(cpointer().on_first_input_event_scene_x(), cpointer().on_first_input_event_scene_y()));
+        update_softselected_marker(QPointF(cpointer().on_first_input_event_scene_x(), cpointer().on_first_input_event_scene_y()));
 
 	if (m_blinkingMarker) {
 		return new DragMarker(m_blinkingMarker, m_sv->timeref_scalefactor, tr("Drag Marker"));

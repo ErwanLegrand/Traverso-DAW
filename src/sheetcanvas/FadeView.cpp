@@ -62,7 +62,6 @@ FadeView::FadeView(SheetView* sv, AudioClipView* parent, FadeCurve * fadeCurve )
 	}
 	
 	load_theme_data();
-	setAcceptsHoverEvents(true);
 	setCursor(themer()->get_cursor("Fade"));
 	
 	connect(m_fadeCurve, SIGNAL(stateChanged()), this, SLOT(state_changed()));
@@ -124,7 +123,7 @@ void FadeView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 			themer()->get_color("Fade:bypassed") :
 			themer()->get_color("Fade:default");
 	
-	if (option->state & QStyle::State_MouseOver) {
+        if (has_active_context()) {
 		color.setAlpha(color.alpha() + 10);
 	}
 	

@@ -216,7 +216,9 @@ void ContextPointer::set_active_context_items_by_keyboard_input(const QList<Cont
 void ContextPointer::set_active_context_items(const QList<ContextItem *> &items)
 {
         foreach(ContextItem* oldItem, m_activeContextItems) {
-                oldItem->set_has_active_context(false);
+                if (!items.contains(oldItem)) {
+                        oldItem->set_has_active_context(false);
+                }
         }
 
         m_activeContextItems.clear();
@@ -226,3 +228,15 @@ void ContextPointer::set_active_context_items(const QList<ContextItem *> &items)
                 item->set_has_active_context(true);
         }
 }
+
+void ContextPointer::remove_from_active_context_list(ContextItem *item)
+{
+        m_activeContextItems.removeAll(item);
+        item->set_has_active_context(false);
+}
+
+void ContextPointer::about_to_delete(ContextItem *item)
+{
+        m_activeContextItems.removeAll(item);
+}
+

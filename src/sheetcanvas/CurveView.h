@@ -103,15 +103,11 @@ public:
 	float get_default_value();
 	void calculate_bounding_rect();
 	void load_theme_data();
-	
+        void mouse_hover_move_event();
+
 	void set_start_offset(const TimeRef& offset);
 	const TimeRef& get_start_offset() const {return m_startoffset;}
 	
-
-protected:
-	void hoverEnterEvent ( QGraphicsSceneHoverEvent * event );
-	void hoverLeaveEvent ( QGraphicsSceneHoverEvent * event );
-	void hoverMoveEvent ( QGraphicsSceneHoverEvent * event );
 
 private:
 	Curve*		m_curve;
@@ -123,7 +119,7 @@ private:
 	QList<CurveNodeView*>	m_nodeViews;
 	TimeRef		m_startoffset;
 	
-	void update_softselected_node(QPoint pos, bool force = false);
+        void update_softselected_node(QPoint pos, bool force = false);
 
 public slots:
 	Command* add_node();
@@ -138,6 +134,8 @@ private slots:
 	void node_moved();
 	void set_view_mode();
 	void update_blink_color();
+        void active_context_changed();
+
 	
 signals :
 	// emit from the gui so that we can stop following the playhead only

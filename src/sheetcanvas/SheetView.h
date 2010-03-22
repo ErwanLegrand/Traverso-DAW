@@ -59,6 +59,8 @@ class SheetView : public ViewItem
 	Q_CLASSINFO("center_playhead", tr("Center"))
         Q_CLASSINFO("add_track", tr("Add Track"))
         Q_CLASSINFO("toggle_expand_all_tracks", tr("Expand/Collapse Tracks"));
+        Q_CLASSINFO("activate_previous_track", tr("To Previous Track"));
+        Q_CLASSINFO("activate_next_track", tr("To Next Track"));
 
 public :
 
@@ -76,7 +78,8 @@ public :
 	TrackPanelViewPort* get_trackpanel_view_port() const;
 	ClipsViewPort* get_clips_viewport() const;
 	
-	AudioTrackView* get_trackview_under(QPointF point);
+        AudioTrackView* get_audio_trackview_under(QPointF point);
+        TrackView* get_trackview_under(QPointF point);
         QList<TrackView*> get_track_views() const;
 	
 	void load_theme_data();

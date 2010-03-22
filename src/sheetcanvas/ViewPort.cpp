@@ -161,6 +161,8 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 	}
 
 	m_oldMousePos = event->pos();
+
+        QList<ViewItem*> mouseTrackingItems;
 	
 	if (!ie().is_holding()) {
 		QList<QGraphicsItem *> itemsUnderCursor = scene()->items(mapToScene(event->pos()));
@@ -172,7 +174,11 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 
                         foreach(QGraphicsItem* item, itemsUnderCursor) {
                                 if (ViewItem::is_viewitem(item)) {
-                                        activeContextItems.append((ViewItem*)item);
+                                        ViewItem* vItem = (ViewItem*)item;
+                                        activeContextItems.append(vItem);
+                                        if (vItem->has_mouse_tracking()) {
+                                                mouseTrackingItems.append(vItem);
+                                        }
                                 }
                         }
 
@@ -198,6 +204,11 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 	}
 
 	cpointer().set_point(event->x(), event->y());
+
+        foreach(ViewItem* item, mouseTrackingItems) {
+                item->mouse_hover_move_event();
+        }
+
 	event->accept();
 }
 

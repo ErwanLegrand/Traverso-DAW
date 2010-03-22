@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define CONTEXTITEM_H
 
 #include <QObject>
+#include "ContextPointer.h"
 
 class Command;
 class QUndoStack;
@@ -54,7 +55,11 @@ public:
                 , m_contextItem(0)
                 , m_hasActiveContext(false) {}
 
-	~ContextItem() {}
+        ~ContextItem() {
+                if (m_hasActiveContext) {
+                        cpointer().about_to_delete(this);
+                }
+        }
 
 	ContextItem* get_context() const {return m_contextItem;}
 	
@@ -64,10 +69,16 @@ public:
 	void set_history_stack(QUndoStack* hs) {m_hs = hs;}
 	void set_context_item(ContextItem* item) {m_contextItem = item;}
         void set_has_active_context(bool context) {
+                if (context == m_hasActiveContext) {
+                        return;
+                }
+
                 m_hasActiveContext = context;
+
                 if (m_contextItem) {
                         m_contextItem->set_has_active_context(context);
                 }
+
                 emit activeContextChanged();
         }
         bool has_active_context() const {return m_hasActiveContext;}

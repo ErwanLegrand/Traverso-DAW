@@ -99,9 +99,6 @@ TrackPanelView::TrackPanelView(TrackView* view)
         connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_name()));
         connect(m_track, SIGNAL(activeContextChanged()), this, SLOT(active_context_changed()));
 
-
-        setAcceptsHoverEvents(true);
-
         setCursor(themer()->get_cursor("Track"));
 }
 
@@ -340,11 +337,9 @@ void SubGroupPanelView::layout_panel_items()
 
 
 TrackPanelGain::TrackPanelGain(TrackPanelView *parent, Track *track)
-	: ViewItem(parent, track)
+        : ViewItem(parent, 0)
         , m_track(track)
 {
-	setAcceptsHoverEvents(true);
-
 }
 
 void TrackPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
@@ -378,9 +373,8 @@ void TrackPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem *
 	painter->drawText(0, height + 1, "GAIN");
 	painter->drawRect(30, 0, sliderWidth, height);
 	
-	bool mousehover = (option->state & QStyle::State_MouseOver);
 	QColor color(cr,0,cb);
-	if (mousehover) {
+        if (has_active_context()) {
 		color = color.light(140);
 	}
 	painter->fillRect(31, 1, sliderdbx, height-1, color);
@@ -407,20 +401,17 @@ Command* TrackPanelGain::gain_decrement()
 }
 
 TrackPanelPan::TrackPanelPan(TrackPanelView *parent, Track *track)
-	: ViewItem(parent, track)
+        : ViewItem(parent, 0)
         , m_track(track)
 {
-	setAcceptsHoverEvents(true);
 }
 
 void TrackPanelPan::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
 {
 	Q_UNUSED(widget);
 
-	bool mousehover = (option->state & QStyle::State_MouseOver);
-	
 	QColor color = themer()->get_color("TrackPanel:slider:background");
-	if (mousehover) {
+        if (has_active_context()) {
 		color = color.light(110);
 	}
 	
@@ -477,14 +468,12 @@ TrackPanelLed::TrackPanelLed(TrackPanelView* view, Track *track, const QString& 
 	, m_isOn(false)
 {
         m_track = track;
-	setAcceptsHoverEvents(true);
 }
 
 void TrackPanelLed::paint(QPainter* painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
 {
 	Q_UNUSED(widget);
 	
-	bool mousehover = (option->state & QStyle::State_MouseOver);
 	int roundfactor = 20;
 	
 	painter->save();
@@ -493,7 +482,7 @@ void TrackPanelLed::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 	
 	if (m_isOn) {
 		QColor color = themer()->get_color("TrackPanel:" + m_name + "led");
-		if (mousehover) {
+                if (has_active_context()) {
 			color = color.light(110);
 		}
 		
@@ -507,7 +496,7 @@ void TrackPanelLed::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 		painter->drawText(m_boundingRect, Qt::AlignCenter, m_name);
 	} else {
 		QColor color = themer()->get_color("TrackPanel:led:inactive");
-		if (mousehover) {
+                if (has_active_context()) {
 			color = color.light(110);
 		}
 		
@@ -553,7 +542,6 @@ TrackPanelBus::TrackPanelBus(TrackPanelView *view, Track *track, int busType)
         , m_type(busType)
 {
 	bus_changed();
-	setAcceptsHoverEvents(true);
 }
 
 void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
@@ -568,7 +556,7 @@ void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 	
 	painter->setRenderHint(QPainter::Antialiasing);
 	
-	if (option->state & QStyle::State_MouseOver) {
+        if (has_active_context()) {
 		color = color.light(110);
 	}
 	 

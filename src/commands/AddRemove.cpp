@@ -118,7 +118,7 @@ $Id: AddRemove.cpp,v 1.6 2008/11/24 10:12:19 r_sijrier Exp $
  */
 
 
-AddRemove::AddRemove(ContextItem* parent, void* arg, const QString& des)
+AddRemove::AddRemove(ContextItem* parent, ContextItem* item, const QString& des)
 	: Command(parent, des),
 	m_sheet(0),
 	m_doActionSlot(""),
@@ -128,9 +128,13 @@ AddRemove::AddRemove(ContextItem* parent, void* arg, const QString& des)
 	m_instantanious(0)
 {
 	m_parentItem = parent;
-	m_arg = arg;
+        m_arg = item;
 	m_doActionEvent.valid = false;
 	m_undoActionEvent.valid = false;
+
+        if (item && item->has_active_context()) {
+                cpointer().remove_from_active_context_list(item);
+        }
 }
 
 
@@ -175,6 +179,34 @@ AddRemove::AddRemove(
 {
 	m_isHistorable = historable;
 }
+
+AddRemove::AddRemove(
+        ContextItem* parent,
+        ContextItem* item,
+        bool historable,
+        Sheet* sheet,
+        const char * doActionSlot,
+        const char * doSignal,
+        const char * undoActionSlot,
+        const char * undoSignal,
+        const QString& des)
+        : Command(parent, des),
+          m_parentItem(parent),
+          m_arg(item),
+          m_sheet(sheet),
+          m_doActionSlot(doActionSlot),
+          m_undoActionSlot(undoActionSlot),
+          m_doSignal(doSignal),
+          m_undoSignal(undoSignal),
+          m_instantanious(0)
+{
+        m_isHistorable = historable;
+
+        if (item && item->has_active_context()) {
+                cpointer().remove_from_active_context_list(item);
+        }
+}
+
 
 AddRemove::~AddRemove()
 {}

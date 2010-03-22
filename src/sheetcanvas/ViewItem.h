@@ -62,6 +62,7 @@ public:
                 set_context_item(parentContext);
                 m_parentViewItem = parentViewItem;
                 setCursor(themer()->get_cursor("Default"));
+                m_hasMouseTracking = false;
 #if QT_VERSION >= 0x040600
                 setFlags(QGraphicsItem::ItemUsesExtendedStyleOption);
 #endif
@@ -89,12 +90,15 @@ public:
 	 *	to make the theme change visible.
 	 */
 	virtual void load_theme_data() {};
+        virtual void mouse_hover_move_event() {};
 	
 	SheetView* get_sheetview() const {return m_sv;}
 	
 	static bool is_viewitem(QGraphicsItem* item) {
 		return item->type() == Type;
 	}
+
+        bool has_mouse_tracking() const {return m_hasMouseTracking;}
 		
 
 protected:
@@ -102,6 +106,7 @@ protected:
 	SheetView* 	m_sv;
 	ViewItem*	m_parentViewItem;
 	QRectF		m_boundingRect;
+        bool            m_hasMouseTracking;
 };
 
 inline QRectF ViewItem::boundingRect() const {return m_boundingRect;}

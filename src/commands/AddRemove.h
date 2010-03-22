@@ -32,7 +32,7 @@ class Sheet;
 class AddRemove : public Command
 {
 public :
-        AddRemove(ContextItem* parent, void* arg, const QString& des);
+        AddRemove(ContextItem* parent, ContextItem* item, const QString& des);
         AddRemove(ContextItem* parent,
 			void*  arg,
 			bool historable,
@@ -42,6 +42,15 @@ public :
 			const char* undoActionSlot,
 			const char* undoSignal,
 			const QString& des);
+        AddRemove(ContextItem* parent,
+                        ContextItem*  item,
+                        bool historable,
+                        Sheet* sheet,
+                        const char* doActionSlot,
+                        const char* doSignal,
+                        const char* undoActionSlot,
+                        const char* undoSignal,
+                        const QString& des);
         ~AddRemove();
 
         int prepare_actions();

@@ -161,8 +161,9 @@ public:
         QList<QObject* > get_context_items();
 
         void add_contextitem(QObject* item);
-
         void remove_contextitem(QObject* item);
+        void remove_from_active_context_list(ContextItem* item);
+        void about_to_delete(ContextItem* item);
 	
 	QList<QObject* > get_contextmenu_items() const;
 	void set_contextmenu_items(QList<QObject* > list);
