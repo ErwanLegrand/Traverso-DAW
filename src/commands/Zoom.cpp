@@ -175,16 +175,33 @@ int Zoom::undo_action( )
 
 void Zoom::vzoom_in(bool autorepeat)
 {
-	m_sv->vzoom(1.3);
+        Q_UNUSED(autorepeat);
+        m_sv->vzoom(1.3);
 }
 
 void Zoom::vzoom_out(bool autorepeat)
 {
-	m_sv->vzoom(0.7);
+        Q_UNUSED(autorepeat);
+        m_sv->vzoom(0.7);
 }
+
+void Zoom::hzoom_in(bool autorepeat)
+{
+        Q_UNUSED(autorepeat);
+        m_sv->hzoom(0.5);
+}
+
+void Zoom::hzoom_out(bool autorepeat)
+{
+        Q_UNUSED(autorepeat);
+        m_sv->hzoom(2.0);
+}
+
 
 void Zoom::track_vzoom_in(bool autorepeat)
 {
+        Q_UNUSED(autorepeat);
+
         if (!m_tv) {
                 return;
         }
@@ -197,6 +214,8 @@ void Zoom::track_vzoom_in(bool autorepeat)
 
 void Zoom::track_vzoom_out(bool autorepeat)
 {
+        Q_UNUSED(autorepeat);
+
         if (!m_tv) {
                 return;
         }
@@ -220,7 +239,7 @@ void Zoom::set_collected_number(const QString &collected)
 
         if (ok && m_tv) {
                 switch(number) {
-                case 0: m_sv->set_track_height(m_tv, 50); break;
+                case 0: m_sv->set_track_height(m_tv, 10); break;
                 case 1: m_sv->set_track_height(m_tv, 30); break;
                 case 2: m_sv->set_track_height(m_tv, 60); break;
                 case 3: m_sv->set_track_height(m_tv, 90); break;

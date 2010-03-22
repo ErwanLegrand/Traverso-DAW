@@ -48,7 +48,8 @@
 				<Object objectname="SheetView" slotsignature="scroll_left" modes="All" sortorder="1" submenu="Scroll" />
 				<Object objectname="MoveClip" slotsignature="move_left" modes="All" sortorder="3" />
 				<Object objectname="TrackPan" slotsignature="pan_left" modes="All" sortorder="1" />
-				<Object objectname="Sheet" slotsignature="prev_skip_pos" modes="All" sortorder="5" modifierkeys="CTRL" submenu="Playhead" />
+                                <Object objectname="Zoom" slotsignature="hzoom_out" modes="All" sortorder="4" />
+                                <Object objectname="Sheet" slotsignature="prev_skip_pos" modes="All" sortorder="5" modifierkeys="CTRL" submenu="Playhead" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="RARROW" >
@@ -56,7 +57,8 @@
 				<Object objectname="SheetView" slotsignature="scroll_right" modes="All" sortorder="2" submenu="Scroll" />
 				<Object objectname="MoveClip" slotsignature="move_right" modes="All" sortorder="4" />
 				<Object objectname="TrackPan" slotsignature="pan_right" modes="All" sortorder="2" />
-				<Object objectname="Sheet" slotsignature="next_skip_pos" modes="All" sortorder="5" modifierkeys="CTRL" submenu="Playhead" />
+                                <Object objectname="Zoom" slotsignature="hzoom_in" modes="All" sortorder="5" />
+                                <Object objectname="Sheet" slotsignature="next_skip_pos" modes="All" sortorder="5" modifierkeys="CTRL" submenu="Playhead" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="UARROW" >
@@ -77,7 +79,7 @@
                                 <Object objectname="DragNode" slotsignature="move_down" modes="Effects" />
 				<Object objectname="SheetView" slotsignature="scroll_down" modes="All" sortorder="4" submenu="Scroll" />
 				<Object objectname="MoveClip" slotsignature="move_down" modes="All" sortorder="2" />
-                                <Object objectname="Zoom" slotsignature="track_vzoom_in" modes="All" sortorder="1" />
+                                <Object objectname="Zoom" slotsignature="track_vzoom_in" modes="All" sortorder="2" />
                                 <Object objectname="SheetView" slotsignature="activate_next_track" modes="All" sortorder="5" />
                         </Objects>
 		</keyfact>
@@ -91,7 +93,7 @@
 			<Objects>
 				<Object objectname="SheetView" slotsignature="playhead_to_workcursor" modes="All" sortorder="12" submenu="Playhead" />
 				<Object objectname="SheetView" slotsignature="center_playhead" modes="All" sortorder="15" modifierkeys="CTRL" submenu="Playhead" />
-				<Object objectname="Zoom" slotsignature="toggle_vertical_horizontal_jog_zoom" modes="All" />
+                                <Object objectname="Zoom" slotsignature="toggle_vertical_horizontal_jog_zoom" modes="All" sortorder="9" />
 				<Object objectname="MoveClip" slotsignature="toggle_vertical_only" modes="All" sortorder="10" />
 			</Objects>
 		</keyfact>
@@ -112,7 +114,7 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="Z" >
 			<Objects>
-				<Object objectname="SheetView" modes="All" sortorder="3" submenu="Zoom" pluginname="TraversoCommands" commandname="HZoomIn" arguments="HZoom;0.5" />
+                                <Object objectname="SheetView" modes="All" sortorder="1" submenu="Zoom" pluginname="TraversoCommands" commandname="HZoomIn" arguments="HZoom;0.5" />
 				<Object objectname="MoveClip" slotsignature="start_zoom" modes="All" sortorder="11"/>
 			</Objects>
 		</keyfact>
@@ -176,7 +178,7 @@
 				<Object objectname="SpectralMeterView" slotsignature="edit_properties" modes="All" />
 				<Object objectname="AudioClipView" slotsignature="edit_properties" modes="All" sortorder="11" />
 				<Object objectname="TimeLineView" slotsignature="Interface::show_marker_dialog" modes="All" />
-                                <Object objectname="Zoom" modes="All" sortorder="5" slotsignature="toggle_expand_all_tracks" />
+                                <Object objectname="Zoom" modes="All" sortorder="1" slotsignature="toggle_expand_all_tracks" />
                         </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="N" >
@@ -251,7 +253,7 @@
 				<Object objectname="Gain" slotsignature="increase_gain" modes="All" />
 				<Object objectname="TrackPanelPan" slotsignature="pan_right" modes="All" sortorder="1" />
 				<Object objectname="TrackPanelGain" slotsignature="gain_increment" modes="All" sortorder="1" />
-				<Object objectname="Zoom" slotsignature="vzoom_out" modes="All" />
+                                <Object objectname="Zoom" slotsignature="vzoom_out" modes="All" sortorder="7" />
 				<Object objectname="TrackPan" slotsignature="pan_right" modes="All" sortorder="2" />
                                 <Object objectname="Crop" slotsignature="adjust_left" modes="All" />
                         </Objects>
@@ -263,7 +265,7 @@
 				<Object objectname="Gain" slotsignature="decrease_gain" modes="All" />
 				<Object objectname="TrackPanelPan" slotsignature="pan_left" modes="All" sortorder="2" />
 				<Object objectname="TrackPanelGain" slotsignature="gain_decrement" modes="All" sortorder="2" />
-				<Object objectname="Zoom" slotsignature="vzoom_in" modes="All" />
+                                <Object objectname="Zoom" slotsignature="vzoom_in" modes="All" sortorder="8" />
 				<Object objectname="TrackPan" slotsignature="pan_left" modes="All" sortorder="1" />
                                 <Object objectname="Crop" slotsignature="adjust_right" modes="All" />
                         </Objects>
