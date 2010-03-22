@@ -74,7 +74,7 @@ int ArmTracks::undo_action()
 
 int ArmTracks::jog()
 {
-	AudioTrackView* view = m_sv->get_trackview_under(cpointer().scene_pos());
+	AudioTrackView* view = m_sv->get_audio_trackview_under(cpointer().scene_pos());
 	
 	if ( ! view ) {
 		return 0;

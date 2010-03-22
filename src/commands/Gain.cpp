@@ -47,12 +47,17 @@ Gain::Gain(ContextItem* context, QVariantList args)
 
 	float gain = -1;
 	QString des = "";
+        ProcessingData* data = qobject_cast<ProcessingData*>(m_gainObject);
+        QString name;
+        if (data) {
+                name = data->get_name();
+        }
 	
         if (args.size() > 0) {
 		gain = args.at(0).toDouble();
 		des = QString(context->metaObject()->className()) + ": Reset gain";
 	} else {
-		des = QString(context->metaObject()->className()) + " Gain";
+                des = "Gain (" + QString(context->metaObject()->className()) + " " + name + ")";
 	}
 	
 	setText(des);
