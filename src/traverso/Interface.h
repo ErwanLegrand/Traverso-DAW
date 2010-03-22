@@ -94,8 +94,8 @@ class Interface : public QMainWindow
 	Q_CLASSINFO("start_transport", tr("Play"))
         Q_CLASSINFO("set_recordable_and_start_transport", tr("Record"));
         Q_CLASSINFO("sheet_audio_io_dialog", tr("Show Audio I/O dialog"));
-
-
+        Q_CLASSINFO("show_track_finder", tr("Activate Track Finder"));
+        Q_CLASSINFO("audio_io_dialog", tr("Show Audio I/O Dialog"));
 
 public :
 	Interface();
