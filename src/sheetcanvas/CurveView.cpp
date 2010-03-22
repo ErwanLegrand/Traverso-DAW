@@ -234,6 +234,7 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 		pen.setColor(themer()->get_color("Curve:inactive"));
 	}
 	
+        pen.setWidth(2);
 	painter->save();
 	painter->setPen(pen);
 	painter->setClipRect(m_boundingRect);
