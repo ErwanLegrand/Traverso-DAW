@@ -120,8 +120,8 @@ void CurveNodeView::update_pos( )
 void CurveNodeView::set_selected( )
 {
 	int size = themer()->get_property("CurveNode:diameter", 6).toInt();
-	m_boundingRect.setWidth(size + 1);
-	m_boundingRect.setHeight(size + 1);
+        m_boundingRect.setWidth(size + 1.5);
+        m_boundingRect.setHeight(size + 1.5);
 	update_pos();
 }
 
