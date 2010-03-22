@@ -284,6 +284,15 @@
                                 <Object objectname="Interface" modes="All" sortorder="5" slotsignature="show_track_finder" />
                         </Objects>
                 </keyfact>
+                <keyfact type="FKEY" key1="DELETE" >
+                        <Objects>
+                                <Object objectname="AudioClip" modes="All" sortorder="50" pluginname="TraversoCommands" commandname="RemoveClip" />
+                                <Object objectname="Track" modes="All" sortorder="50" pluginname="TraversoCommands" commandname="RemoveTrack" />
+                                <Object objectname="CurveView" slotsignature="remove_node" modes="All" />
+                                <Object objectname="PluginView" slotsignature="remove_plugin" modes="All" />
+                                <Object objectname="TimeLineView" slotsignature="remove_marker" modes="All" />
+                        </Objects>
+                </keyfact>
 
 
 		
@@ -599,12 +608,6 @@
 				<Object objectname="Sheet" modes="All" sortorder="1" submenu="Selection" pluginname="TraversoCommands" commandname="ClipSelectionSelectAll" arguments="select_all_clips" />
 			</Objects>
 		</keyfact>
-                <keyfact type="D_FKEY" key1="Z">
-                        <Objects>
-                                <Object objectname="SheetView" modes="All" sortorder="1" submenu="Zoom" slotsignature="toggle_expand_all_tracks" />
-                        </Objects>
-                </keyfact>
-
 
 		
 		
