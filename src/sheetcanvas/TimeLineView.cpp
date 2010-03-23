@@ -391,6 +391,10 @@ Command* TimeLineView::remove_marker()
 
 void TimeLineView::update_softselected_marker(QPointF pos)
 {
+        // TODO : pos is scene_pos, but Marker positions are relative
+        // to parent, not to scene, but since TimeLineView spans the scene
+        // they happen to be the same now. Could change in the future?
+
 	MarkerView* prevMarker = m_blinkingMarker;
 	if (m_markerViews.size()) {
 		m_blinkingMarker = m_markerViews.first();

@@ -410,7 +410,7 @@ void CurveView::active_context_changed()
 	
 void CurveView::mouse_hover_move_event()
 {
-        update_softselected_node(cpointer().scene_pos().toPoint());
+        update_softselected_node(mapToItem(this, cpointer().scene_pos()).toPoint());
 
 	if (m_blinkingNode) {
 		setCursor(themer()->get_cursor("CurveNode"));
@@ -529,7 +529,7 @@ Command* CurveView::drag_node()
 {
 	PENTER;
 
-	QPointF origPos(mapFromScene(QPoint(cpointer().on_first_input_event_scene_x(), cpointer().on_first_input_event_scene_y())));
+        QPointF origPos(mapToItem(this, QPoint(cpointer().on_first_input_event_scene_x(), cpointer().on_first_input_event_scene_y())));
 
 	update_softselected_node(QPoint((int)origPos.x(), (int)origPos.y()), true);
 	
