@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <libtraversocore.h>
 #include "libtraversosheetcanvas.h"
+#include "commands.h"
 #include <AudioDevice.h> 
 
 #include <QDockWidget>
@@ -944,7 +945,13 @@ Command * Interface::get_keymap(QString &str)
 	QList<const QMetaObject*> fadelist; fadelist << &FadeCurve::staticMetaObject; fadelist << &FadeView::staticMetaObject;
 	QList<const QMetaObject*> interfacelist; interfacelist << &Interface::staticMetaObject;
 	QList<const QMetaObject*> pmlist; pmlist << &ProjectManager::staticMetaObject;
-		
+        QList<const QMetaObject*> gainlist; gainlist << &Gain::staticMetaObject;
+        QList<const QMetaObject*> movetracklist; movetracklist << &MoveTrack::staticMetaObject;
+        QList<const QMetaObject*> movecliplist; movecliplist << &MoveClip::staticMetaObject;
+        QList<const QMetaObject*> zoomlist; zoomlist << &Zoom::staticMetaObject;
+        QList<const QMetaObject*> trackpanlist; trackpanlist << &TrackPan::staticMetaObject;
+        QList<const QMetaObject*> croplist; croplist << &Crop::staticMetaObject;
+
 	objects.insert("Sheet", sheetlist);
         objects.insert("Track", tracklist);
         objects.insert("SubGroup", subgrouplist);
@@ -955,8 +962,14 @@ Command * Interface::get_keymap(QString &str)
 	objects.insert("Plugin", pluginlist);
 	objects.insert("Fade", fadelist);
 	objects.insert("Interface", interfacelist);
-	objects.insert("ProjectManager", pmlist);
-	
+        objects.insert("ProjectManager", pmlist);
+        objects.insert("Gain", gainlist);
+        objects.insert("Move Track", movetracklist);
+        objects.insert("Move AudioClip", cliplist);
+        objects.insert("Zoom", zoomlist);
+        objects.insert("Track Pan", trackpanlist);
+        objects.insert("Magnetic Cut", croplist);
+
 	
 	str = "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"></head><body><h1>Traverso keymap: " + config().get_property("CCE", "keymap", "default").toString() + "</h1>";
 	
