@@ -127,15 +127,6 @@ public:
                 return (int) m_port->map_to_scene(m_onFirstInputEventX, m_onFirstInputEventY).y();
 	}
 	
-	/**
-	 *        Called _only_ by InputEngine, not to be used anywhere else.
-	 */
-	inline void inputengine_first_input_event( )
-	{
-		m_onFirstInputEventX = m_x;
-		m_onFirstInputEventY = m_y;
-	}
-	
 	inline int get_current_mode() const {
                 if (m_port) {
                         return m_port->get_current_mode();
@@ -177,6 +168,7 @@ private:
 
         // allow this function to create one instance
         friend ContextPointer& cpointer();
+        friend class InputEngine;
 
         int m_x;
         int m_y;
@@ -195,8 +187,19 @@ private:
         QList<QObject* > m_contextItemsList;
 	QList<QObject* > m_contextMenuItems;
         QList<ContextItem*> m_activeContextItems;
+        QList<ContextItem*> m_onFirstInputEventActiveContextItems;
 
         void set_active_context_items(const QList<ContextItem*>& items);
+
+        /**
+         *        Called ONLY by InputEngine, not to be used anywhere else.
+         */
+        inline void inputengine_first_input_event( )
+        {
+                m_onFirstInputEventX = m_x;
+                m_onFirstInputEventY = m_y;
+                m_onFirstInputEventActiveContextItems = m_activeContextItems;
+        }
 
 	
 private slots:

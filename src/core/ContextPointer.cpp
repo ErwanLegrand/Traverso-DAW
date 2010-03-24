@@ -95,9 +95,16 @@ QList< QObject * > ContextPointer::get_context_items( )
 	QList<QObject* > contextItems;
 	ContextItem* item;
 	ContextItem*  nextItem;
+
+        QList<ContextItem*> activeItems;
+        if (m_keyboardOnlyInput) {
+                activeItems = m_activeContextItems;
+        } else {
+                activeItems = m_onFirstInputEventActiveContextItems;
+        }
 	
-        for (int i=0; i < m_activeContextItems.size(); ++i) {
-                item = m_activeContextItems.at(i);
+        for (int i=0; i < activeItems.size(); ++i) {
+                item = activeItems.at(i);
 		contextItems.append(item);
 		while ((nextItem = item->get_context())) {
 			contextItems.append(nextItem);
