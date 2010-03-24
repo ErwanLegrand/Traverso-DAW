@@ -291,6 +291,75 @@ void SheetView::move_trackview_down(TrackView *trackView)
 
 }
 
+void SheetView::to_bottom(TrackView *trackView)
+{
+        AudioTrackView* atv = qobject_cast<AudioTrackView*>(trackView);
+        SubGroupView* sgv = qobject_cast<SubGroupView*>(trackView);
+
+        if (atv) {
+                QList<TrackView*> list = m_audioTrackViews;
+                list.removeAll(atv);
+                for(int i=0; i<list.size(); i++) {
+                        list.at(i)->get_track()->set_sort_index(i);
+                }
+                atv->get_track()->set_sort_index(list.size());
+        }
+
+        if (sgv) {
+                QList<TrackView*> list = m_subGroupViews;
+                list.removeAll(atv);
+
+                for(int i=0; i<list.size(); i++) {
+                        list.at(i)->get_track()->set_sort_index(i);
+                }
+                sgv->get_track()->set_sort_index(list.size());
+        }
+
+
+        qSort(m_audioTrackViews.begin(), m_audioTrackViews.end(), smallerTrackView);
+        qSort(m_subGroupViews.begin(), m_subGroupViews.end(), smallerTrackView);
+
+        layout_tracks();
+}
+
+void SheetView::to_top(TrackView *trackView)
+{
+        int index = trackView->get_track()->get_sort_index();
+        if (index == 0) {
+                // it's allready topmost, don't do anything
+                return;
+        }
+
+        AudioTrackView* atv = qobject_cast<AudioTrackView*>(trackView);
+        SubGroupView* sgv = qobject_cast<SubGroupView*>(trackView);
+
+        if (atv) {
+                QList<TrackView*> list = m_audioTrackViews;
+                list.removeAll(atv);
+                atv->get_track()->set_sort_index(0);
+
+                for(int i=0; i<list.size(); i++) {
+                        list.at(i)->get_track()->set_sort_index(i + 1);
+                }
+        }
+
+        if (sgv) {
+                QList<TrackView*> list = m_subGroupViews;
+                list.removeAll(atv);
+                sgv->get_track()->set_sort_index(0);
+
+                for(int i=0; i<list.size(); i++) {
+                        list.at(i)->get_track()->set_sort_index(i + 1);
+                }
+        }
+
+
+        qSort(m_audioTrackViews.begin(), m_audioTrackViews.end(), smallerTrackView);
+        qSort(m_subGroupViews.begin(), m_subGroupViews.end(), smallerTrackView);
+
+        layout_tracks();
+}
+
 void SheetView::add_new_track_view(Track* track)
 {
         TrackView* view;

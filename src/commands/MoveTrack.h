@@ -34,6 +34,8 @@ class MoveTrack : public Command
         Q_OBJECT
         Q_CLASSINFO("move_up", tr("Move Up"));
         Q_CLASSINFO("move_down", tr("Move Down"));
+        Q_CLASSINFO("to_bottom", tr("To Bottom"));
+        Q_CLASSINFO("to_top", tr("To Top"));
 
 public :
         MoveTrack(TrackView* view);
@@ -59,6 +61,8 @@ private:
 public slots:
         void move_up(bool autorepeat);
         void move_down(bool autorepeat);
+        void to_top(bool autorepeat);
+        void to_bottom(bool autorepeat);
 };
 
 

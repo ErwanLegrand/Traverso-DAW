@@ -134,3 +134,15 @@ void MoveTrack::set_cursor_shape(int /*useX*/, int useY)
                 cpointer().get_viewport()->set_holdcursor(":/cursorHoldUd");
         }
 }
+
+void MoveTrack::to_bottom(bool autorepeat)
+{
+        m_sv->to_bottom(m_trackView);
+        m_sv->browse_to_track(m_trackView->get_track());
+}
+
+void MoveTrack::to_top(bool autorepeat)
+{
+        m_sv->to_top(m_trackView);
+        m_sv->browse_to_track(m_trackView->get_track());
+}
