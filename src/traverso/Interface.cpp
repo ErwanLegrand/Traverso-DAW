@@ -965,7 +965,7 @@ Command * Interface::get_keymap(QString &str)
         objects.insert("ProjectManager", pmlist);
         objects.insert("Gain", gainlist);
         objects.insert("Move Track", movetracklist);
-        objects.insert("Move AudioClip", cliplist);
+        objects.insert("Move AudioClip", movecliplist);
         objects.insert("Zoom", zoomlist);
         objects.insert("Track Pan", trackpanlist);
         objects.insert("Magnetic Cut", croplist);
@@ -983,39 +983,39 @@ Command * Interface::get_keymap(QString &str)
 		
 		foreach(const QMetaObject* mo, objectlist) {
                         while (mo) {
-			QList<MenuData > list;
-			
-			ie().create_menudata_for_metaobject(mo, list);
-		
-			QList<QMenu* > menulist;
-			QMenu* menu = create_context_menu(0, &list);
-			if (menu) {
-				menulist.append(menu);
-				foreach(QAction* action, menu->actions()) {
-					if (action->menu()) {
-						menulist.append(action->menu());
-					}
-				}
-				for (int i=0; i<menulist.size(); ++i) {
-					QMenu* somemenu = menulist.at(i);
-					foreach(QAction* action, somemenu->actions()) {
-						QStringList strings = action->data().toStringList();
-						if (strings.size() >= 3) {
-							QString submenuname = "";
-							if (i > 0) {
-								submenuname = somemenu->menuAction()->text() + "&#160;&#160;&#160;&#160;";
-							}
-							QString keyfact = strings.at(2);
-							keyfact.replace("<", "&lt;");
-									
-							result += QString("<tr><td>") + submenuname + strings.at(1) + "</td><td>" + keyfact + "</td></tr>";
-						}
-					}
-				}
-				delete menu;
-			}
-                        mo = mo->superClass();
-                }
+                                QList<MenuData > list;
+                                
+                                ie().create_menudata_for_metaobject(mo, list);
+                        
+                                QList<QMenu* > menulist;
+                                QMenu* menu = create_context_menu(0, &list);
+                                if (menu) {
+                                        menulist.append(menu);
+                                        foreach(QAction* action, menu->actions()) {
+                                                if (action->menu()) {
+                                                        menulist.append(action->menu());
+                                                }
+                                        }
+                                        for (int i=0; i<menulist.size(); ++i) {
+                                                QMenu* somemenu = menulist.at(i);
+                                                foreach(QAction* action, somemenu->actions()) {
+                                                        QStringList strings = action->data().toStringList();
+                                                        if (strings.size() >= 3) {
+                                                                QString submenuname = "";
+                                                                if (i > 0) {
+                                                                        submenuname = somemenu->menuAction()->text() + "&#160;&#160;&#160;&#160;";
+                                                                }
+                                                                QString keyfact = strings.at(2);
+                                                                keyfact.replace("<", "&lt;");
+                                                                                
+                                                                result += QString("<tr><td>") + submenuname + strings.at(1) + "</td><td>" + keyfact + "</td></tr>";
+                                                        }
+                                                }
+                                        }
+                                        delete menu;
+                                }
+                                mo = mo->superClass();
+                        }
 		}
 		result.sort();
                 result.removeDuplicates();
