@@ -287,12 +287,13 @@ int JackDriver::process_callback (nframes_t nframes)
 	jack_position_t pos;
         jack_transport_state_t state = jack_transport_query (m_jack_client, &pos);
 	
-	transport_state_t tranportstate;
-        tranportstate.transport = state;
-	tranportstate.location = TimeRef(pos.frame, audiodevice().get_sample_rate());
-	tranportstate.realtime = true;
-	
-	device->transport_control(tranportstate);
+        transport_state_t transportstate;
+        transportstate.transport = state;
+        transportstate.location = TimeRef(pos.frame, audiodevice().get_sample_rate());
+        transportstate.realtime = true;
+        transportstate.isSlave = true;
+
+        device->transport_control(transportstate);
 	
 	device->run_cycle( nframes, 0.0);
         return 0;
