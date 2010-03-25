@@ -66,9 +66,6 @@ public:
 	void calculate_bounding_rect();
 	void load_theme_data();
 	
-protected:
-	void hoverEnterEvent ( QGraphicsSceneHoverEvent * event );
-
 private:
 	AudioTrackView* 	m_tv;
 	QList<FadeView*> m_fadeViews;
@@ -148,6 +145,7 @@ private slots:
 	void finish_recording();
 	void update_recording();
 	void clip_state_changed();
+        void active_context_changed();
 };
 
 

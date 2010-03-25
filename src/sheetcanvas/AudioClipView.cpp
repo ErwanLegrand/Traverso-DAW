@@ -93,7 +93,7 @@ AudioClipView::AudioClipView(SheetView* sv, AudioTrackView* parent, AudioClip* c
 
         connect(m_clip, SIGNAL(muteChanged()), this, SLOT(repaint()));
         connect(m_clip, SIGNAL(stateChanged()), this, SLOT(clip_state_changed()));
-        connect(m_clip, SIGNAL(activeContextChanged()), this, SLOT(repaint()));
+        connect(m_clip, SIGNAL(activeContextChanged()), this, SLOT(active_context_changed()));
         connect(m_clip, SIGNAL(lockChanged()), this, SLOT(repaint()));
         connect(m_clip, SIGNAL(fadeAdded(FadeCurve*)), this, SLOT(add_new_fadeview( FadeCurve*)));
         connect(m_clip, SIGNAL(fadeRemoved(FadeCurve*)), this, SLOT(remove_fadeview( FadeCurve*)));
@@ -421,7 +421,7 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
                                 p->setBrush(m_waveBrush);
                         }
 
-                        if (m_paintWithOutline && (m_height > m_mimimumheightforinfoarea)) {
+                        if (m_paintWithOutline) {
                                 if (m_sheet->get_mode() == Sheet::EDIT) {
                                         p->setPen(themer()->get_color("AudioClip:wavemacroview:outline"));
                                 } else  {
@@ -720,6 +720,11 @@ void AudioClipView::set_height( int height )
 {
         m_height = height;
         create_brushes();
+        if (m_height < m_mimimumheightforinfoarea) {
+                m_classicView = false;
+        } else {
+                m_classicView = ! config().get_property("Themer", "paintaudiorectified", false).toBool();
+        }
 }
 
 int AudioClipView::get_childview_y_offset() const
@@ -812,14 +817,17 @@ void AudioClipView::load_theme_data()
 }
 
 
-void AudioClipView::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
+void AudioClipView::active_context_changed()
 {
-        Q_UNUSED(event)
         if (ie().is_holding()) {
                 return;
         }
+
+        if (m_clip->has_active_context()) {
+                m_tv->to_front(this);
+        }
+
         update(m_boundingRect);
-        m_tv->to_front(this);
 }
 
 
