@@ -104,13 +104,15 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="HOME" >
 			<Objects>
-				<Object objectname="SheetView" slotsignature="goto_begin" modes="All" sortorder="5" submenu="Work Cursor" />
+                                <Object objectname="SheetView" slotsignature="goto_begin" modifierkeys="CTRL" modes="All" sortorder="5" submenu="Work Cursor" />
+                                <Object objectname="SheetView" slotsignature="play_to_begin" modes="All" sortorder="30" submenu="Playhead" />
                                 <Object objectname="MoveTrack" slotsignature="to_top" modes="All" sortorder="3" />
                         </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="END" >
 			<Objects>
-				<Object objectname="SheetView" slotsignature="goto_end" modes="All" sortorder="6" submenu="Work Cursor" />
+                                <Object objectname="SheetView" slotsignature="goto_end" modifierkeys="CTRL" modes="All" sortorder="6" submenu="Work Cursor" />
+                                <Object objectname="SheetView" slotsignature="play_to_end" modes="All" sortorder="31" submenu="Playhead" />
                                 <Object objectname="MoveTrack" slotsignature="to_bottom" modes="All" sortorder="4" />
                         </Objects>
 		</keyfact>

@@ -764,6 +764,13 @@ Command * SheetView::play_to_begin( )
 	return 0;
 }
 
+Command* SheetView::play_to_end()
+{
+        m_sheet->set_transport_pos(m_sheet->get_last_location());
+
+        return 0;
+}
+
 Command * SheetView::play_cursor_move( )
 {
 	return new PlayHeadMove(m_playCursor, this);

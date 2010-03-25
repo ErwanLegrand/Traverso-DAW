@@ -159,8 +159,9 @@ public slots:
         Command* activate_next_track();
         Command* goto_begin();
         Command* goto_end();
-	Command* play_to_begin();
-	Command* play_cursor_move();
+        Command* play_to_begin();
+        Command* play_to_end();
+        Command* play_cursor_move();
 	Command* work_cursor_move();
 	Command* add_marker();
 	Command* add_marker_at_playhead();
