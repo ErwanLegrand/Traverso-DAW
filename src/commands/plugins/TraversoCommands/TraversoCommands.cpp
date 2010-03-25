@@ -165,13 +165,9 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 		{
 			AudioTrack* track = qobject_cast<AudioTrack*>(obj);
 			if (! track) {
-				TrackPanelPan* tpp = qobject_cast<TrackPanelPan*>(obj);
-				if (! tpp ) {
-					PERROR("TraversoCommands: Supplied QObject was not a Track! "
-						"TrackPanCommand needs a Track as argument");
-					return 0;
-				}
-				track = (AudioTrack*)(tpp->get_context());
+                                PERROR("TraversoCommands: Supplied QObject was not a Track! "
+                                        "TrackPanCommand needs a Track as argument");
+                                return 0;
 			}
 			return new TrackPan(track, arguments);
 		}
