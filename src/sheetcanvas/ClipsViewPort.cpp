@@ -52,10 +52,6 @@ ClipsViewPort::ClipsViewPort(QGraphicsScene* scene, SheetWidget* sw)
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
-void ClipsViewPort::get_pointed_context_items(QList<ContextItem* > &list)
-{
-}
-
 void ClipsViewPort::resizeEvent( QResizeEvent * e )
 {
 	ViewPort::resizeEvent(e);

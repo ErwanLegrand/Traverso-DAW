@@ -63,10 +63,6 @@ void TimeLineViewPort::set_sheetview( SheetView * view )
 	m_sv = view;
 }
 
-void TimeLineViewPort::get_pointed_context_items(QList<ContextItem* > &list)
-{
-}
-
 void TimeLineViewPort::scale_factor_changed()
 {
 	if (m_timeLineView) {

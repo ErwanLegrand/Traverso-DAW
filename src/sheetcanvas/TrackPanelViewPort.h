@@ -33,9 +33,6 @@ public:
 	TrackPanelViewPort(QGraphicsScene* scene, SheetWidget* sw);
 	~TrackPanelViewPort() {};
 	
-        void get_pointed_context_items(QList<ContextItem* > &list);
-        void set_sheetview(SheetView* view) {m_sv = view;}
-
 private:
 	SheetWidget*	m_sw;
 };

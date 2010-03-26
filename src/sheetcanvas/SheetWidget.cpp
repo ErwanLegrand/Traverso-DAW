@@ -68,23 +68,10 @@ public:
 	SheetPanelViewPort(QGraphicsScene* scene, SheetWidget* sw);
 	~SheetPanelViewPort() {};
 
-	void get_pointed_context_items(QList<ContextItem* > &list)
-	{
-		QList<QGraphicsItem *> itemlist = items(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
-		foreach(QGraphicsItem* item, itemlist) {
-			if (ViewItem::is_viewitem(item)) {
-				list.append((ViewItem*)item);
-			}
-		}
-		list.removeAll(m_spv);
-		list.append(m_sv);
-	}
-
         void set_sheet_view(SheetView* view) { m_sv = view;}
 
 private:
         Sheet*          m_sheet;
-        SheetView*      m_sv;
 	SheetPanelView* m_spv;
 };
 

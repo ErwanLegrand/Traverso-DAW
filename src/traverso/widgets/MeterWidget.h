@@ -39,8 +39,6 @@ public:
 	MeterWidget(QWidget* parent, MeterView* item);
 	~MeterWidget();
 
-	void get_pointed_context_items(QList<ContextItem* > &list);
-
 protected:
 	void resizeEvent( QResizeEvent* e);
 	void hideEvent ( QHideEvent * event );

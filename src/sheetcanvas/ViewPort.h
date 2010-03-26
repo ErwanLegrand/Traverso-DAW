@@ -53,6 +53,7 @@ public :
         void set_holdcursor_pos(QPointF pos);
 	void set_current_mode(int mode);
         void set_cursor_shape(const QString& cursor);
+        virtual void set_sheetview(SheetView* view) {m_sv = view;}
 
 	void reset_cursor();
 	

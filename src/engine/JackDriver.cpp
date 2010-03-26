@@ -299,6 +299,8 @@ int JackDriver::process_callback (nframes_t nframes)
         return 0;
 }
 
+// NOTE:  note that in jack2 they (process and sync callback) occur asynchronously in 2 different threads
+//        How to handle that properly in Travers? The Tsar RT event buffer assumes only one RT thread.
 int JackDriver::jack_sync_callback (jack_transport_state_t state, jack_position_t* pos)
 {
         transport_state_t transportstate;

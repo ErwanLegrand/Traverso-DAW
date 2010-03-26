@@ -42,9 +42,5 @@ TrackPanelViewPort::TrackPanelViewPort(QGraphicsScene* scene, SheetWidget* sw)
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
-void TrackPanelViewPort::get_pointed_context_items(QList<ContextItem* > &list)
-{
-}
-
 
 //eof

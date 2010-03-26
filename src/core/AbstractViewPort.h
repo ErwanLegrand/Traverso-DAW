@@ -21,7 +21,6 @@ public:
         virtual void set_holdcursor(const QString& cursorName) = 0;
         virtual void set_holdcursor_text(const QString& text) = 0;
         virtual void set_holdcursor_pos(QPointF pos) = 0;
-        virtual void get_pointed_context_items(QList<ContextItem* > &list) = 0;
 };
 
 #endif // ABSTRACTVIEWPORT_H

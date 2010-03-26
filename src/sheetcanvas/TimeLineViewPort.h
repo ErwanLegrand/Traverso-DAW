@@ -41,7 +41,6 @@ public:
 	void scale_factor_changed();
 	TimeLineView* get_timeline_view() const {return m_timeLineView;}
 	
-	void get_pointed_context_items(QList<ContextItem* > &list);
 
 protected:
 	void wheelEvent ( QWheelEvent * e );

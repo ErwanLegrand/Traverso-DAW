@@ -94,18 +94,6 @@ QSize MeterWidget::sizeHint() const
 	return QSize(220, 50);
 }
 
-void MeterWidget::get_pointed_context_items(QList<ContextItem* > &list)
-{
-	printf("MeterWidget::get_pointed_view_items\n");
-	QList<QGraphicsItem *> itemlist = items(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
-	foreach(QGraphicsItem* item, itemlist) {
-		if (ViewItem::is_viewitem(item)) {
-			list.append((ViewItem*)item);
-		}
-	}
-	
-	printf("itemlist size is %d\n", itemlist.size());
-}
 
 
 MeterView::MeterView(MeterWidget* widget)
