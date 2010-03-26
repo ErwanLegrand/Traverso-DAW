@@ -266,16 +266,18 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 {
 	PENTER2;
 
-	Command* k = 0;
+        PMESG("Trying to find IEAction for key sequence %s", action->keySequence.data());
+
+        Command* k = 0;
 	QObject* item = 0;
 	int useX=0, useY=0;
 
 	QList<QObject* > list;
 	 
-	if ( ! fromContextMenu ) {
-		list = cpointer().get_context_items();
-	} else {
-		list = cpointer().get_contextmenu_items();
+        if (fromContextMenu) {
+                list = cpointer().get_contextmenu_items();
+        } else {
+                list = cpointer().get_context_items();
 	}
 
 	QString slotsignature = "";
@@ -283,8 +285,6 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 	if (holdingCommand) {
 		list.prepend(holdingCommand);
 	}
-	
-	PMESG("Trying to find IEAction for key sequence %s", action->keySequence.data());
 	
 	for (int i=0; i < list.size(); ++i) {
 		k = 0;
