@@ -158,8 +158,10 @@ public slots:
         Command* scroll_down();
         Command* to_upper_context_level();
         Command* to_lower_context_level();
-        Command* activate_previous_track();
-        Command* activate_next_track();
+        Command* browse_to_previous_context_item();
+        Command* browse_to_next_context_item();
+        Command* browse_to_context_item_above();
+        Command* browse_to_context_item_below();
         Command* goto_begin();
         Command* goto_end();
         Command* play_to_begin();
