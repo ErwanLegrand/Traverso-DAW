@@ -147,8 +147,6 @@ public:
 
         void set_current_viewport(AbstractViewPort* vp) {
                 m_port = vp;
-                m_activeContextItems.clear();
-                m_onFirstInputEventActiveContextItems.clear();
         }
 
         QList<QObject* > get_context_items();
