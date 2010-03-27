@@ -51,6 +51,8 @@ public :
 
         void set_cursor_shape(int useX, int useY);
 
+        void move_to_sheet();
+
 private:
         SheetView*      m_sv;
         TrackView*      m_trackView;

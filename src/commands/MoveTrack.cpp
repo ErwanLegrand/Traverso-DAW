@@ -23,9 +23,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "ClipsViewPort.h"
 #include "ContextPointer.h"
+#include "Sheet.h"
 #include "SheetView.h"
 #include "Track.h"
 #include "TrackView.h"
+#include "Project.h"
+#include "ProjectManager.h"
+
+#include <QMenu>
+
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -61,6 +67,7 @@ int MoveTrack::finish_hold()
 
 int MoveTrack::prepare_actions()
 {
+        move_to_sheet();
 
         return -1;
 }
@@ -145,4 +152,44 @@ void MoveTrack::to_top(bool autorepeat)
 {
         m_sv->to_top(m_trackView);
         m_sv->browse_to_track(m_trackView->get_track());
+}
+
+void MoveTrack::move_to_sheet()
+{
+        Project* project = pm().get_project();
+
+        if (!project) {
+                return;
+        }
+
+        QList<Sheet*> sheets = project->get_sheets();
+
+        QMenu menu;
+
+        foreach(Sheet* sheet, sheets) {
+                QAction* action = menu.addAction(sheet->get_name());
+                action->setData(sheet->get_id());
+        }
+
+        QAction* action = menu.exec(QCursor::pos());
+
+        if (!action) {
+                return;
+        }
+
+        qlonglong id = action->data().toLongLong();
+
+
+        Track* track = m_trackView->get_track();
+        Sheet* destination = project->get_sheet(id);
+        Sheet* orig = track->get_sheet();
+
+        if (! (destination || orig)) {
+                return;
+        }
+
+        Command::process_command(orig->remove_track(track));
+        Command::process_command(destination->add_track(track));
+
+        m_sv->browse_to_track(track);
 }
