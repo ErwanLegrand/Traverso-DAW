@@ -365,12 +365,6 @@
                                 <Object objectname="Interface" modes="All" sortorder="13"  slotsignature="audio_io_dialog" />
                         </Objects>
                 </keyfact>
-                <keyfact type="FKEY2" key1="S" key2="M" >
-                        <Objects>
-                                <Object objectname="TrackView" mousehint="UD" modes="All" sortorder="20" pluginname="TraversoCommands" commandname="MoveTrack" />
-                        </Objects>
-                </keyfact>
-
 
 
 		

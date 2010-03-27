@@ -67,7 +67,7 @@ int MoveTrack::finish_hold()
 
 int MoveTrack::prepare_actions()
 {
-        move_to_sheet();
+//        move_to_sheet();
 
         return -1;
 }
@@ -154,6 +154,8 @@ void MoveTrack::to_top(bool autorepeat)
         m_sv->browse_to_track(m_trackView->get_track());
 }
 
+
+// horribly broken :D
 void MoveTrack::move_to_sheet()
 {
         Project* project = pm().get_project();
@@ -189,7 +191,7 @@ void MoveTrack::move_to_sheet()
         }
 
         Command::process_command(orig->remove_track(track));
-        Command::process_command(destination->add_track(track));
+        Command::process_command(destination->create_audio_track());
 
         m_sv->browse_to_track(track);
 }
