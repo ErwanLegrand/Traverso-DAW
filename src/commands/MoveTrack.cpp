@@ -191,7 +191,7 @@ void MoveTrack::move_to_sheet()
         }
 
         Command::process_command(orig->remove_track(track));
-        Command::process_command(destination->create_audio_track());
+        Command::process_command(destination->add_track(track));
 
         m_sv->browse_to_track(track);
 }
