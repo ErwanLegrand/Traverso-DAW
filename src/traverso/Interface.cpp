@@ -218,7 +218,6 @@ Interface::Interface()
         m_trackFinder->setCompleter(m_trackFinderCompleter);
         connect(m_trackFinderCompleter, SIGNAL(activated(const QModelIndex&)),
                 this, SLOT(track_finder_model_index_changed(const QModelIndex&)));
-        connect(m_trackFinder, SIGNAL(returnPressed()), this, SLOT(track_finder_return_pressed()));
 
         QTreeView *treeView = new QTreeView;
         treeView->setMinimumWidth(300);
@@ -448,6 +447,13 @@ bool Interface::eventFilter(QObject * obj, QEvent * event)
         if (event->type() == QEvent::MouseButtonPress && obj == m_trackFinder) {
                 show_track_finder();
                 return true;
+        }
+
+        if (obj == m_trackFinder) {
+                // If a user types characters in the track finer, we catch that here and try to show and 'select'
+                // the first found item. When the topmost item is the track to be found, then the user can hit
+                // enter and the topmost item will be browsed to aka partial search.
+                m_trackFinderCompleter->popup()->selectionModel()->setCurrentIndex(index, QItemSelectionModel::NoUpdate);
         }
 
 	QMenu* menu = qobject_cast<QMenu*>(obj);
@@ -1842,19 +1848,6 @@ void Interface::track_finder_model_index_changed(const QModelIndex& index)
         track_finder_show_initial_text();
 }
 
-void Interface::track_finder_return_pressed()
-{
-        if (!m_project) {
-                return;
-        }
-
-        QString name = m_trackFinder->text();
-        QList<QStandardItem*> items = m_trackFinderModel->findItems(name, Qt::MatchStartsWith);
-        if (items.size()) {
-                track_finder_model_index_changed(m_trackFinderModel->indexFromItem(items.at(0)));
-                return;
-        }
-}
 
 void Interface::track_finder_show_initial_text()
 {
