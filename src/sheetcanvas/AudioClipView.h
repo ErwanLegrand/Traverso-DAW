@@ -60,6 +60,7 @@ public:
 	void set_height(int height);
 	
 	AudioClip* get_clip() const {return m_clip;}
+        AudioTrackView* get_audio_track_view() const {return m_tv;}
 	int get_height() const;
 	int get_childview_y_offset() const;
 	

@@ -25,6 +25,7 @@
 #include "ViewItem.h"
 #include <QTimer>
 
+class AudioClip;
 class Sheet;
 class AudioTrackView;
 class ClipsViewPort;
@@ -99,6 +100,7 @@ public :
         void set_track_height(TrackView* view, int newheight);
 
         void browse_to_track(Track* track);
+        void browse_to_audio_clip(AudioClip* clip);
         void center_in_view(ViewItem* item);
 
 	qint64		timeref_scalefactor;

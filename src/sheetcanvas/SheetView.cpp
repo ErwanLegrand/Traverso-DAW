@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include "Curve.h"
 #include "InputEngine.h"
 #include "Sheet.h"
+#include "AudioClip.h"
 #include "SnapList.h"
 #include "AudioTrack.h"
 #include "SubGroup.h"
@@ -936,6 +937,37 @@ void SheetView::browse_to_track(Track *track)
         }
 }
 
+void SheetView::browse_to_audio_clip(AudioClip *clip)
+{
+        // find related AudioClipView
+        AudioClipView* acv = 0;
+        foreach(TrackView* atv, m_audioTrackViews) {
+                foreach(AudioClipView* view, ((AudioTrackView*)atv)->get_clipviews()) {
+                        if (view->get_clip() == clip) {
+                               acv = view;
+                               break;
+                        }
+                }
+        }
+
+        if (!acv) {
+                return;
+        }
+
+        QList<ContextItem*> activeList;
+
+        activeList.append(acv);
+        activeList.append(acv->get_audio_track_view());
+        activeList.append(this);
+
+        set_hscrollbar_value(acv->pos().x() - (m_clipsViewPort->width() / 3));
+        QCursor::setPos(m_clipsViewPort->mapToGlobal(
+                        m_clipsViewPort->mapFromScene(
+                        acv->scenePos().x() + 30, acv->scenePos().y() + acv->boundingRect().height() / 2)));
+
+        cpointer().set_active_context_items_by_keyboard_input(activeList);
+}
+
 
 Command* SheetView::to_upper_context_level()
 {
@@ -947,11 +979,8 @@ Command* SheetView::to_upper_context_level()
                 QList<AudioClipView*> clipsViews = atv->get_clipviews();
                 AudioClipView* acv = clipsViews.first();
                 if (acv) {
-                        activeList.append(acv);
-                        activeList.append(atv);
-                        QPoint point = m_tpvp->mapToGlobal(m_tpvp->mapFromScene(acv->scenePos().x() + 30,
-                                                                                acv->scenePos().y() + acv->boundingRect().height() / 2));
-                        QCursor::setPos(point);
+                        browse_to_audio_clip(acv->get_clip());
+                        return 0;
                 }
         }
 
@@ -1019,11 +1048,70 @@ Command* SheetView::browse_to_context_item_above()
 
 Command* SheetView::browse_to_next_context_item()
 {
+        QList<QObject*> list = cpointer().get_context_items();
+        QList<ContextItem*> activeList;
+
+        AudioClipView* acv = qobject_cast<AudioClipView*>(list.first());
+        AudioTrackView* atv = 0;
+        foreach(QObject* obj, list) {
+                AudioTrackView* view = qobject_cast<AudioTrackView*>(obj);
+                if (view) {
+                        atv = view;
+                }
+        }
+
+        if (acv) {
+                QList<AudioClipView*> views = atv->get_clipviews();
+                int index = views.indexOf(acv);
+                if (index < (views.size() - 1)) {
+                        acv = views.at(index + 1);
+                        browse_to_audio_clip(acv->get_clip());
+                        return 0;
+                }
+        }
+
+        if (!activeList.size()) {
+                return 0;
+        }
+
+        activeList.append(this);
+        cpointer().set_active_context_items_by_keyboard_input(activeList);
+
+
         return 0;
 }
 
 Command* SheetView::browse_to_previous_context_item()
 {
+        QList<QObject*> list = cpointer().get_context_items();
+        QList<ContextItem*> activeList;
+
+        AudioClipView* acv = qobject_cast<AudioClipView*>(list.first());
+        AudioTrackView* atv = 0;
+        foreach(QObject* obj, list) {
+                AudioTrackView* view = qobject_cast<AudioTrackView*>(obj);
+                if (view) {
+                        atv = view;
+                }
+        }
+
+        if (acv) {
+                QList<AudioClipView*> views = atv->get_clipviews();
+                int index = views.indexOf(acv);
+                if (index > 0) {
+                        acv = views.at(index - 1);
+                        browse_to_audio_clip(acv->get_clip());
+                        return 0;
+                }
+        }
+
+        if (!activeList.size()) {
+                return 0;
+        }
+
+        activeList.append(this);
+        cpointer().set_active_context_items_by_keyboard_input(activeList);
+
         return 0;
 }
 

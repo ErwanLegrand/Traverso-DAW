@@ -45,8 +45,9 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="LARROW" >
 			<Objects>
-				<Object objectname="SheetView" slotsignature="scroll_left" modes="All" sortorder="1" submenu="Scroll" />
-				<Object objectname="MoveClip" slotsignature="move_left" modes="All" sortorder="3" />
+                                <Object objectname="SheetView" slotsignature="scroll_left" modifierkeys="CTRL" modes="All" sortorder="1" submenu="Scroll" />
+                                <Object objectname="SheetView" slotsignature="browse_to_previous_context_item" modes="All" sortorder="3" />
+                                <Object objectname="MoveClip" slotsignature="move_left" modes="All" sortorder="3" />
 				<Object objectname="TrackPan" slotsignature="pan_left" modes="All" sortorder="1" />
                                 <Object objectname="Zoom" slotsignature="hzoom_out" modes="All" sortorder="4" />
                                 <Object objectname="Sheet" slotsignature="prev_skip_pos" modes="All" sortorder="5" modifierkeys="CTRL" submenu="Playhead" />
@@ -54,8 +55,9 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="RARROW" >
 			<Objects>
-				<Object objectname="SheetView" slotsignature="scroll_right" modes="All" sortorder="2" submenu="Scroll" />
-				<Object objectname="MoveClip" slotsignature="move_right" modes="All" sortorder="4" />
+                                <Object objectname="SheetView" slotsignature="scroll_right" modifierkeys="CTRL" modes="All" sortorder="2" submenu="Scroll" />
+                                <Object objectname="SheetView" slotsignature="browse_to_next_context_item" modes="All" sortorder="4" />
+                                <Object objectname="MoveClip" slotsignature="move_right" modes="All" sortorder="4" />
 				<Object objectname="TrackPan" slotsignature="pan_right" modes="All" sortorder="2" />
                                 <Object objectname="Zoom" slotsignature="hzoom_in" modes="All" sortorder="5" />
                                 <Object objectname="Sheet" slotsignature="next_skip_pos" modes="All" sortorder="5" modifierkeys="CTRL" submenu="Playhead" />
