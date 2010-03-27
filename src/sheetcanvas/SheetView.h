@@ -156,6 +156,8 @@ public slots:
         Command* scroll_left();
         Command* scroll_up();
         Command* scroll_down();
+        Command* to_upper_context_level();
+        Command* to_lower_context_level();
         Command* activate_previous_track();
         Command* activate_next_track();
         Command* goto_begin();

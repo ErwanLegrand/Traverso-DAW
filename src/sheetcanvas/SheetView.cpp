@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include "Themer.h"
 #include "Interface.h"
 
+#include "AudioClipView.h"
 #include "SheetView.h"
 #include "SheetWidget.h"
 #include "AudioTrackView.h"
@@ -974,6 +975,47 @@ void SheetView::browse_to_track(Track *track)
                 }
         }
 }
+
+
+Command* SheetView::to_upper_context_level()
+{
+        QList<QObject*> list = cpointer().get_context_items();
+        QList<ContextItem*> activeList;
+
+        AudioTrackView* atv = qobject_cast<AudioTrackView*>(list.first());
+        if (atv) {
+                QList<AudioClipView*> clipsViews = atv->get_clipviews();
+                AudioClipView* acv = clipsViews.first();
+                if (acv) {
+                        activeList.append(acv);
+                        activeList.append(atv);
+                        QPoint point = m_tpvp->mapToGlobal(m_tpvp->mapFromScene(acv->scenePos().x() + 30,
+                                                                                acv->scenePos().y() + acv->boundingRect().height() / 2));
+                        QCursor::setPos(point);
+                }
+        }
+
+        activeList.append(this);
+        cpointer().set_active_context_items_by_keyboard_input(activeList);
+
+        return 0;
+}
+
+Command* SheetView::to_lower_context_level()
+{
+        QList<QObject*> list = cpointer().get_context_items();
+
+        AudioClipView* acv = qobject_cast<AudioClipView*>(list.first());
+        if (acv) {
+                AudioTrackView* atv = static_cast<AudioTrackView*>(acv->parentItem());
+                if (atv) {
+                        browse_to_track(atv->get_track());
+                }
+        }
+
+        return 0;
+}
+
 
 
 void SheetView::center_in_view(ViewItem *item)

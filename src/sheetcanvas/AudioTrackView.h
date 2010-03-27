@@ -42,7 +42,7 @@ public:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	
         AudioTrack* get_track() const {return m_track;}
-	QList<AudioClipView* >* get_clipviews() {return &m_clipViews;}
+        QList<AudioClipView* > get_clipviews() {return m_clipViews;}
 	
         int get_childview_y_offset() const;
         int get_height();
