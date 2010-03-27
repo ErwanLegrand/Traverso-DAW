@@ -453,6 +453,7 @@ bool Interface::eventFilter(QObject * obj, QEvent * event)
                 // If a user types characters in the track finer, we catch that here and try to show and 'select'
                 // the first found item. When the topmost item is the track to be found, then the user can hit
                 // enter and the topmost item will be browsed to aka partial search.
+                QModelIndex index = m_trackFinderCompleter->currentIndex();
                 m_trackFinderCompleter->popup()->selectionModel()->setCurrentIndex(index, QItemSelectionModel::NoUpdate);
         }
 
