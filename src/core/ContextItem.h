@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define CONTEXTITEM_H
 
 #include <QObject>
+#include <QPointer>
 #include "ContextPointer.h"
 
 class Command;
@@ -89,7 +90,7 @@ protected:
 	qint64 m_id;
 
 private:
-        ContextItem*    m_contextItem;
+        QPointer<ContextItem>    m_contextItem;
         bool            m_hasActiveContext;
 
 	friend class Tsar;
