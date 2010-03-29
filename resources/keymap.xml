@@ -191,7 +191,7 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="N" >
 			<Objects>
-				<Object objectname="AudioClip" slotsignature="normalize" modes="All" sortorder="17" />
+                                <Object objectname="AudioClip" modes="All" sortorder="17" pluginname="TraversoCommands" commandname="NormalizeClip" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="B" >
