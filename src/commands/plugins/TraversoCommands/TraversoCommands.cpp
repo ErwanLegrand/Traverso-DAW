@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <libtraversocore.h>
 #include <libtraversosheetcanvas.h>
 #include <commands.h>
-
+#include <float.h>
 #include <QInputDialog>
 
 
@@ -410,6 +410,7 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
                         }
                         return new Shuttle(view);
                 }
+
                 case NormalizeClipCommand:
                 {
                         AudioClip* clip = qobject_cast<AudioClip*>(obj);
@@ -421,7 +422,7 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 
                         if (clip->is_selected()) {
                                 bool ok;
-                                float normfactor = 0.0f;
+                                float normfactor = FLT_MAX;
 
                                 double d = QInputDialog::getDouble(0, tr("Normalization"),
                                                                    tr("Set Normalization level:"), 0.0, -120, 0, 1, &ok);
@@ -432,10 +433,10 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
                                 QList<AudioClip* > selection;
                                 clip->get_sheet()->get_audioclip_manager()->get_selected_clips(selection);
                                 foreach(AudioClip* selected, selection) {
-                                        normfactor = f_max(selected->calculate_normalization_factor(d), normfactor);
+                                        normfactor = std::min(selected->calculate_normalization_factor(d), normfactor);
                                 }
 
-                                CommandGroup* group = new CommandGroup(clip, "Normalize Selected Clips");
+                                CommandGroup* group = new CommandGroup(clip, tr("Normalize Selected Clips"));
 
                                 foreach(AudioClip* selected, selection) {
                                         group->add_command(new PCommand(selected, "set_gain", normfactor, selected->get_gain(), tr("AudioClip: Normalize")));
